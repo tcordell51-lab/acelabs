@@ -230,6 +230,15 @@ html,body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink)
   <a class="sb-link" data-go="dashboard"><span class="dot"></span><span class="label">Dashboard</span><span class="meta">live</span></a>
   <a class="sb-link" data-go="tree"><span class="dot"></span><span class="label">Skill tree</span><span class="meta">live</span></a>
   <a class="sb-link" data-go="mock"><span class="dot"></span><span class="label">40Q DAT mock</span><span class="meta">live</span></a>
+
+  <div class="sb-section">Reaction Maps · Reference</div>
+  <a class="sb-link" href="../ochem/index.html#roadmap" target="_blank"><span class="dot" style="background:var(--gold)"></span><span class="label">Master Map</span><span class="meta">v1 ↗</span></a>
+  <a class="sb-link" href="../ochem/index.html#mech-library" target="_blank"><span class="dot" style="background:var(--gold)"></span><span class="label">Mechanism Library</span><span class="meta">27 anims ↗</span></a>
+  <a class="sb-link" href="../ochem/index.html#synthesis-lab" target="_blank"><span class="dot" style="background:var(--gold)"></span><span class="label">Synthesis Puzzle</span><span class="meta">12 ↗</span></a>
+  <a class="sb-link" href="../ochem/index.html#reagents" target="_blank"><span class="dot" style="background:var(--gold)"></span><span class="label">Reagent Reference</span><span class="meta">50+ ↗</span></a>
+  <a class="sb-link" href="../ochem/index.html#stereo-lab" target="_blank"><span class="dot" style="background:var(--gold)"></span><span class="label">Stereo + Newman Lab</span><span class="meta">↗</span></a>
+  <a class="sb-link" href="../ochem/index.html#spec-trainer" target="_blank"><span class="dot" style="background:var(--gold)"></span><span class="label">IR + NMR Trainer</span><span class="meta">↗</span></a>
+
   <div id="sb-modules"></div>
 </aside>
 
@@ -378,6 +387,31 @@ function problemsForSkill(skillId, n){
    ============================================================ */
 const MODULES = {};
 function defM(id, def){ MODULES[id] = Object.assign({skill:id, tier:SKILL_BY_ID[id].tier, num:SKILL_BY_ID[id].num, title:SKILL_BY_ID[id].name}, def); }
+
+// Map each v2 module to its corresponding v1 (Reaction Maps) deep-link anchor.
+// Students click "Open in Reaction Maps" inside the Concept stage to jump to the
+// rich animated mechanism / decision wizard / reagent predictor for that concept.
+const V1_ANCHOR = {
+  'fg-recognize':'roadmap', 'nomenclature':'roadmap',
+  'resonance':'acids', 'acid-base':'acids',
+  'stereo-rs':'stereo-lab', 'chirality':'stereo-lab', 'newman':'stereo-lab', 'fischer':'stereo-lab',
+  'ir-basics':'spec-trainer', 'nmr-basics':'spec-trainer', 'nmr-strategy':'spec-trainer', 'dou':'spec-trainer',
+  'sn1-sn2':'subelim', 'e1-e2':'subelim',
+  'alkene-add':'alkenes', 'hydroboration':'alkenes', 'ozonolysis':'alkenes',
+  'alkyne-rxn':'alkynes',
+  'eas':'aromatic',
+  'alc-oxidation':'alcohols', 'epoxide':'ethers',
+  'carbonyl-add':'carbonyl', 'aldol':'carbonyl',
+  'acid-deriv':'acids',
+  'amine-rxn':'amines',
+  'synthesis':'synthesis-lab', 'retrosynthesis':'synthesis-lab',
+  'lab-tech':null, 'pacing':null, 'ochem-guess':null
+};
+function v1Link(skillId){
+  const a = V1_ANCHOR[skillId];
+  if (!a) return '';
+  return `<a class="btn primary sm" style="margin-top:10px" href="../ochem/index.html#${a}" target="_blank" rel="noopener" title="Opens the Reaction Maps reference in a new tab"><span style="margin-right:4px">↗</span> Open mechanism + interactive in Reaction Maps</a>`;
+}
 
 defM('fg-recognize', {
   sub:'Spot the functional group; predict reactivity.',
@@ -820,7 +854,7 @@ function renderModule(skillId){
             <p>${M.pattern}</p>
             <div class="formula">${M.formula}</div>
           </div>
-          <div class="subcard"><div class="h"><span class="lbl info">Visual</span></div><div class="vis" id="vis-${skillId}"></div></div>
+          <div class="subcard"><div class="h"><span class="lbl info">Visual</span></div><div class="vis" id="vis-${skillId}"></div>${v1Link(skillId)}</div>
         </div>
         <div class="row r2" style="margin-top:14px">
           <div class="subcard trap"><div class="h"><span class="lbl trap">Trap</span></div><p>${M.trap}</p></div>
