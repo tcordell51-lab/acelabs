@@ -454,7 +454,7 @@ defM('acid-base', {
   sub:'pKa rankings; predict equilibrium direction.',
   pattern:'<b>Stable conjugate base = strong acid.</b> Stability comes from: 1) atom holding the charge (electronegativity, size). 2) resonance. 3) inductive effects. 4) hybridization (s-character).',
   formula:'<b>pKa landmarks:</b> HCl -7 · H2SO4 -3 · sulfonic acid 0 · -COOH 4 · phenol 10 · alcohol 16 · alkyne H 25 · NH3 36 · alkene H 44 · alkane H 50',
-  visualType:'pka-ladder', lock:'Lower pKa = stronger acid; equilibrium moves toward weaker acid + weaker base.',
+  visualType:'pka-drag', lock:'Lower pKa = stronger acid; equilibrium moves toward weaker acid + weaker base.',
   trap:'Reading pKa as basicity. Lower pKa = stronger acid. Higher pKaH (pKa of conjugate acid) = stronger base.',
   worked:[
     {q:'Why is acetic acid (pKa ~5) more acidic than ethanol (pKa ~16)?', steps:[{n:1, what:'Compare conjugate bases: acetate (-OOC-CH3) vs ethoxide (CH3CH2-O⁻)'},{n:2, what:'Acetate: charge on O delocalized over 2 oxygens via resonance → stable'},{n:3, what:'Ethoxide: localized -O⁻ on single atom → less stable. <b>Stability of A⁻ drives acidity.</b>'}]},
@@ -535,7 +535,7 @@ defM('sn1-sn2', {
   sub:'Substrate, nucleophile, solvent — three knobs.',
   pattern:'<b>Decision tree:</b> 1° → SN2 (only option). 3° → SN1 (no SN2 sterics). 2° → solvent + nucleophile decide. Strong nuc + polar aprotic = SN2. Weak nuc + polar protic + heat = SN1.',
   formula:'<b>SN2:</b> 1-step concerted, inversion, rate = k[sub][nuc] · <b>SN1:</b> 2-step, racemization, rate = k[sub], requires stable carbocation',
-  visualType:'sne-decision', lock:'1° SN2. 3° SN1. 2° depends on nucleophile and solvent.',
+  visualType:'sne-wizard', lock:'1° SN2. 3° SN1. 2° depends on nucleophile and solvent.',
   trap:'Treating 2° as automatic SN1. 2° with strong nucleophile in polar aprotic solvent = SN2.',
   worked:[
     {q:'CH3CH2Br + NaOH in DMSO. Mechanism?', steps:[{n:1, what:'Substrate: 1° (primary alkyl halide)'},{n:2, what:'Nucleophile: -OH (strong)'},{n:3, what:'Solvent: DMSO (polar aprotic)'},{n:4, what:'<b>SN2</b> — inversion, fast, single step'}]},
@@ -547,7 +547,7 @@ defM('e1-e2', {
   sub:'Strong/bulky base + heat → E2. Weak base + heat → E1.',
   pattern:'<b>E2:</b> concerted, anti-periplanar, requires strong base. Zaitsev (more-substituted alkene) usually wins. Bulky base (t-BuOK) → Hofmann (less-substituted).',
   formula:'<b>E1:</b> 2-step, carbocation intermediate (so rearrangements possible), Zaitsev, often competes with SN1',
-  visualType:'sne-decision', lock:'Strong base → E2. Weak base + heat → E1. Bulky base → Hofmann.',
+  visualType:'sne-wizard', lock:'Strong base → E2. Weak base + heat → E1. Bulky base → Hofmann.',
   trap:'Forgetting the anti-periplanar requirement for E2 — sometimes a substrate physically can\'t reach that geometry, blocking the major Zaitsev product.',
   worked:[
     {q:'2-bromobutane + NaOEt. Major product?', steps:[{n:1, what:'2° substrate, ethoxide is a strong base'},{n:2, what:'<b>E2</b> dominant; Zaitsev → 2-butene (more substituted) over 1-butene'}]},
@@ -559,7 +559,7 @@ defM('alkene-add', {
   sub:'Markovnikov, halogenation, hydration.',
   pattern:'<b>Markovnikov:</b> H adds to the C with more H\'s; the halide/OH adds to the more-substituted C (forms the more stable carbocation).',
   formula:'<b>HX:</b> Markovnikov · <b>HX + peroxides:</b> anti-Markovnikov radical mechanism (only HBr) · <b>X2:</b> anti addition via halonium · <b>cold KMnO4:</b> syn diol',
-  visualType:'alkene-add-anim', lock:'H to the H-rich carbon. Halide to the more-substituted carbon (Markovnikov).',
+  visualType:'alkene-mech', lock:'H to the H-rich carbon. Halide to the more-substituted carbon (Markovnikov).',
   trap:'Forgetting peroxides reverse selectivity ONLY with HBr. HCl + peroxides = still Markovnikov.',
   worked:[
     {q:'Propene + HBr. Major product?', steps:[{n:1, what:'No peroxides → Markovnikov'},{n:2, what:'H to terminal CH2, Br to interior C → <b>2-bromopropane</b>'}]},
@@ -604,7 +604,7 @@ defM('eas', {
   sub:'Activators direct ortho/para; deactivators direct meta. Halogens are the exception.',
   pattern:'<b>Activator → ortho/para director (and faster reaction).</b> Deactivator → meta director (slower). Halogens deactivate but direct ortho/para.',
   formula:'<b>Top activators (o/p):</b> -NH2, -OH, -OR, -NR2, alkyl · <b>Top deactivators (meta):</b> -NO2, -CN, -COOH, -SO3H, -CHO · <b>Halogens (-F, -Cl, -Br, -I):</b> deactivate but o/p',
-  visualType:'eas-director', lock:'Lone pair donors → o/p. EWGs (no lone pair to donate) → meta. Halogens are weird (deactivate but o/p).',
+  visualType:'eas-mech', lock:'Lone pair donors → o/p. EWGs (no lone pair to donate) → meta. Halogens are weird (deactivate but o/p).',
   trap:'Forgetting that halogens are the o/p exception. Cl/Br/I are deactivating BUT direct o/p.',
   worked:[
     {q:'Toluene + Br2/FeBr3. Major product?', steps:[{n:1, what:'-CH3 is alkyl → activator → ortho/para director'},{n:2, what:'<b>p-bromotoluene</b> dominant; some o-bromotoluene'}]},
@@ -650,7 +650,7 @@ defM('aldol', {
   sub:'Enolate of one carbonyl attacks another C=O.',
   pattern:'<b>Base deprotonates α-H</b> (pKa ~20) → enolate. Enolate (nucleophile) attacks carbonyl of second molecule. Acid/heat dehydrates β-hydroxy carbonyl to α,β-unsaturated (aldol condensation).',
   formula:'<b>Aldol addition:</b> 2 RCHO → β-hydroxy aldehyde (R-CH(OH)-CHR-CHO) · <b>Aldol condensation:</b> + heat → α,β-unsaturated aldehyde (-CH=CR-CHO + H2O)',
-  visualType:'lock-only', lock:'Enolate attacks the next carbonyl C. Acid/heat dehydrates.',
+  visualType:'aldol-mech', lock:'Enolate attacks the next carbonyl C. Acid/heat dehydrates.',
   trap:'Mixing up which C ends up where. Enolate C attacks carbonyl C; the new C-C bond is between α-C of one and carbonyl-C of the other.',
   worked:[
     {q:'2 acetaldehyde + dilute NaOH. Aldol product?', steps:[{n:1, what:'NaOH removes α-H of one CH3CHO → enolate (CH2=CH-O⁻)'},{n:2, what:'Enolate attacks C of other CH3CHO carbonyl'},{n:3, what:'Workup: <b>3-hydroxybutanal</b> (CH3-CH(OH)-CH2-CHO)'},{n:4, what:'Heat → dehydrate to <b>crotonaldehyde</b> (CH3-CH=CH-CHO)'}]}
@@ -739,7 +739,7 @@ defM('pacing', {
   sub:'OChem section is 30 questions in 30 minutes within the SoNS 90 min total.',
   pattern:'<b>Budget ~60 sec/Q.</b> Skip after 90s. Pass 1: ~20 done. Pass 2: clean up. Pass 3: educated guesses on the rest.',
   formula:'<b>OChem within SoNS:</b> 90 min for 100 Q (40 Bio + 30 GC + 30 OChem) = 54 sec/Q average. OChem mechanisms can take longer, so frontload Bio + GC if you\'re slow on mechanisms.',
-  visualType:'lock-only', lock:'~60 sec/Q. Skip + return. Always answer (no penalty).',
+  visualType:'pacing-budget', lock:'~60 sec/Q. Skip + return. Always answer (no penalty).',
   trap:'Stuck on a synthesis problem. Mark + move at 90 sec — costs you 2-3 easier Qs otherwise.',
   worked:[
     {q:'You\'ve spent 2 minutes on a synthesis problem. Best move?', steps:[{n:1, what:'Mark, move, come back. The opportunity cost is 2 easier problems.'}]}
@@ -750,7 +750,7 @@ defM('ochem-guess', {
   sub:'Eliminate by units, magnitude, sign, and trap-pattern.',
   pattern:'<b>5 → 2 doubles your odds.</b> Look for: wrong FG (e.g., aldehyde when only ketones can form), wrong stereochem (S when only R is possible), wildly off magnitude.',
   formula:'<b>Quick filters:</b> Did the question ask for a specific stereoisomer? Eliminate the wrong one. Is one option an SN2 product when the substrate is 3° (impossible)? Drop it.',
-  visualType:'lock-only', lock:'Eliminate before guessing. 5→2 = 50% from random 20%.',
+  visualType:'guess-funnel', lock:'Eliminate before guessing. 5→2 = 50% from random 20%.',
   trap:'Skipping elimination because you don\'t know the answer. Even one elimination raises odds from 20% to 25%.',
   worked:[
     {q:'You don\'t know the product but the substrate is 3° benzylic and the reagent is a strong nucleophile.', steps:[{n:1, what:'3° benzylic + strong nuc → SN1 likely (benzylic stable carbocation)'},{n:2, what:'Eliminate any options that show inversion (SN2 not possible at 3°)'}]}
@@ -1039,7 +1039,112 @@ function renderVisual(skillId){
       break;
     case 'lab-cards':
       html = `<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12px">
-        ${[['Distillation','BP differ by >25°C → simple. Less → fractional.','var(--gold-bg)','var(--gold-d)'],['Recrystallization','Solubility difference. Hot dissolve → cool slow → pure crystals.','var(--good-bg)','var(--good-d)'],['Chromatography','Polarity difference. Polar = stays. Nonpolar = elutes first.','rgba(58,107,84,.12)','var(--teal-3)'],['Extraction','Acid/base/neutral. Wash with NaHCO3 (acid → aq), HCl (base → aq).','var(--trap-bg)','var(--trap)']].map(([n,d,bg,c]) => `<div style="padding:10px 12px;background:${bg};border-left:4px solid ${c};border-radius:0 6px 6px 0"><b style="color:${c}">${n}</b><div style="color:var(--ink-2);margin-top:4px;font-size:11.5px;line-height:1.45">${d}</div></div>`).join('')}
+        ${[['Distillation','BP differ by >25°C → simple. Less → fractional.','var(--gold-bg)','var(--gold-d)','property: boiling point'],['Recrystallization','Solubility difference. Hot dissolve → cool slow → pure crystals.','var(--good-bg)','var(--good-d)','property: solubility (T-dependent)'],['Chromatography','Polarity difference. Polar stays. Nonpolar elutes first.','rgba(58,107,84,.12)','var(--teal-3)','property: polarity'],['Extraction','Acid/base/neutral. Wash with NaHCO3 (acid → aq), HCl (base → aq).','var(--trap-bg)','var(--trap)','property: pKa / phase']].map(([n,d,bg,c,p]) => `<div style="padding:10px 12px;background:${bg};border-left:4px solid ${c};border-radius:0 6px 6px 0"><b style="color:${c}">${n}</b><div style="font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--ink-mute);text-transform:uppercase;letter-spacing:.08em;margin-top:2px">${p}</div><div style="color:var(--ink-2);margin-top:4px;font-size:11.5px;line-height:1.45">${d}</div></div>`).join('')}
+      </div>
+      <div style="margin-top:10px;padding:10px 12px;background:var(--paper-2);border-radius:6px;font-size:11.5px;color:var(--ink-2);font-family:'Playfair Display',serif;font-style:italic;text-align:center">Match the technique to the property that <em>differs</em> between the two compounds you're separating.</div>`;
+      break;
+    case 'sne-wizard':
+      const wId = 'sne-'+skillId;
+      html = `<div id="${wId}" style="font-family:'DM Sans',sans-serif">
+        <div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap">${['Substrate','Nuc/Base','Solvent','Result'].map((s,i)=>`<div data-step="${i}" style="flex:1;min-width:80px;padding:6px 10px;background:var(--paper-2);border:1.5px solid var(--line);border-radius:6px;text-align:center;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-mute)">${i+1}. ${s}</div>`).join('')}</div>
+        <div data-screen="0" style="padding:14px;background:var(--gold-bg);border-radius:8px">
+          <div style="font-family:'Playfair Display',serif;font-size:14px;font-weight:600;margin-bottom:8px">What's the substrate?</div>
+          <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px">
+            ${[['methyl','CH₃-X','SN2 only'],['1°','R-CH₂-X','SN2 strong; rare SN1'],['2°','R₂CH-X','depends on Nuc + solvent'],['3°','R₃C-X','SN1/E1; E2 with strong base']].map(([k,f,n])=>`<button class="btn sm" onclick="qrSneAns('${wId}','sub','${k}','${n}')">${k} <span style="color:var(--ink-mute);font-family:'JetBrains Mono',monospace;font-size:10px;margin-left:6px">${f}</span></button>`).join('')}
+          </div>
+        </div>
+        <div data-screen="1" class="hidden"></div>
+        <div data-screen="2" class="hidden"></div>
+        <div data-screen="3" class="hidden"></div>
+        <button class="btn ghost sm" onclick="qrSneReset('${wId}')" style="margin-top:8px">↺ Restart wizard</button>
+      </div>`;
+      break;
+    case 'alkene-mech':
+      const aId = 'alk-'+skillId;
+      html = `<div id="${aId}">
+        <div style="text-align:center;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-mute);letter-spacing:.14em;text-transform:uppercase;margin-bottom:6px">Propene + HBr · 3-frame mechanism</div>
+        <svg viewBox="0 0 400 180" style="background:var(--paper-2);border-radius:8px"><g id="${aId}-g"></g></svg>
+        <div class="row controls" style="margin-top:10px;justify-content:center;gap:6px">
+          <button class="btn sm" onclick="qrAlkFrame('${aId}',0)">Frame 1</button>
+          <button class="btn sm" onclick="qrAlkFrame('${aId}',1)">Frame 2</button>
+          <button class="btn sm" onclick="qrAlkFrame('${aId}',2)">Frame 3</button>
+          <button class="btn gold sm" onclick="qrAlkPlay('${aId}')">▶ Play</button>
+        </div>
+        <div class="readout" id="${aId}-r" style="margin-top:8px">Click a frame or press Play.</div>
+      </div>`;
+      setTimeout(()=>qrAlkFrame(aId,0),50);
+      break;
+    case 'pka-drag':
+      const pId = 'pka-'+skillId;
+      html = `<div id="${pId}">
+        <div style="text-align:center;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-mute);letter-spacing:.14em;text-transform:uppercase;margin-bottom:8px">pKa scale · stronger acid → left</div>
+        <svg viewBox="0 0 400 200">
+          <line x1="20" y1="100" x2="380" y2="100" stroke="var(--ink)" stroke-width="2"/>
+          ${[-10,0,10,20,30,40,50].map(v=>`<g><line x1="${20+(v+10)*6}" y1="92" x2="${20+(v+10)*6}" y2="108" stroke="var(--ink)" stroke-width="1.2"/><text x="${20+(v+10)*6}" y="125" text-anchor="middle" font-family="JetBrains Mono" font-size="11" fill="var(--ink-mute)">${v}</text></g>`).join('')}
+          <text x="200" y="148" text-anchor="middle" font-family="DM Sans" font-size="11" fill="var(--ink-mute)" letter-spacing="2">pKa</text>
+          <g id="${pId}-markers"></g>
+        </svg>
+        <div class="row controls" style="margin-top:6px;flex-wrap:wrap;gap:4px">
+          ${[['HCl',-7],['H₂SO₄',-3],['Sulfonic',0],['-COOH',5],['Phenol',10],['Alcohol',16],['Alkyne',25],['NH₃',36],['Alkene',44],['Alkane',50]].map((a,i)=>`<button class="btn sm" onclick="qrPkaMark('${pId}','${a[0]}',${a[1]})">${a[0]} (${a[1]})</button>`).join('')}
+        </div>
+        <div class="readout" id="${pId}-r" style="margin-top:8px">Click any acid to mark its pKa. Lower = stronger acid = more stable conjugate base.</div>
+      </div>`;
+      break;
+    case 'eas-mech':
+      const eId = 'eas-'+skillId;
+      html = `<div id="${eId}">
+        <div style="text-align:center;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-mute);letter-spacing:.14em;text-transform:uppercase;margin-bottom:6px">Bromobenzene · 3-frame EAS</div>
+        <svg viewBox="0 0 400 180" style="background:var(--paper-2);border-radius:8px"><g id="${eId}-g"></g></svg>
+        <div class="row controls" style="margin-top:10px;justify-content:center;gap:6px">
+          <button class="btn sm" onclick="qrEasFrame('${eId}',0)">1. Approach</button>
+          <button class="btn sm" onclick="qrEasFrame('${eId}',1)">2. Arenium ion</button>
+          <button class="btn sm" onclick="qrEasFrame('${eId}',2)">3. H⁺ loss · re-aromatize</button>
+        </div>
+        <div class="readout" id="${eId}-r" style="margin-top:8px">Click a frame.</div>
+      </div>`;
+      setTimeout(()=>qrEasFrame(eId,0),50);
+      break;
+    case 'aldol-mech':
+      const adId = 'ald-'+skillId;
+      html = `<div id="${adId}">
+        <div style="text-align:center;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-mute);letter-spacing:.14em;text-transform:uppercase;margin-bottom:6px">Acetaldehyde + acetaldehyde · aldol</div>
+        <svg viewBox="0 0 400 180" style="background:var(--paper-2);border-radius:8px"><g id="${adId}-g"></g></svg>
+        <div class="row controls" style="margin-top:10px;justify-content:center;gap:6px">
+          <button class="btn sm" onclick="qrAldFrame('${adId}',0)">1. Deprotonate α-H</button>
+          <button class="btn sm" onclick="qrAldFrame('${adId}',1)">2. Enolate attack</button>
+          <button class="btn sm" onclick="qrAldFrame('${adId}',2)">3. Protonate</button>
+          <button class="btn sm" onclick="qrAldFrame('${adId}',3)">4. Heat: dehydrate</button>
+        </div>
+        <div class="readout" id="${adId}-r" style="margin-top:8px">Click any frame.</div>
+      </div>`;
+      setTimeout(()=>qrAldFrame(adId,0),50);
+      break;
+    case 'pacing-budget':
+      html = `<div>
+        <div style="text-align:center;font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--gold-d);margin-bottom:10px">~60 sec / Q</div>
+        <svg viewBox="0 0 400 100" style="display:block;margin:0 auto">
+          <rect x="20" y="35" width="360" height="20" fill="var(--paper-3)" stroke="var(--line)" stroke-width="1" rx="3"/>
+          <rect x="20" y="35" width="216" height="20" fill="var(--good)" rx="3"/>
+          <rect x="236" y="35" width="108" height="20" fill="var(--gold)"/>
+          <rect x="344" y="35" width="36" height="20" fill="var(--trap)"/>
+          <text x="20" y="25" font-family="JetBrains Mono" font-size="10" fill="var(--ink-mute)" letter-spacing="2">0:00</text>
+          <text x="380" y="25" text-anchor="end" font-family="JetBrains Mono" font-size="10" fill="var(--ink-mute)" letter-spacing="2">30:00</text>
+          <text x="128" y="80" text-anchor="middle" font-family="JetBrains Mono" font-size="11" fill="var(--good-d)" font-weight="700">Pass 1 · ~18 min · easy + medium</text>
+          <text x="290" y="80" text-anchor="middle" font-family="JetBrains Mono" font-size="11" fill="var(--gold-d)" font-weight="700">Pass 2 · ~9 min · marked</text>
+          <text x="362" y="95" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="var(--trap-d)" font-weight="700">P3 guess</text>
+        </svg>
+        <div class="readout" style="margin-top:10px">30 OChem Q in 30 min · skip after <b>90s</b> · always answer (no penalty)</div>
+      </div>`;
+      break;
+    case 'guess-funnel':
+      html = `<div>
+        <div style="text-align:center;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-mute);letter-spacing:.14em;text-transform:uppercase;margin-bottom:8px">Eliminate before guessing</div>
+        <svg viewBox="0 0 400 240">
+          <path d="M 30 30 L 370 30 L 250 200 L 150 200 Z" fill="var(--paper-2)" stroke="var(--ink)" stroke-width="1.5"/>
+          ${[['A','impossible mechanism',60],['B','wrong stereo',130],['C','correct',200],['D','wrong functional group',270],['E','wrong magnitude',340]].map(([l,n,x],i)=>{const dropped=i!==2;return `<g transform="translate(${x-25}, ${dropped?80+i*8:200}) ${dropped?'rotate('+(i*15-30)+' 25 12)':''}" opacity="${dropped?'0.35':'1'}"><rect width="50" height="24" rx="4" fill="${dropped?'var(--trap-bg)':'var(--good-bg)'}" stroke="${dropped?'var(--trap)':'var(--good-d)'}" stroke-width="1.5"/><text x="25" y="16" text-anchor="middle" font-family="JetBrains Mono" font-size="11" font-weight="700" fill="${dropped?'var(--trap-d)':'var(--good-d)'}">${l}</text></g>`}).join('')}
+          <text x="200" y="225" text-anchor="middle" font-family="Playfair Display" font-size="13" font-style="italic" fill="var(--good-d)" font-weight="700">5 → 1 left = 100% odds</text>
+        </svg>
+        <div class="readout" style="margin-top:8px">Filters: units · magnitude · sign · trap pattern · "looks too easy"</div>
       </div>`;
       break;
     case 'resonance-arrows':
@@ -1056,6 +1161,128 @@ function renderVisual(skillId){
   }
   wrap.innerHTML = html;
 }
+
+/* ============================================================
+   INTERACTIVE VISUAL HANDLERS
+   ============================================================ */
+window.qrSneAns = function(wId, step, val, hint){
+  const w = document.getElementById(wId); if (!w) return;
+  // Mark prior step pill as done
+  w.querySelectorAll('[data-step]').forEach((p, i) => {
+    const stepIdx = ['sub','nuc','solv','res'].indexOf(step);
+    if (i === stepIdx){ p.style.background = 'var(--good-bg)'; p.style.borderColor = 'var(--good-d)'; p.style.color = 'var(--good-d)'; }
+  });
+  if (step === 'sub'){
+    if (val === '3°'){
+      // 3° goes straight to result — no Nuc/Solv decision needed
+      _qrSneShowResult(wId, val === '3°' ? 'SN1 / E1 (or E2 with strong base)' : '?', '3° substrates can\'t do SN2 (sterics block backside attack). Solvolysis or weak base = SN1/E1; strong base = E2 (Zaitsev usually).');
+      return;
+    }
+    if (val === 'methyl' || val === '1°'){
+      _qrSneShowResult(wId, 'SN2', val === 'methyl' ? 'Methyl substrates ONLY do SN2.' : 'Primary substrate + any decent nucleophile = SN2. SN1 essentially impossible (1° carbocation too unstable).');
+      return;
+    }
+    // 2° — ask about nucleophile
+    const next = w.querySelector('[data-screen="1"]');
+    next.classList.remove('hidden');
+    next.innerHTML = `<div style="padding:14px;background:var(--gold-bg);border-radius:8px">
+      <div style="font-family:'Playfair Display',serif;font-size:14px;font-weight:600;margin-bottom:8px">2° substrate. What's the nucleophile / base?</div>
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px">
+        <button class="btn sm" onclick="qrSneAns('${wId}','nuc','strong-nuc','strong nucleophile, NOT a strong base')">Strong nuc · weak base <span style="color:var(--ink-mute);font-size:10px;margin-left:4px">(I⁻, RS⁻, CN⁻)</span></button>
+        <button class="btn sm" onclick="qrSneAns('${wId}','nuc','strong-base','strong base AND nucleophile')">Strong base · strong nuc <span style="color:var(--ink-mute);font-size:10px;margin-left:4px">(NaOH, NaOR)</span></button>
+        <button class="btn sm" onclick="qrSneAns('${wId}','nuc','bulky-base','very bulky strong base')">Bulky strong base <span style="color:var(--ink-mute);font-size:10px;margin-left:4px">(t-BuOK, LDA)</span></button>
+        <button class="btn sm" onclick="qrSneAns('${wId}','nuc','weak','weak nuc, weak base, hot solvent')">Weak nuc + heat <span style="color:var(--ink-mute);font-size:10px;margin-left:4px">(H₂O, ROH)</span></button>
+      </div>
+    </div>`;
+  }
+  if (step === 'nuc'){
+    const next = w.querySelector('[data-screen="2"]');
+    next.classList.remove('hidden');
+    if (val === 'bulky-base'){
+      _qrSneShowResult(wId, 'E2 — Hofmann (less-substituted alkene)', 'Bulky bases can\'t reach the more-hindered β-H, so they pluck the more-accessible β-H instead → less-substituted alkene.');
+      return;
+    }
+    if (val === 'weak'){
+      _qrSneShowResult(wId, 'SN1 / E1 mix', 'Weak nuc + heat on a 2° substrate → carbocation forms (slow) → SN1 captured by Nu, or E1 loses β-H. Both products usually.');
+      return;
+    }
+    next.innerHTML = `<div style="padding:14px;background:var(--gold-bg);border-radius:8px">
+      <div style="font-family:'Playfair Display',serif;font-size:14px;font-weight:600;margin-bottom:8px">Solvent?</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+        <button class="btn sm" onclick="qrSneAns('${wId}','solv','aprotic','polar aprotic')">Polar aprotic <span style="color:var(--ink-mute);font-size:10px;margin-left:4px">(DMSO, DMF, acetone)</span></button>
+        <button class="btn sm" onclick="qrSneAns('${wId}','solv','protic','polar protic')">Polar protic <span style="color:var(--ink-mute);font-size:10px;margin-left:4px">(H₂O, ROH)</span></button>
+      </div>
+    </div>`;
+    w._qrSneNuc = val;
+  }
+  if (step === 'solv'){
+    const isStrongBase = w._qrSneNuc === 'strong-base';
+    if (val === 'aprotic'){
+      _qrSneShowResult(wId, isStrongBase ? 'SN2 dominant; some E2' : 'SN2', 'Polar aprotic doesn\'t hydrogen-bond to the nucleophile → "naked" reactive Nu → SN2 wins on 2°. Strong base: some E2 too.');
+    } else {
+      _qrSneShowResult(wId, isStrongBase ? 'E2 (Zaitsev)' : 'SN1 / E1 (mix)', 'Polar protic solvates the Nu (deactivates SN2) and stabilizes the carbocation. Strong base on 2° + heat: E2 dominant. Weak nuc: SN1 mix.');
+    }
+  }
+};
+function _qrSneShowResult(wId, result, why){
+  const w = document.getElementById(wId); if (!w) return;
+  const r = w.querySelector('[data-screen="3"]');
+  r.classList.remove('hidden');
+  r.innerHTML = `<div style="padding:18px;background:var(--good-bg);border:2px solid var(--good-d);border-radius:8px;margin-top:6px">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--good-d);font-weight:700;margin-bottom:6px">Predicted mechanism</div>
+    <div style="font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--good-d);font-style:italic">${result}</div>
+    <div style="font-size:13px;color:var(--ink-2);margin-top:8px;line-height:1.55">${why}</div>
+  </div>`;
+};
+window.qrSneReset = function(wId){
+  const w = document.getElementById(wId); if (!w) return;
+  w.querySelectorAll('[data-step]').forEach(p => { p.style.background = 'var(--paper-2)'; p.style.borderColor = 'var(--line)'; p.style.color = 'var(--ink-mute)'; });
+  ['1','2','3'].forEach(i => { const s = w.querySelector('[data-screen="'+i+'"]'); if (s){ s.classList.add('hidden'); s.innerHTML = ''; } });
+  delete w._qrSneNuc;
+};
+
+const ALK_FRAMES = [
+  {svg: '<text x="200" y="40" text-anchor="middle" font-family="Playfair Display" font-style="italic" font-size="14" fill="var(--ink-mute)">Frame 1 · approach</text><text x="100" y="100" text-anchor="middle" font-family="JetBrains Mono" font-size="20" fill="var(--ink)">CH₂=CH-CH₃</text><text x="200" y="100" text-anchor="middle" font-family="JetBrains Mono" font-size="22" fill="var(--gold-d)" font-weight="700">+ HBr</text><text x="320" y="100" text-anchor="middle" font-family="JetBrains Mono" font-size="20" fill="var(--ink-mute)">π attacks H⁺</text>', why:'Pi electrons of the alkene attack the H⁺ of HBr.'},
+  {svg: '<text x="200" y="40" text-anchor="middle" font-family="Playfair Display" font-style="italic" font-size="14" fill="var(--ink-mute)">Frame 2 · carbocation</text><text x="200" y="100" text-anchor="middle" font-family="JetBrains Mono" font-size="22" fill="var(--ink)">CH₃-<tspan fill="var(--gold-d)" font-weight="700">⁺C</tspan>H-CH₃</text><text x="200" y="135" text-anchor="middle" font-family="JetBrains Mono" font-size="14" fill="var(--gold-d)">+ Br⁻</text><text x="200" y="160" text-anchor="middle" font-family="DM Sans" font-size="11" fill="var(--ink-mute)" font-style="italic">2° carbocation forms (more stable than 1°)</text>', why:'H went to the terminal CH₂ (more H\'s already). Carbocation forms on the interior C — more stable (2°).'},
+  {svg: '<text x="200" y="40" text-anchor="middle" font-family="Playfair Display" font-style="italic" font-size="14" fill="var(--ink-mute)">Frame 3 · Br⁻ attacks</text><text x="200" y="100" text-anchor="middle" font-family="JetBrains Mono" font-size="22" fill="var(--ink)">CH₃-<tspan fill="var(--gold-d)" font-weight="700">CHBr</tspan>-CH₃</text><text x="200" y="135" text-anchor="middle" font-family="Playfair Display" font-style="italic" font-size="16" fill="var(--good-d)" font-weight="700">2-bromopropane</text><text x="200" y="160" text-anchor="middle" font-family="DM Sans" font-size="11" fill="var(--ink-mute)" font-style="italic">Br on more-substituted C · Markovnikov</text>', why:'Br⁻ attacks the carbocation. Final product: Markovnikov.'}
+];
+window.qrAlkFrame = function(aId, n){
+  const g = document.getElementById(aId+'-g'); if (g) g.innerHTML = ALK_FRAMES[n].svg;
+  const r = document.getElementById(aId+'-r'); if (r) r.innerHTML = '<b>' + ALK_FRAMES[n].why + '</b>';
+};
+window.qrAlkPlay = function(aId){
+  let i = 0;
+  const tick = () => { if (i >= ALK_FRAMES.length) return; qrAlkFrame(aId, i); i++; setTimeout(tick, 1500); };
+  tick();
+};
+
+window.qrPkaMark = function(pId, name, val){
+  const m = document.getElementById(pId+'-markers'); if (!m) return;
+  const x = 20 + (val + 10) * 6;
+  m.innerHTML += `<g><line x1="${x}" y1="60" x2="${x}" y2="100" stroke="var(--gold-d)" stroke-width="2"/><circle cx="${x}" cy="60" r="6" fill="var(--gold)" stroke="var(--gold-d)" stroke-width="1.5"/><text x="${x}" y="55" text-anchor="middle" font-family="JetBrains Mono" font-size="10" font-weight="700" fill="var(--gold-d)">${name}</text></g>`;
+  const r = document.getElementById(pId+'-r'); if (r) r.innerHTML = `<b>${name}</b> · pKa ${val} · ${val < 0 ? 'very strong acid' : val < 5 ? 'strong-medium acid' : val < 16 ? 'weak acid' : val < 25 ? 'very weak acid' : 'effectively neutral'}`;
+};
+
+const EAS_FRAMES = [
+  {svg: '<text x="200" y="30" text-anchor="middle" font-family="Playfair Display" font-style="italic" font-size="14" fill="var(--ink-mute)">Approach</text><circle cx="170" cy="100" r="38" fill="none" stroke="var(--ink)" stroke-width="2"/><text x="170" y="105" text-anchor="middle" font-family="Playfair Display" font-size="22" font-weight="700">⌬</text><text x="270" y="100" font-family="JetBrains Mono" font-size="20" fill="var(--gold-d)" font-weight="700">Br⁺</text><text x="220" y="100" font-family="JetBrains Mono" font-size="14" fill="var(--ink-mute)">→</text><text x="200" y="160" text-anchor="middle" font-family="DM Sans" font-size="11" fill="var(--ink-mute)" font-style="italic">FeBr₃ activates Br₂ → Br⁺ (electrophile)</text>', why:'Lewis acid (FeBr₃) generates the Br⁺ electrophile.'},
+  {svg: '<text x="200" y="30" text-anchor="middle" font-family="Playfair Display" font-style="italic" font-size="14" fill="var(--ink-mute)">Arenium ion</text><circle cx="200" cy="100" r="38" fill="none" stroke="var(--ink)" stroke-width="2" stroke-dasharray="4 3"/><text x="200" y="98" text-anchor="middle" font-family="JetBrains Mono" font-size="13" font-weight="700" fill="var(--gold-d)">+</text><text x="240" y="80" text-anchor="middle" font-family="JetBrains Mono" font-size="14" font-weight="700" fill="var(--ink)">Br</text><text x="240" y="95" text-anchor="middle" font-family="JetBrains Mono" font-size="14" fill="var(--ink-mute)">H</text><text x="200" y="160" text-anchor="middle" font-family="DM Sans" font-size="11" fill="var(--ink-mute)" font-style="italic">Aromaticity broken, sp³ C, + spread over 3 ring positions</text>', why:'Pi e⁻ attack Br⁺ → arenium ion (Wheland). Slow step — RDS.'},
+  {svg: '<text x="200" y="30" text-anchor="middle" font-family="Playfair Display" font-style="italic" font-size="14" fill="var(--ink-mute)">Re-aromatize</text><circle cx="200" cy="100" r="38" fill="none" stroke="var(--ink)" stroke-width="2"/><text x="200" y="105" text-anchor="middle" font-family="Playfair Display" font-size="22" font-weight="700">⌬</text><line x1="200" y1="62" x2="200" y2="40" stroke="var(--ink)" stroke-width="2"/><text x="200" y="33" text-anchor="middle" font-family="JetBrains Mono" font-size="13" font-weight="700" fill="var(--gold-d)">Br</text><text x="200" y="160" text-anchor="middle" font-family="Playfair Display" font-style="italic" font-size="14" font-weight="700" fill="var(--good-d)">bromobenzene + HBr</text>', why:'Base removes H⁺ → aromaticity restored. Net: H replaced by Br. Catalyst regenerates.'}
+];
+window.qrEasFrame = function(eId, n){
+  const g = document.getElementById(eId+'-g'); if (g) g.innerHTML = EAS_FRAMES[n].svg;
+  const r = document.getElementById(eId+'-r'); if (r) r.innerHTML = '<b>' + EAS_FRAMES[n].why + '</b>';
+};
+
+const ALD_FRAMES = [
+  {svg: '<text x="200" y="30" text-anchor="middle" font-family="Playfair Display" font-style="italic" font-size="14" fill="var(--ink-mute)">Step 1 · base removes α-H</text><text x="100" y="100" text-anchor="middle" font-family="JetBrains Mono" font-size="16">CH₃-CHO</text><text x="200" y="100" text-anchor="middle" font-family="JetBrains Mono" font-size="14" fill="var(--gold-d)">+ NaOH</text><text x="320" y="100" text-anchor="middle" font-family="JetBrains Mono" font-size="16" fill="var(--ink)"><tspan fill="var(--gold-d)">⁻CH₂</tspan>-CHO</text><text x="200" y="160" text-anchor="middle" font-family="DM Sans" font-size="11" fill="var(--ink-mute)" font-style="italic">α-H pKa ~20 · enolate forms</text>', why:'Strong base removes the α-hydrogen, generating the enolate (negative charge on α-C, resonance to O).'},
+  {svg: '<text x="200" y="30" text-anchor="middle" font-family="Playfair Display" font-style="italic" font-size="14" fill="var(--ink-mute)">Step 2 · enolate attacks 2nd carbonyl</text><text x="80" y="100" text-anchor="middle" font-family="JetBrains Mono" font-size="14" fill="var(--gold-d)">⁻CH₂-CHO</text><text x="170" y="100" text-anchor="middle" font-family="JetBrains Mono" font-size="14" fill="var(--ink-mute)">attacks</text><text x="280" y="100" text-anchor="middle" font-family="JetBrains Mono" font-size="14">CH₃-CHO</text><text x="200" y="160" text-anchor="middle" font-family="DM Sans" font-size="11" fill="var(--ink-mute)" font-style="italic">α-C of enolate → C of 2nd C=O · new C-C bond</text>', why:'The enolate carbon (nucleophile) attacks the carbonyl carbon of a second aldehyde molecule.'},
+  {svg: '<text x="200" y="30" text-anchor="middle" font-family="Playfair Display" font-style="italic" font-size="14" fill="var(--ink-mute)">Step 3 · protonate β-O</text><text x="200" y="100" text-anchor="middle" font-family="JetBrains Mono" font-size="16">CH₃-<tspan fill="var(--gold-d)">CH(OH)</tspan>-CH₂-CHO</text><text x="200" y="135" text-anchor="middle" font-family="Playfair Display" font-style="italic" font-size="14" font-weight="700" fill="var(--good-d)">3-hydroxybutanal · aldol product</text>', why:'After protonation: β-hydroxy aldehyde. This is the "aldol addition" product.'},
+  {svg: '<text x="200" y="30" text-anchor="middle" font-family="Playfair Display" font-style="italic" font-size="14" fill="var(--ink-mute)">Step 4 · dehydrate (heat)</text><text x="200" y="100" text-anchor="middle" font-family="JetBrains Mono" font-size="16">CH₃-<tspan fill="var(--gold-d)" font-weight="700">CH=CH</tspan>-CHO</text><text x="200" y="135" text-anchor="middle" font-family="Playfair Display" font-style="italic" font-size="14" font-weight="700" fill="var(--good-d)">crotonaldehyde · α,β-unsaturated</text><text x="200" y="160" text-anchor="middle" font-family="DM Sans" font-size="11" fill="var(--ink-mute)" font-style="italic">+ H₂O lost · aldol condensation</text>', why:'Heat drives loss of water from the β-hydroxy → α,β-unsaturated carbonyl (aldol condensation).'}
+];
+window.qrAldFrame = function(adId, n){
+  const g = document.getElementById(adId+'-g'); if (g) g.innerHTML = ALD_FRAMES[n].svg;
+  const r = document.getElementById(adId+'-r'); if (r) r.innerHTML = '<b>' + ALD_FRAMES[n].why + '</b>';
+};
 
 /* ============================================================
    STAGES — Worked, Faded, Independent, Mastery
