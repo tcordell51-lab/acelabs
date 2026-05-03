@@ -24,7 +24,7 @@ AceDAT-AceLabs/
 │   ├── ace-labs-shell.css     # Brand vars + home-page layout
 │   └── ace-labs-shell.js      # Cross-tool localStorage aggregator
 ├── tools/
-│   ├── qr/                    # QR Remediation (Sarah · 31 visuals · 963 problems)
+│   ├── qr/                    # QR Remediation (Sarah · 41 modules · 35 visuals · 1010 problems)
 │   │   ├── index.html
 │   │   └── tiktoks/           # TikTok library + bespoke + voiceover studio
 │   ├── bio/                   # Bio Engine (Riya · 6 hubs · 500-Q mock bank)

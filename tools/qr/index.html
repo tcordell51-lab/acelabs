@@ -29,6 +29,18 @@ body[data-theme="dark"]{
   --ink:#ece4d4; --ink-2:#c9c0ad; --ink-mute:#8a9088; --ink-soft:#5e6660;
   --line:rgba(236,228,212,0.10); --line-2:rgba(236,228,212,0.05); --line-strong:rgba(236,228,212,0.18);
   --trap-bg:#3a201a; --good-bg:#1c3026; --info-bg:#1d2934; --plum-bg:#2a1d2c;
+  /* Accent ramp shifts: in dark mode the "deep" variants need to lighten so
+     borders, emphasis text, and status colors read against dark surfaces. */
+  --gold-d:#E2C97A;
+  --teal:#5A957C;
+  --teal-2:#7BB39C;
+  --teal-3:#9CCDB5;
+  --trap:#D97A5C;
+  --trap-d:#E08770;
+  --good:#7AC09A;
+  --good-d:#8AC9A1;
+  --info:#9DB6CF;
+  --plum:#B385B8;
   --shadow:0 1px 3px rgba(0,0,0,0.4), 0 8px 24px rgba(0,0,0,0.35);
   --shadow-md:0 2px 6px rgba(0,0,0,0.5), 0 16px 40px rgba(0,0,0,0.4);
   --shadow-lg:0 4px 14px rgba(0,0,0,0.5), 0 24px 56px rgba(0,0,0,0.45);
@@ -583,8 +595,9 @@ body.sarah-edit-on .sb{padding-top:50px}
 
 [data-edit-changed]{position:relative}
 [data-edit-changed]::after{
-  content:"●"; position:absolute; top:-2px; right:-12px;
-  color:var(--gold-d); font-size:14px;
+  content:""; position:absolute; top:4px; right:-14px;
+  width:8px; height:8px; border-radius:50%;
+  background:var(--gold-d);
 }
 
 /* ============================================================
@@ -777,7 +790,11 @@ body[data-theme="dark"] .celeb-h em{color:var(--gold-m)}
 .celeb-unlocks .lbl{font-size:10px; letter-spacing:0.18em; text-transform:uppercase; font-weight:700; color:var(--gold-d); margin-bottom:6px}
 body[data-theme="dark"] .celeb-unlocks .lbl{color:var(--gold-m)}
 .celeb-unlocks .item{display:flex; gap:10px; align-items:center; padding:6px 0; font-size:14px}
-.celeb-unlocks .item::before{content:"✓"; color:var(--good); font-weight:700; font-size:16px}
+.celeb-unlocks .item::before{
+  content:""; display:inline-block; width:14px; height:8px;
+  border-left:2px solid var(--good); border-bottom:2px solid var(--good);
+  transform:rotate(-45deg); margin-right:2px; flex:none;
+}
 .celeb-cta{display:flex; gap:10px; justify-content:center; flex-wrap:wrap; opacity:0; animation:fadeUp 0.5s 1.0s forwards}
 
 @keyframes fadeUp{to{opacity:1; transform:translateY(0)}}
@@ -862,8 +879,14 @@ body[data-theme="dark"] .lockmod .small{color:var(--gold-m)}
 /* Locked sidebar link tooltip on hover */
 .sb-link.lock{position:relative}
 .sb-link.lock::after{
-  content:"🔒"; font-size:9px; position:absolute; right:18px; top:50%; transform:translateY(-50%);
-  opacity:0.55;
+  content:""; position:absolute; right:18px; top:50%; transform:translateY(-50%);
+  width:8px; height:9px; border:1.3px solid currentColor; border-radius:1.5px;
+  border-top:none; opacity:0.55;
+}
+.sb-link.lock::before{
+  content:""; position:absolute; right:21px; top:calc(50% - 8px);
+  width:6px; height:5px; border:1.3px solid currentColor; border-bottom:none;
+  border-radius:3px 3px 0 0; opacity:0.55;
 }
 
 /* ============================================================
@@ -1530,6 +1553,7 @@ body[data-theme="dark"] .qr-vis svg text:not([fill]){fill:var(--ink-2)}
   <a class="sb-link" data-go="mental"><span class="dot"></span><span class="label">Mental Math Tricks</span><span class="meta">live</span></a>
   <a class="sb-link" data-go="lin-eq"><span class="dot"></span><span class="label">Linear Equations</span><span class="meta">live</span></a>
   <a class="sb-link" data-go="distrib"><span class="dot"></span><span class="label">Distribution &amp; Like Terms</span><span class="meta">live</span></a>
+  <a class="sb-link" data-go="binomials"><span class="dot"></span><span class="label">Binomial Algebra</span><span class="meta">live</span></a>
   <a class="sb-link" data-go="pemdas"><span class="dot"></span><span class="label">PEMDAS Edge Cases</span><span class="meta">live</span></a>
   <a class="sb-link" data-go="neg-ineq"><span class="dot"></span><span class="label">Negatives &amp; Inequalities</span><span class="meta">live</span></a>
 
@@ -1556,8 +1580,11 @@ body[data-theme="dark"] .qr-vis svg text:not([fill]){fill:var(--ink-2)}
   <a class="sb-link" data-go="ds"><span class="dot"></span><span class="label">Data Sufficiency</span><span class="meta">live</span></a>
   <a class="sb-link" data-go="exps"><span class="dot"></span><span class="label">Exponent Laws</span><span class="meta">live</span></a>
   <a class="sb-link" data-go="absval"><span class="dot"></span><span class="label">Absolute Value Inequalities</span><span class="meta">live</span></a>
-  <a class="sb-link" data-go="logs"><span class="dot"></span><span class="label">Logs &amp; Exponents</span><span class="meta">live · ⚾</span></a>
-  <a class="sb-link" data-go="patterns-link"><span class="dot"></span><span class="label">Open Pattern System v1</span><span class="meta">→ link</span></a>
+  <a class="sb-link" data-go="geo-2d"><span class="dot"></span><span class="label">2D Geometry</span><span class="meta">live</span></a>
+  <a class="sb-link" data-go="sets"><span class="dot"></span><span class="label">Sets — Union, Intersection</span><span class="meta">live</span></a>
+  <a class="sb-link" data-go="desc-stats"><span class="dot"></span><span class="label">Descriptive Statistics</span><span class="meta">live</span></a>
+  <a class="sb-link" data-go="logs"><span class="dot"></span><span class="label">Logs &amp; Exponents</span><span class="meta">live</span></a>
+  <a class="sb-link" data-go="patterns-link"><span class="dot"></span><span class="label">Open Pattern System v1</span><span class="meta">link</span></a>
 
   <div class="sb-section">DAT Day · Tier 3</div>
   <a class="sb-link" data-go="untimed"><span class="dot"></span><span class="label">Untimed Mastery</span><span class="meta">live</span></a>
@@ -1571,22 +1598,22 @@ body[data-theme="dark"] .qr-vis svg text:not([fill]){fill:var(--ink-2)}
   <a class="sb-link" data-go="test-sim"><span class="dot"></span><span class="label">Test-Day Simulation</span><span class="meta">40 Q</span></a>
   <a class="sb-link" data-go="sarah-dash"><span class="dot"></span><span class="label">Sarah's Dashboard</span><span class="meta">tutor</span></a>
 
-  <div class="sb-stuck-btn" id="stuckBtn">⏸ I need a sec</div>
+  <div class="sb-stuck-btn" id="stuckBtn">I need a sec</div>
 
   <div class="sb-foot">
-    <div class="row"><span>Streak</span><b id="streakCount" class="streak-fire"><span class="flame">🔥</span> 0d</b></div>
+    <div class="row"><span>Streak</span><b id="streakCount" class="streak-fire">0d</b></div>
     <div class="row"><span>Mastered</span><b id="totMastered">0</b></div>
     <div class="row"><span>Due review</span><b id="srDue">0</b></div>
     <div class="row"><span>Sarah-mode</span><b id="sarahState">off</b></div>
   </div>
 </aside>
-<button class="mn-burger hide" id="mnBurger" aria-label="Open menu">☰</button>
+<button class="mn-burger hide" id="mnBurger" aria-label="Open menu"><svg width="20" height="14" viewBox="0 0 20 14" aria-hidden="true"><line x1="1" y1="2" x2="19" y2="2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="1" y1="7" x2="19" y2="7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="1" y1="12" x2="19" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
 <div class="sb-backdrop" id="sbBackdrop"></div>
 <button class="iso-exit-pill" id="isoExitPill" onclick="exitIsolate()">↩ exit isolate · esc</button>
 
 <!-- Sarah's edit-mode banner — visible whenever edit mode is on -->
 <div class="edit-mode-banner" id="editBanner">
-  <span class="lbl">✏ <em>Sarah's edit mode</em> — click any underlined text to edit. Changes save to your browser.</span>
+  <span class="lbl"><em>Sarah's edit mode</em> — click any underlined text to edit. Changes save to your browser.</span>
   <span class="count" id="editCount">0 edits</span>
   <button onclick="SARAH_EDIT.exportChanges()">Export &amp; Send to Tommy</button>
   <button onclick="SARAH_EDIT.toggle()">Done</button>
@@ -1638,8 +1665,8 @@ body[data-theme="dark"] .qr-vis svg text:not([fill]){fill:var(--ink-2)}
         <button class="btn ghost sm" onclick="ONBOARD.skip()">Skip — I know my way around</button>
       </div>
       <div style="display:flex; gap:8px">
-        <button class="btn ghost sm" id="obBack2" onclick="ONBOARD.prev()">← Back</button>
-        <button class="btn gold" id="obNext" onclick="ONBOARD.next()">Continue →</button>
+        <button class="btn ghost sm" id="obBack2" onclick="ONBOARD.prev()">Back</button>
+        <button class="btn gold" id="obNext" onclick="ONBOARD.next()">Continue</button>
       </div>
     </div>
   </div>
@@ -1652,11 +1679,11 @@ body[data-theme="dark"] .qr-vis svg text:not([fill]){fill:var(--ink-2)}
 <div class="topbar">
   <div class="tb-crumbs"><b id="crumbWhere">Welcome</b> · QR Remediation</div>
   <div class="tb-spacer"></div>
-  <button class="sarah-edit-toggle" id="btnEdit" title="Edit any trick or text in place">✏ Edit Mode</button>
-  <button class="sound-toggle" id="btnSound" title="Toggle sound feedback">🔇 Sound</button>
-  <button class="btn ghost sm" id="btnTheme" title="Toggle dark mode">◐ Theme</button>
-  <button class="btn ghost sm" id="btnIso" title="Hide chrome">◱ Isolate</button>
-  <button class="btn gold sm" id="btnSarah">▶ Sarah-Mode</button>
+  <button class="sarah-edit-toggle" id="btnEdit" title="Edit any trick or text in place">Edit Mode</button>
+  <button class="sound-toggle" id="btnSound" title="Toggle sound feedback">Sound</button>
+  <button class="btn ghost sm" id="btnTheme" title="Toggle dark mode">Theme</button>
+  <button class="btn ghost sm" id="btnIso" title="Hide chrome">Isolate</button>
+  <button class="btn gold sm" id="btnSarah">Sarah-Mode</button>
 </div>
 
 <!-- HERO -->
@@ -1665,13 +1692,13 @@ body[data-theme="dark"] .qr-vis svg text:not([fill]){fill:var(--ink-2)}
   <h1>The DAT math <em>isn't math.</em><br>It's <em>patterns.</em> We'll find yours.</h1>
   <p class="lede">If you've felt "bad at math" — you're not. Somewhere along the way, a small step got skipped, and everything after it felt harder than it should. <b>We're going to find that step, fix it, and build up from there.</b> No timer. No grade. No catching you off-guard. Each skill teaches you the move, walks you through it, lets you practice, and only marks it "done" when you can do it cold three times in a row. When your brain freezes, hit the red <b>"I need a sec"</b> button — it's there for that exact moment.</p>
   <div class="hero-cta">
-    <button class="btn gold lg" onclick="goSec('diagnostic')">▶ Start the diagnostic — 15 min</button>
+    <button class="btn gold lg" onclick="goSec('diagnostic')">Start the diagnostic — 15 min</button>
     <button class="btn lg" onclick="goSec('tree')">See the full skill tree</button>
     <button class="btn ghost lg" onclick="goSec('frac-add')">Or jump straight to fractions</button>
   </div>
   <div class="stats">
     <div class="stat"><div class="n">40</div><div class="l">Skills · from basic floor to test-day pacing</div></div>
-    <div class="stat"><div class="n">6 steps</div><div class="l">Per skill · concept → guided → solo → mastery</div></div>
+    <div class="stat"><div class="n">6 steps</div><div class="l">Per skill · concept, guided, solo, mastery</div></div>
     <div class="stat"><div class="n">No clock</div><div class="l">Until you say you're ready</div></div>
     <div class="stat"><div class="n">∞</div><div class="l">Replays · take your time, this is for you</div></div>
   </div>
@@ -1728,13 +1755,13 @@ body[data-theme="dark"] .qr-vis svg text:not([fill]){fill:var(--ink-2)}
       </div>
       <div class="diag" id="diagFb"></div>
       <div style="margin-top:14px">
-        <button class="btn primary" id="diagNext" disabled>Next question →</button>
+        <button class="btn primary" id="diagNext" disabled>Next question</button>
       </div>
     </div>
 
     <div class="diag-results" id="diagResults">
       <div class="card-h">
-        <div class="mark good">✓</div>
+        <div class="mark good"><svg width="14" height="10" viewBox="0 0 14 10" aria-hidden="true"><polyline points="1,5 5,9 13,1" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
         <div class="ttl">
           <h3>We found your floor. <em>Here's the map.</em></h3>
           <div class="sub" id="diagSummary">—</div>
@@ -1748,7 +1775,7 @@ body[data-theme="dark"] .qr-vis svg text:not([fill]){fill:var(--ink-2)}
       <h4 style="font-family:'Playfair Display',serif; font-size:18px; margin:20px 0 8px">Skill heatmap</h4>
       <div class="diag-heatmap" id="diagHeatmap"></div>
       <div style="margin-top:18px">
-        <button class="btn primary lg" id="diagGoTree">Open skill tree map →</button>
+        <button class="btn primary lg" id="diagGoTree">Open skill tree map</button>
         <button class="btn ghost lg" onclick="DIAG.restart()">Retake diagnostic</button>
       </div>
     </div>
@@ -1818,6 +1845,10 @@ body[data-theme="dark"] .qr-vis svg text:not([fill]){fill:var(--ink-2)}
 <section class="sec" id="ds" data-skill="ds"></section>
 <section class="sec" id="exps" data-skill="exps"></section>
 <section class="sec" id="absval" data-skill="absval"></section>
+<section class="sec" id="binomials" data-skill="binomials"></section>
+<section class="sec" id="geo-2d" data-skill="geo-2d"></section>
+<section class="sec" id="sets" data-skill="sets"></section>
+<section class="sec" id="desc-stats" data-skill="desc-stats"></section>
 <section class="sec" id="untimed" data-skill="untimed"></section>
 <section class="sec" id="skip-ret" data-skill="skip-ret"></section>
 <section class="sec" id="guess" data-skill="guess"></section>
@@ -1841,7 +1872,7 @@ body[data-theme="dark"] .qr-vis svg text:not([fill]){fill:var(--ink-2)}
       </div>
     </div>
     <p>The pattern path was built first as proof-of-system. The remediation tier you're in now is the *floor* that unlocks it. Once your foundation is solid, the patterns are where speed shortcuts and DAT-trap recognition come in.</p>
-    <a class="btn primary lg" href="qr-pattern-system-v1.html" target="_blank" style="margin-top:10px; text-decoration:none">Open pattern path → </a>
+    <a class="btn primary lg" href="qr-pattern-system-v1.html" target="_blank" style="margin-top:10px; text-decoration:none">Open pattern path</a>
   </div>
 </section>
 
@@ -1890,9 +1921,9 @@ body[data-theme="dark"] .qr-vis svg text:not([fill]){fill:var(--ink-2)}
   </div>
   <div class="card">
     <div class="card-h">
-      <div class="mark">⏱</div>
+      <div class="mark"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><circle cx="7" cy="8" r="5.2" fill="none" stroke="currentColor" stroke-width="1.6"/><line x1="7" y1="8" x2="7" y2="5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><line x1="7" y1="8" x2="9.5" y2="8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><line x1="5.5" y1="1.5" x2="8.5" y2="1.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></div>
       <div class="ttl"><h3>Four tiers · <em>climb when ready</em></h3>
-      <div class="sub">No timer until you're ready for one. Then we ratchet down: 90s → 60s → DAT-pace.</div></div>
+      <div class="sub">No timer until you're ready for one. Then we ratchet down: 90s, 60s, DAT-pace.</div></div>
     </div>
     <div class="pace-ladder" id="paceLadder"></div>
     <div id="paceStart"></div>
@@ -1918,7 +1949,7 @@ body[data-theme="dark"] .qr-vis svg text:not([fill]){fill:var(--ink-2)}
       <div class="sim-stat"><div class="n" id="simPredict">—</div><div class="l">Predicted DAT QR</div></div>
     </div>
     <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:6px">
-      <button class="btn gold lg" onclick="SIM.start()">Start mock →</button>
+      <button class="btn gold lg" onclick="SIM.start()">Start mock</button>
       <button class="btn ghost lg" style="color:#ece4d4; border-color:rgba(236,228,212,0.18)" onclick="SIM.review()">Review last mock</button>
     </div>
   </div>
@@ -1941,11 +1972,11 @@ body[data-theme="dark"] .qr-vis svg text:not([fill]){fill:var(--ink-2)}
   <div class="card">
     <div id="drillBox">
       <div class="card-h">
-        <div class="mark">⚡</div>
+        <div class="mark"><svg width="10" height="14" viewBox="0 0 10 14" aria-hidden="true"><polygon points="6,1 1,8 4,8 3,13 9,5 6,5" fill="currentColor"/></svg></div>
         <div class="ttl"><h3>Today's drill — <em id="drillCount">5 problems</em></h3>
         <div class="sub">Streak: <b id="drillStreak">0 days</b> · today's mix is interleaved across your green skills.</div></div>
       </div>
-      <button class="btn primary lg" onclick="DRILL.start()">Start drill →</button>
+      <button class="btn primary lg" onclick="DRILL.start()">Start drill</button>
     </div>
   </div>
 </section>
@@ -1999,7 +2030,7 @@ body[data-theme="dark"] .qr-vis svg text:not([fill]){fill:var(--ink-2)}
       <div id="celebUnlockList"></div>
     </div>
     <div class="celeb-cta">
-      <button class="btn gold lg" onclick="CELEB.next()">Continue →</button>
+      <button class="btn gold lg" onclick="CELEB.next()">Continue</button>
       <button class="btn ghost lg" onclick="CELEB.tree()">Show me the tree</button>
     </div>
   </div>
@@ -2016,23 +2047,43 @@ body[data-theme="dark"] .qr-vis svg text:not([fill]){fill:var(--ink-2)}
   </div>
 </div>
 
+<!-- ===================== NOTICE MODAL (replaces alert) ===================== -->
+<div class="modal-back" id="noticeModal" onclick="if(event.target===this)NOTICE.close()">
+  <div class="modal" style="max-width:420px">
+    <button class="close" onclick="NOTICE.close()" aria-label="Close">×</button>
+    <h3 id="noticeTitle">Heads up</h3>
+    <p class="lede" id="noticeBody">—</p>
+    <div style="display:flex; justify-content:flex-end; margin-top:14px">
+      <button class="btn primary" onclick="NOTICE.close()" id="noticeOk">OK</button>
+    </div>
+  </div>
+</div>
+
 <!-- ===================== STUCK MODAL ===================== -->
 <div class="modal-back" id="stuckModal">
   <div class="modal">
     <button class="close" onclick="STUCK.close()">×</button>
     <h3>Stuck is <em>normal.</em></h3>
-    <p class="lede">Especially on QR. Your brain is processing — it's not broken. Here's the move:</p>
-    <div class="stuck-msg">
-      <em>Sixty seconds of breathing.</em> Box breathing — inhale 4, hold 4, exhale 4, hold 4. Then we'll grab three quick wins from skills you've already locked in, and you're back.
+    <p class="lede">Especially on QR. Your brain is processing — it's not broken. Pick what'll help right now:</p>
+    <div id="stuckTriage" style="display:flex; flex-direction:column; gap:10px; margin-top:8px">
+      <button class="btn gold lg" style="text-align:left" onclick="STUCK.chooseWins()">
+        <b>Three quick wins</b><br><span class="muted" style="font-size:12px; font-weight:400">Three problems from skills you've already locked. Rebuild flow.</span>
+      </button>
+      <button class="btn lg" style="text-align:left" onclick="STUCK.chooseBreath()">
+        <b>Take a 60-second breath</b><br><span class="muted" style="font-size:12px; font-weight:400">Slow your nervous system, then come back to it.</span>
+      </button>
+      <button class="btn ghost lg" style="text-align:left" onclick="STUCK.chooseSkip()">
+        <b>Move on for now</b><br><span class="muted" style="font-size:12px; font-weight:400">Mark and skip. Come back later with fresh eyes.</span>
+      </button>
     </div>
-    <div class="breath-wrap">
+    <div class="breath-wrap" id="stuckBreath" style="display:none">
       <div class="breath-box">
         <div class="breath-fill" id="breathFill"></div>
         <div class="breath-cue" id="breathCue">Ready?</div>
       </div>
       <div class="breath-counter" id="breathCount">— · —</div>
       <div style="display:flex; gap:8px">
-        <button class="btn primary" id="breathStart">Start breathing</button>
+        <button class="btn primary" id="breathStart">Start</button>
         <button class="btn ghost" onclick="STUCK.skipBreath()">Skip to wins</button>
       </div>
     </div>
@@ -2046,15 +2097,15 @@ body[data-theme="dark"] .qr-vis svg text:not([fill]){fill:var(--ink-2)}
 
 <!-- ===================== SARAH BAR ===================== -->
 <div class="sarah-bar" id="sarahBar">
-  <div class="pill">⚡ Sarah-mode</div>
+  <div class="pill">Sarah-mode</div>
   <div class="ctl">
-    <button class="iconbtn" id="sBack" title="Previous">‹</button>
-    <button class="iconbtn play" id="sPlay" title="Play">▶</button>
-    <button class="iconbtn" id="sFwd" title="Next">›</button>
+    <button class="iconbtn" id="sBack" title="Previous"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><polyline points="8,2 4,6 8,10" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    <button class="iconbtn play" id="sPlay" title="Play"><svg width="11" height="13" viewBox="0 0 11 13" aria-hidden="true"><polygon points="2,1.5 9.5,6.5 2,11.5" fill="currentColor"/></svg></button>
+    <button class="iconbtn" id="sFwd" title="Next"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><polyline points="4,2 8,6 4,10" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
   </div>
   <div class="now"><div class="t">Now teaching</div><div class="n" id="sNow">— pick a skill —</div></div>
-  <button class="iconbtn" id="sIso" title="Isolate">◱</button>
-  <button class="iconbtn" id="sExit" title="Exit">✕</button>
+  <button class="iconbtn" id="sIso" title="Isolate"><svg width="13" height="13" viewBox="0 0 13 13" aria-hidden="true"><path d="M 1.5 4 L 1.5 1.5 L 4 1.5 M 9 1.5 L 11.5 1.5 L 11.5 4 M 11.5 9 L 11.5 11.5 L 9 11.5 M 4 11.5 L 1.5 11.5 L 1.5 9" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></button>
+  <button class="iconbtn" id="sExit" title="Exit"><svg width="11" height="11" viewBox="0 0 11 11" aria-hidden="true"><line x1="2" y1="2" x2="9" y2="9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="9" y1="2" x2="2" y2="9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
 </div>
 
 <script>
@@ -2096,7 +2147,7 @@ const SOUND = {
     const b = document.getElementById('btnSound');
     if (!b) return;
     b.classList.toggle('on', this.on);
-    b.innerHTML = (this.on ? '🔊' : '🔇') + ' Sound';
+    b.innerHTML = 'Sound: ' + (this.on ? 'on' : 'off');
   },
   tone(freq, dur=0.18, type='sine', vol=0.10){
     if (!this.on) return;
@@ -2205,6 +2256,7 @@ const SKILLS = [
   {id:'mental',    tier:0, name:'Mental Math Tricks',           prereqs:['dec-arith'],x:5, y:1},
   {id:'lin-eq',    tier:0, name:'Linear Equations',             prereqs:[],           x:5, y:0},
   {id:'distrib',   tier:0, name:'Distribution + Like Terms',    prereqs:['lin-eq'],   x:5, y:2},
+  {id:'binomials', tier:0, name:'Binomial Algebra',              prereqs:['distrib'],  x:3, y:2},
   {id:'pemdas',    tier:0, name:'PEMDAS Edge Cases',            prereqs:[],           x:0, y:0},
   {id:'neg-ineq',  tier:0, name:'Negatives + Inequalities',     prereqs:['lin-eq'],   x:0, y:1},
   // Tier 1 — Building Blocks (8)
@@ -2231,6 +2283,9 @@ const SKILLS = [
   {id:'logs',      tier:2, name:'Logarithm Laws',                prereqs:['distrib'],      x:5, y:7},
   {id:'exps',      tier:2, name:'Exponent Laws',                 prereqs:['distrib'],      x:0, y:8},
   {id:'absval',    tier:2, name:'Absolute Value Inequalities',   prereqs:['neg-ineq'],     x:1, y:8},
+  {id:'geo-2d',    tier:2, name:'2D Geometry — Circles, Squares', prereqs:['coord'],       x:2, y:8},
+  {id:'sets',      tier:2, name:'Sets — Union, Intersection',     prereqs:['count-pc'],    x:3, y:8},
+  {id:'desc-stats',tier:2, name:'Descriptive Statistics',         prereqs:['frac-mul'],    x:4, y:8},
   // Tier 3 — DAT Day (5)
   {id:'untimed',   tier:3, name:'Untimed Mastery Checkpoint',    prereqs:['p-flip','p-andor','count-pc'], x:1, y:10},
   {id:'pace-90',   tier:3, name:'90s/Q Pacing',                  prereqs:['untimed'],      x:2, y:10},
@@ -2673,6 +2728,24 @@ const BANK = [
   {id:'gu1', skills:['guess'], diff:2, q:'You\'re guessing on a 4-choice question with no idea. What\'s your best play?', opts:['Eliminate any obviously wrong, then guess','Always pick C','Random','Skip'], correct:0, why:'Eliminate any 1-2 you can rule out → from 25% to 33-50%. The DAT does NOT penalize guessing.', diag:{1:'No basis.', 2:'Same as A but framed lazy.', 3:'Skip = 0%.'}},
   {id:'gu2', skills:['guess'], diff:2, q:'You\'re educated-guessing under time pressure. Two answers seem possible. What gives you the edge?', opts:['Pick the more "specific" answer','Always pick longer answer','Always shorter','Coin flip'], correct:0, why:'On the DAT, more specific/calculated answers tend to be correct over vague ones, when both seem plausible. Not a guarantee — small edge.', diag:{1:'Length doesn\'t matter.', 2:'Length doesn\'t matter.', 3:'You can do better than 50%.'}},
 
+  // Untimed expansion
+  {id:'ut2', skills:['untimed'], diff:1, q:'You finished 12 untimed problems in 18 min. 3 wrong. What matters most for next session?', opts:['Diagnose what made the 3 wrong','Speed up to mimic test','Move to 90s pacing','Stop here, you\'re close'], correct:0, why:'Untimed mode\'s only metric is correctness. Wrong answers carry the lesson — diagnose the misstep before adding speed.', diag:{1:'Speed without correctness is wrong fast.', 2:'25% wrong = 75% right; gate is 80%.', 3:'Stopping mid-skill leaves the floor soft.'}},
+  {id:'ut3', skills:['untimed'], diff:2, q:'Mid-untimed-set, you realize the question type is unfamiliar. Best move?', opts:['Pause, re-read the lock + worked example','Guess and move on','Skip the whole skill','Switch to timed mode'], correct:0, why:'Untimed is a learning mode, not a test. Going back to the concept lock takes 30 seconds and prevents reinforcing a wrong move.', diag:{1:'Guessing builds nothing.', 2:'You can\'t skip what you haven\'t learned.', 3:'Time pressure on unmastered material burns confidence.'}},
+  {id:'ut4', skills:['untimed'], diff:1, q:'Untimed mode. You got 7/10 on a skill. Should you advance to 90s pacing?', opts:['No — gate is 80%','Yes, you\'re close enough','Yes, time pressure will sharpen you','Skip this skill'], correct:0, why:'The 80% gate is a confidence floor, not a perfectionist target. 70% means one in three problems still gets you. That\'s not ready.', diag:{1:'Close-enough untimed = panic-prone timed.', 2:'Sharpening requires a stable floor.', 3:'Skipping creates downstream gaps.'}},
+  {id:'ut5', skills:['untimed'], diff:3, q:'Why does untimed practice come BEFORE timed practice?', opts:['Speed amplifies whatever pattern you\'ve drilled','It feels easier','To save the hard problems','To avoid wasting time'], correct:0, why:'Speed compounds the move you\'ve grooved. Drill the correct move slowly first; speed it up only after the move is locked.', diag:{1:'Easier feel doesn\'t mean better outcome.', 2:'Difficulty isn\'t saved — every tier sees the same skills.', 3:'Untimed is investment, not waste.'}},
+
+  // Skip-and-return expansion
+  {id:'sk3', skills:['skip-ret'], diff:2, q:'How many skips per 45-min DAT QR section is healthy?', opts:['2 to 4','0','8 to 10','15+'], correct:0, why:'2-4 skips means you\'re pacing well: investing in solvable problems and triaging time-traps. Zero skips often means over-investment; many skips means pace is too aggressive.', diag:{1:'Zero skips often hides hidden time-burns.', 2:'8+ means pace was too fast or skill floor too soft.', 3:'15+ means triage broke down — different problem.'}},
+  {id:'sk4', skills:['skip-ret'], diff:2, q:'After skipping, when do you return?', opts:['End of section, with remaining time','Immediately after the next question','Halfway through the section','Don\'t return — they\'re lost'], correct:0, why:'Returning at the end protects pace. Mid-section returns scramble timing; never returning forfeits guess-able points.', diag:{1:'Mid-section returns recreate the original time-burn.', 2:'Halfway is no better than mid-section returns.', 3:'Eliminate-and-guess on returns adds points for free.'}},
+  {id:'sk5', skills:['skip-ret'], diff:3, q:'You\'re 30 min in, 25 of 40 questions done, no skips yet. Pace check?', opts:['On track — about 1.2 min/q','Behind — should be at 28','Ahead — slow down','Too many skipped'], correct:0, why:'30 min / 25 questions = 1.2 min/q. DAT QR pace is roughly 1.13 min/q (45 min / 40). Slightly slow but within margin if remaining problems are easier.', diag:{1:'25 in 30 min IS the right zone for sustainable pace.', 2:'Slowing further pushes you behind.', 3:'Zero skips isn\'t the worry — pace is.'}},
+  {id:'sk6', skills:['skip-ret'], diff:1, q:'What is the 90-second rule?', opts:['90s with no progress, mark and skip','Skip every 90 seconds','Spend 90s on every problem','90s for the whole section'], correct:0, why:'90 seconds without forward progress means the problem is fighting you. Mark, skip, return at end. Trying to push through usually doubles the loss.', diag:{1:'You\'d skip everything.', 2:'Forces over-investment on every problem.', 3:'You\'d skip 39 of 40.'}},
+
+  // Guess expansion
+  {id:'gu3', skills:['guess'], diff:1, q:'5-choice question. You eliminated 1. Should you guess or skip?', opts:['Guess — 1/4 = 25% beats 0%','Skip — wasting time','Pick C every time','Random word'], correct:0, why:'The DAT does NOT penalize wrong answers. Skipping = 0%. Guessing 1-of-4 = 25%. The math always favors guessing once you\'ve eliminated anything.', diag:{1:'Skipping = guaranteed zero on that point.', 2:'No basis for "C is best."', 3:'Same as random.'}},
+  {id:'gu4', skills:['guess'], diff:3, q:'On a 5-choice question, two answers look almost identical (e.g., "4" and "4.0"). Pick which?', opts:['Likely the simpler one','Always the longer','The decimal version','Skip — it\'s a trap'], correct:0, why:'Near-duplicate answer choices mean the question expects a specific form. The simpler form (4 vs 4.0) is usually the intended answer. The duplicate is bait.', diag:{1:'Format isn\'t the signal.', 2:'Decimals aren\'t inherently more "right."', 3:'Skipping forfeits points.'}},
+  {id:'gu5', skills:['guess'], diff:1, q:'Eliminate-before-guess: how does it improve odds on a 5-choice question?', opts:['Eliminate 2 → 1/3 (33%) vs 1/5 (20%)','Doesn\'t help','Always picks the right one','Eliminates the trap'], correct:0, why:'Each elimination shrinks the denominator. Going from 5 choices to 3 takes you from 20% baseline to 33% — a 65% relative improvement on a guess.', diag:{1:'It demonstrably helps.', 2:'Elimination doesn\'t identify the answer, just narrows it.', 3:'The trap might be the only one you can\'t eliminate.'}},
+  {id:'gu6', skills:['guess'], diff:2, q:'A numerical answer feels suspiciously round (exactly 100, exactly 1/2). On a multi-step calculation. What does it suggest?', opts:['Often a trap on multi-step QR','Always correct','Always wrong','Means the test is broken'], correct:0, why:'Real multi-step calculations rarely land on perfectly round numbers. When they do on the DAT, it\'s often the trap distractor — placed because students gravitate to clean answers.', diag:{1:'Round answers can be correct, but watch for trap context.', 2:'They can be correct.', 3:'The test isn\'t broken — the trap is intentional.'}},
+
   // ===== MASTERY BANK — fresh problems student has NOT seen during practice =====
   // frac-add mastery (5)
   {id:'fam1', skills:['frac-add'], diff:2, q:'5/12 + 1/4 = ?', opts:['8/12','6/16','5/16','2/3'], correct:0, why:'LCD = 12. 1/4 = 3/12. 5/12 + 3/12 = 8/12.', diag:{1:'Added top and bottom.', 2:'Wrong LCD.', 3:'You reduced to 2/3, but 8/12 also = 2/3 — both right; 8/12 is the literal answer.'}},
@@ -2803,7 +2876,6 @@ const BANK = [
   {"id":"fra1066","skills":["frac-dec"],"diff":2,"q":"Convert 1/8 to a decimal.","opts":["0.25","0.5","0.125","0.75"],"correct":2,"why":"1/8 = 0.125. Memorize the eighths/fifths strip.","diag":{}},
   {"id":"fra1067","skills":["frac-dec"],"diff":2,"q":"Convert 1/4 to a decimal.","opts":["0.75","0.25","0.5","0.125"],"correct":1,"why":"1/4 = 0.25. Memorize the eighths/fifths strip.","diag":{}},
   {"id":"fra1068","skills":["frac-dec"],"diff":2,"q":"Convert 7/8 to a decimal.","opts":["0.5","0.25","0.875","0.75"],"correct":2,"why":"7/8 = 0.875. Memorize the eighths/fifths strip.","diag":{}},
-  {"id":"fra1069","skills":["frac-dec"],"diff":2,"q":"Convert 1/8 to a decimal.","opts":["0.25","0.5","0.125","0.75"],"correct":2,"why":"1/8 = 0.125. Memorize the eighths/fifths strip.","diag":{}},
   {"id":"fra1070","skills":["frac-dec"],"diff":2,"q":"Convert 5/8 to a decimal.","opts":["0.5","0.75","0.25","0.625"],"correct":3,"why":"5/8 = 0.625. Memorize the eighths/fifths strip.","diag":{}},
   {"id":"fra1071","skills":["frac-dec"],"diff":2,"q":"Convert 7/8 to a decimal.","opts":["0.75","0.5","0.25","0.875"],"correct":3,"why":"7/8 = 0.875. Memorize the eighths/fifths strip.","diag":{}},
   {"id":"fra1072","skills":["frac-dec"],"diff":2,"q":"Convert 1/4 to a decimal.","opts":["0.5","0.125","0.25","0.75"],"correct":2,"why":"1/4 = 0.25. Memorize the eighths/fifths strip.","diag":{}},
@@ -2987,16 +3059,16 @@ const BANK = [
   {"id":"lin1250","skills":["lin-eq"],"diff":2,"q":"Solve: -4x - 10 = -30","opts":["5","-5","6","4"],"correct":0,"why":"Subtract -10: -4x = -20. Divide by -4: x = 5.","diag":{}},
   {"id":"lin1251","skills":["lin-eq"],"diff":2,"q":"Solve: -4x - 9 = -33","opts":["5","6","-6","7"],"correct":1,"why":"Subtract -9: -4x = -24. Divide by -4: x = 6.","diag":{}},
   {"id":"lin1252","skills":["lin-eq"],"diff":2,"q":"Solve: -1x - 10 = -15","opts":["5","-5","6","4"],"correct":0,"why":"Subtract -10: -1x = -5. Divide by -1: x = 5.","diag":{}},
-  {"id":"lin1253","skills":["lin-eq"],"diff":3,"q":"Solve: 6x - 3 = -2x - 3","opts":["1","-1","0"],"correct":2,"why":"Move x: (6--2)x = -3--3 → 8x = 0 → x = 0.","diag":{}},
-  {"id":"lin1254","skills":["lin-eq"],"diff":3,"q":"Solve: -3x + 1 = -2x + 7","opts":["-6","-7","6","-5"],"correct":0,"why":"Move x: (-3--2)x = 7-1 → -1x = 6 → x = -6.","diag":{}},
-  {"id":"lin1255","skills":["lin-eq"],"diff":3,"q":"Solve: -3x - 2 = 1x + 10","opts":["-2","-3","-4","3"],"correct":1,"why":"Move x: (-3-1)x = 10--2 → -4x = 12 → x = -3.","diag":{}},
-  {"id":"lin1256","skills":["lin-eq"],"diff":3,"q":"Solve: 2x - 9 = -1x + 10","opts":["-6.33","6.33","5.33","7.33"],"correct":1,"why":"Move x: (2--1)x = 10--9 → 3x = 19 → x = 6.33.","diag":{}},
-  {"id":"lin1257","skills":["lin-eq"],"diff":3,"q":"Solve: 1x + 7 = -2x - 10","opts":["-5.67","-6.67","-4.67","5.67"],"correct":0,"why":"Move x: (1--2)x = -10-7 → 3x = -17 → x = -5.67.","diag":{}},
-  {"id":"lin1258","skills":["lin-eq"],"diff":3,"q":"Solve: -4x - 1 = 1x + 3","opts":["-0.8","-1.8","0.8","0.2"],"correct":0,"why":"Move x: (-4-1)x = 3--1 → -5x = 4 → x = -0.8.","diag":{}},
-  {"id":"lin1259","skills":["lin-eq"],"diff":3,"q":"Solve: 6x - 7 = -2x + 7","opts":["1.75","0.75","2.75","-1.75"],"correct":0,"why":"Move x: (6--2)x = 7--7 → 8x = 14 → x = 1.75.","diag":{}},
-  {"id":"lin1260","skills":["lin-eq"],"diff":3,"q":"Solve: -5x + 7 = -3x - 9","opts":["7","8","9","-8"],"correct":1,"why":"Move x: (-5--3)x = -9-7 → -2x = -16 → x = 8.","diag":{}},
+  {"id":"lin1253","skills":["lin-eq"],"diff":3,"q":"Solve: 6x - 3 = -2x - 3","opts":["8","1","-1","0"],"correct":3,"why":"Move x: (6+2)x = -3+3 → 8x = 0 → x = 0.","diag":{}},
+  {"id":"lin1254","skills":["lin-eq"],"diff":3,"q":"Solve: -3x + 1 = -2x + 7","opts":["-6","-7","6","-5"],"correct":0,"why":"Move x: (-3+2)x = 7-1 → -1x = 6 → x = -6.","diag":{}},
+  {"id":"lin1255","skills":["lin-eq"],"diff":3,"q":"Solve: -3x - 2 = 1x + 10","opts":["-2","-3","-4","3"],"correct":1,"why":"Move x: (-3-1)x = 10+2 → -4x = 12 → x = -3.","diag":{}},
+  {"id":"lin1256","skills":["lin-eq"],"diff":3,"q":"Solve: 2x - 9 = -1x + 10","opts":["-6.33","6.33","5.33","7.33"],"correct":1,"why":"Move x: (2+1)x = 10+9 → 3x = 19 → x = 6.33.","diag":{}},
+  {"id":"lin1257","skills":["lin-eq"],"diff":3,"q":"Solve: 1x + 7 = -2x - 10","opts":["-5.67","-6.67","-4.67","5.67"],"correct":0,"why":"Move x: (1+2)x = -10-7 → 3x = -17 → x = -5.67.","diag":{}},
+  {"id":"lin1258","skills":["lin-eq"],"diff":3,"q":"Solve: -4x - 1 = 1x + 3","opts":["-0.8","-1.8","0.8","0.2"],"correct":0,"why":"Move x: (-4-1)x = 3+1 → -5x = 4 → x = -0.8.","diag":{}},
+  {"id":"lin1259","skills":["lin-eq"],"diff":3,"q":"Solve: 6x - 7 = -2x + 7","opts":["1.75","0.75","2.75","-1.75"],"correct":0,"why":"Move x: (6+2)x = 7+7 → 8x = 14 → x = 1.75.","diag":{}},
+  {"id":"lin1260","skills":["lin-eq"],"diff":3,"q":"Solve: -5x + 7 = -3x - 9","opts":["7","8","9","-8"],"correct":1,"why":"Move x: (-5+3)x = -9-7 → -2x = -16 → x = 8.","diag":{}},
   {"id":"lin1261","skills":["lin-eq"],"diff":4,"q":"Solve: 9x + 3 = 1x - 8","opts":["-2.38","1.38","-0.38","-1.38"],"correct":3,"why":"Move x: (9-1)x = -8-3 → 8x = -11 → x = -1.38.","diag":{}},
-  {"id":"lin1262","skills":["lin-eq"],"diff":4,"q":"Solve: 11x + 10 = -3x - 9","opts":["-2.36","-0.36","1.36","-1.36"],"correct":3,"why":"Move x: (11--3)x = -9-10 → 14x = -19 → x = -1.36.","diag":{}},
+  {"id":"lin1262","skills":["lin-eq"],"diff":4,"q":"Solve: 11x + 10 = -3x - 9","opts":["-2.36","-0.36","1.36","-1.36"],"correct":3,"why":"Move x: (11+3)x = -9-10 → 14x = -19 → x = -1.36.","diag":{}},
   {"id":"lin1263","skills":["lin-eq"],"diff":4,"q":"Solve: 11x + 9 = 3x + 3","opts":["-0.75","-1.75","0.75","0.25"],"correct":0,"why":"Move x: (11-3)x = 3-9 → 8x = -6 → x = -0.75.","diag":{}},
   {"id":"lin1264","skills":["lin-eq"],"diff":4,"q":"Solve: 4x + 8 = 1x - 3","opts":["-2.67","-3.67","3.67","-4.67"],"correct":1,"why":"Move x: (4-1)x = -3-8 → 3x = -11 → x = -3.67.","diag":{}},
   {"id":"dis1265","skills":["distrib"],"diff":1,"q":"Solve: 3(x + 4) = 15","opts":["0","2","5","1"],"correct":3,"why":"Distribute: 3x + 12 = 15. Subtract 12: 3x = 3. x = 1.","diag":{}},
@@ -3132,7 +3204,6 @@ const BANK = [
   {"id":"wor1395","skills":["work-rate"],"diff":3,"q":"A finishes a job in 3 hr, B in 4 hr. Together?","opts":["3","1.71","3.5","7"],"correct":1,"why":"1/T = 1/3 + 1/4 = 7/12. T = 12/7 = 1.71 hr.","diag":{}},
   {"id":"wor1396","skills":["work-rate"],"diff":3,"q":"A finishes a job in 2 hr, B in 4 hr. Together?","opts":["1.33","6","2","3"],"correct":0,"why":"1/T = 1/2 + 1/4 = 6/8. T = 8/6 = 1.33 hr.","diag":{}},
   {"id":"wor1397","skills":["work-rate"],"diff":4,"q":"A finishes a job in 5 hr, B in 4 hr. Together?","opts":["4.5","2.22","9","4"],"correct":1,"why":"1/T = 1/5 + 1/4 = 9/20. T = 20/9 = 2.22 hr.","diag":{}},
-  {"id":"wor1398","skills":["work-rate"],"diff":4,"q":"A finishes a job in 3 hr, B in 4 hr. Together?","opts":["3","3.5","7","1.71"],"correct":3,"why":"1/T = 1/3 + 1/4 = 7/12. T = 12/7 = 1.71 hr.","diag":{}},
   {"id":"wor1399","skills":["work-rate"],"diff":4,"q":"A finishes a job in 5 hr, B in 4 hr. Together?","opts":["2.22","9","4.5","4"],"correct":0,"why":"1/T = 1/5 + 1/4 = 9/20. T = 20/9 = 2.22 hr.","diag":{}},
   {"id":"mix1400","skills":["mixture"],"diff":1,"q":"Mix 100mL of 20% with 100mL of 5%. Final concentration?","opts":["25","25","12.5"],"correct":2,"why":"Solute total = 20 + 5 = 25 mL in 200 mL → 12.5%.","diag":{}},
   {"id":"mix1401","skills":["mixture"],"diff":1,"q":"Mix 100mL of 40% with 250mL of 10%. Final concentration?","opts":["65","87.5","18.57","25"],"correct":2,"why":"Solute total = 40 + 25 = 65 mL in 350 mL → 18.57%.","diag":{}},
@@ -3460,7 +3531,6 @@ const BANK = [
   {"id":"abs1723","skills":["absval"],"diff":1,"q":"|-6| = ?","opts":["-6","-6","6","-12"],"correct":2,"why":"|-6| = 6 (distance from zero).","diag":{}},
   {"id":"abs1724","skills":["absval"],"diff":1,"q":"|-9| = ?","opts":["-9","-18","-9","9"],"correct":3,"why":"|-9| = 9 (distance from zero).","diag":{}},
   {"id":"abs1725","skills":["absval"],"diff":1,"q":"|0| = ?","opts":["5","0"],"correct":1,"why":"|0| = 0 (distance from zero).","diag":{}},
-  {"id":"abs1726","skills":["absval"],"diff":2,"q":"|0| = ?","opts":["5","0"],"correct":1,"why":"|0| = 0 (distance from zero).","diag":{}},
   {"id":"abs1727","skills":["absval"],"diff":2,"q":"|-16| = ?","opts":["-16","-16","16","-32"],"correct":2,"why":"|-16| = 16 (distance from zero).","diag":{}},
   {"id":"abs1728","skills":["absval"],"diff":2,"q":"|-19| = ?","opts":["-38","-19","19","-19"],"correct":2,"why":"|-19| = 19 (distance from zero).","diag":{}},
   {"id":"abs1729","skills":["absval"],"diff":2,"q":"|-19| = ?","opts":["-19","-38","19","-19"],"correct":2,"why":"|-19| = 19 (distance from zero).","diag":{}},
@@ -3504,6 +3574,52 @@ const BANK = [
   {"id":"gue1767","skills":["guess"],"diff":1,"q":"Question asks for distance. Eliminate by units: which can NOT be the answer?","opts":["150 mi","60 mi","24 mi","24 hr"],"correct":3,"why":"Distance is measured in mi (or m, km), never in hours. Drop the time-unit option immediately.","diag":{}},
   {"id":"gue1768","skills":["guess"],"diff":1,"q":"Question asks for distance. Eliminate by units: which can NOT be the answer?","opts":["$0.06","$0.006","$0.60","$60.00","undefined","$6.00"],"correct":4,"why":"Distance is measured in mi (or m, km), never in hours. Drop the time-unit option immediately.","diag":{}},
   {"id":"gue1769","skills":["guess"],"diff":1,"q":"Question asks for distance. Eliminate by units: which can NOT be the answer?","opts":["24 mi","24 hr","60 mi","150 mi"],"correct":1,"why":"Distance is measured in mi (or m, km), never in hours. Drop the time-unit option immediately.","diag":{}},
+
+  // ===== Binomials (bn*) — practice + mastery =====
+  {id:'bn1', skills:['binomials'], diff:1, q:'Expand (x + 2)².', opts:['x² + 4x + 4','x² + 4','x² + 2x + 4','x² + 4x + 2'], correct:0, why:'(x+y)² = x² + 2xy + y². Middle term is 2·x·2 = 4x.', diag:{1:'Forgot the middle term — most common error.', 2:'Middle should be 2xy, not xy.', 3:'Last term should be y², not y.'}},
+  {id:'bn2', skills:['binomials'], diff:2, q:'Factor x² − 16.', opts:['(x + 4)(x − 4)','(x − 4)²','(x + 4)²','(x + 8)(x − 2)'], correct:0, why:'Difference of squares: x² − 4² = (x+4)(x−4). No middle term.', diag:{1:'That gives x² − 8x + 16, not x² − 16.', 2:'That gives x² + 8x + 16.', 3:'Random factoring; check by FOIL.'}},
+  {id:'bn3', skills:['binomials'], diff:2, q:'Expand (3x − 1)².', opts:['9x² − 6x + 1','9x² − 1','9x² + 6x + 1','3x² − 6x + 1'], correct:0, why:'(a−b)² = a² − 2ab + b² = 9x² − 6x + 1.', diag:{1:'Treated as difference of squares.', 2:'Wrong sign on middle.', 3:'Forgot to square 3.'}},
+  {id:'bn4', skills:['binomials'], diff:3, q:'Compute 19² mentally using (20 − 1)².', opts:['361','381','379','341'], correct:0, why:'(20−1)² = 400 − 40 + 1 = 361.', diag:{1:'Added the middle.', 2:'Skipped the +1.', 3:'Wrong middle term.'}},
+  {id:'bn5', skills:['binomials'], diff:2, q:'(x + 5)(x − 5) = ?', opts:['x² − 25','x² + 25','x² + 10x − 25','x² − 10x + 25'], correct:0, why:'Difference of squares — middle terms cancel by design.', diag:{1:'Sign on the second term is negative.', 2:'No middle term in difference of squares.', 3:'No middle term in difference of squares.'}},
+  {id:'bnm1', skills:['binomials'], diff:2, q:'Expand (2x + 3)².', opts:['4x² + 12x + 9','4x² + 9','4x² + 6x + 9','2x² + 12x + 9'], correct:0, why:'(a+b)² where a=2x, b=3. = 4x² + 2(2x)(3) + 9 = 4x² + 12x + 9.', diag:{1:'Forgot the middle.', 2:'Middle should be 2ab = 12x.', 3:'Forgot to square the 2 in 2x.'}},
+  {id:'bnm2', skills:['binomials'], diff:2, q:'Factor 49 − x².', opts:['(7 + x)(7 − x)','(7 − x)²','(x − 7)²','(7 + x)²'], correct:0, why:'Difference of squares: 7² − x² = (7+x)(7−x).', diag:{1:'Squared not difference.', 2:'Squared not difference.', 3:'Squared not difference.'}},
+  {id:'bnm3', skills:['binomials'], diff:3, q:'Simplify (a + b)² − (a − b)².', opts:['4ab','2a² + 2b²','0','2ab'], correct:0, why:'(a²+2ab+b²) − (a²−2ab+b²) = 4ab. The squared terms cancel.', diag:{1:'Added them instead.', 2:'They\'re not equal — check the signs.', 3:'Off by a factor of 2.'}},
+  {id:'bnm4', skills:['binomials'], diff:3, q:'If x + y = 7 and xy = 10, find x² + y².', opts:['29','49','39','19'], correct:0, why:'(x+y)² = x² + 2xy + y² → 49 = x² + y² + 20 → x² + y² = 29.', diag:{1:'That\'s (x+y)².', 2:'Off by xy.', 3:'Off by 2xy.'}},
+  {id:'bnm5', skills:['binomials'], diff:2, q:'Factor x² − 6x + 9.', opts:['(x − 3)²','(x + 3)²','(x − 9)(x + 1)','(x − 3)(x + 3)'], correct:0, why:'a² − 2ab + b² = (a−b)². Here a=x, b=3, middle = −6x = −2(3)x.', diag:{1:'Sign on middle is negative.', 2:'Doesn\'t expand to x² − 6x + 9.', 3:'That\'s difference of squares.'}},
+
+  // ===== 2D Geometry (g2d*) =====
+  {id:'g2d1', skills:['geo-2d'], diff:1, q:'Circle with radius 6. Area = ?', opts:['36π','12π','6π','π'], correct:0, why:'A = πr² = π(6²) = 36π.', diag:{1:'That\'s the circumference.', 2:'That\'s the diameter.', 3:'Squared the wrong number.'}},
+  {id:'g2d2', skills:['geo-2d'], diff:1, q:'Square with perimeter 24. Area = ?', opts:['36','24','144','12'], correct:0, why:'P = 4s → s = 6. A = s² = 36.', diag:{1:'That\'s P, not A.', 2:'Squared P instead of s.', 3:'Half of P.'}},
+  {id:'g2d3', skills:['geo-2d'], diff:2, q:'Triangle with base 10 and height 7. Area = ?', opts:['35','70','17','140'], correct:0, why:'A = ½bh = ½(10)(7) = 35.', diag:{1:'Forgot the ½.', 2:'Added base and height.', 3:'Doubled when you should have halved.'}},
+  {id:'g2d4', skills:['geo-2d'], diff:2, q:'Circle has diameter 10. Circumference = ?', opts:['10π','5π','100π','25π'], correct:0, why:'C = πd = 10π. (Or C = 2πr = 2π·5 = 10π.)', diag:{1:'That\'s πr, not 2πr.', 2:'Squared the diameter.', 3:'That\'s πr², the area with r=5.'}},
+  {id:'g2d5', skills:['geo-2d'], diff:3, q:'A square has side 4. If you double the side, the area becomes…', opts:['×4','×2','×8','×16'], correct:0, why:'Area scales as length squared. Double the side → area × 2² = ×4.', diag:{1:'Linear scaling, but area is squared.', 2:'That\'s cubed, for volume.', 3:'Multiplying by 4 again.'}},
+  {id:'g2dm1', skills:['geo-2d'], diff:1, q:'Rectangle 8 by 5. Area = ?', opts:['40','26','13','80'], correct:0, why:'A = lw = 8·5 = 40.', diag:{1:'That\'s the perimeter.', 2:'That\'s half the perimeter.', 3:'Doubled.'}},
+  {id:'g2dm2', skills:['geo-2d'], diff:2, q:'Circle of area 49π. Radius = ?', opts:['7','49','14','7π'], correct:0, why:'A = πr² → r² = 49 → r = 7.', diag:{1:'Forgot to square root.', 2:'Doubled.', 3:'Left π in.'}},
+  {id:'g2dm3', skills:['geo-2d'], diff:2, q:'Triangle: base 12, area 30. Height = ?', opts:['5','2.5','60','15'], correct:0, why:'A = ½bh → 30 = ½(12)h → h = 5.', diag:{1:'Forgot to multiply by 2.', 2:'Multiplied by 2 instead of dividing.', 3:'Half-stepped.'}},
+  {id:'g2dm4', skills:['geo-2d'], diff:3, q:'A circle\'s radius triples. Area changes by what factor?', opts:['×9','×3','×6','×27'], correct:0, why:'Area scales as r². Tripling r gives 3² = 9× the area.', diag:{1:'Linear scaling, but area is squared.', 2:'Doubled the multiplication.', 3:'That\'s cubed, for volume.'}},
+  {id:'g2dm5', skills:['geo-2d'], diff:2, q:'Square inscribed in a circle of radius 5. Square\'s diagonal = ?', opts:['10','5','5√2','25'], correct:0, why:'The diagonal of an inscribed square equals the circle\'s diameter = 2r = 10.', diag:{1:'That\'s the radius.', 2:'That\'s the side of the square.', 3:'That\'s area of the bounding box.'}},
+
+  // ===== Sets (st*) =====
+  {id:'st1', skills:['sets'], diff:1, q:'A = {1,2,3,4}, B = {3,4,5,6}. A ∩ B = ?', opts:['{3, 4}','{1, 2, 3, 4, 5, 6}','{1, 2, 5, 6}','{}'], correct:0, why:'Intersection = elements in both sets. 3 and 4 appear in both.', diag:{1:'That\'s the union.', 2:'That\'s symmetric difference.', 3:'They share elements.'}},
+  {id:'st2', skills:['sets'], diff:1, q:'|A| = 8, |B| = 6, |A ∩ B| = 2. |A ∪ B| = ?', opts:['12','14','16','4'], correct:0, why:'|A ∪ B| = 8 + 6 − 2 = 12. Subtract the overlap once.', diag:{1:'Forgot to subtract the overlap.', 2:'Double-counted the overlap.', 3:'That\'s |A ∩ B| × 2.'}},
+  {id:'st3', skills:['sets'], diff:2, q:'In a survey: 70 like Math, 60 like Science, 30 like both. How many like at least one?', opts:['100','130','30','40'], correct:0, why:'|M ∪ S| = 70 + 60 − 30 = 100. Inclusion-exclusion.', diag:{1:'Didn\'t subtract the overlap — double counted.', 2:'That\'s the both-only count.', 3:'That\'s the size of one exclusive group.'}},
+  {id:'st4', skills:['sets'], diff:3, q:'|A| = 25, |B| = 20, |A ∪ B| = 35. |A ∩ B| = ?', opts:['10','5','45','20'], correct:0, why:'Rearrange inclusion-exclusion: |A ∩ B| = |A| + |B| − |A ∪ B| = 25 + 20 − 35 = 10.', diag:{1:'Off by a factor.', 2:'That\'s the sum of |A| + |B|.', 3:'Same as |B|.'}},
+  {id:'stm1', skills:['sets'], diff:2, q:'|A only| = 12, |B only| = 8, |A ∩ B| = 5. |A ∪ B| = ?', opts:['25','20','13','17'], correct:0, why:'A ∪ B = (A only) + (B only) + (A ∩ B) = 12 + 8 + 5 = 25.', diag:{1:'Forgot one region.', 2:'Subtracted instead of added.', 3:'Used wrong region.'}},
+  {id:'stm2', skills:['sets'], diff:2, q:'A = {a,b,c}, B = {b,c,d,e}. |A ∪ B| = ?', opts:['5','7','3','2'], correct:0, why:'A ∪ B = {a,b,c,d,e}. Five distinct elements.', diag:{1:'Counted duplicates.', 2:'That\'s |A|.', 3:'That\'s |A ∩ B|.'}},
+  {id:'stm3', skills:['sets'], diff:3, q:'30 students take Math, 25 take History, 12 take both. How many take Math but not History?', opts:['18','12','7','30'], correct:0, why:'|M only| = |M| − |M ∩ H| = 30 − 12 = 18.', diag:{1:'That\'s the both-only count.', 2:'Subtracted from the wrong total.', 3:'No subtraction at all.'}},
+  {id:'stm4', skills:['sets'], diff:3, q:'|A| = 18, |B| = 22, |A ∩ B| = 0. |A ∪ B| = ?', opts:['40','22','18','4'], correct:0, why:'No overlap → just sum: 18 + 22 = 40. Disjoint sets.', diag:{1:'That\'s |B|.', 2:'That\'s |A|.', 3:'Difference, not sum.'}},
+  {id:'stm5', skills:['sets'], diff:2, q:'A = {2,4,6,8,10}, B = {3,6,9}. A ∩ B = ?', opts:['{6}','{6, 9}','{2,3,4,6,8,9,10}','{}'], correct:0, why:'Only 6 is in both A and B.', diag:{1:'9 isn\'t in A.', 2:'That\'s the union.', 3:'They DO share 6.'}},
+
+  // ===== Descriptive Stats (ds*s) =====
+  {id:'ds1s', skills:['desc-stats'], diff:1, q:'Mean of [4, 6, 8, 10, 12] = ?', opts:['8','9','10','7'], correct:0, why:'Sum = 40. Divide by 5 = 8.', diag:{1:'Off by one.', 2:'Used max.', 3:'Used min.'}},
+  {id:'ds2s', skills:['desc-stats'], diff:1, q:'Median of [3, 7, 8, 5, 9] = ?', opts:['7','5','8','6.4'], correct:0, why:'Sort: [3, 5, 7, 8, 9]. Middle is 7.', diag:{1:'That\'s the second value.', 2:'That\'s the fourth value.', 3:'That\'s the mean.'}},
+  {id:'ds3s', skills:['desc-stats'], diff:2, q:'Mode of [2, 5, 5, 7, 7, 7, 9] = ?', opts:['7','5','6','no mode'], correct:0, why:'7 appears three times, more than any other value.', diag:{1:'Appears twice; 7 appears more.', 2:'That\'s the median.', 3:'There IS a mode.'}},
+  {id:'ds4s', skills:['desc-stats'], diff:3, q:'Dataset [2, 4, 6]. Mean is 4. σ = ?', opts:['√(8/3)','2','√2','4'], correct:0, why:'Deviations: −2, 0, 2. Squared: 4, 0, 4. Sum = 8. Variance = 8/3. σ = √(8/3) ≈ 1.63.', diag:{1:'Range, not σ.', 2:'Off by a factor.', 3:'That\'s the mean.'}},
+  {id:'dsm1', skills:['desc-stats'], diff:2, q:'Mean of [10, 20, 30, 40] = ?', opts:['25','30','100','20'], correct:0, why:'Sum = 100. Divide by 4 = 25.', diag:{1:'Used median of an even-count set wrongly.', 2:'Forgot to divide.', 3:'Took middle value.'}},
+  {id:'dsm2', skills:['desc-stats'], diff:2, q:'Median of [1, 3, 5, 7, 9, 11] = ?', opts:['6','5','7','9'], correct:0, why:'Even count → average the two middle values: (5 + 7)/2 = 6.', diag:{1:'Took the lower middle only.', 2:'Took the upper middle only.', 3:'Took an outer value.'}},
+  {id:'dsm3', skills:['desc-stats'], diff:3, q:'Add a value to [4, 5, 6, 7] so the median stays 5.5. The new value must be in what range?', opts:['≥ 6','≤ 4','any value','exactly 5.5'], correct:0, why:'Currently sorted [4,5,6,7], median = 5.5. Adding a 5th value: the new median is the 3rd. To keep it at 5.5 (not possible exactly with 5 values — closest is 5 or 6), the value must be ≥ 6 so the 3rd of 5 stays at 6. Closest reasonable answer.', diag:{1:'That would shift median down.', 2:'New value affects median.', 3:'Then median would shift.'}},
+  {id:'dsm4', skills:['desc-stats'], diff:2, q:'Adding a value much larger than the rest of the dataset most affects which?', opts:['Mean','Median','Mode','None'], correct:0, why:'Mean is sensitive to outliers. Median and mode are robust.', diag:{1:'Median holds steady against outliers.', 2:'Mode tracks frequency, not magnitude.', 3:'Mean shifts.'}},
+  {id:'dsm5', skills:['desc-stats'], diff:3, q:'Variance of [3, 3, 3, 3] = ?', opts:['0','3','12','1'], correct:0, why:'All values equal mean → all deviations = 0 → variance = 0. Zero spread.', diag:{1:'That\'s the mean.', 2:'Sum of values.', 3:'Default guess.'}},
 ];
 
 const BANK_BY_ID = Object.fromEntries(BANK.map(b => [b.id, b]));
@@ -3895,9 +4011,9 @@ const MODULES = {
         {what:'40 + 35 = 75 → 0.75', why:'add as integers, place decimal in same column.'}
       ]},
       {q:'0.6 × 0.4', steps:[
-        {what:'6 × 4 = 24', why:'multiply as integers.'},
-        {what:'1 + 1 = 2 decimal places total', why:'count places in inputs.'},
-        {what:'0.24', why:'place decimal 2 places from right.'}
+        {what:'6 × 4 = 24', why:'pretend the decimals aren\'t there for the multiplication step.'},
+        {what:'1 + 1 = 2 decimal places total', why:'each decimal place in an input shrinks the answer by a factor of 10. Two factors of 10 means the answer is 100× smaller than 24 — that\'s why we shift the decimal twice.'},
+        {what:'0.24', why:'sanity check: both inputs are less than 1, so the answer must be less than either input. 0.24 is.'}
       ]},
       {q:'1.5 ÷ 0.5', steps:[
         {what:'×10 both sides: 15 ÷ 5', why:'shift to make divisor whole.'},
@@ -3925,14 +4041,14 @@ const MODULES = {
     visualType:'word-translate', visualData:{},
     worked:[
       {q:'Estimate 487 × 19', steps:[
-        {what:'Round: 500 × 20', why:'both rounded up to friendly numbers.'},
-        {what:'500 × 20 = 10,000', why:'easy mental math.'},
-        {what:'Real answer: ~9,253', why:'within 10%. Choose the answer closest to 10,000.'}
+        {what:'Round: 500 × 20', why:'both rounded up by the same small amount — the bias is easy to read later.'},
+        {what:'500 × 20 = 10,000', why:'5 × 2 = 10, then add the trailing zeros — no place-value error possible.'},
+        {what:'Real answer: ~9,253', why:'must sit in the ten-thousands. Any answer choice in the thousands or hundred-thousands is wrong by an order of magnitude — eliminate before computing.'}
       ]},
       {q:'Estimate 12% of 837', steps:[
-        {what:'Round: 10% of 800', why:'simpler.'},
-        {what:'10% of 800 = 80', why:'move decimal.'},
-        {what:'12% is a bit more', why:'real ≈ 100.'}
+        {what:'Round: 10% of 800', why:'10% is the friendliest percent (just shift the decimal) and 800 is two-digit-friendly.'},
+        {what:'10% of 800 = 80', why:'shift the decimal one place left.'},
+        {what:'12% is a bit more', why:'12% is 20% bigger than 10%, so add roughly 20% of 80 (= 16). Estimate ≈ 96; real ≈ 100 — well inside ±10%.'}
       ]}
     ],
     faded:[
@@ -3956,18 +4072,18 @@ const MODULES = {
     visualType:'word-translate', visualData:{},
     worked:[
       {q:'46 × 11', steps:[
-        {what:'Split 46 into 4 and 6', why:'×11 trick uses split-and-add.'},
-        {what:'Add the middle: 4 + 6 = 10', why:'middle digit.'},
-        {what:'Carry: 4_(10)_6 → 506', why:'when middle ≥ 10, carry the 1.'}
+        {what:'Split 46 into 4 and 6', why:'×11 = ×10 + ×1. The original number sits in two columns shifted by one place — the middle position is where those columns overlap.'},
+        {what:'Add the middle: 4 + 6 = 10', why:'the overlap digit is the sum of the two original digits.'},
+        {what:'Carry: 4_(10)_6 → 506', why:'when the middle is ≥ 10, carry the 1 into the hundreds column — same as ordinary addition.'}
       ]},
       {q:'23 × 9', steps:[
-        {what:'×10: 23 × 10 = 230', why:'easy multiplication.'},
-        {what:'Subtract original: 230 − 23 = 207', why:'9 = 10 − 1.'}
+        {what:'×10: 23 × 10 = 230', why:'×10 is free — just add a zero.'},
+        {what:'Subtract original: 230 − 23 = 207', why:'9 = 10 − 1, so ×9 = ×10 − ×1. One free multiplication and one cheap subtraction beats the messy 9 times table.'}
       ]},
       {q:'35²', steps:[
-        {what:'Take 3 (everything before the 5)', why:'apply the trick.'},
-        {what:'3 × 4 = 12', why:'n × (n+1).'},
-        {what:'Append 25: 1225', why:'always ends in 25 for n5² problems.'}
+        {what:'Take 3 (everything before the 5)', why:'algebra: (10n+5)² = 100n(n+1) + 25 — only the n changes per problem.'},
+        {what:'3 × 4 = 12', why:'this is the n × (n+1) hundreds piece.'},
+        {what:'Append 25: 1225', why:'every n5² ends in 25 because (10n+5)² always has +25 as its constant term.'}
       ]}
     ],
     faded:[
@@ -4127,7 +4243,7 @@ const MODULES = {
     title:'Mixture <em>Setups</em>',
     sub:'Total stuff stays. Compute "amount of X" before and after, set equal, solve.',
     pattern:'Mixture problems track ONE substance through a process. Before mixing: count up the salt (or acid, or sugar) in each component. After mixing: same total salt, but now in a different total volume. Set up: (concentration × volume) summed = final concentration × total volume.',
-    formula:'Before: <span class="gold">c₁v₁ + c₂v₂</span> = total stuff<br>After: total stuff = <span class="gold">c_final × v_total</span>',
+    formula:'<span class="gold">Single bottle dilution:</span> C₁V₁ = C₂V₂<br>Combining solutions: <span class="gold">c₁v₁ + c₂v₂</span> = c_f · v_total<br>(works in any concentration unit — molarity, %, mass)',
     visualType:'word-translate', visualData:{},
     worked:[
       {q:'40 oz of 25% acid + 60 oz of 75% acid. Final concentration?', steps:[
@@ -4195,7 +4311,7 @@ const MODULES = {
     title:'Coordinate <em>Plane</em> Basics',
     sub:'Slope, distance, midpoint. Three formulas, mostly the same picture.',
     pattern:'The coordinate plane has three workhorse formulas. Slope = rise/run between two points. Distance = √(rise² + run²) (Pythagorean). Midpoint = average of x\'s, average of y\'s. All three are about two points and the line/segment between them.',
-    formula:'Slope: <span class="gold">m = (y₂−y₁)/(x₂−x₁)</span><br>Distance: <span class="gold">d = √((x₂−x₁)² + (y₂−y₁)²)</span><br>Midpoint: <span class="gold">((x₁+x₂)/2, (y₁+y₂)/2)</span>',
+    formula:'Slope-intercept: <span class="gold">y = mx + b</span><br>Slope: <span class="gold">m = (y₂−y₁)/(x₂−x₁)</span><br>Distance: <span class="gold">d = √((x₂−x₁)² + (y₂−y₁)²)</span><br>Midpoint: <span class="gold">((x₁+x₂)/2, (y₁+y₂)/2)</span><br><span class="gold">Parallel:</span> same slope · <span class="gold">Perpendicular:</span> slopes are negative reciprocals (m₁ · m₂ = −1)',
     visualType:'word-translate', visualData:{},
     worked:[
       {q:'Slope between (1,2) and (4,8)?', steps:[
@@ -4215,8 +4331,8 @@ const MODULES = {
       ]}
     ],
     faded:[
-      {prompt:'Slope between (0,0) and (5,15) = ', lcd:'rise/run = 15/5.', blank:'__', answer:'3'},
-      {prompt:'Distance from (1,2) to (4,6) = ', lcd:'√(3² + 4²).', blank:'__', answer:'5'}
+      {prompt:'Slope between (2, 3) and (5, 12). Rise = 12 − 3 = ', lcd:'rise first, then run. Slope = rise/run.', blank:'__, run = __, slope = __', answer:'9, 3, 3'},
+      {prompt:'Distance from (1,2) to (4,6) = ', lcd:'√((Δx)² + (Δy)²) — Pythagorean triple in disguise.', blank:'√(3² + 4²) = √__', answer:'25'}
     ],
     practice:['co1','co2','co3'],
     lock:'<em>Slope · Distance · Midpoint</em> — all about two points.',
@@ -4231,13 +4347,13 @@ const MODULES = {
     title:'Unit <em>Conversions</em>',
     sub:'Multiply by a fraction equal to 1. The unit you don\'t want cancels.',
     pattern:'Unit conversion is multiplication by a clever form of "1." 1 mile = 5280 ft, so the fraction (5280 ft)/(1 mile) = 1. Multiplying by it doesn\'t change the value, just the units. Set it up so the unit you have CANCELS, leaving the unit you want.',
-    formula:'Multiply by a <span class="gold">unit fraction equal to 1</span>. Arrange so unwanted units cancel diagonally.',
+    formula:'Multiply by a <span class="gold">unit fraction equal to 1</span>. Arrange so unwanted units cancel diagonally.<br><span class="gold">Memorize:</span> 1 lb = 16 oz = 454 g · 1 kg = 2.2 lb<br>1 in = 2.54 cm · 1 ft = 12 in · 1 yd = 3 ft<br>1 m = 1.1 yd · 1 mile = 5280 ft',
     visualType:'word-translate', visualData:{},
     worked:[
       {q:'30 mph in ft/s', steps:[
-        {what:'Setup: 30 mi/hr × (5280 ft / 1 mi) × (1 hr / 3600 s)', why:'two conversion factors, units cancel diagonally.'},
-        {what:'Compute: 30 × 5280 / 3600', why:'multiply.'},
-        {what:'≈ 44 ft/s', why:'final.'}
+        {what:'Setup: 30 mi/hr × (5280 ft / 1 mi) × (1 hr / 3600 s)', why:'each conversion factor equals 1 (5280 ft really IS 1 mile) — so the value doesn\'t change, only the units do. Arrange each fraction so the unit you want to delete is on the opposite side from the one keeping it.'},
+        {what:'Compute: 30 × 5280 / 3600', why:'after diagonal cancellation, only "ft" and "s" survive — exactly what we wanted.'},
+        {what:'≈ 44 ft/s', why:'sanity check: 30 mph is highway-ish; 44 ft/s is roughly the right human-scale speed (a fast jog is ~10 ft/s, a sprint ~30, a slow car ~50).'}
       ]},
       {q:'250 mL to L', steps:[
         {what:'1 L = 1000 mL → fraction (1 L)/(1000 mL) = 1', why:'unit fraction.'},
@@ -4282,7 +4398,7 @@ const MODULES = {
       {prompt:'P(at least one tail in 3 flips) = ', lcd:'1 − (1/2)³.', blank:'__', answer:'7/8'},
       {prompt:'P(at least one ace in drawing 2 cards w/replacement) = ', lcd:'1 − (48/52)².', blank:'1 − __', answer:'(48/52)²'}
     ],
-    practice:['pf1','pf2','pf3','d11'],
+    practice:['pf1','pf2','pf3'],
     lock:'AT LEAST = <em>flip to none.</em>',
     trap:'Adding the "exactly k" cases. P(exactly 1) + P(exactly 2) + ... burns 60+ seconds and is error-prone. Always flip.',
     sarahTricks:[
@@ -4354,7 +4470,7 @@ const MODULES = {
     title:'Permutations <em>vs</em> Combinations',
     sub:'Order matters? Permutation. Order doesn\'t? Combination. That\'s the whole gate.',
     pattern:'One question separates them: does shuffling create a different answer? Yes = permutation. No = combination. Permutations count ordered arrangements (P). Combinations count unordered selections (C). They\'re related by C = P / r! (you divide out the duplicate orderings).',
-    formula:'<span class="gold">P(n,r) = n!/(n−r)!</span> &nbsp;(order matters)<br><span class="gold">C(n,r) = n!/(r!(n−r)!)</span> &nbsp;(order doesn\'t)<br>C = P / r!',
+    formula:'<span class="gold">P(n,r) = n!/(n−r)!</span> &nbsp;(order matters)<br><span class="gold">C(n,r) = n!/(r!(n−r)!)</span> &nbsp;(order doesn\'t)<br>C = P / r!<br><span class="gold">Letters with repeats:</span> n! / (r₁! · r₂! · …) — divide by the factorial of each repeat group',
     visualType:'word-translate', visualData:{},
     worked:[
       {q:'Committee of 3 from 10 — how many?', steps:[
@@ -4368,16 +4484,16 @@ const MODULES = {
         {what:'= 5!/1! = 120', why:'compute.'}
       ]},
       {q:'Pick 2 boys from 5 AND 3 girls from 6', steps:[
-        {what:'Two independent selections — multiply', why:'AND combinations multiply.'},
-        {what:'C(5,2) × C(6,3)', why:'each is unordered.'},
-        {what:'= 10 × 20 = 200', why:'compute.'}
+        {what:'Two independent selections — multiply', why:'AND in counting always means multiply, never add. Every choice of boy-pair pairs up with every choice of girl-trio, so the total = (boy-pair options) × (girl-trio options).'},
+        {what:'C(5,2) × C(6,3)', why:'each group is "no order" (a committee, not a ranking) — combinations on both.'},
+        {what:'= 10 × 20 = 200', why:'10 ways to pick the boys, 20 ways to pick the girls, every combination of those 200 pairings is a distinct group.'}
       ]}
     ],
     faded:[
       {prompt:'How many ways to arrange 4 people in a line? = ', lcd:'order matters → 4!.', blank:'__', answer:'24'},
       {prompt:'How many 5-card hands from 52? = ', lcd:'order doesn\'t → C(52,5).', blank:'C(52,__)', answer:'5'}
     ],
-    practice:['cp1','cp2','cp3','d12'],
+    practice:['cp1','cp2','cp3'],
     lock:'PODIUM = <em>P</em>. PIZZA = <em>C</em>.',
     trap:'Treating committee selection as ordered. The DAT puts 720 (permutation) and 120 (combination) as adjacent answer choices. Off by r! every time.',
     sarahTricks:[
@@ -4390,7 +4506,7 @@ const MODULES = {
     title:'Quadratic <em>Discriminant</em>',
     sub:'b² − 4ac tells you how many real roots a quadratic has — without solving.',
     pattern:'For ax² + bx + c = 0, the discriminant is b² − 4ac. Its sign tells you the root count: positive = 2 real roots, zero = 1 repeated root, negative = 0 real roots (complex pair). Reading the sign takes 5 seconds. Solving the full quadratic takes 30+. The DAT often only asks for the count.',
-    formula:'<span class="gold">Δ = b² − 4ac</span><br>Δ &gt; 0: 2 real roots · Δ = 0: 1 repeated · Δ &lt; 0: 0 real',
+    formula:'<span class="gold">Quadratic formula:</span> x = (−b ± √(b² − 4ac)) / 2a<br><span class="gold">Discriminant:</span> Δ = b² − 4ac<br>Δ &gt; 0: 2 real roots · Δ = 0: 1 repeated · Δ &lt; 0: 0 real<br><span class="gold">Parabola vertex:</span> x = −b / (2a)',
     visualType:'word-translate', visualData:{},
     worked:[
       {q:'How many real solutions: 2x² + 3x + 5 = 0?', steps:[
@@ -4582,20 +4698,20 @@ const MODULES = {
     title:'Exponent <em>Laws</em>',
     sub:'Same base, multiply: ADD exponents. Power of a power: MULTIPLY exponents. Anything to the 0 = 1.',
     pattern:'Exponent laws are mechanical. Same-base multiplication adds exponents. Power-of-power multiplies. Same-base division subtracts. Negative exponents flip to fractions. Zero power equals 1 (except 0⁰).',
-    formula:'<span class="gold">aᵐ · aⁿ = aᵐ⁺ⁿ</span><br>(aᵐ)ⁿ = aᵐⁿ<br>aᵐ / aⁿ = aᵐ⁻ⁿ<br>a⁰ = 1 · a⁻ⁿ = 1/aⁿ',
+    formula:'<span class="gold">aᵐ · aⁿ = aᵐ⁺ⁿ</span><br>(aᵐ)ⁿ = aᵐⁿ<br>aᵐ / aⁿ = aᵐ⁻ⁿ<br>aᵐ · bᵐ = (a·b)ᵐ &nbsp; <span class="muted">(same exponent)</span><br>aᵐ / bᵐ = (a/b)ᵐ<br>a⁰ = 1 · a⁻ⁿ = 1/aⁿ',
     visualType:'word-translate', visualData:{},
     worked:[
       {q:'2³ × 2⁴', steps:[
-        {what:'Same base, multiply → ADD exponents', why:'core law.'},
-        {what:'2³⁺⁴ = 2⁷', why:'compute.'}
+        {what:'Same base, multiply: ADD exponents', why:'2³ means 2·2·2 (three 2\'s) and 2⁴ means 2·2·2·2 (four 2\'s). Multiplied together: seven 2\'s. The exponents add because we\'re literally counting factors of the same base.'},
+        {what:'2³⁺⁴ = 2⁷', why:'2⁷ = 128 if you need the number — but the law gives you the symbolic form for free.'}
       ]},
       {q:'(3²)⁴', steps:[
-        {what:'Power of a power → MULTIPLY exponents', why:'core law.'},
-        {what:'3²ˣ⁴ = 3⁸', why:'compute.'}
+        {what:'Power of a power: MULTIPLY exponents', why:'(3²)⁴ means four copies of 3² multiplied together: (3·3)·(3·3)·(3·3)·(3·3) = eight 3\'s. The outer exponent counts the COPIES; each copy already brings 2 factors. Total factors = 2 × 4 = 8.'},
+        {what:'3²ˣ⁴ = 3⁸', why:'multiplication of exponents is just "factors per group × number of groups."'}
       ]},
       {q:'5⁰', steps:[
-        {what:'Anything (≠0) to the 0 power = 1', why:'definition.'},
-        {what:'= 1', why:'always.'}
+        {what:'Anything (≠0) to the 0 power = 1', why:'forced by the division law: 5ⁿ / 5ⁿ = 5ⁿ⁻ⁿ = 5⁰. But 5ⁿ / 5ⁿ also equals 1, so 5⁰ must equal 1.'},
+        {what:'= 1', why:'true for every nonzero base.'}
       ]}
     ],
     faded:[
@@ -4624,9 +4740,9 @@ const MODULES = {
         {what:'Add 3: 1 < x < 5', why:'isolate x.'}
       ]},
       {q:'Solve |x + 1| > 4', steps:[
-        {what:'"Greater than" → split', why:'outsides pattern.'},
-        {what:'x + 1 > 4 OR x + 1 < −4', why:'two cases.'},
-        {what:'x > 3 OR x < −5', why:'subtract 1.'}
+        {what:'"Greater than" → split', why:'|expr| > 4 means "more than 4 units from zero" — that\'s either deep positive (above +4) or deep negative (below −4). Two non-overlapping zones, never both.'},
+        {what:'x + 1 > 4 OR x + 1 < −4', why:'one case for each zone. The OR is critical: a single solution can\'t be in both.'},
+        {what:'x > 3 OR x < −5', why:'subtract 1 from each side of both inequalities — same operation, both stay flipped the same way.'}
       ]}
     ],
     faded:[
@@ -4658,7 +4774,10 @@ const MODULES = {
         {what:'Check your answer', why:'sanity-check is part of the move.'}
       ]}
     ],
-    faded:[],
+    faded:[
+      {prompt:'You scored 76% untimed across 30 problems. Should you move to 90s pacing? ', lcd:'untimed gate is 80%.', blank:'__ — keep drilling untimed first', answer:'No'},
+      {prompt:'You hit 84% untimed and felt rushed. Next session: ', lcd:'gate cleared — but rushing means accuracy is fragile. Stay one more session before adding the timer.', blank:'__ another untimed pass', answer:'one more'}
+    ],
     practice:['ut1'],
     lock:'<em>Untimed first.</em> Speed comes after.',
     trap:'Rushing in untimed mode to "feel test-like." That builds bad habits. Untimed is for accuracy, not speed.',
@@ -4724,7 +4843,7 @@ const MODULES = {
     title:'Logarithms — <em>how many doublings?</em>',
     sub:'Logs aren\'t calculations. They\'re countings in disguise. Once you see them as "how many times did this multiply," they stop being scary.',
     pattern:'A logarithm answers ONE question: "the base, raised to what power, gives me this number?" That\'s it. Exponents go forward (multiply, multiply, multiply). Logs read backward (how many times did we multiply?). On the DAT, almost every log question is solved by recognizing the answer is a small whole number — usually 1, 2, 3, 4, or 5.',
-    formula:'<span class="gold">log_b(N) = x</span> &nbsp; ⟺ &nbsp; <span class="gold">b<sup>x</sup> = N</span><br>The log <span class="gold">IS</span> the exponent.<br>log(N) with no base shown means log<sub>10</sub>(N).',
+    formula:'<span class="gold">log_b(N) = x</span> &nbsp; ⟺ &nbsp; <span class="gold">b<sup>x</sup> = N</span><br>The log <span class="gold">IS</span> the exponent.<br>log(N) with no base shown means log<sub>10</sub>(N).<br><span class="gold">Product:</span> log(x) + log(y) = log(x·y)<br><span class="gold">Quotient:</span> log(x) − log(y) = log(x/y)<br><span class="gold">Power:</span> log<sub>a</sub>(x<sup>b</sup>) = b · log<sub>a</sub>(x)<br>log(10) = 1 · log(1) = 0',
     visualType:'log-curve',
     visualData:{},
     worked:[
@@ -4760,7 +4879,7 @@ const MODULES = {
     sarahTricks:[
       {
         when:'A student freezes on log₂(N) — anything base 2.',
-        name:'⚾ <em>The Baseball-Card Doubling</em>',
+        name:'<em>The Baseball-Card Doubling</em>',
         move:'You\'re collecting baseball cards. On day 1, you have 1 card. Every day your collection DOUBLES. Day 2: 2 cards. Day 3: 4. Day 4: 8. Day 5: 16. Day 6: 32. Day 7: 64. Day 8: 128. log₂(N) just asks: "I have N cards — how many days have I been collecting?" Your answer to log₂(8) is "day 4 — I had 8 cards on day 4." (Or 3 doublings from day 1, depending on how you start counting.)',
         why:'Doubling is the most intuitive exponent for almost any student. Tying it to a story they understand (a kid collecting something) makes the abstraction concrete. Once base 2 clicks, every other base follows the same rule with different multiplier.',
         lock:'"How many days of doubling?" — that\'s your log.',
@@ -4830,6 +4949,169 @@ const MODULES = {
        why:'This single trap catches more students than any other in word translation.', lock:'"Less than" → flip the order.'}
     ]
   },
+
+  'binomials': {
+    skill:'binomials', tier:0, num:'38',
+    title:'Binomial <em>Algebra</em>',
+    sub:'Three patterns. Square of a sum, square of a difference, difference of squares. Recognize them and you skip the work.',
+    pattern:'Three identities show up everywhere in DAT algebra. (x+y)² is NOT x²+y² — the middle term 2xy is the most common student-miss. (x−y)² has the same form with a minus on the middle. (x+y)(x−y) has NO middle term — it collapses to x² − y². Memorize all three.',
+    formula:'<span class="gold">(x + y)² = x² + 2xy + y²</span><br><span class="gold">(x − y)² = x² − 2xy + y²</span><br><span class="gold">(x + y)(x − y) = x² − y²</span><br>FOIL: (a + b)(c + d) = ac + ad + bc + bd',
+    visualType:'binom-tile', visualData:{},
+    worked:[
+      {q:'Expand (x + 3)²', steps:[
+        {what:'Apply (x + y)² = x² + 2xy + y²', why:'square-of-sum identity. Don\'t expand by hand — recognize the pattern.'},
+        {what:'x² + 2(x)(3) + 3² = x² + 6x + 9', why:'middle term is twice the product. The +6x is what students forget.'}
+      ]},
+      {q:'Factor x² − 25', steps:[
+        {what:'Recognize: x² − 5²', why:'difference of squares. Both terms are perfect squares with a minus between.'},
+        {what:'(x + 5)(x − 5)', why:'difference-of-squares identity. No middle term to find — it cancels by design.'}
+      ]},
+      {q:'Compute 21² mentally', steps:[
+        {what:'Rewrite: (20 + 1)²', why:'pick a friendly base near 21.'},
+        {what:'20² + 2(20)(1) + 1² = 400 + 40 + 1 = 441', why:'square-of-sum lets you square any close-to-round number in three quick steps.'}
+      ]}
+    ],
+    faded:[
+      {prompt:'(x + 4)² = x² + __ + 16', lcd:'middle term is 2·x·4.', blank:'__', answer:'8x'},
+      {prompt:'x² − 49 = (x + __)(x − __)', lcd:'difference of squares; 49 = 7².', blank:'__, __', answer:'7, 7'}
+    ],
+    practice:['bn1','bn2','bn3','bn4'],
+    masteryProblems:['bnm1','bnm2','bnm3','bnm4','bnm5'],
+    lock:'(x + y)² has a <em>middle term</em>. (x + y)(x − y) does <em>not</em>.',
+    trap:'Writing (x + y)² as x² + y². The 2xy is the whole point — without it the identity fails. The DAT puts x² + y² as a distractor on every binomial-square question.',
+    sarahTricks:[
+      {when:'Squaring a binomial.', name:'<em>Don\'t forget the middle</em>',
+       move:'Say it out loud: "first squared, plus or minus twice the product, plus second squared." The middle term is twice the product — never zero, never just one product.',
+       why:'Verbalizing the structure prevents the most common binomial error.', lock:'Twice the product. Always.', sarah:true, placeholder:true},
+      {when:'Subtracting two perfect squares.', name:'<em>Difference of squares = no middle</em>',
+       move:'a² − b² always factors as (a + b)(a − b). The middle terms cancel by construction. Spot a perfect-square minus a perfect-square and you skip ahead.',
+       why:'This is the one identity where the middle disappears. Recognizing it saves a full FOIL pass.', lock:'a² − b² = (a+b)(a−b).'}
+    ]
+  },
+
+  'geo-2d': {
+    skill:'geo-2d', tier:2, num:'39',
+    title:'2D Geometry — <em>Circles, Squares, Triangles</em>',
+    sub:'Area is two dimensions. Perimeter is one. Don\'t confuse them — and never square the wrong dimension.',
+    pattern:'Each 2D shape has two formulas: an area (square units) and a perimeter or circumference (linear units). The single biggest student error is picking 2πr when the question asks for area, or πr² when it asks for circumference. Read the units in the answer choices to confirm.',
+    formula:'<span class="gold">Circle:</span> A = πr² · C = 2πr (= πd)<br><span class="gold">Square:</span> A = s² · P = 4s<br><span class="gold">Rectangle:</span> A = lw · P = 2(l + w)<br><span class="gold">Triangle:</span> A = ½bh',
+    visualType:'shape-morph', visualData:{},
+    worked:[
+      {q:'Circle with r = 5. Find area and circumference.', steps:[
+        {what:'Area = πr² = π(25) = 25π', why:'square the radius first, then multiply by π. Units are square-something.'},
+        {what:'Circumference = 2πr = 10π', why:'linear units. Doubling r doubles C, but quadruples A.'}
+      ]},
+      {q:'Triangle with base 8 and height 6. Find area.', steps:[
+        {what:'A = ½bh = ½(8)(6)', why:'half-base-times-height — works for any triangle, not just right triangles, as long as h is the perpendicular height.'},
+        {what:'= 24', why:'square units.'}
+      ]},
+      {q:'Square has side 5. Double the side. What happens to area?', steps:[
+        {what:'Original area: 5² = 25', why:'baseline.'},
+        {what:'New area: 10² = 100', why:'doubling a linear dimension QUADRUPLES area. Area scales as the square of length.'},
+        {what:'Area is ×4', why:'this is the area-vs-length scaling rule. Same as in vol-sa for 3D — but squared instead of cubed.'}
+      ]}
+    ],
+    faded:[
+      {prompt:'Circle r = 4. Area = ', lcd:'πr².', blank:'__π', answer:'16'},
+      {prompt:'Square side 7. Perimeter = ', lcd:'4s.', blank:'__', answer:'28'}
+    ],
+    practice:['g2d1','g2d2','g2d3','g2d4'],
+    masteryProblems:['g2dm1','g2dm2','g2dm3','g2dm4','g2dm5'],
+    lock:'Area = <em>squared units</em>. Perimeter / circumference = <em>linear</em>.',
+    trap:'Confusing πr² with 2πr — and squaring diameter instead of radius. If a circle\'s diameter is 10, the radius is 5; A = π(5)² = 25π, not π(10)² = 100π.',
+    sarahTricks:[
+      {when:'Any circle question.', name:'<em>Radius first, then formula</em>',
+       move:'If the problem gives diameter, halve it FIRST. Write r = ___ before touching π. Most circle errors are diameter-vs-radius confusion, not the formula itself.',
+       why:'Forces a one-line setup that prevents the most common mistake.', lock:'Find r before π.', sarah:true, placeholder:true},
+      {when:'Comparing two shapes after a length change.', name:'<em>Length × k → Area × k²</em>',
+       move:'Doubling a side doesn\'t double the area — it quadruples it. Tripling triples linear measures and 9× the area. Memorize the squared scaling.',
+       why:'Connects 2D scaling to the cube law in vol-sa. Same idea, one less power.', lock:'Area scales as length squared.'}
+    ]
+  },
+
+  'sets': {
+    skill:'sets', tier:2, num:'40',
+    title:'Sets — <em>Union &amp; Intersection</em>',
+    sub:'Union keeps everyone, no duplicates. Intersection keeps only those in both. Inclusion-exclusion handles overlap without double-counting.',
+    pattern:'Two sets, one rule. A ∪ B is "in either or both" — count the union once, never twice. A ∩ B is "in both" — the overlap. The bridge is inclusion-exclusion: |A ∪ B| = |A| + |B| − |A ∩ B|. Subtracting the overlap is the whole trick.',
+    formula:'<span class="gold">A ∪ B</span> = elements in A or B (no duplicates)<br><span class="gold">A ∩ B</span> = elements in both A and B<br><span class="gold">|A ∪ B|</span> = |A| + |B| − |A ∩ B|<br>Complement: A\' = everything not in A',
+    visualType:'venn-2set', visualData:{},
+    worked:[
+      {q:'A = {1, 2, 3}, B = {1, 3, 4}. Find A ∪ B and A ∩ B.', steps:[
+        {what:'Union: list all unique elements', why:'1, 2, 3 from A; 4 added from B; 1 and 3 already counted.'},
+        {what:'A ∪ B = {1, 2, 3, 4}', why:'no duplicates in a set.'},
+        {what:'Intersection: only elements in BOTH', why:'1 is in both. 3 is in both. 2 is only in A. 4 is only in B.'},
+        {what:'A ∩ B = {1, 3}', why:'two-way overlap.'}
+      ]},
+      {q:'In a class, 60 students like coffee, 50 like tea, 30 like both. How many like at least one?', steps:[
+        {what:'Use inclusion-exclusion: |A ∪ B| = |A| + |B| − |A ∩ B|', why:'we want "at least one" = the union.'},
+        {what:'= 60 + 50 − 30 = 80', why:'we subtract 30 because those students are in BOTH the 60 and the 50 — adding the totals double-counts them.'}
+      ]},
+      {q:'|A| = 25, |A ∩ B| = 10. How many are in A only?', steps:[
+        {what:'A only = |A| − |A ∩ B|', why:'remove the shared ones to get A-exclusive.'},
+        {what:'= 25 − 10 = 15', why:'A-only is what\'s left after pulling out the overlap.'}
+      ]}
+    ],
+    faded:[
+      {prompt:'|A| = 30, |B| = 40, |A ∩ B| = 12. |A ∪ B| = ', lcd:'inclusion-exclusion.', blank:'30 + 40 − __', answer:'12'},
+      {prompt:'A = {a, b, c, d}, B = {c, d, e, f}. A ∩ B = ', lcd:'elements in both.', blank:'{__, __}', answer:'c, d'}
+    ],
+    practice:['st1','st2','st3','st4'],
+    masteryProblems:['stm1','stm2','stm3','stm4','stm5'],
+    lock:'<em>Union − Intersection</em> avoids double-counting.',
+    trap:'Adding |A| + |B| without subtracting the overlap. Survey questions ("how many like at least one?") trap exactly this. The DAT puts the no-subtraction answer as the most common distractor.',
+    sarahTricks:[
+      {when:'A survey/overlap word problem.', name:'<em>Draw two circles</em>',
+       move:'Sketch a Venn diagram on scratch. Write |A ∩ B| in the middle, |A only| on one side, |B only| on the other. Three regions, three numbers — the union is the sum of all three.',
+       why:'A 5-second sketch prevents the "I added and got too much" mistake.', lock:'Three regions, three numbers.', sarah:true, placeholder:true},
+      {when:'The question says "at least one."', name:'<em>That\'s the union</em>',
+       move:'"At least one" = "in A or B or both" = A ∪ B. Use inclusion-exclusion: add the singles, subtract the overlap. Don\'t go to "1 − P(none)" unless it\'s a probability question.',
+       why:'Connects set vocabulary to its formula directly.', lock:'"At least one" = union.'}
+    ]
+  },
+
+  'desc-stats': {
+    skill:'desc-stats', tier:2, num:'41',
+    title:'Descriptive <em>Statistics</em>',
+    sub:'Mean is sensitive to outliers. Median isn\'t. Mode is for repeats. SD measures spread.',
+    pattern:'Three measures of center, two of spread. Mean (average) is pulled toward outliers. Median (middle) ignores them. Mode is the most-repeated value. Standard deviation σ measures how spread out the data is — small σ = tight cluster, large σ = wide. Variance is just σ². Z-score lives in its own module.',
+    formula:'<span class="gold">Mean</span> x̄ = Σx / n<br><span class="gold">Median</span> = middle of sorted data (avg the two middles if even count)<br><span class="gold">Mode</span> = most frequent value<br><span class="gold">σ</span> = √(Σ(x − x̄)² / N) · <span class="gold">Variance</span> = σ²<br>Box plot: min · Q1 · median · Q3 · max',
+    visualType:'stat-spread', visualData:{},
+    worked:[
+      {q:'Find mean, median, and mode of [3, 5, 5, 7, 12]', steps:[
+        {what:'Mean: (3+5+5+7+12)/5 = 32/5 = 6.4', why:'sum divided by count.'},
+        {what:'Median: middle value of sorted set', why:'data is already sorted; 5 values means the 3rd is the middle.'},
+        {what:'Median = 5', why:'middle position.'},
+        {what:'Mode = 5', why:'5 appears twice; everything else once.'}
+      ]},
+      {q:'Add 100 to the dataset above: [3, 5, 5, 7, 12, 100]. New mean and median?', steps:[
+        {what:'New mean: 132/6 = 22', why:'one outlier shifted the mean from 6.4 to 22 — the outlier dragged it up significantly.'},
+        {what:'New median: average of 5 and 7 = 6', why:'median barely moved — 5 became 6. Median is robust to outliers.'},
+        {what:'Lock in the contrast', why:'mean: outlier-sensitive. Median: outlier-resistant. Pick mean for symmetric data, median when outliers are present.'}
+      ]},
+      {q:'Find σ for [2, 4, 4, 4, 5, 5, 7, 9]. Mean = 5.', steps:[
+        {what:'Compute (x − 5)² for each: 9, 1, 1, 1, 0, 0, 4, 16', why:'squared deviations from the mean.'},
+        {what:'Sum: 32. Divide by N = 8: variance = 4', why:'population variance.'},
+        {what:'σ = √4 = 2', why:'standard deviation. The dataset spreads roughly 2 units around the mean.'}
+      ]}
+    ],
+    faded:[
+      {prompt:'[2, 4, 6, 8]. Mean = ', lcd:'sum/n.', blank:'__', answer:'5'},
+      {prompt:'[1, 3, 3, 5, 9, 11]. Median = ', lcd:'even count → average the two middles (3 and 5).', blank:'__', answer:'4'}
+    ],
+    practice:['ds1s','ds2s','ds3s','ds4s'],
+    masteryProblems:['dsm1','dsm2','dsm3','dsm4','dsm5'],
+    lock:'Mean: <em>sensitive</em>. Median: <em>resistant</em>.',
+    trap:'Computing σ with N − 1 (sample formula) instead of N (population). The DAT uses the population formula; double-check by reading the question.',
+    sarahTricks:[
+      {when:'Any "average" question with extreme values.', name:'<em>Mean or median?</em>',
+       move:'If the data has outliers (one or two values much larger or smaller than the rest), the median is usually the better measure of center. Only use the mean for roughly symmetric, outlier-free data.',
+       why:'Picks the right tool. Most "best measure of center" questions on the DAT come down to outlier presence.', lock:'Outliers → median. Symmetric → mean.', sarah:true, placeholder:true},
+      {when:'Computing standard deviation by hand.', name:'<em>Squared deviations, then average, then root</em>',
+       move:'Three steps. (1) Subtract the mean from each value, square the result. (2) Average those squared deviations (that\'s the variance). (3) Square root the variance (that\'s σ). Order matters — don\'t square at the end.',
+       why:'Breaking σ into three labeled steps prevents formula-memorization panic.', lock:'Deviation² → average → root.'}
+    ]
+  },
 };
 
 /* ============================================================
@@ -4873,8 +5155,8 @@ function renderModule(skillId){
         </div>
         ${M.laws ? `<div style="margin-top:18px"><div class="up muted" style="margin-bottom:8px">The three laws · <em class="gold">memorize cold</em></div><div class="law-grid">${M.laws.map(l => `<div class="law-card"><div class="lname">${l.name}</div><div class="lform">${l.form}</div><div class="lex">${l.ex}</div></div>`).join('')}</div></div>` : ''}
         <div class="row r2" style="margin-top:14px">
-          <div class="subcard trap"><div class="h"><span class="lbl trap">⚠ The Trap</span></div><p>${M.trap}</p></div>
-          <div class="subcard lock"><div class="h"><span class="lbl teal">🔒 Lock</span></div><div class="lock-line">${M.lock}</div></div>
+          <div class="subcard trap"><div class="h"><span class="lbl trap">The Trap</span></div><p>${M.trap}</p></div>
+          <div class="subcard lock"><div class="h"><span class="lbl teal">Lock</span></div><div class="lock-line">${M.lock}</div></div>
         </div>
         ${M.sarahTricks ? renderTricksPanel(M.sarahTricks) : ''}
       </div>
@@ -4964,7 +5246,8 @@ const VISUAL_BY_SKILL = {
   'p-flip':'prob-tree','p-andor':'prob-venn','p-cond':'prob-table','count-pc':'count-grid',
   'discr':'parabola-discr','harm':'harm-mean','zscore':'z-curve','tri-inv':'tri-morph',
   'vol-sa':'solid-net','ds':'slope-rise-run','exps':'exp-rules','absval':'absval-fold',
-  'untimed':'mastery-grid','skip-ret':'triage-board','guess':'elim-funnel'
+  'untimed':'mastery-grid','skip-ret':'triage-board','guess':'elim-funnel',
+  'binomials':'binom-tile','geo-2d':'shape-morph','sets':'venn-2set','desc-stats':'stat-spread'
 };
 
 /* ----- VISUAL renderers (lightweight per-skill) ----- */
@@ -4998,8 +5281,8 @@ function renderVisual(skillId){
           <div class="frac-lbl"><em class="gold" style="font-style:italic">3/4</em></div>
         </div>
       </div>
-      <button class="btn sm" style="margin-top:10px" onclick="animFrac('${skillId}')">▶ Show why</button>
-      <p class="muted" style="font-size:13px; margin-top:10px">Watch: 1/2 doesn't fit on a 4-cell bar. We split each half into 2 quarters → 1/2 = 2/4. Now both bars use quarters. 1 + 2 = 3 quarters lit.</p>
+      <button class="btn sm" style="margin-top:10px" onclick="animFrac('${skillId}')">Show why</button>
+      <p class="muted" style="font-size:13px; margin-top:10px">Watch: 1/2 doesn't fit on a 4-cell bar. We split each half into 2 quarters, so 1/2 = 2/4. Now both bars use quarters. 1 + 2 = 3 quarters lit.</p>
     `;
   } else if (M.visualType === 'decimal-strip'){
     html = `
@@ -5007,7 +5290,7 @@ function renderVisual(skillId){
         <line x1="20" y1="60" x2="340" y2="60" stroke="var(--ink)" stroke-width="1.5"/>
         ${[0,0.125,0.25,0.375,0.5,0.625,0.75,0.875,1].map((v,i)=>{
           const x = 20 + v*320;
-          const labels = ['0','⅛','¼','⅜','½','⅝','¾','⅞','1'];
+          const labels = ['0','1/8','1/4','3/8','1/2','5/8','3/4','7/8','1'];
           const decs = ['0','.125','.25','.375','.5','.625','.75','.875','1'];
           return `<g><line x1="${x}" y1="55" x2="${x}" y2="65" stroke="var(--ink)" stroke-width="1.5"/><text x="${x}" y="48" text-anchor="middle" font-family="Playfair Display" font-size="14" fill="var(--gold-d)" font-weight="700">${labels[i]}</text><text x="${x}" y="86" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="var(--ink-mute)">${decs[i]}</text></g>`;
         }).join('')}
@@ -5042,19 +5325,19 @@ function renderVisual(skillId){
           <button class="btn sm" onclick="adjPrice('${skillId}', 0.10)">+10%</button>
           <button class="btn sm" onclick="adjPrice('${skillId}', -0.20)">−20%</button>
           <button class="btn sm" onclick="adjPrice('${skillId}', -0.35)">−35%</button>
-          <button class="btn sm danger" onclick="adjPrice('${skillId}', 'reset')">↺ reset</button>
+          <button class="btn sm danger" onclick="adjPrice('${skillId}', 'reset')">Reset</button>
         </div>
       </div>
     `;
   } else if (M.visualType === 'sequential-bars'){
     html = `
       <svg viewBox="0 0 360 220" style="width:100%; height:auto">
-        <text x="20" y="22" font-family="DM Sans" font-size="11" fill="var(--ink-mute)" letter-spacing="2">$100 → +20% → −20%</text>
+        <text x="20" y="22" font-family="DM Sans" font-size="11" fill="var(--ink-mute)" letter-spacing="2">$100, +20%, then −20%</text>
         <rect x="20" y="35" width="140" height="40" fill="var(--gold)" stroke="var(--gold-d)" stroke-width="1.5"/>
         <text x="170" y="60" font-family="JetBrains Mono" font-size="13" fill="var(--ink)">$100 (start)</text>
-        <rect x="20" y="90" width="168" height="40" fill="#7bc395" stroke="var(--good-d)" stroke-width="1.5"/>
+        <rect x="20" y="90" width="168" height="40" fill="var(--good)" stroke="var(--good-d)" stroke-width="1.5"/>
         <text x="198" y="115" font-family="JetBrains Mono" font-size="13" fill="var(--ink)">$120 (×1.20)</text>
-        <rect x="20" y="145" width="135" height="40" fill="#e08770" stroke="var(--trap-d)" stroke-width="1.5"/>
+        <rect x="20" y="145" width="135" height="40" fill="var(--trap)" stroke="var(--trap-d)" stroke-width="1.5"/>
         <text x="165" y="170" font-family="JetBrains Mono" font-size="13" fill="var(--ink)">$96 (×0.80)</text>
         <text x="20" y="208" font-family="Playfair Display" font-style="italic" font-size="14" font-weight="700" fill="var(--trap-d)">net −4%, not 0%</text>
       </svg>
@@ -5115,7 +5398,7 @@ function renderVisual(skillId){
           <!-- diamond paths -->
           <path class="basepath" d="M 180 220 L 280 130 L 180 50 L 80 130 Z"/>
           <!-- labels -->
-          <text x="180" y="32" text-anchor="middle" font-family="Playfair Display" font-style="italic" font-size="13" fill="var(--gold-d)" font-weight="700">⚾ each base = a doubling</text>
+          <text x="180" y="32" text-anchor="middle" font-family="Playfair Display" font-style="italic" font-size="13" fill="var(--gold-d)" font-weight="700">each base = a doubling</text>
           <!-- bases -->
           <rect class="base active" id="base-home-${skillId}" x="170" y="210" width="20" height="20"/>
           <text x="180" y="248" text-anchor="middle" class="label" font-family="JetBrains Mono">HOME · 1</text>
@@ -5131,10 +5414,10 @@ function renderVisual(skillId){
         </svg>
       </div>
       <div style="display:flex; gap:6px; margin-top:8px; justify-content:center">
-        <button class="btn sm" onclick="advanceRunner('${skillId}', 0)">↺ Reset</button>
-        <button class="btn sm" onclick="advanceRunner('${skillId}', 1)">→ 1st (×2)</button>
-        <button class="btn sm" onclick="advanceRunner('${skillId}', 2)">→ 2nd (×4)</button>
-        <button class="btn sm" onclick="advanceRunner('${skillId}', 3)">→ 3rd (×8)</button>
+        <button class="btn sm" onclick="advanceRunner('${skillId}', 0)">Reset</button>
+        <button class="btn sm" onclick="advanceRunner('${skillId}', 1)">1st (×2)</button>
+        <button class="btn sm" onclick="advanceRunner('${skillId}', 2)">2nd (×4)</button>
+        <button class="btn sm" onclick="advanceRunner('${skillId}', 3)">3rd (×8)</button>
       </div>
     `;
   } else if (M.visualType === 'word-translate'){
@@ -5279,7 +5562,11 @@ const QR_LOCKS = {
   'absval':'<b>|x| is distance from zero.</b> The V-graph reflects negatives across the y-axis.',
   'untimed':'<b>Knowledge before speed.</b> 24 / 30 untimed unlocks timed practice.',
   'skip-ret':'<b>Skip after 90 seconds.</b> Don\'t let one problem swallow your section.',
-  'guess':'<b>Eliminate before guessing.</b> 5 choices → 2 doubles your odds.'
+  'guess':'<b>Eliminate before guessing.</b> 5 choices → 2 doubles your odds.',
+  'binomials':'<b>(x+y)² has a middle term.</b> Twice the product, never zero.',
+  'geo-2d':'<b>Area is squared. Perimeter is linear.</b> Double the side, area ×4.',
+  'sets':'<b>Union − Intersection.</b> Inclusion-exclusion prevents double-counting.',
+  'desc-stats':'<b>Mean shifts with outliers; median doesn\'t.</b> Pick by data shape.'
 };
 
 /* ===== 1. coord-plane ===== */
@@ -6098,8 +6385,8 @@ window.qrRateRun = function(skillId){
     dotA.setAttribute('class','runner-a'); dotA.setAttribute('cx', xT(0)); dotA.setAttribute('cy', yD(s.a.start)); dotA.setAttribute('r', 7); dotA.setAttribute('fill','var(--gold-d)'); svg.appendChild(dotA);
     dotB = svg.ownerDocument.createElementNS('http://www.w3.org/2000/svg', 'circle');
     dotB.setAttribute('class','runner-b'); dotB.setAttribute('cx', xT(0)); dotB.setAttribute('cy', yD(s.b.start)); dotB.setAttribute('r', 7); dotB.setAttribute('fill','var(--teal-3)'); svg.appendChild(dotB);
-    anime({targets: dotA, cx: xT(tMax), cy: yD(s.a.start + s.a.rate*tMax), duration: 2400, easing:'linear', complete: () => dotA.remove()});
-    anime({targets: dotB, cx: xT(tMax), cy: yD(s.b.start - s.b.rate*tMax), duration: 2400, easing:'linear', complete: () => dotB.remove()});
+    anime({targets: dotA, cx: xT(tMax), cy: yD(s.a.start + s.a.rate*tMax), duration: 1500, easing:'linear', complete: () => dotA.remove()});
+    anime({targets: dotB, cx: xT(tMax), cy: yD(s.b.start - s.b.rate*tMax), duration: 1500, easing:'linear', complete: () => dotB.remove()});
   } else {
     const tA = 1/s.a.rate, tB = 1/s.b.rate, tComb = (s.a.rate+s.b.rate)===0?0:1/(s.a.rate+s.b.rate);
     const tMax = Math.max(tA, tB, 8);
@@ -6110,9 +6397,9 @@ window.qrRateRun = function(skillId){
     dotB.setAttribute('class','runner-b'); dotB.setAttribute('cx', xT(0)); dotB.setAttribute('cy', yF(0)); dotB.setAttribute('r', 7); dotB.setAttribute('fill','var(--teal-3)'); svg.appendChild(dotB);
     const dotC = svg.ownerDocument.createElementNS('http://www.w3.org/2000/svg', 'circle');
     dotC.setAttribute('cx', xT(0)); dotC.setAttribute('cy', yF(0)); dotC.setAttribute('r', 8); dotC.setAttribute('fill','var(--gold-d)'); dotC.setAttribute('stroke','var(--paper)'); dotC.setAttribute('stroke-width','2'); svg.appendChild(dotC);
-    anime({targets: dotA, cx: xT(Math.min(tA,tMax)), cy: yF(Math.min(s.a.rate*tMax, 1)), duration: 2400, easing:'linear', complete: () => dotA.remove()});
-    anime({targets: dotB, cx: xT(Math.min(tB,tMax)), cy: yF(Math.min(s.b.rate*tMax, 1)), duration: 2400, easing:'linear', complete: () => dotB.remove()});
-    anime({targets: dotC, cx: xT(Math.min(tComb,tMax)), cy: yF(1), duration: 2400, easing:'linear', complete: () => dotC.remove()});
+    anime({targets: dotA, cx: xT(Math.min(tA,tMax)), cy: yF(Math.min(s.a.rate*tMax, 1)), duration: 1500, easing:'linear', complete: () => dotA.remove()});
+    anime({targets: dotB, cx: xT(Math.min(tB,tMax)), cy: yF(Math.min(s.b.rate*tMax, 1)), duration: 1500, easing:'linear', complete: () => dotB.remove()});
+    anime({targets: dotC, cx: xT(Math.min(tComb,tMax)), cy: yF(1), duration: 1500, easing:'linear', complete: () => dotC.remove()});
   }
 };
 window.qrRateSet = function(skillId, who, k, v){ const s = QR_STATE[skillId]; if (!s) return; s[who][k] = +v; qrRateRedraw(skillId); };
@@ -6267,6 +6554,7 @@ function qrWordTranslate(skillId){
         <input type="text" id="qrwt-input-${skillId}" placeholder="Type your own sentence…" style="flex:1; padding:8px 10px; font-family:'DM Sans',sans-serif; font-size:13px; border:1.5px solid var(--line); border-radius:6px; background:var(--paper)"/>
         <button class="btn sm" onclick="qrWordCustom('${skillId}')">Translate</button>
       </div>
+      <p class="qr-cap">"of" means ×. "more than X" reverses (X first). Translate one phrase at a time, never the whole sentence at once.</p>
     </div>`;
 }
 function qrWordTranslateInit(skillId){ qrWordRedraw(skillId); }
@@ -6687,6 +6975,7 @@ function qrDecomposer(skillId){
         <button class="btn sm" onclick="qrDecPreset('${skillId}','99×7')">99 × 7</button>
         <button class="btn sm" onclick="qrDecPreset('${skillId}','24×25')">24 × 25</button>
       </div>
+      <p class="qr-cap">Decompose first. Distribute, double-and-halve, or round-and-correct turn one hard step into a chain of easy ones.</p>
     </div>`;
 }
 function qrDecomposerInit(skillId){ qrDecRedraw(skillId); }
@@ -7294,6 +7583,7 @@ function qrExpRules(skillId){
       <div class="qr-slider"><label>m</label><input type="range" min="0" max="6" step="1" value="${s.m}" oninput="qrErSet('${skillId}','m',this.value)"/><span class="v" id="qrer-vm-${skillId}">${s.m}</span></div>
       <div class="qr-slider"><label>n</label><input type="range" min="0" max="6" step="1" value="${s.n}" oninput="qrErSet('${skillId}','n',this.value)"/><span class="v" id="qrer-vn-${skillId}">${s.n}</span></div>
     </div>
+    <p class="qr-cap">Same base: multiply adds exponents, divide subtracts. Power of a power multiplies them. A negative exponent flips to a reciprocal.</p>
   </div>`;
 }
 function qrExpRulesInit(skillId){ qrErRedraw(skillId); }
@@ -7324,6 +7614,289 @@ function qrErRedraw(skillId){
   document.getElementById('qrer-rule-'+skillId).innerHTML = rule;
 }
 
+/* ===== Binomial Tile (area model) ===== */
+function qrBinomTile(skillId){
+  const s = _qs(skillId, {x:5, y:3, mode:'sum'});
+  return `
+    <div class="qr-vis qr-binom" id="qrbinom-${skillId}">
+      <div class="qr-pill">
+        <button class="${s.mode==='sum'?'active':''}" onclick="qrBinomMode('${skillId}','sum')">(x + y)²</button>
+        <button class="${s.mode==='diff'?'active':''}" onclick="qrBinomMode('${skillId}','diff')">(x − y)²</button>
+        <button class="${s.mode==='dos'?'active':''}" onclick="qrBinomMode('${skillId}','dos')">(x + y)(x − y)</button>
+      </div>
+      <svg viewBox="0 0 360 280" id="qrbinom-svg-${skillId}"></svg>
+      <div class="qr-readout" id="qrbinom-out-${skillId}">—</div>
+      <div class="qr-row">
+        <div class="qr-slider"><label>x</label><input type="range" min="2" max="9" step="1" value="${s.x}" oninput="qrBinomSet('${skillId}','x',this.value)"/><span class="v" id="qrbinom-vx-${skillId}">${s.x}</span></div>
+        <div class="qr-slider"><label>y</label><input type="range" min="1" max="6" step="1" value="${s.y}" oninput="qrBinomSet('${skillId}','y',this.value)"/><span class="v" id="qrbinom-vy-${skillId}">${s.y}</span></div>
+      </div>
+      <p class="qr-cap">The middle term in (x ± y)² is twice the product (the two off-diagonal rectangles). For (x + y)(x − y), one rectangle subtracts the other and the middle vanishes.</p>
+    </div>`;
+}
+function qrBinomTileInit(skillId){ qrBinomRedraw(skillId); }
+window.qrBinomMode = function(skillId, m){ const s = QR_STATE[skillId]; if (!s) return; s.mode = m; qrBinomRedraw(skillId); document.querySelectorAll(`#qrbinom-${skillId} .qr-pill button`).forEach((b,i)=>b.classList.toggle('active', ['sum','diff','dos'][i]===m)); };
+window.qrBinomSet = function(skillId, k, v){ const s = QR_STATE[skillId]; if (!s) return; s[k] = +v; document.getElementById('qrbinom-v'+k+'-'+skillId).textContent = v; qrBinomRedraw(skillId); };
+function qrBinomRedraw(skillId){
+  const s = QR_STATE[skillId]; if (!s) return;
+  const svg = document.getElementById('qrbinom-svg-'+skillId); if (!svg) return;
+  const ox = 30, oy = 30, scale = 22;
+  const x = s.x, y = s.y;
+  const xPx = x*scale, yPx = y*scale;
+  let html = '';
+  let result = '';
+  if (s.mode === 'sum'){
+    // (x+y)² square divided into 4: x², xy, xy, y²
+    const total = xPx + yPx;
+    html += `<rect x="${ox}" y="${oy}" width="${xPx}" height="${xPx}" fill="var(--gold)" stroke="var(--gold-d)" stroke-width="1.5"/>`;
+    html += `<text x="${ox+xPx/2}" y="${oy+xPx/2+5}" text-anchor="middle" font-family="JetBrains Mono" font-size="14" font-weight="700" fill="var(--ink)">x² = ${x*x}</text>`;
+    html += `<rect x="${ox+xPx}" y="${oy}" width="${yPx}" height="${xPx}" fill="var(--teal-3)" stroke="var(--teal)" stroke-width="1.5" opacity="0.85"/>`;
+    html += `<text x="${ox+xPx+yPx/2}" y="${oy+xPx/2+5}" text-anchor="middle" font-family="JetBrains Mono" font-size="12" font-weight="700" fill="var(--ink)">xy = ${x*y}</text>`;
+    html += `<rect x="${ox}" y="${oy+xPx}" width="${xPx}" height="${yPx}" fill="var(--teal-3)" stroke="var(--teal)" stroke-width="1.5" opacity="0.85"/>`;
+    html += `<text x="${ox+xPx/2}" y="${oy+xPx+yPx/2+5}" text-anchor="middle" font-family="JetBrains Mono" font-size="12" font-weight="700" fill="var(--ink)">xy = ${x*y}</text>`;
+    html += `<rect x="${ox+xPx}" y="${oy+xPx}" width="${yPx}" height="${yPx}" fill="var(--paper-3)" stroke="var(--ink-mute)" stroke-width="1.5"/>`;
+    html += `<text x="${ox+xPx+yPx/2}" y="${oy+xPx+yPx/2+5}" text-anchor="middle" font-family="JetBrains Mono" font-size="12" font-weight="700" fill="var(--ink)">y² = ${y*y}</text>`;
+    result = `(${x} + ${y})² = ${x*x} + 2·${x*y} + ${y*y} = ${(x+y)*(x+y)}`;
+  } else if (s.mode === 'diff'){
+    // (x-y)² visualized as x² with two xy strips and y² overlap subtracted (visual: highlight inner (x-y)² square)
+    const inner = (x-y)*scale;
+    html += `<rect x="${ox}" y="${oy}" width="${xPx}" height="${xPx}" fill="var(--paper-3)" stroke="var(--ink-mute)" stroke-width="1.5"/>`;
+    html += `<text x="${ox+xPx-6}" y="${oy+14}" text-anchor="end" font-family="JetBrains Mono" font-size="11" fill="var(--ink-mute)">x² = ${x*x}</text>`;
+    if (x > y){
+      html += `<rect x="${ox}" y="${oy}" width="${inner}" height="${inner}" fill="var(--gold)" stroke="var(--gold-d)" stroke-width="1.5" opacity="0.95"/>`;
+      html += `<text x="${ox+inner/2}" y="${oy+inner/2+5}" text-anchor="middle" font-family="JetBrains Mono" font-size="13" font-weight="700" fill="var(--ink)">(x−y)² = ${(x-y)*(x-y)}</text>`;
+      html += `<rect x="${ox+inner}" y="${oy}" width="${yPx}" height="${inner}" fill="var(--trap)" stroke="var(--trap-d)" stroke-width="1.2" opacity="0.6"/>`;
+      html += `<rect x="${ox}" y="${oy+inner}" width="${inner}" height="${yPx}" fill="var(--trap)" stroke="var(--trap-d)" stroke-width="1.2" opacity="0.6"/>`;
+      html += `<text x="${ox+inner+yPx/2}" y="${oy+inner/2+5}" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="var(--ink-2)">−xy</text>`;
+      html += `<rect x="${ox+inner}" y="${oy+inner}" width="${yPx}" height="${yPx}" fill="var(--paper-2)" stroke="var(--ink-mute)" stroke-width="1.2"/>`;
+      html += `<text x="${ox+inner+yPx/2}" y="${oy+inner+yPx/2+4}" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="var(--ink-mute)">+y²</text>`;
+    }
+    result = `(${x} − ${y})² = ${x*x} − 2·${x*y} + ${y*y} = ${(x-y)*(x-y)}`;
+  } else { // dos: (x+y)(x-y)
+    if (x > y){
+      const inner = (x-y)*scale;
+      html += `<rect x="${ox}" y="${oy}" width="${xPx+yPx}" height="${inner}" fill="var(--gold)" stroke="var(--gold-d)" stroke-width="1.5"/>`;
+      html += `<text x="${ox+(xPx+yPx)/2}" y="${oy+inner/2+5}" text-anchor="middle" font-family="JetBrains Mono" font-size="14" font-weight="700" fill="var(--ink)">(x+y)(x−y) = ${(x+y)*(x-y)}</text>`;
+      html += `<rect x="${ox+xPx}" y="${oy}" width="${yPx}" height="${inner}" fill="none" stroke="var(--teal)" stroke-width="1.5" stroke-dasharray="4 3"/>`;
+      html += `<text x="${ox+xPx+yPx+5}" y="${oy+inner/2+4}" font-family="JetBrains Mono" font-size="10" fill="var(--ink-mute)">width = x+y = ${x+y}</text>`;
+      html += `<text x="${ox-5}" y="${oy+inner/2+4}" text-anchor="end" font-family="JetBrains Mono" font-size="10" fill="var(--ink-mute)">${x-y}</text>`;
+    }
+    result = `(${x} + ${y})(${x} − ${y}) = ${x*x} − ${y*y} = ${x*x - y*y}`;
+  }
+  svg.innerHTML = html;
+  document.getElementById('qrbinom-out-'+skillId).innerHTML = result;
+}
+
+/* ===== Shape Morph (2D geometry) ===== */
+function qrShapeMorph(skillId){
+  const s = _qs(skillId, {shape:'circle', d:5, d2:7});
+  return `
+    <div class="qr-vis qr-shape" id="qrshape-${skillId}">
+      <div class="qr-pill">
+        <button class="${s.shape==='circle'?'active':''}" onclick="qrShapePick('${skillId}','circle')">Circle</button>
+        <button class="${s.shape==='square'?'active':''}" onclick="qrShapePick('${skillId}','square')">Square</button>
+        <button class="${s.shape==='triangle'?'active':''}" onclick="qrShapePick('${skillId}','triangle')">Triangle</button>
+        <button class="${s.shape==='rect'?'active':''}" onclick="qrShapePick('${skillId}','rect')">Rectangle</button>
+      </div>
+      <svg viewBox="0 0 360 280" id="qrshape-svg-${skillId}"></svg>
+      <div class="qr-readout" id="qrshape-out-${skillId}">—</div>
+      <div class="qr-row" id="qrshape-ctrl-${skillId}"></div>
+      <p class="qr-cap">Drag the slider. The shape scales — and the area grows quadratically while the perimeter grows linearly.</p>
+    </div>`;
+}
+function qrShapeMorphInit(skillId){ qrShapeRedraw(skillId); }
+window.qrShapePick = function(skillId, shape){ const s = QR_STATE[skillId]; if (!s) return; s.shape = shape; qrShapeRedraw(skillId); document.querySelectorAll(`#qrshape-${skillId} .qr-pill button`).forEach((b,i)=>b.classList.toggle('active', ['circle','square','triangle','rect'][i]===shape)); };
+window.qrShapeSet = function(skillId, k, v){ const s = QR_STATE[skillId]; if (!s) return; s[k] = +v; qrShapeRedraw(skillId); };
+function qrShapeRedraw(skillId){
+  const s = QR_STATE[skillId]; if (!s) return;
+  const svg = document.getElementById('qrshape-svg-'+skillId); if (!svg) return;
+  const cx = 180, cy = 130;
+  const scale = 14;
+  let html = '', area = 0, peri = 0, formula = '';
+  if (s.shape === 'circle'){
+    const r = s.d, rPx = r*scale;
+    html = `<circle cx="${cx}" cy="${cy}" r="${rPx}" fill="var(--gold-glow)" stroke="var(--gold-d)" stroke-width="2"/>` +
+           `<line x1="${cx}" y1="${cy}" x2="${cx+rPx}" y2="${cy}" stroke="var(--gold-d)" stroke-width="1.5" stroke-dasharray="3 3"/>` +
+           `<text x="${cx+rPx/2}" y="${cy-6}" text-anchor="middle" font-family="JetBrains Mono" font-size="11" fill="var(--gold-d)" font-weight="700">r = ${r}</text>`;
+    area = Math.PI * r * r;
+    peri = 2 * Math.PI * r;
+    formula = `A = πr² = π·${r}² = ${r*r}π ≈ ${area.toFixed(2)} · C = 2πr = ${2*r}π ≈ ${peri.toFixed(2)}`;
+  } else if (s.shape === 'square'){
+    const side = s.d, sPx = side*scale;
+    html = `<rect x="${cx-sPx/2}" y="${cy-sPx/2}" width="${sPx}" height="${sPx}" fill="var(--gold-glow)" stroke="var(--gold-d)" stroke-width="2"/>` +
+           `<text x="${cx}" y="${cy+sPx/2+18}" text-anchor="middle" font-family="JetBrains Mono" font-size="11" fill="var(--gold-d)" font-weight="700">s = ${side}</text>`;
+    area = side*side;
+    peri = 4*side;
+    formula = `A = s² = ${side}² = ${area} · P = 4s = ${peri}`;
+  } else if (s.shape === 'triangle'){
+    const b = s.d, h = s.d2, bPx = b*scale, hPx = h*scale;
+    html = `<polygon points="${cx-bPx/2},${cy+hPx/2} ${cx+bPx/2},${cy+hPx/2} ${cx-bPx/2+bPx*0.3},${cy-hPx/2}" fill="var(--gold-glow)" stroke="var(--gold-d)" stroke-width="2"/>` +
+           `<line x1="${cx-bPx/2+bPx*0.3}" y1="${cy-hPx/2}" x2="${cx-bPx/2+bPx*0.3}" y2="${cy+hPx/2}" stroke="var(--teal)" stroke-width="1.4" stroke-dasharray="3 3"/>` +
+           `<text x="${cx-bPx/2+bPx*0.3+8}" y="${cy}" font-family="JetBrains Mono" font-size="10" fill="var(--teal)">h = ${h}</text>` +
+           `<text x="${cx}" y="${cy+hPx/2+18}" text-anchor="middle" font-family="JetBrains Mono" font-size="11" fill="var(--gold-d)" font-weight="700">b = ${b}</text>`;
+    area = 0.5 * b * h;
+    peri = 0;
+    formula = `A = ½bh = ½·${b}·${h} = ${area}  &nbsp;<span class="muted">(perimeter depends on slant sides)</span>`;
+  } else { // rect
+    const w = s.d, h = s.d2, wPx = w*scale, hPx = h*scale;
+    html = `<rect x="${cx-wPx/2}" y="${cy-hPx/2}" width="${wPx}" height="${hPx}" fill="var(--gold-glow)" stroke="var(--gold-d)" stroke-width="2"/>` +
+           `<text x="${cx}" y="${cy+hPx/2+18}" text-anchor="middle" font-family="JetBrains Mono" font-size="11" fill="var(--gold-d)" font-weight="700">l = ${w}</text>` +
+           `<text x="${cx+wPx/2+8}" y="${cy+4}" font-family="JetBrains Mono" font-size="11" fill="var(--gold-d)" font-weight="700">w = ${h}</text>`;
+    area = w*h;
+    peri = 2*(w+h);
+    formula = `A = lw = ${w}·${h} = ${area} · P = 2(l + w) = ${peri}`;
+  }
+  svg.innerHTML = html;
+  document.getElementById('qrshape-out-'+skillId).innerHTML = formula;
+  const needsTwo = s.shape === 'triangle' || s.shape === 'rect';
+  const labelMain = s.shape === 'circle' ? 'r' : s.shape === 'square' ? 's' : s.shape === 'triangle' ? 'b' : 'l';
+  let ctrl = `<div class="qr-slider"><label>${labelMain}</label><input type="range" min="1" max="10" step="1" value="${s.d}" oninput="qrShapeSet('${skillId}','d',this.value)"/><span class="v">${s.d}</span></div>`;
+  if (needsTwo){
+    const label2 = s.shape === 'triangle' ? 'h' : 'w';
+    ctrl += `<div class="qr-slider"><label>${label2}</label><input type="range" min="1" max="10" step="1" value="${s.d2}" oninput="qrShapeSet('${skillId}','d2',this.value)"/><span class="v">${s.d2}</span></div>`;
+  }
+  document.getElementById('qrshape-ctrl-'+skillId).innerHTML = ctrl;
+}
+
+/* ===== Venn 2-Set ===== */
+function qrVenn2Set(skillId){
+  const s = _qs(skillId, {a:30, b:25, both:10, query:'union'});
+  return `
+    <div class="qr-vis qr-venn" id="qrvenn-${skillId}">
+      <svg viewBox="0 0 380 240" id="qrvenn-svg-${skillId}"></svg>
+      <div class="qr-readout" id="qrvenn-out-${skillId}">—</div>
+      <div class="qr-pill">
+        <button class="${s.query==='union'?'active':''}" onclick="qrVennQuery('${skillId}','union')">A ∪ B</button>
+        <button class="${s.query==='inter'?'active':''}" onclick="qrVennQuery('${skillId}','inter')">A ∩ B</button>
+        <button class="${s.query==='aOnly'?'active':''}" onclick="qrVennQuery('${skillId}','aOnly')">A only</button>
+        <button class="${s.query==='bOnly'?'active':''}" onclick="qrVennQuery('${skillId}','bOnly')">B only</button>
+      </div>
+      <div class="qr-row">
+        <div class="qr-slider"><label>|A|</label><input type="range" min="0" max="60" step="1" value="${s.a}" oninput="qrVennSet('${skillId}','a',this.value)"/><span class="v" id="qrvenn-va-${skillId}">${s.a}</span></div>
+        <div class="qr-slider"><label>|B|</label><input type="range" min="0" max="60" step="1" value="${s.b}" oninput="qrVennSet('${skillId}','b',this.value)"/><span class="v" id="qrvenn-vb-${skillId}">${s.b}</span></div>
+        <div class="qr-slider"><label>|A∩B|</label><input type="range" min="0" max="30" step="1" value="${s.both}" oninput="qrVennSet('${skillId}','both',this.value)"/><span class="v" id="qrvenn-vboth-${skillId}">${s.both}</span></div>
+      </div>
+      <p class="qr-cap">Add |A| and |B|, then subtract the overlap once to get |A ∪ B|. Adding without subtracting double-counts the middle.</p>
+    </div>`;
+}
+function qrVenn2SetInit(skillId){ qrVennRedraw(skillId); }
+window.qrVennSet = function(skillId, k, v){ const s = QR_STATE[skillId]; if (!s) return; s[k] = +v; document.getElementById('qrvenn-v'+k+'-'+skillId).textContent = v; qrVennRedraw(skillId); };
+window.qrVennQuery = function(skillId, q){ const s = QR_STATE[skillId]; if (!s) return; s.query = q; qrVennRedraw(skillId); document.querySelectorAll(`#qrvenn-${skillId} .qr-pill button`).forEach((b,i)=>b.classList.toggle('active', ['union','inter','aOnly','bOnly'][i]===q)); };
+function qrVennRedraw(skillId){
+  const s = QR_STATE[skillId]; if (!s) return;
+  const svg = document.getElementById('qrvenn-svg-'+skillId); if (!svg) return;
+  const cap = Math.min(s.both, s.a, s.b);
+  const aOnly = Math.max(0, s.a - cap);
+  const bOnly = Math.max(0, s.b - cap);
+  const union = aOnly + bOnly + cap;
+  const cxA = 145, cxB = 235, cy = 110, r = 70;
+  const fillA = s.query === 'union' || s.query === 'aOnly' ? 'var(--gold-glow)' : (s.query === 'inter' ? 'var(--paper-3)' : 'var(--paper-3)');
+  const fillB = s.query === 'union' || s.query === 'bOnly' ? 'rgba(58,107,84,0.30)' : (s.query === 'inter' ? 'var(--paper-3)' : 'var(--paper-3)');
+  const fillI = s.query === 'union' || s.query === 'inter' ? 'rgba(201,168,76,0.55)' : 'transparent';
+  let html = '';
+  html += `<defs><clipPath id="vclipA-${skillId}"><circle cx="${cxA}" cy="${cy}" r="${r}"/></clipPath></defs>`;
+  html += `<circle cx="${cxA}" cy="${cy}" r="${r}" fill="${fillA}" stroke="var(--gold-d)" stroke-width="1.8"/>`;
+  html += `<circle cx="${cxB}" cy="${cy}" r="${r}" fill="${fillB}" stroke="var(--teal)" stroke-width="1.8"/>`;
+  html += `<g clip-path="url(#vclipA-${skillId})"><circle cx="${cxB}" cy="${cy}" r="${r}" fill="${fillI}" stroke="none"/></g>`;
+  html += `<text x="${cxA - r/2}" y="${cy+5}" text-anchor="middle" font-family="JetBrains Mono" font-size="14" font-weight="700" fill="var(--ink)">${aOnly}</text>`;
+  html += `<text x="${cxB + r/2}" y="${cy+5}" text-anchor="middle" font-family="JetBrains Mono" font-size="14" font-weight="700" fill="var(--ink)">${bOnly}</text>`;
+  html += `<text x="${(cxA+cxB)/2}" y="${cy+5}" text-anchor="middle" font-family="JetBrains Mono" font-size="14" font-weight="700" fill="var(--ink)">${cap}</text>`;
+  html += `<text x="${cxA - r}" y="${cy - r - 8}" font-family="DM Sans" font-size="13" font-weight="700" fill="var(--gold-d)">A</text>`;
+  html += `<text x="${cxB + r - 6}" y="${cy - r - 8}" font-family="DM Sans" font-size="13" font-weight="700" fill="var(--teal)">B</text>`;
+  svg.innerHTML = html;
+  let answer = '';
+  if (s.query === 'union') answer = `|A ∪ B| = |A| + |B| − |A ∩ B| = ${s.a} + ${s.b} − ${cap} = <b>${union}</b>`;
+  else if (s.query === 'inter') answer = `|A ∩ B| = <b>${cap}</b>`;
+  else if (s.query === 'aOnly') answer = `|A only| = |A| − |A ∩ B| = ${s.a} − ${cap} = <b>${aOnly}</b>`;
+  else answer = `|B only| = |B| − |A ∩ B| = ${s.b} − ${cap} = <b>${bOnly}</b>`;
+  document.getElementById('qrvenn-out-'+skillId).innerHTML = answer;
+}
+
+/* ===== Stat Spread (mean / median / mode / σ) ===== */
+function qrStatSpread(skillId){
+  const s = _qs(skillId, {data:[3,5,5,7,12], showSigma:false});
+  return `
+    <div class="qr-vis qr-stat" id="qrstat-${skillId}">
+      <svg viewBox="0 0 420 220" id="qrstat-svg-${skillId}"></svg>
+      <div class="qr-readout" id="qrstat-out-${skillId}">—</div>
+      <div class="qr-row" style="flex-wrap:wrap; justify-content:center">
+        <button class="btn sm" onclick="qrStatPreset('${skillId}','symmetric')">Symmetric</button>
+        <button class="btn sm" onclick="qrStatPreset('${skillId}','outlier')">Add outlier</button>
+        <button class="btn sm" onclick="qrStatPreset('${skillId}','bimodal')">Bimodal</button>
+        <button class="btn sm" onclick="qrStatPreset('${skillId}','tight')">Tight cluster</button>
+        <button class="btn sm" onclick="qrStatToggle('${skillId}')" id="qrstat-sig-${skillId}">Show σ band</button>
+      </div>
+      <div class="qr-row" style="justify-content:center">
+        <input type="text" id="qrstat-input-${skillId}" placeholder="Type comma-separated values…" style="flex:1; max-width:320px; padding:6px 10px; font-family:'JetBrains Mono',monospace; font-size:12px; border:1.5px solid var(--line); border-radius:6px; background:var(--paper); color:var(--ink)" value="${s.data.join(', ')}"/>
+        <button class="btn sm" onclick="qrStatLoad('${skillId}')">Load</button>
+      </div>
+      <p class="qr-cap">Mean (gold) is pulled toward outliers. Median (teal) holds steady. Mode is the tallest stack. The σ band shows ±1 standard deviation from the mean.</p>
+    </div>`;
+}
+function qrStatSpreadInit(skillId){ qrStatRedraw(skillId); }
+window.qrStatPreset = function(skillId, name){
+  const s = QR_STATE[skillId]; if (!s) return;
+  const presets = {'symmetric':[2,4,4,6,6,8,10], 'outlier':[3,5,5,7,12,100], 'bimodal':[2,2,3,8,9,9,10], 'tight':[5,5,6,6,6,7,7]};
+  s.data = presets[name] || s.data;
+  document.getElementById('qrstat-input-'+skillId).value = s.data.join(', ');
+  qrStatRedraw(skillId);
+};
+window.qrStatToggle = function(skillId){ const s = QR_STATE[skillId]; if (!s) return; s.showSigma = !s.showSigma; qrStatRedraw(skillId); };
+window.qrStatLoad = function(skillId){
+  const s = QR_STATE[skillId]; if (!s) return;
+  const raw = document.getElementById('qrstat-input-'+skillId).value;
+  const parsed = raw.split(/[,\s]+/).map(t => parseFloat(t)).filter(v => !isNaN(v));
+  if (parsed.length > 0){ s.data = parsed; qrStatRedraw(skillId); }
+};
+function qrStatRedraw(skillId){
+  const s = QR_STATE[skillId]; if (!s || !s.data || s.data.length === 0) return;
+  const svg = document.getElementById('qrstat-svg-'+skillId); if (!svg) return;
+  const data = s.data.slice().sort((a,b)=>a-b);
+  const n = data.length;
+  const mean = data.reduce((a,b)=>a+b,0)/n;
+  const median = n%2 ? data[Math.floor(n/2)] : (data[n/2-1]+data[n/2])/2;
+  const freq = {};
+  data.forEach(v => freq[v] = (freq[v]||0)+1);
+  const maxFreq = Math.max(...Object.values(freq));
+  const modes = Object.keys(freq).filter(k => freq[k] === maxFreq).map(Number);
+  const variance = data.reduce((a,b)=>a+(b-mean)*(b-mean),0)/n;
+  const sigma = Math.sqrt(variance);
+  const xMin = Math.min(...data), xMax = Math.max(...data);
+  const pad = Math.max(1, (xMax-xMin)*0.1);
+  const lo = xMin - pad, hi = xMax + pad;
+  const W = 380, ox = 25, axisY = 175, dotR = 9;
+  const xS = v => ox + ((v-lo)/(hi-lo))*W;
+  let html = '';
+  html += `<line x1="${ox}" y1="${axisY}" x2="${ox+W}" y2="${axisY}" stroke="var(--ink)" stroke-width="1.5"/>`;
+  // tick marks
+  const ticks = 6;
+  for (let i = 0; i <= ticks; i++){
+    const v = lo + (hi-lo)*i/ticks;
+    html += `<line x1="${xS(v)}" y1="${axisY}" x2="${xS(v)}" y2="${axisY+5}" stroke="var(--ink-mute)"/>`;
+    html += `<text x="${xS(v)}" y="${axisY+18}" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="var(--ink-mute)">${(+v).toFixed(0)}</text>`;
+  }
+  // sigma band
+  if (s.showSigma){
+    html += `<rect x="${xS(mean-sigma)}" y="${axisY - 80}" width="${xS(mean+sigma)-xS(mean-sigma)}" height="80" fill="var(--paper-2)" stroke="var(--gold-d)" stroke-width="1.2" stroke-dasharray="3 3" opacity="0.7"/>`;
+  }
+  // dots stacked when repeated
+  const counts = {};
+  data.forEach(v => {
+    const x = xS(v);
+    counts[v] = (counts[v]||0)+1;
+    const stackIdx = counts[v]-1;
+    const cy = axisY - dotR - 2 - stackIdx*(dotR*2 + 2);
+    html += `<circle cx="${x}" cy="${cy}" r="${dotR}" fill="var(--paper)" stroke="var(--ink)" stroke-width="1.4"/>`;
+  });
+  // mean and median markers
+  html += `<line x1="${xS(mean)}" y1="20" x2="${xS(mean)}" y2="${axisY}" stroke="var(--gold-d)" stroke-width="2.4"/>`;
+  html += `<text x="${xS(mean)}" y="14" text-anchor="middle" font-family="JetBrains Mono" font-size="11" font-weight="700" fill="var(--gold-d)">mean ${mean.toFixed(2)}</text>`;
+  html += `<line x1="${xS(median)}" y1="40" x2="${xS(median)}" y2="${axisY}" stroke="var(--teal)" stroke-width="2.4" stroke-dasharray="4 3"/>`;
+  html += `<text x="${xS(median)}" y="34" text-anchor="middle" font-family="JetBrains Mono" font-size="11" font-weight="700" fill="var(--teal)">med ${(+median).toFixed(2)}</text>`;
+  svg.innerHTML = html;
+  const modeLabel = modes.length === n ? 'no mode' : `mode ${modes.join(', ')}`;
+  document.getElementById('qrstat-out-'+skillId).innerHTML = `n=${n} · mean ${mean.toFixed(2)} · median ${(+median).toFixed(2)} · ${modeLabel} · σ ${sigma.toFixed(2)}`;
+}
+
 /* ===== Dispatch tables ===== */
 const QR_RENDERERS = {
   'coord-plane': qrCoordPlane, 'prob-tree': qrProbTree, 'count-grid': qrCountGrid, 'z-curve': qrZCurve, 'solid-net': qrSolidNet,
@@ -7335,7 +7908,8 @@ const QR_RENDERERS = {
   'slope-rise-run': qrSlopeRiseRun, 'tri-morph': qrTriMorph, 'absval-fold': qrAbsValFold,
   'prob-venn': qrProbVenn, 'prob-table': qrProbTable,
   'distrib-area': qrDistribArea, 'pemdas-stack': qrPemdasStack,
-  'mixture-beaker': qrMixtureBeaker, 'work-bars': qrWorkBars, 'exp-rules': qrExpRules
+  'mixture-beaker': qrMixtureBeaker, 'work-bars': qrWorkBars, 'exp-rules': qrExpRules,
+  'binom-tile': qrBinomTile, 'shape-morph': qrShapeMorph, 'venn-2set': qrVenn2Set, 'stat-spread': qrStatSpread
 };
 const QR_INITS = {
   'coord-plane': qrCoordPlaneInit, 'prob-tree': qrProbTreeInit, 'count-grid': qrCountGridInit, 'z-curve': qrZCurveInit, 'solid-net': qrSolidNetInit,
@@ -7347,7 +7921,8 @@ const QR_INITS = {
   'slope-rise-run': qrSlopeRiseRunInit, 'tri-morph': qrTriMorphInit, 'absval-fold': qrAbsValFoldInit,
   'prob-venn': qrProbVennInit, 'prob-table': qrProbTableInit,
   'distrib-area': qrDistribAreaInit, 'pemdas-stack': qrPemdasStackInit,
-  'mixture-beaker': qrMixtureBeakerInit, 'work-bars': qrWorkBarsInit, 'exp-rules': qrExpRulesInit
+  'mixture-beaker': qrMixtureBeakerInit, 'work-bars': qrWorkBarsInit, 'exp-rules': qrExpRulesInit,
+  'binom-tile': qrBinomTileInit, 'shape-morph': qrShapeMorphInit, 'venn-2set': qrVenn2SetInit, 'stat-spread': qrStatSpreadInit
 };
 
 /* WORKED EXAMPLES (stage 1) */
@@ -7373,7 +7948,7 @@ function renderWorked(skillId){
         `).join('')}
       </div>
       <div class="worked-ctl">
-        <button class="btn primary sm" onclick="playWorked('${skillId}',${i})">▶ Play through</button>
+        <button class="btn primary sm" onclick="playWorked('${skillId}',${i})">Play through</button>
         <button class="btn ghost sm" onclick="showAllSteps('${skillId}',${i})">Show all at once</button>
         <span class="progress" id="wp-${skillId}-${i}">step 0/${w.steps.length}</span>
       </div>
@@ -7582,9 +8157,16 @@ function renderMastery(skillId){
 
 window.masteryNext = function(skillId){
   const M = MODULES[skillId];
-  // Prefer the separate mastery bank (problems student hasn't seen) when available
-  const sourceList = M.masteryProblems && M.masteryProblems.length ? M.masteryProblems : M.practice;
-  const probs = sourceList.map(pid => BANK_BY_ID[pid]).filter(Boolean);
+  // Prefer the curated mastery bank when set; otherwise pull skill-matched bank problems
+  // the student hasn't seen during practice. Only fall back to practice IDs if neither pool exists.
+  let probs;
+  if (M.masteryProblems && M.masteryProblems.length){
+    probs = M.masteryProblems.map(pid => BANK_BY_ID[pid]).filter(Boolean);
+  } else {
+    const seen = new Set(M.practice || []);
+    probs = BANK.filter(p => p.skills && p.skills.indexOf(skillId) >= 0 && !seen.has(p.id));
+    if (probs.length === 0) probs = (M.practice || []).map(pid => BANK_BY_ID[pid]).filter(Boolean);
+  }
   if (probs.length === 0){
     document.getElementById('mProb-'+skillId).innerHTML = '<p class="muted">No more problems in pool — honor-system mark mastered.</p>';
     return;
@@ -7610,7 +8192,7 @@ window.masteryRecord = function(skillId, correctIdx){
   const wrap = document.querySelector(`[data-stage="m-${skillId}"]`);
   if (!wrap) return;
   const chosen = wrap.querySelector('.opt.correct, .opt.wrong');
-  if (!chosen){ alert('Pick an answer first.'); return; }
+  if (!chosen){ NOTICE.show('Pick an answer first.'); return; }
   const isCorrect = chosen.classList.contains('correct');
   const track = document.getElementById('mTrack-'+skillId).querySelectorAll('.mastery-dot');
   let n = ST.get('mTrack:'+skillId, 0);
@@ -7831,7 +8413,7 @@ function refreshSidebar(){
   // streak fire + SR due + total mastered
   const streak = ST.get('drill:streak', 0);
   const sf = document.getElementById('streakCount');
-  if (sf){ sf.innerHTML = `<span class="flame">🔥</span> ${streak}d`; sf.classList.toggle('on', streak > 0); }
+  if (sf){ sf.textContent = `${streak}d`; sf.classList.toggle('on', streak > 0); }
   const tm = document.getElementById('totMastered');
   if (tm) tm.textContent = masteredCount;
   const due = SR.due().length;
@@ -7928,7 +8510,7 @@ function renderTree(){
       <text class="node-text ${status==='locked'?'locked':''}" x="${p.x+8}" y="${p.y+32}">${s.name.length > 18 ? s.name.slice(0,18)+'…' : s.name}</text>
       ${status==='mastered'?`<circle cx="${p.x+NODE_W-12}" cy="${p.y+12}" r="4" fill="var(--good-d)"/>`:''}
       ${status==='partial'?`<circle cx="${p.x+NODE_W-12}" cy="${p.y+12}" r="4" fill="var(--gold-d)"/>`:''}
-      ${status==='locked'?`<text x="${p.x+NODE_W-14}" y="${p.y+16}" font-size="11" fill="var(--ink-soft)">🔒</text>`:''}
+      ${status==='locked'?`<g transform="translate(${p.x+NODE_W-22} ${p.y+6})"><rect x="2" y="5" width="10" height="8" rx="1.5" fill="none" stroke="var(--ink-soft)" stroke-width="1.3"/><path d="M 4 5 V 3.5 a 3 3 0 0 1 6 0 V 5" fill="none" stroke="var(--ink-soft)" stroke-width="1.3"/></g>`:''}
     </g>`;
   });
   // Resize svg
@@ -7962,7 +8544,9 @@ const LOCKMOD = {
     const wrap = document.getElementById('lockmodPreqs');
     wrap.innerHTML = skill.prereqs.map(pid => {
       const p = SKILL_BY_ID[pid]; const done = m[pid] === 'mastered';
-      return `<div class="preq ${done?'done':''}" onclick="LOCKMOD.go('${pid}')"><div class="stat">${done?'✓':'?'}</div><div class="nm">${p.name}</div><div class="arrow">→</div></div>`;
+      const checkSvg = '<svg width="12" height="9" viewBox="0 0 12 9" aria-hidden="true"><polyline points="1,4.5 4.5,8 11,1" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+      const arrowSvg = '<svg width="11" height="11" viewBox="0 0 11 11" aria-hidden="true"><polyline points="3.5,2 7.5,5.5 3.5,9" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+      return `<div class="preq ${done?'done':''}" onclick="LOCKMOD.go('${pid}')"><div class="stat">${done?checkSvg:'?'}</div><div class="nm">${p.name}</div><div class="arrow">${arrowSvg}</div></div>`;
     }).join('') || '<p class="muted">No prereqs found — should be unlocked. Refresh.</p>';
     document.getElementById('lockmodBack').classList.add('show');
   },
@@ -7975,7 +8559,9 @@ const LOCKMOD = {
     wrap.innerHTML = '<p class="muted" style="font-size:13px; margin-bottom:10px">Live modules to work on now:</p>' + liveOptions.map(id => {
       const p = SKILL_BY_ID[id]; if (!p) return '';
       const done = (getMastery())[id] === 'mastered';
-      return `<div class="preq ${done?'done':''}" onclick="LOCKMOD.go('${id}')"><div class="stat">${done?'✓':'→'}</div><div class="nm">${p.name}</div><div class="arrow">→</div></div>`;
+      const checkSvg = '<svg width="12" height="9" viewBox="0 0 12 9" aria-hidden="true"><polyline points="1,4.5 4.5,8 11,1" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+      const arrowSvg = '<svg width="11" height="11" viewBox="0 0 11 11" aria-hidden="true"><polyline points="3.5,2 7.5,5.5 3.5,9" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+      return `<div class="preq ${done?'done':''}" onclick="LOCKMOD.go('${id}')"><div class="stat">${done?checkSvg:arrowSvg}</div><div class="nm">${p.name}</div><div class="arrow">${arrowSvg}</div></div>`;
     }).join('');
     document.getElementById('lockmodBack').classList.add('show');
   },
@@ -7987,6 +8573,25 @@ const LOCKMOD = {
   close(){ document.getElementById('lockmodBack').classList.remove('show'); }
 };
 window.LOCKMOD = LOCKMOD;
+
+/* ============================================================
+   NOTICE — calm modal that replaces alert() in interactive paths.
+   Use NOTICE.show(message) or NOTICE.show(title, message).
+   ============================================================ */
+const NOTICE = {
+  show(a, b){
+    const title = b === undefined ? 'Heads up' : a;
+    const body  = b === undefined ? a : b;
+    document.getElementById('noticeTitle').textContent = title;
+    document.getElementById('noticeBody').textContent = body;
+    const back = document.getElementById('noticeModal');
+    back.classList.add('show');
+    const ok = document.getElementById('noticeOk');
+    if (ok) setTimeout(() => ok.focus(), 0);
+  },
+  close(){ document.getElementById('noticeModal').classList.remove('show'); }
+};
+window.NOTICE = NOTICE;
 
 /* ============================================================
    DIAGNOSTIC
@@ -8222,13 +8827,25 @@ document.getElementById('diagNext').addEventListener('click', () => DIAG.next())
 const STUCK = {
   open(){
     document.getElementById('stuckModal').classList.add('show');
+    document.getElementById('stuckTriage').style.display = 'flex';
+    document.getElementById('stuckBreath').style.display = 'none';
     document.getElementById('stuckWins').style.display = 'none';
     document.getElementById('breathCue').innerHTML = 'Ready?';
     document.getElementById('breathCount').textContent = '— · —';
     document.getElementById('breathFill').style.transform = 'translateY(100%)';
+    this.running = false;
     ST.push('stuck-events', {t:Date.now()});
   },
-  close(){ document.getElementById('stuckModal').classList.remove('show'); if (this.timer) clearInterval(this.timer); },
+  close(){ document.getElementById('stuckModal').classList.remove('show'); if (this.timer) clearInterval(this.timer); this.running = false; },
+  chooseWins(){
+    document.getElementById('stuckTriage').style.display = 'none';
+    this.showWins();
+  },
+  chooseBreath(){
+    document.getElementById('stuckTriage').style.display = 'none';
+    document.getElementById('stuckBreath').style.display = 'flex';
+  },
+  chooseSkip(){ this.close(); },
   startBreath(){
     if (this.running) return;
     this.running = true;
@@ -8361,9 +8978,9 @@ function renderCalibration(){
       <line class="axis" x1="${P}" y1="${H-P}" x2="${W-P}" y2="${H-P}"/>
       <line class="axis" x1="${P}" y1="${P}" x2="${P}" y2="${H-P}"/>
       <path class="calib-line" d="${calibLineD}"/>
-      <text x="${W/2}" y="${H - 8}" text-anchor="middle" font-family="DM Sans" font-size="11" fill="var(--ink-mute)" letter-spacing="2">CONFIDENCE (★)</text>
+      <text x="${W/2}" y="${H - 8}" text-anchor="middle" font-family="DM Sans" font-size="11" fill="var(--ink-mute)" letter-spacing="2">CONFIDENCE (1-5)</text>
       <text x="14" y="${H/2}" text-anchor="middle" font-family="DM Sans" font-size="11" fill="var(--ink-mute)" letter-spacing="2" transform="rotate(-90 14 ${H/2})">ACCURACY</text>
-      ${[1,2,3,4,5].map(c => `<text x="${xS(c)}" y="${H-P+16}" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="var(--ink-mute)">${'★'.repeat(c)}</text>`).join('')}
+      ${[1,2,3,4,5].map(c => `<text x="${xS(c)}" y="${H-P+16}" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="var(--ink-mute)">${c}</text>`).join('')}
       ${[0,0.25,0.5,0.75,1].map(a => `<text x="${P-6}" y="${yS(a)+3}" text-anchor="end" font-family="JetBrains Mono" font-size="10" fill="var(--ink-mute)">${Math.round(a*100)}%</text>`).join('')}
       ${dots}
       <g transform="translate(${W - 130}, ${P - 6})">
@@ -8412,7 +9029,7 @@ function renderPacing(){
 }
 const PACE = {
   start(key, i, curIdx){
-    if (i > curIdx){ alert('Tier locked. Complete the previous tier with 80% accuracy first.'); return; }
+    if (i > curIdx){ NOTICE.show('Tier locked', 'Complete the previous tier with 80% accuracy first.'); return; }
     const tier = PACE_TIERS[i];
     const timeLimit = tier.key === 'untimed' ? null : (tier.key === '90s' ? 90 : tier.key === '60s' ? 60 : 45);
     const m = getMastery();
@@ -8423,7 +9040,7 @@ const PACE = {
       // fallback: any practiced
       pool = BANK.filter(b => ST.get('attempts',[]).some(a => a.probId === b.id));
     }
-    if (pool.length < 5){ alert('Not enough mastered problems yet. Practice more skills first.'); return; }
+    if (pool.length < 5){ NOTICE.show('Not enough mastered problems yet. Practice more skills first.'); return; }
     pool = pool.sort(() => Math.random() - 0.5).slice(0, 8);
     const wrap = document.getElementById('paceStart');
     wrap.innerHTML = `
@@ -8563,7 +9180,7 @@ const SIM = {
     });
     // Shuffle final pool so adjacent problems aren't same skill
     pool.sort(() => Math.random() - 0.5);
-    if (pool.length === 0){ alert('Problem bank empty.'); return; }
+    if (pool.length === 0){ NOTICE.show('Problem bank empty.'); return; }
     const body = document.getElementById('simBody');
     body.style.display = 'block';
     body.innerHTML = '<div id="simRun"></div>';
@@ -8672,7 +9289,7 @@ const SIM = {
   },
   review(){
     const runs = ST.get('sim:runs', []);
-    if (runs.length === 0){ alert('No mocks taken yet.'); return; }
+    if (runs.length === 0){ NOTICE.show('No mocks taken yet.'); return; }
     const last = runs[runs.length - 1];
     document.getElementById('simBody').style.display = 'block';
     document.getElementById('simBody').innerHTML = `<div class="card"><h3 style="font-family:'Playfair Display',serif">Last mock: ${last.correct}/${last.total} (predicted ${last.predicted})</h3><p>Run another to refine the prediction.</p></div>`;
@@ -8685,7 +9302,7 @@ window.predictDatScore = predictDatScore;
 const DRILL_SKILL = {
   start(skill){
     const pool = (BANK_BY_SKILL[skill]||[]).slice();
-    if (pool.length === 0){ alert('No problems for '+skill); return; }
+    if (pool.length === 0){ NOTICE.show('No problems for '+skill+' yet.'); return; }
     const drillProbs = pool.sort(()=>Math.random()-0.5).slice(0, Math.min(10, pool.length));
     const body = document.getElementById('simBody');
     body.style.display = 'block';
@@ -8750,7 +9367,7 @@ const DRILL = {
       masteredSkills.forEach(s => (BANK_BY_SKILL[s]||[]).forEach(p => { if (!pool.includes(p)) pool.push(p); }));
     }
     if (pool.length === 0){
-      alert('Master a skill first — daily drill pulls from your spaced-repetition queue.');
+      NOTICE.show('Master a skill first', 'Daily drill pulls from your spaced-repetition queue. Lock in a skill, and tomorrow\'s drill will populate.');
       return;
     }
     // interleave: shuffle so adjacent problems are different skills
@@ -8758,7 +9375,7 @@ const DRILL = {
     const drill = pool;
     const box = document.getElementById('drillBox');
     box.innerHTML = `
-      <div class="card-h"><div class="mark">⚡</div><div class="ttl"><h3>Drill in progress · <em>5 mixed</em></h3></div></div>
+      <div class="card-h"><div class="mark"><svg width="10" height="14" viewBox="0 0 10 14" aria-hidden="true"><polygon points="6,1 1,8 4,8 3,13 9,5 6,5" fill="currentColor"/></svg></div><div class="ttl"><h3>Drill in progress · <em>5 mixed</em></h3></div></div>
       ${drill.map((p,i)=>`
         <div class="card" style="margin-bottom:10px; padding:14px 16px; box-shadow:none">
           <div class="up muted" style="margin-bottom:4px">Q${i+1}</div>
@@ -8782,8 +9399,8 @@ const DRILL = {
       ST.set('drill:lastDay', today);
     }
     document.getElementById('streakCount').textContent = streak + 'd';
-    alert(`Drill complete · ${streak}-day streak.`);
-    document.getElementById('drillBox').innerHTML = `<div class="card-h"><div class="mark good">✓</div><div class="ttl"><h3>Done for today.</h3><div class="sub">Streak: ${streak} days. Come back tomorrow.</div></div></div>`;
+    NOTICE.show('Drill complete', `${streak}-day streak.`);
+    document.getElementById('drillBox').innerHTML = `<div class="card-h"><div class="mark good"><svg width="14" height="10" viewBox="0 0 14 10" aria-hidden="true"><polyline points="1,5 5,9 13,1" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="ttl"><h3>Done for today.</h3><div class="sub">Streak: ${streak} days. Come back tomorrow.</div></div></div>`;
   }
 };
 document.getElementById('drillStreak').textContent = ST.get('drill:streak',0) + ' days';
@@ -8957,7 +9574,7 @@ document.getElementById('btnIso').addEventListener('click', () => {
     if (vis > bestScore){ bestScore = vis; best = s; }
   });
   if (!best) best = sections.find(s => s.querySelector('.card'));
-  if (!best){ alert('Open a module first, then isolate.'); return; }
+  if (!best){ NOTICE.show('Open a module first, then isolate.'); return; }
   enterIsolateOnSection(best.id);
 });
 
@@ -9078,7 +9695,7 @@ const SARAH_EDIT = {
       revised: edits[key].html,
       revisedAt: new Date(edits[key].t).toISOString()
     }));
-    if (out.length === 0){ alert('No edits to export.'); return; }
+    if (out.length === 0){ NOTICE.show('No edits to export.'); return; }
     const blob = JSON.stringify({
       generated: new Date().toISOString(),
       from: 'Sarah QR Remediation v2 — edit log',
@@ -9091,7 +9708,7 @@ const SARAH_EDIT = {
     dl.href = 'data:application/json;charset=utf-8,' + encodeURIComponent(blob);
     dl.download = 'sarah-qr-edits-' + new Date().toISOString().slice(0,10) + '.json';
     dl.click();
-    alert(`Exported ${out.length} edits.\nA file was downloaded AND the JSON was copied to your clipboard.\nEmail it to Tommy or paste into a message.`);
+    NOTICE.show(`Exported ${out.length} edits`, 'A file was downloaded and the JSON was copied to your clipboard. Email it to Tommy or paste into a message.');
   },
   apply(){
     // On boot, apply saved edits to live elements (read-only mode)
@@ -9141,7 +9758,7 @@ const FEEDBACK = {
   close(){ document.getElementById('fbModal').classList.remove('show'); },
   save(){
     const txt = document.getElementById('fbText').value.trim();
-    if (!txt){ alert('Type a note first.'); return; }
+    if (!txt){ NOTICE.show('Type a note first.'); return; }
     const ctx = document.getElementById('fbCtx').textContent;
     const log = ST.get('feedback-log', []);
     log.push({t:Date.now(), tag:this.selectedTag||'note', text:txt, ctx});
@@ -9173,7 +9790,7 @@ const FEEDBACK = {
   },
   exportLog(){
     const log = ST.get('feedback-log', []);
-    if (log.length === 0){ alert('No notes to export.'); return; }
+    if (log.length === 0){ NOTICE.show('No notes to export.'); return; }
     const lines = ['# Sarah\'s feedback log', '', `Exported ${new Date().toLocaleString()} · ${log.length} notes`, ''];
     log.forEach((n, i) => {
       lines.push(`## ${i+1}. [${n.tag}] ${new Date(n.t).toLocaleString()}`);
@@ -9188,7 +9805,7 @@ const FEEDBACK = {
     dl.href = 'data:text/markdown;charset=utf-8,' + encodeURIComponent(md);
     dl.download = 'sarah-feedback-' + new Date().toISOString().slice(0,10) + '.md';
     dl.click();
-    alert(`Exported ${log.length} notes.\nDownloaded as a markdown file AND copied to clipboard.\nEmail or paste to Tommy.`);
+    NOTICE.show(`Exported ${log.length} notes`, 'Downloaded as a markdown file and copied to clipboard. Email or paste to Tommy.');
   },
   clearLog(){
     if (!confirm('Clear all saved notes? This cannot be undone.')) return;
@@ -9225,7 +9842,7 @@ const OB_STEPS = [
   {
     title:'Step 3 — <em>The "I need a sec" button.</em>',
     body:'Bottom of the sidebar. Hit it whenever your brain freezes. It\'s 60 seconds of breathing, then 3 quick wins from skills you\'ve already locked in to rebuild flow. <b>Stuck is normal. Especially on QR.</b>',
-    vis:'<div style="text-align:center; padding:8px"><div style="display:inline-block; padding:11px 14px; background:rgba(194,91,63,0.18); color:#f3c5b3; border:1px solid rgba(194,91,63,0.35); border-radius:9px; font-size:12px; font-weight:600; letter-spacing:0.06em; text-transform:uppercase">⏸ I need a sec</div></div>'
+    vis:'<div style="text-align:center; padding:8px"><div style="display:inline-block; padding:11px 14px; background:rgba(194,91,63,0.18); color:#f3c5b3; border:1px solid rgba(194,91,63,0.35); border-radius:9px; font-size:12px; font-weight:600; letter-spacing:0.06em; text-transform:uppercase">I need a sec</div></div>'
   },
   {
     title:'You\'re ready. <em>Floor first.</em>',
@@ -9340,7 +9957,7 @@ function refreshSkillStreaks(){
     if (m[id] === 'mastered' && maxStreak >= 3){
       const sp = document.createElement('span');
       sp.className = 'streak';
-      sp.textContent = `🔥${maxStreak}`;
+      sp.textContent = `${maxStreak}d streak`;
       labelEl.appendChild(sp);
     }
     if (dueNow){
@@ -9380,9 +9997,10 @@ FEEDBACK.updateBadge();
    ============================================================ */
 [
   'frac-add','frac-mul','frac-dec','dec-arith','pct-of','pct-chg','pct-seq','estim','mental',
-  'lin-eq','distrib','pemdas','neg-ineq',
+  'lin-eq','distrib','binomials','pemdas','neg-ineq',
   'ratios','rate-time','work-rate','mixture','interest','coord','units','word-decode',
   'p-flip','p-andor','p-cond','count-pc','discr','harm','zscore','tri-inv','vol-sa','ds','exps','absval','logs',
+  'geo-2d','sets','desc-stats',
   'untimed','skip-ret','guess'
 ].forEach(renderModule);
 renderTree();

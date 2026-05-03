@@ -41,7 +41,7 @@
       }
     } catch(e){}
     // Tool-specific defaults / fallbacks if no localStorage data yet
-    const totals = { qr:37, gc:37, bio:40, ochem:30 };
+    const totals = { qr:41, gc:37, bio:40, ochem:30 };
     if (out.total === 0) out.total = totals[toolKey] || 30;
     return out;
   }
