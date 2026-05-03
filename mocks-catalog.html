@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Ace Labs · Mock catalog</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=DM+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared/ace-labs-shell.css">
+<style>
+.cat-h{font-family:'Playfair Display',serif; font-size:42px; font-weight:700; line-height:1.05; letter-spacing:-.02em; margin-bottom:8px}
+.cat-h em{color:var(--al-gold-d); font-style:italic}
+.cat-sub{font-size:15px; color:var(--al-ink-2); max-width:680px; margin-bottom:28px}
+
+.cat-cap-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:34px}
+@media (max-width:780px){.cat-cap-grid{grid-template-columns:repeat(2,1fr)}}
+.cat-cap{padding:14px 16px; background:var(--al-paper); border:1px solid var(--al-line); border-radius:9px}
+.cat-cap .lbl{font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:var(--al-ink-mute); font-weight:700}
+.cat-cap .num{font-family:'Playfair Display',serif; font-size:26px; font-weight:700; color:var(--al-ink); line-height:1.2}
+.cat-cap .sub{font-size:12px; color:var(--al-ink-mute); margin-top:4px}
+
+.mock-list{display:flex; flex-direction:column; gap:12px; margin-bottom:34px}
+.mock-row{display:grid; grid-template-columns:60px 1.5fr 2fr auto; gap:14px; align-items:center; padding:18px 22px; background:var(--al-paper); border:1px solid var(--al-line); border-radius:11px; transition:all .15s}
+@media (max-width:780px){.mock-row{grid-template-columns:60px 1fr; gap:8px}}
+.mock-row:hover{box-shadow:0 4px 14px rgba(13,32,24,.06); border-color:var(--al-line-2)}
+.mock-row[data-tier="diagnostic"]{border-left:5px solid #6e7c74}
+.mock-row[data-tier="easy"]{border-left:5px solid var(--al-good)}
+.mock-row[data-tier="standard"]{border-left:5px solid var(--al-gold-d)}
+.mock-row[data-tier="hard"]{border-left:5px solid #c25b3f}
+.mock-row[data-tier="final"]{border-left:5px solid var(--al-trap)}
+.mock-num{font-family:'Playfair Display',serif; font-size:32px; font-weight:900; color:var(--al-gold-d); line-height:1; text-align:center}
+.mock-info .mock-name{font-family:'Playfair Display',serif; font-size:18px; font-weight:700; line-height:1.2}
+.mock-info .mock-name em{color:var(--al-gold-d); font-style:italic}
+.mock-info .mock-tag{font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--al-ink-mute); letter-spacing:.10em; text-transform:uppercase; margin-top:3px; font-weight:700}
+.mock-mix{display:flex; flex-direction:column; gap:6px}
+.mock-mix .bar{height:10px; background:var(--al-paper-3); border-radius:5px; overflow:hidden; display:flex}
+.mock-mix .bar div{height:100%; transition:width .3s}
+.mock-mix .bar .e{background:var(--al-good)}
+.mock-mix .bar .m{background:var(--al-gold)}
+.mock-mix .bar .h{background:#c25b3f}
+.mock-mix .bar .x{background:var(--al-trap)}
+.mock-mix .legend{display:flex; gap:14px; font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--al-ink-mute); font-weight:700}
+.mock-mix .legend span{display:inline-flex; align-items:center; gap:4px}
+.mock-mix .legend i{display:inline-block; width:8px; height:8px; border-radius:2px}
+.mock-cta{padding:10px 18px; background:var(--al-gold); border:1px solid var(--al-gold-d); color:var(--al-ink); font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700; letter-spacing:.10em; text-transform:uppercase; border-radius:7px; text-decoration:none; transition:all .15s; white-space:nowrap; text-align:center}
+.mock-cta:hover{background:var(--al-gold-d); color:var(--al-paper)}
+
+.cat-explainer{padding:20px 24px; background:var(--al-paper-2); border-left:4px solid var(--al-gold-d); border-radius:0 11px 11px 0; margin-top:20px; font-size:14px; line-height:1.6; color:var(--al-ink-2); max-width:720px}
+.cat-explainer b{color:var(--al-ink)}
+.cat-explainer table{width:100%; border-collapse:collapse; font-family:'JetBrains Mono',monospace; font-size:12px; margin-top:10px}
+.cat-explainer th{text-align:left; padding:6px 10px; border-bottom:1.5px solid var(--al-ink); font-weight:700; font-size:11px; letter-spacing:.1em; text-transform:uppercase}
+.cat-explainer td{padding:6px 10px; border-bottom:1px dashed var(--al-line)}
+</style>
+</head>
+<body data-page="catalog">
+<div class="al-app">
+
+<header class="al-top">
+  <div class="al-brand">
+    <span class="al-mark">Ace<em>The</em>DAT</span>
+    <span class="al-divider"></span>
+    <span class="al-product">Ace Labs</span>
+  </div>
+  <nav class="al-nav">
+    <a href="ace-labs.html" class="al-nav-link">← Home</a>
+    <a href="unified-mock.html" class="al-nav-link">Cross-tool mock</a>
+  </nav>
+</header>
+
+<h1 class="cat-h">The mock <em>catalog.</em></h1>
+<p class="cat-sub">10 mocks, laddered. Diagnostic first to read your floor; standard mocks build through the middle; hard mocks ratchet pressure; final mocks simulate test week. Each mock pulls a fresh sample from the bank, so retakes don't see the same problems.</p>
+
+<div class="cat-cap-grid">
+  <div class="cat-cap"><div class="lbl">Bio bank</div><div class="num">~500 Q</div><div class="sub">12 unique 40-Q draws</div></div>
+  <div class="cat-cap"><div class="lbl">GC bank</div><div class="num">605 Q</div><div class="sub">20 unique 30-Q draws</div></div>
+  <div class="cat-cap"><div class="lbl">OChem bank</div><div class="num">355 Q</div><div class="sub">12 unique 30-Q draws</div></div>
+  <div class="cat-cap"><div class="lbl">QR bank</div><div class="num">963 Q</div><div class="sub">24 unique 40-Q draws (separate)</div></div>
+</div>
+
+<div class="mock-list" id="mockList"></div>
+
+<div class="cat-explainer">
+  <b>How to use the catalog.</b> Take Mock #1 (Diagnostic) <em>before</em> any heavy studying — that's your floor reading. Then study to mastery using each engine's modules + spaced-rep cards. Take Mock #2-#3 to confirm the floor lifted. Mocks #4-#5 establish your "standard" baseline. Mock #6-#7 (Hard) drill exam pressure. Mocks #8-#10 (Final) simulate test-week conditions — take one per week in the 3 weeks before your test date.
+  <table>
+    <thead><tr><th>When</th><th>Mock</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>Day 0 (week 1)</td><td>#1 Diagnostic</td><td>Read your floor. Identify weakest subject.</td></tr>
+      <tr><td>Week 2</td><td>#2 Easy</td><td>Confirm Tier 0 work landed. Build confidence.</td></tr>
+      <tr><td>Week 4-5</td><td>#3-4 Standard</td><td>DAT-realistic baseline. Compare deltas.</td></tr>
+      <tr><td>Week 6-7</td><td>#5 Standard, #6 Hard</td><td>Push into harder problems. Accept dips.</td></tr>
+      <tr><td>Week 8</td><td>#7 Hard</td><td>Pressure test. If score holds, you're ready.</td></tr>
+      <tr><td>3 weeks out</td><td>#8 Final</td><td>Full simulation. Time of day, fed, hydrated.</td></tr>
+      <tr><td>2 weeks out</td><td>#9 Final</td><td>Same conditions. Track variance.</td></tr>
+      <tr><td>1 week out</td><td>#10 Final</td><td>Last full simulation. Use for confidence, not panic.</td></tr>
+    </tbody>
+  </table>
+</div>
+
+</div>
+<script>
+const MOCKS = [
+  {n:1, name:'<em>Diagnostic</em>', tier:'diagnostic', tag:'Day 0 · floor reading',  diff:[60,30,10,0],  desc:'Take this BEFORE studying. Reads your floor and points you at your weakest subject. Dont sweat the score.'},
+  {n:2, name:'Easy',                 tier:'easy',       tag:'Week 2 · confidence',     diff:[50,40,10,0],  desc:'Confirms your Tier 0 work landed. Builds confidence. Aim for 70%+.'},
+  {n:3, name:'Standard A',           tier:'standard',   tag:'Week 4 · DAT-realistic',  diff:[30,50,20,0],  desc:'DAT-realistic difficulty mix. This is the score that matters most.'},
+  {n:4, name:'Standard B',           tier:'standard',   tag:'Week 5 · DAT-realistic',  diff:[30,50,20,0],  desc:'Different draw, same difficulty. Compare to A — where did you slip?'},
+  {n:5, name:'Standard C',           tier:'standard',   tag:'Week 6 · DAT-realistic',  diff:[30,50,20,0],  desc:'Third standard mock. Deltas matter more than raw score now.'},
+  {n:6, name:'Hard A',               tier:'hard',       tag:'Week 7 · pressure',       diff:[20,40,30,10], desc:'Pressure-test. Hard problems with traps. Score drops are normal — track recovery time.'},
+  {n:7, name:'Hard B',               tier:'hard',       tag:'Week 8 · pressure',       diff:[20,40,30,10], desc:'Second hard mock. If your score holds within 1-2 of standard, youre ready for finals.'},
+  {n:8, name:'Final A',              tier:'final',      tag:'3 weeks out',             diff:[20,35,30,15], desc:'Full DAT simulation. Same time of day, fed and hydrated, no interruptions.'},
+  {n:9, name:'Final B',              tier:'final',      tag:'2 weeks out',             diff:[20,35,30,15], desc:'Same conditions. Tracking variance is more important than peak score.'},
+  {n:10,name:'Final C',              tier:'final',      tag:'1 week out',              diff:[20,35,30,15], desc:'Last full simulation. Use for confidence calibration, NOT for cramming gaps.'}
+];
+const tierToDiff = {diagnostic:'diagnostic', easy:'easy', standard:'standard', hard:'hard', final:'final'};
+
+const list = document.getElementById('mockList');
+list.innerHTML = MOCKS.map(m => `
+  <div class="mock-row" data-tier="${m.tier}">
+    <div class="mock-num">${m.n}</div>
+    <div class="mock-info">
+      <div class="mock-name">Mock ${m.name}</div>
+      <div class="mock-tag">${m.tag}</div>
+      <div style="font-size:13px; color:var(--al-ink-2); margin-top:4px; line-height:1.45">${m.desc}</div>
+    </div>
+    <div class="mock-mix">
+      <div class="bar">
+        <div class="e" style="width:${m.diff[0]}%"></div>
+        <div class="m" style="width:${m.diff[1]}%"></div>
+        <div class="h" style="width:${m.diff[2]}%"></div>
+        <div class="x" style="width:${m.diff[3]}%"></div>
+      </div>
+      <div class="legend">
+        <span><i style="background:var(--al-good)"></i>${m.diff[0]}% easy</span>
+        <span><i style="background:var(--al-gold)"></i>${m.diff[1]}% med</span>
+        <span><i style="background:#c25b3f"></i>${m.diff[2]}% hard</span>
+        ${m.diff[3] > 0 ? `<span><i style="background:var(--al-trap)"></i>${m.diff[3]}% trap</span>` : ''}
+      </div>
+    </div>
+    <a class="mock-cta" href="unified-mock.html?diff=${tierToDiff[m.tier]}">Take Mock ${m.n}</a>
+  </div>
+`).join('');
+</script>
+</body>
+</html>

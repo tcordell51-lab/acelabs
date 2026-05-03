@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Ace Labs · Survey of Natural Sciences Mock</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared/ace-labs-shell.css">
+<style>
+.mk-stage{max-width:820px; margin:0 auto;}
+.mk-h{font-family:'Playfair Display',serif; font-size:42px; font-weight:700; letter-spacing:-.02em; line-height:1.05; margin-bottom:8px}
+.mk-h em{color:var(--al-gold-d); font-style:italic}
+.mk-sub{font-size:15px; color:var(--al-ink-2); max-width:640px; margin-bottom:24px}
+.mk-pill{display:inline-flex; align-items:center; gap:8px; font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--al-gold-d); background:var(--al-gold-bg); padding:6px 12px; border-radius:99px; border:1px solid var(--al-gold-d); font-weight:700; margin-bottom:18px}
+.mk-config{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:22px}
+@media (max-width:680px){.mk-config{grid-template-columns:1fr}}
+.mk-config-card{padding:18px 22px; background:var(--al-paper); border:1px solid var(--al-line); border-radius:11px}
+.mk-config-card h3{font-family:'Playfair Display',serif; font-size:18px; font-weight:700; margin-bottom:10px}
+.mk-config-card label{display:flex; justify-content:space-between; padding:8px 0; font-size:13px; border-bottom:1px dashed var(--al-line); cursor:pointer}
+.mk-config-card label:last-child{border-bottom:none}
+.mk-config-card label input{margin-right:8px}
+.mk-tier-pill{display:inline-flex; align-items:baseline; gap:8px; padding:5px 12px; background:var(--al-paper-2); border-radius:99px; font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700; letter-spacing:.06em; cursor:pointer; transition:all .15s; border:1px solid var(--al-line)}
+.mk-tier-pill:hover{border-color:var(--al-gold-d)}
+.mk-tier-pill.active{background:var(--al-gold); color:var(--al-ink); border-color:var(--al-gold-d)}
+.mk-start{display:block; width:100%; padding:18px 24px; background:linear-gradient(180deg,var(--al-teal),var(--al-teal-2)); color:var(--al-paper); border:2px solid var(--al-gold); border-radius:12px; font-family:'JetBrains Mono',monospace; font-size:14px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; cursor:pointer; transition:all .18s; text-align:center}
+.mk-start:hover{transform:translateY(-2px); box-shadow:0 12px 36px rgba(13,32,24,.16)}
+.mk-start:disabled{opacity:.5; cursor:not-allowed; transform:none}
+.mk-info{padding:14px 18px; background:var(--al-paper-2); border-left:3px solid var(--al-gold-d); border-radius:0 8px 8px 0; font-size:13px; line-height:1.55; color:var(--al-ink-2); margin-top:14px}
+.mk-info b{color:var(--al-ink)}
+/* In-mock UI */
+.mk-runtop{display:flex; justify-content:space-between; align-items:center; padding:14px 20px; background:var(--al-ink); color:var(--al-paper); border-radius:11px 11px 0 0; font-family:'JetBrains Mono',monospace; font-size:13px; font-weight:700; letter-spacing:.08em}
+.mk-runtop .timer{color:var(--al-gold); font-size:18px}
+.mk-runtop .timer.warn{color:#ff5a5a}
+.mk-runbody{padding:24px 28px; background:var(--al-paper); border:1px solid var(--al-line); border-top:none; border-radius:0 0 11px 11px}
+.mk-q{font-family:'Playfair Display',serif; font-size:20px; font-weight:600; line-height:1.4; margin-bottom:18px}
+.mk-opts{display:flex; flex-direction:column; gap:8px}
+.mk-opt{padding:12px 16px; background:var(--al-paper-2); border:1.5px solid var(--al-line); border-radius:8px; cursor:pointer; transition:all .15s; display:flex; gap:12px; align-items:flex-start; font-size:14px; line-height:1.5}
+.mk-opt:hover{border-color:var(--al-gold-d); background:var(--al-paper)}
+.mk-opt.selected{background:var(--al-gold-bg); border-color:var(--al-gold-d)}
+.mk-opt .let{font-family:'JetBrains Mono',monospace; font-weight:700; color:var(--al-gold-d); flex-shrink:0}
+.mk-runfoot{display:flex; justify-content:space-between; align-items:center; margin-top:20px}
+.mk-pagebtn{padding:10px 18px; font-size:13px; font-weight:700; border:1px solid var(--al-line); background:var(--al-paper); color:var(--al-ink); border-radius:7px; cursor:pointer; font-family:'DM Sans',sans-serif}
+.mk-pagebtn:hover{border-color:var(--al-gold-d)}
+.mk-pagebtn.gold{background:var(--al-gold); border-color:var(--al-gold-d); color:var(--al-ink)}
+.mk-pagebtn.danger{color:var(--al-trap); border-color:var(--al-trap)}
+.mk-pagebtn:disabled{opacity:.4; cursor:not-allowed}
+.mk-progress{flex:1; height:6px; background:var(--al-paper-3); border-radius:3px; overflow:hidden; margin:0 14px}
+.mk-progress-fill{height:100%; background:var(--al-gold); transition:width .25s}
+.mk-jumpbar{display:flex; flex-wrap:wrap; gap:4px; padding:14px 18px; margin-top:14px; background:var(--al-paper-2); border-radius:8px; max-height:160px; overflow-y:auto}
+.mk-jumpbar button{width:30px; height:30px; font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700; background:var(--al-paper); border:1px solid var(--al-line); border-radius:5px; cursor:pointer; color:var(--al-ink-2)}
+.mk-jumpbar button.cur{background:var(--al-ink); color:var(--al-paper)}
+.mk-jumpbar button.answered{background:var(--al-good); color:var(--al-paper); border-color:var(--al-good-d)}
+.mk-jumpbar button.skipped{background:var(--al-paper-3)}
+.mk-jumpbar button:hover{border-color:var(--al-gold-d)}
+/* Result */
+.mk-result{padding:30px 32px; background:var(--al-paper); border:2px solid var(--al-gold); border-radius:14px; max-width:820px; margin:0 auto}
+.mk-result h2{font-family:'Playfair Display',serif; font-size:36px; font-weight:700; margin-bottom:14px}
+.mk-scoregrid{display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin:18px 0}
+@media (max-width:680px){.mk-scoregrid{grid-template-columns:repeat(2,1fr)}}
+.mk-scorecard{padding:16px 18px; text-align:center; background:var(--al-paper-2); border-radius:10px}
+.mk-scorecard.gold{background:var(--al-gold); color:var(--al-ink)}
+.mk-scorecard .lbl{font-size:10px; letter-spacing:.16em; text-transform:uppercase; font-weight:700; color:var(--al-ink-mute); margin-bottom:6px}
+.mk-scorecard.gold .lbl{color:var(--al-ink)}
+.mk-scorecard .num{font-family:'Playfair Display',serif; font-size:36px; font-weight:700; line-height:1; color:var(--al-gold-d)}
+.mk-scorecard.gold .num{color:var(--al-ink)}
+.mk-bysubject{margin:18px 0; padding:18px; background:var(--al-paper-2); border-radius:10px}
+.mk-bysubject table{width:100%; border-collapse:collapse; font-family:'JetBrains Mono',monospace; font-size:13px}
+.mk-bysubject th{text-align:left; padding:6px 10px; font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--al-ink-mute); border-bottom:1.5px solid var(--al-ink)}
+.mk-bysubject td{padding:8px 10px; border-bottom:1px dashed var(--al-line)}
+.mk-bysubject tr:last-child td{border-bottom:none}
+.mk-review{margin-top:22px}
+.mk-review h3{font-family:'Playfair Display',serif; font-size:20px; font-weight:700; margin-bottom:10px}
+.mk-review-card{padding:14px 16px; margin-bottom:8px; background:var(--al-paper); border:1px solid var(--al-line); border-left:3px solid var(--al-trap); border-radius:0 8px 8px 0; font-size:13px; line-height:1.5}
+.mk-review-card .qtext{font-family:'Playfair Display',serif; font-size:14px; font-weight:600; margin-bottom:4px}
+.mk-review-card .why{font-size:12.5px; color:var(--al-ink-2); margin-top:4px}
+.mk-review-card .why b{color:var(--al-good-d)}
+.mk-review-card .why .you{color:var(--al-trap-d); font-weight:700}
+</style>
+</head>
+<body data-page="mock">
+<div class="al-app">
+
+<header class="al-top">
+  <div class="al-brand">
+    <span class="al-mark">Ace<em>The</em>DAT</span>
+    <span class="al-divider"></span>
+    <span class="al-product">Ace Labs</span>
+  </div>
+  <nav class="al-nav">
+    <a href="ace-labs.html" class="al-nav-link">← Home</a>
+    <a href="mocks-catalog.html" class="al-nav-link">Mock catalog</a>
+  </nav>
+</header>
+
+<div class="mk-stage" id="mkStage">
+  <div class="mk-pill"><span style="width:8px;height:8px;border-radius:50%;background:var(--al-gold);display:inline-block"></span>Survey of Natural Sciences mock · Ace Labs</div>
+  <h1 class="mk-h">The DAT science <em>mock.</em></h1>
+  <p class="mk-sub">DAT-format Survey of Natural Sciences. 100 questions in 90 minutes (40 Bio + 30 Gen Chem + 30 OChem). Per-subject scorecard at the end + composite SoNS scaled-score prediction.</p>
+
+  <div class="mk-config">
+    <div class="mk-config-card">
+      <h3>Mock difficulty</h3>
+      <div style="display:flex; flex-wrap:wrap; gap:6px; margin-top:6px">
+        <button class="mk-tier-pill" data-diff="diagnostic">Diagnostic (60/30/10)</button>
+        <button class="mk-tier-pill" data-diff="easy">Easy (50/40/10)</button>
+        <button class="mk-tier-pill active" data-diff="standard">Standard (30/50/20) · DAT-realistic</button>
+        <button class="mk-tier-pill" data-diff="hard">Hard (20/40/30/10)</button>
+        <button class="mk-tier-pill" data-diff="final">Final (DAT-mix + traps)</button>
+      </div>
+    </div>
+    <div class="mk-config-card">
+      <h3>Subjects to include</h3>
+      <label><span><input type="checkbox" id="incBio" checked/>Biology (40 Q)</span><span style="color:var(--al-ink-mute)">— external mock for now</span></label>
+      <label><span><input type="checkbox" id="incGc" checked/>Gen Chem (30 Q)</span><span style="color:var(--al-ink-mute)">— external mock for now</span></label>
+      <label><span><input type="checkbox" id="incOchem" checked/>OChem (30 Q)</span><span style="color:var(--al-good-d); font-weight:700">— 282 in bank ✓</span></label>
+    </div>
+  </div>
+
+  <button class="mk-start" id="mkStartBtn">Start mock · 90:00 timer</button>
+
+  <div class="mk-info">
+    <b>Note:</b> Bio and GC bank extraction lands in the next phase — for now, the unified mock runs the OChem section live and sends Bio/GC to their in-engine mocks (open in new tabs). When all 4 banks are unified, this single button runs the full 100 Q. Difficulty pill changes the easy/medium/hard mix sampled from the OChem bank (282 problems, distribution: 77 easy / 106 medium / 63 hard / 36 hardest).
+  </div>
+</div>
+
+<script src="shared/ochem-bank.js"></script>
+<script>
+let DIFF_MIX = (new URLSearchParams(location.search).get('diff')) || 'standard';
+const _autoStart = (new URLSearchParams(location.search).get('autostart')) === '1';
+const MIXES = {
+  diagnostic: {1:0.60, 2:0.30, 3:0.10, 4:0.00},
+  easy:       {1:0.50, 2:0.40, 3:0.10, 4:0.00},
+  standard:   {1:0.30, 2:0.50, 3:0.20, 4:0.00},
+  hard:       {1:0.20, 2:0.40, 3:0.30, 4:0.10},
+  final:      {1:0.20, 2:0.35, 3:0.30, 4:0.15}
+};
+
+document.querySelectorAll('.mk-tier-pill').forEach(p => p.addEventListener('click', () => {
+  document.querySelectorAll('.mk-tier-pill').forEach(x => x.classList.remove('active'));
+  p.classList.add('active');
+  DIFF_MIX = p.dataset.diff;
+}));
+// Apply URL ?diff= preselection
+if (DIFF_MIX !== 'standard'){
+  document.querySelectorAll('.mk-tier-pill').forEach(p => p.classList.toggle('active', p.dataset.diff === DIFF_MIX));
+}
+
+function buildOChemSet(n){
+  const bank = window.OCHEM_BANK || [];
+  const mix = MIXES[DIFF_MIX];
+  const byDiff = {1:[], 2:[], 3:[], 4:[]};
+  bank.forEach(p => { if (byDiff[p.diff]) byDiff[p.diff].push(p); });
+  Object.keys(byDiff).forEach(d => byDiff[d] = byDiff[d].sort(() => Math.random()-0.5));
+  const slots = [];
+  Object.keys(mix).forEach(d => { for (let i=0;i<Math.round(n*mix[d]);i++) slots.push(+d); });
+  while (slots.length < n) slots.push(2);
+  slots.length = n;
+  return slots.map(d => {
+    let p = byDiff[d].pop();
+    if (!p){ for (const dd of [d,d-1,d+1,d-2,d+2,1,2,3,4]){ if (byDiff[dd]?.length){ p = byDiff[dd].pop(); break; } } }
+    return p;
+  }).filter(Boolean);
+}
+
+function predictSoNSScore(pctCorrect){
+  const anchors = [[0,13],[0.20,15],[0.30,16],[0.40,17],[0.50,18],[0.60,19],[0.70,20],[0.78,21],[0.84,22],[0.89,23],[0.93,24],[0.96,25],[0.98,27],[1,30]];
+  for (let i=1; i<anchors.length; i++){
+    if (pctCorrect <= anchors[i][0]){
+      const [x0,y0]=anchors[i-1], [x1,y1]=anchors[i];
+      const t = (pctCorrect-x0)/(x1-x0);
+      return Math.max(13, Math.min(30, Math.round(y0 + t*(y1-y0))));
+    }
+  }
+  return 30;
+}
+
+const STATE = {pool:null, i:0, answers:{}, startedAt:null, timerId:null, durationSec:90*60, finished:false};
+
+function startMock(){
+  const includeOchem = document.getElementById('incOchem').checked;
+  if (!includeOchem){ alert('OChem section is required for this build (Bio/GC bank extraction not yet wired).'); return; }
+  STATE.pool = buildOChemSet(30);
+  STATE.i = 0;
+  STATE.answers = {};
+  STATE.startedAt = Date.now();
+  STATE.finished = false;
+  STATE.durationSec = 90*60;
+  renderRun();
+  startTimer();
+}
+
+document.getElementById('mkStartBtn').addEventListener('click', startMock);
+
+function startTimer(){
+  if (STATE.timerId) clearInterval(STATE.timerId);
+  STATE.timerId = setInterval(() => {
+    const elapsed = Math.floor((Date.now() - STATE.startedAt)/1000);
+    const rem = Math.max(0, STATE.durationSec - elapsed);
+    const t = document.getElementById('mkTimer');
+    if (t){
+      const m = Math.floor(rem/60), s = rem%60;
+      t.textContent = m + ':' + String(s).padStart(2,'0');
+      t.classList.toggle('warn', rem < 300);
+    }
+    if (rem === 0 && !STATE.finished){ finishMock(); }
+  }, 1000);
+}
+
+function renderRun(){
+  const stage = document.getElementById('mkStage');
+  if (STATE.i >= STATE.pool.length){ finishMock(); return; }
+  const p = STATE.pool[STATE.i];
+  const elapsed = Math.floor((Date.now() - STATE.startedAt)/1000);
+  const rem = Math.max(0, STATE.durationSec - elapsed);
+  const m = Math.floor(rem/60), s = rem%60;
+  const cur = STATE.answers[STATE.i] !== undefined ? STATE.answers[STATE.i] : -1;
+
+  stage.innerHTML = `
+    <div class="mk-runtop">
+      <span>Q ${STATE.i+1} / ${STATE.pool.length} · OChem · diff ${p.diff}</span>
+      <span>Section · <span class="timer" id="mkTimer">${m}:${String(s).padStart(2,'0')}</span></span>
+    </div>
+    <div class="mk-runbody">
+      <div class="mk-q">${p.q}</div>
+      <div class="mk-opts">
+        ${p.opts.map((o, j) => `<div class="mk-opt ${cur===j?'selected':''}" data-i="${j}"><span class="let">${'ABCD'[j]}</span><span>${o}</span></div>`).join('')}
+      </div>
+      <div class="mk-runfoot">
+        <button class="mk-pagebtn" id="mkPrev" ${STATE.i===0?'disabled':''}>← Previous</button>
+        <div class="mk-progress"><div class="mk-progress-fill" style="width:${100*(Object.keys(STATE.answers).length)/STATE.pool.length}%"></div></div>
+        <button class="mk-pagebtn gold" id="mkNext">${STATE.i===STATE.pool.length-1?'Submit mock':'Next →'}</button>
+      </div>
+      <div class="mk-jumpbar" id="mkJump"></div>
+      <div style="text-align:center; margin-top:12px">
+        <button class="mk-pagebtn danger" id="mkBail">Exit mock without saving</button>
+      </div>
+    </div>`;
+
+  // Wire opts
+  stage.querySelectorAll('.mk-opt').forEach(o => o.addEventListener('click', () => {
+    STATE.answers[STATE.i] = +o.dataset.i;
+    stage.querySelectorAll('.mk-opt').forEach(x => x.classList.remove('selected'));
+    o.classList.add('selected');
+    document.querySelector('.mk-progress-fill').style.width = (100*Object.keys(STATE.answers).length/STATE.pool.length) + '%';
+    renderJump();
+  }));
+  document.getElementById('mkPrev').addEventListener('click', () => { if (STATE.i > 0){ STATE.i--; renderRun(); } });
+  document.getElementById('mkNext').addEventListener('click', () => {
+    if (STATE.i === STATE.pool.length-1){ finishMock(); }
+    else { STATE.i++; renderRun(); }
+  });
+  document.getElementById('mkBail').addEventListener('click', () => {
+    if (confirm('Exit without saving?')){ if (STATE.timerId) clearInterval(STATE.timerId); location.reload(); }
+  });
+  renderJump();
+}
+
+function renderJump(){
+  const jump = document.getElementById('mkJump');
+  if (!jump) return;
+  jump.innerHTML = STATE.pool.map((_, j) => {
+    const cls = j===STATE.i?'cur':(STATE.answers[j]!==undefined?'answered':'');
+    return `<button class="${cls}" data-j="${j}">${j+1}</button>`;
+  }).join('');
+  jump.querySelectorAll('button').forEach(b => b.addEventListener('click', () => { STATE.i = +b.dataset.j; renderRun(); }));
+}
+
+function finishMock(){
+  STATE.finished = true;
+  if (STATE.timerId) clearInterval(STATE.timerId);
+  const correct = STATE.pool.filter((p, i) => STATE.answers[i] === p.correct).length;
+  const total = STATE.pool.length;
+  const pct = correct / total;
+  const predictedSoNS = predictSoNSScore(pct);
+  // Per-skill breakdown
+  const bySkill = {};
+  STATE.pool.forEach((p, i) => {
+    if (!bySkill[p.skill]) bySkill[p.skill] = {n:0, c:0};
+    bySkill[p.skill].n++;
+    if (STATE.answers[i] === p.correct) bySkill[p.skill].c++;
+  });
+  // Save to localStorage — both lastMock and history
+  const mockRecord = {score: correct, total, pct: Math.round(pct*100), predicted: predictedSoNS, ts: Date.now(), section:'OChem', diff: DIFF_MIX};
+  try {
+    localStorage.setItem('al:lastMock', JSON.stringify(mockRecord));
+    const hist = JSON.parse(localStorage.getItem('al:mockHistory') || '[]');
+    hist.push(mockRecord);
+    localStorage.setItem('al:mockHistory', JSON.stringify(hist.slice(-50)));
+  } catch(e){}
+
+  const stage = document.getElementById('mkStage');
+  const wrong = STATE.pool.filter((p, i) => STATE.answers[i] !== undefined && STATE.answers[i] !== p.correct);
+  const skipped = STATE.pool.filter((p, i) => STATE.answers[i] === undefined);
+  const skillRows = Object.keys(bySkill).sort((a,b) => bySkill[a].c/bySkill[a].n - bySkill[b].c/bySkill[b].n).map(sk => {
+    const r = bySkill[sk]; const p = Math.round(100*r.c/r.n);
+    return `<tr><td>${sk}</td><td style="text-align:right">${r.c}/${r.n}</td><td style="text-align:right; color:${p<50?'var(--al-trap)':p<75?'var(--al-gold-d)':'var(--al-good-d)'}; font-weight:700">${p}%</td></tr>`;
+  }).join('');
+
+  stage.innerHTML = `
+    <div class="mk-result">
+      <h2>OChem section · <em>complete</em></h2>
+      <p style="font-size:14px; color:var(--al-ink-2)">${MIXES[DIFF_MIX] ? 'Difficulty mix: ' + DIFF_MIX : ''}</p>
+      <div class="mk-scoregrid">
+        <div class="mk-scorecard"><div class="lbl">Raw score</div><div class="num">${correct}/${total}</div></div>
+        <div class="mk-scorecard"><div class="lbl">Accuracy</div><div class="num">${Math.round(pct*100)}%</div></div>
+        <div class="mk-scorecard"><div class="lbl">Skipped</div><div class="num" style="color:var(--al-trap)">${skipped.length}</div></div>
+        <div class="mk-scorecard gold"><div class="lbl">Predicted DAT OChem</div><div class="num">${predictedSoNS}</div></div>
+      </div>
+      <div class="mk-bysubject">
+        <table>
+          <thead><tr><th>Skill</th><th style="text-align:right">Hit</th><th style="text-align:right">%</th></tr></thead>
+          <tbody>${skillRows}</tbody>
+        </table>
+      </div>
+      <div class="mk-review">
+        <h3>Wrong-answer review (${wrong.length})</h3>
+        ${wrong.map((p, idx) => {
+          const i = STATE.pool.indexOf(p);
+          const yourLetter = STATE.answers[i] !== undefined ? 'ABCD'[STATE.answers[i]] : '—';
+          return `<div class="mk-review-card">
+            <div class="qtext">Q${i+1}. ${p.q}</div>
+            <div class="why">You picked <span class="you">${yourLetter}. ${STATE.answers[i] !== undefined ? p.opts[STATE.answers[i]] : 'skipped'}</span>. Correct: <b>${'ABCD'[p.correct]}. ${p.opts[p.correct]}</b>. <em>${p.why || ''}</em></div>
+          </div>`;
+        }).join('')}
+      </div>
+      <div style="display:flex; gap:10px; margin-top:24px; flex-wrap:wrap">
+        <button class="mk-pagebtn gold" onclick="location.reload()">Take another mock</button>
+        <a href="ace-labs.html" class="mk-pagebtn">← Home</a>
+        <a href="mocks-catalog.html" class="mk-pagebtn">Mock catalog</a>
+      </div>
+    </div>`;
+}
+</script>
+</body>
+</html>

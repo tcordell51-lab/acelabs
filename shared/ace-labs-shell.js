@@ -6,28 +6,39 @@
   const NS = {
     qr:    'qr-rem-v2',
     gc:    'gc-rem-v1',
-    bio:   'bio-engine',     // bio uses bio- prefix
-    ochem: 'ochem'           // ochem uses portal student-scope OR raw 'ochem-' keys
+    bio:   'acethedat_bio',     // bio uses acethedat_bio_* keys (no colon — uses underscore)
+    ochem: 'ochem-rem-v1'       // ochem v2 will write here (existing tool uses portal student-scope)
   };
+  // Bio uses underscore separator instead of colon — handled per-tool below
 
-  // Read mastery state for each tool
+  // Read mastery state for each tool. Each tool uses a different shape; handle each explicitly.
   function getMasteryFor(toolKey){
-    const ns = NS[toolKey];
     const out = { mastered:0, partial:0, total:0, lastSession:null };
     try {
-      // QR + GC store under "<ns>:mastery" → JSON map { skillId: 'mastered'|'partial'|... }
-      const masteryRaw = localStorage.getItem(ns + ':mastery');
-      if (masteryRaw){
-        const m = JSON.parse(masteryRaw);
-        Object.values(m).forEach(v => {
-          if (v === 'mastered') out.mastered++;
-          else if (v === 'partial') out.partial++;
-        });
-        out.total = Object.keys(m).length;
+      if (toolKey === 'qr' || toolKey === 'gc' || toolKey === 'ochem'){
+        const ns = NS[toolKey];
+        const masteryRaw = localStorage.getItem(ns + ':mastery');
+        if (masteryRaw){
+          const m = JSON.parse(masteryRaw);
+          Object.values(m).forEach(v => { if (v === 'mastered') out.mastered++; else if (v === 'partial') out.partial++; });
+          out.total = Object.keys(m).length;
+        }
+        const lastRaw = localStorage.getItem(ns + ':lastSession');
+        if (lastRaw) out.lastSession = parseInt(lastRaw);
+      } else if (toolKey === 'bio'){
+        // Bio uses underscore-prefixed keys: acethedat_bio_*
+        // Mastered cards live in acethedat_bio_cards (per-card SR state)
+        const cardsRaw = localStorage.getItem('acethedat_bio_cards');
+        if (cardsRaw){
+          const cards = JSON.parse(cardsRaw);
+          if (Array.isArray(cards)){
+            cards.forEach(c => { if (c.state === 'mastered' || (c.reps && c.reps >= 5)) out.mastered++; else if (c.reps && c.reps >= 1) out.partial++; });
+            out.total = cards.length;
+          }
+        }
+        const lastRaw = localStorage.getItem('acethedat_bio_last_session');
+        if (lastRaw) out.lastSession = parseInt(lastRaw);
       }
-      // Last session timestamp
-      const lastRaw = localStorage.getItem(ns + ':lastSession');
-      if (lastRaw) out.lastSession = parseInt(lastRaw);
     } catch(e){}
     // Tool-specific defaults / fallbacks if no localStorage data yet
     const totals = { qr:37, gc:37, bio:40, ochem:30 };
@@ -122,9 +133,23 @@
     if (lastMock){
       const dashMockScore = document.getElementById('dashMockScore');
       const dashMockSub = document.getElementById('dashMockSub');
-      if (dashMockScore) dashMockScore.textContent = lastMock.score + ' / 100';
-      if (dashMockSub) dashMockSub.textContent = 'Predicted SoNS: ' + (lastMock.predicted || '—') + ' · ' + fmtRelTime(lastMock.ts);
+      if (dashMockScore) dashMockScore.textContent = lastMock.score + ' / ' + (lastMock.total || 100);
+      if (dashMockSub) dashMockSub.textContent = 'Predicted: ' + (lastMock.predicted || '—') + ' · ' + (lastMock.section || 'unified') + ' · ' + fmtRelTime(lastMock.ts);
     }
+    // Mock history (if 2+ mocks, show delta)
+    try {
+      const hist = JSON.parse(localStorage.getItem('al:mockHistory') || '[]');
+      if (hist.length >= 2){
+        const last = hist[hist.length-1], prev = hist[hist.length-2];
+        const delta = (last.predicted || 0) - (prev.predicted || 0);
+        const dashSub = document.getElementById('dashMockSub');
+        if (dashSub){
+          const arrow = delta > 0 ? '▲' : delta < 0 ? '▼' : '=';
+          const color = delta > 0 ? 'var(--al-good-d)' : delta < 0 ? 'var(--al-trap)' : 'var(--al-ink-mute)';
+          dashSub.innerHTML = 'Predicted: <b>' + (last.predicted || '—') + '</b> <span style="color:' + color + '; font-weight:700; margin-left:6px">' + arrow + ' ' + Math.abs(delta) + '</span> from last · ' + (hist.length) + ' mocks taken';
+        }
+      }
+    } catch(e){}
 
     // Per-tool mastery on the tile
     tools.forEach(t => {
