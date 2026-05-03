@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Ace The DAT — TikTok Library</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,700&family=DM+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#0d2018; --paper:#f5f0e8; --paper-2:#ece5d6;
+  --ink:#0d2018; --ink-2:#3a4a42; --ink-mute:#6e7c74;
+  --gold:#C9A84C; --gold-m:#E2C97A; --gold-d:#8C7235; --gold-bg:rgba(201,168,76,.10);
+  --teal:#1B3A2D; --teal-3:#3A6B54;
+  --line:rgba(13,32,24,.12);
+  --good:#5FA874;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);min-height:100vh;line-height:1.5;}
+.app{max-width:1200px;margin:0 auto;padding:36px 28px 60px;}
+
+header{margin-bottom:30px;}
+.brand{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--ink);margin-bottom:6px;}
+.brand em{color:var(--gold-d);font-style:italic;}
+h1{font-family:'Playfair Display',serif;font-size:42px;line-height:1.1;font-weight:700;letter-spacing:-.02em;margin-bottom:8px;}
+h1 em{color:var(--gold-d);font-style:italic;}
+.lede{font-size:16px;color:var(--ink-2);max-width:720px;line-height:1.55;}
+.lede a{color:var(--gold-d);font-weight:700;text-decoration:none;border-bottom:1px solid var(--gold-d);}
+
+.tools-row{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap;}
+.tool-link{padding:10px 16px;font-size:13px;background:var(--paper);border:1px solid var(--line);border-radius:7px;cursor:pointer;font-weight:700;color:var(--ink);text-decoration:none;transition:all .15s;letter-spacing:.04em;font-family:'DM Sans',sans-serif;}
+.tool-link:hover{border-color:var(--gold-d);color:var(--gold-d);}
+.tool-link.gold{background:var(--gold);border-color:var(--gold-d);color:var(--ink);}
+.tool-link.gold:hover{background:var(--gold-d);color:var(--paper);}
+
+.filters{display:flex;align-items:center;gap:12px;margin:30px 0 18px;flex-wrap:wrap;}
+.filter-pill{padding:7px 14px;font-size:12px;background:var(--paper);border:1px solid var(--line);border-radius:99px;cursor:pointer;font-weight:700;color:var(--ink-mute);transition:all .15s;letter-spacing:.04em;}
+.filter-pill:hover{color:var(--ink);}
+.filter-pill.active{background:var(--gold);border-color:var(--gold-d);color:var(--ink);}
+.filter-search{flex:1;min-width:200px;padding:8px 14px;font-size:13px;background:var(--paper);border:1px solid var(--line);border-radius:7px;font-family:'DM Sans',sans-serif;color:var(--ink);}
+.filter-search:focus{outline:none;border-color:var(--gold-d);}
+.count-pill{margin-left:auto;font-size:11px;color:var(--ink-mute);font-family:'JetBrains Mono',monospace;letter-spacing:.08em;font-weight:700;}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill, minmax(280px, 1fr));gap:14px;}
+.card{background:var(--paper);border:1px solid var(--line);border-left:4px solid var(--ink-mute);border-radius:10px;padding:16px 18px;display:flex;flex-direction:column;gap:8px;transition:all .18s;}
+.card:hover{border-left-color:var(--gold-d);transform:translateY(-1px);box-shadow:0 8px 24px rgba(13,32,24,.06);}
+.card[data-tier="custom"]{border-left-color:var(--gold);}
+.card[data-tier="0"]{border-left-color:var(--good);}
+.card[data-tier="1"]{border-left-color:var(--gold-d);}
+.card[data-tier="2"]{border-left-color:var(--teal);}
+.card-h{display:flex;align-items:baseline;gap:8px;}
+.card-num{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ink-mute);font-weight:700;letter-spacing:.06em;}
+.card-tag{font-size:9px;padding:2px 8px;background:var(--paper-2);border-radius:99px;color:var(--ink-mute);text-transform:uppercase;letter-spacing:.08em;font-weight:700;margin-left:auto;}
+.card-tag.custom{background:var(--gold-bg);color:var(--gold-d);}
+.card-tag.t0{background:rgba(95,168,116,.15);color:#3e7c54;}
+.card-tag.t1{background:rgba(140,114,53,.15);color:var(--gold-d);}
+.card-tag.t2{background:rgba(27,58,45,.10);color:var(--teal);}
+.card-t{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--ink);line-height:1.25;}
+.card-t em{color:var(--gold-d);font-style:italic;}
+.card-mod{font-size:11px;color:var(--ink-mute);font-family:'JetBrains Mono',monospace;}
+.card-actions{display:flex;gap:6px;margin-top:auto;padding-top:8px;flex-wrap:wrap;}
+.card-btn{padding:6px 12px;font-size:11px;background:var(--paper-2);border:1px solid var(--line);border-radius:6px;cursor:pointer;color:var(--ink);font-weight:700;text-decoration:none;font-family:'DM Sans',sans-serif;transition:all .15s;letter-spacing:.04em;}
+.card-btn:hover{border-color:var(--gold-d);color:var(--gold-d);}
+.card-btn.primary{background:var(--gold);border-color:var(--gold-d);color:var(--ink);}
+.card-btn.primary:hover{background:var(--gold-d);color:var(--paper);}
+
+.empty{padding:60px 20px;text-align:center;color:var(--ink-mute);font-style:italic;font-size:14px;}
+</style>
+</head>
+<body>
+<div class="app">
+
+<header>
+  <div class="brand">Ace<em>The</em>DAT</div>
+  <h1>TikTok <em>library.</em></h1>
+  <p class="lede">All 34 Gen Chem TikToks in one place. <b>5 hand-crafted</b> + <b>29 templated</b>. Click <b>Watch</b> to play any video, <b>Record VO</b> to open the voiceover studio for that topic. Use <code>?face=URL</code> on the watch URL to overlay your face video.</p>
+  <div class="tools-row">
+    <a class="tool-link gold" href="voiceover-studio.html">🎤 Open Voiceover Studio</a>
+    <a class="tool-link" href="../gc-remediation-system-v1.html">↗ Back to GC tool</a>
+  </div>
+</header>
+
+<div class="filters">
+  <button class="filter-pill active" data-f="all" onclick="filterTo('all')">All (34)</button>
+  <button class="filter-pill" data-f="custom" onclick="filterTo('custom')">★ Hand-crafted (5)</button>
+  <button class="filter-pill" data-f="0" onclick="filterTo('0')">Tier 0 (12)</button>
+  <button class="filter-pill" data-f="1" onclick="filterTo('1')">Tier 1 (10)</button>
+  <button class="filter-pill" data-f="2" onclick="filterTo('2')">Tier 2 (7)</button>
+  <input class="filter-search" id="searchBox" type="text" placeholder="Search title or skill…" oninput="onSearch(this.value)"/>
+  <span class="count-pill" id="countPill">34 / 34 visible</span>
+</div>
+
+<div class="grid" id="grid"></div>
+
+</div>
+
+<script src="topics.js"></script>
+<script>
+/* Combine 5 custom TikToks + auto-wired 29 templated TikToks */
+const CUSTOM = [
+  {key:'buffers-hh',         module:'buffers',     title:'Buffers are <em>ratios</em>',          file:'buffers-hh-tiktok.html',         num:'GC·01'},
+  {key:'weak-acid-sqrt',     module:'strong-weak', title:'Weak = <em>square root</em>',          file:'weak-acid-sqrt-tiktok.html',     num:'GC·02'},
+  {key:'gibbs-quadrant',     module:'gibbs',       title:'Read the <em>signs</em> (4-quadrant ΔG)', file:'gibbs-quadrant-tiktok.html',  num:'GC·03'},
+  {key:'q-vs-k',             module:'eq-kc',       title:'Q points <em>the way</em> (Q vs K)',   file:'q-vs-k-tiktok.html',             num:'GC·04'},
+  {key:'ksp-common-ion',     module:'ksp',         title:'Common ion <em>kills solubility</em>', file:'ksp-common-ion-tiktok.html',     num:'GC·05'},
+  {key:'lewis-five-steps',   module:'lewis',       title:'Lewis in <em>5 steps</em> (CO₂ build)', file:'lewis-five-steps-tiktok.html',  num:'GC·06'}
+];
+
+const TIER_OF = (tag) => /Tier 0/.test(tag) ? 0 : /Tier 1/.test(tag) ? 1 : /Tier 2/.test(tag) ? 2 : null;
+
+let allCards = [];
+function buildCards(){
+  allCards = [];
+  // Custom
+  CUSTOM.forEach((c, i) => {
+    allCards.push({
+      key: c.key, module: c.module, num: c.num, title: c.title,
+      tier: 'custom', tierLabel: 'Custom', file: c.file,
+      voFile: `voiceover-studio.html#${c.key}`
+    });
+  });
+  // Templated (from window.TOPICS)
+  if (window.TOPICS){
+    let n = 6;
+    Object.entries(window.TOPICS).forEach(([key, t]) => {
+      const tier = TIER_OF(t.tag);
+      if (tier === null) return;
+      allCards.push({
+        key, module: key, num: 'GC·' + (n++).toString().padStart(2,'0'),
+        title: (t.hookWord || t.title || key).replace(/<br\/?>/g, ' ').replace(/<[^>]+>/g, '<em>').replace(/<\/em>/g, '</em>'),
+        // Simpler: just use plain title
+        tier, tierLabel: 'Tier ' + tier,
+        file: 'topic-tiktok.html?topic=' + key,
+        voFile: `voiceover-studio.html#${key}`,
+        plainTitle: t.title
+      });
+    });
+  }
+  render();
+}
+
+let activeFilter = 'all';
+let searchTerm = '';
+
+function filterTo(f){
+  activeFilter = f;
+  document.querySelectorAll('.filter-pill').forEach(p => p.classList.toggle('active', p.dataset.f === f));
+  render();
+}
+
+function onSearch(v){
+  searchTerm = v.toLowerCase().trim();
+  render();
+}
+
+function render(){
+  const filtered = allCards.filter(c => {
+    if (activeFilter !== 'all'){
+      if (activeFilter === 'custom' && c.tier !== 'custom') return false;
+      if (activeFilter !== 'custom' && String(c.tier) !== activeFilter) return false;
+    }
+    if (searchTerm){
+      const hay = ((c.plainTitle || c.title) + ' ' + c.module).toLowerCase();
+      if (!hay.includes(searchTerm)) return false;
+    }
+    return true;
+  });
+  document.getElementById('countPill').textContent = `${filtered.length} / ${allCards.length} visible`;
+  const grid = document.getElementById('grid');
+  if (filtered.length === 0){
+    grid.innerHTML = '<div class="empty" style="grid-column:1/-1">No TikToks match.</div>';
+    return;
+  }
+  grid.innerHTML = filtered.map(c => {
+    const tagClass = c.tier === 'custom' ? 'custom' : 't' + c.tier;
+    return `<div class="card" data-tier="${c.tier}">
+      <div class="card-h">
+        <span class="card-num">${c.num}</span>
+        <span class="card-tag ${tagClass}">${c.tier === 'custom' ? '★ custom' : c.tierLabel}</span>
+      </div>
+      <div class="card-t">${c.plainTitle || c.title}</div>
+      <div class="card-mod">module: <code>${c.module}</code></div>
+      <div class="card-actions">
+        <a class="card-btn primary" href="${c.file}" target="_blank">▶ Watch</a>
+        <a class="card-btn" href="voiceover-studio.html" target="_blank" onclick="localStorage.setItem('vo-studio:autopick','${c.key}'); return true;">🎤 Record VO</a>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+buildCards();
+</script>
+</body>
+</html>

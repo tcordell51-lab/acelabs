@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=1080,initial-scale=1"/>
+<title>Ace The DAT — Bayes Inverts (P(D|+))</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400;1,700&family=DM+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+<style>
+:root{
+  --sb:#0d2018; --ink:#f5f0e8;
+  --muted:rgba(245,240,232,.55); --dim:rgba(245,240,232,.32);
+  --gold:#C9A84C; --gold-m:#E2C97A; --gold-d:#8C7235;
+  --sick:#ff5a5a;
+  --sick-d:#c43030;
+  --well:#3a6b54;
+  --pos:#e2c97a;        /* highlighted positive test */
+  --trap:#f59e0b; --trap-deep:#b45309;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{background:#000;overflow:hidden;font-family:'DM Sans',sans-serif;color:var(--ink);}
+.stage{width:1080px;height:1920px;position:absolute;left:50%;top:50%;transform-origin:center center;overflow:hidden;transition:background 0.8s ease;}
+.stage[data-phase="hook"]{background:linear-gradient(175deg,#0a1c20 0%,#0d2230 50%,#08121c 100%);}
+.stage[data-phase="demo"]{background:linear-gradient(175deg,#08161e 0%,#0d2030 50%,#04101a 100%);}
+.stage[data-phase="reveal"]{background:linear-gradient(175deg,#1f0a14 0%,#2c0d1c 50%,#10040c 100%);}
+.stage[data-phase="trap"]{background:linear-gradient(175deg,#3d2706 0%,#5c3608 50%,#2c1d04 100%);}
+.stage[data-phase="lock"]{background:linear-gradient(175deg,#0a1812 0%,#1a3322 50%,#0d2018 100%);}
+.stage::after{content:'';position:absolute;inset:0;pointer-events:none;z-index:99;opacity:.04;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-size:220px;}
+
+.brand{position:absolute;left:0;right:0;top:50px;display:flex;align-items:center;justify-content:space-between;padding:0 70px;z-index:20;}
+.brand-word{font-family:'Playfair Display',serif;font-size:36px;font-weight:700;color:#fff;}
+.brand-word span{color:var(--gold);}
+.brand-tag{font-size:18px;font-weight:600;color:var(--dim);letter-spacing:.18em;text-transform:uppercase;}
+
+.voice-toggle{position:absolute;top:130px;right:70px;z-index:30;width:64px;height:64px;border-radius:50%;background:rgba(13,32,24,.85);border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;cursor:pointer;backdrop-filter:blur(8px);}
+.voice-toggle.active{background:var(--gold);}
+.voice-toggle svg{width:30px;height:30px;fill:var(--gold);}
+.voice-toggle.active svg{fill:#0d2018;}
+
+.tier-pill{position:absolute;top:130px;left:70px;z-index:30;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;padding:5px 12px;border-radius:99px;background:rgba(245,240,232,.10);border:1px solid #3a6b54;color:#88c4ff;}
+
+.hook{position:absolute;left:0;right:0;top:0;bottom:0;display:flex;align-items:center;justify-content:center;flex-direction:column;z-index:25;opacity:1;pointer-events:none;text-align:center;padding:0 80px;}
+.hook-tag{font-size:24px;font-weight:700;color:var(--gold);letter-spacing:.22em;text-transform:uppercase;margin-bottom:30px;display:flex;align-items:center;gap:18px;}
+.hook-tag::before,.hook-tag::after{content:'';width:30px;height:1px;background:var(--gold);}
+.hook-stats{display:flex;flex-direction:column;gap:18px;margin-bottom:40px;}
+.hook-stat{font-family:'JetBrains Mono',monospace;font-size:42px;font-weight:600;color:#fff;letter-spacing:-.01em;}
+.hook-stat .num{color:var(--gold);font-weight:800;}
+.hook-question{font-family:'Playfair Display',serif;font-size:120px;font-weight:900;color:#fff;letter-spacing:-.04em;line-height:.95;text-shadow:0 0 60px rgba(201,168,76,.4);max-width:920px;}
+.hook-question em{color:var(--gold);font-style:italic;}
+.hook-sub{font-size:30px;font-weight:600;color:var(--muted);margin-top:30px;letter-spacing:.04em;line-height:1.3;max-width:760px;}
+
+/* Population grid 100 × 100 = 10,000 squares scaled */
+.pop-grid{position:absolute;left:60px;right:60px;top:300px;z-index:14;opacity:0;}
+.pop-svg{width:100%;height:auto;display:block;}
+.pop-cell{transition:fill 0.5s, stroke 0.4s;}
+.pop-cell.well{fill:var(--well);}
+.pop-cell.sick{fill:var(--sick);}
+.pop-cell.tp{fill:var(--pos);stroke:var(--gold-d);stroke-width:1;}
+.pop-cell.fp{fill:var(--pos);opacity:.5;stroke:var(--trap);stroke-width:0.5;}
+
+.pop-readout{position:absolute;left:60px;right:60px;top:1090px;z-index:15;text-align:center;opacity:0;}
+.pop-stat-row{display:flex;justify-content:center;gap:30px;margin-bottom:14px;font-family:'JetBrains Mono',monospace;font-size:26px;color:#fff;}
+.pop-stat-row .label{color:var(--muted);font-weight:600;font-size:18px;text-transform:uppercase;letter-spacing:.14em;}
+.pop-stat-row .val{font-weight:800;color:var(--gold);font-size:32px;}
+.pop-stat-row .tp-label{color:var(--gold);}
+.pop-stat-row .fp-label{color:var(--trap);}
+
+.reveal{position:absolute;left:0;right:0;top:0;bottom:0;display:flex;align-items:center;justify-content:center;flex-direction:column;z-index:30;opacity:0;pointer-events:none;text-align:center;padding:0 70px;}
+.reveal-eq{font-family:'JetBrains Mono',monospace;font-size:50px;font-weight:700;color:#fff;line-height:1.4;margin-bottom:40px;letter-spacing:-.01em;}
+.reveal-eq .num{color:var(--gold);}
+.reveal-eq .frac{display:inline-flex;flex-direction:column;align-items:center;line-height:1.05;font-size:36px;vertical-align:middle;margin:0 6px;}
+.reveal-eq .frac .top{padding:2px 12px;border-bottom:2.5px solid #fff;}
+.reveal-eq .frac .bot{padding:2px 12px;}
+.reveal-num{font-family:'Playfair Display',serif;font-size:280px;font-weight:900;color:var(--gold);line-height:.92;letter-spacing:-.05em;text-shadow:0 0 80px rgba(201,168,76,.5);}
+.reveal-num em{font-style:italic;}
+.reveal-decode{font-size:36px;font-weight:600;color:#fff;margin-top:30px;line-height:1.3;max-width:880px;}
+
+.caption{position:absolute;left:50%;top:1500px;transform:translateX(-50%);z-index:18;background:#000;color:#fff;font-size:48px;font-weight:900;padding:22px 44px;border-radius:14px;letter-spacing:-.01em;line-height:1.05;box-shadow:0 12px 40px rgba(0,0,0,.6);text-align:center;opacity:0;max-width:920px;}
+.caption .sick{color:var(--sick);}
+.caption .pos{color:var(--gold);}
+
+.trap{position:absolute;left:0;right:0;top:0;bottom:0;background:linear-gradient(135deg,rgba(245,158,11,.95),rgba(180,83,9,.95));z-index:40;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:0 70px;opacity:0;pointer-events:none;}
+.trap-ribbon{background:#0d2018;color:var(--gold);font-size:32px;font-weight:900;letter-spacing:.20em;padding:18px 40px;border-radius:8px;margin-bottom:40px;text-transform:uppercase;border:2px solid var(--gold);}
+.trap-h{font-family:'Playfair Display',serif;font-size:130px;font-weight:900;color:#fff;line-height:.95;letter-spacing:-.03em;margin-bottom:30px;}
+.trap-h em{font-style:italic;color:#0d2018;}
+.trap-sub{font-size:38px;font-weight:600;color:rgba(13,32,24,.92);line-height:1.3;max-width:880px;}
+.trap-sub em{font-style:italic;font-weight:800;}
+
+.lock{position:absolute;left:0;right:0;top:0;bottom:0;z-index:35;display:flex;align-items:center;justify-content:center;flex-direction:column;opacity:0;pointer-events:none;text-align:center;padding:0 70px;}
+.lock-tag{font-size:28px;font-weight:700;color:var(--gold);letter-spacing:.22em;text-transform:uppercase;margin-bottom:30px;}
+.lock-word{font-family:'Playfair Display',serif;font-size:160px;font-weight:900;color:var(--gold);line-height:.95;letter-spacing:-.04em;text-shadow:0 0 80px rgba(201,168,76,.5);}
+.lock-word em{font-style:italic;}
+.lock-decode{font-size:38px;font-weight:600;color:#fff;margin-top:50px;line-height:1.5;}
+.lock-decode .gold{color:var(--gold-m);}
+.lock-decode .arrow{color:var(--dim);font-weight:500;margin:0 10px;}
+
+.foot{position:absolute;left:80px;right:80px;bottom:80px;z-index:50;}
+.scrub-wrap{position:relative;height:8px;background:rgba(245,240,232,.1);border-radius:4px;cursor:pointer;}
+.scrub-fill{position:absolute;left:0;top:0;bottom:0;width:0%;background:linear-gradient(90deg,var(--gold-m),var(--gold));border-radius:4px;}
+.scrub-thumb{position:absolute;top:50%;transform:translate(-50%,-50%);width:28px;height:28px;background:var(--gold);border-radius:50%;box-shadow:0 0 0 4px rgba(201,168,76,.22);}
+.foot-row{display:flex;justify-content:space-between;align-items:center;margin-top:24px;font-size:18px;color:var(--dim);letter-spacing:.1em;}
+.foot-cta{color:var(--gold);font-weight:700;letter-spacing:.14em;text-transform:uppercase;}
+.play-btn{background:var(--gold);color:#0d2018;border:none;padding:10px 22px;border-radius:6px;font-weight:700;letter-spacing:.08em;font-size:16px;cursor:pointer;font-family:inherit;}
+.watermark{position:absolute;left:80px;bottom:30px;font-size:14px;letter-spacing:.2em;color:rgba(245,240,232,.28);text-transform:uppercase;z-index:50;}
+
+.face-pip{position:absolute;right:60px;bottom:240px;width:320px;height:320px;border-radius:50%;overflow:hidden;border:5px solid var(--gold);box-shadow:0 16px 40px rgba(0,0,0,.5);background:#000;z-index:48;display:none;}
+.face-pip.show{display:block;}
+.face-pip video{width:100%;height:100%;object-fit:cover;}
+.face-pip-tag{position:absolute;bottom:-36px;left:50%;transform:translateX(-50%);font-size:14px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:.2em;}
+</style>
+</head>
+<body>
+<div class="stage" id="stage" data-phase="hook">
+
+  <div class="tier-pill">Tier 2 · Patterns</div>
+  <div class="brand">
+    <div class="brand-word">Ace The <span>DAT</span></div>
+    <div class="brand-tag">QR · Sarah</div>
+  </div>
+
+  <button class="voice-toggle" id="voiceBtn" aria-label="Toggle voice">
+    <svg viewBox="0 0 24 24"><path d="M12 1c-4.97 0-9 4.03-9 9v7c0 1.66 1.34 3 3 3h3v-8H5v-2c0-3.87 3.13-7 7-7s7 3.13 7 7v2h-4v8h3c1.66 0 3-1.34 3-3v-7c0-4.97-4.03-9-9-9z"/></svg>
+  </button>
+
+  <div class="hook" id="hook">
+    <div class="hook-tag">Conditional Probability · Bayes</div>
+    <div class="hook-stats">
+      <div class="hook-stat">Prevalence <span class="num">1%</span></div>
+      <div class="hook-stat">Sensitivity <span class="num">99%</span></div>
+      <div class="hook-stat">Specificity <span class="num">95%</span></div>
+    </div>
+    <div class="hook-question">You test<br/><em>positive.</em></div>
+    <div class="hook-sub">P(disease) = ?</div>
+  </div>
+
+  <div class="pop-grid" id="popGrid">
+    <svg class="pop-svg" id="popSvg" viewBox="0 0 1000 700"></svg>
+  </div>
+
+  <div class="pop-readout" id="popReadout">
+    <div class="pop-stat-row"><span class="label">Diseased:</span><span class="val">100</span><span class="label">Healthy:</span><span class="val">9,900</span></div>
+    <div class="pop-stat-row"><span class="label tp-label">True positives:</span><span class="val" id="tpCount">99</span><span class="label fp-label">False positives:</span><span class="val" id="fpCount">495</span></div>
+  </div>
+
+  <div class="caption" id="caption">caption</div>
+
+  <div class="reveal" id="reveal">
+    <div class="reveal-eq">
+      P(D | +) =
+      <span class="frac"><span class="top"><span class="num">99</span> true pos</span><span class="bot"><span class="num">99 + 495</span> all pos</span></span>
+      =
+    </div>
+    <div class="reveal-num">~<em>17%</em></div>
+    <div class="reveal-decode">Not 99%. <span style="color:var(--gold)">Not even close.</span></div>
+  </div>
+
+  <div class="trap" id="trap">
+    <div class="trap-ribbon">DAT Trap</div>
+    <div class="trap-h"><em>Test positive</em><br/>= disease.</div>
+    <div class="trap-sub">A <em>99% sensitive</em> test on a <em>1% prevalent</em> disease still has only <em>~17%</em> positive predictive value. Sensitivity is not the same as P(disease | positive).</div>
+  </div>
+
+  <div class="lock" id="lock">
+    <div class="lock-tag">Lock it in</div>
+    <div class="lock-word"><em>Bayes inverts.</em></div>
+    <div class="lock-decode">
+      P(A|B) = P(A ∩ B) / P(B)<br/>
+      <span class="arrow">=</span> P(B|A) · P(A) / P(B)<br/>
+      <span class="gold">Sensitivity ≠ disease probability</span>
+    </div>
+  </div>
+
+  <div class="foot">
+    <div class="scrub-wrap" id="scrubBar">
+      <div class="scrub-fill" id="scrubFill"></div>
+      <div class="scrub-thumb" id="scrubThumb" style="left:0%"></div>
+    </div>
+    <div class="foot-row">
+      <button class="play-btn" id="playBtn">▶ Play</button>
+      <div class="foot-cta">acethedat.com</div>
+    </div>
+  </div>
+
+  <div class="watermark">Ace The DAT · QR · Sarah · p-cond</div>
+
+  <div class="face-pip" id="facePip">
+    <video id="facePipVideo" autoplay loop muted playsinline></video>
+    <div class="face-pip-tag">Sarah</div>
+  </div>
+</div>
+
+<script>
+function fitStage(){
+  const s=document.getElementById('stage');
+  const scale=Math.min(window.innerWidth/1080,window.innerHeight/1920);
+  s.style.transform=`translate(-50%,-50%) scale(${scale})`;
+}
+window.addEventListener('resize',fitStage); fitStage();
+
+// Build 100x100 grid (10,000 cells representing population)
+const popSvg = document.getElementById('popSvg');
+const cellSize = 9;  // 100 cells across, slightly less than 1000/100 for gaps
+const cellGap = 1;
+let cellEls = [];
+for (let r = 0; r < 70; r++){
+  for (let c = 0; c < 100; c++){
+    const x = c * (cellSize + cellGap);
+    const y = r * (cellSize + cellGap);
+    const idx = r * 100 + c;
+    const cell = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    cell.setAttribute('x', x);
+    cell.setAttribute('y', y);
+    cell.setAttribute('width', cellSize);
+    cell.setAttribute('height', cellSize);
+    cell.setAttribute('rx', 1);
+    cell.setAttribute('class', 'pop-cell well');
+    cell.setAttribute('data-i', idx);
+    popSvg.appendChild(cell);
+    cellEls.push(cell);
+  }
+}
+// 7000 cells (70 rows × 100 cols) representing the population at scale: 70/10000 = 0.7%
+// We'll treat this as: every cell = 1.43 people, but for display we'll use proportions:
+// 1% diseased = 70 cells (1% of 7000)
+// Of those 70: 99% positive = ~69 true pos
+// Of 6930 healthy: 5% = ~347 false pos
+// Let's just simulate the proportions visually with reasonable counts
+
+const TOTAL = 7000;
+const SICK = 70;           // 1% of 7000 = 70
+const TP = 69;             // 99% sensitivity → 69
+const HEALTHY = TOTAL - SICK;  // 6930
+const FP = Math.round(HEALTHY * 0.05);  // 347 → display says 495 if actual sample at 1% of 9900
+
+// Pre-randomize indices for sick / TP / FP so they're spread visually
+function shuffled(n){ const a = []; for (let i=0;i<n;i++) a.push(i); for (let i=a.length-1;i>0;i--){ const j = Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+const sickIdx = shuffled(TOTAL).slice(0, SICK);
+const sickSet = new Set(sickIdx);
+const healthyIdx = shuffled(TOTAL).filter(i => !sickSet.has(i));
+const tpIdx = sickIdx.slice(0, TP);
+const fpIdx = healthyIdx.slice(0, FP);
+
+function paintCells(idxArr, cls){
+  idxArr.forEach((idx, k) => {
+    setTimeout(() => {
+      const el = cellEls[idx];
+      if (!el) return;
+      el.setAttribute('class', 'pop-cell ' + cls);
+    }, k * 4);
+  });
+}
+function resetGrid(){
+  cellEls.forEach(el => el.setAttribute('class', 'pop-cell well'));
+}
+
+/* Voice */
+const synth = window.speechSynthesis;
+let voices = [], selectedVoice = null, voiceEnabled = false;
+function pickVoice(){
+  if (!synth) return;
+  voices = synth.getVoices();
+  const prefs = ['Ava (Premium)','Ava','Allison','Samantha','Karen','Moira','Tessa','Susan'];
+  for(const p of prefs){ const f = voices.find(v=>v.name===p||v.name.startsWith(p)); if(f){selectedVoice=f; return;}}
+  selectedVoice = voices.find(v=>/female|samantha|allison|ava|karen/i.test(v.name) && /en/i.test(v.lang)) || voices[0];
+}
+if (synth && synth.onvoiceschanged !== undefined) synth.onvoiceschanged = pickVoice;
+if (synth) pickVoice();
+function speak(t,o){if(!voiceEnabled||!t||!synth)return; synth.cancel(); const u=new SpeechSynthesisUtterance(t); if(selectedVoice)u.voice=selectedVoice; u.rate=(o&&o.rate)||0.94; u.pitch=(o&&o.pitch)||0.97; u.volume=1; synth.speak(u);}
+const voiceBtn=document.getElementById('voiceBtn');
+voiceBtn.addEventListener('click',()=>{
+  voiceEnabled=!voiceEnabled; voiceBtn.classList.toggle('active',voiceEnabled);
+  if(voiceEnabled){ const ph=document.getElementById('stage').getAttribute('data-phase'); if(ph==='hook') speak("One percent prevalence. Ninety nine percent sensitive. You test positive. What's the chance you actually have the disease?"); }
+  else if (synth) synth.cancel();
+});
+
+/* Face PiP */
+(function(){
+  const params = new URLSearchParams(window.location.search);
+  const faceUrl = params.get('face');
+  if (faceUrl){ const pip = document.getElementById('facePip'); const vid = document.getElementById('facePipVideo'); vid.src = faceUrl; pip.classList.add('show'); vid.play().catch(()=>{}); }
+})();
+
+/* Animation timeline */
+const stage = document.getElementById('stage');
+const hook = document.getElementById('hook');
+const popGrid = document.getElementById('popGrid');
+const popReadout = document.getElementById('popReadout');
+const caption = document.getElementById('caption');
+const reveal = document.getElementById('reveal');
+const trap = document.getElementById('trap');
+const lock = document.getElementById('lock');
+const scrubFill = document.getElementById('scrubFill');
+const scrubThumb = document.getElementById('scrubThumb');
+const playBtn = document.getElementById('playBtn');
+
+const TIMELINE = [
+  {t:0,    fn: () => { stage.dataset.phase='hook'; hook.style.opacity=1; popGrid.style.opacity=0; popReadout.style.opacity=0; reveal.style.opacity=0; trap.style.opacity=0; lock.style.opacity=0; caption.style.opacity=0; resetGrid(); if(voiceEnabled) speak("One percent prevalence. Ninety nine percent sensitive. You test positive. What's the chance you actually have the disease?"); }},
+  {t:6500, fn: () => { stage.dataset.phase='demo'; anime({targets:hook,opacity:0,duration:500,easing:'easeOutQuad'}); setTimeout(() => { popGrid.style.opacity=1; anime({targets:popGrid,opacity:[0,1],duration:600}); }, 400); if(voiceEnabled) speak("Picture seven thousand people."); }},
+  {t:9000, fn: () => { popReadout.style.opacity=1; anime({targets:popReadout,opacity:[0,1],duration:500}); paintCells(sickIdx, 'sick'); if(voiceEnabled) speak("One percent are diseased — about seventy people."); }},
+  {t:12500, fn: () => { caption.innerHTML = '<span class="sick">red</span> = diseased (1%)'; caption.style.opacity=1; anime({targets:caption,opacity:[0,1],duration:400}); }},
+  {t:16000, fn: () => { caption.style.opacity=0; if(voiceEnabled) speak("The test is ninety nine percent sensitive. So sixty nine of the seventy diseased test positive."); }},
+  {t:18500, fn: () => { paintCells(tpIdx, 'tp'); }},
+  {t:22000, fn: () => { caption.innerHTML = '<span class="pos">gold</span> = tested positive'; caption.style.opacity=1; anime({targets:caption,opacity:[0,1],duration:400}); if(voiceEnabled) speak("But the test is only ninety five percent specific. Five percent of healthy people also test positive."); }},
+  {t:26000, fn: () => { caption.style.opacity=0; paintCells(fpIdx.slice(0, 200), 'fp'); }},
+  {t:30000, fn: () => { paintCells(fpIdx.slice(200), 'fp'); if(voiceEnabled) speak("That's three hundred and forty seven false positives."); }},
+  {t:34000, fn: () => { caption.innerHTML = 'Total positives: <span class="pos">~416</span> · only 69 actually sick'; caption.style.opacity=1; anime({targets:caption,opacity:[0,1],duration:500}); }},
+  {t:38500, fn: () => { caption.style.opacity=0; stage.dataset.phase='reveal'; reveal.style.opacity=1; anime({targets:reveal,opacity:[0,1],scale:[0.92,1],duration:700,easing:'easeOutBack'}); if(voiceEnabled) speak("So given you tested positive, the chance you're actually sick is sixty nine over four sixteen — about seventeen percent. Not ninety nine."); }},
+  {t:46500, fn: () => { reveal.style.opacity=0; stage.dataset.phase='trap'; trap.style.opacity=1; anime({targets:trap,opacity:[0,1],duration:600}); if(voiceEnabled) speak("Trap. Test positive does not mean you have the disease. Sensitivity is conditional on having the disease, not on the test result."); }},
+  {t:55000, fn: () => { trap.style.opacity=0; stage.dataset.phase='lock'; lock.style.opacity=1; anime({targets:lock,opacity:[0,1],scale:[0.9,1],duration:700,easing:'easeOutBack'}); if(voiceEnabled) speak("Lock it in. Bayes inverts. P of A given B equals P of A and B over P of B."); }},
+  {t:64000, fn: () => { /* hold */ }},
+  {t:71000, fn: () => { stage.dataset.phase='hook'; lock.style.opacity=0; hook.style.opacity=1; if(voiceEnabled) speak("Bayes inverts."); }}
+];
+const TOTAL_T = 75000;
+
+let startedAt = 0, paused = true, elapsed = 0;
+function tick(){
+  if(paused) return;
+  const now = Date.now();
+  const t = elapsed + (now - startedAt);
+  for(const e of TIMELINE){ if(!e._fired && t >= e.t){ e._fired = true; e.fn(); } }
+  scrubFill.style.width = Math.min(100, t / TOTAL_T * 100) + '%';
+  scrubThumb.style.left = Math.min(100, t / TOTAL_T * 100) + '%';
+  if(t >= TOTAL_T){ paused = true; playBtn.textContent = '↻ Replay'; return; }
+  requestAnimationFrame(tick);
+}
+function play(){
+  if(elapsed >= TOTAL_T){ TIMELINE.forEach(e => e._fired = false); elapsed = 0; }
+  paused = false; startedAt = Date.now();
+  playBtn.textContent = '⏸ Pause';
+  tick();
+}
+function pause(){ paused = true; elapsed += Date.now() - startedAt; playBtn.textContent = '▶ Resume'; }
+playBtn.addEventListener('click', () => { if(paused) play(); else pause(); });
+document.getElementById('scrubBar').addEventListener('click', e => {
+  const r = e.currentTarget.getBoundingClientRect();
+  const pct = (e.clientX - r.left) / r.width;
+  elapsed = Math.max(0, Math.min(TOTAL_T, pct * TOTAL_T));
+  TIMELINE.forEach(e => e._fired = e.t < elapsed);
+  for(let i = TIMELINE.length - 1; i >= 0; i--){ if(TIMELINE[i].t <= elapsed){ TIMELINE[i].fn(); break; } }
+  if(!paused){ startedAt = Date.now(); }
+  scrubFill.style.width = (elapsed / TOTAL_T * 100) + '%';
+  scrubThumb.style.left = (elapsed / TOTAL_T * 100) + '%';
+});
+</script>
+</body>
+</html>

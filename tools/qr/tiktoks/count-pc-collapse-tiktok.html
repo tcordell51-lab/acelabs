@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=1080,initial-scale=1"/>
+<title>Ace The DAT — nPr ÷ r! = nCr</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400;1,700&family=DM+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+<style>
+:root{
+  --sb:#0d2018; --ink:#f5f0e8;
+  --muted:rgba(245,240,232,.55); --dim:rgba(245,240,232,.32);
+  --gold:#C9A84C; --gold-m:#E2C97A; --gold-d:#8C7235;
+  --teal:#5fa3ff; --teal-d:#2c6fc4;
+  --warm:#ff8a3a;
+  --good:#7be08a;
+  --trap:#f59e0b; --trap-deep:#b45309;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{background:#000;overflow:hidden;font-family:'DM Sans',sans-serif;color:var(--ink);}
+.stage{width:1080px;height:1920px;position:absolute;left:50%;top:50%;transform-origin:center center;overflow:hidden;transition:background 0.8s ease;}
+.stage[data-phase="hook"]{background:linear-gradient(175deg,#08161e 0%,#0d2030 50%,#04101a 100%);}
+.stage[data-phase="demo"]{background:linear-gradient(175deg,#0a1830 0%,#0d2040 50%,#06122a 100%);}
+.stage[data-phase="collapse"]{background:linear-gradient(175deg,#0d2520 0%,#143c30 50%,#06120c 100%);}
+.stage[data-phase="reveal"]{background:linear-gradient(175deg,#1f1606 0%,#2c2009 50%,#1a1206 100%);}
+.stage[data-phase="trap"]{background:linear-gradient(175deg,#3d2706 0%,#5c3608 50%,#2c1d04 100%);}
+.stage[data-phase="lock"]{background:linear-gradient(175deg,#0a1812 0%,#1a3322 50%,#0d2018 100%);}
+.stage::after{content:'';position:absolute;inset:0;pointer-events:none;z-index:99;opacity:.04;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-size:220px;}
+
+.brand{position:absolute;left:0;right:0;top:50px;display:flex;align-items:center;justify-content:space-between;padding:0 70px;z-index:20;}
+.brand-word{font-family:'Playfair Display',serif;font-size:36px;font-weight:700;color:#fff;}
+.brand-word span{color:var(--gold);}
+.brand-tag{font-size:18px;font-weight:600;color:var(--dim);letter-spacing:.18em;text-transform:uppercase;}
+
+.voice-toggle{position:absolute;top:130px;right:70px;z-index:30;width:64px;height:64px;border-radius:50%;background:rgba(13,32,24,.85);border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;cursor:pointer;backdrop-filter:blur(8px);}
+.voice-toggle.active{background:var(--gold);}
+.voice-toggle svg{width:30px;height:30px;fill:var(--gold);}
+.voice-toggle.active svg{fill:#0d2018;}
+
+.tier-pill{position:absolute;top:130px;left:70px;z-index:30;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;padding:5px 12px;border-radius:99px;background:rgba(245,240,232,.10);border:1px solid #3a6b54;color:var(--teal);}
+
+.hook{position:absolute;left:0;right:0;top:0;bottom:0;display:flex;align-items:center;justify-content:center;flex-direction:column;z-index:25;opacity:1;pointer-events:none;text-align:center;padding:0 80px;}
+.hook-tag{font-size:24px;font-weight:700;color:var(--gold);letter-spacing:.22em;text-transform:uppercase;margin-bottom:30px;display:flex;align-items:center;gap:18px;}
+.hook-tag::before,.hook-tag::after{content:'';width:30px;height:1px;background:var(--gold);}
+.hook-q{font-family:'Playfair Display',serif;font-size:120px;font-weight:900;color:#fff;letter-spacing:-.04em;line-height:.95;text-shadow:0 0 60px rgba(201,168,76,.4);max-width:920px;}
+.hook-q em{color:var(--gold);font-style:italic;}
+.hook-sub{font-size:30px;font-weight:600;color:var(--muted);margin-top:30px;letter-spacing:.04em;line-height:1.3;max-width:760px;}
+.hook-stats{display:flex;gap:30px;margin-top:38px;justify-content:center;}
+.hook-stat{font-family:'JetBrains Mono',monospace;font-size:30px;font-weight:700;color:var(--gold-m);}
+.hook-stat .lbl{font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.16em;display:block;margin-bottom:8px;}
+
+/* CHIP GRID — positioned absolute for animation */
+.chip-grid{position:absolute;left:60px;right:60px;top:340px;height:900px;z-index:14;opacity:0;}
+.chip-svg{width:100%;height:100%;display:block;}
+.chip{transition:transform 1.0s cubic-bezier(0.65,0,0.35,1), opacity 0.5s;}
+.chip rect{fill:var(--paper, #f5f0e8);stroke:var(--gold-d);stroke-width:1.5;rx:6;transition:fill 0.5s, stroke 0.5s;}
+.chip text{font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;fill:#0d2018;text-anchor:middle;pointer-events:none;}
+.chip.combo rect{fill:var(--gold);stroke:var(--gold-d);stroke-width:2.5;}
+.chip.combo text{fill:#0d2018;}
+.chip.faded{opacity:0.18;}
+
+/* Equation reveal */
+.reveal{position:absolute;left:0;right:0;top:0;bottom:0;display:flex;align-items:center;justify-content:center;flex-direction:column;z-index:30;opacity:0;pointer-events:none;text-align:center;padding:0 70px;}
+.reveal-eq{font-family:'JetBrains Mono',monospace;font-size:60px;font-weight:700;color:#fff;line-height:1.4;margin-bottom:40px;letter-spacing:-.01em;}
+.reveal-eq .frac{display:inline-flex;flex-direction:column;align-items:center;line-height:1.05;font-size:48px;vertical-align:middle;margin:0 10px;}
+.reveal-eq .frac .top{padding:2px 14px;border-bottom:3px solid #fff;}
+.reveal-eq .frac .bot{padding:2px 14px;}
+.reveal-eq .nPr{color:var(--gold);}
+.reveal-eq .nCr{color:var(--teal);}
+.reveal-eq .div{color:var(--muted);font-style:italic;}
+.reveal-num{font-family:'Playfair Display',serif;font-size:240px;font-weight:900;color:var(--gold);line-height:.92;letter-spacing:-.05em;text-shadow:0 0 80px rgba(201,168,76,.5);}
+.reveal-num em{font-style:italic;}
+.reveal-decode{font-size:36px;font-weight:600;color:#fff;margin-top:30px;line-height:1.3;max-width:880px;}
+
+.caption{position:absolute;left:50%;top:1500px;transform:translateX(-50%);z-index:18;background:#000;color:#fff;font-size:48px;font-weight:900;padding:22px 44px;border-radius:14px;letter-spacing:-.01em;line-height:1.05;box-shadow:0 12px 40px rgba(0,0,0,.6);text-align:center;opacity:0;max-width:920px;}
+.caption .gold{color:var(--gold);}
+.caption .teal{color:var(--teal);}
+
+.trap{position:absolute;left:0;right:0;top:0;bottom:0;background:linear-gradient(135deg,rgba(245,158,11,.95),rgba(180,83,9,.95));z-index:40;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:0 70px;opacity:0;pointer-events:none;}
+.trap-ribbon{background:#0d2018;color:var(--gold);font-size:32px;font-weight:900;letter-spacing:.20em;padding:18px 40px;border-radius:8px;margin-bottom:40px;text-transform:uppercase;border:2px solid var(--gold);}
+.trap-h{font-family:'Playfair Display',serif;font-size:130px;font-weight:900;color:#fff;line-height:.95;letter-spacing:-.03em;margin-bottom:30px;}
+.trap-h em{font-style:italic;color:#0d2018;}
+.trap-sub{font-size:38px;font-weight:600;color:rgba(13,32,24,.92);line-height:1.3;max-width:880px;}
+.trap-sub em{font-style:italic;font-weight:800;}
+
+.lock{position:absolute;left:0;right:0;top:0;bottom:0;z-index:35;display:flex;align-items:center;justify-content:center;flex-direction:column;opacity:0;pointer-events:none;text-align:center;padding:0 70px;}
+.lock-tag{font-size:28px;font-weight:700;color:var(--gold);letter-spacing:.22em;text-transform:uppercase;margin-bottom:30px;}
+.lock-word{font-family:'Playfair Display',serif;font-size:140px;font-weight:900;color:var(--gold);line-height:.95;letter-spacing:-.04em;text-shadow:0 0 80px rgba(201,168,76,.5);}
+.lock-word em{font-style:italic;}
+.lock-decode{font-size:36px;font-weight:600;color:#fff;margin-top:50px;line-height:1.5;}
+.lock-decode .gold{color:var(--gold-m);}
+.lock-decode .teal{color:var(--teal);}
+
+.foot{position:absolute;left:80px;right:80px;bottom:80px;z-index:50;}
+.scrub-wrap{position:relative;height:8px;background:rgba(245,240,232,.1);border-radius:4px;cursor:pointer;}
+.scrub-fill{position:absolute;left:0;top:0;bottom:0;width:0%;background:linear-gradient(90deg,var(--gold-m),var(--gold));border-radius:4px;}
+.scrub-thumb{position:absolute;top:50%;transform:translate(-50%,-50%);width:28px;height:28px;background:var(--gold);border-radius:50%;box-shadow:0 0 0 4px rgba(201,168,76,.22);}
+.foot-row{display:flex;justify-content:space-between;align-items:center;margin-top:24px;font-size:18px;color:var(--dim);letter-spacing:.1em;}
+.foot-cta{color:var(--gold);font-weight:700;letter-spacing:.14em;text-transform:uppercase;}
+.play-btn{background:var(--gold);color:#0d2018;border:none;padding:10px 22px;border-radius:6px;font-weight:700;letter-spacing:.08em;font-size:16px;cursor:pointer;font-family:inherit;}
+.watermark{position:absolute;left:80px;bottom:30px;font-size:14px;letter-spacing:.2em;color:rgba(245,240,232,.28);text-transform:uppercase;z-index:50;}
+
+.face-pip{position:absolute;right:60px;bottom:240px;width:320px;height:320px;border-radius:50%;overflow:hidden;border:5px solid var(--gold);box-shadow:0 16px 40px rgba(0,0,0,.5);background:#000;z-index:48;display:none;}
+.face-pip.show{display:block;}
+.face-pip video{width:100%;height:100%;object-fit:cover;}
+.face-pip-tag{position:absolute;bottom:-36px;left:50%;transform:translateX(-50%);font-size:14px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:.2em;}
+</style>
+</head>
+<body>
+<div class="stage" id="stage" data-phase="hook">
+
+  <div class="tier-pill">Tier 2 · Patterns</div>
+  <div class="brand">
+    <div class="brand-word">Ace The <span>DAT</span></div>
+    <div class="brand-tag">QR · Sarah</div>
+  </div>
+
+  <button class="voice-toggle" id="voiceBtn" aria-label="Toggle voice">
+    <svg viewBox="0 0 24 24"><path d="M12 1c-4.97 0-9 4.03-9 9v7c0 1.66 1.34 3 3 3h3v-8H5v-2c0-3.87 3.13-7 7-7s7 3.13 7 7v2h-4v8h3c1.66 0 3-1.34 3-3v-7c0-4.97-4.03-9-9-9z"/></svg>
+  </button>
+
+  <div class="hook" id="hook">
+    <div class="hook-tag">Counting · Permutations vs Combinations</div>
+    <div class="hook-q">5 letters.<br/><em>Pick 3.</em></div>
+    <div class="hook-sub">How many ways?</div>
+    <div class="hook-stats">
+      <div class="hook-stat"><span class="lbl">Order matters</span><span style="color:var(--gold)">5P3 = 60</span></div>
+      <div class="hook-stat"><span class="lbl">Order doesn't</span><span style="color:var(--teal)">5C3 = 10</span></div>
+    </div>
+  </div>
+
+  <div class="chip-grid" id="chipGrid">
+    <svg class="chip-svg" id="chipSvg" viewBox="0 0 1000 900"></svg>
+  </div>
+
+  <div class="caption" id="caption">caption</div>
+
+  <div class="reveal" id="reveal">
+    <div class="reveal-eq">
+      <span class="nCr">5C3</span> = <span class="frac"><span class="top"><span class="nPr">5P3</span></span><span class="bot">3!</span></span> = <span class="frac"><span class="top">60</span><span class="bot">6</span></span> =
+    </div>
+    <div class="reveal-num"><em>10</em></div>
+    <div class="reveal-decode">Divide by r! to remove order. The 6 reorderings within each group collapse to one.</div>
+  </div>
+
+  <div class="trap" id="trap">
+    <div class="trap-ribbon">DAT Trap</div>
+    <div class="trap-h">Treating <em>P</em><br/>like <em>C</em>.</div>
+    <div class="trap-sub">"Choose 3 students for a committee" is a <em>combination</em> — not a permutation. Order doesn't make a different committee. Always ask: <em>does swapping change the answer?</em></div>
+  </div>
+
+  <div class="lock" id="lock">
+    <div class="lock-tag">Lock it in</div>
+    <div class="lock-word"><em>÷ r! removes</em><br/>order.</div>
+    <div class="lock-decode">
+      <span class="gold">nPr</span> = n! / (n − r)! · order matters<br/>
+      <span class="teal">nCr</span> = nPr / r! · order doesn't<br/>
+      Ask: <span class="gold">does swapping change the answer?</span>
+    </div>
+  </div>
+
+  <div class="foot">
+    <div class="scrub-wrap" id="scrubBar">
+      <div class="scrub-fill" id="scrubFill"></div>
+      <div class="scrub-thumb" id="scrubThumb" style="left:0%"></div>
+    </div>
+    <div class="foot-row">
+      <button class="play-btn" id="playBtn">▶ Play</button>
+      <div class="foot-cta">acethedat.com</div>
+    </div>
+  </div>
+
+  <div class="watermark">Ace The DAT · QR · Sarah · count-pc</div>
+
+  <div class="face-pip" id="facePip">
+    <video id="facePipVideo" autoplay loop muted playsinline></video>
+    <div class="face-pip-tag">Sarah</div>
+  </div>
+</div>
+
+<script>
+function fitStage(){
+  const s=document.getElementById('stage');
+  const scale=Math.min(window.innerWidth/1080,window.innerHeight/1920);
+  s.style.transform=`translate(-50%,-50%) scale(${scale})`;
+}
+window.addEventListener('resize',fitStage); fitStage();
+
+// Build all 60 permutations of {A,B,C,D,E} taken 3
+const items = ['A','B','C','D','E'];
+const perms = [];
+function gen(chosen, remaining){
+  if (chosen.length === 3){ perms.push(chosen.slice()); return; }
+  for (const x of remaining){ chosen.push(x); gen(chosen, remaining.filter(y => y !== x)); chosen.pop(); }
+}
+gen([], items);
+// Group permutations by their sorted-key (combinations); each group has 3! = 6 orderings
+const groups = {};
+perms.forEach(p => { const k = p.slice().sort().join(''); (groups[k] = groups[k] || []).push(p); });
+const groupKeys = Object.keys(groups).sort();  // 10 keys
+// Layout: 60 chips in a 10x6 grid (10 cols, 6 rows). Each column = one combination group.
+const COL_W = 92, ROW_H = 70, GRID_X = 30, GRID_Y = 60;
+const CHIP_W = 72, CHIP_H = 38;
+// Build chip SVG elements with initial position
+const chipSvg = document.getElementById('chipSvg');
+const chipMap = {};  // permKey → element
+groupKeys.forEach((gk, col) => {
+  groups[gk].forEach((perm, row) => {
+    const x = GRID_X + col * COL_W;
+    const y = GRID_Y + row * ROW_H;
+    const text = perm.join('');
+    const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    g.setAttribute('class', 'chip');
+    g.setAttribute('data-group', gk);
+    g.setAttribute('data-perm', text);
+    g.setAttribute('transform', `translate(${x}, ${y})`);
+    g.dataset.x = x; g.dataset.y = y;
+    g.innerHTML = `<rect width="${CHIP_W}" height="${CHIP_H}" rx="6"/><text x="${CHIP_W/2}" y="${CHIP_H/2 + 6}">${text}</text>`;
+    chipSvg.appendChild(g);
+    chipMap[text] = g;
+  });
+});
+// Add column labels at top (combination names) — invisible until collapse phase
+groupKeys.forEach((gk, col) => {
+  const x = GRID_X + col * COL_W + CHIP_W/2;
+  const lbl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+  lbl.setAttribute('x', x);
+  lbl.setAttribute('y', GRID_Y - 16);
+  lbl.setAttribute('text-anchor', 'middle');
+  lbl.setAttribute('font-family', 'Playfair Display');
+  lbl.setAttribute('font-size', '16');
+  lbl.setAttribute('font-style', 'italic');
+  lbl.setAttribute('font-weight', '700');
+  lbl.setAttribute('fill', '#7be08a');
+  lbl.setAttribute('opacity', '0');
+  lbl.setAttribute('class', 'group-lbl');
+  lbl.setAttribute('data-group', gk);
+  lbl.textContent = gk;
+  chipSvg.appendChild(lbl);
+});
+
+function collapseToCombos(){
+  // For each group, animate its 6 chips into the same position (top of column)
+  groupKeys.forEach((gk, col) => {
+    const targetX = GRID_X + col * COL_W;
+    const targetY = GRID_Y + 0 * ROW_H;
+    groups[gk].forEach((perm, idx) => {
+      const el = chipMap[perm.join('')];
+      if (!el) return;
+      // Sort: keep the first (alphabetical), fade others under it
+      el.classList.add(idx === 0 ? 'combo' : 'faded');
+      el.setAttribute('transform', `translate(${targetX}, ${targetY})`);
+    });
+  });
+  // Reveal column labels
+  document.querySelectorAll('.group-lbl').forEach((lbl, i) => {
+    setTimeout(() => lbl.setAttribute('opacity', '1'), 800 + i * 60);
+  });
+}
+function expandToPerms(){
+  groupKeys.forEach((gk, col) => {
+    groups[gk].forEach((perm, row) => {
+      const el = chipMap[perm.join('')];
+      if (!el) return;
+      el.classList.remove('combo','faded');
+      const x = GRID_X + col * COL_W;
+      const y = GRID_Y + row * ROW_H;
+      el.setAttribute('transform', `translate(${x}, ${y})`);
+    });
+  });
+  document.querySelectorAll('.group-lbl').forEach(lbl => lbl.setAttribute('opacity', '0'));
+}
+
+/* Voice */
+const synth = window.speechSynthesis;
+let voices = [], selectedVoice = null, voiceEnabled = false;
+function pickVoice(){
+  if (!synth) return;
+  voices = synth.getVoices();
+  const prefs = ['Ava (Premium)','Ava','Allison','Samantha','Karen','Moira','Tessa'];
+  for(const p of prefs){ const f = voices.find(v=>v.name===p||v.name.startsWith(p)); if(f){selectedVoice=f; return;}}
+  selectedVoice = voices.find(v=>/female|samantha|allison|ava|karen/i.test(v.name) && /en/i.test(v.lang)) || voices[0];
+}
+if (synth && synth.onvoiceschanged !== undefined) synth.onvoiceschanged = pickVoice;
+if (synth) pickVoice();
+function speak(t){if(!voiceEnabled||!t||!synth)return; synth.cancel(); const u=new SpeechSynthesisUtterance(t); if(selectedVoice)u.voice=selectedVoice; u.rate=0.94; u.pitch=0.97; u.volume=1; synth.speak(u);}
+const voiceBtn=document.getElementById('voiceBtn');
+voiceBtn.addEventListener('click',()=>{
+  voiceEnabled=!voiceEnabled; voiceBtn.classList.toggle('active',voiceEnabled);
+  if(voiceEnabled){ const ph=document.getElementById('stage').getAttribute('data-phase'); if(ph==='hook') speak("Five letters, pick three. How many ways?"); }
+  else if (synth) synth.cancel();
+});
+
+/* Face PiP */
+(function(){
+  const params = new URLSearchParams(window.location.search);
+  const faceUrl = params.get('face');
+  if (faceUrl){ const pip = document.getElementById('facePip'); const vid = document.getElementById('facePipVideo'); vid.src = faceUrl; pip.classList.add('show'); vid.play().catch(()=>{}); }
+})();
+
+/* Animation timeline */
+const stage = document.getElementById('stage');
+const hook = document.getElementById('hook');
+const chipGrid = document.getElementById('chipGrid');
+const caption = document.getElementById('caption');
+const reveal = document.getElementById('reveal');
+const trap = document.getElementById('trap');
+const lock = document.getElementById('lock');
+const scrubFill = document.getElementById('scrubFill');
+const scrubThumb = document.getElementById('scrubThumb');
+const playBtn = document.getElementById('playBtn');
+
+const TIMELINE = [
+  {t:0,    fn: () => { stage.dataset.phase='hook'; hook.style.opacity=1; chipGrid.style.opacity=0; reveal.style.opacity=0; trap.style.opacity=0; lock.style.opacity=0; caption.style.opacity=0; expandToPerms(); if(voiceEnabled) speak("Five letters, pick three. How many ways?"); }},
+  {t:5500, fn: () => { stage.dataset.phase='demo'; anime({targets:hook,opacity:0,duration:500,easing:'easeOutQuad'}); setTimeout(() => { chipGrid.style.opacity=1; anime({targets:chipGrid,opacity:[0,1],duration:600}); }, 400); if(voiceEnabled) speak("If order matters, that's a permutation. Five P three. We get sixty arrangements."); }},
+  {t:11000, fn: () => { caption.innerHTML = '<span class="gold">5P3 = 60</span> arrangements'; caption.style.opacity=1; anime({targets:caption,opacity:[0,1],duration:400}); }},
+  {t:16000, fn: () => { caption.style.opacity=0; if(voiceEnabled) speak("But wait. ABC, BCA, CAB — these are the same three letters in different order. If order doesn't matter for your problem, they should count as one."); }},
+  {t:23000, fn: () => { stage.dataset.phase='collapse'; collapseToCombos(); if(voiceEnabled) speak("Watch them collapse. Each column is one combination — six orderings of the same three letters."); }},
+  {t:30000, fn: () => { caption.innerHTML = '60 perms <span class="teal">÷ 6 orderings</span> = 10 combos'; caption.style.opacity=1; anime({targets:caption,opacity:[0,1],duration:500}); }},
+  {t:35000, fn: () => { caption.style.opacity=0; stage.dataset.phase='reveal'; reveal.style.opacity=1; anime({targets:reveal,opacity:[0,1],scale:[0.92,1],duration:700,easing:'easeOutBack'}); if(voiceEnabled) speak("Five C three equals five P three divided by three factorial. Sixty divided by six is ten."); }},
+  {t:44000, fn: () => { reveal.style.opacity=0; stage.dataset.phase='trap'; trap.style.opacity=1; anime({targets:trap,opacity:[0,1],duration:600}); if(voiceEnabled) speak("Trap. Treating P like C. A committee of three students from five has ten possibilities, not sixty. Always ask: does swapping change the answer?"); }},
+  {t:54000, fn: () => { trap.style.opacity=0; stage.dataset.phase='lock'; lock.style.opacity=1; anime({targets:lock,opacity:[0,1],scale:[0.9,1],duration:700,easing:'easeOutBack'}); if(voiceEnabled) speak("Lock it in. Divide by r factorial to remove order. Order matters? Permutation. Doesn't? Combination."); }},
+  {t:65000, fn: () => { /* hold */ }},
+  {t:71000, fn: () => { stage.dataset.phase='hook'; lock.style.opacity=0; hook.style.opacity=1; if(voiceEnabled) speak("Order matters? P. Doesn't? C."); }}
+];
+const TOTAL_T = 75000;
+
+let startedAt = 0, paused = true, elapsed = 0;
+function tick(){
+  if(paused) return;
+  const now = Date.now();
+  const t = elapsed + (now - startedAt);
+  for(const e of TIMELINE){ if(!e._fired && t >= e.t){ e._fired = true; e.fn(); } }
+  scrubFill.style.width = Math.min(100, t / TOTAL_T * 100) + '%';
+  scrubThumb.style.left = Math.min(100, t / TOTAL_T * 100) + '%';
+  if(t >= TOTAL_T){ paused = true; playBtn.textContent = '↻ Replay'; return; }
+  requestAnimationFrame(tick);
+}
+function play(){
+  if(elapsed >= TOTAL_T){ TIMELINE.forEach(e => e._fired = false); elapsed = 0; }
+  paused = false; startedAt = Date.now();
+  playBtn.textContent = '⏸ Pause';
+  tick();
+}
+function pause(){ paused = true; elapsed += Date.now() - startedAt; playBtn.textContent = '▶ Resume'; }
+playBtn.addEventListener('click', () => { if(paused) play(); else pause(); });
+document.getElementById('scrubBar').addEventListener('click', e => {
+  const r = e.currentTarget.getBoundingClientRect();
+  const pct = (e.clientX - r.left) / r.width;
+  elapsed = Math.max(0, Math.min(TOTAL_T, pct * TOTAL_T));
+  TIMELINE.forEach(e => e._fired = e.t < elapsed);
+  for(let i = TIMELINE.length - 1; i >= 0; i--){ if(TIMELINE[i].t <= elapsed){ TIMELINE[i].fn(); break; } }
+  if(!paused){ startedAt = Date.now(); }
+  scrubFill.style.width = (elapsed / TOTAL_T * 100) + '%';
+  scrubThumb.style.left = (elapsed / TOTAL_T * 100) + '%';
+});
+</script>
+</body>
+</html>

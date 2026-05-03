@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Ace The DAT — QR TikTok Library (Sarah)</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,700&family=DM+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#0d2018; --paper:#f5f0e8; --paper-2:#ece5d6;
+  --ink:#0d2018; --ink-2:#3a4a42; --ink-mute:#6e7c74;
+  --gold:#C9A84C; --gold-m:#E2C97A; --gold-d:#8C7235; --gold-bg:rgba(201,168,76,.10);
+  --teal:#1B3A2D; --teal-3:#3A6B54;
+  --line:rgba(13,32,24,.12);
+  --good:#5FA874;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);min-height:100vh;line-height:1.5;}
+.app{max-width:1200px;margin:0 auto;padding:36px 28px 60px;}
+
+header{margin-bottom:30px;}
+.brand{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--ink);margin-bottom:6px;}
+.brand em{color:var(--gold-d);font-style:italic;}
+h1{font-family:'Playfair Display',serif;font-size:42px;line-height:1.1;font-weight:700;letter-spacing:-.02em;margin-bottom:8px;}
+h1 em{color:var(--gold-d);font-style:italic;}
+.lede{font-size:16px;color:var(--ink-2);max-width:720px;line-height:1.55;}
+.lede a{color:var(--gold-d);font-weight:700;text-decoration:none;border-bottom:1px solid var(--gold-d);}
+.lede code{font-family:'JetBrains Mono',monospace;background:var(--paper-2);padding:1px 6px;border-radius:4px;font-size:12px;}
+
+.tools-row{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap;}
+.tool-link{padding:10px 16px;font-size:13px;background:var(--paper);border:1px solid var(--line);border-radius:7px;cursor:pointer;font-weight:700;color:var(--ink);text-decoration:none;transition:all .15s;letter-spacing:.04em;}
+.tool-link:hover{border-color:var(--gold-d);color:var(--gold-d);}
+.tool-link.gold{background:var(--gold);border-color:var(--gold-d);color:var(--ink);}
+
+.filters{display:flex;align-items:center;gap:12px;margin:30px 0 18px;flex-wrap:wrap;}
+.filter-pill{padding:7px 14px;font-size:12px;background:var(--paper);border:1px solid var(--line);border-radius:99px;cursor:pointer;font-weight:700;color:var(--ink-mute);transition:all .15s;letter-spacing:.04em;}
+.filter-pill:hover{color:var(--ink);}
+.filter-pill.active{background:var(--gold);border-color:var(--gold-d);color:var(--ink);}
+.filter-search{flex:1;min-width:200px;padding:8px 14px;font-size:13px;background:var(--paper);border:1px solid var(--line);border-radius:7px;font-family:'DM Sans',sans-serif;color:var(--ink);}
+.filter-search:focus{outline:none;border-color:var(--gold-d);}
+.count-pill{margin-left:auto;font-size:11px;color:var(--ink-mute);font-family:'JetBrains Mono',monospace;letter-spacing:.08em;font-weight:700;}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill, minmax(280px, 1fr));gap:14px;}
+.card{background:var(--paper);border:1px solid var(--line);border-left:4px solid var(--ink-mute);border-radius:10px;padding:16px 18px;display:flex;flex-direction:column;gap:8px;transition:all .18s;}
+.card:hover{border-left-color:var(--gold-d);transform:translateY(-1px);box-shadow:0 8px 24px rgba(13,32,24,.06);}
+.card[data-tier="0"]{border-left-color:var(--good);}
+.card[data-tier="1"]{border-left-color:var(--gold-d);}
+.card[data-tier="2"]{border-left-color:var(--teal);}
+.card[data-tier="3"]{border-left-color:var(--ink-mute);}
+.card-h{display:flex;align-items:baseline;gap:8px;}
+.card-num{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ink-mute);font-weight:700;letter-spacing:.06em;}
+.card-tag{font-size:9px;padding:2px 8px;background:var(--paper-2);border-radius:99px;color:var(--ink-mute);text-transform:uppercase;letter-spacing:.08em;font-weight:700;margin-left:auto;}
+.card-tag.t0{background:rgba(95,168,116,.15);color:#3e7c54;}
+.card-tag.t1{background:rgba(140,114,53,.15);color:var(--gold-d);}
+.card-tag.t2{background:rgba(27,58,45,.10);color:var(--teal);}
+.card-tag.t3{background:rgba(110,124,116,.18);color:var(--ink-mute);}
+.card-t{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--ink);line-height:1.25;}
+.card-t em{color:var(--gold-d);font-style:italic;}
+.card-mod{font-size:11px;color:var(--ink-mute);font-family:'JetBrains Mono',monospace;}
+.card-actions{display:flex;gap:6px;margin-top:auto;padding-top:8px;flex-wrap:wrap;}
+.card-btn{padding:6px 12px;font-size:11px;background:var(--paper-2);border:1px solid var(--line);border-radius:6px;cursor:pointer;color:var(--ink);font-weight:700;text-decoration:none;font-family:'DM Sans',sans-serif;transition:all .15s;letter-spacing:.04em;}
+.card-btn:hover{border-color:var(--gold-d);color:var(--gold-d);}
+.card-btn.primary{background:var(--gold);border-color:var(--gold-d);color:var(--ink);}
+.card-btn.primary:hover{background:var(--gold-d);color:var(--paper);}
+
+.empty{padding:60px 20px;text-align:center;color:var(--ink-mute);font-style:italic;font-size:14px;}
+</style>
+</head>
+<body>
+<div class="app">
+
+<header>
+  <div class="brand">Ace<em>The</em>DAT</div>
+  <h1>QR TikTok <em>library.</em></h1>
+  <p class="lede">37 Quantitative Reasoning TikToks branded for <b>Sarah</b>. Each video is a hook → demo → trap → lock template, ~75 seconds, narrated by browser TTS. Click <b>Watch</b> to play, or open with <code>?face=URL</code> to overlay a face video.</p>
+  <div class="tools-row">
+    <a class="tool-link gold" href="voiceover-studio.html">Open Voiceover Studio</a>
+    <a class="tool-link" href="../qr-remediation-system-v2.html">↗ Back to QR tool</a>
+  </div>
+</header>
+
+<div class="filters">
+  <div class="filter-pill active" data-tier="all">All</div>
+  <div class="filter-pill" data-tier="0">Tier 0 · Foundations</div>
+  <div class="filter-pill" data-tier="1">Tier 1 · Building Blocks</div>
+  <div class="filter-pill" data-tier="2">Tier 2 · Patterns</div>
+  <div class="filter-pill" data-tier="3">Tier 3 · Test-day</div>
+  <input type="text" class="filter-search" id="searchInput" placeholder="Search by title, key, or hook…"/>
+  <div class="count-pill" id="countPill">37 topics</div>
+</div>
+
+<div class="grid" id="grid"></div>
+
+</div>
+<script src="topics.js"></script>
+<script>
+const TIER_FROM_TAG = (tag) => {
+  const m = (tag || '').match(/Tier (\d)/);
+  return m ? m[1] : '?';
+};
+
+let activeFilter = 'all';
+let searchQuery = '';
+
+function render(){
+  const grid = document.getElementById('grid');
+  const all = Object.keys(window.TOPICS || {});
+  const filtered = all.filter(k => {
+    const t = window.TOPICS[k];
+    const tier = TIER_FROM_TAG(t.tag);
+    if (activeFilter !== 'all' && tier !== activeFilter) return false;
+    if (searchQuery){
+      const q = searchQuery.toLowerCase();
+      const blob = (k + ' ' + (t.title||'') + ' ' + (t.hookWord||'').replace(/<[^>]+>/g, ' ') + ' ' + (t.hookSub||'')).toLowerCase();
+      if (!blob.includes(q)) return false;
+    }
+    return true;
+  });
+  if (filtered.length === 0){
+    grid.innerHTML = '<div class="empty">No topics match.</div>';
+    document.getElementById('countPill').textContent = '0 topics';
+    return;
+  }
+  document.getElementById('countPill').textContent = filtered.length + ' topics';
+  grid.innerHTML = filtered.map((k, i) => {
+    const t = window.TOPICS[k];
+    const tier = TIER_FROM_TAG(t.tag);
+    const cleanHook = (t.hookWord || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+    return `
+      <div class="card" data-tier="${tier}">
+        <div class="card-h">
+          <div class="card-num">${String(i+1).padStart(2,'0')}</div>
+          <div class="card-tag t${tier}">${t.tag.replace(/Tier \\d · /, '')}</div>
+        </div>
+        <div class="card-t">${t.title}</div>
+        <div class="card-mod">${k}</div>
+        <div style="font-size:13px;color:var(--ink-2);font-style:italic;line-height:1.4">${cleanHook}</div>
+        <div class="card-actions">
+          <a class="card-btn primary" href="${t.customFile ? t.customFile : 'topic-tiktok.html?topic=' + encodeURIComponent(k)}" target="_blank">▶ Watch${t.customFile ? ' (bespoke)' : ''}</a>
+          <a class="card-btn" href="../qr-remediation-system-v2.html#${k}" target="_blank">QR module</a>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+document.querySelectorAll('.filter-pill').forEach(p => p.addEventListener('click', () => {
+  document.querySelectorAll('.filter-pill').forEach(x => x.classList.remove('active'));
+  p.classList.add('active');
+  activeFilter = p.dataset.tier;
+  render();
+}));
+document.getElementById('searchInput').addEventListener('input', e => { searchQuery = e.target.value; render(); });
+
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Ace The DAT — TikTok Voiceover Scripts (all 34)</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,700&family=DM+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --paper:#fbf8f1; --paper-2:#f0ebde; --paper-3:#e3dcc7;
+  --ink:#0d2018; --ink-2:#3a4a42; --ink-mute:#6e7c74;
+  --gold:#C9A84C; --gold-d:#8C7235; --gold-bg:rgba(201,168,76,.12);
+  --teal:#1B3A2D; --teal-3:#3A6B54;
+  --line:rgba(13,32,24,.10);
+  --good:#5FA874;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);line-height:1.55;}
+.app{max-width:1240px;margin:0 auto;display:grid;grid-template-columns:260px 1fr;gap:36px;padding:32px;}
+
+/* Sidebar TOC */
+aside{position:sticky;top:32px;align-self:start;max-height:calc(100vh - 64px);overflow-y:auto;padding-right:8px;}
+.brand{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--ink);margin-bottom:6px;}
+.brand em{color:var(--gold-d);font-style:italic;}
+.toc-h{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-mute);font-weight:700;margin-top:18px;margin-bottom:6px;}
+.toc-link{display:block;padding:5px 8px;font-size:12px;color:var(--ink-2);text-decoration:none;border-radius:4px;transition:all .15s;border-left:2px solid transparent;}
+.toc-link:hover{background:var(--gold-bg);color:var(--ink);border-left-color:var(--gold-d);}
+.toc-link.custom{font-weight:700;color:var(--gold-d);}
+.toc-help{margin-top:24px;padding:12px 14px;background:var(--gold-bg);border-radius:6px;font-size:11px;color:var(--ink-2);line-height:1.55;}
+.toc-help b{color:var(--gold-d);}
+
+/* Main */
+header{margin-bottom:36px;}
+h1{font-family:'Playfair Display',serif;font-size:42px;font-weight:700;letter-spacing:-.02em;line-height:1.05;margin-bottom:10px;}
+h1 em{color:var(--gold-d);font-style:italic;}
+.lede{font-size:15px;color:var(--ink-2);max-width:760px;line-height:1.6;margin-bottom:18px;}
+.lede a{color:var(--gold-d);font-weight:700;}
+.print-row{display:flex;gap:8px;margin-top:8px;}
+.print-btn{padding:7px 14px;font-size:12px;background:var(--paper);border:1px solid var(--line);border-radius:6px;cursor:pointer;font-weight:700;color:var(--ink);font-family:'DM Sans',sans-serif;letter-spacing:.04em;}
+.print-btn:hover{border-color:var(--gold-d);color:var(--gold-d);}
+
+.tier-h{font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:var(--ink);margin-top:48px;margin-bottom:18px;border-bottom:2px solid var(--line);padding-bottom:8px;letter-spacing:-.01em;}
+.tier-h em{color:var(--gold-d);font-style:italic;}
+.tier-h:first-of-type{margin-top:0;}
+
+.tk{background:var(--paper);border:1px solid var(--line);border-left:4px solid var(--gold-d);border-radius:8px;padding:24px 28px;margin-bottom:18px;page-break-inside:avoid;}
+.tk[data-tier="0"]{border-left-color:var(--good);}
+.tk[data-tier="1"]{border-left-color:var(--gold-d);}
+.tk[data-tier="2"]{border-left-color:var(--teal);}
+.tk[data-tier="custom"]{border-left-color:var(--gold);background:linear-gradient(135deg, var(--paper) 0%, var(--gold-bg) 100%);}
+.tk-h{display:flex;align-items:baseline;gap:14px;margin-bottom:6px;flex-wrap:wrap;}
+.tk-num{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-mute);font-weight:700;letter-spacing:.06em;background:var(--paper-2);padding:3px 8px;border-radius:4px;}
+.tk-tag{font-size:9px;padding:3px 9px;background:var(--paper-2);border-radius:99px;color:var(--ink-mute);text-transform:uppercase;letter-spacing:.08em;font-weight:700;}
+.tk-tag.custom{background:var(--gold);color:var(--ink);}
+.tk-meta{font-size:11px;color:var(--ink-mute);margin-left:auto;font-family:'JetBrains Mono',monospace;}
+.tk-t{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--ink);line-height:1.2;margin-bottom:4px;}
+.tk-t em{color:var(--gold-d);font-style:italic;}
+.tk-mod{font-size:12px;color:var(--ink-mute);font-family:'JetBrains Mono',monospace;margin-bottom:14px;}
+.tk-mod a{color:var(--gold-d);font-weight:700;text-decoration:none;border-bottom:1px solid var(--gold-d);}
+
+.scenes{display:flex;flex-direction:column;gap:8px;margin-top:8px;}
+.scene{display:grid;grid-template-columns:78px 70px 1fr;gap:14px;align-items:start;padding:10px 12px;background:var(--paper-2);border-radius:6px;}
+.scene-time{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--gold-d);font-weight:700;padding-top:3px;}
+.scene-phase{font-size:9px;padding:3px 7px;border-radius:99px;text-transform:uppercase;letter-spacing:.08em;font-weight:700;align-self:start;text-align:center;}
+.scene-phase.hook{background:rgba(95,168,116,.15);color:#3e7c54;}
+.scene-phase.demo{background:rgba(106,138,168,.15);color:#1e6691;}
+.scene-phase.trap{background:rgba(245,158,11,.15);color:#b45309;}
+.scene-phase.lock{background:rgba(201,168,76,.18);color:var(--gold-d);}
+.scene-text{font-family:'Playfair Display',serif;font-size:16px;line-height:1.5;color:var(--ink);font-style:italic;}
+.scene-text::before{content:'"';color:var(--gold-d);font-size:20px;vertical-align:-2px;margin-right:1px;}
+.scene-text::after{content:'"';color:var(--gold-d);font-size:20px;vertical-align:-2px;margin-left:1px;}
+
+.runtime-summary{margin-top:14px;padding:10px 14px;background:var(--paper-3);border-radius:6px;font-size:12px;color:var(--ink-2);font-family:'JetBrains Mono',monospace;display:flex;gap:18px;flex-wrap:wrap;}
+.runtime-summary b{color:var(--gold-d);}
+
+@media (max-width:880px){
+  .app{grid-template-columns:1fr;}
+  aside{position:static;max-height:none;}
+}
+@media print {
+  body{background:#fff;}
+  .app{display:block;padding:0;margin:0;max-width:none;}
+  aside, .print-row{display:none;}
+  .tk{break-inside:avoid;border:1px solid #999;background:#fff;box-shadow:none;margin-bottom:14px;padding:14px 16px;}
+  .tk[data-tier="custom"]{background:#fff;}
+  .scene{background:#f6f6f6;}
+  h1{font-size:28px;}
+  .tier-h{font-size:20px;page-break-after:avoid;margin-top:24px;}
+  @page { size: letter; margin: 0.6in; }
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+<aside>
+  <div class="brand">Ace<em>The</em>DAT</div>
+  <div class="toc-h">★ Hand-crafted (5)</div>
+  <div id="toc-custom"></div>
+  <div class="toc-h">Tier 0 — Foundations</div>
+  <div id="toc-t0"></div>
+  <div class="toc-h">Tier 1 — Quantitative</div>
+  <div id="toc-t1"></div>
+  <div class="toc-h">Tier 2 — Patterns</div>
+  <div id="toc-t2"></div>
+  <div class="toc-help">
+    <b>Pacing:</b> read at conversational speed, ~2.5 words/sec. Add a half-second pause between scenes. Aim for 60-90 sec total per TikTok.
+    <br><br><b>Tone:</b> hooks high-energy, demos calm-clear, trap punchy, lock grounded.
+  </div>
+</aside>
+
+<main>
+<header>
+  <h1>TikTok <em>scripts</em> · all 34</h1>
+  <p class="lede">Read aloud per scene in the <a href="voiceover-studio.html">Voiceover Studio</a>. The studio captures audio (and optional face cam) and lets you download per-scene WebM files. This page is the printable script reference.</p>
+  <div class="print-row">
+    <button class="print-btn" onclick="window.print()">⎙ Print all scripts</button>
+    <a class="print-btn" href="voiceover-studio.html" target="_blank">🎤 Open Voiceover Studio</a>
+    <a class="print-btn" href="index.html">↗ TikTok Library</a>
+  </div>
+</header>
+
+<div id="content"></div>
+
+</main>
+</div>
+
+<script src="topics.js"></script>
+<script>
+/* ============================================================
+   The 5 hand-crafted TikToks — bespoke scripts (8-10 scenes)
+   ============================================================ */
+const CUSTOM = {
+  'buffers-hh': {
+    title: 'Buffers are <em>ratios</em>', module: 'buffers', file: 'buffers-hh-tiktok.html',
+    scenes: [
+      {t:0,     phase:'hook', text:"Buffers are ratios. Stop calculating, start comparing."},
+      {t:4500,  phase:'demo', text:"The Henderson-Hasselbalch equation. pH equals pKa plus log of base over acid."},
+      {t:11000, phase:'demo', text:"Equal HA and A minus. Ratio is one. Log of one is zero. pH equals the pKa exactly."},
+      {t:22000, phase:'demo', text:"Now add more acid. HA goes up, A minus stays. Ratio drops below one. pH drops below pKa."},
+      {t:32000, phase:'demo', text:"Reverse it. Add base. A minus dominates. Ratio above one. pH climbs."},
+      {t:43000, phase:'trap', text:"Trap. Invert the ratio. Base on top. Always. Mix it up, wrong sign on log, wrong pH."},
+      {t:51000, phase:'lock', text:"Lock it in. Buffers are ratios. More HA, pH down. More A minus, pH up. Equal, pH equals pKa."},
+      {t:70000, phase:'hook', text:"Buffers are ratios."}
+    ]
+  },
+  'weak-acid-sqrt': {
+    title: 'Weak = <em>square root</em>', module: 'strong-weak', file: 'weak-acid-sqrt-tiktok.html',
+    scenes: [
+      {t:0,     phase:'hook', text:"Weak equals square root. Skip the I-C-E table."},
+      {t:4500,  phase:'demo', text:"Hydrogen ion concentration equals the square root of K-a times initial concentration."},
+      {t:11000, phase:'demo', text:"Let's run a real example. Zero point one molar acetic acid. K-a equals one point eight times ten to the negative five."},
+      {t:18000, phase:'demo', text:"Step one. Plug in. Square root of K-a times C."},
+      {t:22000, phase:'demo', text:"Multiply inside. Square root of one point eight times ten to the negative six."},
+      {t:26000, phase:'demo', text:"Take the root. One point three four times ten to the negative three molar."},
+      {t:30000, phase:'demo', text:"Negative log gives pH of two point eight seven. Done. No I-C-E table needed."},
+      {t:40000, phase:'trap', text:"Trap. Don't treat weak like strong. Zero point one molar weak acid is not pH one. Always check the strong-acid list first."},
+      {t:48000, phase:'lock', text:"Lock it in. Weak equals square root. H plus equals root K-a C. O-H minus equals root K-b C. When K is less than ten to the negative three."},
+      {t:68000, phase:'hook', text:"Weak equals square root."}
+    ]
+  },
+  'gibbs-quadrant': {
+    title: 'Read the <em>signs</em> (4-quadrant ΔG)', module: 'gibbs', file: 'gibbs-quadrant-tiktok.html',
+    scenes: [
+      {t:0,     phase:'hook', text:"Four quadrants. Skip the math. Read the signs."},
+      {t:4500,  phase:'demo', text:"Delta G equals delta H minus T delta S. Sign of delta G tells you spontaneity."},
+      {t:11000, phase:'demo', text:"Negative delta H, positive delta S. Both forces drive forward. Always spontaneous. Doesn't matter what T is."},
+      {t:19500, phase:'demo', text:"Positive delta H, negative delta S. Both forces fight you. Never spontaneous. T cannot help."},
+      {t:27500, phase:'demo', text:"Positive delta H, positive delta S. Endothermic but disorder helps. Spontaneous only at high T, when T delta S overcomes delta H."},
+      {t:36500, phase:'demo', text:"Negative delta H, negative delta S. Exothermic helps but ordering hurts. Only spontaneous at low T, when delta H wins over T delta S."},
+      {t:46000, phase:'trap', text:"Trap. Mixing kilojoules and joules per kelvin. Delta S is in joules. Delta H is in kilojoules. Convert before computing or you're off by a thousand."},
+      {t:55000, phase:'lock', text:"Lock it in. Read the signs. Negative H positive S, always. Both positive, high T. Both negative, low T. Positive H negative S, never."},
+      {t:75000, phase:'hook', text:"Read the signs."}
+    ]
+  },
+  'q-vs-k': {
+    title: 'Q points <em>the way</em> (Q vs K)', module: 'eq-kc', file: 'q-vs-k-tiktok.html',
+    scenes: [
+      {t:0,     phase:'hook', text:"Q tells direction. K tells destination."},
+      {t:5000,  phase:'demo', text:"Compute Q. Compare to K. The marker tells you what happens."},
+      {t:10500, phase:'demo', text:"Q equals K. Already balanced. Nothing happens."},
+      {t:15000, phase:'demo', text:"Q smaller than K. Not enough products. System pushes right to make more."},
+      {t:24000, phase:'demo', text:"Q bigger than K. Too many products. System pushes left to undo some."},
+      {t:34000, phase:'demo', text:"Direction is set by where Q sits relative to K. K itself only moves if temperature changes."},
+      {t:38000, phase:'trap', text:"Trap. Memorize the direction. Q less than K, shift right toward products. Q greater than K, shift left toward reactants."},
+      {t:48000, phase:'lock', text:"Lock it in. Q points the way. Q less than K, right. Q greater than K, left. Q equals K, you're done."},
+      {t:67000, phase:'hook', text:"Q points the way."}
+    ]
+  },
+  'ksp-common-ion': {
+    title: 'Common ion <em>kills solubility</em>', module: 'ksp', file: 'ksp-common-ion-tiktok.html',
+    scenes: [
+      {t:0,     phase:'hook', text:"Common ion kills solubility. Silver chloride in pure water versus salt water. Watch what happens."},
+      {t:5500,  phase:'demo', text:"Silver chloride. Pure water on the left, point one molar sodium chloride on the right. Same K-s-p."},
+      {t:13000, phase:'demo', text:"On the left, silver chloride dissolves to about thirteen micromolar."},
+      {t:17000, phase:'demo', text:"On the right, the chloride is already there. Equilibrium shifts left. Almost nothing dissolves."},
+      {t:23000, phase:'demo', text:"Solubility drops by a factor of seven thousand four hundred. Three orders of magnitude."},
+      {t:35000, phase:'trap', text:"Trap. Same K-s-p does not mean same solubility. Adding any shared ion pushes equilibrium left."},
+      {t:44000, phase:'lock', text:"Lock it in. For an A-B salt, solubility goes from root K-s-p to K-s-p divided by the common ion concentration. Massive drop."},
+      {t:65000, phase:'hook', text:"Common ion kills."}
+    ]
+  },
+  'lewis-five-steps': {
+    title: 'Lewis in <em>5 steps</em> (CO₂ build)', module: 'lewis', file: 'lewis-five-steps-tiktok.html',
+    scenes: [
+      {t:0,     phase:'hook', text:"Lewis in five steps. C-O-2 from scratch. Same recipe for every molecule."},
+      {t:5000,  phase:'demo', text:"Step one. Count valence electrons. Carbon brings four. Each oxygen brings six. Total: sixteen."},
+      {t:14000, phase:'demo', text:"Step two. Carbon goes in the middle. Lower electronegativity wins. Never put hydrogen central."},
+      {t:21500, phase:'demo', text:"Step three. Single bonds to each oxygen. Two bonds means four electrons used."},
+      {t:29500, phase:'demo', text:"Step four. Fill the outer atoms first. Each oxygen gets three lone pairs. Twelve electrons."},
+      {t:38000, phase:'demo', text:"Step five. Carbon has only four electrons. Convert to double bonds. Each O shares one lone pair to make a double bond. Now everyone has a full octet and formal charge zero."},
+      {t:48000, phase:'trap', text:"Trap. Forget electrons for the charge. N-O-3 minus has twenty four electrons, not twenty three. Negative adds, positive subtracts. Always count the charge."},
+      {t:58000, phase:'lock', text:"Lock it in. Five steps every time. Count, central, single, octets, multiple bonds."},
+      {t:80000, phase:'hook', text:"Lewis in five steps."}
+    ]
+  }
+};
+
+/* Auto-generate scripts for the 29 templated TikToks from window.TOPICS */
+function buildTemplatedScripts(){
+  const out = {};
+  if (!window.TOPICS) return out;
+  Object.entries(window.TOPICS).forEach(([key, t]) => {
+    const sk = t.speak || {};
+    const stripHtml = s => (s||'').replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+    out[key] = {
+      title: stripHtml(t.hookWord) || t.title,
+      module: key,
+      file: 'topic-tiktok.html?topic=' + key,
+      tier: /Tier 0/.test(t.tag) ? 0 : /Tier 1/.test(t.tag) ? 1 : 2,
+      scenes: [
+        {t:0,     phase:'hook', text: sk.hook     || stripHtml(t.hookSub) || stripHtml(t.hookWord)},
+        {t:4500,  phase:'demo', text: sk.formula  || stripHtml(t.formula)},
+        {t:11000, phase:'demo', text: sk.bulletsIntro || ('Three or four things to remember about ' + (t.title || key).toLowerCase() + '.')},
+        {t:36000, phase:'trap', text: sk.trap     || ('Trap. ' + stripHtml(t.trapH) + '. ' + stripHtml(t.trapSub))},
+        {t:46000, phase:'lock', text: sk.lock     || ('Lock it in. ' + stripHtml(t.lockWord) + '. ' + stripHtml(t.lockDecode))}
+      ]
+    };
+  });
+  return out;
+}
+
+const fmtTime = ms => {
+  const total = Math.round(ms / 1000);
+  return Math.floor(total / 60) + ':' + (total % 60).toString().padStart(2, '0');
+};
+const wordCount = text => (text || '').split(/\s+/).filter(Boolean).length;
+const estReadSec = text => Math.ceil(wordCount(text) / 2.5);
+
+function renderTk(key, tk, num, isCustom){
+  const tier = isCustom ? 'custom' : tk.tier;
+  const tierLabel = isCustom ? '★ custom' : 'Tier ' + tier;
+  const totalWords = tk.scenes.reduce((sum, s) => sum + wordCount(s.text), 0);
+  const totalEstSec = tk.scenes.reduce((sum, s) => sum + estReadSec(s.text), 0);
+  return `<div class="tk" data-tier="${tier}" id="tk-${key}">
+    <div class="tk-h">
+      <span class="tk-num">${num}</span>
+      <span class="tk-tag ${isCustom?'custom':''}">${tierLabel}</span>
+      <span class="tk-meta">${tk.scenes.length} scenes · ${totalWords} words · ~${totalEstSec}s read</span>
+    </div>
+    <div class="tk-t">${tk.title}</div>
+    <div class="tk-mod">module: <code>${tk.module}</code> · file: <a href="${tk.file}" target="_blank">${tk.file}</a></div>
+    <div class="scenes">
+      ${tk.scenes.map((s, i) => `<div class="scene">
+        <div class="scene-time">${fmtTime(s.t)} <span style="color:var(--ink-mute)">#${(i+1).toString().padStart(2,'0')}</span></div>
+        <div class="scene-phase ${s.phase}">${s.phase}</div>
+        <div class="scene-text">${s.text}</div>
+      </div>`).join('')}
+    </div>
+    <div class="runtime-summary">
+      <span>Recommended pace: <b>~2.5 words/sec</b></span>
+      <span>Estimated total: <b>~${Math.ceil(totalEstSec)}s</b></span>
+      <span>Stage runtime: <b>~${fmtTime((tk.scenes[tk.scenes.length-1].t || 0) + 5000)}</b></span>
+    </div>
+  </div>`;
+}
+
+const templated = buildTemplatedScripts();
+const groups = {custom:[], t0:[], t1:[], t2:[]};
+let n = 1;
+Object.entries(CUSTOM).forEach(([key, tk]) => groups.custom.push({key, tk, num:'GC·' + (n++).toString().padStart(2,'0'), isCustom:true}));
+Object.entries(templated).forEach(([key, tk]) => {
+  const item = {key, tk, num:'GC·' + (n++).toString().padStart(2,'0'), isCustom:false};
+  if (tk.tier === 0) groups.t0.push(item);
+  else if (tk.tier === 1) groups.t1.push(item);
+  else groups.t2.push(item);
+});
+
+// Render TOC
+const tocHtml = (items, isCustom) => items.map(({key, tk}) =>
+  `<a class="toc-link ${isCustom?'custom':''}" href="#tk-${key}">${tk.title.replace(/<[^>]+>/g, '')}</a>`
+).join('');
+document.getElementById('toc-custom').innerHTML = tocHtml(groups.custom, true);
+document.getElementById('toc-t0').innerHTML = tocHtml(groups.t0, false);
+document.getElementById('toc-t1').innerHTML = tocHtml(groups.t1, false);
+document.getElementById('toc-t2').innerHTML = tocHtml(groups.t2, false);
+
+// Render content
+let contentHtml = '';
+contentHtml += `<h2 class="tier-h">★ Hand-crafted <em>(5)</em></h2>`;
+groups.custom.forEach(({key, tk, num, isCustom}) => contentHtml += renderTk(key, tk, num, isCustom));
+contentHtml += `<h2 class="tier-h">Tier 0 — <em>Foundations</em> (12)</h2>`;
+groups.t0.forEach(({key, tk, num, isCustom}) => contentHtml += renderTk(key, tk, num, isCustom));
+contentHtml += `<h2 class="tier-h">Tier 1 — <em>Quantitative</em> (10)</h2>`;
+groups.t1.forEach(({key, tk, num, isCustom}) => contentHtml += renderTk(key, tk, num, isCustom));
+contentHtml += `<h2 class="tier-h">Tier 2 — <em>Patterns</em> (7)</h2>`;
+groups.t2.forEach(({key, tk, num, isCustom}) => contentHtml += renderTk(key, tk, num, isCustom));
+document.getElementById('content').innerHTML = contentHtml;
+</script>
+</body>
+</html>

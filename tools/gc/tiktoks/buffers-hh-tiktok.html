@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=1080,initial-scale=1"/>
+<title>Ace The DAT — Buffers Are Ratios (HH)</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400;1,700&family=DM+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+<style>
+:root{
+  --sb:#0d2018; --ink:#f5f0e8;
+  --muted:rgba(245,240,232,.55); --dim:rgba(245,240,232,.32);
+  --gold:#C9A84C; --gold-m:#E2C97A; --gold-d:#8C7235;
+  --acid:#ff8a3a;        /* HA — orange (acid) */
+  --acid-d:#cc5a14;
+  --base:#5fa3ff;        /* A⁻ — blue (base) */
+  --base-d:#2c6fc4;
+  --trap:#f59e0b; --trap-deep:#b45309;
+  --good:#7be08a;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{background:#000;overflow:hidden;font-family:'DM Sans',sans-serif;color:var(--ink);}
+.stage{width:1080px;height:1920px;position:absolute;left:50%;top:50%;transform-origin:center center;overflow:hidden;transition:background 0.8s ease;}
+.stage[data-phase="hook"]{background:linear-gradient(175deg,#0a1812 0%,#0d2018 50%,#08120c 100%);}
+.stage[data-phase="demo"]{background:linear-gradient(175deg,#0a1830 0%,#0d2040 50%,#06122a 100%);}
+.stage[data-phase="trap"]{background:linear-gradient(175deg,#3d2706 0%,#5c3608 50%,#2c1d04 100%);}
+.stage[data-phase="lock"]{background:linear-gradient(175deg,#0a1812 0%,#1a3322 50%,#0d2018 100%);}
+.stage::after{content:'';position:absolute;inset:0;pointer-events:none;z-index:99;opacity:.04;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-size:220px;}
+
+.brand{position:absolute;left:0;right:0;top:50px;display:flex;align-items:center;justify-content:space-between;padding:0 70px;z-index:20;}
+.brand-word{font-family:'Playfair Display',serif;font-size:36px;font-weight:700;color:#fff;letter-spacing:.01em;}
+.brand-word span{color:var(--gold);}
+.brand-tag{font-size:18px;font-weight:600;color:var(--dim);letter-spacing:.18em;text-transform:uppercase;}
+
+.voice-toggle{position:absolute;top:130px;right:70px;z-index:30;width:64px;height:64px;border-radius:50%;background:rgba(13,32,24,.85);border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;cursor:pointer;backdrop-filter:blur(8px);}
+.voice-toggle.active{background:var(--gold);}
+.voice-toggle svg{width:30px;height:30px;fill:var(--gold);}
+.voice-toggle.active svg{fill:#0d2018;}
+.voice-tooltip{position:absolute;top:210px;right:70px;z-index:30;background:rgba(13,32,24,.92);color:var(--gold-m);font-size:14px;padding:8px 12px;border-radius:6px;border:1px solid rgba(201,168,76,.3);opacity:0;pointer-events:none;transition:opacity .2s;max-width:200px;}
+
+/* HOOK */
+.hook{position:absolute;left:0;right:0;top:0;bottom:0;display:flex;align-items:center;justify-content:center;flex-direction:column;z-index:25;opacity:1;pointer-events:none;text-align:center;padding:0 80px;}
+.hook-tag{font-size:24px;font-weight:700;color:var(--gold);letter-spacing:.22em;text-transform:uppercase;margin-bottom:30px;display:flex;align-items:center;gap:18px;}
+.hook-tag::before,.hook-tag::after{content:'';width:30px;height:1px;background:var(--gold);}
+.hook-word{font-family:'Playfair Display',serif;font-size:230px;font-weight:900;color:#fff;letter-spacing:-.04em;line-height:.92;text-shadow:0 0 60px rgba(201,168,76,.4);}
+.hook-word em{color:var(--gold);font-style:italic;}
+.hook-sub{font-size:32px;font-weight:600;color:var(--muted);margin-top:30px;letter-spacing:.04em;max-width:760px;line-height:1.3;}
+
+/* DEMO — HH equation surface */
+.hh-eq{position:absolute;left:60px;right:60px;top:280px;z-index:15;text-align:center;opacity:0;}
+.hh-eq-line{font-family:'JetBrains Mono',monospace;font-size:78px;font-weight:700;color:#fff;letter-spacing:-.02em;line-height:1.15;}
+.hh-eq .pka{color:var(--gold-m);}
+.hh-eq .a{color:var(--base);}
+.hh-eq .ha{color:var(--acid);}
+.hh-eq .ratio-paren{color:var(--dim);}
+
+/* Two-bar visual: HA vs A⁻ */
+.bars{position:absolute;left:140px;right:140px;top:540px;height:640px;z-index:14;display:flex;justify-content:space-between;align-items:flex-end;opacity:0;}
+.bar-col{width:340px;display:flex;flex-direction:column;align-items:center;}
+.bar-track{width:240px;height:480px;background:rgba(245,240,232,.06);border:2px solid rgba(245,240,232,.20);border-radius:18px;position:relative;overflow:hidden;box-shadow:inset 0 -8px 16px rgba(0,0,0,.25);}
+.bar-fill{position:absolute;left:0;right:0;bottom:0;border-radius:0 0 16px 16px;transition:height 1.2s cubic-bezier(.4,0,.2,1);height:50%;}
+.bar-fill.acid{background:linear-gradient(180deg,rgba(255,138,58,.55),var(--acid));}
+.bar-fill.base{background:linear-gradient(180deg,rgba(95,163,255,.55),var(--base));}
+.bar-label{font-family:'Playfair Display',serif;font-size:64px;font-weight:800;margin-top:24px;letter-spacing:-.02em;}
+.bar-label.acid{color:var(--acid);}
+.bar-label.base{color:var(--base);}
+.bar-conc{font-family:'JetBrains Mono',monospace;font-size:38px;font-weight:600;color:#fff;margin-top:6px;}
+
+/* pH readout */
+.ph-readout{position:absolute;left:0;right:0;top:1210px;z-index:18;text-align:center;opacity:0;}
+.ph-tag{font-size:22px;font-weight:700;color:var(--gold);letter-spacing:.22em;text-transform:uppercase;margin-bottom:14px;}
+.ph-num{font-family:'Playfair Display',serif;font-size:140px;font-weight:900;color:#fff;line-height:.9;letter-spacing:-.04em;text-shadow:0 0 50px rgba(201,168,76,.4);}
+.ph-num em{color:var(--gold);font-style:italic;}
+.ph-decode{font-size:30px;font-weight:600;color:var(--muted);margin-top:10px;letter-spacing:.02em;}
+
+/* Caption — fixed belt at y=1500 (foot starts ~1770) */
+.caption{position:absolute;left:50%;top:1500px;transform:translateX(-50%);z-index:18;background:#000;color:#fff;font-size:54px;font-weight:900;padding:22px 44px;border-radius:14px;letter-spacing:-.01em;line-height:1.05;box-shadow:0 12px 40px rgba(0,0,0,.6);text-align:center;opacity:0;max-width:920px;}
+.caption .acid{color:var(--acid);}
+.caption .base{color:var(--base);}
+
+/* Trap */
+.trap{position:absolute;left:0;right:0;top:0;bottom:0;background:linear-gradient(135deg,rgba(245,158,11,.95),rgba(180,83,9,.95));z-index:40;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:0 70px;opacity:0;pointer-events:none;}
+.trap-ribbon{background:#0d2018;color:var(--gold);font-size:32px;font-weight:900;letter-spacing:.20em;padding:18px 40px;border-radius:8px;margin-bottom:50px;text-transform:uppercase;border:2px solid var(--gold);}
+.trap-h{font-family:'Playfair Display',serif;font-size:152px;font-weight:900;color:#fff;line-height:.95;letter-spacing:-.03em;margin-bottom:36px;}
+.trap-h em{font-style:italic;color:#0d2018;}
+.trap-sub{font-size:42px;font-weight:600;color:rgba(13,32,24,.92);line-height:1.3;max-width:880px;}
+.trap-sub em{font-style:italic;font-weight:800;}
+
+/* Lock */
+.lock{position:absolute;left:0;right:0;top:0;bottom:0;z-index:35;display:flex;align-items:center;justify-content:center;flex-direction:column;opacity:0;pointer-events:none;text-align:center;padding:0 70px;}
+.lock-tag{font-size:28px;font-weight:700;color:var(--gold);letter-spacing:.22em;text-transform:uppercase;margin-bottom:30px;}
+.lock-word{font-family:'Playfair Display',serif;font-size:200px;font-weight:900;color:var(--gold);line-height:.9;letter-spacing:-.05em;text-shadow:0 0 80px rgba(201,168,76,.5);}
+.lock-word em{font-style:italic;}
+.lock-decode{font-size:42px;font-weight:700;color:#fff;margin-top:60px;line-height:1.55;}
+.lock-decode .acid{color:var(--acid);}
+.lock-decode .base{color:var(--base);}
+.lock-decode .arrow{color:var(--dim);font-weight:500;margin:0 12px;}
+
+/* Foot */
+.foot{position:absolute;left:80px;right:80px;bottom:80px;z-index:50;}
+.scrub-wrap{position:relative;height:8px;background:rgba(245,240,232,.1);border-radius:4px;cursor:pointer;}
+.scrub-fill{position:absolute;left:0;top:0;bottom:0;width:0%;background:linear-gradient(90deg,var(--gold-m),var(--gold));border-radius:4px;}
+.scrub-thumb{position:absolute;top:50%;transform:translate(-50%,-50%);width:28px;height:28px;background:var(--gold);border-radius:50%;box-shadow:0 0 0 4px rgba(201,168,76,.22);}
+.foot-row{display:flex;justify-content:space-between;align-items:center;margin-top:24px;font-size:18px;color:var(--dim);letter-spacing:.1em;}
+.foot-cta{color:var(--gold);font-weight:700;letter-spacing:.14em;text-transform:uppercase;}
+.play-btn{background:var(--gold);color:#0d2018;border:none;padding:10px 22px;border-radius:6px;font-weight:700;letter-spacing:.08em;font-size:16px;cursor:pointer;font-family:inherit;}
+.play-btn:hover{background:var(--gold-m);}
+.watermark{position:absolute;left:80px;bottom:30px;font-size:14px;letter-spacing:.2em;color:rgba(245,240,232,.28);text-transform:uppercase;z-index:50;}
+
+/* Face PiP — picture-in-picture overlay for face-on-camera native feel.
+   Activate with ?face=path/to/video.webm OR localStorage.setItem('tt-face-buffers', path).
+   Position: bottom-right circle ~360px diameter (above the foot). */
+.face-pip{position:absolute;right:60px;bottom:240px;width:340px;height:340px;border-radius:50%;overflow:hidden;border:5px solid var(--gold);box-shadow:0 16px 40px rgba(0,0,0,.5),0 0 0 3px rgba(13,32,24,.3);background:#000;z-index:48;display:none;}
+.face-pip.show{display:block;}
+.face-pip video{width:100%;height:100%;object-fit:cover;}
+.face-pip-tag{position:absolute;bottom:-38px;left:50%;transform:translateX(-50%);font-size:14px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:.2em;white-space:nowrap;text-shadow:0 2px 8px rgba(0,0,0,.6);}
+</style>
+</head>
+<body>
+<div class="stage" id="stage" data-phase="hook">
+
+  <div class="brand">
+    <div class="brand-word">Ace The <span>DAT</span></div>
+    <div class="brand-tag">Gen Chem · Buffers 01</div>
+  </div>
+
+  <button class="voice-toggle" id="voiceBtn" aria-label="Toggle voice">
+    <svg viewBox="0 0 24 24"><path d="M12 1c-4.97 0-9 4.03-9 9v7c0 1.66 1.34 3 3 3h3v-8H5v-2c0-3.87 3.13-7 7-7s7 3.13 7 7v2h-4v8h3c1.66 0 3-1.34 3-3v-7c0-4.97-4.03-9-9-9z"/></svg>
+  </button>
+  <div class="voice-tooltip" id="voiceTip">Click to enable voice</div>
+
+  <div class="hook" id="hook">
+    <div class="hook-tag">Buffers · Henderson-Hasselbalch</div>
+    <div class="hook-word">Buffers are<br/><em>ratios.</em></div>
+    <div class="hook-sub">Stop calculating. Start comparing.</div>
+  </div>
+
+  <div class="hh-eq" id="hhEq">
+    <div class="hh-eq-line">pH = <span class="pka">pKa</span> + log <span class="ratio-paren">(</span><span class="a">[A⁻]</span> / <span class="ha">[HA]</span><span class="ratio-paren">)</span></div>
+  </div>
+
+  <div class="bars" id="bars">
+    <div class="bar-col">
+      <div class="bar-track"><div class="bar-fill acid" id="acidFill"></div></div>
+      <div class="bar-label acid">HA</div>
+      <div class="bar-conc" id="acidConc">0.50 M</div>
+    </div>
+    <div class="bar-col">
+      <div class="bar-track"><div class="bar-fill base" id="baseFill"></div></div>
+      <div class="bar-label base">A⁻</div>
+      <div class="bar-conc" id="baseConc">0.50 M</div>
+    </div>
+  </div>
+
+  <div class="ph-readout" id="phReadout">
+    <div class="ph-tag">pH</div>
+    <div class="ph-num" id="phNum">4.74</div>
+    <div class="ph-decode" id="phDecode">= pKa (acetate)</div>
+  </div>
+
+  <div class="caption" id="caption">caption</div>
+
+  <div class="trap" id="trap">
+    <div class="trap-ribbon">⚠ DAT Trap</div>
+    <div class="trap-h"><em>Invert</em><br/>the ratio.</div>
+    <div class="trap-sub"><em>Base</em> goes on top. Always. log([A⁻]/[HA]). Mix it up — wrong sign on log — wrong pH.</div>
+  </div>
+
+  <div class="lock" id="lock">
+    <div class="lock-tag">Lock it in</div>
+    <div class="lock-word"><em>buffers = ratios.</em></div>
+    <div class="lock-decode">
+      <span class="acid">More HA</span> <span class="arrow">→</span> pH ↓<br/>
+      <span class="base">More A⁻</span> <span class="arrow">→</span> pH ↑<br/>
+      [A⁻] = [HA] <span class="arrow">→</span> pH = pKa
+    </div>
+  </div>
+
+  <div class="foot">
+    <div class="scrub-wrap" id="scrubBar">
+      <div class="scrub-fill" id="scrubFill"></div>
+      <div class="scrub-thumb" id="scrubThumb" style="left:0%"></div>
+    </div>
+    <div class="foot-row">
+      <button class="play-btn" id="playBtn">▶ Play</button>
+      <div class="foot-cta">acethedat.com</div>
+    </div>
+  </div>
+
+  <div class="watermark">Ace The DAT · Gen Chem 01</div>
+
+  <!-- Face PiP — only visible when ?face=URL or localStorage('tt-face-buffers') is set -->
+  <div class="face-pip" id="facePip">
+    <video id="facePipVideo" autoplay loop muted playsinline></video>
+    <div class="face-pip-tag">Tommy</div>
+  </div>
+</div>
+
+<script>
+function fitStage(){
+  const s=document.getElementById('stage');
+  const scale=Math.min(window.innerWidth/1080,window.innerHeight/1920);
+  s.style.transform=`translate(-50%,-50%) scale(${scale})`;
+}
+window.addEventListener('resize',fitStage); fitStage();
+
+/* Face PiP wiring — checks ?face=URL param or localStorage('tt-face-buffers') */
+(function(){
+  let faceUrl = null;
+  try {
+    const params = new URLSearchParams(window.location.search);
+    faceUrl = params.get('face');
+    if (!faceUrl) faceUrl = localStorage.getItem('tt-face-buffers');
+  } catch(e){}
+  if (faceUrl){
+    const pip = document.getElementById('facePip');
+    const vid = document.getElementById('facePipVideo');
+    vid.src = faceUrl;
+    pip.classList.add('show');
+    vid.play().catch(()=>{});
+  }
+})();
+
+/* Voice */
+const synth = window.speechSynthesis;
+let voices = [], selectedVoice = null, voiceEnabled = false;
+function pickVoice(){
+  voices = synth.getVoices();
+  const prefs = ['Ava (Premium)','Ava','Allison','Samantha','Karen','Moira','Tessa','Susan','Veena','Microsoft Aria','Google US English'];
+  for(const p of prefs){ const f = voices.find(v=>v.name===p||v.name.startsWith(p)); if(f){selectedVoice=f; return;}}
+  selectedVoice = voices.find(v=>/female|samantha|allison|ava|karen|aria|moira/i.test(v.name) && /en/i.test(v.lang)) || voices[0];
+}
+if(synth.onvoiceschanged !== undefined) synth.onvoiceschanged = pickVoice;
+pickVoice();
+function speak(t,o){if(!voiceEnabled||!t)return; synth.cancel(); const u=new SpeechSynthesisUtterance(t); if(selectedVoice)u.voice=selectedVoice; u.rate=(o&&o.rate)||0.94; u.pitch=(o&&o.pitch)||0.97; u.volume=1; synth.speak(u);}
+const voiceBtn=document.getElementById('voiceBtn'),voiceTip=document.getElementById('voiceTip');
+voiceBtn.addEventListener('click',()=>{
+  voiceEnabled=!voiceEnabled; voiceBtn.classList.toggle('active',voiceEnabled);
+  voiceTip.textContent = voiceEnabled?'Voice on — '+(selectedVoice?selectedVoice.name:'default'):'Click to enable voice';
+  voiceTip.style.opacity='1'; setTimeout(()=>voiceTip.style.opacity='0',1800);
+  if(voiceEnabled){const ph=document.getElementById('stage').getAttribute('data-phase'); if(ph==='hook') speak("Buffers are ratios. Stop calculating, start comparing.");}
+  else synth.cancel();
+});
+
+/* Animation timeline — ~75 sec */
+const stage = document.getElementById('stage');
+const hook = document.getElementById('hook');
+const hhEq = document.getElementById('hhEq');
+const bars = document.getElementById('bars');
+const phReadout = document.getElementById('phReadout');
+const caption = document.getElementById('caption');
+const trap = document.getElementById('trap');
+const lock = document.getElementById('lock');
+const acidFill = document.getElementById('acidFill');
+const baseFill = document.getElementById('baseFill');
+const acidConc = document.getElementById('acidConc');
+const baseConc = document.getElementById('baseConc');
+const phNum = document.getElementById('phNum');
+const phDecode = document.getElementById('phDecode');
+const scrubFill = document.getElementById('scrubFill');
+const scrubThumb = document.getElementById('scrubThumb');
+const playBtn = document.getElementById('playBtn');
+
+const TIMELINE = [
+  {t:0,    fn: () => { stage.dataset.phase='hook'; hook.style.opacity=1; hhEq.style.opacity=0; bars.style.opacity=0; phReadout.style.opacity=0; caption.style.opacity=0; trap.style.opacity=0; lock.style.opacity=0; if(voiceEnabled) speak("Buffers are ratios. Stop calculating, start comparing."); }},
+  {t:4500, fn: () => { stage.dataset.phase='demo'; anime({targets:hook,opacity:0,duration:500,easing:'easeOutQuad'}); setTimeout(() => { hhEq.style.opacity=1; anime({targets:hhEq,translateY:[40,0],opacity:[0,1],duration:700,easing:'easeOutQuad'}); }, 400); if(voiceEnabled) speak("The Henderson-Hasselbalch equation. pH equals pKa plus log of base over acid."); }},
+  {t:11000, fn: () => { bars.style.opacity=1; anime({targets:bars,translateY:[40,0],opacity:[0,1],duration:700,easing:'easeOutQuad'}); acidFill.style.height='50%'; baseFill.style.height='50%'; acidConc.textContent='0.50 M'; baseConc.textContent='0.50 M'; phReadout.style.opacity=1; phNum.textContent='4.74'; phDecode.textContent='[A⁻] = [HA], log(1) = 0, pH = pKa'; if(voiceEnabled) speak("Equal HA and A minus. Ratio is one. Log of one is zero. pH equals the pKa exactly."); }},
+  {t:18000, fn: () => { caption.textContent='Equal HA + A⁻ → pH = pKa'; caption.style.opacity=1; anime({targets:caption,translateY:[20,0],opacity:[0,1],duration:500,easing:'easeOutQuad'}); }},
+  {t:22000, fn: () => { caption.style.opacity=0; if(voiceEnabled) speak("Now add more acid. HA goes up, A minus stays. Ratio drops below one. pH drops below pKa."); }},
+  {t:24000, fn: () => { acidFill.style.height='80%'; baseFill.style.height='30%'; acidConc.textContent='0.80 M'; baseConc.textContent='0.20 M'; phNum.textContent='4.14'; phDecode.textContent='log(0.20/0.80) = −0.60'; }},
+  {t:28000, fn: () => { caption.innerHTML='More <span class="acid">HA</span> → pH ↓'; caption.style.opacity=1; anime({targets:caption,translateY:[20,0],opacity:[0,1],duration:500,easing:'easeOutQuad'}); }},
+  {t:32000, fn: () => { caption.style.opacity=0; if(voiceEnabled) speak("Reverse it. Add base. A minus dominates. Ratio above one. pH climbs."); }},
+  {t:34000, fn: () => { acidFill.style.height='20%'; baseFill.style.height='90%'; acidConc.textContent='0.10 M'; baseConc.textContent='0.90 M'; phNum.textContent='5.69'; phDecode.textContent='log(0.90/0.10) = +0.95'; }},
+  {t:38000, fn: () => { caption.innerHTML='More <span class="base">A⁻</span> → pH ↑'; caption.style.opacity=1; anime({targets:caption,translateY:[20,0],opacity:[0,1],duration:500,easing:'easeOutQuad'}); }},
+  {t:43000, fn: () => { caption.style.opacity=0; stage.dataset.phase='trap'; trap.style.opacity=1; anime({targets:trap,opacity:[0,1],duration:600,easing:'easeOutQuad'}); if(voiceEnabled) speak("Trap. Invert the ratio. Base on top. Always. Mix it up, wrong sign on log, wrong pH."); }},
+  {t:51000, fn: () => { trap.style.opacity=0; stage.dataset.phase='lock'; lock.style.opacity=1; anime({targets:lock,opacity:[0,1],scale:[0.9,1],duration:700,easing:'easeOutQuad'}); if(voiceEnabled) speak("Lock it in. Buffers are ratios. More HA, pH down. More A minus, pH up. Equal, pH equals pKa."); }},
+  {t:62000, fn: () => { /* hold */ }},
+  {t:70000, fn: () => { stage.dataset.phase='hook'; lock.style.opacity=0; hook.style.opacity=1; if(voiceEnabled) speak("Buffers are ratios."); }}
+];
+const TOTAL = 75000;
+
+let timer = null, startedAt = 0, paused = true, elapsed = 0;
+function tick(){
+  if(paused) return;
+  const now = Date.now();
+  const t = elapsed + (now - startedAt);
+  for(const e of TIMELINE){ if(!e._fired && t >= e.t){ e._fired = true; e.fn(); } }
+  scrubFill.style.width = Math.min(100, t / TOTAL * 100) + '%';
+  scrubThumb.style.left = Math.min(100, t / TOTAL * 100) + '%';
+  if(t >= TOTAL){ paused = true; playBtn.textContent = '↻ Replay'; return; }
+  requestAnimationFrame(tick);
+}
+function play(){
+  if(elapsed >= TOTAL){ TIMELINE.forEach(e => e._fired = false); elapsed = 0; }
+  paused = false; startedAt = Date.now();
+  playBtn.textContent = '⏸ Pause';
+  tick();
+}
+function pause(){ paused = true; elapsed += Date.now() - startedAt; playBtn.textContent = '▶ Resume'; }
+playBtn.addEventListener('click', () => { if(paused) play(); else pause(); });
+document.getElementById('scrubBar').addEventListener('click', e => {
+  const r = e.currentTarget.getBoundingClientRect();
+  const pct = (e.clientX - r.left) / r.width;
+  elapsed = Math.max(0, Math.min(TOTAL, pct * TOTAL));
+  TIMELINE.forEach(e => e._fired = e.t < elapsed);
+  // Re-fire the closest prior to set state
+  for(let i = TIMELINE.length - 1; i >= 0; i--){ if(TIMELINE[i].t <= elapsed){ TIMELINE[i].fn(); break; } }
+  if(!paused){ startedAt = Date.now(); }
+  scrubFill.style.width = (elapsed / TOTAL * 100) + '%';
+  scrubThumb.style.left = (elapsed / TOTAL * 100) + '%';
+});
+</script>
+</body>
+</html>

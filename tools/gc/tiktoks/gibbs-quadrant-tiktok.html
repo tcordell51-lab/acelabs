@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=1080,initial-scale=1"/>
+<title>Ace The DAT — Gibbs ΔG 4-Quadrant Map</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400;1,700&family=DM+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+<style>
+:root{
+  --sb:#0d2018; --ink:#f5f0e8;
+  --muted:rgba(245,240,232,.55); --dim:rgba(245,240,232,.32);
+  --gold:#C9A84C; --gold-m:#E2C97A; --gold-d:#8C7235;
+  --spont:#7be08a; --spont-d:#3f9a52;        /* always green — spontaneous */
+  --never:#f87171; --never-d:#b53d3d;        /* always red — never */
+  --hi-T:#ff8a3a; --hi-T-d:#cc5a14;          /* high-T orange */
+  --lo-T:#5fa3ff; --lo-T-d:#2c6fc4;          /* low-T blue */
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{background:#000;overflow:hidden;font-family:'DM Sans',sans-serif;color:var(--ink);}
+.stage{width:1080px;height:1920px;position:absolute;left:50%;top:50%;transform-origin:center center;overflow:hidden;transition:background 0.8s ease;}
+.stage[data-phase="hook"]{background:linear-gradient(175deg,#0a1812 0%,#0d2018 50%,#08120c 100%);}
+.stage[data-phase="demo"]{background:linear-gradient(175deg,#0a1812 0%,#102025 50%,#08120c 100%);}
+.stage[data-phase="trap"]{background:linear-gradient(175deg,#3d2706 0%,#5c3608 50%,#2c1d04 100%);}
+.stage[data-phase="lock"]{background:linear-gradient(175deg,#0a1812 0%,#1a3322 50%,#0d2018 100%);}
+.stage::after{content:'';position:absolute;inset:0;pointer-events:none;z-index:99;opacity:.04;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-size:220px;}
+
+.brand{position:absolute;left:0;right:0;top:50px;display:flex;align-items:center;justify-content:space-between;padding:0 70px;z-index:20;}
+.brand-word{font-family:'Playfair Display',serif;font-size:36px;font-weight:700;color:#fff;}
+.brand-word span{color:var(--gold);}
+.brand-tag{font-size:18px;font-weight:600;color:var(--dim);letter-spacing:.18em;text-transform:uppercase;}
+
+.voice-toggle{position:absolute;top:130px;right:70px;z-index:30;width:64px;height:64px;border-radius:50%;background:rgba(13,32,24,.85);border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;cursor:pointer;backdrop-filter:blur(8px);}
+.voice-toggle.active{background:var(--gold);}
+.voice-toggle svg{width:30px;height:30px;fill:var(--gold);}
+.voice-toggle.active svg{fill:#0d2018;}
+.voice-tooltip{position:absolute;top:210px;right:70px;z-index:30;background:rgba(13,32,24,.92);color:var(--gold-m);font-size:14px;padding:8px 12px;border-radius:6px;border:1px solid rgba(201,168,76,.3);opacity:0;pointer-events:none;transition:opacity .2s;max-width:200px;}
+
+.hook{position:absolute;left:0;right:0;top:0;bottom:0;display:flex;align-items:center;justify-content:center;flex-direction:column;z-index:25;opacity:1;pointer-events:none;text-align:center;padding:0 80px;}
+.hook-tag{font-size:24px;font-weight:700;color:var(--gold);letter-spacing:.22em;text-transform:uppercase;margin-bottom:30px;display:flex;align-items:center;gap:18px;}
+.hook-tag::before,.hook-tag::after{content:'';width:30px;height:1px;background:var(--gold);}
+.hook-word{font-family:'Playfair Display',serif;font-size:200px;font-weight:900;color:#fff;letter-spacing:-.04em;line-height:.92;text-shadow:0 0 60px rgba(201,168,76,.4);}
+.hook-word em{color:var(--gold);font-style:italic;}
+.hook-sub{font-size:32px;font-weight:600;color:var(--muted);margin-top:30px;letter-spacing:.04em;max-width:780px;line-height:1.3;}
+
+/* The 4-quadrant grid */
+.grid{position:absolute;left:60px;right:60px;top:340px;height:1080px;z-index:14;opacity:0;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:18px;}
+.q{position:relative;border-radius:24px;padding:36px 28px;display:flex;flex-direction:column;justify-content:space-between;border:3px solid;transition:all 0.5s;background:rgba(13,32,24,.55);overflow:hidden;}
+.q::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity 0.5s;}
+.q.lit{transform:scale(1.02);box-shadow:0 0 60px;}
+.q.lit::before{opacity:0.18;}
+.q-head{font-family:'JetBrains Mono',monospace;font-size:46px;font-weight:700;letter-spacing:-.02em;}
+.q-name{font-family:'Playfair Display',serif;font-size:62px;font-weight:900;letter-spacing:-.03em;line-height:.95;}
+.q-name em{font-style:italic;}
+.q-rule{font-family:'JetBrains Mono',monospace;font-size:30px;font-weight:600;color:var(--ink);opacity:.85;line-height:1.4;}
+
+.q.spont{border-color:var(--spont);color:var(--spont);}
+.q.spont::before{background:var(--spont);}
+.q.spont .q-rule{color:#fff;}
+.q.never{border-color:var(--never);color:var(--never);}
+.q.never::before{background:var(--never);}
+.q.never .q-rule{color:#fff;}
+.q.hi-T{border-color:var(--hi-T);color:var(--hi-T);}
+.q.hi-T::before{background:var(--hi-T);}
+.q.hi-T .q-rule{color:#fff;}
+.q.lo-T{border-color:var(--lo-T);color:var(--lo-T);}
+.q.lo-T::before{background:var(--lo-T);}
+.q.lo-T .q-rule{color:#fff;}
+
+/* Axis labels */
+.axis-x{position:absolute;left:50%;top:300px;transform:translateX(-50%);z-index:16;font-family:'JetBrains Mono',monospace;font-size:24px;color:var(--gold);font-weight:700;letter-spacing:.2em;opacity:0;}
+.axis-y{position:absolute;left:30px;top:880px;z-index:16;font-family:'JetBrains Mono',monospace;font-size:24px;color:var(--gold);font-weight:700;letter-spacing:.2em;writing-mode:vertical-rl;transform:rotate(180deg);opacity:0;}
+
+/* Caption — fixed belt at y=1500 (foot starts ~1770) */
+.caption{position:absolute;left:50%;top:1500px;transform:translateX(-50%);z-index:18;background:#000;color:#fff;font-size:50px;font-weight:900;padding:22px 44px;border-radius:14px;letter-spacing:-.01em;line-height:1.1;box-shadow:0 12px 40px rgba(0,0,0,.6);text-align:center;opacity:0;max-width:920px;}
+
+/* Trap */
+.trap{position:absolute;left:0;right:0;top:0;bottom:0;background:linear-gradient(135deg,rgba(245,158,11,.95),rgba(180,83,9,.95));z-index:40;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:0 70px;opacity:0;pointer-events:none;}
+.trap-ribbon{background:#0d2018;color:var(--gold);font-size:32px;font-weight:900;letter-spacing:.20em;padding:18px 40px;border-radius:8px;margin-bottom:50px;text-transform:uppercase;border:2px solid var(--gold);}
+.trap-h{font-family:'Playfair Display',serif;font-size:160px;font-weight:900;color:#fff;line-height:.95;letter-spacing:-.03em;margin-bottom:36px;}
+.trap-h em{font-style:italic;color:#0d2018;}
+.trap-sub{font-size:42px;font-weight:600;color:rgba(13,32,24,.92);line-height:1.3;max-width:880px;}
+
+/* Lock */
+.lock{position:absolute;left:0;right:0;top:0;bottom:0;z-index:35;display:flex;align-items:center;justify-content:center;flex-direction:column;opacity:0;pointer-events:none;text-align:center;padding:0 70px;}
+.lock-tag{font-size:28px;font-weight:700;color:var(--gold);letter-spacing:.22em;text-transform:uppercase;margin-bottom:30px;}
+.lock-word{font-family:'Playfair Display',serif;font-size:140px;font-weight:900;color:var(--gold);line-height:.95;letter-spacing:-.04em;text-shadow:0 0 80px rgba(201,168,76,.5);}
+.lock-word em{font-style:italic;}
+.lock-decode{font-family:'JetBrains Mono',monospace;font-size:34px;font-weight:600;color:#fff;margin-top:50px;line-height:1.65;}
+.lock-decode .spont{color:var(--spont);}
+.lock-decode .never{color:var(--never);}
+.lock-decode .hi-T{color:var(--hi-T);}
+.lock-decode .lo-T{color:var(--lo-T);}
+
+.foot{position:absolute;left:80px;right:80px;bottom:80px;z-index:50;}
+.scrub-wrap{position:relative;height:8px;background:rgba(245,240,232,.1);border-radius:4px;cursor:pointer;}
+.scrub-fill{position:absolute;left:0;top:0;bottom:0;width:0%;background:linear-gradient(90deg,var(--gold-m),var(--gold));border-radius:4px;}
+.scrub-thumb{position:absolute;top:50%;transform:translate(-50%,-50%);width:28px;height:28px;background:var(--gold);border-radius:50%;box-shadow:0 0 0 4px rgba(201,168,76,.22);}
+.foot-row{display:flex;justify-content:space-between;align-items:center;margin-top:24px;font-size:18px;color:var(--dim);letter-spacing:.1em;}
+.foot-cta{color:var(--gold);font-weight:700;letter-spacing:.14em;text-transform:uppercase;}
+.play-btn{background:var(--gold);color:#0d2018;border:none;padding:10px 22px;border-radius:6px;font-weight:700;letter-spacing:.08em;font-size:16px;cursor:pointer;font-family:inherit;}
+.play-btn:hover{background:var(--gold-m);}
+.watermark{position:absolute;left:80px;bottom:30px;font-size:14px;letter-spacing:.2em;color:rgba(245,240,232,.28);text-transform:uppercase;z-index:50;}
+
+/* Face PiP — universal slot. ?face=URL or localStorage('tt-face-gibbs-quadrant') */
+.face-pip{position:absolute;right:60px;bottom:240px;width:340px;height:340px;border-radius:50%;overflow:hidden;border:5px solid var(--gold);box-shadow:0 16px 40px rgba(0,0,0,.5),0 0 0 3px rgba(13,32,24,.3);background:#000;z-index:48;display:none;}
+.face-pip.show{display:block;}
+.face-pip video{width:100%;height:100%;object-fit:cover;}
+.face-pip-tag{position:absolute;bottom:-36px;left:50%;transform:translateX(-50%);font-size:14px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:.2em;white-space:nowrap;text-shadow:0 2px 8px rgba(0,0,0,.6);}
+</style>
+</head>
+<body>
+<div class="stage" id="stage" data-phase="hook">
+
+  <div class="brand">
+    <div class="brand-word">Ace The <span>DAT</span></div>
+    <div class="brand-tag">Gen Chem · Gibbs 03</div>
+  </div>
+
+  <button class="voice-toggle" id="voiceBtn" aria-label="Toggle voice">
+    <svg viewBox="0 0 24 24"><path d="M12 1c-4.97 0-9 4.03-9 9v7c0 1.66 1.34 3 3 3h3v-8H5v-2c0-3.87 3.13-7 7-7s7 3.13 7 7v2h-4v8h3c1.66 0 3-1.34 3-3v-7c0-4.97-4.03-9-9-9z"/></svg>
+  </button>
+  <div class="voice-tooltip" id="voiceTip">Click to enable voice</div>
+
+  <div class="hook" id="hook">
+    <div class="hook-tag">Gibbs ΔG · Sign Map</div>
+    <div class="hook-word">Four<br/><em>quadrants.</em></div>
+    <div class="hook-sub">Skip the math. Read the signs of ΔH and ΔS.</div>
+  </div>
+
+  <div class="axis-x" id="axisX">→ ΔS (entropy)</div>
+  <div class="axis-y" id="axisY">→ ΔH (enthalpy)</div>
+
+  <div class="grid" id="grid">
+    <div class="q never" id="q-never">
+      <div>
+        <div class="q-head">+ΔH, −ΔS</div>
+        <div class="q-name"><em>Never.</em></div>
+      </div>
+      <div class="q-rule">ΔG always +<br/>No T helps.</div>
+    </div>
+    <div class="q hi-T" id="q-hi">
+      <div>
+        <div class="q-head">+ΔH, +ΔS</div>
+        <div class="q-name"><em>High T<br/>only.</em></div>
+      </div>
+      <div class="q-rule">Spont when<br/>T &gt; ΔH/ΔS</div>
+    </div>
+    <div class="q lo-T" id="q-lo">
+      <div>
+        <div class="q-head">−ΔH, −ΔS</div>
+        <div class="q-name"><em>Low T<br/>only.</em></div>
+      </div>
+      <div class="q-rule">Spont when<br/>T &lt; ΔH/ΔS</div>
+    </div>
+    <div class="q spont" id="q-spont">
+      <div>
+        <div class="q-head">−ΔH, +ΔS</div>
+        <div class="q-name"><em>Always.</em></div>
+      </div>
+      <div class="q-rule">ΔG always −<br/>Both forces win.</div>
+    </div>
+  </div>
+
+  <div class="caption" id="caption">caption</div>
+
+  <div class="trap" id="trap">
+    <div class="trap-ribbon">⚠ DAT Trap</div>
+    <div class="trap-h">Mix <em>kJ</em><br/>and J/K.</div>
+    <div class="trap-sub">ΔH usually in kJ, ΔS in J/K. Convert ΔS to kJ/K (÷1000) before computing ΔG = ΔH − TΔS. Off by 1000 → wrong sign → wrong answer.</div>
+  </div>
+
+  <div class="lock" id="lock">
+    <div class="lock-tag">Lock it in</div>
+    <div class="lock-word">read<br/>the <em>signs.</em></div>
+    <div class="lock-decode">
+      <span class="spont">(−H, +S)</span> → always spont<br/>
+      <span class="hi-T">(+H, +S)</span> → spont if T high<br/>
+      <span class="lo-T">(−H, −S)</span> → spont if T low<br/>
+      <span class="never">(+H, −S)</span> → never spont
+    </div>
+  </div>
+
+  <div class="foot">
+    <div class="scrub-wrap" id="scrubBar">
+      <div class="scrub-fill" id="scrubFill"></div>
+      <div class="scrub-thumb" id="scrubThumb" style="left:0%"></div>
+    </div>
+    <div class="foot-row">
+      <button class="play-btn" id="playBtn">▶ Play</button>
+      <div class="foot-cta">acethedat.com</div>
+    </div>
+  </div>
+
+  <div class="watermark">Ace The DAT · Gen Chem 03</div>
+
+  <div class="face-pip" id="facePip">
+    <video id="facePipVideo" autoplay loop muted playsinline></video>
+    <div class="face-pip-tag">Tommy</div>
+  </div>
+</div>
+
+<script>
+function fitStage(){
+  const s=document.getElementById('stage');
+  const scale=Math.min(window.innerWidth/1080,window.innerHeight/1920);
+  s.style.transform=`translate(-50%,-50%) scale(${scale})`;
+}
+window.addEventListener('resize',fitStage); fitStage();
+
+(function(){
+  let faceUrl = null;
+  try { const p = new URLSearchParams(window.location.search); faceUrl = p.get('face') || localStorage.getItem('tt-face-gibbs-quadrant'); } catch(e){}
+  if (faceUrl){ const pip = document.getElementById('facePip'); const vid = document.getElementById('facePipVideo'); vid.src = faceUrl; pip.classList.add('show'); vid.play().catch(()=>{}); }
+})();
+
+const synth = window.speechSynthesis;
+let voices = [], selectedVoice = null, voiceEnabled = false;
+function pickVoice(){
+  voices = synth.getVoices();
+  const prefs = ['Ava (Premium)','Ava','Allison','Samantha','Karen','Moira','Tessa','Susan','Veena','Microsoft Aria','Google US English'];
+  for(const p of prefs){ const f = voices.find(v=>v.name===p||v.name.startsWith(p)); if(f){selectedVoice=f; return;}}
+  selectedVoice = voices.find(v=>/female|samantha|allison|ava|karen|aria|moira/i.test(v.name) && /en/i.test(v.lang)) || voices[0];
+}
+if(synth.onvoiceschanged !== undefined) synth.onvoiceschanged = pickVoice;
+pickVoice();
+function speak(t,o){if(!voiceEnabled||!t)return; synth.cancel(); const u=new SpeechSynthesisUtterance(t); if(selectedVoice)u.voice=selectedVoice; u.rate=(o&&o.rate)||0.94; u.pitch=(o&&o.pitch)||0.97; u.volume=1; synth.speak(u);}
+const voiceBtn=document.getElementById('voiceBtn'),voiceTip=document.getElementById('voiceTip');
+voiceBtn.addEventListener('click',()=>{
+  voiceEnabled=!voiceEnabled; voiceBtn.classList.toggle('active',voiceEnabled);
+  voiceTip.textContent = voiceEnabled?'Voice on':'Click to enable voice';
+  voiceTip.style.opacity='1'; setTimeout(()=>voiceTip.style.opacity='0',1800);
+  if(voiceEnabled){const ph=document.getElementById('stage').getAttribute('data-phase'); if(ph==='hook') speak("Four quadrants. Skip the math. Read the signs.");}
+  else synth.cancel();
+});
+
+const stage = document.getElementById('stage');
+const hook = document.getElementById('hook');
+const grid = document.getElementById('grid');
+const axisX = document.getElementById('axisX');
+const axisY = document.getElementById('axisY');
+const qNever = document.getElementById('q-never');
+const qHi = document.getElementById('q-hi');
+const qLo = document.getElementById('q-lo');
+const qSpont = document.getElementById('q-spont');
+const caption = document.getElementById('caption');
+const trap = document.getElementById('trap');
+const lock = document.getElementById('lock');
+const scrubFill = document.getElementById('scrubFill');
+const scrubThumb = document.getElementById('scrubThumb');
+const playBtn = document.getElementById('playBtn');
+
+const litReset = () => [qNever, qHi, qLo, qSpont].forEach(q => q.classList.remove('lit'));
+
+const TIMELINE = [
+  {t:0,    fn: () => { stage.dataset.phase='hook'; hook.style.opacity=1; grid.style.opacity=0; axisX.style.opacity=0; axisY.style.opacity=0; caption.style.opacity=0; trap.style.opacity=0; lock.style.opacity=0; litReset(); if(voiceEnabled) speak("Four quadrants. Skip the math. Read the signs."); }},
+  {t:4500, fn: () => { stage.dataset.phase='demo'; anime({targets:hook,opacity:0,duration:500,easing:'easeOutQuad'}); setTimeout(() => { grid.style.opacity=1; axisX.style.opacity=1; axisY.style.opacity=1; anime({targets:grid,scale:[0.9,1],opacity:[0,1],duration:700,easing:'easeOutQuad'}); }, 400); if(voiceEnabled) speak("ΔG equals ΔH minus T ΔS. Sign of ΔG tells you spontaneity."); }},
+  {t:11000, fn: () => { qSpont.classList.add('lit'); if(voiceEnabled) speak("Negative ΔH, positive ΔS. Both forces drive forward. Always spontaneous. Doesn't matter what T is."); }},
+  {t:16000, fn: () => { caption.innerHTML='(−H, +S) → <span style="color:var(--spont)">always</span>'; caption.style.opacity=1; anime({targets:caption,translateY:[20,0],opacity:[0,1],duration:500}); }},
+  {t:19500, fn: () => { caption.style.opacity=0; litReset(); qNever.classList.add('lit'); if(voiceEnabled) speak("Positive ΔH, negative ΔS. Both forces fight you. Never spontaneous. T cannot help."); }},
+  {t:24000, fn: () => { caption.innerHTML='(+H, −S) → <span style="color:var(--never)">never</span>'; caption.style.opacity=1; anime({targets:caption,translateY:[20,0],opacity:[0,1],duration:500}); }},
+  {t:27500, fn: () => { caption.style.opacity=0; litReset(); qHi.classList.add('lit'); if(voiceEnabled) speak("Positive ΔH, positive ΔS. Endothermic but disorder helps. Spontaneous only at high T, when T ΔS overcomes ΔH."); }},
+  {t:33000, fn: () => { caption.innerHTML='(+H, +S) → <span style="color:var(--hi-T)">high T</span>'; caption.style.opacity=1; anime({targets:caption,translateY:[20,0],opacity:[0,1],duration:500}); }},
+  {t:36500, fn: () => { caption.style.opacity=0; litReset(); qLo.classList.add('lit'); if(voiceEnabled) speak("Negative ΔH, negative ΔS. Exothermic helps but ordering hurts. Only spontaneous at low T, when ΔH wins over T ΔS."); }},
+  {t:42000, fn: () => { caption.innerHTML='(−H, −S) → <span style="color:var(--lo-T)">low T</span>'; caption.style.opacity=1; anime({targets:caption,translateY:[20,0],opacity:[0,1],duration:500}); }},
+  {t:46000, fn: () => { caption.style.opacity=0; stage.dataset.phase='trap'; trap.style.opacity=1; anime({targets:trap,opacity:[0,1],duration:600}); if(voiceEnabled) speak("Trap. Mixing kJ and J per K. ΔS is in joules. ΔH is in kilojoules. Convert before computing or you're off by a thousand."); }},
+  {t:55000, fn: () => { trap.style.opacity=0; stage.dataset.phase='lock'; lock.style.opacity=1; anime({targets:lock,opacity:[0,1],scale:[0.9,1],duration:700,easing:'easeOutQuad'}); if(voiceEnabled) speak("Lock it in. Read the signs. Negative H positive S, always. Both positive, high T. Both negative, low T. Positive H negative S, never."); }},
+  {t:68000, fn: () => { /* hold */ }},
+  {t:75000, fn: () => { stage.dataset.phase='hook'; lock.style.opacity=0; hook.style.opacity=1; if(voiceEnabled) speak("Read the signs."); }}
+];
+const TOTAL = 80000;
+
+let timer = null, startedAt = 0, paused = true, elapsed = 0;
+function tick(){
+  if(paused) return;
+  const now = Date.now();
+  const t = elapsed + (now - startedAt);
+  for(const e of TIMELINE){ if(!e._fired && t >= e.t){ e._fired = true; e.fn(); } }
+  scrubFill.style.width = Math.min(100, t / TOTAL * 100) + '%';
+  scrubThumb.style.left = Math.min(100, t / TOTAL * 100) + '%';
+  if(t >= TOTAL){ paused = true; playBtn.textContent = '↻ Replay'; return; }
+  requestAnimationFrame(tick);
+}
+function play(){
+  if(elapsed >= TOTAL){ TIMELINE.forEach(e => e._fired = false); elapsed = 0; }
+  paused = false; startedAt = Date.now();
+  playBtn.textContent = '⏸ Pause';
+  tick();
+}
+function pause(){ paused = true; elapsed += Date.now() - startedAt; playBtn.textContent = '▶ Resume'; }
+playBtn.addEventListener('click', () => { if(paused) play(); else pause(); });
+document.getElementById('scrubBar').addEventListener('click', e => {
+  const r = e.currentTarget.getBoundingClientRect();
+  const pct = (e.clientX - r.left) / r.width;
+  elapsed = Math.max(0, Math.min(TOTAL, pct * TOTAL));
+  TIMELINE.forEach(e => e._fired = e.t < elapsed);
+  for(let i = TIMELINE.length - 1; i >= 0; i--){ if(TIMELINE[i].t <= elapsed){ TIMELINE[i].fn(); break; } }
+  if(!paused){ startedAt = Date.now(); }
+  scrubFill.style.width = (elapsed / TOTAL * 100) + '%';
+  scrubThumb.style.left = (elapsed / TOTAL * 100) + '%';
+});
+</script>
+</body>
+</html>

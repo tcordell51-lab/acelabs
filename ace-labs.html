@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Ace Labs · DAT Mastery System</title>
+<meta name="description" content="The unified DAT prep system from AceTheDAT. Quantitative Reasoning, Biology, Gen Chem, Organic Chem — one home, four engines, one mock."/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400;1,700&family=DM+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared/ace-labs-shell.css">
+</head>
+<body data-page="home">
+<div class="al-app">
+
+<!-- ========== TOP BAR ========== -->
+<header class="al-top">
+  <div class="al-brand">
+    <span class="al-mark">Ace<em>The</em>DAT</span>
+    <span class="al-divider"></span>
+    <span class="al-product">Ace Labs</span>
+    <span class="al-build">v1 · 2026-05</span>
+  </div>
+  <nav class="al-nav">
+    <a href="ace-labs.html" class="al-nav-link active">Home</a>
+    <a href="unified-mock.html" class="al-nav-link">Cross-tool mock</a>
+    <a href="#tools" class="al-nav-link">Tools</a>
+    <a href="#plan" class="al-nav-link">This week</a>
+  </nav>
+</header>
+
+<!-- ========== HERO ========== -->
+<section class="al-hero">
+  <span class="al-hero-badge"><span class="pulse"></span>Four engines · ~2,500-question bank · DAT-format mocks · spaced retrieval</span>
+  <h1>The DAT Mastery System,<br/><em>under one roof.</em></h1>
+  <p class="al-lede">Quantitative Reasoning, Biology, Gen Chem, Organic Chem — four engines built around the way the DAT actually tests, not the way textbooks teach. Each engine drops into deep-dive nodes with interactive visuals; together they feed a single Survey-of-Natural-Sciences mock and a cross-tool spaced-repetition queue.</p>
+</section>
+
+<!-- ========== UNIFIED DASHBOARD ========== -->
+<section class="al-dash" id="dashboard">
+  <div class="al-dash-row">
+    <div class="al-dash-card al-dash-today">
+      <div class="al-dash-lbl">Today</div>
+      <div class="al-dash-num" id="dashCardsDue">—</div>
+      <div class="al-dash-sub">retrieval cards due now (across all tools)</div>
+      <a href="#tools" class="al-dash-cta">Study now</a>
+    </div>
+    <div class="al-dash-card">
+      <div class="al-dash-lbl">Last study session</div>
+      <div class="al-dash-num-small" id="dashLastSession">No data yet</div>
+      <div class="al-dash-sub" id="dashLastSessionSub">Open any tool to start tracking</div>
+    </div>
+    <div class="al-dash-card al-dash-mastery">
+      <div class="al-dash-lbl">Overall mastery</div>
+      <div class="al-dash-num" id="dashMasteryPct">—%</div>
+      <div class="al-dash-bar"><div class="al-dash-bar-fill" id="dashMasteryFill" style="width:0%"></div></div>
+      <div class="al-dash-sub" id="dashMasterySub">— of — modules mastered across QR / Bio / GC / OChem</div>
+    </div>
+    <div class="al-dash-card al-dash-mock">
+      <div class="al-dash-lbl">Last cross-tool mock</div>
+      <div class="al-dash-num" id="dashMockScore">—</div>
+      <div class="al-dash-sub" id="dashMockSub">no mock attempts yet</div>
+      <a href="unified-mock.html" class="al-dash-cta">Take Survey-of-Sciences mock</a>
+    </div>
+  </div>
+  <div class="al-dash-row al-dash-row-by-subject">
+    <div class="al-dash-subjects-head">
+      <h3>Mastery by subject</h3>
+      <span class="al-dash-subjects-sub" id="dashSubjectsSub">Composite from each tool's localStorage. Open a tool to update its slice.</span>
+    </div>
+    <div class="al-dash-subjects-grid" id="dashSubjectsGrid"></div>
+  </div>
+</section>
+
+<!-- ========== 4 TOOL TILES ========== -->
+<section class="al-tools" id="tools">
+  <h2 class="al-section-title">Four <em>engines</em>, four tutors.</h2>
+  <p class="al-section-sub">Each engine opens in its own tab. Your progress saves to localStorage and rolls up here.</p>
+
+  <div class="al-tools-grid">
+
+    <a class="al-tool-tile al-tool-qr" href="tools/qr/index.html" target="_blank" rel="noopener">
+      <div class="al-tool-tag">Section · QR</div>
+      <h3 class="al-tool-name">Quantitative <em>Reasoning</em></h3>
+      <p class="al-tool-desc">37 modules, 31 distinct interactive visualizers, 963 problems with 4-tier difficulty ladder. Full 40-question, 45-minute DAT-format mock with score predictor.</p>
+      <div class="al-tool-features">
+        <span class="al-feat">Sarah · tutor</span>
+        <span class="al-feat">31 visuals</span>
+        <span class="al-feat">963 problems</span>
+        <span class="al-feat">DAT-format mock</span>
+      </div>
+      <div class="al-tool-foot">
+        <span class="al-tool-cta">Open QR engine</span>
+        <span class="al-tool-stat" id="qrMasteryStat">— mastered</span>
+      </div>
+    </a>
+
+    <a class="al-tool-tile al-tool-bio" href="tools/bio/index.html" target="_blank" rel="noopener">
+      <div class="al-tool-tag">Section · Bio</div>
+      <h3 class="al-tool-name"><em>Biology</em></h3>
+      <p class="al-tool-desc">6 hubs (Cell &amp; Molecular, Genetics, Physiology, Diversity, Developmental, Evolution). 500-question mock bank, SM-2 spaced retrieval via Ace Cards.</p>
+      <div class="al-tool-features">
+        <span class="al-feat">Riya · tutor</span>
+        <span class="al-feat">28 / 40 nodes</span>
+        <span class="al-feat">500-Q bank</span>
+        <span class="al-feat">SM-2 SR cards</span>
+      </div>
+      <div class="al-tool-foot">
+        <span class="al-tool-cta">Open Bio engine</span>
+        <span class="al-tool-stat" id="bioMasteryStat">— mastered</span>
+      </div>
+    </a>
+
+    <a class="al-tool-tile al-tool-gc" href="tools/gc/index.html" target="_blank" rel="noopener">
+      <div class="al-tool-tag">Section · Gen Chem</div>
+      <h3 class="al-tool-name">General <em>Chemistry</em></h3>
+      <p class="al-tool-desc">37 modules across 4 tiers (Foundations, Quantitative, Patterns, Test-day). Skill tree with progressive disclosure, 605-problem bank, mock + score predictor.</p>
+      <div class="al-tool-features">
+        <span class="al-feat">Tommy · tutor</span>
+        <span class="al-feat">38 visuals</span>
+        <span class="al-feat">605 problems</span>
+        <span class="al-feat">Skill-tree pedagogy</span>
+      </div>
+      <div class="al-tool-foot">
+        <span class="al-tool-cta">Open GC engine</span>
+        <span class="al-tool-stat" id="gcMasteryStat">— mastered</span>
+      </div>
+    </a>
+
+    <a class="al-tool-tile al-tool-ochem" href="tools/ochem/index.html" target="_blank" rel="noopener">
+      <div class="al-tool-tag">Section · Organic Chem</div>
+      <h3 class="al-tool-name">Organic <em>Chemistry</em></h3>
+      <p class="al-tool-desc">10 functional-group hubs around the master interconversion map. 27 animated mechanisms, SN1/SN2/E1/E2 decision wizard, reagent predictor (forward + retrosynthesis), R/S + Newman trainer, IR + NMR strategy.</p>
+      <div class="al-tool-features">
+        <span class="al-feat">Tommy · tutor</span>
+        <span class="al-feat">10 hubs</span>
+        <span class="al-feat">27 animations</span>
+        <span class="al-feat">Synthesis lab</span>
+      </div>
+      <div class="al-tool-foot">
+        <span class="al-tool-cta">Open OChem engine</span>
+        <span class="al-tool-stat" id="ochemMasteryStat">— mastered</span>
+      </div>
+    </a>
+
+  </div>
+</section>
+
+<!-- ========== UNIFIED MOCK CTA ========== -->
+<section class="al-cta-section">
+  <a class="al-mock-cta" href="unified-mock.html">
+    <div class="al-mock-cta-tag">SURVEY OF NATURAL SCIENCES · 100 questions · 90 minutes</div>
+    <h2 class="al-mock-cta-h">The <em>full DAT science section</em> mock.</h2>
+    <p class="al-mock-cta-sub">40 Bio + 30 Gen Chem + 30 OChem. DAT-realistic distribution and timing. Per-subject scorecard + composite SoNS scaled-score prediction. Wrong answers feed the cross-tool spaced-rep queue.</p>
+    <span class="al-mock-cta-link">Take the mock</span>
+  </a>
+</section>
+
+<!-- ========== THIS WEEK PLAN PLACEHOLDER ========== -->
+<section class="al-plan" id="plan">
+  <h2 class="al-section-title">This <em>week's plan</em>.</h2>
+  <p class="al-section-sub">When wired to the AceTheDAT portal, your tutor's weekly assignment shows up here. For now, the suggestion engine surfaces your weakest subject + due cards.</p>
+  <div class="al-plan-grid" id="planGrid">
+    <div class="al-plan-empty">Open at least one engine and complete a session — your weak spots will surface here.</div>
+  </div>
+</section>
+
+<!-- ========== FOOT ========== -->
+<footer class="al-foot">
+  <div class="al-foot-row">
+    <span>Ace Labs · standalone v1</span>
+    <span>Eventually wired to <a href="https://acethedat-portal.netlify.app" target="_blank">acethedat-portal.netlify.app</a> for weekly plan + tutor sync</span>
+  </div>
+</footer>
+
+</div>
+<script src="shared/ace-labs-shell.js"></script>
+</body>
+</html>
