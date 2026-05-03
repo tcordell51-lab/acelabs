@@ -11301,5 +11301,42 @@ function downloadPage(){
 }
 </script>
 
+<!-- ===== Ace Labs namespace sync (added for OChem v2 / dashboard integration) ===== -->
+<script>
+(function(){
+  // Mirror the v1 tool's mastery state into ochem-rem-v1: namespace so the
+  // Ace Labs home dashboard reads it. Runs once on load, then on any localStorage write.
+  function syncToAceLabs(){
+    try {
+      // Last session timestamp
+      localStorage.setItem('ochem-rem-v1:lastSession', JSON.stringify(Date.now()));
+      // Mastery: count v1 hubs/sections that the student has visited or interacted with.
+      // Heuristic: any localStorage key starting with 'ochem-' that has truthy value implies activity.
+      const m = JSON.parse(localStorage.getItem('ochem-rem-v1:mastery') || '{}');
+      // Map v1 hub IDs to v2 module IDs (best-effort)
+      const HUB_TO_V2 = {
+        'alkanes':'fg-recognize','alkenes':'alkene-add','alkynes':'alkyne-rxn','subelim':'sn1-sn2',
+        'alcohols':'alc-oxidation','ethers':'epoxide','aromatic':'eas','carbonyl':'carbonyl-add',
+        'acids':'acid-deriv','amines':'amine-rxn','stereo-lab':'stereo-rs','spec-trainer':'nmr-basics'
+      };
+      // For each hub, if any local key references it, mark as 'partial' in v2
+      Object.keys(HUB_TO_V2).forEach(hub => {
+        for (let i = 0; i < localStorage.length; i++){
+          const k = localStorage.key(i);
+          if (k && k.includes(hub) && !m[HUB_TO_V2[hub]]){
+            m[HUB_TO_V2[hub]] = 'partial';
+            break;
+          }
+        }
+      });
+      localStorage.setItem('ochem-rem-v1:mastery', JSON.stringify(m));
+    } catch(e){}
+  }
+  syncToAceLabs();
+  // Re-sync periodically (catches in-session activity)
+  setInterval(syncToAceLabs, 30000);
+})();
+</script>
+
 </body>
 </html>
