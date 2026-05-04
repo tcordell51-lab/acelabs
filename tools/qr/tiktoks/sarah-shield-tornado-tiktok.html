@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=1080,initial-scale=1"/>
+<title>Ace The DAT — Sarah's Shield + Tornado (Absolute Value)</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400;1,700&family=DM+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+<style>
+:root{
+  --sb:#0d2018; --ink:#f5f0e8;
+  --muted:rgba(245,240,232,.55); --dim:rgba(245,240,232,.32);
+  --gold:#C9A84C; --gold-m:#E2C97A; --gold-d:#8C7235;
+  --teal:#5fa3ff; --teal-d:#2c6fc4;
+  --good:#7be08a; --good-d:#3f9a52;
+  --warm:#ff8a3a;
+  --trap:#f59e0b; --trap-deep:#b45309;
+  --shield:#5fa3ff; --shield-d:#2c6fc4;
+  --tornado:#ff8a3a; --tornado-d:#cc5a14;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{background:#000;overflow:hidden;font-family:'DM Sans',sans-serif;color:var(--ink);}
+.stage{width:1080px;height:1920px;position:absolute;left:50%;top:50%;transform-origin:center center;overflow:hidden;transition:background 0.8s ease;}
+.stage[data-phase="hook"]{background:linear-gradient(175deg,#08161e 0%,#0d2030 50%,#04101a 100%);}
+.stage[data-phase="shield"]{background:linear-gradient(175deg,#0a1830 0%,#102540 50%,#06122a 100%);}
+.stage[data-phase="tornado"]{background:linear-gradient(175deg,#1f1006 0%,#3a1c08 50%,#1a0c04 100%);}
+.stage[data-phase="trap"]{background:linear-gradient(175deg,#3d2706 0%,#5c3608 50%,#2c1d04 100%);}
+.stage[data-phase="lock"]{background:linear-gradient(175deg,#0a1812 0%,#1a3322 50%,#0d2018 100%);}
+.stage::after{content:'';position:absolute;inset:0;pointer-events:none;z-index:99;opacity:.04;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-size:220px;}
+
+.brand{position:absolute;left:0;right:0;top:50px;display:flex;align-items:center;justify-content:space-between;padding:0 70px;z-index:20;}
+.brand-word{font-family:'Playfair Display',serif;font-size:36px;font-weight:700;color:#fff;}
+.brand-word span{color:var(--gold);}
+.brand-tag{font-size:18px;font-weight:600;color:var(--dim);letter-spacing:.18em;text-transform:uppercase;}
+
+.voice-toggle{position:absolute;top:130px;right:70px;z-index:30;width:64px;height:64px;border-radius:50%;background:rgba(13,32,24,.85);border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;cursor:pointer;backdrop-filter:blur(8px);}
+.voice-toggle.active{background:var(--gold);}
+.voice-toggle svg{width:30px;height:30px;fill:var(--gold);}
+.voice-toggle.active svg{fill:#0d2018;}
+
+.tier-pill{position:absolute;top:130px;left:70px;z-index:30;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;padding:6px 14px;border-radius:99px;background:rgba(245,240,232,.10);border:1px solid var(--gold-d);color:var(--gold-m);}
+
+.hook{position:absolute;left:0;right:0;top:0;bottom:0;display:flex;align-items:center;justify-content:center;flex-direction:column;z-index:25;opacity:1;pointer-events:none;text-align:center;padding:0 80px;}
+.hook-tag{font-size:22px;font-weight:700;color:var(--gold);letter-spacing:.22em;text-transform:uppercase;margin-bottom:24px;display:flex;align-items:center;gap:18px;}
+.hook-tag::before,.hook-tag::after{content:'';width:30px;height:1px;background:var(--gold);}
+.hook-q{font-family:'Playfair Display',serif;font-size:130px;font-weight:900;color:#fff;letter-spacing:-.04em;line-height:.92;text-shadow:0 0 60px rgba(201,168,76,.4);}
+.hook-q em{color:var(--gold);font-style:italic;}
+.hook-sub{font-size:28px;font-weight:600;color:var(--muted);margin-top:34px;letter-spacing:.04em;line-height:1.35;max-width:840px;}
+.hook-credit{font-family:'JetBrains Mono',monospace;font-size:18px;color:var(--gold-m);margin-top:50px;letter-spacing:.18em;text-transform:uppercase;}
+
+.demo{position:absolute;left:0;right:0;top:280px;height:1180px;z-index:14;opacity:0;pointer-events:none;}
+.demo-title{position:absolute;left:0;right:0;top:0;text-align:center;font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:700;color:var(--gold);letter-spacing:.18em;text-transform:uppercase;}
+.demo-title-sub{position:absolute;left:0;right:0;top:48px;text-align:center;font-family:'Playfair Display',serif;font-style:italic;font-size:30px;color:var(--muted);}
+
+/* Equation display, large center */
+.eq-stage{position:absolute;left:50%;top:140px;transform:translateX(-50%);width:920px;height:760px;}
+.eq-svg{width:100%;height:100%;display:block;}
+
+/* Two-answer panel below */
+.answers{position:absolute;left:50%;top:920px;transform:translateX(-50%);display:flex;gap:30px;justify-content:center;}
+.ans-card{background:rgba(0,0,0,.55);border:2px solid var(--gold-d);border-radius:14px;padding:18px 28px;font-family:'JetBrains Mono',monospace;font-size:34px;font-weight:700;color:var(--ink);min-width:340px;text-align:center;opacity:0;transition:opacity 0.6s, border-color 0.4s;}
+.ans-card.shield{border-color:var(--shield);}
+.ans-card.tornado{border-color:var(--tornado);}
+.ans-card .lbl{display:block;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;letter-spacing:.18em;color:var(--gold-m);margin-bottom:10px;text-transform:uppercase;}
+.ans-card.shield .lbl{color:var(--shield);}
+.ans-card.tornado .lbl{color:var(--tornado);}
+.ans-card .ans{color:var(--good);}
+
+.caption{position:absolute;left:50%;top:1500px;transform:translateX(-50%);z-index:18;background:#000;color:#fff;font-size:46px;font-weight:900;padding:22px 44px;border-radius:14px;letter-spacing:-.01em;line-height:1.15;box-shadow:0 12px 40px rgba(0,0,0,.6);text-align:center;opacity:0;max-width:940px;}
+.caption em{color:var(--gold);font-style:italic;}
+
+.trap{position:absolute;left:0;right:0;top:0;bottom:0;background:linear-gradient(135deg,rgba(245,158,11,.95),rgba(180,83,9,.95));z-index:40;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:0 70px;opacity:0;pointer-events:none;}
+.trap-ribbon{background:#0d2018;color:var(--gold);font-size:28px;font-weight:900;letter-spacing:.20em;padding:16px 36px;border-radius:8px;margin-bottom:50px;text-transform:uppercase;border:2px solid var(--gold);}
+.trap-h{font-family:'Playfair Display',serif;font-size:130px;font-weight:900;color:#fff;line-height:.95;letter-spacing:-.03em;margin-bottom:36px;}
+.trap-h em{font-style:italic;color:#0d2018;}
+.trap-sub{font-size:36px;font-weight:600;color:rgba(13,32,24,.92);line-height:1.35;max-width:880px;}
+
+.lock{position:absolute;left:0;right:0;top:0;bottom:0;z-index:35;display:flex;align-items:center;justify-content:center;flex-direction:column;opacity:0;pointer-events:none;text-align:center;padding:0 70px;}
+.lock-tag{font-size:26px;font-weight:700;color:var(--gold);letter-spacing:.22em;text-transform:uppercase;margin-bottom:34px;}
+.lock-word{font-family:'Playfair Display',serif;font-size:130px;font-weight:900;color:var(--gold);line-height:.95;letter-spacing:-.04em;text-shadow:0 0 80px rgba(201,168,76,.5);}
+.lock-word em{font-style:italic;}
+.lock-decode{font-family:'JetBrains Mono',monospace;font-size:32px;font-weight:700;color:#fff;margin-top:50px;line-height:1.6;letter-spacing:.04em;}
+.lock-decode .gold{color:var(--gold-m);}
+.lock-decode .shield{color:var(--shield);}
+.lock-decode .tornado{color:var(--tornado);}
+
+.foot{position:absolute;left:80px;right:80px;bottom:80px;z-index:50;}
+.scrub-wrap{position:relative;height:8px;background:rgba(245,240,232,.1);border-radius:4px;cursor:pointer;}
+.scrub-fill{position:absolute;left:0;top:0;bottom:0;width:0%;background:linear-gradient(90deg,var(--gold-m),var(--gold));border-radius:4px;}
+.scrub-thumb{position:absolute;top:50%;transform:translate(-50%,-50%);width:28px;height:28px;background:var(--gold);border-radius:50%;box-shadow:0 0 0 4px rgba(201,168,76,.22);}
+.foot-row{display:flex;justify-content:space-between;align-items:center;margin-top:24px;font-size:18px;color:var(--dim);letter-spacing:.1em;}
+.foot-cta{color:var(--gold);font-weight:700;letter-spacing:.14em;text-transform:uppercase;}
+.play-btn{background:var(--gold);color:#0d2018;border:none;padding:10px 22px;border-radius:6px;font-weight:700;letter-spacing:.08em;font-size:16px;cursor:pointer;font-family:inherit;}
+.play-btn:hover{background:var(--gold-m);}
+.watermark{position:absolute;left:80px;bottom:30px;font-size:14px;letter-spacing:.2em;color:rgba(245,240,232,.28);text-transform:uppercase;z-index:50;}
+</style>
+</head>
+<body>
+<div class="stage" id="stage" data-phase="hook">
+
+  <div class="brand">
+    <div class="brand-word">Ace The <span>DAT</span></div>
+    <div class="brand-tag">QR · Sarah · Absolute Value</div>
+  </div>
+
+  <div class="tier-pill">Sarah's Trick · Shield + Tornado</div>
+
+  <button class="voice-toggle" id="voiceBtn" aria-label="Toggle voice">
+    <svg viewBox="0 0 24 24"><path d="M12 1c-4.97 0-9 4.03-9 9v7c0 1.66 1.34 3 3 3h3v-8H5v-2c0-3.87 3.13-7 7-7s7 3.13 7 7v2h-4v8h3c1.66 0 3-1.34 3-3v-7c0-4.97-4.03-9-9-9z"/></svg>
+  </button>
+
+  <div class="hook" id="hook">
+    <div class="hook-tag">Absolute Value · Two-Method Setup</div>
+    <div class="hook-q">Bars are<br/><em>shields.</em></div>
+    <div class="hook-sub">Inside the bars stays put. Outside the bars gets ripped — by a tornado.</div>
+    <div class="hook-credit">— Sarah's metaphor for the two-answer rule</div>
+  </div>
+
+  <div class="demo" id="demo">
+    <div class="demo-title" id="demoTitle">|x − 3| < 5</div>
+    <div class="demo-title-sub" id="demoSub">two answers · always</div>
+
+    <div class="eq-stage">
+      <svg class="eq-svg" viewBox="0 0 920 760" id="eqSvg">
+        <!-- Center stage equation rendered as SVG so we can animate parts -->
+
+        <!-- "as is" / shield row at y=160 -->
+        <g id="shieldRow" opacity="0">
+          <!-- Shield bars on outer | -->
+          <line x1="170" y1="100" x2="170" y2="220" stroke="#5fa3ff" stroke-width="8" stroke-linecap="round"/>
+          <line x1="350" y1="100" x2="350" y2="220" stroke="#5fa3ff" stroke-width="8" stroke-linecap="round"/>
+          <!-- Inside bars: x − 3 — protected -->
+          <text x="260" y="180" text-anchor="middle" font-family="JetBrains Mono" font-size="64" font-weight="700" fill="#fff">x − 3</text>
+          <!-- Inequality (outside bars) -->
+          <text x="430" y="180" font-family="JetBrains Mono" font-size="60" font-weight="700" fill="#fff">&lt;</text>
+          <!-- Right side -->
+          <text x="510" y="180" font-family="JetBrains Mono" font-size="64" font-weight="700" fill="#fff">5</text>
+          <!-- Shield label -->
+          <text x="260" y="60" text-anchor="middle" font-family="DM Sans" font-size="20" letter-spacing="3" fill="#5fa3ff" font-weight="700">PROTECTED · SHIELD</text>
+          <!-- Tornado label for outer -->
+          <text x="780" y="60" text-anchor="middle" font-family="DM Sans" font-size="20" letter-spacing="3" fill="#ff8a3a" font-weight="700" id="shieldOuterLabel" opacity="0">FLIPPED · TORNADO</text>
+          <!-- Down-arrow simplification -->
+          <path d="M 260 240 L 260 280 M 248 270 L 260 282 L 272 270" stroke="#7be08a" stroke-width="3" fill="none" stroke-linecap="round" id="shieldArrow" opacity="0"/>
+        </g>
+
+        <!-- Easy method (just write as is, drop bars) at y=380 -->
+        <g id="easyRow" opacity="0">
+          <text x="60" y="350" font-family="DM Sans" font-size="20" letter-spacing="3" fill="#5fa3ff" font-weight="700">EASY METHOD · WRITE AS IS</text>
+          <text x="200" y="420" font-family="JetBrains Mono" font-size="60" font-weight="700" fill="#fff">x − 3 &lt; 5</text>
+          <text x="600" y="420" font-family="JetBrains Mono" font-size="60" font-weight="700" fill="#fff">→ x &lt; 8</text>
+        </g>
+
+        <!-- Hard method (tornado) at y=560 -->
+        <g id="hardRow" opacity="0">
+          <text x="60" y="530" font-family="DM Sans" font-size="20" letter-spacing="3" fill="#ff8a3a" font-weight="700">HARD METHOD · TORNADO FLIPS</text>
+          <text x="200" y="600" font-family="JetBrains Mono" font-size="60" font-weight="700" fill="#fff">x − 3 &gt; <tspan fill="#ff8a3a">−5</tspan></text>
+          <text x="600" y="600" font-family="JetBrains Mono" font-size="60" font-weight="700" fill="#fff">→ x &gt; <tspan fill="#7be08a">−2</tspan></text>
+        </g>
+
+        <!-- Combined answer at y=720 -->
+        <g id="combined" opacity="0">
+          <text x="460" y="720" text-anchor="middle" font-family="Playfair Display" font-style="italic" font-size="56" font-weight="900" fill="#7be08a">−2 &lt; x &lt; 8</text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="answers" id="answersWrap">
+      <div class="ans-card shield" id="ansShield"><span class="lbl">Easy · Shield</span><span class="ans">x &lt; 8</span></div>
+      <div class="ans-card tornado" id="ansTornado"><span class="lbl">Hard · Tornado</span><span class="ans">x &gt; −2</span></div>
+    </div>
+  </div>
+
+  <div class="caption" id="caption">caption</div>
+
+  <div class="trap" id="trap">
+    <div class="trap-ribbon">⚠ DAT Trap</div>
+    <div class="trap-h">Only<br/><em>one answer.</em></div>
+    <div class="trap-sub">|x| ≥ 5 has TWO solutions, not one. Students who solve the easy method and stop miss half the answer. Always do shield AND tornado — every absolute value, every time.</div>
+  </div>
+
+  <div class="lock" id="lock">
+    <div class="lock-tag">Lock it in</div>
+    <div class="lock-word">shield<br/><em>+ tornado.</em></div>
+    <div class="lock-decode">
+      inside bars: <span class="shield">stays</span><br/>
+      outside bars: <span class="tornado">tornado flips</span><br/>
+      always two answers
+    </div>
+  </div>
+
+  <div class="foot">
+    <div class="scrub-wrap" id="scrubBar">
+      <div class="scrub-fill" id="scrubFill"></div>
+      <div class="scrub-thumb" id="scrubThumb" style="left:0%"></div>
+    </div>
+    <div class="foot-row">
+      <button class="play-btn" id="playBtn">▶ Play</button>
+      <div class="foot-cta">acethedat.com · sarah's tricks</div>
+    </div>
+  </div>
+
+  <div class="watermark">Ace The DAT · QR · Sarah's Shield + Tornado</div>
+</div>
+
+<script>
+function fitStage(){
+  const s=document.getElementById('stage');
+  const scale=Math.min(window.innerWidth/1080,window.innerHeight/1920);
+  s.style.transform=`translate(-50%,-50%) scale(${scale})`;
+}
+window.addEventListener('resize',fitStage); fitStage();
+
+const synth = window.speechSynthesis;
+let voices = [], selectedVoice = null, voiceEnabled = false;
+function pickVoice(){
+  voices = synth.getVoices();
+  const prefs = ['Ava (Premium)','Ava','Allison','Samantha','Karen','Moira','Tessa','Susan','Veena','Microsoft Aria','Google US English'];
+  for(const p of prefs){ const f = voices.find(v=>v.name===p||v.name.startsWith(p)); if(f){selectedVoice=f; return;}}
+  selectedVoice = voices.find(v=>/female|samantha|allison|ava|karen|aria|moira/i.test(v.name) && /en/i.test(v.lang)) || voices[0];
+}
+if(synth.onvoiceschanged !== undefined) synth.onvoiceschanged = pickVoice;
+pickVoice();
+function speak(t,o){if(!voiceEnabled||!t)return; synth.cancel(); const u=new SpeechSynthesisUtterance(t); if(selectedVoice)u.voice=selectedVoice; u.rate=(o&&o.rate)||0.95; u.pitch=(o&&o.pitch)||1.02; u.volume=1; synth.speak(u);}
+const voiceBtn=document.getElementById('voiceBtn');
+voiceBtn.addEventListener('click',()=>{
+  voiceEnabled=!voiceEnabled; voiceBtn.classList.toggle('active',voiceEnabled);
+  if(voiceEnabled){const ph=document.getElementById('stage').getAttribute('data-phase'); if(ph==='hook') speak("Bars are shields. Inside stays put. Outside gets ripped by a tornado.");}
+  else synth.cancel();
+});
+
+const stage = document.getElementById('stage');
+const hook = document.getElementById('hook');
+const demo = document.getElementById('demo');
+const demoTitle = document.getElementById('demoTitle');
+const demoSub = document.getElementById('demoSub');
+const shieldRow = document.getElementById('shieldRow');
+const easyRow = document.getElementById('easyRow');
+const hardRow = document.getElementById('hardRow');
+const combined = document.getElementById('combined');
+const ansShield = document.getElementById('ansShield');
+const ansTornado = document.getElementById('ansTornado');
+const caption = document.getElementById('caption');
+const trap = document.getElementById('trap');
+const lock = document.getElementById('lock');
+const scrubFill = document.getElementById('scrubFill');
+const scrubThumb = document.getElementById('scrubThumb');
+const playBtn = document.getElementById('playBtn');
+
+const TIMELINE = [
+  {t:0, fn: () => {
+    stage.dataset.phase='hook';
+    hook.style.opacity=1; demo.style.opacity=0; caption.style.opacity=0; trap.style.opacity=0; lock.style.opacity=0;
+    shieldRow.style.opacity=0; easyRow.style.opacity=0; hardRow.style.opacity=0; combined.style.opacity=0;
+    ansShield.style.opacity=0; ansTornado.style.opacity=0;
+    if(voiceEnabled) speak("Bars are shields. Inside the bars stays put. Outside the bars gets ripped by a tornado.");
+  }},
+
+  {t:5000, fn: () => {
+    stage.dataset.phase='shield';
+    anime({targets:hook,opacity:0,duration:600,easing:'easeOutQuad'});
+    setTimeout(() => { demo.style.opacity=1; }, 500);
+    if(voiceEnabled) speak("Solve absolute value of x minus three less than five.");
+  }},
+  {t:7500, fn: () => {
+    demoTitle.textContent = '|x − 3| < 5';
+    demoSub.textContent = 'two answers · always';
+    shieldRow.style.opacity=1;
+    anime({targets:shieldRow, opacity:[0,1], duration:600});
+    if(voiceEnabled) speak("The shield protects what's inside the bars — x minus three. Don't change it.");
+  }},
+  {t:13500, fn: () => {
+    easyRow.style.opacity=1;
+    anime({targets:easyRow, opacity:[0,1], translateY:[20,0], duration:500});
+    ansShield.style.opacity=1;
+    if(voiceEnabled) speak("Easy method. Drop the bars. Write it as is. x minus three less than five — gives you x less than eight.");
+  }},
+
+  {t:21000, fn: () => {
+    stage.dataset.phase='tornado';
+    if(voiceEnabled) speak("Now the tornado. Everything OUTSIDE the bars flips. The inequality direction reverses, and the right side picks up a minus sign.");
+  }},
+  {t:24500, fn: () => {
+    hardRow.style.opacity=1;
+    anime({targets:hardRow, opacity:[0,1], translateY:[20,0], duration:500});
+    ansTornado.style.opacity=1;
+    if(voiceEnabled) speak("Hard method. x minus three is now greater than negative five. Solve — gives you x greater than negative two.");
+  }},
+  {t:32000, fn: () => {
+    combined.style.opacity=1;
+    anime({targets:combined, opacity:[0,1], scale:[0.92,1], duration:600, easing:'easeOutQuad'});
+    if(voiceEnabled) speak("Two answers combine. Negative two less than x less than eight.");
+  }},
+  {t:36500, fn: () => {
+    caption.innerHTML = 'shield + <em>tornado</em> = both sides';
+    caption.style.opacity = 1;
+    anime({targets:caption, translateY:[20,0], opacity:[0,1], duration:500});
+  }},
+
+  {t:42000, fn: () => {
+    caption.style.opacity = 0;
+    stage.dataset.phase='trap';
+    trap.style.opacity = 1;
+    anime({targets:trap, opacity:[0,1], duration:600});
+    if(voiceEnabled) speak("Trap. Solving only the easy method and stopping. Absolute value always has two answers. The DAT will offer the half-answer as a distractor on every absolute value question.");
+  }},
+
+  {t:54000, fn: () => {
+    trap.style.opacity = 0;
+    stage.dataset.phase='lock';
+    lock.style.opacity = 1;
+    anime({targets:lock, opacity:[0,1], scale:[0.92,1], duration:700, easing:'easeOutQuad'});
+    if(voiceEnabled) speak("Lock it in. Inside bars stays. Outside bars — tornado flips. Always two answers.");
+  }},
+  {t:70000, fn: () => { /* hold */ }},
+
+  {t:73000, fn: () => {
+    stage.dataset.phase='hook';
+    lock.style.opacity = 0;
+    hook.style.opacity = 1;
+    if(voiceEnabled) speak("Shield plus tornado.");
+  }}
+];
+const TOTAL = 78000;
+
+let timer = null, startedAt = 0, paused = true, elapsed = 0;
+function tick(){
+  if(paused) return;
+  const now = Date.now();
+  const t = elapsed + (now - startedAt);
+  for(const e of TIMELINE){ if(!e._fired && t >= e.t){ e._fired = true; e.fn(); } }
+  scrubFill.style.width = Math.min(100, t / TOTAL * 100) + '%';
+  scrubThumb.style.left = Math.min(100, t / TOTAL * 100) + '%';
+  if(t >= TOTAL){ paused = true; playBtn.textContent = '↻ Replay'; return; }
+  requestAnimationFrame(tick);
+}
+function play(){
+  if(elapsed >= TOTAL){ TIMELINE.forEach(e => e._fired = false); elapsed = 0; }
+  paused = false; startedAt = Date.now();
+  playBtn.textContent = '⏸ Pause';
+  tick();
+}
+function pause(){ paused = true; elapsed += Date.now() - startedAt; playBtn.textContent = '▶ Resume'; }
+playBtn.addEventListener('click', () => { if(paused) play(); else pause(); });
+document.getElementById('scrubBar').addEventListener('click', e => {
+  const r = e.currentTarget.getBoundingClientRect();
+  const pct = (e.clientX - r.left) / r.width;
+  elapsed = Math.max(0, Math.min(TOTAL, pct * TOTAL));
+  TIMELINE.forEach(e => e._fired = e.t < elapsed);
+  for(let i = TIMELINE.length - 1; i >= 0; i--){ if(TIMELINE[i].t <= elapsed){ TIMELINE[i].fn(); break; } }
+  if(!paused){ startedAt = Date.now(); }
+  scrubFill.style.width = (elapsed / TOTAL * 100) + '%';
+  scrubThumb.style.left = (elapsed / TOTAL * 100) + '%';
+});
+
+TIMELINE[0].fn();
+</script>
+</body>
+</html>

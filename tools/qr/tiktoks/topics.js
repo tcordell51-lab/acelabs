@@ -119,6 +119,7 @@ window.TOPICS = {
   },
 
   'pct-chg': {
+    sarahFile:'sarah-pretend-100-tiktok.html',
     tag:'Tier 0 · Percent', title:'Percent Change',
     hookTag:'Percent · Increase or Decrease',
     hookWord:'Multiply<br/><em>by 1 ± p.</em>',
@@ -341,6 +342,7 @@ window.TOPICS = {
   },
 
   'work-rate': {
+    sarahFile:'sarah-work-rate-trap-tiktok.html',
     tag:'Tier 1 · Rates', title:'Work-Rate Problems',
     hookTag:'Work-rate · Rates Add',
     hookWord:'Rates<br/><em>add. Times don\'t.</em>',
@@ -723,6 +725,7 @@ window.TOPICS = {
   },
 
   'absval': {
+    sarahFile:'sarah-shield-tornado-tiktok.html',
     tag:'Tier 2 · Algebra', title:'Absolute Value',
     hookTag:'|x| · Distance from Zero',
     hookWord:'|x| =<br/><em>distance from 0.</em>',

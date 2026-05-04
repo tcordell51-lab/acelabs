@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=1080,initial-scale=1"/>
+<title>Ace The DAT — Sarah's "If Together" vs "Work Together For" (Work-Rate)</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400;1,700&family=DM+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+<style>
+:root{
+  --sb:#0d2018; --ink:#f5f0e8;
+  --muted:rgba(245,240,232,.55); --dim:rgba(245,240,232,.32);
+  --gold:#C9A84C; --gold-m:#E2C97A; --gold-d:#8C7235;
+  --teal:#5fa3ff; --teal-d:#2c6fc4;
+  --good:#7be08a; --good-d:#3f9a52;
+  --warm:#ff8a3a;
+  --left:#5fa3ff; --left-d:#2c6fc4;
+  --right:#ff8a3a; --right-d:#cc5a14;
+  --trap:#f59e0b; --trap-deep:#b45309;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{background:#000;overflow:hidden;font-family:'DM Sans',sans-serif;color:var(--ink);}
+.stage{width:1080px;height:1920px;position:absolute;left:50%;top:50%;transform-origin:center center;overflow:hidden;transition:background 0.8s ease;}
+.stage[data-phase="hook"]{background:linear-gradient(175deg,#08161e 0%,#0d2030 50%,#04101a 100%);}
+.stage[data-phase="contrast"]{background:linear-gradient(175deg,#0a1830 0%,#0d2540 50%,#06122a 100%);}
+.stage[data-phase="solve"]{background:linear-gradient(175deg,#0d2520 0%,#143c30 50%,#06120c 100%);}
+.stage[data-phase="trap"]{background:linear-gradient(175deg,#3d2706 0%,#5c3608 50%,#2c1d04 100%);}
+.stage[data-phase="lock"]{background:linear-gradient(175deg,#0a1812 0%,#1a3322 50%,#0d2018 100%);}
+.stage::after{content:'';position:absolute;inset:0;pointer-events:none;z-index:99;opacity:.04;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-size:220px;}
+
+.brand{position:absolute;left:0;right:0;top:50px;display:flex;align-items:center;justify-content:space-between;padding:0 70px;z-index:20;}
+.brand-word{font-family:'Playfair Display',serif;font-size:36px;font-weight:700;color:#fff;}
+.brand-word span{color:var(--gold);}
+.brand-tag{font-size:18px;font-weight:600;color:var(--dim);letter-spacing:.18em;text-transform:uppercase;}
+
+.voice-toggle{position:absolute;top:130px;right:70px;z-index:30;width:64px;height:64px;border-radius:50%;background:rgba(13,32,24,.85);border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;cursor:pointer;backdrop-filter:blur(8px);}
+.voice-toggle.active{background:var(--gold);}
+.voice-toggle svg{width:30px;height:30px;fill:var(--gold);}
+.voice-toggle.active svg{fill:#0d2018;}
+
+.tier-pill{position:absolute;top:130px;left:70px;z-index:30;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;padding:6px 14px;border-radius:99px;background:rgba(245,240,232,.10);border:1px solid var(--gold-d);color:var(--gold-m);}
+
+.hook{position:absolute;left:0;right:0;top:0;bottom:0;display:flex;align-items:center;justify-content:center;flex-direction:column;z-index:25;opacity:1;pointer-events:none;text-align:center;padding:0 80px;}
+.hook-tag{font-size:22px;font-weight:700;color:var(--gold);letter-spacing:.22em;text-transform:uppercase;margin-bottom:24px;display:flex;align-items:center;gap:18px;}
+.hook-tag::before,.hook-tag::after{content:'';width:30px;height:1px;background:var(--gold);}
+.hook-q{font-family:'Playfair Display',serif;font-size:120px;font-weight:900;color:#fff;letter-spacing:-.04em;line-height:.92;text-shadow:0 0 60px rgba(201,168,76,.4);}
+.hook-q em{color:var(--gold);font-style:italic;}
+.hook-sub{font-size:28px;font-weight:600;color:var(--muted);margin-top:34px;letter-spacing:.04em;line-height:1.35;max-width:840px;}
+.hook-credit{font-family:'JetBrains Mono',monospace;font-size:18px;color:var(--gold-m);margin-top:50px;letter-spacing:.18em;text-transform:uppercase;}
+
+.demo{position:absolute;left:0;right:0;top:280px;height:1180px;z-index:14;opacity:0;pointer-events:none;}
+.demo-title{position:absolute;left:0;right:0;top:0;text-align:center;font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;color:var(--gold);letter-spacing:.18em;text-transform:uppercase;}
+.demo-title-sub{position:absolute;left:0;right:0;top:42px;text-align:center;font-family:'Playfair Display',serif;font-style:italic;font-size:28px;color:var(--muted);}
+
+/* Two side-by-side phrase panels with very different setups */
+.contrast-grid{position:absolute;left:60px;right:60px;top:120px;display:grid;grid-template-columns:1fr 1fr;gap:30px;}
+.cside{padding:30px 26px;border-radius:18px;border:3px solid;background:rgba(13,32,24,.55);min-height:780px;position:relative;}
+.cside.left{border-color:var(--left);}
+.cside.right{border-color:var(--right);}
+.cside .phrase{font-family:'Playfair Display',serif;font-size:32px;font-weight:700;color:#fff;line-height:1.2;margin-bottom:16px;}
+.cside .phrase em{font-style:italic;}
+.cside.left .phrase em{color:var(--left);}
+.cside.right .phrase em{color:var(--right);}
+.cside .meaning{font-family:'DM Sans',sans-serif;font-size:18px;color:var(--muted);letter-spacing:.06em;margin-bottom:30px;line-height:1.5;}
+.cside .setup{font-family:'JetBrains Mono',monospace;font-size:24px;color:var(--ink);background:rgba(0,0,0,.4);padding:18px 20px;border-radius:10px;line-height:1.5;margin-bottom:22px;border-left:3px solid;}
+.cside.left .setup{border-left-color:var(--left);}
+.cside.right .setup{border-left-color:var(--right);}
+.cside .answer{font-family:'JetBrains Mono',monospace;font-size:30px;color:var(--good);font-weight:700;text-align:center;padding:14px;background:rgba(123,224,138,.12);border-radius:10px;border:2px dashed var(--good-d);}
+.cside .answer .num{font-family:'Playfair Display',serif;font-size:42px;font-style:italic;}
+
+.caption{position:absolute;left:50%;top:1500px;transform:translateX(-50%);z-index:18;background:#000;color:#fff;font-size:42px;font-weight:900;padding:22px 44px;border-radius:14px;letter-spacing:-.01em;line-height:1.15;box-shadow:0 12px 40px rgba(0,0,0,.6);text-align:center;opacity:0;max-width:940px;}
+.caption em{color:var(--gold);font-style:italic;}
+
+.trap{position:absolute;left:0;right:0;top:0;bottom:0;background:linear-gradient(135deg,rgba(245,158,11,.95),rgba(180,83,9,.95));z-index:40;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:0 70px;opacity:0;pointer-events:none;}
+.trap-ribbon{background:#0d2018;color:var(--gold);font-size:28px;font-weight:900;letter-spacing:.20em;padding:16px 36px;border-radius:8px;margin-bottom:50px;text-transform:uppercase;border:2px solid var(--gold);}
+.trap-h{font-family:'Playfair Display',serif;font-size:110px;font-weight:900;color:#fff;line-height:.95;letter-spacing:-.03em;margin-bottom:36px;}
+.trap-h em{font-style:italic;color:#0d2018;}
+.trap-sub{font-size:34px;font-weight:600;color:rgba(13,32,24,.92);line-height:1.35;max-width:880px;}
+
+.lock{position:absolute;left:0;right:0;top:0;bottom:0;z-index:35;display:flex;align-items:center;justify-content:center;flex-direction:column;opacity:0;pointer-events:none;text-align:center;padding:0 70px;}
+.lock-tag{font-size:26px;font-weight:700;color:var(--gold);letter-spacing:.22em;text-transform:uppercase;margin-bottom:34px;}
+.lock-word{font-family:'Playfair Display',serif;font-size:110px;font-weight:900;color:var(--gold);line-height:.95;letter-spacing:-.04em;text-shadow:0 0 80px rgba(201,168,76,.5);}
+.lock-word em{font-style:italic;}
+.lock-decode{font-family:'JetBrains Mono',monospace;font-size:28px;font-weight:700;color:#fff;margin-top:50px;line-height:1.6;letter-spacing:.04em;max-width:960px;}
+.lock-decode .gold{color:var(--gold-m);}
+.lock-decode .left{color:var(--left);}
+.lock-decode .right{color:var(--right);}
+
+.foot{position:absolute;left:80px;right:80px;bottom:80px;z-index:50;}
+.scrub-wrap{position:relative;height:8px;background:rgba(245,240,232,.1);border-radius:4px;cursor:pointer;}
+.scrub-fill{position:absolute;left:0;top:0;bottom:0;width:0%;background:linear-gradient(90deg,var(--gold-m),var(--gold));border-radius:4px;}
+.scrub-thumb{position:absolute;top:50%;transform:translate(-50%,-50%);width:28px;height:28px;background:var(--gold);border-radius:50%;box-shadow:0 0 0 4px rgba(201,168,76,.22);}
+.foot-row{display:flex;justify-content:space-between;align-items:center;margin-top:24px;font-size:18px;color:var(--dim);letter-spacing:.1em;}
+.foot-cta{color:var(--gold);font-weight:700;letter-spacing:.14em;text-transform:uppercase;}
+.play-btn{background:var(--gold);color:#0d2018;border:none;padding:10px 22px;border-radius:6px;font-weight:700;letter-spacing:.08em;font-size:16px;cursor:pointer;font-family:inherit;}
+.play-btn:hover{background:var(--gold-m);}
+.watermark{position:absolute;left:80px;bottom:30px;font-size:14px;letter-spacing:.2em;color:rgba(245,240,232,.28);text-transform:uppercase;z-index:50;}
+</style>
+</head>
+<body>
+<div class="stage" id="stage" data-phase="hook">
+
+  <div class="brand">
+    <div class="brand-word">Ace The <span>DAT</span></div>
+    <div class="brand-tag">QR · Sarah · Work-Rate</div>
+  </div>
+
+  <div class="tier-pill">Sarah's Trick · Read the Phrase</div>
+
+  <button class="voice-toggle" id="voiceBtn" aria-label="Toggle voice">
+    <svg viewBox="0 0 24 24"><path d="M12 1c-4.97 0-9 4.03-9 9v7c0 1.66 1.34 3 3 3h3v-8H5v-2c0-3.87 3.13-7 7-7s7 3.13 7 7v2h-4v8h3c1.66 0 3-1.34 3-3v-7c0-4.97-4.03-9-9-9z"/></svg>
+  </button>
+
+  <div class="hook" id="hook">
+    <div class="hook-tag">Work-Rate · Wording Trap</div>
+    <div class="hook-q">Two phrases.<br/><em>Two setups.</em></div>
+    <div class="hook-sub">"If together they work N hours" is NOT the same as "they work together FOR N hours." Different problems. Different equations.</div>
+    <div class="hook-credit">— Sarah catches this every week</div>
+  </div>
+
+  <div class="demo" id="demo">
+    <div class="demo-title">read the phrase</div>
+    <div class="demo-title-sub">word order changes the math</div>
+
+    <div class="contrast-grid">
+      <div class="cside left" id="leftSide">
+        <div class="phrase">"<em>If together</em><br/>they work 12 hours…"</div>
+        <div class="meaning">SUM of their hours = 12. They might NOT be working at the same time. Sam + Joe = 12.</div>
+        <div class="setup">Sam_hours + Joe_hours = 12<br/><br/>(combined total — not simultaneous)</div>
+        <div class="answer">setup: <span class="num">SUM</span> of hours</div>
+      </div>
+      <div class="cside right" id="rightSide">
+        <div class="phrase">"They work<br/><em>together for</em><br/>12 hours…"</div>
+        <div class="meaning">SIMULTANEOUSLY for 12 hours. Both rates apply for the FULL 12. Combined rate × 12 = work done.</div>
+        <div class="setup">(rate_A + rate_B) × 12 = job<br/><br/>(both running at the same time)</div>
+        <div class="answer">setup: <span class="num">SIMULTANEOUS</span> rates</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="caption" id="caption">caption</div>
+
+  <div class="trap" id="trap">
+    <div class="trap-ribbon">⚠ DAT Trap</div>
+    <div class="trap-h">One word<br/><em>changes everything.</em></div>
+    <div class="trap-sub">"If" vs "for" reads tiny but the equations are different. Read the phrase TWICE before setting up. Underline "if together" or "together for" — those words pick the equation.</div>
+  </div>
+
+  <div class="lock" id="lock">
+    <div class="lock-tag">Lock it in</div>
+    <div class="lock-word">read the<br/><em>preposition.</em></div>
+    <div class="lock-decode">
+      <span class="left">"if together"</span> = SUM of hours<br/>
+      <span class="right">"work together FOR"</span> = simultaneous rates
+    </div>
+  </div>
+
+  <div class="foot">
+    <div class="scrub-wrap" id="scrubBar">
+      <div class="scrub-fill" id="scrubFill"></div>
+      <div class="scrub-thumb" id="scrubThumb" style="left:0%"></div>
+    </div>
+    <div class="foot-row">
+      <button class="play-btn" id="playBtn">▶ Play</button>
+      <div class="foot-cta">acethedat.com · sarah's tricks</div>
+    </div>
+  </div>
+
+  <div class="watermark">Ace The DAT · QR · Sarah's Phrase Trap</div>
+</div>
+
+<script>
+function fitStage(){
+  const s=document.getElementById('stage');
+  const scale=Math.min(window.innerWidth/1080,window.innerHeight/1920);
+  s.style.transform=`translate(-50%,-50%) scale(${scale})`;
+}
+window.addEventListener('resize',fitStage); fitStage();
+
+const synth = window.speechSynthesis;
+let voices = [], selectedVoice = null, voiceEnabled = false;
+function pickVoice(){
+  voices = synth.getVoices();
+  const prefs = ['Ava (Premium)','Ava','Allison','Samantha','Karen','Moira','Tessa','Susan','Veena','Microsoft Aria','Google US English'];
+  for(const p of prefs){ const f = voices.find(v=>v.name===p||v.name.startsWith(p)); if(f){selectedVoice=f; return;}}
+  selectedVoice = voices.find(v=>/female|samantha|allison|ava|karen|aria|moira/i.test(v.name) && /en/i.test(v.lang)) || voices[0];
+}
+if(synth.onvoiceschanged !== undefined) synth.onvoiceschanged = pickVoice;
+pickVoice();
+function speak(t,o){if(!voiceEnabled||!t)return; synth.cancel(); const u=new SpeechSynthesisUtterance(t); if(selectedVoice)u.voice=selectedVoice; u.rate=(o&&o.rate)||0.95; u.pitch=(o&&o.pitch)||1.02; u.volume=1; synth.speak(u);}
+const voiceBtn=document.getElementById('voiceBtn');
+voiceBtn.addEventListener('click',()=>{
+  voiceEnabled=!voiceEnabled; voiceBtn.classList.toggle('active',voiceEnabled);
+  if(voiceEnabled){const ph=document.getElementById('stage').getAttribute('data-phase'); if(ph==='hook') speak("Two phrases. Two setups. Read carefully.");}
+  else synth.cancel();
+});
+
+const stage = document.getElementById('stage');
+const hook = document.getElementById('hook');
+const demo = document.getElementById('demo');
+const leftSide = document.getElementById('leftSide');
+const rightSide = document.getElementById('rightSide');
+const caption = document.getElementById('caption');
+const trap = document.getElementById('trap');
+const lock = document.getElementById('lock');
+const scrubFill = document.getElementById('scrubFill');
+const scrubThumb = document.getElementById('scrubThumb');
+const playBtn = document.getElementById('playBtn');
+
+leftSide.style.opacity = 0;
+rightSide.style.opacity = 0;
+
+const TIMELINE = [
+  {t:0, fn: () => {
+    stage.dataset.phase='hook';
+    hook.style.opacity=1; demo.style.opacity=0; caption.style.opacity=0; trap.style.opacity=0; lock.style.opacity=0;
+    leftSide.style.opacity = 0; rightSide.style.opacity = 0;
+    if(voiceEnabled) speak("Two phrases. Two setups. If together they work twelve hours is NOT the same as they work together for twelve hours.");
+  }},
+
+  {t:6500, fn: () => {
+    stage.dataset.phase='contrast';
+    anime({targets:hook,opacity:0,duration:600,easing:'easeOutQuad'});
+    setTimeout(() => { demo.style.opacity=1; }, 500);
+    if(voiceEnabled) speak("Side one. If together they work twelve hours.");
+  }},
+  {t:9500, fn: () => {
+    leftSide.style.opacity = 1;
+    anime({targets:leftSide, opacity:[0,1], translateX:[-30,0], duration:600});
+    if(voiceEnabled) speak("That means the SUM of their individual hours equals twelve. Sam plus Joe equals twelve. They might not even be in the same room.");
+  }},
+  {t:18000, fn: () => {
+    rightSide.style.opacity = 1;
+    anime({targets:rightSide, opacity:[0,1], translateX:[30,0], duration:600});
+    if(voiceEnabled) speak("Side two. They work together FOR twelve hours.");
+  }},
+  {t:21500, fn: () => {
+    if(voiceEnabled) speak("That means simultaneously for twelve hours. Both their rates apply at the same time, for the full twelve hours. Combined rate times twelve equals the job.");
+  }},
+  {t:30000, fn: () => {
+    stage.dataset.phase='solve';
+    caption.innerHTML = 'one word changes the <em>setup</em>';
+    caption.style.opacity = 1;
+    anime({targets:caption, translateY:[20,0], opacity:[0,1], duration:500});
+  }},
+
+  {t:36000, fn: () => {
+    caption.style.opacity = 0;
+    stage.dataset.phase='trap';
+    trap.style.opacity = 1;
+    anime({targets:trap, opacity:[0,1], duration:600});
+    if(voiceEnabled) speak("Trap. The two phrases sound nearly identical, but the math is completely different. Read the question twice. Underline the preposition. That tells you the setup.");
+  }},
+
+  {t:50000, fn: () => {
+    trap.style.opacity = 0;
+    stage.dataset.phase='lock';
+    lock.style.opacity = 1;
+    anime({targets:lock, opacity:[0,1], scale:[0.92,1], duration:700, easing:'easeOutQuad'});
+    if(voiceEnabled) speak("Lock it in. If together — sum of hours. Work together for — simultaneous rates. Read the preposition.");
+  }},
+  {t:68000, fn: () => { /* hold */ }},
+
+  {t:73000, fn: () => {
+    stage.dataset.phase='hook';
+    lock.style.opacity = 0;
+    hook.style.opacity = 1;
+    if(voiceEnabled) speak("Read the phrase.");
+  }}
+];
+const TOTAL = 78000;
+
+let timer = null, startedAt = 0, paused = true, elapsed = 0;
+function tick(){
+  if(paused) return;
+  const now = Date.now();
+  const t = elapsed + (now - startedAt);
+  for(const e of TIMELINE){ if(!e._fired && t >= e.t){ e._fired = true; e.fn(); } }
+  scrubFill.style.width = Math.min(100, t / TOTAL * 100) + '%';
+  scrubThumb.style.left = Math.min(100, t / TOTAL * 100) + '%';
+  if(t >= TOTAL){ paused = true; playBtn.textContent = '↻ Replay'; return; }
+  requestAnimationFrame(tick);
+}
+function play(){
+  if(elapsed >= TOTAL){ TIMELINE.forEach(e => e._fired = false); elapsed = 0; }
+  paused = false; startedAt = Date.now();
+  playBtn.textContent = '⏸ Pause';
+  tick();
+}
+function pause(){ paused = true; elapsed += Date.now() - startedAt; playBtn.textContent = '▶ Resume'; }
+playBtn.addEventListener('click', () => { if(paused) play(); else pause(); });
+document.getElementById('scrubBar').addEventListener('click', e => {
+  const r = e.currentTarget.getBoundingClientRect();
+  const pct = (e.clientX - r.left) / r.width;
+  elapsed = Math.max(0, Math.min(TOTAL, pct * TOTAL));
+  TIMELINE.forEach(e => e._fired = e.t < elapsed);
+  for(let i = TIMELINE.length - 1; i >= 0; i--){ if(TIMELINE[i].t <= elapsed){ TIMELINE[i].fn(); break; } }
+  if(!paused){ startedAt = Date.now(); }
+  scrubFill.style.width = (elapsed / TOTAL * 100) + '%';
+  scrubThumb.style.left = (elapsed / TOTAL * 100) + '%';
+});
+
+TIMELINE[0].fn();
+</script>
+</body>
+</html>
