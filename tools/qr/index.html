@@ -359,6 +359,22 @@ body[data-theme="dark"] .tm{border-bottom-color:var(--gold-m)}
 .worked-step .why{font-size:12.5px; color:var(--ink-mute); font-style:italic; margin-top:3px; line-height:1.5}
 .worked-step .why::before{content:"why? "; font-style:normal; color:var(--gold-d); font-weight:600; letter-spacing:0.08em; text-transform:uppercase; font-size:10px}
 body[data-theme="dark"] .worked-step .why::before{color:var(--gold-m)}
+.worked-step .sarah-says{
+  margin-top:10px; padding:9px 12px 9px 14px;
+  background:var(--paper-2); border-left:3px solid var(--gold-d);
+  border-radius:0 6px 6px 0;
+  font-family:'Playfair Display',serif; font-style:italic;
+  font-size:13px; color:var(--ink-2); line-height:1.45;
+  position:relative;
+}
+.worked-step .sarah-says::before{
+  content:"Sarah says"; display:block;
+  font-family:'DM Sans',sans-serif; font-style:normal;
+  font-size:9.5px; letter-spacing:0.14em; text-transform:uppercase;
+  color:var(--gold-d); font-weight:700; margin-bottom:3px;
+}
+body[data-theme="dark"] .worked-step .sarah-says{background:var(--paper-3); border-left-color:var(--gold-m); color:var(--ink)}
+body[data-theme="dark"] .worked-step .sarah-says::before{color:var(--gold-m)}
 .worked-ctl{display:flex; gap:8px; margin-top:14px; align-items:center}
 .worked-ctl .progress{font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--ink-mute)}
 
@@ -3767,11 +3783,13 @@ const MODULES = {
     visualData:{},
     worked:[
       {q:'$50 marked up 20%', steps:[
-        {what:'20% increase = ×1.20', why:'the multiplier replaces add-then-find-percent.'},
+        {what:'20% increase = ×1.20', why:'the multiplier replaces add-then-find-percent.',
+         sarahSays:'Whenever we\'re increasing by a percent, I want you to do 1 PLUS that percent. Always. So +20% means ×1.20. Never compute the increase separately and add — go straight to the multiplier.'},
         {what:'50 × 1.20 = 60', why:'one operation: 50 × 1.2 = $60.'},
       ]},
       {q:'$200 jacket, 35% off', steps:[
-        {what:'35% off = keep 65%', why:'reframe — what fraction of original do you actually pay?'},
+        {what:'35% off = keep 65%', why:'reframe — what fraction of original do you actually pay?',
+         sarahSays:'When we reduce by a percent, we do 1 MINUS that percent — and that\'s what we multiply by. So −35% means ×0.65. The "keep-percent" is what\'s left over.'},
         {what:'200 × 0.65 = 130', why:'one multiplication: $130.'},
       ]},
       {q:'80 marbles → 100 marbles. % change?', steps:[
@@ -4239,9 +4257,11 @@ const MODULES = {
     visualType:'word-translate', visualData:{},
     worked:[
       {q:'Pipe A fills tank in 4 hr. B fills in 6 hr. Together?', steps:[
-        {what:'A\'s rate = 1/4 per hour', why:'finishes 1 tank in 4 hours.'},
+        {what:'A\'s rate = 1/4 per hour', why:'finishes 1 tank in 4 hours.',
+         sarahSays:'Read the question carefully. "Working together" here means simultaneously — both pipes running for the same hours. That\'s different from "if together they work 12 hours" (which would mean the SUM of their hours = 12). Always check which setup the problem is asking for.'},
         {what:'B\'s rate = 1/6 per hour', why:'same logic.'},
-        {what:'Combined: 1/4 + 1/6 = 3/12 + 2/12 = 5/12 per hour', why:'rates add when working together.'},
+        {what:'Combined: 1/4 + 1/6 = 3/12 + 2/12 = 5/12 per hour', why:'rates add when working together.',
+         sarahSays:'Working together, they can do 5/12 of the tank per hour. We want to set that equal to 1 full tank and find how long. Rates add — never times.'},
         {what:'Time = 1 ÷ (5/12) = 12/5 = 2.4 hours', why:'total time = 1 over combined rate.'}
       ]},
       {q:'Inlet fills in 6 hr. Drain empties in 9 hr. With both open?', steps:[
@@ -4514,8 +4534,10 @@ const MODULES = {
     visualType:'word-translate', visualData:{},
     worked:[
       {q:'Committee of 3 from 10 — how many?', steps:[
-        {what:'Does shuffling matter? "Committee" — no order', why:'Alice, Bob, Carol = Carol, Bob, Alice (same committee).'},
-        {what:'Combination: C(10, 3)', why:'unordered.'},
+        {what:'Does shuffling matter? "Committee" — no order', why:'Alice, Bob, Carol = Carol, Bob, Alice (same committee).',
+         sarahSays:'Permutations are picky about position. Combinations don\'t care. A committee doesn\'t care who got picked first — same group either way. So it\'s a combination.'},
+        {what:'Combination: C(10, 3)', why:'unordered.',
+         sarahSays:'Forget the n! / (r!(n−r)!) formula. Draw a literal C. Larger number on the LEFT (top of the C), smaller on the RIGHT. On top: 10 × 9 × 8 (count down by the smaller number). On bottom: 3 × 2 × 1. Same number of digits on top and bottom — that\'s your self-check.'},
         {what:'= 10!/(3!·7!) = 120', why:'compute.'}
       ]},
       {q:'4-letter "words" from A,B,C,D,E (no repeats)', steps:[
@@ -4804,13 +4826,16 @@ const MODULES = {
     visualType:'word-translate', visualData:{},
     worked:[
       {q:'Solve |x − 3| < 2', steps:[
-        {what:'"Less than" → sandwich', why:'middle pattern.'},
-        {what:'−2 < x − 3 < 2', why:'set up bounds.'},
+        {what:'"Less than" → sandwich', why:'middle pattern.',
+         sarahSays:'Think of the absolute-value bars as shields. What\'s inside (x − 3) is protected. The tornado came through and flipped everything outside — that\'s how we get the negative bound on one side.'},
+        {what:'−2 < x − 3 < 2', why:'set up bounds.',
+         sarahSays:'Two answers, always. The "easy method" writes it as is: x − 3 < 2 → x < 5. The "hard / opposite method" applies the tornado: x − 3 > −2 → x > 1. Combined: 1 < x < 5.'},
         {what:'Add 3: 1 < x < 5', why:'isolate x.'}
       ]},
       {q:'Solve |x + 1| > 4', steps:[
         {what:'"Greater than" → split', why:'|expr| > 4 means "more than 4 units from zero" — that\'s either deep positive (above +4) or deep negative (below −4). Two non-overlapping zones, never both.'},
-        {what:'x + 1 > 4 OR x + 1 < −4', why:'one case for each zone. The OR is critical: a single solution can\'t be in both.'},
+        {what:'x + 1 > 4 OR x + 1 < −4', why:'one case for each zone. The OR is critical: a single solution can\'t be in both.',
+         sarahSays:'Same shield + tornado. The bars protect x + 1, but the tornado flips the inequality direction on the other case — > becomes <, and the 4 picks up a minus sign. Two answers always.'},
         {what:'x > 3 OR x < −5', why:'subtract 1 from each side of both inequalities — same operation, both stay flipped the same way.'}
       ]}
     ],
@@ -4931,9 +4956,11 @@ const MODULES = {
     visualData:{},
     worked:[
       {q:'log₂(8) = ?', steps:[
-        {what:'log₂(8) asks: "2 raised to what gives 8?"', why:'translate the log into the question it really asks.'},
+        {what:'log₂(8) asks: "2 raised to what gives 8?"', why:'translate the log into the question it really asks.',
+         sarahSays:'When you see a log base something, and it equals something, and it\'s all on its own like this — I want you to just think we need to do the baseball thing, and we need to put an exponent forward.'},
         {what:'2 × 2 × 2 = 8', why:'count the doublings — that\'s three multiplications by 2.'},
-        {what:'log₂(8) = 3', why:'three doublings. The answer to a log is always the EXPONENT, never the input or the base.'},
+        {what:'log₂(8) = 3', why:'three doublings. The answer to a log is always the EXPONENT, never the input or the base.',
+         sarahSays:'In the baseball setup: 2 was warming up, 8 was hitting, and 3 ran to first. To convert: everyone moves up one spot. The 2 steps up to home (becomes the base), the 8 crosses the equals sign, and the 3 runs all the way to second base — which is far away, and that\'s why the exponent looks small. So 2³ = 8.'},
       ]},
       {q:'log₁₀(1000) = ?', steps:[
         {what:'log₁₀(1000) asks: "10 to what gives 1000?"', why:'same question, different base.'},
@@ -8032,6 +8059,7 @@ function renderWorked(skillId){
             <div class="body">
               <div class="what">${s.what}</div>
               <div class="why">${s.why}</div>
+              ${s.sarahSays ? `<div class="sarah-says">${s.sarahSays}</div>` : ''}
             </div>
           </div>
         `).join('')}
