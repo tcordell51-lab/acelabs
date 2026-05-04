@@ -497,6 +497,7 @@ window.TOPICS = {
   },
 
   'p-andor': {
+    sarahFile:'sarah-dice-pyramid-tiktok.html',
     tag:'Tier 2 · Probability', title:'AND / OR Rules',
     hookTag:'Probability · OR Adds, Overlap Subtracts',
     hookWord:'Or adds.<br/><em>Overlap subtracts.</em>',
@@ -543,6 +544,7 @@ window.TOPICS = {
 
   'count-pc': {
     customFile:'count-pc-collapse-tiktok.html',
+    sarahFile:'sarah-c-method-tiktok.html',
     tag:'Tier 2 · Counting', title:'Permutations & Combinations',
     hookTag:'Counting · Order Matters or Not',
     hookWord:'Order matters?<br/><em>Permutation.</em>',
@@ -743,6 +745,7 @@ window.TOPICS = {
   },
 
   'logs': {
+    sarahFile:'sarah-baseball-tiktok.html',
     tag:'Tier 2 · Logarithms', title:'Logarithms',
     hookTag:'Logs · Inverse of Exponentials',
     hookWord:'log_b(x) =<br/><em>\"b to what?\"</em>',
