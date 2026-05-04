@@ -62,7 +62,7 @@ The Ace Labs GC engine is comprehensive. For most students, GC + a commercial su
 
 ### Organic Chem (OChem)
 
-- **Reaction maps + animations:** Ace Labs OChem (Tommy · 10 reaction maps · 27 animations)
+- **Reaction maps + animations:** Ace Labs OChem (Tommy · 12 hubs + 10 labs · 27 animations)
 - **Problem volume layer:** DATBooster OR Bootcamp.com (OChem-specific question banks are essential — DAT OChem traps are very pattern-specific)
 - **Calibration layer:** ADA official practice tests
 - **Foundation supplement:** Klein OChem textbook for any specific reaction families a student is shaky on

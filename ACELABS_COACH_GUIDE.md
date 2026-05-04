@@ -15,7 +15,7 @@ Each tool has its own coach (Sarah for QR, Riya for Bio, Tommy for GC and OChem)
 | **Quantitative Reasoning** | Sarah | `tools/qr/index.html` | 41 | Coach guides ✅ |
 | **Biology** | Riya | `tools/bio/index.html` | 6 hubs | Coach guides ⏳ |
 | **Gen Chem** | Tommy | `tools/gc/index.html` | 37 | Coach guides ⏳ |
-| **Organic Chem** | Tommy | `tools/ochem/index.html` | 10 reaction maps | Coach guides ⏳ |
+| **Organic Chem** | Tommy | `tools/ochem/index.html` | 12 hubs + 10 labs | Coach guide starter ✅ |
 
 **Coach guides for QR are complete and live in `~/Documents/Claude/Projects/AceDAT-QR-Remediation/`:**
 - [COACH_GUIDE_README.md](../AceDAT-QR-Remediation/COACH_GUIDE_README.md) — plan picker
