@@ -8,6 +8,62 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="bio-shared.css">
+<style>
+/* Bio stuck-triage modal · anxiety-aware design */
+.bio-stuck-trigger{
+  display:flex; align-items:center; justify-content:center; gap:8px;
+  margin:14px 16px 8px; padding:10px 14px;
+  background:rgba(194,91,63,0.16); color:#f3c5b3;
+  border:1px solid rgba(194,91,63,0.32); border-radius:10px;
+  font-size:12px; font-weight:600; letter-spacing:0.06em; text-transform:uppercase;
+  cursor:pointer; transition:all 0.18s; font-family:inherit;
+}
+.bio-stuck-trigger:hover{background:rgba(194,91,63,0.30); transform:translateY(-1px); color:#fff;}
+.bio-stuck-back{
+  position:fixed; inset:0; background:rgba(13,32,24,0.55); backdrop-filter:blur(4px);
+  z-index:200; display:none; align-items:center; justify-content:center; padding:20px;
+}
+.bio-stuck-back.show{display:flex;}
+.bio-stuck-modal{
+  background:#fffdf7; border:1px solid rgba(13,32,24,0.12); border-radius:18px;
+  max-width:520px; width:100%; padding:32px 34px; box-shadow:0 24px 56px rgba(13,32,24,0.18);
+  position:relative; max-height:90vh; overflow:auto;
+  font-family:'DM Sans',sans-serif; color:#0f1814;
+}
+.bio-stuck-modal h3{
+  font-family:'Playfair Display',serif; font-size:28px; margin:0 0 8px;
+  line-height:1.15; font-weight:700; color:#0f1814;
+}
+.bio-stuck-modal h3 em{font-style:italic; color:#8C7235;}
+.bio-stuck-modal .lede{
+  font-size:15px; color:#3a4a42; margin-bottom:18px; line-height:1.5;
+}
+.bio-stuck-close{
+  position:absolute; top:18px; right:22px;
+  background:none; border:none; font-size:28px; line-height:1; color:#6e7c74;
+  cursor:pointer; padding:0; width:30px; height:30px;
+}
+.bio-stuck-options{display:flex; flex-direction:column; gap:10px; margin-top:8px;}
+.bio-stuck-options button{
+  text-align:left; padding:14px 16px; border-radius:10px; cursor:pointer;
+  font-family:inherit; font-size:15px; font-weight:600; line-height:1.4;
+  transition:all 0.18s; border:1.5px solid;
+}
+.bio-stuck-options button b{display:block; font-size:16px; margin-bottom:3px;}
+.bio-stuck-options button .sub{display:block; font-size:12px; font-weight:400; color:#6e7c74; margin-top:2px;}
+.bio-stuck-options .opt-primary{
+  background:#C9A84C; color:#0f1814; border-color:#8C7235;
+}
+.bio-stuck-options .opt-primary:hover{background:#E2C97A;}
+.bio-stuck-options .opt-secondary{
+  background:#fffdf7; color:#0f1814; border-color:#1B3A2D;
+}
+.bio-stuck-options .opt-secondary:hover{background:#f9f3e6;}
+.bio-stuck-options .opt-ghost{
+  background:transparent; color:#3a4a42; border-color:rgba(13,32,24,0.18);
+}
+.bio-stuck-options .opt-ghost:hover{background:#f3ecdb;}
+</style>
 </head>
 <body data-page="engine">
 <div class="app">
@@ -31,7 +87,15 @@
     <span class="count" id="acePillCount">0 due</span>
   </div>
 
-  <a class="sb-link" href="bio-engine.html" style="margin-bottom:6px"><span class="dot"></span><span class="label">&larr; Mastery hub</span><span class="meta"></span></a>
+  <button class="bio-stuck-trigger" id="bioStuckBtn" type="button">Stuck? Take a beat</button>
+
+  <a class="sb-link active" href="bio-engine.html" style="margin-bottom:6px"><span class="dot"></span><span class="label">&larr; Mastery hub</span><span class="meta"></span></a>
+  <a class="sb-link live" href="bio-mock.html" style="margin-bottom:6px"><span class="dot" style="background:var(--gold)"></span><span class="label"><b>Mock Exam</b></span><span class="meta">2001q</span></a>
+  <a class="sb-link live" href="bio-diagnostic.html" style="margin-bottom:6px"><span class="dot"></span><span class="label">Diagnostic</span><span class="meta">24q</span></a>
+  <a class="sb-link live" href="bio-calendar.html" style="margin-bottom:8px"><span class="dot"></span><span class="label">60-day plan</span><span class="meta">study</span></a>
+  <a class="sb-link live" href="bio-analytics.html" style="margin-bottom:8px"><span class="dot"></span><span class="label">Analytics</span><span class="meta">trends</span></a>
+  <a class="sb-link live" href="bio-bonus.html" style="margin-bottom:6px"><span class="dot"></span><span class="label">Bonus topics</span><span class="meta">supp</span></a>
+  <a class="sb-link live" href="bio-micrographs.html" style="margin-bottom:8px"><span class="dot"></span><span class="label">Micrograph ID</span><span class="meta">8 cards</span></a>
 
   <div class="sb-section">01 &middot; Cell &amp; Molecular</div>
   <a class="sb-link live" href="bio-cell.html"><span class="dot"></span><span class="label"><b>Cell Lab</b> (flagship)</span><span class="meta">live</span></a>
@@ -212,7 +276,7 @@
     <!-- MOCK EXAM CTA -->
     <section class="hub-grid" style="margin-top:0">
       <a class="hub-tile featured" href="bio-mock.html" style="grid-column: 1 / -1; background:linear-gradient(180deg,#1B3A2D 0%,#2a4f3f 100%);color:#ece4d4;border-color:var(--gold)">
-        <div class="hub-num" style="color:var(--gold)">MOCK EXAM &middot; 500-question bank</div>
+        <div class="hub-num" style="color:var(--gold)">MOCK EXAM &middot; 2001-question bank</div>
         <h3 style="color:#fff">The <em style="color:var(--gold)">DAT Bio Mock Exam</em></h3>
         <p style="color:rgba(236,228,212,0.78)">40 questions in 30 minutes — DAT-style timing + weighting. Subject-specific drills also available. Wrong answers feed your spaced-repetition Ace Cards.</p>
         <div class="hub-meta" style="border-top-color:rgba(236,228,212,0.18)"><span class="hub-flagship" style="color:var(--gold)">Take the test &rarr;</span><span class="hub-count" style="color:rgba(236,228,212,0.55)">500 questions</span></div>
@@ -231,6 +295,79 @@
   </div><!-- /lab -->
 </main>
 </div><!-- /app -->
+
+<!-- ============================================================
+     Bio Stuck Triage Modal (anxiety-aware design · subject-tuned)
+     Three options: quick recall cards · hub overview · move on
+     NO breath modal — Bio anxiety is "drowning in volume," not nervous-system freeze
+     ============================================================ -->
+<div class="bio-stuck-back" id="bioStuckBack" role="dialog" aria-modal="true" aria-labelledby="bioStuckTitle">
+  <div class="bio-stuck-modal">
+    <button class="bio-stuck-close" type="button" id="bioStuckClose" aria-label="Close">&times;</button>
+    <h3 id="bioStuckTitle">Feeling <em>lost?</em></h3>
+    <p class="lede">Bio is volume — that's normal. Pick what'll help right now:</p>
+    <div class="bio-stuck-options">
+      <button class="opt-primary" id="bioStuckWins" type="button">
+        <b>Three quick recall cards</b>
+        <span class="sub">From hubs you've already mastered. Rebuild flow.</span>
+      </button>
+      <button class="opt-secondary" id="bioStuckOverview" type="button">
+        <b>Step back to the hub overview</b>
+        <span class="sub">Re-orient — see where you are in the bigger picture.</span>
+      </button>
+      <button class="opt-ghost" id="bioStuckSkip" type="button">
+        <b>Move on for now</b>
+        <span class="sub">Skip this card. Come back when you're fresh.</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const back  = document.getElementById('bioStuckBack');
+  const trig  = document.getElementById('bioStuckBtn');
+  const close = document.getElementById('bioStuckClose');
+  const wins  = document.getElementById('bioStuckWins');
+  const over  = document.getElementById('bioStuckOverview');
+  const skip  = document.getElementById('bioStuckSkip');
+  if (!back || !trig) return;
+
+  function open(){
+    back.classList.add('show');
+    try { localStorage.setItem('bio-engine:stuck-events', JSON.stringify(
+      [...JSON.parse(localStorage.getItem('bio-engine:stuck-events') || '[]'), { t: Date.now() }]
+    )); } catch(e){}
+  }
+  function shut(){ back.classList.remove('show'); }
+
+  trig.addEventListener('click', open);
+  close.addEventListener('click', shut);
+  back.addEventListener('click', e => { if (e.target === back) shut(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && back.classList.contains('show')) shut(); });
+
+  wins.addEventListener('click', () => {
+    shut();
+    // Bio "quick wins" path = jump to spaced-retrieval Ace Cards section.
+    // The retrieval-card practice IS the Bio equivalent of "wins from green skills."
+    const target = document.getElementById('aceCardsSection');
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    else location.href = 'bio-engine.html#aceCardsSection';
+  });
+  over.addEventListener('click', () => {
+    shut();
+    // Bio "way to settle" = re-orient on the hub map. NOT a breath modal.
+    // Drowning-in-volume is the Bio anxiety, and seeing the structure calms it.
+    const target = document.querySelector('section.lab-hubs') || document.querySelector('main') || document.body;
+    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (location.pathname.endsWith('bio-engine.html') === false){
+      location.href = 'bio-engine.html#hubs';
+    }
+  });
+  skip.addEventListener('click', shut);
+})();
+</script>
+
 <script src="bio-cards.js"></script>
 <script src="bio-shared.js"></script>
 </body>
