@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Ace Labs · Mock catalog</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=DM+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared/al-tokens.css">
 <link rel="stylesheet" href="shared/ace-labs-shell.css">
 <style>
 .cat-h{font-family:'Playfair Display',serif; font-size:42px; font-weight:700; line-height:1.05; letter-spacing:-.02em; margin-bottom:8px}
@@ -23,10 +24,8 @@
 @media (max-width:780px){.mock-row{grid-template-columns:60px 1fr; gap:8px}}
 .mock-row:hover{box-shadow:0 4px 14px rgba(13,32,24,.06); border-color:var(--al-line-2)}
 .mock-row[data-tier="diagnostic"]{border-left:5px solid #6e7c74}
-.mock-row[data-tier="easy"]{border-left:5px solid var(--al-good)}
 .mock-row[data-tier="standard"]{border-left:5px solid var(--al-gold-d)}
 .mock-row[data-tier="hard"]{border-left:5px solid #c25b3f}
-.mock-row[data-tier="final"]{border-left:5px solid var(--al-trap)}
 .mock-num{font-family:'Playfair Display',serif; font-size:32px; font-weight:900; color:var(--al-gold-d); line-height:1; text-align:center}
 .mock-info .mock-name{font-family:'Playfair Display',serif; font-size:18px; font-weight:700; line-height:1.2}
 .mock-info .mock-name em{color:var(--al-gold-d); font-style:italic}
@@ -62,61 +61,65 @@
   </div>
   <nav class="al-nav">
     <a href="ace-labs.html" class="al-nav-link">← Home</a>
-    <a href="unified-mock.html" class="al-nav-link">Cross-tool mock</a>
+    <a href="prometric-mock.html" class="al-nav-link">Prometric mocks</a>
   </nav>
 </header>
 
 <h1 class="cat-h">The mock <em>catalog.</em></h1>
-<p class="cat-sub">10 mocks, laddered. Diagnostic first to read your floor; standard mocks build through the middle; hard mocks ratchet pressure; final mocks simulate test week. Each mock pulls a fresh sample from the bank, so retakes don't see the same problems.</p>
+<p class="cat-sub">Three Prometric-style practice tests run through a timed proctored interface — the closest simulation Ace Labs ships for Sciences + QR. Each test is fixed and fully independent, with zero question overlap across the three.</p>
+
+<div class="cat-explainer" style="border-left-color:var(--al-teal); margin-bottom:30px">
+  <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:14px; flex-wrap:wrap">
+    <div style="flex:1; min-width:280px">
+      <div style="font-family:'Playfair Display',serif; font-size:24px; font-weight:700; color:var(--al-ink); margin-bottom:6px">3 Prometric tests · <em style="color:var(--al-gold-d); font-style:italic">partial simulation</em></div>
+      <p style="margin-bottom:8px"><b>140 questions · 135 minutes · 2 timed sections.</b> Sciences (40 Bio + 30 GC + 30 OChem in 90 min) followed by QR (40 Q in 45 min). Question nav panel, mark-for-review, end-of-section review screen, periodic table for Gen Chem, and calculator widget for QR. Each test draws 140 unique problems with zero overlap across the 3 tests — 420 unique problems total drawn from the AceLabs banks.</p>
+      <p style="margin-bottom:0; font-size:13px"><b>Honest scope.</b> PAT and Reading Comp are not included — those sections need image and passage banks Ace Labs does not yet ship. The real DAT scheduled 30-minute break comes after PAT, so these tests are high-fidelity practice for the covered sections, not a full-length administration. Predicted SoNS and QR scaled scores are useful; the &ldquo;academic average&rdquo; field is a 2-section proxy, not the official AA.</p>
+    </div>
+    <a class="mock-cta" style="padding:12px 22px" href="prometric-mock.html">Open Prometric tests →</a>
+  </div>
+</div>
+
+<h2 style="font-family:'Playfair Display',serif; font-size:24px; font-weight:700; margin:0 0 6px">The 3 tests · <em style="color:var(--al-gold-d); font-style:italic">what each one is for</em></h2>
+<p class="cat-sub" style="margin-bottom:18px">Each test has a distinct role in your study arc. Take Test 1 early to read your floor, Test 2 mid-prep to confirm growth, and Test 3 close to your date as a final simulation.</p>
 
 <div class="cat-cap-grid">
-  <div class="cat-cap"><div class="lbl">Bio bank</div><div class="num">~500 Q</div><div class="sub">12 unique 40-Q draws</div></div>
-  <div class="cat-cap"><div class="lbl">GC bank</div><div class="num">605 Q</div><div class="sub">20 unique 30-Q draws</div></div>
-  <div class="cat-cap"><div class="lbl">OChem bank</div><div class="num">355 Q</div><div class="sub">12 unique 30-Q draws</div></div>
-  <div class="cat-cap"><div class="lbl">QR bank</div><div class="num">963 Q</div><div class="sub">24 unique 40-Q draws (separate)</div></div>
+  <div class="cat-cap"><div class="lbl">Bio bank</div><div class="num">158 Q</div><div class="sub">rewritten + expert pool · used in mocks</div></div>
+  <div class="cat-cap"><div class="lbl">GC bank</div><div class="num">495 Q</div><div class="sub">34 topics · 16 unique 30-Q draws</div></div>
+  <div class="cat-cap"><div class="lbl">OChem bank</div><div class="num">388 Q</div><div class="sub">13 topics · 11 unique 30-Q draws</div></div>
+  <div class="cat-cap"><div class="lbl">QR bank</div><div class="num">8 expert Q</div><div class="sub">+ cleaned subset · pacing items</div></div>
 </div>
 
 <div class="mock-list" id="mockList"></div>
 
 <div class="cat-explainer">
-  <b>How to use the catalog.</b> Take Mock #1 (Diagnostic) <em>before</em> any heavy studying — that's your floor reading. Then study to mastery using each engine's modules + spaced-rep cards. Take Mock #2-#3 to confirm the floor lifted. Mocks #4-#5 establish your "standard" baseline. Mock #6-#7 (Hard) drill exam pressure. Mocks #8-#10 (Final) simulate test-week conditions — take one per week in the 3 weeks before your test date.
+  <b>How to use these tests.</b> Take Test 1 <em>before</em> any heavy studying — that is your floor reading. Study to mastery using each engine's modules and spaced-rep cards. Take Test 2 around the midpoint of your prep to confirm the floor has lifted. Take Test 3 in the 1-2 weeks before your date, under real conditions: same time of day, fed and hydrated, no interruptions.
   <table>
-    <thead><tr><th>When</th><th>Mock</th><th>Why</th></tr></thead>
+    <thead><tr><th>When</th><th>Test</th><th>Why</th></tr></thead>
     <tbody>
-      <tr><td>Day 0 (week 1)</td><td>#1 Diagnostic</td><td>Read your floor. Identify weakest subject.</td></tr>
-      <tr><td>Week 2</td><td>#2 Easy</td><td>Confirm Tier 0 work landed. Build confidence.</td></tr>
-      <tr><td>Week 4-5</td><td>#3-4 Standard</td><td>DAT-realistic baseline. Compare deltas.</td></tr>
-      <tr><td>Week 6-7</td><td>#5 Standard, #6 Hard</td><td>Push into harder problems. Accept dips.</td></tr>
-      <tr><td>Week 8</td><td>#7 Hard</td><td>Pressure test. If score holds, you're ready.</td></tr>
-      <tr><td>3 weeks out</td><td>#8 Final</td><td>Full simulation. Time of day, fed, hydrated.</td></tr>
-      <tr><td>2 weeks out</td><td>#9 Final</td><td>Same conditions. Track variance.</td></tr>
-      <tr><td>1 week out</td><td>#10 Final</td><td>Last full simulation. Use for confidence, not panic.</td></tr>
+      <tr><td>Day 0 (week 1)</td><td>Test 1 · Diagnostic</td><td>Read your floor. Identify weakest subject.</td></tr>
+      <tr><td>Midpoint of prep</td><td>Test 2 · Standard</td><td>DAT-realistic difficulty. Confirm growth since Test 1.</td></tr>
+      <tr><td>1-2 weeks out</td><td>Test 3 · Final sim</td><td>Full pacing simulation. Use for confidence calibration, not cramming.</td></tr>
     </tbody>
   </table>
 </div>
 
 </div>
 <script>
-const MOCKS = [
-  {n:1, name:'<em>Diagnostic</em>', tier:'diagnostic', tag:'Day 0 · floor reading',  diff:[60,30,10,0],  desc:'Take this BEFORE studying. Reads your floor and points you at your weakest subject. Dont sweat the score.'},
-  {n:2, name:'Easy',                 tier:'easy',       tag:'Week 2 · confidence',     diff:[50,40,10,0],  desc:'Confirms your Tier 0 work landed. Builds confidence. Aim for 70%+.'},
-  {n:3, name:'Standard A',           tier:'standard',   tag:'Week 4 · DAT-realistic',  diff:[30,50,20,0],  desc:'DAT-realistic difficulty mix. This is the score that matters most.'},
-  {n:4, name:'Standard B',           tier:'standard',   tag:'Week 5 · DAT-realistic',  diff:[30,50,20,0],  desc:'Different draw, same difficulty. Compare to A — where did you slip?'},
-  {n:5, name:'Standard C',           tier:'standard',   tag:'Week 6 · DAT-realistic',  diff:[30,50,20,0],  desc:'Third standard mock. Deltas matter more than raw score now.'},
-  {n:6, name:'Hard A',               tier:'hard',       tag:'Week 7 · pressure',       diff:[20,40,30,10], desc:'Pressure-test. Hard problems with traps. Score drops are normal — track recovery time.'},
-  {n:7, name:'Hard B',               tier:'hard',       tag:'Week 8 · pressure',       diff:[20,40,30,10], desc:'Second hard mock. If your score holds within 1-2 of standard, youre ready for finals.'},
-  {n:8, name:'Final A',              tier:'final',      tag:'3 weeks out',             diff:[20,35,30,15], desc:'Full DAT simulation. Same time of day, fed and hydrated, no interruptions.'},
-  {n:9, name:'Final B',              tier:'final',      tag:'2 weeks out',             diff:[20,35,30,15], desc:'Same conditions. Tracking variance is more important than peak score.'},
-  {n:10,name:'Final C',              tier:'final',      tag:'1 week out',              diff:[20,35,30,15], desc:'Last full simulation. Use for confidence calibration, NOT for cramming gaps.'}
+const TESTS = [
+  {n:1, name:'<em>Diagnostic</em>', tier:'diagnostic', tag:'Take first · floor reading',  diff:[55,35,10,0],
+   desc:'Take this before heavy studying. Reads your floor across Bio, GC, OChem, and QR. The score is less important than knowing where you are weakest.'},
+  {n:2, name:'Standard',            tier:'standard',   tag:'Midpoint · DAT-realistic',   diff:[30,50,20,0],
+   desc:'DAT-realistic difficulty mix. Compare your raw scores to Test 1 to see where your prep has moved the needle.'},
+  {n:3, name:'Final sim',           tier:'hard',       tag:'1-2 weeks out · full sim',   diff:[20,45,25,10],
+   desc:'Hardest draw. Simulate test-week conditions: same time of day, no interruptions, timed end-to-end. Use the result for confidence calibration, not last-minute cramming.'}
 ];
-const tierToDiff = {diagnostic:'diagnostic', easy:'easy', standard:'standard', hard:'hard', final:'final'};
 
 const list = document.getElementById('mockList');
-list.innerHTML = MOCKS.map(m => `
+list.innerHTML = TESTS.map((m, idx) => `
   <div class="mock-row" data-tier="${m.tier}">
     <div class="mock-num">${m.n}</div>
     <div class="mock-info">
-      <div class="mock-name">Mock ${m.name}</div>
+      <div class="mock-name">Test ${m.name}</div>
       <div class="mock-tag">${m.tag}</div>
       <div style="font-size:13px; color:var(--al-ink-2); margin-top:4px; line-height:1.45">${m.desc}</div>
     </div>
@@ -134,7 +137,7 @@ list.innerHTML = MOCKS.map(m => `
         ${m.diff[3] > 0 ? `<span><i style="background:var(--al-trap)"></i>${m.diff[3]}% trap</span>` : ''}
       </div>
     </div>
-    <a class="mock-cta" href="unified-mock.html?diff=${tierToDiff[m.tier]}">Take Mock ${m.n}</a>
+    <a class="mock-cta" href="prometric-mock.html?test=${idx}">Take Test ${m.n}</a>
   </div>
 `).join('');
 </script>

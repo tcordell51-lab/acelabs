@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Micrograph ID &middot; AceTheDAT Bio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="bio-shared.css">
+<style>
+.mg-deck{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin:24px 0 60px}
+@media (max-width:980px){.mg-deck{grid-template-columns:1fr}}
+.mg-card{background:var(--paper);border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:var(--shadow);transition:transform .25s var(--ease-bezier),box-shadow .25s}
+.mg-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-md)}
+.mg-card.flipped .mg-front{display:none}
+.mg-card.flipped .mg-back{display:block}
+.mg-card .mg-back{display:none;padding:22px 24px}
+.mg-front{padding:0}
+.mg-img{width:100%;height:280px;background:#0d1612;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.mg-img svg{width:90%;height:90%;display:block}
+.mg-img .mag{position:absolute;top:10px;right:14px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;color:rgba(245,240,232,0.6);background:rgba(0,0,0,0.4);padding:3px 8px;border-radius:4px;letter-spacing:.1em}
+.mg-meta{padding:16px 22px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--line)}
+.mg-meta .id{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--gold-d);letter-spacing:.14em}
+.mg-meta .reveal{font-size:12px;font-weight:700;color:var(--ink);background:var(--paper-2);border:1px solid var(--line);border-radius:6px;padding:5px 11px;cursor:pointer;transition:all .15s;font-family:inherit}
+.mg-meta .reveal:hover{background:var(--gold-bg);border-color:var(--gold-d);color:var(--gold-d)}
+.mg-back h3{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;margin:0 0 6px;line-height:1.2}
+.mg-back h3 em{font-style:italic;color:var(--gold-d)}
+.mg-back .what{font-size:14px;color:var(--ink-2);line-height:1.55;margin:6px 0 10px}
+.mg-back .keys{font-size:13px;color:var(--ink-mute);line-height:1.7;padding-left:18px;margin:0}
+.mg-back .keys li::marker{color:var(--gold-d)}
+.mg-back .gotcha{margin-top:14px;padding:10px 14px;background:rgba(194,91,63,0.10);border-left:3px solid var(--trap);border-radius:0 8px 8px 0;font-size:13px;color:var(--trap-d);line-height:1.5}
+.mg-back .gotcha b{color:var(--trap-d)}
+.mg-back .flip-back{margin-top:14px;font-size:12px;color:var(--ink-mute);background:none;border:none;cursor:pointer;font-family:inherit;padding:0;text-decoration:underline}
+.mg-back .flip-back:hover{color:var(--ink)}
+.mg-progress{display:flex;justify-content:space-between;align-items:center;padding:14px 22px;background:var(--paper-2);border:1px solid var(--line);border-radius:12px;margin:18px 0 26px;font-size:13px;color:var(--ink-mute)}
+.mg-progress b{color:var(--ink)}
+.mg-progress button{background:var(--gold);color:var(--sb);border:none;padding:6px 14px;border-radius:7px;font-weight:700;font-size:12px;cursor:pointer;font-family:inherit}
+.mg-progress button:hover{background:var(--gold-m)}
+</style>
+</head>
+<body data-page="micrographs">
+<div class="app">
+<aside class="sb">
+  <div class="sb-brand">
+    <div class="mark">Ace<em>The</em>DAT</div>
+    <div class="sub">Bio Mastery System &middot; v2</div>
+  </div>
+  <a class="sb-link" href="index.html" style="margin-bottom:6px"><span class="dot"></span><span class="label">&larr; Mastery hub</span><span class="meta"></span></a>
+  <a class="sb-link live" href="bio-mock.html" style="margin-bottom:6px"><span class="dot" style="background:var(--gold)"></span><span class="label"><b>Mock Exam</b></span><span class="meta">40q</span></a>
+  <a class="sb-link live" href="bio-diagnostic.html" style="margin-bottom:6px"><span class="dot"></span><span class="label">Diagnostic</span><span class="meta">24q</span></a>
+  <a class="sb-link live" href="bio-calendar.html" style="margin-bottom:8px"><span class="dot"></span><span class="label">60-day plan</span><span class="meta">study</span></a>
+  <a class="sb-link live" href="bio-analytics.html" style="margin-bottom:8px"><span class="dot"></span><span class="label">Analytics</span><span class="meta">trends</span></a>
+  <a class="sb-link live" href="bio-bonus.html" style="margin-bottom:6px"><span class="dot"></span><span class="label">Bonus topics</span><span class="meta">supp</span></a>
+  <a class="sb-link live active" href="bio-micrographs.html" style="margin-bottom:8px"><span class="dot"></span><span class="label">Micrograph ID</span><span class="meta">8 cards</span></a>
+
+  <div class="sb-section">Six hubs</div>
+  <a class="sb-link live" href="bio-cell.html"><span class="dot"></span><span class="label">Cell Lab</span><span class="meta">17</span></a>
+  <a class="sb-link live" href="bio-genetics.html"><span class="dot"></span><span class="label">Genetics</span><span class="meta">flagship</span></a>
+  <a class="sb-link live" href="bio-physiology.html"><span class="dot"></span><span class="label">Physiology</span><span class="meta">flagship</span></a>
+  <a class="sb-link live" href="bio-diversity.html"><span class="dot"></span><span class="label">Diversity</span><span class="meta">flagship</span></a>
+  <a class="sb-link live" href="bio-devo.html"><span class="dot"></span><span class="label">Developmental</span><span class="meta">flagship</span></a>
+  <a class="sb-link live" href="bio-evolution.html"><span class="dot"></span><span class="label">Evolution</span><span class="meta">flagship</span></a>
+</aside>
+
+<main class="mn">
+  <section class="hub-hero" style="padding:46px 60px 0">
+    <span class="badge"><span class="pulse"></span>Visual ID &middot; 8 cards &middot; ~6 min</span>
+    <h1>Micrograph <em>ID</em>.</h1>
+    <p class="lede">The DAT shows you a black-and-white electron micrograph and asks "what's this organelle?" — and a third of test-takers freeze. Eight cards is enough to inoculate. Tap any card to flip; mark it once you can name it cold.</p>
+  </section>
+
+  <section style="padding:0 60px">
+  <div class="mg-progress">
+    <span><b id="mgKnown">0</b> / 8 marked known &middot; <span id="mgPct">0%</span></span>
+    <button id="mgReset" type="button">Reset progress</button>
+  </div>
+
+  <div class="mg-deck" id="mgDeck"></div>
+  </section>
+</main>
+</div>
+
+<script>
+const MICROGRAPHS = [
+  {
+    id:'mg01', title:'Mitochondrion', titleEm:'mitochondrion', mag:'TEM &middot; 25,000×',
+    what:'Double-membraned organelle. Outer membrane is smooth, inner membrane folds into <b>cristae</b> that pack the surface area for the electron transport chain. Matrix holds the Krebs-cycle enzymes and circular mtDNA.',
+    keys:['Cristae = inner-membrane folds','Matrix = innermost compartment','Two membranes (smooth outer + folded inner)','Sausage-shaped, often clustered near energy demand'],
+    gotcha:'<b>Trap:</b> a chloroplast also has a double membrane. Cristae are <i>folds of the inner membrane</i>; thylakoids are <i>separate stacked discs floating in stroma</i>.',
+    svg:`<svg viewBox="0 0 400 280" xmlns="http://www.w3.org/2000/svg">
+      <defs><radialGradient id="m1" cx="50%" cy="50%" r="60%"><stop offset="0%" stop-color="#3a4a42"/><stop offset="100%" stop-color="#0d1612"/></radialGradient></defs>
+      <ellipse cx="200" cy="140" rx="170" ry="80" fill="url(#m1)" stroke="#9aa39e" stroke-width="2"/>
+      <ellipse cx="200" cy="140" rx="155" ry="65" fill="none" stroke="#9aa39e" stroke-width="1.4"/>
+      <path d="M 70 140 Q 90 80, 110 140 Q 130 200, 150 140 Q 170 80, 190 140 Q 210 200, 230 140 Q 250 80, 270 140 Q 290 200, 310 140 Q 330 80, 340 140" fill="none" stroke="#cfc8b8" stroke-width="1.8" opacity="0.85"/>
+      <text x="200" y="265" text-anchor="middle" fill="rgba(245,240,232,0.5)" font-family="JetBrains Mono" font-size="10">cristae visible · matrix darker</text>
+    </svg>`
+  },
+  {
+    id:'mg02', title:'Rough ER', titleEm:'rough endoplasmic reticulum', mag:'TEM &middot; 50,000×',
+    what:'Stacked, parallel membrane sheets studded with <b>ribosomes</b> on the cytoplasmic face. Synthesizes membrane-bound and secreted proteins; the "rough" texture is dotted ribosomes seen in profile.',
+    keys:['Parallel membrane sheets (cisternae)','Studded surface = ribosomes','Continuous with the nuclear envelope','Smooth ER lacks the dots'],
+    gotcha:'<b>Trap:</b> students confuse rough ER with the Golgi. Rough ER = parallel sheets with dots. Golgi = stacked, slightly curved discs without dots.',
+    svg:`<svg viewBox="0 0 400 280" xmlns="http://www.w3.org/2000/svg">
+      <g stroke="#cfc8b8" stroke-width="1.8" fill="none">
+        <path d="M 40 80 Q 200 60, 360 80"/>
+        <path d="M 40 120 Q 200 100, 360 120"/>
+        <path d="M 40 160 Q 200 140, 360 160"/>
+        <path d="M 40 200 Q 200 180, 360 200"/>
+        <path d="M 40 240 Q 200 220, 360 240"/>
+      </g>
+      <g fill="#E2C97A">
+        <circle cx="80" cy="78" r="3"/><circle cx="140" cy="72" r="3"/><circle cx="220" cy="68" r="3"/><circle cx="300" cy="74" r="3"/>
+        <circle cx="100" cy="118" r="3"/><circle cx="180" cy="110" r="3"/><circle cx="260" cy="112" r="3"/><circle cx="340" cy="118" r="3"/>
+        <circle cx="60" cy="158" r="3"/><circle cx="160" cy="150" r="3"/><circle cx="240" cy="148" r="3"/><circle cx="320" cy="156" r="3"/>
+        <circle cx="120" cy="198" r="3"/><circle cx="200" cy="190" r="3"/><circle cx="280" cy="194" r="3"/>
+        <circle cx="80" cy="238" r="3"/><circle cx="180" cy="232" r="3"/><circle cx="260" cy="234" r="3"/><circle cx="340" cy="240" r="3"/>
+      </g>
+      <text x="200" y="270" text-anchor="middle" fill="rgba(245,240,232,0.5)" font-family="JetBrains Mono" font-size="10">parallel sheets · ribosome studs</text>
+    </svg>`
+  },
+  {
+    id:'mg03', title:'Golgi apparatus', titleEm:'Golgi apparatus', mag:'TEM &middot; 30,000×',
+    what:'Stack of flattened, slightly curved membrane discs (<b>cisternae</b>) with vesicles budding from the rims. Receives proteins from the ER on the cis face, modifies and sorts them, ships from the trans face.',
+    keys:['Stacked, curved cisternae','Vesicles budding from edges','No ribosomes on the surface','Cis (receiving) and trans (shipping) faces'],
+    gotcha:'<b>Trap:</b> the Golgi can look like smooth ER at low magnification. Look for the <i>curved</i> stack and the <i>budding vesicles</i>.',
+    svg:`<svg viewBox="0 0 400 280" xmlns="http://www.w3.org/2000/svg">
+      <g stroke="#cfc8b8" stroke-width="2" fill="none">
+        <path d="M 60 90 Q 200 70, 340 90"/>
+        <path d="M 60 120 Q 200 100, 340 120"/>
+        <path d="M 70 150 Q 200 130, 330 150"/>
+        <path d="M 80 180 Q 200 160, 320 180"/>
+        <path d="M 90 210 Q 200 190, 310 210"/>
+      </g>
+      <g fill="none" stroke="#9aa39e" stroke-width="1.5">
+        <circle cx="50" cy="100" r="10"/>
+        <circle cx="35" cy="135" r="8"/>
+        <circle cx="355" cy="105" r="12"/>
+        <circle cx="370" cy="145" r="9"/>
+        <circle cx="345" cy="225" r="11"/>
+        <circle cx="60" cy="220" r="9"/>
+      </g>
+      <text x="200" y="265" text-anchor="middle" fill="rgba(245,240,232,0.5)" font-family="JetBrains Mono" font-size="10">curved cisternae · vesicles budding</text>
+    </svg>`
+  },
+  {
+    id:'mg04', title:'Nucleus + nuclear envelope', titleEm:'nucleus', mag:'TEM &middot; 10,000×',
+    what:'Large, roughly circular structure with a <b>double membrane</b> (the nuclear envelope) pierced by <b>nuclear pores</b>. The dense interior body is the nucleolus (rRNA synthesis); the rest is chromatin (DNA + protein).',
+    keys:['Double membrane = nuclear envelope','Pores along the envelope','Nucleolus = dense dark spot inside','Chromatin = grainy texture'],
+    gotcha:'<b>Trap:</b> the nuclear envelope is continuous with rough ER on the outer face — students often mistake them. The nucleus is the only organelle with a <i>nucleolus</i> inside.',
+    svg:`<svg viewBox="0 0 400 280" xmlns="http://www.w3.org/2000/svg">
+      <defs><radialGradient id="n1" cx="50%" cy="50%" r="55%"><stop offset="0%" stop-color="#3a4a42" stop-opacity="0.6"/><stop offset="100%" stop-color="#0d1612"/></radialGradient></defs>
+      <circle cx="200" cy="140" r="115" fill="url(#n1)" stroke="#9aa39e" stroke-width="2"/>
+      <circle cx="200" cy="140" r="103" fill="none" stroke="#9aa39e" stroke-width="1.5"/>
+      <g fill="#0d1612" stroke="#cfc8b8" stroke-width="1">
+        <circle cx="100" cy="80" r="3"/><circle cx="135" cy="50" r="3"/><circle cx="200" cy="35" r="3"/><circle cx="265" cy="48" r="3"/><circle cx="305" cy="80" r="3"/><circle cx="320" cy="135" r="3"/><circle cx="305" cy="195" r="3"/><circle cx="265" cy="230" r="3"/><circle cx="200" cy="245" r="3"/><circle cx="135" cy="230" r="3"/><circle cx="95" cy="195" r="3"/><circle cx="80" cy="135" r="3"/>
+      </g>
+      <ellipse cx="170" cy="160" rx="35" ry="28" fill="#1B3A2D" stroke="#5fa874" stroke-width="1.5"/>
+      <text x="200" y="265" text-anchor="middle" fill="rgba(245,240,232,0.5)" font-family="JetBrains Mono" font-size="10">nucleolus · pores · double envelope</text>
+    </svg>`
+  },
+  {
+    id:'mg05', title:'Chloroplast', titleEm:'chloroplast', mag:'TEM &middot; 20,000×',
+    what:'Lens-shaped, double-membraned organelle with <b>thylakoid discs stacked into grana</b>. The grana sit in the stroma. Light reactions on the thylakoid membrane; Calvin cycle in the stroma.',
+    keys:['Stacked thylakoid discs (grana)','Stroma = surrounding fluid','Double membrane (outer + inner)','Lens-shaped silhouette'],
+    gotcha:'<b>Trap:</b> a mitochondrion also has a double membrane and folded internal structure — but a chloroplast\'s thylakoids are <i>discrete stacked discs</i>, not continuous folds.',
+    svg:`<svg viewBox="0 0 400 280" xmlns="http://www.w3.org/2000/svg">
+      <defs><radialGradient id="c1" cx="50%" cy="50%" r="65%"><stop offset="0%" stop-color="#1B3A2D"/><stop offset="100%" stop-color="#0d1612"/></radialGradient></defs>
+      <ellipse cx="200" cy="140" rx="170" ry="75" fill="url(#c1)" stroke="#9aa39e" stroke-width="2"/>
+      <ellipse cx="200" cy="140" rx="158" ry="62" fill="none" stroke="#9aa39e" stroke-width="1.4"/>
+      <g fill="#5FA874" stroke="#3e7c54" stroke-width="0.8">
+        <ellipse cx="100" cy="125" rx="14" ry="4"/><ellipse cx="100" cy="135" rx="14" ry="4"/><ellipse cx="100" cy="145" rx="14" ry="4"/><ellipse cx="100" cy="155" rx="14" ry="4"/>
+        <ellipse cx="160" cy="115" rx="14" ry="4"/><ellipse cx="160" cy="125" rx="14" ry="4"/><ellipse cx="160" cy="135" rx="14" ry="4"/><ellipse cx="160" cy="145" rx="14" ry="4"/><ellipse cx="160" cy="155" rx="14" ry="4"/><ellipse cx="160" cy="165" rx="14" ry="4"/>
+        <ellipse cx="220" cy="118" rx="14" ry="4"/><ellipse cx="220" cy="128" rx="14" ry="4"/><ellipse cx="220" cy="138" rx="14" ry="4"/><ellipse cx="220" cy="148" rx="14" ry="4"/><ellipse cx="220" cy="158" rx="14" ry="4"/>
+        <ellipse cx="290" cy="125" rx="14" ry="4"/><ellipse cx="290" cy="135" rx="14" ry="4"/><ellipse cx="290" cy="145" rx="14" ry="4"/><ellipse cx="290" cy="155" rx="14" ry="4"/>
+      </g>
+      <text x="200" y="265" text-anchor="middle" fill="rgba(245,240,232,0.5)" font-family="JetBrains Mono" font-size="10">thylakoid stacks (grana) in stroma</text>
+    </svg>`
+  },
+  {
+    id:'mg06', title:'Centriole / basal body', titleEm:'centriole', mag:'TEM cross-section',
+    what:'A wheel of <b>nine triplet microtubules</b> arranged around an empty center (9+0). Two perpendicular centrioles form the centrosome — the cell\'s microtubule-organizing center. Spindle origin in mitosis.',
+    keys:['Cartwheel of 9 triplet microtubules','Empty center (no central pair)','9+0 arrangement','Pairs sit perpendicular = centrosome'],
+    gotcha:'<b>Trap:</b> cilia and flagella cross-sections show 9+2 (nine doublets + two central singlets). Centrioles are 9+0 triplets. Memorize the difference.',
+    svg:`<svg viewBox="0 0 400 280" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="200" cy="140" r="100" fill="#0d1612" stroke="#9aa39e" stroke-width="1.5"/>
+      <g fill="none" stroke="#cfc8b8" stroke-width="2">
+        <g transform="translate(200,140)">
+          ${Array.from({length:9},(_,i)=>{const a=i*40-90;const r=70;const x=Math.cos(a*Math.PI/180)*r;const y=Math.sin(a*Math.PI/180)*r;return `<g transform="translate(${x.toFixed(1)},${y.toFixed(1)}) rotate(${a+90})"><circle cx="-7" cy="0" r="6"/><circle cx="0" cy="0" r="6"/><circle cx="7" cy="0" r="6"/></g>`}).join('')}
+        </g>
+      </g>
+      <g stroke="#9aa39e" stroke-width="1" stroke-dasharray="2 3" fill="none">
+        ${Array.from({length:9},(_,i)=>{const a=i*40-90;return `<line x1="200" y1="140" x2="${200+Math.cos(a*Math.PI/180)*50}" y2="${140+Math.sin(a*Math.PI/180)*50}"/>`}).join('')}
+      </g>
+      <text x="200" y="265" text-anchor="middle" fill="rgba(245,240,232,0.5)" font-family="JetBrains Mono" font-size="10">9 triplets · empty center · 9+0</text>
+    </svg>`
+  },
+  {
+    id:'mg07', title:'Cilium / flagellum cross-section', titleEm:'cilium', mag:'TEM cross-section',
+    what:'A wheel of <b>nine doublet microtubules surrounding two central singlets</b> — the 9+2 axoneme. Dynein arms walk doublets past each other to bend the structure. Same architecture in cilia and eukaryotic flagella.',
+    keys:['9 outer doublets + 2 central singlets','9+2 arrangement','Dynein arms between doublets','Anchored by basal body (a centriole, 9+0)'],
+    gotcha:'<b>Trap:</b> bacterial flagella are <i>completely different</i> — protein flagellin, rotational motor, no microtubules. The DAT loves this contrast.',
+    svg:`<svg viewBox="0 0 400 280" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="200" cy="140" r="100" fill="#0d1612" stroke="#9aa39e" stroke-width="1.5"/>
+      <g fill="none" stroke="#cfc8b8" stroke-width="2">
+        <g transform="translate(200,140)">
+          ${Array.from({length:9},(_,i)=>{const a=i*40-90;const r=70;const x=Math.cos(a*Math.PI/180)*r;const y=Math.sin(a*Math.PI/180)*r;return `<g transform="translate(${x.toFixed(1)},${y.toFixed(1)})"><circle cx="-4" cy="0" r="6"/><circle cx="4" cy="0" r="6"/></g>`}).join('')}
+        </g>
+        <circle cx="190" cy="140" r="6"/>
+        <circle cx="210" cy="140" r="6"/>
+      </g>
+      <g stroke="#E2C97A" stroke-width="1.5" fill="none" opacity="0.7">
+        ${Array.from({length:9},(_,i)=>{const a=i*40-90;const x=200+Math.cos(a*Math.PI/180)*70;const y=140+Math.sin(a*Math.PI/180)*70;return `<path d="M ${x.toFixed(1)} ${y.toFixed(1)} l 6 -3"/>`}).join('')}
+      </g>
+      <text x="200" y="265" text-anchor="middle" fill="rgba(245,240,232,0.5)" font-family="JetBrains Mono" font-size="10">9 doublets + 2 central · 9+2</text>
+    </svg>`
+  },
+  {
+    id:'mg08', title:'Lysosome', titleEm:'lysosome', mag:'TEM &middot; 40,000×',
+    what:'Small, single-membraned vesicle with a <b>dense, granular interior</b> — packed with hydrolytic enzymes. Acidic lumen (pH ~4.5). Performs intracellular digestion + autophagy of damaged organelles.',
+    keys:['Single membrane','Dense, dark interior (enzymes)','Variable shape and size (~0.1–1 µm)','Often near Golgi or autophagosomes'],
+    gotcha:'<b>Trap:</b> peroxisomes look similar but contain a paracrystalline core and process H₂O₂ (catalase). Lysosomes are uniformly granular, not crystalline.',
+    svg:`<svg viewBox="0 0 400 280" xmlns="http://www.w3.org/2000/svg">
+      <defs><radialGradient id="l1" cx="50%" cy="50%" r="55%"><stop offset="0%" stop-color="#5a4a2a"/><stop offset="100%" stop-color="#2a1f10"/></radialGradient><pattern id="grain" patternUnits="userSpaceOnUse" width="6" height="6"><circle cx="3" cy="3" r="1" fill="#cfc8b8" opacity="0.4"/></pattern></defs>
+      <circle cx="200" cy="140" r="85" fill="url(#l1)" stroke="#cfc8b8" stroke-width="2"/>
+      <circle cx="200" cy="140" r="80" fill="url(#grain)"/>
+      <text x="200" y="265" text-anchor="middle" fill="rgba(245,240,232,0.5)" font-family="JetBrains Mono" font-size="10">single membrane · dense granular core</text>
+    </svg>`
+  }
+];
+
+const STORE_KEY = 'acethedat_bio_micrograph_known';
+function getKnown(){ try { return JSON.parse(localStorage.getItem(STORE_KEY) || '{}'); } catch(e){ return {}; } }
+function setKnown(map){ try { localStorage.setItem(STORE_KEY, JSON.stringify(map)); } catch(e){} }
+
+function render(){
+  const known = getKnown();
+  const deck = document.getElementById('mgDeck');
+  deck.innerHTML = MICROGRAPHS.map(m => `
+    <div class="mg-card ${known[m.id] ? 'known' : ''}" data-id="${m.id}">
+      <div class="mg-front">
+        <div class="mg-img">${m.svg}<span class="mag">${m.mag}</span></div>
+        <div class="mg-meta">
+          <span class="id">${m.id.toUpperCase()}${known[m.id] ? ' &middot; known' : ''}</span>
+          <button class="reveal" type="button">Flip &middot; reveal</button>
+        </div>
+      </div>
+      <div class="mg-back">
+        <h3>${m.title.replace(m.titleEm, '<em>'+m.titleEm+'</em>')}</h3>
+        <p class="what">${m.what}</p>
+        <ul class="keys">${m.keys.map(k => `<li>${k}</li>`).join('')}</ul>
+        <div class="gotcha">${m.gotcha}</div>
+        <div style="display:flex;gap:8px;margin-top:14px">
+          <button class="btn primary sm" type="button" data-act="known">${known[m.id] ? 'Marked known' : 'Mark known'}</button>
+          <button class="flip-back" type="button" data-act="flip">&larr; Back to image</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+
+  deck.querySelectorAll('.mg-card').forEach(card => {
+    const id = card.dataset.id;
+    card.querySelector('.reveal').addEventListener('click', e => { e.stopPropagation(); card.classList.add('flipped'); });
+    card.querySelector('[data-act="flip"]').addEventListener('click', e => { e.stopPropagation(); card.classList.remove('flipped'); });
+    card.querySelector('[data-act="known"]').addEventListener('click', e => {
+      e.stopPropagation();
+      const k = getKnown();
+      if (k[id]) delete k[id]; else k[id] = Date.now();
+      setKnown(k);
+      render();
+    });
+  });
+
+  const knownCount = Object.keys(known).filter(k => MICROGRAPHS.find(m => m.id === k)).length;
+  document.getElementById('mgKnown').textContent = knownCount;
+  document.getElementById('mgPct').textContent = Math.round(100 * knownCount / MICROGRAPHS.length) + '%';
+}
+
+document.getElementById('mgReset').addEventListener('click', () => {
+  if (!confirm('Reset all 8 micrograph progress? This clears your known marks.')) return;
+  setKnown({});
+  render();
+});
+
+render();
+</script>
+<script src="bio-shared.js"></script>
+</body>
+</html>

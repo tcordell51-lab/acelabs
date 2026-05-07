@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>QR Pattern System &middot; AceTheDAT</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f5f0e8; --paper:#fffdf7; --paper-2:#f9f3e6; --paper-3:#f3ecdb;
+  --sb:#0d2018; --sb-2:#15301f;
+  --ink:#0f1814; --ink-2:#3a4a42; --ink-mute:#6e7c74; --ink-soft:#9aa39e;
+  --gold:#C9A84C; --gold-m:#E2C97A; --gold-d:#8C7235; --gold-bg:rgba(201,168,76,0.12); --gold-glow:rgba(201,168,76,0.35);
+  --teal:#1B3A2D; --teal-2:#2A5240;
+  --line:rgba(13,32,24,0.12); --line-strong:rgba(13,32,24,0.22);
+  --trap:#C25B3F; --trap-bg:#fbe7df; --trap-d:#8a3d28;
+  --good:#5FA874; --good-bg:#e3efe6; --good-d:#3e7c54;
+  --info:#6A8AA8; --info-bg:#e6edf4;
+  --shadow:0 1px 3px rgba(13,32,24,0.06), 0 8px 24px rgba(13,32,24,0.04);
+  --shadow-md:0 2px 6px rgba(13,32,24,0.08), 0 16px 40px rgba(13,32,24,0.06);
+  --ease-bezier:cubic-bezier(0.22,0.61,0.36,1);
+}
+*{box-sizing:border-box} html,body{margin:0;padding:0}
+body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.55;-webkit-font-smoothing:antialiased;background-image:radial-gradient(1200px 600px at 15% -10%,rgba(201,168,76,0.07),transparent 60%),radial-gradient(900px 500px at 85% 110%,rgba(27,58,45,0.06),transparent 60%);min-height:100vh}
+.app{max-width:1240px;margin:0 auto;padding:0 40px 80px}
+.top{display:flex;justify-content:space-between;align-items:center;padding:30px 0 20px;border-bottom:1px solid var(--line);margin-bottom:30px}
+.top .brand{font-family:'Playfair Display',serif;font-size:24px;font-weight:700}
+.top .brand em{color:var(--gold-d);font-style:italic}
+.top .crumb{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.16em;color:var(--ink-mute);text-transform:uppercase;font-weight:700}
+.top a{color:var(--gold-d);text-decoration:none;font-weight:600}
+.top a:hover{text-decoration:underline}
+.hero{margin-bottom:40px}
+.hero .badge{display:inline-flex;align-items:center;gap:8px;padding:5px 12px;background:var(--gold-bg);border:1px solid rgba(201,168,76,.4);border-radius:20px;font-size:11px;letter-spacing:.16em;color:var(--gold-d);font-weight:700;text-transform:uppercase;margin-bottom:14px}
+.hero .badge .pulse{width:8px;height:8px;border-radius:50%;background:var(--gold);animation:pulse 1.8s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 var(--gold-glow)}50%{box-shadow:0 0 0 8px transparent}}
+.hero h1{font-family:'Playfair Display',serif;font-size:48px;font-weight:700;line-height:1.05;margin:6px 0 14px;letter-spacing:-.02em}
+.hero h1 em{font-style:italic;color:var(--gold-d)}
+.hero .lede{font-size:17px;color:var(--ink-2);max-width:780px;line-height:1.6}
+.hero .lede b{color:var(--ink);font-weight:600}
+
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:30px 0 38px}
+@media (max-width:980px){.stats-row{grid-template-columns:repeat(2,1fr)}}
+.stat-card{padding:18px 20px;background:var(--paper);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow)}
+.stat-card .lbl{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.16em;color:var(--ink-mute);text-transform:uppercase;font-weight:700;margin-bottom:8px}
+.stat-card .num{font-family:'Playfair Display',serif;font-size:36px;font-weight:700;line-height:1}
+.stat-card .num em{font-style:italic;color:var(--gold-d)}
+.stat-card .sub{font-size:12px;color:var(--ink-mute);margin-top:4px}
+
+.tier-tabs{display:flex;gap:8px;margin-bottom:20px}
+.tier-tab{padding:8px 16px;background:var(--paper);border:1px solid var(--line);border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.1em;cursor:pointer;color:var(--ink-2);transition:all .15s}
+.tier-tab.active{background:var(--gold);border-color:var(--gold-d);color:var(--ink)}
+.tier-tab:hover{border-color:var(--gold-d)}
+
+.pattern-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:60px}
+@media (max-width:980px){.pattern-grid{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:680px){.pattern-grid{grid-template-columns:1fr}}
+.p-card{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:22px 24px;box-shadow:var(--shadow);cursor:pointer;transition:all .2s var(--ease-bezier);position:relative}
+.p-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);border-color:var(--gold-d)}
+.p-card.gotit{background:var(--good-bg);border-color:var(--good)}
+.p-card.stub{opacity:0.85}
+.p-card .meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink-mute);font-weight:700;text-transform:uppercase}
+.p-card .meta .stat{color:var(--gold-d)}
+.p-card .meta .stat.stub{color:var(--ink-mute)}
+.p-card .meta .stat.gotit{color:var(--good-d)}
+.p-card h3{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;margin:0 0 6px;line-height:1.2}
+.p-card h3 em{font-style:italic;color:var(--gold-d)}
+.p-card .desc{font-size:13px;color:var(--ink-2);line-height:1.5;margin:0 0 12px}
+.p-card .formula{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--ink);background:var(--paper-2);padding:8px 11px;border-radius:7px;border-left:3px solid var(--gold);margin-bottom:8px}
+.p-card .tag-row{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.p-card .tag-row span{font-size:10px;font-family:'JetBrains Mono',monospace;letter-spacing:.1em;font-weight:700;padding:3px 8px;border-radius:4px;background:var(--paper-2);color:var(--ink-mute);text-transform:uppercase}
+
+/* Detail view */
+.detail-back{position:fixed;inset:0;background:rgba(13,32,24,0.55);backdrop-filter:blur(6px);z-index:200;display:none;align-items:flex-start;justify-content:center;padding:40px 20px;overflow-y:auto}
+.detail-back.show{display:flex}
+.detail-card{background:var(--paper);border-radius:18px;max-width:780px;width:100%;padding:36px 40px;box-shadow:0 24px 56px rgba(13,32,24,0.25);position:relative}
+.detail-close{position:absolute;top:18px;right:20px;background:none;border:none;font-size:30px;cursor:pointer;color:var(--ink-mute);line-height:1;padding:0;width:34px;height:34px}
+.detail-close:hover{color:var(--ink)}
+.detail-card .tag{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--gold-d);text-transform:uppercase;font-weight:700;margin-bottom:8px}
+.detail-card h2{font-family:'Playfair Display',serif;font-size:36px;font-weight:700;line-height:1.1;margin:0 0 14px}
+.detail-card h2 em{font-style:italic;color:var(--gold-d)}
+.detail-card h4{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;margin:24px 0 10px;color:var(--ink)}
+.detail-card p{font-size:15px;line-height:1.6;color:var(--ink-2);margin:0 0 12px}
+.detail-card .lede{font-size:16px;color:var(--ink-2);margin:0 0 18px;line-height:1.55}
+.detail-card .formula-block{background:var(--paper-2);border-left:4px solid var(--gold);border-radius:0 10px 10px 0;padding:14px 18px;font-family:'JetBrains Mono',monospace;font-size:14px;line-height:1.7;margin:12px 0}
+.detail-card .formula-block b{color:var(--gold-d)}
+.detail-card .worked{background:var(--paper-2);border-radius:10px;padding:18px 20px;margin:14px 0;border:1px solid var(--line)}
+.detail-card .worked .q{font-weight:600;color:var(--ink);font-size:14px;margin-bottom:10px;line-height:1.5}
+.detail-card .worked .step{font-size:13.5px;line-height:1.7;color:var(--ink-2);padding-left:16px;position:relative;margin-bottom:6px}
+.detail-card .worked .step::before{content:'·';position:absolute;left:4px;color:var(--gold-d);font-weight:700;font-size:18px;line-height:1}
+.detail-card .worked .ans{margin-top:12px;font-size:14.5px;color:var(--good-d);font-weight:700;padding:8px 12px;background:var(--good-bg);border-radius:7px}
+.detail-card .gotcha{background:var(--trap-bg);border-left:4px solid var(--trap);padding:12px 16px;border-radius:0 8px 8px 0;font-size:13.5px;color:var(--trap-d);line-height:1.5;margin:14px 0}
+.detail-card .gotcha b{color:var(--trap-d)}
+.detail-card .actions{display:flex;gap:10px;margin-top:24px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:10px 20px;border-radius:8px;border:1px solid var(--line);background:var(--paper);color:var(--ink);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit}
+.btn:hover{border-color:var(--gold-d)}
+.btn.primary{background:var(--gold);color:var(--ink);border-color:var(--gold-d)}
+.btn.primary:hover{background:var(--gold-m)}
+.btn.good{background:var(--good);color:#fff;border-color:var(--good-d)}
+.btn.good:hover{background:var(--good-d)}
+.btn.ghost{background:transparent}
+
+.anim-stage{padding:14px 0 4px}
+.empty-stub{padding:40px 20px;background:var(--paper-2);border-radius:10px;text-align:center;color:var(--ink-mute);font-style:italic;font-size:14px;line-height:1.6}
+.empty-stub b{color:var(--ink);font-style:normal}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top">
+    <div class="brand">Ace<em>The</em>DAT &middot; QR Pattern System</div>
+    <div class="crumb"><a href="index.html">&larr; QR Engine</a> &middot; v1</div>
+  </div>
+
+  <div class="hero">
+    <span class="badge"><span class="pulse"></span>14 patterns &middot; 9 animated &middot; 5 stubs</span>
+    <h1>The pattern <em>path</em>.</h1>
+    <p class="lede">The remediation engine builds the <b>floor</b>. This is where you stack the speed shortcuts and DAT-trap recognition that turn a 21 into a 25. Each card opens to a worked example, the formula in your own handwriting, and the most common trap that catches people who learned this from a textbook.</p>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="lbl">Patterns mastered</div>
+      <div class="num"><em id="pmCount">0</em><span style="color:var(--ink-mute);font-size:24px;font-weight:400"> / 14</span></div>
+      <div class="sub">marked "got it"</div>
+    </div>
+    <div class="stat-card">
+      <div class="lbl">Animated</div>
+      <div class="num">9</div>
+      <div class="sub">full walk-throughs</div>
+    </div>
+    <div class="stat-card">
+      <div class="lbl">Stubs</div>
+      <div class="num">5</div>
+      <div class="sub">written, animation pending</div>
+    </div>
+    <div class="stat-card">
+      <div class="lbl">Tier</div>
+      <div class="num" style="font-size:24px">Patterns</div>
+      <div class="sub">unlocks after Tier 0+1 mastery</div>
+    </div>
+  </div>
+
+  <div class="tier-tabs">
+    <button class="tier-tab active" data-filter="all">All 14</button>
+    <button class="tier-tab" data-filter="animated">Animated only</button>
+    <button class="tier-tab" data-filter="stub">Stubs</button>
+    <button class="tier-tab" data-filter="gotit">Got it</button>
+    <button class="tier-tab" data-filter="open">Open</button>
+  </div>
+
+  <div class="pattern-grid" id="grid"></div>
+</div>
+
+<div class="detail-back" id="detailBack">
+  <div class="detail-card" id="detailCard"></div>
+</div>
+
+<script>
+const PATTERNS = [
+  { id:'sequential-pct', tag:'Percent', status:'animated', title:'Sequential <em>percent</em> change',
+    desc:'A 20% increase followed by a 20% decrease is NOT zero. It compounds — and the order matters less than people think.',
+    formula:'final = original × (1 ± p₁/100) × (1 ± p₂/100)',
+    full:{
+      lede:'Most students collapse two percent changes into one. The DAT punishes this every time. The fix: multiply, never add.',
+      worked:[{
+        q:'A stock rises 30%, then falls 30%. What is the net change from the original?',
+        steps:['Set original = 100 (always)','After +30%: 100 × 1.30 = 130','After −30% from 130: 130 × 0.70 = 91','Net = 91 − 100 = −9 ⇒ <b>−9%</b>'],
+        ans:'9% LOWER than the start, not zero.'
+      }],
+      gotcha:'<b>Trap:</b> "+x% then −x% nets to zero." It never does. The percentages multiply, not add. The shortcut: a +x then −x always nets to <b>−(x²/100)%</b>.'
+    } },
+
+  { id:'work-rate', tag:'Work', status:'animated', title:'Work + <em>rate</em>',
+    desc:'Two pumps, two times. The trap is averaging the times. The shortcut is summing rates.',
+    formula:'1/T = 1/t₁ + 1/t₂',
+    full:{
+      lede:'Pumps, painters, hoses — anything that does work in time. Never average times. Always sum the per-unit-time rates.',
+      worked:[{
+        q:'Pump A fills the pool in 6 hours. Pump B fills it in 3 hours. Together?',
+        steps:['Rate A = 1/6 pool per hour','Rate B = 1/3 = 2/6','Sum: 3/6 = 1/2 pool per hour','Time = reciprocal = <b>2 hours</b>'],
+        ans:'2 hours, not 4.5 (the average).'
+      }],
+      gotcha:'<b>Trap:</b> averaging the two times (giving 4.5h here). Always reciprocate-sum-reciprocate. Memorize this rhythm: <b>1/T = 1/a + 1/b</b>.'
+    } },
+
+  { id:'cond-bayes', tag:'Probability', status:'animated', title:'Conditional <em>probability</em>',
+    desc:'Given that something happened, what\'s the probability of something else? The DAT loves disease-test variants of this.',
+    formula:'P(A | B) = P(A ∩ B) / P(B)',
+    full:{
+      lede:'The classic disease-test trap: 1% disease prevalence, 99% accurate test. Positive result — what\'s the probability you actually have it? Most people answer 99%. It\'s closer to 50%.',
+      worked:[{
+        q:'1% of people have a disease. A test is 99% sensitive (catches sick) and 99% specific (clears healthy). You test positive. P(actually sick)?',
+        steps:['Imagine 10,000 people. 100 sick, 9,900 healthy.','True positives: 99 of the 100 sick test positive.','False positives: 1% of 9,900 = 99 healthy people test positive.','Total positives = 198. Of those, 99 are actually sick.','P(sick | positive) = 99/198 = <b>50%</b>'],
+        ans:'About 50%, despite the "99% accurate" test.'
+      }],
+      gotcha:'<b>Trap:</b> assuming "99% accurate test" means "99% of positives are sick." Base rate dominates when the disease is rare. <b>Always think in 10,000 people</b>, not percentages.'
+    } },
+
+  { id:'pc-collapse', tag:'Counting', status:'animated', title:'Permutation vs <em>combination</em>',
+    desc:'Order matters → permutation (P). Order doesn\'t → combination (C). The shortcut: divide P by k! to get C.',
+    formula:'ₙPₖ = n!/(n−k)!  ·  ₙCₖ = n!/[k!(n−k)!]',
+    full:{
+      lede:'The fastest way to spot which one: ask "if I rearrange my answer, is it a different answer?" If yes, permutation. If no, combination.',
+      worked:[{
+        q:'How many 3-person committees from 8 people?',
+        steps:['Order doesn\'t matter (committee A,B,C = B,A,C). Combination.','₈C₃ = 8!/(3!·5!) = (8·7·6)/(3·2·1)','= 336/6 = <b>56</b>'],
+        ans:'56 committees.'
+      },{
+        q:'How many ways to arrange 3 of 8 people in line?',
+        steps:['Order matters now (different line orders). Permutation.','₈P₃ = 8!/5! = 8·7·6 = <b>336</b>'],
+        ans:'336 arrangements — exactly 6× the combination answer (3!).'
+      }],
+      gotcha:'<b>Trap:</b> using P when you needed C. Always 6× too many for 3-element problems. The "rearrange test" never lies.'
+    } },
+
+  { id:'zscore-bell', tag:'Statistics', status:'animated', title:'z &amp; the <em>empirical rule</em>',
+    desc:'Three numbers: 68 · 95 · 99.7. Memorize these once and you own every bell-curve question.',
+    formula:'68% within 1σ · 95% within 2σ · 99.7% within 3σ',
+    full:{
+      lede:'The DAT will draw a bell curve and shade a region. You name the percentage. That\'s the entire pattern.',
+      worked:[{
+        q:'Test scores normally distributed, mean = 100, σ = 15. What % score above 130?',
+        steps:['130 is 2σ above the mean (130 = 100 + 2·15)','By empirical rule: 95% within ±2σ','So 5% in the two outer tails combined','Above 130 is just one tail: 5%/2 = <b>2.5%</b>'],
+        ans:'About 2.5%.'
+      }],
+      gotcha:'<b>Trap:</b> reading "above 130" as "outside ±2σ" (5%) instead of "above +2σ" (2.5%). Always halve when only one tail is asked.'
+    } },
+
+  { id:'count-100', tag:'Number sense', status:'animated', title:'Pretend it\'s <em>100</em>',
+    desc:'Whenever a problem talks in percentages with no real numbers, plug in 100. The arithmetic falls out.',
+    formula:'set unknown total = 100, work in absolute counts',
+    full:{
+      lede:'This is Sarah\'s most-recommended shortcut. Lets you skip variable manipulation entirely. Works for percentages, mixtures, dilutions, and most "ratio" problems.',
+      worked:[{
+        q:'A solution is 30% acid by volume. You add water to dilute to 20%. The new volume is what fraction of the original?',
+        steps:['Original = 100 mL. Acid = 30 mL.','After dilution: acid is still 30 mL but is now 20% of new volume.','New volume = 30 / 0.20 = 150 mL','Ratio = 150/100 = <b>3/2</b> (or 1.5×)'],
+        ans:'1.5× original.'
+      }],
+      gotcha:'<b>Trap:</b> trying to set up algebra with unknowns. The "pretend it\'s 100" move skips all that. Use it whenever absolute numbers don\'t matter.'
+    } },
+
+  { id:'harm-distance', tag:'Rate', status:'animated', title:'Harmonic mean for <em>round-trips</em>',
+    desc:'Drive there at 60 mph, back at 40 mph. Average speed is NOT 50 mph. It\'s the harmonic mean.',
+    formula:'avg = 2v₁v₂ / (v₁ + v₂)',
+    full:{
+      lede:'Average speed when distance is fixed at both legs uses the harmonic mean — always less than the arithmetic mean. The DAT loves this.',
+      worked:[{
+        q:'You drive 60 mph one way, 40 mph back. Average speed for the round trip?',
+        steps:['Distance fixed both ways → use harmonic mean','avg = (2 · 60 · 40) / (60 + 40)','= 4800 / 100','= <b>48 mph</b>'],
+        ans:'48 mph (not 50).'
+      }],
+      gotcha:'<b>Trap:</b> averaging the two speeds gives 50 mph. That\'s wrong because you spend MORE time at the slower speed. Harmonic mean is always smaller than arithmetic.'
+    } },
+
+  { id:'sarah-c-method', tag:'Algebra', status:'animated', title:'Sarah\'s <em>C-method</em>',
+    desc:'When the answer choices ARE the variable, plug them in. Skip the algebra entirely.',
+    formula:'try (C) first — it\'s the median answer choice',
+    full:{
+      lede:'Sarah\'s shortcut: most DAT QR algebra problems have numerical answer choices. Plugging in the middle choice (C) tells you which way to move next.',
+      worked:[{
+        q:'If 3x − 7 = 2(x + 4), what is x? (A) 12 (B) 14 (C) 15 (D) 16',
+        steps:['Try (C): x = 15. Left: 3(15) − 7 = 38. Right: 2(15+4) = 38.','Match! Answer = <b>(C) 15</b>'],
+        ans:'15. No equation manipulation needed.'
+      }],
+      gotcha:'<b>Trap:</b> ignoring this technique because "I should be able to solve it algebraically." On the DAT, time is the constraint, not pride. Plug in and move on.'
+    } },
+
+  { id:'baseball-shortcut', tag:'Probability', status:'animated', title:'Sarah\'s <em>baseball</em> shortcut',
+    desc:'For "at least one" probability questions: subtract from 1. Don\'t add up cases.',
+    formula:'P(at least one) = 1 − P(none)',
+    full:{
+      lede:'When a problem asks "what\'s the probability at least one X happens" — never sum the individual cases. Always: <b>1 − P(no X)</b>.',
+      worked:[{
+        q:'You flip a coin 5 times. Probability of at least one heads?',
+        steps:['P(no heads) = (1/2)⁵ = 1/32','P(at least one heads) = 1 − 1/32','= <b>31/32</b>'],
+        ans:'31/32.'
+      }],
+      gotcha:'<b>Trap:</b> trying to sum P(1H) + P(2H) + P(3H) + P(4H) + P(5H). Possible but slow. Always prefer the complement.'
+    } },
+
+  { id:'mixture', tag:'Mixture', status:'stub', title:'Mixture / <em>alligation</em>',
+    desc:'Mix x% solution with y% solution to get z%. The lever-arm trick beats algebra every time.',
+    formula:'(z − x) : (y − z) = volume of y : volume of x',
+    full:{
+      lede:'Lever arm: imagine a balance with x and y on the ends, fulcrum at z. The volume ratio inversely matches the distance to fulcrum. Animated walkthrough coming.',
+      worked:[{
+        q:'How much 60% acid mixed with 20% acid yields 30% acid? (in ratio)',
+        steps:['Distances from target (30): 60−30=30 (acid side), 30−20=10 (water side)','Ratio of volumes inversely: 60% : 20% = 10 : 30 = <b>1 : 3</b>'],
+        ans:'1 part 60% acid : 3 parts 20% acid.'
+      }],
+      gotcha:'<b>Trap:</b> averaging the two percentages and assuming equal volumes. The lever arm only works because of inverse proportion.'
+    } },
+
+  { id:'compound-int', tag:'Finance', status:'stub', title:'Compound <em>interest</em>',
+    desc:'Doubling time, rule of 72, and exponential growth on the back of a napkin.',
+    formula:'A = P(1 + r/n)^(nt)  ·  doubling ≈ 72/r',
+    full:{
+      lede:'Pattern walkthrough pending. The two facts to remember: (1) compound > simple over time, (2) rule of 72 estimates doubling time given an annual rate.',
+      worked:[{
+        q:'How long for $1000 to double at 6% compounded annually?',
+        steps:['Rule of 72: 72 / 6 = <b>12 years</b>'],
+        ans:'~12 years (exact = 11.9 years).'
+      }],
+      gotcha:'<b>Trap:</b> using simple interest (16+ years) when the problem says compound. Read the question.'
+    } },
+
+  { id:'std-dev-properties', tag:'Statistics', status:'stub', title:'Std-dev <em>properties</em>',
+    desc:'Adding a constant doesn\'t change σ. Multiplying does. Easy points if you know the rule.',
+    formula:'σ(X+c) = σ(X)  ·  σ(kX) = |k|·σ(X)',
+    full:{
+      lede:'The walkthrough is queued. Two-line summary above. Remember: variance scales as k², standard deviation scales as |k|.',
+      worked:[{
+        q:'A dataset has σ = 4. You multiply every value by 3 then add 5. New σ?',
+        steps:['Adding 5: no change, σ still 4','Multiplying by 3: σ → 3·4 = 12','New σ = <b>12</b>'],
+        ans:'12 (the +5 is irrelevant).'
+      }],
+      gotcha:'<b>Trap:</b> applying the +5 to σ. Shifts don\'t affect spread.'
+    } },
+
+  { id:'log-shortcuts', tag:'Algebra', status:'stub', title:'Logarithm <em>shortcuts</em>',
+    desc:'log₁₀(2) ≈ 0.30, log₁₀(3) ≈ 0.48. Memorize once and skip the calculator.',
+    formula:'log(ab) = log(a) + log(b)  ·  log(aⁿ) = n·log(a)',
+    full:{
+      lede:'Pattern walkthrough pending. The DAT permits logs only with the on-screen calculator, but knowing approximate values lets you eliminate wrong answers fast.',
+      worked:[{
+        q:'Estimate log₁₀(60).',
+        steps:['log(60) = log(6 · 10) = log(6) + log(10)','log(6) = log(2) + log(3) ≈ 0.30 + 0.48 = 0.78','Total: 0.78 + 1 = <b>1.78</b>'],
+        ans:'Approximately 1.78 (calculator: 1.778).'
+      }],
+      gotcha:'<b>Trap:</b> none here — this is pure mental-math leverage. Just memorize the seed values.'
+    } },
+
+  { id:'triangle-345', tag:'Geometry', status:'stub', title:'3-4-5 <em>triangles</em>',
+    desc:'And their multiples. Spotting the 3-4-5 ratio in disguise saves the Pythagorean step.',
+    formula:'Pythagorean triples: 3-4-5 · 5-12-13 · 8-15-17',
+    full:{
+      lede:'Pattern walkthrough pending. The triples pop up scaled (6-8-10, 9-12-15, etc.) — recognize the ratio immediately.',
+      worked:[{
+        q:'A right triangle has legs 9 and 12. The hypotenuse is?',
+        steps:['9 = 3 × 3, 12 = 4 × 3 → it\'s a scaled 3-4-5 with multiplier 3','Hypotenuse = 5 × 3 = <b>15</b>'],
+        ans:'15. No Pythagorean theorem needed.'
+      }],
+      gotcha:'<b>Trap:</b> doing 9² + 12² = 225 → √225 = 15. Same answer, slower. Recognize the triple instantly.'
+    } }
+];
+
+const STORE_KEY = 'qr-rem-v2:patterns-gotit';
+function getGotIt(){ try { return JSON.parse(localStorage.getItem(STORE_KEY) || '{}'); } catch(e){ return {}; } }
+function setGotIt(map){ try { localStorage.setItem(STORE_KEY, JSON.stringify(map)); } catch(e){} }
+
+let activeFilter = 'all';
+
+function render(){
+  const got = getGotIt();
+  const filtered = PATTERNS.filter(p => {
+    if (activeFilter === 'all') return true;
+    if (activeFilter === 'animated') return p.status === 'animated';
+    if (activeFilter === 'stub') return p.status === 'stub';
+    if (activeFilter === 'gotit') return got[p.id];
+    if (activeFilter === 'open') return !got[p.id];
+    return true;
+  });
+  document.getElementById('grid').innerHTML = filtered.map(p => {
+    const gotit = !!got[p.id];
+    const cls = ['p-card'];
+    if (gotit) cls.push('gotit');
+    if (p.status === 'stub') cls.push('stub');
+    const statCls = gotit ? 'gotit' : (p.status === 'stub' ? 'stub' : '');
+    const statLbl = gotit ? 'Got it' : (p.status === 'stub' ? 'Stub' : 'Animated');
+    return `<div class="${cls.join(' ')}" data-id="${p.id}">
+      <div class="meta">
+        <span>${p.tag}</span>
+        <span class="stat ${statCls}">${statLbl}</span>
+      </div>
+      <h3>${p.title}</h3>
+      <p class="desc">${p.desc}</p>
+      <div class="formula">${p.formula}</div>
+    </div>`;
+  }).join('');
+  document.querySelectorAll('.p-card').forEach(card => {
+    card.addEventListener('click', () => openDetail(card.dataset.id));
+  });
+  document.getElementById('pmCount').textContent = Object.keys(got).filter(id => PATTERNS.find(p => p.id === id)).length;
+}
+
+function openDetail(id){
+  const p = PATTERNS.find(x => x.id === id);
+  if (!p) return;
+  const got = !!getGotIt()[id];
+  const card = document.getElementById('detailCard');
+  const f = p.full || {};
+  card.innerHTML = `
+    <button class="detail-close" aria-label="Close">&times;</button>
+    <div class="tag">${p.tag} &middot; ${p.status === 'stub' ? 'Stub &middot; animation pending' : 'Animated walkthrough'}</div>
+    <h2>${p.title}</h2>
+    <p class="lede">${f.lede || p.desc}</p>
+    <h4>The pattern</h4>
+    <div class="formula-block">${p.formula}</div>
+    ${p.status === 'stub' ? `<div class="empty-stub"><b>Animation pending.</b> The text walkthrough below covers everything you need; the visual is queued for a follow-up build.</div>` : ''}
+    ${(f.worked || []).map(w => `
+      <h4>Worked example</h4>
+      <div class="worked">
+        <div class="q">${w.q}</div>
+        ${w.steps.map(s => `<div class="step">${s}</div>`).join('')}
+        <div class="ans">${w.ans}</div>
+      </div>
+    `).join('')}
+    ${f.gotcha ? `<div class="gotcha">${f.gotcha}</div>` : ''}
+    <div class="actions">
+      <button class="btn ${got ? 'good' : 'primary'}" id="markGotIt">${got ? 'Marked got it &middot; tap to clear' : 'Mark "got it"'}</button>
+      <button class="btn ghost" id="closeBtn">Close</button>
+    </div>
+  `;
+  card.querySelector('.detail-close').addEventListener('click', closeDetail);
+  document.getElementById('closeBtn').addEventListener('click', closeDetail);
+  document.getElementById('markGotIt').addEventListener('click', () => {
+    const map = getGotIt();
+    if (map[id]) delete map[id]; else map[id] = Date.now();
+    setGotIt(map);
+    closeDetail();
+    render();
+  });
+  document.getElementById('detailBack').classList.add('show');
+}
+
+function closeDetail(){ document.getElementById('detailBack').classList.remove('show'); }
+
+document.getElementById('detailBack').addEventListener('click', e => {
+  if (e.target.id === 'detailBack') closeDetail();
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDetail(); });
+document.querySelectorAll('.tier-tab').forEach(t => t.addEventListener('click', () => {
+  document.querySelectorAll('.tier-tab').forEach(x => x.classList.remove('active'));
+  t.classList.add('active');
+  activeFilter = t.dataset.filter;
+  render();
+}));
+
+render();
+</script>
+</body>
+</html>

@@ -3,11 +3,13 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Ace Labs · DAT Mastery System</title>
-<meta name="description" content="The unified DAT prep system from AceTheDAT. Quantitative Reasoning, Biology, Gen Chem, Organic Chem — one home, four engines, one mock."/>
+<title>Ace Labs · DAT Prep Companion</title>
+<meta name="description" content="Your DAT prep companion from AceTheDAT. Quantitative Reasoning, Biology, Gen Chem, Organic Chem — interactive engines, calibrated mocks, last-week review tools."/>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400;1,700&family=DM+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared/al-tokens.css">
+<link rel="stylesheet" href="shared/al-motion.css">
 <link rel="stylesheet" href="shared/ace-labs-shell.css">
 </head>
 <body data-page="home">
@@ -23,17 +25,28 @@
   </div>
   <nav class="al-nav">
     <a href="ace-labs.html" class="al-nav-link active">Home</a>
-    <a href="unified-mock.html" class="al-nav-link">Cross-tool mock</a>
+    <a href="prometric-mock.html" class="al-nav-link">Prometric mocks</a>
+    <a href="mocks-catalog.html" class="al-nav-link">Mock catalog</a>
     <a href="#tools" class="al-nav-link">Tools</a>
+    <!-- Fix 7: #plan nav entry retained; section now surfaces localStorage last-session links per engine -->
     <a href="#plan" class="al-nav-link">This week</a>
+    <a href="test-day-readiness.html" class="al-nav-link">Test day</a>
   </nav>
 </header>
 
 <!-- ========== HERO ========== -->
+<!-- Fix 1: Consolidated to one primary pill; secondary links demoted to small text below lede -->
+<!-- Fix 43: Headline softened from "The DAT Mastery System, under one roof" -->
 <section class="al-hero">
-  <span class="al-hero-badge"><span class="pulse"></span>Four engines · ~2,500-question bank · DAT-format mocks · spaced retrieval</span>
-  <h1>The DAT Mastery System,<br/><em>under one roof.</em></h1>
+  <span class="al-hero-badge"><span class="pulse"></span>Four engines · honest question counts · DAT-format mocks · spaced retrieval</span>
+  <a href="test-week.html" style="display:inline-block;margin-left:10px;padding:7px 14px;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--al-teal);background:rgba(27,58,45,.08);border:1px solid var(--al-teal);border-radius:99px;text-decoration:none;vertical-align:middle;transition:all .15s;" onmouseover="this.style.background='rgba(27,58,45,.16)'" onmouseout="this.style.background='rgba(27,58,45,.08)'">Test in less than 2 weeks? Open test-week mode</a>
+  <h1>Your DAT prep companion —<br/><em>interactive engines, calibrated mocks, last-week review tools.</em></h1>
   <p class="al-lede">Quantitative Reasoning, Biology, Gen Chem, Organic Chem — four engines built around the way the DAT actually tests, not the way textbooks teach. Each engine drops into deep-dive nodes with interactive visuals; together they feed a single Survey-of-Natural-Sciences mock and a cross-tool spaced-repetition queue.</p>
+  <p style="margin-top:14px;font-size:13px;font-family:'JetBrains Mono',monospace;letter-spacing:.06em;">
+    <a href="test-day-readiness.html" style="color:var(--al-gold-d);text-decoration:none;border-bottom:1px dashed var(--al-gold-d);">Test-day mechanics briefing</a>
+    <span style="margin:0 10px;color:var(--al-muted);">·</span>
+    <a href="onboarding.html" style="color:var(--al-gold-d);text-decoration:none;border-bottom:1px dashed var(--al-gold-d);">First time here? Set up your path</a>
+  </p>
 </section>
 
 <!-- ========== UNIFIED DASHBOARD ========== -->
@@ -41,6 +54,9 @@
   <div class="al-dash-row">
     <div class="al-dash-card al-dash-today">
       <div class="al-dash-lbl">Today</div>
+      <!-- Fix 13: dashCardsDue reads <ns>:sr-due keys that no engine currently writes.
+           This is a known stale read — update dashCardsDue lookup in shared/ace-labs-shell.js
+           once engines begin writing consistent sr-due keys. -->
       <div class="al-dash-num" id="dashCardsDue">—</div>
       <div class="al-dash-sub">retrieval cards due now (across all tools)</div>
       <a href="#tools" class="al-dash-cta">Study now</a>
@@ -57,10 +73,12 @@
       <div class="al-dash-sub" id="dashMasterySub">— of — modules mastered across QR / Bio / GC / OChem</div>
     </div>
     <div class="al-dash-card al-dash-mock">
-      <div class="al-dash-lbl">Last cross-tool mock</div>
+      <div class="al-dash-lbl">Last Prometric mock</div>
+      <!-- Fix 14: dashMockScore reads acelabs_lastMock but the mock runner writes al:lastMock.
+           Known key mismatch — update the lookup in shared/ace-labs-shell.js. -->
       <div class="al-dash-num" id="dashMockScore">—</div>
       <div class="al-dash-sub" id="dashMockSub">no mock attempts yet</div>
-      <a href="unified-mock.html" class="al-dash-cta">Take Survey-of-Sciences mock</a>
+      <a href="prometric-mock.html" class="al-dash-cta">Take a Prometric mock</a>
     </div>
   </div>
   <div class="al-dash-row al-dash-row-by-subject">
@@ -79,15 +97,18 @@
 
   <div class="al-tools-grid">
 
+    <!-- Fix 21: corrected problem count 1010 -> 767 -->
+    <!-- Fix 22: removed unreliable "35 distinct" count; rewritten as "11+ interactive visualizers" -->
+    <!-- Fix 49: corrected module count 41 -> 45 (added sys-eq, profit-loss, data-graph, trig) -->
     <a class="al-tool-tile al-tool-qr" href="tools/qr/index.html" target="_blank" rel="noopener">
       <div class="al-tool-tag">Section · QR</div>
       <h3 class="al-tool-name">Quantitative <em>Reasoning</em></h3>
-      <p class="al-tool-desc">41 modules, 35 distinct interactive visualizers, 1010 problems with 4-tier difficulty ladder. Full 40-question, 45-minute DAT-format mock with score predictor.</p>
+      <p class="al-tool-desc">45 modules, 11+ interactive visualizers, 767 problems with 4-tier difficulty ladder. Full 40-question, 45-minute DAT-format mock with score predictor.</p>
       <div class="al-tool-features">
         <span class="al-feat">Sarah · tutor</span>
-        <span class="al-feat">35 visuals</span>
-        <span class="al-feat">1010 problems</span>
-        <span class="al-feat">DAT-format mock</span>
+        <span class="al-feat" id="qrFeatPartial">— in progress</span>
+        <span class="al-feat" id="qrFeatActivity">— attempts</span>
+        <span class="al-feat" id="qrFeatLast">No sessions yet</span>
       </div>
       <div class="al-tool-foot">
         <span class="al-tool-cta">Open QR engine</span>
@@ -95,15 +116,17 @@
       </div>
     </a>
 
+    <!-- Fix 23: rewrote hub description to accurately reflect live vs. in-progress state -->
+    <!-- Fix 24: removed "500-Q bank" claim; actual expert pool is 158 questions -->
     <a class="al-tool-tile al-tool-bio" href="tools/bio/index.html" target="_blank" rel="noopener">
       <div class="al-tool-tag">Section · Bio</div>
       <h3 class="al-tool-name"><em>Biology</em></h3>
-      <p class="al-tool-desc">6 hubs (Cell &amp; Molecular, Genetics, Physiology, Diversity, Developmental, Evolution). 500-question mock bank, SM-2 spaced retrieval via Ace Cards.</p>
+      <p class="al-tool-desc">Cell Lab + Genetics Studio fully live; Physiology, Diversity, Developmental, Evolution shipping deep-dive nodes. 40-question fixed mock, diagnostic, 60-day plan, analytics, micrograph ID, bonus topics. SM-2 spaced retrieval via Ace Cards.</p>
       <div class="al-tool-features">
         <span class="al-feat">Riya · tutor</span>
-        <span class="al-feat">28 / 40 nodes</span>
-        <span class="al-feat">500-Q bank</span>
-        <span class="al-feat">SM-2 SR cards</span>
+        <span class="al-feat" id="bioFeatPartial">— in progress</span>
+        <span class="al-feat" id="bioFeatActivity">— retrievals</span>
+        <span class="al-feat" id="bioFeatLast">No sessions yet</span>
       </div>
       <div class="al-tool-foot">
         <span class="al-tool-cta">Open Bio engine</span>
@@ -111,15 +134,16 @@
       </div>
     </a>
 
+    <!-- Fix 25: corrected module count "37 modules across 4 tiers" -> "31 core + 3 strategy modules" -->
     <a class="al-tool-tile al-tool-gc" href="tools/gc/index.html" target="_blank" rel="noopener">
       <div class="al-tool-tag">Section · Gen Chem</div>
       <h3 class="al-tool-name">General <em>Chemistry</em></h3>
-      <p class="al-tool-desc">37 modules across 4 tiers (Foundations, Quantitative, Patterns, Test-day). Skill tree with progressive disclosure, 605-problem bank, mock + score predictor.</p>
+      <p class="al-tool-desc">31 core + 3 strategy modules across 4 tiers (Foundations, Quantitative, Patterns, Test-day). Skill tree with progressive disclosure, 605-problem bank, mock + score predictor.</p>
       <div class="al-tool-features">
         <span class="al-feat">Tommy · tutor</span>
-        <span class="al-feat">38 visuals</span>
-        <span class="al-feat">605 problems</span>
-        <span class="al-feat">Skill-tree pedagogy</span>
+        <span class="al-feat" id="gcFeatPartial">— in progress</span>
+        <span class="al-feat" id="gcFeatActivity">— attempts</span>
+        <span class="al-feat" id="gcFeatLast">No sessions yet</span>
       </div>
       <div class="al-tool-foot">
         <span class="al-tool-cta">Open GC engine</span>
@@ -127,22 +151,21 @@
       </div>
     </a>
 
-    <a class="al-tool-tile al-tool-ochem" href="tools/ochem-v3/index.html" target="_blank" rel="noopener">
-      <div class="al-tool-tag">Section · Organic Chem · v3</div>
+    <!-- Fix 26: removed "1230-question bank" claim; actual is 388 questions -->
+    <!-- Fix 27: removed "94 lessons" (legacy v3 claim); v1 canonical has 11 hubs -->
+    <a class="al-tool-tile al-tool-ochem" href="tools/ochem/index.html" target="_blank" rel="noopener">
+      <div class="al-tool-tag">Section · Organic Chem · Reaction Maps</div>
       <h3 class="al-tool-name">Organic <em>Chemistry</em></h3>
-      <p class="al-tool-desc">14 chapters mapped to the gold-standard DAT outline. 94 lessons — every one has a visual (40+ embed v1's animated mechanisms inline). 1230-question bank with DAT-realistic notation mix: skeletal SVG (60%), condensed text, IUPAC names, Fischer + Newman projections — all rendered inline. Suggested path engine + 40Q DAT mock with sigmoid score predictor.</p>
+      <p class="al-tool-desc">11 hand-crafted hubs covering every functional-group family on the DAT. 388-question bank. 27 animated mechanisms with step-through controls, decision wizards, reagent predictor, multi-step synthesis puzzles, stereo + spec trainers, and a full DAT-format exam sim. Premium node grid landing — gamified unlock as you master each hub.</p>
       <div class="al-tool-features">
         <span class="al-feat">Tommy · tutor</span>
-        <span class="al-feat">94 lessons · 100% with visuals</span>
-        <span class="al-feat">1230 problems · 5 notation types</span>
-        <span class="al-feat">v1 animations embedded</span>
+        <span class="al-feat" id="ochemFeatPartial">— in progress</span>
+        <span class="al-feat" id="ochemFeatActivity">— hubs touched</span>
+        <span class="al-feat" id="ochemFeatLast">No sessions yet</span>
       </div>
       <div class="al-tool-foot">
-        <span class="al-tool-cta">Open OChem v3</span>
+        <span class="al-tool-cta">Open Reaction Maps</span>
         <span class="al-tool-stat" id="ochemMasteryStat">— mastered</span>
-      </div>
-      <div style="margin-top:8px;padding-top:10px;border-top:1px dashed var(--al-line);font-size:11px;color:var(--al-ink-mute);display:flex;justify-content:space-between;align-items:center">
-        <span>Reference: <a href="tools/ochem/index.html" target="_blank" rel="noopener" style="color:var(--al-ochem-color);font-weight:700">Reaction Maps (v1) ↗</a> · 27 animations + synthesis lab</span>
       </div>
     </a>
 
@@ -151,28 +174,31 @@
 
 <!-- ========== UNIFIED MOCK CTA ========== -->
 <section class="al-cta-section">
-  <a class="al-mock-cta" href="unified-mock.html">
-    <div class="al-mock-cta-tag">SURVEY OF NATURAL SCIENCES · 100 questions · 90 minutes</div>
-    <h2 class="al-mock-cta-h">The <em>full DAT science section</em> mock.</h2>
-    <p class="al-mock-cta-sub">40 Bio + 30 Gen Chem + 30 OChem. DAT-realistic distribution and timing. Per-subject scorecard + composite SoNS scaled-score prediction. Wrong answers feed the cross-tool spaced-rep queue.</p>
-    <span class="al-mock-cta-link">Take the mock</span>
+  <a class="al-mock-cta" href="prometric-mock.html">
+    <div class="al-mock-cta-tag">PROMETRIC MOCKS · 5 fixed tests · 140 Q · 135 min · zero overlap</div>
+    <h2 class="al-mock-cta-h">The <em>partial DAT simulation</em> mock.</h2>
+    <p class="al-mock-cta-sub">Sciences (40 Bio + 30 GC + 30 OChem · 90 min) followed by QR (40 Q · 45 min). Question nav panel, mark-for-review, end-of-section review screen, periodic table for Gen Chem, and calculator widget for QR — the closest simulation Ace Labs ships for the sections it currently covers. PAT and Reading Comp are not included; the real DAT places the scheduled 30-minute break after PAT, so this is a high-fidelity two-section simulation rather than a full-length DAT.</p>
+    <span class="al-mock-cta-link">Take a Prometric mock · or browse the catalog</span>
   </a>
 </section>
 
-<!-- ========== THIS WEEK PLAN PLACEHOLDER ========== -->
+<!-- ========== THIS WEEK PLAN ========== -->
+<!-- Fix 7: #plan section populated with localStorage-driven last-session links per engine -->
 <section class="al-plan" id="plan">
-  <h2 class="al-section-title">This <em>week's plan</em>.</h2>
-  <p class="al-section-sub">When wired to the AceTheDAT portal, your tutor's weekly assignment shows up here. For now, the suggestion engine surfaces your weakest subject + due cards.</p>
+  <h2 class="al-section-title">Pick up where you <em>left off</em>.</h2>
+  <p class="al-section-sub">Last-session links surface from each engine's localStorage. Open a tool to start building your history.</p>
   <div class="al-plan-grid" id="planGrid">
-    <div class="al-plan-empty">Open at least one engine and complete a session — your weak spots will surface here.</div>
+    <div class="al-plan-empty">Open at least one engine and complete a session — your recent activity will surface here.</div>
   </div>
 </section>
 
 <!-- ========== FOOT ========== -->
+<!-- Fix 39: tightened footer copy from aspirational/informal to factual -->
 <footer class="al-foot">
   <div class="al-foot-row">
     <span>Ace Labs · standalone v1</span>
-    <span>Eventually wired to <a href="https://acethedat-portal.netlify.app" target="_blank">acethedat-portal.netlify.app</a> for weekly plan + tutor sync</span>
+    <span>Your study data stays in your browser. No accounts, no tracking, no servers.</span>
+    <span>Synced to <a href="https://acethedat-portal.netlify.app" target="_blank">AceTheDAT tutor portal</a> (in progress)</span>
   </div>
 </footer>
 

@@ -15,9 +15,10 @@
   --gold:#C9A84C; --gold-m:#E2C97A; --gold-d:#8C7235; --gold-glow:rgba(201,168,76,0.35); --gold-bg:rgba(201,168,76,0.10);
   --teal:#1B3A2D; --teal-2:#2A5240; --teal-3:#3A6B54;
   --line:rgba(13,32,24,0.12); --line-2:rgba(13,32,24,0.06); --line-strong:rgba(13,32,24,0.22);
-  --trap:#C25B3F; --trap-bg:#fbe7df; --trap-d:#8a3d28;
-  --warn:#D97A3C;
-  --good:#5FA874; --good-bg:#e3efe6; --good-d:#3e7c54;
+  /* Wong / Okabe-Ito correctness tokens — answer feedback only */
+  --trap:#D55E00; --trap-bg:rgba(213,94,0,.10); --trap-d:#9b4500;
+  --warn:#E69F00;
+  --good:#009E73; --good-bg:rgba(0,158,115,.10); --good-d:#007a59;
   --info:#6A8AA8; --info-bg:#e6edf4; --info-d:#1e6691;
   --plum:#8a5a8c; --plum-bg:#efe5f0;
   --shadow:0 1px 3px rgba(13,32,24,0.06), 0 8px 24px rgba(13,32,24,0.04);
@@ -328,7 +329,7 @@ body[data-theme="dark"] .formula-eq .gold{color:var(--gold-m)}
   margin-top:10px; letter-spacing:-0.01em; position:relative;
 }
 .lock-line::before{
-  content:'★'; position:absolute; top:-12px; left:50%; transform:translateX(-50%);
+  content:'*'; position:absolute; top:-12px; left:50%; transform:translateX(-50%);
   width:24px; height:24px; background:var(--gold); color:var(--sb);
   border-radius:50%; font-size:12px; font-weight:700;
   display:flex; align-items:center; justify-content:center;
@@ -1114,7 +1115,7 @@ body[data-theme="dark"] .celeb-h em{color:var(--gold-m)}
 .celeb-unlocks .lbl{font-size:10px; letter-spacing:0.18em; text-transform:uppercase; font-weight:700; color:var(--gold-d); margin-bottom:6px}
 body[data-theme="dark"] .celeb-unlocks .lbl{color:var(--gold-m)}
 .celeb-unlocks .item{display:flex; gap:10px; align-items:center; padding:6px 0; font-size:14px}
-.celeb-unlocks .item::before{content:"✓"; color:var(--good); font-weight:700; font-size:16px}
+.celeb-unlocks .item::before{content:"+"; color:var(--good); font-weight:700; font-size:16px}
 .celeb-cta{display:flex; gap:10px; justify-content:center; flex-wrap:wrap; opacity:0; animation:fadeUp 0.5s 1.0s forwards}
 
 @keyframes fadeUp{to{opacity:1; transform:translateY(0)}}
@@ -1283,6 +1284,18 @@ body[data-theme="dark"] .trick-card .lock-q{color:var(--gold-m)}
 /* ============================================================
    Final 5% gap — sig-figs, quantum-numbers, hybridization
    ============================================================ */
+/* Lab techniques table visual */
+.lt-wrap{padding:8px 0}
+.lt-section{background:var(--paper-2); border:1px solid var(--line); border-radius:10px; padding:10px 14px}
+.lt-heading{font-size:11px; letter-spacing:1.5px; text-transform:uppercase; color:var(--ink-mute); font-weight:700; margin-bottom:8px}
+.lt-table{display:flex; flex-direction:column; gap:2px}
+.lt-row{display:grid; grid-template-columns:1.4fr 1.2fr 2fr 2fr; gap:8px; font-size:12.5px; padding:5px 4px; border-bottom:1px solid var(--line)}
+.lt-row:last-child{border-bottom:none}
+.lt-hdr{font-size:10.5px; font-weight:700; letter-spacing:.8px; text-transform:uppercase; color:var(--ink-mute); background:transparent}
+.lt-best{border-left:3px solid var(--good); padding-left:6px}
+.lt-ok{border-left:3px solid var(--gold-d); padding-left:6px}
+.lt-poor{border-left:3px solid var(--trap); padding-left:6px}
+@media (max-width:780px){.lt-row{grid-template-columns:1fr 1fr}}
 /* Sig figs visual */
 .sf-wrap{padding:8px 0; display:grid; grid-template-columns:1fr 280px; gap:14px}
 @media (max-width:780px){.sf-wrap{grid-template-columns:1fr}}
@@ -2894,6 +2907,31 @@ body[data-theme="dark"] .today-card{background:linear-gradient(135deg, var(--pap
 .sd-stack-list li{font-family:'Playfair Display',serif; font-style:italic; font-size:13px; color:var(--ink); line-height:1.5; padding-left:14px; position:relative}
 .sd-stack-list li::before{content:'⟫'; position:absolute; left:0; color:var(--gold-d); font-style:normal; font-weight:700}
 
+/* VSEPR Predictor standalone section */
+.vspr-outer{display:grid; grid-template-columns:auto 1fr; gap:18px; align-items:start}
+@media (max-width:860px){.vspr-outer{grid-template-columns:1fr}}
+.vspr-controls{display:flex; flex-direction:column; gap:10px; min-width:200px}
+.vspr-ctl-group{display:flex; flex-direction:column; gap:4px}
+.vspr-lbl{font-size:10.5px; letter-spacing:1.2px; text-transform:uppercase; color:var(--ink-mute); font-weight:700}
+.vspr-controls select{padding:6px 10px; border:1px solid var(--line); border-radius:7px; background:var(--paper-2); color:var(--ink); font-size:14px}
+.vspr-result{background:var(--paper-2); border:1px solid var(--gold); border-left:4px solid var(--gold-d); border-radius:10px; padding:12px 16px; margin-top:4px}
+.vspr-name{font-family:'Playfair Display',serif; font-size:22px; font-weight:700; color:var(--ink); line-height:1.2}
+.vspr-angle{font-family:'JetBrains Mono',monospace; font-size:14px; color:var(--gold-d); margin:4px 0 2px}
+.vspr-ex{font-size:12px; color:var(--ink-mute)}
+.vspr-stage{background:var(--paper-2); border:1px solid var(--line); border-radius:12px; padding:12px}
+.vspr-svg{width:100%; max-width:320px; display:block; margin:0 auto}
+.vspr-info-grid{display:grid; grid-template-columns:1fr 1fr; gap:4px 12px; font-size:12.5px; padding:8px 4px 0}
+.vspr-info-grid .lbl{color:var(--ink-mute); font-size:10.5px; letter-spacing:.8px; text-transform:uppercase; font-weight:700}
+.vspr-ref{grid-column:1 / -1; margin-top:14px}
+.vspr-ref-h{font-size:11px; letter-spacing:1.5px; text-transform:uppercase; color:var(--ink-mute); font-weight:700; margin-bottom:6px}
+.vspr-ref-table{display:flex; flex-direction:column; border:1px solid var(--line); border-radius:10px; overflow:hidden}
+.vspr-ref-row{display:grid; grid-template-columns:60px 70px 50px 150px 90px 1fr; gap:8px; font-size:12px; padding:5px 10px; border-bottom:1px solid var(--line)}
+.vspr-ref-row:last-child{border-bottom:none}
+.vspr-ref-hdr{font-size:10.5px; font-weight:700; letter-spacing:.8px; text-transform:uppercase; color:var(--ink-mute); background:var(--paper-2)}
+.vspr-ref-row[data-shape]{cursor:pointer}
+.vspr-ref-row[data-shape]:hover{background:var(--paper-2)}
+@media (max-width:700px){.vspr-ref-row{grid-template-columns:1fr 1fr 1fr; gap:4px}}
+
 /* LAB TOOLKIT — glassware/indicator/error reference */
 .lab-sec{padding:32px 0 0}
 .lab-block{margin-bottom:22px}
@@ -3248,6 +3286,7 @@ body[data-mode="B"] .sb-link[data-go="quick-ref"]{background:rgba(201,168,76,.10
   @page { size: letter; margin: 0.5in }
 }
 </style>
+<link rel="stylesheet" href="../../shared/al-motion.css">
 </head>
 
 <body data-theme="light">
@@ -3277,6 +3316,7 @@ body[data-mode="B"] .sb-link[data-go="quick-ref"]{background:rgba(201,168,76,.10
   <a class="sb-link" data-go="today"><span class="dot"></span><span class="label">Today's Set</span><span class="meta" id="sbTodayMeta">daily</span></a>
   <a class="sb-link" data-go="weekly-plan"><span class="dot"></span><span class="label">Weekly Plan</span><span class="meta">7 days</span></a>
   <a class="sb-link" data-go="shortcut-deck"><span class="dot"></span><span class="label">Shortcut Deck</span><span class="meta">17 cards</span></a>
+  <a class="sb-link" data-go="vsepr-predictor"><span class="dot"></span><span class="label">VSEPR Predictor</span><span class="meta">geometry</span></a>
   <a class="sb-link" data-go="lab-toolkit"><span class="dot"></span><span class="label">Lab Toolkit</span><span class="meta">5%</span></a>
   <a class="sb-link" data-go="checkpoints"><span class="dot"></span><span class="label">Checkpoints</span><span class="meta" id="sbCheckMeta">retention</span></a>
   <a class="sb-link" data-go="phase-picker"><span class="dot"></span><span class="label">Set Your Phase</span><span class="meta" id="sbPhaseMeta">profile</span></a>
@@ -3298,6 +3338,7 @@ body[data-mode="B"] .sb-link[data-go="quick-ref"]{background:rgba(201,168,76,.10
   <a class="sb-link" data-go="lim-react"><span class="dot"></span><span class="label">Limiting Reactant</span><span class="meta">live</span></a>
   <a class="sb-link" data-go="solutions"><span class="dot"></span><span class="label">Solutions &amp; Concentration</span><span class="meta">live</span></a>
   <a class="sb-link" data-go="imf-rank"><span class="dot"></span><span class="label">Intermolecular Forces</span><span class="meta">live</span></a>
+  <a class="sb-link" data-go="lab-techniques"><span class="dot"></span><span class="label">Lab Techniques</span><span class="meta">live</span></a>
 
   <div class="sb-section sb-mode-a-only">Quantitative · Tier 1</div>
   <a class="sb-link" data-go="gas-laws"><span class="dot"></span><span class="label">Gas Laws</span><span class="meta">live</span></a>
@@ -3314,6 +3355,7 @@ body[data-mode="B"] .sb-link[data-go="quick-ref"]{background:rgba(201,168,76,.10
   <a class="sb-link" data-go="strong-weak"><span class="dot"></span><span class="label">Acid-Base · Strong vs Weak</span><span class="meta">live</span></a>
   <a class="sb-link" data-go="buffers"><span class="dot"></span><span class="label">Acid-Base · Buffers (HH)</span><span class="meta">live</span></a>
   <a class="sb-link" data-go="titration"><span class="dot"></span><span class="label">Acid-Base · Titration Curves</span><span class="meta">live</span></a>
+  <a class="sb-link" data-go="colligative"><span class="dot"></span><span class="label">Colligative Properties</span><span class="meta">live</span></a>
 
   <div class="sb-section sb-mode-a-only">Patterns · Tier 2</div>
   <a class="sb-link" data-go="ksp"><span class="dot"></span><span class="label">Solubility (Ksp)</span><span class="meta">live</span></a>
@@ -3331,10 +3373,10 @@ body[data-mode="B"] .sb-link[data-go="quick-ref"]{background:rgba(201,168,76,.10
   <a class="sb-link" data-go="guess"><span class="dot"></span><span class="label">Educated Guessing on GC Traps</span><span class="meta">live</span></a>
 
   <div class="sb-section">Specialized Tools</div>
-  <a class="sb-link" data-go="tool-ptable"><span class="dot"></span><span class="label">⚛ Periodic Table Explorer</span><span class="meta">tool</span></a>
-  <a class="sb-link" data-go="tool-balancer"><span class="dot"></span><span class="label">⚖ Equation Balancer</span><span class="meta">tool</span></a>
-  <a class="sb-link" data-go="tool-ice"><span class="dot"></span><span class="label">🧮 ICE Table Calculator</span><span class="meta">tool</span></a>
-  <a class="sb-link" data-go="tool-gas"><span class="dot"></span><span class="label">🎈 Gas Law Slider</span><span class="meta">tool</span></a>
+  <a class="sb-link" data-go="tool-ptable"><span class="dot"></span><span class="label">Periodic Table Explorer</span><span class="meta">tool</span></a>
+  <a class="sb-link" data-go="tool-balancer"><span class="dot"></span><span class="label">Equation Balancer</span><span class="meta">tool</span></a>
+  <a class="sb-link" data-go="tool-ice"><span class="dot"></span><span class="label">ICE Table Calculator</span><span class="meta">tool</span></a>
+  <a class="sb-link" data-go="tool-gas"><span class="dot"></span><span class="label">Gas Law Slider</span><span class="meta">tool</span></a>
   <a class="sb-link" data-go="tool-cell"><span class="dot"></span><span class="label">🔋 Cell Diagram Builder</span><span class="meta">tool</span></a>
   <a class="sb-link" data-go="tool-mw"><span class="dot"></span><span class="label">🧪 Molar Mass Calculator</span><span class="meta">tool</span></a>
   <a class="sb-link" data-go="tool-sigfig"><span class="dot"></span><span class="label">📐 Sig Figs &amp; Rounding</span><span class="meta">tool</span></a>
@@ -3482,10 +3524,11 @@ body[data-mode="B"] .sb-link[data-go="quick-ref"]{background:rgba(201,168,76,.10
   <div class="hero-cta">
     <button class="btn gold lg" onclick="goSec('diagnostic')">▶ Start the diagnostic — 12 min</button>
     <button class="btn lg" onclick="goSec('tree')">See the full skill tree</button>
+    <button class="btn ghost lg" onclick="goSec('shortcut-deck')">DAT Cheat Sheet — 20 shortcuts</button>
     <button class="btn ghost lg" onclick="goSec('atomic')">Or jump straight to atomic structure</button>
   </div>
   <div class="stats">
-    <div class="stat"><div class="n">37</div><div class="l">Skills · foundations → patterns → test-day</div></div>
+    <div class="stat"><div class="n">31 core + 3 strategy</div><div class="l">Modules · foundations → patterns → test-day</div></div>
     <div class="stat"><div class="n">6 steps</div><div class="l">Per skill · pattern → walk → faded → mastery</div></div>
     <div class="stat"><div class="n">No clock</div><div class="l">Until you say you're ready</div></div>
     <div class="stat"><div class="n">∞</div><div class="l">Replays · take your time, this is for you</div></div>
@@ -3618,7 +3661,7 @@ body[data-mode="B"] .sb-link[data-go="quick-ref"]{background:rgba(201,168,76,.10
     <div class="grow">
       <div class="num">SHORTCUTS · 03</div>
       <h2>Shortcut Deck — <em>DAT gold</em></h2>
-      <p class="s">17 high-yield acid-base + equilibrium shortcuts the test punishes you for not knowing. Each card has the <b>formula</b>, the <b>Thomasism</b> that locks it in, and a <b>jump-link</b> into the module where it's drilled. Print-friendly — Cmd-P to grab the cheat sheet.</p>
+      <p class="s">20 high-yield shortcuts — acid-base, equilibrium, colligative properties, reaction mechanisms, and solid types — the test punishes you for not knowing. Each card has the <b>formula</b>, the <b>Thomasism</b> that locks it in, and a <b>jump-link</b> into the module where it's drilled. Print-friendly — Cmd-P to grab the cheat sheet.</p>
     </div>
     <button class="btn lg" onclick="window.print()" style="align-self:flex-start; margin-left:auto">⎙ Print sheet</button>
   </div>
@@ -3638,7 +3681,70 @@ body[data-mode="B"] .sb-link[data-go="quick-ref"]{background:rgba(201,168,76,.10
       <li>"14 is a privilege, not a right."</li>
       <li>"Q too small → make products."</li>
       <li>"Divide, square root, move decimal twice."</li>
+      <li>"Count particles first — i before anything else."</li>
+      <li>"The slow step sets the speed limit."</li>
+      <li>"Does it conduct solid? That's your first solid-type question."</li>
     </ul>
+  </div>
+</section>
+
+<!-- VSEPR PREDICTOR — standalone interactive geometry lookup -->
+<section class="sec" id="vsepr-predictor">
+  <div class="sec-head">
+    <div class="grow">
+      <div class="num">TOOLS · 3B</div>
+      <h2>VSEPR <em>Predictor</em></h2>
+      <p class="s">Select the number of bonded atoms and lone pairs on the central atom. The geometry name, bond angle, and 2D shape diagram update instantly. Use this to drill the pattern before working through the full VSEPR module.</p>
+    </div>
+  </div>
+  <div class="vspr-outer">
+    <div class="vspr-controls">
+      <div class="vspr-ctl-group">
+        <label class="vspr-lbl">Bonded atoms (X)</label>
+        <select id="vsprBonded" onchange="vsprUpdate()">
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4" selected>4</option>
+          <option value="5">5</option>
+          <option value="6">6</option>
+        </select>
+      </div>
+      <div class="vspr-ctl-group">
+        <label class="vspr-lbl">Lone pairs (E)</label>
+        <select id="vsprLP" onchange="vsprUpdate()">
+          <option value="0" selected>0</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+        </select>
+      </div>
+      <div class="vspr-result" id="vsprResult">
+        <div class="vspr-name" id="vsprName">Tetrahedral</div>
+        <div class="vspr-angle" id="vsprAngle">109.5deg</div>
+        <div class="vspr-ex" id="vsprEx">CH4, NH4+</div>
+      </div>
+    </div>
+    <div class="vspr-stage">
+      <svg class="vp-svg vspr-svg" id="vsprSvg" viewBox="0 0 320 280" preserveAspectRatio="xMidYMid meet"></svg>
+      <div class="vspr-info-grid" id="vsprInfoGrid"></div>
+    </div>
+    <div class="vspr-ref">
+      <div class="vspr-ref-h">Full reference table</div>
+      <div class="vspr-ref-table">
+        <div class="vspr-ref-row vspr-ref-hdr"><div>Steric #</div><div>Bonded</div><div>LP</div><div>Shape</div><div>Angle</div><div>Examples</div></div>
+        <div class="vspr-ref-row" data-shape="linear"><div>2</div><div>2</div><div>0</div><div>Linear</div><div>180deg</div><div>CO2, BeCl2</div></div>
+        <div class="vspr-ref-row" data-shape="trigonal"><div>3</div><div>3</div><div>0</div><div>Trig. planar</div><div>120deg</div><div>BF3, NO3-</div></div>
+        <div class="vspr-ref-row" data-shape="bent"><div>3</div><div>2</div><div>1</div><div>Bent</div><div>~120deg</div><div>SO2</div></div>
+        <div class="vspr-ref-row" data-shape="tetrahedral"><div>4</div><div>4</div><div>0</div><div>Tetrahedral</div><div>109.5deg</div><div>CH4, NH4+</div></div>
+        <div class="vspr-ref-row" data-shape="trig-pyr"><div>4</div><div>3</div><div>1</div><div>Trig. pyramidal</div><div>~107deg</div><div>NH3, PCl3</div></div>
+        <div class="vspr-ref-row" data-shape="bent"><div>4</div><div>2</div><div>2</div><div>Bent</div><div>~104.5deg</div><div>H2O</div></div>
+        <div class="vspr-ref-row" data-shape="trig-bipyr"><div>5</div><div>5</div><div>0</div><div>Trig. bipyr.</div><div>120/90deg</div><div>PCl5</div></div>
+        <div class="vspr-ref-row" data-shape="seesaw"><div>5</div><div>4</div><div>1</div><div>See-saw</div><div>~120/90deg</div><div>SF4</div></div>
+        <div class="vspr-ref-row" data-shape="tshape"><div>5</div><div>3</div><div>2</div><div>T-shape</div><div>~90deg</div><div>ClF3</div></div>
+        <div class="vspr-ref-row" data-shape="octahedral"><div>6</div><div>6</div><div>0</div><div>Octahedral</div><div>90deg</div><div>SF6</div></div>
+        <div class="vspr-ref-row" data-shape="sq-planar"><div>6</div><div>4</div><div>2</div><div>Square planar</div><div>90deg</div><div>XeF4</div></div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -4053,7 +4159,7 @@ body[data-mode="B"] .sb-link[data-go="quick-ref"]{background:rgba(201,168,76,.10
         <div class="ion-drill-feedback" id="ionDrillFeedback"></div>
         <div class="ion-drill-stats">
           <span>Correct: <b id="ionDrillCorrect">0</b></span>
-          <span>Wrong: <b id="ionDrillWrong">0</b></span>
+          <span>Needs review: <b id="ionDrillWrong">0</b></span>
           <span>Streak: <b id="ionDrillStreak">0</b></span>
           <button class="btn primary sm" id="ionDrillNext" onclick="ION_DRILL.next()">Start →</button>
           <button class="btn ghost sm" onclick="ION_DRILL.reset()">Reset</button>
@@ -4171,7 +4277,7 @@ body[data-mode="B"] .sb-link[data-go="quick-ref"]{background:rgba(201,168,76,.10
     <div class="card-h">
       <div class="mark">⌬</div>
       <div class="ttl">
-        <h3>The skill map · <em>37 skills, 4 tiers</em></h3>
+        <h3>The skill map · <em>30 core modules + 3 test-day strategy, 4 tiers</em></h3>
         <div class="sub">Click any unlocked card to open that lesson. Locked cards (🔒) show their prereqs in a tooltip — hover or long-press. Solid green lines = prereq mastered, dashed = not yet.</div>
       </div>
       <div id="treeFilter" class="tree-filter-wrap"></div>
@@ -4205,6 +4311,7 @@ body[data-mode="B"] .sb-link[data-go="quick-ref"]{background:rgba(201,168,76,.10
 <section class="sec" id="lim-react" data-skill="lim-react"></section>
 <section class="sec" id="solutions" data-skill="solutions"></section>
 <section class="sec" id="imf-rank" data-skill="imf-rank"></section>
+<section class="sec" id="lab-techniques" data-skill="lab-techniques"></section>
 <!-- Tier 1 — Quantitative -->
 <section class="sec" id="gas-laws" data-skill="gas-laws"></section>
 <section class="sec" id="enthalpy" data-skill="enthalpy"></section>
@@ -4220,6 +4327,7 @@ body[data-mode="B"] .sb-link[data-go="quick-ref"]{background:rgba(201,168,76,.10
 <section class="sec" id="strong-weak" data-skill="strong-weak"></section>
 <section class="sec" id="buffers" data-skill="buffers"></section>
 <section class="sec" id="titration" data-skill="titration"></section>
+<section class="sec" id="colligative" data-skill="colligative"></section>
 <!-- Tier 2 — Patterns -->
 <section class="sec" id="ksp" data-skill="ksp"></section>
 <section class="sec" id="galvanic" data-skill="galvanic"></section>
@@ -4573,6 +4681,9 @@ const ST = {
   push(k, v){ const a = this.get(k, []); a.push(v); this.set(k, a); return a; }
 };
 
+/* Stamp a session-open timestamp so the Ace Labs home tile can show "Last: …" */
+ST.set('lastSession', Date.now());
+
 /* ----- STUDENT roster — for tutors managing multiple students.
    Each student has their own namespaced ST data. The roster (active + list)
    lives in a separate meta namespace so it survives switches. ----- */
@@ -4727,7 +4838,7 @@ const STUDENT_UI = {
     let html = `<div class="student-row ${isActiveDefault ? 'active' : ''}">
       <div class="student-row-info" onclick="STUDENT.switchTo('default')">
         <div class="student-row-name">Default workspace</div>
-        <div class="student-row-meta">${isActiveDefault ? '✓ active' : 'click to switch'}</div>
+        <div class="student-row-meta">${isActiveDefault ? 'active' : 'click to switch'}</div>
       </div>
     </div>`;
     if (roster.length === 0){
@@ -4739,9 +4850,9 @@ const STUDENT_UI = {
         return `<div class="student-row ${isActive ? 'active' : ''}">
           <div class="student-row-info" onclick="STUDENT.switchTo('${s.slug}')">
             <div class="student-row-name">${s.name}</div>
-            <div class="student-row-meta">${isActive ? '✓ active' : 'click to switch'} · added ${created}</div>
+            <div class="student-row-meta">${isActive ? 'active' : 'click to switch'} · added ${created}</div>
           </div>
-          <button class="student-row-del" onclick="event.stopPropagation(); STUDENT.remove('${s.slug}')" title="Delete this student's data">🗑</button>
+          <button class="student-row-del" onclick="event.stopPropagation(); STUDENT.remove('${s.slug}')" title="Delete this student's data">Del</button>
         </div>`;
       }).join('');
     }
@@ -4884,6 +4995,7 @@ const SKILLS = [
   {id:'hybridization',  tier:0, name:'Hybridization (sp/sp²/sp³)',short:'Hybridization',  prereqs:['vsepr'],     x:3, y:1, full:true},
   {id:'imf-rank',       tier:0, name:'Intermolecular Forces',     short:'IMFs',           prereqs:['bonding'],   x:4, y:1, full:true},
   {id:'quantum-numbers',tier:0, name:'Quantum Numbers + Photons', short:'Quantum #s',     prereqs:['atomic'],    x:5, y:1, full:true},
+  {id:'lab-techniques', tier:0, name:'Lab Techniques',            short:'Lab Tech',       prereqs:['sig-figs'],  x:6, y:0, full:true},
   // Tier 1 — Quantitative (14 skills, 3 rows)
   {id:'gas-laws',       tier:1, name:'Gas Laws',                  short:'Gas Laws',       prereqs:['mole-conv'],         x:0, y:2, full:true},
   {id:'enthalpy',       tier:1, name:'Thermo — Enthalpy (ΔH/Hess)',short:'Enthalpy ΔH',   prereqs:['mole-conv'],         x:1, y:2, full:true},
@@ -4892,6 +5004,7 @@ const SKILLS = [
   {id:'gibbs',          tier:1, name:'Thermo — Gibbs ΔG',         short:'Gibbs ΔG',       prereqs:['enthalpy','entropy'],x:4, y:2, full:true},
   {id:'rate-laws',      tier:1, name:'Kinetics — Rate Laws',      short:'Rate Laws',      prereqs:['mole-conv'],         x:5, y:2, full:true},
   {id:'arrhenius',      tier:1, name:'Kinetics — Arrhenius + Catalysis',short:'Arrhenius',prereqs:['rate-laws'],         x:0, y:3, full:true},
+  {id:'colligative',    tier:1, name:'Colligative Properties',          short:'Colligative',prereqs:['solutions'],         x:5, y:4, full:true},
   {id:'eq-kc',          tier:1, name:'Equilibrium — Kc & Kp',     short:'Eq · Kc',        prereqs:['mole-conv'],         x:1, y:3, full:true},
   {id:'eq-lechat',      tier:1, name:'Equilibrium — Le Châtelier',short:'Le Châtelier',   prereqs:['eq-kc'],             x:2, y:3, full:true},
   {id:'eq-ice',         tier:1, name:'Equilibrium — ICE Table',   short:'ICE Table',      prereqs:['eq-kc'],             x:3, y:3, full:true},
@@ -4988,12 +5101,12 @@ const BANK = [
   // === SOLUTIONS (8) ===
   {id:'s1',skills:['solutions'],diff:1,q:'Molarity of 0.5 mol in 250 mL?',opts:['0.125 M','0.5 M','2 M','125 M'],correct:2,why:'M=0.5/0.250=2.',diag:{0:'Multiplied.',1:'mol.',3:'mL not L.'}},
   {id:'s2',skills:['solutions'],diff:2,q:'Dilute 100 mL of 6 M HCl to 0.5 M. Final V?',opts:['600 mL','1200 mL','60 mL','100 mL'],correct:1,why:'M₁V₁=M₂V₂ → V₂=600/0.5=1200.',diag:{0:'Off.',2:'Reversed.',3:'No dilution.'}},
-  {id:'s3',skills:['solutions'],diff:2,q:'1 m KCl in water freezes at? (Kf=1.86, i=2)',opts:['0°C','−1.86°C','−3.72°C','−5.58°C'],correct:2,why:'ΔTf=i·Kf·m=2(1.86)(1)=3.72.',diag:{0:'No depression?',1:'Forgot i=2.',3:'i=3 (CaCl₂).'}},
-  {id:'s4',skills:['solutions'],diff:2,q:'π of 0.10 M glucose at 300 K?',opts:['0.82 atm','2.46 atm','24.6 atm','30 atm'],correct:1,why:'π=iMRT=(1)(0.10)(0.0821)(300)=2.46.',diag:{0:'Decimal.',2:'10× off.',3:'Wrong R.'}},
-  {id:'s5',skills:['solutions'],diff:1,q:'Lowest FP at 1 m: glucose, NaCl, CaCl₂, urea?',opts:['glucose','NaCl','CaCl₂','urea'],correct:2,why:'CaCl₂ has i=3 → most particles → most depression.',diag:{0:'i=1.',1:'i=2.',3:'i=1.'}},
+  {id:'s3',skills:['solutions','colligative'],diff:2,q:'1 m KCl in water freezes at? (Kf=1.86, i=2)',opts:['0°C','−1.86°C','−3.72°C','−5.58°C'],correct:2,why:'ΔTf=i·Kf·m=2(1.86)(1)=3.72.',diag:{0:'No depression?',1:'Forgot i=2.',3:'i=3 (CaCl₂).'}},
+  {id:'s4',skills:['solutions','colligative'],diff:2,q:'π of 0.10 M glucose at 300 K?',opts:['0.82 atm','2.46 atm','24.6 atm','30 atm'],correct:1,why:'π=iMRT=(1)(0.10)(0.0821)(300)=2.46.',diag:{0:'Decimal.',2:'10× off.',3:'Wrong R.'}},
+  {id:'s5',skills:['solutions','colligative'],diff:1,q:'Lowest FP at 1 m: glucose, NaCl, CaCl₂, urea?',opts:['glucose','NaCl','CaCl₂','urea'],correct:2,why:'CaCl₂ has i=3 → most particles → most depression.',diag:{0:'i=1.',1:'i=2.',3:'i=1.'}},
   {id:'s6',skills:['solutions'],diff:2,q:'Mole fraction ethanol: 46 g EtOH (MW=46) + 72 g H₂O (MW=18)?',opts:['0.20','0.39','0.50','0.80'],correct:0,why:'mol EtOH=1, H₂O=4. X=1/5=0.20.',diag:{1:'Wrong.',2:'Mass-based.',3:'Reversed.'}},
   {id:'s7',skills:['solutions'],diff:1,q:'Henry: gas solubility ↑ with?',opts:['Higher P, lower T','Higher P, higher T','Lower P, lower T','Lower P, higher T'],correct:0,why:'High P pushes more in. Cold liquids hold more gas.',diag:{1:'Hot loses gas.',2:'Low P releases.',3:'Both wrong.'}},
-  {id:'s8',skills:['solutions'],diff:3,q:'BP of 0.20 m KCl in water? (Kb=0.52, i=2)',opts:['100.10','100.21','100.52','101.04'],correct:1,why:'ΔTb=i·Kb·m=2(0.52)(0.20)=0.208.',diag:{0:'Forgot i.',2:'1 m.',3:'Wrong arith.'}},
+  {id:'s8',skills:['solutions','colligative'],diff:3,q:'BP of 0.20 m KCl in water? (Kb=0.52, i=2)',opts:['100.10','100.21','100.52','101.04'],correct:1,why:'ΔTb=i·Kb·m=2(0.52)(0.20)=0.208.',diag:{0:'Forgot i.',2:'1 m.',3:'Wrong arith.'}},
   // === GAS LAWS (8) ===
   {id:'g1',skills:['gas-laws'],diff:1,q:'2 mol gas at 27°C in 5 L. P?',opts:['4.93 atm','9.85 atm','19.7 atm','0.49 atm'],correct:1,why:'T=300 K. P=nRT/V=(2)(0.0821)(300)/5=9.85.',diag:{0:'Off by 2.',2:'Off by 2.',3:'Wrong setup.'}},
   {id:'g2',skills:['gas-laws'],diff:1,q:'Gas at 1 atm, 273 K → 546 K at const V. New P?',opts:['0.5 atm','2 atm','1.5 atm','4 atm'],correct:1,why:'P/T const → T×2 → P×2.',diag:{0:'Reversed.',2:'Wrong.',3:'Wrong.'}},
@@ -5770,14 +5883,17 @@ const MODULES = {
   'atomic': {
     skill:'atomic', tier:0, num:'01',
     title:'Atomic <em>Structure</em>',
-    sub:'Protons, neutrons, electrons. Electron configuration. Foundation for everything else.',
-    pattern:"Every atom is a small nucleus (p+n) surrounded by electrons in shells. <b>Atomic # = protons</b> — the element's identity. <b>Mass # = p + n</b>. Neutral atom: e⁻ = p. Ions have gained or lost electrons, NEVER changed proton count.",
-    formula:'Mass # = p + n<br><span class="gold">Atomic # (Z) = p = e⁻ (in neutral)</span><br>Charge = p − e⁻',
+    sub:'Protons, neutrons, electrons. Electron configuration. Oxidation state rules. Foundation for everything else.',
+    pattern:"Every atom is a small nucleus (p+n) surrounded by electrons in shells. <b>Atomic # = protons</b> — the element's identity. <b>Mass # = p + n</b>. Neutral atom: e⁻ = p. Ions have gained or lost electrons, NEVER changed proton count.<br><br><b>Oxidation State Rules (memorize all 4):</b><br>1. Pure element = 0 (Na, O₂, Fe, Cl₂ — all 0).<br>2. Monoatomic ion = its charge (Na⁺ = +1, Cl⁻ = −1, Al³⁺ = +3).<br>3. O = −2 in most compounds (exceptions: peroxides O₂²⁻ where O = −1; OF₂ where O = +2).<br>4. H = +1 in most compounds (exception: hydrides like NaH, where H = −1).<br>5. Sum of all oxidation states = overall charge of the species (0 for molecule, −2 for SO₄²⁻, etc.).<br>These rules lead directly into identifying oxidation and reduction in redox reactions.",
+    formula:'Mass # = p + n<br><span class="gold">Atomic # (Z) = p = e⁻ (in neutral)</span><br>Charge = p − e⁻<br>Ox. states: element=0 · monoatomic ion=charge · O=−2 (perox: −1) · H=+1 (hydride: −1) · sum=total charge',
     visualType:'atom-builder', visualData:{defaultZ:11},
     worked:[
       {q:'Identify ⁵⁶₂₆Fe', steps:[{what:'Z = 26 → 26 protons', why:'Subscript = atomic #.'}, {what:'Mass # = 56', why:'Superscript = nucleons.', predict:{q:'Neutrons?', hint:'Mass # − atomic #.'}}, {what:'Neutrons = 56 − 26 = 30', why:'Neutrons = mass # − protons.'}, {what:'Neutral → 26 e⁻', why:'No charge means electrons = protons.'}]},
       {q:'How many e⁻ in Cl⁻?', steps:[{what:'Cl is Z=17', why:'17 protons → 17 e⁻ when neutral.'}, {what:'Charge −1 → gained 1 e⁻', why:'Negative charge = extra electron(s).', predict:{q:'Mg²⁺ e⁻?', hint:'Lost 2.'}}, {what:'17 + 1 = 18 e⁻', why:'Original 17 plus the gained one.'}]},
-      {q:'Ground state of Mn (Z=25)', steps:[{what:'Aufbau: 1s,2s,2p,3s,3p,4s,3d', why:'4s before 3d.'}, {what:'1s² 2s² 2p⁶ 3s² 3p⁶ 4s² 3d⁵', why:'Sum = 25 ✓'}, {what:'[Ar] 4s² 3d⁵', why:'Shorthand.'}]}
+      {q:'Ground state of Mn (Z=25)', steps:[{what:'Aufbau: 1s,2s,2p,3s,3p,4s,3d', why:'4s before 3d.'}, {what:'1s² 2s² 2p⁶ 3s² 3p⁶ 4s² 3d⁵', why:'Sum = 25 ✓'}, {what:'[Ar] 4s² 3d⁵', why:'Shorthand.'}]},
+      {q:'Oxidation state of Cr in Cr₂O₇²⁻?', steps:[{what:'O = −2 each; 7 oxygens = −14 total', why:'Rule 3: O = −2 in most compounds.'}, {what:'2·x + (−14) = −2 (total charge)', why:'Rule 5: sum = total charge of the ion.', predict:{q:'Cr = ?', hint:'Solve for x.'}}, {what:'2x = +12 → x = +6', why:'Each Cr is +6 in dichromate. This is a classic DAT high-yield: Cr₂O₇²⁻ → Cr(+6).'}]},
+      {q:'What is oxidized and what is reduced: 2Fe³⁺ + Sn²⁺ → 2Fe²⁺ + Sn⁴⁺?', steps:[{what:'Fe: +3 → +2 (gained e⁻ → reduced)', why:'Decrease in oxidation state = reduction = gains electrons.'}, {what:'Sn: +2 → +4 (lost e⁻ → oxidized)', why:'Increase in oxidation state = oxidation = loses electrons.', predict:{q:'Who is the reducing agent?', hint:'The one getting oxidized.'}}, {what:'Sn²⁺ is the reducing agent; Fe³⁺ is the oxidizing agent', why:'The reducing agent donates electrons (gets oxidized). The oxidizing agent accepts them (gets reduced).'}]},
+      {q:'Oxidation state of N in NH₄⁺?', steps:[{what:'H = +1 each; 4 H = +4 total', why:'Rule 4: H = +1 in most compounds.'}, {what:'x + 4(+1) = +1', why:'Sum = +1 (the charge of NH₄⁺).'}, {what:'x = −3', why:'N is −3 in ammonium — same as in NH₃.'}]}
     ],
     faded:[
       {prompt:'Neutrons in ²³⁵₉₂U?', lcd:'Mass#−Z.', blank:'235 − 92 = ___', answer:'143'},
@@ -5785,11 +5901,13 @@ const MODULES = {
     ],
     practice:['at1','at2','at3','at4','at5','at6','at7','at8'],
     masteryProblems:['at5','at6','at7','at8'],
-    lock:'Atomic # = identity. Charge changes electrons, never protons.',
-    trap:'Students assume charge changes proton count. NEVER does. Charge = e⁻ gained (−) or lost (+).',
+    lock:'Atomic # = identity. Charge changes electrons, never protons. Oxidation states: element=0; ion=charge; O=−2 (peroxide −1); H=+1 (hydride −1); sum=total charge.',
+    trap:'Students assume charge changes proton count. NEVER does. Charge = e⁻ gained (−) or lost (+). For oxidation states: forgetting that the SUM (including stoich coefficients) must equal the species charge — for SO₄²⁻ it is −2, not 0.',
     coachTricks:[
       {when:'Confused by isotope notation', name:'<em>Sub = base, super = total</em>', move:'On ²³⁵₉₂U, SUBSCRIPT is proton count. SUPERSCRIPT is mass. Subtract for neutrons.', why:'Naming each removes the freeze.', lock:'Sub=p. Super=mass.', coach:true, placeholder:true},
-      {when:'Aufbau exception (Cu, Cr)', name:'<em>Half-full or full</em>', move:'Cu: [Ar] 4s¹ 3d¹⁰. Cr: [Ar] 4s¹ 3d⁵. Promote 4s e⁻ to fill d.', why:'d⁵ and d¹⁰ are stable.', lock:'d⁵, d¹⁰ steal from 4s.', coach:true, placeholder:true}
+      {when:'Aufbau exception (Cu, Cr)', name:'<em>Half-full or full</em>', move:'Cu: [Ar] 4s¹ 3d¹⁰. Cr: [Ar] 4s¹ 3d⁵. Promote 4s e⁻ to fill d.', why:'d⁵ and d¹⁰ are stable.', lock:'d⁵, d¹⁰ steal from 4s.', coach:true, placeholder:true},
+      {when:'Oxidation state of a buried atom', name:'<em>Pin the easy atoms first</em>', move:'For something like Cr₂O₇²⁻: pin O = −2 (rule 3) → 7·(−2) = −14. Set 2x + (−14) = −2 (the ion charge). Solve: 2x = +12 → x = +6. Same recipe for ClO₃⁻, MnO₄⁻, NH₄⁺ etc.', why:'Pinning the known atoms reduces every problem to one variable.', lock:'Pin O and H first. Solve for the rest.', coach:true, placeholder:true},
+      {when:'Identifying oxidation vs reduction', name:'<em>OIL RIG (Tommy\'s version)</em>', move:'<b>O</b>xidation <b>I</b>s <b>L</b>oss of electrons → ox. state INCREASES. <b>R</b>eduction <b>I</b>s <b>G</b>ain → ox. state DECREASES. The species that gets oxidized IS the reducing agent.', why:'Direction of the ox-state change tells you everything.', lock:'OIL RIG. Oxidation up. Reduction down.', coach:true, placeholder:true}
     ]
   },
   'periodic': {
@@ -5821,7 +5939,7 @@ const MODULES = {
     skill:'bonding', tier:0, num:'03',
     title:'Bonding <em>Basics</em>',
     sub:'Ionic vs covalent vs metallic — predicting from ΔEN. Polar vs nonpolar covalent.',
-    pattern:'Bond type from <b>ΔEN</b>. ΔEN > 1.7 → ionic. 0.4–1.7 → polar covalent. <0.4 → nonpolar covalent. Metals + metals → metallic.',
+    pattern:'Bond type from <b>ΔEN</b>. ΔEN > 1.7 → ionic. 0.4–1.7 → polar covalent. <0.4 → nonpolar covalent. Metals + metals → metallic.<br><br><b>Cross-link:</b> Bond type predicts molecular polarity only when combined with geometry (VSEPR). Use the VSEPR Predictor tool (sidebar) to check geometry after determining bond type here.',
     formula:'ΔEN > 1.7 → Ionic<br>0.4 ≤ ΔEN ≤ 1.7 → Polar covalent<br>ΔEN < 0.4 → Nonpolar covalent',
     visualType:'en-dial', visualData:{a:'Na', b:'Cl'},
     worked:[
@@ -5846,7 +5964,7 @@ const MODULES = {
     skill:'lewis', tier:0, num:'04',
     title:'Lewis <em>Structures</em>',
     sub:'Counting valence e⁻, drawing bonds, octets, formal charge.',
-    pattern:"Total valence e⁻ first. Then central atom (least EN, except H). Singles, fill outer octets, leftover on center. Center short of octet → multiple bonds. <span class='gold'>FC = group# − dots − ½ sticks</span>; want zero.",
+    pattern:"Total valence e⁻ first. Then central atom (least EN, except H). Singles, fill outer octets, leftover on center. Center short of octet → multiple bonds. <span class='gold'>FC = group# − dots − ½ sticks</span>; want zero.<br><br><b>Cross-link:</b> Once you have the Lewis structure, the electron groups on the central atom determine geometry via VSEPR. Use the VSEPR Predictor (sidebar) for instant lookup. Lewis acids and bases are also explained in the ph-basics module (Acid-Base section).",
     formula:'e⁻ = Σ valence (± charge)<br>FC = G − non-bonding − ½ bonding<br>Period 3+ can expand',
     videoUrl:'tiktoks/lewis-five-steps-tiktok.html', videoTitle:'Lewis in 5 steps (CO₂ build)', videoDur:'~85 sec',
     visualType:'lewis-builder', visualData:{defaultMolecule:'CO2'},
@@ -5871,26 +5989,32 @@ const MODULES = {
   'vsepr': {
     skill:'vsepr', tier:0, num:'05',
     title:'VSEPR &amp; <em>Geometry</em>',
-    sub:'Predicting shape from electron groups + LPs. Polarity from shape + bond polarity.',
-    pattern:'Count <b>electron groups</b> (each bond = 1, each LP = 1). Geometry from groups; molecular shape from groups − LPs.',
-    formula:'Steric # = bonded atoms + LPs<br>2→linear, 3→trig planar, 4→tetra<br>5→trig bipyr, 6→octa',
+    sub:'Predicting shape from electron groups + LPs. Molecular polarity from shape + bond polarity.',
+    pattern:'Count <b>electron groups</b> (each bond = 1, each LP = 1). Geometry from groups; molecular shape from groups − LPs.<br><br><b>Molecular polarity (the integration step):</b> a molecule is polar when it has both (1) <em>polar bonds</em> (ΔEN ≥ 0.4 — see Bonding) AND (2) <em>asymmetric geometry</em> so the bond dipoles do not cancel. Symmetry kills net dipole even when individual bonds are very polar.<br><br><b>The two-question test for any molecule:</b><br>1. Are there polar bonds? (Look at electronegativity differences.)<br>2. Does VSEPR geometry let those bond dipoles cancel out?<br>If YES + NO → molecule is polar. If YES + YES → bond polarity cancels → nonpolar. If NO → nonpolar regardless of shape.<br><br><b>Classic contrasts:</b> CO₂ has two strongly polar C=O bonds but linear geometry → the dipoles point opposite ways and cancel → nonpolar. H₂O has two equally polar O−H bonds but BENT geometry → dipoles add → polar. BF₃ has polar B−F bonds but trigonal-planar shape → 3 equal dipoles at 120° cancel → nonpolar. NH₃ has polar N−H bonds AND trigonal pyramidal shape → polar (the lone pair breaks symmetry). CCl₄ has polar C−Cl bonds but tetrahedral shape → cancel → nonpolar. CHCl₃ has the same general shape but is asymmetric (one H, three Cl) → polar.<br><br><b>Cross-link:</b> Use the VSEPR Predictor tool (sidebar → "VSEPR Predictor") for instant geometry lookup. For the underlying electron structure that drives shape, see the Lewis Structures and Bonding modules. For the IMF consequences of polarity (dipole-dipole, H-bonding) see the IMFs module.',
+    formula:'Steric # = bonded atoms + LPs<br>2→linear, 3→trig planar, 4→tetra<br>5→trig bipyr, 6→octa<br>Molecular polarity = polar bonds AND asymmetric geometry<br>Symmetric (linear, trig planar, tetrahedral, trig bipyr, octa with all-same atoms) → bond dipoles cancel → nonpolar',
     visualType:'vsepr-gallery', visualData:{shape:'tetrahedral'},
     worked:[
       {q:'Geometry of NH₃?', steps:[{what:'3 bonds + 1 LP = 4 groups', why:'Steric # counts each bond AND each lone pair.'}, {what:'4 → tetrahedral electron geometry', why:'4 groups always arrange tetrahedrally to minimize repulsion.', predict:{q:'Shape with 1 LP?', hint:'Drop LP.'}}, {what:'Trigonal pyramidal', why:'Molecular shape names atoms only — drop the LP from the name.'}]},
       {q:'Shape of CO₂?', steps:[{what:'2 double bonds = 2 groups', why:'Doubles count once.'}, {what:'Linear', why:'180°.'}]},
-      {q:'Shape of XeF₄?', steps:[{what:'4 + 2 LP = 6 groups', why:'.'}, {what:'Octahedral, LPs opposite (180°)', why:'Min repulsion.'}, {what:'Square planar', why:'.'}]}
+      {q:'Shape of XeF₄?', steps:[{what:'4 + 2 LP = 6 groups', why:'.'}, {what:'Octahedral, LPs opposite (180°)', why:'Min repulsion.'}, {what:'Square planar', why:'.'}]},
+      {q:'<b>CO₂ vs H₂O — both have polar bonds. Why is one polar and the other nonpolar?</b>', steps:[{what:'CO₂: 2 polar C=O bonds, ΔEN ≈ 1.0 each', why:'Strong individual bond dipoles, oxygen pulls electron density.', predict:{q:'Geometry?', hint:'2 groups → linear.'}}, {what:'CO₂: linear (O=C=O, 180°) → dipoles point opposite directions and CANCEL', why:'Equal-magnitude vectors at 180° sum to zero. Molecule is NONPOLAR despite the polar bonds.'}, {what:'H₂O: 2 polar O−H bonds, ΔEN ≈ 1.4', why:'Even more polar bonds than CO₂.'}, {what:'H₂O: BENT (~104.5°) due to 2 lone pairs → dipoles ADD → POLAR', why:'When the geometry is asymmetric, polar bonds cannot cancel. The two O−H dipoles partially align, giving water its strong net dipole.'}]},
+      {q:'<b>BF₃ vs NH₃ — same number of bonds, opposite polarity verdict. Why?</b>', steps:[{what:'BF₃: 3 polar B−F bonds; trigonal planar (3 groups, 0 LP)', why:'B is in group 13 → only 3 bonds, no lone pair on the central atom.', predict:{q:'Do they cancel?', hint:'Symmetry.'}}, {what:'BF₃: 3 dipoles at 120° in a flat plane → vectors cancel → NONPOLAR', why:'Three equal vectors evenly spaced sum to zero, just like CO₂\'s pair did.'}, {what:'NH₃: 3 polar N−H bonds; tetrahedral electron geom (3 bonds + 1 LP)', why:'Nitrogen has a lone pair — the geometry becomes trigonal pyramidal, NOT planar.'}, {what:'NH₃: pyramidal → dipoles point downward AND the LP\'s electron density adds → strong net dipole → POLAR', why:'The lone pair breaks the symmetry that would have cancelled the dipoles. NH₃ is polar enough to act as a Lewis base and an H-bond donor.'}]}
     ],
     faded:[
       {prompt:'H₂O shape?', lcd:'2 + 2 LP = 4.', blank:'___', answer:'bent'},
-      {prompt:'BF₃ shape?', lcd:'3, 0 LP.', blank:'___', answer:'trigonal planar'}
+      {prompt:'BF₃ shape?', lcd:'3, 0 LP.', blank:'___', answer:'trigonal planar'},
+      {prompt:'CCl₄ — polar or nonpolar?', lcd:'Tetrahedral, identical atoms → symmetric.', blank:'___', answer:'nonpolar'},
+      {prompt:'CHCl₃ — polar or nonpolar? (same shape as CCl₄ but H replaces one Cl)', lcd:'Asymmetric → no cancellation.', blank:'___', answer:'polar'}
     ],
     practice:['v1','v2','v3','v4','v5'],
     masteryProblems:['v3','v4','v5'],
-    lock:'Groups = bonds + LPs. Shape = atoms only.',
-    trap:"Students count double bonds as 2 groups (it's 1).",
+    lock:'Groups = bonds + LPs. Shape = atoms only. Polar molecule = polar bonds AND asymmetric shape.',
+    trap:"Students count double bonds as 2 groups (it's 1). Students assume all polar bonds → polar molecule (CO₂, BF₃, CCl₄ all have polar bonds but are nonpolar by symmetry).",
     coachTricks:[
       {when:'5-group LP placement', name:'<em>LPs go equatorial</em>', move:'Trig bipyr: LPs equatorial. SF₄=see-saw, ClF₃=T, XeF₂=linear.', why:'Equatorial has 120° neighbors.', lock:'LP→equatorial.', coach:true, placeholder:true},
-      {when:'Bond angle', name:'<em>LPs squeeze ~2°</em>', move:'CH₄=109.5°, NH₃=107°, H₂O=104.5°. Each LP shaves ~2°.', why:'LPs repel more.', lock:'~2° per LP.', coach:true, placeholder:true}
+      {when:'Bond angle', name:'<em>LPs squeeze ~2°</em>', move:'CH₄=109.5°, NH₃=107°, H₂O=104.5°. Each LP shaves ~2°.', why:'LPs repel more.', lock:'~2° per LP.', coach:true, placeholder:true},
+      {when:'Polar molecule vs polar bond', name:'<em>Symmetry kills polarity</em>', move:'Tommy\'s 2-step: (1) Are there polar bonds? (2) Does VSEPR geometry cancel them? Linear/trigonal-planar/tetrahedral/trig-bipyr/octahedral with identical atoms = symmetric = nonpolar. ANY lone pair on the central atom or different terminal atoms breaks symmetry → polar.', why:'Net dipole is a vector sum. Symmetric vectors cancel.', lock:'Polar bonds + asymmetric shape = polar molecule.', coach:true, placeholder:true},
+      {when:'Spotting symmetry fast', name:'<em>"All same, no LP" check</em>', move:'If the central atom has NO lone pairs AND all terminal atoms are the same, the molecule is nonpolar (CO₂, BF₃, CH₄, PCl₅, SF₆). Break either rule and it becomes polar (NH₃ has LP, CHCl₃ has different terminals).', why:'Both conditions must hold for cancellation.', lock:'No LP + same terminals = nonpolar.', coach:true, placeholder:true}
     ]
   },
   'mole-conv': {
@@ -5903,19 +6027,23 @@ const MODULES = {
     worked:[
       {q:'Mol in 36 g H₂O?', steps:[{what:'MW = 18', why:'2(1) + 16 = 18 g/mol.'}, {what:'mol = 36/18 = 2', why:'mass divided by molar mass gives moles.', predict:{q:'Molecules?', hint:'× Avogadro.'}}, {what:'2 × 6.022×10²³ = 1.2×10²⁴', why:'1 mol = Avogadro\'s number of particles.'}]},
       {q:'V of 0.5 mol N₂ at STP?', steps:[{what:'22.4 L/mol at STP', why:'Molar volume of any ideal gas at 0°C, 1 atm.'}, {what:'V = 0.5 × 22.4 = 11.2 L', why:'Direct multiplication — only valid AT STP.'}]},
-      {q:'Mass of 3.01×10²³ Mg atoms?', steps:[{what:'mol = 3.01/6.022 = 0.5', why:'Particles divided by Avogadro = moles.'}, {what:'Mass = 0.5 × 24.3 = 12.15 g', why:'Moles × molar mass of Mg = grams.'}]}
+      {q:'Mass of 3.01×10²³ Mg atoms?', steps:[{what:'mol = 3.01/6.022 = 0.5', why:'Particles divided by Avogadro = moles.'}, {what:'Mass = 0.5 × 24.3 = 12.15 g', why:'Moles × molar mass of Mg = grams.'}]},
+      {q:'Combustion analysis: burning an unknown hydrocarbon CxHy gives 4.40 g CO₂ and 2.70 g H₂O. Find the empirical formula.', steps:[{what:'mol CO₂ = 4.40/44.0 = 0.100 → mol C = 0.100', why:'Each mol CO₂ contains exactly 1 mol C. MW(CO₂) = 44.0 g/mol.'}, {what:'mol H₂O = 2.70/18.0 = 0.150 → mol H = 0.300', why:'Each mol H₂O contains 2 mol H. So mol H = 2 × 0.150 = 0.300.', predict:{q:'C:H ratio?', hint:'0.100 : 0.300.'}}, {what:'Ratio C:H = 0.100 : 0.300 = 1:3', why:'Divide both by the smaller (0.100).'}, {what:'Empirical formula: CH₃', why:'Simplest whole-number ratio.'}]},
+      {q:'Combustion analysis continued: the molecular weight is 30 g/mol. Find the molecular formula from CH₃ empirical.', steps:[{what:'Empirical formula mass: 12 + 3(1) = 15 g/mol', why:'Sum atomic masses for CH₃.'}, {what:'n = MW / EFM = 30/15 = 2', why:'Divide the given molecular weight by the empirical formula mass.', predict:{q:'Molecular formula?', hint:'Multiply subscripts by n=2.'}}, {what:'Molecular formula: C₂H₆ (ethane)', why:'Multiply each subscript by 2: CH₃ × 2 = C₂H₆.'}]}
     ],
     faded:[
       {prompt:'Mol in 88 g CO₂ (MW=44)?', lcd:'g/MW.', blank:'___', answer:'2'},
-      {prompt:'V of 1.5 mol gas at STP?', lcd:'×22.4.', blank:'___', answer:'33.6 L'}
+      {prompt:'V of 1.5 mol gas at STP?', lcd:'×22.4.', blank:'___', answer:'33.6 L'},
+      {prompt:'Combustion gives 0.20 mol CO₂. mol C = ?', lcd:'1 CO₂ = 1 C.', blank:'___', answer:'0.20 mol'}
     ],
     practice:['m1','m2','m3','m4','m5','m6','m7','m8'],
     masteryProblems:['m5','m6','m7','m8'],
-    lock:'Mol is the bridge. Always go through mol.',
-    trap:'Use 22.4 L/mol when NOT at STP. Only valid at 0°C, 1 atm.',
+    lock:'Mol is the bridge. Always go through mol. Combustion: CO₂→mol C; H₂O→mol H (×2). Ratio→empirical. Divide MW by empirical mass for n→molecular.',
+    trap:'Use 22.4 L/mol when NOT at STP. Only valid at 0°C, 1 atm. Combustion trap: forgetting that mol H = 2 × mol H₂O (water has 2 H atoms).',
     coachTricks:[
       {when:'Non-STP gas', name:'<em>Use PV=nRT</em>', move:"When P or T given, use n = PV/RT. Don't use 22.4.", why:'22.4 is a special case.', lock:'STP only ⇒ 22.4.', coach:true, placeholder:true},
-      {when:'Empirical from %', name:'<em>%→g→mol→ratio</em>', move:'Assume 100 g sample. Each %=g. Convert to mol, divide by smallest.', why:'Mole ratio gives subscripts.', lock:'Pretend 100 g.', coach:true, placeholder:true}
+      {when:'Empirical from %', name:'<em>%→g→mol→ratio</em>', move:'Assume 100 g sample. Each %=g. Convert to mol, divide by smallest.', why:'Mole ratio gives subscripts.', lock:'Pretend 100 g.', coach:true, placeholder:true},
+      {when:'Combustion analysis', name:'<em>CO₂ holds C; H₂O holds H</em>', move:'All the carbon ends up in CO₂ (÷44 → mol C). All the hydrogen ends up in H₂O (÷18 then ×2 → mol H). Then find ratio.', why:'Every hydrocarbon combustion: C→CO₂, H→H₂O.', lock:'CO₂→C; H₂O÷18×2→H.', coach:true, placeholder:true}
     ]
   },
   'lim-react': {
@@ -5946,39 +6074,44 @@ const MODULES = {
   'solutions': {
     skill:'solutions', tier:0, num:'08',
     title:'Solutions &amp; <em>Concentration</em>',
-    sub:'Molarity, molality, %w/w, dilution (M₁V₁=M₂V₂), unit conversions.',
-    pattern:'<b>M = mol/L solution</b>. <b>m = mol/kg solvent</b>. Dilution: M₁V₁=M₂V₂. %w/w = g_solute/g_sol × 100.',
-    formula:'M = mol/L<br>m = mol/kg solvent<br>M₁V₁ = M₂V₂<br>%w/w = g/g × 100',
+    sub:'Molarity, molality, %w/w, dilution (M₁V₁=M₂V₂), unit conversions. Henry\'s Law: gas solubility.',
+    pattern:'<b>M = mol/L solution</b>. <b>m = mol/kg solvent</b>. Dilution: M₁V₁=M₂V₂. %w/w = g_solute/g_sol × 100.<br><br><b>Henry\'s Law:</b> the solubility of a gas in a liquid is directly proportional to the partial pressure of that gas above the liquid: <b>C = k_H · P_gas</b>. k_H is the Henry\'s law constant (mol/L·atm, substance-specific). Intuition: higher pressure → more gas molecules hit the surface → more dissolve. Applications: carbonated beverages (CO₂ sealed under pressure dissolves; open = fizz), scuba diving / nitrogen narcosis (N₂ dissolves into blood at depth; rapid ascent → bubbles = decompression sickness), hyperbaric O₂ therapy. Temperature effect: gas solubility decreases with increasing temperature (unlike most solids).',
+    formula:'M = mol/L<br>m = mol/kg solvent<br>M₁V₁ = M₂V₂<br>%w/w = g/g × 100<br>Henry\'s Law: C = k_H · P_gas (gas solubility ∝ pressure)',
     visualType:'dilution-beakers', visualData:{M1:1.0, V1:100, V2:500},
     worked:[
       {q:'M of 4 g NaOH (MW=40) in 250 mL?', steps:[{what:'mol = 4/40 = 0.1', why:'Grams divided by molar mass gives moles.'}, {what:'L = 0.250', why:'Convert mL to L for molarity (always SI).', predict:{q:'M?', hint:'mol/L.'}}, {what:'M = 0.1/0.25 = 0.4 M', why:'Molarity = mol solute / L solution.'}]},
       {q:'Dilute 50 mL of 6 M to 300 mL — final M?', steps:[{what:'M₁V₁=M₂V₂', why:'Moles of solute conserved on dilution; only volume changes.'}, {what:'6(50)=M₂(300) → 1 M', why:'Same units on both sides cancel — mL works fine.'}]},
-      {q:'%w/w of 10 g NaCl in 90 g water?', steps:[{what:'Total = 100 g', why:'Solute (10 g) + solvent (90 g) = solution mass.'}, {what:'%w/w = 10%', why:'10 g solute / 100 g solution × 100.'}]}
+      {q:'%w/w of 10 g NaCl in 90 g water?', steps:[{what:'Total = 100 g', why:'Solute (10 g) + solvent (90 g) = solution mass.'}, {what:'%w/w = 10%', why:'10 g solute / 100 g solution × 100.'}]},
+      {q:'Henry\'s Law: CO₂ has k_H = 3.4×10⁻² mol/(L·atm) at 25°C. If the partial pressure of CO₂ above a soft drink is 2.5 atm, what is [CO₂] dissolved?', steps:[{what:'C = k_H · P_gas', why:'Henry\'s law: solubility is directly proportional to gas partial pressure.'}, {what:'C = 3.4×10⁻² × 2.5 = 0.085 mol/L', why:'Direct multiplication — units: (mol/L·atm) × atm = mol/L.', predict:{q:'Opening the can (P→0.0004 atm)?', hint:'C drops by ~6000×.'}}, {what:'Opening the can drops P to ~0.0004 atm → [CO₂] becomes negligible → bubbles form as gas escapes', why:'This is exactly what fizzing is: CO₂ coming out of solution when the pressure that was keeping it dissolved is released.'}]}
     ],
     faded:[
       {prompt:'M of 0.5 mol KCl in 2 L?', lcd:'mol/L.', blank:'___', answer:'0.25'},
-      {prompt:'Dilute 25 mL 2 M → 100 mL?', lcd:'M₁V₁=M₂V₂.', blank:'___', answer:'0.5 M'}
+      {prompt:'Dilute 25 mL 2 M → 100 mL?', lcd:'M₁V₁=M₂V₂.', blank:'___', answer:'0.5 M'},
+      {prompt:'Henry\'s Law: double the gas pressure → solubility ___?', lcd:'C ∝ P.', blank:'___', answer:'doubles'}
     ],
     practice:['s1','s2','s3','s4','s5','s6','s7','s8'],
     masteryProblems:['s5','s6','s7','s8'],
-    lock:'M uses solution volume. m uses solvent mass.',
-    trap:'Use mL instead of L for molarity.',
+    lock:'M uses solution volume. m uses solvent mass. Henry: C = k_H × P (gas solubility ∝ pressure; decreases with temperature).',
+    trap:'Use mL instead of L for molarity. Henry\'s law trap: gas solubility DECREASES with temperature (opposite of most solids) — the test exploits this.',
     coachTricks:[
       {when:'%w/w → M', name:'<em>100-g sample</em>', move:'Assume 100 g solution. % is now grams. Use density for V.', why:'Removes unknown total.', lock:'Pretend 100 g.', coach:true, placeholder:true},
-      {when:'Dilution', name:'<em>Same units OK</em>', move:'Both V can be mL — units cancel.', why:'Consistent units, not specific.', lock:'Same unit OK.', coach:true, placeholder:true}
+      {when:'Dilution', name:'<em>Same units OK</em>', move:'Both V can be mL — units cancel.', why:'Consistent units, not specific.', lock:'Same unit OK.', coach:true, placeholder:true},
+      {when:'Henry\'s Law context', name:'<em>Pressure in = gas stays in</em>', move:'Carbonated drinks: CO₂ stays dissolved under high pressure cap. Scuba: N₂ dissolves at depth (high P). Both follow C = k_H·P.', why:'Anytime you see gas+liquid+pressure, think Henry.', lock:'Gas+liquid+P → Henry\'s Law.', coach:true, placeholder:true}
     ]
   },
   'gas-laws': {
     skill:'gas-laws', tier:1, num:'09',
     title:'Gas <em>Laws</em>',
-    sub:"Boyle's, Charles's, combined, ideal gas, Dalton's, Graham's effusion.",
-    pattern:'Master <b>PV = nRT</b>. R = 0.0821 L·atm/(mol·K). Combined: P₁V₁/T₁ = P₂V₂/T₂. Dalton: P_T = ΣP_i. Graham: rate ∝ 1/√M.',
-    formula:'PV = nRT<br>P₁V₁/T₁ = P₂V₂/T₂<br>P_T = ΣP_i<br>r₁/r₂ = √(M₂/M₁)',
+    sub:"Boyle's, Charles's, combined, ideal gas, Dalton's, Graham's effusion. When ideal breaks: real gas / van der Waals.",
+    pattern:'Master <b>PV = nRT</b>. R = 0.0821 L·atm/(mol·K). Combined: P₁V₁/T₁ = P₂V₂/T₂. Dalton: P_T = ΣP_i. Graham: rate ∝ 1/√M.<br><br><b>When ideal fails — real gases:</b> the ideal-gas law assumes (1) molecules are point particles with no volume of their own, and (2) molecules do not attract or repel one another. Both assumptions break down at <b>high pressure</b> (molecules crowded — their own volume matters) and <b>low temperature</b> (molecules slow — IMFs pull them together, lowering measured P). <b>Van der Waals correction:</b> [P + a(n/V)²]·(V − nb) = nRT. The <em>a</em> term adds back attractive forces; the <em>b</em> term subtracts excluded volume. Polar gases (NH₃, H₂O) and large gases deviate most. <b>Closest to ideal:</b> small, nonpolar, low-IMF gases at high T and low P (He, Ne, H₂).',
+    formula:'PV = nRT<br>P₁V₁/T₁ = P₂V₂/T₂<br>P_T = ΣP_i<br>r₁/r₂ = √(M₂/M₁)<br>Van der Waals: [P + a(n/V)²](V − nb) = nRT<br>Real ≈ ideal when: high T, low P, small nonpolar gas',
     visualType:'gas-slider', visualData:{solveFor:'P', P:1, V:22.4, n:1, T:273},
     worked:[
       {q:'2 mol gas, 1 atm, 27°C — V?', steps:[{what:'T = 300 K', why:'°C + 273 — gas laws REQUIRE Kelvin.'}, {what:'V = nRT/P = 2(0.0821)(300)/1', why:'Solve PV=nRT for V; use R = 0.0821 L·atm/(mol·K).', predict:{q:'≈ ?', hint:'~49.'}}, {what:'V ≈ 49.3 L', why:'Plug and compute.'}]},
       {q:"Boyle's: 2 atm, 4 L → 2 L. New P?", steps:[{what:'P₁V₁=P₂V₂', why:'At fixed n and T, pressure × volume is constant.'}, {what:'2(4)=P₂(2) → 4 atm', why:'Compress to half the volume → pressure doubles.'}]},
-      {q:'Effusion ratio H₂ vs O₂?', steps:[{what:'M(O₂)=32, M(H₂)=2', why:'Molar masses of the two gases.'}, {what:'r(H₂)/r(O₂) = √(32/2) = 4', why:'Graham\'s law: lighter gas effuses faster, by √(M_heavy/M_light).'}]}
+      {q:'Effusion ratio H₂ vs O₂?', steps:[{what:'M(O₂)=32, M(H₂)=2', why:'Molar masses of the two gases.'}, {what:'r(H₂)/r(O₂) = √(32/2) = 4', why:'Graham\'s law: lighter gas effuses faster, by √(M_heavy/M_light).'}]},
+      {q:'Of He, NH₃, CO₂, and N₂, which behaves MOST ideally at 0 °C and 1 atm? Which deviates MOST?', steps:[{what:'List forces: He = noble (London only, tiny); NH₃ = H-bond donor; CO₂ = nonpolar, larger; N₂ = small nonpolar.', why:'The deviation tracks IMFs and molecular size — both make a gas "stickier" than ideal.', predict:{q:'Best behaved?', hint:'Smallest, weakest IMF.'}}, {what:'He behaves most ideally', why:'Tiny molecule, only weak London dispersion — closest to a true point particle with no attractions.'}, {what:'NH₃ deviates most', why:'Hydrogen bonding pulls molecules together, so the measured pressure is LOWER than PV=nRT predicts. Bigger <em>a</em> in the van der Waals correction.'}]},
+      {q:'A real gas at 200 atm and 200 K — does it occupy MORE or LESS volume than the ideal-gas law predicts?', steps:[{what:'Two competing effects', why:'High P → excluded volume (the b term) makes V slightly LARGER than ideal. Low T → attractions (the a term) pull molecules in, making V SMALLER than ideal.'}, {what:'Cold dominates: attractions win at low T → V_real < V_ideal', why:'Below the Boyle temperature, attractive forces dominate; the gas "sucks itself in" relative to ideal behaviour.', predict:{q:'When would the b term win?', hint:'Hot and crushed.'}}, {what:'At very high T and high P, repulsive (excluded volume) dominates → V_real > V_ideal', why:'Crossover at the Boyle temperature; this is why real-gas isotherms differ above vs below it.'}]}
     ],
     faded:[
       {prompt:'V of 1 mol at STP?', lcd:'PV=nRT.', blank:'___', answer:'22.4 L'},
@@ -5990,14 +6123,15 @@ const MODULES = {
     trap:'Forget Celsius → Kelvin. Always +273.',
     coachTricks:[
       {when:'Mole fraction', name:'<em>Pᵢ = χᵢ · P_T</em>', move:'Partial = mole fraction × total.', why:'Dalton decomposed.', lock:'χ × P_T = Pᵢ.', coach:true, placeholder:true},
-      {when:'Real gas', name:'<em>Real deviates at high P, low T</em>', move:'Ideal assumes point particles, no IMFs. Fails when crowded or slow.', why:'Volume + attraction matter.', lock:'Cold + crushed = real.', coach:true, placeholder:true}
+      {when:'Real gas vs ideal', name:'<em>Real deviates at high P, low T</em>', move:'Ideal assumes point particles with no IMFs. Real gases fail this when (a) molecules are crowded (high P) so excluded volume matters, or (b) molecules are slow (low T) so attractions matter. Closest to ideal: He and Ne at room T.', why:'Volume + attraction terms dominate at the extremes.', lock:'Cold + crushed = real. Hot + spacious = ideal.', coach:true, placeholder:true},
+      {when:'van der Waals lookup', name:'<em>"a" pulls in, "b" pushes out</em>', move:'In [P + a(n/V)²](V − nb) = nRT, a corrects pressure UPWARD (attractions LOWERED real P below ideal) and b corrects volume DOWNWARD (each molecule occupies finite space). Polar / H-bonding gases have larger a; bigger gases have larger b.', why:'Both terms come from the assumptions ideal violates.', lock:'a = attraction, b = bulk.', coach:true, placeholder:true}
     ]
   },
   'enthalpy': {
     skill:'enthalpy', tier:1, num:'10',
     title:'Thermo — <em>Enthalpy</em>',
     sub:"ΔH, exo/endo, calorimetry q=mcΔT, Hess's law, ΔH_f.",
-    pattern:'<b>ΔH</b> is heat at constant P. Negative=exo. q=mcΔT for calorimetry. Hess: ΔH=ΣΔH_f(prod) − ΣΔH_f(rxt).',
+    pattern:'<b>ΔH</b> is heat at constant P. Negative=exo. q=mcΔT for calorimetry. Hess: ΔH=ΣΔH_f(prod) − ΣΔH_f(rxt).<br><br><b>Cross-link:</b> The enthalpy of solution (ΔH_soln) ties directly into colligative properties — when a salt dissolves it releases or absorbs heat, and the entropy gain from mixing is what drives the colligative effects. See the Colligative Properties module.',
     formula:'q = mcΔT<br>ΔH = ΣΔH_f(p) − ΣΔH_f(r)<br>Hess: add steps',
     visualType:'rxn-coord', visualData:{dH:-50, Ea:80},
     worked:[
@@ -6022,7 +6156,7 @@ const MODULES = {
     skill:'entropy', tier:1, num:'11',
     title:'Thermo — <em>Entropy</em>',
     sub:'ΔS = disorder change. Predicting sign. ΔS for phase changes.',
-    pattern:'<b>ΔS &gt; 0</b> when disorder ↑: s→l→g, fewer→more gas mol, dissolving, heating. ΔS &lt; 0 opposite. Calculate: ΔS = ΣS(p) − ΣS(r).',
+    pattern:'<b>ΔS &gt; 0</b> when disorder ↑: s→l→g, fewer→more gas mol, dissolving, heating. ΔS &lt; 0 opposite. Calculate: ΔS = ΣS(p) − ΣS(r).<br><br><b>Cross-link:</b> The entropy of mixing is the thermodynamic driver behind all colligative properties — when solute particles are added, the solvent\'s entropy increases (more microstates), lowering its chemical potential. This is why FP drops and BP rises. See the Colligative Properties module.',
     formula:'gas mol ↑ → ΔS > 0<br>s→l→g → ΔS > 0<br>ΔS° = ΣS°(p) − ΣS°(r)',
     visualType:'entropy-box', visualData:{phase:'liquid'},
     worked:[
@@ -6047,7 +6181,7 @@ const MODULES = {
     skill:'gibbs', tier:1, num:'12',
     title:'Thermo — <em>Gibbs</em>',
     sub:'ΔG = ΔH − TΔS. Predicting spontaneity. Sign maps. Cross-over T.',
-    pattern:'<b>ΔG = ΔH − TΔS</b>. ΔG &lt; 0 = spontaneous. (−H,+S) always; (−H,−S) low T; (+H,+S) high T; (+H,−S) never. T_cross = ΔH/ΔS.',
+    pattern:'<b>ΔG = ΔH − TΔS</b>. ΔG &lt; 0 = spontaneous. (−H,+S) always; (−H,−S) low T; (+H,+S) high T; (+H,−S) never. T_cross = ΔH/ΔS.<br><br><b>Cross-link:</b> Colligative properties (boiling-point elevation, freezing-point depression, osmotic pressure) are rooted in the thermodynamics here — dissolving a solute lowers the chemical potential (ΔG) of the solvent, which is why FP drops and BP rises. See the Colligative Properties module for the formulas.',
     formula:'ΔG = ΔH − TΔS<br>ΔG &lt; 0 ⇒ spont<br>T_cross = ΔH/ΔS',
     videoUrl:'tiktoks/gibbs-quadrant-tiktok.html', videoTitle:'Read the signs (4-quadrant ΔG)', videoDur:'~80 sec',
     visualType:'gibbs-quadrant', visualData:{dH:-40, dS:100, T:298},
@@ -6096,27 +6230,31 @@ const MODULES = {
   },
   'arrhenius': {
     skill:'arrhenius', tier:1, num:'14',
-    title:'Kinetics — <em>Activation E + Catalysis</em>',
-    sub:'Arrhenius eq, T effect, catalysts lower E_a.',
-    pattern:"<b>k = A·e^(−Eₐ/RT)</b>. Higher T → bigger k. Higher Eₐ → smaller k. Catalyst lowers Eₐ for BOTH directions; doesn't change ΔH or K.",
-    formula:'k = A·exp(−Eₐ/RT)<br>ln(k₂/k₁) = (Eₐ/R)(1/T₁ − 1/T₂)<br>Catalyst ↓ Eₐ',
+    title:'Kinetics — <em>Activation E + Catalysis + Mechanisms</em>',
+    sub:'Arrhenius eq, T effect, catalysts lower E_a. Reaction mechanisms: elementary steps, slow step controls rate, intermediates vs catalysts.',
+    pattern:"<b>k = A·e^(−Eₐ/RT)</b>. Higher T → bigger k. Higher Eₐ → smaller k. Catalyst lowers Eₐ for BOTH directions; doesn't change ΔH or K.<br><br><b>Reaction Mechanisms:</b> a mechanism is a sequence of elementary steps. The <b>slow step (rate-determining step)</b> controls the overall rate — write the rate law from the slow step's reactants only (not intermediates). An <b>intermediate</b> is formed in one step and consumed in a later step; it appears in the mechanism but NOT in the overall equation. A <b>catalyst</b> is consumed in an early step and regenerated later — it appears in the overall equation but does not change ΔH or K. <b>Pre-equilibrium:</b> when a fast equilibrium precedes the slow step, substitute the K_eq expression to eliminate the intermediate from the final rate law.",
+    formula:'k = A·exp(−Eₐ/RT)<br>ln(k₂/k₁) = (Eₐ/R)(1/T₁ − 1/T₂)<br>Catalyst ↓ Eₐ<br>Rate law from slow step: rate = k[reactants in slow step]<br>Intermediate: formed then consumed · Catalyst: consumed then regenerated',
     visualType:'boltzmann-curve', visualData:{T:300, Ea:50},
     worked:[
       {q:'T raised 10°C → rate ~doubles. Why?', steps:[{what:'More molecules pass Eₐ', why:'Boltzmann distribution: heating shifts the high-energy tail up.', predict:{q:'Sign Eₐ?', hint:'>0.'}}, {what:'Eₐ > 0 → exp grows', why:'k ∝ exp(−Eₐ/RT); raising T makes the negative exponent less negative → k climbs.'}]},
       {q:'Catalyst on K_eq?', steps:[{what:'Lowers Eₐ both ways', why:'Same activation barrier dropped from forward AND reverse direction.'}, {what:'K UNCHANGED', why:'Same equilibrium, faster.'}]},
-      {q:'Eₐ=50 kJ. k(400)/k(300)?', steps:[{what:'ln(k₂/k₁)=(Eₐ/R)(1/300−1/400)', why:'Two-temperature Arrhenius form (eliminates pre-exponential A).'}, {what:'≈ 5 → k₂/k₁ ≈ 150', why:'A 100°C jump from 300→400 K with Eₐ=50 kJ gives a ~150-fold rate increase.'}]}
+      {q:'Eₐ=50 kJ. k(400)/k(300)?', steps:[{what:'ln(k₂/k₁)=(Eₐ/R)(1/300−1/400)', why:'Two-temperature Arrhenius form (eliminates pre-exponential A).'}, {what:'≈ 5 → k₂/k₁ ≈ 150', why:'A 100°C jump from 300→400 K with Eₐ=50 kJ gives a ~150-fold rate increase.'}]},
+      {q:'Mechanism: Step 1 (slow) NO₂ + NO₂ → NO₃ + NO. Step 2 (fast) NO₃ + CO → NO₂ + CO₂. Overall rate law?', steps:[{what:'Rate-determining step = Step 1 (slow)', why:'The overall rate cannot be faster than its slowest step — the slow step is the bottleneck.', predict:{q:'Rate law from slow step?', hint:'reactants of Step 1.'}}, {what:'Rate = k[NO₂]²', why:'Both NO₂ molecules appear as reactants in the slow step → second-order in NO₂.'}, {what:'NO₃ is an intermediate', why:'NO₃ is produced in Step 1 and consumed in Step 2 — it does not appear in the overall balanced equation.'}]},
+      {q:'Pre-equilibrium: Step 1 (fast equil) A + B ⇌ C (K₁). Step 2 (slow) C + D → products. Write rate law in terms of A, B, D only.', steps:[{what:'Rate from slow step = k₂[C][D]', why:'C is a reactant in the slow step; but C is an intermediate — we must eliminate it.'}, {what:'K₁ = [C]/([A][B]) → [C] = K₁[A][B]', why:'Use the fast equilibrium expression to solve for [C].', predict:{q:'Substitute?', hint:'Replace [C].'}}, {what:'Rate = k₂·K₁·[A][B][D] = k_obs[A][B][D]', why:'Combine the constants: k_obs = k₂K₁. No intermediate remains in the final rate law.'}]}
     ],
     faded:[
       {prompt:'Catalyst changes ΔH?', lcd:'.', blank:'___', answer:'no'},
-      {prompt:'Higher T → k ___?', lcd:'.', blank:'___', answer:'increases'}
+      {prompt:'Higher T → k ___?', lcd:'.', blank:'___', answer:'increases'},
+      {prompt:'Slow step is Step 1: A + B → C. Rate = ?', lcd:'Slow step gives rate law.', blank:'Rate = k·___', answer:'[A][B]'}
     ],
     practice:['ar1','ar2','ar3','ar4','ar5'],
     masteryProblems:['ar3','ar4','ar5'],
-    lock:'Catalyst speeds both directions equally.',
-    trap:"Catalyst shifts equilibrium? It doesn't. Also: <b>convert Eₐ from kJ/mol to J/mol</b> before plugging into ln(k₂/k₁) = (Eₐ/R)(1/T₁ − 1/T₂); R = 8.314 J/(mol·K).",
+    lock:'Slow step controls rate. Intermediate = formed then consumed. Catalyst = consumed then regenerated.',
+    trap:"Catalyst shifts equilibrium? It doesn't. Writing the rate law from the overall equation rather than the slow step — the overall balanced equation does NOT give you the rate law. Also: <b>convert Eₐ from kJ/mol to J/mol</b> before plugging into ln(k₂/k₁); R = 8.314 J/(mol·K).",
     coachTricks:[
       {when:'Two T ratio', name:'<em>ln-form</em>', move:'ln(k₂/k₁) = (Eₐ/R)(1/T₁ − 1/T₂).', why:'Eliminates A.', lock:'Two T → ln-form.', coach:true, placeholder:true},
-      {when:'Catalyst Q', name:'<em>Lower Eₐ both ways</em>', move:'Shorter pass over the hill — faster forward AND reverse.', why:'Same K, faster.', lock:'Same K, faster.', coach:true, placeholder:true}
+      {when:'Catalyst Q', name:'<em>Lower Eₐ both ways</em>', move:'Shorter pass over the hill — faster forward AND reverse.', why:'Same K, faster.', lock:'Same K, faster.', coach:true, placeholder:true},
+      {when:'Intermediate vs catalyst', name:'<em>Track it through steps</em>', move:'Intermediate: absent at start, gone at end. Catalyst: present at start, restored at end.', why:'The distinction shows up in DAT answer choices about mechanism species.', lock:'Intermediate comes and goes. Catalyst returns.', coach:true, placeholder:true}
     ]
   },
   'eq-kc': {
@@ -6205,19 +6343,24 @@ const MODULES = {
     worked:[
       {q:'pH of 0.001 M HCl?', steps:[{what:'Strong → [H⁺]=0.001', why:'HCl is strong → fully dissociates → [H⁺] = initial concentration.'}, {what:'pH = 3', why:'pH = −log(10⁻³) = 3.', predict:{q:'pOH?', hint:'14-3.'}}, {what:'pOH = 11', why:'pH + pOH = 14 at 25°C.'}]},
       {q:'pH of 0.01 M NaOH?', steps:[{what:'[OH⁻]=0.01', why:'NaOH is a strong base — fully dissociates.'}, {what:'pOH=2 → pH=12', why:'pOH = −log(10⁻²) = 2; pH = 14 − 2 = 12.'}]},
-      {q:'Ka for pKa=4.7?', steps:[{what:'Ka = 10^(−4.7)', why:'Inverse of −log: Ka = 10^(−pKa).'}, {what:'≈ 2×10⁻⁵', why:'10^(−4.7) ≈ 2 × 10⁻⁵ (since 10^0.3 ≈ 2).'}]}
+      {q:'Ka for pKa=4.7?', steps:[{what:'Ka = 10^(−4.7)', why:'Inverse of −log: Ka = 10^(−pKa).'}, {what:'≈ 2×10⁻⁵', why:'10^(−4.7) ≈ 2 × 10⁻⁵ (since 10^0.3 ≈ 2).'}]},
+      {q:'Lewis acid or base: BF₃ reacts with NH₃ to form H₃N:→BF₃. Label each.', steps:[{what:'Lewis acid = electron pair acceptor', why:'BF₃ has an empty p orbital on B — it accepts the lone pair from NH₃.', predict:{q:'NH₃ role?', hint:'Lone pair donor.'}}, {what:'BF₃ = Lewis acid; NH₃ = Lewis base', why:'NH₃ donates its nitrogen lone pair into B\'s empty orbital. No H⁺ involved — purely Lewis acid-base.'}]},
+      {q:'Is Fe³⁺ a Lewis acid when it forms Fe(H₂O)₆³⁺?', steps:[{what:'Fe³⁺ has empty d orbitals', why:'Metal cations are classic Lewis acids — they have low-energy empty orbitals ready to accept electron pairs.'}, {what:'Fe³⁺ = Lewis acid; each H₂O = Lewis base', why:'Water donates a lone pair on O into Fe³⁺\'s empty d orbital. This is how all aqueous metal cation coordination works.'}]}
     ],
     faded:[
       {prompt:'pH of 1 M HCl?', lcd:'.', blank:'___', answer:'0'},
-      {prompt:'pKa+pKb of conjugate?', lcd:'.', blank:'___', answer:'14'}
+      {prompt:'pKa+pKb of conjugate?', lcd:'.', blank:'___', answer:'14'},
+      {prompt:'Lewis acid accepts ___ pair?', lcd:'Electron.', blank:'___', answer:'electron'},
+      {prompt:'AlCl₃: Lewis acid or base?', lcd:'Al has empty orbital.', blank:'___', answer:'Lewis acid'}
     ],
     practice:['ph1','ph2','ph3','ph4','ph5'],
     masteryProblems:['ph3','ph4','ph5'],
-    lock:'pH=−log[H⁺]. Strong fully dissociate.',
-    trap:'Treat weak acid like strong: [H⁺] ≠ [HA]₀ for weak.',
+    lock:'pH=−log[H⁺]. Strong fully dissociate. Lewis acid = e⁻ pair acceptor (BF₃, AlCl₃, metal cations, H⁺). Lewis base = e⁻ pair donor (NH₃, OH⁻, H₂O).',
+    trap:'Treat weak acid like strong: [H⁺] ≠ [HA]₀ for weak. Lewis acid trap: "acid" sounds like proton-donor — but Lewis acids ACCEPT electron pairs. BF₃ never gives H⁺ but is a Lewis acid.',
     coachTricks:[
       {when:'pH not 7 at neutral?', name:'<em>Pure water = 7 only at 25°C</em>', move:'Kw rises with T. At 37°C, pure water pH ≈ 6.8.', why:'Kw is T-dep.', lock:'Neutral ≠ always 7.', coach:true, placeholder:true},
-      {when:'Negative log shortcut', name:'<em>pH ≈ n − log(a)</em>', move:'For [H⁺]=a×10⁻ⁿ: pH = n − log(a). log 2 ≈ 0.3.', why:'Speeds exam math.', lock:'pH ≈ n − log(a).', coach:true, placeholder:true}
+      {when:'Negative log shortcut', name:'<em>pH ≈ n − log(a)</em>', move:'For [H⁺]=a×10⁻ⁿ: pH = n − log(a). log 2 ≈ 0.3.', why:'Speeds exam math.', lock:'pH ≈ n − log(a).', coach:true, placeholder:true},
+      {when:'Lewis vs Brønsted', name:'<em>Lewis is the superset</em>', move:'Every Brønsted acid is also a Lewis acid. Metal cations (Fe³⁺, Al³⁺) and BF₃/AlCl₃ are Lewis acids only — no H⁺ donated.', why:'Lewis is broader.', lock:'Lewis includes Brønsted + more.', coach:true, placeholder:true}
     ]
   },
   'strong-weak': {
@@ -6274,29 +6417,34 @@ const MODULES = {
   },
   'titration': {
     skill:'titration', tier:1, num:'21',
-    title:'Acid-Base — <em>Titration Curves</em>',
-    sub:'Strong-strong, weak-strong shapes. Half-eq (pH=pKa). Eq pH.',
-    pattern:'<b>SA+SB</b>: eq pH=7. <b>WA+SB</b>: eq pH&gt;7. <b>WB+SA</b>: eq pH&lt;7. Half-eq: pH = pKa. <em>Polyprotic acids (H₃PO₄, H₂CO₃) titrate stepwise — one eq point per ionizable H, with pKa₁, pKa₂, pKa₃ each ~5 units apart. Buffer regions appear around each pKa; mid-buffer pH = pKa of that step.</em>',
-    formula:'SA+SB: eq pH=7<br>WA+SB: eq pH>7<br>WB+SA: eq pH<7<br>Half-eq: pH=pKa<br>Polyprotic: 1 eq point per H · pH at half-step n = pKa<sub>n</sub>',
+    title:'Acid-Base — <em>Titration Curves &amp; Indicators</em>',
+    sub:'Strong-strong, weak-strong shapes. Half-eq (pH = pKa). Eq pH. Indicator selection.',
+    pattern:'<b>SA+SB</b>: eq pH = 7. <b>WA+SB</b>: eq pH &gt; 7. <b>WB+SA</b>: eq pH &lt; 7. Half-eq: pH = pKa. <em>Polyprotic acids (H₃PO₄, H₂CO₃) titrate stepwise — one eq point per ionizable H, with pKa₁, pKa₂, pKa₃ each ~5 units apart. Buffer regions appear around each pKa; mid-buffer pH = pKa of that step.</em><br><br><b>Indicator selection — match indicator pKa to the equivalence-point pH</b>:<br>An indicator is itself a weak acid (HIn ⇌ H⁺ + In⁻) where HIn and In⁻ are different colours. The visible colour-change range is roughly <b>pKa(indicator) ± 1</b>. To pick the right indicator, find the eq-point pH and choose an indicator whose colour change brackets it.<br><br><b>Common indicators (memorize this short table):</b><br>- <b>Methyl orange</b> · pKa ≈ 3.7 · range 3.1–4.4 · for <em>WB + SA</em> titrations (eq pH ~ 4–6)<br>- <b>Methyl red</b> · pKa ≈ 5.0 · range 4.4–6.2 · for <em>WB + SA</em> with eq pH ~ 5<br>- <b>Bromothymol blue</b> · pKa ≈ 7.1 · range 6.0–7.6 · for <em>SA + SB</em> (eq pH = 7)<br>- <b>Phenolphthalein</b> · pKa ≈ 9.4 · range 8.2–10.0 · for <em>WA + SB</em> (eq pH ~ 8–10)<br>- <b>Thymolphthalein</b> · pKa ≈ 10.0 · range 9.4–10.6 · for very weak acids titrated with strong base<br><br><b>Cross-link:</b> the buffer-region pH math comes from <a href="#buffers" onclick="goSec(\'buffers\'); return false;" style="color:var(--gold-d); font-weight:600">Buffers (Henderson-Hasselbalch)</a>; the underlying equilibria sit in <a href="#ph-basics" onclick="goSec(\'ph-basics\'); return false;" style="color:var(--gold-d); font-weight:600">pH/pOH/Ka</a> and <a href="#strong-weak" onclick="goSec(\'strong-weak\'); return false;" style="color:var(--gold-d); font-weight:600">Strong vs Weak</a>.',
+    formula:'SA+SB: eq pH = 7<br>WA+SB: eq pH &gt; 7<br>WB+SA: eq pH &lt; 7<br>Half-eq: pH = pKa<br>Polyprotic: 1 eq point per H · pH at half-step n = pKa<sub>n</sub><br>Indicator colour change: pKa(ind) ± 1 — match it to eq-point pH<br>Bromothymol blue ~7 (SA+SB) · phenolphthalein ~9 (WA+SB) · methyl orange ~4 (WB+SA)',
     visualType:'titration-curve', visualData:{type:'wa-sb', V:0},
     worked:[
-      {q:'HCl + NaOH eq pH?', steps:[{what:'SA+SB', why:'Strong acid neutralized by strong base.'}, {what:'pH=7', why:'Neutral salt.'}]},
+      {q:'HCl + NaOH eq pH?', steps:[{what:'SA+SB', why:'Strong acid neutralized by strong base.'}, {what:'pH = 7', why:'Neutral salt.'}]},
       {q:'25 mL 0.1 M acetic + 0.1 M NaOH. Half-eq pH?', steps:[{what:'Half-eq: half converted', why:'At half-eq, [HA] = [A⁻] — the buffer ratio = 1.', predict:{q:'At half-eq?', hint:'HH 1:1.'}}, {what:'pH = pKa = 4.74', why:'log(1) = 0, so pH = pKa exactly.'}]},
       {q:'Eq pH for acetic+NaOH?', steps:[{what:'All HA → OAc⁻ (basic)', why:'At equivalence, all weak acid is converted to its conjugate base.'}, {what:'pH > 7 (~8.7)', why:'Conjugate base of weak acid hydrolyzes water → basic solution.'}]},
-      {q:'Titrate H₃PO₄ (pKa₁=2.1, pKa₂=7.2, pKa₃=12.4) with NaOH. pH at <em>second half-equivalence</em>?', steps:[{what:'1st eq → all H₃PO₄ → H₂PO₄⁻', why:'First proton fully removed by the time you reach 1st eq point.'}, {what:'2nd half-eq → [H₂PO₄⁻] = [HPO₄²⁻]', why:'HH log term = 0.', predict:{q:'pH = ?', hint:'pKa of THAT step.'}}, {what:'pH = pKa₂ = 7.2', why:'Half-step always = pKa of that ionization.'}]}
+      {q:'Titrate H₃PO₄ (pKa₁ = 2.1, pKa₂ = 7.2, pKa₃ = 12.4) with NaOH. pH at <em>second half-equivalence</em>?', steps:[{what:'1st eq → all H₃PO₄ → H₂PO₄⁻', why:'First proton fully removed by the time you reach 1st eq point.'}, {what:'2nd half-eq → [H₂PO₄⁻] = [HPO₄²⁻]', why:'HH log term = 0.', predict:{q:'pH = ?', hint:'pKa of THAT step.'}}, {what:'pH = pKa₂ = 7.2', why:'Half-step always = pKa of that ionization.'}]},
+      {q:'<b>Indicator selection:</b> you are titrating 0.1 M acetic acid (Ka = 1.8 × 10⁻⁵) with 0.1 M NaOH. Which indicator should you use — methyl orange, bromothymol blue, or phenolphthalein?', steps:[{what:'Identify the system: weak acid + strong base (WA+SB)', why:'Acetic acid is weak (Ka < 1); NaOH is strong.', predict:{q:'Eq pH range?', hint:'> 7.'}}, {what:'At equivalence, all acetic acid → acetate (a weak base) → eq pH ≈ 8.7', why:'Conjugate base of weak acid hydrolyzes water — solution is basic at the equivalence point.'}, {what:'Pick an indicator whose pKa brackets pH 8.7', why:'Indicator must change colour on the steep portion of the titration curve.'}, {what:'Phenolphthalein (pKa ≈ 9.4, range 8.2–10.0) — perfect match', why:'Methyl orange (3.1–4.4) would change colour FAR before the equivalence point — useless. Bromothymol blue (6.0–7.6) misses the eq point of a WA+SB titration.'}]},
+      {q:'<b>Indicator selection contrast:</b> you are titrating 0.1 M ammonia (a weak base, Kb = 1.8 × 10⁻⁵) with 0.1 M HCl. Which indicator?', steps:[{what:'WB + SA system', why:'NH₃ is a weak base; HCl is a strong acid.', predict:{q:'Eq pH range?', hint:'< 7.'}}, {what:'At equivalence, all NH₃ → NH₄⁺ (a weak acid) → eq pH ≈ 5.3', why:'Conjugate acid of weak base — solution is mildly acidic.'}, {what:'Methyl red (pKa ≈ 5.0, range 4.4–6.2) is the best fit; methyl orange (3.1–4.4) also works', why:'Phenolphthalein would never change colour before the equivalence point in this titration. Match indicator pKa to eq-point pH every time.'}]}
     ],
     faded:[
       {prompt:'Half-eq rule?', lcd:'1:1.', blank:'pH = ___', answer:'pKa'},
-      {prompt:'Indicator for SA+SB?', lcd:'~7.', blank:'___', answer:'phenolphthalein'},
+      {prompt:'Best indicator for SA + SB titration?', lcd:'Eq pH ~ 7.', blank:'___', answer:'bromothymol blue'},
+      {prompt:'Best indicator for WA + SB (eq pH ~ 9)?', lcd:'pKa(indicator) ± 1 brackets 9.', blank:'___', answer:'phenolphthalein'},
+      {prompt:'Best indicator for WB + SA (eq pH ~ 5)?', lcd:'pKa(indicator) ± 1 brackets 5.', blank:'___', answer:'methyl red'},
       {prompt:'H₂CO₃ has how many eq points?', lcd:'count ionizable H.', blank:'___', answer:'2'}
     ],
     practice:['ti1','ti2','ti3','poly1','poly2'],
     masteryProblems:['ti1','ti2','ti3','poly3'],
-    lock:'Half-eq → pH=pKa. Eq → check salt. Polyprotic: one eq per H, half-step n = pKa<sub>n</sub>.',
-    trap:'Equivalence is always pH 7? WRONG for weak. Polyprotic curve only has ONE inflection? WRONG — it has one per ionizable H (3 for H₃PO₄, 2 for H₂CO₃, 1 for H₂SO₄ since first H is strong).',
+    lock:'Half-eq → pH = pKa. Eq → check salt. Polyprotic: one eq per H, half-step n = pKa<sub>n</sub>. Indicator: pKa(ind) ± 1 must bracket eq-point pH.',
+    trap:'Equivalence is always pH 7? WRONG for weak. Polyprotic curve only has ONE inflection? WRONG — it has one per ionizable H (3 for H₃PO₄, 2 for H₂CO₃, 1 for H₂SO₄ since first H is strong). Indicator trap: picking phenolphthalein for every titration regardless of system. Phenolphthalein only fits WA+SB; methyl orange/red fits WB+SA; bromothymol blue fits SA+SB.',
     coachTricks:[
-      {when:'Indicator choice', name:'<em>Match to eq pH</em>', move:'Phenolphthalein (8.3-10) for WA+SB. Methyl orange (3.1-4.4) for WB+SA.', why:'Color change near eq.', lock:'Match pKa(ind) to eq pH.', coach:true, placeholder:true},
-      {when:'Polyprotic', name:'<em>One eq per H</em>', move:'H₃PO₄: 3 eq points. H₂SO₄: 1 (both strong).', why:'Each ionizable H steps.', lock:'One eq per ionizable H.', coach:true, placeholder:true}
+      {when:'Indicator choice', name:'<em>Match indicator pKa to eq pH</em>', move:'Identify the titration type → predict the eq-point pH → pick an indicator whose pKa is within ±1 of that pH. SA+SB → bromothymol blue (~7). WA+SB → phenolphthalein (~9). WB+SA → methyl red or methyl orange (~5).', why:'The colour change is sharp only within ±1 of the indicator pKa. Outside that range you get false positives or false negatives.', lock:'Match pKa(ind) to eq pH.', coach:true, placeholder:true},
+      {when:'Polyprotic', name:'<em>One eq per H</em>', move:'H₃PO₄: 3 eq points. H₂SO₄: 1 (the first H is strong, so it deprotonates with the second).', why:'Each ionizable H produces a separate inflection on the titration curve.', lock:'One eq per ionizable H.', coach:true, placeholder:true},
+      {when:'Why pKa ± 1?', name:'<em>Henderson-Hasselbalch on the indicator itself</em>', move:'For HIn ⇌ H⁺ + In⁻, HH says pH = pKa(ind) + log([In⁻]/[HIn]). At pH = pKa−1 the ratio is 1:10 (mostly HIn colour); at pKa+1 it is 10:1 (mostly In⁻ colour); the eye sees a transition over that ~2 pH unit window.', why:'It is the same buffer math you already know — just applied to the indicator equilibrium.', lock:'Indicator is just another HA / A⁻ pair.', coach:true, placeholder:true}
     ]
   },
   'ksp': {
@@ -6327,27 +6475,31 @@ const MODULES = {
   },
   'galvanic': {
     skill:'galvanic', tier:2, num:'23',
-    title:'Electrochem — <em>Galvanic Cells</em>',
-    sub:'Anode/cathode. E°_cell = E°_red(cath) − E°_red(an). Spont if E&gt;0.',
-    pattern:'<b>Anode = oxidation (LEO)</b>. <b>Cathode = reduction (GER)</b>. E°_cell = E°(cath) − E°(an). +E° ⇒ spont. ΔG° = −nFE°.',
-    formula:'Anode = ox (LEO)<br>Cathode = red (GER)<br>E°_cell = E°(c) − E°(a)<br>ΔG° = −nFE°',
+    title:'Electrochem — <em>Galvanic Cells &amp; Half-Reaction Balancing</em>',
+    sub:'Step 0: balance half-reactions (atoms → O → H → charge → electrons). Anode/cathode. E°_cell = E°_red(cath) − E°_red(an). Spont if E&gt;0.',
+    pattern:'<b>Before using E° values you must be able to balance the half-reactions.</b> The method works in acid or base:<br>1. Balance atoms other than O and H.<br>2. Balance O by adding H₂O.<br>3. Balance H by adding H⁺ (acid) or OH⁻ (base).<br>4. Balance charge by adding e⁻.<br>5. Multiply half-reactions to equalize e⁻ transferred.<br>6. Add and cancel spectators.<br><b>Anode = oxidation (LEO)</b>. <b>Cathode = reduction (GER)</b>. E°_cell = E°(cath) − E°(an). +E° ⇒ spont. ΔG° = −nFE°.',
+    formula:'Step 0: balance atoms → O (+H₂O) → H (+H⁺ acid or +OH⁻ base) → charge (+e⁻)<br>Anode = ox (LEO)<br>Cathode = red (GER)<br>E°_cell = E°(c) − E°(a)<br>ΔG° = −nFE°',
     visualType:'galvanic-cell', visualData:{anode:'Zn', cathode:'Cu'},
     worked:[
+      {q:'Balance in acid: MnO₄⁻ → Mn²⁺ (reduction half-reaction)', steps:[{what:'Mn atoms: 1 on each side — balanced.', why:'Step 1: non-O, non-H atoms first.'}, {what:'O: 4 O on left, 0 right → add 4H₂O right', why:'Step 2: balance O using water.', predict:{q:'Now balance H?', hint:'H⁺ on the H-deficient side.'}}, {what:'H: 8 H (from 4H₂O) right → add 8H⁺ left', why:'Step 3: in acid, add H⁺ to balance H.'}, {what:'Charge: left = −1+8(+1) = +7; right = +2. Add 5e⁻ left.', why:'Step 4: add electrons to the more positive side.'}, {what:'MnO₄⁻ + 8H⁺ + 5e⁻ → Mn²⁺ + 4H₂O', why:'Balanced half-reaction: atoms and charge both check out.'}]},
+      {q:'Balance in base: Cr(OH)₃ → CrO₄²⁻ (oxidation half-reaction)', steps:[{what:'Cr balanced (1:1)', why:'Non-O, non-H atoms OK.'}, {what:'O: 3 left, 4 right → add 1H₂O left', why:'Step 2 in base is the same — balance O with H₂O.'}, {what:'H: now 2H left + 3H (from OH₃) vs 2H (from H₂O) right. Balance H: add 5OH⁻ right.', why:'Step 3 in base: instead of H⁺, add OH⁻ to neutralize H on the other side.'}, {what:'Charge check: left = 0, right = −2 + 5(−1) = −7. Add 3e⁻ right (it is oxidation).', why:'Step 4: Cr goes from +3 to +6 = loses 3e⁻.'}, {what:'Cr(OH)₃ + H₂O → CrO₄²⁻ + 5H⁺ + 3e⁻', why:'Simplified — the method still works; in strongly basic medium convert H⁺ to H₂O/OH⁻ after balancing.'}]},
       {q:'Zn|Zn²⁺||Cu²⁺|Cu. E°(Cu)=0.34, E°(Zn)=−0.76. E°_cell?', steps:[{what:'Cathode = Cu (higher E°)', why:'Higher reduction potential = more eager to grab electrons → cathode.', predict:{q:'E°_cell?', hint:'Subtract.'}}, {what:'0.34 − (−0.76) = 1.10 V', why:'E°_cell = E°(cathode) − E°(anode); both as reduction potentials.'}, {what:'Spont (>0)', why:'Positive E°_cell → ΔG° < 0 → reaction goes as written.'}]},
       {q:'ΔG° (n=2, F=96485)?', steps:[{what:'ΔG° = −nFE°', why:'Links electrochemistry (E°) to thermo (ΔG).'}, {what:'= −(2)(96485)(1.10) = −212,267 J ≈ −212 kJ', why:'n = 2 because 2 electrons transferred per Zn/Cu pair.'}]},
       {q:'e⁻ flow direction?', steps:[{what:'Anode → wire → cathode', why:'Electrons leave the site of oxidation, enter the site of reduction.'}, {what:'Zn → wire → Cu', why:'Zn is anode (oxidized), Cu is cathode (reduced).'}]}
     ],
     faded:[
+      {prompt:'Balancing MnO₄⁻ in acid: after balancing Mn and O, next step is?', lcd:'H⁺ in acid.', blank:'Add ___ to balance H', answer:'H⁺'},
       {prompt:'Anode is what process?', lcd:'LEO.', blank:'___', answer:'oxidation'},
       {prompt:'+E° ⇒ ΔG ___?', lcd:'.', blank:'___', answer:'negative'}
     ],
     practice:['gv1','gv2','gv3'],
     masteryProblems:['gv1','gv2','gv3'],
-    lock:'Cathode = higher E°. e⁻ flow A→C.',
-    trap:'Reverse anode/cathode. LEO/GER!',
+    lock:'Balance: atoms → O → H → charge → e⁻. Cathode = higher E°. e⁻ flow A→C.',
+    trap:'Reverse anode/cathode. LEO/GER! Also: in acid use H⁺; in base use OH⁻ to balance H. Never add both.',
     coachTricks:[
       {when:'Salt bridge', name:'<em>Maintains charge balance</em>', move:'Anions to anode, cations to cathode.', why:'Without bridge, charge stalls.', lock:'Bridge balances charge.', coach:true, placeholder:true},
-      {when:'Combining halves', name:"<em>Don't multiply E°</em>", move:'Multiply WHOLE half-rxn but NOT E°. E° intensive.', why:'E° is per-electron.', lock:'E° unchanged by ×n.', coach:true, placeholder:true}
+      {when:'Combining halves', name:"<em>Don't multiply E°</em>", move:'Multiply WHOLE half-rxn but NOT E°. E° intensive.', why:'E° is per-electron.', lock:'E° unchanged by ×n.', coach:true, placeholder:true},
+      {when:'Acid vs base condition', name:'<em>H⁺ in acid, OH⁻ in base</em>', move:'Acid: add H⁺ to balance H. Base: add OH⁻ to balance OH — OR balance as acid then convert (add OH⁻ to both sides, combine to H₂O).', why:'Medium determines which proton source is valid.', lock:'Acid→H⁺. Base→OH⁻.', coach:true, placeholder:true}
     ]
   },
   'red-pot': {
@@ -6378,51 +6530,56 @@ const MODULES = {
   'nernst': {
     skill:'nernst', tier:2, num:'25',
     title:'Electrochem — <em>Nernst</em>',
-    sub:'Non-standard E. E = E° − (0.0592/n)·log Q at 25°C.',
-    pattern:'<b>E = E° − (0.0592/n)·log Q</b> at 25°C. Q&gt;1 lowers E. Q=K when E=0.',
-    formula:'E = E° − (0.0592/n)·log Q<br>E=0 ⇒ Q=K<br>E° = (0.0592/n)·log K',
+    sub:'Non-standard E. E = E° − (0.0592/n)·log Q at 25°C. Conceptual: Q&gt;1 lowers E; at equilibrium E=0.',
+    pattern:'<b>E = E° − (0.0592/n)·log Q</b> at 25°C. Key concepts: (1) Increasing products (Q&gt;1) LOWERS E — the reaction is less favorable. (2) When the cell reaches equilibrium, E=0 and Q=K. (3) A concentration cell (same metal both sides) has E°=0 — only the concentration ratio drives the voltage. The DAT rarely asks heavy Nernst arithmetic; it tests direction of change and the E=0 at equilibrium concept.',
+    formula:'E = E° − (0.0592/n)·log Q<br>E=0 ⇒ Q=K<br>E° = (0.0592/n)·log K<br>Direction: Q increases → E decreases',
     visualType:'nernst-slider', visualData:{E0:1.10, n:2, Q:1, T:298},
     worked:[
-      {q:'Cu/Zn, [Cu²⁺]=0.01, [Zn²⁺]=1. E°=1.10, n=2. E?', steps:[{what:'Q = [Zn²⁺]/[Cu²⁺] = 100', why:'Q uses product over reactant for the cell reaction Zn + Cu²⁺ → Zn²⁺ + Cu.', predict:{q:'Q>1 raises or lowers?', hint:'Lowers.'}}, {what:'E = 1.10 − 0.0296·log(100) = 1.10 − 0.0592', why:'0.0592/n = 0.0592/2 = 0.0296; log(100) = 2.'}, {what:'E ≈ 1.04 V', why:'Higher product than reactant lowers driving force.'}]},
-      {q:'At eq, E=0 ⇒ ?', steps:[{what:'0 = E° − (0.0592/n)·log K', why:'At equilibrium, no net driving force → E = 0 and Q = K.'}, {what:'log K = nE°/0.0592', why:'Rearrange to solve for K.'}]},
-      {q:'K for E°=1.10, n=2?', steps:[{what:'log K = 2(1.10)/0.0592 = 37.16', why:'Plug in n and E° from standard cell potential.'}, {what:'K ≈ 10³⁷', why:'Huge K — the redox goes essentially to completion.'}]}
+      {q:'Cu/Zn, [Cu²⁺]=0.01, [Zn²⁺]=1. E°=1.10, n=2. E?', steps:[{what:'Q = [Zn²⁺]/[Cu²⁺] = 100', why:'Q uses product over reactant for the cell reaction Zn + Cu²⁺ → Zn²⁺ + Cu.', predict:{q:'Q>1 raises or lowers?', hint:'Lowers.'}}, {what:'E = 1.10 − 0.0296·log(100) = 1.10 − 0.0592', why:'0.0592/n = 0.0592/2 = 0.0296; log(100) = 2.'}, {what:'E ≈ 1.04 V', why:'Higher product than reactant lowers driving force — the cell is running down toward equilibrium.'}]},
+      {q:'Conceptual: For the same cell, if you increased [Cu²⁺] from 0.01 to 1.0 M, what happens to E?', steps:[{what:'Q decreases when [Cu²⁺] (reactant) increases', why:'Q = [Zn²⁺]/[Cu²⁺]; denominator larger → Q smaller.'}, {what:'Smaller Q → less subtracted → E increases', why:'E = E° − (0.0592/n)log(Q); smaller log(Q) = less subtraction = higher E.', predict:{q:'More favorable?', hint:'Higher E = more spontaneous.'}}, {what:'E increases toward E°', why:'When reactant concentration rises, the driving force increases — makes sense chemically.'}]},
+      {q:'At equilibrium, E = 0. Find K from E°=1.10, n=2.', steps:[{what:'0 = 1.10 − (0.0592/2)·log K', why:'Set E = 0, Q = K at equilibrium.'}, {what:'log K = 2(1.10)/0.0592 = 37.2', why:'Rearrange.'}, {what:'K ≈ 10³⁷', why:'Huge K confirms the reaction runs nearly to completion.'}]}
     ],
     faded:[
       {prompt:'Q=K when E = ?', lcd:'Eq.', blank:'___', answer:'0'},
-      {prompt:'Doubling [products] → E?', lcd:'.', blank:'___', answer:'lowers'}
+      {prompt:'Increasing [products] → E ___?', lcd:'Q rises.', blank:'___', answer:'lowers'}
     ],
-    practice:['nr1','nr2','nr3','nr4','nr5'],
-    masteryProblems:['nr3','nr4','nr5'],
-    lock:'E = E° − (0.0592/n)·log Q. Q=K when E=0.',
-    trap:'Plug Q with wrong reference (forget direction).',
+    practice:['nr1','nr2','nr3'],
+    masteryProblems:['nr1','nr2','nr3'],
+    lock:'E = E° − (0.0592/n)·log Q. Bigger Q = lower E. E=0 at equilibrium.',
+    trap:'Plugging Q with wrong product/reactant orientation. Always write the cell reaction first, then construct Q from products over reactants.',
     coachTricks:[
-      {when:'Concentration cell', name:'<em>E°=0; only Q drives</em>', move:'Same metal both sides → E°=0.', why:'Anode dissolves into low-conc.', lock:'Conc cell: E°=0.', coach:true, placeholder:true},
-      {when:'pH-dep half-rxn', name:'<em>1 pH unit ≈ 60 mV</em>', move:'For 2H⁺+2e⁻→H₂, every pH unit shifts E by ~0.06 V.', why:'log[H⁺]=pH.', lock:'1 pH ≈ 60 mV.', coach:true, placeholder:true}
+      {when:'Concentration cell', name:'<em>E°=0; only Q drives</em>', move:'Same metal both sides → E°=0. The voltage comes entirely from the concentration gradient.', why:'Anode dissolves into low-conc half-cell.', lock:'Conc cell: E°=0.', coach:true, placeholder:true},
+      {when:'Direction question', name:'<em>Higher Q = lower drive</em>', move:'If you are asked which change raises or lowers E: anything that raises Q (more products or fewer reactants) LOWERS E. Anything that lowers Q raises E.', why:'E = E° − term; bigger term = lower E.', lock:'Q up = E down.', coach:true, placeholder:true}
     ]
   },
   'nuclear': {
     skill:'nuclear', tier:2, num:'26',
     title:'Nuclear <em>Chemistry</em>',
-    sub:'α, β, γ decay. Mass + atomic balance. Half-life.',
-    pattern:'Balance mass # AND Z. <b>α = ⁴₂He</b> (−4 mass, −2 Z). <b>β⁻ = ⁰₋₁e</b> (mass same, Z+1). <b>γ</b> = photon (no change). N = N₀(1/2)^(t/t½).',
-    formula:'α: −4 mass, −2 Z<br>β⁻: same mass, +1 Z<br>γ: no change<br>N = N₀(½)^(t/t½)',
+    sub:'α, β, γ decay. Half-life. Fission, fusion, mass defect, binding energy.',
+    pattern:'Balance mass # AND Z. <b>α = ⁴₂He</b> (−4 mass, −2 Z). <b>β⁻ = ⁰₋₁e</b> (mass same, Z+1). <b>γ</b> = photon (no change). N = N₀(1/2)^(t/t½).<br><br><b>Fission:</b> a heavy nucleus absorbs a neutron and splits into smaller nuclei + neutrons + energy. Classic DAT: ²³⁵₉₂U + ¹₀n → ¹⁴¹₅₆Ba + ⁹²₃₆Kr + 3¹₀n + energy. Fission is a chain reaction (each event releases neutrons that trigger more).<br><b>Fusion:</b> two light nuclei combine into a heavier nucleus, releasing energy. E.g., ²₁H + ³₁H → ⁴₂He + ¹₀n + energy. Fusion releases more energy per nucleon than fission; requires extreme temperature to overcome Coulomb repulsion.<br><b>Mass defect:</b> Δm = Σm_reactants − Σm_products. Nuclei are slightly less massive than the sum of their free protons + neutrons. The "missing" mass is converted to binding energy.<br><b>Binding energy:</b> E = Δm·c². Per-nucleon binding energy peaks at iron-56 (Fe-56) — the most stable nucleus. Elements lighter than Fe release energy by fusion; elements heavier than Fe release energy by fission.',
+    formula:'α: −4 mass, −2 Z<br>β⁻: same mass, +1 Z<br>γ: no change<br>N = N₀(½)^(t/t½)<br>Fission: heavy + n → medium + n + E<br>Fusion: light + light → heavier + E<br>Δm = Σm_reactants − Σm_products<br>E_bind = Δm · c²<br>Max binding energy/nucleon: Fe-56',
     visualType:'decay-curve', visualData:{halflives:1},
     worked:[
       {q:'α-decay of ²³⁸U?', steps:[{what:'²³⁸₉₂U → ⁴₂He + ?', why:'Alpha particle is a He nucleus (mass 4, Z 2).', predict:{q:'Daughter?', hint:'Subtract.'}}, {what:'²³⁴₉₀Th', why:'Mass: 238 − 4 = 234. Atomic #: 92 − 2 = 90 → Th.'}]},
       {q:'β-decay of ¹⁴C?', steps:[{what:'¹⁴₆C → ⁰₋₁e + ?', why:'Beta minus is an electron from a neutron converting to a proton.'}, {what:'¹⁴₇N', why:'Z+1, mass same.'}]},
-      {q:'After 3 half-lives, fraction?', steps:[{what:'(1/2)³ = 1/8', why:'Each half-life cuts amount in half; three halvings = (1/2)³.'}, {what:'12.5%', why:'1/8 = 0.125 = 12.5%.'}]}
+      {q:'After 3 half-lives, fraction?', steps:[{what:'(1/2)³ = 1/8', why:'Each half-life cuts amount in half; three halvings = (1/2)³.'}, {what:'12.5%', why:'1/8 = 0.125 = 12.5%.'}]},
+      {q:'Balance the fission reaction: ²³⁵₉₂U + ¹₀n → ¹⁴¹₅₆Ba + ___ + 3¹₀n', steps:[{what:'Mass balance: 235 + 1 = 141 + A + 3·1 → A = 92', why:'Mass numbers must sum to the same total on both sides.', predict:{q:'Z of unknown?', hint:'Same for Z.'}}, {what:'Z balance: 92 + 0 = 56 + Z + 0 → Z = 36', why:'Atomic numbers (proton counts) must also balance.'}, {what:'Z=36 → Krypton. Product is ⁹²₃₆Kr', why:'DAT may give three of four pieces and ask you to identify the missing nuclide.'}]},
+      {q:'Why does fusion release more energy per nucleon than fission?', steps:[{what:'Binding energy per nucleon peaks at Fe-56', why:'The curve rises steeply from H to Fe, then falls gently from Fe to U.'}, {what:'Light nuclei (H, He) have low binding E/nucleon', why:'Fusing two H nuclei climbs toward the Fe peak — large energy release per nucleon.'}, {what:'Heavy nuclei (U, Th) are just past the peak', why:'Splitting them releases energy but less per nucleon than fusion. Both processes release energy by moving toward Fe-56.'}]},
+      {q:'Mass defect for ⁴He: proton mass = 1.00728 u, neutron mass = 1.00867 u, He-4 mass = 4.00151 u?', steps:[{what:'Σm_free = 2(1.00728) + 2(1.00867) = 4.03190 u', why:'He-4 has 2 protons and 2 neutrons.'}, {what:'Δm = 4.03190 − 4.00151 = 0.03039 u', why:'The nucleus is lighter than the sum of its parts — that mass became binding energy.', predict:{q:'Energy direction?', hint:'Released when nucleus forms.'}}, {what:'E_bind = Δm · c² = 0.03039 × 931.5 MeV/u ≈ 28.3 MeV', why:'1 u of mass = 931.5 MeV of energy (standard conversion).'}]}
     ],
     faded:[
       {prompt:'α-decay of ²²⁶₈₈Ra?', lcd:'.', blank:'___', answer:'²²²₈₆Rn'},
-      {prompt:'After 4 t½, fraction?', lcd:'.', blank:'___', answer:'1/16'}
+      {prompt:'After 4 t½, fraction?', lcd:'.', blank:'___', answer:'1/16'},
+      {prompt:'Nucleus with max binding energy/nucleon?', lcd:'Peak of the curve.', blank:'___', answer:'Fe-56'}
     ],
     practice:['nu1','nu2','nu3','nu4','nu5','nu6'],
     masteryProblems:['nu3','nu4','nu5','nu6'],
-    lock:'Mass + Z balance. Half-life exponential.',
-    trap:'Forget to track BOTH mass and atomic #.',
+    lock:'Mass + Z balance. Half-life exponential. Mass defect → binding energy. Fe-56 = most stable.',
+    trap:'Forget to track BOTH mass and atomic # in fission/fusion balancing. Confusing which process releases more energy per nucleon: fusion > fission per nucleon (the DAT loves this distinction).',
     coachTricks:[
       {when:'Positron emission', name:'<em>β⁺: Z−1, mass same</em>', move:'¹¹C → ¹¹B + ⁰₊₁e.', why:'p→n.', lock:'β⁺: Z−1.', coach:true, placeholder:true},
-      {when:'Electron capture', name:'<em>EC = β⁺ in disguise</em>', move:'p+e⁻→n. Same Z change as β⁺.', why:'Both Z−1.', lock:'EC and β⁺: Z−1.', coach:true, placeholder:true}
+      {when:'Electron capture', name:'<em>EC = β⁺ in disguise</em>', move:'p+e⁻→n. Same Z change as β⁺.', why:'Both Z−1.', lock:'EC and β⁺: Z−1.', coach:true, placeholder:true},
+      {when:'Fission vs fusion', name:'<em>Both move toward Fe-56</em>', move:'Light nuclei fuse up to Fe; heavy nuclei fission down to Fe. The slope of the binding-energy curve tells the story.', why:'Moves toward higher stability = lower energy state = released energy.', lock:'Fusion and fission both aim at Fe-56.', coach:true, placeholder:true}
     ]
   },
   'phase-diag': {
@@ -6525,10 +6682,35 @@ const MODULES = {
       {when:'Stuck on trend', name:'<em>Position predicts</em>', move:'Top-right = small, high IE/EN. Bottom-left = opposite.', why:'Spatial heuristic.', lock:'Top-right = small.', coach:true, placeholder:true}
     ]
   },
+  'lab-techniques': {
+    skill:'lab-techniques', tier:0, num:'00b',
+    title:'Lab <em>Techniques</em>',
+    sub:'Glassware accuracy hierarchy, random vs systematic error, and titration setup. DAT rewards knowing which tool to pick and where errors hide.',
+    pattern:'<b>Glassware accuracy hierarchy:</b> volumetric flask = volumetric pipette = buret (~0.1%) &gt; graduated cylinder (~1%) &gt; beaker/Erlenmeyer (~5%). <b>Error types:</b> random (scatter, improves with repeats) vs systematic (consistent bias, does NOT improve). <b>Titration:</b> buret delivers titrant; indicator chosen to bracket the equivalence pH.',
+    formula:'Volumetric flask / pipette / buret: ~0.1%<br>Grad cylinder: ~1%<br>Beaker: not calibrated<br>Random err → repeat; Systematic → fix method<br>Indicator: pKa close to equivalence pH',
+    visualType:'lab-tech-table', visualData:{},
+    worked:[
+      {q:'Which glassware to prepare 250.00 mL of 0.100 M NaOH standard?', steps:[{what:'Need one precise volume', why:'Volumetric flask is calibrated to ±0.05 mL at one volume — the etched mark.', predict:{q:'Could you use a 250 mL graduated cylinder?', hint:'~1% error — too sloppy.'}}, {what:'Volumetric flask (250 mL)', why:'Only glassware calibrated to ~0.1% at a single fixed volume. Not a graduated cylinder.'}]},
+      {q:'Student always reads buret 0.08 mL high. Random or systematic error?', steps:[{what:'Consistent direction (always high)', why:'Random error scatters around the true value; systematic always skews the same way.'}, {what:'Systematic', why:'Fix: re-calibrate technique. More repeats will NOT help.'}]},
+      {q:'Titrating acetic acid with NaOH. Equivalence pH ~8.7. Best indicator?', steps:[{what:'Equivalence pH = 8.7 (WA + SB)', why:'Weak acid + strong base equivalence point is basic.'}, {what:'Phenolphthalein (range 8.2–10.0)', why:'Indicator must change color in the pH range that brackets the equivalence point.'}]}
+    ],
+    faded:[
+      {prompt:'Titration glassware that delivers variable volume precisely?', lcd:'One of the "best" class.', blank:'___', answer:'buret'},
+      {prompt:'Error type that repeats more trials cannot fix?', lcd:'Consistent bias.', blank:'___', answer:'systematic'}
+    ],
+    practice:['lab1','lab2','lab3','lab4','lab5'],
+    masteryProblems:['lab2','lab3','lab4'],
+    lock:'Volumetric = 0.1%. Systematic = consistent bias. Indicator pKa brackets eq pH.',
+    trap:'Using graduated cylinder for quantitative preparation. Assuming more repeats fix a systematic error — they do not.',
+    coachTricks:[
+      {when:'Wet glassware', name:'<em>Rinse rule</em>', move:'Buret/pipette: rinse with TITRANT, not water (water dilutes). Volumetric flask: water-wet is fine — you fill to the mark anyway.', why:'Dilution errors ruin molarity.', lock:'Pipette/buret → rinse with titrant.', coach:true, placeholder:true},
+      {when:'Air bubble in buret', name:'<em>Purge before zero</em>', move:'Air bubble reads as titrant delivered without actually entering the flask. Purge by opening stopcock briskly before taking initial reading.', why:'Bubble volume = phantom titrant.', lock:'Purge first.', coach:true, placeholder:true}
+    ]
+  },
   'sig-figs': {
     skill:'sig-figs', tier:0, num:'00',
     title:'Sig Figs &amp; <em>Measurement</em>',
-    sub:'Count significant figures correctly. Propagate them through ×÷ (smallest sig fig count) and +− (smallest decimal place).',
+    sub:'Reference card — sig fig rules rarely tested directly on the DAT. Scan the rules, then move on. The Lab Toolkit section (sidebar) has the practical version for any glassware/measurement questions.',
     pattern:'<b>Non-zero digits always count.</b> <b>Captive zeros (between non-zeros) count.</b> <b>Leading zeros NEVER count.</b> <b>Trailing zeros after a decimal count; without a decimal they are ambiguous</b> — use scientific notation. ×÷ → keep smallest sig fig count. +− → keep smallest decimal place.',
     formula:'4.32 → 3 sf<br>5005 → 4 sf<br>0.0042 → 2 sf<br>4.200 → 4 sf<br>5300 → 2-4 sf (use 5.30×10³ for 3)',
     visualType:'sigfig-tool', visualData:{},
@@ -6602,34 +6784,40 @@ const MODULES = {
   },
   'imf-rank': {
     skill:'imf-rank', tier:0, num:'09',
-    title:'Intermolecular <em>Forces</em>',
-    sub:'Rank the forces (London → dipole-dipole → H-bond → ion-dipole) and use them to predict BP, MP, solubility, vapor pressure.',
-    pattern:'Force strength: <b>Ion-dipole &gt; H-bond &gt; dipole-dipole &gt; London</b>. Bigger / heavier molecules → more London. H-bond requires H attached to N, O, or F. Stronger IMFs ⇒ higher BP, lower vapor P, more soluble in like solvents.',
-    formula:'BP rank = IMF strength rank<br>H-bond ⇒ N-H, O-H, or F-H<br>London ↑ with size / electrons<br>"Like dissolves like"',
+    title:'Intermolecular <em>Forces &amp; Types of Solids</em>',
+    sub:'Rank the forces (London → dipole-dipole → H-bond → ion-dipole) and use them to predict BP, MP, solubility, vapor pressure. Four types of crystalline solids and lattice energy.',
+    pattern:'Force strength: <b>Ion-dipole &gt; H-bond &gt; dipole-dipole &gt; London</b>. Bigger / heavier molecules → more London. H-bond requires H attached to N, O, or F. Stronger IMFs ⇒ higher BP, lower vapor P, more soluble in like solvents.<br><br><b>Types of Solids:</b><br>- <b>Ionic</b> (e.g. NaCl, CaCO₃): high MP, hard but brittle, does NOT conduct solid — ions locked in lattice; DOES conduct when molten or dissolved (mobile ions). Lattice energy = energy to separate to gas-phase ions.<br>- <b>Covalent network</b> (e.g. diamond, SiO₂): very high MP, very hard, does NOT conduct in any form, atoms covalently bonded in 3D network.<br>- <b>Metallic</b> (e.g. Cu, Fe, Na): variable MP, malleable and ductile, excellent conductor (sea of electrons), lustrous.<br>- <b>Molecular</b> (e.g. I₂, sucrose, ice): low MP, soft, does NOT conduct; held together by IMFs only.<br><br><b>Lattice energy intuition (Coulomb):</b> E ∝ (charge product) / (interionic distance). Larger charges and smaller ions → higher lattice energy → harder to melt or dissolve.',
+    formula:'BP rank = IMF strength rank<br>H-bond ⇒ N-H, O-H, or F-H<br>London ↑ with size / electrons<br>"Like dissolves like"<br>Solids: ionic(high MP) > covalent network(highest) vs metallic vs molecular(lowest MP)<br>Lattice E ∝ q₊·q₋ / r',
     visualType:'imf-rank', visualData:{},
     worked:[
       {q:'Rank BP: H₂O, CH₄, HF, Ne', steps:[{what:'IMFs: H₂O = H-bond; CH₄ = London; HF = H-bond; Ne = weakest London', why:'IMF strength sets boiling point — stronger IMFs mean more energy needed to vaporize.', predict:{q:'Highest?', hint:'H-bond + size'}}, {what:'BP: H₂O > HF > CH₄ > Ne', why:'H₂O has 2 H-bonds per molecule.'}]},
       {q:'Why does CH₃OH dissolve in water but CH₄ does not?', steps:[{what:'CH₃OH: H-bond donor + acceptor', why:'.'}, {what:'CH₄: only London — water won\'t pay the cost to break its H-bonds', why:'.'}]},
-      {q:'Rank vapor P: pentane vs hexane vs octane', steps:[{what:'All London-only', why:'.'}, {what:'Larger = more London = harder to vaporize', why:'.'}, {what:'Vapor P: pentane > hexane > octane', why:'Inverse to BP.'}]}
+      {q:'Rank vapor P: pentane vs hexane vs octane', steps:[{what:'All London-only', why:'.'}, {what:'Larger = more London = harder to vaporize', why:'.'}, {what:'Vapor P: pentane > hexane > octane', why:'Inverse to BP.'}]},
+      {q:'Classify the solid: conducts electricity when molten but not solid; very high MP; brittle.', steps:[{what:'Conducts when molten (mobile ions)', why:'Metallic solids conduct as solids; ionic solids need molten/dissolved state to free ions.', predict:{q:'Ionic or metallic?', hint:'Brittle = ionic.'}}, {what:'Ionic solid', why:'High MP + brittle (stress breaks lattice planes) + molten conductivity are the ionic signature. Example: NaCl, MgO.'}]},
+      {q:'Which solid has the higher lattice energy: NaCl or MgO?', steps:[{what:'NaCl: Na⁺(+1), Cl⁻(−1); MgO: Mg²⁺(+2), O²⁻(−2)', why:'Lattice energy ∝ charge product.'}, {what:'MgO charge product = 2×2 = 4 vs NaCl = 1×1 = 1', why:'Also Mg²⁺ and O²⁻ are smaller ions → shorter interionic distance.', predict:{q:'Which has higher lattice E?', hint:'Higher charge product.'}}, {what:'MgO has far higher lattice energy (~3800 kJ/mol vs ~788 for NaCl)', why:'Both charge and distance favor MgO.'}]},
+      {q:'Diamond vs table sugar: which is molecular and which is covalent network?', steps:[{what:'Diamond: C atoms bonded covalently in all 3 dimensions', why:'Every C forms 4 covalent bonds to neighbors — one giant network.'}, {what:'Sugar (sucrose): discrete C₁₂H₂₂O₁₁ molecules held by IMFs', why:'Molecules are held together by H-bonds and London forces — hence the low MP.'}, {what:'Diamond = covalent network; sugar = molecular', why:'The soft, low-MP character of sugar vs the extremely hard, high-MP diamond reflects this difference.'}]}
     ],
     faded:[
       {prompt:'Strongest IMF in NH₃?', lcd:'N-H bond present.', blank:'___', answer:'H-bond'},
-      {prompt:'IMF in Ar(l)?', lcd:'Noble gas, no dipole.', blank:'___', answer:'London'}
+      {prompt:'IMF in Ar(l)?', lcd:'Noble gas, no dipole.', blank:'___', answer:'London'},
+      {prompt:'Solid: low MP, soft, no conductor, e.g. I₂. Type?', lcd:'IMF-held.', blank:'___', answer:'molecular'},
+      {prompt:'Lattice E higher for MgF₂ or NaF? (same F⁻)', lcd:'Charge product.', blank:'___', answer:'MgF₂'}
     ],
     practice:['imf1','imf2','imf3','imf4','imf5','imf6','imf7'],
     masteryProblems:['imf4','imf5','imf6','imf7'],
-    lock:'IMF strength ranks BP / MP. H-bond needs H attached to N/O/F.',
-    trap:'Confusing IMFs with INTRA-molecular bonds. The covalent bond inside H₂O is NOT an IMF; the attraction between TWO H₂O molecules is.',
+    lock:'IMF strength ranks BP / MP. H-bond needs H attached to N/O/F. Ionic solid: conducts molten not solid; brittle. Lattice E ∝ charge / distance.',
+    trap:'Confusing IMFs with INTRA-molecular bonds. The covalent bond inside H₂O is NOT an IMF. Also: metallic solids conduct as solids (sea of electrons); ionic solids only conduct when molten/aqueous.',
     coachTricks:[
       {when:'Forgetting London is in everything', name:'<em>London tax</em>', move:'Every molecule pays the London tax. Then add stronger forces if applicable.', why:'Floor under all molecules.', lock:'London = always present.', coach:true, placeholder:true},
-      {when:'Mixing up dipole vs H-bond', name:'<em>H-bond rule of 3</em>', move:'For H-bond: H attached to N, O, or F. If not, it is "just" dipole-dipole.', why:'Strict criterion.', lock:'NOF only.', coach:true, placeholder:true}
+      {when:'Mixing up dipole vs H-bond', name:'<em>H-bond rule of 3</em>', move:'For H-bond: H attached to N, O, or F. If not, it is "just" dipole-dipole.', why:'Strict criterion.', lock:'NOF only.', coach:true, placeholder:true},
+      {when:'Solid type identification', name:'<em>Four-question test</em>', move:'1) Conduct as solid? Yes→metallic. 2) Conduct molten? Yes→ionic. 3) Extremely hard + no conductivity? →covalent network. 4) Soft + low MP? →molecular.', why:'Each solid type has a unique conductivity+hardness signature.', lock:'Metallic conducts solid. Ionic conducts molten. Network = hard no-conduct. Molecular = soft.', coach:true, placeholder:true}
     ]
   },
   'calorimetry': {
     skill:'calorimetry', tier:1, num:'10b',
     title:'Calorimetry · <em>q = mcΔT</em>',
-    sub:'Measure heat flow by tracking T change. Specific heat c is per substance. Conservation: q_lost = −q_gained.',
-    pattern:'Heat absorbed/released: <b>q = m · c · ΔT</b>. m in g, c in J/(g·K), ΔT in K (or °C — same magnitude). For mixing, the colder substance gains what the hotter loses: <b>q_cold + q_hot = 0</b>.',
+    sub:'Measure heat flow by tracking T change. Specific heat c is per substance. Conservation: q_lost = −q_gained. Cross-link: for Hess\'s Law, ΔH_rxn context, and bond-energy estimates, see the Enthalpy module — this module focuses on the q=mcΔT calculation itself.',
+    pattern:'Heat absorbed/released: <b>q = m · c · ΔT</b>. m in g, c in J/(g·K), ΔT in K (or °C — same magnitude). For mixing, the colder substance gains what the hotter loses: <b>q_cold + q_hot = 0</b>. For phase changes within a heating calculation, the energy is q = n·ΔH_phase (handled in full in the Heating Curves module).',
     formula:'q = m · c · ΔT<br>q_cold = −q_hot<br>q_phase = n · ΔH (no T change during phase change)<br>c_water = 4.184 J/(g·K)',
     visualType:'calorimeter', visualData:{m:100, c:4.184, dT:10},
     worked:[
@@ -6704,6 +6892,38 @@ const MODULES = {
     coachTricks:[
       {when:'Mixed segments', name:'<em>Sketch the curve first</em>', move:'Draw the T-vs-q axes, mark the 5 segments, label each q. Then sum.', why:'Visual avoids missing terms.', lock:'Sketch → sum.', coach:true, placeholder:true},
       {when:'ΔH_vap vs ΔH_fus', name:'<em>Vap is way bigger</em>', move:'For water, ΔH_vap (40.7 kJ/mol) is ~7× ΔH_fus (6.01). Most heat goes into boiling.', why:'IMF physics — fully separated > slightly mobile.', lock:'Vap >> fus.', coach:true, placeholder:true}
+    ]
+  },
+  'colligative': {
+    skill:'colligative', tier:1, num:'14b',
+    title:'Colligative <em>Properties</em>',
+    sub:'BP elevation, FP depression, osmotic pressure, Raoult\'s law. Van\'t Hoff factor i. About 4-5 DAT questions per test — one of the highest-yield Tier 1 topics.',
+    pattern:'Colligative properties depend only on the <b>number of solute particles</b>, not their identity. Tommy\'s rule: <em>"Count the pieces, then plug the formula."</em><br><br>The four colligative effects all flow from the same idea — adding solute particles to a solvent disrupts how molecules enter and leave the surface or the lattice:<br>- <b>BP elevation</b>: solute particles block escape into vapor, so the solvent boils <em>higher</em>. <b>ΔTb = i · Kb · m</b>.<br>- <b>FP depression</b>: solute particles disrupt crystal packing, so the solvent freezes <em>lower</em>. <b>ΔTf = i · Kf · m</b>.<br>- <b>Osmotic pressure</b>: solvent rushes across a semipermeable membrane to dilute the side with more particles. <b>π = i · M · R · T</b>.<br>- <b>Vapor-pressure lowering / Raoult\'s law</b>: solute particles dilute the solvent at the surface, so fewer molecules escape into vapor. <b>P_solution = χ_solvent · P°_solvent</b>.<br><br><b>Van\'t Hoff factor i</b> is the particle multiplier. Write the dissociation and count: NaCl → Na⁺ + Cl⁻ (i = 2). CaCl₂ → Ca²⁺ + 2Cl⁻ (i = 3). MgSO₄ → Mg²⁺ + SO₄²⁻ (i = 2). Glucose, sucrose, urea, ethanol → no dissociation, i = 1. Strong electrolytes have i ≈ the formula count; weak electrolytes have i between 1 and that count (partial dissociation).<br><br><b>Cross-link:</b> dissolving is favored partly because of entropy gain — see <a href="#entropy" onclick="goSec(\'entropy\'); return false;" style="color:var(--gold-d); font-weight:600">Entropy</a> and <a href="#gibbs" onclick="goSec(\'gibbs\'); return false;" style="color:var(--gold-d); font-weight:600">Gibbs ΔG</a>. Solubility itself sits in <a href="#solutions" onclick="goSec(\'solutions\'); return false;" style="color:var(--gold-d); font-weight:600">Solutions</a>; gas dissolution follows Henry\'s law, also in Solutions.',
+    formula:'ΔTb = i · Kb · m  (Kb_water = 0.512 °C/m)<br>ΔTf = i · Kf · m  (Kf_water = 1.86 °C/m)<br>π  = i · M · R · T  (R = 0.0821 L·atm/(mol·K), T in K)<br>P_solution = χ_solvent · P°_solvent  (Raoult)<br>i = 1 glucose / sucrose / urea<br>i = 2 NaCl / KBr / MgSO₄<br>i = 3 CaCl₂ / Na₂SO₄<br>i = 4 AlCl₃ / FeCl₃',
+    visualType:'colligative-vis', visualData:{i:2, m:1.0, property:'bp'},
+    worked:[
+      {q:'ΔTf for 1.5 m NaCl in water?', steps:[{what:'NaCl → Na⁺ + Cl⁻, so i = 2', why:'Each formula unit of NaCl fully dissociates into 2 particles in water.', predict:{q:'Plug into ΔTf formula?', hint:'i · Kf · m.'}}, {what:'ΔTf = 2 × 1.86 × 1.5 = 5.58 °C', why:'Kf_water = 1.86 °C/m. Multiply i, Kf, and molality.'}, {what:'FP = 0 − 5.58 = −5.58 °C', why:'"Depression" means the new freezing point is LOWER than 0 °C — subtract ΔTf.'}]},
+      {q:'BP elevation when 90 g glucose (MW = 180) is dissolved in 500 g water?', steps:[{what:'mol glucose = 90 / 180 = 0.5 mol', why:'Moles = mass / molar mass.'}, {what:'molality = 0.5 mol / 0.500 kg = 1.0 m', why:'<b>m uses kg of SOLVENT, not the whole solution</b> — that is the trap.', predict:{q:'ΔTb at i = 1?', hint:'1 · 0.512 · 1.0.'}}, {what:'ΔTb = 1 × 0.512 × 1.0 = 0.512 °C', why:'Glucose is a non-electrolyte → i = 1.'}, {what:'New BP = 100 + 0.512 = 100.512 °C', why:'BP is ELEVATED (raised), so add ΔTb to 100 °C.'}]},
+      {q:'Osmotic pressure of 0.10 M CaCl₂ at 25 °C?', steps:[{what:'CaCl₂ → Ca²⁺ + 2Cl⁻, i = 3', why:'One Ca²⁺ + two Cl⁻ = 3 dissolved particles per formula unit.'}, {what:'T = 25 + 273 = 298 K', why:'Osmotic-pressure formula uses absolute temperature — always Kelvin.'}, {what:'π = iMRT = 3 × 0.10 × 0.0821 × 298', why:'R = 0.0821 L·atm/(mol·K) gives π directly in atm.', predict:{q:'About how many atm?', hint:'~7-8.'}}, {what:'π ≈ 7.34 atm', why:'Even a dilute solution drives substantial osmotic pressure — that is why kidney tubules can move water with small concentration gradients.'}]},
+      {q:'<b>Tommy\'s comparison test:</b> rank the freezing points of 0.10 m NaCl, 0.10 m CaCl₂, and 0.10 m glucose — which freezes lowest?', steps:[{what:'Same molality, only i differs', why:'ΔTf = i · Kf · m. Kf and m are identical across all three; only i changes the answer.', predict:{q:'Which has the highest i?', hint:'Count particles.'}}, {what:'i: NaCl = 2, CaCl₂ = 3, glucose = 1', why:'Write the dissociation and count: Na⁺ + Cl⁻ = 2; Ca²⁺ + 2Cl⁻ = 3; glucose stays one molecule.'}, {what:'ΔTf: glucose 0.186, NaCl 0.372, CaCl₂ 0.558 °C', why:'Each ΔTf = i · 1.86 · 0.10. Triple-i triples the depression.'}, {what:'<em>CaCl₂ freezes lowest</em> at −0.558 °C', why:'Most particles → most disruption → biggest depression. This is exactly why CaCl₂ is the road-deicer of choice — three particles per formula unit instead of two.'}]},
+      {q:'Vapor-pressure lowering: 0.10 mol glucose dissolved in 0.90 mol water at 25 °C, where P°(H₂O) = 23.8 mmHg. Find P_solution.', steps:[{what:'Identify SOLVENT mole fraction', why:'Raoult uses χ of the SOLVENT, not the solute — easy trap.', predict:{q:'χ_water?', hint:'mol water / total mol.'}}, {what:'χ_solvent = 0.90 / (0.90 + 0.10) = 0.90', why:'Mole fraction = mol of that component / total mol.'}, {what:'P_solution = χ_solvent · P°_solvent = 0.90 · 23.8', why:'Plug in directly — no i factor here for non-electrolyte.'}, {what:'P_solution = 21.4 mmHg', why:'Vapor pressure dropped because solute particles took up surface positions where water molecules used to escape.'}]}
+    ],
+    faded:[
+      {prompt:'ΔTb for 2 m CaCl₂ in water? (Kb = 0.512)', lcd:'i = 3 for CaCl₂. ΔTb = i·Kb·m.', blank:'ΔTb = ___', answer:'3.07°C'},
+      {prompt:'Raoult: χ_solvent = 0.90, P° = 50 mmHg. P_solution = ?', lcd:'P = χ_solvent · P°_solvent.', blank:'P = ___', answer:'45 mmHg'},
+      {prompt:'Lowest freezing point at 1 m: NaCl, glucose, CaCl₂, urea?', lcd:'Highest i wins.', blank:'___', answer:'CaCl₂'},
+      {prompt:'π for 0.20 M NaCl at 300 K? (R = 0.0821)', lcd:'i = 2; π = iMRT.', blank:'π ≈ ___ atm', answer:'9.85'}
+    ],
+    practice:['s3','s4','s5','s8'],
+    masteryProblems:['s3','s4','s5','s8'],
+    lock:'Count particles first (i). Then pick the formula and plug in.',
+    trap:'Using M (molarity) instead of m (molality) for ΔTb and ΔTf. Using mole fraction of SOLUTE (not solvent) in Raoult. Forgetting i for ionic solutes — NaCl is i = 2, not 1. Forgetting that BP is RAISED but FP is LOWERED — same magnitude formula, opposite direction on the thermometer.',
+    coachTricks:[
+      {when:'You forget which i to use', name:'<em>Write the dissociation, then count</em>', move:'Tommy\'s drill — before plugging numbers, write the dissociation: NaCl → Na⁺ + Cl⁻ (count = 2). CaCl₂ → Ca²⁺ + 2Cl⁻ (count = 3). MgSO₄ → Mg²⁺ + SO₄²⁻ (count = 2). Glucose stays glucose (count = 1). Three seconds, no guessing.', why:'i is just the particle multiplier — every dissociated formula doubles or triples the colligative effect.', lock:'Write dissoc → count → multiply.', coach:true, placeholder:true},
+      {when:'BP rises, FP falls', name:'<em>"Boil up, freeze down"</em>', move:'BP elevation means new BP = 100 + ΔTb. FP depression means new FP = 0 − ΔTf. Same formula structure (i·K·m), opposite sign in the final step.', why:'The math is symmetric, but DAT writers love trapping students with sign errors here.', lock:'Boil up. Freeze down.', coach:true, placeholder:true},
+      {when:'Raoult vs osmosis confusion', name:'<em>Solvent fraction vs solution molarity</em>', move:'Raoult uses χ_solvent — the mole fraction of what is LEFT (solvent) — and a reference P°. Osmotic π uses M (molarity of all solute particles) and acts at a membrane. Different setups → different choices.', why:'Both involve "particles in solvent," but they answer different physical questions.', lock:'Raoult: χ_solvent + P°. Osmosis: M + R + T.', coach:true, placeholder:true},
+      {when:'The DAT 4-particle ranking question', name:'<em>Same m, just rank i</em>', move:'When the prompt holds molality (or molarity) constant and asks for biggest ΔTf or biggest π, only i changes the answer. AlCl₃ (i = 4) > CaCl₂ (i = 3) > NaCl (i = 2) > glucose (i = 1).', why:'It is a one-step problem disguised as a four-option problem.', lock:'Same m → just rank i.', coach:true, placeholder:true},
+      {when:'Molality vs molarity confusion', name:'<em>m has kg of solvent in the bottom</em>', move:'BP/FP formulas use m (mol solute / kg <b>solvent</b>). Osmotic pressure uses M (mol solute / L <b>solution</b>). Look at the units of the K constant: °C per m means it is asking for molality.', why:'The constant\'s units tell you which concentration to use.', lock:'K\'s units name the concentration.', coach:true, placeholder:true}
     ]
   }
 };
@@ -8140,6 +8360,42 @@ function renderVisual(skillId){
         </div>
       </div>
     `;
+  } else if (M.visualType === 'lab-tech-table'){
+    html = `
+      <div class="lt-wrap">
+        <div class="lt-section">
+          <div class="lt-heading">Glassware — accuracy hierarchy</div>
+          <div class="lt-table">
+            <div class="lt-row lt-hdr"><div>Glassware</div><div>Precision</div><div>Use</div><div>Key trap</div></div>
+            <div class="lt-row lt-best"><div><b>Volumetric flask</b></div><div>~0.1% (one volume)</div><div>Prepare precise fixed-volume standards</div><div>Cannot measure AT any other volume</div></div>
+            <div class="lt-row lt-best"><div><b>Volumetric pipette</b></div><div>~0.1%</div><div>Transfer a precise fixed volume (10 or 25 mL)</div><div>Do not blow out the last drop — retained by design</div></div>
+            <div class="lt-row lt-best"><div><b>Buret</b></div><div>~0.1%</div><div>Titrations — variable dispensed volume</div><div>Purge air bubbles before reading zero</div></div>
+            <div class="lt-row lt-ok"><div><b>Graduated cylinder</b></div><div>~1%</div><div>Approximate volumes (rinse water, solvents)</div><div>Too sloppy for quantitative standards</div></div>
+            <div class="lt-row lt-poor"><div><b>Beaker / Erlenmeyer</b></div><div>~5% or worse</div><div>Reaction vessel — NOT for measuring volume</div><div>Markings are not calibrated</div></div>
+            <div class="lt-row lt-best"><div><b>Analytical balance</b></div><div>±0.0001 g</div><div>Precise mass for stoichiometry</div><div>Hot objects bias reading low (convection)</div></div>
+          </div>
+        </div>
+        <div class="lt-section" style="margin-top:14px">
+          <div class="lt-heading">Error types</div>
+          <div class="lt-table">
+            <div class="lt-row lt-hdr"><div>Type</div><div>Pattern</div><div>Fix</div><div>Example</div></div>
+            <div class="lt-row"><div><b>Random</b></div><div>Scatter around true value, no consistent direction</div><div>Repeat and average</div><div>Reading meniscus from slightly different angles each time</div></div>
+            <div class="lt-row"><div><b>Systematic</b></div><div>Consistent bias always in the same direction</div><div>Fix the method — more repeats do NOT help</div><div>Air bubble in buret always inflates volume delivered</div></div>
+          </div>
+        </div>
+        <div class="lt-section" style="margin-top:14px">
+          <div class="lt-heading">Titration setup</div>
+          <div class="lt-table">
+            <div class="lt-row lt-hdr"><div>Component</div><div>Role</div><div>DAT rule</div></div>
+            <div class="lt-row"><div><b>Buret</b></div><div>Delivers titrant of known concentration</div><div>Read bottom of meniscus; subtract initial from final</div></div>
+            <div class="lt-row"><div><b>Indicator</b></div><div>Changes color at endpoint (approximately = equivalence)</div><div>Choose indicator whose pKa is close to the equivalence pH</div></div>
+            <div class="lt-row"><div><b>WA + SB</b></div><div>Eq pH &gt; 7</div><div>Use phenolphthalein (8.2–10.0)</div></div>
+            <div class="lt-row"><div><b>WB + SA</b></div><div>Eq pH &lt; 7</div><div>Use methyl orange (3.1–4.4)</div></div>
+            <div class="lt-row"><div><b>SA + SB</b></div><div>Eq pH = 7</div><div>Phenolphthalein or bromothymol blue</div></div>
+          </div>
+        </div>
+      </div>
+    `;
   } else if (M.visualType === 'sigfig-tool'){
     html = `
       <div class="sf-wrap" data-skill="${skillId}" data-num="0.04200">
@@ -8354,6 +8610,36 @@ function renderVisual(skillId){
         </table>
       </div>
     `;
+  } else if (M.visualType === 'colligative-vis'){
+    html = `
+      <div class="cv-wrap" style="padding:8px 0" data-skill="${skillId}">
+        <div class="muted up" style="margin-bottom:8px; letter-spacing:0.14em">Particle counter · van\'t Hoff factor i</div>
+        <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:12px">
+          <button class="btn sm" onclick="cvSet('${skillId}','glucose',1)">glucose · i=1</button>
+          <button class="btn sm" onclick="cvSet('${skillId}','NaCl',2)">NaCl · i=2</button>
+          <button class="btn sm" onclick="cvSet('${skillId}','MgSO4',2)">MgSO₄ · i=2</button>
+          <button class="btn sm" onclick="cvSet('${skillId}','CaCl2',3)">CaCl₂ · i=3</button>
+          <button class="btn sm" onclick="cvSet('${skillId}','AlCl3',4)">AlCl₃ · i=4</button>
+        </div>
+        <div style="background:var(--paper-2); border:1px solid var(--line); border-radius:10px; padding:14px 16px; margin-bottom:10px">
+          <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:6px">
+            <span style="font-family:'Playfair Display',serif; font-size:18px; font-weight:700" id="cvSolute-${skillId}">NaCl</span>
+            <span class="mono" style="color:var(--gold-d); font-weight:700" id="cvI-${skillId}">i = 2</span>
+          </div>
+          <div style="display:flex; gap:6px; flex-wrap:wrap" id="cvParticles-${skillId}"></div>
+          <div class="muted" style="font-size:12px; margin-top:6px" id="cvDissoc-${skillId}">NaCl → Na⁺ + Cl⁻</div>
+        </div>
+        <div style="background:var(--paper); border:1px solid var(--line); border-radius:10px; padding:14px 16px">
+          <div class="muted up" style="margin-bottom:8px; letter-spacing:0.14em">Effect at m = 1.0 mol/kg in water</div>
+          <table style="width:100%; font-size:13px; border-collapse:collapse">
+            <tr><td style="padding:4px 6px; color:var(--ink-2)">ΔTf = i · 1.86 · m</td><td class="mono" style="padding:4px 6px; text-align:right; color:var(--good-d); font-weight:700" id="cvFP-${skillId}">3.72 °C → FP −3.72 °C</td></tr>
+            <tr><td style="padding:4px 6px; color:var(--ink-2)">ΔTb = i · 0.512 · m</td><td class="mono" style="padding:4px 6px; text-align:right; color:var(--good-d); font-weight:700" id="cvBP-${skillId}">1.02 °C → BP 101.02 °C</td></tr>
+            <tr><td style="padding:4px 6px; color:var(--ink-2)">π at 298 K (M = 1.0)</td><td class="mono" style="padding:4px 6px; text-align:right; color:var(--good-d); font-weight:700" id="cvPi-${skillId}">48.9 atm</td></tr>
+          </table>
+        </div>
+      </div>
+    `;
+    setTimeout(() => { if (typeof window.cvSet === 'function') window.cvSet(skillId, 'NaCl', 2); }, 0);
   }
   wrap.innerHTML = html;
   const initMap = {
@@ -8399,6 +8685,45 @@ function renderVisual(skillId){
 }
 
 /* fraction animation */
+/* Colligative properties · particle counter visual handler.
+   Reuses Wong tokens; no red/green pairs; soft labels. */
+window.cvSet = function(skillId, solute, i){
+  const sol = document.getElementById('cvSolute-'+skillId);
+  const iEl = document.getElementById('cvI-'+skillId);
+  const parts = document.getElementById('cvParticles-'+skillId);
+  const dis = document.getElementById('cvDissoc-'+skillId);
+  const fp = document.getElementById('cvFP-'+skillId);
+  const bp = document.getElementById('cvBP-'+skillId);
+  const piEl = document.getElementById('cvPi-'+skillId);
+  if (!sol || !iEl || !parts || !dis || !fp || !bp || !piEl) return;
+  const dissocMap = {
+    'glucose':  {label:'glucose (C₆H₁₂O₆)',  eqn:'glucose stays whole — no dissociation', ions:['glucose']},
+    'NaCl':     {label:'NaCl',                eqn:'NaCl → Na⁺ + Cl⁻',                       ions:['Na⁺','Cl⁻']},
+    'MgSO4':    {label:'MgSO₄',               eqn:'MgSO₄ → Mg²⁺ + SO₄²⁻',                   ions:['Mg²⁺','SO₄²⁻']},
+    'CaCl2':    {label:'CaCl₂',               eqn:'CaCl₂ → Ca²⁺ + 2 Cl⁻',                   ions:['Ca²⁺','Cl⁻','Cl⁻']},
+    'AlCl3':    {label:'AlCl₃',               eqn:'AlCl₃ → Al³⁺ + 3 Cl⁻',                   ions:['Al³⁺','Cl⁻','Cl⁻','Cl⁻']}
+  };
+  const entry = dissocMap[solute] || dissocMap['NaCl'];
+  sol.textContent = entry.label;
+  iEl.textContent = 'i = ' + i;
+  dis.innerHTML = entry.eqn;
+  // Render coloured pills for each particle (Wong-safe: gold + teal + plum, no red/green)
+  const palette = ['var(--gold)','var(--teal-3)','var(--plum)','var(--info)'];
+  parts.innerHTML = entry.ions.map((ion, idx) => {
+    const colour = palette[idx % palette.length];
+    return `<span style="display:inline-flex; align-items:center; gap:6px; background:${colour}; color:#fffdf7; font-family:'JetBrains Mono',monospace; font-size:12px; font-weight:700; padding:4px 10px; border-radius:14px; box-shadow:var(--shadow)">${ion}</span>`;
+  }).join('');
+  // Compute effects at m = 1.0 mol/kg, M = 1.0 mol/L, T = 298 K
+  const m = 1.0;
+  const Kb = 0.512, Kf = 1.86, R = 0.0821, T = 298;
+  const dTf = i * Kf * m;
+  const dTb = i * Kb * m;
+  const pi  = i * 1.0 * R * T;
+  fp.textContent = dTf.toFixed(2) + ' °C → FP ' + (-dTf).toFixed(2) + ' °C';
+  bp.textContent = dTb.toFixed(2) + ' °C → BP ' + (100 + dTb).toFixed(2) + ' °C';
+  piEl.textContent = pi.toFixed(1) + ' atm';
+};
+
 window.animFrac = function(skillId){
   const cellsA = document.querySelectorAll(`#fbA-${skillId} .frac-cell`);
   const cellsB = document.querySelectorAll(`#fbB-${skillId} .frac-cell`);
@@ -10178,6 +10503,63 @@ window.vsQuizAnswer = function(skillId, picked){
   nextBtn.onclick = () => _vsQuizNew(skillId);
   prompt.appendChild(nextBtn);
 };
+
+/* ============================================================
+   VSEPR PREDICTOR — standalone section (bonded + LP dropdowns)
+   Maps [bonded][lp] → shape key into VSEPR_SHAPES
+   ============================================================ */
+const VSPR_MAP = {
+  2: {0:'linear', 1:'bent', 2:'linear'},
+  3: {0:'trigonal', 1:'bent', 2:'linear'},
+  4: {0:'tetrahedral', 1:'trig-pyr', 2:'bent', 3:'linear'},
+  5: {0:'trig-bipyr', 1:'seesaw', 2:'tshape', 3:'linear'},
+  6: {0:'octahedral', 1:'octahedral', 2:'sq-planar', 3:'octahedral'}
+};
+window.vsprUpdate = function(){
+  const bonded = parseInt(document.getElementById('vsprBonded').value) || 4;
+  const lp = parseInt(document.getElementById('vsprLP').value) || 0;
+  const shapeKey = (VSPR_MAP[bonded] && VSPR_MAP[bonded][lp]) ? VSPR_MAP[bonded][lp] : 'tetrahedral';
+  if (typeof VSEPR_SHAPES === 'undefined') return;
+  const S = VSEPR_SHAPES[shapeKey] || VSEPR_SHAPES.tetrahedral;
+  const svg = document.getElementById('vsprSvg');
+  if (svg) svg.innerHTML = S.svg;
+  const nameEl = document.getElementById('vsprName');
+  if (nameEl) nameEl.textContent = S.name;
+  const angleEl = document.getElementById('vsprAngle');
+  if (angleEl) angleEl.textContent = S.angle;
+  const exEl = document.getElementById('vsprEx');
+  if (exEl) exEl.textContent = S.ex;
+  const infoEl = document.getElementById('vsprInfoGrid');
+  if (infoEl) infoEl.innerHTML = `
+    <div class="lbl">Steric #</div><div>${S.steric}</div>
+    <div class="lbl">Lone pairs</div><div>${S.lps}</div>
+    <div class="lbl">Bond angle</div><div>${S.angle}</div>
+    <div class="lbl">Examples</div><div>${S.ex}</div>
+  `;
+  // Highlight matching row in reference table
+  document.querySelectorAll('.vspr-ref-row[data-shape]').forEach(r => {
+    r.style.background = r.dataset.shape === shapeKey ? 'rgba(201,168,76,.12)' : '';
+    r.style.fontWeight = r.dataset.shape === shapeKey ? '700' : '';
+  });
+};
+// Init after DOM ready (called from section-open or on load)
+function _vsprInit(){
+  if (document.getElementById('vsprSvg')) window.vsprUpdate();
+}
+// Also trigger when the section is first made visible via goSec
+document.addEventListener('DOMContentLoaded', function(){
+  const obs = new MutationObserver(function(){
+    const sec = document.getElementById('vsepr-predictor');
+    if (sec && sec.style.display !== 'none' && !sec._vsInitDone){
+      sec._vsInitDone = true;
+      window.vsprUpdate();
+    }
+  });
+  const mn = document.querySelector('.mn');
+  if (mn) obs.observe(mn, {childList:true, subtree:false, attributes:true, attributeFilter:['class']});
+  // Also run once on load in case section is visible at start
+  setTimeout(_vsprInit, 200);
+});
 
 /* ============================================================
    MOLE LADDER — unit converter
@@ -13259,6 +13641,9 @@ window.goSec = id => {
   if (id === 'insights' && typeof INSIGHTS !== 'undefined') {
     setTimeout(() => INSIGHTS.render(), 100);
   }
+  if (id === 'vsepr-predictor' && typeof window.vsprUpdate === 'function') {
+    setTimeout(() => window.vsprUpdate(), 80);
+  }
 };
 // Click handler on sidebar links also triggers goSec — make sure refresh fires
 document.addEventListener('click', e => {
@@ -14693,6 +15078,11 @@ const SIM = {
     else predicted = 25 + ((pct - 0.95) / 0.05) * 5;       // 25-30
     predicted = Math.max(1, Math.min(30, Math.round(predicted)));
 
+    // DAT GC percentile anchors (beta calibration — internal-mock-validated only)
+    // Source: ADE percentile tables approximated; treat as directional, not diagnostic-exact.
+    const PCT_TABLE = {1:1,2:1,3:1,4:2,5:3,6:4,7:6,8:9,9:13,10:18,11:24,12:31,13:38,14:46,15:53,16:60,17:67,18:73,19:78,20:83,21:87,22:90,23:93,24:95,25:97,26:98,27:99,28:99,29:99,30:99};
+    const predictedPct = PCT_TABLE[predicted] || 50;
+
     // Per-topic breakdown
     const byTopic = {};
     s.pool.forEach((p, j) => {
@@ -14727,11 +15117,12 @@ const SIM = {
         <h3 style="font-family:'Playfair Display',serif; font-size:28px; margin:0 0 4px">Mock complete.</h3>
         <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(140px, 1fr)); gap:12px; margin:14px 0">
           <div class="sim-result-tile"><div class="n">${correct}/${attempted}</div><div class="l">Correct (${Math.round(pct*100)}%)</div></div>
-          <div class="sim-result-tile"><div class="n">${predicted}</div><div class="l">Predicted DAT GC</div></div>
+          <div class="sim-result-tile"><div class="n">${predicted}</div><div class="l">Predicted DAT GC · approx ${predictedPct}th pct.</div></div>
           <div class="sim-result-tile"><div class="n">${elapsedMin}:${elapsedSec.toString().padStart(2,'0')}</div><div class="l">Time taken</div></div>
           <div class="sim-result-tile"><div class="n">${total - attempted}</div><div class="l">Skipped</div></div>
         </div>
-        ${pushedToSR > 0 ? `<div style="background:var(--gold-bg); border:1px solid var(--gold-d); border-radius:8px; padding:10px 14px; margin:8px 0; font-size:13px; color:var(--ink)"><b style="color:var(--gold-d)">↻ Spaced repetition:</b> ${pushedToSR} wrong/skipped question${pushedToSR===1?'':'s'} added to your daily drill queue — they'll resurface tomorrow.</div>` : ''}
+        <div style="font-size:11.5px; color:var(--ink-mute); padding:4px 2px; margin:2px 0 8px">Predicted score ${predicted} · approx ${predictedPct}th percentile · beta calibration. Internal-mock-validated only — not equivalent to ADE official percentile data.</div>
+        ${pushedToSR > 0 ? `<div style="background:var(--gold-bg); border:1px solid var(--gold-d); border-radius:8px; padding:10px 14px; margin:8px 0; font-size:13px; color:var(--ink)"><b style="color:var(--gold-d)">Spaced repetition:</b> ${pushedToSR} missed/skipped question${pushedToSR===1?'':'s'} added to your daily drill queue — they'll resurface tomorrow.</div>` : ''}
         <h4 style="font-family:'Playfair Display',serif; font-size:18px; margin:18px 0 8px">By topic — weakest first</h4>
         <div class="sim-topic-grid">
           ${topicSorted.map(([sk, t]) => {
@@ -14740,7 +15131,7 @@ const SIM = {
             return `<div class="sim-topic-row ${cls}"><span class="sk">${sk}</span><span class="bar"><span class="fill" style="width:${p*100}%"></span></span><span class="pct">${t.right}/${t.seen}</span></div>`;
           }).join('')}
         </div>
-        <h4 style="font-family:'Playfair Display',serif; font-size:18px; margin:18px 0 8px">Wrong-answer review</h4>
+        <h4 style="font-family:'Playfair Display',serif; font-size:18px; margin:18px 0 8px">Needs-review walkthrough</h4>
         <div style="display:flex; flex-direction:column; gap:8px">
           ${s.pool.map((p, j) => {
             const r = s.results[j];
@@ -16225,6 +16616,8 @@ function renderPhasePicker(){
         'weekly-plan':'Weekly Plan',
         checkpoints:'Checkpoints',
         'shortcut-deck':'Shortcut Deck',
+        'vsepr-predictor':'VSEPR Predictor',
+        'lab-techniques':'Lab Techniques',
         'lab-toolkit':'Lab Toolkit',
         'test-sim':'Test-Day Simulation',
         pacing:'Pacing Ladder',
@@ -17744,7 +18137,13 @@ const SHORTCUTS = [
   {n:16, cat:'acid', t:'pH logic shortcut', form:'More H⁺ → pH ↓ &nbsp; · &nbsp; More OH⁻ → pH ↑', tom:'Direction first, then math.',
    when:'On any pH question, predict the direction before computing. Catches sign errors and bad answer choices.', modules:['ph-basics','buffers']},
   {n:17, cat:'acid', t:'Amphoteric species', form:'Can both donate AND accept H⁺', tom:'Amphoteric ≠ amphiprotic, but for the DAT they overlap.',
-   when:'H₂O, HCO₃⁻, HSO₄⁻, H₂PO₄⁻, HPO₄²⁻, amino acids. Acts as base in acidic solutions, acid in basic ones.', modules:['ph-basics','strong-weak']}
+   when:'H₂O, HCO₃⁻, HSO₄⁻, H₂PO₄⁻, HPO₄²⁻, amino acids. Acts as base in acidic solutions, acid in basic ones.', modules:['ph-basics','strong-weak']},
+  {n:18, cat:'collig', t:'Colligative shortcut — van\'t Hoff i first', form:'ΔTb = i·Kb·m · ΔTf = i·Kf·m · π = i·M·R·T', tom:'Count particles first, then plug.',
+   when:'i = 1 (glucose), 2 (NaCl, KBr), 3 (CaCl₂, MgSO₄?). The i factor multiplies everything. Always identify the solute dissociation before touching the formula.', modules:['colligative','solutions']},
+  {n:19, cat:'mech', t:'Slow step controls rate', form:'Rate law = k × [reactants of slow step]', tom:'The bottleneck sets the speed limit.',
+   when:'Mechanism problems: write rate law from the slow step only. Intermediates in the slow step must be eliminated via pre-equilibrium expressions if they appear.', modules:['arrhenius','rate-laws']},
+  {n:20, cat:'solid', t:'Four types of solids — quick ID', form:'Ionic: high MP, brittle, conducts molten · Network: hardest, no conduct · Metallic: conducts solid · Molecular: soft, low MP', tom:'Ask: does it conduct solid? Molten? How hard?',
+   when:'Any question about MP, conductivity, hardness, or malleability. The conductivity clue is fastest: conducts solid = metallic; conducts molten = ionic; no conductivity = network or molecular.', modules:['imf-rank']}
 ];
 
 window.SHORTCUTS = SHORTCUTS;
@@ -17752,7 +18151,7 @@ window.SHORTCUTS = SHORTCUTS;
 function renderShortcutDeck(){
   const grid = document.getElementById('sdGrid');
   if (!grid) return;
-  const catLbl = {acid:'Acid-Base', buffer:'Buffer', ksp:'Ksp', eq:'Equilibrium'};
+  const catLbl = {acid:'Acid-Base', buffer:'Buffer', ksp:'Ksp', eq:'Equilibrium', collig:'Colligative', mech:'Mechanisms', solid:'Solids'};
   grid.innerHTML = SHORTCUTS.map(s => `
     <div class="sd-card" data-cat="${s.cat}" onclick="goSec('${s.modules[0]}')">
       <div class="sd-card-h">
@@ -17843,8 +18242,8 @@ function renderShortcutDeck(){
 })();
 
 [
-  'sig-figs','atomic','quantum-numbers','periodic','bonding','lewis','vsepr','hybridization','mole-conv','lim-react','solutions','imf-rank',
-  'gas-laws','enthalpy','calorimetry','entropy','gibbs','rate-laws','arrhenius','eq-kc','eq-lechat','eq-ice',
+  'sig-figs','atomic','quantum-numbers','periodic','bonding','lewis','vsepr','hybridization','mole-conv','lim-react','solutions','imf-rank','lab-techniques',
+  'gas-laws','enthalpy','calorimetry','entropy','gibbs','rate-laws','arrhenius','colligative','eq-kc','eq-lechat','eq-ice',
   'ph-basics','strong-weak','buffers','titration',
   'ksp','galvanic','red-pot','nernst','electrolysis','nuclear','phase-diag','heating-curve',
   'untimed','skip-ret','guess'

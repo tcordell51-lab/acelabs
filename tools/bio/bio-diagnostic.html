@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Diagnostic &middot; AceTheDAT Bio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="bio-shared.css">
+<link rel="stylesheet" href="../../shared/al-motion.css">
+<style>
+.dg-stage{max-width:780px;margin:0 auto;padding:0 60px}
+.dg-intro{padding:30px 32px;background:var(--paper);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);margin-bottom:24px}
+.dg-intro h2{font-family:'Playfair Display',serif;font-size:30px;margin:0 0 10px;font-weight:700;line-height:1.15}
+.dg-intro h2 em{font-style:italic;color:var(--gold-d)}
+.dg-intro .lede{font-size:15px;color:var(--ink-2);margin-bottom:18px;line-height:1.55}
+.dg-intro ul{margin:0 0 18px;padding-left:20px;font-size:13.5px;color:var(--ink-2);line-height:1.7}
+.dg-intro ul li::marker{color:var(--gold-d)}
+.dg-runtop{display:flex;justify-content:space-between;align-items:center;padding:12px 18px;background:var(--ink);color:var(--paper);border-radius:11px 11px 0 0;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;letter-spacing:.08em}
+.dg-runbody{padding:24px 28px;background:var(--paper);border:1px solid var(--line);border-top:none;border-radius:0 0 11px 11px}
+.dg-progress{flex:1;height:5px;background:rgba(255,255,255,0.18);border-radius:3px;overflow:hidden;margin:0 14px}
+.dg-progress-fill{height:100%;background:var(--gold);transition:width .3s}
+.dg-q{font-family:'Playfair Display',serif;font-size:21px;font-weight:600;line-height:1.4;margin:0 0 18px}
+.dg-tag{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.16em;color:var(--gold-d);text-transform:uppercase;font-weight:700;margin-bottom:8px}
+.dg-opts{display:flex;flex-direction:column;gap:8px}
+.dg-opt{padding:12px 16px;background:var(--paper-2);border:1.5px solid var(--line);border-radius:8px;cursor:pointer;transition:all .15s;display:flex;gap:12px;font-size:14px;line-height:1.5}
+.dg-opt:hover{border-color:var(--gold-d);background:var(--paper)}
+.dg-opt.selected{background:var(--gold-bg);border-color:var(--gold-d)}
+.dg-opt .let{font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--gold-d);flex-shrink:0;min-width:18px}
+.dg-foot{display:flex;justify-content:space-between;align-items:center;margin-top:22px;gap:10px}
+.dg-result{padding:30px 32px;background:var(--paper);border:2px solid var(--gold);border-radius:14px;box-shadow:var(--shadow-md)}
+.dg-result h2{font-family:'Playfair Display',serif;font-size:32px;margin:0 0 14px;font-weight:700}
+.dg-result h2 em{font-style:italic;color:var(--gold-d)}
+.dg-scores{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:18px 0}
+@media (max-width:680px){.dg-scores{grid-template-columns:1fr}}
+.dg-scorecard{padding:16px 18px;text-align:center;background:var(--paper-2);border-radius:10px}
+.dg-scorecard.gold{background:var(--gold-bg);border:1px solid var(--gold-d)}
+.dg-scorecard .lbl{font-size:10px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:var(--ink-mute);margin-bottom:6px}
+.dg-scorecard.gold .lbl{color:var(--gold-d)}
+.dg-scorecard .num{font-family:'Playfair Display',serif;font-size:36px;font-weight:700;line-height:1}
+.dg-scorecard .num em{font-style:italic;color:var(--gold-d)}
+.dg-hubtable{width:100%;margin-top:18px;border-collapse:collapse;font-size:13.5px}
+.dg-hubtable th{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink-mute);text-transform:uppercase;font-weight:700;text-align:left;padding:8px 12px;border-bottom:1px solid var(--line)}
+.dg-hubtable td{padding:10px 12px;border-bottom:1px dashed var(--line)}
+.dg-hubtable td:nth-child(2),.dg-hubtable td:nth-child(3){text-align:right;font-family:'JetBrains Mono',monospace;font-weight:700}
+.dg-hubtable .strong{color:var(--good-d)}
+.dg-hubtable .weak{color:var(--trap-d)}
+.dg-review{margin-top:22px}
+.dg-review h3{font-family:'Playfair Display',serif;font-size:20px;margin:0 0 12px;font-weight:700}
+.dg-review-item{padding:14px 16px;background:var(--paper-2);border-left:3px solid var(--trap);border-radius:0 8px 8px 0;margin-bottom:10px;font-size:13.5px;line-height:1.55}
+.dg-review-item b{color:var(--ink)}
+.dg-review-item .why{margin-top:8px;color:var(--ink-2);font-size:13px}
+.dg-review-item .why em{color:var(--trap-d);font-style:normal;font-weight:700}
+</style>
+</head>
+<body data-page="diagnostic">
+<div class="app">
+<aside class="sb">
+  <div class="sb-brand">
+    <div class="mark">Ace<em>The</em>DAT</div>
+    <div class="sub">Bio Mastery System &middot; v2</div>
+  </div>
+  <a class="sb-link" href="index.html" style="margin-bottom:6px"><span class="dot"></span><span class="label">&larr; Mastery hub</span><span class="meta"></span></a>
+  <a class="sb-link live" href="bio-mock.html" style="margin-bottom:6px"><span class="dot" style="background:var(--gold)"></span><span class="label"><b>Mock Exam</b></span><span class="meta">40q</span></a>
+  <a class="sb-link live active" href="bio-diagnostic.html" style="margin-bottom:6px"><span class="dot"></span><span class="label">Diagnostic</span><span class="meta">24q</span></a>
+  <a class="sb-link live" href="bio-calendar.html" style="margin-bottom:8px"><span class="dot"></span><span class="label">60-day plan</span><span class="meta">study</span></a>
+  <a class="sb-link live" href="bio-analytics.html" style="margin-bottom:8px"><span class="dot"></span><span class="label">Analytics</span><span class="meta">trends</span></a>
+  <a class="sb-link live" href="bio-bonus.html" style="margin-bottom:6px"><span class="dot"></span><span class="label">Bonus topics</span><span class="meta">supp</span></a>
+  <a class="sb-link live" href="bio-micrographs.html" style="margin-bottom:8px"><span class="dot"></span><span class="label">Micrograph ID</span><span class="meta">8 cards</span></a>
+
+  <div class="sb-section">Six hubs</div>
+  <a class="sb-link live" href="bio-cell.html"><span class="dot"></span><span class="label">Cell Lab</span><span class="meta">17</span></a>
+  <a class="sb-link live" href="bio-genetics.html"><span class="dot"></span><span class="label">Genetics</span><span class="meta">flagship</span></a>
+  <a class="sb-link live" href="bio-physiology.html"><span class="dot"></span><span class="label">Physiology</span><span class="meta">flagship</span></a>
+  <a class="sb-link live" href="bio-diversity.html"><span class="dot"></span><span class="label">Diversity</span><span class="meta">flagship</span></a>
+  <a class="sb-link live" href="bio-devo.html"><span class="dot"></span><span class="label">Developmental</span><span class="meta">flagship</span></a>
+  <a class="sb-link live" href="bio-evolution.html"><span class="dot"></span><span class="label">Evolution</span><span class="meta">flagship</span></a>
+</aside>
+
+<main class="mn" style="padding-top:46px">
+  <div class="dg-stage" id="dgStage"></div>
+</main>
+</div>
+
+<script>
+// 24 calibrated diagnostic questions — 4 per hub. Each maps to a node so the
+// student's results plot directly into the calendar's weak-spot list.
+const QUESTIONS = [
+  // Cell Lab (8)
+  { hub:'Cell Lab', node:'wat', q:'Hydrogen bonding gives water all the following properties EXCEPT:', opts:['high specific heat','high heat of vaporization','low surface tension','solid is less dense than liquid'], correct:2, why:'Water has unusually <i>high</i> surface tension (hydrogen bonds at the surface pull inward).' },
+  { hub:'Cell Lab', node:'pro', q:'Tertiary structure of a protein is held primarily by:', opts:['peptide bonds','side-chain interactions (H-bonds, disulfides, van der Waals)','base pairing','phosphodiester bonds'], correct:1, why:'Tertiary = R-group interactions. Peptide bonds hold primary; secondary is backbone H-bonds.' },
+  { hub:'Cell Lab', node:'enz', q:'A non-competitive inhibitor binds:', opts:['the active site','the substrate','an allosteric site','the cofactor'], correct:2, why:'Non-competitive = allosteric. Vmax decreases, Km is unchanged.' },
+  { hub:'Cell Lab', node:'mtr', q:'Facilitated diffusion differs from simple diffusion in that it:', opts:['requires ATP','requires a transport protein','moves against the gradient','only occurs in plants'], correct:1, why:'Both are passive (no ATP). Facilitated needs a channel/carrier; simple goes through the bilayer.' },
+  { hub:'Cell Lab', node:'krb', q:'How many NADH are produced per glucose by the Krebs cycle (both turns)?', opts:['2','4','6','10'], correct:2, why:'3 NADH per turn × 2 turns = 6. Plus 2 FADH₂ and 2 ATP/GTP.' },
+  { hub:'Cell Lab', node:'rep', q:'Okazaki fragments are joined by:', opts:['DNA polymerase III','DNA polymerase I','primase','ligase'], correct:3, why:'Pol I removes RNA primers and fills the gap. Ligase seals the nick between fragments.' },
+  { hub:'Cell Lab', node:'mit', q:'The cell cycle checkpoint that monitors DNA damage before replication is:', opts:['G2/M','M (spindle)','G1/S','S phase'], correct:2, why:'G1/S is the major p53 checkpoint — verifies size + DNA integrity before committing to replicate.' },
+  { hub:'Cell Lab', node:'org', q:'A cell that secretes a lot of protein would have abundant:', opts:['smooth ER','rough ER','peroxisomes','lysosomes'], correct:1, why:'Rough ER (ribosome-studded) makes secreted/membrane proteins. Smooth ER does lipid synthesis.' },
+
+  // Genetics (4)
+  { hub:'Genetics', node:'ap', q:'Two heterozygotes (Aa × Aa) produce offspring. The phenotypic ratio is:', opts:['1:1','1:2:1','3:1','9:3:3:1'], correct:2, why:'Phenotypic 3:1 (3 dominant : 1 recessive). Genotypic is 1:2:1.' },
+  { hub:'Genetics', node:'ap', q:'A father is colorblind (X^c Y), mother is a carrier (X^C X^c). What fraction of <b>daughters</b> are colorblind?', opts:['0','1/4','1/2','3/4'], correct:2, why:'Daughters get X^c from dad; half also get X^c from mom → 1/2 colorblind, 1/2 carriers.' },
+  { hub:'Genetics', node:'ap', q:'In a population at Hardy-Weinberg equilibrium, the frequency of homozygous recessives is 0.16. What is the carrier frequency?', opts:['0.04','0.16','0.40','0.48'], correct:3, why:'q² = 0.16 → q = 0.4, p = 0.6. Carriers = 2pq = 2(0.6)(0.4) = 0.48.' },
+  { hub:'Genetics', node:'dom', q:'Which type of mutation almost always causes the most severe protein change?', opts:['silent','missense','frameshift','synonymous'], correct:2, why:'Frameshift (insertion/deletion not in multiples of 3) shifts the entire downstream reading frame.' },
+
+  // Physiology (5)
+  { hub:'Physiology', node:'ra', q:'During the plateau phase of a cardiac myocyte action potential, the dominant ionic event is:', opts:['Na+ influx','K+ efflux','Ca2+ influx','Cl- influx'], correct:2, why:'Slow Ca²⁺ channels open, balancing K⁺ efflux. The plateau is what makes cardiac contractions long.' },
+  { hub:'Physiology', node:'ra', q:'In the nephron, water is reabsorbed primarily in the:', opts:['Bowman capsule','proximal convoluted tubule','distal convoluted tubule','collecting duct (under ADH)'], correct:1, why:'~65% of water is reabsorbed in the PCT (passive, follows Na⁺). ADH fine-tunes the rest at the CD.' },
+  { hub:'Physiology', node:'ra', q:'Which curve shifts represent the Bohr effect?', opts:['Hb-O₂ curve shifts <b>left</b> with high CO₂','Hb-O₂ curve shifts <b>right</b> with high CO₂','Hb-O₂ curve unchanged with CO₂','CO₂ has no effect on Hb-O₂ binding'], correct:1, why:'High CO₂ + low pH → right shift → Hb releases O₂ more easily in metabolizing tissues.' },
+  { hub:'Physiology', node:'fer', q:'Insulin is secreted by the pancreas and acts to:', opts:['raise blood glucose','lower blood glucose by promoting cellular uptake','convert glycogen to glucose','stimulate gluconeogenesis'], correct:1, why:'Insulin = "anabolic, after a meal". Glucagon does the opposite (raises glucose).' },
+  { hub:'Physiology', node:'nse', q:'Saltatory conduction in myelinated axons is fast because:', opts:['the axon diameter is larger','myelin increases the rate of ion exchange','action potentials jump between nodes of Ranvier','myelin generates more Na+ channels'], correct:2, why:'Myelin insulates internodal regions; action potentials regenerate only at nodes, "jumping" between them.' },
+
+  // Diversity (3)
+  { hub:'Diversity', node:'bact', q:'Which is NOT shared by all three domains of life?', opts:['DNA','ribosomes','membrane-bound nucleus','plasma membrane'], correct:2, why:'Only Eukarya has a membrane-bound nucleus. Bacteria and Archaea are prokaryotic.' },
+  { hub:'Diversity', node:'bact', q:'Fungi are most closely related to:', opts:['plants','animals','protists','bacteria'], correct:1, why:'Fungi and animals are sister groups (both Opisthokonta). Both have chitin or chitin-like wall components in some lineages.' },
+  { hub:'Diversity', node:'bact', q:'A bacterium with a thin cell wall and an outer membrane is:', opts:['Gram-positive','Gram-negative','an Archaean','a virus'], correct:1, why:'Gram-negative = thin peptidoglycan + outer membrane. Gram-positive = thick peptidoglycan, no outer membrane.' },
+
+  // Developmental (2)
+  { hub:'Developmental', node:'contact', q:'The acrosome reaction during fertilization releases:', opts:['oxytocin','hydrolytic enzymes that digest the zona pellucida','progesterone','calcium into the egg'], correct:1, why:'Acrosome contains hydrolases; release lets sperm penetrate the zona. Cortical reaction (different) prevents polyspermy.' },
+  { hub:'Developmental', node:'contact', q:'Gastrulation produces the three germ layers in this order of formation:', opts:['ectoderm, mesoderm, endoderm — all simultaneously','endoderm and ectoderm first, then mesoderm','mesoderm forms first','they form sequentially over weeks'], correct:1, why:'Endoderm and ectoderm form first as the inner and outer layers; mesoderm fills in between via invagination.' },
+
+  // Evolution (2)
+  { hub:'Evolution', node:'dir', q:'Genetic drift has the strongest effect on:', opts:['large populations','small populations','populations with high migration','populations with strong selection'], correct:1, why:'Drift = random allele frequency change. Smaller N → larger random fluctuations.' },
+  { hub:'Evolution', node:'dir', q:'Two species that look similar because they live in similar environments — but evolved independently — are an example of:', opts:['divergent evolution','convergent evolution','coevolution','allopatric speciation'], correct:1, why:'Convergent evolution: similar selection pressures → analogous traits in unrelated lineages (sharks + dolphins).' }
+];
+
+const STORE_KEY = 'acethedat_bio_diagnostic_runs';
+const STATE = { i:0, answers:{}, started:null, finished:false };
+
+function loadRuns(){ try { return JSON.parse(localStorage.getItem(STORE_KEY) || '[]'); } catch(e){ return []; } }
+function saveRun(record){
+  try {
+    const runs = loadRuns();
+    runs.push(record);
+    localStorage.setItem(STORE_KEY, JSON.stringify(runs.slice(-20)));
+  } catch(e){}
+}
+
+function renderIntro(){
+  const runs = loadRuns();
+  const last = runs.length ? runs[runs.length-1] : null;
+  document.getElementById('dgStage').innerHTML = `
+    <div class="dg-intro">
+      <h2>The 24-question <em>diagnostic</em>.</h2>
+      <p class="lede">Four questions per hub. Untimed but should take ~20 minutes. Aimed at <b>where to start</b>, not at predicting your scaled score — the mock exam is the right tool for that.</p>
+      <ul>
+        <li>Select the best answer; you can change it before the next question.</li>
+        <li>You'll get a per-hub breakdown at the end with weak nodes flagged.</li>
+        <li>Results save to this device only — retake any time.</li>
+      </ul>
+      <button class="btn primary lg" id="dgStart" type="button">Begin diagnostic</button>
+      ${last ? `
+        <div style="margin-top:18px;padding:14px 16px;background:var(--paper-2);border-radius:9px;font-size:13px;color:var(--ink-2);line-height:1.5">
+          <b>Last attempt:</b> ${last.score}/${QUESTIONS.length} on ${new Date(last.ts).toLocaleDateString()}.
+          <button class="btn ghost sm" id="dgViewLast" style="margin-left:10px" type="button">View last results</button>
+        </div>
+      ` : ''}
+    </div>
+  `;
+  document.getElementById('dgStart').addEventListener('click', start);
+  if (last) document.getElementById('dgViewLast').addEventListener('click', () => renderResults(last));
+}
+
+function start(){
+  STATE.i = 0; STATE.answers = {}; STATE.started = Date.now(); STATE.finished = false;
+  renderQuestion();
+}
+
+function renderQuestion(){
+  const Q = QUESTIONS[STATE.i];
+  const total = QUESTIONS.length;
+  const sel = STATE.answers[STATE.i];
+  document.getElementById('dgStage').innerHTML = `
+    <div class="dg-runtop">
+      <span>Q ${STATE.i+1} / ${total}</span>
+      <div class="dg-progress"><div class="dg-progress-fill" style="width:${(STATE.i)*100/total}%"></div></div>
+      <span>${Q.hub}</span>
+    </div>
+    <div class="dg-runbody">
+      <div class="dg-tag">${Q.hub}</div>
+      <div class="dg-q">${Q.q}</div>
+      <div class="dg-opts">
+        ${Q.opts.map((o,i) => `<div class="dg-opt ${sel===i?'selected':''}" data-i="${i}"><span class="let">${'ABCD'[i]}</span><span>${o}</span></div>`).join('')}
+      </div>
+      <div class="dg-foot">
+        <button class="btn ghost" id="dgPrev" ${STATE.i === 0 ? 'disabled' : ''}>&larr; Back</button>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-mute)">${Object.keys(STATE.answers).length} answered</span>
+        <button class="btn primary" id="dgNext">${STATE.i === total-1 ? 'Finish &rarr;' : 'Next &rarr;'}</button>
+      </div>
+    </div>
+  `;
+  document.querySelectorAll('.dg-opt').forEach(opt => {
+    opt.addEventListener('click', () => {
+      STATE.answers[STATE.i] = parseInt(opt.dataset.i);
+      document.querySelectorAll('.dg-opt').forEach(o => o.classList.remove('selected'));
+      opt.classList.add('selected');
+    });
+  });
+  document.getElementById('dgPrev').addEventListener('click', () => { if (STATE.i > 0){ STATE.i--; renderQuestion(); } });
+  document.getElementById('dgNext').addEventListener('click', () => {
+    if (STATE.i === total-1){ finish(); }
+    else { STATE.i++; renderQuestion(); }
+  });
+}
+
+function finish(){
+  STATE.finished = true;
+  let score = 0;
+  const byHub = {};
+  const wrong = [];
+  QUESTIONS.forEach((q, i) => {
+    if (!byHub[q.hub]) byHub[q.hub] = { correct:0, total:0 };
+    byHub[q.hub].total++;
+    if (STATE.answers[i] === q.correct){ byHub[q.hub].correct++; score++; }
+    else { wrong.push({ q:q.q, hub:q.hub, correct:q.correct, picked:STATE.answers[i], opts:q.opts, why:q.why }); }
+  });
+  const record = { score, total:QUESTIONS.length, byHub, ts:Date.now(), durationSec: Math.round((Date.now()-STATE.started)/1000) };
+  saveRun(record);
+  renderResults(record, wrong);
+}
+
+function renderResults(record, wrong){
+  const pct = Math.round(100 * record.score / record.total);
+  const hubRows = Object.entries(record.byHub).map(([hub, r]) => {
+    const p = Math.round(100 * r.correct / r.total);
+    const cls = p >= 75 ? 'strong' : p < 50 ? 'weak' : '';
+    return `<tr><td>${hub}</td><td>${r.correct}/${r.total}</td><td class="${cls}">${p}%</td></tr>`;
+  }).join('');
+  document.getElementById('dgStage').innerHTML = `
+    <div class="dg-result">
+      <h2>Diagnostic <em>complete</em>.</h2>
+      <div class="dg-scores">
+        <div class="dg-scorecard"><div class="lbl">Raw</div><div class="num"><em>${record.score}</em>/${record.total}</div></div>
+        <div class="dg-scorecard"><div class="lbl">Accuracy</div><div class="num">${pct}%</div></div>
+        <div class="dg-scorecard gold"><div class="lbl">Time</div><div class="num">${Math.floor(record.durationSec/60)}m</div></div>
+      </div>
+      <h3 style="font-family:'Playfair Display',serif;font-size:20px;margin:18px 0 6px;font-weight:700">Per-hub <em>breakdown</em></h3>
+      <table class="dg-hubtable">
+        <thead><tr><th>Hub</th><th>Hit</th><th>%</th></tr></thead>
+        <tbody>${hubRows}</tbody>
+      </table>
+      ${wrong && wrong.length > 0 ? `
+        <div class="dg-review">
+          <h3>Needs-review <em>walkthrough</em> (${wrong.length})</h3>
+          ${wrong.map(w => {
+            const yourLetter = w.picked !== undefined ? 'ABCD'[w.picked] : '—';
+            return `<div class="dg-review-item">
+              <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--gold-d);font-weight:700;text-transform:uppercase;margin-bottom:6px">${w.hub}</div>
+              <b>${w.q}</b>
+              <div class="why">You picked <em>${yourLetter}</em>. Correct: <b>${'ABCD'[w.correct]}.</b> ${w.opts[w.correct]} &middot; ${w.why}</div>
+            </div>`;
+          }).join('')}
+        </div>
+      ` : '<p style="margin-top:20px;font-size:14px;color:var(--good-d);font-weight:600">Clean run. Move to the mock exam to calibrate against time pressure.</p>'}
+      <div style="display:flex;gap:10px;margin-top:22px">
+        <button class="btn primary lg" id="dgRetake">Retake</button>
+        <a class="btn lg" href="bio-mock.html">Take the mock &rarr;</a>
+        <a class="btn ghost lg" href="bio-analytics.html">See analytics</a>
+      </div>
+    </div>
+  `;
+  document.getElementById('dgRetake').addEventListener('click', start);
+}
+
+renderIntro();
+</script>
+<script src="bio-shared.js"></script>
+</body>
+</html>

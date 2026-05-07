@@ -1,0 +1,45 @@
+/* Ace Labs global motion stylesheet — al-motion.css
+   Load this after al-tokens.css in every engine entry point.
+
+   Responsibilities:
+   1. Expose standard motion-duration custom properties (mirrors al-tokens.css
+      so engines that inline their own :root still get the cascade).
+   2. Respect prefers-reduced-motion: reduce by collapsing all
+      animation/transition durations to near-zero.  0.01ms is used rather
+      than 0 so that event callbacks (animationend, transitionend) still fire.
+*/
+
+/* ── 1. Motion token fallbacks ──────────────────────────────────────────────
+   If al-tokens.css is loaded first these are no-ops.  Kept here so pages
+   that load only al-motion.css still have the tokens available.
+*/
+:root {
+  --motion-fast:     150ms;
+  --motion-base:     250ms;
+  --motion-slow:     400ms;
+  --motion-explainer:800ms;
+}
+
+/* ── 2. Reduced-motion reset ────────────────────────────────────────────────
+   Targets the OS/browser "reduce motion" preference.
+   !important is intentional — this must override any inline or engine-level
+   transition/animation shorthand without requiring per-component changes.
+*/
+@media (prefers-reduced-motion: reduce) {
+  /* Collapse token durations so any `var(--motion-*)` usage also falls to 0 */
+  :root {
+    --motion-fast:     0.01ms;
+    --motion-base:     0.01ms;
+    --motion-slow:     0.01ms;
+    --motion-explainer:0.01ms;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration:        0.01ms !important;
+    animation-iteration-count: 1      !important;
+    transition-duration:       0.01ms !important;
+    scroll-behavior:           auto   !important;
+  }
+}

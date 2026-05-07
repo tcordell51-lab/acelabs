@@ -15,9 +15,10 @@
   --gold:#C9A84C; --gold-m:#E2C97A; --gold-d:#8C7235; --gold-glow:rgba(201,168,76,0.35);
   --teal:#1B3A2D; --teal-2:#2A5240; --teal-3:#3A6B54;
   --line:rgba(13,32,24,0.12); --line-2:rgba(13,32,24,0.06); --line-strong:rgba(13,32,24,0.22);
-  --trap:#C25B3F; --trap-bg:#fbe7df; --trap-d:#8a3d28;
-  --warn:#D97A3C;
-  --good:#5FA874; --good-bg:#e3efe6; --good-d:#3e7c54;
+  /* Wong / Okabe-Ito correctness tokens — answer feedback only */
+  --trap:#D55E00; --trap-bg:rgba(213,94,0,.10); --trap-d:#9b4500;
+  --warn:#E69F00;
+  --good:#009E73; --good-bg:rgba(0,158,115,.10); --good-d:#007a59;
   --info:#6A8AA8; --info-bg:#e6edf4;
   --plum:#8a5a8c; --plum-bg:#efe5f0;
   --shadow:0 1px 3px rgba(13,32,24,0.06), 0 8px 24px rgba(13,32,24,0.04);
@@ -439,17 +440,23 @@ body[data-theme="dark"] .diag-q em{color:var(--gold-m)}
 .tree-wrap{padding:8px 0; overflow-x:auto}
 .tree-svg{width:100%; min-width:780px; height:auto; display:block}
 .node-card{
-  fill:var(--paper); stroke:var(--line); stroke-width:1.5; transition:all 0.2s;
+  fill:var(--paper); stroke:var(--line); stroke-width:1.5;
+  transition:fill 0.3s, stroke 0.3s, stroke-width 0.2s, opacity 0.3s, transform 0.4s, filter 0.2s;
   cursor:pointer;
 }
 .node-card.locked{fill:var(--paper-3); stroke-dasharray:4 4; opacity:0.55; cursor:not-allowed}
-.node-card.unlocked{stroke:var(--gold); stroke-width:2}
-.node-card.partial{stroke:var(--gold-d); stroke-width:2; fill:rgba(201,168,76,0.08)}
+.node-card.unlocked{stroke:var(--gold-d); stroke-width:2.2; fill:var(--paper)}
+.node-card.partial{stroke:var(--gold-d); stroke-width:2.2; fill:rgba(201,168,76,0.16)}
 .node-card.mastered{stroke:var(--good); stroke-width:2.5; fill:var(--good-bg)}
-.node-card:hover:not(.locked){filter:brightness(1.05); transform:translate(0,-1px)}
-.node-text{font-family:'DM Sans',sans-serif; font-size:11px; font-weight:600; fill:var(--ink); pointer-events:none}
+.node-card:hover:not(.locked){filter:brightness(1.04); stroke-width:3}
+.node-g:hover .node-card.unlocked{fill:rgba(201,168,76,0.10)}
+.node-g:focus{outline:none}
+.node-g:focus .node-card{stroke-width:3.5; filter:drop-shadow(0 0 6px var(--gold-glow))}
+.node-text{font-family:'DM Sans',sans-serif; font-size:13px; font-weight:700; fill:var(--ink); pointer-events:none; letter-spacing:-.005em}
 .node-text.locked{fill:var(--ink-soft)}
-.node-tier{font-family:'JetBrains Mono',monospace; font-size:9px; letter-spacing:0.1em; pointer-events:none; fill:var(--ink-mute)}
+.node-sub{font-family:'DM Sans',sans-serif; font-size:9.5px; font-weight:500; fill:var(--ink-mute); pointer-events:none; letter-spacing:0}
+.node-sub.locked{fill:var(--ink-soft); opacity:0.7}
+.node-tier{font-family:'JetBrains Mono',monospace; font-size:9px; font-weight:700; letter-spacing:0.1em; pointer-events:none; fill:var(--ink-mute)}
 
 /* ======= DASHBOARDS ======= */
 .dash-grid{display:grid; grid-template-columns:1.2fr 1fr; gap:18px; margin-top:14px}
@@ -838,8 +845,7 @@ body[data-theme="dark"] .celeb-unlocks .lbl{color:var(--gold-m)}
   100%{transform:scale(8); opacity:0}
 }
 
-/* Tree node enhancements */
-.node-card{transition:fill 0.3s, stroke 0.3s, opacity 0.3s, transform 0.4s}
+/* Tree node enhancements (extends base .node-card defined above) */
 .node-just-unlocked{
   animation:nodeUnlock 1.4s ease-out;
 }
@@ -1534,6 +1540,7 @@ body[data-theme="dark"] .qr-vis svg text:not([fill]){fill:var(--ink-2)}
   .qr-rung-step{font-size:9px}
 }
 </style>
+<link rel="stylesheet" href="../../shared/al-motion.css">
 </head>
 
 <body data-theme="light">
@@ -1560,7 +1567,7 @@ body[data-theme="dark"] .qr-vis svg text:not([fill]){fill:var(--ink-2)}
   <div class="sb-section">Foundation · Tier 0</div>
   <a class="sb-link" data-go="frac-add"><span class="dot"></span><span class="label">Fractions: Add &amp; Subtract</span><span class="meta">live</span></a>
   <a class="sb-link" data-go="frac-mul"><span class="dot"></span><span class="label">Fractions: Multiply/Divide</span><span class="meta">live</span></a>
-  <a class="sb-link" data-go="frac-dec"><span class="dot"></span><span class="label">Fraction ↔ Decimal</span><span class="meta">live</span></a>
+  <a class="sb-link" data-go="frac-dec"><span class="dot"></span><span class="label">Fraction · Decimal</span><span class="meta">live</span></a>
   <a class="sb-link" data-go="dec-arith"><span class="dot"></span><span class="label">Decimal Arithmetic</span><span class="meta">live</span></a>
   <a class="sb-link" data-go="pct-of"><span class="dot"></span><span class="label">Percent of a Number</span><span class="meta">live</span></a>
   <a class="sb-link" data-go="pct-chg"><span class="dot"></span><span class="label">Percent Increase/Decrease</span><span class="meta">live</span></a>
@@ -1568,6 +1575,7 @@ body[data-theme="dark"] .qr-vis svg text:not([fill]){fill:var(--ink-2)}
   <a class="sb-link" data-go="estim"><span class="dot"></span><span class="label">Estimation</span><span class="meta">live</span></a>
   <a class="sb-link" data-go="mental"><span class="dot"></span><span class="label">Mental Math Tricks</span><span class="meta">live</span></a>
   <a class="sb-link" data-go="lin-eq"><span class="dot"></span><span class="label">Linear Equations</span><span class="meta">live</span></a>
+  <a class="sb-link" data-go="sys-eq"><span class="dot"></span><span class="label">Systems of Equations</span><span class="meta">live</span></a>
   <a class="sb-link" data-go="distrib"><span class="dot"></span><span class="label">Distribution &amp; Like Terms</span><span class="meta">live</span></a>
   <a class="sb-link" data-go="binomials"><span class="dot"></span><span class="label">Binomial Algebra</span><span class="meta">live</span></a>
   <a class="sb-link" data-go="pemdas"><span class="dot"></span><span class="label">PEMDAS Edge Cases</span><span class="meta">live</span></a>
@@ -1579,8 +1587,10 @@ body[data-theme="dark"] .qr-vis svg text:not([fill]){fill:var(--ink-2)}
   <a class="sb-link" data-go="work-rate"><span class="dot"></span><span class="label">Work / Rate Setups</span><span class="meta">live</span></a>
   <a class="sb-link" data-go="mixture"><span class="dot"></span><span class="label">Mixture Setups</span><span class="meta">live</span></a>
   <a class="sb-link" data-go="interest"><span class="dot"></span><span class="label">Interest &amp; Growth</span><span class="meta">live</span></a>
+  <a class="sb-link" data-go="profit-loss"><span class="dot"></span><span class="label">Profit · Loss · Break-Even</span><span class="meta">live</span></a>
   <a class="sb-link" data-go="coord"><span class="dot"></span><span class="label">Coordinate Plane</span><span class="meta">live</span></a>
   <a class="sb-link" data-go="units"><span class="dot"></span><span class="label">Unit Conversions</span><span class="meta">live</span></a>
+  <a class="sb-link" data-go="data-graph"><span class="dot"></span><span class="label">Data &amp; Graph Reading</span><span class="meta">live</span></a>
   <a class="sb-link" data-go="word-decode"><span class="dot"></span><span class="label">Word Problem Decoder</span><span class="meta">live</span></a>
 
   <div class="sb-section">DAT Patterns · Tier 2</div>
@@ -1589,23 +1599,24 @@ body[data-theme="dark"] .qr-vis svg text:not([fill]){fill:var(--ink-2)}
   <a class="sb-link" data-go="p-cond"><span class="dot"></span><span class="label">P · Conditional ("given")</span><span class="meta">live</span></a>
   <a class="sb-link" data-go="count-pc"><span class="dot"></span><span class="label">Permutations vs Combinations</span><span class="meta">live</span></a>
   <a class="sb-link" data-go="discr"><span class="dot"></span><span class="label">Quadratic Discriminant</span><span class="meta">live</span></a>
-  <a class="sb-link" data-go="harm"><span class="dot"></span><span class="label">Harmonic Mean Trap</span><span class="meta">live</span></a>
+  <a class="sb-link" data-go="harm"><span class="dot"></span><span class="label">Harmonic Mean (rate-time aside)</span><span class="meta">brief</span></a>
   <a class="sb-link" data-go="zscore"><span class="dot"></span><span class="label">Z-Scores 68/95/99.7</span><span class="meta">live</span></a>
   <a class="sb-link" data-go="tri-inv"><span class="dot"></span><span class="label">Triangle Invariance</span><span class="meta">live</span></a>
   <a class="sb-link" data-go="vol-sa"><span class="dot"></span><span class="label">Volume / Surface (cube law)</span><span class="meta">live</span></a>
-  <a class="sb-link" data-go="ds"><span class="dot"></span><span class="label">Data Sufficiency</span><span class="meta">live</span></a>
+  <a class="sb-link" data-go="trig"><span class="dot"></span><span class="label">Trigonometry — SOH-CAH-TOA</span><span class="meta">live</span></a>
+  <a class="sb-link" data-go="ds"><span class="dot"></span><span class="label">Logical Sufficiency (skill)</span><span class="meta">skill</span></a>
   <a class="sb-link" data-go="exps"><span class="dot"></span><span class="label">Exponent Laws</span><span class="meta">live</span></a>
   <a class="sb-link" data-go="absval"><span class="dot"></span><span class="label">Absolute Value Inequalities</span><span class="meta">live</span></a>
-  <a class="sb-link" data-go="geo-2d"><span class="dot"></span><span class="label">2D Geometry</span><span class="meta">live</span></a>
+  <a class="sb-link" data-go="geo-2d"><span class="dot"></span><span class="label">2D Geometry &amp; Special Triangles</span><span class="meta">live</span></a>
   <a class="sb-link" data-go="sets"><span class="dot"></span><span class="label">Sets — Union, Intersection</span><span class="meta">live</span></a>
   <a class="sb-link" data-go="desc-stats"><span class="dot"></span><span class="label">Descriptive Statistics</span><span class="meta">live</span></a>
   <a class="sb-link" data-go="logs"><span class="dot"></span><span class="label">Logs &amp; Exponents</span><span class="meta">live</span></a>
   <a class="sb-link" data-go="patterns-link"><span class="dot"></span><span class="label">Open Pattern System v1</span><span class="meta">link</span></a>
 
-  <div class="sb-section">DAT Day · Tier 3</div>
-  <a class="sb-link" data-go="untimed"><span class="dot"></span><span class="label">Untimed Mastery</span><span class="meta">live</span></a>
-  <a class="sb-link" data-go="skip-ret"><span class="dot"></span><span class="label">Skip &amp; Return</span><span class="meta">live</span></a>
-  <a class="sb-link" data-go="guess"><span class="dot"></span><span class="label">Educated Guessing</span><span class="meta">live</span></a>
+  <div class="sb-section">Test-Day Strategy · Tier 3</div>
+  <a class="sb-link" data-go="untimed"><span class="dot"></span><span class="label">Untimed Mastery</span><span class="meta">strategy</span></a>
+  <a class="sb-link" data-go="skip-ret"><span class="dot"></span><span class="label">Skip &amp; Return</span><span class="meta">strategy</span></a>
+  <a class="sb-link" data-go="guess"><span class="dot"></span><span class="label">Educated Guessing</span><span class="meta">strategy</span></a>
 
   <div class="sb-section">Performance</div>
   <a class="sb-link" data-go="dashboard"><span class="dot"></span><span class="label">Progress Dashboard</span><span class="meta">live</span></a>
@@ -1713,10 +1724,10 @@ body[data-theme="dark"] .qr-vis svg text:not([fill]){fill:var(--ink-2)}
     <button class="btn ghost lg" onclick="goSec('frac-add')">Or jump straight to fractions</button>
   </div>
   <div class="stats">
-    <div class="stat"><div class="n">40</div><div class="l">Skills · from basic floor to test-day pacing</div></div>
+    <div class="stat"><div class="n">45</div><div class="l">Modules · from basic floor to test-day pacing</div></div>
     <div class="stat"><div class="n">6 steps</div><div class="l">Per skill · concept, guided, solo, mastery</div></div>
     <div class="stat"><div class="n">No clock</div><div class="l">Until you say you're ready</div></div>
-    <div class="stat"><div class="n">∞</div><div class="l">Replays · take your time, this is for you</div></div>
+    <div class="stat"><div class="n">Replay</div><div class="l">Anything · take your time, this is for you</div></div>
   </div>
 </section>
 
@@ -1811,7 +1822,7 @@ body[data-theme="dark"] .qr-vis svg text:not([fill]){fill:var(--ink-2)}
     <div class="card-h">
       <div class="mark">⌬</div>
       <div class="ttl">
-        <h3>40 nodes · <em>floor to test-day</em></h3>
+        <h3>45 nodes · <em>floor to test-day</em></h3>
         <div class="sub">Click any unlocked node to open it. Locked nodes show why they're locked.</div>
       </div>
     </div>
@@ -1869,6 +1880,10 @@ body[data-theme="dark"] .qr-vis svg text:not([fill]){fill:var(--ink-2)}
 <section class="sec" id="skip-ret" data-skill="skip-ret"></section>
 <section class="sec" id="guess" data-skill="guess"></section>
 <section class="sec" id="logs" data-skill="logs"></section>
+<section class="sec" id="trig" data-skill="trig"></section>
+<section class="sec" id="sys-eq" data-skill="sys-eq"></section>
+<section class="sec" id="data-graph" data-skill="data-graph"></section>
+<section class="sec" id="profit-loss" data-skill="profit-loss"></section>
 
 <!-- DAT Pattern link -->
 <section class="sec" id="patterns-link">
@@ -1957,7 +1972,7 @@ body[data-theme="dark"] .qr-vis svg text:not([fill]){fill:var(--ink-2)}
   </div>
   <div class="sim-card">
     <h3>Run a <em>full mock</em></h3>
-    <p class="sub">A 40-question set drawn from the full ~960-problem bank, weighted to match the real DAT QR distribution and laddered by difficulty (30/40/20/10 across diff 1-4). 45-minute section timer. Skip-and-return supported. Per-skill scorecard and DAT-band score prediction at the end.</p>
+    <p class="sub">A 40-question set drawn from the full ~767-problem bank, weighted to match the real DAT QR distribution and laddered by difficulty (30/40/20/10 across diff 1-4). 45-minute section timer. Skip-and-return supported. Per-skill scorecard and DAT-band score prediction at the end.</p>
     <div class="sim-stats">
       <div class="sim-stat"><div class="n" id="simAvail">—</div><div class="l">Questions available</div></div>
       <div class="sim-stat"><div class="n" id="simBest">—</div><div class="l">Best score</div></div>
@@ -2138,6 +2153,9 @@ const ST = {
   push(k, v){ const a = this.get(k, []); a.push(v); this.set(k, a); return a; }
 };
 
+/* Stamp a session-open timestamp so the Ace Labs home tile can show "Last: …" */
+ST.set('lastSession', Date.now());
+
 /* ----- Theme ----- */
 (function(){
   const saved = ST.get('theme', 'light');
@@ -2257,10 +2275,10 @@ const SR = {
 })();
 
 /* ============================================================
-   SKILL TREE — 40 nodes
+   SKILL TREE — 45 content nodes (+ 5 tier-3 strategy)
    ============================================================ */
 const SKILLS = [
-  // Tier 0 — Foundation (13)
+  // Tier 0 — Foundation (15)
   {id:'frac-add',  tier:0, name:'Fractions: Add/Subtract',     prereqs:[],   x:1, y:0, full:true},
   {id:'frac-mul',  tier:0, name:'Fractions: Multiply/Divide',   prereqs:[],   x:2, y:0},
   {id:'frac-dec',  tier:0, name:'Fraction ↔ Decimal',           prereqs:[],   x:3, y:0, full:true},
@@ -2271,11 +2289,12 @@ const SKILLS = [
   {id:'estim',     tier:0, name:'Estimation',                   prereqs:['dec-arith'],x:4, y:1},
   {id:'mental',    tier:0, name:'Mental Math Tricks',           prereqs:['dec-arith'],x:5, y:1},
   {id:'lin-eq',    tier:0, name:'Linear Equations',             prereqs:[],           x:5, y:0},
+  {id:'sys-eq',    tier:0, name:'Systems of Equations',          prereqs:['lin-eq','distrib'], x:4, y:2},
   {id:'distrib',   tier:0, name:'Distribution + Like Terms',    prereqs:['lin-eq'],   x:5, y:2},
   {id:'binomials', tier:0, name:'Binomial Algebra',              prereqs:['distrib'],  x:3, y:2},
   {id:'pemdas',    tier:0, name:'PEMDAS Edge Cases',            prereqs:[],           x:0, y:0},
   {id:'neg-ineq',  tier:0, name:'Negatives + Inequalities',     prereqs:['lin-eq'],   x:0, y:1},
-  // Tier 1 — Building Blocks (8)
+  // Tier 1 — Building Blocks (10)
   {id:'word-decode',tier:1,name:'Word Problem Decoder',         prereqs:['lin-eq','pct-chg'], x:2, y:3, full:true},
   {id:'rate-time', tier:1, name:'Rate × Time = Distance',       prereqs:['word-decode'], x:1, y:4},
   {id:'work-rate', tier:1, name:'Work / Rate Setups',           prereqs:['word-decode'], x:2, y:4},
@@ -2284,7 +2303,9 @@ const SKILLS = [
   {id:'coord',     tier:1, name:'Coordinate Plane Basics',      prereqs:['lin-eq'],      x:5, y:3},
   {id:'ratios',    tier:1, name:'Ratios & Proportions',         prereqs:['frac-mul'],    x:0, y:3},
   {id:'units',     tier:1, name:'Unit Conversions',             prereqs:['ratios'],      x:0, y:4},
-  // Tier 2 — DAT Patterns (14)
+  {id:'profit-loss',tier:1,name:'Profit · Loss · Break-Even',    prereqs:['pct-chg','lin-eq'], x:4, y:4},
+  {id:'data-graph', tier:1,name:'Data &amp; Graph Reading',        prereqs:['pct-of','frac-dec'], x:5, y:4},
+  // Tier 2 — DAT Patterns (15)
   {id:'p-flip',    tier:2, name:'Probability — At Least (Flip)', prereqs:['frac-mul'],     x:0, y:6},
   {id:'p-andor',   tier:2, name:'Probability — AND/OR',          prereqs:['frac-mul'],     x:1, y:6},
   {id:'p-cond',    tier:2, name:'Conditional — "Given"',         prereqs:['p-andor'],      x:2, y:6},
@@ -2295,13 +2316,14 @@ const SKILLS = [
   {id:'zscore',    tier:2, name:'Z-Scores 68/95/99.7',           prereqs:['pct-of'],       x:1, y:7},
   {id:'tri-inv',   tier:2, name:'Triangle Invariance',           prereqs:['coord'],        x:2, y:7},
   {id:'vol-sa',    tier:2, name:'Volume / Surface (cube law)',   prereqs:['coord'],        x:3, y:7},
-  {id:'ds',        tier:2, name:'Data Sufficiency',              prereqs:['lin-eq'],       x:4, y:7},
+  {id:'ds',        tier:2, name:'Logical Sufficiency (skill)',   prereqs:['lin-eq'],       x:4, y:7},
   {id:'logs',      tier:2, name:'Logarithm Laws',                prereqs:['distrib'],      x:5, y:7},
   {id:'exps',      tier:2, name:'Exponent Laws',                 prereqs:['distrib'],      x:0, y:8},
   {id:'absval',    tier:2, name:'Absolute Value Inequalities',   prereqs:['neg-ineq'],     x:1, y:8},
-  {id:'geo-2d',    tier:2, name:'2D Geometry — Circles, Squares', prereqs:['coord'],       x:2, y:8},
+  {id:'geo-2d',    tier:2, name:'2D Geometry &amp; Special Triangles', prereqs:['coord'],   x:2, y:8},
   {id:'sets',      tier:2, name:'Sets — Union, Intersection',     prereqs:['count-pc'],    x:3, y:8},
   {id:'desc-stats',tier:2, name:'Descriptive Statistics',         prereqs:['frac-mul'],    x:4, y:8},
+  {id:'trig',      tier:2, name:'Trigonometry — SOH-CAH-TOA',     prereqs:['geo-2d'],      x:5, y:8},
   // Tier 3 — DAT Day (5)
   {id:'untimed',   tier:3, name:'Untimed Mastery Checkpoint',    prereqs:['p-flip','p-andor','count-pc'], x:1, y:10},
   {id:'pace-90',   tier:3, name:'90s/Q Pacing',                  prereqs:['untimed'],      x:2, y:10},
@@ -2988,27 +3010,12 @@ const BANK = [
   {"id":"pct1163","skills":["pct-chg"],"diff":4,"q":"A $318 item is decreased by 45%. New price?","opts":["363","273","143.1","174.9"],"correct":3,"why":"New = 318 × (1 - 45/100) = 318 × 0.55 = 174.9.","diag":{}},
   {"id":"pct1164","skills":["pct-seq"],"diff":1,"q":"$500 → -40% → -10%. Final?","opts":["450","270","300","250"],"correct":1,"why":"Multiply factors: 500 × 0.6 × 0.9 = 270. Naïvely adding gives 250, which is wrong.","diag":{}},
   {"id":"pct1165","skills":["pct-seq"],"diff":1,"q":"$100 → +20% → -25%. Final?","opts":["90","95","120","75"],"correct":0,"why":"Multiply factors: 100 × 1.2 × 0.75 = 90. Naïvely adding gives 95, which is wrong.","diag":{}},
-  {"id":"pct1166","skills":["pct-seq"],"diff":1,"q":"$500 → -40% → +30%. Final?","opts":["450","390","650","300"],"correct":1,"why":"Multiply factors: 500 × 0.6 × 1.3 = 390. Naïvely adding gives 450, which is wrong.","diag":{}},
-  {"id":"pct1167","skills":["pct-seq"],"diff":1,"q":"$500 → -40% → -25%. Final?","opts":["225","175","375","300"],"correct":0,"why":"Multiply factors: 500 × 0.6 × 0.75 = 225. Naïvely adding gives 175, which is wrong.","diag":{}},
-  {"id":"pct1168","skills":["pct-seq"],"diff":1,"q":"$500 → +30% → -25%. Final?","opts":["375","650","525","487.5"],"correct":3,"why":"Multiply factors: 500 × 1.3 × 0.75 = 487.5. Naïvely adding gives 525, which is wrong.","diag":{}},
-  {"id":"pct1169","skills":["pct-seq"],"diff":1,"q":"$500 → +10% → +40%. Final?","opts":["770","700","550","750"],"correct":0,"why":"Multiply factors: 500 × 1.1 × 1.4 = 770. Naïvely adding gives 750, which is wrong.","diag":{}},
   {"id":"pct1170","skills":["pct-seq"],"diff":2,"q":"$100 → +40% → -10%. Final?","opts":["90","126","140","130"],"correct":1,"why":"Multiply factors: 100 × 1.4 × 0.9 = 126. Naïvely adding gives 130, which is wrong.","diag":{}},
   {"id":"pct1171","skills":["pct-seq"],"diff":2,"q":"$100 → -30% → +20%. Final?","opts":["120","70","84","90"],"correct":2,"why":"Multiply factors: 100 × 0.7 × 1.2 = 84. Naïvely adding gives 90, which is wrong.","diag":{}},
-  {"id":"pct1172","skills":["pct-seq"],"diff":2,"q":"$100 → +10% → +30%. Final?","opts":["110","143","140","130"],"correct":1,"why":"Multiply factors: 100 × 1.1 × 1.3 = 143. Naïvely adding gives 140, which is wrong.","diag":{}},
-  {"id":"pct1173","skills":["pct-seq"],"diff":2,"q":"$100 → +20% → -30%. Final?","opts":["84","90","120","70"],"correct":0,"why":"Multiply factors: 100 × 1.2 × 0.7 = 84. Naïvely adding gives 90, which is wrong.","diag":{}},
-  {"id":"pct1174","skills":["pct-seq"],"diff":2,"q":"$500 → +20% → +25%. Final?","opts":["750","600","725","625"],"correct":0,"why":"Multiply factors: 500 × 1.2 × 1.25 = 750. Naïvely adding gives 725, which is wrong.","diag":{}},
-  {"id":"pct1175","skills":["pct-seq"],"diff":2,"q":"$200 → -20% → -10%. Final?","opts":["144","160","140","180"],"correct":0,"why":"Multiply factors: 200 × 0.8 × 0.9 = 144. Naïvely adding gives 140, which is wrong.","diag":{}},
-  {"id":"pct1176","skills":["pct-seq"],"diff":2,"q":"$100 → +10% → +30%. Final?","opts":["140","143","110","130"],"correct":1,"why":"Multiply factors: 100 × 1.1 × 1.3 = 143. Naïvely adding gives 140, which is wrong.","diag":{}},
-  {"id":"pct1177","skills":["pct-seq"],"diff":2,"q":"$200 → +10% → +30%. Final?","opts":["220","260","286","280"],"correct":2,"why":"Multiply factors: 200 × 1.1 × 1.3 = 286. Naïvely adding gives 280, which is wrong.","diag":{}},
   {"id":"pct1178","skills":["pct-seq"],"diff":3,"q":"$80 → +10% → +25%. Final?","opts":["88","108","110","100"],"correct":2,"why":"Multiply factors: 80 × 1.1 × 1.25 = 110. Naïvely adding gives 108, which is wrong.","diag":{}},
   {"id":"pct1179","skills":["pct-seq"],"diff":3,"q":"$480 → -10% → +25%. Final?","opts":["432","540","552","600"],"correct":1,"why":"Multiply factors: 480 × 0.9 × 1.25 = 540. Naïvely adding gives 552, which is wrong.","diag":{}},
-  {"id":"pct1180","skills":["pct-seq"],"diff":3,"q":"$125 → -30% → +25%. Final?","opts":["118.75","87.5","109.38","156.25"],"correct":2,"why":"Multiply factors: 125 × 0.7 × 1.25 = 109.38. Naïvely adding gives 118.75, which is wrong.","diag":{}},
-  {"id":"pct1181","skills":["pct-seq"],"diff":3,"q":"$480 → -30% → +25%. Final?","opts":["600","420","336","456"],"correct":1,"why":"Multiply factors: 480 × 0.7 × 1.25 = 420. Naïvely adding gives 456, which is wrong.","diag":{}},
   {"id":"pct1182","skills":["pct-seq"],"diff":3,"q":"$250 → +30% → -25%. Final?","opts":["262.5","187.5","243.75","325"],"correct":2,"why":"Multiply factors: 250 × 1.3 × 0.75 = 243.75. Naïvely adding gives 262.5, which is wrong.","diag":{}},
-  {"id":"pct1183","skills":["pct-seq"],"diff":3,"q":"$250 → -10% → +25%. Final?","opts":["312.5","225","287.5","281.25"],"correct":3,"why":"Multiply factors: 250 × 0.9 × 1.25 = 281.25. Naïvely adding gives 287.5, which is wrong.","diag":{}},
-  {"id":"pct1184","skills":["pct-seq"],"diff":3,"q":"$125 → +10% → -25%. Final?","opts":["106.25","103.13","137.5","93.75"],"correct":1,"why":"Multiply factors: 125 × 1.1 × 0.75 = 103.13. Naïvely adding gives 106.25, which is wrong.","diag":{}},
   {"id":"pct1185","skills":["pct-seq"],"diff":4,"q":"$80 → -25% → -10%. Final?","opts":["54","52","72","60"],"correct":0,"why":"Multiply factors: 80 × 0.75 × 0.9 = 54. Naïvely adding gives 52, which is wrong.","diag":{}},
-  {"id":"pct1186","skills":["pct-seq"],"diff":4,"q":"$80 → -40% → -10%. Final?","opts":["48","43.2","40","72"],"correct":1,"why":"Multiply factors: 80 × 0.6 × 0.9 = 43.2. Naïvely adding gives 40, which is wrong.","diag":{}},
   {"id":"pct1187","skills":["pct-seq"],"diff":4,"q":"$125 → +10% → -25%. Final?","opts":["137.5","103.13","93.75","106.25"],"correct":1,"why":"Multiply factors: 125 × 1.1 × 0.75 = 103.13. Naïvely adding gives 106.25, which is wrong.","diag":{}},
   {"id":"pct1188","skills":["pct-seq"],"diff":4,"q":"$480 → -30% → +20%. Final?","opts":["432","403.2","336","576"],"correct":1,"why":"Multiply factors: 480 × 0.7 × 1.2 = 403.2. Naïvely adding gives 432, which is wrong.","diag":{}},
   {"id":"est1189","skills":["estim"],"diff":1,"q":"Estimate 907 - 16.","opts":["930","830","891","880"],"correct":3,"why":"Round to easy values: 900 - 20 = 880. Exact 891.","diag":{}},
@@ -3423,25 +3430,10 @@ const BANK = [
   {"id":"dis1599","skills":["discr"],"diff":4,"q":"For -1x² - 2x + 4 = 0, how many real roots?","opts":["two imaginary roots","two real roots","one real root","no real roots"],"correct":1,"why":"Δ = b² − 4ac = 4 − 4·-1·4 = 20. > 0 → two.","diag":{}},
   {"id":"dis1600","skills":["discr"],"diff":4,"q":"For 1x² - 4x + 1 = 0, how many real roots?","opts":["two real roots","one real root","no real roots","two imaginary roots"],"correct":0,"why":"Δ = b² − 4ac = 16 − 4·1·1 = 12. > 0 → two.","diag":{}},
   {"id":"har1601","skills":["harm"],"diff":1,"q":"Driving 60 mi at 20 mph then 60 mi at 60 mph. Average speed?","opts":["80","40","1200","30"],"correct":3,"why":"Harmonic mean: 2(20)(60) / (20+60) = 30 mph. Arithmetic mean (40) is wrong here.","diag":{}},
-  {"id":"har1602","skills":["harm"],"diff":1,"q":"Driving 60 mi at 30 mph then 60 mi at 50 mph. Average speed?","opts":["1500","40","37.5","80"],"correct":2,"why":"Harmonic mean: 2(30)(50) / (30+50) = 37.5 mph. Arithmetic mean (40) is wrong here.","diag":{}},
-  {"id":"har1603","skills":["harm"],"diff":1,"q":"Driving 60 mi at 20 mph then 60 mi at 60 mph. Average speed?","opts":["40","80","30","1200"],"correct":2,"why":"Harmonic mean: 2(20)(60) / (20+60) = 30 mph. Arithmetic mean (40) is wrong here.","diag":{}},
-  {"id":"har1604","skills":["harm"],"diff":1,"q":"Driving 60 mi at 40 mph then 60 mi at 30 mph. Average speed?","opts":["1200","70","35","34.29"],"correct":3,"why":"Harmonic mean: 2(40)(30) / (40+30) = 34.29 mph. Arithmetic mean (35) is wrong here.","diag":{}},
-  {"id":"har1605","skills":["harm"],"diff":1,"q":"Driving 60 mi at 30 mph then 60 mi at 60 mph. Average speed?","opts":["1800","45","40","90"],"correct":2,"why":"Harmonic mean: 2(30)(60) / (30+60) = 40 mph. Arithmetic mean (45) is wrong here.","diag":{}},
   {"id":"har1606","skills":["harm"],"diff":2,"q":"Driving 60 mi at 50 mph then 60 mi at 20 mph. Average speed?","opts":["70","35","28.57","1000"],"correct":2,"why":"Harmonic mean: 2(50)(20) / (50+20) = 28.57 mph. Arithmetic mean (35) is wrong here.","diag":{}},
-  {"id":"har1607","skills":["harm"],"diff":2,"q":"Driving 60 mi at 20 mph then 60 mi at 40 mph. Average speed?","opts":["800","30","26.67","60"],"correct":2,"why":"Harmonic mean: 2(20)(40) / (20+40) = 26.67 mph. Arithmetic mean (30) is wrong here.","diag":{}},
-  {"id":"har1608","skills":["harm"],"diff":2,"q":"Driving 60 mi at 40 mph then 60 mi at 50 mph. Average speed?","opts":["90","45","44.44","2000"],"correct":2,"why":"Harmonic mean: 2(40)(50) / (40+50) = 44.44 mph. Arithmetic mean (45) is wrong here.","diag":{}},
-  {"id":"har1609","skills":["harm"],"diff":2,"q":"Driving 60 mi at 50 mph then 60 mi at 60 mph. Average speed?","opts":["3000","54.55","110","55"],"correct":1,"why":"Harmonic mean: 2(50)(60) / (50+60) = 54.55 mph. Arithmetic mean (55) is wrong here.","diag":{}},
-  {"id":"har1610","skills":["harm"],"diff":2,"q":"Driving 60 mi at 40 mph then 60 mi at 20 mph. Average speed?","opts":["800","26.67","60","30"],"correct":1,"why":"Harmonic mean: 2(40)(20) / (40+20) = 26.67 mph. Arithmetic mean (30) is wrong here.","diag":{}},
-  {"id":"har1611","skills":["harm"],"diff":2,"q":"Driving 60 mi at 50 mph then 60 mi at 40 mph. Average speed?","opts":["2000","90","44.44","45"],"correct":2,"why":"Harmonic mean: 2(50)(40) / (50+40) = 44.44 mph. Arithmetic mean (45) is wrong here.","diag":{}},
-  {"id":"har1612","skills":["harm"],"diff":2,"q":"Driving 60 mi at 60 mph then 60 mi at 40 mph. Average speed?","opts":["50","100","48","2400"],"correct":2,"why":"Harmonic mean: 2(60)(40) / (60+40) = 48 mph. Arithmetic mean (50) is wrong here.","diag":{}},
   {"id":"har1613","skills":["harm"],"diff":3,"q":"Driving 60 mi at 60 mph then 60 mi at 50 mph. Average speed?","opts":["3000","110","54.55","55"],"correct":2,"why":"Harmonic mean: 2(60)(50) / (60+50) = 54.55 mph. Arithmetic mean (55) is wrong here.","diag":{}},
-  {"id":"har1614","skills":["harm"],"diff":3,"q":"Driving 60 mi at 50 mph then 60 mi at 20 mph. Average speed?","opts":["35","70","1000","28.57"],"correct":3,"why":"Harmonic mean: 2(50)(20) / (50+20) = 28.57 mph. Arithmetic mean (35) is wrong here.","diag":{}},
   {"id":"har1615","skills":["harm"],"diff":3,"q":"Driving 60 mi at 30 mph then 60 mi at 20 mph. Average speed?","opts":["24","25","600","50"],"correct":0,"why":"Harmonic mean: 2(30)(20) / (30+20) = 24 mph. Arithmetic mean (25) is wrong here.","diag":{}},
-  {"id":"har1616","skills":["harm"],"diff":3,"q":"Driving 60 mi at 40 mph then 60 mi at 20 mph. Average speed?","opts":["30","26.67","60","800"],"correct":1,"why":"Harmonic mean: 2(40)(20) / (40+20) = 26.67 mph. Arithmetic mean (30) is wrong here.","diag":{}},
-  {"id":"har1617","skills":["harm"],"diff":3,"q":"Driving 60 mi at 20 mph then 60 mi at 50 mph. Average speed?","opts":["28.57","1000","35","70"],"correct":0,"why":"Harmonic mean: 2(20)(50) / (20+50) = 28.57 mph. Arithmetic mean (35) is wrong here.","diag":{}},
   {"id":"har1618","skills":["harm"],"diff":4,"q":"Driving 60 mi at 20 mph then 60 mi at 60 mph. Average speed?","opts":["30","1200","40","80"],"correct":0,"why":"Harmonic mean: 2(20)(60) / (20+60) = 30 mph. Arithmetic mean (40) is wrong here.","diag":{}},
-  {"id":"har1619","skills":["harm"],"diff":4,"q":"Driving 60 mi at 60 mph then 60 mi at 50 mph. Average speed?","opts":["110","54.55","55","3000"],"correct":1,"why":"Harmonic mean: 2(60)(50) / (60+50) = 54.55 mph. Arithmetic mean (55) is wrong here.","diag":{}},
-  {"id":"har1620","skills":["harm"],"diff":4,"q":"Driving 60 mi at 60 mph then 60 mi at 40 mph. Average speed?","opts":["48","50","2400","100"],"correct":0,"why":"Harmonic mean: 2(60)(40) / (60+40) = 48 mph. Arithmetic mean (50) is wrong here.","diag":{}},
   {"id":"zsc1621","skills":["zscore"],"diff":1,"q":"μ = 100, σ = 15, x = 70. z?","opts":["-0.3","2","-30","-2"],"correct":3,"why":"z = (x − μ)/σ = (70 − 100)/15 = -2.","diag":{}},
   {"id":"zsc1622","skills":["zscore"],"diff":1,"q":"μ = 100, σ = 15, x = 85. z?","opts":["-1","-0.15","-15","1"],"correct":0,"why":"z = (x − μ)/σ = (85 − 100)/15 = -1.","diag":{}},
   {"id":"zsc1623","skills":["zscore"],"diff":1,"q":"μ = 100, σ = 10, x = 90. z?","opts":["-10","-1","1","-0.1"],"correct":1,"why":"z = (x − μ)/σ = (90 − 100)/10 = -1.","diag":{}},
@@ -3687,7 +3679,10 @@ const MODULES = {
        why:'Calling it a "common floor" makes the abstract LCD physical. Students who freeze on "find the LCD" suddenly remember "they need the same floor."', lock:'Same floor, then add.', sarah:true, placeholder:true},
       {when:'Mixed numbers (3 1/4 + 2 2/3) appear.', name:'Whole + fraction <em>separate piles</em>',
        move:'Two piles. Whole-number pile: add those (3 + 2 = 5). Fraction pile: handle with bow-tie or LCD. Combine at the end. Don\'t convert to improper fractions unless the result needs it.',
-       why:'Students panic at mixed numbers because they look like two separate problems. Naming them "two piles" makes them feel manageable.', lock:'Two piles. Combine at the end.'}
+       why:'Students panic at mixed numbers because they look like two separate problems. Naming them "two piles" makes them feel manageable.', lock:'Two piles. Combine at the end.'},
+      {when:'Finding an LCD or reducing a fraction.', name:'<em>Divisibility rules reference</em>',
+       move:'Quick tests — no long division needed. Divisible by 2: last digit is even. By 3: sum of digits divisible by 3 (e.g. 174 → 1+7+4 = 12, yes). By 4: last two digits divisible by 4. By 5: ends in 0 or 5. By 6: divisible by both 2 and 3. By 9: sum of digits divisible by 9. By 10: ends in 0. GCF (greatest common factor): list factors of each number and take the largest in common — used to reduce fractions to lowest terms. LCM (least common multiple): take the GCF, then LCM = (a × b) / GCF — this gives the LCD for adding fractions.',
+       why:'These rules speed up fraction setup on the DAT; you don\'t have to factor from scratch each time.', lock:'Digit-sum test for 3 and 9. LCM = (a × b) / GCF.'}
     ]
   },
   'frac-dec': {
@@ -4394,6 +4389,10 @@ const MODULES = {
     sarahTricks:[
       {when:'Computing slope.', name:'"<em>Rise over run</em>" — every time', move:'Always say it out loud: "rise OVER run." The y-difference (vertical = rise) goes on TOP. The x-difference (horizontal = run) goes on BOTTOM. If you mix them up once, you\'ll mix them up forever — say it every time.', why:'Verbalizing the formula prevents the most common error.', lock:'Rise over run. Always.', sarah:true, placeholder:true},
       {when:'Distance problems with whole-number coordinates.', name:'Look for <em>3-4-5</em> or <em>5-12-13</em>', move:'Many DAT distance problems use Pythagorean triples. If your rise and run are 3 and 4 (in any order), distance is 5. If 5 and 12, distance is 13. If 8 and 15, distance is 17. Spot the triple, skip the square root.', why:'Saves time and prevents arithmetic errors on the square root.', lock:'Spot the triple.'}
+    ],
+    crossLinks:[
+      {to:'geo-2d', label:'2D Geometry &amp; Special Triangles · the triples and 30-60-90 / 45-45-90 ratios live here.'},
+      {to:'trig', label:'Trigonometry · slope of a line is tan(angle with x-axis).'}
     ]
   },
   'units':{
@@ -4613,40 +4612,43 @@ const MODULES = {
   },
   'harm':{
     skill:'harm', tier:2, num:'27',
-    title:'Harmonic <em>Mean</em>',
-    sub:'Same distance, two different speeds → average speed is the harmonic mean, not the arithmetic.',
-    pattern:'When the same distance is traveled at two different speeds, you spend MORE TIME at the slower speed (covering the same ground takes longer). So the average speed is weighted toward the slow end. The harmonic mean handles this: avg = 2v₁v₂ / (v₁ + v₂).',
-    formula:'Same DISTANCE: <span class="gold">avg = 2v₁v₂ / (v₁+v₂)</span> &nbsp;(harmonic)<br>Same TIME: avg = (v₁+v₂)/2 &nbsp;(arithmetic)',
+    title:'Harmonic <em>Mean</em> — round-trip aside',
+    sub:'A niche scenario inside rate-time. Same distance, two speeds → average is NOT (v₁+v₂)/2.',
+    pattern:'This is a brief reminder, not a full module. The harmonic mean only matters when the SAME distance is traveled at two different speeds (round trip, upstream/downstream, etc.). You spend more TIME at the slower speed, so the average tilts toward the slow end. The full average-speed treatment lives in <b>Rate × Time = Distance</b> (#08); this card just locks in the formula and the trap.',
+    formula:'Same DISTANCE both legs: <span class="gold">avg = 2v₁v₂ / (v₁+v₂)</span><br>Same TIME both legs: avg = (v₁+v₂)/2 &nbsp;(simple average)<br><b>Universal rule from rate-time:</b> avg speed = total distance / total time',
     visualType:'word-translate', visualData:{},
     worked:[
-      {q:'Boat: 30 mph downstream, 20 mph upstream, same distance', steps:[
-        {what:'Same distance both directions → harmonic', why:'spend more time going slow.'},
-        {what:'avg = 2(30)(20)/(30+20)', why:'plug in.'},
-        {what:'= 1200/50 = 24 mph', why:'NOT 25.'}
+      {q:'Round trip: 60 mph one way, 40 mph back. Average speed?', steps:[
+        {what:'Same distance both legs → harmonic', why:'more time spent going slower covers the same ground.'},
+        {what:'avg = 2(60)(40)/(60+40) = 4800/100', why:'plug in the harmonic formula.'},
+        {what:'= 48 mph (NOT 50)', why:'the DAT puts 50 as the tempting wrong answer.'}
       ]},
-      {q:'Drove 60 mph for 1 hr, then 40 for 1 hr. Avg?', steps:[
-        {what:'Same TIME at each speed → arithmetic', why:'time-weighted, not distance-weighted.'},
-        {what:'(60+40)/2 = 50 mph', why:'simple average works here.'}
+      {q:'Drove 60 mph for 1 hr, then 40 mph for 1 hr. Avg?', steps:[
+        {what:'Same TIME at each speed → simple average works', why:'time-weighted, not distance-weighted.'},
+        {what:'(60+40)/2 = 50 mph', why:'no harmonic adjustment needed.'}
       ]}
     ],
     faded:[
-      {prompt:'Round trip: 60 mph one way, 40 back. Avg = ', lcd:'2(60)(40)/100.', blank:'__ mph', answer:'48'},
+      {prompt:'Boat: 30 mph downstream, 20 mph upstream, same distance. Avg = ', lcd:'2(30)(20)/(30+20).', blank:'__ mph', answer:'24'},
       {prompt:'Same distance at 80 mph and 20 mph. Avg = ', lcd:'2(80)(20)/100.', blank:'__ mph', answer:'32'}
     ],
     practice:['hm1','hm2','hm3'],
     lock:'Same DISTANCE → <em>harmonic</em>. Same TIME → arithmetic.',
-    trap:'Reflexive simple average. (30+20)/2 = 25 — but the right answer is 24. The DAT puts 25 as the most tempting wrong choice every single time.',
+    trap:'Reflexive simple average. (60+40)/2 = 50 — but the right answer is 48. The DAT puts the simple-average wrong choice on every harmonic question.',
     sarahTricks:[
-      {when:'Question phrasing includes "round trip" or "back and forth" or "the same distance."', name:'<em>Distance signal → harmonic</em>', move:'These phrases lock in the harmonic-mean scenario. Don\'t average the speeds. Compute 2v₁v₂/(v₁+v₂).', why:'Pattern recognition cuts the question in half.', lock:'Round trip = harmonic.', sarah:true, placeholder:true},
-      {when:'Distinguishing same-distance vs same-time.', name:'<em>What\'s held constant?</em>', move:'Read carefully. If the WORD "distance" is the same: harmonic. If the WORD "time" is the same (or the trip lengths are described in time, like "drove for 1 hour then 1 hour"): arithmetic.', why:'The distinction is subtle but the DAT exploits it.', lock:'What\'s constant? That tells you which mean.'}
+      {when:'Question phrasing includes "round trip," "back and forth," or "the same distance."', name:'<em>Distance signal → harmonic</em>', move:'These phrases lock in the harmonic scenario. Don\'t average the speeds. Compute 2v₁v₂/(v₁+v₂). Or — if you\'d rather skip the formula — pick a friendly distance (60 miles works), compute time each way, total distance / total time. Same answer either way.', why:'Pattern recognition. Sarah teaches the rate-time approach as the universal fallback.', lock:'Round trip = harmonic, OR pick a distance.', sarah:true, placeholder:true},
+      {when:'Distinguishing same-distance vs same-time.', name:'<em>What\'s held constant?</em>', move:'If the WORD "distance" is the same: harmonic. If the WORD "time" is the same (or trip lengths are in time, like "drove for 1 hour then 1 hour"): simple average.', why:'The distinction is subtle but the DAT exploits it.', lock:'What\'s constant? That tells you which mean.'}
+    ],
+    crossLinks:[
+      {to:'rate-time', label:'The full average-speed treatment with d = rt setup lives here.'}
     ]
   },
   'zscore':{
     skill:'zscore', tier:2, num:'28',
     title:'Z-Scores <em>·</em> 68/95/99.7',
-    sub:'Three numbers cover almost every normal-distribution question on the DAT.',
-    pattern:'For normal distributions, the empirical rule says: 68% of values fall within ±1σ of the mean, 95% within ±2σ, 99.7% within ±3σ. The z-score (value − mean)/σ tells you how many standard deviations away you are. The DAT rarely needs z-tables; it tests recognition of these three percentages.',
-    formula:'<span class="gold">z = (value − mean)/σ</span><br>Within ±1σ: 68% · ±2σ: 95% · ±3σ: 99.7%<br>Single tail: <span class="gold">(100 − inside)/2</span>',
+    sub:'Three numbers cover almost every normal-distribution question on the DAT. Single-tail probabilities are rare on this exam — focus on the empirical rule.',
+    pattern:'For normal distributions, the empirical rule says: 68% of values fall within ±1σ of the mean, 95% within ±2σ, 99.7% within ±3σ. The z-score (value − mean)/σ tells you how many standard deviations away you are. <b>The DAT rarely tests beyond the 68/95/99.7 rule</b> — it almost never asks for the probability for a non-integer z-value, and it almost never expects you to use a z-table. Memorize the three numbers, recognize the band the question is asking about, done.',
+    formula:'<span class="gold">z = (value − mean)/σ</span><br>Within ±1σ: 68% · ±2σ: 95% · ±3σ: 99.7%<br><span class="muted">(rare on DAT)</span> Single tail: (100 − inside) / 2',
     visualType:'word-translate', visualData:{},
     worked:[
       {q:'Mean=100, σ=15. z-score for 130?', steps:[
@@ -4703,6 +4705,11 @@ const MODULES = {
     sarahTricks:[
       {when:'Multiple triangles in a figure share an edge.', name:'<em>Check for parallel apex line</em>', move:'When triangles share a side and the figure includes parallel lines, check if the un-shared apexes are on the same parallel line. If yes → all those triangles have equal area.', why:'Geometry problems often hide this invariance. Spotting it saves computation.', lock:'Shared base + parallel apexes = equal area.', sarah:true, placeholder:true},
       {when:'Right triangle with legs given.', name:'Legs <em>are</em> base and height', move:'In a right triangle, the two legs (the sides forming the right angle) ARE the base and height. No need to compute. Area = ½ · leg₁ · leg₂. Don\'t waste time finding "the height."', why:'Students sometimes look for an altitude when the legs work directly.', lock:'Right triangle: legs are base × height.'}
+    ],
+    crossLinks:[
+      {to:'geo-2d', label:'2D Geometry &amp; Special Triangles · 30-60-90 / 45-45-90 / Pythagorean triples.'},
+      {to:'trig', label:'Trigonometry · area = ½ ab sin C extends triangle area to non-right triangles.'},
+      {to:'coord', label:'Coordinate Plane · same Pythagoras under the distance formula.'}
     ]
   },
   'vol-sa':{
@@ -4742,34 +4749,38 @@ const MODULES = {
   },
   'ds':{
     skill:'ds', tier:2, num:'31',
-    title:'Data <em>Sufficiency</em>',
-    sub:'Don\'t solve. Decide. Is the answer UNIQUE — yes or no?',
-    pattern:'Data sufficiency questions don\'t want the answer — they want to know IF you have enough info to answer. Each statement is sufficient on its own only if it produces a UNIQUE answer. Two values? Insufficient. The DAT format: A: (1) alone sufficient. B: (2) alone. C: both together. D: each alone. E: neither.',
-    formula:'For each statement, ask: <span class="gold">"Does this give one unique answer?"</span><br>(1) alone? (2) alone? Both together? Neither?',
+    title:'Logical <em>Sufficiency</em> — meta-skill',
+    sub:'<b>Note:</b> the DAT does NOT use the GMAT "data sufficiency" question format. This module teaches the underlying skill — recognizing when info pins down a unique answer — which transfers to algebra setups, word problems, and DS-style questions on other exams.',
+    pattern:'<b>Why this module exists:</b> the DAT QR uses standard 4-choice multiple-choice. It does NOT use "data sufficiency" as a question format. So this module is positioned as a <em>meta-skill</em>: the discipline of asking <em>"do I have enough information to land on a unique answer?"</em> before grinding through the algebra. That habit transfers directly to algebraic setups, word problems, and parameter problems on the DAT.<br><br>The mechanic: each statement or constraint is "sufficient on its own" only if it produces a UNIQUE answer. Two possible values? Insufficient. Even-power equations (x² = N) typically split into ± and are insufficient unless paired with a sign constraint.',
+    formula:'For each given fact, ask: <span class="gold">"Does this give one unique answer?"</span><br>One value: sufficient · Two or more: insufficient<br>Combined facts can pin down what each alone cannot.<br><b>Connects to:</b> Linear Equations (#06), Systems of Equations (new), and the "N variables = N equations" rule.',
     visualType:'word-translate', visualData:{},
     worked:[
-      {q:'Q: What is x? (1) x + 5 = 12. (2) x² = 49. Sufficient?', steps:[
+      {q:'What is x? Given (1) x + 5 = 12. Given (2) x² = 49. Which fact is sufficient?', steps:[
         {what:'(1) gives x = 7 — UNIQUE', why:'one answer.'},
         {what:'(2) gives x = ±7 — TWO answers', why:'not unique.'},
-        {what:'(1) alone is sufficient. (2) alone is not.', why:'apply rule.'}
+        {what:'(1) alone is sufficient. (2) alone is not.', why:'even-power ambiguity strikes again.'}
       ]},
-      {q:'Q: Is x positive? (1) x² = 9. (2) x > −2.', steps:[
-        {what:'(1) gives x = ±3 — both possible', why:'can\'t determine sign.'},
-        {what:'(2) gives x > −2 — could be −1 (negative) or 5 (positive)', why:'not unique.'},
+      {q:'Is x positive? Given (1) x² = 9. Given (2) x > −2.', steps:[
+        {what:'(1) gives x = ±3 — both possible', why:'can\'t determine sign from a square.'},
+        {what:'(2) gives x > −2 — could be −1 (negative) or 5 (positive)', why:'not unique either.'},
         {what:'Together: x = ±3 AND x > −2 → x = 3 (only positive option)', why:'combined narrows to unique.'},
-        {what:'BOTH together sufficient', why:'C answer.'}
+        {what:'Both facts together are sufficient — neither alone is.', why:'classic both-needed scenario.'}
       ]}
     ],
     faded:[
-      {prompt:'Sufficient means: __', lcd:'one unique answer.', blank:'__ answer', answer:'unique'},
+      {prompt:'Sufficient means: __ answer', lcd:'one unique answer.', blank:'__ answer', answer:'unique'},
       {prompt:'(1) gives x ∈ {2, 5}. Sufficient? __', lcd:'two values = not unique.', blank:'__', answer:'no'}
     ],
     practice:['ds1','ds2','ds3'],
-    lock:'<em>Don\'t compute. Decide.</em>',
-    trap:'Actually solving the question and burning 60+ seconds. DS questions reward decision-making, not arithmetic.',
+    lock:'<em>Decide first. Solve only when needed.</em>',
+    trap:'Treating this like a DAT question format. It is NOT — the DAT uses standard MC. This module teaches the underlying habit, not a question type.',
     sarahTricks:[
-      {when:'Approaching any DS question.', name:'<em>Two questions, not one</em>', move:'Test each statement INDEPENDENTLY first. Cover the other one. Ask: "with just this, do I get a unique answer?" Then test together. The order: (1) alone, (2) alone, both together, neither.', why:'Mixing statements leads to over-relying on combined info.', lock:'(1) alone, (2) alone, both, neither.', sarah:true, placeholder:true},
-      {when:'A statement gives an equation with even powers.', name:'<em>±</em> ambiguity', move:'When a statement gives x² = N, x = ±√N — TWO solutions. Unless the question constrains the sign elsewhere (like "x is positive"), this is INSUFFICIENT alone.', why:'Even-power ambiguity is a constant DS trap.', lock:'Even powers split signs.'}
+      {when:'Approaching an algebra setup with multiple facts/constraints.', name:'<em>Each fact, by itself</em>', move:'Test each fact INDEPENDENTLY first. Cover the others. Ask: "with just this, do I get a unique answer?" Then check whether you actually need the rest. Often you don\'t — and that saves time.', why:'Cuts unnecessary algebra. The skill that transfers to all "do I have enough info?" moments on the DAT.', lock:'One fact at a time, then combine.', sarah:true, placeholder:true},
+      {when:'A statement gives an equation with even powers.', name:'<em>±</em> ambiguity', move:'When you see x² = N (or x⁴, |x| = N, etc.), x has TWO values: +√N and −√N. Unless something else constrains the sign, that fact alone is NOT sufficient to pin down x.', why:'Even-power ambiguity is the most common single-fact trap.', lock:'Even powers split signs.'}
+    ],
+    crossLinks:[
+      {to:'lin-eq', label:'The "N variables = N equations" Sarah-trick is the foundation of this skill.'},
+      {to:'sys-eq', label:'Systems of equations are the natural place to practice sufficiency thinking.'}
     ]
   },
   'exps':{
@@ -4777,7 +4788,7 @@ const MODULES = {
     title:'Exponent <em>Laws</em>',
     sub:'Same base, multiply: ADD exponents. Power of a power: MULTIPLY exponents. Anything to the 0 = 1.',
     pattern:'Exponent laws are mechanical. Same-base multiplication adds exponents. Power-of-power multiplies. Same-base division subtracts. Negative exponents flip to fractions. Zero power equals 1 (except 0⁰).',
-    formula:'<span class="gold">aᵐ · aⁿ = aᵐ⁺ⁿ</span><br>(aᵐ)ⁿ = aᵐⁿ<br>aᵐ / aⁿ = aᵐ⁻ⁿ<br>aᵐ · bᵐ = (a·b)ᵐ &nbsp; <span class="muted">(same exponent)</span><br>aᵐ / bᵐ = (a/b)ᵐ<br>a⁰ = 1 · a⁻ⁿ = 1/aⁿ',
+    formula:'<span class="gold">aᵐ · aⁿ = aᵐ⁺ⁿ</span><br>(aᵐ)ⁿ = aᵐⁿ<br>aᵐ / aⁿ = aᵐ⁻ⁿ<br>aᵐ · bᵐ = (a·b)ᵐ &nbsp; <span class="muted">(same exponent)</span><br>aᵐ / bᵐ = (a/b)ᵐ<br>a⁰ = 1 · a⁻ⁿ = 1/aⁿ<br><br><b>Scientific notation:</b> <span class="gold">a × 10ⁿ</span> where 1 ≤ a &lt; 10 and n is any integer.<br>Multiply: multiply the a-values, add the exponents → adjust if a ≥ 10.<br>Divide: divide the a-values, subtract the exponents.<br>Add/subtract: align exponents first (rewrite to same power of 10), then add/subtract the a-values.',
     visualType:'word-translate', visualData:{},
     worked:[
       {q:'2³ × 2⁴', steps:[
@@ -4792,6 +4803,11 @@ const MODULES = {
       {q:'5⁰', steps:[
         {what:'Anything (≠0) to the 0 power = 1', why:'forced by the division law: 5ⁿ / 5ⁿ = 5ⁿ⁻ⁿ = 5⁰. But 5ⁿ / 5ⁿ also equals 1, so 5⁰ must equal 1.'},
         {what:'= 1', why:'true for every nonzero base.'}
+      ]},
+      {q:'(3 × 10⁴) × (2 × 10³)', steps:[
+        {what:'Multiply the a-values: 3 × 2 = 6', why:'the coefficient and the power of 10 are separate factors — handle each independently.'},
+        {what:'Add the exponents: 10⁴ × 10³ = 10⁷', why:'same base (10), multiplication → add exponents.'},
+        {what:'Answer: 6 × 10⁷', why:'6 is already in [1, 10), so no adjustment needed. If the product were ≥ 10 (e.g. 15 × 10⁷), rewrite as 1.5 × 10⁸.'}
       ]}
     ],
     faded:[
@@ -5111,41 +5127,64 @@ const MODULES = {
 
   'geo-2d': {
     skill:'geo-2d', tier:2, num:'39',
-    title:'2D Geometry — <em>Circles, Squares, Triangles</em>',
-    sub:'Area is two dimensions. Perimeter is one. Don\'t confuse them — and never square the wrong dimension.',
-    pattern:'Each 2D shape has two formulas: an area (square units) and a perimeter or circumference (linear units). The single biggest student error is picking 2πr when the question asks for area, or πr² when it asks for circumference. Read the units in the answer choices to confirm.',
-    formula:'<span class="gold">Circle:</span> A = πr² · C = 2πr (= πd)<br><span class="gold">Square:</span> A = s² · P = 4s<br><span class="gold">Rectangle:</span> A = lw · P = 2(l + w)<br><span class="gold">Triangle:</span> A = ½bh',
+    title:'2D Geometry — <em>Circles, Squares, Special Triangles</em>',
+    sub:'Area is two dimensions. Perimeter is one. The three special triangles let you skip the Pythagorean theorem on most DAT geometry items.',
+    pattern:'Each 2D shape has two formulas: an area (square units) and a perimeter or circumference (linear units). The single biggest student error is picking 2πr when the question asks for area, or πr² when it asks for circumference. Read the units in the answer choices to confirm.<br><br><b>Special triangles:</b> three side-ratio patterns appear constantly. <span class="gold">3-4-5</span>, <span class="gold">5-12-13</span>, <span class="gold">8-15-17</span> are Pythagorean triples — when two sides match, the third drops out without computation. The <span class="gold">30-60-90</span> ratio is <span class="gold">1 : √3 : 2</span>. The <span class="gold">45-45-90</span> ratio is <span class="gold">1 : 1 : √2</span>. Recognize the angles, scale the ratio.',
+    formula:'<span class="gold">Circle:</span> A = πr² · C = 2πr (= πd)<br><span class="gold">Square:</span> A = s² · P = 4s<br><span class="gold">Rectangle:</span> A = lw · P = 2(l + w)<br><span class="gold">Triangle:</span> A = ½bh<br><span class="gold">Pythagorean:</span> a² + b² = c² (right triangle, c = hypotenuse)<br><span class="gold">Triples:</span> 3-4-5 · 5-12-13 · 8-15-17<br><span class="gold">30-60-90:</span> sides scale as 1 : √3 : 2 (short : long : hypotenuse)<br><span class="gold">45-45-90:</span> sides scale as 1 : 1 : √2 (leg : leg : hypotenuse)',
     visualType:'shape-morph', visualData:{},
     worked:[
       {q:'Circle with r = 5. Find area and circumference.', steps:[
         {what:'Area = πr² = π(25) = 25π', why:'square the radius first, then multiply by π. Units are square-something.'},
         {what:'Circumference = 2πr = 10π', why:'linear units. Doubling r doubles C, but quadruples A.'}
       ]},
-      {q:'Triangle with base 8 and height 6. Find area.', steps:[
-        {what:'A = ½bh = ½(8)(6)', why:'half-base-times-height — works for any triangle, not just right triangles, as long as h is the perpendicular height.'},
-        {what:'= 24', why:'square units.'}
+      {q:'Right triangle with legs 6 and 8. Hypotenuse?', steps:[
+        {what:'Recognize the triple: 6 and 8 are 2× the legs of a 3-4-5 triangle', why:'when both legs match a known triple after scaling, the hypotenuse just scales too. Faster than computing 6² + 8².',
+         sarahSays:'Before you reach for a² + b² = c², always pause and ask: do these legs match a triple? 3-4-5, 5-12-13, 8-15-17. If yes, write the hypotenuse straight down — no squaring, no square-rooting.'},
+        {what:'Hypotenuse = 2 × 5 = 10', why:'scale the third side by the same factor.'},
+        {what:'Sanity-check with Pythagoras: 36 + 64 = 100 = 10²', why:'matches.'}
       ]},
-      {q:'Square has side 5. Double the side. What happens to area?', steps:[
-        {what:'Original area: 5² = 25', why:'baseline.'},
-        {what:'New area: 10² = 100', why:'doubling a linear dimension QUADRUPLES area. Area scales as the square of length.'},
-        {what:'Area is ×4', why:'this is the area-vs-length scaling rule. Same as in vol-sa for 3D — but squared instead of cubed.'}
+      {q:'45-45-90 triangle with legs 5. Hypotenuse?', steps:[
+        {what:'Ratio is 1 : 1 : √2', why:'isosceles right triangle — both legs equal, hypotenuse is leg × √2.'},
+        {what:'Hypotenuse = 5√2', why:'scale the ratio by 5. No Pythagorean theorem needed.',
+         sarahSays:'Square inscribed in a circle? That\'s a 45-45-90 in disguise. The diagonal of a square is always side × √2. Same exact ratio.'}
+      ]},
+      {q:'30-60-90 triangle with hypotenuse 12. Other two sides?', steps:[
+        {what:'Ratio: short : long : hyp = 1 : √3 : 2', why:'memorize the order — short side is opposite the 30° angle, long is opposite the 60°, hypotenuse opposite the 90°.'},
+        {what:'Hypotenuse = 12 → scale factor = 6', why:'12 = 2 × 6, so we multiply the whole ratio by 6.'},
+        {what:'Short side = 6 · Long side = 6√3', why:'1 × 6 and √3 × 6.'}
       ]}
     ],
     faded:[
       {prompt:'Circle r = 4. Area = ', lcd:'πr².', blank:'__π', answer:'16'},
-      {prompt:'Square side 7. Perimeter = ', lcd:'4s.', blank:'__', answer:'28'}
+      {prompt:'Square side 7. Perimeter = ', lcd:'4s.', blank:'__', answer:'28'},
+      {prompt:'Right triangle, legs 5 and 12. Hypotenuse = ', lcd:'5-12-13 triple.', blank:'__', answer:'13'},
+      {prompt:'45-45-90 triangle, legs 3. Hypotenuse = ', lcd:'leg × √2.', blank:'__', answer:'3√2'}
     ],
     practice:['g2d1','g2d2','g2d3','g2d4'],
     masteryProblems:['g2dm1','g2dm2','g2dm3','g2dm4','g2dm5'],
-    lock:'Area = <em>squared units</em>. Perimeter / circumference = <em>linear</em>.',
-    trap:'Confusing πr² with 2πr — and squaring diameter instead of radius. If a circle\'s diameter is 10, the radius is 5; A = π(5)² = 25π, not π(10)² = 100π.',
+    lock:'Area = <em>squared units</em>. Triples and ratios skip <em>the square root</em>.',
+    trap:'Confusing πr² with 2πr — and squaring diameter instead of radius. If a circle\'s diameter is 10, the radius is 5; A = π(5)² = 25π, not π(10)² = 100π. For special triangles: confusing the 30-60-90 ratio order. The <em>short</em> side (1) is opposite 30°, not 60°.',
     sarahTricks:[
       {when:'Any circle question.', name:'<em>Radius first, then formula</em>',
        move:'If the problem gives diameter, halve it FIRST. Write r = ___ before touching π. Most circle errors are diameter-vs-radius confusion, not the formula itself.',
        why:'Forces a one-line setup that prevents the most common mistake.', lock:'Find r before π.', sarah:true, placeholder:true},
       {when:'Comparing two shapes after a length change.', name:'<em>Length × k → Area × k²</em>',
        move:'Doubling a side doesn\'t double the area — it quadruples it. Tripling triples linear measures and 9× the area. Memorize the squared scaling.',
-       why:'Connects 2D scaling to the cube law in vol-sa. Same idea, one less power.', lock:'Area scales as length squared.'}
+       why:'Connects 2D scaling to the cube law in vol-sa. Same idea, one less power.', lock:'Area scales as length squared.'},
+      {when:'Right triangle with two integer legs given.', name:'<em>Triple-spot before squaring</em>',
+       move:'Three triples handle 90% of DAT right-triangle questions: <b>3-4-5</b>, <b>5-12-13</b>, <b>8-15-17</b>. Scan the legs first. If they match (or are a multiple), write the third side straight down. Reach for a² + b² only when no triple appears.',
+       why:'Pythagoras takes 3 steps and a square root. Triple-spotting takes one glance.', lock:'Spot the triple. Skip the root.', sarah:true, placeholder:true},
+      {when:'A right triangle has a 30°, 45°, or 60° angle marked.', name:'<em>Angles → ratio</em>',
+       move:'Two angle patterns memorize cold: 45-45-90 has sides 1 : 1 : √2 (the diagonal of a square). 30-60-90 has sides 1 : √3 : 2 (half of an equilateral). When you see those angles, the side ratio is given. Find the scale factor, multiply through. Pythagoras only as a sanity check.',
+       why:'These two ratios appear in DAT geometry as often as the triples. Memorizing the ratio replaces all trig for these specific cases.', lock:'45-45-90 = 1 · 1 · √2. 30-60-90 = 1 · √3 · 2.'},
+      {when:'A square is inscribed in or circumscribes a circle.', name:'Diagonal = <em>side × √2</em>',
+       move:'Square diagonal IS a 45-45-90 hypotenuse. Side length s → diagonal s√2. If the square is inscribed in a circle, diagonal = diameter. If the square circumscribes the circle, side = diameter. These two relationships solve almost every "square + circle" problem on the DAT.',
+       why:'Reframes a compound figure as a known triangle. No new formulas needed.', lock:'Square + circle? Find the 45-45-90.'}
+    ],
+    crossLinks:[
+      {to:'coord', label:'Distance formula uses Pythagoras — same triples apply.'},
+      {to:'tri-inv', label:'Triangle invariance pairs with the side-ratio rules here.'},
+      {to:'trig', label:'SOH-CAH-TOA generalizes special-triangle ratios to any angle.'}
     ]
   },
 
@@ -5232,6 +5271,310 @@ const MODULES = {
        why:'Breaking σ into three labeled steps prevents formula-memorization panic.', lock:'Deviation² → average → root.'}
     ]
   },
+
+  // ===== NEW: SYSTEMS OF EQUATIONS (Tier 0) =====
+  'sys-eq': {
+    skill:'sys-eq', tier:0, num:'42',
+    title:'Systems of <em>Equations</em>',
+    sub:'Two unknowns? You need two equations. Substitute when one variable is already isolated. Eliminate when coefficients can be matched.',
+    pattern:'When a problem has more than one unknown, you need exactly that many <em>independent</em> equations to pin down a single answer (Sarah\'s rule from <b>lin-eq</b> — N variables, N equations). Two methods solve a 2-variable system: <b>substitution</b> (isolate one variable in one equation, plug it into the other) and <b>elimination</b> (line up the coefficients of one variable, add or subtract the equations so that variable cancels). Pick whichever takes fewer pencil strokes.',
+    formula:'<span class="gold">Substitution:</span> isolate a variable, plug into the other equation.<br><span class="gold">Elimination:</span> multiply equations so coefficients of one variable match (or are opposite), then ADD or SUBTRACT to eliminate that variable.<br><b>Sarah\'s rule:</b> N unknowns require N independent equations. Two equations that are scalar multiples of each other (e.g. 2x+4y=8 and x+2y=4) are NOT independent — same equation, no new information.',
+    visualType:'word-translate', visualData:{},
+    worked:[
+      {q:'Solve · y = 2x + 1 · 3x + y = 11 · (substitution-favored)', steps:[
+        {what:'Notice y is already alone in the first equation', why:'this is the substitution signal — when one variable is already isolated, just plug it in.',
+         sarahSays:'Whenever I see a variable already alone — y = something, x = something — I jump straight to substitution. Don\'t fight it. The hard work is already done for you.'},
+        {what:'Substitute (2x + 1) for y in the second: 3x + (2x + 1) = 11', why:'replace y with what the first equation says it equals.'},
+        {what:'Combine: 5x + 1 = 11 → 5x = 10 → x = 2', why:'one-variable equation. Solve normally.'},
+        {what:'Back-substitute: y = 2(2) + 1 = 5', why:'plug x = 2 into the first equation. Solution: (x, y) = (2, 5).'},
+        {what:'Verify: 3(2) + 5 = 11. Matches.', why:'always sanity-check by plugging back into BOTH equations.'}
+      ]},
+      {q:'Solve · 2x + 3y = 12 · 2x − y = 4 · (elimination-favored)', steps:[
+        {what:'Look at the x-coefficients: 2x in both equations', why:'this is the elimination signal — same coefficient on one variable across both equations.',
+         sarahSays:'When the same variable has matching coefficients, elimination is one step. Subtract the equations and that variable disappears. Don\'t reach for substitution when elimination is right there.'},
+        {what:'Subtract second from first: (2x + 3y) − (2x − y) = 12 − 4', why:'2x cancels. Distribute the minus sign carefully — 2x − (2x − y) = 2x − 2x + y = y, plus the 3y already there.'},
+        {what:'4y = 8 → y = 2', why:'one-variable equation.'},
+        {what:'Back-substitute into either: 2x − 2 = 4 → x = 3', why:'plug y = 2 into the simpler equation.'},
+        {what:'Solution: (x, y) = (3, 2). Verify: 2(3) + 3(2) = 12. Matches.', why:'sanity-check.'}
+      ]},
+      {q:'Word problem · A movie theater sells adult tickets for $12 and child tickets for $8. They sold 100 tickets for $1080 total. How many of each?', steps:[
+        {what:'Define variables: a = adult tickets, c = child tickets', why:'two unknowns → expect two equations.',
+         sarahSays:'Count your unknowns FIRST. Two unknowns means you should be looking for exactly two equations. Don\'t solve until you have them both written down.'},
+        {what:'Equation 1 (count): a + c = 100', why:'total tickets.'},
+        {what:'Equation 2 (revenue): 12a + 8c = 1080', why:'total dollars.'},
+        {what:'Solve by elimination: multiply Eq1 by 8 → 8a + 8c = 800', why:'set up to cancel c.'},
+        {what:'Subtract from Eq2: (12a + 8c) − (8a + 8c) = 1080 − 800 → 4a = 280 → a = 70', why:'c terms cancel cleanly.'},
+        {what:'Back-substitute: c = 100 − 70 = 30', why:'plug into Eq1.'},
+        {what:'70 adults, 30 children. Verify: 12(70) + 8(30) = 840 + 240 = 1080. Matches.', why:'sanity-check.'}
+      ]}
+    ],
+    faded:[
+      {prompt:'y = x + 3 and 2x + y = 9. x = ', lcd:'substitute (x+3) for y → 2x + x + 3 = 9 → 3x = 6.', blank:'__', answer:'2'},
+      {prompt:'x + y = 10 and x − y = 4. Add the equations: 2x = 14, so x = ', lcd:'elimination — y cancels when you add.', blank:'__', answer:'7'}
+    ],
+    practice:[],
+    lock:'<em>Match the unknowns to the equations.</em> N unknowns = N equations.',
+    trap:'Trying to solve a system with only one equation, or with two equations that are really the same equation in disguise (e.g. 2x + 4y = 8 and x + 2y = 4 — these are NOT independent). The DAT will sometimes hand you a system that LOOKS like two equations but reduces to one — recognize it and answer "cannot be determined" if that\'s a choice.',
+    sarahTricks:[
+      {
+        when:'You\'re looking at a problem with multiple unknowns and you don\'t know how many equations to write.',
+        name:'<em>N unknowns = N equations</em>',
+        move:'Count the variables. <b>That\'s exactly how many independent equations you need.</b> 2 unknowns → 2 equations. 3 unknowns → 3 equations. Before solving anything: list the unknowns, count them, then read the problem and ask "is this a unique fact, or am I rewriting one I already wrote?" Only count it if it adds new information.',
+        why:'Sarah\'s structural rule. Counting before solving prevents under-determined or over-confident setups. Same rule that anchors lin-eq #06 and the Logical Sufficiency module.',
+        lock:'Unknowns first. Count them. That\'s your equation count.',
+        sarah:true
+      },
+      {
+        when:'One equation already has a variable isolated (y = ..., or x = ...).',
+        name:'<em>Substitute when isolated</em>',
+        move:'Don\'t fight a problem that hands you a substitution. If you see y = something, plug that "something" into the OTHER equation wherever y appears. The work is already half-done. Use parentheses around the substituted expression so you don\'t lose a sign.',
+        why:'Picks the lower-effort method. Saves the elimination algebra for when no variable is isolated.',
+        lock:'Variable already alone? Substitute.',
+        sarah:true
+      },
+      {
+        when:'Two equations have matching (or opposite) coefficients on one variable.',
+        name:'<em>Eliminate when matched</em>',
+        move:'When the same variable has the same coefficient in both equations: SUBTRACT to cancel. When the coefficients are opposites (+3y and −3y): ADD. If neither, multiply one or both equations by integers until you can match. Watch the sign distribution when you subtract — that\'s the #1 elimination error.',
+        why:'Mechanical method. Once the coefficients match, the variable disappears in one step.',
+        lock:'Matched? Subtract. Opposite? Add.'
+      },
+      {
+        when:'A word problem mentions "twice as many," "three times as," or a sum.',
+        name:'Translate <em>two relationships</em> directly',
+        move:'Each relationship in the problem is one equation. "Total of 100 tickets" = one equation. "Revenue of $1080" = a second equation. "Twice as many adults as children" = a relationship equation (a = 2c). When you find two relationships, you have your two equations — don\'t over-think the setup.',
+        why:'Word problems often hide their two facts in plain language. Surface them, then solve.',
+        lock:'Each relationship = one equation.'
+      }
+    ],
+    crossLinks:[
+      {to:'lin-eq', label:'Linear Equations · the foundation. The N-variables rule originates here.'},
+      {to:'word-decode', label:'Word Problem Decoder · turn sentences into the two equations.'},
+      {to:'ds', label:'Logical Sufficiency · the same "do I have enough?" question, formalized.'}
+    ]
+  },
+
+  // ===== NEW: PROFIT · LOSS · BREAK-EVEN (Tier 1) =====
+  'profit-loss': {
+    skill:'profit-loss', tier:1, num:'43',
+    title:'Profit · Loss · <em>Break-Even</em>',
+    sub:'Profit = Revenue − Cost. Break-even is when profit equals zero. Markup and margin are NOT the same percent.',
+    pattern:'Three quantities, one relationship: <b>Profit = Revenue − Cost</b>. Revenue is what you take in (price × units sold). Cost has two parts on the DAT: a one-time <b>fixed cost</b> (rent, equipment) and a per-unit <b>variable cost</b> (materials per item). At <b>break-even</b>, Profit = 0, so Revenue = Cost. Solving for the break-even quantity: <b>Q = Fixed Cost / (Price − Variable Cost)</b>. The denominator is the per-unit profit margin — what each item contributes after covering its variable cost.<br><br><b>Markup vs Margin:</b> these are not the same percent. <b>Markup</b> = profit / cost (relative to what you paid). <b>Margin</b> = profit / price (relative to what you charged). A 50% markup is only a 33% margin.',
+    formula:'<span class="gold">Profit = Revenue − Cost</span><br>Revenue = Price × Quantity<br>Cost = Fixed Cost + (Variable Cost × Quantity)<br><span class="gold">Break-even Q = Fixed Cost / (Price − Variable Cost)</span><br><span class="gold">Markup % = (Price − Cost) / Cost</span> &nbsp;<span class="muted">(relative to cost)</span><br><span class="gold">Margin % = (Price − Cost) / Price</span> &nbsp;<span class="muted">(relative to price)</span>',
+    visualType:'word-translate', visualData:{},
+    worked:[
+      {q:'A bakery has $200 in fixed daily costs. Each loaf costs $2 to make and sells for $7. How many loaves to break even?', steps:[
+        {what:'Identify pieces: Fixed Cost = $200, Variable Cost = $2/loaf, Price = $7/loaf', why:'label every number with what it is before plugging in.',
+         sarahSays:'Anytime you see "fixed cost" or "setup fee" or "rental" in the problem, that\'s your fixed cost. Anything described "per item" or "per unit" is variable. Sort the numbers before solving.'},
+        {what:'Per-loaf profit margin = Price − Variable Cost = 7 − 2 = $5', why:'each loaf contributes $5 to covering the fixed cost (after paying for its own ingredients).'},
+        {what:'Break-even Q = Fixed Cost / per-unit margin = 200 / 5', why:'how many $5 contributions does it take to cover $200?'},
+        {what:'Q = 40 loaves', why:'at 40 loaves the bakery breaks even. Loaf 41 starts producing actual profit.'}
+      ]},
+      {q:'A jacket costs the store $40. They sell it for $60. What is the markup percent? What is the margin percent?', steps:[
+        {what:'Profit per jacket = 60 − 40 = $20', why:'absolute profit first.',
+         sarahSays:'Markup and margin look like the same number on the surface — "$20 made on a $40 jacket." But the denominator changes. Markup divides by COST (what you paid). Margin divides by PRICE (what they paid). Different denominators, different percents.'},
+        {what:'Markup % = profit / COST = 20 / 40 = 50%', why:'relative to the original cost — the store paid $40 and added 50%.'},
+        {what:'Margin % = profit / PRICE = 20 / 60 ≈ 33%', why:'relative to the price the customer paid — about a third of the price is profit.'},
+        {what:'Lock the contrast: 50% markup is the SAME deal as a 33% margin', why:'the DAT puts both numbers as answer choices. The right one depends on which denominator the question asks for.'}
+      ]},
+      {q:'A company sells gadgets for $20 each. Variable cost is $12 per gadget. They have $4000 in fixed costs. How many gadgets must they sell to make $2000 profit?', steps:[
+        {what:'Set up the equation: Profit = Revenue − Cost', why:'always start from the master formula.'},
+        {what:'2000 = 20Q − (4000 + 12Q)', why:'plug in: revenue = 20Q, cost = fixed + variable.'},
+        {what:'2000 = 20Q − 4000 − 12Q → 2000 = 8Q − 4000', why:'distribute the minus sign and combine like terms.'},
+        {what:'8Q = 6000 → Q = 750 gadgets', why:'standard linear equation. The denominator (8) is the per-unit margin.'}
+      ]}
+    ],
+    faded:[
+      {prompt:'Fixed cost $300. Price $20. Variable cost $5 per unit. Break-even quantity = ', lcd:'300 / (20 − 5).', blank:'__', answer:'20'},
+      {prompt:'Item costs $25, sells for $40. Markup % = ', lcd:'profit / cost = 15/25.', blank:'__%', answer:'60'}
+    ],
+    practice:[],
+    lock:'<em>Profit = Revenue − Cost.</em> Break-even when profit equals zero.',
+    trap:'Confusing markup with margin. A 25% markup gives a 20% margin (profit is the same; denominator differs). The DAT puts both numbers in the answer choices on every markup-vs-margin question.',
+    sarahTricks:[
+      {
+        when:'A break-even or "how many to sell to make $X" problem.',
+        name:'<em>Per-unit margin × quantity</em>',
+        move:'Always isolate the per-unit profit margin first: Price − Variable Cost. That\'s what each item contributes. Break-even quantity is just <b>Fixed Cost ÷ per-unit margin</b>. To make a TARGET profit instead of zero: (Fixed Cost + target profit) ÷ per-unit margin.',
+        why:'One formula, one mental shortcut. Reduces every break-even problem to a division.',
+        lock:'Per-unit margin first. Then divide.',
+        sarah:true
+      },
+      {
+        when:'The question asks for markup vs margin (or you see both as answer choices).',
+        name:'<em>Cost denominator vs Price denominator</em>',
+        move:'Mark%up divides by cost. Margin divides by price. The numerator (profit) is the same — it\'s only the denominator that changes. Memory aid: "<b>m</b>arkup is over <b>m</b>oney-paid (cost). <b>M</b>argin is over <b>M</b>SRP (price)." Or just slow down and read which denominator the question is asking about.',
+        why:'The DAT exploits this confusion. Same dollar profit, two different percents — and they\'ll put both in the choices.',
+        lock:'Markup over cost. Margin over price.',
+        sarah:true,
+        placeholder:true
+      },
+      {
+        when:'A profit/loss word problem with multiple costs.',
+        name:'<em>Sort fixed vs variable</em>',
+        move:'Before writing any equation, label every cost as either fixed (one-time, doesn\'t depend on Q) or variable (per-unit, scales with Q). Rent, equipment, setup fees → fixed. Materials per item, shipping per item, commission per sale → variable. Sorting first prevents tangled algebra.',
+        why:'The hardest part of these problems is reading them, not solving them. Sort first.',
+        lock:'Fixed once. Variable per unit.'
+      }
+    ],
+    crossLinks:[
+      {to:'pct-chg', label:'Percent Increase/Decrease · markup and discount math.'},
+      {to:'lin-eq', label:'Linear Equations · the algebra under every break-even setup.'},
+      {to:'word-decode', label:'Word Problem Decoder · sort the numbers before plugging in.'}
+    ]
+  },
+
+  // ===== NEW: DATA & GRAPH READING (Tier 1) =====
+  'data-graph': {
+    skill:'data-graph', tier:1, num:'44',
+    title:'Data &amp; <em>Graph Reading</em>',
+    sub:'Bar charts. Line graphs. Pie charts. Two-way tables. Scatter plots. Read the axes first, then the data.',
+    pattern:'Five graph types appear on the DAT QR. Each has a small set of question patterns: find max/min, compute differences, identify trends, convert percentages to counts, read marginal vs conditional from a table, identify correlation and outliers. The single biggest student mistake is jumping to the data before reading the axes — and then computing in the wrong units, or comparing unlike scales.<br><br><b>Bar chart:</b> max/min, difference between bars, percent change between bars.<br><b>Line graph:</b> slope (rate of change), trend direction, projection.<br><b>Pie chart:</b> percent → count conversion (if 30% of 200 students prefer X, 60 students do).<br><b>Two-way table:</b> row vs column reading, marginal probabilities (sum the row or column / grand total), conditional probabilities (sub-cell / row or column total).<br><b>Scatter plot:</b> correlation direction (positive, negative, none), outliers.',
+    formula:'<span class="gold">Read the axes FIRST.</span> What\'s the unit? What\'s the scale (linear, log, %)? Where does the axis start (zero or truncated)?<br><span class="gold">Pie chart:</span> count = (percent / 100) × total<br><span class="gold">Two-way marginal:</span> row total / grand total · column total / grand total<br><span class="gold">Two-way conditional:</span> cell / row total &nbsp;OR&nbsp; cell / column total<br><span class="gold">Line slope (rate):</span> (Δy / Δx) — same as coord plane',
+    visualType:'word-translate', visualData:{},
+    worked:[
+      {q:'Bar chart shows monthly revenue: Jan $40k, Feb $50k, Mar $60k, Apr $45k. Percent change Mar → Apr?', steps:[
+        {what:'Read axes first. y-axis = revenue (thousands of dollars). x-axis = month.', why:'always confirm units before computing — is the y-axis in dollars or thousands? Truncated or starting at zero?',
+         sarahSays:'Bar charts trick students with truncated y-axes. A bar that LOOKS twice as tall as another may only be 10% larger if the axis starts at, say, 40 instead of 0. Always read the axis numbers, never the visual height.'},
+        {what:'Mar = $60k, Apr = $45k. Change = 45 − 60 = −$15k', why:'absolute change.'},
+        {what:'Percent change = change / ORIGINAL = −15 / 60 = −25%', why:'denominator is the original value (Mar), not the new one (Apr). Same rule as pct-chg.'},
+        {what:'A 25% decrease from March to April', why:'sign matters — this is a decrease.'}
+      ]},
+      {q:'Pie chart: 200 students surveyed. 35% prefer math, 25% prefer English, 20% prefer history, 20% prefer science. How many prefer math?', steps:[
+        {what:'Verify the percents sum to 100%: 35 + 25 + 20 + 20 = 100', why:'always sanity-check the pie. If the pieces don\'t add to 100, something\'s misread.',
+         sarahSays:'Every pie chart question is the same conversion: percent × total. The percent comes from the chart, the total comes from the question. The number you want is just (percent/100) × total. No fancy math.'},
+        {what:'Count = (percent / 100) × total = 0.35 × 200', why:'plug in.'},
+        {what:'= 70 students', why:'final answer. Same shortcut as pct-of #03 — find 10% of 200 = 20, then 35% = 3.5 × 20 = 70.'}
+      ]},
+      {q:'Two-way table · 50 men, 50 women, surveyed about coffee. 30 men drink coffee, 20 women drink coffee. P(man | drinks coffee)?', steps:[
+        {what:'Set up the table. Total coffee drinkers = 30 + 20 = 50. Total surveyed = 100.', why:'compute the marginals first.',
+         sarahSays:'On any conditional probability from a table, the word AFTER "given" is the world you live in. "Given drinks coffee" → your denominator is total coffee drinkers, not total people. Underline the given word every time.'},
+        {what:'P(man | drinks coffee) means: among coffee drinkers, what fraction is male?', why:'translate the conditional. The "given" sets the denominator world.'},
+        {what:'= 30 (men coffee drinkers) / 50 (all coffee drinkers) = 0.6 = 60%', why:'restricted to the coffee-drinker world. Different from P(coffee | man) = 30/50 also (same here by coincidence) — but in general these two are different.'}
+      ]}
+    ],
+    faded:[
+      {prompt:'Pie chart shows 40% of 250 customers prefer brand A. Count = ', lcd:'(40/100) × 250.', blank:'__', answer:'100'},
+      {prompt:'Bar chart: Q1 = 80, Q2 = 100. Percent change Q1→Q2 = ', lcd:'(100−80)/80.', blank:'__%', answer:'25'}
+    ],
+    practice:[],
+    lock:'<em>Read the axes first.</em> Then the data.',
+    trap:'Truncated y-axes. A bar that visually looks twice as tall as another may only be 10% larger if the axis starts above zero. Same with line graphs — a sharp upward visual slope may be a tiny absolute change. Always check where the axis starts and what the scale is. The DAT puts the visual-impression answer as a tempting distractor.',
+    sarahTricks:[
+      {
+        when:'Approaching ANY graph or chart question.',
+        name:'<em>Axes first, data second</em>',
+        move:'Before reading any data point, scan the axes: <b>(1)</b> what\'s on each axis, <b>(2)</b> what units, <b>(3)</b> what\'s the scale (linear, log, percent, dollars, thousands), <b>(4)</b> where does the y-axis start — at zero or truncated. Only after you\'ve answered all four do you go to the data. Five-second move; saves a misread.',
+        why:'Most graph errors are unit errors and scale errors, not arithmetic. Reading axes first defends against both.',
+        lock:'Axes. Units. Scale. Origin. THEN data.',
+        sarah:true
+      },
+      {
+        when:'A pie chart asks for a count from a percent.',
+        name:'<em>Percent × total</em>',
+        move:'Same as pct-of #03 — find 10% of the total first, then build to the percent you want. Pie charts are just percent-of problems with a circle drawn next to them.',
+        why:'No new math. Reuses the 10%-anchor trick.',
+        lock:'Pie chart count = pct-of in disguise.',
+        sarah:true,
+        placeholder:true
+      },
+      {
+        when:'A two-way table asks for "P(A given B)" or "what fraction of B are A?"',
+        name:'<em>Underline the "given"</em>',
+        move:'Find the word "given" or "of those who" or "among the ___." Underline what comes after it. That is your DENOMINATOR — the row or column total you\'re restricted to. Then your numerator is the cell that satisfies BOTH conditions.',
+        why:'Conditional direction errors are the single biggest two-way table mistake. Underlining the given fixes it.',
+        lock:'Underline "given." That\'s the bottom.'
+      },
+      {
+        when:'A scatter plot asks about correlation or outliers.',
+        name:'<em>Direction · strength · outliers</em>',
+        move:'Three questions in order. <b>(1) Direction:</b> does y go up or down as x goes up? Up = positive correlation. Down = negative. Random cloud = no correlation. <b>(2) Strength:</b> how tightly do the points cluster around a line? <b>(3) Outliers:</b> any single point far from the cluster? The DAT mostly tests direction and outliers, occasionally strength.',
+        why:'Three-step scan covers every scatter-plot question type the DAT has used.',
+        lock:'Direction. Strength. Outliers.'
+      }
+    ],
+    crossLinks:[
+      {to:'pct-of', label:'Percent of a Number · pie charts are percent-of problems with a circle.'},
+      {to:'pct-chg', label:'Percent Increase/Decrease · used for bar-chart comparisons.'},
+      {to:'p-cond', label:'Conditional Probability · the formal version of "given" on a two-way table.'},
+      {to:'desc-stats', label:'Descriptive Statistics · scatter-plot reasoning extends here.'}
+    ]
+  },
+
+  // ===== NEW: TRIGONOMETRY (Tier 2) =====
+  'trig': {
+    skill:'trig', tier:2, num:'45',
+    title:'Trigonometry — <em>SOH-CAH-TOA</em>',
+    sub:'Right triangles only. Sine, cosine, and tangent are ratios. Memorize five angles cold.',
+    pattern:'Trigonometry on the DAT is right-triangle ratios. Three functions, three sides, one mnemonic: <b>SOH · CAH · TOA</b>. <b>S</b>ine = <b>O</b>pposite / <b>H</b>ypotenuse. <b>C</b>osine = <b>A</b>djacent / <b>H</b>ypotenuse. <b>T</b>angent = <b>O</b>pposite / <b>A</b>djacent. "Opposite" and "adjacent" are taken with respect to the angle you\'re asking about — not a fixed labeling. The hypotenuse is always the side across from the right angle. Once you label the three sides, the three ratios are mechanical.<br><br>Five common angles drive 90% of DAT trig questions. Memorize the table cold:',
+    formula:'<span class="gold">SOH · CAH · TOA</span><br>sin θ = opposite / hypotenuse<br>cos θ = adjacent / hypotenuse<br>tan θ = opposite / adjacent<br><br><span class="gold">Common-angle table (memorize cold):</span><br>sin 0° = 0 · sin 30° = 1/2 · sin 45° = √2/2 · sin 60° = √3/2 · sin 90° = 1<br>cos 0° = 1 · cos 30° = √3/2 · cos 45° = √2/2 · cos 60° = 1/2 · cos 90° = 0<br>tan 0° = 0 · tan 30° = 1/√3 · tan 45° = 1 · tan 60° = √3 · tan 90° = undefined<br><b>Symmetry shortcut:</b> sin and cos are mirror images — sin 30° = cos 60°, sin 45° = cos 45°, sin 60° = cos 30°.',
+    visualType:'word-translate', visualData:{},
+    worked:[
+      {q:'Right triangle: opposite side to angle θ is 3, hypotenuse is 5. Find sin θ.', steps:[
+        {what:'Identify the ratio: sin = opposite / hypotenuse', why:'SOH — the S stands for sine, opposite over hypotenuse.',
+         sarahSays:'Trigonometry feels scary because of the names — sine, cosine, tangent — but they\'re just ratios. Once you label the sides relative to the angle, the function is just "which two sides do I divide?" Memorize SOH-CAH-TOA and you\'ve memorized 90% of right-triangle trig.'},
+        {what:'sin θ = 3 / 5 = 0.6', why:'plug in. Decimal form is fine; on the DAT, fraction form (3/5) usually appears in answer choices.'},
+        {what:'Sanity-check: this is the 3-4-5 triangle (with θ opposite the side-3 leg)', why:'and sin of that angle ≈ 36.87°. Spotting the triple confirms the setup.'}
+      ]},
+      {q:'In a right triangle, the angle is 30°, the hypotenuse is 10. Find the side opposite to 30°.', steps:[
+        {what:'Use sin 30° = opposite / hypotenuse', why:'opposite is the unknown.'},
+        {what:'sin 30° = 1/2 (memorized)', why:'common-angle recall — no calculator needed.',
+         sarahSays:'When the angle is 30°, 45°, 60°, 0°, or 90° — those are the only angles you need to memorize. Anything else, you wouldn\'t see on the DAT QR. Just five angles, three functions, fifteen values total. Memorize the table once.'},
+        {what:'1/2 = opposite / 10 → opposite = 5', why:'cross-multiply or just reason: sin 30° is half, so opposite is half the hypotenuse.'},
+        {what:'Check via 30-60-90 ratio (1 : √3 : 2): hypotenuse 10 → short side 5. Matches.', why:'special-triangle ratios from geo-2d agree.'}
+      ]},
+      {q:'Right triangle: opposite to angle θ is 4, adjacent is 3. Find θ.', steps:[
+        {what:'Choose the ratio with both KNOWN sides: tan = opposite / adjacent', why:'sine and cosine both involve the hypotenuse, which we don\'t have. Tangent uses only opposite and adjacent.'},
+        {what:'tan θ = 4 / 3', why:'plug in.'},
+        {what:'tan θ = 4/3 ≈ 1.33', why:'compare to memorized values: tan 45° = 1, tan 60° = √3 ≈ 1.73. So θ is between 45° and 60° — closer to 53°.'},
+        {what:'In fact this is the 3-4-5 triangle, and the angle opposite the 4-leg is ~53°', why:'this exact triangle appears repeatedly on the DAT — both 37° and 53° as the two non-right angles.'}
+      ]}
+    ],
+    faded:[
+      {prompt:'Right triangle, opposite to θ = 6, hypotenuse = 10. sin θ = ', lcd:'opp/hyp = 6/10.', blank:'__', answer:'3/5'},
+      {prompt:'sin 60° = ', lcd:'memorized common angle.', blank:'__/2', answer:'√3'}
+    ],
+    practice:[],
+    lock:'<em>Label the angle, then SOH-CAH-TOA.</em> Five angles, fifteen values, memorized.',
+    trap:'Mixing up "opposite" and "adjacent." Both are taken relative to the specific angle in the question — they\'re NOT fixed labels for two specific sides. If the question asks about angle A, "opposite" is the side across from A. If the question shifts to angle B, the same physical side may now be the "adjacent." The hypotenuse is the only fixed side (always opposite the right angle).',
+    sarahTricks:[
+      {
+        when:'Any right-triangle trig question.',
+        name:'<em>The Ladder Trick</em> · label, then ratio',
+        move:'Picture a ladder leaning on a wall. The ladder itself is the hypotenuse (always — opposite the right angle, which is the corner where wall meets ground). The wall is one side, the ground is the other. <b>From the angle the ladder makes with the ground:</b> the wall is OPPOSITE, the ground is ADJACENT. Now SOH-CAH-TOA picks the ratio. Sarah\'s ladder mental image makes "opposite" and "adjacent" physical instead of abstract.',
+        why:'Students confuse opposite and adjacent because the labels feel arbitrary. Anchoring to a ladder leaning on a wall gives a concrete picture.',
+        lock:'Picture a ladder. Wall = opposite the ground angle. Ground = adjacent.',
+        sarah:true,
+        placeholder:true
+      },
+      {
+        when:'You need a sine, cosine, or tangent for a common angle (0°, 30°, 45°, 60°, 90°).',
+        name:'<em>Memorize five angles</em>',
+        move:'Five angles, three functions = fifteen values total. Memorize cold. The DAT will not ask you for sin 17°. <b>Symmetry shortcut to halve the memorization:</b> sin θ = cos (90° − θ). So sin 30° = cos 60°, sin 60° = cos 30°, sin 45° = cos 45°. You really only need to learn sine; cosine flips the angles. Tangent = sine/cosine handles the third.',
+        why:'Recall is faster than computing from a triangle every time. The symmetry pattern cuts the memorization in half.',
+        lock:'Sine: 0, 1/2, √2/2, √3/2, 1. Cosine: same list, reversed.'
+      },
+      {
+        when:'A right triangle gives you two sides (no angle).',
+        name:'Pick the ratio that uses <em>only what you have</em>',
+        move:'You have two sides; you don\'t need all three trig functions. <b>Have opposite and hypotenuse?</b> sine. <b>Have adjacent and hypotenuse?</b> cosine. <b>Have opposite and adjacent?</b> tangent (no hypotenuse needed). Pick the function that matches the two sides you actually have. The other two can wait.',
+        why:'Often students try all three ratios out of confusion. Choosing the one that uses only the given sides eliminates wasted work.',
+        lock:'Match the ratio to the sides you have.'
+      },
+      {
+        when:'Two non-right angles in a right triangle, one given, one unknown.',
+        name:'They <em>add to 90°</em>',
+        move:'In a right triangle, the two non-right angles sum to 90° (because all three angles must total 180°, and one is already 90°). If one is 35°, the other is 55°. No trig needed for the angle itself — the trig is for the sides.',
+        why:'Quick fact that students sometimes miss when the question gives a side and one angle and asks for the other angle.',
+        lock:'Two non-right angles sum to 90°.'
+      }
+    ],
+    crossLinks:[
+      {to:'geo-2d', label:'2D Geometry & Special Triangles · 30-60-90 and 45-45-90 ratios are the trig table in disguise.'},
+      {to:'coord', label:'Coordinate Plane · slope of a line is tan(angle with x-axis).'},
+      {to:'tri-inv', label:'Triangle Invariance · area = ½ ab sin C extends the trig to any triangle.'}
+    ]
+  },
 };
 
 /* ============================================================
@@ -5279,6 +5622,7 @@ function renderModule(skillId){
           <div class="subcard lock"><div class="h"><span class="lbl teal">Lock</span></div><div class="lock-line">${M.lock}</div></div>
         </div>
         ${M.sarahTricks ? renderTricksPanel(M.sarahTricks) : ''}
+        ${M.crossLinks ? renderCrossLinks(M.crossLinks) : ''}
       </div>
 
       <div class="stage-body hidden" data-stage="1" id="stage-${skillId}-1"></div>
@@ -5352,6 +5696,19 @@ function renderTricksPanel(tricks){
       `).join('')}
       <div class="tricks-cta">
         Tutor tips capture: After every session, Sarah notes any trick that landed. They drop into this panel automatically. The library grows session by session.
+      </div>
+    </div>
+  `;
+}
+
+/* ----- Cross-links panel ----- */
+function renderCrossLinks(links){
+  if (!links || !links.length) return '';
+  return `
+    <div class="cross-links" style="margin-top:18px; padding:14px 18px; background:var(--paper-2); border:1px solid var(--line); border-radius:11px">
+      <div class="up muted" style="margin-bottom:8px; letter-spacing:0.14em">Related modules</div>
+      <div style="display:flex; flex-direction:column; gap:6px">
+        ${links.map(l => `<a href="javascript:void(0)" onclick="document.getElementById('${l.to}')?.scrollIntoView({behavior:'smooth'})" style="text-decoration:none; color:var(--ink); display:flex; gap:10px; align-items:baseline; padding:6px 0; border-bottom:1px dashed var(--line-2); cursor:pointer"><span class="mono" style="color:var(--gold-d); font-size:11px; letter-spacing:0.1em; min-width:88px">${l.to}</span><span style="font-size:13.5px; color:var(--ink-2)">${l.label}</span></a>`).join('')}
       </div>
     </div>
   `;
@@ -5787,9 +6144,13 @@ const QR_LOCKS = {
   'skip-ret':'<b>Skip after 90 seconds.</b> Don\'t let one problem swallow your section.',
   'guess':'<b>Eliminate before guessing.</b> 5 choices → 2 doubles your odds.',
   'binomials':'<b>(x+y)² has a middle term.</b> Twice the product, never zero.',
-  'geo-2d':'<b>Area is squared. Perimeter is linear.</b> Double the side, area ×4.',
+  'geo-2d':'<b>Area is squared. Perimeter is linear.</b> Double the side, area ×4. Triples and special-angle ratios skip the square root.',
   'sets':'<b>Union − Intersection.</b> Inclusion-exclusion prevents double-counting.',
-  'desc-stats':'<b>Mean shifts with outliers; median doesn\'t.</b> Pick by data shape.'
+  'desc-stats':'<b>Mean shifts with outliers; median doesn\'t.</b> Pick by data shape.',
+  'sys-eq':'<b>N unknowns = N equations.</b> Substitute when isolated. Eliminate when matched.',
+  'profit-loss':'<b>Profit = Revenue − Cost.</b> Break-even Q = Fixed ÷ (Price − Variable).',
+  'data-graph':'<b>Read the axes first.</b> Truncated y-axes lie. Pie charts are percent-of with a circle.',
+  'trig':'<b>SOH-CAH-TOA.</b> Five angles memorized. Sine and cosine mirror at 90° − θ.'
 };
 
 /* ===== 1. coord-plane ===== */
@@ -6013,9 +6374,16 @@ function qrCountGrid(skillId){
         <div class="qr-slider"><label>r</label><input type="range" min="0" max="${s.n}" step="1" value="${s.r}" oninput="qrCountSet('${skillId}','r',this.value)"/><span class="v" id="qrcount-vr-${skillId}">${s.r}</span></div>
         <div class="qr-pill"><button class="${s.mode==='P'?'active':''}" onclick="qrCountMode('${skillId}','P')">Permutation</button><button class="${s.mode==='C'?'active':''}" onclick="qrCountMode('${skillId}','C')">Combination</button></div>
       </div>
+
+      <!-- Slot-filling diagram: r labeled boxes, each showing how many choices remain -->
+      <div style="margin:10px 0 4px; font-size:10px; letter-spacing:0.14em; text-transform:uppercase; color:var(--gold-d); font-weight:700; font-family:'DM Sans',sans-serif">Slot-filling diagram</div>
+      <svg viewBox="0 0 480 100" id="qrslot-svg-${skillId}" style="width:100%; max-width:480px; height:auto; display:block; margin:0 auto"></svg>
+      <div id="qrslot-out-${skillId}" style="text-align:center; font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--ink); margin:6px 0 2px"></div>
+      <p style="font-size:11px; color:var(--ink-mute); font-style:italic; margin:0 0 12px; font-family:'Playfair Display',serif">"Each box asks: how many items are left to pick from? Permutations multiply the choices down."</p>
+
       <div class="qr-readout" id="qrcount-formula-${skillId}">—</div>
       <div class="qr-count-grid" id="qrcount-grid-${skillId}"></div>
-      <p class="qr-cap">Permutations care about order; combinations don't. The "÷ r!" is exactly the count of reorderings inside each combination group.</p>
+      <p class="qr-cap">Permutations care about order; combinations don't. The slot diagram shows why: each slot locks in one choice, reducing the pool. Divide by r! to collapse all the reorderings — that's the combination count.</p>
 
       <!-- Sarah's C-Method widget — combinations without the formula -->
       <div class="qr-sarah-cmethod" style="margin-top:24px; padding:14px 16px; border:1px solid var(--line); border-left:3px solid var(--gold-d); border-radius:0 8px 8px 0; background:var(--paper-2)">
@@ -6082,33 +6450,84 @@ function qrCmDraw(skillId){
   svg.innerHTML = h;
   if (out) out.innerHTML = `C(${n}, ${r}) = (${topNumbers.join(' × ')}) / (${botNumbers.join(' × ')}) = <b>${result}</b> · same digits top & bottom (${r} each) ✓`;
 }
+/* qrSlotRedraw — slot-filling diagram for permutations / combinations.
+   Draws r boxes left-to-right. Each box shows how many items are still
+   available for that position (n, n-1, n-2 …). The visual teaches the
+   key move: "each slot you fill shrinks the remaining pool by one."
+   In combination mode a second line shows the ÷ r! step that collapses all
+   the reorderings inside each group down to one unique selection. */
+function qrSlotRedraw(skillId){
+  const svg = document.getElementById('qrslot-svg-'+skillId); if (!svg) return;
+  const out = document.getElementById('qrslot-out-'+skillId);
+  const s = QR_STATE[skillId]; if (!s) return;
+  if (!s.r){
+    svg.innerHTML = '<text x="240" y="50" text-anchor="middle" font-family="DM Sans" font-size="13" fill="var(--ink-mute)" font-style="italic">Set r above 0 to see slots</text>';
+    if (out) out.innerHTML = '';
+    return;
+  }
+  const fact = n => { let p = 1; for (let i = 2; i <= n; i++) p *= i; return p; };
+  const nPr = fact(s.n) / fact(s.n - s.r);
+  const nCr = nPr / fact(s.r);
+  const BOX_W = 50, BOX_H = 50, GAP = 12;
+  const totalW = s.r * BOX_W + (s.r - 1) * GAP;
+  const startX = Math.max(10, (480 - totalW) / 2);
+  const boxY = 16;
+  let h = '';
+  for (let i = 0; i < s.r; i++){
+    const choices = s.n - i;
+    const bx = startX + i * (BOX_W + GAP);
+    const first = i === 0;
+    h += '<rect x="' + bx + '" y="' + boxY + '" width="' + BOX_W + '" height="' + BOX_H + '" fill="' + (first ? 'var(--gold)' : 'var(--paper-3)') + '" fill-opacity="' + (first ? 0.4 : 0.7) + '" stroke="' + (first ? 'var(--gold-d)' : 'var(--line-strong)') + '" stroke-width="2" rx="6"/>';
+    h += '<text x="' + (bx + BOX_W/2) + '" y="' + (boxY + 31) + '" text-anchor="middle" font-family="Playfair Display" font-size="22" font-weight="700" fill="' + (first ? 'var(--sb)' : 'var(--gold-d)') + '">' + choices + '</text>';
+    h += '<text x="' + (bx + BOX_W/2) + '" y="' + (boxY + BOX_H + 13) + '" text-anchor="middle" font-family="DM Sans" font-size="9" fill="var(--ink-mute)">slot ' + (i+1) + '</text>';
+    if (i < s.r - 1){
+      const mx = bx + BOX_W + GAP/2;
+      h += '<text x="' + mx + '" y="' + (boxY + BOX_H/2 + 7) + '" text-anchor="middle" font-family="JetBrains Mono" font-size="16" font-weight="700" fill="var(--ink-2)">x</text>';
+    }
+  }
+  if (s.mode === 'C'){
+    const divY = boxY + BOX_H + 30;
+    const factStr = Array.from({length: s.r}, (_, i) => s.r - i).join(' x ');
+    h += '<text x="240" y="' + divY + '" text-anchor="middle" font-family="DM Sans" font-size="9" fill="var(--ink-mute)">Combinations: divide by r! = ' + factStr + ' = ' + fact(s.r) + ' to collapse reorderings</text>';
+    h += '<text x="240" y="' + (divY + 16) + '" text-anchor="middle" font-family="JetBrains Mono" font-size="12" font-weight="700" fill="var(--teal-3)">' + s.n + 'C' + s.r + ' = ' + nPr + ' / ' + fact(s.r) + ' = ' + nCr + '</text>';
+  }
+  svg.innerHTML = h;
+  if (out){
+    const cl = Array.from({length: s.r}, (_, i) => s.n - i).join(' x ');
+    out.innerHTML = s.mode === 'P'
+      ? cl + ' = <b>' + nPr + '</b> ordered arrangements'
+      : '(' + cl + ') / ' + fact(s.r) + ' = <b>' + nCr + '</b> unordered groups';
+  }
+}
+
 window.qrCountSet = function(skillId, key, val){
   const s = QR_STATE[skillId]; if (!s) return;
   s[key] = +val;
   if (s.r > s.n) s.r = s.n;
   document.getElementById('qrcount-v'+key+'-'+skillId).textContent = s[key];
-  const rIn = document.querySelector(`#qrcount-${skillId} input[oninput*="'r'"]`); if (rIn){ rIn.max = s.n; rIn.value = s.r; document.getElementById('qrcount-vr-'+skillId).textContent = s.r; }
+  const rIn = document.querySelector('#qrcount-'+skillId+' input[oninput*="\'r\'"]'); if (rIn){ rIn.max = s.n; rIn.value = s.r; document.getElementById('qrcount-vr-'+skillId).textContent = s.r; }
   qrCountRedraw(skillId);
 };
-window.qrCountMode = function(skillId, mode){ const s = QR_STATE[skillId]; if (!s) return; s.mode = mode; document.querySelectorAll(`#qrcount-${skillId} .qr-pill button`).forEach((b,i)=>b.classList.toggle('active', ['P','C'][i]===mode)); qrCountRedraw(skillId); };
+window.qrCountMode = function(skillId, mode){ const s = QR_STATE[skillId]; if (!s) return; s.mode = mode; document.querySelectorAll('#qrcount-'+skillId+' .qr-pill button').forEach((b,i)=>b.classList.toggle('active', ['P','C'][i]===mode)); qrCountRedraw(skillId); };
 function qrCountRedraw(skillId){
   const s = QR_STATE[skillId]; if (!s) return;
   const items = s.items.slice(0, s.n);
   const fact = n => { let p = 1; for (let i=2;i<=n;i++) p*=i; return p; };
   const nPr = fact(s.n)/fact(s.n-s.r);
   const nCr = nPr / fact(s.r);
-  const formula = s.mode === 'P' ? `${s.n}P${s.r} = ${s.n}!/(${s.n}-${s.r})! = <b>${nPr}</b>` : `${s.n}C${s.r} = ${s.n}!/(${s.r}!·${s.n-s.r}!) = <b>${nCr}</b>`;
+  const formula = s.mode === 'P' ? s.n+'P'+s.r+' = '+s.n+'!/('+s.n+'-'+s.r+')! = <b>'+nPr+'</b>' : s.n+'C'+s.r+' = '+s.n+'!/('+s.r+'!·'+(s.n-s.r)+'!) = <b>'+nCr+'</b>';
   document.getElementById('qrcount-formula-'+skillId).innerHTML = formula;
+  qrSlotRedraw(skillId);
   const perms = [];
   const gen = (chosen, remaining) => { if (chosen.length === s.r){ perms.push(chosen.slice()); return; } for (const x of remaining){ chosen.push(x); gen(chosen, remaining.filter(y=>y!==x)); chosen.pop(); } };
   gen([], items);
   const grid = document.getElementById('qrcount-grid-'+skillId);
   if (s.mode === 'P'){
-    grid.innerHTML = perms.map(p => `<div class="qr-count-chip">${p.join('')}</div>`).join('');
+    grid.innerHTML = perms.map(p => '<div class="qr-count-chip">'+p.join('')+'</div>').join('');
   } else {
     const seen = new Set(), groups = [];
     perms.forEach(p => { const k = p.slice().sort().join(''); if (!seen.has(k)){ seen.add(k); groups.push(k); } });
-    grid.innerHTML = groups.map(g => `<div class="qr-count-chip collapsed">${g}</div>`).join('');
+    grid.innerHTML = groups.map(g => '<div class="qr-count-chip collapsed">'+g+'</div>').join('');
   }
   if (typeof anime !== 'undefined'){
     const chips = grid.querySelectorAll('.qr-count-chip');
@@ -7089,7 +7508,7 @@ function qrMgRedraw(skillId){
   const acc = (correct+wrong)===0?0:(100*correct/(correct+wrong));
   const open = correct >= s.threshold;
   document.getElementById('qrmg-gate-'+skillId).classList.toggle('open', open);
-  document.getElementById('qrmg-out-'+skillId).innerHTML = `Correct: <b>${correct}</b> / 30 · Wrong: ${wrong} · Accuracy: ${_qrFmt(acc,0)}% · ${correct>=s.threshold?'<b style="color:var(--good-d)">gate open</b>':`${s.threshold-correct} more to unlock`}`;
+  document.getElementById('qrmg-out-'+skillId).innerHTML = `Correct: <b>${correct}</b> / 30 · Needs review: ${wrong} · Accuracy: ${_qrFmt(acc,0)}% · ${correct>=s.threshold?'<b style="color:var(--good-d)">gate open</b>':`${s.threshold-correct} more to unlock`}`;
 }
 
 /* ===== 18. triage-board ===== */
@@ -7702,52 +8121,138 @@ function qrPvRedraw(skillId){
   document.getElementById('qrpv-out-'+skillId).innerHTML = `${_qrFmt(s.pA,2)} + ${_qrFmt(s.pB,2)} − ${_qrFmt(overlap,2)} = <b>${_qrFmt(s.pA + s.pB - overlap,3)}</b>`;
 }
 
-/* prob-table (p-cond) — 2×2 contingency */
+/* prob-table (p-cond) — branching probability tree + 2x2 contingency table
+   The tree is the memorable metaphor: "split 10,000 people down two branches."
+   Branch 1: disease present (prev%) → test positive (sens%) or negative.
+   Branch 2: no disease (1-prev%) → test positive (1-spec%, false alarm) or negative.
+   P(D|+) = TP leaf / (TP leaf + FP leaf). The tree makes Bayes physically obvious. */
 function qrProbTable(skillId){
   const s = _qs(skillId, {prev:1, sens:99, spec:95});
-  return `<div class="qr-vis" id="qrpt-${skillId}">
-    <div id="qrpt-table-${skillId}" style="display:flex; flex-direction:column; align-items:center; max-width:520px; margin:0 auto"></div>
-    <div class="qr-readout" id="qrpt-out-${skillId}">—</div>
-    <div class="qr-row">
-      <div class="qr-slider"><label>prev</label><input type="range" min="1" max="50" step="1" value="${s.prev}" oninput="qrPtSet('${skillId}','prev',this.value)"/><span class="v" id="qrpt-vprev-${skillId}">${s.prev}%</span></div>
-      <div class="qr-slider"><label>sens</label><input type="range" min="50" max="100" step="1" value="${s.sens}" oninput="qrPtSet('${skillId}','sens',this.value)"/><span class="v" id="qrpt-vsens-${skillId}">${s.sens}%</span></div>
-      <div class="qr-slider"><label>spec</label><input type="range" min="50" max="100" step="1" value="${s.spec}" oninput="qrPtSet('${skillId}','spec',this.value)"/><span class="v" id="qrpt-vspec-${skillId}">${s.spec}%</span></div>
-    </div>
-    <p class="qr-cap">P(D|+) = TP / (TP + FP). Sensitivity is conditional on disease — not on test result. Bayes inverts.</p>
-  </div>`;
+  return '<div class="qr-vis" id="qrpt-'+skillId+'">'
+    + '<div style="margin:0 0 4px; font-size:10px; letter-spacing:0.14em; text-transform:uppercase; color:var(--gold-d); font-weight:700; font-family:\'DM Sans\',sans-serif">Probability tree — send 10,000 people down two branches</div>'
+    + '<svg viewBox="0 0 480 220" id="qrpt-svg-'+skillId+'" style="width:100%; max-width:480px; height:auto; display:block; margin:0 auto"></svg>'
+    + '<p style="font-size:11px; color:var(--ink-mute); font-style:italic; margin:2px 0 10px; font-family:\'Playfair Display\',serif">"Build the tree. Trust the tree. Never trust intuition on Bayes."</p>'
+    + '<div id="qrpt-table-'+skillId+'" style="display:flex; flex-direction:column; align-items:center; max-width:520px; margin:0 auto"></div>'
+    + '<div class="qr-readout" id="qrpt-out-'+skillId+'">—</div>'
+    + '<div class="qr-row">'
+    + '<div class="qr-slider"><label>prev</label><input type="range" min="1" max="50" step="1" value="'+s.prev+'" oninput="qrPtSet(\''+skillId+'\',\'prev\',this.value)"/><span class="v" id="qrpt-vprev-'+skillId+'">'+s.prev+'%</span></div>'
+    + '<div class="qr-slider"><label>sens</label><input type="range" min="50" max="100" step="1" value="'+s.sens+'" oninput="qrPtSet(\''+skillId+'\',\'sens\',this.value)"/><span class="v" id="qrpt-vsens-'+skillId+'">'+s.sens+'%</span></div>'
+    + '<div class="qr-slider"><label>spec</label><input type="range" min="50" max="100" step="1" value="'+s.spec+'" oninput="qrPtSet(\''+skillId+'\',\'spec\',this.value)"/><span class="v" id="qrpt-vspec-'+skillId+'">'+s.spec+'%</span></div>'
+    + '</div>'
+    + '<p class="qr-cap">P(D|+) = TP / (TP + FP). The tree shows why: only count people in the Test+ column. The disease branch and the no-disease branch both feed into Test+, so you need both leaves to get the denominator.</p>'
+    + '</div>';
 }
 function qrProbTableInit(skillId){ qrPtRedraw(skillId); }
 window.qrPtSet = function(skillId, k, v){ const s = QR_STATE[skillId]; if (!s) return; s[k] = +v; document.getElementById('qrpt-v'+k+'-'+skillId).textContent = v + '%'; qrPtRedraw(skillId); };
 function qrPtRedraw(skillId){
   const s = QR_STATE[skillId]; if (!s) return;
   const N = 10000;
-  const D = N * s.prev/100, NotD = N - D;
-  const TP = D * s.sens/100, FN = D - TP;
-  const FP = NotD * (100-s.spec)/100, TN = NotD - FP;
+  const D = Math.round(N * s.prev/100), NotD = N - D;
+  const TP = Math.round(D * s.sens/100), FN = D - TP;
+  const FP = Math.round(NotD * (100-s.spec)/100), TN = NotD - FP;
   const PD_pos = (TP+FP) === 0 ? 0 : TP / (TP+FP);
+
+  // Draw the branching tree SVG
+  const svg = document.getElementById('qrpt-svg-'+skillId);
+  if (svg){
+    // Tree layout: root (left) -> two mid branches -> four leaf nodes (right)
+    const rootX = 40, rootY = 110;
+    const midDX = 160;
+    const midY1 = 60, midY2 = 160;  // disease / no-disease mid nodes
+    const leafDX = 150;
+    const leafY1 = 30, leafY2 = 90, leafY3 = 130, leafY4 = 190; // TP FN FP TN
+    const mid1X = rootX + midDX, mid2X = rootX + midDX;
+    const leaf1X = mid1X + leafDX, leaf2X = mid1X + leafDX;
+    const leaf3X = mid2X + leafDX, leaf4X = mid2X + leafDX;
+
+    const fmtN = n => n >= 1000 ? (n/1000).toFixed(1)+'k' : String(n);
+
+    let h = '';
+    // Root node
+    h += '<circle cx="'+rootX+'" cy="'+rootY+'" r="22" fill="var(--paper-2)" stroke="var(--line-strong)" stroke-width="2"/>';
+    h += '<text x="'+rootX+'" y="'+rootY+'" text-anchor="middle" dominant-baseline="central" font-family="JetBrains Mono" font-size="11" font-weight="700" fill="var(--ink)">'+N+'</text>';
+    h += '<text x="'+rootX+'" y="'+(rootY+20)+'" text-anchor="middle" font-family="DM Sans" font-size="8" fill="var(--ink-mute)">people</text>';
+
+    // Branch to disease mid
+    h += '<line x1="'+(rootX+22)+'" y1="'+rootY+'" x2="'+(mid1X-18)+'" y2="'+midY1+'" stroke="var(--trap)" stroke-width="2"/>';
+    h += '<text x="'+(rootX+60)+'" y="'+(rootY-25)+'" text-anchor="middle" font-family="DM Sans" font-size="9" fill="var(--trap-d)">'+s.prev+'%</text>';
+
+    // Branch to no-disease mid
+    h += '<line x1="'+(rootX+22)+'" y1="'+rootY+'" x2="'+(mid2X-18)+'" y2="'+midY2+'" stroke="var(--ink-mute)" stroke-width="2"/>';
+    h += '<text x="'+(rootX+60)+'" y="'+(rootY+30)+'" text-anchor="middle" font-family="DM Sans" font-size="9" fill="var(--ink-mute)">'+(100-s.prev)+'%</text>';
+
+    // Disease mid node
+    h += '<circle cx="'+mid1X+'" cy="'+midY1+'" r="20" fill="var(--trap-bg)" stroke="var(--trap)" stroke-width="2"/>';
+    h += '<text x="'+mid1X+'" y="'+midY1+'" text-anchor="middle" dominant-baseline="central" font-family="JetBrains Mono" font-size="11" font-weight="700" fill="var(--trap-d)">'+fmtN(D)+'</text>';
+    h += '<text x="'+mid1X+'" y="'+(midY1+18)+'" text-anchor="middle" font-family="DM Sans" font-size="8" fill="var(--trap-d)">disease</text>';
+
+    // No-disease mid node
+    h += '<circle cx="'+mid2X+'" cy="'+midY2+'" r="20" fill="var(--paper-3)" stroke="var(--line-strong)" stroke-width="2"/>';
+    h += '<text x="'+mid2X+'" y="'+midY2+'" text-anchor="middle" dominant-baseline="central" font-family="JetBrains Mono" font-size="11" font-weight="700" fill="var(--ink-2)">'+fmtN(NotD)+'</text>';
+    h += '<text x="'+mid2X+'" y="'+(midY2+18)+'" text-anchor="middle" font-family="DM Sans" font-size="8" fill="var(--ink-mute)">no disease</text>';
+
+    // Disease -> TP branch
+    h += '<line x1="'+(mid1X+20)+'" y1="'+midY1+'" x2="'+(leaf1X-26)+'" y2="'+leafY1+'" stroke="var(--good-d)" stroke-width="2.5"/>';
+    h += '<text x="'+(mid1X+75)+'" y="'+(midY1-28)+'" text-anchor="middle" font-family="DM Sans" font-size="8" fill="var(--good-d)">'+s.sens+'% sens</text>';
+    // TP leaf
+    h += '<rect x="'+(leaf1X-24)+'" y="'+(leafY1-16)+'" width="52" height="32" rx="5" fill="var(--good-bg)" stroke="var(--good)" stroke-width="2"/>';
+    h += '<text x="'+leaf1X+'" y="'+leafY1+'" text-anchor="middle" dominant-baseline="central" font-family="JetBrains Mono" font-size="11" font-weight="700" fill="var(--good-d)">'+_qrFmt(TP,0)+'</text>';
+    h += '<text x="'+leaf1X+'" y="'+(leafY1+16)+'" text-anchor="middle" font-family="DM Sans" font-size="8" fill="var(--good-d)">TP</text>';
+
+    // Disease -> FN branch
+    h += '<line x1="'+(mid1X+20)+'" y1="'+midY1+'" x2="'+(leaf2X-26)+'" y2="'+leafY2+'" stroke="var(--line-strong)" stroke-width="1.5"/>';
+    // FN leaf
+    h += '<rect x="'+(leaf2X-24)+'" y="'+(leafY2-16)+'" width="52" height="32" rx="5" fill="var(--paper-2)" stroke="var(--line)" stroke-width="1.5"/>';
+    h += '<text x="'+leaf2X+'" y="'+leafY2+'" text-anchor="middle" dominant-baseline="central" font-family="JetBrains Mono" font-size="11" fill="var(--ink-mute)">'+_qrFmt(FN,0)+'</text>';
+    h += '<text x="'+leaf2X+'" y="'+(leafY2+16)+'" text-anchor="middle" font-family="DM Sans" font-size="8" fill="var(--ink-mute)">FN</text>';
+
+    // No-disease -> FP branch (highlighted — this is the trap)
+    h += '<line x1="'+(mid2X+20)+'" y1="'+midY2+'" x2="'+(leaf3X-26)+'" y2="'+leafY3+'" stroke="var(--gold-d)" stroke-width="2.5"/>';
+    h += '<text x="'+(mid2X+75)+'" y="'+(midY2-18)+'" text-anchor="middle" font-family="DM Sans" font-size="8" fill="var(--gold-d)">'+(100-s.spec)+'% false alarm</text>';
+    // FP leaf
+    h += '<rect x="'+(leaf3X-24)+'" y="'+(leafY3-16)+'" width="52" height="32" rx="5" fill="rgba(201,168,76,0.18)" stroke="var(--gold-d)" stroke-width="2"/>';
+    h += '<text x="'+leaf3X+'" y="'+leafY3+'" text-anchor="middle" dominant-baseline="central" font-family="JetBrains Mono" font-size="11" font-weight="700" fill="var(--gold-d)">'+_qrFmt(FP,0)+'</text>';
+    h += '<text x="'+leaf3X+'" y="'+(leafY3+16)+'" text-anchor="middle" font-family="DM Sans" font-size="8" fill="var(--gold-d)">FP</text>';
+
+    // No-disease -> TN branch
+    h += '<line x1="'+(mid2X+20)+'" y1="'+midY2+'" x2="'+(leaf4X-26)+'" y2="'+leafY4+'" stroke="var(--line-strong)" stroke-width="1.5"/>';
+    // TN leaf
+    h += '<rect x="'+(leaf4X-24)+'" y="'+(leafY4-16)+'" width="52" height="32" rx="5" fill="var(--paper-2)" stroke="var(--line)" stroke-width="1.5"/>';
+    h += '<text x="'+leaf4X+'" y="'+leafY4+'" text-anchor="middle" dominant-baseline="central" font-family="JetBrains Mono" font-size="11" fill="var(--ink-mute)">'+_qrFmt(TN,0)+'</text>';
+    h += '<text x="'+leaf4X+'" y="'+(leafY4+16)+'" text-anchor="middle" font-family="DM Sans" font-size="8" fill="var(--ink-mute)">TN</text>';
+
+    // Brace / annotation: Test+ column = TP + FP
+    const braceX = leaf1X + 30;
+    h += '<line x1="'+braceX+'" y1="'+leafY1+'" x2="'+braceX+'" y2="'+leafY3+'" stroke="var(--ink-2)" stroke-width="1.5" stroke-dasharray="3 2"/>';
+    h += '<text x="'+(braceX+6)+'" y="'+Math.round((leafY1+leafY3)/2)+'" dominant-baseline="central" font-family="DM Sans" font-size="8" fill="var(--gold-d)" font-weight="700">Test+</text>';
+
+    svg.innerHTML = h;
+  }
+
   const cells = [
     {lbl:'TP', n:TP, color:'var(--good)', bg:'var(--good-bg)'},
     {lbl:'FN', n:FN, color:'var(--trap-d)', bg:'var(--trap-bg)'},
     {lbl:'FP', n:FP, color:'var(--gold-d)', bg:'rgba(201,168,76,0.18)'},
     {lbl:'TN', n:TN, color:'var(--ink-2)', bg:'var(--paper-2)'}
   ];
-  let html = `<table style="width:100%; max-width:480px; border-collapse:separate; border-spacing:6px; font-family:'JetBrains Mono',monospace">
-    <tr><td></td><td style="text-align:center; font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:var(--gold-d); font-weight:700">Test +</td><td style="text-align:center; font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:var(--ink-mute); font-weight:700">Test −</td><td></td></tr>
-    <tr>
-      <td style="font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:var(--trap-d); font-weight:700; text-align:right; padding-right:6px">Disease</td>
-      <td style="background:${cells[0].bg}; padding:14px; text-align:center; border-radius:7px; border:2px solid ${cells[0].color}"><div style="font-size:11px; color:${cells[0].color}; font-weight:700">TP</div><div style="font-family:'Playfair Display',serif; font-size:22px; font-weight:700; color:${cells[0].color}">${_qrFmt(TP,0)}</div></td>
-      <td style="background:${cells[1].bg}; padding:14px; text-align:center; border-radius:7px; border:1px solid var(--line)"><div style="font-size:11px; color:${cells[1].color}; font-weight:700">FN</div><div style="font-family:'Playfair Display',serif; font-size:18px; font-weight:700; color:${cells[1].color}">${_qrFmt(FN,0)}</div></td>
-      <td style="font-size:11px; color:var(--ink-mute); font-weight:700">${_qrFmt(D,0)}</td>
-    </tr>
-    <tr>
-      <td style="font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:var(--ink-mute); font-weight:700; text-align:right; padding-right:6px">No disease</td>
-      <td style="background:${cells[2].bg}; padding:14px; text-align:center; border-radius:7px; border:2px solid ${cells[2].color}"><div style="font-size:11px; color:${cells[2].color}; font-weight:700">FP</div><div style="font-family:'Playfair Display',serif; font-size:22px; font-weight:700; color:${cells[2].color}">${_qrFmt(FP,0)}</div></td>
-      <td style="background:${cells[3].bg}; padding:14px; text-align:center; border-radius:7px; border:1px solid var(--line)"><div style="font-size:11px; color:${cells[3].color}; font-weight:700">TN</div><div style="font-family:'Playfair Display',serif; font-size:18px; font-weight:700; color:${cells[3].color}">${_qrFmt(TN,0)}</div></td>
-      <td style="font-size:11px; color:var(--ink-mute); font-weight:700">${_qrFmt(NotD,0)}</td>
-    </tr>
-  </table>`;
+  let html = '<table style="width:100%; max-width:480px; border-collapse:separate; border-spacing:6px; font-family:\'JetBrains Mono\',monospace">'
+    + '<tr><td></td>'
+    + '<td style="text-align:center; font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:var(--gold-d); font-weight:700">Test +</td>'
+    + '<td style="text-align:center; font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:var(--ink-mute); font-weight:700">Test -</td>'
+    + '<td></td></tr>'
+    + '<tr>'
+    + '<td style="font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:var(--trap-d); font-weight:700; text-align:right; padding-right:6px">Disease</td>'
+    + '<td style="background:'+cells[0].bg+'; padding:14px; text-align:center; border-radius:7px; border:2px solid '+cells[0].color+'"><div style="font-size:11px; color:'+cells[0].color+'; font-weight:700">TP</div><div style="font-family:\'Playfair Display\',serif; font-size:22px; font-weight:700; color:'+cells[0].color+'">'+_qrFmt(TP,0)+'</div></td>'
+    + '<td style="background:'+cells[1].bg+'; padding:14px; text-align:center; border-radius:7px; border:1px solid var(--line)"><div style="font-size:11px; color:'+cells[1].color+'; font-weight:700">FN</div><div style="font-family:\'Playfair Display\',serif; font-size:18px; font-weight:700; color:'+cells[1].color+'">'+_qrFmt(FN,0)+'</div></td>'
+    + '<td style="font-size:11px; color:var(--ink-mute); font-weight:700">'+_qrFmt(D,0)+'</td>'
+    + '</tr><tr>'
+    + '<td style="font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:var(--ink-mute); font-weight:700; text-align:right; padding-right:6px">No disease</td>'
+    + '<td style="background:'+cells[2].bg+'; padding:14px; text-align:center; border-radius:7px; border:2px solid '+cells[2].color+'"><div style="font-size:11px; color:'+cells[2].color+'; font-weight:700">FP</div><div style="font-family:\'Playfair Display\',serif; font-size:22px; font-weight:700; color:'+cells[2].color+'">'+_qrFmt(FP,0)+'</div></td>'
+    + '<td style="background:'+cells[3].bg+'; padding:14px; text-align:center; border-radius:7px; border:1px solid var(--line)"><div style="font-size:11px; color:'+cells[3].color+'; font-weight:700">TN</div><div style="font-family:\'Playfair Display\',serif; font-size:18px; font-weight:700; color:'+cells[3].color+'">'+_qrFmt(TN,0)+'</div></td>'
+    + '<td style="font-size:11px; color:var(--ink-mute); font-weight:700">'+_qrFmt(NotD,0)+'</td>'
+    + '</tr></table>';
   document.getElementById('qrpt-table-'+skillId).innerHTML = html;
-  document.getElementById('qrpt-out-'+skillId).innerHTML = `Out of ${N} people: ${_qrFmt(TP,0)} true positives, ${_qrFmt(FP,0)} false positives. P(D|+) = TP / (TP+FP) = <b>${_qrFmt(PD_pos*100,1)}%</b>`;
+  document.getElementById('qrpt-out-'+skillId).innerHTML = 'Out of '+N+' people: '+_qrFmt(TP,0)+' true positives, '+_qrFmt(FP,0)+' false positives. P(D|+) = TP / (TP+FP) = <b>'+_qrFmt(PD_pos*100,1)+'%</b>';
 }
 
 /* distrib-area (distrib) */
@@ -7881,35 +8386,87 @@ function qrMbRedraw(skillId){
   document.getElementById('qrmb-out-'+skillId).innerHTML = `(${s.cA} · ${s.vA} + ${s.cB} · ${s.vB}) / ${s.vA+s.vB} = <b>${_qrFmt(cMix,2)}%</b> · arithmetic midpoint would be ${_qrFmt((s.cA+s.cB)/2,1)}%`;
 }
 
-/* work-bars (work-rate) */
+/* work-bars (work-rate) — shared pipeline metaphor
+   Picture two pipes draining into one output pipe. Each pipe has a flow rate
+   (the fraction of the job it completes per hour). The combined pipe carries
+   the SUM of both rates, so the job finishes faster than either alone.
+   The pipeline SVG makes "rates add" physically obvious. */
 function qrWorkBars(skillId){
   const s = _qs(skillId, {tA:4, tB:6});
   return `<div class="qr-vis" id="qrwb-${skillId}">
-    <div id="qrwb-bars-${skillId}" style="display:flex; flex-direction:column; gap:14px; max-width:520px; margin:0 auto"></div>
+    <svg viewBox="0 0 480 260" id="qrwb-svg-${skillId}" style="width:100%; max-width:480px; display:block; margin:0 auto; height:auto"></svg>
     <div class="qr-readout" id="qrwb-out-${skillId}">—</div>
     <div class="qr-row">
-      <div class="qr-slider"><label>t_A</label><input type="range" min="1" max="12" step="0.5" value="${s.tA}" oninput="qrWbSet('${skillId}','tA',this.value)"/><span class="v" id="qrwb-vtA-${skillId}">${s.tA}h</span></div>
-      <div class="qr-slider"><label>t_B</label><input type="range" min="1" max="12" step="0.5" value="${s.tB}" oninput="qrWbSet('${skillId}','tB',this.value)"/><span class="v" id="qrwb-vtB-${skillId}">${s.tB}h</span></div>
+      <div class="qr-slider"><label>t_A (hr)</label><input type="range" min="1" max="12" step="0.5" value="${s.tA}" oninput="qrWbSet('${skillId}','tA',this.value)"/><span class="v" id="qrwb-vtA-${skillId}">${s.tA}h</span></div>
+      <div class="qr-slider"><label>t_B (hr)</label><input type="range" min="1" max="12" step="0.5" value="${s.tB}" oninput="qrWbSet('${skillId}','tB',this.value)"/><span class="v" id="qrwb-vtB-${skillId}">${s.tB}h</span></div>
     </div>
-    <p class="qr-cap">Rates add, not times. 1/T = 1/t_A + 1/t_B → T = t_A·t_B / (t_A+t_B). Combined is always faster than either.</p>
+    <p class="qr-cap">Two pipes, one tank. Each pipe's flow rate = 1/time. Open both: rates add. The shared output pipe fills faster than either pipe alone — that's why combined time is always shorter than either individual time.</p>
   </div>`;
 }
 function qrWorkBarsInit(skillId){ qrWbRedraw(skillId); }
 window.qrWbSet = function(skillId, k, v){ const s = QR_STATE[skillId]; if (!s) return; s[k] = +v; document.getElementById('qrwb-v'+k+'-'+skillId).textContent = v + 'h'; qrWbRedraw(skillId); };
 function qrWbRedraw(skillId){
   const s = QR_STATE[skillId]; if (!s) return;
-  const tComb = (s.tA*s.tB)/(s.tA+s.tB);
-  const maxT = Math.max(s.tA, s.tB) + 1;
-  const bar = (lbl, t, color, isHL) => `<div>
-    <div style="display:flex; justify-content:space-between; align-items:baseline; font-family:'JetBrains Mono',monospace; font-size:12px; margin-bottom:4px"><b style="color:${color}">${lbl}</b><span>${_qrFmt(t,2)} hr to finish</span></div>
-    <div style="position:relative; height:24px; background:var(--paper-2); border:1.5px solid var(--line); border-radius:5px; overflow:hidden">
-      <div style="position:absolute; left:0; top:0; height:100%; width:${100*t/maxT}%; background:${color}; border-radius:4px 0 0 4px; ${isHL?'box-shadow:0 0 0 2px var(--gold) inset':''}"></div>
-      <div style="position:absolute; left:50%; top:0; height:100%; width:1px; background:rgba(0,0,0,0.15)"></div>
-    </div>
-  </div>`;
-  const html = bar('Worker A alone', s.tA, 'var(--gold)') + bar('Worker B alone', s.tB, 'var(--teal)') + bar('Combined', tComb, 'var(--gold-d)', true);
-  document.getElementById('qrwb-bars-'+skillId).innerHTML = html;
-  document.getElementById('qrwb-out-'+skillId).innerHTML = `T = (${s.tA} · ${s.tB}) / (${s.tA} + ${s.tB}) = <b>${_qrFmt(tComb,2)} hr</b> · arithmetic average would be ${_qrFmt((s.tA+s.tB)/2,1)} hr (wrong)`;
+  const rA = 1/s.tA, rB = 1/s.tB;
+  const rComb = rA + rB;
+  const tComb = 1/rComb;
+
+  // Pipeline SVG layout:
+  //   Pipe A (top)   ─┐
+  //                    ├─ junction ─ output pipe ─ tank
+  //   Pipe B (bottom)─┘
+  //
+  // Pipe width proportional to flow rate (thicker = faster).
+  const maxR = Math.max(rA, rB, rComb);
+  const scale = 28; // px per unit rate
+  const wA = Math.max(6, Math.round(rA / maxR * scale));
+  const wB = Math.max(6, Math.round(rB / maxR * scale));
+  const wC = Math.max(8, Math.round(rComb / maxR * scale));
+  const pipelen = 140;
+  const jx = 200, jy = 130; // junction point
+  const ayA = 70, ayB = 190; // pipe A and B left endpoints
+  const tankX = jx + pipelen, tankY = jy;
+  const tankW = 60, tankH = 100;
+
+  let h = '';
+
+  // Pipe A (gold)
+  h += `<path d="M 40 ${ayA} L ${jx} ${jy}" fill="none" stroke="var(--gold)" stroke-width="${wA}" stroke-linecap="round"/>`;
+  // Pipe B (teal)
+  h += `<path d="M 40 ${ayB} L ${jx} ${jy}" fill="none" stroke="var(--teal-3)" stroke-width="${wB}" stroke-linecap="round"/>`;
+  // Combined output pipe (gold-d, thicker)
+  h += `<path d="M ${jx} ${jy} L ${tankX} ${tankY}" fill="none" stroke="var(--gold-d)" stroke-width="${wC}" stroke-linecap="round"/>`;
+
+  // Junction dot
+  h += `<circle cx="${jx}" cy="${jy}" r="8" fill="var(--ink-2)" stroke="var(--paper)" stroke-width="2"/>`;
+
+  // Tank outline
+  const ty = tankY - tankH/2;
+  h += `<rect x="${tankX}" y="${ty}" width="${tankW}" height="${tankH}" fill="var(--paper-3)" stroke="var(--gold-d)" stroke-width="2" rx="4"/>`;
+  // Tank fill level proportional to 1 job (always full when done)
+  h += `<rect x="${tankX+1}" y="${ty + tankH*0.1}" width="${tankW-2}" height="${tankH*0.9-1}" fill="var(--gold)" fill-opacity="0.25" rx="3"/>`;
+  h += `<text x="${tankX + tankW/2}" y="${tankY + 6}" text-anchor="middle" font-family="Playfair Display" font-size="12" font-weight="700" fill="var(--gold-d)">DONE</text>`;
+
+  // Pipe A label
+  h += `<text x="36" y="${ayA - 10}" text-anchor="end" font-family="JetBrains Mono" font-size="12" font-weight="700" fill="var(--gold)">A: 1/${s.tA} job/hr</text>`;
+  // Rate annotation on pipe A
+  h += `<text x="36" y="${ayA + 16}" text-anchor="end" font-family="DM Sans" font-size="10" fill="var(--ink-mute)">alone: ${_qrFmt(s.tA,2)} hr</text>`;
+
+  // Pipe B label
+  h += `<text x="36" y="${ayB - 10}" text-anchor="end" font-family="JetBrains Mono" font-size="12" font-weight="700" fill="var(--teal-3)">B: 1/${s.tB} job/hr</text>`;
+  h += `<text x="36" y="${ayB + 16}" text-anchor="end" font-family="DM Sans" font-size="10" fill="var(--ink-mute)">alone: ${_qrFmt(s.tB,2)} hr</text>`;
+
+  // Combined label on output pipe
+  const midCx = (jx + tankX)/2, midCy = jy - wC/2 - 10;
+  h += `<text x="${midCx}" y="${midCy}" text-anchor="middle" font-family="JetBrains Mono" font-size="12" font-weight="700" fill="var(--gold-d)">1/${s.tA} + 1/${s.tB} = ${_qrFmt(rComb,3)}/hr</text>`;
+  h += `<text x="${midCx}" y="${midCy + 15}" text-anchor="middle" font-family="DM Sans" font-size="10" fill="var(--ink-mute)">together: ${_qrFmt(tComb,2)} hr</text>`;
+
+  // Wrong arithmetic label
+  const wrongT = (s.tA + s.tB)/2;
+  h += `<text x="${tankX + tankW/2}" y="${ty - 12}" text-anchor="middle" font-family="DM Sans" font-size="9" fill="var(--trap-d)" font-style="italic">avg of times = ${_qrFmt(wrongT,1)} hr (wrong)</text>`;
+
+  document.getElementById('qrwb-svg-'+skillId).innerHTML = h;
+  document.getElementById('qrwb-out-'+skillId).innerHTML = `Rate<sub>A</sub> = 1/${s.tA}, Rate<sub>B</sub> = 1/${s.tB}. Combined rate = <b>${_qrFmt(rComb,3)} job/hr</b>. Time = 1 / ${_qrFmt(rComb,3)} = <b>${_qrFmt(tComb,2)} hr</b>. (Averaging the times gives ${_qrFmt(wrongT,1)} hr — always wrong.)`;
 }
 
 /* exp-rules (exps) */
@@ -8848,10 +9405,12 @@ function renderTree(){
   SKILLS.forEach(s => {
     const p = positions[s.id];
     const status = getStatus(s);
-    html += `<g class="node-g" onclick="onNodeClick('${s.id}')">
+    const ariaLabel = `${s.name}, ${status}${status==='locked' ? '' : ', tier ' + s.tier}`;
+    html += `<g class="node-g" tabindex="0" role="button" aria-label="${ariaLabel}" onclick="onNodeClick('${s.id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();onNodeClick('${s.id}')}" style="cursor:pointer">
+      <title>${s.name}</title>
       <rect class="node-card ${status}" x="${p.x}" y="${p.y}" width="${NODE_W}" height="${NODE_H}" rx="9"/>
-      <text class="node-tier" x="${p.x+8}" y="${p.y+14}">T${s.tier}</text>
-      <text class="node-text ${status==='locked'?'locked':''}" x="${p.x+8}" y="${p.y+32}">${s.name.length > 18 ? s.name.slice(0,18)+'…' : s.name}</text>
+      <text class="node-tier" x="${p.x+10}" y="${p.y+15}">T${s.tier}</text>
+      <text class="node-text ${status==='locked'?'locked':''}" x="${p.x+10}" y="${p.y+36}">${s.name.length > 18 ? s.name.slice(0,18)+'…' : s.name}</text>
       ${status==='mastered'?`<circle cx="${p.x+NODE_W-12}" cy="${p.y+12}" r="4" fill="var(--good-d)"/>`:''}
       ${status==='partial'?`<circle cx="${p.x+NODE_W-12}" cy="${p.y+12}" r="4" fill="var(--gold-d)"/>`:''}
       ${status==='locked'?`<g transform="translate(${p.x+NODE_W-22} ${p.y+6})"><rect x="2" y="5" width="10" height="8" rx="1.5" fill="none" stroke="var(--ink-soft)" stroke-width="1.3"/><path d="M 4 5 V 3.5 a 3 3 0 0 1 6 0 V 5" fill="none" stroke="var(--ink-soft)" stroke-width="1.3"/></g>`:''}
@@ -9163,6 +9722,11 @@ const DIAG = {
     document.getElementById('diagGoTree').onclick = () => goSec('tree');
   }
 };
+// Inline onclick handlers (DIAG.start, DIAG.skip, DIAG.pick, DIAG.rate, DIAG.restart)
+// resolve names against the global object, but top-level `const` declarations
+// don't bind there. Expose explicitly so the static buttons + dynamically-injected
+// option/star handlers all work.
+window.DIAG = DIAG;
 document.getElementById('diagNext').addEventListener('click', () => DIAG.next());
 
 /* ============================================================
@@ -9463,20 +10027,23 @@ window.PACE = PACE;
    TEST DAY SIMULATION (40Q · 45 min · DAT-realistic distribution)
    ============================================================ */
 // DAT QR skill distribution (approximate weights from real test composition)
+// 'ds' is intentionally absent — it teaches a meta-skill, not a DAT question format,
+// so it should not be sampled into a DAT-realistic mock.
 const SIM_DISTRIBUTION = {
-  // Tier 0 fundamentals (25%)
-  'frac-add':1, 'frac-mul':1, 'frac-dec':1, 'dec-arith':1, 'pct-of':2, 'pct-chg':1, 'pct-seq':1, 'lin-eq':2, 'distrib':1, 'pemdas':1,
-  // Tier 1 word problems (35%)
-  'ratios':2, 'rate-time':2, 'work-rate':1, 'mixture':1, 'interest':1, 'word-decode':2, 'units':1, 'coord':1,
-  // Tier 2 patterns (35%)
-  'p-flip':1, 'p-andor':1, 'p-cond':1, 'count-pc':1, 'discr':1, 'harm':1, 'zscore':1, 'tri-inv':1, 'vol-sa':1, 'ds':1, 'exps':1, 'absval':1, 'logs':1,
-  // Foundations sprinkled (5%)
+  // Tier 0 fundamentals (~25%)
+  'frac-add':1, 'frac-mul':1, 'frac-dec':1, 'dec-arith':1, 'pct-of':2, 'pct-chg':1, 'pct-seq':1, 'lin-eq':2, 'sys-eq':2, 'distrib':1, 'pemdas':1,
+  // Tier 1 word problems (~35%)
+  'ratios':2, 'rate-time':2, 'work-rate':1, 'mixture':1, 'interest':1, 'profit-loss':2, 'word-decode':2, 'units':1, 'coord':1, 'data-graph':2,
+  // Tier 2 patterns (~35%)
+  'p-flip':1, 'p-andor':1, 'p-cond':1, 'count-pc':1, 'discr':1, 'harm':1, 'zscore':1, 'tri-inv':1, 'vol-sa':1, 'trig':2, 'exps':1, 'absval':1, 'logs':1, 'geo-2d':1,
+  // Foundations sprinkled (~5%)
   'estim':1, 'mental':1, 'neg-ineq':1
 };
 // Difficulty mix per mock: 30% easy, 40% medium, 20% hard, 10% hardest
 const SIM_DIFF_MIX = {1:0.30, 2:0.40, 3:0.20, 4:0.10};
 
 // DAT-style scaled-score predictor: maps weighted % to 16-30 band
+// Predicted score is a beta calibration based on internal mock data. Treat as diagnostic only.
 function predictDatScore(weightedPct){
   // Sigmoid-ish mapping calibrated against rough DAT QR norms
   // 30%→16, 50%→18, 65%→20, 75%→21, 85%→23, 92%→25, 97%→27, 100%→30
@@ -9622,7 +10189,7 @@ const SIM = {
           <thead><tr style="border-bottom:1.5px solid var(--ink); text-align:left"><th style="padding:5px 8px">Skill</th><th style="padding:5px 8px; text-align:right">Hit</th><th style="padding:5px 8px; text-align:right">%</th><th></th></tr></thead>
           <tbody>${skillRows}</tbody>
         </table>
-        <h4 style="font-family:'Playfair Display',serif; font-size:18px; margin-top:18px">Wrong-answer review</h4>
+        <h4 style="font-family:'Playfair Display',serif; font-size:18px; margin-top:18px">Needs-review walkthrough</h4>
         <div style="margin-top:8px">
           ${s.results.filter(r=>!r.correct).map(r => { const p = BANK_BY_ID[r.probId]; return p?`<div class="card" style="margin-bottom:8px; padding:12px 14px; box-shadow:none; border:1px solid var(--line); border-left:3px solid var(--trap)"><div style="font-family:'Playfair Display',serif; font-size:14px">${p.q}</div><div class="muted" style="font-size:12.5px; margin-top:4px">Correct: <b>${p.opts[p.correct]}</b>. ${p.why||''}</div></div>`:''}).join('')}
         </div>
@@ -9836,7 +10403,7 @@ function renderSarahDash(){
    ============================================================ */
 const SARAH = {
   on:false, i:0,
-  modules:['frac-add','frac-mul','frac-dec','dec-arith','pct-of','pct-chg','pct-seq','estim','mental','lin-eq','distrib','pemdas','neg-ineq','ratios','rate-time','work-rate','mixture','interest','coord','units','word-decode','p-flip','p-andor','p-cond','count-pc','discr','harm','zscore','tri-inv','vol-sa','ds','exps','absval','logs','untimed','skip-ret','guess'],
+  modules:['frac-add','frac-mul','frac-dec','dec-arith','pct-of','pct-chg','pct-seq','estim','mental','lin-eq','sys-eq','distrib','pemdas','neg-ineq','ratios','rate-time','work-rate','mixture','interest','profit-loss','coord','units','data-graph','word-decode','p-flip','p-andor','p-cond','count-pc','discr','harm','zscore','tri-inv','vol-sa','trig','ds','exps','absval','logs','geo-2d','sets','desc-stats','untimed','skip-ret','guess'],
   toggle(){ this.on = !this.on; document.getElementById('sarahBar').classList.toggle('on', this.on); document.getElementById('sarahState').textContent = this.on?'on':'off'; if (this.on) this.go(0); },
   go(i){
     this.i = (i + this.modules.length) % this.modules.length;
@@ -10341,9 +10908,9 @@ FEEDBACK.updateBadge();
    ============================================================ */
 [
   'frac-add','frac-mul','frac-dec','dec-arith','pct-of','pct-chg','pct-seq','estim','mental',
-  'lin-eq','distrib','binomials','pemdas','neg-ineq',
-  'ratios','rate-time','work-rate','mixture','interest','coord','units','word-decode',
-  'p-flip','p-andor','p-cond','count-pc','discr','harm','zscore','tri-inv','vol-sa','ds','exps','absval','logs',
+  'lin-eq','sys-eq','distrib','binomials','pemdas','neg-ineq',
+  'ratios','rate-time','work-rate','mixture','interest','profit-loss','coord','units','data-graph','word-decode',
+  'p-flip','p-andor','p-cond','count-pc','discr','harm','zscore','tri-inv','vol-sa','trig','ds','exps','absval','logs',
   'geo-2d','sets','desc-stats',
   'untimed','skip-ret','guess'
 ].forEach(renderModule);
@@ -10357,7 +10924,7 @@ if (typeof renderWeakSpots === 'function') renderWeakSpots();
 
 // Boot tip
 console.log('%c AceTheDAT QR · Remediation v2 ', 'background:#0d2018;color:#E2C97A;padding:6px 12px;border-radius:4px;font-family:Playfair Display');
-console.log('Foundation modules live: 6 · Tree nodes: 40 · Diagnostic: ready · Stuck: ready · Sarah dash: ready');
+console.log('Modules live: 45 · Tree nodes: 45 (+ 5 strategy) · Diagnostic: ready · Stuck: ready · Sarah dash: ready');
 </script>
 </body>
 </html>

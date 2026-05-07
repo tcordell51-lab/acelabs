@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Analytics &middot; AceTheDAT Bio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="bio-shared.css">
+<style>
+.an-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:24px 0 22px}
+@media (max-width:980px){.an-grid{grid-template-columns:repeat(2,1fr)}}
+.an-stat{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:18px 20px;box-shadow:var(--shadow)}
+.an-stat .lbl{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.16em;color:var(--ink-mute);text-transform:uppercase;font-weight:700;margin-bottom:8px}
+.an-stat .num{font-family:'Playfair Display',serif;font-size:36px;font-weight:700;line-height:1;color:var(--ink)}
+.an-stat .num em{color:var(--gold-d);font-style:italic}
+.an-stat .num.muted{color:var(--ink-mute)}
+.an-stat .sub{font-size:12px;color:var(--ink-mute);margin-top:6px;line-height:1.4}
+.an-stat .sub b{color:var(--ink);font-weight:600}
+.an-row{display:grid;grid-template-columns:1.2fr 1fr;gap:18px;margin-bottom:18px}
+@media (max-width:980px){.an-row{grid-template-columns:1fr}}
+.an-card{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:22px 24px;box-shadow:var(--shadow)}
+.an-card h3{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;margin:0 0 4px;line-height:1.2}
+.an-card h3 em{font-style:italic;color:var(--gold-d)}
+.an-card .desc{font-size:12.5px;color:var(--ink-mute);line-height:1.5;margin:0 0 16px}
+.bar-row{display:flex;align-items:center;gap:10px;padding:5px 0;font-size:13px}
+.bar-row .nm{flex:0 0 130px;color:var(--ink-2);font-weight:600}
+.bar-row .bar{flex:1;height:10px;background:var(--paper-3);border-radius:5px;overflow:hidden;position:relative}
+.bar-row .bar .fill{height:100%;background:linear-gradient(90deg,var(--gold) 0%,var(--gold-m) 100%);border-radius:5px;transition:width .6s var(--ease-bezier)}
+.bar-row .bar .fill.partial{background:linear-gradient(90deg,var(--gold-d) 0%,var(--gold) 100%);opacity:0.55}
+.bar-row .pct{flex:0 0 64px;text-align:right;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:var(--ink-2)}
+.weak-list{list-style:none;padding:0;margin:0}
+.weak-list li{padding:11px 14px;background:var(--paper-2);border:1px solid var(--line);border-radius:9px;margin-bottom:8px;display:flex;align-items:center;gap:12px;text-decoration:none;color:inherit}
+.weak-list li:hover{border-color:var(--gold-d);transform:translateY(-1px);transition:all .15s}
+.weak-list .pri{width:26px;height:26px;border-radius:50%;background:var(--trap);color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;font-family:'JetBrains Mono',monospace}
+.weak-list .pri.med{background:var(--gold-d)}
+.weak-list .pri.low{background:var(--info)}
+.weak-list .body{flex:1;min-width:0}
+.weak-list .nm{font-weight:600;font-size:14px;color:var(--ink);line-height:1.2}
+.weak-list .meta{font-size:11px;color:var(--ink-mute);margin-top:2px}
+.weak-list .arrow{color:var(--ink-soft);font-size:18px}
+.streak-grid{display:grid;grid-template-columns:repeat(14,1fr);gap:4px;margin-top:12px}
+.streak-cell{aspect-ratio:1;border-radius:3px;background:var(--paper-3);position:relative}
+.streak-cell.s1{background:rgba(95,168,116,0.4)}
+.streak-cell.s2{background:rgba(95,168,116,0.65)}
+.streak-cell.s3{background:var(--good)}
+.streak-cell .tip{position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:var(--ink);color:var(--paper);font-size:10px;font-family:'JetBrains Mono',monospace;padding:4px 7px;border-radius:4px;white-space:nowrap;display:none;pointer-events:none;z-index:10}
+.streak-cell:hover .tip{display:block}
+.empty-msg{padding:28px 20px;text-align:center;color:var(--ink-mute);font-size:14px;line-height:1.6;background:var(--paper-2);border-radius:10px;font-style:italic}
+.empty-msg b{color:var(--ink);font-style:normal}
+</style>
+</head>
+<body data-page="analytics">
+<div class="app">
+<aside class="sb">
+  <div class="sb-brand">
+    <div class="mark">Ace<em>The</em>DAT</div>
+    <div class="sub">Bio Mastery System &middot; v2</div>
+  </div>
+  <a class="sb-link" href="index.html" style="margin-bottom:6px"><span class="dot"></span><span class="label">&larr; Mastery hub</span><span class="meta"></span></a>
+  <a class="sb-link live" href="bio-mock.html" style="margin-bottom:6px"><span class="dot" style="background:var(--gold)"></span><span class="label"><b>Mock Exam</b></span><span class="meta">40q</span></a>
+  <a class="sb-link live" href="bio-diagnostic.html" style="margin-bottom:6px"><span class="dot"></span><span class="label">Diagnostic</span><span class="meta">24q</span></a>
+  <a class="sb-link live" href="bio-calendar.html" style="margin-bottom:8px"><span class="dot"></span><span class="label">60-day plan</span><span class="meta">study</span></a>
+  <a class="sb-link live active" href="bio-analytics.html" style="margin-bottom:8px"><span class="dot"></span><span class="label">Analytics</span><span class="meta">trends</span></a>
+  <a class="sb-link live" href="bio-bonus.html" style="margin-bottom:6px"><span class="dot"></span><span class="label">Bonus topics</span><span class="meta">supp</span></a>
+  <a class="sb-link live" href="bio-micrographs.html" style="margin-bottom:8px"><span class="dot"></span><span class="label">Micrograph ID</span><span class="meta">8 cards</span></a>
+
+  <div class="sb-section">Six hubs</div>
+  <a class="sb-link live" href="bio-cell.html"><span class="dot"></span><span class="label">Cell Lab</span><span class="meta">17</span></a>
+  <a class="sb-link live" href="bio-genetics.html"><span class="dot"></span><span class="label">Genetics</span><span class="meta">flagship</span></a>
+  <a class="sb-link live" href="bio-physiology.html"><span class="dot"></span><span class="label">Physiology</span><span class="meta">flagship</span></a>
+  <a class="sb-link live" href="bio-diversity.html"><span class="dot"></span><span class="label">Diversity</span><span class="meta">flagship</span></a>
+  <a class="sb-link live" href="bio-devo.html"><span class="dot"></span><span class="label">Developmental</span><span class="meta">flagship</span></a>
+  <a class="sb-link live" href="bio-evolution.html"><span class="dot"></span><span class="label">Evolution</span><span class="meta">flagship</span></a>
+</aside>
+
+<main class="mn">
+  <section class="hub-hero" style="padding:46px 60px 0">
+    <span class="badge"><span class="pulse"></span>Live &middot; pulled from this device</span>
+    <h1>Your <em>analytics</em>.</h1>
+    <p class="lede">Everything below is computed from this browser's localStorage — no server. Open the engines, place enzymes, flip Ace Cards, take mocks. The numbers update every time you come back here.</p>
+  </section>
+
+  <section style="padding:0 60px">
+    <div class="an-grid">
+      <div class="an-stat">
+        <div class="lbl">Mastered</div>
+        <div class="num"><em id="anMastered">0</em><span style="color:var(--ink-mute);font-size:24px;font-weight:400"> / <span id="anTotal">0</span></span></div>
+        <div class="sub">nodes complete &middot; <b id="anMasteryPct">0%</b> of bio</div>
+      </div>
+      <div class="an-stat">
+        <div class="lbl">In progress</div>
+        <div class="num" id="anPartial">0</div>
+        <div class="sub">nodes started but not yet locked in</div>
+      </div>
+      <div class="an-stat">
+        <div class="lbl">Ace Cards due</div>
+        <div class="num" id="anDue">0</div>
+        <div class="sub"><span id="anDueDetail">no cards yet</span></div>
+      </div>
+      <div class="an-stat">
+        <div class="lbl">Last session</div>
+        <div class="num muted" id="anLast" style="font-size:22px;font-weight:600">No data yet</div>
+        <div class="sub" id="anLastSub">Open a hub to start tracking</div>
+      </div>
+    </div>
+
+    <div class="an-row">
+      <div class="an-card">
+        <h3>Mastery by <em>hub</em></h3>
+        <p class="desc">Solid bar = mastered (all stages placed). Faded bar = in progress.</p>
+        <div id="anHubBars"></div>
+      </div>
+      <div class="an-card">
+        <h3>Weak <em>spots</em></h3>
+        <p class="desc">Partial nodes that have stalled — these are where retrieval has the most leverage.</p>
+        <ul class="weak-list" id="anWeakList"></ul>
+      </div>
+    </div>
+
+    <div class="an-card">
+      <h3>14-day <em>activity</em></h3>
+      <p class="desc">Each cell is one day. Lighter = a few interactions. Darker = a heavy session. Pulled from Ace Card retrieval timestamps.</p>
+      <div class="streak-grid" id="anStreak"></div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--ink-mute);margin-top:10px;letter-spacing:.08em">14 days ago &mdash;&mdash;&rarr; today</div>
+    </div>
+  </section>
+</main>
+</div>
+
+<script>
+// Hub → node count map (mirrors NODES in bio-shared.js so this page stays useful
+// without loading the full ~1MB engine bundle just for analytics).
+// HUB_NODES reflects the actual node IDs tracked in bio-shared.js STATE.
+// Hubs with no retrieval nodes yet list an empty array — analytics will show
+// "no nodes yet" for those hubs rather than fabricating numbers.
+const HUB_NODES = {
+  'Cell Lab':     ['rep','trc','tln','mit','gly','wat','car','lip','pro','nuc','enz','pve','org','mtr','sig','krb','pho'],
+  'Genetics':     ['men','mei','ped','hwb','mut','lco'],
+  'Physiology':   ['ap','syn','cdv','nph','imn','rpd'],
+  'Diversity':    ['dom','bgt'],
+  'Developmental':['fer','dif'],
+  'Evolution':    ['nse','spc','beh']
+};
+// Stage thresholds vary by node — these match bio-shared.js stageOrder lengths.
+// Hardcoding keeps analytics decoupled from the engine bundle's load order.
+// Stage lengths match stageOrder arrays in bio-shared.js exactly.
+const STAGE_LEN = {
+  rep:7, trc:5, tln:5, mit:5, gly:5, wat:5, car:5, lip:5, pro:5, nuc:5, enz:3,
+  pve:5, org:5, mtr:5, sig:5, krb:5, pho:5,
+  men:4, mei:5, ped:5, hwb:5, mut:5, lco:5,
+  ap:5, syn:5, cdv:5, nph:5, imn:5, rpd:5,
+  dom:5, bgt:5,
+  fer:5, dif:5,
+  nse:5, spc:5, beh:5
+};
+
+function loadBioState(){
+  try { return JSON.parse(localStorage.getItem('acethedat_bio_engine_v1') || '{}'); }
+  catch(e){ return {}; }
+}
+function loadProgress(){
+  try { return JSON.parse(localStorage.getItem('acethedat_bio_progress') || 'null'); }
+  catch(e){ return null; }
+}
+function loadLastSession(){
+  try {
+    const raw = localStorage.getItem('acethedat_bio_last_session');
+    if (!raw) return null;
+    return parseInt(JSON.parse(raw)) || parseInt(raw);
+  } catch(e){ return null; }
+}
+function fmtRel(ts){
+  const diff = Date.now() - ts;
+  const min = Math.floor(diff/60000);
+  if (min < 1) return 'Just now';
+  if (min < 60) return min + ' min ago';
+  const hr = Math.floor(min/60);
+  if (hr < 24) return hr + ' hr ago';
+  const d = Math.floor(hr/24);
+  if (d < 7) return d + ' day' + (d>1?'s':'') + ' ago';
+  return new Date(ts).toLocaleDateString();
+}
+
+function classifyNode(state, nodeId){
+  const node = state[nodeId];
+  if (!node) return 'untouched';
+  const stage = parseInt(node.stage) || 0;
+  const len = STAGE_LEN[nodeId] || 5;
+  if (stage >= len) return 'mastered';
+  if (stage > 0) return 'partial';
+  return 'untouched';
+}
+
+function render(){
+  const state = loadBioState();
+  const summary = loadProgress();
+
+  // Hub-by-hub bar breakdown
+  const hubBars = document.getElementById('anHubBars');
+  let masteredTotal = 0, partialTotal = 0, total = 0;
+  hubBars.innerHTML = Object.entries(HUB_NODES).map(([hub, nodes]) => {
+    let mastered = 0, partial = 0;
+    nodes.forEach(n => {
+      const c = classifyNode(state, n);
+      if (c === 'mastered') mastered++;
+      else if (c === 'partial') partial++;
+    });
+    masteredTotal += mastered;
+    partialTotal += partial;
+    total += nodes.length;
+    if (nodes.length === 0) {
+      return `<div class="bar-row">
+        <span class="nm">${hub}</span>
+        <div class="bar" style="opacity:0.35"><div class="fill" style="width:0%"></div></div>
+        <span class="pct" style="color:var(--ink-mute)">no nodes yet</span>
+      </div>`;
+    }
+    const pctM = Math.round(100*mastered/nodes.length);
+    const pctP = Math.round(100*partial/nodes.length);
+    return `<div class="bar-row">
+      <span class="nm">${hub}</span>
+      <div class="bar"><div class="fill partial" style="width:${pctM+pctP}%"></div><div class="fill" style="width:${pctM}%;position:absolute;left:0;top:0"></div></div>
+      <span class="pct">${mastered}/${nodes.length}</span>
+    </div>`;
+  }).join('');
+
+  // Top-line stats — prefer summary key (precise) over computed total
+  const useSummary = summary && typeof summary.mastered === 'number';
+  const finalMastered = useSummary ? summary.mastered : masteredTotal;
+  const finalPartial = useSummary ? summary.partial : partialTotal;
+  const finalTotal = useSummary && summary.total ? summary.total : total;
+  document.getElementById('anMastered').textContent = finalMastered;
+  document.getElementById('anTotal').textContent = finalTotal;
+  document.getElementById('anPartial').textContent = finalPartial;
+  document.getElementById('anMasteryPct').textContent = finalTotal > 0 ? Math.round(100*finalMastered/finalTotal) + '%' : '0%';
+
+  // Ace Cards due
+  const cards = Array.isArray(state.aceCards) ? state.aceCards : [];
+  const now = Date.now();
+  const due = cards.filter(c => c && !c.closed && c.state !== 'mastered' && typeof c.nextDue === 'number' && c.nextDue <= now).length;
+  document.getElementById('anDue').textContent = due;
+  const totalCards = cards.filter(c => c && !c.closed).length;
+  document.getElementById('anDueDetail').innerHTML = totalCards === 0
+    ? 'no cards yet — flip a wrong answer to start'
+    : `<b>${totalCards}</b> total card${totalCards===1?'':'s'} in deck`;
+
+  // Last session
+  const last = loadLastSession();
+  if (last){
+    document.getElementById('anLast').textContent = fmtRel(last);
+    document.getElementById('anLast').classList.remove('muted');
+    document.getElementById('anLastSub').textContent = new Date(last).toLocaleString();
+  }
+
+  // Weak spots (partials, prioritized by how few stages they have stuck at)
+  const weak = [];
+  Object.values(HUB_NODES).flat().forEach(nodeId => {
+    const node = state[nodeId];
+    if (!node) return;
+    const stage = parseInt(node.stage) || 0;
+    const len = STAGE_LEN[nodeId] || 5;
+    if (stage > 0 && stage < len){
+      weak.push({ id:nodeId, stage, len, ratio: stage/len });
+    }
+  });
+  weak.sort((a,b) => a.ratio - b.ratio);
+  const weakList = document.getElementById('anWeakList');
+  if (weak.length === 0){
+    weakList.innerHTML = '<li style="border:none;background:transparent;display:block;text-align:center;color:var(--ink-mute);font-style:italic;padding:18px">No partials yet — open a hub and place some enzymes to populate this list.</li>';
+  } else {
+    weakList.innerHTML = weak.slice(0, 6).map((w, i) => {
+      const pri = i < 2 ? '' : i < 4 ? 'med' : 'low';
+      return `<li>
+        <span class="pri ${pri}">${i+1}</span>
+        <div class="body">
+          <div class="nm">${w.id.toUpperCase()}</div>
+          <div class="meta">stage ${w.stage} / ${w.len} &middot; ${Math.round(100*w.ratio)}% through</div>
+        </div>
+        <span class="arrow">&rsaquo;</span>
+      </li>`;
+    }).join('');
+  }
+
+  // 14-day activity heatmap from card review timestamps
+  const dayBuckets = new Array(14).fill(0);
+  cards.forEach(c => {
+    if (!c || !Array.isArray(c.reviews)) return;
+    c.reviews.forEach(r => {
+      const t = r && r.t;
+      if (!t) return;
+      const daysAgo = Math.floor((now - t) / 86400000);
+      if (daysAgo >= 0 && daysAgo < 14) dayBuckets[13 - daysAgo]++;
+    });
+  });
+  const streakEl = document.getElementById('anStreak');
+  streakEl.innerHTML = dayBuckets.map((count, i) => {
+    const d = new Date(now - (13-i)*86400000);
+    const cls = count === 0 ? '' : count < 3 ? 's1' : count < 8 ? 's2' : 's3';
+    return `<div class="streak-cell ${cls}"><span class="tip">${d.getMonth()+1}/${d.getDate()} &middot; ${count} review${count===1?'':'s'}</span></div>`;
+  }).join('');
+}
+
+render();
+window.addEventListener('focus', render);
+</script>
+<script src="bio-shared.js"></script>
+</body>
+</html>

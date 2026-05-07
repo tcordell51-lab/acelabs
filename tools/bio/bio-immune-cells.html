@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Innate vs Adaptive Immunity &middot; AceTheDAT Bio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../shared/al-tokens.css">
+<link rel="stylesheet" href="../../shared/al-motion.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{font-family:var(--al-font-sans);background:var(--al-bg);color:var(--al-ink);line-height:1.55;-webkit-font-smoothing:antialiased;}
+body{
+  background-image:
+    radial-gradient(1200px 600px at 15% -10%, rgba(139,95,168,.08), transparent 60%),
+    radial-gradient(900px 500px at 85% 110%, rgba(58,124,196,.06), transparent 60%);
+  min-height:100vh;
+}
+
+/* ── Local cell palette (innate purple, adaptive blue, overlap blend) ── */
+:root{
+  --inn-pale:#f3eaf7;
+  --inn-light:#d4b8e0;
+  --inn-mid:#a875be;
+  --inn-deep:#6f3f8f;
+  --inn-stroke:#553070;
+
+  --adp-pale:#e6f0f8;
+  --adp-light:#b8d6ec;
+  --adp-mid:#5a98c9;
+  --adp-deep:#1f5891;
+  --adp-stroke:#173f6b;
+
+  --ovl-pale:#ebe6f3;
+  --ovl-mid:#9c8bc3;
+
+  --granule-inn:#5a2b78;
+  --granule-adp:#173f6b;
+  --nuc-inn:#42215a;
+  --nuc-adp:#0e2c4d;
+}
+
+/* ── App shell ── */
+.app{max-width:1320px;margin:0 auto;padding:24px 28px 80px;}
+.topbar{display:flex;align-items:center;gap:14px;padding:12px 0 28px;border-bottom:1px solid var(--al-line);margin-bottom:36px;flex-wrap:wrap;}
+.brand{display:flex;align-items:center;gap:12px;}
+.brand .mark{font-family:var(--al-font-serif);font-size:22px;font-weight:700;}
+.brand .mark em{font-style:italic;color:var(--al-gold-d);}
+.brand .div{width:1px;height:18px;background:var(--al-line-2);}
+.brand .product{font-family:var(--al-font-mono);font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--al-gold-d);background:var(--al-gold-bg);padding:5px 10px;border-radius:6px;border:1px solid var(--al-gold-d);}
+.spacer{flex:1;}
+.nav{display:flex;gap:4px;}
+.nav a{font-family:var(--al-font-mono);font-size:12px;font-weight:600;letter-spacing:.06em;color:var(--al-ink-2);text-decoration:none;padding:7px 12px;border-radius:6px;transition:background var(--motion-fast),color var(--motion-fast);}
+.nav a:hover{background:var(--al-paper);color:var(--al-ink);}
+.nav a.cur{background:var(--al-ink);color:var(--al-paper);}
+
+/* ── Hero ── */
+.hero{margin-bottom:32px;}
+.kicker{font-family:var(--al-font-mono);font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--al-gold-d);margin-bottom:8px;display:inline-flex;align-items:center;gap:8px;background:var(--al-gold-bg);padding:5px 12px;border-radius:99px;border:1px solid var(--al-gold-d);}
+.kicker .pulse{width:7px;height:7px;border-radius:50%;background:var(--al-gold);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.55}}
+h1{font-family:var(--al-font-serif);font-size:46px;font-weight:700;line-height:1.05;letter-spacing:-.015em;margin:14px 0 12px;}
+h1 em{font-style:italic;color:var(--al-gold-d);}
+.lede{font-size:16px;color:var(--al-ink-2);max-width:780px;line-height:1.6;}
+.lede b{color:var(--al-ink);font-weight:600;}
+
+/* ── Filter bar ── */
+.filters{display:flex;gap:6px;flex-wrap:wrap;padding:14px 18px;background:var(--al-paper);border:1px solid var(--al-line);border-radius:12px;margin:24px 0 22px;align-items:center;}
+.filters .lab{font-family:var(--al-font-mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--al-ink-mute);font-weight:700;margin-right:8px;}
+.fbtn{font-family:var(--al-font-mono);font-size:11px;font-weight:700;letter-spacing:.06em;padding:6px 11px;border:1px solid var(--al-line-2);border-radius:6px;background:transparent;color:var(--al-ink-2);cursor:pointer;transition:all var(--motion-fast);text-transform:uppercase;}
+.fbtn:hover{border-color:var(--al-gold-d);color:var(--al-ink);}
+.fbtn.on{background:var(--al-ink);color:var(--al-paper);border-color:var(--al-ink);}
+
+/* ── Main canvas + side panel layout ── */
+.work{display:grid;grid-template-columns:1.55fr 1fr;gap:24px;align-items:start;}
+@media (max-width:1080px){.work{grid-template-columns:1fr;}}
+
+/* ── SVG canvas card ── */
+.canvas-card{background:var(--al-paper);border:1px solid var(--al-line);border-radius:18px;padding:18px 18px 14px;box-shadow:var(--al-shadow);position:relative;overflow:hidden;}
+.canvas-card .legend-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;padding:0 6px;}
+.legend-row .ltl{font-family:var(--al-font-mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;}
+.legend-row .ltl.inn{color:var(--inn-deep);}
+.legend-row .ltl.adp{color:var(--adp-deep);}
+.legend-row .meta{font-family:var(--al-font-mono);font-size:10px;color:var(--al-ink-mute);letter-spacing:.06em;}
+
+#imm-svg{width:100%;height:auto;display:block;}
+#imm-svg .cell-grp{cursor:pointer;transition:transform var(--motion-fast);}
+#imm-svg .cell-grp:hover{transform:translateY(-2px);}
+#imm-svg .cell-grp .cell-shadow{opacity:0;transition:opacity var(--motion-fast);}
+#imm-svg .cell-grp:hover .cell-shadow{opacity:.55;}
+#imm-svg .cell-grp.dim{opacity:.18;pointer-events:none;}
+#imm-svg .cell-grp.active .cell-membrane{stroke-width:3.6;}
+#imm-svg .cell-label{font-family:var(--al-font-sans);font-size:11px;font-weight:700;fill:var(--al-ink);text-anchor:middle;pointer-events:none;letter-spacing:.01em;}
+#imm-svg .arrow-stem{stroke:var(--adp-deep);stroke-width:1.8;fill:none;marker-end:url(#arrow-end);}
+#imm-svg .arrow-stem.muted{opacity:.4;}
+
+/* ── Side panel ── */
+.panel{background:var(--al-paper);border:1px solid var(--al-line);border-radius:18px;padding:24px 26px;box-shadow:var(--al-shadow);min-height:420px;position:sticky;top:18px;}
+.panel .empty{text-align:center;padding:40px 20px;color:var(--al-ink-mute);font-style:italic;}
+.panel .empty b{color:var(--al-ink);font-style:normal;font-weight:600;display:block;margin-bottom:6px;font-family:var(--al-font-serif);font-size:18px;}
+.p-cat{font-family:var(--al-font-mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;margin-bottom:6px;display:inline-flex;align-items:center;gap:8px;padding:4px 10px;border-radius:99px;}
+.p-cat.inn{color:var(--inn-deep);background:rgba(168,117,190,.12);border:1px solid var(--inn-mid);}
+.p-cat.adp{color:var(--adp-deep);background:rgba(90,152,201,.12);border:1px solid var(--adp-mid);}
+.p-cat.ovl{color:var(--ovl-mid);background:var(--ovl-pale);border:1px solid var(--ovl-mid);}
+.p-name{font-family:var(--al-font-serif);font-size:28px;font-weight:700;line-height:1.15;margin:6px 0 4px;}
+.p-name em{font-style:italic;color:var(--al-gold-d);}
+.p-tag{font-family:var(--al-font-mono);font-size:11.5px;color:var(--al-ink-mute);letter-spacing:.06em;margin-bottom:18px;}
+.p-row{display:grid;grid-template-columns:auto 1fr;gap:10px 14px;font-size:14px;line-height:1.55;margin-bottom:14px;padding-bottom:14px;border-bottom:1px dashed var(--al-line);}
+.p-row:last-of-type{border-bottom:none;}
+.p-row .k{font-family:var(--al-font-mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--al-ink-mute);font-weight:700;padding-top:3px;}
+.p-row .v{color:var(--al-ink-2);}
+.p-row .v b{color:var(--al-ink);font-weight:600;}
+.p-trap{margin-top:16px;padding:12px 14px;background:var(--al-needs-review-pale);border-left:3px solid var(--al-needs-review);border-radius:0 8px 8px 0;font-size:13.5px;color:var(--al-needs-review-d, var(--al-needs-review));line-height:1.5;}
+.p-trap b{color:var(--al-needs-review);font-weight:700;}
+.p-link-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px;}
+.p-link{font-family:var(--al-font-mono);font-size:10.5px;font-weight:700;letter-spacing:.06em;padding:5px 10px;background:var(--al-paper-2);border:1px solid var(--al-line);border-radius:6px;cursor:pointer;color:var(--al-ink-2);transition:all var(--motion-fast);text-transform:uppercase;}
+.p-link:hover{border-color:var(--al-gold-d);color:var(--al-ink);}
+
+/* ── Function summary cards (below) ── */
+.sum-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:32px;}
+@media (max-width:780px){.sum-grid{grid-template-columns:1fr;}}
+.sum-card{background:var(--al-paper);border:1px solid var(--al-line);border-radius:14px;padding:20px 22px;border-left:4px solid var(--al-ink-mute);}
+.sum-card.inn{border-left-color:var(--inn-mid);}
+.sum-card.adp{border-left-color:var(--adp-mid);}
+.sum-card.ovl{border-left-color:var(--ovl-mid);}
+.sum-card .num{font-family:var(--al-font-mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:var(--al-gold-d);margin-bottom:6px;}
+.sum-card h3{font-family:var(--al-font-serif);font-size:22px;font-weight:700;margin-bottom:8px;line-height:1.15;}
+.sum-card h3 em{font-style:italic;color:var(--al-gold-d);}
+.sum-card p{font-size:13.5px;color:var(--al-ink-2);line-height:1.55;margin-bottom:8px;}
+.sum-card ul{margin:6px 0 0 16px;font-size:13px;line-height:1.65;color:var(--al-ink-2);}
+.sum-card ul li::marker{color:var(--al-gold-d);}
+.sum-card ul li b{color:var(--al-ink);font-weight:600;}
+
+/* ── Compare table ── */
+.cmp{margin-top:32px;background:var(--al-paper);border:1px solid var(--al-line);border-radius:14px;overflow:hidden;}
+.cmp h3{font-family:var(--al-font-serif);font-size:22px;font-weight:700;padding:18px 22px;border-bottom:1px solid var(--al-line);}
+.cmp h3 em{font-style:italic;color:var(--al-gold-d);}
+.cmp table{width:100%;border-collapse:collapse;font-size:14px;}
+.cmp th{font-family:var(--al-font-mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--al-ink-mute);font-weight:700;text-align:left;padding:14px 22px;background:var(--al-paper-2);}
+.cmp td{padding:14px 22px;border-top:1px solid var(--al-line);vertical-align:top;}
+.cmp td:nth-child(1){font-family:var(--al-font-mono);font-size:11.5px;font-weight:700;letter-spacing:.06em;color:var(--al-ink-mute);text-transform:uppercase;width:160px;}
+.cmp td b{color:var(--al-ink);font-weight:600;}
+.cmp tr.inn-row td:nth-child(2){border-left:3px solid var(--inn-mid);background:rgba(168,117,190,.04);}
+.cmp tr.adp-row td:nth-child(3){border-left:3px solid var(--adp-mid);background:rgba(90,152,201,.04);}
+
+/* ── Footer ── */
+.foot{margin-top:42px;padding-top:18px;border-top:1px solid var(--al-line);font-family:var(--al-font-mono);font-size:11px;color:var(--al-ink-mute);letter-spacing:.04em;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+.foot a{color:var(--al-gold-d);text-decoration:none;}
+.foot a:hover{text-decoration:underline;}
+
+/* ── Stuck-button (canonical Bio design from index.html) ── */
+.bio-stuck-trigger{
+  display:flex; align-items:center; justify-content:center; gap:8px;
+  margin:14px 0 8px; padding:10px 14px;
+  background:rgba(194,91,63,0.16); color:#f3c5b3;
+  border:1px solid rgba(194,91,63,0.32); border-radius:10px;
+  font-size:12px; font-weight:600; letter-spacing:0.06em; text-transform:uppercase;
+  cursor:pointer; transition:all 0.18s; font-family:inherit;
+}
+.bio-stuck-trigger:hover{background:rgba(194,91,63,0.30); transform:translateY(-1px); color:#fff;}
+.bio-stuck-back{
+  position:fixed; inset:0; background:rgba(13,32,24,0.55); backdrop-filter:blur(4px);
+  z-index:200; display:none; align-items:center; justify-content:center; padding:20px;
+}
+.bio-stuck-back.show{display:flex;}
+.bio-stuck-modal{
+  background:#fffdf7; border:1px solid rgba(13,32,24,0.12); border-radius:18px;
+  max-width:520px; width:100%; padding:32px 34px; box-shadow:0 24px 56px rgba(13,32,24,0.18);
+  position:relative; max-height:90vh; overflow:auto;
+  font-family:'DM Sans',sans-serif; color:#0f1814;
+}
+.bio-stuck-modal h3{
+  font-family:'Playfair Display',serif; font-size:28px; margin:0 0 8px;
+  line-height:1.15; font-weight:700; color:#0f1814;
+}
+.bio-stuck-modal h3 em{font-style:italic; color:#8C7235;}
+.bio-stuck-modal .lede{
+  font-size:15px; color:#3a4a42; margin-bottom:18px; line-height:1.5;
+}
+.bio-stuck-close{
+  position:absolute; top:18px; right:22px;
+  background:none; border:none; font-size:28px; line-height:1; color:#6e7c74;
+  cursor:pointer; padding:0; width:30px; height:30px;
+}
+.bio-stuck-options{display:flex; flex-direction:column; gap:10px; margin-top:8px;}
+.bio-stuck-options button{
+  text-align:left; padding:14px 16px; border-radius:10px; cursor:pointer;
+  font-family:inherit; font-size:15px; font-weight:600; line-height:1.4;
+  transition:all 0.18s; border:1.5px solid;
+}
+.bio-stuck-options button b{display:block; font-size:16px; margin-bottom:3px;}
+.bio-stuck-options button .sub{display:block; font-size:12px; font-weight:400; color:#6e7c74; margin-top:2px;}
+.bio-stuck-options .opt-primary{
+  background:#C9A84C; color:#0f1814; border-color:#8C7235;
+}
+.bio-stuck-options .opt-primary:hover{background:#E2C97A;}
+.bio-stuck-options .opt-secondary{
+  background:#fffdf7; color:#0f1814; border-color:#1B3A2D;
+}
+.bio-stuck-options .opt-secondary:hover{background:#f9f3e6;}
+.bio-stuck-options .opt-ghost{
+  background:transparent; color:#3a4a42; border-color:rgba(13,32,24,0.18);
+}
+.bio-stuck-options .opt-ghost:hover{background:#f3ecdb;}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ===== TOPBAR ===== -->
+<header class="topbar">
+  <div class="brand">
+    <span class="mark">Ace<em>The</em>DAT</span>
+    <span class="div"></span>
+    <span class="product">Bio &middot; Immune cells</span>
+  </div>
+  <span class="spacer"></span>
+  <nav class="nav">
+    <a href="../../ace-labs.html">Home</a>
+    <a href="index.html">Bio hub</a>
+    <a href="bio-physiology.html">Physiology</a>
+    <a href="bio-mock.html">Mock</a>
+    <a href="../../cheat-sheets.html">Cheat sheets</a>
+  </nav>
+</header>
+
+<!-- ===== HERO ===== -->
+<section class="hero">
+  <span class="kicker"><span class="pulse"></span>Interactive map &middot; click any cell</span>
+  <h1>Innate vs. <em>adaptive</em> immunity.</h1>
+  <p class="lede">The DAT tests this as a <b>category sort</b>, not memorization. Two arms, one shared zone. Click any cell on the diagram to see what it does, where it comes from, and the trap the test loves to spring.</p>
+</section>
+
+<!-- ===== FILTERS ===== -->
+<div class="filters">
+  <span class="lab">Filter</span>
+  <button class="fbtn on" data-filter="all">All cells</button>
+  <button class="fbtn" data-filter="innate">Innate only</button>
+  <button class="fbtn" data-filter="adaptive">Adaptive only</button>
+  <button class="fbtn" data-filter="overlap">Overlap zone</button>
+  <button class="fbtn" data-filter="phagocyte">Phagocytes</button>
+  <button class="fbtn" data-filter="killer">Killers (cytotoxic)</button>
+  <button class="fbtn" data-filter="apc">Antigen-presenting</button>
+</div>
+
+<!-- ===== WORK AREA ===== -->
+<div class="work">
+
+  <!-- ===== SVG VENN CANVAS ===== -->
+  <div class="canvas-card">
+    <div class="legend-row">
+      <span class="ltl inn">Innate immunity</span>
+      <span class="meta">Hover to highlight &middot; click to expand</span>
+      <span class="ltl adp">Adaptive immunity</span>
+    </div>
+
+    <svg id="imm-svg" viewBox="0 0 900 560" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <!-- Gradient fills for the two Venn lobes -->
+        <radialGradient id="innFill" cx="35%" cy="40%" r="75%">
+          <stop offset="0%" stop-color="#f3eaf7"/>
+          <stop offset="60%" stop-color="#e2d2ec"/>
+          <stop offset="100%" stop-color="#cbb1de"/>
+        </radialGradient>
+        <radialGradient id="adpFill" cx="65%" cy="40%" r="75%">
+          <stop offset="0%" stop-color="#e6f0f8"/>
+          <stop offset="60%" stop-color="#d2e3f1"/>
+          <stop offset="100%" stop-color="#b1cfe3"/>
+        </radialGradient>
+        <!-- Arrow marker for differentiation arrows -->
+        <marker id="arrow-end" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M0 0 L10 5 L0 10 Z" fill="var(--adp-deep)"/>
+        </marker>
+        <!-- Soft drop-shadow filter for cells on hover -->
+        <filter id="cellShadow" x="-30%" y="-30%" width="160%" height="160%">
+          <feGaussianBlur in="SourceAlpha" stdDeviation="3"/>
+          <feOffset dx="0" dy="3" result="off"/>
+          <feComponentTransfer><feFuncA type="linear" slope="0.35"/></feComponentTransfer>
+          <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+
+      <!-- ============ VENN LOBES ============ -->
+      <ellipse cx="290" cy="290" rx="260" ry="220" fill="url(#innFill)" stroke="#6f3f8f" stroke-width="2" opacity="0.92"/>
+      <ellipse cx="610" cy="290" rx="260" ry="220" fill="url(#adpFill)" stroke="#1f5891" stroke-width="2" opacity="0.92"/>
+
+      <!-- Section labels -->
+      <text x="200" y="58" text-anchor="middle" font-family="Playfair Display, serif" font-size="22" font-weight="700" fill="#553070" font-style="italic">Innate immunity</text>
+      <text x="700" y="58" text-anchor="middle" font-family="Playfair Display, serif" font-size="22" font-weight="700" fill="#173f6b" font-style="italic">Adaptive immunity</text>
+      <text x="200" y="78" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="2" fill="#553070" font-weight="700">FAST &middot; NON-SPECIFIC &middot; NO MEMORY</text>
+      <text x="700" y="78" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="2" fill="#173f6b" font-weight="700">SLOW &middot; SPECIFIC &middot; HAS MEMORY</text>
+
+      <!-- ============ INNATE CELLS ============ -->
+
+      <!-- NK cell (top, large, with kidney nucleus + granules) -->
+      <g class="cell-grp" data-cell="nk" data-cat="innate" data-tags="killer" transform="translate(220 145)">
+        <ellipse class="cell-shadow" cx="0" cy="0" rx="48" ry="50" fill="#000" opacity="0.18" transform="translate(2 4)"/>
+        <ellipse class="cell-membrane" cx="0" cy="0" rx="46" ry="48" fill="#cba1da" stroke="#553070" stroke-width="2"/>
+        <path d="M-25,-15 Q-30,-22 -22,-30 Q-5,-38 14,-30 Q26,-20 26,-2 Q26,16 12,22 Q-5,28 -20,18 Q-32,8 -25,-15 Z" fill="#42215a" opacity="0.85"/>
+        <!-- granule dots -->
+        <circle cx="-32" cy="20" r="2" fill="#5a2b78"/><circle cx="-25" cy="30" r="1.6" fill="#5a2b78"/>
+        <circle cx="-15" cy="36" r="1.8" fill="#5a2b78"/><circle cx="-2" cy="38" r="1.5" fill="#5a2b78"/>
+        <circle cx="12" cy="36" r="1.7" fill="#5a2b78"/><circle cx="22" cy="32" r="1.5" fill="#5a2b78"/>
+        <circle cx="30" cy="22" r="1.8" fill="#5a2b78"/><circle cx="-30" cy="-22" r="1.6" fill="#5a2b78"/>
+        <circle cx="-18" cy="-30" r="1.5" fill="#5a2b78"/>
+        <text class="cell-label" y="68">NK cell</text>
+      </g>
+
+      <!-- Eosinophil (bilobed nucleus + many granules) -->
+      <g class="cell-grp" data-cell="eosinophil" data-cat="innate" data-tags="" transform="translate(110 235)">
+        <ellipse class="cell-shadow" cx="0" cy="0" rx="34" ry="34" fill="#000" opacity="0.18" transform="translate(2 4)"/>
+        <circle class="cell-membrane" cx="0" cy="0" r="32" fill="#dcbfea" stroke="#553070" stroke-width="2"/>
+        <!-- bilobed nucleus -->
+        <ellipse cx="-9" cy="-2" rx="11" ry="14" fill="#42215a" opacity="0.82"/>
+        <ellipse cx="9" cy="2" rx="11" ry="14" fill="#42215a" opacity="0.82"/>
+        <path d="M-3,-2 L3,2" stroke="#42215a" stroke-width="3" opacity="0.82"/>
+        <!-- granules (many, pinkish) -->
+        <circle cx="-22" cy="-12" r="1.8" fill="#c64779"/><circle cx="-20" cy="6" r="2" fill="#c64779"/>
+        <circle cx="-15" cy="20" r="1.8" fill="#c64779"/><circle cx="0" cy="22" r="1.7" fill="#c64779"/>
+        <circle cx="15" cy="20" r="1.8" fill="#c64779"/><circle cx="22" cy="10" r="2" fill="#c64779"/>
+        <circle cx="22" cy="-10" r="1.8" fill="#c64779"/><circle cx="14" cy="-22" r="1.7" fill="#c64779"/>
+        <circle cx="-2" cy="-25" r="1.8" fill="#c64779"/><circle cx="-15" cy="-22" r="1.6" fill="#c64779"/>
+        <circle cx="-26" cy="-2" r="1.5" fill="#c64779"/><circle cx="26" cy="2" r="1.5" fill="#c64779"/>
+        <text class="cell-label" y="50">Eosinophil</text>
+      </g>
+
+      <!-- Dendritic cell (star with projections) -->
+      <g class="cell-grp" data-cell="dendritic" data-cat="innate" data-tags="apc" transform="translate(290 240)">
+        <ellipse class="cell-shadow" cx="0" cy="0" rx="48" ry="40" fill="#000" opacity="0.18" transform="translate(2 4)"/>
+        <path d="M-12,-32 L-2,-18 L8,-32 L18,-22 L12,-8 L36,-12 L24,4 L40,16 L20,18 L26,34 L8,28 L4,42 L-8,28 L-22,38 L-22,20 L-38,22 L-26,8 L-40,-4 L-22,-8 L-30,-22 Z"
+              fill="#b88ccd" stroke="#553070" stroke-width="2" stroke-linejoin="round"/>
+        <ellipse cx="-2" cy="0" rx="13" ry="14" fill="#42215a" opacity="0.82"/>
+        <text class="cell-label" y="60">Dendritic cell</text>
+      </g>
+
+      <!-- Basophil (lobed nucleus, dark dense granules) -->
+      <g class="cell-grp" data-cell="basophil" data-cat="innate" data-tags="" transform="translate(140 360)">
+        <ellipse class="cell-shadow" cx="0" cy="0" rx="32" ry="32" fill="#000" opacity="0.18" transform="translate(2 4)"/>
+        <circle class="cell-membrane" cx="0" cy="0" r="30" fill="#c099d4" stroke="#553070" stroke-width="2"/>
+        <!-- s-shaped lobed nucleus -->
+        <path d="M-12,-14 Q-2,-20 8,-12 Q14,-2 4,4 Q-4,8 -12,2 Q-18,-6 -12,-14 Z M-6,4 Q4,8 12,18 Q4,22 -8,18 Q-12,12 -6,4 Z" fill="#3d1e58" opacity="0.85"/>
+        <!-- heavy dark granules covering most of cytoplasm -->
+        <circle cx="-22" cy="-8" r="2.4" fill="#2c143f"/><circle cx="-18" cy="6" r="2.6" fill="#2c143f"/>
+        <circle cx="-16" cy="18" r="2.4" fill="#2c143f"/><circle cx="0" cy="22" r="2.6" fill="#2c143f"/>
+        <circle cx="14" cy="20" r="2.4" fill="#2c143f"/><circle cx="22" cy="10" r="2.6" fill="#2c143f"/>
+        <circle cx="22" cy="-6" r="2.4" fill="#2c143f"/><circle cx="14" cy="-20" r="2.6" fill="#2c143f"/>
+        <circle cx="-2" cy="-24" r="2.4" fill="#2c143f"/><circle cx="-16" cy="-22" r="2.4" fill="#2c143f"/>
+        <text class="cell-label" y="48">Basophil</text>
+      </g>
+
+      <!-- Granulocyte / Neutrophil (multilobed nucleus) -->
+      <g class="cell-grp" data-cell="granulocyte" data-cat="innate" data-tags="phagocyte killer" transform="translate(70 410)">
+        <ellipse class="cell-shadow" cx="0" cy="0" rx="34" ry="34" fill="#000" opacity="0.18" transform="translate(2 4)"/>
+        <circle class="cell-membrane" cx="0" cy="0" r="32" fill="#dcbfea" stroke="#553070" stroke-width="2"/>
+        <!-- 4-lobed nucleus (3 visible) connected by thin strands -->
+        <ellipse cx="-14" cy="-8" rx="9" ry="11" fill="#42215a" opacity="0.85"/>
+        <ellipse cx="-2" cy="10" rx="9" ry="11" fill="#42215a" opacity="0.85"/>
+        <ellipse cx="14" cy="-6" rx="9" ry="11" fill="#42215a" opacity="0.85"/>
+        <path d="M-12,-2 Q-6,2 -2,4 M-2,4 Q6,4 12,0" stroke="#42215a" stroke-width="2.5" fill="none" opacity="0.85"/>
+        <!-- light granules -->
+        <circle cx="-22" cy="14" r="1.4" fill="#7a3f9c" opacity="0.6"/>
+        <circle cx="-12" cy="20" r="1.4" fill="#7a3f9c" opacity="0.6"/>
+        <circle cx="0" cy="-24" r="1.4" fill="#7a3f9c" opacity="0.6"/>
+        <circle cx="20" cy="14" r="1.4" fill="#7a3f9c" opacity="0.6"/>
+        <circle cx="-26" cy="-2" r="1.4" fill="#7a3f9c" opacity="0.6"/>
+        <circle cx="14" cy="20" r="1.4" fill="#7a3f9c" opacity="0.6"/>
+        <text class="cell-label" y="50">Neutrophil</text>
+      </g>
+
+      <!-- Mast cell (round, very heavy granules) -->
+      <g class="cell-grp" data-cell="mast" data-cat="innate" data-tags="" transform="translate(220 460)">
+        <ellipse class="cell-shadow" cx="0" cy="0" rx="32" ry="32" fill="#000" opacity="0.18" transform="translate(2 4)"/>
+        <circle class="cell-membrane" cx="0" cy="0" r="30" fill="#c8a4dd" stroke="#553070" stroke-width="2"/>
+        <ellipse cx="0" cy="0" rx="9" ry="10" fill="#42215a" opacity="0.6"/>
+        <!-- very heavy granules -->
+        <g fill="#3d1e58">
+          <circle cx="-22" cy="-12" r="2"/><circle cx="-18" cy="2" r="2.2"/><circle cx="-22" cy="14" r="2"/>
+          <circle cx="-12" cy="22" r="2.2"/><circle cx="2" cy="24" r="2"/><circle cx="14" cy="22" r="2.2"/>
+          <circle cx="22" cy="14" r="2"/><circle cx="22" cy="0" r="2.2"/><circle cx="22" cy="-12" r="2"/>
+          <circle cx="14" cy="-22" r="2.2"/><circle cx="2" cy="-24" r="2"/><circle cx="-12" cy="-22" r="2.2"/>
+          <circle cx="-14" cy="10" r="1.7"/><circle cx="-2" cy="14" r="1.7"/><circle cx="12" cy="12" r="1.7"/>
+          <circle cx="14" cy="0" r="1.7"/><circle cx="-14" cy="-2" r="1.7"/>
+        </g>
+        <text class="cell-label" y="48">Mast cell</text>
+      </g>
+
+      <!-- Monocyte / Macrophage (large, kidney-bean nucleus) -->
+      <g class="cell-grp" data-cell="macrophage" data-cat="innate" data-tags="phagocyte apc" transform="translate(345 425)">
+        <ellipse class="cell-shadow" cx="0" cy="0" rx="44" ry="40" fill="#000" opacity="0.18" transform="translate(2 4)"/>
+        <ellipse class="cell-membrane" cx="0" cy="0" rx="42" ry="38" fill="#d0aedf" stroke="#553070" stroke-width="2"/>
+        <!-- kidney-bean nucleus -->
+        <path d="M-22,-8 Q-26,-22 -10,-26 Q14,-30 18,-12 Q14,2 0,2 Q-12,4 -16,-2 Q-22,-2 -22,-8 Z" fill="#42215a" opacity="0.85"/>
+        <!-- a few sparse granules -->
+        <circle cx="-30" cy="14" r="1.6" fill="#5a2b78"/>
+        <circle cx="-12" cy="22" r="1.6" fill="#5a2b78"/>
+        <circle cx="10" cy="22" r="1.6" fill="#5a2b78"/>
+        <circle cx="26" cy="14" r="1.6" fill="#5a2b78"/>
+        <circle cx="32" cy="0" r="1.6" fill="#5a2b78"/>
+        <text class="cell-label" y="58">Monocyte / Macrophage</text>
+      </g>
+
+      <!-- ============ OVERLAP CELLS (Venn intersection) ============ -->
+
+      <!-- NKT cell -->
+      <g class="cell-grp" data-cell="nkt" data-cat="overlap" data-tags="killer" transform="translate(450 220)">
+        <ellipse class="cell-shadow" cx="0" cy="0" rx="36" ry="38" fill="#000" opacity="0.18" transform="translate(2 4)"/>
+        <ellipse class="cell-membrane" cx="0" cy="0" rx="34" ry="36" fill="#a899c7" stroke="#3a2a55" stroke-width="2"/>
+        <ellipse cx="-2" cy="-2" rx="16" ry="18" fill="#1f1737" opacity="0.85"/>
+        <!-- a few granules -->
+        <circle cx="-22" cy="14" r="1.5" fill="#3d2768"/>
+        <circle cx="-14" cy="22" r="1.5" fill="#3d2768"/>
+        <circle cx="0" cy="24" r="1.5" fill="#3d2768"/>
+        <circle cx="14" cy="22" r="1.5" fill="#3d2768"/>
+        <circle cx="22" cy="14" r="1.5" fill="#3d2768"/>
+        <text class="cell-label" y="56">NKT cell</text>
+      </g>
+
+      <!-- γδ T cell -->
+      <g class="cell-grp" data-cell="gdt" data-cat="overlap" data-tags="killer" transform="translate(450 350)">
+        <ellipse class="cell-shadow" cx="0" cy="0" rx="32" ry="34" fill="#000" opacity="0.18" transform="translate(2 4)"/>
+        <ellipse class="cell-membrane" cx="0" cy="0" rx="30" ry="32" fill="#a8b8d0" stroke="#3a2a55" stroke-width="2"/>
+        <ellipse cx="0" cy="0" rx="15" ry="17" fill="#1f1737" opacity="0.85"/>
+        <text class="cell-label" y="50">&#947;&#948; T cell</text>
+      </g>
+
+      <!-- ============ ADAPTIVE CELLS ============ -->
+
+      <!-- CD4+ T cell + arrow + Regulatory T cell -->
+      <g class="cell-grp" data-cell="cd4" data-cat="adaptive" data-tags="" transform="translate(610 165)">
+        <ellipse class="cell-shadow" cx="0" cy="0" rx="36" ry="36" fill="#000" opacity="0.18" transform="translate(2 4)"/>
+        <circle class="cell-membrane" cx="0" cy="0" r="34" fill="#b8d7ec" stroke="#173f6b" stroke-width="2"/>
+        <ellipse cx="0" cy="0" rx="17" ry="19" fill="#0e2c4d" opacity="0.85"/>
+        <text class="cell-label" y="52">CD4+ T cell</text>
+      </g>
+
+      <line x1="650" y1="165" x2="730" y2="165" class="arrow-stem"/>
+
+      <g class="cell-grp" data-cell="treg" data-cat="adaptive" data-tags="" transform="translate(790 165)">
+        <ellipse class="cell-shadow" cx="0" cy="0" rx="32" ry="32" fill="#000" opacity="0.18" transform="translate(2 4)"/>
+        <circle class="cell-membrane" cx="0" cy="0" r="30" fill="#dceaf5" stroke="#173f6b" stroke-width="2"/>
+        <ellipse cx="0" cy="0" rx="14" ry="16" fill="#0e2c4d" opacity="0.78"/>
+        <text class="cell-label" y="48">T-reg</text>
+      </g>
+
+      <!-- CD8+ T cell + arrow + Cytotoxic T cell -->
+      <g class="cell-grp" data-cell="cd8" data-cat="adaptive" data-tags="killer" transform="translate(610 290)">
+        <ellipse class="cell-shadow" cx="0" cy="0" rx="36" ry="36" fill="#000" opacity="0.18" transform="translate(2 4)"/>
+        <circle class="cell-membrane" cx="0" cy="0" r="34" fill="#b8d7ec" stroke="#173f6b" stroke-width="2"/>
+        <ellipse cx="0" cy="0" rx="17" ry="19" fill="#0e2c4d" opacity="0.85"/>
+        <text class="cell-label" y="52">CD8+ T cell</text>
+      </g>
+
+      <line x1="650" y1="290" x2="730" y2="290" class="arrow-stem"/>
+
+      <g class="cell-grp" data-cell="ctl" data-cat="adaptive" data-tags="killer" transform="translate(790 290)">
+        <ellipse class="cell-shadow" cx="0" cy="0" rx="34" ry="34" fill="#000" opacity="0.18" transform="translate(2 4)"/>
+        <circle class="cell-membrane" cx="0" cy="0" r="32" fill="#dceaf5" stroke="#173f6b" stroke-width="2"/>
+        <ellipse cx="0" cy="0" rx="14" ry="16" fill="#0e2c4d" opacity="0.78"/>
+        <!-- granules -->
+        <circle cx="-22" cy="10" r="1.4" fill="#0e2c4d"/>
+        <circle cx="-14" cy="20" r="1.4" fill="#0e2c4d"/>
+        <circle cx="14" cy="20" r="1.4" fill="#0e2c4d"/>
+        <circle cx="22" cy="10" r="1.4" fill="#0e2c4d"/>
+        <circle cx="22" cy="-10" r="1.4" fill="#0e2c4d"/>
+        <text class="cell-label" y="50">Cytotoxic T cell</text>
+      </g>
+
+      <!-- B cell + arrow + Plasma cell + Antibodies -->
+      <g class="cell-grp" data-cell="bcell" data-cat="adaptive" data-tags="apc" transform="translate(610 415)">
+        <ellipse class="cell-shadow" cx="0" cy="0" rx="36" ry="36" fill="#000" opacity="0.18" transform="translate(2 4)"/>
+        <circle class="cell-membrane" cx="0" cy="0" r="34" fill="#5a98c9" stroke="#173f6b" stroke-width="2"/>
+        <ellipse cx="0" cy="0" rx="16" ry="18" fill="#dceaf5" opacity="0.95"/>
+        <text class="cell-label" y="52">B cell</text>
+      </g>
+
+      <line x1="650" y1="415" x2="730" y2="415" class="arrow-stem"/>
+
+      <g class="cell-grp" data-cell="plasma" data-cat="adaptive" data-tags="" transform="translate(790 415)">
+        <ellipse class="cell-shadow" cx="0" cy="0" rx="40" ry="34" fill="#000" opacity="0.18" transform="translate(2 4)"/>
+        <ellipse class="cell-membrane" cx="0" cy="0" rx="38" ry="32" fill="#1f5891" stroke="#0a2143" stroke-width="2"/>
+        <ellipse cx="-12" cy="-2" rx="13" ry="15" fill="#dceaf5" opacity="0.95"/>
+        <!-- striations representing rough ER -->
+        <path d="M6,-18 Q14,-10 20,-2 M8,-10 Q18,-2 24,6 M6,-2 Q18,4 24,12 M4,8 Q14,14 22,20" stroke="#dceaf5" stroke-width="1.4" fill="none" opacity="0.55"/>
+        <text class="cell-label" y="50">Plasma cell</text>
+      </g>
+
+      <!-- Antibodies cluster (Y shapes) -->
+      <g class="cell-grp" data-cell="antibodies" data-cat="adaptive" data-tags="" transform="translate(790 510)">
+        <g stroke="#173f6b" stroke-width="2.4" fill="none" stroke-linecap="round">
+          <path d="M-26,8 L-26,0 M-26,0 L-32,-8 M-26,0 L-20,-8"/>
+          <path d="M-6,8 L-6,0 M-6,0 L-12,-8 M-6,0 L0,-8"/>
+          <path d="M14,8 L14,0 M14,0 L8,-8 M14,0 L20,-8"/>
+        </g>
+        <text class="cell-label" y="22" style="font-size:10.5px;">Antibodies (IgG, IgA, IgM, IgE, IgD)</text>
+      </g>
+
+    </svg>
+
+    <!-- Stuck-button (canonical Bio) -->
+    <button class="bio-stuck-trigger" id="bioStuckBtn" type="button">Stuck? Take a beat</button>
+  </div>
+
+  <!-- ===== SIDE PANEL ===== -->
+  <aside class="panel" id="panel">
+    <div class="empty">
+      <b>Click any cell</b>
+      Origin, function, key markers, and the trap the DAT loves to spring on it &mdash; in one card.
+    </div>
+  </aside>
+
+</div>
+
+<!-- ===== FUNCTION-SUMMARY CARDS ===== -->
+<section class="sum-grid">
+  <div class="sum-card inn">
+    <div class="num">Branch &middot; 01</div>
+    <h3>Innate &mdash; <em>fast and dumb</em>.</h3>
+    <p>First line of defense. Recognizes <b>broad patterns</b> (PAMPs), not specific antigens. Active in minutes to hours.</p>
+    <ul>
+      <li><b>No memory</b> &mdash; second exposure is no faster</li>
+      <li><b>Pattern receptors</b> (TLRs, NLRs)</li>
+      <li><b>Cells:</b> neutrophils, macrophages, NK, mast, basophils, eosinophils, dendritic</li>
+      <li><b>Soluble:</b> complement, interferons, cytokines</li>
+    </ul>
+  </div>
+  <div class="sum-card ovl">
+    <div class="num">Branch &middot; bridge</div>
+    <h3>Overlap &mdash; <em>both arms</em>.</h3>
+    <p>NKT and &#947;&#948; T cells share features of both. They have T-cell receptors but respond fast and kill without prior sensitization.</p>
+    <ul>
+      <li><b>NKT:</b> TCR + NK receptors; recognizes lipid antigens on CD1d</li>
+      <li><b>&#947;&#948; T:</b> non-MHC restricted; first responders at mucosal surfaces</li>
+      <li><b>Bridge role:</b> rapid, but with TCR specificity</li>
+    </ul>
+  </div>
+  <div class="sum-card adp">
+    <div class="num">Branch &middot; 02</div>
+    <h3>Adaptive &mdash; <em>slow and exact</em>.</h3>
+    <p>Targets specific antigens via <b>clonal selection</b>. Days to mount on first exposure; hours on second exposure (memory).</p>
+    <ul>
+      <li><b>Memory</b> &mdash; second exposure is faster + stronger</li>
+      <li><b>Specific receptors</b> (TCR, BCR)</li>
+      <li><b>Cells:</b> CD4+ helper, CD8+ cytotoxic, B cell, plasma, T-reg, memory</li>
+      <li><b>Antibodies:</b> 5 classes (IgG, IgA, IgM, IgE, IgD)</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ===== COMPARISON TABLE ===== -->
+<section class="cmp">
+  <h3>Side-by-<em>side</em>.</h3>
+  <table>
+    <thead>
+      <tr><th></th><th>Innate</th><th>Adaptive</th></tr>
+    </thead>
+    <tbody>
+      <tr class="inn-row"><td>Speed</td><td><b>Minutes to hours</b></td><td>Days (1st exposure)</td></tr>
+      <tr class="adp-row"><td>Specificity</td><td>Pattern-based (PAMPs)</td><td><b>Antigen-specific</b></td></tr>
+      <tr class="inn-row"><td>Memory</td><td><b>None</b> &mdash; same speed each time</td><td>Yes &mdash; second exposure faster + stronger</td></tr>
+      <tr class="adp-row"><td>Receptors</td><td>TLRs, NLRs (germline-encoded)</td><td><b>TCR, BCR</b> (rearranged in development)</td></tr>
+      <tr class="inn-row"><td>Diversity</td><td>Limited (~100 receptors)</td><td><b>Vast</b> (~10&#8311;-10&#185;&#185; from V(D)J)</td></tr>
+      <tr class="adp-row"><td>Soluble factors</td><td>Complement, defensins, interferons</td><td><b>Antibodies</b> (5 classes)</td></tr>
+      <tr class="inn-row"><td>Major cells</td><td>Neutrophils, macrophages, NK, mast</td><td>T cells, B cells, plasma cells</td></tr>
+      <tr class="adp-row"><td>MHC needed?</td><td>No (NK uses missing-self)</td><td><b>Yes</b> &mdash; T cells require MHC presentation</td></tr>
+      <tr class="inn-row"><td>Vaccine target</td><td>Not the goal</td><td><b>Yes</b> &mdash; vaccines build adaptive memory</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ===== FOOT ===== -->
+<footer class="foot">
+  <span>Ace Labs &middot; Bio engine &middot; Riya tutor track</span>
+  <span>Pair with: <a href="bio-bonus.html">apoptosis</a> &middot; <a href="bio-physiology.html">action potential</a> &middot; <a href="../../cheat-sheets.html">cheat sheets</a></span>
+</footer>
+
+</div>
+
+<!-- ===== STUCK-TRIAGE MODAL (canonical Bio design) ===== -->
+<div class="bio-stuck-back" id="bioStuckBack" role="dialog" aria-modal="true" aria-labelledby="bioStuckTitle">
+  <div class="bio-stuck-modal">
+    <button class="bio-stuck-close" type="button" id="bioStuckClose" aria-label="Close">&times;</button>
+    <h3 id="bioStuckTitle">Feeling <em>lost?</em></h3>
+    <p class="lede">Immune cells are a category-sort, not a memorization grind. Pick what will help right now:</p>
+    <div class="bio-stuck-options">
+      <button class="opt-primary" id="bioStuckWins" type="button">
+        <b>Three quick recall cards</b>
+        <span class="sub">From hubs you have already studied. Rebuild flow.</span>
+      </button>
+      <button class="opt-secondary" id="bioStuckOverview" type="button">
+        <b>Step back to the hub overview</b>
+        <span class="sub">Re-orient &mdash; see where you are in the bigger picture.</span>
+      </button>
+      <button class="opt-ghost" id="bioStuckSkip" type="button">
+        <b>Move on for now</b>
+        <span class="sub">Step away. Come back when you are fresh. The cells will be here.</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// CELL DATABASE
+// ============================================================
+const CELLS = {
+  nk: {
+    name: "NK cell <em>(natural killer)</em>",
+    cat: "innate", catLabel: "Innate &middot; Lymphocyte",
+    origin: "Bone marrow &middot; lymphoid lineage",
+    function: "<b>Kills virus-infected and tumor cells</b> without prior sensitization.",
+    rec: "CD16+ &middot; CD56+ &middot; <em>no</em> TCR or BCR",
+    activate: '"Missing-self" recognition. Healthy cells display MHC I; NK <em>spares</em> them. Stressed/infected cells lose MHC I and gain stress markers (MIC-A) &mdash; NK <em>kills</em> them.',
+    weapon: "Perforin (forms pores) + granzymes (induce apoptosis). <b>Same arsenal as cytotoxic T cells.</b>",
+    trap: "<b>Trap:</b> NK cells are <em>lymphocytes</em>, but they are part of <em>innate</em> immunity &mdash; no TCR, no antigen specificity, no memory. The DAT loves this category-confusion."
+  },
+  eosinophil: {
+    name: "Eosinophil",
+    cat: "innate", catLabel: "Innate &middot; Granulocyte",
+    origin: "Bone marrow &middot; myeloid lineage",
+    function: "<b>Kills parasites</b> (helminths/worms). Major player in <b>allergy and asthma</b>.",
+    rec: "Bilobed nucleus &middot; eosin-pink granules (major basic protein, eosinophil peroxidase)",
+    activate: "IL-5 from Th2 cells. Recognizes IgE-coated parasites.",
+    weapon: "ADCC: releases granules onto antibody-coated parasites &mdash; too big to phagocytose, so they're killed externally.",
+    trap: "<b>Trap:</b> When the DAT says <em>parasitic infection</em> &rarr; eosinophil. When it says <em>allergic reaction</em> &rarr; mast cell + eosinophil + IgE."
+  },
+  dendritic: {
+    name: "Dendritic cell",
+    cat: "innate", catLabel: "Innate &middot; Antigen-presenting",
+    origin: "Bone marrow &middot; tissue-resident",
+    function: "<b>Most important antigen-presenting cell.</b> Bridges innate and adaptive: samples tissue, migrates to lymph node, activates naive T cells.",
+    rec: "MHC II (loaded with peptides) &middot; CD80/CD86 co-stimulatory",
+    activate: "Pattern receptors (TLRs) recognize PAMPs. Endocytoses pathogen, processes peptides, displays on MHC II.",
+    weapon: "<em>Not killing</em> &mdash; activation. Provides Signal 1 (peptide-MHC) + Signal 2 (CD80/86 to CD28) needed to switch on naive T cells.",
+    trap: "<b>Trap:</b> Dendritic cells are <em>innate</em>, but they're the gatekeeper of the <em>adaptive</em> response. Without dendritic activation, naive T cells stay naive."
+  },
+  basophil: {
+    name: "Basophil",
+    cat: "innate", catLabel: "Innate &middot; Granulocyte",
+    origin: "Bone marrow &middot; myeloid lineage",
+    function: "<b>Allergic reactions.</b> Releases histamine and heparin in response to IgE-bound allergens.",
+    rec: "Lobed nucleus &middot; dark basophilic granules (basic dyes stain them)",
+    activate: "IgE bound to allergen cross-links FcεRI receptors &rarr; degranulation.",
+    weapon: "Histamine (vasodilation, bronchoconstriction), heparin (anticoagulant), leukotrienes.",
+    trap: "<b>Trap:</b> Basophil and mast cell do <em>almost</em> the same thing. Difference: basophils circulate in blood; mast cells live in tissues."
+  },
+  granulocyte: {
+    name: "Neutrophil <em>(granulocyte)</em>",
+    cat: "innate", catLabel: "Innate &middot; Granulocyte",
+    origin: "Bone marrow &middot; myeloid lineage",
+    function: "<b>First responder to bacterial infection.</b> Most abundant white blood cell (~50-70% of leukocytes).",
+    rec: "Multi-lobed nucleus (3-5 lobes) &middot; light cytoplasmic granules",
+    activate: "Chemotaxis along complement (C5a) and IL-8 gradients. Pattern recognition via TLRs.",
+    weapon: "Phagocytosis, oxidative burst (ROS), defensins, NETs (neutrophil extracellular traps). Pus is dead neutrophils.",
+    trap: "<b>Trap:</b> 'Most abundant WBC' = neutrophil. 'Increases in parasitic infection' = eosinophil. 'Increases in allergy' = eosinophil + basophil. Don't blur them."
+  },
+  mast: {
+    name: "Mast cell",
+    cat: "innate", catLabel: "Innate &middot; Tissue-resident",
+    origin: "Bone marrow &rarr; matures in tissues",
+    function: "<b>Allergy and anaphylaxis.</b> Tissue-resident sentinel that releases histamine fast.",
+    rec: "Round nucleus &middot; <b>very heavy</b> granules of histamine + heparin",
+    activate: "IgE cross-linking on FcεRI receptors triggers <b>massive degranulation</b>.",
+    weapon: "Histamine (causes the swelling, redness, itch), heparin, tryptase, leukotrienes.",
+    trap: "<b>Trap:</b> Anaphylaxis = systemic mast cell degranulation. Epinephrine treats it (reverses vasodilation + bronchoconstriction). The DAT will ask why epinephrine and you should know it counters histamine's effects."
+  },
+  macrophage: {
+    name: "Monocyte / Macrophage",
+    cat: "innate", catLabel: "Innate &middot; Phagocyte + APC",
+    origin: "Bone marrow &rarr; monocyte in blood &rarr; macrophage in tissue",
+    function: "<b>Professional phagocyte.</b> Cleans up debris, kills intracellular pathogens, presents antigen on MHC II.",
+    rec: "Kidney-bean nucleus &middot; CD14 &middot; tissue-specific names (Kupffer in liver, microglia in brain, alveolar in lung, osteoclast in bone)",
+    activate: "TLR pattern recognition. IFN-γ from Th1 cells supercharges them (M1 polarization).",
+    weapon: "Phagocytosis + ROS + nitric oxide. Also fuses lysosomes onto phagosomes (phagolysosome).",
+    trap: "<b>Trap:</b> Macrophages are <em>both</em> innate phagocytes <em>and</em> antigen-presenting cells. They straddle innate &harr; adaptive but live in the innate camp."
+  },
+  nkt: {
+    name: "NKT cell",
+    cat: "overlap", catLabel: "Overlap &middot; Innate-like T",
+    origin: "Thymus &middot; T cell lineage",
+    function: "<b>Bridge cell.</b> Has a TCR (like T cells) but recognizes lipid antigens on CD1d (not MHC). Responds <em>fast</em> like an NK cell.",
+    rec: "TCR + NK markers &middot; CD1d-restricted",
+    activate: "Lipid antigens (e.g., α-galactosylceramide) presented on CD1d.",
+    weapon: "Massive cytokine burst (IFN-γ, IL-4) + cytolysis like CD8+/NK.",
+    trap: "<b>Why it lives in the overlap:</b> TCR specificity (adaptive feature) + speed and cytotoxic arsenal (innate feature)."
+  },
+  gdt: {
+    name: "&#947;&#948; T cell",
+    cat: "overlap", catLabel: "Overlap &middot; Innate-like T",
+    origin: "Thymus &middot; T cell lineage",
+    function: "<b>First-responder T cell at mucosal surfaces</b> (gut, lung, skin). Recognizes stress signals, not classical MHC peptides.",
+    rec: "Gamma-delta TCR (vs. αβ TCR on conventional T cells) &middot; <em>not</em> MHC-restricted",
+    activate: "Phosphoantigens, stress molecules (MIC-A/B), heat-shock proteins.",
+    weapon: "Cytotoxicity + cytokines. Also has phagocytic activity in some subsets.",
+    trap: "<b>Why it lives in the overlap:</b> Has a TCR (adaptive trait) but doesn't need MHC presentation (innate trait). Acts within hours, not days."
+  },
+  cd4: {
+    name: "CD4+ T cell <em>(helper)</em>",
+    cat: "adaptive", catLabel: "Adaptive &middot; Helper T",
+    origin: "Bone marrow &rarr; matures in thymus",
+    function: "<b>The conductor.</b> Coordinates the adaptive response by secreting cytokines that direct B cells, CD8+ T cells, and macrophages.",
+    rec: "TCR + CD4 co-receptor &middot; recognizes peptide on <b>MHC class II</b>",
+    activate: "Dendritic cell presents peptide-MHC II + co-stimulation (CD80/86 → CD28).",
+    weapon: "Cytokines &mdash; depending on subset:<br/><b>Th1:</b> IFN-γ (activates macrophages)<br/><b>Th2:</b> IL-4/5/13 (B cells, eosinophils, allergy)<br/><b>Th17:</b> IL-17 (recruits neutrophils)<br/><b>Tfh:</b> helps B cell affinity maturation",
+    trap: "<b>Trap:</b> CD4 binds <em>MHC II</em> (mnemonic: 4×2=8, so CD4 with MHC II and CD8 with MHC I). HIV depletes CD4 and collapses the whole adaptive response."
+  },
+  treg: {
+    name: "Regulatory T cell <em>(T-reg)</em>",
+    cat: "adaptive", catLabel: "Adaptive &middot; CD4+ subset",
+    origin: "Differentiates from CD4+ in thymus or periphery",
+    function: "<b>Brakes the immune response.</b> Suppresses autoreactive lymphocytes; maintains self-tolerance.",
+    rec: "CD4+ &middot; CD25+ &middot; <b>FoxP3+</b> (master transcription factor)",
+    activate: "TGF-β + IL-2 drive differentiation.",
+    weapon: "Inhibitory cytokines (IL-10, TGF-β) + direct suppression of effector T cells.",
+    trap: "<b>Trap:</b> Loss of T-regs &rarr; autoimmunity (the immune system attacks self because nothing is shutting off the response). FoxP3 mutation = IPEX syndrome."
+  },
+  cd8: {
+    name: "CD8+ T cell <em>(cytotoxic precursor)</em>",
+    cat: "adaptive", catLabel: "Adaptive &middot; Cytotoxic T",
+    origin: "Bone marrow &rarr; matures in thymus",
+    function: "<b>Kills infected cells</b> by recognizing pathogen-derived peptide on the infected cell's own MHC I.",
+    rec: "TCR + CD8 co-receptor &middot; recognizes peptide on <b>MHC class I</b>",
+    activate: "Dendritic cell cross-presents on MHC I + Th1 help (IL-2). Two-signal activation.",
+    weapon: "Once activated, becomes a cytotoxic T lymphocyte (CTL). Releases perforin + granzymes.",
+    trap: "<b>Trap:</b> CD8 binds <em>MHC I</em> (8×1=8). MHC I is on every nucleated cell, so CD8s can patrol the whole body. RBCs lack MHC I, which is why malaria-infected RBCs are hard to clear."
+  },
+  ctl: {
+    name: "Cytotoxic T cell <em>(activated CTL)</em>",
+    cat: "adaptive", catLabel: "Adaptive &middot; Cytotoxic T (activated)",
+    origin: "Activated CD8+ T cell",
+    function: "<b>Kills the target cell.</b> Recognizes peptide on MHC I on infected/tumor cells and induces apoptosis.",
+    rec: "Same as CD8+ &middot; cytoplasmic granules with perforin and granzymes",
+    activate: "Already activated by APC in lymph node. Now patrolling tissue.",
+    weapon: "Perforin (forms pore in target membrane) + granzyme B (enters through pore, activates caspase cascade) + Fas-FasL (death receptor pathway).",
+    trap: "<b>Trap:</b> CTL kills via <em>apoptosis</em> (clean &mdash; no spilled contents) not necrosis. Test will ask 'why doesn't a CTL kill cause inflammation?' Answer: apoptosis is non-inflammatory."
+  },
+  bcell: {
+    name: "B cell",
+    cat: "adaptive", catLabel: "Adaptive &middot; Lymphocyte",
+    origin: "Bone marrow &middot; matures in bone marrow (the <em>B</em> is for bursa in birds, but think bone marrow)",
+    function: "<b>Antibody producer.</b> Recognizes antigen via membrane-bound BCR; with helper T input, differentiates into plasma cell.",
+    rec: "BCR (membrane immunoglobulin) &middot; CD19, CD20 markers &middot; MHC II",
+    activate: "Two signals: BCR binds antigen (Signal 1) + Tfh CD4 cell binds MHC II-peptide complex on the B cell and provides cytokines (Signal 2).",
+    weapon: "Differentiates into <b>plasma cell</b> (antibody factory) or <b>memory B cell</b> (faster response next time). Class-switching changes IgM &rarr; IgG/A/E.",
+    trap: "<b>Trap:</b> B cells <em>are</em> APCs. They present antigen on MHC II to Tfh cells &mdash; that's how they get help. The DAT will sometimes hide this in a stem."
+  },
+  plasma: {
+    name: "Plasma cell",
+    cat: "adaptive", catLabel: "Adaptive &middot; Antibody factory",
+    origin: "Differentiated B cell after activation",
+    function: "<b>Pumps out antibodies.</b> Terminal effector cell of the B-cell lineage.",
+    rec: "<b>Eccentric nucleus</b> &middot; massive rough ER (the striations in the diagram) &middot; large Golgi",
+    activate: "B cell + T-cell help drives differentiation. Germinal center reaction in lymph node produces high-affinity plasma cells.",
+    weapon: "Secretes thousands of antibody molecules per second &mdash; specifically the same Ig that the parent B cell's BCR was.",
+    trap: "<b>Trap:</b> Plasma cells live mostly in bone marrow long-term. Multiple myeloma = plasma cell cancer (M-spike on protein electrophoresis = monoclonal antibody flood)."
+  },
+  antibodies: {
+    name: "Antibodies <em>(immunoglobulins)</em>",
+    cat: "adaptive", catLabel: "Adaptive &middot; Soluble",
+    origin: "Secreted by plasma cells",
+    function: "<b>Soluble effectors.</b> Bind antigen for neutralization, opsonization, complement activation, ADCC.",
+    rec: "Y-shape: 2 heavy chains + 2 light chains. Variable region (Fab) binds antigen. Constant region (Fc) determines class.",
+    activate: "Class switching is driven by Th cytokines: IL-4 &rarr; IgE (allergy), IFN-γ &rarr; IgG (opsonization), TGF-β &rarr; IgA (mucosal).",
+    weapon: "<b>5 classes:</b><br/><b>IgG:</b> most abundant, crosses placenta, opsonization<br/><b>IgM:</b> first responder, pentamer, complement<br/><b>IgA:</b> mucosal/secretions (gut, breast milk)<br/><b>IgE:</b> allergy/parasites (binds mast cells)<br/><b>IgD:</b> mostly on B cell surface; function unclear",
+    trap: "<b>Trap:</b> IgM appears <em>first</em>, IgG appears <em>most</em>. Memory response is mostly IgG (faster, higher affinity). The DAT loves the IgM-then-IgG curve question."
+  }
+};
+
+// ============================================================
+// PANEL RENDER
+// ============================================================
+const panel = document.getElementById('panel');
+function renderCell(id){
+  const c = CELLS[id];
+  if (!c){ return; }
+  const catClass = c.cat === 'overlap' ? 'ovl' : c.cat === 'innate' ? 'inn' : 'adp';
+
+  panel.innerHTML = `
+    <span class="p-cat ${catClass}">${c.catLabel}</span>
+    <h2 class="p-name">${c.name}</h2>
+    <div class="p-tag">Cell ID &middot; ${id}</div>
+    <div class="p-row"><span class="k">Origin</span><span class="v">${c.origin}</span></div>
+    <div class="p-row"><span class="k">Function</span><span class="v">${c.function}</span></div>
+    <div class="p-row"><span class="k">Recognize</span><span class="v">${c.rec}</span></div>
+    <div class="p-row"><span class="k">Activate</span><span class="v">${c.activate}</span></div>
+    <div class="p-row"><span class="k">Weapon</span><span class="v">${c.weapon}</span></div>
+    ${c.trap ? `<div class="p-trap">${c.trap}</div>` : ''}
+    <div class="p-link-row">
+      <button class="p-link" type="button" onclick="renderCell('${pickRelated(id, -1)}')">&larr; Prev cell</button>
+      <button class="p-link" type="button" onclick="renderCell('${pickRelated(id, 1)}')">Next cell &rarr;</button>
+    </div>
+  `;
+}
+function pickRelated(id, dir){
+  const ids = Object.keys(CELLS);
+  const i = ids.indexOf(id);
+  return ids[(i + dir + ids.length) % ids.length];
+}
+
+// ============================================================
+// SVG INTERACTIONS
+// ============================================================
+const svg = document.getElementById('imm-svg');
+const cells = svg.querySelectorAll('.cell-grp');
+cells.forEach(g => {
+  g.addEventListener('click', () => {
+    cells.forEach(o => o.classList.remove('active'));
+    g.classList.add('active');
+    const id = g.getAttribute('data-cell');
+    renderCell(id);
+  });
+});
+
+// ============================================================
+// FILTERS
+// ============================================================
+const fbtns = document.querySelectorAll('.fbtn');
+fbtns.forEach(b => b.addEventListener('click', () => {
+  fbtns.forEach(o => o.classList.remove('on'));
+  b.classList.add('on');
+  const f = b.getAttribute('data-filter');
+  cells.forEach(g => {
+    g.classList.remove('dim');
+    if (f === 'all') return;
+    const cat = g.getAttribute('data-cat');
+    const tags = (g.getAttribute('data-tags') || '').split(/\s+/);
+    let show = false;
+    if (f === 'innate' && cat === 'innate') show = true;
+    if (f === 'adaptive' && cat === 'adaptive') show = true;
+    if (f === 'overlap' && cat === 'overlap') show = true;
+    if (f === 'phagocyte' && tags.includes('phagocyte')) show = true;
+    if (f === 'killer' && tags.includes('killer')) show = true;
+    if (f === 'apc' && tags.includes('apc')) show = true;
+    if (!show) g.classList.add('dim');
+  });
+}));
+
+// ============================================================
+// STUCK MODAL (canonical Bio design from index.html)
+// ============================================================
+(function(){
+  const back  = document.getElementById('bioStuckBack');
+  const trig  = document.getElementById('bioStuckBtn');
+  const close = document.getElementById('bioStuckClose');
+  const wins  = document.getElementById('bioStuckWins');
+  const over  = document.getElementById('bioStuckOverview');
+  const skip  = document.getElementById('bioStuckSkip');
+  if (!back || !trig) return;
+
+  function open(){
+    back.classList.add('show');
+    try { localStorage.setItem('bio-engine:stuck-events', JSON.stringify(
+      [...JSON.parse(localStorage.getItem('bio-engine:stuck-events') || '[]'), { t: Date.now() }]
+    )); } catch(e){}
+  }
+  function shut(){ back.classList.remove('show'); }
+
+  trig.addEventListener('click', open);
+  close.addEventListener('click', shut);
+  back.addEventListener('click', e => { if (e.target === back) shut(); });
+
+  wins.addEventListener('click', () => {
+    shut();
+    location.href = 'index.html#aceCardsSection';
+  });
+  over.addEventListener('click', () => {
+    shut();
+    location.href = 'index.html';
+  });
+  skip.addEventListener('click', shut);
+})();
+
+// ============================================================
+// KEYBOARD: arrow keys cycle cells
+// ============================================================
+document.addEventListener('keydown', e => {
+  const bioBack = document.getElementById('bioStuckBack');
+  if (bioBack && bioBack.classList.contains('show')){
+    if (e.key === 'Escape') bioBack.classList.remove('show');
+    return;
+  }
+  const cur = svg.querySelector('.cell-grp.active');
+  if (!cur) return;
+  const id = cur.getAttribute('data-cell');
+  if (e.key === 'ArrowRight') renderCell(pickRelated(id, 1));
+  if (e.key === 'ArrowLeft') renderCell(pickRelated(id, -1));
+});
+
+// Auto-open NK cell on first load so the panel isn't empty
+window.addEventListener('DOMContentLoaded', () => {
+  const first = svg.querySelector('[data-cell="nk"]');
+  if (first){ first.classList.add('active'); renderCell('nk'); }
+});
+</script>
+
+</body>
+</html>

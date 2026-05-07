@@ -1,5 +1,51 @@
 /* Ace Labs shell — cross-tool localStorage aggregator
-   Reads from each tool's namespace and rolls up to the home dashboard. */
+   Reads from each tool's namespace and rolls up to the home dashboard.
+
+   ── localStorage key prefix reference ────────────────────────────────────
+   Each engine uses a different prefix convention. DO NOT migrate keys — the
+   engines own their own storage shapes. This comment is the canonical index.
+
+   Bio engine  -- prefix: acethedat_bio_*  (underscore separator, not colon)
+                 keys include:
+                   acethedat_bio_engine_v1    — full state object; .aceCards array
+                   acethedat_bio_progress     — mastery summary { mastered, partial, total }
+                   acethedat_bio_last_session — timestamp (ms epoch, plain number string)
+
+   QR engine   -- prefix: qr-rem-v2:*  (colon separator)
+                 keys include:
+                   qr-rem-v2:mastery    — { questionId: 'mastered'|'partial' }
+                   qr-rem-v2:attempts   — array of attempt objects with .t timestamp
+                   qr-rem-v2:lastSession — timestamp (ms epoch)
+
+   GC engine   -- prefix: gc-rem-v1:*  (colon separator)
+                 Same shape as QR (mastery / attempts / lastSession).
+
+   OChem engine -- prefix: ochem-rem-v1:*  (colon separator)
+                 keys include:
+                   ochem-rem-v1:mastery      — { hubId: 'mastered'|'partial' }
+                   ochem-rem-v1:hub-mastery  — hub-level object (used for activity count)
+                   ochem-rem-v1:lastSession  — timestamp (ms epoch)
+
+   Unified mock / home dash -- prefix: al:*
+                 keys include:
+                   al:lastPrometric   — last full Prometric sim result object
+                   al:lastMock        — last single-section unified mock result
+                   al:mockHistory     — array of past mock results
+
+   ── Score predictor disclaimer (canonical copy, do not change per-engine) ─
+   "Predicted score is a beta calibration based on internal mock data. Treat as diagnostic only."
+   Each engine currently renders a slight variant. The canonical copy above should be
+   used when the engines are next edited.  Do NOT rewrite engine HTMLs just for this.
+
+   ── qrFeatActivity binding note ──────────────────────────────────────────
+   The element #qrFeatActivity in ace-labs.html IS bound: the render() loop at
+   the bottom of this file iterates tools.forEach(t => ...) and sets
+   t + 'FeatActivity' for all tools including 'qr'. If it shows "— attempts"
+   forever in the browser, the issue is zero attempts in qr-rem-v2:attempts
+   (no data yet), NOT a missing binding. The element updates correctly once the
+   student has used the QR engine.
+   ──────────────────────────────────────────────────────────────────────────
+*/
 
 (function(){
   // localStorage namespaces used by each engine (verified against source files)
@@ -11,11 +57,18 @@
   };
   // Bio uses underscore separator instead of colon — handled per-tool below
 
-  // Read mastery state for each tool. Each tool uses a different shape; handle each explicitly.
+  // Read mastery + activity for each tool. Each tool uses a different shape; handle each explicitly.
+  // attempts: a per-tool "activity volume" signal (problem attempts for QR/GC, retrievals for Bio,
+  //           hubs touched for OChem). Used by the home tile pills, not by the rollup totals.
+  function readNum(raw){
+    if (raw == null) return null;
+    try { const v = JSON.parse(raw); const n = parseInt(v); return Number.isFinite(n) ? n : null; }
+    catch(e){ const n = parseInt(raw); return Number.isFinite(n) ? n : null; }
+  }
   function getMasteryFor(toolKey){
-    const out = { mastered:0, partial:0, total:0, lastSession:null };
+    const out = { mastered:0, partial:0, total:0, attempts:0, lastSession:null };
     try {
-      if (toolKey === 'qr' || toolKey === 'gc' || toolKey === 'ochem'){
+      if (toolKey === 'qr' || toolKey === 'gc'){
         const ns = NS[toolKey];
         const masteryRaw = localStorage.getItem(ns + ':mastery');
         if (masteryRaw){
@@ -23,21 +76,64 @@
           Object.values(m).forEach(v => { if (v === 'mastered') out.mastered++; else if (v === 'partial') out.partial++; });
           out.total = Object.keys(m).length;
         }
-        const lastRaw = localStorage.getItem(ns + ':lastSession');
-        if (lastRaw) out.lastSession = parseInt(lastRaw);
-      } else if (toolKey === 'bio'){
-        // Bio uses underscore-prefixed keys: acethedat_bio_*
-        // Mastered cards live in acethedat_bio_cards (per-card SR state)
-        const cardsRaw = localStorage.getItem('acethedat_bio_cards');
-        if (cardsRaw){
-          const cards = JSON.parse(cardsRaw);
-          if (Array.isArray(cards)){
-            cards.forEach(c => { if (c.state === 'mastered' || (c.reps && c.reps >= 5)) out.mastered++; else if (c.reps && c.reps >= 1) out.partial++; });
-            out.total = cards.length;
+        const attemptsRaw = localStorage.getItem(ns + ':attempts');
+        if (attemptsRaw){
+          const arr = JSON.parse(attemptsRaw);
+          if (Array.isArray(arr)){
+            out.attempts = arr.length;
+            // Derive lastSession from the most recent attempt timestamp as a fallback
+            for (let i = arr.length - 1; i >= 0; i--){
+              if (arr[i] && arr[i].t){ out.lastSession = arr[i].t; break; }
+            }
           }
         }
-        const lastRaw = localStorage.getItem('acethedat_bio_last_session');
-        if (lastRaw) out.lastSession = parseInt(lastRaw);
+        const lastExplicit = readNum(localStorage.getItem(ns + ':lastSession'));
+        if (lastExplicit && (!out.lastSession || lastExplicit > out.lastSession)) out.lastSession = lastExplicit;
+      } else if (toolKey === 'ochem'){
+        const ns = NS[toolKey];
+        const masteryRaw = localStorage.getItem(ns + ':mastery');
+        if (masteryRaw){
+          const m = JSON.parse(masteryRaw);
+          Object.values(m).forEach(v => { if (v === 'mastered') out.mastered++; else if (v === 'partial') out.partial++; });
+          out.total = Object.keys(m).length;
+        }
+        // Activity = number of hubs the student has touched (mastered or partial)
+        const hubRaw = localStorage.getItem(ns + ':hub-mastery');
+        if (hubRaw){
+          try { out.attempts = Object.keys(JSON.parse(hubRaw) || {}).length; } catch(e){}
+        }
+        const lastExplicit = readNum(localStorage.getItem(ns + ':lastSession'));
+        if (lastExplicit) out.lastSession = lastExplicit;
+      } else if (toolKey === 'bio'){
+        // Bio's saveState writes a summary under acethedat_bio_progress with per-node
+        // stageOrder.length factored in. Prefer that. Fall back to a stage-threshold
+        // heuristic on the raw STATE for legacy data that hasn't been re-saved.
+        let summaryUsed = false;
+        const summaryRaw = localStorage.getItem('acethedat_bio_progress');
+        if (summaryRaw){
+          try {
+            const s = JSON.parse(summaryRaw);
+            out.mastered = parseInt(s.mastered) || 0;
+            out.partial  = parseInt(s.partial)  || 0;
+            if (s.total) out.total = parseInt(s.total) || 0;
+            summaryUsed = true;
+          } catch(e){}
+        }
+        const stateRaw = localStorage.getItem('acethedat_bio_engine_v1');
+        if (stateRaw){
+          const state = JSON.parse(stateRaw);
+          Object.values(state).forEach(node => {
+            if (!node || typeof node !== 'object') return;
+            const stage = parseInt(node.stage) || 0;
+            if (node.retrievals) out.attempts += Object.keys(node.retrievals).length;
+            if (!summaryUsed){
+              if (stage >= 5) out.mastered++;
+              else if (stage > 0) out.partial++;
+            }
+          });
+        }
+        const lastExplicit = readNum(localStorage.getItem('acethedat_bio_last_session'));
+        if (lastExplicit) out.lastSession = lastExplicit;
       }
     } catch(e){}
     // Tool-specific defaults / fallbacks if no localStorage data yet
@@ -46,39 +142,50 @@
     return out;
   }
 
-  // Aggregate due cards across tools (best-effort: each tool stores SR queue under <ns>:sr-due)
+  // Aggregate due cards across tools.
+  //   QR / GC: no SR system today — skip (uses attempts[], not a due-date queue).
+  //   OChem:   no SR system today — skip.
+  //   Bio:     acethedat_bio_engine_v1 contains .aceCards array with per-card
+  //            { nextDue (ms epoch), closed (bool) } shape. Count cards where
+  //            !closed && nextDue <= now.
   function aggregateCardsDue(){
     let total = 0;
-    Object.values(NS).forEach(ns => {
-      try {
-        const raw = localStorage.getItem(ns + ':sr-due');
-        if (raw){
-          const arr = JSON.parse(raw);
-          if (Array.isArray(arr)) total += arr.length;
+    const now = Date.now();
+    try {
+      const bioRaw = localStorage.getItem('acethedat_bio_engine_v1');
+      if (bioRaw){
+        const state = JSON.parse(bioRaw);
+        if (Array.isArray(state.aceCards)){
+          state.aceCards.forEach(c => {
+            if (c && !c.closed && typeof c.nextDue === 'number' && c.nextDue <= now) total++;
+          });
         }
-      } catch(e){}
-    });
+      }
+    } catch(e){}
     return total;
   }
 
-  // Last session across all tools
-  function getLastSessionAcrossTools(){
+  // Last session across all tools — uses each tool's data object so the per-attempt fallback
+  // and Bio's underscore-key location are handled centrally.
+  function getLastSessionAcrossTools(data){
     let latest = null, source = null;
-    Object.entries(NS).forEach(([k, ns]) => {
-      try {
-        const raw = localStorage.getItem(ns + ':lastSession');
-        if (raw){
-          const t = parseInt(raw);
-          if (t && (latest === null || t > latest)){ latest = t; source = k; }
-        }
-      } catch(e){}
+    Object.keys(data).forEach(k => {
+      const t = data[k] && data[k].lastSession;
+      if (t && (latest === null || t > latest)){ latest = t; source = k; }
     });
     return { ts:latest, source };
   }
 
-  // Last cross-tool mock score
+  // Last mock score — prefer Prometric (full sim) over single-section unified mock
   function getLastMockScore(){
     try {
+      const promRaw = localStorage.getItem('al:lastPrometric');
+      if (promRaw){
+        const p = JSON.parse(promRaw);
+        const sonsCorrect = (p.subjects?.Biology?.correct || 0) + (p.subjects?.['Gen Chem']?.correct || 0) + (p.subjects?.OChem?.correct || 0);
+        const qrCorrect = p.subjects?.QR?.correct || 0;
+        return { score: sonsCorrect + qrCorrect, total: 140, predicted: p.sonsScaled + ' / ' + p.qrScaled, section: 'Prometric · ' + (p.testName || 'Mock'), ts: p.ts, _source: 'prometric' };
+      }
       const raw = localStorage.getItem('al:lastMock');
       if (raw) return JSON.parse(raw);
     } catch(e){}
@@ -120,7 +227,7 @@
     if (dashSub) dashSub.textContent = totalMastered + ' of ' + totalModules + ' modules mastered across QR / Bio / GC / OChem';
 
     // Last session
-    const last = getLastSessionAcrossTools();
+    const last = getLastSessionAcrossTools(data);
     if (last.ts){
       const dashLast = document.getElementById('dashLastSession');
       const dashLastSub = document.getElementById('dashLastSessionSub');
@@ -151,10 +258,23 @@
       }
     } catch(e){}
 
-    // Per-tool mastery on the tile
+    // Per-tool mastery on the tile foot
     tools.forEach(t => {
       const el = document.getElementById(t + 'MasteryStat');
       if (el) el.textContent = data[t].mastered + ' / ' + data[t].total + ' mastered';
+    });
+
+    // Per-tool live progress pills (replaces the old static "35 visuals" / "28 / 40 nodes" copy).
+    // Activity-pill label varies per tool because each tracks a different unit of work.
+    const ACTIVITY_LABEL = { qr:'attempts', gc:'attempts', bio:'retrievals', ochem:'hubs touched' };
+    tools.forEach(t => {
+      const d = data[t];
+      const partialEl = document.getElementById(t + 'FeatPartial');
+      if (partialEl) partialEl.textContent = d.partial + ' in progress';
+      const actEl = document.getElementById(t + 'FeatActivity');
+      if (actEl) actEl.textContent = d.attempts + ' ' + ACTIVITY_LABEL[t];
+      const lastEl = document.getElementById(t + 'FeatLast');
+      if (lastEl) lastEl.textContent = d.lastSession ? 'Last: ' + fmtRelTime(d.lastSession) : 'No sessions yet';
     });
 
     // Subjects grid

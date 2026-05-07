@@ -93,9 +93,9 @@
 </header>
 
 <div class="mk-stage" id="mkStage">
-  <div class="mk-pill"><span style="width:8px;height:8px;border-radius:50%;background:var(--al-gold);display:inline-block"></span>Survey of Natural Sciences mock · Ace Labs</div>
-  <h1 class="mk-h">The DAT science <em>mock.</em></h1>
-  <p class="mk-sub">DAT-format Survey of Natural Sciences. 100 questions in 90 minutes (40 Bio + 30 Gen Chem + 30 OChem). Per-subject scorecard at the end + composite SoNS scaled-score prediction.</p>
+  <div class="mk-pill"><span style="width:8px;height:8px;border-radius:50%;background:var(--al-gold);display:inline-block"></span>OChem sampled section · Ace Labs prototype</div>
+  <h1 class="mk-h">The OChem sampled <em>mock.</em></h1>
+  <p class="mk-sub">Prototype 30-question OChem section sampled by difficulty. The full 100-question Science simulation now lives in the Prometric mock runner, which combines Bio, Gen Chem, and OChem into the 90-minute Sciences section.</p>
 
   <div class="mk-config">
     <div class="mk-config-card">
@@ -109,17 +109,17 @@
       </div>
     </div>
     <div class="mk-config-card">
-      <h3>Subjects to include</h3>
-      <label><span><input type="checkbox" id="incBio" checked/>Biology (40 Q)</span><span style="color:var(--al-ink-mute)">— external mock for now</span></label>
-      <label><span><input type="checkbox" id="incGc" checked/>Gen Chem (30 Q)</span><span style="color:var(--al-ink-mute)">— external mock for now</span></label>
-      <label><span><input type="checkbox" id="incOchem" checked/>OChem (30 Q)</span><span style="color:var(--al-good-d); font-weight:700">— 282 in bank ✓</span></label>
+      <h3>Section scope</h3>
+      <label><span><input type="checkbox" disabled/>Biology (40 Q)</span><span style="color:var(--al-ink-mute)">— use Prometric mocks</span></label>
+      <label><span><input type="checkbox" disabled/>Gen Chem (30 Q)</span><span style="color:var(--al-ink-mute)">— use Prometric mocks</span></label>
+      <label><span><input type="checkbox" id="incOchem" checked/>OChem (30 Q)</span><span style="color:var(--al-good-d); font-weight:700">— sampled live</span></label>
     </div>
   </div>
 
-  <button class="mk-start" id="mkStartBtn">Start mock · 90:00 timer</button>
+  <button class="mk-start" id="mkStartBtn">Start OChem sample · 30 Q</button>
 
   <div class="mk-info">
-    <b>Note:</b> Bio and GC bank extraction lands in the next phase — for now, the unified mock runs the OChem section live and sends Bio/GC to their in-engine mocks (open in new tabs). When all 4 banks are unified, this single button runs the full 100 Q. Difficulty pill changes the easy/medium/hard mix sampled from the OChem bank (282 problems, distribution: 77 easy / 106 medium / 63 hard / 36 hardest).
+    <b>Note:</b> This page is intentionally labeled as an OChem sampler so it does not over-promise. For the DAT-style 140-question Sciences + QR experience, use the Prometric mocks. Difficulty pills change the easy/medium/hard mix sampled from the OChem bank.
   </div>
 </div>
 
@@ -270,7 +270,10 @@ function finishMock(){
   if (STATE.timerId) clearInterval(STATE.timerId);
   const correct = STATE.pool.filter((p, i) => STATE.answers[i] === p.correct).length;
   const total = STATE.pool.length;
-  const pct = correct / total;
+  // Guard against an empty pool — buildOChemSet can return < requested if the
+  // bank is too small for the chosen difficulty mix. NaN here would corrupt
+  // the persisted mockRecord and the "▲ delta" math on the home dashboard.
+  const pct = total > 0 ? correct / total : 0;
   const predictedSoNS = predictSoNSScore(pct);
   // Per-skill breakdown
   const bySkill = {};
@@ -313,7 +316,7 @@ function finishMock(){
         </table>
       </div>
       <div class="mk-review">
-        <h3>Wrong-answer review (${wrong.length})</h3>
+        <h3>Needs-review walkthrough (${wrong.length})</h3>
         ${wrong.map((p, idx) => {
           const i = STATE.pool.indexOf(p);
           const yourLetter = STATE.answers[i] !== undefined ? 'ABCD'[STATE.answers[i]] : '—';

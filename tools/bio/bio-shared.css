@@ -5,8 +5,12 @@
   --gold:#C9A84C; --gold-m:#E2C97A; --gold-d:#8C7235; --gold-glow:rgba(201,168,76,0.35);
   --teal:#1B3A2D; --teal-2:#2A5240; --teal-3:#3A6B54;
   --line:rgba(13,32,24,0.12); --line-2:rgba(13,32,24,0.06); --line-strong:rgba(13,32,24,0.22);
-  --trap:#C25B3F; --trap-bg:#fbe7df; --trap-d:#8a3d28;
-  --good:#5FA874; --good-bg:#e3efe6; --good-d:#3e7c54;
+  /* Wong / Okabe-Ito correctness tokens — answer feedback only.
+     --trap / --good are legacy aliases kept for backward compat with existing
+     class-names (.retrieval-card .opt.correct, .mock-opt.wrong, etc.).
+     New code should prefer --al-confirmed / --al-needs-review from al-tokens. */
+  --trap:#D55E00; --trap-bg:rgba(213,94,0,.10); --trap-d:#9b4500;
+  --good:#009E73; --good-bg:rgba(0,158,115,.10); --good-d:#007a59;
   --info:#6A8AA8; --info-bg:#e6edf4;
   --plum:#8a5a8c; --plum-bg:#efe5f0;
   --dna-parent:#1B3A2D; --dna-daughter:#C9A84C; --dna-rna:#C25B3F;
@@ -14,6 +18,23 @@
   --shadow-md:0 2px 6px rgba(13,32,24,0.08), 0 16px 40px rgba(13,32,24,0.06);
   --shadow-lg:0 4px 14px rgba(13,32,24,0.10), 0 24px 56px rgba(13,32,24,0.08);
   --tl-w:300px; --ease-bezier:cubic-bezier(0.22,0.61,0.36,1);
+
+  /* Ace Labs canonical aliases — let shell-namespace utilities (--al-*) work
+     inside Bio pages without forcing this file to depend on al-tokens.css. */
+  --al-bg:var(--bg); --al-paper:var(--paper); --al-paper-2:var(--paper-2); --al-paper-3:var(--paper-3);
+  --al-ink:var(--ink); --al-ink-2:var(--ink-2); --al-ink-mute:var(--ink-mute); --al-ink-soft:var(--ink-soft);
+  --al-gold:var(--gold); --al-gold-m:var(--gold-m); --al-gold-d:var(--gold-d);
+  --al-gold-bg:rgba(201,168,76,.10); --al-gold-glow:var(--gold-glow);
+  --al-teal:var(--teal); --al-teal-2:var(--teal-2); --al-teal-3:var(--teal-3);
+  --al-good:var(--good); --al-good-d:var(--good-d);
+  --al-trap:var(--trap); --al-trap-d:var(--trap-d);
+  /* Wong palette canonical names (matches al-tokens.css) */
+  --al-confirmed:var(--good); --al-confirmed-pale:var(--good-bg);
+  --al-needs-review:var(--trap); --al-needs-review-pale:var(--trap-bg);
+  --al-almost:#E69F00; --al-almost-pale:rgba(230,159,0,.10);
+  --al-new:#0072B2; --al-new-pale:rgba(0,114,178,.10);
+  --al-line:var(--line); --al-line-2:var(--line-strong);
+  --al-bio-color:var(--good);
 }
 *{box-sizing:border-box} html,body{margin:0;padding:0}
 body{
@@ -1387,3 +1408,257 @@ foreignObject table td, foreignObject table th{padding:6px 8px !important;line-h
 .builder-feedback.wrong{background:rgba(194,91,63,0.12);color:var(--trap-d)}
 
 .builder-org-ghost{position:fixed;pointer-events:none;background:linear-gradient(160deg,var(--gold) 0%,var(--gold-d) 100%);color:#0d2018;padding:6px 12px;border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;z-index:9999;box-shadow:0 6px 18px -6px rgba(13,32,24,0.4);transform:translate(-50%,-50%)}
+
+/* ========================================================
+   NODE-VIZ FRAMEWORK
+   Wrapper for interactive node visualizations: GI absorption map,
+   respiratory O2-Hb curve, endocrine receptor table, sliding-filament
+   sarcomere, immune cascade, etc. The HTML uses .node-viz / .viz-head /
+   .viz-body[.two-col|.controls-canvas] / .viz-readout consistently.
+   ======================================================== */
+.node-viz{
+  background:var(--paper);
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:22px 24px;
+  margin:18px 0 28px;
+  box-shadow:var(--shadow);
+  position:relative;
+}
+.node-viz .viz-head{
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  gap:14px;
+  flex-wrap:wrap;
+  padding-bottom:14px;
+  margin-bottom:18px;
+  border-bottom:1px dashed var(--line);
+}
+.node-viz .viz-head h3{
+  font-family:'Playfair Display',serif;
+  font-size:22px;
+  font-weight:700;
+  line-height:1.2;
+  margin:0;
+  letter-spacing:-.01em;
+}
+.node-viz .viz-head h3 em{font-style:italic;color:var(--gold-d);font-weight:400;}
+.node-viz .viz-head .tag{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10.5px;
+  font-weight:700;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--gold-d);
+  background:rgba(201,168,76,.10);
+  padding:4px 10px;
+  border-radius:99px;
+  border:1px solid var(--gold-d);
+  white-space:nowrap;
+}
+.node-viz .viz-body{display:block;}
+.node-viz .viz-body.two-col{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:24px;
+  align-items:start;
+}
+@media (max-width:780px){.node-viz .viz-body.two-col{grid-template-columns:1fr;}}
+.node-viz .viz-body.controls-canvas{
+  display:grid;
+  grid-template-columns:300px 1fr;
+  gap:24px;
+  align-items:start;
+}
+@media (max-width:880px){.node-viz .viz-body.controls-canvas{grid-template-columns:1fr;}}
+
+/* viz-readout — the info panel that updates when a region/control is selected */
+.node-viz .viz-readout{
+  background:var(--paper-2);
+  border:1px solid var(--line);
+  border-left:3px solid var(--gold);
+  border-radius:10px;
+  padding:18px 20px;
+  font-size:14px;
+  line-height:1.6;
+  color:var(--ink-2);
+  min-height:120px;
+}
+.node-viz .viz-readout:empty::before{
+  content:"Click a region to see details.";
+  font-style:italic;
+  color:var(--ink-mute);
+}
+.node-viz .viz-readout h4{
+  font-family:'Playfair Display',serif;
+  font-size:18px;
+  font-weight:700;
+  margin:0 0 6px;
+  color:var(--ink);
+  letter-spacing:-.005em;
+}
+.node-viz .viz-readout h4 em{font-style:italic;color:var(--gold-d);font-weight:400;}
+.node-viz .viz-readout .lbl{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10.5px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  font-weight:700;
+  color:var(--ink-mute);
+  margin-bottom:4px;
+  display:block;
+}
+.node-viz .viz-readout .keys{margin:8px 0 0;padding-left:18px;font-size:13.5px;line-height:1.65;}
+.node-viz .viz-readout .keys li{margin-bottom:3px;}
+.node-viz .viz-readout .keys li::marker{color:var(--gold-d);}
+.node-viz .viz-readout .trap{
+  margin-top:10px;
+  padding:10px 14px;
+  background:rgba(213,94,0,.08);
+  border-left:3px solid var(--trap);
+  border-radius:0 6px 6px 0;
+  font-size:13px;
+  color:var(--trap-d);
+}
+.node-viz .viz-readout .trap b{color:var(--trap-d);font-weight:700;}
+
+/* ========================================================
+   GI ABSORPTION MAP
+   Vertical anatomical column: Mouth → Stomach → Duodenum →
+   Jejunum → Ileum → Colon. Each region is a clickable card
+   that reveals detail in the adjacent .viz-readout panel.
+   ======================================================== */
+.gi-map{
+  display:flex;
+  flex-direction:column;
+  gap:0;
+  position:relative;
+  padding:8px 0;
+}
+.gi-map::before{
+  /* the connecting "tube" running down the column */
+  content:"";
+  position:absolute;
+  left:50%;
+  top:30px;
+  bottom:30px;
+  width:6px;
+  background:linear-gradient(180deg,var(--gold-m) 0%,var(--gold) 50%,var(--gold-d) 100%);
+  border-radius:3px;
+  transform:translateX(-50%);
+  z-index:0;
+  opacity:.45;
+}
+.gi-region{
+  position:relative;
+  z-index:1;
+  display:grid;
+  grid-template-columns:120px 1fr;
+  gap:14px;
+  align-items:center;
+  background:var(--paper);
+  border:1.5px solid var(--line);
+  border-radius:14px;
+  padding:14px 18px;
+  margin:5px auto;
+  width:92%;
+  cursor:pointer;
+  transition:all var(--motion-base,.25s);
+  text-align:left;
+  box-shadow:0 1px 0 rgba(13,32,24,.03);
+}
+.gi-region:hover{
+  border-color:var(--gold);
+  transform:translateY(-1px);
+  box-shadow:var(--shadow);
+}
+.gi-region:focus-visible{
+  outline:2.5px solid var(--gold-d);
+  outline-offset:2px;
+}
+.gi-region.active{
+  border-color:var(--gold-d);
+  background:linear-gradient(135deg,var(--paper) 0%,rgba(201,168,76,.08) 100%);
+  box-shadow:0 2px 0 var(--gold-d), var(--shadow);
+}
+.gi-region.active::after{
+  content:"";
+  position:absolute;
+  left:-6px;
+  top:50%;
+  transform:translateY(-50%);
+  width:12px;
+  height:12px;
+  background:var(--gold);
+  border:2px solid var(--paper);
+  border-radius:50%;
+  box-shadow:0 0 0 3px var(--gold-glow);
+}
+.gi-region .name{
+  font-family:'Playfair Display',serif;
+  font-size:18px;
+  font-weight:700;
+  color:var(--ink);
+  letter-spacing:-.01em;
+}
+.gi-region .info{
+  font-family:'DM Sans',sans-serif;
+  font-size:13.5px;
+  color:var(--ink-2);
+  line-height:1.45;
+}
+.gi-region.active .name{color:var(--gold-d);}
+
+/* ========================================================
+   GI REGION DETAIL CARDS (rendered into viz-readout on click)
+   ======================================================== */
+.gi-detail{font-size:14px;line-height:1.6;color:var(--ink-2);}
+.gi-detail .gi-d-h{
+  font-family:'Playfair Display',serif;
+  font-size:20px;
+  font-weight:700;
+  color:var(--ink);
+  margin-bottom:2px;
+}
+.gi-detail .gi-d-h em{font-style:italic;color:var(--gold-d);}
+.gi-detail .gi-d-sub{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10.5px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--gold-d);
+  font-weight:700;
+  margin-bottom:10px;
+}
+.gi-detail .gi-d-row{
+  display:grid;
+  grid-template-columns:90px 1fr;
+  gap:6px 14px;
+  font-size:13.5px;
+  margin-bottom:8px;
+  padding-bottom:8px;
+  border-bottom:1px dashed var(--line);
+}
+.gi-detail .gi-d-row:last-child{border-bottom:none;padding-bottom:0;margin-bottom:0;}
+.gi-detail .gi-d-row .k{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10.5px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--ink-mute);
+  font-weight:700;
+  padding-top:2px;
+}
+.gi-detail .gi-d-row .v b{color:var(--ink);font-weight:600;}
+.gi-detail .gi-d-trap{
+  margin-top:8px;
+  padding:10px 14px;
+  background:rgba(213,94,0,.08);
+  border-left:3px solid var(--trap);
+  border-radius:0 6px 6px 0;
+  font-size:13px;
+  color:var(--trap-d);
+  line-height:1.5;
+}
+.gi-detail .gi-d-trap b{color:var(--trap-d);font-weight:700;}

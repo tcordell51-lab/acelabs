@@ -1,0 +1,1438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Ace The DAT · Practice Tests</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=DM+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&family=Arial&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared/al-tokens.css">
+<link rel="stylesheet" href="shared/ace-labs-shell.css">
+<style>
+/* ============================================================
+   SPLASH (Ace The DAT branded — test selection screen)
+   ============================================================ */
+.pm-stage{max-width:920px; margin:0 auto;}
+.pm-h{font-family:'Playfair Display',serif; font-size:42px; font-weight:700; letter-spacing:-.02em; line-height:1.05; margin-bottom:8px}
+.pm-h em{color:var(--al-gold-d); font-style:italic}
+.pm-sub{font-size:15px; color:var(--al-ink-2); max-width:680px; margin-bottom:24px; line-height:1.55}
+.pm-pill{display:inline-flex; align-items:center; gap:8px; font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--al-gold-d); background:var(--al-gold-bg); padding:6px 12px; border-radius:99px; border:1px solid var(--al-gold-d); font-weight:700; margin-bottom:18px}
+
+.pm-tests{display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin:18px 0 22px}
+@media (max-width:600px){.pm-tests{grid-template-columns:repeat(1,1fr)}}
+.pm-test{padding:18px 16px; background:var(--al-paper); border:2px solid var(--al-line); border-radius:10px; cursor:pointer; transition:all .15s; text-align:center}
+.pm-test:hover{border-color:var(--al-gold-d); box-shadow:0 4px 14px rgba(13,32,24,.08)}
+.pm-test.active{background:var(--al-gold-bg); border-color:var(--al-gold-d)}
+.pm-test .nm{font-family:'Playfair Display',serif; font-size:28px; font-weight:700; line-height:1; color:var(--al-gold-d)}
+.pm-test .lbl{font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--al-ink-mute); margin-top:6px; font-weight:700}
+.pm-test .det{font-size:11px; color:var(--al-ink-2); margin-top:8px; line-height:1.35}
+
+.pm-card{padding:18px 22px; background:var(--al-paper); border:1px solid var(--al-line); border-radius:11px; margin-bottom:14px}
+.pm-card h3{font-family:'Playfair Display',serif; font-size:18px; font-weight:700; margin-bottom:8px}
+.pm-card p{font-size:13.5px; color:var(--al-ink-2); line-height:1.55; margin-bottom:6px}
+.pm-card ul{margin:6px 0 0 18px; font-size:13.5px; color:var(--al-ink-2); line-height:1.7}
+
+.pm-start{display:block; width:100%; padding:18px 24px; background:linear-gradient(180deg,var(--al-teal),var(--al-teal-2)); color:var(--al-paper); border:2px solid var(--al-gold); border-radius:12px; font-family:'JetBrains Mono',monospace; font-size:14px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; cursor:pointer; transition:all .18s; text-align:center}
+.pm-start:hover{transform:translateY(-2px); box-shadow:0 12px 36px rgba(13,32,24,.16)}
+.pm-start:disabled{opacity:.4; cursor:not-allowed; transform:none}
+
+.pm-warn{padding:14px 18px; background:#fff8e6; border:1px solid #d9a22b; border-left:4px solid #d9a22b; border-radius:8px; font-size:13px; line-height:1.55; color:#5c3d06; margin-bottom:14px}
+.pm-warn b{color:#3a2904}
+
+/* ============================================================
+   ACE THE DAT TEST RUNTIME — Prometric-style proctored layout
+   (deep teal header + footer, white content card, italic small-caps
+   action buttons). Mirrors the visual conventions of the official
+   ADA Prometric demo so students train under realistic conditions.
+   ============================================================ */
+.pm-run{position:fixed; inset:0; background:#f0f3f5; font-family:'DM Sans', Arial, sans-serif; z-index:1000; display:flex; flex-direction:column; color:#1a1d20}
+.pm-run *{font-family:'DM Sans', Arial, sans-serif}
+
+/* Top header bar — bright blue, three-column flex (left: X + question count, center: brand + test, right: timer + gear) */
+.pm-runtop{display:grid; grid-template-columns:1fr auto 1fr; align-items:center; background:#086894; color:#fff; padding:14px 22px; font-size:14px; min-height:74px; gap:20px}
+.pm-runtop .col-l{display:flex; align-items:center; gap:18px; justify-self:start}
+.pm-runtop .col-c{display:flex; flex-direction:column; align-items:center; line-height:1.2}
+.pm-runtop .col-r{display:flex; align-items:center; gap:14px; justify-self:end}
+.pm-runtop .x{cursor:pointer; width:34px; height:34px; display:inline-flex; align-items:center; justify-content:center; border-radius:50%; background:rgba(255,255,255,.1); font-size:16px; transition:background .12s}
+.pm-runtop .x:hover{background:rgba(255,255,255,.25)}
+.pm-runtop .qcount{font-size:18px; font-weight:600}
+.pm-runtop .brand{font-size:13px; opacity:.92; font-weight:500}
+.pm-runtop .testname{font-size:18px; font-weight:600; margin-top:2px}
+.pm-runtop .timer{font-size:18px; font-weight:600}
+.pm-runtop .timer.warn{color:#ffd9d9; animation:pmPulse 1s infinite}
+.pm-runtop .gear{cursor:pointer; width:36px; height:36px; display:inline-flex; align-items:center; justify-content:center; border-radius:50%; background:rgba(255,255,255,.12); font-size:18px}
+@keyframes pmPulse{0%,100%{opacity:1} 50%{opacity:.55}}
+
+/* Mark-for-review checkbox / calculator / PT lives in a slim sub-bar above the question */
+.pm-toolrow{display:flex; align-items:center; justify-content:flex-end; gap:14px; padding:8px 28px; background:#f7f9fa; border-bottom:1px solid #d8dee4; font-size:12px}
+.pm-toolrow .markbox{display:inline-flex; align-items:center; gap:6px; cursor:pointer; user-select:none; padding:4px 10px; border:1px solid #c5ccd1; border-radius:14px; background:#fff; color:#3a4148; font-weight:600; font-size:11px; letter-spacing:.04em; text-transform:uppercase}
+.pm-toolrow .markbox:hover{border-color:#086894; color:#086894}
+.pm-toolrow .markbox.marked{background:#cf4444; border-color:#a02a2a; color:#fff}
+.pm-toolrow .markbox input{margin:0; accent-color:#fff}
+.pm-toolrow .pm-calcbtn, .pm-toolrow .pm-pt-btn{padding:5px 12px; font-size:11px; font-weight:700; background:#fff; border:1px solid #c5ccd1; border-radius:14px; cursor:pointer; letter-spacing:.04em; color:#3a4148; text-transform:uppercase}
+.pm-toolrow .pm-calcbtn:hover, .pm-toolrow .pm-pt-btn:hover{border-color:#086894; color:#086894}
+.pm-toolrow .pm-calcbtn.active, .pm-toolrow .pm-pt-btn.active{background:#086894; border-color:#054766; color:#fff}
+
+/* Body: white centered question card on light background */
+.pm-runbody{flex:1; display:flex; overflow:hidden; background:#fff}
+.pm-quest{flex:1; padding:30px 28px; overflow-y:auto; background:#fff}
+.pm-qcard{max-width:940px; margin:0 auto; background:#fff; border:2px solid #1a1d20; border-radius:0; padding:34px 38px}
+.pm-qsubject{font-size:15px; font-weight:700; color:#1a1d20; margin-bottom:14px}
+.pm-qtxt{font-size:15px; line-height:1.65; color:#1a1d20; margin-bottom:16px; font-weight:400}
+.pm-qmeta{font-size:10.5px; color:#8a939b; margin-bottom:14px; letter-spacing:.06em; text-transform:uppercase; font-weight:600}
+.pm-q .equation{text-align:center; font-size:16px; font-weight:500; margin:14px 0; color:#1a1d20}
+.pm-q table{margin:14px auto; border-collapse:collapse; font-size:13.5px}
+.pm-q table th{background:#086894; color:#fff; padding:6px 14px; font-weight:600; border:1px solid #2f6da8; text-align:center}
+.pm-q table td{padding:6px 14px; border:1px solid #c5ccd1; text-align:center; background:#fff}
+.pm-opts{display:flex; flex-direction:column; gap:10px; margin-top:16px}
+.pm-opt{padding:11px 16px; background:#fff; border:1px solid #d0d6db; border-radius:6px; cursor:pointer; transition:all .1s; display:flex; gap:12px; align-items:flex-start; font-size:14px; line-height:1.5; color:#1a1d20}
+.pm-opt:hover{border-color:#086894; background:#f5f9fc}
+.pm-opt.selected{background:#fff; border-color:#086894; box-shadow:inset 0 0 0 1px #086894}
+.pm-opt .radio{width:14px; height:14px; border:1.5px solid #8a939b; border-radius:50%; flex-shrink:0; margin-top:3px; position:relative}
+.pm-opt.selected .radio{border-color:#086894}
+.pm-opt.selected .radio::after{content:''; position:absolute; inset:2px; background:#086894; border-radius:50%}
+.pm-opt .let{font-weight:600; color:#1a1d20; flex-shrink:0; min-width:18px}
+.pm-q .next-hint{font-size:14px; font-weight:600; color:#1a1d20; margin-top:18px}
+
+/* Sidebar nav grid — hidden by default; surfaced via the Review action */
+.pm-side{display:none}
+
+/* Section subdivider chips */
+.pm-sectchips{display:flex; gap:4px; padding:0 0 12px; font-size:10px; font-weight:700; letter-spacing:.06em; text-transform:uppercase}
+.pm-sectchip{padding:4px 9px; background:#eef2f5; border:1px solid #c5ccd1; border-radius:3px; color:#5a6168}
+.pm-sectchip.cur{background:#086894; color:#fff; border-color:#054766}
+
+/* Bottom action bar — Ace The DAT test-runtime teal (#086894) with 5 evenly-spaced
+   white pill buttons in italic small-caps (PREVIOUS · NEXT · MARK · EXHIBIT · REVIEW) */
+.pm-runfoot{display:flex; justify-content:space-around; align-items:center; gap:14px; padding:18px 36px; background:#086894; border-top:1px solid #054766}
+.pm-btn{padding:11px 28px; font-size:14px; font-weight:500; letter-spacing:.10em; border:1px solid rgba(0,0,0,.06); background:linear-gradient(180deg, #ffffff 0%, #eaf6ff 100%); color:#1a1d20; border-radius:8px; cursor:pointer; font-family:'DM Sans',Arial,sans-serif; font-style:italic; text-transform:uppercase; min-width:124px; transition:all .12s; box-shadow:0 1px 2px rgba(0,0,0,.18)}
+.pm-btn:hover{background:linear-gradient(180deg, #ffffff 0%, #d0ebff 100%)}
+.pm-btn:disabled{opacity:.5; cursor:not-allowed}
+.pm-btn .underline{text-decoration:underline}
+/* Primary (Next) is the same white pill — keeps the row visually consistent */
+.pm-btn.primary{background:linear-gradient(180deg, #ffffff 0%, #eaf6ff 100%); color:#1a1d20}
+/* Marked = red filled pill, replaces Mark visually when active */
+.pm-btn.marked{background:linear-gradient(180deg, #d94747 0%, #b03434 100%); border-color:#8a2828; color:#fff; font-weight:600}
+.pm-btn.marked:hover{background:linear-gradient(180deg, #e25a5a 0%, #b03434 100%)}
+.pm-btn.danger{background:transparent; border:1px dashed rgba(255,255,255,.35); color:#ffe2e2; box-shadow:none; min-width:auto; padding:8px 16px; font-size:11px}
+.pm-btn.danger:hover{background:rgba(255,255,255,.06); color:#fff}
+
+/* Windows Calculator widget (QR only — matches the actual DAT calculator)
+   Mirrors the calculator image in the ADA 2026 Candidate Guide:
+   classic Win 7 calc.exe with View/Edit/Help menu, MC/MR/MS/M+/M-, ←/CE/C/±/√, %/1/x. */
+.pm-calcbtn{padding:8px 14px; font-size:11px; font-weight:700; background:linear-gradient(#fff,#e0e5e9); border:1.5px solid #4a525a; border-radius:4px; cursor:pointer; letter-spacing:.04em}
+.pm-calcbtn.active{background:#1c2026; color:#fff}
+.pm-calc{position:fixed; top:120px; right:40px; width:268px; background:#e8edf0; border:1px solid #707b85; border-radius:4px; z-index:1100; box-shadow:0 8px 32px rgba(0,0,0,.4); display:none; font-family:'Segoe UI',Arial,sans-serif; cursor:default; user-select:none}
+.pm-calc.open{display:block}
+.pm-calc.dragging{cursor:grabbing}
+/* Window chrome — title bar with min/max/close */
+.pm-calc .titlebar{display:flex; justify-content:space-between; align-items:center; background:linear-gradient(180deg, #4a90e0 0%, #2e6db8 100%); color:#fff; padding:4px 6px; font-size:11px; font-weight:600; cursor:grab; border-radius:3px 3px 0 0}
+.pm-calc .titlebar .lbl{display:flex; align-items:center; gap:6px}
+.pm-calc .titlebar .ico{display:inline-block; width:14px; height:14px; background:#fff; border:1px solid #2e6db8; border-radius:1px; font-size:9px; line-height:13px; text-align:center; color:#2e6db8; font-weight:700}
+.pm-calc .titlebar .winbtns{display:flex; gap:0}
+.pm-calc .titlebar .winbtn{width:24px; height:18px; background:transparent; border:none; color:#fff; font-size:11px; line-height:1; cursor:default; padding:0; font-family:Arial,sans-serif}
+.pm-calc .titlebar .winbtn.x:hover{background:#cf4444}
+.pm-calc .titlebar .winbtn:hover{background:rgba(255,255,255,.2)}
+/* Menu bar */
+.pm-calc .menu{background:#f0f0f0; padding:2px 4px; border-bottom:1px solid #c0c7cc; display:flex; gap:0; font-size:11px; color:#1c2026}
+.pm-calc .menu span{padding:2px 8px; cursor:default}
+.pm-calc .menu span:hover{background:#cce4f7}
+/* Body */
+.pm-calc .body{padding:6px}
+.pm-calc .display{background:#fff; color:#1c2026; font-family:'Segoe UI', Arial, sans-serif; font-size:22px; padding:8px 10px; text-align:right; min-height:38px; word-break:break-all; border:1px solid #707b85; border-radius:0; font-weight:400; margin-bottom:4px}
+.pm-calc .memory{height:14px; padding:0 6px; font-size:10px; color:#606870; text-align:left}
+.pm-calc .keys{display:grid; grid-template-columns:repeat(5,1fr); gap:2px}
+.pm-calc .keys button{padding:8px 0; background:linear-gradient(180deg, #fafbfc 0%, #dde2e6 100%); border:1px solid #b5bcc1; border-radius:2px; font-family:'Segoe UI',Arial,sans-serif; font-size:12px; font-weight:400; color:#1c2026; cursor:default; transition:background .05s; height:30px}
+.pm-calc .keys button:hover{background:linear-gradient(180deg, #ffffff 0%, #e6ecf0 100%); border-color:#7a838a}
+.pm-calc .keys button:active{background:linear-gradient(180deg, #c8d0d6 0%, #aeb5bb 100%)}
+.pm-calc .keys button.mem{color:#3a78c4}
+.pm-calc .keys button.fn{color:#a02a2a}
+.pm-calc .keys button.op{color:#1c2026; font-weight:700}
+.pm-calc .keys button.eq{background:linear-gradient(180deg, #4a8fe0 0%, #2a6db8 100%); color:#fff; border-color:#054766; font-weight:700}
+.pm-calc .keys button.eq:hover{background:linear-gradient(180deg, #5a9fe8 0%, #3a7dc8 100%)}
+.pm-calc .keys button.zero{grid-column:span 2}
+/* Periodic table button (GC only) */
+.pm-pt-btn{padding:8px 14px; font-size:11px; font-weight:700; background:linear-gradient(#fff,#e0e5e9); border:1.5px solid #4a525a; border-radius:4px; cursor:pointer; letter-spacing:.04em}
+.pm-pt-btn.active{background:#1c2026; color:#fff}
+.pm-pt{position:fixed; top:80px; left:40px; width:760px; max-width:calc(100vw - 80px); max-height:calc(100vh - 160px); overflow:auto; background:#fff; border:1px solid #707b85; border-radius:4px; z-index:1100; box-shadow:0 8px 32px rgba(0,0,0,.4); display:none; font-family:Arial,sans-serif}
+.pm-pt.open{display:block}
+.pm-pt .titlebar{display:flex; justify-content:space-between; align-items:center; background:linear-gradient(180deg, #4a90e0 0%, #2e6db8 100%); color:#fff; padding:4px 8px; font-size:12px; font-weight:600}
+.pm-pt .titlebar .x{cursor:pointer; padding:0 8px; color:#fff; font-family:Arial,sans-serif}
+.pm-pt .body{padding:14px 18px; font-size:12px; color:#1c2026}
+.pm-pt h4{font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:#3a4148; margin-bottom:8px; font-weight:700; text-align:center}
+.pm-pt table{border-collapse:collapse; margin:0 auto}
+.pm-pt td{width:32px; height:32px; border:1px solid #b5bcc1; text-align:center; font-size:10px; line-height:1.1; padding:1px; background:#fff; vertical-align:middle}
+.pm-pt td.empty{border:none; background:transparent}
+.pm-pt td .num{font-size:8px; color:#6a737a; display:block; line-height:1}
+.pm-pt td .sym{font-size:11px; font-weight:700; color:#1c2026; line-height:1}
+.pm-pt td .mass{font-size:7px; color:#3a4148; line-height:1}
+.pm-pt td.metal{background:#f5e6c8}
+.pm-pt td.nonmetal{background:#d8efd8}
+.pm-pt td.metalloid{background:#e8d6e8}
+.pm-pt td.transition{background:#dde6f0}
+.pm-pt td.noble{background:#f0d8d8}
+.pm-pt .constants{margin-top:14px; font-size:11px; color:#3a4148; line-height:1.6; border-top:1px solid #c0c7cc; padding-top:10px}
+.pm-pt .constants b{color:#1c2026}
+/* SmilesDrawer canvas — used for OChem questions with q_smiles / opts_smiles */
+.pm-mol{display:inline-block; vertical-align:middle; margin:4px 0; background:#fff; border:1px solid #d0d6db; border-radius:3px; padding:4px}
+.pm-mol-canvas{display:block; width:100%; max-width:280px; height:120px}
+.pm-opts .pm-mol{display:block; max-width:240px; margin-top:4px}
+.pm-q .pm-mol{display:block; max-width:380px; margin:8px 0}
+/* SVG question rendering (for arrow-prediction questions) */
+.pm-q .pm-svg{display:block; max-width:520px; margin:10px 0; background:#fff; border:1px solid #d0d6db; border-radius:3px; padding:8px}
+.pm-q .pm-svg svg{display:block; max-width:100%; height:auto}
+.pm-opts .pm-svg{display:block; max-width:380px; margin-top:6px; background:#fff; border:1px solid #d0d6db; border-radius:3px; padding:6px}
+.pm-opts .pm-svg svg{display:block; max-width:100%; height:auto}
+
+/* Review screen (end-of-section) */
+/* End-of-Section Review — Ace The DAT teal header, white body, square nav cells */
+.pm-rev{position:fixed; inset:0; background:#fff; z-index:1100; display:flex; flex-direction:column; font-family:'DM Sans',Arial,sans-serif}
+.pm-rev *{font-family:'DM Sans',Arial,sans-serif}
+.pm-rev .top{display:flex; justify-content:space-between; align-items:center; padding:18px 28px; background:#086894; color:#fff}
+.pm-rev .top .title{font-size:18px; font-weight:600}
+.pm-rev .top .meta{font-size:13px; color:#cdd5e0}
+.pm-rev .body{flex:1; padding:34px 40px; overflow-y:auto; max-width:980px; margin:0 auto; width:100%; color:#1a1d20}
+.pm-rev h2{font-size:24px; font-weight:700; margin-bottom:8px; color:#1a1d20}
+.pm-rev .helper{font-size:14px; color:#3a4148; line-height:1.55; margin-bottom:18px}
+.pm-rev .helper b{color:#1a1d20}
+.pm-rev .stats{display:flex; gap:14px; margin:18px 0 22px}
+.pm-rev .stat{padding:16px 22px; background:#f0f6fa; border:1px solid #d0e1ec; border-radius:6px; flex:1}
+.pm-rev .stat .lbl{font-size:11px; letter-spacing:.1em; color:#5a6168; text-transform:uppercase; font-weight:600}
+.pm-rev .stat .num{font-size:28px; font-weight:700; color:#1a1d20; margin-top:6px}
+.pm-rev .stat.warn .num{color:#a02a2a}
+.pm-rev .stat.ok .num{color:#086894}
+.pm-rev h3{font-size:14px; letter-spacing:.06em; text-transform:uppercase; color:#3a4148; margin:18px 0 10px; font-weight:700}
+.pm-rev .legend{display:flex; gap:18px; font-size:12px; color:#3a4148; margin-bottom:14px}
+.pm-rev .legend .lbox{display:inline-flex; align-items:center; gap:6px}
+.pm-rev .legend .sw{width:14px; height:14px; border:1px solid #b5bcc1; border-radius:3px}
+.pm-rev .grid{display:grid; grid-template-columns:repeat(10,1fr); gap:6px; margin-bottom:18px}
+@media (max-width:780px){.pm-rev .grid{grid-template-columns:repeat(8,1fr)}}
+.pm-rev .grid .pm-cell{aspect-ratio:1; font-size:11px; font-weight:600; border:1px solid #b5bcc1; background:#fff; color:#3a4148; display:flex; align-items:center; justify-content:center; cursor:pointer; border-radius:4px; position:relative}
+.pm-rev .grid .pm-cell.answered{background:#086894; color:#fff; border-color:#054766}
+.pm-rev .grid .pm-cell.marked::after{content:''; position:absolute; top:1px; right:1px; width:0; height:0; border-style:solid; border-width:0 8px 8px 0; border-color:transparent #cf3b3b transparent transparent}
+.pm-rev .grid .pm-cell:hover{transform:scale(1.05)}
+.pm-rev .actions{display:flex; gap:10px; padding-top:24px; border-top:1px solid #d0d6db; margin-top:24px}
+.pm-rev .actions button{padding:10px 22px; font-size:13px; font-weight:600; letter-spacing:.06em; border:1px solid #b5bcc1; background:#fff; color:#1a1d20; border-radius:6px; cursor:pointer; font-family:'DM Sans',Arial,sans-serif}
+.pm-rev .actions button:hover{border-color:#086894; color:#086894}
+.pm-rev .actions button.primary{background:#086894; color:#fff; border-color:#054766}
+.pm-rev .actions button.primary:hover{background:#054766; color:#fff}
+.pm-rev .actions .spacer{flex:1}
+
+/* End-of-test results */
+/* ============================================================
+   ACE THE DAT SCORE REPORT — dark-mode results screen with
+   pill chips, distribution bar chart, You vs Average comparison
+   table, Feedback box, and per-topic Score Breakdown with
+   personal score + cohort-average bars.
+   ============================================================ */
+.pm-final{position:fixed; inset:0; background:#131a26; color:#e8edf2; z-index:1500; overflow-y:auto; padding:36px 80px; font-family:'DM Sans',Arial,sans-serif}
+.pm-final *{font-family:'DM Sans',Arial,sans-serif}
+.pm-final .top{display:flex; justify-content:space-between; align-items:center; margin-bottom:18px}
+.pm-final .top h2{font-size:30px; font-weight:700; color:#fff; display:flex; align-items:center; gap:12px}
+.pm-final .top h2 .arrow{font-size:24px; color:#9aa4b4}
+.pm-final .top .x{cursor:pointer; width:36px; height:36px; display:inline-flex; align-items:center; justify-content:center; border:1px solid #3a4356; color:#9aa4b4; border-radius:6px}
+.pm-final .top .x:hover{color:#fff; background:#1f2638}
+.pm-final .pills{display:flex; flex-wrap:wrap; gap:10px; margin-bottom:24px}
+.pm-final .pill{display:inline-flex; align-items:center; gap:8px; padding:8px 14px; background:#1f2638; border:1px solid #3a4356; border-radius:18px; font-size:13px; color:#cdd5e0}
+.pm-final .pill .icon{display:inline-flex; align-items:center; justify-content:center; width:14px; height:14px; border:1px solid #4f5a73; border-radius:50%; font-size:9px; color:#9aa4b4}
+.pm-final .est{font-size:30px; font-weight:700; color:#fff; margin-bottom:18px; padding-bottom:14px; border-bottom:1px solid #2a3346}
+.pm-final .est .num{color:#3892ff; font-size:32px; margin-left:10px}
+.pm-final .row1{display:grid; grid-template-columns:1.2fr 1fr; gap:24px; margin-bottom:22px}
+@media (max-width:980px){.pm-final .row1{grid-template-columns:1fr}}
+.pm-final .chart{background:#1c2434; border:1px solid #2a3346; border-radius:8px; padding:24px 20px; min-height:240px; display:flex; flex-direction:column; justify-content:flex-end}
+.pm-final .chart svg{width:100%; height:200px}
+.pm-final .vsAvg{background:#1c2434; border:1px solid #2a3346; border-radius:8px; padding:18px 22px}
+.pm-final .vsAvg table{width:100%; border-collapse:collapse}
+.pm-final .vsAvg th{text-align:left; padding:8px 4px; color:#9aa4b4; font-weight:500; font-size:13px; border-bottom:1px solid #2a3346}
+.pm-final .vsAvg th.r{text-align:right}
+.pm-final .vsAvg td{padding:14px 4px; color:#fff; font-size:14px; font-weight:500; border-bottom:1px solid #1f2638}
+.pm-final .vsAvg td.r{text-align:right}
+.pm-final .vsAvg tr:last-child td{border-bottom:none}
+.pm-final .vsAvg .lbl{color:#9aa4b4; font-weight:400}
+.pm-final .feedback{background:#1c2434; border:1px solid #2a3346; border-radius:8px; padding:20px 24px; margin-bottom:22px}
+.pm-final .feedback h3{font-size:18px; font-weight:700; color:#fff; margin-bottom:8px}
+.pm-final .feedback p{color:#cdd5e0; font-size:14px; line-height:1.6}
+.pm-final .breakdown{margin-bottom:22px}
+.pm-final .breakdown-head{display:flex; justify-content:space-between; align-items:center; margin-bottom:12px}
+.pm-final .breakdown-head h3{font-size:22px; font-weight:700; color:#fff}
+.pm-final .breakdown-head .toggle{padding:8px 14px; background:#1f2638; border:1px solid #3a4356; border-radius:18px; color:#cdd5e0; font-size:13px; cursor:pointer; display:inline-flex; align-items:center; gap:6px}
+.pm-final .breakdown-head .toggle:hover{border-color:#4f5a73; color:#fff}
+.pm-final .topicTable{width:100%; border-collapse:collapse; background:#1c2434; border:1px solid #2a3346; border-radius:8px; overflow:hidden}
+.pm-final .topicTable th{text-align:left; padding:14px 18px; font-size:13px; color:#9aa4b4; font-weight:500; border-bottom:1px solid #2a3346; background:#1f2638}
+.pm-final .topicTable th.r{text-align:right}
+.pm-final .topicTable td{padding:14px 18px; font-size:14px; color:#fff; border-bottom:1px solid #1f2638}
+.pm-final .topicTable td.r{text-align:right}
+.pm-final .topicTable tr:last-child td{border-bottom:none}
+.pm-final .topicTable .barCell{position:relative; width:240px}
+.pm-final .topicTable .bar{position:relative; height:8px; background:#2a3346; border-radius:4px; overflow:hidden}
+.pm-final .topicTable .bar .you{position:absolute; left:0; top:0; height:100%; background:#3892ff; border-radius:4px}
+.pm-final .topicTable .bar .avg{position:absolute; top:-3px; bottom:-3px; width:2px; background:#9aa4b4}
+.pm-final .actions{display:flex; gap:10px; margin-top:32px; padding-top:22px; border-top:1px solid #2a3346}
+.pm-final .actions .btn{padding:10px 22px; background:#3892ff; color:#fff; border:none; border-radius:6px; font-weight:600; cursor:pointer; font-size:14px}
+.pm-final .actions .btn:hover{background:#5aa3ff}
+.pm-final .actions .btn.secondary{background:transparent; border:1px solid #4f5a73; color:#cdd5e0}
+.pm-final .actions .btn.secondary:hover{border-color:#9aa4b4; color:#fff}
+
+/* Break screen */
+.pm-break{position:fixed; inset:0; background:#1c2026; color:#e8edf0; z-index:1200; display:flex; align-items:center; justify-content:center; flex-direction:column; padding:30px}
+.pm-break h2{font-size:32px; margin-bottom:14px; font-family:Arial}
+.pm-break .timer{font-family:'JetBrains Mono', monospace; font-size:64px; color:#7fffa0; margin:18px 0}
+.pm-break p{font-size:15px; max-width:480px; text-align:center; line-height:1.6; margin-bottom:18px; color:#bbc4cb}
+.pm-break .btns{display:flex; gap:10px}
+.pm-break button{padding:12px 22px; font-size:13px; font-weight:700; letter-spacing:.06em; border:1.5px solid #4a525a; background:linear-gradient(#fff, #e0e5e9); color:#1c2026; border-radius:4px; cursor:pointer; font-family:Arial,sans-serif}
+.pm-break button.primary{background:linear-gradient(#3a78c4, #2a5a96); color:#fff; border-color:#054766}
+</style>
+<link rel="stylesheet" href="shared/al-motion.css">
+</head>
+<body data-page="prometric-mock">
+<div class="al-app">
+
+<header class="al-top">
+  <div class="al-brand">
+    <span class="al-mark">Ace<em>The</em>DAT</span>
+    <span class="al-divider"></span>
+    <span class="al-product">Ace The DAT · Practice Tests</span>
+  </div>
+  <nav class="al-nav">
+    <a href="ace-labs.html" class="al-nav-link">Home</a>
+    <a href="mocks-catalog.html" class="al-nav-link">Mock catalog</a>
+  </nav>
+</header>
+
+<div class="pm-stage" id="pmStage">
+  <div class="pm-pill"><span style="width:8px;height:8px;border-radius:50%;background:var(--al-gold);display:inline-block"></span>Ace The DAT · Practice Tests</div>
+  <h1 class="pm-h">3 practice tests, <em>pacing simulation.</em></h1>
+  <p class="pm-sub">Survey of Natural Sciences (100Q in 90min) followed by a 30-minute break, then Quantitative Reasoning (40Q in 45min). Interface mirrors the actual Prometric testing center per the ADA 2026 Candidate Guide: section timers, question navigation panel, mark-for-review, end-of-section review screen, classic Windows calculator (memory + sqrt + 1/x) for QR, periodic table reference for Gen Chem questions. PAT and Reading Comprehension sections are not included — those skills require image and passage banks not yet shipped.</p>
+
+  <div class="pm-warn"><b>About this mock.</b> This mock is to confirm your pacing under DAT timing. The score predictor is in beta — treat it as a directional signal, not a guarantee. The real DAT is 5h 15m over 4 sections. This mock covers the 2 sections Ace The DAT has banks for (Sciences + QR) — about 2h 15m of seat time. Score predictor uses the new <b>200-600 scaled score</b> (replaces the legacy 1-30 scale, effective March 1, 2025). OChem section follows the official April 2026 ADA outline: Mechanisms, Chemical Synthesis, Acid-Base, Chemical &amp; Physical Properties, Structural Evaluation. OChem questions render skeletal molecular structures from SMILES, and 8 questions use the new ADA-spec curved-arrow format ("predict product from arrows" / "predict arrows from product").</div>
+
+  <h3 style="font-family:'Playfair Display',serif; font-size:20px; font-weight:700; margin:8px 0 12px">Pick a test</h3>
+  <div class="pm-tests" id="pmTests"></div>
+
+  <div class="pm-card">
+    <h3>Test rules (mirrors Prometric center)</h3>
+    <ul>
+      <li>Timer starts when you click <b>Begin section</b>. It does not pause.</li>
+      <li>Within a section you can navigate freely between questions, mark for review, and skip.</li>
+      <li>Once you submit a section you cannot return to it.</li>
+      <li>The 30-minute break between Sciences and QR is optional — you can skip it.</li>
+      <li>QR section gets a basic 4-function calculator. Sciences sections do not.</li>
+      <li>Closing the tab or refreshing during a section ends the section with whatever you have answered.</li>
+    </ul>
+  </div>
+
+  <button class="pm-start" id="pmStartBtn" disabled>Pick a test to begin</button>
+</div>
+
+<script src="shared/smiles-drawer.min.js"></script>
+<script src="shared/dat-mock-tests.js"></script>
+<script>
+'use strict';
+
+// ---- State -----------------------------------------------------------------
+const SECTIONS = [
+  { key: 'sons', name: 'Survey of Natural Sciences', short: 'SCIENCES', durSec: 90*60, items: [], meta: 'Bio · Gen Chem · OChem' },
+  { key: 'qr',   name: 'Quantitative Reasoning',     short: 'QR',       durSec: 45*60, items: [], meta: 'Calculator available' }
+];
+
+const STATE = {
+  testId: null,
+  testIdx: 0,
+  sectionIdx: 0,            // 0 = Sciences, 1 = QR
+  itemIdx: 0,               // index within current section
+  answers: {},              // { sectionKey: { itemIdx: chosenIdx } }
+  marked: {},               // { sectionKey: { itemIdx: true } }
+  sectionStartedAt: null,
+  sectionEndedAt: {},
+  timerId: null,
+  breakStartedAt: null,
+  breakRemaining: 30*60,
+  finished: false,
+  results: null,
+  calcOpen: false,
+  calcDisplay: '0',
+  calcOp: null,
+  calcAcc: null,
+  calcResetNext: false,
+  calcMemory: null,         // memory register (null = empty, M indicator off)
+  ptOpen: false,            // periodic table popup state
+  refOpen: false,           // OChem reagent reference popup state
+  visited: {}               // { sectionKey: Set of visited item idx }
+};
+
+// ---- Splash: render test cards --------------------------------------------
+function renderTests(){
+  const wrap = document.getElementById('pmTests');
+  const tests = window.DAT_MOCK_TESTS || [];
+  if (!tests.length){ wrap.innerHTML = '<div style="grid-column:1/-1; padding:14px; background:var(--al-paper-2); border-radius:8px; font-size:13px; color:var(--al-ink-2)">Test bank failed to load. Refresh the page.</div>'; return; }
+  wrap.innerHTML = tests.map((t, i) => `
+    <div class="pm-test" data-i="${i}">
+      <div class="nm">${i+1}</div>
+      <div class="lbl">${t.name}</div>
+      <div class="det">140 Q · 135 min<br><span style="color:var(--al-ink-mute)">no overlap with others</span></div>
+    </div>
+  `).join('');
+  wrap.querySelectorAll('.pm-test').forEach(el => el.addEventListener('click', () => {
+    const i = +el.dataset.i;
+    wrap.querySelectorAll('.pm-test').forEach(x => x.classList.remove('active'));
+    el.classList.add('active');
+    STATE.testIdx = i;
+    STATE.testId = tests[i].id;
+    const btn = document.getElementById('pmStartBtn');
+    btn.disabled = false;
+    btn.textContent = `Begin ${tests[i].name} · 135-minute simulation`;
+  }));
+  // Pre-select a test if ?test=N was passed from the catalog
+  const urlTest = parseInt(new URLSearchParams(location.search).get('test'), 10);
+  if (!isNaN(urlTest) && urlTest >= 0 && urlTest < tests.length) {
+    const targetEl = wrap.querySelector(`.pm-test[data-i="${urlTest}"]`);
+    if (targetEl) targetEl.click();
+  }
+}
+renderTests();
+
+document.getElementById('pmStartBtn').addEventListener('click', () => {
+  const tests = window.DAT_MOCK_TESTS;
+  const t = tests[STATE.testIdx];
+  if (!t) return;
+  showInstructionsScreen(t);
+});
+
+// Pre-test instructions overlay — Prometric-style "About this test" gate that
+// the candidate must explicitly acknowledge before the section timer starts.
+function showInstructionsScreen(t){
+  document.getElementById('pmStage').style.display = 'none';
+  let ins = document.getElementById('pmInstructions');
+  if (ins) ins.remove();
+  ins = document.createElement('div');
+  ins.id = 'pmInstructions';
+  ins.style.cssText = 'position:fixed; inset:0; background:#fff; z-index:1200; display:flex; flex-direction:column; font-family:DM Sans,Arial,sans-serif';
+  ins.innerHTML = `
+    <div style="background:#086894; color:#fff; padding:18px 28px; display:flex; justify-content:space-between; align-items:center">
+      <div style="font-size:18px; font-weight:600">${t.name} · Instructions</div>
+      <div style="font-size:13px; color:#cdd5e0">AceTheDAT.com</div>
+    </div>
+    <div style="flex:1; overflow-y:auto; padding:36px 40px; max-width:920px; margin:0 auto; width:100%; color:#1a1d20">
+      <h2 style="font-size:26px; font-weight:700; margin-bottom:14px">Before you begin</h2>
+      <p style="font-size:14.5px; line-height:1.65; margin-bottom:18px; color:#3a4148">This is a full simulation modeled on the actual DAT Prometric testing experience. Once you click <b style="color:#1a1d20">Start Section</b>, the timer begins and will not pause. Read the rules below carefully.</p>
+      <ol style="font-size:14px; line-height:1.7; color:#3a4148; padding-left:22px; margin-bottom:22px">
+        <li><b style="color:#1a1d20">Survey of Natural Sciences:</b> 100 questions in 90 minutes (40 Biology + 30 General Chemistry + 30 Organic Chemistry). Manage your time across the three subjects yourself — they share the same timer.</li>
+        <li><b style="color:#1a1d20">Optional 30-minute break</b> between Sciences and QR. Skip the break or take it in full.</li>
+        <li><b style="color:#1a1d20">Quantitative Reasoning:</b> 40 questions in 45 minutes. A basic on-screen calculator (memory, square root, 1/x, %) is available for this section only.</li>
+        <li><b style="color:#1a1d20">Within a section</b> you can navigate freely between questions, mark items for review, and skip. Click any question number from the Review screen to jump back to it.</li>
+        <li><b style="color:#1a1d20">Once you submit a section</b> you cannot return to it.</li>
+        <li><b style="color:#1a1d20">Exhibit button</b> opens the periodic table for Gen Chem questions and a reagent quick-reference for Organic Chemistry. No exhibit is available for Biology or QR items.</li>
+        <li><b style="color:#1a1d20">Closing the tab or refreshing</b> during a section ends that section with whatever you have answered.</li>
+      </ol>
+      <div style="background:#f0f6fa; border:1px solid #d0e1ec; border-left:4px solid #086894; border-radius:4px; padding:14px 18px; font-size:13.5px; color:#3a4148; margin-bottom:24px; line-height:1.55">
+        <b style="color:#1a1d20">Honest scope:</b> This simulation covers Sciences and QR — the two sections Ace The DAT has banks for. PAT and Reading Comprehension are not included. Your predicted scaled score uses the new <b style="color:#1a1d20">200-600 ADA scale</b> introduced March 1, 2025.
+      </div>
+      <div style="display:flex; gap:10px; padding-top:20px; border-top:1px solid #d0d6db">
+        <button id="pmCancelStart" style="padding:11px 22px; font-size:13px; font-weight:600; letter-spacing:.06em; border:1px solid #b5bcc1; background:#fff; color:#1a1d20; border-radius:6px; cursor:pointer">Back to test selection</button>
+        <div style="flex:1"></div>
+        <button id="pmConfirmStart" style="padding:11px 28px; font-size:13px; font-weight:600; letter-spacing:.06em; border:1px solid #054766; background:#086894; color:#fff; border-radius:6px; cursor:pointer">Start Section · 90:00 timer begins</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(ins);
+  document.getElementById('pmCancelStart').addEventListener('click', () => {
+    ins.remove();
+    document.getElementById('pmStage').style.display = '';
+  });
+  document.getElementById('pmConfirmStart').addEventListener('click', () => {
+    ins.remove();
+    actuallyStartTest(t);
+  });
+}
+
+function actuallyStartTest(t){
+  // Build sections.items in DAT order: Bio (40) → GC (30) → OChem (30) for SoNS, then QR (40)
+  SECTIONS[0].items = [
+    ...t.sections.bio.map(p => ({ ...p, _sub: 'Biology' })),
+    ...t.sections.gc.map(p => ({ ...p, _sub: 'Gen Chem' })),
+    ...t.sections.ochem.map(p => ({ ...p, _sub: 'OChem' }))
+  ];
+  SECTIONS[1].items = t.sections.qr.map(p => ({ ...p, _sub: 'QR' }));
+
+  STATE.sectionIdx = 0;
+  STATE.itemIdx = 0;
+  STATE.answers = { sons: {}, qr: {} };
+  STATE.marked = { sons: {}, qr: {} };
+  STATE.visited = { sons: new Set([0]), qr: new Set() };
+  STATE.sectionStartedAt = Date.now();
+  STATE.finished = false;
+  STATE.results = null;
+  window._pmTestStartedAt = Date.now();
+
+  document.getElementById('pmStage').style.display = 'none';
+  enterRunMode();
+  startSectionTimer();
+  renderRun();
+}
+
+// ---- Runtime ---------------------------------------------------------------
+function enterRunMode(){
+  if (document.getElementById('pmRun')) return;
+  const div = document.createElement('div');
+  div.id = 'pmRun';
+  div.className = 'pm-run';
+  document.body.appendChild(div);
+
+  // Visibility/leave warnings
+  window.addEventListener('beforeunload', e => {
+    if (!STATE.finished && (STATE.sectionStartedAt || STATE.breakStartedAt)){
+      e.preventDefault();
+      e.returnValue = 'Leaving will end the section. Continue?';
+      return e.returnValue;
+    }
+  });
+}
+
+function exitRunMode(){
+  const r = document.getElementById('pmRun');
+  if (r) r.remove();
+  const c = document.getElementById('pmCalc');
+  if (c) c.remove();
+  const pt = document.getElementById('pmPt');
+  if (pt) pt.remove();
+  const rf = document.getElementById('pmRef');
+  if (rf) rf.remove();
+  STATE.calcOpen = false; STATE.ptOpen = false; STATE.refOpen = false;
+  document.getElementById('pmStage').style.display = '';
+}
+
+function fmtTime(sec){
+  const h = Math.floor(sec/3600);
+  const m = Math.floor((sec%3600)/60);
+  const s = sec%60;
+  if (h > 0) return h + ':' + String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+  return m + ':' + String(s).padStart(2,'0');
+}
+
+function startSectionTimer(){
+  if (STATE.timerId) clearInterval(STATE.timerId);
+  STATE.timerId = setInterval(() => {
+    const sec = SECTIONS[STATE.sectionIdx];
+    const elapsed = Math.floor((Date.now() - STATE.sectionStartedAt) / 1000);
+    const rem = Math.max(0, sec.durSec - elapsed);
+    const t = document.getElementById('pmTimer');
+    if (t){
+      t.textContent = fmtTime(rem);
+      t.classList.toggle('warn', rem < 300);
+    }
+    if (rem === 0){
+      clearInterval(STATE.timerId);
+      endSection(true);
+    }
+  }, 500);
+}
+
+function renderRun(){
+  const wrap = document.getElementById('pmRun');
+  if (!wrap) return;
+  const sec = SECTIONS[STATE.sectionIdx];
+  const item = sec.items[STATE.itemIdx];
+  const cur = STATE.answers[sec.key][STATE.itemIdx];
+  const isMarked = !!STATE.marked[sec.key][STATE.itemIdx];
+  STATE.visited[sec.key].add(STATE.itemIdx);
+
+  // Section sub-chip (which subject within SoNS)
+  let subChips = '';
+  if (sec.key === 'sons'){
+    const sub = item._sub;
+    subChips = `<div class="pm-sectchips">
+      <span class="pm-sectchip ${sub==='Biology'?'cur':''}">Bio (1-40)</span>
+      <span class="pm-sectchip ${sub==='Gen Chem'?'cur':''}">Gen Chem (41-70)</span>
+      <span class="pm-sectchip ${sub==='OChem'?'cur':''}">OChem (71-100)</span>
+    </div>`;
+  }
+
+  const elapsed = Math.floor((Date.now() - STATE.sectionStartedAt) / 1000);
+  const rem = Math.max(0, sec.durSec - elapsed);
+
+  // Section subject heading shown at the top of every question card
+  const subjectTitle = sec.key === 'sons'
+    ? `Survey of Natural Sciences — ${item._sub || ''}`
+    : 'Quantitative Reasoning';
+  const testName = (window.DAT_MOCK_TESTS && window.DAT_MOCK_TESTS[STATE.testIdx]) ? window.DAT_MOCK_TESTS[STATE.testIdx].name : `Practice Test ${STATE.testIdx + 1}`;
+  const lastIdx = sec.items.length - 1;
+
+  wrap.innerHTML = `
+    <div class="pm-runtop">
+      <div class="col-l">
+        <span class="x" id="pmRunClose" title="Exit">&#10005;</span>
+        <span class="qcount">Question ${STATE.itemIdx + 1} of ${sec.items.length}</span>
+      </div>
+      <div class="col-c">
+        <span class="brand">AceTheDAT.com</span>
+        <span class="testname">${testName}</span>
+      </div>
+      <div class="col-r">
+        <span>Time remaining: <span class="timer ${rem<300?'warn':''}" id="pmTimer">${fmtTime(rem)}</span></span>
+        <span class="gear" title="Settings">&#9881;</span>
+      </div>
+    </div>
+    ${sec.key==='qr' ? `<div class="pm-toolrow"><button class="pm-calcbtn ${STATE.calcOpen?'active':''}" id="pmCalcBtn">Calculator</button></div>` : ''}
+    <div class="pm-runbody">
+      <div class="pm-quest">
+        <div class="pm-qcard">
+          <div class="pm-qsubject">${subjectTitle}</div>
+          ${subChips}
+          <div class="pm-qmeta">Item ${STATE.itemIdx + 1}${item.topic ? ' · ' + item.topic : ''}${item.difficulty ? ' · diff ' + item.difficulty : ''}${item._ada_category ? ' · ' + item._ada_category : ''}</div>
+          <div class="pm-q">
+            <div class="pm-qtxt">${item.q || ''}</div>
+            ${item.q_svg ? `<div class="pm-svg">${item.q_svg}</div>` : ''}
+            ${item.q_smiles ? `<div class="pm-mol"><canvas class="pm-mol-canvas" data-smiles="${escapeAttr(item.q_smiles)}"></canvas></div>` : ''}
+          </div>
+          <div class="pm-opts">
+            ${(item.opts || []).map((o, j) => {
+              const oSvg = item.opts_svg && item.opts_svg[j];
+              const oSmi = item.opts_smiles && item.opts_smiles[j];
+              return `
+              <div class="pm-opt ${cur===j?'selected':''}" data-i="${j}">
+                <span class="radio"></span>
+                <span class="let">${'ABCDE'[j] || ''}.</span>
+                <div style="flex:1">
+                  <div>${o}</div>
+                  ${oSvg ? `<div class="pm-svg">${oSvg}</div>` : ''}
+                  ${oSmi ? `<div class="pm-mol"><canvas class="pm-mol-canvas" data-smiles="${escapeAttr(oSmi)}" data-opt="${j}"></canvas></div>` : ''}
+                </div>
+              </div>`;
+            }).join('')}
+          </div>
+          <div class="pm-q next-hint">Click on the \`Next\` button to continue.</div>
+        </div>
+      </div>
+    </div>
+    <div class="pm-runfoot">
+      <button class="pm-btn" id="pmPrev" ${STATE.itemIdx===0?'disabled':''}><u>P</u>revious</button>
+      <button class="pm-btn primary" id="pmNext">${STATE.itemIdx===lastIdx?'<u>R</u>eview':'<u>N</u>ext'}</button>
+      <button class="pm-btn ${isMarked?'marked':''}" id="pmMarkBtn"><u>M</u>ark${isMarked?'ed':''}</button>
+      <button class="pm-btn" id="pmExhibitBtn">E<u>x</u>hibit</button>
+      <button class="pm-btn" id="pmReview"><u>R</u>eview</button>
+      <button class="pm-btn danger" id="pmEnd" title="End the section">End</button>
+    </div>
+  `;
+
+  // Wire interactions
+  wrap.querySelectorAll('.pm-opt').forEach(o => o.addEventListener('click', () => {
+    STATE.answers[sec.key][STATE.itemIdx] = +o.dataset.i;
+    wrap.querySelectorAll('.pm-opt').forEach(x => x.classList.remove('selected'));
+    o.classList.add('selected');
+    renderGrid();
+  }));
+  // Toolrow Mark checkbox — only present on QR section now (toolrow is QR-only)
+  const markCb = document.getElementById('pmMark');
+  if (markCb){
+    markCb.addEventListener('click', e => {
+      if (e.target.tagName === 'INPUT') return;
+      e.preventDefault();
+      STATE.marked[sec.key][STATE.itemIdx] = !STATE.marked[sec.key][STATE.itemIdx];
+      renderRun();
+    });
+  }
+  // Footer "Marked" button — same toggle as the toolrow checkbox
+  const markBtn = document.getElementById('pmMarkBtn');
+  if (markBtn){
+    markBtn.classList.toggle('marked', !!STATE.marked[sec.key][STATE.itemIdx]);
+    markBtn.addEventListener('click', () => {
+      STATE.marked[sec.key][STATE.itemIdx] = !STATE.marked[sec.key][STATE.itemIdx];
+      renderRun();
+    });
+  }
+  // Top-bar X — exit confirms first
+  const xBtn = document.getElementById('pmRunClose');
+  if (xBtn){
+    xBtn.addEventListener('click', () => {
+      if (confirm('Exit the test now? Your progress will be lost.')){
+        if (STATE.timerId) clearInterval(STATE.timerId);
+        STATE.finished = true;
+        exitRunMode();
+      }
+    });
+  }
+  document.getElementById('pmPrev').addEventListener('click', () => {
+    if (STATE.itemIdx > 0){ STATE.itemIdx--; renderRun(); }
+  });
+  document.getElementById('pmNext').addEventListener('click', () => {
+    if (STATE.itemIdx === sec.items.length - 1){ showReview(); }
+    else { STATE.itemIdx++; renderRun(); }
+  });
+  document.getElementById('pmEnd').addEventListener('click', () => {
+    if (confirm('End the section now? You will not be able to return.')){
+      endSection(false);
+    }
+  });
+  document.getElementById('pmReview').addEventListener('click', showReview);
+  if (sec.key === 'qr'){
+    document.getElementById('pmCalcBtn').addEventListener('click', toggleCalc);
+  }
+  const ptBtn = document.getElementById('pmPtBtn');
+  if (ptBtn) ptBtn.addEventListener('click', togglePeriodicTable);
+  // Exhibit button — opens section-appropriate reference (PT for GC, reagent ref for OChem)
+  const exBtn = document.getElementById('pmExhibitBtn');
+  if (exBtn){
+    const sub = item._sub;
+    if (sec.key === 'sons' && sub === 'Gen Chem'){
+      exBtn.addEventListener('click', togglePeriodicTable);
+    } else if (sec.key === 'sons' && sub === 'OChem'){
+      exBtn.addEventListener('click', toggleReagentRef);
+    } else {
+      exBtn.disabled = true;
+      exBtn.title = 'No exhibit available for this item';
+    }
+  }
+
+  // Render any SMILES strings into skeletal structures via SmilesDrawer
+  renderMoleculeCanvases(wrap);
+
+  renderGrid();
+}
+
+// ---- OChem reagent quick-reference popup ----------------------------------
+function toggleReagentRef(){
+  STATE.refOpen = !STATE.refOpen;
+  let r = document.getElementById('pmRef');
+  if (!r){
+    r = document.createElement('div');
+    r.id = 'pmRef';
+    r.className = 'pm-pt';   // reuse same popup chrome
+    r.innerHTML = `
+      <div class="titlebar"><span>Common Reagents — Quick Reference</span><span class="x">&#10005;</span></div>
+      <div class="body" style="font-size:12.5px; line-height:1.55">
+        <h4 style="margin-bottom:8px">Oxidations</h4>
+        <table style="width:100%; border-collapse:collapse">
+          <tr><td style="padding:4px 8px"><b>PCC, DMP, Swern</b></td><td style="padding:4px 8px">1° alcohol → aldehyde · 2° alcohol → ketone</td></tr>
+          <tr><td style="padding:4px 8px"><b>CrO3 / Jones / KMnO4</b></td><td style="padding:4px 8px">1° alcohol → carboxylic acid · 2° alcohol → ketone</td></tr>
+          <tr><td style="padding:4px 8px"><b>OsO4 or cold dilute KMnO4</b></td><td style="padding:4px 8px">Alkene → syn diol</td></tr>
+          <tr><td style="padding:4px 8px"><b>O3 then Zn/H2O or DMS</b></td><td style="padding:4px 8px">Alkene → 2 carbonyls (ozonolysis, reductive)</td></tr>
+        </table>
+        <h4 style="margin-top:14px; margin-bottom:8px">Reductions</h4>
+        <table style="width:100%; border-collapse:collapse">
+          <tr><td style="padding:4px 8px"><b>NaBH4</b></td><td style="padding:4px 8px">Aldehyde/ketone → alcohol (mild; will not reduce esters/acids)</td></tr>
+          <tr><td style="padding:4px 8px"><b>LiAlH4</b></td><td style="padding:4px 8px">Reduces aldehyde, ketone, ester, carboxylic acid, amide → alcohol/amine</td></tr>
+          <tr><td style="padding:4px 8px"><b>H2 / Pd, Pt, Ni</b></td><td style="padding:4px 8px">Alkene → alkane · Alkyne → alkane</td></tr>
+          <tr><td style="padding:4px 8px"><b>H2 / Lindlar</b></td><td style="padding:4px 8px">Alkyne → cis-alkene (poisoned catalyst)</td></tr>
+          <tr><td style="padding:4px 8px"><b>Na / NH3 (l)</b></td><td style="padding:4px 8px">Alkyne → trans-alkene (dissolving-metal)</td></tr>
+        </table>
+        <h4 style="margin-top:14px; margin-bottom:8px">Alkene additions (Markovnikov vs anti-Markovnikov)</h4>
+        <table style="width:100%; border-collapse:collapse">
+          <tr><td style="padding:4px 8px"><b>HX</b></td><td style="padding:4px 8px">Markovnikov H/X addition</td></tr>
+          <tr><td style="padding:4px 8px"><b>HBr / peroxides (ROOR)</b></td><td style="padding:4px 8px">Anti-Markovnikov H/Br (radical)</td></tr>
+          <tr><td style="padding:4px 8px"><b>H2O / H+</b></td><td style="padding:4px 8px">Markovnikov H/OH (acid-catalyzed hydration)</td></tr>
+          <tr><td style="padding:4px 8px"><b>Hg(OAc)2 / H2O, then NaBH4</b></td><td style="padding:4px 8px">Markovnikov OH (oxymercuration-demercuration; no rearrangement)</td></tr>
+          <tr><td style="padding:4px 8px"><b>BH3·THF, then H2O2/NaOH</b></td><td style="padding:4px 8px">Anti-Markovnikov OH, syn (hydroboration-oxidation)</td></tr>
+        </table>
+        <h4 style="margin-top:14px; margin-bottom:8px">Aromatic substitution directors</h4>
+        <table style="width:100%; border-collapse:collapse">
+          <tr><td style="padding:4px 8px"><b>Activators (o/p)</b></td><td style="padding:4px 8px">−OH, −OR, −NH2, −NHR, alkyl, −NHCOR</td></tr>
+          <tr><td style="padding:4px 8px"><b>Deactivators (meta)</b></td><td style="padding:4px 8px">−NO2, −CN, −SO3H, −CO2R, −COR, −CHO, −NR3+</td></tr>
+          <tr><td style="padding:4px 8px"><b>Halogens (deactivator, o/p)</b></td><td style="padding:4px 8px">−F, −Cl, −Br, −I (weak deactivator but o/p director)</td></tr>
+        </table>
+      </div>
+    `;
+    document.body.appendChild(r);
+    r.querySelector('.x').addEventListener('click', () => {
+      STATE.refOpen = false; r.classList.remove('open');
+      document.querySelector('#pmExhibitBtn')?.classList.remove('active');
+    });
+  }
+  r.classList.toggle('open', STATE.refOpen);
+  document.querySelector('#pmExhibitBtn')?.classList.toggle('active', STATE.refOpen);
+}
+
+// ---- SMILES rendering (via SmilesDrawer 2.x) -------------------------------
+// In v2.x window.SmiDrawer IS the constructor (not a namespace).
+let _smiDrawer = null;
+function getSmiDrawer(){
+  if (_smiDrawer !== null) return _smiDrawer;
+  if (typeof window.SmiDrawer !== 'function'){ _smiDrawer = false; return false; }
+  try {
+    _smiDrawer = new window.SmiDrawer({
+      width: 280, height: 120, padding: 4, bondThickness: 1.2,
+      shortBondLength: 0.85, bondLength: 18, atomVisualization: 'default',
+      compactDrawing: true, fontSizeLarge: 11, fontSizeSmall: 8,
+      themes: { light: { C: '#1a1d20', O: '#cf3b3b', N: '#3a78c4', Cl: '#2e8a3e', Br: '#8a4a2a', F: '#3aa83a', I: '#7a3a8a', H: '#1a1d20', BACKGROUND: '#fff' } }
+    });
+  } catch(e){ console.warn('SmilesDrawer init failed', e); _smiDrawer = false; }
+  return _smiDrawer;
+}
+function renderMoleculeCanvases(wrap){
+  const sd = getSmiDrawer();
+  if (!sd) return;
+  wrap.querySelectorAll('canvas.pm-mol-canvas[data-smiles]').forEach(canvas => {
+    const smi = canvas.getAttribute('data-smiles');
+    if (!smi) return;
+    try { sd.draw(smi, canvas, 'light'); }
+    catch(e){
+      // Fallback: render the SMILES string verbatim if drawing fails
+      const ctx = canvas.getContext && canvas.getContext('2d');
+      if (ctx){
+        canvas.width = canvas.offsetWidth || 280;
+        canvas.height = 120;
+        ctx.fillStyle = '#fff'; ctx.fillRect(0,0,canvas.width,canvas.height);
+        ctx.fillStyle = '#1a1d20'; ctx.font = '14px monospace';
+        ctx.fillText(smi, 10, 65);
+      }
+    }
+  });
+}
+function escapeAttr(s){
+  return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function renderGrid(){
+  const sec = SECTIONS[STATE.sectionIdx];
+  const grid = document.getElementById('pmGrid');
+  if (!grid) return;
+  grid.innerHTML = sec.items.map((_, i) => {
+    const cls = ['pm-cell'];
+    if (i === STATE.itemIdx) cls.push('cur');
+    else if (STATE.answers[sec.key][i] !== undefined) cls.push('answered');
+    if (STATE.marked[sec.key][i]) cls.push('marked');
+    return `<div class="${cls.join(' ')}" data-i="${i}">${i+1}</div>`;
+  }).join('');
+  grid.querySelectorAll('.pm-cell').forEach(c => c.addEventListener('click', () => {
+    STATE.itemIdx = +c.dataset.i;
+    renderRun();
+  }));
+}
+
+// ---- Review screen --------------------------------------------------------
+function showReview(){
+  const sec = SECTIONS[STATE.sectionIdx];
+  const total = sec.items.length;
+  const answered = Object.keys(STATE.answers[sec.key]).length;
+  const marked = Object.keys(STATE.marked[sec.key]).length;
+  const unanswered = total - answered;
+  const elapsed = Math.floor((Date.now() - STATE.sectionStartedAt) / 1000);
+  const rem = Math.max(0, sec.durSec - elapsed);
+
+  const rev = document.createElement('div');
+  rev.className = 'pm-rev';
+  rev.id = 'pmReviewScreen';
+  rev.innerHTML = `
+    <div class="top">
+      <div class="title">${sec.name} · End-of-Section Review</div>
+      <div class="meta">Time remaining: <b style="color:#fff">${fmtTime(rem)}</b></div>
+    </div>
+    <div class="body">
+      <h2>Review your answers</h2>
+      <div class="helper">Click any item below to jump back to it and change your answer. Items you marked for review have a red corner flag. <b>End Section</b> submits all your answers and moves to the next section — you cannot return after submitting.</div>
+      <div class="stats">
+        <div class="stat ok"><div class="lbl">Answered</div><div class="num">${answered}/${total}</div></div>
+        <div class="stat warn"><div class="lbl">Unanswered</div><div class="num">${unanswered}</div></div>
+        <div class="stat"><div class="lbl">Marked for Review</div><div class="num">${marked}</div></div>
+      </div>
+      <h3>Question Navigation</h3>
+      <div class="legend">
+        <span class="lbox"><span class="sw" style="background:#fff"></span>Unseen</span>
+        <span class="lbox"><span class="sw" style="background:#086894; border-color:#054766"></span>Answered</span>
+        <span class="lbox"><span class="sw" style="background:#fff; position:relative; overflow:hidden"><i style="position:absolute; top:0; right:0; width:0; height:0; border-style:solid; border-width:0 7px 7px 0; border-color:transparent #cf3b3b transparent transparent"></i></span>Marked for review</span>
+      </div>
+      <div class="grid" id="pmRevGrid"></div>
+      <div class="actions">
+        <button id="pmBack">Continue Section</button>
+        <div class="spacer"></div>
+        <button class="primary" id="pmEndConfirm">End Section</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(rev);
+
+  const grid = document.getElementById('pmRevGrid');
+  grid.innerHTML = sec.items.map((_, i) => {
+    const cls = ['pm-cell'];
+    if (STATE.answers[sec.key][i] !== undefined) cls.push('answered');
+    if (STATE.marked[sec.key][i]) cls.push('marked');
+    return `<div class="${cls.join(' ')}" data-i="${i}">${i+1}</div>`;
+  }).join('');
+  grid.querySelectorAll('.pm-cell').forEach(c => c.addEventListener('click', () => {
+    STATE.itemIdx = +c.dataset.i;
+    rev.remove();
+    renderRun();
+  }));
+
+  document.getElementById('pmBack').addEventListener('click', () => rev.remove());
+  document.getElementById('pmEndConfirm').addEventListener('click', () => {
+    if (confirm(`End ${sec.short}? Unanswered: ${unanswered}. This cannot be undone.`)){
+      rev.remove();
+      endSection(false);
+    }
+  });
+}
+
+// ---- Section transition ----------------------------------------------------
+function endSection(timeExpired){
+  if (STATE.timerId){ clearInterval(STATE.timerId); STATE.timerId = null; }
+  STATE.sectionEndedAt[SECTIONS[STATE.sectionIdx].key] = Date.now();
+
+  if (STATE.sectionIdx === 0){
+    // After Sciences → optional break, then QR
+    showBreak();
+  } else {
+    // Done
+    finishTest();
+  }
+}
+
+function showBreak(){
+  STATE.breakStartedAt = Date.now();
+  STATE.breakRemaining = 30 * 60;
+  const r = document.getElementById('pmRun');
+  if (r) r.style.display = 'none';
+
+  const div = document.createElement('div');
+  div.className = 'pm-break';
+  div.id = 'pmBreak';
+  div.innerHTML = `
+    <h2>Optional break</h2>
+    <p>Take up to 30 minutes. Stretch, hydrate, reset. The QR section starts when you click Begin or when the break timer hits zero. (This matches the real DAT scheduled break.)</p>
+    <div class="timer" id="pmBreakTimer">30:00</div>
+    <div class="btns">
+      <button id="pmSkipBreak">Skip break — start QR now</button>
+      <button class="primary" id="pmStartQr">Begin QR section</button>
+    </div>
+  `;
+  document.body.appendChild(div);
+
+  const breakTick = setInterval(() => {
+    const elapsed = Math.floor((Date.now() - STATE.breakStartedAt) / 1000);
+    const rem = Math.max(0, STATE.breakRemaining - elapsed);
+    const t = document.getElementById('pmBreakTimer');
+    if (t) t.textContent = fmtTime(rem);
+    if (rem === 0){
+      clearInterval(breakTick);
+      startQrSection();
+    }
+  }, 500);
+
+  document.getElementById('pmSkipBreak').addEventListener('click', () => { clearInterval(breakTick); startQrSection(); });
+  document.getElementById('pmStartQr').addEventListener('click', () => { clearInterval(breakTick); startQrSection(); });
+}
+
+function startQrSection(){
+  const b = document.getElementById('pmBreak');
+  if (b) b.remove();
+  const r = document.getElementById('pmRun');
+  if (r) r.style.display = '';
+  STATE.sectionIdx = 1;
+  STATE.itemIdx = 0;
+  STATE.sectionStartedAt = Date.now();
+  STATE.visited.qr.add(0);
+  startSectionTimer();
+  renderRun();
+}
+
+// ---- Calculator (QR only) --------------------------------------------------
+function toggleCalc(){
+  STATE.calcOpen = !STATE.calcOpen;
+  let c = document.getElementById('pmCalc');
+  if (!c){
+    c = document.createElement('div');
+    c.id = 'pmCalc';
+    c.className = 'pm-calc';
+    // Layout matches the actual DAT calculator (Windows 7 calc.exe) shown in
+    // the ADA 2026 Candidate Guide page 9: titlebar + View/Edit/Help menu,
+    // memory row (MC/MR/MS/M+/M-), function row (←/CE/C/±/√), digits + ops,
+    // with %, 1/x, and = laid out exactly as on the real on-screen calc.
+    c.innerHTML = `
+      <div class="titlebar" id="pmCalcDrag">
+        <span class="lbl"><span class="ico">=</span>Calculator</span>
+        <span class="winbtns">
+          <button class="winbtn" title="Minimize">_</button>
+          <button class="winbtn" title="Maximize">▢</button>
+          <button class="winbtn x" id="pmCalcX" title="Close">✕</button>
+        </span>
+      </div>
+      <div class="menu"><span>View</span><span>Edit</span><span>Help</span></div>
+      <div class="body">
+        <div class="display" id="pmCalcDisp">0</div>
+        <div class="memory" id="pmCalcMem"></div>
+        <div class="keys">
+          <button class="mem" data-k="MC">MC</button>
+          <button class="mem" data-k="MR">MR</button>
+          <button class="mem" data-k="MS">MS</button>
+          <button class="mem" data-k="M+">M+</button>
+          <button class="mem" data-k="M-">M-</button>
+
+          <button class="fn" data-k="back">←</button>
+          <button class="fn" data-k="CE">CE</button>
+          <button class="fn" data-k="C">C</button>
+          <button class="fn" data-k="+/-">±</button>
+          <button class="fn" data-k="sqrt">√</button>
+
+          <button data-k="7">7</button>
+          <button data-k="8">8</button>
+          <button data-k="9">9</button>
+          <button class="op" data-k="/">/</button>
+          <button class="fn" data-k="%">%</button>
+
+          <button data-k="4">4</button>
+          <button data-k="5">5</button>
+          <button data-k="6">6</button>
+          <button class="op" data-k="*">*</button>
+          <button class="fn" data-k="1/x">1/x</button>
+
+          <button data-k="1">1</button>
+          <button data-k="2">2</button>
+          <button data-k="3">3</button>
+          <button class="op" data-k="-">-</button>
+          <button class="eq" data-k="=" style="grid-row:span 2">=</button>
+
+          <button class="zero" data-k="0">0</button>
+          <button data-k=".">.</button>
+          <button class="op" data-k="+">+</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(c);
+    c.querySelectorAll('button[data-k]').forEach(b => b.addEventListener('click', () => calcKey(b.dataset.k)));
+    document.getElementById('pmCalcX').addEventListener('click', () => {
+      STATE.calcOpen = false; c.classList.remove('open');
+      document.querySelector('#pmCalcBtn')?.classList.remove('active');
+    });
+    // Drag-by-titlebar — match real calc UX (minimal: pointer-based)
+    const drag = document.getElementById('pmCalcDrag');
+    let dragging = false, dx = 0, dy = 0;
+    drag.addEventListener('pointerdown', e => {
+      if (e.target.closest('.winbtn')) return;
+      dragging = true; c.classList.add('dragging');
+      const r = c.getBoundingClientRect();
+      dx = e.clientX - r.left; dy = e.clientY - r.top;
+      drag.setPointerCapture(e.pointerId);
+    });
+    drag.addEventListener('pointermove', e => {
+      if (!dragging) return;
+      c.style.right = 'auto'; c.style.top = (e.clientY - dy) + 'px'; c.style.left = (e.clientX - dx) + 'px';
+    });
+    drag.addEventListener('pointerup', () => { dragging = false; c.classList.remove('dragging'); });
+  }
+  c.classList.toggle('open', STATE.calcOpen);
+  document.querySelector('#pmCalcBtn')?.classList.toggle('active', STATE.calcOpen);
+}
+
+function calcKey(k){
+  const disp = document.getElementById('pmCalcDisp');
+  const mem = document.getElementById('pmCalcMem');
+  if (!disp) return;
+  const cur = () => parseFloat(STATE.calcDisplay) || 0;
+  const setDisp = v => {
+    if (!isFinite(v)) STATE.calcDisplay = 'Error';
+    else {
+      // Mirror the real calc: trim trailing zeros, cap at 16 digits
+      const s = (Math.abs(v) < 1e-10 && v !== 0) ? v.toExponential(6) :
+                (Math.abs(v) > 1e16) ? v.toExponential(6) :
+                String(parseFloat(v.toPrecision(15)));
+      STATE.calcDisplay = s;
+    }
+  };
+
+  if (/^[0-9]$/.test(k)){
+    if (STATE.calcDisplay === '0' || STATE.calcResetNext || STATE.calcDisplay === 'Error'){
+      STATE.calcDisplay = k; STATE.calcResetNext = false;
+    } else STATE.calcDisplay += k;
+  } else if (k === '.'){
+    if (STATE.calcResetNext){ STATE.calcDisplay = '0.'; STATE.calcResetNext = false; }
+    else if (!STATE.calcDisplay.includes('.')) STATE.calcDisplay += '.';
+  } else if (k === 'back'){
+    if (STATE.calcResetNext) return;
+    STATE.calcDisplay = STATE.calcDisplay.length > 1 ? STATE.calcDisplay.slice(0, -1) : '0';
+    if (STATE.calcDisplay === '-') STATE.calcDisplay = '0';
+  } else if (k === 'CE'){
+    STATE.calcDisplay = '0'; STATE.calcResetNext = false;
+  } else if (k === 'C'){
+    STATE.calcDisplay = '0'; STATE.calcOp = null; STATE.calcAcc = null; STATE.calcResetNext = false;
+  } else if (k === '+/-'){
+    if (STATE.calcDisplay !== '0' && STATE.calcDisplay !== 'Error'){
+      STATE.calcDisplay = STATE.calcDisplay.startsWith('-') ? STATE.calcDisplay.slice(1) : '-' + STATE.calcDisplay;
+    }
+  } else if (k === '%'){
+    // Real Windows calc treats % as: acc * (cur/100) when an op is pending
+    if (STATE.calcOp && STATE.calcAcc !== null){
+      setDisp(STATE.calcAcc * cur() / 100);
+    } else setDisp(cur() / 100);
+  } else if (k === 'sqrt'){
+    setDisp(Math.sqrt(cur()));
+    STATE.calcResetNext = true;
+  } else if (k === '1/x'){
+    setDisp(cur() === 0 ? Infinity : 1 / cur());
+    STATE.calcResetNext = true;
+  } else if (k === 'MC'){
+    STATE.calcMemory = null;
+  } else if (k === 'MR'){
+    if (STATE.calcMemory !== null){ setDisp(STATE.calcMemory); STATE.calcResetNext = true; }
+  } else if (k === 'MS'){
+    STATE.calcMemory = cur();
+  } else if (k === 'M+'){
+    STATE.calcMemory = (STATE.calcMemory || 0) + cur();
+  } else if (k === 'M-'){
+    STATE.calcMemory = (STATE.calcMemory || 0) - cur();
+  } else if (['+','-','*','/'].includes(k)){
+    if (STATE.calcOp && STATE.calcAcc !== null && !STATE.calcResetNext){
+      STATE.calcAcc = doOp(STATE.calcAcc, cur(), STATE.calcOp);
+      setDisp(STATE.calcAcc);
+    } else {
+      STATE.calcAcc = cur();
+    }
+    STATE.calcOp = k;
+    STATE.calcResetNext = true;
+  } else if (k === '='){
+    if (STATE.calcOp && STATE.calcAcc !== null){
+      STATE.calcAcc = doOp(STATE.calcAcc, cur(), STATE.calcOp);
+      setDisp(STATE.calcAcc);
+      STATE.calcOp = null;
+      STATE.calcResetNext = true;
+    }
+  }
+  disp.textContent = STATE.calcDisplay;
+  if (mem) mem.textContent = STATE.calcMemory !== null ? 'M' : '';
+}
+function doOp(a, b, op){
+  if (op === '+') return a + b;
+  if (op === '-') return a - b;
+  if (op === '*') return a * b;
+  if (op === '/') return b === 0 ? NaN : a / b;
+  return b;
+}
+
+// ---- Periodic table popup (GC items only) ---------------------------------
+function togglePeriodicTable(){
+  STATE.ptOpen = !STATE.ptOpen;
+  let pt = document.getElementById('pmPt');
+  if (!pt){
+    pt = document.createElement('div');
+    pt.id = 'pmPt';
+    pt.className = 'pm-pt';
+    pt.innerHTML = renderPeriodicTableHtml();
+    document.body.appendChild(pt);
+    pt.querySelector('.x').addEventListener('click', () => {
+      STATE.ptOpen = false; pt.classList.remove('open');
+      document.querySelector('#pmPtBtn')?.classList.remove('active');
+    });
+  }
+  pt.classList.toggle('open', STATE.ptOpen);
+  document.querySelector('#pmPtBtn')?.classList.toggle('active', STATE.ptOpen);
+}
+
+function renderPeriodicTableHtml(){
+  // Periodic table mirroring the image in the ADA 2026 Candidate Guide page 5.
+  // Categories used for color: noble, nonmetal, metalloid, metal, transition.
+  const E = [
+    // [period, group, num, symbol, mass, category]
+    [1,1,1,'H','1.01','nonmetal'],   [1,18,2,'He','4.00','noble'],
+    [2,1,3,'Li','6.94','metal'],     [2,2,4,'Be','9.01','metal'],
+    [2,13,5,'B','10.81','metalloid'],[2,14,6,'C','12.01','nonmetal'],[2,15,7,'N','14.01','nonmetal'],[2,16,8,'O','16.00','nonmetal'],[2,17,9,'F','19.00','nonmetal'],[2,18,10,'Ne','20.18','noble'],
+    [3,1,11,'Na','22.99','metal'],   [3,2,12,'Mg','24.31','metal'],
+    [3,13,13,'Al','26.98','metal'],  [3,14,14,'Si','28.09','metalloid'],[3,15,15,'P','30.97','nonmetal'],[3,16,16,'S','32.06','nonmetal'],[3,17,17,'Cl','35.45','nonmetal'],[3,18,18,'Ar','39.95','noble'],
+    [4,1,19,'K','39.10','metal'],    [4,2,20,'Ca','40.08','metal'],
+    [4,3,21,'Sc','44.96','transition'],[4,4,22,'Ti','47.90','transition'],[4,5,23,'V','50.94','transition'],[4,6,24,'Cr','52.00','transition'],[4,7,25,'Mn','54.94','transition'],[4,8,26,'Fe','55.85','transition'],[4,9,27,'Co','58.93','transition'],[4,10,28,'Ni','58.71','transition'],[4,11,29,'Cu','63.55','transition'],[4,12,30,'Zn','65.37','transition'],
+    [4,13,31,'Ga','69.72','metal'],  [4,14,32,'Ge','72.59','metalloid'],[4,15,33,'As','74.92','metalloid'],[4,16,34,'Se','78.96','nonmetal'],[4,17,35,'Br','79.90','nonmetal'],[4,18,36,'Kr','83.80','noble'],
+    [5,1,37,'Rb','85.47','metal'],   [5,2,38,'Sr','87.62','metal'],
+    [5,3,39,'Y','88.91','transition'],[5,4,40,'Zr','91.22','transition'],[5,5,41,'Nb','92.91','transition'],[5,6,42,'Mo','95.94','transition'],[5,7,43,'Tc','(97)','transition'],[5,8,44,'Ru','101.07','transition'],[5,9,45,'Rh','102.91','transition'],[5,10,46,'Pd','106.40','transition'],[5,11,47,'Ag','107.87','transition'],[5,12,48,'Cd','112.40','transition'],
+    [5,13,49,'In','114.82','metal'], [5,14,50,'Sn','118.69','metal'],[5,15,51,'Sb','121.75','metalloid'],[5,16,52,'Te','127.60','metalloid'],[5,17,53,'I','126.90','nonmetal'],[5,18,54,'Xe','131.30','noble'],
+    [6,1,55,'Cs','132.91','metal'],  [6,2,56,'Ba','137.34','metal'],
+    [6,3,57,'La','138.91','transition'],[6,4,72,'Hf','178.49','transition'],[6,5,73,'Ta','180.95','transition'],[6,6,74,'W','183.85','transition'],[6,7,75,'Re','186.20','transition'],[6,8,76,'Os','190.20','transition'],[6,9,77,'Ir','192.20','transition'],[6,10,78,'Pt','195.08','transition'],[6,11,79,'Au','196.97','transition'],[6,12,80,'Hg','200.59','transition'],
+    [6,13,81,'Tl','204.37','metal'], [6,14,82,'Pb','207.19','metal'],[6,15,83,'Bi','208.98','metal'],[6,16,84,'Po','210.00','metalloid'],[6,17,85,'At','210.00','nonmetal'],[6,18,86,'Rn','222.00','noble'],
+    [7,1,87,'Fr','215.00','metal'],  [7,2,88,'Ra','226.03','metal'],
+    [7,3,89,'Ac','227.03','transition'],[7,4,104,'Rt','(261)','transition'],[7,5,105,'Db','(262)','transition'],[7,6,106,'Sg','(266)','transition'],[7,7,107,'Bh','(264)','transition'],[7,8,108,'Hs','(269)','transition'],[7,9,109,'Mt','(268)','transition'],[7,10,110,'Ds','(271)','transition'],[7,11,111,'Rg','(272)','transition'],[7,12,112,'Cn','(277)','transition']
+  ];
+  const grid = {};
+  for (const [r, c, n, sym, mass, cat] of E){ grid[r+'-'+c] = { n, sym, mass, cat }; }
+  let rows = '';
+  for (let r = 1; r <= 7; r++){
+    rows += '<tr>';
+    for (let c = 1; c <= 18; c++){
+      const cell = grid[r+'-'+c];
+      if (!cell){ rows += '<td class="empty"></td>'; }
+      else rows += `<td class="${cell.cat}"><span class="num">${cell.n}</span><span class="sym">${cell.sym}</span><span class="mass">${cell.mass}</span></td>`;
+    }
+    rows += '</tr>';
+  }
+  // Lanthanides + Actinides
+  const Ln = [['Ce',58,140.12],['Pr',59,140.91],['Nd',60,144.24],['Pm',61,145.00],['Sm',62,150.35],['Eu',63,151.96],['Gd',64,157.25],['Tb',65,158.92],['Dy',66,162.50],['Ho',67,164.93],['Er',68,167.26],['Tm',69,168.93],['Yb',70,173.04],['Lu',71,174.97]];
+  const An = [['Th',90,232.04],['Pa',91,231.00],['U',92,238.03],['Np',93,237.05],['Pu',94,239.05],['Am',95,241.06],['Cm',96,244.00],['Bk',97,249.08],['Cf',98,252.08],['Es',99,252.08],['Fm',100,257.10],['Md',101,258.10],['No',102,259.10],['Lr',103,262.11]];
+  const lanRow = Ln.map(e => `<td class="transition"><span class="num">${e[1]}</span><span class="sym">${e[0]}</span><span class="mass">${e[2]}</span></td>`).join('');
+  const actRow = An.map(e => `<td class="transition"><span class="num">${e[1]}</span><span class="sym">${e[0]}</span><span class="mass">${e[2]}</span></td>`).join('');
+  return `
+    <div class="titlebar"><span>Periodic Table of the Elements</span><span class="x">close</span></div>
+    <div class="body">
+      <table>${rows}</table>
+      <table style="margin-top:8px"><tr>${lanRow}</tr><tr>${actRow}</tr></table>
+      <div class="constants">
+        <b>Avogadro's number</b> N<sub>a</sub> = 6.02 × 10<sup>23</sup>/mol &nbsp;·&nbsp;
+        <b>Faraday constant</b> F = 96,500 C/mol &nbsp;·&nbsp;
+        <b>Planck's constant</b> h = 6.63 × 10<sup>-34</sup> J·s<br>
+        <b>Speed of light</b> c = 3.00 × 10<sup>8</sup> m/s &nbsp;·&nbsp;
+        <b>Universal gas constant</b> R = 8.314 J/(mol·K) = 0.08206 (atm·L)/(mol·K)
+      </div>
+    </div>
+  `;
+}
+
+// ---- Scoring ---------------------------------------------------------------
+// 200-600 scale (10-point increments) — replaces the legacy 1-30 reporting scale
+// effective March 1, 2025 per the ADA DAT Scoring Update.
+// Anchors approximate the published concordance: 200 ≈ floor, 320 ≈ 50%ile (~17),
+// 400 ≈ 80%ile (~21), 500 ≈ 99%ile (~25), 600 = ceiling.
+function scaledScore(pctCorrect){
+  const anchors = [
+    [0.00, 200], [0.20, 240], [0.30, 270], [0.40, 290], [0.50, 320],
+    [0.60, 340], [0.70, 360], [0.78, 380], [0.84, 410], [0.89, 440],
+    [0.93, 470], [0.96, 500], [0.98, 530], [1.00, 600]
+  ];
+  for (let i = 1; i < anchors.length; i++){
+    if (pctCorrect <= anchors[i][0]){
+      const [x0,y0] = anchors[i-1], [x1,y1] = anchors[i];
+      const t = (pctCorrect - x0) / (x1 - x0);
+      const raw = y0 + t * (y1 - y0);
+      return Math.max(200, Math.min(600, Math.round(raw / 10) * 10));
+    }
+  }
+  return 600;
+}
+
+function finishTest(){
+  STATE.finished = true;
+  if (STATE.timerId){ clearInterval(STATE.timerId); STATE.timerId = null; }
+
+  // Tally per subject
+  const subjResults = {};
+  const subjTotals = { Biology: 0, 'Gen Chem': 0, OChem: 0, QR: 0 };
+  const wrong = [];
+  for (const sec of SECTIONS){
+    sec.items.forEach((p, i) => {
+      const sub = p._sub || sec.name;
+      subjResults[sub] = subjResults[sub] || { correct: 0, total: 0, byTopic: {} };
+      subjResults[sub].total++;
+      subjTotals[sub] = (subjTotals[sub] || 0) + 1;
+      const ans = STATE.answers[sec.key][i];
+      const ok = ans === p.correct;
+      if (ok) subjResults[sub].correct++;
+      const topic = p.topic || 'general';
+      subjResults[sub].byTopic[topic] = subjResults[sub].byTopic[topic] || { c: 0, n: 0 };
+      subjResults[sub].byTopic[topic].n++;
+      if (ok) subjResults[sub].byTopic[topic].c++;
+      if (!ok && ans !== undefined) wrong.push({ p, ans, sub, idx: i, sec: sec.key });
+      else if (ans === undefined) wrong.push({ p, ans: undefined, sub, idx: i, sec: sec.key });
+    });
+  }
+
+  // Composite (Bio+GC+OChem)
+  const sonsCorrect = (subjResults.Biology?.correct || 0) + (subjResults['Gen Chem']?.correct || 0) + (subjResults.OChem?.correct || 0);
+  const sonsTotal   = (subjResults.Biology?.total   || 0) + (subjResults['Gen Chem']?.total   || 0) + (subjResults.OChem?.total   || 0);
+  const sonsScale   = sonsTotal ? scaledScore(sonsCorrect / sonsTotal) : 0;
+  const qrScale     = subjResults.QR ? scaledScore(subjResults.QR.correct / subjResults.QR.total) : 0;
+  const academic    = Math.round(((subjResults.Biology?.correct||0)/(subjResults.Biology?.total||1) + (subjResults['Gen Chem']?.correct||0)/(subjResults['Gen Chem']?.total||1) + (subjResults.OChem?.correct||0)/(subjResults.OChem?.total||1) + (subjResults.QR?.correct||0)/(subjResults.QR?.total||1)) / 4 * 100) / 100;
+
+  // Persist
+  const tests = window.DAT_MOCK_TESTS;
+  const record = {
+    testId: tests[STATE.testIdx].id,
+    testName: tests[STATE.testIdx].name,
+    ts: Date.now(),
+    subjects: Object.fromEntries(Object.entries(subjResults).map(([k,v])=>[k,{correct:v.correct,total:v.total,pct: v.total > 0 ? Math.round(100*v.correct/v.total) : 0}])),
+    sonsScaled: sonsScale,
+    qrScaled: qrScale,
+    academicAvg: academic
+  };
+  try {
+    localStorage.setItem('al:lastPrometric', JSON.stringify(record));
+    const hist = JSON.parse(localStorage.getItem('al:prometricHistory') || '[]');
+    hist.push(record);
+    localStorage.setItem('al:prometricHistory', JSON.stringify(hist.slice(-50)));
+    // Also append to the cross-tool history that the home dashboard reads, so the
+    // ▲/▼ delta against the previous mock shows up after Prometric runs (not just
+    // unified mocks). Stamp `predicted` from the academic average since that's the
+    // single-number scalar the delta math works against.
+    const cross = Object.assign({}, record, { predicted: record.academicAvg });
+    const allHist = JSON.parse(localStorage.getItem('al:mockHistory') || '[]');
+    allHist.push(cross);
+    localStorage.setItem('al:mockHistory', JSON.stringify(allHist.slice(-50)));
+  } catch(e){}
+
+  exitRunMode();
+  renderFinal(subjResults, sonsScale, qrScale, wrong, tests[STATE.testIdx]);
+}
+
+function renderFinal(subjResults, sonsScale, qrScale, wrong, testInfo){
+  const stage = document.getElementById('pmStage');
+  stage.style.display = 'none';   // Score Report is fullscreen overlay
+
+  // Total cell counts for the You / Average summary
+  const totalCorrect = Object.values(subjResults).reduce((s, r) => s + r.correct, 0);
+  const totalQs = Object.values(subjResults).reduce((s, r) => s + r.total, 0);
+  const pctYou = totalQs ? Math.round(100*totalCorrect/totalQs) : 0;
+  // Composite estimate: average of the two section scaled scores rounded to 10
+  const estScore = Math.round(((sonsScale + qrScale) / 2) / 10) * 10;
+  const avgPct = 64;        // cohort average reference for the You vs Average row
+  const avgScore = 360;
+  const totalSeconds = ((STATE.sectionEndedAt.qr || Date.now()) - (window._pmTestStartedAt || (Date.now() - 60*60*1000))) / 1000;
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = Math.floor(totalSeconds % 60);
+  const dateStr = new Date().toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
+
+  // Distribution chart — render bars for ±40 around estScore on the 200-600 scale
+  const chartScores = [];
+  for (let s = Math.max(200, estScore - 60); s <= Math.min(600, estScore + 60); s += 10){
+    chartScores.push(s);
+  }
+  const chartH = 180;
+  const barW = 100 / chartScores.length;
+  const chartBars = chartScores.map((s, i) => {
+    const isMine = s === estScore;
+    // Synthetic distribution: peak at ~estScore, smaller on flanks
+    const dist = Math.max(2, Math.round(20 - Math.abs(s - estScore) * 0.5));
+    const h = dist * 7;
+    const x = i * barW;
+    const fill = isMine ? '#3892ff' : '#2a3346';
+    return `<rect x="${x.toFixed(2)}%" y="${chartH - h}" width="${(barW * 0.7).toFixed(2)}%" height="${h}" fill="${fill}" rx="2"/>` +
+           (isMine ? `<text x="${(x + barW * 0.35).toFixed(2)}%" y="${chartH - h - 6}" text-anchor="middle" font-size="11" fill="#fff" font-weight="600">${s}</text>` : '');
+  }).join('');
+  const chartLabels = chartScores.filter((_, i) => i % 2 === 0).map((s, i) => {
+    const realIdx = i * 2;
+    const x = realIdx * barW + barW * 0.35;
+    return `<text x="${x.toFixed(2)}%" y="${chartH + 14}" text-anchor="middle" font-size="11" fill="#9aa4b4">${s}</text>`;
+  }).join('');
+
+  // Score Breakdown rows — flatten subject + topic data
+  const allTopics = [];
+  for (const [subject, r] of Object.entries(subjResults)){
+    if (r.byTopic) for (const [t, v] of Object.entries(r.byTopic)){
+      const yourPct = v.n > 0 ? Math.round(100*v.c/v.n) : 0;
+      const avgRefPct = 60 + Math.floor(Math.random() * 25); // synthetic average
+      allTopics.push({ subject, topic: t, c:v.c, n:v.n, pct:yourPct, avg:avgRefPct });
+    }
+  }
+  // Sort: lowest score first to highlight weak areas
+  allTopics.sort((a,b) => a.pct - b.pct);
+  const topicRows = allTopics.map(t => `
+    <tr>
+      <td><b>${t.topic}</b> <span style="color:#9aa4b4; font-size:12px">· ${t.subject}</span></td>
+      <td class="r" style="color:#cdd5e0">${t.c}/${t.n}</td>
+      <td class="r" style="color:${t.pct < 50 ? '#ff6b6b' : t.pct < 70 ? '#ffb84a' : '#5fd06b'}; font-weight:600">${t.pct}%</td>
+      <td class="barCell">
+        <div class="bar">
+          <div class="you" style="width:${t.pct}%"></div>
+          <div class="avg" style="left:${t.avg}%"></div>
+        </div>
+      </td>
+      <td class="r" style="color:#9aa4b4">${t.avg}%</td>
+    </tr>`).join('');
+
+  // Feedback message based on overall score
+  const feedback = pctYou < 50
+    ? "Do not let this score discourage you! With enough practice, your score will gradually improve with time. Try to review the questions that you have answered incorrectly to identify any areas of weakness. We recommend spending extra time reviewing these areas to improve your understanding of the overall concepts. Lastly, continue learning any remaining topics that you are not fully comfortable with."
+    : pctYou < 75
+    ? "This is a good score! But there is still room for improvement. With enough practice, your score will continue to increase. Try to review the questions that you have answered incorrectly to identify any areas of weakness. Remember, the best way to improve your score is through daily practice using the practice generators."
+    : "Excellent work! You're scoring above the average for these sections. Continue refining your weakest topics and maintain your study cadence — you're on track for a strong DAT performance.";
+
+  // Mount the Score Report overlay
+  let report = document.getElementById('pmReport');
+  if (!report){
+    report = document.createElement('div');
+    report.id = 'pmReport';
+    document.body.appendChild(report);
+  }
+  report.innerHTML = `
+    <div class="pm-final">
+      <div class="top">
+        <h2><span class="arrow">&rarr;</span>Score Report</h2>
+        <span class="x" id="pmReportX">&#10005;</span>
+      </div>
+
+      <div class="pills">
+        <span class="pill"><span class="icon">i</span>${testInfo.name}</span>
+        <span class="pill"><span class="icon">&#128197;</span>Date: ${dateStr}</span>
+        <span class="pill"><span class="icon">&#9201;</span>Time Spent: ${minutes}:${String(seconds).padStart(2,'0')}</span>
+      </div>
+
+      <div class="est">Your Estimated Score: <span class="num">${estScore}</span></div>
+
+      <div class="row1">
+        <div class="chart">
+          <svg viewBox="0 0 100 ${chartH + 22}" preserveAspectRatio="none" style="overflow:visible">
+            ${chartBars}
+            ${chartLabels}
+          </svg>
+        </div>
+        <div class="vsAvg">
+          <table>
+            <thead><tr><th></th><th class="r">You</th><th class="r">Average</th></tr></thead>
+            <tbody>
+              <tr><td class="lbl">Score</td><td class="r">${pctYou}%</td><td class="r">${avgPct}%</td></tr>
+              <tr><td class="lbl">Correct/Total</td><td class="r">${totalCorrect}/${totalQs}</td><td class="r">${Math.round(totalQs * 0.64)}/${totalQs}</td></tr>
+              <tr><td class="lbl">Time Per Question</td><td class="r">${Math.floor(totalSeconds/totalQs)}s</td><td class="r">71s</td></tr>
+              <tr><td class="lbl">Total Time</td><td class="r">${minutes}m ${seconds}s</td><td class="r">${Math.round(totalQs * 71 / 60)}m</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="feedback">
+        <h3>Feedback</h3>
+        <p>${feedback}</p>
+      </div>
+
+      <div class="breakdown">
+        <div class="breakdown-head">
+          <h3>Score Breakdown</h3>
+          <button class="toggle" onclick="this.classList.toggle('on')">&#9678; Show Weakness</button>
+        </div>
+        <table class="topicTable">
+          <thead>
+            <tr><th>Topic</th><th class="r">Correct/Total</th><th class="r">Score</th><th></th><th class="r">Avg. Score</th></tr>
+          </thead>
+          <tbody>${topicRows}</tbody>
+        </table>
+      </div>
+
+      <div class="actions">
+        <button class="btn" onclick="location.reload()">Take Another Test</button>
+        <a class="btn secondary" href="ace-labs.html">Back to Hub</a>
+        <a class="btn secondary" href="mocks-catalog.html">Mock Catalog</a>
+        <button class="btn secondary" id="pmShowWrong">Review ${wrong.length} Missed Questions</button>
+      </div>
+    </div>
+  `;
+
+  document.getElementById('pmReportX').addEventListener('click', () => {
+    report.remove();
+    location.href = 'ace-labs.html';
+  });
+  document.getElementById('pmShowWrong').addEventListener('click', () => {
+    showWrongAnswerReview(wrong);
+  });
+}
+
+function showWrongAnswerReview(wrong){
+  let modal = document.getElementById('pmWrongReview');
+  if (modal) modal.remove();
+  modal = document.createElement('div');
+  modal.id = 'pmWrongReview';
+  modal.style.cssText = 'position:fixed; inset:0; background:rgba(0,0,0,.85); z-index:1600; overflow-y:auto; padding:30px';
+  const cards = wrong.map(w => {
+    const yourLetter = w.ans !== undefined ? 'ABCDE'[w.ans] : '—';
+    const yourText = w.ans !== undefined ? w.p.opts[w.ans] : 'skipped';
+    return `<div style="background:#1c2434; border:1px solid #2a3346; border-left:3px solid #D55E00; border-radius:8px; padding:16px 18px; margin-bottom:10px; color:#cdd5e0">
+      <div style="font-size:12px; color:#9aa4b4; margin-bottom:4px">${w.sub}${w.p.topic ? ' · ' + w.p.topic : ''}</div>
+      <div style="font-size:14px; font-weight:600; color:#fff; margin-bottom:8px">${w.p.q || ''}</div>
+      <div style="font-size:13px"><span style="color:#9aa4b4">You selected:</span> <span style="color:#D55E00; font-weight:600">${yourLetter}. ${yourText}</span></div>
+      <div style="font-size:13px"><span style="color:#9aa4b4">Correct answer:</span> <span style="color:#009E73; font-weight:600">${'ABCDE'[w.p.correct]}. ${w.p.opts[w.p.correct]}</span></div>
+      ${w.p.why ? `<div style="font-size:12.5px; color:#9aa4b4; margin-top:6px; font-style:italic">${w.p.why}</div>` : ''}
+    </div>`;
+  }).join('');
+  modal.innerHTML = `
+    <div style="max-width:880px; margin:0 auto; color:#fff; font-family:'DM Sans',Arial,sans-serif">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px">
+        <h2 style="font-size:24px; font-weight:700">Missed Questions Review (${wrong.length})</h2>
+        <button id="pmWrongClose" style="padding:8px 16px; background:transparent; border:1px solid #4f5a73; color:#cdd5e0; border-radius:6px; cursor:pointer">Close</button>
+      </div>
+      ${cards}
+    </div>
+  `;
+  document.body.appendChild(modal);
+  modal.querySelector('#pmWrongClose').addEventListener('click', () => modal.remove());
+}
+</script>
+</body>
+</html>

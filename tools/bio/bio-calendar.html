@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>60-day Plan &middot; AceTheDAT Bio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="bio-shared.css">
+<style>
+.cal-bar{display:flex;gap:14px;align-items:center;flex-wrap:wrap;padding:18px 22px;background:var(--paper);border:1px solid var(--line);border-radius:12px;margin-bottom:18px;box-shadow:var(--shadow)}
+.cal-bar label{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--ink-2)}
+.cal-bar input[type=date]{font-family:inherit;font-size:13px;padding:6px 10px;border:1px solid var(--line);border-radius:7px;background:var(--paper-2)}
+.cal-bar .stat{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--ink-mute);margin-left:auto}
+.cal-bar .stat b{color:var(--ink);font-weight:700}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin:0 0 24px}
+.cal-day-h{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.16em;color:var(--ink-mute);text-align:center;padding:6px 0;font-weight:700;text-transform:uppercase}
+.cal-cell{background:var(--paper);border:1px solid var(--line);border-radius:9px;padding:10px 11px;min-height:96px;display:flex;flex-direction:column;gap:5px;transition:transform .15s,box-shadow .15s,border-color .15s;cursor:pointer;text-decoration:none;color:inherit}
+.cal-cell:hover{transform:translateY(-1px);box-shadow:var(--shadow);border-color:var(--gold-d)}
+.cal-cell .dn{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-mute);font-weight:700;display:flex;justify-content:space-between}
+.cal-cell .dn .dt{color:var(--ink-2)}
+.cal-cell .topic{font-size:12.5px;font-weight:600;color:var(--ink);line-height:1.25;margin-top:auto}
+.cal-cell .hub{font-size:10px;letter-spacing:.1em;color:var(--gold-d);font-weight:700;text-transform:uppercase}
+.cal-cell.today{border:2px solid var(--gold);background:rgba(201,168,76,0.08)}
+.cal-cell.today .dn{color:var(--gold-d)}
+.cal-cell.past{opacity:0.55}
+.cal-cell.past.complete{opacity:1;background:var(--good-bg);border-color:var(--good)}
+.cal-cell.past.complete::after{content:'';display:block;width:8px;height:8px;background:var(--good-d);border-radius:50%;position:absolute}
+.cal-cell.rest{background:var(--paper-2);opacity:0.7;cursor:default}
+.cal-cell.rest:hover{transform:none;box-shadow:none;border-color:var(--line)}
+.cal-cell.rest .topic{color:var(--ink-mute);font-style:italic;font-weight:500}
+.cal-cell.review{background:rgba(106,138,168,0.08);border-color:rgba(106,138,168,0.4)}
+.cal-cell.review .hub{color:var(--info)}
+.cal-cell.mock{background:linear-gradient(135deg,var(--gold-bg),rgba(201,168,76,0.18));border-color:var(--gold-d)}
+.cal-cell.mock .hub{color:var(--gold-d)}
+.cal-cell.mock .topic{font-weight:700;color:var(--ink)}
+.cal-week-lbl{grid-column:1/-1;font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.18em;color:var(--ink-mute);text-transform:uppercase;font-weight:700;padding:14px 0 4px;border-top:1px dashed var(--line);margin-top:6px;display:flex;justify-content:space-between;align-items:baseline}
+.cal-week-lbl:first-child{border-top:none;padding-top:0}
+.cal-week-lbl em{font-style:italic;color:var(--gold-d);text-transform:none;letter-spacing:0}
+.cal-leg{display:flex;flex-wrap:wrap;gap:14px;font-size:12px;color:var(--ink-mute);padding:14px 22px;background:var(--paper-2);border-radius:10px;margin:18px 0}
+.cal-leg span{display:inline-flex;align-items:center;gap:6px}
+.cal-leg .sw{width:14px;height:14px;border-radius:4px;border:1px solid var(--line)}
+.cal-leg .sw.today{border-color:var(--gold);background:rgba(201,168,76,0.18)}
+.cal-leg .sw.review{background:rgba(106,138,168,0.18);border-color:rgba(106,138,168,0.4)}
+.cal-leg .sw.mock{background:var(--gold-bg);border-color:var(--gold-d)}
+.cal-leg .sw.rest{background:var(--paper-2)}
+.cal-leg .sw.complete{background:var(--good-bg);border-color:var(--good)}
+</style>
+</head>
+<body data-page="calendar">
+<div class="app">
+<aside class="sb">
+  <div class="sb-brand">
+    <div class="mark">Ace<em>The</em>DAT</div>
+    <div class="sub">Bio Mastery System &middot; v2</div>
+  </div>
+  <a class="sb-link" href="index.html" style="margin-bottom:6px"><span class="dot"></span><span class="label">&larr; Mastery hub</span><span class="meta"></span></a>
+  <a class="sb-link live" href="bio-mock.html" style="margin-bottom:6px"><span class="dot" style="background:var(--gold)"></span><span class="label"><b>Mock Exam</b></span><span class="meta">40q</span></a>
+  <a class="sb-link live" href="bio-diagnostic.html" style="margin-bottom:6px"><span class="dot"></span><span class="label">Diagnostic</span><span class="meta">24q</span></a>
+  <a class="sb-link live active" href="bio-calendar.html" style="margin-bottom:8px"><span class="dot"></span><span class="label">60-day plan</span><span class="meta">study</span></a>
+  <a class="sb-link live" href="bio-analytics.html" style="margin-bottom:8px"><span class="dot"></span><span class="label">Analytics</span><span class="meta">trends</span></a>
+  <a class="sb-link live" href="bio-bonus.html" style="margin-bottom:6px"><span class="dot"></span><span class="label">Bonus topics</span><span class="meta">supp</span></a>
+  <a class="sb-link live" href="bio-micrographs.html" style="margin-bottom:8px"><span class="dot"></span><span class="label">Micrograph ID</span><span class="meta">8 cards</span></a>
+
+  <div class="sb-section">Six hubs</div>
+  <a class="sb-link live" href="bio-cell.html"><span class="dot"></span><span class="label">Cell Lab</span><span class="meta">17</span></a>
+  <a class="sb-link live" href="bio-genetics.html"><span class="dot"></span><span class="label">Genetics</span><span class="meta">flagship</span></a>
+  <a class="sb-link live" href="bio-physiology.html"><span class="dot"></span><span class="label">Physiology</span><span class="meta">flagship</span></a>
+  <a class="sb-link live" href="bio-diversity.html"><span class="dot"></span><span class="label">Diversity</span><span class="meta">flagship</span></a>
+  <a class="sb-link live" href="bio-devo.html"><span class="dot"></span><span class="label">Developmental</span><span class="meta">flagship</span></a>
+  <a class="sb-link live" href="bio-evolution.html"><span class="dot"></span><span class="label">Evolution</span><span class="meta">flagship</span></a>
+</aside>
+
+<main class="mn">
+  <section class="hub-hero" style="padding:46px 60px 0">
+    <span class="badge"><span class="pulse"></span>60-day plan &middot; ~75 min/day</span>
+    <h1>Sixty <em>days</em>. One pass.</h1>
+    <p class="lede">Pick your test date — the plan reverses out from there. Days 1–24 walk every node in the six hubs at a sustainable pace; days 25–48 cycle review + retrieval against weak hubs; days 49–60 lock in mocks. Sundays are review-only. Adjust your start whenever life happens; click any cell to jump to that day's work.</p>
+  </section>
+
+  <section style="padding:0 60px">
+    <div class="cal-bar">
+      <label>Test date <input type="date" id="testDate"></label>
+      <button class="btn sm" id="resetStart" type="button">Today &rarr; D1</button>
+      <span class="stat" id="planStat">&mdash;</span>
+    </div>
+
+    <div class="cal-leg">
+      <span><span class="sw today"></span> today</span>
+      <span><span class="sw"></span> upcoming</span>
+      <span><span class="sw complete"></span> done</span>
+      <span><span class="sw review"></span> review</span>
+      <span><span class="sw mock"></span> mock</span>
+      <span><span class="sw rest"></span> rest</span>
+    </div>
+
+    <div class="cal-grid" id="calGrid"></div>
+  </section>
+</main>
+</div>
+
+<script>
+// 60-day curriculum: each day is one node from one hub, paced so weak hubs get
+// more touches. Weeks 1-4 walk all nodes; weeks 5-7 review by hub; weeks 8-9 mocks.
+// Topics intentionally pulled in the order the existing hubs teach them so the
+// student's localStorage progress carries through cleanly.
+const PLAN = [
+  // Week 1 — Cell Lab foundations
+  {hub:'Cell Lab',  topic:'Water + biomolecules',     href:'bio-cell.html#node-water'},
+  {hub:'Cell Lab',  topic:'Carbohydrates',            href:'bio-cell.html#node-carbs'},
+  {hub:'Cell Lab',  topic:'Lipids + membranes',       href:'bio-cell.html#node-lipids'},
+  {hub:'Cell Lab',  topic:'Proteins',                 href:'bio-cell.html#node-proteins'},
+  {hub:'Cell Lab',  topic:'Nucleic acids',            href:'bio-cell.html#node-nucleic'},
+  {hub:'Cell Lab',  topic:'Enzymes + kinetics',       href:'bio-cell.html#node-enzymes'},
+  {kind:'rest',     topic:'Rest day &middot; light review'},
+  // Week 2 — Cell continued + DNA replication
+  {hub:'Cell Lab',  topic:'Prokaryote vs eukaryote',  href:'bio-cell.html#node-prokaryote'},
+  {hub:'Cell Lab',  topic:'Organelles',               href:'bio-cell.html#node-organelles'},
+  {hub:'Cell Lab',  topic:'Membrane transport',       href:'bio-cell.html#node-membrane'},
+  {hub:'Cell Lab',  topic:'Cellular respiration',     href:'bio-cell.html#node-respiration'},
+  {hub:'Cell Lab',  topic:'Photosynthesis',           href:'bio-cell.html#node-photosynthesis'},
+  {hub:'Cell Lab',  topic:'Cell signaling',           href:'bio-cell.html#node-signaling'},
+  {kind:'rest',     topic:'Rest day &middot; flip Ace Cards'},
+  // Week 3 — Cell wraps + Genetics begins
+  {hub:'Cell Lab',  topic:'Mitosis',                  href:'bio-cell.html#node-mitosis'},
+  {hub:'Cell Lab',  topic:'Meiosis',                  href:'bio-cell.html#node-meiosis'},
+  {hub:'Cell Lab',  topic:'DNA replication',          href:'bio-cell.html#node-dna-replication'},
+  {hub:'Cell Lab',  topic:'Transcription',            href:'bio-cell.html#node-transcription'},
+  {hub:'Cell Lab',  topic:'Translation',              href:'bio-cell.html#node-translation'},
+  {hub:'Genetics',  topic:'Mendelian genetics',       href:'bio-genetics.html#node-mendel'},
+  {kind:'rest',     topic:'Rest day &middot; first retrieval check'},
+  // Week 4 — Genetics + Physiology start
+  {hub:'Genetics',  topic:'Punnett squares + ratios', href:'bio-genetics.html#node-punnett'},
+  {hub:'Genetics',  topic:'Sex-linked + pedigrees',   href:'bio-genetics.html#node-pedigrees'},
+  {hub:'Genetics',  topic:'Linkage + crossing over',  href:'bio-genetics.html#node-linkage'},
+  {hub:'Genetics',  topic:'Population genetics',      href:'bio-genetics.html#node-population'},
+  {hub:'Genetics',  topic:'Mutations',                href:'bio-genetics.html#node-mutations'},
+  {hub:'Genetics',  topic:'Biotech + cloning',        href:'bio-genetics.html#node-biotech'},
+  {kind:'rest',     topic:'Rest day &middot; bonus topics'},
+  // Week 5 — Physiology
+  {hub:'Physiology',topic:'Cardiovascular',           href:'bio-physiology.html#node-cardio'},
+  {hub:'Physiology',topic:'Respiratory',              href:'bio-physiology.html#node-respiratory'},
+  {hub:'Physiology',topic:'Digestive',                href:'bio-physiology.html#node-digestive'},
+  {hub:'Physiology',topic:'Excretory + nephron',      href:'bio-physiology.html#node-nephron'},
+  {hub:'Physiology',topic:'Endocrine',                href:'bio-physiology.html#node-endocrine'},
+  {hub:'Physiology',topic:'Nervous + action potential',href:'bio-physiology.html#node-action-potential'},
+  {kind:'mock',     topic:'Diagnostic mock &middot; 24q', href:'bio-diagnostic.html'},
+  // Week 6 — Physiology wraps + Diversity + Devo
+  {hub:'Physiology',topic:'Muscular + sliding filament',href:'bio-physiology.html#node-muscle'},
+  {hub:'Physiology',topic:'Reproductive',             href:'bio-physiology.html#node-reproductive'},
+  {hub:'Physiology',topic:'Immune',                   href:'bio-physiology.html#node-immune'},
+  {hub:'Diversity', topic:'Three domains overview',   href:'bio-diversity.html#node-domains'},
+  {hub:'Diversity', topic:'Animal phyla',             href:'bio-diversity.html#node-phyla'},
+  {hub:'Diversity', topic:'Protists + fungi',         href:'bio-diversity.html#node-protists'},
+  {kind:'rest',     topic:'Rest day &middot; weak-spot drilling'},
+  // Week 7 — Devo + Evolution
+  {hub:'Diversity', topic:'Plant taxonomy',           href:'bio-diversity.html#node-plants'},
+  {hub:'Devo',      topic:'Fertilization',            href:'bio-devo.html#node-fertilization'},
+  {hub:'Devo',      topic:'Cleavage + gastrulation',  href:'bio-devo.html#node-gastrulation'},
+  {hub:'Devo',      topic:'Organogenesis',            href:'bio-devo.html#node-organogenesis'},
+  {hub:'Evolution', topic:'Natural selection',        href:'bio-evolution.html#node-selection'},
+  {hub:'Evolution', topic:'Speciation',               href:'bio-evolution.html#node-speciation'},
+  {kind:'mock',     topic:'Mid-cycle mock &middot; full', href:'bio-mock.html'},
+  // Week 8 — Review by hub + bonus
+  {kind:'review',   topic:'Review &middot; Cell Lab',     href:'bio-cell.html'},
+  {kind:'review',   topic:'Review &middot; Genetics',     href:'bio-genetics.html'},
+  {kind:'review',   topic:'Review &middot; Physiology',   href:'bio-physiology.html'},
+  {hub:'Evolution', topic:'Phylogeny + cladistics',   href:'bio-evolution.html#node-phylogeny'},
+  {hub:'Evolution', topic:'Hardy-Weinberg drift',     href:'bio-evolution.html#node-drift'},
+  {kind:'review',   topic:'Bonus topics &middot; CRISPR + immunity', href:'bio-bonus.html'},
+  {kind:'rest',     topic:'Rest day &middot; flip Ace Cards'},
+  // Week 9 — Mock surge
+  {kind:'review',   topic:'Review &middot; Diversity',     href:'bio-diversity.html'},
+  {kind:'review',   topic:'Review &middot; Devo + Evolution', href:'bio-devo.html'},
+  {kind:'review',   topic:'Micrograph drill',          href:'bio-micrographs.html'},
+  {kind:'mock',     topic:'Mock #2 &middot; full',         href:'bio-mock.html'},
+  {kind:'review',   topic:'Needs-review walkthrough',   href:'bio-mock.html'},
+  {kind:'mock',     topic:'Mock #3 &middot; full',         href:'bio-mock.html'},
+  {kind:'rest',     topic:'Rest &middot; test eve &middot; light only'}
+];
+// Pad to 60 if needed (defensive — count shouldn't change but guard regardless).
+while (PLAN.length < 60) PLAN.push({kind:'rest', topic:'Rest day'});
+
+const STORE_KEY = 'acethedat_bio_calendar_start';
+function getStartDate(){
+  try {
+    const raw = localStorage.getItem(STORE_KEY);
+    if (raw) return new Date(JSON.parse(raw));
+  } catch(e){}
+  return new Date(); // default = today
+}
+function setStartDate(d){
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(d.toISOString().slice(0,10))); } catch(e){}
+}
+function fmtMD(d){ return (d.getMonth()+1) + '/' + d.getDate(); }
+function dayOfYear(d){ const s = new Date(d.getFullYear(),0,0); return Math.floor((d - s) / 86400000); }
+function isSameDay(a, b){ return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate(); }
+function daysBetween(a, b){ const ms = b.setHours(0,0,0,0) - a.setHours(0,0,0,0); return Math.round(ms/86400000); }
+
+function render(){
+  const start = getStartDate();
+  start.setHours(0,0,0,0);
+  const today = new Date(); today.setHours(0,0,0,0);
+  const elapsed = daysBetween(new Date(start), new Date(today));
+  const grid = document.getElementById('calGrid');
+  const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  let html = '';
+  // Day-of-week header row
+  for (let i = 0; i < 7; i++) html += `<div class="cal-day-h">${dayNames[(start.getDay()+i)%7]}</div>`;
+  // Render 60 cells in 9 rows of 7
+  for (let week = 0; week < 9; week++){
+    const wkStart = new Date(start); wkStart.setDate(start.getDate() + week*7);
+    const wkEnd = new Date(start); wkEnd.setDate(start.getDate() + week*7 + 6);
+    html += `<div class="cal-week-lbl"><span>Week ${week+1}</span><em>${fmtMD(wkStart)} – ${fmtMD(wkEnd)}</em></div>`;
+    for (let d = 0; d < 7; d++){
+      const idx = week*7 + d;
+      if (idx >= 60) break;
+      const day = PLAN[idx];
+      const cellDate = new Date(start); cellDate.setDate(start.getDate() + idx);
+      const isToday = isSameDay(cellDate, today);
+      const isPast = cellDate < today && !isToday;
+      const cls = ['cal-cell'];
+      if (day.kind === 'rest') cls.push('rest');
+      if (day.kind === 'review') cls.push('review');
+      if (day.kind === 'mock') cls.push('mock');
+      if (isToday) cls.push('today');
+      if (isPast) cls.push('past');
+      const tag = day.href ? `<a class="${cls.join(' ')}" href="${day.href}">` : `<div class="${cls.join(' ')}">`;
+      const closeTag = day.href ? '</a>' : '</div>';
+      const hubLabel = day.hub || (day.kind === 'review' ? 'Review' : day.kind === 'mock' ? 'Mock' : day.kind === 'rest' ? 'Rest' : '');
+      html += `${tag}
+        <div class="dn"><span>D${idx+1}</span><span class="dt">${fmtMD(cellDate)}</span></div>
+        ${hubLabel ? `<div class="hub">${hubLabel}</div>` : ''}
+        <div class="topic">${day.topic}</div>
+      ${closeTag}`;
+    }
+  }
+  grid.innerHTML = html;
+
+  // Plan stat
+  const stat = document.getElementById('planStat');
+  if (elapsed < 0){
+    stat.innerHTML = `Plan starts in <b>${-elapsed} day${-elapsed===1?'':'s'}</b>`;
+  } else if (elapsed >= 60){
+    stat.innerHTML = `Plan complete &middot; <b>${elapsed - 59} day${elapsed-59===1?'':'s'}</b> past finish`;
+  } else {
+    stat.innerHTML = `Today is <b>D${elapsed+1}</b> of 60`;
+  }
+}
+
+document.getElementById('testDate').addEventListener('change', e => {
+  const target = new Date(e.target.value);
+  if (isNaN(target)) return;
+  const start = new Date(target); start.setDate(start.getDate() - 60);
+  setStartDate(start);
+  render();
+});
+document.getElementById('resetStart').addEventListener('click', () => {
+  const today = new Date();
+  setStartDate(today);
+  // Suggest a 60-day window so the test date input shows something sensible.
+  const target = new Date(today); target.setDate(target.getDate() + 60);
+  document.getElementById('testDate').value = target.toISOString().slice(0,10);
+  render();
+});
+
+// Initialize: if no start saved, default to today + show implied test date 60d out.
+const start = getStartDate();
+const implied = new Date(start); implied.setDate(implied.getDate() + 60);
+document.getElementById('testDate').value = implied.toISOString().slice(0,10);
+render();
+</script>
+<script src="bio-shared.js"></script>
+</body>
+</html>

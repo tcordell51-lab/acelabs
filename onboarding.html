@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Get Started · Ace Labs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400;1,700&family=DM+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared/ace-labs-shell.css">
+<style>
+/* ===== ONBOARDING-SPECIFIC ===== */
+body[data-page="onboarding"]{
+  background:linear-gradient(180deg,var(--al-bg) 0%,var(--al-paper-2) 100%);
+  min-height:100vh;
+}
+
+.ob-wrap{
+  max-width:580px;
+  margin:0 auto;
+  padding:0 28px 80px;
+}
+
+.ob-progress{
+  display:flex;
+  align-items:center;
+  gap:0;
+  margin:32px 0 44px;
+}
+.ob-step-node{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:4px;
+  flex:1;
+  position:relative;
+}
+.ob-step-node::after{
+  content:'';
+  position:absolute;
+  top:16px;
+  left:calc(50% + 18px);
+  right:calc(-50% + 18px);
+  height:1px;
+  background:var(--al-line-2);
+}
+.ob-step-node:last-child::after{display:none;}
+.ob-step-num{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:.14em;
+  width:32px;
+  height:32px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:var(--al-paper-2);
+  border:2px solid var(--al-line-2);
+  color:var(--al-ink-mute);
+  transition:all .2s;
+}
+.ob-step-node.active .ob-step-num{
+  background:var(--al-ink);
+  border-color:var(--al-ink);
+  color:var(--al-paper);
+}
+.ob-step-node.done .ob-step-num{
+  background:var(--al-good);
+  border-color:var(--al-good);
+  color:#fff;
+}
+.ob-step-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:9px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--al-ink-mute);
+  text-align:center;
+}
+.ob-step-node.active .ob-step-label{color:var(--al-ink);font-weight:700;}
+
+/* ===== STEP PANELS ===== */
+.ob-panel{display:none;}
+.ob-panel.ob-active{display:block;}
+
+.ob-step-tag{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--al-gold-d);
+  margin-bottom:10px;
+}
+.ob-heading{
+  font-family:'Playfair Display',serif;
+  font-size:38px;
+  font-weight:700;
+  letter-spacing:-.01em;
+  line-height:1.1;
+  margin-bottom:10px;
+}
+.ob-heading em{color:var(--al-gold-d);font-style:italic;}
+.ob-sub{
+  font-size:15px;
+  color:var(--al-ink-2);
+  margin-bottom:30px;
+  line-height:1.55;
+}
+@media (max-width:520px){
+  .ob-heading{font-size:28px;}
+}
+
+/* ===== DATE PICKER ===== */
+.ob-date-wrap{display:flex;flex-direction:column;gap:8px;margin-bottom:32px;}
+.ob-date-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--al-ink-2);
+}
+.ob-date-input{
+  font-family:'DM Sans',sans-serif;
+  font-size:18px;
+  font-weight:600;
+  color:var(--al-ink);
+  background:var(--al-paper);
+  border:2px solid var(--al-line-2);
+  border-radius:10px;
+  padding:14px 18px;
+  outline:none;
+  transition:border-color .15s;
+  width:100%;
+}
+.ob-date-input:focus{border-color:var(--al-gold);}
+
+/* ===== RADIO GROUP ===== */
+.ob-radio-group{display:flex;flex-direction:column;gap:12px;margin-bottom:32px;}
+.ob-radio-option{
+  display:flex;
+  align-items:flex-start;
+  gap:14px;
+  padding:18px 20px;
+  background:var(--al-paper);
+  border:2px solid var(--al-line-2);
+  border-radius:12px;
+  cursor:pointer;
+  transition:all .15s;
+}
+.ob-radio-option:hover{border-color:var(--al-gold-d);}
+.ob-radio-option.selected{
+  border-color:var(--al-ink);
+  background:var(--al-ink);
+  color:var(--al-paper);
+}
+.ob-radio-option input[type="radio"]{
+  width:18px;
+  height:18px;
+  margin-top:2px;
+  flex-shrink:0;
+  accent-color:var(--al-gold-d);
+  cursor:pointer;
+}
+.ob-radio-option.selected input[type="radio"]{accent-color:var(--al-gold);}
+.ob-radio-text-head{
+  font-size:16px;
+  font-weight:700;
+  line-height:1.2;
+}
+.ob-radio-text-sub{
+  font-size:13px;
+  color:var(--al-ink-mute);
+  margin-top:3px;
+}
+.ob-radio-option.selected .ob-radio-text-sub{color:rgba(245,240,232,.65);}
+
+/* ===== CHECKBOX GROUP ===== */
+.ob-check-group{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:32px;}
+@media (max-width:420px){.ob-check-group{grid-template-columns:1fr;}}
+.ob-check-option{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:16px 18px;
+  background:var(--al-paper);
+  border:2px solid var(--al-line-2);
+  border-radius:12px;
+  cursor:pointer;
+  transition:all .15s;
+}
+.ob-check-option:hover{border-color:var(--al-gold-d);}
+.ob-check-option.selected{
+  border-color:var(--al-ink);
+  background:var(--al-paper-2);
+}
+.ob-check-option input[type="checkbox"]{
+  width:18px;
+  height:18px;
+  flex-shrink:0;
+  accent-color:var(--al-gold-d);
+  cursor:pointer;
+}
+.ob-check-label{font-size:15px;font-weight:600;}
+.ob-check-tag{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:.10em;
+  text-transform:uppercase;
+  color:var(--al-ink-mute);
+  margin-top:1px;
+}
+
+/* Per-section accent */
+.ob-check-option[data-section="bio"] .ob-check-label{color:var(--al-bio-color);}
+.ob-check-option[data-section="gc"] .ob-check-label{color:var(--al-gc-color);}
+.ob-check-option[data-section="ochem"] .ob-check-label{color:var(--al-ochem-color);}
+.ob-check-option[data-section="qr"] .ob-check-label{color:var(--al-qr-color);}
+
+/* ===== BUTTONS ===== */
+.ob-btn-row{display:flex;align-items:center;gap:14px;}
+.ob-btn{
+  font-family:'JetBrains Mono',monospace;
+  font-size:12px;
+  font-weight:700;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  padding:14px 28px;
+  border-radius:8px;
+  border:none;
+  cursor:pointer;
+  transition:all .15s;
+}
+.ob-btn-primary{
+  background:var(--al-ink);
+  color:var(--al-paper);
+}
+.ob-btn-primary:hover{background:var(--al-teal-2);}
+.ob-btn-primary:disabled{opacity:.4;cursor:not-allowed;}
+.ob-btn-back{
+  background:transparent;
+  color:var(--al-ink-2);
+  border:2px solid var(--al-line-2);
+}
+.ob-btn-back:hover{border-color:var(--al-ink-2);}
+
+/* ===== VALIDATION NOTE ===== */
+.ob-note{
+  font-size:12px;
+  color:var(--al-ink-mute);
+  font-style:italic;
+  margin-top:8px;
+  min-height:16px;
+}
+.ob-note.ob-error{color:var(--al-trap);font-style:normal;font-weight:600;}
+</style>
+</head>
+<body data-page="onboarding">
+<div class="ob-wrap">
+
+<!-- TOP BAR -->
+<header class="al-top">
+  <div class="al-brand">
+    <span class="al-mark">Ace<em>The</em>DAT</span>
+    <span class="al-divider"></span>
+    <span class="al-product">Ace Labs</span>
+  </div>
+  <nav class="al-nav">
+    <a href="ace-labs.html" class="al-nav-link">Home</a>
+  </nav>
+</header>
+
+<!-- PROGRESS INDICATOR -->
+<div class="ob-progress" role="list" aria-label="Setup steps">
+  <div class="ob-step-node active" id="sn1" role="listitem">
+    <div class="ob-step-num" aria-current="step">01</div>
+    <div class="ob-step-label">Test date</div>
+  </div>
+  <div class="ob-step-node" id="sn2" role="listitem">
+    <div class="ob-step-num">02</div>
+    <div class="ob-step-label">Attempt</div>
+  </div>
+  <div class="ob-step-node" id="sn3" role="listitem">
+    <div class="ob-step-num">03</div>
+    <div class="ob-step-label">Weak areas</div>
+  </div>
+</div>
+
+<!-- ===== STEP 1: TEST DATE ===== -->
+<div class="ob-panel ob-active" id="panel1" role="main" aria-labelledby="s1-heading">
+  <div class="ob-step-tag">Step 01 of 03</div>
+  <h1 class="ob-heading" id="s1-heading">When's your <em>test?</em></h1>
+  <p class="ob-sub">Your test date shapes everything — how deep to go, which sections to front-load, when to shift to full mocks.</p>
+
+  <div class="ob-date-wrap">
+    <label class="ob-date-label" for="testDateInput">DAT test date</label>
+    <input
+      class="ob-date-input"
+      type="date"
+      id="testDateInput"
+      name="testDate"
+      autocomplete="off"
+      aria-describedby="dateNote"
+    />
+  </div>
+  <p class="ob-note" id="dateNote">Select the date shown on your Prometric confirmation.</p>
+
+  <div class="ob-btn-row">
+    <button class="ob-btn ob-btn-primary" id="btn1Next" onclick="step1Next()">Next</button>
+  </div>
+</div>
+
+<!-- ===== STEP 2: ATTEMPT ===== -->
+<div class="ob-panel" id="panel2" aria-labelledby="s2-heading">
+  <div class="ob-step-tag">Step 02 of 03</div>
+  <h1 class="ob-heading" id="s2-heading">First attempt <em>or retake?</em></h1>
+  <p class="ob-sub">Your history with the test shapes which path makes the most sense right now.</p>
+
+  <div class="ob-radio-group" role="radiogroup" aria-label="Attempt type">
+    <label class="ob-radio-option" id="optFirst" onclick="selectAttempt('first')">
+      <input type="radio" name="attempt" value="first" id="rdoFirst" />
+      <div>
+        <div class="ob-radio-text-head">First attempt</div>
+        <div class="ob-radio-text-sub">Never taken the official DAT before.</div>
+      </div>
+    </label>
+    <label class="ob-radio-option" id="optRetake" onclick="selectAttempt('retake')">
+      <input type="radio" name="attempt" value="retake" id="rdoRetake" />
+      <div>
+        <div class="ob-radio-text-head">Retake</div>
+        <div class="ob-radio-text-sub">Sat for the DAT at least once. Came back to push the score.</div>
+      </div>
+    </label>
+  </div>
+  <p class="ob-note" id="attemptNote"></p>
+
+  <div class="ob-btn-row">
+    <button class="ob-btn ob-btn-back" onclick="goToStep(1)">Back</button>
+    <button class="ob-btn ob-btn-primary" id="btn2Next" onclick="step2Next()">Next</button>
+  </div>
+</div>
+
+<!-- ===== STEP 3: WEAK AREAS ===== -->
+<div class="ob-panel" id="panel3" aria-labelledby="s3-heading">
+  <div class="ob-step-tag">Step 03 of 03</div>
+  <h1 class="ob-heading" id="s3-heading">Which sections feel <em>weakest?</em></h1>
+  <p class="ob-sub">Select everything that feels shaky right now. You can change this anytime. The system will weight those engines first when you open Ace Labs.</p>
+
+  <div class="ob-check-group" role="group" aria-label="Weak sections">
+    <label class="ob-check-option" data-section="bio" onclick="toggleSection(this,'bio')">
+      <input type="checkbox" value="bio" id="cbBio" />
+      <div>
+        <div class="ob-check-label">Biology</div>
+        <div class="ob-check-tag">Section · Bio</div>
+      </div>
+    </label>
+    <label class="ob-check-option" data-section="gc" onclick="toggleSection(this,'gc')">
+      <input type="checkbox" value="gc" id="cbGC" />
+      <div>
+        <div class="ob-check-label">Gen Chem</div>
+        <div class="ob-check-tag">Section · GC</div>
+      </div>
+    </label>
+    <label class="ob-check-option" data-section="ochem" onclick="toggleSection(this,'ochem')">
+      <input type="checkbox" value="ochem" id="cbOchem" />
+      <div>
+        <div class="ob-check-label">Organic Chem</div>
+        <div class="ob-check-tag">Section · OChem</div>
+      </div>
+    </label>
+    <label class="ob-check-option" data-section="qr" onclick="toggleSection(this,'qr')">
+      <input type="checkbox" value="qr" id="cbQR" />
+      <div>
+        <div class="ob-check-label">Quantitative Reasoning</div>
+        <div class="ob-check-tag">Section · QR</div>
+      </div>
+    </label>
+  </div>
+  <p class="ob-note" id="sectionNote">Select at least one section, or skip to get the full home dashboard.</p>
+
+  <div class="ob-btn-row">
+    <button class="ob-btn ob-btn-back" onclick="goToStep(2)">Back</button>
+    <button class="ob-btn ob-btn-primary" id="btn3Submit" onclick="submitOnboarding()">Go to my path</button>
+  </div>
+</div>
+
+<!-- FOOT -->
+<footer class="al-foot" style="margin-top:60px;">
+  <div class="al-foot-row">
+    <span>Ace Labs · setup</span>
+    <span><a href="ace-labs.html">Skip setup, go to home</a></span>
+  </div>
+</footer>
+
+</div><!-- /ob-wrap -->
+
+<script>
+(function(){
+  var currentStep = 1;
+  var attemptVal = null;
+  var weakSections = {};
+
+  // ---- step navigation ----
+  window.goToStep = function(n){
+    // Update panels
+    document.querySelectorAll('.ob-panel').forEach(function(p){ p.classList.remove('ob-active'); });
+    document.getElementById('panel' + n).classList.add('ob-active');
+
+    // Update step nodes
+    for(var i=1;i<=3;i++){
+      var sn = document.getElementById('sn'+i);
+      sn.classList.remove('active','done');
+      if(i < n) sn.classList.add('done');
+      else if(i === n) sn.classList.add('active');
+    }
+
+    currentStep = n;
+    window.scrollTo({top:0,behavior:'smooth'});
+  };
+
+  // ---- step 1 ----
+  window.step1Next = function(){
+    var input = document.getElementById('testDateInput');
+    var note  = document.getElementById('dateNote');
+    var val   = input.value;
+    if(!val){
+      note.textContent = 'Please select your test date to continue.';
+      note.classList.add('ob-error');
+      input.focus();
+      return;
+    }
+    note.textContent = '';
+    note.classList.remove('ob-error');
+    goToStep(2);
+  };
+
+  // ---- step 2 ----
+  window.selectAttempt = function(val){
+    attemptVal = val;
+    document.getElementById('optFirst').classList.toggle('selected', val === 'first');
+    document.getElementById('optRetake').classList.toggle('selected', val === 'retake');
+    document.getElementById('rdoFirst').checked = (val === 'first');
+    document.getElementById('rdoRetake').checked = (val === 'retake');
+    document.getElementById('attemptNote').textContent = '';
+    document.getElementById('attemptNote').classList.remove('ob-error');
+  };
+
+  window.step2Next = function(){
+    var note = document.getElementById('attemptNote');
+    if(!attemptVal){
+      note.textContent = 'Please select one to continue.';
+      note.classList.add('ob-error');
+      return;
+    }
+    note.textContent = '';
+    note.classList.remove('ob-error');
+    goToStep(3);
+  };
+
+  // ---- step 3 ----
+  window.toggleSection = function(el, section){
+    var cb = document.getElementById('cb' + section.charAt(0).toUpperCase() + section.slice(1));
+    // The click on the label will toggle the checkbox — read after tick
+    setTimeout(function(){
+      if(cb.checked){ weakSections[section] = true; el.classList.add('selected'); }
+      else { delete weakSections[section]; el.classList.remove('selected'); }
+    }, 0);
+  };
+
+  window.submitOnboarding = function(){
+    // Gather data
+    var testDate  = document.getElementById('testDateInput').value;
+    var attempt   = attemptVal || 'first';
+    var sections  = Object.keys(weakSections);
+
+    // Persist to localStorage
+    try {
+      localStorage.setItem('aceLabs:onboarding', JSON.stringify({
+        testDate:  testDate,
+        attempt:   attempt,
+        weakAreas: sections,
+        setAt:     Date.now()
+      }));
+      // Dual-write so test-week.html and calendar.html can read a consistent key
+      if(testDate) localStorage.setItem('acelabs_test_date', testDate);
+    } catch(e){}
+
+    // Route decision
+    var today = new Date();
+    today.setHours(0,0,0,0);
+    var testDt = testDate ? new Date(testDate + 'T00:00:00') : null;
+    var daysAway = testDt ? Math.round((testDt - today) / 86400000) : 9999;
+
+    if(daysAway <= 14 && testDt){
+      window.location.href = 'test-week.html';
+    } else if(attempt === 'retake'){
+      window.location.href = 'for-retakers.html';
+    } else {
+      window.location.href = 'ace-labs.html';
+    }
+  };
+
+  // Prefill if returning
+  try {
+    var saved = JSON.parse(localStorage.getItem('aceLabs:onboarding') || 'null');
+    if(saved){
+      if(saved.testDate) document.getElementById('testDateInput').value = saved.testDate;
+      if(saved.attempt) selectAttempt(saved.attempt);
+      if(Array.isArray(saved.weakAreas)){
+        saved.weakAreas.forEach(function(s){
+          weakSections[s] = true;
+          var cb = document.getElementById('cb' + s.charAt(0).toUpperCase() + s.slice(1));
+          if(cb){ cb.checked = true; }
+          var el = document.querySelector('.ob-check-option[data-section="'+s+'"]');
+          if(el) el.classList.add('selected');
+        });
+      }
+    }
+  } catch(e){}
+
+  // Set min date to today
+  var today = new Date();
+  var yyyy = today.getFullYear();
+  var mm = String(today.getMonth()+1).padStart(2,'0');
+  var dd = String(today.getDate()).padStart(2,'0');
+  document.getElementById('testDateInput').setAttribute('min', yyyy+'-'+mm+'-'+dd);
+
+})();
+</script>
+</body>
+</html>

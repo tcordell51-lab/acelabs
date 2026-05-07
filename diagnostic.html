@@ -1,0 +1,1444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Ace Labs · Cross-Section Diagnostic</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400;1,700&family=DM+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ── Design tokens (inline for single-file portability) ─────────────── */
+:root{
+  --al-bg:#f5f0e8;
+  --al-paper:#fffdf7;
+  --al-paper-2:#f9f3e6;
+  --al-paper-3:#f3ecdb;
+  --al-ink:#0d2018;
+  --al-ink-2:#3a4a42;
+  --al-ink-mute:#6e7c74;
+  --al-ink-soft:#9aa39e;
+  --al-gold:#C9A84C;
+  --al-gold-m:#E2C97A;
+  --al-gold-d:#8C7235;
+  --al-gold-bg:rgba(201,168,76,.10);
+  --al-teal:#1B3A2D;
+  --al-teal-2:#2A5240;
+  --al-teal-3:#3A6B54;
+  --al-line:rgba(13,32,24,.12);
+  --al-line-2:rgba(13,32,24,.20);
+  --al-shadow:0 1px 3px rgba(13,32,24,.06),0 8px 24px rgba(13,32,24,.04);
+  --al-shadow-md:0 2px 6px rgba(13,32,24,.08),0 16px 40px rgba(13,32,24,.06);
+  /* Wong / Okabe-Ito correctness */
+  --al-confirmed:#009E73;
+  --al-confirmed-pale:rgba(0,158,115,.10);
+  --al-confirmed-border:rgba(0,158,115,.30);
+  --al-needs-review:#D55E00;
+  --al-needs-review-pale:rgba(213,94,0,.10);
+  --al-needs-review-border:rgba(213,94,0,.30);
+  --al-almost:#E69F00;
+  --al-almost-pale:rgba(230,159,0,.10);
+  /* section accents */
+  --al-qr-color:#C9A84C;
+  --al-bio-color:#5FA874;
+  --al-gc-color:#3A6B54;
+  --al-ochem-color:#8C7235;
+  /* type */
+  --al-font-serif:'Playfair Display',Georgia,serif;
+  --al-font-sans:'DM Sans',system-ui,-apple-system,sans-serif;
+  --al-font-mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;
+  --motion-fast:150ms;
+  --motion-base:250ms;
+  --motion-slow:400ms;
+}
+
+/* ── Reset ───────────────────────────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;-webkit-text-size-adjust:100%}
+body{
+  background:var(--al-bg);
+  color:var(--al-ink);
+  font-family:var(--al-font-sans);
+  line-height:1.6;
+  min-height:100vh;
+}
+
+/* ── Top bar ─────────────────────────────────────────────────────────── */
+.al-top{
+  display:flex;
+  align-items:center;
+  gap:1rem;
+  padding:.75rem 1.5rem;
+  background:var(--al-teal);
+  color:#fff;
+  position:sticky;
+  top:0;
+  z-index:200;
+}
+.al-brand{
+  display:flex;
+  align-items:center;
+  gap:.6rem;
+  font-family:var(--al-font-serif);
+  font-weight:700;
+  font-size:1.05rem;
+  color:#fff;
+  text-decoration:none;
+}
+.al-brand em{font-style:italic;color:var(--al-gold-m)}
+.al-divider{width:1px;height:1.1rem;background:rgba(255,255,255,.25)}
+.al-product{font-size:.9rem;font-weight:600;font-family:var(--al-font-sans);letter-spacing:.03em;opacity:.85}
+.al-top-right{margin-left:auto;display:flex;align-items:center;gap:1.25rem}
+
+/* Timer */
+.diag-timer{
+  font-family:var(--al-font-mono);
+  font-size:1.1rem;
+  font-weight:600;
+  background:rgba(255,255,255,.10);
+  border:1px solid rgba(255,255,255,.20);
+  border-radius:.4rem;
+  padding:.3rem .75rem;
+  letter-spacing:.05em;
+  min-width:6rem;
+  text-align:center;
+  transition:background var(--motion-fast),color var(--motion-fast);
+}
+.diag-timer.warning{background:rgba(213,94,0,.25);border-color:rgba(213,94,0,.50);color:#ffcba0}
+.diag-timer.critical{background:rgba(213,94,0,.40);border-color:var(--al-needs-review);color:#fff;animation:pulse-timer 1s ease-in-out infinite}
+@keyframes pulse-timer{0%,100%{opacity:1}50%{opacity:.7}}
+
+/* Progress */
+.diag-progress-pill{
+  font-family:var(--al-font-sans);
+  font-size:.82rem;
+  font-weight:600;
+  opacity:.80;
+  white-space:nowrap;
+}
+
+/* ── Page shell ──────────────────────────────────────────────────────── */
+.diag-shell{
+  max-width:900px;
+  margin:0 auto;
+  padding:2rem 1.5rem 4rem;
+}
+
+/* ── Loading / intro screens ─────────────────────────────────────────── */
+.diag-screen{display:none}
+.diag-screen.active{display:block}
+
+.diag-intro-card{
+  background:var(--al-paper);
+  border:1px solid var(--al-line);
+  border-radius:1rem;
+  padding:2.5rem 2.5rem 2rem;
+  box-shadow:var(--al-shadow-md);
+  margin-top:2rem;
+}
+.diag-intro-card h1{
+  font-family:var(--al-font-serif);
+  font-size:2rem;
+  font-weight:700;
+  line-height:1.25;
+  color:var(--al-ink);
+  margin-bottom:.5rem;
+}
+.diag-intro-card h1 em{font-style:italic;color:var(--al-gold-d)}
+.diag-intro-card .lede{
+  color:var(--al-ink-2);
+  font-size:1.05rem;
+  margin-bottom:1.75rem;
+  max-width:60ch;
+}
+.diag-meta-row{
+  display:flex;
+  gap:1.5rem;
+  flex-wrap:wrap;
+  margin-bottom:1.75rem;
+}
+.diag-meta-item{
+  background:var(--al-bg);
+  border:1px solid var(--al-line);
+  border-radius:.5rem;
+  padding:.6rem 1rem;
+  font-size:.88rem;
+}
+.diag-meta-item strong{
+  display:block;
+  font-size:1.25rem;
+  font-family:var(--al-font-mono);
+  font-weight:700;
+  color:var(--al-teal);
+  line-height:1.2;
+}
+.diag-meta-item span{color:var(--al-ink-mute);font-size:.78rem}
+.diag-section-breakdown{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:.75rem;
+  margin-bottom:2rem;
+}
+.diag-section-pill{
+  border-radius:.5rem;
+  padding:.6rem .75rem;
+  font-size:.82rem;
+  font-weight:600;
+  border:1px solid var(--al-line);
+}
+.diag-section-pill.bio{background:rgba(95,168,116,.08);border-color:rgba(95,168,116,.25);color:#2e6b42}
+.diag-section-pill.gc{background:rgba(58,107,84,.08);border-color:rgba(58,107,84,.25);color:#1f4a32}
+.diag-section-pill.ochem{background:rgba(140,114,53,.08);border-color:rgba(140,114,53,.25);color:#5c4520}
+.diag-section-pill.qr{background:var(--al-gold-bg);border-color:rgba(201,168,76,.30);color:#6b4e10}
+.diag-section-pill .pill-label{display:block;opacity:.65;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.15rem}
+.diag-note{
+  font-size:.82rem;
+  color:var(--al-ink-mute);
+  border-top:1px solid var(--al-line);
+  padding-top:1rem;
+  margin-top:.5rem;
+}
+.btn-primary{
+  display:inline-flex;
+  align-items:center;
+  gap:.5rem;
+  background:var(--al-teal);
+  color:#fff;
+  font-family:var(--al-font-sans);
+  font-size:.95rem;
+  font-weight:600;
+  padding:.7rem 1.75rem;
+  border:none;
+  border-radius:.5rem;
+  cursor:pointer;
+  transition:background var(--motion-fast),transform var(--motion-fast);
+  letter-spacing:.015em;
+}
+.btn-primary:hover{background:var(--al-teal-2)}
+.btn-primary:active{transform:scale(.98)}
+.btn-primary:disabled{opacity:.5;cursor:not-allowed}
+.btn-secondary{
+  display:inline-flex;
+  align-items:center;
+  gap:.5rem;
+  background:transparent;
+  color:var(--al-teal);
+  font-family:var(--al-font-sans);
+  font-size:.9rem;
+  font-weight:600;
+  padding:.6rem 1.25rem;
+  border:1.5px solid var(--al-teal-3);
+  border-radius:.5rem;
+  cursor:pointer;
+  transition:background var(--motion-fast);
+}
+.btn-secondary:hover{background:rgba(27,58,45,.06)}
+
+/* Loading state */
+.diag-loading{
+  display:flex;
+  align-items:center;
+  gap:.75rem;
+  color:var(--al-ink-mute);
+  font-size:.9rem;
+  padding:1rem 0;
+}
+.spinner{
+  width:1.1rem;height:1.1rem;
+  border:2px solid var(--al-line-2);
+  border-top-color:var(--al-teal);
+  border-radius:50%;
+  animation:spin .7s linear infinite;
+  flex-shrink:0;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── Question area ───────────────────────────────────────────────────── */
+.diag-q-area{
+  display:none;
+}
+.diag-q-area.active{display:block}
+
+/* Section header strip */
+.diag-section-strip{
+  display:flex;
+  align-items:center;
+  gap:.75rem;
+  margin-bottom:1.25rem;
+  padding:.5rem 0;
+  border-bottom:1px solid var(--al-line);
+}
+.diag-section-badge{
+  font-size:.72rem;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  padding:.25rem .6rem;
+  border-radius:.3rem;
+}
+.badge-bio{background:rgba(95,168,116,.12);color:#2e6b42}
+.badge-gc{background:rgba(58,107,84,.12);color:#1f4a32}
+.badge-ochem{background:rgba(140,114,53,.12);color:#5c4520}
+.badge-qr{background:var(--al-gold-bg);color:#6b4e10}
+.diag-q-counter{
+  font-family:var(--al-font-mono);
+  font-size:.82rem;
+  color:var(--al-ink-mute);
+}
+.diag-q-topic{
+  font-size:.8rem;
+  color:var(--al-ink-soft);
+  margin-left:auto;
+  text-transform:capitalize;
+}
+
+/* Question card */
+.diag-q-card{
+  background:var(--al-paper);
+  border:1px solid var(--al-line);
+  border-radius:.85rem;
+  padding:1.75rem 2rem;
+  box-shadow:var(--al-shadow);
+  margin-bottom:1.25rem;
+}
+.diag-q-text{
+  font-family:var(--al-font-serif);
+  font-size:1.08rem;
+  line-height:1.65;
+  color:var(--al-ink);
+  margin-bottom:1.5rem;
+}
+
+/* Options */
+.diag-opts{
+  display:flex;
+  flex-direction:column;
+  gap:.55rem;
+}
+.diag-opt{
+  display:flex;
+  align-items:flex-start;
+  gap:.85rem;
+  padding:.8rem 1rem;
+  border:1.5px solid var(--al-line);
+  border-radius:.55rem;
+  cursor:pointer;
+  background:var(--al-paper);
+  transition:border-color var(--motion-fast),background var(--motion-fast);
+  text-align:left;
+  width:100%;
+  font-family:var(--al-font-sans);
+  color:var(--al-ink);
+  font-size:.95rem;
+  line-height:1.5;
+}
+.diag-opt:hover{border-color:var(--al-teal-3);background:rgba(27,58,45,.03)}
+.diag-opt.selected{border-color:var(--al-teal);background:rgba(27,58,45,.05)}
+.diag-opt-letter{
+  flex-shrink:0;
+  width:1.5rem;height:1.5rem;
+  border-radius:50%;
+  border:1.5px solid var(--al-line-2);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--al-font-mono);
+  font-size:.72rem;
+  font-weight:600;
+  color:var(--al-ink-mute);
+  background:var(--al-bg);
+  transition:all var(--motion-fast);
+  margin-top:.05rem;
+}
+.diag-opt.selected .diag-opt-letter{
+  background:var(--al-teal);
+  border-color:var(--al-teal);
+  color:#fff;
+}
+.diag-opt-text{flex:1}
+
+/* Nav controls */
+.diag-nav{
+  display:flex;
+  align-items:center;
+  gap:.75rem;
+  justify-content:space-between;
+}
+.diag-nav-left,.diag-nav-right{display:flex;gap:.6rem}
+
+/* Progress bar */
+.diag-progress-bar{
+  background:var(--al-line);
+  border-radius:999px;
+  height:4px;
+  margin-bottom:1.25rem;
+  overflow:hidden;
+}
+.diag-progress-fill{
+  background:var(--al-teal);
+  height:100%;
+  border-radius:999px;
+  transition:width var(--motion-base) ease;
+}
+
+/* Jump grid */
+.diag-jump-panel{
+  background:var(--al-paper);
+  border:1px solid var(--al-line);
+  border-radius:.75rem;
+  padding:1rem 1.25rem 1.25rem;
+  box-shadow:var(--al-shadow);
+  margin-top:1.25rem;
+}
+.diag-jump-panel h4{
+  font-size:.78rem;
+  text-transform:uppercase;
+  letter-spacing:.07em;
+  color:var(--al-ink-mute);
+  margin-bottom:.75rem;
+  font-weight:700;
+}
+.diag-jump-grid{
+  display:flex;
+  flex-wrap:wrap;
+  gap:.35rem;
+}
+.diag-jump-btn{
+  width:2rem;height:2rem;
+  border-radius:.35rem;
+  border:1.5px solid var(--al-line);
+  background:var(--al-bg);
+  font-family:var(--al-font-mono);
+  font-size:.72rem;
+  font-weight:600;
+  cursor:pointer;
+  color:var(--al-ink-mute);
+  transition:all var(--motion-fast);
+}
+.diag-jump-btn:hover{border-color:var(--al-teal-3);color:var(--al-ink)}
+.diag-jump-btn.answered{background:var(--al-teal);border-color:var(--al-teal);color:#fff}
+.diag-jump-btn.current{border-color:var(--al-gold);color:var(--al-gold-d);box-shadow:0 0 0 2px var(--al-gold-bg)}
+.diag-jump-section-label{
+  width:100%;
+  font-size:.7rem;
+  text-transform:uppercase;
+  letter-spacing:.06em;
+  color:var(--al-ink-soft);
+  margin-top:.5rem;
+  margin-bottom:.15rem;
+}
+
+/* Submit zone */
+.diag-submit-zone{
+  background:var(--al-paper-2);
+  border:1px dashed var(--al-line-2);
+  border-radius:.75rem;
+  padding:1.25rem 1.5rem;
+  text-align:center;
+  margin-top:1.5rem;
+}
+.diag-submit-zone p{
+  font-size:.88rem;
+  color:var(--al-ink-mute);
+  margin-bottom:.75rem;
+}
+.diag-answered-count{
+  font-family:var(--al-font-mono);
+  font-weight:700;
+  color:var(--al-teal);
+}
+
+/* ── Results screen ──────────────────────────────────────────────────── */
+#screenResults{display:none}
+#screenResults.active{display:block}
+
+.diag-result-hero{
+  background:var(--al-teal);
+  color:#fff;
+  border-radius:1rem;
+  padding:2rem 2rem 1.75rem;
+  margin-bottom:1.5rem;
+}
+.diag-result-hero h2{
+  font-family:var(--al-font-serif);
+  font-size:1.65rem;
+  font-weight:700;
+  margin-bottom:.25rem;
+}
+.diag-result-hero p{font-size:.9rem;opacity:.75;margin:0}
+
+.diag-result-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:1rem;
+  margin-bottom:1.5rem;
+}
+@media(max-width:580px){
+  .diag-result-grid{grid-template-columns:1fr}
+  .diag-section-breakdown{grid-template-columns:repeat(2,1fr)}
+}
+.diag-section-card{
+  background:var(--al-paper);
+  border:1px solid var(--al-line);
+  border-radius:.85rem;
+  padding:1.25rem 1.5rem;
+  box-shadow:var(--al-shadow);
+  border-left:4px solid var(--al-line-2);
+}
+.diag-section-card.bio{border-left-color:var(--al-bio-color)}
+.diag-section-card.gc{border-left-color:var(--al-gc-color)}
+.diag-section-card.ochem{border-left-color:var(--al-ochem-color)}
+.diag-section-card.qr{border-left-color:var(--al-qr-color)}
+.diag-section-card h3{
+  font-size:.75rem;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  color:var(--al-ink-mute);
+  margin-bottom:.6rem;
+  font-weight:700;
+}
+.diag-score-big{
+  font-family:var(--al-font-mono);
+  font-size:2rem;
+  font-weight:700;
+  color:var(--al-ink);
+  line-height:1;
+  margin-bottom:.25rem;
+}
+.diag-score-pct{
+  font-family:var(--al-font-sans);
+  font-size:.85rem;
+  color:var(--al-ink-mute);
+  margin-bottom:.75rem;
+}
+.diag-acc-bar{
+  background:var(--al-line);
+  border-radius:999px;
+  height:6px;
+  overflow:hidden;
+}
+.diag-acc-fill{
+  height:100%;
+  border-radius:999px;
+  transition:width .8s cubic-bezier(.16,1,.3,1);
+}
+.fill-good{background:var(--al-confirmed)}
+.fill-mid{background:var(--al-almost)}
+.fill-low{background:var(--al-needs-review)}
+
+/* Weak topics */
+.diag-weak-section{
+  background:var(--al-paper);
+  border:1px solid var(--al-line);
+  border-radius:.85rem;
+  padding:1.5rem;
+  box-shadow:var(--al-shadow);
+  margin-bottom:1.5rem;
+}
+.diag-weak-section h3{
+  font-family:var(--al-font-serif);
+  font-size:1.1rem;
+  font-weight:700;
+  margin-bottom:1rem;
+  color:var(--al-ink);
+}
+.diag-weak-list{
+  display:flex;
+  flex-direction:column;
+  gap:.65rem;
+}
+.diag-weak-item{
+  border:1px solid var(--al-line);
+  border-radius:.55rem;
+  padding:.85rem 1rem;
+  background:var(--al-bg);
+}
+.diag-weak-item-header{
+  display:flex;
+  align-items:center;
+  gap:.75rem;
+  margin-bottom:.35rem;
+}
+.diag-weak-rank{
+  width:1.6rem;height:1.6rem;
+  border-radius:50%;
+  background:var(--al-needs-review);
+  color:#fff;
+  font-size:.7rem;
+  font-weight:700;
+  font-family:var(--al-font-mono);
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+}
+.diag-weak-rank.rank-2{background:var(--al-almost)}
+.diag-weak-rank.rank-3{background:var(--al-almost);filter:brightness(.88)}
+.diag-weak-name{
+  font-weight:600;
+  font-size:.95rem;
+  color:var(--al-ink);
+  flex:1;
+}
+.diag-weak-score{
+  font-family:var(--al-font-mono);
+  font-size:.82rem;
+  color:var(--al-ink-mute);
+}
+.diag-weak-rec{
+  font-size:.82rem;
+  color:var(--al-ink-mute);
+  padding-left:2.35rem;
+}
+.diag-weak-rec a{
+  color:var(--al-teal-3);
+  font-weight:600;
+  text-decoration:none;
+}
+.diag-weak-rec a:hover{text-decoration:underline}
+
+/* Feedback strip */
+.diag-feedback-strip{
+  background:var(--al-needs-review-pale);
+  border:1px solid var(--al-needs-review-border);
+  border-radius:.55rem;
+  padding:.75rem 1rem;
+  font-size:.82rem;
+  color:var(--al-needs-review);
+  font-weight:500;
+}
+.diag-feedback-strip.good{
+  background:var(--al-confirmed-pale);
+  border-color:var(--al-confirmed-border);
+  color:#006646;
+}
+
+/* Result actions */
+.diag-result-actions{
+  display:flex;
+  gap:.75rem;
+  margin-top:1.5rem;
+  flex-wrap:wrap;
+}
+
+/* Previous result banner */
+.diag-prev-banner{
+  background:var(--al-gold-bg);
+  border:1px solid rgba(201,168,76,.30);
+  border-radius:.6rem;
+  padding:.75rem 1rem;
+  font-size:.83rem;
+  color:var(--al-ink-2);
+  margin-bottom:1.25rem;
+  display:none;
+}
+
+/* ── Responsive tweaks ───────────────────────────────────────────────── */
+@media(max-width:640px){
+  .diag-shell{padding:1.25rem 1rem 3rem}
+  .diag-q-card{padding:1.25rem 1rem}
+  .diag-intro-card{padding:1.5rem 1.25rem 1.25rem}
+  .diag-meta-row{gap:.75rem}
+}
+</style>
+</head>
+<body>
+
+<!-- ========== TOP BAR ========== -->
+<header class="al-top">
+  <a class="al-brand" href="ace-labs.html">
+    Ace<em>The</em>DAT
+    <span class="al-divider"></span>
+    <span class="al-product">Ace Labs</span>
+  </a>
+  <div class="al-top-right">
+    <span class="diag-progress-pill" id="topProgress" style="display:none">— / 60</span>
+    <span class="diag-timer" id="topTimer" style="display:none">45:00</span>
+  </div>
+</header>
+
+<!-- ========== SHELL ========== -->
+<main class="diag-shell">
+
+  <!-- ===== INTRO SCREEN ===== -->
+  <div id="screenIntro" class="diag-screen active">
+    <div class="diag-prev-banner" id="prevBanner"></div>
+    <div class="diag-intro-card">
+      <h1>Cross-Section <em>Diagnostic</em></h1>
+      <p class="lede">60 questions across all four DAT sections. 45 minutes. At the end you will see per-section accuracy and your three weakest topic areas — so you know exactly where to focus this week.</p>
+
+      <div class="diag-meta-row">
+        <div class="diag-meta-item">
+          <strong>60</strong>
+          <span>questions total</span>
+        </div>
+        <div class="diag-meta-item">
+          <strong>45 min</strong>
+          <span>time limit</span>
+        </div>
+        <div class="diag-meta-item">
+          <strong>~45 s</strong>
+          <span>per question</span>
+        </div>
+        <div class="diag-meta-item">
+          <strong>4</strong>
+          <span>sections</span>
+        </div>
+      </div>
+
+      <div class="diag-section-breakdown">
+        <div class="diag-section-pill bio">
+          <span class="pill-label">Biology</span>
+          15 questions
+        </div>
+        <div class="diag-section-pill gc">
+          <span class="pill-label">Gen Chem</span>
+          15 questions
+        </div>
+        <div class="diag-section-pill ochem">
+          <span class="pill-label">Org Chem</span>
+          15 questions
+        </div>
+        <div class="diag-section-pill qr">
+          <span class="pill-label">Quant Reasoning</span>
+          15 questions
+        </div>
+      </div>
+
+      <div id="loadingState" class="diag-loading">
+        <div class="spinner"></div>
+        Loading question bank...
+      </div>
+
+      <div id="startButtons" style="display:none">
+        <button class="btn-primary" id="btnStart" onclick="startDiagnostic()">Begin diagnostic</button>
+      </div>
+
+      <p class="diag-note">
+        You can change your answer to any question before submitting. Skipped questions count as incorrect.
+        Results are saved locally so you can review them from the home dashboard.
+      </p>
+    </div>
+  </div>
+
+  <!-- ===== QUESTION SCREEN ===== -->
+  <div id="screenQuestion" class="diag-screen">
+
+    <!-- Progress bar -->
+    <div class="diag-progress-bar">
+      <div class="diag-progress-fill" id="progressFill" style="width:0%"></div>
+    </div>
+
+    <!-- Section strip -->
+    <div class="diag-section-strip">
+      <span class="diag-section-badge" id="qSectionBadge">Bio</span>
+      <span class="diag-q-counter" id="qCounter">Q1 of 60</span>
+      <span class="diag-q-topic" id="qTopic"></span>
+    </div>
+
+    <!-- Question card -->
+    <div class="diag-q-card">
+      <div class="diag-q-text" id="qText"></div>
+      <div class="diag-opts" id="qOpts"></div>
+    </div>
+
+    <!-- Nav -->
+    <div class="diag-nav">
+      <div class="diag-nav-left">
+        <button class="btn-secondary" id="btnPrev" onclick="navigateQ(-1)" disabled>Previous</button>
+      </div>
+      <div class="diag-nav-right">
+        <button class="btn-secondary" id="btnNext" onclick="navigateQ(1)">Next</button>
+        <button class="btn-primary" id="btnSubmit" onclick="confirmSubmit()" style="display:none">Submit</button>
+      </div>
+    </div>
+
+    <!-- Jump grid -->
+    <div class="diag-jump-panel">
+      <h4>All questions</h4>
+      <div class="diag-jump-grid" id="jumpGrid"></div>
+    </div>
+
+    <!-- Submit zone (appears near end) -->
+    <div class="diag-submit-zone" id="submitZone" style="display:none">
+      <p>
+        <span class="diag-answered-count" id="answeredCount">0</span> of 60 answered.
+        Unanswered questions count as incorrect.
+      </p>
+      <button class="btn-primary" onclick="confirmSubmit()">Submit and see results</button>
+    </div>
+  </div>
+
+  <!-- ===== RESULTS SCREEN ===== -->
+  <div id="screenResults">
+
+    <div class="diag-result-hero">
+      <h2>Diagnostic complete.</h2>
+      <p id="resultSubline">Here is what the data says about where to focus.</p>
+    </div>
+
+    <!-- Per-section accuracy grid -->
+    <div class="diag-result-grid" id="sectionGrid"></div>
+
+    <!-- Weak topics -->
+    <div class="diag-weak-section">
+      <h3>Your three weakest areas</h3>
+      <div class="diag-weak-list" id="weakList"></div>
+    </div>
+
+    <!-- Actions -->
+    <div class="diag-result-actions">
+      <button class="btn-primary" onclick="retakeDiagnostic()">Retake diagnostic</button>
+      <a class="btn-secondary" href="ace-labs.html">Back to home</a>
+    </div>
+  </div>
+
+</main>
+
+<script>
+/* =========================================================
+   Ace Labs — Cross-Section Diagnostic v1
+   Single-file. Reads scripts/dat-mock-bank.json async.
+   No emoji. No marketing. No score predictions.
+   ========================================================= */
+
+'use strict';
+
+/* ── State ─────────────────────────────────────────────── */
+let pool = [];           // 60 drawn questions
+let currentIdx = 0;
+let answers = {};        // { idx: choiceIndex }
+let timerInterval = null;
+let secondsLeft = 45 * 60;
+let submitted = false;
+
+/* ── Module URL map (only links that exist) ─────────────── */
+const MODULE_URLS = {
+  /* OChem */
+  'mech-sne':      'tools/ochem/index.html#sne',
+  'stereo-rs':     'tools/ochem/index.html#stereo',
+  'alkene-add':    'tools/ochem/index.html#alkene',
+  'alkyne':        'tools/ochem/index.html#alkyne',
+  'arom-eas':      'tools/ochem/index.html#aromaticity',
+  'alc-eth':       'tools/ochem/index.html#alc-eth',
+  'carbonyl':      'tools/ochem/index.html#carbonyl',
+  'acids':         'tools/ochem/index.html#acids',
+  'amines':        'tools/ochem/index.html#amines',
+  'spec-ir-nmr':   'tools/ochem/index.html#spectroscopy',
+  'synth':         'tools/ochem/index.html#synthesis',
+  'lab':           'tools/ochem/index.html#lab',
+  'mech-arrows':   'tools/ochem/index.html#arrows',
+  /* Bio */
+  'water':         'tools/bio/index.html#water',
+  'biomolecules':  'tools/bio/index.html#biomolecules',
+  'carbs':         'tools/bio/index.html#carbs',
+  'lipids':        'tools/bio/index.html#lipids',
+  'proteins':      'tools/bio/index.html#proteins',
+  'nucleic':       'tools/bio/index.html#nucleic',
+  'enzymes':       'tools/bio/index.html#enzymes',
+  'cell-types':    'tools/bio/index.html#cell-types',
+  'organelles':    'tools/bio/index.html#organelles',
+  'membrane':      'tools/bio/index.html#membrane',
+  'glycolysis':    'tools/bio/index.html#glycolysis',
+  'krebs':         'tools/bio/index.html#krebs',
+  'photo':         'tools/bio/index.html#photosynthesis',
+  'mitosis':       'tools/bio/index.html#mitosis',
+  'replication':   'tools/bio/index.html#replication',
+  'transcription': 'tools/bio/index.html#transcription',
+  'translation':   'tools/bio/index.html#translation',
+  /* GC */
+  'atomic':        'tools/gc/index.html#atomic',
+  'periodic':      'tools/gc/index.html#periodic',
+  'bonding':       'tools/gc/index.html#bonding',
+  'lewis':         'tools/gc/index.html#lewis',
+  'vsepr':         'tools/gc/index.html#vsepr',
+  'mole-conv':     'tools/gc/index.html#stoich',
+  'gas-laws':      'tools/gc/index.html#gases',
+  'enthalpy':      'tools/gc/index.html#thermo',
+  'entropy':       'tools/gc/index.html#thermo',
+  'gibbs':         'tools/gc/index.html#thermo',
+  'eq-kc':         'tools/gc/index.html#equilibrium',
+  'eq-lechat':     'tools/gc/index.html#equilibrium',
+  'eq-ice':        'tools/gc/index.html#equilibrium',
+  'ph-basics':     'tools/gc/index.html#acid-base',
+  'strong-weak':   'tools/gc/index.html#acid-base',
+  'buffers':       'tools/gc/index.html#acid-base',
+  'titration':     'tools/gc/index.html#acid-base',
+  'galvanic':      'tools/gc/index.html#redox',
+  'nuclear':       'tools/gc/index.html#nuclear',
+  /* QR */
+  'algebra':       'tools/qr/index.html#algebra',
+  'logarithms':    'tools/qr/index.html#logarithms',
+  'probability':   'tools/qr/index.html#probability',
+  'rate':          'tools/qr/index.html#rate',
+  'geometry':      'tools/qr/index.html#geometry',
+};
+
+/* ── Topic display names ────────────────────────────────── */
+const TOPIC_LABELS = {
+  'mech-sne':'OChem · Substitution/Elimination','stereo-rs':'OChem · Stereochemistry',
+  'alkene-add':'OChem · Alkene Additions','alkyne':'OChem · Alkynes',
+  'arom-eas':'OChem · Aromaticity & EAS','alc-eth':'OChem · Alcohols & Ethers',
+  'carbonyl':'OChem · Carbonyl Chemistry','acids':'OChem · Acidity & pKa',
+  'amines':'OChem · Amines','spec-ir-nmr':'OChem · IR & NMR Spectroscopy',
+  'synth':'OChem · Synthesis','lab':'OChem · Lab Techniques',
+  'mech-arrows':'OChem · Arrow Pushing','ab-ochem':'OChem · Acid-Base',
+  'water':'Bio · Water & Polarity','biomolecules':'Bio · Biomolecules',
+  'carbs':'Bio · Carbohydrates','lipids':'Bio · Lipids',
+  'proteins':'Bio · Proteins & Enzymes','nucleic':'Bio · Nucleic Acids',
+  'enzymes':'Bio · Enzyme Kinetics','cell-types':'Bio · Cell Types',
+  'organelles':'Bio · Organelles','membrane':'Bio · Membrane Biology',
+  'signaling':'Bio · Cell Signaling','glycolysis':'Bio · Glycolysis',
+  'krebs':'Bio · Krebs Cycle','photo':'Bio · Photosynthesis',
+  'mitosis':'Bio · Cell Division','replication':'Bio · DNA Replication',
+  'transcription':'Bio · Transcription','translation':'Bio · Translation',
+  'lab':'Bio · Lab Methods','cytoskeleton':'Bio · Cytoskeleton',
+  'mutation':'Bio · Mutations','repair':'Bio · DNA Repair',
+  'operon':'Bio · Gene Regulation','eukaryotic-reg':'Bio · Eukaryotic Gene Regulation',
+  'atomic':'GC · Atomic Structure','periodic':'GC · Periodic Trends',
+  'bonding':'GC · Chemical Bonding','lewis':'GC · Lewis Structures',
+  'vsepr':'GC · VSEPR & Geometry','mole-conv':'GC · Mole Conversions',
+  'lim-react':'GC · Limiting Reagents','solutions':'GC · Solutions',
+  'gas-laws':'GC · Gas Laws','enthalpy':'GC · Enthalpy',
+  'entropy':'GC · Entropy','gibbs':'GC · Gibbs Free Energy',
+  'rate-laws':'GC · Rate Laws','arrhenius':'GC · Arrhenius Equation',
+  'eq-kc':'GC · Equilibrium Constants','eq-lechat':'GC · Le Chatelier',
+  'eq-ice':'GC · ICE Tables','ph-basics':'GC · pH Basics',
+  'strong-weak':'GC · Strong & Weak Acids','buffers':'GC · Buffer Systems',
+  'titration':'GC · Titrations','ksp':'GC · Solubility',
+  'galvanic':'GC · Galvanic Cells','red-pot':'GC · Reduction Potentials',
+  'nernst':'GC · Nernst Equation','nuclear':'GC · Nuclear Chemistry',
+  'phase-diag':'GC · Phase Diagrams','hybridization':'GC · Hybridization',
+  'imf-rank':'GC · Intermolecular Forces','calorimetry':'GC · Calorimetry',
+  'quantum-numbers':'GC · Quantum Numbers','electrolysis':'GC · Electrolysis',
+  'heating-curve':'GC · Heating Curves','kinetics':'GC · Kinetics',
+  'equilibrium':'GC · Equilibrium','acid-base':'GC · Acid-Base Chemistry',
+  'redox':'GC · Redox Reactions','gases':'GC · Gases','thermo':'GC · Thermodynamics',
+  'stoich':'GC · Stoichiometry','liquids':'GC · Liquids',
+  'sig-figs':'GC · Significant Figures',
+  'algebra':'QR · Algebra','logarithms':'QR · Logarithms',
+  'probability':'QR · Probability','rate':'QR · Rates & Work',
+  'geometry':'QR · Geometry','word-problem':'QR · Word Problems',
+  'data':'QR · Data Interpretation','pct-chg':'QR · Percent Change',
+};
+
+function topicLabel(t){ return TOPIC_LABELS[t] || t; }
+
+/* ── Utility ────────────────────────────────────────────── */
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+function sample(arr, n){
+  return shuffle(arr).slice(0, n);
+}
+
+function fmtTime(s){
+  const m = Math.floor(s/60);
+  const sec = s % 60;
+  return `${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
+}
+
+function sectionBadgeClass(sec){
+  const map = {BIO:'bio',GC:'gc',OCHEM:'ochem',QR:'qr'};
+  return map[sec] || 'gc';
+}
+
+function sectionLabel(sec){
+  const map = {BIO:'Biology',GC:'Gen Chem',OCHEM:'Org Chem',QR:'Quant Reasoning'};
+  return map[sec] || sec;
+}
+
+/* ── Load bank (async, filtered) ───────────────────────── */
+async function loadBank(){
+  const res = await fetch('scripts/dat-mock-bank.json');
+  const bank = await res.json();
+
+  const bioAll   = bank.bio   || [];
+  const gcAll    = bank.gc    || [];
+  const ochemAll = bank.ochem || [];
+  const qrAll    = bank.qr   || [];
+
+  /* Filter rules */
+  const bioPool   = bioAll.filter(q => q._rewritten === true || q._expert === true);
+  const gcPool    = gcAll;                                               // all good
+  const ochemPool = ochemAll;                                            // all good
+  const qrPool    = qrAll.filter(q =>
+    (q.id && q.id.match(/_xp/i)) || q.why
+  );
+
+  return { bioPool, gcPool, ochemPool, qrPool };
+}
+
+/* ── Draw 60 questions ──────────────────────────────────── */
+function drawQuestions(pools){
+  const { bioPool, gcPool, ochemPool, qrPool } = pools;
+
+  const bio   = sample(bioPool,   Math.min(15, bioPool.length));
+  const gc    = sample(gcPool,    Math.min(15, gcPool.length));
+  const ochem = sample(ochemPool, Math.min(15, ochemPool.length));
+
+  // QR pool may be small (8); pad with a note but use what we have
+  const qr = sample(qrPool, Math.min(15, qrPool.length));
+
+  // Interleave: Bio 1-15, GC 16-30, OChem 31-45, QR 46-60
+  return [...bio, ...gc, ...ochem, ...qr];
+}
+
+/* ── Boot ───────────────────────────────────────────────── */
+window.addEventListener('DOMContentLoaded', async () => {
+  // Check for prior result
+  const prior = localStorage.getItem('acelabs_diagnostic_v1');
+  if(prior){
+    try{
+      const d = JSON.parse(prior);
+      const banner = document.getElementById('prevBanner');
+      const ts = new Date(d.ts).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+      banner.style.display = 'block';
+      const bioAcc  = d.perSection?.bio  ? Math.round(d.perSection.bio.pct)  : '?';
+      const gcAcc   = d.perSection?.gc   ? Math.round(d.perSection.gc.pct)   : '?';
+      const ochemAcc= d.perSection?.ochem? Math.round(d.perSection.ochem.pct): '?';
+      const qrAcc   = d.perSection?.qr   ? Math.round(d.perSection.qr.pct)   : '?';
+      banner.innerHTML =
+        `You took this diagnostic on ${ts}. &nbsp;Bio ${bioAcc}% &nbsp;|&nbsp; GC ${gcAcc}% &nbsp;|&nbsp; OChem ${ochemAcc}% &nbsp;|&nbsp; QR ${qrAcc}%.
+         &nbsp;<button class="btn-secondary" style="font-size:.78rem;padding:.3rem .7rem" onclick="reviewPrior()">Review results</button>`;
+    }catch(e){}
+  }
+
+  try{
+    const pools = await loadBank();
+    window._diagPools = pools;
+
+    // Update pill counts in intro
+    const bioCount   = Math.min(15, pools.bioPool.length);
+    const gcCount    = Math.min(15, pools.gcPool.length);
+    const ochemCount = Math.min(15, pools.ochemPool.length);
+    const qrCount    = Math.min(15, pools.qrPool.length);
+
+    // Show QR pool warning if fewer than 15
+    if(qrCount < 15){
+      const noteEl = document.querySelector('.diag-note');
+      noteEl.innerHTML = `
+        QR pool has ${pools.qrPool.length} expert-quality questions available; the diagnostic will use all ${qrCount}.
+        Total: Bio ${bioCount} + GC ${gcCount} + OChem ${ochemCount} + QR ${qrCount} = ${bioCount+gcCount+ochemCount+qrCount} questions.
+        Results are saved locally to your browser.
+      `;
+    }
+
+    document.getElementById('loadingState').style.display = 'none';
+    document.getElementById('startButtons').style.display = 'block';
+  }catch(err){
+    document.getElementById('loadingState').innerHTML =
+      '<span style="color:var(--al-needs-review)">Could not load question bank. Check that dat-mock-bank.json is accessible.</span>';
+    console.error('Diagnostic bank load error:', err);
+  }
+});
+
+/* ── Start ──────────────────────────────────────────────── */
+function startDiagnostic(){
+  pool = drawQuestions(window._diagPools);
+  currentIdx = 0;
+  answers = {};
+  submitted = false;
+  secondsLeft = 45 * 60;
+
+  showScreen('screenQuestion');
+  document.getElementById('topProgress').style.display = '';
+  document.getElementById('topTimer').style.display = '';
+
+  renderQuestion(0);
+  buildJumpGrid();
+  startTimer();
+}
+
+/* ── Timer ──────────────────────────────────────────────── */
+function startTimer(){
+  clearInterval(timerInterval);
+  updateTimerDisplay();
+  timerInterval = setInterval(() => {
+    if(submitted) return clearInterval(timerInterval);
+    secondsLeft--;
+    updateTimerDisplay();
+    if(secondsLeft <= 0){
+      clearInterval(timerInterval);
+      autoSubmit();
+    }
+  }, 1000);
+}
+
+function updateTimerDisplay(){
+  const el = document.getElementById('topTimer');
+  el.textContent = fmtTime(secondsLeft);
+  el.className = 'diag-timer';
+  if(secondsLeft < 300 && secondsLeft >= 120) el.classList.add('warning');
+  if(secondsLeft < 120) el.classList.add('critical');
+}
+
+function autoSubmit(){
+  if(!submitted) submitDiagnostic();
+}
+
+/* ── Screen routing ─────────────────────────────────────── */
+function showScreen(id){
+  document.querySelectorAll('.diag-screen,[id^="screen"]').forEach(el => {
+    el.classList.remove('active');
+    if(el.id && el.id !== 'screenQuestion'){
+      el.style.display = '';
+    }
+  });
+  const target = document.getElementById(id);
+  target.classList.add('active');
+  if(id === 'screenResults'){
+    target.style.display = 'block';
+    document.getElementById('screenQuestion').style.display = 'none';
+  }
+}
+
+/* ── Render question ────────────────────────────────────── */
+function renderQuestion(idx){
+  const q = pool[idx];
+  if(!q) return;
+
+  // Update header
+  const sec = (q.section || '').toUpperCase();
+  const badge = document.getElementById('qSectionBadge');
+  badge.textContent = sectionLabel(sec);
+  badge.className = `diag-section-badge badge-${sectionBadgeClass(sec)}`;
+
+  document.getElementById('qCounter').textContent = `Q${idx+1} of ${pool.length}`;
+  document.getElementById('qTopic').textContent = topicLabel(q.topic || '') ;
+
+  // Progress
+  const pct = ((idx) / pool.length) * 100;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('topProgress').textContent = `${idx+1} / ${pool.length}`;
+
+  // Question text
+  document.getElementById('qText').textContent = q.q;
+
+  // Options
+  const optsEl = document.getElementById('qOpts');
+  optsEl.innerHTML = '';
+  const letters = ['A','B','C','D','E'];
+  (q.opts || []).forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'diag-opt' + (answers[idx] === i ? ' selected' : '');
+    btn.innerHTML = `<span class="diag-opt-letter">${letters[i]||i}</span><span class="diag-opt-text">${escapeHtml(opt)}</span>`;
+    btn.addEventListener('click', () => selectAnswer(idx, i));
+    optsEl.appendChild(btn);
+  });
+
+  // Nav buttons
+  document.getElementById('btnPrev').disabled = idx === 0;
+  const isLast = idx === pool.length - 1;
+  document.getElementById('btnNext').style.display  = isLast ? 'none' : '';
+  document.getElementById('btnSubmit').style.display = isLast ? '' : 'none';
+
+  // Submit zone (show when on last 5 or all answered)
+  const answeredN = Object.keys(answers).length;
+  const submitZone = document.getElementById('submitZone');
+  if(idx >= pool.length - 5 || answeredN >= pool.length){
+    submitZone.style.display = '';
+    document.getElementById('answeredCount').textContent = answeredN;
+  } else {
+    submitZone.style.display = 'none';
+  }
+
+  // Update jump grid current
+  updateJumpGrid();
+}
+
+function escapeHtml(str){
+  return String(str)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;');
+}
+
+/* ── Answer selection ───────────────────────────────────── */
+function selectAnswer(idx, choice){
+  if(submitted) return;
+  answers[idx] = choice;
+  renderQuestion(idx);   // re-render to reflect selection
+  updateJumpGrid();
+}
+
+/* ── Navigation ─────────────────────────────────────────── */
+function navigateQ(delta){
+  const next = currentIdx + delta;
+  if(next < 0 || next >= pool.length) return;
+  currentIdx = next;
+  renderQuestion(currentIdx);
+}
+
+/* ── Jump grid ──────────────────────────────────────────── */
+function buildJumpGrid(){
+  const grid = document.getElementById('jumpGrid');
+  grid.innerHTML = '';
+
+  const sections = [
+    {label:'Biology',     start:0,  end:14},
+    {label:'Gen Chem',    start:15, end:29},
+    {label:'Org Chem',    start:30, end:44},
+    {label:'QR',          start:45, end:pool.length-1},
+  ];
+
+  sections.forEach(sec => {
+    const lbl = document.createElement('div');
+    lbl.className = 'diag-jump-section-label';
+    lbl.textContent = sec.label;
+    grid.appendChild(lbl);
+
+    for(let i = sec.start; i <= Math.min(sec.end, pool.length-1); i++){
+      const btn = document.createElement('button');
+      btn.className = 'diag-jump-btn';
+      btn.textContent = i+1;
+      btn.dataset.idx = i;
+      btn.addEventListener('click', () => {
+        currentIdx = i;
+        renderQuestion(i);
+      });
+      grid.appendChild(btn);
+    }
+  });
+}
+
+function updateJumpGrid(){
+  document.querySelectorAll('.diag-jump-btn').forEach(btn => {
+    const i = parseInt(btn.dataset.idx);
+    btn.className = 'diag-jump-btn';
+    if(answers[i] !== undefined) btn.classList.add('answered');
+    if(i === currentIdx) btn.classList.add('current');
+  });
+}
+
+/* ── Submit ─────────────────────────────────────────────── */
+function confirmSubmit(){
+  const answeredN = Object.keys(answers).length;
+  const remaining = pool.length - answeredN;
+  if(remaining > 0){
+    const ok = window.confirm(
+      `You have ${remaining} unanswered question${remaining>1?'s':''}.` +
+      ` Unanswered questions count as incorrect. Submit anyway?`
+    );
+    if(!ok) return;
+  }
+  submitDiagnostic();
+}
+
+function submitDiagnostic(){
+  if(submitted) return;
+  submitted = true;
+  clearInterval(timerInterval);
+
+  const result = scoreQuestions();
+  saveResult(result);
+  renderResults(result);
+
+  showScreen('screenResults');
+  document.getElementById('topTimer').style.display = 'none';
+  document.getElementById('topProgress').style.display = 'none';
+}
+
+/* ── Scoring ────────────────────────────────────────────── */
+function scoreQuestions(){
+  const sectionData = {
+    BIO:   {correct:0, total:0, topics:{}},
+    GC:    {correct:0, total:0, topics:{}},
+    OCHEM: {correct:0, total:0, topics:{}},
+    QR:    {correct:0, total:0, topics:{}},
+  };
+
+  pool.forEach((q, i) => {
+    const sec = (q.section || '').toUpperCase();
+    const topic = q.topic || 'unknown';
+    const chosen = answers[i];
+    const isCorrect = chosen !== undefined && chosen === q.correct;
+
+    if(!sectionData[sec]) return;
+    sectionData[sec].total++;
+    if(isCorrect) sectionData[sec].correct++;
+
+    if(!sectionData[sec].topics[topic]){
+      sectionData[sec].topics[topic] = {correct:0, total:0, section:sec};
+    }
+    sectionData[sec].topics[topic].total++;
+    if(isCorrect) sectionData[sec].topics[topic].correct++;
+  });
+
+  // Flatten topics
+  const allTopics = [];
+  Object.entries(sectionData).forEach(([sec, data]) => {
+    Object.entries(data.topics).forEach(([topic, td]) => {
+      allTopics.push({
+        topic,
+        section: sec,
+        correct: td.correct,
+        total:   td.total,
+        accuracy: td.total > 0 ? td.correct / td.total : 0,
+      });
+    });
+  });
+
+  // Sort by accuracy ascending (weakest first), break ties by total (more questions = more confident signal)
+  allTopics.sort((a,b) => {
+    if(a.accuracy !== b.accuracy) return a.accuracy - b.accuracy;
+    return b.total - a.total;
+  });
+
+  const topWeakTopics = allTopics.slice(0, 3);
+
+  // Per-section summary
+  const perSection = {};
+  ['BIO','GC','OCHEM','QR'].forEach(sec => {
+    const d = sectionData[sec];
+    perSection[sec.toLowerCase()] = {
+      correct: d.correct,
+      total:   d.total,
+      pct:     d.total > 0 ? (d.correct / d.total) * 100 : 0,
+    };
+  });
+
+  return { perSection, topWeakTopics, allTopics };
+}
+
+/* ── Persist ────────────────────────────────────────────── */
+function saveResult(result){
+  const payload = {
+    ts:            new Date().toISOString(),
+    perSection:    result.perSection,
+    topWeakTopics: result.topWeakTopics.map(t => ({
+      topic:    t.topic,
+      section:  t.section,
+      correct:  t.correct,
+      total:    t.total,
+      accuracy: t.accuracy,
+    })),
+    answers: pool.map((q, i) => ({
+      id:      q.id,
+      chosen:  answers[i] !== undefined ? answers[i] : null,
+      correct: q.correct,
+    })),
+  };
+  try{
+    localStorage.setItem('acelabs_diagnostic_v1', JSON.stringify(payload));
+  }catch(e){
+    console.warn('Could not save diagnostic result:', e);
+  }
+}
+
+/* ── Render results ─────────────────────────────────────── */
+function renderResults(result){
+  const { perSection, topWeakTopics } = result;
+
+  // Section cards
+  const sectionGrid = document.getElementById('sectionGrid');
+  sectionGrid.innerHTML = '';
+  const sectionDefs = [
+    {key:'bio',   label:'Biology',         cls:'bio'},
+    {key:'gc',    label:'Gen Chem',        cls:'gc'},
+    {key:'ochem', label:'Org Chem',        cls:'ochem'},
+    {key:'qr',    label:'Quant Reasoning', cls:'qr'},
+  ];
+  sectionDefs.forEach(def => {
+    const d = perSection[def.key] || {correct:0, total:0, pct:0};
+    const pct = Math.round(d.pct);
+    const fillCls = pct >= 70 ? 'fill-good' : pct >= 50 ? 'fill-mid' : 'fill-low';
+    const feedbackText = pct >= 80 ? 'Strong performance' :
+                         pct >= 65 ? 'Solid — a few gaps to close' :
+                         pct >= 50 ? 'Almost — review the topics below' :
+                                     'Needs focus — this is a priority area';
+    const card = document.createElement('div');
+    card.className = `diag-section-card ${def.cls}`;
+    card.innerHTML = `
+      <h3>${def.label}</h3>
+      <div class="diag-score-big">${d.correct}<span style="font-size:1.1rem;opacity:.5"> / ${d.total}</span></div>
+      <div class="diag-score-pct">${pct}% accuracy</div>
+      <div class="diag-acc-bar"><div class="diag-acc-fill ${fillCls}" style="width:${pct}%"></div></div>
+      <div style="margin-top:.6rem;font-size:.78rem;color:var(--al-ink-mute)">${feedbackText}</div>
+    `;
+    sectionGrid.appendChild(card);
+  });
+
+  // Weak topics
+  const weakList = document.getElementById('weakList');
+  weakList.innerHTML = '';
+
+  if(topWeakTopics.length === 0){
+    weakList.innerHTML = '<p style="color:var(--al-ink-mute);font-size:.9rem">Not enough data to identify weak topics. Complete more questions.</p>';
+  } else {
+    topWeakTopics.forEach((t, i) => {
+      const pct = t.total > 0 ? Math.round((t.correct / t.total) * 100) : 0;
+      const label = topicLabel(t.topic);
+      const url = MODULE_URLS[t.topic];
+      const recHtml = url
+        ? `${label} &rarr; <a href="${escapeHtml(url)}">Open module</a>.`
+        : `${label} &mdash; review your notes and practice problems for this topic.`;
+
+      const feedbackVerb = pct === 0 ? 'No questions answered correctly in this area.' :
+                           pct < 40  ? 'Not quite there yet.' :
+                                       'Almost &mdash; a focused review should close the gap.';
+
+      const item = document.createElement('div');
+      item.className = 'diag-weak-item';
+      item.innerHTML = `
+        <div class="diag-weak-item-header">
+          <span class="diag-weak-rank rank-${i+1}">${i+1}</span>
+          <span class="diag-weak-name">${label}</span>
+          <span class="diag-weak-score">${t.correct}/${t.total} correct (${pct}%)</span>
+        </div>
+        <div class="diag-weak-rec">${feedbackVerb} ${recHtml}</div>
+      `;
+      weakList.appendChild(item);
+    });
+  }
+
+  // Result subline
+  const totalCorrect = Object.values(perSection).reduce((s,d) => s + d.correct, 0);
+  const totalQ       = Object.values(perSection).reduce((s,d) => s + d.total, 0);
+  const overall = totalQ > 0 ? Math.round((totalCorrect/totalQ)*100) : 0;
+  document.getElementById('resultSubline').textContent =
+    `${totalCorrect} of ${totalQ} correct (${overall}% overall). Focus on the three areas listed below.`;
+}
+
+/* ── Review prior result ────────────────────────────────── */
+function reviewPrior(){
+  const raw = localStorage.getItem('acelabs_diagnostic_v1');
+  if(!raw) return;
+  try{
+    const d = JSON.parse(raw);
+    // Reconstruct minimal result for display
+    const result = {
+      perSection:    d.perSection    || {},
+      topWeakTopics: d.topWeakTopics || [],
+      allTopics:     [],
+    };
+    renderResults(result);
+    showScreen('screenResults');
+    document.getElementById('topTimer').style.display = 'none';
+    document.getElementById('topProgress').style.display = 'none';
+  }catch(e){
+    alert('Could not load prior results.');
+  }
+}
+
+/* ── Retake ─────────────────────────────────────────────── */
+function retakeDiagnostic(){
+  pool = [];
+  answers = {};
+  currentIdx = 0;
+  submitted = false;
+  clearInterval(timerInterval);
+
+  // Hide results, show intro
+  document.getElementById('screenResults').style.display = 'none';
+  document.getElementById('screenResults').classList.remove('active');
+  showScreen('screenIntro');
+
+  // Don't auto-start; let user click Begin again
+}
+</script>
+</body>
+</html>

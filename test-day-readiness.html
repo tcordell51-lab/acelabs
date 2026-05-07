@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Test-Day Readiness · Ace Labs</title>
+<meta name="description" content="What real DAT day actually feels like. The interface quirks, timing rules, and physical-center details no prep tool tells you."/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400;1,700&family=DM+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared/al-tokens.css">
+<link rel="stylesheet" href="shared/al-motion.css">
+<link rel="stylesheet" href="shared/ace-labs-shell.css">
+<style>
+/* ===== TEST-DAY READINESS PAGE ===== */
+body[data-page="test-day"]{
+  background:linear-gradient(180deg,var(--al-bg) 0%,var(--al-paper-2) 100%);
+}
+
+/* ── Layout wrapper ── */
+.tdr-page{
+  max-width:760px;
+  margin:0 auto;
+  padding:0 24px 80px;
+}
+
+/* ── Hero ── */
+.tdr-hero{
+  padding:32px 0 52px;
+}
+.tdr-hero-eyebrow{
+  display:inline-block;
+  font-family:var(--al-font-mono);
+  font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--al-ink-2);
+  background:var(--al-paper);
+  border:1px solid var(--al-line-2);
+  padding:7px 14px;border-radius:99px;
+  margin-bottom:22px;
+}
+.tdr-hero h1{
+  font-family:var(--al-font-serif);
+  font-size:54px;font-weight:700;line-height:1.07;letter-spacing:-.025em;
+  color:var(--al-ink);
+  margin:0 0 16px;
+}
+.tdr-hero h1 em{
+  font-style:italic;color:var(--al-gold-d);
+}
+.tdr-hero-sub{
+  font-family:var(--al-font-sans);
+  font-size:17px;line-height:1.6;color:var(--al-ink-2);
+  max-width:560px;margin:0;
+}
+@media(max-width:680px){
+  .tdr-hero h1{font-size:36px;}
+  .tdr-hero-sub{font-size:15px;}
+}
+
+/* ── Progress bar ── */
+.tdr-progress-bar{
+  height:3px;
+  background:var(--al-line);
+  border-radius:99px;
+  margin-bottom:52px;
+  overflow:hidden;
+}
+.tdr-progress-fill{
+  height:100%;
+  width:0%;
+  background:linear-gradient(90deg, var(--al-good) 0%, var(--al-gold) 100%);
+  border-radius:99px;
+  transition:width 0.4s ease;
+}
+
+/* ── Section card ── */
+.tdr-section{
+  padding:32px 36px 28px;
+  background:var(--al-paper);
+  border:1px solid var(--al-line);
+  border-radius:16px;
+  margin-bottom:20px;
+  position:relative;
+}
+.tdr-section + .tdr-section{
+  margin-top:0;
+}
+.tdr-section-num{
+  font-family:var(--al-font-mono);
+  font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--al-ink-soft);
+  margin-bottom:8px;
+  display:block;
+}
+.tdr-section h2{
+  font-family:var(--al-font-serif);
+  font-size:26px;font-weight:700;line-height:1.1;letter-spacing:-.015em;
+  color:var(--al-ink);
+  margin:0 0 4px;
+}
+.tdr-section h2 em{font-style:italic;color:var(--al-gold-d);}
+.tdr-finding{
+  font-family:var(--al-font-mono);
+  font-size:12.5px;font-weight:700;letter-spacing:.06em;
+  color:var(--al-ink-2);
+  background:var(--al-paper-2);
+  border-left:3px solid var(--al-trap);
+  padding:8px 14px;
+  border-radius:0 6px 6px 0;
+  margin:16px 0 12px;
+  line-height:1.45;
+}
+.tdr-explanation{
+  font-family:var(--al-font-sans);
+  font-size:15px;line-height:1.7;color:var(--al-ink-2);
+  margin:0 0 14px;
+}
+.tdr-tip{
+  font-family:var(--al-font-sans);
+  font-size:14.5px;line-height:1.65;
+  color:var(--al-good-d, #007a59);
+  background:rgba(0,158,115,.07);
+  border-left:3px solid var(--al-good);
+  padding:10px 14px;
+  border-radius:0 6px 6px 0;
+  margin:0;
+}
+.tdr-tip strong{font-weight:700;}
+
+/* ── Warning variant (trap border on section) ── */
+.tdr-section--watch{
+  border-left:4px solid var(--al-trap);
+}
+/* ── Plan variant (good border on section) ── */
+.tdr-section--plan{
+  border-left:4px solid var(--al-good);
+}
+
+/* ── Demo block ── */
+.tdr-demo{
+  margin:20px 0 4px;
+  padding:20px 22px;
+  background:var(--al-paper-3);
+  border:1px solid var(--al-line-2);
+  border-radius:12px;
+}
+.tdr-demo-label{
+  font-family:var(--al-font-mono);
+  font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--al-ink-mute);
+  margin-bottom:14px;
+}
+
+/* ── Lag demo ── */
+.tdr-lag-demo{
+  display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+}
+.tdr-lag-interface{
+  display:flex;align-items:center;gap:8px;
+  background:#2c3540;
+  border-radius:8px;
+  padding:14px 18px;
+}
+.tdr-lag-q{
+  font-family:var(--al-font-mono);
+  font-size:13px;font-weight:500;
+  color:#c8d0d8;
+  min-width:110px;
+}
+.tdr-lag-btn{
+  padding:8px 18px;
+  background:#4a7abf;
+  color:#fff;
+  font-family:var(--al-font-mono);
+  font-size:12px;font-weight:700;letter-spacing:.08em;
+  border:none;border-radius:5px;
+  cursor:pointer;
+  transition:none;
+  min-width:70px;
+  text-align:center;
+}
+.tdr-lag-btn:disabled{
+  background:#3a5a8a;
+  cursor:not-allowed;
+  opacity:.75;
+}
+.tdr-lag-status{
+  font-family:var(--al-font-sans);
+  font-size:13px;color:var(--al-ink-mute);
+  min-width:180px;
+}
+
+/* ── Mark/Skip demo ── */
+.tdr-marksip-row{
+  display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+}
+.tdr-ms-btn{
+  padding:8px 14px;
+  font-family:var(--al-font-mono);
+  font-size:12px;font-weight:700;letter-spacing:.06em;
+  border:1.5px solid #5a6570;
+  background:#2c3540;
+  color:#c8d0d8;
+  border-radius:5px;
+  cursor:pointer;
+}
+.tdr-ms-btn.active{
+  background:#c8d0d8;
+  color:#1a2530;
+  border-color:#c8d0d8;
+}
+.tdr-ms-status{
+  font-family:var(--al-font-sans);
+  font-size:13px;color:var(--al-ink-mute);
+  margin-top:10px;
+}
+
+/* ── Calculator demo ── */
+.tdr-calc-demo{
+  display:flex;flex-direction:column;gap:10px;max-width:260px;
+}
+.tdr-calc-screen{
+  background:#1e2830;
+  border-radius:8px 8px 0 0;
+  padding:10px 14px;
+  font-family:var(--al-font-mono);
+  font-size:22px;font-weight:500;
+  color:#d4e4c8;
+  text-align:right;
+  min-height:44px;
+  border:1px solid #3a4550;
+  border-bottom:none;
+}
+.tdr-calc-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:4px;
+  background:#2c3540;
+  border:1px solid #3a4550;
+  border-top:none;
+  border-radius:0 0 8px 8px;
+  padding:8px;
+}
+.tdr-calc-key{
+  padding:9px 0;
+  background:#3a4a58;
+  color:#c8d0d8;
+  font-family:var(--al-font-mono);
+  font-size:12px;font-weight:600;
+  border:none;border-radius:4px;
+  cursor:pointer;
+  text-align:center;
+  transition:background 80ms;
+}
+.tdr-calc-key:hover{background:#4a5a6a;}
+.tdr-calc-key.op{background:#5a6a78;color:#e8f0e8;}
+.tdr-calc-key.equals{background:#4a7abf;color:#fff;}
+.tdr-calc-key.clr{background:#6a4840;color:#e8c8c0;}
+.tdr-calc-hint{
+  font-family:var(--al-font-sans);
+  font-size:13px;color:var(--al-ink-mute);
+  margin-top:4px;
+}
+
+/* ── Keyboard shortcut table ── */
+.tdr-shortcut-table{
+  width:100%;border-collapse:collapse;margin:4px 0;
+}
+.tdr-shortcut-table th{
+  font-family:var(--al-font-mono);
+  font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--al-ink-mute);
+  text-align:left;padding:8px 10px;
+  border-bottom:1px solid var(--al-line-2);
+}
+.tdr-shortcut-table td{
+  font-family:var(--al-font-sans);
+  font-size:14px;color:var(--al-ink-2);
+  padding:9px 10px;
+  border-bottom:1px solid var(--al-line);
+  vertical-align:middle;
+}
+.tdr-shortcut-table tr:last-child td{border-bottom:none;}
+.tdr-key{
+  display:inline-block;
+  padding:3px 8px;
+  font-family:var(--al-font-mono);
+  font-size:11px;font-weight:700;
+  background:var(--al-paper-3);
+  border:1px solid var(--al-line-2);
+  border-bottom:2px solid var(--al-line-2);
+  border-radius:4px;
+  color:var(--al-ink);
+  white-space:nowrap;
+}
+
+/* ── Checklist ── */
+.tdr-checklist-section{
+  padding:36px 36px 32px;
+  background:var(--al-teal);
+  border-radius:16px;
+  margin-top:32px;
+  margin-bottom:0;
+}
+.tdr-checklist-eyebrow{
+  font-family:var(--al-font-mono);
+  font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+  color:rgba(255,255,255,.55);
+  margin-bottom:10px;
+  display:block;
+}
+.tdr-checklist-section h2{
+  font-family:var(--al-font-serif);
+  font-size:28px;font-weight:700;line-height:1.1;
+  color:#fff;margin:0 0 24px;
+}
+.tdr-checklist-section h2 em{font-style:italic;color:var(--al-gold-m);}
+.tdr-checklist{
+  list-style:none;margin:0;padding:0;
+  display:flex;flex-direction:column;gap:10px;
+}
+.tdr-checklist li{
+  display:flex;align-items:flex-start;gap:12px;
+  font-family:var(--al-font-sans);
+  font-size:15px;line-height:1.55;
+  color:rgba(255,255,255,.88);
+}
+.tdr-checklist li input[type="checkbox"]{
+  margin-top:2px;
+  flex-shrink:0;
+  width:16px;height:16px;
+  accent-color:var(--al-gold);
+  cursor:pointer;
+}
+.tdr-checklist li label{
+  cursor:pointer;
+  transition:color var(--motion-fast);
+}
+.tdr-checklist li input:checked + label{
+  color:rgba(255,255,255,.45);
+  text-decoration:line-through;
+  text-decoration-color:rgba(255,255,255,.30);
+}
+
+/* ── Divider ── */
+.tdr-divider{
+  border:none;
+  border-top:1px solid var(--al-line);
+  margin:10px 0 10px;
+}
+
+/* ── Back nav ── */
+.tdr-back{
+  display:inline-flex;align-items:center;gap:6px;
+  font-family:var(--al-font-mono);
+  font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--al-ink-mute);
+  text-decoration:none;
+  margin-bottom:20px;
+  margin-top:12px;
+  padding:6px 0;
+}
+.tdr-back:hover{color:var(--al-ink-2);}
+.tdr-back-arrow{font-size:14px;line-height:1;}
+
+@media(max-width:600px){
+  .tdr-section{padding:22px 20px 20px;}
+  .tdr-checklist-section{padding:24px 20px 22px;}
+  .tdr-lag-interface{flex-wrap:wrap;}
+}
+</style>
+</head>
+<body data-page="test-day">
+<div class="al-app">
+
+<!-- ========== TOP BAR ========== -->
+<header class="al-top">
+  <div class="al-brand">
+    <span class="al-mark">Ace<em>The</em>DAT</span>
+    <span class="al-divider"></span>
+    <span class="al-product">Ace Labs</span>
+    <span class="al-build">v1 · 2026-05</span>
+  </div>
+  <nav class="al-nav">
+    <a href="ace-labs.html" class="al-nav-link">Home</a>
+    <a href="prometric-mock.html" class="al-nav-link">Prometric mocks</a>
+    <a href="mocks-catalog.html" class="al-nav-link">Mock catalog</a>
+    <a href="test-week.html" class="al-nav-link">Test week</a>
+    <a href="test-day-readiness.html" class="al-nav-link active">Test day</a>
+  </nav>
+</header>
+
+<!-- ========== PAGE WRAPPER ========== -->
+<div class="tdr-page">
+
+  <a href="ace-labs.html" class="tdr-back">
+    <span class="tdr-back-arrow">&larr;</span> Back to Ace Labs
+  </a>
+
+  <!-- HERO -->
+  <section class="tdr-hero">
+    <span class="tdr-hero-eyebrow">Test-day mechanics</span>
+    <h1>What real DAT day<br/><em>actually feels like.</em></h1>
+    <p class="tdr-hero-sub">Five minutes. The interface quirks, timing rules, and physical-center details that catch even well-prepared students off guard — because no prep tool puts them in writing.</p>
+  </section>
+
+  <!-- PROGRESS -->
+  <div class="tdr-progress-bar" id="tdrProgressBar">
+    <div class="tdr-progress-fill" id="tdrProgressFill"></div>
+  </div>
+
+  <!-- ================================================
+       SECTION 1 — Navigation lag
+  ================================================= -->
+  <div class="tdr-section tdr-section--watch" id="tdr-s1">
+    <span class="tdr-section-num">01 of 08 &nbsp;·&nbsp; Interface</span>
+    <h2>The <em>navigation lag</em> is real.</h2>
+
+    <p class="tdr-finding">
+      Students report a roughly half-second delay between pressing "Next" and the next question appearing on the Prometric interface. Every click. Every question.
+    </p>
+
+    <p class="tdr-explanation">
+      This is not your connection or the computer. The Prometric DAT delivery software has a measurable response lag that shows up between questions, between passages, and when the review screen loads. If you have never practiced with it, your first instinct on test day will be to click again — and double-clicking can skip a question or register an unintended answer.
+    </p>
+
+    <div class="tdr-demo">
+      <div class="tdr-demo-label">Demo &mdash; feel the lag before test day</div>
+      <div class="tdr-lag-demo">
+        <div class="tdr-lag-interface">
+          <span class="tdr-lag-q" id="lagQLabel">Question 1 of 40</span>
+          <button class="tdr-lag-btn" id="lagNextBtn" onclick="handleLagClick()">Next</button>
+        </div>
+        <div class="tdr-lag-status" id="lagStatus">Click "Next" to feel the 0.5&nbsp;s delay.</div>
+      </div>
+    </div>
+
+    <p class="tdr-tip">
+      <strong>What to do:</strong> Click once, then hold. Resist the urge to click again during the pause. Practice this on every Prometric-format mock you run before test day so the rhythm is automatic.
+    </p>
+  </div>
+
+  <!-- ================================================
+       SECTION 2 — Mark / skip behavior
+  ================================================= -->
+  <div class="tdr-section tdr-section--watch" id="tdr-s2">
+    <span class="tdr-section-num">02 of 08 &nbsp;·&nbsp; Interface</span>
+    <h2>Marking is <em>not</em> the same as free skipping.</h2>
+
+    <p class="tdr-finding">
+      The DAT interface has a "Mark" button, but you cannot freely navigate to any question at will. You can mark a question to flag it, then use the End-of-Section review screen to return to marked items only.
+    </p>
+
+    <p class="tdr-explanation">
+      Students sometimes expect a sidebar list where they can jump to any question mid-section, as some third-party mocks offer. That is not how the Prometric interface works. On the real exam, your forward movement through questions is linear. You can mark a question as you go, and at the end of the section you get a review screen that shows all questions with their status — answered, unanswered, marked. From there you can revisit any marked or unanswered item. There is no mid-section free navigation.
+    </p>
+
+    <div class="tdr-demo">
+      <div class="tdr-demo-label">Demo &mdash; mark behavior</div>
+      <div class="tdr-marksip-row" id="msRow">
+        <button class="tdr-ms-btn" id="msBtnMark" onclick="handleMark()">Mark</button>
+        <button class="tdr-ms-btn" id="msBtnNext" onclick="handleMsNext()">Next</button>
+      </div>
+      <div class="tdr-ms-status" id="msStatus">Mark a question, then continue forward. You return to it at section review.</div>
+    </div>
+
+    <p class="tdr-tip">
+      <strong>What to do:</strong> Build a clear rule for yourself now. For example: if a question will take more than 90 seconds, mark it and move on. Budget 10-15 seconds at end of section to hit the review screen and address marked items. Practice this exact workflow in your next full mock.
+    </p>
+  </div>
+
+  <!-- ================================================
+       SECTION 3 — RC scroll reset
+  ================================================= -->
+  <div class="tdr-section tdr-section--watch" id="tdr-s3">
+    <span class="tdr-section-num">03 of 08 &nbsp;·&nbsp; Interface</span>
+    <h2>RC passages <em>reset to the top</em> on each question.</h2>
+
+    <p class="tdr-finding">
+      Students have reported that when you advance to a new question in Reading Comprehension, the passage panel scrolls back to the top — even if your previous question required reading something near the bottom.
+    </p>
+
+    <p class="tdr-explanation">
+      On the real exam, RC questions appear alongside a scrollable passage. When you move to the next question in the set, the scroll position resets. If consecutive questions both reference content in paragraph 4 or 5, you will re-scroll each time. Students who do not expect this waste time assuming the passage "loaded wrong" and are surprised to find themselves scrolling repeatedly.
+    </p>
+
+    <p class="tdr-tip">
+      <strong>What to do:</strong> During practice, track approximately which paragraph contains key evidence for each question type. On test day, scroll directly to that region without hunting. For main-idea or tone questions that require no specific quote, do not scroll at all — answer from your read-through.
+    </p>
+  </div>
+
+  <!-- ================================================
+       SECTION 4 — Break timer starts immediately
+  ================================================= -->
+  <div class="tdr-section tdr-section--watch" id="tdr-s4">
+    <span class="tdr-section-num">04 of 08 &nbsp;·&nbsp; Timing</span>
+    <h2>Your break timer starts <em>the moment the break begins</em>.</h2>
+
+    <p class="tdr-finding">
+      There is no grace period. Your optional break timer begins immediately when your scheduled break period opens. If you spend two minutes in the check-out / check-in protocol, those two minutes come out of your break.
+    </p>
+
+    <p class="tdr-explanation">
+      The DAT has an optional break between the Biology section and the Survey of Natural Sciences. The break is timed. The check-out process — raising your hand, waiting for the proctor, signing out, walking to the waiting area — takes real time. The same is true coming back: you sign in, get reseated, go through the check-in process, and only then resume. Students who have not planned for this are sometimes surprised to find 4-5 minutes gone before they reach the bathroom.
+    </p>
+
+    <p class="tdr-tip">
+      <strong>What to do:</strong> Plan your break activities in order of priority. If you need the bathroom, that is first. Water and a snack should be waiting at your assigned locker. Know exactly what you are going to do and do it in that order, without hesitation. Do not browse your phone looking for test tips during the break.
+    </p>
+  </div>
+
+  <!-- ================================================
+       SECTION 5 — Calculator
+  ================================================= -->
+  <div class="tdr-section tdr-section--plan" id="tdr-s5">
+    <span class="tdr-section-num">05 of 08 &nbsp;·&nbsp; Tools</span>
+    <h2>There is a calculator in QR. <em>Use it.</em></h2>
+
+    <p class="tdr-finding">
+      The Prometric interface provides an on-screen calculator for the Quantitative Reasoning section. Multiple students have reported not knowing it existed until they were already deep into the section.
+    </p>
+
+    <p class="tdr-explanation">
+      The calculator button appears in the toolbar. It is a basic four-function calculator with some additional operations. It does not do symbolic algebra, does not graph, and does not factor — but for arithmetic-heavy steps in rate, ratio, and geometry problems, it can meaningfully reduce errors. Students who discover it mid-section and have never practiced using an on-screen calculator in exam conditions tend to use it poorly or not at all.
+    </p>
+
+    <div class="tdr-demo">
+      <div class="tdr-demo-label">Demo &mdash; practice the on-screen calculator workflow</div>
+      <div class="tdr-calc-demo">
+        <div class="tdr-calc-screen" id="calcDisplay">0</div>
+        <div class="tdr-calc-grid">
+          <button class="tdr-calc-key clr" onclick="calcInput('C')">C</button>
+          <button class="tdr-calc-key op" onclick="calcInput('(')">(</button>
+          <button class="tdr-calc-key op" onclick="calcInput(')')">)</button>
+          <button class="tdr-calc-key op" onclick="calcInput('/')">÷</button>
+
+          <button class="tdr-calc-key" onclick="calcInput('7')">7</button>
+          <button class="tdr-calc-key" onclick="calcInput('8')">8</button>
+          <button class="tdr-calc-key" onclick="calcInput('9')">9</button>
+          <button class="tdr-calc-key op" onclick="calcInput('*')">×</button>
+
+          <button class="tdr-calc-key" onclick="calcInput('4')">4</button>
+          <button class="tdr-calc-key" onclick="calcInput('5')">5</button>
+          <button class="tdr-calc-key" onclick="calcInput('6')">6</button>
+          <button class="tdr-calc-key op" onclick="calcInput('-')">&minus;</button>
+
+          <button class="tdr-calc-key" onclick="calcInput('1')">1</button>
+          <button class="tdr-calc-key" onclick="calcInput('2')">2</button>
+          <button class="tdr-calc-key" onclick="calcInput('3')">3</button>
+          <button class="tdr-calc-key op" onclick="calcInput('+')">+</button>
+
+          <button class="tdr-calc-key" style="grid-column:span 2" onclick="calcInput('0')">0</button>
+          <button class="tdr-calc-key" onclick="calcInput('.')">.</button>
+          <button class="tdr-calc-key equals" onclick="calcInput('=')">=</button>
+        </div>
+      </div>
+      <p class="tdr-calc-hint">Click the keys above. The real Prometric calculator is mouse-only. Drill the click workflow before test day.</p>
+    </div>
+
+    <p class="tdr-tip">
+      <strong>What to do:</strong> On every QR mock you run before test day, open the on-screen calculator and force yourself to use it for multi-step arithmetic — even when you could do it mentally. By test day, reaching for it should be a reflex, not a decision.
+    </p>
+  </div>
+
+  <!-- ================================================
+       SECTION 6 — Keyboard shortcuts
+  ================================================= -->
+  <div class="tdr-section tdr-section--plan" id="tdr-s6">
+    <span class="tdr-section-num">06 of 08 &nbsp;·&nbsp; Tools</span>
+    <h2>Keyboard shortcuts exist in SNS and PAT.</h2>
+
+    <p class="tdr-finding">
+      Students who knew about keyboard shortcuts in the Survey of Natural Sciences and Perceptual Ability sections saved time on navigation. Students who did not know spent those same moments reaching for the mouse.
+    </p>
+
+    <p class="tdr-explanation">
+      The Prometric delivery software supports keyboard navigation for answer selection and moving between questions in several sections. In SNS, answer choices can typically be selected with the corresponding letter key. In PAT, similar keyboard actions apply. The exact key mappings students have reported are listed below. Because the interface is not publicly documented in detail, treat these as "reported behavior" and verify in any full-length Prometric-format mock you run.
+    </p>
+
+    <div class="tdr-demo">
+      <div class="tdr-demo-label">Reported keyboard shortcuts</div>
+      <table class="tdr-shortcut-table">
+        <thead>
+          <tr>
+            <th>Key</th>
+            <th>Action</th>
+            <th>Sections</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="tdr-key">A</span> <span class="tdr-key">B</span> <span class="tdr-key">C</span> <span class="tdr-key">D</span> <span class="tdr-key">E</span></td>
+            <td>Select answer choice</td>
+            <td>SNS, PAT (some question types)</td>
+          </tr>
+          <tr>
+            <td><span class="tdr-key">Enter</span></td>
+            <td>Confirm / advance (where enabled)</td>
+            <td>SNS</td>
+          </tr>
+          <tr>
+            <td><span class="tdr-key">M</span></td>
+            <td>Toggle mark on current question</td>
+            <td>All sections (reported)</td>
+          </tr>
+          <tr>
+            <td><span class="tdr-key">N</span></td>
+            <td>Next question (where enabled)</td>
+            <td>SNS (reported)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="tdr-tip">
+      <strong>What to do:</strong> Run at least one full Prometric-format mock with the keyboard next to your mouse. Test each shortcut early in the section when the stakes of an error are low. If a shortcut behaves differently than listed above, note it — then keep using whatever is faster for you.
+    </p>
+  </div>
+
+  <!-- ================================================
+       SECTION 7 — Physical center
+  ================================================= -->
+  <div class="tdr-section tdr-section--watch" id="tdr-s7">
+    <span class="tdr-section-num">07 of 08 &nbsp;·&nbsp; Physical center</span>
+    <h2>Prometric centers have rules that <em>affect your comfort</em>.</h2>
+
+    <p class="tdr-finding">
+      Mask requirements, food and water restrictions, ID rules, and locker policies vary by center and have changed over time. Do not assume your experience at another testing center (MCAT, GRE, etc.) will match.
+    </p>
+
+    <p class="tdr-explanation">
+      A few specific points students have flagged after test day:
+    </p>
+
+    <ul style="margin:0 0 14px;padding-left:22px;font-family:var(--al-font-sans);font-size:15px;line-height:1.75;color:var(--al-ink-2);">
+      <li>
+        <strong>Glasses + mask fogging.</strong> If you wear glasses and your center requires a mask, the combination can cause lens fogging that is genuinely distracting. Students have reported spending 30-60 seconds between sections adjusting their mask or glasses. Bring a mask with a nose wire and practice wearing it while studying in the weeks before your test.
+      </li>
+      <li>
+        <strong>Food and water.</strong> You cannot bring food or drinks into the testing room. Items go in a locker. You can access your locker only during a scheduled break. Plan accordingly — eat before arrival, and leave a small snack and water in the locker for the break.
+      </li>
+      <li>
+        <strong>ID requirements.</strong> You need a current, government-issued photo ID. Expired IDs are typically not accepted. Confirm the specific accepted ID list on the ADA (American Dental Association) and Prometric websites before test day, since policies update.
+      </li>
+      <li>
+        <strong>Personal items.</strong> Phones, smartwatches, and most personal items must be stored. Many centers require you to empty your pockets completely. Wear comfortable clothing without pockets that could trigger any concern.
+      </li>
+      <li>
+        <strong>Earplugs.</strong> Many centers offer foam earplugs. Ask when you arrive. These are often not advertised, but students report they are available if you ask the proctor.
+      </li>
+    </ul>
+
+    <p class="tdr-tip">
+      <strong>What to do:</strong> Call your specific Prometric center 2-3 days before your test date and confirm their current mask policy, ID requirements, and locker access procedure. A 5-minute phone call eliminates 30 minutes of test-morning anxiety.
+    </p>
+  </div>
+
+  <!-- ================================================
+       SECTION 8 — You can talk to the proctor
+  ================================================= -->
+  <div class="tdr-section tdr-section--plan" id="tdr-s8">
+    <span class="tdr-section-num">08 of 08 &nbsp;·&nbsp; Your rights</span>
+    <h2>You are allowed to <em>ask the proctor</em>.</h2>
+
+    <p class="tdr-finding">
+      Many students assume they must silently tolerate any problem — a flickering monitor, loud noise from an adjacent station, or an urgent need for the restroom mid-section. You do not have to.
+    </p>
+
+    <p class="tdr-explanation">
+      Proctors are there to administer the exam and to help resolve issues that could compromise your performance. Several situations where raising your hand is appropriate and will not penalize you:
+    </p>
+
+    <ul style="margin:0 0 14px;padding-left:22px;font-family:var(--al-font-sans);font-size:15px;line-height:1.75;color:var(--al-ink-2);">
+      <li>
+        <strong>Technical problem at your station.</strong> If your screen freezes, your mouse stops responding, or you notice something wrong with the software display, raise your hand immediately. The proctor can note the issue and, if necessary, contact Prometric support. Do not wait to see if it resolves itself.
+      </li>
+      <li>
+        <strong>Restroom during a section.</strong> You can request a restroom break mid-section. The section timer will continue running. The proctor will escort you out and back in. This is not ideal, but if you genuinely need it, do not wait through 20 questions in discomfort.
+      </li>
+      <li>
+        <strong>Disruptive noise or environment.</strong> If another test-taker is causing significant noise, you can raise your hand and ask the proctor to address it. They may offer earplugs or move the other person.
+      </li>
+      <li>
+        <strong>Scratch paper or whiteboard replacement.</strong> You will be given scratch materials (the form varies by center — laminated boards are common). If you run out of space, raise your hand and ask for more.
+      </li>
+    </ul>
+
+    <p class="tdr-tip">
+      <strong>What to do:</strong> Know before you arrive that raising your hand is a tool, not a disruption. You have already prepared for the content. Do not let a solvable environmental problem knock you off course.
+    </p>
+  </div>
+
+  <hr class="tdr-divider" style="margin:28px 0 28px;"/>
+
+  <!-- ================================================
+       CHECKLIST
+  ================================================= -->
+  <div class="tdr-checklist-section">
+    <span class="tdr-checklist-eyebrow">Before test day</span>
+    <h2>The <em>get-ready</em> checklist.</h2>
+    <ul class="tdr-checklist" id="tdrChecklist">
+      <li>
+        <input type="checkbox" id="chk1" onchange="saveChecklist()"/>
+        <label for="chk1">Run at least one full Prometric-format mock with the on-screen calculator open in QR. Use it for every multi-step arithmetic step, even when you do not need to.</label>
+      </li>
+      <li>
+        <input type="checkbox" id="chk2" onchange="saveChecklist()"/>
+        <label for="chk2">Practice the navigation-lag pause. After clicking "Next," pause before clicking again. Do this for an entire section in your next mock.</label>
+      </li>
+      <li>
+        <input type="checkbox" id="chk3" onchange="saveChecklist()"/>
+        <label for="chk3">Build and drill your mark-and-review rule: decide the time threshold above which you will mark-and-skip, and practice it in a full mock.</label>
+      </li>
+      <li>
+        <input type="checkbox" id="chk4" onchange="saveChecklist()"/>
+        <label for="chk4">Plan your break sequence in order: bathroom, water, snack, sit. Assume 2-3 minutes of check-out and check-in. Do not improvise the break on test day.</label>
+      </li>
+      <li>
+        <input type="checkbox" id="chk5" onchange="saveChecklist()"/>
+        <label for="chk5">If you wear glasses, find a mask with a nose wire and wear it during at least one full study session before test day to identify any fogging issues.</label>
+      </li>
+      <li>
+        <input type="checkbox" id="chk6" onchange="saveChecklist()"/>
+        <label for="chk6">Confirm your valid government-issued photo ID is current and matches your registration name exactly.</label>
+      </li>
+      <li>
+        <input type="checkbox" id="chk7" onchange="saveChecklist()"/>
+        <label for="chk7">Call your specific Prometric center 2-3 days before your exam to confirm their current mask, ID, and locker policy.</label>
+      </li>
+      <li>
+        <input type="checkbox" id="chk8" onchange="saveChecklist()"/>
+        <label for="chk8">Prepare your locker items the night before: small snack, water, any approved comfort items. Do not leave this for test morning.</label>
+      </li>
+      <li>
+        <input type="checkbox" id="chk9" onchange="saveChecklist()"/>
+        <label for="chk9">When you arrive, ask the proctor about earplugs. Ask where scratch materials are and what to do if you need more.</label>
+      </li>
+      <li>
+        <input type="checkbox" id="chk10" onchange="saveChecklist()"/>
+        <label for="chk10">Know that raising your hand mid-section for a technical issue or environment problem is allowed and will not penalize your score.</label>
+      </li>
+    </ul>
+  </div>
+
+</div><!-- /tdr-page -->
+</div><!-- /al-app -->
+
+<script>
+/* ===================================================================
+   Navigation lag demo
+=================================================================== */
+var lagCount = 0;
+var lagMax = 5;
+var lagBusy = false;
+
+function handleLagClick() {
+  if (lagBusy) return;
+  lagBusy = true;
+  var btn = document.getElementById('lagNextBtn');
+  var status = document.getElementById('lagStatus');
+  var qLabel = document.getElementById('lagQLabel');
+
+  btn.disabled = true;
+  status.textContent = 'Loading next question...';
+
+  setTimeout(function() {
+    lagCount = Math.min(lagCount + 1, lagMax);
+    if (lagCount < lagMax) {
+      qLabel.textContent = 'Question ' + (lagCount + 1) + ' of 40';
+    } else {
+      qLabel.textContent = 'End of section';
+    }
+    status.textContent = lagCount < lagMax
+      ? 'That was 0.5 s. Every single question, for 40 questions.'
+      : 'That is the full rhythm. Now you know what to expect.';
+    btn.disabled = false;
+    lagBusy = false;
+
+    if (lagCount >= lagMax) {
+      btn.textContent = 'Reset';
+      btn.onclick = function() {
+        lagCount = 0;
+        btn.textContent = 'Next';
+        btn.onclick = handleLagClick;
+        qLabel.textContent = 'Question 1 of 40';
+        status.textContent = 'Click "Next" to feel the 0.5 s delay.';
+      };
+    }
+  }, 500);
+}
+
+/* ===================================================================
+   Mark / skip demo
+=================================================================== */
+var msMarked = false;
+var msStep = 0;
+
+function handleMark() {
+  var btn = document.getElementById('msBtnMark');
+  var status = document.getElementById('msStatus');
+  msMarked = !msMarked;
+  btn.classList.toggle('active', msMarked);
+  btn.textContent = msMarked ? 'Marked' : 'Mark';
+  if (msMarked) {
+    status.textContent = 'Question flagged. Continue forward — you return to it at the review screen.';
+  } else {
+    status.textContent = 'Mark removed. The question is still answered (or unanswered) in place.';
+  }
+}
+
+function handleMsNext() {
+  var status = document.getElementById('msStatus');
+  msStep++;
+  if (msStep === 1) {
+    status.textContent = 'Moved forward. You cannot go back directly. Marked items appear on the end-of-section review.';
+    var btn = document.getElementById('msBtnNext');
+    btn.textContent = 'Next';
+  } else if (msStep === 2) {
+    status.textContent = 'Still moving forward. When the section ends, the review screen lists marked and unanswered questions.';
+  } else {
+    status.textContent = 'Section complete. Review screen shows all marked items. Now you return to them.';
+    document.getElementById('msBtnNext').textContent = 'Reset';
+    document.getElementById('msBtnNext').onclick = function() {
+      msStep = 0;
+      msMarked = false;
+      document.getElementById('msBtnMark').classList.remove('active');
+      document.getElementById('msBtnMark').textContent = 'Mark';
+      document.getElementById('msBtnNext').textContent = 'Next';
+      document.getElementById('msBtnNext').onclick = handleMsNext;
+      status.textContent = 'Mark a question, then continue forward. You return to it at section review.';
+    };
+  }
+}
+
+/* ===================================================================
+   Calculator demo
+=================================================================== */
+var calcExpr = '';
+var calcJustEvaled = false;
+
+function calcInput(key) {
+  var display = document.getElementById('calcDisplay');
+  if (key === 'C') {
+    calcExpr = '';
+    calcJustEvaled = false;
+    display.textContent = '0';
+    return;
+  }
+  if (key === '=') {
+    try {
+      // Safe evaluation: only allow digits, operators, parens, decimal
+      var safe = calcExpr.replace(/[^0-9+\-*/().]/g, '');
+      if (!safe) return;
+      var result = Function('"use strict"; return (' + safe + ')')();
+      if (!isFinite(result)) {
+        display.textContent = 'Error';
+        calcExpr = '';
+        return;
+      }
+      // Round to 8 significant figures to avoid float noise
+      var rounded = parseFloat(result.toPrecision(8));
+      display.textContent = String(rounded);
+      calcExpr = String(rounded);
+      calcJustEvaled = true;
+    } catch(e) {
+      display.textContent = 'Error';
+      calcExpr = '';
+    }
+    return;
+  }
+  // If just evaluated and user types a digit, start fresh
+  if (calcJustEvaled && /[0-9.]/.test(key)) {
+    calcExpr = '';
+    calcJustEvaled = false;
+  } else if (calcJustEvaled && /[+\-*/]/.test(key)) {
+    // Continue from result
+    calcJustEvaled = false;
+  } else {
+    calcJustEvaled = false;
+  }
+  calcExpr += key;
+  // Display the expression, replacing operator symbols for readability
+  var shown = calcExpr.replace(/\*/g, '×').replace(/\//g, '÷');
+  display.textContent = shown || '0';
+}
+
+/* ===================================================================
+   Reading progress bar
+=================================================================== */
+function updateProgress() {
+  var sections = document.querySelectorAll('[id^="tdr-s"]');
+  var visible = 0;
+  var total = sections.length;
+  sections.forEach(function(s) {
+    var rect = s.getBoundingClientRect();
+    if (rect.top < window.innerHeight * 0.85) visible++;
+  });
+  var pct = total > 0 ? Math.round((visible / total) * 100) : 0;
+  document.getElementById('tdrProgressFill').style.width = pct + '%';
+}
+window.addEventListener('scroll', updateProgress, {passive: true});
+updateProgress();
+
+/* ===================================================================
+   Checklist persistence
+=================================================================== */
+function saveChecklist() {
+  var state = {};
+  for (var i = 1; i <= 10; i++) {
+    var el = document.getElementById('chk' + i);
+    if (el) state['chk' + i] = el.checked;
+  }
+  try { localStorage.setItem('tdr_checklist', JSON.stringify(state)); } catch(e) {}
+}
+
+function loadChecklist() {
+  try {
+    var raw = localStorage.getItem('tdr_checklist');
+    if (!raw) return;
+    var state = JSON.parse(raw);
+    for (var k in state) {
+      var el = document.getElementById(k);
+      if (el) el.checked = state[k];
+    }
+  } catch(e) {}
+}
+
+loadChecklist();
+</script>
+</body>
+</html>

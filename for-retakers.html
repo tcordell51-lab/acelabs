@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Going Again · Ace Labs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400;1,700&family=DM+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared/ace-labs-shell.css">
+<style>
+/* ===== FOR-RETAKERS PAGE ===== */
+body[data-page="retakers"]{
+  background:linear-gradient(180deg,var(--al-bg) 0%,var(--al-paper-2) 100%);
+}
+
+.rt-wrap{max-width:860px;margin:0 auto;padding:0 28px 80px;}
+
+/* Hero */
+.rt-hero{padding:18px 0 42px;}
+.rt-hero-tag{
+  display:inline-flex;
+  align-items:center;
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--al-gold-d);
+  background:var(--al-gold-bg);
+  padding:7px 14px;
+  border-radius:99px;
+  border:1px solid var(--al-gold-d);
+  margin-bottom:22px;
+}
+.rt-hero h1{
+  font-family:'Playfair Display',serif;
+  font-size:54px;
+  font-weight:700;
+  letter-spacing:-.02em;
+  line-height:1.05;
+  margin-bottom:14px;
+}
+.rt-hero h1 em{color:var(--al-gold-d);font-style:italic;}
+.rt-hero-sub{
+  font-size:18px;
+  color:var(--al-ink-2);
+  max-width:640px;
+  line-height:1.6;
+}
+@media (max-width:680px){
+  .rt-hero h1{font-size:36px;}
+  .rt-hero-sub{font-size:16px;}
+}
+
+/* Section blocks */
+.rt-section{
+  margin-bottom:52px;
+  padding:34px 36px;
+  background:var(--al-paper);
+  border:1px solid var(--al-line);
+  border-radius:16px;
+}
+@media (max-width:520px){.rt-section{padding:24px 20px;}}
+.rt-section-tag{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--al-ink-mute);
+  margin-bottom:10px;
+}
+.rt-section h2{
+  font-family:'Playfair Display',serif;
+  font-size:30px;
+  font-weight:700;
+  letter-spacing:-.01em;
+  margin-bottom:12px;
+  line-height:1.15;
+}
+.rt-section h2 em{color:var(--al-gold-d);font-style:italic;}
+.rt-section-body{
+  font-size:15px;
+  color:var(--al-ink-2);
+  line-height:1.65;
+  max-width:680px;
+}
+.rt-section-body p+p{margin-top:12px;}
+
+/* Bullet list inside sections */
+.rt-list{
+  list-style:none;
+  margin:16px 0 0;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.rt-list li{
+  display:flex;
+  align-items:flex-start;
+  gap:12px;
+  font-size:14px;
+  color:var(--al-ink-2);
+  line-height:1.5;
+}
+.rt-list li::before{
+  content:'--';
+  font-family:'JetBrains Mono',monospace;
+  font-size:12px;
+  font-weight:700;
+  color:var(--al-gold-d);
+  flex-shrink:0;
+  margin-top:2px;
+}
+
+/* Path cards */
+.rt-path-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:14px;
+  margin-top:18px;
+}
+@media (max-width:680px){.rt-path-grid{grid-template-columns:1fr;}}
+.rt-path-card{
+  padding:18px 20px;
+  background:var(--al-paper-2);
+  border:1px solid var(--al-line);
+  border-radius:12px;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  text-decoration:none;
+  color:var(--al-ink);
+  transition:all .18s;
+  border-top:3px solid var(--al-line-2);
+}
+.rt-path-card:hover{
+  transform:translateY(-2px);
+  box-shadow:0 8px 24px rgba(13,32,24,.08);
+  border-top-color:var(--al-gold-d);
+}
+.rt-path-card-tag{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--al-ink-mute);
+}
+.rt-path-card-title{
+  font-family:'Playfair Display',serif;
+  font-size:18px;
+  font-weight:700;
+  line-height:1.2;
+}
+.rt-path-card-desc{font-size:13px;color:var(--al-ink-2);line-height:1.45;}
+.rt-path-card-link{
+  margin-top:auto;
+  padding-top:10px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:.10em;
+  text-transform:uppercase;
+  color:var(--al-gold-d);
+  border-top:1px dashed var(--al-line);
+}
+
+/* Stuck callout */
+.rt-stuck{
+  display:flex;
+  align-items:flex-start;
+  gap:18px;
+  padding:24px 26px;
+  background:var(--al-paper-2);
+  border:1px solid var(--al-line-2);
+  border-left:4px solid var(--al-teal-3);
+  border-radius:12px;
+  margin-top:20px;
+}
+.rt-stuck-body{flex:1;}
+.rt-stuck-head{
+  font-size:16px;
+  font-weight:700;
+  color:var(--al-ink);
+  margin-bottom:6px;
+}
+.rt-stuck-text{font-size:14px;color:var(--al-ink-2);line-height:1.55;}
+.rt-stuck-cta{
+  display:inline-block;
+  margin-top:12px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--al-teal-3);
+  text-decoration:none;
+}
+.rt-stuck-cta:hover{color:var(--al-ink);}
+
+/* CTA strip */
+.rt-cta-strip{
+  display:flex;
+  align-items:center;
+  gap:16px;
+  flex-wrap:wrap;
+  margin-top:8px;
+}
+.rt-cta-primary{
+  font-family:'JetBrains Mono',monospace;
+  font-size:12px;
+  font-weight:700;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  padding:13px 24px;
+  background:var(--al-ink);
+  color:var(--al-paper);
+  border-radius:8px;
+  text-decoration:none;
+  transition:background .15s;
+}
+.rt-cta-primary:hover{background:var(--al-teal-2);}
+.rt-cta-secondary{
+  font-size:14px;
+  color:var(--al-ink-mute);
+  text-decoration:none;
+}
+.rt-cta-secondary:hover{color:var(--al-ink);}
+</style>
+</head>
+<body data-page="retakers">
+<div class="rt-wrap">
+
+<!-- TOP BAR -->
+<header class="al-top">
+  <div class="al-brand">
+    <span class="al-mark">Ace<em>The</em>DAT</span>
+    <span class="al-divider"></span>
+    <span class="al-product">Ace Labs</span>
+  </div>
+  <nav class="al-nav">
+    <a href="ace-labs.html" class="al-nav-link">Home</a>
+    <a href="unified-mock.html" class="al-nav-link">Cross-tool mock</a>
+    <a href="#tools" class="al-nav-link">Tools</a>
+  </nav>
+</header>
+
+<!-- HERO -->
+<section class="rt-hero">
+  <div class="rt-hero-tag">Retake path</div>
+  <h1>Going again.<br/><em>Let's make it count.</em></h1>
+  <p class="rt-hero-sub">You've already sat in that room. You know what the pressure feels like. This time around, the work is different — narrower, more targeted, more honest about where the gaps actually are.</p>
+</section>
+
+<!-- ===== SECTION A: WHAT YOU ALREADY KNOW ===== -->
+<section class="rt-section" id="what-you-know">
+  <div class="rt-section-tag">Section A</div>
+  <h2>What you <em>already know</em></h2>
+  <div class="rt-section-body">
+    <p>A retake is not a reset. You have a real, scored official attempt to work from. That's the most honest data point anyone in DAT prep can have.</p>
+    <p>Most retakers walk in with more content knowledge than they credit themselves for. The first attempt surfaces which sections actually matter and which ones were already close. Use it.</p>
+    <ul class="rt-list">
+      <li>Your official score report tells you which sections are worth the most ground to gain.</li>
+      <li>The sections you passed within a few points of your target need maintenance, not a full rebuild.</li>
+      <li>Sections far below target deserve focused, structured work — not just more practice questions.</li>
+      <li>Anxiety on test day is normal. It is also trainable. Timed mocks under realistic conditions are the only thing that actually moves that needle.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ===== SECTION B: WHAT'S DIFFERENT THIS TIME ===== -->
+<section class="rt-section" id="what-is-different">
+  <div class="rt-section-tag">Section B</div>
+  <h2>What's <em>different</em> this time</h2>
+  <div class="rt-section-body">
+    <p>Ace Labs was built around the ways the DAT actually tests — not the way textbooks teach. For retakers specifically, that means a few things work in your favor:</p>
+  </div>
+  <ul class="rt-list" style="margin-top:18px;">
+    <li>
+      <div>
+        <strong>Targeted weak-area drilling.</strong> The setup flow you just came through logged which sections you flagged as weak. Ace Labs surfaces those engines first every time you open it. You are not starting from the beginning — you are starting from where you fell short.
+      </div>
+    </li>
+    <li>
+      <div>
+        <strong>Calibrated mocks, not just practice.</strong> The cross-tool Survey of Natural Sciences mock (40 Bio + 30 GC + 30 OChem) is timed and DAT-realistic. Wrong answers automatically feed the spaced-rep queue. Every mock you take tells you something specific.
+      </div>
+    </li>
+    <li>
+      <div>
+        <strong>No pressure to start at chapter one.</strong> Each engine has modular nodes. You can open Gen Chem and go straight to Electrochemistry without sitting through atomic theory. Use the skill tree to skip what you already own.
+      </div>
+    </li>
+    <li>
+      <div>
+        <strong>Anxiety-aware design.</strong> The interface avoids score countdowns and pass/fail labels during active study. Mocks show performance only after submission, not mid-session. You can break flow at any point; progress saves automatically.
+      </div>
+    </li>
+  </ul>
+</section>
+
+<!-- ===== SECTION C: RECOMMENDED PATH ===== -->
+<section class="rt-section" id="path">
+  <div class="rt-section-tag">Section C</div>
+  <h2><em>Recommended path</em> for retakers</h2>
+  <div class="rt-section-body">
+    <p>Three concrete starting points. Do them in order if you have time; jump to the mock if your test date is close.</p>
+  </div>
+  <div class="rt-path-grid">
+    <a class="rt-path-card" href="ace-labs.html#tools">
+      <div class="rt-path-card-tag">Step 01</div>
+      <div class="rt-path-card-title">Open your weakest section engine</div>
+      <div class="rt-path-card-desc">Go to the section that cost you the most points. Start with the diagnostic node inside that engine.</div>
+      <div class="rt-path-card-link">Go to tools</div>
+    </a>
+    <a class="rt-path-card" href="unified-mock.html">
+      <div class="rt-path-card-tag">Step 02</div>
+      <div class="rt-path-card-title">Take a baseline cross-tool mock</div>
+      <div class="rt-path-card-desc">100 questions, 90 minutes. Get a current composite score before building a plan around old assumptions.</div>
+      <div class="rt-path-card-link">Open the mock</div>
+    </a>
+    <a class="rt-path-card" href="ace-labs.html">
+      <div class="rt-path-card-tag">Step 03</div>
+      <div class="rt-path-card-title">Check your weekly plan</div>
+      <div class="rt-path-card-desc">After one session, the home dashboard surfaces your weakest modules and due spaced-rep cards. Work the queue.</div>
+      <div class="rt-path-card-link">Go to home</div>
+    </a>
+  </div>
+</section>
+
+<!-- ===== SECTION D: IF YOU'RE STUCK ===== -->
+<section class="rt-section" id="stuck">
+  <div class="rt-section-tag">Section D</div>
+  <h2>If you're <em>feeling stuck</em></h2>
+  <div class="rt-section-body">
+    <p>Plateau scores are real. So is the feeling that you've seen all this material before and it still isn't clicking. That is a recognizable pattern — and it usually points to one of two things: a gap that wasn't identified correctly, or a study method that isn't forcing active retrieval.</p>
+    <p>The spaced-rep queue and mock scorecard inside Ace Labs are built to surface those gaps. But if you've been grinding and the number isn't moving, take a step back before pushing harder.</p>
+  </div>
+
+  <div class="rt-stuck">
+    <div class="rt-stuck-body">
+      <div class="rt-stuck-head">Take a beat before adding more volume.</div>
+      <div class="rt-stuck-text">If a section score is flat across two or more practice attempts, more questions in that section may not be the answer. Look at the error patterns first — are the wrong answers clustered around a specific topic? Are they timing-related? Are they second-guessing errors on things you actually knew?</div>
+      <a class="rt-stuck-cta" href="ace-labs.html#plan">See your current weak spots on the home dashboard</a>
+    </div>
+  </div>
+
+  <div class="rt-cta-strip" style="margin-top:24px;">
+    <a class="rt-cta-primary" href="ace-labs.html">Go to the home dashboard</a>
+    <a class="rt-cta-secondary" href="onboarding.html">Update my setup</a>
+  </div>
+</section>
+
+<!-- FOOT -->
+<footer class="al-foot">
+  <div class="al-foot-row">
+    <span>Ace Labs · retake path</span>
+    <span>
+      <a href="ace-labs.html">Back to home</a>
+      &nbsp;&middot;&nbsp;
+      Eventually wired to <a href="https://acethedat-portal.netlify.app" target="_blank">acethedat-portal.netlify.app</a> for tutor sync
+    </span>
+  </div>
+</footer>
+
+</div><!-- /rt-wrap -->
+</body>
+</html>

@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=1080,initial-scale=1"/>
+<title>Ace The DAT &mdash; Sliding Filament</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --sb:#0d2018; --ink:#f5f0e8;
+  --muted:rgba(245,240,232,.55); --dim:rgba(245,240,232,.32);
+  --gold:#C9A84C; --gold-m:#E2C97A; --gold-d:#8C7235;
+  --teal:#5fa3ff;
+  --warm:#ff8a3a;
+  --good:#7be08a;
+  --trap:#f59e0b; --trap-deep:#b45309;
+  --actin:#E2C97A; --myosin:#5fa3ff;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{background:#000;overflow:hidden;font-family:'DM Sans',sans-serif;color:var(--ink);}
+.stage{width:1080px;height:1920px;position:absolute;left:50%;top:50%;transform-origin:center center;overflow:hidden;transition:background 0.8s ease;}
+.stage[data-phase="hook"]{background:linear-gradient(175deg,#08161e 0%,#0d2030 50%,#04101a 100%);}
+.stage[data-phase="step1"]{background:linear-gradient(175deg,#0a1830 0%,#0d2040 50%,#06122a 100%);}
+.stage[data-phase="step2"]{background:linear-gradient(175deg,#0a1d28 0%,#0d2832 50%,#061218 100%);}
+.stage[data-phase="step3"]{background:linear-gradient(175deg,#1a2208 0%,#2c3009 50%,#0d1604 100%);}
+.stage[data-phase="step4"]{background:linear-gradient(175deg,#1f1606 0%,#2c2009 50%,#1a1206 100%);}
+.stage[data-phase="trap"]{background:linear-gradient(175deg,#3d2706 0%,#5c3608 50%,#2c1d04 100%);}
+.stage[data-phase="lock"]{background:linear-gradient(175deg,#0a1812 0%,#1a3322 50%,#0d2018 100%);}
+.stage::after{content:'';position:absolute;inset:0;pointer-events:none;z-index:99;opacity:.04;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-size:220px;}
+
+.brand{position:absolute;left:0;right:0;top:50px;display:flex;align-items:center;justify-content:space-between;padding:0 70px;z-index:20;}
+.brand-word{font-family:'Playfair Display',serif;font-size:36px;font-weight:700;color:#fff;}
+.brand-word span{color:var(--gold);}
+.brand-tag{font-size:18px;font-weight:600;color:var(--dim);letter-spacing:.18em;text-transform:uppercase;}
+.tier-pill{position:absolute;top:130px;left:70px;z-index:30;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;padding:5px 12px;border-radius:99px;background:rgba(245,240,232,.10);border:1px solid #3a6b54;color:var(--good);}
+
+/* Phases */
+.phase{position:absolute;left:0;right:0;top:0;bottom:0;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:25;opacity:0;pointer-events:none;text-align:center;padding:0 70px;transition:opacity 0.5s ease;}
+.phase.show{opacity:1;}
+
+.hook .tag{font-size:22px;font-weight:700;color:var(--gold);letter-spacing:.22em;text-transform:uppercase;margin-bottom:30px;display:flex;align-items:center;gap:18px;}
+.hook .tag::before,.hook .tag::after{content:'';width:30px;height:1px;background:var(--gold);}
+.hook .h{font-family:'Playfair Display',serif;font-size:155px;font-weight:900;color:#fff;letter-spacing:-.04em;line-height:.92;text-shadow:0 0 60px rgba(201,168,76,.4);}
+.hook .h em{color:var(--gold);font-style:italic;}
+.hook .sub{font-size:32px;font-weight:600;color:var(--muted);margin-top:30px;letter-spacing:.04em;line-height:1.3;max-width:840px;}
+
+/* Sarcomere SVG container */
+.scope{position:absolute;left:60px;right:60px;top:380px;height:540px;z-index:14;display:flex;align-items:center;justify-content:center;}
+.scope svg{width:100%;height:100%;display:block;}
+
+/* Z-line */
+.zline{stroke:#fff;stroke-width:5;stroke-linecap:round;}
+/* Actin (thin) — gold beads */
+.actin{stroke:var(--actin);stroke-width:7;}
+.actin-bead{fill:var(--actin);}
+/* Myosin (thick) — blue rods */
+.myosin{stroke:var(--myosin);stroke-width:11;stroke-linecap:round;}
+.myosin-head{fill:var(--myosin);stroke:#0d2018;stroke-width:1.5;}
+/* H-zone label */
+.label-text{font-family:'JetBrains Mono',monospace;font-size:18px;fill:var(--muted);font-weight:700;letter-spacing:.1em;text-transform:uppercase;}
+.label-bracket{stroke:var(--muted);stroke-width:1.5;fill:none;}
+
+/* Step caption */
+.step-caption{position:absolute;left:50%;top:1080px;transform:translateX(-50%);z-index:18;background:#000;color:#fff;font-size:42px;font-weight:900;padding:22px 44px;border-radius:14px;letter-spacing:-.01em;line-height:1.1;box-shadow:0 12px 40px rgba(0,0,0,.6);text-align:center;max-width:920px;}
+.step-caption .gold{color:var(--gold);}
+.step-caption .lab{font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;letter-spacing:.16em;color:var(--gold-m);text-transform:uppercase;display:block;margin-bottom:8px;}
+
+.step-anno{position:absolute;left:50%;top:1340px;transform:translateX(-50%);z-index:17;font-size:26px;font-weight:600;color:#fff;line-height:1.4;max-width:920px;text-align:center;}
+.step-anno em{color:var(--gold-m);font-style:italic;}
+.step-anno b{color:var(--good);}
+
+/* Trap */
+.trap{background:linear-gradient(135deg,rgba(245,158,11,.95),rgba(180,83,9,.95));z-index:40;}
+.trap .ribbon{background:#0d2018;color:var(--gold);font-size:30px;font-weight:900;letter-spacing:.20em;padding:18px 40px;border-radius:8px;margin-bottom:40px;text-transform:uppercase;border:2px solid var(--gold);}
+.trap .h{font-family:'Playfair Display',serif;font-size:118px;font-weight:900;color:#fff;line-height:.95;letter-spacing:-.03em;margin-bottom:30px;}
+.trap .h em{font-style:italic;color:#0d2018;}
+.trap .sub{font-size:34px;font-weight:600;color:rgba(13,32,24,.92);line-height:1.3;max-width:880px;}
+.trap .sub em{font-style:italic;font-weight:800;}
+
+/* Lock */
+.lock .tag{font-size:26px;font-weight:700;color:var(--gold);letter-spacing:.22em;text-transform:uppercase;margin-bottom:30px;}
+.lock .word{font-family:'Playfair Display',serif;font-size:108px;font-weight:900;color:var(--gold);line-height:.95;letter-spacing:-.04em;text-shadow:0 0 80px rgba(201,168,76,.5);}
+.lock .word em{font-style:italic;}
+.lock .decode{font-size:32px;font-weight:600;color:#fff;margin-top:48px;line-height:1.55;}
+.lock .decode .gold{color:var(--gold-m);}
+.lock .decode b{color:var(--good);}
+.lock .recap{margin-top:36px;padding:20px 28px;background:rgba(0,0,0,.45);border:1px solid rgba(201,168,76,.4);border-radius:14px;font-size:24px;line-height:1.55;color:rgba(245,240,232,.92);max-width:780px;}
+.lock .recap b{color:var(--gold-m);}
+
+/* Foot */
+.foot{position:absolute;left:80px;right:80px;bottom:80px;z-index:50;}
+.scrub-wrap{position:relative;height:8px;background:rgba(245,240,232,.1);border-radius:4px;cursor:pointer;}
+.scrub-fill{position:absolute;left:0;top:0;bottom:0;width:0%;background:linear-gradient(90deg,var(--gold-m),var(--gold));border-radius:4px;}
+.scrub-thumb{position:absolute;top:50%;transform:translate(-50%,-50%);width:28px;height:28px;background:var(--gold);border-radius:50%;box-shadow:0 0 0 4px rgba(201,168,76,.22);}
+.foot-row{display:flex;justify-content:space-between;align-items:center;margin-top:24px;font-size:18px;color:var(--dim);letter-spacing:.1em;}
+.foot-cta{color:var(--gold);font-weight:700;letter-spacing:.14em;text-transform:uppercase;}
+.play-btn{background:var(--gold);color:#0d2018;border:none;padding:10px 22px;border-radius:6px;font-weight:700;letter-spacing:.08em;font-size:16px;cursor:pointer;font-family:inherit;}
+.watermark{position:absolute;left:80px;bottom:30px;font-size:14px;letter-spacing:.2em;color:rgba(245,240,232,.28);text-transform:uppercase;z-index:50;}
+</style>
+</head>
+<body>
+<div class="stage" id="stage" data-phase="hook">
+
+  <div class="tier-pill">Physiology &middot; Muscle</div>
+  <div class="brand">
+    <div class="brand-word">Ace The <span>DAT</span></div>
+    <div class="brand-tag">Bio &middot; Riya</div>
+  </div>
+
+  <!-- Phase: Hook -->
+  <div class="phase hook show" data-p="hook">
+    <div class="tag">Sliding Filament</div>
+    <div class="h">One <em>cycle</em>.<br/>Five steps.</div>
+    <div class="sub">Why your muscles can fire 10 times a second &mdash; and what calcium has to do with all of it.</div>
+  </div>
+
+  <!-- Sarcomere SVG -->
+  <div class="scope">
+    <svg viewBox="0 0 1000 540" xmlns="http://www.w3.org/2000/svg">
+      <!-- Left Z-line -->
+      <line class="zline" id="zL" x1="160" y1="60" x2="160" y2="480"/>
+      <!-- Right Z-line -->
+      <line class="zline" id="zR" x1="840" y1="60" x2="840" y2="480"/>
+      <!-- Actin filaments — anchored to Z lines, extend toward center -->
+      <g id="actinGroup">
+        <!-- Top actin from left Z -->
+        <line class="actin" x1="160" y1="180" x2="510" y2="180" id="actLT"/>
+        <line class="actin" x1="160" y1="360" x2="510" y2="360" id="actLB"/>
+        <!-- Top actin from right Z -->
+        <line class="actin" x1="840" y1="180" x2="490" y2="180" id="actRT"/>
+        <line class="actin" x1="840" y1="360" x2="490" y2="360" id="actRB"/>
+        <!-- Beads on each actin -->
+        <g id="beadsLT"></g><g id="beadsLB"></g><g id="beadsRT"></g><g id="beadsRB"></g>
+      </g>
+      <!-- Myosin filament (thick) — center, fixed -->
+      <line class="myosin" x1="320" y1="270" x2="680" y2="270"/>
+      <!-- Myosin heads — 8 heads, 4 above 4 below, angled toward Z lines -->
+      <g id="headsGroup">
+        <ellipse class="myosin-head" id="hLT1" cx="370" cy="225" rx="14" ry="10" transform="rotate(-30 370 225)"/>
+        <ellipse class="myosin-head" id="hLT2" cx="430" cy="225" rx="14" ry="10" transform="rotate(-30 430 225)"/>
+        <ellipse class="myosin-head" id="hLB1" cx="370" cy="315" rx="14" ry="10" transform="rotate(30 370 315)"/>
+        <ellipse class="myosin-head" id="hLB2" cx="430" cy="315" rx="14" ry="10" transform="rotate(30 430 315)"/>
+        <ellipse class="myosin-head" id="hRT1" cx="570" cy="225" rx="14" ry="10" transform="rotate(30 570 225)"/>
+        <ellipse class="myosin-head" id="hRT2" cx="630" cy="225" rx="14" ry="10" transform="rotate(30 630 225)"/>
+        <ellipse class="myosin-head" id="hRB1" cx="570" cy="315" rx="14" ry="10" transform="rotate(-30 570 315)"/>
+        <ellipse class="myosin-head" id="hRB2" cx="630" cy="315" rx="14" ry="10" transform="rotate(-30 630 315)"/>
+      </g>
+      <!-- Calcium ions — appear/disappear with phase -->
+      <g id="caGroup" style="opacity:0">
+        <circle r="9" fill="#E2C97A" stroke="#fff" stroke-width="1.5" cx="270" cy="120"/>
+        <circle r="9" fill="#E2C97A" stroke="#fff" stroke-width="1.5" cx="490" cy="100"/>
+        <circle r="9" fill="#E2C97A" stroke="#fff" stroke-width="1.5" cx="730" cy="135"/>
+        <circle r="9" fill="#E2C97A" stroke="#fff" stroke-width="1.5" cx="360" cy="430"/>
+        <circle r="9" fill="#E2C97A" stroke="#fff" stroke-width="1.5" cx="610" cy="420"/>
+        <text x="270" y="106" text-anchor="middle" font-family="JetBrains Mono" font-size="14" fill="#E2C97A" font-weight="700">Ca²⁺</text>
+      </g>
+      <!-- Z-line labels -->
+      <text x="160" y="510" text-anchor="middle" class="label-text">Z</text>
+      <text x="840" y="510" text-anchor="middle" class="label-text">Z</text>
+      <text x="500" y="510" text-anchor="middle" class="label-text">M-line</text>
+      <line x1="500" y1="60" x2="500" y2="480" stroke="rgba(255,255,255,0.18)" stroke-width="1" stroke-dasharray="4 6"/>
+    </svg>
+  </div>
+
+  <!-- Step captions overlay -->
+  <div class="step-caption" id="stepCap" style="display:none">
+    <span class="lab" id="stepLab">Step 1</span>
+    <span id="stepText">caption</span>
+  </div>
+  <div class="step-anno" id="stepAnno" style="display:none"></div>
+
+  <!-- Trap card (revealed near the end) -->
+  <div class="phase trap" data-p="trap">
+    <div class="ribbon">DAT Trap</div>
+    <div class="h">"ATP <em>contracts</em>."</div>
+    <div class="sub">Wrong direction. <em>ATP causes detachment.</em> The power stroke happens when the head releases ADP+Pi &mdash; <em>before</em> new ATP arrives. Without ATP, you get rigor mortis (locked attachment).</div>
+  </div>
+
+  <!-- Lock card -->
+  <div class="phase lock" data-p="lock">
+    <div class="tag">Lock it in</div>
+    <div class="word"><em>Cross-bridge</em> cycle</div>
+    <div class="decode"><span class="gold">Calcium</span> exposes binding sites &middot; <span class="gold">myosin</span> latches &middot; <span class="gold">power stroke</span> shortens &middot; <b>ATP</b> detaches</div>
+    <div class="recap">
+      <b>1.</b> Ca²⁺ binds troponin &rarr; tropomyosin moves<br/>
+      <b>2.</b> Myosin head binds exposed actin site<br/>
+      <b>3.</b> Power stroke (ADP + Pi released)<br/>
+      <b>4.</b> ATP binds &rarr; head detaches<br/>
+      <b>5.</b> ATP &rarr; ADP+Pi cocks the head; repeat
+    </div>
+  </div>
+
+  <!-- Foot scrubber -->
+  <div class="foot">
+    <div class="scrub-wrap" id="scrub"><div class="scrub-fill" id="scrubFill"></div><div class="scrub-thumb" id="scrubThumb" style="left:0%"></div></div>
+    <div class="foot-row">
+      <span><button class="play-btn" id="playBtn">PLAY</button></span>
+      <span class="foot-cta">acethedat.com &middot; sliding-filament</span>
+    </div>
+  </div>
+  <div class="watermark">AceTheDAT &middot; Bio &middot; Sliding Filament</div>
+</div>
+
+<script>
+// Resize the 1080x1920 stage to fit the viewport (vertical-friendly).
+function fitStage(){
+  const s = document.getElementById('stage');
+  const sx = window.innerWidth / 1080;
+  const sy = window.innerHeight / 1920;
+  const scale = Math.min(sx, sy);
+  s.style.transform = `translate(-50%, -50%) scale(${scale})`;
+}
+window.addEventListener('resize', fitStage); fitStage();
+
+// Generate actin beads procedurally
+(function(){
+  const beadDefs = [
+    {g:'beadsLT', x0:170, x1:500, y:180},
+    {g:'beadsLB', x0:170, x1:500, y:360},
+    {g:'beadsRT', x0:830, x1:500, y:180},
+    {g:'beadsRB', x0:830, x1:500, y:360}
+  ];
+  const ns = 'http://www.w3.org/2000/svg';
+  beadDefs.forEach(d => {
+    const g = document.getElementById(d.g);
+    const dx = d.x1 > d.x0 ? 22 : -22;
+    for (let x = d.x0; (dx > 0 ? x <= d.x1 : x >= d.x1); x += dx){
+      const c = document.createElementNS(ns,'circle');
+      c.setAttribute('cx', x); c.setAttribute('cy', d.y); c.setAttribute('r','5');
+      c.setAttribute('class','actin-bead');
+      g.appendChild(c);
+    }
+  });
+})();
+
+// Phases
+const PHASES = [
+  { id:'hook',  dur:3000, title:null, anno:null, action:null },
+  { id:'step1', dur:3500, title:'Ca²⁺ floods in',
+    anno:'Action potential triggers SR. Calcium binds <em>troponin</em>. Tropomyosin slides &mdash; <b>actin sites exposed</b>.',
+    action: () => { document.getElementById('caGroup').style.transition = 'opacity .8s'; document.getElementById('caGroup').style.opacity = '1'; } },
+  { id:'step2', dur:3500, title:'Cross-bridge attaches',
+    anno:'The cocked myosin head latches onto the now-exposed actin binding site.',
+    action: () => { animateHeadAttach(); } },
+  { id:'step3', dur:3500, title:'Power stroke',
+    anno:'Head pivots, dragging actin <em>toward the M-line</em>. <b>ADP + Pi released.</b> Sarcomere shortens.',
+    action: () => { animatePowerStroke(); } },
+  { id:'step4', dur:3500, title:'ATP detaches',
+    anno:'New ATP binds the head, <em>releasing</em> it from actin. ATP &rarr; ADP+Pi re-cocks the head for next cycle.',
+    action: () => { animateDetach(); } },
+  { id:'trap',  dur:4000, title:null, anno:null, action: () => {} },
+  { id:'lock',  dur:5000, title:null, anno:null, action: () => {} }
+];
+
+function animateHeadAttach(){
+  // Pulse heads briefly
+  ['hLT1','hLT2','hLB1','hLB2','hRT1','hRT2','hRB1','hRB2'].forEach(id => {
+    const el = document.getElementById(id);
+    el.style.transition = 'transform 0.6s ease-out';
+    el.setAttribute('stroke-width','3');
+  });
+}
+
+function animatePowerStroke(){
+  // Slide actin toward center: left actins extend rightward, right actins extend leftward
+  // Visually we move Z-lines inward to simulate sarcomere shortening.
+  document.getElementById('zL').style.transition = 'transform 1.6s ease-out';
+  document.getElementById('zR').style.transition = 'transform 1.6s ease-out';
+  document.getElementById('zL').style.transform = 'translateX(40px)';
+  document.getElementById('zR').style.transform = 'translateX(-40px)';
+  // Also drag the actin filaments + their beads
+  ['actLT','actLB','beadsLT','beadsLB'].forEach(id => {
+    const el = document.getElementById(id);
+    el.style.transition = 'transform 1.6s ease-out';
+    el.style.transform = 'translateX(40px)';
+  });
+  ['actRT','actRB','beadsRT','beadsRB'].forEach(id => {
+    const el = document.getElementById(id);
+    el.style.transition = 'transform 1.6s ease-out';
+    el.style.transform = 'translateX(-40px)';
+  });
+  // Rotate myosin heads — power stroke
+  ['hLT1','hLT2','hLB1','hLB2'].forEach(id => {
+    const el = document.getElementById(id);
+    el.style.transition = 'transform 1.6s ease-out';
+    el.style.transformOrigin = 'center';
+  });
+}
+
+function animateDetach(){
+  // Pulse opacity to indicate detachment
+  ['hLT1','hLT2','hLB1','hLB2','hRT1','hRT2','hRB1','hRB2'].forEach(id => {
+    const el = document.getElementById(id);
+    el.style.transition = 'fill 0.5s, stroke-width 0.5s';
+    el.setAttribute('stroke-width','1.5');
+  });
+}
+
+let phaseIdx = 0, playing = false, timer = null;
+function showPhase(idx){
+  phaseIdx = idx;
+  const p = PHASES[idx];
+  document.getElementById('stage').setAttribute('data-phase', p.id);
+  // Hide all phases, show the one that matches
+  document.querySelectorAll('.phase').forEach(el => el.classList.toggle('show', el.dataset.p === p.id));
+  // Step caption
+  const cap = document.getElementById('stepCap');
+  const anno = document.getElementById('stepAnno');
+  if (p.title){
+    cap.style.display = 'block';
+    document.getElementById('stepLab').textContent = 'Step ' + (idx); // step1->1
+    document.getElementById('stepText').innerHTML = p.title;
+  } else { cap.style.display = 'none'; }
+  if (p.anno){ anno.style.display = 'block'; anno.innerHTML = p.anno; }
+  else { anno.style.display = 'none'; }
+  if (p.action) p.action();
+  updateScrub();
+}
+
+function updateScrub(){
+  const total = PHASES.reduce((s, p) => s + p.dur, 0);
+  let consumed = 0;
+  for (let i = 0; i < phaseIdx; i++) consumed += PHASES[i].dur;
+  const pct = Math.min(100, (consumed / total) * 100);
+  document.getElementById('scrubFill').style.width = pct + '%';
+  document.getElementById('scrubThumb').style.left = pct + '%';
+}
+
+function play(){
+  playing = true;
+  document.getElementById('playBtn').textContent = 'PAUSE';
+  function tick(){
+    if (!playing) return;
+    const p = PHASES[phaseIdx];
+    timer = setTimeout(() => {
+      if (phaseIdx < PHASES.length - 1){ showPhase(phaseIdx + 1); tick(); }
+      else { playing = false; document.getElementById('playBtn').textContent = 'REPLAY'; }
+    }, p.dur);
+  }
+  tick();
+}
+
+function pause(){ playing = false; clearTimeout(timer); document.getElementById('playBtn').textContent = 'PLAY'; }
+
+document.getElementById('playBtn').addEventListener('click', () => {
+  if (playing) pause();
+  else if (phaseIdx >= PHASES.length - 1){ resetAnims(); showPhase(0); play(); }
+  else play();
+});
+document.getElementById('scrub').addEventListener('click', e => {
+  const rect = e.currentTarget.getBoundingClientRect();
+  const pct = (e.clientX - rect.left) / rect.width;
+  const total = PHASES.reduce((s, p) => s + p.dur, 0);
+  let target = pct * total, consumed = 0;
+  for (let i = 0; i < PHASES.length; i++){
+    consumed += PHASES[i].dur;
+    if (consumed >= target){ resetAnims(); showPhase(i); break; }
+  }
+});
+
+function resetAnims(){
+  ['zL','zR','actLT','actLB','actRT','actRB','beadsLT','beadsLB','beadsRT','beadsRB'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el){ el.style.transition = 'none'; el.style.transform = ''; }
+  });
+  document.getElementById('caGroup').style.opacity = '0';
+}
+
+// Auto-start after a brief pause
+setTimeout(() => { play(); }, 600);
+</script>
+</body>
+</html>

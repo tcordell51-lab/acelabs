@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Test Week · Ace Labs</title>
+<meta name="description" content="Ace Labs test-week mode: diagnostic, cheat sheets, one pacing mock, a calm daily plan. For students whose DAT is in 5-14 days."/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400;1,700&family=DM+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared/al-tokens.css">
+<link rel="stylesheet" href="shared/al-motion.css">
+<link rel="stylesheet" href="shared/ace-labs-shell.css">
+<style>
+/* ===== TEST-WEEK PAGE OVERRIDES ===== */
+body[data-page="test-week"]{background:linear-gradient(180deg,var(--al-bg) 0%,var(--al-paper-2) 100%);}
+
+/* ===== HERO ===== */
+.tw-hero{padding:18px 0 44px;}
+.tw-hero-eyebrow{
+  display:inline-block;
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--al-gold-d);background:var(--al-gold-bg);
+  padding:7px 14px;border-radius:99px;border:1px solid var(--al-gold-d);
+  margin-bottom:20px;
+}
+.tw-hero h1{
+  font-family:'Playfair Display',serif;
+  font-size:52px;font-weight:700;line-height:1.08;letter-spacing:-.02em;
+  margin-bottom:14px;
+}
+.tw-hero h1 em{color:var(--al-gold-d);font-style:italic;}
+.tw-hero-sub{
+  font-size:16px;color:var(--al-ink-2);
+  font-family:'DM Sans',sans-serif;
+  max-width:560px;line-height:1.5;margin-bottom:0;
+}
+@media(max-width:680px){.tw-hero h1{font-size:36px;}}
+
+/* Date picker (shown when no test date is stored) */
+.tw-date-prompt{
+  display:none;
+  margin-top:24px;padding:22px 24px;
+  background:var(--al-paper);border:1px solid var(--al-line);border-radius:12px;
+  max-width:420px;
+}
+.tw-date-prompt.visible{display:block;}
+.tw-date-prompt label{
+  display:block;font-size:13px;font-weight:700;letter-spacing:.06em;
+  color:var(--al-ink-2);margin-bottom:10px;
+}
+.tw-date-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+.tw-date-input{
+  padding:9px 12px;font-family:'JetBrains Mono',monospace;font-size:14px;
+  border:1.5px solid var(--al-line-2);border-radius:8px;background:var(--al-paper-2);
+  color:var(--al-ink);outline:none;transition:border-color var(--motion-fast);
+}
+.tw-date-input:focus{border-color:var(--al-gold);}
+.tw-date-btn{
+  padding:9px 18px;background:var(--al-teal);color:var(--al-paper);
+  font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;
+  letter-spacing:.10em;text-transform:uppercase;
+  border:none;border-radius:8px;cursor:pointer;transition:background var(--motion-fast);
+}
+.tw-date-btn:hover{background:var(--al-teal-2);}
+
+/* ===== FOUR TILES ===== */
+.tw-tiles-section{margin-bottom:52px;}
+.tw-tiles-label{
+  font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;
+  letter-spacing:.18em;text-transform:uppercase;color:var(--al-ink-mute);
+  margin-bottom:16px;
+}
+.tw-tiles{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;}
+@media(max-width:680px){.tw-tiles{grid-template-columns:1fr;}}
+
+.tw-tile{
+  display:flex;flex-direction:column;gap:8px;
+  padding:24px 26px;
+  background:var(--al-paper);border:1px solid var(--al-line);
+  border-left:5px solid var(--al-ink-mute);border-radius:14px;
+  text-decoration:none;color:var(--al-ink);
+  transition:transform var(--motion-base),box-shadow var(--motion-base),border-color var(--motion-fast);
+}
+.tw-tile:hover{transform:translateY(-2px);box-shadow:var(--al-shadow-md);}
+.tw-tile--diagnostic{border-left-color:var(--al-new);}
+.tw-tile--sheets{border-left-color:var(--al-gold);}
+.tw-tile--mock{border-left-color:var(--al-gc-color);}
+.tw-tile--calendar{border-left-color:var(--al-bio-color);}
+
+.tw-tile-tag{
+  font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--al-ink-mute);
+}
+.tw-tile-name{
+  font-family:'Playfair Display',serif;font-size:26px;font-weight:700;
+  line-height:1.1;letter-spacing:-.01em;
+}
+.tw-tile-name em{font-style:italic;}
+.tw-tile--diagnostic .tw-tile-name em{color:var(--al-new);}
+.tw-tile--sheets .tw-tile-name em{color:var(--al-gold-d);}
+.tw-tile--mock .tw-tile-name em{color:var(--al-gc-color);}
+.tw-tile--calendar .tw-tile-name em{color:var(--al-bio-color);}
+
+.tw-tile-desc{font-size:13px;color:var(--al-ink-2);line-height:1.5;}
+.tw-tile-foot{
+  margin-top:auto;padding-top:10px;border-top:1px dashed var(--al-line);
+  font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;
+  letter-spacing:.08em;text-transform:uppercase;color:var(--al-gold-d);
+}
+
+/* ===== STUCK BUTTON ===== */
+.tw-stuck-wrap{margin-bottom:44px;display:flex;justify-content:flex-start;}
+.tw-stuck-trigger{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:11px 20px;
+  background:transparent;
+  border:1.5px solid var(--al-line-2);border-radius:10px;
+  font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;
+  color:var(--al-ink-2);cursor:pointer;
+  transition:all var(--motion-fast);
+}
+.tw-stuck-trigger:hover{
+  background:var(--al-paper);border-color:var(--al-ink-2);color:var(--al-ink);
+}
+
+/* ===== CALM MODAL ===== */
+.tw-modal-back{
+  position:fixed;inset:0;background:rgba(13,32,24,.52);backdrop-filter:blur(4px);
+  z-index:300;display:none;align-items:center;justify-content:center;padding:20px;
+}
+.tw-modal-back.show{display:flex;}
+.tw-modal{
+  background:var(--al-paper);border:1px solid var(--al-line);border-radius:18px;
+  max-width:520px;width:100%;padding:34px 36px;
+  box-shadow:var(--al-shadow-lg);
+  position:relative;max-height:90vh;overflow:auto;
+  font-family:'DM Sans',sans-serif;color:var(--al-ink);
+}
+.tw-modal-close{
+  position:absolute;top:18px;right:22px;
+  background:none;border:none;font-size:26px;line-height:1;
+  color:var(--al-ink-mute);cursor:pointer;padding:0;width:30px;height:30px;
+}
+.tw-modal-close:hover{color:var(--al-ink);}
+.tw-modal h3{
+  font-family:'Playfair Display',serif;font-size:27px;font-weight:700;
+  line-height:1.15;margin:0 0 10px;
+}
+.tw-modal h3 em{font-style:italic;color:var(--al-gold-d);}
+.tw-modal .lede{
+  font-size:15px;color:var(--al-ink-2);margin-bottom:20px;line-height:1.55;
+}
+.tw-modal-items{display:flex;flex-direction:column;gap:10px;}
+.tw-modal-item{
+  padding:14px 16px;border-radius:10px;
+  font-size:14px;line-height:1.45;
+}
+.tw-modal-item b{display:block;font-size:15px;margin-bottom:4px;}
+.tw-modal-item--a{background:var(--al-gold-bg);border:1.5px solid var(--al-gold-d);color:var(--al-ink);}
+.tw-modal-item--b{background:var(--al-paper-2);border:1.5px solid var(--al-teal);color:var(--al-ink);}
+.tw-modal-item--c{background:transparent;border:1.5px solid var(--al-line-2);color:var(--al-ink-2);}
+.tw-modal-dismiss{
+  margin-top:16px;width:100%;padding:11px;border-radius:8px;
+  background:var(--al-teal);color:var(--al-paper);
+  font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;
+  letter-spacing:.10em;text-transform:uppercase;
+  border:none;cursor:pointer;transition:background var(--motion-fast);
+}
+.tw-modal-dismiss:hover{background:var(--al-teal-2);}
+
+/* ===== QUICK LINKS ===== */
+.tw-quick{
+  margin-bottom:44px;padding:18px 22px;
+  background:var(--al-paper);border:1px solid var(--al-line);border-radius:12px;
+  display:flex;align-items:center;flex-wrap:wrap;gap:10px;
+}
+.tw-quick-label{
+  font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--al-ink-mute);
+  flex-shrink:0;
+}
+.tw-quick-links{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+.tw-quick-sep{color:var(--al-line-2);}
+.tw-quick-link{
+  font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;
+  color:var(--al-gold-d);text-decoration:none;
+  padding:4px 10px;border-radius:6px;border:1px solid var(--al-gold-d);
+  background:var(--al-gold-bg);
+  transition:all var(--motion-fast);
+}
+.tw-quick-link:hover{background:var(--al-gold);color:var(--al-ink);}
+
+/* ===== FOOTER ===== */
+.tw-foot{
+  padding-top:22px;border-top:1px solid var(--al-line);
+  font-family:'JetBrains Mono',monospace;font-size:11px;
+  color:var(--al-ink-mute);letter-spacing:.04em;
+  display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;
+}
+.tw-foot-link{
+  color:var(--al-gold-d);text-decoration:none;font-weight:700;
+}
+.tw-foot-link:hover{text-decoration:underline;}
+</style>
+</head>
+<body data-page="test-week">
+<div class="al-app">
+
+<!-- ========== TOP BAR ========== -->
+<header class="al-top">
+  <div class="al-brand">
+    <span class="al-mark">Ace<em>The</em>DAT</span>
+    <span class="al-divider"></span>
+    <span class="al-product">Ace Labs</span>
+    <span class="al-build">test-week mode</span>
+  </div>
+  <nav class="al-nav">
+    <a href="ace-labs.html" class="al-nav-link">Home</a>
+    <a href="test-week.html" class="al-nav-link active">Test week</a>
+    <a href="prometric-mock.html" class="al-nav-link">Prometric mocks</a>
+    <a href="test-day-readiness.html" class="al-nav-link">Test day</a>
+  </nav>
+</header>
+
+<!-- ========== HERO ========== -->
+<section class="tw-hero">
+  <div class="tw-hero-eyebrow" id="heroEyebrow">Test week</div>
+  <h1 id="heroHeading">Test in <em id="daysLabel">N</em> days.<br/>Here's the plan.</h1>
+  <p class="tw-hero-sub">Diagnostic. Cheat sheets. One mock. Calm calendar. That's it.</p>
+
+  <!-- Date picker — shown only if no test date is stored -->
+  <div class="tw-date-prompt" id="datePrompt">
+    <label for="testDateInput">When is your DAT? Enter the date and we will do the rest.</label>
+    <div class="tw-date-row">
+      <input type="date" id="testDateInput" class="tw-date-input" />
+      <button class="tw-date-btn" id="testDateSave">Set date</button>
+    </div>
+  </div>
+</section>
+
+<!-- ========== FOUR DAILY-DRIVER TILES ========== -->
+<section class="tw-tiles-section">
+  <div class="tw-tiles-label">Four tools. That's your whole week.</div>
+  <div class="tw-tiles">
+
+    <a class="tw-tile tw-tile--diagnostic" href="diagnostic.html">
+      <div class="tw-tile-tag">Step 1 · Do this first</div>
+      <h2 class="tw-tile-name"><em>Diagnostic</em></h2>
+      <p class="tw-tile-desc">60 questions, 45 minutes. Surfaces your three weakest areas so you know exactly where to spend time.</p>
+      <div class="tw-tile-foot">Open diagnostic</div>
+    </a>
+
+    <a class="tw-tile tw-tile--sheets" href="cheat-sheets.html">
+      <div class="tw-tile-tag">Step 2 · High-yield review</div>
+      <h2 class="tw-tile-name">Cheat <em>sheets</em></h2>
+      <p class="tw-tile-desc">One scannable page of pattern shortcuts per section. Print it, read it twice a day.</p>
+      <div class="tw-tile-foot">Open cheat sheets</div>
+    </a>
+
+    <a class="tw-tile tw-tile--mock" href="prometric-mock.html">
+      <div class="tw-tile-tag">Step 3 · Pacing only</div>
+      <h2 class="tw-tile-name">Pacing <em>mock</em></h2>
+      <p class="tw-tile-desc">140 questions, Prometric format. Do this once for pacing — not to chase a score. One run is enough.</p>
+      <div class="tw-tile-foot">Open pacing mock</div>
+    </a>
+
+    <a class="tw-tile tw-tile--calendar" href="calendar.html">
+      <div class="tw-tile-tag">Step 4 · Steady as you go</div>
+      <h2 class="tw-tile-name">Daily <em>plan</em></h2>
+      <p class="tw-tile-desc">Seven-day countdown. One or two light tasks per day. Nothing heroic — just consistent.</p>
+      <div class="tw-tile-foot">Open daily plan</div>
+    </a>
+
+  </div>
+</section>
+
+<!-- ========== STUCK BUTTON ========== -->
+<div class="tw-stuck-wrap">
+  <button class="tw-stuck-trigger" id="stuckTrigger" type="button">Stuck? Take a beat.</button>
+</div>
+
+<!-- ========== CALM MODAL ========== -->
+<div class="tw-modal-back" id="stuckModal" role="dialog" aria-modal="true" aria-labelledby="stuckModalTitle">
+  <div class="tw-modal">
+    <button class="tw-modal-close" id="stuckClose" aria-label="Close">&times;</button>
+    <h3 id="stuckModalTitle">It is okay to <em>feel this way.</em></h3>
+    <p class="lede">A little anxiety before a high-stakes test is normal. It does not mean you are not ready. Here are three things you can do right now.</p>
+    <div class="tw-modal-items">
+      <div class="tw-modal-item tw-modal-item--a">
+        <b>Step away for five minutes.</b>
+        Close the tab. Drink some water. Sit somewhere quiet. You are allowed to pause.
+      </div>
+      <div class="tw-modal-item tw-modal-item--b">
+        <b>Look at what you already know.</b>
+        Open the cheat sheets. Find three things on there that you understand cold. That knowledge is real and it is yours.
+      </div>
+      <div class="tw-modal-item tw-modal-item--c">
+        <b>Do just one thing today.</b>
+        Open the diagnostic. Answer five questions. That is it — the goal is showing up, not perfecting everything.
+      </div>
+    </div>
+    <button class="tw-modal-dismiss" id="stuckDismiss" type="button">Got it. Back to the plan.</button>
+  </div>
+</div>
+
+<!-- ========== QUICK LINKS TO ENGINES ========== -->
+<div class="tw-quick">
+  <span class="tw-quick-label">Drill specific topics</span>
+  <div class="tw-quick-links">
+    <a class="tw-quick-link" href="tools/bio/index.html">Bio</a>
+    <span class="tw-quick-sep">&#183;</span>
+    <a class="tw-quick-link" href="tools/qr/index.html">QR</a>
+    <span class="tw-quick-sep">&#183;</span>
+    <a class="tw-quick-link" href="tools/ochem/index.html">OChem</a>
+    <span class="tw-quick-sep">&#183;</span>
+    <a class="tw-quick-link" href="tools/gc/index.html">GC</a>
+  </div>
+</div>
+
+<!-- ========== FOOTER ========== -->
+<footer class="tw-foot">
+  <span>Ace Labs &middot; test-week mode</span>
+  <a class="tw-foot-link" href="ace-labs.html" id="longTermLink">Long-term prep mode &rarr;</a>
+</footer>
+
+</div><!-- .al-app -->
+
+<script>
+(function(){
+  'use strict';
+
+  var STORAGE_KEY = 'acelabs_test_date';
+
+  // ── Date helpers ──────────────────────────────────────────────
+  function parseLocalDate(iso){
+    // Parse YYYY-MM-DD as local midnight (avoid UTC shift)
+    var parts = iso.split('-');
+    if(parts.length !== 3) return null;
+    var d = new Date(+parts[0], +parts[1]-1, +parts[2]);
+    return isNaN(d) ? null : d;
+  }
+
+  function daysUntil(date){
+    var now = new Date();
+    var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    var diff = date - today;
+    return Math.round(diff / 86400000);
+  }
+
+  // ── Update hero ───────────────────────────────────────────────
+  function renderHero(days){
+    var label = document.getElementById('daysLabel');
+    var heading = document.getElementById('heroHeading');
+    var eyebrow = document.getElementById('heroEyebrow');
+
+    if(days === null){
+      label.textContent = '';
+      heading.innerHTML = 'Here\'s the plan.';
+      eyebrow.textContent = 'Test week';
+      return;
+    }
+
+    if(days < 0){
+      eyebrow.textContent = 'Test is in the past';
+      heading.innerHTML = 'The DAT is behind you.';
+      return;
+    }
+    if(days === 0){
+      eyebrow.textContent = 'Test day';
+      heading.innerHTML = 'Today is the day.<br/><em>You\'ve got this.</em>';
+      return;
+    }
+    if(days === 1){
+      eyebrow.textContent = 'Test week';
+      heading.innerHTML = 'Test is <em>tomorrow.</em><br/>Here\'s the plan.';
+      return;
+    }
+
+    label.textContent = days;
+    // Re-set innerHTML to restore the <em> around daysLabel
+    heading.innerHTML = 'Test in <em><span id="daysLabel">' + days + '</span></em> days.<br/>Here\'s the plan.';
+  }
+
+  // ── Init ──────────────────────────────────────────────────────
+  function init(){
+    var stored = localStorage.getItem(STORAGE_KEY);
+    var datePrompt = document.getElementById('datePrompt');
+    var dateInput  = document.getElementById('testDateInput');
+    var dateSave   = document.getElementById('testDateSave');
+
+    if(stored){
+      var d = parseLocalDate(stored);
+      if(d){
+        renderHero(daysUntil(d));
+      } else {
+        // Bad value — clear and prompt
+        localStorage.removeItem(STORAGE_KEY);
+        showPrompt();
+      }
+    } else {
+      showPrompt();
+    }
+
+    function showPrompt(){
+      datePrompt.classList.add('visible');
+      // Pre-fill with today + 7 days as a sensible default
+      var def = new Date();
+      def.setDate(def.getDate() + 7);
+      dateInput.value = def.toISOString().slice(0,10);
+    }
+
+    dateSave.addEventListener('click', function(){
+      var val = dateInput.value;
+      if(!val) return;
+      var d = parseLocalDate(val);
+      if(!d){ return; }
+      localStorage.setItem(STORAGE_KEY, val);
+      datePrompt.classList.remove('visible');
+      renderHero(daysUntil(d));
+    });
+  }
+
+  // ── Modal ─────────────────────────────────────────────────────
+  function initModal(){
+    var trigger  = document.getElementById('stuckTrigger');
+    var modal    = document.getElementById('stuckModal');
+    var closeBtn = document.getElementById('stuckClose');
+    var dismiss  = document.getElementById('stuckDismiss');
+
+    function open(){
+      modal.classList.add('show');
+      document.body.style.overflow = 'hidden';
+      closeBtn.focus();
+    }
+    function close(){
+      modal.classList.remove('show');
+      document.body.style.overflow = '';
+      trigger.focus();
+    }
+
+    trigger.addEventListener('click', open);
+    closeBtn.addEventListener('click', close);
+    dismiss.addEventListener('click', close);
+    modal.addEventListener('click', function(e){
+      if(e.target === modal) close();
+    });
+    document.addEventListener('keydown', function(e){
+      if(e.key === 'Escape' && modal.classList.contains('show')) close();
+    });
+  }
+
+  // ── Long-term mode link (Fix 4) ──────────────────────────────
+  function initLongTermLink(){
+    var link = document.getElementById('longTermLink');
+    if(!link) return;
+    link.addEventListener('click', function(){
+      try { localStorage.setItem('acelabs_mode', 'long-term'); } catch(e){}
+      // navigation proceeds normally via href
+    });
+  }
+
+  init();
+  initModal();
+  initLongTermLink();
+
+})();
+</script>
+</body>
+</html>

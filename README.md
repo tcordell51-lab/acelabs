@@ -42,7 +42,7 @@ AceDAT-AceLabs/
 │   │   └── tiktoks/
 │   └── ochem/                 # OChem Reaction Maps (Tommy · 10 hubs · 27 animations)
 │       └── index.html
-├── unified-mock.html          # (Phase 2) cross-tool Survey of Natural Sciences mock
+├── unified-mock.html          # OChem sampled mock prototype; Prometric mocks are the live cross-section runner
 └── README.md
 ```
 
@@ -95,7 +95,7 @@ The cross-tool mock writes its own key `al:lastMock` for the home dashboard.
 ## Phases
 
 - **Phase 1 (this commit):** scaffold + home page + 4 tool tiles + dashboard.
-- **Phase 2:** `unified-mock.html` — 100Q SoNS mock (40 Bio + 30 GC + 30 OChem) with composite score predictor.
+- **Phase 2:** `prometric-mock.html` — fixed Sciences + QR mock runner. `unified-mock.html` remains an OChem-only sampled prototype until the older route is retired or fully rewired.
 - **Phase 3:** OChem content buffs — lab techniques hub, acid/base hub, enolate deep dive, Hofmann/Cope animations, +300 MCQs, 40Q OChem mock.
 - **Phase 4:** Cross-tool spaced-repetition queue + portal weekly-plan integration.
 

@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Ace Labs · Test Week Calendar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400;1,700&family=DM+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ===== TOKENS ===== */
+:root{
+  --al-bg:#f5f0e8;
+  --al-paper:#fffdf7;
+  --al-paper-2:#f9f3e6;
+  --al-paper-3:#f3ecdb;
+  --al-ink:#0d2018;
+  --al-ink-2:#3a4a42;
+  --al-ink-mute:#6e7c74;
+  --al-ink-soft:#9aa39e;
+  --al-gold:#C9A84C;
+  --al-gold-m:#E2C97A;
+  --al-gold-d:#8C7235;
+  --al-gold-bg:rgba(201,168,76,.10);
+  --al-gold-glow:rgba(201,168,76,.35);
+  --al-teal:#1B3A2D;
+  --al-teal-2:#2A5240;
+  --al-teal-3:#3A6B54;
+  --al-good:#009E73;
+  --al-good-pale:rgba(0,158,115,.10);
+  --al-needs:#D55E00;
+  --al-needs-pale:rgba(213,94,0,.10);
+  --al-new:#0072B2;
+  --al-new-pale:rgba(0,114,178,.10);
+  --al-line:rgba(13,32,24,.12);
+  --al-line-2:rgba(13,32,24,.20);
+  --al-shadow:0 1px 3px rgba(13,32,24,.06),0 8px 24px rgba(13,32,24,.04);
+  --al-shadow-md:0 2px 6px rgba(13,32,24,.08),0 16px 40px rgba(13,32,24,.06);
+  --font-serif:'Playfair Display',Georgia,serif;
+  --font-sans:'DM Sans',system-ui,sans-serif;
+  --font-mono:'JetBrains Mono',monospace;
+}
+
+/* ===== RESET ===== */
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{font-family:var(--font-sans);background:var(--al-bg);color:var(--al-ink);line-height:1.55;min-height:100vh;}
+
+/* ===== APP SHELL ===== */
+.al-app{max-width:1100px;margin:0 auto;padding:0 28px 80px;}
+
+/* ===== TOP BAR ===== */
+.al-top{display:flex;align-items:center;justify-content:space-between;padding:24px 0 36px;border-bottom:1px solid var(--al-line);margin-bottom:34px;flex-wrap:wrap;gap:16px;}
+.al-brand{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+.al-mark{font-family:var(--font-serif);font-size:22px;font-weight:700;color:var(--al-ink);}
+.al-mark em{color:var(--al-gold-d);font-style:italic;}
+.al-divider{width:1px;height:18px;background:var(--al-line-2);}
+.al-product{font-family:var(--font-mono);font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--al-gold-d);background:var(--al-gold-bg);padding:5px 12px;border-radius:6px;border:1px solid var(--al-gold-d);}
+.al-nav{display:flex;gap:4px;}
+.al-nav-link{padding:8px 14px;font-size:13px;font-weight:600;color:var(--al-ink-2);text-decoration:none;border-radius:6px;transition:background .15s,color .15s;letter-spacing:.02em;}
+.al-nav-link:hover{background:var(--al-paper);color:var(--al-ink);}
+.al-nav-link.active{background:var(--al-ink);color:var(--al-paper);}
+
+/* ===== COUNTDOWN HEADER ===== */
+.cal-header{padding:28px 0 36px;text-align:center;}
+.cal-countdown-num{font-family:var(--font-serif);font-size:80px;font-weight:800;color:var(--al-gold-d);letter-spacing:-.03em;line-height:1;}
+.cal-countdown-label{font-family:var(--font-mono);font-size:12px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--al-ink-mute);margin-top:6px;}
+.cal-test-date-line{font-size:14px;color:var(--al-ink-mute);margin-top:10px;}
+.cal-test-date-line strong{color:var(--al-ink-2);}
+
+/* ===== DATE SETUP PANEL ===== */
+.cal-setup{background:var(--al-paper);border:1px solid var(--al-line);border-radius:16px;padding:40px;max-width:440px;margin:48px auto;text-align:center;box-shadow:var(--al-shadow-md);}
+.cal-setup h2{font-family:var(--font-serif);font-size:28px;font-weight:700;margin-bottom:10px;}
+.cal-setup h2 em{color:var(--al-gold-d);font-style:italic;}
+.cal-setup p{font-size:14px;color:var(--al-ink-mute);margin-bottom:28px;line-height:1.6;}
+.cal-setup label{display:block;font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--al-ink-mute);margin-bottom:8px;}
+.cal-setup input[type="date"]{display:block;width:100%;font-family:var(--font-sans);font-size:16px;padding:12px 16px;border:1.5px solid var(--al-line-2);border-radius:8px;background:var(--al-paper-2);color:var(--al-ink);margin-bottom:18px;outline:none;transition:border-color .15s;}
+.cal-setup input[type="date"]:focus{border-color:var(--al-gold);}
+.cal-setup-btn{display:inline-block;padding:13px 32px;background:var(--al-teal);color:var(--al-paper);font-family:var(--font-sans);font-size:14px;font-weight:700;border:none;border-radius:8px;cursor:pointer;letter-spacing:.04em;transition:background .15s;}
+.cal-setup-btn:hover{background:var(--al-teal-2);}
+.cal-change-link{font-size:12px;color:var(--al-ink-mute);text-decoration:underline;cursor:pointer;border:none;background:none;padding:0;margin-top:16px;display:inline-block;}
+.cal-change-link:hover{color:var(--al-ink);}
+
+/* ===== ROUTING STATES ===== */
+.cal-state-card{background:var(--al-paper);border:1px solid var(--al-line);border-radius:16px;padding:48px 40px;max-width:520px;margin:60px auto;text-align:center;box-shadow:var(--al-shadow-md);}
+.cal-state-card h2{font-family:var(--font-serif);font-size:26px;font-weight:700;margin-bottom:12px;}
+.cal-state-card h2 em{color:var(--al-gold-d);font-style:italic;}
+.cal-state-card p{font-size:15px;color:var(--al-ink-2);line-height:1.65;margin-bottom:20px;}
+.cal-state-link{display:inline-block;padding:11px 26px;background:var(--al-teal);color:var(--al-paper);font-size:13px;font-weight:700;border-radius:8px;text-decoration:none;letter-spacing:.04em;transition:background .15s;}
+.cal-state-link:hover{background:var(--al-teal-2);}
+.cal-state-link.secondary{background:transparent;color:var(--al-teal);border:1.5px solid var(--al-teal);margin-left:10px;}
+.cal-state-link.secondary:hover{background:var(--al-teal);color:var(--al-paper);}
+
+/* ===== CALENDAR GRID ===== */
+.cal-section{margin-top:8px;}
+.cal-section-label{font-family:var(--font-mono);font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--al-ink-mute);margin-bottom:20px;}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:10px;}
+@media(max-width:900px){.cal-grid{grid-template-columns:repeat(4,1fr);}}
+@media(max-width:600px){.cal-grid{grid-template-columns:1fr;gap:8px;}}
+
+/* ===== DAY CARD ===== */
+.cal-day{
+  background:var(--al-paper);
+  border:1.5px solid var(--al-line);
+  border-radius:14px;
+  padding:16px 14px 14px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  transition:box-shadow .18s,border-color .18s;
+  position:relative;
+}
+.cal-day:hover{box-shadow:var(--al-shadow);}
+
+/* current day: dashed gold border */
+.cal-day.is-today{
+  border:2px dashed var(--al-gold);
+  background:var(--al-gold-bg);
+}
+/* past + completed: faded */
+.cal-day.is-past.is-done{
+  opacity:.55;
+  border-color:var(--al-line);
+}
+/* past + not completed: slightly muted */
+.cal-day.is-past:not(.is-done){
+  border-color:var(--al-line);
+  background:var(--al-paper-2);
+}
+/* test day card: gold-bordered, large */
+.cal-day.is-test-day{
+  border:2.5px solid var(--al-gold-d);
+  background:var(--al-gold-bg);
+  grid-column:span 1;
+  padding:22px 18px;
+  text-align:center;
+  align-items:center;
+}
+@media(max-width:900px){.cal-day.is-test-day{grid-column:span 2;}}
+@media(max-width:600px){.cal-day.is-test-day{grid-column:span 1;}}
+
+/* ===== DAY HEADER ===== */
+.cal-day-head{display:flex;flex-direction:column;gap:2px;}
+.cal-day-label{font-family:var(--font-mono);font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--al-gold-d);}
+.cal-day-weekday{font-size:13px;font-weight:600;color:var(--al-ink-2);}
+.cal-day-date{font-size:11px;color:var(--al-ink-soft);}
+
+/* ===== TASK CARDS ===== */
+.cal-tasks{display:flex;flex-direction:column;gap:6px;}
+.cal-task{background:var(--al-paper-2);border:1px solid var(--al-line);border-radius:8px;padding:9px 10px;}
+.cal-task-name{font-size:12px;font-weight:600;color:var(--al-ink);line-height:1.4;}
+.cal-task-dur{font-size:10px;font-weight:700;letter-spacing:.08em;color:var(--al-ink-mute);margin-top:3px;}
+
+/* cheat-sheet day styling */
+.cal-day.is-review .cal-task{background:var(--al-new-pale);border-color:rgba(0,114,178,.20);}
+.cal-day.is-review .cal-task-name{color:var(--al-new);}
+
+/* test day body */
+.cal-testday-body{text-align:center;}
+.cal-testday-body h3{font-family:var(--font-serif);font-size:20px;font-weight:700;color:var(--al-ink);line-height:1.3;margin-bottom:8px;}
+.cal-testday-body h3 em{color:var(--al-gold-d);font-style:italic;}
+.cal-testday-body p{font-size:13px;color:var(--al-ink-mute);line-height:1.6;}
+
+/* ===== ACTIONS ===== */
+.cal-actions{display:flex;flex-direction:column;gap:6px;margin-top:auto;}
+.cal-btn{
+  font-family:var(--font-sans);
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:.04em;
+  border-radius:6px;
+  padding:7px 10px;
+  border:none;
+  cursor:pointer;
+  transition:background .15s,color .15s,opacity .15s;
+  text-align:center;
+}
+.cal-btn-done{background:var(--al-good);color:#fff;}
+.cal-btn-done:hover{opacity:.88;}
+.cal-btn-done.is-marked{background:var(--al-good-pale);color:var(--al-good);border:1px solid var(--al-good);}
+.cal-btn-skip{background:transparent;color:var(--al-ink-mute);border:1px solid var(--al-line-2);}
+.cal-btn-skip:hover{background:var(--al-paper-3);color:var(--al-ink);}
+.cal-btn-skip.is-marked{background:var(--al-paper-3);color:var(--al-ink-mute);}
+
+/* ===== DONE BADGE ===== */
+.cal-done-badge{
+  position:absolute;
+  top:10px;right:10px;
+  font-family:var(--font-mono);
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  padding:3px 7px;
+  border-radius:4px;
+  pointer-events:none;
+}
+.badge-done{background:var(--al-good-pale);color:var(--al-good);}
+.badge-skipped{background:var(--al-paper-3);color:var(--al-ink-mute);}
+
+/* ===== FOOTER BAR ===== */
+.cal-foot{
+  margin-top:48px;
+  border-top:1px solid var(--al-line);
+  padding-top:24px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:12px;
+}
+.cal-foot-left{font-size:13px;color:var(--al-ink-mute);}
+.cal-foot-right{font-size:12px;color:var(--al-ink-soft);}
+.cal-foot-right a{color:var(--al-ink-mute);text-decoration:none;}
+.cal-foot-right a:hover{color:var(--al-ink);}
+
+/* ===== WEAK TOPIC HINT ===== */
+.cal-weak-hint{
+  font-size:11px;
+  color:var(--al-needs);
+  background:var(--al-needs-pale);
+  border-radius:4px;
+  padding:3px 8px;
+  margin-top:4px;
+  font-weight:600;
+}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:680px){
+  .al-top{padding:18px 0 24px;margin-bottom:24px;}
+  .cal-header{padding:20px 0 28px;}
+  .cal-countdown-num{font-size:56px;}
+  .al-app{padding:0 18px 60px;}
+}
+</style>
+</head>
+<body>
+<div class="al-app">
+
+<!-- ===== TOP BAR ===== -->
+<header class="al-top">
+  <div class="al-brand">
+    <span class="al-mark">Ace<em>The</em>DAT</span>
+    <span class="al-divider"></span>
+    <span class="al-product">Ace Labs</span>
+  </div>
+  <nav class="al-nav">
+    <a href="ace-labs.html" class="al-nav-link">Home</a>
+    <a href="calendar.html" class="al-nav-link active">Test week</a>
+    <a href="prometric-mock.html" class="al-nav-link">Mocks</a>
+  </nav>
+</header>
+
+<!-- ===== MAIN ===== -->
+<main id="calMain"></main>
+
+<!-- ===== FOOTER ===== -->
+<footer class="cal-foot" id="calFoot" style="display:none;">
+  <div class="cal-foot-left" id="calFootProgress"></div>
+  <div class="cal-foot-right">
+    Ace Labs · Test Week Calendar &nbsp;|&nbsp;
+    <a href="ace-labs.html">Back to home</a> &nbsp;|&nbsp;
+    <button class="cal-change-link" id="footChangeDateBtn">Change test date</button>
+  </div>
+</footer>
+
+</div>
+
+<script>
+// ===== CONSTANTS =====
+const LS_TEST_DATE   = 'acelabs_test_date';
+const LS_DIAGNOSTIC  = 'acelabs_diagnostic_v1';
+const LS_CALENDAR    = 'acelabs_calendar_v1';
+
+const DAY_NAMES = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const MONTH_NAMES = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+// ===== HELPERS =====
+function todayLocal(){
+  const now = new Date();
+  return new Date(now.getFullYear(), now.getMonth(), now.getDate());
+}
+
+function parseLocalDate(str){
+  // str: "YYYY-MM-DD"
+  const [y,m,d] = str.split('-').map(Number);
+  return new Date(y, m-1, d);
+}
+
+function diffDays(a, b){
+  // returns b - a in whole days
+  return Math.round((b - a) / 86400000);
+}
+
+function formatDate(d){
+  return DAY_NAMES[d.getDay()] + ', ' + MONTH_NAMES[d.getMonth()] + ' ' + d.getDate();
+}
+
+function loadCalendarState(){
+  try{ return JSON.parse(localStorage.getItem(LS_CALENDAR) || '{}'); }
+  catch(e){ return {}; }
+}
+
+function saveCalendarState(state){
+  localStorage.setItem(LS_CALENDAR, JSON.stringify(state));
+}
+
+function loadTopWeakTopics(){
+  try{
+    const raw = localStorage.getItem(LS_DIAGNOSTIC);
+    if(!raw) return null;
+    const diag = JSON.parse(raw);
+    return (Array.isArray(diag.topWeakTopics) && diag.topWeakTopics.length > 0)
+      ? diag.topWeakTopics : null;
+  } catch(e){ return null; }
+}
+
+// ===== TASK DEFINITIONS =====
+// For days D-7 through D-3: diagnostic-driven drill tasks
+// For days D-2 through D-1: cheat-sheet review only
+// For D0: test day message
+
+function buildDayPlan(daysOut, weakTopics, dayIndex){
+  // daysOut: positive integer = days before test (7 down to 1), 0 = test day
+  if(daysOut === 0) return { type:'testday' };
+
+  if(daysOut <= 2){
+    // cheat-sheet review only — no new questions
+    const sheets = [
+      { name:'OChem cheat sheet — functional groups + reactions', dur:'20 min' },
+      { name:'Gen Chem cheat sheet — formulas + periodic trends', dur:'20 min' },
+      { name:'QR cheat sheet — formulas + calculator shortcuts', dur:'15 min' },
+      { name:'Bio cheat sheet — key systems + vocabulary', dur:'20 min' },
+    ];
+    const sheet = sheets[dayIndex % sheets.length];
+    return {
+      type:'review',
+      tasks:[
+        { name:'Cheat-sheet review: ' + sheet.name, dur:sheet.dur },
+        { name:'Flip through your personal notes — flag anything uncertain', dur:'10 min' }
+      ]
+    };
+  }
+
+  // D-7 through D-3: targeted drills
+  const defaultPairs = [
+    [
+      { name:'QR: ratio and proportion warm-up drill', dur:'25 min' },
+      { name:'Bio: cell biology concept review', dur:'25 min' }
+    ],
+    [
+      { name:'Gen Chem: stoichiometry and limiting reagent drill', dur:'30 min' },
+      { name:'QR: geometry and spatial reasoning drill', dur:'20 min' }
+    ],
+    [
+      { name:'OChem: functional group identification drill', dur:'25 min' },
+      { name:'Bio: genetics and heredity concept check', dur:'20 min' }
+    ],
+    [
+      { name:'Gen Chem: equilibrium and acid-base drill', dur:'30 min' },
+      { name:'QR: probability and statistics warm-up', dur:'20 min' }
+    ],
+    [
+      { name:'OChem: reaction mechanisms — nucleophilic substitution', dur:'30 min' },
+      { name:'Bio: physiology and organ systems review', dur:'20 min' }
+    ],
+  ];
+
+  let tasks;
+  if(weakTopics && weakTopics.length >= 2){
+    const t1 = weakTopics[ dayIndex % weakTopics.length ];
+    const t2 = weakTopics[ (dayIndex + 1) % weakTopics.length ];
+    tasks = [
+      { name:'Drill: ' + t1, dur:'30 min', weak:true },
+      { name:'Review: ' + t2, dur:'20 min', weak:true }
+    ];
+  } else if(weakTopics && weakTopics.length === 1){
+    tasks = [
+      { name:'Drill: ' + weakTopics[0], dur:'30 min', weak:true },
+      { name:'Light review across all sections', dur:'20 min' }
+    ];
+  } else {
+    tasks = defaultPairs[ dayIndex % defaultPairs.length ];
+  }
+
+  return { type:'drill', tasks };
+}
+
+// ===== RENDER FUNCTIONS =====
+
+function renderSetup(message){
+  const main = document.getElementById('calMain');
+  main.innerHTML = `
+    <div class="cal-setup">
+      <h2>Your <em>test week</em> calendar.</h2>
+      <p>${message || 'Enter your DAT date and get a calm, day-by-day plan for the final stretch. No pressure — just a quiet structure for the days ahead.'}</p>
+      <label for="testDateInput">Your DAT date</label>
+      <input type="date" id="testDateInput" name="testDateInput"/>
+      <button class="cal-setup-btn" id="setDateBtn">Set my test date</button>
+    </div>
+  `;
+  document.getElementById('setDateBtn').addEventListener('click', () => {
+    const val = document.getElementById('testDateInput').value;
+    if(!val){ return; }
+    localStorage.setItem(LS_TEST_DATE, val);
+    renderPage();
+  });
+}
+
+function renderTooEarly(testDate, daysOut){
+  const main = document.getElementById('calMain');
+  main.innerHTML = `
+    <div class="cal-state-card">
+      <h2>You have <em>time.</em></h2>
+      <p>Your test is ${daysOut} days away. This calendar is designed for the final 7-14 days of prep — the calm-down stretch where targeted review and rest matter more than new material.</p>
+      <p>For now, the full Ace Labs system has what your preparation needs.</p>
+      <a href="ace-labs.html" class="cal-state-link">Go to Ace Labs home</a>
+      <button class="cal-state-link secondary" id="tooEarlyChangeDateBtn">Change test date</button>
+    </div>
+  `;
+  document.getElementById('tooEarlyChangeDateBtn').addEventListener('click', () => {
+    localStorage.removeItem(LS_TEST_DATE);
+    renderPage();
+  });
+}
+
+function renderAfterTest(testDate){
+  const main = document.getElementById('calMain');
+  main.innerHTML = `
+    <div class="cal-state-card">
+      <h2>Recovery <em>day.</em></h2>
+      <p>Your test date has passed. Whatever happened in that room, you did the work to get there. Today is for rest — food, hydration, something that has nothing to do with studying.</p>
+      <p>When you are ready, sharing what felt hard and what felt solid helps your tutor plan what comes next.</p>
+      <a href="ace-labs.html" class="cal-state-link">Back to Ace Labs</a>
+      <button class="cal-state-link secondary" id="afterResetDateBtn">Reset test date</button>
+    </div>
+  `;
+  document.getElementById('afterResetDateBtn').addEventListener('click', () => {
+    localStorage.removeItem(LS_TEST_DATE);
+    renderPage();
+  });
+}
+
+function renderCalendar(testDateStr, testDate, daysOut){
+  const main = document.getElementById('calMain');
+  const today = todayLocal();
+  const weakTopics = loadTopWeakTopics();
+  const calState = loadCalendarState();
+
+  // Build the 7-day window: D-7 to D0
+  const days = [];
+  for(let i = 7; i >= 0; i--){
+    const d = new Date(testDate);
+    d.setDate(d.getDate() - i);
+    days.push({ date:d, daysOut:i });
+  }
+
+  // Countdown header
+  let countdownHTML = '';
+  if(daysOut > 0){
+    countdownHTML = `
+      <div class="cal-header">
+        <div class="cal-countdown-num">${daysOut}</div>
+        <div class="cal-countdown-label">${daysOut === 1 ? 'day' : 'days'} until your test</div>
+        <div class="cal-test-date-line">Your DAT: <strong>${formatDate(testDate)}</strong>
+          &nbsp;&middot;&nbsp;
+          <button class="cal-change-link" id="headerChangeDateBtn">Change date</button>
+        </div>
+      </div>
+    `;
+  } else {
+    countdownHTML = `
+      <div class="cal-header">
+        <div class="cal-countdown-num">0</div>
+        <div class="cal-countdown-label">Test day</div>
+        <div class="cal-test-date-line">Your DAT: <strong>${formatDate(testDate)}</strong></div>
+      </div>
+    `;
+  }
+
+  // Build day cards
+  let cardsHTML = '';
+  let completedCount = 0;
+  let totalActive = 0; // D-7 to D-1
+
+  days.forEach((dayObj, idx) => {
+    const { date, daysOut: dOut } = dayObj;
+    const dateKey = date.toISOString().slice(0,10);
+    const isToday = date.getTime() === today.getTime();
+    const isPast = date < today;
+    const isFuture = date > today;
+    const isTestDay = dOut === 0;
+    const plan = buildDayPlan(dOut, weakTopics, idx);
+
+    const stateKey = 'day_' + dateKey;
+    const dayState = calState[stateKey] || {};
+    const isDone = dayState.done === true;
+    const isSkipped = dayState.skipped === true;
+
+    if(!isTestDay) totalActive++;
+    if(!isTestDay && (isDone || isSkipped)) completedCount++;
+
+    // day label
+    const dayLabel = dOut === 0 ? 'Test day' : `D-${dOut}`;
+
+    // CSS classes
+    let cls = 'cal-day';
+    if(isToday) cls += ' is-today';
+    if(isPast && !isTestDay) cls += ' is-past';
+    if(isDone) cls += ' is-done';
+    if(plan.type === 'review') cls += ' is-review';
+    if(isTestDay) cls += ' is-test-day';
+
+    // badge
+    let badgeHTML = '';
+    if(isDone) badgeHTML = `<span class="cal-done-badge badge-done">Done</span>`;
+    else if(isSkipped) badgeHTML = `<span class="cal-done-badge badge-skipped">Rested</span>`;
+
+    // content
+    let contentHTML = '';
+    if(isTestDay){
+      contentHTML = `
+        <div class="cal-testday-body">
+          <h3>Test day.<br/><em>Trust your prep.</em></h3>
+          <p>Rest. Hydrate. Eat a good meal. Arrive early. You have done the work to be in that room.</p>
+        </div>
+      `;
+    } else {
+      let tasksHTML = '';
+      plan.tasks.forEach(t => {
+        const weakHint = t.weak && weakTopics ? `<div class="cal-weak-hint">from your diagnostic</div>` : '';
+        tasksHTML += `
+          <div class="cal-task">
+            <div class="cal-task-name">${t.name}</div>
+            <div class="cal-task-dur">${t.dur}</div>
+            ${weakHint}
+          </div>
+        `;
+      });
+
+      let actionsHTML = '';
+      if(!isDone && !isSkipped){
+        actionsHTML = `
+          <div class="cal-actions">
+            <button class="cal-btn cal-btn-done" data-date="${dateKey}" data-action="done">Mark done</button>
+            <button class="cal-btn cal-btn-skip" data-date="${dateKey}" data-action="skip">I rested today</button>
+          </div>
+        `;
+      } else if(isDone){
+        actionsHTML = `
+          <div class="cal-actions">
+            <button class="cal-btn cal-btn-done is-marked" data-date="${dateKey}" data-action="undone">Done — undo?</button>
+          </div>
+        `;
+      } else if(isSkipped){
+        actionsHTML = `
+          <div class="cal-actions">
+            <button class="cal-btn cal-btn-skip is-marked" data-date="${dateKey}" data-action="unskip">Rested — undo?</button>
+          </div>
+        `;
+      }
+
+      contentHTML = `
+        <div class="cal-tasks">${tasksHTML}</div>
+        ${actionsHTML}
+      `;
+    }
+
+    cardsHTML += `
+      <div class="${cls}" data-date="${dateKey}">
+        ${badgeHTML}
+        <div class="cal-day-head">
+          <div class="cal-day-label">${dayLabel}</div>
+          <div class="cal-day-weekday">${DAY_NAMES[date.getDay()]}</div>
+          <div class="cal-day-date">${MONTH_NAMES[date.getMonth()]} ${date.getDate()}</div>
+        </div>
+        ${contentHTML}
+      </div>
+    `;
+  });
+
+  // Weak-topic note
+  let weakNoteHTML = '';
+  if(weakTopics && weakTopics.length > 0){
+    weakNoteHTML = `<p style="font-size:12px;color:var(--al-ink-mute);margin-bottom:14px;">
+      Drill tasks pulled from your diagnostic weak areas: <strong style="color:var(--al-needs);">${weakTopics.slice(0,3).join(', ')}</strong>${weakTopics.length > 3 ? ' and more' : ''}.
+    </p>`;
+  } else {
+    weakNoteHTML = `<p style="font-size:12px;color:var(--al-ink-mute);margin-bottom:14px;">
+      No diagnostic data found — using default drill sequence. Complete a section diagnostic to personalize these tasks.
+    </p>`;
+  }
+
+  main.innerHTML = countdownHTML + `
+    <section class="cal-section">
+      <div class="cal-section-label">Your 7-day plan</div>
+      ${weakNoteHTML}
+      <div class="cal-grid">${cardsHTML}</div>
+    </section>
+  `;
+
+  // Footer progress
+  const foot = document.getElementById('calFoot');
+  const footProgress = document.getElementById('calFootProgress');
+  foot.style.display = 'flex';
+  if(totalActive > 0){
+    footProgress.textContent = `${completedCount} of ${totalActive} days marked — ${totalActive - completedCount} remaining.`;
+  } else {
+    footProgress.textContent = '';
+  }
+
+  // Wire up header change date button
+  const headerBtn = document.getElementById('headerChangeDateBtn');
+  if(headerBtn){
+    headerBtn.addEventListener('click', () => {
+      localStorage.removeItem(LS_TEST_DATE);
+      renderPage();
+    });
+  }
+
+  const footChangeBtn = document.getElementById('footChangeDateBtn');
+  if(footChangeBtn){
+    footChangeBtn.addEventListener('click', () => {
+      localStorage.removeItem(LS_TEST_DATE);
+      renderPage();
+    });
+  }
+
+  // Wire up mark-done / skip buttons via event delegation
+  main.addEventListener('click', e => {
+    const btn = e.target.closest('[data-action]');
+    if(!btn) return;
+    const action = btn.dataset.action;
+    const dateKey = btn.dataset.date;
+    const stateKey = 'day_' + dateKey;
+    const state = loadCalendarState();
+
+    if(action === 'done'){
+      state[stateKey] = { done:true, skipped:false, ts: Date.now() };
+    } else if(action === 'skip'){
+      state[stateKey] = { done:false, skipped:true, ts: Date.now() };
+    } else if(action === 'undone'){
+      state[stateKey] = { done:false, skipped:false };
+    } else if(action === 'unskip'){
+      state[stateKey] = { done:false, skipped:false };
+    }
+
+    saveCalendarState(state);
+    renderPage(); // re-render with updated state
+  });
+}
+
+// ===== MAIN RENDER ROUTER =====
+function renderPage(){
+  const main = document.getElementById('calMain');
+  const foot = document.getElementById('calFoot');
+  foot.style.display = 'none';
+
+  const testDateStr = localStorage.getItem(LS_TEST_DATE);
+
+  if(!testDateStr){
+    renderSetup();
+    return;
+  }
+
+  const testDate = parseLocalDate(testDateStr);
+  const today = todayLocal();
+  const daysOut = diffDays(today, testDate);
+
+  if(daysOut > 14){
+    renderTooEarly(testDate, daysOut);
+    return;
+  }
+
+  if(daysOut < 0){
+    renderAfterTest(testDate);
+    return;
+  }
+
+  // 0-14 days out: show calendar
+  renderCalendar(testDateStr, testDate, daysOut);
+}
+
+// ===== BOOT =====
+renderPage();
+</script>
+</body>
+</html>

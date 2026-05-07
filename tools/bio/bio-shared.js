@@ -28,10 +28,14 @@ const STATE = {
   dom: { placed:{}, stage:0, retrievals:{} },
   fer: { placed:{}, stage:0, retrievals:{} },
   nse: { placed:{}, stage:0, retrievals:{} },
-
-
-
-
+  spc: { placed:{}, stage:0, retrievals:{} },
+  beh: { placed:{}, stage:0, retrievals:{} },
+  bgt: { placed:{}, stage:0, retrievals:{} },  /* bacterial gene transfer */
+  syn: { placed:{}, stage:0, retrievals:{} },  /* synaptic transmission   */
+  imn: { placed:{}, stage:0, retrievals:{} },  /* immune deep-dive        */
+  rpd: { placed:{}, stage:0, retrievals:{} },  /* reproductive deep-dive  */
+  lco: { placed:{}, stage:0, retrievals:{} },  /* linkage + crossing over */
+  dif: { placed:{}, stage:0, retrievals:{} },  /* determination vs differentiation */
 
 };
 
@@ -41,6 +45,7 @@ const NODES = {
     enzColors: { helicase:"#C25B3F", ssb:"#6A8AA8", topo:"#8a5a8c", primase:"#c19a3e", pol3:"#1B3A2D", pol1:"#3A6B54", ligase:"#b91c1c" },
     enzLabels: { helicase:"H", ssb:"S", topo:"T", primase:"P", pol3:"III", pol1:"I", ligase:"L" },
     zoneCenters: { helicase:{x:127,y:225}, ssb:{x:222,y:225}, topo:{x:335,y:225}, primase:{x:427,y:225}, pol3:{x:520,y:225}, pol1:{x:612,y:225}, ligase:{x:704,y:225} },
+    spinEnz: "helicase",
     stageOrder: ["helicase", "ssb", "topo", "primase", "pol3", "pol1", "ligase"],
     stageLabels: ["Stage 1 · place Helicase", "Stage 2 · place SSB proteins", "Stage 3 · place Topoisomerase", "Stage 4 · place Primase", "Stage 5 · place DNA pol III", "Stage 6 · place DNA pol I", "Stage 7 · place DNA ligase", "Complete · all placed"],
     retrievals: {
@@ -427,11 +432,141 @@ const NODES = {
       3: { rt:"Right. Allopolyploidy (hybrid + chromosome doubling) creates a new plant species in one generation.", wr:"Allopolyploidy: cross two species → infertile hybrid (chromosomes can't pair). Then chromosome doubling → diploid hybrid with two complete sets — can self-fertilize or breed with other allopolyploids of same type. Sympatric speciation in ONE generation. ~50% of plant species are polyploid.", q:"A new plant species arises in one generation when chromosome doubling occurs in a hybrid. This is:", qh:"<b>Sympatric speciation via allopolyploidy.</b> Hybrid + chromosome doubling = new species, one generation.", ex:"Polyploidy in plants: <b>autopolyploidy</b> = same-species genome doubled (e.g., 2n → 4n). Can self-fertilize. <b>Allopolyploidy</b> = interspecies hybrid + chromosome doubling, fertile because each subgenome has a partner. Both create new species in one generation, in the same geographic area = sympatric speciation. Examples: bread wheat (allohexaploid), cotton, oat, banana. Far less common in animals (sex determination disrupted) but seen in some fish and amphibians." },
     },
   },
+
+  /* ------------------------------------------------------------------ */
+  /*  BACTERIAL GENE TRANSFER  (bgt)  — Diversity hub                   */
+  /* ------------------------------------------------------------------ */
+  bgt: {
+    name: "Bacterial gene transfer: <em>conjugation</em>, <em>transformation</em>, <em>transduction</em>",
+    enzColors: { fplas:"#C25B3F", hfr:"#c19a3e", trans:"#1B3A2D", gen:"#8a5a8c", spec:"#6A8AA8" },
+    enzLabels: { fplas:"F+", hfr:"Hfr", trans:"Tr", gen:"GT", spec:"ST" },
+    zoneCenters: { fplas:{x:120,y:225}, hfr:{x:260,y:225}, trans:{x:400,y:225}, gen:{x:540,y:225}, spec:{x:680,y:225} },
+    stageOrder: ["fplas", "hfr", "trans", "gen", "spec"],
+    stageLabels: ["Stage 1 · F+ conjugation", "Stage 2 · Hfr conjugation", "Stage 3 · Transformation", "Stage 4 · Generalized transduction", "Stage 5 · Specialized transduction", "Complete · all gene transfer types"],
+    retrievals: {
+      1: { rt:"Right. Transformation is the uptake of naked (free) DNA from the environment.", wr:"Transformation = competent cell takes up free DNA from environment. Discovered by Griffith (S/R pneumococcus experiment). Requires competence factors. Does not need a bacteriophage.", q:"A bacterium gains antibiotic resistance by absorbing free DNA from lysed cells nearby. This is:", qh:"<b>Transformation.</b> Uptake of naked (free) DNA by a competent cell.", ex:"Transformation: competent bacteria (naturally or induced) take up free DNA from the environment. Griffith's classic experiment (heat-killed smooth + live rough → live smooth) showed a 'transforming principle' later identified as DNA (Avery, MacLeod, McCarty). Competence factors (e.g., ComK in B. subtilis) make cells permissive. No phage required." },
+      2: { rt:"Right. Generalized transduction accidentally packages any bacterial DNA into phage particles.", wr:"Generalized transduction: lytic phage accidentally packages random bacterial DNA instead of phage DNA. Any gene can be transferred. Specialized transduction: lysogenic phage precisely excises from chromosome, sometimes taking adjacent bacterial genes with it — specific genes only.", q:"A bacteriophage accidentally packages random chromosomal DNA and transfers it to a new host. This is:", qh:"<b>Generalized transduction.</b> Random bacterial DNA packaged into phage.", ex:"Generalized transduction: lytic phage (e.g., P1 in E. coli) occasionally packages a random segment of bacterial chromosome instead of phage DNA. That transducing phage injects bacterial DNA into a new host — any gene could transfer. Used in gene mapping experiments. Specialized transduction: lysogenic phage (e.g., lambda) integrates at a specific chromosomal site; imprecise excision can include adjacent bacterial genes (usually gal or bio genes). Only adjacent genes transfer." },
+      3: { rt:"Right. In Hfr × F- conjugation, genes closer to the origin of transfer transfer first and at highest frequency.", wr:"Hfr has the F factor integrated into the chromosome. During conjugation, a nick at oriT initiates chromosome transfer starting at the F origin. Genes are transferred in order from the origin. Because conjugation breaks before the full chromosome transfers, genes closest to the F origin transfer most frequently. This principle allows interrupted mating experiments to map gene order.", q:"In an Hfr x F- mating experiment, interrupted at different times, which genes are used to determine relative order?", qh:"<b>Genes closest to the origin of transfer</b> arrive earliest and at highest frequency.", ex:"Hfr (high-frequency recombination) strains: F factor integrated into the bacterial chromosome. During conjugation, transfer begins at oriT and proceeds linearly. The chromosome rarely transfers completely (takes ~100 min in E. coli), so F genes arrive last. Genes near oriT transfer first. Interrupted mating: stop conjugation at different times, see which alleles have transferred → build a time-of-entry (minutes) map = genetic distance. 1 minute ≈ ~20 kb transferred." },
+    },
+  },
+
+  /* ------------------------------------------------------------------ */
+  /*  SYNAPTIC TRANSMISSION  (syn)  — Physiology hub                    */
+  /* ------------------------------------------------------------------ */
+  syn: {
+    name: "Synaptic transmission: <em>vesicle → cleft → receptor</em>",
+    enzColors: { dock:"#1B3A2D", ca:"#C25B3F", ach:"#c19a3e", iono:"#6A8AA8", meta:"#8a5a8c" },
+    enzLabels: { dock:"SN", ca:"Ca", ach:"NT", iono:"Io", meta:"Me" },
+    zoneCenters: { dock:{x:120,y:225}, ca:{x:260,y:225}, ach:{x:400,y:225}, iono:{x:540,y:225}, meta:{x:680,y:225} },
+    stageOrder: ["dock", "ca", "ach", "iono", "meta"],
+    stageLabels: ["Stage 1 · SNARE docking", "Stage 2 · Ca2+ trigger", "Stage 3 · Neurotransmitter release", "Stage 4 · Ionotropic receptor", "Stage 5 · Metabotropic receptor", "Complete · full synapse sequence"],
+    retrievals: {
+      1: { rt:"Right. GABA is the primary inhibitory neurotransmitter in the brain, opening Cl- channels to hyperpolarize the postsynaptic cell.", wr:"GABA (gamma-aminobutyric acid) is the main inhibitory neurotransmitter in the CNS. It opens Cl- channels (ionotropic GABA-A) → Cl- flows in → membrane hyperpolarizes → IPSP. Glycine is the main inhibitory NT in the spinal cord. Glutamate is the main excitatory NT in the brain. Acetylcholine can be excitatory (NMJ) or inhibitory (cardiac via muscarinic).", q:"Which neurotransmitter is the principal inhibitory transmitter in the brain?", qh:"<b>GABA.</b> Opens Cl- channels → hyperpolarizes postsynaptic neuron (IPSP).", ex:"GABA (gamma-aminobutyric acid) mediates most inhibitory signaling in the brain. GABA-A receptors: ionotropic Cl- channels — fast, direct inhibition. GABA-B receptors: metabotropic (GPCR) — slower, modulate K+ or Ca2+ channels. Benzodiazepines (diazepam) enhance GABA-A Cl- conductance. Alcohol potentiates GABA-A as well. Compare: glycine = main inhibitory NT in spinal cord (also opens Cl- channels)." },
+      2: { rt:"Right. Acetylcholinesterase (AChE) in the synaptic cleft breaks down acetylcholine, terminating the signal.", wr:"ACh action must be terminated after release. AChE (acetylcholinesterase) in the basal lamina of the synaptic cleft rapidly hydrolyzes ACh into acetate + choline. Choline is recycled back into the presynaptic terminal (high-affinity choline transporter) and reused for new ACh synthesis. Organophosphate nerve agents and many insecticides inhibit AChE → ACh accumulates → continuous stimulation.", q:"How is acetylcholine (ACh) signal terminated at the neuromuscular junction?", qh:"<b>Acetylcholinesterase (AChE)</b> hydrolyzes ACh → acetate + choline in the synaptic cleft.", ex:"AChE is anchored in the synaptic cleft. It hydrolyzes ACh extremely rapidly (~25,000 ACh molecules per AChE per second). Products: choline (taken back up by presynaptic terminal via high-affinity transporter) and acetate. Rate-limiting step for new ACh synthesis is choline availability. Clinical: AChE inhibitors (neostigmine, physostigmine) used in myasthenia gravis; organophosphates (sarin, nerve agents, many pesticides) irreversibly inhibit AChE." },
+      3: { rt:"Right. Temporal summation is the additive effect of multiple APs arriving in rapid succession at the same synapse; spatial summation adds inputs from multiple synapses simultaneously.", wr:"Summation is how EPSPs and IPSPs are integrated. Temporal: one presynaptic neuron fires repeatedly in quick succession, each EPSP adds before the previous fades. Spatial: multiple presynaptic neurons fire at the same time, their EPSPs add algebraically at the postsynaptic cell. Threshold is reached if the sum pushes membrane past -55 mV.", q:"Two presynaptic neurons both fire simultaneously and both produce EPSPs on the same postsynaptic cell. This is:", qh:"<b>Spatial summation.</b> Multiple simultaneous inputs add their EPSPs at the postsynaptic cell.", ex:"Postsynaptic integration: the membrane at the axon hillock algebraically sums all incoming graded potentials (EPSPs add, IPSPs subtract). Temporal summation: rapid successive firing from one terminal. Spatial summation: simultaneous firing from multiple terminals. If the sum reaches threshold at the axon hillock, an AP fires. This is how 'votes' from thousands of synapses are tallied into a yes/no AP decision." },
+    },
+  },
+
+  /* ------------------------------------------------------------------ */
+  /*  IMMUNE DEEP-DIVE  (imn)  — Physiology hub                         */
+  /* ------------------------------------------------------------------ */
+  imn: {
+    name: "Immune system: <em>innate</em> vs <em>adaptive</em>, MHC, antibodies",
+    enzColors: { inn:"#6A8AA8", comp:"#c19a3e", mhc:"#1B3A2D", bcell:"#8a5a8c", tcell:"#C25B3F" },
+    enzLabels: { inn:"In", comp:"Co", mhc:"MH", bcell:"B", tcell:"T" },
+    zoneCenters: { inn:{x:120,y:225}, comp:{x:260,y:225}, mhc:{x:400,y:225}, bcell:{x:540,y:225}, tcell:{x:680,y:225} },
+    stageOrder: ["inn", "comp", "mhc", "bcell", "tcell"],
+    stageLabels: ["Stage 1 · Innate first response", "Stage 2 · Complement cascade", "Stage 3 · MHC presentation", "Stage 4 · B cell + antibodies", "Stage 5 · T cell types", "Complete · full immune sequence"],
+    retrievals: {
+      1: { rt:"Right. MHC I presents endogenous (intracellular) antigens to cytotoxic CD8 T cells.", wr:"MHC I is on ALL nucleated cells. It presents peptides from proteins made inside the cell (endogenous — viral proteins, tumor antigens). CD8 cytotoxic T cells recognize MHC I + peptide and kill the cell. MHC II is on APCs (macrophages, dendritic cells, B cells) and presents exogenous peptides to CD4 helper T cells.", q:"A virus-infected cell displays viral peptides on its surface. Which receptor on the immune cell recognizes this?", qh:"<b>MHC I</b> on the infected cell presents to <b>CD8 T cell</b> (cytotoxic).", ex:"MHC I: expressed on ALL nucleated cells. Loaded with endogenous peptides (8-10 aa) in the ER via proteasome degradation. Recognized by CD8+ cytotoxic T cells — leads to target cell killing (perforin, granzyme B, Fas pathway). MHC II: expressed only on professional APCs (dendritic cells, macrophages, B cells). Loaded with exogenous peptides (13-25 aa) from lysosomes. Recognized by CD4+ helper T cells — leads to cytokine production, B cell help, macrophage activation." },
+      2: { rt:"Right. IgM is the first antibody produced in a primary immune response and is a pentamer.", wr:"Primary response: IgM rises first, then class switching produces IgG. Secondary response: faster, higher peak, mostly IgG (memory cells switch quickly). IgA is found in secretions (saliva, tears, breast milk, gut). IgE binds mast cells/basophils — involved in allergies and anti-parasite response. IgD sits on naive B cells as receptor.", q:"A patient is exposed to a pathogen for the first time. The first antibody class produced is:", qh:"<b>IgM.</b> First antibody in primary response; pentameric form.", ex:"Antibody class switching (isotype switching): activated B cell initially makes IgM. Class switch recombination (CSR) in the heavy chain constant region — AID enzyme + T cell help (CD40L + cytokines) — leads to IgG, IgA, or IgE. IgM: pentamer, good complement activator, low affinity but high avidity (10 binding sites). IgG: monomer, can cross placenta (maternal-fetal immunity), complement activation, opsonization. IgA: dimer in secretions (SIgA), protection at mucosal surfaces. IgE: mast cell degranulation, allergy, anti-helminth." },
+      3: { rt:"Right. Clonal selection: when an antigen binds to a lymphocyte with the matching receptor, that cell proliferates and differentiates — the core of adaptive immunity.", wr:"Clonal selection (Burnet): the antigen doesn't create new receptors — it selects and expands the pre-existing lymphocyte clone that already has the matching receptor. That clone proliferates into effector cells (for immediate response) and memory cells (for faster secondary response). Primary response: slow (days), mostly effectors. Secondary (memory) response: faster, larger, mostly IgG (B cells) or fast CD8 kill (T cells).", q:"Which principle explains why the secondary immune response is faster and stronger than the primary?", qh:"<b>Clonal selection + memory cells.</b> The primary response generated memory lymphocytes that respond rapidly on re-exposure.", ex:"Clonal selection summary: rare lymphocytes with matching surface receptors are expanded by antigen binding. Effector cells act immediately; memory cells persist long-term. Secondary response: memory B cells already have class-switched Ig (IgG), low threshold activation. Memory T cells are more numerous, respond faster, require less co-stimulation. Vaccines exploit this: harmless antigen (or part of antigen) induces primary response + memory formation → protection when real pathogen arrives." },
+    },
+  },
+
+  /* ------------------------------------------------------------------ */
+  /*  REPRODUCTIVE DEEP-DIVE  (rpd)  — Physiology hub                   */
+  /* ------------------------------------------------------------------ */
+  rpd: {
+    name: "Reproductive biology: <em>gametogenesis</em>, <em>menstrual cycle</em>, <em>hormones</em>",
+    enzColors: { sperm:"#1B3A2D", oogen:"#C25B3F", fol:"#c19a3e", ovu:"#8a5a8c", preg:"#6A8AA8" },
+    enzLabels: { sperm:"Sp", oogen:"Oo", fol:"Fo", ovu:"Ov", preg:"Pr" },
+    zoneCenters: { sperm:{x:120,y:225}, oogen:{x:260,y:225}, fol:{x:400,y:225}, ovu:{x:540,y:225}, preg:{x:680,y:225} },
+    stageOrder: ["sperm", "oogen", "fol", "ovu", "preg"],
+    stageLabels: ["Stage 1 · Spermatogenesis", "Stage 2 · Oogenesis", "Stage 3 · Follicular phase", "Stage 4 · Ovulation trigger", "Stage 5 · Pregnancy hormones", "Complete · full reproductive cycle"],
+    retrievals: {
+      1: { rt:"Right. One primary spermatocyte → 4 sperm; one primary oocyte → 1 egg + 3 polar bodies.", wr:"Spermatogenesis: spermatogonium → primary spermatocyte → (meiosis I) 2 secondary spermatocytes → (meiosis II) 4 spermatids → 4 sperm. All 4 products are functional. Oogenesis: primary oocyte → unequal cytokinesis → secondary oocyte (large, keeps cytoplasm) + 1st polar body. At fertilization: secondary oocyte → ootid + 2nd polar body. Total: 1 functional egg + 3 polar bodies.", q:"How many functional gametes result from one primary spermatocyte vs one primary oocyte completing meiosis?", qh:"<b>4 sperm</b> from one spermatocyte; <b>1 egg + 3 polar bodies</b> from one oocyte.", ex:"Asymmetric cytokinesis in oogenesis conserves cytoplasm for one large, nutrient-rich egg. The 3 polar bodies (small, minimal cytoplasm) are non-functional and eventually degenerate. Timing: primary oocyte is arrested at prophase I from fetal life until puberty/ovulation. Meiosis I completes just before ovulation. Meiosis II completes only if fertilization occurs. Spermatogenesis is continuous from puberty onward, producing millions of sperm per day in the testes." },
+      2: { rt:"Right. Ovulation is triggered by the LH surge, which is itself triggered by rising estrogen levels exceeding a threshold (positive feedback).", wr:"The LH surge timing: around day 12-13 of the menstrual cycle. Rising estrogen from the dominant follicle initially exerts negative feedback on LH. As the follicle matures and estrogen rises above a threshold (~200 pg/mL sustained for 48 h), estrogen switches to POSITIVE feedback on the hypothalamus (GnRH pulse increases) and anterior pituitary → massive LH surge. This LH surge triggers oocyte maturation completion and rupture of the follicle ~36 h later.", q:"The LH surge that triggers ovulation is caused by:", qh:"<b>Positive feedback from rising estrogen</b> on the hypothalamus-pituitary axis.", ex:"Menstrual cycle hormone sequence: Follicular phase (days 1-14): FSH rises → recruits follicles → estrogen rises from granulosa cells → LH surge (positive feedback) → ovulation day 14. Luteal phase (days 14-28): LH → corpus luteum → progesterone rises → prepares endometrium for implantation → if no implantation, corpus luteum degenerates → progesterone/estrogen drop → menstruation. If implantation: embryo secretes hCG → maintains corpus luteum → progesterone stays high throughout first trimester." },
+      3: { rt:"Right. Human chorionic gonadotropin (hCG) secreted by the embryo/placenta maintains the corpus luteum in early pregnancy, keeping progesterone high.", wr:"Pregnancy tests detect hCG (human chorionic gonadotropin). hCG is produced by the trophoblast (outer layer of blastocyst) starting at implantation, peaks around week 10, then declines as the placenta takes over progesterone production. hCG mimics LH → maintains corpus luteum → corpus luteum keeps secreting progesterone → endometrium maintained → no menstruation. Without hCG, corpus luteum degenerates, progesterone falls, and menstruation would occur.", q:"What hormone produced by the embryo prevents menstruation in early pregnancy?", qh:"<b>hCG (human chorionic gonadotropin).</b> Maintains corpus luteum → keeps progesterone high.", ex:"Pregnancy test logic: anti-hCG antibodies detect hCG in urine. hCG appears as early as 6-12 days post-fertilization. Structure: heterodimeric glycoprotein with alpha (same as LH/FSH/TSH) and unique beta subunit (pregnancy-test antibodies target beta-hCG). After ~10-12 weeks, the placenta produces enough progesterone on its own (luteo-placental shift) — corpus luteum can degenerate without interrupting pregnancy." },
+    },
+  },
+
+  /* ------------------------------------------------------------------ */
+  /*  LINKAGE + CROSSING OVER  (lco)  — Genetics hub                    */
+  /* ------------------------------------------------------------------ */
+  lco: {
+    name: "Linkage and crossing over: <em>recombination frequency</em> = map distance",
+    enzColors: { link:"#1B3A2D", rf:"#c19a3e", cm:"#C25B3F", tpt:"#8a5a8c", chi:"#6A8AA8" },
+    enzLabels: { link:"Li", rf:"RF", cm:"cM", tpt:"3pt", chi:"X2" },
+    zoneCenters: { link:{x:120,y:225}, rf:{x:260,y:225}, cm:{x:400,y:225}, tpt:{x:540,y:225}, chi:{x:680,y:225} },
+    stageOrder: ["link", "rf", "cm", "tpt", "chi"],
+    stageLabels: ["Stage 1 · Linked genes", "Stage 2 · RF formula", "Stage 3 · Centimorgans", "Stage 4 · Three-point cross", "Stage 5 · Chi-squared linkage test", "Complete · full linkage analysis"],
+    retrievals: {
+      1: { rt:"Right. Recombination frequency = (recombinant offspring) / (total offspring) × 100%. 1% RF = 1 centimorgan.", wr:"Linked genes are on the same chromosome and tend to be inherited together. Crossing over (homologous recombination at chiasmata during prophase I) can separate them. The further apart two genes are, the more likely a crossover occurs between them. RF = recombinants ÷ total × 100%. Max RF = 50% (assorting independently = unlinked). 1% RF = 1 centimorgan (cM) = 1 map unit.", q:"In a testcross, 20 out of 200 offspring have recombinant phenotypes. The recombination frequency is:", qh:"<b>10%</b> = 10 cM apart. RF = 20/200 = 0.10 = 10%.", ex:"Linkage mapping: parental combinations are more frequent than recombinants (when genes are linked). Testcross (AaBb × aabb): if genes are unlinked, expect 1:1:1:1 (25% each class). If linked in coupling (AB/ab), parental classes (AB and ab) are > 25% each; recombinants (Ab and aB) are < 25% each. RF = recombinant total ÷ all offspring. Map distance (cM) = RF%. Over ~50 cM: genes appear unlinked even though they're on the same chromosome (too many double crossovers)." },
+      2: { rt:"Right. In a three-point cross, the class present in the lowest frequency identifies the double crossovers — and the middle gene is the one that switches order relative to the parental types.", wr:"Three-point cross logic: order the 8 phenotypic classes from most to least frequent. Parental classes = most frequent (2). Double recombinants = least frequent (2). Compare double recombinants to parentals: the gene that has flipped positions (relative to the other two) is the MIDDLE gene. Map distance between each adjacent pair = (single crossovers for that interval + double crossovers) ÷ total × 100%.", q:"In a three-point cross, the two least frequent offspring classes indicate:", qh:"<b>Double crossover classes.</b> Identifying them reveals the middle gene (it flips relative to parentals).", ex:"Three-point cross example: genes A, B, C. Parentals: ABC and abc (most frequent). Doubles: ABc and abC (least frequent). Compare ABc to ABC — C flipped. So C is in the middle! True order: A-C-B or equivalently B-C-A. Then calculate: map distance A-C = (AC single + doubles)/total; map distance C-B = (CB single + doubles)/total. Coefficient of coincidence = observed doubles / expected doubles. Interference = 1 - COC." },
+      3: { rt:"Right. If chi-squared test yields p < 0.05, we reject the null hypothesis of independent assortment — the genes are likely linked.", wr:"Chi-squared test for linkage: null hypothesis = genes assort independently (9:3:3:1 for dihybrid, or 1:1:1:1 for testcross). Calculate expected numbers from ratio. X² = sum of (observed-expected)²/expected. Compare to critical value (df = number of classes - 1). If X² > critical value → reject null → evidence for linkage.", q:"A chi-squared test of a dihybrid cross yields p < 0.05. The conclusion is:", qh:"<b>Reject the null hypothesis of independent assortment</b> — the two genes may be linked.", ex:"Chi-square for linkage: degrees of freedom = (number of phenotypic classes) - 1. For dihybrid testcross (4 classes), df = 3. Critical X² at p=0.05, df=3 is 7.815. If calculated X² > 7.815, reject H0 (independent assortment) → suggest linkage. Note: chi-square can't prove linkage — it only says the observed ratio is unlikely if genes were unlinked. Actual RF calculation requires knowing which classes are recombinants." },
+    },
+  },
+
+  /* ------------------------------------------------------------------ */
+  /*  DETERMINATION vs DIFFERENTIATION  (dif)  — Devo hub               */
+  /* ------------------------------------------------------------------ */
+  dif: {
+    name: "Determination vs differentiation: <em>Spemann's organizer</em> and <em>induction</em>",
+    enzColors: { det:"#1B3A2D", diff:"#5FA874", ind:"#c19a3e", morph:"#C25B3F", recip:"#8a5a8c" },
+    enzLabels: { det:"De", diff:"Di", ind:"In", morph:"Mo", recip:"Re" },
+    zoneCenters: { det:{x:120,y:225}, diff:{x:260,y:225}, ind:{x:400,y:225}, morph:{x:540,y:225}, recip:{x:680,y:225} },
+    stageOrder: ["det", "diff", "ind", "morph", "recip"],
+    stageLabels: ["Stage 1 · Determination", "Stage 2 · Differentiation", "Stage 3 · Induction", "Stage 4 · Morphogen gradient", "Stage 5 · Reciprocal induction", "Complete · determination to differentiation"],
+    retrievals: {
+      1: { rt:"Right. Determination is commitment to a developmental fate; differentiation is the actual expression of that fate (morphological/functional change).", wr:"Determination = a cell is committed to a particular fate (even if it still looks undifferentiated). Transplant a determined ectoderm cell elsewhere — it will still become what it was committed to. Differentiation = the cell actually takes on the morphology and biochemistry of its final cell type. Determination precedes differentiation. A cell can be determined but not yet differentiated.", q:"A frog embryo ectoderm cell is transplanted to a mesoderm region before gastrulation and becomes muscle. After gastrulation it becomes epidermis even when transplanted to mesoderm. What happened between the two time points?", qh:"<b>Determination occurred.</b> After gastrulation, the cell is committed to epidermal fate (determined) even in a new environment.", ex:"Classic transplant logic: before determination, cells are pluripotent/labile — they respond to local signals and adopt the fate of their new environment (regulative development). After determination, cells are committed — transplanting them produces their original fate in the new environment (mosaic development tendency). Most vertebrates show a mixture: early embryo is regulative, later becomes mosaic as cells get determined." },
+      2: { rt:"Right. Spemann's organizer experiment: transplanting the dorsal lip of the blastopore to a ventral location induces a complete secondary body axis, demonstrating that the organizer produces signals that establish the body plan.", wr:"Spemann and Mangold (1924, Nobel Prize): excised the 'organizer' (dorsal lip of blastopore) from one newt embryo and transplanted it to the ventral side of another. The host developed a secondary complete embryo — second neural tube, notochord, etc. The organizer itself contributes some cells, but more importantly it INDUCES the host tissue to reorganize. Organizer signals: chordin + noggin (BMP antagonists, allow dorsal fate), Wnt signals.", q:"Spemann and Mangold's transplant of the dorsal blastopore lip to a ventral location produced:", qh:"<b>A complete second body axis</b> in the host embryo — demonstrating the dorsal lip is the primary organizer.", ex:"Organizer signals (molecular level): BMP (bone morphogenetic protein) is present in ventral territory → specifies ventral/lateral fate. Organizer secretes BMP antagonists (chordin, noggin, follistatin) → creates a BMP gradient → high BMP = ventral, low BMP = dorsal. Wnt signaling also establishes dorsoventral axis. Sonic Hedgehog (from notochord) patterns ventral neural tube. FGF and retinoic acid contribute to anteroposterior patterning." },
+      3: { rt:"Right. Reciprocal induction: the optic vesicle induces the overlying ectoderm to form the lens, and the lens in turn induces the optic cup to differentiate properly — a two-way inductive conversation.", wr:"Reciprocal induction = mutual induction between two tissues. Classic example: eye development. Optic vesicle (outgrowth of diencephalon) contacts overlying head ectoderm → ectoderm thickens to lens placode → lens. The forming lens then sends signals back to the optic vesicle → optic cup (and eventually retina) differentiates. Remove the optic vesicle = no lens. Remove the lens placode = no optic cup differentiation. Each tissue needs the other.", q:"The optic vesicle induces the overlying ectoderm to form the lens, which then induces the optic cup to differentiate. This is:", qh:"<b>Reciprocal induction.</b> Two tissues mutually induce each other's differentiation.", ex:"Additional induction examples: mesoderm (notochord) → overlying ectoderm → neural plate (primary embryonic induction). Kidney: ureteric bud induces metanephric mesenchyme → nephrons form; metanephric mesenchyme induces ureteric bud to branch. General principle: inducers secrete paracrine signals; responders must have the competence (receptors + downstream machinery) to respond. Loss of either = no induction. The competence window is time-limited." },
+    },
+  },
 };
 
 /* ---- PERSISTENCE ---- */
 function loadState(){ try{ const r=localStorage.getItem(STORAGE_KEY); if(r){ Object.assign(STATE,JSON.parse(r)); } }catch(e){} }
-function saveState(){ try{ localStorage.setItem(STORAGE_KEY,JSON.stringify(STATE)); }catch(e){} }
+function saveState(){
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(STATE)); } catch(e){}
+  // Mastered/partial depend on each node's own stageOrder length, which the home
+  // dashboard doesn't have access to. Write a precomputed summary alongside.
+  try {
+    let mastered = 0, partial = 0;
+    Object.keys(STATE).forEach(nodeId => {
+      const node = STATE[nodeId], cfg = NODES[nodeId];
+      if (!node || !cfg) return;
+      const stage = parseInt(node.stage) || 0;
+      const len = (cfg.stageOrder || []).length;
+      if (len > 0 && stage >= len) mastered++;
+      else if (stage > 0) partial++;
+    });
+    localStorage.setItem('acethedat_bio_progress', JSON.stringify({
+      mastered, partial, total: Object.keys(NODES).length, ts: Date.now()
+    }));
+  } catch(e){}
+  // Write due-count so sidebar pills on non-index pages can read it without
+  // running the full engine.
+  try {
+    const now = Date.now();
+    const due = (STATE.aceCards || []).filter(c => !c.closed && c.state !== 'mastered' && c.nextDue <= now).length;
+    localStorage.setItem('acethedat_bio_due_count', String(due));
+  } catch(e){}
+}
+
+/* Stamp a session-open timestamp so the Ace Labs home tile can show "Last: …" */
+try { localStorage.setItem('acethedat_bio_last_session', JSON.stringify(Date.now())); } catch(e){}
 
 /* ---- DRAG-DROP (per-node) ---- */
 let dragState = null;
@@ -1363,7 +1498,7 @@ function initCladogramBuilder() {
 }
 
 /* =====================================================================
-   STUDY DASHBOARD — populates bio-engine.html launcher
+   STUDY DASHBOARD — populates index.html launcher
    Computes: cards due now, last session, overall mastery,
              per-subject mastery, last mock score, recommended next action.
    ===================================================================== */
@@ -9750,10 +9885,10 @@ const DNATEC_DATA = {
         <text x="140" y="285" text-anchor="middle" font-size="9" fill="#1B3A2D">Heterozygotes show both patterns</text>
       </g>
     </svg>`,
-    info:'<b>RFLP</b> = Restriction Fragment Length Polymorphism. A point mutation that creates or destroys a restriction site changes the size of fragments produced by that enzyme.<br><b>Process:</b> digest sample DNA → run on gel → Southern blot → probe → see which fragments contain the gene.<br><b>Heterozygotes</b> show bands from both alleles.<br><b>Use cases:</b> early genetic mapping, paternity testing (historic), forensic identification (now replaced by STR profiling), some clinical diagnostics (sickle cell — HbS destroys an MstII site).<br><b>Why obsolete:</b> NGS and genotyping arrays are faster, cheaper, more comprehensive.',
+    info:'<b>RFLP</b> = Restriction Fragment Length Polymorphism. A point mutation that creates or destroys a restriction site changes the size of fragments produced by that enzyme.<br><b>Process:</b> digest sample DNA → run on gel → Southern blot → probe → see which fragments contain the gene.<br><b>Heterozygotes</b> show bands from both alleles.<br><b>Use cases:</b> early genetic mapping, paternity testing (historic), forensic identification (now replaced by STR profiling), some clinical diagnostics (sickle cell — HbS destroys an MstII site).',
   },
   micro: {
-    label:'DNA microarrays',
+    label:'DNA microarrays (not DAT-tested)',
     svg:`<svg viewBox="0 0 900 380" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
       <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">DNA MICROARRAY — thousands of genes at once</text>
       <g transform="translate(60, 70)">
@@ -9833,7 +9968,7 @@ const DNATEC_DATA = {
         <text x="20" y="216" font-size="10" font-weight="700" fill="#C25B3F">Largely replaced by RNA-seq for expression; still used for SNP genotyping at scale.</text>
       </g>
     </svg>`,
-    info:'<b>DNA microarray</b> = chip with thousands of DNA probe spots, each binding to a specific transcript or SNP.<br><b>Two-color expression array:</b> label sample cDNA red, reference cDNA green, mix and hybridize. Spot color reveals which gene is up/down vs reference.<br><b>SNP array (Affymetrix, Illumina):</b> probes designed for known SNPs across the genome — used for GWAS, ancestry, disease risk.<br><b>Use cases:</b> tumor classification, drug response signatures, GWAS, copy-number variation (CGH arrays).<br><b>Modern context:</b> RNA-seq has largely replaced expression arrays; SNP arrays remain widely used for genotyping at scale.',
+    info:'<b>DNA microarrays</b> are not tested on the DAT. This technique (gene chips, expression profiling, SNP arrays) is graduate-level. DAT-tested lab techniques: PCR, gel electrophoresis, Southern/Northern/Western blotting, restriction enzymes, CRISPR, cloning vectors.',
   },
   forensic: {
     label:'Forensic STR profiling',
@@ -12295,7 +12430,7 @@ function init() {
   });
 
   // Mark current-page sidebar link as active
-  const here = window.location.pathname.split("/").pop() || "bio-engine.html";
+  const here = window.location.pathname.split("/").pop() || "index.html";
   document.querySelectorAll(".sb-link[href]").forEach(link => {
     const href = link.getAttribute("href");
     if (href && (href === here || href.startsWith(here + "#"))) {
