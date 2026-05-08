@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Volume / Surface Area Canvas — AceTheDAT QR</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js"></script>
+<style>
+:root{
+  --bg:#f5f0e8; --paper:#fffdf7; --paper-2:#f9f3e6; --paper-3:#f3ecdb;
+  --ink:#0f1814; --ink-2:#3a4a42; --ink-mute:#6e7c74; --ink-soft:#9aa39e;
+  --gold:#C9A84C; --gold-m:#E2C97A; --gold-d:#8C7235; --gold-glow:rgba(201,168,76,0.35);
+  --teal:#1B3A2D; --teal-2:#2A5240; --teal-3:#3A6B54;
+  --line:rgba(13,32,24,0.12); --line-2:rgba(13,32,24,0.06); --line-strong:rgba(13,32,24,0.22);
+  --trap:#C25B3F; --trap-bg:#fbe7df; --trap-d:#8a3d28;
+  --good:#5FA874; --good-bg:#e3efe6; --good-d:#3e7c54;
+  --info:#6A8AA8; --info-bg:#e6edf4;
+  --shadow:0 1px 3px rgba(13,32,24,0.06), 0 8px 24px rgba(13,32,24,0.04);
+  --shadow-md:0 2px 6px rgba(13,32,24,0.08), 0 16px 40px rgba(13,32,24,0.06);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:'DM Sans',system-ui,-apple-system,sans-serif; background:var(--bg); color:var(--ink); line-height:1.5; padding:32px 24px; min-height:100vh}
+.wrap{max-width:1100px; margin:0 auto}
+h1{font-family:'Playfair Display',serif; font-size:32px; margin:0 0 8px}
+h1 em{font-style:italic; color:var(--gold-d); font-weight:400}
+.sub{font-size:11px; letter-spacing:0.16em; text-transform:uppercase; color:var(--gold-d); font-weight:600}
+.lede{font-size:15px; color:var(--ink-2); max-width:740px; margin:8px 0 24px}
+
+.canvas-card{background:var(--paper); border:1px solid var(--line); border-radius:16px; padding:20px; box-shadow:var(--shadow-md); display:grid; grid-template-columns:1fr 320px; gap:20px}
+@media (max-width:820px){.canvas-card{grid-template-columns:1fr}}
+.stage{position:relative; background:var(--paper-2); border:1px solid var(--line); border-radius:12px; overflow:hidden; touch-action:none}
+.stage svg{display:block; width:100%; height:auto; user-select:none; -webkit-user-select:none; cursor:grab}
+.stage svg.rotating{cursor:grabbing}
+
+.stage svg .face{stroke:var(--gold-d); stroke-width:1.5; stroke-linejoin:round}
+.stage svg .edge{stroke:var(--gold-d); stroke-width:1.5; fill:none}
+.stage svg .edge-back{stroke:var(--gold-d); stroke-width:1; stroke-dasharray:4 3; opacity:0.45; fill:none}
+.stage svg .axis{stroke:var(--ink-mute); stroke-width:0.5; opacity:0.4}
+.stage svg .net-face{fill:rgba(58,107,84,0.08); stroke:var(--teal-2); stroke-width:1.5; stroke-linejoin:round}
+.stage svg .dim-lbl{font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:600; fill:var(--ink-2); paint-order:stroke; stroke:var(--paper-2); stroke-width:3}
+
+.toggles{display:grid; grid-template-columns:repeat(5,1fr); gap:6px; margin-bottom:10px}
+.tog{padding:8px 6px; font-size:11.5px; font-weight:600; border:1px solid var(--line); background:var(--paper); color:var(--ink-2); border-radius:8px; cursor:pointer; text-align:center; font-family:'DM Sans',sans-serif}
+.tog:hover{border-color:var(--gold); color:var(--ink)}
+.tog.active{background:var(--teal); color:#fff; border-color:var(--teal)}
+
+.controls{display:flex; flex-direction:column; gap:10px; margin-bottom:12px; padding:12px; background:var(--paper-2); border:1px solid var(--line); border-radius:10px}
+.slider-row{display:flex; align-items:center; gap:10px}
+.slider-row label{font-size:11px; color:var(--ink-mute); letter-spacing:0.1em; text-transform:uppercase; min-width:64px; font-weight:600}
+.slider-row input{flex:1}
+.slider-row b{font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--teal); min-width:36px; text-align:right}
+input[type=range]{accent-color:var(--gold)}
+.btn-row{display:flex; gap:8px}
+.btn{flex:1; padding:8px 10px; font-size:12px; font-weight:600; border:1px solid var(--line); background:var(--paper); color:var(--ink); border-radius:8px; cursor:pointer; font-family:'DM Sans',sans-serif}
+.btn:hover{border-color:var(--gold)}
+.btn.active{background:var(--teal); color:#fff; border-color:var(--teal)}
+
+.panel{background:var(--paper-2); border:1px solid var(--line); border-radius:10px; padding:12px 14px}
+.panel h3{font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:var(--ink-mute); margin:0 0 8px; font-weight:600}
+.row{display:flex; justify-content:space-between; gap:10px; font-size:13px; padding:3px 0}
+.row b{font-family:'JetBrains Mono',monospace; color:var(--teal); font-weight:600; font-size:12.5px}
+.formula{font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--ink-mute); margin-top:6px; line-height:1.6}
+.panels{display:flex; flex-direction:column; gap:12px}
+.hint{font-size:11px; color:var(--ink-mute); margin-top:14px; line-height:1.5; font-style:italic}
+.cube-law{margin-top:6px; padding:8px 10px; background:var(--info-bg); color:var(--ink); border-left:3px solid var(--info); border-radius:4px; font-size:11.5px; line-height:1.5}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="sub">QR · Tier 2 · Volume &amp; Surface Area</div>
+  <h1>Solids in 3D. <em>Watch</em> the cube law bite.</h1>
+  <p class="lede">Cycle solids. Drag dimensions. Volume scales with the cube of length, surface area with the square — the classic 600-tier trap. Drag the canvas to rotate. Toggle "show net" to unfold the surface.</p>
+
+  <div class="canvas-card">
+    <div>
+      <div class="toggles">
+        <button class="tog active" data-solid="cube">Cube</button>
+        <button class="tog" data-solid="rect">Rect prism</button>
+        <button class="tog" data-solid="cylinder">Cylinder</button>
+        <button class="tog" data-solid="cone">Cone</button>
+        <button class="tog" data-solid="sphere">Sphere</button>
+      </div>
+      <div class="controls">
+        <div id="sliders"></div>
+        <div class="btn-row">
+          <button class="btn" id="net-toggle">Show net</button>
+          <button class="btn" id="reset-rot">Reset rotation</button>
+        </div>
+      </div>
+      <div class="stage">
+        <svg id="svg" viewBox="0 0 600 460" preserveAspectRatio="xMidYMid meet">
+          <g id="solid-layer"></g>
+          <g id="dim-layer"></g>
+          <g id="net-layer" style="display:none"></g>
+        </svg>
+      </div>
+      <div class="hint" id="stage-hint">Drag the canvas to rotate the solid (3D view). Touch and drag on mobile.</div>
+    </div>
+
+    <div class="panels">
+      <div class="panel">
+        <h3 id="solid-name">Cube</h3>
+        <div class="row"><span>Volume V</span><b id="vol">0</b></div>
+        <div class="row"><span>Surface area SA</span><b id="sa">0</b></div>
+        <div class="row"><span>SA / V ratio</span><b id="ratio">0</b></div>
+        <div class="formula" id="formula">V = s³ · SA = 6s²</div>
+        <div class="cube-law" id="cube-law">Double a side → V multiplies by 8, SA multiplies by 4. Cube law.</div>
+      </div>
+
+      <div class="panel">
+        <h3>Cube-law preview</h3>
+        <div class="row"><span>at 1× scale</span><b id="prev-1">—</b></div>
+        <div class="row"><span>at 2× scale</span><b id="prev-2">—</b></div>
+        <div class="row"><span>at 3× scale</span><b id="prev-3">—</b></div>
+        <div class="formula">V scales as k³, SA scales as k². Doubling all linear dimensions multiplies V by 8, SA by 4.</div>
+      </div>
+
+      <div class="panel" id="net-panel" style="display:none">
+        <h3>Net (unfolded)</h3>
+        <div class="formula" id="net-text">The net shows each face flat — sum of face areas = surface area.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const svg = document.getElementById('svg');
+  const solidG = document.getElementById('solid-layer');
+  const dimG = document.getElementById('dim-layer');
+  const netG = document.getElementById('net-layer');
+
+  let solid = 'cube';
+  let dims = {s:2.5, l:3, w:2, h:2.5, r:1.5}; // s=cube side, l/w/h rect, r=radius (also for cylinder/cone/sphere), h reused for cyl/cone height
+  let cylDims = {r:1.5, h:3};
+  let coneDims = {r:1.5, h:3};
+  let sphereDims = {r:2};
+  let rotX = -0.35, rotY = 0.5; // radians
+  let showNet = false;
+  const SCALE = 40;
+  const CX = 300, CY = 240;
+
+  function project(x,y,z){
+    // rotate around X then Y (intrinsic)
+    let yy = y*Math.cos(rotX) - z*Math.sin(rotX);
+    let zz = y*Math.sin(rotX) + z*Math.cos(rotX);
+    let xx = x*Math.cos(rotY) + zz*Math.sin(rotY);
+    zz = -x*Math.sin(rotY) + zz*Math.cos(rotY);
+    return {x: CX + xx*SCALE, y: CY - yy*SCALE, z: zz};
+  }
+  function clearChildren(g){while(g.firstChild) g.removeChild(g.firstChild);}
+  function fmt(n,d=2){return Number(n).toFixed(d);}
+
+  function drawPoly(parent, pts3, fillColor, isBack){
+    const proj = pts3.map(p=>project(p[0],p[1],p[2]));
+    const avgZ = proj.reduce((a,p)=>a+p.z,0)/proj.length;
+    const el = document.createElementNS('http://www.w3.org/2000/svg','polygon');
+    el.setAttribute('points', proj.map(p=>`${p.x},${p.y}`).join(' '));
+    el.setAttribute('class','face');
+    el.setAttribute('fill', fillColor);
+    if(isBack){ el.setAttribute('opacity','0.35'); el.setAttribute('stroke-dasharray','4 3'); }
+    parent.appendChild({el, avgZ}._wrap = el);
+    return {el, avgZ};
+  }
+
+  function drawCube(){
+    clearChildren(solidG); clearChildren(dimG);
+    const s = dims.s/2;
+    // 8 vertices
+    const v = [
+      [-s,-s,-s],[s,-s,-s],[s,s,-s],[-s,s,-s],
+      [-s,-s,s],[s,-s,s],[s,s,s],[-s,s,s]
+    ];
+    const faces = [
+      [0,1,2,3], [4,5,6,7], [0,1,5,4], [2,3,7,6], [0,3,7,4], [1,2,6,5]
+    ];
+    drawFaces(faces.map(f=>f.map(i=>v[i])), 'rgba(201,168,76,0.16)');
+    // dimension label
+    const a = project(s,-s,-s), b = project(-s,-s,-s);
+    addDimLabel((a.x+b.x)/2, Math.max(a.y,b.y)+18, 's = '+fmt(dims.s,2));
+  }
+
+  function drawRect(){
+    clearChildren(solidG); clearChildren(dimG);
+    const lx=dims.l/2, ly=dims.h/2, lz=dims.w/2;
+    const v = [
+      [-lx,-ly,-lz],[lx,-ly,-lz],[lx,ly,-lz],[-lx,ly,-lz],
+      [-lx,-ly,lz],[lx,-ly,lz],[lx,ly,lz],[-lx,ly,lz]
+    ];
+    const faces = [[0,1,2,3],[4,5,6,7],[0,1,5,4],[2,3,7,6],[0,3,7,4],[1,2,6,5]];
+    drawFaces(faces.map(f=>f.map(i=>v[i])), 'rgba(201,168,76,0.16)');
+    const a = project(lx,-ly,-lz), b = project(-lx,-ly,-lz);
+    addDimLabel((a.x+b.x)/2, Math.max(a.y,b.y)+18, 'l = '+fmt(dims.l,2));
+    const c = project(-lx,-ly,-lz), d = project(-lx,ly,-lz);
+    addDimLabel(c.x-30, (c.y+d.y)/2, 'h = '+fmt(dims.h,2));
+    const e = project(-lx,-ly,lz);
+    addDimLabel((c.x+e.x)/2-20, (c.y+e.y)/2+10, 'w = '+fmt(dims.w,2));
+  }
+
+  function drawCylinder(){
+    clearChildren(solidG); clearChildren(dimG);
+    const r=cylDims.r, h=cylDims.h/2, N=40;
+    const top = [], bot = [];
+    for(let i=0;i<N;i++){
+      const a = i*2*Math.PI/N;
+      top.push([r*Math.cos(a), h, r*Math.sin(a)]);
+      bot.push([r*Math.cos(a), -h, r*Math.sin(a)]);
+    }
+    const items = [];
+    items.push({pts:top.slice(), fill:'rgba(201,168,76,0.18)', isBack:false});
+    items.push({pts:bot.slice(), fill:'rgba(201,168,76,0.10)', isBack:true});
+    // side as quads
+    for(let i=0;i<N;i++){
+      const j=(i+1)%N;
+      items.push({pts:[bot[i],bot[j],top[j],top[i]], fill:'rgba(201,168,76,0.14)', isBack:false});
+    }
+    drawSorted(items);
+    const a = project(0,-h,0), b = project(0,h,0);
+    addDimLabel(b.x+18, (a.y+b.y)/2, 'h = '+fmt(cylDims.h,2));
+    const c = project(-r,-h,0), d = project(r,-h,0);
+    addDimLabel((c.x+d.x)/2, Math.max(c.y,d.y)+16, 'r = '+fmt(cylDims.r,2));
+  }
+
+  function drawCone(){
+    clearChildren(solidG); clearChildren(dimG);
+    const r=coneDims.r, h=coneDims.h, N=40;
+    const base = [];
+    for(let i=0;i<N;i++){
+      const a = i*2*Math.PI/N;
+      base.push([r*Math.cos(a), -h/2, r*Math.sin(a)]);
+    }
+    const apex = [0, h/2, 0];
+    const items = [];
+    items.push({pts:base.slice(), fill:'rgba(201,168,76,0.10)', isBack:true});
+    for(let i=0;i<N;i++){
+      const j=(i+1)%N;
+      items.push({pts:[base[i],base[j],apex], fill:'rgba(201,168,76,0.14)', isBack:false});
+    }
+    drawSorted(items);
+    const aP = project(0,-h/2,0), bP = project(0,h/2,0);
+    addDimLabel(bP.x+18, (aP.y+bP.y)/2, 'h = '+fmt(coneDims.h,2));
+    const cP = project(-r,-h/2,0), dP = project(r,-h/2,0);
+    addDimLabel((cP.x+dP.x)/2, Math.max(cP.y,dP.y)+16, 'r = '+fmt(coneDims.r,2));
+  }
+
+  function drawSphere(){
+    clearChildren(solidG); clearChildren(dimG);
+    const r=sphereDims.r;
+    // wireframe: longitude + latitude as ellipses (projected)
+    // Use a simple approach: draw circle + great circles
+    const cE = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    cE.setAttribute('cx', CX); cE.setAttribute('cy', CY);
+    cE.setAttribute('r', r*SCALE);
+    cE.setAttribute('fill', 'rgba(201,168,76,0.14)');
+    cE.setAttribute('stroke', getCSS('--gold-d'));
+    cE.setAttribute('stroke-width', '1.5');
+    solidG.appendChild(cE);
+    // latitude rings (3) + longitude (3)
+    function ring(axis){
+      // axis = 'lat' (xz plane at y=lat) or 'lon' (yz plane at lon angle)
+      const N=60;
+      const pts = [];
+      for(let i=0;i<=N;i++){
+        const t = i*2*Math.PI/N;
+        let x,y,z;
+        if(axis==='eqXZ'){ x=r*Math.cos(t); y=0; z=r*Math.sin(t); }
+        else if(axis==='eqXY'){ x=r*Math.cos(t); y=r*Math.sin(t); z=0; }
+        else if(axis==='eqYZ'){ x=0; y=r*Math.cos(t); z=r*Math.sin(t); }
+        const p = project(x,y,z);
+        pts.push(`${p.x},${p.y}`);
+      }
+      const e = document.createElementNS('http://www.w3.org/2000/svg','polyline');
+      e.setAttribute('points', pts.join(' '));
+      e.setAttribute('class','edge');
+      e.setAttribute('opacity','0.55');
+      solidG.appendChild(e);
+    }
+    ring('eqXZ'); ring('eqXY'); ring('eqYZ');
+
+    addDimLabel(CX+r*SCALE+22, CY, 'r = '+fmt(sphereDims.r,2));
+    // radius line
+    const rline = document.createElementNS('http://www.w3.org/2000/svg','line');
+    rline.setAttribute('x1', CX); rline.setAttribute('y1', CY);
+    rline.setAttribute('x2', CX+r*SCALE); rline.setAttribute('y2', CY);
+    rline.setAttribute('stroke', getCSS('--gold-d')); rline.setAttribute('stroke-width','1.2');
+    rline.setAttribute('stroke-dasharray','4 3');
+    solidG.appendChild(rline);
+  }
+
+  function drawSorted(items){
+    // painter's algorithm by avgZ
+    items.forEach(it=>{
+      const proj = it.pts.map(p=>project(p[0],p[1],p[2]));
+      it.proj = proj;
+      it.avgZ = proj.reduce((a,p)=>a+p.z,0)/proj.length;
+    });
+    items.sort((a,b)=>a.avgZ-b.avgZ);
+    items.forEach(it=>{
+      const el = document.createElementNS('http://www.w3.org/2000/svg','polygon');
+      el.setAttribute('points', it.proj.map(p=>`${p.x},${p.y}`).join(' '));
+      el.setAttribute('class','face');
+      el.setAttribute('fill', it.fill);
+      if(it.isBack){ el.setAttribute('opacity','0.35'); el.setAttribute('stroke-dasharray','4 3'); }
+      solidG.appendChild(el);
+    });
+  }
+
+  function drawFaces(faces, fill){
+    const items = faces.map(f=>({pts:f, fill, isBack:false}));
+    drawSorted(items);
+  }
+
+  function addDimLabel(x,y,txt){
+    const t = document.createElementNS('http://www.w3.org/2000/svg','text');
+    t.setAttribute('class','dim-lbl'); t.setAttribute('text-anchor','middle');
+    t.setAttribute('x', x); t.setAttribute('y', y);
+    t.textContent = txt;
+    dimG.appendChild(t);
+  }
+
+  function getCSS(name){
+    return getComputedStyle(document.documentElement).getPropertyValue(name).trim() || '#1B3A2D';
+  }
+
+  // NETS
+  function drawNet(){
+    clearChildren(netG);
+    if(!showNet){ netG.style.display='none'; return; }
+    netG.style.display='';
+    if(solid==='cube'){
+      // cross-shaped net at right side of view
+      const s = dims.s*30; // smaller scale for the net
+      const ox = 380, oy = 90;
+      const faces = [
+        {x:s, y:0}, {x:0, y:s}, {x:s, y:s}, {x:2*s, y:s}, {x:3*s, y:s}, {x:s, y:2*s}
+      ];
+      faces.forEach((f,i)=>{
+        const r = document.createElementNS('http://www.w3.org/2000/svg','rect');
+        r.setAttribute('class','net-face');
+        r.setAttribute('x', ox+f.x); r.setAttribute('y', oy+f.y);
+        r.setAttribute('width', s); r.setAttribute('height', s);
+        netG.appendChild(r);
+      });
+      const t = document.createElementNS('http://www.w3.org/2000/svg','text');
+      t.setAttribute('class','dim-lbl'); t.setAttribute('x',ox+s*1.5); t.setAttribute('y',oy-6); t.setAttribute('text-anchor','middle');
+      t.textContent = '6 squares · area s² each';
+      netG.appendChild(t);
+    } else if(solid==='rect'){
+      const l=dims.l*30, w=dims.w*30, h=dims.h*30;
+      const ox=320, oy=70;
+      function rect(x,y,wd,ht){
+        const r = document.createElementNS('http://www.w3.org/2000/svg','rect');
+        r.setAttribute('class','net-face');
+        r.setAttribute('x',x); r.setAttribute('y',y); r.setAttribute('width',wd); r.setAttribute('height',ht);
+        netG.appendChild(r);
+      }
+      rect(ox+w, oy, l, h);
+      rect(ox, oy+h, w, l);
+      rect(ox+w, oy+h, l, l);
+      rect(ox+w+l, oy+h, w, l);
+      rect(ox+w+l+w, oy+h, l, l);
+      rect(ox+w, oy+h+l, l, h);
+    } else if(solid==='cylinder'){
+      const r = cylDims.r, h = cylDims.h;
+      // top circle, bottom circle, rectangle of (2πr × h)
+      const ox=320, oy=80;
+      const cR = r*30;
+      const c1 = document.createElementNS('http://www.w3.org/2000/svg','circle');
+      c1.setAttribute('class','net-face'); c1.setAttribute('cx', ox+cR); c1.setAttribute('cy', oy+cR); c1.setAttribute('r',cR);
+      netG.appendChild(c1);
+      const rectW = 2*Math.PI*r*30;
+      const rectH = h*30;
+      const rE = document.createElementNS('http://www.w3.org/2000/svg','rect');
+      rE.setAttribute('class','net-face'); rE.setAttribute('x',ox); rE.setAttribute('y',oy+2*cR+8);
+      rE.setAttribute('width', Math.min(rectW,260)); rE.setAttribute('height', rectH);
+      netG.appendChild(rE);
+      const c2 = document.createElementNS('http://www.w3.org/2000/svg','circle');
+      c2.setAttribute('class','net-face'); c2.setAttribute('cx', ox+cR); c2.setAttribute('cy', oy+2*cR+8+rectH+cR+8); c2.setAttribute('r',cR);
+      netG.appendChild(c2);
+      const t = document.createElementNS('http://www.w3.org/2000/svg','text');
+      t.setAttribute('class','dim-lbl'); t.setAttribute('x',ox+(Math.min(rectW,260))/2); t.setAttribute('y',oy+2*cR+rectH+24); t.setAttribute('text-anchor','middle');
+      t.textContent = 'side = 2πr × h';
+      netG.appendChild(t);
+    } else if(solid==='cone'){
+      const r = coneDims.r, h = coneDims.h;
+      const slant = Math.hypot(r,h);
+      const ox=350, oy=130;
+      // base circle
+      const cR = r*30;
+      const cBase = document.createElementNS('http://www.w3.org/2000/svg','circle');
+      cBase.setAttribute('class','net-face'); cBase.setAttribute('cx',ox); cBase.setAttribute('cy',oy+cR+90); cBase.setAttribute('r',cR);
+      netG.appendChild(cBase);
+      // sector with radius slant*30 and arc length 2πr*30
+      const sR = slant*30;
+      const arcLen = 2*Math.PI*r*30;
+      const theta = arcLen / sR; // sector angle
+      const a0 = -Math.PI/2 - theta/2;
+      const a1 = -Math.PI/2 + theta/2;
+      const cx=ox, cy=oy;
+      const sx = cx + sR*Math.cos(a0), sy = cy + sR*Math.sin(a0);
+      const ex = cx + sR*Math.cos(a1), ey = cy + sR*Math.sin(a1);
+      const large = theta>Math.PI?1:0;
+      const path = document.createElementNS('http://www.w3.org/2000/svg','path');
+      path.setAttribute('class','net-face');
+      path.setAttribute('d',`M ${cx} ${cy} L ${sx} ${sy} A ${sR} ${sR} 0 ${large} 1 ${ex} ${ey} Z`);
+      netG.appendChild(path);
+      const t = document.createElementNS('http://www.w3.org/2000/svg','text');
+      t.setAttribute('class','dim-lbl'); t.setAttribute('x',cx); t.setAttribute('y',cy-8); t.setAttribute('text-anchor','middle');
+      t.textContent = 'lateral = π·r·slant';
+      netG.appendChild(t);
+    } else if(solid==='sphere'){
+      const t = document.createElementNS('http://www.w3.org/2000/svg','text');
+      t.setAttribute('class','dim-lbl'); t.setAttribute('x',CX); t.setAttribute('y',420); t.setAttribute('text-anchor','middle');
+      t.textContent = 'A sphere has no flat net (4πr² wraps).';
+      netG.appendChild(t);
+    }
+  }
+
+  // SLIDER UI
+  function buildSliders(){
+    const c = document.getElementById('sliders');
+    c.innerHTML='';
+    function row(name, label, min, max, step, val, onInput){
+      const r = document.createElement('div');
+      r.className='slider-row';
+      r.innerHTML = `<label>${label}</label><input type="range" min="${min}" max="${max}" step="${step}" value="${val}"><b>${val}</b>`;
+      const inp = r.querySelector('input'); const b = r.querySelector('b');
+      inp.addEventListener('input', e=>{
+        const v = +e.target.value; b.textContent = v.toFixed(2); onInput(v); compute();
+      });
+      c.appendChild(r);
+    }
+    if(solid==='cube'){
+      row('s','side',0.5,5,0.1,dims.s,v=>{dims.s=v});
+    } else if(solid==='rect'){
+      row('l','length',0.5,5,0.1,dims.l,v=>{dims.l=v});
+      row('w','width',0.5,5,0.1,dims.w,v=>{dims.w=v});
+      row('h','height',0.5,5,0.1,dims.h,v=>{dims.h=v});
+    } else if(solid==='cylinder'){
+      row('r','radius',0.3,3,0.1,cylDims.r,v=>{cylDims.r=v});
+      row('h','height',0.5,5,0.1,cylDims.h,v=>{cylDims.h=v});
+    } else if(solid==='cone'){
+      row('r','radius',0.3,3,0.1,coneDims.r,v=>{coneDims.r=v});
+      row('h','height',0.5,5,0.1,coneDims.h,v=>{coneDims.h=v});
+    } else if(solid==='sphere'){
+      row('r','radius',0.3,3,0.1,sphereDims.r,v=>{sphereDims.r=v});
+    }
+  }
+
+  function compute(){
+    let V=0, SA=0, formula='';
+    if(solid==='cube'){
+      const s=dims.s; V=s*s*s; SA=6*s*s;
+      formula = 'V = s³ · SA = 6s²';
+      document.getElementById('solid-name').textContent='Cube';
+    } else if(solid==='rect'){
+      const {l,w,h}=dims; V=l*w*h; SA=2*(l*w+l*h+w*h);
+      formula = 'V = l·w·h · SA = 2(lw + lh + wh)';
+      document.getElementById('solid-name').textContent='Rectangular prism';
+    } else if(solid==='cylinder'){
+      const {r,h}=cylDims; V=Math.PI*r*r*h; SA=2*Math.PI*r*r + 2*Math.PI*r*h;
+      formula = 'V = πr²h · SA = 2πr² + 2πrh';
+      document.getElementById('solid-name').textContent='Cylinder';
+    } else if(solid==='cone'){
+      const {r,h}=coneDims; V=Math.PI*r*r*h/3;
+      const slant = Math.hypot(r,h);
+      SA = Math.PI*r*r + Math.PI*r*slant;
+      formula = 'V = πr²h/3 · SA = πr² + πr·ℓ (ℓ = √(r²+h²))';
+      document.getElementById('solid-name').textContent='Cone';
+    } else if(solid==='sphere'){
+      const {r}=sphereDims; V=(4/3)*Math.PI*r*r*r; SA=4*Math.PI*r*r;
+      formula = 'V = (4/3)πr³ · SA = 4πr²';
+      document.getElementById('solid-name').textContent='Sphere';
+    }
+    document.getElementById('vol').textContent = fmt(V,3);
+    document.getElementById('sa').textContent = fmt(SA,3);
+    document.getElementById('ratio').textContent = V>1e-6?fmt(SA/V,3):'—';
+    document.getElementById('formula').textContent = formula;
+
+    // cube-law preview: at each k, V scales k^3, SA scales k^2
+    function previewAt(k){return `V·${(k**3).toFixed(0)}× , SA·${(k**2).toFixed(0)}×`;}
+    document.getElementById('prev-1').textContent = `V=${fmt(V,2)}, SA=${fmt(SA,2)}`;
+    document.getElementById('prev-2').textContent = `V=${fmt(V*8,2)}, SA=${fmt(SA*4,2)}`;
+    document.getElementById('prev-3').textContent = `V=${fmt(V*27,2)}, SA=${fmt(SA*9,2)}`;
+
+    redraw();
+  }
+
+  function redraw(){
+    if(solid==='cube') drawCube();
+    else if(solid==='rect') drawRect();
+    else if(solid==='cylinder') drawCylinder();
+    else if(solid==='cone') drawCone();
+    else if(solid==='sphere') drawSphere();
+    drawNet();
+  }
+
+  // rotation drag on stage
+  (function(){
+    let dragging=false, lx=0, ly=0;
+    function start(e){
+      dragging=true; svg.classList.add('rotating');
+      const t = e.touches?e.touches[0]:e;
+      lx=t.clientX; ly=t.clientY;
+      e.preventDefault();
+    }
+    function move(e){
+      if(!dragging) return;
+      const t = e.touches?e.touches[0]:e;
+      const dx = t.clientX-lx, dy = t.clientY-ly;
+      lx=t.clientX; ly=t.clientY;
+      rotY += dx*0.012;
+      rotX += dy*0.012;
+      rotX = Math.max(-Math.PI/2, Math.min(Math.PI/2, rotX));
+      redraw();
+      e.preventDefault();
+    }
+    function end(){dragging=false; svg.classList.remove('rotating');}
+    svg.addEventListener('mousedown', start);
+    svg.addEventListener('touchstart', start, {passive:false});
+    window.addEventListener('mousemove', move);
+    window.addEventListener('touchmove', move, {passive:false});
+    window.addEventListener('mouseup', end);
+    window.addEventListener('touchend', end);
+  })();
+
+  document.querySelectorAll('.tog').forEach(b=>{
+    b.addEventListener('click', ()=>{
+      document.querySelectorAll('.tog').forEach(x=>x.classList.remove('active'));
+      b.classList.add('active');
+      solid = b.dataset.solid;
+      buildSliders();
+      compute();
+    });
+  });
+
+  document.getElementById('net-toggle').addEventListener('click', e=>{
+    showNet = !showNet;
+    e.target.classList.toggle('active', showNet);
+    e.target.textContent = showNet?'Hide net':'Show net';
+    document.getElementById('net-panel').style.display = showNet?'':'none';
+    drawNet();
+  });
+  document.getElementById('reset-rot').addEventListener('click', ()=>{
+    rotX=-0.35; rotY=0.5; redraw();
+  });
+
+  buildSliders();
+  compute();
+})();
+</script>
+</body>
+</html>

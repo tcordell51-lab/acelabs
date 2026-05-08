@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sarah Dashboard — proposal mock</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,700;1,400;1,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f5f0e8; --paper:#fffdf7; --paper-2:#f9f3e6; --paper-3:#f3ecdb;
+  --sb:#0d2018; --sb-2:#15301f;
+  --ink:#0f1814; --ink-2:#3a4a42; --ink-mute:#6e7c74; --ink-soft:#9aa39e;
+  --gold:#C9A84C; --gold-m:#E2C97A; --gold-d:#8C7235; --gold-glow:rgba(201,168,76,0.35);
+  --teal:#1B3A2D; --teal-2:#2A5240; --teal-3:#3A6B54;
+  --line:rgba(13,32,24,0.12); --line-2:rgba(13,32,24,0.06); --line-strong:rgba(13,32,24,0.22);
+  --trap:#C25B3F; --trap-bg:#fbe7df; --trap-d:#8a3d28;
+  --good:#5FA874; --good-bg:#e3efe6; --good-d:#3e7c54;
+  --info:#6A8AA8; --info-bg:#e6edf4;
+  --shadow:0 1px 3px rgba(13,32,24,0.06), 0 8px 24px rgba(13,32,24,0.04);
+  --shadow-md:0 2px 6px rgba(13,32,24,0.08), 0 16px 40px rgba(13,32,24,0.06);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:'DM Sans',system-ui,sans-serif; background:var(--bg); color:var(--ink); line-height:1.55; min-height:100vh;
+  background-image:radial-gradient(1200px 600px at 15% -10%, rgba(201,168,76,0.07), transparent 60%), radial-gradient(900px 500px at 85% 110%, rgba(27,58,45,0.06), transparent 60%);}
+.serif{font-family:'Playfair Display',serif}
+.mono{font-family:'JetBrains Mono',monospace}
+em.gold{font-style:italic; color:var(--gold-d); font-family:'Playfair Display',serif}
+
+.wrap{max-width:1080px; margin:0 auto; padding:32px 24px 96px}
+.proto-banner{background:var(--paper-3); border:1px dashed var(--line-strong); border-radius:8px; padding:10px 14px; font-size:12px; color:var(--ink-mute); margin-bottom:18px}
+.proto-banner b{color:var(--gold-d)}
+
+h1{font-family:'Playfair Display',serif; font-size:34px; line-height:1.15; margin:0 0 6px; font-weight:700; letter-spacing:-0.01em}
+h1 em{color:var(--gold-d)}
+.lede{color:var(--ink-2); font-size:15px; max-width:720px; margin:0 0 28px}
+
+/* Mode strip */
+.mode-strip{display:flex; align-items:center; gap:12px; padding:10px 14px; background:var(--sb); color:#ece4d4; border-radius:10px; margin-bottom:18px; box-shadow:var(--shadow)}
+.mode-strip .pill{font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:var(--gold-m); font-weight:600}
+.mode-strip .who{flex:1; font-family:'Playfair Display',serif; font-size:16px}
+.mode-strip .who em{color:var(--gold-m); font-style:italic}
+.mode-strip select{background:transparent; color:#ece4d4; border:1px solid rgba(236,228,212,0.25); border-radius:7px; padding:6px 10px; font-family:inherit; font-size:13px}
+
+.btn{display:inline-flex; align-items:center; gap:6px; padding:6px 12px; border-radius:8px; border:1px solid var(--line); background:var(--paper); color:var(--ink); font-size:13px; font-weight:500; cursor:pointer; transition:all 0.12s; font-family:inherit}
+.btn:hover{border-color:var(--gold); transform:translateY(-1px); box-shadow:var(--shadow)}
+.btn.gold{background:var(--gold); color:var(--sb); border-color:var(--gold)}
+.btn.gold:hover{background:var(--gold-m)}
+.btn.primary{background:var(--teal); color:#fff; border-color:var(--teal)}
+.btn.primary:hover{background:var(--teal-2)}
+.btn.ghost{background:transparent}
+.btn.sm{padding:4px 9px; font-size:12px}
+
+.card{background:var(--paper); border:1px solid var(--line); border-radius:14px; padding:22px 24px; box-shadow:var(--shadow); margin-bottom:20px}
+.card-h{display:flex; gap:12px; align-items:flex-start; margin-bottom:14px}
+.mark{width:34px; height:34px; border-radius:9px; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-family:'Playfair Display',serif; font-weight:700; font-size:16px}
+.mark.teal{background:var(--teal); color:#fff}
+.mark.gold{background:var(--gold); color:var(--sb)}
+.mark.good{background:var(--good); color:#fff}
+.mark.trap{background:var(--trap); color:#fff}
+.ttl h3{margin:0; font-family:'Playfair Display',serif; font-size:21px; line-height:1.2; font-weight:600}
+.ttl h3 em{color:var(--gold-d); font-style:italic}
+.ttl .sub{font-size:12.5px; color:var(--ink-mute); margin-top:3px}
+
+.grid-3{display:grid; grid-template-columns:repeat(3,1fr); gap:14px}
+.grid-2{display:grid; grid-template-columns:1fr 1fr; gap:18px}
+
+.weak-list{display:flex; flex-direction:column; gap:10px}
+.weak-row{display:flex; align-items:center; gap:12px; padding:12px 14px; background:var(--paper-2); border:1px solid var(--line); border-radius:10px; transition:all 0.12s}
+.weak-row:hover{border-color:var(--gold); transform:translateX(2px)}
+.weak-row .rank{font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--ink-mute); width:22px}
+.weak-row .lbl{flex:1; min-width:0}
+.weak-row .lbl .nm{font-weight:600; font-size:14px}
+.weak-row .lbl .meta{font-size:11.5px; color:var(--ink-mute); margin-top:2px; font-family:'JetBrains Mono',monospace}
+.weak-row .acc{font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--trap-d); font-weight:600}
+.weak-row .jump{padding:4px 10px; border-radius:7px; background:var(--gold); color:var(--sb); border:none; font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.06em; cursor:pointer; font-family:inherit}
+.weak-row .jump:hover{background:var(--gold-m)}
+
+.last-stamp{font-size:12px; color:var(--ink-mute); margin-top:10px; padding-top:10px; border-top:1px solid var(--line-2)}
+.last-stamp b{color:var(--ink-2)}
+
+/* Note thread */
+.thread{display:flex; flex-direction:column; gap:8px; max-height:280px; overflow-y:auto; padding:4px}
+.note{padding:10px 12px; border-radius:9px; font-size:13px; line-height:1.5}
+.note.from-sarah{background:var(--gold-glow); border-left:3px solid var(--gold)}
+.note.from-tommy{background:var(--info-bg); border-left:3px solid var(--info)}
+.note .who-when{font-size:10.5px; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink-mute); margin-bottom:4px; font-weight:600}
+.note .who-when b{color:var(--gold-d)}
+
+.compose{margin-top:10px; display:flex; gap:8px}
+.compose textarea{flex:1; padding:10px 12px; font-family:inherit; font-size:13px; border:1px solid var(--line); border-radius:9px; resize:vertical; min-height:60px; background:var(--paper); color:var(--ink)}
+.compose textarea:focus{outline:none; border-color:var(--gold)}
+
+.empty{padding:18px; text-align:center; color:var(--ink-mute); font-size:13px; font-style:italic}
+
+@media (max-width: 760px){
+  .grid-3{grid-template-columns:1fr}
+  .grid-2{grid-template-columns:1fr}
+  .wrap{padding:18px 14px 60px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="proto-banner"><b>Mock · Agent 10 proposal.</b> Standalone — does not modify the master HTML. Renders against fake data plus whatever <code>qr-rem-v2:attempts</code> is already in your local storage.</div>
+
+  <h1>Sarah's <em>dashboard</em></h1>
+  <p class="lede">When Sarah toggles Sarah-mode, the dashboard switches from "active student on this device" to a roster picker. After picking a student she sees three weakest skills, last attempt timestamp, and her own note thread for that student. Built additively — student data still keys off the existing <code>attempts</code> + <code>mastery</code> stores.</p>
+
+  <!-- Mode strip -->
+  <div class="mode-strip">
+    <span class="pill">Sarah-mode</span>
+    <span class="who">Viewing: <em id="curName">Marcus L.</em> <span style="opacity:0.5; font-size:12px; font-family:'DM Sans'">(test date Jul 12)</span></span>
+    <select id="studentPicker">
+      <option value="m">Marcus L. — test Jul 12</option>
+      <option value="j">Jaya R. — test Aug 3</option>
+      <option value="d">Devin S. — test Sep 14</option>
+    </select>
+    <button class="btn sm">Exit Sarah-mode</button>
+  </div>
+
+  <div class="grid-2">
+    <!-- Weakest 3 -->
+    <div class="card">
+      <div class="card-h">
+        <div class="mark trap">W</div>
+        <div class="ttl"><h3>Weakest <em>three</em></h3><div class="sub">Lowest accuracy among unlocked skills with at least 4 attempts in the last 14 days.</div></div>
+      </div>
+      <div class="weak-list" id="weakList"></div>
+      <div class="last-stamp">Last attempt overall: <b id="lastOverall">—</b></div>
+    </div>
+
+    <!-- Note thread -->
+    <div class="card">
+      <div class="card-h">
+        <div class="mark gold">N</div>
+        <div class="ttl"><h3>Notes on <em><span id="threadName">Marcus</span></em></h3><div class="sub">Private to Sarah and Tommy. Student does not see this thread.</div></div>
+      </div>
+      <div class="thread" id="thread"></div>
+      <div class="compose">
+        <textarea id="noteText" placeholder="Note about Marcus — e.g. 'froze on rate-time word problems again, anxiety more than content'"></textarea>
+      </div>
+      <div style="display:flex; gap:8px; margin-top:8px; justify-content:flex-end">
+        <button class="btn ghost sm" id="exportThread">Export thread</button>
+        <button class="btn primary sm" id="addNote">Add note</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick-jump strip — drop into any module the student is weakest in -->
+  <div class="card">
+    <div class="card-h">
+      <div class="mark teal">J</div>
+      <div class="ttl"><h3>Drop into <em>their</em> module</h3><div class="sub">One click — opens the module with Sarah-mode bar already pinned. Use this in a live session to teach the exact thing they're stuck on.</div></div>
+    </div>
+    <div class="grid-3" id="quickJumps"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-h">
+      <div class="mark teal">S</div>
+      <div class="ttl"><h3>Spec</h3><div class="sub">How this slots into the master HTML.</div></div>
+    </div>
+    <ul style="font-size:13.5px; line-height:1.7; padding-left:20px; margin:0">
+      <li>New storage key <code>students_v1</code>: <code>{[id]: {name, testDate, attempts, mastery, stuck, threadKey}}</code>. Existing <code>attempts</code> / <code>mastery</code> keys become the "active student" view; multi-student wraps them.</li>
+      <li>New storage key <code>tutorThreads_v1</code>: <code>{[studentId]: [{t, who:'sarah'|'tommy', text}]}</code>. Note thread is per-student, never per-skill (that's feature 2).</li>
+      <li><code>SARAH.toggle()</code> already exists — extend it to also call <code>renderSarahDash()</code> with a Sarah-mode view that surfaces the picker. Today's dashboard still works for non-Sarah-mode visitors.</li>
+      <li>Weakest-3 selector: <code>SKILLS.filter(unlocked).map(s =&gt; ({s, recent: attempts.filter(...)})).filter(r =&gt; r.recent.length &gt;= 4).sort((a,b) =&gt; acc(a) - acc(b)).slice(0,3)</code>.</li>
+      <li>"Drop into module" button = existing <code>goSec(skillId)</code>; Sarah-mode bar already follows.</li>
+    </ul>
+  </div>
+</div>
+
+<script>
+/* Fake students for the mock — in the real integration these come from students_v1 */
+const STUDENTS = {
+  m: {name:'Marcus L.', testDate:'Jul 12', weakest:[
+    {id:'pct-chg', name:'Percent change', acc:0.42, n:14, last:Date.now()-2*86400000, note:'gets sign of change wrong'},
+    {id:'rate-time', name:'Rate × time', acc:0.50, n:8, last:Date.now()-5*86400000, note:'forgets to convert min↔hr'},
+    {id:'word-decode', name:'Word-problem decode', acc:0.55, n:11, last:Date.now()-86400000, note:'panics on long stems'},
+  ], thread:[
+    {who:'sarah', t:Date.now()-7*86400000, text:'Anxiety spikes on rate problems — try untimed only this week.'},
+    {who:'tommy', t:Date.now()-5*86400000, text:'Agreed. Push pacing module to next week.'},
+    {who:'sarah', t:Date.now()-86400000, text:'Stuck button hit 3x today on rate-time. Plan: open with breath, then walk Q1 together.'},
+  ]},
+  j: {name:'Jaya R.', testDate:'Aug 3', weakest:[
+    {id:'logs', name:'Logarithms', acc:0.33, n:6, last:Date.now()-86400000, note:'never saw log rules'},
+    {id:'zscore', name:'Z-score', acc:0.45, n:10, last:Date.now()-3*86400000, note:'mixes σ and σ²'},
+    {id:'tri-inv', name:'Triangle inverse', acc:0.55, n:7, last:Date.now()-4*86400000, note:'30-60-90 vs 45-45-90'},
+  ], thread:[
+    {who:'sarah', t:Date.now()-3*86400000, text:'Need to reteach log rules from scratch. She was never taught them in school.'},
+  ]},
+  d: {name:'Devin S.', testDate:'Sep 14', weakest:[
+    {id:'frac-add', name:'Fraction add/subtract', acc:0.60, n:12, last:Date.now()-86400000, note:'common-denominator step'},
+    {id:'estim', name:'Estimation', acc:0.62, n:9, last:Date.now()-2*86400000, note:'rounds too aggressively'},
+    {id:'mental', name:'Mental math', acc:0.65, n:15, last:Date.now()-86400000, note:''},
+  ], thread:[]},
+};
+
+const STORE_KEY = 'qr-rem-v2:tutorThreads_v1';
+function loadThreads(){ try{ return JSON.parse(localStorage.getItem(STORE_KEY)) || {}; }catch(e){ return {}; } }
+function saveThreads(t){ try{ localStorage.setItem(STORE_KEY, JSON.stringify(t)); }catch(e){} }
+
+let curId = 'm';
+
+function renderAll(){
+  const s = STUDENTS[curId];
+  document.getElementById('curName').textContent = s.name;
+  document.getElementById('threadName').textContent = s.name.split(' ')[0];
+
+  // Weakest 3
+  const wl = document.getElementById('weakList');
+  wl.innerHTML = s.weakest.map((w,i) => {
+    const days = Math.max(1, Math.round((Date.now() - w.last) / 86400000));
+    return `<div class="weak-row">
+      <span class="rank">${String(i+1).padStart(2,'0')}</span>
+      <div class="lbl">
+        <div class="nm">${w.name}</div>
+        <div class="meta">${Math.round(w.acc*100)}% on ${w.n} attempts · ${w.note ? 'note: '+w.note : 'no note yet'}</div>
+      </div>
+      <span class="acc">${days}d ago</span>
+      <button class="jump" data-id="${w.id}">drop in</button>
+    </div>`;
+  }).join('');
+  // Last overall
+  const last = Math.max(...s.weakest.map(w => w.last));
+  const days = Math.round((Date.now() - last) / 86400000);
+  document.getElementById('lastOverall').textContent = days <= 0 ? 'today' : `${days} day${days===1?'':'s'} ago`;
+
+  // Thread (merge fake + persisted user-added)
+  const persisted = loadThreads()[curId] || [];
+  const all = [...s.thread, ...persisted].sort((a,b) => a.t - b.t);
+  const th = document.getElementById('thread');
+  if (all.length === 0){
+    th.innerHTML = '<div class="empty">No notes yet. Add the first one — Sarah will see it next time she opens this student.</div>';
+  } else {
+    th.innerHTML = all.map(n => {
+      const when = new Date(n.t).toLocaleString('en-US',{month:'short', day:'numeric', hour:'numeric', minute:'2-digit'});
+      const who = n.who === 'sarah' ? 'Sarah' : 'Tommy';
+      return `<div class="note from-${n.who}"><div class="who-when"><b>${who}</b> · ${when}</div>${n.text.replace(/</g,'&lt;')}</div>`;
+    }).join('');
+    th.scrollTop = th.scrollHeight;
+  }
+
+  // Quick jumps — show all 3 weak skills + a fourth "next-not-started" placeholder
+  const qj = document.getElementById('quickJumps');
+  qj.innerHTML = s.weakest.map(w => `
+    <button class="btn" style="justify-content:flex-start; padding:14px 16px; flex-direction:column; align-items:flex-start; gap:4px; height:auto" data-id="${w.id}">
+      <span style="font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink-mute); font-weight:600">module</span>
+      <span style="font-family:'Playfair Display',serif; font-size:16px">${w.name}</span>
+      <span style="font-size:11px; color:var(--trap-d); font-family:'JetBrains Mono',monospace">${Math.round(w.acc*100)}% acc · ${w.n} attempts</span>
+    </button>
+  `).join('');
+}
+
+document.getElementById('studentPicker').addEventListener('change', e => { curId = e.target.value; renderAll(); });
+
+document.getElementById('addNote').addEventListener('click', () => {
+  const ta = document.getElementById('noteText');
+  const txt = ta.value.trim();
+  if (!txt) return;
+  const all = loadThreads();
+  if (!all[curId]) all[curId] = [];
+  all[curId].push({t:Date.now(), who:'sarah', text:txt});
+  saveThreads(all);
+  ta.value = '';
+  renderAll();
+});
+
+document.getElementById('exportThread').addEventListener('click', () => {
+  const s = STUDENTS[curId];
+  const persisted = loadThreads()[curId] || [];
+  const all = [...s.thread, ...persisted].sort((a,b) => a.t - b.t);
+  const lines = [`# Notes — ${s.name}`, '', `Exported ${new Date().toLocaleString()}`, ''];
+  all.forEach(n => {
+    lines.push(`## ${n.who === 'sarah' ? 'Sarah' : 'Tommy'} · ${new Date(n.t).toLocaleString()}`);
+    lines.push(n.text);
+    lines.push('');
+  });
+  const md = lines.join('\n');
+  const dl = document.createElement('a');
+  dl.href = 'data:text/markdown;charset=utf-8,' + encodeURIComponent(md);
+  dl.download = `notes-${curId}-${new Date().toISOString().slice(0,10)}.md`;
+  dl.click();
+});
+
+renderAll();
+</script>
+</body>
+</html>

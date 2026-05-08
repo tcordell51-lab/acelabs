@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mixture Decoder · AceTheDAT QR</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js"></script>
+<style>
+:root{--bg:#f5f0e8;--paper:#fffdf7;--paper-2:#f9f3e6;--paper-3:#f3ecdb;--sb:#0d2018;--ink:#0f1814;--ink-2:#3a4a42;--ink-mute:#6e7c74;--gold:#C9A84C;--gold-m:#E2C97A;--gold-d:#8C7235;--gold-glow:rgba(201,168,76,0.35);--teal:#1B3A2D;--teal-2:#2A5240;--line:rgba(13,32,24,0.12);--line-strong:rgba(13,32,24,0.22);--trap:#C25B3F;--trap-bg:#fbe7df;--trap-d:#8a3d28;--good:#5FA874;--good-bg:#e3efe6;--good-d:#3e7c54;--info:#6A8AA8;--shadow:0 1px 3px rgba(13,32,24,0.06), 0 8px 24px rgba(13,32,24,0.04);}
+*{box-sizing:border-box} html,body{margin:0;padding:0}
+body{font-family:'DM Sans',system-ui,sans-serif; background:var(--bg); color:var(--ink); line-height:1.6; min-height:100vh; background-image:radial-gradient(1200px 600px at 15% -10%, rgba(201,168,76,0.07), transparent 60%), radial-gradient(900px 500px at 85% 110%, rgba(27,58,45,0.06), transparent 60%);}
+.wrap{max-width:880px; margin:0 auto; padding:32px 22px 120px}
+.head{margin-bottom:22px}
+.head .badge{display:inline-flex; align-items:center; gap:8px; padding:5px 12px; background:rgba(201,168,76,0.18); border:1px solid rgba(201,168,76,0.4); border-radius:20px; font-size:11px; letter-spacing:0.16em; color:var(--gold-d); font-weight:700; text-transform:uppercase; margin-bottom:14px}
+.head .badge .pulse{width:8px; height:8px; border-radius:50%; background:var(--gold); box-shadow:0 0 0 0 var(--gold-glow); animation:pulse 1.8s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 var(--gold-glow)} 70%{box-shadow:0 0 0 8px rgba(201,168,76,0)} 100%{box-shadow:0 0 0 0 rgba(201,168,76,0)}}
+.head h1{font-family:'Playfair Display',serif; font-size:42px; font-weight:700; line-height:1.05; margin:0 0 10px; letter-spacing:-0.02em}
+.head h1 em{font-style:italic; color:var(--gold-d); font-weight:400}
+.head .lede{font-size:16px; color:var(--ink-2); max-width:640px; line-height:1.55; margin:0}
+
+.qbar{display:flex; gap:6px; margin:18px 0 14px; flex-wrap:wrap; align-items:center}
+.qbar .lbl{font-size:10px; letter-spacing:0.18em; text-transform:uppercase; color:var(--ink-mute); font-weight:600; margin-right:6px}
+.qchip{width:34px; height:34px; border-radius:8px; border:1px solid var(--line); background:var(--paper); display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono',monospace; font-size:13px; font-weight:700; color:var(--ink-mute); cursor:pointer; transition:all 0.15s}
+.qchip:hover{border-color:var(--gold); transform:translateY(-1px)}
+.qchip.active{background:var(--gold); border-color:var(--gold-d); color:var(--sb); box-shadow:var(--shadow)}
+.qchip.done{background:var(--good-bg); border-color:var(--good); color:var(--good-d)}
+.qchip.done.active{background:var(--gold); color:var(--sb); border-color:var(--gold-d)}
+
+.steps{display:flex; gap:6px; margin:14px 0 18px; flex-wrap:wrap}
+.step-pill{flex:1; min-width:140px; padding:10px 12px; border-radius:9px; background:var(--paper-2); border:1px solid var(--line); font-size:12px; transition:all 0.15s; display:flex; gap:9px; align-items:center}
+.step-pill.active{background:var(--gold); color:var(--sb); border-color:var(--gold-d); font-weight:600}
+.step-pill.done{background:var(--good-bg); border-color:var(--good); color:var(--good-d)}
+.step-pill .num{width:20px; height:20px; border-radius:50%; background:var(--sb); color:#fff; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:700; font-family:'JetBrains Mono',monospace; flex-shrink:0}
+.step-pill.active .num{background:var(--sb); color:var(--gold-m)}
+.step-pill.done .num{background:var(--good); color:#fff}
+.step-pill .lbl{flex:1; line-height:1.2}
+.step-pill .lbl .ttl{font-weight:600; display:block}
+.step-pill .lbl .sub{font-size:10.5px; opacity:0.85}
+
+.card{background:var(--paper); border:1px solid var(--line); border-radius:14px; padding:22px 24px; box-shadow:var(--shadow); margin-bottom:14px}
+.card-h{display:flex; gap:12px; align-items:flex-start; margin-bottom:14px; padding-bottom:10px; border-bottom:1px dashed var(--line)}
+.card-h .mark{width:34px; height:34px; flex-shrink:0; border-radius:9px; background:linear-gradient(135deg,var(--gold) 0%, var(--gold-d) 100%); display:flex; align-items:center; justify-content:center; color:#fff; font-family:'JetBrains Mono',monospace; font-size:13px; font-weight:700}
+.card-h h3{font-family:'Playfair Display',serif; font-size:20px; font-weight:700; line-height:1.15; margin:0 0 2px}
+.card-h h3 em{font-style:italic; color:var(--gold-d); font-weight:400}
+.card-h .sub{font-size:12px; color:var(--ink-mute)}
+.card-h .ttl{flex:1}
+
+.problem{font-size:18px; line-height:1.7; padding:18px 20px; background:var(--paper-2); border:1px solid var(--line); border-left:4px solid var(--gold); border-radius:10px; color:var(--ink); font-family:'Playfair Display', serif}
+.problem .ask{display:block; margin-top:10px; font-size:14.5px; color:var(--ink-2); font-family:'DM Sans', sans-serif; font-style:italic}
+.token{display:inline-block; padding:1px 4px; border-radius:5px; cursor:pointer; transition:all 0.18s; border:1.5px solid transparent}
+.token.selectable:hover{background:rgba(201,168,76,0.18); border-color:var(--gold)}
+.token.picked{background:var(--gold); color:var(--sb); border-color:var(--gold-d); font-weight:600; font-family:'JetBrains Mono',monospace}
+.token.picked.correct{background:var(--good); color:#fff; border-color:var(--good-d)}
+.token.picked.wrong{background:var(--trap); color:#fff; border-color:var(--trap-d)}
+
+.var-tray{display:flex; gap:8px; flex-wrap:wrap; margin-top:12px; padding:12px 14px; background:var(--paper-3); border:1px dashed var(--line-strong); border-radius:9px; min-height:50px; align-items:center}
+.var-tray .ph{font-size:12px; color:var(--ink-mute)}
+.var-pill{display:inline-flex; align-items:center; gap:6px; padding:5px 10px; background:var(--gold); color:var(--sb); font-family:'JetBrains Mono',monospace; font-size:13px; font-weight:700; border-radius:7px; border:1px solid var(--gold-d); cursor:grab}
+.var-pill.dragging{opacity:0.5}
+.var-pill .x{font-size:11px; opacity:0.6; cursor:pointer; padding:0 3px}
+.var-pill .x:hover{opacity:1}
+
+.skeleton{font-family:'JetBrains Mono',monospace; font-size:18px; line-height:1.7; text-align:center; padding:22px 18px; background:var(--paper-2); border:1px solid var(--line); border-radius:10px; color:var(--ink)}
+.slot{display:inline-flex; align-items:center; justify-content:center; min-width:62px; min-height:32px; padding:3px 8px; border:2px dashed var(--gold); border-radius:7px; background:var(--paper); margin:0 2px; vertical-align:middle; font-weight:700; transition:all 0.2s}
+.slot.over{background:var(--gold-glow); border-style:solid; transform:scale(1.05)}
+.slot.filled{background:var(--gold); color:var(--sb); border-style:solid}
+.slot.filled.correct{background:var(--good); color:#fff; border-color:var(--good-d)}
+.slot.filled.wrong{background:var(--trap); color:#fff; border-color:var(--trap-d)}
+.slot .label{font-size:9px; letter-spacing:0.1em; text-transform:uppercase; opacity:0.8; font-family:'DM Sans', sans-serif; font-weight:600}
+
+.mix-table{width:100%; border-collapse:collapse; margin:10px 0 4px; font-family:'JetBrains Mono', monospace; font-size:13.5px}
+.mix-table th, .mix-table td{padding:9px 10px; border:1px solid var(--line); text-align:center; background:var(--paper)}
+.mix-table th{background:var(--paper-3); font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--ink-mute); font-weight:700; font-family:'DM Sans', sans-serif}
+.mix-table td.row-lbl{background:var(--paper-3); font-weight:700; text-align:left}
+
+.solve-row{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:12px}
+@media (max-width:680px){.solve-row{grid-template-columns:1fr}}
+.field{display:flex; flex-direction:column; gap:5px; padding:11px 13px; background:var(--paper-2); border:1px solid var(--line); border-radius:9px}
+.field .lbl{font-size:10.5px; letter-spacing:0.14em; text-transform:uppercase; color:var(--ink-mute); font-weight:700}
+.field input{background:var(--paper); border:1.5px solid var(--line); border-radius:7px; padding:9px 12px; font-family:'JetBrains Mono',monospace; font-size:15px; color:var(--ink); outline:none}
+.field input:focus{border-color:var(--gold); box-shadow:0 0 0 3px rgba(201,168,76,0.18)}
+.field input.correct{border-color:var(--good); background:var(--good-bg); color:var(--good-d)}
+.field input.wrong{border-color:var(--trap); background:var(--trap-bg); color:var(--trap-d)}
+.field .units{font-size:11px; color:var(--ink-mute); font-style:italic}
+
+.feedback{margin-top:14px; padding:13px 16px; border-radius:9px; font-size:13.5px; line-height:1.55; display:none; border:1px solid var(--line); background:var(--paper-2)}
+.feedback.show{display:block}
+.feedback.good{border-color:var(--good); background:var(--good-bg); color:var(--good-d)}
+.feedback.bad{border-color:var(--trap); background:var(--trap-bg); color:var(--trap-d)}
+.feedback .lbl{font-size:10px; letter-spacing:0.18em; font-weight:700; text-transform:uppercase; display:block; margin-bottom:6px; opacity:0.78}
+
+.sanity{margin-top:14px; padding:13px 16px; background:rgba(106,138,168,0.10); border-left:3px solid var(--info); border-radius:0 9px 9px 0; font-size:13.5px; color:var(--ink-2); line-height:1.55; display:none}
+.sanity.show{display:block}
+.sanity .lbl{font-size:10px; letter-spacing:0.16em; font-weight:700; text-transform:uppercase; color:var(--info); display:block; margin-bottom:5px}
+
+.btnrow{display:flex; gap:8px; margin-top:14px; align-items:center; flex-wrap:wrap}
+.btn{display:inline-flex; align-items:center; gap:6px; padding:8px 16px; border-radius:8px; border:1px solid var(--line); background:var(--paper); color:var(--ink); font-size:13.5px; font-weight:600; cursor:pointer; transition:all 0.15s; font-family:inherit}
+.btn:hover{border-color:var(--gold); transform:translateY(-1px); box-shadow:var(--shadow)}
+.btn.primary{background:var(--teal); color:#fff; border-color:var(--teal)}
+.btn.gold{background:var(--gold); color:var(--sb); border-color:var(--gold)}
+.btn.gold:hover{background:var(--gold-m)}
+.btn.ghost{background:transparent}
+.btn:disabled{opacity:0.45; cursor:not-allowed; transform:none}
+.btnrow .spacer{flex:1}
+.score{display:inline-flex; align-items:center; gap:8px; padding:8px 14px; background:var(--paper-3); border:1px solid var(--line); border-radius:9px; font-size:12px; font-weight:600; color:var(--ink-2)}
+.score b{color:var(--gold-d); font-family:'JetBrains Mono', monospace; font-size:14px}
+
+.celebration{text-align:center; padding:30px 18px; background:linear-gradient(135deg, var(--good-bg) 0%, rgba(201,168,76,0.18) 100%); border:1px solid var(--good); border-radius:14px; margin-top:14px; display:none}
+.celebration.show{display:block}
+.celebration h2{font-family:'Playfair Display', serif; font-size:28px; margin:0 0 6px; color:var(--good-d)}
+.celebration h2 em{font-style:italic; color:var(--gold-d); font-weight:400}
+.celebration p{margin:0; color:var(--ink-2); font-size:14px}
+</style>
+</head>
+<body>
+
+<div class="wrap" id="app">
+  <div class="head">
+    <span class="badge"><span class="pulse"></span>Mixture Decoder</span>
+    <h1>Concentration <em>times</em> volume.</h1>
+    <p class="lede">Mixture problems hide an additive law: <b>solute in = solute out</b>. The skeleton is <b>C₁·V₁ + C₂·V₂ = C_f·V_f</b>. Three steps, five problems. The wording always names two of the three things and asks for one.</p>
+  </div>
+
+  <div class="qbar" id="qbar"><span class="lbl">Problem</span></div>
+  <div class="steps" id="steps">
+    <div class="step-pill active" data-step="1"><span class="num">1</span><span class="lbl"><span class="ttl">Highlight</span><span class="sub">find C and V</span></span></div>
+    <div class="step-pill" data-step="2"><span class="num">2</span><span class="lbl"><span class="ttl">Build skeleton</span><span class="sub">C·V = C·V</span></span></div>
+    <div class="step-pill" data-step="3"><span class="num">3</span><span class="lbl"><span class="ttl">Solve &amp; verify</span><span class="sub">conserve solute</span></span></div>
+  </div>
+
+  <div class="card" id="step1-card">
+    <div class="card-h"><div class="mark">01</div><div class="ttl"><h3>Highlight each <em>concentration &amp; volume</em></h3><div class="sub">Tap the percent strengths and the amounts of solution.</div></div></div>
+    <div class="problem" id="problem-text"></div>
+    <div class="var-tray" id="var-tray"><span class="ph">Picked variables will appear here.</span></div>
+    <div class="feedback" id="step1-feedback"></div>
+    <div class="btnrow">
+      <button class="btn ghost" id="step1-clear">Clear picks</button>
+      <div class="spacer"></div>
+      <button class="btn primary" id="step1-check">Check picks</button>
+      <button class="btn gold" id="step1-next" disabled>Next: build skeleton</button>
+    </div>
+  </div>
+
+  <div class="card" id="step2-card" style="display:none">
+    <div class="card-h"><div class="mark">02</div><div class="ttl"><h3>Drop into the <em>conservation skeleton</em></h3><div class="sub">Solute on the left equals solute on the right.</div></div></div>
+    <div class="skeleton" id="skeleton"></div>
+    <div class="var-tray" id="var-tray-2"></div>
+    <div class="feedback" id="step2-feedback"></div>
+    <div class="btnrow">
+      <button class="btn ghost" id="step2-back">Back</button>
+      <button class="btn ghost" id="step2-reset">Reset slots</button>
+      <div class="spacer"></div>
+      <button class="btn primary" id="step2-check">Check skeleton</button>
+      <button class="btn gold" id="step2-next" disabled>Next: solve</button>
+    </div>
+  </div>
+
+  <div class="card" id="step3-card" style="display:none">
+    <div class="card-h"><div class="mark">03</div><div class="ttl"><h3>Solve &amp; <em>sanity-check</em></h3><div class="sub">Final concentration must lie between the two source concentrations (unless one is pure water = 0%).</div></div></div>
+    <div class="skeleton" id="skeleton-filled"></div>
+    <div class="solve-row">
+      <div class="field"><span class="lbl">Your answer</span><input type="text" id="answer-input" placeholder="number"><span class="units" id="units-hint"></span></div>
+      <div class="field"><span class="lbl">Sanity check</span><input type="text" id="sanity-input" placeholder="lies between sources?"><span class="units">one short sentence</span></div>
+    </div>
+    <div class="feedback" id="step3-feedback"></div>
+    <div class="sanity" id="step3-sanity"></div>
+    <div class="btnrow">
+      <button class="btn ghost" id="step3-back">Back</button>
+      <div class="spacer"></div>
+      <span class="score">Decoder: <b id="score">0/5</b></span>
+      <button class="btn primary" id="step3-check">Check answer</button>
+      <button class="btn gold" id="step3-next" disabled>Next problem</button>
+    </div>
+  </div>
+
+  <div class="celebration" id="celeb"><h2>Mixtures <em>locked.</em></h2><p>Five problems decoded. Solute conservation is now reflex.</p></div>
+</div>
+
+<script>
+/* Skeleton: C1·V1 + C2·V2 = Cf·Vf */
+const PROBLEMS = [
+  {
+    id:'mx-1',
+    text:'Mix 40 oz of 25% acid with 60 oz of 75% acid.',
+    ask:'Find the final concentration Cf (%).',
+    tokens:[
+      {t:'Mix '},
+      {t:'40 oz', v:'V1=40', kind:'vol'},
+      {t:' of '},
+      {t:'25%', v:'C1=.25', kind:'conc'},
+      {t:' acid with '},
+      {t:'60 oz', v:'V2=60', kind:'vol'},
+      {t:' of '},
+      {t:'75%', v:'C2=.75', kind:'conc'},
+      {t:' acid.'}
+    ],
+    expect:['V1=40','C1=.25','V2=60','C2=.75'],
+    skeletonHtml:'<span class="slot" data-slot="C1"><span class="label">C1</span></span> · <span class="slot" data-slot="V1"><span class="label">V1</span></span> &nbsp;+&nbsp; <span class="slot" data-slot="C2"><span class="label">C2</span></span> · <span class="slot" data-slot="V2"><span class="label">V2</span></span> &nbsp;=&nbsp; <span class="slot" data-slot="Cf"><span class="label">Cf</span></span> · <span class="slot" data-slot="Vf"><span class="label">Vf=100</span></span>',
+    slots:{C1:'C1=.25', V1:'V1=40', C2:'C2=.75', V2:'V2=60', Cf:'Cf', Vf:'__100'},
+    fixedSlots:{Vf:'100', Cf:'Cf'},
+    skelDisplay:'(.25)(40) + (.75)(60) = Cf · 100',
+    answer:55, tol:0.5,
+    sanity:'Solute: 10 + 45 = 55 oz in 100 oz total. 55%. Lies between 25% and 75%, weighted toward 75% because more 75% solution was used.',
+    answerHint:'percent (e.g. 55)'
+  },
+  {
+    id:'mx-2',
+    text:'Add pure water to 50 oz of 30% saline to dilute it to 20% saline.',
+    ask:'How many oz of water to add (Vw)?',
+    tokens:[
+      {t:'Add pure water to '},
+      {t:'50 oz', v:'V1=50', kind:'vol'},
+      {t:' of '},
+      {t:'30%', v:'C1=.30', kind:'conc'},
+      {t:' saline to dilute it to '},
+      {t:'20%', v:'Cf=.20', kind:'conc'},
+      {t:' saline.'},
+      {t:' '},
+      {t:'Vw', v:'Vw', kind:'unknown'}
+    ],
+    expect:['V1=50','C1=.30','Cf=.20','Vw'],
+    skeletonHtml:'<span class="slot" data-slot="C1"><span class="label">C1</span></span> · <span class="slot" data-slot="V1"><span class="label">V1</span></span> &nbsp;+&nbsp; <span class="slot" data-slot="C2"><span class="label">water</span></span> · <span class="slot" data-slot="V2"><span class="label">Vw</span></span> &nbsp;=&nbsp; <span class="slot" data-slot="Cf"><span class="label">Cf</span></span> · ( <span class="slot" data-slot="V1b"><span class="label">V1</span></span> + <span class="slot" data-slot="V2b"><span class="label">Vw</span></span> )',
+    slots:{C1:'C1=.30', V1:'V1=50', C2:'__0', V2:'Vw', Cf:'Cf=.20', V1b:'V1=50', V2b:'Vw'},
+    fixedSlots:{C2:'0'},
+    skelDisplay:'(.30)(50) + 0·Vw = (.20)(50 + Vw)',
+    answer:25, tol:0.5,
+    sanity:'15 = 0.20(50+Vw) → 75 = 50+Vw → Vw = 25 oz. Adding water spreads 15 oz of salt over 75 oz, giving 20%.',
+    answerHint:'oz of water'
+  },
+  {
+    id:'mx-3',
+    text:'How much 80% alcohol must be added to 30 mL of 20% alcohol to make 50% alcohol?',
+    ask:'Find V2 (mL of 80% to add).',
+    tokens:[
+      {t:'How much '},
+      {t:'80%', v:'C2=.80', kind:'conc'},
+      {t:' alcohol must be added to '},
+      {t:'30 mL', v:'V1=30', kind:'vol'},
+      {t:' of '},
+      {t:'20%', v:'C1=.20', kind:'conc'},
+      {t:' alcohol to make '},
+      {t:'50%', v:'Cf=.50', kind:'conc'},
+      {t:' alcohol?'},
+      {t:' '},
+      {t:'V2', v:'V2', kind:'unknown'}
+    ],
+    expect:['C2=.80','V1=30','C1=.20','Cf=.50','V2'],
+    skeletonHtml:'<span class="slot" data-slot="C1"><span class="label">C1</span></span> · <span class="slot" data-slot="V1"><span class="label">V1</span></span> &nbsp;+&nbsp; <span class="slot" data-slot="C2"><span class="label">C2</span></span> · <span class="slot" data-slot="V2"><span class="label">V2</span></span> &nbsp;=&nbsp; <span class="slot" data-slot="Cf"><span class="label">Cf</span></span> · ( <span class="slot" data-slot="V1b"><span class="label">V1</span></span> + <span class="slot" data-slot="V2b"><span class="label">V2</span></span> )',
+    slots:{C1:'C1=.20', V1:'V1=30', C2:'C2=.80', V2:'V2', Cf:'Cf=.50', V1b:'V1=30', V2b:'V2'},
+    fixedSlots:{},
+    skelDisplay:'(.20)(30) + (.80)(V2) = (.50)(30 + V2)',
+    answer:30, tol:0.5,
+    sanity:'6 + .8V2 = 15 + .5V2 → .3V2 = 9 → V2 = 30 mL. Final mix: 60 mL at 50%.',
+    answerHint:'mL'
+  },
+  {
+    id:'mx-4',
+    text:'A 12 L tank of 10% bleach has 4 L drained and replaced with pure water.',
+    ask:'Find the new concentration Cf (%).',
+    tokens:[
+      {t:'A '},
+      {t:'12 L', v:'V=12', kind:'vol'},
+      {t:' tank of '},
+      {t:'10%', v:'C=.10', kind:'conc'},
+      {t:' bleach has '},
+      {t:'4 L', v:'Vd=4', kind:'vol'},
+      {t:' drained and replaced with pure water.'},
+      {t:' '},
+      {t:'Cf', v:'Cf', kind:'unknown'}
+    ],
+    expect:['V=12','C=.10','Vd=4','Cf'],
+    skeletonHtml:'<span class="slot" data-slot="C"><span class="label">C</span></span> · ( <span class="slot" data-slot="V"><span class="label">V</span></span> − <span class="slot" data-slot="Vd"><span class="label">drained</span></span> ) &nbsp;=&nbsp; <span class="slot" data-slot="Cf"><span class="label">Cf</span></span> · <span class="slot" data-slot="Vf"><span class="label">V (refilled)</span></span>',
+    slots:{C:'C=.10', V:'V=12', Vd:'Vd=4', Cf:'Cf', Vf:'V=12'},
+    fixedSlots:{},
+    skelDisplay:'(.10)(12 − 4) = Cf · 12',
+    answer:6.67, tol:0.2,
+    sanity:'.10·8 = .8 L bleach left. 0.8/12 = 6.67%. Diluted from 10% — checks.',
+    answerHint:'percent'
+  },
+  {
+    id:'mx-5',
+    text:'How many liters of 60% antifreeze and how many of 20% antifreeze make 10 L of 45% antifreeze? (Find the 60% volume.)',
+    ask:'Find V1 (liters of 60% solution).',
+    tokens:[
+      {t:'How many liters of '},
+      {t:'60%', v:'C1=.60', kind:'conc'},
+      {t:' antifreeze and how many of '},
+      {t:'20%', v:'C2=.20', kind:'conc'},
+      {t:' antifreeze make '},
+      {t:'10 L', v:'Vf=10', kind:'vol'},
+      {t:' of '},
+      {t:'45%', v:'Cf=.45', kind:'conc'},
+      {t:' antifreeze?'},
+      {t:' '},
+      {t:'V1', v:'V1', kind:'unknown'}
+    ],
+    expect:['C1=.60','C2=.20','Vf=10','Cf=.45','V1'],
+    skeletonHtml:'<span class="slot" data-slot="C1"><span class="label">C1</span></span> · <span class="slot" data-slot="V1"><span class="label">V1</span></span> &nbsp;+&nbsp; <span class="slot" data-slot="C2"><span class="label">C2</span></span> · ( <span class="slot" data-slot="Vf"><span class="label">Vf</span></span> − <span class="slot" data-slot="V1b"><span class="label">V1</span></span> ) &nbsp;=&nbsp; <span class="slot" data-slot="Cf"><span class="label">Cf</span></span> · <span class="slot" data-slot="Vf2"><span class="label">Vf</span></span>',
+    slots:{C1:'C1=.60', V1:'V1', C2:'C2=.20', Vf:'Vf=10', V1b:'V1', Cf:'Cf=.45', Vf2:'Vf=10'},
+    fixedSlots:{},
+    skelDisplay:'(.60)(V1) + (.20)(10 − V1) = (.45)(10)',
+    answer:6.25, tol:0.1,
+    sanity:'.6V1 + 2 − .2V1 = 4.5 → .4V1 = 2.5 → V1 = 6.25 L. Other solution: 3.75 L. 6.25 of 60% pulls the mix toward 60% — final 45% sits between, weighted right.',
+    answerHint:'liters'
+  }
+];
+
+const state = { qIdx:0, picks:[], slotFills:{}, completed:Array(PROBLEMS.length).fill(false), step:1 };
+
+function renderQbar(){
+  const bar = document.getElementById('qbar'); bar.innerHTML = '<span class="lbl">Problem</span>';
+  PROBLEMS.forEach((p,i)=>{
+    const el = document.createElement('div');
+    el.className = 'qchip' + (i===state.qIdx?' active':'') + (state.completed[i]?' done':'');
+    el.textContent = (i+1);
+    el.addEventListener('click', ()=>{ state.qIdx=i; loadProblem(); });
+    bar.appendChild(el);
+  });
+  document.getElementById('score').textContent = state.completed.filter(Boolean).length + '/' + PROBLEMS.length;
+}
+
+function renderProblem(){
+  const p = PROBLEMS[state.qIdx];
+  const elt = document.getElementById('problem-text'); elt.innerHTML = '';
+  p.tokens.forEach((tk,i)=>{
+    if (tk.v){
+      const span = document.createElement('span');
+      span.className = 'token selectable'; span.dataset.v = tk.v; span.dataset.i = i;
+      span.textContent = tk.t;
+      span.addEventListener('click', ()=>togglePick(i, tk.v, span));
+      elt.appendChild(span);
+    } else elt.appendChild(document.createTextNode(tk.t));
+  });
+  const ask = document.createElement('span'); ask.className = 'ask'; ask.textContent = p.ask; elt.appendChild(ask);
+  state.picks=[]; renderTray();
+  document.getElementById('step1-feedback').classList.remove('show');
+  document.getElementById('step1-next').disabled = true;
+}
+
+function togglePick(i, v, el){
+  if (el.classList.contains('picked')){
+    el.classList.remove('picked','correct','wrong');
+    state.picks = state.picks.filter(x=>x.i!==i);
+  } else {
+    el.classList.add('picked'); state.picks.push({i,v,el});
+    anime({targets:el, scale:[1,1.18,1], duration:280, easing:'easeOutQuad'});
+  }
+  renderTray();
+}
+
+function renderTray(){
+  const tray = document.getElementById('var-tray');
+  if (!state.picks.length){ tray.innerHTML = '<span class="ph">Picked variables will appear here.</span>'; return; }
+  tray.innerHTML = '';
+  state.picks.forEach(pk=>{
+    const pill = document.createElement('span');
+    pill.className = 'var-pill'; pill.draggable = true; pill.dataset.v = pk.v;
+    pill.innerHTML = pk.v + ' <span class="x" title="remove">×</span>';
+    pill.querySelector('.x').addEventListener('click',(e)=>{
+      e.stopPropagation(); pk.el.classList.remove('picked','correct','wrong');
+      state.picks = state.picks.filter(x=>x!==pk); renderTray();
+    });
+    pill.addEventListener('dragstart',(e)=>{ pill.classList.add('dragging'); e.dataTransfer.setData('text/v', pk.v); });
+    pill.addEventListener('dragend', ()=>pill.classList.remove('dragging'));
+    tray.appendChild(pill);
+  });
+}
+
+function checkPicks(){
+  const p = PROBLEMS[state.qIdx];
+  const wanted = new Set(p.expect); const got = new Set(state.picks.map(x=>x.v));
+  let ok = true;
+  state.picks.forEach(pk=>{
+    pk.el.classList.remove('correct','wrong');
+    if (wanted.has(pk.v)) pk.el.classList.add('correct'); else { pk.el.classList.add('wrong'); ok=false; }
+  });
+  const missing = [...wanted].filter(v=>!got.has(v));
+  const fb = document.getElementById('step1-feedback');
+  fb.className = 'feedback show ' + (ok && missing.length===0?'good':'bad');
+  if (ok && missing.length===0){
+    fb.innerHTML = '<span class="lbl">Locked</span>You found <b>'+p.expect.join('</b>, <b>')+'</b>. Each percent pairs with its volume.';
+    document.getElementById('step1-next').disabled = false;
+  } else {
+    let msg = '<span class="lbl">Not yet</span>';
+    if (missing.length) msg += 'Missing: <b>'+missing.join('</b>, <b>')+'</b>. ';
+    msg += 'Every percent has a partner volume; pure water counts as 0% concentration.';
+    fb.innerHTML = msg;
+  }
+}
+
+function renderSkeleton(){
+  const p = PROBLEMS[state.qIdx];
+  document.getElementById('skeleton').innerHTML = p.skeletonHtml;
+  state.slotFills = {};
+  Object.keys(p.fixedSlots||{}).forEach(k=>{
+    const el = document.querySelector('.slot[data-slot="'+k+'"]');
+    if (el){ el.classList.add('filled'); el.innerHTML = p.fixedSlots[k]; state.slotFills[k] = '__'+p.fixedSlots[k]; }
+  });
+  document.querySelectorAll('#skeleton .slot').forEach(slot=>{
+    slot.addEventListener('dragover',(e)=>{e.preventDefault(); slot.classList.add('over')});
+    slot.addEventListener('dragleave', ()=>slot.classList.remove('over'));
+    slot.addEventListener('drop',(e)=>{
+      e.preventDefault(); slot.classList.remove('over');
+      const v = e.dataTransfer.getData('text/v'); if (!v) return;
+      slot.classList.add('filled'); slot.classList.remove('correct','wrong');
+      slot.innerHTML = v; state.slotFills[slot.dataset.slot] = v;
+      anime({targets:slot, scale:[1,1.12,1], duration:280, easing:'easeOutQuad'});
+    });
+    slot.addEventListener('click', ()=>{
+      const k = slot.dataset.slot;
+      if (p.fixedSlots && p.fixedSlots[k]) return;
+      if (slot.classList.contains('filled')){
+        slot.classList.remove('filled','correct','wrong');
+        slot.innerHTML = '<span class="label">'+k+'</span>';
+        delete state.slotFills[k];
+      }
+    });
+  });
+  const tray2 = document.getElementById('var-tray-2'); tray2.innerHTML='';
+  state.picks.forEach(pk=>{
+    const pill = document.createElement('span');
+    pill.className='var-pill'; pill.draggable=true; pill.dataset.v=pk.v; pill.textContent=pk.v;
+    pill.addEventListener('dragstart',(e)=>{ pill.classList.add('dragging'); e.dataTransfer.setData('text/v', pk.v); });
+    pill.addEventListener('dragend', ()=>pill.classList.remove('dragging'));
+    tray2.appendChild(pill);
+  });
+  document.getElementById('step2-feedback').classList.remove('show');
+  document.getElementById('step2-next').disabled = true;
+}
+
+function checkSkeleton(){
+  const p = PROBLEMS[state.qIdx]; let ok = true;
+  Object.keys(p.slots).forEach(k=>{
+    const expect = p.slots[k]; const got = state.slotFills[k];
+    const slot = document.querySelector('.slot[data-slot="'+k+'"]'); if (!slot) return;
+    slot.classList.remove('correct','wrong');
+    if (got === expect) slot.classList.add('correct'); else { slot.classList.add('wrong'); ok=false; }
+  });
+  const fb = document.getElementById('step2-feedback');
+  fb.className = 'feedback show ' + (ok?'good':'bad');
+  if (ok){
+    fb.innerHTML = '<span class="lbl">Skeleton built</span>Canonical: <b>'+p.skelDisplay+'</b>. Solute is conserved.';
+    document.getElementById('step2-next').disabled = false;
+  } else {
+    fb.innerHTML = '<span class="lbl">Slot mismatch</span>Each percent multiplies its own volume. Pure water is 0%.';
+  }
+}
+
+function renderSolve(){
+  const p = PROBLEMS[state.qIdx];
+  document.getElementById('skeleton-filled').innerHTML = p.skelDisplay;
+  document.getElementById('answer-input').value = '';
+  document.getElementById('answer-input').classList.remove('correct','wrong');
+  document.getElementById('sanity-input').value = '';
+  document.getElementById('units-hint').textContent = p.answerHint || '';
+  document.getElementById('step3-feedback').classList.remove('show');
+  document.getElementById('step3-sanity').classList.remove('show');
+  document.getElementById('step3-next').disabled = true;
+}
+
+function checkAnswer(){
+  const p = PROBLEMS[state.qIdx];
+  const raw = document.getElementById('answer-input').value.trim();
+  const num = parseFloat(raw);
+  const fb = document.getElementById('step3-feedback'); const ai = document.getElementById('answer-input');
+  ai.classList.remove('correct','wrong');
+  if (isNaN(num)){ fb.className='feedback show bad'; fb.innerHTML='<span class="lbl">Need a number</span>'; ai.classList.add('wrong'); return; }
+  const correct = Math.abs(num - p.answer) < (p.tol||0.5);
+  if (correct){
+    ai.classList.add('correct');
+    fb.className = 'feedback show good';
+    fb.innerHTML = '<span class="lbl">Decoded</span>Correct: <b>'+p.answer+'</b>.';
+    const sn = document.getElementById('step3-sanity');
+    sn.className = 'sanity show'; sn.innerHTML = '<span class="lbl">Sanity check</span>'+p.sanity;
+    state.completed[state.qIdx] = true;
+    document.getElementById('step3-next').disabled = false;
+    document.getElementById('score').textContent = state.completed.filter(Boolean).length + '/' + PROBLEMS.length;
+    if (state.completed.every(Boolean)) document.getElementById('celeb').classList.add('show');
+    renderQbar();
+  } else {
+    ai.classList.add('wrong');
+    fb.className = 'feedback show bad';
+    fb.innerHTML = '<span class="lbl">Off</span>Did you remember to multiply concentration as a decimal? <b>'+p.skelDisplay+'</b>';
+  }
+}
+
+function goStep(n){
+  state.step = n;
+  document.querySelectorAll('.step-pill').forEach(el=>{
+    const s = +el.dataset.step;
+    el.classList.toggle('active', s===n);
+    el.classList.toggle('done', s<n);
+  });
+  document.getElementById('step1-card').style.display = (n===1?'block':'none');
+  document.getElementById('step2-card').style.display = (n===2?'block':'none');
+  document.getElementById('step3-card').style.display = (n===3?'block':'none');
+  if (n===2) renderSkeleton();
+  if (n===3) renderSolve();
+}
+
+function loadProblem(){
+  document.getElementById('celeb').classList.remove('show');
+  renderQbar(); renderProblem(); goStep(1);
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+document.getElementById('step1-check').addEventListener('click', checkPicks);
+document.getElementById('step1-clear').addEventListener('click', ()=>{
+  state.picks.forEach(pk=>pk.el.classList.remove('picked','correct','wrong'));
+  state.picks=[]; renderTray();
+  document.getElementById('step1-feedback').classList.remove('show');
+  document.getElementById('step1-next').disabled = true;
+});
+document.getElementById('step1-next').addEventListener('click', ()=>goStep(2));
+document.getElementById('step2-back').addEventListener('click', ()=>goStep(1));
+document.getElementById('step2-reset').addEventListener('click', renderSkeleton);
+document.getElementById('step2-check').addEventListener('click', checkSkeleton);
+document.getElementById('step2-next').addEventListener('click', ()=>goStep(3));
+document.getElementById('step3-back').addEventListener('click', ()=>goStep(2));
+document.getElementById('step3-check').addEventListener('click', checkAnswer);
+document.getElementById('step3-next').addEventListener('click', ()=>{
+  if (state.qIdx < PROBLEMS.length-1){ state.qIdx++; loadProblem(); } else renderQbar();
+});
+
+loadProblem();
+</script>
+</body>
+</html>

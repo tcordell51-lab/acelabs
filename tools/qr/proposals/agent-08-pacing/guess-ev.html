@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guess vs Blank EV · AceTheDAT QR · Tier 3</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js"></script>
+<style>
+:root{
+  --bg:#f5f0e8; --paper:#fffdf7; --paper-2:#f9f3e6; --paper-3:#f3ecdb;
+  --sb:#0d2018; --sb-2:#15301f; --sb-3:#1d4030;
+  --ink:#0f1814; --ink-2:#3a4a42; --ink-mute:#6e7c74; --ink-soft:#9aa39e;
+  --gold:#C9A84C; --gold-m:#E2C97A; --gold-d:#8C7235; --gold-glow:rgba(201,168,76,0.35);
+  --teal:#1B3A2D; --teal-2:#2A5240; --teal-3:#3A6B54;
+  --line:rgba(13,32,24,0.12); --line-2:rgba(13,32,24,0.06); --line-strong:rgba(13,32,24,0.22);
+  --trap:#C25B3F; --trap-bg:#fbe7df; --trap-d:#8a3d28;
+  --warn:#D97A3C;
+  --good:#5FA874; --good-bg:#e3efe6; --good-d:#3e7c54;
+  --info:#6A8AA8; --info-bg:#e6edf4;
+  --plum:#8a5a8c; --plum-bg:#efe5f0;
+  --shadow:0 1px 3px rgba(13,32,24,0.06), 0 8px 24px rgba(13,32,24,0.04);
+  --shadow-md:0 2px 6px rgba(13,32,24,0.08), 0 16px 40px rgba(13,32,24,0.06);
+  --shadow-lg:0 4px 14px rgba(13,32,24,0.10), 0 24px 56px rgba(13,32,24,0.08);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family:'DM Sans',system-ui,-apple-system,sans-serif;
+  background:var(--bg); color:var(--ink); line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  background-image:
+    radial-gradient(1200px 600px at 15% -10%, rgba(201,168,76,0.07), transparent 60%),
+    radial-gradient(900px 500px at 85% 110%, rgba(27,58,45,0.06), transparent 60%);
+  min-height:100vh;
+}
+.serif{font-family:'Playfair Display',serif}
+.mono{font-family:'JetBrains Mono',monospace}
+em.gold{font-style:italic; color:var(--gold-d); font-family:'Playfair Display',serif}
+
+.wrap{max-width:1100px; margin:0 auto; padding:36px 28px 80px}
+.head .num{font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--gold-d); letter-spacing:0.18em}
+.head h1{font-family:'Playfair Display',serif; font-size:42px; font-weight:700; line-height:1.05; margin:6px 0 10px; letter-spacing:-0.02em}
+.head h1 em{font-style:italic; color:var(--gold-d); font-weight:400}
+.head .sub{color:var(--ink-mute); font-size:15px; max-width:720px; margin-bottom:18px}
+.tag{display:inline-block; padding:3px 9px; border-radius:6px; font-size:10px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; margin-right:6px}
+.tag.gold{background:rgba(201,168,76,0.18); color:var(--gold-d)}
+.tag.teal{background:rgba(27,58,45,0.10); color:var(--teal)}
+
+.card{background:var(--paper); border:1px solid var(--line); border-radius:16px; padding:24px 26px; margin-bottom:18px; box-shadow:var(--shadow)}
+.card h3{font-family:'Playfair Display',serif; font-size:22px; font-weight:700; margin:0 0 10px}
+
+.btn{display:inline-flex; align-items:center; gap:6px; padding:8px 14px; border-radius:9px; border:1px solid var(--line); background:var(--paper); color:var(--ink); font-size:13.5px; font-weight:600; cursor:pointer; transition:all .12s; font-family:inherit}
+.btn:hover{border-color:var(--gold); transform:translateY(-1px); box-shadow:var(--shadow)}
+.btn.gold{background:var(--gold); color:var(--sb); border-color:var(--gold)}
+.btn.gold:hover{background:var(--gold-m)}
+.btn.ghost{background:transparent}
+
+/* ===== Slider blocks ===== */
+.slider-grid{display:grid; grid-template-columns:1fr 1fr; gap:14px}
+@media (max-width:760px){ .slider-grid{grid-template-columns:1fr} .head h1{font-size:32px} }
+
+.slider-card{
+  background:var(--paper-2); border:1px solid var(--line); border-radius:14px;
+  padding:18px 20px;
+}
+.slider-card .l{font-size:11px; letter-spacing:0.16em; text-transform:uppercase; font-weight:700; color:var(--ink-mute)}
+.slider-card .v{font-family:'Playfair Display',serif; font-size:42px; line-height:1; margin:6px 0; color:var(--teal); font-weight:700}
+.slider-card.blank .v{color:var(--trap-d)}
+.slider-card.guess .v{color:var(--gold-d)}
+.slider-card .det{font-size:12.5px; color:var(--ink-mute); margin-top:4px}
+.slider-card input[type=range]{
+  -webkit-appearance:none; appearance:none; width:100%; height:6px; background:rgba(13,32,24,0.12);
+  border-radius:3px; outline:none; margin-top:14px;
+}
+.slider-card input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none; appearance:none; width:22px; height:22px; border-radius:50%;
+  background:var(--gold); border:3px solid var(--paper); box-shadow:0 2px 8px rgba(201,168,76,0.45);
+  cursor:pointer;
+}
+.slider-card input[type=range]::-moz-range-thumb{
+  width:22px; height:22px; border-radius:50%; background:var(--gold);
+  border:3px solid var(--paper); box-shadow:0 2px 8px rgba(201,168,76,0.45); cursor:pointer;
+}
+.slider-card.blank input[type=range]::-webkit-slider-thumb{background:var(--trap)}
+.slider-card.blank input[type=range]::-moz-range-thumb{background:var(--trap)}
+
+.tick-row{display:flex; justify-content:space-between; font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--ink-soft); margin-top:6px; letter-spacing:0.06em}
+
+/* ===== Strategy bars ===== */
+.strats{display:grid; grid-template-columns:1fr; gap:10px; margin-top:6px}
+.strat{
+  display:grid; grid-template-columns:200px 1fr 90px; gap:14px; align-items:center;
+  padding:14px 18px; background:var(--paper-2); border:1px solid var(--line); border-radius:12px;
+}
+.strat.hl{background:linear-gradient(90deg, rgba(201,168,76,0.18) 0%, var(--paper-2) 60%); border-color:var(--gold)}
+.strat .name{font-family:'Playfair Display',serif; font-size:17px; font-weight:700}
+.strat .name .tag-m{display:block; font-family:'DM Sans',sans-serif; font-size:11px; color:var(--ink-mute); margin-top:2px; font-weight:500; letter-spacing:0.04em; text-transform:none; line-height:1.3}
+.strat .bar{position:relative; height:24px; background:rgba(13,32,24,0.06); border-radius:6px; overflow:hidden}
+.strat .bar .fill{position:absolute; left:0; top:0; bottom:0; border-radius:6px; transition:width .35s ease}
+.strat.f-all .fill{background:linear-gradient(90deg, var(--good) 0%, var(--good-d) 100%)}
+.strat.f-blank .fill{background:linear-gradient(90deg, var(--trap) 0%, var(--trap-d) 100%)}
+.strat.f-guess .fill{background:linear-gradient(90deg, var(--gold) 0%, var(--gold-d) 100%)}
+.strat .score{font-family:'JetBrains Mono',monospace; font-size:20px; font-weight:700; color:var(--ink); text-align:right}
+.strat .bar .ticks{position:absolute; inset:0}
+.strat .bar .ticks span{position:absolute; top:0; bottom:0; width:1px; background:rgba(13,32,24,0.08)}
+@media (max-width:760px){ .strat{grid-template-columns:1fr; gap:6px} .strat .score{text-align:left} }
+
+/* ===== Math panel ===== */
+.math{
+  margin-top:14px; padding:16px 18px; background:var(--paper-3); border:1px solid var(--line); border-radius:12px;
+  font-family:'JetBrains Mono',monospace; font-size:13px; line-height:1.7; color:var(--ink-2);
+}
+.math .l{font-family:'DM Sans',sans-serif; font-size:11px; letter-spacing:0.16em; text-transform:uppercase; color:var(--gold-d); font-weight:700; margin-bottom:6px}
+.math b{color:var(--ink); font-weight:700}
+.math .gold{color:var(--gold-d); font-weight:700}
+.math .trap{color:var(--trap-d); font-weight:700}
+.math .good{color:var(--good-d); font-weight:700}
+
+/* ===== Verdict ===== */
+.verdict{
+  margin-top:14px; padding:18px 22px; border-radius:14px;
+  background:linear-gradient(135deg, var(--info-bg) 0%, var(--paper-2) 100%);
+  border:1px solid var(--info); color:var(--ink);
+  display:flex; align-items:center; gap:14px;
+}
+.verdict .icon{width:52px; height:52px; border-radius:14px; background:var(--gold); color:var(--sb); display:flex; align-items:center; justify-content:center; font-family:'Playfair Display',serif; font-size:22px; font-weight:700; flex-shrink:0; box-shadow:0 4px 12px rgba(201,168,76,0.35)}
+.verdict.danger{background:linear-gradient(135deg, var(--trap-bg) 0%, var(--paper-2) 100%); border-color:var(--trap)}
+.verdict.danger .icon{background:var(--trap); color:#fff; box-shadow:0 4px 12px rgba(194,91,63,0.35)}
+.verdict.win{background:linear-gradient(135deg, var(--good-bg) 0%, var(--paper-2) 100%); border-color:var(--good)}
+.verdict.win .icon{background:var(--good); color:#fff; box-shadow:0 4px 12px rgba(95,168,116,0.35)}
+.verdict .body{flex:1}
+.verdict .ttl{font-family:'Playfair Display',serif; font-size:20px; font-weight:700; line-height:1.15}
+.verdict .det{font-size:13.5px; margin-top:4px; color:var(--ink-2)}
+
+/* ===== Scaling table ===== */
+.scale{margin-top:14px}
+.scale-row{display:grid; grid-template-columns:80px 1fr 80px; gap:10px; padding:6px 0; border-bottom:1px dashed var(--line); font-size:13px}
+.scale-row.hd{font-weight:700; color:var(--ink-mute); font-size:11px; letter-spacing:0.14em; text-transform:uppercase}
+.scale-row b{font-family:'JetBrains Mono',monospace}
+
+.legend{display:flex; gap:14px; flex-wrap:wrap; margin-top:8px; font-size:12px; color:var(--ink-mute)}
+.legend .sw{display:inline-block; width:10px; height:10px; border-radius:2px; margin-right:5px; vertical-align:middle}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head">
+    <span class="tag gold">Tier 3 · Meta-Strategy</span>
+    <span class="tag teal">Module 36 · Guess vs Blank</span>
+    <div class="num">EXPECTED VALUE CALCULATOR</div>
+    <h1>Why <em>guessing</em> beats blanking — every time.</h1>
+    <p class="sub">DAT QR has 5 answer choices. A random guess is 1-in-5 = 0.20 expected raw points. A blank is exactly 0. There is no penalty for wrong. <b>Blanking is strictly worse than guessing on every single question.</b> This calculator shows you the math.</p>
+  </div>
+
+  <!-- Sliders -->
+  <div class="card">
+    <h3>Set your scenario</h3>
+    <p style="font-size:13px; color:var(--ink-mute); margin:0 0 14px">Picture a 45-question section where time runs out before you finish all of them. The sliders below model the questions you didn't fully solve.</p>
+    <div class="slider-grid">
+      <div class="slider-card blank">
+        <div class="l">Blanked questions</div>
+        <div class="v"><span id="blank-n">5</span></div>
+        <div class="det">Left these completely empty. Each contributes <b>0</b> raw points.</div>
+        <input type="range" id="r-blank" min="0" max="10" step="1" value="5">
+        <div class="tick-row"><span>0</span><span>5</span><span>10</span></div>
+      </div>
+      <div class="slider-card guess">
+        <div class="l">Random-guessed questions</div>
+        <div class="v"><span id="guess-n">0</span></div>
+        <div class="det">Random pick from 5 choices. Each contributes <b>0.20</b> expected raw points.</div>
+        <input type="range" id="r-guess" min="0" max="10" step="1" value="0">
+        <div class="tick-row"><span>0</span><span>5</span><span>10</span></div>
+      </div>
+    </div>
+
+    <div style="margin-top:14px; display:flex; gap:8px; flex-wrap:wrap">
+      <button class="btn gold" id="preset-typical">Typical 500 student</button>
+      <button class="btn" id="preset-tight">Pace-tight (8 unanswered)</button>
+      <button class="btn" id="preset-perfect">Finished all 45</button>
+      <button class="btn ghost" id="preset-reset">Reset</button>
+    </div>
+  </div>
+
+  <!-- Live computed scores -->
+  <div class="card">
+    <h3>Three strategies, side by side</h3>
+    <p style="font-size:13px; color:var(--ink-mute); margin:0 0 12px">All three start from the same <b>solved</b> count of 45 minus your unanswered total. The only difference is what you do with the unanswered questions.</p>
+
+    <div class="strats">
+      <div class="strat f-all hl">
+        <div class="name">Finish all 45<span class="tag-m">solve every question (idealized)</span></div>
+        <div class="bar"><div class="ticks" id="ticks-1"></div><div class="fill" id="fill-all"></div></div>
+        <div class="score"><span id="s-all">37.0</span></div>
+      </div>
+      <div class="strat f-blank">
+        <div class="name">Blank what you can't finish<span class="tag-m">leave the unanswered empty</span></div>
+        <div class="bar"><div class="ticks" id="ticks-2"></div><div class="fill" id="fill-blank"></div></div>
+        <div class="score"><span id="s-blank">32.0</span></div>
+      </div>
+      <div class="strat f-guess">
+        <div class="name">Guess on every blank<span class="tag-m">random pick from 5 choices</span></div>
+        <div class="bar"><div class="ticks" id="ticks-3"></div><div class="fill" id="fill-guess"></div></div>
+        <div class="score"><span id="s-guess">33.0</span></div>
+      </div>
+    </div>
+
+    <div class="legend">
+      <span><span class="sw" style="background:var(--good)"></span>Idealized ceiling</span>
+      <span><span class="sw" style="background:var(--trap)"></span>Cost of blanking</span>
+      <span><span class="sw" style="background:var(--gold)"></span>Free expected lift from guessing</span>
+    </div>
+
+    <div class="math">
+      <div class="l">The math behind the bars</div>
+      <span id="m-solved">solved = 45 − blank − guess = <b>40</b> raw points</span><br>
+      <span id="m-finishall">finish_all = 45 raw × hit_rate (we use <span class="gold">0.82</span> baseline) = <b>36.9</b></span><br>
+      <span id="m-blank">blank_strategy = solved + 0 × <span class="trap">(blanks)</span> = <b>40.0</b></span><br>
+      <span id="m-guess">guess_strategy = solved + <span class="gold">0.20 × (blanks + guesses)</span> = <b>40.0</b></span><br>
+      <span style="color:var(--ink-mute)">Each random guess: 1/5 = <span class="gold">0.20</span> expected raw points. Each blank: <span class="trap">0</span>. Always.</span>
+    </div>
+
+    <div class="verdict win" id="verdict">
+      <div class="icon" id="v-icon">+1</div>
+      <div class="body">
+        <div class="ttl" id="v-ttl">Guessing on 5 instead of blanking is worth +1 raw point.</div>
+        <div class="det" id="v-det">On the DAT scaling curve that's roughly <b>+1 scaled point</b> at the 18 → 22 raw range. That can be the difference between a 19 and a 20.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scaling reference -->
+  <div class="card">
+    <h3>What does +1 raw mean in scaled-score terms?</h3>
+    <p style="font-size:13px; color:var(--ink-mute); margin:0 0 12px">DAT raw-to-scaled is non-linear: <b>1 raw point ≈ 1 scaled point</b> in the meaningful 17–22 band where most students live. Above 23 the curve gets steeper.</p>
+    <div class="scale">
+      <div class="scale-row hd"><span>Raw</span><span>Approx scaled (typical curve)</span><span>Notes</span></div>
+      <div class="scale-row"><b>16</b><span>17</span><span>below average</span></div>
+      <div class="scale-row"><b>20</b><span>19</span><span>average DAT</span></div>
+      <div class="scale-row"><b>24</b><span>21</span><span>solid</span></div>
+      <div class="scale-row"><b>28</b><span>22</span><span>competitive</span></div>
+      <div class="scale-row"><b>32</b><span>24</span><span>top quartile</span></div>
+      <div class="scale-row"><b>36</b><span>26</span><span>top decile</span></div>
+      <div class="scale-row"><b>40</b><span>28</span><span>elite</span></div>
+    </div>
+    <p style="font-size:12.5px; color:var(--ink-mute); margin-top:10px"><b>Bottom line:</b> if you blank 5 questions, your expected loss vs guessing is <b>1.0 raw points = roughly 1 scaled point</b>. There is never a reason to leave a DAT question blank.</p>
+  </div>
+
+</div>
+
+<script>
+/* ===========================================================
+   GUESS vs BLANK · EV CALCULATOR
+   - DAT QR: 45 questions, 5 choices each
+   - Per-question random guess EV = 1/5 = 0.20 raw
+   - No penalty for wrong; blank = 0
+   - "Solved" baseline assumes 0.82 hit rate on attempted
+=========================================================== */
+
+const TOTAL = 45;
+const HIT = 0.82;          // baseline accuracy on questions you actually solve
+const GUESS_EV = 0.20;     // 1 / 5
+
+const ui = {
+  rB:document.getElementById('r-blank'),
+  rG:document.getElementById('r-guess'),
+  nB:document.getElementById('blank-n'),
+  nG:document.getElementById('guess-n'),
+  sAll:document.getElementById('s-all'),
+  sBlank:document.getElementById('s-blank'),
+  sGuess:document.getElementById('s-guess'),
+  fAll:document.getElementById('fill-all'),
+  fBlank:document.getElementById('fill-blank'),
+  fGuess:document.getElementById('fill-guess'),
+  mSolved:document.getElementById('m-solved'),
+  mFinish:document.getElementById('m-finishall'),
+  mBlank:document.getElementById('m-blank'),
+  mGuess:document.getElementById('m-guess'),
+  vIcon:document.getElementById('v-icon'),
+  vTtl:document.getElementById('v-ttl'),
+  vDet:document.getElementById('v-det'),
+  verdict:document.getElementById('verdict')
+};
+
+// build tick marks at every 5 raw points up to 45
+['ticks-1','ticks-2','ticks-3'].forEach(id=>{
+  const t = document.getElementById(id);
+  for(let i=5;i<TOTAL;i+=5){
+    const s=document.createElement('span');
+    s.style.left=(i/TOTAL*100)+'%';
+    t.appendChild(s);
+  }
+});
+
+function compute(){
+  const blank = parseInt(ui.rB.value,10);
+  const guess = parseInt(ui.rG.value,10);
+  const unanswered = blank + guess;
+  const solvedQ = Math.max(0, TOTAL - unanswered);
+
+  const solvedRaw = solvedQ * HIT;
+  // Strategy A: finish all 45 at hit rate (you wouldn't have any unanswered)
+  const sAll = TOTAL * HIT;
+  // Strategy B: blank everything unanswered
+  const sBlank = solvedRaw + 0 * blank + 0 * guess;
+  // Strategy C: guess on EVERY unanswered question (blanks + guesses)
+  const sGuess = solvedRaw + GUESS_EV * unanswered;
+
+  ui.nB.textContent = blank;
+  ui.nG.textContent = guess;
+  ui.sAll.textContent = sAll.toFixed(1);
+  ui.sBlank.textContent = sBlank.toFixed(1);
+  ui.sGuess.textContent = sGuess.toFixed(1);
+
+  ui.fAll.style.width   = (sAll  / TOTAL * 100) + '%';
+  ui.fBlank.style.width = (sBlank/ TOTAL * 100) + '%';
+  ui.fGuess.style.width = (sGuess/ TOTAL * 100) + '%';
+
+  ui.mSolved.innerHTML =
+    `solved_questions = 45 − ${blank} − ${guess} = <b>${solvedQ}</b><br>solved_raw = ${solvedQ} × ${HIT.toFixed(2)} = <b>${solvedRaw.toFixed(1)}</b>`;
+  ui.mFinish.innerHTML =
+    `finish_all = 45 × ${HIT.toFixed(2)} = <b>${sAll.toFixed(1)}</b>`;
+  ui.mBlank.innerHTML =
+    `blank_strategy = ${solvedRaw.toFixed(1)} + 0 × <span class="trap">${unanswered}</span> = <b>${sBlank.toFixed(1)}</b>`;
+  ui.mGuess.innerHTML =
+    `guess_strategy = ${solvedRaw.toFixed(1)} + <span class="gold">0.20 × ${unanswered}</span> = <b>${sGuess.toFixed(1)}</b>`;
+
+  // Verdict
+  const lift = sGuess - sBlank;             // = 0.20 × unanswered
+  const liftRaw = Math.round(lift * 10) / 10;
+  const liftScaled = approxScaledLift(sBlank, sGuess);
+
+  if(unanswered === 0){
+    ui.verdict.className = 'verdict win';
+    ui.vIcon.textContent = 'OK';
+    ui.vTtl.textContent = `You finished all 45. Strategy doesn't bind here.`;
+    ui.vDet.innerHTML = `Both strategies converge when nothing is left unanswered. The work is in <b>pacing</b> — see Widget A.`;
+  } else if(blank === 0){
+    ui.verdict.className = 'verdict win';
+    ui.vIcon.textContent = `+${liftRaw}`;
+    ui.vTtl.textContent = `Good. You guessed instead of blanking.`;
+    ui.vDet.innerHTML = `Guessing on ${guess} questions adds <b>${liftRaw} expected raw points</b> over leaving them blank. That's about <b>+${liftScaled} scaled</b>.`;
+  } else if(guess === 0){
+    ui.verdict.className = 'verdict danger';
+    ui.vIcon.textContent = `−${liftRaw}`;
+    ui.vTtl.textContent = `You're leaving ${liftRaw} expected raw points on the table.`;
+    ui.vDet.innerHTML = `Blanking ${blank} questions instead of guessing costs you <b>${liftRaw} raw ≈ ${liftScaled} scaled</b> points. There is no test-design reason to leave a DAT question blank.`;
+  } else {
+    ui.verdict.className = 'verdict danger';
+    ui.vIcon.textContent = `−${(0.20*blank).toFixed(1)}`;
+    ui.vTtl.textContent = `Convert the ${blank} blanks to guesses for +${(0.20*blank).toFixed(1)} expected raw.`;
+    ui.vDet.innerHTML = `Even random guessing on those ${blank} blanks adds <b>${(0.20*blank).toFixed(1)} raw ≈ ${liftScaled} scaled points</b>. With one elimination it doubles to <b>${(0.25*blank).toFixed(1)} raw</b>.`;
+  }
+
+  // animate verdict
+  if(window.anime){
+    anime.remove(ui.verdict);
+    anime({targets: ui.verdict, scale:[0.97,1], duration:240, easing:'easeOutCubic'});
+  }
+}
+
+// Cheap scaling-curve estimator: 1 raw ≈ 1 scaled in the 16–28 raw band,
+// 1 raw ≈ 0.5 scaled below 12 raw, 1 raw ≈ 0.7 scaled above 32 raw.
+function rawToScaled(raw){
+  if(raw <= 0) return 1;
+  if(raw < 12) return 14 + raw * 0.4;
+  if(raw < 28) return 16 + (raw - 12) * 0.85;
+  return 16 + 16*0.85 + (raw - 28) * 0.55;
+}
+function approxScaledLift(rawA, rawB){
+  const d = rawToScaled(rawB) - rawToScaled(rawA);
+  return (Math.round(d*10)/10);
+}
+
+ui.rB.addEventListener('input',compute);
+ui.rG.addEventListener('input',compute);
+
+document.getElementById('preset-typical').addEventListener('click',()=>{
+  ui.rB.value = 6; ui.rG.value = 0; compute();
+});
+document.getElementById('preset-tight').addEventListener('click',()=>{
+  ui.rB.value = 4; ui.rG.value = 4; compute();
+});
+document.getElementById('preset-perfect').addEventListener('click',()=>{
+  ui.rB.value = 0; ui.rG.value = 0; compute();
+});
+document.getElementById('preset-reset').addEventListener('click',()=>{
+  ui.rB.value = 5; ui.rG.value = 0; compute();
+});
+
+compute();
+</script>
+</body>
+</html>

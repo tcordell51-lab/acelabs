@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Friday Mini-Mock · AceTheDAT QR · 22 Q / 22 min</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js"></script>
+<style>
+:root{
+  --bg:#f5f0e8; --paper:#fffdf7; --paper-2:#f9f3e6; --paper-3:#f3ecdb;
+  --sb:#0d2018; --sb-2:#15301f; --sb-3:#1d4030;
+  --ink:#0f1814; --ink-2:#3a4a42; --ink-mute:#6e7c74; --ink-soft:#9aa39e;
+  --gold:#C9A84C; --gold-m:#E2C97A; --gold-d:#8C7235; --gold-glow:rgba(201,168,76,0.35);
+  --teal:#1B3A2D; --teal-2:#2A5240; --teal-3:#3A6B54;
+  --line:rgba(13,32,24,0.12); --line-2:rgba(13,32,24,0.06); --line-strong:rgba(13,32,24,0.22);
+  --trap:#C25B3F; --trap-bg:#fbe7df; --trap-d:#8a3d28;
+  --warn:#D97A3C;
+  --good:#5FA874; --good-bg:#e3efe6; --good-d:#3e7c54;
+  --info:#6A8AA8; --info-bg:#e6edf4;
+  --plum:#8a5a8c; --plum-bg:#efe5f0;
+  --shadow:0 1px 3px rgba(13,32,24,0.06), 0 8px 24px rgba(13,32,24,0.04);
+  --shadow-md:0 2px 6px rgba(13,32,24,0.08), 0 16px 40px rgba(13,32,24,0.06);
+  --shadow-lg:0 4px 14px rgba(13,32,24,0.10), 0 24px 56px rgba(13,32,24,0.08);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family:'DM Sans',system-ui,-apple-system,sans-serif;
+  background:var(--bg); color:var(--ink); line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  background-image:
+    radial-gradient(1200px 600px at 15% -10%, rgba(201,168,76,0.07), transparent 60%),
+    radial-gradient(900px 500px at 85% 110%, rgba(27,58,45,0.06), transparent 60%);
+  min-height:100vh;
+}
+.serif{font-family:'Playfair Display',serif}
+.mono{font-family:'JetBrains Mono',monospace}
+em.gold{font-style:italic; color:var(--gold-d); font-family:'Playfair Display',serif}
+
+.wrap{max-width:1100px; margin:0 auto; padding:36px 28px 80px}
+.head .num{font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--gold-d); letter-spacing:0.18em}
+.head h1{font-family:'Playfair Display',serif; font-size:42px; font-weight:700; line-height:1.05; margin:6px 0 10px; letter-spacing:-0.02em}
+.head h1 em{font-style:italic; color:var(--gold-d); font-weight:400}
+.head .sub{color:var(--ink-mute); font-size:15px; max-width:720px; margin-bottom:18px}
+.tag{display:inline-block; padding:3px 9px; border-radius:6px; font-size:10px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; margin-right:6px}
+.tag.gold{background:rgba(201,168,76,0.18); color:var(--gold-d)}
+.tag.teal{background:rgba(27,58,45,0.10); color:var(--teal)}
+
+.card{background:var(--paper); border:1px solid var(--line); border-radius:16px; padding:24px 26px; margin-bottom:18px; box-shadow:var(--shadow)}
+.card h3{font-family:'Playfair Display',serif; font-size:22px; font-weight:700; margin:0 0 12px}
+
+.btn{display:inline-flex; align-items:center; gap:6px; padding:8px 14px; border-radius:9px; border:1px solid var(--line); background:var(--paper); color:var(--ink); font-size:13.5px; font-weight:600; cursor:pointer; transition:all .12s; font-family:inherit}
+.btn:hover{border-color:var(--gold); transform:translateY(-1px); box-shadow:var(--shadow)}
+.btn.primary{background:var(--teal); color:#fff; border-color:var(--teal)}
+.btn.primary:hover{background:var(--teal-2)}
+.btn.gold{background:var(--gold); color:var(--sb); border-color:var(--gold)}
+.btn.gold:hover{background:var(--gold-m)}
+.btn.danger{background:var(--trap-bg); color:var(--trap-d); border-color:var(--trap)}
+.btn.ghost{background:transparent}
+.btn:disabled{opacity:.45; cursor:not-allowed; transform:none}
+
+/* ====== Cockpit ====== */
+.cockpit{
+  display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:12px;
+  background:linear-gradient(180deg,var(--sb) 0%, var(--sb-2) 100%);
+  color:#ece4d4; padding:18px; border-radius:14px; margin-bottom:14px;
+  box-shadow:var(--shadow-md); position:relative; overflow:hidden;
+}
+.cockpit::before{
+  content:""; position:absolute; inset:0;
+  background:radial-gradient(800px 200px at 50% -50%, rgba(201,168,76,0.14), transparent 60%);
+  pointer-events:none;
+}
+.cell{position:relative; z-index:1}
+.cell .l{font-size:10px; letter-spacing:0.18em; text-transform:uppercase; color:rgba(236,228,212,0.55); font-weight:700}
+.cell .v{font-family:'Playfair Display',serif; font-size:30px; font-weight:700; line-height:1; margin-top:4px}
+.cell .v.mono{font-family:'JetBrains Mono',monospace; font-size:26px; font-weight:600}
+.cell .delta{font-size:11px; letter-spacing:0.06em; margin-top:4px; font-family:'JetBrains Mono',monospace; font-weight:600}
+.cell .delta.behind{color:#f3a886}
+.cell .delta.ahead{color:#9ce0b3}
+.cell .delta.on{color:rgba(236,228,212,0.6)}
+
+.bar-wrap{margin-top:14px; padding:12px 14px; background:var(--paper-2); border:1px solid var(--line); border-radius:12px}
+.bar-row{display:flex; justify-content:space-between; font-size:11px; color:var(--ink-mute); letter-spacing:0.1em; text-transform:uppercase; font-weight:700; margin-bottom:6px}
+.bar{position:relative; height:14px; background:rgba(13,32,24,0.08); border-radius:7px; overflow:hidden}
+.bar .fill{position:absolute; left:0; top:0; bottom:0; background:linear-gradient(90deg,var(--gold) 0%, var(--gold-m) 100%); border-radius:7px; transition:width .35s ease}
+.bar .marker{position:absolute; top:-3px; bottom:-3px; width:2px; background:var(--teal); box-shadow:0 0 0 2px rgba(27,58,45,0.18)}
+.bar .marker .lab{position:absolute; top:-18px; left:50%; transform:translateX(-50%); font-family:'JetBrains Mono',monospace; font-size:9px; letter-spacing:0.1em; color:var(--teal); white-space:nowrap; font-weight:700; text-transform:uppercase}
+
+/* Per-checkpoint pace track */
+.pace-track{margin-top:12px; padding:12px 14px; background:var(--paper-2); border:1px solid var(--line); border-radius:12px}
+.pace-track .pt-row{display:flex; justify-content:space-between; align-items:center; font-size:11px; color:var(--ink-mute); letter-spacing:0.1em; text-transform:uppercase; font-weight:700; margin-bottom:6px}
+.pace-track .pt-row .legend{display:flex; gap:10px; align-items:center; font-size:10px; letter-spacing:0.08em}
+.pace-track .pt-row .legend .sw{display:inline-block; width:10px; height:2px; vertical-align:middle; margin-right:4px}
+.pace-track .pt-row .legend .sw.tgt{background:var(--gold-d)}
+.pace-track .pt-row .legend .sw.act{background:var(--teal)}
+.pace-canvas{position:relative; height:54px; border-bottom:1px dashed var(--line); margin-top:10px}
+.pace-canvas .gridline{position:absolute; top:0; bottom:0; width:1px; background:rgba(13,32,24,0.05)}
+.pace-canvas .gridlab{position:absolute; bottom:-16px; transform:translateX(-50%); font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--ink-soft); font-weight:600}
+.pace-canvas .pt-line{position:absolute; left:0; right:0; height:2px; pointer-events:none}
+.pace-canvas .pt-line.tgt{background:var(--gold-d); opacity:0.85}
+.pace-canvas .pt-line.act{background:var(--teal); opacity:0.95}
+.pace-canvas .pt-dot{position:absolute; width:9px; height:9px; border-radius:50%; transform:translate(-50%,-50%); border:2px solid var(--paper)}
+.pace-canvas .pt-dot.tgt{background:var(--gold-d)}
+.pace-canvas .pt-dot.act{background:var(--teal); box-shadow:0 0 0 3px rgba(27,58,45,0.18)}
+
+.rec{
+  display:none; padding:10px 14px; margin-top:10px; border-radius:10px;
+  font-size:13px; font-weight:600; line-height:1.35;
+  border:1px solid var(--line);
+  background:var(--paper-2); color:var(--ink);
+  align-items:center; gap:10px;
+}
+.rec.show{display:flex; animation:pulseSlow 1.6s ease}
+.rec .rec-tag{font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.14em; text-transform:uppercase; padding:3px 8px; border-radius:5px; font-weight:700; flex-shrink:0}
+.rec.behind{background:var(--trap-bg); border-color:var(--trap); color:var(--trap-d)}
+.rec.behind .rec-tag{background:var(--trap); color:#fff}
+.rec.ahead{background:var(--info-bg); border-color:var(--info); color:var(--ink)}
+.rec.ahead .rec-tag{background:var(--info); color:#fff}
+.rec.on{background:var(--good-bg); border-color:var(--good); color:var(--good-d)}
+.rec.on .rec-tag{background:var(--good); color:#fff}
+
+/* Stage */
+.stage{
+  background:var(--paper); border:1px solid var(--line); border-radius:14px;
+  padding:22px 24px; margin-bottom:14px; box-shadow:var(--shadow);
+  min-height:240px; position:relative;
+}
+.stage .meta-row{display:flex; align-items:center; gap:10px; margin-bottom:14px; flex-wrap:wrap}
+.stage .qnum{font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--gold-d); letter-spacing:0.16em; font-weight:700}
+.skill-tag{padding:3px 10px; border-radius:6px; font-size:10px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; background:var(--info-bg); color:var(--info)}
+.skill-tag.mental{background:rgba(201,168,76,0.18); color:var(--gold-d)}
+.skill-tag.pct-chg{background:var(--plum-bg); color:var(--plum)}
+.skill-tag.ratios{background:var(--good-bg); color:var(--good-d)}
+.skill-tag.geo-2d{background:var(--info-bg); color:var(--info)}
+.skill-tag.prob{background:var(--trap-bg); color:var(--trap-d)}
+.skill-tag.word-decode{background:rgba(27,58,45,0.10); color:var(--teal)}
+.qtimer{margin-left:auto; font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--ink-mute); font-weight:600}
+.qtimer.warn{color:var(--warn)}
+.qtimer.danger{color:var(--trap)}
+
+.qtext{font-size:17px; line-height:1.55; margin:8px 0 16px; color:var(--ink); font-weight:500}
+.opts{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+.opt{
+  padding:12px 14px; border:1px solid var(--line); border-radius:10px;
+  background:var(--paper-2); cursor:pointer; transition:all .12s;
+  font-size:14.5px; font-weight:500; text-align:left; font-family:inherit;
+  color:var(--ink);
+}
+.opt .letter{font-family:'JetBrains Mono',monospace; color:var(--gold-d); font-weight:700; margin-right:8px}
+.opt:hover{border-color:var(--gold); background:var(--paper); transform:translateY(-1px)}
+.opt.picked{background:var(--teal); color:#fff; border-color:var(--teal)}
+.opt.picked .letter{color:var(--gold-m)}
+
+.actions{display:flex; gap:8px; margin-top:14px; flex-wrap:wrap}
+
+/* Calculator toggle row */
+.calc-row{display:flex; align-items:center; gap:14px; padding:10px 14px; background:var(--paper-2); border:1px solid var(--line); border-radius:10px; margin-bottom:14px}
+.calc-row .l{font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:var(--ink-mute); font-weight:700}
+.calc-row .toggle{display:inline-flex; align-items:center; gap:8px; padding:5px 11px; border-radius:7px; border:1px solid var(--line); background:var(--paper); cursor:pointer; font-size:12px; font-weight:600}
+.calc-row .toggle.on{background:var(--teal); color:#fff; border-color:var(--teal)}
+.calc-row .toggle.off{background:var(--good-bg); color:var(--good-d); border-color:var(--good)}
+.calc-row .det{font-size:12px; color:var(--ink-mute); margin-left:auto}
+
+/* Tiny calculator panel (slow on purpose, mirrors DAT calculator policy) */
+.calc-panel{display:none; margin-top:10px; padding:14px; background:#16221a; color:#ece4d4; border-radius:12px}
+.calc-panel.show{display:block}
+.calc-display{padding:8px 12px; font-family:'JetBrains Mono',monospace; background:#0d1612; border-radius:6px; font-size:18px; min-height:32px; text-align:right; margin-bottom:8px}
+.calc-grid{display:grid; grid-template-columns:repeat(4, 1fr); gap:6px}
+.calc-grid button{padding:10px; background:#1d4030; color:#ece4d4; border:none; border-radius:6px; font-family:'JetBrains Mono',monospace; font-size:14px; cursor:pointer; font-weight:600}
+.calc-grid button:hover{background:var(--teal-2)}
+.calc-grid button.op{background:var(--gold-d); color:#fff}
+.calc-grid button.eq{background:var(--gold); color:var(--sb); grid-column:span 2}
+
+/* Result */
+.result{display:none}
+.result.show{display:block}
+.result-grid{display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; margin:14px 0}
+.rcard{background:var(--paper-2); border:1px solid var(--line); border-radius:12px; padding:16px}
+.rcard.hl{background:linear-gradient(180deg, rgba(201,168,76,0.18) 0%, var(--paper-2) 100%); border-color:var(--gold)}
+.rcard .l{font-size:10px; letter-spacing:0.16em; text-transform:uppercase; color:var(--ink-mute); font-weight:700}
+.rcard .big{font-family:'Playfair Display',serif; font-size:36px; line-height:1; margin-top:6px; color:var(--teal); font-weight:700}
+.rcard.hl .big{color:var(--gold-d)}
+.rcard .det{font-size:12px; color:var(--ink-mute); margin-top:6px}
+.skill-table{margin-top:14px; padding:14px 16px; background:var(--paper-2); border:1px solid var(--line); border-radius:12px}
+.skill-table .l{font-size:11px; letter-spacing:0.14em; text-transform:uppercase; font-weight:700; color:var(--ink-mute); margin-bottom:5px}
+.skill-table table{width:100%; border-collapse:collapse}
+.skill-table th, .skill-table td{padding:7px 10px; border-bottom:1px dashed var(--line); text-align:left; font-size:13px}
+.skill-table th{color:var(--ink-mute); font-size:10.5px; letter-spacing:0.1em; text-transform:uppercase; font-weight:700}
+.skill-table td.num{font-family:'JetBrains Mono',monospace; text-align:right; font-weight:600}
+.skill-table tr:last-child td{border-bottom:none}
+.lat-bar{display:inline-block; height:6px; background:var(--gold); border-radius:3px; vertical-align:middle; margin-right:6px}
+
+@media (max-width:760px){
+  .cockpit{grid-template-columns:1fr 1fr}
+  .cell .v{font-size:24px}
+  .cell .v.mono{font-size:20px}
+  .opts{grid-template-columns:1fr}
+  .head h1{font-size:32px}
+  .result-grid{grid-template-columns:1fr}
+  .calc-row{flex-wrap:wrap}
+  .calc-row .det{margin-left:0; width:100%; padding-top:4px; border-top:1px dashed var(--line)}
+}
+@keyframes pulseSlow{
+  0%{transform:translateY(-8px); opacity:0}
+  100%{transform:translateY(0); opacity:1}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head">
+    <span class="tag gold">Tier 3 · Mini-Mock</span>
+    <span class="tag teal">22 Q · 22 min · interleaved</span>
+    <div class="num">FRIDAY MINI-MOCK</div>
+    <h1>Real DAT pacing. <em>Interleaved</em>. Calculator off by default.</h1>
+    <p class="sub">A 22-question, 22-minute beta mini-mock built on the same per-checkpoint pacing engine as the full simulator. Skills are interleaved (no two consecutive same-skill questions, the W2 evidence-based design with effect size d = 0.83-1.21). Calculator defaults off, mirroring the W9 calculator-avoidance habit. Question content is placeholder-grade for beta — real DAT-grade content comes later.</p>
+  </div>
+
+  <!-- Setup -->
+  <div class="card" id="setup">
+    <h3>Mini-mock settings</h3>
+    <p style="font-size:13.5px; color:var(--ink-mute); margin:0 0 14px">22 questions interleaved across 6 skills: <b>mental math</b>, <b>percent change</b>, <b>ratios</b>, <b>2D geometry</b>, <b>probability</b>, <b>word decoder</b>. The mix is fixed; the order is the same interleaved sequence every session so you can compare runs week over week.</p>
+    <div class="calc-row">
+      <span class="l">Calculator</span>
+      <button class="toggle off" id="calc-toggle">OFF · default</button>
+      <span class="det">DAT calculator is mouse-only and intentionally slow. Top scorers avoid it; you should too.</span>
+    </div>
+    <button class="btn primary" id="btn-start">Begin mini-mock</button>
+  </div>
+
+  <!-- Live -->
+  <div id="live" style="display:none">
+    <div class="cockpit">
+      <div class="cell">
+        <div class="l">Time left</div>
+        <div class="v mono" id="tleft">22:00</div>
+        <div class="delta on" id="tnote">section clock</div>
+      </div>
+      <div class="cell">
+        <div class="l">Question</div>
+        <div class="v" id="qpos">1 / 22</div>
+        <div class="delta on" id="qnote">interleaved</div>
+      </div>
+      <div class="cell">
+        <div class="l">Pace</div>
+        <div class="v" id="pace">on</div>
+        <div class="delta on" id="pdelta">+0:00</div>
+      </div>
+      <div class="cell">
+        <div class="l">Calc opens</div>
+        <div class="v mono" id="calccnt">0</div>
+        <div class="delta on" id="calcnote">avoid the trap</div>
+      </div>
+    </div>
+
+    <div class="bar-wrap">
+      <div class="bar-row"><span>Time elapsed</span><span class="mono" id="bartxt">0% · 0:00 / 22:00</span></div>
+      <div class="bar"><div class="fill" id="barfill" style="width:0%"></div><div class="marker" style="left:50%"><span class="lab">Halfway · check pace</span></div></div>
+    </div>
+
+    <div class="pace-track">
+      <div class="pt-row">
+        <span>Per-checkpoint pace · 22+ scorer benchmark</span>
+        <span class="legend">
+          <span><span class="sw tgt"></span>target (1.0 min/q)</span>
+          <span><span class="sw act"></span>your pace</span>
+        </span>
+      </div>
+      <div class="pace-canvas" id="pace-canvas"></div>
+    </div>
+
+    <div class="rec" id="rec">
+      <span class="rec-tag" id="rec-tag">PACE</span>
+      <div class="rec-body" id="rec-body">on pace</div>
+    </div>
+
+    <div class="stage" id="stage">
+      <div class="meta-row">
+        <span class="qnum" id="s-qnum">QUESTION 01</span>
+        <span class="skill-tag mental" id="s-skill">MENTAL</span>
+        <span class="qtimer mono" id="s-qt">0:00 on this question</span>
+      </div>
+      <div class="qtext" id="s-q">…</div>
+      <div class="opts" id="s-opts"></div>
+      <div class="actions">
+        <button class="btn primary" id="b-answer">Submit answer</button>
+        <button class="btn ghost" id="b-calc">Open calculator</button>
+        <button class="btn ghost" id="b-skip">Skip · come back</button>
+      </div>
+      <div class="calc-panel" id="calc-panel">
+        <div class="calc-display" id="calc-disp">0</div>
+        <div class="calc-grid">
+          <button data-k="C">C</button><button data-k="(">(</button><button data-k=")">)</button><button data-k="/" class="op">/</button>
+          <button data-k="7">7</button><button data-k="8">8</button><button data-k="9">9</button><button data-k="*" class="op">*</button>
+          <button data-k="4">4</button><button data-k="5">5</button><button data-k="6">6</button><button data-k="-" class="op">-</button>
+          <button data-k="1">1</button><button data-k="2">2</button><button data-k="3">3</button><button data-k="+" class="op">+</button>
+          <button data-k="0">0</button><button data-k=".">.</button><button data-k="=" class="eq">=</button>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex; gap:8px; margin-top:8px">
+      <button class="btn ghost" id="b-finish">End mini-mock now</button>
+    </div>
+  </div>
+
+  <!-- Result -->
+  <div id="result" class="result">
+    <div class="card">
+      <h3>Mini-mock debrief</h3>
+      <p style="font-size:13px; color:var(--ink-mute)">Two questions matter most: <b>per-skill accuracy</b> (where did you actually break down?) and <b>skill-recognition latency</b> (how fast did you know what kind of problem this was?). Slow recognition is fixable with chunk-library work. Slow execution is fixable with skill-specific drills.</p>
+      <div class="result-grid">
+        <div class="rcard">
+          <div class="l">Answered</div>
+          <div class="big" id="r-ans">0</div>
+          <div class="det" id="r-ans-d">of which X correct</div>
+        </div>
+        <div class="rcard">
+          <div class="l">Calculator opens</div>
+          <div class="big" id="r-calc">0</div>
+          <div class="det">opens / question · target: 0</div>
+        </div>
+        <div class="rcard hl">
+          <div class="l">Raw score</div>
+          <div class="big" id="r-raw">0</div>
+          <div class="det" id="r-raw-d">of 22</div>
+        </div>
+      </div>
+
+      <div class="skill-table">
+        <div class="l">Per-skill accuracy + skill-recognition latency</div>
+        <table>
+          <thead>
+            <tr>
+              <th>Skill</th>
+              <th class="num">Accuracy</th>
+              <th class="num">Avg first-input</th>
+              <th>Latency bar (lower is better)</th>
+            </tr>
+          </thead>
+          <tbody id="skill-tbody"></tbody>
+        </table>
+        <p style="font-size:11.5px; color:var(--ink-mute); margin:8px 0 0">First-input latency is a proxy for skill recognition: how long after the question appeared did the student pick any answer or open the calculator? Sub-5s = recognized cold; 5-15s = building the setup; 15s+ = either decoding the prompt or stuck.</p>
+      </div>
+
+      <div style="margin-top:14px">
+        <button class="btn primary" id="b-again">Run another mini-mock</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ===========================================================
+   FRIDAY MINI-MOCK
+   - 22 q / 22 min — real DAT QR pacing (1 min/q for 22+)
+   - Interleaved by skill (no two consecutive same-skill q)
+   - Calculator off by default; opens are logged per-question
+   - Per-checkpoint pace track, throttled recommendation
+   - Debrief: per-skill accuracy + skill-recognition latency
+   Placeholder content — beta-grade, not DAT-grade.
+=========================================================== */
+
+const SKILL_LABEL = {
+  'mental':      'mental math',
+  'pct-chg':     'percent change',
+  'ratios':      'ratios',
+  'geo-2d':      '2d geometry',
+  'prob':        'probability',
+  'word-decode': 'word decoder'
+};
+
+/* 22 q · interleaved sequence: M P R G B W M P R G B W M P R G B W M P R G */
+const QBANK = [
+  // 01 mental
+  {skill:'mental', q:'25 × 16 = ?',
+    opts:['320','400','450','350'], correct:1,
+    why:'25 × 4 = 100. 100 × 4 = 400.'},
+  // 02 pct-chg
+  {skill:'pct-chg', q:'A $80 jacket is marked up 25%, then discounted 25%. Final price?',
+    opts:['$80.00','$75.00','$72.50','$77.00'], correct:1,
+    why:'80 × 1.25 × 0.75 = 75. Markup-then-discount of equal % drops below the start.'},
+  // 03 ratios
+  {skill:'ratios', q:'If 4 mL of stock yields 12 mL of working solution, how much stock is needed for 45 mL of working solution?',
+    opts:['15 mL','12 mL','13.5 mL','11 mL'], correct:0,
+    why:'Ratio 4:12 = 1:3. So 45 / 3 = 15 mL of stock.'},
+  // 04 geo-2d
+  {skill:'geo-2d', q:'A square has perimeter 36. What is its area?',
+    opts:['81','64','72','144'], correct:0,
+    why:'Side = 36/4 = 9. Area = 9² = 81.'},
+  // 05 prob
+  {skill:'prob', q:'A bag has 3 red and 5 blue marbles. P(red on first draw)?',
+    opts:['3/8','5/8','3/5','1/3'], correct:0,
+    why:'3 red of 8 total → 3/8.'},
+  // 06 word-decode
+  {skill:'word-decode', q:'Twice a number, decreased by 7, equals 11. What is the number?',
+    opts:['9','7','11','2'], correct:0,
+    why:'2x − 7 = 11 → 2x = 18 → x = 9.'},
+  // 07 mental
+  {skill:'mental', q:'12% of 250 = ?',
+    opts:['25','30','27','35'], correct:1,
+    why:'10% = 25. 1% = 2.5. 12% = 25 + 5 = 30.'},
+  // 08 pct-chg
+  {skill:'pct-chg', q:'A salary went from $48k to $54k. Percent increase?',
+    opts:['11.1%','12.5%','15%','6%'], correct:1,
+    why:'Change = 6, original = 48, 6/48 = 0.125 = 12.5%.'},
+  // 09 ratios
+  {skill:'ratios', q:'A class has boys to girls in ratio 5:7. If there are 36 students, how many girls?',
+    opts:['15','18','21','14'], correct:2,
+    why:'12 parts = 36 → 1 part = 3. Girls = 7 × 3 = 21.'},
+  // 10 geo-2d
+  {skill:'geo-2d', q:'A circle has radius 5. What is its circumference (use π ≈ 3.14)?',
+    opts:['15.7','25','31.4','78.5'], correct:2,
+    why:'C = 2πr = 2 · 3.14 · 5 = 31.4.'},
+  // 11 prob
+  {skill:'prob', q:'Two fair coins are flipped. P(at least one head)?',
+    opts:['1/4','1/2','3/4','1'], correct:2,
+    why:'1 − P(both tails) = 1 − 1/4 = 3/4.'},
+  // 12 word-decode
+  {skill:'word-decode', q:'Sara is 4 years older than Ben. The sum of their ages is 28. How old is Sara?',
+    opts:['12','14','16','18'], correct:2,
+    why:'B + (B+4) = 28 → 2B = 24 → B = 12; Sara = 16.'},
+  // 13 mental
+  {skill:'mental', q:'750 / 25 = ?',
+    opts:['25','30','35','40'], correct:1,
+    why:'25 × 30 = 750.'},
+  // 14 pct-chg
+  {skill:'pct-chg', q:'A $200 item is on clearance: 30% off, then an extra 10% off the sale price. Final price?',
+    opts:['$120','$126','$140','$130'], correct:1,
+    why:'200 × 0.70 = 140. 140 × 0.90 = 126.'},
+  // 15 ratios
+  {skill:'ratios', q:'A map scale is 1 in : 24 mi. Two cities are 3.5 in apart on the map. Real distance?',
+    opts:['72 mi','84 mi','96 mi','120 mi'], correct:1,
+    why:'3.5 × 24 = 84 mi.'},
+  // 16 geo-2d
+  {skill:'geo-2d', q:'A right triangle has legs 6 and 8. Hypotenuse?',
+    opts:['10','12','14','9'], correct:0,
+    why:'6-8-10 family (3-4-5 × 2). Hyp = 10.'},
+  // 17 prob
+  {skill:'prob', q:'A standard die is rolled twice. P(both rolls show even)?',
+    opts:['1/2','1/3','1/4','1/6'], correct:2,
+    why:'P(even) = 1/2 each roll. (1/2)(1/2) = 1/4.'},
+  // 18 word-decode
+  {skill:'word-decode', q:'A train travels 60 mph for 1.5 h, then 40 mph for 0.5 h. Total distance?',
+    opts:['90 mi','100 mi','110 mi','120 mi'], correct:2,
+    why:'60·1.5 + 40·0.5 = 90 + 20 = 110.'},
+  // 19 mental
+  {skill:'mental', q:'1/8 + 3/8 = ? (as decimal)',
+    opts:['0.5','0.4','0.625','0.375'], correct:0,
+    why:'4/8 = 1/2 = 0.5.'},
+  // 20 pct-chg
+  {skill:'pct-chg', q:'A jar held 80 mL; now it holds 100 mL. Percent increase?',
+    opts:['20%','25%','15%','125%'], correct:1,
+    why:'Change = 20, original = 80, 20/80 = 25%.'},
+  // 21 ratios
+  {skill:'ratios', q:'A recipe needs 3 cups flour for 12 cookies. How much flour for 20 cookies?',
+    opts:['4 cups','5 cups','4.5 cups','6 cups'], correct:1,
+    why:'3 cups / 12 = 0.25 cups per cookie. 20 × 0.25 = 5 cups.'},
+  // 22 geo-2d
+  {skill:'geo-2d', q:'A rectangle is twice as long as it is wide. Its perimeter is 36. What is its area?',
+    opts:['72','64','81','48'], correct:0,
+    why:'Width = w, length = 2w, P = 6w = 36 → w = 6, l = 12. Area = 72.'},
+];
+
+/* ===== State ===== */
+const state = {
+  sectionSec: 22*60, perQ: 60, // 22 min / 22 q = 60 s/q
+  remain:0, idx:0, queue:[], startTs:0, qStart:0,
+  picked:null, finished:false, tickerId:null, warned:false,
+  recLastFiredAtQ:-99,
+  calcOn:false, calcOpens:0, calcExpr:'0',
+  // Per-question first-input latency: ms from q-render to first answer-pick or calc-open.
+  // Used as proxy for skill-recognition latency.
+};
+
+function fmt(s){const m=Math.floor(s/60), ss=s%60; return `${m}:${ss<10?'0':''}${ss}`}
+
+function buildQueue(){
+  return QBANK.map((q,i) => ({
+    ...q, id:i+1, status:'pending', userPick:null,
+    timeSpent:0, firstInputMs:null, calcOpensThisQ:0
+  }));
+}
+
+function startSection(){
+  state.queue = buildQueue();
+  state.remain = state.sectionSec; state.idx = 0;
+  state.startTs = Date.now(); state.qStart = Date.now();
+  state.picked = null; state.finished = false;
+  state.warned = false; state.recLastFiredAtQ = -99;
+  state.calcOpens = 0; state.calcExpr = '0';
+  // Calculator panel inherits its toggle state from setup; do not reset.
+  document.getElementById('calccnt').textContent = '0';
+  document.getElementById('setup').style.display='none';
+  document.getElementById('result').classList.remove('show');
+  document.getElementById('live').style.display='block';
+  document.getElementById('rec').classList.remove('show');
+  hideCalcPanel();
+  buildPaceTrack();
+  renderQ(); tick();
+  if(state.tickerId) clearInterval(state.tickerId);
+  state.tickerId = setInterval(tick,1000);
+}
+
+function tick(){
+  if(state.finished) return;
+  const elapsed = Math.floor((Date.now()-state.startTs)/1000);
+  state.remain = Math.max(0, state.sectionSec - elapsed);
+  document.getElementById('tleft').textContent = fmt(state.remain);
+  const pct = (elapsed/state.sectionSec)*100;
+  document.getElementById('barfill').style.width = Math.min(100,pct)+'%';
+  document.getElementById('bartxt').textContent =
+    `${Math.round(pct)}% · ${fmt(elapsed)} / ${fmt(state.sectionSec)}`;
+  const onQ = Math.floor((Date.now()-state.qStart)/1000);
+  const qt = document.getElementById('s-qt');
+  qt.textContent = `${fmt(onQ)} on this question`;
+  qt.className = 'qtimer mono' + (onQ>=90 ? ' danger' : (onQ>=60 ? ' warn' : ''));
+  // Pace cell
+  const cur = state.idx + 1;
+  document.getElementById('qpos').textContent = `${cur} / ${state.queue.length}`;
+  const expectedQ = elapsed / state.perQ;
+  const cleared = state.queue.filter(q =>
+    q.status==='answered'||q.status==='skipped'
+  ).length;
+  const gapSec = (expectedQ - cleared) * state.perQ;
+  const pNode = document.getElementById('pace'), dNode = document.getElementById('pdelta');
+  if (elapsed < 5){
+    pNode.textContent = 'on'; dNode.className='delta on'; dNode.textContent = '+0:00';
+  } else if (gapSec > 30){
+    pNode.textContent = 'behind';
+    dNode.className='delta behind'; dNode.textContent = `−${fmt(Math.round(gapSec))} vs target`;
+  } else if (gapSec < -30){
+    pNode.textContent = 'ahead';
+    dNode.className='delta ahead'; dNode.textContent = `+${fmt(Math.round(Math.abs(gapSec)))} vs target`;
+  } else {
+    pNode.textContent = 'on'; dNode.className='delta on'; dNode.textContent = 'on track';
+  }
+  // Halfway warning
+  if (!state.warned && elapsed >= state.sectionSec/2){
+    const expectedAtHalf = Math.floor(state.queue.length/2);
+    if (cleared < expectedAtHalf){
+      const r = document.getElementById('rec');
+      r.classList.remove('behind','ahead','on');
+      r.classList.add('show','behind');
+      document.getElementById('rec-tag').textContent = 'HALFWAY';
+      document.getElementById('rec-body').textContent =
+        `Halfway mark — expected Q${expectedAtHalf}, you're on Q${cur}. Skip the next stuck one.`;
+      setTimeout(()=>r.classList.remove('show'), 7000);
+    }
+    state.warned = true;
+  }
+  updatePaceTrack(elapsed);
+  maybeFireRecommendation(elapsed, cur);
+  if (state.remain <= 0) finishSection();
+}
+
+/* ===== Per-checkpoint pace track ===== */
+function buildPaceTrack(){
+  const c = document.getElementById('pace-canvas');
+  if (!c) return;
+  c.innerHTML = '';
+  const N = state.queue.length;
+  const stops = 8;
+  for (let i=0; i<=stops; i++){
+    const pct = (i/stops)*100;
+    const g = document.createElement('div');
+    g.className = 'gridline'; g.style.left = pct + '%';
+    c.appendChild(g);
+    const lab = document.createElement('div');
+    lab.className = 'gridlab'; lab.style.left = pct + '%';
+    lab.textContent = 'Q' + Math.round((i/stops)*N).toString().padStart(2,'0');
+    c.appendChild(lab);
+  }
+  ['tgt','act'].forEach(k => {
+    const line = document.createElement('div');
+    line.className = 'pt-line ' + k; line.id = 'pt-line-' + k;
+    c.appendChild(line);
+    const dot = document.createElement('div');
+    dot.className = 'pt-dot ' + k; dot.id = 'pt-dot-' + k;
+    c.appendChild(dot);
+  });
+}
+
+function updatePaceTrack(elapsed){
+  const N = state.queue.length;
+  if (!N) return;
+  const targetQ = Math.min(N, elapsed / state.perQ);
+  const cleared = state.queue.filter(q =>
+    q.status==='answered'||q.status==='skipped'
+  ).length;
+  const tgtX = (targetQ / N) * 100;
+  const actX = (cleared / N) * 100;
+  const tl = document.getElementById('pt-line-tgt');
+  const al = document.getElementById('pt-line-act');
+  if (tl){ tl.style.right = (100-tgtX) + '%'; tl.style.top = '20px'; }
+  if (al){ al.style.right = (100-actX) + '%'; al.style.top = '34px'; }
+  const td = document.getElementById('pt-dot-tgt');
+  const ad = document.getElementById('pt-dot-act');
+  if (td){ td.style.left = tgtX + '%'; td.style.top = '20px'; }
+  if (ad){ ad.style.left = actX + '%'; ad.style.top = '34px'; }
+}
+
+function maybeFireRecommendation(elapsed, curQ){
+  if (elapsed < 30) return;
+  const expectedCleared = elapsed / state.perQ;
+  const cleared = state.queue.filter(q =>
+    q.status==='answered'||q.status==='skipped'
+  ).length;
+  const gapSec = (expectedCleared - cleared) * state.perQ;
+  if (curQ - state.recLastFiredAtQ < 5 && state.recLastFiredAtQ !== -99) return;
+  let kind=null, body='', tag='';
+  if (gapSec > 30){
+    kind='behind'; tag='BEHIND';
+    body=`You're ${Math.round(gapSec)}s behind — skip the next hard one.`;
+  } else if (gapSec < -60){
+    kind='ahead'; tag='AHEAD';
+    body=`You're ${Math.round(Math.abs(gapSec))}s ahead — slow down on the next 3.`;
+  } else if (Math.abs(gapSec) <= 30){
+    kind='on'; tag='ON PACE';
+    body=`On pace · within 30 seconds of the 22+ benchmark.`;
+  } else { return; }
+  const r = document.getElementById('rec');
+  r.classList.remove('behind','ahead','on');
+  r.classList.add('show', kind);
+  document.getElementById('rec-tag').textContent = tag;
+  document.getElementById('rec-body').textContent = body;
+  state.recLastFiredAtQ = curQ;
+  setTimeout(()=>r.classList.remove('show'), 5500);
+}
+
+/* ===== Question render ===== */
+function renderQ(){
+  const q = state.queue[state.idx];
+  if (!q){ finishSection(); return; }
+  state.qStart = Date.now();
+  state.picked = null;
+  document.getElementById('s-qnum').textContent = 'QUESTION ' + String(q.id).padStart(2,'0');
+  const sk = document.getElementById('s-skill');
+  sk.className = 'skill-tag ' + q.skill;
+  sk.textContent = SKILL_LABEL[q.skill] || q.skill;
+  document.getElementById('s-q').textContent = q.q;
+  const optWrap = document.getElementById('s-opts');
+  optWrap.innerHTML = '';
+  q.opts.forEach((o,oi)=>{
+    const b = document.createElement('button');
+    b.className='opt';
+    b.innerHTML = `<span class="letter">${String.fromCharCode(65+oi)}.</span>${o}`;
+    b.addEventListener('click', () => {
+      registerFirstInput(q);
+      state.picked = oi;
+      [...optWrap.children].forEach(c=>c.classList.remove('picked'));
+      b.classList.add('picked');
+    });
+    optWrap.appendChild(b);
+  });
+  hideCalcPanel();
+  if (window.anime){
+    anime({targets:'#stage', translateY:[14,0], opacity:[0,1], duration:280, easing:'easeOutCubic'});
+  }
+}
+
+function registerFirstInput(q){
+  if (q.firstInputMs == null){
+    q.firstInputMs = Date.now() - state.qStart;
+  }
+}
+
+function commitAnswer(){
+  const q = state.queue[state.idx];
+  if (state.picked === null){
+    flashStage('Pick an answer or skip');
+    return;
+  }
+  q.userPick = state.picked;
+  q.status = 'answered';
+  q.timeSpent = Math.floor((Date.now()-state.qStart)/1000);
+  advance();
+}
+
+function skipQ(){
+  const q = state.queue[state.idx];
+  q.status = 'skipped';
+  q.timeSpent = Math.floor((Date.now()-state.qStart)/1000);
+  advance();
+}
+
+function advance(){
+  // Find next pending; if none, jump to first skipped.
+  let nextIdx = -1;
+  for (let i = state.idx+1; i < state.queue.length; i++){
+    if (state.queue[i].status === 'pending'){ nextIdx = i; break; }
+  }
+  if (nextIdx === -1){
+    const skipIdx = state.queue.findIndex(q => q.status === 'skipped');
+    if (skipIdx === -1){ finishSection(); return; }
+    state.idx = skipIdx;
+    document.getElementById('qnote').textContent = 'return queue';
+  } else {
+    state.idx = nextIdx;
+  }
+  renderQ();
+}
+
+function flashStage(msg){
+  const s = document.getElementById('stage');
+  if (window.anime){
+    anime({targets:s, translateX:[0,-6,6,-3,3,0], duration:340, easing:'easeOutQuad'});
+  }
+  const tip = document.createElement('div');
+  tip.textContent = msg;
+  tip.style.cssText='position:absolute; top:8px; right:14px; font-size:11px; color:var(--trap); font-weight:700; letter-spacing:0.06em; text-transform:uppercase';
+  s.appendChild(tip);
+  setTimeout(()=>tip.remove(),1400);
+}
+
+/* ===== Calculator ===== */
+function setCalcToggle(on){
+  state.calcOn = on;
+  const t = document.getElementById('calc-toggle');
+  if (on){
+    t.className = 'toggle on'; t.textContent = 'ON · use sparingly';
+  } else {
+    t.className = 'toggle off'; t.textContent = 'OFF · default';
+  }
+}
+function showCalcPanel(){
+  if (!state.calcOn){
+    flashStage('Calculator is off — toggle in setup');
+    return;
+  }
+  state.calcOpens += 1;
+  const q = state.queue[state.idx];
+  if (q){
+    q.calcOpensThisQ += 1;
+    registerFirstInput(q);
+  }
+  document.getElementById('calccnt').textContent = state.calcOpens;
+  document.getElementById('calc-panel').classList.add('show');
+}
+function hideCalcPanel(){
+  const p = document.getElementById('calc-panel');
+  if (p) p.classList.remove('show');
+  state.calcExpr = '0';
+  const d = document.getElementById('calc-disp');
+  if (d) d.textContent = '0';
+}
+function calcKey(k){
+  const d = document.getElementById('calc-disp');
+  if (k === 'C'){ state.calcExpr = '0'; d.textContent = '0'; return; }
+  if (k === '='){
+    try {
+      // Whitelist: only digits, ops, parens, decimal.
+      if (!/^[\d+\-*/().\s]+$/.test(state.calcExpr)) throw new Error();
+      // eslint-disable-next-line no-new-func
+      const v = Function('"use strict";return ('+state.calcExpr+')')();
+      state.calcExpr = String(Math.round(v*1e6)/1e6);
+      d.textContent = state.calcExpr;
+    } catch(e){
+      d.textContent = 'ERR';
+      state.calcExpr = '0';
+    }
+    return;
+  }
+  if (state.calcExpr === '0' && /[0-9.]/.test(k)) state.calcExpr = '';
+  state.calcExpr += k;
+  d.textContent = state.calcExpr;
+}
+
+/* ===== Finish ===== */
+function finishSection(){
+  if (state.finished) return;
+  state.finished = true;
+  if (state.tickerId) clearInterval(state.tickerId);
+  document.getElementById('live').style.display='none';
+  const queue = state.queue;
+  const ans = queue.filter(q => q.status === 'answered');
+  const correct = ans.filter(q => q.userPick === q.correct).length;
+  document.getElementById('r-ans').textContent = ans.length;
+  document.getElementById('r-ans-d').textContent = `${correct} correct, ${ans.length-correct} wrong`;
+  document.getElementById('r-calc').textContent = state.calcOpens;
+  document.getElementById('r-raw').textContent = correct;
+  document.getElementById('r-raw-d').textContent = `of ${queue.length} (${queue.length-ans.length} blank)`;
+  // Per-skill table
+  const bySkill = {};
+  queue.forEach(q => {
+    if (!bySkill[q.skill]) bySkill[q.skill] = {n:0, correct:0, latencyMs:[]};
+    bySkill[q.skill].n += 1;
+    if (q.status==='answered' && q.userPick === q.correct) bySkill[q.skill].correct += 1;
+    if (q.firstInputMs != null) bySkill[q.skill].latencyMs.push(q.firstInputMs);
+  });
+  const tbody = document.getElementById('skill-tbody');
+  tbody.innerHTML = '';
+  // Compute max avg latency for bar scaling
+  const avgs = Object.values(bySkill).map(s =>
+    s.latencyMs.length ? s.latencyMs.reduce((a,b)=>a+b,0)/s.latencyMs.length : 0
+  );
+  const maxAvg = Math.max(...avgs, 1);
+  Object.keys(SKILL_LABEL).forEach(k => {
+    const s = bySkill[k] || {n:0, correct:0, latencyMs:[]};
+    const acc = s.n ? Math.round((s.correct/s.n)*100) : 0;
+    const avgMs = s.latencyMs.length ? s.latencyMs.reduce((a,b)=>a+b,0)/s.latencyMs.length : 0;
+    const avgS = (avgMs/1000).toFixed(1);
+    const widthPct = maxAvg ? Math.max(8, Math.round((avgMs/maxAvg)*100)) : 8;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${SKILL_LABEL[k]}</td>
+      <td class="num">${s.correct}/${s.n} · ${acc}%</td>
+      <td class="num">${avgS}s</td>
+      <td><span class="lat-bar" style="width:${widthPct}%"></span></td>
+    `;
+    tbody.appendChild(tr);
+  });
+  document.getElementById('result').classList.add('show');
+  if (window.anime){
+    anime({targets:'#result', opacity:[0,1], translateY:[12,0], duration:380, easing:'easeOutCubic'});
+  }
+}
+
+/* ===== Wires ===== */
+document.getElementById('calc-toggle').addEventListener('click', () => {
+  setCalcToggle(!state.calcOn);
+});
+document.getElementById('btn-start').addEventListener('click', startSection);
+document.getElementById('b-answer').addEventListener('click', commitAnswer);
+document.getElementById('b-skip').addEventListener('click', skipQ);
+document.getElementById('b-calc').addEventListener('click', showCalcPanel);
+document.getElementById('b-finish').addEventListener('click', finishSection);
+document.getElementById('b-again').addEventListener('click', () => {
+  document.getElementById('result').classList.remove('show');
+  document.getElementById('setup').style.display='block';
+});
+document.querySelectorAll('.calc-grid button').forEach(b => {
+  b.addEventListener('click', () => calcKey(b.getAttribute('data-k')));
+});
+</script>
+</body>
+</html>

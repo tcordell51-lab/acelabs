@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Per-module Sarah note — proposal mock</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,700;1,400;1,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f5f0e8; --paper:#fffdf7; --paper-2:#f9f3e6; --paper-3:#f3ecdb;
+  --sb:#0d2018; --sb-2:#15301f;
+  --ink:#0f1814; --ink-2:#3a4a42; --ink-mute:#6e7c74;
+  --gold:#C9A84C; --gold-m:#E2C97A; --gold-d:#8C7235; --gold-glow:rgba(201,168,76,0.35);
+  --teal:#1B3A2D; --teal-2:#2A5240; --teal-3:#3A6B54;
+  --line:rgba(13,32,24,0.12); --line-2:rgba(13,32,24,0.06); --line-strong:rgba(13,32,24,0.22);
+  --trap:#C25B3F; --trap-bg:#fbe7df; --trap-d:#8a3d28;
+  --good:#5FA874; --good-bg:#e3efe6; --good-d:#3e7c54;
+  --info:#6A8AA8; --info-bg:#e6edf4;
+  --shadow:0 1px 3px rgba(13,32,24,0.06), 0 8px 24px rgba(13,32,24,0.04);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:'DM Sans',system-ui,sans-serif; background:var(--bg); color:var(--ink); line-height:1.55; min-height:100vh;
+  background-image:radial-gradient(1200px 600px at 15% -10%, rgba(201,168,76,0.07), transparent 60%);}
+.serif{font-family:'Playfair Display',serif}
+em.gold{font-style:italic; color:var(--gold-d); font-family:'Playfair Display',serif}
+
+.wrap{max-width:920px; margin:0 auto; padding:32px 24px 96px}
+.proto-banner{background:var(--paper-3); border:1px dashed var(--line-strong); border-radius:8px; padding:10px 14px; font-size:12px; color:var(--ink-mute); margin-bottom:18px}
+.proto-banner b{color:var(--gold-d)}
+
+.crumb{font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--ink-mute); margin-bottom:8px}
+h1{font-family:'Playfair Display',serif; font-size:30px; line-height:1.15; margin:0 0 6px; font-weight:700}
+h1 em{color:var(--gold-d); font-style:italic}
+.lede{color:var(--ink-2); font-size:14.5px; max-width:680px; margin:0 0 24px}
+
+.btn{display:inline-flex; align-items:center; gap:6px; padding:6px 12px; border-radius:8px; border:1px solid var(--line); background:var(--paper); color:var(--ink); font-size:13px; font-weight:500; cursor:pointer; transition:all 0.12s; font-family:inherit}
+.btn:hover{border-color:var(--gold); transform:translateY(-1px); box-shadow:var(--shadow)}
+.btn.gold{background:var(--gold); color:var(--sb); border-color:var(--gold)}
+.btn.gold:hover{background:var(--gold-m)}
+.btn.primary{background:var(--teal); color:#fff; border-color:var(--teal)}
+.btn.ghost{background:transparent}
+.btn.sm{padding:4px 9px; font-size:12px}
+
+.card{background:var(--paper); border:1px solid var(--line); border-radius:14px; padding:22px 24px; box-shadow:var(--shadow); margin-bottom:18px}
+.card-h{display:flex; gap:12px; align-items:flex-start; margin-bottom:14px}
+.mark{width:34px; height:34px; border-radius:9px; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-family:'Playfair Display',serif; font-weight:700; font-size:16px}
+.mark.teal{background:var(--teal); color:#fff}
+.mark.gold{background:var(--gold); color:var(--sb)}
+.ttl h3{margin:0; font-family:'Playfair Display',serif; font-size:21px; line-height:1.2; font-weight:600}
+.ttl h3 em{color:var(--gold-d); font-style:italic}
+.ttl .sub{font-size:12.5px; color:var(--ink-mute); margin-top:3px}
+
+/* === SARAH NOTE BANNER — appears at the top of any module that has a note === */
+.sarah-note{
+  position:relative;
+  margin:0 0 18px;
+  padding:14px 18px 14px 56px;
+  background:linear-gradient(135deg, rgba(201,168,76,0.16) 0%, rgba(201,168,76,0.08) 100%);
+  border:1px solid rgba(201,168,76,0.45);
+  border-left:4px solid var(--gold);
+  border-radius:11px;
+  box-shadow:0 1px 3px rgba(201,168,76,0.10);
+}
+.sarah-note .avatar{
+  position:absolute; left:14px; top:14px;
+  width:30px; height:30px; border-radius:50%;
+  background:var(--gold); color:var(--sb);
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Playfair Display',serif; font-weight:700; font-size:15px;
+}
+.sarah-note .who{font-size:11px; letter-spacing:0.12em; text-transform:uppercase; color:var(--gold-d); font-weight:700; margin-bottom:4px}
+.sarah-note .who em{font-style:italic; font-family:'Playfair Display',serif; text-transform:none; letter-spacing:0; font-size:14px; color:var(--ink); font-weight:500}
+.sarah-note .body{font-size:14px; line-height:1.55; color:var(--ink)}
+.sarah-note .body em.gold{color:var(--gold-d)}
+.sarah-note .when{position:absolute; right:14px; top:14px; font-size:11px; color:var(--ink-mute); font-family:'JetBrains Mono',monospace}
+.sarah-note .acks{display:flex; gap:8px; margin-top:10px; padding-top:10px; border-top:1px solid rgba(201,168,76,0.22); font-size:12px; color:var(--ink-mute)}
+.sarah-note .acks button{background:transparent; border:1px solid var(--line); color:var(--ink-2); border-radius:7px; padding:3px 10px; font-size:11.5px; cursor:pointer; font-family:inherit}
+.sarah-note .acks button:hover{border-color:var(--gold); color:var(--gold-d)}
+
+/* Sarah-mode editor for the note */
+.sarah-edit-strip{
+  margin:0 0 14px;
+  padding:10px 14px;
+  background:var(--sb);
+  color:#ece4d4;
+  border-radius:10px;
+  display:flex; gap:10px; align-items:center;
+  font-size:13px;
+}
+.sarah-edit-strip .pill{font-size:10px; letter-spacing:0.14em; text-transform:uppercase; color:var(--gold-m); font-weight:700}
+.sarah-edit-strip span{flex:1}
+.sarah-edit-strip button{background:var(--gold); color:var(--sb); border:none; padding:5px 12px; border-radius:7px; font-size:12px; font-weight:600; cursor:pointer; font-family:inherit}
+.sarah-edit-strip button.ghost{background:transparent; color:#ece4d4; border:1px solid rgba(236,228,212,0.25)}
+
+.note-editor{
+  margin:0 0 18px;
+  padding:14px 16px;
+  background:var(--paper-2);
+  border:1px dashed var(--gold);
+  border-radius:11px;
+}
+.note-editor textarea{
+  width:100%; min-height:90px; padding:10px 12px; font-family:inherit; font-size:13.5px;
+  border:1px solid var(--line); border-radius:8px; resize:vertical;
+  background:var(--paper); color:var(--ink); line-height:1.55;
+}
+.note-editor textarea:focus{outline:none; border-color:var(--gold)}
+.note-editor .controls{display:flex; gap:8px; margin-top:10px; align-items:center; justify-content:space-between}
+.note-editor .meta{font-size:11.5px; color:var(--ink-mute)}
+
+/* Subcards copied from master so the mock module looks like a real one */
+.subcard{padding:14px 16px; border-radius:10px; background:var(--paper-2); border:1px solid var(--line)}
+.subcard.trap{background:var(--trap-bg); border-color:rgba(194,91,63,0.28)}
+.subcard.trap .h{font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--trap-d); font-weight:700; margin-bottom:6px}
+.row.r2{display:grid; grid-template-columns:1fr 1fr; gap:14px}
+.lock-line{font-family:'Playfair Display',serif; font-size:17px; font-style:italic; color:var(--gold-d); padding:14px 0}
+
+@media (max-width: 720px){
+  .row.r2{grid-template-columns:1fr}
+  .wrap{padding:18px 14px 60px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="proto-banner"><b>Mock · Agent 10 proposal.</b> A sample module page (Percent change) with the new <em>Sarah note</em> banner pinned at the top. Toggle Sarah-mode below to switch to the editor.</div>
+
+  <div class="crumb">QR Review Lab · <b style="color:var(--gold-d)">Percent change</b></div>
+  <h1>Percent <em>change</em></h1>
+  <p class="lede">When something goes from <b>old</b> to <b>new</b>, the percent change is the move from old to the gap, divided by the starting point.</p>
+
+  <!-- Sarah-mode editor strip — only visible when Sarah-mode is on -->
+  <div class="sarah-edit-strip" id="editStrip" style="display:none">
+    <span class="pill">Sarah-mode</span>
+    <span>Edit the note that appears at the top of this module for every student who opens it.</span>
+    <button class="ghost" id="cancelEdit">Cancel</button>
+    <button id="saveEdit">Save</button>
+  </div>
+
+  <!-- The editor — shown when Sarah is composing -->
+  <div class="note-editor" id="editor" style="display:none">
+    <div style="font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--ink-mute); margin-bottom:6px; font-weight:600">Sarah's note for <b style="color:var(--gold-d)">pct-chg</b></div>
+    <textarea id="noteText" placeholder="What should every student see at the top of this module? E.g. 'The most common mistake here is dividing by the new value instead of the old. Watch for that — even strong students miss it once.'"></textarea>
+    <div class="controls">
+      <span class="meta" id="lastSaved"></span>
+      <button class="btn ghost sm" id="clearNote">Delete note</button>
+    </div>
+  </div>
+
+  <!-- Sarah's note — visible to all students -->
+  <div class="sarah-note" id="sarahNote">
+    <div class="avatar">S</div>
+    <div class="who">Note from <em>Sarah</em></div>
+    <div class="body" id="noteBody">
+      The single biggest trap on this module is dividing by the <em class="gold">new</em> value instead of the <em class="gold">old</em>. If you remember nothing else: <b>the denominator is where you started</b>. We will work three of these in your next session — bring questions you got wrong on Bootcamp.
+    </div>
+    <div class="when" id="noteWhen">2 days ago</div>
+    <div class="acks">
+      <span style="flex:1">Read this before you start the module.</span>
+      <button id="ackBtn">Got it</button>
+    </div>
+  </div>
+
+  <!-- Module body (mock) -->
+  <div class="card">
+    <div class="card-h">
+      <div class="mark teal">P</div>
+      <div class="ttl"><h3>Percent <em>change</em></h3><div class="sub">Old → new. Difference over the original.</div></div>
+    </div>
+    <div class="lock-line">change ÷ <em class="gold">starting</em> value</div>
+    <div class="row r2">
+      <div class="subcard">
+        <div style="font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--ink-mute); font-weight:700; margin-bottom:6px">Move</div>
+        <p style="margin:0; font-size:13.5px; line-height:1.6">Subtract old from new. Divide by old. Multiply by 100. Done.</p>
+      </div>
+      <div class="subcard trap">
+        <div class="h">Trap</div>
+        <p style="margin:0; font-size:13.5px; line-height:1.6">Dividing by the new value. The denominator is always where you <em>started</em>.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toggle bar to demo the flow -->
+  <div style="display:flex; gap:8px; margin-top:24px; padding:14px; background:var(--paper-3); border-radius:10px">
+    <span style="font-size:12px; color:var(--ink-mute); align-self:center; flex:1">Demo the flow:</span>
+    <button class="btn sm" id="toggleSarah">Toggle Sarah-mode</button>
+    <button class="btn sm" id="composeBtn">Edit note</button>
+  </div>
+
+  <div class="card">
+    <div class="card-h">
+      <div class="mark gold">S</div>
+      <div class="ttl"><h3>Spec</h3><div class="sub">How this slots in.</div></div>
+    </div>
+    <ul style="font-size:13.5px; line-height:1.7; padding-left:20px; margin:0">
+      <li>Storage key <code>sarahModuleNotes_v1</code>: <code>{[skillId]: {text, t, by:'sarah'}}</code>. Keyed by the existing 41 module IDs (<code>frac-add</code>, <code>pct-chg</code>, etc.).</li>
+      <li>Render hook: piggyback on the existing <code>renderModule(skillId)</code> wrapper at line 10390 of <code>index.html</code>. After <code>tagEditables(skillId)</code>, insert the <code>.sarah-note</code> banner above the section's first <code>.card</code> if a note exists for that ID.</li>
+      <li>Only Sarah-mode can edit. The compose UI mounts when <code>SARAH.on === true</code> AND the user clicks "Edit note". Students see the banner read-only.</li>
+      <li>"Got it" acknowledgements record to <code>sarahModuleAcks_v1</code> as <code>{[skillId]: {[studentId]: ackedAtTimestamp}}</code> so Sarah can confirm in her dashboard whether the student saw the note.</li>
+      <li>No rich text. Plain-text note plus light formatting via the existing <code>em.gold</code> / <code>&lt;b&gt;</code> classes in the master.</li>
+    </ul>
+  </div>
+</div>
+
+<script>
+const KEY = 'qr-rem-v2:sarahModuleNotes_v1';
+const SKILL_ID = 'pct-chg';
+let sarahModeOn = false;
+
+function loadNotes(){ try{ return JSON.parse(localStorage.getItem(KEY)) || {}; }catch(e){ return {}; } }
+function saveNotes(n){ try{ localStorage.setItem(KEY, JSON.stringify(n)); }catch(e){} }
+
+function renderNote(){
+  const all = loadNotes();
+  const n = all[SKILL_ID];
+  const banner = document.getElementById('sarahNote');
+  const body = document.getElementById('noteBody');
+  const when = document.getElementById('noteWhen');
+  if (!n){
+    // Default mock content if nothing saved yet
+    body.textContent = '— no note for this module yet —';
+    when.textContent = '';
+    banner.style.opacity = '0.55';
+    return;
+  }
+  banner.style.opacity = '1';
+  body.textContent = n.text;
+  const days = Math.max(0, Math.round((Date.now() - n.t) / 86400000));
+  when.textContent = days === 0 ? 'today' : days === 1 ? 'yesterday' : days + ' days ago';
+  document.getElementById('noteText').value = n.text;
+  document.getElementById('lastSaved').textContent = 'last saved ' + new Date(n.t).toLocaleString();
+}
+
+document.getElementById('toggleSarah').addEventListener('click', () => {
+  sarahModeOn = !sarahModeOn;
+  document.getElementById('editStrip').style.display = sarahModeOn ? 'flex' : 'none';
+  document.getElementById('toggleSarah').textContent = sarahModeOn ? 'Sarah-mode: on' : 'Toggle Sarah-mode';
+});
+
+document.getElementById('composeBtn').addEventListener('click', () => {
+  if (!sarahModeOn){ alert('Toggle Sarah-mode first.'); return; }
+  document.getElementById('editor').style.display = 'block';
+  document.getElementById('noteText').focus();
+});
+
+document.getElementById('cancelEdit').addEventListener('click', () => {
+  document.getElementById('editor').style.display = 'none';
+});
+
+document.getElementById('saveEdit').addEventListener('click', () => {
+  const txt = document.getElementById('noteText').value.trim();
+  if (!txt){ alert('Note is empty.'); return; }
+  const all = loadNotes();
+  all[SKILL_ID] = {text:txt, t:Date.now(), by:'sarah'};
+  saveNotes(all);
+  document.getElementById('editor').style.display = 'none';
+  renderNote();
+});
+
+document.getElementById('clearNote').addEventListener('click', () => {
+  if (!confirm('Delete this note?')) return;
+  const all = loadNotes();
+  delete all[SKILL_ID];
+  saveNotes(all);
+  document.getElementById('editor').style.display = 'none';
+  renderNote();
+});
+
+document.getElementById('ackBtn').addEventListener('click', () => {
+  const ackKey = 'qr-rem-v2:sarahModuleAcks_v1';
+  let acks; try{ acks = JSON.parse(localStorage.getItem(ackKey)) || {}; }catch(e){ acks = {}; }
+  if (!acks[SKILL_ID]) acks[SKILL_ID] = {};
+  acks[SKILL_ID]['this-device'] = Date.now();
+  localStorage.setItem(ackKey, JSON.stringify(acks));
+  const banner = document.getElementById('sarahNote');
+  banner.style.transition = 'opacity 0.3s';
+  banner.style.opacity = '0.4';
+  document.getElementById('ackBtn').textContent = 'noted';
+  document.getElementById('ackBtn').disabled = true;
+});
+
+renderNote();
+</script>
+</body>
+</html>

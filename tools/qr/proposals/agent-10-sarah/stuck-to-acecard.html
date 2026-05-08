@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Stuck → Ace Card — proposal mock</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,700;1,400;1,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f5f0e8; --paper:#fffdf7; --paper-2:#f9f3e6; --paper-3:#f3ecdb;
+  --sb:#0d2018;
+  --ink:#0f1814; --ink-2:#3a4a42; --ink-mute:#6e7c74;
+  --gold:#C9A84C; --gold-m:#E2C97A; --gold-d:#8C7235; --gold-glow:rgba(201,168,76,0.35);
+  --teal:#1B3A2D; --teal-2:#2A5240;
+  --line:rgba(13,32,24,0.12); --line-2:rgba(13,32,24,0.06); --line-strong:rgba(13,32,24,0.22);
+  --trap:#C25B3F; --trap-bg:#fbe7df; --trap-d:#8a3d28;
+  --good:#5FA874; --good-bg:#e3efe6; --good-d:#3e7c54;
+  --info:#6A8AA8; --info-bg:#e6edf4;
+  --shadow:0 1px 3px rgba(13,32,24,0.06), 0 8px 24px rgba(13,32,24,0.04);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:'DM Sans',system-ui,sans-serif; background:var(--bg); color:var(--ink); line-height:1.55; min-height:100vh;
+  background-image:radial-gradient(1200px 600px at 15% -10%, rgba(201,168,76,0.07), transparent 60%);}
+em.gold{font-style:italic; color:var(--gold-d); font-family:'Playfair Display',serif}
+
+.wrap{max-width:1000px; margin:0 auto; padding:32px 24px 96px}
+.proto-banner{background:var(--paper-3); border:1px dashed var(--line-strong); border-radius:8px; padding:10px 14px; font-size:12px; color:var(--ink-mute); margin-bottom:18px}
+.proto-banner b{color:var(--gold-d)}
+
+h1{font-family:'Playfair Display',serif; font-size:30px; line-height:1.15; margin:0 0 6px; font-weight:700}
+h1 em{color:var(--gold-d); font-style:italic}
+.lede{color:var(--ink-2); font-size:14.5px; max-width:700px; margin:0 0 22px}
+
+.btn{display:inline-flex; align-items:center; gap:6px; padding:8px 14px; border-radius:8px; border:1px solid var(--line); background:var(--paper); color:var(--ink); font-size:13px; font-weight:500; cursor:pointer; transition:all 0.12s; font-family:inherit}
+.btn:hover{border-color:var(--gold); transform:translateY(-1px); box-shadow:var(--shadow)}
+.btn.gold{background:var(--gold); color:var(--sb); border-color:var(--gold)}
+.btn.gold:hover{background:var(--gold-m)}
+.btn.primary{background:var(--teal); color:#fff; border-color:var(--teal)}
+.btn.primary:hover{background:var(--teal-2)}
+.btn.ghost{background:transparent}
+.btn.sm{padding:5px 10px; font-size:12px}
+.btn.lg{padding:11px 18px; font-size:14.5px}
+.btn.trap{background:var(--trap); color:#fff; border-color:var(--trap)}
+
+.card{background:var(--paper); border:1px solid var(--line); border-radius:14px; padding:22px 24px; box-shadow:var(--shadow); margin-bottom:18px}
+.card-h{display:flex; gap:12px; align-items:flex-start; margin-bottom:14px}
+.mark{width:34px; height:34px; border-radius:9px; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-family:'Playfair Display',serif; font-weight:700; font-size:16px}
+.mark.teal{background:var(--teal); color:#fff}
+.mark.gold{background:var(--gold); color:var(--sb)}
+.mark.trap{background:var(--trap); color:#fff}
+.ttl h3{margin:0; font-family:'Playfair Display',serif; font-size:21px; line-height:1.2; font-weight:600}
+.ttl h3 em{color:var(--gold-d); font-style:italic}
+.ttl .sub{font-size:12.5px; color:var(--ink-mute); margin-top:3px}
+
+/* Demo problem */
+.demo-prob{background:var(--paper-2); padding:16px 18px; border-radius:10px; border:1px solid var(--line); margin-bottom:14px}
+.demo-prob .stem{font-family:'Playfair Display',serif; font-size:17px; line-height:1.4}
+.demo-prob .opts{display:grid; grid-template-columns:repeat(2,1fr); gap:6px; margin-top:12px}
+.demo-prob .opt{padding:8px 12px; background:var(--paper); border:1px solid var(--line); border-radius:7px; font-size:13px; cursor:pointer; display:flex; gap:8px; align-items:center}
+.demo-prob .opt .let{font-family:'JetBrains Mono',monospace; color:var(--gold-d); font-weight:600}
+.demo-prob .opt:hover{border-color:var(--gold)}
+.demo-prob .opt.picked{border-color:var(--trap); background:rgba(194,91,63,0.08)}
+
+/* The new "Stuck" capture overlay */
+.stuck-mod-back{position:fixed; inset:0; background:rgba(13,32,24,0.5); display:flex; align-items:center; justify-content:center; z-index:200; padding:18px}
+.stuck-mod{background:var(--paper); border-radius:14px; max-width:480px; width:100%; padding:24px; box-shadow:0 24px 56px rgba(0,0,0,0.25); position:relative}
+.stuck-mod h3{font-family:'Playfair Display',serif; font-size:22px; margin:0 0 6px; font-weight:600}
+.stuck-mod h3 em{color:var(--gold-d); font-style:italic}
+.stuck-mod .lede{font-size:14px; color:var(--ink-2); margin-bottom:14px}
+.stuck-mod .close{position:absolute; right:14px; top:12px; background:none; border:none; font-size:22px; color:var(--ink-mute); cursor:pointer; line-height:1}
+.stuck-mod .options{display:flex; flex-direction:column; gap:10px}
+.stuck-mod .opt-btn{text-align:left; padding:14px 16px; border:1px solid var(--line); border-radius:10px; background:var(--paper); cursor:pointer; transition:all 0.12s; font-family:inherit}
+.stuck-mod .opt-btn:hover{border-color:var(--gold); transform:translateX(2px)}
+.stuck-mod .opt-btn b{display:block; font-family:'Playfair Display',serif; font-size:15px; margin-bottom:3px; color:var(--ink)}
+.stuck-mod .opt-btn span{display:block; font-size:12px; color:var(--ink-mute)}
+.stuck-mod .opt-btn.gold{background:rgba(201,168,76,0.12); border-color:var(--gold)}
+.stuck-mod .opt-btn.gold b{color:var(--gold-d)}
+
+/* Ace Card preview */
+.ace-card{background:linear-gradient(135deg, var(--paper) 0%, var(--paper-2) 100%); border:1px solid var(--line-strong); border-radius:12px; padding:18px 20px; box-shadow:0 4px 14px rgba(13,32,24,0.10); margin-top:14px; position:relative}
+.ace-card .ribbon{position:absolute; top:-8px; right:14px; background:var(--gold); color:var(--sb); font-size:10px; letter-spacing:0.14em; text-transform:uppercase; font-weight:700; padding:4px 10px; border-radius:5px; font-family:'JetBrains Mono',monospace}
+.ace-card .stem{font-family:'Playfair Display',serif; font-size:15px; line-height:1.45; margin-bottom:10px}
+.ace-card .meta{display:flex; gap:14px; flex-wrap:wrap; font-size:11px; color:var(--ink-mute); font-family:'JetBrains Mono',monospace; padding-top:10px; border-top:1px solid var(--line-2)}
+.ace-card .meta b{color:var(--ink-2); font-weight:600}
+.ace-card .reflection{margin:8px 0 0; padding:10px 12px; background:var(--info-bg); border-left:3px solid var(--info); border-radius:7px; font-size:12.5px; color:var(--ink-2)}
+.ace-card .due-pill{display:inline-block; padding:3px 8px; background:var(--gold-glow); color:var(--gold-d); border-radius:5px; font-size:11px; font-weight:600; font-family:'JetBrains Mono',monospace}
+
+textarea.reflect{width:100%; min-height:60px; padding:9px 11px; font-family:inherit; font-size:13px; border:1px solid var(--line); border-radius:8px; resize:vertical; background:var(--paper); color:var(--ink); margin-top:8px}
+textarea.reflect:focus{outline:none; border-color:var(--gold)}
+
+.list{display:flex; flex-direction:column; gap:10px}
+
+@media (max-width: 720px){
+  .demo-prob .opts{grid-template-columns:1fr}
+  .wrap{padding:18px 14px 60px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="proto-banner"><b>Mock · Agent 10 proposal.</b> Audit + redesign of the "I need a sec" stuck button. Today it logs a timestamp and offers wins/breath/skip. Proposal: also capture the current module + last-attempted problem as a flagged Ace Card.</div>
+
+  <h1>Stuck → <em>Ace Card</em></h1>
+  <p class="lede">Hit the red button while working a problem — the tool now offers a fourth option: <b>flag this for review</b>. The current module ID and the most recent attempt get stored as an Ace Card with a reflection prompt. Sarah sees it in the dashboard. The student sees it surface again 24h later via spaced repetition.</p>
+
+  <!-- Demo problem context -->
+  <div class="card">
+    <div class="card-h">
+      <div class="mark teal">P</div>
+      <div class="ttl"><h3>Module: <em>Rate × time</em></h3><div class="sub">Demo — pick an answer, then hit "I need a sec".</div></div>
+    </div>
+    <div class="demo-prob">
+      <div class="stem">A train leaves Boston at 60 mph. Two hours later a second train leaves the same station at 80 mph on the same track. How far from Boston do they meet?</div>
+      <div class="opts" id="demoOpts">
+        <div class="opt" data-i="0"><span class="let">A</span><span>360 mi</span></div>
+        <div class="opt" data-i="1"><span class="let">B</span><span>480 mi</span></div>
+        <div class="opt" data-i="2"><span class="let">C</span><span>600 mi</span></div>
+        <div class="opt" data-i="3"><span class="let">D</span><span>720 mi</span></div>
+      </div>
+    </div>
+    <button class="btn trap lg" id="stuckBtn">I need a sec</button>
+  </div>
+
+  <!-- Ace Card list -->
+  <div class="card">
+    <div class="card-h">
+      <div class="mark gold">A</div>
+      <div class="ttl"><h3>Your <em>Ace Cards</em></h3><div class="sub">Flagged moments. Re-surface in 24h, then 3d, 7d, 14d (Leitner-style). Sarah sees the same list in her dashboard.</div></div>
+    </div>
+    <div class="list" id="aceList"></div>
+    <div style="margin-top:14px; display:flex; gap:8px">
+      <button class="btn ghost sm" id="clearAces">Clear all</button>
+      <button class="btn ghost sm" id="exportAces">Export markdown</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-h">
+      <div class="mark trap">S</div>
+      <div class="ttl"><h3>Spec</h3><div class="sub">How this slots into the master HTML.</div></div>
+    </div>
+    <ul style="font-size:13.5px; line-height:1.7; padding-left:20px; margin:0">
+      <li><code>STUCK.open()</code> at line 9202 is augmented with one extra branch: <b>"Flag this for review"</b>. It calls a new <code>STUCK.flagAceCard()</code> that reads the current module from <code>SARAH.modules[SARAH.i]</code> (or the most-recent <code>renderModule</code> argument) and the last attempt from <code>ST.get('attempts',[])</code>.</li>
+      <li>Storage key <code>aceCards_v1</code> matches the bio tool's pattern: <code>[{id, t, skill, problemId, stem, picked, correct, reflection, due, box}]</code>. <code>box</code> tracks the Leitner level (0=24h, 1=3d, 2=7d, 3=14d, 4=mastered).</li>
+      <li>Sarah's dashboard surfaces all flagged cards with <code>tag === 'stuck'</code> as a high-priority section above the auto-generated plan.</li>
+      <li>When the card resurfaces (due ≤ now), it appears as a yellow-bordered subcard at the top of the module page. Get it right cold → bumps to next box. Miss → stays in box 0.</li>
+      <li>Reflection prompt is optional but encouraged. The free-text field doubles as a tutor hand-off — Sarah reads "I forgot to convert minutes to hours" and knows exactly what to coach.</li>
+    </ul>
+  </div>
+</div>
+
+<!-- Stuck modal — augmented with a 4th option -->
+<div class="stuck-mod-back" id="stuckBack" style="display:none">
+  <div class="stuck-mod" id="stuckPanel">
+    <button class="close" onclick="closeStuck()">×</button>
+    <h3>Stuck is <em>normal.</em></h3>
+    <p class="lede">Especially on QR. Pick what'll help right now:</p>
+    <div class="options" id="stuckOpts">
+      <button class="opt-btn"><b>Three quick wins</b><span>Three problems from skills you've already locked. Rebuild flow.</span></button>
+      <button class="opt-btn"><b>Take a 60-second breath</b><span>Slow your nervous system, then come back to it.</span></button>
+      <button class="opt-btn gold" id="flagBtn"><b>Flag this for review · new</b><span>Save this exact problem as an Ace Card. Surface it again tomorrow. Sarah sees it.</span></button>
+      <button class="opt-btn"><b>Move on for now</b><span>Mark and skip. Come back later with fresh eyes.</span></button>
+    </div>
+    <div id="reflectStep" style="display:none">
+      <p style="font-size:13px; color:var(--ink-2); margin-top:8px">One sentence on what froze you. Optional, but it'll help Sarah and future-you.</p>
+      <textarea class="reflect" id="reflectText" placeholder="e.g. 'I forgot to convert hours to minutes' or 'the second train start time threw me'"></textarea>
+      <div style="display:flex; gap:8px; margin-top:10px; justify-content:flex-end">
+        <button class="btn ghost sm" onclick="confirmFlag(true)">Skip — just save the card</button>
+        <button class="btn primary sm" onclick="confirmFlag(false)">Save Ace Card</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const ACE_KEY = 'qr-rem-v2:aceCards_v1';
+const ATT_KEY = 'qr-rem-v2:stuck-events';
+const CUR_MODULE = 'rate-time';
+const CUR_PROBLEM = {id:'rt-train-meet', stem:'A train leaves Boston at 60 mph. Two hours later a second train leaves at 80 mph on the same track. How far from Boston do they meet?', correct:2};
+let pickedIdx = null;
+
+function loadAces(){ try{ return JSON.parse(localStorage.getItem(ACE_KEY)) || []; }catch(e){ return []; } }
+function saveAces(a){ try{ localStorage.setItem(ACE_KEY, JSON.stringify(a)); }catch(e){} }
+
+document.querySelectorAll('#demoOpts .opt').forEach(o => o.addEventListener('click', () => {
+  document.querySelectorAll('#demoOpts .opt').forEach(x => x.classList.remove('picked'));
+  o.classList.add('picked');
+  pickedIdx = parseInt(o.dataset.i);
+}));
+
+document.getElementById('stuckBtn').addEventListener('click', () => {
+  document.getElementById('stuckBack').style.display = 'flex';
+  document.getElementById('stuckOpts').style.display = 'flex';
+  document.getElementById('reflectStep').style.display = 'none';
+});
+function closeStuck(){ document.getElementById('stuckBack').style.display = 'none'; }
+window.closeStuck = closeStuck;
+
+document.getElementById('flagBtn').addEventListener('click', () => {
+  document.getElementById('stuckOpts').style.display = 'none';
+  document.getElementById('reflectStep').style.display = 'block';
+  document.getElementById('reflectText').focus();
+});
+
+window.confirmFlag = function(skip){
+  const reflection = skip ? '' : (document.getElementById('reflectText').value.trim());
+  const aces = loadAces();
+  const dueIn = 24 * 3600 * 1000;
+  aces.push({
+    id: 'ace-' + Date.now(),
+    t: Date.now(),
+    skill: CUR_MODULE,
+    problemId: CUR_PROBLEM.id,
+    stem: CUR_PROBLEM.stem,
+    picked: pickedIdx !== null ? 'ABCD'[pickedIdx] : null,
+    correct: 'ABCD'[CUR_PROBLEM.correct],
+    reflection,
+    due: Date.now() + dueIn,
+    box: 0,
+    tag: 'stuck'
+  });
+  saveAces(aces);
+  closeStuck();
+  document.getElementById('reflectText').value = '';
+  renderAces();
+};
+
+function renderAces(){
+  const aces = loadAces();
+  const wrap = document.getElementById('aceList');
+  if (aces.length === 0){
+    wrap.innerHTML = '<div style="padding:18px; text-align:center; color:var(--ink-mute); font-size:13px; font-style:italic">No Ace Cards yet. Hit "I need a sec" above and pick "Flag this for review".</div>';
+    return;
+  }
+  wrap.innerHTML = aces.slice().reverse().map(a => {
+    const dueMs = a.due - Date.now();
+    const dueLbl = dueMs <= 0 ? 'due now' : (dueMs < 86400000 ? Math.round(dueMs/3600000) + 'h' : Math.round(dueMs/86400000) + 'd');
+    const boxes = ['box 0 · 24h', 'box 1 · 3d', 'box 2 · 7d', 'box 3 · 14d', 'mastered'];
+    return `<div class="ace-card">
+      <span class="ribbon">stuck flag</span>
+      <div class="stem">${a.stem.replace(/</g,'&lt;')}</div>
+      ${a.reflection ? `<div class="reflection"><b>Reflection:</b> ${a.reflection.replace(/</g,'&lt;')}</div>` : ''}
+      <div class="meta">
+        <span><b>module:</b> ${a.skill}</span>
+        <span><b>picked:</b> ${a.picked || '—'} · correct: ${a.correct}</span>
+        <span><b>${boxes[a.box]}</b></span>
+        <span class="due-pill">${dueLbl}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+document.getElementById('clearAces').addEventListener('click', () => {
+  if (!confirm('Clear all Ace Cards?')) return;
+  saveAces([]); renderAces();
+});
+
+document.getElementById('exportAces').addEventListener('click', () => {
+  const aces = loadAces();
+  if (aces.length === 0){ alert('No cards to export.'); return; }
+  const lines = ['# Ace Cards — flagged from QR tool', '', `Exported ${new Date().toLocaleString()} · ${aces.length} cards`, ''];
+  aces.forEach((a, i) => {
+    lines.push(`## ${i+1}. ${a.skill} · ${new Date(a.t).toLocaleString()}`);
+    lines.push(`**Problem:** ${a.stem}`);
+    lines.push(`**Picked:** ${a.picked || '—'} (correct: ${a.correct})`);
+    if (a.reflection) lines.push(`**Reflection:** ${a.reflection}`);
+    lines.push('');
+  });
+  const md = lines.join('\n');
+  const dl = document.createElement('a');
+  dl.href = 'data:text/markdown;charset=utf-8,' + encodeURIComponent(md);
+  dl.download = 'ace-cards-' + new Date().toISOString().slice(0,10) + '.md';
+  dl.click();
+});
+
+renderAces();
+</script>
+</body>
+</html>

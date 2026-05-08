@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Coordinate Plane Canvas — AceTheDAT QR</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js"></script>
+<style>
+:root{
+  --bg:#f5f0e8; --paper:#fffdf7; --paper-2:#f9f3e6; --paper-3:#f3ecdb;
+  --ink:#0f1814; --ink-2:#3a4a42; --ink-mute:#6e7c74; --ink-soft:#9aa39e;
+  --gold:#C9A84C; --gold-m:#E2C97A; --gold-d:#8C7235; --gold-glow:rgba(201,168,76,0.35);
+  --teal:#1B3A2D; --teal-2:#2A5240; --teal-3:#3A6B54;
+  --line:rgba(13,32,24,0.12); --line-2:rgba(13,32,24,0.06); --line-strong:rgba(13,32,24,0.22);
+  --trap:#C25B3F; --trap-bg:#fbe7df; --trap-d:#8a3d28;
+  --good:#5FA874; --good-bg:#e3efe6; --good-d:#3e7c54;
+  --info:#6A8AA8; --info-bg:#e6edf4;
+  --shadow:0 1px 3px rgba(13,32,24,0.06), 0 8px 24px rgba(13,32,24,0.04);
+  --shadow-md:0 2px 6px rgba(13,32,24,0.08), 0 16px 40px rgba(13,32,24,0.06);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:'DM Sans',system-ui,-apple-system,sans-serif; background:var(--bg); color:var(--ink); line-height:1.5; padding:32px 24px; min-height:100vh}
+.wrap{max-width:1100px; margin:0 auto}
+h1{font-family:'Playfair Display',serif; font-size:32px; margin:0 0 8px}
+h1 em{font-style:italic; color:var(--gold-d); font-weight:400}
+.sub{font-size:11px; letter-spacing:0.16em; text-transform:uppercase; color:var(--gold-d); font-weight:600}
+.lede{font-size:15px; color:var(--ink-2); max-width:740px; margin:8px 0 24px}
+
+.canvas-card{background:var(--paper); border:1px solid var(--line); border-radius:16px; padding:20px; box-shadow:var(--shadow-md); display:grid; grid-template-columns:1fr 320px; gap:20px}
+@media (max-width:820px){.canvas-card{grid-template-columns:1fr}}
+.stage{position:relative; background:var(--paper-2); border:1px solid var(--line); border-radius:12px; overflow:hidden; touch-action:none}
+.stage svg{display:block; width:100%; height:auto; user-select:none; -webkit-user-select:none}
+
+.stage svg .grid-min{stroke:var(--line); stroke-width:0.5; opacity:0.55}
+.stage svg .grid-maj{stroke:var(--line-strong); stroke-width:0.7; opacity:0.5}
+.stage svg .axis{stroke:var(--ink); stroke-width:1.4}
+.stage svg .axis-lbl{font-family:'JetBrains Mono',monospace; font-size:10px; fill:var(--ink-mute)}
+.stage svg .line-main{stroke:var(--teal); stroke-width:2.5; stroke-linecap:round}
+.stage svg .line-ext{stroke:var(--teal-3); stroke-width:1.5; stroke-dasharray:4 3; opacity:0.7}
+.stage svg .pt{cursor:grab; transition:r 0.15s}
+.stage svg .pt:hover{r:11}
+.stage svg .pt.dragging{cursor:grabbing; r:12}
+.stage svg .p1{fill:var(--gold); stroke:var(--gold-d); stroke-width:2}
+.stage svg .p2{fill:var(--teal); stroke:#fff; stroke-width:2}
+.stage svg .p3{fill:var(--trap); stroke:var(--trap-d); stroke-width:2}
+.stage svg .pt-lbl{font-family:'Playfair Display',serif; font-style:italic; font-size:14px; fill:var(--ink); paint-order:stroke; stroke:var(--paper-2); stroke-width:3}
+.stage svg .midpoint{fill:var(--info); stroke:#fff; stroke-width:2}
+.stage svg .leg{stroke:var(--gold-d); stroke-width:1.5; stroke-dasharray:5 3; opacity:0.7}
+.stage svg .leg-lbl{font-family:'JetBrains Mono',monospace; font-size:11px; fill:var(--gold-d); paint-order:stroke; stroke:var(--paper-2); stroke-width:3}
+
+.panels{display:flex; flex-direction:column; gap:12px}
+.panel{background:var(--paper-2); border:1px solid var(--line); border-radius:10px; padding:12px 14px}
+.panel h3{font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:var(--ink-mute); margin:0 0 8px; font-weight:600}
+.row{display:flex; justify-content:space-between; gap:10px; font-size:13px; padding:3px 0; align-items:baseline}
+.row b{font-family:'JetBrains Mono',monospace; color:var(--teal); font-weight:600; font-size:12.5px}
+.eq{font-family:'JetBrains Mono',monospace; font-size:14px; color:var(--ink); padding:8px 10px; background:var(--paper); border-radius:6px; border:1px solid var(--line); margin-top:4px; text-align:center; font-weight:600}
+.eq em{font-style:italic; color:var(--gold-d); font-family:'Playfair Display',serif; font-size:15px}
+
+.hint{font-size:11px; color:var(--ink-mute); margin-top:14px; line-height:1.5; font-style:italic}
+.toolbar{display:flex; gap:8px; margin-bottom:10px; flex-wrap:wrap}
+.tog{flex:1; min-width:0; padding:7px 10px; font-size:12px; font-weight:600; border:1px solid var(--line); background:var(--paper); color:var(--ink-2); border-radius:8px; cursor:pointer; text-align:center; font-family:'DM Sans',sans-serif}
+.tog:hover{border-color:var(--gold); color:var(--ink)}
+.tog.active{background:var(--teal); color:#fff; border-color:var(--teal)}
+
+.test-row{display:flex; align-items:center; gap:8px; padding:8px 10px; border-radius:8px; font-size:13px; font-weight:600}
+.test-row.on-line{background:var(--good-bg); color:var(--good-d); border:1px solid var(--good)}
+.test-row.off-line{background:var(--trap-bg); color:var(--trap-d); border:1px solid var(--trap)}
+.test-row.idle{background:var(--paper); color:var(--ink-mute); border:1px dashed var(--line-strong)}
+.test-row .mark{display:inline-block; width:10px; height:10px; border-radius:50%; background:currentColor}
+.formula{font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--ink-mute); margin-top:4px; padding-left:4px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="sub">QR · Tier 2 · Coordinate Plane</div>
+  <h1>Two points. <em>One</em> line. Live.</h1>
+  <p class="lede">Drag P1 (gold) and P2 (teal). Slope, midpoint, distance, and the slope-intercept equation update as you move. Click anywhere on the plane to drop a third test point — the panel says whether it sits on the line. The DAT trap is forgetting that a vertical line has undefined slope (not zero) and that the midpoint averages, not subtracts.</p>
+
+  <div class="canvas-card">
+    <div>
+      <div class="toolbar">
+        <button class="tog active" data-tool="drag">Drag points</button>
+        <button class="tog" data-tool="test">Place test point</button>
+        <button class="tog" data-tool="reset">Reset</button>
+      </div>
+      <div class="stage">
+        <svg id="svg" viewBox="0 0 600 460" preserveAspectRatio="xMidYMid meet">
+          <defs>
+            <pattern id="grid-min-c" width="20" height="20" patternUnits="userSpaceOnUse">
+              <path d="M 20 0 L 0 0 0 20" class="grid-min" fill="none"/>
+            </pattern>
+          </defs>
+          <rect width="600" height="460" fill="url(#grid-min-c)"/>
+          <g id="grid-maj"></g>
+          <line class="axis" x1="0" y1="230" x2="600" y2="230"/>
+          <line class="axis" x1="300" y1="0" x2="300" y2="460"/>
+          <g id="axis-labels"></g>
+          <line id="line-ext" class="line-ext" x1="0" y1="0" x2="0" y2="0"/>
+          <line id="line-main" class="line-main" x1="0" y1="0" x2="0" y2="0"/>
+          <line id="leg-h" class="leg" x1="0" y1="0" x2="0" y2="0"/>
+          <line id="leg-v" class="leg" x1="0" y1="0" x2="0" y2="0"/>
+          <text id="leg-h-lbl" class="leg-lbl" text-anchor="middle"></text>
+          <text id="leg-v-lbl" class="leg-lbl" text-anchor="middle"></text>
+          <circle id="midpt" class="midpoint" r="5"/>
+          <text id="midpt-lbl" class="pt-lbl" text-anchor="middle" style="font-size:11px">M</text>
+          <circle id="p3" class="pt p3" r="9" cx="-100" cy="-100" style="display:none"/>
+          <text id="p3-lbl" class="pt-lbl" text-anchor="middle" style="display:none">T</text>
+          <circle id="p1" class="pt p1" r="9" cx="200" cy="320"/>
+          <circle id="p2" class="pt p2" r="9" cx="420" cy="160"/>
+          <text id="p1-lbl" class="pt-lbl" text-anchor="middle">P₁</text>
+          <text id="p2-lbl" class="pt-lbl" text-anchor="middle">P₂</text>
+        </svg>
+      </div>
+      <div class="hint">P1 = gold, P2 = teal. After clicking "Place test point," tap the plane to drop T (orange).</div>
+    </div>
+
+    <div class="panels">
+      <div class="panel">
+        <h3>Points</h3>
+        <div class="row"><span>P₁</span><b id="p1-coord">(0, 0)</b></div>
+        <div class="row"><span>P₂</span><b id="p2-coord">(0, 0)</b></div>
+        <div class="row"><span>Midpoint M</span><b id="mid-coord">(0, 0)</b></div>
+        <div class="formula">M = ((x₁+x₂)/2, (y₁+y₂)/2)</div>
+      </div>
+
+      <div class="panel">
+        <h3>Slope &amp; distance</h3>
+        <div class="row"><span>Δx</span><b id="dx">0</b></div>
+        <div class="row"><span>Δy</span><b id="dy">0</b></div>
+        <div class="row"><span>slope m</span><b id="slope">0</b></div>
+        <div class="row"><span>distance d</span><b id="dist">0</b></div>
+        <div class="formula">d = √(Δx² + Δy²) (Pythagorean)</div>
+      </div>
+
+      <div class="panel">
+        <h3>Equation of the line</h3>
+        <div class="eq" id="eq">y = mx + b</div>
+        <div class="row"><span>y-intercept b</span><b id="bint">0</b></div>
+        <div class="formula">slope-intercept · point-slope: y − y₁ = m(x − x₁)</div>
+      </div>
+
+      <div class="panel">
+        <h3>Test point T</h3>
+        <div id="test-row" class="test-row idle">
+          <span class="mark"></span>
+          <span id="test-text">No test point placed</span>
+        </div>
+        <div class="row" style="margin-top:6px"><span>T</span><b id="t-coord">—</b></div>
+        <div class="formula">On line if y_T = m·x_T + b (within 0.05).</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const svg = document.getElementById('svg');
+  const SCALE = 20; // 1 unit = 20px
+  const ORIGIN = {x:300, y:230};
+
+  // logical coords (math units)
+  const P1 = {x:-5, y:-4.5}; // start at (200,320) -> (-5, -4.5)
+  const P2 = {x:6, y:3.5};
+  let P3 = null;
+  let tool = 'drag';
+
+  function toScreen(p){return {x:ORIGIN.x + p.x*SCALE, y:ORIGIN.y - p.y*SCALE};}
+  function toLogic(sx, sy){return {x:(sx-ORIGIN.x)/SCALE, y:(ORIGIN.y-sy)/SCALE};}
+
+  // build axis labels and major grid
+  (function buildGrid(){
+    const major = document.getElementById('grid-maj');
+    const lblG = document.getElementById('axis-labels');
+    for(let x=-14;x<=14;x++){
+      if(x===0) continue;
+      const sx = ORIGIN.x + x*SCALE;
+      const ln = document.createElementNS('http://www.w3.org/2000/svg','line');
+      ln.setAttribute('class','grid-maj'); ln.setAttribute('x1',sx); ln.setAttribute('x2',sx);
+      ln.setAttribute('y1',0); ln.setAttribute('y2',460);
+      if(x%5===0) major.appendChild(ln);
+      if(x%5===0){
+        const t = document.createElementNS('http://www.w3.org/2000/svg','text');
+        t.setAttribute('class','axis-lbl'); t.setAttribute('x',sx); t.setAttribute('y',ORIGIN.y+12);
+        t.setAttribute('text-anchor','middle'); t.textContent=x;
+        lblG.appendChild(t);
+      }
+    }
+    for(let y=-11;y<=11;y++){
+      if(y===0) continue;
+      const sy = ORIGIN.y - y*SCALE;
+      const ln = document.createElementNS('http://www.w3.org/2000/svg','line');
+      ln.setAttribute('class','grid-maj'); ln.setAttribute('y1',sy); ln.setAttribute('y2',sy);
+      ln.setAttribute('x1',0); ln.setAttribute('x2',600);
+      if(y%5===0) major.appendChild(ln);
+      if(y%5===0){
+        const t = document.createElementNS('http://www.w3.org/2000/svg','text');
+        t.setAttribute('class','axis-lbl'); t.setAttribute('x',ORIGIN.x-6); t.setAttribute('y',sy+3);
+        t.setAttribute('text-anchor','end'); t.textContent=y;
+        lblG.appendChild(t);
+      }
+    }
+  })();
+
+  function fmt(n,d=2){
+    if(!isFinite(n)) return '∞';
+    return Math.abs(n)<0.005?'0': Number(n).toFixed(d);
+  }
+  function snap(v){return Math.round(v*2)/2;} // half-unit snap
+
+  function attachDrag(elId, P){
+    const el = document.getElementById(elId);
+    const lblId = elId+'-lbl';
+    let dragging=false;
+    function getPt(evt){
+      const pt = svg.createSVGPoint();
+      const t = evt.touches? evt.touches[0] : evt;
+      pt.x=t.clientX; pt.y=t.clientY;
+      return pt.matrixTransform(svg.getScreenCTM().inverse());
+    }
+    function start(e){if(tool!=='drag')return; dragging=true; el.classList.add('dragging'); e.preventDefault(); e.stopPropagation();}
+    function move(e){
+      if(!dragging) return;
+      const p = getPt(e); const lg = toLogic(p.x, p.y);
+      P.x = Math.max(-14, Math.min(14, snap(lg.x)));
+      P.y = Math.max(-11, Math.min(11, snap(lg.y)));
+      render();
+      e.preventDefault();
+    }
+    function end(){dragging=false; el.classList.remove('dragging');}
+    el.addEventListener('mousedown', start);
+    el.addEventListener('touchstart', start, {passive:false});
+    window.addEventListener('mousemove', move);
+    window.addEventListener('touchmove', move, {passive:false});
+    window.addEventListener('mouseup', end);
+    window.addEventListener('touchend', end);
+  }
+
+  attachDrag('p1', P1);
+  attachDrag('p2', P2);
+
+  // click on stage to place test point
+  svg.addEventListener('click', (e)=>{
+    if(tool!=='test') return;
+    const pt = svg.createSVGPoint();
+    pt.x=e.clientX; pt.y=e.clientY;
+    const sp = pt.matrixTransform(svg.getScreenCTM().inverse());
+    const lg = toLogic(sp.x, sp.y);
+    P3 = {x: snap(lg.x), y: snap(lg.y)};
+    render();
+  });
+
+  document.querySelectorAll('.tog').forEach(b=>{
+    b.addEventListener('click', ()=>{
+      if(b.dataset.tool==='reset'){
+        P1.x=-5; P1.y=-4.5; P2.x=6; P2.y=3.5; P3=null;
+        document.querySelectorAll('.tog').forEach(x=>x.classList.remove('active'));
+        document.querySelector('[data-tool="drag"]').classList.add('active');
+        tool='drag';
+        render();
+        return;
+      }
+      document.querySelectorAll('.tog').forEach(x=>x.classList.remove('active'));
+      b.classList.add('active');
+      tool = b.dataset.tool;
+    });
+  });
+
+  function render(){
+    const s1 = toScreen(P1), s2 = toScreen(P2);
+    const p1El = document.getElementById('p1');
+    const p2El = document.getElementById('p2');
+    p1El.setAttribute('cx', s1.x); p1El.setAttribute('cy', s1.y);
+    p2El.setAttribute('cx', s2.x); p2El.setAttribute('cy', s2.y);
+    document.getElementById('p1-lbl').setAttribute('x', s1.x); document.getElementById('p1-lbl').setAttribute('y', s1.y-14);
+    document.getElementById('p2-lbl').setAttribute('x', s2.x); document.getElementById('p2-lbl').setAttribute('y', s2.y-14);
+
+    const dx = P2.x - P1.x, dy = P2.y - P1.y;
+    const dist = Math.hypot(dx, dy);
+    let slope, b, eqTxt;
+    const vertical = Math.abs(dx) < 1e-6;
+    if(vertical){
+      slope = NaN;
+      b = NaN;
+      eqTxt = `x = ${fmt(P1.x,1)} (vertical, undefined slope)`;
+    } else {
+      slope = dy/dx;
+      b = P1.y - slope*P1.x;
+      const mTxt = Math.abs(slope-1)<1e-6?'':Math.abs(slope+1)<1e-6?'-': fmt(slope,2);
+      const sign = b>=0?'+':'−';
+      const bAbs = Math.abs(b);
+      if(Math.abs(slope)<1e-6) eqTxt = `y = ${fmt(b,2)} (horizontal)`;
+      else eqTxt = `y = ${mTxt}x ${sign} ${fmt(bAbs,2)}`;
+    }
+
+    // line — extend beyond points to plane edges
+    const lineMain = document.getElementById('line-main');
+    const lineExt = document.getElementById('line-ext');
+    if(vertical){
+      lineExt.setAttribute('x1', s1.x); lineExt.setAttribute('x2', s1.x);
+      lineExt.setAttribute('y1', 0); lineExt.setAttribute('y2', 460);
+    } else {
+      // y = m*x + b; at x_screen = 0 -> logic x = -ORIGIN.x/SCALE = -15
+      const xL = -15, xR = 15;
+      const yL = slope*xL + b, yR = slope*xR + b;
+      const eL = toScreen({x:xL, y:yL}), eR = toScreen({x:xR, y:yR});
+      lineExt.setAttribute('x1', eL.x); lineExt.setAttribute('x2', eR.x);
+      lineExt.setAttribute('y1', eL.y); lineExt.setAttribute('y2', eR.y);
+    }
+    lineMain.setAttribute('x1', s1.x); lineMain.setAttribute('y1', s1.y);
+    lineMain.setAttribute('x2', s2.x); lineMain.setAttribute('y2', s2.y);
+
+    // legs (rise / run)
+    const legH = document.getElementById('leg-h');
+    const legV = document.getElementById('leg-v');
+    const legHL = document.getElementById('leg-h-lbl');
+    const legVL = document.getElementById('leg-v-lbl');
+    const corner = toScreen({x:P2.x, y:P1.y});
+    legH.setAttribute('x1', s1.x); legH.setAttribute('y1', s1.y);
+    legH.setAttribute('x2', corner.x); legH.setAttribute('y2', corner.y);
+    legV.setAttribute('x1', corner.x); legV.setAttribute('y1', corner.y);
+    legV.setAttribute('x2', s2.x); legV.setAttribute('y2', s2.y);
+    legHL.setAttribute('x', (s1.x+corner.x)/2); legHL.setAttribute('y', s1.y+14);
+    legHL.textContent = 'Δx = '+fmt(dx,2);
+    legVL.setAttribute('x', corner.x+ (corner.x>s2.x?-22:22)); legVL.setAttribute('y', (corner.y+s2.y)/2);
+    legVL.textContent = 'Δy = '+fmt(dy,2);
+
+    // midpoint
+    const mid = {x:(P1.x+P2.x)/2, y:(P1.y+P2.y)/2};
+    const sm = toScreen(mid);
+    const mEl = document.getElementById('midpt');
+    mEl.setAttribute('cx', sm.x); mEl.setAttribute('cy', sm.y);
+    document.getElementById('midpt-lbl').setAttribute('x', sm.x+14);
+    document.getElementById('midpt-lbl').setAttribute('y', sm.y+4);
+
+    // test point
+    const p3El = document.getElementById('p3');
+    const p3Lbl = document.getElementById('p3-lbl');
+    const testRow = document.getElementById('test-row');
+    const testText = document.getElementById('test-text');
+    const tCoord = document.getElementById('t-coord');
+    if(P3){
+      const sp3 = toScreen(P3);
+      p3El.style.display=''; p3Lbl.style.display='';
+      p3El.setAttribute('cx', sp3.x); p3El.setAttribute('cy', sp3.y);
+      p3Lbl.setAttribute('x', sp3.x); p3Lbl.setAttribute('y', sp3.y-14);
+      tCoord.textContent = `(${fmt(P3.x,1)}, ${fmt(P3.y,1)})`;
+      let onLine = false;
+      if(vertical){ onLine = Math.abs(P3.x - P1.x) < 0.05; }
+      else { onLine = Math.abs(P3.y - (slope*P3.x + b)) < 0.05; }
+      testRow.classList.remove('idle','on-line','off-line');
+      if(onLine){ testRow.classList.add('on-line'); testText.textContent = 'T is on the line.'; }
+      else { testRow.classList.add('off-line'); testText.textContent = 'T is NOT on the line.'; }
+    } else {
+      p3El.style.display='none'; p3Lbl.style.display='none';
+      tCoord.textContent='—';
+      testRow.classList.remove('on-line','off-line');
+      testRow.classList.add('idle');
+      testText.textContent = 'No test point placed';
+    }
+
+    // panels
+    document.getElementById('p1-coord').textContent = `(${fmt(P1.x,1)}, ${fmt(P1.y,1)})`;
+    document.getElementById('p2-coord').textContent = `(${fmt(P2.x,1)}, ${fmt(P2.y,1)})`;
+    document.getElementById('mid-coord').textContent = `(${fmt(mid.x,2)}, ${fmt(mid.y,2)})`;
+    document.getElementById('dx').textContent = fmt(dx,2);
+    document.getElementById('dy').textContent = fmt(dy,2);
+    document.getElementById('slope').textContent = vertical?'undefined':fmt(slope,3);
+    document.getElementById('dist').textContent = fmt(dist,3);
+    document.getElementById('bint').textContent = vertical?'—':fmt(b,2);
+    document.getElementById('eq').textContent = eqTxt;
+  }
+
+  render();
+})();
+</script>
+</body>
+</html>

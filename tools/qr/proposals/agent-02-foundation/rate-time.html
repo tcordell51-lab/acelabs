@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>rate-time · Scrub Timeline</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f5f0e8; --paper:#fffdf7; --paper-2:#f9f3e6;
+  --sb:#0d2018; --ink:#0f1814; --ink-2:#3a4a42; --ink-mute:#6e7c74;
+  --gold:#C9A84C; --gold-m:#E2C97A; --gold-d:#8C7235;
+  --teal:#1B3A2D; --teal-3:#3A6B54;
+  --line:rgba(13,32,24,0.12);
+  --trap:#C25B3F; --trap-bg:#fbe7df; --trap-d:#8a3d28;
+  --good:#5FA874; --good-bg:#e3efe6; --good-d:#3e7c54;
+  --shadow:0 1px 3px rgba(13,32,24,0.06), 0 8px 24px rgba(13,32,24,0.04);
+}
+*{box-sizing:border-box}
+body{margin:0; font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--ink); padding:32px 24px; line-height:1.5}
+.wrap{max-width:880px; margin:0 auto}
+h1{font-family:'Playfair Display',serif; font-size:36px; margin:0 0 4px; font-weight:700}
+h1 em{font-style:italic; color:var(--gold-d); font-weight:400}
+.lede{color:var(--ink-2); font-size:15px; margin:0 0 22px; max-width:640px}
+.card{background:var(--paper); border:1px solid var(--line); border-radius:16px; padding:24px 26px; box-shadow:var(--shadow); margin-bottom:18px}
+
+.rt-prompt{font-family:'Playfair Display',serif; font-size:20px; line-height:1.4; margin-bottom:14px}
+.rt-prompt b{color:var(--teal); font-weight:700}
+
+.rt-canvas{
+  position:relative; width:100%; height:230px; background:var(--paper-2); border:1px solid var(--line);
+  border-radius:12px; overflow:hidden; margin-top:10px;
+}
+.rt-canvas svg{width:100%; height:100%; display:block}
+
+.rt-track-line{stroke:var(--ink); stroke-width:3}
+.rt-tick{stroke:var(--ink-mute); stroke-width:1}
+.rt-tick-lbl{font-family:'JetBrains Mono',monospace; font-size:10px; fill:var(--ink-mute)}
+
+.rt-sliderwrap{margin-top:14px; padding:8px 4px}
+.rt-slider{
+  -webkit-appearance:none; appearance:none; width:100%; height:8px; background:var(--paper-2);
+  border-radius:4px; border:1px solid var(--line); outline:none;
+}
+.rt-slider::-webkit-slider-thumb{
+  -webkit-appearance:none; width:24px; height:24px; border-radius:50%; background:var(--gold);
+  border:3px solid var(--gold-d); cursor:pointer; box-shadow:0 4px 12px rgba(201,168,76,0.4);
+}
+.rt-slider::-moz-range-thumb{
+  width:24px; height:24px; border-radius:50%; background:var(--gold);
+  border:3px solid var(--gold-d); cursor:pointer; box-shadow:0 4px 12px rgba(201,168,76,0.4);
+}
+
+.rt-readout{
+  display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; margin-top:14px;
+}
+.rt-stat{
+  padding:12px 14px; background:var(--paper-2); border-radius:10px; border:1px solid var(--line);
+}
+.rt-stat .lbl{font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:var(--ink-mute); font-weight:600}
+.rt-stat .val{font-family:'Playfair Display',serif; font-size:28px; font-weight:700; line-height:1; color:var(--teal); margin-top:4px}
+.rt-stat .val em{font-style:italic; color:var(--gold-d); font-size:.7em; margin-left:4px}
+
+.rt-controls{display:flex; gap:10px; flex-wrap:wrap; margin-top:14px; align-items:center}
+.rt-btn{padding:8px 14px; border-radius:8px; border:1px solid var(--line); background:var(--paper); font-size:13px; font-weight:600; cursor:pointer; font-family:inherit; color:var(--ink)}
+.rt-btn:hover{border-color:var(--gold)}
+.rt-btn.primary{background:var(--teal); color:#fff; border-color:var(--teal)}
+.rt-btn.gold{background:var(--gold); color:var(--sb); border-color:var(--gold)}
+
+.rt-q{
+  margin-top:14px; padding:14px 16px; background:var(--paper-2); border-radius:10px;
+  border-left:4px solid var(--gold);
+}
+.rt-q-q{font-family:'Playfair Display',serif; font-size:18px; line-height:1.35; margin-bottom:8px}
+.rt-q-input{
+  font-family:'JetBrains Mono',monospace; font-size:16px; padding:6px 12px; border:2px solid var(--gold);
+  border-radius:8px; width:120px; text-align:center; background:var(--paper); font-weight:600;
+}
+.rt-q-input:focus{outline:none; box-shadow:0 0 0 3px rgba(201,168,76,0.25)}
+.rt-q-status{margin-top:8px; font-style:italic; color:var(--ink-mute); font-family:'Playfair Display',serif; font-size:16px; min-height:24px}
+.rt-q-status.good{color:var(--good-d)}
+.rt-q-status.warn{color:var(--trap-d)}
+
+.trap-card{background:var(--trap-bg); border:1px solid var(--trap); border-left:4px solid var(--trap); border-radius:12px; padding:16px 20px; color:var(--trap-d)}
+.trap-card .lbl{font-size:10px; letter-spacing:.18em; font-weight:700; text-transform:uppercase; margin-bottom:6px}
+.trap-card p{margin:0; font-size:14px; line-height:1.55}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Rate · <em>Time</em> · Distance</h1>
+  <p class="lede">Scrub the timeline. Watch distance accumulate at varying rates. d = r·t isn't a formula to memorize — it's the area under the rate curve.</p>
+
+  <div class="card">
+    <div class="rt-prompt" id="rt-prompt">A car drives at <b>40 mph for 2 hours</b>, then <b>60 mph for 1 hour</b>. Use the timeline to track distance.</div>
+
+    <div class="rt-canvas">
+      <svg id="rt-svg" viewBox="0 0 600 230" preserveAspectRatio="none">
+        <!-- horizontal axis (time) -->
+        <line class="rt-track-line" x1="40" y1="190" x2="580" y2="190"/>
+        <!-- ticks (drawn dynamically) -->
+        <g id="rt-ticks"></g>
+        <!-- rate bars (filled rectangles) -->
+        <g id="rt-rate-bars"></g>
+        <!-- distance curve (filled area) -->
+        <path id="rt-dist-path" fill="rgba(201,168,76,0.35)" stroke="var(--gold-d)" stroke-width="2"/>
+        <!-- car icon position -->
+        <g id="rt-car">
+          <circle cx="40" cy="190" r="9" fill="var(--teal)" stroke="var(--teal-3)" stroke-width="2"/>
+        </g>
+        <!-- scrub cursor -->
+        <line id="rt-cursor" x1="40" y1="20" x2="40" y2="200" stroke="var(--gold-d)" stroke-width="2" stroke-dasharray="4 3"/>
+      </svg>
+    </div>
+
+    <div class="rt-sliderwrap">
+      <input type="range" min="0" max="100" value="0" class="rt-slider" id="rt-slider">
+    </div>
+
+    <div class="rt-readout">
+      <div class="rt-stat"><div class="lbl">Time elapsed</div><div class="val" id="rt-time">0<em>h</em></div></div>
+      <div class="rt-stat"><div class="lbl">Current rate</div><div class="val" id="rt-rate">40<em>mph</em></div></div>
+      <div class="rt-stat"><div class="lbl">Distance so far</div><div class="val" id="rt-dist">0<em>mi</em></div></div>
+    </div>
+
+    <div class="rt-q">
+      <div class="rt-q-q" id="rt-q-q">Total distance after the full <b>3-hour</b> trip?</div>
+      <div style="display:flex; gap:10px; align-items:center">
+        <input class="rt-q-input" id="rt-q-input" type="number" placeholder="miles">
+        <button class="rt-btn gold" id="rt-q-check">Check</button>
+      </div>
+      <div class="rt-q-status" id="rt-q-status"></div>
+    </div>
+
+    <div class="rt-controls">
+      <button class="rt-btn primary" id="rt-next">Next scenario</button>
+      <button class="rt-btn" id="rt-reset">Reset</button>
+    </div>
+  </div>
+
+  <div class="trap-card">
+    <div class="lbl">The Trap</div>
+    <p>In two-vehicle problems, students forget that "toward each other" means ADDING speeds (combined gap-closing rate). They use one car's speed alone and get an answer twice too big. d = (combined rate) × time.</p>
+  </div>
+</div>
+
+<script>
+// scenarios: array of {duration, rate} segments. totalT = sum durations
+const ROUNDS = [
+  {segs:[{t:2, r:40},{t:1, r:60}], q:'Total distance after the full 3-hour trip?', ans:140},
+  {segs:[{t:1.5, r:30},{t:1.5, r:50}], q:'Total miles after 3 hours?', ans:120},
+  {segs:[{t:2, r:55},{t:0.5, r:0},{t:1.5, r:65}], q:'Distance after the trip (with rest)?', ans:207.5},
+  {segs:[{t:1, r:25},{t:2, r:75}], q:'Distance after 3 hours?', ans:175},
+];
+let R = 0;
+
+function totalT(){ return ROUNDS[R].segs.reduce((a,s)=>a+s.t,0); }
+
+function distAt(t){
+  let d = 0; let acc = 0;
+  for(const s of ROUNDS[R].segs){
+    if(t <= acc + s.t){ d += s.r * (t - acc); return d; }
+    d += s.r * s.t; acc += s.t;
+  }
+  return d;
+}
+function rateAt(t){
+  let acc = 0;
+  for(const s of ROUNDS[R].segs){
+    if(t <= acc + s.t) return s.r;
+    acc += s.t;
+  }
+  return ROUNDS[R].segs[ROUNDS[R].segs.length-1].r;
+}
+
+function render(){
+  const svg = document.getElementById('rt-svg');
+  const T = totalT();
+  // Build ticks
+  const ticks = document.getElementById('rt-ticks'); ticks.innerHTML='';
+  for(let i=0;i<=T;i++){
+    const x = 40 + (i/T)*540;
+    ticks.innerHTML += `<line class="rt-tick" x1="${x}" y1="186" x2="${x}" y2="194"/><text class="rt-tick-lbl" x="${x}" y="208" text-anchor="middle">${i}h</text>`;
+  }
+  // Rate bars
+  const bars = document.getElementById('rt-rate-bars'); bars.innerHTML='';
+  let acc = 0;
+  const maxR = Math.max(80, ...ROUNDS[R].segs.map(s=>s.r));
+  ROUNDS[R].segs.forEach(s => {
+    const x1 = 40 + (acc/T)*540;
+    const x2 = 40 + ((acc+s.t)/T)*540;
+    const h = (s.r/maxR) * 130;
+    bars.innerHTML += `<rect x="${x1}" y="${190-h}" width="${x2-x1}" height="${h}" fill="rgba(58,107,84,0.4)" stroke="var(--teal)" stroke-width="1.5"/><text x="${(x1+x2)/2}" y="${190-h-6}" text-anchor="middle" font-family="JetBrains Mono" font-size="11" fill="var(--teal)" font-weight="700">${s.r} mph</text>`;
+    acc += s.t;
+  });
+  // Distance curve
+  const totalD = distAt(T);
+  const maxD = Math.max(totalD, 100);
+  let path = 'M 40 190 ';
+  for(let i=0;i<=80;i++){
+    const t = (i/80)*T;
+    const x = 40 + (i/80)*540;
+    const y = 190 - (distAt(t)/maxD) * 165;
+    path += 'L ' + x.toFixed(1) + ' ' + y.toFixed(1) + ' ';
+  }
+  path += 'L 580 190 Z';
+  document.getElementById('rt-dist-path').setAttribute('d', path);
+  setSlider(0);
+}
+
+function setSlider(pct){
+  const T = totalT();
+  const t = (pct/100) * T;
+  const d = distAt(t);
+  const r = rateAt(t);
+  const x = 40 + (pct/100)*540;
+  const totalD = distAt(T);
+  const maxD = Math.max(totalD, 100);
+  const y = 190 - (d/maxD)*165;
+  document.getElementById('rt-cursor').setAttribute('x1', x);
+  document.getElementById('rt-cursor').setAttribute('x2', x);
+  document.getElementById('rt-car').setAttribute('transform', `translate(${x-40} ${y-190})`);
+  document.getElementById('rt-time').innerHTML = t.toFixed(2).replace(/\.?0+$/,'') + '<em>h</em>';
+  document.getElementById('rt-rate').innerHTML = r + '<em>mph</em>';
+  document.getElementById('rt-dist').innerHTML = d.toFixed(1).replace(/\.0$/,'') + '<em>mi</em>';
+}
+
+function setRound(){
+  document.getElementById('rt-prompt').innerHTML = roundCopy();
+  document.getElementById('rt-q-q').textContent = ROUNDS[R].q;
+  document.getElementById('rt-q-input').value = '';
+  document.getElementById('rt-q-status').textContent = '';
+  document.getElementById('rt-q-status').className = 'rt-q-status';
+  document.getElementById('rt-slider').value = 0;
+  render();
+}
+
+function roundCopy(){
+  const segs = ROUNDS[R].segs;
+  const parts = segs.map(s => '<b>'+s.r+' mph for '+s.t+' h</b>');
+  return 'A car drives ' + parts.join(', then ') + '. Scrub to track distance accumulating.';
+}
+
+function checkQ(){
+  const v = parseFloat(document.getElementById('rt-q-input').value);
+  const ans = ROUNDS[R].ans;
+  const status = document.getElementById('rt-q-status');
+  if(Math.abs(v - ans) < 0.5){
+    status.className='rt-q-status good';
+    status.textContent='Locked. ' + ans + ' miles. d = sum of (rate × time) per segment.';
+  } else {
+    status.className='rt-q-status warn';
+    status.textContent='Not yet — scrub to t = ' + totalT() + 'h and read the curve.';
+  }
+}
+
+document.getElementById('rt-slider').addEventListener('input', e => setSlider(+e.target.value));
+document.getElementById('rt-q-check').onclick = checkQ;
+document.getElementById('rt-next').onclick = () => { R = (R+1) % ROUNDS.length; setRound(); };
+document.getElementById('rt-reset').onclick = setRound;
+
+setRound();
+</script>
+</body>
+</html>

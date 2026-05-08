@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AceTheDAT QR · Stats Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js"></script>
+<style>
+:root{
+  --bg:#f5f0e8; --paper:#fffdf7; --paper-2:#f9f3e6; --paper-3:#f3ecdb;
+  --sb:#0d2018; --sb-2:#15301f; --sb-3:#1d4030;
+  --ink:#0f1814; --ink-2:#3a4a42; --ink-mute:#6e7c74; --ink-soft:#9aa39e;
+  --gold:#C9A84C; --gold-m:#E2C97A; --gold-d:#8C7235; --gold-glow:rgba(201,168,76,0.35);
+  --teal:#1B3A2D; --teal-2:#2A5240; --teal-3:#3A6B54;
+  --line:rgba(13,32,24,0.12); --line-2:rgba(13,32,24,0.06); --line-strong:rgba(13,32,24,0.22);
+  --trap:#C25B3F; --trap-bg:#fbe7df; --trap-d:#8a3d28;
+  --warn:#D97A3C;
+  --good:#5FA874; --good-bg:#e3efe6; --good-d:#3e7c54;
+  --info:#6A8AA8; --info-bg:#e6edf4;
+  --plum:#8a5a8c; --plum-bg:#efe5f0;
+  --shadow:0 1px 3px rgba(13,32,24,0.06), 0 8px 24px rgba(13,32,24,0.04);
+  --shadow-md:0 2px 6px rgba(13,32,24,0.08), 0 16px 40px rgba(13,32,24,0.06);
+  --shadow-lg:0 4px 14px rgba(13,32,24,0.10), 0 24px 56px rgba(13,32,24,0.08);
+}
+body[data-theme="dark"]{
+  --bg:#0d1612; --paper:#15211c; --paper-2:#1a2823; --paper-3:#1f2e28;
+  --ink:#ece4d4; --ink-2:#c9c0ad; --ink-mute:#8a9088; --ink-soft:#5e6660;
+  --line:rgba(236,228,212,0.10); --line-2:rgba(236,228,212,0.05); --line-strong:rgba(236,228,212,0.18);
+  --trap-bg:#3a201a; --good-bg:#1c3026; --info-bg:#1d2934; --plum-bg:#2a1d2c;
+  --gold-d:#E2C97A;
+  --teal:#5A957C; --teal-2:#7BB39C; --teal-3:#9CCDB5;
+  --trap:#D97A5C; --trap-d:#E08770;
+  --good:#7AC09A; --good-d:#8AC9A1;
+  --info:#9DB6CF; --plum:#B385B8;
+  --shadow:0 1px 3px rgba(0,0,0,0.4), 0 8px 24px rgba(0,0,0,0.35);
+  --shadow-md:0 2px 6px rgba(0,0,0,0.5), 0 16px 40px rgba(0,0,0,0.4);
+  --shadow-lg:0 4px 14px rgba(0,0,0,0.5), 0 24px 56px rgba(0,0,0,0.45);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family:'DM Sans',system-ui,-apple-system,sans-serif;
+  background:var(--bg); color:var(--ink); line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  background-image:
+    radial-gradient(1200px 600px at 15% -10%, rgba(201,168,76,0.07), transparent 60%),
+    radial-gradient(900px 500px at 85% 110%, rgba(27,58,45,0.06), transparent 60%);
+  min-height:100vh;
+}
+.serif{font-family:'Playfair Display',serif}
+.mono{font-family:'JetBrains Mono',monospace}
+em.gold{font-style:italic; color:var(--gold-d); font-family:'Playfair Display',serif}
+body[data-theme="dark"] em.gold{color:var(--gold-m)}
+
+.wrap{max-width:1180px; margin:0 auto; padding:36px 28px 80px}
+.crumbs{font-size:11px; letter-spacing:0.16em; text-transform:uppercase; color:var(--ink-mute); font-weight:600; margin-bottom:10px}
+.crumbs b{color:var(--gold-d)}
+body[data-theme="dark"] .crumbs b{color:var(--gold-m)}
+h1{font-family:'Playfair Display',serif; font-size:48px; font-weight:700; line-height:1.05; margin:4px 0 12px; letter-spacing:-0.02em}
+h1 em{font-style:italic; color:var(--gold-d); font-weight:400}
+body[data-theme="dark"] h1 em{color:var(--gold-m)}
+.lede{font-size:17px; color:var(--ink-2); max-width:820px; line-height:1.55}
+.lede b{color:var(--ink); font-weight:600}
+
+.btn{
+  display:inline-flex; align-items:center; gap:6px; padding:7px 14px; border-radius:8px;
+  border:1px solid var(--line); background:var(--paper); color:var(--ink); font-size:13px;
+  font-weight:500; cursor:pointer; transition:all 0.12s; font-family:inherit;
+}
+.btn:hover{border-color:var(--gold); transform:translateY(-1px); box-shadow:var(--shadow)}
+.btn.primary{background:var(--teal); color:#fff; border-color:var(--teal)}
+.btn.primary:hover{background:var(--teal-2)}
+.btn.gold{background:var(--gold); color:var(--sb); border-color:var(--gold)}
+.btn.gold:hover{background:var(--gold-m)}
+.btn.sm{padding:5px 10px; font-size:12px}
+.btn.ghost{background:transparent}
+
+.tag{display:inline-block; padding:2px 8px; border-radius:6px; font-size:10px; font-weight:600; letter-spacing:0.08em; text-transform:uppercase}
+.tag.gold{background:rgba(201,168,76,0.18); color:var(--gold-d)}
+body[data-theme="dark"] .tag.gold{color:var(--gold-m); background:rgba(201,168,76,0.15)}
+.tag.trap{background:var(--trap-bg); color:var(--trap-d)}
+.tag.good{background:var(--good-bg); color:var(--good-d)}
+.tag.teal{background:rgba(27,58,45,0.10); color:var(--teal)}
+body[data-theme="dark"] .tag.teal{color:var(--teal-3); background:rgba(58,107,84,0.18)}
+.tag.info{background:var(--info-bg); color:var(--info)}
+
+.card{
+  background:var(--paper); border:1px solid var(--line); border-radius:16px;
+  padding:22px 26px; margin-bottom:18px; box-shadow:var(--shadow); position:relative;
+}
+.card-h{display:flex; gap:14px; align-items:flex-start; margin-bottom:14px}
+.card-h .mark{
+  width:42px; height:42px; flex-shrink:0; border-radius:11px;
+  background:linear-gradient(135deg,var(--gold) 0%, var(--gold-d) 100%);
+  display:flex; align-items:center; justify-content:center; color:#fff;
+  font-family:'Playfair Display',serif; font-size:20px; font-weight:700;
+  box-shadow:0 4px 12px rgba(201,168,76,0.35);
+}
+.card-h .mark.teal{background:linear-gradient(135deg,var(--teal-3) 0%, var(--teal) 100%); box-shadow:0 4px 12px rgba(27,58,45,0.35)}
+.card-h .mark.trap{background:linear-gradient(135deg,#e08770 0%, var(--trap-d) 100%); box-shadow:0 4px 12px rgba(194,91,63,0.35)}
+.card-h .ttl{flex:1}
+.card-h h3{font-family:'Playfair Display',serif; font-size:22px; font-weight:700; line-height:1.15; margin:0 0 4px; letter-spacing:-0.01em}
+.card-h h3 em{font-style:italic; color:var(--gold-d); font-weight:400}
+body[data-theme="dark"] .card-h h3 em{color:var(--gold-m)}
+.card-h .sub{font-size:13px; color:var(--ink-mute); letter-spacing:0.02em}
+
+.subcard{
+  background:var(--paper-2); border:1px solid var(--line); border-radius:12px; padding:14px 16px;
+}
+.subcard.pattern{border-left:4px solid var(--gold)}
+.subcard.trap{border-left:4px solid var(--trap)}
+.subcard.info{border-left:4px solid var(--info)}
+.subcard.good{border-left:4px solid var(--good)}
+.subcard .h{display:flex; gap:8px; align-items:center; margin-bottom:8px}
+.subcard .h .lbl{font-size:10px; letter-spacing:0.18em; text-transform:uppercase; font-weight:700; color:var(--ink-mute)}
+.subcard .h .lbl.gold{color:var(--gold-d)}
+body[data-theme="dark"] .subcard .h .lbl.gold{color:var(--gold-m)}
+.subcard .h .lbl.trap{color:var(--trap-d)}
+.subcard .h .lbl.good{color:var(--good-d)}
+.subcard .h .lbl.info{color:var(--info)}
+
+.formula{
+  font-family:'JetBrains Mono',monospace; font-size:14px; padding:10px 12px;
+  background:rgba(13,32,24,0.05); border-radius:8px; margin:8px 0;
+  color:var(--ink); border:1px solid var(--line);
+}
+body[data-theme="dark"] .formula{background:rgba(236,228,212,0.05)}
+
+/* ===== LAB CANVAS ===== */
+.lab-grid{display:grid; grid-template-columns:1fr; gap:14px}
+.lab-canvas-wrap{
+  position:relative; background:var(--paper-2);
+  border:1px solid var(--line); border-radius:14px;
+  padding:14px 14px 8px; user-select:none; touch-action:none;
+}
+.lab-canvas{display:block; width:100%; height:auto}
+.lab-stats{
+  display:grid; grid-template-columns:repeat(6, 1fr); gap:8px; margin-top:10px;
+}
+@media (max-width:780px){
+  .lab-stats{grid-template-columns:repeat(3, 1fr)}
+}
+.stat-cell{
+  background:var(--paper); border:1px solid var(--line); border-radius:10px;
+  padding:8px 10px; text-align:center; transition:all 0.18s;
+}
+.stat-cell .lbl{font-size:9.5px; letter-spacing:0.16em; text-transform:uppercase; color:var(--ink-mute); font-weight:700}
+.stat-cell .val{font-family:'JetBrains Mono',monospace; font-size:18px; font-weight:600; color:var(--ink); margin-top:3px; line-height:1}
+.stat-cell.mean{border-color:rgba(106,138,168,0.45)}
+.stat-cell.mean .val{color:var(--info)}
+.stat-cell.median{border-color:rgba(95,168,116,0.45)}
+.stat-cell.median .val{color:var(--good-d)}
+.stat-cell.mode .val{color:var(--plum)}
+.stat-cell.sd .val{color:var(--gold-d)}
+body[data-theme="dark"] .stat-cell.sd .val{color:var(--gold-m)}
+.stat-cell.range .val{color:var(--teal)}
+body[data-theme="dark"] .stat-cell.range .val{color:var(--teal-3)}
+.stat-cell.n .val{color:var(--ink-2)}
+.stat-cell .delta{font-size:10px; color:var(--ink-mute); margin-top:2px; font-family:'JetBrains Mono',monospace; height:12px}
+.stat-cell.flash{box-shadow:0 0 0 3px var(--gold-glow); transform:translateY(-1px)}
+
+/* ===== CONTROLS ===== */
+.controls{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:14px}
+@media (max-width:780px){.controls{grid-template-columns:1fr}}
+.ctl-card{
+  background:var(--paper); border:1px solid var(--line); border-radius:12px;
+  padding:14px 16px;
+}
+.ctl-card h5{font-family:'Playfair Display',serif; font-size:15px; font-weight:700; margin:0 0 10px}
+.ctl-card h5 em{font-style:italic; color:var(--gold-d); font-weight:400}
+body[data-theme="dark"] .ctl-card h5 em{color:var(--gold-m)}
+
+.preset-row{display:flex; gap:6px; flex-wrap:wrap}
+.preset-btn{
+  padding:6px 11px; font-size:12px; border:1px solid var(--line);
+  border-radius:8px; background:var(--paper-2); color:var(--ink);
+  cursor:pointer; font-family:inherit; transition:all 0.12s; font-weight:500;
+}
+.preset-btn:hover{border-color:var(--gold); transform:translateY(-1px)}
+.preset-btn.active{background:var(--gold); color:var(--sb); border-color:var(--gold-d); font-weight:600}
+.preset-btn .sub{display:block; font-size:9.5px; color:var(--ink-mute); letter-spacing:0.1em; text-transform:uppercase; margin-top:2px; font-weight:600}
+.preset-btn.active .sub{color:rgba(13,32,24,0.65)}
+
+.slider-row{display:flex; align-items:center; gap:10px; margin-top:10px}
+.slider-row label{font-size:11.5px; font-weight:600; color:var(--ink-2); min-width:128px; letter-spacing:0.04em}
+.slider-row input[type="range"]{flex:1; accent-color:var(--gold)}
+.slider-row .val{font-family:'JetBrains Mono',monospace; font-size:12.5px; font-weight:600; color:var(--ink); min-width:42px; text-align:right}
+
+.toggle-row{display:flex; gap:6px; margin-top:10px; flex-wrap:wrap}
+.toggle-btn{
+  padding:6px 11px; font-size:11.5px; border:1px solid var(--line);
+  border-radius:7px; background:var(--paper-2); color:var(--ink-2);
+  cursor:pointer; font-family:inherit; font-weight:600; letter-spacing:0.04em;
+  transition:all 0.12s;
+}
+.toggle-btn.active{background:var(--teal); color:#fff; border-color:var(--teal)}
+.toggle-btn:hover:not(.active){border-color:var(--gold)}
+
+/* ===== Z-SCORE PANEL ===== */
+.zscore-panel{
+  background:var(--paper-2); border:1px solid var(--line); border-radius:12px;
+  padding:14px 16px; margin-top:14px; display:none;
+}
+.zscore-panel.show{display:block; animation:slidein 0.3s ease}
+@keyframes slidein{from{opacity:0; transform:translateY(-6px)} to{opacity:1; transform:none}}
+.zscore-panel h5{font-family:'Playfair Display',serif; font-size:15px; font-weight:700; margin:0 0 8px}
+.z-readout{
+  display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; margin-top:10px;
+}
+@media (max-width:680px){.z-readout{grid-template-columns:1fr}}
+.z-cell{
+  background:var(--paper); border:1px solid var(--line); border-radius:10px;
+  padding:9px 11px; text-align:center;
+}
+.z-cell .lbl{font-size:9.5px; letter-spacing:0.16em; text-transform:uppercase; color:var(--ink-mute); font-weight:700}
+.z-cell .val{font-family:'JetBrains Mono',monospace; font-size:18px; font-weight:600; margin-top:3px; line-height:1; color:var(--ink)}
+.z-cell.z .val{color:var(--gold-d)}
+body[data-theme="dark"] .z-cell.z .val{color:var(--gold-m)}
+.z-cell.pct .val{color:var(--info)}
+.z-narrative{margin-top:10px; font-size:13px; color:var(--ink-2); line-height:1.5}
+
+/* ===== ROBUST COMPARE ===== */
+.robust-strip{
+  display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:10px;
+}
+@media (max-width:680px){.robust-strip{grid-template-columns:1fr}}
+.robust-cell{
+  padding:10px 12px; border-radius:10px; border:1px solid var(--line);
+  background:var(--paper); text-align:center;
+}
+.robust-cell.mean{border-color:var(--info); background:var(--info-bg)}
+.robust-cell.median{border-color:var(--good); background:var(--good-bg)}
+.robust-cell .lbl{font-size:10px; letter-spacing:0.16em; text-transform:uppercase; font-weight:700; color:var(--ink-mute)}
+.robust-cell.mean .lbl{color:var(--info)}
+.robust-cell.median .lbl{color:var(--good-d)}
+.robust-cell .swing{font-family:'JetBrains Mono',monospace; font-size:18px; font-weight:600; margin-top:3px; color:var(--ink)}
+.robust-cell .verdict{font-size:11px; margin-top:3px; font-style:italic; color:var(--ink-mute)}
+
+/* ===== HARMONIC PANEL ===== */
+.harm-panel{
+  background:var(--paper-2); border:1px solid var(--line); border-radius:12px;
+  padding:14px 16px; margin-top:14px;
+}
+.harm-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px}
+@media (max-width:680px){.harm-grid{grid-template-columns:1fr}}
+.harm-row{display:flex; align-items:center; gap:8px}
+.harm-row label{font-size:11.5px; font-weight:600; color:var(--ink-2); min-width:88px}
+.harm-row input{
+  background:var(--paper); border:1px solid var(--line); border-radius:7px;
+  padding:5px 9px; font-family:'JetBrains Mono',monospace; font-size:13px;
+  width:78px; color:var(--ink); outline:none; font-weight:600;
+}
+.harm-row input:focus{border-color:var(--gold)}
+.harm-out{
+  background:var(--paper); border:1px solid var(--line); border-radius:10px;
+  padding:10px 12px; margin-top:10px; font-family:'JetBrains Mono',monospace;
+  font-size:13px; line-height:1.7; color:var(--ink);
+}
+.harm-out .am{color:var(--info)}
+.harm-out .hm{color:var(--good-d)}
+.harm-out .gap{color:var(--trap-d); font-weight:700}
+
+/* ===== DISCRETE TABLE ===== */
+.discr-card{margin-top:16px}
+.discr-grid{display:grid; grid-template-columns:1fr 1fr; gap:14px}
+@media (max-width:780px){.discr-grid{grid-template-columns:1fr}}
+.discr-table{
+  width:100%; border-collapse:collapse; font-size:13px; margin-top:6px;
+  background:var(--paper); border-radius:10px; overflow:hidden;
+}
+.discr-table th, .discr-table td{
+  padding:7px 10px; border-bottom:1px solid var(--line-2); text-align:left;
+}
+.discr-table th{
+  background:var(--paper-3); font-size:10.5px; letter-spacing:0.14em;
+  text-transform:uppercase; color:var(--ink-mute); font-weight:700;
+}
+.discr-table td.mono{font-family:'JetBrains Mono',monospace}
+.discr-table tr:last-child td{border-bottom:none}
+
+/* ===== TRAP CALLOUT ===== */
+.trap-callout{
+  background:var(--trap-bg); border:1px solid var(--trap); border-radius:12px;
+  padding:14px 18px; margin-top:14px; display:flex; gap:12px; align-items:flex-start;
+}
+.trap-callout .marker{
+  width:32px; height:32px; flex-shrink:0; border-radius:9px;
+  background:var(--trap); color:#fff; display:flex; align-items:center;
+  justify-content:center; font-family:'Playfair Display',serif; font-weight:700; font-size:16px;
+}
+.trap-callout .body{flex:1}
+.trap-callout .lbl{font-size:10px; letter-spacing:0.18em; text-transform:uppercase; color:var(--trap-d); font-weight:700; margin-bottom:4px}
+.trap-callout .copy{font-size:13.5px; color:var(--trap-d); line-height:1.5}
+body[data-theme="dark"] .trap-callout .copy{color:#f3c5b3}
+body[data-theme="dark"] .trap-callout .lbl{color:#f3c5b3}
+
+/* ===== TOPBAR ===== */
+.top{
+  display:flex; align-items:center; gap:12px; padding-bottom:18px;
+  border-bottom:1px solid var(--line); margin-bottom:24px;
+}
+.top .grow{flex:1}
+.theme-toggle{
+  border:1px solid var(--line); background:var(--paper); border-radius:8px;
+  padding:6px 12px; cursor:pointer; font-family:inherit; font-size:12px; font-weight:600;
+}
+
+/* ===== POINT INTERACTIONS ===== */
+.pt-handle{cursor:grab; transition:r 0.15s}
+.pt-handle:hover{r:9}
+.pt-handle.dragging{cursor:grabbing}
+.pt-handle.outlier{stroke:var(--trap); stroke-width:2}
+.axis-tick{font-family:'JetBrains Mono',monospace; font-size:10px; fill:var(--ink-mute)}
+.axis-line{stroke:var(--line-strong); stroke-width:1.5}
+.mean-line{stroke:var(--info); stroke-width:2; stroke-dasharray:4 3}
+.median-line{stroke:var(--good); stroke-width:2; stroke-dasharray:6 3}
+.sd-band{fill:var(--gold-glow); opacity:0.35}
+.lab-help{
+  font-size:11.5px; color:var(--ink-mute); margin-top:6px; text-align:center;
+  letter-spacing:0.04em;
+}
+.lab-help b{color:var(--ink-2); font-weight:600}
+
+</style>
+</head>
+<body data-theme="light">
+<div class="wrap">
+
+<div class="top">
+  <div class="grow">
+    <div class="crumbs">QR · TIER 600 · <b>STATS LAB</b></div>
+  </div>
+  <button class="theme-toggle" id="themeBtn">Dark</button>
+  <a class="btn ghost sm" href="../../index.html">Back to QR</a>
+</div>
+
+<h1>Stats <em>lab</em></h1>
+<p class="lede">One canvas. Drag points on the number line, watch <b>mean</b>, <b>median</b>, <b>mode</b>, <b>SD</b>, and <b>range</b> update live. Load canonical distributions, push outliers, and <b>see why DAT writers pick median when there is one extreme value</b>. Covers <span class="tag gold">zscore</span> <span class="tag gold">desc-stats</span> <span class="tag gold">harm</span> <span class="tag gold">discr</span>.</p>
+
+<!-- ===================== UNIFIED LAB ===================== -->
+<section class="card" id="labCard" style="margin-top:24px">
+  <div class="card-h">
+    <div class="mark">L</div>
+    <div class="ttl">
+      <h3>Live <em>distribution</em> canvas</h3>
+      <div class="sub">Drag any dot left or right. Mean, median, mode, SD, and range update in real time. Load a preset to see canonical shapes.</div>
+    </div>
+    <span class="tag gold">600-tier</span>
+  </div>
+
+  <div class="lab-grid">
+    <div class="lab-canvas-wrap">
+      <svg class="lab-canvas" id="labSvg" viewBox="0 0 900 280" preserveAspectRatio="xMidYMid meet"></svg>
+      <div class="lab-help">Drag any <b>dot</b> on the line. Click empty space to add a point. <b>Shift+click</b> a point to remove it.</div>
+    </div>
+
+    <div class="lab-stats">
+      <div class="stat-cell n"><div class="lbl">N</div><div class="val" id="vN">0</div><div class="delta"></div></div>
+      <div class="stat-cell mean"><div class="lbl">Mean</div><div class="val" id="vMean">—</div><div class="delta" id="dMean"></div></div>
+      <div class="stat-cell median"><div class="lbl">Median</div><div class="val" id="vMedian">—</div><div class="delta" id="dMedian"></div></div>
+      <div class="stat-cell mode"><div class="lbl">Mode</div><div class="val" id="vMode">—</div><div class="delta"></div></div>
+      <div class="stat-cell sd"><div class="lbl">SD</div><div class="val" id="vSD">—</div><div class="delta" id="dSD"></div></div>
+      <div class="stat-cell range"><div class="lbl">Range</div><div class="val" id="vRange">—</div><div class="delta"></div></div>
+    </div>
+
+    <div class="controls">
+      <div class="ctl-card">
+        <h5>Canonical <em>presets</em></h5>
+        <div class="preset-row" id="presetRow">
+          <button class="preset-btn" data-p="symmetric">Symmetric<span class="sub">bell-ish</span></button>
+          <button class="preset-btn" data-p="right-skewed">Right-skewed<span class="sub">tail high</span></button>
+          <button class="preset-btn" data-p="left-skewed">Left-skewed<span class="sub">tail low</span></button>
+          <button class="preset-btn" data-p="bimodal">Bimodal<span class="sub">two peaks</span></button>
+          <button class="preset-btn" data-p="uniform">Uniform<span class="sub">flat</span></button>
+          <button class="preset-btn" data-p="outlier">With outlier<span class="sub">trap shape</span></button>
+        </div>
+        <div class="toggle-row" style="margin-top:14px">
+          <button class="toggle-btn active" data-show="mean">Mean line</button>
+          <button class="toggle-btn active" data-show="median">Median line</button>
+          <button class="toggle-btn" data-show="sd">SD band (±1)</button>
+          <button class="toggle-btn" data-show="zmode">Z-score view</button>
+        </div>
+      </div>
+
+      <div class="ctl-card">
+        <h5>Push the <em>distribution</em></h5>
+        <div class="slider-row">
+          <label>Shift mean by</label>
+          <input type="range" id="shiftSlider" min="-15" max="15" step="0.5" value="0">
+          <span class="val" id="shiftVal">+0</span>
+        </div>
+        <div class="slider-row">
+          <label>Add N outliers</label>
+          <input type="range" id="outlierSlider" min="0" max="5" step="1" value="0">
+          <span class="val" id="outlierVal">0</span>
+        </div>
+        <div class="slider-row">
+          <label>Outlier value</label>
+          <input type="range" id="outlierMagSlider" min="20" max="100" step="1" value="60">
+          <span class="val" id="outlierMagVal">60</span>
+        </div>
+        <div class="toggle-row" style="margin-top:14px">
+          <button class="btn sm ghost" id="resetBtn">Reset preset</button>
+          <button class="btn sm ghost" id="clearBtn">Clear all</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Z-score expansion -->
+    <div class="zscore-panel" id="zPanel">
+      <h5>Z-score <em>view</em></h5>
+      <p style="font-size:13px; color:var(--ink-2); margin:4px 0 6px">Pick any data point — see how many SDs it sits from the mean. The shaded band is ±1 SD.</p>
+      <div class="z-readout">
+        <div class="z-cell"><div class="lbl">Picked X</div><div class="val" id="zX">—</div></div>
+        <div class="z-cell z"><div class="lbl">Z (SDs from mean)</div><div class="val" id="zVal">—</div></div>
+        <div class="z-cell pct"><div class="lbl">~Approx percentile</div><div class="val" id="zPct">—</div></div>
+      </div>
+      <div class="z-narrative" id="zNarr">Tap any dot to read its z-score.</div>
+      <div class="formula" style="margin-top:10px">z = (x − μ) / σ</div>
+    </div>
+
+    <!-- Robust compare strip -->
+    <div class="zscore-panel show" id="robustPanel">
+      <h5>Robust to <em>outliers</em>: live compare</h5>
+      <p style="font-size:13px; color:var(--ink-2); margin:4px 0 6px">Watch how a single outlier swings the <b>mean</b> while the <b>median</b> barely budges. This is the signature DAT QR stats trap.</p>
+      <div class="robust-strip">
+        <div class="robust-cell mean">
+          <div class="lbl">Mean swing from baseline</div>
+          <div class="swing" id="meanSwing">+0.0</div>
+          <div class="verdict" id="meanVerdict">drag a point or add an outlier</div>
+        </div>
+        <div class="robust-cell median">
+          <div class="lbl">Median swing from baseline</div>
+          <div class="swing" id="medianSwing">+0.0</div>
+          <div class="verdict" id="medianVerdict">stays put — robust</div>
+        </div>
+      </div>
+      <div class="trap-callout" style="margin-top:14px">
+        <div class="marker">!</div>
+        <div class="body">
+          <div class="lbl">DAT trap recognition</div>
+          <div class="copy">When the question stem says "<b>one student scored 98</b>" or "<b>except for one outlier</b>", the writer is steering you to <b>median</b>. If they want median to mislead you, they ask for the mean. <b>Read for the outlier signal first.</b></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== HARMONIC ===================== -->
+<section class="card" id="harmCard">
+  <div class="card-h">
+    <div class="mark teal">H</div>
+    <div class="ttl">
+      <h3>Harmonic vs <em>arithmetic</em> mean</h3>
+      <div class="sub">Round trip at two speeds — average speed is harmonic, not arithmetic. The QR trap is huge here.</div>
+    </div>
+    <span class="tag teal">harm</span>
+  </div>
+
+  <div class="harm-panel">
+    <div class="formula">HM(a, b) = 2ab / (a + b) &nbsp;·&nbsp; AM(a, b) = (a + b) / 2 &nbsp;·&nbsp; HM ≤ AM always</div>
+    <div class="harm-grid">
+      <div class="harm-row"><label>Speed 1 (mph)</label><input type="number" id="h1" value="30" min="1" max="200"></div>
+      <div class="harm-row"><label>Speed 2 (mph)</label><input type="number" id="h2" value="60" min="1" max="200"></div>
+    </div>
+    <div class="harm-out">
+      Arithmetic mean: <span class="am" id="amOut">45.0 mph</span><br>
+      Harmonic mean (true round-trip avg): <span class="hm" id="hmOut">40.0 mph</span><br>
+      Trap gap (AM − HM): <span class="gap" id="gapOut">5.0 mph</span>
+    </div>
+    <div class="subcard trap" style="margin-top:14px">
+      <div class="h"><span class="lbl trap">Recognize</span></div>
+      <div style="font-size:13.5px; color:var(--ink-2); line-height:1.5">"Same distance, two speeds → use harmonic." If the stem mentions <b>equal time</b> at each speed instead of equal distance, the answer flips to arithmetic. Equal-distance is the DAT default.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== DISCRETE DATA ===================== -->
+<section class="card discr-card" id="discrCard">
+  <div class="card-h">
+    <div class="mark trap">D</div>
+    <div class="ttl">
+      <h3>Discrete data <em>read</em></h3>
+      <div class="sub">When the QR question is a frequency table, the DAT writer almost always tests "what does the chart actually count?" before any arithmetic.</div>
+    </div>
+    <span class="tag trap">discr</span>
+  </div>
+
+  <div class="discr-grid">
+    <div>
+      <div class="subcard info">
+        <div class="h"><span class="lbl info">Frequency table</span></div>
+        <table class="discr-table" id="freqTable">
+          <thead><tr><th>Score</th><th>Freq</th><th>Score × Freq</th></tr></thead>
+          <tbody id="freqBody"></tbody>
+        </table>
+      </div>
+      <div class="subcard good" style="margin-top:10px">
+        <div class="h"><span class="lbl good">Computed</span></div>
+        <div style="font-family:'JetBrains Mono',monospace; font-size:13px; line-height:1.7">
+          N (total students): <b id="dN">—</b><br>
+          Sum of (Score × Freq): <b id="dSum">—</b><br>
+          Weighted mean: <b id="dMean">—</b><br>
+          Median position: <b id="dMedPos">—</b> → median: <b id="dMed">—</b><br>
+          Mode: <b id="dMode">—</b>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="subcard pattern">
+        <div class="h"><span class="lbl gold">Bar chart of the same data</span></div>
+        <svg id="barSvg" viewBox="0 0 360 200" style="width:100%; height:auto; display:block"></svg>
+      </div>
+      <div class="subcard trap" style="margin-top:10px">
+        <div class="h"><span class="lbl trap">Discrete-data traps</span></div>
+        <div style="font-size:13px; color:var(--ink-2); line-height:1.55">
+          1. <b>"Mean of the frequencies" vs "weighted mean of scores"</b> — the writer hopes you average <em>5, 7, 4, 1</em> instead of using <em>scoreXfreq / N</em>.<br>
+          2. <b>Median position is (N+1)/2</b>, then walk down the cumulative frequency. Don't median the <em>scores column</em>.<br>
+          3. <b>Mode is highest bar</b>, not the highest score.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== INTEGRATION HINT ===================== -->
+<section class="card">
+  <div class="card-h">
+    <div class="mark">i</div>
+    <div class="ttl">
+      <h3>Where this <em>plugs in</em></h3>
+      <div class="sub">Module IDs in master: <span class="mono">#zscore</span>, <span class="mono">#desc-stats</span>, <span class="mono">#harm</span>, <span class="mono">#discr</span>.</div>
+    </div>
+  </div>
+  <p style="font-size:14px; color:var(--ink-2); margin:0">See <span class="mono">INTEGRATION.md</span> in this proposal directory for the section-by-section mapping. The lab is intentionally one canvas because all four modules share the same underlying mental model — a sample distribution.</p>
+</section>
+
+</div>
+
+<script>
+/* ============================================================
+   STATS LAB · core engine
+   ============================================================ */
+
+const PRESETS = {
+  'symmetric':    [10,11,12,13,13,14,14,14,15,15,16,16,17,18,19],
+  'right-skewed': [10,10,11,11,12,12,12,13,13,14,15,16,18,21,28],
+  'left-skewed':  [4,7,10,13,15,16,17,17,18,18,19,19,20,20,20],
+  'bimodal':      [8,8,9,9,10,10,11,17,18,18,19,19,20,21,22],
+  'uniform':      [10,11,12,13,14,15,16,17,18,19,20,21,22,23,24],
+  'outlier':      [11,12,13,13,14,14,15,15,16,16,17,17,18,19,55]
+};
+
+const PRESET_TRAP = {
+  'symmetric':    'Mean ≈ Median ≈ Mode. Symmetric is the boring case — DAT writers rarely give you this.',
+  'right-skewed': 'Mean > Median. Tail pulls the mean up. If they ask for "average income", expect median.',
+  'left-skewed':  'Mean < Median. Tail pulls the mean down. Same logic, mirrored.',
+  'bimodal':      'Two modes. Mean and median sit in the empty valley — neither describes a typical student.',
+  'uniform':      'No mode. Every value equally likely. Mean = median = midpoint. Test for "no mode" wording.',
+  'outlier':      'Single value far above the pack. Mean lurches toward outlier; median sits with the cluster. Classic DAT trap.'
+};
+
+let state = {
+  data: [],
+  baseline: [],
+  axisMin: 0,
+  axisMax: 60,
+  preset: 'symmetric',
+  showMean: true,
+  showMedian: true,
+  showSD: false,
+  zMode: false,
+  shift: 0,
+  outliers: 0,
+  outlierMag: 60,
+  pickedZ: null
+};
+
+/* ===== math helpers ===== */
+function mean(a){ if(!a.length) return null; return a.reduce((s,x)=>s+x,0)/a.length; }
+function median(a){
+  if(!a.length) return null;
+  const s=[...a].sort((x,y)=>x-y), n=s.length;
+  return n%2 ? s[(n-1)/2] : (s[n/2-1]+s[n/2])/2;
+}
+function mode(a){
+  if(!a.length) return null;
+  const c={}; let max=0;
+  a.forEach(x=>{ const k=Math.round(x*10)/10; c[k]=(c[k]||0)+1; if(c[k]>max) max=c[k]; });
+  if(max<=1) return 'none';
+  const modes=Object.keys(c).filter(k=>c[k]===max).map(k=>+k).sort((x,y)=>x-y);
+  return modes.length>3 ? 'multi' : modes.map(m=>m.toFixed(1).replace(/\.0$/,'')).join(', ');
+}
+function stddev(a){
+  if(a.length<2) return null;
+  const m=mean(a);
+  return Math.sqrt(a.reduce((s,x)=>s+(x-m)**2,0)/a.length);
+}
+function range(a){ if(!a.length) return null; return Math.max(...a)-Math.min(...a); }
+
+function fmt(v, d=1){
+  if(v===null||v===undefined) return '—';
+  if(typeof v==='string') return v;
+  if(!isFinite(v)) return '—';
+  return (Math.round(v*Math.pow(10,d))/Math.pow(10,d)).toFixed(d);
+}
+
+/* ===== axis ===== */
+function autoAxis(){
+  if(!state.data.length){ state.axisMin=0; state.axisMax=60; return; }
+  const lo=Math.min(...state.data), hi=Math.max(...state.data);
+  const pad=Math.max(2, (hi-lo)*0.12);
+  state.axisMin=Math.floor(Math.min(0, lo-pad));
+  state.axisMax=Math.ceil(hi+pad);
+  if(state.axisMax - state.axisMin < 20) state.axisMax = state.axisMin + 20;
+}
+
+/* ===== render canvas ===== */
+const svg = document.getElementById('labSvg');
+const W=900, H=280, PADL=42, PADR=42, PADT=40, PADB=64;
+const PLOTW = W - PADL - PADR;
+
+function xToPx(x){
+  return PADL + (x - state.axisMin) / (state.axisMax - state.axisMin) * PLOTW;
+}
+function pxToX(px){
+  return state.axisMin + (px - PADL) / PLOTW * (state.axisMax - state.axisMin);
+}
+
+function jitterY(i, total){
+  // stack overlapping points
+  return PADT + 90 - (i % 6) * 14;
+}
+
+function pointCounts(){
+  // give each duplicate point a stack index for vertical jitter
+  const sorted = state.data.map((v,i)=>({v, i})).sort((a,b)=>a.v-b.v);
+  const stacks = new Map();
+  const yIdx = new Array(state.data.length);
+  sorted.forEach(({v,i})=>{
+    const k = Math.round(v*4)/4; // bin to 0.25 width
+    const c = (stacks.get(k)||0);
+    yIdx[i] = c;
+    stacks.set(k, c+1);
+  });
+  return yIdx;
+}
+
+function renderCanvas(){
+  autoAxis();
+  let html = '';
+
+  // axis
+  const axisY = PADT + 110;
+  html += `<line class="axis-line" x1="${PADL}" y1="${axisY}" x2="${W-PADR}" y2="${axisY}" />`;
+
+  // ticks
+  const span = state.axisMax - state.axisMin;
+  let step = 5;
+  if(span<=12) step=1;
+  else if(span<=25) step=2;
+  else if(span<=60) step=5;
+  else step=10;
+  for(let v=Math.ceil(state.axisMin/step)*step; v<=state.axisMax; v+=step){
+    const x = xToPx(v);
+    html += `<line class="axis-line" x1="${x}" y1="${axisY-4}" x2="${x}" y2="${axisY+4}" stroke-width="1" />`;
+    html += `<text class="axis-tick" x="${x}" y="${axisY+18}" text-anchor="middle">${v}</text>`;
+  }
+
+  // SD band
+  if(state.showSD && state.data.length>=2){
+    const m = mean(state.data), sd = stddev(state.data);
+    const x0 = xToPx(m - sd), x1 = xToPx(m + sd);
+    html += `<rect class="sd-band" x="${x0}" y="${PADT+10}" width="${x1-x0}" height="160" rx="4" />`;
+    html += `<text class="axis-tick" x="${(x0+x1)/2}" y="${PADT+8}" text-anchor="middle" style="font-weight:600">±1 SD</text>`;
+  }
+
+  // points
+  const yIdx = pointCounts();
+  const m = mean(state.data), med = median(state.data);
+  const baseM = mean(state.baseline), baseMed = median(state.baseline);
+  state.data.forEach((v, i)=>{
+    const x = xToPx(v);
+    const y = axisY - 14 - yIdx[i]*13;
+    const isOutlier = Math.abs(v - (m||0)) > 2*(stddev(state.data)||1);
+    const cls = `pt-handle ${isOutlier?'outlier':''}`;
+    const fill = isOutlier ? 'var(--trap)' : 'var(--gold)';
+    const stroke = isOutlier ? 'var(--trap-d)' : 'var(--gold-d)';
+    html += `<circle class="${cls}" data-idx="${i}" cx="${x}" cy="${y}" r="7" fill="${fill}" stroke="${stroke}" stroke-width="1.5" />`;
+  });
+
+  // mean line
+  if(state.showMean && m!==null){
+    const x = xToPx(m);
+    html += `<line class="mean-line" x1="${x}" y1="${PADT+8}" x2="${x}" y2="${axisY-2}" />`;
+    html += `<text x="${x}" y="${PADT+4}" text-anchor="middle" font-size="11" font-family="JetBrains Mono, monospace" font-weight="600" fill="var(--info)">μ ${fmt(m,1)}</text>`;
+  }
+
+  // median line
+  if(state.showMedian && med!==null){
+    const x = xToPx(med);
+    html += `<line class="median-line" x1="${x}" y1="${PADT+24}" x2="${x}" y2="${axisY-2}" />`;
+    html += `<text x="${x}" y="${PADT+22}" text-anchor="middle" font-size="11" font-family="JetBrains Mono, monospace" font-weight="600" fill="var(--good-d)">M ${fmt(med,1)}</text>`;
+  }
+
+  // z-mode picked-x marker
+  if(state.zMode && state.pickedZ!==null && state.data[state.pickedZ]!==undefined){
+    const v = state.data[state.pickedZ];
+    const x = xToPx(v);
+    html += `<line x1="${x}" y1="${PADT+6}" x2="${x}" y2="${axisY+8}" stroke="var(--gold-d)" stroke-width="2" />`;
+    html += `<text x="${x}" y="${axisY+34}" text-anchor="middle" font-size="11" font-family="JetBrains Mono, monospace" font-weight="700" fill="var(--gold-d)">x = ${fmt(v,1)}</text>`;
+  }
+
+  svg.innerHTML = html;
+  attachPointHandlers();
+  updateStats();
+  if(state.zMode) updateZ();
+  updateRobust();
+}
+
+/* ===== drag handlers ===== */
+let dragIdx = null;
+
+function attachPointHandlers(){
+  const handles = svg.querySelectorAll('.pt-handle');
+  handles.forEach(h=>{
+    h.addEventListener('pointerdown', e=>{
+      e.preventDefault();
+      const idx = +h.getAttribute('data-idx');
+      if(e.shiftKey){
+        state.data.splice(idx,1);
+        renderCanvas(); flashStats(['vN','vMean','vMedian']);
+        return;
+      }
+      if(state.zMode){
+        state.pickedZ = idx;
+        renderCanvas();
+        return;
+      }
+      dragIdx = idx;
+      h.classList.add('dragging');
+      h.setPointerCapture(e.pointerId);
+    });
+    h.addEventListener('pointermove', e=>{
+      if(dragIdx===null) return;
+      const rect = svg.getBoundingClientRect();
+      const sx = (e.clientX - rect.left) / rect.width * W;
+      let nx = pxToX(sx);
+      nx = Math.max(state.axisMin, Math.min(state.axisMax, nx));
+      state.data[dragIdx] = Math.round(nx*2)/2; // 0.5 snap
+      renderCanvas();
+    });
+    h.addEventListener('pointerup', e=>{
+      if(dragIdx!==null){
+        const c = svg.querySelector(`[data-idx="${dragIdx}"]`);
+        if(c) c.classList.remove('dragging');
+        dragIdx = null;
+      }
+    });
+  });
+
+  // click empty space to add
+  svg.onpointerdown = e=>{
+    if(e.target.classList && e.target.classList.contains('pt-handle')) return;
+    const rect = svg.getBoundingClientRect();
+    const sx = (e.clientX - rect.left) / rect.width * W;
+    const sy = (e.clientY - rect.top) / rect.height * H;
+    if(sy < PADT || sy > PADT+170) return;
+    let nx = pxToX(sx);
+    nx = Math.max(state.axisMin, Math.min(state.axisMax, nx));
+    state.data.push(Math.round(nx*2)/2);
+    renderCanvas();
+    flashStats(['vN','vMean','vMedian']);
+  };
+}
+
+/* ===== stats display ===== */
+let prev = {mean:null, median:null, sd:null};
+
+function updateStats(){
+  const a = state.data;
+  document.getElementById('vN').textContent = a.length;
+  const m = mean(a), md = median(a), s = stddev(a), r = range(a);
+  document.getElementById('vMean').textContent = fmt(m,1);
+  document.getElementById('vMedian').textContent = fmt(md,1);
+  document.getElementById('vMode').textContent = mode(a) || '—';
+  document.getElementById('vSD').textContent = fmt(s,2);
+  document.getElementById('vRange').textContent = fmt(r,1);
+
+  const dMean = (prev.mean!==null && m!==null) ? (m-prev.mean) : 0;
+  const dMed  = (prev.median!==null && md!==null) ? (md-prev.median) : 0;
+  const dSD   = (prev.sd!==null && s!==null) ? (s-prev.sd) : 0;
+  document.getElementById('dMean').textContent = Math.abs(dMean)>0.05 ? (dMean>0?'+':'')+fmt(dMean,1) : '';
+  document.getElementById('dMedian').textContent = Math.abs(dMed)>0.05 ? (dMed>0?'+':'')+fmt(dMed,1) : '';
+  document.getElementById('dSD').textContent = Math.abs(dSD)>0.02 ? (dSD>0?'+':'')+fmt(dSD,2) : '';
+  prev = {mean:m, median:md, sd:s};
+}
+
+function flashStats(ids){
+  ids.forEach(id=>{
+    const el = document.getElementById(id)?.parentElement;
+    if(!el) return;
+    el.classList.add('flash');
+    setTimeout(()=>el.classList.remove('flash'), 380);
+  });
+}
+
+/* ===== Z view ===== */
+function updateZ(){
+  if(state.pickedZ===null || !state.data[state.pickedZ]){
+    document.getElementById('zX').textContent = '—';
+    document.getElementById('zVal').textContent = '—';
+    document.getElementById('zPct').textContent = '—';
+    document.getElementById('zNarr').textContent = 'Tap any dot to read its z-score.';
+    return;
+  }
+  const x = state.data[state.pickedZ];
+  const m = mean(state.data), s = stddev(state.data);
+  if(s===null || s===0){
+    document.getElementById('zNarr').textContent = 'SD is 0 — every point is identical, z is undefined.';
+    return;
+  }
+  const z = (x - m) / s;
+  document.getElementById('zX').textContent = fmt(x,1);
+  document.getElementById('zVal').textContent = (z>=0?'+':'')+fmt(z,2);
+  // approx percentile via standard normal cdf
+  const p = 100 * normCdf(z);
+  document.getElementById('zPct').textContent = fmt(p,0)+'%';
+  let read = '';
+  if(Math.abs(z) < 0.5) read = 'Right next to the average. DAT rarely flags this.';
+  else if(Math.abs(z) < 1) read = 'Within 1 SD — typical territory (~68% of values sit here in a normal).';
+  else if(Math.abs(z) < 2) read = 'Between 1 and 2 SDs — notable, not extreme. ~95% rule kicks in at 2.';
+  else read = 'Beyond 2 SDs — outlier territory. Flag this on any DAT stem mentioning "extreme" or "unusual".';
+  document.getElementById('zNarr').textContent = read;
+}
+
+function normCdf(z){
+  // Abramowitz & Stegun 26.2.17
+  const t = 1 / (1 + 0.2316419 * Math.abs(z));
+  const d = 0.3989423 * Math.exp(-z*z/2);
+  let p = d*t*((((1.330274*t -1.821256)*t +1.781478)*t -0.356538)*t +0.319382);
+  if(z>0) p = 1 - p;
+  return p;
+}
+
+/* ===== robust compare ===== */
+function updateRobust(){
+  if(!state.baseline.length){
+    document.getElementById('meanSwing').textContent = '—';
+    document.getElementById('medianSwing').textContent = '—';
+    return;
+  }
+  const baseM = mean(state.baseline), baseMd = median(state.baseline);
+  const m = mean(state.data), md = median(state.data);
+  if(m===null||md===null){ return; }
+  const dM = m - baseM, dMd = md - baseMd;
+  document.getElementById('meanSwing').textContent = (dM>=0?'+':'')+fmt(dM,2);
+  document.getElementById('medianSwing').textContent = (dMd>=0?'+':'')+fmt(dMd,2);
+
+  const baseSD = stddev(state.baseline) || 1;
+  const sdSwing = Math.abs(dM)/baseSD;
+
+  let mv = 'tracking baseline';
+  if(Math.abs(dM) > 0.05){
+    if(sdSwing>2) mv = `${fmt(sdSwing,1)} SDs swing — outlier dragging the mean`;
+    else if(sdSwing>1) mv = `${fmt(sdSwing,1)} SD swing — the mean is moving`;
+    else mv = `${fmt(sdSwing,2)} SD swing — small move`;
+  }
+  document.getElementById('meanVerdict').textContent = mv;
+
+  let mdv = 'stays put — robust';
+  if(Math.abs(dMd) > 0.05) mdv = `moved ${fmt(Math.abs(dMd),2)} — interior point shifted`;
+  else mdv = 'unchanged — robust to outlier';
+  document.getElementById('medianVerdict').textContent = mdv;
+}
+
+/* ===== preset loader ===== */
+function loadPreset(name){
+  state.preset = name;
+  state.data = [...PRESETS[name]];
+  state.baseline = [...PRESETS[name]];
+  state.shift = 0;
+  state.outliers = 0;
+  document.getElementById('shiftSlider').value = 0;
+  document.getElementById('shiftVal').textContent = '+0';
+  document.getElementById('outlierSlider').value = 0;
+  document.getElementById('outlierVal').textContent = '0';
+  state.pickedZ = null;
+  document.querySelectorAll('.preset-btn').forEach(b=>b.classList.toggle('active', b.dataset.p===name));
+  prev = {mean:null, median:null, sd:null};
+  renderCanvas();
+  refreshDiscrete();
+}
+
+/* ===== controls ===== */
+document.querySelectorAll('.preset-btn').forEach(b=>{
+  b.addEventListener('click', ()=> loadPreset(b.dataset.p));
+});
+
+document.getElementById('shiftSlider').addEventListener('input', e=>{
+  const v = +e.target.value;
+  document.getElementById('shiftVal').textContent = (v>=0?'+':'')+v;
+  applySliders();
+});
+document.getElementById('outlierSlider').addEventListener('input', e=>{
+  const v = +e.target.value;
+  document.getElementById('outlierVal').textContent = v;
+  applySliders();
+});
+document.getElementById('outlierMagSlider').addEventListener('input', e=>{
+  const v = +e.target.value;
+  document.getElementById('outlierMagVal').textContent = v;
+  applySliders();
+});
+
+function applySliders(){
+  const shift = +document.getElementById('shiftSlider').value;
+  const adds = +document.getElementById('outlierSlider').value;
+  const mag = +document.getElementById('outlierMagSlider').value;
+  state.data = state.baseline.map(v => v + shift);
+  for(let i=0;i<adds;i++) state.data.push(mag + i*2);
+  renderCanvas();
+}
+
+document.getElementById('resetBtn').addEventListener('click', ()=> loadPreset(state.preset));
+document.getElementById('clearBtn').addEventListener('click', ()=>{
+  state.data = []; state.baseline = []; state.pickedZ = null;
+  renderCanvas();
+});
+
+document.querySelectorAll('.toggle-btn').forEach(b=>{
+  b.addEventListener('click', ()=>{
+    b.classList.toggle('active');
+    const k = b.dataset.show;
+    if(k==='mean') state.showMean = b.classList.contains('active');
+    if(k==='median') state.showMedian = b.classList.contains('active');
+    if(k==='sd') state.showSD = b.classList.contains('active');
+    if(k==='zmode'){
+      state.zMode = b.classList.contains('active');
+      document.getElementById('zPanel').classList.toggle('show', state.zMode);
+    }
+    renderCanvas();
+  });
+});
+
+/* ============================================================
+   HARMONIC
+   ============================================================ */
+function refreshHarm(){
+  const a = +document.getElementById('h1').value || 0;
+  const b = +document.getElementById('h2').value || 0;
+  const am = (a+b)/2;
+  const hm = (a&&b) ? (2*a*b)/(a+b) : 0;
+  document.getElementById('amOut').textContent = fmt(am,1)+' mph';
+  document.getElementById('hmOut').textContent = fmt(hm,1)+' mph';
+  document.getElementById('gapOut').textContent = fmt(am-hm,1)+' mph';
+}
+document.getElementById('h1').addEventListener('input', refreshHarm);
+document.getElementById('h2').addEventListener('input', refreshHarm);
+refreshHarm();
+
+/* ============================================================
+   DISCRETE FREQ TABLE
+   ============================================================ */
+function refreshDiscrete(){
+  // generate frequency table from current data, binning to integers
+  const a = state.data.map(v => Math.round(v));
+  const counts = {};
+  a.forEach(v => counts[v] = (counts[v]||0) + 1);
+  const keys = Object.keys(counts).map(Number).sort((x,y)=>x-y);
+  const N = a.length;
+  const sumProd = keys.reduce((s,k)=>s + k*counts[k], 0);
+  const wMean = N ? sumProd/N : null;
+
+  // tbody
+  const tb = document.getElementById('freqBody');
+  tb.innerHTML = keys.map(k=>{
+    return `<tr><td class="mono">${k}</td><td class="mono">${counts[k]}</td><td class="mono">${k*counts[k]}</td></tr>`;
+  }).join('');
+
+  document.getElementById('dN').textContent = N;
+  document.getElementById('dSum').textContent = sumProd;
+  document.getElementById('dMean').textContent = fmt(wMean,2);
+
+  // median position
+  const medPos = (N+1)/2;
+  document.getElementById('dMedPos').textContent = N ? medPos.toFixed(1) : '—';
+  document.getElementById('dMed').textContent = fmt(median(a),1);
+
+  // mode
+  let maxC = 0; let mModes = [];
+  keys.forEach(k=>{ if(counts[k]>maxC){ maxC=counts[k]; mModes=[k]; } else if(counts[k]===maxC){ mModes.push(k); } });
+  document.getElementById('dMode').textContent = N && maxC>1 ? mModes.join(', ') : (N ? 'none' : '—');
+
+  // bar chart
+  drawBars(keys, counts);
+}
+
+function drawBars(keys, counts){
+  const svg2 = document.getElementById('barSvg');
+  const W2=360, H2=200, PADL2=28, PADR2=10, PADT2=14, PADB2=30;
+  const plotW = W2-PADL2-PADR2, plotH = H2-PADT2-PADB2;
+  const maxC = Math.max(1, ...keys.map(k=>counts[k]));
+  const bw = keys.length ? plotW/keys.length * 0.7 : 0;
+  const gap = keys.length ? plotW/keys.length * 0.3 : 0;
+
+  let html = '';
+  // y-axis
+  for(let i=0;i<=maxC;i++){
+    const y = PADT2 + plotH - i/maxC * plotH;
+    html += `<line x1="${PADL2}" x2="${W2-PADR2}" y1="${y}" y2="${y}" stroke="var(--line-2)" stroke-width="1" />`;
+    html += `<text x="${PADL2-4}" y="${y+3}" text-anchor="end" class="axis-tick">${i}</text>`;
+  }
+  keys.forEach((k,i)=>{
+    const x = PADL2 + i*(bw+gap) + gap/2;
+    const h = counts[k]/maxC * plotH;
+    const y = PADT2 + plotH - h;
+    html += `<rect x="${x}" y="${y}" width="${bw}" height="${h}" fill="var(--gold)" stroke="var(--gold-d)" stroke-width="1" rx="2" />`;
+    html += `<text x="${x+bw/2}" y="${PADT2+plotH+14}" text-anchor="middle" class="axis-tick">${k}</text>`;
+    html += `<text x="${x+bw/2}" y="${y-4}" text-anchor="middle" class="axis-tick" style="font-weight:700; fill:var(--ink-2)">${counts[k]}</text>`;
+  });
+  // axis line
+  html += `<line x1="${PADL2}" x2="${W2-PADR2}" y1="${PADT2+plotH}" y2="${PADT2+plotH}" class="axis-line" />`;
+  svg2.innerHTML = html;
+}
+
+/* ============================================================
+   THEME
+   ============================================================ */
+document.getElementById('themeBtn').addEventListener('click', ()=>{
+  const cur = document.body.getAttribute('data-theme');
+  const next = cur === 'dark' ? 'light' : 'dark';
+  document.body.setAttribute('data-theme', next);
+  document.getElementById('themeBtn').textContent = next === 'dark' ? 'Light' : 'Dark';
+});
+
+/* ============================================================
+   BOOT
+   ============================================================ */
+loadPreset('symmetric');
+
+// wire shift state to also update baseline-relative compare
+function refreshAll(){ renderCanvas(); refreshDiscrete(); }
+['shiftSlider','outlierSlider','outlierMagSlider'].forEach(id=>{
+  document.getElementById(id).addEventListener('change', refreshDiscrete);
+});
+
+// re-render discrete after any drag end
+document.addEventListener('pointerup', ()=>{ refreshDiscrete(); });
+
+// entry animation
+anime({
+  targets:'.card',
+  opacity:[0,1], translateY:[10,0],
+  duration:480, delay:anime.stagger(80), easing:'easeOutQuad'
+});
+</script>
+</body>
+</html>

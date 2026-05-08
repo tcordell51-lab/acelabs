@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AceTheDAT QR · Probability Sandbox (unified tree)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js"></script>
+<style>
+:root{
+  --bg:#f5f0e8; --paper:#fffdf7; --paper-2:#f9f3e6; --paper-3:#f3ecdb;
+  --sb:#0d2018; --sb-2:#15301f;
+  --ink:#0f1814; --ink-2:#3a4a42; --ink-mute:#6e7c74; --ink-soft:#9aa39e;
+  --gold:#C9A84C; --gold-m:#E2C97A; --gold-d:#8C7235; --gold-glow:rgba(201,168,76,0.35);
+  --teal:#1B3A2D; --teal-2:#2A5240; --teal-3:#3A6B54;
+  --line:rgba(13,32,24,0.12); --line-2:rgba(13,32,24,0.06); --line-strong:rgba(13,32,24,0.22);
+  --trap:#C25B3F; --trap-bg:#fbe7df; --trap-d:#8a3d28;
+  --good:#5FA874; --good-bg:#e3efe6; --good-d:#3e7c54;
+  --info:#6A8AA8; --info-bg:#e6edf4;
+  --plum:#8a5a8c; --plum-bg:#efe5f0;
+  --shadow:0 1px 3px rgba(13,32,24,0.06), 0 8px 24px rgba(13,32,24,0.04);
+  --shadow-md:0 2px 6px rgba(13,32,24,0.08), 0 16px 40px rgba(13,32,24,0.06);
+  --shadow-lg:0 4px 14px rgba(13,32,24,0.10), 0 24px 56px rgba(13,32,24,0.08);
+}
+body[data-theme="dark"]{
+  --bg:#0d1612; --paper:#15211c; --paper-2:#1a2823; --paper-3:#1f2e28;
+  --ink:#ece4d4; --ink-2:#c9c0ad; --ink-mute:#8a9088; --ink-soft:#5e6660;
+  --line:rgba(236,228,212,0.10); --line-2:rgba(236,228,212,0.05); --line-strong:rgba(236,228,212,0.18);
+  --trap-bg:#3a201a; --good-bg:#1c3026; --info-bg:#1d2934; --plum-bg:#2a1d2c;
+  --gold-d:#E2C97A; --teal:#5A957C; --teal-2:#7BB39C; --teal-3:#9CCDB5;
+  --trap:#D97A5C; --trap-d:#E08770; --good:#7AC09A; --good-d:#8AC9A1;
+  --info:#9DB6CF; --plum:#B385B8;
+}
+*{box-sizing:border-box}
+html,body{margin:0; padding:0}
+body{
+  font-family:'DM Sans',system-ui,-apple-system,sans-serif;
+  background:var(--bg); color:var(--ink); line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+  background-image:
+    radial-gradient(1200px 600px at 15% -10%, rgba(201,168,76,0.07), transparent 60%),
+    radial-gradient(900px 500px at 85% 110%, rgba(27,58,45,0.06), transparent 60%);
+  min-height:100vh;
+}
+.serif{font-family:'Playfair Display',serif}
+.mono{font-family:'JetBrains Mono',monospace}
+em.gold{font-style:italic; color:var(--gold-d); font-family:'Playfair Display',serif}
+body[data-theme="dark"] em.gold{color:var(--gold-m)}
+
+/* =================== shell =================== */
+.wrap{max-width:1240px; margin:0 auto; padding:36px 32px 96px}
+.head{display:flex; align-items:flex-end; gap:18px; padding-bottom:14px; border-bottom:1px solid var(--line); margin-bottom:24px}
+.head .badge{display:inline-flex; align-items:center; gap:8px; padding:5px 12px; background:rgba(201,168,76,0.18); border:1px solid rgba(201,168,76,0.4); border-radius:20px; font-size:11px; letter-spacing:0.16em; color:var(--gold-d); font-weight:700; text-transform:uppercase}
+.head h1{font-family:'Playfair Display',serif; font-weight:700; font-size:38px; line-height:1.05; margin:8px 0 0; letter-spacing:-0.01em}
+.head h1 em{font-style:italic; color:var(--gold-d); font-weight:400}
+body[data-theme="dark"] .head h1 em{color:var(--gold-m)}
+.head p{margin:6px 0 0; color:var(--ink-mute); font-size:14px; max-width:680px}
+.head .grow{flex:1}
+
+.btn{display:inline-flex; align-items:center; gap:6px; padding:7px 13px; border-radius:8px; border:1px solid var(--line); background:var(--paper); color:var(--ink); font-size:13px; font-weight:500; cursor:pointer; transition:all 0.12s; font-family:inherit}
+.btn:hover{border-color:var(--gold); transform:translateY(-1px); box-shadow:var(--shadow)}
+.btn.primary{background:var(--teal); color:#fff; border-color:var(--teal)}
+.btn.primary:hover{background:var(--teal-2)}
+.btn.gold{background:var(--gold); color:var(--sb); border-color:var(--gold)}
+.btn.gold:hover{background:var(--gold-m)}
+.btn.ghost{background:transparent}
+.btn.sm{padding:5px 10px; font-size:12px}
+.btn.danger{background:var(--trap-bg); color:var(--trap-d); border-color:var(--trap)}
+
+.tag{display:inline-block; padding:2px 8px; border-radius:6px; font-size:10px; font-weight:600; letter-spacing:0.08em; text-transform:uppercase}
+.tag.gold{background:rgba(201,168,76,0.18); color:var(--gold-d)}
+.tag.teal{background:rgba(27,58,45,0.10); color:var(--teal)}
+body[data-theme="dark"] .tag.teal{color:var(--teal-3); background:rgba(58,107,84,0.18)}
+.tag.trap{background:var(--trap-bg); color:var(--trap-d)}
+.tag.good{background:var(--good-bg); color:var(--good-d)}
+
+.card{background:var(--paper); border:1px solid var(--line); border-radius:16px; padding:22px 24px; margin-bottom:18px; box-shadow:var(--shadow)}
+.card h3{font-family:'Playfair Display',serif; font-size:20px; margin:0 0 4px; font-weight:700}
+.card .sub{font-size:12px; color:var(--ink-mute); letter-spacing:0.08em; text-transform:uppercase; font-weight:600}
+
+/* =================== layout =================== */
+.layout{display:grid; grid-template-columns:1fr 360px; gap:18px}
+@media (max-width:980px){ .layout{grid-template-columns:1fr} }
+
+/* =================== presets =================== */
+.preset-bar{display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-top:10px}
+@media (max-width:760px){ .preset-bar{grid-template-columns:repeat(2,1fr)} }
+.preset{
+  border:1px solid var(--line); background:var(--paper-2); border-radius:11px;
+  padding:11px 13px; cursor:pointer; text-align:left; transition:all 0.14s;
+  display:flex; flex-direction:column; gap:4px; min-height:74px;
+}
+.preset:hover{border-color:var(--gold); transform:translateY(-1px); box-shadow:var(--shadow)}
+.preset.active{border-color:var(--gold); background:rgba(201,168,76,0.10); box-shadow:0 0 0 3px var(--gold-glow)}
+.preset .name{font-weight:600; font-size:13px; color:var(--ink)}
+.preset .hint{font-size:11px; color:var(--ink-mute); line-height:1.35}
+.preset .formula{font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--gold-d); margin-top:2px}
+body[data-theme="dark"] .preset .formula{color:var(--gold-m)}
+
+/* =================== events list =================== */
+.events{display:flex; flex-direction:column; gap:10px}
+.evt{
+  background:var(--paper-2); border:1px solid var(--line); border-radius:12px;
+  padding:11px 12px; display:grid; grid-template-columns:34px 1fr auto; gap:10px;
+  align-items:center; transition:border-color 0.14s, box-shadow 0.14s;
+}
+.evt.drag-target{border-color:var(--gold); box-shadow:0 0 0 3px var(--gold-glow)}
+.evt .handle{
+  cursor:grab; width:30px; height:30px; border-radius:7px;
+  background:var(--paper-3); display:flex; align-items:center; justify-content:center;
+  font-family:'Playfair Display',serif; font-weight:700; font-size:15px; color:var(--ink-2);
+  user-select:none; touch-action:none;
+}
+.evt .handle:active{cursor:grabbing}
+.evt .body{display:flex; flex-direction:column; gap:6px; min-width:0}
+.evt .name{display:flex; gap:8px; align-items:center; font-size:13px; font-weight:600}
+.evt .name input{
+  flex:1; min-width:60px; border:1px solid var(--line); background:var(--paper);
+  border-radius:6px; padding:4px 8px; font-size:13px; font-family:inherit; color:var(--ink);
+}
+.evt .row{display:grid; grid-template-columns:auto 1fr 56px; gap:8px; align-items:center; font-size:11.5px; color:var(--ink-mute)}
+.evt .row label{font-family:'JetBrains Mono',monospace; font-size:11px; white-space:nowrap}
+.evt input[type="range"]{width:100%; accent-color:var(--gold)}
+.evt .pval{font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--ink); text-align:right}
+.evt .x{
+  width:28px; height:28px; border-radius:7px; border:1px solid var(--line);
+  background:var(--paper); cursor:pointer; color:var(--ink-mute);
+  display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:700;
+}
+.evt .x:hover{background:var(--trap-bg); color:var(--trap-d); border-color:var(--trap)}
+.evt-add{
+  display:flex; gap:8px; flex-wrap:wrap; padding:10px 12px;
+  border:1.5px dashed var(--line-strong); border-radius:12px; background:transparent;
+  align-items:center; color:var(--ink-mute); font-size:12.5px;
+}
+.evt-add.over{border-color:var(--gold); background:rgba(201,168,76,0.08); color:var(--gold-d)}
+
+/* dependence panel */
+.dep-panel{
+  margin-top:10px; padding:12px 13px; border-radius:11px;
+  background:var(--info-bg); border:1px solid var(--line); display:none;
+}
+.dep-panel.show{display:block}
+.dep-panel h4{margin:0 0 8px; font-size:12px; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink-2); font-weight:700}
+.cond-row{display:grid; grid-template-columns:1fr auto 1fr 60px; gap:8px; align-items:center; font-size:11.5px; padding:5px 0}
+.cond-row .lab{font-family:'JetBrains Mono',monospace; font-size:11.5px; color:var(--ink-2)}
+.cond-row input[type="range"]{accent-color:var(--teal-3)}
+.cond-row .pv{font-family:'JetBrains Mono',monospace; font-size:11.5px; text-align:right; color:var(--ink)}
+
+/* mode switch */
+.mode-switch{
+  display:inline-flex; background:var(--paper-3); border:1px solid var(--line);
+  border-radius:9px; padding:3px; gap:2px;
+}
+.mode-switch button{
+  border:0; background:transparent; padding:5px 10px; font-size:12px;
+  font-weight:600; cursor:pointer; color:var(--ink-mute); border-radius:6px;
+  font-family:inherit; transition:all 0.12s;
+}
+.mode-switch button.active{background:var(--paper); color:var(--ink); box-shadow:var(--shadow)}
+
+/* =================== tree =================== */
+.tree-stage{
+  background:var(--paper-2); border:1px solid var(--line); border-radius:14px;
+  padding:14px; min-height:380px; position:relative; overflow:auto;
+}
+.tree-svg{display:block; width:100%; height:auto; min-height:360px}
+.tree-svg .branch{stroke:var(--ink-2); fill:none; stroke-linecap:round; transition:stroke 0.18s, opacity 0.18s, stroke-width 0.18s}
+.tree-svg .branch.dim{stroke:var(--ink-soft); opacity:0.32}
+.tree-svg .branch.lit{stroke:var(--gold)}
+.tree-svg .branch.complement{stroke-dasharray:5 4}
+.tree-svg .node-dot{fill:var(--ink); stroke:var(--paper); stroke-width:1.5}
+.tree-svg .node-dot.split{fill:var(--teal)}
+.tree-svg .lbl{fill:var(--ink-2); font-size:10.5px; font-family:'JetBrains Mono',monospace}
+.tree-svg .lbl.dim{fill:var(--ink-soft); opacity:0.55}
+.tree-svg .lbl.gold{fill:var(--gold-d)}
+body[data-theme="dark"] .tree-svg .lbl.gold{fill:var(--gold-m)}
+.tree-svg .leaf-rect{fill:var(--paper); stroke:var(--ink-2); stroke-width:1; rx:6; transition:all 0.18s}
+.tree-svg .leaf-rect.lit{fill:rgba(201,168,76,0.25); stroke:var(--gold)}
+.tree-svg .leaf-rect.dim{opacity:0.4}
+.tree-svg .leaf-name{fill:var(--ink); font-size:11px; font-weight:600; font-family:'JetBrains Mono',monospace}
+.tree-svg .leaf-prob{fill:var(--ink-2); font-size:10px; font-family:'JetBrains Mono',monospace}
+.tree-svg .leaf-prob.lit{fill:var(--gold-d); font-weight:700}
+body[data-theme="dark"] .tree-svg .leaf-prob.lit{fill:var(--gold-m)}
+
+.tree-empty{
+  position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  text-align:center; color:var(--ink-soft); font-size:13px; padding:20px; pointer-events:none;
+}
+
+/* =================== readout =================== */
+.readout{display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-top:14px}
+@media (max-width:760px){ .readout{grid-template-columns:repeat(2,1fr)} }
+.ro{
+  background:var(--paper); border:1px solid var(--line); border-radius:11px; padding:10px 12px;
+}
+.ro .lab{font-size:10px; color:var(--ink-mute); letter-spacing:0.08em; text-transform:uppercase; font-weight:700}
+.ro .val{font-family:'JetBrains Mono',monospace; font-size:18px; font-weight:600; color:var(--ink); margin-top:4px}
+.ro.gold{background:rgba(201,168,76,0.10); border-color:var(--gold)}
+.ro.gold .val{color:var(--gold-d)}
+body[data-theme="dark"] .ro.gold .val{color:var(--gold-m)}
+.ro.teal{background:rgba(27,58,45,0.06); border-color:var(--teal-3)}
+.ro.teal .val{color:var(--teal)}
+body[data-theme="dark"] .ro.teal{background:rgba(58,107,84,0.10)}
+body[data-theme="dark"] .ro.teal .val{color:var(--teal-3)}
+
+.query-bar{
+  display:flex; gap:8px; align-items:center; flex-wrap:wrap; padding:10px 12px;
+  background:var(--paper-3); border:1px solid var(--line); border-radius:10px; margin-bottom:10px;
+}
+.query-bar label{font-size:11px; color:var(--ink-mute); letter-spacing:0.08em; text-transform:uppercase; font-weight:700}
+.query-bar select{
+  border:1px solid var(--line); background:var(--paper); color:var(--ink); border-radius:7px;
+  padding:5px 10px; font-family:'JetBrains Mono',monospace; font-size:12px;
+}
+.query-bar .ans{
+  margin-left:auto; font-family:'JetBrains Mono',monospace; font-weight:700; font-size:18px;
+  color:var(--gold-d);
+}
+body[data-theme="dark"] .query-bar .ans{color:var(--gold-m)}
+
+/* counting panel */
+.count-panel{
+  margin-top:12px; padding:12px 13px; border-radius:11px;
+  background:var(--paper-3); border:1px solid var(--line); display:none;
+}
+.count-panel.show{display:block}
+.count-panel .ckpi{display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:8px}
+.count-panel .kpi{background:var(--paper); border:1px solid var(--line); border-radius:9px; padding:8px 10px; text-align:center}
+.count-panel .kpi .l{font-size:10px; color:var(--ink-mute); letter-spacing:0.08em; text-transform:uppercase; font-weight:700}
+.count-panel .kpi .v{font-family:'JetBrains Mono',monospace; font-size:16px; font-weight:700; color:var(--ink); margin-top:3px}
+.count-panel .ctrl{display:grid; grid-template-columns:auto 1fr 50px; gap:8px; align-items:center; font-size:11.5px; padding:4px 0}
+.count-panel .ctrl label{font-family:'JetBrains Mono',monospace; font-size:11.5px; color:var(--ink-2)}
+.count-panel input[type="range"]{accent-color:var(--teal)}
+
+/* explain block */
+.explain{
+  margin-top:14px; padding:13px 15px; border-radius:11px;
+  background:var(--good-bg); border-left:3px solid var(--good); font-size:13px; color:var(--ink-2);
+}
+.explain b{color:var(--ink)}
+.explain .formula{font-family:'JetBrains Mono',monospace; background:var(--paper); padding:2px 6px; border-radius:4px; border:1px solid var(--line)}
+
+/* trap callouts */
+.trap-note{
+  margin-top:10px; padding:10px 14px; border-radius:11px;
+  background:var(--trap-bg); border-left:3px solid var(--trap); font-size:12.5px; color:var(--trap-d);
+}
+
+/* drag chip */
+.chip-drag{
+  position:fixed; pointer-events:none; z-index:9999;
+  background:var(--gold); color:var(--sb); padding:7px 11px; border-radius:8px;
+  font-size:13px; font-weight:600; box-shadow:var(--shadow-md); transform:translate(-50%,-50%);
+  font-family:'JetBrains Mono',monospace;
+}
+
+/* footer hint */
+.foot{margin-top:24px; text-align:center; color:var(--ink-soft); font-size:11px; letter-spacing:0.08em; text-transform:uppercase}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="head">
+  <div>
+    <span class="badge">QR · Probability Sandbox</span>
+    <h1>One tree to <em>rule them all</em></h1>
+    <p>Drag events in, slide their probabilities, toggle independence. The tree, the joints, the unions, the conditionals, and the counting all update together so the symbols stop being separate boxes you guess between.</p>
+  </div>
+  <div class="grow"></div>
+  <button class="btn ghost sm" id="theme-tog">Theme</button>
+  <button class="btn ghost sm" id="reset-btn">Reset</button>
+</div>
+
+<!-- ============ PRESETS ============ -->
+<div class="card">
+  <div style="display:flex; align-items:baseline; gap:10px; flex-wrap:wrap">
+    <h3>Canonical shapes</h3>
+    <span class="sub">eight presets that cover every DAT prob trap</span>
+  </div>
+  <div class="preset-bar" id="preset-bar"></div>
+</div>
+
+<div class="layout">
+
+  <!-- ============ LEFT: TREE + READOUT ============ -->
+  <div>
+    <div class="card">
+      <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px; flex-wrap:wrap">
+        <h3 style="margin:0">Tree</h3>
+        <span class="tag teal" id="tree-mode-tag">Independent</span>
+        <span class="grow" style="flex:1"></span>
+        <span class="sub mono" id="tree-leaves-tag">0 leaves</span>
+      </div>
+
+      <div class="query-bar">
+        <label>Query</label>
+        <select id="query-sel">
+          <option value="joint">P(A and B)  &mdash; intersection</option>
+          <option value="union">P(A or B)  &mdash; union</option>
+          <option value="atleast">P(at least one)  &mdash; flip-to-none</option>
+          <option value="condAB">P(A | B)  &mdash; conditional</option>
+          <option value="condBA">P(B | A)  &mdash; conditional</option>
+          <option value="exactly">P(exactly k of n)  &mdash; binomial</option>
+          <option value="ev">Expected value</option>
+        </select>
+        <span class="ans" id="query-ans">&mdash;</span>
+      </div>
+
+      <div class="tree-stage" id="tree-stage">
+        <svg class="tree-svg" id="tree-svg" viewBox="0 0 720 420" preserveAspectRatio="xMidYMid meet"></svg>
+        <div class="tree-empty" id="tree-empty" style="display:none">
+          Drag an event chip from the right, or hit a preset above.
+        </div>
+      </div>
+
+      <div class="readout">
+        <div class="ro"><div class="lab">P(A)</div><div class="val" id="ro-pa">&mdash;</div></div>
+        <div class="ro"><div class="lab">P(B)</div><div class="val" id="ro-pb">&mdash;</div></div>
+        <div class="ro gold"><div class="lab">P(A &cap; B)</div><div class="val" id="ro-and">&mdash;</div></div>
+        <div class="ro gold"><div class="lab">P(A &cup; B)</div><div class="val" id="ro-or">&mdash;</div></div>
+        <div class="ro teal"><div class="lab">P(A | B)</div><div class="val" id="ro-cab">&mdash;</div></div>
+        <div class="ro teal"><div class="lab">P(B | A)</div><div class="val" id="ro-cba">&mdash;</div></div>
+        <div class="ro"><div class="lab">P(at least 1)</div><div class="val" id="ro-atl">&mdash;</div></div>
+        <div class="ro"><div class="lab">E[X]</div><div class="val" id="ro-ev">&mdash;</div></div>
+      </div>
+
+      <div class="explain" id="explain">
+        <b>How the tree reads.</b> Each path multiplies. Leaves at the right are joint outcomes. Highlighted leaves are the ones the current query sums.
+      </div>
+
+      <div class="trap-note" id="trap-note" style="display:none"></div>
+    </div>
+
+    <!-- counting panel -->
+    <div class="card count-panel" id="count-panel">
+      <div style="display:flex; gap:10px; align-items:baseline; flex-wrap:wrap">
+        <h3 style="margin:0">Counting tab &mdash; nPr vs nCr</h3>
+        <span class="sub">order matters? if yes use P, if no use C</span>
+      </div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:10px">
+        <div>
+          <div class="ctrl"><label>n =</label><input type="range" id="cnt-n" min="1" max="12" value="5"><span class="pv mono" id="cnt-nv">5</span></div>
+          <div class="ctrl"><label>r =</label><input type="range" id="cnt-r" min="0" max="12" value="3"><span class="pv mono" id="cnt-rv">3</span></div>
+          <div style="margin-top:6px">
+            <span class="mode-switch">
+              <button data-cmode="P" class="active">Permutation</button>
+              <button data-cmode="C">Combination</button>
+              <button data-cmode="both">Side by side</button>
+            </span>
+          </div>
+        </div>
+        <div class="ckpi">
+          <div class="kpi"><div class="l">n!</div><div class="v" id="cnt-nfact">&mdash;</div></div>
+          <div class="kpi"><div class="l">P(n,r)</div><div class="v" id="cnt-perm">&mdash;</div></div>
+          <div class="kpi"><div class="l">C(n,r)</div><div class="v" id="cnt-comb">&mdash;</div></div>
+        </div>
+      </div>
+      <div class="explain" id="cnt-explain" style="margin-top:12px">
+        <b>Read the formula.</b>
+        <span class="formula" id="cnt-formula">P(n,r) = n! / (n-r)!</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ============ RIGHT: EVENTS PANEL ============ -->
+  <div>
+    <div class="card">
+      <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:8px">
+        <h3 style="margin:0">Events</h3>
+        <span class="grow" style="flex:1"></span>
+        <span class="mode-switch">
+          <button data-mode="indep" class="active">Independent</button>
+          <button data-mode="dep">Dependent</button>
+        </span>
+      </div>
+      <div class="sub" style="margin-bottom:10px">Drag a chip into the list, or tap "+ event"</div>
+
+      <div class="evt-add" id="evt-add">
+        <span class="mono">drop here:</span>
+        <button class="btn sm" data-add="binary"><b>+</b> binary event (A / not A)</button>
+        <button class="btn sm" data-add="kary"><b>+</b> k-ary event (1..k)</button>
+      </div>
+
+      <div class="events" id="events" style="margin-top:10px"></div>
+
+      <div class="dep-panel" id="dep-panel">
+        <h4>Conditional probabilities <span class="tag trap" style="margin-left:6px">dependent</span></h4>
+        <div class="sub" style="margin-bottom:6px">Each row is P(next = "yes" | path so far)</div>
+        <div id="dep-rows"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin:0 0 4px">Quick traps</h3>
+      <div class="sub">tap a trap to load the failing setup</div>
+      <div style="display:flex; flex-direction:column; gap:8px; margin-top:8px">
+        <button class="btn sm" data-trap="add-not-mul">"AND" with overlap &mdash; should multiply, not add</button>
+        <button class="btn sm" data-trap="atleast-direct">"At least one" by direct sum</button>
+        <button class="btn sm" data-trap="bayes-flip">P(disease | +) = test accuracy?</button>
+        <button class="btn sm" data-trap="replace-forget">Forgot replacement &mdash; second draw same probs</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="foot">AceTheDAT QR &middot; Probability Sandbox &middot; v1</div>
+</div>
+
+<script>
+/* ============================================================
+ * Probability Sandbox
+ * Pure binary tree of N events. Path = sequence of branches.
+ * Each event has p (prior) + dependence on prior path.
+ * If independent, p(true) is constant. If dependent, p depends
+ * on the path so far via a conditional table.
+ * ============================================================ */
+(function(){
+  'use strict';
+
+  const $ = (id) => document.getElementById(id);
+  const fmt = (x, d=4) => {
+    if (!isFinite(x)) return '—';
+    if (x === 0) return '0';
+    if (Math.abs(x) < 0.0001) return x.toExponential(2);
+    return (+x).toFixed(d).replace(/\.?0+$/,'');
+  };
+  const pct = (x) => (100*x).toFixed(1)+'%';
+
+  // ============ STATE ============
+  // events: [{name, p (independent prior), cond:{[pathKey]: pTrueGivenPath}}]
+  const state = {
+    events: [],
+    indep: true,
+    query: 'joint',
+    presetId: null,
+    // counting
+    cnt:{n:5, r:3, mode:'P'},
+    showCounting: false,
+  };
+
+  // ============ PRESETS ============
+  const PRESETS = [
+    {
+      id:'two-flip', name:'Two coin flips',
+      hint:'Independent, fair. Demonstrates the multiplication rule on the tree.',
+      formula:'P(HH) = 1/2 × 1/2 = 1/4',
+      apply(){
+        state.events = [
+          mkEvent('Flip 1', 0.5, true),
+          mkEvent('Flip 2', 0.5, true),
+        ];
+        state.indep = true; state.query='joint'; state.showCounting=false;
+      }
+    },
+    {
+      id:'biased', name:'Biased coin',
+      hint:'Same shape, but P shifts. Watch how the leaf bands change width.',
+      formula:'P(HH) = 0.7 × 0.7 = 0.49',
+      apply(){
+        state.events = [
+          mkEvent('Flip 1', 0.7, true),
+          mkEvent('Flip 2', 0.7, true),
+        ];
+        state.indep = true; state.query='joint'; state.showCounting=false;
+      }
+    },
+    {
+      id:'no-replace', name:'Draw without replacement',
+      hint:'4 red of 10. Second draw shrinks. Independence breaks.',
+      formula:'P(R1∩R2) = 4/10 × 3/9',
+      apply(){
+        // 4 red of 10. P(R1)=0.4. If R1 yes -> P(R2)=3/9. If no -> P(R2)=4/9.
+        const e1 = mkEvent('Red 1st', 0.4, false);
+        const e2 = mkEvent('Red 2nd', 4/9, false);
+        e2.cond = { 'T':3/9, 'F':4/9 }; // path key uses T/F per prior event
+        state.events = [e1, e2];
+        state.indep = false; state.query='joint'; state.showCounting=false;
+      }
+    },
+    {
+      id:'bayes', name:'Bayes diagnostic test',
+      hint:'1% prevalence, 99% sensitive, 5% false positive. Disease | positive ≈ 16%.',
+      formula:'P(D|+) = P(+|D)P(D) / P(+)',
+      apply(){
+        const e1 = mkEvent('Disease', 0.01, false);
+        const e2 = mkEvent('Test +', 0.99, false);
+        e2.cond = { 'T':0.99, 'F':0.05 };
+        state.events = [e1, e2];
+        state.indep = false; state.query='condAB'; state.showCounting=false;
+      }
+    },
+    {
+      id:'atleast', name:'At least one (3 dice, ≥ 1 six)',
+      hint:'Flip-to-none: 1 − P(no sixes) = 1 − (5/6)³.',
+      formula:'1 − (5/6)³ ≈ 0.4213',
+      apply(){
+        state.events = [
+          mkEvent('Six on die 1', 1/6, true),
+          mkEvent('Six on die 2', 1/6, true),
+          mkEvent('Six on die 3', 1/6, true),
+        ];
+        state.indep = true; state.query='atleast'; state.showCounting=false;
+      }
+    },
+    {
+      id:'perm', name:'Permutation 5P3',
+      hint:'Order matters: 5 × 4 × 3 = 60.',
+      formula:'P(5,3) = 5! / 2! = 60',
+      apply(){
+        state.events = []; state.indep=true; state.query='joint';
+        state.showCounting = true;
+        state.cnt = {n:5, r:3, mode:'P'};
+      }
+    },
+    {
+      id:'comb', name:'Combination 5C3',
+      hint:'Order does not matter: 60 / 3! = 10.',
+      formula:'C(5,3) = 5! / (3! 2!) = 10',
+      apply(){
+        state.events = []; state.indep=true; state.query='joint';
+        state.showCounting = true;
+        state.cnt = {n:5, r:3, mode:'C'};
+      }
+    },
+    {
+      id:'cind-violate', name:'Conditional indep. violation',
+      hint:'A and B look independent on the surface, but conditioning on C reveals dependence.',
+      formula:'P(A|B,C) ≠ P(A|C)',
+      apply(){
+        // 3-event chain where each depends on the prior path.
+        const e1 = mkEvent('Storm (C)', 0.30, false);
+        const e2 = mkEvent('Wet grass (A)', 0.10, false);
+        e2.cond = { 'T':0.95, 'F':0.10 };
+        const e3 = mkEvent('Wet shoes (B)', 0.10, false);
+        e3.cond = { 'TT':0.90, 'TF':0.20, 'FT':0.40, 'FF':0.05 };
+        state.events = [e1, e2, e3];
+        state.indep = false; state.query='condAB'; state.showCounting=false;
+      }
+    },
+  ];
+
+  function mkEvent(name, p, indep){
+    return { name, p:+p, cond:null, indep };
+  }
+
+  // ============ DERIVED ============
+  // Generate every leaf path with its joint probability.
+  function leaves(){
+    const out = [];
+    const E = state.events;
+    if (!E.length) return out;
+    const n = E.length;
+    const total = 1 << n;
+    for (let mask=0; mask<total; mask++){
+      let prob = 1;
+      const path = [];
+      for (let i=0; i<n; i++){
+        const bit = (mask >> (n-1-i)) & 1;        // 1 = "true" / yes branch
+        const isTrue = (bit === 1);
+        let p;
+        if (state.indep || !E[i].cond){
+          p = E[i].p;
+        } else {
+          // build path key from earlier events: T / F per event
+          let key = '';
+          for (let j=0; j<i; j++) key += (((mask >> (n-1-j)) & 1) === 1) ? 'T':'F';
+          p = (E[i].cond && key in E[i].cond) ? E[i].cond[key] : E[i].p;
+        }
+        prob *= isTrue ? p : (1 - p);
+        path.push(isTrue);
+      }
+      out.push({mask, path, prob});
+    }
+    return out;
+  }
+
+  function marginal(eventIdx, want=true){
+    return leaves().reduce((s,L) => s + (L.path[eventIdx]===want ? L.prob : 0), 0);
+  }
+  function jointTrue(idxs){
+    return leaves().reduce((s,L) => s + (idxs.every(i => L.path[i]) ? L.prob : 0), 0);
+  }
+  function unionTrue(idxs){
+    return leaves().reduce((s,L) => s + (idxs.some(i => L.path[i]) ? L.prob : 0), 0);
+  }
+  function atLeastOne(){
+    if (!state.events.length) return 0;
+    return leaves().reduce((s,L) => s + (L.path.some(b => b) ? L.prob : 0), 0);
+  }
+  function expectedValue(){
+    // Each event contributes 1 if true. EV = sum of marginals (true).
+    return state.events.reduce((s,_,i) => s + marginal(i, true), 0);
+  }
+
+  // ============ RENDERING ============
+  function renderPresets(){
+    const wrap = $('preset-bar');
+    wrap.innerHTML = PRESETS.map(p => `
+      <button class="preset ${state.presetId===p.id?'active':''}" data-preset="${p.id}">
+        <div class="name">${p.name}</div>
+        <div class="hint">${p.hint}</div>
+        <div class="formula">${p.formula}</div>
+      </button>
+    `).join('');
+    wrap.querySelectorAll('[data-preset]').forEach(b => {
+      b.onclick = () => {
+        const p = PRESETS.find(x => x.id === b.dataset.preset);
+        if (!p) return;
+        state.presetId = p.id;
+        p.apply();
+        renderAll();
+        animateIn();
+      };
+    });
+  }
+
+  function renderEvents(){
+    const wrap = $('events');
+    wrap.innerHTML = state.events.map((ev,i) => `
+      <div class="evt" data-idx="${i}" draggable="true">
+        <div class="handle" title="drag to reorder">${String.fromCharCode(65+i)}</div>
+        <div class="body">
+          <div class="name">
+            <input type="text" value="${escapeHtml(ev.name)}" data-act="rename" data-i="${i}" aria-label="event name">
+          </div>
+          <div class="row">
+            <label>P(${String.fromCharCode(65+i)})</label>
+            <input type="range" min="0" max="1" step="0.01" value="${ev.p}" data-act="setp" data-i="${i}" aria-label="probability">
+            <span class="pval">${fmt(ev.p,3)}</span>
+          </div>
+        </div>
+        <button class="x" data-act="del" data-i="${i}" title="remove">&times;</button>
+      </div>
+    `).join('');
+    wrap.querySelectorAll('input[data-act="setp"]').forEach(el => {
+      el.addEventListener('input', e => {
+        const i = +e.target.dataset.i;
+        state.events[i].p = +e.target.value;
+        e.target.parentNode.querySelector('.pval').textContent = fmt(+e.target.value,3);
+        renderTree(); renderReadout(); renderDep();
+      });
+    });
+    wrap.querySelectorAll('input[data-act="rename"]').forEach(el => {
+      el.addEventListener('input', e => {
+        const i = +e.target.dataset.i;
+        state.events[i].name = e.target.value || `E${i+1}`;
+      });
+      el.addEventListener('blur', renderAll);
+    });
+    wrap.querySelectorAll('button[data-act="del"]').forEach(el => {
+      el.addEventListener('click', e => {
+        const i = +e.target.dataset.i;
+        state.events.splice(i,1);
+        renderAll();
+      });
+    });
+    // drag-reorder
+    wireDragReorder(wrap);
+  }
+
+  function renderDep(){
+    const panel = $('dep-panel');
+    if (state.indep || state.events.length < 2){ panel.classList.remove('show'); return; }
+    panel.classList.add('show');
+    const rows = $('dep-rows');
+    let html = '';
+    for (let i=1; i<state.events.length; i++){
+      const ev = state.events[i];
+      // generate every prior path key
+      const priorN = i;
+      const total = 1 << priorN;
+      if (!ev.cond) ev.cond = {};
+      for (let m=0; m<total; m++){
+        let key = '';
+        const labels = [];
+        for (let j=0; j<priorN; j++){
+          const b = ((m >> (priorN-1-j)) & 1) === 1;
+          key += b ? 'T' : 'F';
+          labels.push((b ? '' : '¬') + String.fromCharCode(65+j));
+        }
+        if (!(key in ev.cond)) ev.cond[key] = ev.p;
+        const v = ev.cond[key];
+        html += `
+          <div class="cond-row">
+            <span class="lab">P(${String.fromCharCode(65+i)} | ${labels.join(', ')})</span>
+            <span class="lab">=</span>
+            <input type="range" min="0" max="1" step="0.01" value="${v}" data-evt="${i}" data-key="${key}" aria-label="conditional">
+            <span class="pv">${fmt(v,3)}</span>
+          </div>`;
+      }
+    }
+    rows.innerHTML = html;
+    rows.querySelectorAll('input[type="range"]').forEach(el => {
+      el.addEventListener('input', e => {
+        const i = +e.target.dataset.evt;
+        const key = e.target.dataset.key;
+        state.events[i].cond[key] = +e.target.value;
+        e.target.parentNode.querySelector('.pv').textContent = fmt(+e.target.value,3);
+        renderTree(); renderReadout();
+      });
+    });
+  }
+
+  function renderTree(){
+    const svg = $('tree-svg');
+    const empty = $('tree-empty');
+    const E = state.events;
+    if (!E.length){
+      svg.innerHTML = '';
+      empty.style.display = 'flex';
+      $('tree-leaves-tag').textContent = '0 leaves';
+      $('tree-mode-tag').textContent = state.indep ? 'Independent' : 'Dependent';
+      $('tree-mode-tag').className = 'tag ' + (state.indep ? 'teal':'gold');
+      return;
+    }
+    empty.style.display = 'none';
+
+    const W = 720, H = 420;
+    const n = E.length;
+    const xLeft = 60, xRight = W - 200; // leaf area on right
+    const xStep = (xRight - xLeft) / n;
+    const yTop = 20, yBot = H - 20;
+
+    const Ls = leaves();
+    const litLeaves = whichLeavesLit(Ls);
+
+    // Compute y position for each (level, mask) via even spacing of leaves.
+    // For level L and prefix mask of L bits, the node's y is the centroid of
+    // the descendant leaves that share this prefix.
+    function leavesUnderPrefix(level, prefix){
+      // prefix occupies the top L bits of an n-bit mask
+      const out = [];
+      const tail = n - level;
+      const tailCount = 1 << tail;
+      for (let t=0; t<tailCount; t++){
+        const m = (prefix << tail) | t;
+        out.push(m);
+      }
+      return out;
+    }
+    function leafY(idx){
+      // even slot per leaf, vertically
+      return yTop + (yBot - yTop) * (idx + 0.5) / Ls.length;
+    }
+    function nodeY(level, prefix){
+      const idxs = leavesUnderPrefix(level, prefix);
+      let s = 0;
+      for (const m of idxs) s += leafY(m);
+      return s / idxs.length;
+    }
+
+    let html = '';
+
+    // root
+    const rootX = xLeft, rootY = (yTop + yBot)/2;
+    html += `<circle class="node-dot split" cx="${rootX}" cy="${rootY}" r="5"/>`;
+
+    // recurse: at each level draw branches from prefix-node to its two children.
+    for (let lvl=0; lvl<n; lvl++){
+      const ev = E[lvl];
+      const prefixCount = 1 << lvl;
+      for (let pf=0; pf<prefixCount; pf++){
+        const xParent = xLeft + xStep * lvl;
+        const yParent = (lvl === 0) ? rootY : nodeY(lvl, pf);
+        const xChild = xLeft + xStep * (lvl+1);
+
+        // probability for this path's true-branch from event ev
+        let pT = ev.p;
+        if (!state.indep && ev.cond){
+          let key = '';
+          for (let j=0; j<lvl; j++){
+            const b = ((pf >> (lvl-1-j)) & 1) === 1;
+            key += b ? 'T' : 'F';
+          }
+          if (key in ev.cond) pT = ev.cond[key];
+        }
+        const pF = 1 - pT;
+
+        const yTrue  = nodeY(lvl+1, (pf << 1) | 1);
+        const yFalse = nodeY(lvl+1, (pf << 1) | 0);
+
+        // probability of reaching the parent
+        let pParent = 1;
+        for (let j=0; j<lvl; j++){
+          const b = ((pf >> (lvl-1-j)) & 1) === 1;
+          const evj = E[j];
+          let p;
+          if (state.indep || !evj.cond){ p = evj.p; }
+          else {
+            let k = '';
+            for (let q=0; q<j; q++){
+              const bb = ((pf >> (lvl-1-q)) & 1) === 1;
+              k += bb ? 'T' : 'F';
+            }
+            p = (k in evj.cond) ? evj.cond[k] : evj.p;
+          }
+          pParent *= b ? p : (1 - p);
+        }
+
+        // branch widths proportional to joint reaching this branch
+        const wTrue  = Math.max(0.6, 9 * pParent * pT);
+        const wFalse = Math.max(0.6, 9 * pParent * pF);
+
+        // is this branch on a "lit" path? It's lit if at least one lit leaf
+        // descends from the (pf, true)/(pf, false) child.
+        const trueChildLit = anyLitInChild(litLeaves, lvl+1, (pf<<1)|1, n);
+        const falseChildLit = anyLitInChild(litLeaves, lvl+1, (pf<<1)|0, n);
+
+        html += `<line class="branch ${trueChildLit?'lit':'dim'}" x1="${xParent}" y1="${yParent}" x2="${xChild}" y2="${yTrue}" stroke-width="${wTrue}"/>`;
+        html += `<line class="branch complement ${falseChildLit?'lit':'dim'}" x1="${xParent}" y1="${yParent}" x2="${xChild}" y2="${yFalse}" stroke-width="${wFalse}"/>`;
+
+        // labels (small)
+        const midX1 = (xParent + xChild)/2 - 12, midY1 = (yParent+yTrue)/2 - 4;
+        const midX2 = (xParent + xChild)/2 - 12, midY2 = (yParent+yFalse)/2 + 10;
+        html += `<text class="lbl ${trueChildLit?'gold':'dim'}" x="${midX1}" y="${midY1}">${fmt(pT,2)}</text>`;
+        html += `<text class="lbl ${falseChildLit?'gold':'dim'}" x="${midX2}" y="${midY2}">${fmt(pF,2)}</text>`;
+
+        // event label only on top-most parent of this level
+        if (pf === 0){
+          html += `<text class="lbl" x="${(xParent+xChild)/2 - 18}" y="${yTop - 4}">${escapeHtml(ev.name)}</text>`;
+        }
+
+        // node circles
+        if (lvl < n-1){
+          html += `<circle class="node-dot split" cx="${xChild}" cy="${yTrue}" r="3"/>`;
+          html += `<circle class="node-dot split" cx="${xChild}" cy="${yFalse}" r="3"/>`;
+        }
+      }
+    }
+
+    // leaves at the right
+    Ls.forEach((L, idx) => {
+      const x = xRight + 6, y = leafY(idx);
+      const lit = litLeaves.has(L.mask);
+      const labelBits = L.path.map((b,j) => (b?'':'¬') + String.fromCharCode(65+j)).join('∩');
+      html += `<rect class="leaf-rect ${lit?'lit':''}" x="${x}" y="${y-12}" width="160" height="24" rx="6"/>`;
+      html += `<text class="leaf-name" x="${x+8}" y="${y-1}">${labelBits}</text>`;
+      html += `<text class="leaf-prob ${lit?'lit':''}" x="${x+8}" y="${y+11}">= ${fmt(L.prob,4)}</text>`;
+    });
+
+    svg.innerHTML = html;
+    $('tree-leaves-tag').textContent = `${Ls.length} leaves · ${n} event${n>1?'s':''}`;
+    $('tree-mode-tag').textContent = state.indep ? 'Independent' : 'Dependent';
+    $('tree-mode-tag').className = 'tag ' + (state.indep ? 'teal':'gold');
+  }
+
+  function anyLitInChild(litSet, level, prefix, n){
+    const tail = n - level;
+    const tailCount = 1 << tail;
+    for (let t=0; t<tailCount; t++){
+      const m = (prefix << tail) | t;
+      if (litSet.has(m)) return true;
+    }
+    return false;
+  }
+
+  function whichLeavesLit(Ls){
+    const lit = new Set();
+    if (!Ls.length) return lit;
+    const q = state.query;
+    if (q === 'joint'){
+      Ls.forEach(L => { if (L.path.every(b=>b)) lit.add(L.mask); });
+    } else if (q === 'union'){
+      Ls.forEach(L => { if (L.path.some(b=>b)) lit.add(L.mask); });
+    } else if (q === 'atleast'){
+      Ls.forEach(L => { if (L.path.some(b=>b)) lit.add(L.mask); });
+    } else if (q === 'condAB'){
+      // P(A | B) — light leaves where A and B both true (numerator).
+      Ls.forEach(L => { if (L.path[0] && L.path.length>=2 && L.path[1]) lit.add(L.mask); });
+    } else if (q === 'condBA'){
+      Ls.forEach(L => { if (L.path[0] && L.path.length>=2 && L.path[1]) lit.add(L.mask); });
+    } else if (q === 'exactly'){
+      // light all leaves with exactly k=1 successes by default
+      const k = 1;
+      Ls.forEach(L => { if (L.path.filter(b=>b).length === k) lit.add(L.mask); });
+    } else if (q === 'ev'){
+      Ls.forEach(L => lit.add(L.mask));
+    }
+    return lit;
+  }
+
+  function renderReadout(){
+    const E = state.events;
+    if (!E.length){
+      ['ro-pa','ro-pb','ro-and','ro-or','ro-cab','ro-cba','ro-atl','ro-ev'].forEach(id => $(id).textContent='—');
+      $('query-ans').textContent = '—';
+      $('explain').innerHTML = '<b>How the tree reads.</b> Each path multiplies. Leaves at the right are joint outcomes. Highlighted leaves are the ones the current query sums.';
+      return;
+    }
+    const pa = marginal(0,true);
+    const pb = E.length>1 ? marginal(1,true) : 0;
+    const pAB = E.length>1 ? jointTrue([0,1]) : pa;
+    const pAorB = E.length>1 ? unionTrue([0,1]) : pa;
+    const pCondAB = pb>0 ? pAB/pb : 0;
+    const pCondBA = pa>0 ? pAB/pa : 0;
+    const pAtl = atLeastOne();
+    const ev = expectedValue();
+    $('ro-pa').textContent = fmt(pa,4);
+    $('ro-pb').textContent = E.length>1 ? fmt(pb,4) : '—';
+    $('ro-and').textContent = E.length>1 ? fmt(pAB,4) : '—';
+    $('ro-or').textContent = E.length>1 ? fmt(pAorB,4) : '—';
+    $('ro-cab').textContent = E.length>1 ? fmt(pCondAB,4) : '—';
+    $('ro-cba').textContent = E.length>1 ? fmt(pCondBA,4) : '—';
+    $('ro-atl').textContent = fmt(pAtl,4);
+    $('ro-ev').textContent  = fmt(ev,3);
+
+    // query answer
+    let ans = 0, label='';
+    switch(state.query){
+      case 'joint':   ans = pAB; label='P(A∩B)'; break;
+      case 'union':   ans = pAorB; label='P(A∪B)'; break;
+      case 'atleast': ans = pAtl; label='P(at least 1)'; break;
+      case 'condAB':  ans = pCondAB; label='P(A|B)'; break;
+      case 'condBA':  ans = pCondBA; label='P(B|A)'; break;
+      case 'exactly': {
+        const k = 1;
+        const Ls = leaves();
+        ans = Ls.reduce((s,L)=> s + (L.path.filter(b=>b).length===k ? L.prob : 0), 0);
+        label = `P(exactly ${k})`;
+        break;
+      }
+      case 'ev':      ans = ev; label='E[X]'; break;
+    }
+    $('query-ans').textContent = `${label} = ${fmt(ans, state.query==='ev'?3:4)}`;
+
+    // explain text
+    const explain = explainText(state.query, {pa,pb,pAB,pAorB,pCondAB,pCondBA,pAtl,ev,n:E.length});
+    $('explain').innerHTML = explain;
+
+    // trap note — direction-flip catch
+    const note = $('trap-note');
+    if (state.query==='condAB' && Math.abs(pCondAB - pb) > 0.0001 && pa > 0 && pb > 0){
+      note.style.display='block';
+      note.innerHTML = `<b>Direction matters.</b> P(A|B) = ${fmt(pCondAB,3)} but P(B|A) = ${fmt(pCondBA,3)}. They are <b>not</b> the same. The DAT loves to swap these.`;
+    } else if (state.query==='atleast' && E.length>=2 && state.indep){
+      note.style.display='block';
+      const allFalse = E.reduce((s,e)=>s*(1-e.p),1);
+      note.innerHTML = `<b>Flip-to-none.</b> Easier than summing all "at least one" leaves: 1 − P(none) = 1 − ${fmt(allFalse,4)} = ${fmt(1-allFalse,4)}.`;
+    } else {
+      note.style.display='none';
+    }
+  }
+
+  function explainText(q, ctx){
+    const {pa,pb,pAB,pAorB,pCondAB,pCondBA,pAtl,ev,n} = ctx;
+    if (q === 'joint')   return `<b>Multiply along the path.</b> P(A∩B) = P(A) × P(B|A) = <span class="formula">${fmt(pa,3)} × ${pa>0?fmt(pAB/pa,3):'—'}</span> = ${fmt(pAB,4)}.`;
+    if (q === 'union')   return `<b>Add — but subtract overlap.</b> P(A∪B) = P(A) + P(B) − P(A∩B) = <span class="formula">${fmt(pa,3)} + ${fmt(pb,3)} − ${fmt(pAB,3)}</span> = ${fmt(pAorB,4)}.`;
+    if (q === 'atleast') return `<b>Flip-to-none.</b> P(≥ 1) = 1 − P(none) = ${fmt(pAtl,4)} across ${n} event${n>1?'s':''}.`;
+    if (q === 'condAB')  return `<b>Condition narrows the universe.</b> P(A|B) = P(A∩B) / P(B) = <span class="formula">${fmt(pAB,3)} / ${fmt(pb,3)}</span> = ${fmt(pCondAB,4)}. Compare to the prior P(A) = ${fmt(pa,3)} — the posterior moved.`;
+    if (q === 'condBA')  return `<b>Reversed direction.</b> P(B|A) = P(A∩B) / P(A) = <span class="formula">${fmt(pAB,3)} / ${fmt(pa,3)}</span> = ${fmt(pCondBA,4)}.`;
+    if (q === 'exactly') return `<b>Sum exactly-k leaves.</b> Each tree leaf with exactly k "yes" branches contributes its joint product. Independent + identical p: C(n,k)·p^k·(1−p)^(n−k).`;
+    if (q === 'ev')      return `<b>Linearity.</b> E[X] = sum of marginals (true) = ${fmt(ev,3)}. Independence is not required for linearity.`;
+    return '';
+  }
+
+  // ============ COUNTING ============
+  function fact(n){ if(n<2) return 1; let r=1; for(let i=2;i<=n;i++) r*=i; return r; }
+  function nPr(n,r){ if(r<0||r>n) return 0; return fact(n)/fact(n-r); }
+  function nCr(n,r){ if(r<0||r>n) return 0; return fact(n)/(fact(r)*fact(n-r)); }
+
+  function renderCount(){
+    const panel = $('count-panel');
+    if (state.showCounting){ panel.classList.add('show'); }
+    else { panel.classList.remove('show'); return; }
+
+    $('cnt-nv').textContent = state.cnt.n;
+    $('cnt-rv').textContent = state.cnt.r;
+    $('cnt-r').max = state.cnt.n;
+    if (state.cnt.r > state.cnt.n){ state.cnt.r = state.cnt.n; $('cnt-r').value = state.cnt.r; $('cnt-rv').textContent = state.cnt.r; }
+    $('cnt-nfact').textContent = fact(state.cnt.n);
+    $('cnt-perm').textContent = nPr(state.cnt.n, state.cnt.r);
+    $('cnt-comb').textContent = nCr(state.cnt.n, state.cnt.r);
+    const f = $('cnt-formula');
+    if (state.cnt.mode==='P'){
+      f.innerHTML = `P(${state.cnt.n},${state.cnt.r}) = ${state.cnt.n}! / (${state.cnt.n}-${state.cnt.r})! = ${fact(state.cnt.n)} / ${fact(state.cnt.n - state.cnt.r)} = ${nPr(state.cnt.n,state.cnt.r)}`;
+    } else if (state.cnt.mode==='C'){
+      f.innerHTML = `C(${state.cnt.n},${state.cnt.r}) = ${state.cnt.n}! / (${state.cnt.r}! · ${state.cnt.n - state.cnt.r}!) = ${nCr(state.cnt.n,state.cnt.r)}`;
+    } else {
+      f.innerHTML = `Permutations count ordered, combinations don't. P/C ratio = r! = ${fact(state.cnt.r)}, so P(${state.cnt.n},${state.cnt.r}) = r! · C(${state.cnt.n},${state.cnt.r}) = ${nPr(state.cnt.n,state.cnt.r)}.`;
+    }
+  }
+
+  // ============ INTERACTION ============
+  function addBinary(){
+    if (state.events.length >= 5){ flash('Tree max 5 events (32 leaves) for performance.'); return; }
+    const next = String.fromCharCode(65 + state.events.length);
+    state.events.push(mkEvent(`Event ${next}`, 0.5, true));
+    state.presetId = null;
+    renderAll();
+  }
+  function addKary(k=3){
+    // we model k-ary as a chain of k-1 binary "is-it-this-bucket" events;
+    // simpler approach: just add a binary placeholder named with k notation.
+    // For full k-ary we'd need a different leaf logic — out of scope of v1.
+    addBinary();
+    state.events[state.events.length-1].name = `Outcome 1-of-${k}`;
+    state.events[state.events.length-1].p = 1/k;
+    renderAll();
+  }
+
+  function flash(msg){
+    const note = $('trap-note');
+    note.style.display='block';
+    note.innerHTML = `<b>Heads up:</b> ${msg}`;
+    setTimeout(()=>{ note.style.display='none'; renderReadout(); }, 2400);
+  }
+
+  function setMode(mode){
+    state.indep = (mode === 'indep');
+    document.querySelectorAll('.mode-switch button[data-mode]').forEach(b => {
+      b.classList.toggle('active', b.dataset.mode === mode);
+    });
+    renderAll();
+  }
+  function setCMode(mode){
+    state.cnt.mode = mode;
+    document.querySelectorAll('.mode-switch button[data-cmode]').forEach(b => {
+      b.classList.toggle('active', b.dataset.cmode === mode);
+    });
+    renderCount();
+  }
+
+  // drag-to-add and drag-to-reorder
+  function wireDragReorder(wrap){
+    let dragIdx = null;
+    wrap.querySelectorAll('.evt').forEach(el => {
+      el.addEventListener('dragstart', e => {
+        dragIdx = +el.dataset.idx;
+        el.style.opacity='0.5';
+      });
+      el.addEventListener('dragend', e => { el.style.opacity=''; dragIdx=null; });
+      el.addEventListener('dragover', e => { e.preventDefault(); el.classList.add('drag-target'); });
+      el.addEventListener('dragleave', e => el.classList.remove('drag-target'));
+      el.addEventListener('drop', e => {
+        e.preventDefault();
+        el.classList.remove('drag-target');
+        if (dragIdx === null) return;
+        const target = +el.dataset.idx;
+        if (target === dragIdx) return;
+        const moved = state.events.splice(dragIdx,1)[0];
+        state.events.splice(target,0,moved);
+        renderAll();
+      });
+    });
+  }
+
+  function wireDropZoneAndButtons(){
+    const zone = $('evt-add');
+    // dropping onto the add zone adds an event
+    zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('over'); });
+    zone.addEventListener('dragleave', e => zone.classList.remove('over'));
+    zone.addEventListener('drop', e => {
+      e.preventDefault(); zone.classList.remove('over');
+      const kind = e.dataTransfer.getData('text/plain');
+      if (kind === 'kary') addKary(3);
+      else addBinary();
+    });
+    zone.querySelectorAll('button[data-add]').forEach(b => {
+      b.addEventListener('click', () => {
+        if (b.dataset.add==='kary') addKary(3); else addBinary();
+      });
+      // also support drag from the buttons
+      b.draggable = true;
+      b.addEventListener('dragstart', e => e.dataTransfer.setData('text/plain', b.dataset.add));
+    });
+
+    // touch fallback: long-press a chip drags a ghost
+    [...zone.querySelectorAll('button[data-add]')].forEach(b => {
+      let chip = null, kind = null;
+      b.addEventListener('touchstart', e => {
+        kind = b.dataset.add;
+        chip = document.createElement('div');
+        chip.className = 'chip-drag';
+        chip.textContent = '+ event';
+        document.body.appendChild(chip);
+        const t = e.touches[0]; chip.style.left = t.clientX+'px'; chip.style.top = t.clientY+'px';
+      }, {passive:true});
+      b.addEventListener('touchmove', e => {
+        if (!chip) return;
+        const t = e.touches[0]; chip.style.left = t.clientX+'px'; chip.style.top = t.clientY+'px';
+      }, {passive:true});
+      b.addEventListener('touchend', e => {
+        if (!chip) return;
+        const t = (e.changedTouches&&e.changedTouches[0]);
+        const targetEl = t ? document.elementFromPoint(t.clientX, t.clientY) : null;
+        if (targetEl && (targetEl.closest('.evt-add') || targetEl.closest('.events'))){
+          if (kind==='kary') addKary(3); else addBinary();
+        }
+        chip.remove(); chip = null;
+      }, {passive:true});
+    });
+  }
+
+  // ============ TRAP SHORTCUTS ============
+  function wireTraps(){
+    document.querySelectorAll('button[data-trap]').forEach(b => {
+      b.addEventListener('click', () => {
+        const k = b.dataset.trap;
+        if (k === 'add-not-mul'){
+          state.events = [
+            mkEvent('Drew a King', 4/52, true),
+            mkEvent('Drew a Heart', 13/52, true),
+          ];
+          state.indep=true; state.query='union';
+          flash('Note: P(King AND Heart) = P(King)×P(Heart) only because suit/rank are independent. P(King OR Heart) needs −P(both) to avoid double-counting the King of Hearts.');
+        } else if (k === 'atleast-direct'){
+          state.events = [
+            mkEvent('Six on die 1', 1/6, true),
+            mkEvent('Six on die 2', 1/6, true),
+            mkEvent('Six on die 3', 1/6, true),
+          ];
+          state.indep=true; state.query='atleast';
+          flash('Trying to enumerate "at least one" the long way blows up. Flip-to-none collapses it: 1 − (5/6)³.');
+        } else if (k === 'bayes-flip'){
+          PRESETS.find(p=>p.id==='bayes').apply();
+          state.query = 'condBA';
+          flash('Posterior P(D|+) is NOT 99% — that is P(+|D). Direction matters.');
+        } else if (k === 'replace-forget'){
+          // simulate the "forgot replacement" by setting cond table equal to prior
+          const e1 = mkEvent('Red 1st', 0.4, false);
+          const e2 = mkEvent('Red 2nd (no-replace)', 4/9, false);
+          e2.cond = { 'T':4/10, 'F':4/10 }; // wrong: same as prior
+          state.events = [e1,e2];
+          state.indep = false; state.query='joint';
+          flash('Sandbox is showing the WRONG conditionals (4/10) — slide them to 3/9 and 4/9 and watch the joint shift.');
+        }
+        renderAll();
+      });
+    });
+  }
+
+  // ============ MISC ============
+  function escapeHtml(s){ return (s||'').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+  function animateIn(){
+    if (typeof anime === 'undefined') return;
+    anime({
+      targets: '#tree-svg .leaf-rect',
+      opacity:[0,1], translateX:[8,0], easing:'easeOutCubic', duration:340, delay:anime.stagger(35)
+    });
+    anime({
+      targets:'#tree-svg .branch',
+      opacity:[0,1], easing:'easeOutCubic', duration:280, delay:anime.stagger(15)
+    });
+  }
+
+  function renderAll(){
+    renderPresets();
+    renderEvents();
+    renderDep();
+    renderTree();
+    renderReadout();
+    renderCount();
+  }
+
+  // ============ INIT ============
+  function init(){
+    // theme toggle
+    $('theme-tog').addEventListener('click', () => {
+      const cur = document.body.getAttribute('data-theme');
+      document.body.setAttribute('data-theme', cur === 'dark' ? '' : 'dark');
+    });
+    $('reset-btn').addEventListener('click', () => {
+      state.events = []; state.indep=true; state.query='joint'; state.presetId=null;
+      state.showCounting=false;
+      $('query-sel').value='joint';
+      renderAll();
+    });
+
+    // mode switches
+    document.querySelectorAll('.mode-switch button[data-mode]').forEach(b => {
+      b.addEventListener('click', () => setMode(b.dataset.mode));
+    });
+    document.querySelectorAll('.mode-switch button[data-cmode]').forEach(b => {
+      b.addEventListener('click', () => setCMode(b.dataset.cmode));
+    });
+
+    // query
+    $('query-sel').addEventListener('change', e => {
+      state.query = e.target.value;
+      renderTree(); renderReadout();
+      if (typeof anime!=='undefined'){
+        anime({targets:'#tree-svg .leaf-rect.lit', scale:[1,1.08,1], easing:'easeOutCubic', duration:360, transformOrigin:'center'});
+      }
+    });
+
+    // counting controls
+    $('cnt-n').addEventListener('input', e => { state.cnt.n = +e.target.value; renderCount(); });
+    $('cnt-r').addEventListener('input', e => { state.cnt.r = +e.target.value; renderCount(); });
+
+    wireDropZoneAndButtons();
+    wireTraps();
+
+    // load default
+    PRESETS[0].apply();
+    state.presetId = PRESETS[0].id;
+    renderAll();
+    animateIn();
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+})();
+</script>
+</body>
+</html>

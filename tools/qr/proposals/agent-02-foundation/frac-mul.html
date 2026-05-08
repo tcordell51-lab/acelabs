@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>frac-mul · Area Overlap</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f5f0e8; --paper:#fffdf7; --paper-2:#f9f3e6;
+  --sb:#0d2018; --ink:#0f1814; --ink-2:#3a4a42; --ink-mute:#6e7c74;
+  --gold:#C9A84C; --gold-m:#E2C97A; --gold-d:#8C7235;
+  --teal:#1B3A2D; --teal-3:#3A6B54;
+  --line:rgba(13,32,24,0.12);
+  --trap:#C25B3F; --trap-bg:#fbe7df; --trap-d:#8a3d28;
+  --good:#5FA874; --good-bg:#e3efe6; --good-d:#3e7c54;
+  --shadow:0 1px 3px rgba(13,32,24,0.06), 0 8px 24px rgba(13,32,24,0.04);
+}
+*{box-sizing:border-box}
+body{margin:0; font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--ink); padding:32px 24px; line-height:1.5}
+.wrap{max-width:880px; margin:0 auto}
+h1{font-family:'Playfair Display',serif; font-size:36px; margin:0 0 4px; font-weight:700}
+h1 em{font-style:italic; color:var(--gold-d); font-weight:400}
+.lede{color:var(--ink-2); font-size:15px; margin:0 0 22px; max-width:640px}
+.card{background:var(--paper); border:1px solid var(--line); border-radius:16px; padding:24px 26px; box-shadow:var(--shadow); margin-bottom:18px}
+
+.fm-layout{display:grid; grid-template-columns:1fr 1fr; gap:28px; align-items:center}
+@media(max-width:760px){.fm-layout{grid-template-columns:1fr}}
+
+.fm-grid-wrap{position:relative; aspect-ratio:1/1; max-width:340px; margin:0 auto; width:100%}
+.fm-grid-wrap svg{width:100%; height:100%; display:block}
+
+.fm-cell{stroke:var(--ink-mute); stroke-width:0.6; fill:var(--paper-2)}
+.fm-h-fill{fill:rgba(201,168,76,0.45); stroke:var(--gold-d); stroke-width:1}
+.fm-v-fill{fill:rgba(58,107,84,0.45); stroke:var(--teal); stroke-width:1}
+.fm-overlap{fill:rgba(140, 90, 50, 0.85); stroke:var(--ink); stroke-width:1.5}
+
+.fm-axis-label{font-family:'JetBrains Mono',monospace; font-size:14px; font-weight:700; fill:var(--ink-2)}
+
+.fm-inputs{display:flex; flex-direction:column; gap:14px}
+
+.fm-frac-input{display:flex; align-items:center; gap:8px; padding:14px 16px; background:var(--paper-2); border-radius:10px; border:1px solid var(--line)}
+.fm-frac-input.h{border-left:4px solid var(--gold-d)}
+.fm-frac-input.v{border-left:4px solid var(--teal-3)}
+.fm-frac-input label{font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-mute); font-weight:600; flex-shrink:0; width:90px}
+.fm-frac-stack{display:flex; flex-direction:column; align-items:center}
+.fm-frac-stack input{
+  width:48px; padding:4px 6px; text-align:center; border:1px solid var(--line); border-radius:6px;
+  font-family:'JetBrains Mono',monospace; font-size:15px; font-weight:600; background:var(--paper);
+}
+.fm-frac-stack input:focus{outline:none; border-color:var(--gold)}
+.fm-frac-stack .bar{width:48px; height:2px; background:var(--ink); margin:3px 0}
+
+.fm-readout{
+  font-family:'JetBrains Mono',monospace; font-size:18px; padding:14px 16px; border-radius:10px;
+  background:var(--paper-2); border:1px solid var(--line); border-left:4px solid var(--gold);
+  margin-top:4px; text-align:center; line-height:1.6;
+}
+.fm-readout b{color:var(--gold-d); font-size:22px}
+
+.fm-controls{display:flex; gap:10px; flex-wrap:wrap; margin-top:14px}
+.fm-btn{padding:8px 14px; border-radius:8px; border:1px solid var(--line); background:var(--paper); font-size:13px; font-weight:600; cursor:pointer; font-family:inherit; color:var(--ink)}
+.fm-btn:hover{border-color:var(--gold)}
+.fm-btn.primary{background:var(--teal); color:#fff; border-color:var(--teal)}
+.fm-btn.gold{background:var(--gold); color:var(--sb); border-color:var(--gold)}
+
+.fm-status{font-family:'Playfair Display',serif; font-style:italic; font-size:18px; color:var(--ink-2); min-height:30px; padding:6px 0}
+.fm-status.good{color:var(--good-d)}
+
+.fm-callout{
+  margin-top:10px; padding:8px 12px; background:rgba(201,168,76,0.1); border-radius:8px;
+  font-size:12.5px; color:var(--ink-2); border:1px dashed var(--gold);
+}
+
+.trap-card{background:var(--trap-bg); border:1px solid var(--trap); border-left:4px solid var(--trap); border-radius:12px; padding:16px 20px; color:var(--trap-d)}
+.trap-card .lbl{font-size:10px; letter-spacing:.18em; font-weight:700; text-transform:uppercase; margin-bottom:6px}
+.trap-card p{margin:0; font-size:14px; line-height:1.55}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Fractions — <em>Multiply</em></h1>
+  <p class="lede">Multiplication is overlap. Slice the square horizontally for one fraction, vertically for the other. The dark patch is the product. No LCD needed — that's the trap.</p>
+
+  <div class="card">
+    <div class="fm-layout">
+      <div class="fm-grid-wrap">
+        <svg id="fm-svg" viewBox="0 0 200 200">
+          <rect x="2" y="2" width="196" height="196" fill="var(--paper)" stroke="var(--ink)" stroke-width="2"/>
+          <g id="fm-bg-cells"></g>
+          <rect id="fm-h-rect" class="fm-h-fill" x="0" y="0" width="0" height="0"/>
+          <rect id="fm-v-rect" class="fm-v-fill" x="0" y="0" width="0" height="0"/>
+          <rect id="fm-overlap-rect" class="fm-overlap" x="0" y="0" width="0" height="0"/>
+          <text class="fm-axis-label" id="fm-h-lbl" x="100" y="-10" text-anchor="middle"></text>
+          <text class="fm-axis-label" id="fm-v-lbl" x="-10" y="100" text-anchor="middle" transform="rotate(-90 -10 100)"></text>
+        </svg>
+      </div>
+
+      <div class="fm-inputs">
+        <div class="fm-frac-input h">
+          <label>Horizontal</label>
+          <div class="fm-frac-stack">
+            <input type="number" id="fm-an" min="1" max="9" value="2">
+            <div class="bar"></div>
+            <input type="number" id="fm-ad" min="1" max="9" value="3">
+          </div>
+        </div>
+        <div style="text-align:center; font-family:'Playfair Display',serif; font-size:30px; color:var(--gold-d)">×</div>
+        <div class="fm-frac-input v">
+          <label>Vertical</label>
+          <div class="fm-frac-stack">
+            <input type="number" id="fm-bn" min="1" max="9" value="3">
+            <div class="bar"></div>
+            <input type="number" id="fm-bd" min="1" max="9" value="4">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="fm-readout" id="fm-readout">
+      2/3 × 3/4 = (2·3)/(3·4) = <b>6/12 = 1/2</b>
+    </div>
+
+    <div class="fm-callout">
+      <b>Sarah's read:</b> the dark overlap is the answer. Count its cells. The denominator is the total cells in the grid.
+    </div>
+
+    <div class="fm-status" id="fm-status">Adjust either fraction. The overlap updates live.</div>
+
+    <div class="fm-controls">
+      <button class="fm-btn gold" id="fm-rand">Random round</button>
+      <button class="fm-btn primary" id="fm-show-trap">Show the LCD trap</button>
+    </div>
+  </div>
+
+  <div class="trap-card">
+    <div class="lbl">The Trap</div>
+    <p>Students try to find an LCD for multiplication. <b>Not needed.</b> The DAT puts the LCD-style answer as a trap. For multiplication, multiply tops, multiply bottoms, simplify. The grid shows why: the overlap is just (rows × cols) of the new finer grid.</p>
+  </div>
+</div>
+
+<script>
+function gcd(a,b){return b?gcd(b,a%b):a}
+
+function setFrac(an, ad, bn, bd){
+  document.getElementById('fm-an').value = an;
+  document.getElementById('fm-ad').value = ad;
+  document.getElementById('fm-bn').value = bn;
+  document.getElementById('fm-bd').value = bd;
+  render();
+}
+
+function render(){
+  let an = +document.getElementById('fm-an').value;
+  let ad = +document.getElementById('fm-ad').value;
+  let bn = +document.getElementById('fm-bn').value;
+  let bd = +document.getElementById('fm-bd').value;
+  if(!an || !ad || !bn || !bd) return;
+  if(ad < 1) ad = 1; if(bd < 1) bd = 1;
+  if(an > ad) an = ad; if(bn > bd) bn = bd;
+  // Build background cells: ad columns × bd rows
+  const cells = document.getElementById('fm-bg-cells'); cells.innerHTML='';
+  const W = 196, H = 196, x0 = 2, y0 = 2;
+  const cw = W/ad, ch = H/bd;
+  for(let r=0;r<bd;r++){
+    for(let c=0;c<ad;c++){
+      cells.innerHTML += `<rect class="fm-cell" x="${x0+c*cw}" y="${y0+r*ch}" width="${cw}" height="${ch}"/>`;
+    }
+  }
+  // Horizontal fill (top section, height = an/ad of total) — visualize across full width but height-limited
+  // Better: horizontal frac shades a vertical strip of width an/ad columns
+  const hWidth = (an/ad)*W;
+  const hRect = document.getElementById('fm-h-rect');
+  hRect.setAttribute('x', x0); hRect.setAttribute('y', y0);
+  hRect.setAttribute('width', hWidth); hRect.setAttribute('height', H);
+  // Vertical frac shades a horizontal strip of height bn/bd
+  const vHeight = (bn/bd)*H;
+  const vRect = document.getElementById('fm-v-rect');
+  vRect.setAttribute('x', x0); vRect.setAttribute('y', y0);
+  vRect.setAttribute('width', W); vRect.setAttribute('height', vHeight);
+  // Overlap
+  const oRect = document.getElementById('fm-overlap-rect');
+  oRect.setAttribute('x', x0); oRect.setAttribute('y', y0);
+  oRect.setAttribute('width', hWidth); oRect.setAttribute('height', vHeight);
+  // Labels
+  document.getElementById('fm-h-lbl').textContent = an+'/'+ad;
+  document.getElementById('fm-v-lbl').textContent = bn+'/'+bd;
+  // Readout
+  const num = an*bn, den = ad*bd;
+  const g = gcd(num, den);
+  const simpStr = (g > 1) ? ' = <b>' + (num/g) + '/' + (den/g) + '</b>' : '';
+  document.getElementById('fm-readout').innerHTML = `${an}/${ad} × ${bn}/${bd} = (${an}·${bn})/(${ad}·${bd}) = ${num}/${den}${simpStr}`;
+}
+
+document.querySelectorAll('#fm-an,#fm-ad,#fm-bn,#fm-bd').forEach(inp => inp.addEventListener('input', render));
+
+document.getElementById('fm-rand').onclick = () => {
+  const rand = (lo,hi) => lo + Math.floor(Math.random()*(hi-lo+1));
+  const ad = rand(2,6), bd = rand(2,6);
+  setFrac(rand(1,ad), ad, rand(1,bd), bd);
+};
+document.getElementById('fm-show-trap').onclick = () => {
+  const an = +document.getElementById('fm-an').value;
+  const ad = +document.getElementById('fm-ad').value;
+  const bn = +document.getElementById('fm-bn').value;
+  const bd = +document.getElementById('fm-bd').value;
+  // LCD trap: student finds LCD then "adds-then-multiplies" — show what they'd write
+  const lcd = (ad*bd)/gcd(ad,bd);
+  const status = document.getElementById('fm-status');
+  status.textContent = 'Trap version: students compute LCD = ' + lcd + ' and convert. NOT needed for ×. The overlap method gives the answer directly.';
+  status.className='fm-status good';
+};
+
+render();
+</script>
+</body>
+</html>

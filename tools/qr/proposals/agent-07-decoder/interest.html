@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interest Decoder · AceTheDAT QR</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js"></script>
+<style>
+:root{--bg:#f5f0e8;--paper:#fffdf7;--paper-2:#f9f3e6;--paper-3:#f3ecdb;--sb:#0d2018;--ink:#0f1814;--ink-2:#3a4a42;--ink-mute:#6e7c74;--gold:#C9A84C;--gold-m:#E2C97A;--gold-d:#8C7235;--gold-glow:rgba(201,168,76,0.35);--teal:#1B3A2D;--teal-2:#2A5240;--line:rgba(13,32,24,0.12);--line-strong:rgba(13,32,24,0.22);--trap:#C25B3F;--trap-bg:#fbe7df;--trap-d:#8a3d28;--good:#5FA874;--good-bg:#e3efe6;--good-d:#3e7c54;--info:#6A8AA8;--shadow:0 1px 3px rgba(13,32,24,0.06), 0 8px 24px rgba(13,32,24,0.04);}
+*{box-sizing:border-box} html,body{margin:0;padding:0}
+body{font-family:'DM Sans',system-ui,sans-serif; background:var(--bg); color:var(--ink); line-height:1.6; min-height:100vh; background-image:radial-gradient(1200px 600px at 15% -10%, rgba(201,168,76,0.07), transparent 60%), radial-gradient(900px 500px at 85% 110%, rgba(27,58,45,0.06), transparent 60%);}
+.wrap{max-width:880px; margin:0 auto; padding:32px 22px 120px}
+.head{margin-bottom:22px}
+.head .badge{display:inline-flex; align-items:center; gap:8px; padding:5px 12px; background:rgba(201,168,76,0.18); border:1px solid rgba(201,168,76,0.4); border-radius:20px; font-size:11px; letter-spacing:0.16em; color:var(--gold-d); font-weight:700; text-transform:uppercase; margin-bottom:14px}
+.head .badge .pulse{width:8px; height:8px; border-radius:50%; background:var(--gold); box-shadow:0 0 0 0 var(--gold-glow); animation:pulse 1.8s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 var(--gold-glow)} 70%{box-shadow:0 0 0 8px rgba(201,168,76,0)} 100%{box-shadow:0 0 0 0 rgba(201,168,76,0)}}
+.head h1{font-family:'Playfair Display',serif; font-size:42px; font-weight:700; line-height:1.05; margin:0 0 10px; letter-spacing:-0.02em}
+.head h1 em{font-style:italic; color:var(--gold-d); font-weight:400}
+.head .lede{font-size:16px; color:var(--ink-2); max-width:680px; line-height:1.55; margin:0}
+
+.qbar{display:flex; gap:6px; margin:18px 0 14px; flex-wrap:wrap; align-items:center}
+.qbar .lbl{font-size:10px; letter-spacing:0.18em; text-transform:uppercase; color:var(--ink-mute); font-weight:600; margin-right:6px}
+.qchip{width:34px; height:34px; border-radius:8px; border:1px solid var(--line); background:var(--paper); display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono',monospace; font-size:13px; font-weight:700; color:var(--ink-mute); cursor:pointer; transition:all 0.15s}
+.qchip:hover{border-color:var(--gold); transform:translateY(-1px)}
+.qchip.active{background:var(--gold); border-color:var(--gold-d); color:var(--sb); box-shadow:var(--shadow)}
+.qchip.done{background:var(--good-bg); border-color:var(--good); color:var(--good-d)}
+.qchip.done.active{background:var(--gold); color:var(--sb); border-color:var(--gold-d)}
+.mode-tag{font-size:10px; letter-spacing:0.14em; text-transform:uppercase; padding:3px 9px; border-radius:6px; font-weight:700; margin-left:6px}
+.mode-tag.simple{background:rgba(106,138,168,0.18); color:var(--info)}
+.mode-tag.compound{background:rgba(201,168,76,0.20); color:var(--gold-d)}
+
+.steps{display:flex; gap:6px; margin:14px 0 18px; flex-wrap:wrap}
+.step-pill{flex:1; min-width:140px; padding:10px 12px; border-radius:9px; background:var(--paper-2); border:1px solid var(--line); font-size:12px; transition:all 0.15s; display:flex; gap:9px; align-items:center}
+.step-pill.active{background:var(--gold); color:var(--sb); border-color:var(--gold-d); font-weight:600}
+.step-pill.done{background:var(--good-bg); border-color:var(--good); color:var(--good-d)}
+.step-pill .num{width:20px; height:20px; border-radius:50%; background:var(--sb); color:#fff; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:700; font-family:'JetBrains Mono',monospace; flex-shrink:0}
+.step-pill.active .num{background:var(--sb); color:var(--gold-m)}
+.step-pill.done .num{background:var(--good); color:#fff}
+.step-pill .lbl{flex:1; line-height:1.2}
+.step-pill .lbl .ttl{font-weight:600; display:block}
+.step-pill .lbl .sub{font-size:10.5px; opacity:0.85}
+
+.card{background:var(--paper); border:1px solid var(--line); border-radius:14px; padding:22px 24px; box-shadow:var(--shadow); margin-bottom:14px}
+.card-h{display:flex; gap:12px; align-items:flex-start; margin-bottom:14px; padding-bottom:10px; border-bottom:1px dashed var(--line)}
+.card-h .mark{width:34px; height:34px; flex-shrink:0; border-radius:9px; background:linear-gradient(135deg,var(--gold) 0%, var(--gold-d) 100%); display:flex; align-items:center; justify-content:center; color:#fff; font-family:'JetBrains Mono',monospace; font-size:13px; font-weight:700}
+.card-h h3{font-family:'Playfair Display',serif; font-size:20px; font-weight:700; line-height:1.15; margin:0 0 2px}
+.card-h h3 em{font-style:italic; color:var(--gold-d); font-weight:400}
+.card-h .sub{font-size:12px; color:var(--ink-mute)}
+.card-h .ttl{flex:1}
+
+.problem{font-size:18px; line-height:1.7; padding:18px 20px; background:var(--paper-2); border:1px solid var(--line); border-left:4px solid var(--gold); border-radius:10px; color:var(--ink); font-family:'Playfair Display', serif}
+.problem .ask{display:block; margin-top:10px; font-size:14.5px; color:var(--ink-2); font-family:'DM Sans', sans-serif; font-style:italic}
+.token{display:inline-block; padding:1px 4px; border-radius:5px; cursor:pointer; transition:all 0.18s; border:1.5px solid transparent}
+.token.selectable:hover{background:rgba(201,168,76,0.18); border-color:var(--gold)}
+.token.picked{background:var(--gold); color:var(--sb); border-color:var(--gold-d); font-weight:600; font-family:'JetBrains Mono',monospace}
+.token.picked.correct{background:var(--good); color:#fff; border-color:var(--good-d)}
+.token.picked.wrong{background:var(--trap); color:#fff; border-color:var(--trap-d)}
+
+.var-tray{display:flex; gap:8px; flex-wrap:wrap; margin-top:12px; padding:12px 14px; background:var(--paper-3); border:1px dashed var(--line-strong); border-radius:9px; min-height:50px; align-items:center}
+.var-tray .ph{font-size:12px; color:var(--ink-mute)}
+.var-pill{display:inline-flex; align-items:center; gap:6px; padding:5px 10px; background:var(--gold); color:var(--sb); font-family:'JetBrains Mono',monospace; font-size:13px; font-weight:700; border-radius:7px; border:1px solid var(--gold-d); cursor:grab}
+.var-pill.dragging{opacity:0.5}
+.var-pill .x{font-size:11px; opacity:0.6; cursor:pointer; padding:0 3px}
+.var-pill .x:hover{opacity:1}
+
+.skeleton{font-family:'JetBrains Mono',monospace; font-size:20px; line-height:1.7; text-align:center; padding:22px 18px; background:var(--paper-2); border:1px solid var(--line); border-radius:10px; color:var(--ink)}
+.skeleton sup{font-size:0.7em; vertical-align:super}
+.slot{display:inline-flex; align-items:center; justify-content:center; min-width:62px; min-height:32px; padding:3px 8px; border:2px dashed var(--gold); border-radius:7px; background:var(--paper); margin:0 2px; vertical-align:middle; font-weight:700; transition:all 0.2s}
+.slot.over{background:var(--gold-glow); border-style:solid; transform:scale(1.05)}
+.slot.filled{background:var(--gold); color:var(--sb); border-style:solid}
+.slot.filled.correct{background:var(--good); color:#fff; border-color:var(--good-d)}
+.slot.filled.wrong{background:var(--trap); color:#fff; border-color:var(--trap-d)}
+.slot.sup{min-width:30px; min-height:24px; padding:0 6px; vertical-align:super; font-size:0.85em}
+.slot .label{font-size:9px; letter-spacing:0.1em; text-transform:uppercase; opacity:0.8; font-family:'DM Sans', sans-serif; font-weight:600}
+
+.solve-row{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:12px}
+@media (max-width:680px){.solve-row{grid-template-columns:1fr}}
+.field{display:flex; flex-direction:column; gap:5px; padding:11px 13px; background:var(--paper-2); border:1px solid var(--line); border-radius:9px}
+.field .lbl{font-size:10.5px; letter-spacing:0.14em; text-transform:uppercase; color:var(--ink-mute); font-weight:700}
+.field input{background:var(--paper); border:1.5px solid var(--line); border-radius:7px; padding:9px 12px; font-family:'JetBrains Mono',monospace; font-size:15px; color:var(--ink); outline:none}
+.field input:focus{border-color:var(--gold); box-shadow:0 0 0 3px rgba(201,168,76,0.18)}
+.field input.correct{border-color:var(--good); background:var(--good-bg); color:var(--good-d)}
+.field input.wrong{border-color:var(--trap); background:var(--trap-bg); color:var(--trap-d)}
+.field .units{font-size:11px; color:var(--ink-mute); font-style:italic}
+
+.feedback{margin-top:14px; padding:13px 16px; border-radius:9px; font-size:13.5px; line-height:1.55; display:none; border:1px solid var(--line); background:var(--paper-2)}
+.feedback.show{display:block}
+.feedback.good{border-color:var(--good); background:var(--good-bg); color:var(--good-d)}
+.feedback.bad{border-color:var(--trap); background:var(--trap-bg); color:var(--trap-d)}
+.feedback .lbl{font-size:10px; letter-spacing:0.18em; font-weight:700; text-transform:uppercase; display:block; margin-bottom:6px; opacity:0.78}
+
+.sanity{margin-top:14px; padding:13px 16px; background:rgba(106,138,168,0.10); border-left:3px solid var(--info); border-radius:0 9px 9px 0; font-size:13.5px; color:var(--ink-2); line-height:1.55; display:none}
+.sanity.show{display:block}
+.sanity .lbl{font-size:10px; letter-spacing:0.16em; font-weight:700; text-transform:uppercase; color:var(--info); display:block; margin-bottom:5px}
+
+.btnrow{display:flex; gap:8px; margin-top:14px; align-items:center; flex-wrap:wrap}
+.btn{display:inline-flex; align-items:center; gap:6px; padding:8px 16px; border-radius:8px; border:1px solid var(--line); background:var(--paper); color:var(--ink); font-size:13.5px; font-weight:600; cursor:pointer; transition:all 0.15s; font-family:inherit}
+.btn:hover{border-color:var(--gold); transform:translateY(-1px); box-shadow:var(--shadow)}
+.btn.primary{background:var(--teal); color:#fff; border-color:var(--teal)}
+.btn.gold{background:var(--gold); color:var(--sb); border-color:var(--gold)}
+.btn.gold:hover{background:var(--gold-m)}
+.btn.ghost{background:transparent}
+.btn:disabled{opacity:0.45; cursor:not-allowed; transform:none}
+.btnrow .spacer{flex:1}
+.score{display:inline-flex; align-items:center; gap:8px; padding:8px 14px; background:var(--paper-3); border:1px solid var(--line); border-radius:9px; font-size:12px; font-weight:600; color:var(--ink-2)}
+.score b{color:var(--gold-d); font-family:'JetBrains Mono', monospace; font-size:14px}
+
+.celebration{text-align:center; padding:30px 18px; background:linear-gradient(135deg, var(--good-bg) 0%, rgba(201,168,76,0.18) 100%); border:1px solid var(--good); border-radius:14px; margin-top:14px; display:none}
+.celebration.show{display:block}
+.celebration h2{font-family:'Playfair Display', serif; font-size:28px; margin:0 0 6px; color:var(--good-d)}
+.celebration h2 em{font-style:italic; color:var(--gold-d); font-weight:400}
+.celebration p{margin:0; color:var(--ink-2); font-size:14px}
+
+.mode-strip{display:flex; gap:6px; margin-top:8px; padding:8px 10px; background:var(--paper-3); border:1px solid var(--line); border-radius:8px; font-size:11.5px; align-items:center; color:var(--ink-mute)}
+.mode-strip b{font-family:'JetBrains Mono', monospace; color:var(--ink); font-size:12px}
+</style>
+</head>
+<body>
+
+<div class="wrap" id="app">
+  <div class="head">
+    <span class="badge"><span class="pulse"></span>Interest Decoder</span>
+    <h1>Simple is <em>linear</em>. Compound is <em>exponential</em>.</h1>
+    <p class="lede">Two skeletons, one decoder. Simple: <b>A = P(1 + rt)</b>. Compound: <b>A = P(1 + r/n)<sup>nt</sup></b>. The wording tells you which one to use — "simple interest", "compounded annually", "compounded quarterly". Three steps, five problems mixing both.</p>
+  </div>
+
+  <div class="qbar" id="qbar"><span class="lbl">Problem</span></div>
+  <div class="mode-strip">Pattern this round: <b id="mode-strip-val">—</b></div>
+
+  <div class="steps" id="steps">
+    <div class="step-pill active" data-step="1"><span class="num">1</span><span class="lbl"><span class="ttl">Highlight</span><span class="sub">P, r, t, n</span></span></div>
+    <div class="step-pill" data-step="2"><span class="num">2</span><span class="lbl"><span class="ttl">Build skeleton</span><span class="sub">simple or compound</span></span></div>
+    <div class="step-pill" data-step="3"><span class="num">3</span><span class="lbl"><span class="ttl">Solve &amp; verify</span><span class="sub">end > start</span></span></div>
+  </div>
+
+  <div class="card" id="step1-card">
+    <div class="card-h"><div class="mark">01</div><div class="ttl"><h3>Highlight <em>P, r, t</em> (and n if compounded)</h3><div class="sub">Tap the principal, the rate, the time, and — if the wording says "compounded ___" — the compounding frequency.</div></div></div>
+    <div class="problem" id="problem-text"></div>
+    <div class="var-tray" id="var-tray"><span class="ph">Picked variables will appear here.</span></div>
+    <div class="feedback" id="step1-feedback"></div>
+    <div class="btnrow">
+      <button class="btn ghost" id="step1-clear">Clear picks</button>
+      <div class="spacer"></div>
+      <button class="btn primary" id="step1-check">Check picks</button>
+      <button class="btn gold" id="step1-next" disabled>Next: build skeleton</button>
+    </div>
+  </div>
+
+  <div class="card" id="step2-card" style="display:none">
+    <div class="card-h"><div class="mark">02</div><div class="ttl"><h3>Drop into the <em>right skeleton</em></h3><div class="sub">The wording tells you simple vs compound. Pick the right form, then fill the slots.</div></div></div>
+    <div class="skeleton" id="skeleton"></div>
+    <div class="var-tray" id="var-tray-2"></div>
+    <div class="feedback" id="step2-feedback"></div>
+    <div class="btnrow">
+      <button class="btn ghost" id="step2-back">Back</button>
+      <button class="btn ghost" id="step2-reset">Reset slots</button>
+      <div class="spacer"></div>
+      <button class="btn primary" id="step2-check">Check skeleton</button>
+      <button class="btn gold" id="step2-next" disabled>Next: solve</button>
+    </div>
+  </div>
+
+  <div class="card" id="step3-card" style="display:none">
+    <div class="card-h"><div class="mark">03</div><div class="ttl"><h3>Solve &amp; <em>sanity-check</em></h3><div class="sub">Final amount must exceed principal (interest is positive). Compound at the same r,t always exceeds simple.</div></div></div>
+    <div class="skeleton" id="skeleton-filled" style="font-size:17px"></div>
+    <div class="solve-row">
+      <div class="field"><span class="lbl">Final amount A</span><input type="text" id="answer-input" placeholder="number"><span class="units" id="units-hint">dollars (or interest only — read the question)</span></div>
+      <div class="field"><span class="lbl">Sanity check</span><input type="text" id="sanity-input" placeholder="A > P? compound > simple?"><span class="units">one short sentence</span></div>
+    </div>
+    <div class="feedback" id="step3-feedback"></div>
+    <div class="sanity" id="step3-sanity"></div>
+    <div class="btnrow">
+      <button class="btn ghost" id="step3-back">Back</button>
+      <div class="spacer"></div>
+      <span class="score">Decoder: <b id="score">0/5</b></span>
+      <button class="btn primary" id="step3-check">Check answer</button>
+      <button class="btn gold" id="step3-next" disabled>Next problem</button>
+    </div>
+  </div>
+
+  <div class="celebration" id="celeb"><h2>Interest <em>locked.</em></h2><p>Five problems decoded across simple and compound. The wording cue is now an instinct.</p></div>
+</div>
+
+<script>
+/* Two skeletons:
+   simple:   A = P(1 + r·t)
+   compound: A = P(1 + r/n)^(n·t)
+*/
+const PROBLEMS = [
+  {
+    id:'in-1', mode:'simple',
+    text:'$2,000 is invested at 5% simple interest for 3 years.',
+    ask:'Find the final amount A.',
+    tokens:[
+      {t:'$'},{t:'2,000', v:'P=2000', kind:'P'},
+      {t:' is invested at '},{t:'5%', v:'r=.05', kind:'r'},
+      {t:' simple interest for '},{t:'3 years', v:'t=3', kind:'t'},
+      {t:'.'}
+    ],
+    expect:['P=2000','r=.05','t=3'],
+    skeletonHtml:'A &nbsp;=&nbsp; <span class="slot" data-slot="P"><span class="label">P</span></span> · ( 1 + <span class="slot" data-slot="r"><span class="label">r</span></span> · <span class="slot" data-slot="t"><span class="label">t</span></span> )',
+    slots:{P:'P=2000', r:'r=.05', t:'t=3'},
+    skelDisplay:'A = 2000(1 + 0.05·3)',
+    answer:2300, tol:1,
+    sanity:'A = 2000·1.15 = $2300. Interest = $300, which is exactly 5%·3yr·2000 = $300. Linear growth.',
+    answerHint:'final amount in $'
+  },
+  {
+    id:'in-2', mode:'compound',
+    text:'$1,000 is deposited at 8% interest, compounded annually, for 2 years.',
+    ask:'Find A.',
+    tokens:[
+      {t:'$'},{t:'1,000', v:'P=1000', kind:'P'},
+      {t:' is deposited at '},{t:'8%', v:'r=.08', kind:'r'},
+      {t:' interest, '},{t:'compounded annually', v:'n=1', kind:'n'},
+      {t:', for '},{t:'2 years', v:'t=2', kind:'t'},
+      {t:'.'}
+    ],
+    expect:['P=1000','r=.08','n=1','t=2'],
+    skeletonHtml:'A &nbsp;=&nbsp; <span class="slot" data-slot="P"><span class="label">P</span></span> · ( 1 + <span class="slot" data-slot="r"><span class="label">r</span></span> / <span class="slot" data-slot="n"><span class="label">n</span></span> )<sup><span class="slot sup" data-slot="nt-n"><span class="label">n</span></span>·<span class="slot sup" data-slot="nt-t"><span class="label">t</span></span></sup>',
+    slots:{P:'P=1000', r:'r=.08', n:'n=1', 'nt-n':'n=1', 'nt-t':'t=2'},
+    skelDisplay:'A = 1000(1 + .08/1)^(1·2)',
+    answer:1166.40, tol:1,
+    sanity:'1.08² = 1.1664. A = $1166.40. Compounding once a year on a single rate = (1+r)^t. Beats simple ($1160) by a touch.',
+    answerHint:'final amount in $'
+  },
+  {
+    id:'in-3', mode:'compound',
+    text:'$5,000 is invested at 6% interest, compounded quarterly, for 4 years.',
+    ask:'Find A.',
+    tokens:[
+      {t:'$'},{t:'5,000', v:'P=5000', kind:'P'},
+      {t:' is invested at '},{t:'6%', v:'r=.06', kind:'r'},
+      {t:' interest, '},{t:'compounded quarterly', v:'n=4', kind:'n'},
+      {t:', for '},{t:'4 years', v:'t=4', kind:'t'},
+      {t:'.'}
+    ],
+    expect:['P=5000','r=.06','n=4','t=4'],
+    skeletonHtml:'A &nbsp;=&nbsp; <span class="slot" data-slot="P"><span class="label">P</span></span> · ( 1 + <span class="slot" data-slot="r"><span class="label">r</span></span> / <span class="slot" data-slot="n"><span class="label">n</span></span> )<sup><span class="slot sup" data-slot="nt-n"><span class="label">n</span></span>·<span class="slot sup" data-slot="nt-t"><span class="label">t</span></span></sup>',
+    slots:{P:'P=5000', r:'r=.06', n:'n=4', 'nt-n':'n=4', 'nt-t':'t=4'},
+    skelDisplay:'A = 5000(1 + .06/4)^(4·4)',
+    answer:6346.86, tol:5,
+    sanity:'(1.015)^16 ≈ 1.2690. A ≈ $6346. Quarterly beats annual ($5000·1.06⁴ = $6312) by ~$34.',
+    answerHint:'final amount in $'
+  },
+  {
+    id:'in-4', mode:'simple',
+    text:'A loan of $800 charges 12% simple annual interest. After 6 months, what is the total owed?',
+    ask:'Find A (total owed).',
+    tokens:[
+      {t:'A loan of $'},{t:'800', v:'P=800', kind:'P'},
+      {t:' charges '},{t:'12%', v:'r=.12', kind:'r'},
+      {t:' simple annual interest. After '},{t:'6 months', v:'t=.5', kind:'t'},
+      {t:', what is the total owed?'}
+    ],
+    expect:['P=800','r=.12','t=.5'],
+    skeletonHtml:'A &nbsp;=&nbsp; <span class="slot" data-slot="P"><span class="label">P</span></span> · ( 1 + <span class="slot" data-slot="r"><span class="label">r</span></span> · <span class="slot" data-slot="t"><span class="label">t</span></span> )',
+    slots:{P:'P=800', r:'r=.12', t:'t=.5'},
+    skelDisplay:'A = 800(1 + .12·0.5)',
+    answer:848, tol:1,
+    sanity:'6 months is 0.5 yr — convert because rate is annual. A = 800·1.06 = $848. Interest $48.',
+    answerHint:'total owed in $'
+  },
+  {
+    id:'in-5', mode:'compound',
+    text:'$3,000 grows at 10% interest, compounded semiannually, for 1 year.',
+    ask:'Find A.',
+    tokens:[
+      {t:'$'},{t:'3,000', v:'P=3000', kind:'P'},
+      {t:' grows at '},{t:'10%', v:'r=.10', kind:'r'},
+      {t:' interest, '},{t:'compounded semiannually', v:'n=2', kind:'n'},
+      {t:', for '},{t:'1 year', v:'t=1', kind:'t'},
+      {t:'.'}
+    ],
+    expect:['P=3000','r=.10','n=2','t=1'],
+    skeletonHtml:'A &nbsp;=&nbsp; <span class="slot" data-slot="P"><span class="label">P</span></span> · ( 1 + <span class="slot" data-slot="r"><span class="label">r</span></span> / <span class="slot" data-slot="n"><span class="label">n</span></span> )<sup><span class="slot sup" data-slot="nt-n"><span class="label">n</span></span>·<span class="slot sup" data-slot="nt-t"><span class="label">t</span></span></sup>',
+    slots:{P:'P=3000', r:'r=.10', n:'n=2', 'nt-n':'n=2', 'nt-t':'t=1'},
+    skelDisplay:'A = 3000(1 + .10/2)^(2·1)',
+    answer:3307.50, tol:1,
+    sanity:'(1.05)² = 1.1025. A = $3307.50. Two compounding periods at 5% each beats simple 10% ($3300) by $7.50.',
+    answerHint:'final amount in $'
+  }
+];
+
+const state = { qIdx:0, picks:[], slotFills:{}, completed:Array(PROBLEMS.length).fill(false), step:1 };
+
+function renderQbar(){
+  const bar = document.getElementById('qbar'); bar.innerHTML = '<span class="lbl">Problem</span>';
+  PROBLEMS.forEach((p,i)=>{
+    const el = document.createElement('div');
+    el.className = 'qchip' + (i===state.qIdx?' active':'') + (state.completed[i]?' done':'');
+    el.textContent = (i+1);
+    el.addEventListener('click', ()=>{ state.qIdx=i; loadProblem(); });
+    bar.appendChild(el);
+  });
+  document.getElementById('score').textContent = state.completed.filter(Boolean).length + '/' + PROBLEMS.length;
+  const m = PROBLEMS[state.qIdx].mode;
+  document.getElementById('mode-strip-val').innerHTML = m==='simple' ? 'simple — A = P(1 + r·t)' : 'compound — A = P(1 + r/n)^(n·t)';
+}
+
+function renderProblem(){
+  const p = PROBLEMS[state.qIdx];
+  const elt = document.getElementById('problem-text'); elt.innerHTML = '';
+  p.tokens.forEach((tk,i)=>{
+    if (tk.v){
+      const span = document.createElement('span');
+      span.className = 'token selectable'; span.dataset.v = tk.v; span.dataset.i = i;
+      span.textContent = tk.t;
+      span.addEventListener('click', ()=>togglePick(i, tk.v, span));
+      elt.appendChild(span);
+    } else elt.appendChild(document.createTextNode(tk.t));
+  });
+  const ask = document.createElement('span'); ask.className = 'ask'; ask.textContent = p.ask; elt.appendChild(ask);
+  state.picks=[]; renderTray();
+  document.getElementById('step1-feedback').classList.remove('show');
+  document.getElementById('step1-next').disabled = true;
+}
+
+function togglePick(i, v, el){
+  if (el.classList.contains('picked')){
+    el.classList.remove('picked','correct','wrong');
+    state.picks = state.picks.filter(x=>x.i!==i);
+  } else {
+    el.classList.add('picked'); state.picks.push({i,v,el});
+    anime({targets:el, scale:[1,1.18,1], duration:280, easing:'easeOutQuad'});
+  }
+  renderTray();
+}
+
+function renderTray(){
+  const tray = document.getElementById('var-tray');
+  if (!state.picks.length){ tray.innerHTML = '<span class="ph">Picked variables will appear here.</span>'; return; }
+  tray.innerHTML = '';
+  state.picks.forEach(pk=>{
+    const pill = document.createElement('span');
+    pill.className = 'var-pill'; pill.draggable = true; pill.dataset.v = pk.v;
+    pill.innerHTML = pk.v + ' <span class="x" title="remove">×</span>';
+    pill.querySelector('.x').addEventListener('click',(e)=>{
+      e.stopPropagation(); pk.el.classList.remove('picked','correct','wrong');
+      state.picks = state.picks.filter(x=>x!==pk); renderTray();
+    });
+    pill.addEventListener('dragstart',(e)=>{ pill.classList.add('dragging'); e.dataTransfer.setData('text/v', pk.v); });
+    pill.addEventListener('dragend', ()=>pill.classList.remove('dragging'));
+    tray.appendChild(pill);
+  });
+}
+
+function checkPicks(){
+  const p = PROBLEMS[state.qIdx];
+  const wanted = new Set(p.expect); const got = new Set(state.picks.map(x=>x.v));
+  let ok = true;
+  state.picks.forEach(pk=>{
+    pk.el.classList.remove('correct','wrong');
+    if (wanted.has(pk.v)) pk.el.classList.add('correct'); else { pk.el.classList.add('wrong'); ok=false; }
+  });
+  const missing = [...wanted].filter(v=>!got.has(v));
+  const fb = document.getElementById('step1-feedback');
+  fb.className = 'feedback show ' + (ok && missing.length===0?'good':'bad');
+  if (ok && missing.length===0){
+    fb.innerHTML = '<span class="lbl">Locked</span>You found <b>'+p.expect.join('</b>, <b>')+'</b>. ' + (p.mode==='compound' ? 'This wording says <b>compound</b> — n is the number of compoundings per year.' : 'This wording says <b>simple</b> — no n, just rt.');
+    document.getElementById('step1-next').disabled = false;
+  } else {
+    let msg = '<span class="lbl">Not yet</span>';
+    if (missing.length) msg += 'Missing: <b>'+missing.join('</b>, <b>')+'</b>. ';
+    msg += 'P (principal) is the dollar amount; r is the percent as a decimal; t is years; n appears only when "compounded ___".';
+    fb.innerHTML = msg;
+  }
+}
+
+function renderSkeleton(){
+  const p = PROBLEMS[state.qIdx];
+  document.getElementById('skeleton').innerHTML = p.skeletonHtml;
+  state.slotFills = {};
+  document.querySelectorAll('#skeleton .slot').forEach(slot=>{
+    slot.addEventListener('dragover',(e)=>{e.preventDefault(); slot.classList.add('over')});
+    slot.addEventListener('dragleave', ()=>slot.classList.remove('over'));
+    slot.addEventListener('drop',(e)=>{
+      e.preventDefault(); slot.classList.remove('over');
+      const v = e.dataTransfer.getData('text/v'); if (!v) return;
+      slot.classList.add('filled'); slot.classList.remove('correct','wrong');
+      slot.innerHTML = v; state.slotFills[slot.dataset.slot] = v;
+      anime({targets:slot, scale:[1,1.12,1], duration:280, easing:'easeOutQuad'});
+    });
+    slot.addEventListener('click', ()=>{
+      if (slot.classList.contains('filled')){
+        slot.classList.remove('filled','correct','wrong');
+        slot.innerHTML = '<span class="label">'+slot.dataset.slot+'</span>';
+        delete state.slotFills[slot.dataset.slot];
+      }
+    });
+  });
+  const tray2 = document.getElementById('var-tray-2'); tray2.innerHTML='';
+  state.picks.forEach(pk=>{
+    const pill = document.createElement('span');
+    pill.className='var-pill'; pill.draggable=true; pill.dataset.v=pk.v; pill.textContent=pk.v;
+    pill.addEventListener('dragstart',(e)=>{ pill.classList.add('dragging'); e.dataTransfer.setData('text/v', pk.v); });
+    pill.addEventListener('dragend', ()=>pill.classList.remove('dragging'));
+    tray2.appendChild(pill);
+  });
+  document.getElementById('step2-feedback').classList.remove('show');
+  document.getElementById('step2-next').disabled = true;
+}
+
+function checkSkeleton(){
+  const p = PROBLEMS[state.qIdx]; let ok = true;
+  Object.keys(p.slots).forEach(k=>{
+    const expect = p.slots[k]; const got = state.slotFills[k];
+    const slot = document.querySelector('.slot[data-slot="'+k+'"]'); if (!slot) return;
+    slot.classList.remove('correct','wrong');
+    if (got === expect) slot.classList.add('correct'); else { slot.classList.add('wrong'); ok=false; }
+  });
+  const fb = document.getElementById('step2-feedback');
+  fb.className = 'feedback show ' + (ok?'good':'bad');
+  if (ok){
+    fb.innerHTML = '<span class="lbl">Skeleton built</span>Canonical: <b>'+p.skelDisplay+'</b>. Now compute.';
+    document.getElementById('step2-next').disabled = false;
+  } else {
+    fb.innerHTML = '<span class="lbl">Slot mismatch</span>'+(p.mode==='compound' ? 'For compound: n appears twice (denominator of r/n and exponent n·t). r is the annual rate.' : 'For simple: A = P(1 + r·t). No exponent, no n.');
+  }
+}
+
+function renderSolve(){
+  const p = PROBLEMS[state.qIdx];
+  document.getElementById('skeleton-filled').innerHTML = p.skelDisplay;
+  document.getElementById('answer-input').value = '';
+  document.getElementById('answer-input').classList.remove('correct','wrong');
+  document.getElementById('sanity-input').value = '';
+  document.getElementById('units-hint').textContent = p.answerHint || '';
+  document.getElementById('step3-feedback').classList.remove('show');
+  document.getElementById('step3-sanity').classList.remove('show');
+  document.getElementById('step3-next').disabled = true;
+}
+
+function checkAnswer(){
+  const p = PROBLEMS[state.qIdx];
+  const raw = document.getElementById('answer-input').value.trim().replace(/[$,]/g,'');
+  const num = parseFloat(raw);
+  const fb = document.getElementById('step3-feedback'); const ai = document.getElementById('answer-input');
+  ai.classList.remove('correct','wrong');
+  if (isNaN(num)){ fb.className='feedback show bad'; fb.innerHTML='<span class="lbl">Need a number</span>'; ai.classList.add('wrong'); return; }
+  const correct = Math.abs(num - p.answer) < (p.tol||1);
+  if (correct){
+    ai.classList.add('correct');
+    fb.className = 'feedback show good';
+    fb.innerHTML = '<span class="lbl">Decoded</span>Correct: <b>$'+p.answer.toFixed(2)+'</b>.';
+    const sn = document.getElementById('step3-sanity');
+    sn.className = 'sanity show'; sn.innerHTML = '<span class="lbl">Sanity check</span>'+p.sanity;
+    state.completed[state.qIdx] = true;
+    document.getElementById('step3-next').disabled = false;
+    document.getElementById('score').textContent = state.completed.filter(Boolean).length + '/' + PROBLEMS.length;
+    if (state.completed.every(Boolean)) document.getElementById('celeb').classList.add('show');
+    renderQbar();
+  } else {
+    ai.classList.add('wrong');
+    fb.className = 'feedback show bad';
+    fb.innerHTML = '<span class="lbl">Off</span>Use <b>'+p.skelDisplay+'</b>. Convert percent → decimal, months → years, and watch the exponent.';
+  }
+}
+
+function goStep(n){
+  state.step = n;
+  document.querySelectorAll('.step-pill').forEach(el=>{
+    const s = +el.dataset.step;
+    el.classList.toggle('active', s===n);
+    el.classList.toggle('done', s<n);
+  });
+  document.getElementById('step1-card').style.display = (n===1?'block':'none');
+  document.getElementById('step2-card').style.display = (n===2?'block':'none');
+  document.getElementById('step3-card').style.display = (n===3?'block':'none');
+  if (n===2) renderSkeleton();
+  if (n===3) renderSolve();
+}
+
+function loadProblem(){
+  document.getElementById('celeb').classList.remove('show');
+  renderQbar(); renderProblem(); goStep(1);
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+document.getElementById('step1-check').addEventListener('click', checkPicks);
+document.getElementById('step1-clear').addEventListener('click', ()=>{
+  state.picks.forEach(pk=>pk.el.classList.remove('picked','correct','wrong'));
+  state.picks=[]; renderTray();
+  document.getElementById('step1-feedback').classList.remove('show');
+  document.getElementById('step1-next').disabled = true;
+});
+document.getElementById('step1-next').addEventListener('click', ()=>goStep(2));
+document.getElementById('step2-back').addEventListener('click', ()=>goStep(1));
+document.getElementById('step2-reset').addEventListener('click', renderSkeleton);
+document.getElementById('step2-check').addEventListener('click', checkSkeleton);
+document.getElementById('step2-next').addEventListener('click', ()=>goStep(3));
+document.getElementById('step3-back').addEventListener('click', ()=>goStep(2));
+document.getElementById('step3-check').addEventListener('click', checkAnswer);
+document.getElementById('step3-next').addEventListener('click', ()=>{
+  if (state.qIdx < PROBLEMS.length-1){ state.qIdx++; loadProblem(); } else renderQbar();
+});
+
+loadProblem();
+</script>
+</body>
+</html>

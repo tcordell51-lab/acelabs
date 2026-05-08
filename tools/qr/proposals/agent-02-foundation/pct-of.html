@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>pct-of · Hundred-Grid Painter</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f5f0e8; --paper:#fffdf7; --paper-2:#f9f3e6;
+  --sb:#0d2018; --ink:#0f1814; --ink-2:#3a4a42; --ink-mute:#6e7c74;
+  --gold:#C9A84C; --gold-m:#E2C97A; --gold-d:#8C7235; --gold-glow:rgba(201,168,76,0.35);
+  --teal:#1B3A2D; --teal-3:#3A6B54;
+  --line:rgba(13,32,24,0.12);
+  --trap:#C25B3F; --trap-bg:#fbe7df; --trap-d:#8a3d28;
+  --good:#5FA874; --good-bg:#e3efe6; --good-d:#3e7c54;
+  --shadow:0 1px 3px rgba(13,32,24,0.06), 0 8px 24px rgba(13,32,24,0.04);
+}
+*{box-sizing:border-box}
+body{margin:0; font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--ink); padding:32px 24px; line-height:1.5}
+.wrap{max-width:880px; margin:0 auto}
+h1{font-family:'Playfair Display',serif; font-size:36px; margin:0 0 4px; font-weight:700}
+h1 em{font-style:italic; color:var(--gold-d); font-weight:400}
+.lede{color:var(--ink-2); font-size:15px; margin:0 0 22px; max-width:640px}
+.card{background:var(--paper); border:1px solid var(--line); border-radius:16px; padding:24px 26px; box-shadow:var(--shadow); margin-bottom:18px}
+
+.po-layout{display:grid; grid-template-columns:1fr 1fr; gap:24px; align-items:start}
+@media(max-width:760px){.po-layout{grid-template-columns:1fr}}
+
+.po-grid{
+  display:grid; grid-template-columns:repeat(10, 1fr); gap:2px; padding:6px;
+  background:var(--paper-2); border-radius:10px; border:1px solid var(--line);
+  user-select:none; touch-action:none;
+}
+.po-cell{
+  aspect-ratio:1/1; background:var(--paper); border:1px solid var(--line); border-radius:2px;
+  cursor:pointer; transition:background .12s, transform .12s;
+}
+.po-cell:hover{transform:scale(1.06)}
+.po-cell.on{background:var(--gold); border-color:var(--gold-d)}
+.po-cell.target{background:var(--teal-3); border-color:var(--teal); animation:flash .35s}
+@keyframes flash{0%{transform:scale(1.2)}100%{transform:scale(1)}}
+
+.po-side{display:flex; flex-direction:column; gap:14px}
+
+.po-formula{
+  font-family:'JetBrains Mono',monospace; font-size:18px; padding:14px 16px; border-radius:10px;
+  background:var(--paper-2); border:1px solid var(--line); border-left:4px solid var(--gold);
+  line-height:1.7;
+}
+.po-formula .slot{
+  display:inline-block; min-width:42px; padding:2px 8px; border-radius:6px;
+  background:var(--paper); border:2px dashed var(--gold); text-align:center; font-weight:600;
+  color:var(--gold-d);
+}
+.po-formula .slot.locked{border-style:solid; background:rgba(201,168,76,0.16); color:var(--ink)}
+.po-formula .equals{color:var(--gold-d); font-weight:700; font-size:22px; padding:0 4px}
+
+.po-prompt{
+  font-family:'Playfair Display',serif; font-size:22px; line-height:1.35; padding:14px 16px;
+  background:var(--paper-2); border-radius:10px; border-left:4px solid var(--teal);
+}
+.po-prompt b{color:var(--teal); font-weight:700}
+
+.po-counter{font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--ink-mute); margin-top:4px}
+.po-counter b{color:var(--gold-d); font-size:18px}
+
+.po-controls{display:flex; gap:8px; flex-wrap:wrap}
+.po-btn{padding:8px 14px; border-radius:8px; border:1px solid var(--line); background:var(--paper); font-size:13px; font-weight:600; cursor:pointer; font-family:inherit; color:var(--ink)}
+.po-btn:hover{border-color:var(--gold)}
+.po-btn.primary{background:var(--teal); color:#fff; border-color:var(--teal)}
+.po-btn.gold{background:var(--gold); color:var(--sb); border-color:var(--gold)}
+
+.po-status{font-family:'Playfair Display',serif; font-style:italic; font-size:18px; color:var(--ink-2); min-height:30px; padding:8px 0}
+.po-status.good{color:var(--good-d)}
+.po-status.warn{color:var(--trap-d)}
+
+.po-hud{display:flex; justify-content:space-between; font-size:12px; color:var(--ink-mute); margin-bottom:10px; letter-spacing:.04em}
+.po-hud b{color:var(--gold-d); font-family:'JetBrains Mono',monospace}
+
+.trap-card{background:var(--trap-bg); border:1px solid var(--trap); border-left:4px solid var(--trap); border-radius:12px; padding:16px 20px; color:var(--trap-d)}
+.trap-card .lbl{font-size:10px; letter-spacing:.18em; font-weight:700; text-transform:uppercase; margin-bottom:6px}
+.trap-card p{margin:0; font-size:14px; line-height:1.55}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Percent <em>Of</em> a Number</h1>
+  <p class="lede">The whole is the 100-square. Paint the percent. Watch the formula assemble itself, then read off the answer.</p>
+
+  <div class="card">
+    <div class="po-hud">
+      <span>Round <b id="po-round">1</b> / 5</span>
+      <span>Score <b id="po-score">0</b></span>
+    </div>
+
+    <div class="po-layout">
+      <div>
+        <div class="po-grid" id="po-grid"></div>
+        <div class="po-counter">Painted: <b id="po-count">0</b> / 100 cells</div>
+      </div>
+
+      <div class="po-side">
+        <div class="po-prompt" id="po-prompt">What is <b>30%</b> of <b>240</b>?</div>
+
+        <div class="po-formula" id="po-formula">
+          <span class="slot" id="po-slot-pct">?</span>%
+          <span style="opacity:.6">·</span>
+          <span class="slot locked" id="po-slot-whole">240</span>
+          <span class="equals">=</span>
+          <span class="slot" id="po-slot-ans">?</span>
+        </div>
+
+        <div class="po-status" id="po-status">Click cells to paint the percent.</div>
+
+        <div class="po-controls">
+          <button class="po-btn" id="po-clear">Clear paint</button>
+          <button class="po-btn gold" id="po-check">Check</button>
+          <button class="po-btn primary" id="po-next" disabled>Next round</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="trap-card">
+    <div class="lbl">The Trap</div>
+    <p>Students reach for the calculator. On the real DAT QR, this costs 30+ seconds per question. Picture the 100-grid: 30% is 30 cells out of 100, so 30% of 240 is 30/100 of 240 — <b>multiply, then drop two zeros</b>.</p>
+  </div>
+</div>
+
+<script>
+const ROUNDS = [
+  {pct:30, whole:240},
+  {pct:25, whole:160},
+  {pct:60, whole:85},
+  {pct:15, whole:320},
+  {pct:80, whole:45},
+];
+let R = 0, score = 0, painted = 0;
+
+function buildGrid(){
+  const g = document.getElementById('po-grid'); g.innerHTML='';
+  for(let i=0;i<100;i++){
+    const c = document.createElement('div');
+    c.className = 'po-cell';
+    c.dataset.idx = i;
+    g.appendChild(c);
+  }
+  let down = false;
+  g.addEventListener('mousedown', e => { down = true; toggle(e.target, 'on'); });
+  g.addEventListener('mouseover', e => { if(down) toggle(e.target, 'on'); });
+  window.addEventListener('mouseup', () => down = false);
+  // Touch
+  g.addEventListener('touchstart', e => {
+    const t = document.elementFromPoint(e.touches[0].clientX, e.touches[0].clientY);
+    if(t && t.classList.contains('po-cell')) toggle(t,'on');
+    e.preventDefault();
+  }, {passive:false});
+  g.addEventListener('touchmove', e => {
+    const t = document.elementFromPoint(e.touches[0].clientX, e.touches[0].clientY);
+    if(t && t.classList.contains('po-cell') && !t.classList.contains('on')) toggle(t,'on');
+    e.preventDefault();
+  }, {passive:false});
+}
+
+function toggle(el, mode){
+  if(!el || !el.classList.contains('po-cell')) return;
+  if(!el.classList.contains('on')){
+    el.classList.add('on'); painted++;
+  } else if(mode === 'click'){
+    el.classList.remove('on'); painted--;
+  }
+  document.getElementById('po-count').textContent = painted;
+  document.getElementById('po-slot-pct').textContent = painted;
+  // live preview answer
+  const r = ROUNDS[R];
+  const ans = (painted * r.whole / 100);
+  document.getElementById('po-slot-ans').textContent = (Math.round(ans*100)/100);
+}
+
+function setRound(){
+  const r = ROUNDS[R];
+  document.getElementById('po-round').textContent = (R+1);
+  document.getElementById('po-prompt').innerHTML = 'What is <b>'+r.pct+'%</b> of <b>'+r.whole+'</b>?';
+  document.getElementById('po-slot-whole').textContent = r.whole;
+  document.getElementById('po-slot-pct').textContent = '?';
+  document.getElementById('po-slot-ans').textContent = '?';
+  document.getElementById('po-status').className = 'po-status';
+  document.getElementById('po-status').textContent = 'Click cells to paint the percent.';
+  document.getElementById('po-next').disabled = true;
+  clearPaint();
+}
+
+function clearPaint(){
+  document.querySelectorAll('.po-cell').forEach(c => c.classList.remove('on','target'));
+  painted = 0;
+  document.getElementById('po-count').textContent = 0;
+  document.getElementById('po-slot-pct').textContent = '?';
+  document.getElementById('po-slot-ans').textContent = '?';
+}
+
+function check(){
+  const r = ROUNDS[R];
+  const status = document.getElementById('po-status');
+  const correctAns = (r.pct * r.whole / 100);
+  if(painted === r.pct){
+    status.className = 'po-status good';
+    status.textContent = r.pct+'% of '+r.whole+' = '+correctAns+'. Painted right.';
+    document.getElementById('po-slot-ans').textContent = correctAns;
+    document.getElementById('po-slot-pct').classList.add('locked');
+    score++;
+    document.getElementById('po-score').textContent = score;
+    document.getElementById('po-next').disabled = false;
+  } else {
+    status.className = 'po-status warn';
+    status.textContent = 'You painted '+painted+'%. Target was '+r.pct+'%. Adjust and try again.';
+    // briefly flash the target count
+    let i = 0;
+    const cells = document.querySelectorAll('.po-cell');
+    const pulse = setInterval(()=>{
+      cells[i].classList.add('target');
+      setTimeout(()=>cells[i].classList.remove('target'), 220);
+      i++;
+      if(i >= r.pct){ clearInterval(pulse); }
+    }, 18);
+  }
+}
+
+document.getElementById('po-clear').onclick = clearPaint;
+document.getElementById('po-check').onclick = check;
+document.getElementById('po-next').onclick = () => { R = (R+1) % ROUNDS.length; setRound(); };
+
+buildGrid();
+setRound();
+</script>
+</body>
+</html>

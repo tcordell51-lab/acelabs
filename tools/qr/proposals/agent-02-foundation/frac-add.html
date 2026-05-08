@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>frac-add · Common Floor Bars</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f5f0e8; --paper:#fffdf7; --paper-2:#f9f3e6; --paper-3:#f3ecdb;
+  --sb:#0d2018; --ink:#0f1814; --ink-2:#3a4a42; --ink-mute:#6e7c74;
+  --gold:#C9A84C; --gold-m:#E2C97A; --gold-d:#8C7235; --gold-glow:rgba(201,168,76,0.35);
+  --teal:#1B3A2D; --teal-2:#2A5240; --teal-3:#3A6B54;
+  --line:rgba(13,32,24,0.12);
+  --trap:#C25B3F; --trap-bg:#fbe7df; --trap-d:#8a3d28;
+  --good:#5FA874; --good-bg:#e3efe6; --good-d:#3e7c54;
+  --shadow:0 1px 3px rgba(13,32,24,0.06), 0 8px 24px rgba(13,32,24,0.04);
+}
+*{box-sizing:border-box}
+body{margin:0; font-family:'DM Sans',system-ui,sans-serif; background:var(--bg); color:var(--ink); padding:32px 24px; line-height:1.5}
+.wrap{max-width:880px; margin:0 auto}
+h1{font-family:'Playfair Display',serif; font-size:36px; margin:0 0 4px; font-weight:700; letter-spacing:-0.01em}
+h1 em{font-style:italic; color:var(--gold-d); font-weight:400}
+.lede{color:var(--ink-2); font-size:15px; margin:0 0 22px; max-width:640px}
+.card{background:var(--paper); border:1px solid var(--line); border-radius:16px; padding:24px 26px; box-shadow:var(--shadow); margin-bottom:18px}
+
+.fa-stage{display:flex; flex-direction:column; gap:14px}
+.fa-row{display:flex; align-items:center; gap:14px; flex-wrap:wrap; justify-content:center}
+.fa-frac{display:flex; flex-direction:column; align-items:center; gap:6px}
+.fa-bar{
+  width:240px; height:48px; border:2px solid var(--ink); border-radius:8px;
+  display:flex; overflow:hidden; background:var(--paper-2); position:relative;
+  cursor:grab; user-select:none; touch-action:none;
+}
+.fa-bar.dragging{cursor:grabbing; box-shadow:0 0 0 3px var(--gold-glow)}
+.fa-cell{flex:1; border-right:1px solid var(--ink); transition:background .35s ease, transform .35s ease}
+.fa-cell:last-child{border-right:none}
+.fa-cell.fill-a{background:var(--gold)}
+.fa-cell.fill-b{background:var(--teal-3)}
+.fa-cell.split-line{position:relative}
+.fa-cell.split-line::after{content:""; position:absolute; left:50%; top:0; bottom:0; width:1px; background:rgba(13,32,24,0.4)}
+.fa-lbl{font-family:'JetBrains Mono',monospace; font-size:15px; font-weight:600}
+.fa-op{font-family:'Playfair Display',serif; font-size:36px; color:var(--gold-d); padding:0 4px}
+.fa-eq{font-family:'Playfair Display',serif; font-size:36px; color:var(--ink-mute); padding:0 4px}
+
+.fa-controls{display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:6px}
+.fa-btn{
+  padding:8px 14px; border-radius:8px; border:1px solid var(--line); background:var(--paper);
+  color:var(--ink); font-size:13px; font-weight:600; cursor:pointer; font-family:inherit;
+  transition:all .12s;
+}
+.fa-btn:hover{border-color:var(--gold); transform:translateY(-1px)}
+.fa-btn.primary{background:var(--teal); color:#fff; border-color:var(--teal)}
+.fa-btn.primary:hover{background:var(--teal-2)}
+.fa-btn.gold{background:var(--gold); color:var(--sb); border-color:var(--gold)}
+.fa-btn:disabled{opacity:.45; cursor:not-allowed; transform:none}
+
+.fa-status{
+  text-align:center; font-family:'Playfair Display',serif; font-size:18px; font-style:italic;
+  color:var(--ink-2); min-height:34px; padding:8px 12px;
+}
+.fa-status.good{color:var(--good-d)}
+.fa-status.warn{color:var(--trap-d)}
+
+.fa-step{
+  font-family:'JetBrains Mono',monospace; font-size:13px; padding:10px 14px; border-radius:9px;
+  background:var(--paper-2); border-left:3px solid var(--gold); margin-top:6px;
+}
+.fa-step b{color:var(--gold-d); font-weight:600}
+
+.fa-pick{display:flex; gap:8px; flex-wrap:wrap; justify-content:center; margin-top:8px}
+.fa-pick button{
+  padding:6px 14px; border-radius:18px; border:1px solid var(--line); background:var(--paper);
+  font-family:'JetBrains Mono',monospace; font-size:13px; font-weight:600; cursor:pointer;
+  color:var(--ink); transition:all .12s;
+}
+.fa-pick button:hover{border-color:var(--gold); transform:translateY(-1px)}
+.fa-pick button.on{background:var(--gold); color:var(--sb); border-color:var(--gold-d)}
+.fa-pick button.bad{background:var(--trap-bg); color:var(--trap-d); border-color:var(--trap)}
+.fa-pick button.right{background:var(--good-bg); color:var(--good-d); border-color:var(--good)}
+
+.fa-hud{display:flex; justify-content:space-between; align-items:center; font-size:12px; color:var(--ink-mute); margin-bottom:6px; letter-spacing:.04em}
+.fa-hud b{color:var(--gold-d); font-family:'JetBrains Mono',monospace}
+.trap-card{background:var(--trap-bg); border:1px solid var(--trap); border-left:4px solid var(--trap); border-radius:12px; padding:16px 20px; color:var(--trap-d)}
+.trap-card .lbl{font-size:10px; letter-spacing:.18em; font-weight:700; text-transform:uppercase; margin-bottom:6px}
+.trap-card p{margin:0; font-size:14px; line-height:1.55}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Fractions — <em>Add &amp; Subtract</em></h1>
+  <p class="lede">Drag the two bars on top of each other. They won't fit unless they share a floor. Pick the right LCD; watch the bars re-slice and snap together.</p>
+
+  <div class="card">
+    <div class="fa-hud">
+      <span>Round <b id="fa-round">1</b> of 4</span>
+      <span>Score <b id="fa-score">0</b></span>
+    </div>
+
+    <div class="fa-stage">
+      <div class="fa-row" id="fa-orig">
+        <div class="fa-frac">
+          <div class="fa-bar" id="fa-A"><div class="fa-bar-inner"></div></div>
+          <div class="fa-lbl" id="fa-A-lbl">1/4</div>
+        </div>
+        <div class="fa-op">+</div>
+        <div class="fa-frac">
+          <div class="fa-bar" id="fa-B"><div class="fa-bar-inner"></div></div>
+          <div class="fa-lbl" id="fa-B-lbl">1/2</div>
+        </div>
+      </div>
+
+      <div class="fa-status" id="fa-status">Try dragging one bar onto the other.</div>
+
+      <div id="fa-lcd-block" style="display:none">
+        <div class="fa-step">Pick the <b>LCD</b> — the smallest common floor for both denominators.</div>
+        <div class="fa-pick" id="fa-pick"></div>
+      </div>
+
+      <div class="fa-row" id="fa-converted" style="display:none">
+        <div class="fa-frac">
+          <div class="fa-bar" id="fa-A2"></div>
+          <div class="fa-lbl" id="fa-A2-lbl"></div>
+        </div>
+        <div class="fa-op">+</div>
+        <div class="fa-frac">
+          <div class="fa-bar" id="fa-B2"></div>
+          <div class="fa-lbl" id="fa-B2-lbl"></div>
+        </div>
+        <div class="fa-eq">=</div>
+        <div class="fa-frac">
+          <div class="fa-bar" id="fa-SUM"></div>
+          <div class="fa-lbl" id="fa-SUM-lbl"></div>
+        </div>
+      </div>
+
+      <div class="fa-controls">
+        <button class="fa-btn" id="fa-reset">Reset round</button>
+        <button class="fa-btn primary" id="fa-next" disabled>Next round</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="trap-card">
+    <div class="lbl">The Trap</div>
+    <p>The single most common mistake: adding the denominators (1/4 + 1/2 = 2/6). The DAT will offer this as a choice for <b>every</b> fraction question. The bars on this widget can never line up unless both share a denominator — that visual is the lock.</p>
+  </div>
+</div>
+
+<script>
+const ROUNDS = [
+  {a:[1,4], b:[1,2], lcd:6, options:[2,4,6,8], correct:4},
+  {a:[2,3], b:[3,4], lcd:7, options:[6,7,12,24], correct:12},
+  {a:[5,6], b:[1,4], lcd:10, options:[6,10,12,24], correct:12},
+  {a:[1,3], b:[2,5], lcd:8, options:[8,15,30,3], correct:15},
+];
+
+let R = 0, score = 0;
+
+function gcd(a,b){return b?gcd(b,a%b):a}
+function lcm(a,b){return a*b/gcd(a,b)}
+
+function buildBar(el, num, den, cls){
+  el.innerHTML = '';
+  for(let i=0;i<den;i++){
+    const c = document.createElement('div');
+    c.className = 'fa-cell' + (i<num ? ' '+cls : '');
+    el.appendChild(c);
+  }
+}
+function setRound(){
+  const r = ROUNDS[R];
+  document.getElementById('fa-round').textContent = (R+1);
+  document.getElementById('fa-A-lbl').textContent = r.a[0]+'/'+r.a[1];
+  document.getElementById('fa-B-lbl').textContent = r.b[0]+'/'+r.b[1];
+  buildBar(document.getElementById('fa-A'), r.a[0], r.a[1], 'fill-a');
+  buildBar(document.getElementById('fa-B'), r.b[0], r.b[1], 'fill-b');
+  document.getElementById('fa-status').className = 'fa-status';
+  document.getElementById('fa-status').textContent = 'Try dragging one bar onto the other.';
+  document.getElementById('fa-lcd-block').style.display = 'none';
+  document.getElementById('fa-converted').style.display = 'none';
+  document.getElementById('fa-next').disabled = true;
+  // build LCD options
+  const pick = document.getElementById('fa-pick'); pick.innerHTML='';
+  r.options.forEach(opt => {
+    const b = document.createElement('button');
+    b.textContent = opt;
+    b.onclick = () => choose(opt, b);
+    pick.appendChild(b);
+  });
+}
+
+function attemptCollide(){
+  const r = ROUNDS[R];
+  if(r.a[1] === r.b[1]){
+    document.getElementById('fa-status').textContent = 'They line up — same floor already.';
+    return;
+  }
+  // Visually pulse the mismatch
+  const A = document.getElementById('fa-A'), B = document.getElementById('fa-B');
+  A.style.transform = 'translateX(8px)'; B.style.transform = 'translateX(-8px)';
+  setTimeout(()=>{ A.style.transform=''; B.style.transform=''; }, 220);
+  document.getElementById('fa-status').className = 'fa-status warn';
+  document.getElementById('fa-status').textContent = 'Different denominators — they don\'t fit. Find a common floor.';
+  document.getElementById('fa-lcd-block').style.display = 'block';
+}
+
+function choose(opt, btn){
+  const r = ROUNDS[R];
+  const real = lcm(r.a[1], r.b[1]);
+  document.querySelectorAll('#fa-pick button').forEach(b=>b.disabled=true);
+  if(opt === real){
+    btn.classList.add('right');
+    document.getElementById('fa-status').className='fa-status good';
+    document.getElementById('fa-status').textContent = 'Common floor: ' + real + '. Both bars re-sliced.';
+    score += 1;
+    document.getElementById('fa-score').textContent = score;
+    showConverted(real);
+    document.getElementById('fa-next').disabled = false;
+  } else if(opt === r.a[1] + r.b[1]){
+    btn.classList.add('bad');
+    document.getElementById('fa-status').className='fa-status warn';
+    document.getElementById('fa-status').textContent = 'That\'s the trap — adding the denominators. The bars below would not match.';
+    setTimeout(()=>{ document.querySelectorAll('#fa-pick button').forEach(b=>{b.disabled=false; if(b!==btn) b.classList.remove('bad','right')}); }, 1100);
+  } else {
+    btn.classList.add('bad');
+    setTimeout(()=>{ document.querySelectorAll('#fa-pick button').forEach(b=>{b.disabled=false; if(b!==btn) b.classList.remove('bad','right')}); btn.classList.remove('bad'); }, 700);
+  }
+}
+
+function showConverted(lcd){
+  const r = ROUNDS[R];
+  const aN = r.a[0]*(lcd/r.a[1]);
+  const bN = r.b[0]*(lcd/r.b[1]);
+  const sumN = aN + bN;
+  document.getElementById('fa-converted').style.display = 'flex';
+  buildBar(document.getElementById('fa-A2'), aN, lcd, 'fill-a');
+  buildBar(document.getElementById('fa-B2'), bN, lcd, 'fill-b');
+  buildBar(document.getElementById('fa-SUM'), Math.min(sumN, lcd), lcd, 'fill-a');
+  // overflow indicator
+  if(sumN > lcd){
+    document.getElementById('fa-SUM-lbl').textContent = sumN+'/'+lcd+' (= '+Math.floor(sumN/lcd)+' '+(sumN%lcd)+'/'+lcd+')';
+  } else {
+    document.getElementById('fa-SUM-lbl').textContent = sumN+'/'+lcd;
+  }
+  document.getElementById('fa-A2-lbl').textContent = aN+'/'+lcd;
+  document.getElementById('fa-B2-lbl').textContent = bN+'/'+lcd;
+}
+
+// Drag handling — collide A onto B
+function attachDrag(elId, otherId){
+  const el = document.getElementById(elId);
+  let dragging = false, startX=0, startY=0, dx=0, dy=0;
+  const start = (e) => {
+    dragging = true; el.classList.add('dragging');
+    const p = e.touches ? e.touches[0] : e;
+    startX = p.clientX; startY = p.clientY;
+    e.preventDefault();
+  };
+  const move = (e) => {
+    if(!dragging) return;
+    const p = e.touches ? e.touches[0] : e;
+    dx = p.clientX - startX; dy = p.clientY - startY;
+    el.style.transform = `translate(${dx}px, ${dy}px)`;
+  };
+  const end = () => {
+    if(!dragging) return;
+    dragging = false; el.classList.remove('dragging');
+    const a = el.getBoundingClientRect();
+    const b = document.getElementById(otherId).getBoundingClientRect();
+    const overlap = !(a.right < b.left || a.left > b.right || a.bottom < b.top || a.top > b.bottom);
+    el.style.transform = '';
+    if(overlap) attemptCollide();
+  };
+  el.addEventListener('mousedown', start);
+  el.addEventListener('touchstart', start, {passive:false});
+  window.addEventListener('mousemove', move);
+  window.addEventListener('touchmove', move, {passive:false});
+  window.addEventListener('mouseup', end);
+  window.addEventListener('touchend', end);
+}
+
+attachDrag('fa-A','fa-B');
+attachDrag('fa-B','fa-A');
+
+document.getElementById('fa-reset').onclick = setRound;
+document.getElementById('fa-next').onclick = () => {
+  R = (R+1) % ROUNDS.length;
+  setRound();
+};
+
+setRound();
+</script>
+</body>
+</html>

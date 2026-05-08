@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>estim · Order-of-Magnitude Bracket</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f5f0e8; --paper:#fffdf7; --paper-2:#f9f3e6;
+  --sb:#0d2018; --ink:#0f1814; --ink-2:#3a4a42; --ink-mute:#6e7c74;
+  --gold:#C9A84C; --gold-m:#E2C97A; --gold-d:#8C7235;
+  --teal:#1B3A2D; --teal-3:#3A6B54;
+  --line:rgba(13,32,24,0.12);
+  --trap:#C25B3F; --trap-bg:#fbe7df; --trap-d:#8a3d28;
+  --good:#5FA874; --good-bg:#e3efe6; --good-d:#3e7c54;
+  --shadow:0 1px 3px rgba(13,32,24,0.06), 0 8px 24px rgba(13,32,24,0.04);
+}
+*{box-sizing:border-box}
+body{margin:0; font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--ink); padding:32px 24px; line-height:1.5}
+.wrap{max-width:880px; margin:0 auto}
+h1{font-family:'Playfair Display',serif; font-size:36px; margin:0 0 4px; font-weight:700}
+h1 em{font-style:italic; color:var(--gold-d); font-weight:400}
+.lede{color:var(--ink-2); font-size:15px; margin:0 0 22px; max-width:640px}
+.card{background:var(--paper); border:1px solid var(--line); border-radius:16px; padding:24px 26px; box-shadow:var(--shadow); margin-bottom:18px}
+
+.es-prompt{
+  font-family:'Playfair Display',serif; font-size:32px; line-height:1.25; text-align:center;
+  padding:20px; background:var(--paper-2); border-radius:12px; margin-bottom:18px;
+  letter-spacing:-0.01em;
+}
+.es-prompt em{font-style:italic; color:var(--gold-d)}
+
+.es-stage{padding:8px 0}
+
+.es-step{
+  display:flex; align-items:center; gap:14px; padding:14px 16px; background:var(--paper-2);
+  border:1px solid var(--line); border-radius:10px; margin-bottom:10px; transition:all .25s;
+}
+.es-step.live{border-color:var(--gold); box-shadow:0 0 0 3px rgba(201,168,76,0.18)}
+.es-step.done{border-color:var(--good); background:var(--good-bg)}
+.es-step .num{
+  width:30px; height:30px; border-radius:50%; background:var(--sb); color:var(--gold-m);
+  font-family:'JetBrains Mono',monospace; font-weight:700; display:flex; align-items:center; justify-content:center;
+  flex-shrink:0;
+}
+.es-step.done .num{background:var(--good); color:#fff}
+.es-step .body{flex:1}
+.es-step .lbl{font-family:'Playfair Display',serif; font-weight:600; font-size:16px}
+.es-step .lbl em{font-style:italic; color:var(--gold-d)}
+.es-step .info{font-size:12px; color:var(--ink-mute); margin-top:2px}
+
+.es-bracket{
+  position:relative; height:64px; background:var(--paper-2); border-radius:10px; border:1px solid var(--line);
+  margin:14px 0; overflow:hidden;
+}
+.es-bracket-options{display:flex; height:100%}
+.es-bracket-opt{
+  flex:1; border-right:1px dashed var(--line); display:flex; align-items:center; justify-content:center;
+  font-family:'JetBrains Mono',monospace; font-size:14px; cursor:pointer; transition:all .15s; color:var(--ink-2);
+  position:relative;
+}
+.es-bracket-opt:last-child{border-right:none}
+.es-bracket-opt:hover{background:rgba(201,168,76,0.12)}
+.es-bracket-opt.picked{background:var(--gold); color:var(--sb); font-weight:700}
+.es-bracket-opt.right{background:var(--good); color:#fff; font-weight:700}
+.es-bracket-opt.wrong{background:var(--trap); color:#fff; text-decoration:line-through}
+.es-bracket-opt .tag{
+  position:absolute; top:4px; left:4px; font-size:9px; letter-spacing:.1em;
+  text-transform:uppercase; opacity:.65; font-family:'DM Sans',sans-serif; font-weight:600;
+}
+
+.es-final-q{
+  font-family:'Playfair Display',serif; font-size:18px; padding:14px; background:var(--paper);
+  border-radius:10px; border-left:4px solid var(--teal); margin-top:14px;
+}
+
+.es-options{display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-top:14px}
+@media(max-width:640px){.es-options{grid-template-columns:repeat(2,1fr)}}
+.es-opt{
+  padding:14px; border:1px solid var(--line); border-radius:10px; background:var(--paper);
+  cursor:pointer; font-family:'JetBrains Mono',monospace; font-size:18px; font-weight:700;
+  text-align:center; transition:all .15s; color:var(--ink); position:relative;
+}
+.es-opt:hover{border-color:var(--gold); transform:translateY(-1px)}
+.es-opt.right{background:var(--good-bg); border-color:var(--good); color:var(--good-d)}
+.es-opt.wrong{background:var(--trap-bg); border-color:var(--trap); color:var(--trap-d)}
+.es-opt.dimmed{opacity:.4}
+.es-opt .why{display:block; font-family:'DM Sans',sans-serif; font-size:11px; color:var(--ink-mute); font-weight:400; margin-top:3px; font-style:italic}
+
+.es-controls{display:flex; gap:10px; flex-wrap:wrap; margin-top:14px}
+.es-btn{padding:8px 14px; border-radius:8px; border:1px solid var(--line); background:var(--paper); font-size:13px; font-weight:600; cursor:pointer; font-family:inherit; color:var(--ink)}
+.es-btn:hover{border-color:var(--gold)}
+.es-btn.primary{background:var(--teal); color:#fff; border-color:var(--teal)}
+.es-btn.gold{background:var(--gold); color:var(--sb); border-color:var(--gold)}
+
+.es-status{font-family:'Playfair Display',serif; font-style:italic; font-size:18px; color:var(--ink-2); min-height:30px; padding:6px 0; text-align:center}
+.es-status.good{color:var(--good-d)}
+.es-status.warn{color:var(--trap-d)}
+
+.es-hud{display:flex; justify-content:space-between; font-size:12px; color:var(--ink-mute); margin-bottom:8px; letter-spacing:.04em}
+.es-hud b{color:var(--gold-d); font-family:'JetBrains Mono',monospace}
+
+.trap-card{background:var(--trap-bg); border:1px solid var(--trap); border-left:4px solid var(--trap); border-radius:12px; padding:16px 20px; color:var(--trap-d)}
+.trap-card .lbl{font-size:10px; letter-spacing:.18em; font-weight:700; text-transform:uppercase; margin-bottom:6px}
+.trap-card p{margin:0; font-size:14px; line-height:1.55}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Estimation <em>First</em></h1>
+  <p class="lede">Bracket the answer's order of magnitude before computing. The DAT plants close-but-wrong decoys; estimation eliminates them in 5 seconds.</p>
+
+  <div class="card">
+    <div class="es-hud">
+      <span>Round <b id="es-round">1</b> / 5</span>
+      <span>Score <b id="es-score">0</b></span>
+    </div>
+
+    <div class="es-prompt" id="es-prompt">Estimate <em>347 × 28</em></div>
+
+    <div class="es-stage">
+      <div class="es-step live" id="es-s1">
+        <div class="num">1</div>
+        <div class="body">
+          <div class="lbl">Round to <em>nice numbers</em></div>
+          <div class="info" id="es-s1-info">Pick the cleanest round-up/down for each value.</div>
+        </div>
+      </div>
+
+      <div class="es-bracket">
+        <div class="es-bracket-options" id="es-round-opts"></div>
+      </div>
+
+      <div class="es-step" id="es-s2">
+        <div class="num">2</div>
+        <div class="body">
+          <div class="lbl">Bracket the <em>order of magnitude</em></div>
+          <div class="info" id="es-s2-info">Roughly: 350 × 30 ≈ ?</div>
+        </div>
+      </div>
+
+      <div class="es-bracket">
+        <div class="es-bracket-options" id="es-mag-opts"></div>
+      </div>
+
+      <div class="es-step" id="es-s3">
+        <div class="num">3</div>
+        <div class="body">
+          <div class="lbl">Eliminate <em>impossible</em> options</div>
+          <div class="info">Now pick the answer that fits your bracket.</div>
+        </div>
+      </div>
+
+      <div class="es-options" id="es-options"></div>
+    </div>
+
+    <div class="es-status" id="es-status">Step 1 — pick rounded values.</div>
+
+    <div class="es-controls">
+      <button class="es-btn primary" id="es-next">Next round</button>
+      <button class="es-btn" id="es-reset">Reset</button>
+    </div>
+  </div>
+
+  <div class="trap-card">
+    <div class="lbl">The Trap</div>
+    <p>Without estimation, students fall for "close-but-wrong" decoys — answers that look right because the calculation is mostly correct but off by a factor of 10. Bracket the answer first; then trust your bracket.</p>
+  </div>
+</div>
+
+<script>
+const ROUNDS = [
+  {expr:'347 × 28', round:'350 × 30', exact:9716, magOpts:[
+    {label:'~100', range:[10,1000]}, {label:'~1,000', range:[100,9999]}, {label:'~10,000', range:[1000,99999]}, {label:'~100,000', range:[10000,999999]}
+  ], correctMag:'~10,000', options:[9716, 971, 97160, 1716], rounds:['350 × 30','340 × 25','350 × 25','340 × 30'], correctRound:'350 × 30'},
+  {expr:'62 × 198', round:'60 × 200', exact:12276, magOpts:[
+    {label:'~1,000', range:[100,9999]}, {label:'~10,000', range:[1000,99999]}, {label:'~100,000', range:[10000,999999]}, {label:'~1,000,000', range:[100000,9999999]}
+  ], correctMag:'~10,000', options:[12276, 1226, 122760, 6276], rounds:['60 × 200','62 × 200','60 × 198','65 × 200'], correctRound:'60 × 200'},
+  {expr:'4,832 ÷ 47', round:'5,000 ÷ 50', exact:102.8, magOpts:[
+    {label:'~10', range:[5,50]}, {label:'~100', range:[50,500]}, {label:'~1,000', range:[500,5000]}, {label:'~10,000', range:[5000,99999]}
+  ], correctMag:'~100', options:[103, 10.3, 1028, 1.03], rounds:['5,000 ÷ 50','4,800 ÷ 50','5,000 ÷ 47','4,800 ÷ 47'], correctRound:'5,000 ÷ 50'},
+  {expr:'89 × 0.21', round:'90 × 0.2', exact:18.69, magOpts:[
+    {label:'~0.1', range:[0.01,1]}, {label:'~1', range:[0.1,10]}, {label:'~10', range:[1,100]}, {label:'~100', range:[50,1000]}
+  ], correctMag:'~10', options:[18.69, 1.869, 186.9, 0.1869], rounds:['90 × 0.2','90 × 0.25','100 × 0.2','89 × 0.2'], correctRound:'90 × 0.2'},
+  {expr:'(0.6)² × 1,500', round:'0.4 × 1,500', exact:540, magOpts:[
+    {label:'~10', range:[5,50]}, {label:'~100', range:[50,5000]}, {label:'~10,000', range:[5000,99999]}, {label:'~100,000', range:[50000,999999]}
+  ], correctMag:'~100', options:[540, 54, 5400, 5.4], rounds:['0.4 × 1500','0.36 × 1500','0.6 × 1500','0.6 × 1000'], correctRound:'0.4 × 1500'},
+];
+let R = 0, score = 0, step = 1;
+
+function setRound(){
+  const r = ROUNDS[R];
+  step = 1;
+  document.getElementById('es-round').textContent = R+1;
+  document.getElementById('es-prompt').innerHTML = 'Estimate <em>' + r.expr + '</em>';
+  // Step 1 round opts
+  const ro = document.getElementById('es-round-opts'); ro.innerHTML='';
+  r.rounds.forEach((rr, i) => {
+    const d = document.createElement('div');
+    d.className = 'es-bracket-opt';
+    d.innerHTML = `<span class="tag">option ${i+1}</span>${rr}`;
+    d.onclick = () => pickRound(d, rr, r);
+    ro.appendChild(d);
+  });
+  // Step 2 magnitude opts
+  const mo = document.getElementById('es-mag-opts'); mo.innerHTML='';
+  r.magOpts.forEach((m, i) => {
+    const d = document.createElement('div');
+    d.className = 'es-bracket-opt';
+    d.innerHTML = `<span class="tag">range ${i+1}</span>${m.label}`;
+    d.onclick = () => pickMag(d, m, r);
+    mo.appendChild(d);
+  });
+  // Step 3 options
+  const opts = [...r.options].sort(()=>Math.random()-.5);
+  const oo = document.getElementById('es-options'); oo.innerHTML='';
+  opts.forEach(o => {
+    const b = document.createElement('button');
+    b.className = 'es-opt';
+    b.textContent = o.toLocaleString();
+    b.dataset.val = o;
+    b.onclick = () => pickAnswer(b, o, r);
+    oo.appendChild(b);
+  });
+  setStepLive(1);
+  document.getElementById('es-status').className='es-status';
+  document.getElementById('es-status').textContent='Step 1 — pick the cleanest round-off.';
+}
+
+function setStepLive(n){
+  ['es-s1','es-s2','es-s3'].forEach((id, i) => {
+    const el = document.getElementById(id);
+    el.classList.remove('live','done');
+    if(i+1 < n) el.classList.add('done');
+    if(i+1 === n) el.classList.add('live');
+  });
+}
+
+function pickRound(d, val, r){
+  if(step !== 1) return;
+  document.querySelectorAll('#es-round-opts .es-bracket-opt').forEach(o => o.classList.remove('picked'));
+  d.classList.add('picked');
+  if(val === r.correctRound){
+    d.classList.add('right');
+    step = 2; setStepLive(2);
+    document.getElementById('es-s2-info').textContent = 'Roughly: ' + r.correctRound + ' ≈ ?';
+    document.getElementById('es-status').textContent = 'Good. Step 2 — bracket the magnitude.';
+  } else {
+    d.classList.add('wrong');
+    document.getElementById('es-status').className='es-status warn';
+    document.getElementById('es-status').textContent = 'Pick the cleanest rounding — ' + r.correctRound + ' is friendliest.';
+    setTimeout(()=>{ d.classList.remove('wrong','picked'); document.getElementById('es-status').className='es-status'; document.getElementById('es-status').textContent='Step 1 — pick rounded values.'; }, 1400);
+  }
+}
+
+function pickMag(d, m, r){
+  if(step !== 2) return;
+  document.querySelectorAll('#es-mag-opts .es-bracket-opt').forEach(o => o.classList.remove('picked'));
+  d.classList.add('picked');
+  if(m.label === r.correctMag){
+    d.classList.add('right');
+    step = 3; setStepLive(3);
+    // Dim options outside the magnitude
+    document.querySelectorAll('.es-opt').forEach(b => {
+      const v = parseFloat(b.dataset.val);
+      if(v < m.range[0] || v > m.range[1]) b.classList.add('dimmed');
+    });
+    document.getElementById('es-status').textContent = 'Bracket locked: ' + m.label + '. Now pick the answer that fits.';
+  } else {
+    d.classList.add('wrong');
+    document.getElementById('es-status').className='es-status warn';
+    document.getElementById('es-status').textContent = 'Off — try a different magnitude.';
+    setTimeout(()=>{ d.classList.remove('wrong','picked'); document.getElementById('es-status').className='es-status'; document.getElementById('es-status').textContent='Step 2 — bracket the magnitude.'; }, 1300);
+  }
+}
+
+function pickAnswer(b, val, r){
+  if(step !== 3) return;
+  document.querySelectorAll('.es-opt').forEach(o => o.disabled = true);
+  if(val === r.options[0]){
+    b.classList.add('right');
+    score++; document.getElementById('es-score').textContent = score;
+    document.getElementById('es-status').className='es-status good';
+    document.getElementById('es-status').textContent = 'Locked. Estimate said this; calculator confirms ' + r.exact + '.';
+    document.getElementById('es-s3').classList.add('done');
+  } else {
+    b.classList.add('wrong');
+    document.querySelectorAll('.es-opt').forEach(o => { if(parseFloat(o.dataset.val) === r.options[0]) o.classList.add('right'); });
+    document.getElementById('es-status').className='es-status warn';
+    document.getElementById('es-status').textContent = 'Wrong magnitude. Re-trust your bracket.';
+  }
+}
+
+document.getElementById('es-next').onclick = () => { R = (R+1) % ROUNDS.length; setRound(); };
+document.getElementById('es-reset').onclick = setRound;
+
+setRound();
+</script>
+</body>
+</html>

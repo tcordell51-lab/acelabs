@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ratios · Cross-Multiply Bowtie</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f5f0e8; --paper:#fffdf7; --paper-2:#f9f3e6;
+  --sb:#0d2018; --ink:#0f1814; --ink-2:#3a4a42; --ink-mute:#6e7c74;
+  --gold:#C9A84C; --gold-m:#E2C97A; --gold-d:#8C7235;
+  --teal:#1B3A2D; --teal-3:#3A6B54;
+  --line:rgba(13,32,24,0.12);
+  --trap:#C25B3F; --trap-bg:#fbe7df; --trap-d:#8a3d28;
+  --good:#5FA874; --good-bg:#e3efe6; --good-d:#3e7c54;
+  --shadow:0 1px 3px rgba(13,32,24,0.06), 0 8px 24px rgba(13,32,24,0.04);
+}
+*{box-sizing:border-box}
+body{margin:0; font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--ink); padding:32px 24px; line-height:1.5}
+.wrap{max-width:880px; margin:0 auto}
+h1{font-family:'Playfair Display',serif; font-size:36px; margin:0 0 4px; font-weight:700}
+h1 em{font-style:italic; color:var(--gold-d); font-weight:400}
+.lede{color:var(--ink-2); font-size:15px; margin:0 0 22px; max-width:640px}
+.card{background:var(--paper); border:1px solid var(--line); border-radius:16px; padding:24px 26px; box-shadow:var(--shadow); margin-bottom:18px}
+
+.rt-prompt{font-family:'Playfair Display',serif; font-size:20px; line-height:1.4; margin-bottom:14px}
+.rt-prompt b{color:var(--teal); font-weight:700}
+
+.rt-stage{position:relative; padding:30px 0 14px}
+.rt-stage svg{width:100%; height:240px; display:block}
+
+.rt-slot{
+  font-family:'JetBrains Mono',monospace; font-size:24px; font-weight:700;
+  fill:var(--ink); cursor:pointer;
+}
+.rt-slot.unknown{fill:var(--gold-d)}
+.rt-label-tag{font-family:'DM Sans',sans-serif; font-size:11px; fill:var(--ink-mute); letter-spacing:.1em; font-weight:600}
+
+.rt-cross{stroke-dasharray:8 6; stroke-width:2.5; opacity:0; transition:opacity .35s}
+.rt-cross.show{opacity:1}
+.rt-cross.a{stroke:var(--gold-d)}
+.rt-cross.b{stroke:var(--teal)}
+
+.rt-product{
+  font-family:'JetBrains Mono',monospace; font-size:14px; padding:6px 12px; border-radius:14px;
+  background:var(--paper-2); border:1px solid var(--line); display:inline-block;
+}
+.rt-product.gold{background:rgba(201,168,76,0.18); border-color:var(--gold); color:var(--gold-d); font-weight:700}
+.rt-product.teal{background:rgba(58,107,84,0.18); border-color:var(--teal-3); color:var(--teal); font-weight:700}
+
+.rt-products{display:flex; gap:14px; flex-wrap:wrap; justify-content:center; margin-top:14px}
+
+.rt-formula{
+  font-family:'JetBrains Mono',monospace; font-size:18px; padding:14px 16px; border-radius:10px;
+  background:var(--paper-2); border:1px solid var(--line); border-left:4px solid var(--gold);
+  margin-top:14px; text-align:center;
+}
+
+.rt-controls{display:flex; gap:10px; flex-wrap:wrap; margin-top:14px}
+.rt-btn{padding:8px 14px; border-radius:8px; border:1px solid var(--line); background:var(--paper); font-size:13px; font-weight:600; cursor:pointer; font-family:inherit; color:var(--ink)}
+.rt-btn:hover{border-color:var(--gold)}
+.rt-btn.primary{background:var(--teal); color:#fff; border-color:var(--teal)}
+.rt-btn.gold{background:var(--gold); color:var(--sb); border-color:var(--gold)}
+.rt-btn:disabled{opacity:.5; cursor:not-allowed}
+
+.rt-input{
+  font-family:'JetBrains Mono',monospace; font-size:18px; padding:6px 12px; border:2px solid var(--gold);
+  border-radius:8px; width:100px; text-align:center; background:var(--paper); font-weight:600;
+}
+.rt-input:focus{outline:none; box-shadow:0 0 0 3px rgba(201,168,76,0.25)}
+
+.rt-status{font-family:'Playfair Display',serif; font-style:italic; font-size:18px; color:var(--ink-2); min-height:30px; padding:6px 0}
+.rt-status.good{color:var(--good-d)}
+.rt-status.warn{color:var(--trap-d)}
+
+.rt-hud{display:flex; justify-content:space-between; font-size:12px; color:var(--ink-mute); margin-bottom:8px; letter-spacing:.04em}
+.rt-hud b{color:var(--gold-d); font-family:'JetBrains Mono',monospace}
+
+.trap-card{background:var(--trap-bg); border:1px solid var(--trap); border-left:4px solid var(--trap); border-radius:12px; padding:16px 20px; color:var(--trap-d)}
+.trap-card .lbl{font-size:10px; letter-spacing:.18em; font-weight:700; text-transform:uppercase; margin-bottom:6px}
+.trap-card p{margin:0; font-size:14px; line-height:1.55}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Ratios &amp; <em>Proportions</em></h1>
+  <p class="lede">Set the proportion with units MATCHED on each fraction. Cross-multiply along the bowtie. Solve for the unknown.</p>
+
+  <div class="card">
+    <div class="rt-hud">
+      <span>Round <b id="rt-round">1</b> / 4</span>
+      <span>Score <b id="rt-score">0</b></span>
+    </div>
+
+    <div class="rt-prompt" id="rt-prompt">If 3 lemons make 12 oz of juice, how many lemons are needed for 28 oz?</div>
+
+    <div class="rt-stage">
+      <svg id="rt-svg" viewBox="0 0 600 240">
+        <!-- Cross lines (drawn first to be under text) -->
+        <line class="rt-cross a" id="rt-cross-a" x1="180" y1="80" x2="420" y2="160" stroke="#000"/>
+        <line class="rt-cross b" id="rt-cross-b" x1="180" y1="160" x2="420" y2="80" stroke="#000"/>
+        <!-- LEFT fraction -->
+        <text class="rt-label-tag" x="180" y="35" text-anchor="middle">LEMONS</text>
+        <text class="rt-slot" id="rt-a" x="180" y="80" text-anchor="middle">3</text>
+        <line x1="120" y1="115" x2="240" y2="115" stroke="var(--ink)" stroke-width="2.5"/>
+        <text class="rt-slot" id="rt-b" x="180" y="160" text-anchor="middle">12</text>
+        <text class="rt-label-tag" x="180" y="200" text-anchor="middle">OUNCES</text>
+        <!-- equals -->
+        <text x="300" y="125" text-anchor="middle" font-family="Playfair Display" font-size="40" fill="var(--ink-mute)">=</text>
+        <!-- RIGHT fraction -->
+        <text class="rt-label-tag" x="420" y="35" text-anchor="middle">LEMONS</text>
+        <text class="rt-slot unknown" id="rt-c" x="420" y="80" text-anchor="middle">x</text>
+        <line x1="360" y1="115" x2="480" y2="115" stroke="var(--ink)" stroke-width="2.5"/>
+        <text class="rt-slot" id="rt-d" x="420" y="160" text-anchor="middle">28</text>
+        <text class="rt-label-tag" x="420" y="200" text-anchor="middle">OUNCES</text>
+      </svg>
+    </div>
+
+    <div class="rt-products">
+      <span class="rt-product" id="rt-prod-a">a · d = ?</span>
+      <span style="font-family:'Playfair Display',serif; font-size:20px; color:var(--ink-mute)">=</span>
+      <span class="rt-product" id="rt-prod-b">b · c = ?</span>
+    </div>
+
+    <div class="rt-formula" id="rt-formula">Click <b>Cross-multiply</b> to draw the bowtie.</div>
+
+    <div style="display:flex; gap:14px; align-items:center; flex-wrap:wrap; margin-top:12px">
+      <label style="font-size:13px; color:var(--ink-mute)">Solve for x:
+        <input class="rt-input" id="rt-input" type="number" placeholder="?">
+      </label>
+      <button class="rt-btn gold" id="rt-check">Check</button>
+    </div>
+
+    <div class="rt-status" id="rt-status">Match units top-to-top, bottom-to-bottom.</div>
+
+    <div class="rt-controls">
+      <button class="rt-btn" id="rt-cross">Cross-multiply (bowtie)</button>
+      <button class="rt-btn primary" id="rt-next">Next round</button>
+      <button class="rt-btn" id="rt-reset">Reset</button>
+    </div>
+  </div>
+
+  <div class="trap-card">
+    <div class="lbl">The Trap</div>
+    <p>Confusing direct and inverse. "More workers, more done" feels direct — but the question usually asks about TIME, where more workers = LESS time = inverse. Also: matching units. If lemons are on top in the left fraction, lemons MUST be on top in the right.</p>
+  </div>
+</div>
+
+<script>
+const ROUNDS = [
+  {a:3, b:12, d:28, x:7, story:'If 3 lemons make 12 oz of juice, how many lemons are needed for 28 oz?', lblTop:'LEMONS', lblBot:'OUNCES'},
+  {a:5, b:8, d:24, x:15, story:'A car drives 5 miles in 8 minutes. How far in 24 minutes?', lblTop:'MILES', lblBot:'MINUTES'},
+  {a:2, b:9, d:36, x:8, story:'2 cups of flour for 9 cookies. How much for 36 cookies?', lblTop:'CUPS', lblBot:'COOKIES'},
+  {a:4, b:6, d:21, x:14, story:'A map shows 4 cm = 6 km. How many cm for 21 km?', lblTop:'CM', lblBot:'KM'},
+];
+let R = 0, score = 0, crossShown = false;
+
+function setRound(){
+  const r = ROUNDS[R];
+  document.getElementById('rt-round').textContent = R+1;
+  document.getElementById('rt-prompt').textContent = r.story;
+  document.getElementById('rt-a').textContent = r.a;
+  document.getElementById('rt-b').textContent = r.b;
+  document.getElementById('rt-c').textContent = 'x';
+  document.getElementById('rt-d').textContent = r.d;
+  document.querySelectorAll('.rt-label-tag').forEach((el,i) => {
+    if(i===0 || i===2) el.textContent = r.lblTop;
+    else el.textContent = r.lblBot;
+  });
+  document.getElementById('rt-prod-a').textContent = 'a · d = ?';
+  document.getElementById('rt-prod-a').className = 'rt-product';
+  document.getElementById('rt-prod-b').textContent = 'b · c = ?';
+  document.getElementById('rt-prod-b').className = 'rt-product';
+  document.getElementById('rt-cross-a').classList.remove('show');
+  document.getElementById('rt-cross-b').classList.remove('show');
+  document.getElementById('rt-formula').innerHTML = 'Click <b>Cross-multiply</b> to draw the bowtie.';
+  document.getElementById('rt-input').value = '';
+  document.getElementById('rt-status').className='rt-status';
+  document.getElementById('rt-status').textContent='Match units top-to-top, bottom-to-bottom.';
+  crossShown = false;
+}
+
+function showCross(){
+  const r = ROUNDS[R];
+  document.getElementById('rt-cross-a').classList.add('show');
+  document.getElementById('rt-cross-b').classList.add('show');
+  document.getElementById('rt-prod-a').textContent = r.a + ' × ' + r.d + ' = ' + (r.a*r.d);
+  document.getElementById('rt-prod-a').className = 'rt-product gold';
+  document.getElementById('rt-prod-b').textContent = r.b + ' × x = ' + r.b + 'x';
+  document.getElementById('rt-prod-b').className = 'rt-product teal';
+  document.getElementById('rt-formula').innerHTML = `${r.a} × ${r.d} = ${r.b} × x &nbsp;⟹&nbsp; ${r.a*r.d} = ${r.b}x &nbsp;⟹&nbsp; x = ${r.a*r.d}/${r.b} = <b>${r.x}</b>`;
+  crossShown = true;
+}
+
+function check(){
+  const r = ROUNDS[R];
+  const v = parseFloat(document.getElementById('rt-input').value);
+  const status = document.getElementById('rt-status');
+  if(v === r.x){
+    status.className='rt-status good';
+    status.textContent='x = ' + r.x + '. Locked.';
+    score++;
+    document.getElementById('rt-score').textContent = score;
+  } else {
+    status.className='rt-status warn';
+    status.textContent='Not quite — recheck the cross-product.';
+  }
+}
+
+document.getElementById('rt-cross').onclick = showCross;
+document.getElementById('rt-check').onclick = check;
+document.getElementById('rt-next').onclick = () => { R = (R+1) % ROUNDS.length; setRound(); };
+document.getElementById('rt-reset').onclick = setRound;
+
+setRound();
+</script>
+</body>
+</html>

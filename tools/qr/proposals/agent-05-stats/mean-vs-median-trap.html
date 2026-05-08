@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AceTheDAT QR · Mean vs Median Trap</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js"></script>
+<style>
+:root{
+  --bg:#f5f0e8; --paper:#fffdf7; --paper-2:#f9f3e6; --paper-3:#f3ecdb;
+  --sb:#0d2018; --sb-2:#15301f; --sb-3:#1d4030;
+  --ink:#0f1814; --ink-2:#3a4a42; --ink-mute:#6e7c74; --ink-soft:#9aa39e;
+  --gold:#C9A84C; --gold-m:#E2C97A; --gold-d:#8C7235; --gold-glow:rgba(201,168,76,0.35);
+  --teal:#1B3A2D; --teal-2:#2A5240; --teal-3:#3A6B54;
+  --line:rgba(13,32,24,0.12); --line-2:rgba(13,32,24,0.06); --line-strong:rgba(13,32,24,0.22);
+  --trap:#C25B3F; --trap-bg:#fbe7df; --trap-d:#8a3d28;
+  --good:#5FA874; --good-bg:#e3efe6; --good-d:#3e7c54;
+  --info:#6A8AA8; --info-bg:#e6edf4;
+  --shadow:0 1px 3px rgba(13,32,24,0.06), 0 8px 24px rgba(13,32,24,0.04);
+  --shadow-md:0 2px 6px rgba(13,32,24,0.08), 0 16px 40px rgba(13,32,24,0.06);
+}
+body[data-theme="dark"]{
+  --bg:#0d1612; --paper:#15211c; --paper-2:#1a2823; --paper-3:#1f2e28;
+  --ink:#ece4d4; --ink-2:#c9c0ad; --ink-mute:#8a9088; --ink-soft:#5e6660;
+  --line:rgba(236,228,212,0.10); --line-2:rgba(236,228,212,0.05); --line-strong:rgba(236,228,212,0.18);
+  --trap-bg:#3a201a; --good-bg:#1c3026; --info-bg:#1d2934;
+  --gold-d:#E2C97A; --teal:#5A957C; --teal-3:#9CCDB5;
+  --trap:#D97A5C; --trap-d:#E08770;
+  --good:#7AC09A; --good-d:#8AC9A1;
+  --info:#9DB6CF;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family:'DM Sans',system-ui,-apple-system,sans-serif;
+  background:var(--bg); color:var(--ink); line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+  background-image:
+    radial-gradient(900px 500px at 15% -10%, rgba(201,168,76,0.07), transparent 60%),
+    radial-gradient(700px 400px at 85% 110%, rgba(27,58,45,0.06), transparent 60%);
+  min-height:100vh;
+}
+.wrap{max-width:760px; margin:0 auto; padding:30px 22px 60px}
+
+.crumbs{font-size:11px; letter-spacing:0.16em; text-transform:uppercase; color:var(--ink-mute); font-weight:600}
+.crumbs b{color:var(--gold-d)}
+body[data-theme="dark"] .crumbs b{color:var(--gold-m)}
+
+h1{font-family:'Playfair Display',serif; font-size:34px; font-weight:700; line-height:1.1; margin:6px 0 8px; letter-spacing:-0.01em}
+h1 em{font-style:italic; color:var(--gold-d); font-weight:400}
+body[data-theme="dark"] h1 em{color:var(--gold-m)}
+.lede{font-size:15px; color:var(--ink-2); max-width:620px}
+
+.tag{display:inline-block; padding:2px 8px; border-radius:6px; font-size:10px; font-weight:600; letter-spacing:0.08em; text-transform:uppercase}
+.tag.gold{background:rgba(201,168,76,0.18); color:var(--gold-d)}
+.tag.trap{background:var(--trap-bg); color:var(--trap-d)}
+
+.card{
+  background:var(--paper); border:1px solid var(--line); border-radius:14px;
+  padding:18px 20px; margin-top:18px; box-shadow:var(--shadow);
+}
+
+.demo{
+  position:relative; background:var(--paper-2);
+  border:1px solid var(--line); border-radius:12px;
+  padding:14px 14px 8px; margin-top:10px; user-select:none; touch-action:none;
+}
+svg.demo-svg{width:100%; height:auto; display:block}
+
+.controls{display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap}
+.controls label{font-size:11.5px; font-weight:600; color:var(--ink-2); letter-spacing:0.04em}
+.controls input[type="range"]{flex:1; min-width:160px; accent-color:var(--gold)}
+.controls .val{font-family:'JetBrains Mono',monospace; font-size:13px; font-weight:600; color:var(--gold-d); min-width:42px; text-align:right}
+body[data-theme="dark"] .controls .val{color:var(--gold-m)}
+
+.readout{
+  display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:12px;
+}
+@media (max-width:560px){.readout{grid-template-columns:1fr}}
+.read-cell{
+  padding:11px 13px; border-radius:10px; border:1px solid var(--line);
+  background:var(--paper);
+}
+.read-cell.mean{border-color:var(--info); background:var(--info-bg)}
+.read-cell.median{border-color:var(--good); background:var(--good-bg)}
+.read-cell .lbl{font-size:10px; letter-spacing:0.16em; text-transform:uppercase; font-weight:700; color:var(--ink-mute)}
+.read-cell.mean .lbl{color:var(--info)}
+.read-cell.median .lbl{color:var(--good-d)}
+.read-cell .row{display:flex; align-items:baseline; gap:8px; margin-top:3px}
+.read-cell .val{font-family:'JetBrains Mono',monospace; font-size:24px; font-weight:600; color:var(--ink); line-height:1}
+.read-cell .swing{font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--ink-mute); font-weight:600}
+.read-cell .verdict{font-size:11.5px; margin-top:4px; font-style:italic; color:var(--ink-2); line-height:1.4}
+
+.scenario{
+  margin-top:12px; padding:10px 12px; border-left:3px solid var(--gold);
+  background:var(--paper-2); border-radius:0 8px 8px 0;
+  font-family:'Playfair Display',serif; font-style:italic; font-size:14px; color:var(--ink-2);
+}
+
+.trap-pop{
+  margin-top:14px; background:var(--trap-bg); border:1px solid var(--trap);
+  border-radius:10px; padding:12px 14px; display:none;
+}
+.trap-pop.show{display:block; animation:slidein 0.3s ease}
+@keyframes slidein{from{opacity:0; transform:translateY(-4px)} to{opacity:1; transform:none}}
+.trap-pop .lbl{font-size:10px; letter-spacing:0.18em; text-transform:uppercase; color:var(--trap-d); font-weight:700; margin-bottom:4px}
+.trap-pop .copy{font-size:13px; color:var(--trap-d); line-height:1.5}
+body[data-theme="dark"] .trap-pop .copy{color:#f3c5b3}
+body[data-theme="dark"] .trap-pop .lbl{color:#f3c5b3}
+
+.btn-row{display:flex; gap:8px; margin-top:14px; flex-wrap:wrap}
+.btn{
+  display:inline-flex; align-items:center; gap:6px; padding:7px 14px; border-radius:8px;
+  border:1px solid var(--line); background:var(--paper); color:var(--ink); font-size:13px;
+  font-weight:500; cursor:pointer; transition:all 0.12s; font-family:inherit;
+}
+.btn:hover{border-color:var(--gold); transform:translateY(-1px); box-shadow:var(--shadow)}
+.btn.primary{background:var(--teal); color:#fff; border-color:var(--teal)}
+.btn.gold{background:var(--gold); color:var(--sb); border-color:var(--gold)}
+
+.caption{font-size:11.5px; color:var(--ink-mute); margin-top:6px; text-align:center}
+.caption b{color:var(--ink-2); font-weight:600}
+
+.theme-toggle{
+  border:1px solid var(--line); background:var(--paper); border-radius:8px;
+  padding:6px 12px; cursor:pointer; font-family:inherit; font-size:12px; font-weight:600;
+}
+.top{display:flex; align-items:center; gap:10px; padding-bottom:14px; border-bottom:1px solid var(--line); margin-bottom:18px}
+.top .grow{flex:1}
+
+.dot-handle{cursor:grab}
+.dot-handle.dragging{cursor:grabbing}
+</style>
+</head>
+<body data-theme="light">
+<div class="wrap">
+
+<div class="top">
+  <div class="grow"><div class="crumbs">QR · TIER 600 · <b>MEAN VS MEDIAN TRAP</b></div></div>
+  <button class="theme-toggle" id="themeBtn">Dark</button>
+</div>
+
+<h1>The mean-vs-median <em>trap</em></h1>
+<p class="lede">Nine students score in the 70s. One scores <b>5</b>. Drag the outlier — watch <b>mean</b> swing 5 SDs while <b>median</b> barely moves. <span class="tag trap">single highest-density DAT QR trap</span></p>
+
+<section class="card">
+  <div class="demo">
+    <svg class="demo-svg" id="demoSvg" viewBox="0 0 700 220" preserveAspectRatio="xMidYMid meet"></svg>
+    <div class="caption">Drag the <b style="color:var(--trap-d)">red dot</b>. The <b style="color:var(--info)">blue mean</b> tracks it. The <b style="color:var(--good-d)">green median</b> ignores it.</div>
+  </div>
+
+  <div class="controls">
+    <label>Outlier x:</label>
+    <input type="range" id="outlierX" min="0" max="100" step="1" value="5">
+    <span class="val" id="outlierVal">5</span>
+  </div>
+
+  <div class="readout">
+    <div class="read-cell mean">
+      <div class="lbl">Mean</div>
+      <div class="row"><span class="val" id="meanVal">—</span><span class="swing" id="meanSwing">—</span></div>
+      <div class="verdict" id="meanVerdict">moves with the outlier</div>
+    </div>
+    <div class="read-cell median">
+      <div class="lbl">Median</div>
+      <div class="row"><span class="val" id="medVal">—</span><span class="swing" id="medSwing">—</span></div>
+      <div class="verdict" id="medVerdict">stays put</div>
+    </div>
+  </div>
+
+  <div class="scenario" id="scenario">
+    Nine quiz scores: 70, 71, 72, 73, 74, 75, 76, 77, 78. The tenth student got a 5.
+  </div>
+
+  <div class="trap-pop" id="trapPop">
+    <div class="lbl">Trap surfaced</div>
+    <div class="copy" id="trapCopy">Mean swung more than 5 SDs while median moved 0. The DAT writer is steering you to <b>median</b>.</div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn gold" id="presetA">Tiny outlier (x=5)</button>
+    <button class="btn" id="presetB">Mild outlier (x=40)</button>
+    <button class="btn" id="presetC">Massive outlier (x=98)</button>
+    <button class="btn primary" id="autoBtn">Auto-sweep</button>
+  </div>
+</section>
+
+<section class="card">
+  <h3 style="font-family:'Playfair Display',serif; font-size:18px; margin:0 0 8px">When DAT writers <em style="font-style:italic; color:var(--gold-d); font-weight:400">force median</em></h3>
+  <ul style="margin:6px 0 0; padding-left:18px; color:var(--ink-2); font-size:13.5px; line-height:1.6">
+    <li>"<b>Average income</b>" with a billionaire in the sample.</li>
+    <li>"<b>Typical lab time</b>" with one student who took 4 hours.</li>
+    <li>"<b>One reading</b> was misrecorded as 0" — they want the median because it ignores that bad point.</li>
+    <li>Anything where the answer choices include both a number near the cluster and a number pulled toward the outlier.</li>
+  </ul>
+  <p style="margin-top:10px; font-size:13px; color:var(--ink-mute); line-height:1.55">600-tier students recognize this in under 2 seconds: see "outlier" or "extreme" in the stem, look at the answer choices, pick the one that matches the cluster — that's the median.</p>
+</section>
+
+<script>
+const baseline = [70,71,72,73,74,75,76,77,78];
+let outlier = 5;
+let dragging = false;
+
+function mean(a){ return a.reduce((s,x)=>s+x,0)/a.length; }
+function median(a){
+  const s=[...a].sort((x,y)=>x-y), n=s.length;
+  return n%2 ? s[(n-1)/2] : (s[n/2-1]+s[n/2])/2;
+}
+function stddev(a){
+  const m=mean(a);
+  return Math.sqrt(a.reduce((s,x)=>s+(x-m)**2,0)/a.length);
+}
+function fmt(v, d=1){ return (Math.round(v*Math.pow(10,d))/Math.pow(10,d)).toFixed(d); }
+
+const W=700, H=220, PADL=36, PADR=36, PADT=30, PADB=60;
+const PLOTW=W-PADL-PADR;
+const xMin=0, xMax=100;
+function xToPx(x){ return PADL + (x-xMin)/(xMax-xMin) * PLOTW; }
+function pxToX(px){ return xMin + (px-PADL)/PLOTW * (xMax-xMin); }
+
+const svg = document.getElementById('demoSvg');
+
+function render(){
+  const data = [...baseline, outlier];
+  const m = mean(data), md = median(data), sd = stddev(data);
+  const mBase = mean(baseline), mdBase = median(baseline), sdBase = stddev(baseline);
+
+  let html = '';
+  // axis line
+  const axisY = PADT + 90;
+  html += `<line x1="${PADL}" y1="${axisY}" x2="${W-PADR}" y2="${axisY}" stroke="var(--line-strong)" stroke-width="1.5" />`;
+
+  // ticks
+  for(let v=0; v<=100; v+=10){
+    const x = xToPx(v);
+    html += `<line x1="${x}" y1="${axisY-4}" x2="${x}" y2="${axisY+4}" stroke="var(--line-strong)" stroke-width="1" />`;
+    html += `<text x="${x}" y="${axisY+18}" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="var(--ink-mute)">${v}</text>`;
+  }
+
+  // baseline points (gold)
+  baseline.forEach((v,i)=>{
+    const x = xToPx(v);
+    const y = axisY - 14 - (i%3)*10;
+    html += `<circle cx="${x}" cy="${y}" r="6" fill="var(--gold)" stroke="var(--gold-d)" stroke-width="1.5" />`;
+  });
+
+  // outlier (red, draggable)
+  const ox = xToPx(outlier);
+  const oy = axisY - 14;
+  html += `<circle id="outlierDot" class="dot-handle" cx="${ox}" cy="${oy}" r="9" fill="var(--trap)" stroke="var(--trap-d)" stroke-width="2" />`;
+  html += `<text x="${ox}" y="${oy-14}" text-anchor="middle" font-size="11" font-family="JetBrains Mono, monospace" font-weight="700" fill="var(--trap-d)">x=${outlier}</text>`;
+
+  // mean line (animated)
+  const mx = xToPx(m);
+  html += `<line x1="${mx}" y1="${PADT+8}" x2="${mx}" y2="${axisY-2}" stroke="var(--info)" stroke-width="2" stroke-dasharray="4 3" />`;
+  html += `<text x="${mx}" y="${PADT+4}" text-anchor="middle" font-size="11" font-family="JetBrains Mono, monospace" font-weight="700" fill="var(--info)">μ ${fmt(m,1)}</text>`;
+
+  // median line
+  const mdx = xToPx(md);
+  html += `<line x1="${mdx}" y1="${PADT+24}" x2="${mdx}" y2="${axisY-2}" stroke="var(--good)" stroke-width="2" stroke-dasharray="6 3" />`;
+  html += `<text x="${mdx}" y="${PADT+22}" text-anchor="middle" font-size="11" font-family="JetBrains Mono, monospace" font-weight="700" fill="var(--good-d)">M ${fmt(md,1)}</text>`;
+
+  svg.innerHTML = html;
+  attachDrag();
+
+  // readouts
+  document.getElementById('meanVal').textContent = fmt(m,1);
+  document.getElementById('medVal').textContent = fmt(md,1);
+
+  const dM = m - mBase, dMd = md - mdBase;
+  const sdSwing = Math.abs(dM)/sdBase;
+
+  document.getElementById('meanSwing').textContent = (dM>=0?'+':'')+fmt(dM,2)+`  (${fmt(sdSwing,1)} SD)`;
+  document.getElementById('medSwing').textContent = (dMd>=0?'+':'')+fmt(dMd,2);
+
+  // verdict
+  if(Math.abs(dM)>0.05){
+    document.getElementById('meanVerdict').textContent = sdSwing>2 ?
+      'pulled hard by the outlier' : 'moving with the outlier';
+  } else {
+    document.getElementById('meanVerdict').textContent = 'tracking baseline';
+  }
+  document.getElementById('medVerdict').textContent = Math.abs(dMd)>0.5 ?
+    `moved ${fmt(Math.abs(dMd),1)} — outlier crossed into the cluster` :
+    'unchanged — outlier ignored';
+
+  // trap pop
+  const pop = document.getElementById('trapPop');
+  if(sdSwing > 1.5){
+    pop.classList.add('show');
+    document.getElementById('trapCopy').innerHTML =
+      `Mean swung <b>${fmt(sdSwing,1)} SDs</b> while median moved <b>${fmt(Math.abs(dMd),1)}</b>. ` +
+      (sdSwing>3 ? 'This is a <b>flag-the-median</b> question — the writer wants you to pick the value that ignores the outlier.' :
+                   'When the swing exceeds ~1.5 SDs, expect the DAT to ask for the median.');
+  } else {
+    pop.classList.remove('show');
+  }
+
+  // scenario text
+  document.getElementById('scenario').textContent =
+    `Nine quiz scores: 70, 71, 72, 73, 74, 75, 76, 77, 78. The tenth student got a ${outlier}.`;
+}
+
+function attachDrag(){
+  const dot = document.getElementById('outlierDot');
+  if(!dot) return;
+  dot.addEventListener('pointerdown', e=>{
+    e.preventDefault();
+    dragging = true;
+    dot.classList.add('dragging');
+    dot.setPointerCapture(e.pointerId);
+  });
+  dot.addEventListener('pointermove', e=>{
+    if(!dragging) return;
+    const rect = svg.getBoundingClientRect();
+    const sx = (e.clientX - rect.left)/rect.width * W;
+    let nx = pxToX(sx);
+    nx = Math.max(0, Math.min(100, Math.round(nx)));
+    outlier = nx;
+    document.getElementById('outlierX').value = nx;
+    document.getElementById('outlierVal').textContent = nx;
+    render();
+  });
+  dot.addEventListener('pointerup', ()=>{
+    dragging = false;
+    dot.classList.remove('dragging');
+  });
+}
+
+document.getElementById('outlierX').addEventListener('input', e=>{
+  outlier = +e.target.value;
+  document.getElementById('outlierVal').textContent = outlier;
+  render();
+});
+
+document.getElementById('presetA').addEventListener('click', ()=>{ outlier=5; document.getElementById('outlierX').value=5; document.getElementById('outlierVal').textContent=5; render(); });
+document.getElementById('presetB').addEventListener('click', ()=>{ outlier=40; document.getElementById('outlierX').value=40; document.getElementById('outlierVal').textContent=40; render(); });
+document.getElementById('presetC').addEventListener('click', ()=>{ outlier=98; document.getElementById('outlierX').value=98; document.getElementById('outlierVal').textContent=98; render(); });
+
+let sweepRaf = null;
+document.getElementById('autoBtn').addEventListener('click', ()=>{
+  if(sweepRaf){ cancelAnimationFrame(sweepRaf); sweepRaf=null; document.getElementById('autoBtn').textContent='Auto-sweep'; return; }
+  document.getElementById('autoBtn').textContent='Stop sweep';
+  let t = 0;
+  function step(){
+    t += 0.025;
+    const v = Math.round(50 + 48 * Math.sin(t));
+    outlier = v;
+    document.getElementById('outlierX').value = v;
+    document.getElementById('outlierVal').textContent = v;
+    render();
+    sweepRaf = requestAnimationFrame(step);
+  }
+  step();
+});
+
+document.getElementById('themeBtn').addEventListener('click', ()=>{
+  const cur = document.body.getAttribute('data-theme');
+  const next = cur === 'dark' ? 'light' : 'dark';
+  document.body.setAttribute('data-theme', next);
+  document.getElementById('themeBtn').textContent = next === 'dark' ? 'Light' : 'Dark';
+});
+
+render();
+
+anime({
+  targets:'.card',
+  opacity:[0,1], translateY:[8,0],
+  duration:400, delay:anime.stagger(70), easing:'easeOutQuad'
+});
+</script>
+</body>
+</html>

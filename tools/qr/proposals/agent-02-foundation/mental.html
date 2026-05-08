@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>mental · Speed Drill</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f5f0e8; --paper:#fffdf7; --paper-2:#f9f3e6;
+  --sb:#0d2018; --ink:#0f1814; --ink-2:#3a4a42; --ink-mute:#6e7c74;
+  --gold:#C9A84C; --gold-m:#E2C97A; --gold-d:#8C7235;
+  --teal:#1B3A2D; --teal-3:#3A6B54;
+  --line:rgba(13,32,24,0.12);
+  --trap:#C25B3F; --trap-bg:#fbe7df; --trap-d:#8a3d28;
+  --good:#5FA874; --good-bg:#e3efe6; --good-d:#3e7c54;
+  --shadow:0 1px 3px rgba(13,32,24,0.06), 0 8px 24px rgba(13,32,24,0.04);
+}
+*{box-sizing:border-box}
+body{margin:0; font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--ink); padding:32px 24px; line-height:1.5}
+.wrap{max-width:880px; margin:0 auto}
+h1{font-family:'Playfair Display',serif; font-size:36px; margin:0 0 4px; font-weight:700}
+h1 em{font-style:italic; color:var(--gold-d); font-weight:400}
+.lede{color:var(--ink-2); font-size:15px; margin:0 0 22px; max-width:640px}
+.card{background:var(--paper); border:1px solid var(--line); border-radius:16px; padding:24px 26px; box-shadow:var(--shadow); margin-bottom:18px}
+
+.mt-flash{
+  position:relative; padding:36px 24px; background:linear-gradient(135deg, var(--paper) 0%, var(--paper-2) 100%);
+  border:2px solid var(--gold); border-radius:16px; min-height:200px;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px;
+  box-shadow:0 8px 28px rgba(201,168,76,0.12);
+}
+.mt-flash.flash-good{border-color:var(--good); background:var(--good-bg)}
+.mt-flash.flash-bad{border-color:var(--trap); background:var(--trap-bg)}
+
+.mt-q{
+  font-family:'Playfair Display',serif; font-size:56px; font-weight:700; line-height:1;
+  letter-spacing:-0.02em; text-align:center;
+}
+.mt-q em{font-style:italic; color:var(--gold-d)}
+@media(max-width:640px){.mt-q{font-size:42px}}
+
+.mt-input{
+  font-family:'JetBrains Mono',monospace; font-size:32px; padding:10px 18px; border:2px solid var(--gold);
+  border-radius:10px; width:200px; text-align:center; background:var(--paper); font-weight:700; color:var(--ink);
+  letter-spacing:.04em;
+}
+.mt-input:focus{outline:none; box-shadow:0 0 0 3px rgba(201,168,76,0.25)}
+
+.mt-clock{
+  position:absolute; top:12px; right:14px; font-family:'JetBrains Mono',monospace; font-size:14px;
+  font-weight:700; color:var(--ink-mute); padding:4px 10px; background:var(--paper); border-radius:14px;
+  border:1px solid var(--line);
+}
+.mt-clock.warn{color:var(--trap-d); border-color:var(--trap)}
+
+.mt-no-calc{
+  position:absolute; top:12px; left:14px; font-family:'JetBrains Mono',monospace; font-size:10px;
+  letter-spacing:.16em; text-transform:uppercase; color:var(--trap-d); padding:3px 10px;
+  background:var(--trap-bg); border-radius:14px; font-weight:700; border:1px solid var(--trap);
+}
+
+.mt-progress{
+  display:flex; gap:4px; margin-top:14px; padding:0;
+}
+.mt-progress-dot{
+  flex:1; height:6px; border-radius:3px; background:var(--paper-2); border:1px solid var(--line);
+  transition:all .25s;
+}
+.mt-progress-dot.cur{background:var(--gold); border-color:var(--gold-d); box-shadow:0 0 6px var(--gold-glow)}
+.mt-progress-dot.right{background:var(--good); border-color:var(--good-d)}
+.mt-progress-dot.wrong{background:var(--trap); border-color:var(--trap-d)}
+
+.mt-stats{
+  display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:14px;
+}
+.mt-stat{
+  padding:12px 14px; background:var(--paper-2); border-radius:10px; border:1px solid var(--line); text-align:center;
+}
+.mt-stat .lbl{font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:var(--ink-mute); font-weight:600}
+.mt-stat .val{font-family:'Playfair Display',serif; font-size:28px; font-weight:700; line-height:1; color:var(--teal); margin-top:4px}
+.mt-stat .val em{font-style:italic; color:var(--gold-d); font-size:.7em}
+
+.mt-controls{display:flex; gap:10px; flex-wrap:wrap; margin-top:14px; justify-content:center}
+.mt-btn{padding:8px 14px; border-radius:8px; border:1px solid var(--line); background:var(--paper); font-size:13px; font-weight:600; cursor:pointer; font-family:inherit; color:var(--ink)}
+.mt-btn:hover{border-color:var(--gold)}
+.mt-btn.primary{background:var(--teal); color:#fff; border-color:var(--teal)}
+.mt-btn.gold{background:var(--gold); color:var(--sb); border-color:var(--gold)}
+.mt-btn.lg{padding:12px 24px; font-size:15px}
+
+.mt-track{
+  font-family:'JetBrains Mono',monospace; font-size:12.5px; padding:8px 12px;
+  background:var(--paper-2); border-radius:9px; max-height:160px; overflow:auto;
+  margin-top:14px; border:1px solid var(--line);
+}
+.mt-track .row{display:flex; justify-content:space-between; padding:3px 0; border-bottom:1px dashed var(--line-2)}
+.mt-track .row:last-child{border-bottom:none}
+.mt-track .row.right{color:var(--good-d)}
+.mt-track .row.wrong{color:var(--trap-d)}
+.mt-track .row .t{opacity:.7}
+
+.mt-mode{display:flex; gap:6px; flex-wrap:wrap; margin-bottom:14px}
+.mt-mode button{
+  padding:6px 14px; border-radius:18px; border:1px solid var(--line); background:var(--paper);
+  font-size:12px; font-weight:600; cursor:pointer; font-family:inherit; color:var(--ink);
+}
+.mt-mode button.on{background:var(--teal); color:#fff; border-color:var(--teal)}
+
+.trap-card{background:var(--trap-bg); border:1px solid var(--trap); border-left:4px solid var(--trap); border-radius:12px; padding:16px 20px; color:var(--trap-d)}
+.trap-card .lbl{font-size:10px; letter-spacing:.18em; font-weight:700; text-transform:uppercase; margin-bottom:6px}
+.trap-card p{margin:0; font-size:14px; line-height:1.55}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Mental <em>Math</em> Speed Drill</h1>
+  <p class="lede">No calculator. 12 cards. 8 seconds each. Type the answer and hit Enter. The drill ends with your speed and accuracy — both must improve to break 600.</p>
+
+  <div class="card">
+    <div class="mt-mode">
+      <button class="on" data-mode="mixed">Mixed</button>
+      <button data-mode="dec">Decimal ×/÷</button>
+      <button data-mode="frac">Fraction quick</button>
+      <button data-mode="pct">Percent of</button>
+    </div>
+
+    <div class="mt-flash" id="mt-flash">
+      <div class="mt-no-calc">No calculator</div>
+      <div class="mt-clock" id="mt-clock">8.0s</div>
+      <div class="mt-q" id="mt-q">12 × 25</div>
+      <input class="mt-input" type="text" id="mt-input" placeholder="answer" autocomplete="off">
+      <button class="mt-btn primary lg" id="mt-submit">Submit</button>
+    </div>
+
+    <div class="mt-progress" id="mt-progress"></div>
+
+    <div class="mt-stats">
+      <div class="mt-stat"><div class="lbl">Hits</div><div class="val" id="mt-hits">0<em>/12</em></div></div>
+      <div class="mt-stat"><div class="lbl">Avg time</div><div class="val" id="mt-avg">—<em>s</em></div></div>
+      <div class="mt-stat"><div class="lbl">Accuracy</div><div class="val" id="mt-acc">—<em>%</em></div></div>
+    </div>
+
+    <div class="mt-track" id="mt-track" style="display:none"></div>
+
+    <div class="mt-controls">
+      <button class="mt-btn gold" id="mt-start">Start drill</button>
+      <button class="mt-btn" id="mt-reset">Reset</button>
+    </div>
+  </div>
+
+  <div class="trap-card">
+    <div class="lbl">The Trap</div>
+    <p>Students "compute" everything from scratch, burning 30+ seconds on what should take 3. Mental math is the difference between finishing QR and running out of time. 12 × 25 isn't multiplication — it's "a quarter of 1200" = 300.</p>
+  </div>
+</div>
+
+<script>
+const POOLS = {
+  dec: [
+    {q:'0.6 × 0.4', a:0.24}, {q:'0.5 × 8', a:4}, {q:'1.5 × 4', a:6},
+    {q:'0.25 × 12', a:3}, {q:'0.04 × 50', a:2}, {q:'2.5 × 4', a:10},
+    {q:'0.3 × 0.3', a:0.09}, {q:'1.2 × 5', a:6}, {q:'0.8 × 2.5', a:2},
+    {q:'6 ÷ 0.5', a:12}, {q:'0.9 ÷ 3', a:0.3}, {q:'1.5 ÷ 0.5', a:3},
+  ],
+  frac: [
+    {q:'1/4 + 1/2', a:'3/4'}, {q:'2/3 × 9', a:6}, {q:'3/4 × 8', a:6},
+    {q:'1/2 of 30', a:15}, {q:'2/5 of 25', a:10}, {q:'5/8 as decimal', a:0.625},
+    {q:'7/8 as decimal', a:0.875}, {q:'1/3 of 60', a:20}, {q:'3/4 of 40', a:30},
+    {q:'1/8 + 3/8', a:'1/2'}, {q:'2/3 of 21', a:14}, {q:'1/5 of 100', a:20},
+  ],
+  pct: [
+    {q:'25% of 80', a:20}, {q:'10% of 350', a:35}, {q:'15% of 60', a:9},
+    {q:'5% of 200', a:10}, {q:'30% of 90', a:27}, {q:'50% of 124', a:62},
+    {q:'20% of 45', a:9}, {q:'75% of 80', a:60}, {q:'40% of 25', a:10},
+    {q:'12% of 50', a:6}, {q:'200% of 35', a:70}, {q:'1% of 8500', a:85},
+  ],
+  mixed: null
+};
+
+let queue = [], cur = 0, hits = 0, times = [], log = [], startT = 0, timerId = null, mode = 'mixed', running = false;
+
+function buildQueue(){
+  if(mode === 'mixed'){
+    const all = [...POOLS.dec, ...POOLS.frac, ...POOLS.pct];
+    queue = all.sort(()=>Math.random()-.5).slice(0,12);
+  } else {
+    queue = [...POOLS[mode]].sort(()=>Math.random()-.5).slice(0,12);
+  }
+}
+
+function buildProgress(){
+  const p = document.getElementById('mt-progress'); p.innerHTML='';
+  for(let i=0;i<12;i++){
+    const d = document.createElement('div');
+    d.className = 'mt-progress-dot';
+    p.appendChild(d);
+  }
+}
+
+function start(){
+  buildQueue();
+  buildProgress();
+  cur = 0; hits = 0; times = []; log = []; running = true;
+  document.getElementById('mt-track').style.display = 'block';
+  document.getElementById('mt-track').innerHTML = '';
+  showCard();
+}
+
+function showCard(){
+  if(cur >= 12){ finish(); return; }
+  const card = queue[cur];
+  document.getElementById('mt-q').innerHTML = card.q;
+  document.getElementById('mt-input').value = '';
+  document.getElementById('mt-input').focus();
+  document.getElementById('mt-flash').classList.remove('flash-good','flash-bad');
+  document.querySelectorAll('.mt-progress-dot').forEach((d,i) => d.classList.toggle('cur', i === cur));
+  startT = performance.now();
+  // 8 sec timer
+  if(timerId) clearInterval(timerId);
+  let remain = 8;
+  document.getElementById('mt-clock').textContent = remain.toFixed(1) + 's';
+  document.getElementById('mt-clock').classList.remove('warn');
+  timerId = setInterval(()=>{
+    remain -= 0.1;
+    if(remain <= 3) document.getElementById('mt-clock').classList.add('warn');
+    if(remain <= 0){ remain = 0; clearInterval(timerId); submit(true); }
+    document.getElementById('mt-clock').textContent = Math.max(0, remain).toFixed(1) + 's';
+  }, 100);
+}
+
+function submit(timeout){
+  if(!running) return;
+  if(timerId) clearInterval(timerId);
+  const card = queue[cur];
+  const v = document.getElementById('mt-input').value.trim();
+  const dt = (performance.now() - startT)/1000;
+  times.push(dt);
+  let correct = false;
+  // Compare flexibly
+  if(typeof card.a === 'string'){
+    correct = v.replace(/\s/g,'') === card.a;
+  } else {
+    correct = parseFloat(v) === card.a;
+  }
+  const dot = document.querySelectorAll('.mt-progress-dot')[cur];
+  dot.classList.remove('cur');
+  if(correct){
+    dot.classList.add('right');
+    hits++;
+    document.getElementById('mt-flash').classList.add('flash-good');
+    log.push({q:card.q, a:card.a, given:v, t:dt, ok:true});
+  } else {
+    dot.classList.add('wrong');
+    document.getElementById('mt-flash').classList.add('flash-bad');
+    log.push({q:card.q, a:card.a, given:v || '(timeout)', t:dt, ok:false});
+  }
+  document.getElementById('mt-hits').innerHTML = hits + '<em>/12</em>';
+  const avg = times.reduce((a,b)=>a+b,0)/times.length;
+  document.getElementById('mt-avg').innerHTML = avg.toFixed(1) + '<em>s</em>';
+  document.getElementById('mt-acc').innerHTML = Math.round((hits/(cur+1))*100) + '<em>%</em>';
+  // Add to log
+  const tr = document.getElementById('mt-track');
+  tr.innerHTML += `<div class="row ${correct?'right':'wrong'}"><span>${card.q} = <b>${card.a}</b> · you: ${v||'—'}</span><span class="t">${dt.toFixed(1)}s</span></div>`;
+  tr.scrollTop = tr.scrollHeight;
+  cur++;
+  setTimeout(showCard, 600);
+}
+
+function finish(){
+  running = false;
+  if(timerId) clearInterval(timerId);
+  document.getElementById('mt-q').innerHTML = 'Drill <em>complete</em>';
+  document.getElementById('mt-input').value = '';
+  document.getElementById('mt-clock').textContent = '—';
+}
+
+document.getElementById('mt-input').addEventListener('keydown', e => {
+  if(e.key === 'Enter') submit();
+});
+document.getElementById('mt-submit').onclick = () => submit();
+document.getElementById('mt-start').onclick = start;
+document.getElementById('mt-reset').onclick = () => {
+  if(timerId) clearInterval(timerId);
+  running = false;
+  document.getElementById('mt-q').textContent = 'Click Start to begin';
+  document.getElementById('mt-clock').textContent = '8.0s';
+  document.getElementById('mt-hits').innerHTML = '0<em>/12</em>';
+  document.getElementById('mt-avg').innerHTML = '—<em>s</em>';
+  document.getElementById('mt-acc').innerHTML = '—<em>%</em>';
+  buildProgress();
+  document.getElementById('mt-track').style.display = 'none';
+};
+document.querySelectorAll('.mt-mode button').forEach(b => b.onclick = () => {
+  document.querySelectorAll('.mt-mode button').forEach(x => x.classList.remove('on'));
+  b.classList.add('on');
+  mode = b.dataset.mode;
+});
+
+buildProgress();
+</script>
+</body>
+</html>

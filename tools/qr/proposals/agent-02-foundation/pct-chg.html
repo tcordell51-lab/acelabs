@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>pct-chg · Original-Anchor Stretch Bar</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f5f0e8; --paper:#fffdf7; --paper-2:#f9f3e6;
+  --sb:#0d2018; --ink:#0f1814; --ink-2:#3a4a42; --ink-mute:#6e7c74;
+  --gold:#C9A84C; --gold-m:#E2C97A; --gold-d:#8C7235;
+  --teal:#1B3A2D; --teal-2:#2A5240; --teal-3:#3A6B54;
+  --line:rgba(13,32,24,0.12);
+  --trap:#C25B3F; --trap-bg:#fbe7df; --trap-d:#8a3d28;
+  --good:#5FA874; --good-bg:#e3efe6; --good-d:#3e7c54;
+  --shadow:0 1px 3px rgba(13,32,24,0.06), 0 8px 24px rgba(13,32,24,0.04);
+}
+*{box-sizing:border-box}
+body{margin:0; font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--ink); padding:32px 24px; line-height:1.5}
+.wrap{max-width:880px; margin:0 auto}
+h1{font-family:'Playfair Display',serif; font-size:36px; margin:0 0 4px; font-weight:700}
+h1 em{font-style:italic; color:var(--gold-d); font-weight:400}
+.lede{color:var(--ink-2); font-size:15px; margin:0 0 22px; max-width:640px}
+.card{background:var(--paper); border:1px solid var(--line); border-radius:16px; padding:24px 26px; box-shadow:var(--shadow); margin-bottom:18px}
+
+.pc-prompt{font-family:'Playfair Display',serif; font-size:22px; line-height:1.35; margin-bottom:20px}
+.pc-prompt b{color:var(--teal); font-weight:700}
+
+.pc-bars{padding:14px 0 6px}
+.pc-bar-row{display:flex; align-items:center; gap:12px; margin-bottom:14px}
+.pc-bar-lbl{
+  width:80px; flex-shrink:0; font-size:11px; letter-spacing:.14em; text-transform:uppercase;
+  font-weight:700; color:var(--ink-mute);
+}
+.pc-bar-track{
+  flex:1; height:42px; background:var(--paper-2); border:1px solid var(--line); border-radius:8px;
+  position:relative; overflow:visible;
+}
+.pc-bar-fill{
+  height:100%; border-radius:7px; transition:width .55s cubic-bezier(.4,1.4,.5,1);
+  display:flex; align-items:center; justify-content:flex-end; padding:0 12px;
+  font-family:'JetBrains Mono',monospace; font-size:14px; font-weight:700; color:var(--sb);
+}
+.pc-bar-fill.orig{background:var(--gold); width:50%}
+.pc-bar-fill.new{background:var(--teal-3); color:#fff; width:50%}
+
+.pc-anchor{
+  position:absolute; top:-10px; bottom:-10px; width:2px; background:var(--gold-d);
+  pointer-events:none; z-index:3;
+}
+.pc-anchor::before{
+  content:"ORIGINAL = 100%"; position:absolute; top:-22px; left:50%; transform:translateX(-50%);
+  font-family:'JetBrains Mono',monospace; font-size:9px; letter-spacing:.14em; color:var(--gold-d);
+  white-space:nowrap; font-weight:700;
+}
+.pc-delta{
+  position:absolute; top:50%; transform:translateY(-50%);
+  height:24px; background:rgba(194,91,63,0.25); border-top:2px dashed var(--trap-d); border-bottom:2px dashed var(--trap-d);
+  display:flex; align-items:center; padding:0 6px; font-family:'JetBrains Mono',monospace;
+  font-size:11px; color:var(--trap-d); font-weight:700; pointer-events:none;
+}
+
+.pc-controls{display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-top:10px}
+.pc-btn{padding:8px 14px; border-radius:8px; border:1px solid var(--line); background:var(--paper); font-size:13px; font-weight:600; cursor:pointer; font-family:inherit; color:var(--ink)}
+.pc-btn:hover{border-color:var(--gold)}
+.pc-btn.primary{background:var(--teal); color:#fff; border-color:var(--teal)}
+.pc-btn.gold{background:var(--gold); color:var(--sb); border-color:var(--gold)}
+
+.pc-input{
+  font-family:'JetBrains Mono',monospace; font-size:15px; padding:6px 12px; border:2px solid var(--gold);
+  border-radius:8px; width:80px; text-align:center; background:var(--paper); font-weight:600;
+}
+.pc-input:focus{outline:none; box-shadow:0 0 0 3px rgba(201,168,76,0.25)}
+
+.pc-formula{
+  font-family:'JetBrains Mono',monospace; font-size:16px; padding:14px 16px; border-radius:10px;
+  background:var(--paper-2); border:1px solid var(--line); border-left:4px solid var(--gold);
+  margin-top:18px; line-height:1.7;
+}
+.pc-formula .num{color:var(--good-d); font-weight:700}
+.pc-formula .den{color:var(--gold-d); font-weight:700; text-decoration:underline}
+.pc-formula .wrong{color:var(--trap-d); text-decoration:line-through; opacity:.6}
+
+.pc-status{font-family:'Playfair Display',serif; font-style:italic; font-size:18px; color:var(--ink-2); min-height:30px; padding:6px 0}
+.pc-status.good{color:var(--good-d)}
+.pc-status.warn{color:var(--trap-d)}
+
+.pc-hud{display:flex; justify-content:space-between; font-size:12px; color:var(--ink-mute); margin-bottom:8px; letter-spacing:.04em}
+.pc-hud b{color:var(--gold-d); font-family:'JetBrains Mono',monospace}
+
+.pc-toggle{display:flex; gap:6px; margin-top:8px}
+.pc-toggle button{
+  padding:6px 14px; border-radius:18px; border:1px solid var(--line); background:var(--paper);
+  font-size:12px; font-weight:600; cursor:pointer; font-family:inherit; color:var(--ink);
+}
+.pc-toggle button.on{background:var(--teal); color:#fff; border-color:var(--teal)}
+.pc-toggle button.bad{background:var(--trap-bg); color:var(--trap-d); border-color:var(--trap)}
+
+.trap-card{background:var(--trap-bg); border:1px solid var(--trap); border-left:4px solid var(--trap); border-radius:12px; padding:16px 20px; color:var(--trap-d)}
+.trap-card .lbl{font-size:10px; letter-spacing:.18em; font-weight:700; text-transform:uppercase; margin-bottom:6px}
+.trap-card p{margin:0; font-size:14px; line-height:1.55}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Percent <em>Change</em></h1>
+  <p class="lede">The original is your anchor. Always. Adjust the new value, watch the change bar grow, then pick which value goes in the denominator — original or new.</p>
+
+  <div class="card">
+    <div class="pc-hud">
+      <span>Round <b id="pc-round">1</b> / 4</span>
+      <span>Score <b id="pc-score">0</b></span>
+    </div>
+
+    <div class="pc-prompt" id="pc-prompt">A textbook went from <b>$80</b> to <b>$100</b>. What is the percent change?</div>
+
+    <div class="pc-bars">
+      <div class="pc-bar-row">
+        <div class="pc-bar-lbl">Original</div>
+        <div class="pc-bar-track">
+          <div class="pc-bar-fill orig" id="pc-orig" style="width:50%">$<span id="pc-orig-val">80</span></div>
+          <div class="pc-anchor" id="pc-anchor" style="left:50%"></div>
+        </div>
+      </div>
+      <div class="pc-bar-row">
+        <div class="pc-bar-lbl">New</div>
+        <div class="pc-bar-track">
+          <div class="pc-bar-fill new" id="pc-new" style="width:62.5%">$<span id="pc-new-val">100</span></div>
+          <div class="pc-delta" id="pc-delta" style="display:none"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pc-controls">
+      <label style="font-size:13px; color:var(--ink-mute)">Adjust new value:
+        <input class="pc-input" id="pc-input" type="number" value="100">
+      </label>
+      <span style="font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--ink-mute)">Change Δ = <b id="pc-delta-val" style="color:var(--trap-d); font-size:14px">+20</b></span>
+    </div>
+
+    <div class="pc-formula" id="pc-formula">
+      % change = ( <span class="num" id="pc-f-num">new − original</span> ) ÷ <span id="pc-f-den">?</span> × 100
+    </div>
+
+    <div style="margin-top:8px">
+      <div style="font-size:12px; color:var(--ink-mute); letter-spacing:.06em; margin-bottom:4px">Pick what goes in the denominator:</div>
+      <div class="pc-toggle">
+        <button id="pc-pick-orig">ORIGINAL</button>
+        <button id="pc-pick-new">NEW</button>
+      </div>
+    </div>
+
+    <div class="pc-status" id="pc-status">Lock the denominator to compute.</div>
+
+    <div style="display:flex; gap:10px; margin-top:8px">
+      <button class="pc-btn primary" id="pc-next">Next round</button>
+      <button class="pc-btn" id="pc-reset">Reset</button>
+    </div>
+  </div>
+
+  <div class="trap-card">
+    <div class="lbl">The Trap</div>
+    <p>For percent CHANGE, the denominator is the <b>ORIGINAL</b>. Students reflexively divide by the new value and get the wrong percent every time. The ORIGINAL line on this widget is anchored — that's the lock.</p>
+  </div>
+</div>
+
+<script>
+const ROUNDS = [
+  {orig:80, target:100, scenario:'A textbook went from <b>$80</b> to <b>$100</b>.'},
+  {orig:200, target:160, scenario:'A laptop dropped from <b>$200</b> to <b>$160</b>.'},
+  {orig:50, target:75, scenario:'A salary rose from <b>$50</b>k to <b>$75</b>k.'},
+  {orig:120, target:90, scenario:'Inventory shrank from <b>120</b> units to <b>90</b>.'},
+];
+let R = 0, score = 0, denPicked = null, locked = false;
+
+function setRound(){
+  const r = ROUNDS[R];
+  document.getElementById('pc-round').textContent = (R+1);
+  document.getElementById('pc-prompt').innerHTML = r.scenario + ' What is the percent change?';
+  document.getElementById('pc-orig-val').textContent = r.orig;
+  document.getElementById('pc-input').value = r.target;
+  denPicked = null; locked = false;
+  document.getElementById('pc-pick-orig').classList.remove('on','bad');
+  document.getElementById('pc-pick-new').classList.remove('on','bad');
+  document.getElementById('pc-status').className = 'pc-status';
+  document.getElementById('pc-status').textContent = 'Lock the denominator to compute.';
+  updateBars();
+}
+
+function updateBars(){
+  const r = ROUNDS[R];
+  const newVal = parseFloat(document.getElementById('pc-input').value) || 0;
+  document.getElementById('pc-new-val').textContent = newVal;
+  const max = Math.max(r.orig, newVal, r.orig*1.5);
+  const origPct = (r.orig / max) * 100;
+  const newPct = (newVal / max) * 100;
+  document.getElementById('pc-orig').style.width = origPct + '%';
+  document.getElementById('pc-new').style.width = newPct + '%';
+  document.getElementById('pc-anchor').style.left = origPct + '%';
+  // delta
+  const delta = newVal - r.orig;
+  const dEl = document.getElementById('pc-delta');
+  if(delta !== 0){
+    dEl.style.display = 'flex';
+    const start = Math.min(origPct, newPct);
+    const end = Math.max(origPct, newPct);
+    dEl.style.left = start + '%';
+    dEl.style.width = (end - start) + '%';
+    dEl.textContent = (delta>0 ? '+' : '') + delta;
+  } else dEl.style.display='none';
+  document.getElementById('pc-delta-val').textContent = (delta>=0 ? '+'+delta : delta);
+  if(locked && denPicked === 'orig'){
+    const pct = (delta / r.orig) * 100;
+    document.getElementById('pc-status').textContent = 'Δ ÷ ORIGINAL × 100 = ' + delta + '/' + r.orig + ' × 100 = ' + pct.toFixed(1) + '%';
+  }
+}
+
+function pick(which){
+  if(locked) return;
+  const r = ROUNDS[R];
+  const newVal = parseFloat(document.getElementById('pc-input').value) || 0;
+  const delta = newVal - r.orig;
+  const status = document.getElementById('pc-status');
+  if(which === 'orig'){
+    document.getElementById('pc-pick-orig').classList.add('on');
+    document.getElementById('pc-pick-new').classList.remove('on');
+    document.getElementById('pc-f-den').innerHTML = '<span class="den">ORIGINAL ('+r.orig+')</span>';
+    status.className = 'pc-status good';
+    const pct = (delta/r.orig)*100;
+    status.textContent = 'Locked. Δ ÷ ORIGINAL × 100 = ' + delta + '/' + r.orig + ' × 100 = ' + pct.toFixed(1) + '%';
+    locked = true; denPicked = 'orig';
+    score++; document.getElementById('pc-score').textContent = score;
+  } else {
+    document.getElementById('pc-pick-new').classList.add('bad');
+    document.getElementById('pc-f-den').innerHTML = '<span class="wrong">NEW ('+newVal+')</span>';
+    const wrongPct = (delta/newVal)*100;
+    const rightPct = (delta/r.orig)*100;
+    status.className = 'pc-status warn';
+    status.textContent = 'Trap. NEW gives '+wrongPct.toFixed(1)+'%. ORIGINAL gives '+rightPct.toFixed(1)+'%. Try again.';
+    setTimeout(()=>{
+      document.getElementById('pc-pick-new').classList.remove('bad');
+      document.getElementById('pc-f-den').innerHTML='?';
+      status.className='pc-status'; status.textContent='Lock the denominator to compute.';
+    }, 1800);
+  }
+}
+
+document.getElementById('pc-input').addEventListener('input', updateBars);
+document.getElementById('pc-pick-orig').onclick = () => pick('orig');
+document.getElementById('pc-pick-new').onclick = () => pick('new');
+document.getElementById('pc-next').onclick = () => { R = (R+1) % ROUNDS.length; setRound(); };
+document.getElementById('pc-reset').onclick = setRound;
+
+setRound();
+</script>
+</body>
+</html>

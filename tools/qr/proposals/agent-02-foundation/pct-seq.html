@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>pct-seq · Multiplier Chain</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f5f0e8; --paper:#fffdf7; --paper-2:#f9f3e6;
+  --sb:#0d2018; --ink:#0f1814; --ink-2:#3a4a42; --ink-mute:#6e7c74;
+  --gold:#C9A84C; --gold-m:#E2C97A; --gold-d:#8C7235;
+  --teal:#1B3A2D; --teal-3:#3A6B54;
+  --line:rgba(13,32,24,0.12);
+  --trap:#C25B3F; --trap-bg:#fbe7df; --trap-d:#8a3d28;
+  --good:#5FA874; --good-bg:#e3efe6; --good-d:#3e7c54;
+  --shadow:0 1px 3px rgba(13,32,24,0.06), 0 8px 24px rgba(13,32,24,0.04);
+}
+*{box-sizing:border-box}
+body{margin:0; font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--ink); padding:32px 24px; line-height:1.5}
+.wrap{max-width:880px; margin:0 auto}
+h1{font-family:'Playfair Display',serif; font-size:36px; margin:0 0 4px; font-weight:700}
+h1 em{font-style:italic; color:var(--gold-d); font-weight:400}
+.lede{color:var(--ink-2); font-size:15px; margin:0 0 22px; max-width:640px}
+.card{background:var(--paper); border:1px solid var(--line); border-radius:16px; padding:24px 26px; box-shadow:var(--shadow); margin-bottom:18px}
+
+.ps-prompt{font-family:'Playfair Display',serif; font-size:20px; line-height:1.4; margin-bottom:14px}
+.ps-prompt b{color:var(--teal); font-weight:700}
+
+.ps-stack{display:flex; flex-direction:column; gap:0; margin-top:18px}
+.ps-stage{
+  display:flex; align-items:center; gap:14px; padding:12px 14px;
+  background:var(--paper-2); border:1px solid var(--line); border-radius:10px;
+  margin-bottom:10px; transition:all .25s;
+}
+.ps-stage.live{border-color:var(--gold); box-shadow:0 0 0 3px rgba(201,168,76,0.15); background:var(--paper)}
+.ps-stage.done{border-color:var(--good); background:var(--good-bg)}
+.ps-stage-num{
+  width:30px; height:30px; border-radius:50%; background:var(--sb); color:var(--gold-m);
+  display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono',monospace;
+  font-size:12px; font-weight:700; flex-shrink:0;
+}
+.ps-stage.done .ps-stage-num{background:var(--good); color:#fff}
+.ps-stage-body{flex:1; display:flex; flex-direction:column; gap:6px}
+.ps-stage-title{font-family:'Playfair Display',serif; font-size:16px; font-weight:600}
+.ps-stage-title em{font-style:italic; color:var(--gold-d)}
+.ps-mult-row{display:flex; gap:8px; align-items:center; flex-wrap:wrap}
+.ps-mult{
+  font-family:'JetBrains Mono',monospace; font-size:14px; padding:4px 10px; border-radius:14px;
+  background:var(--paper); border:1px solid var(--line); color:var(--ink-2);
+}
+.ps-mult.gold{background:rgba(201,168,76,0.18); border-color:var(--gold); color:var(--gold-d); font-weight:700}
+.ps-mult.bad{background:var(--trap-bg); color:var(--trap-d); border-color:var(--trap); text-decoration:line-through; opacity:.7}
+.ps-mult.right{background:var(--good-bg); color:var(--good-d); border-color:var(--good); font-weight:700}
+.ps-bar{
+  height:30px; background:var(--paper); border:1px solid var(--line); border-radius:6px;
+  position:relative; overflow:visible;
+}
+.ps-bar-fill{
+  position:absolute; left:0; top:0; bottom:0; background:linear-gradient(90deg, var(--gold), var(--gold-m));
+  border-radius:5px; transition:width .55s cubic-bezier(.4,1.4,.5,1);
+  display:flex; align-items:center; padding:0 10px; font-family:'JetBrains Mono',monospace;
+  font-size:13px; font-weight:700; color:var(--sb);
+}
+.ps-bar-fill.lower{background:linear-gradient(90deg, var(--teal-3), var(--teal))}
+.ps-bar-marker{position:absolute; top:-8px; bottom:-8px; width:2px; background:var(--ink-mute); pointer-events:none}
+.ps-bar-marker::before{content:"START 100%"; position:absolute; bottom:-18px; left:50%; transform:translateX(-50%); font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--ink-mute); white-space:nowrap; letter-spacing:.1em}
+
+.ps-final{
+  display:flex; align-items:center; justify-content:center; gap:14px; padding:18px;
+  background:var(--paper-2); border:2px dashed var(--gold); border-radius:12px; margin-top:18px;
+}
+.ps-final .lbl{font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--gold-d); font-weight:700}
+.ps-final .val{font-family:'Playfair Display',serif; font-size:36px; font-weight:700; color:var(--ink)}
+.ps-final .delta{font-family:'JetBrains Mono',monospace; font-size:14px; color:var(--ink-mute)}
+.ps-final .delta.neg{color:var(--trap-d)}
+.ps-final .delta.pos{color:var(--good-d)}
+
+.ps-controls{display:flex; gap:10px; flex-wrap:wrap; margin-top:14px}
+.ps-btn{padding:8px 14px; border-radius:8px; border:1px solid var(--line); background:var(--paper); font-size:13px; font-weight:600; cursor:pointer; font-family:inherit; color:var(--ink)}
+.ps-btn:hover{border-color:var(--gold)}
+.ps-btn.primary{background:var(--teal); color:#fff; border-color:var(--teal)}
+.ps-btn.gold{background:var(--gold); color:var(--sb); border-color:var(--gold)}
+
+.ps-status{font-family:'Playfair Display',serif; font-style:italic; font-size:18px; color:var(--ink-2); min-height:30px; padding:8px 0}
+.ps-status.good{color:var(--good-d)}
+.ps-status.warn{color:var(--trap-d)}
+
+.trap-card{background:var(--trap-bg); border:1px solid var(--trap); border-left:4px solid var(--trap); border-radius:12px; padding:16px 20px; color:var(--trap-d)}
+.trap-card .lbl{font-size:10px; letter-spacing:.18em; font-weight:700; text-transform:uppercase; margin-bottom:6px}
+.trap-card p{margin:0; font-size:14px; line-height:1.55}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Sequential <em>Percent Changes</em></h1>
+  <p class="lede">Two changes don't cancel — they multiply. Build the multiplier chain stage by stage. Watch the bar update. The trap version (adding the percents) shows up as a ghost.</p>
+
+  <div class="card">
+    <div class="ps-prompt" id="ps-prompt">A sweater is marked up <b>25%</b>, then put on sale at <b>20% off</b>. What's the net change?</div>
+
+    <div class="ps-stack" id="ps-stack"></div>
+
+    <div class="ps-final" id="ps-final" style="display:none">
+      <div>
+        <div class="lbl">Final price</div>
+        <div class="val" id="ps-final-val">—</div>
+      </div>
+      <div style="font-size:30px; color:var(--ink-mute)">·</div>
+      <div>
+        <div class="lbl">Net change</div>
+        <div class="delta" id="ps-final-delta">—</div>
+      </div>
+    </div>
+
+    <div class="ps-status" id="ps-status">Click each stage to apply its multiplier.</div>
+
+    <div class="ps-controls">
+      <button class="ps-btn gold" id="ps-step">Apply next stage</button>
+      <button class="ps-btn primary" id="ps-show-trap">Show the "add them" trap</button>
+      <button class="ps-btn" id="ps-next">Next round</button>
+      <button class="ps-btn" id="ps-reset">Reset</button>
+    </div>
+  </div>
+
+  <div class="trap-card">
+    <div class="lbl">The Trap</div>
+    <p>Students assume +25% then −20% nets to +5%. It doesn't. 1.25 × 0.80 = 1.00 — net zero. Sequential percents <b>multiply</b>, never add. The DAT specifically writes scenarios where adding looks tempting.</p>
+  </div>
+</div>
+
+<script>
+const ROUNDS = [
+  {start:100, steps:[{lbl:'Markup +25%', mult:1.25, sign:'+25%'}, {lbl:'Sale −20%', mult:0.80, sign:'-20%'}], addNaive:'+5%'},
+  {start:200, steps:[{lbl:'Discount −10%', mult:0.90, sign:'-10%'}, {lbl:'Coupon −10%', mult:0.90, sign:'-10%'}], addNaive:'-20%'},
+  {start:50, steps:[{lbl:'Tax +8%', mult:1.08, sign:'+8%'}, {lbl:'Markup +50%', mult:1.50, sign:'+50%'}], addNaive:'+58%'},
+  {start:1000, steps:[{lbl:'Loss −30%', mult:0.70, sign:'-30%'}, {lbl:'Recovery +50%', mult:1.50, sign:'+50%'}], addNaive:'+20%'},
+];
+let R = 0, stage = 0, current = 0;
+
+function setRound(){
+  const r = ROUNDS[R];
+  current = r.start; stage = 0;
+  document.getElementById('ps-prompt').innerHTML = roundCopy(r);
+  const stack = document.getElementById('ps-stack'); stack.innerHTML='';
+  // Stage 0 - start
+  stack.appendChild(stageNode(0, 'Start <em>100%</em>', '×1.00', r.start, true, 'live'));
+  r.steps.forEach((s, i) => {
+    stack.appendChild(stageNode(i+1, s.lbl, '×'+s.mult.toFixed(2), '?', false, ''));
+  });
+  document.getElementById('ps-final').style.display='none';
+  document.getElementById('ps-status').className='ps-status';
+  document.getElementById('ps-status').textContent='Click "Apply next stage" to multiply through.';
+  document.getElementById('ps-step').disabled = false;
+  document.getElementById('ps-show-trap').disabled = true;
+}
+
+function roundCopy(r){
+  if(R === 0) return 'A sweater is marked up <b>25%</b>, then put on sale at <b>20% off</b>. What\'s the net change?';
+  if(R === 1) return 'A $200 jacket gets <b>10% off</b>, then another <b>10% off coupon</b>. What\'s the final price?';
+  if(R === 2) return 'A $50 item: <b>+8% tax</b>, then markup <b>+50%</b>. What\'s the final?';
+  if(R === 3) return 'A $1000 stock loses <b>30%</b>, then gains <b>50%</b>. Net?';
+  return '';
+}
+
+function stageNode(idx, title, mult, val, gold, cls){
+  const div = document.createElement('div');
+  div.className = 'ps-stage ' + cls;
+  div.dataset.idx = idx;
+  const valStr = (typeof val === 'number') ? '$'+val.toFixed(2).replace(/\.00$/,'') : val;
+  div.innerHTML = `
+    <div class="ps-stage-num">${idx}</div>
+    <div class="ps-stage-body">
+      <div class="ps-stage-title">${title}</div>
+      <div class="ps-mult-row">
+        <span class="ps-mult ${gold?'gold':''}" data-role="mult">multiplier ${mult}</span>
+        <span class="ps-mult" data-role="val">value: <b>${valStr}</b></span>
+      </div>
+      <div class="ps-bar"><div class="ps-bar-fill ${gold?'':'lower'}" style="width:${gold?50:0}%">${gold?'100%':''}</div><div class="ps-bar-marker" style="left:50%"></div></div>
+    </div>
+  `;
+  return div;
+}
+
+function step(){
+  const r = ROUNDS[R];
+  if(stage >= r.steps.length){
+    finalize();
+    return;
+  }
+  const s = r.steps[stage];
+  current = current * s.mult;
+  const stages = document.querySelectorAll('.ps-stage');
+  stages[stage].classList.remove('live');
+  stages[stage].classList.add('done');
+  const target = stages[stage+1];
+  if(target){
+    target.classList.add('live');
+    target.querySelector('[data-role="mult"]').classList.add('gold');
+    target.querySelector('[data-role="val"]').innerHTML = 'value: <b>$'+current.toFixed(2).replace(/\.00$/,'')+'</b>';
+    const fill = target.querySelector('.ps-bar-fill');
+    const pct = (current / r.start) * 100;
+    fill.style.width = Math.min(pct, 100) + '%';
+    fill.textContent = pct.toFixed(0) + '%';
+  }
+  stage++;
+  if(stage >= r.steps.length){
+    setTimeout(finalize, 250);
+  }
+}
+
+function finalize(){
+  const r = ROUNDS[R];
+  const final = document.getElementById('ps-final');
+  final.style.display='flex';
+  document.getElementById('ps-final-val').textContent = '$'+current.toFixed(2).replace(/\.00$/,'');
+  const pct = ((current - r.start)/r.start)*100;
+  const dEl = document.getElementById('ps-final-delta');
+  dEl.textContent = (pct>=0 ? '+' : '') + pct.toFixed(1) + '% vs start';
+  dEl.className = 'delta ' + (pct>0 ? 'pos' : pct<0 ? 'neg' : '');
+  document.getElementById('ps-step').disabled = true;
+  document.getElementById('ps-show-trap').disabled = false;
+  document.getElementById('ps-status').className='ps-status good';
+  document.getElementById('ps-status').textContent = 'Multipliers chained. Net = ' + (pct>=0?'+':'') + pct.toFixed(1) + '%.';
+}
+
+function showTrap(){
+  const r = ROUNDS[R];
+  const status = document.getElementById('ps-status');
+  status.className='ps-status warn';
+  const truth = ((current - r.start)/r.start)*100;
+  status.innerHTML = 'Naive add gives <b>'+r.addNaive+'</b> — actual is <b>'+(truth>=0?'+':'')+truth.toFixed(1)+'%</b>. Adding percents lies about the real change.';
+}
+
+document.getElementById('ps-step').onclick = step;
+document.getElementById('ps-show-trap').onclick = showTrap;
+document.getElementById('ps-next').onclick = () => { R = (R+1) % ROUNDS.length; setRound(); };
+document.getElementById('ps-reset').onclick = setRound;
+
+setRound();
+</script>
+</body>
+</html>

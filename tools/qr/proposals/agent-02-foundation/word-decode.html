@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>word-decode · Phrase Translator</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f5f0e8; --paper:#fffdf7; --paper-2:#f9f3e6;
+  --sb:#0d2018; --ink:#0f1814; --ink-2:#3a4a42; --ink-mute:#6e7c74;
+  --gold:#C9A84C; --gold-m:#E2C97A; --gold-d:#8C7235;
+  --teal:#1B3A2D; --teal-3:#3A6B54;
+  --line:rgba(13,32,24,0.12);
+  --trap:#C25B3F; --trap-bg:#fbe7df; --trap-d:#8a3d28;
+  --good:#5FA874; --good-bg:#e3efe6; --good-d:#3e7c54;
+  --shadow:0 1px 3px rgba(13,32,24,0.06), 0 8px 24px rgba(13,32,24,0.04);
+}
+*{box-sizing:border-box}
+body{margin:0; font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--ink); padding:32px 24px; line-height:1.5}
+.wrap{max-width:880px; margin:0 auto}
+h1{font-family:'Playfair Display',serif; font-size:36px; margin:0 0 4px; font-weight:700}
+h1 em{font-style:italic; color:var(--gold-d); font-weight:400}
+.lede{color:var(--ink-2); font-size:15px; margin:0 0 22px; max-width:640px}
+.card{background:var(--paper); border:1px solid var(--line); border-radius:16px; padding:24px 26px; box-shadow:var(--shadow); margin-bottom:18px}
+
+.wd-sentence{
+  font-family:'Playfair Display',serif; font-size:24px; line-height:1.5; padding:18px 22px;
+  background:var(--paper-2); border:1px solid var(--line); border-radius:12px; margin-bottom:14px;
+  text-align:center;
+}
+.wd-chunk{
+  display:inline-block; padding:3px 10px; margin:0 2px; border-radius:8px; cursor:pointer;
+  border:2px solid transparent; transition:all .15s; user-select:none;
+}
+.wd-chunk:hover{background:rgba(201,168,76,0.14); border-color:var(--gold)}
+.wd-chunk.active{background:var(--gold); color:var(--sb); border-color:var(--gold-d)}
+.wd-chunk.locked{background:var(--good-bg); color:var(--good-d); border-color:var(--good); cursor:default; font-family:'JetBrains Mono',monospace; font-size:.85em}
+
+.wd-now{
+  font-family:'Playfair Display',serif; font-style:italic; font-size:18px; color:var(--ink-2);
+  text-align:center; padding:8px 0; min-height:28px;
+}
+
+.wd-options{
+  display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin:14px 0;
+}
+@media(max-width:640px){.wd-options{grid-template-columns:1fr}}
+.wd-opt{
+  padding:14px 18px; border:1px solid var(--line); border-radius:10px; background:var(--paper);
+  cursor:pointer; transition:all .15s; font-family:'JetBrains Mono',monospace; font-size:15px;
+  text-align:left; color:var(--ink); font-weight:600;
+}
+.wd-opt:hover{border-color:var(--gold); transform:translateY(-1px); box-shadow:var(--shadow)}
+.wd-opt.right{background:var(--good-bg); color:var(--good-d); border-color:var(--good)}
+.wd-opt.wrong{background:var(--trap-bg); color:var(--trap-d); border-color:var(--trap)}
+.wd-opt .why{display:block; font-family:'DM Sans',sans-serif; font-size:11px; color:var(--ink-mute); font-weight:400; margin-top:3px; font-style:italic}
+
+.wd-builder{
+  font-family:'JetBrains Mono',monospace; font-size:22px; padding:14px 18px; border-radius:10px;
+  background:var(--sb); color:var(--gold-m); border:1px solid var(--line); text-align:center;
+  letter-spacing:.04em; min-height:60px; display:flex; align-items:center; justify-content:center;
+}
+.wd-builder .blank{
+  display:inline-block; width:36px; height:24px; border:2px dashed var(--gold-m); border-radius:6px;
+  margin:0 4px; vertical-align:middle;
+}
+
+.wd-status{font-family:'Playfair Display',serif; font-style:italic; font-size:18px; color:var(--ink-2); min-height:30px; padding:6px 0}
+.wd-status.good{color:var(--good-d)}
+.wd-status.warn{color:var(--trap-d)}
+
+.wd-controls{display:flex; gap:10px; flex-wrap:wrap; margin-top:14px}
+.wd-btn{padding:8px 14px; border-radius:8px; border:1px solid var(--line); background:var(--paper); font-size:13px; font-weight:600; cursor:pointer; font-family:inherit; color:var(--ink)}
+.wd-btn:hover{border-color:var(--gold)}
+.wd-btn.primary{background:var(--teal); color:#fff; border-color:var(--teal)}
+.wd-btn.gold{background:var(--gold); color:var(--sb); border-color:var(--gold)}
+
+.wd-hud{display:flex; justify-content:space-between; font-size:12px; color:var(--ink-mute); margin-bottom:8px; letter-spacing:.04em}
+.wd-hud b{color:var(--gold-d); font-family:'JetBrains Mono',monospace}
+
+.trap-card{background:var(--trap-bg); border:1px solid var(--trap); border-left:4px solid var(--trap); border-radius:12px; padding:16px 20px; color:var(--trap-d)}
+.trap-card .lbl{font-size:10px; letter-spacing:.18em; font-weight:700; text-transform:uppercase; margin-bottom:6px}
+.trap-card p{margin:0; font-size:14px; line-height:1.55}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Word Problem <em>Decoder</em></h1>
+  <p class="lede">Click each chunk in order. Pick the math translation. The dictionary stays on screen the whole time. "Less than" reverses the order — that's the chunk that catches everyone.</p>
+
+  <div class="card">
+    <div class="wd-hud">
+      <span>Round <b id="wd-round">1</b> / 5</span>
+      <span>Score <b id="wd-score">0</b></span>
+    </div>
+
+    <div class="wd-sentence" id="wd-sentence"></div>
+
+    <div class="wd-now" id="wd-now">Click the next phrase to translate.</div>
+
+    <div class="wd-options" id="wd-options"></div>
+
+    <div class="wd-builder" id="wd-builder">_</div>
+
+    <div class="wd-status" id="wd-status">Goal: build the full equation chunk by chunk.</div>
+
+    <div class="wd-controls">
+      <button class="wd-btn primary" id="wd-next">Next round</button>
+      <button class="wd-btn" id="wd-reset">Reset</button>
+    </div>
+  </div>
+
+  <div class="trap-card">
+    <div class="lbl">The Trap</div>
+    <p>"Less than" reverses the order in your sentence. "5 less than n" = n − 5, NOT 5 − n. The DAT writes these specifically to catch students who translate left-to-right. Always identify the second number first when you see "less than" or "subtracted from".</p>
+  </div>
+</div>
+
+<script>
+const ROUNDS = [
+  {
+    text:'Sam has 3 more apples than twice what Mia has.',
+    chunks:[
+      {span:'Sam has', math:'S =', opts:['S =', '3 =', 'has =', 'Sam · 3'], correct:'S =', why:'"is/has" maps to ='},
+      {span:'twice what Mia has', math:'2m', opts:['2m', 'm/2', 'm + 2', '2 + m'], correct:'2m', why:'"twice" = ×2'},
+      {span:'3 more than that', math:'+ 3', opts:['+ 3', '3 +', '− 3', '× 3'], correct:'+ 3', why:'"more than" adds AFTER'},
+    ],
+    full:'S = 2m + 3'
+  },
+  {
+    text:'A number is 5 less than half of another.',
+    chunks:[
+      {span:'A number', math:'a =', opts:['a =', '5 =', 'a + 5', 'half ='], correct:'a =', why:'name the unknown'},
+      {span:'half of another', math:'n/2', opts:['n/2', '2n', 'n − 2', '2 + n'], correct:'n/2', why:'"half of" = ÷2'},
+      {span:'5 less than that', math:'− 5', opts:['− 5', '5 −', '+ 5', '× 5'], correct:'− 5', why:'"less than" subtracts AFTER (this is THE trap)'},
+    ],
+    full:'a = n/2 − 5'
+  },
+  {
+    text:'Three times the difference of x and 2 is 18.',
+    chunks:[
+      {span:'the difference of x and 2', math:'(x − 2)', opts:['(x − 2)', '(2 − x)', '(x + 2)', 'x · 2'], correct:'(x − 2)', why:'"difference of x and 2" → x first'},
+      {span:'three times that', math:'3 ·', opts:['3 ·', '+ 3', '/ 3', '3 +'], correct:'3 ·', why:'"times" = ×'},
+      {span:'is 18', math:'= 18', opts:['= 18', '+ 18', '· 18', '/ 18'], correct:'= 18', why:'"is" = equals'},
+    ],
+    full:'3(x − 2) = 18'
+  },
+  {
+    text:'7 less than four times y is 21.',
+    chunks:[
+      {span:'four times y', math:'4y', opts:['4y', 'y/4', 'y + 4', '4 + y'], correct:'4y', why:'"times" = ×'},
+      {span:'7 less than that', math:'− 7', opts:['− 7', '7 −', '+ 7', '· 7'], correct:'− 7', why:'"less than" reverses — 4y first, then minus 7'},
+      {span:'is 21', math:'= 21', opts:['= 21', '+ 21', '21 −', '· 21'], correct:'= 21', why:'"is" = equals'},
+    ],
+    full:'4y − 7 = 21'
+  },
+  {
+    text:'The product of 3 and (n + 2) is 21.',
+    chunks:[
+      {span:'product of 3 and (n + 2)', math:'3(n + 2)', opts:['3(n + 2)', '3 + n + 2', '3/(n+2)', 'n + 2 + 3'], correct:'3(n + 2)', why:'"product" = ×'},
+      {span:'is 21', math:'= 21', opts:['= 21', '+ 21', '21 −', '· 21'], correct:'= 21', why:'"is" = equals'},
+    ],
+    full:'3(n + 2) = 21'
+  },
+];
+let R = 0, score = 0, step = 0, building = '';
+
+function setRound(){
+  const r = ROUNDS[R];
+  step = 0; building = '';
+  document.getElementById('wd-round').textContent = R+1;
+  // Render sentence with chunks highlighted
+  let html = r.text;
+  r.chunks.forEach((c, i) => {
+    html = html.replace(c.span, `<span class="wd-chunk" data-idx="${i}">${c.span}</span>`);
+  });
+  document.getElementById('wd-sentence').innerHTML = html;
+  document.getElementById('wd-builder').textContent = '_';
+  document.getElementById('wd-status').className = 'wd-status';
+  document.getElementById('wd-status').textContent = 'Click chunk #' + (step+1) + ' in the sentence above.';
+  highlightChunk();
+  renderOptions();
+}
+
+function highlightChunk(){
+  document.querySelectorAll('.wd-chunk').forEach(el => el.classList.remove('active'));
+  const r = ROUNDS[R];
+  const target = document.querySelector(`.wd-chunk[data-idx="${step}"]`);
+  if(target && !target.classList.contains('locked')) target.classList.add('active');
+  document.getElementById('wd-now').textContent = step < r.chunks.length ? 'Translating: "' + r.chunks[step].span + '"' : 'Done.';
+}
+
+function renderOptions(){
+  const r = ROUNDS[R];
+  const opts = document.getElementById('wd-options');
+  if(step >= r.chunks.length){
+    opts.innerHTML = '';
+    return;
+  }
+  const c = r.chunks[step];
+  opts.innerHTML = c.opts.map(o => `<button class="wd-opt" data-val="${o}">${o}</button>`).join('');
+  opts.querySelectorAll('button').forEach(b => b.onclick = () => choose(b));
+}
+
+function choose(btn){
+  const r = ROUNDS[R];
+  const c = r.chunks[step];
+  const val = btn.dataset.val;
+  document.querySelectorAll('.wd-opt').forEach(b => b.disabled = true);
+  if(val === c.correct){
+    btn.classList.add('right');
+    btn.innerHTML = val + '<span class="why">' + c.why + '</span>';
+    // Lock the chunk
+    const chunkEl = document.querySelector(`.wd-chunk[data-idx="${step}"]`);
+    chunkEl.classList.remove('active');
+    chunkEl.classList.add('locked');
+    chunkEl.textContent = val;
+    building = (building ? building + ' ' : '') + val;
+    document.getElementById('wd-builder').textContent = building;
+    step++;
+    setTimeout(()=>{
+      if(step >= r.chunks.length){
+        finalize(true);
+      } else {
+        highlightChunk();
+        renderOptions();
+        document.getElementById('wd-status').className='wd-status';
+        document.getElementById('wd-status').textContent='Click chunk #'+(step+1)+'.';
+      }
+    }, 700);
+  } else {
+    btn.classList.add('wrong');
+    btn.innerHTML = val + '<span class="why">Try again. Watch the order: "' + c.why + '"</span>';
+    setTimeout(()=>{
+      document.querySelectorAll('.wd-opt').forEach(b => { b.disabled=false; b.classList.remove('wrong'); b.innerHTML = b.dataset.val; });
+    }, 1500);
+  }
+}
+
+function finalize(success){
+  const r = ROUNDS[R];
+  document.getElementById('wd-builder').textContent = r.full;
+  if(success){
+    score++;
+    document.getElementById('wd-score').textContent = score;
+    document.getElementById('wd-status').className='wd-status good';
+    document.getElementById('wd-status').textContent = 'Translation: ' + r.full;
+  }
+}
+
+document.getElementById('wd-next').onclick = () => { R = (R+1) % ROUNDS.length; setRound(); };
+document.getElementById('wd-reset').onclick = setRound;
+
+setRound();
+</script>
+</body>
+</html>

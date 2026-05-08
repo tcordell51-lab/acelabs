@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Work / Rate Decoder · AceTheDAT QR</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js"></script>
+<style>
+:root{
+  --bg:#f5f0e8; --paper:#fffdf7; --paper-2:#f9f3e6; --paper-3:#f3ecdb;
+  --sb:#0d2018; --ink:#0f1814; --ink-2:#3a4a42; --ink-mute:#6e7c74;
+  --gold:#C9A84C; --gold-m:#E2C97A; --gold-d:#8C7235; --gold-glow:rgba(201,168,76,0.35);
+  --teal:#1B3A2D; --teal-2:#2A5240; --teal-3:#3A6B54;
+  --line:rgba(13,32,24,0.12); --line-2:rgba(13,32,24,0.06); --line-strong:rgba(13,32,24,0.22);
+  --trap:#C25B3F; --trap-bg:#fbe7df; --trap-d:#8a3d28;
+  --good:#5FA874; --good-bg:#e3efe6; --good-d:#3e7c54;
+  --info:#6A8AA8; --info-bg:#e6edf4;
+  --shadow:0 1px 3px rgba(13,32,24,0.06), 0 8px 24px rgba(13,32,24,0.04);
+}
+*{box-sizing:border-box} html,body{margin:0;padding:0}
+body{font-family:'DM Sans',system-ui,sans-serif; background:var(--bg); color:var(--ink); line-height:1.6; min-height:100vh;
+  background-image:radial-gradient(1200px 600px at 15% -10%, rgba(201,168,76,0.07), transparent 60%), radial-gradient(900px 500px at 85% 110%, rgba(27,58,45,0.06), transparent 60%);}
+.serif{font-family:'Playfair Display',serif} .mono{font-family:'JetBrains Mono',monospace}
+.wrap{max-width:880px; margin:0 auto; padding:32px 22px 120px}
+.head{margin-bottom:22px}
+.head .badge{display:inline-flex; align-items:center; gap:8px; padding:5px 12px; background:rgba(201,168,76,0.18); border:1px solid rgba(201,168,76,0.4); border-radius:20px; font-size:11px; letter-spacing:0.16em; color:var(--gold-d); font-weight:700; text-transform:uppercase; margin-bottom:14px}
+.head .badge .pulse{width:8px; height:8px; border-radius:50%; background:var(--gold); box-shadow:0 0 0 0 var(--gold-glow); animation:pulse 1.8s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 var(--gold-glow)} 70%{box-shadow:0 0 0 8px rgba(201,168,76,0)} 100%{box-shadow:0 0 0 0 rgba(201,168,76,0)}}
+.head h1{font-family:'Playfair Display',serif; font-size:42px; font-weight:700; line-height:1.05; margin:0 0 10px; letter-spacing:-0.02em}
+.head h1 em{font-style:italic; color:var(--gold-d); font-weight:400}
+.head .lede{font-size:16px; color:var(--ink-2); max-width:640px; line-height:1.55; margin:0}
+
+.qbar{display:flex; gap:6px; margin:18px 0 14px; flex-wrap:wrap; align-items:center}
+.qbar .lbl{font-size:10px; letter-spacing:0.18em; text-transform:uppercase; color:var(--ink-mute); font-weight:600; margin-right:6px}
+.qchip{width:34px; height:34px; border-radius:8px; border:1px solid var(--line); background:var(--paper); display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono',monospace; font-size:13px; font-weight:700; color:var(--ink-mute); cursor:pointer; transition:all 0.15s}
+.qchip:hover{border-color:var(--gold); transform:translateY(-1px)}
+.qchip.active{background:var(--gold); border-color:var(--gold-d); color:var(--sb); box-shadow:var(--shadow)}
+.qchip.done{background:var(--good-bg); border-color:var(--good); color:var(--good-d)}
+.qchip.done.active{background:var(--gold); color:var(--sb); border-color:var(--gold-d)}
+
+.steps{display:flex; gap:6px; margin:14px 0 18px; flex-wrap:wrap}
+.step-pill{flex:1; min-width:140px; padding:10px 12px; border-radius:9px; background:var(--paper-2); border:1px solid var(--line); font-size:12px; transition:all 0.15s; display:flex; gap:9px; align-items:center}
+.step-pill.active{background:var(--gold); color:var(--sb); border-color:var(--gold-d); font-weight:600}
+.step-pill.done{background:var(--good-bg); border-color:var(--good); color:var(--good-d)}
+.step-pill .num{width:20px; height:20px; border-radius:50%; background:var(--sb); color:#fff; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:700; font-family:'JetBrains Mono',monospace; flex-shrink:0}
+.step-pill.active .num{background:var(--sb); color:var(--gold-m)}
+.step-pill.done .num{background:var(--good); color:#fff}
+.step-pill .lbl{flex:1; line-height:1.2}
+.step-pill .lbl .ttl{font-weight:600; display:block}
+.step-pill .lbl .sub{font-size:10.5px; opacity:0.85}
+
+.card{background:var(--paper); border:1px solid var(--line); border-radius:14px; padding:22px 24px; box-shadow:var(--shadow); margin-bottom:14px}
+.card-h{display:flex; gap:12px; align-items:flex-start; margin-bottom:14px; padding-bottom:10px; border-bottom:1px dashed var(--line)}
+.card-h .mark{width:34px; height:34px; flex-shrink:0; border-radius:9px; background:linear-gradient(135deg,var(--gold) 0%, var(--gold-d) 100%); display:flex; align-items:center; justify-content:center; color:#fff; font-family:'JetBrains Mono',monospace; font-size:13px; font-weight:700}
+.card-h .ttl{flex:1}
+.card-h h3{font-family:'Playfair Display',serif; font-size:20px; font-weight:700; line-height:1.15; margin:0 0 2px}
+.card-h h3 em{font-style:italic; color:var(--gold-d); font-weight:400}
+.card-h .sub{font-size:12px; color:var(--ink-mute)}
+
+.problem{font-size:18px; line-height:1.7; padding:18px 20px; background:var(--paper-2); border:1px solid var(--line); border-left:4px solid var(--gold); border-radius:10px; color:var(--ink); font-family:'Playfair Display', serif}
+.problem .ask{display:block; margin-top:10px; font-size:14.5px; color:var(--ink-2); font-family:'DM Sans', sans-serif; font-style:italic}
+
+.token{display:inline-block; padding:1px 4px; border-radius:5px; cursor:pointer; transition:all 0.18s; border:1.5px solid transparent}
+.token.selectable:hover{background:rgba(201,168,76,0.18); border-color:var(--gold)}
+.token.picked{background:var(--gold); color:var(--sb); border-color:var(--gold-d); font-weight:600; font-family:'JetBrains Mono',monospace}
+.token.picked.correct{background:var(--good); color:#fff; border-color:var(--good-d)}
+.token.picked.wrong{background:var(--trap); color:#fff; border-color:var(--trap-d)}
+
+.var-tray{display:flex; gap:8px; flex-wrap:wrap; margin-top:12px; padding:12px 14px; background:var(--paper-3); border:1px dashed var(--line-strong); border-radius:9px; min-height:50px; align-items:center}
+.var-tray .ph{font-size:12px; color:var(--ink-mute)}
+.var-pill{display:inline-flex; align-items:center; gap:6px; padding:5px 10px; background:var(--gold); color:var(--sb); font-family:'JetBrains Mono',monospace; font-size:13px; font-weight:700; border-radius:7px; border:1px solid var(--gold-d); cursor:grab}
+.var-pill.dragging{opacity:0.5}
+.var-pill .x{font-size:11px; opacity:0.6; cursor:pointer; padding:0 3px}
+.var-pill .x:hover{opacity:1}
+
+.skeleton{font-family:'JetBrains Mono',monospace; font-size:22px; line-height:1.6; text-align:center; padding:22px 18px; background:var(--paper-2); border:1px solid var(--line); border-radius:10px; color:var(--ink); letter-spacing:0.02em}
+.skeleton .frac{display:inline-flex; flex-direction:column; align-items:center; vertical-align:middle; margin:0 4px}
+.skeleton .frac .top, .skeleton .frac .bot{display:flex; align-items:center; justify-content:center; padding:2px 6px}
+.skeleton .frac .top{border-bottom:2px solid var(--ink); min-width:60px}
+.skeleton .frac .bot{padding-top:2px}
+.slot{display:inline-flex; align-items:center; justify-content:center; min-width:60px; min-height:32px; padding:3px 8px; border:2px dashed var(--gold); border-radius:7px; background:var(--paper); margin:0 2px; vertical-align:middle; font-weight:700; transition:all 0.2s}
+.slot.over{background:var(--gold-glow); border-style:solid; transform:scale(1.05)}
+.slot.filled{background:var(--gold); color:var(--sb); border-style:solid}
+.slot.filled.correct{background:var(--good); color:#fff; border-color:var(--good-d)}
+.slot.filled.wrong{background:var(--trap); color:#fff; border-color:var(--trap-d)}
+.slot .label{font-size:9px; letter-spacing:0.1em; text-transform:uppercase; opacity:0.8; font-family:'DM Sans', sans-serif; font-weight:600}
+
+.solve-row{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:12px}
+@media (max-width:680px){.solve-row{grid-template-columns:1fr}}
+.field{display:flex; flex-direction:column; gap:5px; padding:11px 13px; background:var(--paper-2); border:1px solid var(--line); border-radius:9px}
+.field .lbl{font-size:10.5px; letter-spacing:0.14em; text-transform:uppercase; color:var(--ink-mute); font-weight:700}
+.field input{background:var(--paper); border:1.5px solid var(--line); border-radius:7px; padding:9px 12px; font-family:'JetBrains Mono',monospace; font-size:15px; color:var(--ink); outline:none}
+.field input:focus{border-color:var(--gold); box-shadow:0 0 0 3px rgba(201,168,76,0.18)}
+.field input.correct{border-color:var(--good); background:var(--good-bg); color:var(--good-d)}
+.field input.wrong{border-color:var(--trap); background:var(--trap-bg); color:var(--trap-d)}
+.field .units{font-size:11px; color:var(--ink-mute); font-style:italic}
+
+.feedback{margin-top:14px; padding:13px 16px; border-radius:9px; font-size:13.5px; line-height:1.55; display:none; border:1px solid var(--line); background:var(--paper-2)}
+.feedback.show{display:block}
+.feedback.good{border-color:var(--good); background:var(--good-bg); color:var(--good-d)}
+.feedback.bad{border-color:var(--trap); background:var(--trap-bg); color:var(--trap-d)}
+.feedback .lbl{font-size:10px; letter-spacing:0.18em; font-weight:700; text-transform:uppercase; display:block; margin-bottom:6px; opacity:0.78}
+.feedback b{font-weight:700}
+
+.sanity{margin-top:14px; padding:13px 16px; background:rgba(106,138,168,0.10); border-left:3px solid var(--info); border-radius:0 9px 9px 0; font-size:13.5px; color:var(--ink-2); line-height:1.55; display:none}
+.sanity.show{display:block}
+.sanity .lbl{font-size:10px; letter-spacing:0.16em; font-weight:700; text-transform:uppercase; color:var(--info); display:block; margin-bottom:5px}
+
+.btnrow{display:flex; gap:8px; margin-top:14px; align-items:center; flex-wrap:wrap}
+.btn{display:inline-flex; align-items:center; gap:6px; padding:8px 16px; border-radius:8px; border:1px solid var(--line); background:var(--paper); color:var(--ink); font-size:13.5px; font-weight:600; cursor:pointer; transition:all 0.15s; font-family:inherit}
+.btn:hover{border-color:var(--gold); transform:translateY(-1px); box-shadow:var(--shadow)}
+.btn.primary{background:var(--teal); color:#fff; border-color:var(--teal)}
+.btn.primary:hover{background:var(--teal-2)}
+.btn.gold{background:var(--gold); color:var(--sb); border-color:var(--gold)}
+.btn.gold:hover{background:var(--gold-m)}
+.btn.ghost{background:transparent}
+.btn:disabled{opacity:0.45; cursor:not-allowed; transform:none}
+.btnrow .spacer{flex:1}
+.score{display:inline-flex; align-items:center; gap:8px; padding:8px 14px; background:var(--paper-3); border:1px solid var(--line); border-radius:9px; font-size:12px; font-weight:600; color:var(--ink-2)}
+.score b{color:var(--gold-d); font-family:'JetBrains Mono', monospace; font-size:14px}
+
+.celebration{text-align:center; padding:30px 18px; background:linear-gradient(135deg, var(--good-bg) 0%, rgba(201,168,76,0.18) 100%); border:1px solid var(--good); border-radius:14px; margin-top:14px; display:none}
+.celebration.show{display:block}
+.celebration h2{font-family:'Playfair Display', serif; font-size:28px; margin:0 0 6px; color:var(--good-d)}
+.celebration h2 em{font-style:italic; color:var(--gold-d); font-weight:400}
+.celebration p{margin:0; color:var(--ink-2); font-size:14px}
+
+.legend{display:flex; gap:12px; flex-wrap:wrap; font-size:11.5px; margin-top:8px; color:var(--ink-mute)}
+.legend .k{display:flex; align-items:center; gap:6px}
+.legend .swatch{width:13px; height:13px; border-radius:3px; border:1px solid var(--line)}
+.legend .swatch.gold{background:var(--gold); border-color:var(--gold-d)}
+.legend .swatch.good{background:var(--good); border-color:var(--good-d)}
+.legend .swatch.trap{background:var(--trap); border-color:var(--trap-d)}
+</style>
+</head>
+<body>
+
+<div class="wrap" id="app">
+  <div class="head">
+    <span class="badge"><span class="pulse"></span>Work / Rate Decoder</span>
+    <h1>Rates <em>add.</em> Times don't.</h1>
+    <p class="lede">When two workers, pipes, or pumps act on the same job, the move is to flip each time into a per-hour rate, sum the rates, then flip back. The skeleton: <b>1/t = 1/a + 1/b</b>. Five problems.</p>
+  </div>
+
+  <div class="qbar" id="qbar"><span class="lbl">Problem</span></div>
+  <div class="steps" id="steps">
+    <div class="step-pill active" data-step="1"><span class="num">1</span><span class="lbl"><span class="ttl">Highlight</span><span class="sub">find each time</span></span></div>
+    <div class="step-pill" data-step="2"><span class="num">2</span><span class="lbl"><span class="ttl">Build skeleton</span><span class="sub">1/t = 1/a + 1/b</span></span></div>
+    <div class="step-pill" data-step="3"><span class="num">3</span><span class="lbl"><span class="ttl">Solve &amp; verify</span><span class="sub">flip back to time</span></span></div>
+  </div>
+
+  <div class="card" id="step1-card">
+    <div class="card-h"><div class="mark">01</div><div class="ttl"><h3>Highlight each <em>solo time</em></h3><div class="sub">Tap the times each worker takes alone, plus the unknown together-time.</div></div></div>
+    <div class="problem" id="problem-text"></div>
+    <div class="var-tray" id="var-tray"><span class="ph">Picked variables will appear here.</span></div>
+    <div class="legend"><span class="k"><span class="swatch gold"></span>picked</span><span class="k"><span class="swatch good"></span>correct</span><span class="k"><span class="swatch trap"></span>wrong</span></div>
+    <div class="feedback" id="step1-feedback"></div>
+    <div class="btnrow">
+      <button class="btn ghost" id="step1-clear">Clear picks</button>
+      <div class="spacer"></div>
+      <button class="btn primary" id="step1-check">Check picks</button>
+      <button class="btn gold" id="step1-next" disabled>Next: build skeleton</button>
+    </div>
+  </div>
+
+  <div class="card" id="step2-card" style="display:none">
+    <div class="card-h"><div class="mark">02</div><div class="ttl"><h3>Drop into the <em>rate skeleton</em></h3><div class="sub">Each solo time becomes a per-hour rate. Rates add to give the combined rate.</div></div></div>
+    <div class="skeleton" id="skeleton"></div>
+    <div class="var-tray" id="var-tray-2"></div>
+    <div class="feedback" id="step2-feedback"></div>
+    <div class="btnrow">
+      <button class="btn ghost" id="step2-back">Back</button>
+      <button class="btn ghost" id="step2-reset">Reset slots</button>
+      <div class="spacer"></div>
+      <button class="btn primary" id="step2-check">Check skeleton</button>
+      <button class="btn gold" id="step2-next" disabled>Next: solve</button>
+    </div>
+  </div>
+
+  <div class="card" id="step3-card" style="display:none">
+    <div class="card-h"><div class="mark">03</div><div class="ttl"><h3>Solve &amp; <em>sanity-check</em></h3><div class="sub">Combined time must be smaller than either solo time. If it isn't, you flipped something wrong.</div></div></div>
+    <div class="skeleton" id="skeleton-filled" style="font-size:18px"></div>
+    <div class="solve-row">
+      <div class="field"><span class="lbl">Combined time t</span><input type="text" id="answer-input" placeholder="number"><span class="units" id="units-hint">hours</span></div>
+      <div class="field"><span class="lbl">Sanity check</span><input type="text" id="sanity-input" placeholder="smaller than both solo times?"><span class="units">one short sentence</span></div>
+    </div>
+    <div class="feedback" id="step3-feedback"></div>
+    <div class="sanity" id="step3-sanity"></div>
+    <div class="btnrow">
+      <button class="btn ghost" id="step3-back">Back</button>
+      <div class="spacer"></div>
+      <span class="score">Decoder: <b id="score">0/5</b></span>
+      <button class="btn primary" id="step3-check">Check answer</button>
+      <button class="btn gold" id="step3-next" disabled>Next problem</button>
+    </div>
+  </div>
+
+  <div class="celebration" id="celeb"><h2>Rates <em>locked.</em></h2><p>Five work-rate problems decoded. Flip-add-flip is now reflex.</p></div>
+</div>
+
+<script>
+/* Skeleton: 1/t = 1/a + 1/b   (drain variants subtract; net-rate variants stay additive after sign) */
+const PROBLEMS = [
+  {
+    id:'wr-1',
+    text:'A pipe fills a tank in 4 hours. A second pipe fills the same tank in 6 hours. Working together, how long do they take?',
+    ask:'Find combined time t (hours).',
+    tokens:[
+      {t:'A pipe fills a tank in '},
+      {t:'4 hours', v:'a=4', kind:'time'},
+      {t:'. A second pipe fills the same tank in '},
+      {t:'6 hours', v:'b=6', kind:'time'},
+      {t:'. Working together, how long do they take, '},
+      {t:'t', v:'t', kind:'unknown'},
+      {t:'?'}
+    ],
+    expect:['a=4','b=6','t'],
+    skeletonHtml:'<span class="frac"><span class="top">1</span><span class="bot"><span class="slot" data-slot="t"><span class="label">t</span></span></span></span> &nbsp;=&nbsp; <span class="frac"><span class="top">1</span><span class="bot"><span class="slot" data-slot="a"><span class="label">a</span></span></span></span> &nbsp;+&nbsp; <span class="frac"><span class="top">1</span><span class="bot"><span class="slot" data-slot="b"><span class="label">b</span></span></span></span>',
+    slots:{t:'t', a:'a=4', b:'b=6'},
+    skelDisplay:'1/t = 1/4 + 1/6',
+    answer:2.4, tol:0.01,
+    sanity:'1/4 + 1/6 = 3/12 + 2/12 = 5/12 per hour. t = 12/5 = 2.4 hr — smaller than 4 and 6, as it must be.',
+    answerHint:'hours (decimal ok)'
+  },
+  {
+    id:'wr-2',
+    text:'Sam paints a wall in 3 hours. Lee paints the same wall in 5 hours. Together, what fraction of the wall do they paint per hour?',
+    ask:'Find combined per-hour rate (1/t).',
+    tokens:[
+      {t:'Sam paints a wall in '},
+      {t:'3 hours', v:'a=3', kind:'time'},
+      {t:'. Lee paints the same wall in '},
+      {t:'5 hours', v:'b=5', kind:'time'},
+      {t:'. Together, what fraction per hour, '},
+      {t:'1/t', v:'1/t', kind:'unknown'},
+      {t:'?'}
+    ],
+    expect:['a=3','b=5','1/t'],
+    skeletonHtml:'<span class="frac"><span class="top">1</span><span class="bot"><span class="slot" data-slot="t"><span class="label">t</span></span></span></span> &nbsp;=&nbsp; <span class="frac"><span class="top">1</span><span class="bot"><span class="slot" data-slot="a"><span class="label">a</span></span></span></span> &nbsp;+&nbsp; <span class="frac"><span class="top">1</span><span class="bot"><span class="slot" data-slot="b"><span class="label">b</span></span></span></span>',
+    slots:{t:'1/t', a:'a=3', b:'b=5'},
+    skelDisplay:'1/t = 1/3 + 1/5',
+    /* answer is 1/t = 8/15 ≈ 0.5333 */
+    answer:0.5333, tol:0.01,
+    sanity:'1/3 + 1/5 = 5/15 + 3/15 = 8/15 ≈ 0.533 of the wall per hour. Inverted: t = 15/8 ≈ 1.88 hr.',
+    answerHint:'fraction or decimal of the wall per hour'
+  },
+  {
+    id:'wr-3',
+    text:'An inlet fills a tank in 6 hours. A drain empties the full tank in 9 hours. With both open, how long to fill?',
+    ask:'Find net fill time t (hours).',
+    tokens:[
+      {t:'An inlet fills a tank in '},
+      {t:'6 hours', v:'a=6', kind:'time'},
+      {t:'. A drain empties the full tank in '},
+      {t:'9 hours', v:'b=9', kind:'drain'},
+      {t:'. With both open, how long to fill, '},
+      {t:'t', v:'t', kind:'unknown'},
+      {t:'?'}
+    ],
+    expect:['a=6','b=9','t'],
+    skeletonHtml:'<span class="frac"><span class="top">1</span><span class="bot"><span class="slot" data-slot="t"><span class="label">t</span></span></span></span> &nbsp;=&nbsp; <span class="frac"><span class="top">1</span><span class="bot"><span class="slot" data-slot="a"><span class="label">fill</span></span></span></span> &nbsp;−&nbsp; <span class="frac"><span class="top">1</span><span class="bot"><span class="slot" data-slot="b"><span class="label">drain</span></span></span></span>',
+    slots:{t:'t', a:'a=6', b:'b=9'},
+    skelDisplay:'1/t = 1/6 − 1/9',
+    answer:18, tol:0.1,
+    sanity:'1/6 − 1/9 = 3/18 − 2/18 = 1/18 per hour. t = 18 hr. Larger than 6, smaller than infinity — drain slows the fill.',
+    answerHint:'hours'
+  },
+  {
+    id:'wr-4',
+    text:'Machine A produces a batch in 2 hours. Machine B produces the same batch in 3 hours. Together, how long for one batch?',
+    ask:'Find combined time t.',
+    tokens:[
+      {t:'Machine A produces a batch in '},
+      {t:'2 hours', v:'a=2', kind:'time'},
+      {t:'. Machine B produces the same batch in '},
+      {t:'3 hours', v:'b=3', kind:'time'},
+      {t:'. Together, how long, '},
+      {t:'t', v:'t', kind:'unknown'},
+      {t:'?'}
+    ],
+    expect:['a=2','b=3','t'],
+    skeletonHtml:'<span class="frac"><span class="top">1</span><span class="bot"><span class="slot" data-slot="t"><span class="label">t</span></span></span></span> &nbsp;=&nbsp; <span class="frac"><span class="top">1</span><span class="bot"><span class="slot" data-slot="a"><span class="label">a</span></span></span></span> &nbsp;+&nbsp; <span class="frac"><span class="top">1</span><span class="bot"><span class="slot" data-slot="b"><span class="label">b</span></span></span></span>',
+    slots:{t:'t', a:'a=2', b:'b=3'},
+    skelDisplay:'1/t = 1/2 + 1/3',
+    answer:1.2, tol:0.01,
+    sanity:'1/2 + 1/3 = 5/6 per hour. t = 6/5 = 1.2 hr — smaller than 2 and 3.',
+    answerHint:'hours'
+  },
+  {
+    id:'wr-5',
+    text:'Painter X finishes a job in 8 hours. Together, X and Y finish in 3 hours. How long does Y take alone?',
+    ask:'Find Y\'s solo time b.',
+    tokens:[
+      {t:'Painter X finishes a job in '},
+      {t:'8 hours', v:'a=8', kind:'time'},
+      {t:'. Together, X and Y finish in '},
+      {t:'3 hours', v:'t=3', kind:'time'},
+      {t:'. How long does Y take alone, '},
+      {t:'b', v:'b', kind:'unknown'},
+      {t:'?'}
+    ],
+    expect:['a=8','t=3','b'],
+    skeletonHtml:'<span class="frac"><span class="top">1</span><span class="bot"><span class="slot" data-slot="t"><span class="label">together</span></span></span></span> &nbsp;=&nbsp; <span class="frac"><span class="top">1</span><span class="bot"><span class="slot" data-slot="a"><span class="label">solo X</span></span></span></span> &nbsp;+&nbsp; <span class="frac"><span class="top">1</span><span class="bot"><span class="slot" data-slot="b"><span class="label">solo Y</span></span></span></span>',
+    slots:{t:'t=3', a:'a=8', b:'b'},
+    skelDisplay:'1/3 = 1/8 + 1/b',
+    answer:4.8, tol:0.05,
+    sanity:'1/b = 1/3 − 1/8 = 8/24 − 3/24 = 5/24. b = 24/5 = 4.8 hr. Y alone is slower than the team and faster than X — checks.',
+    answerHint:'hours'
+  }
+];
+
+/* shared decoder engine */
+const state = { qIdx:0, picks:[], slotFills:{}, completed:Array(PROBLEMS.length).fill(false), step:1 };
+
+function renderQbar(){
+  const bar = document.getElementById('qbar');
+  bar.innerHTML = '<span class="lbl">Problem</span>';
+  PROBLEMS.forEach((p,i)=>{
+    const el = document.createElement('div');
+    el.className = 'qchip' + (i===state.qIdx?' active':'') + (state.completed[i]?' done':'');
+    el.textContent = (i+1);
+    el.addEventListener('click', ()=>{ state.qIdx=i; loadProblem(); });
+    bar.appendChild(el);
+  });
+  document.getElementById('score').textContent = state.completed.filter(Boolean).length + '/' + PROBLEMS.length;
+}
+
+function renderProblem(){
+  const p = PROBLEMS[state.qIdx];
+  const elt = document.getElementById('problem-text');
+  elt.innerHTML = '';
+  p.tokens.forEach((tk,i)=>{
+    if (tk.v){
+      const span = document.createElement('span');
+      span.className = 'token selectable';
+      span.dataset.v = tk.v; span.dataset.i = i;
+      span.textContent = tk.t;
+      span.addEventListener('click', ()=>togglePick(i, tk.v, span));
+      elt.appendChild(span);
+    } else elt.appendChild(document.createTextNode(tk.t));
+  });
+  const ask = document.createElement('span'); ask.className = 'ask'; ask.textContent = p.ask; elt.appendChild(ask);
+  state.picks = []; renderTray();
+  document.getElementById('step1-feedback').classList.remove('show');
+  document.getElementById('step1-next').disabled = true;
+}
+
+function togglePick(i, v, el){
+  if (el.classList.contains('picked')){
+    el.classList.remove('picked','correct','wrong');
+    state.picks = state.picks.filter(x=>x.i!==i);
+  } else {
+    el.classList.add('picked');
+    state.picks.push({i,v,el});
+    anime({targets:el, scale:[1,1.18,1], duration:280, easing:'easeOutQuad'});
+  }
+  renderTray();
+}
+
+function renderTray(){
+  const tray = document.getElementById('var-tray');
+  if (!state.picks.length){ tray.innerHTML = '<span class="ph">Picked variables will appear here.</span>'; return; }
+  tray.innerHTML = '';
+  state.picks.forEach(pk=>{
+    const pill = document.createElement('span');
+    pill.className = 'var-pill'; pill.draggable = true; pill.dataset.v = pk.v;
+    pill.innerHTML = pk.v + ' <span class="x" title="remove">×</span>';
+    pill.querySelector('.x').addEventListener('click',(e)=>{
+      e.stopPropagation(); pk.el.classList.remove('picked','correct','wrong');
+      state.picks = state.picks.filter(x=>x!==pk); renderTray();
+    });
+    pill.addEventListener('dragstart',(e)=>{ pill.classList.add('dragging'); e.dataTransfer.setData('text/v', pk.v); });
+    pill.addEventListener('dragend', ()=>pill.classList.remove('dragging'));
+    tray.appendChild(pill);
+  });
+}
+
+function checkPicks(){
+  const p = PROBLEMS[state.qIdx];
+  const wanted = new Set(p.expect); const got = new Set(state.picks.map(x=>x.v));
+  let ok = true;
+  state.picks.forEach(pk=>{
+    pk.el.classList.remove('correct','wrong');
+    if (wanted.has(pk.v)) pk.el.classList.add('correct'); else { pk.el.classList.add('wrong'); ok=false; }
+  });
+  const missing = [...wanted].filter(v=>!got.has(v));
+  const fb = document.getElementById('step1-feedback');
+  fb.className = 'feedback show ' + (ok && missing.length===0?'good':'bad');
+  if (ok && missing.length===0){
+    fb.innerHTML = '<span class="lbl">Locked</span>You found <b>'+p.expect.join('</b>, <b>')+'</b>. Each solo time becomes a 1/time per-hour rate.';
+    document.getElementById('step1-next').disabled = false;
+  } else {
+    let msg = '<span class="lbl">Not yet</span>';
+    if (missing.length) msg += 'Missing: <b>'+missing.join('</b>, <b>')+'</b>. ';
+    msg += 'You need each solo time and the unknown.';
+    fb.innerHTML = msg;
+  }
+}
+
+function renderSkeleton(){
+  const p = PROBLEMS[state.qIdx];
+  document.getElementById('skeleton').innerHTML = p.skeletonHtml;
+  state.slotFills = {};
+  document.querySelectorAll('#skeleton .slot').forEach(slot=>{
+    slot.addEventListener('dragover',(e)=>{e.preventDefault(); slot.classList.add('over')});
+    slot.addEventListener('dragleave', ()=>slot.classList.remove('over'));
+    slot.addEventListener('drop',(e)=>{
+      e.preventDefault(); slot.classList.remove('over');
+      const v = e.dataTransfer.getData('text/v'); if (!v) return;
+      slot.classList.add('filled'); slot.classList.remove('correct','wrong');
+      slot.innerHTML = v; state.slotFills[slot.dataset.slot] = v;
+      anime({targets:slot, scale:[1,1.12,1], duration:280, easing:'easeOutQuad'});
+    });
+    slot.addEventListener('click', ()=>{
+      if (slot.classList.contains('filled')){
+        slot.classList.remove('filled','correct','wrong');
+        slot.innerHTML = '<span class="label">'+slot.dataset.slot+'</span>';
+        delete state.slotFills[slot.dataset.slot];
+      }
+    });
+  });
+  const tray2 = document.getElementById('var-tray-2'); tray2.innerHTML='';
+  state.picks.forEach(pk=>{
+    const pill = document.createElement('span');
+    pill.className = 'var-pill'; pill.draggable = true; pill.dataset.v = pk.v; pill.textContent = pk.v;
+    pill.addEventListener('dragstart',(e)=>{ pill.classList.add('dragging'); e.dataTransfer.setData('text/v', pk.v); });
+    pill.addEventListener('dragend', ()=>pill.classList.remove('dragging'));
+    tray2.appendChild(pill);
+  });
+  document.getElementById('step2-feedback').classList.remove('show');
+  document.getElementById('step2-next').disabled = true;
+}
+
+function checkSkeleton(){
+  const p = PROBLEMS[state.qIdx]; let ok = true;
+  Object.keys(p.slots).forEach(k=>{
+    const expect = p.slots[k]; const got = state.slotFills[k];
+    const slot = document.querySelector('.slot[data-slot="'+k+'"]'); if (!slot) return;
+    slot.classList.remove('correct','wrong');
+    if (got === expect) slot.classList.add('correct'); else { slot.classList.add('wrong'); ok=false; }
+  });
+  const fb = document.getElementById('step2-feedback');
+  fb.className = 'feedback show ' + (ok?'good':'bad');
+  if (ok){
+    fb.innerHTML = '<span class="lbl">Skeleton built</span>Canonical: <b>'+p.skelDisplay+'</b>. Solve for the unknown by inverting at the end.';
+    document.getElementById('step2-next').disabled = false;
+  } else {
+    fb.innerHTML = '<span class="lbl">Slot mismatch</span>The combined-rate slot goes on the left of the equals sign; solo times sit under their 1.';
+  }
+}
+
+function renderSolve(){
+  const p = PROBLEMS[state.qIdx];
+  document.getElementById('skeleton-filled').innerHTML = p.skelDisplay;
+  document.getElementById('answer-input').value = '';
+  document.getElementById('answer-input').classList.remove('correct','wrong');
+  document.getElementById('sanity-input').value = '';
+  document.getElementById('units-hint').textContent = p.answerHint || '';
+  document.getElementById('step3-feedback').classList.remove('show');
+  document.getElementById('step3-sanity').classList.remove('show');
+  document.getElementById('step3-next').disabled = true;
+}
+
+function checkAnswer(){
+  const p = PROBLEMS[state.qIdx];
+  const raw = document.getElementById('answer-input').value.trim();
+  let num = NaN;
+  if (raw.includes('/')){ const [a,b] = raw.split('/').map(s=>parseFloat(s.trim())); if(!isNaN(a)&&!isNaN(b)&&b!==0) num = a/b; }
+  else num = parseFloat(raw);
+  const fb = document.getElementById('step3-feedback'); const ai = document.getElementById('answer-input');
+  ai.classList.remove('correct','wrong');
+  if (isNaN(num)){
+    fb.className = 'feedback show bad';
+    fb.innerHTML = '<span class="lbl">Need a number</span>Decimal or fraction (e.g. 8/15) both work.';
+    ai.classList.add('wrong'); return;
+  }
+  const correct = Math.abs(num - p.answer) < (p.tol||0.05);
+  if (correct){
+    ai.classList.add('correct');
+    fb.className = 'feedback show good';
+    fb.innerHTML = '<span class="lbl">Decoded</span>Correct: <b>'+p.answer+'</b>. The trick was flipping each time into a rate before summing.';
+    const sn = document.getElementById('step3-sanity');
+    sn.className = 'sanity show';
+    sn.innerHTML = '<span class="lbl">Sanity check</span>'+p.sanity;
+    state.completed[state.qIdx] = true;
+    document.getElementById('step3-next').disabled = false;
+    document.getElementById('score').textContent = state.completed.filter(Boolean).length + '/' + PROBLEMS.length;
+    if (state.completed.every(Boolean)){ document.getElementById('celeb').classList.add('show'); }
+    renderQbar();
+  } else {
+    ai.classList.add('wrong');
+    fb.className = 'feedback show bad';
+    fb.innerHTML = '<span class="lbl">Off</span>Did you flip the combined rate back to time at the end? <b>'+p.skelDisplay+'</b> gives 1/t — invert it for t.';
+  }
+}
+
+function goStep(n){
+  state.step = n;
+  document.querySelectorAll('.step-pill').forEach(el=>{
+    const s = +el.dataset.step;
+    el.classList.toggle('active', s===n);
+    el.classList.toggle('done', s<n);
+  });
+  document.getElementById('step1-card').style.display = (n===1?'block':'none');
+  document.getElementById('step2-card').style.display = (n===2?'block':'none');
+  document.getElementById('step3-card').style.display = (n===3?'block':'none');
+  if (n===2) renderSkeleton();
+  if (n===3) renderSolve();
+}
+
+function loadProblem(){
+  document.getElementById('celeb').classList.remove('show');
+  renderQbar(); renderProblem(); goStep(1);
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+document.getElementById('step1-check').addEventListener('click', checkPicks);
+document.getElementById('step1-clear').addEventListener('click', ()=>{
+  state.picks.forEach(pk=>pk.el.classList.remove('picked','correct','wrong'));
+  state.picks=[]; renderTray();
+  document.getElementById('step1-feedback').classList.remove('show');
+  document.getElementById('step1-next').disabled = true;
+});
+document.getElementById('step1-next').addEventListener('click', ()=>goStep(2));
+document.getElementById('step2-back').addEventListener('click', ()=>goStep(1));
+document.getElementById('step2-reset').addEventListener('click', renderSkeleton);
+document.getElementById('step2-check').addEventListener('click', checkSkeleton);
+document.getElementById('step2-next').addEventListener('click', ()=>goStep(3));
+document.getElementById('step3-back').addEventListener('click', ()=>goStep(2));
+document.getElementById('step3-check').addEventListener('click', checkAnswer);
+document.getElementById('step3-next').addEventListener('click', ()=>{
+  if (state.qIdx < PROBLEMS.length-1){ state.qIdx++; loadProblem(); } else renderQbar();
+});
+
+loadProblem();
+</script>
+</body>
+</html>

@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>dec-arith · Decimal Place Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f5f0e8; --paper:#fffdf7; --paper-2:#f9f3e6;
+  --sb:#0d2018; --ink:#0f1814; --ink-2:#3a4a42; --ink-mute:#6e7c74;
+  --gold:#C9A84C; --gold-m:#E2C97A; --gold-d:#8C7235;
+  --teal:#1B3A2D; --teal-3:#3A6B54;
+  --line:rgba(13,32,24,0.12);
+  --trap:#C25B3F; --trap-bg:#fbe7df; --trap-d:#8a3d28;
+  --good:#5FA874; --good-bg:#e3efe6; --good-d:#3e7c54;
+  --shadow:0 1px 3px rgba(13,32,24,0.06), 0 8px 24px rgba(13,32,24,0.04);
+}
+*{box-sizing:border-box}
+body{margin:0; font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--ink); padding:32px 24px; line-height:1.5}
+.wrap{max-width:880px; margin:0 auto}
+h1{font-family:'Playfair Display',serif; font-size:36px; margin:0 0 4px; font-weight:700}
+h1 em{font-style:italic; color:var(--gold-d); font-weight:400}
+.lede{color:var(--ink-2); font-size:15px; margin:0 0 22px; max-width:640px}
+.card{background:var(--paper); border:1px solid var(--line); border-radius:16px; padding:24px 26px; box-shadow:var(--shadow); margin-bottom:18px}
+
+.da-prompt{font-family:'Playfair Display',serif; font-size:24px; line-height:1.35; text-align:center; padding:14px; background:var(--paper-2); border-radius:10px; margin-bottom:14px}
+.da-prompt .x{color:var(--gold-d); font-weight:700}
+
+.da-stage{display:flex; flex-direction:column; gap:14px; align-items:center; padding:18px 0}
+
+.da-row{display:flex; align-items:center; gap:14px; flex-wrap:wrap; justify-content:center}
+.da-num{
+  font-family:'JetBrains Mono',monospace; font-size:32px; font-weight:700; padding:10px 16px;
+  background:var(--paper); border:2px solid var(--line); border-radius:10px; letter-spacing:.04em;
+  position:relative; min-width:120px; text-align:center;
+}
+.da-num.gold{border-color:var(--gold); background:rgba(201,168,76,0.1)}
+.da-num.teal{border-color:var(--teal-3); background:rgba(58,107,84,0.08)}
+.da-num .digit{display:inline-block}
+.da-num .point{color:var(--gold-d); font-size:1.2em; padding:0 1px}
+.da-num .ghost-point{color:var(--ink-soft); opacity:.5; font-size:1.2em; padding:0 1px}
+
+.da-place-tag{font-size:9px; letter-spacing:.16em; text-transform:uppercase; color:var(--ink-mute); position:absolute; bottom:-18px; font-weight:600}
+
+.da-result{
+  font-family:'JetBrains Mono',monospace; font-size:38px; font-weight:700; padding:14px 24px;
+  background:linear-gradient(135deg, var(--gold) 0%, var(--gold-m) 100%); color:var(--sb);
+  border-radius:12px; letter-spacing:.04em; box-shadow:0 4px 14px rgba(201,168,76,0.4);
+}
+
+.da-decimals-track{
+  display:flex; gap:6px; align-items:center; padding:10px 14px; background:var(--paper-2);
+  border-radius:10px; border:1px solid var(--line); font-family:'JetBrains Mono',monospace;
+  font-size:14px; flex-wrap:wrap; justify-content:center;
+}
+.da-decimals-track .a{color:var(--gold-d); font-weight:700}
+.da-decimals-track .b{color:var(--teal); font-weight:700}
+.da-decimals-track .sum{color:var(--ink); font-weight:700; padding:2px 10px; background:var(--paper); border-radius:14px}
+
+.da-options{display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:14px}
+@media(max-width:640px){.da-options{grid-template-columns:1fr}}
+.da-opt{
+  padding:14px; border:1px solid var(--line); border-radius:10px; background:var(--paper);
+  cursor:pointer; font-family:'JetBrains Mono',monospace; font-size:18px; font-weight:700;
+  text-align:center; transition:all .15s; color:var(--ink);
+}
+.da-opt:hover{border-color:var(--gold); transform:translateY(-1px)}
+.da-opt.right{background:var(--good-bg); border-color:var(--good); color:var(--good-d)}
+.da-opt.wrong{background:var(--trap-bg); border-color:var(--trap); color:var(--trap-d)}
+
+.da-controls{display:flex; gap:10px; flex-wrap:wrap; margin-top:14px}
+.da-btn{padding:8px 14px; border-radius:8px; border:1px solid var(--line); background:var(--paper); font-size:13px; font-weight:600; cursor:pointer; font-family:inherit; color:var(--ink)}
+.da-btn:hover{border-color:var(--gold)}
+.da-btn.primary{background:var(--teal); color:#fff; border-color:var(--teal)}
+.da-btn.gold{background:var(--gold); color:var(--sb); border-color:var(--gold)}
+
+.da-mode{display:flex; gap:6px; margin-bottom:10px}
+.da-mode button{
+  padding:6px 14px; border-radius:18px; border:1px solid var(--line); background:var(--paper);
+  font-size:12px; font-weight:600; cursor:pointer; font-family:inherit; color:var(--ink);
+}
+.da-mode button.on{background:var(--teal); color:#fff; border-color:var(--teal)}
+
+.da-status{font-family:'Playfair Display',serif; font-style:italic; font-size:18px; color:var(--ink-2); min-height:30px; padding:6px 0; text-align:center}
+.da-status.good{color:var(--good-d)}
+.da-status.warn{color:var(--trap-d)}
+
+.da-hud{display:flex; justify-content:space-between; font-size:12px; color:var(--ink-mute); margin-bottom:8px; letter-spacing:.04em}
+.da-hud b{color:var(--gold-d); font-family:'JetBrains Mono',monospace}
+
+.trap-card{background:var(--trap-bg); border:1px solid var(--trap); border-left:4px solid var(--trap); border-radius:12px; padding:16px 20px; color:var(--trap-d)}
+.trap-card .lbl{font-size:10px; letter-spacing:.18em; font-weight:700; text-transform:uppercase; margin-bottom:6px}
+.trap-card p{margin:0; font-size:14px; line-height:1.55}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Decimal <em>Arithmetic</em></h1>
+  <p class="lede">For multiplication, sum the decimal places. Pick the right answer; if the point lands wrong, the widget shows you the off-by-10 and off-by-100 traps side by side.</p>
+
+  <div class="card">
+    <div class="da-hud">
+      <span>Round <b id="da-round">1</b> / 6</span>
+      <span>Score <b id="da-score">0</b></span>
+    </div>
+
+    <div class="da-mode">
+      <button class="on" data-op="mul">Multiply</button>
+      <button data-op="div">Divide</button>
+    </div>
+
+    <div class="da-prompt" id="da-prompt">0.6 <span class="x">×</span> 0.4 = ?</div>
+
+    <div class="da-stage">
+      <div class="da-row">
+        <div class="da-num gold" id="da-a">0.6 <span class="da-place-tag">1 dp</span></div>
+        <div style="font-family:'Playfair Display',serif; font-size:32px; color:var(--gold-d)" id="da-op">×</div>
+        <div class="da-num teal" id="da-b">0.4 <span class="da-place-tag">1 dp</span></div>
+      </div>
+
+      <div class="da-decimals-track" id="da-track">
+        <span>decimal places: <span class="a" id="da-a-dp">1</span> + <span class="b" id="da-b-dp">1</span> = <span class="sum" id="da-sum-dp">2</span></span>
+      </div>
+
+      <div class="da-options" id="da-options"></div>
+
+      <div class="da-result" id="da-result" style="display:none">0.24</div>
+    </div>
+
+    <div class="da-status" id="da-status">For ×: count dec places in each factor, sum them — that's where the point lands in the answer.</div>
+
+    <div class="da-controls">
+      <button class="da-btn primary" id="da-next">Next round</button>
+      <button class="da-btn" id="da-reset">Reset</button>
+    </div>
+  </div>
+
+  <div class="trap-card">
+    <div class="lbl">The Trap</div>
+    <p>Decimal placement errors. <b>0.6 × 0.4 = 0.24</b>, NOT 2.4 or 0.024. The DAT loves to put all three near each other. Add the decimal places of both factors — that count is where the point lands in the answer.</p>
+  </div>
+</div>
+
+<script>
+const ROUNDS_MUL = [
+  {a:0.6, b:0.4, ans:0.24, traps:[2.4, 0.024]},
+  {a:0.25, b:0.4, ans:0.1, traps:[1.0, 0.01]},
+  {a:1.5, b:0.2, ans:0.3, traps:[3.0, 0.03]},
+  {a:0.05, b:0.2, ans:0.01, traps:[0.1, 0.001]},
+  {a:1.2, b:0.5, ans:0.6, traps:[6.0, 0.06]},
+  {a:0.7, b:0.07, ans:0.049, traps:[0.49, 0.0049]},
+];
+const ROUNDS_DIV = [
+  {a:0.6, b:0.2, ans:3, traps:[0.3, 30]},
+  {a:1.5, b:0.3, ans:5, traps:[0.5, 50]},
+  {a:0.08, b:0.4, ans:0.2, traps:[2, 0.02]},
+  {a:0.024, b:0.6, ans:0.04, traps:[0.4, 4]},
+];
+let mode = 'mul', R = 0, score = 0;
+
+function dpCount(n){
+  const s = String(n);
+  const i = s.indexOf('.');
+  return i < 0 ? 0 : s.length - i - 1;
+}
+function rounds(){ return mode==='mul' ? ROUNDS_MUL : ROUNDS_DIV; }
+
+function setRound(){
+  const r = rounds()[R % rounds().length];
+  document.getElementById('da-round').textContent = (R%rounds().length)+1;
+  document.getElementById('da-prompt').innerHTML = r.a + ' <span class="x">' + (mode==='mul'?'×':'÷') + '</span> ' + r.b + ' = ?';
+  document.getElementById('da-a').innerHTML = r.a + ' <span class="da-place-tag">' + dpCount(r.a) + ' dp</span>';
+  document.getElementById('da-b').innerHTML = r.b + ' <span class="da-place-tag">' + dpCount(r.b) + ' dp</span>';
+  document.getElementById('da-op').textContent = mode==='mul' ? '×' : '÷';
+  if(mode==='mul'){
+    document.getElementById('da-track').innerHTML = `<span>decimal places: <span class="a">${dpCount(r.a)}</span> + <span class="b">${dpCount(r.b)}</span> = <span class="sum">${dpCount(r.a)+dpCount(r.b)}</span></span>`;
+  } else {
+    document.getElementById('da-track').innerHTML = `<span>shift point in BOTH numbers right by <span class="b">${dpCount(r.b)}</span> places, then divide whole numbers</span>`;
+  }
+  // Build options
+  const opts = [r.ans, ...r.traps].sort(()=>Math.random()-.5);
+  const el = document.getElementById('da-options');
+  el.innerHTML = opts.map(o => `<button class="da-opt" data-val="${o}">${o}</button>`).join('');
+  el.querySelectorAll('.da-opt').forEach(b => b.onclick = () => choose(b, r));
+  document.getElementById('da-result').style.display='none';
+  document.getElementById('da-status').className='da-status';
+  document.getElementById('da-status').textContent = mode==='mul' ? 'Sum the decimal places of both factors. That count = decimal places in the answer.' : 'Shift the point in BOTH numbers until the divisor is whole. Then divide normally.';
+}
+
+function choose(btn, r){
+  document.querySelectorAll('.da-opt').forEach(b => b.disabled = true);
+  const v = parseFloat(btn.dataset.val);
+  if(v === r.ans){
+    btn.classList.add('right');
+    document.getElementById('da-result').style.display='block';
+    document.getElementById('da-result').textContent = r.ans;
+    score++; document.getElementById('da-score').textContent = score;
+    document.getElementById('da-status').className='da-status good';
+    document.getElementById('da-status').textContent = 'Locked. ' + r.a + (mode==='mul'?'×':'÷') + r.b + ' = ' + r.ans + '.';
+  } else {
+    btn.classList.add('wrong');
+    document.querySelectorAll('.da-opt').forEach(b => { if(parseFloat(b.dataset.val)===r.ans) b.classList.add('right'); });
+    document.getElementById('da-status').className='da-status warn';
+    document.getElementById('da-status').textContent = 'Off by a factor of 10 (or 100). Recount the decimal places.';
+  }
+}
+
+document.getElementById('da-next').onclick = () => { R++; setRound(); };
+document.getElementById('da-reset').onclick = () => { R = 0; score = 0; document.getElementById('da-score').textContent = 0; setRound(); };
+document.querySelectorAll('.da-mode button').forEach(b => b.onclick = () => {
+  document.querySelectorAll('.da-mode button').forEach(x => x.classList.remove('on'));
+  b.classList.add('on');
+  mode = b.dataset.op;
+  R = 0; setRound();
+});
+
+setRound();
+</script>
+</body>
+</html>

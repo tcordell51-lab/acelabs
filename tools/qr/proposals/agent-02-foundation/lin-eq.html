@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>lin-eq · Balance Scale</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f5f0e8; --paper:#fffdf7; --paper-2:#f9f3e6;
+  --sb:#0d2018; --ink:#0f1814; --ink-2:#3a4a42; --ink-mute:#6e7c74;
+  --gold:#C9A84C; --gold-m:#E2C97A; --gold-d:#8C7235;
+  --teal:#1B3A2D; --teal-3:#3A6B54;
+  --line:rgba(13,32,24,0.12);
+  --trap:#C25B3F; --trap-bg:#fbe7df; --trap-d:#8a3d28;
+  --good:#5FA874; --good-bg:#e3efe6; --good-d:#3e7c54;
+  --shadow:0 1px 3px rgba(13,32,24,0.06), 0 8px 24px rgba(13,32,24,0.04);
+}
+*{box-sizing:border-box}
+body{margin:0; font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--ink); padding:32px 24px; line-height:1.5}
+.wrap{max-width:880px; margin:0 auto}
+h1{font-family:'Playfair Display',serif; font-size:36px; margin:0 0 4px; font-weight:700}
+h1 em{font-style:italic; color:var(--gold-d); font-weight:400}
+.lede{color:var(--ink-2); font-size:15px; margin:0 0 22px; max-width:640px}
+.card{background:var(--paper); border:1px solid var(--line); border-radius:16px; padding:24px 26px; box-shadow:var(--shadow); margin-bottom:18px}
+
+.le-eq{
+  font-family:'JetBrains Mono',monospace; font-size:32px; font-weight:600;
+  text-align:center; padding:18px; background:var(--paper-2); border-radius:12px;
+  border:2px solid var(--line); margin-bottom:18px; letter-spacing:.02em;
+}
+.le-eq .x{color:var(--gold-d); font-weight:700}
+.le-eq .lhs, .le-eq .rhs{display:inline-block; padding:4px 18px}
+.le-eq .eq{padding:0 14px; color:var(--ink-mute)}
+
+.le-scale{
+  position:relative; height:200px; margin:18px 0;
+}
+.le-scale svg{width:100%; height:100%; overflow:visible}
+
+.le-controls{
+  display:grid; grid-template-columns:repeat(4, 1fr); gap:10px; margin:18px 0;
+}
+@media(max-width:640px){.le-controls{grid-template-columns:repeat(2,1fr)}}
+.le-op{
+  padding:10px 14px; border-radius:10px; border:1px solid var(--line); background:var(--paper);
+  font-family:'JetBrains Mono',monospace; font-size:14px; font-weight:600; cursor:pointer;
+  text-align:center; transition:all .12s; color:var(--ink);
+}
+.le-op:hover{border-color:var(--gold); transform:translateY(-1px); box-shadow:var(--shadow)}
+.le-op .lbl{font-size:10px; color:var(--ink-mute); letter-spacing:.1em; font-weight:500; display:block; margin-bottom:3px}
+.le-op:disabled{opacity:.4; cursor:not-allowed; transform:none}
+
+.le-trail{
+  margin-top:12px; min-height:60px; padding:10px 14px; border-radius:9px;
+  background:var(--paper-2); border:1px dashed var(--line); font-family:'JetBrains Mono',monospace;
+  font-size:14px; line-height:1.7;
+}
+.le-trail .step{display:block; padding:2px 0}
+.le-trail .step .op{color:var(--gold-d); font-weight:700}
+
+.le-status{font-family:'Playfair Display',serif; font-style:italic; font-size:18px; color:var(--ink-2); min-height:30px; padding:6px 0}
+.le-status.good{color:var(--good-d)}
+.le-status.warn{color:var(--trap-d)}
+
+.le-btn{padding:8px 14px; border-radius:8px; border:1px solid var(--line); background:var(--paper); font-size:13px; font-weight:600; cursor:pointer; font-family:inherit; color:var(--ink)}
+.le-btn:hover{border-color:var(--gold)}
+.le-btn.primary{background:var(--teal); color:#fff; border-color:var(--teal)}
+.le-btn.gold{background:var(--gold); color:var(--sb); border-color:var(--gold)}
+.le-row-btns{display:flex; gap:10px; flex-wrap:wrap; margin-top:8px}
+
+.le-hud{display:flex; justify-content:space-between; font-size:12px; color:var(--ink-mute); margin-bottom:8px; letter-spacing:.04em}
+.le-hud b{color:var(--gold-d); font-family:'JetBrains Mono',monospace}
+
+.trap-card{background:var(--trap-bg); border:1px solid var(--trap); border-left:4px solid var(--trap); border-radius:12px; padding:16px 20px; color:var(--trap-d)}
+.trap-card .lbl{font-size:10px; letter-spacing:.18em; font-weight:700; text-transform:uppercase; margin-bottom:6px}
+.trap-card p{margin:0; font-size:14px; line-height:1.55}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Linear <em>Equations</em></h1>
+  <p class="lede">Whatever you do to one side, do to the other. Apply inverse operations to isolate x — watch the scale tip if you forget to mirror it.</p>
+
+  <div class="card">
+    <div class="le-hud">
+      <span>Round <b id="le-round">1</b> / 4</span>
+      <span>Moves <b id="le-moves">0</b></span>
+    </div>
+
+    <div class="le-eq" id="le-eq">
+      <span class="lhs" id="le-lhs">2x + 3</span>
+      <span class="eq">=</span>
+      <span class="rhs" id="le-rhs">11</span>
+    </div>
+
+    <div class="le-scale">
+      <svg id="le-svg" viewBox="0 0 600 200" preserveAspectRatio="xMidYMid meet">
+        <line x1="300" y1="20" x2="300" y2="180" stroke="var(--ink)" stroke-width="3"/>
+        <polygon points="280,180 320,180 310,195 290,195" fill="var(--ink)"/>
+        <g id="le-beam">
+          <line id="le-beam-line" x1="100" y1="60" x2="500" y2="60" stroke="var(--ink)" stroke-width="4" stroke-linecap="round"/>
+          <g id="le-pan-l">
+            <line x1="100" y1="60" x2="100" y2="105" stroke="var(--ink)" stroke-width="2"/>
+            <ellipse cx="100" cy="120" rx="55" ry="14" fill="var(--gold)" stroke="var(--gold-d)" stroke-width="2"/>
+            <text id="le-l-text" x="100" y="125" text-anchor="middle" font-family="JetBrains Mono" font-size="18" font-weight="700" fill="var(--sb)">2x+3</text>
+          </g>
+          <g id="le-pan-r">
+            <line x1="500" y1="60" x2="500" y2="105" stroke="var(--ink)" stroke-width="2"/>
+            <ellipse cx="500" cy="120" rx="55" ry="14" fill="var(--teal-3)" stroke="var(--teal)" stroke-width="2"/>
+            <text id="le-r-text" x="500" y="125" text-anchor="middle" font-family="JetBrains Mono" font-size="18" font-weight="700" fill="#fff">11</text>
+          </g>
+        </g>
+      </svg>
+    </div>
+
+    <div style="font-size:12px; color:var(--ink-mute); letter-spacing:.06em">Apply this op to BOTH sides:</div>
+    <div class="le-controls">
+      <button class="le-op" data-op="sub3"><span class="lbl">subtract</span>− 3</button>
+      <button class="le-op" data-op="add3"><span class="lbl">add</span>+ 3</button>
+      <button class="le-op" data-op="div2"><span class="lbl">divide by</span>÷ 2</button>
+      <button class="le-op" data-op="mul2"><span class="lbl">multiply by</span>× 2</button>
+      <button class="le-op" data-op="sub2x"><span class="lbl">subtract</span>− 2x</button>
+      <button class="le-op" data-op="bad-sub3-l"><span class="lbl">trap: only LHS</span>− 3 (left only)</button>
+    </div>
+
+    <div class="le-trail" id="le-trail"></div>
+
+    <div class="le-status" id="le-status">Goal: isolate x. Pick the inverse of "+3" first.</div>
+
+    <div class="le-row-btns">
+      <button class="le-btn primary" id="le-next">Next round</button>
+      <button class="le-btn" id="le-reset">Reset</button>
+    </div>
+  </div>
+
+  <div class="trap-card">
+    <div class="lbl">The Trap</div>
+    <p>Distribution and sign errors. <b>2(x − 3) = 2x − 6</b>, not 2x − 3 and not 2x + 6. The minus sign distributes. The DAT puts the wrong-distribution version as a tempting choice. The scale will tip if you forget to mirror an op.</p>
+  </div>
+</div>
+
+<script>
+// state: equation as { lhs:{x:coeff, c:const}, rhs:{x:coeff, c:const} }
+const ROUNDS = [
+  {start:{lhs:{x:2,c:3}, rhs:{x:0,c:11}}, target:4},
+  {start:{lhs:{x:3,c:-5}, rhs:{x:0,c:7}}, target:4},
+  {start:{lhs:{x:5,c:0}, rhs:{x:2,c:9}}, target:3},
+  {start:{lhs:{x:1,c:0}, rhs:{x:0,c:6}}, target:6, soloStep:true},
+];
+let R = 0, state = null, trail = [], moves = 0;
+
+function clone(o){return JSON.parse(JSON.stringify(o))}
+
+function setRound(){
+  const r = ROUNDS[R];
+  state = clone(r.start);
+  trail = []; moves = 0;
+  document.getElementById('le-round').textContent = (R+1);
+  document.getElementById('le-moves').textContent = 0;
+  document.getElementById('le-trail').innerHTML='';
+  document.getElementById('le-status').className='le-status';
+  document.getElementById('le-status').textContent='Goal: isolate x. Apply inverse ops to both sides.';
+  enableOps(true);
+  render();
+}
+
+function fmtSide(s){
+  const parts = [];
+  if(s.x !== 0){
+    if(s.x === 1) parts.push('x');
+    else if(s.x === -1) parts.push('-x');
+    else parts.push(s.x + 'x');
+  }
+  if(s.c !== 0 || parts.length === 0){
+    if(parts.length > 0){
+      parts.push(s.c >= 0 ? '+ ' + s.c : '- ' + Math.abs(s.c));
+    } else {
+      parts.push(s.c);
+    }
+  }
+  return parts.join(' ');
+}
+
+function render(){
+  document.getElementById('le-lhs').innerHTML = fmtSide(state.lhs).replace(/x/g, '<span class="x">x</span>');
+  document.getElementById('le-rhs').innerHTML = fmtSide(state.rhs).replace(/x/g, '<span class="x">x</span>');
+  document.getElementById('le-l-text').textContent = fmtSide(state.lhs);
+  document.getElementById('le-r-text').textContent = fmtSide(state.rhs);
+  // Tilt beam if unbalanced (left/right "weight" with x as some value, here for visual we just compare numbers)
+  const lWt = Math.abs(state.lhs.x) + Math.abs(state.lhs.c);
+  const rWt = Math.abs(state.rhs.x) + Math.abs(state.rhs.c);
+  let tilt = 0;
+  if(lWt !== rWt) tilt = (lWt > rWt ? -8 : 8) * Math.min(1, Math.abs(lWt-rWt)/8);
+  document.getElementById('le-beam').setAttribute('transform', `rotate(${tilt} 300 60)`);
+  // Done?
+  if(state.lhs.x === 1 && state.lhs.c === 0 && state.rhs.x === 0){
+    const ans = state.rhs.c;
+    const status = document.getElementById('le-status');
+    if(ans === ROUNDS[R].target){
+      status.className='le-status good';
+      status.textContent = 'Solved. x = ' + ans + '.';
+    } else {
+      status.className='le-status warn';
+      status.textContent = 'You isolated x = ' + ans + ' but expected ' + ROUNDS[R].target + '. Check signs.';
+    }
+    enableOps(false);
+  }
+}
+
+function applyOp(side, op, val){
+  if(op === 'add'){ side.c += val; }
+  else if(op === 'sub'){ side.c -= val; }
+  else if(op === 'mul'){ side.x *= val; side.c *= val; }
+  else if(op === 'div'){ side.x /= val; side.c /= val; }
+  else if(op === 'subx'){ side.x -= val; }
+  else if(op === 'addx'){ side.x += val; }
+}
+
+function doOp(opName){
+  moves++;
+  document.getElementById('le-moves').textContent = moves;
+  let label = '';
+  let isTrap = false;
+  if(opName === 'sub3'){ applyOp(state.lhs,'sub',3); applyOp(state.rhs,'sub',3); label = '− 3 (both sides)'; }
+  else if(opName === 'add3'){ applyOp(state.lhs,'add',3); applyOp(state.rhs,'add',3); label = '+ 3 (both sides)'; }
+  else if(opName === 'div2'){ applyOp(state.lhs,'div',2); applyOp(state.rhs,'div',2); label = '÷ 2 (both sides)'; }
+  else if(opName === 'mul2'){ applyOp(state.lhs,'mul',2); applyOp(state.rhs,'mul',2); label = '× 2 (both sides)'; }
+  else if(opName === 'sub2x'){ applyOp(state.lhs,'subx',2); applyOp(state.rhs,'subx',2); label = '− 2x (both sides)'; }
+  else if(opName === 'bad-sub3-l'){ applyOp(state.lhs,'sub',3); label = '− 3 (left only) — TRAP'; isTrap = true; }
+  trail.push({label, isTrap});
+  // Render trail
+  const tEl = document.getElementById('le-trail');
+  tEl.innerHTML = trail.map(t => `<span class="step"><span class="op">${t.label}</span> &nbsp;→&nbsp; ${fmtSide(stateAtStep(t)) || ''}</span>`).join('');
+  // Easier: just show current eq at end
+  tEl.innerHTML = trail.map(t => `<span class="step"><span class="op">${t.label}</span></span>`).join('') + `<span class="step" style="color:var(--ink-mute); border-top:1px dashed var(--line); padding-top:6px; margin-top:6px"><b>now:</b> ${fmtSide(state.lhs)} = ${fmtSide(state.rhs)}</span>`;
+  if(isTrap){
+    const status = document.getElementById('le-status');
+    status.className='le-status warn';
+    status.textContent = 'Scale tipped — you only changed one side. The equation is broken.';
+  }
+  render();
+}
+
+function stateAtStep(){return null}
+
+function enableOps(on){
+  document.querySelectorAll('.le-op').forEach(b => b.disabled = !on);
+}
+
+document.querySelectorAll('.le-op').forEach(btn => btn.addEventListener('click', () => doOp(btn.dataset.op)));
+document.getElementById('le-next').onclick = () => { R = (R+1) % ROUNDS.length; setRound(); };
+document.getElementById('le-reset').onclick = setRound;
+
+setRound();
+</script>
+</body>
+</html>

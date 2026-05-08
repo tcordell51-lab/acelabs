@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>frac-dec · Eight Anchors Number Line</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f5f0e8; --paper:#fffdf7; --paper-2:#f9f3e6;
+  --sb:#0d2018; --ink:#0f1814; --ink-2:#3a4a42; --ink-mute:#6e7c74;
+  --gold:#C9A84C; --gold-m:#E2C97A; --gold-d:#8C7235; --gold-glow:rgba(201,168,76,0.35);
+  --teal:#1B3A2D; --teal-3:#3A6B54;
+  --line:rgba(13,32,24,0.12);
+  --trap:#C25B3F; --trap-bg:#fbe7df; --trap-d:#8a3d28;
+  --good:#5FA874; --good-bg:#e3efe6; --good-d:#3e7c54;
+  --shadow:0 1px 3px rgba(13,32,24,0.06), 0 8px 24px rgba(13,32,24,0.04);
+}
+*{box-sizing:border-box}
+body{margin:0; font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--ink); padding:32px 24px; line-height:1.5}
+.wrap{max-width:880px; margin:0 auto}
+h1{font-family:'Playfair Display',serif; font-size:36px; margin:0 0 4px; font-weight:700}
+h1 em{font-style:italic; color:var(--gold-d); font-weight:400}
+.lede{color:var(--ink-2); font-size:15px; margin:0 0 22px; max-width:640px}
+.card{background:var(--paper); border:1px solid var(--line); border-radius:16px; padding:24px 26px; box-shadow:var(--shadow); margin-bottom:18px}
+
+.fd-line-wrap{padding:36px 8px 16px; position:relative}
+.fd-line{position:relative; height:80px}
+.fd-track{position:absolute; left:0; right:0; top:50%; height:3px; background:var(--ink); border-radius:2px; transform:translateY(-50%)}
+.fd-tick{position:absolute; top:calc(50% - 14px); width:2px; height:28px; background:var(--ink); transform:translateX(-50%)}
+.fd-tick.minor{height:14px; top:calc(50% - 7px); background:var(--ink-mute)}
+.fd-tick-lbl{position:absolute; top:calc(50% + 18px); transform:translateX(-50%); font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--ink-mute)}
+
+.fd-marker{
+  position:absolute; top:50%; transform:translate(-50%,-50%);
+  width:36px; height:36px; border-radius:50%; background:var(--gold);
+  border:3px solid var(--gold-d); cursor:grab; touch-action:none;
+  transition:left .25s cubic-bezier(.4,1.6,.6,1), background .15s, transform .12s;
+  display:flex; align-items:center; justify-content:center;
+  font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700; color:var(--sb);
+  box-shadow:0 4px 14px rgba(201,168,76,0.4);
+  z-index:5;
+}
+.fd-marker.right{background:var(--good); border-color:var(--good-d); color:#fff}
+.fd-marker.wrong{background:var(--trap); border-color:var(--trap-d); color:#fff}
+.fd-marker.dragging{cursor:grabbing; transform:translate(-50%,-50%) scale(1.2); transition:none}
+
+.fd-prompt{
+  text-align:center; font-family:'Playfair Display',serif; font-size:48px; font-weight:700;
+  letter-spacing:-0.01em; margin:8px 0 18px; min-height:60px;
+}
+.fd-prompt em{font-style:italic; color:var(--gold-d); font-size:.6em; vertical-align:.3em}
+
+.fd-controls{display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:14px}
+.fd-btn{
+  padding:8px 14px; border-radius:8px; border:1px solid var(--line); background:var(--paper);
+  font-size:13px; font-weight:600; cursor:pointer; font-family:inherit; color:var(--ink);
+}
+.fd-btn:hover{border-color:var(--gold)}
+.fd-btn.primary{background:var(--teal); color:#fff; border-color:var(--teal)}
+.fd-btn.gold{background:var(--gold); color:var(--sb); border-color:var(--gold)}
+
+.fd-hud{display:flex; justify-content:space-between; align-items:center; font-size:12px; color:var(--ink-mute); letter-spacing:.04em; margin-bottom:6px}
+.fd-hud b{color:var(--gold-d); font-family:'JetBrains Mono',monospace}
+.fd-status{text-align:center; font-family:'Playfair Display',serif; font-style:italic; font-size:18px; color:var(--ink-2); min-height:30px; margin-top:8px}
+.fd-status.good{color:var(--good-d)}
+.fd-status.warn{color:var(--trap-d)}
+
+.fd-anchor-row{display:flex; justify-content:center; gap:6px; flex-wrap:wrap; margin-top:18px; padding:12px; background:var(--paper-2); border-radius:10px; border:1px dashed var(--line)}
+.fd-anchor{
+  font-family:'JetBrains Mono',monospace; font-size:12px; padding:5px 10px; border-radius:14px;
+  background:var(--paper); border:1px solid var(--line); color:var(--ink-2);
+}
+.fd-anchor b{color:var(--gold-d)}
+.fd-timer{font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--ink-mute)}
+.fd-timer b{color:var(--teal-3); font-size:16px}
+
+.trap-card{background:var(--trap-bg); border:1px solid var(--trap); border-left:4px solid var(--trap); border-radius:12px; padding:16px 20px; color:var(--trap-d)}
+.trap-card .lbl{font-size:10px; letter-spacing:.18em; font-weight:700; text-transform:uppercase; margin-bottom:6px}
+.trap-card p{margin:0; font-size:14px; line-height:1.55}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Fraction <em>↔</em> Decimal</h1>
+  <p class="lede">Drag the gold marker to the spot on the number line. Eight anchors. Goal: every fraction in under 3 seconds, no calculator.</p>
+
+  <div class="card">
+    <div class="fd-hud">
+      <span>Round <b id="fd-round">1</b> / 12</span>
+      <span class="fd-timer">Avg <b id="fd-avg">—</b>s</span>
+      <span>Hits <b id="fd-hit">0</b></span>
+    </div>
+
+    <div class="fd-prompt" id="fd-prompt">3/8</div>
+
+    <div class="fd-line-wrap">
+      <div class="fd-line" id="fd-line">
+        <div class="fd-track"></div>
+      </div>
+    </div>
+
+    <div class="fd-status" id="fd-status">Drop the marker on the matching decimal.</div>
+
+    <div class="fd-controls">
+      <button class="fd-btn" id="fd-reveal">Show answer</button>
+      <button class="fd-btn primary" id="fd-next">Next</button>
+      <button class="fd-btn" id="fd-restart">Restart</button>
+    </div>
+
+    <div class="fd-anchor-row">
+      <span class="fd-anchor"><b>1/8</b> = .125</span>
+      <span class="fd-anchor"><b>1/4</b> = .25</span>
+      <span class="fd-anchor"><b>3/8</b> = .375</span>
+      <span class="fd-anchor"><b>1/2</b> = .5</span>
+      <span class="fd-anchor"><b>5/8</b> = .625</span>
+      <span class="fd-anchor"><b>3/4</b> = .75</span>
+      <span class="fd-anchor"><b>7/8</b> = .875</span>
+      <span class="fd-anchor"><b>1/3</b> ≈ .333</span>
+      <span class="fd-anchor"><b>2/3</b> ≈ .667</span>
+    </div>
+  </div>
+
+  <div class="trap-card">
+    <div class="lbl">The Trap</div>
+    <p>The DAT loves comparison questions like "which is bigger: 3/7 or 0.43?" If you have to do long division mid-test, you've lost a minute. Memorize the eight anchors, estimate the rest.</p>
+  </div>
+</div>
+
+<script>
+const ANCHORS = [
+  {f:'1/8', d:0.125}, {f:'1/4', d:0.25}, {f:'3/8', d:0.375},
+  {f:'1/2', d:0.5},   {f:'5/8', d:0.625}, {f:'3/4', d:0.75},
+  {f:'7/8', d:0.875}, {f:'1/3', d:0.333}, {f:'2/3', d:0.667},
+];
+let queue = []; let round = 0; let hits = 0; let totalRounds = 12; let times = []; let startT = 0;
+let currentAnchor = null;
+let line, marker;
+
+function buildLine(){
+  line = document.getElementById('fd-line');
+  // Clear except track
+  line.querySelectorAll('.fd-tick,.fd-tick-lbl,.fd-marker').forEach(n=>n.remove());
+  // Major ticks every 0.1
+  for(let i=0;i<=10;i++){
+    const t = document.createElement('div');
+    t.className = 'fd-tick' + (i%5===0 ? '' : ' minor');
+    t.style.left = (i*10) + '%';
+    line.appendChild(t);
+    if(i%5===0 || i===0 || i===10){
+      const lbl = document.createElement('div');
+      lbl.className = 'fd-tick-lbl';
+      lbl.style.left = (i*10) + '%';
+      lbl.textContent = (i/10).toFixed(i%10===0?0:1);
+      line.appendChild(lbl);
+    }
+  }
+  marker = document.createElement('div');
+  marker.className = 'fd-marker';
+  marker.id = 'fd-marker';
+  marker.style.left = '50%';
+  marker.textContent = '?';
+  line.appendChild(marker);
+  attachMarkerDrag();
+}
+
+function attachMarkerDrag(){
+  let dragging = false;
+  const start = (e) => {
+    dragging = true; marker.classList.add('dragging');
+    e.preventDefault();
+  };
+  const move = (e) => {
+    if(!dragging) return;
+    const p = e.touches ? e.touches[0] : e;
+    const r = line.getBoundingClientRect();
+    let pct = (p.clientX - r.left) / r.width;
+    pct = Math.max(0, Math.min(1, pct));
+    marker.style.left = (pct*100) + '%';
+    marker.dataset.value = pct.toFixed(3);
+  };
+  const end = () => {
+    if(!dragging) return;
+    dragging = false; marker.classList.remove('dragging');
+    judge(parseFloat(marker.dataset.value || 0.5));
+  };
+  marker.addEventListener('mousedown', start);
+  marker.addEventListener('touchstart', start, {passive:false});
+  window.addEventListener('mousemove', move);
+  window.addEventListener('touchmove', move, {passive:false});
+  window.addEventListener('mouseup', end);
+  window.addEventListener('touchend', end);
+}
+
+function judge(val){
+  if(!currentAnchor) return;
+  const dt = (performance.now() - startT)/1000;
+  times.push(dt);
+  const diff = Math.abs(val - currentAnchor.d);
+  const status = document.getElementById('fd-status');
+  if(diff <= 0.04){
+    marker.classList.remove('wrong');
+    marker.classList.add('right');
+    marker.textContent = currentAnchor.d.toFixed(3).replace(/0+$/,'').replace(/\.$/,'');
+    hits++;
+    document.getElementById('fd-hit').textContent = hits;
+    status.className = 'fd-status good';
+    status.textContent = currentAnchor.f + ' = ' + currentAnchor.d + '. Locked. (' + dt.toFixed(1) + 's)';
+  } else {
+    marker.classList.remove('right');
+    marker.classList.add('wrong');
+    status.className = 'fd-status warn';
+    status.textContent = 'Off — ' + currentAnchor.f + ' = ' + currentAnchor.d + '. Land within ±0.04.';
+  }
+  // Update avg time
+  const avg = times.reduce((a,b)=>a+b,0)/times.length;
+  document.getElementById('fd-avg').textContent = avg.toFixed(1);
+}
+
+function nextRound(){
+  if(round >= totalRounds){
+    document.getElementById('fd-status').className='fd-status good';
+    document.getElementById('fd-status').textContent = 'Run complete. ' + hits + '/' + totalRounds + ' hits, avg ' + (times.reduce((a,b)=>a+b,0)/times.length).toFixed(1) + 's.';
+    document.getElementById('fd-prompt').textContent = '—';
+    return;
+  }
+  round++;
+  document.getElementById('fd-round').textContent = round;
+  // pull from shuffled queue
+  if(queue.length === 0) queue = [...ANCHORS].sort(()=>Math.random()-.5);
+  currentAnchor = queue.pop();
+  document.getElementById('fd-prompt').textContent = currentAnchor.f;
+  marker.classList.remove('right','wrong');
+  marker.textContent = '?';
+  marker.style.left = '50%';
+  document.getElementById('fd-status').className = 'fd-status';
+  document.getElementById('fd-status').textContent = 'Drop the marker on the matching decimal.';
+  startT = performance.now();
+}
+
+document.getElementById('fd-next').onclick = nextRound;
+document.getElementById('fd-reveal').onclick = () => {
+  if(!currentAnchor) return;
+  marker.style.left = (currentAnchor.d*100) + '%';
+  marker.textContent = currentAnchor.d;
+  marker.classList.remove('right','wrong');
+  document.getElementById('fd-status').className='fd-status';
+  document.getElementById('fd-status').textContent = currentAnchor.f + ' lands at ' + currentAnchor.d + '.';
+};
+document.getElementById('fd-restart').onclick = () => {
+  round = 0; hits = 0; times = []; queue = [];
+  document.getElementById('fd-hit').textContent = 0;
+  document.getElementById('fd-avg').textContent = '—';
+  nextRound();
+};
+
+buildLine();
+nextRound();
+</script>
+</body>
+</html>

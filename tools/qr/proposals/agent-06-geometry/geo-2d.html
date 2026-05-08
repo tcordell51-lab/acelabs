@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2D Geometry Canvas — AceTheDAT QR</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js"></script>
+<style>
+:root{
+  --bg:#f5f0e8; --paper:#fffdf7; --paper-2:#f9f3e6; --paper-3:#f3ecdb;
+  --ink:#0f1814; --ink-2:#3a4a42; --ink-mute:#6e7c74; --ink-soft:#9aa39e;
+  --gold:#C9A84C; --gold-m:#E2C97A; --gold-d:#8C7235; --gold-glow:rgba(201,168,76,0.35);
+  --teal:#1B3A2D; --teal-2:#2A5240; --teal-3:#3A6B54;
+  --line:rgba(13,32,24,0.12); --line-2:rgba(13,32,24,0.06); --line-strong:rgba(13,32,24,0.22);
+  --trap:#C25B3F; --trap-bg:#fbe7df; --trap-d:#8a3d28;
+  --good:#5FA874; --good-bg:#e3efe6; --good-d:#3e7c54;
+  --info:#6A8AA8; --info-bg:#e6edf4;
+  --shadow:0 1px 3px rgba(13,32,24,0.06), 0 8px 24px rgba(13,32,24,0.04);
+  --shadow-md:0 2px 6px rgba(13,32,24,0.08), 0 16px 40px rgba(13,32,24,0.06);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:'DM Sans',system-ui,-apple-system,sans-serif; background:var(--bg); color:var(--ink); line-height:1.5; padding:32px 24px; min-height:100vh}
+.wrap{max-width:1100px; margin:0 auto}
+h1{font-family:'Playfair Display',serif; font-size:32px; margin:0 0 8px}
+h1 em{font-style:italic; color:var(--gold-d); font-weight:400}
+.sub{font-size:11px; letter-spacing:0.16em; text-transform:uppercase; color:var(--gold-d); font-weight:600}
+.lede{font-size:15px; color:var(--ink-2); max-width:740px; margin:8px 0 24px}
+
+.canvas-card{background:var(--paper); border:1px solid var(--line); border-radius:16px; padding:20px; box-shadow:var(--shadow-md); display:grid; grid-template-columns:1fr 320px; gap:20px}
+@media (max-width:820px){.canvas-card{grid-template-columns:1fr}}
+.stage{position:relative; background:var(--paper-2); border:1px solid var(--line); border-radius:12px; overflow:hidden; touch-action:none}
+.stage svg{display:block; width:100%; height:auto; user-select:none; -webkit-user-select:none}
+
+.stage svg .grid-min{stroke:var(--line); stroke-width:0.5; opacity:0.45}
+.stage svg .poly{fill:rgba(201,168,76,0.10); stroke:var(--gold-d); stroke-width:2; stroke-linejoin:round}
+.stage svg .vert{cursor:grab; fill:var(--teal); stroke:#fff; stroke-width:2; transition:r 0.15s}
+.stage svg .vert:hover{r:11}
+.stage svg .vert.dragging{cursor:grabbing; fill:var(--gold); stroke:var(--gold-d)}
+.stage svg .vert.radius-handle{fill:var(--gold); stroke:var(--gold-d)}
+.stage svg .side-len{font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:600; fill:var(--ink-2); paint-order:stroke; stroke:var(--paper-2); stroke-width:3}
+.stage svg .ang-arc{fill:none; stroke:var(--teal-3); stroke-width:1.4}
+.stage svg .ang-lbl{font-family:'JetBrains Mono',monospace; font-size:10.5px; fill:var(--teal); paint-order:stroke; stroke:var(--paper-2); stroke-width:3}
+.stage svg .right-mark{fill:none; stroke:var(--gold-d); stroke-width:1.3}
+.stage svg .center-dot{fill:var(--ink); r:3}
+.stage svg .radius-line{stroke:var(--gold-d); stroke-width:1.5; stroke-dasharray:5 3}
+
+.panels{display:flex; flex-direction:column; gap:12px}
+.panel{background:var(--paper-2); border:1px solid var(--line); border-radius:10px; padding:12px 14px}
+.panel h3{font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:var(--ink-mute); margin:0 0 8px; font-weight:600}
+.row{display:flex; justify-content:space-between; gap:10px; font-size:13px; padding:3px 0}
+.row b{font-family:'JetBrains Mono',monospace; color:var(--teal); font-weight:600; font-size:12.5px}
+.formula{font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--ink-mute); margin-top:4px; padding-left:4px; line-height:1.5}
+
+.toggles{display:grid; grid-template-columns:repeat(3, 1fr); gap:6px; margin-bottom:10px}
+.tog{padding:8px 6px; font-size:11.5px; font-weight:600; border:1px solid var(--line); background:var(--paper); color:var(--ink-2); border-radius:8px; cursor:pointer; text-align:center; font-family:'DM Sans',sans-serif}
+.tog:hover{border-color:var(--gold); color:var(--ink)}
+.tog.active{background:var(--teal); color:#fff; border-color:var(--teal)}
+
+.angle-list{font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--ink-2); line-height:1.7; max-height:140px; overflow:auto}
+.angle-list .ang-item{display:flex; justify-content:space-between; padding:1px 0}
+.hint{font-size:11px; color:var(--ink-mute); margin-top:14px; line-height:1.5; font-style:italic}
+.slider-row{display:flex; align-items:center; gap:10px; margin-top:8px}
+.slider-row label{font-size:11px; color:var(--ink-mute); letter-spacing:0.1em; text-transform:uppercase; min-width:42px}
+.slider-row input{flex:1}
+.slider-row b{font-family:'JetBrains Mono',monospace; font-size:11.5px; color:var(--teal); min-width:32px; text-align:right}
+input[type=range]{accent-color:var(--gold)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="sub">QR · Tier 2 · 2D Geometry</div>
+  <h1>Drag the corners. <em>Watch</em> area react.</h1>
+  <p class="lede">Pick a shape. Drag the vertices (or the radius handle for a circle). Side lengths, interior angles, perimeter, and area update live. The DAT trap: parallelogram area is base × <b>height</b> (not base × side), trapezoid uses the average of the two parallel sides, and a regular polygon's interior angle is (n−2)·180/n — not always 60.</p>
+
+  <div class="canvas-card">
+    <div>
+      <div class="toggles">
+        <button class="tog active" data-shape="triangle">Triangle</button>
+        <button class="tog" data-shape="rectangle">Rectangle</button>
+        <button class="tog" data-shape="parallelogram">Parallelogram</button>
+        <button class="tog" data-shape="trapezoid">Trapezoid</button>
+        <button class="tog" data-shape="regular">Regular polygon</button>
+        <button class="tog" data-shape="circle">Circle</button>
+      </div>
+      <div id="reg-controls" class="slider-row" style="display:none">
+        <label>sides n</label>
+        <input id="reg-n" type="range" min="3" max="12" step="1" value="6">
+        <b id="reg-n-val">6</b>
+      </div>
+      <div class="stage">
+        <svg id="svg" viewBox="0 0 600 460" preserveAspectRatio="xMidYMid meet">
+          <defs>
+            <pattern id="grid-2d" width="20" height="20" patternUnits="userSpaceOnUse">
+              <path d="M 20 0 L 0 0 0 20" class="grid-min" fill="none"/>
+            </pattern>
+          </defs>
+          <rect width="600" height="460" fill="url(#grid-2d)"/>
+          <g id="shape-layer"></g>
+          <g id="ang-arcs"></g>
+          <g id="side-labels"></g>
+          <g id="ang-labels"></g>
+          <g id="verts"></g>
+        </svg>
+      </div>
+      <div class="hint" id="stage-hint">Drag any vertex. Touch and drag on mobile.</div>
+    </div>
+
+    <div class="panels">
+      <div class="panel">
+        <h3 id="meas-h">Measurements</h3>
+        <div class="row"><span id="m1-lbl">Perimeter</span><b id="m1">0</b></div>
+        <div class="row"><span id="m2-lbl">Area</span><b id="m2">0</b></div>
+        <div class="row" id="m3-row"><span id="m3-lbl">Sum interior ∠</span><b id="m3">0</b></div>
+        <div class="formula" id="formula">Area: see formula card</div>
+      </div>
+
+      <div class="panel" id="sides-panel">
+        <h3>Sides</h3>
+        <div id="sides-list" class="angle-list"></div>
+      </div>
+
+      <div class="panel" id="angles-panel">
+        <h3>Interior angles</h3>
+        <div id="angle-list" class="angle-list"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const svg = document.getElementById('svg');
+  const shapeLayer = document.getElementById('shape-layer');
+  const vertsG = document.getElementById('verts');
+  const sideG = document.getElementById('side-labels');
+  const angG = document.getElementById('ang-labels');
+  const arcG = document.getElementById('ang-arcs');
+  const SCALE = 40; // 40px = 1 unit
+
+  let shape = 'triangle';
+  let regN = 6;
+  // dynamic vertex list V plus optional center C and radius for circle
+  let V = [];
+  let circleState = {cx:300, cy:230, rPx:120}; // for circle mode
+
+  const presets = {
+    triangle: ()=> [{x:120,y:340},{x:480,y:340},{x:300,y:120}],
+    rectangle: ()=> [{x:140,y:140},{x:460,y:140},{x:460,y:340},{x:140,y:340}],
+    parallelogram: ()=> [{x:140,y:340},{x:460,y:340},{x:520,y:140},{x:200,y:140}],
+    trapezoid: ()=> [{x:140,y:340},{x:460,y:340},{x:380,y:140},{x:220,y:140}],
+    regular: ()=> regularPoly(regN, 300, 230, 130, -Math.PI/2)
+  };
+
+  function regularPoly(n, cx, cy, r, start){
+    const a=[];
+    for(let i=0;i<n;i++){
+      const ang = start + i*2*Math.PI/n;
+      a.push({x:cx+r*Math.cos(ang), y:cy+r*Math.sin(ang)});
+    }
+    return a;
+  }
+
+  function dist(p,q){return Math.hypot(p.x-q.x, p.y-q.y);}
+  function fmt(n,d=2){return Number(n).toFixed(d);}
+  function clearChildren(g){while(g.firstChild) g.removeChild(g.firstChild);}
+
+  function angleAt(p, q, r){
+    const v1x=q.x-p.x, v1y=q.y-p.y, v2x=r.x-p.x, v2y=r.y-p.y;
+    const m1=Math.hypot(v1x,v1y), m2=Math.hypot(v2x,v2y);
+    if(m1<1e-6||m2<1e-6) return 0;
+    let c=(v1x*v2x+v1y*v2y)/(m1*m2);
+    c=Math.max(-1,Math.min(1,c));
+    return Math.acos(c)*180/Math.PI;
+  }
+
+  function shoelaceArea(pts){
+    let s=0;
+    for(let i=0;i<pts.length;i++){
+      const a=pts[i], b=pts[(i+1)%pts.length];
+      s += a.x*b.y - b.x*a.y;
+    }
+    return Math.abs(s)/2;
+  }
+
+  function attachDrag(el, idx, isRadius=false){
+    let dragging=false;
+    function getPt(evt){
+      const pt = svg.createSVGPoint();
+      const t = evt.touches? evt.touches[0] : evt;
+      pt.x=t.clientX; pt.y=t.clientY;
+      return pt.matrixTransform(svg.getScreenCTM().inverse());
+    }
+    function start(e){dragging=true; el.classList.add('dragging'); e.preventDefault(); e.stopPropagation();}
+    function move(e){
+      if(!dragging) return;
+      const p = getPt(e);
+      if(isRadius){
+        circleState.rPx = Math.max(20, Math.min(200, Math.hypot(p.x-circleState.cx, p.y-circleState.cy)));
+      } else if(shape==='regular'){
+        // dragging any vertex resizes the regular polygon (radius), keeping center
+        const cx=300, cy=230;
+        const r = Math.hypot(p.x-cx, p.y-cy);
+        const ang = Math.atan2(p.y-cy, p.x-cx);
+        // anchor vertex 0 to the dragged angle so polygon rotates too
+        V = regularPoly(regN, cx, cy, Math.max(40,Math.min(200,r)), ang - idx*2*Math.PI/regN);
+      } else if(shape==='rectangle'){
+        // keep rectangle axis-aligned: dragging corner [i] moves only opposite-anchor's free corner
+        V[idx].x = Math.max(20,Math.min(580,p.x));
+        V[idx].y = Math.max(20,Math.min(440,p.y));
+        // re-orthogonalize
+        const i = idx;
+        const opp = (i+2)%4;
+        const a = V[opp], b = V[i];
+        // The two adjacent corners share x with one and y with the other
+        V[(i+1)%4].x = b.x; V[(i+1)%4].y = a.y;
+        V[(i+3)%4].x = a.x; V[(i+3)%4].y = b.y;
+      } else if(shape==='trapezoid'){
+        // top side stays parallel to bottom; dragging top vertex stays on top y
+        V[idx].x = Math.max(20,Math.min(580,p.x));
+        if(idx<2){ // bottom edge — keep horizontal
+          V[idx].y = Math.max(20,Math.min(440,p.y));
+          V[1-idx].y = V[idx].y; // both bottom share y
+        } else {
+          V[idx].y = Math.max(20,Math.min(440,p.y));
+          // both top share y
+          const other = idx===2?3:2;
+          V[other].y = V[idx].y;
+        }
+      } else if(shape==='parallelogram'){
+        V[idx].x = Math.max(20,Math.min(580,p.x));
+        V[idx].y = Math.max(20,Math.min(440,p.y));
+        // enforce: vertex idx+2 = vertex idx+1 + vertex idx+3 - vertex idx (parallelogram property)
+        // Easier: keep three corners free, derive the fourth
+        const i=idx;
+        const opp=(i+2)%4;
+        V[opp].x = V[(i+1)%4].x + V[(i+3)%4].x - V[i].x;
+        V[opp].y = V[(i+1)%4].y + V[(i+3)%4].y - V[i].y;
+      } else {
+        V[idx].x = Math.max(20,Math.min(580,p.x));
+        V[idx].y = Math.max(20,Math.min(440,p.y));
+      }
+      render();
+      e.preventDefault();
+    }
+    function end(){dragging=false; el.classList.remove('dragging');}
+    el.addEventListener('mousedown', start);
+    el.addEventListener('touchstart', start, {passive:false});
+    window.addEventListener('mousemove', move);
+    window.addEventListener('touchmove', move, {passive:false});
+    window.addEventListener('mouseup', end);
+    window.addEventListener('touchend', end);
+  }
+
+  function arcPath(p, q, r, radius){
+    const a1 = Math.atan2(q.y-p.y, q.x-p.x);
+    const a2 = Math.atan2(r.y-p.y, r.x-p.x);
+    const sx = p.x + radius*Math.cos(a1), sy = p.y + radius*Math.sin(a1);
+    const ex = p.x + radius*Math.cos(a2), ey = p.y + radius*Math.sin(a2);
+    let delta = a2 - a1;
+    while(delta>Math.PI) delta -= 2*Math.PI;
+    while(delta<-Math.PI) delta += 2*Math.PI;
+    const sweep = delta>0 ? 1 : 0;
+    return `M ${sx} ${sy} A ${radius} ${radius} 0 0 ${sweep} ${ex} ${ey}`;
+  }
+
+  function buildVerts(){
+    clearChildren(vertsG);
+    if(shape==='circle'){
+      // center
+      const c = document.createElementNS('http://www.w3.org/2000/svg','circle');
+      c.setAttribute('class','center-dot'); c.setAttribute('cx',circleState.cx); c.setAttribute('cy',circleState.cy); c.setAttribute('r',3);
+      vertsG.appendChild(c);
+      // radius handle
+      const h = document.createElementNS('http://www.w3.org/2000/svg','circle');
+      h.setAttribute('class','vert radius-handle');
+      h.setAttribute('cx', circleState.cx + circleState.rPx);
+      h.setAttribute('cy', circleState.cy);
+      h.setAttribute('r', 9);
+      vertsG.appendChild(h);
+      attachDrag(h, 0, true);
+      return;
+    }
+    V.forEach((v,i)=>{
+      const c = document.createElementNS('http://www.w3.org/2000/svg','circle');
+      c.setAttribute('class','vert');
+      c.setAttribute('cx', v.x); c.setAttribute('cy', v.y);
+      c.setAttribute('r', 9);
+      vertsG.appendChild(c);
+      attachDrag(c, i);
+    });
+  }
+
+  function setShape(s){
+    shape=s;
+    document.getElementById('reg-controls').style.display = s==='regular'?'flex':'none';
+    document.getElementById('angles-panel').style.display = s==='circle'?'none':'';
+    document.getElementById('sides-panel').style.display = s==='circle'?'none':'';
+    document.getElementById('m3-row').style.display = (s==='circle'||s==='triangle')?'none':'';
+    if(s==='circle'){
+      circleState = {cx:300, cy:230, rPx:120};
+    } else if(presets[s]){
+      V = presets[s]();
+    }
+    buildVerts();
+    render();
+  }
+
+  function render(){
+    clearChildren(shapeLayer); clearChildren(sideG); clearChildren(angG); clearChildren(arcG);
+
+    const m1Lbl=document.getElementById('m1-lbl'), m2Lbl=document.getElementById('m2-lbl'), m3Lbl=document.getElementById('m3-lbl');
+    const m1=document.getElementById('m1'), m2=document.getElementById('m2'), m3=document.getElementById('m3');
+    const formulaEl = document.getElementById('formula');
+    const sidesList = document.getElementById('sides-list');
+    const angList = document.getElementById('angle-list');
+
+    if(shape==='circle'){
+      const r = circleState.rPx/SCALE;
+      const c = document.createElementNS('http://www.w3.org/2000/svg','circle');
+      c.setAttribute('cx', circleState.cx); c.setAttribute('cy', circleState.cy);
+      c.setAttribute('r', circleState.rPx);
+      c.setAttribute('fill','rgba(201,168,76,0.10)');
+      c.setAttribute('stroke', getCSS('--gold-d'));
+      c.setAttribute('stroke-width','2');
+      shapeLayer.appendChild(c);
+      const ln = document.createElementNS('http://www.w3.org/2000/svg','line');
+      ln.setAttribute('class','radius-line');
+      ln.setAttribute('x1', circleState.cx); ln.setAttribute('y1', circleState.cy);
+      ln.setAttribute('x2', circleState.cx + circleState.rPx); ln.setAttribute('y2', circleState.cy);
+      shapeLayer.appendChild(ln);
+      const t = document.createElementNS('http://www.w3.org/2000/svg','text');
+      t.setAttribute('class','side-len'); t.setAttribute('text-anchor','middle');
+      t.setAttribute('x', circleState.cx + circleState.rPx/2); t.setAttribute('y', circleState.cy-6);
+      t.textContent = 'r = '+fmt(r,2);
+      shapeLayer.appendChild(t);
+      m1Lbl.textContent='Circumference C'; m1.textContent = fmt(2*Math.PI*r,3);
+      m2Lbl.textContent='Area A'; m2.textContent = fmt(Math.PI*r*r,3);
+      formulaEl.textContent = 'C = 2πr · A = πr²';
+      return;
+    }
+
+    // polygon
+    const pts = V.map(v=>`${v.x},${v.y}`).join(' ');
+    const poly = document.createElementNS('http://www.w3.org/2000/svg','polygon');
+    poly.setAttribute('class','poly'); poly.setAttribute('points', pts);
+    shapeLayer.appendChild(poly);
+
+    // update vert circles
+    Array.from(vertsG.children).forEach((el,i)=>{
+      if(el.tagName==='circle' && el.classList.contains('vert')){
+        if(V[i]){ el.setAttribute('cx', V[i].x); el.setAttribute('cy', V[i].y); }
+      }
+    });
+
+    const cx = V.reduce((a,v)=>a+v.x,0)/V.length;
+    const cy = V.reduce((a,v)=>a+v.y,0)/V.length;
+
+    // sides
+    let perimeter = 0;
+    sidesList.innerHTML = '';
+    for(let i=0;i<V.length;i++){
+      const a=V[i], b=V[(i+1)%V.length];
+      const len = dist(a,b)/SCALE;
+      perimeter += len;
+      // label
+      const mx=(a.x+b.x)/2, my=(a.y+b.y)/2;
+      const dx=b.x-a.x, dy=b.y-a.y; const m=Math.hypot(dx,dy)||1;
+      const nx=-dy/m, ny=dx/m;
+      const test = nx*(mx-cx)+ny*(my-cy);
+      const sign = test<0?-1:1;
+      const t = document.createElementNS('http://www.w3.org/2000/svg','text');
+      t.setAttribute('class','side-len'); t.setAttribute('text-anchor','middle');
+      t.setAttribute('x', mx + nx*sign*14); t.setAttribute('y', my + ny*sign*14 + 4);
+      t.textContent = fmt(len,2);
+      sideG.appendChild(t);
+      const item = document.createElement('div');
+      item.className = 'ang-item';
+      item.innerHTML = `<span>side ${i+1}</span><b>${fmt(len,2)}</b>`;
+      sidesList.appendChild(item);
+    }
+
+    // angles
+    let angSum = 0;
+    angList.innerHTML = '';
+    if(shape!=='circle'){
+      for(let i=0;i<V.length;i++){
+        const p=V[i], prev=V[(i-1+V.length)%V.length], next=V[(i+1)%V.length];
+        const ang = angleAt(p, prev, next);
+        angSum += ang;
+        const path = document.createElementNS('http://www.w3.org/2000/svg','path');
+        path.setAttribute('class','ang-arc');
+        path.setAttribute('d', arcPath(p, prev, next, 22));
+        arcG.appendChild(path);
+        // label
+        const a1=Math.atan2(prev.y-p.y,prev.x-p.x), a2=Math.atan2(next.y-p.y,next.x-p.x);
+        let mid=(a1+a2)/2;
+        if(Math.abs(a2-a1)>Math.PI) mid += Math.PI;
+        const t = document.createElementNS('http://www.w3.org/2000/svg','text');
+        t.setAttribute('class','ang-lbl'); t.setAttribute('text-anchor','middle');
+        t.setAttribute('x', p.x + 36*Math.cos(mid)); t.setAttribute('y', p.y + 36*Math.sin(mid)+4);
+        t.textContent = fmt(ang,1)+'°';
+        angG.appendChild(t);
+        // right-angle marker
+        if(Math.abs(ang-90)<1.5){
+          const sz=10;
+          const ux=Math.cos(a1), uy=Math.sin(a1);
+          const vx=Math.cos(a2), vy=Math.sin(a2);
+          const path2 = document.createElementNS('http://www.w3.org/2000/svg','path');
+          path2.setAttribute('class','right-mark');
+          path2.setAttribute('d', `M ${p.x+ux*sz} ${p.y+uy*sz} L ${p.x+ux*sz+vx*sz} ${p.y+uy*sz+vy*sz} L ${p.x+vx*sz} ${p.y+vy*sz}`);
+          arcG.appendChild(path2);
+        }
+        const item = document.createElement('div');
+        item.className='ang-item';
+        item.innerHTML = `<span>vertex ${i+1}</span><b>${fmt(ang,1)}°</b>`;
+        angList.appendChild(item);
+      }
+    }
+
+    const area = shoelaceArea(V) / (SCALE*SCALE);
+
+    m1Lbl.textContent='Perimeter'; m1.textContent = fmt(perimeter,3);
+    m2Lbl.textContent='Area'; m2.textContent = fmt(area,3);
+
+    if(shape==='triangle'){
+      formulaEl.innerHTML = 'Area = ½·base·height. Sum of interior ∠ = 180°.';
+    } else if(shape==='rectangle'){
+      formulaEl.innerHTML = 'Area = length × width. All angles 90°.';
+      m3Lbl.textContent='Sum interior ∠'; m3.textContent = fmt(angSum,1)+'°';
+    } else if(shape==='parallelogram'){
+      // height = area / base; use side 1 as base
+      const base = dist(V[0],V[1])/SCALE;
+      const h = base>0?area/base:0;
+      formulaEl.innerHTML = `Area = base × height. Base = ${fmt(base,2)}, height ≈ ${fmt(h,2)}. NOT base × side.`;
+      m3Lbl.textContent='Sum interior ∠'; m3.textContent = fmt(angSum,1)+'°';
+    } else if(shape==='trapezoid'){
+      // parallel sides are bottom (V0-V1) and top (V2-V3) by construction
+      const bBot = dist(V[0],V[1])/SCALE;
+      const bTop = dist(V[2],V[3])/SCALE;
+      const h = Math.abs(V[0].y - V[2].y)/SCALE;
+      formulaEl.innerHTML = `Area = ½(b₁+b₂)·h = ½(${fmt(bBot,2)}+${fmt(bTop,2)})·${fmt(h,2)} = ${fmt(0.5*(bBot+bTop)*h,2)}`;
+      m3Lbl.textContent='Sum interior ∠'; m3.textContent = fmt(angSum,1)+'°';
+    } else if(shape==='regular'){
+      const n = V.length;
+      const interior = (n-2)*180/n;
+      formulaEl.innerHTML = `Interior ∠ = (n−2)·180/n = ${fmt(interior,1)}°. Sum = (n−2)·180 = ${fmt((n-2)*180,0)}°.`;
+      m3Lbl.textContent='Sum interior ∠'; m3.textContent = fmt(angSum,1)+'°';
+    }
+  }
+
+  function getCSS(name){
+    return getComputedStyle(document.documentElement).getPropertyValue(name).trim() || '#1B3A2D';
+  }
+
+  document.querySelectorAll('.tog').forEach(b=>{
+    b.addEventListener('click', ()=>{
+      document.querySelectorAll('.tog').forEach(x=>x.classList.remove('active'));
+      b.classList.add('active');
+      setShape(b.dataset.shape);
+    });
+  });
+  document.getElementById('reg-n').addEventListener('input', e=>{
+    regN = +e.target.value;
+    document.getElementById('reg-n-val').textContent = regN;
+    if(shape==='regular'){
+      V = regularPoly(regN, 300, 230, 130, -Math.PI/2);
+      buildVerts();
+      render();
+    }
+  });
+
+  setShape('triangle');
+})();
+</script>
+</body>
+</html>
