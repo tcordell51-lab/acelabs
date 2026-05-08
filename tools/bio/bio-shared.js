@@ -957,7 +957,19 @@ function onRetrievalAnswer(nodeId, sectionEl, card, opt) {
 
   const fb = card.querySelector(".retrieval-feedback");
   fb.className = "retrieval-feedback show " + (correct ? "correct" : "wrong");
-  fb.innerHTML = `<span class="lbl">${correct ? "Correct" : "Why this is the answer"}</span>${correct ? data.rt : data.wr}`;
+  // Feedback text — prefer the authored rt/wr, but fall back to the
+  // correct option's visible text when NODES retrieval data is still
+  // a stub (so students never see "Review the explanation." with no
+  // explanation actually present).
+  let feedbackBody = correct ? data.rt : data.wr;
+  if (_isAceCardPlaceholder(feedbackBody)) {
+    const correctOpt = card.querySelector('.opt[data-correct="true"]');
+    const correctText = correctOpt ? correctOpt.textContent.replace(/^[A-D]\s*/,'').trim() : '';
+    feedbackBody = correct
+      ? 'Correct. ' + (correctText || '')
+      : 'The correct answer is: ' + (correctText || '(see node above)') + '. Repair details are still being authored for this prompt.';
+  }
+  fb.innerHTML = `<span class="lbl">${correct ? "Correct" : "Why this is the answer"}</span>${feedbackBody}`;
 
   STATE[nodeId].retrievals[qNum] = correct ? "correct" : "wrong";
 
@@ -1002,12 +1014,43 @@ function escapeHtml(s) {
   return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 }
 
+// Returns true when a string is missing or matches one of the known
+// stub markers used by partially-authored retrieval data. Cards built
+// from these are useless to the student and would just clutter the
+// deck — refuse to create them. Spec: bio-retrieval-spec.md.
+function _isAceCardPlaceholder(s) {
+  if (s == null) return true;
+  var t = String(s).trim();
+  if (!t) return true;
+  if (t === '(question)' || t === '(answer)') return true;
+  if (t === 'Review the explanation.') return true;
+  if (t === '(question) The correct answer is: .') return true;
+  if (/^\(question\)\s+The correct answer is:/.test(t)) return true;
+  return false;
+}
+
 /**
- * Add a new card or upgrade legacy card schema.
- * Each card: {id, q, quickHit, explanation, why, origin, subject, nodeId,
- *             ease, interval, reps, lapses, state, lastReviewed, nextDue, closed}
+ * Add a new Ace Card or upgrade legacy card schema.
+ *
+ * Card shape: {id, q, quickHit, explanation, why, origin, subject,
+ *              nodeId, ease, interval, reps, lapses, state,
+ *              lastReviewed, nextDue, closed}
+ *
+ * Returns null when the input metadata is incomplete (placeholder q /
+ * quickHit / explanation). The retrieval flow logs a console warning
+ * in that case so authors can find the unfilled NODES retrieval entry.
  */
 function addAceCard({ q, quickHit, explanation, origin, subject, nodeId, why, image }) {
+  // Guard: refuse to create a card built from placeholder source data.
+  // The retrieval card on screen still gives feedback (handled in
+  // onRetrievalAnswer), but no useless card joins the deck.
+  if (_isAceCardPlaceholder(q) || _isAceCardPlaceholder(quickHit) || _isAceCardPlaceholder(explanation)) {
+    if (typeof console !== 'undefined' && console.warn) {
+      console.warn('[bio:ace-cards] skipped placeholder card from', origin || subject || nodeId,
+        '— q/quickHit/explanation contain stub markers. Fill the NODES retrieval entry to enable this card.');
+    }
+    return null;
+  }
   // Dedupe: if a card with same q + origin already exists and isn't mastered, don't duplicate
   const dup = STATE.aceCards.find(c => c.q === q && c.origin === origin && !c.closed);
   if (dup) { dup.lapses = (dup.lapses || 0) + 1; saveState(); flashAcePill(); return dup; }
@@ -1027,6 +1070,48 @@ function addAceCard({ q, quickHit, explanation, origin, subject, nodeId, why, im
   renderAceStack();
   flashAcePill();
   return card;
+}
+
+// Public canonical event shape for any Bio miss → Ace Card pipeline.
+// Used by diagnostic, mock/weakness scan, "Log a miss" workflow, and
+// future external miss sources. Adapter functions on consumer pages
+// build one of these from their bank/event then call addBioMissCard.
+//
+// shape: {
+//   prompt:   string  (the question stem, required)
+//   answer:   string  (the correct answer text, required)
+//   summary:  string  (concise explanation; required)
+//   detail?:  string  (longer explanation when available)
+//   subject:  string  ('cell' | 'genetics' | 'physiology' |
+//                      'diversity' | 'devo' | 'evolution')
+//   nodeId?:  string  (registry id; if alias, will be resolved)
+//   nodeTitle?:string (human-readable; falls back to registry title)
+//   route?:   string  (deep link back to the repair node)
+//   trapTag?: string  (misconception tag, optional)
+//   confidence?: string ('cold'|'narrowed'|'guessed'|'blank')
+//   originLabel: string (where the miss came from; e.g. "Diagnostic Q3")
+// }
+function addBioMissCard(evt) {
+  if (!evt) return null;
+  // Resolve registry node when available — gives us route + readable title.
+  var reg = (typeof window !== 'undefined' && window.BIO_REGISTRY) || null;
+  var node = null;
+  if (reg && evt.nodeId) {
+    node = reg.resolve(evt.nodeId, evt.subject);
+  }
+  var title = evt.nodeTitle || (node && node.title) || '';
+  var route = evt.route || (node && reg && reg.repairLink(node)) || '';
+  // We map node fields into the existing addAceCard signature so the
+  // SM-2 review cycle keeps working unchanged.
+  return addAceCard({
+    q: evt.prompt,
+    quickHit: evt.answer,
+    explanation: evt.detail || evt.summary || '',
+    why: evt.summary || '',
+    origin: evt.originLabel + (title ? ' · ' + title : ''),
+    subject: evt.subject,
+    nodeId: node ? node.id : (evt.nodeId || '')
+  });
 }
 
 /**
@@ -14955,6 +15040,543 @@ function initTranscriptionScrubber() {
   render(0);
 }
 
+/* ---- TRANSLATION SCRUBBER ---- */
+const TL_SCRUBBER_HTML = `
+<div style="background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px;padding:18px">
+  <div style="text-align:center;margin-bottom:10px">
+    <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#1B3A2D">Translation — 5-step build</div>
+    <div style="font-size:12px;color:#1B3A2D;margin-top:4px;font-style:italic">Slide through initiation → elongation → termination. tRNAs cycle A→P→E. Polypeptide grows live.</div>
+  </div>
+
+  <div style="background:#fff;border:1.5px solid #1B3A2D;border-radius:10px;padding:14px;margin-bottom:14px">
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);font-size:10px;font-weight:700;color:#1B3A2D;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.05em;text-align:center;gap:2px">
+      <span>1 Small + AUG</span>
+      <span>2 Initiator tRNA</span>
+      <span>3 Large joins</span>
+      <span>4 Elongation</span>
+      <span>5 Stop · Release</span>
+    </div>
+    <input id="tlStage" type="range" min="0" max="100" step="1" value="0" style="width:100%;accent-color:#C25B3F">
+    <div style="text-align:center;margin-top:6px;font-family:'JetBrains Mono',monospace;font-size:13px;color:#1B3A2D">
+      <span id="tlStageName" style="font-weight:700;color:#C25B3F">Stage 1 · Small subunit scans mRNA for AUG</span>
+    </div>
+  </div>
+
+  <svg id="tlSvg" viewBox="0 0 800 400" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:#fff;border:1.5px solid #1B3A2D;border-radius:8px"></svg>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px">
+    <div style="background:#fff;border-left:4px solid #C25B3F;border:1.5px solid #1B3A2D;border-radius:8px;padding:14px">
+      <div style="font-size:11px;color:#C25B3F;font-weight:700;text-transform:uppercase;letter-spacing:0.08em">What's happening</div>
+      <div id="tlExplain" style="font-size:13px;line-height:1.5;color:#1B3A2D;margin-top:6px"></div>
+    </div>
+    <div style="background:#fff;border:1.5px solid #1B3A2D;border-radius:8px;padding:14px">
+      <div style="font-size:11px;color:#1B3A2D;font-weight:700;text-transform:uppercase;letter-spacing:0.08em">Active player</div>
+      <div id="tlPlayerName" style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#1B3A2D;margin:4px 0">—</div>
+      <div id="tlPlayerRole" style="font-size:12px;line-height:1.5;color:#1B3A2D;font-style:italic"></div>
+      <div style="margin-top:8px;font-size:11px;color:#1B3A2D"><span style="font-weight:700;color:#C25B3F">DAT trap:</span> <span id="tlTrap"></span></div>
+    </div>
+  </div>
+</div>
+`;
+
+const TL_STAGES = [
+  {
+    range: [0, 20], label: 'Stage 1 · Small subunit (30S) scans mRNA for AUG', player: 'Small ribosomal subunit (30S)', playerKey: 'small',
+    role: 'Binds the 5\' end of the mRNA (Shine-Dalgarno in prokaryotes; cap in eukaryotes) and scans for the first AUG.',
+    explain: '<b>The small subunit is the scanner.</b> In prokaryotes, the 16S rRNA recognizes the Shine-Dalgarno sequence ~6 nt upstream of AUG. In eukaryotes, the 40S subunit binds the 5\' cap and scans 3\'-ward for the first AUG (Kozak context).',
+    trap: 'Small subunit alone cannot translate — it just finds the start. Polypeptide bond formation requires the LARGE subunit\'s peptidyl transferase activity.'
+  },
+  {
+    range: [20, 40], label: 'Stage 2 · Initiator tRNA (Met) lands in the P site', player: 'Initiator tRNA carrying Met', playerKey: 'init',
+    role: 'The special initiator tRNA (fMet in prokaryotes, Met in eukaryotes) base-pairs with AUG directly in the P site (NOT the A site).',
+    explain: '<b>This is the only tRNA that enters the P site directly.</b> All other aminoacyl-tRNAs enter via the A site. The initiator tRNA carries N-formyl-methionine in bacteria, regular methionine in eukaryotes. Its anticodon is 3\'-UAC-5\', pairing antiparallel with mRNA\'s 5\'-AUG-3\'.',
+    trap: 'Anticodon-codon pairing is ANTIPARALLEL. mRNA codon 5\'-AUG-3\' pairs with tRNA anticodon 3\'-UAC-5\'. The DAT loves to test this orientation.'
+  },
+  {
+    range: [40, 55], label: 'Stage 3 · Large subunit (50S) joins → 70S ribosome', player: 'Large ribosomal subunit (50S)', playerKey: 'large',
+    role: 'The large subunit assembles onto the small subunit + initiator tRNA + mRNA, completing the functional ribosome with active A, P, E sites.',
+    explain: '<b>The large subunit brings peptidyl transferase activity.</b> Now the ribosome has all three tRNA-binding sites — A (aminoacyl, incoming), P (peptidyl, growing chain), E (exit, leaving). Initiator tRNA is in P site; A site is open and ready for the next aminoacyl-tRNA.',
+    trap: 'Prokaryote ribosome = 70S (30S + 50S). Eukaryote ribosome = 80S (40S + 60S). The 50S/60S = sedimentation rate, not literal sum.'
+  },
+  {
+    range: [55, 85], label: 'Stage 4 · Elongation cycle — A → P → E', player: 'Aminoacyl-tRNA (in A site)', playerKey: 'trna',
+    role: 'New aminoacyl-tRNA enters the A site. Peptide bond forms between A-site amino acid and the growing chain on P-site tRNA. Ribosome translocates: A→P, P→E, E→exits.',
+    explain: '<b>The cycle repeats per codon:</b> (1) aminoacyl-tRNA enters A site (matches codon); (2) peptide bond forms — the chain is transferred from P-site tRNA to A-site tRNA via peptidyl transferase (rRNA, a ribozyme!); (3) translocation: ribosome moves 3 nt; A becomes P, P becomes E, E ejects empty tRNA.',
+    trap: 'Peptidyl transferase is a <b>ribozyme</b> — the enzyme is RNA, not protein. The 23S rRNA in the large subunit catalyzes the bond. Test favorite.'
+  },
+  {
+    range: [85, 100], label: 'Stage 5 · Stop codon → release factor → polypeptide released', player: 'Release factor (RF)', playerKey: 'release',
+    role: 'A stop codon (UAA, UAG, UGA) enters the A site. No tRNA matches — instead, a release factor binds and triggers hydrolysis of the polypeptide-tRNA bond.',
+    explain: '<b>Stop codons are NOT decoded by tRNAs.</b> When UAA/UAG/UGA enters the A site, release factor (RF1/RF2 in prokaryotes; eRF1 in eukaryotes) binds and stimulates peptidyl transferase to add WATER instead of an amino acid. Polypeptide is released; ribosome dissociates into subunits.',
+    trap: 'Memorize the stop codons: <b>UAA, UAG, UGA</b>. Mnemonic: "U Are Annoying, U Are Gone, U Go Away." The DAT will sneak one of these into a translation Q to test that you stop reading.'
+  },
+];
+
+const TL_COLORS = {
+  small: '#6A8AA8', init: '#C25B3F', large: '#1B3A2D',
+  trna: '#c19a3e', release: '#a378a5',
+};
+const TL_LETTERS = { small: '30', init: 'M', large: '50', trna: 'A', release: 'RF' };
+
+function initTranslationScrubber() {
+  const body = document.getElementById('tlScrubberBody');
+  if (!body) return;
+  body.innerHTML = TL_SCRUBBER_HTML;
+
+  function drawPlayer(key, x, y, opacity, customLetter) {
+    const color = TL_COLORS[key];
+    const letter = customLetter || TL_LETTERS[key];
+    const r = key === 'small' ? 22 : key === 'large' ? 26 : 16;
+    return `
+      <g opacity="${opacity}">
+        <circle cx="${x}" cy="${y}" r="${r}" fill="${color}" stroke="#1B3A2D" stroke-width="1.8" filter="drop-shadow(0 2px 3px rgba(0,0,0,0.15))"/>
+        <text x="${x}" y="${y + 5}" text-anchor="middle" font-size="${key === 'small' || key === 'large' ? 12 : 13}" font-weight="700" fill="#fff" font-family="JetBrains Mono, monospace">${letter}</text>
+      </g>`;
+  }
+
+  function render(pct) {
+    const stage = TL_STAGES.find(s => pct >= s.range[0] && pct <= s.range[1]) || TL_STAGES[0];
+    const stageIdx = TL_STAGES.indexOf(stage);
+
+    const svg = document.getElementById('tlSvg');
+    let s = '';
+    s += '<defs><linearGradient id="tlsv-paper" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#fbf6e9"/><stop offset="1" stop-color="#f4ecd8"/></linearGradient></defs>';
+    s += '<rect width="800" height="400" fill="url(#tlsv-paper)"/>';
+    s += '<text x="400" y="30" text-anchor="middle" font-size="11" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">RIBOSOME READS mRNA 5\'→3\' · BUILDS PEPTIDE N→C</text>';
+
+    // mRNA strand at the bottom (y=320)
+    const mrnaY = 320;
+    // Codons positioned along x axis
+    const codons = ['AUG', 'GCC', 'UUU', 'AAG', 'CGU', 'UAA'];
+    const codonSpacing = 60;
+    const codonStartX = 100;
+
+    // Position of ribosome along mRNA (advances during elongation)
+    // Small subunit alone: scans from mRNA start to first AUG (codon 0)
+    // Stage 4: ribosome moves through codons 1, 2, 3, 4
+    // Stage 5: at stop codon (codon 5)
+    let ribosomeCodonIdx = 0;  // P-site codon index
+    if (pct >= 55 && pct < 85) {
+      const elongProgress = (pct - 55) / 30;
+      ribosomeCodonIdx = Math.min(4, elongProgress * 4);
+    } else if (pct >= 85) {
+      ribosomeCodonIdx = 4;  // P-site at codon 4, A-site at stop codon 5
+    }
+
+    // mRNA backbone
+    s += `<line x1="60" y1="${mrnaY}" x2="${codonStartX + 6 * codonSpacing}" y2="${mrnaY}" stroke="#C25B3F" stroke-width="3" stroke-linecap="round"/>`;
+    s += `<text x="50" y="${mrnaY + 5}" text-anchor="end" font-size="11" font-weight="700" fill="#8C7235">5\'</text>`;
+    s += `<text x="${codonStartX + 6 * codonSpacing + 10}" y="${mrnaY + 5}" font-size="11" font-weight="700" fill="#8C7235">3\'</text>`;
+
+    // Codons as text on mRNA
+    codons.forEach((c, i) => {
+      const x = codonStartX + i * codonSpacing;
+      const isStop = c === 'UAA' || c === 'UAG' || c === 'UGA';
+      const codonColor = isStop ? '#C25B3F' : '#1B3A2D';
+      s += `<rect x="${x - 24}" y="${mrnaY - 12}" width="48" height="24" fill="rgba(255,253,247,0.8)" stroke="${codonColor}" stroke-width="${i === Math.floor(ribosomeCodonIdx) ? 2 : 0.8}" rx="3"/>`;
+      s += `<text x="${x}" y="${mrnaY + 4}" text-anchor="middle" font-size="11" font-weight="700" fill="${codonColor}" font-family="JetBrains Mono, monospace">${c}</text>`;
+      // Codon position label
+      if (i === 0) s += `<text x="${x}" y="${mrnaY + 30}" text-anchor="middle" font-size="9" fill="#1B3A2D" font-style="italic">START</text>`;
+      if (isStop) s += `<text x="${x}" y="${mrnaY + 30}" text-anchor="middle" font-size="9" font-weight="700" fill="#C25B3F">STOP</text>`;
+    });
+
+    // Ribosome position — large subunit (top arc) + small subunit (bottom arc), centered over P site
+    // P-site x = codonStartX + ribosomeCodonIdx * codonSpacing
+    const pSiteX = codonStartX + ribosomeCodonIdx * codonSpacing;
+
+    if (pct >= 0 && pct < 20) {
+      // Stage 1: small subunit scanning, alone
+      const scanX = codonStartX - 30 + (pct / 20) * 30;
+      s += drawPlayer('small', scanX, mrnaY - 30, 1);
+      s += `<text x="${scanX}" y="${mrnaY - 60}" text-anchor="middle" font-size="9" font-style="italic" fill="#6A8AA8">scanning →</text>`;
+    } else if (pct >= 20) {
+      // Subunits + ribosome assembly drawn at the codon position
+      // Show the ribosome only after stage 3 (large joins). Before that, just small + initiator
+      if (pct >= 40) {
+        // Large subunit (top arc, semi-transparent)
+        s += `<ellipse cx="${pSiteX + 30}" cy="${mrnaY - 60}" rx="80" ry="35" fill="rgba(27,58,45,0.35)" stroke="#1B3A2D" stroke-width="1.5"/>`;
+        s += `<text x="${pSiteX + 30}" y="${mrnaY - 78}" text-anchor="middle" font-size="10" font-weight="700" fill="#1B3A2D">LARGE (50S/60S)</text>`;
+        // A, P, E site labels inside the large subunit
+        s += `<text x="${pSiteX + 60}" y="${mrnaY - 50}" text-anchor="middle" font-size="11" font-weight="700" fill="#1B3A2D">A</text>`;
+        s += `<text x="${pSiteX}" y="${mrnaY - 50}" text-anchor="middle" font-size="11" font-weight="700" fill="#1B3A2D">P</text>`;
+        s += `<text x="${pSiteX - 60}" y="${mrnaY - 50}" text-anchor="middle" font-size="11" font-weight="700" fill="#1B3A2D">E</text>`;
+      }
+      // Small subunit (bottom arc) — always present from stage 1
+      s += `<ellipse cx="${pSiteX + 30}" cy="${mrnaY - 18}" rx="80" ry="22" fill="rgba(106,138,168,0.45)" stroke="#1B3A2D" stroke-width="1.5"/>`;
+      s += `<text x="${pSiteX + 30}" y="${mrnaY - 28}" text-anchor="middle" font-size="9" font-weight="700" fill="#1B3A2D">SMALL (30S/40S)</text>`;
+    }
+
+    // tRNA in P site (initiator at stage 2+, then varies during elongation)
+    if (pct >= 20) {
+      // P-site tRNA: shape = trapezoid stem + circle (amino acid)
+      const aaInP = pct < 55 ? 'fMet' : 'pep';
+      const trnaX = pSiteX;
+      const trnaTopY = mrnaY - 80;
+      // tRNA cloverleaf simplified: vertical stem with small tip + amino acid bubble at top
+      s += `<line x1="${trnaX}" y1="${mrnaY - 14}" x2="${trnaX}" y2="${trnaTopY + 6}" stroke="#C25B3F" stroke-width="3" stroke-linecap="round" opacity="${pct >= 40 ? 0.85 : 1}"/>`;
+      // Anticodon at bottom (3 nt)
+      s += `<text x="${trnaX}" y="${mrnaY - 16}" text-anchor="middle" font-size="9" fill="#C25B3F" font-weight="700">UAC</text>`;
+      // Amino acid attached to top
+      if (pct >= 20 && pct < 55) {
+        // Initiator with single Met
+        s += `<circle cx="${trnaX}" cy="${trnaTopY}" r="10" fill="#C25B3F" stroke="#1B3A2D" stroke-width="1.5"/>`;
+        s += `<text x="${trnaX}" y="${trnaTopY + 3}" text-anchor="middle" font-size="9" font-weight="700" fill="#fff">Met</text>`;
+      } else if (pct >= 55) {
+        // P-site tRNA carries the growing peptide chain (visualized below)
+        s += `<text x="${trnaX}" y="${trnaTopY + 3}" text-anchor="middle" font-size="9" font-weight="700" fill="#C25B3F">P-tRNA</text>`;
+      }
+    }
+
+    // A-site tRNA (during elongation, stages 4-5)
+    if (pct >= 55 && pct < 85) {
+      const aSiteX = pSiteX + 60;
+      const codonAtA = codons[Math.floor(ribosomeCodonIdx) + 1] || '';
+      if (codonAtA && codonAtA !== 'UAA' && codonAtA !== 'UAG' && codonAtA !== 'UGA') {
+        s += `<line x1="${aSiteX}" y1="${mrnaY - 14}" x2="${aSiteX}" y2="${mrnaY - 74}" stroke="#c19a3e" stroke-width="3" stroke-linecap="round"/>`;
+        s += `<circle cx="${aSiteX}" cy="${mrnaY - 80}" r="10" fill="#c19a3e" stroke="#1B3A2D" stroke-width="1.5"/>`;
+        s += `<text x="${aSiteX}" y="${mrnaY - 77}" text-anchor="middle" font-size="9" font-weight="700" fill="#1B3A2D">aa</text>`;
+        s += `<text x="${aSiteX}" y="${mrnaY - 95}" text-anchor="middle" font-size="9" fill="#c19a3e" font-style="italic">incoming</text>`;
+      }
+    }
+
+    // Polypeptide chain (grows during elongation)
+    if (pct >= 55) {
+      const peptideLen = pct >= 85 ? 5 : Math.floor(ribosomeCodonIdx) + 1;
+      // Draw chain as connected circles emerging from the ribosome top
+      const startX = pSiteX - 20, startY = mrnaY - 130;
+      let chainPath = `M ${startX} ${startY}`;
+      let chainCircles = '';
+      for (let i = 0; i < peptideLen; i++) {
+        const cx = startX - i * 22;
+        const cy = startY - (i % 2 === 0 ? 10 : -10);
+        chainPath += ` L ${cx} ${cy}`;
+        chainCircles += `<circle cx="${cx}" cy="${cy}" r="8" fill="#5FA874" stroke="#1B3A2D" stroke-width="1.2"/>`;
+      }
+      s += `<path d="${chainPath}" fill="none" stroke="#5FA874" stroke-width="2.5"/>`;
+      s += chainCircles;
+      s += `<text x="${startX - peptideLen * 22 - 25}" y="${startY - 5}" text-anchor="end" font-size="10" font-weight="700" fill="#5FA874">peptide N-end</text>`;
+
+      if (pct >= 85) {
+        // Released
+        s += `<text x="${startX - peptideLen * 22 - 25}" y="${startY + 10}" text-anchor="end" font-size="9" fill="#5FA874" font-style="italic">RELEASED</text>`;
+      }
+    }
+
+    // Release factor (stage 5)
+    if (pct >= 85) {
+      const stopCodonX = codonStartX + 5 * codonSpacing;
+      s += drawPlayer('release', stopCodonX, mrnaY - 80, 1);
+      s += `<text x="${stopCodonX}" y="${mrnaY - 100}" text-anchor="middle" font-size="9" font-style="italic" fill="#a378a5">no tRNA matches</text>`;
+      // Glow ring
+      s += `<circle cx="${stopCodonX}" cy="${mrnaY - 80}" r="22" fill="none" stroke="#a378a5" stroke-width="2" stroke-dasharray="4,3" opacity="0.7"><animate attributeName="r" values="22;26;22" dur="1.4s" repeatCount="indefinite"/></circle>`;
+    }
+
+    // Direction arrow
+    if (pct >= 55) {
+      s += `<line x1="${pSiteX + 30}" y1="${mrnaY + 50}" x2="${pSiteX + 80}" y2="${mrnaY + 50}" stroke="#1B3A2D" stroke-width="1.5" marker-end="url(#tl-arr)"/>`;
+      s += `<text x="${pSiteX + 90}" y="${mrnaY + 54}" font-size="10" fill="#1B3A2D" font-style="italic">ribosome moves 3 nt per cycle</text>`;
+    }
+    s += '<defs><marker id="tl-arr" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M 0 0 L 6 3 L 0 6 z" fill="#1B3A2D"/></marker></defs>';
+
+    // Legend
+    s += '<g transform="translate(20, 372)">';
+    s += '<rect x="0" y="0" width="14" height="3" fill="#C25B3F"/><text x="20" y="6" font-size="10" fill="#1B3A2D" font-weight="700">mRNA</text>';
+    s += '<circle cx="80" cy="3" r="6" fill="#5FA874" stroke="#1B3A2D" stroke-width="1"/><text x="92" y="6" font-size="10" fill="#1B3A2D" font-weight="700">amino acid</text>';
+    s += '<rect x="180" y="0" width="14" height="3" fill="#c19a3e"/><text x="200" y="6" font-size="10" fill="#1B3A2D" font-weight="700">tRNA</text>';
+    s += '<text x="700" y="6" text-anchor="end" font-size="10" font-style="italic" fill="#1B3A2D">A: aminoacyl · P: peptidyl · E: exit</text>';
+    s += '</g>';
+
+    svg.innerHTML = s;
+
+    // Update text panels
+    document.getElementById('tlStageName').textContent = stage.label;
+    document.getElementById('tlExplain').innerHTML = stage.explain;
+    document.getElementById('tlPlayerName').textContent = stage.player;
+    document.getElementById('tlPlayerRole').textContent = stage.role;
+    document.getElementById('tlTrap').innerHTML = stage.trap;
+  }
+
+  document.getElementById('tlStage').addEventListener('input', e => render(+e.target.value));
+  render(0);
+}
+
+/* ---- ACTION POTENTIAL SCRUBBER ---- */
+const AP_SCRUBBER_HTML = `
+<div style="background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px;padding:18px">
+  <div style="text-align:center;margin-bottom:10px">
+    <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#1B3A2D">Action potential — one cycle</div>
+    <div style="font-size:12px;color:#1B3A2D;margin-top:4px;font-style:italic">Drag through 5 phases. Vm dot rides the curve. Na⁺ + K⁺ channels open and close in real time.</div>
+  </div>
+
+  <div style="background:#fff;border:1.5px solid #1B3A2D;border-radius:10px;padding:14px;margin-bottom:14px">
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);font-size:10px;font-weight:700;color:#1B3A2D;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.05em;text-align:center;gap:2px">
+      <span>1 Resting</span>
+      <span>2 Depol</span>
+      <span>3 Peak</span>
+      <span>4 Repol</span>
+      <span>5 Hyperpol</span>
+    </div>
+    <input id="apStage" type="range" min="0" max="100" step="1" value="0" style="width:100%;accent-color:#C25B3F">
+    <div style="text-align:center;margin-top:6px;font-family:'JetBrains Mono',monospace;font-size:13px;color:#1B3A2D">
+      <span id="apStageName" style="font-weight:700;color:#C25B3F">Stage 1 · Resting (-70 mV)</span>
+    </div>
+  </div>
+
+  <svg id="apScrubberSvg" viewBox="0 0 800 360" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:#fff;border:1.5px solid #1B3A2D;border-radius:8px"></svg>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:14px">
+    <div style="background:#fff;border:1.5px solid #1B3A2D;border-radius:8px;padding:10px;text-align:center">
+      <div style="font-size:10px;color:#1B3A2D;font-weight:700;text-transform:uppercase">Vm</div>
+      <div id="apVm" style="font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;color:#C25B3F;margin-top:4px">-70 mV</div>
+    </div>
+    <div style="background:#fff;border:1.5px solid #C25B3F;border-radius:8px;padding:10px;text-align:center">
+      <div style="font-size:10px;color:#C25B3F;font-weight:700;text-transform:uppercase">Na⁺ channels</div>
+      <div id="apNa" style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:#C25B3F;margin-top:4px">CLOSED</div>
+    </div>
+    <div style="background:#fff;border:1.5px solid #5cabe6;border-radius:8px;padding:10px;text-align:center">
+      <div style="font-size:10px;color:#5cabe6;font-weight:700;text-transform:uppercase">K⁺ channels</div>
+      <div id="apK" style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:#5cabe6;margin-top:4px">CLOSED</div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px">
+    <div style="background:#fff;border-left:4px solid #C25B3F;border:1.5px solid #1B3A2D;border-radius:8px;padding:14px">
+      <div style="font-size:11px;color:#C25B3F;font-weight:700;text-transform:uppercase;letter-spacing:0.08em">What's happening</div>
+      <div id="apExplain" style="font-size:13px;line-height:1.5;color:#1B3A2D;margin-top:6px"></div>
+    </div>
+    <div style="background:#fff;border:1.5px solid #1B3A2D;border-radius:8px;padding:14px">
+      <div style="font-size:11px;color:#1B3A2D;font-weight:700;text-transform:uppercase;letter-spacing:0.08em">Phase</div>
+      <div id="apPhaseName" style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#1B3A2D;margin:4px 0">—</div>
+      <div style="margin-top:8px;font-size:11px;color:#1B3A2D"><span style="font-weight:700;color:#C25B3F">DAT trap:</span> <span id="apTrap"></span></div>
+    </div>
+  </div>
+</div>
+`;
+
+const AP_PHASES = [
+  {
+    range: [0, 18], label: 'Stage 1 · Resting (-70 mV)', vm: -70,
+    na: 'CLOSED', naColor: '#C25B3F',
+    k: 'leak only', kColor: '#5cabe6',
+    explain: '<b>Steady-state.</b> Na/K ATPase pumps 3 Na⁺ out and 2 K⁺ in (per ATP); K⁺ leaks back out via leak channels, leaving the inside negative (~-70 mV). Voltage-gated Na⁺ and K⁺ channels are CLOSED. Stable until a stimulus arrives.',
+    trap: 'The Na/K pump MAINTAINS the gradient — it does NOT generate the AP. The AP is generated by voltage-gated channels using the gradient the pump set up.'
+  },
+  {
+    range: [18, 30], label: 'Stage 2 · Depolarization (threshold → +30 mV)', vm: 0,
+    na: 'OPENING (in)', naColor: '#C25B3F',
+    k: 'still closed', kColor: '#888',
+    explain: '<b>Stimulus brings Vm to threshold (-55 mV).</b> Voltage-gated Na⁺ channels SNAP OPEN — Na⁺ rushes in down its electrochemical gradient. This depolarizes the membrane further → opens MORE Na⁺ channels (positive feedback). All-or-nothing: once threshold is crossed, the AP runs to completion.',
+    trap: 'Sub-threshold stimuli produce graded potentials but NO AP. Above threshold, every AP reaches the same +30 mV peak. Stimulus strength is encoded by AP FREQUENCY, not amplitude.'
+  },
+  {
+    range: [30, 42], label: 'Stage 3 · Peak (+30 mV) — Na⁺ inactivates', vm: 30,
+    na: 'INACTIVATED', naColor: '#888',
+    k: 'opening (out)', kColor: '#5cabe6',
+    explain: '<b>Vm reaches +30 mV.</b> Voltage-gated Na⁺ channels INACTIVATE (a third state, distinct from "closed" — they have an inactivation gate that swings shut). Voltage-gated K⁺ channels are slow to respond but now OPEN. K⁺ begins flowing out down its gradient.',
+    trap: 'Na⁺ channels have THREE states: closed (resting), open (during depol), and inactivated (during peak/repol). The inactivation gate is what makes the absolute refractory period.'
+  },
+  {
+    range: [42, 60], label: 'Stage 4 · Repolarization', vm: -50,
+    na: 'INACTIVATED', naColor: '#888',
+    k: 'OPEN (out)', kColor: '#5cabe6',
+    explain: '<b>K⁺ efflux brings Vm back down.</b> Na⁺ channels remain inactivated (cannot reopen). K⁺ channels stay open and continue letting K⁺ leave the cell. Vm rapidly drops back toward resting.',
+    trap: 'K⁺ flowing OUT depolarizes? No — K⁺ leaving a positive ion REMOVES positive charge from inside, so it HYPER-polarizes (drives Vm more negative). This is the opposite of what students often guess.'
+  },
+  {
+    range: [60, 80], label: 'Stage 5 · Hyperpolarization', vm: -85,
+    na: 'recovering', naColor: '#888',
+    k: 'still open', kColor: '#5cabe6',
+    explain: '<b>Vm overshoots resting and goes more negative (~-85 mV).</b> K⁺ channels are slow to close, so K⁺ keeps flowing out past the resting point. Na⁺ channels are still recovering from inactivation back to closed. Eventually K⁺ channels close and the membrane returns to -70 mV.',
+    trap: 'During this period (relative refractory), a second AP can fire but only with a STRONGER-than-normal stimulus. Combined with absolute refractory (Na inactivated), this prevents APs from running backward along the axon.'
+  },
+  {
+    range: [80, 100], label: 'Stage 6 · Reset to resting (-70 mV)', vm: -70,
+    na: 'CLOSED', naColor: '#C25B3F',
+    k: 'closing', kColor: '#888',
+    explain: '<b>Membrane returns to resting potential.</b> K⁺ channels close, Na⁺ channels reset from inactivated → closed (ready to open again). Na/K pump runs continuously to maintain the gradient (it never stops; just unrelated to the AP itself). Cell is ready for the next stimulus.',
+    trap: 'Each AP costs only a tiny number of Na⁺/K⁺ ions — the gradient is never significantly depleted by a single AP. Pump prevents long-term drift.'
+  },
+];
+
+// AP curve function: returns Vm in mV given t in [0, 1]
+function apVmAt(t) {
+  // Stage 1 resting: -70 (t < 0.18)
+  // Stage 2 depol: -70 → +30 (0.18-0.30, fast rise)
+  // Stage 3 peak + Na inactivation: +30 (0.30-0.36)
+  // Stage 4 repol: +30 → -70 (0.36-0.55)
+  // Stage 5 hyperpol: -70 → -85 → -70 (0.55-0.85)
+  // Stage 6 reset: -70 (0.85-1.0)
+  if (t < 0.18) return -70;
+  if (t < 0.30) {
+    const p = (t - 0.18) / 0.12;
+    return -70 + 100 * p;  // -70 → +30
+  }
+  if (t < 0.36) return 30;
+  if (t < 0.55) {
+    const p = (t - 0.36) / 0.19;
+    return 30 - 100 * p;  // +30 → -70
+  }
+  if (t < 0.70) {
+    const p = (t - 0.55) / 0.15;
+    return -70 - 15 * p;  // -70 → -85
+  }
+  if (t < 0.85) {
+    const p = (t - 0.70) / 0.15;
+    return -85 + 15 * p;  // -85 → -70
+  }
+  return -70;
+}
+
+function initActionPotentialScrubber() {
+  const body = document.getElementById('apScrubberBody');
+  if (!body) return;
+  body.innerHTML = AP_SCRUBBER_HTML;
+
+  // SVG layout constants
+  const CHART_X = 80, CHART_Y_TOP = 50, CHART_W = 600, CHART_H = 240;
+  // Vm range: +50 to -100 mV mapped to chart Y
+  const vmToY = (mv) => {
+    const yMin = CHART_Y_TOP;          // top = +50 mV
+    const yMax = CHART_Y_TOP + CHART_H; // bottom = -100 mV
+    return yMax - ((mv + 100) / 150) * (yMax - yMin);
+  };
+
+  function buildCurvePath() {
+    const N = 200;
+    let d = '';
+    for (let i = 0; i <= N; i++) {
+      const t = i / N;
+      const x = CHART_X + t * CHART_W;
+      const y = vmToY(apVmAt(t));
+      d += (i === 0 ? 'M' : 'L') + x.toFixed(1) + ' ' + y.toFixed(1) + ' ';
+    }
+    return d;
+  }
+
+  function render(pct) {
+    const phase = AP_PHASES.find(p => pct >= p.range[0] && pct <= p.range[1]) || AP_PHASES[0];
+    const t = pct / 100;
+    const vm = apVmAt(t);
+
+    const svg = document.getElementById('apScrubberSvg');
+    let s = '';
+    s += '<defs><linearGradient id="apsv-paper" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#fbf6e9"/><stop offset="1" stop-color="#f4ecd8"/></linearGradient></defs>';
+    s += '<rect width="800" height="360" fill="url(#apsv-paper)"/>';
+    s += '<text x="400" y="28" text-anchor="middle" font-size="11" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">VOLTAGE vs TIME · ONE ACTION POTENTIAL</text>';
+
+    // Y-axis (voltage)
+    s += `<line x1="${CHART_X}" y1="${CHART_Y_TOP}" x2="${CHART_X}" y2="${CHART_Y_TOP + CHART_H}" stroke="#1B3A2D" stroke-width="1.5"/>`;
+    [50, 0, -55, -70, -85, -100].forEach(mv => {
+      const y = vmToY(mv);
+      const isThreshold = mv === -55;
+      const isResting = mv === -70;
+      s += `<line x1="${CHART_X - 5}" y1="${y}" x2="${CHART_X}" y2="${y}" stroke="#1B3A2D" stroke-width="1"/>`;
+      s += `<text x="${CHART_X - 8}" y="${y + 4}" text-anchor="end" font-size="10" fill="${isThreshold ? '#C25B3F' : isResting ? '#1B3A2D' : '#1B3A2D'}" font-weight="${isThreshold || isResting ? 700 : 400}" font-family="JetBrains Mono, monospace">${mv} mV</text>`;
+    });
+
+    // Threshold line (dashed)
+    s += `<line x1="${CHART_X}" y1="${vmToY(-55)}" x2="${CHART_X + CHART_W}" y2="${vmToY(-55)}" stroke="#C25B3F" stroke-width="1" stroke-dasharray="3,3" opacity="0.5"/>`;
+    s += `<text x="${CHART_X + CHART_W + 4}" y="${vmToY(-55) + 4}" font-size="9" fill="#C25B3F" font-style="italic">threshold</text>`;
+    // Resting line (subtle)
+    s += `<line x1="${CHART_X}" y1="${vmToY(-70)}" x2="${CHART_X + CHART_W}" y2="${vmToY(-70)}" stroke="#1B3A2D" stroke-width="0.8" stroke-dasharray="2,3" opacity="0.3"/>`;
+
+    // X-axis (time)
+    s += `<line x1="${CHART_X}" y1="${vmToY(-70)}" x2="${CHART_X + CHART_W}" y2="${vmToY(-70)}" stroke="#1B3A2D" stroke-width="0"/>`;
+    s += `<text x="${CHART_X + CHART_W / 2}" y="${CHART_Y_TOP + CHART_H + 26}" text-anchor="middle" font-size="10" font-weight="700" fill="#1B3A2D" letter-spacing="0.1em">TIME →</text>`;
+
+    // Phase shading
+    const stages = [
+      { from: 0, to: 0.18, color: '#5cabe6', name: 'rest' },
+      { from: 0.18, to: 0.30, color: '#C25B3F', name: 'depol' },
+      { from: 0.30, to: 0.36, color: '#c19a3e', name: 'peak' },
+      { from: 0.36, to: 0.55, color: '#5FA874', name: 'repol' },
+      { from: 0.55, to: 0.85, color: '#a378a5', name: 'hyperpol' },
+      { from: 0.85, to: 1.0, color: '#5cabe6', name: 'reset' },
+    ];
+    stages.forEach(st => {
+      const x = CHART_X + st.from * CHART_W;
+      const w = (st.to - st.from) * CHART_W;
+      s += `<rect x="${x}" y="${CHART_Y_TOP}" width="${w}" height="${CHART_H}" fill="${st.color}" opacity="0.06"/>`;
+    });
+
+    // The AP curve (drawn fully, behind the dot)
+    s += `<path d="${buildCurvePath()}" fill="none" stroke="#1B3A2D" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>`;
+
+    // Vm dot (current position)
+    const dotX = CHART_X + t * CHART_W;
+    const dotY = vmToY(vm);
+    s += `<circle cx="${dotX}" cy="${dotY}" r="9" fill="#C25B3F" stroke="#fff" stroke-width="2"/>`;
+    s += `<circle cx="${dotX}" cy="${dotY}" r="14" fill="none" stroke="#C25B3F" stroke-width="1.5" stroke-dasharray="3,2" opacity="0.5"><animate attributeName="r" values="14;18;14" dur="1.4s" repeatCount="indefinite"/></circle>`;
+
+    // Phase labels along the top
+    const phaseLabels = [
+      { x: 0.09, label: 'RESTING' },
+      { x: 0.24, label: 'DEPOL' },
+      { x: 0.33, label: 'PEAK' },
+      { x: 0.46, label: 'REPOL' },
+      { x: 0.70, label: 'HYPERPOL' },
+      { x: 0.93, label: 'RESET' },
+    ];
+    phaseLabels.forEach(p => {
+      const cx = CHART_X + p.x * CHART_W;
+      const isCurrent = (t >= (stages.find(s => s.name.startsWith(p.label.toLowerCase().slice(0, 4)))?.from || 0)) && (t < (stages.find(s => s.name.startsWith(p.label.toLowerCase().slice(0, 4)))?.to || 1));
+      s += `<text x="${cx}" y="${CHART_Y_TOP - 6}" text-anchor="middle" font-size="9" font-weight="700" fill="${isCurrent ? '#C25B3F' : '#1B3A2D'}" letter-spacing="0.05em" opacity="${isCurrent ? 1 : 0.5}">${p.label}</text>`;
+    });
+
+    // Ion flow arrows (right of chart) — show what's flowing now
+    const ionX = CHART_X + CHART_W + 60;
+    s += `<g transform="translate(${ionX}, 100)">`;
+    s += '<text x="0" y="-12" text-anchor="middle" font-size="10" font-weight="700" fill="#1B3A2D">MEMBRANE</text>';
+    // Membrane line
+    s += '<line x1="-30" y1="0" x2="30" y2="0" stroke="#1B3A2D" stroke-width="2"/>';
+    s += '<line x1="-30" y1="40" x2="30" y2="40" stroke="#1B3A2D" stroke-width="2"/>';
+    s += '<text x="-44" y="22" text-anchor="end" font-size="9" fill="#1B3A2D">outside</text>';
+    s += '<text x="-44" y="62" text-anchor="end" font-size="9" fill="#1B3A2D">inside</text>';
+
+    // Na+ channel + flow
+    const naFlowing = (t >= 0.18 && t < 0.30);
+    s += `<rect x="-10" y="0" width="20" height="40" fill="${naFlowing ? '#C25B3F' : '#888'}" opacity="0.4" stroke="#1B3A2D" stroke-width="1"/>`;
+    s += `<text x="0" y="-2" text-anchor="middle" font-size="9" fill="#1B3A2D" font-weight="700">Na⁺</text>`;
+    if (naFlowing) {
+      s += '<line x1="0" y1="-4" x2="0" y2="44" stroke="#C25B3F" stroke-width="2" marker-end="url(#ap-arr)"/>';
+      s += '<text x="14" y="22" font-size="9" font-style="italic" fill="#C25B3F">in</text>';
+    }
+    s += `</g>`;
+
+    // K+ channel + flow
+    s += `<g transform="translate(${ionX}, 230)">`;
+    s += '<text x="0" y="-12" text-anchor="middle" font-size="10" font-weight="700" fill="#1B3A2D">MEMBRANE</text>';
+    s += '<line x1="-30" y1="0" x2="30" y2="0" stroke="#1B3A2D" stroke-width="2"/>';
+    s += '<line x1="-30" y1="40" x2="30" y2="40" stroke="#1B3A2D" stroke-width="2"/>';
+    const kFlowing = (t >= 0.30 && t < 0.85);
+    s += `<rect x="-10" y="0" width="20" height="40" fill="${kFlowing ? '#5cabe6' : '#888'}" opacity="0.4" stroke="#1B3A2D" stroke-width="1"/>`;
+    s += `<text x="0" y="-2" text-anchor="middle" font-size="9" fill="#1B3A2D" font-weight="700">K⁺</text>`;
+    if (kFlowing) {
+      s += '<line x1="0" y1="44" x2="0" y2="-4" stroke="#5cabe6" stroke-width="2" marker-end="url(#ap-arr)"/>';
+      s += '<text x="14" y="22" font-size="9" font-style="italic" fill="#5cabe6">out</text>';
+    }
+    s += `</g>`;
+
+    s += '<defs><marker id="ap-arr" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M 0 0 L 6 3 L 0 6 z" fill="#1B3A2D"/></marker></defs>';
+
+    svg.innerHTML = s;
+
+    // Update text panels
+    document.getElementById('apStageName').textContent = phase.label;
+    document.getElementById('apVm').textContent = Math.round(vm) + ' mV';
+    document.getElementById('apNa').textContent = phase.na;
+    document.getElementById('apNa').style.color = phase.naColor;
+    document.getElementById('apK').textContent = phase.k;
+    document.getElementById('apK').style.color = phase.kColor;
+    document.getElementById('apExplain').innerHTML = phase.explain;
+    document.getElementById('apPhaseName').textContent = phase.label.replace(/^Stage \d+ · /, '');
+    document.getElementById('apTrap').innerHTML = phase.trap;
+  }
+
+  document.getElementById('apStage').addEventListener('input', e => render(+e.target.value));
+  render(0);
+}
+
 /* ---- WIRING ---- */
 function init() {
   loadState();
@@ -14971,7 +15593,7 @@ function init() {
     initViruses, initBacteria, initFungi, initProtists, initPlantLifecycle, initBodyPlanComparator,
     initComparativeEmbryos, initCleavageTypes, initHoxGenes, initExtraEmbryonic, initTwinsClones,
     initEvidence, initDriftSim, initCoach, initBiomeMap, initBiogeochemicalCycles,
-    initMuscleComparator, initGametogenesis, initHwBubbleCloud, initTonicity, initBrainExplorer, initCrossBridgeCycle, initProbTree, initKrebsScrubber, initRnaScrubber, initZScheme, initReplicationForkScrubber, initTranscriptionScrubber,
+    initMuscleComparator, initGametogenesis, initHwBubbleCloud, initTonicity, initBrainExplorer, initCrossBridgeCycle, initProbTree, initKrebsScrubber, initRnaScrubber, initZScheme, initReplicationForkScrubber, initTranscriptionScrubber, initTranslationScrubber, initActionPotentialScrubber,
     initSuccession, initPopGrowth, initSurvivorship, initPredatorPrey, initSymbiosis,
     initConditioningTrainer, initHwWordTrainer, initPunnett, initPedigree, initHardyWeinberg,
     initLinkage, initOperon, initKaryotype, initBodyMap, initCardiac, initBohr, initNephron,

@@ -275,6 +275,38 @@ const HUBS = [
       },
     },
     {
+      name: 'AP scrubber responds',
+      url: BASE + '/tools/bio/bio-physiology.html',
+      run: async (page) => {
+        await page.waitForSelector('#apStage', { timeout: 5000 });
+        const initial = await page.locator('#apVm').textContent();
+        await page.evaluate(() => {
+          const s = document.getElementById('apStage');
+          s.value = '32';
+          s.dispatchEvent(new Event('input', { bubbles: true }));
+        });
+        await page.waitForTimeout(150);
+        const after = await page.locator('#apVm').textContent();
+        return initial !== after && after.includes('30') ? null : `AP Vm did not advance to peak (got "${after}")`;
+      },
+    },
+    {
+      name: 'Translation scrubber responds',
+      url: BASE + '/tools/bio/bio-cell.html',
+      run: async (page) => {
+        await page.waitForSelector('#tlStage', { timeout: 5000 });
+        const initial = await page.locator('#tlPlayerName').textContent();
+        await page.evaluate(() => {
+          const s = document.getElementById('tlStage');
+          s.value = '95';
+          s.dispatchEvent(new Event('input', { bubbles: true }));
+        });
+        await page.waitForTimeout(150);
+        const after = await page.locator('#tlPlayerName').textContent();
+        return initial !== after && after.toLowerCase().includes('release') ? null : `Translation did not advance to release (got "${after}")`;
+      },
+    },
+    {
       name: 'Transcription bubble scrubber responds',
       url: BASE + '/tools/bio/bio-cell.html',
       run: async (page) => {
