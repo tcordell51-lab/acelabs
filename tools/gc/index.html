@@ -3589,6 +3589,31 @@ body[data-mode="B"] .sb-link[data-go="quick-ref"]{background:rgba(201,168,76,.10
       <b>You're all caught up.</b> No reviews due, no weak skills flagged. Pick a fresh skill from the tree, or run a custom drill to keep retrieval sharp.
     </div>
   </div>
+
+  <!-- Companion tools — discoverability cross-links to standalone GC pages.
+       Sits inside the home/dashboard #today section so it surfaces on landing.
+       Reuses .subcard + .btn styling for theme consistency. -->
+  <div class="subcard" style="margin-top:18px; border-left:5px solid var(--teal);">
+    <div class="h"><span class="lbl teal">Companion tools</span><span class="sub" style="font-size:11px; color:var(--ink-mute); margin-left:6px;">standalone drills · open in a new tab</span></div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:10px;">
+      <a href="traps.html" target="_blank" rel="noopener" style="display:block; padding:12px 14px; background:var(--paper-2); border:1px solid var(--line); border-left:3px solid var(--gold-d); border-radius:8px; text-decoration:none; color:var(--ink); transition:all .15s;" onmouseover="this.style.borderColor='var(--gold)';this.style.transform='translateY(-1px)';this.style.boxShadow='var(--shadow)'" onmouseout="this.style.borderColor='var(--line)';this.style.borderLeftColor='var(--gold-d)';this.style.transform='';this.style.boxShadow=''">
+        <div style="font-family:'Playfair Display',serif; font-size:15px; font-weight:700; color:var(--ink); line-height:1.2;">Common <em style="color:var(--gold-d);">Traps</em></div>
+        <div style="font-size:11.5px; color:var(--ink-2); line-height:1.45; margin-top:4px;">1,815 trap entries clustered into 74 patterns the DAT recycles.</div>
+      </a>
+      <a href="recognition-lab.html" target="_blank" rel="noopener" style="display:block; padding:12px 14px; background:var(--paper-2); border:1px solid var(--line); border-left:3px solid var(--gold-d); border-radius:8px; text-decoration:none; color:var(--ink); transition:all .15s;" onmouseover="this.style.borderColor='var(--gold)';this.style.transform='translateY(-1px)';this.style.boxShadow='var(--shadow)'" onmouseout="this.style.borderColor='var(--line)';this.style.borderLeftColor='var(--gold-d)';this.style.transform='';this.style.boxShadow=''">
+        <div style="font-family:'Playfair Display',serif; font-size:15px; font-weight:700; color:var(--ink); line-height:1.2;">Recognition <em style="color:var(--gold-d);">Lab</em></div>
+        <div style="font-size:11.5px; color:var(--ink-2); line-height:1.45; margin-top:4px;">Timed visual speed-drill across 15 topics and 62 stimuli.</div>
+      </a>
+      <a href="trends.html" target="_blank" rel="noopener" style="display:block; padding:12px 14px; background:var(--paper-2); border:1px solid var(--line); border-left:3px solid var(--gold-d); border-radius:8px; text-decoration:none; color:var(--ink); transition:all .15s;" onmouseover="this.style.borderColor='var(--gold)';this.style.transform='translateY(-1px)';this.style.boxShadow='var(--shadow)'" onmouseout="this.style.borderColor='var(--line)';this.style.borderLeftColor='var(--gold-d)';this.style.transform='';this.style.boxShadow=''">
+        <div style="font-family:'Playfair Display',serif; font-size:15px; font-weight:700; color:var(--ink); line-height:1.2;">Periodic <em style="color:var(--gold-d);">Trends</em></div>
+        <div style="font-size:11.5px; color:var(--ink-2); line-height:1.45; margin-top:4px;">Heatmap explorer, speed drill, and iso-electronic ranker.</div>
+      </a>
+      <a href="lewis-sandbox.html" target="_blank" rel="noopener" style="display:block; padding:12px 14px; background:var(--paper-2); border:1px solid var(--line); border-left:3px solid var(--gold-d); border-radius:8px; text-decoration:none; color:var(--ink); transition:all .15s;" onmouseover="this.style.borderColor='var(--gold)';this.style.transform='translateY(-1px)';this.style.boxShadow='var(--shadow)'" onmouseout="this.style.borderColor='var(--line)';this.style.borderLeftColor='var(--gold-d)';this.style.transform='';this.style.boxShadow=''">
+        <div style="font-family:'Playfair Display',serif; font-size:15px; font-weight:700; color:var(--ink); line-height:1.2;">Lewis &amp; <em style="color:var(--gold-d);">VSEPR Sandbox</em></div>
+        <div style="font-size:11.5px; color:var(--ink-2); line-height:1.45; margin-top:4px;">18 molecules, 5-stage guided builder with octet and geometry checks.</div>
+      </a>
+    </div>
+  </div>
 </section>
 
 <!-- WEEKLY PLAN — personalized 7-day study plan, exportable to AceTheDAT portal -->
@@ -4683,6 +4708,8 @@ const ST = {
 
 /* Stamp a session-open timestamp so the Ace Labs home tile can show "Last: …" */
 ST.set('lastSession', Date.now());
+/* Bank-shape version stamp — lets future bank changes detect old in-progress state. */
+try { localStorage.setItem('gc:meta:version', '1'); } catch(e){}
 
 /* ----- STUDENT roster — for tutors managing multiple students.
    Each student has their own namespaced ST data. The roster (active + list)
@@ -5870,6 +5897,20 @@ const BANK = [
   {id:'xx-q3',skills:['enthalpy','calorimetry','mole-conv'],diff:3,q:'A 0.10 mol methane sample combusts in a bomb calorimeter (C_cal = 5.0 kJ/°C). T rises 18°C. ΔH per mol?',opts:['−180 kJ/mol','−450 kJ/mol','−900 kJ/mol','−1800 kJ/mol'],correct:2,why:'q = C_cal × ΔT = 5.0 × 18 = 90 kJ released. Per mol: 90/0.10 = 900 kJ. ΔH = −900 kJ/mol (matches the actual ~890 kJ/mol for CH₄ combustion).',diag:{0:'Way off.',1:'Off by 2.',3:'Off by 2.'}},
   {id:'xx-q4',skills:['nernst','galvanic'],diff:3,q:'Zn | Zn²⁺(0.10M) || Cu²⁺(1.0M) | Cu, E°cell = 1.10 V, n=2. Find E_cell.',opts:['1.07 V','1.10 V','1.13 V','1.16 V'],correct:2,why:'Q = [Zn²⁺]/[Cu²⁺] = 0.10/1.0 = 0.10. log(0.10) = −1. E = 1.10 − (0.0296)(−1) = 1.10 + 0.0296 ≈ 1.13 V.',diag:{0:'Sign error on log.',1:'Standard.',3:'Off.'}},
   {id:'xx-q5',skills:['eq-ice','eq-kc'],diff:3,q:'0.20 mol N₂O₄ in 2.0 L. At eq, [N₂O₄] = 0.080 M. Compute Kc for N₂O₄(g) ⇌ 2NO₂(g).',opts:['0.020','0.040','0.080','0.20'],correct:0,why:'Initial [N₂O₄] = 0.10 M. ICE: 0.10−x = 0.080 → x = 0.020. [NO₂] = 2x = 0.040. Kc = [NO₂]²/[N₂O₄] = (0.040)²/0.080 = 0.020.',diag:{1:'That\'s [NO₂].',2:'That\'s [N₂O₄].',3:'Way off.'}},
+
+  // === COLLIGATIVE PROPERTIES (12) ===
+  {id:'col-q1',skills:['colligative'],diff:1,q:'A 0.50 m solution of NaCl in water. Predicted freezing point? (Kf = 1.86 °C/m, assume complete dissociation)',opts:['0.00 °C','−0.93 °C','−1.86 °C','−2.79 °C'],correct:2,why:'NaCl → Na⁺ + Cl⁻ so i = 2. ΔTf = i·Kf·m = 2 × 1.86 × 0.50 = 1.86 °C. New FP = 0 − 1.86 = −1.86 °C.',diag:{0:'No depression at all means you forgot to apply ΔTf entirely — the solute IS in the water.',1:'You forgot the i factor and used i = 1 (treating NaCl like a non-electrolyte). NaCl gives 2 particles per formula unit.',3:'You used i = 3, which is CaCl₂, not NaCl. NaCl makes only 2 ions: one Na⁺ and one Cl⁻.'}},
+  {id:'col-q2',skills:['colligative'],diff:1,q:'Boiling-point elevation when 0.5 mol of glucose is dissolved in 1.0 kg of water. (Kb = 0.512 °C/m)',opts:['0.128 °C','0.256 °C','0.512 °C','1.024 °C'],correct:1,why:'molality = 0.5 mol / 1.0 kg = 0.5 m. Glucose is a non-electrolyte → i = 1. ΔTb = 1 × 0.512 × 0.5 = 0.256 °C.',diag:{0:'You divided molality by 2 somewhere — possibly mistook the kg of solvent for mass of solution.',2:'You used m = 1.0 instead of 0.5. Half a mole in one kg is 0.5 m, not 1 m.',3:'You doubled the answer, possibly applying i = 2 to glucose. Glucose does not dissociate.'}},
+  {id:'col-q3',skills:['colligative'],diff:1,q:'Which 0.10 m aqueous solution will have the LOWEST freezing point?',opts:['glucose (i = 1)','NaCl (i = 2)','MgCl₂ (i = 3)','K₃PO₄ (i = 4)'],correct:3,why:'Same molality, so only i decides. Lowest FP requires the largest ΔTf, which requires the largest i. K₃PO₄ → 3 K⁺ + PO₄³⁻ = 4 particles, the most.',diag:{0:'Smallest ΔTf — fewest particles. Glucose gives the HIGHEST freezing point of these four, not the lowest.',1:'Only 2 particles per formula. K₃PO₄ produces twice as many.',2:'3 particles is good but K₃PO₄ produces 4 — a fourth ion of K⁺ wins the ranking.'}},
+  {id:'col-q4',skills:['colligative'],diff:2,q:'Osmotic pressure of a 0.15 M NaCl solution at body temperature (37 °C ≈ 310 K). Use R = 0.0821 L·atm/(mol·K).',opts:['1.91 atm','3.82 atm','7.63 atm','15.3 atm'],correct:2,why:'NaCl: i = 2. T = 310 K. π = i·M·R·T = 2 × 0.15 × 0.0821 × 310 ≈ 7.63 atm. (Roughly the osmotic load of physiological saline.)',diag:{0:'You forgot the i factor — used i = 1 instead of 2 for NaCl.',1:'You used T = 155 K (half the body temperature) or otherwise halved a step. T must be 310 K, not 155.',3:'You used i = 4 — possibly confused NaCl (i = 2) with a tetra-particle salt like AlCl₃ or K₃PO₄.'}},
+  {id:'col-q5',skills:['colligative'],diff:2,q:'Two solutions are at the same molality: 0.20 m sucrose and 0.20 m KCl. Compared to pure water, the boiling-point elevation of the KCl solution will be:',opts:['the same as sucrose','exactly twice that of sucrose','about three times that of sucrose','smaller than sucrose'],correct:1,why:'Same Kb and same m. Sucrose i = 1; KCl i = 2 (full dissociation into K⁺ + Cl⁻). Ratio of ΔTb is 2:1 — KCl elevates BP by twice as much.',diag:{0:'Same i would mean same ΔTb. But KCl dissociates and sucrose does not — different i factors.',2:'3× would require i = 3 for KCl. KCl produces 2 ions, not 3.',3:'KCl has MORE particles, so it must elevate BP more, not less.'}},
+  {id:'col-q6',skills:['colligative'],diff:2,q:'A solution is made by mixing 0.30 mol of a non-volatile non-electrolyte solute into 1.20 mol of water at 25 °C, where P°(H₂O) = 23.8 mmHg. By Raoult\'s law, the vapor pressure of the solution is:',opts:['4.76 mmHg','19.0 mmHg','23.8 mmHg','29.8 mmHg'],correct:1,why:'χ_solvent = 1.20 / (1.20 + 0.30) = 0.80. P_solution = χ_solvent · P°_solvent = 0.80 × 23.8 = 19.04 mmHg.',diag:{0:'You used χ_solute (0.20) instead of χ_solvent (0.80). Raoult uses the SOLVENT mole fraction.',2:'That is the pure-water vapor pressure, P°. The solute LOWERS the vapor pressure, so P_solution must be less.',3:'You ADDED the solute contribution instead of subtracting. Non-volatile solute can only lower vapor pressure, never raise it.'}},
+  {id:'col-q7',skills:['colligative'],diff:2,q:'For a 0.10 M solution of acetic acid (a weak acid, Ka ≈ 1.8 × 10⁻⁵), the experimentally measured van\'t Hoff factor is approximately:',opts:['exactly 1.00','about 1.01','exactly 2.00','about 0.50'],correct:1,why:'Acetic acid is a weak acid: only ~1.3% dissociates in 0.10 M solution. So i = 1 + (fraction dissociated) ≈ 1.013 — barely above 1, NOT 2. For weak electrolytes 1 < i < n.',diag:{0:'A pure non-electrolyte would be exactly 1. Acetic acid does dissociate slightly, so i is just above 1.',2:'2 would be for a STRONG monoprotic acid (HCl). Acetic acid is weak — it barely dissociates.',3:'i can never be less than 1 — that would mean negative particles. Always i ≥ 1 for solutes in water.'}},
+  {id:'col-q8',skills:['colligative'],diff:3,q:'A student dissolves 5.85 g NaCl (MW = 58.5) in 100. g water and measures ΔTf = 3.5 °C. The expected ΔTf assuming complete dissociation (i = 2) is 3.72 °C. The most likely explanation:',opts:['NaCl decomposed during dissolution','ion pairing in solution makes effective i slightly less than 2','the experiment was run above the boiling point','water has Kf < 1.86 in concentrated solutions'],correct:1,why:'Real ionic solutions show ion pairing — Na⁺ and Cl⁻ briefly associate, behaving as one particle. So effective i drops from 2 to ~1.88. This is exactly why measured ΔTf is slightly LESS than the i = 2 prediction.',diag:{0:'NaCl is stable in water — it does not decompose. The discrepancy is a solution-phase effect, not a chemical reaction.',2:'Freezing-point measurement is done near 0 °C, well below boiling. Temperature is not the issue.',3:'Kf is a property of the SOLVENT (water), not the solute concentration. Kf is constant at 1.86.'}},
+  {id:'col-q9',skills:['colligative'],diff:3,q:'A 1.00 M aqueous KCl solution and a 1.00 m aqueous KCl solution — which freezes at a LOWER temperature?',opts:['the 1.00 M solution','the 1.00 m solution','they freeze at the same temperature','cannot be determined without density'],correct:1,why:'ΔTf depends on MOLALITY (mol/kg solvent), not molarity. For aqueous solutions, m > M because the solute also takes up volume — 1 L of solution contains less than 1 kg of water. So 1.00 m has more solute per kg solvent → larger ΔTf → lower FP.',diag:{0:'Molarity is mol per LITER of solution. Once you account for the solute taking up volume, 1 M ≈ 0.97 m or so — slightly less concentrated by molality.',2:'Only true if the solution were infinitely dilute or if solute volume were exactly zero. For real 1 M KCl, m ≠ M.',3:'You can determine the direction without exact density — solute volume is always positive, so M < m for a given solute amount.'}},
+  {id:'col-q10',skills:['colligative'],diff:3,q:'A benzene–toluene mixture is treated as an ideal binary solution. At 25 °C, P°(benzene) = 95 mmHg and P°(toluene) = 28 mmHg. If the mole fraction of benzene in the LIQUID is 0.40, what is the total vapor pressure above the mixture?',opts:['38.0 mmHg','54.8 mmHg','61.6 mmHg','95.0 mmHg'],correct:1,why:'Both components are volatile, so apply Raoult to each: P_benz = 0.40 × 95 = 38.0; P_tol = 0.60 × 28 = 16.8. P_total = 38.0 + 16.8 = 54.8 mmHg.',diag:{0:'That is just P_benzene. You forgot toluene also contributes to the vapor — both are volatile.',2:'You used χ for both components on the wrong P°. Benzene takes its OWN P°, not toluene\'s.',3:'That is P° of pure benzene. The mixture must have a lower combined vapor pressure than pure benzene since toluene is less volatile.'}},
+  {id:'col-q11',skills:['colligative'],diff:4,q:'A real 0.10 m MgSO₄ solution shows ΔTf = 0.24 °C in water (Kf = 1.86). The "ideal" ΔTf for MgSO₄ assuming complete dissociation would be 0.372 °C. The effective van\'t Hoff factor i_eff is:',opts:['1.00','1.29','1.86','2.00'],correct:1,why:'i_eff = ΔTf_measured / (Kf · m) = 0.24 / (1.86 × 0.10) = 0.24 / 0.186 = 1.29. MgSO₄ is famously underdissociated — extensive ion pairing of Mg²⁺ with SO₄²⁻ in water means effective i is much less than the predicted 2.',diag:{0:'i = 1 would mean MgSO₄ does not dissociate at all — that is wrong, it does dissociate, just incompletely.',2:'1.86 is Kf, not i. You confused two different constants in the formula.',3:'2.00 is the IDEAL i (full dissociation). The question asks for the actual measured i_eff, which is reduced by ion pairing.'}},
+  {id:'col-q12',skills:['colligative'],diff:4,q:'You compute osmotic pressure with π = i·M·R·T. For the answer to come out in atm with M in mol/L and T in K, R must have units:',opts:['J/(mol·K)','L·atm/(mol·K)','cal/(mol·K)','atm·mol/(L·K)'],correct:1,why:'π [atm] = i · M [mol/L] · R · T [K]. Solving for R\'s units: atm / (mol/L · K) = atm·L/(mol·K) = L·atm/(mol·K). That is the gas constant 0.0821 L·atm/(mol·K). Picking R = 8.314 J/(mol·K) gives π in J/L (not atm).',diag:{0:'R = 8.314 J/(mol·K) is the SI value, but it does not give atm directly. Use 0.0821 L·atm/(mol·K) when the answer must be in atm.',2:'Calorie units are obsolete for this and would produce the wrong magnitude — π in cal/L is not standard.',3:'Units do not balance: this would give π in (atm·mol/(L·K)) × (mol/L) × K = atm·mol²/L² — not a pressure unit.'}},
 ];
 
 const BANK_BY_ID = Object.fromEntries(BANK.map(b => [b.id, b]));
@@ -5914,7 +5955,7 @@ const MODULES = {
     skill:'periodic', tier:0, num:'02',
     title:'Periodic <em>Trends</em>',
     sub:'Atomic radius, IE, EN, EA — all from Z_eff vs shells.',
-    pattern:'Two forces decide every trend: <b>Z_eff</b> (more p → tighter pull) and <b>shells</b> (more shells → bigger). → across: Z_eff wins → atoms shrink, IE/EN ↑. ↓ down: shells win → atoms grow, IE/EN ↓.',
+    pattern:'Two forces decide every trend: <b>Z_eff</b> (more p → tighter pull) and <b>shells</b> (more shells → bigger). → across: Z_eff wins → atoms shrink, IE/EN ↑. ↓ down: shells win → atoms grow, IE/EN ↓.<br><br><b>Companion tool:</b> <a href="trends.html" target="_blank" rel="noopener" style="color:var(--gold-d); font-weight:700; border-bottom:1px dashed var(--gold-d); text-decoration:none;">Drill periodic trends</a> — heatmap explorer, speed drill, and iso-electronic ranker.',
     formula:'→ across: radius ↓, IE ↑, EN ↑, EA ↑<br>↓ down: radius ↑, IE ↓, EN ↓, EA ↓<br>Z_eff = Z − shielding',
     visualType:'periodic-grid', visualData:{trend:'radius'},
     worked:[
@@ -5964,7 +6005,7 @@ const MODULES = {
     skill:'lewis', tier:0, num:'04',
     title:'Lewis <em>Structures</em>',
     sub:'Counting valence e⁻, drawing bonds, octets, formal charge.',
-    pattern:"Total valence e⁻ first. Then central atom (least EN, except H). Singles, fill outer octets, leftover on center. Center short of octet → multiple bonds. <span class='gold'>FC = group# − dots − ½ sticks</span>; want zero.<br><br><b>Cross-link:</b> Once you have the Lewis structure, the electron groups on the central atom determine geometry via VSEPR. Use the VSEPR Predictor (sidebar) for instant lookup. Lewis acids and bases are also explained in the ph-basics module (Acid-Base section).",
+    pattern:"Total valence e⁻ first. Then central atom (least EN, except H). Singles, fill outer octets, leftover on center. Center short of octet → multiple bonds. <span class='gold'>FC = group# − dots − ½ sticks</span>; want zero.<br><br><b>Cross-link:</b> Once you have the Lewis structure, the electron groups on the central atom determine geometry via VSEPR. Use the VSEPR Predictor (sidebar) for instant lookup. Lewis acids and bases are also explained in the ph-basics module (Acid-Base section).<br><br><b>Companion tool:</b> <a href='lewis-sandbox.html' target='_blank' rel='noopener' style='color:var(--gold-d); font-weight:700; border-bottom:1px dashed var(--gold-d); text-decoration:none;'>Open the guided Lewis and VSEPR sandbox</a> — 18 molecules, 5-stage builder.",
     formula:'e⁻ = Σ valence (± charge)<br>FC = G − non-bonding − ½ bonding<br>Period 3+ can expand',
     videoUrl:'tiktoks/lewis-five-steps-tiktok.html', videoTitle:'Lewis in 5 steps (CO₂ build)', videoDur:'~85 sec',
     visualType:'lewis-builder', visualData:{defaultMolecule:'CO2'},
@@ -5990,7 +6031,7 @@ const MODULES = {
     skill:'vsepr', tier:0, num:'05',
     title:'VSEPR &amp; <em>Geometry</em>',
     sub:'Predicting shape from electron groups + LPs. Molecular polarity from shape + bond polarity.',
-    pattern:'Count <b>electron groups</b> (each bond = 1, each LP = 1). Geometry from groups; molecular shape from groups − LPs.<br><br><b>Molecular polarity (the integration step):</b> a molecule is polar when it has both (1) <em>polar bonds</em> (ΔEN ≥ 0.4 — see Bonding) AND (2) <em>asymmetric geometry</em> so the bond dipoles do not cancel. Symmetry kills net dipole even when individual bonds are very polar.<br><br><b>The two-question test for any molecule:</b><br>1. Are there polar bonds? (Look at electronegativity differences.)<br>2. Does VSEPR geometry let those bond dipoles cancel out?<br>If YES + NO → molecule is polar. If YES + YES → bond polarity cancels → nonpolar. If NO → nonpolar regardless of shape.<br><br><b>Classic contrasts:</b> CO₂ has two strongly polar C=O bonds but linear geometry → the dipoles point opposite ways and cancel → nonpolar. H₂O has two equally polar O−H bonds but BENT geometry → dipoles add → polar. BF₃ has polar B−F bonds but trigonal-planar shape → 3 equal dipoles at 120° cancel → nonpolar. NH₃ has polar N−H bonds AND trigonal pyramidal shape → polar (the lone pair breaks symmetry). CCl₄ has polar C−Cl bonds but tetrahedral shape → cancel → nonpolar. CHCl₃ has the same general shape but is asymmetric (one H, three Cl) → polar.<br><br><b>Cross-link:</b> Use the VSEPR Predictor tool (sidebar → "VSEPR Predictor") for instant geometry lookup. For the underlying electron structure that drives shape, see the Lewis Structures and Bonding modules. For the IMF consequences of polarity (dipole-dipole, H-bonding) see the IMFs module.',
+    pattern:'Count <b>electron groups</b> (each bond = 1, each LP = 1). Geometry from groups; molecular shape from groups − LPs.<br><br><b>Molecular polarity (the integration step):</b> a molecule is polar when it has both (1) <em>polar bonds</em> (ΔEN ≥ 0.4 — see Bonding) AND (2) <em>asymmetric geometry</em> so the bond dipoles do not cancel. Symmetry kills net dipole even when individual bonds are very polar.<br><br><b>The two-question test for any molecule:</b><br>1. Are there polar bonds? (Look at electronegativity differences.)<br>2. Does VSEPR geometry let those bond dipoles cancel out?<br>If YES + NO → molecule is polar. If YES + YES → bond polarity cancels → nonpolar. If NO → nonpolar regardless of shape.<br><br><b>Classic contrasts:</b> CO₂ has two strongly polar C=O bonds but linear geometry → the dipoles point opposite ways and cancel → nonpolar. H₂O has two equally polar O−H bonds but BENT geometry → dipoles add → polar. BF₃ has polar B−F bonds but trigonal-planar shape → 3 equal dipoles at 120° cancel → nonpolar. NH₃ has polar N−H bonds AND trigonal pyramidal shape → polar (the lone pair breaks symmetry). CCl₄ has polar C−Cl bonds but tetrahedral shape → cancel → nonpolar. CHCl₃ has the same general shape but is asymmetric (one H, three Cl) → polar.<br><br><b>Cross-link:</b> Use the VSEPR Predictor tool (sidebar → "VSEPR Predictor") for instant geometry lookup. For the underlying electron structure that drives shape, see the Lewis Structures and Bonding modules. For the IMF consequences of polarity (dipole-dipole, H-bonding) see the IMFs module.<br><br><b>Companion tool:</b> <a href="lewis-sandbox.html" target="_blank" rel="noopener" style="color:var(--gold-d); font-weight:700; border-bottom:1px dashed var(--gold-d); text-decoration:none;">Open the guided Lewis and VSEPR sandbox</a> — practice geometry on 18 molecules with step-by-step checks.',
     formula:'Steric # = bonded atoms + LPs<br>2→linear, 3→trig planar, 4→tetra<br>5→trig bipyr, 6→octa<br>Molecular polarity = polar bonds AND asymmetric geometry<br>Symmetric (linear, trig planar, tetrahedral, trig bipyr, octa with all-same atoms) → bond dipoles cancel → nonpolar',
     visualType:'vsepr-gallery', visualData:{shape:'tetrahedral'},
     worked:[
@@ -6900,7 +6941,7 @@ const MODULES = {
     sub:'BP elevation, FP depression, osmotic pressure, Raoult\'s law. Van\'t Hoff factor i. About 4-5 DAT questions per test — one of the highest-yield Tier 1 topics.',
     pattern:'Colligative properties depend only on the <b>number of solute particles</b>, not their identity. Tommy\'s rule: <em>"Count the pieces, then plug the formula."</em><br><br>The four colligative effects all flow from the same idea — adding solute particles to a solvent disrupts how molecules enter and leave the surface or the lattice:<br>- <b>BP elevation</b>: solute particles block escape into vapor, so the solvent boils <em>higher</em>. <b>ΔTb = i · Kb · m</b>.<br>- <b>FP depression</b>: solute particles disrupt crystal packing, so the solvent freezes <em>lower</em>. <b>ΔTf = i · Kf · m</b>.<br>- <b>Osmotic pressure</b>: solvent rushes across a semipermeable membrane to dilute the side with more particles. <b>π = i · M · R · T</b>.<br>- <b>Vapor-pressure lowering / Raoult\'s law</b>: solute particles dilute the solvent at the surface, so fewer molecules escape into vapor. <b>P_solution = χ_solvent · P°_solvent</b>.<br><br><b>Van\'t Hoff factor i</b> is the particle multiplier. Write the dissociation and count: NaCl → Na⁺ + Cl⁻ (i = 2). CaCl₂ → Ca²⁺ + 2Cl⁻ (i = 3). MgSO₄ → Mg²⁺ + SO₄²⁻ (i = 2). Glucose, sucrose, urea, ethanol → no dissociation, i = 1. Strong electrolytes have i ≈ the formula count; weak electrolytes have i between 1 and that count (partial dissociation).<br><br><b>Cross-link:</b> dissolving is favored partly because of entropy gain — see <a href="#entropy" onclick="goSec(\'entropy\'); return false;" style="color:var(--gold-d); font-weight:600">Entropy</a> and <a href="#gibbs" onclick="goSec(\'gibbs\'); return false;" style="color:var(--gold-d); font-weight:600">Gibbs ΔG</a>. Solubility itself sits in <a href="#solutions" onclick="goSec(\'solutions\'); return false;" style="color:var(--gold-d); font-weight:600">Solutions</a>; gas dissolution follows Henry\'s law, also in Solutions.',
     formula:'ΔTb = i · Kb · m  (Kb_water = 0.512 °C/m)<br>ΔTf = i · Kf · m  (Kf_water = 1.86 °C/m)<br>π  = i · M · R · T  (R = 0.0821 L·atm/(mol·K), T in K)<br>P_solution = χ_solvent · P°_solvent  (Raoult)<br>i = 1 glucose / sucrose / urea<br>i = 2 NaCl / KBr / MgSO₄<br>i = 3 CaCl₂ / Na₂SO₄<br>i = 4 AlCl₃ / FeCl₃',
-    visualType:'colligative-vis', visualData:{i:2, m:1.0, property:'bp'},
+    visualType:'colligative-explorer', visualData:{i:2, m:1.0, mode:'fp'},
     worked:[
       {q:'ΔTf for 1.5 m NaCl in water?', steps:[{what:'NaCl → Na⁺ + Cl⁻, so i = 2', why:'Each formula unit of NaCl fully dissociates into 2 particles in water.', predict:{q:'Plug into ΔTf formula?', hint:'i · Kf · m.'}}, {what:'ΔTf = 2 × 1.86 × 1.5 = 5.58 °C', why:'Kf_water = 1.86 °C/m. Multiply i, Kf, and molality.'}, {what:'FP = 0 − 5.58 = −5.58 °C', why:'"Depression" means the new freezing point is LOWER than 0 °C — subtract ΔTf.'}]},
       {q:'BP elevation when 90 g glucose (MW = 180) is dissolved in 500 g water?', steps:[{what:'mol glucose = 90 / 180 = 0.5 mol', why:'Moles = mass / molar mass.'}, {what:'molality = 0.5 mol / 0.500 kg = 1.0 m', why:'<b>m uses kg of SOLVENT, not the whole solution</b> — that is the trap.', predict:{q:'ΔTb at i = 1?', hint:'1 · 0.512 · 1.0.'}}, {what:'ΔTb = 1 × 0.512 × 1.0 = 0.512 °C', why:'Glucose is a non-electrolyte → i = 1.'}, {what:'New BP = 100 + 0.512 = 100.512 °C', why:'BP is ELEVATED (raised), so add ΔTb to 100 °C.'}]},
@@ -6914,8 +6955,8 @@ const MODULES = {
       {prompt:'Lowest freezing point at 1 m: NaCl, glucose, CaCl₂, urea?', lcd:'Highest i wins.', blank:'___', answer:'CaCl₂'},
       {prompt:'π for 0.20 M NaCl at 300 K? (R = 0.0821)', lcd:'i = 2; π = iMRT.', blank:'π ≈ ___ atm', answer:'9.85'}
     ],
-    practice:['s3','s4','s5','s8'],
-    masteryProblems:['s3','s4','s5','s8'],
+    practice:['s3','s4','s5','s8','col-q1','col-q2','col-q3','col-q4','col-q5','col-q6','col-q7','col-q8','col-q9','col-q10','col-q11','col-q12'],
+    masteryProblems:['s8','col-q4','col-q8','col-q9','col-q10','col-q11','col-q12'],
     lock:'Count particles first (i). Then pick the formula and plug in.',
     trap:'Using M (molarity) instead of m (molality) for ΔTb and ΔTf. Using mole fraction of SOLUTE (not solvent) in Raoult. Forgetting i for ionic solutes — NaCl is i = 2, not 1. Forgetting that BP is RAISED but FP is LOWERED — same magnitude formula, opposite direction on the thermometer.',
     coachTricks:[
@@ -8640,6 +8681,48 @@ function renderVisual(skillId){
       </div>
     `;
     setTimeout(() => { if (typeof window.cvSet === 'function') window.cvSet(skillId, 'NaCl', 2); }, 0);
+  } else if (M.visualType === 'colligative-explorer'){
+    const d = M.visualData || {i:2, m:1.0, mode:'fp'};
+    html = `
+      <div class="gs-wrap" data-skill="${skillId}" data-i="${d.i}" data-m="${d.m}" data-mode="${d.mode}" data-cetag="ce">
+        <div class="gs-row" style="margin-bottom:10px">
+          <span class="pill-lbl">Property mode</span>
+          <button class="gs-solve-btn" data-cmode="fp" onclick="ceMode('${skillId}','fp')">FP depression</button>
+          <button class="gs-solve-btn" data-cmode="bp" onclick="ceMode('${skillId}','bp')">BP elevation</button>
+          <button class="gs-solve-btn" data-cmode="vp" onclick="ceMode('${skillId}','vp')">Raoult VP lowering</button>
+          <button class="gs-solve-btn" data-cmode="op" onclick="ceMode('${skillId}','op')">Osmotic Π</button>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 220px; gap:14px; margin-bottom:10px">
+          <div style="background:var(--paper-2); border:1px solid var(--line); border-radius:14px; padding:10px">
+            <svg id="ceSvg-${skillId}" viewBox="0 0 320 240" preserveAspectRatio="xMidYMid meet" style="width:100%; height:auto; display:block; max-height:260px" aria-label="Colligative property visual"></svg>
+          </div>
+          <div style="background:var(--paper-2); border:1px solid var(--line); border-radius:14px; padding:12px 14px">
+            <div class="muted up" style="font-size:10px; letter-spacing:1.5px; margin-bottom:4px" id="ceTitle-${skillId}">Freezing-point depression</div>
+            <div class="gs-eq" style="margin-bottom:8px; padding:8px 10px; font-size:13px" id="ceEq-${skillId}">ΔTf = i · Kf · m</div>
+            <div style="font-family:'JetBrains Mono',monospace; font-size:18px; font-weight:700; color:var(--gold-d); padding:8px 10px; background:var(--paper); border-radius:8px; border:1px solid var(--line)" id="ceVal-${skillId}">ΔTf = 3.72 °C</div>
+            <div style="font-family:'Playfair Display',serif; font-size:13px; font-style:italic; color:var(--ink-2); margin-top:6px; line-height:1.3" id="ceSub-${skillId}">New FP = 0 − 3.72 = −3.72 °C</div>
+          </div>
+        </div>
+        <div class="gs-sliders" style="grid-template-columns:1fr 1fr">
+          <div class="gs-var" id="ceMBlock-${skillId}">
+            <div class="lbl">Solute molality (m)</div>
+            <div class="val" id="ceMVal-${skillId}">1.00</div>
+            <input type="range" min="0" max="4" step="0.05" value="${d.m}" oninput="ceUpdate('${skillId}','m',this.value)">
+          </div>
+          <div class="gs-var" id="ceIBlock-${skillId}">
+            <div class="lbl">van\'t Hoff factor (i)</div>
+            <div class="val" id="ceIVal-${skillId}">i = 2</div>
+            <div class="gs-row" style="margin-top:4px">
+              <button class="gs-solve-btn" data-iv="1" onclick="ceUpdate('${skillId}','i',1)">1 · glucose</button>
+              <button class="gs-solve-btn" data-iv="2" onclick="ceUpdate('${skillId}','i',2)">2 · NaCl</button>
+              <button class="gs-solve-btn" data-iv="3" onclick="ceUpdate('${skillId}','i',3)">3 · CaCl₂</button>
+              <button class="gs-solve-btn" data-iv="4" onclick="ceUpdate('${skillId}','i',4)">4 · K₃PO₄</button>
+            </div>
+          </div>
+        </div>
+        <div class="muted" style="font-size:12px; margin-top:8px; line-height:1.5" id="ceNote-${skillId}">Drag the molality slider to see how added particles depress the freezing point. Higher i → bigger depression.</div>
+      </div>
+    `;
   }
   wrap.innerHTML = html;
   const initMap = {
@@ -8676,7 +8759,8 @@ function renderVisual(skillId){
     'electrolysis': window._elfInit,
     'sigfig-tool': window._sftInit,
     'qn-explorer': window._qnInit,
-    'hybrid-explorer': window._hbInit
+    'hybrid-explorer': window._hbInit,
+    'colligative-explorer': window._ceInit
   };
   const initFn = initMap[M.visualType];
   if (typeof initFn === 'function') initFn(skillId);
@@ -8723,6 +8807,209 @@ window.cvSet = function(skillId, solute, i){
   bp.textContent = dTb.toFixed(2) + ' °C → BP ' + (100 + dTb).toFixed(2) + ' °C';
   piEl.textContent = pi.toFixed(1) + ' atm';
 };
+
+/* ============================================================
+   COLLIGATIVE EXPLORER — sliders + hand-authored SVG modes
+   FP depression / BP elevation / Raoult VP / Osmotic Π
+   ============================================================ */
+window._ceInit = function(skillId){
+  const root = document.querySelector(`.gs-wrap[data-skill="${skillId}"][data-cetag="ce"]`);
+  if (!root) return;
+  _ceRender(skillId);
+};
+
+window.ceMode = function(skillId, mode){
+  const root = document.querySelector(`.gs-wrap[data-skill="${skillId}"][data-cetag="ce"]`);
+  if (!root) return;
+  root.dataset.mode = mode;
+  _ceRender(skillId);
+};
+
+window.ceUpdate = function(skillId, key, val){
+  const root = document.querySelector(`.gs-wrap[data-skill="${skillId}"][data-cetag="ce"]`);
+  if (!root) return;
+  if (key === 'm') root.dataset.m = val;
+  else if (key === 'i') root.dataset.i = val;
+  _ceRender(skillId);
+};
+
+function _ceRender(skillId){
+  const root = document.querySelector(`.gs-wrap[data-skill="${skillId}"][data-cetag="ce"]`);
+  if (!root) return;
+  const i = parseFloat(root.dataset.i) || 1;
+  const m = parseFloat(root.dataset.m) || 0;
+  const mode = root.dataset.mode || 'fp';
+  const Kf = 1.86, Kb = 0.512, R_atm = 0.0821, T = 298;
+
+  // Toggle active states on mode + i buttons
+  root.querySelectorAll('.gs-solve-btn[data-cmode]').forEach(b => b.classList.toggle('active', b.dataset.cmode === mode));
+  root.querySelectorAll('.gs-solve-btn[data-iv]').forEach(b => b.classList.toggle('active', parseFloat(b.dataset.iv) === i));
+
+  // Slider readouts
+  const mVal = document.getElementById('ceMVal-'+skillId);
+  const iVal = document.getElementById('ceIVal-'+skillId);
+  if (mVal) mVal.textContent = m.toFixed(2);
+  if (iVal) iVal.textContent = 'i = ' + i;
+
+  const titleEl = document.getElementById('ceTitle-'+skillId);
+  const eqEl = document.getElementById('ceEq-'+skillId);
+  const valEl = document.getElementById('ceVal-'+skillId);
+  const subEl = document.getElementById('ceSub-'+skillId);
+  const noteEl = document.getElementById('ceNote-'+skillId);
+  const svg = document.getElementById('ceSvg-'+skillId);
+  if (!svg) return;
+
+  let svgInner = '';
+
+  if (mode === 'fp'){
+    const dTf = i * Kf * m;
+    const newFP = -dTf;
+    if (titleEl) titleEl.textContent = 'Freezing-point depression';
+    if (eqEl) eqEl.innerHTML = 'ΔTf = i · Kf · m  (Kf = 1.86 °C/m)';
+    if (valEl) valEl.textContent = 'ΔTf = ' + dTf.toFixed(2) + ' °C';
+    if (subEl) subEl.textContent = 'New FP = 0 − ' + dTf.toFixed(2) + ' = ' + newFP.toFixed(2) + ' °C';
+    if (noteEl) noteEl.textContent = 'Higher molality and higher i both pull the FP lower. Tommy: count particles, then plug.';
+    // Thermometer with normal point and shifted point
+    // Map: y = 30 (top, +5°C) to y = 210 (bottom, −15°C). 1 °C = 9 px.
+    const yFor = (tC) => 30 + (5 - tC) * 9;
+    const y0 = yFor(0);
+    const yShift = Math.max(yFor(newFP), 30);
+    const fillBottom = 220;
+    const fillTop = Math.min(yShift, 200);
+    svgInner = `
+      <rect x="0" y="0" width="320" height="240" fill="var(--paper)"/>
+      <text x="160" y="20" text-anchor="middle" font-family="Playfair Display,serif" font-size="13" font-weight="700" fill="var(--ink)">Freezing point on the thermometer</text>
+      <!-- thermometer body -->
+      <rect x="146" y="28" width="28" height="190" rx="6" fill="var(--paper-2)" stroke="var(--ink-mute)" stroke-width="1.5"/>
+      <circle cx="160" cy="222" r="14" fill="var(--paper-2)" stroke="var(--ink-mute)" stroke-width="1.5"/>
+      <!-- mercury fill from new FP downward -->
+      <rect x="152" y="${fillTop}" width="16" height="${fillBottom - fillTop}" fill="var(--gold)" opacity="0.55"/>
+      <circle cx="160" cy="222" r="10" fill="var(--gold-d)"/>
+      <!-- normal FP marker (0 °C) -->
+      <line x1="120" y1="${y0}" x2="200" y2="${y0}" stroke="var(--ink-mute)" stroke-dasharray="3 3" stroke-width="1.4"/>
+      <text x="118" y="${y0 + 4}" text-anchor="end" font-family="JetBrains Mono,monospace" font-size="11" fill="var(--ink-2)">0 °C (pure)</text>
+      <!-- shifted FP marker -->
+      <line x1="120" y1="${yShift}" x2="200" y2="${yShift}" stroke="var(--gold-d)" stroke-width="2"/>
+      <text x="202" y="${yShift + 4}" font-family="JetBrains Mono,monospace" font-size="11" font-weight="700" fill="var(--gold-d)">${newFP.toFixed(2)} °C</text>
+      <!-- arrow showing depression -->
+      <line x1="100" y1="${y0}" x2="100" y2="${yShift}" stroke="var(--teal)" stroke-width="2"/>
+      <polygon points="96,${yShift - 4} 100,${yShift + 2} 104,${yShift - 4}" fill="var(--teal)"/>
+      <text x="92" y="${(y0 + yShift) / 2 + 4}" text-anchor="end" font-family="Playfair Display,serif" font-style="italic" font-size="11" fill="var(--teal)">ΔTf</text>
+    `;
+  } else if (mode === 'bp'){
+    const dTb = i * Kb * m;
+    const newBP = 100 + dTb;
+    if (titleEl) titleEl.textContent = 'Boiling-point elevation';
+    if (eqEl) eqEl.innerHTML = 'ΔTb = i · Kb · m  (Kb = 0.512 °C/m)';
+    if (valEl) valEl.textContent = 'ΔTb = ' + dTb.toFixed(3) + ' °C';
+    if (subEl) subEl.textContent = 'New BP = 100 + ' + dTb.toFixed(3) + ' = ' + newBP.toFixed(3) + ' °C';
+    if (noteEl) noteEl.textContent = 'Solute particles block escape into vapor — boiling temperature climbs. Effect is small per molal because Kb is small.';
+    // Thermometer near 100 °C. Show 96–104 °C window. 1 °C = 22.5 px.
+    const yFor = (tC) => 30 + (104 - tC) * 22.5;
+    const y100 = yFor(100);
+    const yShift = Math.min(yFor(newBP), 210);
+    const fillBottom = 220;
+    const fillTop = Math.min(yShift, 200);
+    svgInner = `
+      <rect x="0" y="0" width="320" height="240" fill="var(--paper)"/>
+      <text x="160" y="20" text-anchor="middle" font-family="Playfair Display,serif" font-size="13" font-weight="700" fill="var(--ink)">Boiling point on the thermometer</text>
+      <rect x="146" y="28" width="28" height="190" rx="6" fill="var(--paper-2)" stroke="var(--ink-mute)" stroke-width="1.5"/>
+      <circle cx="160" cy="222" r="14" fill="var(--paper-2)" stroke="var(--ink-mute)" stroke-width="1.5"/>
+      <rect x="152" y="${fillTop}" width="16" height="${fillBottom - fillTop}" fill="var(--gold)" opacity="0.55"/>
+      <circle cx="160" cy="222" r="10" fill="var(--gold-d)"/>
+      <line x1="120" y1="${y100}" x2="200" y2="${y100}" stroke="var(--ink-mute)" stroke-dasharray="3 3" stroke-width="1.4"/>
+      <text x="118" y="${y100 + 4}" text-anchor="end" font-family="JetBrains Mono,monospace" font-size="11" fill="var(--ink-2)">100 °C (pure)</text>
+      <line x1="120" y1="${yShift}" x2="200" y2="${yShift}" stroke="var(--gold-d)" stroke-width="2"/>
+      <text x="202" y="${yShift + 4}" font-family="JetBrains Mono,monospace" font-size="11" font-weight="700" fill="var(--gold-d)">${newBP.toFixed(2)} °C</text>
+      <line x1="100" y1="${y100}" x2="100" y2="${yShift}" stroke="var(--teal)" stroke-width="2"/>
+      <polygon points="96,${yShift + 4} 100,${yShift - 2} 104,${yShift + 4}" fill="var(--teal)"/>
+      <text x="92" y="${(y100 + yShift) / 2 + 4}" text-anchor="end" font-family="Playfair Display,serif" font-style="italic" font-size="11" fill="var(--teal)">ΔTb</text>
+    `;
+  } else if (mode === 'vp'){
+    // Treat solute as non-volatile non-electrolyte for Raoult demo.
+    // Map molality (0..4) onto solute mole fraction in 1 kg of water (~55.5 mol).
+    // χ_solute = (i·m) / (i·m + 55.5)
+    const totalParticles = i * m;
+    const chiSolute = totalParticles / (totalParticles + 55.5);
+    const chiSolvent = 1 - chiSolute;
+    const Pdeg = 23.8;  // mmHg, water at 25 °C
+    const Psol = chiSolvent * Pdeg;
+    if (titleEl) titleEl.textContent = 'Raoult: vapor-pressure lowering';
+    if (eqEl) eqEl.innerHTML = 'P_solution = χ_solvent · P°_solvent';
+    if (valEl) valEl.textContent = 'P_solution = ' + Psol.toFixed(2) + ' mmHg';
+    if (subEl) subEl.textContent = 'χ_solvent = ' + chiSolvent.toFixed(3) + ' · P° = 23.8 mmHg (water, 25 °C)';
+    if (noteEl) noteEl.textContent = 'Non-volatile solute particles dilute the surface — fewer water molecules escape, so vapor pressure drops.';
+    // Bar comparison: pure P° vs solution P
+    const maxP = 23.8;
+    const barH = 150;
+    const pureH = barH;
+    const solH = (Psol / maxP) * barH;
+    const baseY = 200;
+    svgInner = `
+      <rect x="0" y="0" width="320" height="240" fill="var(--paper)"/>
+      <text x="160" y="20" text-anchor="middle" font-family="Playfair Display,serif" font-size="13" font-weight="700" fill="var(--ink)">Vapor pressure: pure vs solution</text>
+      <!-- pure water bar -->
+      <rect x="80" y="${baseY - pureH}" width="50" height="${pureH}" fill="var(--teal-3)" opacity="0.85" stroke="var(--ink-mute)" stroke-width="1"/>
+      <text x="105" y="${baseY + 18}" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="11" fill="var(--ink)">pure H₂O</text>
+      <text x="105" y="${baseY - pureH - 8}" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="11" font-weight="700" fill="var(--teal)">${Pdeg.toFixed(1)} mmHg</text>
+      <!-- solution bar -->
+      <rect x="190" y="${baseY - solH}" width="50" height="${solH}" fill="var(--gold)" opacity="0.85" stroke="var(--ink-mute)" stroke-width="1"/>
+      <text x="215" y="${baseY + 18}" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="11" fill="var(--ink)">solution</text>
+      <text x="215" y="${baseY - solH - 8}" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="11" font-weight="700" fill="var(--gold-d)">${Psol.toFixed(1)} mmHg</text>
+      <!-- baseline -->
+      <line x1="60" y1="${baseY}" x2="260" y2="${baseY}" stroke="var(--ink)" stroke-width="1.4"/>
+      <!-- Δ marker -->
+      <line x1="280" y1="${baseY - pureH}" x2="280" y2="${baseY - solH}" stroke="var(--plum)" stroke-width="2"/>
+      <text x="288" y="${baseY - (pureH + solH) / 2}" font-family="Playfair Display,serif" font-style="italic" font-size="11" fill="var(--plum)">ΔP</text>
+    `;
+  } else if (mode === 'op'){
+    // Use M ≈ m for dilute aqueous solutions for the visual.
+    const piVal = i * m * R_atm * T;
+    if (titleEl) titleEl.textContent = 'Osmotic pressure (Π)';
+    if (eqEl) eqEl.innerHTML = 'Π = i · M · R · T  (R = 0.0821, T = 298 K)';
+    if (valEl) valEl.textContent = 'Π = ' + piVal.toFixed(2) + ' atm';
+    if (subEl) subEl.textContent = 'At body T (310 K), Π ≈ 25.4 · i · M atm — quick sanity check.';
+    if (noteEl) noteEl.textContent = 'Solvent flows across the membrane toward the SOLUTE side, raising that column until osmotic Π balances gravity.';
+    // U-tube: left = pure solvent, right = solution. Right column rises.
+    const baseLevel = 150;
+    const maxRise = 70;
+    const rise = Math.min((piVal / 100) * maxRise, maxRise);
+    const leftLevel = baseLevel + (rise / 2);
+    const rightLevel = baseLevel - (rise / 2);
+    svgInner = `
+      <rect x="0" y="0" width="320" height="240" fill="var(--paper)"/>
+      <text x="160" y="20" text-anchor="middle" font-family="Playfair Display,serif" font-size="13" font-weight="700" fill="var(--ink)">Osmosis: water flows toward solute</text>
+      <!-- U-tube outline -->
+      <path d="M 60 50 L 60 200 Q 60 220 80 220 L 240 220 Q 260 220 260 200 L 260 50" fill="none" stroke="var(--ink-mute)" stroke-width="2"/>
+      <line x1="60" y1="50" x2="100" y2="50" stroke="var(--ink-mute)" stroke-width="2"/>
+      <line x1="220" y1="50" x2="260" y2="50" stroke="var(--ink-mute)" stroke-width="2"/>
+      <line x1="100" y1="50" x2="100" y2="200" stroke="var(--ink-mute)" stroke-width="2"/>
+      <line x1="220" y1="50" x2="220" y2="200" stroke="var(--ink-mute)" stroke-width="2"/>
+      <!-- semipermeable membrane at the bottom of the U -->
+      <line x1="160" y1="200" x2="160" y2="220" stroke="var(--gold-d)" stroke-width="2.5" stroke-dasharray="2 2"/>
+      <text x="160" y="234" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="var(--gold-d)">membrane</text>
+      <!-- left side: pure solvent water -->
+      <rect x="62" y="${leftLevel}" width="36" height="${220 - leftLevel}" fill="var(--teal-3)" opacity="0.55"/>
+      <rect x="100" y="200" width="60" height="20" fill="var(--teal-3)" opacity="0.55"/>
+      <!-- right side: solution (slightly different tint) -->
+      <rect x="222" y="${rightLevel}" width="36" height="${220 - rightLevel}" fill="var(--gold)" opacity="0.55"/>
+      <rect x="160" y="200" width="60" height="20" fill="var(--gold)" opacity="0.55"/>
+      <!-- particle dots on solute side -->
+      <circle cx="232" cy="${rightLevel + 18}" r="3" fill="var(--plum)"/>
+      <circle cx="248" cy="${rightLevel + 35}" r="3" fill="var(--plum)"/>
+      <circle cx="238" cy="${rightLevel + 60}" r="3" fill="var(--plum)"/>
+      <!-- column-rise arrow -->
+      <line x1="280" y1="${baseLevel}" x2="280" y2="${rightLevel}" stroke="var(--gold-d)" stroke-width="2"/>
+      <polygon points="276,${rightLevel + 4} 280,${rightLevel - 2} 284,${rightLevel + 4}" fill="var(--gold-d)"/>
+      <text x="288" y="${(baseLevel + rightLevel) / 2 + 4}" font-family="Playfair Display,serif" font-style="italic" font-size="11" fill="var(--gold-d)">Π</text>
+      <!-- labels -->
+      <text x="80" y="42" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="var(--teal)">solvent</text>
+      <text x="240" y="42" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="var(--gold-d)">solution</text>
+    `;
+  }
+
+  svg.innerHTML = svgInner;
+}
 
 window.animFrac = function(skillId){
   const cellsA = document.querySelectorAll(`#fbA-${skillId} .frac-cell`);

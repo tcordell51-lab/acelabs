@@ -1,0 +1,1096 @@
+[
+  {
+    "id": "stoich.mole-conv.grams-as-moles",
+    "label": "Treats grams as moles",
+    "description": "Skips the molar-mass conversion and plugs grams directly into a mole-based ratio.",
+    "topic": "stoich",
+    "subtopic": "mole-conv",
+    "applicableSkills": ["mole-conv", "lim-react", "solutions"],
+    "examples": [
+      "Distractor uses 22 g CO2 / 6.022e23 as if grams were moles.",
+      "Distractor returns the gram value when a mole count was asked."
+    ],
+    "tags": ["unit-error"],
+    "status": "active"
+  },
+  {
+    "id": "stoich.mole-conv.molar-volume-not-stp",
+    "label": "Uses 22.4 L outside STP",
+    "description": "Applies 22.4 L/mol at conditions other than 0 C and 1 atm without correcting via PV=nRT.",
+    "topic": "stoich",
+    "subtopic": "mole-conv",
+    "applicableSkills": ["mole-conv", "gas-laws"],
+    "examples": [
+      "Distractor uses 22.4 L/mol at 25 C, 1 atm.",
+      "Distractor uses 22.4 L/mol at 2 atm without rescaling."
+    ],
+    "tags": ["context-error"],
+    "status": "active"
+  },
+  {
+    "id": "stoich.mole-conv.avogadro-confused-with-molar-mass",
+    "label": "Swaps NA and molar mass",
+    "description": "Multiplies by 6.022e23 when molar mass was needed, or by molar mass when NA was needed.",
+    "topic": "stoich",
+    "subtopic": "mole-conv",
+    "applicableSkills": ["mole-conv"],
+    "examples": [
+      "Distractor reports 12 g for 1 mol of carbon atoms instead of 6.022e23.",
+      "Distractor multiplies grams by NA directly."
+    ],
+    "tags": ["unit-error"],
+    "status": "active"
+  },
+  {
+    "id": "stoich.balance.coeff-ignored",
+    "label": "Ignores stoichiometric coefficient",
+    "description": "Drops the balanced-equation coefficient when scaling product moles from reactant moles.",
+    "topic": "stoich",
+    "subtopic": "balance",
+    "applicableSkills": ["lim-react", "mole-conv", "enthalpy"],
+    "examples": [
+      "Distractor reports 1 mol H2O from 2 mol H2 + O2.",
+      "Distractor uses 1:1 NH3 to H2 ratio instead of 2:3."
+    ],
+    "tags": ["coefficient-error"],
+    "status": "active"
+  },
+  {
+    "id": "stoich.lim-react.larger-mass-wins",
+    "label": "Picks larger mass as excess",
+    "description": "Identifies the limiting reactant by mass instead of by mole-to-coefficient ratio.",
+    "topic": "stoich",
+    "subtopic": "lim-react",
+    "applicableSkills": ["lim-react"],
+    "examples": [
+      "Distractor names the heavier reactant as limiting because it ran out first by mass.",
+      "Distractor sees equal masses and concludes equal moles."
+    ],
+    "tags": ["unit-error"],
+    "status": "active"
+  },
+  {
+    "id": "stoich.lim-react.percent-yield-inverted",
+    "label": "Inverts percent yield",
+    "description": "Computes theoretical over actual instead of actual over theoretical.",
+    "topic": "stoich",
+    "subtopic": "lim-react",
+    "applicableSkills": ["lim-react"],
+    "examples": [
+      "Distractor reports 119% yield from a 5 g actual / 4.2 g theoretical inversion.",
+      "Distractor uses theoretical / actual when the prompt asked percent yield."
+    ],
+    "tags": ["inverse"],
+    "status": "active"
+  },
+  {
+    "id": "stoich.empirical.empirical-vs-molecular",
+    "label": "Confuses empirical with molecular",
+    "description": "Reports the empirical formula when a molecular formula (or vice versa) was asked.",
+    "topic": "stoich",
+    "subtopic": "empirical",
+    "applicableSkills": ["mole-conv"],
+    "examples": [
+      "Distractor reports CH2O when the prompt asked the molecular formula of glucose.",
+      "Distractor scales the empirical formula by mass-percent instead of by molar-mass ratio."
+    ],
+    "tags": ["vocab"],
+    "status": "active"
+  },
+
+  {
+    "id": "gas.boyle.t-or-n-not-held",
+    "label": "Treats T or n as constant",
+    "description": "Applies Boyle's law when temperature or moles are also changing.",
+    "topic": "gas",
+    "subtopic": "ideal",
+    "applicableSkills": ["gas-laws"],
+    "examples": [
+      "Distractor uses P1V1 = P2V2 across a temperature change.",
+      "Distractor ignores added gas when applying Boyle."
+    ],
+    "tags": ["context-error"],
+    "status": "active"
+  },
+  {
+    "id": "gas.charles.celsius-not-kelvin",
+    "label": "Uses Celsius in gas law",
+    "description": "Plugs C into a ratio expression that requires absolute temperature in K.",
+    "topic": "gas",
+    "subtopic": "ideal",
+    "applicableSkills": ["gas-laws"],
+    "examples": [
+      "Distractor doubles 27 C to 54 C and reports double pressure.",
+      "Distractor uses 0 C as zero in a Charles ratio."
+    ],
+    "tags": ["unit-error"],
+    "status": "active"
+  },
+  {
+    "id": "gas.dalton.mole-fraction-vs-partial-pressure",
+    "label": "Confuses mole fraction and PP",
+    "description": "Reports a mole fraction when a partial pressure was asked, or vice versa.",
+    "topic": "gas",
+    "subtopic": "mixtures",
+    "applicableSkills": ["gas-laws"],
+    "examples": [
+      "Distractor reports 0.21 atm for O2 in a 5 atm mixture (used the fraction directly).",
+      "Distractor adds partial pressures and divides by component count."
+    ],
+    "tags": ["unit-error"],
+    "status": "active"
+  },
+  {
+    "id": "gas.kmt.heavy-gas-faster",
+    "label": "Heavier gas effuses faster",
+    "description": "Reverses Graham's law and picks the heavier gas as the faster one.",
+    "topic": "gas",
+    "subtopic": "kmt",
+    "applicableSkills": ["gas-laws"],
+    "examples": [
+      "Distractor says O2 effuses faster than H2.",
+      "Distractor uses sqrt(M1/M2) instead of sqrt(M2/M1)."
+    ],
+    "tags": ["inverse"],
+    "status": "active"
+  },
+  {
+    "id": "gas.real.high-T-less-ideal",
+    "label": "High T makes gas less ideal",
+    "description": "Claims real gases deviate more from ideal behavior at high T and low P.",
+    "topic": "gas",
+    "subtopic": "real",
+    "applicableSkills": ["gas-laws"],
+    "examples": [
+      "Distractor calls He at 500 K, 1 atm the least ideal of a set.",
+      "Distractor pairs low T with most-ideal."
+    ],
+    "tags": ["inverse"],
+    "status": "active"
+  },
+
+  {
+    "id": "solutions.molarity.mass-not-moles",
+    "label": "Uses mass for molarity",
+    "description": "Computes M = grams / liters without converting to moles.",
+    "topic": "solutions",
+    "subtopic": "concentration",
+    "applicableSkills": ["solutions"],
+    "examples": [
+      "Distractor reports 4 M for 4 g NaOH in 1 L.",
+      "Distractor reports g/L when M was asked."
+    ],
+    "tags": ["unit-error"],
+    "status": "active"
+  },
+  {
+    "id": "solutions.dilution.added-not-final",
+    "label": "Uses added volume not final",
+    "description": "Plugs the volume of added solvent into M2V2 instead of the total final volume.",
+    "topic": "solutions",
+    "subtopic": "dilution",
+    "applicableSkills": ["solutions"],
+    "examples": [
+      "Distractor uses V2 = 100 mL added when V1 was 50 mL and final is 150 mL.",
+      "Distractor sets V1 + V_added = V2 incorrectly."
+    ],
+    "tags": ["context-error"],
+    "status": "active"
+  },
+  {
+    "id": "solutions.molality.mass-of-solution",
+    "label": "Uses solution mass for molality",
+    "description": "Divides moles of solute by mass of solution rather than mass of solvent.",
+    "topic": "solutions",
+    "subtopic": "concentration",
+    "applicableSkills": ["solutions", "colligative"],
+    "examples": [
+      "Distractor uses (mass_solute + mass_solvent) in the denominator.",
+      "Distractor confuses m and M when both numbers are similar."
+    ],
+    "tags": ["vocab"],
+    "status": "active"
+  },
+  {
+    "id": "solutions.colligative.ignores-vant-hoff",
+    "label": "Drops the van't Hoff i",
+    "description": "Forgets to multiply by i for ionic solutes when computing freezing-point or boiling-point change.",
+    "topic": "solutions",
+    "subtopic": "colligative",
+    "applicableSkills": ["solutions", "colligative"],
+    "examples": [
+      "Distractor reports the same delta-Tf for NaCl and glucose at the same molality.",
+      "Distractor uses i = 1 for CaCl2."
+    ],
+    "tags": ["coefficient-error"],
+    "status": "active"
+  },
+  {
+    "id": "solutions.mole-fraction.mass-fraction-instead",
+    "label": "Uses mass fraction for chi",
+    "description": "Reports mass fraction when mole fraction was asked.",
+    "topic": "solutions",
+    "subtopic": "concentration",
+    "applicableSkills": ["solutions"],
+    "examples": [
+      "Distractor reports 0.20 for chi when it was the w/w fraction.",
+      "Distractor adds masses where moles belong."
+    ],
+    "tags": ["unit-error"],
+    "status": "active"
+  },
+
+  {
+    "id": "thermo.enthalpy.sign-of-exo",
+    "label": "Drops exothermic sign",
+    "description": "Treats heat released as positive ΔH instead of negative.",
+    "topic": "thermo",
+    "subtopic": "enthalpy",
+    "applicableSkills": ["enthalpy", "calorimetry", "gibbs"],
+    "examples": [
+      "Distractor offers +ΔH for combustion of methane.",
+      "Distractor flips sign when reversing a Hess-cycle step."
+    ],
+    "tags": ["sign-error"],
+    "status": "active"
+  },
+  {
+    "id": "thermo.hess.no-coeff-scale",
+    "label": "Forgets to scale Hess step",
+    "description": "Omits the multiplier when a Hess-cycle step is doubled or halved.",
+    "topic": "thermo",
+    "subtopic": "enthalpy",
+    "applicableSkills": ["enthalpy"],
+    "examples": [
+      "Distractor reports ΔH for 1 mol H2O when 2 were formed.",
+      "Distractor reverses but does not scale a step."
+    ],
+    "tags": ["coefficient-error"],
+    "status": "active"
+  },
+  {
+    "id": "thermo.hf.elements-nonzero",
+    "label": "Element ΔHf nonzero",
+    "description": "Assigns a nonzero standard formation enthalpy to an element in its reference state.",
+    "topic": "thermo",
+    "subtopic": "enthalpy",
+    "applicableSkills": ["enthalpy"],
+    "examples": [
+      "Distractor uses ΔHf(O2) = 200 kJ/mol in a Hess sum.",
+      "Distractor includes Hf(C, graphite) as a positive value."
+    ],
+    "tags": ["reference-state"],
+    "status": "active"
+  },
+  {
+    "id": "thermo.calorimetry.swap-c-mass",
+    "label": "Swaps c and m in q=mcΔT",
+    "description": "Plugs heat capacity where mass belongs (or vice versa) in q = m c ΔT.",
+    "topic": "thermo",
+    "subtopic": "calorimetry",
+    "applicableSkills": ["calorimetry"],
+    "examples": [
+      "Distractor uses J/K times grams times ΔT.",
+      "Distractor multiplies specific heat by ΔT only."
+    ],
+    "tags": ["unit-error"],
+    "status": "active"
+  },
+  {
+    "id": "thermo.entropy.assumes-mass-or-bond",
+    "label": "Predicts S by mass not phase",
+    "description": "Predicts entropy direction from mass or bond count instead of phase change and disorder.",
+    "topic": "thermo",
+    "subtopic": "entropy",
+    "applicableSkills": ["entropy"],
+    "examples": [
+      "Distractor predicts ΔS<0 for a reaction that produces more gas because product mass is higher.",
+      "Distractor calls melting ΔS<0 because bonds break."
+    ],
+    "tags": ["sign-error"],
+    "status": "active"
+  },
+  {
+    "id": "thermo.gibbs.ignore-T-effect",
+    "label": "Ignores T in ΔG=ΔH−TΔS",
+    "description": "Predicts spontaneity from ΔH alone without weighing the TΔS term.",
+    "topic": "thermo",
+    "subtopic": "gibbs",
+    "applicableSkills": ["gibbs"],
+    "examples": [
+      "Distractor calls a reaction nonspontaneous at all T because ΔH>0.",
+      "Distractor flips conclusion based only on sign of ΔH."
+    ],
+    "tags": ["context-error"],
+    "status": "active"
+  },
+  {
+    "id": "thermo.gibbs.tipping-T-inverted",
+    "label": "Inverts tipping temperature",
+    "description": "Reports T = ΔS/ΔH instead of T = ΔH/ΔS for the spontaneity crossover.",
+    "topic": "thermo",
+    "subtopic": "gibbs",
+    "applicableSkills": ["gibbs"],
+    "examples": [
+      "Distractor returns 0.0025 K when 400 K was the tipping point.",
+      "Distractor inverts when both signs are negative."
+    ],
+    "tags": ["inverse"],
+    "status": "active"
+  },
+  {
+    "id": "thermo.gibbs.Q-vs-K-confused",
+    "label": "Uses K not Q in ΔG eqn",
+    "description": "Plugs K into ΔG = ΔG° + RT ln Q when the system is not at equilibrium.",
+    "topic": "thermo",
+    "subtopic": "gibbs",
+    "applicableSkills": ["gibbs", "eq-kc"],
+    "examples": [
+      "Distractor uses ln K when concentrations were given (must use Q).",
+      "Distractor sets ΔG = 0 by definition for any reaction."
+    ],
+    "tags": ["context-error"],
+    "status": "active"
+  },
+
+  {
+    "id": "kinetics.rate-law.coefficients-as-orders",
+    "label": "Stoich coeffs as rate orders",
+    "description": "Reads rate-law exponents off the balanced equation instead of from rate data.",
+    "topic": "kinetics",
+    "subtopic": "rate-law",
+    "applicableSkills": ["rate-laws"],
+    "examples": [
+      "Distractor reports rate = k[A]^2[B] for 2A + B because the coefficient is 2.",
+      "Distractor calls a reaction second-order without checking initial-rate data."
+    ],
+    "tags": ["coefficient-error"],
+    "status": "active"
+  },
+  {
+    "id": "kinetics.rate-law.units-of-k-fixed",
+    "label": "k always M/s",
+    "description": "Treats rate-constant units as fixed at M/s regardless of overall reaction order.",
+    "topic": "kinetics",
+    "subtopic": "rate-law",
+    "applicableSkills": ["rate-laws"],
+    "examples": [
+      "Distractor labels k for a second-order reaction as M/s.",
+      "Distractor does not adjust k units when order changes."
+    ],
+    "tags": ["unit-error"],
+    "status": "active"
+  },
+  {
+    "id": "kinetics.half-life.assumes-first-order",
+    "label": "Assumes first-order half-life",
+    "description": "Uses t½ = 0.693/k for any reaction without checking the order.",
+    "topic": "kinetics",
+    "subtopic": "half-life",
+    "applicableSkills": ["rate-laws"],
+    "examples": [
+      "Distractor uses t½ = 0.693/k for a zero-order decay.",
+      "Distractor reports a constant half-life for second-order reaction."
+    ],
+    "tags": ["context-error"],
+    "status": "active"
+  },
+  {
+    "id": "kinetics.arrhenius.cat-changes-deltaH",
+    "label": "Catalyst changes ΔH",
+    "description": "Claims a catalyst alters the thermodynamic ΔH of the reaction.",
+    "topic": "kinetics",
+    "subtopic": "arrhenius",
+    "applicableSkills": ["arrhenius"],
+    "examples": [
+      "Distractor says catalyst makes the reaction more exothermic.",
+      "Distractor lowers ΔH instead of Ea."
+    ],
+    "tags": ["vocab"],
+    "status": "active"
+  },
+  {
+    "id": "kinetics.arrhenius.cat-only-fwd",
+    "label": "Catalyst only speeds forward",
+    "description": "Claims a catalyst lowers Ea only in the forward direction.",
+    "topic": "kinetics",
+    "subtopic": "arrhenius",
+    "applicableSkills": ["arrhenius"],
+    "examples": [
+      "Distractor says reverse rate is unchanged when catalyst is added.",
+      "Distractor predicts equilibrium shift from catalyst."
+    ],
+    "tags": ["vocab"],
+    "status": "active"
+  },
+
+  {
+    "id": "equilibrium.k.solids-or-liquids-included",
+    "label": "Solids or liquids in K",
+    "description": "Includes pure solids or pure liquids in the K expression.",
+    "topic": "equilibrium",
+    "subtopic": "k-expr",
+    "applicableSkills": ["eq-kc", "ksp"],
+    "examples": [
+      "Distractor writes K = [CaCO3]/([CaO][CO2]).",
+      "Distractor includes liquid water in a Kc."
+    ],
+    "tags": ["phase-omission"],
+    "status": "active"
+  },
+  {
+    "id": "equilibrium.k.kp-vs-kc",
+    "label": "Kp equals Kc",
+    "description": "Treats Kp and Kc as identical without accounting for Δn.",
+    "topic": "equilibrium",
+    "subtopic": "k-expr",
+    "applicableSkills": ["eq-kc"],
+    "examples": [
+      "Distractor reports Kp = Kc for N2 + 3H2 ↔ 2NH3.",
+      "Distractor does not raise RT to Δn."
+    ],
+    "tags": ["coefficient-error"],
+    "status": "active"
+  },
+  {
+    "id": "equilibrium.lechat.catalyst-shifts",
+    "label": "Catalyst shifts equilibrium",
+    "description": "Claims a catalyst shifts the equilibrium position.",
+    "topic": "equilibrium",
+    "subtopic": "le-chatelier",
+    "applicableSkills": ["eq-lechat"],
+    "examples": [
+      "Distractor predicts more products when catalyst added.",
+      "Distractor changes K when catalyst added."
+    ],
+    "tags": ["vocab"],
+    "status": "active"
+  },
+  {
+    "id": "equilibrium.lechat.inert-gas-shifts",
+    "label": "Inert gas shifts at const V",
+    "description": "Predicts a Le Châtelier shift when inert gas is added at constant volume.",
+    "topic": "equilibrium",
+    "subtopic": "le-chatelier",
+    "applicableSkills": ["eq-lechat"],
+    "examples": [
+      "Distractor predicts shift toward fewer moles of gas.",
+      "Distractor changes partial pressures of reactants."
+    ],
+    "tags": ["context-error"],
+    "status": "active"
+  },
+  {
+    "id": "equilibrium.ice.full-x-not-small",
+    "label": "Refuses small-x approx",
+    "description": "Carries x in the denominator when Ka or Kb is small enough that x is negligible.",
+    "topic": "equilibrium",
+    "subtopic": "ice",
+    "applicableSkills": ["eq-ice", "ph-basics"],
+    "examples": [
+      "Distractor solves a quadratic when small-x gives the same answer.",
+      "Distractor reports an unphysical x close to initial concentration."
+    ],
+    "tags": ["context-error"],
+    "status": "active"
+  },
+
+  {
+    "id": "acid-base.ph.log-of-conc-not-h",
+    "label": "pH = −log(conc) of acid",
+    "description": "Takes log of acid concentration without first computing [H+] from Ka.",
+    "topic": "acid-base",
+    "subtopic": "ph",
+    "applicableSkills": ["ph-basics", "strong-weak"],
+    "examples": [
+      "Distractor reports pH 3 for 0.001 M acetic acid.",
+      "Distractor skips the Ka step entirely."
+    ],
+    "tags": ["context-error"],
+    "status": "active"
+  },
+  {
+    "id": "acid-base.ph.poh-pkw-confused",
+    "label": "pH + pOH not 14 at 25 C",
+    "description": "Treats pH + pOH as some other constant or ignores it entirely.",
+    "topic": "acid-base",
+    "subtopic": "ph",
+    "applicableSkills": ["ph-basics"],
+    "examples": [
+      "Distractor reports pOH 7 for pH 3 solution.",
+      "Distractor adds pH and pOH and gets 7."
+    ],
+    "tags": ["vocab"],
+    "status": "active"
+  },
+  {
+    "id": "acid-base.strong-weak.weak-cant-be-low-ph",
+    "label": "Weak acid can't reach low pH",
+    "description": "Claims a weak acid solution cannot have a low pH at high concentration.",
+    "topic": "acid-base",
+    "subtopic": "strong-weak",
+    "applicableSkills": ["strong-weak", "ph-basics"],
+    "examples": [
+      "Distractor places 1 M acetic acid above pH 5.",
+      "Distractor calls weak acids non-acidic."
+    ],
+    "tags": ["vocab"],
+    "status": "active"
+  },
+  {
+    "id": "acid-base.strong-weak.conjugate-strength-mirrored",
+    "label": "Strong acid → strong conj base",
+    "description": "Predicts the conjugate base of a strong acid is also strong.",
+    "topic": "acid-base",
+    "subtopic": "strong-weak",
+    "applicableSkills": ["strong-weak"],
+    "examples": [
+      "Distractor calls Cl− a strong base.",
+      "Distractor predicts pH > 7 for NaCl solution."
+    ],
+    "tags": ["vocab"],
+    "status": "active"
+  },
+  {
+    "id": "acid-base.buffer.pka-far-from-target",
+    "label": "Picks pKa far from target pH",
+    "description": "Selects a buffer whose pKa is more than 1 unit from the target pH.",
+    "topic": "acid-base",
+    "subtopic": "buffer",
+    "applicableSkills": ["buffers"],
+    "examples": [
+      "Distractor picks pKa = 4.7 for a pH 7 buffer.",
+      "Distractor uses HCl as a buffer component."
+    ],
+    "tags": ["context-error"],
+    "status": "active"
+  },
+  {
+    "id": "acid-base.buffer.hh-ratio-inverted",
+    "label": "Inverts HH ratio",
+    "description": "Uses log([HA]/[A−]) in the Henderson-Hasselbalch equation.",
+    "topic": "acid-base",
+    "subtopic": "buffer",
+    "applicableSkills": ["buffers"],
+    "examples": [
+      "Distractor reports a pH below pKa when [A−] > [HA].",
+      "Distractor swaps numerator and denominator in HH."
+    ],
+    "tags": ["inverse"],
+    "status": "active"
+  },
+  {
+    "id": "acid-base.titration.equivalence-vs-half",
+    "label": "Equivalence equals half-eq",
+    "description": "Confuses the equivalence point (pH from salt) with the half-equivalence point (pH = pKa).",
+    "topic": "acid-base",
+    "subtopic": "titration",
+    "applicableSkills": ["titration", "buffers"],
+    "examples": [
+      "Distractor reports pH = pKa at the equivalence point of a weak-acid titration.",
+      "Distractor places equivalence at pH 7 for weak acid + strong base."
+    ],
+    "tags": ["vocab"],
+    "status": "active"
+  },
+
+  {
+    "id": "ksp.expr.coefficients-as-orders",
+    "label": "Drops Ksp coefficient",
+    "description": "Writes Ksp without raising the ion concentration to its stoichiometric power.",
+    "topic": "ksp",
+    "subtopic": "expr",
+    "applicableSkills": ["ksp"],
+    "examples": [
+      "Distractor writes Ksp = [Ca2+][F−] for CaF2.",
+      "Distractor returns s instead of (2s)^2 · s for CaF2."
+    ],
+    "tags": ["coefficient-error"],
+    "status": "active"
+  },
+  {
+    "id": "ksp.solubility.s-equals-ksp",
+    "label": "Solubility equals Ksp",
+    "description": "Reports Ksp as the molar solubility without taking the appropriate root.",
+    "topic": "ksp",
+    "subtopic": "solubility",
+    "applicableSkills": ["ksp"],
+    "examples": [
+      "Distractor reports 1e-10 M as solubility from a 1e-10 Ksp of MX.",
+      "Distractor skips the cube root for M2X."
+    ],
+    "tags": ["context-error"],
+    "status": "active"
+  },
+  {
+    "id": "ksp.common-ion.ignored",
+    "label": "Ignores common-ion suppression",
+    "description": "Computes solubility in a common-ion solution as if it were pure water.",
+    "topic": "ksp",
+    "subtopic": "common-ion",
+    "applicableSkills": ["ksp"],
+    "examples": [
+      "Distractor uses Ksp directly for AgCl in NaCl solution.",
+      "Distractor predicts higher solubility in common-ion solution."
+    ],
+    "tags": ["context-error"],
+    "status": "active"
+  },
+
+  {
+    "id": "electrochem.cell.anode-vs-cathode",
+    "label": "Swaps anode and cathode",
+    "description": "Names the site of reduction as the anode (or oxidation as the cathode).",
+    "topic": "electrochem",
+    "subtopic": "cells",
+    "applicableSkills": ["galvanic", "red-pot"],
+    "examples": [
+      "Distractor labels the cathode as the site of oxidation.",
+      "Distractor draws electron flow from cathode to anode externally."
+    ],
+    "tags": ["vocab"],
+    "status": "active"
+  },
+  {
+    "id": "electrochem.cell.E-scales-with-coeff",
+    "label": "E° scales with coefficients",
+    "description": "Multiplies E° by stoichiometric coefficients when balancing a half-reaction.",
+    "topic": "electrochem",
+    "subtopic": "cells",
+    "applicableSkills": ["red-pot", "galvanic"],
+    "examples": [
+      "Distractor multiplies E° by 2 when doubling a half-reaction.",
+      "Distractor adds coefficient-scaled potentials."
+    ],
+    "tags": ["coefficient-error"],
+    "status": "active"
+  },
+  {
+    "id": "electrochem.gibbs.sign-of-deltaG",
+    "label": "Drops sign in ΔG=−nFE",
+    "description": "Treats positive E° as giving positive ΔG.",
+    "topic": "electrochem",
+    "subtopic": "thermo-link",
+    "applicableSkills": ["galvanic", "gibbs"],
+    "examples": [
+      "Distractor reports +ΔG for a spontaneous galvanic cell.",
+      "Distractor sets ΔG = nFE."
+    ],
+    "tags": ["sign-error"],
+    "status": "active"
+  },
+  {
+    "id": "electrochem.nernst.log-direction",
+    "label": "Inverts Nernst log term",
+    "description": "Uses log(reactants/products) instead of log(products/reactants) in Nernst.",
+    "topic": "electrochem",
+    "subtopic": "nernst",
+    "applicableSkills": ["nernst"],
+    "examples": [
+      "Distractor reports an increase in cell potential when products accumulate.",
+      "Distractor swaps Q numerator and denominator."
+    ],
+    "tags": ["inverse"],
+    "status": "active"
+  },
+  {
+    "id": "electrochem.faraday.skips-n",
+    "label": "Skips electrons per ion",
+    "description": "Computes mass deposited without using the n electrons transferred per ion.",
+    "topic": "electrochem",
+    "subtopic": "electrolysis",
+    "applicableSkills": ["electrolysis"],
+    "examples": [
+      "Distractor reports double the mass of Cu deposited because n=1 was assumed.",
+      "Distractor leaves out the n in m = (Q M)/(n F)."
+    ],
+    "tags": ["coefficient-error"],
+    "status": "active"
+  },
+
+  {
+    "id": "atomic.config.aufbau-no-exception",
+    "label": "Cu/Cr exception forgotten",
+    "description": "Writes Cr or Cu in strict Aufbau order without the half-filled or filled d-shell promotion.",
+    "topic": "atomic",
+    "subtopic": "configuration",
+    "applicableSkills": ["atomic"],
+    "examples": [
+      "Distractor writes Cu as [Ar] 4s² 3d⁹.",
+      "Distractor writes Cr as [Ar] 4s² 3d⁴."
+    ],
+    "tags": ["vocab"],
+    "status": "active"
+  },
+  {
+    "id": "atomic.ion.add-or-subtract-wrong",
+    "label": "Wrong sign on ion electrons",
+    "description": "Subtracts electrons for an anion or adds them for a cation.",
+    "topic": "atomic",
+    "subtopic": "configuration",
+    "applicableSkills": ["atomic"],
+    "examples": [
+      "Distractor reports 16 e− for Cl−.",
+      "Distractor reports 12 e− for Mg2+."
+    ],
+    "tags": ["sign-error"],
+    "status": "active"
+  },
+  {
+    "id": "atomic.unpaired.total-vs-unpaired",
+    "label": "Reports total not unpaired",
+    "description": "Reports total electrons in the partially filled shell when only unpaired count was asked.",
+    "topic": "atomic",
+    "subtopic": "configuration",
+    "applicableSkills": ["atomic"],
+    "examples": [
+      "Distractor reports 4 for the unpaired count of O (2p4).",
+      "Distractor confuses 'unpaired' with 'in p subshell'."
+    ],
+    "tags": ["vocab"],
+    "status": "active"
+  },
+  {
+    "id": "atomic.spectra.series-mislabeled",
+    "label": "Wrong spectral series",
+    "description": "Assigns a transition to the wrong (Lyman/Balmer/Paschen) series based on the upper level.",
+    "topic": "atomic",
+    "subtopic": "spectra",
+    "applicableSkills": ["atomic", "quantum-numbers"],
+    "examples": [
+      "Distractor calls n=3 to n=1 the Balmer series.",
+      "Distractor reports IR for a Lyman transition."
+    ],
+    "tags": ["vocab"],
+    "status": "active"
+  },
+  {
+    "id": "atomic.shell.max-electrons-rule",
+    "label": "Uses 8 not 2n²",
+    "description": "Limits the n-th shell to 8 electrons instead of 2n².",
+    "topic": "atomic",
+    "subtopic": "configuration",
+    "applicableSkills": ["atomic", "quantum-numbers"],
+    "examples": [
+      "Distractor reports 8 as the max for n=3.",
+      "Distractor reports 16 as the max for n=4."
+    ],
+    "tags": ["vocab"],
+    "status": "active"
+  },
+
+  {
+    "id": "periodic.radius.diagonal-direction",
+    "label": "Wrong diagonal for radius",
+    "description": "Picks top-left or bottom-right as the largest radius.",
+    "topic": "periodic",
+    "subtopic": "radius",
+    "applicableSkills": ["periodic"],
+    "examples": [
+      "Distractor picks Cl as larger than K.",
+      "Distractor picks H as the largest atom."
+    ],
+    "tags": ["inverse"],
+    "status": "active"
+  },
+  {
+    "id": "periodic.ie.misses-group-13-dip",
+    "label": "Misses group 13 IE dip",
+    "description": "Predicts strict left-to-right increase in IE without the Al<Mg dip.",
+    "topic": "periodic",
+    "subtopic": "ie",
+    "applicableSkills": ["periodic"],
+    "examples": [
+      "Distractor orders Na<Mg<Al<Si.",
+      "Distractor places Al above Mg in IE."
+    ],
+    "tags": ["context-error"],
+    "status": "active"
+  },
+  {
+    "id": "periodic.en.applies-to-noble",
+    "label": "Assigns EN to noble gas",
+    "description": "Reports an electronegativity for a noble gas (no defined EN on Pauling scale).",
+    "topic": "periodic",
+    "subtopic": "en",
+    "applicableSkills": ["periodic"],
+    "examples": [
+      "Distractor picks Ne or He as most electronegative.",
+      "Distractor places Ar above Cl in EN."
+    ],
+    "tags": ["vocab"],
+    "status": "active"
+  },
+  {
+    "id": "periodic.iso.same-radius",
+    "label": "Isoelectronic equals equal radius",
+    "description": "Claims isoelectronic species have the same radius regardless of Z.",
+    "topic": "periodic",
+    "subtopic": "iso",
+    "applicableSkills": ["periodic"],
+    "examples": [
+      "Distractor reports equal radii for O2- and Na+.",
+      "Distractor picks the highest-Z species as largest in an iso series."
+    ],
+    "tags": ["vocab"],
+    "status": "active"
+  },
+  {
+    "id": "periodic.ea.f-most-negative",
+    "label": "F has the most negative EA",
+    "description": "Picks F over Cl as the most negative electron affinity.",
+    "topic": "periodic",
+    "subtopic": "ea",
+    "applicableSkills": ["periodic"],
+    "examples": [
+      "Distractor reports EA(F) more negative than EA(Cl).",
+      "Distractor explains EA trend by EN alone."
+    ],
+    "tags": ["context-error"],
+    "status": "active"
+  },
+
+  {
+    "id": "bonding.polarity.symmetric-counts",
+    "label": "Polar bonds → polar molecule",
+    "description": "Concludes a molecule is polar from polar bonds without checking molecular geometry.",
+    "topic": "bonding",
+    "subtopic": "polarity",
+    "applicableSkills": ["bonding", "vsepr"],
+    "examples": [
+      "Distractor calls CCl4 polar.",
+      "Distractor calls CO2 polar."
+    ],
+    "tags": ["cancel-symmetry"],
+    "status": "active"
+  },
+  {
+    "id": "bonding.lewis.octet-period2-expand",
+    "label": "Expands octet on period-2",
+    "description": "Allows octet expansion on a period-2 element such as N or O.",
+    "topic": "bonding",
+    "subtopic": "lewis",
+    "applicableSkills": ["lewis"],
+    "examples": [
+      "Distractor draws a 5-bond N in NO3-.",
+      "Distractor expands octet on F."
+    ],
+    "tags": ["vocab"],
+    "status": "active"
+  },
+  {
+    "id": "bonding.lewis.charge-not-included",
+    "label": "Forgets ion charge in valence",
+    "description": "Counts valence electrons of an ion without adjusting for its charge.",
+    "topic": "bonding",
+    "subtopic": "lewis",
+    "applicableSkills": ["lewis"],
+    "examples": [
+      "Distractor reports 30 valence e− for SO4 2-.",
+      "Distractor reports 8 valence e− for OH-."
+    ],
+    "tags": ["coefficient-error"],
+    "status": "active"
+  },
+  {
+    "id": "bonding.formal-charge.formula-mistake",
+    "label": "Misuses FC formula",
+    "description": "Drops the half on bonding electrons or omits lone-pair electrons in V−L−½B.",
+    "topic": "bonding",
+    "subtopic": "lewis",
+    "applicableSkills": ["lewis"],
+    "examples": [
+      "Distractor reports +2 for N in NO3-.",
+      "Distractor reports a non-integer formal charge."
+    ],
+    "tags": ["coefficient-error"],
+    "status": "active"
+  },
+  {
+    "id": "bonding.vsepr.steric-vs-shape",
+    "label": "Steric # equals shape name",
+    "description": "Names the geometry from the steric number alone, ignoring lone pairs.",
+    "topic": "bonding",
+    "subtopic": "vsepr",
+    "applicableSkills": ["vsepr"],
+    "examples": [
+      "Distractor calls NH3 tetrahedral.",
+      "Distractor calls H2O bent only after seeing the formula, not from VSEPR."
+    ],
+    "tags": ["vocab"],
+    "status": "active"
+  },
+  {
+    "id": "bonding.hybridization.counts-pi",
+    "label": "Counts pi bonds in hybrid",
+    "description": "Adds pi bonds to the steric region count when assigning hybridization.",
+    "topic": "bonding",
+    "subtopic": "hybridization",
+    "applicableSkills": ["hybridization"],
+    "examples": [
+      "Distractor calls C in HCN sp3 because of the triple bond.",
+      "Distractor calls C in CO2 sp2."
+    ],
+    "tags": ["vocab"],
+    "status": "active"
+  },
+
+  {
+    "id": "imf.rank.london-weakest-always",
+    "label": "London always weakest",
+    "description": "Ranks London forces as the weakest IMF without weighing molecular size.",
+    "topic": "imf",
+    "subtopic": "ranking",
+    "applicableSkills": ["imf-rank"],
+    "examples": [
+      "Distractor places I2 below HCl in boiling point.",
+      "Distractor ignores polarizability."
+    ],
+    "tags": ["context-error"],
+    "status": "active"
+  },
+  {
+    "id": "imf.hbond.any-h",
+    "label": "Any H counts as H-bond",
+    "description": "Calls any C-H or H to non-NOF interaction a hydrogen bond.",
+    "topic": "imf",
+    "subtopic": "h-bond",
+    "applicableSkills": ["imf-rank", "bonding"],
+    "examples": [
+      "Distractor labels CH4 as H-bonding.",
+      "Distractor labels HCl as H-bonding."
+    ],
+    "tags": ["vocab"],
+    "status": "active"
+  },
+  {
+    "id": "imf.solubility.like-dissolves-violated",
+    "label": "Wrong like-dissolves match",
+    "description": "Picks a polar solvent for a nonpolar solute (or vice versa).",
+    "topic": "imf",
+    "subtopic": "solubility",
+    "applicableSkills": ["imf-rank", "solutions"],
+    "examples": [
+      "Distractor predicts oil dissolves in water.",
+      "Distractor predicts NaCl dissolves in hexane."
+    ],
+    "tags": ["vocab"],
+    "status": "active"
+  },
+  {
+    "id": "imf.bp.molar-mass-only",
+    "label": "Boiling point by mass only",
+    "description": "Predicts boiling point order from molar mass alone, ignoring H-bond and polarity.",
+    "topic": "imf",
+    "subtopic": "phys-prop",
+    "applicableSkills": ["imf-rank"],
+    "examples": [
+      "Distractor places CH4 above H2O in boiling point.",
+      "Distractor places ethane above ethanol."
+    ],
+    "tags": ["context-error"],
+    "status": "active"
+  },
+
+  {
+    "id": "phase.diagram.triple-vs-critical",
+    "label": "Triple vs critical confused",
+    "description": "Labels the triple point as the critical point or vice versa.",
+    "topic": "phase",
+    "subtopic": "diagrams",
+    "applicableSkills": ["phase-diag"],
+    "examples": [
+      "Distractor names a high-T high-P region as the triple point.",
+      "Distractor names a three-line junction as the critical point."
+    ],
+    "tags": ["vocab"],
+    "status": "active"
+  },
+  {
+    "id": "phase.heating-curve.flat-region-meaning",
+    "label": "Flat region heats matter",
+    "description": "Claims temperature rises during a phase change because heat is being added.",
+    "topic": "phase",
+    "subtopic": "heating-curve",
+    "applicableSkills": ["heating-curve"],
+    "examples": [
+      "Distractor predicts T rises while ice melts.",
+      "Distractor uses q = m c ΔT in the flat region."
+    ],
+    "tags": ["vocab"],
+    "status": "active"
+  },
+  {
+    "id": "phase.heating-curve.fusion-vap-swapped",
+    "label": "Hfus and Hvap swapped",
+    "description": "Uses Hvap when ice is melting (or Hfus when liquid is vaporizing).",
+    "topic": "phase",
+    "subtopic": "heating-curve",
+    "applicableSkills": ["heating-curve"],
+    "examples": [
+      "Distractor uses 40.7 kJ/mol for melting ice.",
+      "Distractor reports Hfus larger than Hvap for water."
+    ],
+    "tags": ["vocab"],
+    "status": "active"
+  },
+
+  {
+    "id": "nuclear.decay.alpha-mass-unchanged",
+    "label": "Alpha leaves mass unchanged",
+    "description": "Claims alpha decay does not change the mass number.",
+    "topic": "nuclear",
+    "subtopic": "decay",
+    "applicableSkills": ["nuclear"],
+    "examples": [
+      "Distractor reports same A after alpha emission.",
+      "Distractor changes only Z in alpha decay."
+    ],
+    "tags": ["vocab"],
+    "status": "active"
+  },
+  {
+    "id": "nuclear.half-life.linear-not-exp",
+    "label": "Linear half-life decay",
+    "description": "Treats radioactive decay as linear so two half-lives leaves zero.",
+    "topic": "nuclear",
+    "subtopic": "half-life",
+    "applicableSkills": ["nuclear", "rate-laws"],
+    "examples": [
+      "Distractor reports 0% remaining after 2 half-lives.",
+      "Distractor reports 50% remaining after 2 half-lives."
+    ],
+    "tags": ["context-error"],
+    "status": "active"
+  },
+
+  {
+    "id": "lab.tools.glassware-precision",
+    "label": "Wrong glassware precision",
+    "description": "Picks a graduated cylinder when a volumetric flask was needed (or vice versa).",
+    "topic": "lab",
+    "subtopic": "glassware",
+    "applicableSkills": ["lab-techniques", "sig-figs"],
+    "examples": [
+      "Distractor uses a beaker to prepare a 0.100 M standard.",
+      "Distractor uses a volumetric flask for a rough volume."
+    ],
+    "tags": ["vocab"],
+    "status": "active"
+  },
+
+  {
+    "id": "colligative.bp-fp-direction",
+    "label": "Wrong direction on Tb/Tf",
+    "description": "Claims solute lowers boiling point or raises freezing point of the solvent.",
+    "topic": "colligative",
+    "subtopic": "direction",
+    "applicableSkills": ["colligative", "solutions"],
+    "examples": [
+      "Distractor reports Tb decreases when NaCl is added.",
+      "Distractor reports Tf increases when sugar is added."
+    ],
+    "tags": ["sign-error"],
+    "status": "active"
+  }
+]

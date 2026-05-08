@@ -143,14 +143,20 @@
   }
 
   // Aggregate due cards across tools.
-  //   QR / GC: no SR system today — skip (uses attempts[], not a due-date queue).
+  //   QR:      qr-rem-v2:sr is a single object keyed by question id —
+  //            { [probId]: { ef, interval, due (ms epoch), reps, lastQ } }.
+  //            Count entries where due <= now.
+  //   GC:      gc-rem-v1:sr — same shape as QR.
   //   OChem:   no SR system today — skip.
   //   Bio:     acethedat_bio_engine_v1 contains .aceCards array with per-card
   //            { nextDue (ms epoch), closed (bool) } shape. Count cards where
   //            !closed && nextDue <= now.
+  // (Fix 13: previously this looked for <ns>:sr-due aggregate keys that no engine
+  //  ever wrote — replaced with direct scan of the engine's actual SR shape.)
   function aggregateCardsDue(){
     let total = 0;
     const now = Date.now();
+    // Bio aceCards
     try {
       const bioRaw = localStorage.getItem('acethedat_bio_engine_v1');
       if (bioRaw){
@@ -162,6 +168,18 @@
         }
       }
     } catch(e){}
+    // GC + QR — both store SR as a single object at <ns>:sr keyed by question id
+    ['gc-rem-v1', 'qr-rem-v2'].forEach(ns => {
+      try {
+        const raw = localStorage.getItem(ns + ':sr');
+        if (!raw) return;
+        const sr = JSON.parse(raw);
+        if (!sr || typeof sr !== 'object') return;
+        Object.values(sr).forEach(entry => {
+          if (entry && typeof entry.due === 'number' && entry.due <= now) total++;
+        });
+      } catch(e){}
+    });
     return total;
   }
 
@@ -319,7 +337,54 @@
     }
   }
 
-  document.addEventListener('DOMContentLoaded', render);
+  // Diagnostic panel — populated only when URL contains ?debug=1.
+  // Lists every localStorage key whose prefix matches an AL engine namespace,
+  // along with its current value truncated to 200 chars. Read-only.
+  function renderDebugPanel(){
+    let isDebug = false;
+    try { isDebug = new URLSearchParams(window.location.search).get('debug') === '1'; }
+    catch(e){ isDebug = /[?&]debug=1\b/.test(window.location.search || ''); }
+    const panel = document.getElementById('debugPanel');
+    if (!panel) return;
+    if (!isDebug){ panel.style.display = 'none'; return; }
+    panel.style.display = '';
+    const body = document.getElementById('debugPanelBody');
+    const sub = document.getElementById('debugPanelSub');
+    if (!body) return;
+    // Match prefixes: gc:, gc-rem-v1:, bio:, acethedat_bio*, qr:, qr-rem-v2:,
+    // ochem:, ochem-rem-v1:, atDAT_*, al:, sim:, pace:
+    const prefixMatchers = [
+      /^gc:/, /^gc-rem-v1/, /^bio:/, /^acethedat_bio/,
+      /^qr:/, /^qr-rem-v2/, /^ochem:/, /^ochem-rem-v1/, /^atDAT_/,
+      /^al:/, /^sim:/, /^pace:/
+    ];
+    const rows = [];
+    try {
+      for (let i = 0; i < localStorage.length; i++){
+        const k = localStorage.key(i);
+        if (!k) continue;
+        if (!prefixMatchers.some(rx => rx.test(k))) continue;
+        let v = '';
+        try { v = localStorage.getItem(k) || ''; } catch(e){ v = '(read error)'; }
+        if (v.length > 200) v = v.slice(0, 200) + '... [+' + (v.length - 200) + ' chars]';
+        rows.push({ k, v });
+      }
+    } catch(e){}
+    rows.sort((a, b) => a.k.localeCompare(b.k));
+    if (sub) sub.textContent = rows.length + ' matching keys (gc:* / bio:* / qr:* / ochem:* / al:* / sim:* / pace:*). Read-only.';
+    const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    body.innerHTML = rows.map((r, i) => {
+      const bg = i % 2 ? 'transparent' : 'rgba(13,32,24,.025)';
+      return '<div style="padding:8px 14px; background:' + bg + '; border-bottom:1px solid var(--al-line); color:var(--al-ink); word-break:break-all;">'
+           + esc(r.k) + '</div>'
+           + '<div style="padding:8px 14px; background:' + bg + '; border-bottom:1px solid var(--al-line); border-left:1px solid var(--al-line); color:var(--al-ink-2); word-break:break-all; white-space:pre-wrap;">'
+           + esc(r.v) + '</div>';
+    }).join('') || '<div style="padding:14px; grid-column:1 / span 2; color:var(--al-ink-mute); text-align:center;">No matching localStorage keys found.</div>';
+  }
+
+  function renderAll(){ render(); renderDebugPanel(); }
+
+  document.addEventListener('DOMContentLoaded', renderAll);
   // Also re-render on focus (in case user came back from a tool tab)
-  window.addEventListener('focus', render);
+  window.addEventListener('focus', renderAll);
 })();

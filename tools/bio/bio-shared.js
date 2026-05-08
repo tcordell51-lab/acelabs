@@ -36,6 +36,15 @@ const STATE = {
   rpd: { placed:{}, stage:0, retrievals:{} },  /* reproductive deep-dive  */
   lco: { placed:{}, stage:0, retrievals:{} },  /* linkage + crossing over */
   dif: { placed:{}, stage:0, retrievals:{} },  /* determination vs differentiation */
+  rfx: { placed:{}, stage:0, retrievals:{} },  /* reflex arc                       */
+  brn: { placed:{}, stage:0, retrievals:{} },  /* brain regions + spinal cord      */
+  snz: { placed:{}, stage:0, retrievals:{} },  /* special senses                   */
+  prb: { placed:{}, stage:0, retrievals:{} },  /* probability rules                */
+  cyt: { placed:{}, stage:0, retrievals:{} },  /* cytoskeleton                     */
+  rnp: { placed:{}, stage:0, retrievals:{} },  /* rna processing                   */
+  stm: { placed:{}, stage:0, retrievals:{} },  /* stem cells                       */
+  vrt: { placed:{}, stage:0, retrievals:{} },  /* vertebrate classes               */
+  com: { placed:{}, stage:0, retrievals:{} },  /* community ecology                */
 
 };
 
@@ -56,9 +65,9 @@ const NODES = {
   },
 
   trc: {
-    name: "Transcription: DNA &rarr; <em>mRNA</em>, one stran",
+    name: "Transcription: DNA → <em>mRNA</em>, one strand at a time",
     enzColors: { sigma:"#C25B3F", rnap:"#1B3A2D", open:"#6A8AA8", elong:"#c19a3e", term:"#8a5a8c" },
-    enzLabels: { sigma:"&sigma;", rnap:"R", open:"O", elong:"E", term:"T" },
+    enzLabels: { sigma:"σ", rnap:"R", open:"O", elong:"E", term:"T" },
     zoneCenters: { sigma:{x:120,y:225}, rnap:{x:260,y:225}, open:{x:400,y:225}, elong:{x:540,y:225}, term:{x:680,y:225} },
     stageOrder: ["sigma", "rnap", "open", "elong", "term"],
     stageLabels: ["Stage 1 · place Sigma factor", "Stage 2 · place RNA polymerase", "Stage 3 · place Open complex", "Stage 4 · place Elongation", "Stage 5 · place Terminator", "Complete · all placed"],
@@ -914,7 +923,8 @@ function playInAction(nodeId, sectionEl, skipSetup) {
   }
   wrap.classList.add("playing");
   const status = sectionEl.querySelector('[data-role="status"]');
-  if (status) status.textContent = NODES[nodeId].name + " · cinematic mode";
+  // NODES[nodeId].name contains hardcoded HTML (e.g., "<em>...</em>") — must use innerHTML
+  if (status) status.innerHTML = NODES[nodeId].name + " &middot; cinematic mode";
 }
 
 function stopInAction(sectionEl) {
@@ -2235,6 +2245,7 @@ function buildMMPath(Km, Vmax, originX, originY, axisLen, maxS) {
 
 function updateKinetics() {
   const baseSvg = document.getElementById("kinCurveBase");
+  if (!baseSvg) return;
   const inhibSvg = document.getElementById("kinCurveInhib");
   const kmLine = document.getElementById("kinKmLine");
   const kmLabel = document.getElementById("kinKmLabel");
@@ -2471,6 +2482,7 @@ function renderPunnett() {
 }
 
 function initPunnett() {
+  if (!document.getElementById('punnettCompute')) return;
   document.querySelectorAll('#punnettModes [data-pmode]').forEach(p => {
     p.addEventListener("click", () => {
       document.querySelectorAll('#punnettModes [data-pmode]').forEach(x => x.classList.remove("on"));
@@ -3670,7 +3682,7 @@ function initBodyMap() {
 }
 
 /* ---- CARDIAC CYCLE ANIMATION ---- */
-const CC_STATE = { playing:false, t:0, animId:null, lastFrame:0, bpm:72 };
+const CC_STATE = { playing:false, t:0, animId:null, lastFrame:0, bpm:72, avDelayMs:120 };
 
 function ekgValueAtT(t) {
   // t in [0,1] — one cardiac cycle
@@ -3812,6 +3824,46 @@ function initCardiac() {
   const conduct = document.getElementById("cc-conduct");
   const side = document.getElementById("cardiacSide");
   if (!ra || !side) return;
+
+  // Pace-maker sliders: HR + AV-node delay
+  const hrSlider = document.getElementById("ccHR");
+  const hrVal = document.getElementById("ccHRVal");
+  const avSlider = document.getElementById("ccAV");
+  const avVal = document.getElementById("ccAVVal");
+  const ccNote = document.getElementById("ccPaceMakerNote");
+
+  function updatePaceMakerNote() {
+    if (!ccNote) return;
+    const hr = CC_STATE.bpm;
+    const av = CC_STATE.avDelayMs || 120;
+    let label, color;
+    if (hr < 60) { label = 'Bradycardia'; color = '#5cabe6'; }
+    else if (hr > 100) { label = 'Tachycardia'; color = '#C25B3F'; }
+    else { label = 'Normal sinus rhythm'; color = '#5FA874'; }
+    let avNote;
+    if (av < 100) avNote = 'short PR — atria barely fill ventricles before they fire';
+    else if (av <= 200) avNote = 'normal PR — atria empty, then ventricles fire';
+    else if (av <= 300) avNote = 'first-degree AV concept — slowed conduction (still 1:1)';
+    else avNote = 'severely delayed conduction — ventricles fire much later than atria';
+    ccNote.innerHTML = `<span style="font-weight:700;color:${color}">${label}</span> · HR ${hr} bpm · AV delay ${av} ms (PR interval). <em>${avNote}.</em>`;
+  }
+  if (hrSlider) {
+    hrSlider.addEventListener('input', e => {
+      CC_STATE.bpm = +e.target.value;
+      if (hrVal) hrVal.textContent = `${CC_STATE.bpm} bpm`;
+      const ccBpmEl = document.getElementById('cc-bpm');
+      if (ccBpmEl && CC_STATE.playing) ccBpmEl.textContent = `${CC_STATE.bpm} bpm`;
+      updatePaceMakerNote();
+    });
+  }
+  if (avSlider) {
+    avSlider.addEventListener('input', e => {
+      CC_STATE.avDelayMs = +e.target.value;
+      if (avVal) avVal.textContent = `${CC_STATE.avDelayMs} ms`;
+      updatePaceMakerNote();
+    });
+  }
+  updatePaceMakerNote();
 
   const setState = (state) => {
     [ra, la, rv, lv].forEach(c => { c.classList.remove("contracting"); c.classList.remove("filling"); });
@@ -11946,41 +11998,33 @@ const HW_WORDS = [
   { q:'For sickle cell (recessive), 1/400 newborns affected in a population. What is the allele frequency q?', steps:'q² = 1/400 = 0.0025 → q = √0.0025 = 0.05.', a:'q = 0.05' },
 ];
 let hwIdx = 0;
-function hwwRender() {
+function hwwRenderWordPanel() {
+  const wp = document.getElementById('hwwWordPanel');
+  if (!wp) return;
   const item = HW_WORDS[hwIdx];
-  document.getElementById('hwwBody').innerHTML = `
-    <div style="background:#fff;border:1.5px solid var(--line);border-radius:10px;padding:24px;min-height:380px">
-      <h4 style="margin:0 0 8px 0;font-family:'Playfair Display',serif;font-size:18px;color:#1B3A2D">Problem ${hwIdx + 1} of ${HW_WORDS.length}</h4>
-      <p style="font-size:14px;line-height:1.6;color:#1B3A2D;margin:14px 0 22px 0">${item.q}</p>
-      <button id="hwwShow" style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;padding:8px 16px;background:#c19a3e;border:1px solid #1B3A2D;color:#0d2018;border-radius:6px;cursor:pointer">Show solution</button>
-      <button id="hwwNext" style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;padding:8px 16px;background:#fff;border:1px solid var(--line);color:#1B3A2D;border-radius:6px;cursor:pointer;margin-left:8px">Next problem</button>
-      <div id="hwwSol" style="margin-top:18px;display:none;background:rgba(95,168,116,0.08);border-left:4px solid #5FA874;padding:14px;border-radius:6px">
-        <p style="font-size:13px;line-height:1.7;color:#1B3A2D;margin:0"><b>Steps:</b> ${item.steps}</p>
-        <p style="font-size:14px;font-weight:700;color:#5FA874;margin:10px 0 0 0">Answer: ${item.a}</p>
+  wp.innerHTML = `
+    <div style="background:#fff;border:1.5px solid var(--line);border-radius:10px;padding:18px">
+      <h4 style="margin:0 0 8px 0;font-family:'Playfair Display',serif;font-size:16px;color:#1B3A2D">DAT-style word problem ${hwIdx + 1} of ${HW_WORDS.length}</h4>
+      <p style="font-size:13px;line-height:1.6;color:#1B3A2D;margin:10px 0 14px 0">${item.q}</p>
+      <button id="hwwShow" style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:6px 14px;background:#c19a3e;border:1px solid #1B3A2D;color:#0d2018;border-radius:6px;cursor:pointer">Show solution</button>
+      <button id="hwwNext" style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:6px 14px;background:#fff;border:1px solid var(--line);color:#1B3A2D;border-radius:6px;cursor:pointer;margin-left:8px">Next problem</button>
+      <div id="hwwSol" style="margin-top:14px;display:none;background:rgba(95,168,116,0.08);border-left:4px solid #5FA874;padding:12px;border-radius:6px">
+        <p style="font-size:12px;line-height:1.6;color:#1B3A2D;margin:0"><b>Steps:</b> ${item.steps}</p>
+        <p style="font-size:13px;font-weight:700;color:#5FA874;margin:8px 0 0 0">Answer: ${item.a}</p>
       </div>
-    </div>
-    <div style="margin-top:14px;background:#fff;border:1.5px solid var(--line);border-radius:10px;padding:14px">
-      <p style="font-size:12.5px;line-height:1.6;color:#1B3A2D;margin:0">
-        <b>Hardy-Weinberg formulas:</b><br>
-        <span style="font-family:monospace">p + q = 1</span> &nbsp; (allele frequencies sum)<br>
-        <span style="font-family:monospace">p² + 2pq + q² = 1</span> &nbsp; (genotype frequencies sum)<br>
-        <b>Assumptions:</b> no mutation, no migration, no selection, random mating, infinite population (no drift).
-      </p>
     </div>
   `;
   document.getElementById('hwwShow').addEventListener('click', () => {
     document.getElementById('hwwSol').style.display = 'block';
-    document.getElementById('hwwStageTag').textContent = 'Solution shown';
   });
   document.getElementById('hwwNext').addEventListener('click', () => {
     hwIdx = (hwIdx + 1) % HW_WORDS.length;
-    hwwRender();
-    document.getElementById('hwwStageTag').textContent = `Problem ${hwIdx + 1}`;
+    hwwRenderWordPanel();
   });
 }
 function initHwWordTrainer() {
-  if (!document.getElementById('hwwBody')) return;
-  hwwRender();
+  // No-op: rendering is handled by initHwBubbleCloud, which mounts the
+  // bubble simulator on top and calls hwwRenderWordPanel for the problems below.
 }
 
 /* ============================================================
@@ -12276,91 +12320,2667 @@ function initCycleWheel() {
   });
 }
 
+/* ---- MUSCLE COMPARATOR (skeletal · smooth · cardiac) ---- */
+const MUSCLE_HTML = `
+<svg viewBox="0 0 900 240" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
+  <text x="450" y="26" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">MUSCLE TYPES — STRUCTURE AT A GLANCE</text>
+
+  <!-- ===== SKELETAL ===== -->
+  <g transform="translate(20, 50)">
+    <text x="140" y="0" text-anchor="middle" font-size="12" font-weight="700" fill="#1B3A2D">Skeletal (striated, voluntary)</text>
+    <rect x="10" y="20" width="260" height="60" fill="#5FA874" stroke="#1B3A2D" stroke-width="1.5" rx="6"/>
+    <!-- Striations -->
+    <line x1="30" y1="20" x2="30" y2="80" stroke="#1B3A2D" stroke-width="1"/>
+    <line x1="55" y1="20" x2="55" y2="80" stroke="#1B3A2D" stroke-width="1"/>
+    <line x1="80" y1="20" x2="80" y2="80" stroke="#1B3A2D" stroke-width="1"/>
+    <line x1="105" y1="20" x2="105" y2="80" stroke="#1B3A2D" stroke-width="1"/>
+    <line x1="130" y1="20" x2="130" y2="80" stroke="#1B3A2D" stroke-width="1"/>
+    <line x1="155" y1="20" x2="155" y2="80" stroke="#1B3A2D" stroke-width="1"/>
+    <line x1="180" y1="20" x2="180" y2="80" stroke="#1B3A2D" stroke-width="1"/>
+    <line x1="205" y1="20" x2="205" y2="80" stroke="#1B3A2D" stroke-width="1"/>
+    <line x1="230" y1="20" x2="230" y2="80" stroke="#1B3A2D" stroke-width="1"/>
+    <line x1="255" y1="20" x2="255" y2="80" stroke="#1B3A2D" stroke-width="1"/>
+    <!-- Multiple peripheral nuclei -->
+    <ellipse cx="35" cy="30" rx="6" ry="4" fill="#1B3A2D"/>
+    <ellipse cx="85" cy="73" rx="6" ry="4" fill="#1B3A2D"/>
+    <ellipse cx="150" cy="28" rx="6" ry="4" fill="#1B3A2D"/>
+    <ellipse cx="220" cy="73" rx="6" ry="4" fill="#1B3A2D"/>
+    <text x="140" y="105" text-anchor="middle" font-size="10" fill="#1B3A2D"><tspan font-weight="700">Long cylindrical, multinucleated</tspan></text>
+    <text x="140" y="120" text-anchor="middle" font-size="10" fill="#1B3A2D">peripheral nuclei · sarcomeres present</text>
+    <text x="140" y="138" text-anchor="middle" font-size="9" fill="#1B3A2D" font-style="italic">attached to bone (locomotion, posture)</text>
+  </g>
+
+  <!-- ===== SMOOTH ===== -->
+  <g transform="translate(310, 50)">
+    <text x="140" y="0" text-anchor="middle" font-size="12" font-weight="700" fill="#1B3A2D">Smooth (no striations, involuntary)</text>
+    <!-- Spindle-shaped cells -->
+    <path d="M 20 50 Q 60 25 110 50 Q 60 75 20 50 Z" fill="#a378a5" stroke="#1B3A2D" stroke-width="1.5"/>
+    <ellipse cx="65" cy="50" rx="5" ry="4" fill="#1B3A2D"/>
+    <path d="M 140 35 Q 180 10 230 35 Q 180 60 140 35 Z" fill="#a378a5" stroke="#1B3A2D" stroke-width="1.5"/>
+    <ellipse cx="185" cy="35" rx="5" ry="4" fill="#1B3A2D"/>
+    <path d="M 100 75 Q 140 50 190 75 Q 140 100 100 75 Z" fill="#a378a5" stroke="#1B3A2D" stroke-width="1.5"/>
+    <ellipse cx="145" cy="75" rx="5" ry="4" fill="#1B3A2D"/>
+    <path d="M 200 65 Q 240 40 280 65 Q 240 90 200 65 Z" fill="#a378a5" stroke="#1B3A2D" stroke-width="1.5"/>
+    <ellipse cx="240" cy="65" rx="5" ry="4" fill="#1B3A2D"/>
+    <text x="140" y="105" text-anchor="middle" font-size="10" fill="#1B3A2D"><tspan font-weight="700">Spindle-shaped, uninucleated</tspan></text>
+    <text x="140" y="120" text-anchor="middle" font-size="10" fill="#1B3A2D">central nucleus · NO sarcomeres</text>
+    <text x="140" y="138" text-anchor="middle" font-size="9" fill="#1B3A2D" font-style="italic">walls of GI, vessels, uterus, airways</text>
+  </g>
+
+  <!-- ===== CARDIAC ===== -->
+  <g transform="translate(600, 50)">
+    <text x="140" y="0" text-anchor="middle" font-size="12" font-weight="700" fill="#1B3A2D">Cardiac (striated, involuntary)</text>
+    <!-- Branched cells with intercalated disc -->
+    <rect x="10" y="20" width="120" height="40" fill="#C25B3F" stroke="#1B3A2D" stroke-width="1.5" rx="4"/>
+    <rect x="140" y="20" width="120" height="40" fill="#C25B3F" stroke="#1B3A2D" stroke-width="1.5" rx="4"/>
+    <rect x="40" y="65" width="180" height="35" fill="#C25B3F" stroke="#1B3A2D" stroke-width="1.5" rx="4"/>
+    <!-- Intercalated discs (zigzag) -->
+    <path d="M 130 22 L 134 30 L 130 38 L 134 46 L 130 54 L 134 60" stroke="#1B3A2D" stroke-width="2.5" fill="none"/>
+    <path d="M 220 65 L 224 73 L 220 81 L 224 89 L 220 97" stroke="#1B3A2D" stroke-width="2.5" fill="none"/>
+    <!-- Striations (less pronounced) -->
+    <line x1="30" y1="20" x2="30" y2="60" stroke="#1B3A2D" stroke-width="0.8"/>
+    <line x1="55" y1="20" x2="55" y2="60" stroke="#1B3A2D" stroke-width="0.8"/>
+    <line x1="80" y1="20" x2="80" y2="60" stroke="#1B3A2D" stroke-width="0.8"/>
+    <line x1="105" y1="20" x2="105" y2="60" stroke="#1B3A2D" stroke-width="0.8"/>
+    <line x1="160" y1="20" x2="160" y2="60" stroke="#1B3A2D" stroke-width="0.8"/>
+    <line x1="185" y1="20" x2="185" y2="60" stroke="#1B3A2D" stroke-width="0.8"/>
+    <line x1="210" y1="20" x2="210" y2="60" stroke="#1B3A2D" stroke-width="0.8"/>
+    <line x1="235" y1="20" x2="235" y2="60" stroke="#1B3A2D" stroke-width="0.8"/>
+    <line x1="60" y1="65" x2="60" y2="100" stroke="#1B3A2D" stroke-width="0.8"/>
+    <line x1="90" y1="65" x2="90" y2="100" stroke="#1B3A2D" stroke-width="0.8"/>
+    <line x1="120" y1="65" x2="120" y2="100" stroke="#1B3A2D" stroke-width="0.8"/>
+    <line x1="150" y1="65" x2="150" y2="100" stroke="#1B3A2D" stroke-width="0.8"/>
+    <line x1="180" y1="65" x2="180" y2="100" stroke="#1B3A2D" stroke-width="0.8"/>
+    <line x1="210" y1="65" x2="210" y2="100" stroke="#1B3A2D" stroke-width="0.8"/>
+    <!-- One central nucleus per cell -->
+    <ellipse cx="70" cy="40" rx="6" ry="4" fill="#1B3A2D"/>
+    <ellipse cx="200" cy="40" rx="6" ry="4" fill="#1B3A2D"/>
+    <ellipse cx="130" cy="82" rx="6" ry="4" fill="#1B3A2D"/>
+    <text x="140" y="110" text-anchor="middle" font-size="10" font-weight="700" fill="#C25B3F">Intercalated discs (zig-zag) →</text>
+    <text x="140" y="125" text-anchor="middle" font-size="10" fill="#1B3A2D"><tspan font-weight="700">Branched, single nucleus</tspan> · sarcomeres</text>
+    <text x="140" y="138" text-anchor="middle" font-size="9" fill="#1B3A2D" font-style="italic">heart only · self-rhythmic</text>
+  </g>
+
+  <!-- ===== KEY DIFFERENTIATOR ===== -->
+  <g transform="translate(20, 200)">
+    <rect x="0" y="0" width="860" height="28" fill="#fff" stroke="#1B3A2D" stroke-width="1" rx="4"/>
+    <text x="14" y="18" font-size="11" fill="#1B3A2D"><tspan font-weight="700">DAT trap:</tspan> only skeletal &amp; cardiac have <tspan font-weight="700">sarcomeres + troponin</tspan>. Smooth uses <tspan font-weight="700">calmodulin → MLCK → myosin-LC phosphorylation</tspan>. Only cardiac has <tspan font-weight="700">intercalated discs</tspan> with gap junctions for synchronized contraction.</text>
+  </g>
+</svg>
+
+<div style="display:grid;grid-template-columns:160px 1fr 1fr 1fr;gap:0;margin-top:14px;background:#fff;border:1.5px solid var(--line);border-radius:10px;overflow:hidden;font-size:13px;line-height:1.5">
+  <div style="padding:10px 12px;background:#1B3A2D;color:#fff;font-weight:700;font-family:'Playfair Display',serif">Feature</div>
+  <div style="padding:10px 12px;background:#1B3A2D;color:#fff;font-weight:700;font-family:'Playfair Display',serif">Skeletal</div>
+  <div style="padding:10px 12px;background:#1B3A2D;color:#fff;font-weight:700;font-family:'Playfair Display',serif">Smooth</div>
+  <div style="padding:10px 12px;background:#1B3A2D;color:#fff;font-weight:700;font-family:'Playfair Display',serif">Cardiac</div>
+
+  <div style="padding:8px 12px;background:#f0e9d6;font-weight:700">Striated?</div>
+  <div style="padding:8px 12px">Yes (sarcomeres)</div>
+  <div style="padding:8px 12px">No</div>
+  <div style="padding:8px 12px">Yes (sarcomeres)</div>
+
+  <div style="padding:8px 12px;background:#f0e9d6;font-weight:700">Nuclei per cell</div>
+  <div style="padding:8px 12px">Multi (peripheral)</div>
+  <div style="padding:8px 12px">Single (central)</div>
+  <div style="padding:8px 12px">1–2 (central)</div>
+
+  <div style="padding:8px 12px;background:#f0e9d6;font-weight:700">Cell shape</div>
+  <div style="padding:8px 12px">Long cylindrical fiber</div>
+  <div style="padding:8px 12px">Spindle-shaped</div>
+  <div style="padding:8px 12px">Branched</div>
+
+  <div style="padding:8px 12px;background:#f0e9d6;font-weight:700">Control</div>
+  <div style="padding:8px 12px">Voluntary (somatic)</div>
+  <div style="padding:8px 12px">Involuntary (autonomic)</div>
+  <div style="padding:8px 12px">Involuntary (intrinsic + autonomic)</div>
+
+  <div style="padding:8px 12px;background:#f0e9d6;font-weight:700">Ca²⁺ source</div>
+  <div style="padding:8px 12px">Sarcoplasmic reticulum</div>
+  <div style="padding:8px 12px">Extracellular + SR</div>
+  <div style="padding:8px 12px">Both (SR + extracellular through L-type)</div>
+
+  <div style="padding:8px 12px;background:#f0e9d6;font-weight:700">Activation</div>
+  <div style="padding:8px 12px"><b>Troponin–tropomyosin</b> (Ca²⁺ binds troponin C)</div>
+  <div style="padding:8px 12px"><b>Calmodulin → MLCK</b> phosphorylates myosin LC</div>
+  <div style="padding:8px 12px">Troponin–tropomyosin (same as skeletal)</div>
+
+  <div style="padding:8px 12px;background:#f0e9d6;font-weight:700">Speed</div>
+  <div style="padding:8px 12px">Fast (ms)</div>
+  <div style="padding:8px 12px">Slow, sustained</div>
+  <div style="padding:8px 12px">Medium, rhythmic</div>
+
+  <div style="padding:8px 12px;background:#f0e9d6;font-weight:700">Fatigue</div>
+  <div style="padding:8px 12px">Yes</div>
+  <div style="padding:8px 12px">Resistant</div>
+  <div style="padding:8px 12px">Resistant (must not fatigue)</div>
+
+  <div style="padding:8px 12px;background:#f0e9d6;font-weight:700">Intercalated discs</div>
+  <div style="padding:8px 12px">No</div>
+  <div style="padding:8px 12px">No (gap junctions only)</div>
+  <div style="padding:8px 12px"><b>Yes</b> (gap junctions + desmosomes)</div>
+
+  <div style="padding:8px 12px;background:#f0e9d6;font-weight:700">Locations</div>
+  <div style="padding:8px 12px">Attached to bone</div>
+  <div style="padding:8px 12px">GI tract, blood vessels, uterus, airways, iris</div>
+  <div style="padding:8px 12px">Heart only</div>
+</div>
+
+<div style="background:#fff;border:1.5px solid var(--line);border-radius:10px;padding:14px;margin-top:14px;font-size:13px;line-height:1.6">
+  <h5 style="margin:0 0 8px 0;font-family:'Playfair Display',serif">High-yield DAT differentiators</h5>
+  <ul style="margin:0;padding-left:20px">
+    <li><b>Sliding filament</b> applies to <b>skeletal + cardiac</b> only (smooth lacks sarcomeres). Memorize: I-band shortens, A-band stays constant, H-zone disappears.</li>
+    <li><b>Troponin C</b> is the Ca²⁺-binding subunit; <b>tropomyosin</b> is the blocker that moves off actin. Smooth muscle has neither — uses <b>calmodulin + MLCK</b>.</li>
+    <li><b>Cardiac action potential</b> has a long plateau (Ca²⁺ influx) — prevents tetanus. Skeletal has short AP and CAN tetanize.</li>
+    <li><b>Functional syncytium:</b> cardiac cells contract as a unit because of gap junctions in intercalated discs. One pacemaker (SA node) → whole atrium contracts together.</li>
+    <li><b>Neuromuscular junction</b> (ACh) drives skeletal muscle. Smooth and cardiac have <b>no NMJ</b> — they receive autonomic input or intrinsic pacemaker signals.</li>
+  </ul>
+</div>
+`;
+function initMuscleComparator() {
+  const el = document.getElementById('muscleBody');
+  if (!el) return;
+  el.innerHTML = MUSCLE_HTML;
+}
+
+/* ---- GAMETOGENESIS (spermatogenesis vs oogenesis) ---- */
+const GAM_HTML = `
+<svg viewBox="0 0 900 460" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
+  <text x="450" y="28" text-anchor="middle" font-size="14" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">GAMETOGENESIS — SPERMATOGENESIS vs OOGENESIS</text>
+
+  <!-- Vertical divider -->
+  <line x1="450" y1="50" x2="450" y2="430" stroke="#1B3A2D" stroke-width="1" stroke-dasharray="4,4" opacity="0.5"/>
+
+  <!-- ============ SPERMATOGENESIS (LEFT) ============ -->
+  <text x="225" y="55" text-anchor="middle" font-size="13" font-weight="700" fill="#5cabe6">SPERMATOGENESIS</text>
+  <text x="225" y="72" text-anchor="middle" font-size="10" fill="#1B3A2D" font-style="italic">testes · seminiferous tubules · puberty → senescence</text>
+
+  <!-- Stage 1: Spermatogonium -->
+  <circle cx="80" cy="110" r="22" fill="#5cabe6" stroke="#1B3A2D" stroke-width="2"/>
+  <text x="80" y="113" text-anchor="middle" font-size="9" font-weight="700" fill="#fff">2n</text>
+  <text x="80" y="148" text-anchor="middle" font-size="9" font-weight="700" fill="#1B3A2D">Spermatogonium</text>
+  <text x="80" y="160" text-anchor="middle" font-size="8" fill="#1B3A2D">(germline stem cell)</text>
+  <text x="160" y="110" font-size="9" font-style="italic" fill="#1B3A2D">mitosis</text>
+  <line x1="105" y1="110" x2="155" y2="110" stroke="#1B3A2D" stroke-width="1.5" marker-end="url(#gam-arr)"/>
+
+  <!-- Stage 2: Primary spermatocyte -->
+  <circle cx="200" cy="110" r="22" fill="#5cabe6" stroke="#1B3A2D" stroke-width="2"/>
+  <text x="200" y="113" text-anchor="middle" font-size="9" font-weight="700" fill="#fff">2n</text>
+  <text x="200" y="148" text-anchor="middle" font-size="9" font-weight="700" fill="#1B3A2D">Primary</text>
+  <text x="200" y="160" text-anchor="middle" font-size="8" fill="#1B3A2D">spermatocyte</text>
+  <text x="240" y="100" font-size="9" font-style="italic" fill="#C25B3F" font-weight="700">Meiosis I</text>
+  <line x1="225" y1="110" x2="275" y2="100" stroke="#C25B3F" stroke-width="1.5" marker-end="url(#gam-arr)"/>
+  <line x1="225" y1="110" x2="275" y2="120" stroke="#C25B3F" stroke-width="1.5" marker-end="url(#gam-arr)"/>
+
+  <!-- Stage 3: 2 secondary spermatocytes -->
+  <circle cx="300" cy="90" r="18" fill="#a378a5" stroke="#1B3A2D" stroke-width="2"/>
+  <text x="300" y="93" text-anchor="middle" font-size="9" font-weight="700" fill="#fff">n</text>
+  <circle cx="300" cy="130" r="18" fill="#a378a5" stroke="#1B3A2D" stroke-width="2"/>
+  <text x="300" y="133" text-anchor="middle" font-size="9" font-weight="700" fill="#fff">n</text>
+  <text x="300" y="160" text-anchor="middle" font-size="9" font-weight="700" fill="#1B3A2D">Secondary</text>
+  <text x="300" y="172" text-anchor="middle" font-size="8" fill="#1B3A2D">spermatocytes (2)</text>
+  <text x="335" y="80" font-size="9" font-style="italic" fill="#C25B3F" font-weight="700">Meiosis II</text>
+  <line x1="320" y1="90" x2="375" y2="80" stroke="#C25B3F" stroke-width="1.5" marker-end="url(#gam-arr)"/>
+  <line x1="320" y1="90" x2="375" y2="100" stroke="#C25B3F" stroke-width="1.5" marker-end="url(#gam-arr)"/>
+  <line x1="320" y1="130" x2="375" y2="120" stroke="#C25B3F" stroke-width="1.5" marker-end="url(#gam-arr)"/>
+  <line x1="320" y1="130" x2="375" y2="140" stroke="#C25B3F" stroke-width="1.5" marker-end="url(#gam-arr)"/>
+
+  <!-- Stage 4: 4 spermatids -->
+  <circle cx="395" cy="80" r="13" fill="#c19a3e" stroke="#1B3A2D" stroke-width="1.5"/>
+  <text x="395" y="83" text-anchor="middle" font-size="8" font-weight="700" fill="#fff">n</text>
+  <circle cx="395" cy="105" r="13" fill="#c19a3e" stroke="#1B3A2D" stroke-width="1.5"/>
+  <text x="395" y="108" text-anchor="middle" font-size="8" font-weight="700" fill="#fff">n</text>
+  <circle cx="395" cy="130" r="13" fill="#c19a3e" stroke="#1B3A2D" stroke-width="1.5"/>
+  <text x="395" y="133" text-anchor="middle" font-size="8" font-weight="700" fill="#fff">n</text>
+  <circle cx="395" cy="155" r="13" fill="#c19a3e" stroke="#1B3A2D" stroke-width="1.5"/>
+  <text x="395" y="158" text-anchor="middle" font-size="8" font-weight="700" fill="#fff">n</text>
+  <text x="395" y="190" text-anchor="middle" font-size="9" font-weight="700" fill="#1B3A2D">4 spermatids</text>
+
+  <!-- Spermiogenesis arrow + 4 mature sperm with detail -->
+  <text x="225" y="240" text-anchor="middle" font-size="11" font-style="italic" font-weight="700" fill="#5FA874">↓ spermiogenesis (no division — morphological transformation)</text>
+  <!-- 4 mature sperm with tails -->
+  <g transform="translate(110, 270)">
+    <ellipse cx="20" cy="20" rx="10" ry="6" fill="#1B3A2D"/>
+    <text x="20" y="23" text-anchor="middle" font-size="6" font-weight="700" fill="#fff">N</text>
+    <path d="M 30 20 Q 50 15 65 25 Q 80 35 95 22" fill="none" stroke="#1B3A2D" stroke-width="1.5"/>
+  </g>
+  <g transform="translate(220, 270)">
+    <ellipse cx="20" cy="20" rx="10" ry="6" fill="#1B3A2D"/>
+    <text x="20" y="23" text-anchor="middle" font-size="6" font-weight="700" fill="#fff">N</text>
+    <path d="M 30 20 Q 50 25 65 15 Q 80 5 95 18" fill="none" stroke="#1B3A2D" stroke-width="1.5"/>
+  </g>
+  <g transform="translate(330, 270)">
+    <ellipse cx="20" cy="20" rx="10" ry="6" fill="#1B3A2D"/>
+    <text x="20" y="23" text-anchor="middle" font-size="6" font-weight="700" fill="#fff">N</text>
+    <path d="M 30 20 Q 50 15 65 25 Q 80 30 95 22" fill="none" stroke="#1B3A2D" stroke-width="1.5"/>
+  </g>
+  <text x="225" y="320" text-anchor="middle" font-size="11" font-weight="700" fill="#5FA874">→ 4 mature sperm (per primary spermatocyte)</text>
+  <text x="225" y="335" text-anchor="middle" font-size="9" fill="#1B3A2D">acrosome (apical) · condensed nucleus · mitochondrial midpiece · flagellum</text>
+
+  <!-- Spermatogenesis box -->
+  <rect x="20" y="355" width="410" height="78" fill="#fff" stroke="#5cabe6" stroke-width="1.5" rx="6"/>
+  <text x="32" y="375" font-size="11" font-weight="700" fill="#5cabe6">Key features (sperm)</text>
+  <text x="32" y="390" font-size="10" fill="#1B3A2D">• Continuous from puberty (~64–74 days per cycle, ~100 million/day)</text>
+  <text x="32" y="404" font-size="10" fill="#1B3A2D">• <tspan font-weight="700">All 4 daughter cells become functional sperm</tspan></text>
+  <text x="32" y="418" font-size="10" fill="#1B3A2D">• Equal cytoplasm division at each meiosis</text>
+  <text x="32" y="429" font-size="9" fill="#1B3A2D" font-style="italic">FSH stimulates Sertoli cells · LH → Leydig cells → testosterone</text>
+
+  <!-- ============ OOGENESIS (RIGHT) ============ -->
+  <text x="675" y="55" text-anchor="middle" font-size="13" font-weight="700" fill="#C25B3F">OOGENESIS</text>
+  <text x="675" y="72" text-anchor="middle" font-size="10" fill="#1B3A2D" font-style="italic">ovaries · all primary oocytes formed before birth</text>
+
+  <!-- Stage 1: Oogonium (fetal) -->
+  <circle cx="510" cy="110" r="22" fill="#C25B3F" stroke="#1B3A2D" stroke-width="2"/>
+  <text x="510" y="113" text-anchor="middle" font-size="9" font-weight="700" fill="#fff">2n</text>
+  <text x="510" y="148" text-anchor="middle" font-size="9" font-weight="700" fill="#1B3A2D">Oogonium</text>
+  <text x="510" y="160" text-anchor="middle" font-size="8" fill="#1B3A2D" font-style="italic">(fetal only)</text>
+  <text x="555" y="103" font-size="9" font-style="italic" fill="#1B3A2D">mitosis</text>
+  <line x1="535" y1="110" x2="585" y2="110" stroke="#1B3A2D" stroke-width="1.5" marker-end="url(#gam-arr)"/>
+
+  <!-- Stage 2: Primary oocyte (arrested prophase I) -->
+  <circle cx="630" cy="110" r="24" fill="#C25B3F" stroke="#1B3A2D" stroke-width="2"/>
+  <text x="630" y="113" text-anchor="middle" font-size="9" font-weight="700" fill="#fff">2n</text>
+  <text x="630" y="148" text-anchor="middle" font-size="9" font-weight="700" fill="#1B3A2D">Primary oocyte</text>
+  <text x="630" y="160" text-anchor="middle" font-size="9" fill="#C25B3F" font-weight="700">arrested in prophase I</text>
+  <text x="630" y="172" text-anchor="middle" font-size="8" fill="#1B3A2D" font-style="italic">until ovulation (puberty → menopause)</text>
+  <text x="690" y="100" font-size="9" font-style="italic" fill="#C25B3F" font-weight="700">Meiosis I</text>
+  <text x="690" y="112" font-size="8" fill="#1B3A2D" font-style="italic">(at ovulation)</text>
+  <line x1="654" y1="110" x2="725" y2="110" stroke="#C25B3F" stroke-width="1.5" marker-end="url(#gam-arr)"/>
+
+  <!-- Stage 3: Secondary oocyte + first polar body -->
+  <circle cx="755" cy="100" r="20" fill="#C25B3F" stroke="#1B3A2D" stroke-width="2"/>
+  <text x="755" y="104" text-anchor="middle" font-size="9" font-weight="700" fill="#fff">n</text>
+  <circle cx="755" cy="135" r="6" fill="#a378a5" stroke="#1B3A2D" stroke-width="1.5"/>
+  <text x="755" y="138" text-anchor="middle" font-size="6" font-weight="700" fill="#fff">n</text>
+  <text x="755" y="155" text-anchor="middle" font-size="9" font-weight="700" fill="#1B3A2D">Secondary oocyte</text>
+  <text x="755" y="168" text-anchor="middle" font-size="9" fill="#C25B3F" font-weight="700">+ 1st polar body</text>
+  <text x="755" y="180" text-anchor="middle" font-size="8" fill="#1B3A2D" font-style="italic">arrested in metaphase II</text>
+  <text x="800" y="92" font-size="9" font-style="italic" fill="#C25B3F" font-weight="700">Meiosis II</text>
+  <text x="800" y="104" font-size="8" fill="#1B3A2D" font-style="italic">(at fertilization)</text>
+  <line x1="775" y1="100" x2="843" y2="100" stroke="#C25B3F" stroke-width="1.5" marker-end="url(#gam-arr)"/>
+
+  <!-- Stage 4: Ovum + 2nd polar body -->
+  <circle cx="870" cy="92" r="20" fill="#C25B3F" stroke="#1B3A2D" stroke-width="2"/>
+  <text x="870" y="96" text-anchor="middle" font-size="9" font-weight="700" fill="#fff">n</text>
+  <circle cx="870" cy="125" r="6" fill="#a378a5" stroke="#1B3A2D" stroke-width="1.5"/>
+  <text x="870" y="128" text-anchor="middle" font-size="6" font-weight="700" fill="#fff">n</text>
+  <text x="870" y="155" text-anchor="middle" font-size="9" font-weight="700" fill="#1B3A2D">Ovum</text>
+  <text x="870" y="167" text-anchor="middle" font-size="9" fill="#C25B3F" font-weight="700">+ 2nd polar body</text>
+  <text x="870" y="180" text-anchor="middle" font-size="8" fill="#1B3A2D" font-style="italic">+ 1st PB may divide</text>
+
+  <!-- Polar body fates -->
+  <text x="675" y="240" text-anchor="middle" font-size="11" font-style="italic" font-weight="700" fill="#a378a5">↓ polar bodies degenerate · all cytoplasm goes to ovum</text>
+
+  <!-- Result: 1 ovum -->
+  <circle cx="675" cy="290" r="36" fill="#C25B3F" stroke="#1B3A2D" stroke-width="2.5"/>
+  <text x="675" y="295" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">OVUM (n)</text>
+  <!-- Polar bodies (smaller, degenerating) -->
+  <circle cx="610" cy="280" r="6" fill="#a378a5" stroke="#1B3A2D" stroke-width="1" opacity="0.5"/>
+  <circle cx="615" cy="295" r="5" fill="#a378a5" stroke="#1B3A2D" stroke-width="1" opacity="0.4"/>
+  <circle cx="730" cy="285" r="6" fill="#a378a5" stroke="#1B3A2D" stroke-width="1" opacity="0.5"/>
+  <text x="675" y="345" text-anchor="middle" font-size="11" font-weight="700" fill="#5FA874">→ 1 functional ovum (per primary oocyte) + up to 3 polar bodies (degenerate)</text>
+
+  <!-- Oogenesis box -->
+  <rect x="470" y="355" width="410" height="78" fill="#fff" stroke="#C25B3F" stroke-width="1.5" rx="6"/>
+  <text x="482" y="375" font-size="11" font-weight="700" fill="#C25B3F">Key features (egg)</text>
+  <text x="482" y="390" font-size="10" fill="#1B3A2D">• Discontinuous: arrest at <tspan font-weight="700">prophase I</tspan> (fetus → ovulation) and <tspan font-weight="700">metaphase II</tspan> (until fertilization)</text>
+  <text x="482" y="404" font-size="10" fill="#1B3A2D">• <tspan font-weight="700">Only 1 of 4 daughters becomes a functional ovum</tspan></text>
+  <text x="482" y="418" font-size="10" fill="#1B3A2D">• Asymmetric cytokinesis — all cytoplasm to the ovum (polar bodies tiny)</text>
+  <text x="482" y="429" font-size="9" fill="#1B3A2D" font-style="italic">FSH → follicle growth · LH surge → ovulation · estrogen / progesterone cycle</text>
+
+  <!-- Arrowhead marker -->
+  <defs>
+    <marker id="gam-arr" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M 0 0 L 8 4 L 0 8 z" fill="#1B3A2D"/>
+    </marker>
+  </defs>
+</svg>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px">
+  <div style="background:#fff;border:1.5px solid #5cabe6;border-radius:10px;padding:14px;font-size:13px;line-height:1.55">
+    <h5 style="margin:0 0 8px 0;font-family:'Playfair Display',serif;color:#5cabe6">Spermatogenesis essentials</h5>
+    <ul style="margin:0;padding-left:20px">
+      <li><b>Site:</b> seminiferous tubules → epididymis (matures + stored)</li>
+      <li><b>Hormones:</b> FSH → Sertoli cells (nurse spermatids); LH → Leydig cells (testosterone)</li>
+      <li><b>Spermiogenesis</b> = spermatid → mature sperm. <b>No cell division</b>; just remodeling: acrosome forms (Golgi-derived), nucleus condenses, midpiece packs mitochondria, flagellum extends.</li>
+      <li><b>Acrosome</b> contains hydrolytic enzymes (acrosin, hyaluronidase) that digest zona pellucida at fertilization.</li>
+    </ul>
+  </div>
+  <div style="background:#fff;border:1.5px solid #C25B3F;border-radius:10px;padding:14px;font-size:13px;line-height:1.55">
+    <h5 style="margin:0 0 8px 0;font-family:'Playfair Display',serif;color:#C25B3F">Oogenesis essentials</h5>
+    <ul style="margin:0;padding-left:20px">
+      <li><b>Two arrest points:</b> prophase I (fetal life → ovulation) and metaphase II (until fertilization).</li>
+      <li><b>Ovulation</b> = secondary oocyte released. Meiosis II only completes if a sperm enters.</li>
+      <li><b>Polar bodies:</b> 1st PB may divide once; all PBs degenerate. Ensures <b>maximum cytoplasm</b> in the egg.</li>
+      <li><b>Limited reserve:</b> all primary oocytes (~1–2 million) are made before birth; ~400 ovulate over lifetime.</li>
+    </ul>
+  </div>
+</div>
+
+<div style="background:#fbf6e9;border:1.5px solid var(--line);border-radius:10px;padding:14px;margin-top:14px;font-size:13px;line-height:1.6">
+  <h5 style="margin:0 0 8px 0;font-family:'Playfair Display',serif">DAT high-yield differences</h5>
+  <table style="width:100%;border-collapse:collapse;font-size:12px">
+    <tr style="background:#1B3A2D;color:#fff">
+      <th style="padding:6px 10px;text-align:left">Feature</th>
+      <th style="padding:6px 10px;text-align:left">Spermatogenesis</th>
+      <th style="padding:6px 10px;text-align:left">Oogenesis</th>
+    </tr>
+    <tr><td style="padding:6px 10px;border-bottom:1px solid var(--line);font-weight:700">Functional gametes per primary cell</td><td style="padding:6px 10px;border-bottom:1px solid var(--line)">4</td><td style="padding:6px 10px;border-bottom:1px solid var(--line)">1 (+ polar bodies that degenerate)</td></tr>
+    <tr><td style="padding:6px 10px;border-bottom:1px solid var(--line);font-weight:700">Timing</td><td style="padding:6px 10px;border-bottom:1px solid var(--line)">Continuous from puberty</td><td style="padding:6px 10px;border-bottom:1px solid var(--line)">Begins in fetus, finishes only at fertilization</td></tr>
+    <tr><td style="padding:6px 10px;border-bottom:1px solid var(--line);font-weight:700">Meiotic arrests</td><td style="padding:6px 10px;border-bottom:1px solid var(--line)">None</td><td style="padding:6px 10px;border-bottom:1px solid var(--line)">Prophase I (fetus→ovulation), Metaphase II (until fertilization)</td></tr>
+    <tr><td style="padding:6px 10px;border-bottom:1px solid var(--line);font-weight:700">Cytokinesis</td><td style="padding:6px 10px;border-bottom:1px solid var(--line)">Equal</td><td style="padding:6px 10px;border-bottom:1px solid var(--line)">Asymmetric — cytoplasm to egg</td></tr>
+    <tr><td style="padding:6px 10px;font-weight:700">Reserve</td><td style="padding:6px 10px">Stem cells regenerate (spermatogonia divide)</td><td style="padding:6px 10px">Fixed pool from birth (~1–2 million → ~400 ovulated)</td></tr>
+  </table>
+</div>
+`;
+function initGametogenesis() {
+  const el = document.getElementById('gamBody');
+  if (!el) return;
+  el.innerHTML = GAM_HTML;
+}
+
+/* ---- HARDY-WEINBERG BUBBLE CLOUD ---- */
+const HW_BUBBLE_HTML = `
+<div style="background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px;padding:18px">
+  <div style="text-align:center;margin-bottom:10px">
+    <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#1B3A2D">Hardy-Weinberg Equilibrium</div>
+    <div style="font-size:12px;color:#1B3A2D;margin-top:4px;font-style:italic">Drag the slider. Watch 100 individuals re-color into AA / Aa / aa.</div>
+  </div>
+
+  <!-- Slider -->
+  <div style="display:flex;align-items:center;gap:14px;background:#fff;border:1.5px solid #1B3A2D;border-radius:10px;padding:14px;margin-bottom:14px">
+    <div style="font-weight:700;color:#1B3A2D;min-width:120px">Recessive allele <span style="font-style:italic">q</span> =
+      <span id="hwQVal" style="color:#C25B3F">0.30</span>
+    </div>
+    <input id="hwQ" type="range" min="0" max="1" step="0.01" value="0.30" style="flex:1;accent-color:#C25B3F">
+    <div style="font-weight:700;color:#1B3A2D;min-width:120px;text-align:right">Dominant <span style="font-style:italic">p</span> =
+      <span id="hwPVal" style="color:#5cabe6">0.70</span>
+    </div>
+  </div>
+
+  <!-- Bubble grid + side panel -->
+  <div style="display:grid;grid-template-columns:1fr 280px;gap:14px;align-items:start">
+    <svg id="hwBubbleSvg" viewBox="0 0 380 420" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:#fff;border:1.5px solid #1B3A2D;border-radius:8px"></svg>
+
+    <div>
+      <!-- Equation card -->
+      <div style="background:#fff;border:1.5px solid #1B3A2D;border-radius:10px;padding:12px;margin-bottom:10px">
+        <div style="font-size:11px;color:#1B3A2D;font-weight:700;text-transform:uppercase;letter-spacing:0.1em">Equation</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:14px;text-align:center;margin:8px 0;color:#1B3A2D">
+          <span style="color:#5cabe6;font-weight:700">p&sup2;</span> + <span style="color:#5FA874;font-weight:700">2pq</span> + <span style="color:#C25B3F;font-weight:700">q&sup2;</span> = 1
+        </div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:13px;text-align:center;color:#1B3A2D">
+          <span id="hwP2" style="color:#5cabe6;font-weight:700">0.49</span> +
+          <span id="hwPQ" style="color:#5FA874;font-weight:700">0.42</span> +
+          <span id="hwQ2" style="color:#C25B3F;font-weight:700">0.09</span> = 1.00
+        </div>
+      </div>
+
+      <!-- Count cards -->
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:10px">
+        <div style="background:#5cabe6;color:#fff;border-radius:6px;padding:8px;text-align:center">
+          <div style="font-size:10px;font-weight:700;letter-spacing:0.08em">HOMO DOM</div>
+          <div style="font-size:11px;margin-top:2px;font-weight:700">AA</div>
+          <div style="font-size:18px;font-weight:700;font-family:'JetBrains Mono',monospace" id="hwCntAA">49</div>
+        </div>
+        <div style="background:#5FA874;color:#fff;border-radius:6px;padding:8px;text-align:center">
+          <div style="font-size:10px;font-weight:700;letter-spacing:0.08em">CARRIER</div>
+          <div style="font-size:11px;margin-top:2px;font-weight:700">Aa</div>
+          <div style="font-size:18px;font-weight:700;font-family:'JetBrains Mono',monospace" id="hwCntAa">42</div>
+        </div>
+        <div style="background:#C25B3F;color:#fff;border-radius:6px;padding:8px;text-align:center">
+          <div style="font-size:10px;font-weight:700;letter-spacing:0.08em">AFFECTED</div>
+          <div style="font-size:11px;margin-top:2px;font-weight:700">aa</div>
+          <div style="font-size:18px;font-weight:700;font-family:'JetBrains Mono',monospace" id="hwCntaa">9</div>
+        </div>
+      </div>
+
+      <!-- DAT scenario callout -->
+      <div style="background:#fbf6e9;border:1.5px solid #c19a3e;border-radius:10px;padding:12px">
+        <div style="font-size:11px;color:#c19a3e;font-weight:700;text-transform:uppercase;letter-spacing:0.1em">DAT scenario</div>
+        <div style="font-size:12px;line-height:1.5;color:#1B3A2D;margin-top:6px" id="hwScenario">
+          If the disease frequency in the population is <b>q&sup2; = 0.09</b> (1 in 11), then carriers are <b>2pq = 0.42</b> &mdash; about <b>4.7&times;</b> more carriers than affected. Most recessive disease alleles hide in heterozygotes.
+        </div>
+      </div>
+
+      <!-- Presets -->
+      <div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap">
+        <button class="hw-preset" data-q="0.0316" style="flex:1;min-width:80px;font-size:11px;padding:6px;background:#fff;border:1.5px solid #1B3A2D;border-radius:6px;cursor:pointer;font-weight:700;color:#1B3A2D">CF (1:1000)</button>
+        <button class="hw-preset" data-q="0.05" style="flex:1;min-width:80px;font-size:11px;padding:6px;background:#fff;border:1.5px solid #1B3A2D;border-radius:6px;cursor:pointer;font-weight:700;color:#1B3A2D">PKU (1:400)</button>
+        <button class="hw-preset" data-q="0.5" style="flex:1;min-width:80px;font-size:11px;padding:6px;background:#fff;border:1.5px solid #1B3A2D;border-radius:6px;cursor:pointer;font-weight:700;color:#1B3A2D">q=p (max het)</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5 conditions strip -->
+  <div style="background:#fff;border:1.5px solid #1B3A2D;border-radius:10px;padding:12px;margin-top:14px;font-size:12px;line-height:1.5;color:#1B3A2D">
+    <span style="font-weight:700">5 conditions for HW equilibrium (no evolution):</span>
+    (1) no <b>mutation</b> &middot; (2) no <b>migration</b> (gene flow) &middot; (3) no <b>selection</b> &middot; (4) <b>random mating</b> &middot; (5) <b>large population</b> (no drift). Violate any → allele frequencies drift from HW prediction.
+  </div>
+
+  <!-- Word problem panel below -->
+  <div id="hwwWordPanel" style="margin-top:14px"></div>
+</div>
+`;
+
+function initHwBubbleCloud() {
+  const body = document.getElementById('hwwBody');
+  if (!body) return;
+  body.innerHTML = HW_BUBBLE_HTML;
+  // Render the word-problem panel that lives below the bubble cloud
+  if (typeof hwwRenderWordPanel === 'function') hwwRenderWordPanel();
+
+  // Build the 10x10 bubble grid as SVG circles
+  // Layout: 10 cols × 36px = 360 + 16 padding each side = 392 wide; viewBox 380×420 fits with slight crop margin
+  const svg = document.getElementById('hwBubbleSvg');
+  const cellSize = 36, padding = 16;
+  let svgInner = '';
+  for (let i = 0; i < 100; i++) {
+    const col = i % 10, row = Math.floor(i / 10);
+    const cx = padding + col * cellSize + cellSize / 2;
+    const cy = padding + row * cellSize + cellSize / 2;
+    svgInner += `<circle id="hw-c-${i}" cx="${cx}" cy="${cy}" r="14" fill="#5cabe6" stroke="#1B3A2D" stroke-width="1.2"/>`;
+  }
+  // Legend strip below grid (grid bottom ≈ y=376; legend at y=388 with room)
+  svgInner += `<g transform="translate(20, 388)">
+    <circle cx="8" cy="10" r="7" fill="#5cabe6" stroke="#1B3A2D" stroke-width="1"/><text x="22" y="14" font-size="11" fill="#1B3A2D" font-weight="700">AA</text>
+    <circle cx="78" cy="10" r="7" fill="#5FA874" stroke="#1B3A2D" stroke-width="1"/><text x="92" y="14" font-size="11" fill="#1B3A2D" font-weight="700">Aa</text>
+    <circle cx="148" cy="10" r="7" fill="#C25B3F" stroke="#1B3A2D" stroke-width="1"/><text x="162" y="14" font-size="11" fill="#1B3A2D" font-weight="700">aa</text>
+    <text x="220" y="14" font-size="10" fill="#1B3A2D" font-style="italic">100 individuals · proportions from p &amp; q</text>
+  </g>`;
+  svg.innerHTML = svgInner;
+
+  function update(q) {
+    q = Math.max(0, Math.min(1, q));
+    const p = 1 - q;
+    const p2 = p * p, q2 = q * q, pq2 = 2 * p * q;
+    // Deterministic counts that sum to 100
+    let nAA = Math.round(p2 * 100);
+    let naa = Math.round(q2 * 100);
+    let nAa = 100 - nAA - naa;
+    if (nAa < 0) { nAa = 0; nAA = Math.round((p2 / (p2 + q2)) * 100); naa = 100 - nAA; }
+
+    // Color circles
+    for (let i = 0; i < 100; i++) {
+      const c = document.getElementById(`hw-c-${i}`);
+      if (!c) continue;
+      let color;
+      if (i < nAA) color = '#5cabe6';
+      else if (i < nAA + nAa) color = '#5FA874';
+      else color = '#C25B3F';
+      c.setAttribute('fill', color);
+    }
+
+    // Update readouts
+    document.getElementById('hwQVal').textContent = q.toFixed(2);
+    document.getElementById('hwPVal').textContent = p.toFixed(2);
+    document.getElementById('hwP2').textContent = p2.toFixed(2);
+    document.getElementById('hwPQ').textContent = pq2.toFixed(2);
+    document.getElementById('hwQ2').textContent = q2.toFixed(3);
+    document.getElementById('hwCntAA').textContent = nAA;
+    document.getElementById('hwCntAa').textContent = nAa;
+    document.getElementById('hwCntaa').textContent = naa;
+
+    // Scenario text
+    const ratio = naa > 0 ? (nAa / naa).toFixed(1) : '∞';
+    let scenario;
+    if (q < 0.05) {
+      scenario = `When the recessive allele is <b>rare</b> (q = ${q.toFixed(2)}), affected individuals are uncommon (~${(q2*100).toFixed(2)}% of population) but carriers are ~<b>${ratio}&times;</b> more common. <b>Most recessive disease alleles hide in heterozygotes.</b> This is why the DAT loves carrier-frequency questions.`;
+    } else if (q < 0.4) {
+      scenario = `Affected: <b>q&sup2; = ${(q2*100).toFixed(1)}%</b>. Carriers: <b>2pq = ${(pq2*100).toFixed(1)}%</b>. Carriers outnumber affected by ~<b>${ratio}&times;</b>. As q rises, the gap shrinks.`;
+    } else {
+      scenario = `When q approaches p (~0.5), heterozygotes are <b>maximized at 50%</b> of the population. As q grows further (q &gt; 0.5), homozygous recessive becomes the majority.`;
+    }
+    document.getElementById('hwScenario').innerHTML = scenario;
+
+    // Stage tag
+    const stageTag = document.getElementById('hwwStageTag');
+    if (stageTag) stageTag.textContent = `q = ${q.toFixed(2)} · p = ${p.toFixed(2)}`;
+  }
+
+  document.getElementById('hwQ').addEventListener('input', e => update(+e.target.value));
+  document.querySelectorAll('.hw-preset').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const q = +btn.dataset.q;
+      document.getElementById('hwQ').value = q;
+      update(q);
+    });
+  });
+
+  update(0.30);
+}
+
+/* ---- TONICITY SIMULATOR ---- */
+const TONICITY_HTML = `
+<div style="background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px;padding:18px">
+  <div style="text-align:center;margin-bottom:10px">
+    <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#1B3A2D">Tonicity &amp; Osmosis Sandbox</div>
+    <div style="font-size:12px;color:#1B3A2D;margin-top:4px;font-style:italic">Water moves to the side with MORE solute. You control the outside.</div>
+  </div>
+
+  <!-- Cell type toggle -->
+  <div style="display:flex;justify-content:center;gap:8px;margin-bottom:14px">
+    <button id="tonAnimal" class="ton-cell-btn" data-cell="animal" style="padding:8px 18px;font-size:13px;font-weight:700;border:1.5px solid #1B3A2D;border-radius:8px;background:#1B3A2D;color:#fff;cursor:pointer">Animal cell (no wall)</button>
+    <button id="tonPlant" class="ton-cell-btn" data-cell="plant" style="padding:8px 18px;font-size:13px;font-weight:700;border:1.5px solid #1B3A2D;border-radius:8px;background:#fff;color:#1B3A2D;cursor:pointer">Plant cell (rigid wall)</button>
+  </div>
+
+  <!-- Solute slider -->
+  <div style="background:#fff;border:1.5px solid #1B3A2D;border-radius:10px;padding:14px;margin-bottom:14px">
+    <div style="display:flex;justify-content:space-between;font-size:11px;font-weight:700;color:#1B3A2D;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.08em">
+      <span>Hypotonic (LOW outside solute)</span>
+      <span>Isotonic</span>
+      <span>Hypertonic (HIGH outside solute)</span>
+    </div>
+    <input id="tonSolute" type="range" min="0" max="100" step="1" value="50" style="width:100%;accent-color:#C25B3F">
+    <div style="text-align:center;margin-top:6px;font-family:'JetBrains Mono',monospace;font-size:13px;color:#1B3A2D">
+      External solute: <span id="tonSoluteVal" style="font-weight:700">50%</span> (cell internal = 50%)
+    </div>
+  </div>
+
+  <!-- Cell visualization + readout -->
+  <div style="display:grid;grid-template-columns:1fr 280px;gap:14px;align-items:start">
+    <svg id="tonCellSvg" viewBox="0 0 400 320" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:#fff;border:1.5px solid #1B3A2D;border-radius:8px"></svg>
+
+    <div>
+      <!-- State card -->
+      <div id="tonStateCard" style="background:#fff;border:1.5px solid #1B3A2D;border-radius:10px;padding:14px;margin-bottom:10px">
+        <div style="font-size:11px;color:#1B3A2D;font-weight:700;text-transform:uppercase;letter-spacing:0.1em">Tonicity</div>
+        <div id="tonStateName" style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:#1B3A2D;margin:6px 0">ISOTONIC</div>
+        <div id="tonStateExplain" style="font-size:13px;line-height:1.5;color:#1B3A2D">External solute matches cell. No net water movement. Cell volume stable.</div>
+      </div>
+
+      <!-- Water flow indicator -->
+      <div style="background:#fff;border:1.5px solid #1B3A2D;border-radius:10px;padding:12px;margin-bottom:10px">
+        <div style="font-size:11px;color:#1B3A2D;font-weight:700;text-transform:uppercase;letter-spacing:0.1em">Water flow</div>
+        <div id="tonWaterFlow" style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:#5cabe6;margin-top:6px;text-align:center">no net flow</div>
+      </div>
+
+      <!-- Outcome warning -->
+      <div id="tonOutcome" style="background:#fbf6e9;border:1.5px solid #c19a3e;border-radius:10px;padding:12px;font-size:12px;line-height:1.5;color:#1B3A2D">
+        <span style="font-weight:700">Stable.</span> Cell holds normal shape and volume.
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick scenario buttons -->
+  <div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap">
+    <button class="ton-preset" data-val="10" style="flex:1;min-width:90px;font-size:11px;padding:6px;background:#fff;border:1.5px solid #1B3A2D;border-radius:6px;cursor:pointer;font-weight:700;color:#1B3A2D">Pure water (hypo)</button>
+    <button class="ton-preset" data-val="50" style="flex:1;min-width:90px;font-size:11px;padding:6px;background:#fff;border:1.5px solid #1B3A2D;border-radius:6px;cursor:pointer;font-weight:700;color:#1B3A2D">Saline (iso)</button>
+    <button class="ton-preset" data-val="90" style="flex:1;min-width:90px;font-size:11px;padding:6px;background:#fff;border:1.5px solid #1B3A2D;border-radius:6px;cursor:pointer;font-weight:700;color:#1B3A2D">5% NaCl (hyper)</button>
+  </div>
+
+  <!-- DAT take -->
+  <div style="background:#fff;border:1.5px solid #1B3A2D;border-radius:10px;padding:12px;margin-top:14px;font-size:12px;line-height:1.5;color:#1B3A2D">
+    <span style="font-weight:700">DAT trap:</span> "hypertonic" describes the SOLUTION, not the cell. A cell in a hypertonic solution loses water (has LESS water inside than the surroundings). Plant cells with rigid walls become <b>plasmolyzed</b> (membrane pulls away from the wall). Animal cells <b>crenate</b> (shrivel). In hypotonic surroundings, animal cells <b>lyse</b> (burst); plants become <b>turgid</b> (wall holds shape).
+  </div>
+</div>
+`;
+
+function initTonicity() {
+  const body = document.getElementById('tonicityBody');
+  if (!body) return;
+  body.innerHTML = TONICITY_HTML;
+
+  let cellType = 'animal';
+  // Pre-compute deterministic dot positions once so they don't flicker on every render.
+  // Use a fixed pseudo-random sequence (linear congruential) seeded from a constant.
+  const dotPool = (() => {
+    const out = [];
+    let seed = 12345;
+    const rand = () => { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return seed / 0x7fffffff; };
+    for (let i = 0; i < 80; i++) out.push({ x: rand() * 380 + 10, y: rand() * 300 + 10 });
+    return out;
+  })();
+
+  function render(externalSolute) {
+    const internal = 50;
+    const diff = externalSolute - internal;  // -50 (max hypo) to +50 (max hyper)
+    // Cell volume scale: hypotonic → swell, hypertonic → shrink
+    // Animal: scale 0.55 (max shrink) to 1.45 (max swell, then LYSED beyond)
+    // Plant: scale 0.65 (plasmolyzed) to 1.0 (turgid; capped by wall)
+
+    const svg = document.getElementById('tonCellSvg');
+    const cx = 200, cy = 160;
+
+    // Compute scale + outcome
+    let scale, state, stateClass, waterFlow, outcome, outcomeBorder;
+    const lysed = (cellType === 'animal' && externalSolute < 12);
+    const plasmolyzed = (cellType === 'plant' && externalSolute > 80);
+
+    if (Math.abs(diff) < 5) {
+      // Isotonic
+      scale = 1.0;
+      state = 'ISOTONIC';
+      stateClass = '#5FA874';
+      waterFlow = 'no net flow (in = out)';
+      outcome = '<span style="font-weight:700">Stable.</span> Cell holds normal shape and volume.';
+      outcomeBorder = '#5FA874';
+    } else if (diff < 0) {
+      // Hypotonic — water flows IN
+      const t = Math.min(1, Math.abs(diff) / 50);
+      scale = 1.0 + (cellType === 'plant' ? 0.0 : 0.45) * t;
+      state = 'HYPOTONIC';
+      stateClass = '#5cabe6';
+      waterFlow = 'water flows IN →';
+      if (lysed) {
+        outcome = '<span style="font-weight:700;color:#C25B3F">LYSED.</span> Animal cell burst. Membrane could not contain incoming water.';
+        outcomeBorder = '#C25B3F';
+      } else if (cellType === 'plant') {
+        outcome = '<span style="font-weight:700;color:#5FA874">TURGID.</span> Cell wall holds shape; protoplast presses outward. Healthy plant state.';
+        outcomeBorder = '#5FA874';
+      } else {
+        outcome = '<span style="font-weight:700;color:#5cabe6">SWELLING.</span> Cell taking on water. Without a wall, will lyse if external solute drops further.';
+        outcomeBorder = '#5cabe6';
+      }
+    } else {
+      // Hypertonic — water flows OUT
+      const t = Math.min(1, diff / 50);
+      scale = 1.0 - 0.45 * t;
+      state = 'HYPERTONIC';
+      stateClass = '#C25B3F';
+      waterFlow = '← water flows OUT';
+      if (cellType === 'plant' && plasmolyzed) {
+        outcome = '<span style="font-weight:700;color:#a378a5">PLASMOLYZED.</span> Membrane pulled away from rigid wall. Plant wilts.';
+        outcomeBorder = '#a378a5';
+      } else if (cellType === 'animal') {
+        outcome = '<span style="font-weight:700;color:#C25B3F">CRENATED.</span> Cell shrivels as water leaves. RBC in hypertonic plasma does this.';
+        outcomeBorder = '#C25B3F';
+      } else {
+        outcome = '<span style="font-weight:700;color:#c19a3e">SHRINKING.</span> Plant cell losing water; will plasmolyze if external solute continues to rise.';
+        outcomeBorder = '#c19a3e';
+      }
+    }
+
+    // Render cell SVG
+    const r = 80 * scale;
+    const wallR = 90;  // plant wall (rigid)
+    let svgInner = '';
+    // Background solute density (deterministic — no flicker on slider drag)
+    const bgDots = Math.round(20 + externalSolute * 0.6);
+    let dots = '';
+    for (let i = 0; i < bgDots && i < dotPool.length; i++) {
+      const { x: dx, y: dy } = dotPool[i];
+      if (Math.hypot(dx - cx, dy - cy) > (cellType === 'plant' ? wallR + 6 : r + 6)) {
+        dots += `<circle cx="${dx.toFixed(1)}" cy="${dy.toFixed(1)}" r="2" fill="#c19a3e" opacity="0.7"/>`;
+      }
+    }
+    svgInner += dots;
+
+    // Plant wall (always shown for plant)
+    if (cellType === 'plant') {
+      svgInner += `<rect x="${cx - wallR}" y="${cy - wallR}" width="${wallR * 2}" height="${wallR * 2}" fill="rgba(95,168,116,0.12)" stroke="#5FA874" stroke-width="3" rx="6"/>`;
+      svgInner += `<text x="${cx + wallR + 4}" y="${cy - wallR - 4}" font-size="9" fill="#5FA874" font-weight="700">cell wall</text>`;
+    }
+
+    // Membrane / cell body
+    if (lysed) {
+      // Burst: jagged fragments
+      svgInner += `<path d="M ${cx-90} ${cy} L ${cx-50} ${cy-40} L ${cx-30} ${cy-90} L ${cx+10} ${cy-50} L ${cx+60} ${cy-80} L ${cx+90} ${cy-30} L ${cx+70} ${cy+30} L ${cx+30} ${cy+80} L ${cx-20} ${cy+60} L ${cx-80} ${cy+90} L ${cx-110} ${cy+30} Z" fill="rgba(194,91,63,0.35)" stroke="#C25B3F" stroke-width="2.5" stroke-dasharray="4,3"/>`;
+      svgInner += `<text x="${cx}" y="${cy+5}" text-anchor="middle" font-family="Playfair Display" font-size="22" font-weight="700" fill="#C25B3F">LYSED</text>`;
+    } else {
+      svgInner += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="rgba(106,138,168,0.18)" stroke="#1B3A2D" stroke-width="2.5"/>`;
+      // Internal solute dots (constant count = 30)
+      for (let i = 0; i < 30; i++) {
+        const angle = (i / 30) * Math.PI * 2;
+        const radius = (r - 12) * (0.3 + 0.6 * Math.sin(i * 7.13));
+        const px = cx + Math.cos(angle) * radius * (0.4 + 0.5 * (i % 3) / 3);
+        const py = cy + Math.sin(angle) * radius * (0.4 + 0.5 * (i % 3) / 3);
+        svgInner += `<circle cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" r="2" fill="#5cabe6" opacity="0.9"/>`;
+      }
+      // Nucleus
+      svgInner += `<circle cx="${cx}" cy="${cy}" r="${r * 0.25}" fill="rgba(27,58,45,0.5)" stroke="#1B3A2D" stroke-width="1.5"/>`;
+    }
+
+    // Water flow arrows (when not isotonic)
+    if (!lysed && Math.abs(diff) >= 5) {
+      const arrowColor = '#5cabe6';
+      if (diff < 0) {
+        // Inward
+        for (let i = 0; i < 4; i++) {
+          const a = (i / 4) * Math.PI * 2;
+          const x1 = cx + Math.cos(a) * (r + 30);
+          const y1 = cy + Math.sin(a) * (r + 30);
+          const x2 = cx + Math.cos(a) * (r + 8);
+          const y2 = cy + Math.sin(a) * (r + 8);
+          svgInner += `<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}" stroke="${arrowColor}" stroke-width="2" marker-end="url(#ton-arr)"/>`;
+        }
+      } else {
+        // Outward
+        for (let i = 0; i < 4; i++) {
+          const a = (i / 4) * Math.PI * 2;
+          const x1 = cx + Math.cos(a) * (r - 4);
+          const y1 = cy + Math.sin(a) * (r - 4);
+          const x2 = cx + Math.cos(a) * (r + 32);
+          const y2 = cy + Math.sin(a) * (r + 32);
+          svgInner += `<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}" stroke="${arrowColor}" stroke-width="2" marker-end="url(#ton-arr)"/>`;
+        }
+      }
+    }
+
+    // Legend
+    svgInner += `<g transform="translate(10, 300)">
+      <circle cx="6" cy="6" r="2.5" fill="#5cabe6"/><text x="14" y="9" font-size="9" fill="#1B3A2D">internal solute</text>
+      <circle cx="100" cy="6" r="2.5" fill="#c19a3e"/><text x="108" y="9" font-size="9" fill="#1B3A2D">external solute</text>
+    </g>`;
+
+    // Marker def
+    svgInner += `<defs><marker id="ton-arr" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M 0 0 L 6 3 L 0 6 z" fill="#5cabe6"/></marker></defs>`;
+
+    svg.innerHTML = svgInner;
+
+    // Update text readouts
+    document.getElementById('tonSoluteVal').textContent = externalSolute + '%';
+    document.getElementById('tonStateName').textContent = state;
+    document.getElementById('tonStateName').style.color = stateClass;
+    document.getElementById('tonStateExplain').innerHTML = (
+      diff === 0 || Math.abs(diff) < 5
+        ? 'External solute matches cell. No net water movement. Cell volume stable.'
+        : diff < 0
+          ? 'External solute is LOWER than internal. Water moves IN (from low solute to high solute side).'
+          : 'External solute is HIGHER than internal. Water moves OUT (from cell toward higher-solute outside).'
+    );
+    document.getElementById('tonWaterFlow').textContent = waterFlow;
+    document.getElementById('tonWaterFlow').style.color = stateClass;
+    const outcomeEl = document.getElementById('tonOutcome');
+    outcomeEl.style.borderColor = outcomeBorder;
+    outcomeEl.innerHTML = outcome;
+  }
+
+  document.getElementById('tonSolute').addEventListener('input', e => render(+e.target.value));
+  document.querySelectorAll('.ton-preset').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const v = +btn.dataset.val;
+      document.getElementById('tonSolute').value = v;
+      render(v);
+    });
+  });
+  document.querySelectorAll('.ton-cell-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      cellType = btn.dataset.cell;
+      document.querySelectorAll('.ton-cell-btn').forEach(b => {
+        b.style.background = '#fff'; b.style.color = '#1B3A2D';
+      });
+      btn.style.background = '#1B3A2D'; btn.style.color = '#fff';
+      render(+document.getElementById('tonSolute').value);
+    });
+  });
+
+  render(50);
+}
+
+/* ---- BRAIN REGION EXPLORER (DAT-safe: function + general consequence only) ---- */
+const BRAIN_REGIONS = {
+  frontal: {
+    name: 'Frontal lobe',
+    color: '#5FA874',
+    function: 'Voluntary movement (motor cortex along the central sulcus), planning, decision-making, personality, executive function, and Broca\'s area for speech production.',
+    damage: 'Motor weakness on the opposite side of the body. Personality and planning changes. Damage to Broca\'s area produces halting, effortful speech (comprehension intact).'
+  },
+  parietal: {
+    name: 'Parietal lobe',
+    color: '#c19a3e',
+    function: 'Somatosensory cortex (touch, pressure, temperature, proprioception). Spatial reasoning, body-position sense, sensory integration.',
+    damage: 'Loss of touch and proprioception on the opposite side of the body. Spatial deficits and trouble integrating sensory input.'
+  },
+  occipital: {
+    name: 'Occipital lobe',
+    color: '#a378a5',
+    function: 'Visual cortex. Receives input from the retina (relayed through the thalamus, except for direct projections in some pathways). Processes shape, color, motion.',
+    damage: 'Visual deficits up to cortical blindness. The eyes are intact, but the brain cannot interpret visual input.'
+  },
+  temporal: {
+    name: 'Temporal lobe',
+    color: '#C25B3F',
+    function: 'Auditory cortex (hearing), Wernicke\'s area for language comprehension, face and object recognition. Houses the hippocampus on its medial surface.',
+    damage: 'Hearing or language-comprehension deficits. Damage to Wernicke\'s area produces fluent but nonsensical speech.'
+  },
+  cerebellum: {
+    name: 'Cerebellum',
+    color: '#5FA874',
+    function: 'Coordinates voluntary movement, fine-tunes timing, maintains balance and posture, and is critical for motor learning (acquiring smooth skilled movement).',
+    damage: 'Ataxia (uncoordinated, jerky movement). Loss of balance. Movements still occur but lose precision and timing.'
+  },
+  brainstem: {
+    name: 'Brainstem (midbrain, pons, medulla)',
+    color: '#6A8AA8',
+    function: 'Controls vital autonomic functions: heart rate, blood pressure, breathing rate. Houses basic reflexes and the reticular activating system (arousal / consciousness).',
+    damage: 'Life-threatening. Vital cardiovascular and respiratory functions can fail. Loss of consciousness or coma.'
+  },
+  thalamus: {
+    name: 'Thalamus',
+    color: '#c19a3e',
+    function: 'Sensory relay station. All sensory input EXCEPT olfaction (smell) passes through the thalamus on its way to the cortex.',
+    damage: 'Sensory deficits across multiple modalities. Disrupted relay of touch, vision, hearing, taste to the cortex.'
+  },
+  hypothalamus: {
+    name: 'Hypothalamus',
+    color: '#C25B3F',
+    function: 'Master controller of homeostasis: body temperature, hunger, thirst, sleep-wake cycle. Connects nervous and endocrine systems by controlling the pituitary gland.',
+    damage: 'Homeostatic dysregulation: temperature, appetite, water balance, hormone control all affected. Sleep cycle disrupted.'
+  },
+  pituitary: {
+    name: 'Pituitary gland',
+    color: '#c19a3e',
+    function: 'The "master" endocrine gland. Receives commands from the hypothalamus and releases hormones that control the thyroid, adrenals, gonads, growth, lactation, and water balance.',
+    damage: 'Multiple hormone deficiencies (or excesses). Effects depend on which axes are involved: growth, reproduction, metabolism, stress response.'
+  },
+  hippocampus: {
+    name: 'Hippocampus',
+    color: '#5FA874',
+    function: 'Memory consolidation. Critical for forming new long-term explicit (declarative) memories. Located on the medial surface of the temporal lobe.',
+    damage: 'Difficulty forming new long-term memories (anterograde memory loss). Older memories typically remain intact.'
+  },
+  amygdala: {
+    name: 'Amygdala',
+    color: '#C25B3F',
+    function: 'Emotion processing, especially fear and aggression. Tags experiences with emotional significance, which strengthens their memory.',
+    damage: 'Blunted fear response and altered emotional processing. Reduced emotional tagging of experiences.'
+  },
+};
+
+const BRAIN_EXPLORER_HTML = `
+<div style="display:grid;grid-template-columns:1fr 280px;gap:12px;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px;padding:14px;align-items:start">
+  <svg id="brainSvg" viewBox="0 0 620 480" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:#fff;border:1.5px solid #1B3A2D;border-radius:8px">
+    <text x="310" y="26" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">BRAIN REGIONS &mdash; SAGITTAL VIEW</text>
+    <text x="310" y="42" text-anchor="middle" font-size="10" font-style="italic" fill="#1B3A2D">click any region</text>
+
+    <!-- Cerebrum outline -->
+    <path d="M 130 90 Q 70 110 70 220 Q 70 310 130 350 L 380 350 Q 410 340 420 310 L 430 230 Q 430 195 410 165 Q 370 125 320 105 Q 230 80 130 90 Z" fill="rgba(106,138,168,0.18)" stroke="#1B3A2D" stroke-width="2"/>
+
+    <!-- Frontal lobe -->
+    <g class="brain-region" data-brain-region="frontal" style="cursor:pointer">
+      <path d="M 130 90 Q 90 100 80 160 L 80 240 Q 100 250 140 245 L 195 240 L 195 130 Z" fill="rgba(95,168,116,0.32)" stroke="#1B3A2D" stroke-width="1.2" class="region-shape"/>
+      <text x="130" y="180" text-anchor="middle" font-size="11" font-weight="700" fill="#1B3A2D" pointer-events="none">FRONTAL</text>
+      <text x="130" y="194" text-anchor="middle" font-size="8" fill="#1B3A2D" pointer-events="none">motor, Broca's,</text>
+      <text x="130" y="205" text-anchor="middle" font-size="8" fill="#1B3A2D" pointer-events="none">planning</text>
+    </g>
+
+    <!-- Parietal lobe -->
+    <g class="brain-region" data-brain-region="parietal" style="cursor:pointer">
+      <path d="M 195 130 L 195 240 L 290 240 L 305 130 Z" fill="rgba(193,154,62,0.32)" stroke="#1B3A2D" stroke-width="1.2" class="region-shape"/>
+      <text x="250" y="180" text-anchor="middle" font-size="11" font-weight="700" fill="#1B3A2D" pointer-events="none">PARIETAL</text>
+      <text x="250" y="194" text-anchor="middle" font-size="8" fill="#1B3A2D" pointer-events="none">somatosensory,</text>
+      <text x="250" y="205" text-anchor="middle" font-size="8" fill="#1B3A2D" pointer-events="none">spatial</text>
+    </g>
+
+    <!-- Occipital lobe -->
+    <g class="brain-region" data-brain-region="occipital" style="cursor:pointer">
+      <path d="M 305 130 L 290 240 L 380 245 L 405 175 L 365 110 Z" fill="rgba(138,90,140,0.32)" stroke="#1B3A2D" stroke-width="1.2" class="region-shape"/>
+      <text x="345" y="180" text-anchor="middle" font-size="11" font-weight="700" fill="#1B3A2D" pointer-events="none">OCCIPITAL</text>
+      <text x="345" y="195" text-anchor="middle" font-size="8" fill="#1B3A2D" pointer-events="none">vision</text>
+    </g>
+
+    <!-- Temporal lobe -->
+    <g class="brain-region" data-brain-region="temporal" style="cursor:pointer">
+      <path d="M 195 240 L 290 240 L 305 320 L 160 330 Z" fill="rgba(194,91,63,0.32)" stroke="#1B3A2D" stroke-width="1.2" class="region-shape"/>
+      <text x="232" y="280" text-anchor="middle" font-size="11" font-weight="700" fill="#1B3A2D" pointer-events="none">TEMPORAL</text>
+      <text x="232" y="294" text-anchor="middle" font-size="8" fill="#1B3A2D" pointer-events="none">auditory, Wernicke's,</text>
+      <text x="232" y="305" text-anchor="middle" font-size="8" fill="#1B3A2D" pointer-events="none">memory</text>
+    </g>
+
+    <!-- Cerebellum -->
+    <g class="brain-region" data-brain-region="cerebellum" style="cursor:pointer">
+      <ellipse cx="425" cy="320" rx="42" ry="32" fill="rgba(95,168,116,0.45)" stroke="#1B3A2D" stroke-width="1.5" class="region-shape"/>
+      <line x1="392" y1="306" x2="458" y2="306" stroke="#1B3A2D" stroke-width="0.6" opacity="0.6" pointer-events="none"/>
+      <line x1="392" y1="320" x2="458" y2="320" stroke="#1B3A2D" stroke-width="0.6" opacity="0.6" pointer-events="none"/>
+      <line x1="392" y1="334" x2="458" y2="334" stroke="#1B3A2D" stroke-width="0.6" opacity="0.6" pointer-events="none"/>
+      <text x="425" y="324" text-anchor="middle" font-size="11" font-weight="700" fill="#1B3A2D" pointer-events="none">CEREBELLUM</text>
+    </g>
+
+    <!-- Brainstem -->
+    <g class="brain-region" data-brain-region="brainstem" style="cursor:pointer">
+      <path d="M 305 350 L 350 350 L 355 440 L 300 440 Z" fill="rgba(106,138,168,0.5)" stroke="#1B3A2D" stroke-width="1.5" class="region-shape"/>
+      <text x="328" y="380" text-anchor="middle" font-size="9" font-weight="700" fill="#1B3A2D" pointer-events="none">midbrain</text>
+      <text x="328" y="397" text-anchor="middle" font-size="9" font-weight="700" fill="#1B3A2D" pointer-events="none">pons</text>
+      <text x="328" y="414" text-anchor="middle" font-size="9" font-weight="700" fill="#1B3A2D" pointer-events="none">medulla</text>
+      <text x="328" y="432" text-anchor="middle" font-size="8" font-weight="700" fill="#1B3A2D" pointer-events="none">BRAINSTEM</text>
+    </g>
+
+    <!-- Thalamus -->
+    <g class="brain-region" data-brain-region="thalamus" style="cursor:pointer">
+      <ellipse cx="250" cy="265" rx="22" ry="14" fill="rgba(193,154,62,0.55)" stroke="#1B3A2D" stroke-width="1.5" class="region-shape"/>
+      <text x="250" y="269" text-anchor="middle" font-size="9" font-weight="700" fill="#1B3A2D" pointer-events="none">thalamus</text>
+    </g>
+
+    <!-- Hypothalamus -->
+    <g class="brain-region" data-brain-region="hypothalamus" style="cursor:pointer">
+      <ellipse cx="250" cy="295" rx="18" ry="9" fill="rgba(194,91,63,0.55)" stroke="#1B3A2D" stroke-width="1.5" class="region-shape"/>
+      <text x="250" y="298" text-anchor="middle" font-size="8" font-weight="700" fill="#1B3A2D" pointer-events="none">hypothal.</text>
+    </g>
+
+    <!-- Pituitary -->
+    <g class="brain-region" data-brain-region="pituitary" style="cursor:pointer">
+      <line x1="250" y1="304" x2="250" y2="314" stroke="#1B3A2D" stroke-width="1.5" pointer-events="none"/>
+      <circle cx="250" cy="320" r="7" fill="rgba(193,154,62,0.7)" stroke="#1B3A2D" stroke-width="1" class="region-shape"/>
+      <text x="262" y="324" font-size="8" fill="#1B3A2D" pointer-events="none">pituitary</text>
+    </g>
+
+    <!-- Hippocampus -->
+    <g class="brain-region" data-brain-region="hippocampus" style="cursor:pointer">
+      <path d="M 200 295 Q 215 305 230 305 Q 240 312 232 322" fill="none" stroke="#5FA874" stroke-width="5" stroke-linecap="round" class="region-shape"/>
+      <text x="195" y="290" text-anchor="end" font-size="8" font-weight="700" fill="#1B3A2D" pointer-events="none">hippocampus</text>
+    </g>
+
+    <!-- Amygdala -->
+    <g class="brain-region" data-brain-region="amygdala" style="cursor:pointer">
+      <circle cx="195" cy="310" r="7" fill="rgba(194,91,63,0.7)" stroke="#1B3A2D" stroke-width="1" class="region-shape"/>
+      <text x="160" y="324" font-size="8" font-weight="700" fill="#1B3A2D" pointer-events="none">amygdala</text>
+    </g>
+
+    <!-- Spinal cord stub -->
+    <rect x="305" y="440" width="50" height="30" fill="rgba(106,138,168,0.3)" stroke="#1B3A2D" stroke-width="1.2" pointer-events="none"/>
+    <text x="330" y="464" text-anchor="middle" font-size="8" fill="#1B3A2D" pointer-events="none">spinal cord</text>
+  </svg>
+
+  <!-- Side panel -->
+  <div>
+    <div id="brainInfo" style="background:#fff;border:1.5px solid #1B3A2D;border-radius:10px;padding:14px;min-height:280px">
+      <div style="font-size:11px;color:#1B3A2D;font-weight:700;text-transform:uppercase;letter-spacing:0.1em">Region</div>
+      <div id="brainName" style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#1B3A2D;margin:6px 0">Pick a region</div>
+
+      <div style="font-size:11px;color:#5FA874;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;margin-top:14px">Function</div>
+      <div id="brainFunction" style="font-size:13px;line-height:1.5;color:#1B3A2D;margin-top:4px">Click any colored region of the brain to see what it does and what happens if it is damaged.</div>
+
+      <div id="brainDamageWrap" style="margin-top:14px;display:none">
+        <div style="font-size:11px;color:#C25B3F;font-weight:700;text-transform:uppercase;letter-spacing:0.08em">If damaged</div>
+        <div id="brainDamage" style="font-size:13px;line-height:1.5;color:#1B3A2D;margin-top:4px"></div>
+      </div>
+    </div>
+
+    <div style="background:#fff;border:1.5px solid #1B3A2D;border-radius:10px;padding:10px;margin-top:10px;font-size:11px;line-height:1.5;color:#1B3A2D">
+      <span style="font-weight:700">DAT note:</span> the test asks "function of region X" or "damage to X causes...". Function-and-consequence pairings are the entire scope. No specific cases or syndromes required.
+    </div>
+  </div>
+</div>
+`;
+
+function initBrainExplorer() {
+  const body = document.getElementById('brainExplorerBody');
+  if (!body) return;
+  body.innerHTML = BRAIN_EXPLORER_HTML;
+
+  document.querySelectorAll('.brain-region').forEach(g => {
+    const shape = g.querySelector('.region-shape');
+    const originalStroke = shape ? shape.getAttribute('stroke-width') : '1.5';
+    g.addEventListener('mouseenter', () => {
+      if (shape) shape.setAttribute('stroke-width', '2.5');
+    });
+    g.addEventListener('mouseleave', () => {
+      if (shape && !g.classList.contains('active-brain-region')) {
+        shape.setAttribute('stroke-width', originalStroke);
+      }
+    });
+    g.addEventListener('click', () => {
+      const id = g.dataset.brainRegion;
+      const data = BRAIN_REGIONS[id];
+      if (!data) return;
+      // De-highlight others
+      document.querySelectorAll('.brain-region').forEach(other => {
+        other.classList.remove('active-brain-region');
+        const s = other.querySelector('.region-shape');
+        if (s) s.setAttribute('stroke-width', '1.5');
+      });
+      g.classList.add('active-brain-region');
+      if (shape) shape.setAttribute('stroke-width', '3.5');
+
+      document.getElementById('brainName').textContent = data.name;
+      document.getElementById('brainName').style.color = data.color;
+      document.getElementById('brainFunction').textContent = data.function;
+      document.getElementById('brainDamage').textContent = data.damage;
+      document.getElementById('brainDamageWrap').style.display = 'block';
+    });
+  });
+}
+
+/* ---- CROSS-BRIDGE CYCLE SCRUBBER ---- */
+const CROSS_BRIDGE_HTML = `
+<div style="background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px;padding:18px">
+  <div style="text-align:center;margin-bottom:10px">
+    <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#1B3A2D">One Cross-Bridge Cycle</div>
+    <div style="font-size:12px;color:#1B3A2D;margin-top:4px;font-style:italic">Drag through the 5 stages. Sarcomere shrinks; A-band does not. Live band widths update at the bottom.</div>
+  </div>
+
+  <!-- Slider -->
+  <div style="background:#fff;border:1.5px solid #1B3A2D;border-radius:10px;padding:14px;margin-bottom:14px">
+    <div style="display:flex;justify-content:space-between;font-size:10px;font-weight:700;color:#1B3A2D;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.06em;text-align:center">
+      <span style="flex:1">1. ATP binds</span>
+      <span style="flex:1">2. Cock</span>
+      <span style="flex:1">3. Bind actin</span>
+      <span style="flex:1">4. Power stroke</span>
+      <span style="flex:1">5. Reset</span>
+    </div>
+    <input id="cbStage" type="range" min="0" max="100" step="1" value="0" style="width:100%;accent-color:#C25B3F">
+    <div style="text-align:center;margin-top:6px;font-family:'JetBrains Mono',monospace;font-size:13px;color:#1B3A2D">
+      <span id="cbStageName" style="font-weight:700;color:#C25B3F">Stage 1 · ATP binds, myosin releases actin</span>
+    </div>
+  </div>
+
+  <!-- Sarcomere visualization -->
+  <svg id="cbSvg" viewBox="0 0 800 280" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:#fff;border:1.5px solid #1B3A2D;border-radius:8px"></svg>
+
+  <!-- Live measurements -->
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;margin-top:14px">
+    <div style="background:#fff;border:1.5px solid #1B3A2D;border-radius:8px;padding:10px;text-align:center">
+      <div style="font-size:10px;color:#1B3A2D;font-weight:700;text-transform:uppercase">Sarcomere (Z to Z)</div>
+      <div id="cbSarcLen" style="font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:#C25B3F;margin-top:4px">560 px</div>
+      <div id="cbSarcDelta" style="font-size:9px;color:#1B3A2D;margin-top:2px">shrinking ↓</div>
+    </div>
+    <div style="background:#fff;border:1.5px solid #C25B3F;border-radius:8px;padding:10px;text-align:center">
+      <div style="font-size:10px;color:#C25B3F;font-weight:700;text-transform:uppercase">I-band</div>
+      <div id="cbIBand" style="font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:#C25B3F;margin-top:4px">160 px</div>
+      <div style="font-size:9px;color:#1B3A2D;margin-top:2px">shrinks ↓</div>
+    </div>
+    <div style="background:#fff;border:2px solid #5cabe6;border-radius:8px;padding:10px;text-align:center">
+      <div style="font-size:10px;color:#5cabe6;font-weight:700;text-transform:uppercase">A-band</div>
+      <div id="cbABand" style="font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:#5cabe6;margin-top:4px">240 px</div>
+      <div style="font-size:9px;color:#5cabe6;margin-top:2px;font-weight:700">CONSTANT ←</div>
+    </div>
+    <div style="background:#fff;border:1.5px solid #c19a3e;border-radius:8px;padding:10px;text-align:center">
+      <div style="font-size:10px;color:#c19a3e;font-weight:700;text-transform:uppercase">H-zone</div>
+      <div id="cbHZone" style="font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:#c19a3e;margin-top:4px">80 px</div>
+      <div style="font-size:9px;color:#1B3A2D;margin-top:2px">shrinks ↓</div>
+    </div>
+  </div>
+
+  <!-- Stage explainer -->
+  <div id="cbExplain" style="background:#fff;border:1.5px solid #1B3A2D;border-radius:10px;padding:12px;margin-top:14px;font-size:13px;line-height:1.5;color:#1B3A2D">
+    <span style="font-weight:700;color:#C25B3F">Stage 1 · ATP binds.</span> A new ATP molecule binds the myosin head. The head conformation changes and <b>releases</b> from the actin filament. ATP is required for this DETACHMENT step (this is why rigor mortis happens — no ATP, head is stuck attached).
+  </div>
+
+  <!-- Conditions panel: Ca²⁺ and ATP indicators -->
+  <div style="display:flex;gap:10px;margin-top:10px">
+    <div style="flex:1;background:#fff;border:1.5px solid #1B3A2D;border-radius:8px;padding:10px;text-align:center">
+      <div style="font-size:10px;color:#1B3A2D;font-weight:700;text-transform:uppercase">ATP state</div>
+      <div id="cbATP" style="font-size:14px;margin-top:4px;font-weight:700;color:#5FA874">ATP bound</div>
+    </div>
+    <div style="flex:1;background:#fff;border:1.5px solid #1B3A2D;border-radius:8px;padding:10px;text-align:center">
+      <div style="font-size:10px;color:#1B3A2D;font-weight:700;text-transform:uppercase">Ca²⁺ state</div>
+      <div id="cbCa" style="font-size:14px;margin-top:4px;font-weight:700;color:#5FA874">bound to troponin</div>
+    </div>
+    <div style="flex:1;background:#fff;border:1.5px solid #1B3A2D;border-radius:8px;padding:10px;text-align:center">
+      <div style="font-size:10px;color:#1B3A2D;font-weight:700;text-transform:uppercase">Cross-bridge</div>
+      <div id="cbBridge" style="font-size:14px;margin-top:4px;font-weight:700;color:#C25B3F">detached</div>
+    </div>
+  </div>
+</div>
+`;
+
+const CB_STAGES = [
+  { range: [0, 20],   name: 'Stage 1 · ATP binds, myosin releases actin', atp: 'ATP bound', ca: 'bound to troponin', bridge: 'detached',
+    explain: '<span style="font-weight:700;color:#C25B3F">Stage 1 · ATP binds.</span> A new ATP molecule binds the myosin head. The head conformation changes and <b>releases</b> from the actin filament. ATP is required for this DETACHMENT step (this is why rigor mortis happens — no ATP, head is stuck attached).' },
+  { range: [20, 40],  name: 'Stage 2 · ATP hydrolyzed, head cocks', atp: 'ATP → ADP + Pi', ca: 'bound to troponin', bridge: 'cocked, primed',
+    explain: '<span style="font-weight:700;color:#c19a3e">Stage 2 · Cock.</span> ATP is hydrolyzed to ADP + Pi (still bound to the head). The energy released "cocks" the myosin head into a high-energy primed position, ready to bind actin again at a new site.' },
+  { range: [40, 60],  name: 'Stage 3 · Cross-bridge forms (Ca²⁺ exposed binding sites)', atp: 'ADP + Pi bound', ca: 'bound to troponin', bridge: 'attached',
+    explain: '<span style="font-weight:700;color:#5cabe6">Stage 3 · Bind.</span> Ca²⁺ (released from the SR) is bound to troponin C, pulling tropomyosin off the actin myosin-binding sites. The cocked myosin head <b>binds</b> actin — a cross-bridge forms.' },
+  { range: [60, 80],  name: 'Stage 4 · Power stroke (Pi released, ADP released)', atp: 'release Pi → ADP', ca: 'bound to troponin', bridge: 'pulling actin',
+    explain: '<span style="font-weight:700;color:#5FA874">Stage 4 · Power stroke.</span> Pi releases. The myosin head pivots roughly 45°, pulling actin toward the M-line. ADP is released. The sarcomere has shortened by one stroke. <b>Z-lines moved closer; I-band and H-zone shrunk; A-band did NOT change.</b>' },
+  { range: [80, 100], name: 'Stage 5 · Cycle resets — ready for next ATP', atp: 'no nucleotide', ca: 'still bound', bridge: 'attached (rigor-like)',
+    explain: '<span style="font-weight:700;color:#1B3A2D">Stage 5 · Reset.</span> The head is now in a low-energy attached state. Without a new ATP, it stays here (this is the rigor state). With ATP, the cycle returns to Stage 1 — release, cock, bind, stroke. Repeats as long as Ca²⁺ and ATP are present.' },
+];
+
+function initCrossBridgeCycle() {
+  const body = document.getElementById('crossBridgeBody');
+  if (!body) return;
+  body.innerHTML = CROSS_BRIDGE_HTML;
+
+  function render(stagePct) {
+    const svg = document.getElementById('cbSvg');
+    if (!svg) return;
+    // Z-line positions: at rest, Z left = 80, Z right = 720. After full cycle, narrowed by ~30 each side.
+    // Cycle: stages 0-3 contribute to shrinkage; stage 5 holds the new resting position
+    // For 0-60 (release → bind), no sarcomere shrinkage yet.
+    // For 60-80 (power stroke), sarcomere shrinks linearly.
+    // For 80-100, holds.
+    let shrink = 0;
+    if (stagePct < 60) shrink = 0;
+    else if (stagePct < 80) shrink = ((stagePct - 60) / 20) * 30;
+    else shrink = 30;
+    const zL = 80 + shrink;
+    const zR = 720 - shrink;
+    const sarcLen = zR - zL;
+    // Myosin (constant width = 240, centered on M = 400)
+    const mLeft = 280, mRight = 520;
+    const aBand = mRight - mLeft;
+    // Actin filaments extend from each Z to past M-line (anchored at Z, length actinLen)
+    const actinLen = 320;
+    const actinLEnd = zL + actinLen;
+    const actinREnd = zR - actinLen;
+    // I-band: from Z to start of myosin overlap (Z-line to mLeft on left side)
+    const iBandWidth = mLeft - zL;
+    const iBandTotalEachSide = iBandWidth;
+    // H-zone: myosin region with no actin overlap. As actin slides in, H shrinks.
+    // Actin slides in by `shrink` pixels per side (because Z-lines move toward M)
+    const hZoneStart = mLeft + Math.max(0, actinLen - (mLeft - zL) - shrink);
+    const hZoneEnd = mRight - Math.max(0, actinLen - (zR - mRight) - shrink);
+    let hZone = Math.max(0, hZoneEnd - hZoneStart);
+
+    // Myosin head positions and rotations based on cycle stage
+    // Show 4 myosin heads (2 on each half), one prominent head highlighted by stage state
+    let inner = '';
+    // Background: M-line marker
+    inner += `<line x1="400" y1="40" x2="400" y2="240" stroke="#1B3A2D" stroke-width="1.2" stroke-dasharray="3,3" opacity="0.4"/>`;
+    inner += `<text x="400" y="262" text-anchor="middle" font-size="10" font-weight="700" fill="#1B3A2D">M-line</text>`;
+
+    // Z-lines
+    inner += `<line x1="${zL}" y1="40" x2="${zL}" y2="240" stroke="#C25B3F" stroke-width="4"/>`;
+    inner += `<line x1="${zR}" y1="40" x2="${zR}" y2="240" stroke="#C25B3F" stroke-width="4"/>`;
+    inner += `<text x="${zL}" y="32" text-anchor="middle" font-size="10" font-weight="700" fill="#C25B3F">Z</text>`;
+    inner += `<text x="${zR}" y="32" text-anchor="middle" font-size="10" font-weight="700" fill="#C25B3F">Z</text>`;
+
+    // Sarcomere length bracket (top)
+    inner += `<line x1="${zL}" y1="48" x2="${zR}" y2="48" stroke="#1B3A2D" stroke-width="0.8"/>`;
+    inner += `<text x="${(zL + zR) / 2}" y="60" text-anchor="middle" font-size="9" font-style="italic" fill="#1B3A2D">sarcomere</text>`;
+
+    // Actin filaments (thin, blue)
+    // Left actin
+    inner += `<rect x="${zL}" y="120" width="${actinLen - shrink}" height="6" fill="#5cabe6" stroke="#1B3A2D" stroke-width="0.8"/>`;
+    inner += `<rect x="${zL}" y="160" width="${actinLen - shrink}" height="6" fill="#5cabe6" stroke="#1B3A2D" stroke-width="0.8"/>`;
+    // Tropomyosin / dots on actin (decorative)
+    for (let i = 0; i < 6; i++) {
+      const dotX = zL + 30 + i * ((actinLen - shrink - 60) / 5);
+      inner += `<circle cx="${dotX}" cy="123" r="2" fill="#1B3A2D" opacity="0.6"/>`;
+      inner += `<circle cx="${dotX}" cy="163" r="2" fill="#1B3A2D" opacity="0.6"/>`;
+    }
+    // Right actin
+    inner += `<rect x="${zR - (actinLen - shrink)}" y="120" width="${actinLen - shrink}" height="6" fill="#5cabe6" stroke="#1B3A2D" stroke-width="0.8"/>`;
+    inner += `<rect x="${zR - (actinLen - shrink)}" y="160" width="${actinLen - shrink}" height="6" fill="#5cabe6" stroke="#1B3A2D" stroke-width="0.8"/>`;
+    for (let i = 0; i < 6; i++) {
+      const dotX = zR - (actinLen - shrink) + 30 + i * ((actinLen - shrink - 60) / 5);
+      inner += `<circle cx="${dotX}" cy="123" r="2" fill="#1B3A2D" opacity="0.6"/>`;
+      inner += `<circle cx="${dotX}" cy="163" r="2" fill="#1B3A2D" opacity="0.6"/>`;
+    }
+
+    // Myosin thick filament (with head bulges) — A-band, gold
+    inner += `<rect x="${mLeft}" y="135" width="${aBand}" height="16" fill="#c19a3e" stroke="#1B3A2D" stroke-width="1.2"/>`;
+    // Myosin tail texture
+    for (let i = 0; i < 12; i++) {
+      const tx = mLeft + 12 + i * (aBand - 24) / 11;
+      inner += `<line x1="${tx}" y1="135" x2="${tx}" y2="151" stroke="#1B3A2D" stroke-width="0.4" opacity="0.5"/>`;
+    }
+
+    // Myosin heads — show 4 heads with state-based positions
+    // Stage determines head position (detached, cocked up, bound, pulled)
+    function drawHead(headX, side) {
+      // side: -1 (left, points left toward Z) or +1 (right, points right toward Z)
+      let headDx, headDy, color;
+      if (stagePct < 20) {
+        // Stage 1: detached, slightly out
+        headDx = side * 8; headDy = side > 0 ? 18 : -18; color = '#888';
+      } else if (stagePct < 40) {
+        // Stage 2: cocked high-energy (further out, higher angle)
+        headDx = side * 10; headDy = side > 0 ? 28 : -28; color = '#c19a3e';
+      } else if (stagePct < 60) {
+        // Stage 3: just bound (90° to filament)
+        headDx = side * 14; headDy = side > 0 ? 22 : -22; color = '#5FA874';
+      } else if (stagePct < 80) {
+        // Stage 4: power stroke in progress (head pivots 45° toward Z)
+        const t = (stagePct - 60) / 20;
+        headDx = side * (14 - t * 6); headDy = side > 0 ? (22 - t * 8) : (-22 + t * 8); color = '#5FA874';
+      } else {
+        // Stage 5: stroke complete (head pivoted, attached, pre-rigor)
+        headDx = side * 8; headDy = side > 0 ? 14 : -14; color = '#1B3A2D';
+      }
+      const hx = headX + headDx;
+      const hy = 143 + headDy;
+      // Lever arm
+      inner += `<line x1="${headX}" y1="143" x2="${hx}" y2="${hy}" stroke="#1B3A2D" stroke-width="2"/>`;
+      // Head
+      inner += `<ellipse cx="${hx}" cy="${hy}" rx="9" ry="6" fill="${color}" stroke="#1B3A2D" stroke-width="1.2"/>`;
+    }
+    // 2 heads on left half (point toward left Z)
+    drawHead(mLeft + 30, -1);
+    drawHead(mLeft + 80, -1);
+    // 2 heads on right half (point toward right Z)
+    drawHead(mRight - 80, 1);
+    drawHead(mRight - 30, 1);
+
+    // Band labels at bottom
+    inner += `<line x1="${zL}" y1="200" x2="${mLeft}" y2="200" stroke="#C25B3F" stroke-width="1.5"/>`;
+    inner += `<text x="${(zL + mLeft) / 2}" y="215" text-anchor="middle" font-size="10" font-weight="700" fill="#C25B3F">I-band</text>`;
+    inner += `<line x1="${mRight}" y1="200" x2="${zR}" y2="200" stroke="#C25B3F" stroke-width="1.5"/>`;
+    inner += `<text x="${(mRight + zR) / 2}" y="215" text-anchor="middle" font-size="10" font-weight="700" fill="#C25B3F">I-band</text>`;
+    inner += `<line x1="${mLeft}" y1="105" x2="${mRight}" y2="105" stroke="#5cabe6" stroke-width="1.5"/>`;
+    inner += `<text x="400" y="100" text-anchor="middle" font-size="10" font-weight="700" fill="#5cabe6">A-band</text>`;
+    if (hZone > 6) {
+      inner += `<line x1="${hZoneStart}" y1="190" x2="${hZoneEnd}" y2="190" stroke="#c19a3e" stroke-width="1.5"/>`;
+      inner += `<text x="${(hZoneStart + hZoneEnd) / 2}" y="184" text-anchor="middle" font-size="9" font-weight="700" fill="#c19a3e">H-zone</text>`;
+    }
+
+    svg.innerHTML = inner;
+
+    // Update measurements
+    document.getElementById('cbSarcLen').textContent = `${sarcLen} px`;
+    document.getElementById('cbSarcDelta').textContent = sarcLen < 640 ? 'shrunk by ' + (640 - sarcLen) + ' px' : 'rest length';
+    document.getElementById('cbIBand').textContent = `${iBandWidth} px`;
+    document.getElementById('cbABand').textContent = `${aBand} px`;
+    document.getElementById('cbHZone').textContent = `${hZone} px`;
+
+    // Update stage info
+    const stage = CB_STAGES.find(s => stagePct >= s.range[0] && stagePct <= s.range[1]) || CB_STAGES[0];
+    document.getElementById('cbStageName').textContent = stage.name;
+    document.getElementById('cbExplain').innerHTML = stage.explain;
+    document.getElementById('cbATP').textContent = stage.atp;
+    document.getElementById('cbCa').textContent = stage.ca;
+    document.getElementById('cbBridge').textContent = stage.bridge;
+  }
+
+  document.getElementById('cbStage').addEventListener('input', e => render(+e.target.value));
+  render(0);
+}
+
+/* ---- PROBABILITY TREE CALCULATOR (AND/OR rules) ---- */
+const PROB_TREE_HTML = `
+<div style="background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px;padding:18px">
+  <div style="text-align:center;margin-bottom:10px">
+    <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#1B3A2D">Probability Tree Calculator</div>
+    <div style="font-size:12px;color:#1B3A2D;margin-top:4px;font-style:italic">Aa &times; Aa cross. Each child independent. P(affected) = 1/4 per child.</div>
+  </div>
+
+  <!-- Controls -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+    <div style="background:#fff;border:1.5px solid #1B3A2D;border-radius:10px;padding:12px">
+      <div style="font-size:11px;color:#1B3A2D;font-weight:700;text-transform:uppercase;letter-spacing:0.08em">Number of children</div>
+      <div style="display:flex;gap:6px;margin-top:8px" id="ptCountBtns">
+        <button class="pt-count" data-n="1" style="flex:1;padding:8px;border:1.5px solid #1B3A2D;background:#fff;color:#1B3A2D;font-weight:700;border-radius:6px;cursor:pointer">1</button>
+        <button class="pt-count active" data-n="2" style="flex:1;padding:8px;border:1.5px solid #1B3A2D;background:#1B3A2D;color:#fff;font-weight:700;border-radius:6px;cursor:pointer">2</button>
+        <button class="pt-count" data-n="3" style="flex:1;padding:8px;border:1.5px solid #1B3A2D;background:#fff;color:#1B3A2D;font-weight:700;border-radius:6px;cursor:pointer">3</button>
+        <button class="pt-count" data-n="4" style="flex:1;padding:8px;border:1.5px solid #1B3A2D;background:#fff;color:#1B3A2D;font-weight:700;border-radius:6px;cursor:pointer">4</button>
+      </div>
+    </div>
+    <div style="background:#fff;border:1.5px solid #1B3A2D;border-radius:10px;padding:12px">
+      <div style="font-size:11px;color:#1B3A2D;font-weight:700;text-transform:uppercase;letter-spacing:0.08em">Question type</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px" id="ptScenarioBtns">
+        <button class="pt-scenario active" data-q="all" style="padding:8px;border:1.5px solid #1B3A2D;background:#1B3A2D;color:#fff;font-weight:700;border-radius:6px;cursor:pointer;font-size:11px">All affected</button>
+        <button class="pt-scenario" data-q="none" style="padding:8px;border:1.5px solid #1B3A2D;background:#fff;color:#1B3A2D;font-weight:700;border-radius:6px;cursor:pointer;font-size:11px">None affected</button>
+        <button class="pt-scenario" data-q="exactly1" style="padding:8px;border:1.5px solid #1B3A2D;background:#fff;color:#1B3A2D;font-weight:700;border-radius:6px;cursor:pointer;font-size:11px">Exactly 1 affected</button>
+        <button class="pt-scenario" data-q="atleast1" style="padding:8px;border:1.5px solid #1B3A2D;background:#fff;color:#1B3A2D;font-weight:700;border-radius:6px;cursor:pointer;font-size:11px">At least 1 affected</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tree visualization -->
+  <svg id="ptTreeSvg" viewBox="0 0 800 360" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:#fff;border:1.5px solid #1B3A2D;border-radius:8px"></svg>
+
+  <!-- Calculation breakdown -->
+  <div style="background:#fff;border:1.5px solid #1B3A2D;border-radius:10px;padding:14px;margin-top:14px">
+    <div style="font-size:11px;color:#1B3A2D;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px">Calculation</div>
+    <div id="ptCalc" style="font-family:'JetBrains Mono',monospace;font-size:14px;line-height:1.7;color:#1B3A2D"></div>
+    <div style="margin-top:10px;font-size:13px;line-height:1.5;color:#1B3A2D" id="ptExplain"></div>
+  </div>
+
+  <!-- Result -->
+  <div id="ptResult" style="background:#5FA874;color:#fff;border-radius:10px;padding:16px;margin-top:14px;text-align:center">
+    <div style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;opacity:0.9">Probability</div>
+    <div id="ptResultValue" style="font-size:28px;font-weight:700;font-family:'JetBrains Mono',monospace;margin-top:4px">3/16 ≈ 18.75%</div>
+  </div>
+</div>
+`;
+
+function ptGcd(a, b) { return b === 0 ? a : ptGcd(b, a % b); }
+function ptSimplify(num, den) {
+  const g = ptGcd(num, den);
+  return [num / g, den / g];
+}
+
+function initProbTree() {
+  const body = document.getElementById('probTreeBody');
+  if (!body) return;
+  body.innerHTML = PROB_TREE_HTML;
+
+  let nChildren = 2;
+  let scenario = 'all';
+
+  function render() {
+    const svg = document.getElementById('ptTreeSvg');
+    const pAffected = 1, pUnaffected = 3;  // out of 4 each
+    const denPerChild = 4;
+    const totalDen = Math.pow(denPerChild, nChildren);
+
+    // Compute numerator based on scenario
+    let numerator, label, formula, explain, finalNum, finalDen;
+
+    if (scenario === 'all') {
+      // P(all affected) = (1/4)^n
+      numerator = 1;
+      label = `${nChildren} of ${nChildren} affected`;
+      formula = Array(nChildren).fill('<span style="color:#C25B3F">1/4</span>').join(' &times; ') + ` = <b style="color:#C25B3F">1/${totalDen}</b>`;
+      explain = `Each child independently has a 1/4 chance of being affected (aa). All ${nChildren} affected requires the AND rule: multiply each child's probability.`;
+      finalNum = 1; finalDen = totalDen;
+    } else if (scenario === 'none') {
+      // P(none affected) = (3/4)^n
+      numerator = Math.pow(3, nChildren);
+      label = `0 of ${nChildren} affected`;
+      formula = Array(nChildren).fill('<span style="color:#5FA874">3/4</span>').join(' &times; ') + ` = <b style="color:#5FA874">${numerator}/${totalDen}</b>`;
+      explain = `Each child independently has a 3/4 chance of being unaffected (AA or Aa). All ${nChildren} unaffected requires the AND rule: multiply each child's probability.`;
+      finalNum = numerator; finalDen = totalDen;
+    } else if (scenario === 'exactly1') {
+      // P(exactly 1 of n) = C(n,1) * (1/4) * (3/4)^(n-1)
+      const orderings = nChildren;  // C(n,1) = n
+      const perOrdering = Math.pow(3, nChildren - 1);  // 1 affected × 3^(n-1) unaffected
+      numerator = orderings * perOrdering;
+      label = `Exactly 1 of ${nChildren} affected`;
+      const oneOrdering = `<span style="color:#C25B3F">1/4</span> &times; ${Array(nChildren - 1).fill('<span style="color:#5FA874">3/4</span>').join(' &times; ')} = ${perOrdering}/${totalDen}`;
+      formula = `Per ordering: ${oneOrdering}<br><span style="color:#c19a3e">${orderings} orderings (1st, 2nd, ..., ${nChildren}th could be the affected one)</span><br>Total = ${orderings} &times; ${perOrdering}/${totalDen} = <b style="color:#c19a3e">${numerator}/${totalDen}</b>`;
+      explain = `Each ordering uses AND (multiply across ${nChildren} children). There are ${orderings} mutually-exclusive orderings, so OR (add) across them — equivalent to multiplying by the count.`;
+      finalNum = numerator; finalDen = totalDen;
+    } else if (scenario === 'atleast1') {
+      // P(at least 1) = 1 - P(none) = 1 - (3/4)^n
+      const noneNum = Math.pow(3, nChildren);
+      numerator = totalDen - noneNum;
+      label = `At least 1 of ${nChildren} affected`;
+      formula = `1 - P(none affected) = 1 - ${noneNum}/${totalDen} = <b style="color:#5cabe6">${numerator}/${totalDen}</b>`;
+      explain = `"At least 1" is easiest as the complement: 1 minus P(zero affected). P(none) = (3/4)^${nChildren} = ${noneNum}/${totalDen}.`;
+      finalNum = numerator; finalDen = totalDen;
+    }
+
+    // Build tree SVG
+    let svgInner = '';
+    svgInner += `<text x="400" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">PROBABILITY TREE — ${label.toUpperCase()}</text>`;
+
+    // Tree layout — each level represents one child
+    // Top: parents node
+    // For each level i (1..n), branches into 2 (affected/unaffected)
+    // We'll show up to 4 levels; just show outline of branching depth
+    const levelsY = [60, 130, 200, 270, 340];
+    const startX = 400;
+
+    // Parents header
+    svgInner += `<rect x="350" y="44" width="100" height="30" fill="#1B3A2D" rx="4"/>`;
+    svgInner += `<text x="400" y="63" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">Aa × Aa</text>`;
+    svgInner += `<text x="400" y="50" text-anchor="middle" font-size="9" fill="#fff" opacity="0.8">parents</text>`;
+
+    // Build branches for each child (binary tree)
+    // For visibility, compute width per level
+    const totalWidth = 760;
+    let prevPositions = [{ x: startX, y: 74, prob: 1, label: '' }];
+
+    for (let lv = 0; lv < nChildren; lv++) {
+      const y = levelsY[lv + 1] || (340 + (lv - 3) * 30);
+      const nNodes = prevPositions.length * 2;
+      const spacing = totalWidth / (nNodes + 1);
+      const newPositions = [];
+      for (let i = 0; i < prevPositions.length; i++) {
+        const parent = prevPositions[i];
+        const leftX = (i * 2 + 1) * spacing + 20;
+        const rightX = (i * 2 + 2) * spacing + 20;
+
+        // Lines from parent
+        svgInner += `<line x1="${parent.x}" y1="${parent.y + 20}" x2="${leftX}" y2="${y - 12}" stroke="#C25B3F" stroke-width="1.5"/>`;
+        svgInner += `<line x1="${parent.x}" y1="${parent.y + 20}" x2="${rightX}" y2="${y - 12}" stroke="#5FA874" stroke-width="1.5"/>`;
+
+        // Affected node (red, left)
+        svgInner += `<circle cx="${leftX}" cy="${y}" r="14" fill="#C25B3F" stroke="#1B3A2D" stroke-width="1.5"/>`;
+        svgInner += `<text x="${leftX}" y="${y + 4}" text-anchor="middle" font-size="9" font-weight="700" fill="#fff">aff</text>`;
+        svgInner += `<text x="${(parent.x + leftX) / 2}" y="${(parent.y + 20 + y - 12) / 2 - 4}" text-anchor="middle" font-size="9" font-weight="700" fill="#C25B3F">1/4</text>`;
+
+        // Unaffected node (green, right)
+        svgInner += `<circle cx="${rightX}" cy="${y}" r="14" fill="#5FA874" stroke="#1B3A2D" stroke-width="1.5"/>`;
+        svgInner += `<text x="${rightX}" y="${y + 4}" text-anchor="middle" font-size="9" font-weight="700" fill="#fff">unaff</text>`;
+        svgInner += `<text x="${(parent.x + rightX) / 2}" y="${(parent.y + 20 + y - 12) / 2 - 4}" text-anchor="middle" font-size="9" font-weight="700" fill="#5FA874">3/4</text>`;
+
+        newPositions.push({ x: leftX, y: y, prob: parent.prob * (1/4), label: parent.label + 'A' });
+        newPositions.push({ x: rightX, y: y, prob: parent.prob * (3/4), label: parent.label + 'U' });
+      }
+      prevPositions = newPositions;
+
+      // Stop displaying if too crowded (>16 nodes)
+      if (prevPositions.length >= 16 && lv < nChildren - 1) {
+        const finalY = y + 50;
+        svgInner += `<text x="400" y="${finalY}" text-anchor="middle" font-size="10" font-style="italic" fill="#1B3A2D">...continued for additional ${nChildren - lv - 1} child(ren)...</text>`;
+        break;
+      }
+    }
+
+    // Highlight relevant outcomes
+    if (scenario === 'all') {
+      // Leftmost path = all affected
+      // Find leaf with all 'A' label
+      const allAffectedLeaf = prevPositions.find(p => p.label === 'A'.repeat(nChildren));
+      if (allAffectedLeaf) {
+        svgInner += `<circle cx="${allAffectedLeaf.x}" cy="${allAffectedLeaf.y}" r="20" fill="none" stroke="#c19a3e" stroke-width="3" stroke-dasharray="4,3"/>`;
+      }
+    } else if (scenario === 'none') {
+      const allUnaffLeaf = prevPositions.find(p => p.label === 'U'.repeat(nChildren));
+      if (allUnaffLeaf) {
+        svgInner += `<circle cx="${allUnaffLeaf.x}" cy="${allUnaffLeaf.y}" r="20" fill="none" stroke="#c19a3e" stroke-width="3" stroke-dasharray="4,3"/>`;
+      }
+    } else if (scenario === 'exactly1') {
+      // All leaves with exactly one 'A'
+      prevPositions.filter(p => p.label.split('').filter(c => c === 'A').length === 1).forEach(p => {
+        svgInner += `<circle cx="${p.x}" cy="${p.y}" r="20" fill="none" stroke="#c19a3e" stroke-width="3" stroke-dasharray="4,3"/>`;
+      });
+    } else if (scenario === 'atleast1') {
+      prevPositions.filter(p => p.label.includes('A')).forEach(p => {
+        svgInner += `<circle cx="${p.x}" cy="${p.y}" r="18" fill="none" stroke="#c19a3e" stroke-width="2" stroke-dasharray="3,2"/>`;
+      });
+    }
+
+    svg.innerHTML = svgInner;
+
+    // Update calculation panel
+    document.getElementById('ptCalc').innerHTML = formula;
+    document.getElementById('ptExplain').textContent = explain;
+
+    // Result with simplification
+    const [sn, sd] = ptSimplify(finalNum, finalDen);
+    const pct = (finalNum / finalDen * 100).toFixed(2);
+    let resultText = `${sn}/${sd}`;
+    if (sn !== finalNum) resultText += ` (= ${finalNum}/${finalDen})`;
+    resultText += ` ≈ ${pct}%`;
+    document.getElementById('ptResultValue').textContent = resultText;
+  }
+
+  document.querySelectorAll('.pt-count').forEach(btn => {
+    btn.addEventListener('click', () => {
+      nChildren = +btn.dataset.n;
+      document.querySelectorAll('.pt-count').forEach(b => {
+        b.classList.remove('active');
+        b.style.background = '#fff'; b.style.color = '#1B3A2D';
+      });
+      btn.classList.add('active');
+      btn.style.background = '#1B3A2D'; btn.style.color = '#fff';
+      render();
+    });
+  });
+  document.querySelectorAll('.pt-scenario').forEach(btn => {
+    btn.addEventListener('click', () => {
+      scenario = btn.dataset.q;
+      document.querySelectorAll('.pt-scenario').forEach(b => {
+        b.classList.remove('active');
+        b.style.background = '#fff'; b.style.color = '#1B3A2D';
+      });
+      btn.classList.add('active');
+      btn.style.background = '#1B3A2D'; btn.style.color = '#fff';
+      render();
+    });
+  });
+
+  render();
+}
+
+/* ---- KREBS / CELLULAR RESPIRATION SCRUBBER ---- */
+const KREBS_SCRUBBER_HTML = `
+<div style="background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px;padding:18px">
+  <div style="text-align:center;margin-bottom:10px">
+    <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#1B3A2D">Cellular Respiration &mdash; One Glucose</div>
+    <div style="font-size:12px;color:#1B3A2D;margin-top:4px;font-style:italic">Drag the slider. Glycolysis &rarr; PDH &rarr; Krebs &rarr; ETC + ATP synthase. Carriers and ATP accumulate live.</div>
+  </div>
+
+  <!-- Phase scrubber -->
+  <div style="background:#fff;border:1.5px solid #1B3A2D;border-radius:10px;padding:14px;margin-bottom:14px">
+    <div style="display:flex;justify-content:space-between;font-size:10px;font-weight:700;color:#1B3A2D;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.06em">
+      <span style="flex:1;text-align:center">Glycolysis<br><span style="font-size:9px;color:#1B3A2D;opacity:0.7">cytoplasm</span></span>
+      <span style="flex:1;text-align:center">PDH<br><span style="font-size:9px;color:#1B3A2D;opacity:0.7">matrix</span></span>
+      <span style="flex:1;text-align:center">Krebs (×2)<br><span style="font-size:9px;color:#1B3A2D;opacity:0.7">matrix</span></span>
+      <span style="flex:1;text-align:center">ETC<br><span style="font-size:9px;color:#1B3A2D;opacity:0.7">inner membrane</span></span>
+      <span style="flex:1;text-align:center">ATP synthase<br><span style="font-size:9px;color:#1B3A2D;opacity:0.7">chemiosmosis</span></span>
+    </div>
+    <input id="krbStage" type="range" min="0" max="100" step="1" value="0" style="width:100%;accent-color:#C25B3F">
+    <div style="text-align:center;margin-top:6px;font-family:'JetBrains Mono',monospace;font-size:13px;color:#1B3A2D">
+      <span id="krbStageName" style="font-weight:700;color:#C25B3F">Stage 1 · Glycolysis (cytoplasm)</span>
+    </div>
+  </div>
+
+  <!-- Live counters -->
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;margin-bottom:14px">
+    <div style="background:#fff;border:1.5px solid #C25B3F;border-radius:8px;padding:10px;text-align:center">
+      <div style="font-size:10px;color:#C25B3F;font-weight:700;text-transform:uppercase">ATP (net)</div>
+      <div id="krbATP" style="font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:700;color:#C25B3F;margin-top:4px">0</div>
+    </div>
+    <div style="background:#fff;border:1.5px solid #5cabe6;border-radius:8px;padding:10px;text-align:center">
+      <div style="font-size:10px;color:#5cabe6;font-weight:700;text-transform:uppercase">NADH</div>
+      <div id="krbNADH" style="font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:700;color:#5cabe6;margin-top:4px">0</div>
+    </div>
+    <div style="background:#fff;border:1.5px solid #c19a3e;border-radius:8px;padding:10px;text-align:center">
+      <div style="font-size:10px;color:#c19a3e;font-weight:700;text-transform:uppercase">FADH&#8322;</div>
+      <div id="krbFADH" style="font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:700;color:#c19a3e;margin-top:4px">0</div>
+    </div>
+    <div style="background:#fff;border:1.5px solid #5FA874;border-radius:8px;padding:10px;text-align:center">
+      <div style="font-size:10px;color:#5FA874;font-weight:700;text-transform:uppercase">CO&#8322; released</div>
+      <div id="krbCO2" style="font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:700;color:#5FA874;margin-top:4px">0</div>
+    </div>
+  </div>
+
+  <!-- ETC + proton gradient visualization -->
+  <svg id="krbSvg" viewBox="0 0 800 280" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:#fff;border:1.5px solid #1B3A2D;border-radius:8px"></svg>
+
+  <!-- Phase explanation -->
+  <div id="krbExplain" style="background:#fff;border:1.5px solid #1B3A2D;border-radius:10px;padding:14px;margin-top:14px;font-size:13px;line-height:1.5;color:#1B3A2D">
+    <span style="font-weight:700;color:#C25B3F">Glycolysis · cytoplasm.</span> One glucose (6C) is split into two pyruvate (3C). Net yield: <b>2 ATP</b> (4 made, 2 spent in the investment phase) and <b>2 NADH</b>. No O&#8322; required — happens whether or not oxygen is present. PFK is the rate-limiting enzyme.
+  </div>
+
+  <!-- Final tally -->
+  <div style="background:#1B3A2D;color:#fff;border-radius:10px;padding:14px;margin-top:10px;text-align:center">
+    <div style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;opacity:0.9">Total ATP per glucose at this point</div>
+    <div id="krbTotalATP" style="font-size:28px;font-weight:700;font-family:'JetBrains Mono',monospace;margin-top:4px">2 ATP</div>
+    <div id="krbTotalNote" style="font-size:11px;font-style:italic;opacity:0.85;margin-top:4px">Glycolysis only — pyruvate must enter mitochondria for the rest</div>
+  </div>
+</div>
+`;
+
+const KREBS_STAGES = [
+  // Each stage: range [min, max] of slider position, what's accumulated
+  { range: [0, 20], name: 'Stage 1 · Glycolysis (cytoplasm)', atp: 2, nadh: 2, fadh: 0, co2: 0,
+    explain: '<span style="font-weight:700;color:#C25B3F">Glycolysis · cytoplasm.</span> One glucose (6C) is split into two pyruvate (3C). Net yield: <b>2 ATP</b> (4 made, 2 spent in the investment phase) and <b>2 NADH</b>. No O&#8322; required — happens whether or not oxygen is present. PFK is the rate-limiting enzyme.',
+    note: 'Glycolysis only — pyruvate must enter mitochondria for the rest' },
+  { range: [20, 35], name: 'Stage 2 · Pyruvate dehydrogenase (matrix)', atp: 2, nadh: 4, fadh: 0, co2: 2,
+    explain: '<span style="font-weight:700;color:#5FA874">PDH · linker step.</span> Each pyruvate (3C) enters the matrix and is decarboxylated to acetyl-CoA (2C) + 1 CO&#8322; + 1 NADH. Per glucose (2 pyruvates): <b>+2 NADH</b>, <b>+2 CO&#8322;</b>. Pyruvate dehydrogenase is the catalyst.',
+    note: '4 of 6 carbons of glucose still left as carbon — Krebs takes the other 4' },
+  { range: [35, 55], name: 'Stage 3 · Krebs cycle (matrix · runs twice)', atp: 4, nadh: 10, fadh: 2, co2: 6,
+    explain: '<span style="font-weight:700;color:#1B3A2D">Krebs cycle · matrix.</span> Each acetyl-CoA enters the cycle and is fully oxidized over 8 steps. Per turn: <b>3 NADH + 1 FADH&#8322; + 1 GTP (=ATP) + 2 CO&#8322;</b>. Cycle runs <b>twice per glucose</b> (once per acetyl-CoA). Per glucose: <b>+6 NADH, +2 FADH&#8322;, +2 GTP, +4 CO&#8322;</b>. All 6 carbons of glucose now released as CO&#8322;.',
+    note: 'All 6 carbons of glucose released as CO₂. ETC + ATP synthase still to come.' },
+  { range: [55, 85], name: 'Stage 4 · Electron transport chain (inner membrane)', atp: 4, nadh: 10, fadh: 2, co2: 6,
+    explain: '<span style="font-weight:700;color:#a378a5">ETC · inner mitochondrial membrane.</span> NADH donates electrons to <b>Complex I</b>; FADH&#8322; donates to <b>Complex II</b>. Electrons flow I → III → IV (NADH path) or II → III → IV (FADH&#8322; path). Final acceptor: <b>O&#8322; → H&#8322;O</b> at Complex IV. Energy from electron flow pumps H&#8314; from matrix to intermembrane space, building the <b>proton gradient</b>.',
+    note: 'Proton gradient is the energy currency. ATP synthase converts it to ATP next.' },
+  { range: [85, 100], name: 'Stage 5 · ATP synthase (chemiosmosis)', atp: 32, nadh: 10, fadh: 2, co2: 6,
+    explain: '<span style="font-weight:700;color:#5cabe6">ATP synthase · chemiosmosis.</span> Protons flow back through ATP synthase down their gradient, spinning the rotor and driving ATP synthesis. Per NADH: ~2.5 ATP. Per FADH&#8322;: ~1.5 ATP. <b>Total per glucose: ~30–32 ATP</b> (counting glycolytic NADH shuttle costs; older textbooks said 36–38).',
+    note: 'Final yield per glucose: ~30–32 ATP. O₂ is the silent hero — without it, the chain backs up and the whole pathway halts.' },
+];
+
+function initKrebsScrubber() {
+  const body = document.getElementById('krebsScrubberBody');
+  if (!body) return;
+  body.innerHTML = KREBS_SCRUBBER_HTML;
+
+  function render(pct) {
+    // Find current stage
+    let stage = KREBS_STAGES[0];
+    for (const s of KREBS_STAGES) {
+      if (pct >= s.range[0] && pct <= s.range[1]) { stage = s; break; }
+    }
+    // Interpolate counters within stage for smooth feel
+    const stageIdx = KREBS_STAGES.indexOf(stage);
+    const prevStage = stageIdx > 0 ? KREBS_STAGES[stageIdx - 1] : { atp: 0, nadh: 0, fadh: 0, co2: 0 };
+    const t = (pct - stage.range[0]) / (stage.range[1] - stage.range[0]);
+    const lerp = (a, b) => Math.round(a + (b - a) * Math.min(1, Math.max(0, t)));
+    const atp = lerp(prevStage.atp, stage.atp);
+    const nadh = lerp(prevStage.nadh, stage.nadh);
+    const fadh = lerp(prevStage.fadh, stage.fadh);
+    const co2 = lerp(prevStage.co2, stage.co2);
+
+    document.getElementById('krbATP').textContent = atp;
+    document.getElementById('krbNADH').textContent = nadh;
+    document.getElementById('krbFADH').textContent = fadh;
+    document.getElementById('krbCO2').textContent = co2;
+    document.getElementById('krbStageName').textContent = stage.name;
+    document.getElementById('krbExplain').innerHTML = stage.explain;
+    document.getElementById('krbTotalATP').textContent = `${atp} ATP`;
+    document.getElementById('krbTotalNote').textContent = stage.note;
+
+    // Render ETC + proton gradient SVG (active when pct >= 55)
+    const svg = document.getElementById('krbSvg');
+    let inner = '';
+    inner += '<text x="400" y="24" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">INNER MITOCHONDRIAL MEMBRANE</text>';
+
+    // Membrane band
+    inner += '<rect x="20" y="80" width="760" height="80" fill="#5FA874" opacity="0.2" stroke="#1B3A2D" stroke-width="1.2"/>';
+    inner += '<text x="30" y="76" font-size="9" font-weight="700" fill="#1B3A2D">INTERMEMBRANE SPACE (high H⁺)</text>';
+    inner += '<text x="30" y="180" font-size="9" font-weight="700" fill="#1B3A2D">MATRIX (low H⁺)</text>';
+
+    // Complex I-IV positions
+    const complexes = [
+      { x: 110, label: 'I', color: '#5cabe6', pumps: true },
+      { x: 240, label: 'II', color: '#c19a3e', pumps: false },
+      { x: 370, label: 'III', color: '#5cabe6', pumps: true },
+      { x: 500, label: 'IV', color: '#5cabe6', pumps: true },
+    ];
+
+    // Q (ubiquinone) and cytochrome c (mobile carriers)
+    inner += '<circle cx="305" cy="120" r="8" fill="#c19a3e" stroke="#1B3A2D" stroke-width="1"/><text x="305" y="123" text-anchor="middle" font-size="8" font-weight="700" fill="#1B3A2D">Q</text>';
+    inner += '<circle cx="435" cy="78" r="7" fill="#a378a5" stroke="#1B3A2D" stroke-width="1"/><text x="435" y="81" text-anchor="middle" font-size="7" font-weight="700" fill="#fff">c</text>';
+
+    complexes.forEach((c, i) => {
+      const active = pct >= 55;  // ETC active in stage 4+
+      const fill = active ? c.color : '#ccc';
+      inner += `<rect x="${c.x - 28}" y="80" width="56" height="80" fill="${fill}" stroke="#1B3A2D" stroke-width="1.5" rx="6" opacity="${active ? '0.85' : '0.4'}"/>`;
+      inner += `<text x="${c.x}" y="118" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">${c.label}</text>`;
+      inner += `<text x="${c.x}" y="135" text-anchor="middle" font-size="9" fill="#fff">complex</text>`;
+
+      // Proton pump arrows (Complex I, III, IV)
+      if (c.pumps && pct >= 55) {
+        inner += `<line x1="${c.x}" y1="80" x2="${c.x}" y2="60" stroke="#C25B3F" stroke-width="2" marker-end="url(#krb-arr)"/>`;
+        inner += `<text x="${c.x}" y="55" text-anchor="middle" font-size="9" font-weight="700" fill="#C25B3F">H⁺</text>`;
+      }
+    });
+
+    // Electron flow arrows
+    if (pct >= 55) {
+      inner += '<line x1="138" y1="120" x2="212" y2="120" stroke="#1B3A2D" stroke-width="1.5" marker-end="url(#krb-arr)"/>';
+      inner += '<line x1="268" y1="120" x2="297" y2="120" stroke="#1B3A2D" stroke-width="1.5" marker-end="url(#krb-arr)"/>';
+      inner += '<line x1="313" y1="120" x2="342" y2="120" stroke="#1B3A2D" stroke-width="1.5" marker-end="url(#krb-arr)"/>';
+      inner += '<line x1="398" y1="100" x2="427" y2="86" stroke="#1B3A2D" stroke-width="1.5" marker-end="url(#krb-arr)"/>';
+      inner += '<line x1="443" y1="86" x2="472" y2="100" stroke="#1B3A2D" stroke-width="1.5" marker-end="url(#krb-arr)"/>';
+      inner += '<text x="195" y="135" font-size="9" fill="#1B3A2D" font-style="italic">e⁻</text>';
+      inner += '<text x="285" y="115" font-size="9" fill="#1B3A2D" font-style="italic">e⁻</text>';
+    }
+
+    // O2 acceptor at the right
+    if (pct >= 55) {
+      inner += '<circle cx="600" cy="120" r="14" fill="#1B3A2D" stroke="#1B3A2D" stroke-width="1.5"/><text x="600" y="124" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">O₂</text>';
+      inner += '<line x1="528" y1="120" x2="585" y2="120" stroke="#1B3A2D" stroke-width="1.5" marker-end="url(#krb-arr)"/>';
+      inner += '<text x="600" y="148" text-anchor="middle" font-size="9" fill="#1B3A2D">→ H₂O</text>';
+    }
+
+    // ATP synthase (active when pct >= 85)
+    const synActive = pct >= 85;
+    const synColor = synActive ? '#a378a5' : '#ccc';
+    const synOp = synActive ? '0.9' : '0.4';
+    inner += `<rect x="660" y="80" width="60" height="80" fill="${synColor}" stroke="#1B3A2D" stroke-width="1.5" rx="6" opacity="${synOp}"/>`;
+    inner += `<text x="690" y="116" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">ATP</text>`;
+    inner += `<text x="690" y="132" text-anchor="middle" font-size="9" fill="#fff">synthase</text>`;
+
+    // Rotor indicator (rotates based on stage 5 progress)
+    if (synActive) {
+      const rotorAngle = (pct - 85) * 24;  // up to 360° rotation
+      inner += `<circle cx="690" cy="120" r="10" fill="none" stroke="#fff" stroke-width="1.5" stroke-dasharray="3,3" transform="rotate(${rotorAngle}, 690, 120)"/>`;
+      // H+ flowing back through synthase
+      inner += '<line x1="690" y1="60" x2="690" y2="78" stroke="#5FA874" stroke-width="2" marker-end="url(#krb-arr)"/>';
+      inner += '<text x="690" y="55" text-anchor="middle" font-size="9" font-weight="700" fill="#5FA874">H⁺ flow</text>';
+      // ATP outflow
+      inner += '<line x1="690" y1="160" x2="690" y2="200" stroke="#C25B3F" stroke-width="2" marker-end="url(#krb-arr)"/>';
+      inner += '<text x="690" y="218" text-anchor="middle" font-size="9" font-weight="700" fill="#C25B3F">ATP →</text>';
+    }
+
+    // Proton gradient bar (right side)
+    const gradientFill = Math.min(60, Math.max(0, (pct - 55) * 3));
+    if (pct >= 55) {
+      inner += `<rect x="730" y="${80 + (60 - gradientFill)}" width="20" height="${gradientFill}" fill="#C25B3F" opacity="0.5" stroke="#1B3A2D" stroke-width="1"/>`;
+      inner += '<text x="755" y="88" font-size="9" font-weight="700" fill="#C25B3F">H⁺</text>';
+      inner += '<text x="755" y="100" font-size="9" font-weight="700" fill="#C25B3F">gradient</text>';
+    }
+
+    // NADH/FADH2 entry labels
+    if (pct >= 55) {
+      inner += '<text x="110" y="245" text-anchor="middle" font-size="10" font-weight="700" fill="#5cabe6">NADH → I</text>';
+      inner += '<text x="240" y="245" text-anchor="middle" font-size="10" font-weight="700" fill="#c19a3e">FADH₂ → II</text>';
+      inner += '<line x1="110" y1="232" x2="110" y2="162" stroke="#5cabe6" stroke-width="1.2" marker-end="url(#krb-arr)"/>';
+      inner += '<line x1="240" y1="232" x2="240" y2="162" stroke="#c19a3e" stroke-width="1.2" marker-end="url(#krb-arr)"/>';
+    }
+
+    // When NOT in ETC stage, show explanatory text
+    if (pct < 55) {
+      inner += '<text x="400" y="220" text-anchor="middle" font-size="11" font-style="italic" fill="#1B3A2D">ETC activates after Krebs (slide right past 55)</text>';
+    }
+
+    inner += `<defs><marker id="krb-arr" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M 0 0 L 6 3 L 0 6 z" fill="#1B3A2D"/></marker></defs>`;
+
+    svg.innerHTML = inner;
+  }
+
+  document.getElementById('krbStage').addEventListener('input', e => render(+e.target.value));
+  render(0);
+}
+
+/* ---- RNA PROCESSING SCRUBBER ---- */
+const RNA_SCRUBBER_HTML = `
+<div style="background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px;padding:18px">
+  <div style="text-align:center;margin-bottom:10px">
+    <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#1B3A2D">Pre-mRNA &rarr; Mature mRNA Scrubber</div>
+    <div style="font-size:12px;color:#1B3A2D;margin-top:4px;font-style:italic">Drag the slider to add cap (m7G), then poly-A tail, then splice introns into lariats.</div>
+  </div>
+
+  <!-- Slider -->
+  <div style="background:#fff;border:1.5px solid #1B3A2D;border-radius:10px;padding:14px;margin-bottom:14px">
+    <div style="display:flex;justify-content:space-between;font-size:10px;font-weight:700;color:#1B3A2D;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.06em;text-align:center">
+      <span style="flex:1">Pre-mRNA</span>
+      <span style="flex:1">+ 5' cap</span>
+      <span style="flex:1">+ poly-A</span>
+      <span style="flex:1">Splicing</span>
+      <span style="flex:1">Mature mRNA</span>
+    </div>
+    <input id="rnaStage" type="range" min="0" max="100" step="1" value="0" style="width:100%;accent-color:#5cabe6">
+    <div style="text-align:center;margin-top:6px;font-family:'JetBrains Mono',monospace;font-size:13px;color:#1B3A2D">
+      <span id="rnaStageName" style="font-weight:700;color:#5cabe6">Stage 1 · Pre-mRNA — freshly transcribed, 5 exons + 4 introns visible</span>
+    </div>
+  </div>
+
+  <!-- mRNA visualization -->
+  <svg id="rnaSvg" viewBox="0 0 800 280" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:#fff;border:1.5px solid #1B3A2D;border-radius:8px"></svg>
+
+  <!-- Stage explanation -->
+  <div id="rnaExplain" style="background:#fff;border:1.5px solid #1B3A2D;border-radius:10px;padding:14px;margin-top:14px;font-size:13px;line-height:1.5;color:#1B3A2D">
+    <span style="font-weight:700;color:#5cabe6">Pre-mRNA.</span> The freshly transcribed RNA has the same sequence as the gene's coding strand: <b>exons</b> (kept) alternating with <b>introns</b> (removed later). At this stage it is unprotected and not ready to be exported from the nucleus.
+  </div>
+
+  <!-- Status panel -->
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;margin-top:10px">
+    <div style="background:#fff;border:1.5px solid #C25B3F;border-radius:8px;padding:8px;text-align:center">
+      <div style="font-size:9px;color:#C25B3F;font-weight:700;text-transform:uppercase">5' cap</div>
+      <div id="rnaCap" style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:#888;margin-top:2px">absent</div>
+    </div>
+    <div style="background:#fff;border:1.5px solid #5cabe6;border-radius:8px;padding:8px;text-align:center">
+      <div style="font-size:9px;color:#5cabe6;font-weight:700;text-transform:uppercase">Poly-A tail</div>
+      <div id="rnaTail" style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:#888;margin-top:2px">absent</div>
+    </div>
+    <div style="background:#fff;border:1.5px solid #c19a3e;border-radius:8px;padding:8px;text-align:center">
+      <div style="font-size:9px;color:#c19a3e;font-weight:700;text-transform:uppercase">Introns</div>
+      <div id="rnaIntrons" style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:#888;margin-top:2px">4 present</div>
+    </div>
+    <div style="background:#fff;border:1.5px solid #5FA874;border-radius:8px;padding:8px;text-align:center">
+      <div style="font-size:9px;color:#5FA874;font-weight:700;text-transform:uppercase">Status</div>
+      <div id="rnaStatus" style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:#888;margin-top:2px">in nucleus</div>
+    </div>
+  </div>
+</div>
+`;
+
+const RNA_STAGES = [
+  { range: [0, 20], name: 'Stage 1 · Pre-mRNA — freshly transcribed, 5 exons + 4 introns visible', cap: 'absent', tail: 'absent', introns: '4 present', status: 'in nucleus',
+    explain: '<span style="font-weight:700;color:#5cabe6">Pre-mRNA.</span> The freshly transcribed RNA has the same sequence as the gene\'s coding strand: <b>exons</b> (kept) alternating with <b>introns</b> (removed later). At this stage it is unprotected and not ready to be exported from the nucleus.' },
+  { range: [20, 40], name: 'Stage 2 · 5\' cap added (7-methylguanosine)', cap: '7-methyl-G ✓', tail: 'absent', introns: '4 present', status: 'in nucleus',
+    explain: '<span style="font-weight:700;color:#C25B3F">5\' cap.</span> Added co-transcriptionally as the first ~25 nucleotides emerge from RNA polymerase II. The cap is a methylated guanosine attached "backward" via a 5\'-5\' triphosphate linkage. Functions: (1) protects the 5\' end from exonucleases, (2) recruits the small ribosomal subunit during translation initiation, (3) signals nuclear export.' },
+  { range: [40, 60], name: 'Stage 3 · 3\' poly-A tail added (~200 As)', cap: '7-methyl-G ✓', tail: '~200 As ✓', introns: '4 present', status: 'in nucleus',
+    explain: '<span style="font-weight:700;color:#5cabe6">3\' poly-A tail.</span> After RNA polymerase encounters the AAUAAA polyadenylation signal, the transcript is cleaved and ~200 adenosines are added by poly-A polymerase. Functions: (1) protects against 3\' exonuclease attack, (2) export signal, (3) the tail shortens with each round of translation — once it falls below ~30 As, the message is degraded.' },
+  { range: [60, 90], name: 'Stage 4 · Splicing — spliceosome cuts introns out as lariats', cap: '7-methyl-G ✓', tail: '~200 As ✓', introns: 'being removed', status: 'in nucleus',
+    explain: '<span style="font-weight:700;color:#c19a3e">Splicing.</span> The <b>spliceosome</b> (snRNPs U1, U2, U4, U5, U6 + many proteins) recognizes intron boundaries (5\' GU and 3\' AG) and the branch-point adenine. The intron loops back and forms a 2\'-5\' bond at the branch site, creating a <b>lariat</b> (lasso shape). The lariat is excised, exons are ligated together, and the lariat is degraded. Watch the introns shrink to lariat structures and pop out below.' },
+  { range: [90, 100], name: 'Stage 5 · Mature mRNA — exits nucleus, ready for translation', cap: '7-methyl-G ✓', tail: '~200 As ✓', introns: 'all removed', status: 'cytoplasm-bound',
+    explain: '<span style="font-weight:700;color:#5FA874">Mature mRNA.</span> Cap + tail + spliced. Now small enough to fit through nuclear pores; the 5\' cap and poly-A tail signal export. Once in the cytoplasm, the cap is recognized by the small ribosomal subunit during initiation. <b>Eukaryotes only</b> — prokaryotes skip all three modifications because their ribosomes can attach to mRNA while it is still being transcribed (coupled transcription/translation).' },
+];
+
+function initRnaScrubber() {
+  const body = document.getElementById('rnaScrubberBody');
+  if (!body) return;
+  body.innerHTML = RNA_SCRUBBER_HTML;
+
+  function render(pct) {
+    const stage = RNA_STAGES.find(s => pct >= s.range[0] && pct <= s.range[1]) || RNA_STAGES[0];
+
+    document.getElementById('rnaStageName').textContent = stage.name;
+    document.getElementById('rnaExplain').innerHTML = stage.explain;
+    document.getElementById('rnaCap').textContent = stage.cap;
+    document.getElementById('rnaCap').style.color = stage.cap.includes('✓') ? '#C25B3F' : '#888';
+    document.getElementById('rnaTail').textContent = stage.tail;
+    document.getElementById('rnaTail').style.color = stage.tail.includes('✓') ? '#5cabe6' : '#888';
+    document.getElementById('rnaIntrons').textContent = stage.introns;
+    document.getElementById('rnaIntrons').style.color = stage.introns === 'all removed' ? '#5FA874' : (stage.introns === '4 present' ? '#888' : '#c19a3e');
+    document.getElementById('rnaStatus').textContent = stage.status;
+    document.getElementById('rnaStatus').style.color = stage.status === 'cytoplasm-bound' ? '#5FA874' : '#888';
+
+    // Build SVG visualization
+    const svg = document.getElementById('rnaSvg');
+    let inner = '';
+    inner += '<text x="400" y="24" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">mRNA STRAND</text>';
+
+    // Backbone position
+    const baseY = 130;
+
+    // Cap rendering (stage 2+)
+    let strandStartX = 80;
+    if (pct >= 20) {
+      // Animate cap appearing during stage 2 (20-40)
+      const capProgress = Math.min(1, (pct - 20) / 20);
+      const capR = 8 + capProgress * 8;
+      const capOp = 0.4 + capProgress * 0.6;
+      inner += `<circle cx="60" cy="${baseY}" r="${capR}" fill="#C25B3F" stroke="#1B3A2D" stroke-width="1.5" opacity="${capOp}"/>`;
+      inner += `<text x="60" y="${baseY + 3}" text-anchor="middle" font-size="${7 + capProgress * 2}" font-weight="700" fill="#fff">m7G</text>`;
+      inner += `<line x1="${60 + capR}" y1="${baseY}" x2="${strandStartX}" y2="${baseY}" stroke="#1B3A2D" stroke-width="1.5"/>`;
+    }
+
+    // Strand: 5 exons + 4 introns alternating
+    // Exon widths (a bit varied), intron widths
+    const exonWidths = [50, 60, 50, 55, 60];
+    const intronWidths = [40, 35, 30, 40];
+    const exonColor = '#5FA874';
+    const intronColor = '#888';
+
+    // During splicing (stage 4, pct 60-90), animate introns shrinking
+    let spliceProgress = 0;
+    if (pct >= 60 && pct < 90) spliceProgress = (pct - 60) / 30;
+    if (pct >= 90) spliceProgress = 1;
+
+    let cursorX = strandStartX;
+    const exonRects = [];
+    const intronRects = [];
+    for (let i = 0; i < 5; i++) {
+      // Exon
+      const ew = exonWidths[i];
+      exonRects.push({ x: cursorX, w: ew });
+      inner += `<rect x="${cursorX}" y="${baseY - 8}" width="${ew}" height="16" fill="${exonColor}" stroke="#1B3A2D" stroke-width="1.2"/>`;
+      cursorX += ew;
+      // Intron (if not last exon)
+      if (i < 4) {
+        const fullW = intronWidths[i];
+        const w = fullW * (1 - spliceProgress);
+        intronRects.push({ origX: cursorX, w: w, fullW: fullW, idx: i });
+        if (w > 0.5) {
+          inner += `<rect x="${cursorX}" y="${baseY - 8}" width="${w}" height="16" fill="${intronColor}" stroke="#1B3A2D" stroke-width="1.2" opacity="${1 - spliceProgress * 0.5}"/>`;
+        }
+        cursorX += w;
+      }
+    }
+    const strandEndX = cursorX;
+
+    // 5' label
+    inner += `<text x="${strandStartX - 6}" y="${baseY + 22}" text-anchor="end" font-size="10" font-weight="700" fill="#1B3A2D">5'</text>`;
+
+    // Poly-A tail (stage 3+)
+    if (pct >= 40) {
+      const tailProgress = Math.min(1, (pct - 40) / 20);
+      const tailLen = tailProgress * 100;
+      // Zigzag tail
+      let path = `M ${strandEndX} ${baseY}`;
+      const segments = Math.floor(tailLen / 10);
+      for (let i = 0; i < segments; i++) {
+        const x = strandEndX + (i + 1) * 10;
+        const y = baseY + (i % 2 === 0 ? -5 : 5);
+        path += ` L ${x} ${y}`;
+      }
+      inner += `<path d="${path}" fill="none" stroke="#5cabe6" stroke-width="2.5" stroke-linecap="round"/>`;
+      if (tailProgress > 0.6) {
+        inner += `<text x="${strandEndX + tailLen / 2}" y="${baseY + 28}" text-anchor="middle" font-size="9" font-style="italic" fill="#5cabe6">AAAA...AAA (~200)</text>`;
+      }
+      inner += `<text x="${strandEndX + tailLen + 10}" y="${baseY + 22}" font-size="10" font-weight="700" fill="#1B3A2D">3'</text>`;
+    } else {
+      inner += `<text x="${strandEndX + 6}" y="${baseY + 22}" font-size="10" font-weight="700" fill="#1B3A2D">3'</text>`;
+    }
+
+    // Released lariats (stage 4+)
+    if (spliceProgress > 0.3) {
+      const lariatY = baseY + 70;
+      const showCount = Math.floor(spliceProgress * 4);
+      for (let i = 0; i < showCount; i++) {
+        const lx = 200 + i * 100;
+        const ly = lariatY + (i % 2 === 0 ? 0 : 15);
+        const opacity = spliceProgress >= 1 ? 0.5 : 1;
+        // Lariat = ellipse with a tail
+        inner += `<ellipse cx="${lx}" cy="${ly}" rx="14" ry="8" fill="none" stroke="${intronColor}" stroke-width="1.5" opacity="${opacity}"/>`;
+        inner += `<line x1="${lx - 14}" y1="${ly + 4}" x2="${lx - 22}" y2="${ly + 14}" stroke="${intronColor}" stroke-width="1.5" opacity="${opacity}"/>`;
+        inner += `<text x="${lx + 24}" y="${ly + 4}" font-size="8" fill="#1B3A2D" opacity="${opacity}">intron ${i + 1}</text>`;
+      }
+      if (showCount > 0) {
+        inner += `<text x="180" y="${lariatY - 12}" font-size="10" font-weight="700" fill="#c19a3e">Released lariat introns →</text>`;
+      }
+      if (spliceProgress >= 1) {
+        inner += `<text x="${(200 + showCount * 100) / 2 + 30}" y="${lariatY + 38}" text-anchor="middle" font-size="9" font-style="italic" fill="#888">(degraded)</text>`;
+      }
+    }
+
+    // Spliceosome appearing (stage 4 only, transient)
+    if (pct >= 60 && pct < 85 && spliceProgress < 0.7) {
+      // Show a spliceosome blob over one of the introns
+      const intronToHighlight = Math.min(3, Math.floor(spliceProgress * 4));
+      const intron = intronRects[intronToHighlight];
+      if (intron && intron.w > 0.5) {
+        const sx = intron.origX + intron.w / 2;
+        inner += `<ellipse cx="${sx}" cy="${baseY - 30}" rx="22" ry="15" fill="rgba(163,120,165,0.6)" stroke="#1B3A2D" stroke-width="1.5"/>`;
+        inner += `<text x="${sx}" y="${baseY - 26}" text-anchor="middle" font-size="9" font-weight="700" fill="#fff">spliceosome</text>`;
+        inner += `<line x1="${sx}" y1="${baseY - 15}" x2="${sx}" y2="${baseY - 8}" stroke="#a378a5" stroke-width="2"/>`;
+      }
+    }
+
+    // Stage label below
+    let stageLabel = '';
+    if (pct < 20) stageLabel = '5 exons (green) + 4 introns (gray) — still in nucleus';
+    else if (pct < 40) stageLabel = '5\' cap (m7G) being added';
+    else if (pct < 60) stageLabel = 'Poly-A tail being added at 3\' end';
+    else if (pct < 90) stageLabel = 'Spliceosome cutting introns out as lariats';
+    else stageLabel = 'Mature mRNA — exits nucleus → cytoplasm → ribosome';
+    inner += `<text x="400" y="240" text-anchor="middle" font-size="11" font-style="italic" fill="#1B3A2D">${stageLabel}</text>`;
+
+    // Legend
+    inner += `<g transform="translate(20, 254)">
+      <rect x="0" y="0" width="14" height="10" fill="#5FA874" stroke="#1B3A2D" stroke-width="1"/><text x="20" y="9" font-size="9" font-weight="700" fill="#1B3A2D">exon (kept)</text>
+      <rect x="100" y="0" width="14" height="10" fill="#888" stroke="#1B3A2D" stroke-width="1"/><text x="120" y="9" font-size="9" font-weight="700" fill="#1B3A2D">intron (removed)</text>
+      <circle cx="220" cy="5" r="6" fill="#C25B3F" stroke="#1B3A2D" stroke-width="1"/><text x="234" y="9" font-size="9" font-weight="700" fill="#1B3A2D">5' cap</text>
+      <text x="290" y="9" font-size="9" font-weight="700" fill="#5cabe6">~~~ poly-A tail ~~~</text>
+    </g>`;
+
+    svg.innerHTML = inner;
+  }
+
+  document.getElementById('rnaStage').addEventListener('input', e => render(+e.target.value));
+  render(0);
+}
+
+/* ---- Z-SCHEME PHOTOSYNTHESIS SCRUBBER ---- */
+const Z_SCHEME_HTML = `
+<div style="background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px;padding:18px">
+  <div style="text-align:center;margin-bottom:10px">
+    <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#1B3A2D">Photosynthesis &mdash; Z-scheme + Calvin Cycle</div>
+    <div style="font-size:12px;color:#1B3A2D;margin-top:4px;font-style:italic">Drag the slider. PSII splits water → electrons jump up → b6f → PSI → NADPH. Calvin uses ATP + NADPH to fix CO&#8322; → G3P.</div>
+  </div>
+
+  <!-- Slider -->
+  <div style="background:#fff;border:1.5px solid #1B3A2D;border-radius:10px;padding:14px;margin-bottom:14px">
+    <div style="display:flex;justify-content:space-between;font-size:10px;font-weight:700;color:#1B3A2D;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.06em;text-align:center">
+      <span style="flex:1">Photon → PSII</span>
+      <span style="flex:1">e⁻ flow → b6f</span>
+      <span style="flex:1">Photon → PSI → NADPH</span>
+      <span style="flex:1">Calvin · CO₂ in</span>
+      <span style="flex:1">G3P out</span>
+    </div>
+    <input id="zsStage" type="range" min="0" max="100" step="1" value="0" style="width:100%;accent-color:#5FA874">
+    <div style="text-align:center;margin-top:6px;font-family:'JetBrains Mono',monospace;font-size:13px;color:#1B3A2D">
+      <span id="zsStageName" style="font-weight:700;color:#5FA874">Stage 1 · Photon strikes PSII (P680)</span>
+    </div>
+  </div>
+
+  <!-- Live counters -->
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;margin-bottom:14px">
+    <div style="background:#fff;border:1.5px solid #c19a3e;border-radius:8px;padding:10px;text-align:center">
+      <div style="font-size:10px;color:#c19a3e;font-weight:700;text-transform:uppercase">O₂ released</div>
+      <div id="zsO2" style="font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;color:#c19a3e;margin-top:4px">0</div>
+    </div>
+    <div style="background:#fff;border:1.5px solid #C25B3F;border-radius:8px;padding:10px;text-align:center">
+      <div style="font-size:10px;color:#C25B3F;font-weight:700;text-transform:uppercase">ATP made</div>
+      <div id="zsATP" style="font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;color:#C25B3F;margin-top:4px">0</div>
+    </div>
+    <div style="background:#fff;border:1.5px solid #5cabe6;border-radius:8px;padding:10px;text-align:center">
+      <div style="font-size:10px;color:#5cabe6;font-weight:700;text-transform:uppercase">NADPH made</div>
+      <div id="zsNADPH" style="font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;color:#5cabe6;margin-top:4px">0</div>
+    </div>
+    <div style="background:#fff;border:1.5px solid #5FA874;border-radius:8px;padding:10px;text-align:center">
+      <div style="font-size:10px;color:#5FA874;font-weight:700;text-transform:uppercase">G3P fixed</div>
+      <div id="zsG3P" style="font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;color:#5FA874;margin-top:4px">0</div>
+    </div>
+  </div>
+
+  <!-- Z-scheme energy diagram -->
+  <svg id="zsSvg" viewBox="0 0 800 320" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:#fff;border:1.5px solid #1B3A2D;border-radius:8px"></svg>
+
+  <!-- Stage explanation -->
+  <div id="zsExplain" style="background:#fff;border:1.5px solid #1B3A2D;border-radius:10px;padding:14px;margin-top:14px;font-size:13px;line-height:1.5;color:#1B3A2D">
+    <span style="font-weight:700;color:#5FA874">Stage 1.</span> A photon strikes Photosystem II (P680). The reaction-center chlorophyll loses an electron to the primary acceptor. P680 — now positively charged — pulls a replacement electron from water in the oxygen-evolving complex. <b>Water is split: 2 H&#8322;O → 4 H&#8314; + 4 e&#8315; + O&#8322;.</b> O&#8322; is the source of the oxygen released by photosynthesis (NOT CO&#8322;).
+  </div>
+</div>
+`;
+
+const Z_STAGES = [
+  { range: [0, 20], name: 'Stage 1 · Photon strikes PSII (P680) — water split, O₂ released', o2: 1, atp: 0, nadph: 0, g3p: 0,
+    explain: '<span style="font-weight:700;color:#5FA874">Stage 1.</span> A photon strikes Photosystem II (P680). The reaction-center chlorophyll loses an electron to the primary acceptor. P680 — now positively charged — pulls a replacement electron from water in the oxygen-evolving complex. <b>Water is split: 2 H&#8322;O → 4 H&#8314; + 4 e&#8315; + O&#8322;.</b> O&#8322; is the source of the oxygen released by photosynthesis (NOT CO&#8322;).' },
+  { range: [20, 40], name: 'Stage 2 · Electrons flow through cytochrome b6f → ATP made', o2: 1, atp: 3, nadph: 0, g3p: 0,
+    explain: '<span style="font-weight:700;color:#c19a3e">Stage 2.</span> Excited electrons leave PSII and travel through the electron transport chain (plastoquinone → cytochrome b6f → plastocyanin). At b6f, energy from the electrons pumps H&#8314; from the stroma into the thylakoid lumen, building a proton gradient. <b>ATP synthase</b> (in the thylakoid membrane) lets H&#8314; flow back, making <b>ATP</b>. This is photophosphorylation.' },
+  { range: [40, 60], name: 'Stage 3 · Photon strikes PSI (P700) — electrons → NADP⁺ → NADPH', o2: 1, atp: 3, nadph: 2, g3p: 0,
+    explain: '<span style="font-weight:700;color:#5cabe6">Stage 3.</span> Electrons arrive at Photosystem I (P700) at a low energy. A second photon re-excites them, sending them to ferredoxin → NADP&#8314; reductase. NADP&#8314; + 2 e&#8315; + H&#8314; → <b>NADPH</b>. The Z-scheme is the energy-vs-step picture: PSII at low energy, jumps up via photon, drops through ETC making ATP, lands at PSI low energy, jumps up again via second photon, lands as NADPH at top.' },
+  { range: [60, 85], name: 'Stage 4 · Calvin cycle in stroma — CO₂ fixed by RuBisCO', o2: 1, atp: 9, nadph: 6, g3p: 1,
+    explain: '<span style="font-weight:700;color:#5FA874">Stage 4.</span> Light-independent reactions in the <b>stroma</b>. <b>RuBisCO</b> attaches CO&#8322; to the 5-carbon RuBP, immediately splitting into two 3-carbon 3-PGAs (carbon fixation). 3-PGA is reduced to G3P using <b>ATP and NADPH</b> (made by light reactions). The cycle runs <b>3 turns to make 1 G3P that exits</b> for glucose synthesis; the rest regenerate RuBP. Costs per G3P: 9 ATP + 6 NADPH.' },
+  { range: [85, 100], name: 'Stage 5 · 6 turns → 1 glucose ready for export', o2: 6, atp: 18, nadph: 12, g3p: 2,
+    explain: '<span style="font-weight:700;color:#1B3A2D">Stage 5.</span> 6 turns of the Calvin cycle make 12 G3P; 10 stay to regenerate RuBP, 2 combine to make 1 glucose (6C). Total cost: <b>18 ATP + 12 NADPH per glucose</b>. The light reactions produce these inputs; the Calvin cycle consumes them. Photosynthesis as a whole: <b>6 CO&#8322; + 6 H&#8322;O + light → C&#8326;H&#8321;&#8322;O&#8326; + 6 O&#8322;</b>.' },
+];
+
+function initZScheme() {
+  const body = document.getElementById('zSchemeBody');
+  if (!body) return;
+  body.innerHTML = Z_SCHEME_HTML;
+
+  function render(pct) {
+    const stage = Z_STAGES.find(s => pct >= s.range[0] && pct <= s.range[1]) || Z_STAGES[0];
+    const stageIdx = Z_STAGES.indexOf(stage);
+    const prev = stageIdx > 0 ? Z_STAGES[stageIdx - 1] : { o2: 0, atp: 0, nadph: 0, g3p: 0 };
+    const t = (pct - stage.range[0]) / (stage.range[1] - stage.range[0]);
+    const lerp = (a, b) => Math.round(a + (b - a) * Math.min(1, Math.max(0, t)));
+
+    document.getElementById('zsStageName').textContent = stage.name;
+    document.getElementById('zsExplain').innerHTML = stage.explain;
+    document.getElementById('zsO2').textContent = lerp(prev.o2, stage.o2);
+    document.getElementById('zsATP').textContent = lerp(prev.atp, stage.atp);
+    document.getElementById('zsNADPH').textContent = lerp(prev.nadph, stage.nadph);
+    document.getElementById('zsG3P').textContent = lerp(prev.g3p, stage.g3p);
+
+    // Z-scheme SVG: energy on Y axis, time/step on X axis
+    const svg = document.getElementById('zsSvg');
+    let inner = '';
+    inner += '<text x="400" y="22" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">Z-SCHEME — energy vs step</text>';
+
+    // Y-axis (energy)
+    inner += '<line x1="50" y1="50" x2="50" y2="270" stroke="#1B3A2D" stroke-width="1.5"/>';
+    inner += '<text x="42" y="55" text-anchor="end" font-size="9" fill="#1B3A2D">high E</text>';
+    inner += '<text x="42" y="270" text-anchor="end" font-size="9" fill="#1B3A2D">low E</text>';
+    inner += '<text x="20" y="160" text-anchor="middle" font-size="10" font-weight="700" fill="#1B3A2D" transform="rotate(-90, 20, 160)">Energy →</text>';
+
+    // PSII (low energy start, around x=120 y=240)
+    inner += '<rect x="80" y="225" width="80" height="40" fill="#5FA874" stroke="#1B3A2D" stroke-width="1.5" rx="6" opacity="0.85"/>';
+    inner += '<text x="120" y="240" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">PSII</text>';
+    inner += '<text x="120" y="255" text-anchor="middle" font-size="9" fill="#fff">P680</text>';
+
+    // Photon arrow up (active in stage 1)
+    if (pct >= 0 && pct < 20) {
+      inner += '<line x1="120" y1="225" x2="120" y2="100" stroke="#c19a3e" stroke-width="3" marker-end="url(#zs-arr)"/>';
+      inner += '<text x="130" y="160" font-size="10" font-weight="700" fill="#c19a3e">photon</text>';
+    } else if (pct >= 20) {
+      inner += '<line x1="120" y1="225" x2="120" y2="100" stroke="#c19a3e" stroke-width="2" stroke-dasharray="3,2" opacity="0.5"/>';
+    }
+
+    // Excited PSII* at top
+    inner += '<circle cx="120" cy="90" r="14" fill="#c19a3e" stroke="#1B3A2D" stroke-width="1.5"/>';
+    inner += '<text x="120" y="94" text-anchor="middle" font-size="9" font-weight="700" fill="#fff">e⁻</text>';
+    inner += '<text x="120" y="78" text-anchor="middle" font-size="8" font-weight="700" fill="#1B3A2D">PSII*</text>';
+
+    // Cytochrome b6f (mid-energy, drops between PSII* and PSI)
+    inner += '<rect x="290" y="160" width="80" height="40" fill="#a378a5" stroke="#1B3A2D" stroke-width="1.5" rx="6" opacity="' + (pct >= 20 ? '0.85' : '0.4') + '"/>';
+    inner += '<text x="330" y="175" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">b6f</text>';
+    inner += '<text x="330" y="190" text-anchor="middle" font-size="9" fill="#fff">cyt complex</text>';
+
+    // ATP synthase (active in stage 2)
+    if (pct >= 20) {
+      inner += '<rect x="290" y="220" width="80" height="40" fill="#C25B3F" stroke="#1B3A2D" stroke-width="1.5" rx="6"/>';
+      inner += '<text x="330" y="237" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">ATP synthase</text>';
+      inner += '<text x="330" y="252" text-anchor="middle" font-size="9" fill="#fff">→ ATP</text>';
+      // Arrow from b6f down to synthase (proton flow concept)
+      inner += '<line x1="330" y1="200" x2="330" y2="220" stroke="#C25B3F" stroke-width="1.5" marker-end="url(#zs-arr)"/>';
+      inner += '<text x="338" y="215" font-size="9" font-weight="700" fill="#C25B3F">H⁺ pump</text>';
+    }
+
+    // PSI (low energy after b6f drop, active in stage 3)
+    inner += '<rect x="450" y="225" width="80" height="40" fill="#5cabe6" stroke="#1B3A2D" stroke-width="1.5" rx="6" opacity="' + (pct >= 40 ? '0.85' : '0.4') + '"/>';
+    inner += '<text x="490" y="240" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">PSI</text>';
+    inner += '<text x="490" y="255" text-anchor="middle" font-size="9" fill="#fff">P700</text>';
+
+    // Photon up to PSI* (stage 3)
+    if (pct >= 40 && pct < 60) {
+      inner += '<line x1="490" y1="225" x2="490" y2="80" stroke="#c19a3e" stroke-width="3" marker-end="url(#zs-arr)"/>';
+      inner += '<text x="500" y="160" font-size="10" font-weight="700" fill="#c19a3e">photon</text>';
+    } else if (pct >= 60) {
+      inner += '<line x1="490" y1="225" x2="490" y2="80" stroke="#c19a3e" stroke-width="2" stroke-dasharray="3,2" opacity="0.5"/>';
+    }
+
+    // PSI* at top
+    inner += '<circle cx="490" cy="70" r="14" fill="#5cabe6" stroke="#1B3A2D" stroke-width="1.5"/>';
+    inner += '<text x="490" y="74" text-anchor="middle" font-size="9" font-weight="700" fill="#fff">e⁻</text>';
+    inner += '<text x="490" y="58" text-anchor="middle" font-size="8" font-weight="700" fill="#1B3A2D">PSI*</text>';
+
+    // NADPH at top right (stage 3+)
+    if (pct >= 40) {
+      inner += '<rect x="600" y="55" width="80" height="40" fill="#5cabe6" stroke="#1B3A2D" stroke-width="1.5" rx="6"/>';
+      inner += '<text x="640" y="72" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">NADPH</text>';
+      inner += '<text x="640" y="87" text-anchor="middle" font-size="9" fill="#fff">(reducing power)</text>';
+      inner += '<line x1="510" y1="70" x2="595" y2="75" stroke="#1B3A2D" stroke-width="1.5" marker-end="url(#zs-arr)"/>';
+      inner += '<text x="555" y="62" text-anchor="middle" font-size="9" font-weight="700" fill="#1B3A2D">e⁻</text>';
+    }
+
+    // Electron flow arrows from PSII* down to b6f (stage 2+)
+    if (pct >= 20) {
+      inner += '<line x1="135" y1="100" x2="285" y2="170" stroke="#1B3A2D" stroke-width="1.8" marker-end="url(#zs-arr)"/>';
+      inner += '<text x="195" y="125" font-size="10" font-weight="700" fill="#1B3A2D">e⁻</text>';
+    }
+
+    // Electron flow from b6f to PSI (stage 2+)
+    if (pct >= 20) {
+      inner += '<line x1="375" y1="200" x2="445" y2="240" stroke="#1B3A2D" stroke-width="1.5" marker-end="url(#zs-arr)"/>';
+    }
+
+    // H2O entering PSII (stage 1+)
+    if (pct >= 5) {
+      inner += '<text x="60" y="278" font-size="10" font-weight="700" fill="#5cabe6">H₂O →</text>';
+      inner += '<line x1="80" y1="276" x2="115" y2="265" stroke="#5cabe6" stroke-width="1.5" marker-end="url(#zs-arr)"/>';
+      inner += '<text x="170" y="290" font-size="10" font-weight="700" fill="#c19a3e">→ O₂ ↑</text>';
+    }
+
+    // Calvin cycle (active stage 4+, right side bottom)
+    if (pct >= 60) {
+      const calvinAlpha = Math.min(1, (pct - 60) / 25);
+      inner += `<g opacity="${calvinAlpha}">`;
+      inner += '<circle cx="700" cy="200" r="42" fill="rgba(95,168,116,0.18)" stroke="#5FA874" stroke-width="2" stroke-dasharray="4,2"/>';
+      inner += '<text x="700" y="178" text-anchor="middle" font-size="10" font-weight="700" fill="#5FA874">CALVIN</text>';
+      inner += '<text x="700" y="192" text-anchor="middle" font-size="10" font-weight="700" fill="#5FA874">CYCLE</text>';
+      inner += '<text x="700" y="208" text-anchor="middle" font-size="9" fill="#1B3A2D">stroma</text>';
+      inner += '<text x="700" y="222" text-anchor="middle" font-size="9" fill="#1B3A2D">RuBisCO</text>';
+
+      // Inputs to Calvin
+      inner += '<line x1="688" y1="98" x2="688" y2="160" stroke="#5cabe6" stroke-width="1.2" marker-end="url(#zs-arr)" opacity="0.7"/>';
+      inner += '<text x="660" y="135" font-size="9" font-weight="700" fill="#5cabe6">NADPH</text>';
+
+      inner += '<line x1="370" y1="240" x2="660" y2="220" stroke="#C25B3F" stroke-width="1.2" stroke-dasharray="3,3" marker-end="url(#zs-arr)" opacity="0.6"/>';
+      inner += '<text x="500" y="216" font-size="9" font-weight="700" fill="#C25B3F">ATP</text>';
+
+      // CO2 in
+      inner += '<text x="745" y="200" font-size="10" font-weight="700" fill="#1B3A2D">← CO₂</text>';
+
+      // G3P out (stage 5)
+      if (pct >= 75) {
+        inner += '<text x="745" y="245" font-size="10" font-weight="700" fill="#5FA874">G3P →</text>';
+        inner += '<line x1="722" y1="240" x2="742" y2="240" stroke="#5FA874" stroke-width="1.5" marker-end="url(#zs-arr)"/>';
+      }
+      inner += '</g>';
+    } else {
+      inner += '<text x="700" y="200" text-anchor="middle" font-size="10" font-style="italic" fill="#888">Calvin cycle starts at stage 4</text>';
+    }
+
+    // Z-scheme path indicator (subtle dashed line showing the energy "Z" shape)
+    inner += '<path d="M 120 240 L 120 100 L 330 180 L 490 240 L 490 80 L 640 75" stroke="#1B3A2D" stroke-width="1" fill="none" stroke-dasharray="2,4" opacity="0.3"/>';
+
+    inner += `<defs><marker id="zs-arr" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M 0 0 L 6 3 L 0 6 z" fill="#1B3A2D"/></marker></defs>`;
+
+    svg.innerHTML = inner;
+  }
+
+  document.getElementById('zsStage').addEventListener('input', e => render(+e.target.value));
+  render(0);
+}
+
+/* ---- REPLICATION FORK SCRUBBER ---- */
+const REP_FORK_HTML = `
+<div style="background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px;padding:18px">
+  <div style="text-align:center;margin-bottom:10px">
+    <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#1B3A2D">Replication fork — 7-step build</div>
+    <div style="font-size:12px;color:#1B3A2D;margin-top:4px;font-style:italic">Drag the slider. Each enzyme appears at its canonical spot, daughter strands grow, primers convert to DNA, ligase seals nicks.</div>
+  </div>
+
+  <!-- Slider -->
+  <div style="background:#fff;border:1.5px solid #1B3A2D;border-radius:10px;padding:14px;margin-bottom:14px">
+    <div style="display:grid;grid-template-columns:repeat(7,1fr);font-size:9.5px;font-weight:700;color:#1B3A2D;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.04em;text-align:center;gap:2px">
+      <span>1 Helicase</span>
+      <span>2 SSB</span>
+      <span>3 Topo</span>
+      <span>4 Primase</span>
+      <span>5 Pol III</span>
+      <span>6 Pol I</span>
+      <span>7 Ligase</span>
+    </div>
+    <input id="repStage" type="range" min="0" max="100" step="1" value="0" style="width:100%;accent-color:#C25B3F">
+    <div style="text-align:center;margin-top:6px;font-family:'JetBrains Mono',monospace;font-size:13px;color:#1B3A2D">
+      <span id="repStageName" style="font-weight:700;color:#C25B3F">Stage 1 · Helicase opens the duplex</span>
+    </div>
+  </div>
+
+  <!-- Fork SVG -->
+  <svg id="repForkSvg" viewBox="0 0 800 400" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:#fff;border:1.5px solid #1B3A2D;border-radius:8px"></svg>
+
+  <!-- Stage explanation + enzyme info -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px">
+    <div style="background:#fff;border-left:4px solid #C25B3F;border:1.5px solid #1B3A2D;border-radius:8px;padding:14px">
+      <div style="font-size:11px;color:#C25B3F;font-weight:700;text-transform:uppercase;letter-spacing:0.08em">What's happening</div>
+      <div id="repExplain" style="font-size:13px;line-height:1.5;color:#1B3A2D;margin-top:6px"></div>
+    </div>
+    <div style="background:#fff;border:1.5px solid #1B3A2D;border-radius:8px;padding:14px">
+      <div style="font-size:11px;color:#1B3A2D;font-weight:700;text-transform:uppercase;letter-spacing:0.08em">Active enzyme</div>
+      <div id="repEnzymeName" style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#1B3A2D;margin:4px 0">—</div>
+      <div id="repEnzymeRole" style="font-size:12px;line-height:1.5;color:#1B3A2D;font-style:italic"></div>
+      <div style="margin-top:8px;font-size:11px;color:#1B3A2D"><span style="font-weight:700;color:#C25B3F">DAT trap:</span> <span id="repTrap"></span></div>
+    </div>
+  </div>
+</div>
+`;
+
+const REP_FORK_STAGES = [
+  {
+    range: [0, 14], label: 'Stage 1 · Helicase opens the duplex', enzyme: 'Helicase (DnaB in E. coli)', enzymeKey: 'helicase',
+    role: 'Breaks H-bonds between complementary base pairs, unwinding the parental duplex into two single strands.',
+    explain: '<b>Helicase lands at the origin and walks 5\'→3\' on one strand</b>, prying the duplex open like a zipper. ATP-driven motor. The unwinding creates the fork shape.',
+    trap: 'Helicase BREAKS the H-bonds between bases — it does not cut the sugar-phosphate backbone. That\'s topoisomerase\'s job (different bond).'
+  },
+  {
+    range: [14, 28], label: 'Stage 2 · SSB stabilizes single-stranded DNA', enzyme: 'Single-strand binding proteins (SSB)', enzymeKey: 'ssb',
+    role: 'Coats the unwound single strands to prevent re-annealing and protect from nucleases.',
+    explain: '<b>SSB proteins bind cooperatively to ssDNA</b> and keep it stretched out so polymerases can access it. Without SSB, the strands snap back together.',
+    trap: 'SSB does NOT have catalytic activity — it is a structural/binding protein. It does not cut, ligate, or polymerize.'
+  },
+  {
+    range: [28, 42], label: 'Stage 3 · Topoisomerase relieves supercoils', enzyme: 'Topoisomerase (gyrase in prokaryotes)', enzymeKey: 'topo',
+    role: 'Cuts the DNA backbone ahead of the fork to release torsional stress, then re-seals.',
+    explain: '<b>Helicase unwinding generates positive supercoils ahead of the fork</b>. Topoisomerase cuts one or both strands (Type I cuts one, Type II cuts both), lets them rotate, and re-seals — relieving torsion.',
+    trap: 'Topo works <b>ahead of</b> the fork (downstream), not at the fork itself. Helicase is at the fork; topo is in the unbroken duplex beyond it.'
+  },
+  {
+    range: [42, 56], label: 'Stage 4 · Primase lays an RNA primer', enzyme: 'Primase (DnaG)', enzymeKey: 'primase',
+    role: 'Synthesizes a short RNA primer (~10 nt) on each strand to give DNA pol III a 3\'-OH to extend from.',
+    explain: '<b>DNA pol III cannot start from scratch</b> — it can only add nucleotides to an existing 3\'-OH. Primase (an RNA polymerase) makes a short RNA primer that pol III then extends. Leading strand needs only ONE primer; lagging needs MANY (one per Okazaki fragment).',
+    trap: 'Primer is <b>RNA, not DNA</b> — that\'s why pol I has to come along later and replace it. The primer ribose has a 2\'-OH (RNA), not 2\'-H (DNA).'
+  },
+  {
+    range: [56, 70], label: 'Stage 5 · DNA pol III extends both strands', enzyme: 'DNA polymerase III', enzymeKey: 'pol3',
+    role: 'Adds nucleotides 5\'→3\' on both daughter strands. Continuous on leading; Okazaki fragments on lagging.',
+    explain: '<b>Pol III is the workhorse</b> — high processivity, high speed (~1000 nt/s in E. coli). On the <b>leading strand</b> it synthesizes continuously toward the fork. On the <b>lagging strand</b> it synthesizes in short Okazaki fragments AWAY from the fork (5\'→3\' constraint forces this).',
+    trap: '5\'→3\' synthesis is the constraint that explains why the lagging strand exists. Pol III cannot add to a 5\' end — it must extend from a 3\'-OH.'
+  },
+  {
+    range: [70, 85], label: 'Stage 6 · DNA pol I replaces RNA primers', enzyme: 'DNA polymerase I', enzymeKey: 'pol1',
+    role: 'Removes RNA primers via 5\'→3\' exonuclease activity and fills the gap with DNA.',
+    explain: '<b>Pol I has both polymerase AND exonuclease activity</b>. It excises the RNA primer one nucleotide at a time (5\'→3\' exonuclease) and simultaneously fills in DNA behind itself. The result: continuous DNA except for tiny nicks where Pol I disengaged.',
+    trap: 'Pol I is mostly a repair enzyme — most synthesis is Pol III. Pol I\'s job here is specifically primer replacement, not new synthesis.'
+  },
+  {
+    range: [85, 100], label: 'Stage 7 · DNA ligase seals the nicks', enzyme: 'DNA ligase', enzymeKey: 'ligase',
+    role: 'Forms the final phosphodiester bond between adjacent Okazaki fragments.',
+    explain: '<b>Ligase joins the 3\'-OH of one fragment to the 5\'-phosphate of the next</b> — using ATP (eukaryotes) or NAD+ (prokaryotes) as the energy source. The result: one continuous lagging-strand daughter molecule.',
+    trap: 'Ligase forms the bond between the SUGAR (3\'-OH) and PHOSPHATE (5\'-PO4) — not between bases. Bases pair via H-bonds, which need no enzyme.'
+  },
+];
+
+const REP_ENZYME_COLORS = {
+  helicase: '#C25B3F', ssb: '#6A8AA8', topo: '#a378a5',
+  primase: '#c19a3e', pol3: '#1B3A2D', pol1: '#5FA874', ligase: '#b91c1c',
+};
+const REP_ENZYME_LETTERS = {
+  helicase: 'H', ssb: 'S', topo: 'T', primase: 'P', pol3: 'III', pol1: 'I', ligase: 'L',
+};
+// Canonical positions for each enzyme on the fork (cx, cy)
+const REP_ENZYME_POS = {
+  helicase: { x: 430, y: 200 },                          // at the fork point
+  ssb:      [{ x: 350, y: 130 }, { x: 280, y: 145 }],    // on top single strand
+  topo:     { x: 600, y: 165 },                          // ahead of fork on parental duplex (top)
+  primase:  { x: 220, y: 280 },                          // on lagging strand
+  pol3:     [{ x: 320, y: 145 }, { x: 175, y: 280 }],    // leading + lagging
+  pol1:     { x: 130, y: 295 },                          // upstream lagging
+  ligase:   { x: 80, y: 305 },                            // far upstream lagging
+};
+
+function initReplicationForkScrubber() {
+  const body = document.getElementById('forkScrubberBody');
+  if (!body) return;
+  body.innerHTML = REP_FORK_HTML;
+
+  function drawEnzyme(key, x, y, opacity) {
+    const color = REP_ENZYME_COLORS[key];
+    const letter = REP_ENZYME_LETTERS[key];
+    return `
+      <g opacity="${opacity}">
+        <circle cx="${x}" cy="${y}" r="16" fill="${color}" stroke="#1B3A2D" stroke-width="1.8" filter="drop-shadow(0 2px 3px rgba(0,0,0,0.15))"/>
+        <text x="${x}" y="${y + 4}" text-anchor="middle" font-size="11" font-weight="700" fill="#fff" font-family="JetBrains Mono, monospace">${letter}</text>
+      </g>`;
+  }
+
+  function render(pct) {
+    const stage = REP_FORK_STAGES.find(s => pct >= s.range[0] && pct <= s.range[1]) || REP_FORK_STAGES[0];
+    const stageIdx = REP_FORK_STAGES.indexOf(stage);
+
+    // SVG composition: parental duplex (right), fork point (center), daughter strands (left)
+    const svg = document.getElementById('repForkSvg');
+    let s = '';
+    s += '<defs>';
+    s += '<linearGradient id="repsv-paper" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#fbf6e9"/><stop offset="1" stop-color="#f4ecd8"/></linearGradient>';
+    s += '</defs>';
+    s += '<rect width="800" height="400" fill="url(#repsv-paper)"/>';
+    s += '<text x="700" y="36" text-anchor="middle" font-size="11" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">PARENTAL DUPLEX →</text>';
+    s += '<text x="100" y="36" text-anchor="middle" font-size="11" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">← FORK MOVES LEFT</text>';
+
+    // Parental duplex (right of fork, helical sine waves)
+    s += '<g opacity="0.85">';
+    // Top strand 5'→3'
+    s += '<path d="M 770 175 Q 750 160 730 175 Q 710 190 690 175 Q 670 160 650 175 Q 630 190 610 175 Q 590 160 570 175 Q 550 190 530 175 Q 510 160 490 175 Q 470 190 450 175 Q 440 175 430 200" fill="none" stroke="#1B3A2D" stroke-width="3.2" stroke-linecap="round"/>';
+    // Bottom strand 3'→5'
+    s += '<path d="M 770 225 Q 750 240 730 225 Q 710 210 690 225 Q 670 240 650 225 Q 630 210 610 225 Q 590 240 570 225 Q 550 210 530 225 Q 510 240 490 225 Q 470 210 450 225 Q 440 225 430 200" fill="none" stroke="#2A5240" stroke-width="3.2" stroke-linecap="round"/>';
+    s += '</g>';
+    // Strand labels
+    s += '<text x="775" y="170" font-size="11" font-weight="700" fill="#8C7235">5\'</text>';
+    s += '<text x="775" y="232" font-size="11" font-weight="700" fill="#8C7235">3\'</text>';
+
+    // Base pairs in parental duplex
+    s += '<g opacity="0.4" stroke="#1B3A2D" stroke-width="1">';
+    [490, 530, 570, 610, 650, 690, 730].forEach(x => { s += `<line x1="${x}" y1="178" x2="${x}" y2="222"/>`; });
+    s += '</g>';
+
+    // Single-strand templates (left of fork) — appear once helicase has opened
+    const helOpen = pct >= 5;
+    if (helOpen) {
+      // Upper template strand (was 5' parental, now exposed as template for leading)
+      s += '<path d="M 430 200 Q 350 175 250 145 T 60 110" fill="none" stroke="#1B3A2D" stroke-width="2.5" stroke-dasharray="2,3" opacity="0.7"/>';
+      s += '<text x="50" y="105" text-anchor="end" font-size="10" font-weight="700" fill="#1B3A2D">3\'</text>';
+      // Lower template strand
+      s += '<path d="M 430 200 Q 350 225 250 280 T 60 340" fill="none" stroke="#2A5240" stroke-width="2.5" stroke-dasharray="2,3" opacity="0.7"/>';
+      s += '<text x="50" y="350" text-anchor="end" font-size="10" font-weight="700" fill="#1B3A2D">5\'</text>';
+    }
+
+    // Daughter strands (appear at stage 5 / pct >= 56)
+    const polActive = pct >= 56;
+    if (polActive) {
+      const polProgress = Math.min(1, (pct - 56) / 14);
+      // Leading daughter: continuous, grows fork-ward (right to left we draw, but visually appears left to right)
+      const leadingEnd = 60 + (430 - 60) * (1 - polProgress);
+      s += `<path d="M 60 130 Q 250 165 350 195 T ${430} 215" fill="none" stroke="#C9A84C" stroke-width="2.5" stroke-linecap="round"/>`;
+      s += '<text x="50" y="135" text-anchor="end" font-size="10" font-weight="700" fill="#8C7235">5\' new</text>';
+
+      // Lagging daughter: Okazaki fragments
+      // Stage 5: fragments with RNA primers (red)
+      // Stage 6: pol I replaces primers (red turns gold)
+      // Stage 7: ligase seals nicks (gold becomes continuous)
+      const primersStillRna = pct < 70;
+      const nicksSealed = pct >= 90;
+
+      if (nicksSealed) {
+        // Continuous lagging strand
+        s += '<path d="M 65 348 Q 200 320 400 270" fill="none" stroke="#C9A84C" stroke-width="2.5" stroke-linecap="round"/>';
+      } else {
+        // Fragments
+        s += '<path d="M 200 318 Q 280 295 400 268" fill="none" stroke="#C9A84C" stroke-width="2.5" stroke-linecap="round"/>';
+        s += '<path d="M 100 348 Q 140 332 195 320" fill="none" stroke="#C9A84C" stroke-width="2.5" stroke-linecap="round"/>';
+        // RNA primers (red if before stage 6, gold if after pol1 active)
+        const primerColor = primersStillRna ? '#C25B3F' : '#C9A84C';
+        s += `<path d="M 165 326 Q 180 322 200 318" fill="none" stroke="${primerColor}" stroke-width="3.5" stroke-linecap="round"/>`;
+        s += `<path d="M 65 350 Q 80 350 100 348" fill="none" stroke="${primerColor}" stroke-width="3.5" stroke-linecap="round"/>`;
+      }
+      s += '<text x="50" y="358" text-anchor="end" font-size="10" font-weight="700" fill="#8C7235">3\' new</text>';
+
+      if (primersStillRna) {
+        s += '<text x="160" y="338" font-size="9" fill="#C25B3F" font-style="italic">RNA</text>';
+      }
+    }
+
+    // Fork point indicator
+    s += '<circle cx="430" cy="200" r="3" fill="#1B3A2D"/>';
+
+    // Enzymes — fade in as their stage activates, stay visible as later stages run
+    const enzymeOrder = ['helicase', 'ssb', 'topo', 'primase', 'pol3', 'pol1', 'ligase'];
+    enzymeOrder.forEach((key, i) => {
+      // Each enzyme appears at its stage (0..6); pulse during its active range; remain at half opacity after
+      const myStart = i * (100 / 7);  // ≈ 14.3
+      const myEnd = (i + 1) * (100 / 7);
+      let opacity = 0;
+      let isCurrent = false;
+      if (pct >= myStart - 1) {
+        if (pct < myEnd) {
+          // Currently active
+          isCurrent = true;
+          opacity = 1;
+        } else {
+          // Past — fade to 0.45
+          opacity = 0.45;
+        }
+      }
+      if (opacity === 0) return;
+      const pos = REP_ENZYME_POS[key];
+      if (Array.isArray(pos)) {
+        pos.forEach(p => { s += drawEnzyme(key, p.x, p.y, opacity); });
+      } else {
+        s += drawEnzyme(key, pos.x, pos.y, opacity);
+      }
+      // Glow ring on current
+      if (isCurrent) {
+        const positions = Array.isArray(pos) ? pos : [pos];
+        positions.forEach(p => {
+          s += `<circle cx="${p.x}" cy="${p.y}" r="22" fill="none" stroke="${REP_ENZYME_COLORS[key]}" stroke-width="2" stroke-dasharray="4,3" opacity="0.7"><animate attributeName="r" values="22;26;22" dur="1.4s" repeatCount="indefinite"/></circle>`;
+        });
+      }
+    });
+
+    // Legend
+    s += '<g transform="translate(20, 372)">';
+    s += '<rect x="0" y="0" width="14" height="3" fill="#1B3A2D"/><text x="20" y="6" font-size="10" fill="#1B3A2D" font-weight="700">parental DNA</text>';
+    s += '<rect x="120" y="0" width="14" height="3" fill="#C9A84C"/><text x="140" y="6" font-size="10" fill="#1B3A2D" font-weight="700">daughter DNA</text>';
+    s += '<rect x="240" y="0" width="14" height="3" fill="#C25B3F"/><text x="260" y="6" font-size="10" fill="#1B3A2D" font-weight="700">RNA primer</text>';
+    s += '<text x="700" y="6" text-anchor="end" font-size="10" font-style="italic" fill="#1B3A2D">' + (helOpen ? 'fork open · template exposed' : 'duplex intact — slide to start') + '</text>';
+    s += '</g>';
+
+    svg.innerHTML = s;
+
+    // Update text panels
+    document.getElementById('repStageName').textContent = stage.label;
+    document.getElementById('repExplain').innerHTML = stage.explain;
+    document.getElementById('repEnzymeName').textContent = stage.enzyme;
+    document.getElementById('repEnzymeRole').textContent = stage.role;
+    document.getElementById('repTrap').innerHTML = stage.trap;
+  }
+
+  document.getElementById('repStage').addEventListener('input', e => render(+e.target.value));
+  render(0);
+}
+
+/* ---- TRANSCRIPTION BUBBLE SCRUBBER ---- */
+const TX_SCRUBBER_HTML = `
+<div style="background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px;padding:18px">
+  <div style="text-align:center;margin-bottom:10px">
+    <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#1B3A2D">Transcription bubble — 5-step build</div>
+    <div style="font-size:12px;color:#1B3A2D;margin-top:4px;font-style:italic">Slide through initiation → elongation → termination. mRNA grows live as the bubble travels.</div>
+  </div>
+
+  <!-- Slider -->
+  <div style="background:#fff;border:1.5px solid #1B3A2D;border-radius:10px;padding:14px;margin-bottom:14px">
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);font-size:10px;font-weight:700;color:#1B3A2D;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.05em;text-align:center;gap:2px">
+      <span>1 σ binds</span>
+      <span>2 RNA pol joins</span>
+      <span>3 Open complex</span>
+      <span>4 Elongation</span>
+      <span>5 Termination</span>
+    </div>
+    <input id="txStage" type="range" min="0" max="100" step="1" value="0" style="width:100%;accent-color:#C25B3F">
+    <div style="text-align:center;margin-top:6px;font-family:'JetBrains Mono',monospace;font-size:13px;color:#1B3A2D">
+      <span id="txStageName" style="font-weight:700;color:#C25B3F">Stage 1 · Sigma factor recognizes promoter</span>
+    </div>
+  </div>
+
+  <!-- Bubble SVG -->
+  <svg id="txBubbleSvg" viewBox="0 0 800 360" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:#fff;border:1.5px solid #1B3A2D;border-radius:8px"></svg>
+
+  <!-- Stage explanation + player info -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px">
+    <div style="background:#fff;border-left:4px solid #C25B3F;border:1.5px solid #1B3A2D;border-radius:8px;padding:14px">
+      <div style="font-size:11px;color:#C25B3F;font-weight:700;text-transform:uppercase;letter-spacing:0.08em">What's happening</div>
+      <div id="txExplain" style="font-size:13px;line-height:1.5;color:#1B3A2D;margin-top:6px"></div>
+    </div>
+    <div style="background:#fff;border:1.5px solid #1B3A2D;border-radius:8px;padding:14px">
+      <div style="font-size:11px;color:#1B3A2D;font-weight:700;text-transform:uppercase;letter-spacing:0.08em">Active player</div>
+      <div id="txPlayerName" style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#1B3A2D;margin:4px 0">—</div>
+      <div id="txPlayerRole" style="font-size:12px;line-height:1.5;color:#1B3A2D;font-style:italic"></div>
+      <div style="margin-top:8px;font-size:11px;color:#1B3A2D"><span style="font-weight:700;color:#C25B3F">DAT trap:</span> <span id="txTrap"></span></div>
+    </div>
+  </div>
+</div>
+`;
+
+const TX_BUBBLE_STAGES = [
+  {
+    range: [0, 20], label: 'Stage 1 · Sigma factor recognizes the promoter', player: 'Sigma factor (σ)', playerKey: 'sigma',
+    role: 'Recognizes the -10 (TATA) and -35 promoter sequences upstream of the gene. Without σ, RNA polymerase cannot find where to start.',
+    explain: '<b>Sigma is the search head.</b> The bacterial RNA polymerase core enzyme cannot specifically recognize promoters on its own. Sigma factor binds to the core to form the holoenzyme, then scans the DNA until it finds a promoter\'s -10 and -35 boxes.',
+    trap: 'Sigma binds the PROMOTER, not the gene itself. After transcription begins, sigma DISSOCIATES — it is not part of the elongation complex.'
+  },
+  {
+    range: [20, 40], label: 'Stage 2 · RNA polymerase joins → holoenzyme', player: 'RNA polymerase + σ (holoenzyme)', playerKey: 'rnap',
+    role: 'The holoenzyme (core RNA pol + σ) binds the promoter via σ. Closed complex forms with the duplex still intact.',
+    explain: '<b>The holoenzyme is sigma + core RNA polymerase.</b> It binds the promoter without yet melting the DNA. This "closed complex" is the recognition step — DNA is still double-stranded but the polymerase is now positioned to start.',
+    trap: 'In <b>eukaryotes</b>, this step requires <b>general transcription factors (TFIID, TFIIA-H)</b> instead of σ. Sigma is bacterial-only.'
+  },
+  {
+    range: [40, 60], label: 'Stage 3 · Open complex — DNA bubble forms', player: 'Open complex (~14 bp bubble)', playerKey: 'open',
+    role: 'RNA polymerase melts a ~14-bp segment of DNA, exposing the template strand for base-pairing.',
+    explain: '<b>The polymerase pries the duplex open into a transcription bubble.</b> Roughly 14 bp of DNA become single-stranded. The template strand (3\'→5\' direction) is now exposed for incoming NTPs to base-pair against.',
+    trap: 'Only one strand — the <b>template (antisense)</b> — is read. The other (<b>coding/sense</b>) strand has the same sequence as mRNA but with T instead of U.'
+  },
+  {
+    range: [60, 85], label: 'Stage 4 · Elongation — mRNA synthesized 5\'→3\'', player: 'RNA polymerase (core, in elongation)', playerKey: 'elong',
+    role: 'Reads template 3\'→5\'. Adds NTPs to the growing mRNA 5\'→3\'. Sigma has dissociated; the bubble travels with the polymerase.',
+    explain: '<b>The bubble travels along the gene.</b> Behind the bubble, the duplex re-anneals; in front, fresh DNA opens. mRNA emerges out the back. After ~10 nt, sigma dissociates and the polymerase enters productive elongation.',
+    trap: 'Polymerase reads <b>3\'→5\'</b> on the template, but synthesizes <b>5\'→3\'</b> on the mRNA. Same constraint as DNA pol — the new chain always grows 5\'→3\'.'
+  },
+  {
+    range: [85, 100], label: 'Stage 5 · Termination — mRNA released', player: 'Terminator (stem-loop or rho)', playerKey: 'term',
+    role: 'A terminator sequence forms a hairpin (intrinsic) or recruits rho protein, which pulls mRNA off the polymerase.',
+    explain: '<b>Two termination mechanisms in prokaryotes:</b> (1) Intrinsic — the mRNA folds into a GC-rich stem-loop followed by a poly-U stretch; the polymerase stalls and falls off. (2) Rho-dependent — rho protein binds an unstructured site on the new mRNA and walks toward the polymerase, displacing it.',
+    trap: 'In <b>eukaryotes</b>, termination involves <b>cleavage at AAUAAA</b> followed by polyadenylation — not stem-loops or rho.'
+  },
+];
+
+const TX_PLAYER_COLORS = {
+  sigma: '#C25B3F', rnap: '#1B3A2D', open: '#6A8AA8', elong: '#c19a3e', term: '#a378a5',
+};
+const TX_PLAYER_LETTERS = { sigma: 'σ', rnap: 'R', open: 'O', elong: 'E', term: 'T' };
+
+function initTranscriptionScrubber() {
+  const body = document.getElementById('txScrubberBody');
+  if (!body) return;
+  body.innerHTML = TX_SCRUBBER_HTML;
+
+  function drawPlayer(key, x, y, opacity) {
+    const color = TX_PLAYER_COLORS[key];
+    const letter = TX_PLAYER_LETTERS[key];
+    return `
+      <g opacity="${opacity}">
+        <circle cx="${x}" cy="${y}" r="16" fill="${color}" stroke="#1B3A2D" stroke-width="1.8" filter="drop-shadow(0 2px 3px rgba(0,0,0,0.15))"/>
+        <text x="${x}" y="${y + 5}" text-anchor="middle" font-size="14" font-weight="700" fill="#fff" font-family="JetBrains Mono, monospace">${letter}</text>
+      </g>`;
+  }
+
+  function render(pct) {
+    const stage = TX_BUBBLE_STAGES.find(s => pct >= s.range[0] && pct <= s.range[1]) || TX_BUBBLE_STAGES[0];
+    const stageIdx = TX_BUBBLE_STAGES.indexOf(stage);
+
+    const svg = document.getElementById('txBubbleSvg');
+    let s = '';
+    s += '<defs><linearGradient id="txsv-paper" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#fbf6e9"/><stop offset="1" stop-color="#f4ecd8"/></linearGradient></defs>';
+    s += '<rect width="800" height="360" fill="url(#txsv-paper)"/>';
+
+    // Position of the polymerase along the gene (advances during elongation)
+    // x range: 250 (promoter) to 700 (terminator)
+    let polX = 250;
+    if (pct >= 60) {
+      // Elongation: polymerase moves from 250 → ~620 across stage 4
+      const elongProgress = Math.min(1, (pct - 60) / 25);
+      polX = 250 + (620 - 250) * elongProgress;
+    } else if (pct >= 85) {
+      polX = 700;  // at terminator
+    }
+
+    // Title labels
+    s += '<text x="400" y="32" text-anchor="middle" font-size="11" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">RNA POLYMERASE READS TEMPLATE 3\'→5\' · BUILDS mRNA 5\'→3\'</text>';
+
+    // DNA strands — the gene
+    // Top strand (5'→3' coding/sense, dark green)
+    // Bottom strand (3'→5' template/antisense, lighter green)
+    const yTop = 175;
+    const yBot = 215;
+
+    // Promoter region (x = 80-220) shaded
+    s += '<rect x="80" y="160" width="140" height="70" fill="rgba(194,91,63,0.10)" stroke="rgba(194,91,63,0.5)" stroke-width="1" stroke-dasharray="3,3"/>';
+    s += '<text x="150" y="155" text-anchor="middle" font-size="10" font-weight="700" fill="#C25B3F" letter-spacing="0.06em">PROMOTER (-35, -10)</text>';
+
+    // Terminator region (x = 660-780)
+    s += '<rect x="660" y="160" width="120" height="70" fill="rgba(163,120,165,0.10)" stroke="rgba(163,120,165,0.5)" stroke-width="1" stroke-dasharray="3,3"/>';
+    s += '<text x="720" y="155" text-anchor="middle" font-size="10" font-weight="700" fill="#a378a5" letter-spacing="0.06em">TERMINATOR</text>';
+
+    // Coding strand (top)
+    // Show as wavy line; bubble region open
+    const bubbleOpen = pct >= 40;
+    const bubbleStart = polX - 22, bubbleEnd = polX + 22;
+
+    if (bubbleOpen) {
+      // Top strand split around bubble
+      s += `<path d="M 30 ${yTop} Q 100 ${yTop} ${bubbleStart} ${yTop}" fill="none" stroke="#1B3A2D" stroke-width="2.6"/>`;
+      s += `<path d="M ${bubbleEnd} ${yTop} Q 700 ${yTop} 770 ${yTop}" fill="none" stroke="#1B3A2D" stroke-width="2.6"/>`;
+      // Top strand opens upward inside bubble
+      s += `<path d="M ${bubbleStart} ${yTop} Q ${polX} ${yTop - 18} ${bubbleEnd} ${yTop}" fill="none" stroke="#1B3A2D" stroke-width="2.6" stroke-dasharray="2,2" opacity="0.7"/>`;
+      // Bottom strand (template) opens downward inside bubble — exposed for reading
+      s += `<path d="M 30 ${yBot} Q 100 ${yBot} ${bubbleStart} ${yBot}" fill="none" stroke="#2A5240" stroke-width="2.6"/>`;
+      s += `<path d="M ${bubbleEnd} ${yBot} Q 700 ${yBot} 770 ${yBot}" fill="none" stroke="#2A5240" stroke-width="2.6"/>`;
+      s += `<path d="M ${bubbleStart} ${yBot} Q ${polX} ${yBot + 18} ${bubbleEnd} ${yBot}" fill="none" stroke="#2A5240" stroke-width="3" opacity="1"/>`;
+      // Highlight the exposed template strand
+      s += `<text x="${polX}" y="${yBot + 30}" text-anchor="middle" font-size="9" fill="#1B3A2D" font-style="italic">template strand (read 3\'→5\')</text>`;
+    } else {
+      // Closed duplex — base pairs visible
+      s += `<path d="M 30 ${yTop} L 770 ${yTop}" stroke="#1B3A2D" stroke-width="2.6"/>`;
+      s += `<path d="M 30 ${yBot} L 770 ${yBot}" stroke="#2A5240" stroke-width="2.6"/>`;
+      // Base pair tick marks
+      s += '<g opacity="0.4" stroke="#1B3A2D" stroke-width="1">';
+      for (let x = 60; x <= 760; x += 20) { s += `<line x1="${x}" y1="${yTop + 3}" x2="${x}" y2="${yBot - 3}"/>`; }
+      s += '</g>';
+    }
+
+    // Strand labels at the ends
+    s += `<text x="20" y="${yTop + 4}" text-anchor="end" font-size="10" font-weight="700" fill="#8C7235">5\'</text>`;
+    s += `<text x="780" y="${yTop + 4}" font-size="10" font-weight="700" fill="#8C7235">3\'</text>`;
+    s += `<text x="20" y="${yBot + 4}" text-anchor="end" font-size="10" font-weight="700" fill="#8C7235">3\'</text>`;
+    s += `<text x="780" y="${yBot + 4}" font-size="10" font-weight="700" fill="#8C7235">5\'</text>`;
+    s += `<text x="775" y="${yTop - 8}" text-anchor="end" font-size="9" fill="#1B3A2D" font-style="italic">coding (sense) strand — same as mRNA but with T not U</text>`;
+
+    // mRNA strand (grows during elongation)
+    if (pct >= 60) {
+      const elongProgress = Math.min(1, (pct - 60) / 25);
+      // mRNA starts at promoter (x=250) and ends at current polX
+      // Drawn rising up out of the polymerase
+      const mrnaStartX = 250;
+      const mrnaArchHeight = 60;
+      // Path: start at the bubble exit (left side after first stage 4 movement), arch upward
+      s += `<path d="M ${polX - 18} ${yBot - 8} Q ${(mrnaStartX + polX) / 2} ${yBot - mrnaArchHeight} ${mrnaStartX - 30} ${yBot - mrnaArchHeight - 10}" fill="none" stroke="#C9A84C" stroke-width="3" stroke-linecap="round" filter="drop-shadow(0 1px 2px rgba(140,114,53,0.3))"/>`;
+      s += `<text x="${mrnaStartX - 38}" y="${yBot - mrnaArchHeight - 14}" text-anchor="end" font-size="11" font-weight="700" fill="#8C7235">mRNA 5\'</text>`;
+      // After termination, show released mRNA
+      if (pct >= 85) {
+        s += `<text x="${mrnaStartX - 38}" y="${yBot - mrnaArchHeight + 4}" text-anchor="end" font-size="9" fill="#5FA874" font-style="italic">released</text>`;
+      }
+    }
+
+    // Direction arrow (top of svg)
+    if (pct >= 40) {
+      s += `<line x1="${Math.max(280, polX - 30)}" y1="100" x2="${Math.min(720, polX + 80)}" y2="100" stroke="#1B3A2D" stroke-width="1.5" marker-end="url(#tx-arr)"/>`;
+      s += `<text x="${Math.max(330, polX + 25)}" y="92" font-size="10" fill="#1B3A2D" font-style="italic">RNA polymerase moves →</text>`;
+    }
+
+    // Arrowhead marker
+    s += '<defs><marker id="tx-arr" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M 0 0 L 6 3 L 0 6 z" fill="#1B3A2D"/></marker></defs>';
+
+    // Players — fade in as their stage activates
+    const playerOrder = ['sigma', 'rnap', 'open', 'elong', 'term'];
+    // Canonical positions (some change with polX during elongation)
+    const playerPos = {
+      sigma: { x: 150, y: 130 },
+      rnap: pct >= 40 ? { x: polX, y: 130 } : { x: 200, y: 130 },
+      open: { x: polX, y: 195 },  // marks the open complex on the bubble
+      elong: { x: polX + 30, y: 130 },  // co-located with rnap during elongation
+      term: { x: 720, y: 130 },
+    };
+
+    playerOrder.forEach((key, i) => {
+      const myStart = i * 20;
+      const myEnd = (i + 1) * 20;
+      let opacity = 0;
+      let isCurrent = false;
+      if (pct >= myStart - 1) {
+        if (pct < myEnd) { isCurrent = true; opacity = 1; }
+        else { opacity = 0.4; }
+      }
+      // Sigma fades when elongation begins (it dissociates after stage 4 starts)
+      if (key === 'sigma' && pct >= 60) opacity *= 0.3;
+      // 'open' is the bubble itself — only highlight during stage 3
+      if (key === 'open' && pct < 40) opacity = 0;
+      if (key === 'open' && pct >= 60) opacity = 0;  // bubble is now part of the elongation complex
+      // 'rnap' fades when elong takes over visually (same enzyme, just labeled differently)
+      if (key === 'rnap' && pct >= 60) opacity = 0.4;
+      // 'elong' merges with rnap — only show distinct during stage 4
+      if (key === 'elong' && (pct < 60 || pct >= 85)) opacity = 0;
+      if (opacity === 0) return;
+
+      const pos = playerPos[key];
+      s += drawPlayer(key, pos.x, pos.y, opacity);
+      if (isCurrent) {
+        s += `<circle cx="${pos.x}" cy="${pos.y}" r="22" fill="none" stroke="${TX_PLAYER_COLORS[key]}" stroke-width="2" stroke-dasharray="4,3" opacity="0.7"><animate attributeName="r" values="22;26;22" dur="1.4s" repeatCount="indefinite"/></circle>`;
+      }
+    });
+
+    // Legend
+    s += '<g transform="translate(20, 332)">';
+    s += '<rect x="0" y="0" width="14" height="3" fill="#1B3A2D"/><text x="20" y="6" font-size="10" fill="#1B3A2D" font-weight="700">DNA strands</text>';
+    s += '<rect x="120" y="0" width="14" height="3" fill="#C9A84C"/><text x="140" y="6" font-size="10" fill="#1B3A2D" font-weight="700">mRNA</text>';
+    s += '<rect x="200" y="0" width="14" height="14" fill="rgba(194,91,63,0.10)" stroke="#C25B3F" stroke-width="1" stroke-dasharray="2,2"/><text x="220" y="11" font-size="10" fill="#1B3A2D" font-weight="700">Promoter</text>';
+    s += '<rect x="300" y="0" width="14" height="14" fill="rgba(163,120,165,0.10)" stroke="#a378a5" stroke-width="1" stroke-dasharray="2,2"/><text x="320" y="11" font-size="10" fill="#1B3A2D" font-weight="700">Terminator</text>';
+    s += '</g>';
+
+    svg.innerHTML = s;
+
+    // Update text panels
+    document.getElementById('txStageName').textContent = stage.label;
+    document.getElementById('txExplain').innerHTML = stage.explain;
+    document.getElementById('txPlayerName').textContent = stage.player;
+    document.getElementById('txPlayerRole').textContent = stage.role;
+    document.getElementById('txTrap').innerHTML = stage.trap;
+  }
+
+  document.getElementById('txStage').addEventListener('input', e => render(+e.target.value));
+  render(0);
+}
+
 /* ---- WIRING ---- */
 function init() {
   loadState();
   relocateNodesToSections();
-  initLabTabs();
-  initCellAtlas();
-  initBioenergetics();
-  initGel();
-  initPCR();
-  initMicroscopy();
-  initKinetics();
-  initCycleWheel();
-  initDnaFork();
-  initTranscription();
-  initMembraneTransport();
-  initSignalTransduction();
-  initMutationSim();
-  initChiSquare();
-  initClassicExperiments();
-  initLabTech();
-  initProEuComparator();
-  initProteinStructure();
-  initEpistasis();
-  initGeneRegulation();
-  initDnaTechnology();
-  initChromosomalAbnormalities();
-  initViruses();
-  initBacteria();
-  initFungi();
-  initProtists();
-  initPlantLifecycle();
-  initBodyPlanComparator();
-  initComparativeEmbryos();
-  initCleavageTypes();
-  initHoxGenes();
-  initExtraEmbryonic();
-  initTwinsClones();
-  initEvidence();
-  initDriftSim();
-  initCoach();
-  initBiomeMap();
-  initBiogeochemicalCycles();
-  initSuccession();
-  initPopGrowth();
-  initSurvivorship();
-  initPredatorPrey();
-  initSymbiosis();
-  initConditioningTrainer();
-  initHwWordTrainer();
-  initPunnett();
-  initPedigree();
-  initHardyWeinberg();
-  initLinkage();
-  initOperon();
-  initKaryotype();
-  initBodyMap();
-  initCardiac();
-  initBohr();
-  initNephron();
-  initSlidingFilament();
-  initEndocrine();
-  initReproductiveCycle();
-  initActionPotential();
-  initVentilation();
-  initBodyDigestive();
-  initBodyImmune();
-  initEndocrineTable();
-  initBodyBlood();
-  initBodyNeuro();
-  initBodyMuscle();
-  initBodyGametogenesis();
-  initBodySkin();
-  initTree();
-  initPlantEvo();
-  initPhyla();
-  initCladogramBuilder();
-  initEmbryoTimeline();
-  initFertilization();
-  initGermQuiz();
-  initMorpher();
-  initInheritanceTree();
-  initAlleleSim();
-  initSelectionModes();
-  initSpeciation();
-  initFoodWeb();
+  // Defensive: each init module targets DOM elements specific to one hub.
+  // On hubs where those elements are absent, the init may throw — wrap so
+  // one failure does not block the rest of the page from initializing.
+  const safe = (fn) => { try { fn(); } catch (e) { console.warn('init guard:', (fn && fn.name) || 'anonymous', '-', e.message); } };
+  [
+    initLabTabs, initCellAtlas, initBioenergetics, initGel, initPCR, initMicroscopy, initKinetics,
+    initCycleWheel, initDnaFork, initTranscription, initMembraneTransport, initSignalTransduction,
+    initMutationSim, initChiSquare, initClassicExperiments, initLabTech, initProEuComparator, initProteinStructure,
+    initEpistasis, initGeneRegulation, initDnaTechnology, initChromosomalAbnormalities,
+    initViruses, initBacteria, initFungi, initProtists, initPlantLifecycle, initBodyPlanComparator,
+    initComparativeEmbryos, initCleavageTypes, initHoxGenes, initExtraEmbryonic, initTwinsClones,
+    initEvidence, initDriftSim, initCoach, initBiomeMap, initBiogeochemicalCycles,
+    initMuscleComparator, initGametogenesis, initHwBubbleCloud, initTonicity, initBrainExplorer, initCrossBridgeCycle, initProbTree, initKrebsScrubber, initRnaScrubber, initZScheme, initReplicationForkScrubber, initTranscriptionScrubber,
+    initSuccession, initPopGrowth, initSurvivorship, initPredatorPrey, initSymbiosis,
+    initConditioningTrainer, initHwWordTrainer, initPunnett, initPedigree, initHardyWeinberg,
+    initLinkage, initOperon, initKaryotype, initBodyMap, initCardiac, initBohr, initNephron,
+    initSlidingFilament, initEndocrine, initReproductiveCycle, initActionPotential, initVentilation,
+    initBodyDigestive, initBodyImmune, initEndocrineTable, initBodyBlood, initBodyNeuro,
+    initBodyMuscle, initBodyGametogenesis, initBodySkin, initTree, initPlantEvo, initPhyla,
+    initCladogramBuilder, initEmbryoTimeline, initFertilization, initGermQuiz, initMorpher,
+    initInheritanceTree, initAlleleSim, initSelectionModes, initSpeciation, initFoodWeb,
+  ].forEach(safe);
 
   // Each node section
   ["rep","trc","tln","mit","men","ap","mei","gly","wat","car","lip","pro","nuc","enz","pve","org","mtr","sig","krb","pho","dom","fer","nse","ped","hwb","cdv","nph","spc"].forEach(nodeId => {
@@ -12379,6 +14999,7 @@ function init() {
 
     // Restore state for this node
     const ns = STATE[nodeId];
+    if (!ns) return;
     if (Object.keys(ns.placed).length > 0) {
       Object.keys(ns.placed).forEach(enz => {
         const tok = section.querySelector(`.enzyme-token[data-enz="${enz}"]`);
@@ -12443,9 +15064,9 @@ function init() {
   const tutorOn = localStorage.getItem("acethedat_bio_tutor_mode") === "1";
   if (tutorOn) {
     document.body.classList.add("tutor-mode");
-    tutorBtn.classList.add("on");
+    if (tutorBtn) tutorBtn.classList.add("on");
   }
-  tutorBtn.addEventListener("click", () => {
+  if (tutorBtn) tutorBtn.addEventListener("click", () => {
     const isOn = document.body.classList.toggle("tutor-mode");
     tutorBtn.classList.toggle("on", isOn);
     localStorage.setItem("acethedat_bio_tutor_mode", isOn ? "1" : "0");

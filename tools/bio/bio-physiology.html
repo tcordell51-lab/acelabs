@@ -165,98 +165,153 @@
             <div class="body-canvas">
               <svg viewBox="0 0 460 600" class="body-svg" id="bodyMapSvg" preserveAspectRatio="xMidYMid meet">
                 <!-- silhouette outline -->
-                <path d="M 230 30 C 250 30 265 50 265 70 C 265 84 257 96 250 102 L 250 130 C 280 138 310 154 320 180 L 330 280 L 320 350 L 305 360 L 305 480 L 295 580 L 270 590 L 260 480 L 240 480 L 230 590 L 200 590 L 190 480 L 200 360 L 165 360 L 150 350 L 140 280 L 150 180 C 160 154 190 138 220 130 L 220 102 C 213 96 205 84 205 70 C 205 50 220 30 230 30 Z" fill="rgba(13,32,24,0.04)" stroke="#1B3A2D" stroke-width="2"/>
+                <path id="bodyOutline" d="M 230 30 C 250 30 265 50 265 70 C 265 84 257 96 250 102 L 250 130 C 280 138 310 154 320 180 L 330 280 L 320 350 L 305 360 L 305 480 L 295 580 L 270 590 L 260 480 L 240 480 L 230 590 L 200 590 L 190 480 L 200 360 L 165 360 L 150 350 L 140 280 L 150 180 C 160 154 190 138 220 130 L 220 102 C 213 96 205 84 205 70 C 205 50 220 30 230 30 Z" fill="rgba(13,32,24,0.04)" stroke="#1B3A2D" stroke-width="2"/>
 
-                <!-- Brain (nervous) -->
+                <!-- Skin (integumentary) — hatched outline pattern + label on outside left -->
+                <g class="organ" data-organ="skin">
+                  <path d="M 230 30 C 250 30 265 50 265 70 C 265 84 257 96 250 102 L 250 130 C 280 138 310 154 320 180 L 330 280 L 320 350 L 305 360 L 305 480 L 295 580 L 270 590 L 260 480 L 240 480 L 230 590 L 200 590 L 190 480 L 200 360 L 165 360 L 150 350 L 140 280 L 150 180 C 160 154 190 138 220 130 L 220 102 C 213 96 205 84 205 70 C 205 50 220 30 230 30 Z" fill="none" stroke="#1B3A2D" stroke-width="6" stroke-dasharray="2,3" opacity="0.0001" pointer-events="stroke"/>
+                  <text x="40" y="305" font-size="10" font-weight="700" fill="#1B3A2D">skin</text>
+                  <text x="40" y="318" font-size="8" fill="#1B3A2D">(integumentary)</text>
+                  <line x1="78" y1="302" x2="138" y2="285" stroke="#1B3A2D" stroke-width="0.8"/>
+                </g>
+
+                <!-- Brain (nervous) — cerebrum + cerebellum + brainstem -->
                 <g class="organ" data-organ="brain">
-                  <ellipse cx="230" cy="65" rx="22" ry="20" fill="rgba(106,138,168,0.4)" stroke="#1B3A2D" stroke-width="1.5"/>
-                  <text x="230" y="68" text-anchor="middle" font-size="9" font-weight="700" fill="#fff">brain</text>
+                  <!-- cerebrum (top, larger) -->
+                  <path d="M 212 56 Q 207 38 230 38 Q 253 38 248 56 Q 252 72 230 72 Q 208 72 212 56 Z" fill="rgba(106,138,168,0.45)" stroke="#1B3A2D" stroke-width="1.5"/>
+                  <!-- midline groove (cerebral fissure) -->
+                  <line x1="230" y1="40" x2="230" y2="70" stroke="#1B3A2D" stroke-width="0.6" opacity="0.6"/>
+                  <!-- cerebellum (back lobe) -->
+                  <ellipse cx="223" cy="83" rx="9" ry="6" fill="rgba(95,168,116,0.45)" stroke="#1B3A2D" stroke-width="1"/>
+                  <!-- brainstem -->
+                  <rect x="227" y="79" width="6" height="14" fill="rgba(106,138,168,0.5)" stroke="#1B3A2D" stroke-width="0.8" rx="2"/>
+                  <text x="230" y="58" text-anchor="middle" font-size="8" font-weight="700" fill="#fff">brain</text>
+                  <text x="278" y="56" font-size="8" fill="#1B3A2D">cerebrum</text>
+                  <line x1="252" y1="56" x2="275" y2="55" stroke="#1B3A2D" stroke-width="0.6"/>
+                  <text x="278" y="86" font-size="8" fill="#1B3A2D">cerebellum</text>
+                  <line x1="232" y1="86" x2="275" y2="84" stroke="#1B3A2D" stroke-width="0.6"/>
                 </g>
 
-                <!-- Lungs (respiratory) -->
+                <!-- Thyroid (endocrine — neck) -->
+                <g class="organ" data-organ="endocrine">
+                  <path d="M 222 118 Q 230 122 238 118 L 235 130 L 225 130 Z" fill="rgba(193,154,62,0.6)" stroke="#1B3A2D" stroke-width="1"/>
+                  <!-- adrenals on kidneys -->
+                  <ellipse cx="178" cy="268" rx="7" ry="4" fill="#c19a3e" stroke="#1B3A2D" stroke-width="1"/>
+                  <ellipse cx="282" cy="268" rx="7" ry="4" fill="#c19a3e" stroke="#1B3A2D" stroke-width="1"/>
+                  <!-- pituitary (under brain) -->
+                  <circle cx="230" cy="100" r="3.5" fill="#c19a3e" stroke="#1B3A2D" stroke-width="0.8"/>
+                  <text x="365" y="170" font-size="10" font-weight="700" fill="#1B3A2D">endocrine</text>
+                  <text x="365" y="183" font-size="8" fill="#1B3A2D">pituitary, thyroid,</text>
+                  <text x="365" y="194" font-size="8" fill="#1B3A2D">adrenals, gonads</text>
+                  <line x1="240" y1="125" x2="360" y2="175" stroke="#1B3A2D" stroke-width="0.8"/>
+                </g>
+
+                <!-- Lungs (respiratory) — bronchi visible -->
                 <g class="organ" data-organ="lungs">
-                  <ellipse cx="195" cy="200" rx="28" ry="40" fill="rgba(193,154,62,0.3)" stroke="#1B3A2D" stroke-width="1.5"/>
-                  <ellipse cx="265" cy="200" rx="28" ry="40" fill="rgba(193,154,62,0.3)" stroke="#1B3A2D" stroke-width="1.5"/>
-                  <text x="195" y="200" text-anchor="middle" font-size="9" font-weight="700" fill="#1B3A2D">L</text>
-                  <text x="265" y="200" text-anchor="middle" font-size="9" font-weight="700" fill="#1B3A2D">R</text>
+                  <ellipse cx="190" cy="200" rx="28" ry="42" fill="rgba(193,154,62,0.32)" stroke="#1B3A2D" stroke-width="1.5"/>
+                  <ellipse cx="270" cy="200" rx="28" ry="42" fill="rgba(193,154,62,0.32)" stroke="#1B3A2D" stroke-width="1.5"/>
+                  <!-- trachea + bronchi -->
+                  <path d="M 230 138 L 230 168 L 200 188 M 230 168 L 260 188" stroke="#1B3A2D" stroke-width="1.5" fill="none"/>
+                  <text x="190" y="225" text-anchor="middle" font-size="9" font-weight="700" fill="#1B3A2D">lungs</text>
                 </g>
 
-                <!-- Heart (circulatory) -->
+                <!-- Heart (circulatory) — chambered with atria/ventricles hint -->
                 <g class="organ" data-organ="heart">
-                  <path d="M 215 195 C 200 175 215 165 230 175 C 245 165 260 175 245 195 L 230 220 Z" fill="rgba(194,91,63,0.5)" stroke="#1B3A2D" stroke-width="1.5"/>
-                  <text x="230" y="200" text-anchor="middle" font-size="9" font-weight="700" fill="#fff">heart</text>
-                </g>
-
-                <!-- Stomach (digestive) -->
-                <g class="organ" data-organ="digestive">
-                  <ellipse cx="215" cy="265" rx="22" ry="14" fill="rgba(193,154,62,0.4)" stroke="#1B3A2D" stroke-width="1.5"/>
-                  <text x="215" y="269" text-anchor="middle" font-size="8" font-weight="700" fill="#1B3A2D">stomach</text>
-                  <!-- intestines outline -->
-                  <path d="M 200 295 Q 220 305 240 295 Q 250 320 220 330 Q 195 320 200 295" fill="rgba(193,154,62,0.18)" stroke="#1B3A2D" stroke-width="1.2"/>
+                  <path d="M 217 195 C 202 178 218 168 230 176 C 242 168 258 178 243 195 L 230 222 Z" fill="rgba(194,91,63,0.5)" stroke="#1B3A2D" stroke-width="1.5"/>
+                  <!-- atrioventricular hint -->
+                  <line x1="218" y1="190" x2="242" y2="190" stroke="#1B3A2D" stroke-width="0.6" opacity="0.7"/>
+                  <text x="230" y="200" text-anchor="middle" font-size="8" font-weight="700" fill="#fff">heart</text>
                 </g>
 
                 <!-- Liver -->
                 <g class="organ" data-organ="liver">
-                  <path d="M 245 245 L 275 245 L 285 275 L 250 280 Z" fill="rgba(138,90,140,0.35)" stroke="#1B3A2D" stroke-width="1.5"/>
-                  <text x="265" y="265" text-anchor="middle" font-size="8" font-weight="700" fill="#fff">liver</text>
+                  <path d="M 240 240 L 290 245 L 295 280 L 245 282 Z" fill="rgba(138,90,140,0.35)" stroke="#1B3A2D" stroke-width="1.5"/>
+                  <text x="270" y="265" text-anchor="middle" font-size="8" font-weight="700" fill="#fff">liver</text>
                 </g>
 
-                <!-- Kidneys (renal) -->
-                <g class="organ" data-organ="kidneys">
-                  <path d="M 175 290 C 170 280 178 270 188 275 C 192 285 188 305 180 305 C 172 305 170 297 175 290 Z" fill="rgba(95,168,116,0.4)" stroke="#1B3A2D" stroke-width="1.5"/>
-                  <path d="M 285 290 C 290 280 282 270 272 275 C 268 285 272 305 280 305 C 288 305 290 297 285 290 Z" fill="rgba(95,168,116,0.4)" stroke="#1B3A2D" stroke-width="1.5"/>
-                  <text x="180" y="295" text-anchor="middle" font-size="8" font-weight="700" fill="#fff">K</text>
-                  <text x="280" y="295" text-anchor="middle" font-size="8" font-weight="700" fill="#fff">K</text>
+                <!-- Stomach + small + large intestine (digestive) -->
+                <g class="organ" data-organ="digestive">
+                  <ellipse cx="208" cy="262" rx="20" ry="14" fill="rgba(193,154,62,0.4)" stroke="#1B3A2D" stroke-width="1.5"/>
+                  <text x="208" y="266" text-anchor="middle" font-size="7.5" font-weight="700" fill="#1B3A2D">stomach</text>
+                  <!-- small intestine (coiled) -->
+                  <path d="M 195 305 Q 215 310 235 305 Q 245 320 225 328 Q 205 332 195 318 Q 200 308 215 312" fill="none" stroke="#1B3A2D" stroke-width="1.2"/>
+                  <!-- large intestine (frame) -->
+                  <path d="M 178 305 L 178 335 L 220 348 L 262 335 L 262 305" fill="none" stroke="#1B3A2D" stroke-width="1.6"/>
                 </g>
 
-                <!-- Adrenal/Endocrine glands cluster (atop kidneys) -->
-                <g class="organ" data-organ="endocrine">
-                  <circle cx="180" cy="270" r="5" fill="#c19a3e" stroke="#1B3A2D" stroke-width="1"/>
-                  <circle cx="280" cy="270" r="5" fill="#c19a3e" stroke="#1B3A2D" stroke-width="1"/>
-                  <text x="365" y="265" font-size="9" font-weight="700" fill="#1B3A2D">endocrine</text>
-                  <line x1="290" y1="270" x2="360" y2="265" stroke="#1B3A2D" stroke-width="0.8"/>
-                </g>
-
-                <!-- Pancreas -->
+                <!-- Pancreas (sausage shape, head + body + tail near duodenum) -->
                 <g class="organ" data-organ="pancreas">
-                  <path d="M 200 285 L 270 290" stroke="var(--good)" stroke-width="6" stroke-linecap="round"/>
-                  <text x="365" y="290" font-size="9" font-weight="700" fill="#1B3A2D">pancreas</text>
-                  <line x1="270" y1="290" x2="360" y2="290" stroke="#1B3A2D" stroke-width="0.8"/>
+                  <path d="M 198 287 Q 215 282 240 287 Q 260 290 270 295" fill="rgba(95,168,116,0.55)" stroke="#1B3A2D" stroke-width="3.5" stroke-linecap="round"/>
+                  <text x="365" y="290" font-size="10" font-weight="700" fill="#1B3A2D">pancreas</text>
+                  <line x1="272" y1="294" x2="360" y2="290" stroke="#1B3A2D" stroke-width="0.8"/>
                 </g>
 
-                <!-- Bones (skeletal) -->
-                <g class="organ" data-organ="skeletal">
-                  <line x1="180" y1="380" x2="180" y2="470" stroke="#1B3A2D" stroke-width="3"/>
-                  <line x1="280" y1="380" x2="280" y2="470" stroke="#1B3A2D" stroke-width="3"/>
-                  <text x="120" y="430" font-size="9" font-weight="700" fill="#1B3A2D">skeletal</text>
-                  <line x1="158" y1="430" x2="118" y2="430" stroke="#1B3A2D" stroke-width="0.8"/>
+                <!-- Kidneys (renal) — bean shape, more prominent -->
+                <g class="organ" data-organ="kidneys">
+                  <path d="M 168 275 C 162 268 170 258 184 263 C 190 273 192 290 182 296 C 168 298 162 290 168 275 Z" fill="rgba(95,168,116,0.4)" stroke="#1B3A2D" stroke-width="1.5"/>
+                  <path d="M 292 275 C 298 268 290 258 276 263 C 270 273 268 290 278 296 C 292 298 298 290 292 275 Z" fill="rgba(95,168,116,0.4)" stroke="#1B3A2D" stroke-width="1.5"/>
+                  <text x="178" y="285" text-anchor="middle" font-size="7.5" font-weight="700" fill="#fff">kidney</text>
+                  <text x="282" y="285" text-anchor="middle" font-size="7.5" font-weight="700" fill="#fff">kidney</text>
+                  <!-- ureters -->
+                  <line x1="180" y1="298" x2="200" y2="368" stroke="#1B3A2D" stroke-width="0.8" opacity="0.6"/>
+                  <line x1="280" y1="298" x2="260" y2="368" stroke="#1B3A2D" stroke-width="0.8" opacity="0.6"/>
                 </g>
 
-                <!-- Muscles -->
-                <g class="organ" data-organ="muscle">
-                  <ellipse cx="170" cy="430" rx="14" ry="44" fill="rgba(194,91,63,0.18)" stroke="#1B3A2D" stroke-width="1.2"/>
-                  <ellipse cx="290" cy="430" rx="14" ry="44" fill="rgba(194,91,63,0.18)" stroke="#1B3A2D" stroke-width="1.2"/>
-                  <text x="370" y="430" font-size="9" font-weight="700" fill="#1B3A2D">muscle</text>
-                  <line x1="304" y1="430" x2="368" y2="430" stroke="#1B3A2D" stroke-width="0.8"/>
-                </g>
-
-                <!-- Reproductive -->
+                <!-- Reproductive — gonads at pelvic level -->
                 <g class="organ" data-organ="repro">
-                  <ellipse cx="230" cy="370" rx="14" ry="9" fill="rgba(138,90,140,0.35)" stroke="#1B3A2D" stroke-width="1.2"/>
-                  <text x="230" y="373" text-anchor="middle" font-size="8" font-weight="700" fill="#fff">repro</text>
+                  <ellipse cx="218" cy="380" rx="6" ry="5" fill="rgba(138,90,140,0.5)" stroke="#1B3A2D" stroke-width="1"/>
+                  <ellipse cx="242" cy="380" rx="6" ry="5" fill="rgba(138,90,140,0.5)" stroke="#1B3A2D" stroke-width="1"/>
+                  <text x="40" y="380" font-size="10" font-weight="700" fill="#1B3A2D">reproductive</text>
+                  <line x1="118" y1="377" x2="210" y2="380" stroke="#1B3A2D" stroke-width="0.8"/>
                 </g>
 
-                <!-- Skin (integumentary) -->
-                <g class="organ" data-organ="skin">
-                  <text x="60" y="50" font-size="9" font-weight="700" fill="#1B3A2D">skin</text>
-                  <path d="M 80 53 L 200 60" stroke="#1B3A2D" stroke-width="0.8"/>
+                <!-- Skeletal — femur bones in legs -->
+                <g class="organ" data-organ="skeletal">
+                  <rect x="216" y="385" width="8" height="90" fill="rgba(232,222,200,0.9)" stroke="#1B3A2D" stroke-width="1.2" rx="3"/>
+                  <rect x="246" y="385" width="8" height="90" fill="rgba(232,222,200,0.9)" stroke="#1B3A2D" stroke-width="1.2" rx="3"/>
+                  <!-- bone caps -->
+                  <ellipse cx="220" cy="385" rx="5" ry="3" fill="#e8dec8" stroke="#1B3A2D" stroke-width="1"/>
+                  <ellipse cx="220" cy="475" rx="5" ry="3" fill="#e8dec8" stroke="#1B3A2D" stroke-width="1"/>
+                  <ellipse cx="250" cy="385" rx="5" ry="3" fill="#e8dec8" stroke="#1B3A2D" stroke-width="1"/>
+                  <ellipse cx="250" cy="475" rx="5" ry="3" fill="#e8dec8" stroke="#1B3A2D" stroke-width="1"/>
+                  <text x="40" y="430" font-size="10" font-weight="700" fill="#1B3A2D">skeletal</text>
+                  <line x1="92" y1="427" x2="208" y2="430" stroke="#1B3A2D" stroke-width="0.8"/>
                 </g>
 
-                <!-- Immune -->
+                <!-- Muscle — striated overlay on outer thigh -->
+                <g class="organ" data-organ="muscle">
+                  <ellipse cx="194" cy="430" rx="11" ry="46" fill="rgba(194,91,63,0.22)" stroke="#1B3A2D" stroke-width="1.2"/>
+                  <ellipse cx="276" cy="430" rx="11" ry="46" fill="rgba(194,91,63,0.22)" stroke="#1B3A2D" stroke-width="1.2"/>
+                  <!-- striations -->
+                  <line x1="186" y1="395" x2="202" y2="395" stroke="#C25B3F" stroke-width="0.8" opacity="0.7"/>
+                  <line x1="186" y1="410" x2="202" y2="410" stroke="#C25B3F" stroke-width="0.8" opacity="0.7"/>
+                  <line x1="186" y1="425" x2="202" y2="425" stroke="#C25B3F" stroke-width="0.8" opacity="0.7"/>
+                  <line x1="186" y1="440" x2="202" y2="440" stroke="#C25B3F" stroke-width="0.8" opacity="0.7"/>
+                  <line x1="186" y1="455" x2="202" y2="455" stroke="#C25B3F" stroke-width="0.8" opacity="0.7"/>
+                  <line x1="268" y1="395" x2="284" y2="395" stroke="#C25B3F" stroke-width="0.8" opacity="0.7"/>
+                  <line x1="268" y1="410" x2="284" y2="410" stroke="#C25B3F" stroke-width="0.8" opacity="0.7"/>
+                  <line x1="268" y1="425" x2="284" y2="425" stroke="#C25B3F" stroke-width="0.8" opacity="0.7"/>
+                  <line x1="268" y1="440" x2="284" y2="440" stroke="#C25B3F" stroke-width="0.8" opacity="0.7"/>
+                  <line x1="268" y1="455" x2="284" y2="455" stroke="#C25B3F" stroke-width="0.8" opacity="0.7"/>
+                  <text x="365" y="430" font-size="10" font-weight="700" fill="#1B3A2D">muscle</text>
+                  <line x1="288" y1="427" x2="360" y2="430" stroke="#1B3A2D" stroke-width="0.8"/>
+                </g>
+
+                <!-- Immune — thymus + spleen + lymph nodes -->
                 <g class="organ" data-organ="immune">
-                  <text x="370" y="180" font-size="9" font-weight="700" fill="#1B3A2D">immune</text>
-                  <text x="370" y="195" font-size="8" fill="#1B3A2D">(thymus, spleen)</text>
-                  <line x1="280" y1="190" x2="365" y2="185" stroke="#1B3A2D" stroke-width="0.8"/>
+                  <!-- thymus (behind sternum) -->
+                  <path d="M 222 162 Q 230 158 238 162 L 236 178 L 224 178 Z" fill="rgba(106,138,168,0.5)" stroke="#1B3A2D" stroke-width="1"/>
+                  <!-- spleen (left side, behind stomach) -->
+                  <ellipse cx="172" cy="248" rx="9" ry="13" fill="rgba(138,90,140,0.55)" stroke="#1B3A2D" stroke-width="1.2"/>
+                  <!-- lymph node clusters (small dots) -->
+                  <circle cx="218" cy="148" r="2" fill="#1B3A2D"/>
+                  <circle cx="242" cy="148" r="2" fill="#1B3A2D"/>
+                  <circle cx="190" cy="350" r="2" fill="#1B3A2D"/>
+                  <circle cx="270" cy="350" r="2" fill="#1B3A2D"/>
+                  <text x="365" y="248" font-size="10" font-weight="700" fill="#1B3A2D">immune</text>
+                  <text x="365" y="261" font-size="8" fill="#1B3A2D">thymus, spleen,</text>
+                  <text x="365" y="272" font-size="8" fill="#1B3A2D">lymph nodes</text>
+                  <line x1="184" y1="248" x2="360" y2="252" stroke="#1B3A2D" stroke-width="0.8"/>
                 </g>
               </svg>
             </div>
@@ -281,6 +336,27 @@
             <button id="cc-conduction">Conduction</button>
             <button id="cc-flow">Trace flow</button>
             <span class="cc-bpm" id="cc-bpm">— bpm</span>
+          </div>
+          <div style="background:#fff;border:1.5px solid #1B3A2D;border-radius:8px;padding:10px 14px;margin:10px 0;display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:center">
+            <div>
+              <div style="display:flex;justify-content:space-between;align-items:center;font-size:11px;font-weight:700;color:#1B3A2D">
+                <span>HEART RATE</span>
+                <span id="ccHRVal" style="font-family:'JetBrains Mono',monospace;color:#C25B3F">72 bpm</span>
+              </div>
+              <input id="ccHR" type="range" min="40" max="160" step="1" value="72" style="width:100%;accent-color:#C25B3F;margin-top:4px">
+              <div style="font-size:9px;color:#1B3A2D;display:flex;justify-content:space-between;opacity:0.7"><span>brady (40)</span><span>normal</span><span>tachy (160)</span></div>
+            </div>
+            <div>
+              <div style="display:flex;justify-content:space-between;align-items:center;font-size:11px;font-weight:700;color:#1B3A2D">
+                <span>AV-NODE DELAY</span>
+                <span id="ccAVVal" style="font-family:'JetBrains Mono',monospace;color:#5cabe6">120 ms</span>
+              </div>
+              <input id="ccAV" type="range" min="50" max="350" step="5" value="120" style="width:100%;accent-color:#5cabe6;margin-top:4px">
+              <div style="font-size:9px;color:#1B3A2D;display:flex;justify-content:space-between;opacity:0.7"><span>fast (50)</span><span>normal</span><span>blocked (350)</span></div>
+            </div>
+          </div>
+          <div id="ccPaceMakerNote" style="background:#fbf6e9;border:1.5px solid #c19a3e;border-radius:8px;padding:8px 12px;margin-bottom:10px;font-size:11px;line-height:1.5;color:#1B3A2D">
+            <span style="font-weight:700">Normal sinus rhythm.</span> HR 60-100 bpm. AV delay ~120 ms (PR interval) lets atria empty before ventricles contract. Faster rate = shorter intervals. Longer AV delay = atria and ventricles desync.
           </div>
           <div class="cardiac-stage">
             <div class="cardiac-canvas">
@@ -1390,6 +1466,549 @@
 
 
     </div>
+
+    <!-- ============================================================
+         NODE: REFLEX ARC  (Physiology · Nervous)
+         ============================================================ -->
+    <section class="node" id="node-reflex-arc" data-node="rfx">
+      <div class="node-header">
+        <div class="num">Section 03 &middot; Physiology &middot; Nervous</div>
+        <h2>Reflex arc: a <em>spinal-cord shortcut</em> &mdash; brain not required.</h2>
+        <p class="sub-lede">A reflex bypasses the brain so the response is faster than a voluntary movement. The <b>five components</b> are: <b>receptor &rarr; afferent (sensory) neuron &rarr; integration center (spinal cord) &rarr; efferent (motor) neuron &rarr; effector</b>. The simplest reflex (knee-jerk) is <b>monosynaptic</b> &mdash; just sensory and motor neurons, one synapse. Withdrawal reflexes are <b>polysynaptic</b> &mdash; an interneuron sits in between. The brain is informed in parallel but does not gate the response.</p>
+      </div>
+
+      <div class="row r3">
+        <div class="subcard trap"><div class="h"><span class="lbl trap">The trap</span></div>
+          <p>Students think every reflex involves the brain. They don't &mdash; the integration center is the <b>spinal cord</b>. Brain involvement makes a movement <em>voluntary</em>, not reflexive.</p></div>
+        <div class="subcard rule"><div class="h"><span class="lbl gold">The rule</span></div>
+          <p>Five components every time. <b>Monosynaptic</b> (1 synapse, 2 neurons) &rarr; stretch reflex (knee-jerk). <b>Polysynaptic</b> (&ge;2 synapses, includes interneuron) &rarr; withdrawal, crossed-extensor, most others.</p></div>
+        <div class="subcard move"><div class="h"><span class="lbl teal">The move</span></div>
+          <p>Count the synapses to classify the reflex. Identify the receptor (e.g., muscle spindle for stretch, nociceptor for withdrawal) and the effector (skeletal muscle, gland, smooth muscle). DAVE: <b>Dorsal Afferent, Ventral Efferent</b>.</p></div>
+      </div>
+
+      <div class="lock-line" style="margin-top:18px">Stretch reflex: <em>monosynaptic</em>. Withdrawal: <em>polysynaptic</em>. Brain is told <em>in parallel</em>, not in line.</div>
+
+      <div class="dat-context">
+        <div class="stat"><span class="lbl">Frequency</span><span class="val"><em>1</em> per exam</span></div>
+        <div class="stat"><span class="lbl">Difficulty</span><span class="val">Easy&ndash;Medium</span></div>
+        <div class="stat"><span class="lbl">Tier</span><span class="val">3 &middot; <em>Physiology</em></span></div>
+        <div class="wording"><div class="lbl">Typical question wording</div><div class="val">A patient with a complete spinal-cord transection at T6 is tested for the patellar (knee-jerk) reflex. What is observed?</div></div>
+      </div>
+
+      <div class="teacher-note">
+        <div class="badge-row">
+          <span class="author-pill">From Coach</span>
+          <span class="label">Coach notes &middot; why monosynaptic is fastest, and the dorsal/ventral split</span>
+        </div>
+        <h4>Reflexes are <em>local circuits</em>. The brain learns about them after the fact.</h4>
+        <p>The patellar (knee-jerk) reflex is the textbook <b>monosynaptic stretch reflex</b>. Tap the patellar tendon &rarr; quadriceps muscle is stretched &rarr; <b>muscle spindle</b> (Ia sensory ending) fires &rarr; afferent neuron travels through the dorsal root into the spinal cord &rarr; synapses <b>directly</b> onto an alpha motor neuron in the ventral horn &rarr; efferent fibre exits via the ventral root &rarr; quadriceps contracts. <b>Two neurons. One synapse.</b> Time from tap to contraction is &lt;50 ms.</p>
+        <p>The <b>withdrawal reflex</b> (touch hot stove) adds an interneuron. Sensory afferent from skin nociceptor &rarr; spinal cord &rarr; <b>interneuron</b> (in dorsal/intermediate gray) &rarr; motor neuron &rarr; effector. The interneuron lets the spinal cord do basic processing (e.g., excite flexors, inhibit extensors via reciprocal inhibition; trigger crossed-extensor on the contralateral side to stabilize posture).</p>
+        <p><b>Spinal cord anatomy is on the test.</b> Gray matter is central (H-shape, cell bodies). White matter is peripheral (myelinated axons / tracts). <b>Dorsal roots = sensory in</b>; <b>ventral roots = motor out</b>. Mnemonic: <b>SAME</b> &mdash; Sensory Afferent, Motor Efferent.</p>
+
+        <div class="label" style="margin-top:14px;color:var(--trap-d)">Common student misconceptions</div>
+        <ul class="miscon-list">
+          <li><b>"Reflexes go through the brain."</b> No &mdash; the brain is notified in parallel via ascending tracts but the reflex itself is a spinal circuit. That's why a patient with a high spinal cord injury can still have intact reflexes below the lesion.</li>
+          <li><b>"Monosynaptic means one neuron."</b> Means one <em>synapse</em> &mdash; still two neurons (sensory + motor).</li>
+          <li><b>"Reflexes are conscious."</b> No &mdash; you're aware of the result, not the circuit. The action precedes any cortical processing.</li>
+          <li><b>"All sensory enters the dorsal horn."</b> Yes &mdash; dorsal columns / dorsal roots. Motor exits ventrally. Confusing this is a classic DAT trap.</li>
+        </ul>
+      </div>
+
+      <div class="see-also">
+        <span class="lbl">See also</span>
+        <a href="#node-action-potential">Action potential</a>
+        <span style="color:var(--ink-mute)">&middot; reflexes ride on the same AP machinery; speed is set by myelination + axon diameter (largest = fastest, e.g., Ia spindle afferents).</span>
+      </div>
+
+      <div class="section-divider"></div>
+
+      <div class="section-num">01 &middot; The 5-component arc</div>
+      <h3 class="section-title">The <em>patellar reflex</em> in cross-section</h3>
+      <p class="section-sub">Trace the arc: receptor (muscle spindle) &rarr; sensory neuron (dorsal root) &rarr; spinal cord (synapse on motor neuron) &rarr; motor neuron (ventral root) &rarr; effector (quadriceps). One synapse total &mdash; that's why it's monosynaptic.</p>
+
+      <div class="sandbox-wrap">
+        <div class="sandbox-head">
+          <h3>Patellar reflex &middot; <em>monosynaptic stretch arc</em></h3>
+          <div class="desc">Tap on the tendon &rarr; muscle spindle senses stretch &rarr; sensory neuron enters dorsal horn &rarr; synapses directly on motor neuron in ventral horn &rarr; motor neuron exits ventral root &rarr; quadriceps contracts.</div>
+        </div>
+        <div class="sandbox-body" style="padding:0">
+          <svg viewBox="0 0 800 420" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
+            <text x="400" y="30" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">PATELLAR (KNEE-JERK) REFLEX &mdash; MONOSYNAPTIC</text>
+
+            <!-- Spinal cord cross-section (left) -->
+            <g transform="translate(80, 90)">
+              <text x="100" y="-10" text-anchor="middle" font-size="11" font-weight="700" fill="#1B3A2D">SPINAL CORD (cross-section)</text>
+              <ellipse cx="100" cy="120" rx="90" ry="100" fill="rgba(236,228,212,0.5)" stroke="#1B3A2D" stroke-width="1.5"/>
+              <!-- Gray matter H-shape -->
+              <path d="M 60 70 Q 70 60 90 70 L 90 110 L 70 130 L 70 170 L 90 180 L 90 220 Q 70 230 60 220 L 60 180 L 50 170 L 50 130 L 60 110 Z" fill="rgba(106,138,168,0.45)" stroke="#1B3A2D" stroke-width="1"/>
+              <path d="M 140 70 Q 130 60 110 70 L 110 110 L 130 130 L 130 170 L 110 180 L 110 220 Q 130 230 140 220 L 140 180 L 150 170 L 150 130 L 140 110 Z" fill="rgba(106,138,168,0.45)" stroke="#1B3A2D" stroke-width="1"/>
+              <!-- Dorsal vs ventral labels -->
+              <text x="100" y="50" text-anchor="middle" font-size="9" font-weight="700" fill="#1B3A2D">DORSAL (sensory in)</text>
+              <text x="100" y="245" text-anchor="middle" font-size="9" font-weight="700" fill="#1B3A2D">VENTRAL (motor out)</text>
+              <!-- Dorsal horn highlight -->
+              <text x="80" y="90" text-anchor="middle" font-size="8" font-weight="700" fill="#1B3A2D">dorsal horn</text>
+              <!-- Ventral horn highlight (with motor neuron cell body) -->
+              <circle cx="80" cy="200" r="6" fill="#C25B3F" stroke="#1B3A2D" stroke-width="1"/>
+              <text x="50" y="205" text-anchor="end" font-size="8" font-weight="700" fill="#1B3A2D">motor neuron</text>
+              <text x="50" y="216" text-anchor="end" font-size="8" fill="#1B3A2D">(alpha)</text>
+            </g>
+
+            <!-- Sensory neuron path (in via dorsal) -->
+            <path d="M 600 200 L 480 200 Q 380 200 280 130 L 220 100" fill="none" stroke="#5cabe6" stroke-width="2.5" marker-end="url(#rfx-arr)"/>
+            <text x="430" y="190" font-size="10" font-weight="700" fill="#5cabe6">1. Sensory afferent (Ia)</text>
+
+            <!-- Synapse marker -->
+            <circle cx="160" cy="155" r="6" fill="#c19a3e" stroke="#1B3A2D" stroke-width="1.5"/>
+            <text x="170" y="150" font-size="9" font-weight="700" fill="#c19a3e">SYNAPSE</text>
+            <text x="170" y="161" font-size="8" fill="#1B3A2D">(dorsal&rarr;ventral)</text>
+
+            <!-- Motor neuron path (out via ventral) -->
+            <path d="M 160 290 L 280 290 Q 380 290 480 290 L 600 290" fill="none" stroke="#C25B3F" stroke-width="2.5" marker-end="url(#rfx-arr)"/>
+            <text x="430" y="280" font-size="10" font-weight="700" fill="#C25B3F">3. Motor efferent (alpha)</text>
+
+            <!-- Muscle spindle (receptor) -->
+            <g transform="translate(620, 180)">
+              <ellipse cx="40" cy="20" rx="40" ry="14" fill="rgba(193,154,62,0.4)" stroke="#1B3A2D" stroke-width="1.5"/>
+              <line x1="20" y1="20" x2="60" y2="20" stroke="#1B3A2D" stroke-width="0.8"/>
+              <text x="40" y="0" text-anchor="middle" font-size="10" font-weight="700" fill="#1B3A2D">muscle spindle</text>
+              <text x="40" y="42" text-anchor="middle" font-size="8" fill="#1B3A2D">(stretch receptor)</text>
+            </g>
+
+            <!-- Quadriceps muscle (effector) -->
+            <g transform="translate(620, 270)">
+              <rect x="0" y="0" width="100" height="50" fill="rgba(194,91,63,0.3)" stroke="#1B3A2D" stroke-width="1.5" rx="4"/>
+              <line x1="10" y1="0" x2="10" y2="50" stroke="#C25B3F" stroke-width="0.6"/>
+              <line x1="25" y1="0" x2="25" y2="50" stroke="#C25B3F" stroke-width="0.6"/>
+              <line x1="40" y1="0" x2="40" y2="50" stroke="#C25B3F" stroke-width="0.6"/>
+              <line x1="55" y1="0" x2="55" y2="50" stroke="#C25B3F" stroke-width="0.6"/>
+              <line x1="70" y1="0" x2="70" y2="50" stroke="#C25B3F" stroke-width="0.6"/>
+              <line x1="85" y1="0" x2="85" y2="50" stroke="#C25B3F" stroke-width="0.6"/>
+              <text x="50" y="30" text-anchor="middle" font-size="10" font-weight="700" fill="#1B3A2D">quadriceps</text>
+            </g>
+
+            <!-- Brain notification (parallel, dotted) -->
+            <text x="380" y="370" text-anchor="middle" font-size="10" font-style="italic" fill="#6A8AA8">Brain is notified in parallel via ascending tracts &mdash; but the contraction has already happened.</text>
+            <path d="M 200 70 Q 350 50 580 60" fill="none" stroke="#6A8AA8" stroke-width="1.5" stroke-dasharray="3,3"/>
+            <text x="580" y="55" font-size="9" font-style="italic" fill="#6A8AA8">&rarr; brain (parallel, not gating)</text>
+
+            <defs>
+              <marker id="rfx-arr" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                <path d="M 0 0 L 8 4 L 0 8 z" fill="#1B3A2D"/>
+              </marker>
+            </defs>
+          </svg>
+        </div>
+      </div>
+
+      <div class="section-divider"></div>
+
+      <div class="section-num">02 &middot; Retrieval</div>
+      <h3 class="section-title">Three quick <em>retrieval</em> prompts</h3>
+
+      <div class="retrieval-card" data-q="1">
+        <div class="q-label">Question 1 of 3</div>
+        <div class="q-text">How many synapses are involved in the patellar (knee-jerk) reflex?</div>
+        <div class="opts-grid">
+          <div class="opt" data-correct="false"><span class="let">A</span>Zero &mdash; sensory and motor are the same neuron</div>
+          <div class="opt" data-correct="true"><span class="let">B</span>One &mdash; sensory neuron synapses directly on the motor neuron in the ventral horn</div>
+          <div class="opt" data-correct="false"><span class="let">C</span>Two &mdash; an interneuron always relays</div>
+          <div class="opt" data-correct="false"><span class="let">D</span>Three &mdash; including a brainstem relay</div>
+        </div>
+        <div class="retrieval-feedback"></div>
+      </div>
+      <div class="retrieval-card" data-q="2">
+        <div class="q-label">Question 2 of 3</div>
+        <div class="q-text">A patient with a complete spinal-cord transection at T6 is tested for the patellar reflex. What is observed?</div>
+        <div class="opts-grid">
+          <div class="opt" data-correct="false"><span class="let">A</span>Reflex is absent because no signal reaches the brain</div>
+          <div class="opt" data-correct="true"><span class="let">B</span>Reflex is intact because the integration center is the spinal cord, not the brain</div>
+          <div class="opt" data-correct="false"><span class="let">C</span>Reflex is exaggerated because all motor pathways are uninhibited</div>
+          <div class="opt" data-correct="false"><span class="let">D</span>Reflex is intact only if the patient is conscious</div>
+        </div>
+        <div class="retrieval-feedback"></div>
+      </div>
+      <div class="retrieval-card" data-q="3">
+        <div class="q-label">Question 3 of 3</div>
+        <div class="q-text">In a withdrawal reflex (e.g., touching a hot stove), what distinguishes it from the patellar reflex?</div>
+        <div class="opts-grid">
+          <div class="opt" data-correct="false"><span class="let">A</span>It uses cranial nerves, not spinal nerves</div>
+          <div class="opt" data-correct="true"><span class="let">B</span>It is polysynaptic &mdash; an interneuron in the spinal cord lies between the sensory and motor neurons</div>
+          <div class="opt" data-correct="false"><span class="let">C</span>It does not involve the brain at all</div>
+          <div class="opt" data-correct="false"><span class="let">D</span>It uses voluntary motor neurons</div>
+        </div>
+        <div class="retrieval-feedback"></div>
+      </div>
+
+      <div class="mastery-bar" data-role="mastery">
+        <div class="mastery-cell cur" data-q="1"><span class="num">1</span>Monosynaptic = 1 synapse</div>
+        <div class="mastery-cell" data-q="2"><span class="num">2</span>Spinal cord integrates</div>
+        <div class="mastery-cell" data-q="3"><span class="num">3</span>Polysynaptic = interneuron</div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         NODE: BRAIN REGIONS + SPINAL CORD  (Physiology · Nervous)
+         ============================================================ -->
+    <section class="node" id="node-brain-regions" data-node="brn">
+      <div class="node-header">
+        <div class="num">Section 03 &middot; Physiology &middot; Nervous</div>
+        <h2>Brain regions: <em>function follows location</em>.</h2>
+        <p class="sub-lede">Major regions and what they do: <b>cerebrum</b> (cortex &mdash; cognition, voluntary movement, sensation, language), <b>cerebellum</b> (motor coordination, balance, motor learning), <b>brainstem</b> (autonomic vitals: HR, breathing, BP), <b>thalamus</b> (sensory relay for everything except smell), <b>hypothalamus</b> (homeostasis, hormones, hunger/thirst/temperature), <b>hippocampus</b> (memory consolidation), <b>amygdala</b> (emotion, fear, fight-or-flight). Spinal cord: gray matter (cell bodies) inside, white matter (tracts) outside; <b>dorsal in, ventral out</b>.</p>
+      </div>
+
+      <div class="row r3">
+        <div class="subcard trap"><div class="h"><span class="lbl trap">The trap</span></div>
+          <p>Students confuse <b>cerebellum</b> (coordination) with <b>cerebrum</b> (cognition), and conflate <b>thalamus</b> (sensory relay) with <b>hypothalamus</b> (homeostasis + endocrine link). They also forget that <b>smell bypasses the thalamus</b> &mdash; goes directly from olfactory bulb to cortex.</p></div>
+        <div class="subcard rule"><div class="h"><span class="lbl gold">The rule</span></div>
+          <p>Big lobes (<em>frontal/parietal/temporal/occipital</em>) on the cerebrum. Walnut-shaped <em>cerebellum</em> at the back coordinates movement. Stem at the bottom keeps you alive. <em>Limbic system</em> = emotion + memory (hippocampus + amygdala). <b>Hypothalamus controls pituitary</b> &mdash; one-line link between nervous and endocrine systems.</p></div>
+        <div class="subcard move"><div class="h"><span class="lbl teal">The move</span></div>
+          <p>Map any function or symptom to a region. Damage clues: <em>ataxia</em> &rarr; cerebellum; <em>memory loss</em> &rarr; hippocampus; <em>fear/aggression changes</em> &rarr; amygdala; <em>temperature/thirst dysregulation</em> &rarr; hypothalamus; <em>respiratory failure</em> &rarr; medulla.</p></div>
+      </div>
+
+      <div class="lock-line" style="margin-top:18px">Cerebrum = cognition. Cerebellum = coordination. Brainstem = vitals. Thalamus = relay. Hypothalamus = homeostasis. Hippocampus = memory. Amygdala = emotion.</div>
+
+      <div class="dat-context">
+        <div class="stat"><span class="lbl">Frequency</span><span class="val"><em>2&ndash;3</em> per exam</span></div>
+        <div class="stat"><span class="lbl">Difficulty</span><span class="val">Easy&ndash;Medium</span></div>
+        <div class="stat"><span class="lbl">Tier</span><span class="val">3 &middot; <em>Physiology</em></span></div>
+        <div class="wording"><div class="lbl">Typical question wording</div><div class="val">Damage to which brain region would most likely impair the formation of new long-term memories?</div></div>
+      </div>
+
+      <div class="teacher-note">
+        <div class="badge-row">
+          <span class="author-pill">From Coach</span>
+          <span class="label">Coach notes &middot; the four lobes, the limbic shortcut, the dorsal/ventral spinal split</span>
+        </div>
+        <h4>Memorize the map. The DAT will quiz <em>region &harr; function</em> mappings.</h4>
+        <p><b>Cerebrum lobes</b> (cortex):</p>
+        <ul class="miscon-list" style="margin-top:6px">
+          <li><b>Frontal:</b> voluntary movement (motor cortex), planning, personality, executive function, Broca's area (speech production).</li>
+          <li><b>Parietal:</b> somatosensory cortex (touch, proprioception), spatial reasoning.</li>
+          <li><b>Temporal:</b> auditory cortex, Wernicke's area (language comprehension), face recognition.</li>
+          <li><b>Occipital:</b> visual cortex.</li>
+        </ul>
+        <p><b>Brainstem</b> (midbrain &rarr; pons &rarr; medulla, top to bottom): contains the <b>cardiac, respiratory, and vasomotor centers</b>. Damage to the medulla = death. The reticular activating system here controls arousal/sleep.</p>
+        <p><b>Limbic system</b> (deep brain): <b>hippocampus</b> writes new long-term memories (damage = anterograde amnesia, e.g., patient H.M.); <b>amygdala</b> processes fear/aggression and tags emotionally significant memories.</p>
+        <p><b>Spinal cord</b>: gray matter is central (H-shape, cell bodies). White matter is peripheral (myelinated tracts &mdash; ascending sensory and descending motor). <b>Dorsal columns</b> carry fine touch + proprioception; <b>spinothalamic tract</b> carries pain + temperature; <b>corticospinal tract</b> is the descending motor highway.</p>
+
+        <div class="label" style="margin-top:14px;color:var(--trap-d)">Common student misconceptions</div>
+        <ul class="miscon-list">
+          <li><b>"All sensation goes through the thalamus."</b> Smell (olfaction) bypasses the thalamus &mdash; olfactory bulb projects directly to the olfactory cortex. The DAT loves this exception.</li>
+          <li><b>"Hypothalamus and pituitary are the same thing."</b> Hypothalamus is the brain region; pituitary is the endocrine gland it controls. Hypothalamus releases <em>hormones</em> that act on the pituitary (anterior) or sends <em>axons</em> directly to it (posterior, releasing ADH and oxytocin).</li>
+          <li><b>"Cerebellum controls fine motor strength."</b> Cerebellum coordinates and times movement; <em>strength</em> is set by motor cortex + cord output. Cerebellar damage = ataxia (uncoordinated movement), not weakness.</li>
+        </ul>
+      </div>
+
+      <div class="see-also">
+        <span class="lbl">See also</span>
+        <a href="#node-endocrine">Endocrine</a>
+        <span style="color:var(--ink-mute)">&middot; hypothalamus controls the pituitary; HPA, HPT, HPG axes start here.</span>
+      </div>
+
+      <div class="section-divider"></div>
+
+      <div class="section-num">01 &middot; Brain regions at a glance</div>
+      <h3 class="section-title">Sagittal view &middot; <em>region &harr; function</em></h3>
+
+      <div class="sandbox-wrap">
+        <div class="sandbox-head">
+          <h3>Brain anatomy &middot; <em>click any region</em></h3>
+          <div class="desc">Click a brain region to reveal its function and the consequence of damage. Region stays highlighted until you pick another. (DAT-scope: function + general consequence; no specific patient cases or clinical scenarios.)</div>
+        </div>
+        <div class="sandbox-body" style="padding:0">
+          <div id="brainExplorerBody" style="padding:0"></div>
+        </div>
+      </div>
+
+      <div class="section-divider"></div>
+
+      <div class="section-num">02 &middot; Retrieval</div>
+      <h3 class="section-title">Three quick <em>retrieval</em> prompts</h3>
+
+      <div class="retrieval-card" data-q="1">
+        <div class="q-label">Question 1 of 3</div>
+        <div class="q-text">Damage to which brain region most directly impairs the formation of new long-term memories?</div>
+        <div class="opts-grid">
+          <div class="opt" data-correct="false"><span class="let">A</span>Amygdala</div>
+          <div class="opt" data-correct="true"><span class="let">B</span>Hippocampus</div>
+          <div class="opt" data-correct="false"><span class="let">C</span>Cerebellum</div>
+          <div class="opt" data-correct="false"><span class="let">D</span>Thalamus</div>
+        </div>
+        <div class="retrieval-feedback"></div>
+      </div>
+      <div class="retrieval-card" data-q="2">
+        <div class="q-label">Question 2 of 3</div>
+        <div class="q-text">Which sense is the only one that does NOT relay through the thalamus?</div>
+        <div class="opts-grid">
+          <div class="opt" data-correct="false"><span class="let">A</span>Vision</div>
+          <div class="opt" data-correct="false"><span class="let">B</span>Hearing</div>
+          <div class="opt" data-correct="true"><span class="let">C</span>Olfaction (smell)</div>
+          <div class="opt" data-correct="false"><span class="let">D</span>Touch</div>
+        </div>
+        <div class="retrieval-feedback"></div>
+      </div>
+      <div class="retrieval-card" data-q="3">
+        <div class="q-label">Question 3 of 3</div>
+        <div class="q-text">Damage to the dorsal columns of the spinal cord would most directly cause which deficit below the level of the lesion?</div>
+        <div class="opts-grid">
+          <div class="opt" data-correct="false"><span class="let">A</span>Voluntary motor weakness</div>
+          <div class="opt" data-correct="true"><span class="let">B</span>Loss of fine touch and proprioception</div>
+          <div class="opt" data-correct="false"><span class="let">C</span>Loss of pain and temperature sensation</div>
+          <div class="opt" data-correct="false"><span class="let">D</span>Hyperactive reflexes</div>
+        </div>
+        <div class="retrieval-feedback"></div>
+      </div>
+
+      <div class="mastery-bar" data-role="mastery">
+        <div class="mastery-cell cur" data-q="1"><span class="num">1</span>Hippocampus = memory</div>
+        <div class="mastery-cell" data-q="2"><span class="num">2</span>Smell bypasses thalamus</div>
+        <div class="mastery-cell" data-q="3"><span class="num">3</span>Dorsal columns = touch/proprio</div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         NODE: SPECIAL SENSES  (Physiology · Nervous)
+         ============================================================ -->
+    <section class="node" id="node-special-senses" data-node="snz">
+      <div class="node-header">
+        <div class="num">Section 03 &middot; Physiology &middot; Nervous</div>
+        <h2>Special senses: <em>five receptors</em>, five transduction stories.</h2>
+        <p class="sub-lede"><b>Vision:</b> light &rarr; cornea &rarr; lens &rarr; retina &rarr; <b>rods (B&amp;W, dim)</b> + <b>cones (color, bright, R/G/B)</b> &rarr; bipolar &rarr; ganglion &rarr; optic nerve. <b>Hearing:</b> sound &rarr; tympanic membrane &rarr; <b>ossicles (malleus &rarr; incus &rarr; stapes)</b> &rarr; oval window &rarr; cochlea &rarr; <b>hair cells</b> on the basilar membrane (high freq at base, low freq at apex). <b>Vestibular:</b> semicircular canals (rotation), utricle/saccule (linear). <b>Taste:</b> 5 modalities (sweet, salty, sour, bitter, umami) on tongue papillae. <b>Smell:</b> olfactory epithelium &rarr; olfactory bulb &rarr; cortex (only sense that bypasses the thalamus).</p>
+      </div>
+
+      <div class="row r3">
+        <div class="subcard trap"><div class="h"><span class="lbl trap">The trap</span></div>
+          <p>Students mix up <b>rods vs cones</b> (rods = dim/B&amp;W, cones = bright/color), confuse the cochlea (hearing) with the semicircular canals (rotational balance), and forget that olfaction is the lone sense that <b>bypasses the thalamus</b>.</p></div>
+        <div class="subcard rule"><div class="h"><span class="lbl gold">The rule</span></div>
+          <p><b>Photoreceptors hyperpolarize in light</b> (less glutamate release &mdash; counterintuitive). <b>Lens accommodation:</b> ciliary muscle contracts &rarr; suspensory ligaments slack &rarr; lens rounds &rarr; near vision. Relaxation &rarr; lens flattens &rarr; far vision. Cochlear hair cells: stereocilia bend &rarr; tip-link channels open &rarr; K<sup>+</sup>/Ca<sup>2+</sup> influx &rarr; depolarization.</p></div>
+        <div class="subcard move"><div class="h"><span class="lbl teal">The move</span></div>
+          <p>Trace receptor &rarr; transduction &rarr; CNS pathway. For vision: identify which photoreceptor (rod vs cone subtype) and the bipolar/ganglion chain. For hearing: trace the wave through the ossicles to the right region of the cochlea (high pitch = base, low pitch = apex).</p></div>
+      </div>
+
+      <div class="lock-line" style="margin-top:18px">Rods = dim, B&amp;W. Cones = bright, color. Cochlea = hearing. Semicircular canals = rotation. Olfaction skips the thalamus.</div>
+
+      <div class="dat-context">
+        <div class="stat"><span class="lbl">Frequency</span><span class="val"><em>1&ndash;2</em> per exam</span></div>
+        <div class="stat"><span class="lbl">Difficulty</span><span class="val">Medium</span></div>
+        <div class="stat"><span class="lbl">Tier</span><span class="val">3 &middot; <em>Physiology</em></span></div>
+        <div class="wording"><div class="lbl">Typical question wording</div><div class="val">To focus on a near object, the ciliary muscles must do which of the following to the lens?</div></div>
+      </div>
+
+      <div class="teacher-note">
+        <div class="badge-row">
+          <span class="author-pill">From Coach</span>
+          <span class="label">Coach notes &middot; vision pathway, lens accommodation, cochlear tonotopy</span>
+        </div>
+        <h4>Each special sense has a <em>receptor type</em>, a <em>transduction step</em>, and a <em>CNS pathway</em>. Memorize all three for each.</h4>
+        <p><b>Vision pathway:</b> light &rarr; cornea (most refraction happens here) &rarr; aqueous humor &rarr; pupil/iris (controls light) &rarr; lens (fine focus via accommodation) &rarr; vitreous humor &rarr; retina. In retina: <b>photoreceptors</b> (rods + cones) at the back &rarr; bipolar cells &rarr; ganglion cells &rarr; ganglion axons exit as the <b>optic nerve</b> at the blind spot. Cones concentrated at the <b>fovea</b> (sharpest vision). Rods spread peripherally.</p>
+        <p><b>Phototransduction:</b> in the dark, photoreceptors are <em>depolarized</em> (cGMP keeps Na<sup>+</sup> channels open) and <em>release glutamate</em>. Light activates rhodopsin &rarr; transducin &rarr; PDE &rarr; cGMP drops &rarr; Na<sup>+</sup> channels close &rarr; photoreceptor <b>hyperpolarizes</b> &rarr; <em>less</em> glutamate. Counterintuitive but tested.</p>
+        <p><b>Lens accommodation:</b></p>
+        <ul class="miscon-list" style="margin-top:6px">
+          <li><b>Far vision</b> (relaxed): ciliary muscle relaxed &rarr; suspensory ligaments taut &rarr; lens stretched flat (low refraction).</li>
+          <li><b>Near vision</b> (accommodation): ciliary muscle <b>contracts</b> &rarr; ring tightens around lens &rarr; ligaments slack &rarr; lens <b>rounds up</b> (high refraction).</li>
+          <li>Lens stiffens with age (presbyopia &mdash; need reading glasses).</li>
+        </ul>
+        <p><b>Hearing &mdash; ossicle chain:</b> outer ear (pinna + canal) &rarr; tympanic membrane &rarr; <b>malleus &rarr; incus &rarr; stapes</b> (mnemonic: MIS) &rarr; oval window &rarr; perilymph in scala vestibuli &rarr; basilar membrane vibrates &rarr; <b>hair cells</b> in organ of Corti &rarr; tip-links open mechanosensitive channels &rarr; depolarization &rarr; CN VIII (vestibulocochlear) &rarr; auditory cortex.</p>
+        <p><b>Tonotopy:</b> high frequencies vibrate the basilar membrane near the <b>base</b> (stiff, narrow); low frequencies near the <b>apex</b> (flexible, wide). Damage to base &rarr; high-frequency hearing loss (typical of aging and noise).</p>
+        <p><b>Vestibular:</b> <b>semicircular canals</b> (3 of them, mutually perpendicular) detect angular/rotational acceleration via cupula deflection. <b>Utricle + saccule</b> (otolith organs) detect linear acceleration and head tilt via otoliths shifting on hair cells.</p>
+        <p><b>Smell &amp; taste:</b> olfactory receptors are GPCRs in the olfactory epithelium &rarr; olfactory bulb &rarr; <b>directly to olfactory cortex</b> (only sense that bypasses thalamus). Taste is detected by 5 receptors on tongue papillae (sweet/salty/sour/bitter/umami) &rarr; CN VII/IX/X &rarr; thalamus &rarr; gustatory cortex.</p>
+
+        <div class="label" style="margin-top:14px;color:var(--trap-d)">Common student misconceptions</div>
+        <ul class="miscon-list">
+          <li><b>"Light depolarizes photoreceptors."</b> Opposite &mdash; light <em>hyperpolarizes</em> them (closes cGMP-gated Na<sup>+</sup> channels). They release more glutamate in the dark.</li>
+          <li><b>"To focus on something close, the lens flattens."</b> Opposite &mdash; the lens <em>rounds</em> for near vision (ciliary muscle contracts, suspensory ligaments slack).</li>
+          <li><b>"The malleus connects to the oval window."</b> No &mdash; the <b>stapes</b> connects to the oval window. Order is malleus &rarr; incus &rarr; stapes.</li>
+          <li><b>"Hearing is by frequency-coded firing."</b> Frequency is encoded by <em>position</em> on the basilar membrane (place coding / tonotopy), not by AP firing rate.</li>
+        </ul>
+      </div>
+
+      <div class="see-also">
+        <span class="lbl">See also</span>
+        <a href="#node-action-potential">Action potential</a>
+        <span style="color:var(--ink-mute)">&middot; sensory transduction ultimately produces APs in afferent neurons; same machinery, different upstream trigger.</span>
+      </div>
+
+      <div class="section-divider"></div>
+
+      <div class="section-num">01 &middot; Eye and ear anatomy</div>
+      <h3 class="section-title">Side-by-side &middot; <em>vision</em> and <em>hearing</em> pathways</h3>
+
+      <div class="sandbox-wrap">
+        <div class="sandbox-head">
+          <h3>Special senses &middot; <em>structure traces function</em></h3>
+          <div class="desc">Eye: light path through cornea &rarr; lens &rarr; retina with rod/cone distribution at the fovea. Ear: sound through ossicles &rarr; cochlea with tonotopic frequency map (high at base, low at apex).</div>
+        </div>
+        <div class="sandbox-body" style="padding:0">
+          <svg viewBox="0 0 800 400" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
+            <text x="400" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">VISION (LEFT) &middot; HEARING (RIGHT)</text>
+
+            <!-- Vertical divider -->
+            <line x1="400" y1="50" x2="400" y2="380" stroke="#1B3A2D" stroke-width="1" stroke-dasharray="4,4" opacity="0.4"/>
+
+            <!-- ============ EYE (LEFT) ============ -->
+            <text x="200" y="60" text-anchor="middle" font-size="12" font-weight="700" fill="#5cabe6">EYE &mdash; vision</text>
+
+            <!-- Eyeball -->
+            <ellipse cx="200" cy="200" rx="130" ry="90" fill="rgba(255,255,255,0.9)" stroke="#1B3A2D" stroke-width="2"/>
+            <!-- Cornea (front bulge) -->
+            <path d="M 70 200 Q 60 175 80 165 L 80 235 Q 60 225 70 200 Z" fill="rgba(106,138,168,0.3)" stroke="#1B3A2D" stroke-width="1.5"/>
+            <text x="50" y="155" font-size="9" font-weight="700" fill="#1B3A2D">cornea</text>
+            <line x1="55" y1="158" x2="73" y2="180" stroke="#1B3A2D" stroke-width="0.6"/>
+
+            <!-- Iris + pupil -->
+            <line x1="80" y1="170" x2="80" y2="230" stroke="#a378a5" stroke-width="3"/>
+            <line x1="80" y1="190" x2="80" y2="210" stroke="#000" stroke-width="6"/>
+            <text x="55" y="180" text-anchor="end" font-size="8" font-weight="700" fill="#1B3A2D">iris/pupil</text>
+
+            <!-- Lens -->
+            <ellipse cx="105" cy="200" rx="10" ry="22" fill="rgba(193,154,62,0.4)" stroke="#1B3A2D" stroke-width="1.2"/>
+            <text x="105" y="155" text-anchor="middle" font-size="9" font-weight="700" fill="#1B3A2D">lens</text>
+            <line x1="105" y1="158" x2="105" y2="178" stroke="#1B3A2D" stroke-width="0.6"/>
+
+            <!-- Ciliary muscle (around lens) -->
+            <path d="M 95 178 Q 95 168 105 168 Q 115 168 115 178" fill="none" stroke="#C25B3F" stroke-width="2"/>
+            <path d="M 95 222 Q 95 232 105 232 Q 115 232 115 222" fill="none" stroke="#C25B3F" stroke-width="2"/>
+
+            <!-- Retina (back of eyeball) -->
+            <path d="M 295 130 Q 330 200 295 270" fill="none" stroke="#5FA874" stroke-width="4"/>
+            <text x="345" y="200" font-size="9" font-weight="700" fill="#1B3A2D">retina</text>
+            <text x="345" y="212" font-size="7" fill="#1B3A2D">rods + cones</text>
+            <line x1="318" y1="200" x2="340" y2="200" stroke="#1B3A2D" stroke-width="0.6"/>
+
+            <!-- Fovea (center of retina) -->
+            <circle cx="320" cy="200" r="4" fill="#C25B3F" stroke="#1B3A2D" stroke-width="0.8"/>
+            <text x="345" y="240" font-size="8" font-weight="700" fill="#1B3A2D">fovea</text>
+            <text x="345" y="252" font-size="7" fill="#1B3A2D">(cone-rich,</text>
+            <text x="345" y="262" font-size="7" fill="#1B3A2D">sharpest vision)</text>
+
+            <!-- Optic nerve -->
+            <path d="M 300 230 L 340 270" stroke="#1B3A2D" stroke-width="3"/>
+            <text x="345" y="285" font-size="9" font-weight="700" fill="#1B3A2D">optic nerve</text>
+            <text x="345" y="296" font-size="7" fill="#1B3A2D">(blind spot here)</text>
+
+            <!-- Light rays -->
+            <line x1="20" y1="170" x2="100" y2="195" stroke="#c19a3e" stroke-width="1.5" stroke-dasharray="2,2" marker-end="url(#snz-arr)"/>
+            <line x1="20" y1="200" x2="100" y2="200" stroke="#c19a3e" stroke-width="1.5" stroke-dasharray="2,2" marker-end="url(#snz-arr)"/>
+            <line x1="20" y1="230" x2="100" y2="205" stroke="#c19a3e" stroke-width="1.5" stroke-dasharray="2,2" marker-end="url(#snz-arr)"/>
+            <text x="20" y="160" font-size="8" font-style="italic" fill="#c19a3e">light</text>
+
+            <!-- Inverted image projection -->
+            <line x1="115" y1="195" x2="295" y2="270" stroke="#1B3A2D" stroke-width="0.6" stroke-dasharray="2,2" opacity="0.6"/>
+            <line x1="115" y1="205" x2="295" y2="130" stroke="#1B3A2D" stroke-width="0.6" stroke-dasharray="2,2" opacity="0.6"/>
+
+            <!-- Eye notes -->
+            <text x="200" y="320" text-anchor="middle" font-size="9" font-style="italic" fill="#1B3A2D">Photoreceptors HYPERPOLARIZE in light (close cGMP-gated Na+ channels). Rods: dim, B&amp;W. Cones: bright, color (R/G/B).</text>
+            <text x="200" y="335" text-anchor="middle" font-size="9" font-style="italic" fill="#1B3A2D">Pathway: light &rarr; rods/cones &rarr; bipolar &rarr; ganglion &rarr; optic nerve &rarr; thalamus (LGN) &rarr; visual cortex (occipital).</text>
+            <text x="200" y="358" text-anchor="middle" font-size="10" font-weight="700" fill="#C25B3F">Near vision: ciliary contracts &rarr; lens ROUNDS. Far: ciliary relaxes &rarr; lens FLATTENS.</text>
+
+            <!-- ============ EAR (RIGHT) ============ -->
+            <text x="600" y="60" text-anchor="middle" font-size="12" font-weight="700" fill="#C25B3F">EAR &mdash; hearing</text>
+
+            <!-- Pinna -->
+            <path d="M 440 120 Q 430 90 460 90 Q 480 110 470 160 L 460 200 Q 445 195 440 170 Z" fill="rgba(193,154,62,0.3)" stroke="#1B3A2D" stroke-width="1.5"/>
+            <text x="430" y="100" text-anchor="end" font-size="9" font-weight="700" fill="#1B3A2D">pinna</text>
+
+            <!-- Ear canal -->
+            <rect x="470" y="155" width="50" height="20" fill="rgba(106,138,168,0.2)" stroke="#1B3A2D" stroke-width="1"/>
+            <text x="495" y="190" text-anchor="middle" font-size="8" font-weight="700" fill="#1B3A2D">ear canal</text>
+
+            <!-- Tympanic membrane -->
+            <line x1="520" y1="150" x2="520" y2="180" stroke="#1B3A2D" stroke-width="3"/>
+            <text x="525" y="148" font-size="8" font-weight="700" fill="#1B3A2D">tympanic membrane</text>
+
+            <!-- Ossicles M-I-S -->
+            <circle cx="535" cy="160" r="6" fill="rgba(95,168,116,0.6)" stroke="#1B3A2D" stroke-width="1"/>
+            <text x="535" y="163" text-anchor="middle" font-size="7" font-weight="700" fill="#fff">M</text>
+            <circle cx="555" cy="155" r="5" fill="rgba(95,168,116,0.6)" stroke="#1B3A2D" stroke-width="1"/>
+            <text x="555" y="158" text-anchor="middle" font-size="7" font-weight="700" fill="#fff">I</text>
+            <path d="M 570 160 L 580 170 L 575 175 Z" fill="rgba(95,168,116,0.6)" stroke="#1B3A2D" stroke-width="1"/>
+            <text x="572" y="155" font-size="7" font-weight="700" fill="#1B3A2D">S</text>
+            <text x="555" y="135" text-anchor="middle" font-size="8" font-weight="700" fill="#1B3A2D">M&rarr;I&rarr;S (ossicles)</text>
+
+            <!-- Oval window -->
+            <line x1="582" y1="168" x2="582" y2="178" stroke="#C25B3F" stroke-width="3"/>
+            <text x="582" y="195" text-anchor="middle" font-size="7" font-weight="700" fill="#C25B3F">oval</text>
+            <text x="582" y="204" text-anchor="middle" font-size="7" font-weight="700" fill="#C25B3F">window</text>
+
+            <!-- Cochlea (spiral) -->
+            <path d="M 590 200 Q 640 180 680 220 Q 700 270 670 290 Q 640 290 640 260 Q 640 240 660 240 Q 670 245 668 255" fill="none" stroke="#1B3A2D" stroke-width="2.5"/>
+            <text x="710" y="220" font-size="9" font-weight="700" fill="#1B3A2D">cochlea</text>
+
+            <!-- Tonotopy labels -->
+            <text x="600" y="220" font-size="8" font-weight="700" fill="#C25B3F">BASE</text>
+            <text x="600" y="232" font-size="7" fill="#1B3A2D">high freq</text>
+            <text x="660" y="270" font-size="8" font-weight="700" fill="#5cabe6">APEX</text>
+            <text x="660" y="282" font-size="7" fill="#1B3A2D">low freq</text>
+
+            <!-- Sound waves entering -->
+            <path d="M 380 165 Q 410 158 440 165" fill="none" stroke="#a378a5" stroke-width="1.5"/>
+            <path d="M 380 175 Q 410 168 440 175" fill="none" stroke="#a378a5" stroke-width="1.5"/>
+            <text x="380" y="155" font-size="8" font-style="italic" fill="#a378a5">sound</text>
+
+            <!-- Auditory nerve -->
+            <path d="M 695 270 L 720 290" stroke="#1B3A2D" stroke-width="2"/>
+            <text x="720" y="305" font-size="8" font-weight="700" fill="#1B3A2D">CN VIII</text>
+            <text x="720" y="316" font-size="7" fill="#1B3A2D">(vestibulocochlear)</text>
+
+            <!-- Ear notes -->
+            <text x="600" y="350" text-anchor="middle" font-size="9" font-style="italic" fill="#1B3A2D">High freq vibrates basilar membrane at BASE; low freq at APEX (place coding).</text>
+            <text x="600" y="365" text-anchor="middle" font-size="9" font-style="italic" fill="#1B3A2D">Hair cells transduce mechanical &rarr; electrical via tip-link channels.</text>
+
+            <defs>
+              <marker id="snz-arr" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+                <path d="M 0 0 L 6 3 L 0 6 z" fill="#c19a3e"/>
+              </marker>
+            </defs>
+          </svg>
+        </div>
+      </div>
+
+      <div class="section-divider"></div>
+
+      <div class="section-num">02 &middot; Retrieval</div>
+      <h3 class="section-title">Three quick <em>retrieval</em> prompts</h3>
+
+      <div class="retrieval-card" data-q="1">
+        <div class="q-label">Question 1 of 3</div>
+        <div class="q-text">Which retinal photoreceptor is responsible for color vision in bright light?</div>
+        <div class="opts-grid">
+          <div class="opt" data-correct="false"><span class="let">A</span>Rods &mdash; they handle all wavelengths</div>
+          <div class="opt" data-correct="true"><span class="let">B</span>Cones &mdash; three subtypes detect red, green, and blue wavelengths</div>
+          <div class="opt" data-correct="false"><span class="let">C</span>Bipolar cells</div>
+          <div class="opt" data-correct="false"><span class="let">D</span>Ganglion cells</div>
+        </div>
+        <div class="retrieval-feedback"></div>
+      </div>
+      <div class="retrieval-card" data-q="2">
+        <div class="q-label">Question 2 of 3</div>
+        <div class="q-text">To focus on a near object, the ciliary muscles must do which of the following to the lens?</div>
+        <div class="opts-grid">
+          <div class="opt" data-correct="false"><span class="let">A</span>Relax, allowing the lens to flatten</div>
+          <div class="opt" data-correct="true"><span class="let">B</span>Contract, allowing the suspensory ligaments to slack so the lens rounds</div>
+          <div class="opt" data-correct="false"><span class="let">C</span>Relax, pulling the lens via the suspensory ligaments</div>
+          <div class="opt" data-correct="false"><span class="let">D</span>Contract, stretching the lens flat</div>
+        </div>
+        <div class="retrieval-feedback"></div>
+      </div>
+      <div class="retrieval-card" data-q="3">
+        <div class="q-label">Question 3 of 3</div>
+        <div class="q-text">A patient suffers high-frequency hearing loss after years of noise exposure. Damage is most likely concentrated in which region of the cochlea?</div>
+        <div class="opts-grid">
+          <div class="opt" data-correct="true"><span class="let">A</span>The base &mdash; the basilar membrane is stiff and narrow there, where high frequencies vibrate</div>
+          <div class="opt" data-correct="false"><span class="let">B</span>The apex &mdash; the membrane is wide and flexible, encoding high frequencies</div>
+          <div class="opt" data-correct="false"><span class="let">C</span>The oval window &mdash; the entry point for high-frequency vibrations</div>
+          <div class="opt" data-correct="false"><span class="let">D</span>The middle ear ossicles &mdash; high frequencies require more force</div>
+        </div>
+        <div class="retrieval-feedback"></div>
+      </div>
+
+      <div class="mastery-bar" data-role="mastery">
+        <div class="mastery-cell cur" data-q="1"><span class="num">1</span>Cones = color</div>
+        <div class="mastery-cell" data-q="2"><span class="num">2</span>Near vision = lens rounds</div>
+        <div class="mastery-cell" data-q="3"><span class="num">3</span>Tonotopy: base = high freq</div>
+      </div>
+    </section>
+
         <!-- ============================================================
          NODE: CARDIOVASCULAR  (Physiology)
          ============================================================ -->
@@ -2585,39 +3204,14 @@
       <div class="section-num">01 &middot; Cross-bridge scrubber</div>
       <h3 class="section-title">The <em>cross-bridge</em> scrubber</h3>
 
-      <div class="node-viz" data-viz="sliding-filament">
-        <div class="viz-head">
-          <h3>Interactive: <em>The cross-bridge scrubber</em></h3>
-          <span class="tag">live · drag / click / type</span>
+      <div class="sandbox-wrap">
+        <div class="sandbox-head">
+          <h3>Cross-bridge cycle scrubber &middot; <em>watch the sarcomere shrink</em></h3>
+          <div class="desc">Drag the slider through one full cross-bridge cycle. Z-lines move closer; I-band and H-zone shrink; A-band stays the same. Live measurements update with the slider.</div>
         </div>
-        <div class="viz-body controls-canvas">
-          <div class="viz-controls">
-            <label>Cycle stage</label>
-            <input type="range" data-slide="stage" min="0" max="100" step="25" value="0">
-            <div class="row"><span class="val" data-region="stage-name">Rest</span></div>
-          </div>
-          <div>
-            <svg viewBox="0 0 400 160" preserveAspectRatio="xMidYMid meet" style="background:#fbf6e9;border-radius:10px;width:100%">
-              <line x1="20" y1="20" x2="20" y2="140" stroke="#0d2018" stroke-width="3"/>
-              <line x1="380" y1="20" x2="380" y2="140" stroke="#0d2018" stroke-width="3"/>
-              <text x="20" y="156" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#666">Z</text>
-              <text x="380" y="156" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#666">Z</text>
-              <text x="200" y="156" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#666">M</text>
-              <line x1="200" y1="20" x2="200" y2="140" stroke="#888" stroke-dasharray="2 2"/>
-              <g data-region="sarcomere">
-                <rect x="125" y="60" width="150" height="14" rx="2" fill="#c19a3e" opacity="0.7"/>
-                <rect x="20" y="46" width="150" height="6" rx="2" fill="var(--good)"/>
-                <rect x="230" y="46" width="150" height="6" rx="2" fill="var(--good)"/>
-                <rect x="20" y="82" width="150" height="6" rx="2" fill="var(--good)"/>
-                <rect x="230" y="82" width="150" height="6" rx="2" fill="var(--good)"/>
-              </g>
-              <circle data-region="head" cx="160" cy="55" r="6" fill="#888"/>
-              <circle data-region="head" cx="240" cy="79" r="6" fill="#888"/>
-            </svg>
-            <div class="viz-readout" data-region="stage-detail" style="margin-top:10px"></div>
-          </div>
+        <div class="sandbox-body" style="padding:0">
+          <div id="crossBridgeBody" style="padding:0"></div>
         </div>
-
       </div>
 
 <div class="section-divider"></div>

@@ -1,0 +1,1387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Periodic Trends · Gen Chem · Ace Labs</title>
+<meta name="description" content="Heatmap explorer, speed drill with anomaly distractors, and iso-electronic ranker for DAT Gen Chem periodic trends."/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400;1,700&family=DM+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../shared/al-tokens.css">
+<link rel="stylesheet" href="../../shared/al-motion.css">
+<link rel="stylesheet" href="../../shared/ace-labs-shell.css">
+<style>
+/* ============================================================
+   Periodic Trends — local styles
+   AL paper + gold + teal palette. No new color literals.
+   ============================================================ */
+body[data-page="gc-trends"]{
+  background:linear-gradient(180deg,var(--al-bg) 0%,var(--al-paper-2) 100%);
+  color:var(--al-ink);
+  min-height:100vh;
+}
+
+.pt-wrap{max-width:1320px;margin:0 auto;padding:30px 28px 80px;}
+
+/* Hero */
+.pt-hero{
+  background:var(--al-paper);
+  border:1px solid var(--al-line);
+  border-left:5px solid var(--al-gc-color);
+  border-radius:14px;
+  padding:30px 34px;
+  box-shadow:var(--al-shadow);
+  margin-bottom:26px;
+}
+.pt-kicker{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--al-gold-d);background:var(--al-gold-bg);
+  padding:5px 12px;border-radius:6px;border:1px solid var(--al-gold-d);
+  display:inline-block;margin-bottom:14px;
+}
+.pt-hero h1{
+  font-family:'Playfair Display',Georgia,serif;
+  font-weight:700;font-size:38px;line-height:1.15;margin:0 0 10px;letter-spacing:-.01em;
+}
+.pt-hero h1 em{color:var(--al-gold-d);font-style:italic;}
+.pt-hero p.lede{
+  font-size:15.5px;line-height:1.55;color:var(--al-ink-2);margin:0;max-width:920px;
+}
+
+/* Section anchor nav */
+.pt-secnav{
+  display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0;
+}
+.pt-secnav a{
+  padding:7px 13px;border-radius:99px;
+  background:var(--al-paper-2);border:1px solid var(--al-line);
+  color:var(--al-ink-2);text-decoration:none;
+  font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;
+  letter-spacing:.10em;text-transform:uppercase;
+  transition:all var(--motion-fast);
+}
+.pt-secnav a:hover{border-color:var(--al-gold-d);background:var(--al-gold-bg);color:var(--al-ink);}
+
+/* Section frame */
+.pt-section{
+  background:var(--al-paper);
+  border:1px solid var(--al-line);
+  border-left:4px solid var(--al-gc-color);
+  border-radius:14px;
+  padding:24px 28px;
+  box-shadow:var(--al-shadow);
+  margin-bottom:24px;
+}
+.pt-section-head{
+  display:flex;align-items:flex-end;justify-content:space-between;gap:14px;
+  margin-bottom:14px;flex-wrap:wrap;
+}
+.pt-section-num{
+  font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--al-gold-d);
+}
+.pt-section-title{
+  font-family:'Playfair Display',serif;font-weight:700;font-size:26px;
+  line-height:1.2;margin:4px 0 4px;letter-spacing:-.01em;
+}
+.pt-section-title em{color:var(--al-gold-d);font-style:italic;}
+.pt-section-sub{font-size:13.5px;color:var(--al-ink-2);max-width:780px;margin:0;}
+
+/* ============================================================
+   Heatmap explorer
+   ============================================================ */
+.pt-trend-bar{
+  display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 16px;
+}
+.pt-trend-btn{
+  padding:8px 14px;border-radius:8px;cursor:pointer;
+  background:var(--al-paper-2);border:1px solid var(--al-line);
+  color:var(--al-ink-2);
+  font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;
+  letter-spacing:.08em;text-transform:uppercase;
+  transition:all var(--motion-fast);
+}
+.pt-trend-btn:hover{border-color:var(--al-gold-d);color:var(--al-ink);}
+.pt-trend-btn.active{
+  background:var(--al-teal);color:var(--al-paper);border-color:var(--al-teal);
+}
+.pt-trend-caption{
+  background:var(--al-paper-2);
+  border-left:3px solid var(--al-gc-color);
+  border-radius:8px;
+  padding:12px 16px;
+  font-size:13.5px;line-height:1.55;color:var(--al-ink-2);
+  margin-bottom:14px;
+}
+.pt-trend-caption .arrow{
+  font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--al-gold-d);
+  display:inline-block;margin-right:8px;
+}
+.pt-trend-caption strong{color:var(--al-ink);font-weight:700;}
+
+/* Heatmap grid: 18 cols main + 15 cols lan/act */
+.pt-grid-wrap{
+  position:relative;
+  background:var(--al-paper-2);
+  border:1px solid var(--al-line);
+  border-radius:10px;
+  padding:14px 12px;
+  overflow-x:auto;
+}
+.pt-grid{
+  display:grid;
+  grid-template-columns:repeat(18, minmax(40px, 1fr));
+  gap:4px;
+  min-width:720px;
+}
+.pt-cell{
+  position:relative;
+  aspect-ratio:1/1;
+  border:1px solid var(--al-line);
+  border-radius:5px;
+  background:var(--al-paper);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  cursor:pointer;
+  transition:transform var(--motion-fast), box-shadow var(--motion-fast);
+  user-select:none;
+  overflow:hidden;
+}
+.pt-cell:hover, .pt-cell.focused{
+  transform:scale(1.08);
+  z-index:5;
+  box-shadow:0 4px 14px rgba(13,32,24,.18);
+  border-color:var(--al-ink);
+}
+.pt-cell .z{
+  position:absolute;top:2px;left:4px;
+  font-family:'JetBrains Mono',monospace;font-size:8.5px;font-weight:600;
+  color:var(--al-ink-mute);
+}
+.pt-cell .sym{
+  font-family:'Playfair Display',serif;font-weight:700;font-size:15px;
+  color:var(--al-ink);line-height:1;
+}
+.pt-cell .val{
+  font-family:'JetBrains Mono',monospace;font-size:8.5px;font-weight:600;
+  color:var(--al-ink-2);margin-top:2px;line-height:1;
+}
+.pt-cell.empty{background:transparent;border:none;cursor:default;}
+.pt-cell.no-data{opacity:.35;}
+
+/* Block labels above the grid */
+.pt-block-row{
+  display:grid;grid-template-columns:repeat(18, minmax(40px, 1fr));
+  gap:4px;margin-bottom:6px;min-width:720px;
+}
+.pt-block-row .blk{
+  font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;
+  letter-spacing:.10em;text-transform:uppercase;color:var(--al-ink-soft);
+  text-align:center;
+}
+
+/* Lan/act separator */
+.pt-fblock{
+  margin-top:12px;
+  display:grid;grid-template-columns:80px repeat(15, minmax(40px, 1fr)) 60px;
+  gap:4px;align-items:center;
+  min-width:720px;
+}
+.pt-fblock .lbl{
+  font-family:'JetBrains Mono',monospace;font-size:9.5px;font-weight:700;
+  letter-spacing:.08em;text-transform:uppercase;color:var(--al-ink-mute);
+  text-align:right;padding-right:6px;line-height:1.2;
+}
+
+/* Legend */
+.pt-legend{
+  display:flex;align-items:center;gap:14px;margin-top:14px;flex-wrap:wrap;
+  font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;
+  letter-spacing:.08em;text-transform:uppercase;color:var(--al-ink-mute);
+}
+.pt-legend-bar{
+  flex:1;min-width:200px;height:14px;border-radius:7px;
+  background:linear-gradient(90deg,
+    var(--al-paper-2) 0%,
+    var(--al-gold-m) 45%,
+    var(--al-gold) 70%,
+    var(--al-teal-3) 100%);
+  border:1px solid var(--al-line);
+}
+.pt-legend .vmin, .pt-legend .vmax{color:var(--al-ink);font-weight:700;}
+
+/* Tooltip */
+.pt-tip{
+  position:fixed;pointer-events:none;
+  background:var(--al-ink);color:var(--al-paper);
+  padding:10px 12px;border-radius:8px;
+  font-size:12.5px;line-height:1.4;
+  box-shadow:var(--al-shadow-md);
+  max-width:240px;z-index:99;
+  opacity:0;transition:opacity var(--motion-fast);
+  border:1px solid var(--al-gold);
+}
+.pt-tip.show{opacity:1;}
+.pt-tip .tip-sym{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--al-gold);}
+.pt-tip .tip-name{font-size:13px;color:var(--al-paper);font-weight:600;}
+.pt-tip .tip-meta{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--al-gold-m);margin-top:4px;}
+.pt-tip .tip-val{margin-top:6px;padding-top:6px;border-top:1px dashed var(--al-gold);}
+.pt-tip .tip-val .vlbl{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--al-gold-m);letter-spacing:.10em;text-transform:uppercase;}
+.pt-tip .tip-val .vnum{font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--al-paper);font-weight:700;}
+
+/* ============================================================
+   Speed drill
+   ============================================================ */
+.pt-drill{display:grid;grid-template-columns:1.4fr 1fr;gap:18px;}
+@media (max-width:880px){.pt-drill{grid-template-columns:1fr;}}
+
+.pt-drill-stage{
+  background:var(--al-paper-2);
+  border:1px solid var(--al-line);
+  border-radius:12px;
+  padding:22px 22px 20px;
+  display:flex;flex-direction:column;gap:14px;
+  min-height:380px;
+}
+.pt-drill-prompt{
+  font-family:'Playfair Display',serif;font-weight:700;font-size:24px;line-height:1.2;
+  color:var(--al-ink);text-align:center;letter-spacing:-.005em;margin:6px 0;
+}
+.pt-drill-prompt em{color:var(--al-gold-d);font-style:italic;}
+.pt-drill-pair{
+  display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:stretch;
+}
+.pt-drill-card{
+  background:var(--al-paper);
+  border:2px solid var(--al-line);
+  border-radius:12px;
+  padding:24px 16px;
+  text-align:center;cursor:pointer;
+  transition:all var(--motion-fast);
+}
+.pt-drill-card:hover:not(.disabled){
+  border-color:var(--al-gold-d);
+  background:var(--al-gold-bg);
+  transform:translateY(-2px);
+}
+.pt-drill-card.disabled{cursor:default;opacity:.7;}
+.pt-drill-card.right{
+  border-color:var(--al-confirmed);background:var(--al-confirmed-pale);
+}
+.pt-drill-card.wrong{
+  border-color:var(--al-needs-review);background:var(--al-needs-review-pale);
+}
+.pt-drill-card .sym{
+  font-family:'Playfair Display',serif;font-weight:700;font-size:48px;line-height:1;
+  color:var(--al-ink);margin-bottom:6px;
+}
+.pt-drill-card .name{
+  font-size:13px;color:var(--al-ink-2);
+}
+.pt-drill-card .z{
+  font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--al-ink-mute);
+  letter-spacing:.08em;text-transform:uppercase;margin-top:4px;
+}
+
+.pt-drill-meta{
+  display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;
+  font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;
+  letter-spacing:.10em;text-transform:uppercase;color:var(--al-ink-mute);
+}
+.pt-drill-meta strong{color:var(--al-ink);}
+.pt-drill-timer{
+  flex:1;min-width:120px;height:6px;background:var(--al-paper-3);border-radius:3px;overflow:hidden;
+}
+.pt-drill-timer-bar{
+  height:100%;background:linear-gradient(90deg,var(--al-confirmed),var(--al-almost),var(--al-needs-review));
+  width:100%;transform-origin:left center;
+  transition:transform 1000ms linear;
+}
+.pt-drill-feedback{
+  background:var(--al-paper);border:1px solid var(--al-line);border-left:3px solid var(--al-gc-color);
+  border-radius:8px;padding:12px 14px;font-size:13px;line-height:1.55;color:var(--al-ink-2);
+  min-height:46px;
+}
+.pt-drill-feedback strong{color:var(--al-ink);}
+.pt-drill-feedback .anomaly-tag{
+  display:inline-block;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;
+  letter-spacing:.10em;text-transform:uppercase;color:var(--al-gold-d);
+  background:var(--al-gold-bg);border:1px solid var(--al-gold-d);
+  padding:2px 8px;border-radius:99px;margin-right:8px;
+}
+.pt-drill-controls{
+  display:flex;gap:8px;flex-wrap:wrap;
+}
+.pt-btn{
+  padding:10px 16px;font-family:'JetBrains Mono',monospace;
+  font-size:11px;font-weight:700;letter-spacing:.10em;text-transform:uppercase;
+  cursor:pointer;border-radius:8px;border:1px solid var(--al-line);
+  background:var(--al-paper);color:var(--al-ink);transition:all var(--motion-fast);
+}
+.pt-btn:hover{border-color:var(--al-gold-d);background:var(--al-gold-bg);}
+.pt-btn-primary{
+  background:var(--al-teal);color:var(--al-paper);border-color:var(--al-teal);
+}
+.pt-btn-primary:hover{background:var(--al-teal-2);border-color:var(--al-teal-2);color:var(--al-paper);}
+.pt-btn:disabled{opacity:.5;cursor:not-allowed;}
+
+/* Drill stats panel */
+.pt-drill-stats{
+  background:var(--al-paper-2);
+  border:1px solid var(--al-line);
+  border-radius:12px;
+  padding:18px 20px;
+  display:flex;flex-direction:column;gap:14px;
+}
+.pt-stats-h{
+  font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--al-ink-mute);
+  margin:0 0 4px;
+}
+.pt-stats-big{
+  display:grid;grid-template-columns:repeat(2, 1fr);gap:10px;
+}
+.pt-stat{
+  background:var(--al-paper);border:1px solid var(--al-line);border-radius:10px;
+  padding:12px 14px;
+}
+.pt-stat-num{
+  font-family:'Playfair Display',serif;font-weight:700;font-size:28px;line-height:1;
+  color:var(--al-ink);margin-bottom:4px;
+}
+.pt-stat-num em{color:var(--al-gold-d);font-style:italic;}
+.pt-stat-lbl{
+  font-family:'JetBrains Mono',monospace;font-size:9.5px;font-weight:700;
+  letter-spacing:.10em;text-transform:uppercase;color:var(--al-ink-mute);
+}
+.pt-trend-table{
+  display:flex;flex-direction:column;gap:6px;
+}
+.pt-trend-row{
+  display:grid;grid-template-columns:1fr 50px 60px;gap:8px;align-items:center;
+  background:var(--al-paper);border:1px solid var(--al-line);border-radius:8px;
+  padding:8px 12px;
+}
+.pt-trend-row .nm{font-size:12.5px;color:var(--al-ink);font-weight:600;}
+.pt-trend-row .nm.weak{color:var(--al-needs-review);}
+.pt-trend-row .pct{
+  font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;
+  color:var(--al-ink);text-align:right;
+}
+.pt-trend-row .pct.weak{color:var(--al-needs-review);}
+.pt-trend-row .rt{
+  font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--al-ink-mute);
+  text-align:right;
+}
+.pt-stats-empty{
+  color:var(--al-ink-mute);font-size:13px;font-style:italic;text-align:center;padding:18px 0;
+}
+.pt-history{
+  display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;
+}
+.pt-hist-chip{
+  font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;
+  letter-spacing:.08em;
+  padding:4px 8px;border-radius:99px;
+  background:var(--al-paper);border:1px solid var(--al-line);color:var(--al-ink-2);
+}
+
+/* ============================================================
+   Iso-electronic ranker
+   ============================================================ */
+.pt-iso-pickers{
+  display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;
+}
+.pt-iso-pick{
+  padding:8px 14px;border-radius:99px;cursor:pointer;
+  background:var(--al-paper-2);border:1px solid var(--al-line);
+  color:var(--al-ink-2);
+  font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;
+  letter-spacing:.08em;text-transform:uppercase;
+  transition:all var(--motion-fast);
+}
+.pt-iso-pick:hover{border-color:var(--al-gold-d);}
+.pt-iso-pick.active{background:var(--al-ink);color:var(--al-paper);border-color:var(--al-ink);}
+
+.pt-iso-stage{
+  background:var(--al-paper-2);
+  border:1px solid var(--al-line);
+  border-radius:12px;
+  padding:22px 22px;
+  display:flex;flex-direction:column;gap:18px;
+}
+.pt-iso-prompt{
+  font-size:14px;color:var(--al-ink-2);line-height:1.55;
+}
+.pt-iso-prompt strong{color:var(--al-ink);}
+.pt-iso-prompt .ne-pill{
+  display:inline-block;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;
+  letter-spacing:.08em;
+  padding:3px 10px;border-radius:99px;
+  background:var(--al-gold-bg);color:var(--al-gold-d);border:1px solid var(--al-gold-d);
+  margin-left:6px;
+}
+.pt-iso-pool, .pt-iso-rank{
+  display:flex;flex-wrap:wrap;gap:10px;
+  min-height:88px;
+  background:var(--al-paper);border:1px dashed var(--al-line-2);border-radius:10px;
+  padding:14px;
+}
+.pt-iso-rank{border-style:solid;}
+.pt-iso-rank-h, .pt-iso-pool-h{
+  font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;
+  letter-spacing:.10em;text-transform:uppercase;color:var(--al-ink-mute);
+  margin-bottom:6px;
+}
+.pt-iso-rank-h strong{color:var(--al-ink);}
+.pt-iso-token{
+  cursor:pointer;
+  background:var(--al-paper-2);border:1.5px solid var(--al-line);border-radius:10px;
+  padding:10px 14px;min-width:80px;text-align:center;
+  font-family:'Playfair Display',serif;font-weight:700;font-size:18px;color:var(--al-ink);
+  transition:all var(--motion-fast);
+  position:relative;
+}
+.pt-iso-token:hover{border-color:var(--al-gold-d);background:var(--al-gold-bg);transform:translateY(-2px);}
+.pt-iso-token .pos{
+  position:absolute;top:-8px;left:-8px;
+  width:22px;height:22px;border-radius:50%;
+  background:var(--al-teal);color:var(--al-paper);
+  font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+  border:1.5px solid var(--al-paper);
+}
+.pt-iso-token.right{border-color:var(--al-confirmed);background:var(--al-confirmed-pale);}
+.pt-iso-token.right .pos{background:var(--al-confirmed);}
+.pt-iso-token.wrong{border-color:var(--al-needs-review);background:var(--al-needs-review-pale);}
+.pt-iso-token.wrong .pos{background:var(--al-needs-review);}
+
+.pt-iso-actions{display:flex;gap:8px;flex-wrap:wrap;}
+.pt-iso-explain{
+  display:none;
+  background:var(--al-paper);border:1px solid var(--al-line);
+  border-left:3px solid var(--al-gold-d);border-radius:10px;
+  padding:14px 16px;font-size:13.5px;line-height:1.6;color:var(--al-ink-2);
+}
+.pt-iso-explain.show{display:block;}
+.pt-iso-explain strong{color:var(--al-ink);}
+.pt-iso-explain .order{
+  font-family:'JetBrains Mono',monospace;font-size:13px;
+  background:var(--al-paper-2);padding:8px 12px;border-radius:8px;display:inline-block;margin:6px 0;
+}
+
+/* Footer */
+.pt-foot{
+  margin-top:30px;padding:18px 22px;
+  background:var(--al-paper);border:1px solid var(--al-line);border-radius:10px;
+  font-size:13px;line-height:1.55;color:var(--al-ink-mute);
+}
+.pt-foot a{color:var(--al-gold-d);text-decoration:none;border-bottom:1px dashed var(--al-gold-d);}
+.pt-foot strong{color:var(--al-ink);}
+
+@media (max-width:680px){
+  .pt-hero h1{font-size:28px;}
+  .pt-section-title{font-size:22px;}
+  .pt-cell .val{display:none;}
+  .pt-cell .sym{font-size:13px;}
+  .pt-drill-card .sym{font-size:36px;}
+}
+</style>
+</head>
+<body data-page="gc-trends">
+
+<header class="al-top">
+  <div class="al-brand">
+    <span class="al-mark">Ace<em>The</em>DAT</span>
+    <span class="al-divider"></span>
+    <span class="al-product">Ace Labs · Gen Chem</span>
+  </div>
+  <nav class="al-nav">
+    <a href="../../ace-labs.html" class="al-nav-link">Home</a>
+    <a href="index.html" class="al-nav-link">Engine</a>
+    <a href="traps.html" class="al-nav-link">Common traps</a>
+    <a href="trends.html" class="al-nav-link active">Periodic trends</a>
+  </nav>
+</header>
+
+<div class="pt-wrap">
+
+  <!-- ============== HERO ============== -->
+  <section class="pt-hero">
+    <span class="pt-kicker">Periodic trends · pattern pack</span>
+    <h1>The <em>arrows</em> work — until they don't.</h1>
+    <p class="lede">Three tools for 600-level pattern recognition: a heatmap of every trend across the table, a five-second speed drill loaded with the anomaly distractors the DAT actually uses, and an iso-electronic ranker that forces Z_eff reasoning. Stop relying on the textbook arrows. Start seeing where they break.</p>
+    <nav class="pt-secnav">
+      <a href="#sec-heat">Heatmap explorer</a>
+      <a href="#sec-drill">Speed drill</a>
+      <a href="#sec-iso">Iso-electronic ranker</a>
+    </nav>
+  </section>
+
+  <!-- ============== SECTION 1 — HEATMAP ============== -->
+  <section id="sec-heat" class="pt-section">
+    <div class="pt-section-head">
+      <div>
+        <div class="pt-section-num">01 · Heatmap explorer</div>
+        <h2 class="pt-section-title">Every trend on <em>one</em> table.</h2>
+        <p class="pt-section-sub">Toggle the overlay. Hover any cell for the value, name, group, and period. Watch the cation-corner / anion-corner gradient flip as you switch between IE and metallic character.</p>
+      </div>
+    </div>
+
+    <div class="pt-trend-bar" id="ptTrendBar"></div>
+
+    <div class="pt-trend-caption" id="ptTrendCap">
+      <span class="arrow"></span><strong></strong> <span></span>
+    </div>
+
+    <div class="pt-grid-wrap" id="ptGridWrap">
+      <div class="pt-block-row" id="ptBlockRow"></div>
+      <div class="pt-grid" id="ptGrid"></div>
+      <div class="pt-fblock" id="ptLanRow"></div>
+      <div class="pt-fblock" id="ptActRow"></div>
+    </div>
+
+    <div class="pt-legend">
+      <span class="vmin" id="ptLegMin">low</span>
+      <span class="pt-legend-bar" aria-hidden="true"></span>
+      <span class="vmax" id="ptLegMax">high</span>
+    </div>
+  </section>
+
+  <!-- ============== SECTION 2 — SPEED DRILL ============== -->
+  <section id="sec-drill" class="pt-section">
+    <div class="pt-section-head">
+      <div>
+        <div class="pt-section-num">02 · Speed drill</div>
+        <h2 class="pt-section-title">Five seconds. Twenty <em>questions</em>. No textbook arrows.</h2>
+        <p class="pt-section-sub">At least 30% of each round is anomaly-loaded — Group 13 IE drops, Group 16 IE drops, Cl-vs-F EA, lanthanide contraction. If the textbook arrow is the trap, this drill catches it.</p>
+      </div>
+    </div>
+
+    <div class="pt-drill">
+      <!-- Stage -->
+      <div class="pt-drill-stage" id="ptDrillStage">
+        <div class="pt-drill-meta">
+          <span>Round <strong id="ptDrillN">0/20</strong></span>
+          <span class="pt-drill-timer"><span class="pt-drill-timer-bar" id="ptDrillTimer"></span></span>
+          <span>Score <strong id="ptDrillScore">0</strong></span>
+        </div>
+        <div class="pt-drill-prompt" id="ptDrillPrompt">Press <em>Start</em> to begin.</div>
+        <div class="pt-drill-pair" id="ptDrillPair">
+          <div class="pt-drill-card disabled"><div class="sym">·</div><div class="name">A</div><div class="z">—</div></div>
+          <div class="pt-drill-card disabled"><div class="sym">·</div><div class="name">B</div><div class="z">—</div></div>
+        </div>
+        <div class="pt-drill-feedback" id="ptDrillFb">Each pair has a 5-second window. Tap or use <strong>1 / 2</strong> on the keyboard.</div>
+        <div class="pt-drill-controls">
+          <button class="pt-btn pt-btn-primary" id="ptDrillStart">Start round</button>
+          <button class="pt-btn" id="ptDrillSkip" disabled>Skip</button>
+          <button class="pt-btn" id="ptDrillReset">Reset stats</button>
+        </div>
+      </div>
+
+      <!-- Stats panel -->
+      <div class="pt-drill-stats">
+        <div>
+          <h3 class="pt-stats-h">Lifetime accuracy</h3>
+          <div class="pt-stats-big">
+            <div class="pt-stat">
+              <div class="pt-stat-num"><em id="ptStatPct">—</em></div>
+              <div class="pt-stat-lbl">Overall correct</div>
+            </div>
+            <div class="pt-stat">
+              <div class="pt-stat-num" id="ptStatRT">—</div>
+              <div class="pt-stat-lbl">Avg reaction (ms)</div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <h3 class="pt-stats-h">By trend</h3>
+          <div class="pt-trend-table" id="ptTrendStats">
+            <div class="pt-stats-empty">No rounds yet — finish a 20-question round to see weakness data.</div>
+          </div>
+        </div>
+        <div>
+          <h3 class="pt-stats-h">Last 8 rounds</h3>
+          <div class="pt-history" id="ptHistory">
+            <span class="pt-hist-chip">none yet</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== SECTION 3 — ISO-ELECTRONIC ============== -->
+  <section id="sec-iso" class="pt-section">
+    <div class="pt-section-head">
+      <div>
+        <div class="pt-section-num">03 · Iso-electronic ranker</div>
+        <h2 class="pt-section-title">Same electrons, <em>different</em> Z.</h2>
+        <p class="pt-section-sub">Click the species in order from largest to smallest radius. The reveal explains via Z_eff: more protons pulling the same electron count means a tighter, smaller radius. Twelve sets across 2, 10, 18, 28, 36, and 54 electron shells.</p>
+      </div>
+    </div>
+
+    <div class="pt-iso-pickers" id="ptIsoPickers"></div>
+
+    <div class="pt-iso-stage">
+      <div class="pt-iso-prompt" id="ptIsoPrompt"></div>
+
+      <div>
+        <div class="pt-iso-pool-h">Pool — click in order from largest to smallest radius</div>
+        <div class="pt-iso-pool" id="ptIsoPool"></div>
+      </div>
+
+      <div>
+        <div class="pt-iso-rank-h">Your ranking <strong id="ptIsoCount">(0 placed)</strong></div>
+        <div class="pt-iso-rank" id="ptIsoRank"></div>
+      </div>
+
+      <div class="pt-iso-actions">
+        <button class="pt-btn pt-btn-primary" id="ptIsoCheck">Check ranking</button>
+        <button class="pt-btn" id="ptIsoReveal">Reveal answer</button>
+        <button class="pt-btn" id="ptIsoClear">Clear</button>
+      </div>
+
+      <div class="pt-iso-explain" id="ptIsoExplain"></div>
+    </div>
+  </section>
+
+  <!-- ============== FOOT ============== -->
+  <section class="pt-foot">
+    <strong>About this pack.</strong> Companion to the Periodic Trends module in the Gen Chem engine — same Z_eff vs shells framework, but visualized across the whole table at once. Speed-drill stats persist locally to <code style="font-family:'JetBrains Mono',monospace;font-size:12px;">localStorage:gc:trends:history</code>; nothing is sent off-device. Anomaly distractors are pulled from the same fact set the engine's distractor library uses — <a href="traps.html">browse them in the trap library</a>. Source data: <code style="font-family:'JetBrains Mono',monospace;font-size:12px;">tools/gc/trends-data.json</code>.
+  </section>
+</div>
+
+<div class="pt-tip" id="ptTip" role="tooltip" aria-hidden="true"></div>
+
+<script>
+(function(){
+  // =========================================================
+  // Data + state
+  // =========================================================
+  const STATE = {
+    data: null,
+    elements: [],
+    bySym: {},
+    trends: [],
+    activeTrend: 'radius',
+    drill: {
+      running:false, queue:[], idx:0, score:0, t0:0, timerHandle:null, deadline:0, accepting:false,
+      results:[], // per-question {trendId, correct, ms}
+    },
+    iso: { activeIdx:0, ranking:[] },
+  };
+
+  const HISTORY_KEY = 'gc:trends:history';
+
+  function loadHistory(){
+    try {
+      const raw = localStorage.getItem(HISTORY_KEY);
+      if (!raw) return { rounds: [], byTrend: {} };
+      const parsed = JSON.parse(raw);
+      return parsed && typeof parsed === 'object' ? parsed : { rounds: [], byTrend: {} };
+    } catch(e){ return { rounds:[], byTrend:{} }; }
+  }
+  function saveHistory(h){
+    try { localStorage.setItem(HISTORY_KEY, JSON.stringify(h)); } catch(e){}
+  }
+
+  // =========================================================
+  // Heatmap explorer
+  // =========================================================
+  // Map for value → color. Uses AL tokens, blends in JS via HSL/Lab approximation
+  // by interpolating between paper-2 (low), gold-m (mid-low), gold (mid), and teal-3 (high).
+  // We read those colors from CSS custom properties at runtime so there is no
+  // duplicated color literal here.
+  function readToken(name){
+    return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  }
+  function hexToRgb(hex){
+    const h = hex.replace('#','');
+    const v = h.length === 3 ? h.split('').map(c=>c+c).join('') : h;
+    const n = parseInt(v, 16);
+    return { r:(n>>16)&255, g:(n>>8)&255, b:n&255 };
+  }
+  function lerp(a,b,t){ return a + (b-a)*t; }
+  function lerpRgb(c1,c2,t){
+    return {
+      r: Math.round(lerp(c1.r,c2.r,t)),
+      g: Math.round(lerp(c1.g,c2.g,t)),
+      b: Math.round(lerp(c1.b,c2.b,t)),
+    };
+  }
+  function rgbStr(c){ return 'rgb(' + c.r + ',' + c.g + ',' + c.b + ')'; }
+
+  let RAMP = null;
+  function buildRamp(){
+    const stops = [
+      { t:0.00, c:hexToRgb(readToken('--al-paper-2')) },
+      { t:0.45, c:hexToRgb(readToken('--al-gold-m')) },
+      { t:0.70, c:hexToRgb(readToken('--al-gold')) },
+      { t:1.00, c:hexToRgb(readToken('--al-teal-3')) },
+    ];
+    RAMP = stops;
+  }
+  function rampColor(t){
+    if (!RAMP) buildRamp();
+    if (t == null || isNaN(t)) return readToken('--al-paper');
+    if (t <= 0) return rgbStr(RAMP[0].c);
+    if (t >= 1) return rgbStr(RAMP[RAMP.length-1].c);
+    for (let i=1;i<RAMP.length;i++){
+      if (t <= RAMP[i].t){
+        const span = RAMP[i].t - RAMP[i-1].t;
+        const local = (t - RAMP[i-1].t) / span;
+        return rgbStr(lerpRgb(RAMP[i-1].c, RAMP[i].c, local));
+      }
+    }
+    return rgbStr(RAMP[RAMP.length-1].c);
+  }
+
+  function trendValue(el, trendId){
+    if (trendId === 'ea_mag') return el.ea == null ? null : Math.abs(el.ea);
+    return el[trendId];
+  }
+
+  function trendRange(trendId){
+    let lo = Infinity, hi = -Infinity;
+    for (const el of STATE.elements){
+      const v = trendValue(el, trendId);
+      if (v == null || isNaN(v)) continue;
+      if (v < lo) lo = v;
+      if (v > hi) hi = v;
+    }
+    return { lo, hi };
+  }
+
+  // For trends where "low value" should still feel meaningful (e.g. atomic
+  // radius — small atoms in the upper-right are the visually striking ones),
+  // we invert the gradient so the "more interesting" end of the trend reads
+  // hotter. Driven by trend.scale.
+  function normalize(v, lo, hi, scale){
+    if (v == null || isNaN(v)) return null;
+    if (hi === lo) return 0.5;
+    let t = (v - lo) / (hi - lo);
+    if (scale === 'low_is_small') t = 1 - t;       // big radius = cool, small radius = hot
+    if (scale === 'low_is_strong') t = 1 - t;      // very negative EA = hot
+    return Math.max(0, Math.min(1, t));
+  }
+
+  function buildHeatmapShell(){
+    // Block label row above the main grid (1..18 columns)
+    const blockRow = document.getElementById('ptBlockRow');
+    const labels = ['1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18'];
+    blockRow.innerHTML = labels.map(l => '<div class="blk">' + l + '</div>').join('');
+
+    // Main grid: 7 periods × 18 groups, but periods 6 and 7 leave column 3
+    // empty and route lanthanides/actinides to the f-block strip below.
+    const grid = document.getElementById('ptGrid');
+    grid.innerHTML = '';
+    const main = STATE.elements.filter(e => typeof e.row === 'number');
+
+    // Group main into a sparse 7×18 grid
+    const cells = {};
+    for (const el of main){ cells[el.row + ':' + el.col] = el; }
+    for (let r=1;r<=7;r++){
+      for (let c=1;c<=18;c++){
+        const el = cells[r + ':' + c];
+        const div = document.createElement('div');
+        if (!el){
+          // Period 1 has only group 1 (H) and group 18 (He); all middle cells empty.
+          // Periods 2,3 leave d-block (cols 3-12) empty.
+          // Periods 6,7 leave column 3 empty (occupied by La/Ac in f-block strip).
+          div.className = 'pt-cell empty';
+        } else {
+          div.className = 'pt-cell';
+          div.dataset.sym = el.symbol;
+          div.innerHTML =
+            '<span class="z">' + el.z + '</span>' +
+            '<span class="sym">' + el.symbol + '</span>' +
+            '<span class="val"></span>';
+        }
+        grid.appendChild(div);
+      }
+    }
+
+    // f-block: lanthanides and actinides each take 15 cells (cols 1..15 of the strip)
+    const lans = STATE.elements.filter(e => e.row === 'lanthanide').sort((a,b)=>a.col-b.col);
+    const acts = STATE.elements.filter(e => e.row === 'actinide').sort((a,b)=>a.col-b.col);
+    const lanRow = document.getElementById('ptLanRow');
+    const actRow = document.getElementById('ptActRow');
+    lanRow.innerHTML = '<div class="lbl">Lanthanides<br>57–71</div>';
+    actRow.innerHTML = '<div class="lbl">Actinides<br>89–103</div>';
+    for (const el of lans){
+      const div = document.createElement('div');
+      div.className = 'pt-cell'; div.dataset.sym = el.symbol;
+      div.innerHTML = '<span class="z">'+el.z+'</span><span class="sym">'+el.symbol+'</span><span class="val"></span>';
+      lanRow.appendChild(div);
+    }
+    lanRow.appendChild(document.createElement('div'));
+    for (const el of acts){
+      const div = document.createElement('div');
+      div.className = 'pt-cell'; div.dataset.sym = el.symbol;
+      div.innerHTML = '<span class="z">'+el.z+'</span><span class="sym">'+el.symbol+'</span><span class="val"></span>';
+      actRow.appendChild(div);
+    }
+    actRow.appendChild(document.createElement('div'));
+
+    // Hover/tap tooltip + click-to-focus
+    const grids = [grid, lanRow, actRow];
+    grids.forEach(g => {
+      g.addEventListener('mousemove', onCellHover);
+      g.addEventListener('mouseleave', () => hideTip());
+      g.addEventListener('click', onCellClick);
+      g.addEventListener('touchstart', onCellTouch, { passive:true });
+    });
+  }
+
+  function fmtVal(v, t){
+    if (v == null || isNaN(v)) return '—';
+    if (t.id === 'ea' || t.id === 'ea_mag') return v.toFixed(1);
+    if ((t.decimals || 0) === 0) return Math.round(v).toString();
+    return v.toFixed(t.decimals);
+  }
+
+  function paintHeatmap(){
+    const t = STATE.trends.find(tt => tt.id === STATE.activeTrend) || STATE.trends[0];
+    const { lo, hi } = trendRange(t.id);
+    const cells = document.querySelectorAll('.pt-cell:not(.empty)');
+    cells.forEach(div => {
+      const sym = div.dataset.sym;
+      const el = STATE.bySym[sym];
+      if (!el) return;
+      const v = trendValue(el, t.id);
+      const valEl = div.querySelector('.val');
+      if (v == null){
+        div.style.background = readToken('--al-paper');
+        div.classList.add('no-data');
+        if (valEl) valEl.textContent = '—';
+      } else {
+        const norm = normalize(v, lo, hi, t.scale);
+        div.style.background = rampColor(norm);
+        div.classList.remove('no-data');
+        if (valEl) valEl.textContent = fmtVal(v, t);
+      }
+    });
+
+    // Caption
+    const cap = document.getElementById('ptTrendCap');
+    cap.innerHTML =
+      '<span class="arrow">' + escHtml(t.direction.split(':')[0] + ':') + '</span>' +
+      '<strong>' + escHtml(t.direction.split(':').slice(1).join(':').trim()) + '</strong> ' +
+      '<span> — ' + escHtml(t.reason) + '</span>';
+
+    // Legend
+    document.getElementById('ptLegMin').textContent =
+      (t.scale === 'low_is_small' || t.scale === 'low_is_strong')
+        ? ('high · ' + fmtVal(hi, t) + ' ' + t.unit)
+        : ('low · ' + fmtVal(lo, t) + ' ' + t.unit);
+    document.getElementById('ptLegMax').textContent =
+      (t.scale === 'low_is_small' || t.scale === 'low_is_strong')
+        ? ('low · ' + fmtVal(lo, t) + ' ' + t.unit)
+        : ('high · ' + fmtVal(hi, t) + ' ' + t.unit);
+  }
+
+  function onCellHover(e){
+    const cell = e.target.closest('.pt-cell');
+    if (!cell || cell.classList.contains('empty')) { hideTip(); return; }
+    showTip(cell, e.clientX, e.clientY);
+  }
+  function onCellClick(e){
+    const cell = e.target.closest('.pt-cell');
+    if (!cell || cell.classList.contains('empty')) return;
+    document.querySelectorAll('.pt-cell.focused').forEach(c => c.classList.remove('focused'));
+    cell.classList.add('focused');
+  }
+  function onCellTouch(e){
+    const cell = e.target.closest('.pt-cell');
+    if (!cell || cell.classList.contains('empty')) return;
+    const tch = e.touches[0];
+    if (tch) showTip(cell, tch.clientX, tch.clientY);
+    setTimeout(hideTip, 2400);
+  }
+
+  const tipEl = document.getElementById('ptTip');
+  function showTip(cell, x, y){
+    const sym = cell.dataset.sym;
+    const el = STATE.bySym[sym];
+    if (!el) return;
+    const t = STATE.trends.find(tt => tt.id === STATE.activeTrend);
+    const v = trendValue(el, t.id);
+    tipEl.innerHTML =
+      '<div class="tip-sym">' + escHtml(el.symbol) + '</div>' +
+      '<div class="tip-name">' + escHtml(el.name) + '</div>' +
+      '<div class="tip-meta">Z ' + el.z + ' · group ' + (el.group || '—') + ' · period ' + el.period + ' · ' + el.block + '-block</div>' +
+      '<div class="tip-val">' +
+        '<div class="vlbl">' + escHtml(t.name) + '</div>' +
+        '<div class="vnum">' + (v == null ? '—' : (fmtVal(v, t) + ' ' + escHtml(t.unit))) + '</div>' +
+      '</div>';
+    // Position to the right of the cursor, flip if near right edge
+    const rect = tipEl.getBoundingClientRect();
+    let nx = x + 14, ny = y + 14;
+    if (nx + 240 > window.innerWidth) nx = x - 250;
+    if (ny + 130 > window.innerHeight) ny = y - 130;
+    tipEl.style.left = Math.max(8, nx) + 'px';
+    tipEl.style.top  = Math.max(8, ny) + 'px';
+    tipEl.classList.add('show');
+    tipEl.setAttribute('aria-hidden','false');
+  }
+  function hideTip(){
+    tipEl.classList.remove('show');
+    tipEl.setAttribute('aria-hidden','true');
+  }
+
+  function buildTrendBar(){
+    const bar = document.getElementById('ptTrendBar');
+    bar.innerHTML = '';
+    STATE.trends.forEach(t => {
+      const b = document.createElement('button');
+      b.className = 'pt-trend-btn' + (t.id === STATE.activeTrend ? ' active' : '');
+      b.dataset.trend = t.id;
+      b.type = 'button';
+      b.textContent = t.name;
+      b.addEventListener('click', () => {
+        STATE.activeTrend = t.id;
+        bar.querySelectorAll('.pt-trend-btn').forEach(x => x.classList.toggle('active', x.dataset.trend === t.id));
+        paintHeatmap();
+      });
+      bar.appendChild(b);
+    });
+  }
+
+  // =========================================================
+  // Speed drill
+  // =========================================================
+  const DRILL_SECONDS = 5;
+  const DRILL_LEN = 20;
+  const ANOMALY_MIN = 0.30;
+
+  function buildDrillQueue(){
+    const pool = STATE.data.drill_pool || [];
+    const anomalies = pool.filter(q => q.anomaly);
+    const rest = pool.filter(q => !q.anomaly);
+    const targetAnom = Math.max(Math.ceil(DRILL_LEN * ANOMALY_MIN), 6);
+    const pickedAnom = sample(anomalies, Math.min(targetAnom, anomalies.length));
+    const need = DRILL_LEN - pickedAnom.length;
+    const pickedRest = sample(rest, Math.min(need, rest.length));
+    let queue = pickedAnom.concat(pickedRest);
+    if (queue.length < DRILL_LEN){
+      // pad if pool small
+      queue = queue.concat(sample(pool, DRILL_LEN - queue.length));
+    }
+    queue = shuffle(queue).slice(0, DRILL_LEN);
+    // Randomize A/B side per question so the answer isn't always card 1
+    queue = queue.map(q => {
+      if (Math.random() < 0.5){
+        return Object.assign({}, q, { a:q.b, b:q.a });
+      }
+      return Object.assign({}, q);
+    });
+    return queue;
+  }
+
+  function shuffle(arr){
+    const a = arr.slice();
+    for (let i=a.length-1;i>0;i--){
+      const j = Math.floor(Math.random()*(i+1));
+      const t = a[i]; a[i]=a[j]; a[j]=t;
+    }
+    return a;
+  }
+  function sample(arr, n){ return shuffle(arr).slice(0, n); }
+
+  function trendLabel(id){
+    if (id === 'ea_mag') return 'EA magnitude';
+    const t = STATE.trends.find(tt => tt.id === id);
+    return t ? t.name : id;
+  }
+
+  function startDrill(){
+    STATE.drill.queue = buildDrillQueue();
+    STATE.drill.idx = 0;
+    STATE.drill.score = 0;
+    STATE.drill.results = [];
+    STATE.drill.running = true;
+    document.getElementById('ptDrillStart').textContent = 'Restart round';
+    document.getElementById('ptDrillSkip').disabled = false;
+    nextDrill();
+  }
+
+  function nextDrill(){
+    const d = STATE.drill;
+    if (d.idx >= d.queue.length){
+      finishDrill();
+      return;
+    }
+    const q = d.queue[d.idx];
+    const a = STATE.bySym[q.a], b = STATE.bySym[q.b];
+    if (!a || !b){ d.idx++; nextDrill(); return; }
+
+    document.getElementById('ptDrillN').textContent = (d.idx+1) + '/' + d.queue.length;
+    document.getElementById('ptDrillScore').textContent = d.score;
+
+    let promptText = '';
+    if (q.trend === 'radius')   promptText = 'Which has the <em>larger</em> atomic radius?';
+    else if (q.trend === 'ie1') promptText = 'Which has the <em>higher</em> first ionization energy?';
+    else if (q.trend === 'en')  promptText = 'Which is <em>more</em> electronegative?';
+    else if (q.trend === 'ea_mag') promptText = 'Which has the <em>greater</em> EA magnitude (more exothermic)?';
+    else if (q.trend === 'metallic') promptText = 'Which is <em>more</em> metallic?';
+    else if (q.trend === 'mass') promptText = 'Which has the <em>greater</em> atomic mass?';
+    else promptText = 'Which has the higher value?';
+    document.getElementById('ptDrillPrompt').innerHTML = promptText;
+
+    const pair = document.getElementById('ptDrillPair');
+    pair.innerHTML =
+      drillCardHtml(a, 0) + drillCardHtml(b, 1);
+    document.getElementById('ptDrillFb').innerHTML =
+      '<strong>' + escHtml(trendLabel(q.trend)) + '</strong> · 5-second window · use 1 or 2 to answer.';
+    pair.querySelectorAll('.pt-drill-card').forEach((card, i) => {
+      card.addEventListener('click', () => answerDrill(i));
+    });
+
+    d.accepting = true;
+    d.t0 = performance.now();
+    d.deadline = d.t0 + DRILL_SECONDS*1000;
+    runTimer();
+  }
+
+  function drillCardHtml(el, i){
+    return ''
+      + '<div class="pt-drill-card" data-side="' + i + '">'
+      + '  <div class="sym">' + escHtml(el.symbol) + '</div>'
+      + '  <div class="name">' + escHtml(el.name) + '</div>'
+      + '  <div class="z">Z ' + el.z + ' · ' + (el.group ? 'gp ' + el.group : 'f-block') + ' · pd ' + el.period + '</div>'
+      + '</div>';
+  }
+
+  function runTimer(){
+    const bar = document.getElementById('ptDrillTimer');
+    bar.style.transition = 'none';
+    bar.style.transform = 'scaleX(1)';
+    requestAnimationFrame(() => {
+      bar.style.transition = 'transform ' + (DRILL_SECONDS*1000) + 'ms linear';
+      bar.style.transform = 'scaleX(0)';
+    });
+    if (STATE.drill.timerHandle) clearTimeout(STATE.drill.timerHandle);
+    STATE.drill.timerHandle = setTimeout(() => {
+      if (STATE.drill.accepting) answerDrill(-1); // timeout = wrong, no pick
+    }, DRILL_SECONDS*1000 + 50);
+  }
+
+  function answerDrill(side){
+    const d = STATE.drill;
+    if (!d.accepting) return;
+    d.accepting = false;
+    if (d.timerHandle){ clearTimeout(d.timerHandle); d.timerHandle = null; }
+    const q = d.queue[d.idx];
+    const ms = Math.round(performance.now() - d.t0);
+    const winner = q.winner;
+    const pickedSym = side === 0 ? q.a : (side === 1 ? q.b : null);
+    const correct = pickedSym === winner;
+    if (correct) d.score++;
+    d.results.push({ trendId: q.trend, correct, ms });
+
+    const pair = document.getElementById('ptDrillPair');
+    pair.querySelectorAll('.pt-drill-card').forEach(card => {
+      card.classList.add('disabled');
+      const s = card.querySelector('.sym').textContent;
+      if (s === winner) card.classList.add('right');
+      else if (pickedSym && s === pickedSym && !correct) card.classList.add('wrong');
+    });
+
+    const tag = q.anomaly ? ('<span class="anomaly-tag">Anomaly</span>') : '';
+    const head = correct ? '<strong>Correct.</strong> ' : (side === -1 ? '<strong>Time.</strong> ' : '<strong>Not quite.</strong> ');
+    const winnerEl = STATE.bySym[winner];
+    document.getElementById('ptDrillFb').innerHTML =
+      tag + head + 'Winner: <strong>' + escHtml(winnerEl.symbol) + '</strong>. ' + escHtml(q.reason);
+
+    document.getElementById('ptDrillScore').textContent = d.score;
+
+    setTimeout(() => {
+      d.idx++;
+      if (d.idx >= d.queue.length) finishDrill();
+      else nextDrill();
+    }, q.anomaly ? 1900 : 1200);
+  }
+
+  function finishDrill(){
+    const d = STATE.drill;
+    d.running = false; d.accepting = false;
+    if (d.timerHandle){ clearTimeout(d.timerHandle); d.timerHandle = null; }
+    document.getElementById('ptDrillSkip').disabled = true;
+    document.getElementById('ptDrillStart').textContent = 'Start new round';
+    document.getElementById('ptDrillPrompt').innerHTML = 'Round complete. Score <em>' + d.score + ' / ' + d.queue.length + '</em>.';
+    const pair = document.getElementById('ptDrillPair');
+    pair.innerHTML = '<div class="pt-drill-card disabled"><div class="sym">·</div><div class="name">A</div><div class="z">—</div></div><div class="pt-drill-card disabled"><div class="sym">·</div><div class="name">B</div><div class="z">—</div></div>';
+    const trendBreak = {};
+    d.results.forEach(r => {
+      if (!trendBreak[r.trendId]) trendBreak[r.trendId] = { n:0, ok:0, msSum:0 };
+      trendBreak[r.trendId].n++;
+      if (r.correct) trendBreak[r.trendId].ok++;
+      trendBreak[r.trendId].msSum += r.ms;
+    });
+    let fb = '<strong>Round summary.</strong> ';
+    const parts = [];
+    Object.keys(trendBreak).forEach(tid => {
+      const tb = trendBreak[tid];
+      parts.push(escHtml(trendLabel(tid)) + ' ' + tb.ok + '/' + tb.n);
+    });
+    fb += parts.join(' · ');
+    document.getElementById('ptDrillFb').innerHTML = fb;
+    persistRound(d);
+    paintStats();
+  }
+
+  function persistRound(d){
+    const h = loadHistory();
+    h.rounds = h.rounds || [];
+    h.byTrend = h.byTrend || {};
+    const round = {
+      ts: Date.now(),
+      score: d.score,
+      total: d.queue.length,
+      avgMs: Math.round(d.results.reduce((s,r)=>s+r.ms,0)/Math.max(1,d.results.length)),
+    };
+    h.rounds.unshift(round);
+    h.rounds = h.rounds.slice(0, 50);
+    d.results.forEach(r => {
+      const k = r.trendId;
+      if (!h.byTrend[k]) h.byTrend[k] = { n:0, ok:0, msSum:0 };
+      h.byTrend[k].n++;
+      if (r.correct) h.byTrend[k].ok++;
+      h.byTrend[k].msSum += r.ms;
+    });
+    saveHistory(h);
+  }
+
+  function paintStats(){
+    const h = loadHistory();
+    const totalN = Object.values(h.byTrend || {}).reduce((s,b)=>s+b.n,0);
+    const totalOk = Object.values(h.byTrend || {}).reduce((s,b)=>s+b.ok,0);
+    const totalMs = Object.values(h.byTrend || {}).reduce((s,b)=>s+b.msSum,0);
+    document.getElementById('ptStatPct').textContent = totalN ? Math.round(100*totalOk/totalN) + '%' : '—';
+    document.getElementById('ptStatRT').textContent = totalN ? Math.round(totalMs/totalN) : '—';
+
+    const tbl = document.getElementById('ptTrendStats');
+    if (!totalN){
+      tbl.innerHTML = '<div class="pt-stats-empty">No rounds yet — finish a 20-question round to see weakness data.</div>';
+    } else {
+      const rows = Object.entries(h.byTrend).map(([id,b]) => {
+        const pct = Math.round(100*b.ok/b.n);
+        const ms  = Math.round(b.msSum/b.n);
+        const weak = pct < 70;
+        return ''
+          + '<div class="pt-trend-row">'
+          + '  <div class="nm' + (weak?' weak':'') + '">' + escHtml(trendLabel(id)) + '</div>'
+          + '  <div class="pct' + (weak?' weak':'') + '">' + pct + '%</div>'
+          + '  <div class="rt">' + ms + 'ms</div>'
+          + '</div>';
+      });
+      tbl.innerHTML = rows.join('');
+    }
+
+    const hist = document.getElementById('ptHistory');
+    const recent = (h.rounds || []).slice(0, 8);
+    if (!recent.length){
+      hist.innerHTML = '<span class="pt-hist-chip">none yet</span>';
+    } else {
+      hist.innerHTML = recent.map(r =>
+        '<span class="pt-hist-chip">' + r.score + '/' + r.total + ' · ' + r.avgMs + 'ms</span>'
+      ).join('');
+    }
+  }
+
+  function wireDrill(){
+    document.getElementById('ptDrillStart').addEventListener('click', startDrill);
+    document.getElementById('ptDrillSkip').addEventListener('click', () => {
+      if (STATE.drill.accepting) answerDrill(-1);
+    });
+    document.getElementById('ptDrillReset').addEventListener('click', () => {
+      saveHistory({ rounds:[], byTrend:{} });
+      paintStats();
+    });
+    window.addEventListener('keydown', (e) => {
+      if (!STATE.drill.accepting) return;
+      if (e.key === '1') answerDrill(0);
+      else if (e.key === '2') answerDrill(1);
+    });
+  }
+
+  // =========================================================
+  // Iso-electronic ranker
+  // =========================================================
+  function buildIsoPickers(){
+    const pickers = document.getElementById('ptIsoPickers');
+    pickers.innerHTML = '';
+    STATE.data.isoelectronic_sets.forEach((set, i) => {
+      const b = document.createElement('button');
+      b.className = 'pt-iso-pick' + (i === STATE.iso.activeIdx ? ' active' : '');
+      b.dataset.idx = i;
+      b.type = 'button';
+      b.textContent = set.n_electrons + ' e⁻ · set ' + (i+1);
+      b.addEventListener('click', () => {
+        STATE.iso.activeIdx = i;
+        pickers.querySelectorAll('.pt-iso-pick').forEach((x,j) => x.classList.toggle('active', j === i));
+        renderIso();
+      });
+      pickers.appendChild(b);
+    });
+  }
+
+  function renderIso(){
+    const set = STATE.data.isoelectronic_sets[STATE.iso.activeIdx];
+    STATE.iso.ranking = [];
+    const noble = nearestNoble(set.n_electrons);
+    document.getElementById('ptIsoPrompt').innerHTML =
+      'Rank these <strong>' + set.n_electrons + '-electron</strong> species by atomic radius — largest to smallest.' +
+      (noble ? '<span class="ne-pill">iso with ' + noble + '</span>' : '');
+    document.getElementById('ptIsoExplain').classList.remove('show');
+    document.getElementById('ptIsoExplain').innerHTML = '';
+    paintIsoLists();
+  }
+
+  function nearestNoble(n){
+    const map = { 2:'He', 10:'Ne', 18:'Ar', 36:'Kr', 54:'Xe', 86:'Rn' };
+    return map[n] || null;
+  }
+
+  function paintIsoLists(){
+    const set = STATE.data.isoelectronic_sets[STATE.iso.activeIdx];
+    const placed = new Set(STATE.iso.ranking);
+    const pool = document.getElementById('ptIsoPool');
+    pool.innerHTML = '';
+    set.members.forEach(m => {
+      if (placed.has(m)) return;
+      const t = document.createElement('button');
+      t.className = 'pt-iso-token';
+      t.type = 'button';
+      t.dataset.member = m;
+      t.innerHTML = escHtml(m);
+      t.addEventListener('click', () => {
+        STATE.iso.ranking.push(m);
+        document.getElementById('ptIsoExplain').classList.remove('show');
+        paintIsoLists();
+      });
+      pool.appendChild(t);
+    });
+    if (!pool.children.length){
+      pool.innerHTML = '<span style="font-family:\'JetBrains Mono\',monospace;font-size:11px;color:var(--al-ink-mute);letter-spacing:.08em;text-transform:uppercase;">All placed — check your ranking</span>';
+    }
+
+    const rank = document.getElementById('ptIsoRank');
+    rank.innerHTML = '';
+    STATE.iso.ranking.forEach((m, i) => {
+      const t = document.createElement('button');
+      t.className = 'pt-iso-token';
+      t.type = 'button';
+      t.dataset.member = m;
+      t.innerHTML = '<span class="pos">' + (i+1) + '</span>' + escHtml(m);
+      t.addEventListener('click', () => {
+        STATE.iso.ranking.splice(i, 1);
+        document.getElementById('ptIsoExplain').classList.remove('show');
+        paintIsoLists();
+      });
+      rank.appendChild(t);
+    });
+    document.getElementById('ptIsoCount').textContent = '(' + STATE.iso.ranking.length + ' of ' + set.members.length + ' placed)';
+  }
+
+  function checkIso(){
+    const set = STATE.data.isoelectronic_sets[STATE.iso.activeIdx];
+    if (STATE.iso.ranking.length !== set.members.length) {
+      document.getElementById('ptIsoExplain').classList.add('show');
+      document.getElementById('ptIsoExplain').innerHTML =
+        '<strong>Place every species first.</strong> ' +
+        'You have ' + STATE.iso.ranking.length + ' placed of ' + set.members.length + '.';
+      return;
+    }
+    const rank = document.getElementById('ptIsoRank');
+    let allRight = true;
+    [...rank.children].forEach((tok, i) => {
+      const expected = set.ranked_by_radius[i];
+      if (tok.dataset.member === expected) tok.classList.add('right');
+      else { tok.classList.add('wrong'); allRight = false; }
+    });
+    revealIso(allRight ? 'right' : 'wrong');
+  }
+
+  function revealIso(mode){
+    const set = STATE.data.isoelectronic_sets[STATE.iso.activeIdx];
+    const ex = document.getElementById('ptIsoExplain');
+    let head = '';
+    if (mode === 'right') head = '<strong>Correct.</strong> ';
+    else if (mode === 'wrong') head = '<strong>Not quite.</strong> ';
+    else head = '<strong>Reveal.</strong> ';
+    ex.innerHTML =
+      head +
+      'Correct order (largest → smallest): ' +
+      '<span class="order">' + set.ranked_by_radius.map(escHtml).join(' &gt; ') + '</span>' +
+      '<br><br>' + escHtml(set.logic);
+    ex.classList.add('show');
+  }
+
+  function clearIso(){
+    STATE.iso.ranking = [];
+    document.getElementById('ptIsoExplain').classList.remove('show');
+    document.getElementById('ptIsoExplain').innerHTML = '';
+    paintIsoLists();
+  }
+
+  function wireIso(){
+    document.getElementById('ptIsoCheck').addEventListener('click', checkIso);
+    document.getElementById('ptIsoReveal').addEventListener('click', () => {
+      const set = STATE.data.isoelectronic_sets[STATE.iso.activeIdx];
+      // Auto-fill with current order so the user sees their ranking judged
+      revealIso(STATE.iso.ranking.length === set.members.length
+        ? (set.ranked_by_radius.every((m,i)=>STATE.iso.ranking[i]===m) ? 'right' : 'wrong')
+        : 'reveal');
+    });
+    document.getElementById('ptIsoClear').addEventListener('click', clearIso);
+  }
+
+  // =========================================================
+  // Utility
+  // =========================================================
+  function escHtml(s){
+    return String(s == null ? '' : s)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  }
+
+  function showError(msg){
+    document.getElementById('ptGrid').innerHTML =
+      '<div style="grid-column:1/-1;padding:40px 20px;text-align:center;color:var(--al-ink-mute);font-family:\'JetBrains Mono\',monospace;">' +
+      escHtml(msg) +
+      '</div>';
+  }
+
+  // =========================================================
+  // Boot
+  // =========================================================
+  fetch('trends-data.json', { cache:'no-store' })
+    .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+    .then(data => {
+      STATE.data = data;
+      STATE.elements = data.elements || [];
+      STATE.bySym = {};
+      STATE.elements.forEach(el => { STATE.bySym[el.symbol] = el; });
+      STATE.trends = data.trends || [];
+      STATE.activeTrend = (STATE.trends[0] && STATE.trends[0].id) || 'radius';
+
+      buildTrendBar();
+      buildHeatmapShell();
+      paintHeatmap();
+
+      wireDrill();
+      paintStats();
+
+      buildIsoPickers();
+      renderIso();
+      wireIso();
+    })
+    .catch(err => {
+      showError('Could not load trends-data.json — ' + err.message + '. If you opened this file directly from disk, run a local server (e.g. python3 -m http.server) so the page can fetch the JSON.');
+    });
+})();
+</script>
+</body>
+</html>

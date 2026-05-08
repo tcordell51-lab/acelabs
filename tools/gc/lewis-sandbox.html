@@ -1,0 +1,1386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Lewis Sandbox · Gen Chem · Ace Labs</title>
+<meta name="description" content="Guided Lewis structure and VSEPR sandbox for the Ace Labs Gen Chem engine. Five-stage build: electron count, skeleton, lone pairs, geometry, polarity."/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400;1,700&family=DM+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../shared/al-tokens.css">
+<link rel="stylesheet" href="../../shared/al-motion.css">
+<link rel="stylesheet" href="../../shared/ace-labs-shell.css">
+<style>
+/* ============================================================
+   Lewis Sandbox — local styles
+   AL paper + gold + teal palette. No new color literals.
+   ============================================================ */
+body[data-page="gc-lewis-sandbox"]{
+  background:linear-gradient(180deg,var(--al-bg) 0%,var(--al-paper-2) 100%);
+  color:var(--al-ink);
+  min-height:100vh;
+}
+
+.ls-wrap{max-width:1320px;margin:0 auto;padding:30px 28px 80px;}
+
+/* Hero */
+.ls-hero{
+  background:var(--al-paper);
+  border:1px solid var(--al-line);
+  border-left:5px solid var(--al-gc-color);
+  border-radius:14px;
+  padding:30px 34px;
+  box-shadow:var(--al-shadow);
+  margin-bottom:24px;
+}
+.ls-kicker{
+  font-family:var(--al-font-mono);
+  font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--al-gold-d);background:var(--al-gold-bg);
+  padding:5px 12px;border-radius:6px;border:1px solid var(--al-gold-d);
+  display:inline-block;margin-bottom:14px;
+}
+.ls-hero h1{
+  font-family:var(--al-font-serif);
+  font-weight:700;font-size:36px;line-height:1.15;margin:0 0 10px;letter-spacing:-.01em;
+}
+.ls-hero h1 em{color:var(--al-gold-d);font-style:italic;}
+.ls-hero p.lede{
+  font-size:15.5px;line-height:1.55;color:var(--al-ink-2);margin:0;max-width:880px;
+}
+
+/* Layout: tier picker + workspace */
+.ls-layout{
+  display:grid;
+  grid-template-columns:300px 1fr;
+  gap:22px;
+}
+@media (max-width:920px){
+  .ls-layout{grid-template-columns:1fr;}
+}
+
+/* Tier list */
+.ls-tiers{
+  background:var(--al-paper);border:1px solid var(--al-line);border-radius:12px;
+  padding:18px 18px 10px;box-shadow:var(--al-shadow);
+  align-self:start;position:sticky;top:18px;
+}
+.ls-tier-h{
+  font-family:var(--al-font-mono);font-size:10.5px;font-weight:700;
+  letter-spacing:.10em;text-transform:uppercase;color:var(--al-ink-mute);
+  margin:14px 0 8px;
+}
+.ls-tier-h:first-child{margin-top:0;}
+.ls-tier-blurb{
+  font-size:12.5px;color:var(--al-ink-mute);line-height:1.45;margin:0 0 10px;
+}
+.ls-tier-locked{
+  background:var(--al-paper-2);border:1px dashed var(--al-line-2);
+  border-radius:8px;padding:10px 12px;
+  font-size:12.5px;color:var(--al-ink-mute);line-height:1.45;
+}
+.ls-mol-btn{
+  display:flex;align-items:center;justify-content:space-between;
+  width:100%;padding:9px 12px;margin-bottom:6px;
+  background:var(--al-paper-2);border:1px solid var(--al-line);
+  border-radius:8px;cursor:pointer;text-align:left;
+  font-family:var(--al-font-sans);font-size:14px;color:var(--al-ink);
+  transition:all var(--motion-fast);
+}
+.ls-mol-btn:hover{border-color:var(--al-gold-d);background:var(--al-gold-bg);}
+.ls-mol-btn.is-active{
+  border-color:var(--al-gc-color);background:var(--al-paper);
+  box-shadow:inset 3px 0 0 var(--al-gc-color);
+}
+.ls-mol-btn.is-mastered{
+  border-color:var(--al-confirmed);
+}
+.ls-mol-btn .formula{font-weight:600;font-family:var(--al-font-serif);font-size:15px;}
+.ls-mol-btn .name{
+  font-family:var(--al-font-mono);font-size:10px;font-weight:600;
+  letter-spacing:.08em;text-transform:uppercase;color:var(--al-ink-mute);
+}
+.ls-mol-btn .badge{
+  font-family:var(--al-font-mono);font-size:10px;font-weight:700;
+  letter-spacing:.08em;text-transform:uppercase;
+  padding:3px 7px;border-radius:99px;
+}
+.ls-mol-btn.is-mastered .badge{
+  color:var(--al-confirmed);background:var(--al-confirmed-pale);
+  border:1px solid var(--al-confirmed);
+}
+
+/* Workspace */
+.ls-work{
+  background:var(--al-paper);border:1px solid var(--al-line);border-radius:14px;
+  padding:24px 26px 28px;box-shadow:var(--al-shadow);
+  min-height:520px;
+}
+.ls-workhead{
+  display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:14px;
+  border-bottom:1px solid var(--al-line);padding-bottom:14px;margin-bottom:18px;
+}
+.ls-formula-display{
+  font-family:var(--al-font-serif);font-weight:700;font-size:36px;line-height:1;
+  color:var(--al-ink);letter-spacing:-.01em;
+}
+.ls-formula-display sub{font-size:.62em;font-weight:600;}
+.ls-formula-display sup{font-size:.6em;font-weight:600;}
+.ls-mol-name{
+  font-family:var(--al-font-mono);font-size:11px;font-weight:700;
+  letter-spacing:.10em;text-transform:uppercase;color:var(--al-ink-mute);
+  margin-top:6px;
+}
+
+/* Stage progress strip */
+.ls-stages{
+  display:grid;grid-template-columns:repeat(5,1fr);gap:10px;
+}
+.ls-stage-pill{
+  position:relative;
+  background:var(--al-paper-2);border:1px solid var(--al-line);border-radius:8px;
+  padding:9px 10px 10px;
+  font-family:var(--al-font-mono);font-size:10.5px;font-weight:700;
+  letter-spacing:.06em;text-transform:uppercase;color:var(--al-ink-mute);
+  text-align:center;
+}
+.ls-stage-pill .num{
+  display:block;font-size:14px;color:var(--al-ink);font-family:var(--al-font-serif);
+  font-weight:700;letter-spacing:0;text-transform:none;line-height:1;margin-bottom:4px;
+}
+.ls-stage-pill.is-active{
+  border-color:var(--al-gc-color);background:var(--al-paper);
+  color:var(--al-gc-color);
+}
+.ls-stage-pill.is-active .num{color:var(--al-gc-color);}
+.ls-stage-pill.is-done{
+  border-color:var(--al-confirmed);background:var(--al-confirmed-pale);
+  color:var(--al-confirmed-d);
+}
+.ls-stage-pill.is-done .num{color:var(--al-confirmed-d);}
+
+/* Stage card */
+.ls-stage{
+  margin-top:22px;background:var(--al-paper-2);
+  border:1px solid var(--al-line);border-radius:12px;padding:22px 24px;
+}
+.ls-stage h2{
+  font-family:var(--al-font-serif);font-weight:700;font-size:22px;line-height:1.2;
+  margin:0 0 4px;letter-spacing:-.01em;
+}
+.ls-stage h2 em{color:var(--al-gold-d);font-style:italic;}
+.ls-stage .ls-stage-sub{
+  font-size:14px;color:var(--al-ink-2);line-height:1.55;margin:0 0 18px;max-width:760px;
+}
+
+/* SVG canvas */
+.ls-canvas-wrap{
+  background:var(--al-paper);border:1px solid var(--al-line);border-radius:10px;
+  padding:14px;display:flex;justify-content:center;
+  margin-bottom:16px;
+}
+.ls-canvas{display:block;max-width:100%;height:auto;}
+.ls-canvas .atom-circle{
+  fill:var(--al-paper);stroke:var(--al-ink);stroke-width:1.6;
+}
+.ls-canvas .atom-label{
+  font-family:var(--al-font-serif);font-weight:700;font-size:18px;fill:var(--al-ink);
+  text-anchor:middle;dominant-baseline:central;
+  user-select:none;
+}
+.ls-canvas .atom-label.is-h{font-size:16px;}
+.ls-canvas .bond-stroke{
+  stroke:var(--al-ink);stroke-width:2;stroke-linecap:round;
+}
+.ls-canvas .bond-hit{
+  stroke:transparent;stroke-width:18;cursor:pointer;
+}
+.ls-canvas .bond-hit:hover + .bond-grp .bond-stroke,
+.ls-canvas .bond-grp:hover .bond-stroke{stroke:var(--al-gold-d);}
+.ls-canvas .lp-dot{
+  fill:var(--al-ink);stroke:none;
+}
+.ls-canvas .lp-dot.is-hint{
+  fill:var(--al-gold-d);
+}
+
+/* Stage 1: number entry */
+.ls-input-row{
+  display:flex;flex-wrap:wrap;align-items:center;gap:12px;
+}
+.ls-num-input{
+  width:120px;padding:11px 14px;
+  font-family:var(--al-font-serif);font-size:22px;font-weight:700;
+  color:var(--al-ink);background:var(--al-paper);
+  border:1px solid var(--al-line-2);border-radius:8px;
+  text-align:center;
+}
+.ls-num-input:focus{outline:none;border-color:var(--al-gc-color);}
+
+/* Buttons */
+.ls-btn{
+  padding:11px 18px;font-family:var(--al-font-mono);
+  font-size:11px;font-weight:700;letter-spacing:.10em;text-transform:uppercase;
+  cursor:pointer;border-radius:8px;border:1px solid var(--al-line-2);
+  background:var(--al-paper);color:var(--al-ink);transition:all var(--motion-fast);
+}
+.ls-btn:hover{border-color:var(--al-gold-d);background:var(--al-gold-bg);}
+.ls-btn-primary{
+  background:var(--al-teal);color:var(--al-paper);border-color:var(--al-teal);
+}
+.ls-btn-primary:hover{background:var(--al-teal-2);border-color:var(--al-teal-2);color:var(--al-paper);}
+.ls-btn:disabled{opacity:.45;cursor:not-allowed;}
+.ls-btn-ghost{background:transparent;}
+
+/* Feedback panels */
+.ls-feedback{
+  margin-top:14px;padding:14px 16px;border-radius:10px;
+  border:1px solid var(--al-line);
+  font-size:14px;line-height:1.55;color:var(--al-ink);
+}
+.ls-feedback.is-good{
+  border-color:var(--al-confirmed);background:var(--al-confirmed-pale);
+}
+.ls-feedback.is-hint{
+  border-color:var(--al-needs-review);background:var(--al-needs-review-pale);
+}
+.ls-feedback .lbl{
+  display:block;font-family:var(--al-font-mono);font-size:10.5px;font-weight:700;
+  letter-spacing:.10em;text-transform:uppercase;margin-bottom:6px;
+}
+.ls-feedback.is-good .lbl{color:var(--al-confirmed-d);}
+.ls-feedback.is-hint .lbl{color:var(--al-needs-review);}
+
+/* Skeleton stage: bond order rows */
+.ls-bond-row{
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  background:var(--al-paper);border:1px solid var(--al-line);
+  border-radius:8px;padding:10px 14px;margin-bottom:8px;
+}
+.ls-bond-row .pair{
+  font-family:var(--al-font-serif);font-weight:700;font-size:17px;
+  color:var(--al-ink);min-width:90px;
+}
+.ls-bond-row .pair sub{font-size:.7em;font-weight:500;color:var(--al-ink-mute);}
+.ls-order-pick{display:inline-flex;border:1px solid var(--al-line-2);border-radius:6px;overflow:hidden;}
+.ls-order-pick button{
+  padding:7px 13px;font-family:var(--al-font-mono);font-size:11px;font-weight:700;
+  letter-spacing:.06em;text-transform:uppercase;
+  background:var(--al-paper);color:var(--al-ink-2);border:none;cursor:pointer;
+  border-right:1px solid var(--al-line-2);
+}
+.ls-order-pick button:last-child{border-right:none;}
+.ls-order-pick button.is-on{
+  background:var(--al-teal);color:var(--al-paper);
+}
+.ls-order-pick button:hover:not(.is-on){background:var(--al-gold-bg);color:var(--al-ink);}
+
+/* Lone pair stage */
+.ls-lp-row{
+  display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+  background:var(--al-paper);border:1px solid var(--al-line);
+  border-radius:8px;padding:10px 14px;margin-bottom:8px;
+}
+.ls-lp-row .atomname{
+  font-family:var(--al-font-serif);font-weight:700;font-size:17px;
+  min-width:80px;color:var(--al-ink);
+}
+.ls-lp-row .atomname .role{
+  display:block;font-family:var(--al-font-mono);font-size:9.5px;
+  font-weight:600;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--al-ink-mute);
+}
+.ls-lp-stepper{display:inline-flex;align-items:center;gap:8px;}
+.ls-lp-stepper button{
+  width:32px;height:32px;border:1px solid var(--al-line-2);border-radius:6px;
+  background:var(--al-paper);color:var(--al-ink);font-size:18px;font-weight:700;
+  cursor:pointer;line-height:1;
+}
+.ls-lp-stepper button:hover{background:var(--al-gold-bg);border-color:var(--al-gold-d);}
+.ls-lp-stepper .val{
+  font-family:var(--al-font-serif);font-weight:700;font-size:20px;min-width:28px;text-align:center;
+}
+.ls-lp-stepper .dots{
+  display:inline-flex;gap:3px;margin-left:8px;align-items:center;
+}
+.ls-lp-stepper .dots span{
+  width:7px;height:7px;border-radius:50%;background:var(--al-ink);display:inline-block;
+}
+
+/* Geometry stage */
+.ls-geom-row{
+  display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:10px;
+}
+@media (max-width:640px){.ls-geom-row{grid-template-columns:1fr;}}
+.ls-fld label{
+  display:block;font-family:var(--al-font-mono);font-size:10.5px;font-weight:700;
+  letter-spacing:.10em;text-transform:uppercase;color:var(--al-ink-mute);margin-bottom:6px;
+}
+.ls-fld select, .ls-fld textarea, .ls-fld input[type="text"]{
+  width:100%;padding:10px 12px;font-family:var(--al-font-sans);font-size:14px;
+  color:var(--al-ink);background:var(--al-paper);
+  border:1px solid var(--al-line-2);border-radius:8px;
+  transition:border-color var(--motion-fast);
+}
+.ls-fld select:focus, .ls-fld textarea:focus, .ls-fld input:focus{
+  outline:none;border-color:var(--al-gc-color);
+}
+.ls-fld textarea{min-height:90px;resize:vertical;font-family:var(--al-font-sans);line-height:1.5;}
+
+/* Polarity radios */
+.ls-pol-radios{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;}
+.ls-pol-radios label{
+  flex:1 1 180px;display:flex;align-items:center;gap:10px;
+  padding:12px 14px;background:var(--al-paper);border:1px solid var(--al-line-2);
+  border-radius:8px;cursor:pointer;transition:all var(--motion-fast);
+}
+.ls-pol-radios label:hover{border-color:var(--al-gold-d);background:var(--al-gold-bg);}
+.ls-pol-radios input[type=radio]{accent-color:var(--al-gc-color);}
+.ls-pol-radios .pol-h{
+  font-family:var(--al-font-serif);font-weight:700;font-size:17px;color:var(--al-ink);
+}
+.ls-pol-radios .pol-s{
+  display:block;font-family:var(--al-font-mono);font-size:10.5px;font-weight:600;
+  letter-spacing:.08em;text-transform:uppercase;color:var(--al-ink-mute);
+}
+
+/* Summary card */
+.ls-summary{
+  margin-top:22px;background:var(--al-paper);
+  border:1px solid var(--al-line);border-left:5px solid var(--al-gold-d);
+  border-radius:12px;padding:24px 26px;
+}
+.ls-summary h3{
+  font-family:var(--al-font-serif);font-weight:700;font-size:24px;line-height:1.2;
+  margin:0 0 4px;letter-spacing:-.01em;
+}
+.ls-summary h3 em{color:var(--al-gold-d);font-style:italic;}
+.ls-summary .micro{
+  font-family:var(--al-font-mono);font-size:10.5px;font-weight:700;
+  letter-spacing:.10em;text-transform:uppercase;color:var(--al-gold-d);
+  margin-bottom:12px;
+}
+.ls-fact-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;
+  margin:14px 0 18px;
+}
+.ls-fact{
+  background:var(--al-paper-2);border:1px solid var(--al-line);border-radius:8px;
+  padding:11px 14px;
+}
+.ls-fact .lbl{
+  font-family:var(--al-font-mono);font-size:10px;font-weight:700;
+  letter-spacing:.10em;text-transform:uppercase;color:var(--al-ink-mute);
+  margin-bottom:4px;display:block;
+}
+.ls-fact .val{
+  font-family:var(--al-font-serif);font-weight:700;font-size:18px;color:var(--al-ink);
+}
+.ls-trap{
+  background:var(--al-needs-review-pale);border:1px solid var(--al-needs-review);
+  border-radius:8px;padding:14px 16px;margin-top:10px;
+}
+.ls-trap .lbl{
+  font-family:var(--al-font-mono);font-size:10.5px;font-weight:700;
+  letter-spacing:.10em;text-transform:uppercase;color:var(--al-needs-review);margin-bottom:6px;
+}
+.ls-trap p{margin:0;font-size:14px;line-height:1.55;color:var(--al-ink);}
+
+.ls-cta-row{margin-top:18px;display:flex;flex-wrap:wrap;gap:10px;}
+
+/* Empty state */
+.ls-empty{
+  padding:80px 30px;text-align:center;color:var(--al-ink-mute);
+  font-size:15px;line-height:1.6;
+}
+.ls-empty h2{
+  font-family:var(--al-font-serif);font-weight:700;font-size:24px;color:var(--al-ink);
+  margin:0 0 10px;
+}
+
+/* Foot */
+.ls-foot{
+  margin-top:24px;background:var(--al-paper);border:1px solid var(--al-line);
+  border-radius:12px;padding:18px 22px;
+  font-size:13px;line-height:1.55;color:var(--al-ink-mute);
+}
+.ls-foot strong{color:var(--al-ink);}
+
+/* Subtle reveal on canvas updates */
+@media (prefers-reduced-motion: no-preference){
+  .ls-canvas .lp-dot{transition:opacity var(--motion-base);}
+  .ls-stage{animation:lsFade var(--motion-base) ease-out;}
+  @keyframes lsFade{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:none;}}
+}
+</style>
+</head>
+<body data-page="gc-lewis-sandbox">
+
+<header class="al-top">
+  <div class="al-brand">
+    <span class="al-mark">Ace<em>The</em>DAT</span>
+    <span class="al-divider"></span>
+    <span class="al-product">Ace Labs &middot; Gen Chem</span>
+  </div>
+  <nav class="al-nav">
+    <a href="../../ace-labs.html" class="al-nav-link">Home</a>
+    <a href="index.html" class="al-nav-link">Engine</a>
+    <a href="lewis-sandbox.html" class="al-nav-link active">Lewis sandbox</a>
+  </nav>
+</header>
+
+<div class="ls-wrap">
+
+  <section class="ls-hero">
+    <span class="ls-kicker">Lewis sandbox &middot; bonding + VSEPR</span>
+    <h1>Build the structure, then earn the <em>shape</em>.</h1>
+    <p class="lede">Five sequential stages per molecule. Count valence electrons, assign bond orders, place lone pairs, pick the geometry, then call the polarity. Every wrong answer surfaces a concept hint instead of a stub. Tier two unlocks at four mastered in tier one; tier three at four in tier two.</p>
+  </section>
+
+  <div class="ls-layout">
+
+    <!-- ============== TIER + MOLECULE LIST ============== -->
+    <aside class="ls-tiers" id="lsTiers" aria-label="Molecule library">
+      <div class="ls-empty" style="padding:24px 6px;">Loading library...</div>
+    </aside>
+
+    <!-- ============== WORKSPACE ============== -->
+    <section class="ls-work" id="lsWork" aria-live="polite">
+      <div class="ls-empty">
+        <h2>Pick a molecule to begin.</h2>
+        <p>Tier one molecules are unlocked by default. Mastery is saved locally so you can come back later.</p>
+      </div>
+    </section>
+
+  </div>
+
+  <section class="ls-foot">
+    <strong>About this sandbox.</strong> Each molecule's bond pattern, lone pair counts, geometry, hybridization, polarity, and "common trap" are hand-authored against the Gen Chem 600-level reference. Distractor hints are concept-specific, not generic. Source library: <code style="font-family:var(--al-font-mono);font-size:12px;">tools/gc/lewis-molecules.json</code>.
+  </section>
+</div>
+
+<script>
+/* ============================================================
+   Lewis Sandbox — vanilla JS controller
+   ============================================================ */
+
+const LS_KEY_MASTERED = 'gc:lewis:mastered';
+const STAGES = [
+  {id:'count',  label:'Electron count'},
+  {id:'skeleton', label:'Skeleton'},
+  {id:'lone',   label:'Lone pairs'},
+  {id:'geom',   label:'Geometry'},
+  {id:'polar',  label:'Polarity'}
+];
+
+const GEOM_NAMES = [
+  'linear','bent','trigonal-planar','tetrahedral','trigonal-pyramidal',
+  'trigonal-bipyramidal','see-saw','T-shape','square-planar',
+  'octahedral','square-pyramidal','pentagonal-bipyramidal'
+];
+
+const HYB_PRETTY = {
+  'sp':'sp', 'sp2':'sp²', 'sp3':'sp³', 'sp3d':'sp³d', 'sp3d2':'sp³d²'
+};
+
+const state = {
+  data:null,
+  mastered:new Set(),
+  active:null,    // molecule object
+  // per-attempt state
+  s1:{ value:'', graded:false, correct:false },
+  s2:{ orders:{}, graded:false, correct:false },
+  s3:{ counts:{}, graded:false, correct:false },
+  s4:{ eg:'', mg:'', graded:false, correct:false },
+  s5:{ pol:'', reason:'', graded:false, correct:false, revealed:false },
+  stage:'count',
+  done:false
+};
+
+/* ---------- Persistence ---------- */
+function loadMastered(){
+  try{
+    const raw = localStorage.getItem(LS_KEY_MASTERED);
+    if(!raw) return new Set();
+    return new Set(JSON.parse(raw));
+  }catch(e){ return new Set(); }
+}
+function saveMastered(){
+  try{ localStorage.setItem(LS_KEY_MASTERED, JSON.stringify([...state.mastered])); }catch(e){}
+}
+
+/* ---------- Tier unlock ---------- */
+function tierUnlocked(tier){
+  if(!tier.unlockRule) return true;
+  const need = tier.unlockRule;
+  const prev = state.data.tiers.find(t=>t.id===need.requireTier);
+  if(!prev) return true;
+  let mastered = 0;
+  for(const m of prev.molecules) if(state.mastered.has(m.id)) mastered++;
+  return mastered >= need.count;
+}
+function masteredCountInTier(tier){
+  let c = 0;
+  for(const m of tier.molecules) if(state.mastered.has(m.id)) c++;
+  return c;
+}
+
+/* ---------- Render tier list ---------- */
+function renderTiers(){
+  const root = document.getElementById('lsTiers');
+  let html = '';
+  for(const tier of state.data.tiers){
+    const unlocked = tierUnlocked(tier);
+    html += `<div class="ls-tier-h">Tier ${tier.id} &middot; ${escapeHTML(tier.name)} <span style="float:right;color:var(--al-ink-soft);font-weight:600;">${masteredCountInTier(tier)}/${tier.molecules.length}</span></div>`;
+    html += `<p class="ls-tier-blurb">${escapeHTML(tier.blurb)}</p>`;
+    if(!unlocked){
+      const need = tier.unlockRule;
+      const prev = state.data.tiers.find(t=>t.id===need.requireTier);
+      const got = masteredCountInTier(prev);
+      const remaining = Math.max(0, need.count - got);
+      html += `<div class="ls-tier-locked">Master ${remaining} more molecule${remaining===1?'':'s'} in tier ${need.requireTier} to unlock these.</div>`;
+    } else {
+      for(const m of tier.molecules){
+        const isMastered = state.mastered.has(m.id);
+        const isActive = state.active && state.active.id === m.id;
+        html += `<button class="ls-mol-btn ${isActive?'is-active':''} ${isMastered?'is-mastered':''}" data-mol="${m.id}">
+          <span>
+            <span class="formula">${m.displayFormula}</span>
+            <span class="name">${escapeHTML(m.name)}</span>
+          </span>
+          ${isMastered?'<span class="badge">Mastered</span>':''}
+        </button>`;
+      }
+    }
+  }
+  root.innerHTML = html;
+  root.querySelectorAll('button[data-mol]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      pickMolecule(btn.dataset.mol);
+    });
+  });
+}
+
+/* ---------- Pick a molecule ---------- */
+function pickMolecule(id){
+  let mol = null;
+  for(const t of state.data.tiers){
+    for(const m of t.molecules){ if(m.id===id){ mol = m; break; } }
+    if(mol) break;
+  }
+  if(!mol) return;
+  state.active = mol;
+  state.stage = 'count';
+  state.done = false;
+  state.s1 = { value:'', graded:false, correct:false };
+  state.s2 = { orders:initBondOrders(mol), graded:false, correct:false };
+  state.s3 = { counts:initLPCounts(mol), graded:false, correct:false };
+  state.s4 = { eg:'', mg:'', graded:false, correct:false };
+  state.s5 = { pol:'', reason:'', graded:false, correct:false, revealed:false };
+  renderTiers();
+  renderWorkspace();
+}
+
+function initBondOrders(mol){
+  const o = {};
+  for(const b of mol.bondPattern){ o[bondKey(b)] = 1; }
+  return o;
+}
+function initLPCounts(mol){
+  const c = {};
+  c[mol.centralAtom] = 0;
+  for(const b of mol.bondPattern){
+    if(b.atomA !== mol.centralAtom) c[b.atomA] = 0;
+    if(b.atomB !== mol.centralAtom) c[b.atomB] = 0;
+  }
+  return c;
+}
+function bondKey(b){ return b.atomA + '|' + b.atomB; }
+
+/* ---------- Render workspace ---------- */
+function renderWorkspace(){
+  const root = document.getElementById('lsWork');
+  if(!state.active){
+    root.innerHTML = `<div class="ls-empty"><h2>Pick a molecule to begin.</h2><p>Tier one molecules are unlocked by default. Mastery is saved locally so you can come back later.</p></div>`;
+    return;
+  }
+  const m = state.active;
+  let html = '';
+  html += `<div class="ls-workhead">
+    <div>
+      <div class="ls-formula-display">${m.displayFormula}</div>
+      <div class="ls-mol-name">${escapeHTML(m.name)} &middot; charge ${m.charge>0?'+'+m.charge:m.charge}</div>
+    </div>
+    <div style="flex:1 1 420px;min-width:280px;">
+      <div class="ls-stages">
+        ${STAGES.map((s, i)=>{
+          const isActive = state.stage === s.id;
+          const isDone = stageIsDone(s.id);
+          return `<div class="ls-stage-pill ${isActive?'is-active':''} ${isDone?'is-done':''}"><span class="num">${i+1}</span>${s.label}</div>`;
+        }).join('')}
+      </div>
+    </div>
+  </div>`;
+
+  html += `<div class="ls-canvas-wrap">${renderCanvas(m)}</div>`;
+
+  if(state.done){
+    html += renderSummary(m);
+  } else if(state.stage === 'count'){
+    html += renderStage1(m);
+  } else if(state.stage === 'skeleton'){
+    html += renderStage2(m);
+  } else if(state.stage === 'lone'){
+    html += renderStage3(m);
+  } else if(state.stage === 'geom'){
+    html += renderStage4(m);
+  } else if(state.stage === 'polar'){
+    html += renderStage5(m);
+  }
+
+  root.innerHTML = html;
+  bindStage();
+}
+
+function stageIsDone(id){
+  switch(id){
+    case 'count': return state.s1.graded && state.s1.correct;
+    case 'skeleton': return state.s2.graded && state.s2.correct;
+    case 'lone': return state.s3.graded && state.s3.correct;
+    case 'geom': return state.s4.graded && state.s4.correct;
+    case 'polar': return state.s5.graded && state.s5.correct && state.s5.revealed;
+  }
+  return false;
+}
+
+/* ---------- SVG canvas (hand-laid by geometry) ---------- */
+/*
+  The canvas adapts to the current stage:
+    stage 1: dim placeholder showing only the formula skeleton (no bonds yet).
+    stage 2: shows central + terminals with current bond orders.
+    stage 3+: shows bonds + lone-pair dots based on lonePairCounts (or current input in stage 3).
+*/
+function renderCanvas(m){
+  const W = 480, H = 320;
+  const cx = W/2, cy = H/2;
+  const R = 28;            // atom radius
+  const armLen = 95;       // bond length
+
+  const positions = layoutPositions(m, cx, cy, armLen);
+  const orders = (state.stage === 'count') ? null : state.s2.orders;
+  const lpCounts = currentLPDisplay(m);
+
+  let svg = `<svg class="ls-canvas" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="Lewis structure for ${m.name}">`;
+
+  // Bonds
+  for(const b of m.bondPattern){
+    const a = positions[b.atomA];
+    const z = positions[b.atomB];
+    const order = orders ? (state.s2.orders[bondKey(b)] || 1) : 0;
+    if(order === 0){
+      // stage 1: faint guide line
+      svg += `<line x1="${a.x}" y1="${a.y}" x2="${z.x}" y2="${z.y}" stroke="var(--al-line-2)" stroke-width="1" stroke-dasharray="3 4"/>`;
+    } else {
+      svg += renderBond(a, z, order);
+    }
+  }
+
+  // Lone-pair dots (only after stage 1)
+  if(state.stage !== 'count' && lpCounts){
+    for(const [atom, n] of Object.entries(lpCounts)){
+      if(!n) continue;
+      const p = positions[atom];
+      const dots = lonePairOffsets(atom, m, positions, p, n, R);
+      for(const d of dots){
+        svg += `<circle class="lp-dot" cx="${d.x}" cy="${d.y}" r="2.4"/>`;
+      }
+    }
+  }
+
+  // Atoms (drawn last so they sit on top)
+  for(const [name, pos] of Object.entries(positions)){
+    const el = atomElement(name);
+    svg += `<g><circle class="atom-circle" cx="${pos.x}" cy="${pos.y}" r="${R}"/>`;
+    svg += `<text class="atom-label ${el==='H'?'is-h':''}" x="${pos.x}" y="${pos.y}">${el}</text></g>`;
+  }
+
+  // Charge marker
+  if(m.charge !== 0){
+    const sign = m.charge > 0 ? '+' : (m.charge < 0 ? '−' : '');
+    svg += `<g transform="translate(${W-44},22)">
+      <rect x="-22" y="-15" width="44" height="26" rx="6" fill="var(--al-gold-bg)" stroke="var(--al-gold-d)"/>
+      <text x="0" y="2" text-anchor="middle" dominant-baseline="central" font-family="var(--al-font-mono)" font-size="13" font-weight="700" fill="var(--al-gold-d)">${sign}${Math.abs(m.charge)===1?'':Math.abs(m.charge)}</text>
+    </g>`;
+  }
+
+  svg += `</svg>`;
+  return svg;
+}
+
+function currentLPDisplay(m){
+  if(state.stage === 'lone') return state.s3.counts;
+  if(state.stage === 'count' || state.stage === 'skeleton') return null;
+  return m.lonePairCounts;
+}
+
+function renderBond(a, z, order){
+  const dx = z.x - a.x, dy = z.y - a.y;
+  const len = Math.hypot(dx, dy);
+  // Trim ends so bonds stop at atom edge
+  const trim = 28;
+  const ux = dx/len, uy = dy/len;
+  const ax = a.x + ux*trim, ay = a.y + uy*trim;
+  const zx = z.x - ux*trim, zy = z.y - uy*trim;
+  // Perpendicular for double/triple offset
+  const px = -uy, py = ux;
+  let s = `<g class="bond-grp">`;
+  if(order === 1){
+    s += `<line class="bond-stroke" x1="${ax}" y1="${ay}" x2="${zx}" y2="${zy}"/>`;
+  } else if(order === 2){
+    const off = 4;
+    s += `<line class="bond-stroke" x1="${ax+px*off}" y1="${ay+py*off}" x2="${zx+px*off}" y2="${zy+py*off}"/>`;
+    s += `<line class="bond-stroke" x1="${ax-px*off}" y1="${ay-py*off}" x2="${zx-px*off}" y2="${zy-py*off}"/>`;
+  } else {
+    const off = 5.5;
+    s += `<line class="bond-stroke" x1="${ax}" y1="${ay}" x2="${zx}" y2="${zy}"/>`;
+    s += `<line class="bond-stroke" x1="${ax+px*off}" y1="${ay+py*off}" x2="${zx+px*off}" y2="${zy+py*off}"/>`;
+    s += `<line class="bond-stroke" x1="${ax-px*off}" y1="${ay-py*off}" x2="${zx-px*off}" y2="${zy-py*off}"/>`;
+  }
+  s += `</g>`;
+  return s;
+}
+
+/* Position the central atom at (cx,cy) and arrange terminals based on
+   the molecule's molecular geometry. We pick the angle set per geometry
+   so each molecule renders correctly without cookie-cutter sameness. */
+function layoutPositions(m, cx, cy, r){
+  const pos = {};
+  pos[m.centralAtom] = { x:cx, y:cy, role:'central' };
+  const terminals = m.bondPattern.map(b => b.atomA === m.centralAtom ? b.atomB : b.atomA);
+  const geom = m.molecularGeometry;
+  const eg = m.electronGeometry;
+  const angles = anglesFor(geom, eg, terminals.length);
+  for(let i=0;i<terminals.length;i++){
+    const a = angles[i] * Math.PI/180;
+    pos[terminals[i]] = { x: cx + Math.cos(a)*r, y: cy + Math.sin(a)*r, role:'terminal' };
+  }
+  return pos;
+}
+
+/* Angle = degrees from +x axis, going CW (because SVG y is down).
+   Hand-tuned per geometry for clarity; uses 'top' = -90, 'bottom' = +90. */
+function anglesFor(geom, eg, n){
+  switch(geom){
+    case 'linear':
+      return [180, 0];
+    case 'bent':
+      return [-130, -50];   // V opens upward
+    case 'trigonal-planar':
+      return [-90, 30, 150];
+    case 'trigonal-pyramidal':
+      // Project a tetrahedral 3-arm bottom view: one front + two back
+      return [-90, 40, 140];
+    case 'tetrahedral':
+      // 2D projection: cross of 4 arms
+      return [-110, -40, 50, 140];
+    case 'trigonal-bipyramidal':
+      // 5 arms: 2 axial vertical, 3 equatorial
+      return [-90, 90, 0, 140, -140];
+    case 'see-saw':
+      // 4 arms: 2 axial vertical squeezed, 2 equatorial wide
+      return [-100, 100, 0, 160];
+    case 'T-shape':
+      // 3 arms: 2 axial squeezed + 1 equatorial right
+      return [-95, 95, 5];
+    case 'square-planar':
+      return [-90, 0, 90, 180];
+    case 'octahedral':
+      // 6 arms: 4 in plane + 2 axial; we offset axials slightly so they read
+      return [-90, 90, 0, 180, -45, 135];
+    case 'square-pyramidal':
+      // 5 arms: 1 apex up + 4 in plane (drawn shorter to imply down-tilt)
+      return [-90, -10, 80, 170, 260];
+    case 'pentagonal-bipyramidal':
+      // not used, but supported
+      return [-90, 90, -36, 36, 108, 144, 216];
+  }
+  // fallback even spread
+  const out = [];
+  for(let i=0;i<n;i++) out.push(-90 + i*(360/n));
+  return out;
+}
+
+/* Place lone-pair dots around an atom on the side facing AWAY from the
+   nearest bond. Each lone pair = 2 dots. */
+function lonePairOffsets(atomName, m, positions, p, n, R){
+  // Direction TO the central atom (or to a bonded neighbor for centrals)
+  let bondedDirs = [];
+  for(const b of m.bondPattern){
+    if(b.atomA === atomName){
+      const o = positions[b.atomB];
+      bondedDirs.push(Math.atan2(o.y - p.y, o.x - p.x));
+    } else if(b.atomB === atomName){
+      const o = positions[b.atomA];
+      bondedDirs.push(Math.atan2(o.y - p.y, o.x - p.x));
+    }
+  }
+  // Choose lone-pair slot angles spread across the un-bonded hemispheres
+  const slots = pickLPSlots(bondedDirs, n);
+  const out = [];
+  const ringR = R + 8;
+  const dotGap = 6;
+  for(const ang of slots){
+    const cx = p.x + Math.cos(ang)*ringR;
+    const cy = p.y + Math.sin(ang)*ringR;
+    // Two dots perpendicular to the ring radius
+    const px = -Math.sin(ang), py = Math.cos(ang);
+    out.push({ x: cx + px*dotGap/2, y: cy + py*dotGap/2 });
+    out.push({ x: cx - px*dotGap/2, y: cy - py*dotGap/2 });
+  }
+  return out;
+}
+
+function pickLPSlots(bondedDirs, n){
+  // Build a candidate ring of 8 evenly spaced angles, then pick the n that
+  // are furthest from any bonded direction.
+  const candidates = [];
+  for(let i=0;i<8;i++) candidates.push(-Math.PI + i*Math.PI/4);
+  const score = a => {
+    if(!bondedDirs.length) return 1;
+    let min = Infinity;
+    for(const b of bondedDirs){
+      let d = Math.abs(angleDelta(a, b));
+      if(d < min) min = d;
+    }
+    return min;
+  };
+  candidates.sort((a,b)=>score(b)-score(a));
+  // Take top n, then re-sort to spread them
+  const picked = candidates.slice(0, n);
+  picked.sort((a,b)=>a-b);
+  return picked;
+}
+function angleDelta(a, b){
+  let d = a - b;
+  while(d > Math.PI) d -= 2*Math.PI;
+  while(d < -Math.PI) d += 2*Math.PI;
+  return d;
+}
+
+function atomElement(name){
+  // Strip trailing digit (H1 -> H, F3 -> F)
+  return name.replace(/\d+$/, '');
+}
+
+/* ============================================================
+   STAGE 1 — Electron count
+   ============================================================ */
+function renderStage1(m){
+  let h = `<div class="ls-stage" data-stage="count">
+    <h2>Stage 1 &middot; <em>count the valence electrons</em></h2>
+    <p class="ls-stage-sub">Sum the valence electrons each atom contributes, then adjust for the molecular charge. Add electrons for negative charges, subtract for positive.</p>
+    <div class="ls-input-row">
+      <input id="lsCountInput" class="ls-num-input" type="text" inputmode="numeric" pattern="[0-9]*" value="${state.s1.value || ''}" aria-label="Total valence electrons" placeholder="?"/>
+      <button id="lsCountSubmit" class="ls-btn ls-btn-primary" type="button">Check</button>
+    </div>`;
+  if(state.s1.graded){
+    if(state.s1.correct){
+      h += `<div class="ls-feedback is-good"><span class="lbl">Correct</span>${m.totalValenceElectrons} valence electrons. That's the budget you'll spend on bonds and lone pairs.</div>
+            <div class="ls-cta-row"><button class="ls-btn ls-btn-primary" id="lsNext">Continue to skeleton</button></div>`;
+    } else {
+      h += `<div class="ls-feedback is-hint"><span class="lbl">Hint</span>${countHint(m, state.s1.value)}</div>`;
+    }
+  }
+  h += `</div>`;
+  return h;
+}
+
+function countHint(m, attempt){
+  const exp = m.totalValenceElectrons;
+  const att = parseInt(attempt, 10);
+  if(isNaN(att)) return 'Enter a whole number. Each atom contributes its group number worth of valence electrons; then add for negative charges and subtract for positive.';
+  if(m.charge < 0 && att === exp + m.charge){
+    return `Close. You forgot to add ${Math.abs(m.charge)} electron${Math.abs(m.charge)===1?'':'s'} for the ${m.charge} charge. Negative charges mean extra electrons in the budget.`;
+  }
+  if(m.charge > 0 && att === exp + m.charge){
+    return `Close. You forgot to subtract ${m.charge} electron${m.charge===1?'':'s'} for the +${m.charge} charge. Positive charges mean fewer electrons.`;
+  }
+  // Off by 2 — common group-16 vs group-18 confusion
+  if(Math.abs(att - exp) === 2){
+    return 'Off by 2. Check the group numbers: oxygen and sulfur (group 16) contribute 6 each, not 8. Halogens (group 17) contribute 7. Hydrogen contributes 1.';
+  }
+  if(Math.abs(att - exp) === 1){
+    return `Off by 1. Did you remember the charge? ${m.charge<0?'Add':'Subtract'} ${Math.abs(m.charge)} electron${Math.abs(m.charge)===1?'':'s'} for the ${m.charge>0?'+'+m.charge:m.charge} charge.`;
+  }
+  if(att > exp + 8){
+    return 'Way too high. Recount each atom\'s group number. Hydrogen is 1; carbon is 4; nitrogen is 5; oxygen is 6; halogens are 7; group 18 (Xe) is 8. You only count valence electrons, not core.';
+  }
+  return 'Recount: each atom contributes its group number worth of valence electrons. Halogens contribute 7 each, oxygen 6, nitrogen 5, carbon 4, hydrogen 1, then adjust for charge.';
+}
+
+/* ============================================================
+   STAGE 2 — Skeleton (bond orders)
+   ============================================================ */
+function renderStage2(m){
+  let h = `<div class="ls-stage" data-stage="skeleton">
+    <h2>Stage 2 &middot; <em>set the bond orders</em></h2>
+    <p class="ls-stage-sub">Pick single, double, or triple for each bond. Aim to give each atom an octet (or duet for hydrogen) while keeping formal charges as close to zero as possible. Period 3+ central atoms can expand past eight electrons.</p>`;
+  for(const b of m.bondPattern){
+    const k = bondKey(b);
+    const cur = state.s2.orders[k] || 1;
+    h += `<div class="ls-bond-row">
+      <span class="pair">${atomElement(b.atomA)}<sub>${labelIndex(b.atomA)}</sub> &mdash; ${atomElement(b.atomB)}<sub>${labelIndex(b.atomB)}</sub></span>
+      <div class="ls-order-pick" role="radiogroup" aria-label="Bond order ${b.atomA} ${b.atomB}">
+        <button type="button" data-bond="${k}" data-ord="1" class="${cur===1?'is-on':''}">Single</button>
+        <button type="button" data-bond="${k}" data-ord="2" class="${cur===2?'is-on':''}">Double</button>
+        <button type="button" data-bond="${k}" data-ord="3" class="${cur===3?'is-on':''}">Triple</button>
+      </div>
+    </div>`;
+  }
+  h += `<div class="ls-cta-row">
+    <button class="ls-btn ls-btn-primary" id="lsSkelSubmit">Check skeleton</button>
+  </div>`;
+  if(state.s2.graded){
+    if(state.s2.correct){
+      h += `<div class="ls-feedback is-good"><span class="lbl">Correct</span>${skeletonCorrectMsg(m)}</div>
+            <div class="ls-cta-row"><button class="ls-btn ls-btn-primary" id="lsNext">Continue to lone pairs</button></div>`;
+    } else {
+      h += `<div class="ls-feedback is-hint"><span class="lbl">Hint</span>${skeletonHint(m)}</div>`;
+    }
+  }
+  h += `</div>`;
+  return h;
+}
+
+function labelIndex(name){
+  const m = name.match(/(\d+)$/);
+  return m ? m[1] : '';
+}
+
+function skeletonCorrectMsg(m){
+  const totalBondE = m.bondPattern.reduce((s,b)=>s + (state.s2.orders[bondKey(b)]||1)*2, 0);
+  const remaining = m.totalValenceElectrons - totalBondE;
+  return `Bond skeleton matches. ${totalBondE} electrons in bonds; ${remaining} electrons left to place as lone pairs.`;
+}
+
+function skeletonHint(m){
+  // Identify mismatch
+  const wrong = [];
+  for(const b of m.bondPattern){
+    const k = bondKey(b);
+    const guess = state.s2.orders[k] || 1;
+    if(guess !== b.order) wrong.push({b, guess});
+  }
+  if(!wrong.length) return 'Almost. Double-check each bond order.';
+  // Build a hint based on the first wrong one
+  const w = wrong[0];
+  const expected = w.b.order;
+  const guess = w.guess;
+  const central = m.centralAtom;
+  const period3plus = ['P','S','Cl','Br','Xe','I','Si','As','Se','Te'].includes(central);
+
+  if(guess < expected){
+    if(expected >= 2){
+      return `Check the central atom's octet. With all single bonds, ${central} has too few electrons. Try a ${expected===2?'double':'triple'} bond on at least one of the ${atomElement(w.b.atomA===central?w.b.atomB:w.b.atomA)} atoms so ${central} reaches an octet.`;
+    }
+  }
+  if(guess > expected){
+    if(period3plus && (central==='S' || central==='P' || central==='Cl' || central==='Br' || central==='I' || central==='Xe')){
+      return `${central} can expand its octet, but the lower-energy structure here uses fewer multiple bonds. Check formal charges: with single bonds and proper lone pairs, you can usually drive every formal charge to zero on this expanded-octet center.`;
+    }
+    if(['B','Be'].includes(central)){
+      return `${central} is an octet exception. A ${guess===2?'double':'triple'} bond would give it more than its preferred 4 (Be) or 6 (B) electrons. Drop back to single bonds.`;
+    }
+    return `Too many multiple bonds. Try fewer; double-check that period-2 atoms (C, N, O, F) are at exactly 8 electrons, not more.`;
+  }
+  return `One or more bond orders are off. Period 2 atoms (C, N, O, F) are strict octets with exactly 8 electrons. ${period3plus?central+' is period 3+, so expanded octet is allowed when it lowers formal charge.':''}`;
+}
+
+/* ============================================================
+   STAGE 3 — Lone pairs
+   ============================================================ */
+function renderStage3(m){
+  let h = `<div class="ls-stage" data-stage="lone">
+    <h2>Stage 3 &middot; <em>place the lone pairs</em></h2>
+    <p class="ls-stage-sub">Distribute the remaining electrons as lone pairs. Hydrogen never carries a lone pair (its duet is satisfied by the bond). Period 2 atoms cap at an octet; period 3+ central atoms can hold more.</p>`;
+
+  const atoms = Object.keys(state.s3.counts);
+  for(const a of atoms){
+    const role = (a === m.centralAtom) ? 'central' : 'terminal';
+    const val = state.s3.counts[a];
+    h += `<div class="ls-lp-row">
+      <span class="atomname">${atomElement(a)}<sub>${labelIndex(a)}</sub><span class="role">${role}</span></span>
+      <div class="ls-lp-stepper">
+        <button type="button" data-lp="${a}" data-step="-1" aria-label="decrease lone pairs">&minus;</button>
+        <span class="val" id="lsLP_${cssEsc(a)}">${val}</span>
+        <button type="button" data-lp="${a}" data-step="1" aria-label="increase lone pairs">+</button>
+        <span class="dots">${'<span></span>'.repeat(val*2)}</span>
+      </div>
+    </div>`;
+  }
+  h += `<div class="ls-cta-row">
+    <button class="ls-btn ls-btn-primary" id="lsLPSubmit">Check lone pairs</button>
+  </div>`;
+  if(state.s3.graded){
+    if(state.s3.correct){
+      h += `<div class="ls-feedback is-good"><span class="lbl">Correct</span>Every atom now has the right electron count.</div>
+            <div class="ls-cta-row"><button class="ls-btn ls-btn-primary" id="lsNext">Continue to geometry</button></div>`;
+    } else {
+      h += `<div class="ls-feedback is-hint"><span class="lbl">Hint</span>${lpHint(m)}</div>`;
+    }
+  }
+  h += `</div>`;
+  return h;
+}
+
+function lpHint(m){
+  for(const a of Object.keys(m.lonePairCounts)){
+    const guess = state.s3.counts[a] || 0;
+    const expected = m.lonePairCounts[a];
+    if(guess === expected) continue;
+    const el = atomElement(a);
+    if(el === 'H'){
+      return `Hydrogen never carries a lone pair. Its duet is already satisfied by the single bond. Set ${el} to 0.`;
+    }
+    if(a === m.centralAtom){
+      if(guess > expected){
+        return `Too many lone pairs on ${el} (central). Count electrons used in bonds, subtract from the total budget, and put what's left ON THE CENTER only after every terminal atom has a full octet.`;
+      } else {
+        return `Not enough lone pairs on ${el} (central). Total electrons remaining after bonds and terminal lone pairs land on the central atom. With ${m.totalValenceElectrons - bondElectrons(m)} non-bonding electrons, the center should hold ${expected} pair${expected===1?'':'s'}.`;
+      }
+    }
+    // terminal atom
+    if(el === 'O'){
+      if(guess > expected){
+        return `${el}<sub>${labelIndex(a)}</sub> has too many lone pairs. With a double bond, oxygen carries 2 lone pairs (4 + 4 = 8). With a single bond, oxygen carries 3 lone pairs (2 + 6 = 8).`;
+      } else {
+        return `${el}<sub>${labelIndex(a)}</sub> needs more lone pairs. Each terminal oxygen needs to reach an octet: single-bond O = 3 lone pairs, double-bond O = 2 lone pairs.`;
+      }
+    }
+    if(['F','Cl','Br','I'].includes(el)){
+      return `Halogen ${el}<sub>${labelIndex(a)}</sub> with one single bond carries 3 lone pairs (2 bonding + 6 non-bonding = 8). You have ${guess}; should be ${expected}.`;
+    }
+    return `${el}<sub>${labelIndex(a)}</sub>: ${guess>expected?'too many':'not enough'} lone pairs. Expected ${expected}, got ${guess}.`;
+  }
+  return 'Check each atom\'s electron count: bonds (2 each) plus lone pairs (2 each) should equal 8 for period 2 atoms, 2 for hydrogen.';
+}
+
+function bondElectrons(m){
+  return m.bondPattern.reduce((s,b)=>s + b.order*2, 0);
+}
+
+/* ============================================================
+   STAGE 4 — Geometry
+   ============================================================ */
+function renderStage4(m){
+  let h = `<div class="ls-stage" data-stage="geom">
+    <h2>Stage 4 &middot; <em>name the geometry</em></h2>
+    <p class="ls-stage-sub">Electron geometry counts every electron group on the central atom (each bond, each lone pair). Molecular geometry names atoms only, ignoring lone pairs in the name.</p>
+    <div class="ls-geom-row">
+      <div class="ls-fld">
+        <label for="lsEG">Electron geometry</label>
+        <select id="lsEG">
+          <option value="">choose...</option>
+          ${GEOM_NAMES.map(g=>`<option value="${g}" ${state.s4.eg===g?'selected':''}>${g}</option>`).join('')}
+        </select>
+      </div>
+      <div class="ls-fld">
+        <label for="lsMG">Molecular geometry</label>
+        <select id="lsMG">
+          <option value="">choose...</option>
+          ${GEOM_NAMES.map(g=>`<option value="${g}" ${state.s4.mg===g?'selected':''}>${g}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+    <div class="ls-cta-row">
+      <button class="ls-btn ls-btn-primary" id="lsGeomSubmit">Check geometry</button>
+    </div>`;
+  if(state.s4.graded){
+    if(state.s4.correct){
+      h += `<div class="ls-feedback is-good"><span class="lbl">Correct</span>${m.electronGeometry === m.molecularGeometry?'Electron geometry and molecular geometry match because the central atom has no lone pairs.':'Lone pairs change the molecular geometry without changing the electron geometry.'}</div>
+            <div class="ls-cta-row"><button class="ls-btn ls-btn-primary" id="lsNext">Continue to polarity</button></div>`;
+    } else {
+      h += `<div class="ls-feedback is-hint"><span class="lbl">Hint</span>${geomHint(m)}</div>`;
+    }
+  }
+  h += `</div>`;
+  return h;
+}
+
+function geomHint(m){
+  const lpCenter = m.lonePairCounts[m.centralAtom] || 0;
+  const bonds = m.bondPattern.length;
+  const groups = bonds + lpCenter;
+  const egGuess = state.s4.eg;
+  const mgGuess = state.s4.mg;
+  if(!egGuess) return `Start with electron geometry. Count electron groups on ${m.centralAtom}: each bond = 1 group, each lone pair = 1 group. ${m.centralAtom} has ${bonds} bond${bonds===1?'':'s'} and ${lpCenter} lone pair${lpCenter===1?'':'s'} = ${groups} groups. Two groups is linear, three trigonal planar, four tetrahedral, five trigonal bipyramidal, six octahedral.`;
+  if(egGuess !== m.electronGeometry){
+    return `Electron geometry is off. Recount electron groups on ${m.centralAtom}: ${bonds} bond${bonds===1?'':'s'} + ${lpCenter} lone pair${lpCenter===1?'':'s'} = ${groups} groups. ${groups===2?'Two groups always go linear.':groups===3?'Three groups go trigonal planar.':groups===4?'Four groups go tetrahedral.':groups===5?'Five groups go trigonal bipyramidal.':groups===6?'Six groups go octahedral.':''}`;
+  }
+  if(!mgGuess) return `Electron geometry is right. Now drop the lone pairs from the name to get molecular geometry. ${lpCenter===0?'No lone pairs on the center, so molecular geometry equals electron geometry.':''}`;
+  if(mgGuess !== m.molecularGeometry){
+    if(lpCenter === 0){
+      return `With no lone pairs on the central atom, molecular geometry equals electron geometry: ${m.electronGeometry}.`;
+    }
+    if(m.electronGeometry === 'tetrahedral'){
+      if(lpCenter === 1) return `Tetrahedral with one lone pair = trigonal pyramidal. Lone pairs count for the electron geometry but get dropped from the molecular geometry name.`;
+      if(lpCenter === 2) return `Tetrahedral with two lone pairs = bent. The two remaining bonded atoms sit at ~104.5°.`;
+    }
+    if(m.electronGeometry === 'trigonal-planar' && lpCenter === 1){
+      return `Trigonal planar with one lone pair = bent (with ~120° reference angle). The lone pair takes one of the three positions in the plane.`;
+    }
+    if(m.electronGeometry === 'trigonal-bipyramidal'){
+      if(lpCenter === 1) return `Trigonal bipyramidal with one lone pair: the lone pair goes equatorial (more room), giving see-saw.`;
+      if(lpCenter === 2) return `Trigonal bipyramidal with two lone pairs: both lone pairs go equatorial (LP-LP repulsion is minimized when both are at 120° from each other), giving T-shape.`;
+      if(lpCenter === 3) return `Trigonal bipyramidal with three lone pairs: all three go equatorial, leaving the two bonded atoms axial. Result is linear.`;
+    }
+    if(m.electronGeometry === 'octahedral'){
+      if(lpCenter === 1) return `Octahedral with one lone pair = square pyramidal. The lone pair takes one octahedral vertex; the five bonded atoms form a base + apex.`;
+      if(lpCenter === 2) return `Octahedral with two lone pairs = square planar. The two lone pairs go trans (180° apart) to minimize lone-pair repulsion, leaving the four bonded atoms in a flat square.`;
+    }
+  }
+  return 'Almost. Recount electron groups for the electron geometry, then subtract lone pairs to name the molecular geometry.';
+}
+
+/* ============================================================
+   STAGE 5 — Polarity
+   ============================================================ */
+function renderStage5(m){
+  let h = `<div class="ls-stage" data-stage="polar">
+    <h2>Stage 5 &middot; <em>call the polarity</em></h2>
+    <p class="ls-stage-sub">A molecule is polar when it has both polar bonds AND an asymmetric geometry. Symmetric shapes (linear, trigonal planar, tetrahedral, trigonal bipyramidal, octahedral, square planar) cancel polar bonds when all terminal atoms match.</p>
+    <div class="ls-pol-radios">
+      <label><input type="radio" name="lsPol" value="polar" ${state.s5.pol==='polar'?'checked':''}><span><span class="pol-h">Polar</span><span class="pol-s">Net dipole ≠ 0</span></span></label>
+      <label><input type="radio" name="lsPol" value="nonpolar" ${state.s5.pol==='nonpolar'?'checked':''}><span><span class="pol-h">Nonpolar</span><span class="pol-s">Bond dipoles cancel</span></span></label>
+    </div>
+    <div class="ls-fld">
+      <label for="lsReason">Why? (one or two sentences)</label>
+      <textarea id="lsReason" placeholder="Explain in terms of bond polarity AND geometry...">${escapeHTML(state.s5.reason || '')}</textarea>
+    </div>
+    <div class="ls-cta-row">
+      <button class="ls-btn ls-btn-primary" id="lsPolSubmit">Check polarity</button>
+    </div>`;
+  if(state.s5.graded){
+    if(state.s5.correct){
+      if(!state.s5.revealed){
+        h += `<div class="ls-feedback is-good"><span class="lbl">Polar choice correct</span>Now compare your reasoning to the canonical answer.</div>
+        <div class="ls-cta-row"><button class="ls-btn" id="lsRevealReason">Reveal reasoning</button></div>`;
+      } else {
+        h += `<div class="ls-feedback is-good"><span class="lbl">Canonical reasoning</span>${escapeHTML(m.polarityReason)}</div>
+        <div class="ls-cta-row"><button class="ls-btn ls-btn-primary" id="lsFinish">Show summary</button></div>`;
+      }
+    } else {
+      h += `<div class="ls-feedback is-hint"><span class="lbl">Hint</span>${polarHint(m)}</div>`;
+    }
+  }
+  h += `</div>`;
+  return h;
+}
+
+function polarHint(m){
+  const guess = state.s5.pol;
+  const central = m.centralAtom;
+  const lpCenter = m.lonePairCounts[central] || 0;
+  const allSameTerminals = new Set(Object.keys(m.lonePairCounts).filter(a=>a!==central).map(atomElement)).size === 1;
+  if(!guess) return 'Pick polar or nonpolar first. The two-question test: (1) Are there polar bonds? (2) Does the geometry let those bond dipoles cancel?';
+  if(m.polarity === 'nonpolar' && guess === 'polar'){
+    return `Look for symmetry. ${m.molecularGeometry} with ${allSameTerminals?'all identical terminal atoms':'these terminal atoms'} and ${lpCenter===0?'no lone pair on the central atom':'symmetric lone-pair placement'} cancels its bond dipoles. The bonds are polar but the molecule is not.`;
+  }
+  if(m.polarity === 'polar' && guess === 'nonpolar'){
+    if(lpCenter > 0) return `The lone pair${lpCenter>1?'s':''} on ${central} break${lpCenter===1?'s':''} symmetry. Even though the bonds may look symmetric, the lone-pair density on top adds a vector that the bonds cannot cancel. Polar.`;
+    return `The geometry doesn't fully cancel here. ${m.molecularGeometry} with these terminal atoms leaves a net dipole.`;
+  }
+  return 'Recheck the geometry and the central atom\'s lone pairs.';
+}
+
+/* ============================================================
+   SUMMARY CARD
+   ============================================================ */
+function renderSummary(m){
+  let h = `<div class="ls-summary" data-stage="summary">
+    <div class="micro">All five stages cleared</div>
+    <h3>${m.displayFormula} &middot; <em>${escapeHTML(m.name)}</em></h3>
+    <p style="margin:0;color:var(--al-ink-2);font-size:14px;line-height:1.55;max-width:760px;">${escapeHTML(m.polarityReason)}</p>
+    <div class="ls-fact-grid">
+      <div class="ls-fact"><span class="lbl">Hybridization</span><span class="val">${HYB_PRETTY[m.hybridization] || m.hybridization}</span></div>
+      <div class="ls-fact"><span class="lbl">Bond angle</span><span class="val">${escapeHTML(String(m.bondAngle))}°</span></div>
+      <div class="ls-fact"><span class="lbl">Electron geom</span><span class="val" style="font-size:14px;">${m.electronGeometry}</span></div>
+      <div class="ls-fact"><span class="lbl">Molecular geom</span><span class="val" style="font-size:14px;">${m.molecularGeometry}</span></div>
+      <div class="ls-fact"><span class="lbl">Polarity</span><span class="val" style="font-size:14px;">${m.polarity}</span></div>
+      ${m.resonance?`<div class="ls-fact"><span class="lbl">Resonance</span><span class="val" style="font-size:14px;">${m.resonanceCount||2} structures</span></div>`:''}
+    </div>
+    <div class="ls-trap">
+      <div class="lbl">Common trap on this molecule</div>
+      <p>${escapeHTML(m.commonTrap)}</p>
+    </div>
+    <div class="ls-cta-row">
+      <button class="ls-btn ls-btn-primary" id="lsTryNext">Try next molecule</button>
+      <button class="ls-btn" id="lsRetry">Replay this one</button>
+    </div>
+  </div>`;
+  return h;
+}
+
+/* ============================================================
+   BIND interactions per stage
+   ============================================================ */
+function bindStage(){
+  const root = document.getElementById('lsWork');
+  // Stage 1
+  const inp = document.getElementById('lsCountInput');
+  if(inp){
+    inp.addEventListener('input', (e)=>{ state.s1.value = e.target.value; });
+    inp.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ submitStage1(); } });
+  }
+  bind('lsCountSubmit', submitStage1);
+  bind('lsNext', advanceStage);
+
+  // Stage 2
+  root.querySelectorAll('button[data-bond]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const k = btn.dataset.bond, ord = parseInt(btn.dataset.ord,10);
+      state.s2.orders[k] = ord;
+      state.s2.graded = false;
+      renderWorkspace();
+    });
+  });
+  bind('lsSkelSubmit', submitStage2);
+
+  // Stage 3
+  root.querySelectorAll('button[data-lp]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const a = btn.dataset.lp, step = parseInt(btn.dataset.step,10);
+      const cur = state.s3.counts[a] || 0;
+      state.s3.counts[a] = Math.max(0, Math.min(6, cur + step));
+      state.s3.graded = false;
+      renderWorkspace();
+    });
+  });
+  bind('lsLPSubmit', submitStage3);
+
+  // Stage 4
+  const eg = document.getElementById('lsEG');
+  const mg = document.getElementById('lsMG');
+  if(eg){ eg.addEventListener('change', (e)=>{ state.s4.eg = e.target.value; state.s4.graded = false; }); }
+  if(mg){ mg.addEventListener('change', (e)=>{ state.s4.mg = e.target.value; state.s4.graded = false; }); }
+  bind('lsGeomSubmit', submitStage4);
+
+  // Stage 5
+  root.querySelectorAll('input[name="lsPol"]').forEach(r=>{
+    r.addEventListener('change', (e)=>{ state.s5.pol = e.target.value; state.s5.graded = false; });
+  });
+  const reason = document.getElementById('lsReason');
+  if(reason) reason.addEventListener('input', (e)=>{ state.s5.reason = e.target.value; });
+  bind('lsPolSubmit', submitStage5);
+  bind('lsRevealReason', ()=>{ state.s5.revealed = true; renderWorkspace(); });
+  bind('lsFinish', finishMolecule);
+
+  // Summary
+  bind('lsTryNext', tryNextMolecule);
+  bind('lsRetry', ()=>{ if(state.active) pickMolecule(state.active.id); });
+}
+
+function bind(id, fn){
+  const el = document.getElementById(id);
+  if(el) el.addEventListener('click', fn);
+}
+
+/* ---------- Stage submissions ---------- */
+function submitStage1(){
+  const att = parseInt(state.s1.value,10);
+  state.s1.graded = true;
+  state.s1.correct = (att === state.active.totalValenceElectrons);
+  renderWorkspace();
+}
+function submitStage2(){
+  const m = state.active;
+  let ok = true;
+  for(const b of m.bondPattern){
+    if((state.s2.orders[bondKey(b)]||1) !== b.order){ ok = false; break; }
+  }
+  state.s2.graded = true;
+  state.s2.correct = ok;
+  renderWorkspace();
+}
+function submitStage3(){
+  const m = state.active;
+  let ok = true;
+  for(const a of Object.keys(m.lonePairCounts)){
+    if((state.s3.counts[a]||0) !== m.lonePairCounts[a]){ ok = false; break; }
+  }
+  state.s3.graded = true;
+  state.s3.correct = ok;
+  renderWorkspace();
+}
+function submitStage4(){
+  const m = state.active;
+  state.s4.graded = true;
+  state.s4.correct = (state.s4.eg === m.electronGeometry && state.s4.mg === m.molecularGeometry);
+  renderWorkspace();
+}
+function submitStage5(){
+  const m = state.active;
+  state.s5.graded = true;
+  state.s5.correct = (state.s5.pol === m.polarity);
+  renderWorkspace();
+}
+
+function advanceStage(){
+  const order = ['count','skeleton','lone','geom','polar'];
+  const i = order.indexOf(state.stage);
+  if(i >= 0 && i < order.length - 1){
+    state.stage = order[i+1];
+    renderWorkspace();
+  }
+}
+
+function finishMolecule(){
+  state.done = true;
+  state.mastered.add(state.active.id);
+  saveMastered();
+  renderTiers();
+  renderWorkspace();
+}
+
+function tryNextMolecule(){
+  // pick the next unmastered, unlocked molecule
+  let pickAfter = false;
+  let firstFallback = null;
+  for(const t of state.data.tiers){
+    if(!tierUnlocked(t)) continue;
+    for(const m of t.molecules){
+      if(state.mastered.has(m.id)) continue;
+      if(!firstFallback) firstFallback = m;
+      if(pickAfter){ pickMolecule(m.id); return; }
+      if(state.active && state.active.id === m.id){ pickAfter = true; }
+    }
+  }
+  if(firstFallback){ pickMolecule(firstFallback.id); return; }
+  // all mastered: stay on summary
+}
+
+/* ---------- Utils ---------- */
+function escapeHTML(s){
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function cssEsc(s){ return s.replace(/[^a-z0-9_-]/gi,'_'); }
+
+/* ---------- Boot ---------- */
+async function boot(){
+  state.mastered = loadMastered();
+  try{
+    const res = await fetch('lewis-molecules.json', {cache:'no-cache'});
+    state.data = await res.json();
+  }catch(err){
+    document.getElementById('lsTiers').innerHTML = `<div class="ls-empty">Could not load molecule library. ${escapeHTML(err.message)}</div>`;
+    return;
+  }
+  renderTiers();
+  renderWorkspace();
+}
+boot();
+</script>
+
+</body>
+</html>

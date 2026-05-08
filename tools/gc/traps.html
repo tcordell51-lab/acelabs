@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Common Traps · Gen Chem · Ace Labs</title>
+<meta name="description" content="Hand-written distractor library for the Ace Labs Gen Chem engine. Browse misconceptions by skill, difficulty tier, and cluster."/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400;1,700&family=DM+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../shared/al-tokens.css">
+<link rel="stylesheet" href="../../shared/al-motion.css">
+<link rel="stylesheet" href="../../shared/ace-labs-shell.css">
+<style>
+/* ============================================================
+   Common Traps — local styles
+   Built on AL paper + gold tokens.
+   ============================================================ */
+body[data-page="gc-traps"]{
+  background:linear-gradient(180deg,var(--al-bg) 0%,var(--al-paper-2) 100%);
+  color:var(--al-ink);
+  min-height:100vh;
+}
+
+.tr-wrap{max-width:1320px;margin:0 auto;padding:30px 28px 80px;}
+
+/* Hero / summary */
+.tr-hero{
+  background:var(--al-paper);
+  border:1px solid var(--al-line);
+  border-left:5px solid var(--al-gc-color);
+  border-radius:14px;
+  padding:30px 34px;
+  box-shadow:var(--al-shadow);
+  margin-bottom:26px;
+}
+.tr-kicker{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--al-gold-d);background:var(--al-gold-bg);
+  padding:5px 12px;border-radius:6px;border:1px solid var(--al-gold-d);
+  display:inline-block;margin-bottom:14px;
+}
+.tr-hero h1{
+  font-family:'Playfair Display',Georgia,serif;
+  font-weight:700;font-size:38px;line-height:1.15;margin:0 0 10px;letter-spacing:-.01em;
+}
+.tr-hero h1 em{color:var(--al-gold-d);font-style:italic;}
+.tr-hero p.lede{
+  font-size:15.5px;line-height:1.55;color:var(--al-ink-2);margin:0 0 18px;max-width:880px;
+}
+.tr-stats{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  gap:14px;margin-top:18px;
+}
+.tr-stat{
+  background:var(--al-paper-2);
+  border:1px solid var(--al-line);border-radius:10px;
+  padding:14px 16px;
+}
+.tr-stat-num{
+  font-family:'Playfair Display',serif;font-weight:700;font-size:32px;line-height:1;
+  color:var(--al-ink);margin-bottom:4px;
+}
+.tr-stat-lbl{
+  font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;
+  letter-spacing:.10em;text-transform:uppercase;color:var(--al-ink-mute);
+}
+.tr-top-clusters{
+  margin-top:20px;display:flex;flex-wrap:wrap;gap:8px;
+}
+.tr-top-clusters .lbl{
+  font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;
+  letter-spacing:.10em;text-transform:uppercase;color:var(--al-ink-mute);
+  margin-right:4px;align-self:center;
+}
+.tr-cluster-pill{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:6px 12px;background:var(--al-paper-2);
+  border:1px solid var(--al-line);border-radius:99px;
+  font-size:13px;color:var(--al-ink-2);
+  cursor:pointer;transition:all .15s;
+}
+.tr-cluster-pill:hover{border-color:var(--al-gold-d);background:var(--al-gold-bg);color:var(--al-ink);}
+.tr-cluster-pill .n{
+  font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;
+  color:var(--al-gold-d);background:var(--al-paper);
+  padding:2px 7px;border-radius:99px;border:1px solid var(--al-gold-d);
+}
+
+/* Filter bar */
+.tr-filters{
+  display:grid;
+  grid-template-columns:1.4fr 1fr 1fr 0.8fr;
+  gap:12px;
+  background:var(--al-paper);border:1px solid var(--al-line);border-radius:12px;
+  padding:18px 20px;margin-bottom:22px;align-items:end;
+  box-shadow:var(--al-shadow);
+}
+.tr-fld label{
+  display:block;font-family:'JetBrains Mono',monospace;
+  font-size:10.5px;font-weight:700;letter-spacing:.10em;text-transform:uppercase;
+  color:var(--al-ink-mute);margin-bottom:6px;
+}
+.tr-fld input, .tr-fld select{
+  width:100%;padding:9px 12px;font-family:'DM Sans',sans-serif;font-size:14px;
+  color:var(--al-ink);background:var(--al-paper-2);
+  border:1px solid var(--al-line);border-radius:8px;
+  transition:border-color .15s, background .15s;
+}
+.tr-fld input:focus, .tr-fld select:focus{
+  outline:none;border-color:var(--al-gold-d);background:var(--al-paper);
+}
+.tr-fld-actions{display:flex;gap:8px;}
+.tr-btn{
+  padding:9px 14px;font-family:'JetBrains Mono',monospace;
+  font-size:11px;font-weight:700;letter-spacing:.10em;text-transform:uppercase;
+  cursor:pointer;border-radius:8px;border:1px solid var(--al-line);
+  background:var(--al-paper-2);color:var(--al-ink);transition:all .15s;
+}
+.tr-btn:hover{border-color:var(--al-gold-d);background:var(--al-gold-bg);}
+.tr-btn-primary{
+  background:var(--al-ink);color:var(--al-paper);border-color:var(--al-ink);
+}
+.tr-btn-primary:hover{background:var(--al-teal);border-color:var(--al-teal);color:var(--al-paper);}
+
+@media (max-width:880px){
+  .tr-filters{grid-template-columns:1fr;}
+  .tr-hero h1{font-size:30px;}
+}
+
+/* Result count */
+.tr-count{
+  font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;
+  letter-spacing:.04em;color:var(--al-ink-mute);margin:6px 2px 14px;
+}
+.tr-count strong{color:var(--al-ink);}
+
+/* Trap card grid */
+.tr-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(380px,1fr));gap:14px;}
+.tr-card{
+  background:var(--al-paper);border:1px solid var(--al-line);border-radius:12px;
+  padding:18px 20px 16px;display:flex;flex-direction:column;gap:10px;
+  transition:border-color .15s, transform .15s;
+  border-left:3px solid var(--al-gc-color);
+}
+.tr-card:hover{border-color:var(--al-line-2);transform:translateY(-1px);}
+
+.tr-card-head{display:flex;flex-wrap:wrap;align-items:center;gap:8px;}
+.tr-tag{
+  display:inline-block;padding:3px 9px;border-radius:99px;
+  font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;
+  letter-spacing:.08em;text-transform:uppercase;
+}
+.tr-tag-skill{background:var(--al-paper-2);border:1px solid var(--al-line);color:var(--al-ink-2);}
+.tr-tag-tier{background:var(--al-gold-bg);border:1px solid var(--al-gold-d);color:var(--al-gold-d);}
+.tr-tag-diff{background:var(--al-paper-2);border:1px solid var(--al-line);color:var(--al-ink-mute);}
+.tr-tag-cluster{background:var(--al-paper-3);border:1px solid var(--al-gc-color);color:var(--al-gc-color);}
+.tr-tag-id{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--al-ink-soft);margin-left:auto;}
+
+.tr-label{
+  font-family:'Playfair Display',serif;font-weight:700;
+  font-size:21px;line-height:1.25;color:var(--al-ink);
+  letter-spacing:-.005em;margin:2px 0 4px;
+}
+.tr-label em{color:var(--al-gold-d);font-style:italic;}
+
+.tr-q{
+  font-size:13px;line-height:1.55;color:var(--al-ink-2);
+  background:var(--al-paper-2);border-left:3px solid var(--al-line-2);
+  padding:9px 12px;border-radius:6px;
+}
+.tr-q .q-lbl{
+  display:block;font-family:'JetBrains Mono',monospace;
+  font-size:10px;font-weight:700;letter-spacing:.10em;text-transform:uppercase;
+  color:var(--al-ink-mute);margin-bottom:4px;
+}
+
+.tr-choices{display:flex;flex-direction:column;gap:6px;font-size:13.5px;line-height:1.5;}
+.tr-choice-row{display:flex;align-items:flex-start;gap:8px;}
+.tr-choice-mark{
+  font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;
+  letter-spacing:.08em;text-transform:uppercase;
+  padding:2px 7px;border-radius:4px;flex-shrink:0;margin-top:1px;
+}
+.tr-choice-mark.wrong{background:var(--al-needs-review-pale);color:var(--al-needs-review);border:1px solid var(--al-needs-review);}
+.tr-choice-mark.right{background:var(--al-gold-bg);color:var(--al-gold-d);border:1px solid var(--al-gold-d);}
+.tr-choice-text{flex:1;}
+.tr-choice-text.wrong{text-decoration:line-through;color:var(--al-ink-mute);}
+.tr-choice-text.right{color:var(--al-gold-d);font-weight:600;}
+
+.tr-why{
+  font-size:12.5px;line-height:1.55;color:var(--al-ink-2);
+  border-top:1px solid var(--al-line);padding-top:10px;margin-top:2px;
+}
+.tr-why .why-lbl{
+  font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;
+  letter-spacing:.10em;text-transform:uppercase;color:var(--al-ink-mute);
+  margin-right:6px;
+}
+
+/* Empty state */
+.tr-empty{
+  grid-column:1/-1;text-align:center;padding:60px 20px;
+  background:var(--al-paper);border:1px dashed var(--al-line-2);border-radius:12px;
+  color:var(--al-ink-mute);
+}
+.tr-empty h3{font-family:'Playfair Display',serif;font-weight:700;font-size:24px;color:var(--al-ink);margin:0 0 8px;}
+
+/* Loading */
+.tr-loading{
+  text-align:center;padding:80px 20px;color:var(--al-ink-mute);
+  font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.10em;text-transform:uppercase;
+}
+
+/* Footer note */
+.tr-foot{
+  margin-top:40px;padding:18px 22px;
+  background:var(--al-paper);border:1px solid var(--al-line);border-radius:10px;
+  font-size:13px;line-height:1.55;color:var(--al-ink-mute);
+}
+.tr-foot a{color:var(--al-gold-d);text-decoration:none;border-bottom:1px dashed var(--al-gold-d);}
+</style>
+</head>
+<body data-page="gc-traps">
+
+<header class="al-top">
+  <div class="al-brand">
+    <span class="al-mark">Ace<em>The</em>DAT</span>
+    <span class="al-divider"></span>
+    <span class="al-product">Ace Labs · Gen Chem</span>
+  </div>
+  <nav class="al-nav">
+    <a href="../../ace-labs.html" class="al-nav-link">Home</a>
+    <a href="index.html" class="al-nav-link">Engine</a>
+    <a href="traps.html" class="al-nav-link active">Common traps</a>
+  </nav>
+</header>
+
+<div class="tr-wrap">
+
+  <!-- ============== HERO + SUMMARY ============== -->
+  <section class="tr-hero">
+    <span class="tr-kicker">Common traps · Gen Chem reference</span>
+    <h1>The <em>misconceptions</em> behind every wrong choice.</h1>
+    <p class="lede">Every distractor in the Gen Chem question bank carries a hand-written explanation of the specific error a student made to land on it. This page surfaces all of those explanations as a study reference, grouped by the underlying misconception so you can see the patterns rather than the one-off slips.</p>
+    <p id="trSummary" class="lede" style="font-weight:600;color:var(--al-ink);"></p>
+
+    <div class="tr-stats" id="trStats"></div>
+
+    <div class="tr-top-clusters" id="trTopClusters">
+      <span class="lbl">Most common</span>
+    </div>
+  </section>
+
+  <!-- ============== FILTERS ============== -->
+  <section class="tr-filters" aria-label="Filter traps">
+    <div class="tr-fld">
+      <label for="trSearch">Search question or label</label>
+      <input id="trSearch" type="search" placeholder="e.g. buffer, half-life, sign error" autocomplete="off">
+    </div>
+    <div class="tr-fld">
+      <label for="trSkill">Skill / module</label>
+      <select id="trSkill"><option value="">All skills</option></select>
+    </div>
+    <div class="tr-fld">
+      <label for="trCluster">Misconception cluster</label>
+      <select id="trCluster"><option value="">All clusters</option></select>
+    </div>
+    <div class="tr-fld">
+      <label for="trDiff">Difficulty tier</label>
+      <select id="trDiff">
+        <option value="">All tiers</option>
+        <option value="1">Tier 1 — recall</option>
+        <option value="2">Tier 2 — apply</option>
+        <option value="3">Tier 3 — multi-step</option>
+        <option value="4">Tier 4 — synthesis</option>
+      </select>
+    </div>
+    <div class="tr-fld" style="grid-column:1/-1;">
+      <div class="tr-fld-actions">
+        <button class="tr-btn tr-btn-primary" id="trReset" type="button">Clear filters</button>
+        <span style="flex:1"></span>
+        <span id="trCount" class="tr-count" style="margin:0;align-self:center;"></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== RESULTS ============== -->
+  <div id="trList" class="tr-list">
+    <div class="tr-loading">Loading trap library…</div>
+  </div>
+
+  <!-- ============== FOOT ============== -->
+  <section class="tr-foot">
+    <strong style="color:var(--al-ink);">About this reference.</strong> Built from the hand-written distractor explanations attached to every Gen Chem practice item. Clusters are derived from the data — each label is auto-categorised by the underlying misconception (sign errors, off-by-2 stoich slips, Le Châtelier shift confusion, and so on). If you spot a label that belongs in a different cluster, surface it during a coaching session and the bank entry will be updated upstream. Source bank: <code style="font-family:'JetBrains Mono',monospace;font-size:12px;">tools/gc/index.html</code>.
+  </section>
+</div>
+
+<script>
+(function(){
+  const STATE = {
+    all: [],
+    skills: [],          // [{id, name, count}]
+    clusters: [],        // [{name, count}]
+    filters: { q:'', skill:'', cluster:'', diff:'' },
+  };
+
+  const elList   = document.getElementById('trList');
+  const elCount  = document.getElementById('trCount');
+  const elSearch = document.getElementById('trSearch');
+  const elSkill  = document.getElementById('trSkill');
+  const elClust  = document.getElementById('trCluster');
+  const elDiff   = document.getElementById('trDiff');
+  const elReset  = document.getElementById('trReset');
+  const elStats  = document.getElementById('trStats');
+  const elTopCl  = document.getElementById('trTopClusters');
+  const elSum    = document.getElementById('trSummary');
+
+  function escHtml(s){
+    return String(s == null ? '' : s)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  }
+  function escAttr(s){ return escHtml(s); }
+
+  function highlight(text, query){
+    const safe = escHtml(text);
+    if (!query) return safe;
+    const q = query.trim();
+    if (!q) return safe;
+    try {
+      const re = new RegExp('(' + q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'ig');
+      return safe.replace(re, '<mark style="background:var(--al-gold-bg);color:var(--al-gold-d);padding:0 2px;border-radius:3px;">$1</mark>');
+    } catch(e){
+      return safe;
+    }
+  }
+
+  function diffLabel(d){
+    if (d == null) return 'Tier ?';
+    return 'Tier ' + d;
+  }
+  function tierLabel(t){
+    if (t == null) return '';
+    const names = ['Foundations','Quantitative','Patterns','Test-day'];
+    return 'T' + t + ' · ' + (names[t] || '');
+  }
+
+  function render(){
+    const f = STATE.filters;
+    const qLower = f.q.trim().toLowerCase();
+
+    const filtered = STATE.all.filter(t => {
+      if (f.skill && t.skill !== f.skill) return false;
+      if (f.cluster && t.cluster !== f.cluster) return false;
+      if (f.diff && String(t.difficulty) !== String(f.diff)) return false;
+      if (qLower){
+        const hay = (t.questionText + ' ' + t.misconceptionLabel + ' ' + t.wrongChoiceText + ' ' + t.correctAnswer + ' ' + t.explanation).toLowerCase();
+        if (hay.indexOf(qLower) === -1) return false;
+      }
+      return true;
+    });
+
+    elCount.innerHTML = '<strong>' + filtered.length.toLocaleString() + '</strong> trap' + (filtered.length === 1 ? '' : 's') + ' shown · ' + STATE.all.length.toLocaleString() + ' total';
+
+    if (filtered.length === 0){
+      elList.innerHTML = '<div class="tr-empty"><h3>No traps match those filters.</h3><p>Try clearing one of the filters or broadening your search.</p></div>';
+      return;
+    }
+
+    // Render up to 600 cards at a time to keep the page snappy. Show a pager hint if more.
+    const PAGE_SIZE = 600;
+    const slice = filtered.slice(0, PAGE_SIZE);
+    const html = slice.map(t => cardHtml(t, f.q)).join('');
+    const more = filtered.length - slice.length;
+    elList.innerHTML = html + (more > 0 ? '<div class="tr-empty" style="grid-column:1/-1;"><h3>' + more.toLocaleString() + ' more matches</h3><p>Add a filter to narrow the list (skill, difficulty, or cluster).</p></div>' : '');
+  }
+
+  function cardHtml(t, q){
+    const skillName = escHtml(t.skillName || t.skill || 'unknown');
+    const clusterName = escHtml(t.cluster || '');
+    const tier = t.topicTier;
+    return ''
+      + '<article class="tr-card">'
+      +   '<div class="tr-card-head">'
+      +     '<span class="tr-tag tr-tag-skill">' + skillName + '</span>'
+      +     (tier != null ? '<span class="tr-tag tr-tag-tier">' + escHtml(tierLabel(tier)) + '</span>' : '')
+      +     '<span class="tr-tag tr-tag-diff">' + escHtml(diffLabel(t.difficulty)) + '</span>'
+      +     '<span class="tr-tag tr-tag-cluster" data-cluster="' + escAttr(clusterName) + '">' + clusterName + '</span>'
+      +     '<span class="tr-tag-id">' + escHtml(t.questionId || '') + ' · choice ' + (t.wrongChoiceIndex != null ? String.fromCharCode(65 + t.wrongChoiceIndex) : '?') + '</span>'
+      +   '</div>'
+      +   '<div class="tr-label">' + highlight(t.misconceptionLabel || '', q) + '</div>'
+      +   '<div class="tr-q"><span class="q-lbl">Prompt</span>' + highlight(t.questionText || '', q) + '</div>'
+      +   '<div class="tr-choices">'
+      +     '<div class="tr-choice-row"><span class="tr-choice-mark wrong">Trap</span><span class="tr-choice-text wrong">' + highlight(t.wrongChoiceText || '(no text)', q) + '</span></div>'
+      +     '<div class="tr-choice-row"><span class="tr-choice-mark right">Correct</span><span class="tr-choice-text right">' + highlight(t.correctAnswer || '(no text)', q) + '</span></div>'
+      +   '</div>'
+      +   (t.explanation ? '<div class="tr-why"><span class="why-lbl">Why</span>' + highlight(t.explanation, q) + '</div>' : '')
+      + '</article>';
+  }
+
+  function buildFacets(data){
+    const skillCounts = {};
+    const skillNames = {};
+    const clusterCounts = {};
+    for (const t of data){
+      if (t.skill){
+        skillCounts[t.skill] = (skillCounts[t.skill] || 0) + 1;
+        skillNames[t.skill] = t.skillName || t.skill;
+      }
+      if (t.cluster){
+        clusterCounts[t.cluster] = (clusterCounts[t.cluster] || 0) + 1;
+      }
+    }
+    STATE.skills = Object.entries(skillCounts)
+      .map(([id, n]) => ({ id, name: skillNames[id], count: n }))
+      .sort((a,b) => a.name.localeCompare(b.name));
+    STATE.clusters = Object.entries(clusterCounts)
+      .map(([name, n]) => ({ name, count: n }))
+      .sort((a,b) => b.count - a.count);
+
+    // Skill select
+    const skillFrag = document.createDocumentFragment();
+    for (const s of STATE.skills){
+      const o = document.createElement('option');
+      o.value = s.id;
+      o.textContent = s.name + ' (' + s.count + ')';
+      skillFrag.appendChild(o);
+    }
+    elSkill.appendChild(skillFrag);
+
+    // Cluster select — keep ranked by frequency
+    const clFrag = document.createDocumentFragment();
+    for (const c of STATE.clusters){
+      const o = document.createElement('option');
+      o.value = c.name;
+      o.textContent = c.name + ' (' + c.count + ')';
+      clFrag.appendChild(o);
+    }
+    elClust.appendChild(clFrag);
+  }
+
+  function buildSummary(meta, data){
+    const totals = meta.totals || {};
+    const trapsTotal = totals.trapsTotal || data.length;
+    const skillsCovered = totals.skillsCovered || STATE.skills.length;
+    const clustersTotal = totals.clustersTotal || STATE.clusters.length;
+    const top3 = STATE.clusters.slice(0, 3).map(c => c.name).join(', ');
+
+    elSum.textContent =
+      trapsTotal.toLocaleString() + ' traps across ' + skillsCovered + ' modules grouped into ' + clustersTotal + ' clusters. ' +
+      (top3 ? 'Most common misconceptions: ' + top3 + '.' : '');
+
+    const stats = [
+      { num: trapsTotal.toLocaleString(), lbl: 'Total traps' },
+      { num: skillsCovered, lbl: 'Skill modules' },
+      { num: clustersTotal, lbl: 'Misconception clusters' },
+      { num: (totals.questionsScanned || '?'), lbl: 'Source questions' },
+    ];
+    elStats.innerHTML = stats.map(s =>
+      '<div class="tr-stat"><div class="tr-stat-num">' + s.num + '</div><div class="tr-stat-lbl">' + s.lbl + '</div></div>'
+    ).join('');
+
+    const topPills = STATE.clusters.slice(0, 8).map(c =>
+      '<span class="tr-cluster-pill" data-cluster="' + escAttr(c.name) + '">' + escHtml(c.name) + '<span class="n">' + c.count + '</span></span>'
+    ).join('');
+    elTopCl.insertAdjacentHTML('beforeend', topPills);
+
+    // pill click → set cluster filter
+    elTopCl.addEventListener('click', e => {
+      const pill = e.target.closest('.tr-cluster-pill');
+      if (!pill) return;
+      const name = pill.getAttribute('data-cluster');
+      elClust.value = name;
+      STATE.filters.cluster = name;
+      window.scrollTo({ top: document.querySelector('.tr-filters').offsetTop - 20, behavior:'smooth' });
+      render();
+    });
+
+    // tag click → set cluster filter
+    elList.addEventListener('click', e => {
+      const tag = e.target.closest('.tr-tag-cluster');
+      if (!tag) return;
+      const name = tag.getAttribute('data-cluster');
+      if (!name) return;
+      elClust.value = name;
+      STATE.filters.cluster = name;
+      window.scrollTo({ top: document.querySelector('.tr-filters').offsetTop - 20, behavior:'smooth' });
+      render();
+    });
+  }
+
+  function wireFilters(){
+    elSearch.addEventListener('input', () => { STATE.filters.q = elSearch.value || ''; render(); });
+    elSkill.addEventListener('change', () => { STATE.filters.skill = elSkill.value || ''; render(); });
+    elClust.addEventListener('change', () => { STATE.filters.cluster = elClust.value || ''; render(); });
+    elDiff.addEventListener('change', () => { STATE.filters.diff = elDiff.value || ''; render(); });
+    elReset.addEventListener('click', () => {
+      STATE.filters = { q:'', skill:'', cluster:'', diff:'' };
+      elSearch.value = ''; elSkill.value = ''; elClust.value = ''; elDiff.value = '';
+      render();
+    });
+  }
+
+  function showError(msg){
+    elList.innerHTML = '<div class="tr-empty"><h3>Could not load trap library.</h3><p>' + escHtml(msg) + '</p></div>';
+  }
+
+  // Load data
+  fetch('traps-library.json', { cache: 'no-store' })
+    .then(r => {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    })
+    .then(meta => {
+      STATE.all = (meta.traps || []).slice();
+      buildFacets(STATE.all);
+      buildSummary(meta, STATE.all);
+      wireFilters();
+      render();
+    })
+    .catch(err => {
+      showError('Could not fetch traps-library.json — ' + err.message + '. If you are opening this file directly from disk, run a local server (e.g. python3 -m http.server) so the page can fetch the JSON.');
+    });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Recognition Lab · Gen Chem · Ace Labs</title>
+<meta name="description" content="Visual recognition speed-drill for the Ace Labs Gen Chem engine. Train your pattern eye for graphs, structures, and diagrams under DAT time pressure."/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400;1,700&family=DM+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../shared/al-tokens.css">
+<link rel="stylesheet" href="../../shared/al-motion.css">
+<link rel="stylesheet" href="../../shared/ace-labs-shell.css">
+<style>
+/* ============================================================
+   Recognition Lab — local styles
+   Built on AL paper + gold + teal tokens.
+   ============================================================ */
+body[data-page="gc-reco"]{
+  background:linear-gradient(180deg,var(--al-bg) 0%,var(--al-paper-2) 100%);
+  color:var(--al-ink);
+  min-height:100vh;
+}
+
+.rl-wrap{max-width:1080px;margin:0 auto;padding:30px 28px 80px;}
+
+/* Hero */
+.rl-hero{
+  background:var(--al-paper);
+  border:1px solid var(--al-line);
+  border-left:5px solid var(--al-gc-color);
+  border-radius:14px;
+  padding:28px 32px;
+  box-shadow:var(--al-shadow);
+  margin-bottom:22px;
+}
+.rl-kicker{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--al-gold-d);background:var(--al-gold-bg);
+  padding:5px 12px;border-radius:6px;border:1px solid var(--al-gold-d);
+  display:inline-block;margin-bottom:14px;
+}
+.rl-hero h1{
+  font-family:'Playfair Display',Georgia,serif;
+  font-weight:700;font-size:36px;line-height:1.15;margin:0 0 10px;letter-spacing:-.01em;
+}
+.rl-hero h1 em{color:var(--al-gold-d);font-style:italic;}
+.rl-hero p.lede{font-size:15.5px;line-height:1.55;color:var(--al-ink-2);margin:0;max-width:760px;}
+
+/* Mode select panel */
+.rl-modes{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:22px 0 6px;
+}
+@media (max-width:780px){.rl-modes{grid-template-columns:1fr;}}
+.rl-mode{
+  background:var(--al-paper);border:1px solid var(--al-line);border-radius:12px;
+  padding:18px 20px;display:flex;flex-direction:column;gap:8px;
+  cursor:pointer;transition:transform var(--motion-fast) ease,border-color var(--motion-fast) ease,box-shadow var(--motion-fast) ease;
+  text-align:left;
+}
+.rl-mode:hover{transform:translateY(-2px);border-color:var(--al-gold-d);box-shadow:var(--al-shadow);}
+.rl-mode:focus-visible{outline:2px solid var(--al-gold-d);outline-offset:3px;}
+.rl-mode-tag{
+  font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--al-gold-d);
+}
+.rl-mode-h{
+  font-family:'Playfair Display',serif;font-weight:700;font-size:22px;line-height:1.2;color:var(--al-ink);
+}
+.rl-mode-h em{color:var(--al-gc-color);font-style:italic;}
+.rl-mode-sub{font-size:13px;color:var(--al-ink-2);line-height:1.5;}
+
+/* Topic select (mode 2 sub-panel) */
+.rl-topic-pick{
+  margin-top:10px;background:var(--al-paper);border:1px solid var(--al-line);
+  border-radius:12px;padding:18px 20px;display:none;
+}
+.rl-topic-pick.active{display:block;}
+.rl-topic-pick label{
+  display:block;font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;
+  letter-spacing:.10em;text-transform:uppercase;color:var(--al-ink-mute);margin-bottom:8px;
+}
+.rl-topic-pick select{
+  width:100%;max-width:420px;padding:10px 12px;font-family:'DM Sans',sans-serif;font-size:14px;
+  color:var(--al-ink);background:var(--al-paper-2);
+  border:1px solid var(--al-line);border-radius:8px;
+}
+.rl-topic-pick select:focus{outline:none;border-color:var(--al-gold-d);background:var(--al-paper);}
+
+/* Run / start button */
+.rl-start-row{display:flex;gap:10px;align-items:center;margin-top:14px;flex-wrap:wrap;}
+.rl-btn{
+  padding:12px 22px;font-family:'JetBrains Mono',monospace;
+  font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  border-radius:8px;border:1px solid var(--al-line);
+  background:var(--al-paper-2);color:var(--al-ink);
+  cursor:pointer;transition:all var(--motion-fast) ease;
+}
+.rl-btn:hover{border-color:var(--al-gold-d);background:var(--al-gold-bg);}
+.rl-btn:focus-visible{outline:2px solid var(--al-gold-d);outline-offset:3px;}
+.rl-btn-primary{background:var(--al-teal);color:#fffdf7;border-color:var(--al-teal);}
+.rl-btn-primary:hover{background:var(--al-teal-2);border-color:var(--al-teal-2);}
+
+/* ─── Drill view ─────────────────────────────────────────────── */
+.rl-drill{display:none;}
+.rl-drill.active{display:block;}
+
+.rl-drill-head{
+  display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;
+  margin-bottom:14px;
+}
+.rl-progress-pill{
+  font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;
+  letter-spacing:.10em;text-transform:uppercase;color:var(--al-ink-mute);
+  background:var(--al-paper);border:1px solid var(--al-line);border-radius:99px;
+  padding:6px 14px;
+}
+.rl-progress-pill strong{color:var(--al-ink);}
+.rl-quit{
+  font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;
+  letter-spacing:.10em;text-transform:uppercase;color:var(--al-ink-mute);
+  background:transparent;border:1px solid var(--al-line);
+  padding:6px 12px;border-radius:6px;cursor:pointer;
+}
+.rl-quit:hover{color:var(--al-needs-review);border-color:var(--al-needs-review);}
+
+/* Countdown bar */
+.rl-countdown{
+  height:6px;background:var(--al-paper-3);border-radius:99px;overflow:hidden;
+  margin-bottom:18px;
+}
+.rl-countdown-fill{
+  height:100%;width:100%;background:linear-gradient(90deg,var(--al-good),var(--al-gold-d));
+  transform-origin:left center;
+  transition:transform linear;
+}
+.rl-countdown-fill.warn{background:linear-gradient(90deg,var(--al-almost),var(--al-needs-review));}
+
+/* Card */
+.rl-card{
+  background:var(--al-paper);border:1px solid var(--al-line);border-radius:14px;
+  box-shadow:var(--al-shadow);
+  padding:26px 28px 22px;
+}
+.rl-topic-tag{
+  font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--al-gc-color);
+  background:var(--al-paper-2);border:1px solid var(--al-line);
+  padding:4px 10px;border-radius:99px;display:inline-block;margin-bottom:10px;
+}
+.rl-question{
+  font-family:'Playfair Display',serif;font-weight:700;font-size:22px;line-height:1.3;
+  margin:0 0 18px;color:var(--al-ink);letter-spacing:-.005em;
+}
+.rl-stimulus{
+  background:var(--al-paper-2);border:1px solid var(--al-line);border-radius:10px;
+  padding:14px;display:flex;align-items:center;justify-content:center;
+  min-height:240px;margin-bottom:18px;
+}
+.rl-stimulus svg{
+  max-width:100%;height:auto;max-height:280px;display:block;
+}
+
+/* Options grid */
+.rl-options{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:10px;
+}
+@media (max-width:620px){.rl-options{grid-template-columns:1fr;}}
+
+.rl-opt{
+  display:flex;align-items:flex-start;gap:10px;padding:12px 14px;
+  background:var(--al-paper);border:1px solid var(--al-line-2);border-radius:10px;
+  font-family:'DM Sans',sans-serif;font-size:14px;line-height:1.4;color:var(--al-ink);
+  text-align:left;cursor:pointer;
+  transition:transform var(--motion-fast) ease,background var(--motion-fast) ease,border-color var(--motion-fast) ease;
+}
+.rl-opt:hover:not(:disabled){border-color:var(--al-gold-d);background:var(--al-gold-bg);}
+.rl-opt:focus-visible{outline:2px solid var(--al-gold-d);outline-offset:3px;}
+.rl-opt:disabled{cursor:default;}
+.rl-opt .key{
+  flex-shrink:0;width:24px;height:24px;border-radius:6px;
+  background:var(--al-paper-2);border:1px solid var(--al-line);
+  display:inline-flex;align-items:center;justify-content:center;
+  font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;
+  color:var(--al-ink-2);
+}
+
+/* Reveal states */
+.rl-opt.is-correct{
+  background:var(--al-gold-bg);border-color:var(--al-gold-d);color:var(--al-gold-d);
+  font-weight:700;
+}
+.rl-opt.is-correct .key{background:var(--al-gold-d);border-color:var(--al-gold-d);color:#fffdf7;}
+.rl-opt.is-wrong{
+  background:var(--al-needs-review-pale);border-color:var(--al-needs-review);
+  color:var(--al-ink-mute);text-decoration:line-through;
+}
+.rl-opt.is-wrong .key{background:var(--al-needs-review);border-color:var(--al-needs-review);color:#fffdf7;text-decoration:none;}
+
+/* Reveal panel */
+.rl-reveal{
+  margin-top:14px;padding:12px 14px;background:var(--al-paper-2);
+  border:1px solid var(--al-line);border-left:3px solid var(--al-gold-d);
+  border-radius:8px;font-size:13.5px;line-height:1.55;color:var(--al-ink-2);
+  display:none;
+  animation:rl-fade-in var(--motion-base) ease-out;
+}
+.rl-reveal.show{display:block;}
+.rl-reveal .why-lbl{
+  font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;
+  letter-spacing:.10em;text-transform:uppercase;color:var(--al-gold-d);
+  margin-right:6px;
+}
+.rl-reveal .miscon{
+  margin-top:6px;font-size:13px;color:var(--al-needs-review);
+}
+.rl-reveal .miscon-lbl{
+  font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;
+  letter-spacing:.10em;text-transform:uppercase;color:var(--al-needs-review);margin-right:6px;
+}
+
+@keyframes rl-fade-in{
+  from{opacity:0;transform:translateY(4px);}
+  to{opacity:1;transform:none;}
+}
+
+/* ─── Summary view ─────────────────────────────────────────────── */
+.rl-summary{display:none;}
+.rl-summary.active{display:block;}
+
+.rl-sum-head{
+  background:var(--al-paper);border:1px solid var(--al-line);border-left:5px solid var(--al-gold-d);
+  border-radius:14px;padding:24px 28px;margin-bottom:18px;box-shadow:var(--al-shadow);
+}
+.rl-sum-head h2{
+  font-family:'Playfair Display',serif;font-weight:700;font-size:30px;margin:0 0 10px;letter-spacing:-.01em;
+}
+.rl-sum-head h2 em{color:var(--al-gold-d);font-style:italic;}
+.rl-sum-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-top:10px;}
+.rl-sum-stat{
+  background:var(--al-paper-2);border:1px solid var(--al-line);border-radius:10px;padding:12px 14px;
+}
+.rl-sum-stat-num{font-family:'Playfair Display',serif;font-weight:700;font-size:30px;line-height:1;color:var(--al-ink);}
+.rl-sum-stat-lbl{
+  font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;
+  letter-spacing:.10em;text-transform:uppercase;color:var(--al-ink-mute);margin-top:4px;
+}
+
+.rl-sum-table{
+  background:var(--al-paper);border:1px solid var(--al-line);border-radius:12px;overflow:hidden;
+  margin-bottom:18px;
+}
+.rl-sum-table table{width:100%;border-collapse:collapse;font-size:13.5px;}
+.rl-sum-table th,.rl-sum-table td{
+  padding:10px 14px;text-align:left;border-bottom:1px solid var(--al-line);
+}
+.rl-sum-table th{
+  background:var(--al-paper-2);font-family:'JetBrains Mono',monospace;font-weight:700;
+  font-size:11px;letter-spacing:.10em;text-transform:uppercase;color:var(--al-ink-mute);cursor:pointer;
+  user-select:none;
+}
+.rl-sum-table th:hover{color:var(--al-ink);}
+.rl-sum-table td .acc{font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--al-ink);}
+.rl-sum-table td .acc.low{color:var(--al-needs-review);}
+.rl-sum-table td .acc.high{color:var(--al-good-d);}
+.rl-sum-table tr:last-child td{border-bottom:none;}
+
+.rl-sum-actions{display:flex;gap:10px;flex-wrap:wrap;}
+
+/* Loading */
+.rl-loading{
+  text-align:center;padding:80px 20px;color:var(--al-ink-mute);
+  font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.10em;text-transform:uppercase;
+}
+
+@media (max-width:680px){
+  .rl-hero h1{font-size:28px;}
+  .rl-question{font-size:18px;}
+  .rl-card{padding:20px 18px 18px;}
+  .rl-stimulus{min-height:200px;padding:10px;}
+}
+</style>
+</head>
+<body data-page="gc-reco">
+
+<header class="al-top">
+  <div class="al-brand">
+    <span class="al-mark">Ace<em>The</em>DAT</span>
+    <span class="al-divider"></span>
+    <span class="al-product">Ace Labs · Gen Chem</span>
+  </div>
+  <nav class="al-nav">
+    <a href="../../ace-labs.html" class="al-nav-link">Home</a>
+    <a href="index.html" class="al-nav-link">Engine</a>
+    <a href="traps.html" class="al-nav-link">Common traps</a>
+    <a href="recognition-lab.html" class="al-nav-link active">Recognition lab</a>
+  </nav>
+</header>
+
+<div class="rl-wrap">
+
+  <!-- ============== INTRO / MODES ============== -->
+  <section id="rlIntro">
+    <section class="rl-hero">
+      <span class="rl-kicker">Recognition lab · speed drill</span>
+      <h1>Train your <em>pattern eye</em>.</h1>
+      <p class="lede">A timed visual drill for the diagrams you'll see most on test day — reaction coordinates, kinetics curves, VSEPR shapes, titration profiles, phase diagrams, and more. Each stimulus has a strict clock; answer with a click or 1–4. Wrong choices reveal the specific misconception they trap.</p>
+    </section>
+
+    <div class="rl-modes" role="list">
+      <button class="rl-mode" data-mode="mixed" role="listitem">
+        <span class="rl-mode-tag">Mode 1</span>
+        <span class="rl-mode-h">Mixed <em>drill</em></span>
+        <span class="rl-mode-sub">20 random stimuli, randomised order across all topics. Best for daily warm-up.</span>
+      </button>
+      <button class="rl-mode" data-mode="topic" role="listitem">
+        <span class="rl-mode-tag">Mode 2</span>
+        <span class="rl-mode-h">Topic <em>drill</em></span>
+        <span class="rl-mode-sub">Pick a single topic and run 10 stimuli of that type. Best for surgical practice.</span>
+      </button>
+      <button class="rl-mode" data-mode="weakness" role="listitem">
+        <span class="rl-mode-tag">Mode 3</span>
+        <span class="rl-mode-h">Weakness <em>drill</em></span>
+        <span class="rl-mode-sub">10 stimuli sampled from your worst topics by accuracy and median reaction time.</span>
+      </button>
+    </div>
+
+    <div id="rlTopicPick" class="rl-topic-pick">
+      <label for="rlTopicSel">Choose a topic</label>
+      <select id="rlTopicSel"></select>
+    </div>
+
+    <div class="rl-start-row">
+      <button id="rlStart" class="rl-btn rl-btn-primary" type="button" disabled>Start drill</button>
+      <span id="rlStartHint" style="font-size:12.5px;color:var(--al-ink-mute);">Pick a mode above to start.</span>
+    </div>
+  </section>
+
+  <!-- ============== DRILL VIEW ============== -->
+  <section id="rlDrill" class="rl-drill" aria-live="polite">
+    <div class="rl-drill-head">
+      <span id="rlProg" class="rl-progress-pill">Question <strong>1</strong> of <strong>20</strong></span>
+      <button id="rlQuit" class="rl-quit" type="button">End round</button>
+    </div>
+    <div class="rl-countdown"><div id="rlBar" class="rl-countdown-fill"></div></div>
+    <article class="rl-card">
+      <span id="rlTopicTag" class="rl-topic-tag"></span>
+      <h2 id="rlQuestion" class="rl-question"></h2>
+      <div id="rlStimulus" class="rl-stimulus"></div>
+      <div id="rlOptions" class="rl-options"></div>
+      <div id="rlReveal" class="rl-reveal"></div>
+    </article>
+  </section>
+
+  <!-- ============== SUMMARY VIEW ============== -->
+  <section id="rlSummary" class="rl-summary">
+    <div class="rl-sum-head">
+      <h2>Round <em>complete</em>.</h2>
+      <p style="margin:0;color:var(--al-ink-2);">Your topic accuracy and median reaction time, ranked.</p>
+      <div id="rlSumStats" class="rl-sum-stats"></div>
+    </div>
+    <div class="rl-sum-table">
+      <table id="rlSumTable">
+        <thead>
+          <tr>
+            <th data-sort="topic">Topic</th>
+            <th data-sort="n">Items</th>
+            <th data-sort="acc">Accuracy</th>
+            <th data-sort="rt">Median RT</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <div class="rl-sum-actions">
+      <button id="rlAgain" class="rl-btn rl-btn-primary" type="button">Run another mixed round</button>
+      <button id="rlGoWeak" class="rl-btn" type="button">Drill weakness</button>
+      <button id="rlBack" class="rl-btn" type="button">Back to modes</button>
+    </div>
+  </section>
+</div>
+
+<script>
+(function(){
+  // ── State ────────────────────────────────────────────────────
+  const STATE = {
+    bank: [],            // raw stimuli array
+    byTopic: {},         // topic -> [stimuli]
+    topics: [],          // sorted topic names
+    mode: null,          // 'mixed' | 'topic' | 'weakness'
+    chosenTopic: null,
+    queue: [],           // current round queue
+    qIdx: 0,
+    results: [],         // {stimulusId, topic, correct, ms}
+    startedAt: 0,
+    timer: null,
+    timeoutFired: false,
+    answered: false,
+  };
+
+  const VERSION_KEY  = 'gc:meta:version';
+  const HISTORY_KEY  = 'gc:reco:history';
+  const MASTERY_KEY  = 'gc:reco:mastery';
+  const ROLLING_N    = 50;
+
+  if (!localStorage.getItem(VERSION_KEY)) {
+    try { localStorage.setItem(VERSION_KEY, '1'); } catch(e){}
+  }
+
+  // ── DOM refs ─────────────────────────────────────────────────
+  const elIntro     = document.getElementById('rlIntro');
+  const elDrill     = document.getElementById('rlDrill');
+  const elSummary   = document.getElementById('rlSummary');
+  const elTopicPick = document.getElementById('rlTopicPick');
+  const elTopicSel  = document.getElementById('rlTopicSel');
+  const elStart     = document.getElementById('rlStart');
+  const elStartHint = document.getElementById('rlStartHint');
+  const elQuit      = document.getElementById('rlQuit');
+  const elProg      = document.getElementById('rlProg');
+  const elBar       = document.getElementById('rlBar');
+  const elTopicTag  = document.getElementById('rlTopicTag');
+  const elQuestion  = document.getElementById('rlQuestion');
+  const elStimulus  = document.getElementById('rlStimulus');
+  const elOptions   = document.getElementById('rlOptions');
+  const elReveal    = document.getElementById('rlReveal');
+  const elSumStats  = document.getElementById('rlSumStats');
+  const elSumTable  = document.getElementById('rlSumTable');
+  const elAgain     = document.getElementById('rlAgain');
+  const elGoWeak    = document.getElementById('rlGoWeak');
+  const elBack      = document.getElementById('rlBack');
+
+  // ── Utils ────────────────────────────────────────────────────
+  function shuffle(arr){
+    const a = arr.slice();
+    for (let i = a.length - 1; i > 0; i--){
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+  function median(nums){
+    if (!nums.length) return null;
+    const s = nums.slice().sort((a,b)=>a-b);
+    const mid = Math.floor(s.length/2);
+    return s.length % 2 ? s[mid] : (s[mid-1] + s[mid]) / 2;
+  }
+  function escHtml(s){
+    return String(s == null ? '' : s)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  }
+  function fmtMs(ms){
+    if (ms == null) return '—';
+    return (ms/1000).toFixed(2) + 's';
+  }
+
+  // ── Persistence ──────────────────────────────────────────────
+  function loadHistory(){
+    try { return JSON.parse(localStorage.getItem(HISTORY_KEY)) || []; }
+    catch(e){ return []; }
+  }
+  function saveHistory(h){
+    try { localStorage.setItem(HISTORY_KEY, JSON.stringify(h.slice(-100))); } catch(e){}
+  }
+  function loadMastery(){
+    try { return JSON.parse(localStorage.getItem(MASTERY_KEY)) || {}; }
+    catch(e){ return {}; }
+  }
+  function saveMastery(m){
+    try { localStorage.setItem(MASTERY_KEY, JSON.stringify(m)); } catch(e){}
+  }
+
+  function updateMastery(results){
+    const m = loadMastery();
+    for (const r of results){
+      const t = r.topic;
+      if (!m[t]) m[t] = { attempts: [] };
+      m[t].attempts.push({ correct: !!r.correct, ms: r.ms });
+      // Roll to last N attempts
+      if (m[t].attempts.length > ROLLING_N){
+        m[t].attempts = m[t].attempts.slice(-ROLLING_N);
+      }
+    }
+    saveMastery(m);
+  }
+
+  // ── Bootstrap ────────────────────────────────────────────────
+  fetch('recognition-stimuli.json', { cache: 'no-store' })
+    .then(r => r.json())
+    .then(data => {
+      STATE.bank = data;
+      STATE.byTopic = {};
+      for (const s of data){
+        if (!STATE.byTopic[s.topic]) STATE.byTopic[s.topic] = [];
+        STATE.byTopic[s.topic].push(s);
+      }
+      STATE.topics = Object.keys(STATE.byTopic).sort();
+      // Populate topic select
+      const frag = document.createDocumentFragment();
+      for (const t of STATE.topics){
+        const o = document.createElement('option');
+        o.value = t;
+        o.textContent = t + ' (' + STATE.byTopic[t].length + ')';
+        frag.appendChild(o);
+      }
+      elTopicSel.appendChild(frag);
+      STATE.chosenTopic = STATE.topics[0];
+      elTopicSel.value = STATE.chosenTopic;
+    })
+    .catch(err => {
+      elStartHint.textContent = 'Could not load stimulus library. Reload the page.';
+      console.error(err);
+    });
+
+  // ── Mode handling ────────────────────────────────────────────
+  document.querySelectorAll('.rl-mode').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.rl-mode').forEach(b => b.style.borderColor = '');
+      btn.style.borderColor = 'var(--al-gold-d)';
+      STATE.mode = btn.getAttribute('data-mode');
+      elTopicPick.classList.toggle('active', STATE.mode === 'topic');
+      elStart.disabled = false;
+      elStartHint.textContent = STATE.mode === 'mixed'
+        ? 'Mixed drill: 20 random items.'
+        : STATE.mode === 'topic'
+          ? 'Topic drill: 10 items of the topic chosen below.'
+          : 'Weakness drill: 10 items from your hardest topics.';
+    });
+  });
+
+  elTopicSel.addEventListener('change', () => {
+    STATE.chosenTopic = elTopicSel.value;
+  });
+
+  elStart.addEventListener('click', () => {
+    startRound();
+  });
+
+  // ── Round build ──────────────────────────────────────────────
+  function buildQueueMixed(){
+    const pool = shuffle(STATE.bank);
+    return pool.slice(0, Math.min(20, pool.length));
+  }
+  function buildQueueTopic(){
+    const pool = shuffle(STATE.byTopic[STATE.chosenTopic] || []);
+    return pool.slice(0, Math.min(10, pool.length));
+  }
+  function buildQueueWeakness(){
+    const m = loadMastery();
+    const scored = STATE.topics.map(t => {
+      const a = (m[t] && m[t].attempts) || [];
+      if (a.length < 3){
+        return { topic: t, score: 1.0, hasData: false }; // unknown -> mid priority
+      }
+      const acc = a.filter(x => x.correct).length / a.length;
+      const med = median(a.map(x => x.ms)) || 0;
+      // Lower accuracy and slower RT -> higher weakness score
+      const accW = (1 - acc);
+      const rtW = Math.min(1, med / 9000);
+      return { topic: t, score: 0.7 * accW + 0.3 * rtW, hasData: true };
+    });
+    scored.sort((a, b) => b.score - a.score);
+    // Take top 4 weak topics, sample stimuli from those proportionally
+    const targets = scored.slice(0, 4).map(s => s.topic);
+    const pool = [];
+    for (const t of targets){
+      pool.push(...(STATE.byTopic[t] || []));
+    }
+    return shuffle(pool).slice(0, 10);
+  }
+
+  function startRound(){
+    let q = [];
+    if (STATE.mode === 'mixed') q = buildQueueMixed();
+    else if (STATE.mode === 'topic') q = buildQueueTopic();
+    else if (STATE.mode === 'weakness') q = buildQueueWeakness();
+    if (!q.length){
+      elStartHint.textContent = 'No stimuli available for that selection.';
+      return;
+    }
+    STATE.queue = q;
+    STATE.qIdx = 0;
+    STATE.results = [];
+    elIntro.style.display = 'none';
+    elSummary.classList.remove('active');
+    elDrill.classList.add('active');
+    renderQuestion();
+  }
+
+  // ── Question render ──────────────────────────────────────────
+  function renderQuestion(){
+    clearTimer();
+    STATE.answered = false;
+    STATE.timeoutFired = false;
+    const stim = STATE.queue[STATE.qIdx];
+    const total = STATE.queue.length;
+    elProg.innerHTML = 'Question <strong>' + (STATE.qIdx + 1) + '</strong> of <strong>' + total + '</strong>';
+    elTopicTag.textContent = stim.topic;
+    elQuestion.textContent = stim.question;
+    // Stimulus is hand-authored SVG; insert as raw HTML.
+    elStimulus.innerHTML = stim.stimulus;
+    elReveal.classList.remove('show');
+    elReveal.innerHTML = '';
+
+    // Render options
+    elOptions.innerHTML = '';
+    stim.options.forEach((opt, i) => {
+      const b = document.createElement('button');
+      b.className = 'rl-opt';
+      b.type = 'button';
+      b.setAttribute('data-idx', String(i));
+      b.innerHTML = '<span class="key">' + (i + 1) + '</span><span class="txt">' + escHtml(opt) + '</span>';
+      b.addEventListener('click', () => onAnswer(i));
+      elOptions.appendChild(b);
+    });
+
+    // Start timer
+    const limit = stim.timeLimitMs || 8000;
+    STATE.startedAt = performance.now();
+    elBar.classList.remove('warn');
+    // Reset bar to full, then animate to 0 over the limit.
+    elBar.style.transition = 'none';
+    elBar.style.transform = 'scaleX(1)';
+    // Force reflow so the next transition takes effect.
+    void elBar.offsetWidth;
+    elBar.style.transition = 'transform ' + limit + 'ms linear';
+    elBar.style.transform = 'scaleX(0)';
+    // Warn color in last 25%
+    setTimeout(() => {
+      if (!STATE.answered) elBar.classList.add('warn');
+    }, limit * 0.75);
+    STATE.timer = setTimeout(() => {
+      if (!STATE.answered){
+        STATE.timeoutFired = true;
+        onAnswer(-1); // -1 = timed out
+      }
+    }, limit);
+  }
+
+  function clearTimer(){
+    if (STATE.timer){ clearTimeout(STATE.timer); STATE.timer = null; }
+  }
+
+  function onAnswer(picked){
+    if (STATE.answered) return;
+    STATE.answered = true;
+    clearTimer();
+    // Freeze the bar at its current position.
+    const cs = window.getComputedStyle(elBar);
+    elBar.style.transition = 'none';
+    elBar.style.transform = cs.transform;
+
+    const stim = STATE.queue[STATE.qIdx];
+    const ms = Math.round(performance.now() - STATE.startedAt);
+    const correct = picked === stim.correct;
+    STATE.results.push({
+      stimulusId: stim.id,
+      topic: stim.topic,
+      correct: correct,
+      ms: ms,
+      picked: picked,
+    });
+
+    // Mark options
+    const opts = elOptions.querySelectorAll('.rl-opt');
+    opts.forEach((b, i) => {
+      b.disabled = true;
+      if (i === stim.correct) b.classList.add('is-correct');
+      if (i === picked && !correct) b.classList.add('is-wrong');
+    });
+
+    // Show why + misconception
+    let html = '<span class="why-lbl">Why</span>' + escHtml(stim.why || '');
+    if (!correct){
+      let miscon = '';
+      if (picked === -1) miscon = 'Timed out — read the cue first, decide second.';
+      else if (stim.diag && stim.diag[String(picked)]) miscon = stim.diag[String(picked)];
+      if (miscon){
+        html += '<div class="miscon"><span class="miscon-lbl">Trap</span>' + escHtml(miscon) + '</div>';
+      }
+    }
+    elReveal.innerHTML = html;
+    elReveal.classList.add('show');
+
+    // Auto-advance after a beat (1.6s correct, 2.0s wrong/timeout for a longer read)
+    const wait = correct ? 1600 : 2000;
+    setTimeout(() => {
+      STATE.qIdx++;
+      if (STATE.qIdx >= STATE.queue.length){
+        finishRound();
+      } else {
+        renderQuestion();
+      }
+    }, wait);
+  }
+
+  // ── Keyboard ─────────────────────────────────────────────────
+  document.addEventListener('keydown', (e) => {
+    if (!elDrill.classList.contains('active')) return;
+    if (STATE.answered) return;
+    if (e.key === '1' || e.key === '2' || e.key === '3' || e.key === '4'){
+      const idx = parseInt(e.key, 10) - 1;
+      const stim = STATE.queue[STATE.qIdx];
+      if (idx < (stim.options || []).length){
+        e.preventDefault();
+        onAnswer(idx);
+      }
+    }
+  });
+
+  elQuit.addEventListener('click', () => {
+    if (!confirm('End this round and see your stats?')) return;
+    clearTimer();
+    finishRound();
+  });
+
+  // ── Round end / summary ─────────────────────────────────────
+  function finishRound(){
+    elDrill.classList.remove('active');
+    // Persist
+    const round = {
+      ts: new Date().toISOString(),
+      mode: STATE.mode,
+      results: STATE.results.slice(),
+    };
+    const hist = loadHistory();
+    hist.push(round);
+    saveHistory(hist);
+    updateMastery(STATE.results);
+
+    renderSummary();
+    elSummary.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function renderSummary(){
+    const total = STATE.results.length;
+    const correct = STATE.results.filter(r => r.correct).length;
+    const acc = total ? Math.round(100 * correct / total) : 0;
+    const med = median(STATE.results.map(r => r.ms));
+    elSumStats.innerHTML = ''
+      + statBlock(total, 'items')
+      + statBlock(correct + ' / ' + total, 'correct')
+      + statBlock(acc + '%', 'accuracy')
+      + statBlock(fmtMs(med), 'median rt');
+
+    // Per-topic table
+    const byTopic = {};
+    for (const r of STATE.results){
+      if (!byTopic[r.topic]) byTopic[r.topic] = { topic: r.topic, n: 0, c: 0, rts: [] };
+      byTopic[r.topic].n += 1;
+      if (r.correct) byTopic[r.topic].c += 1;
+      byTopic[r.topic].rts.push(r.ms);
+    }
+    const rows = Object.values(byTopic).map(x => ({
+      topic: x.topic, n: x.n, acc: x.n ? x.c / x.n : 0, rt: median(x.rts) || 0,
+    }));
+    renderSumTable(rows, 'acc', true); // default: weakest acc first
+    // Hook header sort
+    elSumTable.querySelectorAll('th').forEach(th => {
+      th.onclick = () => {
+        const key = th.getAttribute('data-sort');
+        const asc = th._asc = !th._asc;
+        renderSumTable(rows, key, key === 'acc' ? !asc : !asc);
+      };
+    });
+  }
+
+  function statBlock(num, lbl){
+    return '<div class="rl-sum-stat"><div class="rl-sum-stat-num">' + escHtml(num) + '</div><div class="rl-sum-stat-lbl">' + escHtml(lbl) + '</div></div>';
+  }
+
+  function renderSumTable(rows, key, ascForLowest){
+    const sorted = rows.slice().sort((a, b) => {
+      if (key === 'topic') return a.topic.localeCompare(b.topic);
+      if (key === 'n') return a.n - b.n;
+      if (key === 'rt') return a.rt - b.rt;
+      return a.acc - b.acc; // acc
+    });
+    if (!ascForLowest) sorted.reverse();
+    const body = elSumTable.querySelector('tbody');
+    body.innerHTML = sorted.map(r => {
+      const accPct = Math.round(r.acc * 100);
+      const accCls = accPct >= 80 ? 'high' : (accPct < 50 ? 'low' : '');
+      return '<tr>'
+        + '<td>' + escHtml(r.topic) + '</td>'
+        + '<td>' + r.n + '</td>'
+        + '<td><span class="acc ' + accCls + '">' + accPct + '%</span></td>'
+        + '<td>' + fmtMs(r.rt) + '</td>'
+        + '</tr>';
+    }).join('');
+  }
+
+  elAgain.addEventListener('click', () => {
+    elSummary.classList.remove('active');
+    STATE.mode = 'mixed';
+    startRound();
+  });
+  elGoWeak.addEventListener('click', () => {
+    elSummary.classList.remove('active');
+    STATE.mode = 'weakness';
+    startRound();
+  });
+  elBack.addEventListener('click', () => {
+    elSummary.classList.remove('active');
+    elIntro.style.display = '';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+})();
+</script>
+</body>
+</html>

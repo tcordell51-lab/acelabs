@@ -54,9 +54,10 @@
   <div class="al-dash-row">
     <div class="al-dash-card al-dash-today">
       <div class="al-dash-lbl">Today</div>
-      <!-- Fix 13: dashCardsDue reads <ns>:sr-due keys that no engine currently writes.
-           This is a known stale read — update dashCardsDue lookup in shared/ace-labs-shell.js
-           once engines begin writing consistent sr-due keys. -->
+      <!-- Fix 13 (addressed 2026-05): dashCardsDue now scans each engine's actual SR
+           storage shape directly (Bio aceCards array; GC/QR `<ns>:sr` object keyed by
+           question id with .due timestamp). No engine writes a single `<ns>:sr-due`
+           aggregate key — see aggregateCardsDue() in shared/ace-labs-shell.js. -->
       <div class="al-dash-num" id="dashCardsDue">—</div>
       <div class="al-dash-sub">retrieval cards due now (across all tools)</div>
       <a href="#tools" class="al-dash-cta">Study now</a>
@@ -74,8 +75,10 @@
     </div>
     <div class="al-dash-card al-dash-mock">
       <div class="al-dash-lbl">Last Prometric mock</div>
-      <!-- Fix 14: dashMockScore reads acelabs_lastMock but the mock runner writes al:lastMock.
-           Known key mismatch — update the lookup in shared/ace-labs-shell.js. -->
+      <!-- Fix 14 (addressed 2026-05): dashMockScore now reads al:lastPrometric first
+           (full sim) then falls back to al:lastMock (single-section unified mock) —
+           see getLastMockScore() in shared/ace-labs-shell.js. The legacy
+           acelabs_lastMock key was never written by any engine. -->
       <div class="al-dash-num" id="dashMockScore">—</div>
       <div class="al-dash-sub" id="dashMockSub">no mock attempts yet</div>
       <a href="prometric-mock.html" class="al-dash-cta">Take a Prometric mock</a>
@@ -172,6 +175,40 @@
   </div>
 </section>
 
+<!-- ========== GEN CHEM COMPANION TOOLS ========== -->
+<!-- Discoverability cross-links for four standalone GC companion pages.
+     Each opens in its own tab; matches the AL light + gold + teal theme. -->
+<section class="al-tools" id="gc-companions" style="padding-top:0;">
+  <h2 class="al-section-title">Gen Chem <em>companion tools</em>.</h2>
+  <p class="al-section-sub">Standalone companions to the Gen Chem engine. Drill traps, recognize patterns at speed, master periodic trends, and build Lewis structures with guided checks.</p>
+  <div class="al-tools-grid" style="grid-template-columns:repeat(auto-fit,minmax(240px,1fr));">
+    <a class="al-tool-tile al-tool-gc" href="tools/gc/traps.html" target="_blank" rel="noopener" style="padding:22px 24px;">
+      <div class="al-tool-tag">Reference · GC</div>
+      <h3 class="al-tool-name" style="font-size:22px;">Common <em>Traps</em></h3>
+      <p class="al-tool-desc">1,815 trap entries clustered into 74 patterns the DAT recycles across Gen Chem topics.</p>
+      <div class="al-tool-foot"><span class="al-tool-cta">Open the trap reference</span></div>
+    </a>
+    <a class="al-tool-tile al-tool-gc" href="tools/gc/recognition-lab.html" target="_blank" rel="noopener" style="padding:22px 24px;">
+      <div class="al-tool-tag">Drill · GC</div>
+      <h3 class="al-tool-name" style="font-size:22px;">Recognition <em>Lab</em></h3>
+      <p class="al-tool-desc">Timed visual speed-drill across 15 topics and 62 stimuli — train pattern recognition under time pressure.</p>
+      <div class="al-tool-foot"><span class="al-tool-cta">Open the speed-drill</span></div>
+    </a>
+    <a class="al-tool-tile al-tool-gc" href="tools/gc/trends.html" target="_blank" rel="noopener" style="padding:22px 24px;">
+      <div class="al-tool-tag">Drill · GC</div>
+      <h3 class="al-tool-name" style="font-size:22px;">Periodic <em>Trends</em></h3>
+      <p class="al-tool-desc">Heatmap explorer, speed drill, and iso-electronic ranker for atomic radius, IE, EN, and EA.</p>
+      <div class="al-tool-foot"><span class="al-tool-cta">Open the trends pack</span></div>
+    </a>
+    <a class="al-tool-tile al-tool-gc" href="tools/gc/lewis-sandbox.html" target="_blank" rel="noopener" style="padding:22px 24px;">
+      <div class="al-tool-tag">Sandbox · GC</div>
+      <h3 class="al-tool-name" style="font-size:22px;">Lewis &amp; <em>VSEPR Sandbox</em></h3>
+      <p class="al-tool-desc">18 molecules, 5-stage guided builder — count valence, place atoms, draw bonds, check octets and geometry.</p>
+      <div class="al-tool-foot"><span class="al-tool-cta">Open the sandbox</span></div>
+    </a>
+  </div>
+</section>
+
 <!-- ========== UNIFIED MOCK CTA ========== -->
 <section class="al-cta-section">
   <a class="al-mock-cta" href="prometric-mock.html">
@@ -201,6 +238,24 @@
     <span>Synced to <a href="https://acethedat-portal.netlify.app" target="_blank">AceTheDAT tutor portal</a> (in progress)</span>
   </div>
 </footer>
+
+<!-- ========== DIAGNOSTIC PANEL ========== -->
+<!-- Hidden by default. Appears only when URL has ?debug=1.
+     Lists every localStorage key matching the AL engine prefixes with truncated value.
+     Populated by shared/ace-labs-shell.js renderDebugPanel(). -->
+<section class="al-dash" id="debugPanel" style="display:none; margin-top:54px;">
+  <div class="al-dash-subjects-head">
+    <h3>Diagnostic · localStorage keys</h3>
+    <span class="al-dash-subjects-sub" id="debugPanelSub">Hidden by default. Toggle by appending ?debug=1 to the URL.</span>
+  </div>
+  <div class="al-dash-card" style="padding:0; overflow:hidden;">
+    <div style="display:grid; grid-template-columns:minmax(220px, 36%) 1fr; gap:0; font-family:'JetBrains Mono',monospace; font-size:11.5px;">
+      <div style="padding:10px 14px; background:var(--al-paper-2); border-bottom:1px solid var(--al-line); font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--al-ink-mute); font-size:10px;">Key</div>
+      <div style="padding:10px 14px; background:var(--al-paper-2); border-bottom:1px solid var(--al-line); border-left:1px solid var(--al-line); font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--al-ink-mute); font-size:10px;">Value (truncated to 200 chars)</div>
+      <div id="debugPanelBody" style="display:contents;"></div>
+    </div>
+  </div>
+</section>
 
 </div>
 <script src="shared/ace-labs-shell.js"></script>
