@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ace Labs — Improvement Plan (2026-05-28)</title>
+<style>
+  :root{
+    --bg:#0d0d0f; --bg2:#141417; --card:#191920; --card2:#1f1f28;
+    --line:#2a2a33; --line2:#34343f;
+    --ink:#ece9e1; --ink2:#b6b3aa; --ink3:#838079;
+    --gold:#C9A84C; --gold-dim:#8a7636;
+    --bio:#5bba7d; --gc:#5b9bd5; --ochem:#a87dd5; --qr:#d56b97;
+    --green:#5bba7d; --amber:#d8a23c; --red:#dd6450; --neutral:#7e7b87;
+    --radius:14px;
+    --serif:Georgia,'Times New Roman',serif;
+    --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.6;font-size:16px;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1100px;margin:0 auto;padding:0 22px 120px}
+
+  header.top{border-bottom:1px solid var(--line);background:linear-gradient(180deg,#101014,#0d0d0f);padding:46px 0 34px;margin-bottom:8px}
+  header.top .wrap{padding-bottom:0}
+  .brand{font-size:12px;letter-spacing:.32em;text-transform:uppercase;color:var(--gold);font-weight:600}
+  h1{font-family:var(--serif);font-weight:600;font-size:40px;line-height:1.12;margin:14px 0 10px;letter-spacing:-.01em}
+  h1 em{color:var(--gold);font-style:italic}
+  .sub{color:var(--ink2);font-size:17px;max-width:74ch;margin:0}
+  .meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+  .meta .tag{font-size:12px;color:var(--ink2);border:1px solid var(--line2);border-radius:999px;padding:5px 12px;background:var(--bg2)}
+  .meta .tag b{color:var(--ink)}
+  nav.toc{display:flex;flex-wrap:wrap;gap:8px;margin:30px 0 8px}
+  nav.toc a{font-size:13px;color:var(--ink2);text-decoration:none;border:1px solid var(--line);padding:6px 13px;border-radius:8px;background:var(--bg2);transition:.15s}
+  nav.toc a:hover{color:var(--ink);border-color:var(--gold-dim)}
+
+  section{margin-top:46px;scroll-margin-top:20px}
+  h2{font-family:var(--serif);font-size:26px;font-weight:600;margin:0 0 6px;letter-spacing:-.01em}
+  h2 .num{color:var(--gold);font-size:15px;font-family:var(--sans);font-weight:700;margin-right:10px;letter-spacing:.05em}
+  h3{font-family:var(--serif);font-size:20px;font-weight:600;margin:18px 0 4px}
+  .lead{color:var(--ink2);margin:0 0 22px;max-width:74ch}
+
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px 24px;margin:16px 0;position:relative;overflow:hidden}
+  .card.rail{padding-left:26px}
+  .card.rail::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--gold)}
+  .rail-bio::before{background:var(--bio)} .rail-gc::before{background:var(--gc)}
+  .rail-ochem::before{background:var(--ochem)} .rail-qr::before{background:var(--qr)}
+  .rail-gold::before{background:var(--gold)}
+  .rail-p0::before{background:var(--red)}
+  .rail-p1::before{background:var(--amber)}
+  .rail-p2::before{background:var(--gc)}
+  .rail-p3::before{background:var(--ink3)}
+
+  /* phase banner */
+  .phase-banner{display:flex;align-items:center;gap:14px;padding:14px 18px;margin:30px 0 12px;border-radius:10px;background:linear-gradient(90deg,rgba(201,168,76,.10),transparent);border-left:4px solid var(--gold)}
+  .phase-banner .num{font-family:var(--serif);font-size:28px;color:var(--gold);font-weight:700;line-height:1}
+  .phase-banner .ttl{font-family:var(--serif);font-size:22px;font-weight:600;color:var(--ink)}
+  .phase-banner .ttl small{display:block;font-family:var(--sans);font-size:12px;font-weight:600;color:var(--ink3);letter-spacing:.08em;text-transform:uppercase;margin-top:3px}
+  .phase-banner .hours{margin-left:auto;font-family:var(--serif);font-size:18px;color:var(--gold);font-weight:700}
+
+  /* item rows */
+  .item{display:grid;grid-template-columns:46px 1fr;gap:14px;padding:14px 0;border-top:1px solid var(--line)}
+  .item:first-child{border-top:none}
+  .item .idx{font-family:var(--serif);font-size:18px;color:var(--gold-dim);font-weight:700;text-align:right;padding-top:3px}
+  .item .body{min-width:0}
+  .item .row1{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:6px}
+  .item .row1 .t{font-weight:700;color:var(--ink);font-size:15.5px;margin-right:auto}
+  .item .desc{color:var(--ink2);font-size:14.5px;line-height:1.6;margin:4px 0 8px}
+  .item .meta-row{display:flex;flex-wrap:wrap;gap:6px;font-size:11px;margin-top:6px}
+  .item .meta-row .mk{padding:3px 8px;border-radius:5px;border:1px solid var(--line2);background:var(--bg2);color:var(--ink2)}
+  .item .meta-row .mk b{color:var(--gold);font-weight:700;margin-right:4px}
+
+  /* pills */
+  .pill{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;padding:3px 9px;border-radius:6px;border:1px solid transparent;vertical-align:middle}
+  .p-p0{background:rgba(221,100,80,.16);color:#f0a193;border-color:rgba(221,100,80,.4)}
+  .p-p1{background:rgba(216,162,60,.16);color:#e6bd72;border-color:rgba(216,162,60,.4)}
+  .p-p2{background:rgba(91,155,213,.16);color:#8fc1e8;border-color:rgba(91,155,213,.4)}
+  .p-p3{background:rgba(126,123,135,.16);color:#b0adb8;border-color:rgba(126,123,135,.4)}
+  .p-bio{background:rgba(91,186,125,.14);color:#86d3a3;border-color:rgba(91,186,125,.34)}
+  .p-gc{background:rgba(91,155,213,.14);color:#8fc1e8;border-color:rgba(91,155,213,.34)}
+  .p-ochem{background:rgba(168,125,213,.14);color:#c39de8;border-color:rgba(168,125,213,.34)}
+  .p-qr{background:rgba(213,107,151,.14);color:#e695b5;border-color:rgba(213,107,151,.34)}
+  .p-cross{background:rgba(201,168,76,.14);color:var(--gold);border-color:rgba(201,168,76,.34)}
+  .p-risk-low{background:rgba(91,186,125,.10);color:#86d3a3;border-color:rgba(91,186,125,.3)}
+  .p-risk-med{background:rgba(216,162,60,.10);color:#e6bd72;border-color:rgba(216,162,60,.3)}
+  .p-risk-high{background:rgba(221,100,80,.10);color:#f0a193;border-color:rgba(221,100,80,.3)}
+
+  code{font-family:'SF Mono',ui-monospace,Menlo,monospace;font-size:.85em;background:var(--bg2);border:1px solid var(--line);border-radius:5px;padding:1px 6px;color:#d9d4c4}
+
+  ul.terse{margin:6px 0;padding-left:18px} ul.terse li{margin:3px 0;color:var(--ink2);font-size:13.5px}
+
+  .callout{background:linear-gradient(180deg,rgba(201,168,76,.07),rgba(201,168,76,.02));border:1px solid var(--gold-dim);border-radius:var(--radius);padding:20px 24px;margin:18px 0}
+  .callout .k{font-family:var(--serif);font-size:18px;color:var(--gold);margin:0 0 6px}
+  .callout p{margin:0;color:var(--ink)}
+
+  .accept{font-size:13px;color:var(--ink3);font-style:italic;border-left:2px solid var(--gold-dim);padding:4px 12px;margin:6px 0 0}
+  .accept b{color:var(--gold);font-style:normal;letter-spacing:.04em;text-transform:uppercase;font-size:10px}
+
+  table.summary{width:100%;border-collapse:collapse;font-size:14px;margin:14px 0}
+  table.summary th,table.summary td{padding:11px 13px;border-bottom:1px solid var(--line);text-align:left}
+  table.summary th{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);font-weight:700}
+  table.summary td{color:var(--ink2)}
+  table.summary td:last-child{font-family:var(--serif);color:var(--gold);font-weight:700;text-align:right}
+  table.summary tr:last-child td{border-bottom:none;border-top:2px solid var(--line2);font-weight:700;color:var(--ink)}
+
+  footer{margin-top:60px;padding-top:24px;border-top:1px solid var(--line);color:var(--ink3);font-size:13px}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <div class="brand">Ace Labs &middot; Improvement Plan</div>
+    <h1>Roadmap to 9+ —<br><em>every item, every line, every hour</em></h1>
+    <p class="sub">Fifth document in the audit series. Granular plan with file paths, line references, time estimates, dependencies, and acceptance criteria for every improvement. Sequenced into six phases over ~6 weeks (plus optional long-term builds).</p>
+    <div class="meta">
+      <span class="tag">Drafted <b>2026-05-28</b></span>
+      <span class="tag">Starting from branch <b><code>audit-pass-2026-05-27</code></b></span>
+      <span class="tag">Target <b>9+ overall across all engines</b></span>
+      <span class="tag">Estimated <b>~120 hours total</b> (excl. long-term)</span>
+    </div>
+    <nav class="toc">
+      <a href="#summary">Summary</a>
+      <a href="#phase1">Phase 1 · Hygiene</a>
+      <a href="#phase2">Phase 2 · Active learning</a>
+      <a href="#phase3">Phase 3 · Voice + misconceptions</a>
+      <a href="#phase4">Phase 4 · Bio restoration</a>
+      <a href="#phase5">Phase 5 · Polish</a>
+      <a href="#phase6">Phase 6 · Long-term</a>
+      <a href="#student">Student-input rule</a>
+    </nav>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- ============ SUMMARY ============ -->
+  <section id="summary">
+    <h2><span class="num">00</span>Summary table</h2>
+    <p class="lead">Six phases. Each can run in parallel within itself but builds on the prior phase. Hours are honest estimates of focused build time, not calendar time.</p>
+
+    <table class="summary">
+      <thead><tr><th>Phase</th><th>Focus</th><th>Items</th><th>Hours</th></tr></thead>
+      <tbody>
+        <tr><td><b>Phase 1</b></td><td>P0 hygiene + quick coverage wins</td><td>9</td><td>~14</td></tr>
+        <tr><td><b>Phase 2</b></td><td>Active-learning build-out (OChem predict + QR pacing + GC depth)</td><td>11</td><td>~32</td></tr>
+        <tr><td><b>Phase 3</b></td><td>Voice + misconception wiring</td><td>8</td><td>~22</td></tr>
+        <tr><td><b>Phase 4</b></td><td>Bio restoration (the 23 placeholders + coverage gaps)</td><td>11</td><td>~28</td></tr>
+        <tr><td><b>Phase 5</b></td><td>OChem MCQ build + design tokens + bio bank expansion</td><td>9</td><td>~28</td></tr>
+        <tr><td><b>Phase 6</b></td><td>Long-term (optional) — RC engine, PAT, architectural splits</td><td>6</td><td>~80+</td></tr>
+        <tr><td><b>TOTAL</b></td><td>Phases 1–5</td><td>48 items</td><td><b>~124 hours</b></td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout">
+      <p class="k">Recommended cadence</p>
+      <p>Phase 1 + Phase 3 (taxonomy wiring) happen first because they unblock the most downstream value. Phase 2 is the biggest leverage move (OChem predict-the-step alone lifts OChem from 8.4 → 9.5). Phase 4 is the deepest content authoring. Phase 5 is polish. Phase 6 is "if you want PAT and RC engines."</p>
+    </div>
+  </section>
+
+  <!-- ============ PHASE 1 ============ -->
+  <section id="phase1">
+    <div class="phase-banner">
+      <div class="num">1</div>
+      <div class="ttl">P0 hygiene + quick coverage wins<small>Week 1 · clears the most-cited gaps before bigger work</small></div>
+      <div class="hours">~14 h</div>
+    </div>
+
+    <div class="card rail rail-p0">
+      <div class="item">
+        <div class="idx">1.1</div>
+        <div class="body">
+          <div class="row1"><span class="t">Wire validate-scope.js into <code>package.json</code> + fix the negation bug</span><span class="pill p-p0">P0</span><span class="pill p-cross">cross</span><span class="pill p-risk-low">low risk</span></div>
+          <p class="desc">Add <code>"validate:scope": "node scripts/validate-scope.js"</code> to <code>package.json</code> scripts. Then in <code>scripts/validate-scope.js</code> (~lines 62–72), apply the <code>NEGATION_PATTERNS</code> allowlist before flagging a stale phrase — currently defined in <code>shared/scope.js</code> (lines 147–159) but never consulted, so the validator false-fails on correctly-written disclaimers like "not a predicted DAT score."</p>
+          <div class="meta-row">
+            <span class="mk"><b>Files</b>package.json, scripts/validate-scope.js, shared/scope.js</span>
+            <span class="mk"><b>Time</b>~1.5 h</span>
+            <span class="mk"><b>Deps</b>none</span>
+          </div>
+          <p class="accept"><b>Accept when</b> <code>npm run validate:scope</code> exits 0 on the current repo, and forcing a stale phrase ("5 fixed tests") makes it exit 1.</p>
+        </div>
+      </div>
+
+      <div class="item">
+        <div class="idx">1.2</div>
+        <div class="body">
+          <div class="row1"><span class="t">Update <code>README.md</code> with accurate engine stats</span><span class="pill p-p0">P0</span><span class="pill p-cross">cross</span><span class="pill p-risk-low">low risk</span></div>
+          <p class="desc">README still says QR "41 modules · 1010 problems," OChem "10 hubs," Bio "6 hubs · 500-Q mock bank," lists only 7 root files, and documents Phase 1–4 + unified-mock as the mock surface. Update to: QR 45 modules / 767 items / 30-chunk Pattern Library, OChem 18 hubs / 14 mechanism animations, Bio 6 hubs / 57 registry nodes / 40-Q Weakness scan, plus the 3-test Prometric runner.</p>
+          <div class="meta-row">
+            <span class="mk"><b>File</b>README.md</span>
+            <span class="mk"><b>Time</b>~1 h</span>
+            <span class="mk"><b>Deps</b>none</span>
+          </div>
+          <p class="accept"><b>Accept when</b> grep README.md against the actual engine files shows no count drift.</p>
+        </div>
+      </div>
+
+      <div class="item">
+        <div class="idx">1.3</div>
+        <div class="body">
+          <div class="row1"><span class="t">GC: build solubility-rules + net-ionic mini-module</span><span class="pill p-p0">P0</span><span class="pill p-gc">GC</span><span class="pill p-risk-low">low risk</span></div>
+          <p class="desc">New skill module <code>'sol-rules'</code> at Tier 1. Single-screen reference card (Group 1 + nitrates + acetates always soluble; halides except Ag/Pb/Hg; sulfates except Ba/Pb/Sr/Ca; carbonates/phosphates/sulfides mostly insoluble). 5 drill items: which is insoluble, predict the precipitate, net-ionic for AgNO₃ + NaCl, spectator ions, write the molecular vs net-ionic equation. Slot into the skill tree after <code>solutions</code>.</p>
+          <div class="meta-row">
+            <span class="mk"><b>File</b>tools/gc/index.html</span>
+            <span class="mk"><b>Time</b>~3 h</span>
+            <span class="mk"><b>Deps</b>none</span>
+            <span class="mk"><b>Yield</b>~1–2 DAT questions/test</span>
+          </div>
+          <p class="accept"><b>Accept when</b> the module renders end-to-end (pattern → worked → drill) and shows on the skill-tree map at coordinates between <code>solutions</code> and <code>lim-react</code>.</p>
+        </div>
+      </div>
+
+      <div class="item">
+        <div class="idx">1.4</div>
+        <div class="body">
+          <div class="row1"><span class="t">Bio: build the cardiac AP subsection</span><span class="pill p-p0">P0</span><span class="pill p-bio">Bio</span><span class="pill p-risk-low">low risk</span></div>
+          <p class="desc">The diagnostic Q on cardiac AP was repointed to neuronal AP this session as a band-aid. The real fix is to build the cardiac AP teach in <code>tools/bio/bio-physiology.html</code> under the cardiovascular node. Add the 5-phase walkthrough (resting → upstroke Na+ → early repolar K+ → plateau Ca2+ → repolar K+), the contrast with neuronal AP, and how the plateau enables long contractions. Then re-route the diagnostic to a new cardiac AP item.</p>
+          <div class="meta-row">
+            <span class="mk"><b>Files</b>tools/bio/bio-physiology.html, tools/bio/bio-diagnostic.html</span>
+            <span class="mk"><b>Time</b>~2 h</span>
+            <span class="mk"><b>Deps</b>none</span>
+          </div>
+          <p class="accept"><b>Accept when</b> bio-physiology has a cardiac AP subsection AND bio-diagnostic Q15 routes to it.</p>
+        </div>
+      </div>
+
+      <div class="item">
+        <div class="idx">1.5</div>
+        <div class="body">
+          <div class="row1"><span class="t">GC: add 8 diagnostic items for silent skills</span><span class="pill p-p0">P0</span><span class="pill p-gc">GC</span><span class="pill p-risk-low">low risk</span></div>
+          <p class="desc">8 skills the diagnostic never probes: IMFs, hybridization, calorimetry, electrolysis, heating-curves, colligative, titration, red-pot. Add one item per skill to <code>DIAG_BANK</code> at <code>tools/gc/index.html:14479+</code>. One difficulty-1 or 2 item each so the mastery scorer gets signal everywhere.</p>
+          <div class="meta-row">
+            <span class="mk"><b>File</b>tools/gc/index.html (DIAG_BANK ~ line 14479)</span>
+            <span class="mk"><b>Time</b>~2 h</span>
+            <span class="mk"><b>Deps</b>none</span>
+          </div>
+          <p class="accept"><b>Accept when</b> a fresh diagnostic run produces a non-null mastery value for all 32 modules.</p>
+        </div>
+      </div>
+
+      <div class="item">
+        <div class="idx">1.6</div>
+        <div class="body">
+          <div class="row1"><span class="t">QR: add 6 diagnostic items for Tier-2 PF-eligible modules</span><span class="pill p-p0">P0</span><span class="pill p-qr">QR</span><span class="pill p-risk-low">low risk</span></div>
+          <p class="desc">DIAG_BANK doesn't probe mixture, work-rate, p-cond, harm, interest, or any of the PF-eligible modules. Students can be routed into a PF problem the diagnostic has no signal on. Add 6 items: mixture (diff 2), work-rate (diff 2), p-cond (diff 3), harm (diff 2), geo-2d (diff 2), desc-stats (diff 2). Keeps diagnostic under 30 questions.</p>
+          <div class="meta-row">
+            <span class="mk"><b>File</b>tools/qr/index.html (DIAG_BANK)</span>
+            <span class="mk"><b>Time</b>~2 h</span>
+            <span class="mk"><b>Deps</b>none</span>
+          </div>
+          <p class="accept"><b>Accept when</b> the diagnostic generates mastery values for the 6 added modules without recursing on a wrong answer.</p>
+        </div>
+      </div>
+
+      <div class="item">
+        <div class="idx">1.7</div>
+        <div class="body">
+          <div class="row1"><span class="t">QR: add probability-without-replacement chunk to Pattern Library</span><span class="pill p-p0">P0</span><span class="pill p-qr">QR</span><span class="pill p-risk-low">low risk</span></div>
+          <p class="desc">Currently mentioned once in <code>p-andor</code> (~line 5192), never drilled. Add a 30th chunk to <code>PAT_CHUNKS</code> (~line 12866): "Without replacement: numerator and denominator both drop by 1 each draw. P(2 aces from 52) = (4/52)(3/51)." Generation prompt: P(2 reds from a bag of 5 red + 5 blue, no replacement).</p>
+          <div class="meta-row">
+            <span class="mk"><b>File</b>tools/qr/index.html (PAT_CHUNKS ~ line 12866)</span>
+            <span class="mk"><b>Time</b>~1 h</span>
+            <span class="mk"><b>Deps</b>none</span>
+          </div>
+          <p class="accept"><b>Accept when</b> the chunk appears in the Pattern Library with both recognition and generation prompts, and rolls into the SM-2 due-today list.</p>
+        </div>
+      </div>
+
+      <div class="item">
+        <div class="idx">1.8</div>
+        <div class="body">
+          <div class="row1"><span class="t">GC: sweep diff-3 items for no-calc solvability</span><span class="pill p-p0">P0</span><span class="pill p-gc">GC</span><span class="pill p-risk-low">low risk</span></div>
+          <p class="desc">Specific items flagged: <code>ks-h1</code> (asks for ∛(2.75×10⁻¹³) — not no-calc solvable) and <code>x8</code> (Arrhenius two-T logarithms). Reframe <code>ks-h1</code> to ask for order-of-magnitude ("~10⁻⁵") or change the Ksp value to one with a clean cube root. Reframe <code>x8</code> as qualitative ("rate roughly doubles per 10 K rise"). Sweep every other diff:3 item and tag whether it's truly no-calc-solvable in 90 seconds.</p>
+          <div class="meta-row">
+            <span class="mk"><b>File</b>tools/gc/index.html (BANK)</span>
+            <span class="mk"><b>Time</b>~2 h</span>
+            <span class="mk"><b>Deps</b>none</span>
+          </div>
+          <p class="accept"><b>Accept when</b> no diff:3 item requires a calculator or log table to solve in under 90 seconds.</p>
+        </div>
+      </div>
+
+      <div class="item">
+        <div class="idx">1.9</div>
+        <div class="body">
+          <div class="row1"><span class="t">OChem: tighten aromatic Q1 ortho/para statistics</span><span class="pill p-p1">P1</span><span class="pill p-ochem">OChem</span><span class="pill p-risk-low">low risk</span></div>
+          <p class="desc">Aromatic Q1 says "para usually dominant because ortho is sterically blocked" — for toluene nitration ortho actually wins numerically (~58:38). Tighten to "you get both, with para enriched relative to the 2:1 statistical expectation because ortho carries a small steric penalty." Caught in the pedagogy review but not addressed in this session.</p>
+          <div class="meta-row">
+            <span class="mk"><b>File</b>tools/ochem/index.html (aromatic Q1)</span>
+            <span class="mk"><b>Time</b>~0.5 h</span>
+            <span class="mk"><b>Deps</b>none</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PHASE 2 ============ -->
+  <section id="phase2">
+    <div class="phase-banner">
+      <div class="num">2</div>
+      <div class="ttl">Active-learning build-out<small>Weeks 2–3 · the biggest leverage move in the entire plan</small></div>
+      <div class="hours">~32 h</div>
+    </div>
+
+    <div class="card rail rail-p1">
+      <div class="item">
+        <div class="idx">2.1</div>
+        <div class="body">
+          <div class="row1"><span class="t">OChem: predict-the-step on SN1</span><span class="pill p-p1">P1</span><span class="pill p-ochem">OChem</span><span class="pill p-risk-med">med risk</span></div>
+          <p class="desc">Highest-leverage of the five — SN1 is the contrast partner to SN2 and the only mechanism that teaches racemization. Two prediction points per the codex: (1) after C-Br breaks, "What did this require? What's the rate law?" — correct: 3° substrate (cation stability); rate = k[R-X] only. (2) Nucleophile attacks the planar cation: "If the substrate was chiral, what stereo does the product show?" — correct: 50/50 racemate. Use the SN2 template at <code>tools/ochem/index.html:20851</code> as the reference.</p>
+          <div class="meta-row">
+            <span class="mk"><b>File</b>tools/ochem/index.html (PREDICT_DATA + wirePracticeMode)</span>
+            <span class="mk"><b>Time</b>~3 h</span>
+            <span class="mk"><b>Deps</b>SN1 Frame 2 typo fix (done this session)</span>
+          </div>
+          <p class="accept"><b>Accept when</b> the SN1 mech-player has a Practice toggle that shows ghost-preview + 4-option commit-before-reveal at both checkpoints.</p>
+        </div>
+      </div>
+
+      <div class="item">
+        <div class="idx">2.2</div>
+        <div class="body">
+          <div class="row1"><span class="t">OChem: predict-the-step on E2</span><span class="pill p-p1">P1</span><span class="pill p-ochem">OChem</span><span class="pill p-risk-med">med risk</span></div>
+          <p class="desc">Two prediction points: (1) "What geometric requirement must the β-H and the leaving group satisfy?" — anti-periplanar (180°). Distractors: syn (0°) carry-over from syn addition, gauche (60°) Newman confusion, any geometry (E2 vs E1 confusion). (2) "Strong bulky base on 2-bromo-2-methylbutane — which alkene predominates?" — Hofmann, less-substituted (bulky-base override). Distractor: Zaitsev.</p>
+          <div class="meta-row">
+            <span class="mk"><b>File</b>tools/ochem/index.html (verify E2 mech-player exists or build one)</span>
+            <span class="mk"><b>Time</b>~3 h</span>
+            <span class="mk"><b>Deps</b>none</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="item">
+        <div class="idx">2.3</div>
+        <div class="body">
+          <div class="row1"><span class="t">OChem: predict-the-step on E1 dehydration</span><span class="pill p-p1">P1</span><span class="pill p-ochem">OChem</span><span class="pill p-risk-med">med risk</span></div>
+          <p class="desc">Teaches cation rearrangement, the highest-leverage E1 trap. Prediction point after cation forms: "The 2° cation is adjacent to a 3° carbon. What happens before elimination?" — correct: 1,2-hydride shift to give the more stable 3° cation. Distractor: elimination from the 2° cation directly (the trap most students fall into).</p>
+          <div class="meta-row">
+            <span class="mk"><b>File</b>tools/ochem/index.html (E1-dehydration mech-player at line 13442)</span>
+            <span class="mk"><b>Time</b>~3 h</span>
+            <span class="mk"><b>Deps</b>none</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="item">
+        <div class="idx">2.4</div>
+        <div class="body">
+          <div class="row1"><span class="t">OChem: predict-the-step on imine formation</span><span class="pill p-p1">P1</span><span class="pill p-ochem">OChem</span><span class="pill p-risk-med">med risk</span></div>
+          <p class="desc">Teaches pH dependence — the unique imine question on the DAT. Prediction point: "Why is the reaction run at pH 4–5 specifically, not stronger acid?" — correct: "Below pH 4, the amine is fully protonated and stops being a nucleophile." Distractor: "Stronger acid would speed dehydration" (true but secondary; the kinetic kill at low pH dominates).</p>
+          <div class="meta-row">
+            <span class="mk"><b>File</b>tools/ochem/index.html (imine mech-player ~ line 15933)</span>
+            <span class="mk"><b>Time</b>~3 h</span>
+            <span class="mk"><b>Deps</b>none</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="item">
+        <div class="idx">2.5</div>
+        <div class="body">
+          <div class="row1"><span class="t">OChem: predict-the-step on aldol</span><span class="pill p-p1">P1</span><span class="pill p-ochem">OChem</span><span class="pill p-risk-med">med risk</span></div>
+          <p class="desc">Teaches enolate-as-nucleophile + the heat-driven E1cb dehydration. Two prediction points: (1) enolate formed — "What does the enolate attack on the second propanal molecule?" — correct: electrophilic carbonyl C. Distractors: α-H of second propanal (forms different enolate, no net rxn), carbonyl O (wrong nucleophilic site). (2) β-hydroxy aldehyde formed — "With heat, what happens to the β-OH?" — correct: loss of H₂O via E1cb-style elimination → α,β-unsaturated aldehyde.</p>
+          <div class="meta-row">
+            <span class="mk"><b>File</b>tools/ochem/index.html (alpha-condensation hub ~ line 19986; build the mech-player)</span>
+            <span class="mk"><b>Time</b>~4 h</span>
+            <span class="mk"><b>Deps</b>none</span>
+          </div>
+          <p class="accept"><b>Accept items 2.1–2.5 when</b> the predict-the-step coverage is 8 of 14 mechanisms (was 3), each with at least 2 commit-before-reveal checkpoints.</p>
+        </div>
+      </div>
+
+      <div class="item">
+        <div class="idx">2.6</div>
+        <div class="body">
+          <div class="row1"><span class="t">QR: ship Calculator Tax on the main page</span><span class="pill p-p1">P1</span><span class="pill p-qr">QR</span><span class="pill p-risk-med">med risk</span></div>
+          <p class="desc">The Friday Mini-Mock iframe already tracks <code>state.calcOpens</code>. Hoist it via postMessage to main-page localStorage so the Sarah digest can surface it. Then add a "+10s tax mode" toggle in <code>tools/qr/index.html</code> that adds a delay to every calc open in any drill/mini-mock. Also surface "opens per question" in the Sarah summary digest.</p>
+          <div class="meta-row">
+            <span class="mk"><b>Files</b>tools/qr/index.html, tools/qr/proposals/agent-08-pacing/friday-mini-mock.html</span>
+            <span class="mk"><b>Time</b>~5 h</span>
+            <span class="mk"><b>Deps</b>none</span>
+          </div>
+          <p class="accept"><b>Accept when</b> opening the mini-mock calc N times causes the main-page Sarah digest to show "calc opens this week: N."</p>
+        </div>
+      </div>
+
+      <div class="item">
+        <div class="idx">2.7</div>
+        <div class="body">
+          <div class="row1"><span class="t">QR: promote pacing-sim Two-Pass Drill to canonical pacing</span><span class="pill p-p1">P1</span><span class="pill p-qr">QR</span><span class="pill p-risk-low">low risk</span></div>
+          <p class="desc">The pacing-sim at <code>tools/qr/proposals/agent-08-pacing/pacing-sim.html</code> is the strongest single piece of pedagogy in the engine but sits in an orphan iframe referenced only from the <code>skip-ret</code> module. Promote it to the canonical pacing experience on the main page (~line 2589 pacing ladder) — branch the ladder copy ("we never put a stopwatch in front of you on day one") into "when you're ready for the timer → here's the simulator that teaches you the skip move."</p>
+          <div class="meta-row">
+            <span class="mk"><b>File</b>tools/qr/index.html (pacing ladder ~line 2589)</span>
+            <span class="mk"><b>Time</b>~3 h</span>
+            <span class="mk"><b>Deps</b>none</span>
+          </div>
+          <p class="accept"><b>Accept when</b> the main-page pacing ladder has a CTA to the Two-Pass Drill iframe gated by 80%+ untimed accuracy.</p>
+        </div>
+      </div>
+
+      <div class="item">
+        <div class="idx">2.8</div>
+        <div class="body">
+          <div class="row1"><span class="t">QR: convert discr / interest / zscore from PF to instruction-first</span><span class="pill p-p1">P1</span><span class="pill p-qr">QR</span><span class="pill p-risk-low">low risk</span></div>
+          <p class="desc">Pedagogy review flagged 3 of 8 PF problems as not genuine PF — students can't productively fail toward the formula because they don't have it yet. Convert each to instruction-first with "you'll fall into one of these three traps if you rush" framing. Specifically: <code>discr</code> (b²−4ac sign for root count), <code>interest</code> (simple vs compound), <code>zscore</code> (one-step formula application).</p>
+          <div class="meta-row">
+            <span class="mk"><b>File</b>tools/qr/index.html (PF problems ~ lines 12262, 12330, 12347)</span>
+            <span class="mk"><b>Time</b>~2 h</span>
+            <span class="mk"><b>Deps</b>none</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="item">
+        <div class="idx">2.9</div>
+        <div class="body">
+          <div class="row1"><span class="t">QR: Pattern Library — rewrite recognition prompts as generation-only</span><span class="pill p-p1">P1</span><span class="pill p-qr">QR</span><span class="pill p-risk-low">low risk</span></div>
+          <p class="desc">Drop the lookup prompts ("what fraction equals 0.625?") on the fraction-decimal chunks and replace with generation ladders ("0.125 × 8 = ?" → "0.125 × 32 = ?" → "0.375 × 16 = ?" → "0.625 × 24 = ?"). The chunk's purpose is to instantly recognize-and-convert mid-arithmetic, not to test that the student knows what the chunk IS.</p>
+          <div class="meta-row">
+            <span class="mk"><b>File</b>tools/qr/index.html (PAT_CHUNKS, especially fd-1-8 through fd-2-3)</span>
+            <span class="mk"><b>Time</b>~3 h</span>
+            <span class="mk"><b>Deps</b>none</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="item">
+        <div class="idx">2.10</div>
+        <div class="body">
+          <div class="row1"><span class="t">QR: build a real trig module</span><span class="pill p-p1">P1</span><span class="pill p-qr">QR</span><span class="pill p-risk-low">low risk</span></div>
+          <p class="desc">Trig is essentially missing — three Pattern-Library values exist, no dedicated module. Build a Tier-2 module covering SOHCAHTOA, sin²+cos²=1, the inverse trig "what angle gives sin = 1/2" pattern, and unit-circle quadrant signs. 4 drill items minimum. The DAT regularly tests right-triangle trig setups.</p>
+          <div class="meta-row">
+            <span class="mk"><b>File</b>tools/qr/index.html (new module 'trig')</span>
+            <span class="mk"><b>Time</b>~5 h</span>
+            <span class="mk"><b>Deps</b>none</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="item">
+        <div class="idx">2.11</div>
+        <div class="body">
+          <div class="row1"><span class="t">GC: build "No-calc shortcuts and estimation" Tier-3 module</span><span class="pill p-p1">P1</span><span class="pill p-gc">GC</span><span class="pill p-risk-low">low risk</span></div>
+          <p class="desc">No module teaches the tutor toolbox: log 2 ≈ 0.3, log 3 ≈ 0.48, "tenths of a pH unit per factor-of-2 change," Avogadro × 0.1 = 6×10²², 1 atm·L ≈ 100 J, cube roots of powers of 10. Compress these into a Tier-3 reference module + 5 drill items that force estimation as the path to the answer.</p>
+          <div class="meta-row">
+            <span class="mk"><b>File</b>tools/gc/index.html (new module 'no-calc')</span>
+            <span class="mk"><b>Time</b>~4 h</span>
+            <span class="mk"><b>Deps</b>none</span>
+            <span class="mk"><b>Yield</b>real differentiator — most GC prep skips this entirely</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PHASE 3 ============ -->
+  <section id="phase3">
+    <div class="phase-banner">
+      <div class="num">3</div>
+      <div class="ttl">Voice + misconception wiring<small>Weeks 4–5 · turns the misconception taxonomy from documentation into a working engine</small></div>
+      <div class="hours">~22 h</div>
+    </div>
+
+    <div class="card rail rail-p1">
+      <div class="item">
+        <div class="idx">3.1</div>
+        <div class="body">
+          <div class="row1"><span class="t">GC: tag <code>misconceptionIds:[]</code> on the top 100 most-missed items</span><span class="pill p-p1">P1</span><span class="pill p-gc">GC</span><span class="pill p-risk-low">low risk</span></div>
+          <p class="desc">The 77-entry <code>misconception-taxonomy.json</code> is impressive infrastructure but no bank item references it. Add an optional <code>misconceptionIds:["acid-base.weak-acid.treats-weak-as-strong"]</code> array to each wrong choice's diag entry. Backfill the top 100 most-missed items first (highest signal-to-effort ratio).</p>
+          <div class="meta-row">
+            <span class="mk"><b>Files</b>tools/gc/index.html (BANK), tools/gc/misconception-taxonomy.json</span>
+            <span class="mk"><b>Time</b>~6 h</span>
+            <span class="mk"><b>Deps</b>none</span>
+          </div>
+          <p class="accept"><b>Accept when</b> 100 items have at least one wrong-choice with a non-empty <code>misconceptionIds</code> array.</p>
+        </div>
+      </div>
+
+      <div class="item">
+        <div class="idx">3.2</div>
+        <div class="body">
+          <div class="row1"><span class="t">GC: surface "your top 3 misconception clusters" in post-mock screen</span><span class="pill p-p1">P1</span><span class="pill p-gc">GC</span><span class="pill p-risk-med">med risk</span></div>
+          <p class="desc">Aggregate misses across the mock by <code>misconceptionIds</code>, sort by frequency, display top 3 with linked drill recommendations. Turns the mock from "you got 42/60" into "your dominant pattern is <code>eq.lechat.heat-as-reactant</code> (fell into it 4 times) — drill these 8 items."</p>
+          <div class="meta-row">
+            <span class="mk"><b>File</b>tools/gc/index.html (SIM results screen)</span>
+            <span class="mk"><b>Time</b>~3 h</span>
+            <span class="mk"><b>Deps</b>3.1 must be done first</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="item">
+        <div class="idx">3.3</div>
+        <div class="body">
+          <div class="row1"><span class="t">GC: rewrite the top 50 stub diag entries</span><span class="pill p-p1">P1</span><span class="pill p-gc">GC</span><span class="pill p-risk-low">low risk</span></div>
+          <p class="desc">Sort BANK items by stub-density of their diag fields ("Off." / "Wrong." / "No."). Top 50 priority order per pedagogy review: equilibrium items (<code>ek1–ek4</code>, <code>lc1–lc3</code>, <code>ic1–ic3</code>), buffer/titration (<code>bf1–bf4</code>, <code>ti1–ti3</code>), galvanic/Nernst (now mostly done), stoich expansion (<code>s-e1</code>–<code>s-e12</code>, <code>gl-e1</code>–<code>gl-e15</code>). Each diag must name the specific misconception.</p>
+          <div class="meta-row">
+            <span class="mk"><b>File</b>tools/gc/index.html (BANK)</span>
+            <span class="mk"><b>Time</b>~5 h</span>
+            <span class="mk"><b>Deps</b>3.1 enables tagging while rewriting</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="item">
+        <div class="idx">3.4</div>
+        <div class="body">
+          <div class="row1"><span class="t">GC: expand 4 Tier-1 worked examples to 5+ steps</span><span class="pill p-p1">P1</span><span class="pill p-gc">GC</span><span class="pill p-risk-low">low risk</span></div>
+          <p class="desc">Modules <code>buffers</code>, <code>gibbs</code>, <code>entropy</code>, <code>rate-laws</code> all have one-bullet keystone worked examples (e.g., Gibbs Q1: "(−,+) → always"). Expand each to 5+ steps with a mid-stream <code>predict:</code> challenge — use the format already shipped in <code>titration</code> Q5 (indicator selection) as the template.</p>
+          <div class="meta-row">
+            <span class="mk"><b>File</b>tools/gc/index.html (MODULES)</span>
+            <span class="mk"><b>Time</b>~4 h</span>
+            <span class="mk"><b>Deps</b>none</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="item">
+        <div class="idx">3.5</div>
+        <div class="body">
+          <div class="row1"><span class="t">Apply remaining 7 OChem voice codex cards</span><span class="pill p-p2">P2</span><span class="pill p-ochem">OChem</span><span class="pill p-risk-low">low risk</span></div>
+          <p class="desc">Codex Section 7 cards 1, 2, 3, 4, 5, 6, 11 (Newman stability / chair boat-sail / R/S wedge flip / chiral hot spots / meso hot-dog-bun / E2 anti-peri enrichment / carbocation-alkene separation). Add as inline <code>box-tip</code> coach notes near the corresponding stereo, SN/E, and carbonyl hub sections.</p>
+          <div class="meta-row">
+            <span class="mk"><b>File</b>tools/ochem/index.html</span>
+            <span class="mk"><b>Time</b>~2 h</span>
+            <span class="mk"><b>Deps</b>none (codex at docs/thomas-voice-codex.md)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="item">
+        <div class="idx">3.6</div>
+        <div class="body">
+          <div class="row1"><span class="t">Send 2–3 bio-heavy Zoom sessions for codex re-mining</span><span class="pill p-p2">P2</span><span class="pill p-bio">Bio</span><span class="pill p-risk-low">low risk</span></div>
+          <p class="desc">Action item for Thomas, not me. The current codex captured almost nothing from these three sessions for Bio (sarcomere visual, organelle photos, general "endocrine/muscle/renal is hardest"). A Bio-heavy session would unlock Cell / Genetics / Physiology placeholder card authoring. When sessions land, re-run the Zoom → codex → apply pipeline.</p>
+          <div class="meta-row">
+            <span class="mk"><b>Action</b>Thomas records 2–3 bio-focused sessions</span>
+            <span class="mk"><b>Time</b>~0 h (mine) + ~6 h re-mining once available</span>
+            <span class="mk"><b>Deps</b>session material</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="item">
+        <div class="idx">3.7</div>
+        <div class="body">
+          <div class="row1"><span class="t">QR: apply remaining ~20 Sarah trick cards from codex</span><span class="pill p-p2">P2</span><span class="pill p-qr">QR</span><span class="pill p-risk-low">low risk</span></div>
+          <p class="desc">~20 Sarah placeholders remain on lower-priority Tier-2/3 modules. Apply codex content where it exists. For modules the codex doesn't cover (e.g., trig once built, geo-2d), gather material in next sessions before authoring rather than slipping into generic tutor-speak.</p>
+          <div class="meta-row">
+            <span class="mk"><b>File</b>tools/qr/index.html</span>
+            <span class="mk"><b>Time</b>~2 h (existing material) + dependent on future sessions</span>
+            <span class="mk"><b>Deps</b>some require more session material</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="item">
+        <div class="idx">3.8</div>
+        <div class="body">
+          <div class="row1"><span class="t">Bio: rebalance mock distribution (Genetics 28%)</span><span class="pill p-p2">P2</span><span class="pill p-bio">Bio</span><span class="pill p-risk-low">low risk</span></div>
+          <p class="desc">Current Weakness Scan is Cell 35% / Physiology 25% / Genetics 17% / Diversity 10% / Evolution 8% / Devo 5%. Real DAT weights Genetics ~15–20% and Diversity/Devo/Evo cluster ~25–30%. Rebalance to Cell 28% / Physiology 25% / Genetics 28% / Diversity 12% / Devo 5% / Evolution 8%. Requires authoring ~4–6 new Genetics items.</p>
+          <div class="meta-row">
+            <span class="mk"><b>File</b>tools/bio/bio-mock.html (BANK)</span>
+            <span class="mk"><b>Time</b>~2 h</span>
+            <span class="mk"><b>Deps</b>none</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PHASE 4 ============ -->
+  <section id="phase4">
+    <div class="phase-banner">
+      <div class="num">4</div>
+      <div class="ttl">Bio restoration<small>Weeks 5–6 · the largest content debt closure</small></div>
+      <div class="hours">~28 h</div>
+    </div>
+
+    <div class="card rail rail-p1">
+      <div class="item">
+        <div class="idx">4.1</div>
+        <div class="body">
+          <div class="row1"><span class="t">Author 23 Bio placeholder retrieval nodes</span><span class="pill p-p1">P1</span><span class="pill p-bio">Bio</span><span class="pill p-risk-low">low risk</span></div>
+          <p class="desc">The legacy <code>NODES</code> map in <code>tools/bio/bio-shared.js</code> (~line 60+) has 23 placeholder retrieval entries (q:"(question)", qh:"(answer)", wr:"Review the explanation.", ex:"(question) The correct answer is: ."). Affected node IDs: <code>rep, trc, tln, mit, men, ap, mei, gly, wat, car, lip, pro, nuc, enz, pve, org, mtr, sig, krb, pho, dom, fer, nse</code> — most of Cell + early Genetics. In-node misses currently DON'T generate Ace Cards because <code>_isAceCardPlaceholder()</code> (line 1021) intentionally blocks card creation. Author real <code>q / qh / wr / ex</code> for each.</p>
+          <div class="meta-row">
+            <span class="mk"><b>File</b>tools/bio/bio-shared.js (~line 60+, NODES map)</span>
+            <span class="mk"><b>Time</b>~7 h (≈ 18 min × 23)</span>
+            <span class="mk"><b>Deps</b>none</span>
+            <span class="mk"><b>Yield</b>restores "every miss generates a card" for ~half the Bio engine</span>
+          </div>
+          <p class="accept"><b>Accept when</b> <code>_isAceCardPlaceholder()</code> returns false for all 23 affected node IDs.</p>
+        </div>
+      </div>
+
+      <div class="item">
+        <div class="idx">4.2</div>
+        <div class="body">
+          <div class="row1"><span class="t">Bio: invert retrieval order on Tier-1 nodes</span><span class="pill p-p1">P1</span><span class="pill p-bio">Bio</span><span class="pill p-risk-med">med risk</span></div>
+          <p class="desc">Retrieval cards currently re-state the explanation paragraph immediately above (recognition, not retrieval). Either (a) move retrieval cards to a sibling "retrieval ring" page that pulls from all nodes shuffled, OR (b) disguise the stems so they require transfer (the codex Section 7 has rewrite examples for HW, replication, lac operon, pedigree). For minimum disruption: pick option (b) and rewrite 8–10 Tier-1 stems.</p>
+          <div class="meta-row">
+            <span class="mk"><b>Files</b>tools/bio/bio-cell.html, bio-genetics.html, bio-physiology.html</span>
+            <span class="mk"><b>Time</b>~4 h</span>
+            <span class="mk"><b>Deps</b>4.1 (real retrieval content)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="item">
+        <div class="idx">4.3</div>
+        <div class="body">
+          <div class="row1"><span class="t">Bio: add "Why this exists" panels to Tier-1 nodes</span><span class="pill p-p1">P1</span><span class="pill p-bio">Bio</span><span class="pill p-risk-low">low risk</span></div>
+          <p class="desc">One-paragraph "Why this exists" block on each Tier-1 node, written as the selection pressure or chemical constraint. Specifically: replication directionality (the energy is in the incoming dNTP triphosphate), loop of Henle (the medulla has to be hyperosmotic to make hypertonic urine — countercurrent multiplication is the whole point), Bohr effect (the same proton that flags "work happening here" pries O₂ off), lac operon (catabolite repression is nutritional logic, not just a fact).</p>
+          <div class="meta-row">
+            <span class="mk"><b>Files</b>tools/bio/bio-cell.html, bio-physiology.html, bio-genetics.html</span>
+            <span class="mk"><b>Time</b>~3 h</span>
+            <span class="mk"><b>Deps</b>none</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="item">
+        <div class="idx">4.4</div>
+        <div class="body">
+          <div class="row1"><span class="t">Bio: build countercurrent multiplication subsection</span><span class="pill p-p1">P1</span><span class="pill p-bio">Bio</span><span class="pill p-risk-low">low risk</span></div>
+          <p class="desc">In bio-physiology.html nephron node. The descending and ascending limbs are taught in isolation; the system-level concept (descending + ascending + vasa recta as a unit creating the medullary gradient) is missing. Build a 3-stage interactive: (1) ascending limb pumps NaCl out without water, (2) gradient builds in medulla, (3) descending limb loses water to the now-hyperosmotic interstitium, concentrating tubule fluid. DAT tests this as a system.</p>
+          <div class="meta-row">
+            <span class="mk"><b>File</b>tools/bio/bio-physiology.html (nephron node)</span>
+            <span class="mk"><b>Time</b>~3 h</span>
+            <span class="mk"><b>Deps</b>none</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="item">
+        <div class="idx">4.5</div>
+        <div class="body">
+          <div class="row1"><span class="t">Bio: build molecular techniques subsection (restriction / PCR / gel)</span><span class="pill p-p1">P1</span><span class="pill p-bio">Bio</span><span class="pill p-risk-low">low risk</span></div>
+          <p class="desc">Completely absent from current engine; DAT tests molecular techniques on every test. New section in bio-cell.html (or a "Techniques" subhub). Cover: restriction enzymes (recognition sequences, sticky vs blunt ends), PCR (denature/anneal/extend cycle, Taq polymerase), gel electrophoresis (sample loading, ladder, size sorting), and the CRISPR/Cas9 cross-reference to the existing bonus card.</p>
+          <div class="meta-row">
+            <span class="mk"><b>File</b>tools/bio/bio-cell.html (new subhub)</span>
+            <span class="mk"><b>Time</b>~4 h</span>
+            <span class="mk"><b>Deps</b>none</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="item">
+        <div class="idx">4.6</div>
+        <div class="body">
+          <div class="row1"><span class="t">Bio: add RAAS to cardiovascular hub</span><span class="pill p-p1">P1</span><span class="pill p-bio">Bio</span><span class="pill p-risk-low">low risk</span></div>
+          <p class="desc">Currently aldosterone is mentioned but the upstream renin-angiotensin-aldosterone cascade isn't taught. RAAS is a frequent DAT integration question (cardio + renal + endocrine). Build the cascade: low BP → kidney releases renin → angiotensinogen → angiotensin I → ACE → angiotensin II (vasoconstrict) → aldosterone (Na+ retention) → water retention → BP up. Include the negative-feedback closure.</p>
+          <div class="meta-row">
+            <span class="mk"><b>File</b>tools/bio/bio-physiology.html (cardiovascular node)</span>
+            <span class="mk"><b>Time</b>~2 h</span>
+            <span class="mk"><b>Deps</b>none</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="item">
+        <div class="idx">4.7</div>
+        <div class="body">
+          <div class="row1"><span class="t">Bio: add Frank-Starling + lung volumes (TV/IRV/ERV/RV/VC/TLC)</span><span class="pill p-p1">P1</span><span class="pill p-bio">Bio</span><span class="pill p-risk-low">low risk</span></div>
+          <p class="desc">Frank-Starling: cardiac output adjusts to venous return — more stretch (preload) means more contraction force, within limits. Lung volumes table: TV (tidal), IRV (inspiratory reserve), ERV (expiratory reserve), RV (residual), VC = TV + IRV + ERV, TLC = VC + RV. The DAT tests both via graphs and pulmonary-function-test stems.</p>
+          <div class="meta-row">
+            <span class="mk"><b>File</b>tools/bio/bio-physiology.html</span>
+            <span class="mk"><b>Time</b>~2 h</span>
+            <span class="mk"><b>Deps</b>none</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="item">
+        <div class="idx">4.8</div>
+        <div class="body">
+          <div class="row1"><span class="t">Bio: build hormone classification cross-table</span><span class="pill p-p1">P1</span><span class="pill p-bio">Bio</span><span class="pill p-risk-low">low risk</span></div>
+          <p class="desc">Endocrine node lists hormones individually; needs a one-page cross-table students can drill. Three columns: hormone class (steroid / peptide / amine / eicosanoid), where made, target receptor (cytoplasmic/nuclear for steroid; membrane for peptide/amine; etc.). Stock DAT integration content.</p>
+          <div class="meta-row">
+            <span class="mk"><b>File</b>tools/bio/bio-physiology.html (endocrine node)</span>
+            <span class="mk"><b>Time</b>~2 h</span>
+            <span class="mk"><b>Deps</b>none</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="item">
+        <div class="idx">4.9</div>
+        <div class="body">
+          <div class="row1"><span class="t">Bio: add Cori cycle + lactate metabolism</span><span class="pill p-p1">P1</span><span class="pill p-bio">Bio</span><span class="pill p-risk-low">low risk</span></div>
+          <p class="desc">The Krebs node doesn't cover what happens to pyruvate under anaerobic conditions or how lactate gets recycled. Build: pyruvate → lactate in muscle (regenerates NAD+), lactate travels to liver via blood, liver converts back to glucose via gluconeogenesis (Cori cycle). Hits glycolysis + gluconeogenesis + organ-level integration.</p>
+          <div class="meta-row">
+            <span class="mk"><b>File</b>tools/bio/bio-cell.html (Krebs / glycolysis node area)</span>
+            <span class="mk"><b>Time</b>~2 h</span>
+            <span class="mk"><b>Deps</b>none</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="item">
+        <div class="idx">4.10</div>
+        <div class="body">
+          <div class="row1"><span class="t">Bio: upgrade fragile-correct mechanic</span><span class="pill p-p2">P2</span><span class="pill p-bio">Bio</span><span class="pill p-risk-med">med risk</span></div>
+          <p class="desc">Three changes per pedagogy review: (1) make confidence rating REQUIRED to advance to next question (currently optional and ignored by most students). (2) Add a "timed-out / slow" flag — any item that took >90s is automatically flagged fragile even if correct. (3) Add a calibration tab to results showing accuracy bucketed by confidence (cold/narrowed/guessed), so students see how well-calibrated their self-knowledge is.</p>
+          <div class="meta-row">
+            <span class="mk"><b>File</b>tools/bio/bio-mock.html</span>
+            <span class="mk"><b>Time</b>~3 h</span>
+            <span class="mk"><b>Deps</b>none</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="item">
+        <div class="idx">4.11</div>
+        <div class="body">
+          <div class="row1"><span class="t">Bio: add optional timed-mode to Weakness Scan</span><span class="pill p-p2">P2</span><span class="pill p-bio">Bio</span><span class="pill p-risk-low">low risk</span></div>
+          <p class="desc">For students in their last 30 days, timed pressure is exactly what they need. Add an opt-in "Bio-pace mode" that gives 50–55 seconds per question with a per-question timer. Default off (the Weakness Scan is a triage tool first).</p>
+          <div class="meta-row">
+            <span class="mk"><b>File</b>tools/bio/bio-mock.html</span>
+            <span class="mk"><b>Time</b>~2 h</span>
+            <span class="mk"><b>Deps</b>none</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PHASE 5 ============ -->
+  <section id="phase5">
+    <div class="phase-banner">
+      <div class="num">5</div>
+      <div class="ttl">Polish — OChem MCQs · design tokens · bank expansion<small>Weeks 6+ · activates the stratified sampler and consolidates the design system</small></div>
+      <div class="hours">~28 h</div>
+    </div>
+
+    <div class="card rail rail-p2">
+      <div class="item">
+        <div class="idx">5.1</div>
+        <div class="body">
+          <div class="row1"><span class="t">OChem: build 5 stereo MCQs</span><span class="pill p-p2">P2</span><span class="pill p-ochem">OChem</span><span class="pill p-risk-low">low risk</span></div>
+          <p class="desc">New <code>&lt;div class="mcq-set" data-hub="stereo-lab"&gt;</code>. 5 items: R/S assignment (with wedge-flip trap), meso identification, E/Z assignment, enantiomer-vs-diastereomer decision, optical-activity prediction. Activates the empty stereo bucket in the stratified exam-sim sampler.</p>
+          <div class="meta-row">
+            <span class="mk"><b>File</b>tools/ochem/index.html (stereo lab section)</span>
+            <span class="mk"><b>Time</b>~3 h</span>
+            <span class="mk"><b>Deps</b>none (sampler already wired)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="item">
+        <div class="idx">5.2</div>
+        <div class="body">
+          <div class="row1"><span class="t">OChem: build 5 spec MCQs (IR + NMR)</span><span class="pill p-p2">P2</span><span class="pill p-ochem">OChem</span><span class="pill p-risk-low">low risk</span></div>
+          <p class="desc">Split between IR and NMR. IR items: identify the carbonyl region peak, alcohol vs amine peak shape, conjugation lowers carbonyl. NMR items: n+1 splitting from a structure, integration ratios, match-the-spectrum to one of four structures (the canonical DAT NMR item type).</p>
+          <div class="meta-row">
+            <span class="mk"><b>File</b>tools/ochem/index.html (spec-trainer section)</span>
+            <span class="mk"><b>Time</b>~3 h</span>
+            <span class="mk"><b>Deps</b>none</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="item">
+        <div class="idx">5.3</div>
+        <div class="body">
+          <div class="row1"><span class="t">OChem: build 5 mass-spec MCQs</span><span class="pill p-p2">P2</span><span class="pill p-ochem">OChem</span><span class="pill p-risk-low">low risk</span></div>
+          <p class="desc">The mass-spec hub has a gorgeous interactive fragmenter and zero MCQs. 5 items: M+2 Cl/Br pattern identification, McLafferty rearrangement prediction, base-peak prediction, fragment-loss interpretation, isotope ratio identification.</p>
+          <div class="meta-row">
+            <span class="mk"><b>File</b>tools/ochem/index.html (mass-spec hub)</span>
+            <span class="mk"><b>Time</b>~3 h</span>
+            <span class="mk"><b>Deps</b>none</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="item">
+        <div class="idx">5.4</div>
+        <div class="body">
+          <div class="row1"><span class="t">OChem: build 5 lab-techniques MCQs</span><span class="pill p-p2">P2</span><span class="pill p-ochem">OChem</span><span class="pill p-risk-low">low risk</span></div>
+          <p class="desc">5 items: extraction logic (aqueous vs organic layer), TLC Rf prediction from polarity, qual-test identification given a description (Tollens vs Fehling vs iodoform), IMF/BP ranking, distillation choice (simple vs fractional vs steam).</p>
+          <div class="meta-row">
+            <span class="mk"><b>File</b>tools/ochem/index.html (lab-techniques hub)</span>
+            <span class="mk"><b>Time</b>~3 h</span>
+            <span class="mk"><b>Deps</b>none</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="item">
+        <div class="idx">5.5</div>
+        <div class="body">
+          <div class="row1"><span class="t">OChem: build 5 nomenclature MCQs</span><span class="pill p-p2">P2</span><span class="pill p-ochem">OChem</span><span class="pill p-risk-low">low risk</span></div>
+          <p class="desc">5 items: spiro naming, bicyclic naming, E/Z assignment from structure, lowest-locant rule (substituent vs functional group priority), multi-functional-group naming priority. New hub: <code>data-hub="nomenclature"</code>. Activates the last empty bucket in the stratified sampler.</p>
+          <div class="meta-row">
+            <span class="mk"><b>File</b>tools/ochem/index.html (new nomenclature section)</span>
+            <span class="mk"><b>Time</b>~3 h</span>
+            <span class="mk"><b>Deps</b>none</span>
+          </div>
+          <p class="accept"><b>Accept items 5.1–5.5 when</b> a 20-question stratified exam-sim run includes at least one item from each of stereo / spec / mass-spec / lab-tech / nomenclature.</p>
+        </div>
+      </div>
+
+      <div class="item">
+        <div class="idx">5.6</div>
+        <div class="body">
+          <div class="row1"><span class="t">OChem: build retrosynthesis trainer</span><span class="pill p-p2">P2</span><span class="pill p-ochem">OChem</span><span class="pill p-risk-med">med risk</span></div>
+          <p class="desc">Retrosynthesis is offered (reverse-mode reagent predictor + forward synthesis-lab) but never TAUGHT as a skill. Add a Disconnection Trainer that walks 5 targets via reverse disconnection: 1,3-dicarbonyl → enolate + electrophile; aromatic ortho-disubstituted → directing-group order; Grignard product → alcohol + Grignard reagent; etc. Each shows the retro arrow + the corresponding forward step.</p>
+          <div class="meta-row">
+            <span class="mk"><b>File</b>tools/ochem/index.html (new section or augment synthesis-lab)</span>
+            <span class="mk"><b>Time</b>~6 h</span>
+            <span class="mk"><b>Deps</b>none</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="item">
+        <div class="idx">5.7</div>
+        <div class="body">
+          <div class="row1"><span class="t">QR + GC: migrate to shared design tokens</span><span class="pill p-p2">P2</span><span class="pill p-cross">cross</span><span class="pill p-risk-med">med risk</span></div>
+          <p class="desc">QR and GC both define their own <code>:root</code> tokens instead of loading <code>shared/al-tokens.css</code> + <code>shared/al-motion.css</code>. The al-tokens header even notes "QR + GC pending." Migration: load the shared stylesheets, then remove local duplicates one variable at a time, verifying visual parity after each change. Bio + OChem already adopt this.</p>
+          <div class="meta-row">
+            <span class="mk"><b>Files</b>tools/qr/index.html, tools/gc/index.html, shared/al-tokens.css</span>
+            <span class="mk"><b>Time</b>~6 h</span>
+            <span class="mk"><b>Deps</b>none</span>
+            <span class="mk"><b>Risk</b>visual regression — do screenshot comparison after each variable swap</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="item">
+        <div class="idx">5.8</div>
+        <div class="body">
+          <div class="row1"><span class="t">Bio: expand item pool to ≥120 with sub-banks</span><span class="pill p-p2">P2</span><span class="pill p-bio">Bio</span><span class="pill p-risk-med">med risk</span></div>
+          <p class="desc">Current Weakness Scan is 40 fixed items shuffled. Students who retake know every item after run 2. Author 80+ additional items tagged by node + difficulty (high/medium/low priority). Update the sampler to: draw N items per hub matching the rebalanced distribution from 3.8, no-repeat across attempts until pool wraps.</p>
+          <div class="meta-row">
+            <span class="mk"><b>File</b>tools/bio/bio-mock.html</span>
+            <span class="mk"><b>Time</b>~8 h</span>
+            <span class="mk"><b>Deps</b>3.8 (rebalance done)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="item">
+        <div class="idx">5.9</div>
+        <div class="body">
+          <div class="row1"><span class="t">QR + GC: fill geometry formula bank + data-interpretation module</span><span class="pill p-p2">P2</span><span class="pill p-qr">QR</span><span class="pill p-risk-low">low risk</span></div>
+          <p class="desc">Two related QR coverage gaps. (a) Geometry formula bank: add parallelogram (bh), trapezoid ((b₁+b₂)/2 × h), cylinder (πr²h, 2πr² + 2πrh), cone (⅓πr²h), sphere (4πr²) to <code>geo-2d</code> and <code>vol-sa</code>. (b) Build a data-interpretation module: charts/tables, percentage reading, trend recognition. New Tier-2 module.</p>
+          <div class="meta-row">
+            <span class="mk"><b>File</b>tools/qr/index.html</span>
+            <span class="mk"><b>Time</b>~5 h</span>
+            <span class="mk"><b>Deps</b>none</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PHASE 6 ============ -->
+  <section id="phase6">
+    <div class="phase-banner">
+      <div class="num">6</div>
+      <div class="ttl">Long-term — RC engine, PAT, architectural splits<small>Optional · big bets · ~80+ hours combined</small></div>
+      <div class="hours">~80+ h</div>
+    </div>
+
+    <div class="card rail rail-p3">
+      <div class="item">
+        <div class="idx">6.1</div>
+        <div class="body">
+          <div class="row1"><span class="t">Build a Reading Comprehension engine</span><span class="pill p-p3">P3</span><span class="pill p-cross">cross</span><span class="pill p-risk-high">high risk</span></div>
+          <p class="desc">10 research docs already at <code>research/RC_*.md</code> — passage parsing, question-types, the 10-in-10 method, ESL strategies, structure recognition, pacing, stamina. Build a minimal RC engine: 3 passage types (science / humanities / social science), per-passage timer + highlighter, the 10-in-10 mode the codex documents, and 4 question types (main idea / inference / detail / tone). Closes the "no RC" gap explicitly called out in the scope page.</p>
+          <div class="meta-row">
+            <span class="mk"><b>Files</b>new <code>tools/rc/</code> directory</span>
+            <span class="mk"><b>Time</b>~25 h</span>
+            <span class="mk"><b>Deps</b>RC passages library</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="item">
+        <div class="idx">6.2</div>
+        <div class="body">
+          <div class="row1"><span class="t">Build a PAT engine (major undertaking)</span><span class="pill p-p3">P3</span><span class="pill p-cross">cross</span><span class="pill p-risk-high">high risk</span></div>
+          <p class="desc">Currently explicitly out of scope. Would require: keyhole rotation viewer, top-front-end interpreter, angle ranking, hole punching (with grid method tutor), cube counting, pattern folding. Each sub-type is non-trivial — pattern folding alone is a significant interactive build. Defer unless PAT becomes a strategic priority. The codex captures the grid method coaching but the engine itself is greenfield.</p>
+          <div class="meta-row">
+            <span class="mk"><b>Files</b>new <code>tools/pat/</code> directory</span>
+            <span class="mk"><b>Time</b>~50 h</span>
+            <span class="mk"><b>Deps</b>PAT image bank</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="item">
+        <div class="idx">6.3</div>
+        <div class="body">
+          <div class="row1"><span class="t">Bio: split bio-shared.js into per-hub engines</span><span class="pill p-p3">P3</span><span class="pill p-bio">Bio</span><span class="pill p-risk-high">high risk</span></div>
+          <p class="desc">Current <code>bio-shared.js</code> is 1.27 MB / 15,785 lines — monolithic and hard to maintain. Split into <code>bio-cell-engine.js</code>, <code>bio-genetics-engine.js</code>, etc., with shared core in <code>bio-core.js</code>. Significant refactor; risk of breakage. Defer until other work stabilizes; do alongside extensive Playwright coverage.</p>
+          <div class="meta-row">
+            <span class="mk"><b>Files</b>tools/bio/bio-shared.js</span>
+            <span class="mk"><b>Time</b>~8 h</span>
+            <span class="mk"><b>Deps</b>strong test coverage</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="item">
+        <div class="idx">6.4</div>
+        <div class="body">
+          <div class="row1"><span class="t">Bio: dedupe NODES vs BIO_REGISTRY</span><span class="pill p-p3">P3</span><span class="pill p-bio">Bio</span><span class="pill p-risk-med">med risk</span></div>
+          <p class="desc">Two parallel data layers: legacy <code>NODES</code>/<code>STATE</code> in <code>bio-shared.js</code> (~34 keys) and the newer <code>BIO_REGISTRY.NODES</code> in <code>bio-registry.js</code> (57 entries). Maintenance hazard; must be hand-synced. Pick one path — recommend phasing out the legacy NODES map and routing all consumers through the registry. <code>scripts/validate-bio-registry.js</code> already exists to police drift; use it as the migration safety net.</p>
+          <div class="meta-row">
+            <span class="mk"><b>Files</b>tools/bio/bio-shared.js, tools/bio/bio-registry.js</span>
+            <span class="mk"><b>Time</b>~6 h</span>
+            <span class="mk"><b>Deps</b>4.1 (placeholder author) so the migration doesn't lose content</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="item">
+        <div class="idx">6.5</div>
+        <div class="body">
+          <div class="row1"><span class="t">Cross-tool dashboard: anti-repeat item tagging</span><span class="pill p-p3">P3</span><span class="pill p-cross">cross</span><span class="pill p-risk-med">med risk</span></div>
+          <p class="desc">Track which mock/diagnostic items each student has seen, across all engines. Surface as "fresh question pool: 240 of 320" in the Sarah digest. Prevents the retake-pollution problem where students learn item-text instead of underlying material.</p>
+          <div class="meta-row">
+            <span class="mk"><b>File</b>shared/ace-labs-shell.js + per-engine instrumentation</span>
+            <span class="mk"><b>Time</b>~5 h</span>
+            <span class="mk"><b>Deps</b>5.8 (item pool expansion makes this useful)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="item">
+        <div class="idx">6.6</div>
+        <div class="body">
+          <div class="row1"><span class="t">"Test-day playlist" continuous-flow mode</span><span class="pill p-p3">P3</span><span class="pill p-cross">cross</span><span class="pill p-risk-low">low risk</span></div>
+          <p class="desc">90-min Sciences → optional 30-min break → 45-min QR — a continuous test-day rehearsal that runs students through the actual cadence in one sitting. Largely sits on top of the existing Prometric runner. Big psychological lift for last-week students.</p>
+          <div class="meta-row">
+            <span class="mk"><b>File</b>prometric-mock.html (new mode flag)</span>
+            <span class="mk"><b>Time</b>~4 h</span>
+            <span class="mk"><b>Deps</b>none</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ RULES ============ -->
+  <section id="student">
+    <h2><span class="num">07</span>Cross-cutting rules to honor</h2>
+    <p class="lead">Items that aren't tasks themselves but constrain every task above.</p>
+
+    <div class="card">
+      <ul>
+        <li><b>No emojis, no decorative unicode glyphs anywhere I write.</b> Including ✓/✗/⚠/★. Use text labels + existing red/green/gold palette.</li>
+        <li><b>No payment language in student-visible content.</b> No $, paid, balance, package, installment, etc. in any student-facing field, page, or message.</li>
+        <li><b>No localStorage-only student input.</b> P0 data rule: all student-written content must persist to Airtable (Thomas-visible); localStorage is cache only, never canonical. Applies to any new student-input feature in Phase 2+ (e.g., notes, custom drills, log entries).</li>
+        <li><b>No score predictors in Ace Labs.</b> No predicted DAT scores, percentile forecasts, or outcome-prediction anywhere. Practice metrics are fine; scaled-score projections are banned.</li>
+        <li><b>OChem v1 is canonical — augment in place, no parallel v2/v3.</b></li>
+        <li><b>Safe-extension architectural rules</b> when touching the portal: provider is frozen, build additively with pure selectors + presentational components + new routes.</li>
+        <li><b>Thomas Method — FL-driven prep.</b> Skip proactive content review; let PT misses drive every drill. Don't author content "just because" — author against PT-miss patterns.</li>
+      </ul>
+    </div>
+  </section>
+
+  <footer>
+    Generated 2026-05-28. Fifth document in the audit series.
+    Companions: <code>acelabs-audit-2026-05-27.html</code>, <code>acelabs-pedagogy-2026-05-27.html</code>, <code>acelabs-applied-2026-05-27.html</code>, <code>acelabs-scorecard-2026-05-27.html</code>.
+    Voice reference at <code>docs/thomas-voice-codex.md</code>.
+  </footer>
+
+</div>
+</body>
+</html>
