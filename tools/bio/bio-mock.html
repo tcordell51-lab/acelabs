@@ -3,18 +3,21 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Bio Mock Exam &middot; AceTheDAT</title>
+<title>Bio Weakness Scan &middot; AceTheDAT</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="bio-shared.css">
+<link rel="stylesheet" href="/tools/bio/bio-shared.css">
 <link rel="stylesheet" href="../../shared/al-motion.css">
 <style>
 .mk-stage{max-width:820px;margin:0 auto;padding:0 60px}
+@media (max-width:680px){.mk-stage{padding:0 18px}}
 .mk-intro{padding:30px 32px;background:var(--paper);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);margin-bottom:24px}
 .mk-intro h2{font-family:'Playfair Display',serif;font-size:32px;margin:0 0 10px;font-weight:700;line-height:1.15}
 .mk-intro h2 em{font-style:italic;color:var(--gold-d)}
-.mk-intro .lede{font-size:15px;color:var(--ink-2);margin-bottom:18px;line-height:1.55}
+.mk-intro .lede{font-size:15px;color:var(--ink-2);margin-bottom:12px;line-height:1.55}
+.mk-scope{margin:0 0 18px;padding:12px 14px;background:var(--gold-bg);border:1.5px solid var(--gold-d);border-radius:10px;font-size:13px;line-height:1.55;color:var(--ink-2)}
+.mk-scope b{color:var(--ink)}
 .mk-config{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0}
 @media (max-width:680px){.mk-config{grid-template-columns:1fr}}
 .mk-cfg{padding:16px 18px;background:var(--paper-2);border:1px solid var(--line);border-radius:10px}
@@ -23,8 +26,6 @@
 .mk-cfg label input{margin-right:8px}
 .mk-runtop{display:flex;justify-content:space-between;align-items:center;padding:12px 18px;background:var(--ink);color:var(--paper);border-radius:11px 11px 0 0;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;letter-spacing:.08em}
 .mk-runtop .timer{color:var(--gold);font-size:18px}
-.mk-runtop .timer.warn{color:#ff8a3a;animation:pulse 1.4s infinite}
-.mk-runtop .timer.danger{color:#ff5555}
 .mk-runbody{padding:24px 28px;background:var(--paper);border:1px solid var(--line);border-top:none;border-radius:0 0 11px 11px}
 .mk-q{font-family:'Playfair Display',serif;font-size:20px;font-weight:600;line-height:1.4;margin:0 0 18px}
 .mk-tag{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.16em;color:var(--gold-d);text-transform:uppercase;font-weight:700;margin-bottom:8px}
@@ -33,6 +34,10 @@
 .mk-opt:hover{border-color:var(--gold-d);background:var(--paper)}
 .mk-opt.selected{background:var(--gold-bg);border-color:var(--gold-d)}
 .mk-opt .let{font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--gold-d);flex-shrink:0;min-width:18px}
+.mk-confidence{margin:14px 0 4px;display:flex;flex-wrap:wrap;gap:6px;font-size:12px;align-items:center}
+.mk-confidence span.lbl{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--ink-mute);text-transform:uppercase;font-weight:700;margin-right:4px}
+.mk-confidence button{font-family:inherit;font-size:11.5px;padding:6px 10px;background:var(--paper-2);border:1.5px solid var(--line);border-radius:6px;cursor:pointer;font-weight:600;color:var(--ink-2)}
+.mk-confidence button.on{background:var(--gold);color:var(--ink);border-color:var(--gold-d)}
 .mk-foot{display:flex;justify-content:space-between;align-items:center;margin-top:22px;gap:10px}
 .mk-jumpbar{display:flex;flex-wrap:wrap;gap:4px;padding:14px 18px;margin-top:14px;background:var(--paper-2);border-radius:8px;max-height:140px;overflow-y:auto}
 .mk-jumpbar button{width:30px;height:30px;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;background:var(--paper);border:1px solid var(--line);border-radius:5px;cursor:pointer;color:var(--ink-2)}
@@ -42,8 +47,8 @@
 .mk-result{padding:30px 32px;background:var(--paper);border:2px solid var(--gold);border-radius:14px;box-shadow:var(--shadow-md)}
 .mk-result h2{font-family:'Playfair Display',serif;font-size:34px;margin:0 0 14px;font-weight:700}
 .mk-result h2 em{font-style:italic;color:var(--gold-d)}
-.mk-scores{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:18px 0}
-@media (max-width:680px){.mk-scores{grid-template-columns:repeat(2,1fr)}}
+.mk-scores{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:18px 0}
+@media (max-width:680px){.mk-scores{grid-template-columns:1fr}}
 .mk-scorecard{padding:16px 18px;text-align:center;background:var(--paper-2);border-radius:10px}
 .mk-scorecard.gold{background:var(--gold-bg);border:1px solid var(--gold-d)}
 .mk-scorecard .lbl{font-size:10px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:var(--ink-mute);margin-bottom:6px}
@@ -56,10 +61,17 @@
 .mk-hubtable td:nth-child(2),.mk-hubtable td:nth-child(3){text-align:right;font-family:'JetBrains Mono',monospace;font-weight:700}
 .mk-hubtable .strong{color:var(--good-d)}
 .mk-hubtable .weak{color:var(--trap-d)}
+.mk-review-tabs{display:flex;gap:6px;margin:22px 0 12px;flex-wrap:wrap}
+.mk-review-tabs button{padding:7px 14px;border-radius:8px;font-family:inherit;font-size:12px;font-weight:700;background:var(--paper-2);border:1.5px solid var(--line);cursor:pointer;color:var(--ink-2)}
+.mk-review-tabs button.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
 .mk-review-item{padding:14px 16px;background:var(--paper-2);border-left:3px solid var(--trap);border-radius:0 8px 8px 0;margin-bottom:10px;font-size:13.5px;line-height:1.55}
+.mk-review-item.fragile{border-left-color:var(--gold-d)}
+.mk-review-item.flagged{border-left-color:var(--gold)}
 .mk-review-item b{color:var(--ink)}
 .mk-review-item .why{margin-top:8px;color:var(--ink-2);font-size:13px}
 .mk-review-item .why em{color:var(--trap-d);font-style:normal;font-weight:700}
+.mk-review-item .repair-link{display:inline-block;margin-top:8px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.08em;font-weight:700;color:var(--gold-d);text-decoration:none;padding:5px 10px;border:1px solid var(--gold-d);border-radius:6px}
+.mk-review-item .repair-link:hover{background:var(--gold);color:var(--ink)}
 .mk-flag{background:none;border:1px solid var(--gold-d);color:var(--gold-d);padding:4px 10px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;letter-spacing:.06em}
 .mk-flag.on{background:var(--gold);color:var(--ink)}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}
@@ -70,23 +82,24 @@
 <aside class="sb">
   <div class="sb-brand">
     <div class="mark">Ace<em>The</em>DAT</div>
-    <div class="sub">Bio Mastery System &middot; v2</div>
+    <div class="sub">Bio Repair Lab</div>
   </div>
-  <a class="sb-link" href="index.html" style="margin-bottom:6px"><span class="dot"></span><span class="label">&larr; Mastery hub</span><span class="meta"></span></a>
-  <a class="sb-link live active" href="bio-mock.html" style="margin-bottom:6px"><span class="dot" style="background:var(--gold)"></span><span class="label"><b>Mock Exam</b></span><span class="meta">40q</span></a>
-  <a class="sb-link live" href="bio-diagnostic.html" style="margin-bottom:6px"><span class="dot"></span><span class="label">Diagnostic</span><span class="meta">24q</span></a>
+  <a class="sb-link" href="index.html" style="margin-bottom:6px"><span class="dot"></span><span class="label">&larr; Repair Lab home</span><span class="meta"></span></a>
+  <a class="sb-link live active" href="bio-mock.html" style="margin-bottom:6px"><span class="dot" style="background:var(--gold)"></span><span class="label"><b>Weakness scan</b></span><span class="meta">40q</span></a>
+  <a class="sb-link live" href="bio-repair-sheet.html" style="margin-bottom:6px"><span class="dot"></span><span class="label">Repair sheet</span><span class="meta">cram</span></a>
+  <a class="sb-link live" href="bio-diagnostic.html" style="margin-bottom:6px"><span class="dot"></span><span class="label">Pulse check</span><span class="meta">24q</span></a>
   <a class="sb-link live" href="bio-calendar.html" style="margin-bottom:8px"><span class="dot"></span><span class="label">60-day plan</span><span class="meta">study</span></a>
   <a class="sb-link live" href="bio-analytics.html" style="margin-bottom:8px"><span class="dot"></span><span class="label">Analytics</span><span class="meta">trends</span></a>
   <a class="sb-link live" href="bio-bonus.html" style="margin-bottom:6px"><span class="dot"></span><span class="label">Bonus topics</span><span class="meta">supp</span></a>
   <a class="sb-link live" href="bio-micrographs.html" style="margin-bottom:8px"><span class="dot"></span><span class="label">Micrograph ID</span><span class="meta">8 cards</span></a>
 
-  <div class="sb-section">Six hubs</div>
-  <a class="sb-link live" href="bio-cell.html"><span class="dot"></span><span class="label">Cell Lab</span><span class="meta">17</span></a>
-  <a class="sb-link live" href="bio-genetics.html"><span class="dot"></span><span class="label">Genetics</span><span class="meta">flagship</span></a>
-  <a class="sb-link live" href="bio-physiology.html"><span class="dot"></span><span class="label">Physiology</span><span class="meta">flagship</span></a>
-  <a class="sb-link live" href="bio-diversity.html"><span class="dot"></span><span class="label">Diversity</span><span class="meta">flagship</span></a>
-  <a class="sb-link live" href="bio-devo.html"><span class="dot"></span><span class="label">Developmental</span><span class="meta">flagship</span></a>
-  <a class="sb-link live" href="bio-evolution.html"><span class="dot"></span><span class="label">Evolution</span><span class="meta">flagship</span></a>
+  <div class="sb-section">Six study hubs</div>
+  <a class="sb-link live" href="bio-cell.html"><span class="dot"></span><span class="label">Cell &amp; Molecular</span><span class="meta">live</span></a>
+  <a class="sb-link live" href="bio-genetics.html"><span class="dot"></span><span class="label">Genetics</span><span class="meta">live</span></a>
+  <a class="sb-link live" href="bio-physiology.html"><span class="dot"></span><span class="label">Structure &amp; Function</span><span class="meta">live</span></a>
+  <a class="sb-link live" href="bio-diversity.html"><span class="dot"></span><span class="label">Diversity</span><span class="meta">live</span></a>
+  <a class="sb-link live" href="bio-devo.html"><span class="dot"></span><span class="label">Developmental</span><span class="meta">live</span></a>
+  <a class="sb-link live" href="bio-evolution.html"><span class="dot"></span><span class="label">Evolution &amp; Ecology</span><span class="meta">live</span></a>
 </aside>
 
 <main class="mn" style="padding-top:46px">
@@ -95,67 +108,63 @@
 </div>
 
 <script>
-// 40-question DAT-format Bio mock — DAT bio is 40 questions in 30 minutes.
-// Fixed 40-question bank, hand-curated to span all six hubs in DAT proportions:
-//   Cell Lab: 14 (35%) · Genetics: 7 (17%) · Physiology: 10 (25%)
+// 40-question fixed Bio bank for the Bio Weakness Scan, NOT a DAT mock.
+// Distribution across the six Ace study hubs:
+//   Cell: 14 (35%) · Genetics: 7 (17%) · Structure/Function: 10 (25%)
 //   Diversity: 4 (10%) · Developmental: 2 (5%) · Evolution: 3 (8%)
+// node ids reference the Bio registry (tools/bio/bio-registry.js).
 const BANK = [
-  // Cell Lab
-  { hub:'Cell', q:'Phospholipid bilayers self-assemble in water primarily because:', opts:['hydrophobic tails are repelled by water','phosphate heads bond covalently','tails attract each other electrostatically','head groups are nonpolar'], correct:0, why:'The hydrophobic effect drives tails inward; this is entropy-driven, not enthalpy-driven.' },
-  { hub:'Cell', q:'Which structure does NOT have a double membrane?', opts:['mitochondrion','chloroplast','nucleus','peroxisome'], correct:3, why:'Peroxisomes have a single membrane. The other three have two.' },
-  { hub:'Cell', q:'A drug that blocks oxidative phosphorylation but NOT glycolysis would result in:', opts:['no ATP at all','only the 2 ATP from glycolysis','more ATP than normal','ATP from photosynthesis only'], correct:1, why:'Glycolysis is anaerobic and yields 2 net ATP. Oxidative phosphorylation in the ETC produces the bulk (~30+).' },
-  { hub:'Cell', q:'During mitosis, sister chromatids separate at:', opts:['prophase','metaphase','anaphase','telophase'], correct:2, why:'Anaphase = sister chromatids pulled apart. Mnemonic: A for apart.' },
-  { hub:'Cell', q:'In the lac operon, the inducer is:', opts:['lactose','allolactose','glucose','cAMP'], correct:1, why:'Allolactose (an isomer of lactose) binds the repressor and inactivates it. Lactose itself is the substrate, not the inducer.' },
-  { hub:'Cell', q:'A peptide bond forms between:', opts:['the carboxyl of one amino acid and the amine of the next','two side chains','the alpha carbons','two cysteine sulfurs'], correct:0, why:'-COOH + H₂N- condense, releasing water.' },
-  { hub:'Cell', q:'Which of these enzymes synthesizes RNA?', opts:['DNA polymerase','RNA polymerase','ribosome','reverse transcriptase'], correct:1, why:'RNA polymerase transcribes DNA → RNA. Reverse transcriptase goes RNA → DNA (retroviruses).' },
-  { hub:'Cell', q:'The smooth ER\'s primary function in muscle cells is:', opts:['protein synthesis','lipid synthesis','calcium storage and release','glycogen breakdown'], correct:2, why:'In muscle, smooth ER is called the sarcoplasmic reticulum and stores Ca²⁺ for contraction.' },
-  { hub:'Cell', q:'Active transport against a gradient requires:', opts:['ATP or another energy source','only a transport protein','a concentration difference','a charged membrane'], correct:0, why:'Active = uphill = energy-dependent. ATP-driven (Na⁺/K⁺ pump) or coupled to a gradient (secondary active transport).' },
-  { hub:'Cell', q:'Glycolysis takes place in the:', opts:['mitochondrial matrix','intermembrane space','cytoplasm','nucleus'], correct:2, why:'Glycolysis is cytoplasmic and anaerobic. Krebs is matrix; ETC is inner membrane.' },
-  { hub:'Cell', q:'The genetic code is:', opts:['ambiguous (one codon → many AAs)','degenerate (many codons → one AA)','linear (each base = one AA)','species-specific'], correct:1, why:'Degenerate = redundant. 64 codons → 20 amino acids + stop. Most amino acids have multiple codons.' },
-  { hub:'Cell', q:'Cell-membrane fluidity is increased by:', opts:['more cholesterol at high temps','more saturated fatty acid tails','more unsaturated tails (kinks)','thicker glycoprotein layers'], correct:2, why:'Unsaturated tails kink and pack loosely → more fluidity. Cholesterol buffers against extreme temps in either direction.' },
-  { hub:'Cell', q:'A signal transduction pathway using G-protein coupled receptors typically activates:', opts:['adenylyl cyclase → cAMP','transcription factor binding','direct DNA modification','endocytosis'], correct:0, why:'GPCR → G protein → adenylyl cyclase → cAMP → PKA cascade.' },
-  { hub:'Cell', q:'Cyanide blocks complex IV of the ETC. The immediate consequence is:', opts:['NAD+ accumulates','protons can\'t be pumped','glycolysis stops','glucose can\'t enter cells'], correct:1, why:'Complex IV reduces O₂ to H₂O and pumps protons. Block it and the proton gradient collapses; ATP synthesis halts.' },
+  { hub:'Cell', node:'lip', q:'Phospholipid bilayers self-assemble in water primarily because:', opts:['hydrophobic tails are repelled by water','phosphate heads bond covalently','tails attract each other electrostatically','head groups are nonpolar'], correct:0, why:'Driven by the <b>hydrophobic effect</b>: water molecules form an ordered cage around each nonpolar tail. Burying the tails together releases that ordered water back to bulk solvent — a gain in <em>entropy</em>. So bilayer assembly is entropy-driven, not enthalpy-driven (the tails are not actually attracted to each other — they are excluded from water). Same principle that drives protein folding and detergent micelle formation. Shape matters too: cylindrical phospholipids stack into bilayers; cone-shaped lipids (one tail, like detergents) form micelles instead.' },
+  { hub:'Cell', node:'org', q:'Which structure does NOT have a double membrane?', opts:['mitochondrion','chloroplast','nucleus','peroxisome'], correct:3, why:'Peroxisomes have a single membrane. The other three have two.' },
+  { hub:'Cell', node:'krb', q:'A drug that blocks oxidative phosphorylation but NOT glycolysis would result in:', opts:['no ATP at all','only the 2 ATP from glycolysis','more ATP than normal','ATP from photosynthesis only'], correct:1, why:'Glycolysis is anaerobic and yields 2 net ATP. Oxidative phosphorylation in the ETC produces the bulk (~30+).' },
+  { hub:'Cell', node:'mit', q:'During mitosis, sister chromatids separate at:', opts:['prophase','metaphase','anaphase','telophase'], correct:2, why:'Anaphase = sister chromatids pulled apart. Mnemonic: A for apart.' },
+  { hub:'Cell', node:'grg', q:'In the lac operon, the inducer is:', opts:['lactose','allolactose','glucose','cAMP'], correct:1, why:'Allolactose binds the repressor and inactivates it. Lactose itself is the substrate, not the inducer.' },
+  { hub:'Cell', node:'pro', q:'A peptide bond forms between:', opts:['the carboxyl of one amino acid and the amine of the next','two side chains','the alpha carbons','two cysteine sulfurs'], correct:0, why:'-COOH + H2N- condense, releasing water.' },
+  { hub:'Cell', node:'trc', q:'Which of these enzymes synthesizes RNA?', opts:['DNA polymerase','RNA polymerase','ribosome','reverse transcriptase'], correct:1, why:'RNA polymerase transcribes DNA to RNA. Reverse transcriptase goes RNA to DNA (retroviruses).' },
+  { hub:'Cell', node:'org', q:'The smooth ER\'s primary function in muscle cells is:', opts:['protein synthesis','lipid synthesis','calcium storage and release','glycogen breakdown'], correct:2, why:'In muscle, smooth ER is called the sarcoplasmic reticulum and stores Ca2+ for contraction.' },
+  { hub:'Cell', node:'mtr', q:'Active transport against a gradient requires:', opts:['ATP or another energy source','only a transport protein','a concentration difference','a charged membrane'], correct:0, why:'Active = uphill = energy-dependent. ATP-driven (Na+/K+ pump) or coupled to a gradient (secondary active transport).' },
+  { hub:'Cell', node:'gly', q:'Glycolysis takes place in the:', opts:['mitochondrial matrix','intermembrane space','cytoplasm','nucleus'], correct:2, why:'Glycolysis is cytoplasmic and anaerobic. Krebs is matrix; ETC is inner membrane.' },
+  { hub:'Cell', node:'tln', q:'The genetic code is:', opts:['ambiguous (one codon to many AAs)','degenerate (many codons to one AA)','linear (each base = one AA)','species-specific'], correct:1, why:'Degenerate = redundant. 64 codons, 20 amino acids + stop. Most amino acids have multiple codons.' },
+  { hub:'Cell', node:'lip', q:'Cell-membrane fluidity is increased by:', opts:['more cholesterol at high temps','more saturated fatty acid tails','more unsaturated tails (kinks)','thicker glycoprotein layers'], correct:2, why:'Unsaturated tails kink and pack loosely; cholesterol buffers against extreme temps in either direction.' },
+  { hub:'Cell', node:'sig', q:'A signal transduction pathway using G-protein coupled receptors typically activates:', opts:['adenylyl cyclase to cAMP','transcription factor binding','direct DNA modification','endocytosis'], correct:0, why:'GPCR -> G protein -> adenylyl cyclase -> cAMP -> PKA cascade.' },
+  { hub:'Cell', node:'krb', q:'Cyanide blocks complex IV of the ETC. The immediate consequence is:', opts:['NAD+ accumulates','protons cannot be pumped','glycolysis stops','glucose cannot enter cells'], correct:1, why:'Complex IV reduces O2 to H2O and pumps protons. Block it and the proton gradient collapses; ATP synthesis halts.' },
 
-  // Genetics
-  { hub:'Genetics', q:'A test cross is performed when you want to determine:', opts:['the dominant allele','whether an individual showing the dominant phenotype is homozygous or heterozygous','allele frequency','recombination rates only'], correct:1, why:'Cross with homozygous recessive. If any recessive offspring appear, parent must be heterozygous.' },
-  { hub:'Genetics', q:'Two unlinked genes assort independently because:', opts:['they are on the same chromosome','they are on different chromosomes','crossing over equalizes them','they share a promoter'], correct:1, why:'Independent assortment requires the genes be on different chromosomes (or far apart on the same one).' },
-  { hub:'Genetics', q:'A mutation that changes one base but doesn\'t change the amino acid is:', opts:['nonsense','missense','silent','frameshift'], correct:2, why:'Silent = synonymous. Possible because the genetic code is degenerate.' },
-  { hub:'Genetics', q:'Which of the following is most likely to be an autosomal recessive disorder?', opts:['skips generations and affects males more','affects half of children of affected parents','can skip generations and affects sexes equally','only seen in females'], correct:2, why:'Recessive = skips generations (carriers in between). Autosomal = sexes equally.' },
-  { hub:'Genetics', q:'In a dihybrid cross AaBb × AaBb (independent assortment), the phenotypic ratio is:', opts:['3:1','9:3:3:1','1:1:1:1','1:2:1'], correct:1, why:'Classic Mendelian dihybrid: 9 dom-dom : 3 dom-rec : 3 rec-dom : 1 rec-rec.' },
-  { hub:'Genetics', q:'A bacterium picks up DNA from its environment. This is:', opts:['transduction','conjugation','transformation','translation'], correct:2, why:'Transformation = uptake of free DNA. Transduction = via virus. Conjugation = via pilus.' },
-  { hub:'Genetics', q:'Which type of selection would NARROW phenotypic variation in a population?', opts:['directional','disruptive','stabilizing','sexual'], correct:2, why:'Stabilizing selection favors the average, narrowing variance. Directional shifts the mean; disruptive splits it.' },
+  { hub:'Genetics', node:'men', q:'A test cross is performed when you want to determine:', opts:['the dominant allele','whether an individual showing the dominant phenotype is homozygous or heterozygous','allele frequency','recombination rates only'], correct:1, why:'Cross with homozygous recessive. If any recessive offspring appear, parent must be heterozygous.' },
+  { hub:'Genetics', node:'lco', q:'Two unlinked genes assort independently because:', opts:['they are on the same chromosome','they are on different chromosomes','crossing over equalizes them','they share a promoter'], correct:1, why:'Independent assortment requires the genes be on different chromosomes (or far apart on the same one).' },
+  { hub:'Genetics', node:'mut', q:'A mutation that changes one base but does not change the amino acid is:', opts:['nonsense','missense','silent','frameshift'], correct:2, why:'Silent = synonymous. Possible because the genetic code is degenerate.' },
+  { hub:'Genetics', node:'ped', q:'Which of the following is most likely to be an autosomal recessive disorder?', opts:['skips generations and affects males more','affects half of children of affected parents','can skip generations and affects sexes equally','only seen in females'], correct:2, why:'Recessive = skips generations (carriers in between). Autosomal = sexes equally.' },
+  { hub:'Genetics', node:'prb', q:'In a dihybrid cross AaBb x AaBb (independent assortment), the phenotypic ratio is:', opts:['3:1','9:3:3:1','1:1:1:1','1:2:1'], correct:1, why:'Classic Mendelian dihybrid: 9 dom-dom : 3 dom-rec : 3 rec-dom : 1 rec-rec.' },
+  { hub:'Genetics', node:'mut', q:'A bacterium picks up DNA from its environment. This is:', opts:['transduction','conjugation','transformation','translation'], correct:2, why:'Transformation = uptake of free DNA. Transduction = via virus. Conjugation = via pilus.' },
+  { hub:'Genetics', node:'hwb', q:'Which type of selection would NARROW phenotypic variation in a population?', opts:['directional','disruptive','stabilizing','sexual'], correct:2, why:'Stabilizing selection favors the average, narrowing variance. Directional shifts the mean; disruptive splits it.' },
 
-  // Physiology
-  { hub:'Physiology', q:'Insulin and glucagon are both:', opts:['steroid hormones','peptide hormones','catecholamines','from the adrenal gland'], correct:1, why:'Both peptide hormones, both from the pancreas (β-cells = insulin, α-cells = glucagon).' },
-  { hub:'Physiology', q:'During inhalation, the diaphragm:', opts:['relaxes and rises','contracts and flattens','remains stationary','contracts and rises'], correct:1, why:'Diaphragm contracts and flattens, increasing thoracic volume → pressure drops → air flows in.' },
-  { hub:'Physiology', q:'The hormone that stimulates milk ejection (let-down) is:', opts:['prolactin','oxytocin','progesterone','estrogen'], correct:1, why:'Prolactin makes the milk; oxytocin ejects it (positive feedback loop with suckling).' },
-  { hub:'Physiology', q:'A myelinated motor neuron is more efficient than an unmyelinated one because:', opts:['it uses less ATP per impulse','action potentials are larger','saltatory conduction skips between nodes of Ranvier','myelin amplifies the signal'], correct:2, why:'Insulation forces the action potential to regenerate only at nodes — far faster than continuous conduction.' },
-  { hub:'Physiology', q:'Loop of Henle\'s descending limb is permeable to:', opts:['water only','solutes only','water and Na+','neither'], correct:0, why:'Descending limb = water permeable, solute impermeable. Ascending limb is the opposite.' },
-  { hub:'Physiology', q:'Antibodies are produced by:', opts:['T cells','B cells (plasma cells)','macrophages','dendritic cells'], correct:1, why:'B cells differentiate into plasma cells, which secrete antibodies (humoral immunity).' },
-  { hub:'Physiology', q:'In the cardiac cycle, the "lub" sound corresponds to:', opts:['ventricular relaxation','closure of AV valves','closure of semilunar valves','atrial contraction'], correct:1, why:'S1 (lub) = AV (mitral + tricuspid) valve closure at the start of systole. S2 (dub) = semilunar.' },
-  { hub:'Physiology', q:'The FSH and LH surge in females triggers:', opts:['menstruation','ovulation','implantation','fertilization'], correct:1, why:'LH surge specifically triggers ovulation. FSH stimulates follicle growth before that.' },
-  { hub:'Physiology', q:'Which of the following is responsible for muscle contraction by sliding actin past myosin?', opts:['Ca2+ binding troponin','ATP binding actin','myosin auto-activation','Cl- influx'], correct:0, why:'Ca²⁺ binds troponin → conformational change exposes binding sites on actin → myosin heads cycle.' },
-  { hub:'Physiology', q:'A patient with hypothyroidism has low circulating T3/T4. Negative feedback would cause:', opts:['low TSH','high TSH','high cortisol','low ACTH'], correct:1, why:'Low T3/T4 → no inhibition of pituitary → pituitary cranks out TSH trying to stimulate the thyroid.' },
+  { hub:'Physiology', node:'end', q:'Insulin and glucagon are both:', opts:['steroid hormones','peptide hormones','catecholamines','from the adrenal gland'], correct:1, why:'Both peptide hormones, both from the pancreas (beta-cells = insulin, alpha-cells = glucagon).' },
+  { hub:'Physiology', node:'rsp', q:'During inhalation, the diaphragm:', opts:['relaxes and rises','contracts and flattens','remains stationary','contracts and rises'], correct:1, why:'Diaphragm contracts and flattens, increasing thoracic volume; pressure drops; air flows in.' },
+  { hub:'Physiology', node:'end', q:'The hormone that stimulates milk ejection (let-down) is:', opts:['prolactin','oxytocin','progesterone','estrogen'], correct:1, why:'Prolactin makes the milk; oxytocin ejects it (positive feedback loop with suckling).' },
+  { hub:'Physiology', node:'ap', q:'A myelinated motor neuron is more efficient than an unmyelinated one because:', opts:['it uses less ATP per impulse','action potentials are larger','saltatory conduction skips between nodes of Ranvier','myelin amplifies the signal'], correct:2, why:'Insulation forces the action potential to regenerate only at nodes — far faster than continuous conduction.' },
+  { hub:'Physiology', node:'nph', q:'Loop of Henle\'s descending limb is permeable to:', opts:['water only','solutes only','water and Na+','neither'], correct:0, why:'Descending limb = water permeable, solute impermeable. Ascending limb is the opposite.' },
+  { hub:'Physiology', node:'imn', q:'Antibodies are produced by:', opts:['T cells','B cells (plasma cells)','macrophages','dendritic cells'], correct:1, why:'B cells differentiate into plasma cells, which secrete antibodies (humoral immunity).' },
+  { hub:'Physiology', node:'cdv', q:'In the cardiac cycle, the "lub" sound corresponds to:', opts:['ventricular relaxation','closure of AV valves','closure of semilunar valves','atrial contraction'], correct:1, why:'S1 (lub) = AV (mitral + tricuspid) valve closure at the start of systole. S2 (dub) = semilunar.' },
+  { hub:'Physiology', node:'rpd', q:'The FSH and LH surge in females triggers:', opts:['menstruation','ovulation','implantation','fertilization'], correct:1, why:'LH surge specifically triggers ovulation. FSH stimulates follicle growth before that.' },
+  { hub:'Physiology', node:'sf', q:'Which of the following is responsible for muscle contraction by sliding actin past myosin?', opts:['Ca2+ binding troponin','ATP binding actin','myosin auto-activation','Cl- influx'], correct:0, why:'Ca2+ binds troponin -> conformational change exposes binding sites on actin -> myosin heads cycle.' },
+  { hub:'Physiology', node:'end', q:'A patient with hypothyroidism has low circulating T3/T4. Negative feedback would cause:', opts:['low TSH','high TSH','high cortisol','low ACTH'], correct:1, why:'Low T3/T4 -> no inhibition of pituitary -> pituitary cranks out TSH trying to stimulate the thyroid.' },
 
-  // Diversity
-  { hub:'Diversity', q:'A bacterium has cells walls of peptidoglycan. An archaean has:', opts:['peptidoglycan walls too','pseudopeptidoglycan or other unique walls','no walls','cellulose walls'], correct:1, why:'Archaea lack peptidoglycan. Many have pseudopeptidoglycan or S-layer walls of unique chemistry.' },
-  { hub:'Diversity', q:'Animals belong to which of the following clades?', opts:['Bacteria','Archaea','Eukarya','Both Bacteria and Eukarya'], correct:2, why:'All animals are eukaryotes — Domain Eukarya, Kingdom Animalia.' },
-  { hub:'Diversity', q:'Which is NOT a characteristic of fungi?', opts:['heterotrophic','cell walls of chitin','reproduce via spores','perform photosynthesis'], correct:3, why:'Fungi are heterotrophic (decomposers/parasites). They never photosynthesize.' },
-  { hub:'Diversity', q:'Sponges (Phylum Porifera) lack:', opts:['true tissues','any cells','reproduction','differentiation'], correct:0, why:'Sponges have specialized cells (choanocytes, etc.) but no true tissues. They are the simplest animals.' },
+  { hub:'Diversity', node:'dom', q:'A bacterium has cells walls of peptidoglycan. An archaean has:', opts:['peptidoglycan walls too','pseudopeptidoglycan or other unique walls','no walls','cellulose walls'], correct:1, why:'Archaea lack peptidoglycan. Many have pseudopeptidoglycan or S-layer walls of unique chemistry.' },
+  { hub:'Diversity', node:'anm', q:'Animals belong to which of the following clades?', opts:['Bacteria','Archaea','Eukarya','Both Bacteria and Eukarya'], correct:2, why:'All animals are eukaryotes — Domain Eukarya, Kingdom Animalia.' },
+  { hub:'Diversity', node:'dom', q:'Which is NOT a characteristic of fungi?', opts:['heterotrophic','cell walls of chitin','reproduce via spores','perform photosynthesis'], correct:3, why:'Fungi are heterotrophic (decomposers/parasites). They never photosynthesize.' },
+  { hub:'Diversity', node:'anm', q:'Sponges (Phylum Porifera) lack:', opts:['true tissues','any cells','reproduction','differentiation'], correct:0, why:'Sponges have specialized cells (choanocytes, etc.) but no true tissues. They are the simplest animals.' },
 
-  // Developmental
-  { hub:'Devo', q:'The blastopore in protostomes becomes the:', opts:['anus','mouth','gut','brain'], correct:1, why:'Protostome = "first mouth". Deuterostomes (chordates, echinoderms) have the blastopore become the anus.' },
-  { hub:'Devo', q:'Neurulation produces the neural tube from:', opts:['endoderm','mesoderm','ectoderm','all three'], correct:2, why:'Neural tube comes from ectoderm (specifically the neural plate). It becomes the brain + spinal cord.' },
+  { hub:'Devo', node:'gas', q:'The blastopore in protostomes becomes the:', opts:['anus','mouth','gut','brain'], correct:1, why:'Protostome = "first mouth". Deuterostomes (chordates, echinoderms) have the blastopore become the anus.' },
+  { hub:'Devo', node:'gas', q:'Neurulation produces the neural tube from:', opts:['endoderm','mesoderm','ectoderm','all three'], correct:2, why:'Neural tube comes from ectoderm (specifically the neural plate). It becomes the brain + spinal cord.' },
 
-  // Evolution
-  { hub:'Evolution', q:'A geographic barrier splits a population into two non-interbreeding groups. This sets up:', opts:['sympatric speciation','allopatric speciation','polyploid speciation','convergent evolution'], correct:1, why:'Allopatric = "other place". Geographic isolation is the most common speciation mechanism.' },
-  { hub:'Evolution', q:'Bottleneck and founder effects are both forms of:', opts:['gene flow','natural selection','genetic drift','sexual selection'], correct:2, why:'Both involve sharp reductions in population size, exaggerating drift\'s random allele changes.' },
-  { hub:'Evolution', q:'Analogous structures (e.g., bird and insect wings) result from:', opts:['common ancestry','divergent evolution','convergent evolution','genetic drift'], correct:2, why:'Convergent: similar selection pressures shape unrelated lineages into similar forms. Homologous structures = common ancestry.' }
+  { hub:'Evolution', node:'spc', q:'A geographic barrier splits a population into two non-interbreeding groups. This sets up:', opts:['sympatric speciation','allopatric speciation','polyploid speciation','convergent evolution'], correct:1, why:'Allopatric = "other place". Geographic isolation is the most common speciation mechanism.' },
+  { hub:'Evolution', node:'nse', q:'Bottleneck and founder effects are both forms of:', opts:['gene flow','natural selection','genetic drift','sexual selection'], correct:2, why:'Both involve sharp reductions in population size, exaggerating drift\'s random allele changes.' },
+  { hub:'Evolution', node:'nse', q:'Analogous structures (e.g., bird and insect wings) result from:', opts:['common ancestry','divergent evolution','convergent evolution','genetic drift'], correct:2, why:'Convergent: similar selection pressures shape unrelated lineages into similar forms. Homologous structures = common ancestry.' }
 ];
 
 const STORE_KEY = 'acethedat_bio_mock_runs';
 const LAST_KEY  = 'acethedat_bio_mock_last';
-const STATE = { pool:null, i:0, answers:{}, flags:{}, started:null, durationSec:30*60, timerId:null, finished:false };
+// Local mock state — must not shadow the bio-shared STATE global, hence the rename.
+const MK_STATE = { pool:null, i:0, answers:{}, flags:{}, confidence:{}, started:null, finished:false };
 
 function saveRun(record){
   try {
@@ -168,41 +177,31 @@ function saveRun(record){
 function loadLast(){ try { return JSON.parse(localStorage.getItem(LAST_KEY) || 'null'); } catch(e){ return null; } }
 function loadRuns(){ try { return JSON.parse(localStorage.getItem(STORE_KEY) || '[]'); } catch(e){ return []; } }
 
-// 1-21 scaled-score predictor calibrated against DAT bio percent-correct.
-function predictScaled(pctCorrect){
-  const anchors = [[0,13],[0.30,15],[0.42,16],[0.52,17],[0.60,18],[0.68,19],[0.74,20],[0.80,21],[0.85,22],[0.90,23],[0.94,24],[0.97,25],[1,30]];
-  for (let i = 1; i < anchors.length; i++){
-    if (pctCorrect <= anchors[i][0]){
-      const [x0,y0] = anchors[i-1], [x1,y1] = anchors[i];
-      const t = (x1 - x0) > 0 ? (pctCorrect - x0)/(x1 - x0) : 0;
-      return Math.max(13, Math.min(30, Math.round(y0 + t*(y1 - y0))));
-    }
-  }
-  return 30;
-}
-
 function renderIntro(){
   const last = loadLast();
   const runs = loadRuns();
   document.getElementById('mkStage').innerHTML = `
     <div class="mk-intro">
-      <h2>Bio mock <em>exam</em>.</h2>
-      <p class="lede">40-question fixed bank — same 40 items each retake. 30 minutes, DAT timing. Sampled across the six hubs in DAT proportions. Score predictor maps to the 1-30 DAT bio scaled score using anchor calibration.</p>
+      <h2>Bio weakness <em>scan</em>.</h2>
+      <p class="lede">A 40-question fixed bank across the six Ace study hubs. The point isn't a score &mdash; it's a list of weak nodes to repair. Misses and fragile (guessed-but-right) corrects feed your Ace Cards automatically.</p>
+      <div class="mk-scope">
+        <b>Important framing:</b> the real DAT does not time Biology separately. Biology appears inside the 90-minute Survey of Natural Sciences section. This scan is untimed by default and gives a <em>practice signal</em>, not a DAT score prediction.
+      </div>
       <div class="mk-config">
         <div class="mk-cfg">
           <h3>Format</h3>
           <label><span>Questions</span><b>40</b></label>
-          <label><span>Time</span><b>30 min</b></label>
-          <label><span>Format</span><b>DAT exact</b></label>
+          <label><span>Mode</span><b>Untimed</b></label>
           <label><span>Skipping</span><b>allowed (revisit)</b></label>
+          <label><span>Confidence tracking</span><b>per question</b></label>
         </div>
         <div class="mk-cfg">
           <h3>History</h3>
-          <label><span>Mocks taken</span><b>${runs.length}</b></label>
-          ${last ? `<label><span>Last raw</span><b>${last.score}/${last.total}</b></label><label><span>Last predicted</span><b>${last.predicted}</b></label><label><span>Last attempt</span><b>${new Date(last.ts).toLocaleDateString()}</b></label>` : '<label><span>No attempts yet</span><b>—</b></label>'}
+          <label><span>Scans run</span><b>${runs.length}</b></label>
+          ${last ? `<label><span>Last raw</span><b>${last.score}/${last.total}</b></label><label><span>Last covered-section signal</span><b>${Math.round(100*last.score/last.total)}%</b></label><label><span>Last attempt</span><b>${new Date(last.ts).toLocaleDateString()}</b></label>` : '<label><span>No attempts yet</span><b>&mdash;</b></label>'}
         </div>
       </div>
-      <button class="btn primary lg" id="mkStart">Start mock</button>
+      <button class="btn primary lg" id="mkStart">Start scan</button>
       ${last ? `<button class="btn ghost lg" id="mkReviewLast" style="margin-left:8px">Review last results</button>` : ''}
     </div>
   `;
@@ -211,125 +210,187 @@ function renderIntro(){
 }
 
 function start(){
-  // Sample 40 from BANK, preserving hub proportions roughly. BANK has the right
-  // distribution already — shuffle and take the whole thing if we have 40.
   const pool = BANK.slice();
-  // Fisher-Yates shuffle
   for (let i = pool.length - 1; i > 0; i--){
     const j = Math.floor(Math.random() * (i + 1));
     [pool[i], pool[j]] = [pool[j], pool[i]];
   }
-  STATE.pool = pool.slice(0, Math.min(40, pool.length));
-  STATE.i = 0; STATE.answers = {}; STATE.flags = {}; STATE.started = Date.now(); STATE.finished = false;
-  STATE.durationSec = 30*60;
+  MK_STATE.pool = pool.slice(0, Math.min(40, pool.length));
+  MK_STATE.i = 0; MK_STATE.answers = {}; MK_STATE.flags = {}; MK_STATE.confidence = {};
+  MK_STATE.started = Date.now(); MK_STATE.finished = false;
   renderRun();
-  startTimer();
-}
-
-function startTimer(){
-  if (STATE.timerId) clearInterval(STATE.timerId);
-  STATE.timerId = setInterval(() => {
-    if (STATE.finished){ clearInterval(STATE.timerId); return; }
-    const elapsed = Math.floor((Date.now() - STATE.started)/1000);
-    const rem = Math.max(0, STATE.durationSec - elapsed);
-    const t = document.getElementById('mkTimer');
-    if (t){
-      const m = Math.floor(rem/60), s = rem%60;
-      t.textContent = m + ':' + String(s).padStart(2,'0');
-      t.className = 'timer' + (rem < 60 ? ' danger' : rem < 300 ? ' warn' : '');
-    }
-    if (rem === 0){ finishMock(); }
-  }, 1000);
 }
 
 function renderRun(){
-  if (STATE.i >= STATE.pool.length){ finishMock(); return; }
-  const Q = STATE.pool[STATE.i];
-  const total = STATE.pool.length;
-  const sel = STATE.answers[STATE.i];
+  if (MK_STATE.i >= MK_STATE.pool.length){ finishMock(); return; }
+  const Q = MK_STATE.pool[MK_STATE.i];
+  const total = MK_STATE.pool.length;
+  const sel = MK_STATE.answers[MK_STATE.i];
+  const conf = MK_STATE.confidence[MK_STATE.i] || '';
+  const elapsed = Math.floor((Date.now() - MK_STATE.started)/1000);
+  const m = Math.floor(elapsed/60), s = elapsed%60;
   document.getElementById('mkStage').innerHTML = `
     <div class="mk-runtop">
-      <span>Q ${STATE.i+1} / ${total}</span>
-      <span class="timer" id="mkTimer">30:00</span>
+      <span>Q ${MK_STATE.i+1} / ${total}</span>
+      <span class="timer">${m}:${String(s).padStart(2,'0')}</span>
       <span>Bio &middot; ${Q.hub}</span>
     </div>
     <div class="mk-runbody">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
         <div class="mk-tag">${Q.hub}</div>
-        <button class="mk-flag ${STATE.flags[STATE.i] ? 'on' : ''}" id="mkFlag">${STATE.flags[STATE.i] ? 'Flagged' : 'Flag for review'}</button>
+        <button class="mk-flag ${MK_STATE.flags[MK_STATE.i] ? 'on' : ''}" id="mkFlag">${MK_STATE.flags[MK_STATE.i] ? 'Flagged' : 'Flag for review'}</button>
       </div>
       <div class="mk-q">${Q.q}</div>
       <div class="mk-opts">
         ${Q.opts.map((o,i) => `<div class="mk-opt ${sel===i?'selected':''}" data-i="${i}"><span class="let">${'ABCD'[i]}</span><span>${o}</span></div>`).join('')}
       </div>
+      <div class="mk-confidence">
+        <span class="lbl">Confidence</span>
+        <button data-conf="cold" class="${conf==='cold'?'on':''}">Knew cold</button>
+        <button data-conf="narrowed" class="${conf==='narrowed'?'on':''}">Narrowed</button>
+        <button data-conf="guessed" class="${conf==='guessed'?'on':''}">Guessed</button>
+        <button data-conf="blank" class="${conf==='blank'?'on':''}">Blank</button>
+      </div>
       <div class="mk-foot">
-        <button class="btn ghost" id="mkPrev" ${STATE.i === 0 ? 'disabled' : ''}>&larr; Back</button>
-        <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-mute)">${Object.keys(STATE.answers).length} / ${total} answered</span>
-        <button class="btn primary" id="mkNext">${STATE.i === total-1 ? 'Finish &rarr;' : 'Next &rarr;'}</button>
+        <button class="btn ghost" id="mkPrev" ${MK_STATE.i === 0 ? 'disabled' : ''}>&larr; Back</button>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-mute)">${Object.keys(MK_STATE.answers).length} / ${total} answered</span>
+        <button class="btn primary" id="mkNext">${MK_STATE.i === total-1 ? 'Finish &rarr;' : 'Next &rarr;'}</button>
       </div>
       <div class="mk-jumpbar" id="mkJump">
-        ${STATE.pool.map((_,i) => {
+        ${MK_STATE.pool.map((_,i) => {
           const cls = ['mk-jumpbar-btn'];
-          if (i === STATE.i) cls.push('cur');
-          else if (STATE.answers[i] !== undefined) cls.push('answered');
-          if (STATE.flags[i]) cls.push('flagged');
+          if (i === MK_STATE.i) cls.push('cur');
+          else if (MK_STATE.answers[i] !== undefined) cls.push('answered');
+          if (MK_STATE.flags[i]) cls.push('flagged');
           return `<button data-jump="${i}" class="${cls.join(' ')}">${i+1}</button>`;
         }).join('')}
       </div>
       <div style="margin-top:14px;text-align:right">
-        <button class="btn ghost sm" id="mkBail">Exit mock</button>
+        <button class="btn ghost sm" id="mkBail">Exit scan</button>
       </div>
     </div>
   `;
-  // Restart timer rendering
-  startTimer();
   document.querySelectorAll('.mk-opt').forEach(opt => {
     opt.addEventListener('click', () => {
-      STATE.answers[STATE.i] = parseInt(opt.dataset.i);
+      MK_STATE.answers[MK_STATE.i] = parseInt(opt.dataset.i);
       document.querySelectorAll('.mk-opt').forEach(o => o.classList.remove('selected'));
       opt.classList.add('selected');
     });
   });
-  document.getElementById('mkPrev').addEventListener('click', () => { if (STATE.i > 0){ STATE.i--; renderRun(); } });
+  document.querySelectorAll('[data-conf]').forEach(b => {
+    b.addEventListener('click', () => {
+      MK_STATE.confidence[MK_STATE.i] = b.dataset.conf;
+      renderRun();
+    });
+  });
+  document.getElementById('mkPrev').addEventListener('click', () => { if (MK_STATE.i > 0){ MK_STATE.i--; renderRun(); } });
   document.getElementById('mkNext').addEventListener('click', () => {
-    if (STATE.i === STATE.pool.length-1){ finishMock(); }
-    else { STATE.i++; renderRun(); }
+    if (MK_STATE.i === MK_STATE.pool.length-1){ finishMock(); }
+    else { MK_STATE.i++; renderRun(); }
   });
   document.getElementById('mkFlag').addEventListener('click', () => {
-    STATE.flags[STATE.i] = !STATE.flags[STATE.i];
+    MK_STATE.flags[MK_STATE.i] = !MK_STATE.flags[MK_STATE.i];
     renderRun();
   });
   document.getElementById('mkBail').addEventListener('click', () => {
-    if (confirm('Exit mock without saving? Your answers will be lost.')){
-      if (STATE.timerId) clearInterval(STATE.timerId);
-      STATE.finished = true;
+    if (confirm('Exit scan without saving? Your answers will be lost.')){
+      MK_STATE.finished = true;
       renderIntro();
     }
   });
   document.querySelectorAll('[data-jump]').forEach(b => b.addEventListener('click', () => {
-    STATE.i = parseInt(b.dataset.jump); renderRun();
+    MK_STATE.i = parseInt(b.dataset.jump); renderRun();
   }));
 }
 
 function finishMock(){
-  if (STATE.finished) return;
-  STATE.finished = true;
-  if (STATE.timerId) clearInterval(STATE.timerId);
-  const total = STATE.pool.length;
+  if (MK_STATE.finished) return;
+  MK_STATE.finished = true;
+  const total = MK_STATE.pool.length;
   let score = 0;
   const byHub = {};
   const wrong = [];
-  STATE.pool.forEach((q, i) => {
+  const fragile = [];
+  MK_STATE.pool.forEach((q, i) => {
     if (!byHub[q.hub]) byHub[q.hub] = { correct:0, total:0 };
     byHub[q.hub].total++;
-    if (STATE.answers[i] === q.correct){ byHub[q.hub].correct++; score++; }
-    else { wrong.push({ ...q, picked: STATE.answers[i] }); }
+    const picked = MK_STATE.answers[i];
+    const conf = MK_STATE.confidence[i] || '';
+    const isCorrect = picked === q.correct;
+    if (isCorrect){
+      byHub[q.hub].correct++; score++;
+      if (conf === 'guessed' || conf === 'blank'){
+        fragile.push({ ...q, picked, confidence: conf });
+      }
+    } else {
+      wrong.push({ ...q, picked, confidence: conf, flagged: !!MK_STATE.flags[i] });
+    }
   });
-  const pct = total > 0 ? score/total : 0;
-  const predicted = predictScaled(pct);
-  const record = { score, total, predicted, pctRaw: Math.round(pct*100), byHub, ts: Date.now(), durationSec: Math.round((Date.now()-STATE.started)/1000), wrong };
+  const flagged = MK_STATE.pool
+    .map((q,i) => ({ ...q, idx:i, picked: MK_STATE.answers[i], confidence: MK_STATE.confidence[i] || '' }))
+    .filter((_,i) => MK_STATE.flags[i]);
+  const record = {
+    score, total, byHub, ts: Date.now(),
+    durationSec: Math.round((Date.now()-MK_STATE.started)/1000),
+    wrong, fragile, flagged
+  };
   saveRun(record);
+  pushBioMisses(record);
   renderResults(record);
+}
+
+function hubKey(hubName){
+  const R = window.BIO_REGISTRY;
+  if (!R) return 'cell';
+  const direct = R.HUBS.find(h => h.title.toLowerCase() === hubName.toLowerCase());
+  if (direct) return direct.subjectKey;
+  const partial = R.HUBS.find(h => hubName.toLowerCase().indexOf(h.subjectKey) >= 0);
+  return partial ? partial.subjectKey : 'cell';
+}
+
+function pushBioMisses(record){
+  if (typeof addBioMissCard !== 'function') return;
+  const R = window.BIO_REGISTRY;
+  (record.wrong || []).forEach(w => {
+    const subject = hubKey(w.hub);
+    const node = R && w.node ? R.resolve(w.node, subject) : null;
+    addBioMissCard({
+      prompt: w.q,
+      answer: w.opts[w.correct],
+      summary: w.why,
+      detail: 'You picked: ' + (w.picked != null ? w.opts[w.picked] : 'no answer') + '. Repair the underlying concept in the linked node, then retest in your primary resource.',
+      subject: subject,
+      nodeId: node ? node.id : (w.node || ''),
+      nodeTitle: node ? node.title : '',
+      route: node && R ? R.repairLink(node) : '',
+      confidence: w.confidence || '',
+      originLabel: 'Weakness scan miss'
+    });
+  });
+  (record.fragile || []).forEach(w => {
+    const subject = hubKey(w.hub);
+    const node = R && w.node ? R.resolve(w.node, subject) : null;
+    addBioMissCard({
+      prompt: w.q,
+      answer: w.opts[w.correct],
+      summary: 'You answered correctly while ' + (w.confidence === 'blank' ? 'drawing a blank' : 'guessing') + ' — fragile correct, treat as a miss.',
+      detail: w.why,
+      subject: subject,
+      nodeId: node ? node.id : (w.node || ''),
+      nodeTitle: node ? node.title : '',
+      route: node && R ? R.repairLink(node) : '',
+      confidence: w.confidence || '',
+      originLabel: 'Weakness scan fragile correct'
+    });
+  });
+}
+
+function repairLinkFor(item){
+  const R = window.BIO_REGISTRY;
+  if (!R || !item.node) return null;
+  const subject = hubKey(item.hub);
+  const node = R.resolve(item.node, subject);
+  return node ? { url: R.repairLink(node), label: node.title } : null;
 }
 
 function renderResults(record){
@@ -339,13 +400,33 @@ function renderResults(record){
     return `<tr><td>${hub}</td><td>${r.correct}/${r.total}</td><td class="${cls}">${p}%</td></tr>`;
   }).join('');
   const wrong = record.wrong || [];
+  const fragile = record.fragile || [];
+  const flagged = record.flagged || [];
+  const pct = Math.round(100 * record.score / record.total);
+
+  function renderItem(w, kind){
+    const yourLetter = w.picked !== undefined && w.picked !== null ? 'ABCD'[w.picked] : '—';
+    const link = repairLinkFor(w);
+    const cls = kind === 'fragile' ? 'mk-review-item fragile' : kind === 'flagged' ? 'mk-review-item flagged' : 'mk-review-item';
+    const conf = w.confidence ? ' &middot; <em>'+w.confidence+'</em>' : '';
+    const status = kind === 'fragile' ? 'Fragile correct' : kind === 'flagged' ? 'Flagged' : 'Missed';
+    return `<div class="${cls}">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--gold-d);font-weight:700;text-transform:uppercase;margin-bottom:6px">${w.hub} &middot; ${status}${conf}</div>
+      <b>${w.q}</b>
+      <div class="why">You picked <em>${yourLetter}</em>. Correct: <b>${'ABCD'[w.correct]}.</b> ${w.opts[w.correct]} &middot; ${w.why}</div>
+      ${link ? `<a class="repair-link" href="${link.url}">Repair: ${link.label} &rarr;</a>` : ''}
+    </div>`;
+  }
+
   document.getElementById('mkStage').innerHTML = `
     <div class="mk-result">
-      <h2>Mock <em>complete</em>.</h2>
+      <h2>Scan <em>complete</em>.</h2>
+      <div class="mk-scopelite" style="margin:0 0 16px;font-size:13px;color:var(--ink-2)">
+        Practice signal from the covered questions only. Not a DAT score prediction.
+      </div>
       <div class="mk-scores">
         <div class="mk-scorecard"><div class="lbl">Raw</div><div class="num"><em>${record.score}</em>/${record.total}</div></div>
-        <div class="mk-scorecard"><div class="lbl">Accuracy</div><div class="num">${record.pctRaw}%</div></div>
-        <div class="mk-scorecard gold"><div class="lbl">Predicted Bio</div><div class="num">${record.predicted}</div></div>
+        <div class="mk-scorecard gold"><div class="lbl">Covered-section signal</div><div class="num">${pct}%</div></div>
         <div class="mk-scorecard"><div class="lbl">Time</div><div class="num">${Math.floor(record.durationSec/60)}m</div></div>
       </div>
       <h3 style="font-family:'Playfair Display',serif;font-size:20px;margin:18px 0 6px;font-weight:700">Per-hub <em>breakdown</em></h3>
@@ -353,30 +434,38 @@ function renderResults(record){
         <thead><tr><th>Hub</th><th>Hit</th><th>%</th></tr></thead>
         <tbody>${hubRows}</tbody>
       </table>
-      ${wrong.length > 0 ? `
-        <h3 style="font-family:'Playfair Display',serif;font-size:20px;margin:24px 0 12px;font-weight:700">Needs-review <em>walkthrough</em> (${wrong.length})</h3>
-        ${wrong.map(w => {
-          const yourLetter = w.picked !== undefined ? 'ABCD'[w.picked] : '—';
-          return `<div class="mk-review-item">
-            <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;color:var(--gold-d);font-weight:700;text-transform:uppercase;margin-bottom:6px">${w.hub}</div>
-            <b>${w.q}</b>
-            <div class="why">You picked <em>${yourLetter}</em>. Correct: <b>${'ABCD'[w.correct]}.</b> ${w.opts[w.correct]} &middot; ${w.why}</div>
-          </div>`;
-        }).join('')}
-      ` : '<p style="margin-top:20px;font-size:14px;color:var(--good-d);font-weight:600">Clean run. Take another to test consistency.</p>'}
+
+      <div class="mk-review-tabs" id="mkReviewTabs">
+        <button class="on" data-tab="missed">Missed (${wrong.length})</button>
+        <button data-tab="fragile">Fragile correct (${fragile.length})</button>
+        <button data-tab="flagged">Flagged (${flagged.length})</button>
+      </div>
+      <div id="mkReviewBody">${wrong.length === 0 ? '<p style="font-size:14px;color:var(--good-d);font-weight:600">Clean run on misses.</p>' : wrong.map(w => renderItem(w,'missed')).join('')}</div>
+
       <div style="display:flex;gap:10px;margin-top:22px;flex-wrap:wrap">
         <button class="btn primary lg" id="mkRetake">Retake</button>
         <a class="btn lg" href="bio-analytics.html">Analytics</a>
-        <a class="btn ghost lg" href="bio-calendar.html">Back to plan</a>
+        <a class="btn ghost lg" href="index.html">Back to repair lab</a>
       </div>
     </div>
   `;
   document.getElementById('mkRetake').addEventListener('click', start);
+  document.querySelectorAll('#mkReviewTabs button').forEach(b => {
+    b.addEventListener('click', () => {
+      document.querySelectorAll('#mkReviewTabs button').forEach(x => x.classList.remove('on'));
+      b.classList.add('on');
+      const t = b.dataset.tab;
+      const body = document.getElementById('mkReviewBody');
+      const list = t === 'missed' ? wrong : t === 'fragile' ? fragile : flagged;
+      const empty = t === 'missed' ? 'Clean run on misses.' : t === 'fragile' ? 'No guessed-and-right-anyway items.' : 'No flagged items.';
+      body.innerHTML = list.length === 0 ? `<p style="font-size:14px;color:var(--good-d);font-weight:600">${empty}</p>` : list.map(w => renderItem(w, t)).join('');
+    });
+  });
 }
 
 renderIntro();
 </script>
-<script src="bio-registry.js"></script>
-<script src="bio-shared.js"></script>
+<script src="/tools/bio/bio-registry.js"></script>
+<script src="/tools/bio/bio-shared.js"></script>
 </body>
 </html>

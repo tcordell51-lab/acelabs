@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="bio-shared.css">
+<link rel="stylesheet" href="/tools/bio/bio-shared.css">
 <style>
 .an-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:24px 0 22px}
 @media (max-width:980px){.an-grid{grid-template-columns:repeat(2,1fr)}}
@@ -56,11 +56,12 @@
 <aside class="sb">
   <div class="sb-brand">
     <div class="mark">Ace<em>The</em>DAT</div>
-    <div class="sub">Bio Mastery System &middot; v2</div>
+    <div class="sub">Bio Repair Lab</div>
   </div>
-  <a class="sb-link" href="index.html" style="margin-bottom:6px"><span class="dot"></span><span class="label">&larr; Mastery hub</span><span class="meta"></span></a>
-  <a class="sb-link live" href="bio-mock.html" style="margin-bottom:6px"><span class="dot" style="background:var(--gold)"></span><span class="label"><b>Mock Exam</b></span><span class="meta">40q</span></a>
-  <a class="sb-link live" href="bio-diagnostic.html" style="margin-bottom:6px"><span class="dot"></span><span class="label">Diagnostic</span><span class="meta">24q</span></a>
+  <a class="sb-link" href="index.html" style="margin-bottom:6px"><span class="dot"></span><span class="label">&larr; Repair Lab home</span><span class="meta"></span></a>
+  <a class="sb-link live" href="bio-mock.html" style="margin-bottom:6px"><span class="dot" style="background:var(--gold)"></span><span class="label"><b>Weakness scan</b></span><span class="meta">40q</span></a>
+  <a class="sb-link live" href="bio-repair-sheet.html" style="margin-bottom:6px"><span class="dot"></span><span class="label">Repair sheet</span><span class="meta">cram</span></a>
+  <a class="sb-link live" href="bio-diagnostic.html" style="margin-bottom:6px"><span class="dot"></span><span class="label">Pulse check</span><span class="meta">24q</span></a>
   <a class="sb-link live" href="bio-calendar.html" style="margin-bottom:8px"><span class="dot"></span><span class="label">60-day plan</span><span class="meta">study</span></a>
   <a class="sb-link live active" href="bio-analytics.html" style="margin-bottom:8px"><span class="dot"></span><span class="label">Analytics</span><span class="meta">trends</span></a>
   <a class="sb-link live" href="bio-bonus.html" style="margin-bottom:6px"><span class="dot"></span><span class="label">Bonus topics</span><span class="meta">supp</span></a>
@@ -130,19 +131,41 @@
 </div>
 
 <script>
-// Hub → node count map (mirrors NODES in bio-shared.js so this page stays useful
-// without loading the full ~1MB engine bundle just for analytics).
-// HUB_NODES reflects the actual node IDs tracked in bio-shared.js STATE.
-// Hubs with no retrieval nodes yet list an empty array — analytics will show
-// "no nodes yet" for those hubs rather than fabricating numbers.
-const HUB_NODES = {
-  'Cell Lab':     ['rep','trc','tln','mit','gly','wat','car','lip','pro','nuc','enz','pve','org','mtr','sig','krb','pho'],
-  'Genetics':     ['men','mei','ped','hwb','mut','lco'],
-  'Physiology':   ['ap','syn','cdv','nph','imn','rpd'],
-  'Diversity':    ['dom','bgt'],
-  'Developmental':['fer','dif'],
-  'Evolution':    ['nse','spc','beh']
-};
+// Hub -> node-id map. Sourced from BIO_REGISTRY when available so analytics
+// stays in sync with the canonical registry; falls back to the hardcoded
+// list below if the registry script ever fails to load.
+function buildHubNodes(){
+  if (window.BIO_REGISTRY){
+    var out = {};
+    window.BIO_REGISTRY.HUBS.forEach(function(h){
+      out[h.title] = window.BIO_REGISTRY.nodesForHub(h.id).map(function(n){ return n.id; });
+    });
+    return out;
+  }
+  return {
+    'Cell & Molecular':     ['rep','trc','tln','mit','gly','wat','car','lip','pro','nuc','enz','pve','org','mtr','sig','krb','pho','rnp','cyt'],
+    'Genetics':             ['men','mei','ped','hwb','mut','lco','prb','nmn','grg'],
+    'Structure & Function': ['ap','syn','rfx','brn','snz','cdv','nph','rsp','end','dig','rpd','imn','sf'],
+    'Diversity of Life':    ['dom','plt','anm','vrt','phy','bgt'],
+    'Developmental':        ['fer','gas','organogenesis','stm','dif'],
+    'Evolution & Ecology':  ['nse','spc','eco','com','beh']
+  };
+}
+const HUB_NODES = buildHubNodes();
+function nodeTitleFor(id){
+  if (window.BIO_REGISTRY){
+    var n = window.BIO_REGISTRY.resolve(id);
+    if (n) return n.title;
+  }
+  return id.toUpperCase();
+}
+function nodeRouteFor(id){
+  if (window.BIO_REGISTRY){
+    var n = window.BIO_REGISTRY.resolve(id);
+    if (n) return window.BIO_REGISTRY.repairLink(n);
+  }
+  return '#';
+}
 // Stage thresholds vary by node — these match bio-shared.js stageOrder lengths.
 // Hardcoding keeps analytics decoupled from the engine bundle's load order.
 // Stage lengths match stageOrder arrays in bio-shared.js exactly.
@@ -272,11 +295,13 @@ function render(){
   } else {
     weakList.innerHTML = weak.slice(0, 6).map((w, i) => {
       const pri = i < 2 ? '' : i < 4 ? 'med' : 'low';
+      const title = nodeTitleFor(w.id);
+      const route = nodeRouteFor(w.id);
       return `<li>
         <span class="pri ${pri}">${i+1}</span>
         <div class="body">
-          <div class="nm">${w.id.toUpperCase()}</div>
-          <div class="meta">stage ${w.stage} / ${w.len} &middot; ${Math.round(100*w.ratio)}% through</div>
+          <div class="nm">${title}</div>
+          <div class="meta">stage ${w.stage} / ${w.len} &middot; ${Math.round(100*w.ratio)}% through &middot; <a href="${route}" style="color:var(--gold-d);font-weight:700;text-decoration:none">repair node &rarr;</a></div>
         </div>
         <span class="arrow">&rsaquo;</span>
       </li>`;
@@ -305,7 +330,7 @@ function render(){
 render();
 window.addEventListener('focus', render);
 </script>
-<script src="bio-registry.js"></script>
-<script src="bio-shared.js"></script>
+<script src="/tools/bio/bio-registry.js"></script>
+<script src="/tools/bio/bio-shared.js"></script>
 </body>
 </html>

@@ -4469,9 +4469,28 @@ const FERT_DATA = {
 
 function initFertilization() {
   const side = document.getElementById("fertSide");
-  document.querySelectorAll('#fertSvg .step').forEach(el => {
+  const svg = document.getElementById("fertSvg");
+  if (svg && !svg.dataset.stage) svg.dataset.stage = "0";
+  const STAGE_FOR_STEP = { contact:1, acro:2, fast:3, cortical:4, fuse:5, meiosis2:6 };
+  const HEADLINE = {
+    1: "Stage 1 · Contact",
+    2: "Stage 2 · Acrosomal reaction",
+    3: "Stage 3 · Fast block (polyspermy)",
+    4: "Stage 4 · Cortical reaction (slow block)",
+    5: "Stage 5 · Fusion + activation",
+    6: "Stage 6 · Meiosis II completes"
+  };
+  const steps = document.querySelectorAll('#fertSvg .step');
+  steps.forEach(el => {
     el.addEventListener("click", () => {
-      const d = FERT_DATA[el.dataset.step];
+      const stepKey = el.dataset.step;
+      const stage = STAGE_FOR_STEP[stepKey] || 0;
+      if (svg) svg.dataset.stage = String(stage);
+      steps.forEach(s => s.classList.remove('active'));
+      el.classList.add('active');
+      const headline = document.getElementById('fertStageHeadline');
+      if (headline) headline.textContent = HEADLINE[stage] || 'Click any step above to play it.';
+      const d = FERT_DATA[stepKey];
       if (d && side) side.innerHTML = `<div class="energy-step-info"><div class="stage-lbl">Fertilization</div><h5>${d.name}</h5><p>${d.body}</p></div>`;
     });
   });

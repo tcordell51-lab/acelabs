@@ -7,14 +7,14 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="bio-shared.css">
+<link rel="stylesheet" href="/tools/bio/bio-shared.css">
 </head>
 <body data-page="devo">
 <div class="app">
 <aside class="sb">
   <div class="sb-brand">
     <div class="mark">Ace<em>The</em>DAT</div>
-    <div class="sub">Bio Mastery System &middot; v2</div>
+    <div class="sub">Bio Repair Lab</div>
   </div>
 
   <div class="sb-progress">
@@ -31,8 +31,9 @@
     <span class="count" id="acePillCount">0 due</span>
   </div>
 
-  <a class="sb-link" href="index.html" style="margin-bottom:6px"><span class="dot"></span><span class="label">&larr; Mastery hub</span><span class="meta"></span></a>
-  <a class="sb-link live" href="bio-mock.html" style="margin-bottom:8px;background:rgba(201,168,76,0.10);border-left-color:var(--gold)"><span class="dot" style="background:var(--gold)"></span><span class="label"><b>Mock Exam</b></span><span class="meta">40q</span></a>
+  <a class="sb-link" href="index.html" style="margin-bottom:6px"><span class="dot"></span><span class="label">&larr; Repair Lab home</span><span class="meta"></span></a>
+  <a class="sb-link live" href="bio-mock.html" style="margin-bottom:6px;background:rgba(201,168,76,0.10);border-left-color:var(--gold)"><span class="dot" style="background:var(--gold)"></span><span class="label"><b>Weakness scan</b></span><span class="meta">40q</span></a>
+  <a class="sb-link live" href="bio-repair-sheet.html" style="margin-bottom:8px"><span class="dot"></span><span class="label">Repair sheet</span><span class="meta">cram</span></a>
 
   <div class="sb-section">01 &middot; Cell &amp; Molecular</div>
   <a class="sb-link live" href="bio-cell.html"><span class="dot"></span><span class="label"><b>Cell Lab</b> (flagship)</span><span class="meta">live</span></a>
@@ -111,7 +112,7 @@
 
 <main class="mn">
   <div class="topbar">
-    <div class="tb-where"><b id="crumbWhere">Developmental</b> &middot; Bio Mastery System</div>
+    <div class="tb-where"><b id="crumbWhere">Developmental</b> &middot; Bio Repair Lab</div>
     <div class="tb-spacer"></div>
     <button class="tutor-toggle" id="tutorToggle" title="Coach mode unlocks free-roam and coach overlays"><span class="dot"></span>Coach mode</button>
     <button class="btn ghost sm" id="btnAceCards">Ace Cards</button>
@@ -382,39 +383,146 @@
               <h6 style="font-family:'Playfair Display',serif;font-size:18px;margin:0 0 6px;font-weight:700">Fertilization sequence (sea urchin model)</h6>
               <p style="font-size:13px;color:var(--ink-2);margin:0 0 14px">The DAT loves the sequence: contact → acrosomal reaction → fast block → cortical reaction (slow block) → fusion → activation. Click each step.</p>
 
-              <svg viewBox="0 0 720 360" style="width:100%;background:#fff;border:1px solid var(--line);border-radius:10px;font-family:'JetBrains Mono',monospace" id="fertSvg">
-                <defs><marker id="fert-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" fill="#1B3A2D"/></marker></defs>
+              <style>
+                #fertSvg .step rect{transition:fill 0.2s, stroke-width 0.2s}
+                #fertSvg .step:hover rect{fill:rgba(13,32,24,0.10)}
+                #fertSvg .step.active rect{fill:rgba(193,154,62,0.22);stroke:#c19a3e;stroke-width:1.5}
+                #fertSvg .fert-stage-el{display:none}
+                #fertSvg[data-stage="0"] .fert-stage-el[data-stage="0"],
+                #fertSvg[data-stage="1"] .fert-stage-el[data-stage="1"],
+                #fertSvg[data-stage="2"] .fert-stage-el[data-stage="2"],
+                #fertSvg[data-stage="3"] .fert-stage-el[data-stage="3"],
+                #fertSvg[data-stage="4"] .fert-stage-el[data-stage="4"],
+                #fertSvg[data-stage="5"] .fert-stage-el[data-stage="5"],
+                #fertSvg[data-stage="6"] .fert-stage-el[data-stage="6"]{display:inline}
+                /* Cumulative elements (stick from a minimum stage onward) */
+                #fertSvg .fert-cum{display:none}
+                #fertSvg[data-stage="4"] .fert-cum[data-min="4"],
+                #fertSvg[data-stage="5"] .fert-cum[data-min="4"],
+                #fertSvg[data-stage="6"] .fert-cum[data-min="4"],
+                #fertSvg[data-stage="5"] .fert-cum[data-min="5"],
+                #fertSvg[data-stage="6"] .fert-cum[data-min="5"]{display:inline}
+                /* Sperm position animates from approach (stage 0/1) -> contact (2+) */
+                #fertSvg .fert-sperm{transition:transform 0.5s cubic-bezier(.6,0,.4,1)}
+                #fertSvg[data-stage="0"] .fert-sperm{transform:translateX(-50px)}
+                #fertSvg[data-stage="1"] .fert-sperm,
+                #fertSvg[data-stage="2"] .fert-sperm{transform:translateX(0)}
+                #fertSvg[data-stage="3"] .fert-sperm,
+                #fertSvg[data-stage="4"] .fert-sperm,
+                #fertSvg[data-stage="5"] .fert-sperm,
+                #fertSvg[data-stage="6"] .fert-sperm{transform:translateX(110px);opacity:0.55}
+                /* Ca2+ wave ripple at stage 4 */
+                #fertSvg .fert-ca-ring{animation:fertCaPulse 1.8s ease-out infinite}
+                @keyframes fertCaPulse{0%{r:30;opacity:0.85}100%{r:65;opacity:0}}
+                /* Active membrane-depolarization throb at stage 3 */
+                #fertSvg .fert-depol{animation:fertDepol 0.9s ease-in-out infinite alternate}
+                @keyframes fertDepol{from{stroke-opacity:0.45}to{stroke-opacity:1}}
+              </style>
 
-                <!-- Egg (right side) -->
-                <circle cx="500" cy="180" r="100" fill="rgba(193,154,62,0.15)" stroke="#c19a3e" stroke-width="3"/>
-                <circle cx="500" cy="180" r="100" fill="none" stroke="#c19a3e" stroke-width="1" stroke-dasharray="3 4" opacity="0.5"/>
-                <text x="500" y="180" text-anchor="middle" font-size="13" font-weight="700" fill="#1B3A2D">Egg</text>
-                <text x="500" y="195" text-anchor="middle" font-size="9" fill="var(--ink-mute)">jelly coat + vitelline</text>
+              <svg viewBox="0 0 720 540" style="width:100%;background:#fff;border:1px solid var(--line);border-radius:10px;font-family:'JetBrains Mono',monospace" id="fertSvg" data-stage="0">
+                <defs>
+                  <marker id="fert-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" fill="#1B3A2D"/></marker>
+                  <radialGradient id="fert-egg-grad" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="rgba(193,154,62,0.22)"/><stop offset="100%" stop-color="rgba(193,154,62,0.08)"/></radialGradient>
+                </defs>
 
-                <!-- Sperm (left, with acrosome at tip) -->
-                <ellipse cx="120" cy="180" rx="22" ry="14" fill="rgba(106,138,168,0.4)" stroke="#1B3A2D" stroke-width="2"/>
-                <line x1="100" y1="180" x2="40" y2="160" stroke="#1B3A2D" stroke-width="1.5"/>
-                <line x1="100" y1="180" x2="40" y2="200" stroke="#1B3A2D" stroke-width="1.5"/>
-                <text x="120" y="155" text-anchor="middle" font-size="10" font-weight="700" fill="#1B3A2D">Sperm</text>
-                <circle cx="138" cy="180" r="6" fill="var(--trap)"/>
-                <text x="138" y="208" text-anchor="middle" font-size="8" fill="var(--trap)" font-weight="700">acrosome</text>
-
-                <!-- Steps -->
+                <!-- Step list (top band, y=40..200) -->
                 <g class="step" style="cursor:pointer" data-step="contact"><rect x="40" y="40" width="640" height="22" rx="4" fill="rgba(13,32,24,0.04)"/><text x="60" y="55" font-size="11" font-weight="700" fill="#1B3A2D">1. Contact</text><text x="170" y="55" font-size="10.5" fill="var(--ink-2)">Sperm contacts species-specific receptors on egg jelly coat (sea urchin) or zona pellucida ZP3 (mammals).</text></g>
+                <g class="step" style="cursor:pointer" data-step="acro"><rect x="40" y="68" width="640" height="22" rx="4" fill="rgba(13,32,24,0.04)"/><text x="60" y="83" font-size="11" font-weight="700" fill="var(--trap)">2. Acrosomal reaction</text><text x="200" y="83" font-size="10.5" fill="var(--ink-2)">Acrosome (Golgi-derived) releases hydrolytic enzymes (acrosin) &rarr; digests jelly. Acrosomal process extends; bindin binds egg receptor.</text></g>
+                <g class="step" style="cursor:pointer" data-step="fast"><rect x="40" y="96" width="640" height="22" rx="4" fill="rgba(13,32,24,0.04)"/><text x="60" y="111" font-size="11" font-weight="700" fill="#6A8AA8">3. Fast block (polyspermy)</text><text x="220" y="111" font-size="10.5" fill="var(--ink-2)">Membrane depolarization (Na+ influx) within seconds. Prevents 2nd sperm fusion &mdash; temporary measure until slow block kicks in.</text></g>
+                <g class="step" style="cursor:pointer" data-step="cortical"><rect x="40" y="124" width="640" height="22" rx="4" fill="rgba(13,32,24,0.04)"/><text x="60" y="139" font-size="11" font-weight="700" fill="var(--good)">4. Cortical reaction (slow block)</text><text x="240" y="139" font-size="10.5" fill="var(--ink-2)">Ca&sup2;&#8314; wave through egg &rarr; cortical granules fuse + release contents &rarr; vitelline envelope hardens &rarr; fertilization envelope. Permanent block.</text></g>
+                <g class="step" style="cursor:pointer" data-step="fuse"><rect x="40" y="152" width="640" height="22" rx="4" fill="rgba(13,32,24,0.04)"/><text x="60" y="167" font-size="11" font-weight="700" fill="#1B3A2D">5. Fusion + activation</text><text x="200" y="167" font-size="10.5" fill="var(--ink-2)">Sperm + egg membranes fuse. Sperm nucleus enters egg. Ca&sup2;&#8314; also activates metabolism &mdash; rapid increase in protein + DNA synthesis.</text></g>
+                <g class="step" style="cursor:pointer" data-step="meiosis2"><rect x="40" y="180" width="640" height="22" rx="4" fill="rgba(13,32,24,0.04)"/><text x="60" y="195" font-size="11" font-weight="700" fill="#8a5a8c">6. Meiosis II completes</text><text x="220" y="195" font-size="10.5" fill="var(--ink-2)">Egg was arrested in metaphase II. Fertilization triggers completion &rarr; second polar body extruded &rarr; ovum (n) + 2nd polar body.</text></g>
 
-                <g class="step" style="cursor:pointer" data-step="acro"><rect x="40" y="68" width="640" height="22" rx="4" fill="rgba(13,32,24,0.04)"/><text x="60" y="83" font-size="11" font-weight="700" fill="var(--trap)">2. Acrosomal reaction</text><text x="200" y="83" font-size="10.5" fill="var(--ink-2)">Acrosome (Golgi-derived) releases hydrolytic enzymes (acrosin) → digests jelly. Acrosomal process extends; bindin binds egg receptor.</text></g>
+                <!-- Divider + live stage headline -->
+                <line x1="40" y1="230" x2="680" y2="230" stroke="rgba(13,32,24,0.10)" stroke-width="1"/>
+                <text x="40" y="252" font-size="10" font-weight="700" letter-spacing="0.14em" fill="var(--ink-mute)">LIVE WALKTHROUGH</text>
+                <text id="fertStageHeadline" x="680" y="252" text-anchor="end" font-size="11" font-weight="700" fill="#1B3A2D">Click any step above to play it.</text>
 
-                <g class="step" style="cursor:pointer" data-step="fast"><rect x="40" y="96" width="640" height="22" rx="4" fill="rgba(13,32,24,0.04)"/><text x="60" y="111" font-size="11" font-weight="700" fill="#6A8AA8">3. Fast block (polyspermy)</text><text x="220" y="111" font-size="10.5" fill="var(--ink-2)">Membrane depolarization (Na+ influx) within seconds. Prevents 2nd sperm fusion — temporary measure until slow block kicks in.</text></g>
+                <!-- ALWAYS: egg outline -->
+                <circle cx="500" cy="400" r="70" fill="url(#fert-egg-grad)" stroke="#c19a3e" stroke-width="3"/>
+                <!-- Egg label + subtitle visible only at stages 0-3 (after that, interior content takes over) -->
+                <g class="fert-stage-el" data-stage="0"><text x="500" y="400" text-anchor="middle" font-size="13" font-weight="700" fill="#1B3A2D">Egg</text><text x="500" y="416" text-anchor="middle" font-size="9" fill="var(--ink-mute)">cortical granules under PM</text></g>
+                <g class="fert-stage-el" data-stage="1"><text x="500" y="400" text-anchor="middle" font-size="13" font-weight="700" fill="#1B3A2D">Egg</text><text x="500" y="416" text-anchor="middle" font-size="9" fill="var(--ink-mute)">cortical granules under PM</text></g>
+                <g class="fert-stage-el" data-stage="2"><text x="500" y="385" text-anchor="middle" font-size="13" font-weight="700" fill="#1B3A2D">Egg</text></g>
+                <g class="fert-stage-el" data-stage="3"><text x="500" y="380" text-anchor="middle" font-size="11" font-weight="700" fill="#1B3A2D">Egg</text></g>
 
-                <g class="step" style="cursor:pointer" data-step="cortical"><rect x="40" y="124" width="640" height="22" rx="4" fill="rgba(13,32,24,0.04)"/><text x="60" y="139" font-size="11" font-weight="700" fill="var(--good)">4. Cortical reaction (slow block)</text><text x="240" y="139" font-size="10.5" fill="var(--ink-2)">Ca²⁺ wave through egg → cortical granules fuse + release contents → vitelline envelope hardens → fertilization envelope. Permanent block.</text></g>
+                <!-- Sperm group (animates left-to-right with stage) -->
+                <g class="fert-sperm">
+                  <ellipse cx="180" cy="400" rx="22" ry="14" fill="rgba(106,138,168,0.55)" stroke="#1B3A2D" stroke-width="2"/>
+                  <line x1="160" y1="400" x2="100" y2="380" stroke="#1B3A2D" stroke-width="1.5"/>
+                  <line x1="160" y1="400" x2="100" y2="420" stroke="#1B3A2D" stroke-width="1.5"/>
+                  <text x="180" y="375" text-anchor="middle" font-size="10" font-weight="700" fill="#1B3A2D">Sperm</text>
+                  <circle class="fert-acro" cx="198" cy="400" r="6" fill="var(--trap)"/>
+                  <text class="fert-acro-lbl" x="198" y="428" text-anchor="middle" font-size="8" fill="var(--trap)" font-weight="700">acrosome</text>
+                </g>
 
-                <g class="step" style="cursor:pointer" data-step="fuse"><rect x="40" y="152" width="640" height="22" rx="4" fill="rgba(13,32,24,0.04)"/><text x="60" y="167" font-size="11" font-weight="700" fill="#1B3A2D">5. Fusion + activation</text><text x="200" y="167" font-size="10.5" fill="var(--ink-2)">Sperm + egg membranes fuse. Sperm nucleus enters egg. Ca²⁺ also activates metabolism — rapid increase in protein + DNA synthesis.</text></g>
+                <!-- Approach arrow (visible 0,1) -->
+                <line class="fert-stage-el" data-stage="0" x1="220" y1="400" x2="425" y2="400" stroke="#1B3A2D" stroke-width="1.5" stroke-dasharray="4 4" marker-end="url(#fert-arrow)" opacity="0.45"/>
+                <line class="fert-stage-el" data-stage="1" x1="220" y1="400" x2="425" y2="400" stroke="#1B3A2D" stroke-width="1.5" stroke-dasharray="4 4" marker-end="url(#fert-arrow)" opacity="0.45"/>
 
-                <g class="step" style="cursor:pointer" data-step="meiosis2"><rect x="40" y="180" width="640" height="22" rx="4" fill="rgba(13,32,24,0.04)"/><text x="60" y="195" font-size="11" font-weight="700" fill="#8a5a8c">6. Meiosis II completes</text><text x="220" y="195" font-size="10.5" fill="var(--ink-2)">Egg was arrested in metaphase II. Fertilization triggers completion → second polar body extruded → ovum (n) + 2nd polar body.</text></g>
+                <!-- Stage 0 idle hint -->
+                <text class="fert-stage-el" data-stage="0" x="380" y="525" text-anchor="middle" font-size="11" fill="var(--ink-mute)" font-style="italic">Click step 1 to begin. The illustration animates per step.</text>
 
-                <!-- Polyspermy gotcha note -->
-                <text x="380" y="320" text-anchor="middle" font-size="11" font-weight="700" fill="var(--trap)">FAST BLOCK ≠ SLOW BLOCK</text>
-                <text x="380" y="335" text-anchor="middle" font-size="9.5" fill="var(--ink-2)">Fast = membrane depolarization (Na+ influx, seconds). Slow = cortical reaction → fertilization envelope (minutes).</text>
+                <!-- Stage 1: contact - jelly coat highlighted -->
+                <circle class="fert-stage-el" data-stage="1" cx="500" cy="400" r="84" fill="none" stroke="#c19a3e" stroke-width="1.5" stroke-dasharray="3 4" opacity="0.85"/>
+                <text class="fert-stage-el" data-stage="1" x="500" y="315" text-anchor="middle" font-size="10" fill="#c19a3e" font-weight="700">jelly coat / ZP3 receptors</text>
+                <text class="fert-stage-el" data-stage="1" x="380" y="525" text-anchor="middle" font-size="11" fill="var(--ink-2)">Species-specific binding. No fusion yet.</text>
+
+                <!-- Stage 2: acrosomal reaction - enzymes radiate, jelly fading -->
+                <circle class="fert-stage-el" data-stage="2" cx="500" cy="400" r="84" fill="none" stroke="#c19a3e" stroke-width="1" stroke-dasharray="2 9" opacity="0.4"/>
+                <g class="fert-stage-el" data-stage="2">
+                  <circle cx="245" cy="400" r="3" fill="var(--trap)" opacity="0.7"/>
+                  <circle cx="275" cy="388" r="2.5" fill="var(--trap)" opacity="0.7"/>
+                  <circle cx="300" cy="412" r="2.5" fill="var(--trap)" opacity="0.6"/>
+                  <circle cx="330" cy="395" r="3" fill="var(--trap)" opacity="0.6"/>
+                  <circle cx="360" cy="408" r="2.5" fill="var(--trap)" opacity="0.5"/>
+                  <text x="290" y="352" text-anchor="middle" font-size="10" fill="var(--trap)" font-weight="700">acrosin &rarr; digests jelly</text>
+                  <text x="380" y="525" text-anchor="middle" font-size="11" fill="var(--ink-2)">Acrosomal process extends; bindin protein binds vitelline.</text>
+                </g>
+
+                <!-- Stage 3: fast block - membrane depolarization (Na+) -->
+                <circle class="fert-stage-el fert-depol" data-stage="3" cx="500" cy="400" r="70" fill="rgba(106,138,168,0.18)" stroke="#6A8AA8" stroke-width="5"/>
+                <g class="fert-stage-el" data-stage="3">
+                  <text x="430" y="345" font-size="10" font-weight="700" fill="#6A8AA8">Na+</text>
+                  <text x="565" y="345" font-size="10" font-weight="700" fill="#6A8AA8">Na+</text>
+                  <text x="430" y="465" font-size="10" font-weight="700" fill="#6A8AA8">Na+</text>
+                  <text x="565" y="465" font-size="10" font-weight="700" fill="#6A8AA8">Na+</text>
+                  <text x="500" y="404" text-anchor="middle" font-size="12" font-weight="700" fill="#6A8AA8">depolarized</text>
+                  <text x="380" y="525" text-anchor="middle" font-size="11" fill="var(--ink-2)">Seconds. Temporary block until cortical reaction takes over.</text>
+                </g>
+
+                <!-- Stage 4: cortical reaction - Ca2+ wave + fertilization envelope hardening -->
+                <circle class="fert-stage-el fert-ca-ring" data-stage="4" cx="500" cy="400" r="40" fill="none" stroke="var(--good)" stroke-width="2.5"/>
+                <g class="fert-stage-el" data-stage="4">
+                  <circle cx="570" cy="400" r="3" fill="var(--good-d)" opacity="0.7"/>
+                  <circle cx="430" cy="400" r="3" fill="var(--good-d)" opacity="0.7"/>
+                  <circle cx="500" cy="335" r="3" fill="var(--good-d)" opacity="0.6"/>
+                  <circle cx="500" cy="465" r="3" fill="var(--good-d)" opacity="0.6"/>
+                  <text x="500" y="404" text-anchor="middle" font-size="12" font-weight="700" fill="var(--good-d)">Ca&sup2;&#8314; wave</text>
+                  <text x="380" y="525" text-anchor="middle" font-size="11" fill="var(--ink-2)">Cortical granules release &rarr; vitelline envelope hardens &rarr; permanent block.</text>
+                </g>
+
+                <!-- CUMULATIVE: fertilization envelope appears at stage 4+ -->
+                <circle class="fert-cum" data-min="4" cx="500" cy="400" r="84" fill="none" stroke="#c19a3e" stroke-width="2.5"/>
+                <text class="fert-cum" data-min="4" x="600" y="315" text-anchor="end" font-size="9.5" fill="#c19a3e" font-weight="700">fertilization envelope</text>
+
+                <!-- CUMULATIVE: sperm nucleus inside egg from stage 5+ -->
+                <circle class="fert-cum" data-min="5" cx="500" cy="395" r="9" fill="var(--trap)" stroke="#1B3A2D" stroke-width="1.5"/>
+                <text class="fert-cum" data-min="5" x="500" y="377" text-anchor="middle" font-size="9" font-weight="700" fill="var(--trap)">sperm nucleus</text>
+
+                <!-- Stage 5: fusion + activation annotation -->
+                <text class="fert-stage-el" data-stage="5" x="380" y="525" text-anchor="middle" font-size="11" fill="var(--ink-2)">Membranes fused. Egg activated. Now the zygote.</text>
+
+                <!-- Stage 6: meiosis II completes - polar body extruded (positioned bottom-left of egg to avoid envelope label) -->
+                <g class="fert-stage-el" data-stage="6">
+                  <circle cx="420" cy="455" r="11" fill="rgba(193,154,62,0.45)" stroke="#c19a3e" stroke-width="1.5"/>
+                  <text x="380" y="475" text-anchor="middle" font-size="9" fill="#c19a3e" font-weight="700">2nd polar body</text>
+                  <line x1="432" y1="448" x2="455" y2="430" stroke="#c19a3e" stroke-width="1" stroke-dasharray="2 2"/>
+                  <text x="380" y="525" text-anchor="middle" font-size="11" fill="var(--ink-2)">Meiosis II completes &rarr; mature ovum (n) + 2nd polar body.</text>
+                </g>
+
+                <!-- Persistent gotcha note -->
+                <text x="380" y="500" text-anchor="middle" font-size="10" fill="var(--ink-mute)" font-style="italic">Fast block (Na+ depolarization, seconds) &ne; slow block (cortical reaction &rarr; fertilization envelope, minutes).</text>
               </svg>
             </div>
             <aside class="body-side" id="fertSide">
@@ -583,7 +691,7 @@
       <div class="lock-line" style="margin-top:18px">Fast block <em>electrical</em>. Slow block <em>cortical</em>. Activation <em>finishes meiosis II</em>.</div>
 
       <div class="dat-context">
-        <div class="stat"><span class="lbl">Frequency</span><span class="val"><em>1</em> per exam</span></div>
+        <div class="stat"><span class="lbl">Priority</span><span class="val"><em>Medium</em></span></div>
         <div class="stat"><span class="lbl">Difficulty</span><span class="val">Medium</span></div>
         <div class="stat"><span class="lbl">Tier</span><span class="val">Devo foundation</span></div>
         <div class="wording"><div class="lbl">Typical question wording</div><div class="val">The fast block to polyspermy is caused by:</div></div>
@@ -725,7 +833,7 @@
       <div class="lock-line" style="margin-top:18px">Ecto = <em>outer</em> (skin, CNS). Meso = <em>middle</em> (muscle). Endo = <em>inner</em> (gut).</div>
 
       <div class="dat-context">
-        <div class="stat"><span class="lbl">Frequency</span><span class="val"><em>1</em> per exam</span></div>
+        <div class="stat"><span class="lbl">Priority</span><span class="val"><em>Medium</em></span></div>
         <div class="stat"><span class="lbl">Difficulty</span><span class="val">Medium</span></div>
         <div class="stat"><span class="lbl">Tier</span><span class="val">Devo &middot; <em>Medium-yield</em></span></div>
         <div class="wording"><div class="lbl">Typical question wording</div><div class="val">During cleavage, the embryo:</div></div>
@@ -854,7 +962,7 @@
       <div class="lock-line" style="margin-top:18px">Neural tube → <em>CNS</em>. Neural crest → <em>PNS</em> + melanocytes + adrenal medulla.</div>
 
       <div class="dat-context">
-        <div class="stat"><span class="lbl">Frequency</span><span class="val"><em>1</em> per exam</span></div>
+        <div class="stat"><span class="lbl">Priority</span><span class="val"><em>Medium</em></span></div>
         <div class="stat"><span class="lbl">Difficulty</span><span class="val">Medium</span></div>
         <div class="stat"><span class="lbl">Tier</span><span class="val">Devo &middot; <em>Medium-yield</em></span></div>
         <div class="wording"><div class="lbl">Typical question wording</div><div class="val">Melanocytes, adrenal medulla, and facial cartilage all derive from:</div></div>
@@ -988,7 +1096,7 @@
       <div class="lock-line" style="margin-top:18px"><em>Toti</em> = embryo + placenta. <em>Pluri</em> = all 3 germ layers, no placenta. <em>Multi</em> = one lineage. <em>Uni</em> = one cell type.</div>
 
       <div class="dat-context">
-        <div class="stat"><span class="lbl">Frequency</span><span class="val"><em>1</em> per exam</span></div>
+        <div class="stat"><span class="lbl">Priority</span><span class="val"><em>Medium</em></span></div>
         <div class="stat"><span class="lbl">Difficulty</span><span class="val">Easy&ndash;Medium</span></div>
         <div class="stat"><span class="lbl">Tier</span><span class="val">Developmental &middot; <em>conceptual</em></span></div>
         <div class="wording"><div class="lbl">Typical question wording</div><div class="val">Embryonic stem cells derived from the inner cell mass of a blastocyst are best classified as:</div></div>
@@ -1014,7 +1122,7 @@
       <div class="see-also">
         <span class="lbl">See also</span>
         <a href="#node-fertilization">Fertilization</a>
-        <a href="#node-cleavage">Cleavage + gastrulation</a>
+        <a href="#node-gastrulation">Cleavage + gastrulation</a>
         <span style="color:var(--ink-mute)">&middot; potency drops as cells divide and commit to lineages.</span>
       </div>
 
@@ -1028,7 +1136,7 @@
           <h3>Stem cell potency comparator</h3>
           <div class="desc">As a cell divides and commits to lineages, its potency drops. The earliest embryo has totipotent cells; adult tissues have multipotent or unipotent stem cells.</div>
         </div>
-        <div class="sandbox-body" style="padding:0">
+        <div class="sandbox-body" style="display:block;padding:0;min-height:0">
           <svg viewBox="0 0 800 320" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:0 0 10px 10px">
             <text x="400" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">STEM CELL POTENCY HIERARCHY</text>
 
@@ -1151,7 +1259,7 @@
       <div class="lock-line" style="margin-top:18px">Determination = <em>commitment</em>. Differentiation = <em>expression</em>. Spemann: organizer transplant &rarr; second complete axis.</div>
 
       <div class="dat-context">
-        <div class="stat"><span class="lbl">Frequency</span><span class="val"><em>1</em> per exam</span></div>
+        <div class="stat"><span class="lbl">Priority</span><span class="val"><em>Medium</em></span></div>
         <div class="stat"><span class="lbl">Difficulty</span><span class="val">Medium</span></div>
         <div class="stat"><span class="lbl">Tier</span><span class="val">Developmental &middot; <em>High-yield</em></span></div>
         <div class="wording"><div class="lbl">Typical question wording</div><div class="val">The Spemann organizer experiment demonstrated that the dorsal lip of the blastopore functions as a(n):</div></div>
@@ -1302,8 +1410,8 @@
   </div><!-- /lab -->
 </main>
 </div><!-- /app -->
-<script src="bio-registry.js"></script>
-<script src="bio-shared.js"></script>
+<script src="/tools/bio/bio-registry.js"></script>
+<script src="/tools/bio/bio-shared.js"></script>
 <script>
 (function(){
   var el = document.getElementById('acePillCount');
