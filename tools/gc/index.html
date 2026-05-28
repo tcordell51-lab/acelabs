@@ -3028,7 +3028,7 @@ body[data-theme="dark"] .today-card{background:linear-gradient(135deg, var(--pap
 .trap-content .tp-rate-btn:hover{border-color:var(--gold-d); color:var(--gold-d)}
 .trap-content .tp-rate-btn:disabled{opacity:0.5; cursor:not-allowed}
 
-/* VIDEO slot + modal — embed Tommy's TikToks */
+/* VIDEO slot + modal — embed coach TikToks */
 .vid-slot{margin-top:14px; padding:10px 14px; background:var(--paper-2); border:1px solid var(--line); border-left:3px solid var(--gold-d); border-radius:8px; display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap}
 .vid-h{display:flex; align-items:center; gap:8px}
 .vid-tag{font-family:'JetBrains Mono',monospace; font-size:10px; padding:3px 8px; background:var(--gold-d); color:var(--paper); font-weight:700; border-radius:4px; letter-spacing:1px}
@@ -3407,18 +3407,18 @@ body[data-mode="B"] .sb-link[data-go="quick-ref"]{background:rgba(201,168,76,.10
 <div class="edit-mode-banner" id="editBanner">
   <span class="lbl"><em>Coach edit mode</em> — click any underlined text to edit. Changes save to your browser.</span>
   <span class="count" id="editCount">0 edits</span>
-  <button onclick="COACH_EDIT.exportChanges()">Export &amp; Send to Tommy</button>
+  <button onclick="COACH_EDIT.exportChanges()">Export &amp; Send to Coach</button>
   <button onclick="COACH_EDIT.toggle()">Done</button>
 </div>
 
 <!-- Feedback pill — bottom-right -->
-<button class="fb-pill" id="fbPill" onclick="FEEDBACK.open()" title="Leave a note for Tommy"><span>Note</span><span class="fb-count" id="fbCount">0</span></button>
+<button class="fb-pill" id="fbPill" onclick="FEEDBACK.open()" title="Leave a note for your coach"><span>Note</span><span class="fb-count" id="fbCount">0</span></button>
 
 <!-- Feedback modal -->
 <div class="fb-modal" id="fbModal">
   <div class="panel">
     <button class="close" onclick="FEEDBACK.close()">×</button>
-    <h3>Note for <em>Tommy</em></h3>
+    <h3>Note for <em>your coach</em></h3>
     <p class="lede">Anything that needs to change — content wording, missing example, broken thing, idea — flag it here. Your note + the page you're on get saved together. Export weekly or whenever you want.</p>
     <div class="ctx" id="fbCtx">page: —</div>
     <div class="row-tag" id="fbTags">
@@ -5078,6 +5078,7 @@ const SKILLS = [
   {id:'untimed',        tier:3, name:'Untimed Mastery Checkpoint',short:'Untimed Goal',   prereqs:['gibbs','eq-lechat','buffers'],x:0, y:7, full:true},
   {id:'skip-ret',       tier:3, name:'Skip-and-Return Strategy',  short:'Skip + Return',  prereqs:['untimed'],           x:1, y:7, full:true},
   {id:'guess',          tier:3, name:'Educated Guessing',         short:'Smart Guessing', prereqs:['untimed'],           x:2, y:7, full:true},
+  {id:'no-calc',        tier:3, name:'No-Calc Shortcuts + Estimation',short:'No-Calc',    prereqs:['untimed'],           x:3, y:7, full:true},
 ];
 const SKILL_BY_ID = Object.fromEntries(SKILLS.map(s => [s.id, s]));
 
@@ -5948,6 +5949,27 @@ const BANK = [
   {id:'sr4',skills:['sol-rules'],diff:2,q:'Which combination will NOT form a precipitate when mixed in solution?',opts:['Ba(NO₃)₂ + Na₂SO₄','AgNO₃ + KI','CaCl₂ + Na₂CO₃','NaCl + KNO₃'],correct:3,why:'For each pair, swap partners and check: (a) Ba²⁺ + SO₄²⁻ → BaSO₄ (insoluble sulfate exception — precipitates). (b) Ag⁺ + I⁻ → AgI (insoluble halide exception — precipitates). (c) Ca²⁺ + CO₃²⁻ → CaCO₃ (carbonates insoluble except Group 1 — precipitates). (d) NaCl + KNO₃ → NaNO₃ + KCl, both soluble (Group 1 + nitrate / Group 1 + halide) — no driving force, no reaction.',diag:{0:'BaSO₄ IS insoluble — Ba is one of the sulfate exceptions. This pair does precipitate.',1:'AgI is insoluble — silver halide. This pair does precipitate.',2:'CaCO₃ is insoluble (carbonate with non-Group-1 cation). This pair does precipitate.'}},
 
   {id:'sr5',skills:['sol-rules'],diff:3,q:'You mix aqueous solutions and want to confirm sulfate (SO₄²⁻) is present in an unknown. Which cation should you add to make sulfate precipitate cleanly?',opts:['Na⁺','NH₄⁺','Ba²⁺','K⁺'],correct:2,why:'The classic sulfate confirmation: Ba²⁺ + SO₄²⁻ → BaSO₄(s), a white precipitate. Ba²⁺ is one of the sulfate exceptions to the "sulfates are soluble" rule. Na⁺, NH₄⁺, and K⁺ all form fully soluble sulfates (Group 1 + ammonium), so they cannot precipitate sulfate.',diag:{0:'Na₂SO₄ is soluble — Group 1 sulfates are always soluble. No precipitate.',1:'(NH₄)₂SO₄ is soluble — ammonium sulfates are always soluble. No precipitate.',3:'K₂SO₄ is soluble — same Group 1 rule. To precipitate sulfate you need Ba²⁺, Pb²⁺, or Sr²⁺.'}},
+
+  // === NO-CALC (5) — added 2026-05-28 with the no-calc shortcuts module ===
+  {id:'nc1',skills:['no-calc','ph-basics'],diff:2,q:'Estimate the pH of 2 × 10⁻⁴ M HCl (no calculator).',opts:['3.4','3.7','4.0','4.3'],correct:1,
+   why:'Strong acid → [H⁺] = 2 × 10⁻⁴. pH = 4 − log 2 ≈ 4 − 0.30 = 3.70. The log-2 shortcut handles this in 10 seconds.',
+   diag:{0:'3.4 = 4 − 2(0.3) would be the pH for 4 × 10⁻⁴ M (which uses log 4 = 0.60). You scaled wrong.',2:'4.0 is the pH of exactly 10⁻⁴ M (a = 1). Here a = 2, which pushes pH down by log 2.',3:'4.3 = 4 + 0.3. You added log 2 instead of subtracting. pH = n − log(a), not n + log(a).'}},
+
+  {id:'nc2',skills:['no-calc','mole-conv'],diff:1,q:'How many molecules in 0.20 mol of any substance?',opts:['6.0 × 10²¹','6.0 × 10²²','1.2 × 10²³','1.2 × 10²⁴'],correct:2,
+   why:'Anchor: N<sub>A</sub> × 0.1 = 6.0 × 10²². Double that for 0.20 mol → 1.2 × 10²³. No calculator needed.',
+   diag:{0:'6.0 × 10²¹ would be 0.01 mol. You shifted one decimal too far.',1:'6.0 × 10²² is the anchor for 0.10 mol. For 0.20 mol you double it.',3:'1.2 × 10²⁴ is 10× too high — that would be 2.0 mol.'}},
+
+  {id:'nc3',skills:['no-calc'],diff:2,q:'Best mental estimate of 412 × 19 (no calculator)?',opts:['7,000','7,500','8,000','9,000'],correct:2,
+   why:'Round one up, one down: 400 × 20 = 8,000. True value: 7,828 — within 2% of 8,000. The "round one up, one down" rule lets errors cancel.',
+   diag:{0:'7,000 would be 350 × 20 — too aggressive a round-down on 412.',1:'7,500 is between two answer choices — but rounding 412 to 400 (down 3%) and 19 to 20 (up 5%) gives 8,000, not 7,500.',3:'9,000 would be 450 × 20 — too aggressive a round-up on 412.'}},
+
+  {id:'nc4',skills:['no-calc','ksp'],diff:3,q:'Approximate molar solubility of MX with Ksp = 4 × 10⁻⁹ (no calculator).',opts:['~10⁻³ M','~6 × 10⁻⁵ M','~2 × 10⁻⁴ M','~4 × 10⁻⁹ M'],correct:1,
+   why:'For a 1:1 salt, Ksp = s² → s = √Ksp. √(4 × 10⁻⁹) = 2 × √(10⁻⁹). Note √(10⁻⁹) ≈ √(10⁻¹⁰) × √10 ≈ 10⁻⁵ × 3.16 ≈ 3 × 10⁻⁵. So s ≈ 2 × 3 × 10⁻⁵ = 6 × 10⁻⁵ M. Estimate within a factor of 2 of the exact answer.',
+   diag:{0:'10⁻³ M would mean Ksp = 10⁻⁶ — three orders of magnitude too high.',2:'2 × 10⁻⁴ M would give Ksp = 4 × 10⁻⁸ — one order of magnitude too high.',3:'Ksp is NOT solubility. Ksp = s², so you must take the square root to get s.'}},
+
+  {id:'nc5',skills:['no-calc'],diff:2,q:'log 6 ≈ ? (Use the memorized log-prime shortcuts.)',opts:['0.48','0.60','0.78','0.85'],correct:2,
+   why:'log 6 = log 2 + log 3 = 0.30 + 0.48 = 0.78. The log-of-prime shortcuts (log 2 = 0.30, log 3 = 0.48, log 5 = 0.70, log 7 = 0.85) compose multiplicatively: log(ab) = log a + log b.',
+   diag:{0:'0.48 is log 3 alone. You forgot to add log 2.',1:'0.60 = 2 × log 2 — that is log 4, not log 6.',3:'0.85 is log 7. You may have confused 6 with 7.'}},
 ];
 
 const BANK_BY_ID = Object.fromEntries(BANK.map(b => [b.id, b]));
@@ -5985,7 +6007,7 @@ const MODULES = {
       {when:'Confused by isotope notation', name:'<em>Sub = base, super = total</em>', move:'On ²³⁵₉₂U, SUBSCRIPT is proton count. SUPERSCRIPT is mass. Subtract for neutrons.', why:'Naming each removes the freeze.', lock:'Sub=p. Super=mass.', coach:true, placeholder:true},
       {when:'Aufbau exception (Cu, Cr)', name:'<em>Half-full or full</em>', move:'Cu: [Ar] 4s¹ 3d¹⁰. Cr: [Ar] 4s¹ 3d⁵. Promote 4s e⁻ to fill d.', why:'d⁵ and d¹⁰ are stable.', lock:'d⁵, d¹⁰ steal from 4s.', coach:true, placeholder:true},
       {when:'Oxidation state of a buried atom', name:'<em>Pin the easy atoms first</em>', move:'For something like Cr₂O₇²⁻: pin O = −2 (rule 3) → 7·(−2) = −14. Set 2x + (−14) = −2 (the ion charge). Solve: 2x = +12 → x = +6. Same recipe for ClO₃⁻, MnO₄⁻, NH₄⁺ etc.', why:'Pinning the known atoms reduces every problem to one variable.', lock:'Pin O and H first. Solve for the rest.', coach:true, placeholder:true},
-      {when:'Identifying oxidation vs reduction', name:'<em>OIL RIG (Tommy\'s version)</em>', move:'<b>O</b>xidation <b>I</b>s <b>L</b>oss of electrons → ox. state INCREASES. <b>R</b>eduction <b>I</b>s <b>G</b>ain → ox. state DECREASES. The species that gets oxidized IS the reducing agent.', why:'Direction of the ox-state change tells you everything.', lock:'OIL RIG. Oxidation up. Reduction down.', coach:true, placeholder:true}
+      {when:'Identifying oxidation vs reduction', name:'<em>OIL RIG (coach version)</em>', move:'<b>O</b>xidation <b>I</b>s <b>L</b>oss of electrons → ox. state INCREASES. <b>R</b>eduction <b>I</b>s <b>G</b>ain → ox. state DECREASES. The species that gets oxidized IS the reducing agent.', why:'Direction of the ox-state change tells you everything.', lock:'OIL RIG. Oxidation up. Reduction down.', coach:true, placeholder:true}
     ]
   },
   'periodic': {
@@ -6765,6 +6787,56 @@ const MODULES = {
       {when:'Stuck on trend', name:'<em>Position predicts</em>', move:'Top-right = small, high IE/EN. Bottom-left = opposite.', why:'Spatial heuristic.', lock:'Top-right = small.', coach:true, placeholder:true}
     ]
   },
+  'no-calc': {
+    skill:'no-calc', tier:3, num:'30c',
+    title:'No-Calculator <em>Shortcuts &amp; Estimation</em>',
+    sub:'The tutor toolbox the DAT GC section is built around. Memorize these and you stop fighting arithmetic.',
+    pattern:'GC has no calculator. Every problem is solvable in under 90 seconds with mental math + the shortcuts below. Most students fail GC pacing because they try to grind arithmetic; top scorers pattern-match to one of these shortcuts.<br><br><b>Log shortcuts (own these cold):</b><br>- <b>log 2 ≈ 0.30</b> &middot; <b>log 3 ≈ 0.48</b> &middot; <b>log 5 = 1 − log 2 ≈ 0.70</b> &middot; <b>log 7 ≈ 0.85</b><br>- Any log of a number with these factors collapses: log 6 = log 2 + log 3 ≈ 0.78; log 4 = 2·log 2 ≈ 0.60; log 8 = 3·log 2 ≈ 0.90; log 9 = 2·log 3 ≈ 0.96.<br>- For pH problems: pH ≈ n − log(a), where 10⁻ⁿ·a is the [H⁺]. So [H⁺] = 3 × 10⁻⁵ → pH ≈ 5 − 0.48 ≈ 4.52.<br><br><b>Magnitude shortcuts:</b><br>- <b>Avogadro × 0.1 = 6 × 10²²</b> (memorize — comes up in every mole-to-molecule problem)<br>- <b>1 atm·L ≈ 100 J</b> (rough but enough for DAT magnitude checks)<br>- <b>Cube roots of powers of 10:</b> ∛10⁻⁶ = 10⁻²; ∛10⁻⁹ = 10⁻³; ∛10⁻¹² = 10⁻⁴. Comes up in Ksp solubility.<br><br><b>Rounding moves:</b><br>- For multiplication: round one factor up, one down, so errors cancel. Example: 198 × 51 ≈ 200 × 50 = 10,000 (within 1% of the true 10,098).<br>- For division: round numerator and denominator the same direction. 387 / 19 ≈ 400 / 20 = 20 (true: 20.4).<br>- "Tenths of a pH unit per factor-of-2 change" — a 2× change in [H⁺] shifts pH by about 0.3 (= log 2).',
+    formula:'log 2 ≈ 0.30 &middot; log 3 ≈ 0.48 &middot; log 5 ≈ 0.70 &middot; log 7 ≈ 0.85<br>pH ≈ n − log(a) when [H⁺] = a × 10⁻ⁿ<br>N<sub>A</sub> × 0.1 = 6 × 10²² &middot; 1 atm·L ≈ 100 J<br>∛(10⁻³ⁿ) = 10⁻ⁿ &middot; ∛(10⁻⁹) = 10⁻³<br>Round one factor up, one down → errors cancel',
+    visualType:'word-translate', visualData:{},
+    worked:[
+      {q:'Estimate pH of 3 × 10⁻⁵ M HCl (strong acid, no calculator).', steps:[
+        {what:'Strong acid: [H⁺] = 3 × 10⁻⁵', why:'HCl fully dissociates, so [H⁺] = the formal concentration.'},
+        {what:'pH = −log(3 × 10⁻⁵) = 5 − log 3', why:'Pull out the power of 10 first.'},
+        {what:'log 3 ≈ 0.48', why:'Memorized shortcut.'},
+        {what:'pH ≈ 5 − 0.48 = 4.52', why:'Done in 10 seconds of mental math. No calculator needed.'}
+      ]},
+      {q:'How many molecules in 0.10 mol of glucose?', steps:[
+        {what:'molecules = mol × N<sub>A</sub>', why:'Avogadro converts moles to particles.'},
+        {what:'= 0.10 × 6.022 × 10²³', why:'plug in.'},
+        {what:'= 6 × 10²² molecules', why:'Memorize this exact product: N<sub>A</sub> × 0.1 = 6 × 10²². It shows up in dozens of DAT problems.'}
+      ]},
+      {q:'Estimate the molar solubility of MX (Ksp = 4 × 10⁻⁹).', steps:[
+        {what:'Ksp = s² for MX (1:1 dissolution).', why:'M⁺ + X⁻ each at concentration s, so Ksp = s · s = s².'},
+        {what:'s = √(4 × 10⁻⁹) = 2 × √(10⁻⁹)', why:'Pull out the perfect-square factor first.'},
+        {what:'√(10⁻⁹) ≈ √(10⁻⁸) × √10 = 10⁻⁴ × 3.16 ≈ 3 × 10⁻⁴·⁵', why:'Order-of-magnitude estimate; 10⁻⁹ is between 10⁻⁸ and 10⁻¹⁰.'},
+        {what:'s ≈ 2 × 3 × 10⁻⁴·⁵ ≈ 6 × 10⁻⁵ M', why:'Within a factor of 2 of the answer key — close enough to pick the right MCQ choice. No calculator needed.'}
+      ]},
+      {q:'Estimate 198 × 51 (no calculator).', steps:[
+        {what:'Round one up, one down: 200 × 50', why:'Errors partially cancel.'},
+        {what:'= 10,000', why:'True value: 10,098. Estimate is within 1%.'},
+        {what:'Pick the answer choice nearest 10,000', why:'The DAT typically gives spreads ≥ 10% apart in multiple-choice options, so 1% estimate accuracy is more than enough.'}
+      ]}
+    ],
+    faded:[
+      {prompt:'log 4 ≈ ', lcd:'2 × log 2.', blank:'__', answer:'0.60'},
+      {prompt:'log 8 ≈ ', lcd:'3 × log 2.', blank:'__', answer:'0.90'},
+      {prompt:'pH of 2 × 10⁻⁴ M HCl ≈ ', lcd:'4 − log 2.', blank:'__', answer:'3.7'},
+      {prompt:'Molecules in 0.10 mol = ', lcd:'N<sub>A</sub> × 0.1.', blank:'6 × 10__', answer:'22'},
+      {prompt:'∛(10⁻¹²) = ', lcd:'Power divided by 3.', blank:'10__', answer:'⁻⁴'}
+    ],
+    practice:['nc1','nc2','nc3','nc4','nc5'],
+    masteryProblems:['nc1','nc2','nc3','nc4','nc5'],
+    lock:'<em>log 2 = 0.30. log 3 = 0.48. N<sub>A</sub> × 0.1 = 6×10²². Round one up, one down.</em>',
+    trap:'Reaching for the calculator the DAT does not provide. Trying to be exact when MCQ spreads tolerate 1-2% estimation error. Memorizing log 2 = 0.301 instead of the rounder 0.30 (the extra precision wastes mental cycles for no gain on a multiple choice).',
+    coachTricks:[
+      {when:'You see a pH problem with messy [H⁺]', name:'<em>pH ≈ n − log(a)</em>', move:'Write [H⁺] as a × 10⁻ⁿ where 1 ≤ a &lt; 10. Then pH = n − log(a). Look up log(a) from the memorized table (log 2 ≈ 0.3, log 3 ≈ 0.48, etc.). Done in 10 seconds, no calculator.', why:'Universal pH shortcut for any concentration that is not exactly a power of 10. Stops the "I cannot do log without a calculator" panic.', lock:'pH = n − log(a). Memorize the table.', coach:true},
+      {when:'You see N<sub>A</sub> × small number', name:'<em>Memorize N<sub>A</sub> × 0.1 = 6 × 10²²</em>', move:'Avogadro × 0.1 = 6 × 10²². From there, scale: × 0.01 = 6 × 10²¹, × 1 = 6 × 10²³, × 10 = 6 × 10²⁴. This one anchor handles every mole-to-molecule problem.', why:'Avogadro is the most-multiplied constant in GC. Anchoring to the × 0.1 product saves 30 seconds per problem.', lock:'N<sub>A</sub> × 0.1 = 6×10²².', coach:true},
+      {when:'You see ∛ in a Ksp problem', name:'<em>Cube root of a power of 10</em>', move:'∛(10⁻³ⁿ) = 10⁻ⁿ. So ∛(10⁻⁶) = 10⁻²; ∛(10⁻⁹) = 10⁻³; ∛(10⁻¹²) = 10⁻⁴. For Ksp values that are not powers of 10, factor out the perfect cube first, then estimate the leftover.', why:'Ksp solubility problems with cube roots are unsolvable in 90 seconds without this shortcut. Most students freeze on them.', lock:'∛(10⁻³ⁿ) = 10⁻ⁿ. Pull out perfect cubes.', coach:true},
+      {when:'You are multiplying or dividing big numbers', name:'<em>Round one up, one down</em>', move:'For multiplication, round one factor up and one factor down so the errors partially cancel. 198 × 51 ≈ 200 × 50 = 10,000 (true: 10,098, < 1% off). For division, round both the same direction. 387/19 ≈ 400/20 = 20.', why:'DAT MCQ answer spreads tolerate 1-2% estimation error. Exact arithmetic wastes the time you need for the next question.', lock:'One up, one down → errors cancel.', coach:true},
+      {when:'You see a "factor of 2" change in concentration', name:'<em>Shifts pH by 0.3</em>', move:'A 2× change in [H⁺] shifts pH by about 0.3 unit (= log 2). A 10× change shifts pH by 1 unit (= log 10). So doubling [H⁺] from 10⁻⁴ to 2 × 10⁻⁴ moves pH from 4.0 to 3.7. Useful for buffer / Le Chatelier qualitative questions.', why:'Quick mental arithmetic for any "what happens to pH if I double the acid?" question.', lock:'2× change in [H⁺] = 0.3 pH unit shift.', coach:true}
+    ]
+  },
   'lab-techniques': {
     skill:'lab-techniques', tier:0, num:'00b',
     title:'Lab <em>Techniques</em>',
@@ -7020,14 +7092,14 @@ const MODULES = {
     skill:'colligative', tier:1, num:'14b',
     title:'Colligative <em>Properties</em>',
     sub:'BP elevation, FP depression, osmotic pressure, Raoult\'s law. Van\'t Hoff factor i. About 4-5 DAT questions per test — one of the highest-yield Tier 1 topics.',
-    pattern:'Colligative properties depend only on the <b>number of solute particles</b>, not their identity. Tommy\'s rule: <em>"Count the pieces, then plug the formula."</em><br><br>The four colligative effects all flow from the same idea — adding solute particles to a solvent disrupts how molecules enter and leave the surface or the lattice:<br>- <b>BP elevation</b>: solute particles block escape into vapor, so the solvent boils <em>higher</em>. <b>ΔTb = i · Kb · m</b>.<br>- <b>FP depression</b>: solute particles disrupt crystal packing, so the solvent freezes <em>lower</em>. <b>ΔTf = i · Kf · m</b>.<br>- <b>Osmotic pressure</b>: solvent rushes across a semipermeable membrane to dilute the side with more particles. <b>π = i · M · R · T</b>.<br>- <b>Vapor-pressure lowering / Raoult\'s law</b>: solute particles dilute the solvent at the surface, so fewer molecules escape into vapor. <b>P_solution = χ_solvent · P°_solvent</b>.<br><br><b>Van\'t Hoff factor i</b> is the particle multiplier. Write the dissociation and count: NaCl → Na⁺ + Cl⁻ (i = 2). CaCl₂ → Ca²⁺ + 2Cl⁻ (i = 3). MgSO₄ → Mg²⁺ + SO₄²⁻ (i = 2). Glucose, sucrose, urea, ethanol → no dissociation, i = 1. Strong electrolytes have i ≈ the formula count; weak electrolytes have i between 1 and that count (partial dissociation).<br><br><b>Cross-link:</b> dissolving is favored partly because of entropy gain — see <a href="#entropy" onclick="goSec(\'entropy\'); return false;" style="color:var(--gold-d); font-weight:600">Entropy</a> and <a href="#gibbs" onclick="goSec(\'gibbs\'); return false;" style="color:var(--gold-d); font-weight:600">Gibbs ΔG</a>. Solubility itself sits in <a href="#solutions" onclick="goSec(\'solutions\'); return false;" style="color:var(--gold-d); font-weight:600">Solutions</a>; gas dissolution follows Henry\'s law, also in Solutions.',
+    pattern:'Colligative properties depend only on the <b>number of solute particles</b>, not their identity. Coach rule: <em>"Count the pieces, then plug the formula."</em><br><br>The four colligative effects all flow from the same idea — adding solute particles to a solvent disrupts how molecules enter and leave the surface or the lattice:<br>- <b>BP elevation</b>: solute particles block escape into vapor, so the solvent boils <em>higher</em>. <b>ΔTb = i · Kb · m</b>.<br>- <b>FP depression</b>: solute particles disrupt crystal packing, so the solvent freezes <em>lower</em>. <b>ΔTf = i · Kf · m</b>.<br>- <b>Osmotic pressure</b>: solvent rushes across a semipermeable membrane to dilute the side with more particles. <b>π = i · M · R · T</b>.<br>- <b>Vapor-pressure lowering / Raoult\'s law</b>: solute particles dilute the solvent at the surface, so fewer molecules escape into vapor. <b>P_solution = χ_solvent · P°_solvent</b>.<br><br><b>Van\'t Hoff factor i</b> is the particle multiplier. Write the dissociation and count: NaCl → Na⁺ + Cl⁻ (i = 2). CaCl₂ → Ca²⁺ + 2Cl⁻ (i = 3). MgSO₄ → Mg²⁺ + SO₄²⁻ (i = 2). Glucose, sucrose, urea, ethanol → no dissociation, i = 1. Strong electrolytes have i ≈ the formula count; weak electrolytes have i between 1 and that count (partial dissociation).<br><br><b>Cross-link:</b> dissolving is favored partly because of entropy gain — see <a href="#entropy" onclick="goSec(\'entropy\'); return false;" style="color:var(--gold-d); font-weight:600">Entropy</a> and <a href="#gibbs" onclick="goSec(\'gibbs\'); return false;" style="color:var(--gold-d); font-weight:600">Gibbs ΔG</a>. Solubility itself sits in <a href="#solutions" onclick="goSec(\'solutions\'); return false;" style="color:var(--gold-d); font-weight:600">Solutions</a>; gas dissolution follows Henry\'s law, also in Solutions.',
     formula:'ΔTb = i · Kb · m  (Kb_water = 0.512 °C/m)<br>ΔTf = i · Kf · m  (Kf_water = 1.86 °C/m)<br>π  = i · M · R · T  (R = 0.0821 L·atm/(mol·K), T in K)<br>P_solution = χ_solvent · P°_solvent  (Raoult)<br>i = 1 glucose / sucrose / urea<br>i = 2 NaCl / KBr / MgSO₄<br>i = 3 CaCl₂ / Na₂SO₄<br>i = 4 AlCl₃ / FeCl₃',
     visualType:'colligative-explorer', visualData:{i:2, m:1.0, mode:'fp'},
     worked:[
       {q:'ΔTf for 1.5 m NaCl in water?', steps:[{what:'NaCl → Na⁺ + Cl⁻, so i = 2', why:'Each formula unit of NaCl fully dissociates into 2 particles in water.', predict:{q:'Plug into ΔTf formula?', hint:'i · Kf · m.'}}, {what:'ΔTf = 2 × 1.86 × 1.5 = 5.58 °C', why:'Kf_water = 1.86 °C/m. Multiply i, Kf, and molality.'}, {what:'FP = 0 − 5.58 = −5.58 °C', why:'"Depression" means the new freezing point is LOWER than 0 °C — subtract ΔTf.'}]},
       {q:'BP elevation when 90 g glucose (MW = 180) is dissolved in 500 g water?', steps:[{what:'mol glucose = 90 / 180 = 0.5 mol', why:'Moles = mass / molar mass.'}, {what:'molality = 0.5 mol / 0.500 kg = 1.0 m', why:'<b>m uses kg of SOLVENT, not the whole solution</b> — that is the trap.', predict:{q:'ΔTb at i = 1?', hint:'1 · 0.512 · 1.0.'}}, {what:'ΔTb = 1 × 0.512 × 1.0 = 0.512 °C', why:'Glucose is a non-electrolyte → i = 1.'}, {what:'New BP = 100 + 0.512 = 100.512 °C', why:'BP is ELEVATED (raised), so add ΔTb to 100 °C.'}]},
       {q:'Osmotic pressure of 0.10 M CaCl₂ at 25 °C?', steps:[{what:'CaCl₂ → Ca²⁺ + 2Cl⁻, i = 3', why:'One Ca²⁺ + two Cl⁻ = 3 dissolved particles per formula unit.'}, {what:'T = 25 + 273 = 298 K', why:'Osmotic-pressure formula uses absolute temperature — always Kelvin.'}, {what:'π = iMRT = 3 × 0.10 × 0.0821 × 298', why:'R = 0.0821 L·atm/(mol·K) gives π directly in atm.', predict:{q:'About how many atm?', hint:'~7-8.'}}, {what:'π ≈ 7.34 atm', why:'Even a dilute solution drives substantial osmotic pressure — that is why kidney tubules can move water with small concentration gradients.'}]},
-      {q:'<b>Tommy\'s comparison test:</b> rank the freezing points of 0.10 m NaCl, 0.10 m CaCl₂, and 0.10 m glucose — which freezes lowest?', steps:[{what:'Same molality, only i differs', why:'ΔTf = i · Kf · m. Kf and m are identical across all three; only i changes the answer.', predict:{q:'Which has the highest i?', hint:'Count particles.'}}, {what:'i: NaCl = 2, CaCl₂ = 3, glucose = 1', why:'Write the dissociation and count: Na⁺ + Cl⁻ = 2; Ca²⁺ + 2Cl⁻ = 3; glucose stays one molecule.'}, {what:'ΔTf: glucose 0.186, NaCl 0.372, CaCl₂ 0.558 °C', why:'Each ΔTf = i · 1.86 · 0.10. Triple-i triples the depression.'}, {what:'<em>CaCl₂ freezes lowest</em> at −0.558 °C', why:'Most particles → most disruption → biggest depression. This is exactly why CaCl₂ is the road-deicer of choice — three particles per formula unit instead of two.'}]},
+      {q:'<b>Coach comparison test:</b> rank the freezing points of 0.10 m NaCl, 0.10 m CaCl₂, and 0.10 m glucose — which freezes lowest?', steps:[{what:'Same molality, only i differs', why:'ΔTf = i · Kf · m. Kf and m are identical across all three; only i changes the answer.', predict:{q:'Which has the highest i?', hint:'Count particles.'}}, {what:'i: NaCl = 2, CaCl₂ = 3, glucose = 1', why:'Write the dissociation and count: Na⁺ + Cl⁻ = 2; Ca²⁺ + 2Cl⁻ = 3; glucose stays one molecule.'}, {what:'ΔTf: glucose 0.186, NaCl 0.372, CaCl₂ 0.558 °C', why:'Each ΔTf = i · 1.86 · 0.10. Triple-i triples the depression.'}, {what:'<em>CaCl₂ freezes lowest</em> at −0.558 °C', why:'Most particles → most disruption → biggest depression. This is exactly why CaCl₂ is the road-deicer of choice — three particles per formula unit instead of two.'}]},
       {q:'Vapor-pressure lowering: 0.10 mol glucose dissolved in 0.90 mol water at 25 °C, where P°(H₂O) = 23.8 mmHg. Find P_solution.', steps:[{what:'Identify SOLVENT mole fraction', why:'Raoult uses χ of the SOLVENT, not the solute — easy trap.', predict:{q:'χ_water?', hint:'mol water / total mol.'}}, {what:'χ_solvent = 0.90 / (0.90 + 0.10) = 0.90', why:'Mole fraction = mol of that component / total mol.'}, {what:'P_solution = χ_solvent · P°_solvent = 0.90 · 23.8', why:'Plug in directly — no i factor here for non-electrolyte.'}, {what:'P_solution = 21.4 mmHg', why:'Vapor pressure dropped because solute particles took up surface positions where water molecules used to escape.'}]}
     ],
     faded:[
@@ -7041,7 +7113,7 @@ const MODULES = {
     lock:'Count particles first (i). Then pick the formula and plug in.',
     trap:'Using M (molarity) instead of m (molality) for ΔTb and ΔTf. Using mole fraction of SOLUTE (not solvent) in Raoult. Forgetting i for ionic solutes — NaCl is i = 2, not 1. Forgetting that BP is RAISED but FP is LOWERED — same magnitude formula, opposite direction on the thermometer.',
     coachTricks:[
-      {when:'You forget which i to use', name:'<em>Write the dissociation, then count</em>', move:'Tommy\'s drill — before plugging numbers, write the dissociation: NaCl → Na⁺ + Cl⁻ (count = 2). CaCl₂ → Ca²⁺ + 2Cl⁻ (count = 3). MgSO₄ → Mg²⁺ + SO₄²⁻ (count = 2). Glucose stays glucose (count = 1). Three seconds, no guessing.', why:'i is just the particle multiplier — every dissociated formula doubles or triples the colligative effect.', lock:'Write dissoc → count → multiply.', coach:true, placeholder:true},
+      {when:'You forget which i to use', name:'<em>Write the dissociation, then count</em>', move:'Coach drill — before plugging numbers, write the dissociation: NaCl → Na⁺ + Cl⁻ (count = 2). CaCl₂ → Ca²⁺ + 2Cl⁻ (count = 3). MgSO₄ → Mg²⁺ + SO₄²⁻ (count = 2). Glucose stays glucose (count = 1). Three seconds, no guessing.', why:'i is just the particle multiplier — every dissociated formula doubles or triples the colligative effect.', lock:'Write dissoc → count → multiply.', coach:true, placeholder:true},
       {when:'BP rises, FP falls', name:'<em>"Boil up, freeze down"</em>', move:'BP elevation means new BP = 100 + ΔTb. FP depression means new FP = 0 − ΔTf. Same formula structure (i·K·m), opposite sign in the final step.', why:'The math is symmetric, but DAT writers love trapping students with sign errors here.', lock:'Boil up. Freeze down.', coach:true, placeholder:true},
       {when:'Raoult vs osmosis confusion', name:'<em>Solvent fraction vs solution molarity</em>', move:'Raoult uses χ_solvent — the mole fraction of what is LEFT (solvent) — and a reference P°. Osmotic π uses M (molarity of all solute particles) and acts at a membrane. Different setups → different choices.', why:'Both involve "particles in solvent," but they answer different physical questions.', lock:'Raoult: χ_solvent + P°. Osmosis: M + R + T.', coach:true, placeholder:true},
       {when:'The DAT 4-particle ranking question', name:'<em>Same m, just rank i</em>', move:'When the prompt holds molality (or molarity) constant and asks for biggest ΔTf or biggest π, only i changes the answer. AlCl₃ (i = 4) > CaCl₂ (i = 3) > NaCl (i = 2) > glucose (i = 1).', why:'It is a one-step problem disguised as a four-option problem.', lock:'Same m → just rank i.', coach:true, placeholder:true},
@@ -7106,9 +7178,9 @@ function renderModule(skillId){
           <div class="subcard lock"><div class="h"><span class="lbl teal">Lock</span></div><div class="lock-line">${M.lock}</div></div>
         </div>
         ${M.videoUrl ? `<div class="vid-slot">
-          <div class="vid-h"><span class="vid-tag">Video</span> <span class="vid-t">${M.videoTitle || 'Tommy explains'}</span></div>
+          <div class="vid-h"><span class="vid-tag">Video</span> <span class="vid-t">${M.videoTitle || 'Coach explains'}</span></div>
           <div class="vid-body" id="vidBody-${skillId}">
-            <button class="vid-launch" onclick="VID.open('${skillId}','${M.videoUrl}','${(M.videoTitle||'Tommy explains').replace(/'/g,"\\'")}')">Watch (${M.videoDur || '~90 sec'})</button>
+            <button class="vid-launch" onclick="VID.open('${skillId}','${M.videoUrl}','${(M.videoTitle||'Coach explains').replace(/'/g,"\\'")}')">Watch (${M.videoDur || '~90 sec'})</button>
           </div>
         </div>` : ''}
         ${M.coachTricks ? renderTricksPanel(M.coachTricks) : ''}
@@ -8949,7 +9021,7 @@ function _ceRender(skillId){
     if (eqEl) eqEl.innerHTML = 'ΔTf = i · Kf · m  (Kf = 1.86 °C/m)';
     if (valEl) valEl.textContent = 'ΔTf = ' + dTf.toFixed(2) + ' °C';
     if (subEl) subEl.textContent = 'New FP = 0 − ' + dTf.toFixed(2) + ' = ' + newFP.toFixed(2) + ' °C';
-    if (noteEl) noteEl.textContent = 'Higher molality and higher i both pull the FP lower. Tommy: count particles, then plug.';
+    if (noteEl) noteEl.textContent = 'Higher molality and higher i both pull the FP lower. Coach: count particles, then plug.';
     // Thermometer with normal point and shifted point
     // Map: y = 30 (top, +5°C) to y = 210 (bottom, −15°C). 1 °C = 9 px.
     const yFor = (tC) => 30 + (5 - tC) * 9;
@@ -13357,7 +13429,7 @@ const MISCON = {
 window.MISCON = MISCON;
 
 /* ============================================================
-   VID — embedded short videos (Tommy's TikToks slot)
+   VID — embedded short videos (coach TikToks slot)
    M.videoUrl points to an HTML/Vimeo/YouTube URL. Opens a modal.
    ============================================================ */
 const VID = {
@@ -13390,7 +13462,7 @@ const VID = {
           <div class="vid-modal-body">
             <iframe src="${embed}" allow="autoplay; encrypted-media; fullscreen" allowfullscreen frameborder="0"></iframe>
           </div>
-          <div class="vid-modal-foot"><span class="muted">Tommy's voice · short + surgical</span></div>
+          <div class="vid-modal-foot"><span class="muted">Coach voice · short + surgical</span></div>
         </div>
       </div>
     `;
@@ -13475,7 +13547,7 @@ const CRAM = {
         <div class="cram-h">
           <span class="cram-num">${M.num || ''}</span>
           <span class="cram-tier">${tierLabel}</span>
-          ${hasVid ? `<button class="cram-vid" onclick="VID.open('${s.id}','${M.videoUrl}','${(M.videoTitle||'Tommy explains').replace(/'/g,"\\'")}')" title="Watch the TikTok">Watch</button>` : ''}
+          ${hasVid ? `<button class="cram-vid" onclick="VID.open('${s.id}','${M.videoUrl}','${(M.videoTitle||'Coach explains').replace(/'/g,"\\'")}')" title="Watch the TikTok">Watch</button>` : ''}
           <button class="cram-jump" onclick="goSec('${s.id}')" title="Open the full Mastery Path module">↗</button>
         </div>
         <div class="cram-t">${M.title}</div>
@@ -17368,7 +17440,7 @@ const COACH_EDIT = {
     dl.href = 'data:application/json;charset=utf-8,' + encodeURIComponent(blob);
     dl.download = 'coach-gc-edits-' + new Date().toISOString().slice(0,10) + '.json';
     dl.click();
-    alert(`Exported ${out.length} edits.\nA file was downloaded AND the JSON was copied to your clipboard.\nEmail it to Tommy or paste into a message.`);
+    alert(`Exported ${out.length} edits.\nA file was downloaded AND the JSON was copied to your clipboard.\nEmail it to your coach or paste into a message.`);
   },
   apply(){
     // On boot, apply saved edits to live elements (read-only mode)
@@ -17465,7 +17537,7 @@ const FEEDBACK = {
     dl.href = 'data:text/markdown;charset=utf-8,' + encodeURIComponent(md);
     dl.download = 'coach-feedback-' + new Date().toISOString().slice(0,10) + '.md';
     dl.click();
-    alert(`Exported ${log.length} notes.\nDownloaded as a markdown file AND copied to clipboard.\nEmail or paste to Tommy.`);
+    alert(`Exported ${log.length} notes.\nDownloaded as a markdown file AND copied to clipboard.\nEmail or paste to your coach.`);
   },
   clearLog(){
     if (!confirm('Clear all saved notes? This cannot be undone.')) return;
@@ -18643,7 +18715,7 @@ function renderShortcutDeck(){
   TOPICS_AVAILABLE.forEach(skill => {
     if (MODULES[skill] && !MODULES[skill].videoUrl){
       MODULES[skill].videoUrl = `tiktoks/topic-tiktok.html?topic=${skill}`;
-      MODULES[skill].videoTitle = TITLES[skill] || 'Tommy explains';
+      MODULES[skill].videoTitle = TITLES[skill] || 'Coach explains';
       MODULES[skill].videoDur = '~70 sec';
     }
   });

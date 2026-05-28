@@ -368,7 +368,7 @@ body[data-theme="dark"] .worked-step .why::before{color:var(--gold-m)}
   position:relative;
 }
 .worked-step .sarah-says::before{
-  content:"Sarah says"; display:block;
+  content:"Coach says"; display:block;
   font-family:'DM Sans',sans-serif; font-style:normal;
   font-size:9.5px; letter-spacing:0.14em; text-transform:uppercase;
   color:var(--gold-d); font-weight:700; margin-bottom:3px;
@@ -686,7 +686,7 @@ body[data-theme="dark"] .sarah-item-note .from{color:var(--gold-m)}
   font-size:10.5px; color:var(--ink-mute); margin-top:6px; letter-spacing:0.04em;
 }
 
-/* Item-anchored note: Sarah-mode authoring affordance (Sarah-mode only) */
+/* Item-anchored note: Coach mode authoring affordance (Coach mode only) */
 .sarah-note-author{
   margin-top:10px; padding:10px 12px;
   background:var(--paper-2); border:1px dashed var(--gold);
@@ -2182,7 +2182,7 @@ body[data-theme="dark"] .dash-card .pat-due-row .go{color:var(--gold-m)}
   <a class="sb-link" data-go="drill"><span class="dot"></span><span class="label">Daily Drill</span><span class="meta">5 min · spaced</span></a>
   <a class="sb-link" data-go="pacing"><span class="dot"></span><span class="label">Pacing Ladder</span><span class="meta">4-tier</span></a>
   <a class="sb-link" data-go="test-sim"><span class="dot"></span><span class="label">Test-Day Simulation</span><span class="meta">40 Q</span></a>
-  <a class="sb-link" data-go="sarah-dash"><span class="dot"></span><span class="label">Sarah's Dashboard</span><span class="meta">tutor</span></a>
+  <a class="sb-link" data-go="sarah-dash"><span class="dot"></span><span class="label">Coach Dashboard</span><span class="meta">tutor</span></a>
 
   <div class="sb-stuck-btn" id="stuckBtn">I need a sec</div>
 
@@ -2198,7 +2198,7 @@ body[data-theme="dark"] .dash-card .pat-due-row .go{color:var(--gold-m)}
     <div class="row"><span>Streak</span><b id="streakCount" class="streak-fire">0d</b></div>
     <div class="row"><span>Mastered</span><b id="totMastered">0</b></div>
     <div class="row"><span>Due review</span><b id="srDue">0</b></div>
-    <div class="row"><span>Sarah-mode</span><b id="sarahState">off</b></div>
+    <div class="row"><span>Coach mode</span><b id="sarahState">off</b></div>
   </div>
 </aside>
 <button class="mn-burger hide" id="mnBurger" aria-label="Open menu"><svg width="20" height="14" viewBox="0 0 20 14" aria-hidden="true"><line x1="1" y1="2" x2="19" y2="2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="1" y1="7" x2="19" y2="7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="1" y1="12" x2="19" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
@@ -2207,7 +2207,7 @@ body[data-theme="dark"] .dash-card .pat-due-row .go{color:var(--gold-m)}
 
 <!-- Sarah's edit-mode banner — visible whenever edit mode is on -->
 <div class="edit-mode-banner" id="editBanner">
-  <span class="lbl"><em>Sarah's edit mode</em> — click any underlined text to edit. Changes save to your browser.</span>
+  <span class="lbl"><em>Coach edit mode</em> — click any underlined text to edit. Changes save to your browser.</span>
   <span class="count" id="editCount">0 edits</span>
   <button onclick="SARAH_EDIT.exportChanges()">Export &amp; Send to Tommy</button>
   <button onclick="SARAH_EDIT.toggle()">Done</button>
@@ -2278,7 +2278,7 @@ body[data-theme="dark"] .dash-card .pat-due-row .go{color:var(--gold-m)}
   <button class="sound-toggle" id="btnSound" title="Toggle sound feedback">Sound</button>
   <button class="btn ghost sm" id="btnTheme" title="Toggle dark mode">Theme</button>
   <button class="btn ghost sm" id="btnIso" title="Hide chrome">Isolate</button>
-  <button class="btn gold sm" id="btnSarah">Sarah-Mode</button>
+  <button class="btn gold sm" id="btnSarah">Coach Mode</button>
   <script>
     // Coach-mode gate: Edit button visible only when explicitly opted in.
     (function(){
@@ -2481,7 +2481,7 @@ body[data-theme="dark"] .dash-card .pat-due-row .go{color:var(--gold-m)}
       <div class="mark teal">P</div>
       <div class="ttl">
         <h3>9 fully-animated patterns + 5 stubs</h3>
-        <div class="sub">Same brand shell, same Sarah-mode controller. Lives in <span class="kbd">qr-pattern-system-v1.html</span> in this folder.</div>
+        <div class="sub">Same brand shell, same Coach mode controller. Lives in <span class="kbd">qr-pattern-system-v1.html</span> in this folder.</div>
       </div>
     </div>
     <p>The pattern path was built first as proof-of-system. The remediation tier you're in now is the *floor* that unlocks it. Once your foundation is solid, the patterns are where speed shortcuts and DAT-trap recognition come in.</p>
@@ -2603,6 +2603,21 @@ body[data-theme="dark"] .dash-card .pat-due-row .go{color:var(--gold-m)}
     <div class="pace-ladder" id="paceLadder"></div>
     <div id="paceStart"></div>
   </div>
+
+  <!-- Two-Pass Drill promotion (2026-05-28 · Phase 2.7) -->
+  <div class="card" style="margin-top:14px;border-left:4px solid var(--qr,#d56b97)">
+    <div class="card-h">
+      <div class="mark"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M2 7 L5 10 L12 3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="ttl"><h3>When you're ready for the timer · <em>Two-Pass Drill</em></h3>
+        <div class="sub">The pacing simulator that <b>forces you to skip 5 questions in pass 1</b> — trains the skip move as a first-class skill instead of measuring it after the fact. Gated by 80%+ untimed accuracy at the previous tier.</div>
+      </div>
+    </div>
+    <div style="padding:14px 16px;background:rgba(213,107,151,.04);border-radius:8px;font-size:14px;color:#3a4148;line-height:1.6">
+      <p style="margin:0 0 .6rem"><b>Why this matters more than a stopwatch.</b> Top-scoring students don't just go faster — they have a different decision pattern. They skip earlier, return more accurately, and never burn 3 minutes on a single question. Watching a clock teaches none of that. The Two-Pass Drill builds the skip-and-return reflex by making it the only way to finish the drill.</p>
+      <p style="margin:0 0 .6rem"><b>What you get:</b> a forced 5-skip first pass, a Skip + Return button with a flagged-queue UI, throttled coach-whisper recommendations ("behind by &gt;30s — skip the next hard one"), and a lift-from-guessing debrief comparing your strategy to all-blank and all-guess baselines.</p>
+      <p style="margin:0"><a href="tools/qr/proposals/agent-08-pacing/pacing-sim.html" target="_blank" rel="noopener" style="display:inline-block;padding:8px 18px;background:#d56b97;color:#fff;text-decoration:none;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase">Open the Two-Pass Drill</a> <span style="margin-left:10px;color:#7e7b87;font-size:12.5px">opens in a new tab · 10 Q drill · 5 forced skips</span></p>
+    </div>
+  </div>
 </section>
 
 <!-- ===================== TEST DAY SIM ===================== -->
@@ -2659,7 +2674,7 @@ body[data-theme="dark"] .dash-card .pat-due-row .go{color:var(--gold-m)}
   <div class="sec-head">
     <div class="grow">
       <div class="num">TUTOR · 05</div>
-      <h2>Sarah's <em>dashboard</em></h2>
+      <h2>Coach <em>dashboard</em></h2>
       <p class="s">A view for the tutor. Shows the student's last 7 days, where they stalled, calibration profile, "stuck" usage, and an auto-generated session plan to edit and approve.</p>
     </div>
   </div>
@@ -2674,16 +2689,16 @@ body[data-theme="dark"] .dash-card .pat-due-row .go{color:var(--gold-m)}
     </div>
   </div>
 
-  <!-- Sarah-mode-only · per-student summary digest (Build 2 / Khanmigo Summarize) -->
+  <!-- Coach mode-only · per-student summary digest (Build 2 / Khanmigo Summarize) -->
   <div class="card sarah-only" id="sarahSummaryCard">
     <div class="card-h">
       <div class="mark teal">D</div>
       <div class="ttl">
         <h3 id="sarahSummaryTitle">Latest activity · <em>—</em></h3>
-        <div class="sub">A 6-line digest computed from local data. Replaces raw-log scrolling. Toggle Sarah-mode off to hide.</div>
+        <div class="sub">A 6-line digest computed from local data. Replaces raw-log scrolling. Toggle Coach mode off to hide.</div>
       </div>
     </div>
-    <div id="sarahSummaryBody" class="muted" style="font-size:13px">— Toggle Sarah-mode and pick a student to populate. —</div>
+    <div id="sarahSummaryBody" class="muted" style="font-size:13px">— Toggle Coach mode and pick a student to populate. —</div>
   </div>
   <div class="card">
     <div class="card-h">
@@ -2788,7 +2803,7 @@ body[data-theme="dark"] .dash-card .pat-due-row .go{color:var(--gold-m)}
 
 <!-- ===================== SARAH BAR ===================== -->
 <div class="sarah-bar" id="sarahBar">
-  <div class="pill">Sarah-mode</div>
+  <div class="pill">Coach mode</div>
   <div class="ctl">
     <button class="iconbtn" id="sBack" title="Previous"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><polyline points="8,2 4,6 8,10" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
     <button class="iconbtn play" id="sPlay" title="Play"><svg width="11" height="13" viewBox="0 0 11 13" aria-hidden="true"><polygon points="2,1.5 9.5,6.5 2,11.5" fill="currentColor"/></svg></button>
@@ -2976,6 +2991,7 @@ const SKILLS = [
   {id:'geo-2d',    tier:2, name:'2D Geometry — Circles, Squares', prereqs:['coord'],       x:2, y:8},
   {id:'sets',      tier:2, name:'Sets — Union, Intersection',     prereqs:['count-pc'],    x:3, y:8},
   {id:'desc-stats',tier:2, name:'Descriptive Statistics',         prereqs:['frac-mul'],    x:4, y:8},
+  {id:'trig',      tier:2, name:'Trig — SOHCAHTOA + Identities',  prereqs:['geo-2d'],      x:5, y:8},
   // Tier 3 — DAT Day (3)
   // Removed phantom nodes pat-seq, pace-90, pace-60 (Agent 9 finding §3 — they had no module body
   // and routed to LOCKMOD.openComingSoon). Pacing surface lives in the Pacing Ladder section.
@@ -4328,6 +4344,33 @@ const BANK = [
   {id:'dsm3', skills:['desc-stats'], diff:3, q:'Add a value to [4, 5, 6, 7] so the median stays 5.5. The new value must be in what range?', opts:['≥ 6','≤ 4','any value','exactly 5.5'], correct:0, why:'Currently sorted [4,5,6,7], median = 5.5. Adding a 5th value: the new median is the 3rd. To keep it at 5.5 (not possible exactly with 5 values — closest is 5 or 6), the value must be ≥ 6 so the 3rd of 5 stays at 6. Closest reasonable answer.', diag:{1:'That would shift median down.', 2:'New value affects median.', 3:'Then median would shift.'}},
   {id:'dsm4', skills:['desc-stats'], diff:2, q:'Adding a value much larger than the rest of the dataset most affects which?', opts:['Mean','Median','Mode','None'], correct:0, why:'Mean is sensitive to outliers. Median and mode are robust.', diag:{1:'Median holds steady against outliers.', 2:'Mode tracks frequency, not magnitude.', 3:'Mean shifts.'}},
   {id:'dsm5', skills:['desc-stats'], diff:3, q:'Variance of [3, 3, 3, 3] = ?', opts:['0','3','12','1'], correct:0, why:'All values equal mean → all deviations = 0 → variance = 0. Zero spread.', diag:{1:'That\'s the mean.', 2:'Sum of values.', 3:'Default guess.'}},
+
+  // === TRIG (5) — added 2026-05-28 with the new trig module ===
+  {id:'tr1', skills:['trig'], diff:1, q:'In a right triangle, the hypotenuse is 10 and one angle is 30°. The side opposite the 30° angle is?',
+   opts:['5','5√3','10/√3','√50'], correct:0,
+   why:'sin 30° = opp/hyp = 1/2, so opp = sin 30° × 10 = (1/2)(10) = 5.',
+   diag:{1:'5√3 is the side ADJACENT to 30° (= cos 30° × 10 = (√3/2)(10) = 5√3). Read which side the angle "opens onto."', 2:'10/√3 uses tan 30° (= 1/√3) × hypotenuse — that mixes tan with hypotenuse, which is not a valid SOHCAHTOA pairing. tan uses opp/adj, not hyp.', 3:'√50 ≈ 7.07 is the side of a 45-45-90 with hyp 10. Different triangle.'}},
+
+  {id:'tr2', skills:['trig'], diff:2, q:'If sin θ = 4/5 in a right triangle, then cos θ = ?',
+   opts:['3/5','5/3','5/4','4/3'], correct:0,
+   why:'Use sin²θ + cos²θ = 1. cos²θ = 1 − 16/25 = 9/25. cos θ = 3/5 (positive root, since θ is acute in a right triangle). Or recognize the 3-4-5 Pythagorean triple: if opp = 4 and hyp = 5, then adj = 3.',
+   diag:{1:'5/3 is the reciprocal — that would be csc θ, not cos.', 2:'5/4 is csc θ.', 3:'4/3 is tan θ (opp/adj = 4/3).'}},
+
+  {id:'tr3', skills:['trig'], diff:1, q:'Special-angle value: cos 60° = ?',
+   opts:['1/2','√2/2','√3/2','1'], correct:0,
+   why:'cos 60° = 1/2. Memorize the special-angle table: sin 30° = cos 60° = 1/2. sin 45° = cos 45° = √2/2. sin 60° = cos 30° = √3/2.',
+   diag:{1:'√2/2 is cos 45° (or sin 45°).', 2:'√3/2 is cos 30° (or sin 60°). The 30° and 60° values are reciprocal-positioned — easy to mix up.', 3:'cos = 1 only at θ = 0°.'}},
+
+  {id:'tr4', skills:['trig'], diff:2, q:'For what acute angle θ does tan θ = 1?',
+   opts:['30°','45°','60°','90°'], correct:1,
+   why:'tan θ = sin θ / cos θ. At θ = 45°, sin = cos = √2/2, so the ratio is 1. The DAT inverse-trig answers are almost always 30°, 45°, or 60°.',
+   diag:{0:'tan 30° = 1/√3 ≈ 0.577, not 1.', 2:'tan 60° = √3 ≈ 1.73, not 1.', 3:'tan 90° is undefined (cos 90° = 0, division by zero).'}},
+
+  {id:'tr5', skills:['trig'], diff:2, q:'Sides of a 30-60-90 right triangle are in the ratio (shortest leg : longer leg : hypotenuse) = ?',
+   opts:['1 : √3 : 2','1 : 2 : √3','1 : 1 : √2','3 : 4 : 5'],
+   correct:0,
+   why:'Special right triangle: 30-60-90 sides are 1 : √3 : 2. The side opposite the 30° angle is the shortest (= 1), opposite the 60° is √3, and the hypotenuse opposite 90° is 2. Together with 45-45-90 (1 : 1 : √2), these are the two special-triangle ratios to memorize.',
+   diag:{1:'You swapped the longer leg and the hypotenuse. The hypotenuse is always the longest side.', 2:'1 : 1 : √2 is the 45-45-90 ratio. Different triangle.', 3:'3 : 4 : 5 is a Pythagorean triple but does not have 30° / 60° / 90° angles.'}},
 ];
 
 const BANK_BY_ID = Object.fromEntries(BANK.map(b => [b.id, b]));
@@ -4503,7 +4546,7 @@ const MODULES = {
         when:'A percent-change problem with variables instead of numbers (e.g. "an item\'s price falls X% then rises Y%").',
         name:'<em>Pretend it\'s $100</em>',
         move:'Whatever the problem describes — a car, a stock, a coffee, a house — <b>pretend it costs $100.</b> Run the percentages on $100. Read the answer as a ratio or a final value. The variables get easy because $100 makes every percentage trivial: 20% off $100 is $20 off, $80 left. 30% increase on that is $80 × 1.30 = $104. The relationships stay the same regardless of original price.',
-        why:'Sarah\'s universal substitution for variable-laden percent problems. "No matter what you\'re talking about, we\'re always going to pretend it\'s $100." Eliminates the abstract paralysis.',
+        why:'Coach\'s universal substitution for variable-laden percent problems. "No matter what you\'re talking about, we\'re always going to pretend it\'s $100." Eliminates the abstract paralysis.',
         lock:'Variables in a percent problem? Pretend $100.',
         sarah:true
       },
@@ -4603,7 +4646,7 @@ const MODULES = {
         when:'A word problem has multiple unknowns and the student doesn\'t know how many equations to write.',
         name:'<em>N variables → N equations</em>',
         move:'Count the variables. <b>You need exactly that many unique equations to solve.</b> 2 variables = 2 equations. 3 variables = 3 equations. 4 variables = 4 equations. Before solving anything: list the variables, count them, then look at what the problem gives you and ask "is this a unique equation?" — if yes, it counts. If two equations are scalar multiples of each other (e.g. 2x + 4y = 8 and x + 2y = 4), they\'re NOT unique — same equation, doesn\'t add information.',
-        why:'Sarah\'s structural rule for setting up systems and data-sufficiency questions. Counting variables and equations BEFORE solving prevents going in circles or trying to solve underdetermined systems.',
+        why:'Coach\'s structural rule for setting up systems and data-sufficiency questions. Counting variables and equations BEFORE solving prevents going in circles or trying to solve underdetermined systems.',
         lock:'Count the variables. You need that many unique equations.',
         sarah:true
       },
@@ -4976,8 +5019,8 @@ const MODULES = {
       {
         when:'The problem says "if together they work N hours" or "they work together for N hours" — these are NOT the same setup.',
         name:'<em>"If together" vs "work together for"</em>',
-        move:'Watch this distinction — it\'s a real DAT trap and Sarah catches it explicitly. <b>"If together they work 12 hours"</b> usually means the SUM of their hours is 12 (Sam\'s hours + Joe\'s hours = 12) — they may not be working at the same time. <b>"They work together FOR 12 hours"</b> usually means they work simultaneously for 12 hours — both their rates apply for the full 12. Read carefully. The setup equations are different.',
-        why:'A real DAT-trap distinction Sarah surfaces in her sessions. Most students miss it because the phrasings sound similar.',
+        move:'Watch this distinction — it\'s a real DAT trap and the coach catches it explicitly. <b>"If together they work 12 hours"</b> usually means the SUM of their hours is 12 (Sam\'s hours + Joe\'s hours = 12) — they may not be working at the same time. <b>"They work together FOR 12 hours"</b> usually means they work simultaneously for 12 hours — both their rates apply for the full 12. Read carefully. The setup equations are different.',
+        why:'A real DAT-trap distinction the coach surfaces in her sessions. Most students miss it because the phrasings sound similar.',
         lock:'"If together" = sum of hours. "Work together for" = simultaneous time.',
         sarah:true
       },
@@ -5184,9 +5227,9 @@ const MODULES = {
     sarahTricks:[
       {
         when:'A 2-dice sum question (P(sum = X) or P(sum = X or Y)).',
-        name:'<em>The Dice Pyramid</em> · Sarah\'s favorite trick',
+        name:'<em>The Dice Pyramid</em> · favorite coach trick',
         move:'Write out the pyramid every time — takes 5 seconds and you do zero math. Sums 2 through 12, with the count of ways underneath: <b>1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1</b>. The peak is 6 ways at sum 7. Probability = (count) / 36. So P(sum = 9) → look up 9 → 4 ways → 4/36 = 1/9. Compound questions: P(sum = 6 or 9) → 5 + 4 = 9/36. (Important: 6 goes UNDER the 7, not the other way around — that\'s the only thing students mess up.) Constraint: this only works for SUMS. If the question asks about differences or "both even," use a different approach.',
-        why:'Sarah calls this her favorite trick — "dice questions are my brain break questions, because I\'m not doing literally any single math." It\'s a 5-second answer to what students otherwise spend 60 seconds on.',
+        why:'The coach calls this her favorite trick — "dice questions are my brain break questions, because I\'m not doing literally any single math." It\'s a 5-second answer to what students otherwise spend 60 seconds on.',
         lock:'2 dice sum? Pyramid: 1·2·3·4·5·6·5·4·3·2·1 over 36.',
         sarah:true
       },
@@ -5269,7 +5312,7 @@ const MODULES = {
         when:'A combination question (anything where order doesn\'t matter — committees, hands of cards, groups).',
         name:'<em>The C-Method</em> · skip the formula',
         move:'Don\'t memorize n! / (r!(n−r)!). Instead: <b>draw a literal C.</b> The larger number goes on the LEFT (top of the C), the smaller goes on the RIGHT (bottom). On top, expand the larger as a factorial down by the count of the smaller — for C(10,3): write <b>10 × 9 × 8</b>. On bottom: the smaller as a full factorial — <b>3 × 2 × 1</b>. Divide. Self-check: <b>same number of digits on top and bottom</b> — that\'s how you know you set it up right.',
-        why:'Sarah\'s primary combination move. No N, no R, no formula recall — just a picture and a counting rule. The same-digit-count self-check catches setup errors automatically.',
+        why:'Coach\'s primary combination move. No N, no R, no formula recall — just a picture and a counting rule. The same-digit-count self-check catches setup errors automatically.',
         lock:'Draw a C. Larger left. Same digits top + bottom.',
         sarah:true
       },
@@ -5277,7 +5320,7 @@ const MODULES = {
         when:'Hesitating between P (permutation) and C (combination) — order matters or doesn\'t?',
         name:'<em>P is positive · C doesn\'t care</em>',
         move:'Two memory aids that work for different students. (1) <b>P is positive — order matters is a positive sentence.</b> "Order does not matter" is the negative one. So P = positive = order matters. (2) <b>Permutations are picky about position. Combinations don\'t care.</b> Pick whichever sticks for you. The shuffle test still works as a confirmation: imagine your selection, shuffle it, same thing? → C. Different thing? → P.',
-        why:'Sarah\'s actual P/C decision heuristic from her sessions. Either memory aid works; pick one. The shuffle test is the confirming sanity check.',
+        why:'The coach\'s actual P/C decision heuristic from her sessions. Either memory aid works; pick one. The shuffle test is the confirming sanity check.',
         lock:'P is positive. C doesn\'t care.'
       },
       {when:'A problem has multiple selections.', name:'AND <em>multiplies</em> them', move:'When you need to choose from group A AND group B independently, multiply C\'s (or P\'s) from each. C(5,2) × C(6,3) = 200 ways.', why:'Students sometimes try to add — but each combo of A pairs with EACH combo of B.', lock:'Multiple selections? Multiply.'}
@@ -5511,7 +5554,7 @@ const MODULES = {
         when:'Any exponent expression you can\'t immediately simplify in your head.',
         name:'<em>Calculator-feasibility filter</em>',
         move:'Ask: <b>"Can I plug this directly into the on-screen DAT calculator?"</b> The DAT calculator has a square-root button but no exponent button and no nth-root button. So your job is to <b>rewrite the expression until it\'s something the calculator can handle.</b> Fraction exponents become roots (X^(1/2) = √X). Power-of-power becomes multiplication of exponents. Negative exponents flip to fractions. Every move serves one goal: get to a form you can plug in.',
-        why:'Sarah\'s primary exponent-manipulation philosophy. Stops students from over-elaborate symbolic manipulation when the calculator constraint defines the simpler path.',
+        why:'Coach\'s primary exponent-manipulation philosophy. Stops students from over-elaborate symbolic manipulation when the calculator constraint defines the simpler path.',
         lock:'Rewrite until you can plug it in.',
         sarah:true
       },
@@ -5519,7 +5562,7 @@ const MODULES = {
         when:'A square root with no visible base / a log with no visible base.',
         name:'<em>Hidden bases — assumed and unwritten</em>',
         move:'A plain √ has a hidden 2 — square root means base-2 root. <b>"Just like log of 10 — we don\'t always write the 10, because it\'s assumed."</b> Same idea: the most common case gets the silent treatment. ⁴√x means a 4th root (written). √x means a 2nd root (not written). Once you see the parallel, the notation stops being mysterious.',
-        why:'Sarah\'s favorite analogy for explaining notation. Students who couldn\'t parse "what does this radical mean?" suddenly do once they see the log parallel.',
+        why:'Coach\'s favorite analogy for explaining notation. Students who couldn\'t parse "what does this radical mean?" suddenly do once they see the log parallel.',
         lock:'√ is base 2. log is base 10. Both hidden.'
       },
       {when:'Same base appears in a multiplication.', name:'<em>Multiply bases? Add exponents.</em>', move:'Whenever you see same-base × same-base, just sum the exponents. 2³ · 2⁵ = 2⁸. Doesn\'t matter how big the exponents are.', why:'Most exponent errors come from confusing this with power-of-power.', lock:'Same-base × → add powers.'},
@@ -5560,7 +5603,7 @@ const MODULES = {
         when:'Any absolute-value problem with anything outside the absolute-value bars.',
         name:'<em>Shield + Tornado</em>',
         move:'Think of the absolute-value bars as <b>shields</b>. <b>What\'s inside the bars is protected — it doesn\'t change.</b> Then imagine a <b>tornado</b> ripping through and flipping everything OUTSIDE the bars: signs flip, inequality direction flips, etc. There are always two answers: the <b>easy method</b> (write it as is, drop the bars, solve) AND the <b>hard / opposite method</b> (apply the tornado — flip everything outside the bars, solve again). Two answers, both real. Example: |x + 2|/2 < 3 → easy: (x+2)/2 < 3 → x < 4. Hard/tornado: (x+2)/2 > −3 → x > −8. Combined: −8 < x < 4.',
-        why:'Sarah\'s signature absolute-value move. The shield + tornado metaphor explains WHY the inside stays the same and WHY everything else flips — students who memorized "two cases" without understanding why finally get it.',
+        why:'Coach\'s signature absolute-value move. The shield + tornado metaphor explains WHY the inside stays the same and WHY everything else flips — students who memorized "two cases" without understanding why finally get it.',
         lock:'Shield protects. Tornado flips the rest. Two answers.',
         sarah:true
       },
@@ -5726,7 +5769,7 @@ const MODULES = {
         when:'A log equation appears alone (e.g. log_2(8) = x) and the student doesn\'t know how to solve it.',
         name:'<em>The Baseball Trick</em> · log → exponent conversion',
         move:'Picture a baseball field. The base of the log (small number) is in the practice hitting box, warming up. The number inside the log is at home plate, currently hitting. The answer (the result) is at first base. <b>To convert to exponent form, everyone moves up one spot.</b> The base steps up to home plate (becomes the base of the exponent). The "hitting" number runs across the equals sign to the right side. The "first base" number runs all the way out to second base — which is far away, and that\'s why the exponent looks small in the notation. Example: log_2(8) = 3. The 2 (warming up) becomes the base. The 8 (hitting) crosses to the right side. The 3 (first base) becomes the exponent. Answer: 2³ = 8.',
-        why:'Sarah\'s most distinctive logarithm move. Works for every student who plays/watches baseball. The "second base is far away — that\'s why the exponent looks small" is the visual hook that locks the structure.',
+        why:'Coach\'s most distinctive logarithm move. Works for every student who plays/watches baseball. The "second base is far away — that\'s why the exponent looks small" is the visual hook that locks the structure.',
         lock:'When you see a log alone — do the baseball thing. Everyone moves up one spot.',
         sarah:true
       },
@@ -5963,6 +6006,58 @@ const MODULES = {
        why:'Breaking σ into three labeled steps prevents formula-memorization panic.', lock:'Deviation² → average → root.'}
     ]
   },
+  'trig': {
+    skill:'trig', tier:2, num:'42',
+    title:'Trig &middot; <em>SOHCAHTOA + identities</em>',
+    sub:'Right-triangle ratios + the Pythagorean identity + the four special angles. Enough trig for every DAT QR trig question.',
+    pattern:'The whole DAT trig section reduces to four moves. (1) SOHCAHTOA — sin = opp/hyp, cos = adj/hyp, tan = opp/adj. Memorize the mnemonic, then recognize which side is which from the angle\'s perspective. (2) The Pythagorean identity sin²θ + cos²θ = 1, which lets you find one ratio from another without knowing the angle. (3) The four special-angle values you must memorize cold: 0°, 30°, 45°, 60°, 90°. (4) Inverse-trig "what angle gives sin = 1/2" type questions — lookup against the same special-angle table.',
+    formula:'<span class="gold">sin = O/H, cos = A/H, tan = O/A</span> &middot; SOHCAHTOA<br><span class="gold">sin²θ + cos²θ = 1</span> &middot; Pythagorean identity<br><span class="gold">tan θ = sin θ / cos θ</span><br>Special angles: sin 30° = 1/2, sin 45° = √2/2, sin 60° = √3/2<br>cos 30° = √3/2, cos 45° = √2/2, cos 60° = 1/2<br>tan 30° = 1/√3, tan 45° = 1, tan 60° = √3',
+    visualType:'word-translate', visualData:{},
+    worked:[
+      {q:'A right triangle has hypotenuse 10 and one angle of 30°. What is the length of the side opposite the 30° angle?', steps:[
+        {what:'Use sin: sin 30° = opposite / hypotenuse', why:'SOH — the side opposite the angle is what we want; hypotenuse is given.'},
+        {what:'sin 30° = 1/2', why:'special-angle value, memorize.'},
+        {what:'opposite = sin 30° × hypotenuse = (1/2) × 10 = 5', why:'plug and solve.'}
+      ]},
+      {q:'If sin θ = 3/5 for an angle in a right triangle, find cos θ.', steps:[
+        {what:'Use sin²θ + cos²θ = 1', why:'Pythagorean identity — when one ratio is given but the angle is not, this gets the other.'},
+        {what:'cos²θ = 1 − sin²θ = 1 − 9/25 = 16/25', why:'algebra.'},
+        {what:'cos θ = 4/5', why:'taking the positive root (acute angle in a right triangle).', predict:{q:'Recognize the 3-4-5?', hint:'3-4-5 is the classic Pythagorean triple.'}},
+        {what:'Anchor: 3-4-5 triangle', why:'opposite = 3, adjacent = 4, hypotenuse = 5. sin = 3/5, cos = 4/5, tan = 3/4. Memorize the triple and these questions become instant.'}
+      ]},
+      {q:'For what angle θ between 0 and 90° does sin θ = √2/2?', steps:[
+        {what:'Look up the special-angle table', why:'sin 45° = √2/2 (also written as 1/√2).'},
+        {what:'θ = 45°', why:'inverse-sin lookup. The DAT inverse-trig questions are almost always one of the four special angles.'}
+      ]}
+    ],
+    faded:[
+      {prompt:'sin 60° = ', lcd:'special angle.', blank:'__', answer:'√3/2'},
+      {prompt:'cos 45° = ', lcd:'special angle.', blank:'__', answer:'√2/2'},
+      {prompt:'If cos θ = 0, then θ = ', lcd:'cos is 0 at the top of the unit circle.', blank:'__°', answer:'90'},
+      {prompt:'Sides of a 30-60-90 triangle are in the ratio ', lcd:'special triangle.', blank:'1 : √3 : __', answer:'2'}
+    ],
+    practice:['tr1','tr2','tr3','tr4','tr5'],
+    lock:'<em>SOHCAHTOA + sin²+cos²=1 + four special angles + inverse lookup</em>.',
+    trap:'Confusing opp/adj from the wrong angle\'s perspective. The "opposite" side is opposite the angle you\'re measuring — not the angle you happen to be looking at on the page. Also: forgetting that the calculator must be in degrees mode (Ace Labs assumes degrees).',
+    sarahTricks:[
+      {when:'You see "right triangle" + an angle + one side', name:'<em>SOHCAHTOA in four seconds</em>',
+       move:'Step one: identify which side relative to the angle is the given one (opposite, adjacent, hypotenuse). Step two: identify which side you want. Step three: pick the trig function that connects them. Step four: plug in the special-angle value. The whole thing should take 4 seconds once memorized.',
+       why:'Speed move. Every right-triangle trig problem on the DAT follows this exact recipe.',
+       lock:'Identify sides → pick function → plug value.', sarah:true},
+      {when:'You see sin θ or cos θ given, asked for the other', name:'<em>Pythagorean identity, not the angle</em>',
+       move:'Never look up the angle. Just use sin²θ + cos²θ = 1. If sin θ = a/c, then cos θ = √(1 − a²/c²) = √(c² − a²) / c. Saves you from inverse-trig lookup that the DAT calculator does not do.',
+       why:'The non-calculator DAT cannot compute arc-sine. The identity lets you bypass the angle entirely.',
+       lock:'sin given → cos via identity, never via the angle.', sarah:true},
+      {when:'Memorizing the special-angle values', name:'<em>The "1, 2, 3 over 2" pattern</em>',
+       move:'Write sin 30°, sin 45°, sin 60° as √1/2, √2/2, √3/2. Same numerator pattern (1, 2, 3 under the root); same denominator (2). cos values are the same list, reversed: √3/2, √2/2, √1/2. tan is sin/cos. Memorize once.',
+       why:'Reduces nine values to one mnemonic. The "1, 2, 3 over 2" pattern is the most efficient way to lock these in.',
+       lock:'sin 30/45/60 = √1, √2, √3 — all over 2.', sarah:true},
+      {when:'You see "what angle gives sin = X"', name:'<em>Read the special-angle table backwards</em>',
+       move:'Inverse trig on the DAT is always one of the four special angles. If sin = 1/2, angle = 30°. If sin = √2/2, angle = 45°. If sin = √3/2, angle = 60°. No calculator needed.',
+       why:'The DAT does not test obscure inverse-trig values. Memorizing the special-angle table forwards and backwards covers nearly every inverse-trig question on the test.',
+       lock:'Inverse trig → special-angle lookup.', sarah:true}
+    ]
+  },
   // Meta-module — Pattern Library (Build 4 / QR-D). Section markup is hand-rolled
   // (see id="patterns"), so the standard renderModule pipeline skips it via M.meta.
   'patterns': {
@@ -5992,7 +6087,7 @@ function renderModule(skillId){
         <p class="s">${M.sub}</p>
       </div>
       <span class="tag ${status==='mastered'?'good':status==='partial'?'gold':'teal'}">${status}</span>
-      <a class="btn ghost sm" href="tiktoks/topic-tiktok.html?topic=${encodeURIComponent(skillId)}" target="_blank" rel="noopener" style="text-decoration:none; margin-left:8px; white-space:nowrap" title="Watch Sarah's 75-sec TikTok on this topic">Watch Sarah</a>
+      <a class="btn ghost sm" href="tiktoks/topic-tiktok.html?topic=${encodeURIComponent(skillId)}" target="_blank" rel="noopener" style="text-decoration:none; margin-left:8px; white-space:nowrap" title="Watch the 75-sec TikTok on this topic">Watch</a>
     </div>
     <div class="card">
       <div class="card-h">
@@ -6078,7 +6173,7 @@ function renderTricksPanel(tricks){
     <div class="tricks-panel">
       <div class="tricks-h">
         <span class="badge"><em style="font-style:italic">S</em> · tutor tips</span>
-        <div class="ttl">Sarah's <em>tricks</em> for this skill</div>
+        <div class="ttl"><em>Coach tricks</em> for this skill</div>
       </div>
       ${tricks.map(t => `
         <div class="trick-card ${t.sarah?'sarah':''} ${t.placeholder?'placeholder':''}">
@@ -6087,11 +6182,11 @@ function renderTricksPanel(tricks){
           <div class="move">${t.move}</div>
           <div class="why"><b>Why it works:</b> ${t.why}</div>
           <div class="lock-q">${t.lock}</div>
-          ${t.placeholder ? '<div class="tricks-cta" style="margin-top:10px">↑ <b>Placeholder</b> — this slot is built, but the metaphor needs Sarah to confirm or replace with her actual line. The structure stays; the words swap in.</div>' : ''}
+          ${t.placeholder ? '<div class="tricks-cta" style="margin-top:10px">↑ <b>Placeholder</b> — this slot is built, but the metaphor needs your coach to confirm or replace with their actual line. The structure stays; the words swap in.</div>' : ''}
         </div>
       `).join('')}
       <div class="tricks-cta">
-        Tutor tips capture: After every session, Sarah notes any trick that landed. They drop into this panel automatically. The library grows session by session.
+        Tutor tips capture: After every session, your coach notes any trick that landed. They drop into this panel automatically. The library grows session by session.
       </div>
     </div>
   `;
@@ -6280,11 +6375,11 @@ function renderVisual(skillId){
         <button class="btn sm" onclick="advanceRunner('${skillId}', 3)">3rd (×8)</button>
       </div>
 
-      <!-- Sarah's Baseball Trick widget — log↔exponent conversion -->
+      <!-- Baseball Trick widget — log↔exponent conversion -->
       <div class="qr-sarah-baseball" style="margin-top:24px; padding:14px 16px; border:1px solid var(--line); border-left:3px solid var(--gold-d); border-radius:0 8px 8px 0; background:var(--paper-2)">
-        <div style="font-family:'DM Sans',sans-serif; font-size:10px; letter-spacing:0.16em; text-transform:uppercase; font-weight:700; color:var(--gold-d); margin-bottom:6px">Sarah's Baseball Trick · log ↔ exponent conversion</div>
+        <div style="font-family:'DM Sans',sans-serif; font-size:10px; letter-spacing:0.16em; text-transform:uppercase; font-weight:700; color:var(--gold-d); margin-bottom:6px">Baseball Trick · log ↔ exponent conversion</div>
         <p style="font-family:'Playfair Display',serif; font-style:italic; font-size:13px; color:var(--ink-2); margin:0 0 10px; line-height:1.45">"Picture a baseball field. Everyone moves up one spot when you convert."</p>
-        <svg viewBox="0 0 460 230" id="qrbb-svg-${skillId}" style="width:100%; height:auto; max-width:460px; display:block; margin:0 auto"><text x="230" y="115" text-anchor="middle" font-family="DM Sans" font-size="13" fill="var(--ink-mute)" font-style="italic">Click an example below to see Sarah\'s trick</text></svg>
+        <svg viewBox="0 0 460 230" id="qrbb-svg-${skillId}" style="width:100%; height:auto; max-width:460px; display:block; margin:0 auto"><text x="230" y="115" text-anchor="middle" font-family="DM Sans" font-size="13" fill="var(--ink-mute)" font-style="italic">Click an example below to see the trick</text></svg>
         <div id="qrbb-eq-${skillId}" style="text-align:center; margin-top:10px; font-family:'JetBrains Mono',monospace; font-size:18px; color:var(--ink); padding:10px 12px; background:var(--paper); border-radius:6px">&nbsp;</div>
         <div style="display:flex; gap:6px; justify-content:center; margin-top:10px; flex-wrap:wrap">
           <button class="btn sm" onclick="qrBbToggle('${skillId}')" id="qrbb-toggle-${skillId}">Convert to exponent form</button>
@@ -6359,7 +6454,7 @@ window.advanceRunner = function(skillId, base){
   });
 };
 
-/* Sarah's Baseball Trick — log↔exponent conversion widget */
+/* Baseball Trick — log↔exponent conversion widget */
 window.qrBbState = window.qrBbState || {};
 window.qrBbExample = function(skillId, base, value){
   qrBbState[skillId] = qrBbState[skillId] || {form:'log'};
@@ -6757,9 +6852,9 @@ function qrCountGrid(skillId){
       <div class="qr-count-grid" id="qrcount-grid-${skillId}"></div>
       <p class="qr-cap">Permutations care about order; combinations don't. The "÷ r!" is exactly the count of reorderings inside each combination group.</p>
 
-      <!-- Sarah's C-Method widget — combinations without the formula -->
+      <!-- C-Method widget — combinations without the formula -->
       <div class="qr-sarah-cmethod" style="margin-top:24px; padding:14px 16px; border:1px solid var(--line); border-left:3px solid var(--gold-d); border-radius:0 8px 8px 0; background:var(--paper-2)">
-        <div style="font-family:'DM Sans',sans-serif; font-size:10px; letter-spacing:0.16em; text-transform:uppercase; font-weight:700; color:var(--gold-d); margin-bottom:6px">Sarah's C-Method · combinations without the formula</div>
+        <div style="font-family:'DM Sans',sans-serif; font-size:10px; letter-spacing:0.16em; text-transform:uppercase; font-weight:700; color:var(--gold-d); margin-bottom:6px">C-Method · combinations without the formula</div>
         <p style="font-family:'Playfair Display',serif; font-style:italic; font-size:13px; color:var(--ink-2); margin:0 0 10px; line-height:1.45">"Forget n!/(r!(n−r)!). Draw a literal C. Larger left, smaller right. Same number of digits on top and bottom — that's your self-check."</p>
         <svg viewBox="0 0 460 240" id="qrcm-svg-${skillId}" style="width:100%; height:auto; max-width:460px; display:block; margin:0 auto"></svg>
         <div id="qrcm-out-${skillId}" style="text-align:center; margin-top:10px; font-family:'JetBrains Mono',monospace; font-size:14px; color:var(--ink); padding:8px 12px; background:var(--paper); border-radius:6px"></div>
@@ -8362,7 +8457,7 @@ function qrProbVenn(skillId){
     </div>
     <p class="qr-cap">P(A or B) = P(A) + P(B) − P(A and B). Subtract the overlap so it's not counted twice.</p>
     <div class="qr-dice-trick" style="margin-top:18px; padding:14px 16px; border:1px solid var(--line); border-left:3px solid var(--gold-d); border-radius:0 8px 8px 0; background:var(--paper-2)">
-      <div style="font-family:'DM Sans',sans-serif; font-size:10px; letter-spacing:0.16em; text-transform:uppercase; font-weight:700; color:var(--gold-d); margin-bottom:6px">Sarah's Dice Pyramid · 2-dice sums</div>
+      <div style="font-family:'DM Sans',sans-serif; font-size:10px; letter-spacing:0.16em; text-transform:uppercase; font-weight:700; color:var(--gold-d); margin-bottom:6px">Dice Pyramid · 2-dice sums</div>
       <p style="font-family:'Playfair Display',serif; font-style:italic; font-size:13px; color:var(--ink-2); margin:0 0 10px; line-height:1.45">"Dice questions are my brain break — I'm not doing literally any single math." Click a sum (or two for compound OR questions).</p>
       <svg viewBox="0 0 420 130" id="qrdp-svg-${skillId}" style="width:100%; height:auto"></svg>
       <div id="qrdp-out-${skillId}" style="text-align:center; margin-top:6px; font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--ink); padding:6px 8px; background:var(--paper); border-radius:6px; min-height:18px">click a sum (2-12) to compute its probability</div>
@@ -11147,7 +11242,7 @@ function renderSarahDash(){
     ? '— no stuck events logged —'
     : `<div>${stuck.length} "I need a sec" events in the last week. ${stuck.length > 3 ? '<b>Worth discussing</b> — this many freezes suggests anxiety work alongside content.' : 'Normal frequency.'}</div>`;
 
-  // Latest diagnostic / Weak 3 (Agent 9 §4.6: Sarah-mode now reflects the
+  // Latest diagnostic / Weak 3 (Agent 9 §4.6: Coach mode now reflects the
   // most recent diagnostic result instead of ignoring it.)
   const sarahDiag = document.getElementById('sarahDiag');
   if (sarahDiag){
@@ -11171,7 +11266,7 @@ function renderSarahDash(){
   }
   // Sarah Summary Panel (Build 2 · Khanmigo-style on-demand digest).
   // Pure local computation. Filled in by renderSarahSummary; no-op if the panel
-  // markup isn't present (defensive). Sarah-mode-only display is gated by CSS.
+  // markup isn't present (defensive). Coach mode-only display is gated by CSS.
   if (typeof renderSarahSummary === 'function') renderSarahSummary();
 
   // Due-for-review queue (stretch goal — surfaces dueAt < now)
@@ -11311,6 +11406,27 @@ function computeSarahDigest(){
     sessionMinutes += Math.max(1, Math.round((sEnd - sStart) / 60000));
   }
 
+  // 7. Calculator opens (Calculator Tax · 2026-05-28 · Phase 2.6).
+  //    Mini-mock posts results up via postMessage; we store last 4 runs.
+  //    Surfaces "how often is the student reaching for the calc?"
+  let calcOpensRecent = null;
+  try {
+    const hist = ST.get('calc-opens-history', []) || [];
+    const recentRuns = hist.filter(r => r && r.t && (now - r.t) < WEEK);
+    if (recentRuns.length){
+      const totalOpens = recentRuns.reduce((s, r) => s + (r.calcOpens || 0), 0);
+      const totalQs    = recentRuns.reduce((s, r) => s + (r.total || 0), 0);
+      const opensPerQ  = totalQs ? (totalOpens / totalQs).toFixed(2) : '0.00';
+      calcOpensRecent = {
+        runs: recentRuns.length,
+        totalOpens,
+        totalQs,
+        opensPerQ,
+        last: recentRuns[recentRuns.length - 1]
+      };
+    }
+  } catch(e){ /* ignore */ }
+
   return {
     studentName: getStudentName(),
     struggleItems,
@@ -11322,8 +11438,34 @@ function computeSarahDigest(){
     daysPracticed: days.size,
     sessionMinutes,
     totalRecent: recent.length,
+    calcOpensRecent,
   };
 }
+
+/* ─── Calculator Tax · listen for postMessage from the mini-mock iframe ───
+   The friday-mini-mock iframe posts a {type:'qr:mini-mock:result',...}
+   message when a mock finishes. We persist the last 4 runs so the Sarah
+   digest can surface opens-per-question. */
+(function wireCalcOpensListener(){
+  if (typeof window === 'undefined') return;
+  window.addEventListener('message', function(ev){
+    const m = ev && ev.data;
+    if (!m || m.type !== 'qr:mini-mock:result') return;
+    try {
+      const hist = (ST.get('calc-opens-history', []) || []).slice(-3);
+      hist.push({
+        t: m.timestamp || Date.now(),
+        calcOpens: m.calcOpens || 0,
+        correct: m.correct || 0,
+        total: m.total || 0,
+        answered: m.answered || 0,
+        blank: m.blank || 0
+      });
+      ST.set('calc-opens-history', hist);
+      if (typeof renderSarahSummary === 'function') renderSarahSummary();
+    } catch(e){ /* defensive — store unavailable */ }
+  });
+})();
 
 function renderSarahSummary(){
   const card = document.getElementById('sarahSummaryCard');
@@ -11389,6 +11531,14 @@ function renderSarahSummary(){
       empty: d.totalRecent === 0,
       emptyText: 'no practice in the last 7 days',
       html: `<em>${d.daysPracticed}</em> day${d.daysPracticed===1?'':'s'} practiced &middot; <em>${d.sessionMinutes}</em> min total this week`,
+    },
+    {
+      lbl: 'Calculator opens · last mini-mocks',
+      empty: !d.calcOpensRecent,
+      emptyText: 'no mini-mock runs in last 7 days — run one to see calc-tax data',
+      html: d.calcOpensRecent
+        ? `<em>${d.calcOpensRecent.opensPerQ}</em> opens/Q across ${d.calcOpensRecent.runs} run${d.calcOpensRecent.runs===1?'':'s'} (${d.calcOpensRecent.totalOpens} opens / ${d.calcOpensRecent.totalQs} Q) &middot; <span class="item">top scorers run 0–2 opens per section</span>`
+        : '',
     },
   ];
 
@@ -12048,7 +12198,7 @@ renderModule = function(skillId){
    ITEM-ANCHORED SARAH NOTES (Build 2 · authoring + display)
    Storage:  qr-rem-v2:sarah-notes-by-item
              { [probId]: { text, savedAt, byCoach } }
-   Authoring UI: Sarah-mode-only textarea + Save below every question card.
+   Authoring UI: Coach mode-only textarea + Save below every question card.
    Student-facing display: gold-bordered callout above each question card
    when a note exists for that probId. Always-on (note authorship is gated;
    note display is not).
@@ -12075,7 +12225,7 @@ const SARAH_NOTES = {
     if (typeof renderSarahSummary === 'function') renderSarahSummary();
   },
   /* For each question card in the given skill section, attach the
-     Sarah-mode-only authoring affordance below. Idempotent — safe to call
+     Coach mode-only authoring affordance below. Idempotent — safe to call
      after every renderModule. */
   attachAuthoring(skillId){
     const sec = document.getElementById(skillId);
@@ -12147,7 +12297,7 @@ const SARAH_NOTES = {
   },
   /* Student-facing display: for each question card with a saved note,
      prepend (or refresh) a gold-bordered .sarah-item-note callout above
-     the question. Always-on regardless of Sarah-mode (display is not gated;
+     the question. Always-on regardless of Coach mode (display is not gated;
      authoring is). Note body is rendered via textContent — never innerHTML —
      so script tags / HTML in the note text cannot execute. */
   attachDisplay(skillId){
@@ -12311,8 +12461,8 @@ const PF_PROBLEMS = {
     canonical: 'Combined work: <em>rates add</em>, not times. 1/T<sub>combined</sub> = 1/T<sub>A</sub> + 1/T<sub>B</sub>. Sanity check: with two helpers the combined time is always shorter than the faster worker alone.',
   },
   'interest': {
-    title: 'Compound interest · before we explain anything',
-    prompt: '$1000 invested at <b>10% compounded annually</b> for <b>3 years</b>. What is the ending balance?',
+    title: 'Compound interest · here is the formula, watch for the traps',
+    prompt: '<div style="background:rgba(201,168,76,.08);border-left:3px solid #C9A84C;padding:.7rem 1rem;margin-bottom:.8rem;border-radius:0 6px 6px 0"><b>The rule:</b> A = P · (1 + r)<sup>t</sup> for annual compounding. Each year multiplies by (1 + r) — interest earns interest. <em>Three traps people fall into if they rush:</em> using simple interest by mistake (linear, not exponential); only compounding one year; rounding mid-calculation.</div>$1000 invested at <b>10% compounded annually</b> for <b>3 years</b>. What is the ending balance?',
     options: [
       {label:'$1331', correct:true,  rationale:'1000·(1.10)³ = 1000·1.331 = $1331.'},
       {label:'$1300', correct:false, trap:'simple',    rationale:'You used simple interest: 1000 + 3·100 = 1300. With compounding, year 2 earns interest on the year-1 interest too.'},
@@ -12379,8 +12529,8 @@ const PF_PROBLEMS = {
     canonical: 'Same distance at two speeds → <em>harmonic</em> mean: 2·v₁·v₂ / (v₁ + v₂). Same time at two speeds → arithmetic mean. Cue: the question says "same distance" or "round trip same route" → time spent at the slower speed is greater, so the average is closer to the slower speed than to the midpoint.',
   },
   'zscore': {
-    title: 'Z-score · before we explain anything',
-    prompt: 'A test score of <b>78</b> comes from a distribution with <b>mean 70</b> and <b>standard deviation 4</b>. How many standard deviations is this score above the mean?',
+    title: 'Z-score · here is the formula, watch for the traps',
+    prompt: '<div style="background:rgba(201,168,76,.08);border-left:3px solid #C9A84C;padding:.7rem 1rem;margin-bottom:.8rem;border-radius:0 6px 6px 0"><b>The rule:</b> z = (x − μ) / σ. The z-score asks "how many standard deviations away from the mean is this value?" <em>Always</em> subtract the mean first, then divide by σ. <em>Three traps people fall into if they rush:</em> returning the raw difference (forgot to divide by σ); dividing the raw score (forgot to subtract the mean); dividing by 2 instead of σ.</div>A test score of <b>78</b> comes from a distribution with <b>mean 70</b> and <b>standard deviation 4</b>. How many standard deviations is this score above the mean?',
     options: [
       {label:'2',    correct:true,  rationale:'z = (78 − 70) / 4 = 8/4 = 2.'},
       {label:'8',    correct:false, trap:'diff-only',    rationale:'You returned the raw difference (78 − 70). A z-score scales that difference by the standard deviation, so divide by 4.'},
@@ -12396,8 +12546,8 @@ const PF_PROBLEMS = {
     canonical: 'z = (x − μ) / σ. The z-score asks "how many standard deviations is x above (or below) the mean?" Always subtract the mean first, then divide by σ.',
   },
   'discr': {
-    title: 'Discriminant · before we explain anything',
-    prompt: 'How many <b>real roots</b> does the equation <b>x² + 4x + 5 = 0</b> have?',
+    title: 'Discriminant · here is the formula, watch for the traps',
+    prompt: '<div style="background:rgba(201,168,76,.08);border-left:3px solid #C9A84C;padding:.7rem 1rem;margin-bottom:.8rem;border-radius:0 6px 6px 0"><b>The rule:</b> for ax² + bx + c = 0, the discriminant Δ = b² − 4ac. Sign tells you root count instantly: Δ > 0 → 2 distinct real roots; Δ = 0 → 1 repeated real root; Δ < 0 → 0 real roots (two complex). <em>You never need to solve the full quadratic.</em> Three traps people fall into if they rush: defaulting to "2 real roots" without checking; defaulting to "1"; trying to solve the full equation when only the count is asked.</div>How many <b>real roots</b> does the equation <b>x² + 4x + 5 = 0</b> have?',
     options: [
       {label:'0', correct:true,  rationale:'Δ = b² − 4ac = 16 − 20 = −4. Negative discriminant → 0 real roots (two complex conjugate roots).'},
       {label:'2', correct:false, trap:'default-two', rationale:'You assumed every quadratic has two real roots. The discriminant tells you when there are 2, 1 (repeated), or 0.'},
@@ -12916,39 +13066,43 @@ hydrateDiagOnBoot();
    ============================================================ */
 const PAT_CHUNKS = [
   // ----- fraction-decimal (7) -----
+  // ----- fraction-decimal anchors (8) — generation-only ladders (2026-05-28) -----
+  // The chunk's purpose is to instantly recognize-and-convert mid-arithmetic.
+  // Both prompts here are generation (warmup + transfer); lookup-style
+  // "what fraction equals 0.125?" was retired per the pedagogy review.
   {id:'fd-1-8', cat:'fraction-decimal', rule:'0.125 = 1/8',
-    recog:{q:'What fraction equals 0.125?', opts:['1/6','1/8','1/10','1/12'], correct:1,
-      why:'<b>1/8 = 0.125</b>. The eighths walk in steps of 0.125 — once that\'s automatic, every multiple of 1/8 is instant.'},
+    recog:{q:'0.125 × 8 = ?', opts:['0.125','1','8','64'], correct:1,
+      why:'0.125 = 1/8, so 0.125 × 8 = 8/8 = <b>1</b>. This is the defining identity — every other eighths chunk falls out of it.'},
     gen:{q:'0.125 × 64 = ?', opts:['8','12.5','16','64.125'], correct:0,
       why:'0.125 = 1/8, so 0.125 × 64 = 64/8 = <b>8</b>. Replace the decimal with the fraction every time.'}},
   {id:'fd-1-16', cat:'fraction-decimal', rule:'0.0625 = 1/16',
-    recog:{q:'What fraction equals 0.0625?', opts:['1/12','1/14','1/15','1/16'], correct:3,
-      why:'<b>1/16 = 0.0625</b>. Half of 1/8 (= 0.125), so half of 0.125 = 0.0625.'},
+    recog:{q:'0.0625 × 16 = ?', opts:['0.0625','1','6.25','16'], correct:1,
+      why:'0.0625 = 1/16, so 0.0625 × 16 = 16/16 = <b>1</b>. Defining identity. Same logic as 1/8 but one octave finer.'},
     gen:{q:'0.0625 × 80 = ?', opts:['4','5','6.25','8'], correct:1,
       why:'0.0625 = 1/16, so 80/16 = <b>5</b>. The 1/16 chunk shows up in DAT mixture and rate problems disguised as "6.25%".'}},
   {id:'fd-3-8', cat:'fraction-decimal', rule:'0.375 = 3/8',
-    recog:{q:'What fraction equals 0.375?', opts:['3/8','5/8','3/16','3/10'], correct:0,
-      why:'<b>3/8 = 0.375</b>. Three eighths is just 3 × 0.125.'},
+    recog:{q:'0.375 × 8 = ?', opts:['1','2','3','4'], correct:2,
+      why:'0.375 = 3/8, so 0.375 × 8 = 24/8 = <b>3</b>. The denominator cancels — that is how you know you applied the chunk correctly.'},
     gen:{q:'0.375 × 24 = ?', opts:['7','8','9','10'], correct:2,
       why:'0.375 = 3/8, so (3 × 24)/8 = 72/8 = <b>9</b>.'}},
   {id:'fd-5-8', cat:'fraction-decimal', rule:'0.625 = 5/8',
-    recog:{q:'What fraction equals 0.625?', opts:['3/8','5/8','5/16','7/8'], correct:1,
-      why:'<b>5/8 = 0.625</b>. Five eighths = 5 × 0.125.'},
+    recog:{q:'0.625 × 8 = ?', opts:['3','4','5','6'], correct:2,
+      why:'0.625 = 5/8, so 0.625 × 8 = 40/8 = <b>5</b>. Eighths × 8 always cancels to the top of the fraction — perfect self-check.'},
     gen:{q:'0.625 × 32 = ?', opts:['16','18','20','24'], correct:2,
       why:'0.625 = 5/8, so (5 × 32)/8 = 160/8 = <b>20</b>.'}},
   {id:'fd-7-8', cat:'fraction-decimal', rule:'0.875 = 7/8',
-    recog:{q:'What fraction equals 0.875?', opts:['3/4','5/8','7/8','9/10'], correct:2,
-      why:'<b>7/8 = 0.875</b>. Seven eighths = 7 × 0.125. Also: 1 − 1/8 = 7/8.'},
+    recog:{q:'0.875 × 8 = ?', opts:['5','6','7','8'], correct:2,
+      why:'0.875 = 7/8, so 0.875 × 8 = <b>7</b>. Eighths × 8 = the numerator, every time.'},
     gen:{q:'0.875 × 16 = ?', opts:['12','14','15','16'], correct:1,
       why:'0.875 = 7/8, so (7 × 16)/8 = 112/8 = <b>14</b>.'}},
   {id:'fd-1-3', cat:'fraction-decimal', rule:'0.333... = 1/3',
-    recog:{q:'What fraction equals 0.333... (repeating)?', opts:['1/4','3/10','1/3','1/2'], correct:2,
-      why:'<b>1/3 ≈ 0.333</b>. The repeating decimal is the giveaway.'},
+    recog:{q:'1/3 of 30 = ?', opts:['9','10','12','15'], correct:1,
+      why:'30/3 = <b>10</b>. When you see 0.333 × N, divide by 3 mentally. Anchor problem before the harder one.'},
     gen:{q:'1/3 of 81 = ?', opts:['24','27','29','30'], correct:1,
       why:'81/3 = <b>27</b>. When you see 0.333×N, divide by 3.'}},
   {id:'fd-2-3', cat:'fraction-decimal', rule:'0.666... = 2/3',
-    recog:{q:'What fraction equals 0.666... (repeating)?', opts:['2/3','3/4','5/8','7/9'], correct:0,
-      why:'<b>2/3 ≈ 0.667</b>. Twice the 1/3 anchor.'},
+    recog:{q:'2/3 of 30 = ?', opts:['18','20','22','24'], correct:1,
+      why:'30/3 = 10, then × 2 = <b>20</b>. Two thirds = double the one-third anchor. Build before the bigger N.'},
     gen:{q:'2/3 of 90 = ?', opts:['45','55','60','66'], correct:2,
       why:'90/3 = 30, so 2 × 30 = <b>60</b>. Two thirds = double of one third.'}},
 

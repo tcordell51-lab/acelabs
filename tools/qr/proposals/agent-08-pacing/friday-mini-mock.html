@@ -783,6 +783,23 @@ function finishSection(){
   document.getElementById('r-calc').textContent = state.calcOpens;
   document.getElementById('r-raw').textContent = correct;
   document.getElementById('r-raw-d').textContent = `of ${queue.length} (${queue.length-ans.length} blank)`;
+
+  // Hoist the calc-opens count to the parent QR page so the Sarah digest
+  // can show it (Calculator Tax visibility · 2026-05-28 · Phase 2.6).
+  // The parent listens for this message and writes to localStorage.
+  try {
+    if (window.parent && window.parent !== window) {
+      window.parent.postMessage({
+        type: 'qr:mini-mock:result',
+        calcOpens: state.calcOpens,
+        correct: correct,
+        total: queue.length,
+        answered: ans.length,
+        blank: queue.length - ans.length,
+        timestamp: Date.now()
+      }, '*');
+    }
+  } catch (e) { /* ignore postMessage failures; the iframe still works */ }
   // Per-skill table
   const bySkill = {};
   queue.forEach(q => {
