@@ -162,16 +162,17 @@ function buildOChemSet(n){
   }).filter(Boolean);
 }
 
-function predictSoNSScore(pctCorrect){
-  const anchors = [[0,13],[0.20,15],[0.30,16],[0.40,17],[0.50,18],[0.60,19],[0.70,20],[0.78,21],[0.84,22],[0.89,23],[0.93,24],[0.96,25],[0.98,27],[1,30]];
-  for (let i=1; i<anchors.length; i++){
-    if (pctCorrect <= anchors[i][0]){
-      const [x0,y0]=anchors[i-1], [x1,y1]=anchors[i];
-      const t = (pctCorrect-x0)/(x1-x0);
-      return Math.max(13, Math.min(30, Math.round(y0 + t*(y1-y0))));
-    }
-  }
-  return 30;
+// Sanitize any previously-stored mock records so legacy `predicted` /
+// `percentile` / `scaledScore` fields can never resurface in the UI.
+function sanitizeMockRecord(rec){
+  if (!rec || typeof rec !== 'object') return rec;
+  delete rec.predicted;
+  delete rec.percentile;
+  delete rec.scaledScore;
+  delete rec.sonsScaled;
+  delete rec.qrScaled;
+  delete rec.academicAvg;
+  return rec;
 }
 
 const STATE = {pool:null, i:0, answers:{}, startedAt:null, timerId:null, durationSec:90*60, finished:false};
@@ -271,10 +272,11 @@ function finishMock(){
   const correct = STATE.pool.filter((p, i) => STATE.answers[i] === p.correct).length;
   const total = STATE.pool.length;
   // Guard against an empty pool — buildOChemSet can return < requested if the
-  // bank is too small for the chosen difficulty mix. NaN here would corrupt
-  // the persisted mockRecord and the "▲ delta" math on the home dashboard.
+  // bank is too small for the chosen difficulty mix.
   const pct = total > 0 ? correct / total : 0;
-  const predictedSoNS = predictSoNSScore(pct);
+  const elapsedSec = Math.max(0, Math.floor((Date.now() - STATE.startedAt) / 1000));
+  const elapsedMin = Math.floor(elapsedSec / 60);
+  const elapsedRemS = elapsedSec % 60;
   // Per-skill breakdown
   const bySkill = {};
   STATE.pool.forEach((p, i) => {
@@ -282,41 +284,49 @@ function finishMock(){
     bySkill[p.skill].n++;
     if (STATE.answers[i] === p.correct) bySkill[p.skill].c++;
   });
-  // Save to localStorage — both lastMock and history
-  const mockRecord = {score: correct, total, pct: Math.round(pct*100), predicted: predictedSoNS, ts: Date.now(), section:'OChem', diff: DIFF_MIX};
+  // Save to localStorage — accuracy + time only. No predicted score / percentile.
+  const mockRecord = sanitizeMockRecord({score: correct, total, pct: Math.round(pct*100), elapsedSec, ts: Date.now(), section:'OChem', diff: DIFF_MIX});
   try {
-    localStorage.setItem('al:lastMock', JSON.stringify(mockRecord));
-    const hist = JSON.parse(localStorage.getItem('al:mockHistory') || '[]');
+    // Sanitize any prior history entries on read so legacy `predicted` keys
+    // can't reanimate the predictor accidentally.
+    const hist = (JSON.parse(localStorage.getItem('al:mockHistory') || '[]') || []).map(sanitizeMockRecord);
     hist.push(mockRecord);
     localStorage.setItem('al:mockHistory', JSON.stringify(hist.slice(-50)));
+    // al:lastMock retained for activity-recency only, with predicted fields stripped.
+    localStorage.setItem('al:lastMock', JSON.stringify(mockRecord));
   } catch(e){}
 
   const stage = document.getElementById('mkStage');
   const wrong = STATE.pool.filter((p, i) => STATE.answers[i] !== undefined && STATE.answers[i] !== p.correct);
   const skipped = STATE.pool.filter((p, i) => STATE.answers[i] === undefined);
+  // Sort weakest skill first so the student sees what to study next at the top.
   const skillRows = Object.keys(bySkill).sort((a,b) => bySkill[a].c/bySkill[a].n - bySkill[b].c/bySkill[b].n).map(sk => {
     const r = bySkill[sk]; const p = Math.round(100*r.c/r.n);
     return `<tr><td>${sk}</td><td style="text-align:right">${r.c}/${r.n}</td><td style="text-align:right; color:${p<50?'var(--al-trap)':p<75?'var(--al-gold-d)':'var(--al-good-d)'}; font-weight:700">${p}%</td></tr>`;
   }).join('');
 
+  // Time summary — facts only, no aggregate quality judgment.
+  const timeStr = elapsedMin + 'm ' + String(elapsedRemS).padStart(2,'0') + 's';
+
   stage.innerHTML = `
     <div class="mk-result">
       <h2>OChem section · <em>complete</em></h2>
-      <p style="font-size:14px; color:var(--al-ink-2)">${MIXES[DIFF_MIX] ? 'Difficulty mix: ' + DIFF_MIX : ''}</p>
+      <p style="font-size:14px; color:var(--al-ink-2)">You answered <b>${correct} of ${total}</b> correctly in <b>${timeStr}</b>${MIXES[DIFF_MIX] ? ' · difficulty mix: ' + DIFF_MIX : ''}.</p>
       <div class="mk-scoregrid">
-        <div class="mk-scorecard"><div class="lbl">Raw score</div><div class="num">${correct}/${total}</div></div>
+        <div class="mk-scorecard"><div class="lbl">Correct</div><div class="num">${correct}/${total}</div></div>
         <div class="mk-scorecard"><div class="lbl">Accuracy</div><div class="num">${Math.round(pct*100)}%</div></div>
         <div class="mk-scorecard"><div class="lbl">Skipped</div><div class="num" style="color:var(--al-trap)">${skipped.length}</div></div>
-        <div class="mk-scorecard gold"><div class="lbl">Predicted DAT OChem</div><div class="num">${predictedSoNS}</div></div>
+        <div class="mk-scorecard gold"><div class="lbl">Time</div><div class="num">${timeStr}</div></div>
       </div>
       <div class="mk-bysubject">
+        <div style="font-size:12px; letter-spacing:.10em; text-transform:uppercase; font-weight:700; color:var(--al-ink-mute); margin-bottom:8px">Per-skill accuracy · weakest first</div>
         <table>
           <thead><tr><th>Skill</th><th style="text-align:right">Hit</th><th style="text-align:right">%</th></tr></thead>
           <tbody>${skillRows}</tbody>
         </table>
       </div>
       <div class="mk-review">
-        <h3>Needs-review walkthrough (${wrong.length})</h3>
+        <h3>Missed-question walkthrough (${wrong.length})</h3>
         ${wrong.map((p, idx) => {
           const i = STATE.pool.indexOf(p);
           const yourLetter = STATE.answers[i] !== undefined ? 'ABCD'[STATE.answers[i]] : '—';
@@ -327,7 +337,8 @@ function finishMock(){
         }).join('')}
       </div>
       <div style="display:flex; gap:10px; margin-top:24px; flex-wrap:wrap">
-        <button class="mk-pagebtn gold" onclick="location.reload()">Take another mock</button>
+        <a href="tools/ochem/index.html" class="mk-pagebtn gold">Study these topics in OChem engine</a>
+        <button class="mk-pagebtn" onclick="location.reload()">Take another mock</button>
         <a href="ace-labs.html" class="mk-pagebtn">← Home</a>
         <a href="mocks-catalog.html" class="mk-pagebtn">Mock catalog</a>
       </div>

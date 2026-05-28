@@ -27,15 +27,18 @@
                    ochem-rem-v1:lastSession  — timestamp (ms epoch)
 
    Unified mock / home dash -- prefix: al:*
-                 keys include:
-                   al:lastPrometric   — last full Prometric sim result object
-                   al:lastMock        — last single-section unified mock result
-                   al:mockHistory     — array of past mock results
+                 (the home dashboard does not surface mock scores — outcome-forecasting
+                 was removed 2026-05-07. al:* keys are still written by mock pages and
+                 read by mock-specific result screens; the home tile only reports
+                 freshness, not score.)
 
-   ── Score predictor disclaimer (canonical copy, do not change per-engine) ─
-   "Predicted score is a beta calibration based on internal mock data. Treat as diagnostic only."
-   Each engine currently renders a slight variant. The canonical copy above should be
-   used when the engines are next edited.  Do NOT rewrite engine HTMLs just for this.
+   ── Outcome-forecasting policy (2026-05-07) ─────────────────────────────
+   Ace Labs MUST NOT surface predicted DAT scores, percentiles, "best score"
+   tracking, or anything that maps practice performance to a real-exam outcome
+   on the parent dashboard. Practice metrics (mastery, attempts, retrievals,
+   cards due, last-session freshness) are fine. If a future change adds an
+   outcome-prediction tile here, push back — that's a deliberate product rule,
+   not an oversight.
 
    ── qrFeatActivity binding note ──────────────────────────────────────────
    The element #qrFeatActivity in ace-labs.html IS bound: the render() loop at
@@ -194,20 +197,66 @@
     return { ts:latest, source };
   }
 
-  // Last mock score — prefer Prometric (full sim) over single-section unified mock
-  function getLastMockScore(){
+  // Recent practice — freshness-only readout (no scores, no predictions).
+  // Picks the engine whose lastSession timestamp is most recent and reports
+  // questions answered in the last 7 days for that engine.
+  //
+  // Precedence is purely "whichever ts is biggest"; if multiple engines tie
+  // (unlikely down to ms), the iteration order in the data map wins, which is
+  // qr → bio → gc → ochem.
+  //
+  // Question-count source (last 7 days):
+  //   QR / GC : count entries in <ns>:attempts where attempt.t >= now - 7d
+  //   Bio     : count retrievals across all nodes whose ts >= now - 7d
+  //             (acethedat_bio_engine_v1 nodes have a .retrievals object whose
+  //              values are timestamps; falls back to total if shape differs)
+  //   OChem   : no per-attempt timestamp store; falls back to "hubs touched"
+  //             (the same activity unit the OChem tile uses)
+  function getRecentPractice(data){
+    const ENGINE_LABELS = { qr:'Quantitative Reasoning', bio:'Biology', gc:'Gen Chem', ochem:'Organic Chem' };
+    const ENGINE_HREFS = { qr:'tools/qr/index.html', bio:'tools/bio/index.html', gc:'tools/gc/index.html', ochem:'tools/ochem/index.html' };
+    let freshest = null, ts = null;
+    Object.keys(data).forEach(k => {
+      const t = data[k] && data[k].lastSession;
+      if (t && (ts === null || t > ts)){ ts = t; freshest = k; }
+    });
+    if (!freshest) return null;
+    const weekAgo = Date.now() - (7 * 24 * 60 * 60 * 1000);
+    let weekCount = 0;
     try {
-      const promRaw = localStorage.getItem('al:lastPrometric');
-      if (promRaw){
-        const p = JSON.parse(promRaw);
-        const sonsCorrect = (p.subjects?.Biology?.correct || 0) + (p.subjects?.['Gen Chem']?.correct || 0) + (p.subjects?.OChem?.correct || 0);
-        const qrCorrect = p.subjects?.QR?.correct || 0;
-        return { score: sonsCorrect + qrCorrect, total: 140, predicted: p.sonsScaled + ' / ' + p.qrScaled, section: 'Prometric · ' + (p.testName || 'Mock'), ts: p.ts, _source: 'prometric' };
+      if (freshest === 'qr' || freshest === 'gc'){
+        const ns = NS[freshest];
+        const raw = localStorage.getItem(ns + ':attempts');
+        if (raw){
+          const arr = JSON.parse(raw);
+          if (Array.isArray(arr)){
+            arr.forEach(a => { if (a && typeof a.t === 'number' && a.t >= weekAgo) weekCount++; });
+          }
+        }
+      } else if (freshest === 'bio'){
+        const stateRaw = localStorage.getItem('acethedat_bio_engine_v1');
+        if (stateRaw){
+          const state = JSON.parse(stateRaw);
+          Object.values(state).forEach(node => {
+            if (!node || typeof node !== 'object' || !node.retrievals) return;
+            Object.values(node.retrievals).forEach(t => {
+              const n = typeof t === 'number' ? t : (t && t.ts) || null;
+              if (typeof n === 'number' && n >= weekAgo) weekCount++;
+            });
+          });
+        }
+      } else if (freshest === 'ochem'){
+        weekCount = data.ochem.attempts || 0; // hubs touched (no per-attempt ts in store)
       }
-      const raw = localStorage.getItem('al:lastMock');
-      if (raw) return JSON.parse(raw);
     } catch(e){}
-    return null;
+    return {
+      engine: freshest,
+      label: ENGINE_LABELS[freshest],
+      href: ENGINE_HREFS[freshest],
+      ts,
+      weekCount,
+      activityUnit: freshest === 'ochem' ? 'hubs touched' : (freshest === 'bio' ? 'retrievals' : 'attempts')
+    };
   }
 
   function fmtRelTime(ts){
@@ -253,28 +302,28 @@
       if (dashLastSub) dashLastSub.textContent = 'In the ' + ({qr:'QR',bio:'Bio',gc:'Gen Chem',ochem:'OChem'}[last.source] || 'unknown') + ' engine';
     }
 
-    // Last mock
-    const lastMock = getLastMockScore();
-    if (lastMock){
-      const dashMockScore = document.getElementById('dashMockScore');
-      const dashMockSub = document.getElementById('dashMockSub');
-      if (dashMockScore) dashMockScore.textContent = lastMock.score + ' / ' + (lastMock.total || 100);
-      if (dashMockSub) dashMockSub.textContent = 'Predicted: ' + (lastMock.predicted || '—') + ' · ' + (lastMock.section || 'unified') + ' · ' + fmtRelTime(lastMock.ts);
-    }
-    // Mock history (if 2+ mocks, show delta)
-    try {
-      const hist = JSON.parse(localStorage.getItem('al:mockHistory') || '[]');
-      if (hist.length >= 2){
-        const last = hist[hist.length-1], prev = hist[hist.length-2];
-        const delta = (last.predicted || 0) - (prev.predicted || 0);
-        const dashSub = document.getElementById('dashMockSub');
-        if (dashSub){
-          const arrow = delta > 0 ? '▲' : delta < 0 ? '▼' : '=';
-          const color = delta > 0 ? 'var(--al-good-d)' : delta < 0 ? 'var(--al-trap)' : 'var(--al-ink-mute)';
-          dashSub.innerHTML = 'Predicted: <b>' + (last.predicted || '—') + '</b> <span style="color:' + color + '; font-weight:700; margin-left:6px">' + arrow + ' ' + Math.abs(delta) + '</span> from last · ' + (hist.length) + ' mocks taken';
+    // Recent practice tile (replaces former "Last Prometric mock" tile 2026-05-07).
+    // No scores, no predictions — only freshness + activity volume + a CTA.
+    const recent = getRecentPractice(data);
+    if (recent){
+      const dashRecentDate = document.getElementById('dashRecentDate');
+      const dashRecentSub = document.getElementById('dashRecentSub');
+      const dashRecentCta = document.getElementById('dashRecentCta');
+      if (dashRecentDate) dashRecentDate.textContent = fmtRelTime(recent.ts);
+      if (dashRecentSub){
+        if (recent.weekCount > 0){
+          dashRecentSub.textContent = recent.weekCount + ' ' + recent.activityUnit + ' this week · last in ' + recent.label;
+        } else {
+          dashRecentSub.textContent = 'Last session in ' + recent.label;
         }
       }
-    } catch(e){}
+      if (dashRecentCta){
+        dashRecentCta.setAttribute('href', recent.href);
+        dashRecentCta.setAttribute('target', '_blank');
+        dashRecentCta.setAttribute('rel', 'noopener');
+        dashRecentCta.textContent = 'Open ' + recent.label;
+      }
+    }
 
     // Per-tool mastery on the tile foot
     tools.forEach(t => {

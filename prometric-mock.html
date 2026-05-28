@@ -219,10 +219,11 @@
 
 /* End-of-test results */
 /* ============================================================
-   ACE THE DAT SCORE REPORT — dark-mode results screen with
-   pill chips, distribution bar chart, You vs Average comparison
-   table, Feedback box, and per-topic Score Breakdown with
-   personal score + cohort-average bars.
+   ACE THE DAT PRACTICE REPORT — dark-mode results screen with
+   pill chips (test name + date + time-on-task), per-section
+   accuracy table (correct/total + time per section), and
+   per-topic accuracy bars sorted weakest-first. Practice metrics
+   only — no predicted scaled score, no cohort comparison.
    ============================================================ */
 .pm-final{position:fixed; inset:0; background:#131a26; color:#e8edf2; z-index:1500; overflow-y:auto; padding:36px 80px; font-family:'DM Sans',Arial,sans-serif}
 .pm-final *{font-family:'DM Sans',Arial,sans-serif}
@@ -301,9 +302,9 @@
 <div class="pm-stage" id="pmStage">
   <div class="pm-pill"><span style="width:8px;height:8px;border-radius:50%;background:var(--al-gold);display:inline-block"></span>Ace The DAT · Practice Tests</div>
   <h1 class="pm-h">3 practice tests, <em>pacing simulation.</em></h1>
-  <p class="pm-sub">Survey of Natural Sciences (100Q in 90min) followed by a 30-minute break, then Quantitative Reasoning (40Q in 45min). Interface mirrors the actual Prometric testing center per the ADA 2026 Candidate Guide: section timers, question navigation panel, mark-for-review, end-of-section review screen, classic Windows calculator (memory + sqrt + 1/x) for QR, periodic table reference for Gen Chem questions. PAT and Reading Comprehension sections are not included — those skills require image and passage banks not yet shipped.</p>
+  <p class="pm-sub">Survey of Natural Sciences (100Q in 90min) followed by a 30-minute break, then Quantitative Reasoning (40Q in 45min). The interface follows the Prometric mechanics described in the ADA 2026 Candidate Guide: section timers, question navigation panel, mark-for-review, end-of-section review screen, classic Windows calculator (memory + sqrt + 1/x) for QR, periodic table reference for Gen Chem questions. PAT and Reading Comprehension are not included — those require image and passage banks Ace Labs has not built yet.</p>
 
-  <div class="pm-warn"><b>About this mock.</b> This mock is to confirm your pacing under DAT timing. The score predictor is in beta — treat it as a directional signal, not a guarantee. The real DAT is 5h 15m over 4 sections. This mock covers the 2 sections Ace The DAT has banks for (Sciences + QR) — about 2h 15m of seat time. Score predictor uses the new <b>200-600 scaled score</b> (replaces the legacy 1-30 scale, effective March 1, 2025). OChem section follows the official April 2026 ADA outline: Mechanisms, Chemical Synthesis, Acid-Base, Chemical &amp; Physical Properties, Structural Evaluation. OChem questions render skeletal molecular structures from SMILES, and 8 questions use the new ADA-spec curved-arrow format ("predict product from arrows" / "predict arrows from product").</div>
+  <div class="pm-warn"><b>About this mock.</b> This mock is to confirm your pacing under DAT timing. The real DAT is 5h 15m over 4 sections. This mock covers the 2 sections Ace The DAT has banks for (Sciences + QR) — about 2h 15m of seat time. <b>Ace Labs does not predict DAT scores or percentile ranks.</b> Your post-mock report shows raw counts, per-section accuracy, time-on-task, and a missed-question walkthrough — no scaled-score forecast. OChem section follows the official April 2026 ADA outline: Mechanisms, Chemical Synthesis, Acid-Base, Chemical &amp; Physical Properties, Structural Evaluation. OChem questions render skeletal molecular structures from SMILES, and 8 questions use the new ADA-spec curved-arrow format ("predict product from arrows" / "predict arrows from product").</div>
 
   <h3 style="font-family:'Playfair Display',serif; font-size:20px; font-weight:700; margin:8px 0 12px">Pick a test</h3>
   <div class="pm-tests" id="pmTests"></div>
@@ -413,7 +414,7 @@ function showInstructionsScreen(t){
     </div>
     <div style="flex:1; overflow-y:auto; padding:36px 40px; max-width:920px; margin:0 auto; width:100%; color:#1a1d20">
       <h2 style="font-size:26px; font-weight:700; margin-bottom:14px">Before you begin</h2>
-      <p style="font-size:14.5px; line-height:1.65; margin-bottom:18px; color:#3a4148">This is a full simulation modeled on the actual DAT Prometric testing experience. Once you click <b style="color:#1a1d20">Start Section</b>, the timer begins and will not pause. Read the rules below carefully.</p>
+      <p style="font-size:14.5px; line-height:1.65; margin-bottom:18px; color:#3a4148">A two-section rehearsal of the Prometric testing mechanics (Sciences and QR only — PAT and RC are out of scope here). Once you click <b style="color:#1a1d20">Start Section</b>, the timer begins and will not pause. Read the rules below carefully.</p>
       <ol style="font-size:14px; line-height:1.7; color:#3a4148; padding-left:22px; margin-bottom:22px">
         <li><b style="color:#1a1d20">Survey of Natural Sciences:</b> 100 questions in 90 minutes (40 Biology + 30 General Chemistry + 30 Organic Chemistry). Manage your time across the three subjects yourself — they share the same timer.</li>
         <li><b style="color:#1a1d20">Optional 30-minute break</b> between Sciences and QR. Skip the break or take it in full.</li>
@@ -424,7 +425,7 @@ function showInstructionsScreen(t){
         <li><b style="color:#1a1d20">Closing the tab or refreshing</b> during a section ends that section with whatever you have answered.</li>
       </ol>
       <div style="background:#f0f6fa; border:1px solid #d0e1ec; border-left:4px solid #086894; border-radius:4px; padding:14px 18px; font-size:13.5px; color:#3a4148; margin-bottom:24px; line-height:1.55">
-        <b style="color:#1a1d20">Honest scope:</b> This simulation covers Sciences and QR — the two sections Ace The DAT has banks for. PAT and Reading Comprehension are not included. Your predicted scaled score uses the new <b style="color:#1a1d20">200-600 ADA scale</b> introduced March 1, 2025.
+        <b style="color:#1a1d20">Honest scope:</b> This simulation covers Sciences and QR — the two sections Ace The DAT has banks for. PAT and Reading Comprehension are not included. <b style="color:#1a1d20">Ace Labs does not predict DAT scaled scores or percentiles.</b> Your post-mock report shows raw counts, per-section accuracy, time-on-task, and missed-question review only.
       </div>
       <div style="display:flex; gap:10px; padding-top:20px; border-top:1px solid #d0d6db">
         <button id="pmCancelStart" style="padding:11px 22px; font-size:13px; font-weight:600; letter-spacing:.06em; border:1px solid #b5bcc1; background:#fff; color:#1a1d20; border-radius:6px; cursor:pointer">Back to test selection</button>
@@ -1170,25 +1171,22 @@ function renderPeriodicTableHtml(){
 }
 
 // ---- Scoring ---------------------------------------------------------------
-// 200-600 scale (10-point increments) — replaces the legacy 1-30 reporting scale
-// effective March 1, 2025 per the ADA DAT Scoring Update.
-// Anchors approximate the published concordance: 200 ≈ floor, 320 ≈ 50%ile (~17),
-// 400 ≈ 80%ile (~21), 500 ≈ 99%ile (~25), 600 = ceiling.
-function scaledScore(pctCorrect){
-  const anchors = [
-    [0.00, 200], [0.20, 240], [0.30, 270], [0.40, 290], [0.50, 320],
-    [0.60, 340], [0.70, 360], [0.78, 380], [0.84, 410], [0.89, 440],
-    [0.93, 470], [0.96, 500], [0.98, 530], [1.00, 600]
-  ];
-  for (let i = 1; i < anchors.length; i++){
-    if (pctCorrect <= anchors[i][0]){
-      const [x0,y0] = anchors[i-1], [x1,y1] = anchors[i];
-      const t = (pctCorrect - x0) / (x1 - x0);
-      const raw = y0 + t * (y1 - y0);
-      return Math.max(200, Math.min(600, Math.round(raw / 10) * 10));
-    }
-  }
-  return 600;
+// Ace Labs does NOT predict DAT scaled scores or percentiles. Practice metrics
+// only: raw counts, % correct, per-section accuracy, time-on-task. No scaled-
+// score forecast, no cohort comparison, no outcome calibration.
+
+// Sanitize stored mock records on read so legacy `predicted` / `percentile` /
+// `scaledScore` / `sonsScaled` / `qrScaled` / `academicAvg` fields cannot
+// reanimate the predictor accidentally if they exist in old localStorage.
+function sanitizeMockRecord(rec){
+  if (!rec || typeof rec !== 'object') return rec;
+  delete rec.predicted;
+  delete rec.percentile;
+  delete rec.scaledScore;
+  delete rec.sonsScaled;
+  delete rec.qrScaled;
+  delete rec.academicAvg;
+  return rec;
 }
 
 function finishTest(){
@@ -1217,93 +1215,90 @@ function finishTest(){
     });
   }
 
-  // Composite (Bio+GC+OChem)
+  // Composite raw counts (Bio + GC + OChem) — accuracy facts, no scaled-score forecast.
   const sonsCorrect = (subjResults.Biology?.correct || 0) + (subjResults['Gen Chem']?.correct || 0) + (subjResults.OChem?.correct || 0);
   const sonsTotal   = (subjResults.Biology?.total   || 0) + (subjResults['Gen Chem']?.total   || 0) + (subjResults.OChem?.total   || 0);
-  const sonsScale   = sonsTotal ? scaledScore(sonsCorrect / sonsTotal) : 0;
-  const qrScale     = subjResults.QR ? scaledScore(subjResults.QR.correct / subjResults.QR.total) : 0;
-  const academic    = Math.round(((subjResults.Biology?.correct||0)/(subjResults.Biology?.total||1) + (subjResults['Gen Chem']?.correct||0)/(subjResults['Gen Chem']?.total||1) + (subjResults.OChem?.correct||0)/(subjResults.OChem?.total||1) + (subjResults.QR?.correct||0)/(subjResults.QR?.total||1)) / 4 * 100) / 100;
 
-  // Persist
+  // Persist — practice metrics only. No `sonsScaled`, `qrScaled`, `academicAvg`,
+  // `predicted`, or `percentile` fields. Sanitize prior history on read so any
+  // legacy outcome-forecast fields are stripped before re-saving.
   const tests = window.DAT_MOCK_TESTS;
   const record = {
     testId: tests[STATE.testIdx].id,
     testName: tests[STATE.testIdx].name,
     ts: Date.now(),
     subjects: Object.fromEntries(Object.entries(subjResults).map(([k,v])=>[k,{correct:v.correct,total:v.total,pct: v.total > 0 ? Math.round(100*v.correct/v.total) : 0}])),
-    sonsScaled: sonsScale,
-    qrScaled: qrScale,
-    academicAvg: academic
+    sonsCorrect, sonsTotal
   };
   try {
     localStorage.setItem('al:lastPrometric', JSON.stringify(record));
-    const hist = JSON.parse(localStorage.getItem('al:prometricHistory') || '[]');
+    const hist = (JSON.parse(localStorage.getItem('al:prometricHistory') || '[]') || []).map(sanitizeMockRecord);
     hist.push(record);
     localStorage.setItem('al:prometricHistory', JSON.stringify(hist.slice(-50)));
-    // Also append to the cross-tool history that the home dashboard reads, so the
-    // ▲/▼ delta against the previous mock shows up after Prometric runs (not just
-    // unified mocks). Stamp `predicted` from the academic average since that's the
-    // single-number scalar the delta math works against.
-    const cross = Object.assign({}, record, { predicted: record.academicAvg });
-    const allHist = JSON.parse(localStorage.getItem('al:mockHistory') || '[]');
-    allHist.push(cross);
+    // Cross-tool history mirror — also sanitized. No `predicted` stamp.
+    const allHist = (JSON.parse(localStorage.getItem('al:mockHistory') || '[]') || []).map(sanitizeMockRecord);
+    allHist.push(record);
     localStorage.setItem('al:mockHistory', JSON.stringify(allHist.slice(-50)));
   } catch(e){}
 
   exitRunMode();
-  renderFinal(subjResults, sonsScale, qrScale, wrong, tests[STATE.testIdx]);
+  renderFinal(subjResults, wrong, tests[STATE.testIdx]);
 }
 
-function renderFinal(subjResults, sonsScale, qrScale, wrong, testInfo){
+function renderFinal(subjResults, wrong, testInfo){
   const stage = document.getElementById('pmStage');
-  stage.style.display = 'none';   // Score Report is fullscreen overlay
+  stage.style.display = 'none';   // Practice report is a fullscreen overlay
 
-  // Total cell counts for the You / Average summary
-  const totalCorrect = Object.values(subjResults).reduce((s, r) => s + r.correct, 0);
-  const totalQs = Object.values(subjResults).reduce((s, r) => s + r.total, 0);
+  // Section + overall raw counts.
+  const sonsCorrect = (subjResults.Biology?.correct || 0) + (subjResults['Gen Chem']?.correct || 0) + (subjResults.OChem?.correct || 0);
+  const sonsTotal   = (subjResults.Biology?.total   || 0) + (subjResults['Gen Chem']?.total   || 0) + (subjResults.OChem?.total   || 0);
+  const qrCorrect   = subjResults.QR?.correct || 0;
+  const qrTotal     = subjResults.QR?.total   || 0;
+  const totalCorrect = sonsCorrect + qrCorrect;
+  const totalQs = sonsTotal + qrTotal;
   const pctYou = totalQs ? Math.round(100*totalCorrect/totalQs) : 0;
-  // Composite estimate: average of the two section scaled scores rounded to 10
-  const estScore = Math.round(((sonsScale + qrScale) / 2) / 10) * 10;
-  const avgPct = 64;        // cohort average reference for the You vs Average row
-  const avgScore = 360;
-  const totalSeconds = ((STATE.sectionEndedAt.qr || Date.now()) - (window._pmTestStartedAt || (Date.now() - 60*60*1000))) / 1000;
-  const minutes = Math.floor(totalSeconds / 60);
-  const seconds = Math.floor(totalSeconds % 60);
+
+  // Per-section time (Sciences / QR) — derived from the recorded sectionEndedAt
+  // timestamps. Falls back to overall test time if a per-section end is missing.
+  const testStartTs = window._pmTestStartedAt || Date.now();
+  const sonsEndTs = STATE.sectionEndedAt.sons || STATE.sectionEndedAt.qr || Date.now();
+  const qrEndTs   = STATE.sectionEndedAt.qr   || Date.now();
+  const sonsSec = Math.max(0, Math.floor((sonsEndTs - testStartTs) / 1000));
+  // QR timer started at sonsEndTs (after the optional break — break time is excluded
+  // by using sectionStartedAt only inside the section runner; here we approximate
+  // with sonsEnd → qrEnd which captures section seat time only if they didn't take
+  // a break. If they did take a break the QR clock is still 45min capped by the
+  // section timer so we cap defensively at 45*60.
+  const qrSec = Math.min(45*60, Math.max(0, Math.floor((qrEndTs - sonsEndTs) / 1000)));
+  const totalSec = sonsSec + qrSec;
+  const fmtMS = sec => Math.floor(sec/60) + 'm ' + String(sec%60).padStart(2,'0') + 's';
   const dateStr = new Date().toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
 
-  // Distribution chart — render bars for ±40 around estScore on the 200-600 scale
-  const chartScores = [];
-  for (let s = Math.max(200, estScore - 60); s <= Math.min(600, estScore + 60); s += 10){
-    chartScores.push(s);
-  }
-  const chartH = 180;
-  const barW = 100 / chartScores.length;
-  const chartBars = chartScores.map((s, i) => {
-    const isMine = s === estScore;
-    // Synthetic distribution: peak at ~estScore, smaller on flanks
-    const dist = Math.max(2, Math.round(20 - Math.abs(s - estScore) * 0.5));
-    const h = dist * 7;
-    const x = i * barW;
-    const fill = isMine ? '#3892ff' : '#2a3346';
-    return `<rect x="${x.toFixed(2)}%" y="${chartH - h}" width="${(barW * 0.7).toFixed(2)}%" height="${h}" fill="${fill}" rx="2"/>` +
-           (isMine ? `<text x="${(x + barW * 0.35).toFixed(2)}%" y="${chartH - h - 6}" text-anchor="middle" font-size="11" fill="#fff" font-weight="600">${s}</text>` : '');
-  }).join('');
-  const chartLabels = chartScores.filter((_, i) => i % 2 === 0).map((s, i) => {
-    const realIdx = i * 2;
-    const x = realIdx * barW + barW * 0.35;
-    return `<text x="${x.toFixed(2)}%" y="${chartH + 14}" text-anchor="middle" font-size="11" fill="#9aa4b4">${s}</text>`;
-  }).join('');
+  // Per-section accuracy bars — sort weakest first so "study these next" is at the top.
+  const sectionRows = [];
+  ['Biology','Gen Chem','OChem','QR'].forEach(sub => {
+    const r = subjResults[sub]; if (!r || !r.total) return;
+    sectionRows.push({ sub, c:r.correct, n:r.total, pct: Math.round(100*r.correct/r.total) });
+  });
+  sectionRows.sort((a,b) => a.pct - b.pct);
+  const sectionBars = sectionRows.map(s => `
+    <tr>
+      <td><b>${s.sub}</b></td>
+      <td class="r" style="color:#cdd5e0">${s.c}/${s.n}</td>
+      <td class="r" style="color:${s.pct < 50 ? '#ff6b6b' : s.pct < 70 ? '#ffb84a' : '#5fd06b'}; font-weight:600">${s.pct}%</td>
+      <td class="barCell">
+        <div class="bar"><div class="you" style="width:${s.pct}%"></div></div>
+      </td>
+    </tr>`).join('');
 
-  // Score Breakdown rows — flatten subject + topic data
+  // Per-topic accuracy — flatten subject + topic data, sort weakest first.
   const allTopics = [];
   for (const [subject, r] of Object.entries(subjResults)){
     if (r.byTopic) for (const [t, v] of Object.entries(r.byTopic)){
       const yourPct = v.n > 0 ? Math.round(100*v.c/v.n) : 0;
-      const avgRefPct = 60 + Math.floor(Math.random() * 25); // synthetic average
-      allTopics.push({ subject, topic: t, c:v.c, n:v.n, pct:yourPct, avg:avgRefPct });
+      allTopics.push({ subject, topic: t, c:v.c, n:v.n, pct:yourPct });
     }
   }
-  // Sort: lowest score first to highlight weak areas
   allTopics.sort((a,b) => a.pct - b.pct);
   const topicRows = allTopics.map(t => `
     <tr>
@@ -1311,22 +1306,21 @@ function renderFinal(subjResults, sonsScale, qrScale, wrong, testInfo){
       <td class="r" style="color:#cdd5e0">${t.c}/${t.n}</td>
       <td class="r" style="color:${t.pct < 50 ? '#ff6b6b' : t.pct < 70 ? '#ffb84a' : '#5fd06b'}; font-weight:600">${t.pct}%</td>
       <td class="barCell">
-        <div class="bar">
-          <div class="you" style="width:${t.pct}%"></div>
-          <div class="avg" style="left:${t.avg}%"></div>
-        </div>
+        <div class="bar"><div class="you" style="width:${t.pct}%"></div></div>
       </td>
-      <td class="r" style="color:#9aa4b4">${t.avg}%</td>
     </tr>`).join('');
 
-  // Feedback message based on overall score
-  const feedback = pctYou < 50
-    ? "Do not let this score discourage you! With enough practice, your score will gradually improve with time. Try to review the questions that you have answered incorrectly to identify any areas of weakness. We recommend spending extra time reviewing these areas to improve your understanding of the overall concepts. Lastly, continue learning any remaining topics that you are not fully comfortable with."
-    : pctYou < 75
-    ? "This is a good score! But there is still room for improvement. With enough practice, your score will continue to increase. Try to review the questions that you have answered incorrectly to identify any areas of weakness. Remember, the best way to improve your score is through daily practice using the practice generators."
-    : "Excellent work! You're scoring above the average for these sections. Continue refining your weakest topics and maintain your study cadence — you're on track for a strong DAT performance.";
+  // CTA: route students back to whichever engine matches their weakest section.
+  const weakest = sectionRows[0];
+  const engineLink = weakest ? ({
+    'Biology':  { href:'tools/bio/bio-physiology.html', label:'Open the Bio engine' },
+    'Gen Chem': { href:'tools/gc/index.html',           label:'Open the Gen Chem engine' },
+    'OChem':    { href:'tools/ochem/index.html',        label:'Open the OChem engine' },
+    'QR':       { href:'tools/qr/index.html',           label:'Open the QR engine' }
+  })[weakest.sub] : null;
 
-  // Mount the Score Report overlay
+  // Mount the Practice Report overlay (no predicted score, no cohort comparison,
+  // no aggregate quality judgment — facts only).
   let report = document.getElementById('pmReport');
   if (!report){
     report = document.createElement('div');
@@ -1336,61 +1330,63 @@ function renderFinal(subjResults, sonsScale, qrScale, wrong, testInfo){
   report.innerHTML = `
     <div class="pm-final">
       <div class="top">
-        <h2><span class="arrow">&rarr;</span>Score Report</h2>
-        <span class="x" id="pmReportX">&#10005;</span>
+        <h2>Practice Report</h2>
+        <span class="x" id="pmReportX">Close</span>
       </div>
 
       <div class="pills">
-        <span class="pill"><span class="icon">i</span>${testInfo.name}</span>
-        <span class="pill"><span class="icon">&#128197;</span>Date: ${dateStr}</span>
-        <span class="pill"><span class="icon">&#9201;</span>Time Spent: ${minutes}:${String(seconds).padStart(2,'0')}</span>
+        <span class="pill">${testInfo.name}</span>
+        <span class="pill">Date: ${dateStr}</span>
+        <span class="pill">Time on task: ${fmtMS(totalSec)}</span>
       </div>
 
-      <div class="est">Your Estimated Score: <span class="num">${estScore}</span></div>
+      <div class="est" style="font-size:22px; font-weight:600; color:#fff">
+        You answered <span style="color:#3892ff">${totalCorrect} of ${totalQs}</span> correctly in <span style="color:#3892ff">${fmtMS(totalSec)}</span>.
+      </div>
 
       <div class="row1">
-        <div class="chart">
-          <svg viewBox="0 0 100 ${chartH + 22}" preserveAspectRatio="none" style="overflow:visible">
-            ${chartBars}
-            ${chartLabels}
-          </svg>
-        </div>
-        <div class="vsAvg">
+        <div class="vsAvg" style="grid-column:1 / -1">
           <table>
-            <thead><tr><th></th><th class="r">You</th><th class="r">Average</th></tr></thead>
+            <thead><tr><th>Section</th><th class="r">Correct / Total</th><th class="r">Accuracy</th><th class="r">Time</th></tr></thead>
             <tbody>
-              <tr><td class="lbl">Score</td><td class="r">${pctYou}%</td><td class="r">${avgPct}%</td></tr>
-              <tr><td class="lbl">Correct/Total</td><td class="r">${totalCorrect}/${totalQs}</td><td class="r">${Math.round(totalQs * 0.64)}/${totalQs}</td></tr>
-              <tr><td class="lbl">Time Per Question</td><td class="r">${Math.floor(totalSeconds/totalQs)}s</td><td class="r">71s</td></tr>
-              <tr><td class="lbl">Total Time</td><td class="r">${minutes}m ${seconds}s</td><td class="r">${Math.round(totalQs * 71 / 60)}m</td></tr>
+              <tr><td class="lbl">Survey of Natural Sciences</td><td class="r">${sonsCorrect} / ${sonsTotal}</td><td class="r">${sonsTotal ? Math.round(100*sonsCorrect/sonsTotal) : 0}%</td><td class="r">${fmtMS(sonsSec)}</td></tr>
+              <tr><td class="lbl">Quantitative Reasoning</td><td class="r">${qrCorrect} / ${qrTotal}</td><td class="r">${qrTotal ? Math.round(100*qrCorrect/qrTotal) : 0}%</td><td class="r">${fmtMS(qrSec)}</td></tr>
+              <tr><td class="lbl"><b style="color:#fff">Overall</b></td><td class="r"><b style="color:#fff">${totalCorrect} / ${totalQs}</b></td><td class="r"><b style="color:#fff">${pctYou}%</b></td><td class="r"><b style="color:#fff">${fmtMS(totalSec)}</b></td></tr>
             </tbody>
           </table>
         </div>
       </div>
 
-      <div class="feedback">
-        <h3>Feedback</h3>
-        <p>${feedback}</p>
+      <div class="breakdown">
+        <div class="breakdown-head">
+          <h3>Per-section accuracy · weakest first</h3>
+        </div>
+        <table class="topicTable">
+          <thead>
+            <tr><th>Section</th><th class="r">Correct / Total</th><th class="r">Accuracy</th><th></th></tr>
+          </thead>
+          <tbody>${sectionBars}</tbody>
+        </table>
       </div>
 
       <div class="breakdown">
         <div class="breakdown-head">
-          <h3>Score Breakdown</h3>
-          <button class="toggle" onclick="this.classList.toggle('on')">&#9678; Show Weakness</button>
+          <h3>Per-topic accuracy · weakest first</h3>
         </div>
         <table class="topicTable">
           <thead>
-            <tr><th>Topic</th><th class="r">Correct/Total</th><th class="r">Score</th><th></th><th class="r">Avg. Score</th></tr>
+            <tr><th>Topic</th><th class="r">Correct / Total</th><th class="r">Accuracy</th><th></th></tr>
           </thead>
-          <tbody>${topicRows}</tbody>
+          <tbody>${topicRows || '<tr><td colspan="4" style="color:#9aa4b4; padding:18px">No per-topic tags on this test bank.</td></tr>'}</tbody>
         </table>
       </div>
 
       <div class="actions">
-        <button class="btn" onclick="location.reload()">Take Another Test</button>
-        <a class="btn secondary" href="ace-labs.html">Back to Hub</a>
-        <a class="btn secondary" href="mocks-catalog.html">Mock Catalog</a>
-        <button class="btn secondary" id="pmShowWrong">Review ${wrong.length} Missed Questions</button>
+        ${engineLink ? `<a class="btn" href="${engineLink.href}">Study these topics — ${engineLink.label}</a>` : ''}
+        <button class="btn secondary" id="pmShowWrong">Review ${wrong.length} missed questions</button>
+        <button class="btn secondary" onclick="location.reload()">Take another test</button>
+        <a class="btn secondary" href="ace-labs.html">Back to hub</a>
+        <a class="btn secondary" href="mocks-catalog.html">Mock catalog</a>
       </div>
     </div>
   `;

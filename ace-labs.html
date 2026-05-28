@@ -73,15 +73,21 @@
       <div class="al-dash-bar"><div class="al-dash-bar-fill" id="dashMasteryFill" style="width:0%"></div></div>
       <div class="al-dash-sub" id="dashMasterySub">— of — modules mastered across QR / Bio / GC / OChem</div>
     </div>
-    <div class="al-dash-card al-dash-mock">
-      <div class="al-dash-lbl">Last Prometric mock</div>
-      <!-- Fix 14 (addressed 2026-05): dashMockScore now reads al:lastPrometric first
-           (full sim) then falls back to al:lastMock (single-section unified mock) —
-           see getLastMockScore() in shared/ace-labs-shell.js. The legacy
-           acelabs_lastMock key was never written by any engine. -->
-      <div class="al-dash-num" id="dashMockScore">—</div>
-      <div class="al-dash-sub" id="dashMockSub">no mock attempts yet</div>
-      <a href="prometric-mock.html" class="al-dash-cta">Take a Prometric mock</a>
+    <div class="al-dash-card al-dash-recent">
+      <div class="al-dash-lbl">Recent practice</div>
+      <!-- Outcome-forecasting removed 2026-05-07. This tile now reports the most
+           recent practice activity across engines without any score, percentile,
+           or DAT-outcome mapping. Freshness precedence (most recent ts wins):
+             1. acethedat_bio_last_session   (Bio engine)
+             2. qr-rem-v2:lastSession        (QR engine)
+             3. gc-rem-v1:lastSession        (Gen Chem engine)
+             4. ochem-rem-v1:lastSession     (OChem engine)
+           Fallback (when no explicit lastSession): most recent attempt timestamp
+           in <ns>:attempts. Question count = attempts in the last 7 days for the
+           freshest engine. See renderRecentPractice() in shared/ace-labs-shell.js. -->
+      <div class="al-dash-num-small" id="dashRecentDate">No data yet</div>
+      <div class="al-dash-sub" id="dashRecentSub">Open any engine to start tracking</div>
+      <a href="#tools" class="al-dash-cta" id="dashRecentCta">Open the engine you used last</a>
     </div>
   </div>
   <div class="al-dash-row al-dash-row-by-subject">
@@ -106,7 +112,7 @@
     <a class="al-tool-tile al-tool-qr" href="tools/qr/index.html" target="_blank" rel="noopener">
       <div class="al-tool-tag">Section · QR</div>
       <h3 class="al-tool-name">Quantitative <em>Reasoning</em></h3>
-      <p class="al-tool-desc">45 modules, 11+ interactive visualizers, 767 problems with 4-tier difficulty ladder. Full 40-question, 45-minute DAT-format mock with score predictor.</p>
+      <p class="al-tool-desc">45 modules, 11+ interactive visualizers, 767 problems with 4-tier difficulty ladder. Full 40-question, 45-minute DAT-format mock.</p>
       <div class="al-tool-features">
         <span class="al-feat">Sarah · tutor</span>
         <span class="al-feat" id="qrFeatPartial">— in progress</span>
@@ -141,7 +147,7 @@
     <a class="al-tool-tile al-tool-gc" href="tools/gc/index.html" target="_blank" rel="noopener">
       <div class="al-tool-tag">Section · Gen Chem</div>
       <h3 class="al-tool-name">General <em>Chemistry</em></h3>
-      <p class="al-tool-desc">31 core + 3 strategy modules across 4 tiers (Foundations, Quantitative, Patterns, Test-day). Skill tree with progressive disclosure, 605-problem bank, mock + score predictor.</p>
+      <p class="al-tool-desc">31 core + 3 strategy modules across 4 tiers (Foundations, Quantitative, Patterns, Test-day). Skill tree with progressive disclosure, 605-problem bank, full DAT-format mock.</p>
       <div class="al-tool-features">
         <span class="al-feat">Tommy · tutor</span>
         <span class="al-feat" id="gcFeatPartial">— in progress</span>
@@ -235,7 +241,7 @@
   <div class="al-foot-row">
     <span>Ace Labs · standalone v1</span>
     <span>Your study data stays in your browser. No accounts, no tracking, no servers.</span>
-    <span>Synced to <a href="https://acethedat-portal.netlify.app" target="_blank">AceTheDAT tutor portal</a> (in progress)</span>
+    <span><a href="scope.html">Scope &amp; evidence</a> · <a href="https://acethedat-portal.netlify.app" target="_blank">AceTheDAT tutor portal</a> (in progress)</span>
   </div>
 </footer>
 
