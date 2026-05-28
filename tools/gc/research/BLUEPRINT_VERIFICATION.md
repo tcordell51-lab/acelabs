@@ -1,3 +1,7 @@
+> **STATUS: PARTIALLY DEFUNCT (2026-05-09).** Sections of this document plan or verify a score-prediction calibration system that has been removed from Ace Labs per the rule against outcome forecasting in student-visible surfaces. Specific outcome-prediction sections noted inline below. The remaining sections (UX copy / mobile audit / blueprint content distribution / norms data) are still active.
+
+---
+
 # DAT General Chemistry Blueprint, Norms, and Prep-Tool Landscape — Verification
 
 Compiled 2026-05-07 by browsing ADA, SDN, Bootcamp, Booster, and third-party sources. Reddit (reddit.com / old.reddit.com / web.archive.org) was blocked from the fetch tool, so the test-taker recall question (#3) relies on Student Doctor Network (SDN), which is the same population.
@@ -56,6 +60,8 @@ Official 2024 General Chemistry standard-score statistics (1–30 scale, Table 4
 | SD | 3.36 | 3.71 | **3.79** |
 | N | 12,915 | 12,502 | **17,152** |
 
+> [DEFUNCT 2026-05-09] This section pertains to the removed score-prediction system. Skip.
+
 GC cumulative percentile (2024) — read from Table 4:
 - Score 20 → 71.7%
 - Score 21 → 80.3%   ← **top quartile = 21, not 22**
@@ -70,6 +76,8 @@ GC cumulative percentile (2024) — read from Table 4:
 - **Top quartile = 22 — WRONG.** Actual top quartile cutoff is **21**.
 
 ### New 200-600 scale (effective March 1, 2025)
+
+> [DEFUNCT 2026-05-09] This section pertains to the removed score-prediction system (200-600 scaled-score concordance verification). Skip.
 
 **Source fetched:** "Understanding the New DAT Score Reporting Scale" (PDF, internal "Updated 01/29/2025")
 URL: https://www.ada.org/-/media/project/ada-organization/ada/ada-org/files/education/dat_scorereportingscale.pdf
@@ -207,6 +215,8 @@ The Laboratory category in General Chemistry (basic techniques, equipment, error
 ---
 
 ## Bottom-line corrections to the original synthesis
+
+> [DEFUNCT 2026-05-09] The "top decile = 23" and "top quartile = 22" rows in the table below pertain to the removed score-prediction system (percentile cutoff verification). Skip those rows. Mean/SD/N corrections, content-outline rows, pricing rows, and the bank-distribution row remain active.
 
 | Claim | Status |
 |---|---|

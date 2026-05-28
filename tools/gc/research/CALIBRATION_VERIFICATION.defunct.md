@@ -1,3 +1,7 @@
+> **STATUS: DEFUNCT (2026-05-08).** This document plans/verifies a score-prediction calibration system that has been removed from Ace Labs per a product rule against outcome forecasting in student-visible surfaces. Kept for institutional memory only. Do not act on the contents without confirming the rule has changed.
+
+---
+
 # Calibration Method Verification
 
 Verifies psychometric claims for converting practice-test raw scores to predicted real-exam scaled scores. All sources fetched via live WebSearch / WebFetch on 2026-05-07. URLs accessed 2026-05-07 unless otherwise noted. No DOIs are fabricated; if a source could not be confirmed at the page level, the verdict is UNVERIFIABLE.

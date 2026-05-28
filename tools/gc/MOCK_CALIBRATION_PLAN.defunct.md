@@ -1,3 +1,7 @@
+> **STATUS: DEFUNCT (2026-05-08).** This document plans/verifies a score-prediction calibration system that has been removed from Ace Labs per a product rule against outcome forecasting in student-visible surfaces. Kept for institutional memory only. Do not act on the contents without confirming the rule has changed.
+
+---
+
 # AceLabs Gen Chem Mock Score Predictor — Calibration Plan
 
 Status: planning doc, beta launch. Predictor lives in `tools/gc/index.html` (score function lines 15073–15079, percentile table line 15083, beta caveat line 15124). Do not modify the predictor while collecting baseline data; calibration is downstream of evidence we do not yet have.

@@ -1,3 +1,7 @@
+> **STATUS: PARTIALLY DEFUNCT (2026-05-09).** Sections of this document plan or verify a score-prediction calibration system that has been removed from Ace Labs per the rule against outcome forecasting in student-visible surfaces. Specific outcome-prediction sections noted inline below. The remaining sections (UX copy / mobile audit / blueprint content distribution / norms data) are still active.
+
+---
+
 # GC Engine · UX Beta Launch Spec
 
 Combined build spec for three pre-launch passes against the Gen Chem engine and its companion pages:
@@ -33,6 +37,8 @@ This is a **specification**, not implementation. No HTML/JS is modified by adopt
 Grounded in Beilock & Carr / DeCaro on stress-induced choking, Yeager/Dweck on growth-mindset framing, and SDT on informational vs. controlling feedback. The engine already has the right *architecture* (Stuck modal at line ~14750, LOCKMOD at line ~14422, confidence captures, no-timer foundations). What it doesn't have is uniformly diagnostic, non-evaluative *copy*.
 
 ## A1. Find-and-replace inventory (15 pairs)
+
+> [DEFUNCT 2026-05-09] Row 13 of the table below pertains to the removed score-prediction system (mock copy that mentions "Predicted scaled score at the end" and references the A3 staging). Skip that row. The other 16 copy-replacement rows remain active.
 
 Each row: file (line if pinned) · find phrase · replace phrase · rationale (one sentence).
 
@@ -74,6 +80,8 @@ Inventory of every countdown surface:
 **Summary:** the engine has 4 evaluative timers. Two go to **toggleable-default-on** (mock, recognition), one goes to **late-warning-only** (pacing ladder mid-tiers), one is fine. No timer should be removed outright — that breaks the pedagogy.
 
 ## A3. Score-reveal staging
+
+> [DEFUNCT 2026-05-09] This section pertains to the removed score-prediction system. Skip.
 
 Today, `SIM.finish()` (~line 15402) immediately renders: predicted scaled score → topic breakdown → wrong-answer review. The student sees the number before processing the misses. Beilock & Carr / DeCaro: this maximizes evaluative-threat priming for the next run.
 
@@ -276,6 +284,8 @@ The `{scope: './'}` is implicit but spell it out for the next reader.
 ---
 
 # Effort Estimate + Sequencing
+
+> [DEFUNCT 2026-05-09] The "A3 Score-reveal staging" line item below pertains to the removed score-prediction system. Skip that line and adjust totals accordingly.
 
 | Part | Sub-task | Engineer-hours |
 |---|---|---|

@@ -921,7 +921,7 @@ body.coach-edit-on .sb{padding-top:50px}
 
 [data-edit-changed]{position:relative}
 [data-edit-changed]::after{
-  content:"●"; position:absolute; top:-2px; right:-12px;
+  content:"new"; position:absolute; top:-2px; right:-12px;
   color:var(--gold-d); font-size:14px;
 }
 
@@ -1199,8 +1199,8 @@ body[data-theme="dark"] .lockmod .small{color:var(--gold-m)}
 /* Locked sidebar link tooltip on hover */
 .sb-link.lock{position:relative}
 .sb-link.lock::after{
-  content:"🔒"; font-size:9px; position:absolute; right:18px; top:50%; transform:translateY(-50%);
-  opacity:0.55;
+  content:"locked"; font-size:9px; position:absolute; right:18px; top:50%; transform:translateY(-50%);
+  opacity:0.55; letter-spacing:0.05em; text-transform:uppercase;
 }
 
 /* ============================================================
@@ -2526,7 +2526,7 @@ body[data-theme="dark"] .pace-tier .ptime{color:var(--gold-m)}
 .sim-dot.right{background:var(--good-bg); border-color:var(--good); color:var(--good-d)}
 .sim-dot.wrong{background:var(--trap-bg); border-color:var(--trap); color:var(--trap-d)}
 .sim-dot.flag{background:rgba(217,122,60,0.15); border-color:var(--warn); color:var(--warn)}
-.sim-dot.flag::after{content:'⚐'; font-size:6px; position:absolute; margin-left:14px; margin-top:-12px}
+.sim-dot.flag::after{content:'F'; font-size:6px; position:absolute; margin-left:14px; margin-top:-12px}
 .sim-result-tile{background:var(--paper); border:1px solid var(--line); border-radius:10px; padding:14px 16px; text-align:center}
 .sim-result-tile .n{font-family:'Playfair Display',serif; font-size:28px; font-weight:700; color:var(--gold-d); line-height:1.1}
 body[data-theme="dark"] .sim-result-tile .n{color:var(--gold-m)}
@@ -3377,10 +3377,10 @@ body[data-mode="B"] .sb-link[data-go="quick-ref"]{background:rgba(201,168,76,.10
   <a class="sb-link" data-go="tool-balancer"><span class="dot"></span><span class="label">Equation Balancer</span><span class="meta">tool</span></a>
   <a class="sb-link" data-go="tool-ice"><span class="dot"></span><span class="label">ICE Table Calculator</span><span class="meta">tool</span></a>
   <a class="sb-link" data-go="tool-gas"><span class="dot"></span><span class="label">Gas Law Slider</span><span class="meta">tool</span></a>
-  <a class="sb-link" data-go="tool-cell"><span class="dot"></span><span class="label">🔋 Cell Diagram Builder</span><span class="meta">tool</span></a>
-  <a class="sb-link" data-go="tool-mw"><span class="dot"></span><span class="label">🧪 Molar Mass Calculator</span><span class="meta">tool</span></a>
-  <a class="sb-link" data-go="tool-sigfig"><span class="dot"></span><span class="label">📐 Sig Figs &amp; Rounding</span><span class="meta">tool</span></a>
-  <a class="sb-link" data-go="tool-units"><span class="dot"></span><span class="label">🔄 Unit Converter</span><span class="meta">tool</span></a>
+  <a class="sb-link" data-go="tool-cell"><span class="dot"></span><span class="label">Cell Diagram Builder</span><span class="meta">tool</span></a>
+  <a class="sb-link" data-go="tool-mw"><span class="dot"></span><span class="label">Molar Mass Calculator</span><span class="meta">tool</span></a>
+  <a class="sb-link" data-go="tool-sigfig"><span class="dot"></span><span class="label">Sig Figs &amp; Rounding</span><span class="meta">tool</span></a>
+  <a class="sb-link" data-go="tool-units"><span class="dot"></span><span class="label">Unit Converter</span><span class="meta">tool</span></a>
 
   <div class="sb-section">Performance</div>
   <a class="sb-link" data-go="dashboard"><span class="dot"></span><span class="label">Progress Dashboard</span><span class="meta">live</span></a>
@@ -3390,29 +3390,29 @@ body[data-mode="B"] .sb-link[data-go="quick-ref"]{background:rgba(201,168,76,.10
   <a class="sb-link" data-go="test-sim"><span class="dot"></span><span class="label">Test-Day Simulation</span><span class="meta">DAT mirror</span></a>
   <a class="sb-link" data-go="coach-dash"><span class="dot"></span><span class="label">Coach Dashboard</span><span class="meta">tutor</span></a>
 
-  <div class="sb-stuck-btn" id="stuckBtn">⏸ I need a sec</div>
+  <div class="sb-stuck-btn" id="stuckBtn">I need a sec</div>
 
   <div class="sb-foot">
-    <div class="row"><span>Streak</span><b id="streakCount" class="streak-fire"><span class="flame">🔥</span> 0d</b></div>
+    <div class="row"><span>Streak</span><b id="streakCount" class="streak-fire">0d</b></div>
     <div class="row"><span>Mastered</span><b id="totMastered">0</b></div>
     <div class="row"><span>Due review</span><b id="srDue">0</b></div>
     <div class="row"><span>Coach-mode</span><b id="coachState">off</b></div>
   </div>
 </aside>
-<button class="mn-burger hide" id="mnBurger" aria-label="Open menu">☰</button>
+<button class="mn-burger hide" id="mnBurger" aria-label="Open menu">Menu</button>
 <div class="sb-backdrop" id="sbBackdrop"></div>
 <button class="iso-exit-pill" id="isoExitPill" onclick="exitIsolate()">↩ exit isolate · esc</button>
 
 <!-- Coach edit-mode banner — visible whenever edit mode is on -->
 <div class="edit-mode-banner" id="editBanner">
-  <span class="lbl">✏ <em>Coach edit mode</em> — click any underlined text to edit. Changes save to your browser.</span>
+  <span class="lbl"><em>Coach edit mode</em> — click any underlined text to edit. Changes save to your browser.</span>
   <span class="count" id="editCount">0 edits</span>
   <button onclick="COACH_EDIT.exportChanges()">Export &amp; Send to Tommy</button>
   <button onclick="COACH_EDIT.toggle()">Done</button>
 </div>
 
 <!-- Feedback pill — bottom-right -->
-<button class="fb-pill" id="fbPill" onclick="FEEDBACK.open()" title="Leave a note for Tommy"><span>💬</span><span class="fb-count" id="fbCount">0</span></button>
+<button class="fb-pill" id="fbPill" onclick="FEEDBACK.open()" title="Leave a note for Tommy"><span>Note</span><span class="fb-count" id="fbCount">0</span></button>
 
 <!-- Feedback modal -->
 <div class="fb-modal" id="fbModal">
@@ -3471,9 +3471,9 @@ body[data-mode="B"] .sb-link[data-go="quick-ref"]{background:rgba(201,168,76,.10
 
 <!-- Pre-test nudge banner — shows when test date is ≤ 14 days away -->
 <div class="ptn-banner" id="ptnBanner" style="display:none" onclick="FLOW.ptnAction()">
-  <span class="ptn-icon">⏰</span>
+  <span class="ptn-icon">!</span>
   <span class="ptn-text" id="ptnText">Test in 12 days — switch to Review Mode?</span>
-  <button class="ptn-x" onclick="event.stopPropagation(); FLOW.ptnDismiss()">✕</button>
+  <button class="ptn-x" onclick="event.stopPropagation(); FLOW.ptnDismiss()">close</button>
 </div>
 
 <!-- Onboarding overlay — first visit walkthrough -->
@@ -3501,19 +3501,19 @@ body[data-mode="B"] .sb-link[data-go="quick-ref"]{background:rgba(201,168,76,.10
 
 <!-- TOPBAR -->
 <div class="topbar">
-  <div class="tb-crumbs"><span class="crumb-arrow">▸</span> <b id="crumbWhere">Welcome</b> <span class="crumb-sep">·</span> <span class="crumb-mode">Gen Chem Remediation</span></div>
+  <div class="tb-crumbs"><span class="crumb-arrow">›</span> <b id="crumbWhere">Welcome</b> <span class="crumb-sep">·</span> <span class="crumb-mode">Gen Chem Remediation</span></div>
   <div class="tb-spacer"></div>
   <div class="mode-pill" id="modePill" title="Switch between Mastery Path (slow scaffold) and Review Center (fast cram)">
-    <button class="mp-opt active" data-mode="A" onclick="MODE.set('A')">◧ Mastery</button>
-    <button class="mp-opt" data-mode="B" onclick="MODE.set('B')">◨ Review</button>
+    <button class="mp-opt active" data-mode="A" onclick="MODE.set('A')">Mastery</button>
+    <button class="mp-opt" data-mode="B" onclick="MODE.set('B')">Review</button>
   </div>
-  <button class="coach-edit-toggle" id="btnEdit" title="Edit any trick or text in place">✏ Edit Mode</button>
-  <button class="se-toggle" id="btnSelfExplain" onclick="SE.toggle()" title="Self-explain mode OFF">🧠 Self-Explain</button>
-  <button class="sound-toggle" id="btnSound" title="Toggle sound feedback">🔇 Sound</button>
-  <button class="btn ghost sm" id="btnTheme" title="Toggle dark mode">◐ Theme</button>
-  <button class="btn ghost sm" id="btnIso" title="Hide chrome">◱ Isolate</button>
-  <button class="btn gold sm" id="btnCoach">▶ Coach-Mode</button>
-  <div class="coach-tooltip" id="coachTooltip">👋 Tutor here? Click <b>Coach-Mode</b> to enter editing + roster view.</div>
+  <button class="coach-edit-toggle" id="btnEdit" title="Edit any trick or text in place">Edit Mode</button>
+  <button class="se-toggle" id="btnSelfExplain" onclick="SE.toggle()" title="Self-explain mode OFF">Self-Explain</button>
+  <button class="sound-toggle" id="btnSound" title="Toggle sound feedback">Sound</button>
+  <button class="btn ghost sm" id="btnTheme" title="Toggle dark mode">Theme</button>
+  <button class="btn ghost sm" id="btnIso" title="Hide chrome">Isolate</button>
+  <button class="btn gold sm" id="btnCoach">Coach-Mode</button>
+  <div class="coach-tooltip" id="coachTooltip">Tutor here? Click <b>Coach-Mode</b> to enter editing + roster view.</div>
 </div>
 
 <!-- HERO -->
@@ -3522,7 +3522,7 @@ body[data-mode="B"] .sb-link[data-go="quick-ref"]{background:rgba(201,168,76,.10
   <h1>Gen Chem <em>isn't memorization.</em><br>It's <em>patterns.</em> We'll find yours.</h1>
   <p class="lede">If you've felt "bad at chemistry" — you're not. Somewhere along the way, a foundation skill got skipped — a mole conversion, a Lewis structure rule, a pH shortcut — and everything after it felt harder than it should. <b>We're going to find that step, fix it, and build up from there.</b> No timer. No grade. No catching you off-guard. Each skill teaches you the move, walks you through it, lets you practice, and only marks it "mastered" when you can do it cold three times in a row. When your brain freezes, hit the red <b>"I need a sec"</b> button — it's there for that exact moment.</p>
   <div class="hero-cta">
-    <button class="btn gold lg" onclick="goSec('diagnostic')">▶ Start the diagnostic — 12 min</button>
+    <button class="btn gold lg" onclick="goSec('diagnostic')">Start the diagnostic — 12 min</button>
     <button class="btn lg" onclick="goSec('tree')">See the full skill tree</button>
     <button class="btn ghost lg" onclick="goSec('shortcut-deck')">DAT Cheat Sheet — 20 shortcuts</button>
     <button class="btn ghost lg" onclick="goSec('atomic')">Or jump straight to atomic structure</button>
@@ -3541,11 +3541,11 @@ body[data-mode="B"] .sb-link[data-go="quick-ref"]{background:rgba(201,168,76,.10
   <div class="resume-pill" id="resumePill" style="display:none" onclick="FLOW.resumeAction()">
     <span class="resume-icon">↩</span>
     <span class="resume-text" id="resumeText">Welcome back. Resume X?</span>
-    <button class="resume-x" onclick="event.stopPropagation(); FLOW.resumeDismiss()">✕</button>
+    <button class="resume-x" onclick="event.stopPropagation(); FLOW.resumeDismiss()">close</button>
   </div>
   <!-- "What changed since last visit" — only shows when there's been a gap of 12+ hours -->
   <div class="changed-card" id="changedCard" style="display:none">
-    <div class="cc-h">📊 <em>Since you were last here</em></div>
+    <div class="cc-h"><em>Since you were last here</em></div>
     <div class="cc-grid" id="ccGrid"></div>
   </div>
   <div class="today-card" id="todayCard">
@@ -3555,25 +3555,25 @@ body[data-mode="B"] .sb-link[data-go="quick-ref"]{background:rgba(201,168,76,.10
         <h2 class="today-title">Your <em>daily set</em></h2>
         <p class="today-sub" id="todaySub">A small, smart batch — due reviews, your weakest skill, and one stretch problem. Built fresh whenever you land here.</p>
       </div>
-      <div class="today-streak"><div class="flame">🔥</div><div class="num" id="todayStreak">0</div><div class="lbl">day streak</div></div>
+      <div class="today-streak"><div class="num" id="todayStreak">0</div><div class="lbl">day streak</div></div>
     </div>
     <div class="today-tracks" id="todayTracks">
       <div class="today-track" data-t="due" title="Spaced-repetition: cards whose due date has passed. Forgetting curve is timed to surface them right before you'd start to lose them.">
-        <div class="t-icon">⏱</div>
+        <div class="t-icon">REV</div>
         <div class="t-n" id="todayDue">0</div>
         <div class="t-l">Due review</div>
         <div class="t-h">Spaced-repetition queue</div>
         <div class="t-why" id="todayDueWhy"></div>
       </div>
       <div class="today-track" data-t="weak" title="Lowest-accuracy skill from your attempts (or first un-mastered tier-0 skill if no attempts yet). Drilling weak skills compounds.">
-        <div class="t-icon">🎯</div>
+        <div class="t-icon">DRILL</div>
         <div class="t-n" id="todayWeak">0</div>
         <div class="t-l">Weak-skill drill</div>
         <div class="t-h" id="todayWeakHint">—</div>
         <div class="t-why" id="todayWeakWhy"></div>
       </div>
       <div class="today-track" data-t="stretch" title="One harder (difficulty 3+) problem from a skill you've started. Forces transfer beyond the same-style problem.">
-        <div class="t-icon">🧗</div>
+        <div class="t-icon">STR</div>
         <div class="t-n" id="todayStretch">0</div>
         <div class="t-l">Stretch</div>
         <div class="t-h">One harder problem</div>
@@ -3581,7 +3581,7 @@ body[data-mode="B"] .sb-link[data-go="quick-ref"]{background:rgba(201,168,76,.10
       </div>
     </div>
     <div class="today-actions">
-      <button class="btn gold lg" id="todayStartBtn" onclick="TODAY.start()">▶ Start today's set</button>
+      <button class="btn gold lg" id="todayStartBtn" onclick="TODAY.start()">Start today's set</button>
       <button class="btn lg" onclick="goSec('drill')">Custom drill instead</button>
       <button class="btn ghost lg" onclick="goSec('tree')">Pick a skill manually</button>
     </div>
@@ -3633,7 +3633,7 @@ body[data-mode="B"] .sb-link[data-go="quick-ref"]{background:rgba(201,168,76,.10
           <div class="wp-snap-tile"><div class="n" id="wpSnapMaster">0</div><div class="l">Mastered</div></div>
           <div class="wp-snap-tile"><div class="n" id="wpSnapDue">0</div><div class="l">Due review</div></div>
           <div class="wp-snap-tile"><div class="n" id="wpSnapWeak">—</div><div class="l">Weakest</div></div>
-          <div class="wp-snap-tile"><div class="n" id="wpSnapPredict">—</div><div class="l">Predicted</div></div>
+          <div class="wp-snap-tile"><div class="n" id="wpSnapMockPct">—</div><div class="l">Last mock</div></div>
         </div>
       </div>
       <div class="wp-h-r">
@@ -3664,8 +3664,8 @@ body[data-mode="B"] .sb-link[data-go="quick-ref"]{background:rgba(201,168,76,.10
     <div class="wp-actions">
       <button class="btn gold lg" onclick="WEEK.regenerate()">↻ Regenerate plan</button>
       <button class="btn lg" onclick="WEEK.exportJSON()">⤓ Download JSON for portal</button>
-      <button class="btn ghost lg" onclick="WEEK.copyJSON()">📋 Copy JSON</button>
-      <button class="btn ghost lg" onclick="WEEK.showSchema()">ⓘ Schema reference</button>
+      <button class="btn ghost lg" onclick="WEEK.copyJSON()">Copy JSON</button>
+      <button class="btn ghost lg" onclick="WEEK.showSchema()">Schema reference</button>
     </div>
 
     <div class="wp-portal" id="wpPortalStatus">
@@ -3674,7 +3674,7 @@ body[data-mode="B"] .sb-link[data-go="quick-ref"]{background:rgba(201,168,76,.10
     </div>
 
     <div class="wp-schema" id="wpSchema" style="display:none">
-      <div class="wp-schema-h"><b>Portal export schema (v1)</b><span class="x" onclick="WEEK.hideSchema()">close ✕</span></div>
+      <div class="wp-schema-h"><b>Portal export schema (v1)</b><span class="x" onclick="WEEK.hideSchema()">close</span></div>
       <pre id="wpSchemaBody"></pre>
     </div>
   </div>
@@ -3688,13 +3688,13 @@ body[data-mode="B"] .sb-link[data-go="quick-ref"]{background:rgba(201,168,76,.10
       <h2>Shortcut Deck — <em>DAT gold</em></h2>
       <p class="s">20 high-yield shortcuts — acid-base, equilibrium, colligative properties, reaction mechanisms, and solid types — the test punishes you for not knowing. Each card has the <b>formula</b>, the <b>Thomasism</b> that locks it in, and a <b>jump-link</b> into the module where it's drilled. Print-friendly — Cmd-P to grab the cheat sheet.</p>
     </div>
-    <button class="btn lg" onclick="window.print()" style="align-self:flex-start; margin-left:auto">⎙ Print sheet</button>
+    <button class="btn lg" onclick="window.print()" style="align-self:flex-start; margin-left:auto">Print sheet</button>
   </div>
 
   <div class="sd-grid" id="sdGrid"><!-- populated by SHORTCUTS.render() --></div>
 
   <div class="sd-stack">
-    <div class="sd-stack-h">🧠 Master Thomasism stack</div>
+    <div class="sd-stack-h">Master Thomasism stack</div>
     <ul class="sd-stack-list">
       <li>"Weak = square root."</li>
       <li>"If it's tiny, drop it."</li>
@@ -3787,42 +3787,42 @@ body[data-mode="B"] .sb-link[data-go="quick-ref"]{background:rgba(201,168,76,.10
     <h3 class="lab-block-h">Glassware — accuracy hierarchy</h3>
     <div class="lab-grid lab-grid-3">
       <div class="lab-card" data-cls="best">
-        <div class="lab-card-icon">🧪</div>
+        <div class="lab-card-icon">VF</div>
         <div class="lab-card-t">Volumetric flask</div>
         <div class="lab-card-acc">±0.05 mL · <b>~0.1%</b></div>
         <div class="lab-card-when"><b>Use:</b> preparing a solution at a precise volume (e.g., dilute to 250.00 mL). Calibrated for ONE volume only — fill to the etched line.</div>
         <div class="lab-card-err"><b>Trap:</b> measuring AT a volume other than the etched line.</div>
       </div>
       <div class="lab-card" data-cls="best">
-        <div class="lab-card-icon">💧</div>
+        <div class="lab-card-icon">VP</div>
         <div class="lab-card-t">Volumetric pipette</div>
         <div class="lab-card-acc">±0.02 mL · <b>~0.1%</b></div>
         <div class="lab-card-when"><b>Use:</b> transferring a precise fixed volume (10.00, 25.00 mL). Calibrated TD ("to deliver"). Touch tip to glass to release the meniscus.</div>
         <div class="lab-card-err"><b>Trap:</b> blowing out the last drop — that volume is intentionally retained.</div>
       </div>
       <div class="lab-card" data-cls="best">
-        <div class="lab-card-icon">📏</div>
+        <div class="lab-card-icon">BUR</div>
         <div class="lab-card-t">Buret</div>
         <div class="lab-card-acc">±0.05 mL · <b>~0.1%</b></div>
         <div class="lab-card-when"><b>Use:</b> titrations — variable, precise dispensed volume. Read meniscus at eye level; subtract initial from final.</div>
         <div class="lab-card-err"><b>Trap:</b> air bubble in the tip throws off the volume actually delivered.</div>
       </div>
       <div class="lab-card" data-cls="ok">
-        <div class="lab-card-icon">🥃</div>
+        <div class="lab-card-icon">GC</div>
         <div class="lab-card-t">Graduated cylinder</div>
         <div class="lab-card-acc">±0.5 mL (50 mL) · <b>~1%</b></div>
         <div class="lab-card-when"><b>Use:</b> approximate volumes where ±1% is fine (rinse water, solvent additions).</div>
         <div class="lab-card-err"><b>Trap:</b> using for a quantitative dilution — use a volumetric flask instead.</div>
       </div>
       <div class="lab-card" data-cls="poor">
-        <div class="lab-card-icon">🍶</div>
+        <div class="lab-card-icon">FL</div>
         <div class="lab-card-t">Erlenmeyer / beaker</div>
         <div class="lab-card-acc">±5% or worse</div>
         <div class="lab-card-when"><b>Use:</b> reaction vessel, mixing, holding — NOT for measuring volume.</div>
         <div class="lab-card-err"><b>Trap:</b> trusting the side markings as if they were calibrated.</div>
       </div>
       <div class="lab-card" data-cls="best">
-        <div class="lab-card-icon">⚖</div>
+        <div class="lab-card-icon">BAL</div>
         <div class="lab-card-t">Analytical balance</div>
         <div class="lab-card-acc">±0.0001 g · <b>4 decimal places</b></div>
         <div class="lab-card-when"><b>Use:</b> precise mass for stoichiometry, standards. Tare with weighing paper or boat.</div>
@@ -3915,15 +3915,15 @@ body[data-mode="B"] .sb-link[data-go="quick-ref"]{background:rgba(201,168,76,.10
   </div>
   <div class="cp-hub" id="cpHub">
     <div class="cp-block">
-      <h3 class="cp-block-h">🎓 Graduation checkpoints <span class="cp-block-s">due now</span></h3>
+      <h3 class="cp-block-h">Graduation checkpoints <span class="cp-block-s">due now</span></h3>
       <div id="cpGradList" class="cp-list"></div>
     </div>
     <div class="cp-block">
-      <h3 class="cp-block-h">🏔 Tier checkpoints <span class="cp-block-s">cross-skill gates</span></h3>
+      <h3 class="cp-block-h">Tier checkpoints <span class="cp-block-s">cross-skill gates</span></h3>
       <div id="cpTierList" class="cp-list"></div>
     </div>
     <div class="cp-block">
-      <h3 class="cp-block-h">📅 Weekly cumulative <span class="cp-block-s">runs as Day 7 of your Weekly Plan</span></h3>
+      <h3 class="cp-block-h">Weekly cumulative <span class="cp-block-s">runs as Day 7 of your Weekly Plan</span></h3>
       <div id="cpWeekList" class="cp-list"></div>
     </div>
   </div>
@@ -3959,7 +3959,7 @@ body[data-mode="B"] .sb-link[data-go="quick-ref"]{background:rgba(201,168,76,.10
       <h2>Quick reference — <em>everything else</em></h2>
       <p class="s">The lookup tables, constants, and high-yield memorization aids that don't fit cleanly into a 6-stage module. This is Mode B reference content — scannable, printable, no scaffolding. <b>Closes the final 5%</b> of Gen Chem coverage.</p>
     </div>
-    <button class="btn lg" onclick="window.print()" style="align-self:flex-start; margin-left:auto">⎙ Print</button>
+    <button class="btn lg" onclick="window.print()" style="align-self:flex-start; margin-left:auto">Print</button>
   </div>
 
   <div class="qref-tabs">
@@ -3971,7 +3971,7 @@ body[data-mode="B"] .sb-link[data-go="quick-ref"]{background:rgba(201,168,76,.10
     <button class="qref-tab" data-t="red-pot" onclick="qrefTab('red-pot')">Reduction Pots</button>
     <button class="qref-tab" data-t="activity" onclick="qrefTab('activity')">Activity Series</button>
     <button class="qref-tab" data-t="rxn-types" onclick="qrefTab('rxn-types')">Reaction Types</button>
-    <button class="qref-tab" data-t="ion-drill" onclick="qrefTab('ion-drill')">🎯 Ion Drill</button>
+    <button class="qref-tab" data-t="ion-drill" onclick="qrefTab('ion-drill')">Ion Drill</button>
   </div>
 
   <div class="qref-panels">
@@ -4149,7 +4149,7 @@ body[data-mode="B"] .sb-link[data-go="quick-ref"]{background:rgba(201,168,76,.10
         <div class="qref-list-row hline"><span class="qref-rank">—</span><span class="qref-name">H</span><span class="qref-tag">Reference — metals above replace H from acids</span></div>
         <div class="qref-list-row noble"><span class="qref-rank">4</span><span class="qref-name">Cu, Hg, Ag, Au, Pt</span><span class="qref-tag">Don't react with most acids · "noble metals"</span></div>
       </div>
-      <div class="qref-rule"><b>Lock:</b> A metal above another in this list will displace it. Zn(s) + CuSO₄ → ZnSO₄ + Cu(s) ✓ · Cu(s) + ZnSO₄ → no reaction (Cu is below Zn).</div>
+      <div class="qref-rule"><b>Lock:</b> A metal above another in this list will displace it. Zn(s) + CuSO₄ → ZnSO₄ + Cu(s) <b>(occurs)</b> · Cu(s) + ZnSO₄ → no reaction (Cu is below Zn).</div>
     </div>
 
     <!-- Reaction types -->
@@ -4202,7 +4202,7 @@ body[data-mode="B"] .sb-link[data-go="quick-ref"]{background:rgba(201,168,76,.10
       <h2>Cram sheets — <em>compressed reference</em></h2>
       <p class="s">One card per skill — pattern, formula, lock, top trap, plus a 5-question quick drill. <b>Mode B</b> view: built for review/cram phase, not first-time learning. Click ↗ on any card to jump to the full Mastery Path module.</p>
     </div>
-    <button class="btn lg" onclick="window.print()" style="align-self:flex-start; margin-left:auto">⎙ Print sheets</button>
+    <button class="btn lg" onclick="window.print()" style="align-self:flex-start; margin-left:auto">Print sheets</button>
   </div>
   <div class="cram-grid" id="cramGrid"><!-- populated by CRAM.render() --></div>
 </section>
@@ -4264,7 +4264,7 @@ body[data-mode="B"] .sb-link[data-go="quick-ref"]{background:rgba(201,168,76,.10
 
     <div class="diag-results" id="diagResults">
       <div class="card-h">
-        <div class="mark good">✓</div>
+        <div class="mark good">OK</div>
         <div class="ttl">
           <h3>We found your floor. <em>Here's the map.</em></h3>
           <div class="sub" id="diagSummary">—</div>
@@ -4300,10 +4300,10 @@ body[data-mode="B"] .sb-link[data-go="quick-ref"]{background:rgba(201,168,76,.10
 
   <div class="card" style="margin-top:18px">
     <div class="card-h">
-      <div class="mark">⌬</div>
+      <div class="mark">MAP</div>
       <div class="ttl">
         <h3>The skill map · <em>30 core modules + 3 test-day strategy, 4 tiers</em></h3>
-        <div class="sub">Click any unlocked card to open that lesson. Locked cards (🔒) show their prereqs in a tooltip — hover or long-press. Solid green lines = prereq mastered, dashed = not yet.</div>
+        <div class="sub">Click any unlocked card to open that lesson. Locked cards show their prereqs in a tooltip — hover or long-press. Solid green lines = prereq mastered, dashed = not yet.</div>
       </div>
       <div id="treeFilter" class="tree-filter-wrap"></div>
     </div>
@@ -4317,7 +4317,7 @@ body[data-mode="B"] .sb-link[data-go="quick-ref"]{background:rgba(201,168,76,.10
       <div class="k"><div class="swatch" style="background:var(--paper); border:1.5px solid var(--gold-d); position:relative"><span style="position:absolute;top:-3px;right:-3px;width:6px;height:6px;border:1.5px solid var(--gold-d);border-radius:50%;background:var(--paper)"></span></div><span><b>Unlocked</b> — ready to start</span></div>
       <div class="k"><div class="swatch" style="background:rgba(201,168,76,0.20); border:1.5px solid var(--gold-d); position:relative"><span style="position:absolute;top:-3px;right:-3px;width:6px;height:6px;background:var(--gold-d);border-radius:50%"></span></div><span><b>Started</b> — in progress</span></div>
       <div class="k"><div class="swatch" style="background:var(--good-bg); border:1.5px solid var(--good); position:relative"><span style="position:absolute;top:-3px;right:-3px;width:6px;height:6px;background:var(--good-d);border-radius:50%"></span></div><span><b>Mastered</b> — locked in</span></div>
-      <div class="k"><div class="swatch" style="background:var(--paper-3); border:1.5px dashed var(--ink-soft)"></div><span><b>Locked</b> 🔒 — needs prereqs</span></div>
+      <div class="k"><div class="swatch" style="background:var(--paper-3); border:1.5px dashed var(--ink-soft)"></div><span><b>Locked</b> — needs prereqs</span></div>
     </div>
   </div>
 </section>
@@ -4382,7 +4382,7 @@ body[data-mode="B"] .sb-link[data-go="quick-ref"]{background:rgba(201,168,76,.10
     <div class="grow">
       <div class="num">PERFORMANCE · 03</div>
       <h2>Progress <em>dashboard</em></h2>
-      <p class="s">Mastery curve, calibration, and predicted readiness. Updates every time you finish a stage.</p>
+      <p class="s">Mastery curve and calibration. Updates every time you finish a stage.</p>
     </div>
   </div>
   <div class="dash-grid">
@@ -4392,10 +4392,7 @@ body[data-mode="B"] .sb-link[data-go="quick-ref"]{background:rgba(201,168,76,.10
       <svg class="chart" id="growthChart" viewBox="0 0 600 200"></svg>
     </div>
     <div class="dash-card">
-      <h4>Predicted DAT-ready</h4>
-      <div class="big" id="readyDays">— <em>days</em></div>
-      <div class="label">at current pace · revised after each session</div>
-      <hr>
+      <h4>Practice totals</h4>
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px">
         <div><div class="big" style="font-size:28px" id="masteredCount">0</div><div class="label">skills mastered</div></div>
         <div><div class="big" style="font-size:28px" id="totalAttempts">0</div><div class="label">problems attempted</div></div>
@@ -4421,7 +4418,7 @@ body[data-mode="B"] .sb-link[data-go="quick-ref"]{background:rgba(201,168,76,.10
   </div>
   <div class="card">
     <div class="card-h">
-      <div class="mark">⏱</div>
+      <div class="mark">PACE</div>
       <div class="ttl"><h3>Four tiers · <em>climb when ready</em></h3>
       <div class="sub">No timer until you're ready for one. Then we ratchet down: 90s → 60s → DAT-pace.</div></div>
     </div>
@@ -4449,36 +4446,35 @@ body[data-mode="B"] .sb-link[data-go="quick-ref"]{background:rgba(201,168,76,.10
     <div class="grow">
       <div class="num">PERFORMANCE · 05</div>
       <h2>Test-day <em>simulation</em></h2>
-      <p class="s">40 questions. DAT pace. No breaks. Predicted scaled score at the end. Don't take this until your pacing ladder is at 60s/Q across most patterns — otherwise it'll just rattle you.</p>
+      <p class="s">40 questions. DAT pace. No breaks. Per-topic accuracy and a missed-question walkthrough at the end. Don't take this until your pacing ladder is at 60s/Q across most patterns — otherwise it'll just rattle you.</p>
     </div>
   </div>
   <div class="sim-card">
     <h3>Run a <em>mock test</em></h3>
-    <p class="sub">Pulls from a 600+ problem bank with topic distribution matching the ADA's published Gen Chem outline. You can flag questions, skip-and-return, and jump back to previous Qs. After submission: per-topic accuracy breakdown + wrong-answer review + predicted scaled score.</p>
+    <p class="sub">Pulls from a 600+ problem bank with topic distribution matching the ADA's published Gen Chem outline. You can flag questions, skip-and-return, and jump back to previous Qs. After submission: per-topic accuracy breakdown + missed-question walkthrough.</p>
     <div class="sim-stats">
       <div class="sim-stat"><div class="n" id="simAvail">—</div><div class="l">Total in bank</div></div>
-      <div class="sim-stat"><div class="n" id="simBest">—</div><div class="l">Best predicted</div></div>
       <div class="sim-stat"><div class="n" id="simRuns">0</div><div class="l">Mocks taken</div></div>
-      <div class="sim-stat"><div class="n" id="simPredict">—</div><div class="l">Last predicted</div></div>
+      <div class="sim-stat"><div class="n" id="simLastPct">—</div><div class="l">Last accuracy</div></div>
     </div>
     <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; align-items:center">
       <span style="font-size:11px; letter-spacing:1.5px; color:rgba(236,228,212,0.6); font-weight:700; text-transform:uppercase; min-width:60px">Length</span>
       <button class="btn ghost" style="color:#ece4d4; border-color:rgba(236,228,212,0.18)" onclick="SIM.start({length:15})" title="15 questions in 15 minutes — quick warm-up">15 Q (15 min)</button>
-      <button class="btn gold lg" onclick="SIM.start({length:30})" title="30 questions in 30 minutes — matches the actual DAT GC pace exactly">🎯 DAT Mirror · 30 Q (30 min)</button>
+      <button class="btn gold lg" onclick="SIM.start({length:30})" title="30 questions in 30 minutes — matches the actual DAT GC pace exactly">DAT Mirror · 30 Q (30 min)</button>
       <button class="btn ghost" style="color:#ece4d4; border-color:rgba(236,228,212,0.18)" onclick="SIM.start({length:40})" title="Extended 40 Q at 60 sec/Q — for endurance practice past DAT length">40 Q endurance (40 min)</button>
       <button class="btn ghost" style="color:#ece4d4; border-color:rgba(236,228,212,0.18)" onclick="SIM.review()">Review last</button>
     </div>
     <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; align-items:center">
       <span style="font-size:11px; letter-spacing:1.5px; color:rgba(236,228,212,0.6); font-weight:700; text-transform:uppercase; min-width:60px">Theme</span>
-      <button class="btn ghost" style="color:#ece4d4; border-color:rgba(236,228,212,0.18)" onclick="SIM.start({length:20, theme:'foundations'})" title="Tier 0 only — atomic, periodic, bonding, lewis, vsepr, etc.">📐 Foundations (20 Q)</button>
-      <button class="btn ghost" style="color:#ece4d4; border-color:rgba(236,228,212,0.18)" onclick="SIM.start({length:25, theme:'quant'})" title="Tier 1 — gas laws, thermo, kinetics, equilibrium, acid-base">∑ Quant (25 Q)</button>
-      <button class="btn ghost" style="color:#ece4d4; border-color:rgba(236,228,212,0.18)" onclick="SIM.start({length:20, theme:'patterns'})" title="Tier 2 — Ksp, electrochem, nuclear, phase diagrams">⌬ Patterns (20 Q)</button>
-      <button class="btn ghost" style="color:#ece4d4; border-color:rgba(236,228,212,0.18)" onclick="SIM.start({length:30, theme:'weak'})" title="Pulls from skills with low mastery — drill your weak spots">🎯 My weak spots (30 Q)</button>
+      <button class="btn ghost" style="color:#ece4d4; border-color:rgba(236,228,212,0.18)" onclick="SIM.start({length:20, theme:'foundations'})" title="Tier 0 only — atomic, periodic, bonding, lewis, vsepr, etc.">Foundations (20 Q)</button>
+      <button class="btn ghost" style="color:#ece4d4; border-color:rgba(236,228,212,0.18)" onclick="SIM.start({length:25, theme:'quant'})" title="Tier 1 — gas laws, thermo, kinetics, equilibrium, acid-base">Quant (25 Q)</button>
+      <button class="btn ghost" style="color:#ece4d4; border-color:rgba(236,228,212,0.18)" onclick="SIM.start({length:20, theme:'patterns'})" title="Tier 2 — Ksp, electrochem, nuclear, phase diagrams">Patterns (20 Q)</button>
+      <button class="btn ghost" style="color:#ece4d4; border-color:rgba(236,228,212,0.18)" onclick="SIM.start({length:30, theme:'weak'})" title="Pulls from skills with low mastery — drill your weak spots">My weak spots (30 Q)</button>
     </div>
   </div>
   <div id="simResumeBanner" style="display:none; margin-top:14px; background:var(--gold-bg); border:2px solid var(--gold-d); border-radius:10px; padding:14px 18px; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap">
     <div style="flex:1; min-width:240px">
-      <div style="font-weight:700; color:var(--gold-d); font-size:13px; letter-spacing:.12em; text-transform:uppercase; margin-bottom:4px">⏸ Mock in progress</div>
+      <div style="font-weight:700; color:var(--gold-d); font-size:13px; letter-spacing:.12em; text-transform:uppercase; margin-bottom:4px">Mock in progress</div>
       <div style="font-family:'DM Sans',sans-serif; font-size:15px; color:var(--ink)" id="simResumeText">You have an unfinished mock test. Resume where you left off?</div>
     </div>
     <div style="display:flex; gap:8px">
@@ -4495,18 +4491,18 @@ body[data-mode="B"] .sb-link[data-go="quick-ref"]{background:rgba(201,168,76,.10
     <div class="grow">
       <div class="num">PERFORMANCE · 04</div>
       <h2>Daily <em>5-minute drill</em></h2>
-      <p class="s">Spaced repetition (SM-2) schedules problems based on your performance: missed = next day, easy = exponentially longer. Drills pull from your due-for-review queue first, then refresh recently-attempted problems, then layer in new ones from skills you've started. Difficulty ramps up across the drill (★ → ★★★).</p>
+      <p class="s">Spaced repetition (SM-2) schedules problems based on your performance: missed = next day, easy = exponentially longer. Drills pull from your due-for-review queue first, then refresh recently-attempted problems, then layer in new ones from skills you've started. Difficulty ramps up across the drill (level 1 to level 3).</p>
     </div>
   </div>
   <div class="card">
     <div id="drillBox">
       <div class="card-h">
-        <div class="mark">⚡</div>
+        <div class="mark">DRILL</div>
         <div class="ttl"><h3>Today's drill</h3>
         <div class="sub">Streak: <b id="drillStreak">0 days</b> · <b id="drillDue">0</b> problems due for review now.</div></div>
       </div>
       <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:10px">
-        <button class="btn primary lg" onclick="DRILL.start({count:5})">▶ Quick · 5 problems</button>
+        <button class="btn primary lg" onclick="DRILL.start({count:5})">Quick · 5 problems</button>
         <button class="btn lg" onclick="DRILL.start({count:10})">Standard · 10</button>
         <button class="btn ghost lg" onclick="DRILL.start({count:20})">Deep · 20</button>
       </div>
@@ -4590,22 +4586,22 @@ body[data-mode="B"] .sb-link[data-go="quick-ref"]{background:rgba(201,168,76,.10
     <!-- 4-path recovery picker — shown first -->
     <div class="stuck-paths" id="stuckPaths">
       <button class="stuck-path" data-p="pattern" onclick="STUCK.path('pattern')">
-        <div class="sp-ic">🧩</div>
+        <div class="sp-ic">PATT</div>
         <div class="sp-t">I don't get the <em>pattern</em></div>
         <div class="sp-d">Re-show the one rule that's true 90% of the time</div>
       </button>
       <button class="stuck-path" data-p="formula" onclick="STUCK.path('formula')">
-        <div class="sp-ic">📐</div>
+        <div class="sp-ic">MATH</div>
         <div class="sp-t">Lost in the <em>math</em></div>
         <div class="sp-d">Show the formula + a worked walkthrough</div>
       </button>
       <button class="stuck-path" data-p="lock" onclick="STUCK.path('lock')">
-        <div class="sp-ic">🔒</div>
+        <div class="sp-ic">WHY</div>
         <div class="sp-t">I missed the <em>WHY</em></div>
         <div class="sp-d">Show the lock + the Thomasism</div>
       </button>
       <button class="stuck-path" data-p="break" onclick="STUCK.path('break')">
-        <div class="sp-ic">☕</div>
+        <div class="sp-ic">PAUSE</div>
         <div class="sp-t">Just need a <em>break</em></div>
         <div class="sp-d">60-sec breathing + 3 confidence wins</div>
       </button>
@@ -4646,24 +4642,24 @@ body[data-mode="B"] .sb-link[data-go="quick-ref"]{background:rgba(201,168,76,.10
 
 <!-- ===================== COACH BAR ===================== -->
 <div class="coach-bar" id="coachBar">
-  <div class="pill">⚡ Coach-mode</div>
+  <div class="pill">Coach-mode</div>
   <div class="ctl">
     <button class="iconbtn" id="sBack" title="Previous">‹</button>
-    <button class="iconbtn play" id="sPlay" title="Play">▶</button>
+    <button class="iconbtn play" id="sPlay" title="Play">Play</button>
     <button class="iconbtn" id="sFwd" title="Next">›</button>
   </div>
   <div class="now"><div class="t" id="sNowTag">Now teaching</div><div class="n" id="sNow">— pick a skill —</div></div>
-  <button class="iconbtn" id="sStudents" title="Switch / manage students">👥</button>
-  <button class="iconbtn" id="sIso" title="Isolate">◱</button>
-  <button class="iconbtn" id="sExit" title="Exit">✕</button>
+  <button class="iconbtn" id="sStudents" title="Switch / manage students">Students</button>
+  <button class="iconbtn" id="sIso" title="Isolate">Iso</button>
+  <button class="iconbtn" id="sExit" title="Exit">Exit</button>
 </div>
 
 <!-- Student roster modal — opens from coach bar -->
 <div class="student-modal" id="studentModal" style="display:none">
   <div class="student-modal-card">
     <div class="student-modal-h">
-      <h3>👥 Student roster</h3>
-      <button class="iconbtn" id="studentModalClose" title="Close">✕</button>
+      <h3>Student roster</h3>
+      <button class="iconbtn" id="studentModalClose" title="Close">Close</button>
     </div>
     <div class="student-modal-active">
       <span class="student-modal-tag">Currently active</span>
@@ -4683,8 +4679,8 @@ body[data-mode="B"] .sb-link[data-go="quick-ref"]{background:rgba(201,168,76,.10
     <div class="student-modal-section">
       <div class="student-modal-section-h">Backup &amp; transfer</div>
       <div class="student-modal-actions">
-        <button class="btn sm" id="studentExportBtn">⬇ Export current student</button>
-        <button class="btn sm" id="studentImportBtn">⬆ Import from file</button>
+        <button class="btn sm" id="studentExportBtn">Export current student</button>
+        <button class="btn sm" id="studentImportBtn">Import from file</button>
         <input type="file" id="studentImportFile" accept="application/json" style="display:none"/>
       </div>
       <div class="student-modal-note">Exports a JSON file with this student's full progress (mastery, attempts, settings). Import on another device or to restore.</div>
@@ -4710,6 +4706,35 @@ const ST = {
 ST.set('lastSession', Date.now());
 /* Bank-shape version stamp — lets future bank changes detect old in-progress state. */
 try { localStorage.setItem('gc:meta:version', '1'); } catch(e){}
+
+/* One-time sanitizer: strip legacy outcome-forecasting fields from saved mock runs.
+   Practice metrics (pct, correct, attempted, total, elapsed, byTopic, theme) are kept;
+   predicted / percentile / scaledScore are dropped. The legacy 'sim:best' tracking
+   key is also cleared. Idempotent on re-runs. */
+try {
+  const _sanRuns = ST.get('sim:runs', null);
+  if (Array.isArray(_sanRuns)){
+    let _changed = false;
+    const _cleaned = _sanRuns.map(r => {
+      if (!r || typeof r !== 'object') return r;
+      if ('predicted' in r || 'percentile' in r || 'scaledScore' in r){
+        _changed = true;
+        const { predicted, percentile, scaledScore, ...rest } = r;
+        return rest;
+      }
+      return r;
+    });
+    if (_changed) ST.set('sim:runs', _cleaned);
+  }
+  // Also clear legacy in-progress fields if any
+  const _sanInProg = ST.get('sim:inProgress', null);
+  if (_sanInProg && typeof _sanInProg === 'object' && ('predicted' in _sanInProg || 'percentile' in _sanInProg || 'scaledScore' in _sanInProg)){
+    const { predicted, percentile, scaledScore, ..._restIp } = _sanInProg;
+    ST.set('sim:inProgress', _restIp);
+  }
+  // Drop the legacy best-ever-predicted key entirely
+  try { localStorage.removeItem(ST.ns + ':sim:best'); } catch(e){}
+} catch(e){}
 
 /* ----- STUDENT roster — for tutors managing multiple students.
    Each student has their own namespaced ST data. The roster (active + list)
@@ -4912,7 +4937,7 @@ const SOUND = {
     const b = document.getElementById('btnSound');
     if (!b) return;
     b.classList.toggle('on', this.on);
-    b.innerHTML = (this.on ? '🔊' : '🔇') + ' Sound';
+    b.innerHTML = 'Sound: ' + (this.on ? 'On' : 'Off');
   },
   tone(freq, dur=0.18, type='sine', vol=0.10){
     if (!this.on) return;
@@ -5209,12 +5234,12 @@ const BANK = [
   {id:'ks3',skills:['ksp'],diff:2,q:'Ksp for Ag₂CrO₄ from solubility s?',opts:['s²','s³','4s³','27s⁴'],correct:2,why:'Ag₂CrO₄→2Ag⁺+CrO₄²⁻ → Ksp=(2s)²(s)=4s³.',diag:{0:'1:1.',1:'No coef.',3:'4 ions.'}},
   // === GALVANIC (3) ===
   {id:'gv1',skills:['galvanic'],diff:1,q:'Galvanic cathode is?',opts:['Positive, reduction','Negative, oxidation','Negative, reduction','Positive, oxidation'],correct:0,why:'Red Cat An Ox.',diag:{1:'Anode.',2:'Wrong sign.',3:'Wrong rxn.'}},
-  {id:'gv2',skills:['galvanic'],diff:2,q:'Zn|Zn²⁺(E°=−0.76)||Cu²⁺|Cu(E°=+0.34). E°cell?',opts:['+0.42','+1.10','−0.42','−1.10'],correct:1,why:'E°cell=E°cathode−E°anode=0.34−(−0.76)=1.10.',diag:{0:'Sum off.',2:'Sign.',3:'Reverse cell.'}},
-  {id:'gv3',skills:['galvanic'],diff:1,q:'e⁻ flow in galvanic cell?',opts:['Anode → cathode','Cathode → anode','No flow','Depends'],correct:0,why:'External wire, anode loses → cathode gains.',diag:{1:'Reversed.',2:'Wrong.',3:'No.'}},
+  {id:'gv2',skills:['galvanic'],diff:2,q:'Zn|Zn²⁺(E°=−0.76)||Cu²⁺|Cu(E°=+0.34). E°cell?',opts:['+0.42','+1.10','−0.42','−1.10'],correct:1,why:'E°cell = E°cathode − E°anode (both as reduction potentials). Cu²⁺/Cu is the cathode (higher E°red, gets reduced). E°cell = +0.34 − (−0.76) = +1.10 V. Positive → spontaneous galvanic cell.',diag:{0:'+0.42 = 0.34 + 0.08 — you added the wrong way or used a wrong sign. The rule is always cathode minus anode, both as reduction potentials.',2:'−0.42 means you swapped cathode and anode: you computed E°anode − E°cathode = −0.76 − 0.34 = −1.10? Recheck which half-cell gets reduced (higher E°red = cathode).',3:'−1.10 means you flipped the cell direction (treated Zn²⁺/Zn as the cathode). The species with the higher E°red is the cathode — here that is Cu²⁺/Cu.'}},
+  {id:'gv3',skills:['galvanic'],diff:1,q:'e⁻ flow in galvanic cell?',opts:['Anode → cathode','Cathode → anode','No flow','Depends'],correct:0,why:'Electrons leave the species being oxidized (anode) and travel through the external wire to the species being reduced (cathode). Mnemonic: An Ox / Red Cat (Anode = Oxidation, Cathode = Reduction).',diag:{1:'Reversed — electrons always flow from where they are released (oxidation = anode) to where they are accepted (reduction = cathode).',2:'A galvanic cell is spontaneous (positive E°cell) — electrons flow. "No flow" describes a dead cell at equilibrium.',3:'For a galvanic cell, direction is fixed by which half-cell has the higher E°red — not by external conditions.'}},
   // === RED-POT (3) ===
-  {id:'rp1',skills:['red-pot'],diff:1,q:'Strongest oxidizer?',opts:['F₂(+2.87)','Cl₂(+1.36)','Na⁺(−2.71)','Zn²⁺(−0.76)'],correct:0,why:'Highest E°red.',diag:{1:'Strong but second.',2:'Weak oxidizer.',3:'Weak.'}},
-  {id:'rp2',skills:['red-pot'],diff:2,q:'Best reducer of: Li, Na, Zn?',opts:['Li (E°=−3.04)','Na (E°=−2.71)','Zn (E°=−0.76)','All equal'],correct:0,why:'Most negative E°red = strongest reducing agent.',diag:{1:'Wrong.',2:'Wrong.',3:'No.'}},
-  {id:'rp3',skills:['red-pot'],diff:2,q:'Will Cu reduce Ag⁺? E°(Ag⁺/Ag)=+0.80, E°(Cu²⁺/Cu)=+0.34',opts:['Yes','No','Equilibrium','Cannot tell'],correct:0,why:'Cu has lower E°red → easier to oxidize → reduces Ag⁺.',diag:{1:'Yes.',2:'Off.',3:'Yes.'}},
+  {id:'rp1',skills:['red-pot'],diff:1,q:'Strongest oxidizer?',opts:['F₂(+2.87)','Cl₂(+1.36)','Na⁺(−2.71)','Zn²⁺(−0.76)'],correct:0,why:'Strongest oxidizer = highest E°red (most eager to grab electrons). F₂ at +2.87 is the largest. (Same table: strongest reducer = most negative E°red — Li, Na, K end.)',diag:{1:'Cl₂ is a strong oxidizer but second to F₂. F sits above Cl in Group 17 and has the highest E°red on the standard table.',2:'Na⁺ has a very negative E°red (−2.71) — it does not want electrons. That makes Na (the metal) a strong REDUCER, not Na⁺ an oxidizer.',3:'Zn²⁺ has E°red = −0.76 — modest reducer when present as Zn metal, weak oxidizer as Zn²⁺. Look for the most positive E°red instead.'}},
+  {id:'rp2',skills:['red-pot'],diff:2,q:'Best reducer of: Li, Na, Zn?',opts:['Li (E°=−3.04)','Na (E°=−2.71)','Zn (E°=−0.76)','All equal'],correct:0,why:'A metal is a reducer when it gives up electrons (gets oxidized). The most negative E°red = the species LEAST wanting electrons back → easiest to oxidize → strongest reducer. Li at −3.04 wins.',diag:{1:'Na is a strong reducer but Li at −3.04 is more negative (stronger). Down a column you might expect bigger atoms to lose electrons more easily, but Li wins on the standard reduction-potential table because of hydration energy effects.',2:'Zn at −0.76 is the weakest reducer of the three — it is closest to zero, which means it holds onto its electrons more.',3:'Different E° values guarantee different reducing strengths. Compare the numbers.'}},
+  {id:'rp3',skills:['red-pot'],diff:2,q:'Will Cu reduce Ag⁺? E°(Ag⁺/Ag)=+0.80, E°(Cu²⁺/Cu)=+0.34',opts:['Yes','No','Equilibrium','Cannot tell'],correct:0,why:'Compute E°cell for the proposed reaction. Reduction half: Ag⁺ + e⁻ → Ag (E° = +0.80, cathode). Oxidation half: Cu → Cu²⁺ + 2e⁻ (anode). E°cell = E°cathode − E°anode = +0.80 − (+0.34) = +0.46 V. Positive → spontaneous → yes, Cu reduces Ag⁺ (this is the classic silver-tree demo).',diag:{1:'Compute E°cell = +0.80 − (+0.34) = +0.46 V. A positive E°cell means the forward reaction (Cu reduces Ag⁺) IS spontaneous. Both numbers are positive, but the rule is the higher E°red is the cathode.',2:'"Equilibrium" would require E°cell ≈ 0 (the two E°red values nearly equal). Here the gap is 0.46 V — well away from equilibrium.',3:'You can absolutely tell — compute E°cell from the two reduction potentials. Whichever half-reaction has the higher E°red runs forward as reduction; the other runs as oxidation.'}},
   // === NERNST (2) ===
   {id:'nr1',skills:['nernst'],diff:2,q:'Zn/Cu cell, [Cu²⁺]=0.01, [Zn²⁺]=1, n=2. E?',opts:['1.10','1.04','1.16','0.95'],correct:1,why:'Q=1/0.01=100. E=1.10−(0.0592/2)·2=1.04.',diag:{0:'Standard.',2:'Wrong sign.',3:'Wrong.'}},
   {id:'nr2',skills:['nernst'],diff:1,q:'When Q=K, E=?',opts:['+','−','=0','undefined'],correct:2,why:'Cell at equilibrium.',diag:{0:'Wrong.',1:'Wrong.',3:'Defined.'}},
@@ -5237,7 +5262,7 @@ const BANK = [
   {id:'hb2',skills:['hybridization'],diff:1,q:'Hybridization of N in NH₃?',opts:['sp','sp²','sp³','sp³d'],correct:2,why:'3 bonds + 1 LP = steric # 4.',diag:{0:'2 things only.',1:'No LP counted.',3:'Period 2 cannot expand.'}},
   {id:'hb3',skills:['hybridization'],diff:2,q:'Hybridization of central atom in CO₂?',opts:['sp','sp²','sp³','dsp²'],correct:0,why:'2 atoms bonded (each via double bond), 0 LP. Steric # = 2 — count atoms not bonds.',diag:{1:'Counted bonds.',2:'Way over.',3:'Wrong family.'}},
   {id:'hb4',skills:['hybridization'],diff:2,q:'How many π bonds in C₂H₂ (acetylene, H−C≡C−H)?',opts:['0','1','2','3'],correct:2,why:'Triple bond = 1σ + 2π. The two C−H bonds are pure σ.',diag:{0:'Only σ.',1:'One π.',3:'Including σ.'}},
-  {id:'hb5',skills:['hybridization'],diff:3,q:'Central atom hybridization in XeF₄?',opts:['sp³','sp³d','sp³d²','sp³d³'],correct:2,why:'4 bonds + 2 LP = steric # 6 → sp³d² (octahedral electron geom; square planar molecular shape).',diag:{0:'Period 2 only.',1:'5 things.',3:'7 things.'}},
+  {id:'hb5',skills:['hybridization'],diff:3,q:'Central atom hybridization in XeF₄?',opts:['sp³','sp³d','sp³d²','sp³d³'],correct:2,why:'Count electron groups around Xe: 4 bonded F atoms + 2 lone pairs = 6 groups → sp³d². Electron geometry is octahedral; the two lone pairs sit trans (opposite each other, minimizing repulsion), so the molecular shape is square planar. Xe is in period 5 — well past period 2 — so it can use d-orbitals (or, more precisely, 3-center-4-electron bonding) to exceed an octet.',diag:{0:'sp³ corresponds to 4 electron groups (steric # 4). XeF₄ has 4 bonded atoms PLUS 2 lone pairs, so the total is 6. Don\'t forget to count lone pairs.',1:'sp³d corresponds to 5 electron groups. You may have counted the 4 F bonds plus only one lone pair. Xe has 8 valence electrons; in XeF₄, 4 are used in bonding (one per F) and 4 sit as 2 lone pairs — count both.',3:'sp³d³ corresponds to 7 electron groups (like in IF₇). XeF₄ has 6, not 7 — you may have counted lone-pair electrons individually instead of as pairs.'}},
 
   // === IMF RANK (5) ===
   {id:'if1',skills:['imf-rank'],diff:1,q:'Strongest IMF between H₂O molecules?',opts:['London','Dipole-dipole','Hydrogen bond','Ionic'],correct:2,why:'O-H bond → H-bond donor and acceptor.',diag:{0:'Weakest.',1:'H-bond is a special strong dipole-dipole.',3:'Not ionic — molecular.'}},
@@ -5256,7 +5281,7 @@ const BANK = [
   // === DIFF:3 CHALLENGE — added across high-traffic skills (15) ===
   {id:'at-h1',skills:['atomic'],diff:3,q:'Ion isoelectronic with Ar AND with charge +2?',opts:['K⁺','Ca²⁺','Sc³⁺','S²⁻'],correct:1,why:'Ar has 18 e⁻. Ca²⁺ has 20−2 = 18 e⁻ AND charge +2.',diag:{0:'+1.',2:'+3.',3:'−2.'}},
   {id:'at-h2',skills:['atomic'],diff:3,q:'Cr ground-state config exception?',opts:['[Ar] 4s² 3d⁴','[Ar] 4s¹ 3d⁵','[Ar] 4s² 3d⁵','[Ar] 4s⁰ 3d⁶'],correct:1,why:'Cr promotes one 4s e⁻ to 3d for half-filled stability. [Ar] 4s¹ 3d⁵.',diag:{0:'Naive Aufbau.',2:'Mn config.',3:'Wrong promotion.'}},
-  {id:'p-h1',skills:['periodic'],diff:3,q:'Which has the LARGEST 2nd ionization energy: Na, Mg, Al, K?',opts:['Na','Mg','Al','K'],correct:0,why:'Na⁺ is [Ne] (full octet). Removing 2nd e⁻ breaks the octet → huge IE2 jump. Others have 2nd e⁻ in valence shell.',diag:{1:'Has 2 valence e⁻.',2:'Has 3.',3:'Same as Na conceptually but K⁺ is also [Ar] — wait. K⁺ = Ar config too. Both Na and K should jump. But Na jump is largest (smaller ion, harder).'}},
+  {id:'p-h1',skills:['periodic'],diff:3,q:'Which has the LARGEST 2nd ionization energy: Na, Mg, Al, K?',opts:['Na','Mg','Al','K'],correct:0,why:'IE2 = energy to remove the SECOND electron (after IE1 has already pulled one off). The rule: IE jumps when the next electron must come from a noble-gas core. Na is [Ne]3s¹ → Na⁺ is already [Ne]. Pulling another electron off Na⁺ means cracking the full octet — huge jump. Mg, Al still have valence electrons after IE1. K is [Ar]4s¹ → K⁺ is also [Ar], so K shows a similar jump, but Na⁺ is smaller and has higher effective nuclear charge, so its IE2 is the biggest.',diag:{1:'Mg goes to Mg⁺ ([Ne]3s¹) on IE1, then to Mg²⁺ ([Ne]) on IE2 — still a valence-shell removal, not a core-breaking one. IE2 is large but not the biggest here.',2:'Al goes to Al⁺ ([Ne]3s²) on IE1, then to Al²⁺ ([Ne]3s¹) on IE2 — still in the 3s subshell, smallest IE2 of the four.',3:'K is a great candidate — K⁺ is [Ar], so its IE2 also jumps. But Na⁺ is smaller and more tightly held than K⁺, so Na has the higher IE2. (Across a period IE rises; down a group IE falls.)'}},
   {id:'b-h1',skills:['bonding'],diff:3,q:'Which has the SHORTEST C−C bond?',opts:['Ethane (C-C)','Ethene (C=C)','Ethyne (C≡C)','Benzene (1.5 order)'],correct:2,why:'Bond order: triple > double > single. Higher order = shorter bond. Ethyne (1.20 Å) < benzene (1.40) < ethene (1.34) < ethane (1.54).',diag:{0:'Longest.',1:'Middle.',3:'1.40 Å.'}},
   {id:'lw-h1',skills:['lewis'],diff:3,q:'Best Lewis structure for SO₃: how many resonance structures?',opts:['1','2','3','6'],correct:2,why:'S=O can be at any of 3 positions → 3 equivalent resonance structures.',diag:{0:'Only one drawn.',1:'Forgot one.',3:'Way over.'}},
   {id:'mc-h1',skills:['mole-conv'],diff:3,q:'How many H atoms in 4.5 g of H₂O?',opts:['1.5×10²³','3.0×10²³','6.0×10²³','9.0×10²³'],correct:1,why:'mol H₂O = 4.5/18 = 0.25. molecules = 0.25 × 6.022×10²³ = 1.51×10²³. H atoms = 2× = 3.01×10²³.',diag:{0:'Forgot ×2 for H.',2:'1 mol of atoms.',3:'Way off.'}},
@@ -5275,7 +5300,7 @@ const BANK = [
   {id:'x2',skills:['solutions','ph-basics','strong-weak'],diff:3,q:'Mix 50 mL 0.10 M HCl + 50 mL water. Final pH?',opts:['1.0','1.3','2.0','7.0'],correct:1,why:'M₂ = M₁V₁/V₂ = 0.10×50/100 = 0.05 M. pH = −log(0.05) = 1.30.',diag:{0:'Original.',2:'Off log.',3:'Strong acid neutral?'}},
   {id:'x3',skills:['buffers','titration','strong-weak'],diff:4,q:'Add 5 mL 0.10 M NaOH to 25 mL 0.10 M acetic acid (pKa=4.74). pH?',opts:['4.14','4.74','5.34','5.84'],correct:0,why:'mol HA initial = 0.0025. mol OH⁻ added = 0.0005. Reaction converts: HA → A⁻. New: HA = 0.0020, A⁻ = 0.0005. pH = 4.74 + log(0.0005/0.0020) = 4.74 − 0.602 = 4.14.',diag:{1:'Half-eq (need ~12.5 mL added).',2:'Wrong ratio.',3:'Past eq.'}},
   {id:'x4',skills:['galvanic','gibbs','red-pot'],diff:3,q:'For Zn + Cu²⁺ → Zn²⁺ + Cu, ΔG° = −212 kJ. Sign of E°?',opts:['Negative','Positive','Zero','Cannot tell'],correct:1,why:'ΔG° = −nFE°. ΔG° negative ↔ E° positive. Spontaneous.',diag:{0:'Wrong sign relationship.',2:'Equilibrium.',3:'Computable.'}},
-  {id:'x5',skills:['gas-laws','mole-conv','solutions'],diff:3,q:'NaOH (40 g/mol): 4.0 g dissolved in water, diluted to 1.0 L. M? If 100 mL is added to a flask that contains gas at 1 atm, will the gas dissolve more or less? (ignore part 2; just M)',opts:['0.05 M','0.10 M','0.40 M','1.0 M'],correct:1,why:'mol NaOH = 4.0/40 = 0.10. M = 0.10/1.0 = 0.10 M.',diag:{0:'Halved.',2:'×4.',3:'×10.'}},
+  {id:'x5',skills:['mole-conv','solutions'],diff:1,q:'4.0 g of NaOH (MW = 40 g/mol) is dissolved in water and diluted to 1.0 L. Molarity?',opts:['0.05 M','0.10 M','0.40 M','1.0 M'],correct:1,why:'Two-step conversion: mol NaOH = 4.0 g / (40 g/mol) = 0.10 mol. M = mol / L = 0.10 / 1.0 = 0.10 M. The "divide by MW, then by volume in liters" pattern is the canonical move for any g-to-M problem.',diag:{0:'0.05 M would require either 2.0 g NaOH or 2.0 L of solvent — check whether you halved one of the inputs.',2:'0.40 M would require 16 g of NaOH (not 4.0 g) in 1.0 L. You may have divided by the formula unit (10) instead of the molar mass (40).',3:'1.0 M would require 40 g — a full mole. You only dissolved 4.0 g = 0.10 mol.'}},
   {id:'x6',skills:['enthalpy','calorimetry','heating-curve'],diff:3,q:'Heat 18 g (1 mol) of water from 50°C to 110°C. Total q? (c_water=4.18, ΔH_vap=40.7 kJ)',opts:['4.5 kJ','7.5 kJ','44.5 kJ','46.0 kJ'],correct:2,why:'q1 (50→100): 18×4.18×50/1000 = 3.76 kJ. q2 (vaporize): 1×40.7 = 40.7 kJ. q3 (steam 100→110): 18×2.03×10/1000 = 0.37 kJ. Total ≈ 44.8 kJ.',diag:{0:'Only first.',1:'Forgot vaporization.',3:'Slight overcount.'}},
   {id:'x7',skills:['eq-kc','eq-ice','strong-weak'],diff:4,q:'A 0.10 M weak acid HA has Ka = 1×10⁻⁴. % dissociation?',opts:['0.32%','3.2%','10%','32%'],correct:1,why:'x = √(Ka·C) = √(10⁻⁵) = 3.16×10⁻³. %diss = (3.16×10⁻³ / 0.10)×100 = 3.16% ≈ 3.2%.',diag:{0:'Off by 10.',2:'Used Ka directly.',3:'Off by 10.'}},
   {id:'x8',skills:['arrhenius','rate-laws'],diff:3,q:'Rate doubles when T rises from 300 K to 310 K. Approximate Eₐ?',opts:['~10 kJ/mol','~50 kJ/mol','~100 kJ/mol','~200 kJ/mol'],correct:1,why:'ln(2) = (Eₐ/R)(1/300 − 1/310). 0.693 = (Eₐ/8.314)(0.0001075). Eₐ = 0.693×8.314/0.0001075 ≈ 53,600 J ≈ 54 kJ/mol.',diag:{0:'Underestimate.',2:'Overestimate by 2.',3:'Way over.'}},
@@ -5388,7 +5413,7 @@ const BANK = [
 
   // === LIM-REACT (+15) ===
   {id:'lr-e1',skills:['lim-react'],diff:1,q:'A + 2B → C. 1 mol A, 1 mol B. Limiting?',opts:['A','B','Same','Computable'],correct:1,why:'B uses 2:1; only have 1 mol B → 0.5 mol product. A could give 1 mol product. B limits.',diag:{0:'Larger ratio.',2:'Diff yields.',3:'Yes.'}},
-  {id:'lr-e2',skills:['lim-react'],diff:1,q:'For 2H₂ + O₂ → 2H₂O with 6 mol H₂ and 4 mol O₂, max mol H₂O?',opts:['2','4','6','8'],correct:2,why:'H₂: 6/2 = 3 mol H₂O. O₂: 4/1 = 4 mol H₂O. H₂ limits → 6 mol H₂O? Wait recompute: H₂ → 6 mol H₂ × (2 H₂O/2 H₂) = 6 mol H₂O.',diag:{0:'Half.',1:'Wrong.',3:'O₂ limit.'}},
+  {id:'lr-e2',skills:['lim-react'],diff:1,q:'For 2H₂ + O₂ → 2H₂O with 6 mol H₂ and 4 mol O₂, max mol H₂O?',opts:['2','4','6','8'],correct:2,why:'Convert each reactant to product separately, smaller wins. H₂: 6 mol × (2 H₂O / 2 H₂) = 6 mol H₂O. O₂: 4 mol × (2 H₂O / 1 O₂) = 8 mol H₂O. Smaller answer (6) wins → H₂ is limiting → 6 mol H₂O. O₂ excess: 3 mol consumed, 1 mol left over.',diag:{0:'2 mol H₂O would require only 1 mol H₂ + 1 mol O₂ — both reactants are way bigger than that.',1:'4 mol assumes O₂ is limiting. But O₂ alone could make 8 mol H₂O — it is the excess reactant. Recompute the H₂ yield.',3:'8 mol is what O₂ would yield if it were limiting. But H₂ runs out first (you only have 6 mol H₂ — enough for 6 mol H₂O, not 8).'}},
   {id:'lr-e3',skills:['lim-react'],diff:2,q:'4 g H₂ + 32 g O₂ → 2H₂O. Limiting?',opts:['H₂','O₂','Same','Cannot tell'],correct:2,why:'mol H₂ = 4/2 = 2; mol O₂ = 32/32 = 1. Ratio 2:1 matches stoich → both limit (no excess).',diag:{0:'Both work.',1:'Both work.',3:'Computable.'}},
   {id:'lr-e4',skills:['lim-react'],diff:2,q:'%y if theor = 5 mol, actual = 4.2 mol?',opts:['76%','84%','92%','105%'],correct:1,why:'4.2/5 × 100 = 84%.',diag:{0:'Off.',2:'Off.',3:'>100% impossible.'}},
   {id:'lr-e5',skills:['lim-react'],diff:2,q:'2Al + 3Cl₂ → 2AlCl₃. With 4 mol Al and 5 mol Cl₂, limiting?',opts:['Al','Cl₂','Same','Cannot tell'],correct:1,why:'Al: 4/2 = 2 mol product. Cl₂: 5/3 = 1.67 mol product. Cl₂ smaller → limits.',diag:{0:'Larger ratio.',2:'Diff.',3:'Computable.'}},
@@ -5931,7 +5956,7 @@ const MODULES = {
     worked:[
       {q:'Identify ⁵⁶₂₆Fe', steps:[{what:'Z = 26 → 26 protons', why:'Subscript = atomic #.'}, {what:'Mass # = 56', why:'Superscript = nucleons.', predict:{q:'Neutrons?', hint:'Mass # − atomic #.'}}, {what:'Neutrons = 56 − 26 = 30', why:'Neutrons = mass # − protons.'}, {what:'Neutral → 26 e⁻', why:'No charge means electrons = protons.'}]},
       {q:'How many e⁻ in Cl⁻?', steps:[{what:'Cl is Z=17', why:'17 protons → 17 e⁻ when neutral.'}, {what:'Charge −1 → gained 1 e⁻', why:'Negative charge = extra electron(s).', predict:{q:'Mg²⁺ e⁻?', hint:'Lost 2.'}}, {what:'17 + 1 = 18 e⁻', why:'Original 17 plus the gained one.'}]},
-      {q:'Ground state of Mn (Z=25)', steps:[{what:'Aufbau: 1s,2s,2p,3s,3p,4s,3d', why:'4s before 3d.'}, {what:'1s² 2s² 2p⁶ 3s² 3p⁶ 4s² 3d⁵', why:'Sum = 25 ✓'}, {what:'[Ar] 4s² 3d⁵', why:'Shorthand.'}]},
+      {q:'Ground state of Mn (Z=25)', steps:[{what:'Aufbau: 1s,2s,2p,3s,3p,4s,3d', why:'4s before 3d.'}, {what:'1s² 2s² 2p⁶ 3s² 3p⁶ 4s² 3d⁵', why:'Sum = 25 (matches Z).'}, {what:'[Ar] 4s² 3d⁵', why:'Shorthand.'}]},
       {q:'Oxidation state of Cr in Cr₂O₇²⁻?', steps:[{what:'O = −2 each; 7 oxygens = −14 total', why:'Rule 3: O = −2 in most compounds.'}, {what:'2·x + (−14) = −2 (total charge)', why:'Rule 5: sum = total charge of the ion.', predict:{q:'Cr = ?', hint:'Solve for x.'}}, {what:'2x = +12 → x = +6', why:'Each Cr is +6 in dichromate. This is a classic DAT high-yield: Cr₂O₇²⁻ → Cr(+6).'}]},
       {q:'What is oxidized and what is reduced: 2Fe³⁺ + Sn²⁺ → 2Fe²⁺ + Sn⁴⁺?', steps:[{what:'Fe: +3 → +2 (gained e⁻ → reduced)', why:'Decrease in oxidation state = reduction = gains electrons.'}, {what:'Sn: +2 → +4 (lost e⁻ → oxidized)', why:'Increase in oxidation state = oxidation = loses electrons.', predict:{q:'Who is the reducing agent?', hint:'The one getting oxidized.'}}, {what:'Sn²⁺ is the reducing agent; Fe³⁺ is the oxidizing agent', why:'The reducing agent donates electrons (gets oxidized). The oxidizing agent accepts them (gets reduced).'}]},
       {q:'Oxidation state of N in NH₄⁺?', steps:[{what:'H = +1 each; 4 H = +4 total', why:'Rule 4: H = +1 in most compounds.'}, {what:'x + 4(+1) = +1', why:'Sum = +1 (the charge of NH₄⁺).'}, {what:'x = −3', why:'N is −3 in ammonium — same as in NH₃.'}]}
@@ -6052,10 +6077,10 @@ const MODULES = {
     lock:'Groups = bonds + LPs. Shape = atoms only. Polar molecule = polar bonds AND asymmetric shape.',
     trap:"Students count double bonds as 2 groups (it's 1). Students assume all polar bonds → polar molecule (CO₂, BF₃, CCl₄ all have polar bonds but are nonpolar by symmetry).",
     coachTricks:[
-      {when:'5-group LP placement', name:'<em>LPs go equatorial</em>', move:'Trig bipyr: LPs equatorial. SF₄=see-saw, ClF₃=T, XeF₂=linear.', why:'Equatorial has 120° neighbors.', lock:'LP→equatorial.', coach:true, placeholder:true},
-      {when:'Bond angle', name:'<em>LPs squeeze ~2°</em>', move:'CH₄=109.5°, NH₃=107°, H₂O=104.5°. Each LP shaves ~2°.', why:'LPs repel more.', lock:'~2° per LP.', coach:true, placeholder:true},
-      {when:'Polar molecule vs polar bond', name:'<em>Symmetry kills polarity</em>', move:'Tommy\'s 2-step: (1) Are there polar bonds? (2) Does VSEPR geometry cancel them? Linear/trigonal-planar/tetrahedral/trig-bipyr/octahedral with identical atoms = symmetric = nonpolar. ANY lone pair on the central atom or different terminal atoms breaks symmetry → polar.', why:'Net dipole is a vector sum. Symmetric vectors cancel.', lock:'Polar bonds + asymmetric shape = polar molecule.', coach:true, placeholder:true},
-      {when:'Spotting symmetry fast', name:'<em>"All same, no LP" check</em>', move:'If the central atom has NO lone pairs AND all terminal atoms are the same, the molecule is nonpolar (CO₂, BF₃, CH₄, PCl₅, SF₆). Break either rule and it becomes polar (NH₃ has LP, CHCl₃ has different terminals).', why:'Both conditions must hold for cancellation.', lock:'No LP + same terminals = nonpolar.', coach:true, placeholder:true}
+      {when:'Trigonal planar vs trigonal pyramidal', name:'<em>The major difference is the lone pair</em>', move:'That is it. The lone pair. As long as you can remember — if there is a lone pair on the central atom, it is pyramidal. If there is no lone pair, it is planar. BF₃ has no LP → planar. NH₃ has one LP → pyramidal. Stops you from rote-memorizing every shape.', why:'These two trip people up because the names sound similar. The lone-pair tell is the whole question.', lock:'LP → pyramidal. No LP → planar.', coach:true},
+      {when:'5 electron groups with a lone pair', name:'<em>Lone pairs go equatorial</em>', move:'In a trigonal-bipyramidal electron geometry (5 groups), lone pairs always take equatorial positions, not axial. SF₄ (1 LP) → see-saw. ClF₃ (2 LP) → T-shape. XeF₂ (3 LP) → linear. Memorize those three and you have the 5-group LP cases covered.', why:'Equatorial spots have 120° neighbors instead of 90°, which gives lone-pair electron density more room.', lock:'5-group LP → equatorial.', coach:true},
+      {when:'Bond angle question', name:'<em>Each LP shaves about 2°</em>', move:'Start from the parent geometry: CH₄ is 109.5°. Each lone pair on the central atom pushes the bonds in by ~2°. NH₃ (1 LP) → 107°. H₂O (2 LP) → 104.5°. Same pattern across geometries — LPs hog more space than bonds, so they squeeze the bonded atoms tighter.', why:'Saves you from looking up exact angles. Within ±1° is usually close enough for DAT MCQ choices.', lock:'~2° per LP.', coach:true},
+      {when:'Is the whole molecule polar or just the bonds?', name:'<em>The "all same, no LP" check</em>', move:'Quick filter: if the central atom has NO lone pair AND every terminal atom is the same, the molecule is nonpolar (CO₂, BF₃, CH₄, PCl₅, SF₆). Break either rule and it goes polar (NH₃ has a lone pair → polar; CHCl₃ has mixed terminals → polar). The two-question test is: polar bonds? AND asymmetric shape? You need BOTH for the molecule to be polar.', why:'Net dipole is a vector sum. Symmetric vectors cancel. This single rule replaces memorizing dozens of cases.', lock:'No LP + same terminals = nonpolar.', coach:true}
     ]
   },
   'mole-conv': {
@@ -6345,8 +6370,10 @@ const MODULES = {
     lock:'Add → away. ↑T = add heat. ↑P → fewer gas.',
     trap:"Apply ΔV/ΔP to Δn(g)=0 — those don't shift.",
     coachTricks:[
-      {when:'Equal mol gas', name:'<em>No P shift</em>', move:'H₂+I₂⇌2HI: 2:2. P irrelevant.', why:'No asymmetry.', lock:'Δn(g)=0 ⇒ P irrelevant.', coach:true, placeholder:true},
-      {when:'T direction', name:'<em>Heat as a chemical</em>', move:'Endo: heat+A→B. Adding heat shifts forward.', why:'Heat enters via T-dep K.', lock:'Endo loves heat.', coach:true, placeholder:true}
+      {when:'They show you a volume or pressure change', name:'<em>Count moles on each side</em>', move:'Count gas-phase moles on the reactant side and the product side. That is the whole game. If you INCREASE volume (drop pressure), the side with MORE moles eats up the new space — shift toward more moles. If you DECREASE volume (raise pressure), shift toward FEWER moles, because the side with less moles is more stable in tight quarters, and the side with more moles is more reactive in tight quarters.', why:'Forces you to stop guessing direction. Pressure/volume questions become a one-step mole-count, not a thought experiment.', lock:'Count moles. Shift toward more (on expansion) or fewer (on compression).', coach:true},
+      {when:'Equal moles of gas each side', name:'<em>P irrelevant</em>', move:'H₂ + I₂ ⇌ 2 HI is 2 mol gas to 2 mol gas. Changing P or V does NOT shift this equilibrium — there is no asymmetry to push against. If you see Δn(gas) = 0, the pressure answer is "no change."', why:'Easy point if you remember it; a wasted minute if you do not.', lock:'Δn(gas) = 0 → P irrelevant.', coach:true},
+      {when:'Temperature change', name:'<em>Treat heat as a chemical</em>', move:'Endothermic: heat is a REACTANT (heat + A → B). Add heat (raise T) → shifts forward, toward products. Exothermic: heat is a PRODUCT (A → B + heat). Add heat → shifts reverse. Strip out everything else and it is just Add → away.', why:'Most students freeze on the T question because K itself changes with T. The heat-as-chemical trick lets you use the same Add → away rule you already know.', lock:'Endo: heat reactant. Exo: heat product. Add → away.', coach:true},
+      {when:'Inert gas added at constant V', name:'<em>Nothing happens</em>', move:'Argon, helium, anything inert — at constant volume, the partial pressures of the actual reactants and products do not change. K depends on partial pressures, not total pressure. So no shift. If volume is allowed to change, that is the real driver — and you are back to the moles rule above.', why:'Common trap. Students see "add gas" and want to shift; partial pressures decide, not total.', lock:'Inert + const V = no shift.', coach:true}
     ]
   },
   'eq-ice': {
@@ -6483,9 +6510,10 @@ const MODULES = {
     lock:'Half-eq → pH = pKa. Eq → check salt. Polyprotic: one eq per H, half-step n = pKa<sub>n</sub>. Indicator: pKa(ind) ± 1 must bracket eq-point pH.',
     trap:'Equivalence is always pH 7? WRONG for weak. Polyprotic curve only has ONE inflection? WRONG — it has one per ionizable H (3 for H₃PO₄, 2 for H₂CO₃, 1 for H₂SO₄ since first H is strong). Indicator trap: picking phenolphthalein for every titration regardless of system. Phenolphthalein only fits WA+SB; methyl orange/red fits WB+SA; bromothymol blue fits SA+SB.',
     coachTricks:[
-      {when:'Indicator choice', name:'<em>Match indicator pKa to eq pH</em>', move:'Identify the titration type → predict the eq-point pH → pick an indicator whose pKa is within ±1 of that pH. SA+SB → bromothymol blue (~7). WA+SB → phenolphthalein (~9). WB+SA → methyl red or methyl orange (~5).', why:'The colour change is sharp only within ±1 of the indicator pKa. Outside that range you get false positives or false negatives.', lock:'Match pKa(ind) to eq pH.', coach:true, placeholder:true},
-      {when:'Polyprotic', name:'<em>One eq per H</em>', move:'H₃PO₄: 3 eq points. H₂SO₄: 1 (the first H is strong, so it deprotonates with the second).', why:'Each ionizable H produces a separate inflection on the titration curve.', lock:'One eq per ionizable H.', coach:true, placeholder:true},
-      {when:'Why pKa ± 1?', name:'<em>Henderson-Hasselbalch on the indicator itself</em>', move:'For HIn ⇌ H⁺ + In⁻, HH says pH = pKa(ind) + log([In⁻]/[HIn]). At pH = pKa−1 the ratio is 1:10 (mostly HIn colour); at pKa+1 it is 10:1 (mostly In⁻ colour); the eye sees a transition over that ~2 pH unit window.', why:'It is the same buffer math you already know — just applied to the indicator equilibrium.', lock:'Indicator is just another HA / A⁻ pair.', coach:true, placeholder:true}
+      {when:'They show you a titration curve', name:'<em>The one rule</em>', move:'Forget the starting pH. Forget the ending pH. There is one thing to look at: the equivalence point — the middle of the vertical jump. Drop a line down to the y-axis. If it lands at 7, it is strong+strong (or weak+weak). Below 7 (~5-6), weak base + strong acid. Above 7 (~8-9), strong base + weak acid. That is the whole question.', why:'Students see all four cases as different problems. They are the same problem — read the eq-point pH and you have your answer in five seconds.', lock:'Drop a line from the eq point.', coach:true},
+      {when:'Picking an indicator', name:'<em>Indicator pKa ± 1 must bracket the eq pH</em>', move:'First do the one rule above to find your eq pH. Then pick the indicator whose pKa is within 1 unit of it. SA+SB (eq ~7) → bromothymol blue. WA+SB (eq ~9) → phenolphthalein. WB+SA (eq ~5) → methyl red or methyl orange. Memorize those three pairs and you have most of the DAT indicator questions covered.', why:'The colour change is sharp only within pKa(ind) ± 1. Phenolphthalein is the classic trap — students pick it for everything, but it only fits WA+SB.', lock:'Match indicator pKa to eq pH.', coach:true},
+      {when:'Polyprotic acids', name:'<em>One eq per H</em>', move:'Count the ionizable H atoms — that is how many equivalence points you get. H₃PO₄ → 3. H₂CO₃ → 2. H₂SO₄ → 1 (the first H is already strong, so it leaves with the second). And the half-step rule still holds: pH at the n-th half-equivalence = pKa<sub>n</sub>.', why:'Stops you from staring at a curve with two flat plateaus and panicking — each plateau is its own buffer region, mid-buffer pH = the pKa of that step.', lock:'One eq per ionizable H. Half-step = pKa<sub>n</sub>.', coach:true},
+      {when:'Why pKa ± 1 for indicators?', name:'<em>It is just HH on the indicator</em>', move:'The indicator is itself a weak acid HIn ⇌ H⁺ + In⁻ where HIn and In⁻ are two different colours. Plug into Henderson-Hasselbalch: at pH = pKa − 1 the ratio is 1:10 (you mostly see HIn colour); at pKa + 1 the ratio is 10:1 (you mostly see In⁻ colour). Your eye picks up the transition over that ~2 pH unit window.', why:'Same buffer math you already know, just applied to the indicator equilibrium itself. Once you see this, the ± 1 rule stops being magic.', lock:'Indicator is another HA / A⁻ pair.', coach:true}
     ]
   },
   'ksp': {
@@ -6523,7 +6551,7 @@ const MODULES = {
     visualType:'galvanic-cell', visualData:{anode:'Zn', cathode:'Cu'},
     worked:[
       {q:'Balance in acid: MnO₄⁻ → Mn²⁺ (reduction half-reaction)', steps:[{what:'Mn atoms: 1 on each side — balanced.', why:'Step 1: non-O, non-H atoms first.'}, {what:'O: 4 O on left, 0 right → add 4H₂O right', why:'Step 2: balance O using water.', predict:{q:'Now balance H?', hint:'H⁺ on the H-deficient side.'}}, {what:'H: 8 H (from 4H₂O) right → add 8H⁺ left', why:'Step 3: in acid, add H⁺ to balance H.'}, {what:'Charge: left = −1+8(+1) = +7; right = +2. Add 5e⁻ left.', why:'Step 4: add electrons to the more positive side.'}, {what:'MnO₄⁻ + 8H⁺ + 5e⁻ → Mn²⁺ + 4H₂O', why:'Balanced half-reaction: atoms and charge both check out.'}]},
-      {q:'Balance in base: Cr(OH)₃ → CrO₄²⁻ (oxidation half-reaction)', steps:[{what:'Cr balanced (1:1)', why:'Non-O, non-H atoms OK.'}, {what:'O: 3 left, 4 right → add 1H₂O left', why:'Step 2 in base is the same — balance O with H₂O.'}, {what:'H: now 2H left + 3H (from OH₃) vs 2H (from H₂O) right. Balance H: add 5OH⁻ right.', why:'Step 3 in base: instead of H⁺, add OH⁻ to neutralize H on the other side.'}, {what:'Charge check: left = 0, right = −2 + 5(−1) = −7. Add 3e⁻ right (it is oxidation).', why:'Step 4: Cr goes from +3 to +6 = loses 3e⁻.'}, {what:'Cr(OH)₃ + H₂O → CrO₄²⁻ + 5H⁺ + 3e⁻', why:'Simplified — the method still works; in strongly basic medium convert H⁺ to H₂O/OH⁻ after balancing.'}]},
+      {q:'Balance in base: Cr(OH)₃ → CrO₄²⁻ (oxidation half-reaction). Use the cleanest technique: balance as if acid, then neutralize.', steps:[{what:'Step 1 — Cr atoms: 1 on each side. Balanced.', why:'Always start with the non-O, non-H atoms.'}, {what:'Step 2 — O: 3 on left (from Cr(OH)₃), 4 on right. Add 1 H₂O to left → Cr(OH)₃ + H₂O → CrO₄²⁻', why:'Balance O with water on whichever side is short.'}, {what:'Step 3 — H (acid method first): left has 3 + 2 = 5 H; right has 0. Add 5 H⁺ to right → Cr(OH)₃ + H₂O → CrO₄²⁻ + 5H⁺', why:'Pretend acid medium for now. Cleaner than adding OH⁻ in one step.', predict:{q:'Now balance charge?', hint:'Cr goes +3 → +6. How many electrons lost?'}}, {what:'Step 4 — charge: left = 0, right = −2 + 5 = +3. Add 3 e⁻ to RIGHT (this is oxidation, electrons are products): Cr(OH)₃ + H₂O → CrO₄²⁻ + 5H⁺ + 3e⁻', why:'Cr lost 3 electrons (from +3 to +6 oxidation state). Electrons go on the side that needs negative charge to balance.'}, {what:'Step 5 — convert to base: add 5 OH⁻ to BOTH sides so the 5 H⁺ on the right pair into 5 H₂O. → Cr(OH)₃ + H₂O + 5OH⁻ → CrO₄²⁻ + 5H₂O + 3e⁻', why:'In basic medium you cannot have free H⁺. Add OH⁻ to both sides; H⁺ + OH⁻ combines to H₂O.'}, {what:'Step 6 — cancel waters: 1 H₂O on left vs 5 on right → net 4 H₂O on right.<br/><b>Cr(OH)₃ + 5OH⁻ → CrO₄²⁻ + 4H₂O + 3e⁻</b>', why:'Final balanced half-reaction. Verify: Cr 1=1; O 3+5=8 vs 4+4=8; H 3+5=8 vs 8; charge 0−5=−5 vs −2+0−3=−5. All check.'}]},
       {q:'Zn|Zn²⁺||Cu²⁺|Cu. E°(Cu)=0.34, E°(Zn)=−0.76. E°_cell?', steps:[{what:'Cathode = Cu (higher E°)', why:'Higher reduction potential = more eager to grab electrons → cathode.', predict:{q:'E°_cell?', hint:'Subtract.'}}, {what:'0.34 − (−0.76) = 1.10 V', why:'E°_cell = E°(cathode) − E°(anode); both as reduction potentials.'}, {what:'Spont (>0)', why:'Positive E°_cell → ΔG° < 0 → reaction goes as written.'}]},
       {q:'ΔG° (n=2, F=96485)?', steps:[{what:'ΔG° = −nFE°', why:'Links electrochemistry (E°) to thermo (ΔG).'}, {what:'= −(2)(96485)(1.10) = −212,267 J ≈ −212 kJ', why:'n = 2 because 2 electrons transferred per Zn/Cu pair.'}]},
       {q:'e⁻ flow direction?', steps:[{what:'Anode → wire → cathode', why:'Electrons leave the site of oxidation, enter the site of reduction.'}, {what:'Zn → wire → Cu', why:'Zn is anode (oxidized), Cu is cathode (reduced).'}]}
@@ -6538,9 +6566,11 @@ const MODULES = {
     lock:'Balance: atoms → O → H → charge → e⁻. Cathode = higher E°. e⁻ flow A→C.',
     trap:'Reverse anode/cathode. LEO/GER! Also: in acid use H⁺; in base use OH⁻ to balance H. Never add both.',
     coachTricks:[
-      {when:'Salt bridge', name:'<em>Maintains charge balance</em>', move:'Anions to anode, cations to cathode.', why:'Without bridge, charge stalls.', lock:'Bridge balances charge.', coach:true, placeholder:true},
-      {when:'Combining halves', name:"<em>Don't multiply E°</em>", move:'Multiply WHOLE half-rxn but NOT E°. E° intensive.', why:'E° is per-electron.', lock:'E° unchanged by ×n.', coach:true, placeholder:true},
-      {when:'Acid vs base condition', name:'<em>H⁺ in acid, OH⁻ in base</em>', move:'Acid: add H⁺ to balance H. Base: add OH⁻ to balance OH — OR balance as acid then convert (add OH⁻ to both sides, combine to H₂O).', why:'Medium determines which proton source is valid.', lock:'Acid→H⁺. Base→OH⁻.', coach:true, placeholder:true}
+      {when:'You see a redox half-reaction to balance', name:'<em>The four-step recipe (long way first)</em>', move:'Treat it like a recipe — once you know it, you can make it whenever you want. (1) Balance every atom that is NOT O or H. (2) Balance O by adding H₂O. (3) Balance H by adding H⁺. (4) Balance charge by adding electrons. That order. Every time. Memorize it cold before you ever use a shortcut — I want you to be able to rely on the true way first.', why:'Students who skip to shortcuts forget which step they are on and get arithmetic backwards. Drill the long way for two or three problems, then the shortcut becomes safe.', lock:'Non-O/H → O w/ H₂O → H w/ H⁺ → charge w/ e⁻.', coach:true},
+      {when:'You have the long way down and want the shortcut', name:'<em>Just track the oxidation state</em>', move:'Find the non-oxygen/non-hydrogen atom on each side. Read its oxidation state. The difference is your electron count — same answer as the long method, way less arithmetic. Mn in MnO₄⁻ is +7. Mn²⁺ is +2. Difference is 5 → 5 e⁻ on the reactant side (reduction). Done.', why:'After you have done a few long-method balances, the oxidation-state shortcut is dramatically faster and just as correct.', lock:'Oxidation-state difference = electron count.', coach:true},
+      {when:'Acid vs base medium', name:'<em>H⁺ in acid; in base, balance as acid then neutralize</em>', move:'Acid medium: add H⁺ directly to balance H — done. Base medium: do not try to add OH⁻ during step 3, you will lose track. Instead, balance as if acid (use H⁺), then in one move add equal OH⁻ to BOTH sides so each H⁺ pairs into H₂O. Cancel waters. Cleaner than trying to balance directly in base.', why:'The "convert at the end" trick is the difference between a balanced equation in 90 seconds and a five-minute fight you lose.', lock:'Acid → H⁺ direct. Base → as acid, then add OH⁻ both sides.', coach:true},
+      {when:'A galvanic-cell sign question', name:'<em>Red Cat An Ox</em>', move:'Reduction at the Cathode. Oxidation at the Anode. Electrons leave the anode, travel through the external wire, enter the cathode. If you see electrons on the REACTANT side of a half-reaction it is a reduction; PRODUCT side it is an oxidation. That one mnemonic covers most of the polarity questions on the DAT.', why:'Easy points if it is automatic; easy errors if you guess.', lock:'Red Cat / An Ox.', coach:true},
+      {when:'Direction check after balancing', name:'<em>Electrons must end up on opposite sides</em>', move:'When you add your two half-reactions together, the electrons must cancel — one half has e⁻ on the left (reduction), the other on the right (oxidation). If you finish balancing and electrons are on the SAME side for both halves, you did something wrong. Flip whichever half does not match.', why:'Catches the most common late-stage mistake before you turn it in.', lock:'e⁻ on opposite sides, always.', coach:true}
     ]
   },
   'red-pot': {
@@ -6931,8 +6961,10 @@ const MODULES = {
     lock:'5 segments. Plateaus = phase change = nΔH (no T change). Slopes = mcΔT.',
     trap:'Adding ΔH to a slope, or treating a plateau as if T changes. Vaporization is always the largest q because ΔH_vap >> ΔH_fus.',
     coachTricks:[
-      {when:'Mixed segments', name:'<em>Sketch the curve first</em>', move:'Draw the T-vs-q axes, mark the 5 segments, label each q. Then sum.', why:'Visual avoids missing terms.', lock:'Sketch → sum.', coach:true, placeholder:true},
-      {when:'ΔH_vap vs ΔH_fus', name:'<em>Vap is way bigger</em>', move:'For water, ΔH_vap (40.7 kJ/mol) is ~7× ΔH_fus (6.01). Most heat goes into boiling.', why:'IMF physics — fully separated > slightly mobile.', lock:'Vap >> fus.', coach:true, placeholder:true}
+      {when:'You see a heating-curve problem', name:'<em>Set up 5 blocks before you do any math</em>', move:'Five blocks, in order: warm solid → melt → warm liquid → vaporize → warm gas. Slopes use Q = MC ΔT (c changes at each phase — ice ≠ water ≠ steam). Plateaus use Q = M · ΔH (fusion or vaporization). Write each block down BEFORE plugging numbers; that is how you stop forgetting the phase-change term.', why:'Students who try to do it in their head almost always skip a block (usually one of the plateaus). Writing five empty boxes first prevents the miss.', lock:'5 blocks. Slopes = MC ΔT. Plateaus = M ΔH.', coach:true},
+      {when:'Q = MC ΔT or Q = MC + ΔT?', name:'<em>It is times, not plus</em>', move:'Q = M · C · ΔT. Common pencil slip: writing M·C + ΔT and getting a number an order of magnitude off. The mnemonic is Google "MCAT" — there is no "+" in MCAT.', why:'If your answer is wildly off, this is the first place to check.', lock:'MCAT, not MC plus AT.', coach:true},
+      {when:'Which plateau is bigger?', name:'<em>Vaporization dominates</em>', move:'ΔH_vap is way bigger than ΔH_fus. For water: 40.7 vs 6.01 kJ/mol — roughly 7x. Most of the heat in any ice-to-steam problem lives in the boil plateau, so if your sum is dominated by the melt block instead, you made an arithmetic mistake.', why:'Physics: vaporization fully separates molecules from all neighbors; melting only loosens the lattice. Fully separated > slightly mobile, by a lot.', lock:'Vap >> fus.', coach:true},
+      {when:'Reading the temperature range', name:'<em>Read the stem carefully</em>', move:'When the problem says something like "from −10 to 50 above boiling," that does NOT mean from −10 to 50. It means from −10 (the start) to 50 degrees above boiling (so 150 for water). Reread the range before counting how many blocks the problem actually spans.', why:'Trap stem — students assume the second number is the endpoint and miss the whole vapor segment.', lock:'"Above boiling" = add the boiling point.', coach:true}
     ]
   },
   'colligative': {
@@ -7011,10 +7043,10 @@ function renderModule(skillId){
         ${M.laws ? `<div style="margin-top:18px"><div class="up muted" style="margin-bottom:8px">The three laws · <em class="gold">memorize cold</em></div><div class="law-grid">${M.laws.map(l => `<div class="law-card"><div class="lname">${l.name}</div><div class="lform">${l.form}</div><div class="lex">${l.ex}</div></div>`).join('')}</div></div>` : ''}
         <div class="row r2" style="margin-top:14px">
           <div class="subcard trap" data-trap-skill="${skillId}">
-            <div class="h"><span class="lbl trap">⚠ The Trap</span></div>
+            <div class="h"><span class="lbl trap">The Trap</span></div>
             ${M.tier === 3 ? `<p>${M.trap}</p>` : `
             <div class="trap-predict" id="trapPredict-${skillId}">
-              <div class="tp-q">🤔 <em>Think first:</em> what trap would the test-writer set on this topic? <span class="muted" style="font-size:10px">(forces you to think like the test)</span></div>
+              <div class="tp-q"><em>Think first:</em> what trap would the test-writer set on this topic? <span class="muted" style="font-size:10px">(forces you to think like the test)</span></div>
               <div class="tp-row">
                 <button class="tp-btn" onclick="MISCON.reveal('${skillId}','known')">I think I know it →</button>
                 <button class="tp-btn" onclick="MISCON.reveal('${skillId}','unknown')">Not sure — show me →</button>
@@ -7022,12 +7054,12 @@ function renderModule(skillId){
             </div>
             <div class="trap-content" id="trapContent-${skillId}" style="display:none">${M.trap}</div>`}
           </div>
-          <div class="subcard lock"><div class="h"><span class="lbl teal">🔒 Lock</span></div><div class="lock-line">${M.lock}</div></div>
+          <div class="subcard lock"><div class="h"><span class="lbl teal">Lock</span></div><div class="lock-line">${M.lock}</div></div>
         </div>
         ${M.videoUrl ? `<div class="vid-slot">
-          <div class="vid-h"><span class="vid-tag">▶ Video</span> <span class="vid-t">${M.videoTitle || 'Tommy explains'}</span></div>
+          <div class="vid-h"><span class="vid-tag">Video</span> <span class="vid-t">${M.videoTitle || 'Tommy explains'}</span></div>
           <div class="vid-body" id="vidBody-${skillId}">
-            <button class="vid-launch" onclick="VID.open('${skillId}','${M.videoUrl}','${(M.videoTitle||'Tommy explains').replace(/'/g,"\\'")}')">▶ Watch (${M.videoDur || '~90 sec'})</button>
+            <button class="vid-launch" onclick="VID.open('${skillId}','${M.videoUrl}','${(M.videoTitle||'Tommy explains').replace(/'/g,"\\'")}')">Watch (${M.videoDur || '~90 sec'})</button>
           </div>
         </div>` : ''}
         ${M.coachTricks ? renderTricksPanel(M.coachTricks) : ''}
@@ -7135,7 +7167,7 @@ function renderVisual(skillId){
           <div class="frac-lbl"><em class="gold" style="font-style:italic">3/4</em></div>
         </div>
       </div>
-      <button class="btn sm" style="margin-top:10px" onclick="animFrac('${skillId}')">▶ Show why</button>
+      <button class="btn sm" style="margin-top:10px" onclick="animFrac('${skillId}')">Show why</button>
       <p class="muted" style="font-size:13px; margin-top:10px">Watch: 1/2 doesn't fit on a 4-cell bar. We split each half into 2 quarters → 1/2 = 2/4. Now both bars use quarters. 1 + 2 = 3 quarters lit.</p>
     `;
   } else if (M.visualType === 'decimal-strip'){
@@ -7252,7 +7284,7 @@ function renderVisual(skillId){
           <!-- diamond paths -->
           <path class="basepath" d="M 180 220 L 280 130 L 180 50 L 80 130 Z"/>
           <!-- labels -->
-          <text x="180" y="32" text-anchor="middle" font-family="Playfair Display" font-style="italic" font-size="13" fill="var(--gold-d)" font-weight="700">⚾ each base = a doubling</text>
+          <text x="180" y="32" text-anchor="middle" font-family="Playfair Display" font-style="italic" font-size="13" fill="var(--gold-d)" font-weight="700">each base = a doubling</text>
           <!-- bases -->
           <rect class="base active" id="base-home-${skillId}" x="170" y="210" width="20" height="20"/>
           <text x="180" y="248" text-anchor="middle" class="label" font-family="JetBrains Mono">HOME · 1</text>
@@ -7353,12 +7385,12 @@ function renderVisual(skillId){
           <button class="ptr-btn" data-trend="ie" onclick="ptrSetTrend('${skillId}','ie')">Ionization energy</button>
           <button class="ptr-btn" data-trend="en" onclick="ptrSetTrend('${skillId}','en')">Electronegativity</button>
           <button class="ptr-btn" data-trend="ea" onclick="ptrSetTrend('${skillId}','ea')">Electron affinity</button>
-          <button class="ptr-btn" id="ptrCmpBtn-${skillId}" onclick="ptrToggleCompare('${skillId}')" style="margin-left:auto; border-color:var(--teal)">⚖ Compare 2</button>
+          <button class="ptr-btn" id="ptrCmpBtn-${skillId}" onclick="ptrToggleCompare('${skillId}')" style="margin-left:auto; border-color:var(--teal)">Compare 2</button>
         </div>
         <div class="ptr-grid" id="ptrGrid-${skillId}">${cells}</div>
-        <div class="ptr-readout" id="ptrRead-${skillId}">Hover an element to see its value. Gold = high, pale = low. Tap <b>⚖ Compare 2</b> to pit two elements head-to-head.</div>
+        <div class="ptr-readout" id="ptrRead-${skillId}">Hover an element to see its value. Gold = high, pale = low. Tap <b>Compare 2</b> to pit two elements head-to-head.</div>
         <div class="ptr-cmp" id="ptrCmp-${skillId}">
-          <div class="ptr-cmp-h"><span id="ptrCmpTitle-${skillId}">Compare</span><span class="x" onclick="ptrToggleCompare('${skillId}')">close ✕</span></div>
+          <div class="ptr-cmp-h"><span id="ptrCmpTitle-${skillId}">Compare</span><span class="x" onclick="ptrToggleCompare('${skillId}')">close</span></div>
           <div id="ptrCmpBody-${skillId}"></div>
         </div>
       </div>
@@ -7427,7 +7459,7 @@ function renderVisual(skillId){
           <button class="gs-solve-btn" data-s="T" onclick="gasSolveFor('${skillId}','T')">T</button>
           <button class="btn sm" onclick="gasSTP('${skillId}')">⇢ Snap to STP</button>
         </div>
-        <div class="gs-real" id="gsReal-${skillId}">⚠ Real-gas territory: at high P or low T, deviation from PV=nRT becomes significant.</div>
+        <div class="gs-real" id="gsReal-${skillId}">Note: real-gas territory — at high P or low T, deviation from PV=nRT becomes significant.</div>
       </div>
     `;
   } else if (M.visualType === 'gibbs-quadrant'){
@@ -7568,8 +7600,8 @@ function renderVisual(skillId){
     html = `
       <div class="vp-wrap" data-skill="${skillId}" data-shape="${def}" data-mode="explore">
         <div class="vp-mode-row">
-          <button class="vp-mode-btn active" id="vsModeE-${skillId}" onclick="vsMode('${skillId}','explore')">📖 Explore</button>
-          <button class="vp-mode-btn" id="vsModeQ-${skillId}" onclick="vsMode('${skillId}','quiz')">🎯 Quiz me</button>
+          <button class="vp-mode-btn active" id="vsModeE-${skillId}" onclick="vsMode('${skillId}','explore')">Explore</button>
+          <button class="vp-mode-btn" id="vsModeQ-${skillId}" onclick="vsMode('${skillId}','quiz')">Quiz me</button>
           <span class="vp-score" id="vsScore-${skillId}" style="display:none">0 / 0</span>
         </div>
         <div class="vp-pick" id="vsPickRow-${skillId}">${shapes.map(s => `<button class="vp-pick-btn" data-s="${s}" onclick="vsPick('${skillId}','${s}')">${labels[s]}</button>`).join('')}</div>
@@ -7815,7 +7847,7 @@ function renderVisual(skillId){
         <div class="oc-rates-box">
           <div class="oc-rates-h">
             <span class="lbl">Method of Initial Rates · practice</span>
-            <button class="btn sm primary" onclick="ocRatesNew('${skillId}')">▶ New problem</button>
+            <button class="btn sm primary" onclick="ocRatesNew('${skillId}')">New problem</button>
           </div>
           <div id="ocRates-${skillId}" class="oc-rates-body">Click "New problem" to generate a method-of-initial-rates table. Find the orders by comparing trials where ONE concentration changes at a time.</div>
         </div>
@@ -8119,8 +8151,8 @@ function renderVisual(skillId){
       <div class="gc-wrap" data-skill="${skillId}" data-anode="${def.anode}" data-cathode="${def.cathode}" data-mode="galvanic">
         <div class="cdb-mode-row">
           <span class="cdb-mode-lbl">Cell type</span>
-          <button class="cdb-mode-btn active" id="gcModeG-${skillId}" onclick="gcMode('${skillId}','galvanic')">⚡ Galvanic</button>
-          <button class="cdb-mode-btn" id="gcModeE-${skillId}" onclick="gcMode('${skillId}','electrolytic')">🔌 Electrolytic</button>
+          <button class="cdb-mode-btn active" id="gcModeG-${skillId}" onclick="gcMode('${skillId}','galvanic')">Galvanic</button>
+          <button class="cdb-mode-btn" id="gcModeE-${skillId}" onclick="gcMode('${skillId}','electrolytic')">Electrolytic</button>
         </div>
         <div class="gc-pick">
           <span class="hh-ctl-lbl">Anode</span>
@@ -8359,7 +8391,7 @@ function renderVisual(skillId){
         <div class="imf-instr">Drag the molecules to rank by <b>boiling point</b> (highest at top). Click <b>Check</b> to reveal correct order + the IMFs at play.</div>
         <div class="imf-list" id="imfList-${skillId}"></div>
         <div class="imf-controls">
-          <button onclick="imfCheck('${skillId}')">▶ Check ranking</button>
+          <button onclick="imfCheck('${skillId}')">Check ranking</button>
           <button class="ghost" onclick="imfShuffle('${skillId}')">↺ Shuffle / new set</button>
           <div class="imf-score" id="imfScore-${skillId}">—</div>
         </div>
@@ -8524,8 +8556,8 @@ function renderVisual(skillId){
     html = `
       <div class="hb-wrap" data-skill="${skillId}" data-mol="${def}" data-mode="explore">
         <div class="vp-mode-row">
-          <button class="vp-mode-btn active" id="hbModeE-${skillId}" onclick="hbMode('${skillId}','explore')">📖 Explore</button>
-          <button class="vp-mode-btn" id="hbModeQ-${skillId}" onclick="hbMode('${skillId}','quiz')">🎯 Quiz me</button>
+          <button class="vp-mode-btn active" id="hbModeE-${skillId}" onclick="hbMode('${skillId}','explore')">Explore</button>
+          <button class="vp-mode-btn" id="hbModeQ-${skillId}" onclick="hbMode('${skillId}','quiz')">Quiz me</button>
           <span class="vp-score" id="hbScore-${skillId}" style="display:none">0 / 0</span>
         </div>
         <div class="hb-pick" id="hbPickRow-${skillId}">${mols.map(m => `<button class="hb-pick-btn" data-m="${m}" onclick="hbPick('${skillId}','${m}')">${HYBRID_LABELS[m] || m}</button>`).join('')}</div>
@@ -9351,7 +9383,7 @@ window._renderVarsPanel = function(skillId){
   if (!vars || !vars.length){ slot.innerHTML = ''; slot.className = ''; return; }
   const chips = vars.map(v => {
     const solvable = v.solveCall ? '1' : '0';
-    const cta = v.solveCall ? '<span class="vt-cta">▶ click to set as solve-for in the visual</span>' : '';
+    const cta = v.solveCall ? '<span class="vt-cta">click to set as solve-for in the visual</span>' : '';
     const unit = v.unit ? `<span class="vt-unit">${v.unit}</span>` : '';
     const click = v.solveCall ? ` onclick="varSolve('${skillId}','${v.solveCall}')"` : '';
     return `<span class="var-chip" data-solvable="${solvable}"${click}>${v.sym}<span class="var-tip"><span class="vt-def">${v.def}</span>${unit}${cta}</span></span>`;
@@ -9610,8 +9642,8 @@ window.tryCheck = function(skillId){
   result.classList.remove('right','wrong');
   result.classList.add('show', correct ? 'right' : 'wrong');
   result.innerHTML = correct
-    ? `✓ Correct — ${raw} ${p.unit||''} matches.`
-    : `✗ Not quite. The right answer is <b>${p.answer} ${p.unit||''}</b>. Walk through it below.`;
+    ? `Correct — ${raw} ${p.unit||''} matches.`
+    : `Not quite. The right answer is <b>${p.answer} ${p.unit||''}</b>. Walk through it below.`;
   // Reveal the worked steps
   steps.innerHTML = `<div class="lbl">Worked solution</div>` + p.steps.map(s => window.eqLine(s)).join('');
   steps.classList.add('show');
@@ -9624,8 +9656,8 @@ function _tryRender(skillId, idx){
   drawer.dataset.idx = idx;
   drawer.innerHTML = `
     <div class="try-head">
-      <div class="ttl">▶ Try one <em>${idx+1} / ${bank.length}</em></div>
-      <button class="x" onclick="tryClose('${skillId}')" title="Back to explore">✕</button>
+      <div class="ttl">Try one <em>${idx+1} / ${bank.length}</em></div>
+      <button class="x" onclick="tryClose('${skillId}')" title="Back to explore">close</button>
     </div>
     <div class="try-prompt">${p.prompt}</div>
     ${p.hint ? `<div class="try-hint"><span class="toggle" onclick="tryHint('${skillId}')">show hint</span> <span class="try-hint-body" style="display:none">→ ${p.hint}</span></div>` : ''}
@@ -9652,7 +9684,7 @@ window._tryAttach = function(skillId){
   div.innerHTML = `
     <div class="try-launch" id="tryLaunch-${skillId}">
       <div class="lead"><b>Practice problem</b> — try one yourself, then check your answer and walk the solution.</div>
-      <button onclick="openTry('${skillId}')">▶ Try one</button>
+      <button onclick="openTry('${skillId}')">Try one</button>
     </div>
     <div class="try-drawer" id="tryDrawer-${skillId}" style="display:none"></div>
   `;
@@ -10194,12 +10226,12 @@ window.lewisCheckV = function(skillId){
   if (isNaN(guess)){ res.style.color = 'var(--ink-mute)'; res.textContent = '— enter a number first'; return; }
   if (guess === M.total){
     res.style.color = 'var(--good-d)';
-    res.textContent = '✓ correct!';
+    res.textContent = 'correct!';
     root.dataset.lwGuessed = '1';
     setTimeout(() => _lwDraw(skillId), 600);
   } else {
     res.style.color = 'var(--trap-d)';
-    res.textContent = `✗ not ${guess} — try again`;
+    res.textContent = `not ${guess} — try again`;
   }
 };
 window.lewisRevealV = function(skillId){
@@ -10786,7 +10818,7 @@ window.vsQuizAnswer = function(skillId, picked){
   const nextBtn = document.createElement('button');
   nextBtn.className = 'btn primary sm';
   nextBtn.style.marginTop = '10px';
-  nextBtn.textContent = correct ? '✓ Next →' : '✗ Try another →';
+  nextBtn.textContent = correct ? 'Next →' : 'Try another →';
   nextBtn.onclick = () => _vsQuizNew(skillId);
   prompt.appendChild(nextBtn);
 };
@@ -11334,8 +11366,8 @@ window.ocRatesCheck = function(skillId){
   const correct = (guessA === mA && guessB === mB);
   res.className = 'oc-rates-result ' + (correct ? 'right' : 'wrong');
   res.innerHTML = correct
-    ? `✓ Correct! rate = k[A]<sup>${mA}</sup>[B]<sup>${mB}</sup>. <b>Trial 1 → 2</b> doubles A, rate × 2<sup>${mA}</sup> = ${Math.pow(2,mA)}× → order ${mA} in A. <b>Trial 1 → 3</b> doubles B, rate × 2<sup>${mB}</sup> = ${Math.pow(2,mB)}× → order ${mB} in B.`
-    : `✗ Not quite. The actual rate law is rate = k[A]<sup>${mA}</sup>[B]<sup>${mB}</sup>. Hint: compare trials where ONLY ONE concentration changes — Trial 1 vs 2 isolates A; Trial 1 vs 3 isolates B.`;
+    ? `Correct! rate = k[A]<sup>${mA}</sup>[B]<sup>${mB}</sup>. <b>Trial 1 → 2</b> doubles A, rate × 2<sup>${mA}</sup> = ${Math.pow(2,mA)}× → order ${mA} in A. <b>Trial 1 → 3</b> doubles B, rate × 2<sup>${mB}</sup> = ${Math.pow(2,mB)}× → order ${mB} in B.`
+    : `Not quite. The actual rate law is rate = k[A]<sup>${mA}</sup>[B]<sup>${mB}</sup>. Hint: compare trials where ONLY ONE concentration changes — Trial 1 vs 2 isolates A; Trial 1 vs 3 isolates B.`;
 };
 
 /* ============================================================
@@ -11647,7 +11679,7 @@ function _ksRender(skillId){
       eqEl.innerHTML = window.eqLine({
         form: `Ka = x² / ([HA]₀ − x) ≈ <var>x²</var> / <var>C</var> &nbsp;⇒&nbsp; <var class="tgt">x = [H⁺]</var> = √(Ka · C)`,
         sub:  `[H⁺] = √(<var class="num">${A.Ka.toExponential(1)}</var> · <var class="num">${C.toFixed(3)}</var>)`,
-        ans:  `[H⁺] = <b>${H.toExponential(2)} M</b> · pH = <b>${pH.toFixed(2)}</b> · 5%-check: x/C = ${xPct.toFixed(1)}% ${xPct < 5 ? '✓' : '✗ (do quadratic)'}`,
+        ans:  `[H⁺] = <b>${H.toExponential(2)} M</b> · pH = <b>${pH.toFixed(2)}</b> · 5%-check: x/C = ${xPct.toFixed(1)}% ${xPct < 5 ? '(passes)' : '(fails — do quadratic)'}`,
         compact: true
       });
     }
@@ -12008,18 +12040,18 @@ function _gcRender(skillId){
     anSign.textContent = '−'; anSign.setAttribute('fill', 'var(--trap-d)');
     caSign.textContent = '+'; caSign.setAttribute('fill', 'var(--good-d)');
     cellL.textContent = 'E°cell';
-    cellV.innerHTML = `${Ecell.toFixed(2)} V<br><span style="font-size:11px; opacity:0.8">${Ecell > 0 ? '✓ runs as drawn (spontaneous)' : '✗ would run REVERSE — swap or use electrolytic'}</span>`;
+    cellV.innerHTML = `${Ecell.toFixed(2)} V<br><span style="font-size:11px; opacity:0.8">${Ecell > 0 ? 'runs as drawn (spontaneous)' : 'would run REVERSE — swap or use electrolytic'}</span>`;
     document.getElementById('gcVtext-'+skillId).textContent = Ecell.toFixed(2) + 'V';
     teach.innerHTML = Ecell > 0
-      ? `<div class="cdb-teach-card good"><b>⚡ Galvanic cell — chemistry powers a battery.</b> E°cell &gt; 0 means the reaction is spontaneous. Anode is <b>−</b> (electrons leave naturally). Mnemonic: <b>"AN OX, RED CAT"</b> — Anode = Oxidation, Reduction at Cathode.</div>`
-      : `<div class="cdb-teach-card warn"><b>⚠ E°cell &lt; 0 in galvanic mode.</b> The reaction would run REVERSE. Switch to electrolytic mode to FORCE this direction with an external power source.</div>`;
+      ? `<div class="cdb-teach-card good"><b>Galvanic cell — chemistry powers a battery.</b> E°cell &gt; 0 means the reaction is spontaneous. Anode is <b>−</b> (electrons leave naturally). Mnemonic: <b>"AN OX, RED CAT"</b> — Anode = Oxidation, Reduction at Cathode.</div>`
+      : `<div class="cdb-teach-card warn"><b>Warning: E°cell &lt; 0 in galvanic mode.</b> The reaction would run REVERSE. Switch to electrolytic mode to FORCE this direction with an external power source.</div>`;
   } else {
     anSign.textContent = '+'; anSign.setAttribute('fill', 'var(--good-d)');
     caSign.textContent = '−'; caSign.setAttribute('fill', 'var(--trap-d)');
     cellL.textContent = 'min applied V';
     cellV.innerHTML = `${Math.abs(Ecell).toFixed(2)} V<br><span style="font-size:11px; opacity:0.8">battery must overcome the spontaneous direction</span>`;
-    document.getElementById('gcVtext-'+skillId).textContent = '🔌';
-    teach.innerHTML = `<div class="cdb-teach-card info"><b>🔌 Electrolytic cell — power source forces the non-spontaneous direction.</b> The signs on the electrodes FLIP (anode = +, cathode = −) because the battery is pushing electrons against the natural direction. But the chemistry rule (anode = oxidation) is the SAME. Used for: electroplating, refining metals, electrolysis of water.</div>`;
+    document.getElementById('gcVtext-'+skillId).textContent = 'EXT';
+    teach.innerHTML = `<div class="cdb-teach-card info"><b>Electrolytic cell — power source forces the non-spontaneous direction.</b> The signs on the electrodes FLIP (anode = +, cathode = −) because the battery is pushing electrons against the natural direction. But the chemistry rule (anode = oxidation) is the SAME. Used for: electroplating, refining metals, electrolysis of water.</div>`;
   }
   // EquationLine showing E°cell + ΔG°
   const eqEl = document.getElementById('gcEq-'+skillId);
@@ -12973,7 +13005,7 @@ window.hbQuizAnswer = function(skillId, picked){
   const nextBtn = document.createElement('button');
   nextBtn.className = 'btn primary sm';
   nextBtn.style.marginTop = '10px';
-  nextBtn.textContent = correct ? '✓ Next →' : '✗ Try another →';
+  nextBtn.textContent = correct ? 'Next →' : 'Try another →';
   nextBtn.onclick = () => _hbQuizNew(skillId);
   prompt.appendChild(nextBtn);
 };
@@ -13026,7 +13058,7 @@ function renderWorked(skillId){
     const pair = pairCandidates[i] || null;
     const pairHtml = pair ? `
       <div class="pair-card" data-skill="${skillId}" data-pair="${i}">
-        <div class="pair-h"><span class="pair-tag">✏ Now you try a similar one</span><span class="pair-sub">analogical-mapping pair · same skill, no scaffold</span></div>
+        <div class="pair-h"><span class="pair-tag">Now you try a similar one</span><span class="pair-sub">analogical-mapping pair · same skill, no scaffold</span></div>
         <div class="pair-q">${pair.q}</div>
         <div class="opts" data-prob="${pair.id}" data-stage="pair-${skillId}-${i}">
           ${pair.opts.map((o, j) => `<div class="opt" data-c="${j===pair.correct?1:0}" data-i="${j}"><span class="let">${'ABCD'[j]}</span><span>${o}</span></div>`).join('')}
@@ -13052,7 +13084,7 @@ function renderWorked(skillId){
         `).join('')}
       </div>
       <div class="worked-ctl">
-        <button class="btn primary sm" onclick="playWorked('${skillId}',${i})">▶ Play through</button>
+        <button class="btn primary sm" onclick="playWorked('${skillId}',${i})">Play through</button>
         <button class="btn ghost sm" onclick="showAllSteps('${skillId}',${i})">Show all at once</button>
         <span class="progress" id="wp-${skillId}-${i}">step 0/${w.steps.length}</span>
       </div>
@@ -13209,11 +13241,11 @@ const SE = {
     return next;
   },
   REASONS: [
-    {k:'pattern',     l:'I see the pattern',         icon:'🧩'},
-    {k:'elim',        l:'Process of elimination',     icon:'✂️'},
-    {k:'recall',      l:'I remember the formula',     icon:'📐'},
-    {k:'guess',       l:'Best guess',                  icon:'🎲'},
-    {k:'skip',        l:'Skip → reveal',               icon:'→'}
+    {k:'pattern',     l:'I see the pattern',         icon:'·'},
+    {k:'elim',        l:'Process of elimination',     icon:'·'},
+    {k:'recall',      l:'I remember the formula',     icon:'·'},
+    {k:'guess',       l:'Best guess',                  icon:'·'},
+    {k:'skip',        l:'Skip → reveal',               icon:'·'}
   ],
   promptHtml(stageId, probId, idx){
     return `<div class="se-prompt" id="se-${stageId}">
@@ -13254,8 +13286,8 @@ const MISCON = {
       // Add a thumbs-up/down for "was your guess right?"
       content.innerHTML += `<div class="tp-rate">
         <span class="muted">Was your guess close?</span>
-        <button class="tp-rate-btn" onclick="MISCON.rate('${skillId}','close')">👍 yes</button>
-        <button class="tp-rate-btn" onclick="MISCON.rate('${skillId}','far')">👎 not really</button>
+        <button class="tp-rate-btn" onclick="MISCON.rate('${skillId}','close')">yes</button>
+        <button class="tp-rate-btn" onclick="MISCON.rate('${skillId}','far')">not really</button>
       </div>`;
     }
     // Log
@@ -13304,7 +13336,7 @@ const VID = {
         <div class="vid-modal-card" onclick="event.stopPropagation()">
           <div class="vid-modal-h">
             <span class="vid-modal-t">${title}</span>
-            <button class="vid-modal-x" onclick="VID.close()">close ✕</button>
+            <button class="vid-modal-x" onclick="VID.close()">close</button>
           </div>
           <div class="vid-modal-body">
             <iframe src="${embed}" allow="autoplay; encrypted-media; fullscreen" allowfullscreen frameborder="0"></iframe>
@@ -13365,9 +13397,9 @@ const MODE = {
       toast.id = 'modeBToast';
       toast.className = 'mode-b-toast';
       toast.innerHTML = `
-        <div class="mbt-h">◨ Welcome to <em>Review Mode</em></div>
+        <div class="mbt-h">Welcome to <em>Review Mode</em></div>
         <div class="mbt-body">Module learning is hidden. Cram Sheets, Shortcut Deck, Lab Toolkit, and Quick Reference are now front-and-center. Switch back anytime via the topbar pill.</div>
-        <button class="mbt-x" onclick="document.getElementById('modeBToast').remove()">Got it ✓</button>
+        <button class="mbt-x" onclick="document.getElementById('modeBToast').remove()">Got it</button>
       `;
       document.body.appendChild(toast);
     }
@@ -13394,15 +13426,15 @@ const CRAM = {
         <div class="cram-h">
           <span class="cram-num">${M.num || ''}</span>
           <span class="cram-tier">${tierLabel}</span>
-          ${hasVid ? `<button class="cram-vid" onclick="VID.open('${s.id}','${M.videoUrl}','${(M.videoTitle||'Tommy explains').replace(/'/g,"\\'")}')" title="Watch the TikTok">▶</button>` : ''}
+          ${hasVid ? `<button class="cram-vid" onclick="VID.open('${s.id}','${M.videoUrl}','${(M.videoTitle||'Tommy explains').replace(/'/g,"\\'")}')" title="Watch the TikTok">Watch</button>` : ''}
           <button class="cram-jump" onclick="goSec('${s.id}')" title="Open the full Mastery Path module">↗</button>
         </div>
         <div class="cram-t">${M.title}</div>
         <div class="cram-pattern">${M.pattern || ''}</div>
         ${M.formula ? `<div class="cram-formula">${M.formula}</div>` : ''}
-        <div class="cram-lock">🔒 ${M.lock || ''}</div>
-        ${M.trap ? `<div class="cram-trap">⚠ ${M.trap.length > 110 ? M.trap.slice(0,110)+'…' : M.trap}</div>` : ''}
-        ${probsAvail > 0 ? `<button class="cram-drill" onclick="CRAM.drill('${s.id}')">🎯 Quick drill · ${probsAvail} Q</button>` : '<div class="cram-no-drill">No drill problems yet</div>'}
+        <div class="cram-lock">Lock · ${M.lock || ''}</div>
+        ${M.trap ? `<div class="cram-trap">Trap · ${M.trap.length > 110 ? M.trap.slice(0,110)+'…' : M.trap}</div>` : ''}
+        ${probsAvail > 0 ? `<button class="cram-drill" onclick="CRAM.drill('${s.id}')">Quick drill · ${probsAvail} Q</button>` : '<div class="cram-no-drill">No drill problems yet</div>'}
       </div>`;
     }).join('');
     grid.innerHTML = cards;
@@ -13481,11 +13513,11 @@ const ION_DRILL = {
     if (isCorrect){
       this.correct++; this.streak++;
       fb.className = 'ion-drill-feedback ok';
-      fb.innerHTML = `✓ Correct! ${this.current.ion.n} = ${this.current.ion.f}`;
+      fb.innerHTML = `Correct! ${this.current.ion.n} = ${this.current.ion.f}`;
     } else {
       this.wrong++; this.streak = 0;
       fb.className = 'ion-drill-feedback bad';
-      fb.innerHTML = `✗ Not quite. The answer is <b>${this.current.dir === 'nameToFormula' ? this.current.ion.f : this.current.ion.n}</b>.`;
+      fb.innerHTML = `Not quite. The answer is <b>${this.current.dir === 'nameToFormula' ? this.current.ion.f : this.current.ion.n}</b>.`;
     }
     document.getElementById('ionDrillCorrect').textContent = this.correct;
     document.getElementById('ionDrillWrong').textContent = this.wrong;
@@ -13842,15 +13874,10 @@ function refreshSidebar(){
   const totalAtt = ST.get('attempts', []).length;
   const totEl = document.getElementById('totalAttempts');
   if (totEl) totEl.textContent = totalAtt;
-  // ready-days simple model: avg pace 2 skills/week, target = full 37 skills
-  const remaining = Math.max(0, 37 - masteredCount);
-  const daysLeft = remaining * 3.5;
-  const rd = document.getElementById('readyDays');
-  if (rd) rd.innerHTML = (daysLeft===0?'<em>ready!</em>':`${Math.round(daysLeft)} <em>days</em>`);
   // streak fire + SR due + total mastered
   const streak = ST.get('drill:streak', 0);
   const sf = document.getElementById('streakCount');
-  if (sf){ sf.innerHTML = `<span class="flame">🔥</span> ${streak}d`; sf.classList.toggle('on', streak > 0); }
+  if (sf){ sf.textContent = `${streak}d`; sf.classList.toggle('on', streak > 0); }
   const tm = document.getElementById('totMastered');
   if (tm) tm.textContent = masteredCount;
   const due = SR.due().length;
@@ -13861,15 +13888,13 @@ function refreshSidebar(){
   // sim stats — show TOTAL bank size (not just seen problems; seen-only is misleading)
   const simAvail = document.getElementById('simAvail');
   if (simAvail) simAvail.textContent = (typeof BANK !== 'undefined') ? BANK.length : 0;
-  const simBest = document.getElementById('simBest');
-  if (simBest) simBest.textContent = ST.get('sim:best', '—');
   const simRunsEl = document.getElementById('simRuns');
   if (simRunsEl) simRunsEl.textContent = (ST.get('sim:runs', []).length || 0);
-  const simPredict = document.getElementById('simPredict');
-  if (simPredict){
+  const simLastPct = document.getElementById('simLastPct');
+  if (simLastPct){
     const runs = ST.get('sim:runs', []);
-    if (runs.length){ simPredict.textContent = runs[runs.length-1].predicted; }
-    else simPredict.textContent = '—';
+    if (runs.length){ simLastPct.textContent = Math.round((runs[runs.length-1].pct||0)*100) + '%'; }
+    else simLastPct.textContent = '—';
   }
   // Sidebar "Next up" suggestion + Today's-Set meta badge
   const nextUpEl = document.getElementById('sbNextupVal');
@@ -14121,7 +14146,7 @@ function renderTree(){
     } else if (status === 'partial'){
       tooltip += '\nIn progress';
     } else if (status === 'mastered'){
-      tooltip += '\n✓ Mastered';
+      tooltip += '\nMastered';
     } else {
       tooltip += '\nReady to start';
     }
@@ -14133,10 +14158,10 @@ function renderTree(){
       <text class="node-tier" x="${p.x+10}" y="${p.y+15}">T${s.tier}</text>
       <text class="node-text ${status==='locked'?'locked':''}" x="${p.x+10}" y="${p.y+36}">${display}</text>
       <text class="node-sub ${status==='locked'?'locked':''}" x="${p.x+10}" y="${p.y+50}">${s.name.length > 22 ? s.name.slice(0,22)+'…' : s.name}</text>
-      ${status==='mastered'?`<circle cx="${p.x+NODE_W-14}" cy="${p.y+14}" r="5" fill="var(--good-d)"/><text x="${p.x+NODE_W-17}" y="${p.y+18}" font-size="9" fill="white" font-weight="700">✓</text>`:''}
+      ${status==='mastered'?`<circle cx="${p.x+NODE_W-14}" cy="${p.y+14}" r="5" fill="var(--good-d)"/><text x="${p.x+NODE_W-19}" y="${p.y+18}" font-size="8" fill="white" font-weight="700">M</text>`:''}
       ${status==='partial'?`<circle cx="${p.x+NODE_W-14}" cy="${p.y+14}" r="5" fill="var(--gold-d)"/>`:''}
       ${status==='unlocked'?`<circle cx="${p.x+NODE_W-14}" cy="${p.y+14}" r="5" fill="none" stroke="var(--gold-d)" stroke-width="1.5"/>`:''}
-      ${status==='locked'?`<text x="${p.x+NODE_W-18}" y="${p.y+18}" font-size="12">🔒</text>`:''}
+      ${status==='locked'?`<text x="${p.x+NODE_W-22}" y="${p.y+18}" font-size="9" font-weight="700" fill="var(--ink-mute)">LOCK</text>`:''}
     </g>`;
   });
   svg.setAttribute('viewBox', `0 0 ${totalW} ${totalH}`);
@@ -14170,7 +14195,7 @@ function renderTreeList(){
       } else if (status === 'mastered') metaLine = `Mastered · ~${mins} min review`;
       else if (status === 'partial') metaLine = `In progress · ~${mins} min remaining`;
       else metaLine = buildRationale(s, m) + ` · ~${mins} min`;
-      const icon = status === 'mastered' ? '✓' : status === 'partial' ? '◐' : status === 'locked' ? '🔒' : 'GO';
+      const icon = status === 'mastered' ? 'M' : status === 'partial' ? 'P' : status === 'locked' ? 'LK' : 'GO';
       return `<button type="button" class="tl-card ${status}" onclick="onNodeClick('${s.id}')" aria-label="${s.name}, ${status}, ${mins} minutes">
         <div class="tl-status">${icon}</div>
         <div class="tl-body">
@@ -14361,7 +14386,7 @@ function renderTreeNextUp(){
         <div class="op-fill" style="width:${overallPct}%"></div>
         ${partialCount > 0 ? `<div class="op-fill-partial" style="left:${overallPct}%; width:${Math.round(100*partialCount/totalSkills)}%"></div>` : ''}
       </div>
-      <div class="op-pct">${overallPct}% mastered · target for DAT-ready: 85%+</div>
+      <div class="op-pct">${overallPct}% mastered · mastery target: 85%+</div>
     </div>`;
   if (skillCandidates.length === 0 && !strategyHabit){
     wrap.innerHTML = progressBar + `<div class="next-up-empty">Every unlocked skill is mastered. Keep going to unlock the next tier.</div>`;
@@ -14386,7 +14411,7 @@ function renderTreeNextUp(){
   }).join('');
   const strategyCardHtml = strategyHabit ? `
     <button class="next-up-card next-up-card-strategy" onclick="onNodeClick('${strategyHabit.id}')" aria-label="Strategy habit: ${strategyHabit.name}. Use in every practice session.">
-      <div class="next-up-rank" style="color:var(--teal-3)">★</div>
+      <div class="next-up-rank" style="color:var(--teal-3)">S</div>
       <div class="next-up-body">
         <div class="next-up-meta" style="color:var(--teal-3)">STRATEGY HABIT · ~${estMinutes(strategyHabit)} min · use from day 1</div>
         <div class="next-up-name">${strategyHabit.name}</div>
@@ -14395,7 +14420,7 @@ function renderTreeNextUp(){
       <div class="next-up-arrow" style="color:var(--teal-3)">→</div>
     </button>` : '';
   wrap.innerHTML = progressBar + `
-    <div class="next-up-h"><span class="next-up-tag">▸ START HERE</span> Your next ${skillCandidates.length === 1 ? 'skill' : skillCandidates.length+' skills'}${strategyHabit ? ' + 1 strategy habit' : ''}</div>
+    <div class="next-up-h"><span class="next-up-tag">START HERE</span> Your next ${skillCandidates.length === 1 ? 'skill' : skillCandidates.length+' skills'}${strategyHabit ? ' + 1 strategy habit' : ''}</div>
     <div class="next-up-sub">Tap any card to begin. Order doesn't matter strictly — pick whichever pulls you in. Strategy habits aren't optional and aren't only for the end.</div>
     <div class="next-up-grid">
       ${skillCardsHtml}${strategyCardHtml}
@@ -14428,7 +14453,7 @@ const LOCKMOD = {
     const wrap = document.getElementById('lockmodPreqs');
     wrap.innerHTML = skill.prereqs.map(pid => {
       const p = SKILL_BY_ID[pid]; const done = m[pid] === 'mastered';
-      return `<div class="preq ${done?'done':''}" onclick="LOCKMOD.go('${pid}')"><div class="stat">${done?'✓':'?'}</div><div class="nm">${p.name}</div><div class="arrow">→</div></div>`;
+      return `<div class="preq ${done?'done':''}" onclick="LOCKMOD.go('${pid}')"><div class="stat">${done?'OK':'?'}</div><div class="nm">${p.name}</div><div class="arrow">→</div></div>`;
     }).join('') || '<p class="muted">No prereqs found — should be unlocked. Refresh.</p>';
     document.getElementById('lockmodBack').classList.add('show');
   },
@@ -14441,7 +14466,7 @@ const LOCKMOD = {
     wrap.innerHTML = '<p class="muted" style="font-size:13px; margin-bottom:10px">Live modules to work on now:</p>' + liveOptions.map(id => {
       const p = SKILL_BY_ID[id]; if (!p) return '';
       const done = (getMastery())[id] === 'mastered';
-      return `<div class="preq ${done?'done':''}" onclick="LOCKMOD.go('${id}')"><div class="stat">${done?'✓':'→'}</div><div class="nm">${p.name}</div><div class="arrow">→</div></div>`;
+      return `<div class="preq ${done?'done':''}" onclick="LOCKMOD.go('${id}')"><div class="stat">${done?'OK':'→'}</div><div class="nm">${p.name}</div><div class="arrow">→</div></div>`;
     }).join('');
     document.getElementById('lockmodBack').classList.add('show');
   },
@@ -14577,9 +14602,8 @@ const DIAG = {
       const cls = i < this.qNum-1 ? 'done' : i === this.qNum-1 ? 'cur' : '';
       return `<div class="dot ${cls}"></div>`;
     }).join('');
-    const diffStars = '★'.repeat(Q.diff) + '☆'.repeat(3 - Q.diff);
     const diffLabel = ['','easy','medium','hard'][Q.diff] || '';
-    document.getElementById('diagQNum').innerHTML = `QUESTION ${this.qNum} · <span style="color:var(--gold-d)">DIFFICULTY ${diffStars}</span> <span style="color:var(--ink-mute); font-weight:500; text-transform:none">(${diffLabel})</span> · adapting to you`;
+    document.getElementById('diagQNum').innerHTML = `QUESTION ${this.qNum} · <span style="color:var(--gold-d)">LEVEL ${Q.diff}/3</span> <span style="color:var(--ink-mute); font-weight:500; text-transform:none">(${diffLabel})</span> · adapting to you`;
     document.getElementById('diagQ').innerHTML = Q.q;
     const optsEl = document.getElementById('diagOpts');
     optsEl.innerHTML = Q.opts.map((o,j)=>`<div class="opt" data-c="${j===Q.correct?1:0}" data-i="${j}" onclick="DIAG.pick(${j})"><span class="let">${'ABCD'[j]}</span><span>${o}</span></div>`).join('');
@@ -14950,9 +14974,9 @@ function renderCalibration(){
       <line class="axis" x1="${P}" y1="${H-P}" x2="${W-P}" y2="${H-P}"/>
       <line class="axis" x1="${P}" y1="${P}" x2="${P}" y2="${H-P}"/>
       <path class="calib-line" d="${calibLineD}"/>
-      <text x="${W/2}" y="${H - 8}" text-anchor="middle" font-family="DM Sans" font-size="11" fill="var(--ink-mute)" letter-spacing="2">CONFIDENCE (★)</text>
+      <text x="${W/2}" y="${H - 8}" text-anchor="middle" font-family="DM Sans" font-size="11" fill="var(--ink-mute)" letter-spacing="2">CONFIDENCE</text>
       <text x="14" y="${H/2}" text-anchor="middle" font-family="DM Sans" font-size="11" fill="var(--ink-mute)" letter-spacing="2" transform="rotate(-90 14 ${H/2})">ACCURACY</text>
-      ${[1,2,3,4,5].map(c => `<text x="${xS(c)}" y="${H-P+16}" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="var(--ink-mute)">${'★'.repeat(c)}</text>`).join('')}
+      ${[1,2,3,4,5].map(c => `<text x="${xS(c)}" y="${H-P+16}" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="var(--ink-mute)">${c}</text>`).join('')}
       ${[0,0.25,0.5,0.75,1].map(a => `<text x="${P-6}" y="${yS(a)+3}" text-anchor="end" font-family="JetBrains Mono" font-size="10" fill="var(--ink-mute)">${Math.round(a*100)}%</text>`).join('')}
       ${dots}
       <g transform="translate(${W - 130}, ${P - 6})">
@@ -14979,8 +15003,8 @@ function renderCalibration(){
 const PACE_TIERS = [
   {key:'untimed', name:'<em>Untimed</em>', time:'∞', desc:'No clock. Master the move first. This is where every skill starts.', target:'80% accuracy → unlocks 90s'},
   {key:'90s',     name:'<em>90 sec</em>/Q', time:'90s', desc:'Comfortable pace. Forces decisions but leaves room to think. Most skills should reach this within 2 weeks.', target:'80% accuracy → unlocks 60s'},
-  {key:'60s',     name:'<em>60 sec</em>/Q', time:'60s', desc:'DAT pace. Same speed as test day. If you hold 80% here, you\'re ready.', target:'80% accuracy → unlocks DAT pace'},
-  {key:'dat',     name:'<em>DAT day</em>', time:'45s', desc:'Slightly tighter than DAT actual to build margin. Nothing should rattle you here.', target:'80% accuracy → DAT-ready'},
+  {key:'60s',     name:'<em>60 sec</em>/Q', time:'60s', desc:'DAT pace. Same speed as test day. Hold 80% here to unlock the next tier.', target:'80% accuracy → unlocks DAT pace'},
+  {key:'dat',     name:'<em>DAT day</em>', time:'45s', desc:'Slightly tighter than DAT actual to build margin. Nothing should rattle you here.', target:'80% accuracy → tier complete'},
 ];
 function renderPacing(){
   const wrap = document.getElementById('paceLadder'); if (!wrap) return;
@@ -15278,7 +15302,7 @@ const SIM = {
       <div class="card" style="margin-bottom:14px">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-wrap:wrap; gap:8px">
           <span class="up muted">QUESTION ${s.i+1} / ${s.pool.length}</span>
-          <span style="font-family:'JetBrains Mono',monospace; color:var(--gold-d); font-weight:700; font-size:14px">⏱ <span id="simGlobalTimer">${initTimer}</span> left</span>
+          <span style="font-family:'JetBrains Mono',monospace; color:var(--gold-d); font-weight:700; font-size:14px"><span id="simGlobalTimer">${initTimer}</span> left</span>
           <span style="font-size:11px; color:var(--ink-mute); font-style:italic">topic: ${p.skills[0]}</span>
         </div>
         <div class="sim-dot-strip">${dots}</div>
@@ -15288,7 +15312,7 @@ const SIM = {
         <div style="margin-top:14px; display:flex; gap:8px; flex-wrap:wrap">
           <button class="btn primary" onclick="SIM.next()">${s.i + 1 >= s.pool.length ? 'Submit mock →' : 'Next →'}</button>
           ${s.i > 0 ? `<button class="btn ghost" onclick="SIM.prev()">← Prev</button>` : ''}
-          <button class="btn ${flagged?'gold':'ghost'}" onclick="SIM.flag()">⚐ ${flagged?'Unflag':'Flag for review'}</button>
+          <button class="btn ${flagged?'gold':'ghost'}" onclick="SIM.flag()">${flagged?'Unflag':'Flag for review'}</button>
           <button class="btn ghost danger" onclick="SIM.bail()">End early</button>
         </div>
       </div>
@@ -15357,18 +15381,6 @@ const SIM = {
     const total = s.results.length;
     const attempted = answered.length;
     const pct = attempted > 0 ? correct / attempted : 0;
-    // Improved scaled-score model: anchor at 17=50%, 22=80%, 25=95%
-    let predicted;
-    if (pct < 0.5) predicted = 13 + (pct / 0.5) * 4;       // 13-17
-    else if (pct < 0.8) predicted = 17 + ((pct - 0.5) / 0.3) * 5;  // 17-22
-    else if (pct < 0.95) predicted = 22 + ((pct - 0.8) / 0.15) * 3;  // 22-25
-    else predicted = 25 + ((pct - 0.95) / 0.05) * 5;       // 25-30
-    predicted = Math.max(1, Math.min(30, Math.round(predicted)));
-
-    // DAT GC percentile anchors (beta calibration — internal-mock-validated only)
-    // Source: ADE percentile tables approximated; treat as directional, not diagnostic-exact.
-    const PCT_TABLE = {1:1,2:1,3:1,4:2,5:3,6:4,7:6,8:9,9:13,10:18,11:24,12:31,13:38,14:46,15:53,16:60,17:67,18:73,19:78,20:83,21:87,22:90,23:93,24:95,25:97,26:98,27:99,28:99,29:99,30:99};
-    const predictedPct = PCT_TABLE[predicted] || 50;
 
     // Per-topic breakdown
     const byTopic = {};
@@ -15382,9 +15394,7 @@ const SIM = {
 
     const elapsed = s.elapsed;
     const elapsedMin = Math.floor(elapsed / 60), elapsedSec = elapsed % 60;
-    ST.push('sim:runs', {pct, correct, attempted, total, predicted, t:Date.now(), elapsed, byTopic, theme: s.theme || null});
-    const best = Math.max(predicted, ST.get('sim:best', 0));
-    ST.set('sim:best', best);
+    ST.push('sim:runs', {pct, correct, attempted, total, t:Date.now(), elapsed, byTopic, theme: s.theme || null});
     // Push wrong-answered + skipped questions into spaced-rep queue (due tomorrow)
     let pushedToSR = 0;
     s.pool.forEach((p, j) => {
@@ -15399,26 +15409,40 @@ const SIM = {
     SIM._clearPersist();  // mock complete — clear in-progress state
     SIM._state = {finalView:true, ...s};
     s._pushedToSR = pushedToSR;
+    // Topics to study next — weakest 3 with at least one miss, deep-link to module
+    const studyTargets = topicSorted.filter(([sk, t]) => t.right < t.seen).slice(0, 3);
     document.getElementById('simRun').innerHTML = `
       <div class="card" style="border:2px solid var(--gold)">
         <h3 style="font-family:'Playfair Display',serif; font-size:28px; margin:0 0 4px">Mock complete.</h3>
+        <div style="font-size:15px; color:var(--ink); margin:6px 0 4px">You answered <b>${correct} of ${total}</b> correctly in <b>${elapsedMin} min ${elapsedSec.toString().padStart(2,'0')} sec</b>.</div>
         <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(140px, 1fr)); gap:12px; margin:14px 0">
-          <div class="sim-result-tile"><div class="n">${correct}/${attempted}</div><div class="l">Correct (${Math.round(pct*100)}%)</div></div>
-          <div class="sim-result-tile"><div class="n">${predicted}</div><div class="l">Predicted DAT GC · approx ${predictedPct}th pct.</div></div>
+          <div class="sim-result-tile"><div class="n">${correct}/${total}</div><div class="l">Correct</div></div>
+          <div class="sim-result-tile"><div class="n">${Math.round(pct*100)}%</div><div class="l">Of attempted</div></div>
           <div class="sim-result-tile"><div class="n">${elapsedMin}:${elapsedSec.toString().padStart(2,'0')}</div><div class="l">Time taken</div></div>
           <div class="sim-result-tile"><div class="n">${total - attempted}</div><div class="l">Skipped</div></div>
         </div>
-        <div style="font-size:11.5px; color:var(--ink-mute); padding:4px 2px; margin:2px 0 8px">Predicted score ${predicted} · approx ${predictedPct}th percentile · beta calibration. Internal-mock-validated only — not equivalent to ADE official percentile data.</div>
         ${pushedToSR > 0 ? `<div style="background:var(--gold-bg); border:1px solid var(--gold-d); border-radius:8px; padding:10px 14px; margin:8px 0; font-size:13px; color:var(--ink)"><b style="color:var(--gold-d)">Spaced repetition:</b> ${pushedToSR} missed/skipped question${pushedToSR===1?'':'s'} added to your daily drill queue — they'll resurface tomorrow.</div>` : ''}
-        <h4 style="font-family:'Playfair Display',serif; font-size:18px; margin:18px 0 8px">By topic — weakest first</h4>
+        <h4 style="font-family:'Playfair Display',serif; font-size:18px; margin:18px 0 8px">By topic — strongest place to study next</h4>
         <div class="sim-topic-grid">
           ${topicSorted.map(([sk, t]) => {
             const p = t.right / t.seen;
             const cls = p < 0.5 ? 'wrong' : p < 0.8 ? 'mid' : 'right';
-            return `<div class="sim-topic-row ${cls}"><span class="sk">${sk}</span><span class="bar"><span class="fill" style="width:${p*100}%"></span></span><span class="pct">${t.right}/${t.seen}</span></div>`;
+            const skillObj = (typeof SKILL_BY_ID !== 'undefined') ? SKILL_BY_ID[sk] : null;
+            const name = skillObj ? skillObj.name : sk;
+            return `<div class="sim-topic-row ${cls}"><span class="sk">${name}</span><span class="bar"><span class="fill" style="width:${p*100}%"></span></span><span class="pct">${t.right}/${t.seen}</span></div>`;
           }).join('')}
         </div>
-        <h4 style="font-family:'Playfair Display',serif; font-size:18px; margin:18px 0 8px">Needs-review walkthrough</h4>
+        ${studyTargets.length > 0 ? `
+          <h4 style="font-family:'Playfair Display',serif; font-size:18px; margin:18px 0 8px">Study these topics next</h4>
+          <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:6px">
+            ${studyTargets.map(([sk, t]) => {
+              const skillObj = (typeof SKILL_BY_ID !== 'undefined') ? SKILL_BY_ID[sk] : null;
+              const name = skillObj ? skillObj.name : sk;
+              return `<button class="btn ghost sm" onclick="document.getElementById('${sk}')?.scrollIntoView({behavior:'smooth'})">${name} (${t.right}/${t.seen})</button>`;
+            }).join('')}
+          </div>
+        ` : ''}
+        <h4 style="font-family:'Playfair Display',serif; font-size:18px; margin:18px 0 8px">Missed-question walkthrough</h4>
         <div style="display:flex; flex-direction:column; gap:8px">
           ${s.pool.map((p, j) => {
             const r = s.results[j];
@@ -15451,16 +15475,19 @@ const SIM = {
     const last = runs[runs.length - 1];
     document.getElementById('simBody').style.display = 'block';
     const topicSorted = Object.entries(last.byTopic || {}).sort((a, b) => (a[1].right/a[1].seen) - (b[1].right/b[1].seen));
+    const lastTotal = last.total || (last.attempted + 0);
+    const lastMin = Math.floor((last.elapsed||0)/60), lastSec = (last.elapsed||0) % 60;
     document.getElementById('simBody').innerHTML = `
       <div class="card">
         <h3 style="font-family:'Playfair Display',serif; font-size:24px; margin:0 0 4px">Last mock summary</h3>
         <div style="font-size:14px; color:var(--ink-mute); margin-bottom:14px">${new Date(last.t).toLocaleString()}</div>
+        <div style="font-size:14.5px; color:var(--ink); margin-bottom:10px">You answered <b>${last.correct} of ${lastTotal}</b> correctly in <b>${lastMin} min ${lastSec.toString().padStart(2,'0')} sec</b>.</div>
         <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(140px, 1fr)); gap:12px">
-          <div class="sim-result-tile"><div class="n">${last.correct}/${last.attempted}</div><div class="l">Correct (${Math.round(last.pct*100)}%)</div></div>
-          <div class="sim-result-tile"><div class="n">${last.predicted}</div><div class="l">Predicted DAT GC</div></div>
-          <div class="sim-result-tile"><div class="n">${Math.floor((last.elapsed||0)/60)}m</div><div class="l">Time</div></div>
+          <div class="sim-result-tile"><div class="n">${last.correct}/${lastTotal}</div><div class="l">Correct</div></div>
+          <div class="sim-result-tile"><div class="n">${Math.round((last.pct||0)*100)}%</div><div class="l">Of attempted</div></div>
+          <div class="sim-result-tile"><div class="n">${lastMin}m</div><div class="l">Time</div></div>
         </div>
-        ${topicSorted.length ? `<h4 style="font-family:'Playfair Display',serif; font-size:16px; margin:18px 0 8px">Weakest topics</h4><div class="sim-topic-grid">${topicSorted.slice(0, 5).map(([sk, t]) => { const p = t.right/t.seen; const cls = p<0.5?'wrong':p<0.8?'mid':'right'; return `<div class="sim-topic-row ${cls}"><span class="sk">${sk}</span><span class="bar"><span class="fill" style="width:${p*100}%"></span></span><span class="pct">${t.right}/${t.seen}</span></div>`; }).join('')}</div>` : ''}
+        ${topicSorted.length ? `<h4 style="font-family:'Playfair Display',serif; font-size:16px; margin:18px 0 8px">Topics — strongest place to study next</h4><div class="sim-topic-grid">${topicSorted.slice(0, 5).map(([sk, t]) => { const p = t.right/t.seen; const cls = p<0.5?'wrong':p<0.8?'mid':'right'; const skillObj = (typeof SKILL_BY_ID !== 'undefined') ? SKILL_BY_ID[sk] : null; const name = skillObj ? skillObj.name : sk; return `<div class="sim-topic-row ${cls}"><span class="sk">${name}</span><span class="bar"><span class="fill" style="width:${p*100}%"></span></span><span class="pct">${t.right}/${t.seen}</span></div>`; }).join('')}</div>` : ''}
         <div style="margin-top:14px; display:flex; gap:8px">
           <button class="btn primary" onclick="SIM.start({length:30})">Take another →</button>
         </div>
@@ -15469,14 +15496,12 @@ const SIM = {
   },
   _refreshTiles(){
     const runs = ST.get('sim:runs', []);
-    const best = ST.get('sim:best', 0);
     const last = runs[runs.length - 1];
     const totalAvail = (typeof BANK !== 'undefined') ? BANK.length : 0;
     const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
     set('simAvail', totalAvail);
-    set('simBest', best || '—');
     set('simRuns', runs.length);
-    set('simPredict', last ? last.predicted : '—');
+    set('simLastPct', last ? (Math.round((last.pct||0)*100) + '%') : '—');
   }
 };
 window.SIM = SIM;
@@ -15512,7 +15537,7 @@ const INSIGHTS = {
     const acc7 = att7.length > 0 ? att7.filter(a => a.correct).length / att7.length : null;
     const masteredCount = Object.values(m).filter(v => v === 'mastered').length;
     const totalSkills = (typeof SKILLS !== 'undefined') ? SKILLS.length : 37;
-    const bestPredicted = Math.max(0, ...runs.map(r => r.predicted || 0));
+    const bestMockPct = runs.length > 0 ? Math.max(...runs.map(r => r.pct || 0)) : 0;
 
     // === SKILL PERFORMANCE (sortable) ===
     const skillStats = {};
@@ -15552,9 +15577,9 @@ const INSIGHTS = {
     const improved = Object.entries(skillDelta).sort((a,b) => b[1].delta - a[1].delta).slice(0,3).filter(([_, v]) => v.delta > 0.05);
     const regressed = Object.entries(skillDelta).sort((a,b) => a[1].delta - b[1].delta).slice(0,3).filter(([_, v]) => v.delta < -0.05);
 
-    // === MOCK SCORE TREND ===
+    // === MOCK ACCURACY TREND ===
     const lastMocks = runs.slice(-10);
-    const mockSparkline = lastMocks.length > 0 ? this.buildSparkline(lastMocks.map(r => r.predicted || 0)) : '';
+    const mockSparkline = lastMocks.length > 0 ? this.buildSparkline(lastMocks.map(r => Math.round((r.pct||0)*100))) : '';
 
     // === BUILD HTML ===
     wrap.innerHTML = `
@@ -15563,15 +15588,15 @@ const INSIGHTS = {
         <div class="ins-tile"><div class="n">${att.length}</div><div class="l">Total problems attempted</div></div>
         <div class="ins-tile ${acc7 !== null ? (acc7 >= 0.8 ? 'good' : acc7 >= 0.6 ? 'mid' : 'bad') : ''}"><div class="n">${acc7 !== null ? Math.round(acc7*100)+'%' : '—'}</div><div class="l">Accuracy (last 7 days)</div></div>
         <div class="ins-tile"><div class="n">${masteredCount} <span style="font-size:18px; color:var(--ink-mute)">/ ${totalSkills}</span></div><div class="l">Skills mastered</div></div>
-        <div class="ins-tile"><div class="n">${bestPredicted || '—'}</div><div class="l">Best predicted DAT GC</div></div>
+        <div class="ins-tile"><div class="n">${runs.length > 0 ? Math.round(bestMockPct*100)+'%' : '—'}</div><div class="l">Best mock accuracy</div></div>
         <div class="ins-tile"><div class="n">${runs.length}</div><div class="l">Mocks taken</div></div>
-        <div class="ins-tile"><div class="n">${streak} 🔥</div><div class="l">Day streak</div></div>
+        <div class="ins-tile"><div class="n">${streak}</div><div class="l">Day streak</div></div>
       </div>
 
       ${lastMocks.length > 0 ? `
       <div class="card" style="margin-top:18px">
-        <h3 style="font-family:'Playfair Display',serif; font-size:18px; margin:0 0 4px">Mock score trend</h3>
-        <div class="muted" style="font-size:13px; margin-bottom:14px">Last ${lastMocks.length} mock${lastMocks.length===1?'':'s'} · most recent on the right</div>
+        <h3 style="font-family:'Playfair Display',serif; font-size:18px; margin:0 0 4px">Mock accuracy trend</h3>
+        <div class="muted" style="font-size:13px; margin-bottom:14px">Last ${lastMocks.length} mock${lastMocks.length===1?'':'s'} · % correct of attempted · most recent on the right</div>
         ${mockSparkline}
       </div>` : ''}
 
@@ -15598,7 +15623,7 @@ const INSIGHTS = {
       <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:18px; margin-top:18px">
         ${improved.length > 0 ? `
         <div class="card" style="border-left:4px solid var(--good)">
-          <h3 style="font-family:'Playfair Display',serif; font-size:17px; margin:0 0 12px; color:var(--good-d)">📈 Most improved (vs prior week)</h3>
+          <h3 style="font-family:'Playfair Display',serif; font-size:17px; margin:0 0 12px; color:var(--good-d)">Most improved (vs prior week)</h3>
           ${improved.map(([sk, v]) => {
             const skillObj = (typeof SKILL_BY_ID !== 'undefined') ? SKILL_BY_ID[sk] : null;
             return `<div class="ins-delta-row"><span class="sk">${skillObj?.name || sk}</span><span class="delta good">+${Math.round(v.delta*100)}%</span></div>`;
@@ -15606,7 +15631,7 @@ const INSIGHTS = {
         </div>` : ''}
         ${regressed.length > 0 ? `
         <div class="card" style="border-left:4px solid var(--trap)">
-          <h3 style="font-family:'Playfair Display',serif; font-size:17px; margin:0 0 12px; color:var(--trap-d)">📉 Slipping (vs prior week)</h3>
+          <h3 style="font-family:'Playfair Display',serif; font-size:17px; margin:0 0 12px; color:var(--trap-d)">Slipping (vs prior week)</h3>
           ${regressed.map(([sk, v]) => {
             const skillObj = (typeof SKILL_BY_ID !== 'undefined') ? SKILL_BY_ID[sk] : null;
             return `<div class="ins-delta-row"><span class="sk">${skillObj?.name || sk}</span><span class="delta bad">${Math.round(v.delta*100)}%</span></div>`;
@@ -15624,8 +15649,8 @@ const INSIGHTS = {
             const min = Math.floor((r.elapsed||0)/60), sec = (r.elapsed||0)%60;
             return `<div class="ins-mock-row">
               <div class="ins-mock-date">${date} ${themeStr}</div>
-              <div class="ins-mock-stat"><span class="l">Score</span><span class="n">${r.predicted || '—'}</span></div>
               <div class="ins-mock-stat"><span class="l">Accuracy</span><span class="n">${Math.round((r.pct||0)*100)}%</span></div>
+              <div class="ins-mock-stat"><span class="l">Correct</span><span class="n">${r.correct}/${r.total}</span></div>
               <div class="ins-mock-stat"><span class="l">Q done</span><span class="n">${r.attempted}/${r.total}</span></div>
               <div class="ins-mock-stat"><span class="l">Time</span><span class="n">${min}:${sec.toString().padStart(2,'0')}</span></div>
             </div>`;
@@ -15634,7 +15659,7 @@ const INSIGHTS = {
       </div>` : ''}
 
       <div class="card" style="margin-top:18px; background:var(--paper-2)">
-        <h3 style="font-family:'Playfair Display',serif; font-size:16px; margin:0 0 8px; color:var(--ink-2)">📊 What this tells me</h3>
+        <h3 style="font-family:'Playfair Display',serif; font-size:16px; margin:0 0 8px; color:var(--ink-2)">What this tells me</h3>
         <div style="font-size:13.5px; line-height:1.6; color:var(--ink-2)">
           ${this.buildNarrative({att, acc7, masteredCount, totalSkills, runs, skillRows, improved, regressed, streak})}
         </div>
@@ -15644,7 +15669,7 @@ const INSIGHTS = {
   buildSparkline(values){
     if (!values || values.length === 0) return '';
     const w = 600, h = 120, pad = 24;
-    const max = 30, min = 0;  // DAT GC scale
+    const max = 100, min = 0;  // accuracy %
     const stepX = (w - pad*2) / Math.max(1, values.length - 1);
     const points = values.map((v, i) => {
       const x = pad + i * stepX;
@@ -15652,11 +15677,11 @@ const INSIGHTS = {
       return [x, y];
     });
     const path = points.map((p, i) => (i === 0 ? 'M' : 'L') + p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' ');
-    const dots = points.map((p, i) => `<circle cx="${p[0]}" cy="${p[1]}" r="4" fill="var(--gold-d)"/><text x="${p[0]}" y="${p[1] - 10}" text-anchor="middle" font-family="JetBrains Mono" font-size="10" font-weight="700" fill="var(--ink)">${values[i]}</text>`).join('');
+    const dots = points.map((p, i) => `<circle cx="${p[0]}" cy="${p[1]}" r="4" fill="var(--gold-d)"/><text x="${p[0]}" y="${p[1] - 10}" text-anchor="middle" font-family="JetBrains Mono" font-size="10" font-weight="700" fill="var(--ink)">${values[i]}%</text>`).join('');
     // Y axis labels
-    const yLabels = [10, 17, 22, 25, 30].map(v => {
+    const yLabels = [25, 50, 75, 100].map(v => {
       const y = h - pad - ((v - min) / (max - min)) * (h - pad*2);
-      return `<line x1="${pad}" y1="${y}" x2="${w-pad}" y2="${y}" stroke="var(--line)" stroke-dasharray="3 3"/><text x="${pad-6}" y="${y+3}" text-anchor="end" font-family="JetBrains Mono" font-size="9" fill="var(--ink-mute)">${v}</text>`;
+      return `<line x1="${pad}" y1="${y}" x2="${w-pad}" y2="${y}" stroke="var(--line)" stroke-dasharray="3 3"/><text x="${pad-6}" y="${y+3}" text-anchor="end" font-family="JetBrains Mono" font-size="9" fill="var(--ink-mute)">${v}%</text>`;
     }).join('');
     return `<svg viewBox="0 0 ${w} ${h}" style="width:100%; max-width:${w}px; height:auto; display:block; margin:0 auto">
       ${yLabels}
@@ -15666,8 +15691,8 @@ const INSIGHTS = {
   },
   buildNarrative({att, acc7, masteredCount, totalSkills, runs, skillRows, improved, regressed, streak}){
     const lines = [];
-    if (acc7 !== null && acc7 >= 0.8) lines.push(`<b>Strong week.</b> ${Math.round(acc7*100)}% accuracy across the last 7 days.`);
-    else if (acc7 !== null && acc7 < 0.5) lines.push(`<b>Tough week.</b> ${Math.round(acc7*100)}% accuracy. Focus on your weakest skills below — don't grind across the board.`);
+    if (acc7 !== null && acc7 >= 0.8) lines.push(`Accuracy this week: <b>${Math.round(acc7*100)}%</b> across the last 7 days.`);
+    else if (acc7 !== null && acc7 < 0.5) lines.push(`Accuracy this week: <b>${Math.round(acc7*100)}%</b>. Focus on your weakest skills below — don't grind across the board.`);
     if (skillRows.length > 0 && skillRows[0].acc < 0.5){
       const skillObj = (typeof SKILL_BY_ID !== 'undefined') ? SKILL_BY_ID[skillRows[0].skill] : null;
       lines.push(`Your weakest skill right now is <b>${skillObj?.name || skillRows[0].skill}</b> at ${Math.round(skillRows[0].acc*100)}% — that's the highest-leverage thing to drill.`);
@@ -15681,14 +15706,14 @@ const INSIGHTS = {
       lines.push(`<b>${skillObj?.name || regressed[0][0]}</b> dropped ${Math.round(regressed[0][1].delta*100)}% — worth a refresher before it slips further.`);
     }
     if (runs.length >= 3){
-      const lastThree = runs.slice(-3).map(r => r.predicted || 0);
+      const lastThree = runs.slice(-3).map(r => Math.round((r.pct||0)*100));
       const trend = lastThree[2] - lastThree[0];
-      if (trend > 0) lines.push(`Your last 3 mock predictions: ${lastThree.join(' → ')}. <b>Trending up</b> by ${trend} points.`);
-      else if (trend < 0) lines.push(`Your last 3 mock predictions: ${lastThree.join(' → ')}. <b>Trending down</b> by ${Math.abs(trend)} points — review your wrong-answer notes from the last mock.`);
-      else lines.push(`Your last 3 mock predictions: ${lastThree.join(' → ')}. Plateaued — try the themed mocks to break specific topics.`);
+      if (trend > 0) lines.push(`Your last 3 mock accuracies: ${lastThree.map(p => p+'%').join(' → ')}. Accuracy moved <b>+${trend} points</b> over that span.`);
+      else if (trend < 0) lines.push(`Your last 3 mock accuracies: ${lastThree.map(p => p+'%').join(' → ')}. Accuracy moved <b>${trend} points</b> over that span — review your missed-question notes from the last mock.`);
+      else lines.push(`Your last 3 mock accuracies: ${lastThree.map(p => p+'%').join(' → ')}. No change across the span — try the themed mocks to break specific topics.`);
     }
     if (masteredCount === 0 && att.length > 20) lines.push(`You've attempted ${att.length} problems but haven't marked any skill mastered yet. Use the mastery check inside each module to lock in.`);
-    if (streak >= 7) lines.push(`<b>${streak}-day streak</b> 🔥 — daily drill is the single highest-leverage habit. Keep it.`);
+    if (streak >= 7) lines.push(`<b>${streak}-day streak</b> — daily drill is the single highest-leverage habit. Keep it.`);
     if (lines.length === 0) lines.push(`Not enough recent data to spot patterns yet. Take a mock or run a few drills.`);
     return lines.map(l => `<div style="margin-bottom:6px">→ ${l}</div>`).join('');
   }
@@ -15760,11 +15785,11 @@ const DRILL = {
 
     const dueInDrill = drill.filter(p => dueSet.has(p.id)).length;
     const newInDrill = drill.filter(p => !seen.has(p.id)).length;
-    const diffStars = (d) => '★'.repeat(d || 1) + '☆'.repeat(Math.max(0, 3 - (d || 1)));
+    const diffStars = (d) => `L${d || 1}/3`;
 
     const box = document.getElementById('drillBox');
     box.innerHTML = `
-      <div class="card-h"><div class="mark">⚡</div><div class="ttl">
+      <div class="card-h"><div class="mark">DRILL</div><div class="ttl">
         <h3>Drill in progress · <em>${count} mixed</em></h3>
         <div class="sub"><b>${dueInDrill}</b> due for review · <b>${newInDrill}</b> new · interleaved across topics, easier → harder</div>
       </div></div>
@@ -15795,7 +15820,7 @@ const DRILL = {
     }
     document.getElementById('streakCount').textContent = streak + 'd';
     alert(`Drill complete · ${streak}-day streak.`);
-    document.getElementById('drillBox').innerHTML = `<div class="card-h"><div class="mark good">✓</div><div class="ttl"><h3>Done for today.</h3><div class="sub">Streak: ${streak} days. Come back tomorrow.</div></div></div>`;
+    document.getElementById('drillBox').innerHTML = `<div class="card-h"><div class="mark good">OK</div><div class="ttl"><h3>Done for today.</h3><div class="sub">Streak: ${streak} days. Come back tomorrow.</div></div></div>`;
     if (typeof TODAY !== 'undefined' && TODAY.refresh) TODAY.refresh();
     if (typeof CHECKPOINT !== 'undefined' && CHECKPOINT._activeType) CHECKPOINT.recordCompletion();
   },
@@ -15806,11 +15831,11 @@ const DRILL = {
     const seen = new Set(ST.get('attempts', []).map(a => a.probId));
     const dueInDrill = pool.filter(p => dueIds.has(p.id)).length;
     const newInDrill = pool.filter(p => !seen.has(p.id)).length;
-    const diffStars = (d) => '★'.repeat(d || 1) + '☆'.repeat(Math.max(0, 3 - (d || 1)));
+    const diffStars = (d) => `L${d || 1}/3`;
     const label = source === 'today' ? "Today's set" : `${pool.length} mixed`;
     const box = document.getElementById('drillBox');
     box.innerHTML = `
-      <div class="card-h"><div class="mark">⚡</div><div class="ttl">
+      <div class="card-h"><div class="mark">DRILL</div><div class="ttl">
         <h3>Drill in progress · <em>${label}</em></h3>
         <div class="sub"><b>${dueInDrill}</b> due for review · <b>${newInDrill}</b> new · curated for today</div>
       </div></div>
@@ -15946,7 +15971,7 @@ const TODAY = {
       startBtn.disabled = false;
       startBtn.style.opacity = '';
       startBtn.style.cursor = '';
-      startBtn.textContent = `▶ Start today's set · ${total} problem${total===1?'':'s'}`;
+      startBtn.textContent = `Start today's set · ${total} problem${total===1?'':'s'}`;
     }
     const sub = document.getElementById('todaySub');
     if (sub){
@@ -16047,8 +16072,7 @@ const WEEK = {
         untouched: SKILLS.length - masteredCount - partialCount,
         streakDays: ST.get('drill:streak', 0),
         dueReviews: dueIds.length,
-        predictedScore: lastSimRun ? lastSimRun.predicted : null,
-        predictedScoreSource: lastSimRun ? 'sim' : null,
+        lastMockAccuracy: lastSimRun ? lastSimRun.pct : null,
         lastSimAt: lastSimRun ? new Date(lastSimRun.t).toISOString() : null
       },
       skillState,
@@ -16100,7 +16124,7 @@ const WEEK = {
       // For 'final' phase students: replace with full mock test instead.
       if (i === 6){
         const phase = (typeof PHASE !== 'undefined' && PHASE.current()) || 'build';
-        if (phase === 'final' && snap.student.predictedScore !== null && targetMin >= 45){
+        if (phase === 'final' && snap.student.lastMockAccuracy !== null && targetMin >= 45){
           tasks.push({type:'mock', label:'Full timed mock — final-prep priority over checkpoint', minutes:Math.min(60, targetMin), deepLink:'#test-sim', skillIds:[]});
           mins += Math.min(60, targetMin);
         } else {
@@ -16168,8 +16192,11 @@ const WEEK = {
     document.getElementById('wpSnapDue').textContent = plan.student.dueReviews;
     const weak = plan.weakestSkills[0];
     document.getElementById('wpSnapWeak').textContent = weak ? (weak.name.length > 14 ? weak.name.slice(0,12)+'…' : weak.name) : '—';
-    document.getElementById('wpSnapPredict').textContent = plan.student.predictedScore !== null ? plan.student.predictedScore : '—';
-    const ic = {review:'⏱', study:'📖', drill:'🎯', mock:'🧪', rest:'☕', checkpoint:'🎓'};
+    {
+      const _mockEl = document.getElementById('wpSnapMockPct');
+      if (_mockEl) _mockEl.textContent = plan.student.lastMockAccuracy !== null ? Math.round(plan.student.lastMockAccuracy * 100) + '%' : '—';
+    }
+    const ic = {review:'REV', study:'STUDY', drill:'DRILL', mock:'MOCK', rest:'REST', checkpoint:'CHECK'};
     const grid = plan.weeklyPlan.map(day => `
       <div class="wp-day ${day.isToday?'today':''} ${day.tasks.every(t=>t.type==='rest')?'rest':''}">
         <div class="wp-day-h">
@@ -16249,8 +16276,7 @@ const WEEK = {
         "untouched": "<int>",
         "streakDays": "<int>",
         "dueReviews": "<int>",
-        "predictedScore": "<int 1-30 or null>",
-        "predictedScoreSource": "'sim' | null",
+        "lastMockAccuracy": "<float 0-1 or null>",
         "lastSimAt": "ISO-8601 or null"
       },
       "skillState": {
@@ -16459,7 +16485,7 @@ const FLOW = {
       <div class="cc-tile"><div class="cc-tile-n">${since.length}</div><div class="cc-tile-l">Problems answered</div><div class="cc-tile-d">${since.filter(a=>a.correct).length} correct</div></div>
       ${newlyMastered > 0 ? `<div class="cc-tile"><div class="cc-tile-n">+${newlyMastered}</div><div class="cc-tile-l">Newly mastered</div></div>` : ''}
       ${newDue > 0 ? `<div class="cc-tile"><div class="cc-tile-n">+${newDue}</div><div class="cc-tile-l">New SR due</div><div class="cc-tile-d">added to today's set</div></div>` : ''}
-      <div class="cc-tile"><div class="cc-tile-n">🔥 ${streakNow}</div><div class="cc-tile-l">Day streak</div></div>
+      <div class="cc-tile"><div class="cc-tile-n">${streakNow}</div><div class="cc-tile-l">Day streak</div></div>
     `;
     card.style.display = 'block';
   },
@@ -16765,7 +16791,7 @@ const CHECKPOINT = {
       const card = document.createElement('div');
       card.className = 'cp-followup perfect';
       card.innerHTML = `
-        <div class="cpf-h">🎯 <em>Perfect run.</em></div>
+        <div class="cpf-h"><em>All correct.</em></div>
         <div class="cpf-body">All ${n} correct on this checkpoint. Schedule extended via SR. Keep it.</div>
         <button class="btn primary sm" onclick="this.parentElement.remove()">Nice — close</button>
       `;
@@ -16782,7 +16808,7 @@ const CHECKPOINT = {
     missedProbs.forEach(p => (p.skills || []).forEach(s => skillSet.add(s)));
     const skillNames = Array.from(skillSet).slice(0, 3).map(s => (SKILL_BY_ID[s] || {}).name || s);
     card.innerHTML = `
-      <div class="cpf-h">📋 <em>Follow-up:</em> ${missed.length} missed on this checkpoint</div>
+      <div class="cpf-h"><em>Follow-up:</em> ${missed.length} missed on this checkpoint</div>
       <div class="cpf-body">Concepts: <b>${skillNames.join(' · ')}</b>. Drill them now while it's fresh — every miss is now in your SR queue with a 1-day interval.</div>
       <div class="cpf-actions">
         <button class="btn gold sm" onclick="CHECKPOINT._followUpDrill(${JSON.stringify(missedIds).replace(/"/g, '&quot;')}); this.parentElement.parentElement.remove();">Drill the ${missed.length} missed →</button>
@@ -16816,7 +16842,7 @@ const CHECKPOINT = {
           const g = s.graduation[sk];
           const day = this.GRADUATION_DAYS[g.next_idx];
           return `<div class="cp-card grad" onclick="CHECKPOINT.start('graduation', {skillId:'${sk}'})">
-            <div class="cp-card-icon">🎓</div>
+            <div class="cp-card-icon">GRAD</div>
             <div class="cp-card-body">
               <div class="cp-card-t">${skill ? skill.name : sk}</div>
               <div class="cp-card-m">5-question retention probe · day ${day} after mastery</div>
@@ -16834,7 +16860,7 @@ const CHECKPOINT = {
         tierEl.innerHTML = '<div class="cp-empty">No tier checkpoints unlocked yet. Master 75% of a tier to unlock its 10-question cross-skill checkpoint.</div>';
       } else {
         tierEl.innerHTML = avail.map(a => `<div class="cp-card tier" onclick="CHECKPOINT.start('tier', {tier:${a.tier}})">
-          <div class="cp-card-icon">🏔</div>
+          <div class="cp-card-icon">TIER</div>
           <div class="cp-card-body">
             <div class="cp-card-t">Tier ${a.tier}: ${tierNames[a.tier]}</div>
             <div class="cp-card-m">10-question interleaved check · ${a.mastered}/${a.total} mastered (${Math.round(a.ratio*100)}%)${a.lastDays?` · last taken ${a.lastDays}d ago`:' · first attempt'}</div>
@@ -16930,9 +16956,13 @@ function renderCoachDash(){
     const masteredCount = Object.values(m).filter(v => v==='mastered').length;
     const recent = att.filter(a => Date.now() - a.t < 7*86400000);
     const stuckRecent = stuck.filter(s => Date.now() - s.t < 7*86400000).length;
-    let status = 'green', statusLbl = 'on track';
-    if (stuckRecent >= 4 || (recent.length > 5 && recent.filter(r=>r.correct).length/recent.length < 0.5)){ status = 'red'; statusLbl = 'needs attention'; }
-    else if (recent.length === 0 || (recent.length > 0 && recent.filter(r=>r.correct).length/recent.length < 0.7)){ status = 'yellow'; statusLbl = 'check in'; }
+    // Time since last activity (factual, not judgmental)
+    const lastAttT = att.length > 0 ? Math.max(...att.map(a => a.t)) : 0;
+    const daysSinceLast = lastAttT > 0 ? Math.floor((Date.now() - lastAttT) / 86400000) : null;
+    let status = 'green', statusLbl = `${recent.length} attempts (7d)`;
+    if (daysSinceLast === null || daysSinceLast >= 14){ status = 'red'; statusLbl = 'no activity 14d+'; }
+    else if (daysSinceLast >= 7){ status = 'yellow'; statusLbl = 'no activity 7d+'; }
+    else if (recent.length === 0){ status = 'yellow'; statusLbl = 'no attempts this week'; }
     rosterEl.innerHTML = `
       <div class="roster-card ${status}" onclick="renderCoachDash()">
         <div class="nm">Active student <span style="font-size:10px; color:var(--ink-mute); font-weight:400">(this device)</span></div>
@@ -17366,7 +17396,7 @@ const OB_STEPS = [
   {
     title:'We <em>start where you are.</em>',
     body:'Most Gen Chem struggle isn\'t about being bad at chemistry. Something — a mole conversion, a Lewis structure rule, a pH shortcut — got skipped along the way and never caught. We diagnose, rebuild the floor, then climb. <b>This is a quick tour. 60 seconds.</b>',
-    vis:'<div style="text-align:center; padding:20px"><div class="serif" style="font-size:48px; line-height:1; color:var(--gold-d)">⌬</div><div class="up muted" style="margin-top:8px">40 skills · floor to test-day</div></div>'
+    vis:'<div style="text-align:center; padding:20px"><div class="serif" style="font-size:36px; line-height:1; color:var(--gold-d); font-style:italic">Skill tree</div><div class="up muted" style="margin-top:8px">40 skills · floor to test-day</div></div>'
   },
   {
     title:'Step 1 — <em>Take the diagnostic.</em>',
@@ -17381,7 +17411,7 @@ const OB_STEPS = [
   {
     title:'Step 3 — <em>The "I need a sec" button.</em>',
     body:'Bottom of the sidebar. Hit it whenever your brain freezes. It\'s 60 seconds of breathing, then 3 quick wins from skills you\'ve already locked in to rebuild flow. <b>Stuck is normal. Especially on Gen Chem.</b>',
-    vis:'<div style="text-align:center; padding:8px"><div style="display:inline-block; padding:11px 14px; background:rgba(194,91,63,0.18); color:#f3c5b3; border:1px solid rgba(194,91,63,0.35); border-radius:9px; font-size:12px; font-weight:600; letter-spacing:0.06em; text-transform:uppercase">⏸ I need a sec</div></div>'
+    vis:'<div style="text-align:center; padding:8px"><div style="display:inline-block; padding:11px 14px; background:rgba(194,91,63,0.18); color:#f3c5b3; border:1px solid rgba(194,91,63,0.35); border-radius:9px; font-size:12px; font-weight:600; letter-spacing:0.06em; text-transform:uppercase">I need a sec</div></div>'
   },
   {
     title:'You\'re ready. <em>Floor first.</em>',
@@ -17496,7 +17526,7 @@ function refreshSkillStreaks(){
     if (m[id] === 'mastered' && maxStreak >= 3){
       const sp = document.createElement('span');
       sp.className = 'streak';
-      sp.textContent = `🔥${maxStreak}`;
+      sp.textContent = `${maxStreak}d`;
       labelEl.appendChild(sp);
     }
     if (dueNow){
@@ -17736,7 +17766,7 @@ function _renderBAL(){
           <div class="bal-input-row">
             <label>Equation</label>
             <input type="text" id="balInp" placeholder="e.g. H2 + O2 -> H2O" value="C3H8 + O2 -> CO2 + H2O">
-            <button onclick="balCheck()">▶ Balance</button>
+            <button onclick="balCheck()">Balance</button>
           </div>
           <div class="bal-presets">
             <span class="pblbl">Try:</span>
@@ -17880,7 +17910,7 @@ window.balCheck = function(){
     return `${cs}${sp.replace(/(\d+)/g, '<sub>$1</sub>')}`;
   }).join(' + ');
   const eqHtml = `${fmtSide(lhs.map(stripCoef), 0)} <span class="op" style="color:var(--gold-d); font-size:24px; padding:0 12px">→</span> ${fmtSide(rhs.map(stripCoef), nL)}`;
-  out.innerHTML = `<div class="bal-eq">${eqHtml}</div><div style="margin-top:10px; font-size:12px; color:var(--ink-mute); text-align:center">✓ Balanced — every element accounted for on both sides.</div>`;
+  out.innerHTML = `<div class="bal-eq">${eqHtml}</div><div style="margin-top:10px; font-size:12px; color:var(--ink-mute); text-align:center">Balanced — every element accounted for on both sides.</div>`;
 };
 
 function _renderICEC(){
@@ -18010,8 +18040,8 @@ function _renderCDB(){
         <div class="tool-card gold">
           <div class="cdb-mode-row">
             <span class="cdb-mode-lbl">Cell type</span>
-            <button class="cdb-mode-btn active" id="cdbModeG" onclick="cdbMode('galvanic')">⚡ Galvanic (voltaic)</button>
-            <button class="cdb-mode-btn" id="cdbModeE" onclick="cdbMode('electrolytic')">🔌 Electrolytic</button>
+            <button class="cdb-mode-btn active" id="cdbModeG" onclick="cdbMode('galvanic')">Galvanic (voltaic)</button>
+            <button class="cdb-mode-btn" id="cdbModeE" onclick="cdbMode('electrolytic')">Electrolytic</button>
           </div>
           <div class="cdb-pickers">
             <label style="font-size:11px; letter-spacing:1.5px; color:var(--ink-mute); font-weight:700; text-transform:uppercase">Anode</label>
@@ -18054,9 +18084,9 @@ function _renderCDB(){
           </div>
           <div class="cdb-teach" id="cdbTeach"></div>
           <div class="cdb-compare">
-            <div class="cdb-compare-h">⚡ vs 🔌 — what changes, what stays the same</div>
+            <div class="cdb-compare-h">Galvanic vs electrolytic — what changes, what stays the same</div>
             <table class="cdb-table">
-              <thead><tr><th></th><th>⚡ Galvanic</th><th>🔌 Electrolytic</th></tr></thead>
+              <thead><tr><th></th><th>Galvanic</th><th>Electrolytic</th></tr></thead>
               <tbody>
                 <tr><td>Spontaneity</td><td><b style="color:var(--good-d)">Spontaneous</b> (ΔG &lt; 0, E°cell &gt; 0)</td><td><b style="color:var(--trap-d)">Non-spont.</b> (ΔG &gt; 0, requires power)</td></tr>
                 <tr><td>Energy direction</td><td>Chemical → electrical (battery)</td><td>Electrical → chemical (electroplating)</td></tr>
@@ -18128,10 +18158,10 @@ window.cdbUpdate = function(){
     // meter is voltmeter (circle V)
     meter.innerHTML = `<circle cx="180" cy="30" r="20" fill="var(--paper)" stroke="var(--gold-d)" stroke-width="2"/><text x="180" y="36" text-anchor="middle" fill="var(--gold-d)" font-family="Playfair Display" font-size="14" font-weight="700" id="cdbVtext">${Ecell.toFixed(2)}V</text>`;
     document.getElementById('cdbECellL').textContent = 'E°cell';
-    document.getElementById('cdbECell').innerHTML = `${Ecell.toFixed(2)} V<br><span style="font-size:11px; opacity:0.8">${Ecell > 0 ? '✓ runs as drawn' : '✗ would run REVERSE — swap anode/cathode'}</span>`;
+    document.getElementById('cdbECell').innerHTML = `${Ecell.toFixed(2)} V<br><span style="font-size:11px; opacity:0.8">${Ecell > 0 ? 'runs as drawn' : 'would run REVERSE — swap anode/cathode'}</span>`;
     teach.innerHTML = Ecell > 0
-      ? `<div class="cdb-teach-card good"><b>⚡ Galvanic cell — chemistry powers a battery.</b> Because E°cell &gt; 0, the reaction is spontaneous. Electrons leave the anode (Zn loses e⁻ → Zn²⁺) NATURALLY, making the anode the negative terminal. Mnemonic: <b>"AN OX, RED CAT"</b> — Anode = Oxidation, Reduction at Cathode.</div>`
-      : `<div class="cdb-teach-card warn"><b>⚠ This pairing has E°cell &lt; 0 in galvanic mode.</b> The reaction would run in REVERSE spontaneously. To make it run as drawn, you need an electrolytic cell (switch the toggle above) — pump electrons in with a battery to FORCE the non-spontaneous direction.</div>`;
+      ? `<div class="cdb-teach-card good"><b>Galvanic cell — chemistry powers a battery.</b> Because E°cell &gt; 0, the reaction is spontaneous. Electrons leave the anode (Zn loses e⁻ → Zn²⁺) NATURALLY, making the anode the negative terminal. Mnemonic: <b>"AN OX, RED CAT"</b> — Anode = Oxidation, Reduction at Cathode.</div>`
+      : `<div class="cdb-teach-card warn"><b>Warning: this pairing has E°cell &lt; 0 in galvanic mode.</b> The reaction would run in REVERSE spontaneously. To make it run as drawn, you need an electrolytic cell (switch the toggle above) — pump electrons in with a battery to FORCE the non-spontaneous direction.</div>`;
   } else {
     // Electrolytic: signs flip; pump electrons against the natural direction
     document.getElementById('cdbAnRole').textContent = 'ANODE';
@@ -18146,7 +18176,7 @@ window.cdbUpdate = function(){
     const eForced = -Ecell;
     document.getElementById('cdbECellL').textContent = 'minimum applied V';
     document.getElementById('cdbECell').innerHTML = `${Math.abs(Ecell).toFixed(2)} V<br><span style="font-size:11px; opacity:0.8">battery must overcome the spontaneous direction</span>`;
-    teach.innerHTML = `<div class="cdb-teach-card info"><b>🔌 Electrolytic cell — power source forces the non-spontaneous direction.</b> The external battery PUSHES electrons into the cathode (now the − terminal) and PULLS them from the anode (now +). Same anode = oxidation rule (LEO/GER) holds — only the SIGNS on the electrodes flip because the driving direction is reversed. Used for: electroplating, refining metals, electrolysis of water.</div>`;
+    teach.innerHTML = `<div class="cdb-teach-card info"><b>Electrolytic cell — power source forces the non-spontaneous direction.</b> The external battery PUSHES electrons into the cathode (now the − terminal) and PULLS them from the anode (now +). Same anode = oxidation rule (LEO/GER) holds — only the SIGNS on the electrodes flip because the driving direction is reversed. Used for: electroplating, refining metals, electrolysis of water.</div>`;
   }
 };
 
@@ -18165,7 +18195,7 @@ function _renderMW(){
           <div class="calc-row">
             <label>Formula</label>
             <input type="text" id="mwInp" placeholder="e.g. Na2SO4" value="C6H12O6" onkeydown="if(event.key==='Enter')mwCalc()">
-            <button onclick="mwCalc()">▶ Calculate</button>
+            <button onclick="mwCalc()">Calculate</button>
           </div>
           <div class="bal-presets">
             <span class="pblbl">Try:</span>
@@ -18232,7 +18262,7 @@ function _renderSF(){
           <div class="calc-row">
             <label>Number</label>
             <input type="text" id="sfInp" placeholder="e.g. 0.0420" value="0.04200" onkeydown="if(event.key==='Enter')sfCalc()">
-            <button onclick="sfCalc()">▶ Count</button>
+            <button onclick="sfCalc()">Count</button>
             <label>Round to</label>
             <input type="number" id="sfDigits" value="3" min="1" max="10" style="width:60px">
             <button onclick="sfCalc()">round</button>
@@ -18285,7 +18315,7 @@ window.sfCalc = function(){
   const num = parseFloat(inp);
   const rounded = isFinite(num) ? Number.parseFloat(num.toPrecision(digits)) : NaN;
   const sciRounded = isFinite(num) ? num.toExponential(digits - 1) : '—';
-  out.innerHTML = `<span class="ans">${sigCount}</span> sig figs &nbsp; · &nbsp; rounded to ${digits} sig figs: <b>${rounded}</b> (sci: ${sciRounded})${!hasDecimal && /0$/.test(countStr) ? '<div class="breakdown">⚠ Trailing zeros without a decimal are ambiguous — use scientific notation to disambiguate.</div>' : ''}`;
+  out.innerHTML = `<span class="ans">${sigCount}</span> sig figs &nbsp; · &nbsp; rounded to ${digits} sig figs: <b>${rounded}</b> (sci: ${sciRounded})${!hasDecimal && /0$/.test(countStr) ? '<div class="breakdown">Warning: trailing zeros without a decimal are ambiguous — use scientific notation to disambiguate.</div>' : ''}`;
 };
 
 function _renderUC(){
