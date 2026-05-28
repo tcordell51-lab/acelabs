@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ace Labs — Rating Matrix (2026-05-27)</title>
+<style>
+  :root{
+    --bg:#0d0d0f; --bg2:#141417; --card:#191920; --card2:#1f1f28;
+    --line:#2a2a33; --line2:#34343f;
+    --ink:#ece9e1; --ink2:#b6b3aa; --ink3:#838079;
+    --gold:#C9A84C; --gold-dim:#8a7636;
+    --bio:#5bba7d; --gc:#5b9bd5; --ochem:#a87dd5; --qr:#d56b97;
+    --green:#5bba7d; --amber:#d8a23c; --red:#dd6450; --neutral:#7e7b87;
+    --radius:14px;
+    --serif:Georgia,'Times New Roman',serif;
+    --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.6;font-size:16px;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1100px;margin:0 auto;padding:0 22px 120px}
+
+  header.top{border-bottom:1px solid var(--line);background:linear-gradient(180deg,#101014,#0d0d0f);padding:46px 0 34px;margin-bottom:8px}
+  header.top .wrap{padding-bottom:0}
+  .brand{font-size:12px;letter-spacing:.32em;text-transform:uppercase;color:var(--gold);font-weight:600}
+  h1{font-family:var(--serif);font-weight:600;font-size:40px;line-height:1.12;margin:14px 0 10px;letter-spacing:-.01em}
+  h1 em{color:var(--gold);font-style:italic}
+  .sub{color:var(--ink2);font-size:17px;max-width:74ch;margin:0}
+  .meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+  .meta .tag{font-size:12px;color:var(--ink2);border:1px solid var(--line2);border-radius:999px;padding:5px 12px;background:var(--bg2)}
+  .meta .tag b{color:var(--ink)}
+  nav.toc{display:flex;flex-wrap:wrap;gap:8px;margin:30px 0 8px}
+  nav.toc a{font-size:13px;color:var(--ink2);text-decoration:none;border:1px solid var(--line);padding:6px 13px;border-radius:8px;background:var(--bg2);transition:.15s}
+  nav.toc a:hover{color:var(--ink);border-color:var(--gold-dim)}
+
+  section{margin-top:46px;scroll-margin-top:20px}
+  h2{font-family:var(--serif);font-size:26px;font-weight:600;margin:0 0 6px;letter-spacing:-.01em}
+  h2 .num{color:var(--gold);font-size:15px;font-family:var(--sans);font-weight:700;margin-right:10px;letter-spacing:.05em}
+  h3{font-family:var(--serif);font-size:19px;font-weight:600;margin:18px 0 4px}
+  .lead{color:var(--ink2);margin:0 0 22px;max-width:74ch}
+
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px 24px;margin:16px 0;position:relative;overflow:hidden}
+  .card.rail{padding-left:26px}
+  .card.rail::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--gold)}
+  .rail-bio::before{background:var(--bio)} .rail-gc::before{background:var(--gc)}
+  .rail-ochem::before{background:var(--ochem)} .rail-qr::before{background:var(--qr)}
+  .rail-gold::before{background:var(--gold)}
+  .eng{font-family:var(--sans);font-size:11px;letter-spacing:.2em;text-transform:uppercase;font-weight:700;display:block;margin-bottom:4px}
+  .eng-bio{color:var(--bio)} .eng-gc{color:var(--gc)} .eng-ochem{color:var(--ochem)} .eng-qr{color:var(--qr)}
+
+  /* ---- the matrix ---- */
+  .matrix{width:100%;border-collapse:collapse;margin:14px 0;font-size:13px;table-layout:fixed}
+  .matrix th,.matrix td{padding:10px 8px;text-align:center;border-bottom:1px solid var(--line);border-right:1px solid var(--line)}
+  .matrix th:first-child,.matrix td:first-child{text-align:left;padding-left:14px;border-right:1px solid var(--line2);width:200px;font-size:12.5px}
+  .matrix thead th{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);font-weight:700;background:var(--bg2);padding-top:14px;padding-bottom:14px;border-bottom:2px solid var(--line2)}
+  .matrix thead th.eng-bio{color:var(--bio)}
+  .matrix thead th.eng-gc{color:var(--gc)}
+  .matrix thead th.eng-ochem{color:var(--ochem)}
+  .matrix thead th.eng-qr{color:var(--qr)}
+  .matrix tbody td{color:var(--ink)}
+  .matrix tbody tr:hover{background:rgba(201,168,76,.04)}
+  .matrix tbody td:first-child{color:var(--ink2);font-weight:500}
+  .matrix tr.totals td{background:#0a0a0d;border-top:2px solid var(--line2);font-family:var(--serif);font-weight:700;font-size:15px;padding-top:14px;padding-bottom:14px}
+  .matrix tr.totals td:first-child{color:var(--gold)}
+
+  /* score cell coloring */
+  .s{display:inline-block;min-width:34px;padding:4px 8px;border-radius:6px;font-weight:700;font-family:var(--serif);font-size:14px}
+  .s10{background:rgba(91,186,125,.20);color:#9ee0b8}
+  .s9 {background:rgba(91,186,125,.16);color:#86d3a3}
+  .s8 {background:rgba(91,186,125,.10);color:#86d3a3}
+  .s7 {background:rgba(216,162,60,.14);color:#e6bd72}
+  .s6 {background:rgba(216,162,60,.10);color:#e6bd72}
+  .s5 {background:rgba(221,100,80,.14);color:#f0a193}
+  .s4 {background:rgba(221,100,80,.18);color:#f0a193}
+
+  /* per-engine deep card */
+  .twocol{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:760px){.twocol{grid-template-columns:1fr}}
+  .mini-h{font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;margin:14px 0 6px;color:var(--ink3)}
+  .mini-h.ok{color:var(--green)} .mini-h.work{color:var(--amber)} .mini-h.bad{color:var(--red)}
+  ul{margin:6px 0;padding-left:20px} li{margin:5px 0;color:var(--ink2)} li b{color:var(--ink)}
+
+  .callout{background:linear-gradient(180deg,rgba(201,168,76,.07),rgba(201,168,76,.02));border:1px solid var(--gold-dim);border-radius:var(--radius);padding:20px 24px;margin:18px 0}
+  .callout .k{font-family:var(--serif);font-size:18px;color:var(--gold);margin:0 0 6px}
+  .callout p{margin:0;color:var(--ink)}
+
+  /* legend strip */
+  .legend{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0;font-size:12px}
+  .legend .lk{padding:5px 10px;border-radius:6px;border:1px solid var(--line);background:var(--bg2);color:var(--ink2)}
+  .legend .lk b{color:var(--gold);font-family:var(--serif);font-weight:700;margin-right:4px}
+
+  code{font-family:'SF Mono',ui-monospace,Menlo,monospace;font-size:.85em;background:var(--bg2);border:1px solid var(--line);border-radius:5px;padding:1px 6px;color:#d9d4c4}
+
+  /* component bar */
+  .comp{display:grid;grid-template-columns:1fr 90px 50px;gap:10px;align-items:center;padding:6px 0;font-size:13.5px;border-top:1px solid var(--line)}
+  .comp:first-child{border-top:none}
+  .comp .name{color:var(--ink2)} .comp .name b{color:var(--ink)}
+  .compbar{height:6px;background:var(--bg2);border-radius:3px;overflow:hidden}
+  .compbar > span{display:block;height:100%}
+  .compbar.bio>span{background:linear-gradient(90deg,#3a7a4f,var(--bio))}
+  .compbar.gc>span{background:linear-gradient(90deg,#3a6694,var(--gc))}
+  .compbar.ochem>span{background:linear-gradient(90deg,#6e4d96,var(--ochem))}
+  .compbar.qr>span{background:linear-gradient(90deg,#9b4b6d,var(--qr))}
+  .compbar.gold>span{background:linear-gradient(90deg,var(--gold-dim),var(--gold))}
+  .comp .v{font-family:var(--serif);color:var(--gold);font-weight:700;text-align:right;font-size:14px}
+
+  footer{margin-top:60px;padding-top:24px;border-top:1px solid var(--line);color:var(--ink3);font-size:13px}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <div class="brand">Ace Labs &middot; Rating Matrix</div>
+    <h1>Engine scorecard —<br><em>every tool, every dimension</em></h1>
+    <p class="sub">Fourth and final document in the 2026-05-27 audit series. Rates each engine (Biology, Gen Chem, Organic Chem, QR) and the cross-engine surfaces (hub, mocks, scope, dashboard) across ten dimensions, with sub-component callouts inside each engine. Scores reflect the state AFTER this session's bug fixes, voice-codex application, and housekeeping.</p>
+    <div class="meta">
+      <span class="tag">Date <b>2026-05-27</b></span>
+      <span class="tag">State <b>committed to branch <code>audit-pass-2026-05-27</code></b></span>
+      <span class="tag">Scale <b>0–10</b></span>
+      <span class="tag">Method <b>weighted across pedagogy review + applied changes</b></span>
+    </div>
+    <nav class="toc">
+      <a href="#matrix">The matrix</a>
+      <a href="#bio">Biology deep card</a>
+      <a href="#gc">Gen Chem deep card</a>
+      <a href="#ochem">OChem deep card</a>
+      <a href="#qr">QR deep card</a>
+      <a href="#cross">Cross-engine surfaces</a>
+      <a href="#ranked">Ranked + leverage</a>
+    </nav>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- ============ MATRIX ============ -->
+  <section id="matrix">
+    <h2><span class="num">00</span>The matrix</h2>
+    <p class="lead">Ten dimensions on the rows, four engines on the columns. Each cell is 0–10, calibrated against the pedagogy review's per-engine grades and updated for the work landed in this session.</p>
+
+    <div class="legend">
+      <span class="lk"><b>9–10</b>genuinely best-in-class</span>
+      <span class="lk"><b>8</b>strong, above market</span>
+      <span class="lk"><b>7</b>solid baseline</span>
+      <span class="lk"><b>6</b>workable but needs attention</span>
+      <span class="lk"><b>5</b>visible weak point</span>
+    </div>
+
+    <table class="matrix">
+      <thead>
+        <tr>
+          <th>Dimension</th>
+          <th class="eng-bio">Biology</th>
+          <th class="eng-gc">Gen Chem</th>
+          <th class="eng-ochem">Organic</th>
+          <th class="eng-qr">QR</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Scientific / mathematical accuracy</td>
+            <td><span class="s s9">9</span></td>
+            <td><span class="s s9">9</span></td>
+            <td><span class="s s9">9</span></td>
+            <td><span class="s s9">9</span></td></tr>
+        <tr><td>Pedagogical design (teaches vs tells)</td>
+            <td><span class="s s8">8</span></td>
+            <td><span class="s s9">9</span></td>
+            <td><span class="s s9">9</span></td>
+            <td><span class="s s9">9</span></td></tr>
+        <tr><td>DAT calibration (stem style + distractors)</td>
+            <td><span class="s s7">7</span></td>
+            <td><span class="s s8">8</span></td>
+            <td><span class="s s9">9</span></td>
+            <td><span class="s s8">8</span></td></tr>
+        <tr><td>Question quality (stems, distractors, diag)</td>
+            <td><span class="s s7">7.5</span></td>
+            <td><span class="s s8">8</span></td>
+            <td><span class="s s8">8</span></td>
+            <td><span class="s s8">8</span></td></tr>
+        <tr><td>Coverage of high-yield DAT topics</td>
+            <td><span class="s s7">7</span></td>
+            <td><span class="s s8">8</span></td>
+            <td><span class="s s7">7.5</span></td>
+            <td><span class="s s7">7</span></td></tr>
+        <tr><td>Assessment / diagnostic design</td>
+            <td><span class="s s7">7</span></td>
+            <td><span class="s s8">8</span></td>
+            <td><span class="s s8">8</span></td>
+            <td><span class="s s8">8</span></td></tr>
+        <tr><td>Active-learning depth (commit-before-reveal, transfer)</td>
+            <td><span class="s s7">7.5</span></td>
+            <td><span class="s s7">7.5</span></td>
+            <td><span class="s s8">8</span></td>
+            <td><span class="s s9">9</span></td></tr>
+        <tr><td>Voice authenticity (Thomas in copy vs textbook)</td>
+            <td><span class="s s6">6.5</span></td>
+            <td><span class="s s8">8</span></td>
+            <td><span class="s s7">7.5</span></td>
+            <td><span class="s s8">8</span></td></tr>
+        <tr><td>Visual / interactive design</td>
+            <td><span class="s s9">9</span></td>
+            <td><span class="s s8">8</span></td>
+            <td><span class="s s10">9.5</span></td>
+            <td><span class="s s7">7.5</span></td></tr>
+        <tr><td>Authoring completeness (less placeholder = higher)</td>
+            <td><span class="s s7">7</span></td>
+            <td><span class="s s6">6.5</span></td>
+            <td><span class="s s8">8</span></td>
+            <td><span class="s s7">7</span></td></tr>
+
+        <tr class="totals"><td>Weighted overall</td>
+            <td>7.7</td>
+            <td>8.0</td>
+            <td>8.4</td>
+            <td>8.1</td></tr>
+      </tbody>
+    </table>
+
+    <p style="color:var(--ink3);font-size:13px;margin-top:14px">All scientific-accuracy scores rose to 9 this session — the must-fix bugs were the residual gap. Pedagogical-design ratings for GC / OChem / QR are at 9 because their architecture (adaptive diagnostic + mastery tiers + commit-before-reveal in OChem's predict-the-step + QR's PF design) is genuinely tutor-grade. Bio sits at 8 on pedagogy because the trap/rule/move triad and Coach notes are great, but retrieval cards still echo the explanation immediately above on too many nodes.</p>
+  </section>
+
+  <!-- ============ BIO ============ -->
+  <section id="bio">
+    <h2><span class="num">01</span>Biology — deep card</h2>
+
+    <div class="card rail rail-bio">
+      <span class="eng eng-bio">Overall 7.7 · top dimension Visual/Interactive (9) · weakest Voice authenticity (6.5)</span>
+      <h3 style="margin-top:0">Per-component breakdown</h3>
+      <div class="comp"><div class="name"><b>Cell &amp; Molecular hub</b> · 19 nodes, 405KB — flagship</div><div class="compbar bio"><span style="width:85%"></span></div><div class="v">8.5</div></div>
+      <div class="comp"><div class="name"><b>Genetics hub</b> · 9 nodes (Punnett, pedigree, HW, operon)</div><div class="compbar bio"><span style="width:84%"></span></div><div class="v">8.4</div></div>
+      <div class="comp"><div class="name"><b>Physiology hub</b> · 13 nodes (cardiac, nephron, AP, Bohr)</div><div class="compbar bio"><span style="width:82%"></span></div><div class="v">8.2</div></div>
+      <div class="comp"><div class="name"><b>Diversity / Devo / Evolution hubs</b> · 16 nodes combined</div><div class="compbar bio"><span style="width:72%"></span></div><div class="v">7.2</div></div>
+      <div class="comp"><div class="name"><b>Pulse check</b> · 24Q diagnostic (was fixed this session)</div><div class="compbar bio"><span style="width:78%"></span></div><div class="v">7.8</div></div>
+      <div class="comp"><div class="name"><b>Weakness scan</b> · 40Q mock with fragile-correct + confidence</div><div class="compbar bio"><span style="width:75%"></span></div><div class="v">7.5</div></div>
+      <div class="comp"><div class="name"><b>Repair sheet</b> · cram view of registry trap pairs</div><div class="compbar bio"><span style="width:80%"></span></div><div class="v">8.0</div></div>
+      <div class="comp"><div class="name"><b>Build-mode interactives</b> · replication fork, mitosis, cardiac, fertilization scrubbers</div><div class="compbar bio"><span style="width:92%"></span></div><div class="v">9.2</div></div>
+      <div class="comp"><div class="name"><b>In-node retrieval cards</b> · 23 placeholder nodes remain</div><div class="compbar bio"><span style="width:60%"></span></div><div class="v">6.0</div></div>
+      <div class="comp"><div class="name"><b>Coach notes / Trap-Rule-Move triad</b> · genuine innovation</div><div class="compbar bio"><span style="width:88%"></span></div><div class="v">8.8</div></div>
+
+      <div class="twocol" style="margin-top:18px">
+        <div>
+          <span class="mini-h ok">What lifts the score</span>
+          <ul>
+            <li>Hand-built SVG interactives (replication fork, fertilization, cardiac cycle, sliding filament) are the strongest visual learning surface in the product.</li>
+            <li>The Trap/Rule/Move triad on every node is a real pedagogical innovation — most DAT prep is undifferentiated prose.</li>
+            <li>Diagnostic + mock items now use real registry node IDs (was broken pre-session), so misses route to the right repair node.</li>
+            <li>"Stuck? Take a beat" anxiety-aware design — most DAT prep ignores this entirely.</li>
+          </ul>
+        </div>
+        <div>
+          <span class="mini-h work">What's holding it back</span>
+          <ul>
+            <li><b>23 placeholder retrieval nodes</b> — in-node misses don't generate Ace Cards on the busiest Cell/Genetics topics.</li>
+            <li>Retrieval cards still ape the paragraph immediately above on most nodes — recognition, not transfer.</li>
+            <li><b>Voice authenticity is the lowest dimension (6.5)</b> because the Thomas Voice Codex captured almost nothing from these three sessions for Bio — needs a Bio-heavy session to author from.</li>
+            <li>Coverage gaps that matter for DAT: countercurrent multiplication as a system, restriction enzymes / PCR / gel, RAAS, lung volumes, hormone classification table.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ GC ============ -->
+  <section id="gc">
+    <h2><span class="num">02</span>Gen Chem — deep card</h2>
+
+    <div class="card rail rail-gc">
+      <span class="eng eng-gc">Overall 8.0 · top dimension Pedagogical design (9) · weakest Authoring completeness (6.5)</span>
+      <h3 style="margin-top:0">Per-component breakdown</h3>
+      <div class="comp"><div class="name"><b>37 skill modules</b> · pattern → worked → faded → independent → mastered</div><div class="compbar gc"><span style="width:88%"></span></div><div class="v">8.8</div></div>
+      <div class="comp"><div class="name"><b>DIAG_BANK</b> · 25-item adaptive diagnostic + pre-confidence rating</div><div class="compbar gc"><span style="width:85%"></span></div><div class="v">8.5</div></div>
+      <div class="comp"><div class="name"><b>SIM (mock)</b> · 60 sec/Q, topic-weighted, real DAT pacing</div><div class="compbar gc"><span style="width:84%"></span></div><div class="v">8.4</div></div>
+      <div class="comp"><div class="name"><b>DRILL bank</b> · 600+ items across all skills</div><div class="compbar gc"><span style="width:80%"></span></div><div class="v">8.0</div></div>
+      <div class="comp"><div class="name"><b>Misconception taxonomy</b> · 77 entries, unweaponized (no item tagging)</div><div class="compbar gc"><span style="width:65%"></span></div><div class="v">6.5</div></div>
+      <div class="comp"><div class="name"><b>Trends explorer</b> · hand-curated table through Z=103, heatmap + speed drill</div><div class="compbar gc"><span style="width:90%"></span></div><div class="v">9.0</div></div>
+      <div class="comp"><div class="name"><b>Recognition Lab</b> · 9-sec SVG stimulus quizzes (kinetics, Q vs K, rxn coords)</div><div class="compbar gc"><span style="width:90%"></span></div><div class="v">9.0</div></div>
+      <div class="comp"><div class="name"><b>Lewis Sandbox</b> · 5-stage builder, 18 molecules, per-molecule commonTrap</div><div class="compbar gc"><span style="width:88%"></span></div><div class="v">8.8</div></div>
+      <div class="comp"><div class="name"><b>Traps library</b> · 1815 auto-extracted entries; needs stub-diag cleanup</div><div class="compbar gc"><span style="width:70%"></span></div><div class="v">7.0</div></div>
+      <div class="comp"><div class="name"><b>Coach-trick cards</b> · 5 modules in Thomas voice this session · ~77 placeholders remain</div><div class="compbar gc"><span style="width:68%"></span></div><div class="v">6.8</div></div>
+      <div class="comp"><div class="name"><b>Cross-skill items (x1-x12)</b> · genuine integration probes</div><div class="compbar gc"><span style="width:86%"></span></div><div class="v">8.6</div></div>
+
+      <div class="twocol" style="margin-top:18px">
+        <div>
+          <span class="mini-h ok">What lifts the score</span>
+          <ul>
+            <li>The best architecture of the four engines — adaptive diagnostic, 4-tier mastery path, DAT-weighted mock sim, four substantial companion tools.</li>
+            <li>Pre-answer confidence rating in the diagnostic is genuinely innovative — much harder to game than post-answer.</li>
+            <li>SIM_TOPIC_WEIGHTS calibrated to real DAT distribution (stoich 17%, equilibrium 7%, thermo 10%, etc.).</li>
+            <li>Colligative module is the best-written content in the engine — distractors that name the specific misconception. Template for the rest.</li>
+            <li>5 modules now in Thomas voice (titration / Le Chât / heating curve / VSEPR / galvanic) — was 0 before this session.</li>
+          </ul>
+        </div>
+        <div>
+          <span class="mini-h work">What's holding it back</span>
+          <ul>
+            <li><b>~77 placeholder coach cards remain</b> — Tier-2/3 module placeholders need real authoring, not mechanical replacement.</li>
+            <li>77-entry misconception taxonomy not tagged into items — system can't say "your top 3 miss clusters" yet.</li>
+            <li>Hundreds of "Off." / "Wrong." stub diag fields remain across the drill bank.</li>
+            <li>Solubility rules + net-ionic equations not a module (DAT tests this consistently).</li>
+            <li>8 diagnostic-silent skills (IMFs, hybridization, calorimetry, etc.) never probed.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ OCHEM ============ -->
+  <section id="ochem">
+    <h2><span class="num">03</span>Organic Chem — deep card</h2>
+
+    <div class="card rail rail-ochem">
+      <span class="eng eng-ochem">Overall 8.4 (highest of the four) · top dimension Visual/Interactive (9.5) · weakest Coverage (7.5)</span>
+      <h3 style="margin-top:0">Per-component breakdown</h3>
+      <div class="comp"><div class="name"><b>18-hub map</b> · node graph with prereq edges, locked-prereq UI</div><div class="compbar ochem"><span style="width:90%"></span></div><div class="v">9.0</div></div>
+      <div class="comp"><div class="name"><b>14 mechanism animations</b> · with WHY narration, not just dance</div><div class="compbar ochem"><span style="width:92%"></span></div><div class="v">9.2</div></div>
+      <div class="comp"><div class="name"><b>Predict-the-step</b> · 3 of 14 implementations (SN2 / EAS / acetal) — model quality</div><div class="compbar ochem"><span style="width:70%"></span></div><div class="v">7.0</div></div>
+      <div class="comp"><div class="name"><b>Alpha-condensation Boss Plate</b> · "8 reactions, one skeleton" framing</div><div class="compbar ochem"><span style="width:95%"></span></div><div class="v">9.5</div></div>
+      <div class="comp"><div class="name"><b>CARDIO 5-factor pKa walk</b> · replaces memorization with transfer</div><div class="compbar ochem"><span style="width:92%"></span></div><div class="v">9.2</div></div>
+      <div class="comp"><div class="name"><b>Exam-sim</b> · stratified sampling + Fisher-Yates this session</div><div class="compbar ochem"><span style="width:82%"></span></div><div class="v">8.2</div></div>
+      <div class="comp"><div class="name"><b>MCQ bank (107 items)</b> · DAT-style stems, mostly strong distractors</div><div class="compbar ochem"><span style="width:84%"></span></div><div class="v">8.4</div></div>
+      <div class="comp"><div class="name"><b>Stereo lab</b> · trainers present, no MCQs yet (exam-sim empty bucket)</div><div class="compbar ochem"><span style="width:72%"></span></div><div class="v">7.2</div></div>
+      <div class="comp"><div class="name"><b>Spec trainer (IR + NMR)</b> · strong UI, dynamic MCQ block needs filling</div><div class="compbar ochem"><span style="width:78%"></span></div><div class="v">7.8</div></div>
+      <div class="comp"><div class="name"><b>Mass-spec hub</b> · gorgeous interactive fragmenter; no MCQs</div><div class="compbar ochem"><span style="width:76%"></span></div><div class="v">7.6</div></div>
+      <div class="comp"><div class="name"><b>Lab techniques</b> · Tollens/Fehling/iodoform/Jones, with traps</div><div class="compbar ochem"><span style="width:88%"></span></div><div class="v">8.8</div></div>
+      <div class="comp"><div class="name"><b>Reagent predictor / synthesis lab / flash deck</b></div><div class="compbar ochem"><span style="width:82%"></span></div><div class="v">8.2</div></div>
+      <div class="comp"><div class="name"><b>Inline Thomas coach notes</b> · 4 added this session (Naomi / Jones / EAS / IR)</div><div class="compbar ochem"><span style="width:78%"></span></div><div class="v">7.8</div></div>
+
+      <div class="twocol" style="margin-top:18px">
+        <div>
+          <span class="mini-h ok">What lifts the score</span>
+          <ul>
+            <li>Strongest single-file hand-authored DAT OChem learning surface the reviewer has read.</li>
+            <li>Mechanism animations consistently explain WHY (leaving group leaves because, nucleophile attacks because) — highest-leverage pedagogical move in the engine.</li>
+            <li>Predict-the-step where it exists is model-quality active learning (commit-before-reveal).</li>
+            <li>Hand-authored SVG is restrained, accessible, color-coded to reaction phase.</li>
+            <li>Tier 1/2/3 collapse respects cognitive load for a 30Q/30min recognition-heavy exam.</li>
+          </ul>
+        </div>
+        <div>
+          <span class="mini-h work">What's holding it back</span>
+          <ul>
+            <li><b>Predict-the-step covers 3 of 14 mechanisms.</b> The other 11 can be skimmed Next-Next-Next with no commit.</li>
+            <li><b>Zero stereo / nomenclature / spec / lab-tech MCQs</b> in the exam-sim pool despite gorgeous hubs for all four. Stratified sampler now targets these buckets — they activate the moment MCQs are authored.</li>
+            <li>Retrosynthesis offered but not taught as a skill — highest-yield mid-to-late DAT move underserved.</li>
+            <li>Voice authenticity at 7.5 — 4 coach notes added; codex has 7 more OChem cards ready to apply.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ QR ============ -->
+  <section id="qr">
+    <h2><span class="num">04</span>QR — deep card</h2>
+
+    <div class="card rail rail-qr">
+      <span class="eng eng-qr">Overall 8.1 · top dimension Active-learning depth (9) · weakest Authoring completeness (6.5→7 after session)</span>
+      <h3 style="margin-top:0">Per-component breakdown</h3>
+      <div class="comp"><div class="name"><b>Cross-loaded diagnostic</b> · DINA-light + Laplace + pre-confidence + pruneDescendants</div><div class="compbar qr"><span style="width:88%"></span></div><div class="v">8.8</div></div>
+      <div class="comp"><div class="name"><b>30-chunk Pattern Library</b> · SM-2 spaced retrieval, due-today surface</div><div class="compbar qr"><span style="width:82%"></span></div><div class="v">8.2</div></div>
+      <div class="comp"><div class="name"><b>Productive Failure</b> · 5 of 8 genuine PF, 3 conceptually closer to instruction-first</div><div class="compbar qr"><span style="width:78%"></span></div><div class="v">7.8</div></div>
+      <div class="comp"><div class="name"><b>Friday Mini-Mock</b> · 22Q / 22min interleaved, calc-opens tracked in iframe</div><div class="compbar qr"><span style="width:85%"></span></div><div class="v">8.5</div></div>
+      <div class="comp"><div class="name"><b>Pacing simulator (iframe)</b> · Two-Pass Drill forces 5 skips per pass-1</div><div class="compbar qr"><span style="width:92%"></span></div><div class="v">9.2</div></div>
+      <div class="comp"><div class="name"><b>Sarah summary digest</b> · 6-row builder; tutor-in-the-loop</div><div class="compbar qr"><span style="width:88%"></span></div><div class="v">8.8</div></div>
+      <div class="comp"><div class="name"><b>Calculator Tax</b> · tracked in mini-mock iframe; not yet on main page</div><div class="compbar qr"><span style="width:60%"></span></div><div class="v">6.0</div></div>
+      <div class="comp"><div class="name"><b>Sarah trick cards</b> · 14 in Thomas voice this session · ~20 placeholders remain</div><div class="compbar qr"><span style="width:75%"></span></div><div class="v">7.5</div></div>
+      <div class="comp"><div class="name"><b>43 skill modules</b> (Tier 0-3), drills + faded prompts</div><div class="compbar qr"><span style="width:82%"></span></div><div class="v">8.2</div></div>
+      <div class="comp"><div class="name"><b>10 embedded drill widgets</b> · lazy-loaded iframes from proposals/</div><div class="compbar qr"><span style="width:78%"></span></div><div class="v">7.8</div></div>
+
+      <div class="twocol" style="margin-top:18px">
+        <div>
+          <span class="mini-h ok">What lifts the score</span>
+          <ul>
+            <li>The active-learning depth is the highest in the product (9 on the matrix) — pacing-sim Two-Pass Drill is genuinely best-in-class.</li>
+            <li>Calculator-feasibility framing on <code>exps</code> ("Can I plug this directly into the on-screen DAT calculator?") is exactly the right pedagogy for a 4-function-calculator test.</li>
+            <li>DINA-light scorer + Laplace smoothing + pre-answer confidence is real psychometric thinking, not heuristic.</li>
+            <li>Sarah summary digest replaces what a tutor would otherwise do scrolling logs at session start — real workflow compression.</li>
+            <li>5 modules now in Sarah voice (reciprocal rule / mixture / harm / p-cond / PODIUM-PIZZA / vol-sa) — was 0 before this session.</li>
+          </ul>
+        </div>
+        <div>
+          <span class="mini-h work">What's holding it back</span>
+          <ul>
+            <li><b>Calculator Tax referenced in copy but not main-page implemented</b> — copy fix this session, but the actual tax-mode toggle is deferred.</li>
+            <li>Trig essentially missing as a module — three Pattern Library values exist, no SOHCAHTOA / sin²+cos²=1 / inverse trig.</li>
+            <li>Geometry formula bank thin (no cylinder, cone, sphere SA-and-V table).</li>
+            <li>QR not on shared design tokens — visually divergent from Bio/OChem.</li>
+            <li>~20 Sarah trick cards still placeholder on lower-priority Tier-2/3 modules.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CROSS ============ -->
+  <section id="cross">
+    <h2><span class="num">05</span>Cross-engine surfaces</h2>
+    <p class="lead">The product layer that wraps the four engines — hub, mocks, scope subsystem, dashboard, design tokens, navigation.</p>
+
+    <div class="card rail rail-gold">
+      <h3 style="margin-top:0">Per-surface breakdown</h3>
+      <div class="comp"><div class="name"><b>Hub (<code>ace-labs.html</code>)</b> · entry point, dashboard, engine tiles, plan section</div><div class="compbar gold"><span style="width:86%"></span></div><div class="v">8.6</div></div>
+      <div class="comp"><div class="name"><b>Prometric mock runner</b> · 3 tests × 140Q, full Prometric mechanics</div><div class="compbar gold"><span style="width:88%"></span></div><div class="v">8.8</div></div>
+      <div class="comp"><div class="name"><b>Mock catalog</b> · framing + diagnostic / standard / final-sim differentiation</div><div class="compbar gold"><span style="width:82%"></span></div><div class="v">8.2</div></div>
+      <div class="comp"><div class="name"><b>Scope &amp; evidence subsystem</b> · scope.html + scope.js + validator</div><div class="compbar gold"><span style="width:80%"></span></div><div class="v">8.0</div></div>
+      <div class="comp"><div class="name"><b>Cross-tool dashboard</b> · <code>ace-labs-shell.js</code> aggregator</div><div class="compbar gold"><span style="width:80%"></span></div><div class="v">8.0</div></div>
+      <div class="comp"><div class="name"><b>Design tokens (<code>al-tokens.css</code>)</b> · Bio + OChem adopt; QR + GC still on own tokens</div><div class="compbar gold"><span style="width:72%"></span></div><div class="v">7.2</div></div>
+      <div class="comp"><div class="name"><b>Navigation / sidebars</b> · consistent + repair-sheet wired across all bio</div><div class="compbar gold"><span style="width:84%"></span></div><div class="v">8.4</div></div>
+      <div class="comp"><div class="name"><b>Test-week + onboarding + cheat-sheets + retakers + calendar</b></div><div class="compbar gold"><span style="width:82%"></span></div><div class="v">8.2</div></div>
+      <div class="comp"><div class="name"><b>Git / deploy hygiene</b> · 8 logical commits on branch, ready for ff-merge</div><div class="compbar gold"><span style="width:84%"></span></div><div class="v">8.4</div></div>
+      <div class="comp"><div class="name"><b>Documentation</b> · 4 audit HTMLs + voice codex in <code>docs/</code>; README still stale</div><div class="compbar gold"><span style="width:74%"></span></div><div class="v">7.4</div></div>
+
+      <p style="color:var(--ink2);margin:14px 0 0">Cross-engine weighted overall: <b style="color:var(--gold);font-family:var(--serif);font-size:17px">8.1</b></p>
+    </div>
+  </section>
+
+  <!-- ============ RANKED ============ -->
+  <section id="ranked">
+    <h2><span class="num">06</span>Ranked — and the leverage to get every dimension to 9+</h2>
+    <p class="lead">Strongest to weakest, with the single highest-leverage move per engine.</p>
+
+    <div class="card rail rail-ochem">
+      <h3 style="margin-top:0">1 · Organic Chem &middot; <span style="color:var(--ochem)">8.4</span></h3>
+      <p style="color:var(--ink2);margin:0"><b>Lift to 9.5</b>: implement predict-the-step on the next 5 mechanisms (SN1, E2, E1 dehydration, imine, aldol). Each addition is structurally identical to the SN2 / EAS / acetal templates already shipped — about a half-day per mechanism. That single change moves both Active-learning depth and Coverage up by full points.</p>
+    </div>
+
+    <div class="card rail rail-qr">
+      <h3 style="margin-top:0">2 · QR &middot; <span style="color:var(--qr)">8.1</span></h3>
+      <p style="color:var(--ink2);margin:0"><b>Lift to 9.0</b>: promote the pacing-sim Two-Pass Drill from its proposal iframe to the canonical pacing experience on the main page, and ship the actual Calculator Tax toggle (the calcOpens infrastructure already exists in the mini-mock iframe). Together these convert QR's already-strong active-learning depth into a real student-facing default.</p>
+    </div>
+
+    <div class="card rail rail-gc">
+      <h3 style="margin-top:0">3 · Gen Chem &middot; <span style="color:var(--gc)">8.0</span></h3>
+      <p style="color:var(--ink2);margin:0"><b>Lift to 8.8</b>: wire the 77-entry misconception taxonomy into the bank — add <code>misconceptionIds: []</code> to each wrong-choice diag on the top 100 most-missed items, then surface "your top 3 misconception clusters" in the post-mock screen. This converts the taxonomy from documentation into a working diagnostic engine and addresses the stub-diag problem in one move. Then build the solubility-rules + net-ionic mini-module (4 items minimum) — closes the biggest DAT coverage gap.</p>
+    </div>
+
+    <div class="card rail rail-bio">
+      <h3 style="margin-top:0">4 · Biology &middot; <span style="color:var(--bio)">7.7</span></h3>
+      <p style="color:var(--ink2);margin:0"><b>Lift to 8.6</b>: author real <code>q / qh / ex</code> content for the 23 placeholder retrieval nodes in <code>bio-shared.js</code> — restores the "every miss generates a card" promise that's currently silently broken on the busiest Cell / Genetics topics. Then invert retrieval order on Tier-1 nodes so retrieval comes before the rule reveal (or move retrieval to a sibling page so students must page away first). And send 2-3 bio-heavy Zoom sessions so the voice codex can fill in the bio-specific authoring.</p>
+    </div>
+
+    <div class="callout" style="margin-top:30px">
+      <p class="k">The compound effect</p>
+      <p>Each engine is one focused effort away from a full point lift. None requires a v2 rewrite; all are additive to what's already built. The product as a whole is at <b>~8.1 weighted</b> right now — well above the typical self-built DAT prep market, with a clear path to <b>9+ across the board</b> in the next 6 weeks of authoring + the OChem predict-the-step build-out.</p>
+    </div>
+  </section>
+
+  <footer>
+    Generated 2026-05-27 at session end. Fourth and final document in the audit series. Companion to:
+    <code>acelabs-audit-2026-05-27.html</code> (build state), <code>acelabs-pedagogy-2026-05-27.html</code> (content review), <code>acelabs-applied-2026-05-27.html</code> (this session's receipt).
+    Voice reference at <code>docs/thomas-voice-codex.md</code>; raw transcripts at <code>docs/zoom-mined/</code>.
+  </footer>
+
+</div>
+</body>
+</html>
