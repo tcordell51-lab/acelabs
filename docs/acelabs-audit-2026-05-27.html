@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ace Labs — State of the Build (2026-05-27)</title>
+<style>
+  :root{
+    --bg:#0d0d0f; --bg2:#141417; --card:#191920; --card2:#1f1f28;
+    --line:#2a2a33; --line2:#34343f;
+    --ink:#ece9e1; --ink2:#b6b3aa; --ink3:#838079;
+    --gold:#C9A84C; --gold-dim:#8a7636;
+    --bio:#5bba7d; --gc:#5b9bd5; --ochem:#a87dd5; --qr:#d56b97;
+    --strategy:#C9A84C; --rc:#4cc0bb;
+    --green:#5bba7d; --amber:#d8a23c; --red:#dd6450; --neutral:#7e7b87;
+    --radius:14px;
+    --serif:Georgia,'Times New Roman',serif;
+    --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;background:var(--bg);color:var(--ink);
+    font-family:var(--sans);line-height:1.6;font-size:16px;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:980px;margin:0 auto;padding:0 22px 120px}
+
+  /* ---- header ---- */
+  header.top{
+    border-bottom:1px solid var(--line);
+    background:linear-gradient(180deg,#101014,#0d0d0f);
+    padding:46px 0 34px;margin-bottom:8px;
+  }
+  header.top .wrap{padding-bottom:0}
+  .brand{font-size:12px;letter-spacing:.32em;text-transform:uppercase;color:var(--gold);font-weight:600}
+  h1{font-family:var(--serif);font-weight:600;font-size:40px;line-height:1.12;margin:14px 0 10px;letter-spacing:-.01em}
+  h1 em{color:var(--gold);font-style:italic}
+  .sub{color:var(--ink2);font-size:17px;max-width:70ch;margin:0}
+  .meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+  .meta .tag{font-size:12px;color:var(--ink2);border:1px solid var(--line2);border-radius:999px;padding:5px 12px;background:var(--bg2)}
+  .meta .tag b{color:var(--ink)}
+
+  /* ---- toc ---- */
+  nav.toc{display:flex;flex-wrap:wrap;gap:8px;margin:30px 0 8px}
+  nav.toc a{font-size:13px;color:var(--ink2);text-decoration:none;border:1px solid var(--line);padding:6px 13px;border-radius:8px;background:var(--bg2);transition:.15s}
+  nav.toc a:hover{color:var(--ink);border-color:var(--gold-dim)}
+
+  /* ---- sections ---- */
+  section{margin-top:46px;scroll-margin-top:20px}
+  h2{font-family:var(--serif);font-size:26px;font-weight:600;margin:0 0 6px;letter-spacing:-.01em}
+  h2 .num{color:var(--gold);font-size:15px;font-family:var(--sans);font-weight:700;margin-right:10px;letter-spacing:.05em}
+  .lead{color:var(--ink2);margin:0 0 22px;max-width:74ch}
+
+  /* ---- cards ---- */
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px 24px;margin:16px 0;position:relative;overflow:hidden}
+  .card.rail{padding-left:26px}
+  .card.rail::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--gold)}
+  .rail-bio::before{background:var(--bio)} .rail-gc::before{background:var(--gc)}
+  .rail-ochem::before{background:var(--ochem)} .rail-qr::before{background:var(--qr)}
+  .rail-rc::before{background:var(--rc)} .rail-gold::before{background:var(--gold)}
+  .card h3{font-family:var(--serif);font-size:21px;font-weight:600;margin:0 0 2px}
+  .card h3 .eng{font-family:var(--sans);font-size:11px;letter-spacing:.2em;text-transform:uppercase;font-weight:700;margin-left:0;display:block;margin-bottom:6px}
+  .eng-bio{color:var(--bio)} .eng-gc{color:var(--gc)} .eng-ochem{color:var(--ochem)} .eng-qr{color:var(--qr)}
+
+  /* ---- pills ---- */
+  .pill{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;padding:3px 9px;border-radius:6px;vertical-align:middle;border:1px solid transparent}
+  .p-block{background:rgba(221,100,80,.14);color:#f0a193;border-color:rgba(221,100,80,.35)}
+  .p-work{background:rgba(216,162,60,.14);color:#e6bd72;border-color:rgba(216,162,60,.34)}
+  .p-ok{background:rgba(91,186,125,.14);color:#86d3a3;border-color:rgba(91,186,125,.34)}
+  .p-info{background:rgba(126,123,135,.16);color:#b0adb8;border-color:rgba(126,123,135,.4)}
+  .p-gold{background:rgba(201,168,76,.16);color:var(--gold);border-color:rgba(201,168,76,.4)}
+
+  /* ---- priority rows ---- */
+  .prio{display:flex;gap:16px;padding:18px 0;border-top:1px solid var(--line)}
+  .prio:first-child{border-top:none}
+  .prio .lvl{flex:0 0 54px;font-family:var(--serif);font-weight:700;font-size:20px;text-align:center;padding-top:2px}
+  .lvl-p0{color:var(--red)} .lvl-p1{color:var(--amber)} .lvl-p2{color:var(--gc)} .lvl-p3{color:var(--ink3)}
+  .prio .body{flex:1;min-width:0}
+  .prio .body .t{font-weight:600;color:var(--ink);margin:0 0 4px;font-size:16px}
+  .prio .body p{margin:0;color:var(--ink2);font-size:14.5px}
+  .prio .body .fix{margin-top:8px;font-size:13px;color:var(--ink3)}
+  .prio .body .fix b{color:var(--gold);font-weight:600}
+  code{font-family:'SF Mono',ui-monospace,Menlo,monospace;font-size:.86em;background:var(--bg2);border:1px solid var(--line);border-radius:5px;padding:1px 6px;color:#d9d4c4}
+
+  ul{margin:8px 0;padding-left:20px} li{margin:5px 0;color:var(--ink2)}
+  li b{color:var(--ink)}
+  .twocol{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:720px){.twocol{grid-template-columns:1fr}.prio{flex-direction:column;gap:8px}.prio .lvl{text-align:left}}
+  .mini-h{font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;margin:14px 0 6px;color:var(--ink3)}
+  .mini-h.ok{color:var(--green)} .mini-h.work{color:var(--amber)}
+
+  /* ---- table ---- */
+  table{width:100%;border-collapse:collapse;margin:12px 0;font-size:14px}
+  th,td{text-align:left;padding:11px 12px;border-bottom:1px solid var(--line)}
+  th{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);font-weight:700}
+  td{color:var(--ink2)} td b{color:var(--ink)}
+  tr:last-child td{border-bottom:none}
+
+  .callout{background:linear-gradient(180deg,rgba(201,168,76,.07),rgba(201,168,76,.02));border:1px solid var(--gold-dim);border-radius:var(--radius);padding:20px 24px;margin:18px 0}
+  .callout .k{font-family:var(--serif);font-size:18px;color:var(--gold);margin:0 0 6px}
+  .callout p{margin:0;color:var(--ink)}
+
+  footer{margin-top:60px;padding-top:24px;border-top:1px solid var(--line);color:var(--ink3);font-size:13px}
+  .bignum{font-family:var(--serif);font-size:15px;color:var(--gold);font-weight:700}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <div class="brand">Ace Labs &middot; Internal Build Audit</div>
+    <h1>State of the build —<br><em>what's solid, what's at risk, what it's for</em></h1>
+    <p class="sub">A four-part deep read of the Ace Labs codebase: the Bio, Gen Chem, OChem, and QR engines, the shared shell and scope system, and the root pages and git state. Synthesized into a single priority list, an honest read of what works, and a clear statement of what this product should be used as.</p>
+    <div class="meta">
+      <span class="tag">Date <b>2026-05-27</b></span>
+      <span class="tag">Branch <b>main</b> &middot; 1 commit ahead, unpushed</span>
+      <span class="tag">Repo <b>~/Documents/Claude/Projects/AceDAT-AceLabs</b></span>
+      <span class="tag">Live <b>acelabs.netlify.app</b></span>
+    </div>
+    <nav class="toc">
+      <a href="#tldr">Bottom line</a>
+      <a href="#attention">Needs most attention</a>
+      <a href="#git">Uncommitted state</a>
+      <a href="#engines">Engine-by-engine</a>
+      <a href="#root">Root &amp; product</a>
+      <a href="#use">Best used as</a>
+    </nav>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- ============ TLDR ============ -->
+  <section id="tldr">
+    <h2><span class="num">00</span>The bottom line</h2>
+    <p class="lead">Ace Labs is four genuinely substantial, working science engines wrapped in a Prometric-style mock runner and a test-week support layer. The thing demanding attention is not the features — it's that the codebase is mid-pivot and almost none of it is saved.</p>
+
+    <div class="callout">
+      <p class="k">One sentence</p>
+      <p>The whole working tree is an in-flight repositioning — from "DAT simulator that predicts your score" to "honest supplemental repair lab" — and that pass is largely <b>built but uncommitted, and the truthfulness cleanup it depends on is only half-integrated</b>, so the live hub still makes claims the new system was written to forbid.</p>
+    </div>
+
+    <div class="twocol">
+      <div class="card">
+        <div class="mini-h ok">What's genuinely strong</div>
+        <ul>
+          <li>Four deep, hand-built engines with real interactives, banks, and spaced-retrieval — the substance is there.</li>
+          <li>The <b>score-predictor removal</b> pass is complete and consistent across all four engines and the dashboard.</li>
+          <li>The Prometric 3-test runner is a real, complete cross-section pacing engine.</li>
+          <li>The new <b>scope / evidence page</b> and its data module are well-built artifacts.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="mini-h work">What's fragile right now</div>
+        <ul>
+          <li><b>Nothing in the working tree is committed.</b> One disk loss erases all of it.</li>
+          <li>The scope cleanup is unfinished: validator <b>fails with 17 errors</b>, isn't wired in, and pages weren't retrofitted.</li>
+          <li>The hub still advertises <b>"5 fixed tests"</b> (there are 3) — a live truthfulness regression.</li>
+          <li>A few real per-engine bugs: OChem progress mis-tracking, Bio in-node card gaps.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ATTENTION ============ -->
+  <section id="attention">
+    <h2><span class="num">01</span>What needs most attention</h2>
+    <p class="lead">Prioritized. P0 is "do this before anything else, you are one accident from losing weeks of work or shipping a broken/untruthful site." P3 is hygiene.</p>
+
+    <div class="card">
+
+      <div class="prio">
+        <div class="lvl lvl-p0">P0</div>
+        <div class="body">
+          <p class="t">Commit the working tree. Nothing is saved. <span class="pill p-block">Data loss risk</span></p>
+          <p>The entire Bio engine refactor, the GC/OChem/QR edits, the hub fixes, the dashboard rewrite, the new scope subsystem, the Bio repair sheet, the audit scripts, and the RC research docs all exist <b>only in your working tree</b>. Roughly +1,620 / −1,297 lines across 28 tracked files, plus a dozen untracked files. A reset, a bad <code>git checkout</code>, or a disk failure loses all of it.</p>
+          <p class="fix"><b>Fix:</b> Commit in logical chunks now — at minimum one "no-score-prediction + honest-scope repositioning" commit and one "Bio Repair Lab v3 refactor" commit. Then keep going on the items below.</p>
+        </div>
+      </div>
+
+      <div class="prio">
+        <div class="lvl lvl-p0">P0</div>
+        <div class="body">
+          <p class="t">Push <code>main</code>. One commit is unpushed. <span class="pill p-block">Off-machine backup</span></p>
+          <p>Commit <code>61cfb76</code> ("QR Wave 1: 6-feature build") is committed locally but not on <code>origin/main</code>. It is not backed up anywhere off this machine.</p>
+          <p class="fix"><b>Fix:</b> <code>git push origin main</code> (after committing the working tree, so the push carries everything).</p>
+        </div>
+      </div>
+
+      <div class="prio">
+        <div class="lvl lvl-p0">P0</div>
+        <div class="body">
+          <p class="t">Untracked files that deployed pages depend on. <span class="pill p-block">Deploy risk</span></p>
+          <p>Three files are referenced by the app but exist in no commit. Manual CLI deploys from <code>.</code> will ship them, but a fresh <code>git clone</code> or any git-based rebuild would not have them, breaking the pages that link to them:</p>
+          <ul>
+            <li><code>shared/scope.js</code> — <code>scope.html</code> hard-depends on it for its data and last-verified date.</li>
+            <li><code>tools/bio/bio-repair-sheet.html</code> — the uncommitted <code>tools/bio/index.html</code> adds a sidebar link to it (<code>index.html:97</code>). Commit the index without it and the link 404s.</li>
+            <li><code>shared/scope.js</code> + <code>scope.html</code> + <code>scripts/validate-scope.js</code> as a set — the whole scope subsystem is untracked.</li>
+          </ul>
+          <p class="fix"><b>Fix:</b> Track these in the same commit as the code that references them, so the link and the target always land together.</p>
+        </div>
+      </div>
+
+      <div class="prio">
+        <div class="lvl lvl-p1">P1</div>
+        <div class="body">
+          <p class="t">The hub still says "5 fixed tests" — there are 3. <span class="pill p-work">Truthfulness regression</span></p>
+          <p><code>ace-labs.html</code>'s Prometric CTA reads "5 fixed tests &middot; 140 Q &middot; 135 min." The catalog, the scope page, and the actual bank (<code>shared/dat-mock-tests.js</code>) all have <b>3</b>. The hub also still carries "calibrated mocks," and <code>prometric-mock.html</code> says "full simulation" / "mirrors the actual." These are precisely the phrases the new scope validator was written to forbid — the live site currently contradicts the repositioning in flight.</p>
+          <p class="fix"><b>Fix:</b> Correct the hub to "3 fixed tests"; remove "calibrated"/"full simulation"/"mirrors the actual." Ideally drive the number from <code>ACE_SCOPE.MOCKS.count</code> so it can't drift again.</p>
+        </div>
+      </div>
+
+      <div class="prio">
+        <div class="lvl lvl-p1">P1</div>
+        <div class="body">
+          <p class="t">The scope cleanup is half-integrated and its validator fails today. <span class="pill p-work">Finish the pass</span></p>
+          <p>The scope registry, the public page, and the validator are all built — but the integration is not done. <code>node scripts/validate-scope.js</code> exits 1 with <b>17 errors</b>: the user-facing pages were never retrofitted with the <code>alScopeStrip</code> / <code>alDisclaimer</code> / <code>shared/scope.js</code> hooks, they still contain stale phrases, <code>validate:scope</code> was never added to <code>package.json</code>, and the validator's own negation allowlist (<code>NEGATION_PATTERNS</code> in <code>shared/scope.js</code>) is defined but never consulted — so it also <b>false-fails correctly-written disclaimers</b> like "not a predicted DAT score."</p>
+          <p class="fix"><b>Fix:</b> Wire the scope hooks into <code>ace-labs.html</code>, <code>prometric-mock.html</code>, <code>mocks-catalog.html</code>; de-stale the copy; make the validator apply <code>NEGATION_PATTERNS</code> before flagging; add <code>"validate:scope"</code> to <code>package.json</code>. Then the validator becomes a real guard against backsliding.</p>
+        </div>
+      </div>
+
+      <div class="prio">
+        <div class="lvl lvl-p2">P2</div>
+        <div class="body">
+          <p class="t">OChem progress tracking is silently broken on its most important hub. <span class="pill p-work">Functional bug</span></p>
+          <p>The alkene MCQ set uses <code>data-hub="alkene"</code> (singular, <code>tools/ochem/index.html:11323</code>), but the sidebar reader and the Mastery Dashboard both expect <code>"alkenes"</code> (plural, lines 4543 / 21275). Completing alkene questions never lights up the dot or the tile — and alkenes is described in-app as "the center of the universe." Separately, the Mastery Dashboard only counts <b>10 of 18 hubs</b> (the 8 foundation/advanced hubs and the spec banks are excluded), so the completion ring systematically understates coverage. Three different hub lists in the file disagree with each other.</p>
+          <p class="fix"><b>Fix:</b> Normalize to one hub-id list (<code>alkenes</code>), reconcile the dashboard array and <code>EXISTING_HUBS</code> bars against the 18-hub <code>HUBS</code> source of truth.</p>
+        </div>
+      </div>
+
+      <div class="prio">
+        <div class="lvl lvl-p2">P2</div>
+        <div class="body">
+          <p class="t">Bio: in-node misses don't generate cards for ~23 high-traffic nodes. <span class="pill p-work">Content gap</span></p>
+          <p>The legacy <code>NODES</code> retrieval entries in <code>tools/bio/bio-shared.js:60+</code> are placeholder stubs (<code>q:"(question)"</code> …) for 23 nodes — most of Cell and early Genetics. Answering the inline card works, but a wrong answer is intentionally blocked from creating an Ace Card (<code>_isAceCardPlaceholder()</code>, line 1021), so the home page's "every miss becomes a card" promise silently doesn't hold there. (Misses via the diagnostic and mock still create cards — those build from their own answer text.) Also, the Restart handler hardcodes a stale 28-node list and says "all 20 nodes," so a restart doesn't clear several nodes.</p>
+          <p class="fix"><b>Fix:</b> Author real <code>q/qh/ex</code> for the 23 stub nodes (this is the main outstanding content debt), and rebuild the Restart list from <code>BIO_REGISTRY</code> rather than hardcoding.</p>
+        </div>
+      </div>
+
+      <div class="prio">
+        <div class="lvl lvl-p2">P2</div>
+        <div class="body">
+          <p class="t">Coach "trick" content is placeholder across GC and QR. <span class="pill p-info">Awaiting authoring</span></p>
+          <p>Every coach card is a visible, student-facing placeholder: <b>94 in Gen Chem</b> (all <code>coach:true</code> cards are also <code>placeholder:true</code>) and <b>34 in QR</b>, each rendering a note like "this slot is built, but the metaphor needs your coach to confirm or replace." The scaffolding is done; the signature Thomas/Sarah metaphors are not written. This is the single largest content gap in GC.</p>
+          <p class="fix"><b>Fix:</b> Authoring task, not a code task — slot in real coach lines per the OChem-style craft protocol. Until then they read as honestly unfinished, which is acceptable but not shippable as "the trick."</p>
+        </div>
+      </div>
+
+      <div class="prio">
+        <div class="lvl lvl-p3">P3</div>
+        <div class="body">
+          <p class="t">Hygiene: stale README, dead links, stale dates, divergent QR. <span class="pill p-info">Cleanup</span></p>
+          <ul style="margin-top:4px">
+            <li><b>README.md</b> is well out of date (QR "41 modules/1010 problems", OChem "10 hubs", 7 root files) vs the real build (QR 45/767, OChem 18 hubs, etc.).</li>
+            <li><b><code>scope.html</code> is orphaned</b> — no page links to it; it should sit in the hub footer.</li>
+            <li><b><code>for-retakers.html</code></b> links twice to <code>unified-mock.html</code>, which 301-redirects to the Prometric runner — point it there directly.</li>
+            <li><b>LAST_VERIFIED</b> is 2026-05-08 in <code>shared/scope.js</code> and <code>scope.html</code> — stale by ~3 weeks.</li>
+            <li><b>QR is off the shared design system</b> (loads none of <code>al-tokens.css</code> / <code>ace-labs-shell.js</code>) and is invisible to shared tooling — a known "QR pending" migration.</li>
+            <li>Empty research dirs <code>agent-w2-learning-science/</code> and <code>agent-w3-competitors/</code> are cited by the QR gameplan but were never committed.</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============ GIT ============ -->
+  <section id="git">
+    <h2><span class="num">02</span>What hasn't been committed</h2>
+    <p class="lead">The authoritative whole-repo picture. Read this as "what disappears if the working tree is discarded." The good news first: the two "deleted" GC docs are not lost — they were renamed to <code>.defunct.md</code> with a tombstone banner, and <code>node_modules</code>, <code>astro-proto</code>, screenshots, and <code>.netlify</code> are correctly gitignored.</p>
+
+    <table>
+      <thead><tr><th>State</th><th>What</th><th>Risk if lost</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="pill p-work">Unpushed</span></td>
+          <td><b>1 commit</b> — <code>61cfb76</code> QR Wave 1 (cross-loaded diagnostic, Sarah summary, pacing, Pattern Library, Productive Failure, calc tax)</td>
+          <td>Not on remote; gone if this machine is lost.</td>
+        </tr>
+        <tr>
+          <td><span class="pill p-block">Modified, uncommitted</span></td>
+          <td><b>26 tracked files</b> + 2 deletions, ~+1,620 / −1,297 lines. The whole repositioning: all of <code>tools/bio/*</code> (Repair Lab v3), <code>tools/gc/index.html</code>, <code>tools/ochem/index.html</code>, <code>tools/qr/index.html</code>, <code>shared/ace-labs-shell.js</code>, and root pages <code>ace-labs.html</code>, <code>prometric-mock.html</code>, <code>mocks-catalog.html</code>, <code>for-retakers.html</code>, <code>unified-mock.html</code>.</td>
+          <td>Weeks of work. Entirely unsaved.</td>
+        </tr>
+        <tr>
+          <td><span class="pill p-block">Untracked, depended-on</span></td>
+          <td><code>shared/scope.js</code>, <code>scope.html</code>, <code>tools/bio/bio-repair-sheet.html</code> — referenced by app code.</td>
+          <td>Break pages on a clean checkout.</td>
+        </tr>
+        <tr>
+          <td><span class="pill p-info">Untracked, standalone</span></td>
+          <td><code>scripts/validate-scope.js</code>, <code>scripts/audit-bio.js</code> (neither wired into <code>package.json</code>), and <code>research/</code> (10 RC_*.md docs — groundwork for a future Reading Comp area, referenced by nothing).</td>
+          <td>Tooling and planning; recoverable but worth keeping.</td>
+        </tr>
+        <tr>
+          <td><span class="pill p-ok">Safe rename</span></td>
+          <td><code>tools/gc/MOCK_CALIBRATION_PLAN.md</code> and <code>research/CALIBRATION_VERIFICATION.md</code> show as deleted, but were re-saved as <code>*.defunct.md</code> with a "DEFUNCT (2026-05-08)" banner. Byte-identical except the banner.</td>
+          <td>None — content preserved, just tombstoned.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="card rail rail-gold">
+      <p style="margin:0;color:var(--ink)">The shape of the uncommitted work is coherent, not random: it is one product decision (drop score predictions, tell the truth about scope, reframe as a repair lab) applied across every engine, plus the Bio v3 rebrand. Most of it is <b>finished</b>; the part that is genuinely <b>in-progress</b> is the scope-hook integration and validator wiring described in P1.</p>
+    </div>
+  </section>
+
+  <!-- ============ ENGINES ============ -->
+  <section id="engines">
+    <h2><span class="num">03</span>Engine by engine</h2>
+    <p class="lead">Each engine is a self-contained static-HTML mini-app with localStorage persistence and no build step. Sizes give a sense of weight.</p>
+
+    <!-- BIO -->
+    <div class="card rail rail-bio">
+      <h3><span class="eng eng-bio">Biology &middot; "Repair Lab v3"</span>1.5 MB engine &middot; 6 topic hubs &middot; 57-node registry</h3>
+      <div class="mini-h ok">Working</div>
+      <ul>
+        <li>Six richly-built hubs with hand-authored SVG interactives: replication/transcription/translation scrubbers, Punnett &amp; pedigree tools, cardiac cycle, nephron, Bohr curve, cross-bridge, and a new staged fertilization walkthrough.</li>
+        <li>Registry-driven home dashboard, 24-Q Pulse check, 40-Q Weakness scan — all now route misses (and "fragile correct") to the right node and into an SM-2 Ace Cards deck. Score predictor and Bio-section timer correctly removed.</li>
+        <li>The repair sheet, triage modal, coach mode, and scroll-spy nav all function.</li>
+      </ul>
+      <div class="mini-h work">Needs attention</div>
+      <ul>
+        <li><b>23 placeholder retrieval nodes</b> — in-node misses don't create cards (see P2). Main content debt.</li>
+        <li>Two parallel data layers (<code>NODES</code>/<code>STATE</code> vs <code>BIO_REGISTRY</code>) must be hand-synced — a maintenance hazard; Restart copy/list is stale.</li>
+        <li>Nav drift: repair sheet not linked from the other 12 sidebars; <code>bio-micrographs.html</code> still has the old sidebar style; two orphan files (<code>bio-immune-cells.html</code>, <code>sliding-filament-tiktok.html</code>).</li>
+      </ul>
+    </div>
+
+    <!-- GC -->
+    <div class="card rail rail-gc">
+      <h3><span class="eng eng-gc">Gen Chem</span>1.3 MB engine &middot; ~37 skill sections &middot; 4 companion tools</h3>
+      <div class="mini-h ok">Working</div>
+      <ul>
+        <li>Full engine set wired: diagnostic, mock sim, drill (600+ items), today's-set, weekly-plan export, mastery/review modes, self-explain, coach edit-mode.</li>
+        <li>Four solid interactive references with live JSON pipelines: Periodic Trends, Common Traps, Recognition Lab, Lewis Sandbox.</li>
+        <li>Score-predictor removal is complete and self-consistent, including a one-time localStorage sanitizer that strips legacy predicted/percentile keys.</li>
+      </ul>
+      <div class="mini-h work">Needs attention</div>
+      <ul>
+        <li><b>All 94 coach "trick" cards are placeholders</b> (see P2) — the biggest single gap, visible to students as hatched "needs your coach" notes.</li>
+      </ul>
+    </div>
+
+    <!-- OCHEM -->
+    <div class="card rail rail-ochem">
+      <h3><span class="eng eng-ochem">OChem &middot; Reaction Maps (v1, canonical)</span>2.2 MB engine &middot; 18-hub map &middot; 14 mechanisms</h3>
+      <div class="mini-h ok">Working</div>
+      <ul>
+        <li>18-hub node-map with prereq edges, 14 step-through mechanism animations, an MCQ engine, and a dynamically-assembled DAT-format exam-sim.</li>
+        <li>Score-prediction removal complete: predicted-score card, verdict strings, and share-PNG verdict all replaced with neutral practice metrics.</li>
+      </ul>
+      <div class="mini-h work">Needs attention</div>
+      <ul>
+        <li><b>alkene/alkenes hub-id mismatch</b> breaks progress tracking on the flagship hub (see P2).</li>
+        <li>Mastery Dashboard counts only 10 of 18 hubs; three hub lists disagree; "Mark mastered" bars appear on only 5 hubs.</li>
+        <li>"Predict the step" is built for only 3 of 14 mechanisms; a dead "coming soon" lock path; README documents a stale 12-hub model and wrong localStorage namespace.</li>
+      </ul>
+    </div>
+
+    <!-- QR -->
+    <div class="card rail rail-qr">
+      <h3><span class="eng eng-qr">Quantitative Reasoning</span>995 KB engine &middot; Wave-1 6-feature build</h3>
+      <div class="mini-h ok">Working</div>
+      <ul>
+        <li>The strongest recent build: cross-loaded 22-item diagnostic with weighted-skill mastery, a 30-chunk Pattern Library with spaced retrieval, Productive Failure stages, a Friday mini-mock, pacing tiers with calculator telemetry, and a "Calculator Tax" mode.</li>
+        <li>Sarah-mode summary + item-anchored notes make it usable as a tutor-in-the-loop tool. All 10 embedded drill widgets exist and resolve.</li>
+      </ul>
+      <div class="mini-h work">Needs attention</div>
+      <ul>
+        <li><b>34 placeholder "trick" cards</b> awaiting Sarah's real lines (visible to students).</li>
+        <li>Off the shared design system (own tokens, no shared shell) — a known pending migration.</li>
+        <li>Cited research dirs W2/W3 are empty (never committed).</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ ROOT ============ -->
+  <section id="root">
+    <h2><span class="num">04</span>Root pages &amp; product framing</h2>
+    <p class="lead">The hub and the test-week layer that wrap the engines.</p>
+    <div class="card">
+      <div class="mini-h ok">Working</div>
+      <ul>
+        <li><b>The hub (<code>ace-labs.html</code>) resolves cleanly</b> — every engine tile, companion tile, and CTA points to a real file. Root <code>/</code> rewrites to it correctly via <code>_redirects</code>.</li>
+        <li><b>Prometric runner</b> is a complete 3-test cross-section engine (140 Q each: 40 Bio / 30 GC / 30 OChem / 40 QR) with real Prometric mechanics — nav panel, mark-for-review, periodic table, calculator, per-section review.</li>
+        <li><code>diagnostic.html</code> and the 80 KB <code>cheat-sheets.html</code> are full, content-rich pages wired into the test-week flow. No TODO/lorem/"coming soon" markers anywhere in the root pages.</li>
+        <li>The scope/evidence page is well-built and degrades gracefully if its data module fails to load.</li>
+      </ul>
+      <div class="mini-h work">Needs attention</div>
+      <ul>
+        <li><b>"5 fixed tests"</b> on the hub vs the real 3 (see P1) — the headline inconsistency.</li>
+        <li><code>scope.html</code> orphaned; <code>for-retakers.html</code> links to the redirected <code>unified-mock.html</code>; README stale (see P3).</li>
+        <li><code>unified-mock.html</code> is complete but intentionally 301-redirected to the Prometric runner on deploy — effectively dead, fine to leave or retire.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ USE ============ -->
+  <section id="use">
+    <h2><span class="num">05</span>What this tool should be best used as</h2>
+    <p class="lead">All four agents converged on the same answer, and it matches the product's own honest copy.</p>
+
+    <div class="callout">
+      <p class="k">The role</p>
+      <p>A <b>supplemental, science-section repair lab and pacing rehearsal</b> — used <em>alongside</em> a primary resource (Bootcamp / Booster / Anki), and ideally <em>inside a tutoring session</em>. It is deliberately not a primary course, not a full DAT (no PAT, no RC yet), and — correctly — not a score predictor.</p>
+    </div>
+
+    <div class="twocol">
+      <div class="card rail rail-gold">
+        <h3 style="font-size:18px">Lean into this</h3>
+        <ul>
+          <li><b>Repair specific misconceptions</b> through hand-built interactives — the strongest asset, especially Bio Cell/Genetics/Physiology and OChem mechanisms.</li>
+          <li><b>Diagnose where to start</b> — the per-engine diagnostics route every miss to a repair node and a spaced-retrieval deck, framed as signal, not a grade.</li>
+          <li><b>Train recognition and pacing</b> — QR's Pattern Library and Calculator Tax, and the Prometric runner as a covered-section pacing rehearsal.</li>
+          <li><b>Tutor-in-the-loop</b> — Sarah-mode notes and coach edit-mode make it a live-session companion, which is the real moat.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3 style="font-size:18px">Don't oversell it as</h3>
+        <ul>
+          <li><b>A question-volume grinder</b> — it concedes it can't beat Bootcamp/Booster on count; in-node Bio retrieval is incomplete.</li>
+          <li><b>A full DAT simulation</b> — PAT is out of scope, RC is only researched, and the mocks cover 2 sections, not the whole exam.</li>
+          <li><b>"The trick" content engine</b> — yet — until the 94 GC + 34 QR coach cards are authored, that layer is honest placeholder.</li>
+          <li><b>A score forecaster</b> — by design. That language is being actively removed; the hub's stale claims are the cleanup still to finish.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    Generated 2026-05-27 from a four-part parallel read of the Ace Labs working tree. Internal document — kept under <code>docs/</code> so it is not served by the Netlify deploy. Findings cite specific files and line numbers; spot-check before acting on the P2/P3 items, as line numbers shift as the tree changes.
+  </footer>
+
+</div>
+</body>
+</html>

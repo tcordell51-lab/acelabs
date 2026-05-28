@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ace Labs — Pedagogy Review (2026-05-27)</title>
+<style>
+  :root{
+    --bg:#0d0d0f; --bg2:#141417; --card:#191920; --card2:#1f1f28;
+    --line:#2a2a33; --line2:#34343f;
+    --ink:#ece9e1; --ink2:#b6b3aa; --ink3:#838079;
+    --gold:#C9A84C; --gold-dim:#8a7636;
+    --bio:#5bba7d; --gc:#5b9bd5; --ochem:#a87dd5; --qr:#d56b97;
+    --green:#5bba7d; --amber:#d8a23c; --red:#dd6450; --neutral:#7e7b87;
+    --radius:14px;
+    --serif:Georgia,'Times New Roman',serif;
+    --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.62;font-size:16px;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1000px;margin:0 auto;padding:0 22px 120px}
+
+  header.top{border-bottom:1px solid var(--line);background:linear-gradient(180deg,#101014,#0d0d0f);padding:46px 0 34px;margin-bottom:8px}
+  header.top .wrap{padding-bottom:0}
+  .brand{font-size:12px;letter-spacing:.32em;text-transform:uppercase;color:var(--gold);font-weight:600}
+  h1{font-family:var(--serif);font-weight:600;font-size:40px;line-height:1.12;margin:14px 0 10px;letter-spacing:-.01em}
+  h1 em{color:var(--gold);font-style:italic}
+  .sub{color:var(--ink2);font-size:17px;max-width:74ch;margin:0}
+  .meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+  .meta .tag{font-size:12px;color:var(--ink2);border:1px solid var(--line2);border-radius:999px;padding:5px 12px;background:var(--bg2)}
+  .meta .tag b{color:var(--ink)}
+  nav.toc{display:flex;flex-wrap:wrap;gap:8px;margin:30px 0 8px}
+  nav.toc a{font-size:13px;color:var(--ink2);text-decoration:none;border:1px solid var(--line);padding:6px 13px;border-radius:8px;background:var(--bg2);transition:.15s}
+  nav.toc a:hover{color:var(--ink);border-color:var(--gold-dim)}
+
+  section{margin-top:46px;scroll-margin-top:20px}
+  h2{font-family:var(--serif);font-size:26px;font-weight:600;margin:0 0 6px;letter-spacing:-.01em}
+  h2 .num{color:var(--gold);font-size:15px;font-family:var(--sans);font-weight:700;margin-right:10px;letter-spacing:.05em}
+  h3{font-family:var(--serif);font-size:20px;font-weight:600;margin:18px 0 6px}
+  .lead{color:var(--ink2);margin:0 0 22px;max-width:74ch}
+
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px 24px;margin:16px 0;position:relative;overflow:hidden}
+  .card.rail{padding-left:26px}
+  .card.rail::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--gold)}
+  .rail-bio::before{background:var(--bio)} .rail-gc::before{background:var(--gc)}
+  .rail-ochem::before{background:var(--ochem)} .rail-qr::before{background:var(--qr)}
+  .rail-gold::before{background:var(--gold)}
+  .eng{font-family:var(--sans);font-size:11px;letter-spacing:.2em;text-transform:uppercase;font-weight:700;display:block;margin-bottom:6px}
+  .eng-bio{color:var(--bio)} .eng-gc{color:var(--gc)} .eng-ochem{color:var(--ochem)} .eng-qr{color:var(--qr)}
+
+  .pill{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;padding:3px 9px;border-radius:6px;border:1px solid transparent;vertical-align:middle}
+  .p-block{background:rgba(221,100,80,.14);color:#f0a193;border-color:rgba(221,100,80,.35)}
+  .p-work{background:rgba(216,162,60,.14);color:#e6bd72;border-color:rgba(216,162,60,.34)}
+  .p-ok{background:rgba(91,186,125,.14);color:#86d3a3;border-color:rgba(91,186,125,.34)}
+  .p-info{background:rgba(126,123,135,.16);color:#b0adb8;border-color:rgba(126,123,135,.4)}
+
+  code{font-family:'SF Mono',ui-monospace,Menlo,monospace;font-size:.85em;background:var(--bg2);border:1px solid var(--line);border-radius:5px;padding:1px 6px;color:#d9d4c4}
+  ul{margin:8px 0;padding-left:20px} li{margin:6px 0;color:var(--ink2)}
+  li b{color:var(--ink)}
+  .twocol{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:760px){.twocol{grid-template-columns:1fr}}
+
+  .scorecard{display:grid;grid-template-columns:80px 1fr 90px;gap:10px;align-items:center;padding:8px 0;border-top:1px solid var(--line)}
+  .scorecard:first-child{border-top:none}
+  .scorecard .eng-name{font-family:var(--serif);font-weight:600;font-size:15px}
+  .bar{height:8px;background:var(--bg2);border-radius:4px;overflow:hidden;position:relative}
+  .bar > span{display:block;height:100%;background:linear-gradient(90deg,var(--gold-dim),var(--gold))}
+  .bar.bio > span{background:linear-gradient(90deg,#3a7a4f,var(--bio))}
+  .bar.gc > span{background:linear-gradient(90deg,#3a6694,var(--gc))}
+  .bar.ochem > span{background:linear-gradient(90deg,#6e4d96,var(--ochem))}
+  .bar.qr > span{background:linear-gradient(90deg,#9b4b6d,var(--qr))}
+  .score{font-family:var(--serif);font-weight:700;color:var(--gold);text-align:right;font-size:15px}
+
+  .bug{display:flex;gap:16px;padding:16px 0;border-top:1px solid var(--line)}
+  .bug:first-child{border-top:none}
+  .bug .where{flex:0 0 230px;font-family:'SF Mono',ui-monospace,Menlo,monospace;font-size:12px;color:var(--ink3);line-height:1.45}
+  .bug .where .tag{color:var(--gold);display:block;font-family:var(--sans);font-size:11px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px;font-weight:700}
+  .bug .desc{flex:1;min-width:0}
+  .bug .desc .t{font-weight:600;color:var(--ink);margin:0 0 4px;font-size:15px}
+  .bug .desc p{margin:4px 0 0;color:var(--ink2);font-size:14px}
+  @media(max-width:760px){.bug{flex-direction:column;gap:6px}.bug .where{flex:0 0 auto}}
+
+  .quote{border-left:3px solid var(--gold-dim);padding:8px 14px;color:var(--ink2);background:var(--bg2);border-radius:0 6px 6px 0;margin:10px 0;font-size:14.5px}
+  .quote.bad{border-left-color:var(--red)}
+  .quote.good{border-left-color:var(--green)}
+  .quote em{color:var(--ink3);font-style:normal;font-size:12px;display:block;margin-top:4px;letter-spacing:.05em;text-transform:uppercase}
+
+  .callout{background:linear-gradient(180deg,rgba(201,168,76,.07),rgba(201,168,76,.02));border:1px solid var(--gold-dim);border-radius:var(--radius);padding:20px 24px;margin:18px 0}
+  .callout .k{font-family:var(--serif);font-size:18px;color:var(--gold);margin:0 0 6px}
+  .callout p{margin:0;color:var(--ink)}
+
+  .mini-h{font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;margin:18px 0 6px;color:var(--ink3)}
+  .mini-h.ok{color:var(--green)} .mini-h.work{color:var(--amber)} .mini-h.bad{color:var(--red)}
+
+  table{width:100%;border-collapse:collapse;margin:12px 0;font-size:14px}
+  th,td{text-align:left;padding:11px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);font-weight:700}
+  td{color:var(--ink2)} td b{color:var(--ink)}
+  tr:last-child td{border-bottom:none}
+
+  pre.snippet{background:#0a0a0d;border:1px solid var(--line);border-radius:8px;padding:14px 16px;font-family:'SF Mono',ui-monospace,Menlo,monospace;font-size:12.5px;color:#cfcbbf;overflow-x:auto;line-height:1.55;margin:10px 0}
+  pre.snippet .add{color:#86d3a3} pre.snippet .del{color:#f0a193}
+  pre.snippet .cm{color:var(--ink3)}
+
+  footer{margin-top:60px;padding-top:24px;border-top:1px solid var(--line);color:var(--ink3);font-size:13px}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <div class="brand">Ace Labs &middot; Content &amp; Pedagogy Review</div>
+    <h1>How it teaches —<br><em>where the science is loose and where the teaching breaks</em></h1>
+    <p class="sub">Four parallel reviewers, one per engine, each working in the combined voice of a PhD subject expert and a veteran DAT tutor. They sampled questions, distractors, explanations, mechanism narration, interactive scaffolds, diagnostics, and the spaced-retrieval design. This document is the synthesis — cross-cutting patterns, must-fix bugs, per-engine critiques, and an actionable plan to lift the teaching from "above market" to "the best in this category."</p>
+    <div class="meta">
+      <span class="tag">Date <b>2026-05-27</b></span>
+      <span class="tag">Companion to <b>State of the build</b></span>
+      <span class="tag">Scope <b>Content + teaching only</b></span>
+      <span class="tag">Method <b>4 expert reviewers, parallel</b></span>
+    </div>
+    <nav class="toc">
+      <a href="#tldr">Scorecard</a>
+      <a href="#patterns">Seven patterns</a>
+      <a href="#bugs">Must-fix bugs</a>
+      <a href="#bio">Bio</a>
+      <a href="#gc">Gen Chem</a>
+      <a href="#ochem">OChem</a>
+      <a href="#qr">QR</a>
+      <a href="#playbook">Active-learning playbook</a>
+      <a href="#order">What to author first</a>
+    </nav>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- ============ TLDR ============ -->
+  <section id="tldr">
+    <h2><span class="num">00</span>The honest scorecard</h2>
+    <p class="lead">All four engines are noticeably above the typical self-built DAT-prep market. None is at "the definitive tool" yet — and the gap to that is mostly authoring and assessment design, not infrastructure.</p>
+
+    <div class="card">
+      <div class="scorecard"><div class="eng-name" style="color:var(--bio)">Biology</div>
+        <div class="bar bio"><span style="width:80%"></span></div><div class="score">8.0 / 10</div></div>
+      <div class="scorecard"><div class="eng-name" style="color:var(--gc)">Gen Chem</div>
+        <div class="bar gc"><span style="width:78%"></span></div><div class="score">7.8 / 10</div></div>
+      <div class="scorecard"><div class="eng-name" style="color:var(--ochem)">Organic Chem</div>
+        <div class="bar ochem"><span style="width:85%"></span></div><div class="score">8.5 / 10</div></div>
+      <div class="scorecard"><div class="eng-name" style="color:var(--qr)">QR</div>
+        <div class="bar qr"><span style="width:82%"></span></div><div class="score">8.2 / 10</div></div>
+    </div>
+
+    <div class="callout">
+      <p class="k">The headline pattern</p>
+      <p>Across all four engines, the same shape recurs: <b>architecture and pedagogical structure are tutor-grade; question-bank execution and active-learning depth lag behind</b>. The system <em>knows</em> how to teach — the bug is that too many surfaces still tell instead of make the student do. Fix the bank-level execution and the engine moves from "the most thoughtful DAT prep on the market" to the genuinely-best-in-class.</p>
+    </div>
+  </section>
+
+  <!-- ============ PATTERNS ============ -->
+  <section id="patterns">
+    <h2><span class="num">01</span>Seven patterns that recur in every engine</h2>
+    <p class="lead">These are the cross-cutting findings — fix any one of them in one engine and you have a template for fixing it in the other three.</p>
+
+    <div class="twocol">
+
+      <div class="card">
+        <h3>1. Recognition dressed up as retrieval</h3>
+        <p style="color:var(--ink2);margin:6px 0 0">Retrieval cards re-state the explanation paragraph immediately above. The Bio gastrulation node teaches "heart from mesoderm" in coach notes, then asks "heart and skeletal muscle derive from?" 30 lines later. QR Pattern Library asks "what fraction equals 0.625?" instead of "0.625 × 24 = ?". This is recognition, not transfer — and the DAT tests transfer.</p>
+      </div>
+
+      <div class="card">
+        <h3>2. "Then magic" worked examples</h3>
+        <p style="color:var(--ink2);margin:6px 0 0">Worked examples advertised as step-by-step are often 2-3 lines of bullet points with a one-phrase "why." GC's Gibbs keystone worked example is <em>one</em> bullet: "(−,+) → always." OChem mechanisms outside the three predict-the-step ones can be skimmed Next-Next-Next with no commit. The reasoning chain is asserted, not modeled.</p>
+      </div>
+
+      <div class="card">
+        <h3>3. Distractors that don't teach</h3>
+        <p style="color:var(--ink2);margin:6px 0 0">Many wrong-answer diag fields are single-word stubs: "Off.", "Wrong.", "Reversed." A student who picks that answer learns nothing about <em>which</em> misconception they fell into. GC has hundreds of these; Bio has them in the mock; even OChem's strong items have a few throwaways. Every "Off." is a missed teaching moment.</p>
+      </div>
+
+      <div class="card">
+        <h3>4. Mechanism without the "why it has to be this way"</h3>
+        <p style="color:var(--ink2);margin:6px 0 0">Bio teaches polymerase only adds to 3'-OH without explaining the dNTP triphosphate energy that <em>forces</em> the rule. The loop-of-Henle node teaches limb-by-limb permeability without ever explaining countercurrent multiplication, which is the whole point. The Bohr effect explains rightward shift without why hemoglobin evolved that allostery. Mechanism becomes memorized when it should be inevitable.</p>
+      </div>
+
+      <div class="card">
+        <h3>5. Diagnostics with silent skills</h3>
+        <p style="color:var(--ink2);margin:6px 0 0">The Bio Pulse Check covers 24 nodes, leaving most of physiology and devo unprobed. GC's 25-item diagnostic ignores 8 modules including IMFs, hybridization, calorimetry, colligative, titration. QR's diagnostic never probes <em>any</em> of the Productive-Failure-eligible modules (mixture, work-rate, p-cond, harm, interest). Students get routed into PF on topics the diagnostic literally has no signal on.</p>
+      </div>
+
+      <div class="card">
+        <h3>6. Calibration too flat for the top scorers</h3>
+        <p style="color:var(--ink2);margin:6px 0 0">Difficulty hovers at DAT 19-21 across mocks. A 40-question bank at one difficulty does not differentiate a 20 from a 24. The DAT's hardest items are stratified — multi-step transfer, figure/graph reading, integration across two science sections. None of the mocks currently have figure/table items.</p>
+      </div>
+
+      <div class="card" style="grid-column:1/-1">
+        <h3>7. The killer feature exists in one place — and is missing everywhere else</h3>
+        <p style="color:var(--ink2);margin:6px 0 0">Each engine has at least one piece of <em>genuinely best-in-market</em> pedagogy that nothing else in the build replicates. OChem's <b>predict-the-step</b> (commit-before-reveal) on SN2/EAS/acetal is the highest-evidence active-learning move in the whole product — implemented for 3 of 14 mechanisms. QR's <b>pacing-sim Two-Pass Drill</b> forces 5 skips per session — implemented in an orphan iframe, not on the main page. Bio's <b>misconception-tagged repair patterns</b> are the cleanest design — but the diag fields don't tag back to them. GC's <b>misconception taxonomy</b> has 77 entries but no item references them. <b>The patterns work; the wiring across the rest of the engine doesn't exist yet.</b></p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============ BUGS ============ -->
+  <section id="bugs">
+    <h2><span class="num">02</span>Must-fix content bugs</h2>
+    <p class="lead">These are not stylistic gripes. Each one teaches the wrong content or breaks an explanation panel. Listed by file:line for direct action.</p>
+
+    <div class="card">
+
+      <div class="bug">
+        <div class="where"><span class="tag">OChem</span>tools/ochem/index.html:10776<br>tools/ochem/index.html:10808</div>
+        <div class="desc">
+          <p class="t">Hydroboration Frame 1 — directional reversal <span class="pill p-block">teaches wrong chemistry</span></p>
+          <p>Step 1 narration says "B-H bond swings to the less hindered carbon (C1)." That's backwards. Boron goes to C1; H goes to C2 (the more substituted carbon). It's the entire point of anti-Markovnikov hydroboration, and the hub contradicts itself — Step 3 of the same mechanism says "Step 1 delivered H to C2." A careful student will catch the inconsistency. Fix both the narration and the SVG arrow label.</p>
+        </div>
+      </div>
+
+      <div class="bug">
+        <div class="where"><span class="tag">OChem</span>tools/ochem/index.html:12789</div>
+        <div class="desc">
+          <p class="t">SN1 Frame 2 typo silently breaks the most important explanation in the mechanism <span class="pill p-block">missing instruction</span></p>
+          <p><code>data-explace</code> should be <code>data-explain</code>. The narration that explains why SN1 racemizes (planar cation → 50/50 face attack) never renders in the explain panel. Animation still plays; the load-bearing prose is silently dead.</p>
+        </div>
+      </div>
+
+      <div class="bug">
+        <div class="where"><span class="tag">Gen Chem</span>tools/gc/index.html:5416</div>
+        <div class="desc">
+          <p class="t">Item <code>lr-e2</code> — explanation is incoherent author thinking-out-loud <span class="pill p-block">teaches wrong logic</span></p>
+          <p>The <code>why</code> field literally contains: <em>"H₂: 6/2 = 3 mol H₂O. O₂: 4/1 = 4 mol H₂O. H₂ limits → 6 mol H₂O? Wait recompute…"</em> The key is right (6 mol) but the prose contradicts itself. A student reads this and loses trust in the bank.</p>
+        </div>
+      </div>
+
+      <div class="bug">
+        <div class="where"><span class="tag">Gen Chem</span>tools/gc/index.html:5242</div>
+        <div class="desc">
+          <p class="t">Item <code>rp3</code> — diag for "Cannot tell" answers "Yes" <span class="pill p-block">contradictory feedback</span></p>
+          <p>Cu reducing Ag⁺. The answer key is "Yes" (correct=0). A student who picks "Cannot tell" reads the diag <em>"Yes."</em> — the correct answer they didn't pick — with no indication of why they're wrong.</p>
+        </div>
+      </div>
+
+      <div class="bug">
+        <div class="where"><span class="tag">Gen Chem</span>tools/gc/index.html:5303</div>
+        <div class="desc">
+          <p class="t">Item <code>x5</code> — leftover author note "(ignore part 2; just M)" in the stem <span class="pill p-work">student-visible</span></p>
+          <p>The DAT does not tell you to ignore part of a prompt. Cut the parenthetical.</p>
+        </div>
+      </div>
+
+      <div class="bug">
+        <div class="where"><span class="tag">Gen Chem</span>tools/gc/index.html:6551<br>(galvanic worked Q2)</div>
+        <div class="desc">
+          <p class="t">Cr(OH)₃ → CrO₄²⁻ balancing in basic solution lands with H⁺ on the wrong side <span class="pill p-work">method error</span></p>
+          <p>Either teach the alternate technique (balance as acid, then neutralize with OH⁻) or run the method properly to the end. Currently the worked example contradicts the method.</p>
+        </div>
+      </div>
+
+      <div class="bug">
+        <div class="where"><span class="tag">Gen Chem</span>tools/gc/index.html:5265<br>(<code>hb5</code> lock)</div>
+        <div class="desc">
+          <p class="t">Hybridization lock contradicts the keyed answer <span class="pill p-work">wrong rule</span></p>
+          <p>Lock text says "Period 3 cannot expand → no sp³d² for them." But Period 3 is exactly where d-orbital expansion is taught (S, P, Cl), and the keyed answer is sp³d² for XeF₄ (Period 5). The lock copy says the opposite of the answer.</p>
+        </div>
+      </div>
+
+      <div class="bug">
+        <div class="where"><span class="tag">Biology</span>tools/bio/bio-diagnostic.html:128</div>
+        <div class="desc">
+          <p class="t">Gastrulation diagnostic question is essentially wrong/ambiguous <span class="pill p-block">teaches wrong content</span></p>
+          <p>"Gastrulation produces the three germ layers in this order of formation" — there is no single canonical order across vertebrates. The keyed answer is amphibian-specific without the stem saying so, and it contradicts the engine's own teaching in <code>bio-devo.html</code>. Replace with a real DAT-style germ-layer item (e.g., which layer gives rise to the lining of the small intestine).</p>
+        </div>
+      </div>
+
+      <div class="bug">
+        <div class="where"><span class="tag">Biology</span>tools/bio/bio-diagnostic.html:115</div>
+        <div class="desc">
+          <p class="t">Cardiac action-potential question — the engine doesn't teach the topic <span class="pill p-work">orphan item</span></p>
+          <p>The plateau-phase question is asked, but <code>bio-physiology.html</code>'s action-potential node is entirely <em>neuronal</em>. Either build a cardiac-AP subsection on the cardiovascular node or pull the question.</p>
+        </div>
+      </div>
+
+      <div class="bug">
+        <div class="where"><span class="tag">QR</span>tools/qr/index.html<br>(grep "calc.*tax" → 0 hits)</div>
+        <div class="desc">
+          <p class="t">Calculator Tax is in the spec and the marketing copy — not in the code <span class="pill p-work">promised feature missing</span></p>
+          <p>MASTER_GAMEPLAN.md P1 Build 6 describes it; the mini-mock copy mentions "calculator opens = 8"; the Friday Mini-Mock iframe tracks <code>state.calcOpens</code> locally. But the master page has no opens logger, no tax toggle, no surfacing in the Sarah digest. Either ship it (the iframe code is most of the way there) or remove the references.</p>
+        </div>
+      </div>
+
+      <div class="bug">
+        <div class="where"><span class="tag">QR</span>tools/qr/index.html:9734<br>(<code>d10</code> secondaryAttribution)</div>
+        <div class="desc">
+          <p class="t">DINA-light scorer dings the wrong skill for a word-decode error <span class="pill p-work">mastery noise</span></p>
+          <p>"Sam has 3 more apples than twice Mia" — picking "3m+2" over "2m+3" is coefficient/constant swap, not a <code>lin-eq</code> error. The secondary attribution will silently lower <code>lin-eq</code> mastery for what is unambiguously a word-decode trap. Remove or re-tag.</p>
+        </div>
+      </div>
+
+      <div class="bug">
+        <div class="where"><span class="tag">OChem</span>tools/ochem/index.html:23302</div>
+        <div class="desc">
+          <p class="t">Exam-sim shuffle is biased <span class="pill p-info">methodology</span></p>
+          <p><code>.sort(() => Math.random() - 0.5)</code> is non-uniform — some items are systematically more likely to land in the top 20. Replace with Fisher-Yates. Pair with stratified topic sampling so the random draw matches DAT topic weighting.</p>
+        </div>
+      </div>
+
+      <div class="bug">
+        <div class="where"><span class="tag">OChem</span>tools/ochem/index.html:11700, :11717, :18054</div>
+        <div class="desc">
+          <p class="t">Decorative unicode glyphs violate the no-emojis rule <span class="pill p-info">house style</span></p>
+          <p>Checkmark, cross, and warning triangle in axial/equatorial chair labels and the alpha-condensation panel. Replace with text plus the existing red/green palette.</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============ BIO ============ -->
+  <section id="bio">
+    <h2><span class="num">03</span>Biology — content &amp; pedagogy</h2>
+    <p class="lead">Above the typical DAT-prep median for both content correctness and pedagogical structure. The weakness is assessment design and recognition-vs-transfer.</p>
+
+    <div class="card rail rail-bio">
+      <span class="eng eng-bio">Strengths to preserve</span>
+      <ul>
+        <li>The <b>Trap / Rule / Move triad</b> on every node is a real pedagogical innovation in this market. Most DAT prep is undifferentiated prose.</li>
+        <li>The <b>Coach notes</b> on Hardy-Weinberg, the immune cell summary, and the Bohr-effect respiratory writeup are tutor-quality field notes.</li>
+        <li>The <b>repair-pattern registry</b> (<code>bio-registry.js:147-196</code>) — 12 trap pairs each tied to a node — is exactly how a tutor thinks.</li>
+        <li>The <b>misses → Ace Cards pipeline</b> connects assessment to study time; the right spaced-retrieval architecture.</li>
+        <li><b>Build-mode interactives</b> (replication fork, mitosis scrubbers, cardiac cycle, fertilization stages) are real teaching tools, not decoration.</li>
+        <li>The <b>"Stuck? Take a beat" trigger</b> — anxiety-aware design that most DAT prep ignores entirely.</li>
+      </ul>
+
+      <span class="mini-h work">Pedagogical weaknesses</span>
+      <ul>
+        <li><b>Retrieval cards re-state the explanation paragraph immediately above</b> — the single biggest fix-it. Move them to a sibling page, disguise the stem, or force a free-text reflection step in between.</li>
+        <li><b>Mechanism without the "why it has to be this way."</b> Add a one-paragraph "Why this exists" block to every Tier-1 node: replication directionality (energy is in the incoming dNTP), loop-of-Henle (the medulla has to be hyperosmotic to make hypertonic urine), Bohr effect (the same proton that flags "work happening here" pries O₂ off).</li>
+        <li><b>The "Move" subcard is procedural without judgment.</b> Recipe-trained students freeze on a rotated figure or a circular plasmid. Each Move block needs a "what's the variable here?" check.</li>
+        <li><b>Build-mode tests sequencing, not consequences.</b> After the replication-fork drag-and-drop, follow with "if primase is missing, what's the first thing that breaks?" — that's the DAT-style transfer question.</li>
+      </ul>
+
+      <span class="mini-h work">DAT-fit issues</span>
+      <ul>
+        <li><b>Stems are textbook-quiz style, not DAT style.</b> DAT Bio stems are almost always scenario-bound: clinical vignette, experiment, graph, pedigree. Rewrite ~30% of mock items as scenarios.</li>
+        <li><b>Difficulty is too flat.</b> Stratify the mock as ~15 fundamentals, ~20 moderate, ~5 stretch with figure/table reading. Currently zero items require reading a figure.</li>
+        <li><b>The "fragile correct" mechanic is good in concept, broken in execution.</b> Self-report bias; no "slow but correct" flag; students can ignore confidence buttons entirely. Make confidence required to advance, add a calibration tab to results.</li>
+        <li><b>Mock distribution over-weights Cell, under-weights Genetics.</b> Bring Genetics to 10-12 items (~28%); shrink Cell to 10-12.</li>
+      </ul>
+
+      <span class="mini-h bad">High-yield DAT topics that are weak or missing</span>
+      <ul>
+        <li><b>Countercurrent multiplication</b> in the loop of Henle — taught limb-by-limb, never as a system. This is what the DAT actually tests.</li>
+        <li><b>End-replication problem and telomerase</b> — only mentioned in passing.</li>
+        <li><b>Restriction enzymes, PCR, gel electrophoresis</b> — completely absent. The DAT tests molecular techniques every test.</li>
+        <li><b>RAAS</b> (renin-angiotensin-aldosterone) — aldosterone alone is mentioned, never the upstream cascade.</li>
+        <li><b>Frank-Starling, lung volumes (TV, IRV, ERV, RV, VC, TLC)</b> — not taught.</li>
+        <li><b>Hormone classification cross-table</b> (steroid vs peptide vs amine + receptor type) — listed individually, never tabled.</li>
+        <li><b>Cori cycle and lactate metabolism</b> — what happens to pyruvate anaerobically and how lactate is recycled.</li>
+      </ul>
+
+      <div class="quote bad">"Insulin is secreted by the pancreas and acts to lower blood glucose by promoting cellular uptake."<em>Bio diagnostic — recall stem</em></div>
+      <div class="quote good">"After a high-carbohydrate meal, plasma glucose rises from 90 to 160 mg/dL. Which hormonal response best explains the return to baseline by 2 hours post-meal? (B) Insulin from β-cells, promoting GLUT4 translocation in muscle and adipose."<em>DAT-style rewrite — same fact, transfer required</em></div>
+    </div>
+  </section>
+
+  <!-- ============ GC ============ -->
+  <section id="gc">
+    <h2><span class="num">04</span>Gen Chem — content &amp; pedagogy</h2>
+    <p class="lead">One of the better self-built DAT GC engines. Architecture is unusually thoughtful (adaptive diagnostic, mastery path, pattern → worked → faded → independent → mastered, DAT-weighted mock, four solid companion tools). But the bank itself sits at DAT 19-21 calibration, not the 22-25 it is aimed at, and a half-dozen items have errors serious enough to teach the wrong thing.</p>
+
+    <div class="card rail rail-gc">
+      <span class="eng eng-gc">Strengths to preserve</span>
+      <ul>
+        <li>The <b>colligative module</b> is the best-written content in the engine — distractors that name the specific misconception ("you used i = 3, which is CaCl₂, not NaCl"). Template for the rest.</li>
+        <li><b>VSEPR polarity decision tree</b> — pedagogically excellent: "B3 — linear/tetrahedral/trigonal planar, symmetric" distractors that teach the cancellation principle.</li>
+        <li><b>Recognition Lab</b> with 9-second timer and hand-authored SVGs for reaction coordinates, integrated rate-law plots, Q vs K bar charts. Real pattern-recognition training.</li>
+        <li><b>Lewis Sandbox</b> per-molecule <code>commonTrap</code> field ("students see four hydrogens and assume CH₄ must be polar"). 18 molecules, 5-stage builder.</li>
+        <li><b>SIM_TOPIC_WEIGHTS</b> well-calibrated to ADA distributions — stoich 17%, gas laws 6%, acid-base 12%, equilibrium 7%, thermo 10%, electrochem 7%, quantum 2%. Don't drift.</li>
+        <li><b>Pre-answer confidence rating in the diagnostic</b> — captured before correctness is revealed, much harder to game than post-answer.</li>
+      </ul>
+
+      <span class="mini-h work">Pedagogical weaknesses</span>
+      <ul>
+        <li><b>Worked examples for keystone Tier-1 modules are one-bullet reveals.</b> Gibbs worked Q1 in full: <code>{what:'(−,+) → always', why:'Both terms drive ΔG negative.'}</code> Expand <code>buffers</code>, <code>gibbs</code>, <code>entropy</code>, <code>rate-laws</code> to 5+ steps with a mid-stream <code>predict:</code> challenge.</li>
+        <li><b>The 77-entry misconception taxonomy is unweaponized.</b> Items don't tag <code>misconceptionIds</code>, so the system can never say "your dominant misconception cluster is <code>eq.lechat.heat-as-reactant</code>." Add the tags. Backfill the top 100 most-missed items first.</li>
+        <li><b>Many "coach tricks" aren't tricks.</b> "Reverse → flip sign" is a fact. A trick answers <em>what do I do when stuck?</em>, <em>what's the no-calc shortcut?</em>, or <em>what's the trap I should sanity-check against?</em> Use <code>vsepr</code>'s "all same, no LP" and <code>ph-basics</code>'s "pH ≈ n − log(a)" as templates.</li>
+        <li><b>The "Off." / "Wrong." stub diag problem</b> — hundreds of wrong-answer explanations are single-word. Equilibrium, buffer/titration, and galvanic/Nernst are the highest-priority cleanups because the wrong choice almost always corresponds to a named misconception.</li>
+      </ul>
+
+      <span class="mini-h work">DAT-fit issues</span>
+      <ul>
+        <li><b>No-calculator preparedness is uneven.</b> Several diff=3 items require calculator-grade arithmetic: <code>ks-h1</code> takes ∛(2.75×10⁻¹³), <code>x8</code> requires Arrhenius two-T logarithms. Sweep every diff=3 item for 90-second no-calc solvability.</li>
+        <li><b>Estimation as a skill is missing.</b> No module teaches the tutor toolbox: log 2 ≈ 0.3, log 3 ≈ 0.48, "tenths of a pH unit per factor-of-2," "1 atm·L = 100 J." Build a Tier-3 "No-calc shortcuts" module — would be a real differentiator.</li>
+        <li><b>Mastery gate is 3-in-a-row from a small pool.</b> For conceptual skills (Q vs K, Le Châtelier, buffer direction), this rewards item-pattern-matching. Mix in at least one cross-skill item per mastery probe.</li>
+      </ul>
+
+      <span class="mini-h bad">High-yield DAT topics that are weak or missing</span>
+      <ul>
+        <li><b>Solubility rules + net ionic equations + spectator ions</b> — not a module. The DAT tests this consistently.</li>
+        <li><b>Oxidation-state assignment drill</b> (Mn in MnO₄⁻, S in S₂O₃²⁻, Cr in Cr₂O₇²⁻) — one worked example exists; needs 2-3 drill items.</li>
+        <li><b>Electrochemistry concentration cells, half-life chained problems, phase-diagram point identification</b> — under-built relative to DAT frequency.</li>
+        <li><b>Eight diagnostic-silent skills</b> — IMFs, hybridization, calorimetry, electrolysis, heating curves, colligative, titration, red-pot — never probed. Add one item each to the diagnostic.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ OCHEM ============ -->
+  <section id="ochem">
+    <h2><span class="num">05</span>Organic Chem — content &amp; pedagogy</h2>
+    <p class="lead">The strongest single-file hand-authored DAT OChem learning surface the reviewer has read. The pedagogical architecture is best-in-class; the gaps are bank coverage (no MCQs in stereo / nomenclature / spec / lab-techniques) and the predict-the-step coverage (3 of 14 mechanisms).</p>
+
+    <div class="card rail rail-ochem">
+      <span class="eng eng-ochem">Strengths to preserve</span>
+      <ul>
+        <li><b>Tier 1/2/3 collapse discipline.</b> Hides depth behind <code>&lt;details&gt;</code>, surfaces only DAT-essential at Tier 1. The right architecture for a recognition-heavy 30-Q/30-min exam.</li>
+        <li><b>Mechanism animations explain WHY, not just what.</b> "The leaving group leaves because…", "the nucleophile attacks because…" — consistent causal language across SN1, EAS-nitration, acetal, imine. Highest-leverage move in the engine.</li>
+        <li><b>Predict-the-step on SN2 / EAS / acetal.</b> Commit-before-reveal active learning; the EAS Q3 ("Why is H₂SO₄ catalytic?") tests a <em>concept</em> not a step. Model implementations.</li>
+        <li><b>CARDIO 5-factor pKa decision walk.</b> Replaces 30-value memorization with transfer-quality reasoning.</li>
+        <li><b>Alpha-condensation "Boss Plate"</b> — "8 reactions, one skeleton, only the electrophile varies." Best-in-class meta-organization for a chapter students chronically silo.</li>
+        <li><b>Lab techniques as a real DAT topic</b> — Tollens, Fehling, iodoform, AgNO₃, Br₂/CCl₄, Jones, each with a micro-experiment and trap callout. The part most prep tools botch is built correctly here.</li>
+        <li><b>Carbocation-rearrangement trap</b> in E1 is taught with a worked 1,2-H shift — high-yield DAT content done right.</li>
+      </ul>
+
+      <span class="mini-h work">Pedagogical weaknesses</span>
+      <ul>
+        <li><b>Predict-the-step covers 3 of 14 mechanisms.</b> The other 11 can be skimmed Next-Next-Next. Build the next five in priority order:
+          <ol style="margin-top:6px">
+            <li><b>SN1</b> — racemization is the unique teach; contrast partner to SN2.</li>
+            <li><b>E2</b> — anti-periplanar geometry + bulky-base Hofmann override.</li>
+            <li><b>E1 dehydration</b> — predict the 1,2-hydride shift before elimination.</li>
+            <li><b>Imine</b> — pH 4-5 bell curve, the unique DAT imine question.</li>
+            <li><b>Aldol</b> — enolate attack site + heat-driven E1cb dehydration.</li>
+          </ol>
+        </li>
+        <li><b>Pattern-matching shortcut creep.</b> Diels-Alder callout teaches "count double bonds in the product" without the <em>why</em>. Add a one-line tail: "because alkene = 1 π in, alkyne = 2 π in, and only the diene's two π become the new σ bonds."</li>
+        <li><b>Retrosynthesis is offered but barely taught as a skill.</b> The reagent predictor has a retro mode; the synthesis-lab is forward-multi-step. Neither walks the student through the disconnection logic ("for a 1,3-dicarbonyl, disconnect at the α,β-bond"). Highest-yield mid-to-late DAT skill, underserved.</li>
+      </ul>
+
+      <span class="mini-h work">DAT-fit issues</span>
+      <ul>
+        <li><b>Exam-sim has zero stereo, zero nomenclature, zero mass-spec, zero lab-techniques MCQs.</b> Despite gorgeous hubs for all four. Even if the exam-sim sampling were stratified, those buckets are empty.</li>
+        <li><b>Exam-sim sampling is uniform random + biased shuffle</b> — not weighted by DAT topic distribution. Adding stratification is half a day's work and a real win.</li>
+        <li><b>Per-hub breakdown shows "No data" on most hubs in any 20-question pull</b> — students get told their weakest hub is the one they didn't see. Stratify with at least 1 from each hub.</li>
+        <li><b>Aromatic Q1 oversimplifies ortho/para statistics.</b> "Para usually dominant" — actually for toluene nitration ortho wins numerically (~58:38). Tighten the explanation.</li>
+      </ul>
+
+      <span class="mini-h bad">Bank gaps to fill (priority order)</span>
+      <ol>
+        <li>5 stereo MCQs (R/S, meso, E/Z, enantiomer-vs-diastereomer, optical activity).</li>
+        <li>5 IR MCQs + 5 NMR MCQs (splitting/integration, match-the-spectrum).</li>
+        <li>5 mass-spec MCQs (M+2 Cl/Br, McLafferty, base-peak, fragment-loss).</li>
+        <li>5 lab-techniques MCQs (extraction logic, TLC Rf, qual-test ID, distillation choice).</li>
+        <li>5 nomenclature MCQs (spiro, bicyclic, E/Z, lowest-locant, multi-functional-group priority).</li>
+        <li>Grignard + protic functional group trap, NaBH₄ vs LiAlH₄ scope, crossed aldol with benzaldehyde, Sandmeyer/diazonium.</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ============ QR ============ -->
+  <section id="qr">
+    <h2><span class="num">06</span>QR — content &amp; pedagogy</h2>
+    <p class="lead">A tutor-aware engine, not a generic question bank. The Sarah-mode summary, the right-subset Productive Failure scaffolds, the pacing-sim Two-Pass Drill, and the calculator-feasibility framing on <code>exps</code> are pedagogically real. The bugs are coverage holes and a few "pattern" labels on features that aren't actually patterns.</p>
+
+    <div class="card rail rail-qr">
+      <span class="eng eng-qr">Strengths to preserve</span>
+      <ul>
+        <li><b>The Sarah summary digest</b> (6-row builder) compresses what a tutor would otherwise scroll logs for. Real workflow compression.</li>
+        <li><b>5 of 8 Productive Failure problems are genuine PF</b> — <code>mixture</code>, <code>work-rate</code>, <code>harm</code>, <code>p-cond</code>, <code>count-pc</code>. Distractors map to canonical misconceptions; the <code>youDid</code> block diagnoses which trap; the reveal contrasts failed approaches against the canonical move.</li>
+        <li><b>The pacing-sim Two-Pass Drill</b> (proposals/agent-08-pacing) <em>forces</em> 5 skips per pass-1, throttled coach-whisper recommendations, lift-from-guessing debrief. Genuinely teaches the skip move; doesn't just measure it.</li>
+        <li><b>Calculator-feasibility on <code>exps</code></b> ("Can I plug this directly into the on-screen DAT calculator? Only square root, no exponent button. Rewrite until you can.") A+ thinking — exactly the right pedagogy for a 4-function-calculator test.</li>
+        <li><b>Pre-answer confidence rating</b> in the diagnostic — much harder to game than post-answer ratings.</li>
+        <li><b>DINA-light scorer + Laplace smoothing + pruneDescendants</b> — real psychometric thinking, not weight-the-misses heuristics.</li>
+      </ul>
+
+      <span class="mini-h work">Pedagogical weaknesses</span>
+      <ul>
+        <li><b>Pattern Library recognition prompts are surface-feature lookups.</b> "What fraction equals 0.625?" trains the dictionary; what you want trained is "0.625 × 24 = ?" in the middle of a stem. Drop the recognition prompts on the fraction-decimal chunks and double the generation drills.</li>
+        <li><b>3 of 8 PF problems aren't really PF.</b> <code>discr</code> (student needs the formula <em>before</em> they can productively fail), <code>interest</code> (gap is declarative not procedural), <code>zscore</code> (only one attack plan exists). Convert to instruction-first with "you'll fall into one of these three traps if you rush" framing.</li>
+        <li><b>Confidence data is collected but only half-used.</b> The bucket scorer uses <code>confWrong</code> as a penalty; the new DINA-light scorer ignores confidence entirely. Two parallel scorers, one signal — pick a path.</li>
+        <li><b>The "specific answer is more likely correct" guessing heuristic</b> at <code>index.html:5629</code> is unsupported testlore. Drop or restrict to "if you've ruled out two and the remaining two differ by an order of magnitude, pick the one matching your ballpark."</li>
+      </ul>
+
+      <span class="mini-h work">DAT-fit issues</span>
+      <ul>
+        <li><b>Mental-math estimation as a meta-skill is not trained.</b> Estimation should be the <em>check</em> on every chunk output ("0.625 &gt; 1/2, so the answer to 0.625 × 24 should be &gt; 12"). Append a "ballpark check" Sarah trick to every Pattern Library chunk.</li>
+        <li><b>Distractors are too clean.</b> Friday Mini-Mock Q22 (rectangle area = 72) offers <code>[64, 81, 48]</code> — the DAT would offer <code>[60, 72, 84, 90]</code> specifically to punish eyeballing. Add 1-2 ballpark-trap distractors per skill area.</li>
+        <li><b>Stem variety</b> — pct-change items repeatedly use $ framing. Diversify (recipe scaling, dilution, lab dilutions).</li>
+      </ul>
+
+      <span class="mini-h bad">Bank gaps to fill</span>
+      <ul>
+        <li><b>Trig is essentially missing as a module.</b> Three Pattern-Library values exist; SOHCAHTOA, sin²+cos²=1, inverse trig "what angle gives sin=1/2," unit-circle quadrant signs — none. Add a Tier-2 module.</li>
+        <li><b>Geometry formula bank is thin.</b> No parallelogram, no trapezoid, no cylinder/cone/sphere SA-and-V table. Inflate <code>geo-2d</code> and <code>vol-sa</code>.</li>
+        <li><b>Data interpretation from charts/tables is absent.</b> Real DAT QR has it; the engine has no chunk or module. Wave-2 add at minimum.</li>
+        <li><b>Probability without replacement</b> — mentioned once, never drilled. Add a chunk.</li>
+        <li><b>Diagnostic doesn't probe any Tier-2 PF-eligible module</b> (mixture, work-rate, p-cond, harm, interest). Six items closes the hole.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ PLAYBOOK ============ -->
+  <section id="playbook">
+    <h2><span class="num">07</span>The active-learning playbook</h2>
+    <p class="lead">Six moves that already exist somewhere in the product and should be promoted to canon across all four engines.</p>
+
+    <table>
+      <thead><tr><th style="width:25%">Pattern</th><th style="width:32%">Where it already works</th><th>Promote it to</th></tr></thead>
+      <tbody>
+        <tr><td><b>Commit-before-reveal</b><br>(predict, then see)</td><td>OChem predict-the-step on SN2 / EAS / acetal</td><td>All 14 OChem mechanisms (priority five listed in §05); every Tier-1 GC worked example via the <code>predict:</code> mid-stream hook; every Bio interactive (drag → predict → reveal)</td></tr>
+        <tr><td><b>Pre-answer confidence capture</b><br>(uncalibratable by review)</td><td>GC and QR diagnostics</td><td>Bio Pulse Check + Weakness Scan; OChem exam-sim. Make required to advance. Add a calibration grid to results showing cold/narrowed/guessed accuracy bands.</td></tr>
+        <tr><td><b>Misconception-tagged distractors</b><br>(name the trap)</td><td>GC <code>colligative</code> module ("you used i = 3, which is CaCl₂ not NaCl")</td><td>Backfill the top 100 most-missed items in GC; rewrite stub diag fields in Bio mock; tag every QR distractor with the canonical misconception ID</td></tr>
+        <tr><td><b>"Why this exists" panel</b><br>(forcing chemistry / selection pressure / mathematical motivation)</td><td>OChem mechanism narration; GC <code>exps</code> calculator-feasibility framing</td><td>Every Tier-1 Bio node (replication directionality, countercurrent multiplication, Bohr allostery); every keystone GC concept (buffer direction, Le Châtelier as a forcing logic)</td></tr>
+        <tr><td><b>Two-pass / skip-decision drill</b><br>(force the skip move)</td><td>QR pacing-sim Two-Pass Drill (proposals/agent-08)</td><td>QR main page (replace the disconnected "pacing ladder" with this as the canonical pacing experience); Bio Weakness Scan with optional timed mode</td></tr>
+        <tr><td><b>"Setup, not answer" comparator</b><br>(pick the right equation form before solving)</td><td>QR proposals: <code>work-rate.html</code> two-card setup comparator</td><td>Default layout for every PF-eligible module in QR; carry over to GC's stoich/equilibrium worked examples</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============ ORDER ============ -->
+  <section id="order">
+    <h2><span class="num">08</span>Authoring priority — what to write first</h2>
+    <p class="lead">A six-week rough plan, sequenced by leverage per hour.</p>
+
+    <div class="card">
+
+      <h3 style="margin-top:0">Week 1 — fix what teaches the wrong thing</h3>
+      <ul>
+        <li>All 13 must-fix bugs in §02 (one afternoon).</li>
+        <li>Bio: rewrite the gastrulation diagnostic question + remove or build the cardiac-AP topic to match the diagnostic Q.</li>
+        <li>GC: rewrite <code>lr-e2</code>, <code>rp3</code>, <code>x5</code>, <code>hb5</code> lock, <code>galvanic</code> worked Q2.</li>
+        <li>OChem: hydroboration arrow + SN1 typo + carbonyl Q5 wording + unicode glyphs + alkene/alkenes hub-ID normalization.</li>
+        <li>QR: ship or remove Calculator Tax; fix <code>d10</code> secondary attribution.</li>
+      </ul>
+
+      <h3>Week 2 — close the diagnostic blind spots</h3>
+      <ul>
+        <li>Bio: add ~10 items to bring the Pulse Check to construct validity across all six hubs; add Genetics to ~28% of the Weakness Scan.</li>
+        <li>GC: add 8 items so the diagnostic touches all 32 modules (IMFs, hybridization, calorimetry, electrolysis, heating curves, colligative, titration, red-pot).</li>
+        <li>QR: add 6 Tier-2 items so PF-eligible modules (mixture, work-rate, p-cond, harm, interest, plus geo-2d / desc-stats) get diagnostic signal.</li>
+        <li>OChem: build the 5 stereo + 5 spec + 5 lab-tech + 5 nomenclature MCQs (the bank gaps that hold back the exam-sim).</li>
+      </ul>
+
+      <h3>Week 3 — author the 5 highest-leverage Sarah-voice cards (QR)</h3>
+      <ol>
+        <li><code>mixture</code> table — "which column has to add up?"</li>
+        <li><code>harm</code> round-trip phrase trap — "STOP when you hear 'and back'"</li>
+        <li><code>p-cond</code> underline-the-given — "your world just shrunk to the B branch"</li>
+        <li><code>count-pc</code> PODIUM=P / PIZZA=C — promote from the lock line to a full trick card</li>
+        <li><code>vol-sa</code> cube-law — "side doubles → ×8, side triples → ×27; memorize those two numbers"</li>
+      </ol>
+
+      <h3>Week 4 — build the 5 highest-leverage predict-the-step mechanisms (OChem)</h3>
+      <ol>
+        <li>SN1 (racemization, rate law)</li>
+        <li>E2 (anti-periplanar, Hofmann override)</li>
+        <li>E1 dehydration (predict the 1,2-hydride shift)</li>
+        <li>Imine (pH 4-5 bell curve)</li>
+        <li>Aldol (enolate attack site, heat → dehydration)</li>
+      </ol>
+
+      <h3>Week 5 — kill the 100 worst "Off." stubs (GC) + tag misconceptions</h3>
+      <ul>
+        <li>Wire the existing 77-entry misconception taxonomy into the bank via <code>misconceptionIds:[]</code> on each wrong-choice diag.</li>
+        <li>Add a "your top 3 misconception clusters" surface to the post-mock screen.</li>
+        <li>Rewrite the top 100 highest-traffic stub diags in equilibrium, buffer/titration, galvanic/Nernst, and stoichiometry expansion items first.</li>
+      </ul>
+
+      <h3>Week 6 — re-shape retrieval (Bio) and promote the pacing-sim (QR)</h3>
+      <ul>
+        <li>Bio: invert the order on Tier-1 nodes so retrieval comes before the rule reveal; or move retrieval cards to a sibling "retrieval ring" page so students must page away first.</li>
+        <li>Bio: add the "Why this exists" paragraph to every Tier-1 node — replication directionality, loop-of-Henle countercurrent, Bohr allostery, lac-operon catabolite repression.</li>
+        <li>QR: replace the main-page pacing ladder with the pacing-sim Two-Pass Drill as the canonical pacing experience.</li>
+        <li>QR: append a "ballpark check" Sarah trick to every Pattern Library chunk.</li>
+      </ul>
+
+    </div>
+  </section>
+
+  <!-- ============ CLOSE ============ -->
+  <section>
+    <h2><span class="num">09</span>The bottom line</h2>
+    <div class="callout">
+      <p class="k">What this product is, after the pedagogy lens</p>
+      <p>The same answer as the build audit, with more confidence: a <b>supplemental, tutor-in-the-loop repair lab and pacing rehearsal</b> with the rare property that the <em>teaching architecture is already tutor-grade</em>. The build is not held back by what it doesn't know how to do — every move it needs to make is already implemented <em>somewhere</em> in the product. The gap to "definitive" is execution-and-authoring on a small number of named patterns: replace recognition with transfer, name the misconception in every distractor, force commit-before-reveal on every mechanism, ship the killer features that today live in orphan iframes.</p>
+    </div>
+    <p style="color:var(--ink2);margin-top:18px">Six engineering bugs and ten weeks of authoring stand between this and the best DAT companion in the market. None of it requires a v2 rewrite. All of it is additive to what is already built.</p>
+  </section>
+
+  <footer>
+    Generated 2026-05-27 from a four-part parallel pedagogy review (one PhD-level subject expert per engine, each with combined experienced-DAT-tutor lens). Findings cite specific files, line numbers, and quoted text. Internal document, lives under <code>docs/</code> so it is not served by the Netlify deploy. Companion to <code>acelabs-audit-2026-05-27.html</code>.
+  </footer>
+
+</div>
+</body>
+</html>

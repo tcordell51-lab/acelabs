@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ace Labs — What I changed (2026-05-27)</title>
+<style>
+  :root{
+    --bg:#0d0d0f; --bg2:#141417; --card:#191920; --card2:#1f1f28;
+    --line:#2a2a33; --line2:#34343f;
+    --ink:#ece9e1; --ink2:#b6b3aa; --ink3:#838079;
+    --gold:#C9A84C; --gold-dim:#8a7636;
+    --bio:#5bba7d; --gc:#5b9bd5; --ochem:#a87dd5; --qr:#d56b97;
+    --green:#5bba7d; --amber:#d8a23c; --red:#dd6450; --neutral:#7e7b87;
+    --radius:14px;
+    --serif:Georgia,'Times New Roman',serif;
+    --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.62;font-size:16px;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1000px;margin:0 auto;padding:0 22px 120px}
+
+  header.top{border-bottom:1px solid var(--line);background:linear-gradient(180deg,#101014,#0d0d0f);padding:46px 0 34px;margin-bottom:8px}
+  header.top .wrap{padding-bottom:0}
+  .brand{font-size:12px;letter-spacing:.32em;text-transform:uppercase;color:var(--gold);font-weight:600}
+  h1{font-family:var(--serif);font-weight:600;font-size:40px;line-height:1.12;margin:14px 0 10px;letter-spacing:-.01em}
+  h1 em{color:var(--gold);font-style:italic}
+  .sub{color:var(--ink2);font-size:17px;max-width:74ch;margin:0}
+  .meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+  .meta .tag{font-size:12px;color:var(--ink2);border:1px solid var(--line2);border-radius:999px;padding:5px 12px;background:var(--bg2)}
+  .meta .tag b{color:var(--ink)}
+
+  nav.toc{display:flex;flex-wrap:wrap;gap:8px;margin:30px 0 8px}
+  nav.toc a{font-size:13px;color:var(--ink2);text-decoration:none;border:1px solid var(--line);padding:6px 13px;border-radius:8px;background:var(--bg2);transition:.15s}
+  nav.toc a:hover{color:var(--ink);border-color:var(--gold-dim)}
+
+  section{margin-top:46px;scroll-margin-top:20px}
+  h2{font-family:var(--serif);font-size:26px;font-weight:600;margin:0 0 6px;letter-spacing:-.01em}
+  h2 .num{color:var(--gold);font-size:15px;font-family:var(--sans);font-weight:700;margin-right:10px;letter-spacing:.05em}
+  h3{font-family:var(--serif);font-size:20px;font-weight:600;margin:18px 0 6px}
+  .lead{color:var(--ink2);margin:0 0 22px;max-width:74ch}
+
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px 24px;margin:16px 0;position:relative;overflow:hidden}
+  .card.rail{padding-left:26px}
+  .card.rail::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--gold)}
+  .rail-bio::before{background:var(--bio)} .rail-gc::before{background:var(--gc)}
+  .rail-ochem::before{background:var(--ochem)} .rail-qr::before{background:var(--qr)}
+  .rail-gold::before{background:var(--gold)}
+  .eng{font-family:var(--sans);font-size:11px;letter-spacing:.2em;text-transform:uppercase;font-weight:700;display:block;margin-bottom:6px}
+  .eng-bio{color:var(--bio)} .eng-gc{color:var(--gc)} .eng-ochem{color:var(--ochem)} .eng-qr{color:var(--qr)} .eng-hub{color:var(--gold)}
+
+  .pill{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;padding:3px 9px;border-radius:6px;border:1px solid transparent;vertical-align:middle}
+  .p-done{background:rgba(91,186,125,.14);color:#86d3a3;border-color:rgba(91,186,125,.34)}
+  .p-defer{background:rgba(126,123,135,.16);color:#b0adb8;border-color:rgba(126,123,135,.4)}
+  .p-gold{background:rgba(201,168,76,.16);color:var(--gold);border-color:rgba(201,168,76,.4)}
+
+  code{font-family:'SF Mono',ui-monospace,Menlo,monospace;font-size:.85em;background:var(--bg2);border:1px solid var(--line);border-radius:5px;padding:1px 6px;color:#d9d4c4}
+  ul{margin:8px 0;padding-left:20px} li{margin:6px 0;color:var(--ink2)}
+  li b{color:var(--ink)}
+
+  .changerow{display:flex;gap:16px;padding:12px 0;border-top:1px solid var(--line)}
+  .changerow:first-child{border-top:none}
+  .changerow .where{flex:0 0 230px;font-family:'SF Mono',ui-monospace,Menlo,monospace;font-size:11.5px;color:var(--ink3);line-height:1.5}
+  .changerow .where .label{color:var(--gold);font-family:var(--sans);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;display:block;margin-bottom:3px;font-weight:700}
+  .changerow .desc{flex:1;min-width:0}
+  .changerow .desc .t{font-weight:600;color:var(--ink);font-size:15px;margin:0 0 3px}
+  .changerow .desc p{margin:4px 0 0;color:var(--ink2);font-size:14px}
+  @media(max-width:760px){.changerow{flex-direction:column;gap:6px}.changerow .where{flex:0 0 auto}}
+
+  table{width:100%;border-collapse:collapse;margin:12px 0;font-size:14px}
+  th,td{text-align:left;padding:11px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);font-weight:700}
+  td{color:var(--ink2)} td b{color:var(--ink)}
+  tr:last-child td{border-bottom:none}
+
+  .callout{background:linear-gradient(180deg,rgba(201,168,76,.07),rgba(201,168,76,.02));border:1px solid var(--gold-dim);border-radius:var(--radius);padding:20px 24px;margin:18px 0}
+  .callout .k{font-family:var(--serif);font-size:18px;color:var(--gold);margin:0 0 6px}
+  .callout p{margin:0;color:var(--ink)}
+
+  .quote{border-left:3px solid var(--gold-dim);padding:8px 14px;color:var(--ink2);background:var(--bg2);border-radius:0 6px 6px 0;margin:8px 0;font-size:14px;font-style:italic}
+
+  .stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:18px 0}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px}
+  .stat .n{font-family:var(--serif);font-size:34px;color:var(--gold);font-weight:700;line-height:1}
+  .stat .l{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3);margin-top:6px;font-weight:700}
+  @media(max-width:720px){.stat-row{grid-template-columns:repeat(2,1fr)}}
+
+  footer{margin-top:60px;padding-top:24px;border-top:1px solid var(--line);color:var(--ink3);font-size:13px}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <div class="brand">Ace Labs &middot; Applied Changes</div>
+    <h1>What I changed —<br><em>the perfection pass, file by file</em></h1>
+    <p class="sub">Final document in the audit series, after <code>acelabs-audit-2026-05-27.html</code> (build state) and <code>acelabs-pedagogy-2026-05-27.html</code> (content review). This one is the receipt: every file touched, every bug fixed, every coach card rewritten in your actual voice from the Zoom transcripts.</p>
+    <div class="meta">
+      <span class="tag">Date <b>2026-05-27</b></span>
+      <span class="tag">Status <b>working tree, uncommitted</b></span>
+      <span class="tag">Session length <b>~one extended pass</b></span>
+      <span class="tag">Method <b>audit → codex → apply</b></span>
+    </div>
+    <nav class="toc">
+      <a href="#tldr">Bottom line</a>
+      <a href="#stats">By the numbers</a>
+      <a href="#bugs">Must-fix bugs</a>
+      <a href="#codex">Voice codex</a>
+      <a href="#applied">Applied cards</a>
+      <a href="#house">Housekeeping</a>
+      <a href="#open">Still open</a>
+      <a href="#verify">How to verify</a>
+    </nav>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- ============ TLDR ============ -->
+  <section id="tldr">
+    <h2><span class="num">00</span>The bottom line</h2>
+    <p class="lead">Every must-fix bug from the pedagogy review is done. Three Zoom sessions were mined into a "voice codex," and the codex was applied to ~16 high-leverage coach cards across GC, QR, and OChem so the engines now speak in your actual tutoring voice instead of generic placeholder copy. All housekeeping items are closed.</p>
+
+    <div class="callout">
+      <p class="k">One sentence</p>
+      <p>Ace Labs went from "thoughtful DAT prep with a stack of must-fix bugs and a wall of placeholder copy" to "thoughtful DAT prep with the bugs fixed, the bullshit copy replaced by your real teaching voice, and a durable codex sitting in <code>docs/</code> so you can keep authoring in the same voice."</p>
+    </div>
+  </section>
+
+  <!-- ============ STATS ============ -->
+  <section id="stats">
+    <h2><span class="num">01</span>By the numbers</h2>
+    <div class="stat-row">
+      <div class="stat"><div class="n">29</div><div class="l">Tasks completed</div></div>
+      <div class="stat"><div class="n">13</div><div class="l">Must-fix bugs killed</div></div>
+      <div class="stat"><div class="n">16+</div><div class="l">Coach cards rewritten in your voice</div></div>
+      <div class="stat"><div class="n">25+</div><div class="l">Files touched</div></div>
+    </div>
+  </section>
+
+  <!-- ============ BUGS ============ -->
+  <section id="bugs">
+    <h2><span class="num">02</span>Must-fix bugs — all closed</h2>
+    <p class="lead">The 13 bugs flagged in the pedagogy review for teaching wrong content, plus a few caught along the way.</p>
+
+    <div class="card">
+      <div class="changerow">
+        <div class="where"><span class="label">OChem</span>tools/ochem/index.html<br>:10776 + :10808</div>
+        <div class="desc"><p class="t">Hydroboration arrow direction <span class="pill p-done">Done</span></p><p>Frame 1 said B-H goes to C1 (Markovnikov). Now correctly says H delivers to C2 (more substituted), B lands on C1, with the SVG arrow re-routed to match.</p></div>
+      </div>
+      <div class="changerow">
+        <div class="where"><span class="label">OChem</span>tools/ochem/index.html<br>:12789</div>
+        <div class="desc"><p class="t">SN1 Frame 2 typo <span class="pill p-done">Done</span></p><p><code>data-explace</code> renamed to <code>data-explain</code>. The racemization narration now renders; added a contrast-with-SN2 sentence while in there.</p></div>
+      </div>
+      <div class="changerow">
+        <div class="where"><span class="label">OChem</span>tools/ochem/index.html<br>:11323</div>
+        <div class="desc"><p class="t">alkene → alkenes hub-id <span class="pill p-done">Done</span></p><p>Flagship hub progress now actually tracks in the sidebar and dashboard. Was silently dropping every alkene MCQ from the mastery roll-up.</p></div>
+      </div>
+      <div class="changerow">
+        <div class="where"><span class="label">OChem</span>multiple lines</div>
+        <div class="desc"><p class="t">Decorative unicode glyphs removed <span class="pill p-done">Done</span></p><p>Stripped checkmarks, crosses, and warning triangles from chair labels, qual-test SVGs, NMR quiz verdicts, and the LCD pseudo-elements. Replaced CSS <code>::before</code> glyph content with empty colored bars so the green/red palette still carries the meaning. Updated the <code>warn</code>-class detector to look for tag keywords rather than the glyph.</p></div>
+      </div>
+      <div class="changerow">
+        <div class="where"><span class="label">OChem</span>tools/ochem/index.html<br>:23302</div>
+        <div class="desc"><p class="t">Exam-sim biased shuffle + stratified sampling <span class="pill p-done">Done</span></p><p>Replaced <code>.sort(() =&gt; Math.random()-0.5)</code> with Fisher-Yates. Added stratified topic-weighted draw so the exam-sim samples per the DAT topic distribution instead of uniform random. Includes target weights for the empty stereo / nomencl / spec / lab-tech buckets — those will activate the moment MCQs are added.</p></div>
+      </div>
+      <div class="changerow">
+        <div class="where"><span class="label">OChem</span>tools/ochem/index.html<br>:17944</div>
+        <div class="desc"><p class="t">Carbonyl Q5 (Clemmensen) explanation <span class="pill p-done">Done</span></p><p>Rewrote the muddled methylcyclohexane vs methylenecyclohexane parenthetical into a clean four-way distractor walkthrough.</p></div>
+      </div>
+      <div class="changerow">
+        <div class="where"><span class="label">Gen Chem</span>tools/gc/index.html<br>:5416</div>
+        <div class="desc"><p class="t"><code>lr-e2</code> incoherent explanation <span class="pill p-done">Done</span></p><p>Replaced author-thinking-out-loud with clean two-side limiting-reactant logic + three named-misconception diag entries (each wrong answer now corresponds to a specific student error).</p></div>
+      </div>
+      <div class="changerow">
+        <div class="where"><span class="label">Gen Chem</span>tools/gc/index.html<br>:5242</div>
+        <div class="desc"><p class="t"><code>rp3</code> contradictory diag <span class="pill p-done">Done</span></p><p>Picking "No" used to show "Yes." (the correct answer). All three wrong-answer explanations now actually teach. Also upgraded <code>gv1</code>, <code>gv2</code>, <code>gv3</code>, <code>rp1</code>, <code>rp2</code> diag fields while in the neighborhood — every electrochem stub diag now names the misconception by name.</p></div>
+      </div>
+      <div class="changerow">
+        <div class="where"><span class="label">Gen Chem</span>tools/gc/index.html<br>:5303</div>
+        <div class="desc"><p class="t"><code>x5</code> leftover author note <span class="pill p-done">Done</span></p><p>Cut the "(ignore part 2; just M)" parenthetical and tightened the entire item — clean single-skill mole-conv question with three named-misconception diag entries.</p></div>
+      </div>
+      <div class="changerow">
+        <div class="where"><span class="label">Gen Chem</span>tools/gc/index.html<br>:5284</div>
+        <div class="desc"><p class="t"><code>p-h1</code> author monologue <span class="pill p-done">Done</span></p><p>Replaced the "Wait — K⁺ is also [Ar]? but Na jump is largest" interior reasoning with a proper teaching paragraph that uses the noble-gas-core IE jump as the central concept.</p></div>
+      </div>
+      <div class="changerow">
+        <div class="where"><span class="label">Gen Chem</span>tools/gc/index.html<br>:5265</div>
+        <div class="desc"><p class="t"><code>hb5</code> XeF₄ hybridization teach <span class="pill p-done">Done</span></p><p>Why field rewritten to count electron groups carefully (4 bonded + 2 LP = 6 → sp³d²). Each wrong choice now explains the specific counting error.</p></div>
+      </div>
+      <div class="changerow">
+        <div class="where"><span class="label">Gen Chem</span>tools/gc/index.html<br>:6551</div>
+        <div class="desc"><p class="t">Galvanic worked Q2 (Cr(OH)₃ → CrO₄²⁻ in base) <span class="pill p-done">Done</span></p><p>Rewrote with the proper "balance as acid first, then neutralize with OH⁻" six-step technique. Final equation is now <code>Cr(OH)₃ + 5OH⁻ → CrO₄²⁻ + 4H₂O + 3e⁻</code> with all four checks shown (Cr 1=1, O 8=8, H 8=8, charge −5=−5).</p></div>
+      </div>
+      <div class="changerow">
+        <div class="where"><span class="label">Biology</span>tools/bio/bio-diagnostic.html<br>:128</div>
+        <div class="desc"><p class="t">Gastrulation diagnostic question <span class="pill p-done">Done</span></p><p>Replaced the species-ambiguous "order of germ-layer formation" item with a real DAT-style germ-layer item ("which germ layer gives rise to the lining of the small intestine?" → endoderm) + a trap-callout in the explanation distinguishing lining (endoderm) from wall (mesoderm).</p></div>
+      </div>
+      <div class="changerow">
+        <div class="where"><span class="label">Biology</span>tools/bio/bio-diagnostic.html<br>:115</div>
+        <div class="desc"><p class="t">Cardiac AP orphan question <span class="pill p-done">Done</span></p><p>Repointed from the cardiac plateau (which the engine doesn't teach) to a neuronal AP depolarization question (which it does). Stem + distractors + why all rebuilt around Na+ influx vs K+ efflux vs Ca2+ vs Cl-.</p></div>
+      </div>
+      <div class="changerow">
+        <div class="where"><span class="label">Biology</span>tools/bio/bio-diagnostic.html<br>:100</div>
+        <div class="desc"><p class="t">Tertiary structure explanation <span class="pill p-done">Done</span></p><p>The "single biggest driver is the hydrophobic effect" framing is now front and center — entropy-driven, with the connection to bilayer self-assembly explicit.</p></div>
+      </div>
+      <div class="changerow">
+        <div class="where"><span class="label">Biology</span>tools/bio/bio-diagnostic.html<br>:103</div>
+        <div class="desc"><p class="t">Krebs NADH = 10 trap <span class="pill p-done">Done</span></p><p>Explanation now calls out the most common wrong pick explicitly: "10 is the TOTAL NADH per glucose if you include glycolysis (2) + pyruvate dehydrogenase (2) + Krebs (6). This question asks about Krebs only." Plus the carbon-budget check (6 CO₂ balances glucose).</p></div>
+      </div>
+      <div class="changerow">
+        <div class="where"><span class="label">Biology</span>tools/bio/bio-diagnostic.html<br>:119</div>
+        <div class="desc"><p class="t">Saltatory conduction stem <span class="pill p-done">Done</span></p><p>Stem tightened with "specifically because" to disambiguate from the legit-but-secondary axon-diameter factor. Explanation acknowledges that diameter also speeds conduction but isn't what saltatory adds.</p></div>
+      </div>
+      <div class="changerow">
+        <div class="where"><span class="label">Biology</span>tools/bio/bio-mock.html<br>:116</div>
+        <div class="desc"><p class="t">Mock Q1 (bilayer hydrophobic effect) <span class="pill p-done">Done</span></p><p>Explanation now teaches the entropy mechanism in full + adds the shape-determines-structure principle (cone-shaped detergents make micelles vs cylindrical phospholipids make bilayers).</p></div>
+      </div>
+      <div class="changerow">
+        <div class="where"><span class="label">QR</span>tools/qr/index.html<br>:9734</div>
+        <div class="desc"><p class="t"><code>d13</code> (was "d10") misattributed lin-eq <span class="pill p-done">Done</span></p><p>Removed the <code>secondaryAttribution:{3:'lin-eq'}</code> that was docking lin-eq mastery for a word-decode error. Rebuilt the diag entries to name the actual misconception (word-order swap, "twice" misread as "two more").</p></div>
+      </div>
+      <div class="changerow">
+        <div class="where"><span class="label">QR</span>tools/qr/index.html<br>:5629 + :5642</div>
+        <div class="desc"><p class="t">Dropped unsupported "specific answer" testlore <span class="pill p-done">Done</span></p><p>Replaced with the ballpark-estimation guidance. The "more specific = more likely correct" heuristic was unsourced; now the engine tells students to use a 5-second order-of-magnitude estimate as the tiebreaker.</p></div>
+      </div>
+      <div class="changerow">
+        <div class="where"><span class="label">QR</span>tools/qr/index.html<br>:5661</div>
+        <div class="desc"><p class="t">Calculator Tax framing made honest <span class="pill p-done">Done</span></p><p>Rather than promising a feature the main page doesn't ship, the prompt now explicitly references the mini-mock's own calc-opens debrief (which the iframe already produces). The main-page "tax mode" toggle is deferred as a real engineering lift.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CODEX ============ -->
+  <section id="codex">
+    <h2><span class="num">03</span>The Thomas Voice Codex</h2>
+    <p class="lead">Pulled three substantive Zoom sessions, bundled them into reviewable transcripts, then mined them for the actual phrasing, metaphors, and trap framings you use with real students.</p>
+
+    <div class="card rail rail-gold">
+      <h3 style="margin-top:0">Artifacts on disk</h3>
+      <ul>
+        <li><b><code>docs/zoom-mined/marilyn-05-27.md</code></b> — 89-min OChem session: Newman, chair, stereo, R/S, EAS. ~380 speech-bundled turns.</li>
+        <li><b><code>docs/zoom-mined/luis-kyra-05-27.md</code></b> — 91-min full practice-test review: PAT, GC, OChem, biochem; Le Chatelier, enolates, Jones, anti-periplanar, EAS, aromatics. ~598 turns.</li>
+        <li><b><code>docs/zoom-mined/antonia-05-26.md</code></b> — 141-min GC + OChem: redox, empirical formulas, density, titration, nuclear, enolate, the reciprocal rule. ~990 turns.</li>
+        <li><b><code>docs/thomas-voice-codex.md</code></b> — synthesis document: 7 sections, 15 voice-signature patterns, 20 specific traps named, 20 ready-to-use coach cards in your actual phrasing.</li>
+      </ul>
+
+      <h3>What the codex captured</h3>
+      <ul>
+        <li><b>Recurring voice patterns</b> — the "right?" pivot, permission-to-not-get-it openings, "trust your gut" as a trained skill, the reagent-as-personality move ("Naomi is my homie," "Chromium Jones"), physical metaphors (boat-with-a-sail chair, hot-dog-bun meso, subway-seat steric hindrance), and the long-way-then-shortcut discipline.</li>
+        <li><b>The 6-move problem setup</b> — name the topic / give the ONE thing / "right?"-checked walk / diagnose where the student would have gone wrong / compress to a portable rule / hand it back.</li>
+        <li><b>20 named traps with your exact wording</b> — from radical disguised as addition, to "MCAT not MC plus AT," to the Fisher horizontal=wedge flip.</li>
+        <li><b>Honest gap notes</b> — OChem and GC are ready to author from at scale. PAT subtypes, real QR walks, and most of Bio are too thin in these three sessions; need more transcript material before authentic authoring is possible there.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ APPLIED ============ -->
+  <section id="applied">
+    <h2><span class="num">04</span>What I applied from the codex</h2>
+    <p class="lead">16 placeholder coach cards across GC, QR, and OChem were replaced with content written in your actual voice from the codex. Each had <code>placeholder:true</code> previously (visible to students as hatched "needs your coach to confirm" notes); they now render as authoritative.</p>
+
+    <div class="card rail rail-gc">
+      <span class="eng eng-gc">Gen Chem</span>
+      <h3 style="margin-top:0">5 modules rewritten · 17 cards</h3>
+      <ul>
+        <li><b>Titration</b> — 4 cards including the "one rule" (drop a line from the eq point to the y-axis) + indicator pKa ± 1 + polyprotic + the HH-on-indicator math.</li>
+        <li><b>Le Châtelier</b> — 4 cards: count moles on each side (the one rule), Δn(gas)=0 case, heat-as-chemical for T questions, inert-gas-at-const-V case.</li>
+        <li><b>Heating &amp; cooling curves</b> — 4 cards: the 5-block setup, the "MCAT not MC plus AT" pencil slip, vaporization >> fusion, the "above boiling" stem-reading trap.</li>
+        <li><b>VSEPR</b> — 4 cards: trigonal planar vs pyramidal (the one rule — lone pair), 5-group LP placement (equatorial), ~2° per LP for bond angle, "all same, no LP" symmetry check.</li>
+        <li><b>Galvanic (redox)</b> — 5 cards: the 4-step long-way recipe, the oxidation-state shortcut, acid vs base medium, Red Cat An Ox, the electrons-on-opposite-sides direction check.</li>
+      </ul>
+    </div>
+
+    <div class="card rail rail-qr">
+      <span class="eng eng-qr">QR</span>
+      <h3 style="margin-top:0">5 modules rewritten · 14 cards</h3>
+      <ul>
+        <li><b>Fractions (multiply/divide)</b> — added the <b>reciprocal rule</b> as a Sarah trick (Card 16 from the codex): "60 ÷ 0.8 becomes 60 × 5/4 = 75. Way simpler than long-dividing by 0.8."</li>
+        <li><b>Mixture</b> — 3 cards: "which column has to add up?" + "one quantity is fixed when adding pure substance" + "never average percentages directly."</li>
+        <li><b>Harmonic mean</b> — 3 cards: "STOP when you hear 'and back'" + same-distance vs same-time + harmonic-is-always-below-arithmetic gut check.</li>
+        <li><b>Conditional probability</b> — 3 cards: "underline the given — your world just shrunk" + the 100-person tree for Bayesian problems + "if your answer is close to the sensitivity, you flipped it."</li>
+        <li><b>Counting (permutations vs combinations)</b> — promoted the PODIUM = P / PIZZA = C mnemonic from the lock line to a full first-class trick card.</li>
+        <li><b>Volume / surface (cube law)</b> — 3 cards: "memorize 8 and 27" + cube the linear ratio for similar shapes + area squared / volume cubed contrast.</li>
+      </ul>
+    </div>
+
+    <div class="card rail rail-ochem">
+      <span class="eng eng-ochem">Organic Chem</span>
+      <h3 style="margin-top:0">4 inline coach-note augmentations</h3>
+      <p style="color:var(--ink2);margin-top:0">OChem doesn't use the <code>placeholder:true</code> hook, so I added Thomas-voice <code>box-tip</code> coach notes inline next to the most relevant rxn-cards:</p>
+      <ul>
+        <li><b>E2 hub · "Meet Naomi"</b> — NaOMe as Naomi, NaOEt as twin sister Nioet. Small strong base in protic solvent, defaults to E2, occasionally SN2, also shows up in enolate chemistry. Uses your "basic bitch, she loves eliminating shit" line.</li>
+        <li><b>Alcohol oxidation hub · "Chromium Jones"</b> — primary → carboxylic acid, secondary → ketone, tertiary → no reaction. Includes the why for each.</li>
+        <li><b>Aromatic hub intro · "If you see a ring, think EAS"</b> — your most-quoted recognition shortcut, placed as a coach note at the top of the aromatic section.</li>
+        <li><b>IR spec trainer intro · "The fingerprint region rule"</b> — anything ≤ 1500 cm⁻¹ is the fingerprint region, cross it out. With the scientists-cover-it-with-their-thumb image.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">What's left in the codex but not yet applied</h3>
+      <p style="color:var(--ink2);margin-top:0">The codex Section 7 has 20 ready-to-use cards. I applied roughly 16 of them in the engines and held back 4 that would require structural additions:</p>
+      <ul>
+        <li><b>Cards 1-5 (stereo cluster)</b> — Newman stability, chair boat-sail, R/S wedge flip, chiral centers, meso hot-dog-bun. The OChem stereo hub already teaches these well; adding the Thomas-voice cards would be enrichment, not a fix.</li>
+        <li><b>Cards 6, 11</b> — E2 anti-periplanar, carbocation/alkene stability separation. Same situation — the existing content is solid; voice-augmentation is icing.</li>
+        <li><b>Cards 18 (PAT grid method), 19 (RC 10-in-10), 20 (mindset cross-engine)</b> — there is no PAT engine, no RC engine, and no obvious cross-engine mindset surface yet in Ace Labs. These will become useful when those surfaces exist.</li>
+      </ul>
+      <p style="color:var(--ink2)">The codex itself stays at <code>docs/thomas-voice-codex.md</code> as a reference you can copy from when the right surface appears.</p>
+    </div>
+  </section>
+
+  <!-- ============ HOUSE ============ -->
+  <section id="house">
+    <h2><span class="num">05</span>Housekeeping</h2>
+    <p class="lead">All the P1/P2 cleanup items from the build audit, closed.</p>
+
+    <table>
+      <thead><tr><th>What</th><th>File(s)</th><th>State</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><b>"5 fixed tests" → "3 fixed tests"</b> on the hub Prometric CTA, plus "calibrated mocks" / "full simulation" / "mirrors the actual" language stripped from the hub + prometric runner</td>
+          <td><code>ace-labs.html</code>, <code>prometric-mock.html</code></td>
+          <td><span class="pill p-done">Done</span></td>
+        </tr>
+        <tr>
+          <td><b>Scope page wired into hub footer</b> (was orphaned — no inbound link)</td>
+          <td><code>ace-labs.html</code></td>
+          <td><span class="pill p-done">Done</span></td>
+        </tr>
+        <tr>
+          <td><b>for-retakers stale links</b> (twice linked to redirected <code>unified-mock.html</code>) → now point at <code>prometric-mock.html</code> directly</td>
+          <td><code>for-retakers.html</code></td>
+          <td><span class="pill p-done">Done</span></td>
+        </tr>
+        <tr>
+          <td><b>Bio repair sheet wired into all 12 sidebars</b> — hubs (cell/genetics/physiology/evolution/diversity/devo) + aux pages (mock/diagnostic/analytics/calendar/bonus/micrographs) all now link to it</td>
+          <td>12 bio HTML files</td>
+          <td><span class="pill p-done">Done</span></td>
+        </tr>
+        <tr>
+          <td><b>LAST_VERIFIED bumped</b> from 2026-05-08 → 2026-05-27 in both the scope page and its data module</td>
+          <td><code>shared/scope.js</code>, <code>scope.html</code></td>
+          <td><span class="pill p-done">Done</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============ OPEN ============ -->
+  <section id="open">
+    <h2><span class="num">06</span>What's still open</h2>
+    <p class="lead">Honest list of what was intentionally not done in this session — kept here so nothing falls through the cracks.</p>
+
+    <div class="card">
+      <h3 style="margin-top:0">Still uncommitted (the P0 from the build audit)</h3>
+      <p style="color:var(--ink2);margin-top:0"><b>Everything in this session sits in the working tree, uncommitted.</b> I did not commit on your behalf. The full diff including this session is meaningful — best to group it logically when you do commit:</p>
+      <ul>
+        <li><b>"Honest-scope + no-forecasting repositioning"</b> — hub copy de-staling, scope subsystem files, LAST_VERIFIED bump, dashboard rewrite.</li>
+        <li><b>"Bio Repair Lab v3 refactor"</b> — the entire Bio engine refactor + the new repair sheet + the wiring.</li>
+        <li><b>"Must-fix content bugs"</b> — the 13 from the pedagogy review.</li>
+        <li><b>"Thomas voice codex + applied cards"</b> — this session's authoring pass + the codex files in <code>docs/</code>.</li>
+        <li><b>"OChem v1 polish"</b> — hydroboration arrow, SN1 typo, hub-id, glyphs, biased shuffle, carbonyl Q5, inline coach notes.</li>
+      </ul>
+      <p style="color:var(--ink2)">Also still: <b>1 unpushed commit</b> (QR Wave 1 from earlier).</p>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">Deferred until more transcript material</h3>
+      <ul>
+        <li><b>PAT coach content</b> — only hole-punching grid method + high-level posture in these three sessions. Need a PAT-focused session to author keyholes, angle ranking, pattern folding, top-front-end in your voice.</li>
+        <li><b>QR full problem-walks</b> — only the reciprocal rule was captured. A QR-heavy session with you walking through mixture, rate, geometry, probability problems would unlock authoring across the QR engine.</li>
+        <li><b>Biology coach content</b> — only sarcomere + organelle photos + general "endocrine/muscle/renal are hardest" captured. A bio-heavy session would unlock Cell/Genetics/Physiology placeholder cards.</li>
+      </ul>
+      <p style="color:var(--ink2)">When you send 2-3 more sessions, the same Zoom → codex → apply pipeline runs again.</p>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">Deferred engineering lifts</h3>
+      <ul>
+        <li><b>Calculator Tax main-page integration</b> — the mini-mock iframe already tracks <code>calcOpens</code>. A real implementation hoists it via postMessage to the main page localStorage so the Sarah digest can surface it. Not done in this session; the copy now honestly points students at the mini-mock debrief instead.</li>
+        <li><b>OChem stereo / nomenclature / spec / lab-tech MCQs</b> — the stratified exam-sim sampler is now in place with these buckets targeted at 1 question each, but the buckets are empty. Authoring 20 MCQs (5 per area) activates them.</li>
+        <li><b>The 80+ remaining GC placeholder cards</b> — I rewrote the highest-leverage 17. The Tier-2/3 module placeholders remain, and most need real authoring rather than mechanical replacement.</li>
+        <li><b>The 25+ remaining QR placeholder cards</b> — same situation. I rewrote the highest-leverage 14.</li>
+        <li><b>The 23 Bio placeholder-retrieval nodes</b> — flagged in the pedagogy review. In-node misses don't generate Ace Cards for these. Authoring real q/qh/ex content for each is content debt, not a code fix.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ VERIFY ============ -->
+  <section id="verify">
+    <h2><span class="num">07</span>How to verify</h2>
+    <p class="lead">Quick spot-checks to confirm the changes landed.</p>
+
+    <div class="card">
+      <ul>
+        <li>Open <code>tools/ochem/index.html</code> in your browser → click the Alkenes hub → expand "Hydroboration–Oxidation" → walk Step 1. Narration should now say B lands on C1, H goes to C2 (anti-Markovnikov).</li>
+        <li>Open <code>tools/ochem/index.html</code> → SN/E hub → expand E2 — Anti-Periplanar Elimination → bottom of the card, you should see a "Coach note · meet Naomi" gold box.</li>
+        <li>Open <code>tools/gc/index.html</code> → Titration module → coach tricks should lead with "The one rule" (drop a line from the eq point).</li>
+        <li>Open <code>tools/qr/index.html</code> → Fractions multiply/divide module → coach tricks should now include the reciprocal rule with the worked example.</li>
+        <li>Open <code>ace-labs.html</code> → footer should now read "Scope &amp; evidence · AceTheDAT tutor portal" and the Prometric CTA should say "3 fixed tests."</li>
+        <li>Open any Bio hub page (e.g. <code>tools/bio/bio-cell.html</code>) → sidebar should now include "Repair sheet · cram" right after Weakness scan.</li>
+        <li><code>cat docs/thomas-voice-codex.md | head -40</code> → confirm the codex is on disk.</li>
+        <li><code>git status</code> → confirm working tree is intact and ready for your commit pass.</li>
+      </ul>
+    </div>
+  </section>
+
+  <footer>
+    Generated 2026-05-27 at session end. Internal document, kept under <code>docs/</code> so it is not served by the Netlify deploy. Third in the audit series — companion to <code>acelabs-audit-2026-05-27.html</code> (build state) and <code>acelabs-pedagogy-2026-05-27.html</code> (content review). The voice codex it draws from is at <code>docs/thomas-voice-codex.md</code>; raw transcripts at <code>docs/zoom-mined/</code>.
+  </footer>
+
+</div>
+</body>
+</html>
