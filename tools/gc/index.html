@@ -5057,6 +5057,7 @@ const SKILLS = [
   {id:'rate-laws',      tier:1, name:'Kinetics — Rate Laws',      short:'Rate Laws',      prereqs:['mole-conv'],         x:5, y:2, full:true},
   {id:'arrhenius',      tier:1, name:'Kinetics — Arrhenius + Catalysis',short:'Arrhenius',prereqs:['rate-laws'],         x:0, y:3, full:true},
   {id:'colligative',    tier:1, name:'Colligative Properties',          short:'Colligative',prereqs:['solutions'],         x:5, y:4, full:true},
+  {id:'sol-rules',      tier:1, name:'Solubility Rules + Net-Ionic Eqns',short:'Sol Rules',  prereqs:['solutions'],         x:2, y:4, full:true},
   {id:'eq-kc',          tier:1, name:'Equilibrium — Kc & Kp',     short:'Eq · Kc',        prereqs:['mole-conv'],         x:1, y:3, full:true},
   {id:'eq-lechat',      tier:1, name:'Equilibrium — Le Châtelier',short:'Le Châtelier',   prereqs:['eq-kc'],             x:2, y:3, full:true},
   {id:'eq-ice',         tier:1, name:'Equilibrium — ICE Table',   short:'ICE Table',      prereqs:['eq-kc'],             x:3, y:3, full:true},
@@ -5293,7 +5294,7 @@ const BANK = [
   {id:'ti-h1',skills:['titration'],diff:3,q:'25 mL 0.1 M acetic (Ka=1.8×10⁻⁵) titrated with 0.1 M NaOH. pH at half-equivalence?',opts:['2.87','4.74','7.0','8.7'],correct:1,why:'Half-eq: [HA] = [A⁻]. By HH, log term = 0, pH = pKa = −log(1.8×10⁻⁵) = 4.74.',diag:{0:'Initial pH.',2:'SA+SB eq.',3:'Eq pt.'}},
   {id:'gv-h1',skills:['galvanic'],diff:3,q:'Standard cell Zn|Zn²⁺‖Cu²⁺|Cu has E°cell = 1.10 V. ΔG°? (n=2, F=96485)',opts:['+212 kJ','−212 kJ','−424 kJ','−54 kJ'],correct:1,why:'ΔG° = −nFE° = −(2)(96485)(1.10) = −212,267 J ≈ −212 kJ. Spontaneous.',diag:{0:'Wrong sign.',2:'Used n=4.',3:'Used n=½.'}},
   {id:'nu-h1',skills:['nuclear'],diff:3,q:'A 100 mg sample decays to 12.5 mg. How many half-lives elapsed?',opts:['2','3','4','5'],correct:1,why:'12.5/100 = 1/8 = (½)³ → 3 half-lives.',diag:{0:'1/4.',2:'1/16.',3:'1/32.'}},
-  {id:'ks-h1',skills:['ksp'],diff:3,q:'Solubility of Ag₂CrO₄ if Ksp = 1.1×10⁻¹²?',opts:['1.0×10⁻⁶','6.5×10⁻⁵','1.1×10⁻¹²','3.3×10⁻⁴'],correct:1,why:'Ag₂CrO₄ → 2Ag⁺ + CrO₄²⁻. Ksp = (2s)²(s) = 4s³. s = ∛(1.1×10⁻¹²/4) = 6.5×10⁻⁵ M.',diag:{0:'Used s² (wrong stoich).',2:'Just Ksp.',3:'Off.'}},
+  {id:'ks-h1',skills:['ksp'],diff:3,q:'Approximate molar solubility of Ag₂CrO₄ (Ksp = 1.1×10⁻¹²)? Pick the closest order-of-magnitude answer.',opts:['~10⁻⁴ M','~10⁻⁵ M','~10⁻⁷ M','~10⁻¹² M'],correct:1,why:'Ag₂CrO₄ → 2Ag⁺ + CrO₄²⁻, so Ksp = (2s)²(s) = 4s³. s = ∛(1.1×10⁻¹² / 4) = ∛(0.275×10⁻¹²) ≈ ∛(0.3×10⁻¹²) ≈ 6.5×10⁻⁵, which is ~10⁻⁵ M. No-calc shortcut: 4s³ ≈ 10⁻¹² → s³ ≈ 10⁻¹³ → s ≈ 10⁻⁴·³ → ~10⁻⁵ once you account for the factor of 4.',diag:{0:'10⁻⁴ would mean Ksp ≈ 4×(10⁻⁴)³ = 4×10⁻¹² — one order of magnitude too high. Recompute the cube-root scale.',2:'10⁻⁷ is way too small. s³ ≈ 10⁻²¹ from that value, far from the actual Ksp.',3:'Ksp is not solubility — you need to solve for s, not just read the Ksp value.'}},
 
   // === CROSS-TOPIC INTERTWINE (12) — multi-skill problems ===
   {id:'x1',skills:['mole-conv','lim-react','gas-laws'],diff:3,q:'Combust 8.0 g CH₄ in excess O₂. V of CO₂ at STP?',opts:['5.6 L','11.2 L','22.4 L','44.8 L'],correct:1,why:'mol CH₄ = 8/16 = 0.5. CH₄+2O₂→CO₂+2H₂O → mol CO₂ = 0.5. V = 0.5×22.4 = 11.2 L.',diag:{0:'Forgot 1:1 ratio.',2:'1 mol CH₄.',3:'2× too much.'}},
@@ -5303,7 +5304,7 @@ const BANK = [
   {id:'x5',skills:['mole-conv','solutions'],diff:1,q:'4.0 g of NaOH (MW = 40 g/mol) is dissolved in water and diluted to 1.0 L. Molarity?',opts:['0.05 M','0.10 M','0.40 M','1.0 M'],correct:1,why:'Two-step conversion: mol NaOH = 4.0 g / (40 g/mol) = 0.10 mol. M = mol / L = 0.10 / 1.0 = 0.10 M. The "divide by MW, then by volume in liters" pattern is the canonical move for any g-to-M problem.',diag:{0:'0.05 M would require either 2.0 g NaOH or 2.0 L of solvent — check whether you halved one of the inputs.',2:'0.40 M would require 16 g of NaOH (not 4.0 g) in 1.0 L. You may have divided by the formula unit (10) instead of the molar mass (40).',3:'1.0 M would require 40 g — a full mole. You only dissolved 4.0 g = 0.10 mol.'}},
   {id:'x6',skills:['enthalpy','calorimetry','heating-curve'],diff:3,q:'Heat 18 g (1 mol) of water from 50°C to 110°C. Total q? (c_water=4.18, ΔH_vap=40.7 kJ)',opts:['4.5 kJ','7.5 kJ','44.5 kJ','46.0 kJ'],correct:2,why:'q1 (50→100): 18×4.18×50/1000 = 3.76 kJ. q2 (vaporize): 1×40.7 = 40.7 kJ. q3 (steam 100→110): 18×2.03×10/1000 = 0.37 kJ. Total ≈ 44.8 kJ.',diag:{0:'Only first.',1:'Forgot vaporization.',3:'Slight overcount.'}},
   {id:'x7',skills:['eq-kc','eq-ice','strong-weak'],diff:4,q:'A 0.10 M weak acid HA has Ka = 1×10⁻⁴. % dissociation?',opts:['0.32%','3.2%','10%','32%'],correct:1,why:'x = √(Ka·C) = √(10⁻⁵) = 3.16×10⁻³. %diss = (3.16×10⁻³ / 0.10)×100 = 3.16% ≈ 3.2%.',diag:{0:'Off by 10.',2:'Used Ka directly.',3:'Off by 10.'}},
-  {id:'x8',skills:['arrhenius','rate-laws'],diff:3,q:'Rate doubles when T rises from 300 K to 310 K. Approximate Eₐ?',opts:['~10 kJ/mol','~50 kJ/mol','~100 kJ/mol','~200 kJ/mol'],correct:1,why:'ln(2) = (Eₐ/R)(1/300 − 1/310). 0.693 = (Eₐ/8.314)(0.0001075). Eₐ = 0.693×8.314/0.0001075 ≈ 53,600 J ≈ 54 kJ/mol.',diag:{0:'Underestimate.',2:'Overestimate by 2.',3:'Way over.'}},
+  {id:'x8',skills:['arrhenius','rate-laws'],diff:3,q:'Rate doubles when temperature rises from 300 K to 310 K. Qualitatively, what does this tell you about the activation energy?',opts:['Eₐ is very small (a few kJ/mol)','Eₐ is moderate (around 50–60 kJ/mol)','Eₐ is large (>200 kJ/mol)','Eₐ cannot be inferred from rate vs T data'],correct:1,why:'The "rate doubles per 10 K rise" rule of thumb corresponds to a moderate Eₐ around 50–60 kJ/mol for most organic reactions near room temperature. Plugging into Arrhenius (ln 2 = Eₐ/R · ΔT/(T₁T₂)) gives Eₐ ≈ 54 kJ/mol, but the qualitative DAT version is "rate doubles per 10 K → moderate Eₐ." Very small Eₐ would give a much weaker T sensitivity; very large Eₐ would multiply rate by far more than 2.',diag:{0:'A few kJ/mol gives almost no temperature dependence — rate would barely change.',2:'>200 kJ/mol would make rate jump by orders of magnitude per 10 K, not just double.',3:'Eₐ can absolutely be inferred from rate vs T via Arrhenius. That is the whole point of the equation.'}},
   {id:'x9',skills:['nernst','red-pot','galvanic'],diff:4,q:'Cu/Zn cell: E°=1.10 V, n=2. If [Zn²⁺]=1.0 M and [Cu²⁺]=0.001 M, E_cell?',opts:['1.013 V','1.10 V','1.19 V','0.93 V'],correct:0,why:'Q = [Zn²⁺]/[Cu²⁺] = 1000. E = 1.10 − (0.0592/2)log(1000) = 1.10 − 0.0888 = 1.011 V.',diag:{1:'Forgot Q.',2:'Wrong sign on log.',3:'Used [Cu²⁺]/[Zn²⁺].'}},
   {id:'x10',skills:['lim-react','solutions'],diff:3,q:'Mix 50 mL of 0.20 M AgNO₃ with 50 mL of 0.10 M NaCl. Limiting?',opts:['AgNO₃','NaCl','Same','Need more info'],correct:1,why:'mol AgNO₃ = 0.20×0.050 = 0.010. mol NaCl = 0.10×0.050 = 0.0050. Ag⁺+Cl⁻ → AgCl (1:1). Less NaCl → limiting.',diag:{0:'More moles.',2:'Equal volume ≠ equal mol.',3:'Computable.'}},
   {id:'x11',skills:['ph-basics','buffers','strong-weak'],diff:3,q:'A buffer is 0.1 M HF and 0.1 M F⁻. pKa(HF)=3.18. Add 1 mL of 1 M NaOH to 100 mL of buffer. New pH?',opts:['3.18','3.27','3.10','3.99'],correct:1,why:'Initial mol: HF=0.010, F⁻=0.010. Added 0.001 mol OH⁻ → HF: 0.009, F⁻: 0.011. pH = 3.18 + log(0.011/0.009) = 3.18 + 0.087 = 3.27.',diag:{0:'No change.',2:'Wrong direction.',3:'Beyond range.'}},
@@ -5936,6 +5937,17 @@ const BANK = [
   {id:'col-q10',skills:['colligative'],diff:3,q:'A benzene–toluene mixture is treated as an ideal binary solution. At 25 °C, P°(benzene) = 95 mmHg and P°(toluene) = 28 mmHg. If the mole fraction of benzene in the LIQUID is 0.40, what is the total vapor pressure above the mixture?',opts:['38.0 mmHg','54.8 mmHg','61.6 mmHg','95.0 mmHg'],correct:1,why:'Both components are volatile, so apply Raoult to each: P_benz = 0.40 × 95 = 38.0; P_tol = 0.60 × 28 = 16.8. P_total = 38.0 + 16.8 = 54.8 mmHg.',diag:{0:'That is just P_benzene. You forgot toluene also contributes to the vapor — both are volatile.',2:'You used χ for both components on the wrong P°. Benzene takes its OWN P°, not toluene\'s.',3:'That is P° of pure benzene. The mixture must have a lower combined vapor pressure than pure benzene since toluene is less volatile.'}},
   {id:'col-q11',skills:['colligative'],diff:4,q:'A real 0.10 m MgSO₄ solution shows ΔTf = 0.24 °C in water (Kf = 1.86). The "ideal" ΔTf for MgSO₄ assuming complete dissociation would be 0.372 °C. The effective van\'t Hoff factor i_eff is:',opts:['1.00','1.29','1.86','2.00'],correct:1,why:'i_eff = ΔTf_measured / (Kf · m) = 0.24 / (1.86 × 0.10) = 0.24 / 0.186 = 1.29. MgSO₄ is famously underdissociated — extensive ion pairing of Mg²⁺ with SO₄²⁻ in water means effective i is much less than the predicted 2.',diag:{0:'i = 1 would mean MgSO₄ does not dissociate at all — that is wrong, it does dissociate, just incompletely.',2:'1.86 is Kf, not i. You confused two different constants in the formula.',3:'2.00 is the IDEAL i (full dissociation). The question asks for the actual measured i_eff, which is reduced by ion pairing.'}},
   {id:'col-q12',skills:['colligative'],diff:4,q:'You compute osmotic pressure with π = i·M·R·T. For the answer to come out in atm with M in mol/L and T in K, R must have units:',opts:['J/(mol·K)','L·atm/(mol·K)','cal/(mol·K)','atm·mol/(L·K)'],correct:1,why:'π [atm] = i · M [mol/L] · R · T [K]. Solving for R\'s units: atm / (mol/L · K) = atm·L/(mol·K) = L·atm/(mol·K). That is the gas constant 0.0821 L·atm/(mol·K). Picking R = 8.314 J/(mol·K) gives π in J/L (not atm).',diag:{0:'R = 8.314 J/(mol·K) is the SI value, but it does not give atm directly. Use 0.0821 L·atm/(mol·K) when the answer must be in atm.',2:'Calorie units are obsolete for this and would produce the wrong magnitude — π in cal/L is not standard.',3:'Units do not balance: this would give π in (atm·mol/(L·K)) × (mol/L) × K = atm·mol²/L² — not a pressure unit.'}},
+
+  // === SOL-RULES (5) — added 2026-05-28 with the new solubility-rules module
+  {id:'sr1',skills:['sol-rules'],diff:1,q:'Which of the following is INSOLUBLE in water?',opts:['NaCl','KNO₃','AgCl','MgSO₄'],correct:2,why:'AgCl is one of the famous insoluble silver halides (others: AgBr, AgI, PbCl₂, Hg₂Cl₂). NaCl is a Group 1 chloride (always soluble); KNO₃ is a nitrate (always soluble); MgSO₄ is a soluble sulfate (the only insoluble sulfates are Ba, Pb, Sr, and slightly Ca).',diag:{0:'All Group 1 salts (Li, Na, K, Rb, Cs) are soluble. No exceptions.',1:'All nitrates are soluble. No exceptions.',3:'Most sulfates are soluble; the exceptions are BaSO₄, PbSO₄, SrSO₄, CaSO₄ (slightly). Mg is not on the exception list — MgSO₄ (Epsom salts) dissolves freely in water.'}},
+
+  {id:'sr2',skills:['sol-rules'],diff:1,q:'Mixing aqueous Pb(NO₃)₂ with aqueous KI produces a precipitate. The precipitate is:',opts:['Pb(NO₃)₂','KI','PbI₂','KNO₃'],correct:2,why:'Swap partners: Pb²⁺ pairs with I⁻ to give PbI₂; K⁺ pairs with NO₃⁻ to give KNO₃. PbI₂ is INSOLUBLE (lead halides are a halide exception); KNO₃ is soluble (Group 1 nitrate). So PbI₂ is the yellow precipitate ("golden rain" demo).',diag:{0:'Pb(NO₃)₂ is a starting material — it was the source of Pb²⁺. If the question asked for unreacted reagent that would be different, but it asks what precipitates.',1:'KI is also a starting material and is soluble (Group 1 halide).',3:'KNO₃ stays dissolved — both the Group 1 cation and the nitrate anion guarantee solubility.'}},
+
+  {id:'sr3',skills:['sol-rules'],diff:2,q:'For the reaction AgNO₃(aq) + NaCl(aq) → AgCl(s) + NaNO₃(aq), what is the net-ionic equation?',opts:['Ag⁺ + Cl⁻ → AgCl(s)','AgNO₃ + NaCl → AgCl + NaNO₃','Na⁺ + NO₃⁻ → NaNO₃','Ag⁺ + Na⁺ + Cl⁻ + NO₃⁻ → AgCl + NaNO₃'],correct:0,why:'A net-ionic equation shows ONLY the species that change phase or oxidation state. Na⁺ and NO₃⁻ appear unchanged on both sides — spectators — cancel them. What remains is the precipitation event: Ag⁺(aq) + Cl⁻(aq) → AgCl(s).',diag:{1:'That is the molecular equation, not the net-ionic. The net-ionic removes the spectator ions.',2:'NaNO₃ stays dissolved — it does NOT form (both ions remain dissociated). Na⁺ and NO₃⁻ are spectators.',3:'That is the COMPLETE ionic equation (everything dissociated). To get net-ionic, cancel the ions that appear on both sides unchanged.'}},
+
+  {id:'sr4',skills:['sol-rules'],diff:2,q:'Which combination will NOT form a precipitate when mixed in solution?',opts:['Ba(NO₃)₂ + Na₂SO₄','AgNO₃ + KI','CaCl₂ + Na₂CO₃','NaCl + KNO₃'],correct:3,why:'For each pair, swap partners and check: (a) Ba²⁺ + SO₄²⁻ → BaSO₄ (insoluble sulfate exception — precipitates). (b) Ag⁺ + I⁻ → AgI (insoluble halide exception — precipitates). (c) Ca²⁺ + CO₃²⁻ → CaCO₃ (carbonates insoluble except Group 1 — precipitates). (d) NaCl + KNO₃ → NaNO₃ + KCl, both soluble (Group 1 + nitrate / Group 1 + halide) — no driving force, no reaction.',diag:{0:'BaSO₄ IS insoluble — Ba is one of the sulfate exceptions. This pair does precipitate.',1:'AgI is insoluble — silver halide. This pair does precipitate.',2:'CaCO₃ is insoluble (carbonate with non-Group-1 cation). This pair does precipitate.'}},
+
+  {id:'sr5',skills:['sol-rules'],diff:3,q:'You mix aqueous solutions and want to confirm sulfate (SO₄²⁻) is present in an unknown. Which cation should you add to make sulfate precipitate cleanly?',opts:['Na⁺','NH₄⁺','Ba²⁺','K⁺'],correct:2,why:'The classic sulfate confirmation: Ba²⁺ + SO₄²⁻ → BaSO₄(s), a white precipitate. Ba²⁺ is one of the sulfate exceptions to the "sulfates are soluble" rule. Na⁺, NH₄⁺, and K⁺ all form fully soluble sulfates (Group 1 + ammonium), so they cannot precipitate sulfate.',diag:{0:'Na₂SO₄ is soluble — Group 1 sulfates are always soluble. No precipitate.',1:'(NH₄)₂SO₄ is soluble — ammonium sulfates are always soluble. No precipitate.',3:'K₂SO₄ is soluble — same Group 1 rule. To precipitate sulfate you need Ba²⁺, Pb²⁺, or Sr²⁺.'}},
 ];
 
 const BANK_BY_ID = Object.fromEntries(BANK.map(b => [b.id, b]));
@@ -6965,6 +6977,43 @@ const MODULES = {
       {when:'Q = MC ΔT or Q = MC + ΔT?', name:'<em>It is times, not plus</em>', move:'Q = M · C · ΔT. Common pencil slip: writing M·C + ΔT and getting a number an order of magnitude off. The mnemonic is Google "MCAT" — there is no "+" in MCAT.', why:'If your answer is wildly off, this is the first place to check.', lock:'MCAT, not MC plus AT.', coach:true},
       {when:'Which plateau is bigger?', name:'<em>Vaporization dominates</em>', move:'ΔH_vap is way bigger than ΔH_fus. For water: 40.7 vs 6.01 kJ/mol — roughly 7x. Most of the heat in any ice-to-steam problem lives in the boil plateau, so if your sum is dominated by the melt block instead, you made an arithmetic mistake.', why:'Physics: vaporization fully separates molecules from all neighbors; melting only loosens the lattice. Fully separated > slightly mobile, by a lot.', lock:'Vap >> fus.', coach:true},
       {when:'Reading the temperature range', name:'<em>Read the stem carefully</em>', move:'When the problem says something like "from −10 to 50 above boiling," that does NOT mean from −10 to 50. It means from −10 (the start) to 50 degrees above boiling (so 150 for water). Reread the range before counting how many blocks the problem actually spans.', why:'Trap stem — students assume the second number is the endpoint and miss the whole vapor segment.', lock:'"Above boiling" = add the boiling point.', coach:true}
+    ]
+  },
+  'sol-rules': {
+    skill:'sol-rules', tier:1, num:'14c',
+    title:'Solubility <em>Rules</em> &amp; Net-Ionic Equations',
+    sub:'Which combinations form a precipitate, and how to write the equation that only shows the reaction.',
+    pattern:'Memorize the short solubility table, then write reactions in two stages: (1) molecular equation (everything written as compounds), (2) net-ionic equation (only the species that actually change phase or oxidation state). Spectator ions — the ones that appear unchanged on both sides — get cancelled out.<br><br><b>Short solubility table (memorize cold):</b><br>- <b>Always soluble:</b> Group 1 cations (Li⁺, Na⁺, K⁺, Cs⁺, Rb⁺), NH₄⁺, nitrates (NO₃⁻), acetates (CH₃COO⁻), perchlorates (ClO₄⁻). No exceptions.<br>- <b>Usually soluble — with exceptions:</b><br>&nbsp;&nbsp;Halides (Cl⁻, Br⁻, I⁻) — except <b>Ag⁺, Pb²⁺, Hg₂²⁺</b>.<br>&nbsp;&nbsp;Sulfates (SO₄²⁻) — except <b>Ba²⁺, Pb²⁺, Sr²⁺, Ca²⁺ (slightly)</b>.<br>- <b>Usually insoluble — with exceptions:</b><br>&nbsp;&nbsp;Carbonates (CO₃²⁻), phosphates (PO₄³⁻), sulfides (S²⁻), hydroxides (OH⁻) — soluble only with Group 1 or NH₄⁺.<br><br>The two most-tested DAT precipitations: <b>AgCl</b> (silver halide test) and <b>BaSO₄</b> (sulfate confirmation).',
+    formula:'Always soluble: Group 1, NH₄⁺, NO₃⁻, CH₃COO⁻<br>Halides: soluble except Ag⁺, Pb²⁺, Hg₂²⁺<br>Sulfates: soluble except Ba²⁺, Pb²⁺, Sr²⁺<br>CO₃²⁻, PO₄³⁻, S²⁻, OH⁻: insoluble (Group 1 + NH₄⁺ excepted)<br>Net ionic = drop spectators (ions unchanged on both sides)',
+    visualType:'word-translate', visualData:{},
+    worked:[
+      {q:'AgNO₃(aq) + NaCl(aq) → ?', steps:[
+        {what:'Predict products by swapping partners: Ag⁺ ↔ Na⁺, NO₃⁻ ↔ Cl⁻', why:'Double-replacement skeleton.'},
+        {what:'AgCl forms — AgCl is INSOLUBLE (halide exception)', why:'Silver halides are the classic precipitate.', predict:{q:'NaNO₃ — soluble or not?', hint:'Group 1 nitrate.'}},
+        {what:'NaNO₃ stays dissolved (Group 1 nitrate — always soluble)', why:'Spectator pair.'},
+        {what:'Molecular: AgNO₃(aq) + NaCl(aq) → AgCl(s) + NaNO₃(aq)', why:'Full equation with phases.'},
+        {what:'Net-ionic: Ag⁺(aq) + Cl⁻(aq) → AgCl(s)', why:'Cancel the spectators (Na⁺, NO₃⁻ unchanged). Only the precipitation event appears.'}
+      ]},
+      {q:'BaCl₂(aq) + Na₂SO₄(aq) → ?', steps:[
+        {what:'Swap partners → BaSO₄ + NaCl', why:'Double replacement.'},
+        {what:'BaSO₄ — INSOLUBLE (sulfate exception)', why:'Ba/Pb/Sr/Ca sulfates are insoluble.'},
+        {what:'NaCl — soluble (Group 1 halide).', why:'Spectator pair.'},
+        {what:'Net-ionic: Ba²⁺(aq) + SO₄²⁻(aq) → BaSO₄(s)', why:'Drop the Na⁺ and Cl⁻ that did not change phase.'}
+      ]}
+    ],
+    faded:[
+      {prompt:'AgNO₃ + KBr → precipitate?', lcd:'Halide exception (Ag).', blank:'___', answer:'AgBr'},
+      {prompt:'Which of these is insoluble? NaCl, KNO₃, AgCl, MgSO₄', lcd:'Silver halide exception.', blank:'___', answer:'AgCl'},
+      {prompt:'Net-ionic for Pb(NO₃)₂ + 2KI → PbI₂(s) + 2KNO₃ is?', lcd:'Drop K⁺ and NO₃⁻ (spectators).', blank:'Pb²⁺ + 2I⁻ → ___', answer:'PbI₂(s)'}
+    ],
+    practice:['sr1','sr2','sr3','sr4','sr5'],
+    masteryProblems:['sr1','sr2','sr3','sr4','sr5'],
+    lock:'Group 1, NH₄⁺, NO₃⁻ ALWAYS soluble. Halides except Ag/Pb/Hg₂. Sulfates except Ba/Pb/Sr. Net-ionic = drop the spectators.',
+    trap:'Forgetting the Ag halide exception (most-tested). Confusing carbonate (insoluble with Ca/Mg/Ba) with bicarbonate (soluble). Writing the molecular equation as the net-ionic — you must cancel spectator ions or it is not a net-ionic equation.',
+    coachTricks:[
+      {when:'You see a double-replacement and want to predict the precipitate', name:'<em>Swap partners, then check the short table</em>', move:'Write the swap (cation A pairs with anion B; cation B pairs with anion A). Then run each new compound through the soluble/insoluble table. If both are soluble, no reaction. If one is insoluble, you have your precipitate.', why:'Avoids the trap of writing reactions that do not actually go (no driving force = no rxn).', lock:'Swap. Check. Mark phases.', coach:true},
+      {when:'Going from molecular to net-ionic', name:'<em>Drop everything that did not change phase</em>', move:'Spectator ions appear on BOTH sides of the ionic equation as the same dissolved ion. They are not part of the actual chemistry. Cancel them out. What is left is the net-ionic — usually a precipitation, a gas formation, or a water formation.', why:'Net-ionic strips the reaction to the species that actually change. The DAT often gives you the molecular equation and asks for the net-ionic in one step.', lock:'Same ion on both sides = spectator = cancel.', coach:true},
+      {when:'The two most-tested precipitates', name:'<em>AgCl + BaSO₄</em>', move:'Memorize these two cold. AgCl(s) is the classic silver-halide test (curdy white). BaSO₄(s) is the classic sulfate confirmation (white, used in barium meals for GI imaging). If you see Ag⁺ + a halide or Ba²⁺ + sulfate, predict the precipitate without doubt.', why:'These two come up disproportionately often on the DAT — high-yield memorize.', lock:'Ag⁺ + halide = AgCl. Ba²⁺ + SO₄²⁻ = BaSO₄.', coach:true}
     ]
   },
   'colligative': {
@@ -14534,6 +14583,48 @@ const DIAG_BANK = [
    opts:['\u00B2\u00B3\u2074\u2089\u2080Th','\u00B2\u00B3\u2078\u2089\u2083Np','\u00B2\u00B3\u2074\u2089\u2082U','\u00B2\u00B3\u2076\u2089\u2080Th'], correct:0, why:'\u22124 mass, \u22122 Z.', diag:{1:'\u03B2\u207B.',2:'No Z change.',3:'Mass wrong.'}},
   {id:'d25', skill:'phase-diag',diff:2, q:'Triple point: how many phases coexist?',
    opts:['1','2','3','4'], correct:2, why:'s, l, g all in eq.', diag:{0:'Single.',1:'Line.',3:'Impossible.'}},
+
+  // ---- Silent-skill coverage adds (2026-05-28). One item per skill that
+  //      was previously unprobed by the diagnostic.
+  {id:'d26', skill:'imf-rank', diff:1, q:'Strongest IMF between two water molecules?',
+   opts:['London dispersion','Dipole-dipole','Hydrogen bond','Ionic'], correct:2,
+   why:'O–H bond → H-bond donor and acceptor; H-bonds are the strongest non-ionic intermolecular force. London is universal but weak; ionic does not apply between molecular substances.',
+   diag:{0:'London is the universal floor, not the dominant force when H-bonding is available.', 1:'Dipole-dipole is right family but H-bonds are a special, much stronger flavor (because of O/N/F + H specifically).', 3:'Ionic is intRA-molecular here, not interMOLECULAR — water molecules are not ionic substances.'}},
+
+  {id:'d27', skill:'hybridization', diff:2, q:'Central-atom hybridization in CO₂?',
+   opts:['sp','sp²','sp³','sp³d'], correct:0,
+   why:'Carbon has 2 electron groups (one double bond to each O). Each double bond counts as ONE group for steric number. 2 groups → sp → linear.',
+   diag:{1:'sp² would require 3 electron groups. You may have counted each double bond as two groups — they count as one.', 2:'sp³ requires 4 electron groups (CH₄). CO₂ has only 2.', 3:'sp³d requires 5 groups and Period 3+ central atom. Carbon is Period 2 and cannot expand.'}},
+
+  {id:'d28', skill:'calorimetry', diff:2, q:'A 50 g sample of metal cools from 80°C to 25°C, releasing 1100 J. Specific heat of the metal (J/g·°C)?',
+   opts:['0.20','0.40','0.50','2.0'], correct:1,
+   why:'q = m·c·ΔT → c = q / (m·ΔT) = 1100 / (50 × 55) = 1100 / 2750 = 0.40 J/g·°C.',
+   diag:{0:'0.20 would need ΔT = 110°C (double the actual range) or m = 100 g. Recheck arithmetic.', 2:'0.50 would mean 1375 J released; you would have used ΔT = 50 or m = 40.', 3:'2.0 is the inverse — you divided m·ΔT by q instead of q by m·ΔT.'}},
+
+  {id:'d29', skill:'electrolysis', diff:2, q:'How many moles of electrons are required to deposit 1 mole of Al from molten Al₂O₃?',
+   opts:['1','2','3','6'], correct:2,
+   why:'Al³⁺ + 3e⁻ → Al. So 1 mol Al requires 3 mol e⁻. (Faraday counting: q = nFI ... where n is electron count per ion.)',
+   diag:{0:'1 e⁻ deposits Na (Na⁺), Ag (Ag⁺), or K — singly-charged cations. Al is Al³⁺.', 1:'2 e⁻ deposits Cu (Cu²⁺), Zn (Zn²⁺), Mg (Mg²⁺). Al carries a +3 charge in the oxide.', 3:'6 mol e⁻ deposits 2 mol Al (the full stoichiometric Al₂O₃ unit). The question asks per mol Al.'}},
+
+  {id:'d30', skill:'heating-curve', diff:2, q:'On a heating-curve plot (T vs heat added) for water, what does a flat plateau represent?',
+   opts:['Warming the liquid','A phase change at constant T','Cooling','Constant volume'], correct:1,
+   why:'During fusion or vaporization, T stays constant while heat is absorbed to break IMFs. Slopes represent warming within a single phase; plateaus represent phase transitions.',
+   diag:{0:'Warming the liquid is a sloped segment with positive rise — NOT flat.', 2:'Cooling would have a NEGATIVE slope on a heating curve (this plot is heat added, so cooling does not appear).', 3:'Constant volume is irrelevant — this plot is T vs q, no V axis.'}},
+
+  {id:'d31', skill:'colligative', diff:2, q:'Which 1.0 m aqueous solution shows the GREATEST freezing-point depression?',
+   opts:['Glucose (C₆H₁₂O₆)','NaCl','CaCl₂','Sucrose'], correct:2,
+   why:'ΔTf = i·Kf·m. Glucose and sucrose: i = 1 (no dissociation). NaCl: i = 2 (Na⁺ + Cl⁻). CaCl₂: i = 3 (Ca²⁺ + 2Cl⁻). Largest i wins → CaCl₂.',
+   diag:{0:'Glucose does not dissociate (i = 1). Two ionic solutes above it both give bigger depression.', 1:'NaCl gives i = 2, real depression — but CaCl₂ produces 3 particles per formula unit, so it wins.', 3:'Sucrose is a non-electrolyte (i = 1) — same as glucose for colligative purposes.'}},
+
+  {id:'d32', skill:'titration', diff:2, q:'Titration of a weak acid with NaOH. Equivalence-point pH is:',
+   opts:['Less than 7 (acidic)','Equal to 7','Greater than 7 (basic)','Depends on starting concentration'], correct:2,
+   why:'At equivalence all weak acid has been converted to its conjugate base (A⁻). The conjugate base hydrolyzes water → solution is basic → pH > 7. Strong+strong gives pH = 7; weak base + strong acid gives pH < 7.',
+   diag:{0:'That is the eq pH for weak BASE + strong ACID, not weak acid + strong base.', 1:'pH = 7 at equivalence only when BOTH are strong (or both weak). Weak acid + strong base goes basic.', 3:'Eq-point pH is set by the conjugate species, not by starting concentration (concentration affects shape, not the eq pH significantly).'}},
+
+  {id:'d33', skill:'red-pot', diff:2, q:'Strongest reducing agent of: Li, Na, Zn, F⁻?',
+   opts:['Li (E°=−3.04)','Na (E°=−2.71)','Zn (E°=−0.76)','F⁻ (E° = +2.87 for F₂/F⁻)'], correct:0,
+   why:'Strongest reducer = most negative E°red (most easily oxidized). Li at −3.04 V is the most negative, so Li loses electrons most readily → strongest reducer.',
+   diag:{1:'Na is a strong reducer but Li at −3.04 V is more negative (stronger). Down a column you would expect bigger atoms to lose electrons more easily, but Li wins on the standard table because of hydration energy.', 2:'Zn at −0.76 V is the weakest reducer of the metals listed.', 3:'F⁻ at +2.87 V is the most OXIDIZING (F₂ is the strongest oxidizer). The fluoride ion is a terrible reducer because it holds its electrons tightly.'}},
 ];
 
 const DIAG = {

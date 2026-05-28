@@ -9792,6 +9792,45 @@ const DIAG_BANK = [
    opts:['~10,100','~9,500','~12,000','~5,000'], correct:0,
    why:'Round to 200 × 50 = 10,000. Adjust slightly up.',
    diag:{1:'Rounded both down hard.', 2:'Compounded rounding the wrong way.', 3:'Way off — divided somewhere.'}},
+
+  // ----- Tier-2 PF-eligible coverage (6) -----
+  // Added 2026-05-28: closes the diagnostic blind spot for the PF-eligible
+  // modules so the weak-set surface has signal before routing into PF.
+  {id:'d23', skills:['mixture','frac-mul'], diff:2, cluster:'mixture-rate',
+   q:'200 mL of 30% saline mixed with 300 mL of 60% saline. Final %?',
+   opts:['45%','48%','50%','52%'], correct:1,
+   why:'Track the salt. 200·0.30 = 60 mL salt + 300·0.60 = 180 mL salt = 240 mL total salt. Divide by 500 mL total volume → 48%. Trap to catch: averaging the percentages (30+60)/2 = 45 is only right if the volumes match.',
+   diag:{0:'You averaged the percentages — that only works when the two volumes are equal. Weight by volume instead.', 2:'50 is the simple midpoint. The mixture is weighted by volume; the larger 60% portion pulls the answer past the midpoint.', 3:'52 overshoots — the 200 mL of 30% drags the answer below where the larger 60% portion alone would be.'}},
+
+  {id:'d24', skills:['work-rate','frac-add'], diff:2, cluster:'mixture-rate',
+   q:'A fills a tank in 4 hours, B fills it in 6 hours. Working together, fill time?',
+   opts:['2.0 h','2.4 h','5.0 h','10 h'], correct:1,
+   why:'Rates add — A is 1/4 tank/hr, B is 1/6 tank/hr. Combined rate = 1/4 + 1/6 = 5/12 tank/hr. Time = reciprocal = 12/5 = 2.4 hours. Gut check: the combined time MUST be shorter than either alone.',
+   diag:{0:'2.0 is the half of 4 — you halved one rate. Add the rates, then invert.', 2:'5 is the average of 4 and 6 — but averaging times is wrong here. Rates add, not times.', 3:'10 = 4 + 6 — you summed the times. Working together is always FASTER than either alone, never slower.'}},
+
+  {id:'d25', skills:['p-cond','frac-mul'], diff:3, cluster:'probability-pat',
+   q:'1% of a population has a disease. A test is 99% sensitive (true positive) and 95% specific (true negative — so 5% false positive). A random person tests positive. P(disease | positive)?',
+   opts:['99%','~17%','50%','1%'], correct:1,
+   why:'Build a 100-person tree. 1 person has the disease (true positive 0.99). 99 do not have it (false positives = 99 × 0.05 = 4.95). Total positives ≈ 5.95. P(disease | positive) = 0.99 / 5.95 ≈ 17%. The base-rate (1%) overwhelms the test accuracy — this is the classic Bayes flip.',
+   diag:{0:'99% is the SENSITIVITY of the test, not P(disease | positive). You flipped the conditional. Build the tree.', 2:'50% is intuition trying to split the difference. The math says ~17% because most people without the disease still outnumber the few with it.', 3:'1% is the base prevalence, what you would say with no test info. Testing positive moves you UP from there but not all the way to 99%.'}},
+
+  {id:'d26', skills:['harm','word-decode'], diff:2, cluster:'mixture-rate',
+   q:'A driver goes 60 mph to work, returns the SAME ROUTE at 40 mph. Average speed for the trip?',
+   opts:['50 mph','48 mph','45 mph','55 mph'], correct:1,
+   why:'Same DISTANCE → harmonic mean: 2(60)(40) / (60 + 40) = 4800/100 = 48 mph. The driver spent more clock time at the slower speed, so the average drags toward the slow end. Trap: (60+40)/2 = 50 only works if the same TIME is spent at each speed, not the same distance.',
+   diag:{0:'50 is the simple arithmetic average — the trap answer. When the distance is the same, the slower leg takes more time, so the average must be BELOW the midpoint.', 2:'45 is between the midpoint and the lower speed but you over-corrected. Use 2v₁v₂/(v₁+v₂) = 48.', 3:'55 is above the midpoint, which is impossible when the slower leg takes more time. Harmonic is always below arithmetic.'}},
+
+  {id:'d27', skills:['geo-2d'], diff:2, cluster:'geometry',
+   q:'A right triangle has legs 6 and 8. Hypotenuse?',
+   opts:['10','12','14','7'], correct:0,
+   why:'Pythagorean: 6² + 8² = 36 + 64 = 100, so hypotenuse = √100 = 10. Memorize the 3-4-5 family (and its multiples like 6-8-10) — they are everywhere on the DAT.',
+   diag:{0:'(correct — but if you guessed: confirm with √(36+64) = √100 = 10.)', 1:'You added the legs instead of using Pythagorean. The hypotenuse is √(a²+b²), not a+b.', 2:'14 is a + b. Always shorter than that — the hypotenuse satisfies a² + b² = c², and 6²+8² = 100, not 196.', 3:'7 is the average of the legs, which has no geometric meaning here. The right answer is the Pythagorean sum, not a midpoint.'}},
+
+  {id:'d28', skills:['desc-stats'], diff:2, cluster:'stats-pat',
+   q:'Data set: {3, 5, 5, 7, 12}. If you ADD a single outlier of 100, what happens to the MEDIAN?',
+   opts:['Median rises sharply','Median is unchanged','Median rises slightly to 6','Median falls'], correct:2,
+   why:'Original set sorted: 3, 5, 5, 7, 12 — median = 5 (middle of 5 values). New sorted set: 3, 5, 5, 7, 12, 100 — median = (5+7)/2 = 6. Adding the outlier shifts the median position from index 2 to between indices 2 and 3, so the median rises by 1. Mean would jump dramatically (15 → ~22). Median is robust against outliers; mean is not.',
+   diag:{0:'Median is robust — adding even one extreme value barely moves it. The MEAN would rise sharply, not the median.', 1:'Not quite — adding a value changes whether there is an odd or even count, which shifts the median position by half a step.', 3:'Adding a value of 100 cannot lower the median — it sits above every other value in the set.'}},
 ];
 
 // Helper: which skills are probed by the bank? Used to drive skillsToProbe.
@@ -13044,7 +13083,14 @@ const PAT_CHUNKS = [
     recog:{q:'For "at least one" probability, use:', opts:['Sum of all individual probabilities','1 − P(none of them happen)','Average of the events','Subtract from 100% directly'], correct:1,
       why:'<b>P(at least one) = 1 − P(none)</b>. Independent events: 1 − (1−p)ⁿ.'},
     gen:{q:'Flip a fair coin 3 times. P(at least one head)?', opts:['1/8','3/8','1/2','7/8'], correct:3,
-      why:'P(no heads) = (1/2)³ = 1/8. So P(at least one head) = 1 − 1/8 = <b>7/8</b>.'}}
+      why:'P(no heads) = (1/2)³ = 1/8. So P(at least one head) = 1 − 1/8 = <b>7/8</b>.'}},
+
+  // ----- probability (2) -----
+  {id:'pr-noreplace', cat:'probability', rule:'Without replacement: numerator and denominator both drop by 1 each draw',
+    recog:{q:'Drawing 2 cards from a 52-card deck without replacement, P(both aces) sets up as:', opts:['(4/52) × (4/52)','(4/52) × (3/51)','(4/52) + (3/51)','(4/52) − (3/51)'], correct:1,
+      why:'After you draw one ace, both the favorable count (4 → 3) AND the total count (52 → 51) drop by one. So the multiplication is <b>(4/52) × (3/51)</b>. With replacement would be (4/52)² — that is the trap to catch when the stem omits "without."'},
+    gen:{q:'A bag has 5 red and 5 blue marbles. You draw 2 without replacement. P(both red)?', opts:['1/4','5/18','2/9','1/2'], correct:2,
+      why:'First draw: 5/10. Second draw, with one red already removed: 4/9. Multiply: (5/10) × (4/9) = 20/90 = <b>2/9</b>. Sanity check: this is LESS than (5/10)² = 1/4, the with-replacement answer — exactly what you would expect when removing a red shrinks the pool.'}}
 ];
 const PAT_CHUNK_BY_ID = Object.fromEntries(PAT_CHUNKS.map(c => [c.id, c]));
 const PAT_CATEGORIES = [
