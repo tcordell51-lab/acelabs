@@ -52,6 +52,22 @@ function isAllowed(filePath) {
   return SCOPE.STALE_PHRASE_ALLOWED_PATHS.some((p) => rel.startsWith(p) || rel === p);
 }
 
+// Strip HTML tags from the ~30 chars before a match so negation tokens like
+// "not a" can be matched even when split across spans. We keep word boundaries
+// by collapsing tags to a single space.
+function stripTags(s) {
+  return s.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+}
+
+function isNegated(text, idx) {
+  if (!SCOPE.NEGATION_PATTERNS || !SCOPE.NEGATION_PATTERNS.length) return false;
+  // Take a 60-char window before the match, strip tags, then test patterns
+  // anchored at end-of-string (the $ in each pattern).
+  const winStart = Math.max(0, idx - 60);
+  const window = stripTags(text.slice(winStart, idx));
+  return SCOPE.NEGATION_PATTERNS.some((rx) => rx.test(window));
+}
+
 SCOPE.USER_FACING_HTML.forEach((rel) => {
   const p = path.join(ROOT, rel);
   if (!fs.existsSync(p)) {
@@ -59,15 +75,20 @@ SCOPE.USER_FACING_HTML.forEach((rel) => {
     return;
   }
   const text = readText(p);
+  const lower = text.toLowerCase();
   SCOPE.STALE_PHRASES.forEach((phrase) => {
-    // Case-insensitive substring scan.
-    const idx = text.toLowerCase().indexOf(phrase.toLowerCase());
-    if (idx !== -1) {
-      // Surface a small surrounding excerpt for context.
-      const start = Math.max(0, idx - 30);
-      const end   = Math.min(text.length, idx + phrase.length + 30);
-      const excerpt = text.slice(start, end).replace(/\s+/g, ' ').trim();
-      err(rel + ': stale phrase "' + phrase + '" — context: …' + excerpt + '…');
+    const needle = phrase.toLowerCase();
+    // Walk every occurrence; a single page can contain the phrase multiple times
+    // (some negated, some not). Each non-negated occurrence is an error.
+    let idx = lower.indexOf(needle);
+    while (idx !== -1) {
+      if (!isNegated(text, idx)) {
+        const start = Math.max(0, idx - 30);
+        const end   = Math.min(text.length, idx + phrase.length + 30);
+        const excerpt = text.slice(start, end).replace(/\s+/g, ' ').trim();
+        err(rel + ': stale phrase "' + phrase + '" — context: …' + excerpt + '…');
+      }
+      idx = lower.indexOf(needle, idx + needle.length);
     }
   });
 });

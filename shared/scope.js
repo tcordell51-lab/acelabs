@@ -144,18 +144,24 @@
     'predicted DAT score'
   ];
 
-  // Negation window patterns. Match within ~30 chars BEFORE a phrase to
-  // mark it as allowed (a negation/disclaimer rather than a positive claim).
+  // Negation window patterns. The validator extracts a ~60-char window of
+  // tag-stripped text immediately BEFORE each stale-phrase match; if any
+  // of these patterns matches anywhere in that window, the occurrence is
+  // treated as a legitimate disclaimer rather than a positive claim.
+  // Patterns are intentionally unanchored — the window itself is the scope.
   var NEGATION_PATTERNS = [
-    /\bnot\s+the\s+official\b\s*$/i,
-    /\bnot\s+a\b\s*$/i,
-    /\bnot\s+an\b\s*$/i,
-    /\bis\s+not\b\s*$/i,
-    /\bare\s+not\b\s*$/i,
-    /\bisn'?t\b\s*$/i,
-    /\baren'?t\b\s*$/i,
-    /\bno\b\s*$/i,
-    /\b(?:replaces|retired)\s+the\s+legacy\b\s*$/i
+    /\bnot\s+the\s+official\b/i,
+    /\bnot\s+(?:a|an)\b/i,
+    /\b(?:is|are|was|were)\s+not\b/i,
+    /\b(?:isn'?t|aren'?t|wasn'?t|weren'?t)\b/i,
+    /\bnever\b/i,
+    /\bdoes\s+not\b/i,
+    /\bcan(?:not|'?t)\b/i,
+    /\bwill\s+not\b/i,
+    /\bdo\s+not\b/i,
+    /\b(?:replaces|retired)\s+the\s+legacy\b/i,
+    /\bno\s+(?:scaled|predicted|forecast|outcome)\b/i,
+    /\bnot\s+yet\s+(?:built|shipped|published)\b/i
   ];
   // Some phrases are allowed in research/spec docs but never on
   // user-facing pages. Keep this list of allowed paths in sync with
@@ -203,6 +209,55 @@
   }
   function mockCountClaim() {
     return MOCKS.count + ' fixed Prometric-style practice tests';
+  }
+
+  // Inject minimal scope-strip + disclaimer styles exactly once per page.
+  // Lets any page wire the hooks without a separate CSS include.
+  function ensureStyles() {
+    if (typeof document === 'undefined') return;
+    if (document.getElementById('alScopeStyles')) return;
+    var css = [
+      '.al-scope-strip{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;padding:.55rem .9rem;margin:.6rem 0;background:rgba(201,168,76,.07);border:1px solid rgba(201,168,76,.28);border-radius:8px;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;font-size:12.5px;color:#3a4148;line-height:1.5}',
+      '.al-scope-strip .al-scope-label{font-weight:700;letter-spacing:.06em;text-transform:uppercase;font-size:10.5px;color:#8C7235}',
+      '.al-scope-strip .al-scope-label-warn{color:#a8431a}',
+      '.al-scope-strip .al-scope-value{color:#1a1d20;font-weight:600}',
+      '.al-scope-strip .al-scope-value-warn{color:#a8431a}',
+      '.al-scope-strip .al-scope-sep{color:#cbb98a;font-weight:700}',
+      '.al-scope-strip .al-scope-meta{color:#5c5348;font-style:italic;margin-left:auto}',
+      '.al-scope-strip .al-scope-link{margin-left:.4rem;color:#8C7235;text-decoration:none;border-bottom:1px dashed #8C7235;font-weight:700}',
+      '.al-disclaimer{margin:1.2rem 0;padding:1rem 1.2rem;background:rgba(0,0,0,.03);border-left:3px solid #C9A84C;border-radius:0 8px 8px 0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;font-size:13px;color:#3a4148;line-height:1.65}',
+      '.al-disclaimer p{margin:.4rem 0}',
+      '.al-disclaimer b{color:#1a1d20}',
+      '.al-disclaimer .al-disclaimer-meta{font-size:11.5px;color:#5c5348;margin-top:.6rem;letter-spacing:.04em}',
+      '.al-disclaimer a{color:#8C7235;text-decoration:none;border-bottom:1px dashed #8C7235;font-weight:700}',
+      '@media (prefers-color-scheme: dark){.al-scope-strip{background:rgba(201,168,76,.10);color:#ece9e1}.al-scope-strip .al-scope-value{color:#ece9e1}.al-scope-strip .al-scope-meta{color:#b6b3aa}.al-disclaimer{background:rgba(255,255,255,.04);color:#b6b3aa}.al-disclaimer b{color:#ece9e1}}'
+    ].join('');
+    var s = document.createElement('style');
+    s.id = 'alScopeStyles';
+    s.textContent = css;
+    document.head.appendChild(s);
+  }
+
+  // Hydrate any element with id="alScopeStrip" or id="alDisclaimer".
+  // Pages just drop those placeholder divs and load shared/scope.js — no
+  // per-page boilerplate needed.
+  function hydrate() {
+    if (typeof document === 'undefined') return;
+    ensureStyles();
+    var strip = document.getElementById('alScopeStrip');
+    if (strip && !strip.hasAttribute('data-al-scope-hydrated')) {
+      strip.innerHTML = scopeStripHTML();
+      strip.setAttribute('data-al-scope-hydrated', '1');
+    }
+    var disc = document.getElementById('alDisclaimer');
+    if (disc && !disc.hasAttribute('data-al-disclaimer-hydrated')) {
+      disc.innerHTML = disclaimerHTML();
+      disc.setAttribute('data-al-disclaimer-hydrated', '1');
+    }
+    // Also patch the optional last-verified <span id="scopeLastVerified">
+    // used by scope.html so the value tracks scope.js.
+    var lv = document.getElementById('scopeLastVerified');
+    if (lv) lv.textContent = LAST_VERIFIED;
   }
 
   // Render the standard scope strip as inline HTML. Pages can drop this
@@ -256,10 +311,22 @@
     bankCount: bankCount,
     mockCountClaim: mockCountClaim,
     scopeStripHTML: scopeStripHTML,
-    disclaimerHTML: disclaimerHTML
+    disclaimerHTML: disclaimerHTML,
+    ensureStyles: ensureStyles,
+    hydrate: hydrate
   };
 
   if (typeof module !== 'undefined' && module.exports) module.exports = scope;
   root.ACE_SCOPE = scope;
+
+  // Auto-hydrate in a browser: pages just drop the placeholder divs and
+  // include the script — no per-page wiring needed.
+  if (typeof document !== 'undefined') {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', hydrate);
+    } else {
+      hydrate();
+    }
+  }
 
 })(typeof window !== 'undefined' ? window : globalThis);
