@@ -4730,8 +4730,9 @@ const MODULES = {
     lock:'<em>Multiply across.</em> Divide? Flip the second.',
     trap:'Students try to find an LCD for multiplication. Not needed. The DAT puts the LCD-style answer as a trap.',
     sarahTricks:[
-      {when:'Multiplying fractions.', name:'<em>No LCD needed</em>', move:'For multiplication, just multiply tops and bottoms straight across. The LCD is only needed for ADDING/SUBTRACTING fractions.', why:'Students confuse the two operations and waste time finding LCDs unnecessarily.', lock:'Multiply = no LCD.', sarah:true, placeholder:true},
-      {when:'Dividing fractions.', name:'<em>Keep, change, flip</em>', move:'KEEP the first fraction, CHANGE divide to multiply, FLIP the second fraction. Then go.', why:'Concrete three-word algorithm replaces vague "flip and multiply" instruction.', lock:'Keep · change · flip.'}
+      {when:'Multiplying fractions', name:'<em>No LCD needed</em>', move:'For multiplication, just multiply tops and bottoms straight across. The LCD is only needed for ADDING/SUBTRACTING fractions.', why:'Students confuse the two operations and waste time finding LCDs unnecessarily.', lock:'Multiply = no LCD.', sarah:true},
+      {when:'Dividing fractions', name:'<em>Keep, change, flip</em>', move:'KEEP the first fraction, CHANGE divide to multiply, FLIP the second fraction. Then go.', why:'Concrete three-word algorithm replaces vague "flip and multiply" instruction.', lock:'Keep · change · flip.'},
+      {when:'Dividing by a decimal or awkward fraction', name:'<em>Multiply by the reciprocal</em>', move:'Little trick: when you are dividing by a decimal or a fraction, multiply by its reciprocal instead. 60 ÷ 0.8 becomes 60 × (10/8) = 60 × (5/4) = 75. Way simpler than long-dividing by 0.8. And the gut check — dividing by a number less than 1 makes the result BIGGER, which catches people who expected a smaller answer.', why:'Thomas tutoring rule: convert any decimal divisor to a fraction, then flip it and multiply. Works on every DAT QR problem that asks you to divide by 0.something.', lock:'Divide by a decimal? Multiply by its reciprocal.', sarah:true}
     ]
   },
   'dec-arith':{
@@ -5012,8 +5013,9 @@ const MODULES = {
     lock:'<em>Track the substance.</em> Concentration × volume.',
     trap:'Averaging the percentages instead of weighting by volume. 25% + 75% averaged = 50% — but if volumes differ, that\'s wrong.',
     sarahTricks:[
-      {when:'Any mixture or solution problem.', name:'<em>Make a table</em>', move:'Build a 3-row table: Before A, Before B, After. Three columns: concentration, volume, amount-of-stuff. Fill in what you know. The "amount" column is concentration × volume. Equation: amount(A) + amount(B) = amount(After).', why:'Tables externalize working memory. Students who try to do this in their head usually drop a term.', lock:'Table it: %, vol, amount.', sarah:true, placeholder:true},
-      {when:'Adding pure water (or pure substance).', name:'<em>One side stays</em>', move:'When you add pure water to a saline, the salt amount doesn\'t change — only the volume does. Track the salt as constant. Same trick when adding pure salt: salt amount changes, but the WATER amount is constant.', why:'Recognizing what\'s invariant simplifies the equation dramatically.', lock:'Pure addition? One quantity is fixed.'}
+      {when:'Any mixture or solution problem', name:'<em>Which column has to add up?</em>', move:'Build a 3-row table: Before A, Before B, After. Three columns: concentration, volume, amount-of-stuff. The only column that has to balance is the amount-of-stuff column — that is the conservation law. Concentration is just a ratio, volume is just a count; the actual STUFF (acid, salt, sugar) is what gets conserved. So fill in concentration and volume from the stem, multiply across to get amount, and write the equation as amount(A) + amount(B) = amount(After).', why:'Students who try to do this in their head usually put the percent into the "amount" column instead of the product. Forcing the table externalizes the bookkeeping.', lock:'Table it. The amount column is the one that balances.', sarah:true},
+      {when:'Adding pure water (or pure substance)', name:'<em>One quantity is fixed</em>', move:'When you add pure water to a saline, the salt AMOUNT does not change — only the total volume does. Track the salt as the constant. Same trick the other way: when you add pure salt, the water amount is what is fixed. Pick the conserved thing, write it as constant, and solve for the new total.', why:'Recognizing what is invariant collapses the equation down to one unknown.', lock:'Pure addition → one quantity is fixed.', sarah:true},
+      {when:'Tempted to average two percentages', name:'<em>The averaging trap</em>', move:'Do NOT average percentages directly. "50% + 30% over 2 = 40%" is only right when the two volumes are equal. If they differ, average by VOLUME (weighted average). 25 oz of 50% with 75 oz of 30% gives (25·0.5 + 75·0.3) / 100 = (12.5 + 22.5) / 100 = 35%, not 40%.', why:'The single most common mixture miss on the DAT — the trap answer is always the straight arithmetic average.', lock:'Average by volume, never the percentages.', sarah:true}
     ]
   },
   'interest':{
@@ -5216,8 +5218,9 @@ const MODULES = {
     lock:'"<em>Given</em>" = the world you live in.',
     trap:'Computing the wrong direction. P(positive | sick) = 95% (test accuracy). But the question asks P(sick | positive) which is much smaller because most people are well.',
     sarahTricks:[
-      {when:'Question has "given" or "if" describing a known event.', name:'<em>Underline the given</em>', move:'Find the word "given" or "if X happens." Underline what comes AFTER it. That is your DENOMINATOR. Everything else is computed inside that branch.', why:'Direction errors are the #1 conditional probability mistake.', lock:'Underline "given." That\'s the bottom.', sarah:true, placeholder:true},
-      {when:'Medical/test problems with prevalence.', name:'Build the <em>tree</em>', move:'Don\'t trust intuition on Bayesian medical problems — they always feel wrong. Build a 100-person tree. Send the right fractions down each branch. Sum the branches you care about. Take the ratio.', why:'Concrete tree numbers > abstract probability formulas for these problems.', lock:'Tree it. Trust the tree.'}
+      {when:'You see "given" or "if X happens" in a probability stem', name:'<em>Underline the given — your world just shrunk</em>', move:'Find the word "given" or "if X happens." Underline what comes AFTER it. That phrase is the WORLD you now live in — everything you compute, you compute INSIDE that world. The number you divide BY is the size of that world, not the size of the whole universe. P(A | B) means: among only the B cases, what fraction are also A? When a stem says "tested positive," your world just shrunk to everyone who tested positive — including the false positives.', why:'Direction errors are the #1 conditional probability mistake. P(positive | sick) is NOT the same as P(sick | positive), and the DAT writes both versions on purpose.', lock:'Underline "given." That phrase is your denominator.', sarah:true},
+      {when:'Medical / test problems with prevalence', name:'<em>Build a 100-person tree</em>', move:'Do not trust intuition on Bayesian medical problems — they always feel wrong because of base-rate neglect. Build a concrete 100-person tree. Send the right fractions down each branch. Sum the branches you care about. Take the ratio. With small prevalence and any false-positive rate, the answer is almost always lower than students expect.', why:'Concrete tree numbers beat abstract probability formulas every single time on these problems.', lock:'Tree it. Trust the tree.', sarah:true},
+      {when:'You computed something and it feels close to the test sensitivity (e.g. 95%)', name:'<em>You probably flipped the conditional</em>', move:'If a problem with a small disease prevalence gives you an answer near the test\'s sensitivity, you almost certainly computed P(positive | sick) instead of P(sick | positive). Rebuild the tree. The Bayes flip is the entire point of the question — flipping it back accidentally gives you the trap answer.', why:'Most-tested misconception on conditional probability. Catches it before submission.', lock:'Answer near sensitivity → you flipped. Recompute.', sarah:true}
     ]
   },
   'count-pc':{
@@ -5254,6 +5257,14 @@ const MODULES = {
     lock:'PODIUM = <em>P</em>. PIZZA = <em>C</em>.',
     trap:'Treating committee selection as ordered. The DAT puts 720 (permutation) and 120 (combination) as adjacent answer choices. Off by r! every time.',
     sarahTricks:[
+      {
+        when:'Deciding P vs C in the first 5 seconds of a counting problem',
+        name:'<em>PODIUM = P · PIZZA = C</em>',
+        move:'Two concrete images to lock the abstract rule. PODIUM has 1st, 2nd, 3rd place — order matters, that is a permutation. PIZZA has toppings — mushrooms, pepperoni, olives — no order, that is a combination. Picture which one the problem looks like and you have the family in 5 seconds. Then run the C-method or the P formula on the numbers.',
+        why:'Permutations vs combinations is the gate to the whole counting topic. Anchoring it to two physical images stops the abstract "does order matter?" recheck loop.',
+        lock:'PODIUM = P. PIZZA = C.',
+        sarah:true
+      },
       {
         when:'A combination question (anything where order doesn\'t matter — committees, hands of cards, groups).',
         name:'<em>The C-Method</em> · skip the formula',
@@ -5329,8 +5340,9 @@ const MODULES = {
     lock:'Same DISTANCE → <em>harmonic</em>. Same TIME → arithmetic.',
     trap:'Reflexive simple average. (30+20)/2 = 25 — but the right answer is 24. The DAT puts 25 as the most tempting wrong choice every single time.',
     sarahTricks:[
-      {when:'Question phrasing includes "round trip" or "back and forth" or "the same distance."', name:'<em>Distance signal → harmonic</em>', move:'These phrases lock in the harmonic-mean scenario. Don\'t average the speeds. Compute 2v₁v₂/(v₁+v₂).', why:'Pattern recognition cuts the question in half.', lock:'Round trip = harmonic.', sarah:true, placeholder:true},
-      {when:'Distinguishing same-distance vs same-time.', name:'<em>What\'s held constant?</em>', move:'Read carefully. If the WORD "distance" is the same: harmonic. If the WORD "time" is the same (or the trip lengths are described in time, like "drove for 1 hour then 1 hour"): arithmetic.', why:'The distinction is subtle but the DAT exploits it.', lock:'What\'s constant? That tells you which mean.'}
+      {when:'You hear "round trip" / "and back" / "returned" / "same route"', name:'<em>STOP — this is the harmonic flag</em>', move:'When you hear "and back" or "returned" or "same route," STOP and do not let your hand write (v₁ + v₂)/2. That is the trap answer the DAT puts down every time. The right move is 2v₁v₂/(v₁ + v₂). You spent more clock time at the slow speed (covering the same ground takes longer), so the average gets dragged toward the slow speed — never above the midpoint.', why:'30 seconds saved per round-trip question, every time. And the gut check — the harmonic mean is ALWAYS below the arithmetic mean for unequal speeds.', lock:'Round trip / same distance → harmonic, never average.', sarah:true},
+      {when:'Distinguishing same-distance vs same-time', name:'<em>What\'s held constant?</em>', move:'Read carefully. If the SAME DISTANCE is covered (round trip, same route, same path): harmonic. If the SAME TIME is spent at each speed ("drove for 1 hour, then drove for another hour at..."): arithmetic. The phrase you anchor on is whether time or distance is the equal thing.', why:'The DAT writes both versions and counts on you reflexively averaging.', lock:'Same distance = harmonic. Same time = arithmetic.', sarah:true},
+      {when:'Gut-check your answer', name:'<em>Below the midpoint, always</em>', move:'For any two unequal speeds, the harmonic mean lands BELOW the simple average. 30 and 20 average is 25; harmonic is 24. 80 and 20 average is 50; harmonic is 32. If your harmonic answer ever exceeds the midpoint, you flipped the formula — recompute.', why:'A 5-second sanity check that catches setup errors before you commit.', lock:'Harmonic < arithmetic, always.', sarah:true}
     ]
   },
   'zscore':{
@@ -5428,8 +5440,9 @@ const MODULES = {
     lock:'Length k → Area k² → <em>Volume k³</em>',
     trap:'Treating volume as if it scaled linearly. "Side doubles → volume doubles" is wrong by a factor of 4.',
     sarahTricks:[
-      {when:'A scaling problem ("if X doubles...").', name:'<em>Cube law</em> for volume', move:'When any linear dimension scales by k, volume scales by k³. Side doubles → volume × 8. Side triples → volume × 27. Side halves → volume × 1/8. Memorize cold.', why:'The exponential nature of volume is unintuitive without practice.', lock:'Volume scales as cube of side.', sarah:true, placeholder:true},
-      {when:'Comparing two similar 3D shapes.', name:'Length ratio <em>cubed</em>', move:'For similar shapes, if the linear ratio is r, the volume ratio is r³. Two similar cylinders, one with radius 2× the other → its volume is 8× the other.', why:'Generalizes the cube law beyond cubes.', lock:'Similar shapes: cube the ratio.'}
+      {when:'A scaling problem ("if the side doubles, the volume...")', name:'<em>Memorize two numbers: 8 and 27</em>', move:'Your brain wants to scale volume linearly because that is how length works. But volume is length-cubed, so you cube the scale factor. Side doubles → volume × 8. Side triples → volume × 27. Memorize those two numbers cold and you cover 80% of the cube-law DAT items. Side halves → volume × 1/8 (= 0.125). Side × 1.5 → volume × 3.375. Same rule every time.', why:'The cube law shows up on the DAT regularly and the trap answer is ALWAYS the linear-scaled version (× 2 instead of × 8). Locking the two anchor numbers makes the right answer automatic.', lock:'×2 → ×8 vol. ×3 → ×27 vol.', sarah:true},
+      {when:'Comparing two similar 3D shapes', name:'<em>Cube the linear ratio</em>', move:'For any similar shapes (cubes, spheres, cylinders, pyramids), if the linear ratio is r, the volume ratio is r³. Two similar cylinders where one has radius 2x the other → its volume is 8x. Same rule generalizes the cube anchor to every 3D shape, not just cubes.', why:'Stops you from re-deriving the formula for every shape. Linear ratio cubed = volume ratio, always.', lock:'Similar shapes: cube the linear ratio.', sarah:true},
+      {when:'Surface area in the same problem', name:'<em>Area squared, volume cubed</em>', move:'Same scaling logic for surface area, but with the square instead of the cube. Side doubles → SA × 4 and Vol × 8. Side triples → SA × 9 and Vol × 27. Mixed-up SA vs Vol questions are the most common DAT trap on cube-law problems — read the prompt carefully.', why:'Catches the half of the cube-law questions that test SA instead of V.', lock:'k² for area, k³ for volume.', sarah:true}
     ]
   },
   'ds':{
@@ -5625,8 +5638,8 @@ const MODULES = {
     worked:[
       {q:'You\'re guessing on a 4-choice question. Best play?', steps:[
         {what:'Read all four choices', why:'don\'t skip this.'},
-        {what:'Eliminate any obviously wrong', why:'wildly off magnitude, wrong sign, etc.'},
-        {what:'Among remaining: pick the more "specific" answer', why:'small edge — DAT often rewards specificity.'},
+        {what:'Eliminate any obviously wrong', why:'wildly off magnitude, wrong sign, wrong unit.'},
+        {what:'Among remaining: pick the answer closest to your ballpark estimate', why:'a 5-second order-of-magnitude check beats a coin flip. If you can rule out answers more than 2x off your estimate, you turn a 25% guess into 50%+.'},
         {what:'Never leave blank', why:'no penalty for wrong; 0% for blank.'}
       ]}
     ],
@@ -5639,7 +5652,7 @@ const MODULES = {
     trap:'Leaving questions blank thinking it\'s "more honest." It\'s strictly worse — 0% vs 25%.',
     sarahTricks:[
       {when:'Student doesn\'t know an answer.', name:'<em>Eliminate first</em>', move:'Even when you\'re completely lost, scan the choices: any wildly wrong magnitude? Wrong sign? Wrong type? Cross those out. Going from 1-in-4 to 1-in-3 is a 33% increase in your odds.', why:'Most students guess without elimination. That\'s leaving points on the table.', lock:'Cross out before you guess.', sarah:true, placeholder:true},
-      {when:'Two answers seem equally likely.', name:'Pick the more <em>specific</em> one', move:'On the DAT, when two answers seem plausible, the one with more specific or calculated detail is slightly more likely to be correct than a vague or rounded one. Not a guarantee — small edge.', why:'Test-design convention; not all DAT questions follow this but enough do.', lock:'When in doubt, specific wins.'}
+      {when:'Two answers seem equally likely.', name:'Ballpark, then pick the closer one', move:'Spend five seconds estimating the answer with rough numbers. If the two finalists are very different magnitudes (e.g., 12 vs 120), your estimate breaks the tie. If they\'re close (e.g., 12 vs 14), you\'re truly 50/50 — flip and move on, don\'t burn another minute.', why:'Order-of-magnitude reasoning is a real testable skill; pattern-matching "which answer feels more specific" is folklore and isn\'t supported by DAT psychometrics.', lock:'Ballpark beats guessing on shape.'}
     ]
   },
   'mini-mock':{
@@ -5658,7 +5671,7 @@ const MODULES = {
       ]}
     ],
     faded:[
-      {prompt:'You scored 12/22 on the mini-mock with calculator opens = 8. What\'s the read?', lcd:'opens-per-question is high; you\'re leaning on the calculator for problems that should be mental math.', blank:'__ first, then re-run', answer:'drill mental + chunk library'},
+      {prompt:'Your mini-mock debrief shows 12/22 correct and 8 calculator opens (the mini-mock tracks this for you in its post-section report). Read?', lcd:'opens-per-question ≈ 0.36 — you\'re reaching for the calculator on more than 1 in 3 questions. Top scorers run 0–2 opens for the whole section. Calc dependence is masking the mental-math gap.', blank:'__ first, then re-run', answer:'drill mental + chunk library'},
       {prompt:'Per-skill latency: mental 4s avg, geo-2d 22s avg. Where to start? ', lcd:'recognition latency is the proxy for "do I know what type of problem this is?"', blank:'__', answer:'geo-2d'}
     ],
     practice:[],
@@ -9729,9 +9742,8 @@ const DIAG_BANK = [
   {id:'d13', skills:['word-decode','lin-eq'], diff:2, cluster:'word-floor',
    q:'Sam has 3 more apples than twice Mia. If Mia has m, Sam =',
    opts:['2m + 3','2m − 3','m + 6','3m + 2'], correct:0,
-   why:'"twice Mia" = 2m. "3 more than" adds 3. Translate words → an algebraic expression.',
-   diag:{1:'Subtracted.', 2:'Misread "twice".', 3:'Swapped factors.'},
-   secondaryAttribution:{3:'lin-eq'}},
+   why:'"twice Mia" = 2m. "3 more than" adds 3 to that → 2m + 3. The word order in English matters: "3 more than [twice m]" reads outside-in, so the +3 is the last operation. Translate words → an algebraic expression piece by piece.',
+   diag:{1:'You subtracted instead of added — "3 more than" means +3.', 2:'Looks like you read "twice" as "two more" (m + 2). "Twice Mia" doubles Mia, giving 2m.', 3:'You swapped the multiplier and the constant: 3m + 2. The "3" in the stem is what gets added, and "twice" (the 2) is what multiplies.'}},
   {id:'d14', skills:['ratios','frac-mul','word-decode'], diff:2, cluster:'ratios-rate',
    q:'A blend mixes flour to sugar 5:2. Scaled to 35 cups of flour, sugar = ?',
    opts:['14','10','17.5','7'], correct:0,
@@ -10338,7 +10350,7 @@ const DIAG = {
       ? 'No confidence data collected.'
       : (overConf > underConf+1 ? '<b>Slightly overconfident.</b> When you rate 4-5 stars, you\'re wrong more often than your rating suggests. Slow down on those.'
         : underConf > overConf+1 ? '<b>Underconfident.</b> When you rate 1-2 stars, you\'re actually getting them right. Trust your reasoning more.'
-        : '<b>Well-calibrated.</b> Your confidence tracks your accuracy. Excellent — you\'re ready for time pressure once mastery is in.');
+        : '<b>Well-calibrated.</b> Your confidence tracks your accuracy. Time-pressure mode opens once mastery is in.');
     document.getElementById('diagCalib').innerHTML = calibText;
     document.getElementById('diagPace').innerHTML = '<b>To be measured</b> — we\'ll track this as you progress through stages.';
 
@@ -10602,7 +10614,7 @@ function renderCalibration(){
 const PACE_TIERS = [
   {key:'untimed', name:'<em>Untimed</em>', time:'∞', desc:'No clock. Master the move first. This is where every skill starts.', target:'80% accuracy → unlocks 90s'},
   {key:'90s',     name:'<em>90 sec</em>/Q', time:'90s', desc:'Comfortable pace. Forces decisions but leaves room to think. Most skills should reach this within 2 weeks.', target:'80% accuracy → unlocks 60s'},
-  {key:'60s',     name:'<em>60 sec</em>/Q', time:'60s', desc:'DAT pace. Same speed as test day. If you hold 80% here, you\'re ready.', target:'80% accuracy → unlocks DAT pace'},
+  {key:'60s',     name:'<em>60 sec</em>/Q', time:'60s', desc:'DAT pace. Same speed as test day. Holding 80% here unlocks the top tier.', target:'80% accuracy → unlocks DAT pace'},
   {key:'dat',     name:'<em>DAT day</em>', time:'45s', desc:'Slightly tighter than DAT actual to build margin. Nothing should rattle you here.', target:'80% accuracy → top tier locked in'},
 ];
 function renderPacing(){
@@ -11013,9 +11025,25 @@ function renderSarahDash(){
     const masteredCount = Object.values(m).filter(v => v==='mastered').length;
     const recent = att.filter(a => Date.now() - a.t < 7*86400000);
     const stuckRecent = stuck.filter(s => Date.now() - s.t < 7*86400000).length;
-    let status = 'green', statusLbl = 'on track';
-    if (stuckRecent >= 4 || (recent.length > 5 && recent.filter(r=>r.correct).length/recent.length < 0.5)){ status = 'red'; statusLbl = 'needs attention'; }
-    else if (recent.length === 0 || (recent.length > 0 && recent.filter(r=>r.correct).length/recent.length < 0.7)){ status = 'yellow'; statusLbl = 'check in'; }
+    // Activity descriptors are factual: count attempts and stuck events in the last 7 days.
+    // Color coding still uses the same thresholds; LABEL is now a description, not a judgment.
+    const lastAttempt = att.length ? att[att.length-1].t : null;
+    const daysSinceAttempt = lastAttempt ? Math.floor((Date.now() - lastAttempt) / 86400000) : null;
+    let status = 'green', statusLbl = `${recent.length} attempts (7d)`;
+    if (stuckRecent >= 4 || (recent.length > 5 && recent.filter(r=>r.correct).length/recent.length < 0.5)){
+      status = 'red';
+      statusLbl = stuckRecent >= 4
+        ? `${stuckRecent} stuck events (7d)`
+        : `${recent.length} attempts (7d) · accuracy under 50%`;
+    }
+    else if (recent.length === 0){
+      status = 'yellow';
+      statusLbl = daysSinceAttempt == null ? 'no attempts yet' : `no activity ${daysSinceAttempt}d`;
+    }
+    else if (recent.filter(r=>r.correct).length/recent.length < 0.7){
+      status = 'yellow';
+      statusLbl = `${recent.length} attempts (7d) · accuracy under 70%`;
+    }
     rosterEl.innerHTML = `
       <div class="roster-card ${status}" onclick="renderSarahDash()">
         <div class="nm">Active student <span style="font-size:10px; color:var(--ink-mute); font-weight:400">(this device)</span></div>
@@ -11722,7 +11750,7 @@ const OB_STEPS = [
     vis:'<div style="text-align:center; padding:8px"><div style="display:inline-block; padding:11px 14px; background:rgba(194,91,63,0.18); color:#f3c5b3; border:1px solid rgba(194,91,63,0.35); border-radius:9px; font-size:12px; font-weight:600; letter-spacing:0.06em; text-transform:uppercase">I need a sec</div></div>'
   },
   {
-    title:'You\'re ready. <em>Floor first.</em>',
+    title:'Onboarding complete. <em>Floor tier first.</em>',
     body:'Tap "Start diagnostic" below to find your gap. Or skip to a specific skill from the sidebar. Your progress saves automatically — close the tab, come back tomorrow, pick up where you left off.<br><br><b>Your tutor (Sarah) will use this with you in sessions.</b> She can also leave you notes inside the tool.',
     vis:'<div style="text-align:center; padding:14px"><div class="serif" style="font-size:30px; line-height:1; color:var(--gold-d); font-style:italic">"the DAT follows."</div></div>'
   }
