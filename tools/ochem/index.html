@@ -202,7 +202,7 @@ html[data-theme="dark"] .theme-icon-dark{display:inline;}
 .takeaway-title{font-size:.64rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--teal);margin-bottom:.45rem;}
 .takeaway ul{list-style:none;}
 .takeaway li{font-size:.86rem;color:var(--slate);line-height:1.65;display:flex;gap:.5rem;margin-bottom:.28rem;}
-.takeaway li::before{content:'✓';color:var(--teal);font-weight:700;flex-shrink:0;}
+.takeaway li::before{content:'';flex-shrink:0;width:6px;height:6px;border-radius:50%;background:var(--teal);margin-top:.55em;}
 
 .vis-label{font-size:.64rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-d);display:flex;align-items:center;gap:.4rem;margin:1.2rem 0 .5rem;}
 .vis-label::before{content:'';width:14px;height:1px;background:var(--gold);}
@@ -1218,7 +1218,7 @@ html[data-theme="dark"] .mastery-stat b{color:var(--gold-m);}
 .bucket-traits{list-style:none;padding:.8rem 1.1rem .3rem;margin:0;}
 .bucket-traits .trait{display:flex;align-items:center;gap:.5rem;padding:.25rem 0;font-size:.85rem;color:var(--slate);}
 .bucket-traits .trait::before{content:'';width:16px;height:16px;border-radius:50%;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;color:#fff;}
-.bucket-traits .trait.good::before{content:'✓';background:var(--green);}
+.bucket-traits .trait.good::before{content:'';background:var(--green);}
 .bucket-traits .trait.warn::before{content:'!';background:var(--amber);}
 .bucket-traits .trait.neutral::before{content:'~';background:var(--muted);}
 .bucket-traits .trait b{color:var(--ink);}
@@ -1437,9 +1437,9 @@ html[data-theme="dark"] .flash-card-wrap::after{background:linear-gradient(180de
 .mcq-opt:hover{border-color:var(--blue);background:var(--blue-pale);}
 .mcq-opt:disabled,.mcq-opt.disabled{cursor:default;}
 .mcq-opt.correct{background:var(--green-pale);border-color:var(--green);color:var(--green);font-weight:600;}
-.mcq-opt.correct::before{content:'✓';display:inline-block;font-weight:700;}
+.mcq-opt.correct::before{content:'';display:inline-block;width:3px;height:1em;background:var(--green);border-radius:2px;margin-right:.1rem;}
 .mcq-opt.wrong{background:var(--red-pale);border-color:var(--red);color:var(--red);}
-.mcq-opt.wrong::before{content:'✗';display:inline-block;font-weight:700;}
+.mcq-opt.wrong::before{content:'';display:inline-block;width:3px;height:1em;background:var(--red);border-radius:2px;margin-right:.1rem;}
 .mcq-opt.disabled:not(.correct):not(.wrong){opacity:.5;}
 .mcq-opt-key{display:inline-block;font-weight:700;color:var(--mid);min-width:14px;}
 .mcq-opt.correct .mcq-opt-key{color:var(--green);}
@@ -3466,7 +3466,7 @@ html[data-theme="dark"] .qual-trap{ background: var(--amber-pale); }
   display:flex; align-items:center; justify-content:center;
   font-family:'Playfair Display',serif; font-size:.85rem; font-weight:700;
 }
-.t1-self[open] summary::before{ background:#15803d; content:'✓'; }
+.t1-self[open] summary::before{ background:#15803d; content:''; }
 .t1-self[open] summary{ border-bottom:1px dashed var(--border2); }
 .t1-self > div{
   padding:.55rem .75rem;
@@ -6160,6 +6160,8 @@ html[data-theme="dark"] .dt-case-select{background:var(--white);color:var(--ink)
     <p class="sec-intro">The DAT spec section rewards pattern recognition. Master IR by the 5 key peaks; master NMR by running the 4-step strategy on every problem. Practice below.</p>
   </div>
 
+  <div class="box box-tip" style="margin-bottom:1rem"><div class="box-label tip">Coach note · the fingerprint region rule</div><div class="box-text">Anything <b>1500 cm⁻¹ and below is the fingerprint region.</b> Cross it out instantly. If an answer choice points to a peak below 1500, rule it out — that region is so dense with overlapping bands that scientists in the lab used to literally cover it with their thumb. "Forget about it. It is nonsense." Your real signals live above 1500: carbonyl around 1700, alcohols/amines way up in the 3000s, C=C aromatic right around 1600.</div></div>
+
   <div class="lab-tabs" role="tablist">
     <button class="lab-tab active" data-spectab="strategy" role="tab">How to solve ANY spec problem</button>
     <button class="lab-tab" data-spectab="spectra" role="tab">Real IR Spectra</button>
@@ -7442,7 +7444,7 @@ html[data-theme="dark"] .dt-case-select{background:var(--white);color:var(--ink)
   <div class="sec-header">
     <div class="sec-number">Your Progress</div>
     <h2 class="sec-title"><em>Mastery</em> Dashboard</h2>
-    <p class="sec-intro">Your per-hub best scores on the practice MCQs are saved locally in this browser. Green = mastered (≥80%), amber = getting there, red = needs work, gray = not attempted yet. Click any tile to jump to that hub. Totally private — nothing leaves your device.</p>
+    <p class="sec-intro">Your per-hub best scores on the practice MCQs are saved locally in this browser. Green = ≥80%, amber = 60–79%, red = below 60%, gray = not attempted yet. Click any tile to jump to that hub. Totally private — nothing leaves your device.</p>
   </div>
   <div id="masteryDash"></div>
 </section>
@@ -10773,7 +10775,7 @@ html[data-theme="dark"] .dt-case-select{background:var(--white);color:var(--ink)
             <!-- ─────── FRAME 1: approach ─────── -->
             <div class="mech-frame active"
                  data-explain-title="Step 1 · BH₃ approaches the π bond"
-                 data-explain="The π bond of propene is a <b>nucleophile</b>; boron has an <em>empty p-orbital</em> so it's <b>electrophilic</b>. Both arrows move at once: the π electrons attack B, and a B–H bond swings to the less hindered carbon (C1). Because it's <b>concerted</b>, H and B add to the <b>same face</b>.">
+                 data-explain="The π bond of propene is a <b>nucleophile</b>; boron has an <em>empty p-orbital</em> so it's <b>electrophilic</b>. Both arrows move at once: the π electrons attack B (so <b>B lands on C1</b>, the less hindered carbon), and the B–H σ bond breaks to deliver <b>H onto C2</b> (the more substituted carbon). Because it's <b>concerted</b>, H and B add to the <b>same face</b> — and because no cation ever forms, there are <b>no rearrangements</b>. Net: <b>anti-Markovnikov + syn</b>.">
               <svg viewBox="0 0 800 240" xmlns="http://www.w3.org/2000/svg" class="on-bg">
                 <!-- propene on left -->
                 <g transform="translate(180 120)">
@@ -10803,9 +10805,9 @@ html[data-theme="dark"] .dt-case-select{background:var(--white);color:var(--ink)
                 <!-- Arrow 1: π → B -->
                 <path class="sk-push sk-push-draw" d="M 195 108 Q 380 50 555 108" marker-end="url(#pushEP)"/>
                 <text class="sk-label-atlas" x="375" y="68" text-anchor="middle" font-size="10" fill="#b45309">π → B</text>
-                <!-- Arrow 2: B–H → C1 -->
-                <path class="sk-push sk-push-draw" d="M 550 128 Q 400 170 210 128" marker-end="url(#pushEP)"/>
-                <text class="sk-label-atlas" x="380" y="165" text-anchor="middle" font-size="10" fill="#b45309">B–H → C1</text>
+                <!-- Arrow 2: B–H σ bond breaks; H delivered to C2 (more substituted) -->
+                <path class="sk-push sk-push-draw" d="M 550 128 Q 380 195 160 128" marker-end="url(#pushEP)"/>
+                <text class="sk-label-atlas" x="370" y="170" text-anchor="middle" font-size="10" fill="#b45309">B–H σ → H lands on C2</text>
                 <!-- badge -->
                 <rect x="320" y="195" width="160" height="22" rx="11" fill="#fdf8ee" stroke="#C9A84C" stroke-width="1"/>
                 <text x="400" y="207" text-anchor="middle" font-size="10" font-weight="700" fill="#8C7235" dominant-baseline="central">CONCERTED · SYN · ANTI-MARKOV</text>
@@ -11320,7 +11322,7 @@ html[data-theme="dark"] .dt-case-select{background:var(--white);color:var(--ink)
   </div>
 
   <!-- MCQ Practice Set -->
-  <div class="mcq-set" data-hub="alkene">
+  <div class="mcq-set" data-hub="alkenes">
     <div class="mcq-head">
       <div class="mcq-pill">Practice</div>
       <div class="mcq-head-title">Alkene Practice<small>DAT-style · immediate feedback · 5 questions</small></div>
@@ -11697,7 +11699,7 @@ html[data-theme="dark"] .dt-case-select{background:var(--white);color:var(--ink)
         <!-- 1,3-diaxial clash indicator -->
         <path d="M -28,-48 Q -12,-58 8,-40" fill="none" stroke="#b91c1c" stroke-width="1.6" stroke-dasharray="3,3"/>
         <text class="sk-label-atlas" x="-12" y="-66" text-anchor="middle" font-size="9.5" fill="#b91c1c" font-weight="700">1,3-diaxial clash</text>
-        <text x="-10" y="60" text-anchor="middle" font-size="12" font-weight="700" fill="#b91c1c">✗ axial t-Bu · high energy</text>
+        <text x="-10" y="60" text-anchor="middle" font-size="12" font-weight="700" fill="#b91c1c">axial t-Bu · high energy (1,3-clash)</text>
       </g>
       <!-- Ring-flip arrow -->
       <g transform="translate(400 120)">
@@ -11714,7 +11716,7 @@ html[data-theme="dark"] .dt-case-select{background:var(--white);color:var(--ink)
         <!-- H's axial but small -->
         <line class="sk-bond" x1="-30" y1="-20" x2="-30" y2="-40"/>
         <text class="sk-label-atlas" x="-30" y="-46" text-anchor="middle" font-size="10" fill="#15803d">H</text>
-        <text x="-10" y="60" text-anchor="middle" font-size="12" font-weight="700" fill="#15803d">✓ equatorial t-Bu · low energy</text>
+        <text x="-10" y="60" text-anchor="middle" font-size="12" font-weight="700" fill="#15803d">equatorial t-Bu · low energy (preferred)</text>
       </g>
       <text x="400" y="236" text-anchor="middle" font-size="10.5" font-style="italic" fill="#475569">The chair with the largest substituent EQUATORIAL is the more stable conformation. DAT loves asking "which chair is lower energy?" — answer: whichever has the bulky group out to the side.</text>
     </svg>
@@ -12786,7 +12788,7 @@ html[data-theme="dark"] .dt-case-select{background:var(--white);color:var(--ink)
             <!-- Frame 2: Nu attack from either face -->
             <div class="mech-frame"
                  data-explain-title="Step 2 · Nucleophile attacks the planar cation from either face"
-                 data-explace="The carbocation has an <b>empty p-orbital perpendicular to the ring plane</b> — and that orbital has lobes on <em>both</em> sides of the plane. A nucleophile (often the solvent, e.g., H₂O or ROH) can attack from above OR from below with equal probability. The <b>50/50 attack distribution</b> is what gives SN1 its signature: <b>racemization</b> when the substrate is chiral.">
+                 data-explain="The carbocation has an <b>empty p-orbital perpendicular to the trigonal plane</b> — and that orbital has lobes on <em>both</em> sides of the plane. A nucleophile (often the solvent, e.g., H₂O or ROH) can attack from above OR from below with equal probability. The <b>50/50 attack distribution</b> is the signature of SN1: <b>racemization</b> when the starting carbon was chiral. Contrast this with SN2, where the nucleophile <em>must</em> attack the opposite face of the leaving group → clean inversion.">
               <svg viewBox="0 0 800 240" xmlns="http://www.w3.org/2000/svg" class="on-bg">
                 <!-- Planar cation in middle -->
                 <g transform="translate(400 130)">
@@ -13065,6 +13067,8 @@ html[data-theme="dark"] .dt-case-select{background:var(--white);color:var(--ink)
         </div>
 
         <div class="box box-warn"><div class="box-label warn">Bulky-base trap</div><div class="box-text">Strong base ≠ small base. <b>t-BuO⁻ and LDA</b> override Zaitsev because they can only reach the less-hindered β-H. Always check base size before predicting the alkene.</div></div>
+
+        <div class="box box-tip"><div class="box-label tip">Coach note · meet Naomi</div><div class="box-text"><b>NaOMe is "Naomi."</b> NaOEt is her twin sister "Nioet" — ethyl instead of methyl. Same family: small, strong base in a protic solvent. Default reaction is E2 — Zaitsev, more substituted alkene — because she is small enough to grab whatever β-H sits anti to the leaving group. In rare cases she will do SN2, but default to E2 when you see her. You will also see Naomi in enolate reactions deprotonating the alpha hydrogen. "Basic bitch, she loves eliminating shit. That's her thing."</div></div>
 
         <!-- TIER 2 · Hofmann + stereo notes (collapsed) -->
         <details class="tier-expand">
@@ -13723,6 +13727,7 @@ html[data-theme="dark"] .dt-case-select{background:var(--white);color:var(--ink)
           <br/>• <b>3° alcohols: no oxidation</b> (no α-H to lose).</div>
         <div class="rxn-equation">R–CH₂–OH &nbsp;→<sup>PCC</sup>&nbsp; R–CHO &nbsp;&nbsp;<b>vs</b>&nbsp;&nbsp; R–CH₂–OH &nbsp;→<sup>Jones</sup>&nbsp; R–COOH</div>
         <div class="box box-tip"><div class="box-label tip">DAT pattern</div><div class="box-text">If the problem says "oxidize without over-oxidation" or uses <em>anhydrous</em> conditions, it's <b>PCC</b>. If it says "acidic chromate" or shows CrO₃/H₂SO₄/H₂O, it's <b>Jones</b> → full oxidation.</div></div>
+        <div class="box box-tip"><div class="box-label tip">Coach note · Chromium Jones</div><div class="box-text">Chromium Jones — that's how it is. He is a strong oxidizer, top of the food chain. Primary alcohol → carboxylic acid. Secondary alcohol → ketone (nothing left to oxidize once you make the C=O — the carbonyl carbon has no H to lose). Tertiary alcohol → no reaction at all (no α-H on the C-OH carbon, nothing to remove). If you ever doubt yourself on this one, remember: it is not your job to redo organic chem, it is your job to spot the reagent and pick the product.</div></div>
       </div></div>
     </article>
 
@@ -14292,6 +14297,8 @@ html[data-theme="dark"] .dt-case-select{background:var(--white);color:var(--ink)
     <h2 class="sec-title"><em>Aromatic</em> — Electrophilic Aromatic Substitution</h2>
     <p class="sec-intro">Benzene is a nucleophile (electron-rich π system), but it refuses to <em>add</em> because that would destroy aromaticity. Instead, it <strong>substitutes</strong>: electrophile attacks → arenium ion → loses H⁺ → aromatic again. Five core reactions, plus <strong>directing effects</strong> that decide where a second group lands.</p>
   </div>
+
+  <div class="box box-tip" style="margin-bottom:1rem"><div class="box-label tip">Coach note · the recognition shortcut</div><div class="box-text"><b>If you see a ring, think EAS.</b> That is the family. Electrophilic aromatic substitution covers a whole bunch of reactions on benzene — and you do not have to know every carbocation intermediate or every resonance step. You just have to recognize: ring + something getting added = EAS. It looks like addition, but really, it is substitution — a hydrogen on the ring is what gets kicked off so the ring can stay aromatic. The whole family is Thomas's favorite; maybe that helps you flag it on test day.</div></div>
 
   <div class="tm-corner">
     <span class="tm-corner-label">Pattern shortcuts for this hub</span>
@@ -15140,7 +15147,7 @@ html[data-theme="dark"] .dt-case-select{background:var(--white);color:var(--ink)
       <tr><td>–NH₂, –NHR, –NR₂, –OH, –O⁻</td><td><b style="color:var(--green);">Strong activator</b></td><td><b>o/p</b></td><td>Lone pair on N/O donates into ring via π (strong)</td></tr>
       <tr><td>–OR, –NHCOR</td><td style="color:var(--green);">Moderate activator</td><td><b>o/p</b></td><td>Lone pair donates, attenuated by the other group on N/O</td></tr>
       <tr><td>–R (alkyl), –Ar</td><td style="color:var(--green);">Weak activator</td><td><b>o/p</b></td><td>Hyperconjugation / inductive donation only (no lone pair)</td></tr>
-      <tr><td>–F, –Cl, –Br, –I</td><td style="color:var(--red);"><b>Deactivator</b></td><td><b>o/p</b> ⚠</td><td>σ-withdraws (fast &lt; benzene), π-donates (o/p direct) — split</td></tr>
+      <tr><td>–F, –Cl, –Br, –I</td><td style="color:var(--red);"><b>Deactivator</b></td><td><b>o/p</b> (the trap)</td><td>σ-withdraws (fast &lt; benzene), π-donates (o/p direct) — split: deactivates but still directs ortho/para</td></tr>
       <tr><td>–CHO, –COR, –COOH, –COOR, –CONH₂, –SO₃H</td><td style="color:var(--red);">Moderate deactivator</td><td><b>m</b></td><td>π bond to EN atom pulls density from o/p → attacks at m</td></tr>
       <tr><td>–NO₂, –NR₃⁺, –CF₃, –CCl₃</td><td style="color:var(--red);"><b>Strong deactivator</b></td><td><b>m</b></td><td>Either heavy π-withdrawal or formal + charge</td></tr>
     </tbody>
@@ -17942,7 +17949,7 @@ html[data-theme="dark"] .dt-case-select{background:var(--white);color:var(--ink)
       </div>
       <div class="mcq-explain">
         <div class="mcq-explain-title">Explanation</div>
-        <b>B is correct.</b> Wittig converts C=O → C=CR' directly. For =CH₂ specifically, use Ph₃P=CH₂. A (H₂/Pt) doesn't reduce ketones. C (NaBH₄) gives the alcohol, not the alkene. D (Clemmensen) gives fully reduced CH₂ (methylenecyclohexane would be CH₂ with a double bond, not a single bond — Clemmensen gives the saturated product).
+        <b>B is correct.</b> The Wittig converts C=O directly into an alkene (C=CR'). For =CH₂ specifically, use the methylene ylide Ph₃P=CH₂. Only the Wittig installs a new C=C double bond at the former carbonyl carbon.<br/><br/><b>Why the others fail:</b> A (H₂/Pt) — molecular hydrogen on Pt doesn't reduce a simple ketone (needs a stronger reducing system like NaBH₄ or LiAlH₄). C (NaBH₄) reduces C=O → C–OH, giving cyclohexan<u>ol</u> (alcohol, no alkene). D (Clemmensen, Zn(Hg)/HCl) also breaks the C=O — but it reduces it all the way to a CH₂ <em>single</em> bond, giving methylcyclohexane (saturated). That is the trap to catch: methylcyclohexane (saturated) and methylenecyclohexane (exocyclic alkene) are two different molecules. Only the Wittig keeps the double bond.
       </div>
     </div>
 
@@ -18051,7 +18058,7 @@ html[data-theme="dark"] .dt-case-select{background:var(--white);color:var(--ink)
 
       <!-- "Going up" box -->
       <rect x="60" y="530" width="880" height="80" rx="12" fill="#fdf8ee" stroke="#8C7235" stroke-width="1.5"/>
-      <text class="atlas-label" x="500" y="556" text-anchor="middle" font-size="12" font-weight="700" fill="#3c2e1a">⚠ To go UP the ladder</text>
+      <text class="atlas-label" x="500" y="556" text-anchor="middle" font-size="12" font-weight="700" fill="#3c2e1a">To go UP the ladder</text>
       <text class="atlas-label" x="500" y="575" text-anchor="middle" font-size="10" font-style="italic">Carboxylic acid + SOCl₂ → acid chloride. Then acid chloride + any nucleophile makes any other derivative.</text>
       <text class="atlas-label" x="500" y="594" text-anchor="middle" font-size="10" fill="#5c4a2e">R-COOH + R'NH₂ directly gives a salt, NOT an amide. Always activate to -COCl first (or use DCC coupling).</text>
     </svg>
@@ -19011,7 +19018,7 @@ html[data-theme="dark"] .dt-case-select{background:var(--white);color:var(--ink)
         <line class="sk-bond" x1="-4" y1="-4" x2="14" y2="8"/>
         <text class="sk-atom N" x="22" y="8">NHR'</text>
       </g>
-      <text class="sk-label-atlas" x="900" y="108" font-size="9" font-style="italic" fill="#b45309">⚠ over-alkylates</text>
+      <text class="sk-label-atlas" x="900" y="108" font-size="9" font-style="italic" fill="#b45309">over-alkylates</text>
 
       <path d="M 580 290 L 750 260" stroke="#8C7235" stroke-width="1.5" fill="none" marker-end="url(#rxnHead)"/>
       <text class="chem-reagent" x="680" y="268" text-anchor="middle">RCOCl (acylation)</text>
@@ -21293,7 +21300,7 @@ function renderMasteryDash(){
   const C=238.76;
   const dashOff=(C*(1-overall/100)).toFixed(2);
   const ringColor=overall>=80?'#15803d':overall>=60?'#b45309':overall>=1?'#b91c1c':'#5c5348';
-  const heroSub=overall>=80?'You\'re running at DAT-ready pace. Keep the streak.':overall>=60?'Solid foundation — push the red and amber tiles next.':attempted>0?'Early days. Keep building one hub at a time.':'Tap any tile below to start your first hub.';
+  const heroSub=attempted>0?`${attempted} of ${hubs.length} hubs attempted · ${mastered} at ≥80%.`:'Tap any tile below to start your first hub.';
   dash.innerHTML=`
     <div class="mastery-top">
       <div class="mastery-donut" aria-hidden="true">
@@ -21316,9 +21323,9 @@ function renderMasteryDash(){
           <div class="mastery-stat"><b>${mastered}</b><span>of ${hubs.length} mastered (≥80%)</span></div>
         </div>
         <div class="mastery-legend">
-          <span class="mastery-legend-item"><span class="mastery-legend-swatch" style="background:#15803d;"></span>mastered</span>
-          <span class="mastery-legend-item"><span class="mastery-legend-swatch" style="background:#b45309;"></span>getting there</span>
-          <span class="mastery-legend-item"><span class="mastery-legend-swatch" style="background:#b91c1c;"></span>needs work</span>
+          <span class="mastery-legend-item"><span class="mastery-legend-swatch" style="background:#15803d;"></span>≥80%</span>
+          <span class="mastery-legend-item"><span class="mastery-legend-swatch" style="background:#b45309;"></span>60–79%</span>
+          <span class="mastery-legend-item"><span class="mastery-legend-swatch" style="background:#b91c1c;"></span>below 60%</span>
           <span class="mastery-legend-item"><span class="mastery-legend-swatch" style="background:#bfb6a4;border:1px dashed #5c5348;"></span>not attempted</span>
         </div>
       </div>
@@ -21329,7 +21336,7 @@ function renderMasteryDash(){
         const p=prog[k];
         const pct=p?Math.round(100*p.best/p.total):0;
         const active=p&&p.best>0;
-        const stateLabel=!p?'Not attempted yet':pct>=80?'Mastered':pct>=60?'Getting there':'Needs work';
+        const stateLabel=!p?'Not attempted yet':pct>=80?'≥80%':pct>=60?'60–79%':'below 60%';
         const stateColor=progressColor(pct);
         const attempts=p?p.attempts||0:0;
         const lastDelta=p&&typeof p.last==='number'?p.last-(p.best-p.last>0?(p.best-p.last):0):null;
@@ -21486,11 +21493,11 @@ const REAGENTS = {
 // Reaction DB: key = `${substrate}__${reagent}`
 const RXN_DB = {
   // ── Alkene (terminal e.g. propene) ──
-  'alkene_terminal__hbr': { name:'2° alkyl bromide (Markov)', formula:'R-CHBr-CH₃', tags:['Markov','racemic','⚠ rearr. possible'], bucket:1, explain:'<b>HBr</b> adds H to the less-substituted C and Br to the more-substituted C (Markov). Goes through an <em>open carbocation</em>, so hydride/methyl shifts are possible.', hub:'alkenes',
+  'alkene_terminal__hbr': { name:'2° alkyl bromide (Markov)', formula:'R-CHBr-CH₃', tags:['Markov','racemic','rearr. possible'], bucket:1, explain:'<b>HBr</b> adds H to the less-substituted C and Br to the more-substituted C (Markov). Goes through an <em>open carbocation</em>, so hydride/methyl shifts are possible.', hub:'alkenes',
     svg: skFrag('<line class="sk-bond" x1="20" y1="45" x2="42" y2="30"/><line class="sk-bond" x1="42" y1="30" x2="64" y2="45"/><line class="sk-bond" x1="42" y1="30" x2="42" y2="14"/><text class="sk-atom-sm X" x="42" y="10" font-size="11">Br</text>') },
   'alkene_terminal__hbr_peroxide': { name:'1° alkyl bromide (anti-Markov)', formula:'R-CH₂-CH₂Br', tags:['anti-Markov','radical','no rearr.'], bucket:0, explain:'Peroxides flip the regiochemistry through a <b>radical mechanism</b>. Br• adds to the less-substituted C so the resulting carbon radical is more stable. Works only with HBr (not HCl or HI).', hub:'alkenes',
     svg: skFrag('<line class="sk-bond" x1="18" y1="48" x2="38" y2="34"/><line class="sk-bond" x1="38" y1="34" x2="58" y2="48"/><line class="sk-bond" x1="58" y1="48" x2="76" y2="34"/><text class="sk-atom-sm X" x="82" y="34" font-size="11">Br</text>') },
-  'alkene_terminal__h3o': { name:'2° alcohol (Markov)', formula:'R-CH(OH)-CH₃', tags:['Markov','racemic','⚠ rearr. possible'], bucket:1, explain:'Acid-catalyzed hydration: H adds to less-subst. C, OH lands on more-subst. C. Open carbocation → rearrangements possible.', hub:'alkenes',
+  'alkene_terminal__h3o': { name:'2° alcohol (Markov)', formula:'R-CH(OH)-CH₃', tags:['Markov','racemic','rearr. possible'], bucket:1, explain:'Acid-catalyzed hydration: H adds to less-subst. C, OH lands on more-subst. C. Open carbocation → rearrangements possible.', hub:'alkenes',
     svg: skFrag('<line class="sk-bond" x1="20" y1="45" x2="42" y2="30"/><line class="sk-bond" x1="42" y1="30" x2="64" y2="45"/><line class="sk-bond" x1="42" y1="30" x2="42" y2="14"/><text class="sk-atom-sm O" x="42" y="10" font-size="11">OH</text>') },
   'alkene_terminal__hg_h2o': { name:'2° alcohol (Markov, no rearr.)', formula:'R-CH(OH)-CH₃', tags:['Markov','anti','no rearr.'], bucket:2, explain:'<b>Oxymercuration–demercuration</b> goes through a bridged <em>mercurinium</em> ion, not an open cation. Same Markov regio as H₃O⁺ but <b>without</b> rearrangement.', hub:'alkenes',
     svg: skFrag('<line class="sk-bond" x1="20" y1="45" x2="42" y2="30"/><line class="sk-bond" x1="42" y1="30" x2="64" y2="45"/><line class="sk-bond" x1="42" y1="30" x2="42" y2="14"/><text class="sk-atom-sm O" x="42" y="10" font-size="11">OH</text>') },
@@ -21513,7 +21520,7 @@ const RXN_DB = {
 
   // ── Alkene (internal), abbreviate: reuses most of terminal behaviors ──
   'alkene_internal__h2_pt': { name:'Butane (alkane)', formula:'CH₃-CH₂-CH₂-CH₃', tags:['syn'], bucket:3, explain:'Syn hydrogenation across the double bond.', hub:'alkenes', svg: skFrag('<line class="sk-bond" x1="14" y1="48" x2="34" y2="34"/><line class="sk-bond" x1="34" y1="34" x2="54" y2="48"/><line class="sk-bond" x1="54" y1="48" x2="74" y2="34"/><line class="sk-bond" x1="74" y1="34" x2="94" y2="48"/>',110,70) },
-  'alkene_internal__hbr': { name:'2-bromobutane (Markov on asymmetric)', formula:'CH₃-CHBr-CH₂-CH₃', tags:['Markov','⚠ rearr.'], bucket:1, explain:'On a symmetric internal alkene regio doesn\'t matter. On asymmetric, Br goes to the more substituted C.', hub:'alkenes', svg: skFrag('<line class="sk-bond" x1="14" y1="48" x2="34" y2="34"/><line class="sk-bond" x1="34" y1="34" x2="54" y2="48"/><line class="sk-bond" x1="54" y1="48" x2="74" y2="34"/><line class="sk-bond" x1="74" y1="34" x2="94" y2="48"/><line class="sk-bond" x1="34" y1="34" x2="34" y2="16"/><text class="sk-atom-sm X" x="34" y="12" font-size="11">Br</text>',110,70) },
+  'alkene_internal__hbr': { name:'2-bromobutane (Markov on asymmetric)', formula:'CH₃-CHBr-CH₂-CH₃', tags:['Markov','rearr.'], bucket:1, explain:'On a symmetric internal alkene regio doesn\'t matter. On asymmetric, Br goes to the more substituted C.', hub:'alkenes', svg: skFrag('<line class="sk-bond" x1="14" y1="48" x2="34" y2="34"/><line class="sk-bond" x1="34" y1="34" x2="54" y2="48"/><line class="sk-bond" x1="54" y1="48" x2="74" y2="34"/><line class="sk-bond" x1="74" y1="34" x2="94" y2="48"/><line class="sk-bond" x1="34" y1="34" x2="34" y2="16"/><text class="sk-atom-sm X" x="34" y="12" font-size="11">Br</text>',110,70) },
   'alkene_internal__br2': { name:'2,3-dibromobutane (anti)', formula:'CH₃-CHBr-CHBr-CH₃', tags:['anti'], bucket:2, explain:'Cis internal alkene → racemic (R,R + S,S). Trans → meso.', hub:'alkenes', svg: skFrag('<line class="sk-bond" x1="12" y1="48" x2="32" y2="34"/><line class="sk-bond" x1="32" y1="34" x2="54" y2="48"/><line class="sk-bond" x1="54" y1="48" x2="76" y2="34"/><line class="sk-bond" x1="76" y1="34" x2="96" y2="48"/><polygon class="sk-wedge" points="32,34 28,20 36,20"/><text class="sk-atom-sm X" x="32" y="14" font-size="11">Br</text><line class="sk-dash-line" x1="50" y1="54" x2="58" y2="54"/><line class="sk-dash-line" x1="48" y1="58" x2="60" y2="58"/><line class="sk-dash-line" x1="46" y1="62" x2="62" y2="62"/><text class="sk-atom-sm X" x="54" y="68" font-size="11">Br</text>',110,80) },
   'alkene_internal__o3_zn': { name:'Two aldehydes/ketones', formula:'R-CHO + R\'-CHO', tags:['cleaves'], bucket:0, explain:'Each alkene carbon becomes a carbonyl carbon.', hub:'alkenes', svg: skFrag('<line class="sk-bond" x1="10" y1="44" x2="24" y2="34"/><line class="sk-bond" x1="24" y1="34" x2="24" y2="20"/><line class="sk-bond" x1="28" y1="28" x2="28" y2="20"/><text class="sk-atom-sm O" x="26" y="14" font-size="11">O</text><text font-size="14" fill="#8C7235" font-weight="700" x="52" y="40" text-anchor="middle">+</text><line class="sk-bond" x1="68" y1="34" x2="84" y2="34"/><line class="sk-bond" x1="84" y1="34" x2="84" y2="20"/><line class="sk-bond" x1="88" y1="28" x2="88" y2="20"/><text class="sk-atom-sm O" x="86" y="14" font-size="11">O</text><line class="sk-bond" x1="84" y1="34" x2="100" y2="44"/>',110,70) },
   'alkene_internal__oso4': { name:'2,3-butanediol (syn diol)', formula:'CH₃-CH(OH)-CH(OH)-CH₃', tags:['syn','cis diol'], bucket:3, explain:'Cis diol from the same face.', hub:'alkenes', svg: skFrag('<line class="sk-bond" x1="12" y1="48" x2="32" y2="34"/><line class="sk-bond" x1="32" y1="34" x2="54" y2="48"/><line class="sk-bond" x1="54" y1="48" x2="76" y2="34"/><line class="sk-bond" x1="76" y1="34" x2="96" y2="48"/><polygon class="sk-wedge" points="32,34 28,20 36,20"/><text class="sk-atom-sm O" x="32" y="14" font-size="11">OH</text><polygon class="sk-wedge" points="54,48 48,62 60,62"/><text class="sk-atom-sm O" x="54" y="68" font-size="11">OH</text>',110,80) },
@@ -21538,14 +21545,14 @@ const RXN_DB = {
   'alcohol_primary__jones': { name:'Propanoic acid', formula:'CH₃-CH₂-COOH', tags:['full oxidation'], bucket:0, explain:'Jones (CrO₃/H₂SO₄/H₂O) goes all the way. 1° → COOH, 2° → ketone, 3° → no reaction.', hub:'alcohols', svg: skFrag('<line class="sk-bond" x1="14" y1="48" x2="34" y2="34"/><line class="sk-bond" x1="34" y1="34" x2="54" y2="48"/><line class="sk-bond" x1="54" y1="48" x2="54" y2="30"/><line class="sk-bond" x1="58" y1="42" x2="58" y2="30"/><text class="sk-atom O" x="56" y="24" font-size="12">O</text><line class="sk-bond" x1="54" y1="48" x2="70" y2="56"/><text class="sk-atom-sm O" x="80" y="56" font-size="11">OH</text>',110,70) },
   'alcohol_secondary__pcc': { name:'Acetone (ketone)', formula:'CH₃-CO-CH₃', tags:['clean ketone'], bucket:0, explain:'2° alcohol + any chromate oxidant gives a ketone (no further oxidation possible).', hub:'alcohols', svg: skFrag('<line class="sk-bond" x1="16" y1="48" x2="36" y2="34"/><line class="sk-bond" x1="36" y1="34" x2="56" y2="48"/><line class="sk-bond" x1="36" y1="34" x2="36" y2="16"/><line class="sk-bond" x1="32" y1="26" x2="32" y2="16"/><text class="sk-atom O" x="34" y="10" font-size="12">O</text>',110,70) },
   'alcohol_secondary__jones': { name:'Acetone (ketone)', formula:'CH₃-CO-CH₃', tags:['same product'], bucket:0, explain:'Like PCC: the ketone has <b>no H on the carbonyl carbon itself</b>, so there\'s nothing left to oxidize. Same product from both oxidants.', hub:'alcohols', svg: skFrag('<line class="sk-bond" x1="16" y1="48" x2="36" y2="34"/><line class="sk-bond" x1="36" y1="34" x2="56" y2="48"/><line class="sk-bond" x1="36" y1="34" x2="36" y2="16"/><line class="sk-bond" x1="32" y1="26" x2="32" y2="16"/><text class="sk-atom O" x="34" y="10" font-size="12">O</text>',110,70) },
-  'alcohol_tertiary__jones': { name:'No reaction', formula:'tert-butanol (unchanged)', tags:['no α-H'], bucket:0, explain:'3° alcohols have no H on the C-OH carbon → no oxidation is possible (nothing to remove).', hub:'alcohols', svg: skFrag('<line class="sk-bond" x1="14" y1="50" x2="34" y2="38"/><line class="sk-bond" x1="34" y1="38" x2="54" y2="50"/><line class="sk-bond" x1="54" y1="50" x2="74" y2="38"/><line class="sk-bond" x1="54" y1="50" x2="54" y2="62"/><line class="sk-bond" x1="54" y1="50" x2="54" y2="32"/><text class="sk-atom O" x="54" y="28" font-size="12">OH</text><text class="sk-label-atlas" x="90" y="50" font-size="11" fill="#b91c1c" font-weight="700">✗</text>',110,75) },
+  'alcohol_tertiary__jones': { name:'No reaction', formula:'tert-butanol (unchanged)', tags:['no α-H'], bucket:0, explain:'3° alcohols have no H on the C-OH carbon → no oxidation is possible (nothing to remove).', hub:'alcohols', svg: skFrag('<line class="sk-bond" x1="14" y1="50" x2="34" y2="38"/><line class="sk-bond" x1="34" y1="38" x2="54" y2="50"/><line class="sk-bond" x1="54" y1="50" x2="74" y2="38"/><line class="sk-bond" x1="54" y1="50" x2="54" y2="62"/><line class="sk-bond" x1="54" y1="50" x2="54" y2="32"/><text class="sk-atom O" x="54" y="28" font-size="12">OH</text><text class="sk-label-atlas" x="90" y="50" font-size="10" fill="#b91c1c" font-weight="700">no rxn</text>',110,75) },
   'alcohol_primary__socl2': { name:'1-chloropropane', formula:'CH₃-CH₂-CH₂-Cl', tags:['no rearr.'], bucket:0, explain:'Clean conversion without rearrangement. Pyridine (optional) mops up HCl.', hub:'alcohols', svg: skFrag('<line class="sk-bond" x1="14" y1="48" x2="32" y2="34"/><line class="sk-bond" x1="32" y1="34" x2="52" y2="48"/><line class="sk-bond" x1="52" y1="48" x2="72" y2="34"/><text class="sk-atom X" x="82" y="34" font-size="12">Cl</text>',110,70) },
   'alcohol_secondary__socl2': { name:'2-chloropropane', formula:'CH₃-CHCl-CH₃', tags:['no rearr.'], bucket:0, explain:'Retention-then-inversion (SNi) pathway keeps stereo clean. Pick SOCl₂ when rearrangement is unacceptable.', hub:'alcohols', svg: skFrag('<line class="sk-bond" x1="16" y1="48" x2="36" y2="34"/><line class="sk-bond" x1="36" y1="34" x2="56" y2="48"/><line class="sk-bond" x1="36" y1="34" x2="36" y2="16"/><text class="sk-atom X" x="36" y="12" font-size="12">Cl</text>',110,70) },
   'alcohol_primary__pbr3': { name:'1-bromopropane', formula:'CH₃-CH₂-CH₂-Br', tags:['no rearr.'], bucket:0, explain:'PBr₃ activates the OH without touching the C — clean SN2 pathway.', hub:'alcohols', svg: skFrag('<line class="sk-bond" x1="14" y1="48" x2="32" y2="34"/><line class="sk-bond" x1="32" y1="34" x2="52" y2="48"/><line class="sk-bond" x1="52" y1="48" x2="72" y2="34"/><text class="sk-atom X" x="82" y="34" font-size="12">Br</text>',110,70) },
   'alcohol_secondary__pbr3': { name:'2-bromopropane (inversion)', formula:'CH₃-CHBr-CH₃', tags:['inversion','no rearr.'], bucket:0, explain:'Like SOCl₂, no cation means no rearrangement.', hub:'alcohols', svg: skFrag('<line class="sk-bond" x1="16" y1="48" x2="36" y2="34"/><line class="sk-bond" x1="36" y1="34" x2="56" y2="48"/><line class="sk-bond" x1="36" y1="34" x2="36" y2="16"/><text class="sk-atom X" x="36" y="12" font-size="12">Br</text>',110,70) },
   'alcohol_tertiary__socl2': { name:'tert-butyl chloride', formula:'(CH₃)₃C-Cl', tags:['SN1-like'], bucket:1, explain:'On a 3° alcohol, HCl or SOCl₂ both work via SN1 since the cation is stable.', hub:'alcohols', svg: skFrag('<line class="sk-bond" x1="14" y1="50" x2="34" y2="38"/><line class="sk-bond" x1="34" y1="38" x2="54" y2="50"/><line class="sk-bond" x1="54" y1="50" x2="74" y2="38"/><line class="sk-bond" x1="54" y1="50" x2="54" y2="62"/><line class="sk-bond" x1="54" y1="50" x2="54" y2="32"/><text class="sk-atom X" x="54" y="28" font-size="12">Cl</text>',110,75) },
-  'alcohol_tertiary__h2so4_heat': { name:'2-methylpropene (isobutylene)', formula:'(CH₃)₂C=CH₂', tags:['E1','Zaitsev','⚠ rearr.'], bucket:1, explain:'Acid-catalyzed E1 dehydration. 3° &gt; 2° &gt;&gt; 1°. The most substituted alkene dominates.', hub:'alcohols', mech:'e1-dehydration', svg: skFrag('<line class="sk-bond" x1="14" y1="48" x2="32" y2="34"/><line class="sk-bond" x1="32" y1="34" x2="56" y2="34"/><line class="sk-bond" x1="34" y1="28" x2="54" y2="28"/><line class="sk-bond" x1="32" y1="34" x2="32" y2="16"/>',110,70) },
-  'alcohol_secondary__h2so4_heat': { name:'Propene (Zaitsev, slower)', formula:'CH₃-CH=CH₂', tags:['E1','⚠ rearr.'], bucket:1, explain:'2° alcohols require higher temperatures. Same Zaitsev + rearrangement risk.', hub:'alcohols', svg: skFrag('<line class="sk-bond" x1="14" y1="48" x2="34" y2="34"/><line class="sk-bond" x1="34" y1="34" x2="70" y2="34"/><line class="sk-bond" x1="36" y1="28" x2="68" y2="28"/>',110,70) },
+  'alcohol_tertiary__h2so4_heat': { name:'2-methylpropene (isobutylene)', formula:'(CH₃)₂C=CH₂', tags:['E1','Zaitsev','rearr.'], bucket:1, explain:'Acid-catalyzed E1 dehydration. 3° &gt; 2° &gt;&gt; 1°. The most substituted alkene dominates.', hub:'alcohols', mech:'e1-dehydration', svg: skFrag('<line class="sk-bond" x1="14" y1="48" x2="32" y2="34"/><line class="sk-bond" x1="32" y1="34" x2="56" y2="34"/><line class="sk-bond" x1="34" y1="28" x2="54" y2="28"/><line class="sk-bond" x1="32" y1="34" x2="32" y2="16"/>',110,70) },
+  'alcohol_secondary__h2so4_heat': { name:'Propene (Zaitsev, slower)', formula:'CH₃-CH=CH₂', tags:['E1','rearr.'], bucket:1, explain:'2° alcohols require higher temperatures. Same Zaitsev + rearrangement risk.', hub:'alcohols', svg: skFrag('<line class="sk-bond" x1="14" y1="48" x2="34" y2="34"/><line class="sk-bond" x1="34" y1="34" x2="70" y2="34"/><line class="sk-bond" x1="36" y1="28" x2="68" y2="28"/>',110,70) },
   'alcohol_primary__tscl_py': { name:'Propyl tosylate', formula:'CH₃-CH₂-CH₂-OTs', tags:['retention at C','→ excellent LG'], bucket:0, explain:'TsCl attaches the tosyl group to O, not C — so stereo at C is <em>retained</em>. Then SN2 with a nucleophile inverts. Net: clean control over stereochem.', hub:'alcohols', svg: skFrag('<line class="sk-bond" x1="14" y1="48" x2="32" y2="34"/><line class="sk-bond" x1="32" y1="34" x2="52" y2="48"/><line class="sk-bond" x1="52" y1="48" x2="72" y2="34"/><text class="sk-atom O" x="82" y="34" font-size="12">OTs</text>',110,70) },
   'alcohol_primary__nah_rx': { name:'Dipropyl ether (Williamson)', formula:'CH₃CH₂CH₂-O-CH₂CH₂CH₃', tags:['SN2','1° only'], bucket:0, explain:'Deprotonate alcohol → alkoxide → SN2 on a <b>1° or methyl</b> alkyl halide. Don\'t use 2° or 3° alkyl halides — you\'ll get E2 instead.', hub:'alcohols', svg: skFrag('<line class="sk-bond" x1="6" y1="48" x2="22" y2="34"/><line class="sk-bond" x1="22" y1="34" x2="40" y2="48"/><line class="sk-bond" x1="40" y1="48" x2="58" y2="34"/><line class="sk-bond" x1="58" y1="34" x2="76" y2="48"/><line class="sk-bond" x1="76" y1="48" x2="94" y2="34"/><text class="sk-atom O" x="58" y="34" font-size="12">O</text>',110,70) },
   'alcohol_primary__rcooh_h': { name:'Propyl acetate (ester)', formula:'CH₃-COO-CH₂CH₂CH₃', tags:['reversible','PADPED'], bucket:1, explain:'Acid-catalyzed reversible esterification. Drive forward with excess alcohol or by removing water.', hub:'acids', mech:'fischer', svg: skFrag('<line class="sk-bond" x1="8" y1="48" x2="28" y2="34"/><line class="sk-bond" x1="28" y1="34" x2="28" y2="16"/><line class="sk-bond" x1="32" y1="24" x2="32" y2="16"/><text class="sk-atom-sm O" x="30" y="10" font-size="11">O</text><line class="sk-bond" x1="28" y1="34" x2="48" y2="48"/><text class="sk-atom-sm O" x="58" y="48" font-size="11">O</text><line class="sk-bond" x1="66" y1="48" x2="80" y2="34"/><line class="sk-bond" x1="80" y1="34" x2="96" y2="48"/>',110,70) },
@@ -21586,7 +21593,7 @@ const RXN_DB = {
 
   // ── Acid ──
   'acid__socl2': { name:'Acetyl chloride (acid chloride)', formula:'CH₃-COCl', tags:['activation'], bucket:0, explain:'Converts the acid into the most reactive derivative. Now you can make any other derivative by adding the right nucleophile.', hub:'acids', svg: skFrag('<line class="sk-bond" x1="14" y1="48" x2="34" y2="34"/><line class="sk-bond" x1="34" y1="34" x2="34" y2="16"/><line class="sk-bond" x1="38" y1="24" x2="38" y2="16"/><text class="sk-atom O" x="36" y="10" font-size="12">O</text><line class="sk-bond" x1="34" y1="34" x2="54" y2="48"/><text class="sk-atom X" x="64" y="48" font-size="12">Cl</text>',110,70) },
-  'acid__rcooh_h': { name:'— (already an acid)', formula:'—', tags:[], bucket:0, explain:'You need an alcohol + H⁺ (Fischer). Pick a different reagent.', hub:'acids', svg: skFrag('<text x="55" y="40" text-anchor="middle" font-size="24" fill="#b91c1c">✗</text>',110,70) },
+  'acid__rcooh_h': { name:'— (already an acid)', formula:'—', tags:[], bucket:0, explain:'You need an alcohol + H⁺ (Fischer). Pick a different reagent.', hub:'acids', svg: skFrag('<text x="55" y="44" text-anchor="middle" font-size="13" fill="#b91c1c" font-weight="700">no rxn</text>',110,70) },
   'acid__lah': { name:'Ethanol (1° alcohol)', formula:'CH₃-CH₂-OH', tags:['reduction'], bucket:0, explain:'LiAlH₄ reduces carboxylic acid all the way to 1° alcohol.', hub:'acids', svg: skFrag('<line class="sk-bond" x1="22" y1="48" x2="42" y2="34"/><line class="sk-bond" x1="42" y1="34" x2="62" y2="48"/><text class="sk-atom O" x="72" y="48" font-size="12">OH</text>',110,70) },
 
   // ── Ester ──
@@ -21605,7 +21612,7 @@ const RXN_DB = {
   'benzene__x2_fe': { name:'Bromobenzene', formula:'C₆H₅-Br', tags:['EAS'], bucket:0, explain:'Standard EAS halogenation via E⁺ = X⁺ (polarized by FeX₃).', hub:'aromatic', mech:'eas-nitration', svg: skFrag('<g transform="translate(45 35)"><polygon class="sk-bond" points="20,0 10,-17 -10,-17 -20,0 -10,17 10,17" fill="none"/><circle class="sk-bond-thin" cx="0" cy="0" r="11" fill="none"/><line class="sk-bond" x1="20" y1="0" x2="35" y2="0"/><text class="sk-atom X" x="46" y="0" font-size="12">Br</text></g>',110,70) },
   'benzene__hno3_h2so4': { name:'Nitrobenzene', formula:'C₆H₅-NO₂', tags:['EAS','→ NH₂ via reduction'], bucket:0, explain:'Nitronium ion ⁺NO₂ is the electrophile. Subsequent <b>Sn(s)/HCl</b> (tin metal) — or Fe/HCl or H₂/Pd — reduces NO₂ to NH₂ (aniline).', hub:'aromatic', mech:'eas-nitration', svg: skFrag('<g transform="translate(55 30)"><polygon class="sk-bond" points="0,-20 17,-10 17,10 0,20 -17,10 -17,-10" fill="none"/><circle class="sk-bond-thin" cx="0" cy="0" r="11" fill="none"/><line class="sk-bond" x1="0" y1="20" x2="0" y2="30"/><text class="sk-atom-sm N" x="0" y="36" font-size="11">NO₂</text></g>',110,75) },
   'benzene__so3_h2so4': { name:'Benzenesulfonic acid', formula:'C₆H₅-SO₃H', tags:['EAS','reversible'], bucket:0, explain:'Sulfonation is reversible — can be used as a blocking group and then removed with hot dilute H₂SO₄.', hub:'aromatic', svg: skFrag('<g transform="translate(55 30)"><polygon class="sk-bond" points="0,-20 17,-10 17,10 0,20 -17,10 -17,-10" fill="none"/><circle class="sk-bond-thin" cx="0" cy="0" r="11" fill="none"/><line class="sk-bond" x1="0" y1="20" x2="0" y2="30"/><text class="sk-atom-sm S" x="0" y="36" font-size="11">SO₃H</text></g>',110,75) },
-  'benzene__rx_alcl3': { name:'Alkylbenzene (⚠ rearranges)', formula:'C₆H₅-R', tags:['EAS','⚠ rearr.','polyalkylation'], bucket:0, explain:'Friedel-Crafts alkylation. Cation can rearrange (1-chloropropane → isopropylbenzene!). Also polyalkylates because the product is more activated than benzene.', hub:'aromatic', svg: skFrag('<g transform="translate(40 35)"><polygon class="sk-bond" points="18,0 9,-15 -9,-15 -18,0 -9,15 9,15" fill="none"/><circle class="sk-bond-thin" cx="0" cy="0" r="10" fill="none"/><line class="sk-bond" x1="18" y1="0" x2="32" y2="-8"/><line class="sk-bond" x1="32" y1="-8" x2="46" y2="0"/></g>',110,70) },
+  'benzene__rx_alcl3': { name:'Alkylbenzene (rearranges)', formula:'C₆H₅-R', tags:['EAS','rearr.','polyalkylation'], bucket:0, explain:'Friedel-Crafts alkylation. Cation can rearrange (1-chloropropane → isopropylbenzene!). Also polyalkylates because the product is more activated than benzene.', hub:'aromatic', svg: skFrag('<g transform="translate(40 35)"><polygon class="sk-bond" points="18,0 9,-15 -9,-15 -18,0 -9,15 9,15" fill="none"/><circle class="sk-bond-thin" cx="0" cy="0" r="10" fill="none"/><line class="sk-bond" x1="18" y1="0" x2="32" y2="-8"/><line class="sk-bond" x1="32" y1="-8" x2="46" y2="0"/></g>',110,70) },
   'benzene__rcocl_alcl3': { name:'Aryl ketone (no rearr.)', formula:'C₆H₅-CO-R', tags:['EAS','no rearr.'], bucket:0, explain:'FC acylation. Acylium ion is resonance-stabilized so it doesn\'t rearrange. Pair with Clemmensen or Wolff-Kishner for clean alkyl benzenes.', hub:'aromatic', svg: skFrag('<g transform="translate(34 35)"><polygon class="sk-bond" points="18,0 9,-15 -9,-15 -18,0 -9,15 9,15" fill="none"/><circle class="sk-bond-thin" cx="0" cy="0" r="10" fill="none"/><line class="sk-bond" x1="18" y1="0" x2="32" y2="0"/><line class="sk-bond" x1="32" y1="0" x2="32" y2="-14"/><line class="sk-bond" x1="36" y1="-8" x2="36" y2="-14"/><text class="sk-atom-sm O" x="34" y="-20" font-size="11">O</text><line class="sk-bond" x1="32" y1="0" x2="48" y2="8"/><text class="sk-label-atlas" x="56" y="8" dominant-baseline="central" font-size="10">R</text></g>',110,75) },
   'aniline__nano2_hcl_cubr': { name:'Bromobenzene (Sandmeyer)', formula:'C₆H₅-Br', tags:['Sandmeyer'], bucket:0, explain:'Sandmeyer — diazonium salt + CuBr. Net ArNH₂ → Ar-Br.', hub:'amines', svg: skFrag('<g transform="translate(45 35)"><polygon class="sk-bond" points="20,0 10,-17 -10,-17 -20,0 -10,17 10,17" fill="none"/><circle class="sk-bond-thin" cx="0" cy="0" r="11" fill="none"/><line class="sk-bond" x1="20" y1="0" x2="35" y2="0"/><text class="sk-atom X" x="46" y="0" font-size="12">Br</text></g>',110,70) },
   'aniline__nano2_hcl_cucl': { name:'Chlorobenzene (Sandmeyer)', formula:'C₆H₅-Cl', tags:['Sandmeyer'], bucket:0, explain:'Sandmeyer — CuCl swaps N₂ for Cl.', hub:'amines', svg: skFrag('<g transform="translate(45 35)"><polygon class="sk-bond" points="20,0 10,-17 -10,-17 -20,0 -10,17 10,17" fill="none"/><circle class="sk-bond-thin" cx="0" cy="0" r="11" fill="none"/><line class="sk-bond" x1="20" y1="0" x2="35" y2="0"/><text class="sk-atom X" x="46" y="0" font-size="12">Cl</text></g>',110,70) },
@@ -21792,7 +21799,7 @@ function showPrediction(){
   const bucketChip=rxn.bucket?`<span class="predictor-meta-chip warn">Bucket #${rxn.bucket}</span>`:'';
   const mechLink=rxn.mech?`<a style="margin-left:auto;color:var(--gold-d);text-decoration:none;font-weight:700;font-size:.78rem;cursor:pointer;" onclick="scrollToMech('${rxn.mech}')">See mechanism →</a>`:'';
   const tagsHTML=(rxn.tags||[]).map(t=>{
-    const cls=t.includes('⚠')?'warn':(/syn|anti|inversion|Markov|Zaitsev|Hofmann|racemic|reversible|Sandmeyer/.test(t)?'good':'');
+    const cls=/rearr|polyalk|over-alk|caution/.test(t)?'warn':(/syn|anti|inversion|Markov|Zaitsev|Hofmann|racemic|reversible|Sandmeyer/.test(t)?'good':'');
     return `<span class="predictor-meta-chip ${cls}">${t}</span>`;
   }).join('');
   const subSvg=SUBSTRATE_SVG[subKey]||`<div style="padding:1rem;text-align:center;color:var(--muted);">—</div>`;
@@ -21917,7 +21924,7 @@ function clearChain(){predChain=[];showPrediction();}
 // Each answer verified via cross-product of priority-1, priority-2, priority-3 positions.
 const RS_PROBLEMS=[
   {id:1, subs:['Br','CH₃','H','CH₂CH₃'], priorities:[1,3,4,2], answer:'R', rotation:'ccw',
-   why:'<b>Priority:</b> Br (1) &gt; Et (2) &gt; CH₃ (3) &gt; H (4).<br/><b>Positions:</b> Br top (in plane), CH₃ right (in plane), H on <em>wedge</em> (toward you), Et on <em>dash</em> (away).<br/><b>Trace 1 → 2 → 3:</b> Br (top) → Et (bottom-right, behind) → CH₃ (right). Going top → bottom-right → right traces a <b>counter-clockwise</b> loop (the long way around).<br/><b>⚠ H is on the wedge (toward you)</b> — so <b>FLIP</b> the 2D answer. CCW flipped = CW → <b>R</b>.'},
+   why:'<b>Priority:</b> Br (1) &gt; Et (2) &gt; CH₃ (3) &gt; H (4).<br/><b>Positions:</b> Br top (in plane), CH₃ right (in plane), H on <em>wedge</em> (toward you), Et on <em>dash</em> (away).<br/><b>Trace 1 → 2 → 3:</b> Br (top) → Et (bottom-right, behind) → CH₃ (right). Going top → bottom-right → right traces a <b>counter-clockwise</b> loop (the long way around).<br/><b>Trap to catch: H is on the wedge (toward you)</b> — so <b>FLIP</b> the 2D answer. CCW flipped = CW → <b>R</b>.'},
   {id:2, subs:['OH','CH₃','H','CH₂CH₃'], priorities:[1,3,4,2], answer:'R', rotation:'ccw',
    why:'<b>Priority:</b> OH (1) &gt; Et (2) &gt; CH₃ (3) &gt; H (4).<br/><b>Positions:</b> OH top, CH₃ right, H on wedge, Et on dash.<br/>Same geometry as problem 1. Trace OH → Et (behind) → CH₃ is CCW in 2D; H is in front → flip → <b>R</b>.'},
   {id:3, subs:['Cl','CH₃','CH₂CH₃','H'], priorities:[1,3,2,4], answer:'S', rotation:'ccw',
@@ -21925,7 +21932,7 @@ const RS_PROBLEMS=[
   {id:4, subs:['OH','COOH','CH₃','H'], priorities:[2,1,3,4], answer:'S', rotation:'ccw',
    why:'<b>Priority:</b> COOH (1 — phantom atoms: C bonded to three O) &gt; OH (2) &gt; CH₃ (3) &gt; H (4).<br/><b>Positions:</b> OH top, COOH right, CH₃ on wedge, H on dash.<br/><b>H on dash — no flip.</b> Trace 1→2→3: COOH (right) → OH (top) → CH₃ (lower-left). Counter-clockwise → <b>S</b>.'},
   {id:5, subs:['NH₂','OH','CH₃','H'], priorities:[2,1,3,4], answer:'S', rotation:'ccw',
-   why:'<b>⚠ Trap:</b> NH₂ is on top but it\'s only priority #2 — <b>O beats N</b>, so OH (on the right) is priority #1 even though it\'s not on top. Position ≠ priority.<br/><b>Priority:</b> OH (1) &gt; NH₂ (2) &gt; CH₃ (3) &gt; H (4).<br/><b>Positions:</b> NH₂ top, OH right, CH₃ on wedge (front), H on dash (back).<br/><b>H on dash — no flip.</b> Trace 1→2→3: OH (right) → NH₂ (top) → CH₃ (lower-left, front). Counter-clockwise → <b>S</b>.'},
+   why:'<b>Trap to catch:</b> NH₂ is on top but it\'s only priority #2 — <b>O beats N</b>, so OH (on the right) is priority #1 even though it\'s not on top. Position ≠ priority.<br/><b>Priority:</b> OH (1) &gt; NH₂ (2) &gt; CH₃ (3) &gt; H (4).<br/><b>Positions:</b> NH₂ top, OH right, CH₃ on wedge (front), H on dash (back).<br/><b>H on dash — no flip.</b> Trace 1→2→3: OH (right) → NH₂ (top) → CH₃ (lower-left, front). Counter-clockwise → <b>S</b>.'},
   {id:6, subs:['Br','Cl','F','H'], priorities:[1,2,3,4], answer:'R', rotation:'cw',
    why:'<b>Priority:</b> Br (1) &gt; Cl (2) &gt; F (3) &gt; H (4). Straight atomic-number ranking.<br/><b>Positions:</b> Br top, Cl right, F on wedge (front), H on dash (back).<br/><b>H on dash — no flip.</b> Trace 1→2→3: Br (top) → Cl (right) → F (lower-left, front). Clockwise → <b>R</b>.'},
   {id:7, subs:['CH=CH₂','CH₂CH₃','CH₃','H'], priorities:[1,2,3,4], answer:'R', rotation:'cw',
@@ -23291,6 +23298,40 @@ function buildExamBank(){
   return bank;
 }
 
+// Unbiased shuffle (Math.random()-0.5 is not uniform with a comparison sort).
+function fisherYates(arr){
+  const a=[...arr];
+  for(let i=a.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+// Stratified draw: target the rough DAT topic distribution per hub, then top up.
+// Hubs not yet populated (stereo MCQs, nomenclature, spec, lab-tech, mass-spec)
+// simply contribute 0 and the top-up fills them via the remainder.
+function stratifiedDraw(bank,total){
+  const target={
+    subelim:3, alkenes:3, carbonyl:3, aromatic:2, acids:2,
+    alkanes:1, alkynes:1, alcohols:1, ethers:1, amines:1,
+    'stereo-lab':1, 'spec-ir':1, 'spec-nmr':1, 'mass-spec':1,
+    nomenclature:1, 'lab-techniques':1
+  };
+  const byHub={};
+  bank.forEach(q=>{ (byHub[q.hub]||(byHub[q.hub]=[])).push(q); });
+  const drawn=[];
+  const seen=new Set();
+  Object.entries(target).forEach(([hub,n])=>{
+    const pool=fisherYates(byHub[hub]||[]);
+    pool.slice(0,n).forEach(q=>{ drawn.push(q); seen.add(q.id); });
+  });
+  if(drawn.length<total){
+    const remainder=fisherYates(bank.filter(q=>!seen.has(q.id)));
+    while(drawn.length<total && remainder.length) drawn.push(remainder.pop());
+  }
+  return fisherYates(drawn).slice(0,total);
+}
+
 function examStart(){
   const allBank=buildExamBank();
   if(allBank.length<20){alert('Need at least 20 MCQs in bank.');return;}
@@ -23298,8 +23339,8 @@ function examStart(){
   const mode=modeEl?modeEl.value:'timed';
   EXAM_STATE.mode=mode;
   EXAM_STATE.duration = mode==='sprint' ? 10*60*1000 : mode==='practice' ? 0 : 30*60*1000;
-  // Shuffle and pick 20
-  const shuffled=[...allBank].sort(()=>Math.random()-0.5).slice(0,20);
+  // Stratified topic-weighted draw + unbiased shuffle within
+  const shuffled=stratifiedDraw(allBank,20);
   EXAM_STATE.questions=shuffled;
   EXAM_STATE.current=0;
   EXAM_STATE.answers={};
@@ -23381,7 +23422,6 @@ function examSubmit(){
   const pct=Math.round(100*correct/total);
   const elapsed=Date.now()-EXAM_STATE.startTime;
   const mins=Math.floor(elapsed/60000),secs=Math.floor(elapsed/1000)%60;
-  const verdict=pct>=90?'Elite · 22+ range':pct>=75?'Strong · 20-22 range':pct>=60?'Solid baseline · keep drilling':'Let\'s revisit a few hubs';
   const results=document.getElementById('examResults');
   // Sort hubs by accuracy ascending so weakest is most visible
   const sortedHubs=Object.entries(perHub).sort((a,b)=>(a[1].correct/a[1].total)-(b[1].correct/b[1].total));
@@ -23389,7 +23429,7 @@ function examSubmit(){
     const hubPct=Math.round(100*v.correct/v.total);
     const tone=hubPct>=80?'good':hubPct>=60?'mid':hubPct>=1?'weak':'none';
     const accentColor=hubPct>=80?'#15803d':hubPct>=60?'#b45309':hubPct>=1?'#b91c1c':'#5c5348';
-    const status=hubPct>=80?'Strong':hubPct>=60?'OK':hubPct>=1?'Weak':'No data';
+    const status=hubPct>=80?'≥80%':hubPct>=60?'60–79%':hubPct>=1?'<60%':'No data';
     return '<div class="exam-hub-row '+tone+'">'+
       '<div class="exam-hub-row-name">'+h+'</div>'+
       '<div class="exam-hub-row-bar"><div class="exam-hub-row-fill" style="width:'+hubPct+'%;background:'+accentColor+';"></div></div>'+
@@ -23415,8 +23455,8 @@ function examSubmit(){
     <div class="exam-results-hero">
       <div class="exam-score-big">${pct}%</div>
       <div class="exam-results-body">
-        <div class="exam-results-title">${correct} / ${total} correct · ${verdict}</div>
-        <div class="exam-results-sub">Completed in ${mins}m ${secs}s. ${pct>=75?'You\'re ready for the DAT — this score predicts 20+.':'Review the hubs below and retake the exam when the Mastery Dashboard shows all-green.'}</div>
+        <div class="exam-results-title">${correct} / ${total} correct in ${mins}m ${secs}s</div>
+        <div class="exam-results-sub">Weakest hub: ${weakest}. Per-hub breakdown and question review below.</div>
         <div class="exam-quickstats">
           <div class="exam-quickstat"><span class="exam-quickstat-l">Avg pace</span><b>${avgSec}s/q</b></div>
           <div class="exam-quickstat"><span class="exam-quickstat-l">Weakest hub</span><b>${weakest}</b></div>
@@ -23440,7 +23480,7 @@ function examSubmit(){
     <div style="text-align:center;margin-top:1rem;display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;">
       <button class="puzzle-btn" onclick="examRestart()">Take another exam</button>
       <button class="puzzle-btn ghost" onclick="scrollToSec('mastery')">See mastery dashboard</button>
-      <button class="puzzle-btn ghost" onclick="shareExamScore(${pct},${correct},${total},'${mins}m ${secs}s')">Share score</button>
+      <button class="puzzle-btn ghost" onclick="shareExamScore(${pct},${correct},${total},'${mins}m ${secs}s','${weakest.replace(/'/g,"\\'")}')">Share score</button>
     </div>`;
   document.getElementById('examRunning').style.display='none';
   results.style.display='block';
@@ -23676,7 +23716,7 @@ function checkPuzzle(){
   const match=currentPuzzle.solutions.some(sol=>sol.length===userSequence.length && sol.every((s,i)=>s===userSequence[i]));
   if(match){
     puzzleEl.feedback.className='puzzle-feedback show success';
-    puzzleEl.feedback.innerHTML=`<b>Nailed it.</b> Sequence solved in ${userSequence.length} step${userSequence.length>1?'s':''}.`;
+    puzzleEl.feedback.innerHTML=`<b>Correct.</b> Sequence solved in ${userSequence.length} step${userSequence.length>1?'s':''}.`;
   } else if(!userSequence.length){
     puzzleEl.feedback.className='puzzle-feedback show hint';
     puzzleEl.feedback.innerHTML='Add some reagents first, then press Check.';
@@ -23794,7 +23834,7 @@ if(flashEl.card){
 /* ═══════════════════════════════════════════════════════════
    ANKI/QUIZLET CSV EXPORT — flashcards as plain TSV/CSV
    ═══════════════════════════════════════════════════════════ */
-function shareExamScore(pct,correct,total,time){
+function shareExamScore(pct,correct,total,time,weakest){
   // Render a clean, shareable PNG via canvas
   const canvas=document.createElement('canvas');
   canvas.width=800; canvas.height=420;
@@ -23826,11 +23866,12 @@ function shareExamScore(pct,correct,total,time){
   ctx.fillStyle='#f5f0e8';
   ctx.font='600 22px Arial,sans-serif';
   ctx.fillText(correct+' / '+total+' correct · finished in '+time,60,270);
-  // Verdict
-  const verdict = pct>=90?'Elite — this predicts 22+ on the DAT.' : pct>=80?'Strong — on track for a 20.' : pct>=70?'Solid — keep drilling weak hubs.' : pct>=60?'Getting there — review mastery dashboard.' : 'Early days — practice the mechanism library.';
-  ctx.fillStyle='rgba(245,240,232,0.85)';
-  ctx.font='500 18px Arial,sans-serif';
-  ctx.fillText(verdict,60,310);
+  // Weakest hub (practice fact, not a verdict)
+  if(weakest && weakest!=='—'){
+    ctx.fillStyle='rgba(245,240,232,0.85)';
+    ctx.font='500 18px Arial,sans-serif';
+    ctx.fillText('Weakest hub: '+weakest,60,310);
+  }
   // Date
   ctx.fillStyle='rgba(245,240,232,0.5)';
   ctx.font='400 14px Arial,sans-serif';
@@ -23839,7 +23880,7 @@ function shareExamScore(pct,correct,total,time){
   ctx.fillStyle='#C9A84C';
   ctx.font='700 13px Arial,sans-serif';
   ctx.textAlign='right';
-  ctx.fillText('Study at acethedat.com →',740,380);
+  ctx.fillText('Study at acethedat.com',740,380);
   ctx.textAlign='start';
   // Download
   canvas.toBlob(blob=>{
@@ -26248,74 +26289,12 @@ window.MolMini = (function(){
     };
     document.getElementById('daReadout').innerHTML = readouts[daState.frame];
   }
-  /* ─── EXAM-SIM · Sigmoid scaled-score predictor (Wave 3.3) ─── */
-  // Sigmoid-anchored mapping: raw% → 13-30 DAT scale
-  // Anchors: 25% → 16, 45% → 19, 60% → 21, 75% → 23, 88% → 26, 95%+ → 28-30
-  function predictScaled(pct){
-    const k = 8.0, mid = 0.55;
-    const sig = 1 / (1 + Math.exp(-k * (pct/100 - mid)));
-    return Math.min(30, Math.max(13, Math.round(13 + sig * 17)));
-  }
-  // Phase C: predictor re-enabled. It auto-attaches to #examResults via MutationObserver,
-  // which means it lives INSIDE the exam-sim section (not as a separate global card).
-  // Sigmoid mapping calibrated to OChem section norms.
-  function attachPredictor(){
-    const results = document.getElementById('examResults');
-    if (!results) return;
-    const obs = new MutationObserver(() => {
-      // Look for the score-big element rendered by the existing exam handler
-      const big = results.querySelector('.exam-score-big');
-      if (!big) return;
-      // Avoid double-injecting
-      if (results.querySelector('.exam-predictor-card')) return;
-      const pct = parseInt((big.textContent || '0').replace('%',''));
-      if (isNaN(pct)) return;
-      const scaled = predictScaled(pct);
-      const band = scaled >= 27 ? 'Elite (95+ percentile)' : scaled >= 23 ? 'Strong (top 15%)' : scaled >= 20 ? 'Solid baseline (avg dental school)' : scaled >= 17 ? 'Foundation building' : 'Needs more reps';
-      const card = document.createElement('div');
-      card.className = 'exam-predictor-card';
-      card.setAttribute('role', 'status');
-      card.setAttribute('aria-live', 'polite');
-      card.setAttribute('aria-label', `Predicted scaled DAT score ${scaled} of 30. ${band}.`);
-      // Match v1's exam-results-hero: dark teal gradient, white text, premium feel
-      card.style.cssText = 'background:linear-gradient(135deg,#0d2018,#1B3A2D 65%,#2A5240);color:#fff;border-radius:14px;padding:1.6rem 1.8rem;margin-bottom:1rem;display:flex;align-items:center;gap:1.8rem;flex-wrap:wrap;box-shadow:0 8px 24px rgba(13,32,24,.18);position:relative;overflow:hidden;';
-      // Subtle gold accent in the corner
-      card.innerHTML = `
-        <div style="position:absolute;top:-30px;right:-30px;width:140px;height:140px;background:radial-gradient(circle,rgba(201,168,76,.18) 0%,transparent 70%);pointer-events:none;"></div>
-        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(135deg,#C9A84C,#8C7235);border-radius:14px;padding:.9rem 1.4rem;box-shadow:0 4px 12px rgba(0,0,0,.15);min-width:130px;">
-          <div style="font-family:'JetBrains Mono','Courier New',monospace;font-size:.58rem;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:rgba(13,32,24,.7);">Predicted</div>
-          <div style="font-family:'Playfair Display',serif;font-size:3.6rem;font-weight:800;color:#0d2018;line-height:1;letter-spacing:-.02em;">${scaled}</div>
-          <div style="font-family:'JetBrains Mono','Courier New',monospace;font-size:.6rem;font-weight:700;color:rgba(13,32,24,.6);">/ 30 DAT scale</div>
-        </div>
-        <div style="flex:1;min-width:240px;">
-          <div style="font-family:'JetBrains Mono','Courier New',monospace;font-size:.62rem;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:#E2C97A;margin-bottom:.4rem;">Sigmoid-anchored mapping · OChem section norms</div>
-          <div style="font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;color:#fff;line-height:1.2;margin-bottom:.5rem;">${band}</div>
-          <div style="font-size:.85rem;color:rgba(255,255,255,.78);line-height:1.6;">Calibrated to historical OChem section distributions. <b style="color:#E2C97A;">23+ predicts most dental school admit thresholds.</b> Take 3+ mocks before trusting a single number.</div>
-        </div>
-        <div style="font-family:'JetBrains Mono','Courier New',monospace;font-size:.7rem;color:rgba(255,255,255,.55);background:rgba(255,255,255,.04);border:1px solid rgba(226,201,122,.18);border-radius:8px;padding:.7rem .9rem;line-height:1.6;">
-          <div style="color:#E2C97A;font-weight:800;letter-spacing:.1em;text-transform:uppercase;font-size:.6rem;margin-bottom:.4rem;">Anchor table</div>
-          <div>25% → 16</div>
-          <div>45% → 19</div>
-          <div>60% → 21</div>
-          <div>75% → 23</div>
-          <div>88% → 26</div>
-          <div>95%+ → 28-30</div>
-        </div>`;
-      // Insert at the top of results, just after the existing hero
-      const hero = results.querySelector('.exam-results-hero');
-      if (hero && hero.nextSibling){
-        results.insertBefore(card, hero.nextSibling);
-      } else {
-        results.insertBefore(card, results.firstChild);
-      }
-    });
-    obs.observe(results, { childList: true, subtree: true });
-  }
-  if (document.readyState === 'loading'){
-    document.addEventListener('DOMContentLoaded', attachPredictor);
-  } else {
-    attachPredictor();
-  }
+  /* ─── EXAM-SIM · Score-prediction surfaces removed.
+     Per product rule, Ace Labs must not map practice performance
+     to predicted DAT scores or percentiles. The post-exam screen
+     already shows raw count, % correct, time, per-hub accuracy
+     (weakest-first), and missed-question walkthroughs — that is
+     the practice-only review surface. ─── */
 
   /* ─── FLASH-DECK · "due today" badge on sidebar (Wave 3.4) ─── */
   function updateDueBadge(){
@@ -27448,7 +27427,7 @@ window.MolMini = (function(){
     const envV = document.getElementById('hnmrQEnvV');
     if (parseInt(envInput.value) === m.peaks.length){
       envRow.classList.add('correct'); envRow.classList.remove('wrong');
-      envV.textContent = '✓ correct'; envV.className = 'hnmr-quiz-verdict correct';
+      envV.textContent = 'correct'; envV.className = 'hnmr-quiz-verdict correct';
     } else {
       envRow.classList.add('wrong'); envRow.classList.remove('correct');
       envV.textContent = 'expected ' + m.peaks.length; envV.className = 'hnmr-quiz-verdict wrong';
@@ -27471,7 +27450,7 @@ window.MolMini = (function(){
     }
     if (userReduced === expReduced){
       ratioRow.classList.add('correct'); ratioRow.classList.remove('wrong');
-      ratioV.textContent = '✓ correct'; ratioV.className = 'hnmr-quiz-verdict correct';
+      ratioV.textContent = 'correct'; ratioV.className = 'hnmr-quiz-verdict correct';
     } else {
       ratioRow.classList.add('wrong'); ratioRow.classList.remove('correct');
       ratioV.textContent = 'expected ' + expReduced; ratioV.className = 'hnmr-quiz-verdict wrong';
@@ -27491,7 +27470,7 @@ window.MolMini = (function(){
     });
     if (multAll){
       multRow.classList.add('correct'); multRow.classList.remove('wrong');
-      multV.textContent = '✓ all correct'; multV.className = 'hnmr-quiz-verdict correct';
+      multV.textContent = 'all correct'; multV.className = 'hnmr-quiz-verdict correct';
     } else {
       multRow.classList.add('wrong'); multRow.classList.remove('correct');
       multV.textContent = 'expected: ' + sortedPeaks.map(p => p.mult).join(', '); multV.className = 'hnmr-quiz-verdict wrong';
@@ -29055,7 +29034,7 @@ window.MolMini = (function(){
     const v = document.getElementById('cnmrQEnvV');
     if (parseInt(inp.value) === m.peaks.length){
       row.classList.add('correct'); row.classList.remove('wrong');
-      v.textContent = '✓ correct'; v.className = 'hnmr-quiz-verdict correct';
+      v.textContent = 'correct'; v.className = 'hnmr-quiz-verdict correct';
     } else {
       row.classList.add('wrong'); row.classList.remove('correct');
       v.textContent = 'expected ' + m.peaks.length + ' (count after symmetry collapse)';
