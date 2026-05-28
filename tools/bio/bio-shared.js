@@ -58,9 +58,9 @@ const NODES = {
     stageOrder: ["helicase", "ssb", "topo", "primase", "pol3", "pol1", "ligase"],
     stageLabels: ["Stage 1 · place Helicase", "Stage 2 · place SSB proteins", "Stage 3 · place Topoisomerase", "Stage 4 · place Primase", "Stage 5 · place DNA pol III", "Stage 6 · place DNA pol I", "Stage 7 · place DNA ligase", "Complete · all placed"],
     retrievals: {
-      1: { rt:"Right. 5'→3' only — because the incoming dNTP brings the energy in its triphosphate, the 3'-OH attacks the α-phosphate.", wr:"DNA polymerase ONLY adds nucleotides to a free 3'-OH. The energy for the new bond comes from the incoming dNTP's 5'-triphosphate — the existing 3'-OH attacks the incoming α-phosphate. You cannot add to a 5' end because the energy would have to come from the existing chain.", q:"DNA polymerase synthesizes new strands in which direction?", qh:"<b>5' → 3'.</b> The incoming dNTP brings its triphosphate energy; existing 3'-OH attacks the α-phosphate.", ex:"The 5'→3' rule is not arbitrary — it falls out of where the energy is. The incoming dNTP carries a 5'-triphosphate (PPP-dN). The existing chain's 3'-OH attacks the α-phosphate, releasing pyrophosphate and forming the new phosphodiester bond. If you tried to extend in the other direction, the energy would have to come from the existing chain — and a single hydrolysis error would dissolve the whole strand, killing proofreading. The chemistry forces the directionality." },
+      3: { rt:"Right. 5'→3' only — because the incoming dNTP brings the energy in its triphosphate, the 3'-OH attacks the α-phosphate.", wr:"DNA polymerase ONLY adds nucleotides to a free 3'-OH. The energy for the new bond comes from the incoming dNTP's 5'-triphosphate — the existing 3'-OH attacks the incoming α-phosphate. You cannot add to a 5' end because the energy would have to come from the existing chain.", q:"DNA polymerase synthesizes new strands in which direction?", qh:"<b>5' → 3'.</b> The incoming dNTP brings its triphosphate energy; existing 3'-OH attacks the α-phosphate.", ex:"The 5'→3' rule is not arbitrary — it falls out of where the energy is. The incoming dNTP carries a 5'-triphosphate (PPP-dN). The existing chain's 3'-OH attacks the α-phosphate, releasing pyrophosphate and forming the new phosphodiester bond. If you tried to extend in the other direction, the energy would have to come from the existing chain — and a single hydrolysis error would dissolve the whole strand, killing proofreading. The chemistry forces the directionality." },
       2: { rt:"Right. Lagging strand fragments are joined by DNA ligase after pol I removes RNA primer and fills the gap.", wr:"Okazaki fragments are connected in a 3-step relay: pol III synthesizes each fragment (5'→3'), pol I removes the RNA primer and fills the gap with DNA, and DNA ligase seals the final nick with a phosphodiester bond.", q:"Which enzyme seals the nick between Okazaki fragments?", qh:"<b>DNA ligase.</b> Pol I fills the primer gap; ligase seals the nick.", ex:"On the lagging strand, replication happens in pieces (Okazaki fragments) because synthesis must run 5'→3' but the fork moves the other way. Each fragment is primed by primase (RNA primer), extended by DNA pol III, then the RNA primer is removed and replaced with DNA by pol I, leaving a NICK between the fragments. DNA ligase forms the final phosphodiester bond that seals the nick. Without ligase, fragments stay disconnected." },
-      3: { rt:"Right. Topoisomerase cuts and rejoins DNA to relieve supercoiling ahead of the helicase.", wr:"Helicase unzips the double helix, which over-twists the DNA ahead of the fork. Topoisomerase cuts one or both strands, rotates around, and rejoins them — relieving the supercoiling so the fork can keep moving. Quinolone antibiotics target bacterial topoisomerase.", q:"What problem does topoisomerase solve during replication?", qh:"<b>Relieves supercoiling.</b> Helicase unwinding over-twists DNA ahead of the fork; topoisomerase cuts/rotates/rejoins to relax it.", ex:"Helicase unwinding (~3,000 base pairs per minute in E. coli) creates positive supercoils ahead of the fork — imagine twisting one end of a phone cord. Without relief, the fork would seize within seconds. Topoisomerase I makes single-strand cuts; topoisomerase II (gyrase in bacteria) makes double-strand cuts and introduces negative supercoils. Both let DNA rotate freely past the fork, then religate it. Targeting bacterial gyrase is why fluoroquinolones work." },
+      1: { rt:"Right. Topoisomerase cuts and rejoins DNA to relieve supercoiling ahead of the helicase.", wr:"Helicase unzips the double helix, which over-twists the DNA ahead of the fork. Topoisomerase cuts one or both strands, rotates around, and rejoins them — relieving the supercoiling so the fork can keep moving. Quinolone antibiotics target bacterial topoisomerase.", q:"What problem does topoisomerase solve during replication?", qh:"<b>Relieves supercoiling.</b> Helicase unwinding over-twists DNA ahead of the fork; topoisomerase cuts/rotates/rejoins to relax it.", ex:"Helicase unwinding (~3,000 base pairs per minute in E. coli) creates positive supercoils ahead of the fork — imagine twisting one end of a phone cord. Without relief, the fork would seize within seconds. Topoisomerase I makes single-strand cuts; topoisomerase II (gyrase in bacteria) makes double-strand cuts and introduces negative supercoils. Both let DNA rotate freely past the fork, then religate it. Targeting bacterial gyrase is why fluoroquinolones work." },
     },
   },
 
@@ -310,9 +310,9 @@ const NODES = {
     stageOrder: ["glyc", "pdh", "krb", "etc", "atps"],
     stageLabels: ["Stage 1 · place Glycolysis", "Stage 2 · place PDH", "Stage 3 · place Krebs cycle", "Stage 4 · place ETC", "Stage 5 · place ATP synthase", "Complete · all placed"],
     retrievals: {
-      1: { rt:"Right. Krebs makes 6 NADH per glucose (3 per turn × 2 turns). PDH adds 2 more; glycolysis adds 2 more — 10 NADH total per glucose (the trap).", wr:"Krebs cycle (per glucose, both turns): 6 NADH + 2 FADH₂ + 2 ATP (or GTP) + 4 CO₂. Plus 2 CO₂ from PDH; plus 2 NADH from PDH; plus 2 NADH from glycolysis. So TOTAL per glucose = 10 NADH + 2 FADH₂. The trap on the DAT: '10' is the answer when asked about all of cellular respiration, but '6' is the answer when asked specifically about Krebs.", q:"How many NADH are produced per glucose by the Krebs cycle (both turns)?", qh:"<b>6</b> (3 per turn × 2 turns). PLUS 2 FADH₂ + 2 ATP/GTP. (The total NADH per glucose across glycolysis+PDH+Krebs is 10 — that's the trap.)", ex:"Cellular respiration NADH/FADH₂ accounting per glucose: GLYCOLYSIS → 2 NADH (and 2 ATP, 2 pyruvate). PDH (pyruvate dehydrogenase, ×2) → 2 NADH (and 2 CO₂, 2 acetyl-CoA). KREBS CYCLE (×2 turns per glucose, since glucose gives 2 acetyl-CoA) → 6 NADH + 2 FADH₂ + 2 ATP/GTP + 4 CO₂. TOTAL per glucose: 10 NADH, 2 FADH₂, 4 ATP (2 glycolysis + 2 Krebs), 6 CO₂. The ETC then uses the NADH + FADH₂ to pump protons and generate ATP via ATP synthase: each NADH gives ~2.5 ATP, each FADH₂ gives ~1.5 ATP (modern numbers), so total respiration yields ~30-32 ATP per glucose. THE TRAP on the DAT: '10 NADH per glucose' is total respiration; '6 NADH per glucose' is Krebs alone. Read the question carefully." },
+      3: { rt:"Right. Krebs makes 6 NADH per glucose (3 per turn × 2 turns). PDH adds 2 more; glycolysis adds 2 more — 10 NADH total per glucose (the trap).", wr:"Krebs cycle (per glucose, both turns): 6 NADH + 2 FADH₂ + 2 ATP (or GTP) + 4 CO₂. Plus 2 CO₂ from PDH; plus 2 NADH from PDH; plus 2 NADH from glycolysis. So TOTAL per glucose = 10 NADH + 2 FADH₂. The trap on the DAT: '10' is the answer when asked about all of cellular respiration, but '6' is the answer when asked specifically about Krebs.", q:"How many NADH are produced per glucose by the Krebs cycle (both turns)?", qh:"<b>6</b> (3 per turn × 2 turns). PLUS 2 FADH₂ + 2 ATP/GTP. (The total NADH per glucose across glycolysis+PDH+Krebs is 10 — that's the trap.)", ex:"Cellular respiration NADH/FADH₂ accounting per glucose: GLYCOLYSIS → 2 NADH (and 2 ATP, 2 pyruvate). PDH (pyruvate dehydrogenase, ×2) → 2 NADH (and 2 CO₂, 2 acetyl-CoA). KREBS CYCLE (×2 turns per glucose, since glucose gives 2 acetyl-CoA) → 6 NADH + 2 FADH₂ + 2 ATP/GTP + 4 CO₂. TOTAL per glucose: 10 NADH, 2 FADH₂, 4 ATP (2 glycolysis + 2 Krebs), 6 CO₂. The ETC then uses the NADH + FADH₂ to pump protons and generate ATP via ATP synthase: each NADH gives ~2.5 ATP, each FADH₂ gives ~1.5 ATP (modern numbers), so total respiration yields ~30-32 ATP per glucose. THE TRAP on the DAT: '10 NADH per glucose' is total respiration; '6 NADH per glucose' is Krebs alone. Read the question carefully." },
       2: { rt:"Right. The ETC pumps protons into the intermembrane space → proton gradient drives ATP synthase. Chemiosmotic coupling.", wr:"ETC complexes I, III, IV pump H+ from matrix into the intermembrane space as electrons flow down the chain (NADH → O₂). This creates a PROTON GRADIENT (electrochemical, ~150 mV across the inner membrane). H+ then flows back into the matrix through ATP SYNTHASE, and the energy of this flow drives the synthesis of ATP from ADP + Pᵢ. This is Mitchell's CHEMIOSMOTIC HYPOTHESIS — the central insight of bioenergetics.", q:"What is the immediate energy source for ATP synthase to make ATP?", qh:"<b>The proton gradient across the inner mitochondrial membrane</b> (built by the ETC). H+ flows down its gradient through ATP synthase, driving ATP synthesis.", ex:"CHEMIOSMOTIC COUPLING (Mitchell, 1961, Nobel 1978): the ETC and ATP synthesis are mechanistically coupled by a PROTON GRADIENT. As electrons flow down the ETC from NADH → ubiquinone → cytochrome c → O₂, the complexes I, III, and IV pump H+ from the mitochondrial matrix INTO the intermembrane space. This builds an electrochemical proton gradient (~150 mV, pH ~1 unit lower outside). ATP SYNTHASE (complex V) is a rotary enzyme that lets H+ flow back DOWN their gradient into the matrix — the flow turns the F0 ring, which rotates the F1 stalk, which sequentially changes the conformation of three β-subunits, each of which catalyzes ATP synthesis from ADP + Pᵢ. So the ETC doesn't make ATP directly — it makes the proton gradient, which is the intermediate energy form. Each NADH yields ~2.5 ATP; each FADH₂ ~1.5 ATP. Uncouplers like DNP collapse the gradient → ETC runs full speed (burns nutrients, generates heat) but no ATP is made — used historically as a dangerous weight-loss drug and naturally in brown fat thermogenesis." },
-      3: { rt:"Right. Oxygen is the FINAL electron acceptor in the ETC. Without O₂, ETC stops → NADH builds up → glycolysis halts.", wr:"Oxygen plays one critical role in cellular respiration: it's the FINAL ELECTRON ACCEPTOR of the ETC. At complex IV (cytochrome c oxidase), 4 electrons + 4 H+ + O₂ → 2 H₂O. Without O₂, the ETC backs up, NADH can't be reoxidized to NAD+, the Krebs cycle and glycolysis halt (no NAD+). Anaerobic cells survive on the 2 ATP from glycolysis + fermentation (regenerates NAD+); aerobic cells can extract 15× more ATP per glucose with O₂.", q:"What is the role of oxygen in cellular respiration?", qh:"<b>Final electron acceptor</b> at the end of the ETC. O₂ + 4e⁻ + 4H+ → 2 H₂O at complex IV.", ex:"OXYGEN's role in respiration is precisely one thing: it accepts electrons at the END of the electron transport chain. At complex IV (cytochrome c oxidase), 4 electrons (from cytochrome c) + 4 H+ + O₂ → 2 H₂O. Without O₂, electrons have nowhere to go → ETC backs up → NADH can't be reoxidized to NAD+ → Krebs cycle stops (needs NAD+ as cofactor) → glycolysis eventually stops too (also needs NAD+). The cell is stuck with anaerobic glycolysis: 2 ATP per glucose, with fermentation to regenerate NAD+ from NADH (pyruvate → lactate in animals, ethanol in yeast). Aerobic respiration extracts ~30-32 ATP per glucose — about 15× more efficient than anaerobic. This is why aerobic organisms dominate. Cyanide blocks complex IV directly (binds the heme iron) — instantly fatal because it shuts down the entire ETC even with plenty of O₂ available." },
+      1: { rt:"Right. Oxygen is the FINAL electron acceptor in the ETC. Without O₂, ETC stops → NADH builds up → glycolysis halts.", wr:"Oxygen plays one critical role in cellular respiration: it's the FINAL ELECTRON ACCEPTOR of the ETC. At complex IV (cytochrome c oxidase), 4 electrons + 4 H+ + O₂ → 2 H₂O. Without O₂, the ETC backs up, NADH can't be reoxidized to NAD+, the Krebs cycle and glycolysis halt (no NAD+). Anaerobic cells survive on the 2 ATP from glycolysis + fermentation (regenerates NAD+); aerobic cells can extract 15× more ATP per glucose with O₂.", q:"What is the role of oxygen in cellular respiration?", qh:"<b>Final electron acceptor</b> at the end of the ETC. O₂ + 4e⁻ + 4H+ → 2 H₂O at complex IV.", ex:"OXYGEN's role in respiration is precisely one thing: it accepts electrons at the END of the electron transport chain. At complex IV (cytochrome c oxidase), 4 electrons (from cytochrome c) + 4 H+ + O₂ → 2 H₂O. Without O₂, electrons have nowhere to go → ETC backs up → NADH can't be reoxidized to NAD+ → Krebs cycle stops (needs NAD+ as cofactor) → glycolysis eventually stops too (also needs NAD+). The cell is stuck with anaerobic glycolysis: 2 ATP per glucose, with fermentation to regenerate NAD+ from NADH (pyruvate → lactate in animals, ethanol in yeast). Aerobic respiration extracts ~30-32 ATP per glucose — about 15× more efficient than anaerobic. This is why aerobic organisms dominate. Cyanide blocks complex IV directly (binds the heme iron) — instantly fatal because it shuts down the entire ETC even with plenty of O₂ available." },
     },
   },
 
@@ -352,9 +352,9 @@ const NODES = {
     stageOrder: ["contact", "acro", "fast", "cort", "fuse"],
     stageLabels: ["Stage 1 · place Contact", "Stage 2 · place Acrosomal reaction", "Stage 3 · place Fast block", "Stage 4 · place Cortical reaction", "Stage 5 · place Fusion + activation", "Complete · all placed"],
     retrievals: {
-      1: { rt:"Right. Acrosomal reaction = SPERM enzymes digest the zona pellucida. Cortical reaction = EGG releases cortical granules to block polyspermy.", wr:"Two reactions, two cells. The ACROSOMAL REACTION is the SPERM'S tool: the acrosome (vesicle at the sperm tip) releases hydrolytic enzymes (hyaluronidase, acrosin) that digest the corona radiata and zona pellucida, letting the sperm reach the egg membrane. The CORTICAL REACTION is the EGG'S RESPONSE: after sperm fusion, cortical granules near the plasma membrane release enzymes that harden the zona pellucida (slow block to polyspermy). Two distinct events serving two opposite purposes — don't confuse them.", q:"The acrosomal reaction during fertilization:", qh:"<b>Releases hydrolytic enzymes from the sperm</b> to digest the zona pellucida. (Cortical reaction is the egg's response that blocks polyspermy.)", ex:"Fertilization has multiple steps, and the DAT loves to test the distinction between the SPERM'S role and the EGG'S role. SPERM'S CONTRIBUTION: (1) Contact — sperm reaches egg's outer layers. (2) ACROSOMAL REACTION — the acrosome (a Golgi-derived vesicle at the sperm tip) releases hydrolytic enzymes (hyaluronidase digests the corona radiata cells; acrosin digests the zona pellucida glycoprotein matrix), creating a path for the sperm to reach the egg's plasma membrane. (3) Sperm and egg membranes FUSE. EGG'S RESPONSE: (1) FAST BLOCK to polyspermy — Na+ influx within milliseconds depolarizes the egg, preventing additional sperm fusion. (2) CORTICAL REACTION — cortical granules just under the egg membrane fuse with it and release enzymes that modify the zona pellucida (zona reaction), creating a permanent SLOW BLOCK to polyspermy. (3) Egg ACTIVATION — completion of meiosis II + initiation of development. Acrosomal = sperm's TOOL. Cortical = egg's DEFENSE. Two reactions, two cells, two purposes." },
+      3: { rt:"Right. Acrosomal reaction = SPERM enzymes digest the zona pellucida. Cortical reaction = EGG releases cortical granules to block polyspermy.", wr:"Two reactions, two cells. The ACROSOMAL REACTION is the SPERM'S tool: the acrosome (vesicle at the sperm tip) releases hydrolytic enzymes (hyaluronidase, acrosin) that digest the corona radiata and zona pellucida, letting the sperm reach the egg membrane. The CORTICAL REACTION is the EGG'S RESPONSE: after sperm fusion, cortical granules near the plasma membrane release enzymes that harden the zona pellucida (slow block to polyspermy). Two distinct events serving two opposite purposes — don't confuse them.", q:"The acrosomal reaction during fertilization:", qh:"<b>Releases hydrolytic enzymes from the sperm</b> to digest the zona pellucida. (Cortical reaction is the egg's response that blocks polyspermy.)", ex:"Fertilization has multiple steps, and the DAT loves to test the distinction between the SPERM'S role and the EGG'S role. SPERM'S CONTRIBUTION: (1) Contact — sperm reaches egg's outer layers. (2) ACROSOMAL REACTION — the acrosome (a Golgi-derived vesicle at the sperm tip) releases hydrolytic enzymes (hyaluronidase digests the corona radiata cells; acrosin digests the zona pellucida glycoprotein matrix), creating a path for the sperm to reach the egg's plasma membrane. (3) Sperm and egg membranes FUSE. EGG'S RESPONSE: (1) FAST BLOCK to polyspermy — Na+ influx within milliseconds depolarizes the egg, preventing additional sperm fusion. (2) CORTICAL REACTION — cortical granules just under the egg membrane fuse with it and release enzymes that modify the zona pellucida (zona reaction), creating a permanent SLOW BLOCK to polyspermy. (3) Egg ACTIVATION — completion of meiosis II + initiation of development. Acrosomal = sperm's TOOL. Cortical = egg's DEFENSE. Two reactions, two cells, two purposes." },
       2: { rt:"Right. Three germ layers (ENDOderm/MESOderm/ECTOderm) form during gastrulation. They give rise to all body tissues.", wr:"During GASTRULATION (after the blastula stage), cells move and invaginate to form THREE GERM LAYERS — the developmental foundation for every tissue type. ECTODERM (outer) → skin epidermis, nervous system, neural crest. MESODERM (middle) → muscle (all 3 types), bone, blood, kidneys, gonads, dermis, cardiovascular system. ENDODERM (inner) → epithelial lining of the GI tract, respiratory tract, liver, pancreas. Classic DAT trap: students confuse 'gut' with mesoderm. Gut LINING is endoderm; the muscle wall AROUND the lining is mesoderm.", q:"Which germ layer gives rise to the epithelial lining of the small intestine?", qh:"<b>Endoderm.</b> Endoderm = epithelial linings of GI + respiratory tracts. (Mesoderm = the muscle WALL around the lining.)", ex:"During gastrulation (after the blastula stage), cells migrate to form THREE GERM LAYERS, which then differentiate into every tissue of the body. Memorize the derivatives — high-yield DAT material. <b>ECTODERM</b> (outer layer): skin epidermis, hair, nails, nervous system (brain, spinal cord, peripheral nerves), neural crest derivatives (PNS ganglia, melanocytes, adrenal medulla, parts of the face). <b>MESODERM</b> (middle layer): all three muscle types (skeletal, cardiac, smooth), bone, cartilage, blood + blood vessels + heart, kidneys, gonads, dermis (deep skin layer), connective tissues, lymphatic system. <b>ENDODERM</b> (inner layer): EPITHELIAL LINING of the GI tract (mouth-to-anus) and respiratory tract; liver; pancreas; thyroid; bladder lining; thymus. THE CLASSIC TRAP: 'gut' is endoderm only for the LINING (the epithelium). The muscle WALL around the gut is mesoderm. Same for blood vessels — the endothelial lining is mesoderm (from blood vessel development), but the principle holds: lining vs wall, lining is typically endoderm for GI/respiratory." },
-      3: { rt:"Right. The order of embryonic stages: zygote → cleavage → morula → blastula → gastrula → neurula.", wr:"Stages of early embryonic development: ZYGOTE (fertilized egg, single cell). CLEAVAGE (rapid mitotic divisions without growth — cells get smaller). MORULA (16-32 cells, solid ball). BLASTULA (hollow ball with a cavity called blastocoel; in mammals, the blastocyst has an inner cell mass + trophoblast). GASTRULA (cell migration creates the three germ layers via invagination; archenteron forms). NEURULA (neural plate folds to form neural tube — future CNS; only in vertebrates). Memorize this sequence cold.", q:"In embryonic development, what stage comes immediately AFTER the blastula?", qh:"<b>Gastrula.</b> Cell migration during gastrulation forms the three germ layers (ectoderm, mesoderm, endoderm).", ex:"Stages of early animal embryonic development, in order: <b>ZYGOTE</b> — single diploid cell formed by fertilization. <b>CLEAVAGE</b> — rapid mitotic divisions without cell growth (cells get smaller each division). Holoblastic (complete) in mammals; meroblastic (partial) in egg-laying species with lots of yolk. <b>MORULA</b> — solid ball of 16-32 cells. <b>BLASTULA</b> — hollow ball with a fluid-filled cavity (blastocoel). In mammals: BLASTOCYST, with an inner cell mass (future embryo) and trophoblast (future placenta). <b>GASTRULA</b> — gastrulation invagination creates the three germ layers (ectoderm, mesoderm, endoderm) and a primitive gut tube (archenteron). The blastopore is the opening of the archenteron: in PROTOSTOMES (most invertebrates) the blastopore becomes the MOUTH; in DEUTEROSTOMES (echinoderms + chordates including humans) it becomes the ANUS. <b>NEURULA</b> — neural plate (ectoderm) folds and pinches off to form the neural tube (future brain + spinal cord). This sequence is high-yield: the DAT often tests the order, what happens at each step, and the protostome/deuterostome distinction." },
+      1: { rt:"Right. The order of embryonic stages: zygote → cleavage → morula → blastula → gastrula → neurula.", wr:"Stages of early embryonic development: ZYGOTE (fertilized egg, single cell). CLEAVAGE (rapid mitotic divisions without growth — cells get smaller). MORULA (16-32 cells, solid ball). BLASTULA (hollow ball with a cavity called blastocoel; in mammals, the blastocyst has an inner cell mass + trophoblast). GASTRULA (cell migration creates the three germ layers via invagination; archenteron forms). NEURULA (neural plate folds to form neural tube — future CNS; only in vertebrates). Memorize this sequence cold.", q:"In embryonic development, what stage comes immediately AFTER the blastula?", qh:"<b>Gastrula.</b> Cell migration during gastrulation forms the three germ layers (ectoderm, mesoderm, endoderm).", ex:"Stages of early animal embryonic development, in order: <b>ZYGOTE</b> — single diploid cell formed by fertilization. <b>CLEAVAGE</b> — rapid mitotic divisions without cell growth (cells get smaller each division). Holoblastic (complete) in mammals; meroblastic (partial) in egg-laying species with lots of yolk. <b>MORULA</b> — solid ball of 16-32 cells. <b>BLASTULA</b> — hollow ball with a fluid-filled cavity (blastocoel). In mammals: BLASTOCYST, with an inner cell mass (future embryo) and trophoblast (future placenta). <b>GASTRULA</b> — gastrulation invagination creates the three germ layers (ectoderm, mesoderm, endoderm) and a primitive gut tube (archenteron). The blastopore is the opening of the archenteron: in PROTOSTOMES (most invertebrates) the blastopore becomes the MOUTH; in DEUTEROSTOMES (echinoderms + chordates including humans) it becomes the ANUS. <b>NEURULA</b> — neural plate (ectoderm) folds and pinches off to form the neural tube (future brain + spinal cord). This sequence is high-yield: the DAT often tests the order, what happens at each step, and the protostome/deuterostome distinction." },
     },
   },
 
@@ -366,9 +366,9 @@ const NODES = {
     stageOrder: ["dir", "stab", "disr", "bal", "drift"],
     stageLabels: ["Stage 1 · place Antibiotic resistance", "Stage 2 · place Human birth weight", "Stage 3 · place African seedcrackers", "Stage 4 · place Sickle-cell + malaria", "Stage 5 · place Cheetah bottleneck", "Complete · all placed"],
     retrievals: {
-      1: { rt:"Right. Three types of natural selection: DIRECTIONAL (one extreme favored), STABILIZING (middle favored, extremes culled), DISRUPTIVE (extremes favored, middle culled).", wr:"Three types of natural selection: <b>DIRECTIONAL</b> = one phenotypic extreme is favored over the others, shifting the population mean over time. Example: antibiotic resistance, peppered moths during industrial revolution. <b>STABILIZING</b> = the middle (mean) phenotype is favored; extremes are selected against. Example: human birth weight (extreme high or low birth weight has historically poor survival). <b>DISRUPTIVE</b> = both extremes favored, middle disfavored. Example: African seedcrackers (large + small beaks both eat available seeds; medium beaks eat neither well).", q:"Which type of natural selection favors BOTH phenotypic extremes against the average?", qh:"<b>Disruptive selection.</b> Both extremes favored; intermediate phenotype disfavored. Classic example: African seedcrackers.", ex:"Three modes of natural selection, classified by how they reshape the phenotypic distribution: <b>DIRECTIONAL SELECTION</b> — one extreme is favored, population mean shifts over time. Examples: antibiotic resistance (bacteria with resistance survive treatment); peppered moths in industrial-era England (dark moths favored on soot-blackened trees); human height increases over centuries. <b>STABILIZING SELECTION</b> — average phenotype is favored; both extremes selected against. Variance decreases. Examples: human birth weight (8-pound babies have higher survival than 4-pound or 12-pound); butterfly egg counts; clutch size. <b>DISRUPTIVE SELECTION</b> — both extremes favored; intermediate selected against. Can lead to speciation if reproductive isolation develops. Examples: African seedcrackers (small beaks for soft seeds, large beaks for hard seeds; medium beaks eat neither well); Cameroon finch beaks. The DAT loves bar/curve graphs showing these — memorize the shapes." },
+      3: { rt:"Right. Three types of natural selection: DIRECTIONAL (one extreme favored), STABILIZING (middle favored, extremes culled), DISRUPTIVE (extremes favored, middle culled).", wr:"Three types of natural selection: <b>DIRECTIONAL</b> = one phenotypic extreme is favored over the others, shifting the population mean over time. Example: antibiotic resistance, peppered moths during industrial revolution. <b>STABILIZING</b> = the middle (mean) phenotype is favored; extremes are selected against. Example: human birth weight (extreme high or low birth weight has historically poor survival). <b>DISRUPTIVE</b> = both extremes favored, middle disfavored. Example: African seedcrackers (large + small beaks both eat available seeds; medium beaks eat neither well).", q:"Which type of natural selection favors BOTH phenotypic extremes against the average?", qh:"<b>Disruptive selection.</b> Both extremes favored; intermediate phenotype disfavored. Classic example: African seedcrackers.", ex:"Three modes of natural selection, classified by how they reshape the phenotypic distribution: <b>DIRECTIONAL SELECTION</b> — one extreme is favored, population mean shifts over time. Examples: antibiotic resistance (bacteria with resistance survive treatment); peppered moths in industrial-era England (dark moths favored on soot-blackened trees); human height increases over centuries. <b>STABILIZING SELECTION</b> — average phenotype is favored; both extremes selected against. Variance decreases. Examples: human birth weight (8-pound babies have higher survival than 4-pound or 12-pound); butterfly egg counts; clutch size. <b>DISRUPTIVE SELECTION</b> — both extremes favored; intermediate selected against. Can lead to speciation if reproductive isolation develops. Examples: African seedcrackers (small beaks for soft seeds, large beaks for hard seeds; medium beaks eat neither well); Cameroon finch beaks. The DAT loves bar/curve graphs showing these — memorize the shapes." },
       2: { rt:"Right. Genetic drift has the STRONGEST effect on SMALL populations. Random sampling has bigger impact when N is small.", wr:"GENETIC DRIFT is random change in allele frequencies due to chance sampling — NOT due to fitness differences. It's MORE POWERFUL IN SMALL POPULATIONS (random sampling causes bigger swings when N is low). Two flavors: BOTTLENECK EFFECT (small surviving population after disaster — cheetahs, northern elephant seals); FOUNDER EFFECT (small group establishes a new population — Pennsylvania Dutch, Galápagos finches). Drift can override selection in small populations, fixing deleterious alleles or losing beneficial ones.", q:"Genetic drift has the STRONGEST effect on:", qh:"<b>Small populations.</b> Random allele frequency changes are dramatic when N is small.", ex:"GENETIC DRIFT = random change in allele frequencies from generation to generation, due to chance sampling. NOT driven by fitness — it's purely stochastic. The smaller the population, the bigger the swings (think: flipping 10 coins gives more variable HEAD% than flipping 10,000). DRIFT has its strongest effect in SMALL populations. Two famous flavors: <b>BOTTLENECK EFFECT</b> — population drastically reduced (disease, disaster) → survivors are a non-random sample → allele frequencies shift. Cheetahs (~10,000 years ago) and northern elephant seals (down to ~20 in the 1800s) have very low genetic diversity from bottlenecks. <b>FOUNDER EFFECT</b> — small group leaves to establish a new population → their alleles are a non-random sample of the parent population. Examples: Amish/Mennonite communities (elevated rate of certain genetic disorders), Galápagos finches descended from a few mainland colonists. Drift CAN OVERRIDE natural selection in small populations: a weakly deleterious allele might drift to fixation if N is small enough." },
-      3: { rt:"Right. Convergent evolution: similar selection pressures produce ANALOGOUS structures in unrelated lineages. Bird and insect wings.", wr:"CONVERGENT EVOLUTION: unrelated lineages independently evolve similar traits due to similar selection pressures. The traits are ANALOGOUS (same function, different evolutionary origin). Classic examples: bird and insect wings (both for flight, totally different developmental origins); shark and dolphin streamlined bodies (both aquatic predators); cactus and euphorbia succulence (both adapted to arid environments). DIVERGENT evolution is the opposite: related lineages develop differences as they adapt to different environments — produces HOMOLOGOUS structures (same origin, sometimes different functions, like the bones in your hand, a bat's wing, a whale's flipper).", q:"Two species that look similar because they live in similar environments — but evolved independently — are an example of:", qh:"<b>Convergent evolution.</b> Similar selection pressures → analogous traits in unrelated lineages.", ex:"<b>CONVERGENT EVOLUTION</b> — unrelated lineages independently evolve similar traits because they face similar selection pressures. The shared traits are ANALOGOUS (similar function, similar appearance, but DIFFERENT evolutionary origin — they did not come from a common ancestor with that trait). Classic examples: WINGS — birds, bats, and insects all evolved wings independently; the wings serve the same function (flight) but the underlying structures are completely different. STREAMLINED BODIES — sharks (fish), dolphins (mammals), ichthyosaurs (extinct reptiles) all evolved torpedo-like body shapes for fast aquatic predation. SUCCULENCE — New World cacti and Old World euphorbias look almost identical (water-storing stems, reduced leaves, spines) but evolved independently from different ancestors. <b>DIVERGENT EVOLUTION</b> is the opposite: closely related species develop different traits as they adapt to different niches. Produces HOMOLOGOUS structures (same ancestor, sometimes different functions): your arm, a bat's wing, a whale's flipper, a horse's foreleg — all have the same underlying bones (humerus, radius/ulna, carpals, metacarpals, phalanges) but adapted to flight, swimming, running. Tell the DAT difference: ANALOGOUS = convergent (unrelated, similar trait). HOMOLOGOUS = divergent (related, possibly different traits)." },
+      1: { rt:"Right. Convergent evolution: similar selection pressures produce ANALOGOUS structures in unrelated lineages. Bird and insect wings.", wr:"CONVERGENT EVOLUTION: unrelated lineages independently evolve similar traits due to similar selection pressures. The traits are ANALOGOUS (same function, different evolutionary origin). Classic examples: bird and insect wings (both for flight, totally different developmental origins); shark and dolphin streamlined bodies (both aquatic predators); cactus and euphorbia succulence (both adapted to arid environments). DIVERGENT evolution is the opposite: related lineages develop differences as they adapt to different environments — produces HOMOLOGOUS structures (same origin, sometimes different functions, like the bones in your hand, a bat's wing, a whale's flipper).", q:"Two species that look similar because they live in similar environments — but evolved independently — are an example of:", qh:"<b>Convergent evolution.</b> Similar selection pressures → analogous traits in unrelated lineages.", ex:"<b>CONVERGENT EVOLUTION</b> — unrelated lineages independently evolve similar traits because they face similar selection pressures. The shared traits are ANALOGOUS (similar function, similar appearance, but DIFFERENT evolutionary origin — they did not come from a common ancestor with that trait). Classic examples: WINGS — birds, bats, and insects all evolved wings independently; the wings serve the same function (flight) but the underlying structures are completely different. STREAMLINED BODIES — sharks (fish), dolphins (mammals), ichthyosaurs (extinct reptiles) all evolved torpedo-like body shapes for fast aquatic predation. SUCCULENCE — New World cacti and Old World euphorbias look almost identical (water-storing stems, reduced leaves, spines) but evolved independently from different ancestors. <b>DIVERGENT EVOLUTION</b> is the opposite: closely related species develop different traits as they adapt to different niches. Produces HOMOLOGOUS structures (same ancestor, sometimes different functions): your arm, a bat's wing, a whale's flipper, a horse's foreleg — all have the same underlying bones (humerus, radius/ulna, carpals, metacarpals, phalanges) but adapted to flight, swimming, running. Tell the DAT difference: ANALOGOUS = convergent (unrelated, similar trait). HOMOLOGOUS = divergent (related, possibly different traits)." },
     },
   },
 
@@ -394,9 +394,9 @@ const NODES = {
     stageOrder: ["p", "q", "p2", "pq", "q2"],
     stageLabels: ["Stage 1 · place p", "Stage 2 · place q", "Stage 3 · place p²", "Stage 4 · place 2pq", "Stage 5 · place q²", "Complete · all HW terms"],
     retrievals: {
-      1: { rt:"Right. q²=0.16 → q=0.4 → p=0.6 → 2pq=0.48 = 48%.", wr:"Steps: q²=0.16 → q=√0.16=0.4 → p=1−0.4=0.6 → carriers (2pq) = 2(0.6)(0.4) = 0.48 = 48%. Carriers > affected — common in real disorders.", q:"In a population in HW equilibrium, 16% express a recessive disorder. What % are carriers?", qh:"<b>48%.</b> q²=0.16 → q=0.4, p=0.6, 2pq=0.48.", ex:"Classic carrier-frequency problem. Given affected (q²) = 0.16: take square root to get q (allele freq) = 0.4. Then p = 1 − q = 0.6. Carriers = 2pq = 2(0.6)(0.4) = 0.48 = 48%. The lesson: carrier frequency is often MUCH higher than affected frequency. For rare disorders (q² = 0.0001), carriers are ~2% (1 in 50) — way more common than affected." },
+      3: { rt:"Right. q²=0.16 → q=0.4 → p=0.6 → 2pq=0.48 = 48%.", wr:"Steps: q²=0.16 → q=√0.16=0.4 → p=1−0.4=0.6 → carriers (2pq) = 2(0.6)(0.4) = 0.48 = 48%. Carriers > affected — common in real disorders.", q:"In a population in HW equilibrium, 16% express a recessive disorder. What % are carriers?", qh:"<b>48%.</b> q²=0.16 → q=0.4, p=0.6, 2pq=0.48.", ex:"Classic carrier-frequency problem. Given affected (q²) = 0.16: take square root to get q (allele freq) = 0.4. Then p = 1 − q = 0.6. Carriers = 2pq = 2(0.6)(0.4) = 0.48 = 48%. The lesson: carrier frequency is often MUCH higher than affected frequency. For rare disorders (q² = 0.0001), carriers are ~2% (1 in 50) — way more common than affected." },
       2: { rt:"Right. The five HW conditions are: no mutation, no migration, no selection, random mating, infinite population. Equal sex ratio is not required.", wr:"HW assumes no mutation, no migration (gene flow), no selection, random mating, and infinite population (so no drift). Sex ratio is irrelevant for HW math — what matters is allele frequencies in the gene pool.", q:"Which is NOT a Hardy-Weinberg condition?", qh:"<b>Equal sex ratio.</b> The 5 HW conditions are: no mutation, no migration, no selection, random mating, infinite population.", ex:"Five HW conditions for NO evolution: (1) no mutation, (2) no migration / no gene flow, (3) no selection, (4) random mating, (5) infinite population (no drift). Equal sex ratio is not on the list — HW math works on gene-pool allele frequencies regardless of sex ratio (assuming random mating). Real populations almost always violate at least one condition → evolution proceeds." },
-      3: { rt:"Right. q² = 1/10,000 = 0.0001 → q = √0.0001 = 0.01.", wr:"Affected freq = q². Allele freq q = √(q²). Here q² = 1/10,000 = 0.0001 → q = 0.01. Don't confuse the affected frequency with the allele frequency — students often forget the square root.", q:"1 in 10,000 individuals is affected. What is the allele frequency q?", qh:"<b>0.01.</b> q = √q² = √0.0001 = 0.01.", ex:"q² is the affected frequency (homozygous recessive). q is the allele frequency. Take the square root. 1 in 10,000 → q² = 0.0001 → q = 0.01. Then carriers = 2pq ≈ 0.02 = 2% = 1 in 50. Even rare diseases have surprisingly common carriers." },
+      1: { rt:"Right. q² = 1/10,000 = 0.0001 → q = √0.0001 = 0.01.", wr:"Affected freq = q². Allele freq q = √(q²). Here q² = 1/10,000 = 0.0001 → q = 0.01. Don't confuse the affected frequency with the allele frequency — students often forget the square root.", q:"1 in 10,000 individuals is affected. What is the allele frequency q?", qh:"<b>0.01.</b> q = √q² = √0.0001 = 0.01.", ex:"q² is the affected frequency (homozygous recessive). q is the allele frequency. Take the square root. 1 in 10,000 → q² = 0.0001 → q = 0.01. Then carriers = 2pq ≈ 0.02 = 2% = 1 in 50. Even rare diseases have surprisingly common carriers." },
     },
   },
 
@@ -944,23 +944,62 @@ function makeRetrievalHandlers(nodeId, sectionEl) {
 
 function onRetrievalAnswer(nodeId, sectionEl, card, opt) {
   if (card.classList.contains("locked")) return;
-  card.classList.add("locked");
+  if (card.dataset.awaiting === "1") return;
+  card.dataset.awaiting = "1";
   const qNum = parseInt(card.dataset.q, 10);
   const correct = opt.dataset.correct === "true";
-  const data = NODES[nodeId].retrievals[qNum];
 
+  // Visually mark the answer chosen but do NOT lock yet — we need
+  // calibration data before revealing the explanation. This is the
+  // "fragile-correct" mechanic: catch low-confidence right answers
+  // so they get spaced-review like wrong answers do.
   card.querySelectorAll(".opt").forEach(o => {
     o.classList.add("disabled");
+    if (o === opt) o.classList.add("chosen");
+  });
+
+  // Inject the confidence picker just above the (still hidden) feedback.
+  let picker = card.querySelector(".confidence-picker");
+  if (!picker) {
+    picker = document.createElement("div");
+    picker.className = "confidence-picker";
+    picker.innerHTML =
+      '<div class="cp-prompt">Before the answer — how sure were you?</div>' +
+      '<div class="cp-row">' +
+        '<button class="cp-btn" data-conf="guess">Guess</button>' +
+        '<button class="cp-btn" data-conf="sure">Pretty sure</button>' +
+        '<button class="cp-btn" data-conf="locked">Locked in</button>' +
+      '</div>';
+    const fb = card.querySelector(".retrieval-feedback");
+    fb.parentNode.insertBefore(picker, fb);
+  }
+  picker.style.display = "block";
+  picker.querySelectorAll(".cp-btn").forEach(b => {
+    b.addEventListener("click", () => finishRetrievalAnswer(nodeId, sectionEl, card, opt, correct, qNum, b.dataset.conf), { once:true });
+  });
+}
+
+function finishRetrievalAnswer(nodeId, sectionEl, card, opt, correct, qNum, confidence) {
+  card.classList.add("locked");
+  card.dataset.awaiting = "";
+  const data = NODES[nodeId].retrievals[qNum];
+
+  // Hide the picker, show selection state.
+  const picker = card.querySelector(".confidence-picker");
+  if (picker) picker.style.display = "none";
+
+  card.querySelectorAll(".opt").forEach(o => {
     if (o.dataset.correct === "true") o.classList.add("correct");
     if (o === opt && !correct) o.classList.add("wrong");
   });
 
+  // Fragile = right answer reached by guessing. Treat it like a miss
+  // for spaced review (Ace Card), but still record the win for mastery.
+  const fragile = correct && confidence === "guess";
+
   const fb = card.querySelector(".retrieval-feedback");
-  fb.className = "retrieval-feedback show " + (correct ? "correct" : "wrong");
-  // Feedback text — prefer the authored rt/wr, but fall back to the
-  // correct option's visible text when NODES retrieval data is still
-  // a stub (so students never see "Review the explanation." with no
-  // explanation actually present).
+  const tone = correct ? (fragile ? "fragile" : "correct") : "wrong";
+  fb.className = "retrieval-feedback show " + tone;
   let feedbackBody = correct ? data.rt : data.wr;
   if (_isAceCardPlaceholder(feedbackBody)) {
     const correctOpt = card.querySelector('.opt[data-correct="true"]');
@@ -969,23 +1008,36 @@ function onRetrievalAnswer(nodeId, sectionEl, card, opt) {
       ? 'Correct. ' + (correctText || '')
       : 'The correct answer is: ' + (correctText || '(see node above)') + '. Repair details are still being authored for this prompt.';
   }
-  fb.innerHTML = `<span class="lbl">${correct ? "Correct" : "Why this is the answer"}</span>${feedbackBody}`;
+  const label = correct
+    ? (fragile ? "Right — but you guessed. Sending to spaced review."
+                : (confidence === "locked" ? "Locked in" : "Correct"))
+    : "Why this is the answer";
+  fb.innerHTML = `<span class="lbl">${label}</span>${feedbackBody}`;
 
-  STATE[nodeId].retrievals[qNum] = correct ? "correct" : "wrong";
+  // STATE shape: backward-compatible. Older saves stored a string;
+  // new saves store an object so the calibration view can read it.
+  STATE[nodeId].retrievals[qNum] = {
+    result: correct ? "correct" : "wrong",
+    confidence: confidence,
+    fragile: fragile,
+    ts: Date.now()
+  };
 
   const cell = sectionEl.querySelector(`.mastery-cell[data-q="${qNum}"]`);
   if (cell) {
     cell.classList.remove("cur");
     cell.classList.add(correct ? "pass" : "fail");
+    if (fragile) cell.classList.add("fragile");
     const next = sectionEl.querySelector(`.mastery-cell[data-q="${qNum + 1}"]`);
     if (next && !next.classList.contains("pass") && !next.classList.contains("fail")) next.classList.add("cur");
   }
 
-  if (!correct) {
+  // Spaced-review trigger: misses AND fragile-correct.
+  if (!correct || fragile) {
     const subject = (window.location.pathname.match(/bio-(\w+)\.html/)||[,'cell'])[1];
     addAceCard({
       q: data.q, quickHit: data.qh, explanation: data.ex,
-      origin: NODES[nodeId].name + " · Q" + qNum,
+      origin: NODES[nodeId].name + " · Q" + qNum + (fragile ? " (fragile)" : ""),
       subject, nodeId,
     });
   }
@@ -1202,6 +1254,75 @@ function flashAcePill() {
   pill.style.transform = "translateY(-3px)";
   pill.style.boxShadow = "0 0 0 4px rgba(201,168,76,0.30)";
   setTimeout(() => { pill.style.transform = ""; pill.style.boxShadow = ""; }, 900);
+}
+
+/* ---- CALIBRATION VIEW ---- */
+/* Crosses confidence vs accuracy across all answered retrievals so the
+   student can see whether their "locked in" answers actually land, and
+   whether their "guesses" are random or quietly correct. This is the
+   pedagogical surface that justifies the confidence prompt. */
+function computeCalibration() {
+  const buckets = {
+    guess:  { right:0, wrong:0, fragile:0 },
+    sure:   { right:0, wrong:0 },
+    locked: { right:0, wrong:0 },
+    legacy: { right:0, wrong:0 }   // old saves with no confidence
+  };
+  Object.keys(STATE).forEach(nodeId => {
+    const ns = STATE[nodeId];
+    if (!ns || !ns.retrievals) return;
+    Object.keys(ns.retrievals).forEach(q => {
+      const raw = ns.retrievals[q];
+      if (raw && typeof raw === "object") {
+        const conf = raw.confidence || "legacy";
+        const b = buckets[conf] || buckets.legacy;
+        if (raw.result === "correct") b.right++;
+        else b.wrong++;
+        if (raw.fragile) buckets.guess.fragile++;
+      } else if (raw === "correct") buckets.legacy.right++;
+      else if (raw === "wrong") buckets.legacy.wrong++;
+    });
+  });
+  return buckets;
+}
+
+function openCalibration() {
+  const b = computeCalibration();
+  const pct = (r,w) => (r+w === 0) ? "—" : Math.round(100 * r / (r+w)) + "%";
+  const total = (r,w) => r + w;
+  let modal = document.getElementById("calibrationModal");
+  if (!modal) {
+    modal = document.createElement("div");
+    modal.id = "calibrationModal";
+    modal.className = "cal-modal";
+    document.body.appendChild(modal);
+  }
+  const tag = (cls,label,b) => `
+    <div class="cal-row ${cls}">
+      <div class="cal-conf">${label}</div>
+      <div class="cal-bar"><span class="cal-fill" style="width:${(total(b.right,b.wrong)===0)?0:Math.round(100*b.right/(b.right+b.wrong))}%"></span></div>
+      <div class="cal-stat"><b>${pct(b.right,b.wrong)}</b> · ${total(b.right,b.wrong)} attempts</div>
+    </div>`;
+  modal.innerHTML = `
+    <div class="cal-card">
+      <div class="cal-head">
+        <h2>Calibration</h2>
+        <button class="cal-close" onclick="closeCalibration()">close</button>
+      </div>
+      <p class="cal-sub">Your confidence vs your accuracy. A well-calibrated student
+        is right ~100% of the time when "locked in," ~75% when "pretty sure,"
+        and ~25–50% when "guessing." Big gaps = read the gap, not just the score.</p>
+      ${tag("locked","Locked in",b.locked)}
+      ${tag("sure","Pretty sure",b.sure)}
+      ${tag("guess","Guess",b.guess)}
+      ${b.guess.fragile>0?`<div class="cal-note">Fragile-correct (right answer, "guess" confidence): <b>${b.guess.fragile}</b>. These are in spaced review.</div>`:""}
+      ${(b.legacy.right+b.legacy.wrong>0)?`<div class="cal-note muted">${b.legacy.right+b.legacy.wrong} older answers (pre-calibration) excluded from buckets above.</div>`:""}
+    </div>`;
+  modal.style.display = "flex";
+}
+function closeCalibration() {
+  const m = document.getElementById("calibrationModal");
+  if (m) m.style.display = "none";
 }
 
 function relativeDueText(card) {
@@ -15655,17 +15776,31 @@ function init() {
       const card = section.querySelector(`.retrieval-card[data-q="${q}"]`);
       if (!card) return;
       card.classList.add("locked");
-      const correct = ns.retrievals[q] === "correct";
+      // Backward compat: old saves stored "correct"/"wrong" as strings;
+      // new saves store {result, confidence, fragile, ts}.
+      const raw = ns.retrievals[q];
+      const isObj = raw && typeof raw === "object";
+      const correct = isObj ? raw.result === "correct" : raw === "correct";
+      const fragile = isObj && raw.fragile;
       const data = NODES[nodeId].retrievals[q];
       card.querySelectorAll(".opt").forEach(o => {
         o.classList.add("disabled");
         if (o.dataset.correct === "true") o.classList.add("correct");
       });
       const cell = section.querySelector(`.mastery-cell[data-q="${q}"]`);
-      if (cell) { cell.classList.remove("cur"); cell.classList.add(correct ? "pass" : "fail"); }
+      if (cell) {
+        cell.classList.remove("cur");
+        cell.classList.add(correct ? "pass" : "fail");
+        if (fragile) cell.classList.add("fragile");
+      }
       const fb = card.querySelector(".retrieval-feedback");
-      fb.className = "retrieval-feedback show " + (correct ? "correct" : "wrong");
-      fb.innerHTML = `<span class="lbl">${correct ? "Correct" : "Why this is the answer"}</span>${correct ? data.rt : data.wr}`;
+      const tone = correct ? (fragile ? "fragile" : "correct") : "wrong";
+      fb.className = "retrieval-feedback show " + tone;
+      const lbl = correct
+        ? (fragile ? "Right — but you guessed. Spaced-review queued."
+                   : "Correct")
+        : "Why this is the answer";
+      fb.innerHTML = `<span class="lbl">${lbl}</span>${correct ? data.rt : data.wr}`;
     });
   });
 

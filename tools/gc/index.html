@@ -6260,9 +6260,22 @@ const MODULES = {
     formula:'gas mol ↑ → ΔS > 0<br>s→l→g → ΔS > 0<br>ΔS° = ΣS°(p) − ΣS°(r)',
     visualType:'entropy-box', visualData:{phase:'liquid'},
     worked:[
-      {q:'Sign: 2NO₂(g) → N₂O₄(g)?', steps:[{what:'2 mol gas → 1 mol gas', why:'Count gas-phase moles on each side.', predict:{q:'More disorder?', hint:'Fewer = ordered.'}}, {what:'ΔS < 0', why:'Fewer gas particles = more ordered system.'}]},
-      {q:'Sign for ice melting?', steps:[{what:'s → l', why:'Going up the phase ladder s→l→g.'}, {what:'ΔS > 0', why:'Liquid molecules have more positional freedom than rigid solid.'}]},
-      {q:'Sign: NaCl(s) → ions(aq)?', steps:[{what:'Solid → ions', why:'Lattice breaks; Na⁺ and Cl⁻ disperse through water.'}, {what:'ΔS > 0 typically', why:'Two free ions in solution have far more positional freedom than the lattice.'}]}
+      {q:'Sign of ΔS for 2NO₂(g) → N₂O₄(g)?', steps:[
+        {what:'Count moles of GAS on each side', why:'Gas-phase moles are the dominant predictor of ΔS — gases have orders of magnitude more positional freedom than solids/liquids.', predict:{q:'2 mol gas → 1 mol gas — direction?', hint:'Fewer gas particles = fewer microstates.'}},
+        {what:'2 mol gas → 1 mol gas', why:'The reaction COMBINES two gas particles into one. Fewer particles to arrange in space → fewer microstates → lower entropy.'},
+        {what:'ΔS < 0 (negative)', why:'When gas moles decrease, ΔS is always negative. This is the dominant rule. Don\'t overthink it — just count gas moles, and if they drop, ΔS drops.'},
+        {what:'Sanity check: any reaction that condenses gas to liquid/solid is also ΔS < 0', why:'Same logic — fewer gas particles, less freedom. The DAT loves "predict ΔS sign" questions and almost all of them reduce to gas-mole counting.'}
+      ]},
+      {q:'Sign of ΔS for ice melting? (H₂O(s) → H₂O(l))', steps:[
+        {what:'Phase change up the ladder: solid → liquid → gas', why:'Going UP the phase ladder ALWAYS increases entropy (the molecules gain more positional and rotational freedom each step).', predict:{q:'Which direction is +ΔS?', hint:'Liquid less ordered than solid.'}},
+        {what:'ΔS > 0 (positive)', why:'Liquid water molecules can translate freely throughout the volume; ice molecules are locked in a rigid lattice. The liquid has dramatically more microstates available.'},
+        {what:'Order of magnitude: ΔS_fus ≈ 22 J/(mol·K) for water — smallish.', why:'Compare to ΔS_vap ≈ 109 J/(mol·K) for water — about 5× bigger. Why? Going to gas opens up the WHOLE container as the volume the molecules can occupy. Liquid still has neighbors.'}
+      ]},
+      {q:'Sign of ΔS for NaCl(s) → Na⁺(aq) + Cl⁻(aq)?', steps:[
+        {what:'Solid lattice → two free ions dispersed in solution', why:'The crystalline lattice has ZERO positional freedom (each ion in a fixed spot); the dissolved ions can move anywhere in the liquid volume.', predict:{q:'Direction of ΔS?', hint:'Lattice → free particles.'}},
+        {what:'ΔS > 0 typically', why:'Two free ions in solution have far more microstates than the rigid solid. Dissolving most salts gives ΔS > 0.'},
+        {what:'TRAP: not always positive. Highly charged ions (like Ca²⁺, Mg²⁺) order surrounding water molecules into a tight hydration shell — sometimes net ΔS < 0.', why:'The "ions in solution = always +ΔS" intuition is mostly right but breaks for high-charge cations. The DAT occasionally tests this.'}
+      ]}
     ],
     faded:[
       {prompt:'Sign: H₂(g)+Cl₂(g)→2HCl(g)?', lcd:'2→2 mol gas.', blank:'___', answer:'≈0 (slight)'},
@@ -6286,9 +6299,25 @@ const MODULES = {
     videoUrl:'tiktoks/gibbs-quadrant-tiktok.html', videoTitle:'Read the signs (4-quadrant ΔG)', videoDur:'~80 sec',
     visualType:'gibbs-quadrant', visualData:{dH:-40, dS:100, T:298},
     worked:[
-      {q:'ΔH=−40, ΔS=+100 J/K. Spont?', steps:[{what:'(−,+) → always', why:'Both terms drive ΔG negative; no T dependency flips it.'}]},
-      {q:'ΔH=+30 kJ, ΔS=+50 J/K. T_cross?', steps:[{what:'T = ΔH/ΔS', why:'Set ΔG = 0 → T = ΔH/ΔS.', predict:{q:'Units!', hint:'kJ→J.'}}, {what:'30000/50 = 600 K', why:'Spont above 600 K.'}]},
-      {q:'ΔH=−50 kJ, ΔS=−100 J/K, T=298. Spont?', steps:[{what:'ΔG = −50000 − 298(−100)', why:'Plug into ΔG = ΔH − TΔS, with all units in J.'}, {what:'= −50000 + 29800 = −20200 J', why:'Spont.'}]}
+      {q:'ΔH = −40 kJ/mol, ΔS = +100 J/(mol·K). Spontaneous at 298 K, and at any T?', steps:[
+        {what:'Convert units first: ΔS = +0.100 kJ/(mol·K)', why:'Always match ΔH and ΔS units before plugging into ΔG = ΔH − TΔS. The DAT trap is mixing kJ with J/K.', predict:{q:'What is ΔG at 298 K?', hint:'ΔH − TΔS, both terms in kJ.'}},
+        {what:'At 298 K: ΔG = −40 − (298)(0.100) = −40 − 29.8 = −69.8 kJ/mol', why:'Both terms are negative (−H and −TΔS) — they reinforce each other, making ΔG very negative.'},
+        {what:'ΔG < 0 at 298 K → spontaneous.', why:'Standard definition: negative ΔG = spontaneous in the forward direction.', predict:{q:'Will any temperature make it non-spontaneous?', hint:'Look at the signs of ΔH and ΔS.'}},
+        {what:'Spontaneous at ALL T (the "−,+" quadrant)', why:'When ΔH < 0 AND ΔS > 0, ΔG = (−) − T(+) is always negative regardless of T. No crossover temperature exists.'},
+        {what:'Sanity check on the 4-quadrant table: (−,+) = always; (−,−) = low T only; (+,+) = high T only; (+,−) = never.', why:'Most DAT spontaneity questions can be solved by sign analysis ALONE, no arithmetic needed. The 4-quadrant table is the DAT shortcut.'}
+      ]},
+      {q:'ΔH = +30 kJ/mol, ΔS = +50 J/(mol·K). At what temperature does the reaction become spontaneous?', steps:[
+        {what:'(+,+) quadrant → spontaneous only at HIGH T', why:'Both terms are positive. To get ΔG < 0, the TΔS term has to outgrow ΔH — only possible at large T.', predict:{q:'Set ΔG = 0. Solve for T.', hint:'T_cross = ΔH/ΔS.'}},
+        {what:'Convert ΔS to kJ: 50 J/(mol·K) = 0.050 kJ/(mol·K)', why:'Units must match. kJ/K and J/K are off by 1000.'},
+        {what:'T_cross = ΔH / ΔS = 30 / 0.050 = 600 K', why:'At 600 K, ΔG = 0 (equilibrium). Above 600 K, ΔG < 0 (spontaneous). Below 600 K, ΔG > 0 (non-spontaneous).'},
+        {what:'Spontaneous ABOVE 600 K', why:'Classic high-T-only example. Real-world: ice → water is (+H, +S) — spontaneous above 0 °C (273 K), the melting crossover.'}
+      ]},
+      {q:'ΔH = −50 kJ/mol, ΔS = −100 J/(mol·K). Spontaneous at 298 K? At what T does spontaneity flip?', steps:[
+        {what:'(−,−) quadrant → spontaneous only at LOW T', why:'ΔH wants to make ΔG negative; TΔS wants to make it positive (because ΔS is negative, −TΔS is positive). Low T → small TΔS → ΔH wins. High T → big TΔS → ΔS wins.'},
+        {what:'At 298 K: ΔG = −50 − (298)(−0.100) = −50 + 29.8 = −20.2 kJ/mol', why:'ΔG < 0 → spontaneous at 298 K.', predict:{q:'At what T does ΔG = 0?', hint:'Same T_cross formula.'}},
+        {what:'T_cross = ΔH/ΔS = (−50) / (−0.100) = 500 K', why:'Both ΔH and ΔS are negative, so the ratio is positive. Below 500 K, ΔG < 0; above 500 K, ΔG > 0.'},
+        {what:'Spontaneous BELOW 500 K (including 298 K); non-spontaneous above', why:'Real-world: water → ice is (−H, −S) — spontaneous below 0 °C.'}
+      ]}
     ],
     faded:[
       {prompt:'(−H,+S) is spont when?', lcd:'.', blank:'___', answer:'always'},
@@ -6311,9 +6340,26 @@ const MODULES = {
     formula:'Rate = k[A]ᵐ[B]ⁿ<br>m,n from trials<br>t₁/₂: 1st=ln2/k; 0=A₀/2k; 2nd=1/(kA₀)',
     visualType:'order-curves', visualData:{order:1, k:0.1, A0:1.0},
     worked:[
-      {q:'Trial 1: [A]=1, r=2. Trial 2: [A]=2, r=8. Order?', steps:[{what:'[A] doubled, r quadrupled', why:'2²=4.', predict:{q:'Order?', hint:'2 doublings.'}}, {what:'Order 2', why:'Rate scales as [A]² → second order in A.'}]},
-      {q:'1st-order t₁/₂ when k=0.1 /s?', steps:[{what:'ln2/k = 0.693/0.1', why:'First-order half-life = ln2/k, independent of [A]₀.'}, {what:'6.93 s', why:'Direct division.'}]},
-      {q:'k for 2nd order, r=8 at [A]=2?', steps:[{what:'r = k[A]²', why:'Second-order rate law in one reactant.'}, {what:'8 = k(4) → k = 2', why:'M⁻¹s⁻¹.'}]}
+      {q:'Determine the order from trial data: Trial 1 [A]=1 M, rate=2; Trial 2 [A]=2 M, rate=8.', steps:[
+        {what:'Step 1: Identify what changed between trials', why:'In order-determination problems, find the trial pair where ONE concentration changes and others stay constant. Then look at the rate ratio.', predict:{q:'How did [A] change? How did rate change?', hint:'Ratios.'}},
+        {what:'Step 2: [A] doubled (1→2). Rate quadrupled (2→8).', why:'Calculate ratios: [A]₂/[A]₁ = 2/1 = 2. Rate₂/Rate₁ = 8/2 = 4.'},
+        {what:'Step 3: Solve 2ⁿ = 4 for n', why:'If doubling [A] makes rate go up by a factor of 2ⁿ, where n is the order in A. Here 2ⁿ = 4, so n = 2.', predict:{q:'2ⁿ = 4. n = ?', hint:'2² = 4.'}},
+        {what:'Order in A = 2 (second-order)', why:'Rate = k[A]². Doubling [A] would 4× the rate; tripling would 9× it.'},
+        {what:'PATTERN to memorize: double → 2× = 1st; 4× = 2nd; 8× = 3rd; same = 0th', why:'This is the fastest way to read order off DAT trial-table problems. Memorize all four.'}
+      ]},
+      {q:'First-order half-life when k = 0.1 s⁻¹?', steps:[
+        {what:'Step 1: Pick the right half-life formula', why:'Three formulas: 0th: t½ = [A]₀/(2k); 1st: t½ = ln2/k; 2nd: t½ = 1/(k·[A]₀). 1st-order is the only one that does NOT depend on [A]₀.', predict:{q:'Which formula here?', hint:'1st order = ln2/k.'}},
+        {what:'Step 2: t½ = ln2/k = 0.693/0.1', why:'ln 2 ≈ 0.693 — memorize this constant; it shows up constantly on the DAT.'},
+        {what:'t½ = 6.93 s', why:'Simple division.'},
+        {what:'CONCEPTUAL: why is 1st-order t½ constant?', why:'Because rate = k[A] depends on [A] linearly. As [A] halves, the time to halve again stays the same — radioactive decay works this way. The DAT loves this concept.'}
+      ]},
+      {q:'For a 2nd-order reaction in A, rate = 8 M/s when [A] = 2 M. Find k.', steps:[
+        {what:'Step 1: Write the rate law for 2nd-order in one reactant', why:'Rate = k[A]². Square the concentration.', predict:{q:'Plug in [A]=2 → rate law gives?', hint:'8 = k(2)².'}},
+        {what:'Step 2: 8 = k(4)', why:'Square first, then multiply by k.'},
+        {what:'Step 3: k = 8/4 = 2 M⁻¹·s⁻¹', why:'Solve for k.'},
+        {what:'Step 4: CHECK UNITS for 2nd-order', why:'Rate has units M/s. [A]² has units M². So k = (M/s)/M² = M⁻¹·s⁻¹. Unit check confirms 2nd-order.'},
+        {what:'UNITS RULE: k units = M^(1−n)·s⁻¹', why:'0th: M/s; 1st: s⁻¹; 2nd: M⁻¹s⁻¹; 3rd: M⁻²s⁻¹. If the DAT gives you k\'s units, you can back-out the order instantly.'}
+      ]}
     ],
     faded:[
       {prompt:'1st order: [A] doubles → r ___?', lcd:'.', blank:'___', answer:'doubles'},
@@ -6474,9 +6520,28 @@ const MODULES = {
     videoUrl:'tiktoks/weak-acid-sqrt-tiktok.html', videoTitle:'Weak = square root', videoDur:'~73 sec',
     visualType:'ka-spectrum', visualData:{acid:'acetic', conc:0.1},
     worked:[
-      {q:'pH of 0.1 M acetic (Ka=1.8×10⁻⁵)?', steps:[{what:'[H⁺] ≈ √(1.8×10⁻⁶)', why:'Weak acid shortcut: [H⁺] = √(Ka·C) = √(1.8×10⁻⁵ × 0.1).', predict:{q:'≈?', hint:'1.34×10⁻³.'}}, {what:'[H⁺] ≈ 1.34×10⁻³', why:'Square root of 1.8×10⁻⁶.'}, {what:'pH ≈ 2.87', why:'pH = −log(1.34×10⁻³) ≈ 2.87.'}]},
-      {q:'pH of 0.1 M NH₃ (Kb=1.8×10⁻⁵)?', steps:[{what:'[OH⁻] ≈ 1.34×10⁻³', why:'Same √(Kb·C) shortcut for weak base — gives [OH⁻] not [H⁺].'}, {what:'pOH ≈ 2.87 → pH ≈ 11.13', why:'pH = 14 − pOH for the basic side.'}]},
-      {q:'Stronger: HF or HCl?', steps:[{what:'HCl in the 6', why:'HCl is in the canonical 6 strong acids; HF is not.'}, {what:'HCl', why:'HF Ka ≈ 7×10⁻⁴.'}]}
+      {q:'pH of 0.1 M acetic acid (Ka=1.8×10⁻⁵)?', steps:[
+        {what:'Step 1: Is it strong or weak?', why:'Acetic acid is NOT in the 6 strong acids (HCl, HBr, HI, HClO₄, HNO₃, H₂SO₄). Weak acids do not fully dissociate — you need Ka.', predict:{q:'Strong or weak?', hint:'Look up the 6.'}},
+        {what:'Step 2: Use the weak-acid shortcut [H⁺] ≈ √(Ka·C)', why:'Derived from x²/(C−x) ≈ x²/C = Ka, assuming x ≪ C. Valid when C/Ka ≥ 100 (the 5% rule). Here C/Ka = 0.1/1.8×10⁻⁵ ≈ 5500, so totally fine.'},
+        {what:'Step 3: Plug in: [H⁺] = √(1.8×10⁻⁵ × 0.1) = √(1.8×10⁻⁶)', why:'Multiply Ka by initial concentration first, then square-root the whole thing.', predict:{q:'√(1.8×10⁻⁶) ≈ ?', hint:'√1.8 ≈ 1.34, √(10⁻⁶) = 10⁻³.'}},
+        {what:'[H⁺] ≈ 1.34×10⁻³ M', why:'√1.8 ≈ 1.34, √(10⁻⁶) = 10⁻³. Combine.'},
+        {what:'Step 4: pH = −log(1.34×10⁻³) ≈ 2.87', why:'Log trick: pH = −log(1.34) + 3 = −0.13 + 3 = 2.87. The "3" comes from the exponent.'},
+        {what:'Sanity check: weak acid in dilute concentration should give pH between 3 and 6.', why:'Strong 0.1M acid would give pH 1. Acetic at 2.87 is "weak-but-not-that-weak" — makes sense for the canonical weak acid.'}
+      ]},
+      {q:'pH of 0.1 M NH₃ (Kb=1.8×10⁻⁵)?', steps:[
+        {what:'Step 1: NH₃ is a weak BASE (not in the strong-base list)', why:'Strong bases = group 1 hydroxides + Sr(OH)₂, Ba(OH)₂. NH₃ is the canonical weak base.', predict:{q:'What does the shortcut give us — [H⁺] or [OH⁻]?', hint:'Bases produce OH⁻ on dissociation.'}},
+        {what:'Step 2: [OH⁻] ≈ √(Kb·C) = √(1.8×10⁻⁶) ≈ 1.34×10⁻³ M', why:'Same algebra as weak acid, but the equilibrium gives [OH⁻] not [H⁺] because NH₃ + H₂O ⇌ NH₄⁺ + OH⁻.'},
+        {what:'Step 3: pOH = −log(1.34×10⁻³) ≈ 2.87', why:'Take −log of [OH⁻] to get pOH.'},
+        {what:'Step 4: pH = 14 − pOH = 14 − 2.87 = 11.13', why:'Water relationship: pH + pOH = 14 at 25°C. ALWAYS convert pOH → pH at the end for base problems.'},
+        {what:'TRAP: do not take −log of [OH⁻] and call it pH', why:'Common mistake under time pressure. Calculate pOH first, then subtract from 14.'}
+      ]},
+      {q:'Rank acid strength: HF, HCl, HClO₄, H₃PO₄', steps:[
+        {what:'Step 1: Memorize the 6 strong acids', why:'HCl, HBr, HI, HClO₄, HNO₃, H₂SO₄ (first proton only). Everything else is weak.', predict:{q:'Which two are strong?', hint:'Cross-check the list.'}},
+        {what:'HCl and HClO₄ are strong; HF and H₃PO₄ are weak', why:'HF is weak despite being a halide — short F-H bond plus small ion makes it less ionizing.'},
+        {what:'Step 2: Among the strong pair — HClO₄ > HCl', why:'Perchloric is the strongest of the 6 (Ka ~10⁸). HCl is "merely" strong (Ka ~10⁶).'},
+        {what:'Step 3: Among the weak pair — H₃PO₄ (pKa₁ ≈ 2.1) > HF (pKa ≈ 3.2)', why:'Lower pKa = stronger. H₃PO₄ first proton is actually stronger than HF despite "phosphoric" sounding weak.'},
+        {what:'Final ranking: HClO₄ > HCl > H₃PO₄ > HF', why:'Counterintuitive — phosphoric beats hydrofluoric. The DAT loves this because students assume "all weak acids are weaker than all halides".'}
+      ]}
     ],
     faded:[
       {prompt:'HF strong?', lcd:'Not in 6.', blank:'___', answer:'no'},
@@ -6500,9 +6565,28 @@ const MODULES = {
     videoUrl:'tiktoks/buffers-hh-tiktok.html', videoTitle:'Buffers are ratios', videoDur:'~75 sec',
     visualType:'hh-slider', visualData:{pKa:4.74, ratio:1, system:'acetate'},
     worked:[
-      {q:'0.2 M HOAc / 0.1 M OAc⁻ (pKa=4.74). pH?', steps:[{what:'log(0.1/0.2) = −0.3', why:'log of a ratio less than 1 is negative.', predict:{q:'pH?', hint:'pKa+log.'}}, {what:'pH = 4.74 − 0.3 = 4.44', why:'pH = pKa + log([A⁻]/[HA]); more acid form than base form pulls pH below pKa.'}]},
-      {q:'Best pKa for pH 7 buffer?', steps:[{what:'pKa within ±1', why:'Buffer effective only when pH stays within ±1 of pKa.'}, {what:'pKa ≈ 7 (H₂PO₄⁻/HPO₄²⁻ at 7.2)', why:'Phosphate pKa₂ is closest to pH 7.'}]},
-      {q:'Add 0.01 mol HCl to buffer?', steps:[{what:'HCl converts A⁻→HA', why:'Strong acid protonates the conjugate base.'}, {what:'A⁻ ↓ 0.01, HA ↑ 0.01', why:'1:1 stoich with the strong acid.'}, {what:'Recompute HH', why:'Use new ratio in pH = pKa + log([A⁻]/[HA]).'}]}
+      {q:'Find the pH of a buffer with 0.2 M HOAc and 0.1 M OAc⁻ (pKa = 4.74).', steps:[
+        {what:'Step 1: Identify the weak-acid and conjugate-base concentrations', why:'Henderson-Hasselbalch needs both. HOAc = acid form ([HA]) = 0.2 M. OAc⁻ = conjugate base ([A⁻]) = 0.1 M.', predict:{q:'Which is on top in the log?', hint:'[A⁻]/[HA].'}},
+        {what:'Step 2: Set up HH: pH = pKa + log([A⁻]/[HA])', why:'Memorize this equation cold. The A⁻ (BASE form) goes on TOP. Mnemonic: "base over acid" reads top-to-bottom like the dictionary.'},
+        {what:'Step 3: Plug in: pH = 4.74 + log(0.1/0.2) = 4.74 + log(0.5)', why:'The ratio is less than 1 because there is more acid than base.', predict:{q:'log(0.5) ≈ ?', hint:'log(2) ≈ 0.30, so log(0.5) = −0.30.'}},
+        {what:'Step 4: log(0.5) = −0.30 → pH = 4.74 − 0.30 = 4.44', why:'Log of a number LESS than 1 is NEGATIVE. Subtract, do not add.'},
+        {what:'DIRECTION CHECK: more acid than base → pH should be BELOW pKa. ✓', why:'pKa = 4.74, calculated pH = 4.44 (below). Matches the conceptual expectation. If the answer came out above 4.74 with more acid present, something is wrong — sign error in log.'}
+      ]},
+      {q:'Choose the best buffer system to maintain pH ≈ 7.0. Options: acetate (pKa 4.74), phosphate (pKa₂ 7.2), bicarbonate (pKa 6.4), ammonia (pKa 9.25).', steps:[
+        {what:'Step 1: The "pKa ± 1" rule', why:'A buffer is only effective when the desired pH is within ±1 pH unit of the pKa. Outside this range, the ratio [A⁻]/[HA] becomes too lopsided to absorb added acid or base.', predict:{q:'Which pKas are within ±1 of pH 7?', hint:'Range 6.0–8.0.'}},
+        {what:'Step 2: Filter to candidates in range', why:'Phosphate (7.2) is within ±1 of 7. Bicarbonate (6.4) is within ±1 of 7. Acetate (4.74) is 2.26 away — out. Ammonia (9.25) is 2.25 away — out.'},
+        {what:'Step 3: Pick the CLOSEST', why:'Phosphate pKa₂ = 7.2 is only 0.2 away from target 7.0. Bicarbonate pKa = 6.4 is 0.6 away. Closer = better-balanced ratio at the target pH.'},
+        {what:'Answer: phosphate (pKa₂ = 7.2)', why:'Phosphate is THE physiological intracellular buffer for this reason — its pKa₂ sits almost exactly at cellular pH.'},
+        {what:'BIO CROSSOVER: bicarbonate is the BLOOD plasma buffer (~pH 7.4), even though pKa is 6.4', why:'The body cheats by keeping [HCO₃⁻] very high relative to CO₂ — pushing the ratio side of HH to hold pH 7.4 despite the unfavorable pKa.'}
+      ]},
+      {q:'A buffer is 0.10 M HA + 0.10 M A⁻ (pKa = 5.00). Add 0.01 mol HCl to 1 L. New pH?', steps:[
+        {what:'Step 1: Initial check — pH = pKa = 5.00 (because ratio = 1)', why:'log(1) = 0, so HH gives pH = pKa exactly. This is the MAX BUFFERING CAPACITY point.', predict:{q:'Which way will pH move when acid is added?', hint:'Acid should lower pH, but only slightly.'}},
+        {what:'Step 2: Strong acid reacts with the BASE form: HCl + A⁻ → HA + Cl⁻', why:'Strong acid protonates the conjugate base 1:1. This is the key insight — the buffer "absorbs" the added H⁺ by converting A⁻ into more HA.'},
+        {what:'Step 3: New concentrations: [A⁻] = 0.10 − 0.01 = 0.09; [HA] = 0.10 + 0.01 = 0.11', why:'Subtract from base, add to acid. The total amount of buffer is unchanged — only the ratio shifts.'},
+        {what:'Step 4: Plug into HH: pH = 5.00 + log(0.09/0.11) = 5.00 + log(0.818)', why:'New ratio is now less than 1 because [HA] > [A⁻].', predict:{q:'log(0.82) ≈ ?', hint:'Slightly negative, around −0.09.'}},
+        {what:'Step 5: log(0.818) = −0.087 → pH = 5.00 − 0.087 = 4.91', why:'pH dropped only 0.09 units despite adding 0.01 mol of strong acid. THIS is the magic of buffering.'},
+        {what:'COMPARISON: with no buffer, 0.01 mol HCl in 1 L of pure water → pH = 2', why:'A buffer can absorb the same insult and barely move (5.00 → 4.91). The DAT loves "compare buffered vs unbuffered" questions.'}
+      ]}
     ],
     faded:[
       {prompt:'Buffer at pH=pKa: ratio?', lcd:'log(1)=0.', blank:'___', answer:'1'},
