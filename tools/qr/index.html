@@ -2992,6 +2992,7 @@ const SKILLS = [
   {id:'sets',      tier:2, name:'Sets — Union, Intersection',     prereqs:['count-pc'],    x:3, y:8},
   {id:'desc-stats',tier:2, name:'Descriptive Statistics',         prereqs:['frac-mul'],    x:4, y:8},
   {id:'trig',      tier:2, name:'Trig — SOHCAHTOA + Identities',  prereqs:['geo-2d'],      x:5, y:8},
+  {id:'data-interp',tier:2,name:'Data Interpretation — Charts + Tables', prereqs:['pct-of','desc-stats'], x:5, y:9},
   // Tier 3 — DAT Day (3)
   // Removed phantom nodes pat-seq, pace-90, pace-60 (Agent 9 finding §3 — they had no module body
   // and routed to LOCKMOD.openComingSoon). Pacing surface lives in the Pacing Ladder section.
@@ -4371,6 +4372,32 @@ const BANK = [
    correct:0,
    why:'Special right triangle: 30-60-90 sides are 1 : √3 : 2. The side opposite the 30° angle is the shortest (= 1), opposite the 60° is √3, and the hypotenuse opposite 90° is 2. Together with 45-45-90 (1 : 1 : √2), these are the two special-triangle ratios to memorize.',
    diag:{1:'You swapped the longer leg and the hypotenuse. The hypotenuse is always the longest side.', 2:'1 : 1 : √2 is the 45-45-90 ratio. Different triangle.', 3:'3 : 4 : 5 is a Pythagorean triple but does not have 30° / 60° / 90° angles.'}},
+
+  // === DATA-INTERP (5) — added 2026-05-28 with the new data-interp module ===
+  {id:'di1', skills:['data-interp','pct-of'], diff:1, q:'A company\'s revenue grew from $400K to $500K. Percent increase?',
+   opts:['20%','25%','100%','125%'], correct:1,
+   why:'Percent change = (new − old) / old × 100 = (500 − 400) / 400 × 100 = 100 / 400 = 25%. Anchor on OLD as the denominator.',
+   diag:{0:'20% would mean (500 − 400) / 500 = the new value as denominator — that is the most-tested trap on percent change.', 2:'100% would mean revenue doubled. It only grew by 25% of the old.', 3:'125% would mean it more than doubled.'}},
+
+  {id:'di2', skills:['data-interp','desc-stats'], diff:2, q:'A bar chart shows test scores: 60, 70, 80, 90, 100. What is the median?',
+   opts:['70','80','85','90'], correct:1,
+   why:'Median = middle value of sorted data. Five values, sorted; middle is the 3rd. The 3rd value is 80.',
+   diag:{0:'70 is the second value, not the median.', 2:'85 = (80+90)/2 — that would be the median if there were an even count.', 3:'90 is the 4th value, not the median.'}},
+
+  {id:'di3', skills:['data-interp'], diff:2, q:'A line graph shows Product A rising from 50 to 80 units and Product B rising from 200 to 250 units over the same period. Which had a LARGER percent increase?',
+   opts:['A (it grew by more percent)','B (it grew by more units)','Both grew by the same percent','Cannot determine'], correct:0,
+   why:'A: (80−50)/50 = 60% growth. B: (250−200)/200 = 25% growth. A grew more in percent (smaller base means small unit changes are big percentages). The trap: B grew by 50 units (more than A\'s 30 units), so students think B grew "more" — but the question asks PERCENT.',
+   diag:{1:'B grew by more UNITS (50 vs 30), but the question asks percent. Percent normalizes for the starting value.', 2:'Different percent — A is 60%, B is 25%. Don\'t assume.', 3:'Both percents can be computed directly from the values given.'}},
+
+  {id:'di4', skills:['data-interp','ratios'], diff:2, q:'A pie chart shows a survey of 200 students: 40% rated the course "great," 35% "okay," 25% "poor." How many MORE students rated it "great" than "poor"?',
+   opts:['15','30','40','50'], correct:1,
+   why:'Great = 40% × 200 = 80 students. Poor = 25% × 200 = 50 students. Difference = 80 − 50 = 30. Compute each absolute count first, then subtract.',
+   diag:{0:'15 would be 15% of 100 — wrong base. The difference in absolute counts is 30.', 2:'40 is the percentage of "great," not the difference in counts.', 3:'50 is the count of "poor," not the difference.'}},
+
+  {id:'di5', skills:['data-interp','pct-of'], diff:3, q:'A 3-column table shows GPA × MCAT × Hours-of-study for 4 students. Student 1: 3.8/520/40. Student 2: 3.6/510/30. Student 3: 3.9/515/45. Student 4: 3.5/505/35. Which student has the highest GPA per hour of study?',
+   opts:['Student 1','Student 2','Student 3','Student 4'], correct:1,
+   why:'Compute GPA/hour for each. Student 1: 3.8/40 = 0.095. Student 2: 3.6/30 = 0.120. Student 3: 3.9/45 = 0.0867. Student 4: 3.5/35 = 0.100. Student 2 highest at 0.12. The trap: highest absolute GPA (Student 3) does NOT give the highest efficiency.',
+   diag:{0:'Student 1 has 3.8/40 = 0.095. Not highest.', 2:'Student 3 has the highest GPA but spent 45 hours. Efficiency = GPA/hour, where 3.9/45 = 0.087 — actually the LOWEST of the four.', 3:'Student 4 = 3.5/35 = 0.100 — second highest but not max.'}},
 ];
 
 const BANK_BY_ID = Object.fromEntries(BANK.map(b => [b.id, b]));
@@ -5457,7 +5484,7 @@ const MODULES = {
     title:'Volume / Surface — <em>Cube Law</em>',
     sub:'When a length doubles, area quadruples, volume octuples. The cube law.',
     pattern:'Scaling a 3D shape changes lengths, areas, and volumes by different factors. Length scales by k. Area scales by k². Volume scales by k³. Doubling a cube\'s side → area × 4, volume × 8. The DAT exploits this with "if the side doubles..." questions.',
-    formula:'Length: ×k → Area: ×k² → <span class="gold">Volume: ×k³</span><br>Cube: V = s³ · SA = 6s²<br>Sphere: V = (4/3)πr³ · SA = 4πr²<br>Cylinder: V = πr²h · SA = 2πr² + 2πrh',
+    formula:'Length: ×k → Area: ×k² → <span class="gold">Volume: ×k³</span><br><b>Cube</b> · V = s³ · SA = 6s²<br><b>Rectangular prism</b> · V = lwh · SA = 2(lw+lh+wh)<br><b>Sphere</b> · V = (4/3)πr³ · SA = 4πr²<br><b>Cylinder</b> · V = πr²h · SA = 2πr² + 2πrh (top + bottom + lateral)<br><b>Cone</b> · V = (1/3)πr²h · SA = πr² + πrℓ (ℓ = slant height)<br><b>Pyramid (square base)</b> · V = (1/3)s²h<br><br>And 2D area shortcuts:<br><b>Parallelogram</b> · A = bh (base × perpendicular height)<br><b>Trapezoid</b> · A = ½(b₁ + b₂)h (average base × height)<br><b>Rhombus</b> · A = ½(d₁ × d₂) (half × product of diagonals)<br><b>Triangle</b> · A = ½bh · area = ¼√3 s² (equilateral)',
     visualType:'word-translate', visualData:{},
     worked:[
       {q:'Cube side 5. Volume?', steps:[
@@ -6056,6 +6083,57 @@ const MODULES = {
        move:'Inverse trig on the DAT is always one of the four special angles. If sin = 1/2, angle = 30°. If sin = √2/2, angle = 45°. If sin = √3/2, angle = 60°. No calculator needed.',
        why:'The DAT does not test obscure inverse-trig values. Memorizing the special-angle table forwards and backwards covers nearly every inverse-trig question on the test.',
        lock:'Inverse trig → special-angle lookup.', sarah:true}
+    ]
+  },
+  'data-interp': {
+    skill:'data-interp', tier:2, num:'43',
+    title:'Data <em>Interpretation</em>',
+    sub:'Reading off bar charts, line graphs, and tables. The DAT puts at least 2-3 of these per QR section — easy points if you slow down for 10 seconds.',
+    pattern:'Three skills cover almost every DAT data-interp question. (1) READ the chart correctly: axes, units, scale, what each row/column represents. (2) PICK the right data point or interval — read carefully which value the question wants. (3) COMPUTE a percentage, ratio, or change between two values. Most data-interp problems are arithmetic dressed up as a chart — the trap is misreading the chart, not the arithmetic.',
+    formula:'<span class="gold">Pct change</span> = (new − old) / old × 100<br><span class="gold">Ratio</span> = a : b, scale by dividing through by a common factor<br><span class="gold">Reading bars/lines</span>: align eye carefully to the axis; double-check units<br>Tables: read the column header AND the row header before you read the cell',
+    visualType:'word-translate', visualData:{},
+    worked:[
+      {q:'A bar chart shows quarterly sales. Q1 = $200K, Q2 = $300K, Q3 = $250K, Q4 = $400K. What is the percent increase from Q2 to Q4?',
+       steps:[
+         {what:'Identify the right two bars: Q2 (old) = $300K, Q4 (new) = $400K', why:'Always identify old vs new before computing percent change.'},
+         {what:'Pct change = (400 − 300) / 300 × 100', why:'standard percent change formula.'},
+         {what:'= 100/300 × 100 = 33.3%', why:'Don\'t use the new value as the denominator — that gives 25%, the trap answer.'}
+       ]},
+      {q:'A line graph shows two products A and B over 5 years. Product A rose from 100 to 180 units. Product B rose from 50 to 120 units. Which had a LARGER PERCENT increase?',
+       steps:[
+         {what:'A: (180 − 100) / 100 = 80%', why:'percent change for A.'},
+         {what:'B: (120 − 50) / 50 = 70/50 = 140%', why:'percent change for B.'},
+         {what:'B grew more in PERCENT terms even though A added more units.', why:'The trap: A added 80 units (more than B\'s 70 units), so students think A "grew more." Always check what the question asks — units vs %. % winners come from starting low.', predict:{q:'When does this trap bite hardest?', hint:'Small starting denominators.'}}
+       ]},
+      {q:'A 4-column table shows GPA, MCAT score, study hours/week, and year of application for 4 applicants. Which student had the HIGHEST GPA per study hour?',
+       steps:[
+         {what:'Set up a column or quick mental ratio: GPA / hours', why:'this is "efficiency" — output divided by input.'},
+         {what:'For each row, mentally divide GPA by hours and pick max', why:'Don\'t fall for the highest absolute GPA — that\'s a different question.'},
+         {what:'Read the column headers carefully — make sure you\'re using GPA and HOURS (not MCAT or year).', why:'Misreading the wrong column is the dominant error on table problems.'}
+       ]}
+    ],
+    faded:[
+      {prompt:'Pct change from 50 to 75 = ', lcd:'(75−50)/50 × 100.', blank:'__%', answer:'50'},
+      {prompt:'Pct change from 100 to 80 = ', lcd:'negative — that\'s a DECREASE.', blank:'__%', answer:'−20'},
+      {prompt:'Ratio 36:48 reduces to ', lcd:'divide both by GCD = 12.', blank:'_:_', answer:'3:4'},
+      {prompt:'In a graph showing 200, 250, 300, 350 over four quarters, what is the average?', lcd:'sum / count.', blank:'__', answer:'275'}
+    ],
+    practice:['di1','di2','di3','di4','di5'],
+    lock:'<em>Read axes + units first. Pct change = (new − old) / old. Pick the right two cells before computing.</em>',
+    trap:'Misreading the axis scale (logarithmic vs linear), using new as denominator in percent change (the most-tested error), or picking the wrong row/column on a table because you read the wrong header.',
+    sarahTricks:[
+      {when:'You see a chart or table question', name:'<em>Read the axes BEFORE the data</em>',
+       move:'Most data-interp mistakes happen because students dive at the bars or numbers without first confirming what the axes/columns mean. Spend 5 seconds: what are the units (% vs raw count)? What is the scale (linear vs logarithmic)? What do rows vs columns represent? Then read the question to find the SPECIFIC data point you need.',
+       why:'Reading the data correctly is harder than the arithmetic. Slow down once, save 60 seconds of confusion.',
+       lock:'Axes first. Question second. Data third.', sarah:true},
+      {when:'Computing percent change', name:'<em>(new − old) / OLD, not new</em>',
+       move:'The denominator is the OLD value (the baseline), not the new value. (75 − 50) / 50 = 50%, not (75 − 50) / 75 = 33%. Memorize: change-over-original. The DAT puts the 33% trap right next to the 50% answer to catch students.',
+       why:'Most-tested percent change error. Anchoring on "change over ORIGINAL" stops it.',
+       lock:'Change over OLD, not new.', sarah:true},
+      {when:'A table has many rows and columns', name:'<em>Trace the row + column to the cell</em>',
+       move:'Physically trace the row label across with one finger and the column label down with the other; meet at the cell. Sounds silly but eliminates misreads. Confirm the cell value matches what the question asks BEFORE doing arithmetic.',
+       why:'Misreading the wrong cell is the dominant table-problem error. The slowdown is worth 30 seconds you won\'t spend debugging your answer.',
+       lock:'Trace row AND column. Confirm cell.', sarah:true}
     ]
   },
   // Meta-module — Pattern Library (Build 4 / QR-D). Section markup is hand-rolled
