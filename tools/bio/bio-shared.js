@@ -110,7 +110,11 @@ const NODES = {
     name: "Mendelian genetics: <em>probability</em>, not magi",
     enzColors: { tl:"#C9A84C", tr:"#E2C97A", bl:"#E2C97A", br:"#8a5a8c" },
     enzLabels: { tl:"AA", tr:"Aa", bl:"Aa", br:"aa" },
-    zoneCenters: { tl:{x:120,y:225}, tr:{x:306,y:225}, bl:{x:492,y:225}, br:{x:678,y:225} },
+    /* Punnett is a 2x2 grid (cells centered at 350/490 × 220/350), not the
+       horizontal row the standard builder layout assumes. Token coordinates
+       must match the SVG cells in bio-genetics.html or AA lands on top of
+       the "P2 gametes" rail and aa drifts into the Results card. */
+    zoneCenters: { tl:{x:350,y:220}, tr:{x:490,y:220}, bl:{x:350,y:350}, br:{x:490,y:350} },
     stageOrder: ["tl", "tr", "bl", "br"],
     stageLabels: ["Stage 1 · place Homozygous dom", "Stage 2 · place Heterozygous", "Stage 3 · place Heterozygous", "Stage 4 · place Homozygous rec", "Complete · all placed"],
     retrievals: {
