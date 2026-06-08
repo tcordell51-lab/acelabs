@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta name="robots" content="noindex,nofollow"/>
+<title>Casper Coaching Console · Ace Labs</title>
+<meta name="description" content="Live 1-on-1 Casper coaching tool: run a timed scenario, score the response against five dimensions in real time, and warm up with rapid judgment drills."/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  /* ----- Brand tokens (ported from the React `C` palette) ----- */
+  :root{
+    --forest:#1f3d2e; --forest-deep:#173023; --brass:#b8923d;
+    --cream:#f7f3ea; --paper:#fffdf8; --line:#dcd2bc; --soft:#eef2ec;
+    --green:#2f7a4f; --red:#a8402f; --ink:#25302a;
+    --font-display:'Playfair Display', Georgia, serif;
+    --font-body:'DM Sans', system-ui, sans-serif;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:var(--font-body);background:var(--cream);color:var(--ink);min-height:100vh;}
+  button{font-family:var(--font-body);}
+  .hdr{background:var(--forest-deep);padding:14px 24px;}
+  .hdr-in{max-width:1120px;margin:0 auto;display:flex;align-items:center;gap:10px;}
+  .logo-mark{width:34px;height:34px;border-radius:7px;background:var(--brass);color:var(--forest);
+    display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:900;font-size:19px;}
+  .logo-t1{font-family:var(--font-display);font-weight:900;font-size:17px;color:var(--cream);line-height:1.05;}
+  .logo-t2{font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--brass);font-weight:700;line-height:1.05;}
+
+  .eyebrow{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--brass);font-weight:700;}
+  .btn-primary{background:var(--forest);color:var(--cream);border:none;border-radius:7px;padding:10px 18px;
+    font-size:13.5px;font-weight:700;cursor:pointer;margin-top:8px;}
+  .btn-ghost{background:transparent;color:var(--forest);border:1.5px solid var(--line);border-radius:7px;
+    padding:9px 16px;font-size:13.5px;font-weight:700;cursor:pointer;}
+
+  .topbar{display:flex;justify-content:space-between;align-items:center;}
+  .topbar a{background:none;border:none;color:var(--brass);font-weight:700;font-size:13px;cursor:pointer;letter-spacing:.04em;}
+  .topbar .right{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#8a9389;font-weight:700;}
+
+  .footer{margin-top:36px;padding-top:14px;border-top:1px solid var(--line);font-size:10.5px;color:#8a9389;
+    display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+
+  .scen-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:22px;margin-top:20px;align-items:start;}
+  @media (max-width:860px){.scen-grid{grid-template-columns:1fr;}}
+  .sticky-card{position:sticky;top:20px;}
+  @media (max-width:860px){.sticky-card{position:static;}}
+</style>
+</head>
+<body>
+  <div class="hdr">
+    <div class="hdr-in">
+      <div class="logo-mark">A</div>
+      <div>
+        <div class="logo-t1">AceTheDAT</div>
+        <div class="logo-t2">Casper Coaching Console</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="app"></div>
+
+<script>
+/* ============================================================
+   Casper Coaching Console — vanilla port of the AceTheDAT
+   React prototype. No build step, no CDN deps (site CSP only
+   allows self + Google Fonts). All original scenario IP kept.
+   ============================================================ */
+
+/* ---------- Brand ---------- */
+var C = {
+  forest:"#1f3d2e", forestDeep:"#173023", brass:"#b8923d", cream:"#f7f3ea",
+  paper:"#fffdf8", line:"#dcd2bc", soft:"#eef2ec", green:"#2f7a4f", red:"#a8402f", ink:"#25302a",
+};
+var fontDisplay = "'Playfair Display', Georgia, serif";
+var fontBody = "'DM Sans', system-ui, sans-serif";
+
+/* ---------- Original scenario bank (AceTheDAT IP) ---------- */
+var SCENARIOS = [
+  { id:1, tag:"Professionalism",
+    stem:"You are working a group lab and notice a teammate, Priya, has been quiet, arriving late, and her portion of the work is incomplete two days before the deadline. Another teammate suggests reporting her to the instructor.",
+    qs:["What do you do in this situation?","What factors would influence your decision?","Is it ever appropriate to not escalate a teammate's poor performance? Explain."] },
+  { id:2, tag:"Ethics / Confidentiality",
+    stem:"A close friend confides that they cheated on an important exam, feels guilty, and asks you to keep it between you two.",
+    qs:["How do you respond to your friend?","What responsibilities, if any, do you have here?","Would your answer change if the exam determined professional licensure? Why?"] },
+  { id:3, tag:"Patient Advocacy",
+    stem:"While volunteering at a clinic, you overhear a senior staff member give a patient information you believe is incorrect. The staff member is well-respected and busy.",
+    qs:["What do you do?","What would you need to consider before acting?","How do you weigh respecting authority against advocating for the patient?"] },
+  { id:4, tag:"Fairness / Teamwork",
+    stem:"You are leading a project and one member, Sam, has not contributed but expects equal credit. The deadline is in two days and the rest of the team is frustrated.",
+    qs:["What do you do?","How do you balance fairness to the group with fairness to Sam?","What would change your approach to the situation?"] },
+  { id:5, tag:"Resource Allocation",
+    stem:"You manage scheduling for a free dental screening event. Two patients arrive at the same time: an elderly man in visible discomfort without an appointment, and a young mother with an appointment who has waited two weeks and must leave soon for work.",
+    qs:["How do you handle this situation?","What information would help you decide?","How do you communicate your decision to both people?"] },
+  { id:6, tag:"Self-Awareness",
+    stem:"A peer gives you harsh feedback in front of others that your part of a presentation was disorganized. You felt it was unfair and somewhat public.",
+    qs:["How do you respond in the moment?","What do you do afterward?","Describe how you would handle the relationship going forward."] },
+];
+
+var ARCADE = [
+  { q:"A classmate wants to skip a required safety step because the group is tired and behind schedule. Strongest response?",
+    options:["Agree, since the team is clearly exhausted and morale matters.","Acknowledge the pressure, explain why the step protects everyone, and propose doing it together quickly.","Refuse and report the classmate to the instructor immediately.","Let them skip it but document that you disagreed."],
+    correct:1, why:"Validates the feeling, holds the safety line without judgment, and offers a concrete collaborative next step. No hard stance, no assumption, clear action." },
+  { q:"A patient seems upset and is short with you at check-in. Best first move?",
+    options:["Match their tone so they know you're serious.","Assume they are having a bad day and ignore it.","Acknowledge they seem frustrated and gently ask if something is wrong.","Call a supervisor right away."],
+    correct:2, why:"Leads with empathy and gathers information before acting, rather than assuming the cause or escalating prematurely." },
+  { q:"You realize you made a small charting error that hasn't yet affected anyone. What do you do?",
+    options:["Fix it quietly and move on since no harm was done.","Wait to see if it becomes a problem before saying anything.","Disclose the error to the appropriate person and correct it promptly.","Ask a coworker whether you really need to report it."],
+    correct:2, why:"Honesty and professionalism: disclose and correct proactively. Concealment fails the integrity dimension even when harm hasn't occurred." },
+  { q:"A friend asks you to write their name on an attendance sheet for a class they're skipping. Best response?",
+    options:["Do it once, since it's minor and they'd do the same for you.","Decline, and explain you're not comfortable signing something untrue.","Lecture them about academic integrity in front of others.","Ignore the request and avoid them."],
+    correct:1, why:"Declines the dishonest act respectfully without judgment or public shaming. Holds the ethical line while preserving the relationship." },
+  { q:"Two equally qualified volunteers want the single remaining shift. How do you decide fairly?",
+    options:["Give it to whoever asked you first, no further thought.","Pick the one you personally like more.","Use a transparent, neutral criterion and explain it to both.","Leave the shift unfilled to avoid conflict."],
+    correct:2, why:"Fairness and communication: a transparent neutral process applied consistently, clearly explained to both parties." },
+];
+
+var DIMENSIONS = [
+  { key:"info", label:"Gathered info before deciding", hint:"Paused to ask what she'd want to know first." },
+  { key:"empathy", label:"Showed empathy explicitly", hint:"Named the other person's perspective in words." },
+  { key:"stance", label:"Avoided assumptions / hard stances", hint:"Conditional 'if X then Y' reasoning." },
+  { key:"ethics", label:"Weighed ethics & multiple sides", hint:"Named the trade-off and balanced it." },
+  { key:"concise", label:"Concise, structured, finished", hint:"Clear order; answered all sub-questions." },
+];
+
+var KILLERS = ['"Obviously…"','"They should be fired."','"I would definitely report/tell."','"The right thing is clearly…"',"Silence on the other person"];
+var BUILDERS = ['"Before deciding, I\'d want to know…"','"I can understand why they\'d feel…"','"There are a few perspectives here…"','"If X, then… but if Y, then…"','"I\'d choose this because it balances…"'];
+
+/* ---------- App state ---------- */
+var S = {
+  mode:"home",        // home | scenario | arcade
+  scenIdx:0,
+  answer:"",
+  duration:300,
+  remaining:300,
+  running:false,
+  scores:{},          // dim.key -> 1|2|3
+  arcadeIdx:0,
+  arcadePick:null,
+  arcadeStats:{ right:0, total:0 },
+};
+var timerHandle = null;
+
+/* ---------- tiny DOM helpers ---------- */
+function esc(s){ return String(s).replace(/[&<>"']/g,function(c){
+  return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];
+}); }
+function $(sel,root){ return (root||document).querySelector(sel); }
+
+/* ---------- timer ---------- */
+function stopTimer(){ if(timerHandle){ clearInterval(timerHandle); timerHandle=null; } }
+function syncTimer(){
+  stopTimer();
+  if(S.running){
+    timerHandle = setInterval(function(){
+      S.remaining = Math.max(0, S.remaining - 1);
+      // update just the timer node to avoid blowing away the textarea/caret
+      var t = $("#timer");
+      if(t){ paintTimer(t); }
+      if(S.remaining === 0){ S.running = false; stopTimer(); render(); }
+    }, 1000);
+  }
+}
+function paintTimer(node){
+  var m = Math.floor(S.remaining/60), s = S.remaining%60;
+  var low = S.remaining <= 30;
+  node.style.color = low ? C.red : C.cream;
+  node.textContent = m + ":" + (s<10?"0"+s:s);
+}
+
+/* ---------- actions ---------- */
+function startScenario(i){
+  S.scenIdx=i; S.answer=""; S.remaining=S.duration; S.running=false; S.scores={}; S.mode="scenario";
+  render();
+}
+function setDim(k,v){ S.scores[k] = (S.scores[k]===v ? undefined : v); render(); }
+
+function totalScore(){
+  var t=0; for(var k in S.scores){ if(S.scores[k]) t+=S.scores[k]; } return t;
+}
+function hasZero(){ return DIMENSIONS.some(function(d){ return S.scores[d.key]===1; }); }
+function scoredCount(){ var n=0; for(var k in S.scores){ if(S.scores[k]) n++; } return n; }
+
+/* ============================================================
+   RENDER
+   ============================================================ */
+function render(){
+  stopTimer();
+  var app = document.getElementById("app");
+  if(S.mode==="home")      app.innerHTML = viewHome();
+  else if(S.mode==="arcade") app.innerHTML = viewArcade();
+  else                       app.innerHTML = viewScenario();
+  wire();
+  if(S.mode==="scenario"){ var t=$("#timer"); if(t) paintTimer(t); syncTimer(); }
+}
+
+function footer(){
+  return '<div class="footer">'
+    + '<span>AceTheDAT · Ace Labs — internal coaching tool</span>'
+    + '<span>Original scenarios · not affiliated with Casper / Acuity Insights</span>'
+    + '</div>';
+}
+function topbar(right){
+  return '<div class="topbar">'
+    + '<button data-act="home" style="cursor:pointer;">← Console home</button>'
+    + '<span class="right">'+esc(right)+'</span>'
+    + '</div>';
+}
+
+/* ---------- HOME ---------- */
+function viewHome(){
+  var tiles =
+    '<div style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:40px;">'
+    + bigBtn("start-0", "Start a Scenario", "Timed 3-question flow + live scorecard", true)
+    + bigBtn("arcade", "Decision Arcade", "Rapid judgment warm-up drills", false)
+    + '</div>';
+
+  var bank = SCENARIOS.map(function(s,i){
+    return '<button data-act="start" data-i="'+i+'" style="text-align:left;background:'+C.paper+';border:1px solid '+C.line+';border-radius:8px;padding:12px 16px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:12px;">'
+      + '<div>'
+        + '<span style="font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:'+C.brass+';font-weight:700;">'+esc(s.tag)+'</span>'
+        + '<div style="font-size:13.5px;color:'+C.ink+';margin-top:3px;line-height:1.4;">'+esc(s.stem.slice(0,96))+'…</div>'
+      + '</div>'
+      + '<span style="color:'+C.brass+';font-size:20px;flex-shrink:0;">›</span>'
+      + '</button>';
+  }).join("");
+
+  return '<div style="max-width:760px;margin:0 auto;padding:48px 24px;">'
+    + '<div class="eyebrow" style="margin-bottom:10px;">Live 1-on-1 Coaching Tool</div>'
+    + '<h1 style="font-family:'+fontDisplay+';font-weight:900;font-size:40px;color:'+C.forest+';line-height:1.05;margin:0 0 14px;">Run a Casper session, score it live.</h1>'
+    + '<p style="font-size:16px;color:#4a564d;max-width:58ch;margin-bottom:32px;">Pick a scenario, start the timer, have your student type her answer, then score her against the five dimensions in real time. The rubric and phrase flags sit right beside her response.</p>'
+    + tiles
+    + '<div style="border-top:1px solid '+C.line+';padding-top:22px;">'
+      + '<div style="font-family:'+fontDisplay+';font-weight:700;font-size:18px;color:'+C.forest+';margin-bottom:12px;">Scenario bank</div>'
+      + '<div style="display:grid;gap:10px;">'+bank+'</div>'
+    + '</div>'
+    + footer()
+    + '</div>';
+}
+function bigBtn(act,title,sub,primary){
+  return '<button data-act="'+act+'" style="flex:1 1 240px;text-align:left;background:'+(primary?C.forest:C.paper)+';color:'+(primary?C.cream:C.forest)+';border:1.5px solid '+(primary?C.forest:C.line)+';border-radius:10px;padding:18px 20px;cursor:pointer;">'
+    + '<div style="font-family:'+fontDisplay+';font-weight:700;font-size:18px;margin-bottom:4px;">'+esc(title)+'</div>'
+    + '<div style="font-size:12.5px;opacity:.85;">'+esc(sub)+'</div>'
+    + '</button>';
+}
+
+/* ---------- ARCADE ---------- */
+function viewArcade(){
+  var a = ARCADE[S.arcadeIdx];
+  var answered = S.arcadePick !== null;
+  var acc = S.arcadeStats.total ? Math.round((S.arcadeStats.right/S.arcadeStats.total)*100) : 0;
+
+  var opts = a.options.map(function(opt,i){
+    var bg=C.paper, bd=C.line, color=C.ink;
+    if(answered){
+      if(i===a.correct){ bg="#eaf3ec"; bd=C.green; }
+      else if(i===S.arcadePick){ bg="#f8ece9"; bd=C.red; }
+    }
+    return '<button '+(answered?"disabled":"")+' data-act="pick" data-i="'+i+'" style="text-align:left;background:'+bg+';border:1.5px solid '+bd+';border-radius:8px;padding:13px 16px;cursor:'+(answered?"default":"pointer")+';font-size:14.5px;color:'+color+';line-height:1.4;">'
+      + esc(opt) + '</button>';
+  }).join("");
+
+  var explain = "";
+  if(answered){
+    var head = (S.arcadePick===a.correct) ? "✓ Strongest move" : "Why the highlighted option is strongest";
+    var nextLabel = (S.arcadeIdx+1 < ARCADE.length) ? "Next question →" : "Finish · back home";
+    explain = '<div style="margin-top:18px;background:'+C.soft+';border-left:3px solid '+C.brass+';border-radius:0 8px 8px 0;padding:14px 16px;">'
+      + '<div style="font-weight:700;color:'+C.forest+';font-size:12.5px;margin-bottom:4px;">'+esc(head)+'</div>'
+      + '<div style="font-size:13.5px;color:#46524a;line-height:1.5;">'+esc(a.why)+'</div>'
+      + '<button class="btn-primary" data-act="arcade-next">'+esc(nextLabel)+'</button>'
+      + '</div>';
+  }
+
+  return '<div style="max-width:720px;margin:0 auto;padding:32px 24px;">'
+    + topbar("Accuracy "+acc+"% · "+S.arcadeStats.right+"/"+S.arcadeStats.total)
+    + '<div class="eyebrow" style="margin:20px 0 8px;letter-spacing:.18em;">Decision Arcade · Q'+(S.arcadeIdx+1)+'</div>'
+    + '<div style="font-family:'+fontDisplay+';font-size:22px;font-weight:700;color:'+C.forest+';line-height:1.3;margin-bottom:22px;">'+esc(a.q)+'</div>'
+    + '<div style="display:grid;gap:10px;">'+opts+'</div>'
+    + explain
+    + footer()
+    + '</div>';
+}
+
+/* ---------- SCENARIO ---------- */
+function viewScenario(){
+  var scen = SCENARIOS[S.scenIdx];
+  var words = S.answer.trim() ? S.answer.trim().split(/\s+/).length : 0;
+
+  var qsList = scen.qs.map(function(q){
+    return '<li style="font-size:14px;margin-bottom:5px;color:#e8e2d2;">'+esc(q)+'</li>';
+  }).join("");
+
+  /* timer controls */
+  var controls = "";
+  if(!S.running && S.remaining===S.duration){
+    controls += '<button class="btn-primary" data-act="timer-start">▶ Start timer</button>';
+  }
+  if(S.running){
+    controls += '<button class="btn-ghost" data-act="timer-pause">⏸ Pause</button>';
+  }
+  if(!S.running && S.remaining<S.duration && S.remaining>0){
+    controls += '<button class="btn-primary" data-act="timer-resume">▶ Resume</button>';
+  }
+  controls += '<button class="btn-ghost" data-act="timer-reset">↺ Reset</button>';
+
+  function opt(v,label){ return '<option value="'+v+'"'+(S.duration===v?" selected":"")+'>'+label+'</option>'; }
+  var durSel = '<select data-act="duration" style="margin-left:auto;padding:8px 10px;border-radius:6px;border:1px solid '+C.line+';background:'+C.paper+';color:'+C.ink+';font-family:'+fontBody+';font-size:13px;">'
+    + opt(300,"5:00 (standard)") + opt(240,"4:00") + opt(360,"6:00") + '</select>';
+
+  /* scorecard rows */
+  var labels = {1:"Missing",2:"Implied",3:"Explicit"};
+  var cols = {1:C.red,2:"#9a7322",3:C.green};
+  var rows = DIMENSIONS.map(function(d){
+    var btns = [1,2,3].map(function(v){
+      var active = S.scores[d.key]===v;
+      return '<button data-act="dim" data-k="'+d.key+'" data-v="'+v+'" style="flex:1;padding:6px 4px;border-radius:6px;border:1.3px solid '+(active?cols[v]:C.line)+';background:'+(active?cols[v]:C.paper)+';color:'+(active?"#fff":"#8a9389")+';font-size:10px;font-weight:700;cursor:pointer;letter-spacing:.04em;text-transform:uppercase;">'+v+' '+labels[v]+'</button>';
+    }).join("");
+    return '<div style="padding:10px 0;border-bottom:1px solid '+C.line+';">'
+      + '<div style="font-size:12.5px;font-weight:700;color:'+C.forest+';margin-bottom:2px;">'+esc(d.label)+'</div>'
+      + '<div style="font-size:10.5px;color:#7a857b;margin-bottom:7px;">'+esc(d.hint)+'</div>'
+      + '<div style="display:flex;gap:6px;">'+btns+'</div>'
+      + '</div>';
+  }).join("");
+
+  var ts = totalScore();
+  var maxScore = DIMENSIONS.length*3;
+  var hz = hasZero();
+  var verdict;
+  if(scoredCount()<5) verdict = "Score all five dimensions.";
+  else if(hz) verdict = "Has a 1 — name that gap and have her redo just that sentence.";
+  else if(ts>=13) verdict = "Strong: mostly 3s, no 1s.";
+  else verdict = "Solid — push the 2s up to 3s by stating them out loud.";
+
+  var card = '<div style="background:'+C.paper+';border:1.5px solid '+C.forest+';border-radius:10px;overflow:hidden;" class="sticky-card">'
+    + '<div style="background:'+C.forest+';color:'+C.cream+';padding:12px 16px;font-family:'+fontDisplay+';font-weight:700;font-size:15px;display:flex;justify-content:space-between;align-items:baseline;">'
+      + '<span>Live Scorecard</span>'
+      + '<span style="font-size:13px;color:'+(hz?"#f0b8ac":C.brass)+';font-weight:700;">'+ts+'/'+maxScore+'</span>'
+    + '</div>'
+    + '<div style="padding:6px 14px 14px;">'
+      + rows
+      + '<div style="margin-top:10px;font-size:11px;color:'+(hz?C.red:C.green)+';font-weight:600;">'+esc(verdict)+'</div>'
+    + '</div>'
+    + '<div style="padding:0 14px 14px;display:grid;grid-template-columns:1fr 1fr;gap:8px;">'
+      + flagBox("red","Score-killers",KILLERS)
+      + flagBox("green","Score-builders",BUILDERS)
+    + '</div>'
+    + '</div>';
+
+  return '<div style="max-width:1120px;margin:0 auto;padding:28px 24px;">'
+    + topbar(scen.tag+" · Scenario "+(S.scenIdx+1)+" of "+SCENARIOS.length)
+    + '<div class="scen-grid">'
+      + '<div>'
+        + '<div style="background:'+C.forest+';color:'+C.cream+';border-radius:10px;padding:20px 22px;margin-bottom:16px;">'
+          + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">'
+            + '<span style="font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:'+C.brass+';font-weight:700;">Scenario</span>'
+            + '<div id="timer" style="font-family:'+fontDisplay+';font-weight:900;font-size:30px;color:'+C.cream+';font-variant-numeric:tabular-nums;">5:00</div>'
+          + '</div>'
+          + '<p style="font-size:15.5px;line-height:1.55;margin:0;">'+esc(scen.stem)+'</p>'
+          + '<ol style="margin:14px 0 0;padding-left:20px;">'+qsList+'</ol>'
+        + '</div>'
+        + '<div style="display:flex;gap:8px;margin-bottom:12px;align-items:center;flex-wrap:wrap;">'+controls+durSel+'</div>'
+        + '<textarea id="answer" placeholder="Student types her response here…" style="width:100%;min-height:220px;padding:16px;border-radius:10px;border:1.5px solid '+C.line+';font-family:'+fontBody+';font-size:14.5px;line-height:1.6;color:'+C.ink+';resize:vertical;background:'+C.paper+';">'+esc(S.answer)+'</textarea>'
+        + '<div style="font-size:12px;color:#8a9389;margin-top:6px;" id="wordcount">'+words+' words</div>'
+      + '</div>'
+      + card
+    + '</div>'
+    + '<div style="display:flex;justify-content:space-between;margin-top:22px;">'
+      + '<button class="btn-ghost" data-act="prev-scen">← Previous</button>'
+      + '<button class="btn-primary" data-act="next-scen">Next scenario →</button>'
+    + '</div>'
+    + footer()
+    + '</div>';
+}
+function flagBox(tone,title,items){
+  var red = tone==="red";
+  var head = (red?"✗ ":"✓ ")+title;
+  var lis = items.map(function(it){
+    return '<div style="font-family:'+fontDisplay+';font-style:italic;font-size:10.5px;color:#3a4640;margin-bottom:3px;line-height:1.3;">'+esc(it)+'</div>';
+  }).join("");
+  return '<div style="border:1px solid '+(red?"#e3c4bc":"#c4ddca")+';background:'+(red?"#fbf4f2":"#f3f8f4")+';border-radius:8px;padding:9px 10px;">'
+    + '<div style="font-size:8.5px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:'+(red?C.red:C.green)+';margin-bottom:5px;">'+esc(head)+'</div>'
+    + lis + '</div>';
+}
+
+/* ============================================================
+   EVENT WIRING (delegation; re-bound after each render)
+   ============================================================ */
+function wire(){
+  var app = document.getElementById("app");
+
+  app.onclick = function(e){
+    var el = e.target.closest("[data-act]");
+    if(!el) return;
+    var act = el.getAttribute("data-act");
+
+    if(act==="home"){ S.mode="home"; render(); return; }
+    if(act==="start-0"){ startScenario(0); return; }
+    if(act==="start"){ startScenario(+el.getAttribute("data-i")); return; }
+    if(act==="arcade"){ S.mode="arcade"; S.arcadeIdx=0; S.arcadePick=null; render(); return; }
+
+    if(act==="pick"){
+      if(S.arcadePick!==null) return;
+      var i = +el.getAttribute("data-i");
+      var a = ARCADE[S.arcadeIdx];
+      S.arcadePick = i;
+      S.arcadeStats = { right:S.arcadeStats.right+(i===a.correct?1:0), total:S.arcadeStats.total+1 };
+      render(); return;
+    }
+    if(act==="arcade-next"){
+      if(S.arcadeIdx+1 < ARCADE.length){ S.arcadeIdx++; S.arcadePick=null; render(); }
+      else { S.mode="home"; render(); }
+      return;
+    }
+
+    if(act==="timer-start" || act==="timer-resume"){ S.running=true; render(); return; }
+    if(act==="timer-pause"){ S.running=false; render(); return; }
+    if(act==="timer-reset"){ S.remaining=S.duration; S.running=false; render(); return; }
+    if(act==="dim"){ setDim(el.getAttribute("data-k"), +el.getAttribute("data-v")); return; }
+    if(act==="prev-scen"){ startScenario((S.scenIdx-1+SCENARIOS.length)%SCENARIOS.length); return; }
+    if(act==="next-scen"){ startScenario((S.scenIdx+1)%SCENARIOS.length); return; }
+  };
+
+  /* textarea: keep state in sync without re-rendering (preserve caret) */
+  var ta = $("#answer");
+  if(ta){
+    ta.oninput = function(){
+      S.answer = ta.value;
+      var w = S.answer.trim() ? S.answer.trim().split(/\s+/).length : 0;
+      var wc = $("#wordcount"); if(wc) wc.textContent = w + " words";
+    };
+  }
+
+  /* duration select */
+  var sel = $("[data-act='duration']");
+  if(sel){
+    sel.onchange = function(){
+      var d = +sel.value;
+      S.duration=d; S.remaining=d; S.running=false; render();
+    };
+  }
+}
+
+render();
+</script>
+</body>
+</html>
