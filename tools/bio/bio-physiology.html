@@ -163,9 +163,37 @@
 
         <!-- ====== BODY MAP ====== -->
         <div class="lab-module active" data-module="bodymap">
+          <style>
+          /* ── Body Systems Map · impeccable polish (scoped) ───────────────── */
+          .body-canvas{display:flex;align-items:center;justify-content:center;
+            background:radial-gradient(120% 130% at 50% -10%,#fefbf3 0%,#f4eddc 60%,#efe7d3 100%)}
+          .bodymap-wrap{width:100%;max-width:440px;margin:0 auto}
+          .bodymap-hint{display:flex;align-items:center;justify-content:center;gap:9px;
+            font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.18em;
+            text-transform:uppercase;color:var(--gold-d);font-weight:700;margin:2px 0 10px}
+          .bodymap-hint::before{content:"";width:7px;height:7px;border-radius:50%;
+            background:var(--gold);box-shadow:0 0 0 4px var(--gold-glow);animation:bmPulse 2.4s ease-in-out infinite}
+          @keyframes bmPulse{0%,100%{box-shadow:0 0 0 3px var(--gold-glow)}50%{box-shadow:0 0 0 6px rgba(201,168,76,0.12)}}
+          #bodyMapSvg{filter:drop-shadow(0 18px 32px rgba(13,32,24,0.10))}
+          /* refined silhouette — CSS beats the inline presentation attribute */
+          #bodyOutline{fill:#fdf9ef;stroke:#22402f;stroke-width:2.4;stroke-linejoin:round}
+          .body-svg text{font-family:'DM Sans',-apple-system,sans-serif}
+          .body-svg .organ{cursor:pointer;transition:opacity .28s ease, filter .2s ease}
+          .body-svg .organ text{transition:opacity .28s ease}
+          .body-svg .organ:not(.active):hover{filter:drop-shadow(0 6px 13px rgba(13,32,24,0.30)) brightness(1.05)}
+          .body-svg .organ:focus-visible{outline:none;
+            filter:drop-shadow(0 0 0 3px var(--gold)) drop-shadow(0 0 0 6px var(--gold-glow))}
+          /* focus the selected system, calm everything else */
+          .body-svg.has-active .organ:not(.active){opacity:.16;filter:grayscale(.55)}
+          .body-svg.has-active .organ:not(.active) text{opacity:0}
+          .body-svg .organ.active{filter:drop-shadow(0 0 0 3px var(--gold)) drop-shadow(0 9px 18px rgba(201,168,76,0.45))}
+          @media (prefers-reduced-motion:reduce){.bodymap-hint::before{animation:none}}
+          </style>
           <div class="body-stage">
             <div class="body-canvas">
-              <svg viewBox="0 0 460 600" class="body-svg" id="bodyMapSvg" preserveAspectRatio="xMidYMid meet">
+              <div class="bodymap-wrap">
+                <div class="bodymap-hint">Tap any system to explore</div>
+                <svg viewBox="0 0 460 600" class="body-svg" id="bodyMapSvg" preserveAspectRatio="xMidYMid meet">
                 <!-- silhouette outline -->
                 <path id="bodyOutline" d="M 230 30 C 250 30 265 50 265 70 C 265 84 257 96 250 102 L 250 130 C 280 138 310 154 320 180 L 330 280 L 320 350 L 305 360 L 305 480 L 295 580 L 270 590 L 260 480 L 240 480 L 230 590 L 200 590 L 190 480 L 200 360 L 165 360 L 150 350 L 140 280 L 150 180 C 160 154 190 138 220 130 L 220 102 C 213 96 205 84 205 70 C 205 50 220 30 230 30 Z" fill="rgba(13,32,24,0.04)" stroke="#1B3A2D" stroke-width="2"/>
 
@@ -316,13 +344,14 @@
                   <line x1="184" y1="248" x2="360" y2="252" stroke="#1B3A2D" stroke-width="0.8"/>
                 </g>
               </svg>
+              </div>
             </div>
 
             <aside class="body-side" id="bodyMapSide">
               <div class="energy-step-info">
-                <div class="stage-lbl">Click any organ</div>
-                <h5>Body Systems Map</h5>
-                <p>11 systems on the DAT. Click any to get an overview + the highest-yield facts. Several have their own dedicated tab in this lab.</p>
+                <div class="stage-lbl">Body systems</div>
+                <h5>Pick a system to begin.</h5>
+                <p>Eleven systems show up on the DAT. Tap any one for a predict-first prompt, its highest-yield facts, the classic trap, and a one-tap jump into its dedicated lab.</p>
               </div>
             </aside>
           </div>
@@ -3554,6 +3583,123 @@
 
     // Auto-open the first region so the readout isn't empty on first load.
     if (regions[0]){ regions[0].classList.add('active'); readout.innerHTML = renderRegion(regions[0].getAttribute('data-region-id')); }
+  });
+})();
+</script>
+<script>
+/* ============================================================
+   BODY SYSTEMS MAP — click/keyboard handler, predict-before-reveal,
+   and routing into each system's dedicated lab tab.
+   ============================================================ */
+(function(){
+  const SYS = {
+    skin: { name:'Integumentary', fn:'Barrier, thermoregulation, sensation, and the first step of vitamin D synthesis.',
+      predict:'If a large area of skin is destroyed (a major burn), what kills the patient first?',
+      facts:['Three layers: epidermis (keratinocytes, <b>avascular</b>), dermis (collagen, vessels, nerves), hypodermis (fat).','Thermoregulation via vasodilation/constriction + sweat; UV light starts vitamin D synthesis here.','The avascular epidermis is fed by diffusion from the dermis below.'],
+      trap:'Massive burns kill via <b>fluid loss + infection</b> (the barrier is gone), not the burn wound itself.', tab:'skin' },
+    brain: { name:'Nervous', fn:'Integration and rapid electrical control of the whole organism.',
+      predict:'Resting potential is ~−70 mV. Which ion is the membrane most permeable to at rest, and which pump maintains the gradient?',
+      facts:['Neuronal AP: resting → threshold → depolarization (Na⁺ in) → repolarization (K⁺ out) → hyperpolarization.','The <b>Na⁺/K⁺ ATPase</b> (3 Na⁺ out, 2 K⁺ in) maintains the gradient.','CNS = brain + spinal cord; PNS = somatic + autonomic (sympathetic vs parasympathetic).'],
+      trap:'Resting potential sits near <b>K⁺</b>’s equilibrium potential — the membrane is most permeable to K⁺ at rest, not Na⁺.', tab:'ap' },
+    endocrine: { name:'Endocrine', fn:'Slow, long-lasting chemical control through hormones carried in the blood.',
+      predict:'A steroid hormone and a peptide hormone reach the same cell. Which one must use a surface receptor?',
+      facts:['<b>Steroid</b> (lipid) hormones cross the membrane → intracellular receptors → change transcription. Slow, long.','<b>Peptide/amine</b> hormones bind surface receptors → second messengers (cAMP) → fast.','Axis logic: hypothalamus → pituitary → target gland → negative feedback.'],
+      trap:'Peptide hormones need surface receptors (can’t cross the membrane); steroids use intracellular ones. <b>Thyroid hormone</b> is the amine exception — it acts like a steroid.', tab:'endocrine' },
+    lungs: { name:'Respiratory', fn:'Gas exchange — O₂ in, CO₂ out — across the alveolar membrane.',
+      predict:'What physically drives air INTO the lungs during a normal inhalation?',
+      facts:['Diaphragm contracts → thoracic volume rises → intrapleural pressure drops → air flows in (negative-pressure breathing).','Exchange is passive diffusion down partial-pressure gradients at the alveolus.','CO₂ travels mostly as <b>bicarbonate (HCO₃⁻)</b> in plasma.'],
+      trap:'Inhalation is driven by a <b>pressure drop</b> from the diaphragm. Central chemoreceptors sense CO₂/pH — not O₂.', tab:'vent' },
+    heart: { name:'Circulatory', fn:'The pump that drives blood through the pulmonary and systemic circuits.',
+      predict:'Which side of the heart pumps to the lungs — and is that blood oxygenated or not?',
+      facts:['Right heart → lungs (deoxygenated); left heart → body (oxygenated). The <b>left ventricle</b> is thickest.','Conduction: SA node → AV node → bundle of His → Purkinje fibers.','Systole = contraction/ejection; diastole = relaxation/filling.'],
+      trap:'<b>Pulmonary arteries carry deoxygenated blood; pulmonary veins carry oxygenated</b> — the one place the artery/vein rule flips.', tab:'cardiac' },
+    liver: { name:'Hepatic', fn:'Metabolic hub: detox, bile, glucose and lipid handling, plasma proteins.',
+      predict:'After a meal, nutrient-rich blood from the gut reaches the liver first through which vessel?',
+      facts:['The <b>hepatic portal vein</b> delivers gut blood to the liver before systemic circulation.','Makes bile (emulsifies fat), urea (from ammonia), albumin, and clotting factors.','Stores glycogen; runs gluconeogenesis during fasting.'],
+      trap:'Dietary <b>long-chain fats bypass the portal vein</b> — they enter via lacteals/lymph, not the liver first.', tab:'dig' },
+    digestive: { name:'Digestive', fn:'Mechanical and chemical breakdown, then nutrient absorption.',
+      predict:'Where are most carbohydrates and amino acids actually absorbed?',
+      facts:['Most absorption is in the <b>small intestine (jejunum)</b> — villi + microvilli give huge surface area.','Stomach: pepsin + HCl (parietal cells) + intrinsic factor; pancreas adds enzymes + bicarbonate.','Colon reclaims water + electrolytes; gut bacteria synthesize vitamin K.'],
+      trap:'<b>Iron + calcium</b> are absorbed in the duodenum; <b>B12</b> in the terminal ileum (needs intrinsic factor from the stomach).', tab:'dig' },
+    pancreas: { name:'Pancreas (dual)', fn:'Exocrine digestive enzymes + endocrine glucose hormones.',
+      predict:'Blood glucose spikes after a meal. Which islet cell responds, and with what hormone?',
+      facts:['Exocrine: amylase, lipase, proteases + bicarbonate secreted into the duodenum.','Endocrine islets: <b>β-cells → insulin</b> (lowers glucose), <b>α-cells → glucagon</b> (raises glucose).','Insulin drives GLUT4 translocation in muscle and fat.'],
+      trap:'<b>Insulin lowers</b> blood glucose (β-cells); <b>glucagon raises</b> it (α-cells). Don’t swap them.', tab:'endotab' },
+    kidneys: { name:'Renal / Urinary', fn:'Filter blood, balance water and electrolytes, regulate blood pressure and pH.',
+      predict:'The medulla must be very salty to concentrate urine. What builds that gradient?',
+      facts:['Nephron path: glomerulus → PCT → loop of Henle → DCT → collecting duct.','<b>Countercurrent multiplication</b> makes the medulla hyperosmotic, enabling concentrated urine.','ADH → aquaporins in the collecting duct (water back); aldosterone → Na⁺ reabsorption.'],
+      trap:'The loop of Henle <b>sets up</b> the gradient; ADH then lets the collecting duct <b>use</b> it. Two separate steps.', tab:'nephron' },
+    repro: { name:'Reproductive', fn:'Gamete production and hormonal cycling.',
+      predict:'What hormone surge triggers ovulation around day 14?',
+      facts:['28-day cycle: follicular (FSH → follicle) → <b>LH surge</b> → ovulation → luteal (progesterone).','The corpus luteum makes progesterone; its decay (no pregnancy) triggers menstruation.','Males: continuous spermatogenesis — FSH → Sertoli cells, LH → Leydig cells (testosterone).'],
+      trap:'The <b>LH surge</b> triggers ovulation. Mid-cycle estrogen flips to <b>positive</b> feedback to cause that surge.', tab:'repro' },
+    skeletal: { name:'Skeletal', fn:'Support, protection, movement levers, mineral storage, and blood cell production.',
+      predict:'Where are new blood cells made, and what hormone pulls calcium out of bone?',
+      facts:['<b>Red marrow</b> → hematopoiesis (all blood cells). Bone stores Ca²⁺ and PO₄³⁻.','<b>Osteoblasts build</b> bone; <b>osteoclasts cut</b> (resorb) it.','PTH raises blood Ca²⁺ (osteoclast activity); calcitonin lowers it.'],
+      trap:'OsteoBlasts Build, osteoClasts Cut. <b>PTH raises</b> blood calcium by resorbing bone.', tab:'skin' },
+    muscle: { name:'Muscular', fn:'Force generation through actin–myosin sliding filaments.',
+      predict:'What ion, released from the sarcoplasmic reticulum, actually starts a contraction?',
+      facts:['Sliding filament: myosin heads pull actin; the sarcomere shortens (A-band stays constant).','<b>Ca²⁺</b> from the SR binds troponin → shifts tropomyosin → exposes actin sites; ATP then detaches the head.','Skeletal (striated, voluntary), cardiac (striated, involuntary, intercalated discs), smooth (involuntary).'],
+      trap:'<b>ATP is needed to detach</b> myosin from actin — that’s why rigor mortis (no ATP) locks the muscles.', tab:'filament' },
+    immune: { name:'Immune / Lymphatic', fn:'Defense: innate (fast, nonspecific) + adaptive (slow, specific, with memory).',
+      predict:'A virus is replicating inside your cells. Which T cell kills the infected cells directly?',
+      facts:['Innate: barriers, phagocytes, NK cells, inflammation — fast, no memory.','Adaptive: <b>B cells</b> (antibodies, humoral) + <b>T cells</b> (cytotoxic kill, helper coordinate).','Memory cells drive a faster, stronger secondary response — the basis of vaccination.'],
+      trap:'<b>Cytotoxic (CD8)</b> T cells kill infected cells; <b>Helper (CD4)</b> coordinate. HIV targets CD4, crippling the whole adaptive arm.', tab:'imm' },
+  };
+
+  const svg = document.getElementById('bodyMapSvg');
+  const side = document.getElementById('bodyMapSide');
+  if (!svg || !side) return;
+  const flagship = svg.closest('.flagship');
+
+  function render(key){
+    const d = SYS[key];
+    if (!d) return;
+    const facts = d.facts.map(f => `<li>${f}</li>`).join('');
+    side.innerHTML = `
+      <div class="energy-step-info">
+        <div class="stage-lbl">${d.name} system</div>
+        <h5>${d.fn}</h5>
+        <div class="bm-predict" style="background:rgba(193,154,62,0.10);border:1px solid var(--gold-d);border-radius:8px;padding:10px 12px;margin:6px 0 10px">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-d);font-weight:700;margin-bottom:4px">Predict first</div>
+          <div style="font-size:13px;color:var(--ink);line-height:1.5">${d.predict}</div>
+          <button type="button" class="bm-reveal" style="margin-top:8px;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:#fff;background:var(--teal);border:none;border-radius:6px;padding:6px 12px;cursor:pointer">Reveal the high-yield facts</button>
+        </div>
+        <div class="bm-facts" hidden>
+          <ul style="margin:0 0 10px;padding-left:18px;font-size:13px;line-height:1.5;color:var(--ink-2)">${facts}</ul>
+          <div class="yield" style="margin-top:0"><b>DAT trap:</b> ${d.trap}</div>
+          ${d.tab ? `<button type="button" class="bm-goto" data-goto="${d.tab}" style="margin-top:12px;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--teal);background:none;border:1px solid var(--teal);border-radius:6px;padding:7px 12px;cursor:pointer;width:100%">Open the ${d.name} lab →</button>` : ''}
+        </div>
+      </div>`;
+    const rev = side.querySelector('.bm-reveal');
+    const facelem = side.querySelector('.bm-facts');
+    if (rev && facelem){ rev.addEventListener('click', () => { facelem.hidden = false; rev.style.display = 'none'; }); }
+    const goto = side.querySelector('.bm-goto');
+    if (goto && flagship){
+      goto.addEventListener('click', () => {
+        const btn = flagship.querySelector(`.lab-tabs button[data-tab="${goto.dataset.goto}"]`);
+        if (btn){ btn.click(); btn.scrollIntoView({behavior:'smooth', block:'nearest'}); }
+      });
+    }
+  }
+
+  function activate(g){
+    svg.querySelectorAll('.organ').forEach(o => o.classList.remove('active'));
+    g.classList.add('active');
+    svg.classList.add('has-active');
+    render(g.dataset.organ);
+  }
+
+  svg.querySelectorAll('.organ').forEach(g => {
+    const key = g.dataset.organ;
+    if (!SYS[key]) return;
+    g.setAttribute('tabindex','0');
+    g.setAttribute('role','button');
+    g.setAttribute('aria-label', `${SYS[key].name} system`);
+    g.addEventListener('click', () => activate(g));
+    g.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); activate(g); }
+    });
   });
 })();
 </script>
