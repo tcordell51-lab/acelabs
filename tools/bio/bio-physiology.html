@@ -187,12 +187,32 @@
           .body-svg.has-active .organ:not(.active){opacity:.16;filter:grayscale(.55)}
           .body-svg.has-active .organ:not(.active) text{opacity:0}
           .body-svg .organ.active{filter:drop-shadow(0 0 0 3px var(--gold)) drop-shadow(0 9px 18px rgba(201,168,76,0.45))}
-          @media (prefers-reduced-motion:reduce){.bodymap-hint::before{animation:none}}
+          /* ── Deep-dive fly-in (heart proof-of-concept) ───────────────── */
+          .body-svg .organ.heart-deep{cursor:zoom-in}
+          .bm-deepdive{transform-box:fill-box;transform-origin:center;pointer-events:none;
+            animation:bmDeep 2.2s ease-in-out infinite}
+          @keyframes bmDeep{0%,100%{opacity:.18;transform:scale(.84)}50%{opacity:.62;transform:scale(1.2)}}
+          .body-svg.flying .bm-deepdive{display:none}
+          .body-svg .organ line,.body-svg .organ circle{transition:opacity .3s ease}
+          /* during a fly-in: collapse everything except the target organ glyph */
+          .body-svg.flying .organ:not(.active){opacity:0}
+          .body-svg.flying text{opacity:0}
+          .body-svg.flying .organ.active line,.body-svg.flying .organ.active circle{opacity:0}
+          /* "land inside" arrival animation on the destination lab module */
+          @keyframes bmArrive{from{opacity:0;transform:scale(1.06)}to{opacity:1;transform:scale(1)}}
+          .lab-module.bm-arriving{animation:bmArrive .6s cubic-bezier(.2,.7,.2,1)}
+          /* zoom-out control inside a deep-dive destination */
+          .bm-zoomback{display:inline-flex;align-items:center;gap:7px;margin:0 0 14px;
+            font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.04em;
+            color:var(--teal);background:rgba(95,168,116,0.10);border:1px solid var(--teal);
+            border-radius:8px;padding:8px 14px;cursor:pointer;transition:background .18s ease,transform .18s ease}
+          .bm-zoomback:hover{background:rgba(95,168,116,0.20);transform:translateX(-2px)}
+          @media (prefers-reduced-motion:reduce){.bodymap-hint::before,.bm-deepdive{animation:none}.lab-module.bm-arriving{animation:none}}
           </style>
           <div class="body-stage">
             <div class="body-canvas">
               <div class="bodymap-wrap">
-                <div class="bodymap-hint">Tap any system to explore</div>
+                <div class="bodymap-hint">Tap any system — or tap the heart to fly inside</div>
                 <svg viewBox="0 0 460 600" class="body-svg" id="bodyMapSvg" preserveAspectRatio="xMidYMid meet">
                 <!-- ===== Clean flat schematic body ===== -->
                 <circle class="silhouette" cx="230" cy="62" r="26" fill="#fdf9ef" stroke="#22402f" stroke-width="2.4"/>
@@ -3673,15 +3693,83 @@
     render(g.dataset.organ);
   }
 
+  /* ── Deep-dive fly-in (heart proof-of-concept) ───────────────────── */
+  const DEFAULT_VB = [0, 0, 460, 600];
+  const HEART_VB   = [150, 96, 150, 196];                 // frames the chest on the heart
+  const easeInOut  = t => (t < 0.5 ? 2*t*t : 1 - Math.pow(-2*t + 2, 2) / 2);
+  const reduceMotion = () => window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+
+  function animateViewBox(from, to, dur, done){
+    const t0 = performance.now();
+    (function step(now){
+      const t = Math.min(1, (now - t0) / dur), e = easeInOut(t);
+      svg.setAttribute('viewBox', from.map((f, i) => f + (to[i] - f) * e).join(' '));
+      if (t < 1) requestAnimationFrame(step); else if (done) done();
+    })(t0);
+  }
+
+  function switchToTab(name){
+    const btn = flagship && flagship.querySelector(`.lab-tabs button[data-tab="${name}"]`);
+    if (btn) btn.click();
+    return flagship && flagship.querySelector(`:scope > .lab-module[data-module="${name}"]`);
+  }
+
+  function resetBodyMap(){
+    svg.setAttribute('viewBox', DEFAULT_VB.join(' '));
+    svg.classList.remove('flying', 'has-active');
+    svg.querySelectorAll('.organ').forEach(o => o.classList.remove('active'));
+  }
+
+  function flyInto(g, tab){
+    const land = () => {
+      const mod = switchToTab(tab);
+      if (mod){ mod.classList.remove('bm-arriving'); void mod.offsetWidth; mod.classList.add('bm-arriving'); }
+      resetBodyMap();                       // body map is hidden now — reset invisibly for next time
+    };
+    if (reduceMotion()){ activate(g); land(); return; }
+    svg.querySelectorAll('.organ').forEach(o => o.classList.remove('active'));
+    g.classList.add('active');
+    svg.classList.add('flying', 'has-active');
+    animateViewBox(DEFAULT_VB, HEART_VB, 780, () => setTimeout(land, 110));
+  }
+
+  function flyBackToBodyMap(){
+    const bodyMod = switchToTab('bodymap');
+    if (reduceMotion() || !bodyMod){ resetBodyMap(); return; }
+    svg.classList.add('flying');
+    svg.setAttribute('viewBox', HEART_VB.join(' '));        // start zoomed-in, before paint
+    requestAnimationFrame(() => animateViewBox(HEART_VB, DEFAULT_VB, 720, resetBodyMap));
+  }
+
+  /* pulsing "deep-dive" ring on the heart + a zoom-out control inside the cardiac lab */
+  const heartG = svg.querySelector('.organ[data-organ="heart"]');
+  if (heartG){
+    heartG.classList.add('heart-deep');
+    const ring = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    ring.setAttribute('class', 'bm-deepdive');
+    ring.setAttribute('cx', '228'); ring.setAttribute('cy', '196'); ring.setAttribute('r', '23');
+    ring.setAttribute('fill', 'none'); ring.setAttribute('stroke', '#C9A84C'); ring.setAttribute('stroke-width', '2');
+    heartG.insertBefore(ring, heartG.firstChild);
+    const cardiacMod = flagship && flagship.querySelector(':scope > .lab-module[data-module="cardiac"]');
+    if (cardiacMod && !cardiacMod.querySelector('.bm-zoomback')){
+      const back = document.createElement('button');
+      back.type = 'button'; back.className = 'bm-zoomback';
+      back.innerHTML = '↩ Zoom out to Body Map';
+      back.addEventListener('click', flyBackToBodyMap);
+      cardiacMod.insertBefore(back, cardiacMod.firstChild);
+    }
+  }
+
   svg.querySelectorAll('.organ').forEach(g => {
     const key = g.dataset.organ;
     if (!SYS[key]) return;
     g.setAttribute('tabindex','0');
     g.setAttribute('role','button');
-    g.setAttribute('aria-label', `${SYS[key].name} system`);
-    g.addEventListener('click', () => activate(g));
+    g.setAttribute('aria-label', key === 'heart' ? 'Circulatory system — fly into the cardiac cycle' : `${SYS[key].name} system`);
+    const go = () => (key === 'heart' ? flyInto(g, 'cardiac') : activate(g));
+    g.addEventListener('click', go);
     g.addEventListener('keydown', e => {
-      if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); activate(g); }
+      if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); go(); }
     });
   });
 })();
