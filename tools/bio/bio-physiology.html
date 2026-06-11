@@ -212,7 +212,7 @@
           <div class="body-stage">
             <div class="body-canvas">
               <div class="bodymap-wrap">
-                <div class="bodymap-hint">Tap any system — or tap the heart to fly inside</div>
+                <div class="bodymap-hint">Tap a system · predict · then fly inside the lab</div>
                 <svg viewBox="0 0 460 600" class="body-svg" id="bodyMapSvg" preserveAspectRatio="xMidYMid meet">
                 <!-- ===== Clean flat schematic body ===== -->
                 <circle class="silhouette" cx="230" cy="62" r="26" fill="#fdf9ef" stroke="#22402f" stroke-width="2.4"/>
@@ -3671,33 +3671,53 @@
         <div class="bm-facts" hidden>
           <ul style="margin:0 0 10px;padding-left:18px;font-size:13px;line-height:1.5;color:var(--ink-2)">${facts}</ul>
           <div class="yield" style="margin-top:0"><b>DAT trap:</b> ${d.trap}</div>
-          ${d.tab ? `<button type="button" class="bm-goto" data-goto="${d.tab}" style="margin-top:12px;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--teal);background:none;border:1px solid var(--teal);border-radius:6px;padding:7px 12px;cursor:pointer;width:100%">Open the ${d.name} lab →</button>` : ''}
+          ${d.tab ? `<button type="button" class="bm-goto" data-goto="${d.tab}" style="margin-top:12px;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--teal);background:none;border:1px solid var(--teal);border-radius:6px;padding:7px 12px;cursor:pointer;width:100%">⤢ Fly into the ${d.name} lab</button>` : ''}
         </div>
       </div>`;
     const rev = side.querySelector('.bm-reveal');
     const facelem = side.querySelector('.bm-facts');
     if (rev && facelem){ rev.addEventListener('click', () => { facelem.hidden = false; rev.style.display = 'none'; }); }
     const goto = side.querySelector('.bm-goto');
-    if (goto && flagship){
-      goto.addEventListener('click', () => {
-        const btn = flagship.querySelector(`.lab-tabs button[data-tab="${goto.dataset.goto}"]`);
-        if (btn){ btn.click(); btn.scrollIntoView({behavior:'smooth', block:'nearest'}); }
-      });
+    if (goto){
+      goto.addEventListener('click', () => { if (activeG) flyInto(activeG, goto.dataset.goto); });
     }
   }
 
+  let activeG = null;
+
   function activate(g){
+    activeG = g;
     svg.querySelectorAll('.organ').forEach(o => o.classList.remove('active'));
     g.classList.add('active');
     svg.classList.add('has-active');
     render(g.dataset.organ);
   }
 
-  /* ── Deep-dive fly-in (heart proof-of-concept) ───────────────────── */
+  /* ── Cinematic fly-in (generalized to every system) ──────────────── */
   const DEFAULT_VB = [0, 0, 460, 600];
-  const HEART_VB   = [150, 96, 150, 196];                 // frames the chest on the heart
+  const HEART_VB   = [150, 96, 150, 196];                 // hand-tuned frame for the heart
+  const AR = 460 / 600;                                    // keep the zoom box on-aspect
+  let lastTarget = HEART_VB.slice();
   const easeInOut  = t => (t < 0.5 ? 2*t*t : 1 - Math.pow(-2*t + 2, 2) / 2);
   const reduceMotion = () => window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+
+  // Auto-frame an organ on its anatomical glyph, ignoring the off-body legend swatch + leader line.
+  function organTarget(g){
+    if (g.dataset.organ === 'heart') return HEART_VB.slice();
+    let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
+    g.querySelectorAll('path,ellipse,circle,rect,polygon').forEach(el => {
+      let bb; try { bb = el.getBBox(); } catch(e){ return; }
+      const cx = bb.x + bb.width / 2;
+      if (cx < 140 || cx > 300) return;                   // skip the legend swatch in the margin
+      x0 = Math.min(x0, bb.x);             y0 = Math.min(y0, bb.y);
+      x1 = Math.max(x1, bb.x + bb.width);  y1 = Math.max(y1, bb.y + bb.height);
+    });
+    if (x1 < x0) return HEART_VB.slice();
+    let w = (x1 - x0) * 1.9, h = (y1 - y0) * 1.9;          // 1.9× leaves breathing room
+    const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;
+    if (w / h < AR) w = h * AR; else h = w / AR;
+    return [cx - w / 2, cy - h / 2, w, h];
+  }
 
   function animateViewBox(from, to, dur, done){
     const t0 = performance.now();
@@ -3714,6 +3734,16 @@
     return flagship && flagship.querySelector(`:scope > .lab-module[data-module="${name}"]`);
   }
 
+  function ensureZoomBack(mod){
+    if (!mod || mod.querySelector('.bm-zoomback')) return;
+    const back = document.createElement('button');
+    back.type = 'button';
+    back.className = 'bm-zoomback';
+    back.innerHTML = '↩ Zoom out to Body Map';
+    back.addEventListener('click', flyBackToBodyMap);
+    mod.insertBefore(back, mod.firstChild);
+  }
+
   function resetBodyMap(){
     svg.setAttribute('viewBox', DEFAULT_VB.join(' '));
     svg.classList.remove('flying', 'has-active');
@@ -3721,43 +3751,26 @@
   }
 
   function flyInto(g, tab){
+    const target = lastTarget = organTarget(g);
     const land = () => {
       const mod = switchToTab(tab);
+      ensureZoomBack(mod);
       if (mod){ mod.classList.remove('bm-arriving'); void mod.offsetWidth; mod.classList.add('bm-arriving'); }
       resetBodyMap();                       // body map is hidden now — reset invisibly for next time
     };
-    if (reduceMotion()){ activate(g); land(); return; }
+    if (reduceMotion()){ land(); return; }
     svg.querySelectorAll('.organ').forEach(o => o.classList.remove('active'));
     g.classList.add('active');
     svg.classList.add('flying', 'has-active');
-    animateViewBox(DEFAULT_VB, HEART_VB, 780, () => setTimeout(land, 110));
+    animateViewBox(DEFAULT_VB, target, 780, () => setTimeout(land, 110));
   }
 
   function flyBackToBodyMap(){
     const bodyMod = switchToTab('bodymap');
     if (reduceMotion() || !bodyMod){ resetBodyMap(); return; }
     svg.classList.add('flying');
-    svg.setAttribute('viewBox', HEART_VB.join(' '));        // start zoomed-in, before paint
-    requestAnimationFrame(() => animateViewBox(HEART_VB, DEFAULT_VB, 720, resetBodyMap));
-  }
-
-  /* pulsing "deep-dive" ring on the heart + a zoom-out control inside the cardiac lab */
-  const heartG = svg.querySelector('.organ[data-organ="heart"]');
-  if (heartG){
-    heartG.classList.add('heart-deep');
-    const ring = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-    ring.setAttribute('class', 'bm-deepdive');
-    ring.setAttribute('cx', '228'); ring.setAttribute('cy', '196'); ring.setAttribute('r', '23');
-    ring.setAttribute('fill', 'none'); ring.setAttribute('stroke', '#C9A84C'); ring.setAttribute('stroke-width', '2');
-    heartG.insertBefore(ring, heartG.firstChild);
-    const cardiacMod = flagship && flagship.querySelector(':scope > .lab-module[data-module="cardiac"]');
-    if (cardiacMod && !cardiacMod.querySelector('.bm-zoomback')){
-      const back = document.createElement('button');
-      back.type = 'button'; back.className = 'bm-zoomback';
-      back.innerHTML = '↩ Zoom out to Body Map';
-      back.addEventListener('click', flyBackToBodyMap);
-      cardiacMod.insertBefore(back, cardiacMod.firstChild);
-    }
+    svg.setAttribute('viewBox', lastTarget.join(' '));      // start zoomed-in, before paint
+    requestAnimationFrame(() => animateViewBox(lastTarget, DEFAULT_VB, 720, resetBodyMap));
   }
 
   svg.querySelectorAll('.organ').forEach(g => {
@@ -3765,11 +3778,10 @@
     if (!SYS[key]) return;
     g.setAttribute('tabindex','0');
     g.setAttribute('role','button');
-    g.setAttribute('aria-label', key === 'heart' ? 'Circulatory system — fly into the cardiac cycle' : `${SYS[key].name} system`);
-    const go = () => (key === 'heart' ? flyInto(g, 'cardiac') : activate(g));
-    g.addEventListener('click', go);
+    g.setAttribute('aria-label', `${SYS[key].name} system`);
+    g.addEventListener('click', () => activate(g));
     g.addEventListener('keydown', e => {
-      if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); go(); }
+      if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); activate(g); }
     });
   });
 })();
