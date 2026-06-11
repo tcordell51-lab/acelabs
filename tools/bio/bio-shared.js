@@ -4291,16 +4291,91 @@ const ENDO_DATA = {
   thy2: { name:"Thymus", body:"<b>Thymosin</b> + thymopoietin → <b>T cell maturation</b> (positive + negative selection). Most active in childhood; involutes after puberty. T cells get their name here ('T' for thymus)." },
 };
 
+/* Per-hormone source → target/effect, color-coded by class (steroid/peptide/amine).
+   Renders compact mini-diagrams inside each gland row of the endocrine map. */
+const ENDO_HORMONES = {
+  hypo: [
+    { h:"TRH",          cls:"peptide", fx:"ant. pituitary · → TSH" },
+    { h:"CRH",          cls:"peptide", fx:"ant. pituitary · → ACTH" },
+    { h:"GnRH",         cls:"peptide", fx:"ant. pituitary · → FSH / LH" },
+    { h:"GHRH",         cls:"peptide", fx:"ant. pituitary · → GH" },
+    { h:"Somatostatin", cls:"peptide", fx:"ant. pituitary · suppresses GH" },
+    { h:"Dopamine",     cls:"amine",   fx:"ant. pituitary · suppresses prolactin" },
+  ],
+  ant: [
+    { h:"GH",        cls:"peptide", fx:"liver / body · growth, IGF-1" },
+    { h:"TSH",       cls:"peptide", fx:"thyroid · → T3 / T4" },
+    { h:"ACTH",      cls:"peptide", fx:"adrenal cortex · → cortisol" },
+    { h:"FSH",       cls:"peptide", fx:"gonads · gametes (egg / sperm)" },
+    { h:"LH",        cls:"peptide", fx:"gonads · sex steroids, ovulation" },
+    { h:"Prolactin", cls:"peptide", fx:"mammary gland · milk synthesis" },
+  ],
+  post: [
+    { h:"ADH (vasopressin)", cls:"peptide", fx:"kidney collecting duct · water retention" },
+    { h:"Oxytocin",          cls:"peptide", fx:"uterus / breast · contraction, milk letdown" },
+  ],
+  thyr: [
+    { h:"T3 / T4",    cls:"amine",   fx:"whole body · ↑ metabolic rate" },
+    { h:"Calcitonin", cls:"peptide", fx:"bone · ↓ blood Ca²⁺" },
+  ],
+  par: [
+    { h:"PTH", cls:"peptide", fx:"bone / kidney / gut · ↑ blood Ca²⁺" },
+  ],
+  cort: [
+    { h:"Aldosterone",     cls:"steroid", fx:"kidney · ↑ Na⁺ retention, ↑ K⁺ loss" },
+    { h:"Cortisol",        cls:"steroid", fx:"whole body · ↑ glucose, anti-inflammatory" },
+    { h:"Androgens (DHEA)", cls:"steroid", fx:"body · sex characteristics" },
+  ],
+  med: [
+    { h:"Epinephrine",    cls:"amine", fx:"whole body · fight-or-flight, ↑ HR / glucose" },
+    { h:"Norepinephrine", cls:"amine", fx:"blood vessels · vasoconstriction" },
+  ],
+  panc: [
+    { h:"Insulin (β)",      cls:"peptide", fx:"liver / muscle / fat · ↓ blood glucose" },
+    { h:"Glucagon (α)",     cls:"peptide", fx:"liver · ↑ blood glucose" },
+    { h:"Somatostatin (δ)", cls:"peptide", fx:"islets · damps insulin and glucagon" },
+  ],
+  ova: [
+    { h:"Estrogen",     cls:"steroid", fx:"uterus / body · endometrium, sex characteristics" },
+    { h:"Progesterone", cls:"steroid", fx:"uterus · maintains endometrium" },
+  ],
+  tes: [
+    { h:"Testosterone", cls:"steroid", fx:"body / testes · sex characteristics, sperm" },
+  ],
+  pin: [
+    { h:"Melatonin", cls:"amine", fx:"brain (SCN) · circadian / sleep" },
+  ],
+  thy2: [
+    { h:"Thymosin", cls:"peptide", fx:"T lymphocytes · T-cell maturation" },
+  ],
+};
+
 function initEndocrine() {
   const cells = document.querySelectorAll("#endoGrid .endo-cell");
   const side = document.getElementById("endoSide");
   cells.forEach(c => {
-    c.addEventListener("click", () => {
+    // Upgrade the plain hormone line into per-hormone source → target/effect mini-diagrams.
+    const horms = c.querySelector(".horms");
+    const list = ENDO_HORMONES[c.dataset.endo];
+    if (horms && list) {
+      horms.classList.add("endo-hormones");
+      horms.innerHTML = list.map(x =>
+        `<span class="hx hx-${x.cls}"><span class="hx-dot" aria-hidden="true"></span>` +
+        `<span class="hx-name">${x.h}</span><span class="hx-arrow" aria-hidden="true">→</span>` +
+        `<span class="hx-fx">${x.fx}</span></span>`
+      ).join("");
+    }
+    // Keyboard + a11y: each gland row behaves as a button.
+    if (!c.hasAttribute("role")) c.setAttribute("role", "button");
+    if (!c.hasAttribute("tabindex")) c.setAttribute("tabindex", "0");
+    const open = () => {
       cells.forEach(x => x.classList.remove("active"));
       c.classList.add("active");
       const d = ENDO_DATA[c.dataset.endo];
-      if (d) side.innerHTML = `<div class="energy-step-info"><div class="stage-lbl">Gland</div><h5>${d.name}</h5><p>${d.body}</p></div>`;
-    });
+      if (d && side) side.innerHTML = `<div class="energy-step-info"><div class="stage-lbl">Gland</div><h5>${d.name}</h5><p>${d.body}</p></div>`;
+    };
+    c.addEventListener("click", open);
+    c.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); open(); } });
   });
 }
 
