@@ -657,6 +657,224 @@
 
         <!-- ====== ENDOCRINE MAP ====== -->
         <div class="lab-module" data-module="endocrine">
+          <!-- ====== ENDOCRINE FEEDBACK-AXIS EXPLORER ====== -->
+          <style>
+          .endo-axis{--ea-lo:#4E84A6;--ea-norm:#5FA874;--ea-hi:#D9694C;
+            background:radial-gradient(120% 130% at 50% -10%,#fefbf3 0%,#f4eddc 70%,#efe7d3 100%);
+            border-bottom:1px solid var(--line);padding:20px 24px}
+          .ea-head{display:flex;flex-wrap:wrap;align-items:flex-start;gap:10px 16px;margin-bottom:18px}
+          .ea-title{font-family:'DM Sans',sans-serif;font-weight:800;font-size:16px;color:var(--ink);margin:0}
+          .ea-sub{font-size:12px;color:var(--ink-2);margin-top:2px;max-width:340px}
+          .ea-pills{display:flex;flex-wrap:wrap;gap:6px;margin-left:auto}
+          .ea-pill{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.02em;
+            color:var(--ink-2);background:#fff;border:1px solid var(--line);border-radius:999px;
+            padding:6px 12px;cursor:pointer;transition:all .16s ease}
+          .ea-pill:hover{border-color:var(--gold-d)}
+          .ea-pill.on{color:#fff;background:var(--teal);border-color:var(--teal)}
+          .ea-body{display:flex;gap:22px;align-items:flex-start;flex-wrap:wrap}
+          .ea-chain{position:relative;flex:1 1 320px;min-width:290px;padding-right:46px}
+          .ea-node{position:relative;background:#fff;border:1.5px solid var(--ink);border-radius:12px;
+            padding:10px 14px;box-shadow:0 4px 12px rgba(13,32,24,0.06)}
+          .ea-gland{font-family:'DM Sans',sans-serif;font-weight:800;font-size:14px;color:var(--ink)}
+          .ea-role{font-size:10px;color:var(--ink-2);margin-top:1px;letter-spacing:.02em;text-transform:uppercase}
+          .ea-horm{display:flex;align-items:center;gap:9px;margin-top:7px}
+          .ea-h-name{font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:var(--ink);min-width:64px}
+          .ea-bar{flex:1;height:11px;background:rgba(13,32,24,0.07);border-radius:6px;overflow:hidden}
+          .ea-bar > i{display:block;height:100%;width:50%;border-radius:6px;background:var(--ea-norm);
+            transition:width .7s cubic-bezier(.3,.7,.2,1),background .5s ease}
+          .ea-arrow{position:relative;height:32px}
+          .ea-arrow::before{content:"";position:absolute;top:0;bottom:0;left:50%;width:2px;
+            background:rgba(13,32,24,0.22);transform:translateX(-50%)}
+          .ea-arrow::after{content:"";position:absolute;bottom:-1px;left:50%;transform:translateX(-50%);
+            border-left:5px solid transparent;border-right:5px solid transparent;border-top:7px solid rgba(13,32,24,0.38)}
+          .ea-sig{position:absolute;left:50%;top:0;width:8px;height:8px;margin-left:-4px;border-radius:50%;
+            background:var(--gold);box-shadow:0 0 6px var(--gold);animation:eaPulse 1.5s linear infinite}
+          @keyframes eaPulse{0%{top:-3px;opacity:0}18%{opacity:1}82%{opacity:1}100%{top:29px;opacity:0}}
+          .ea-arrow-lbl{position:absolute;left:calc(50% + 12px);top:50%;transform:translateY(-50%);
+            font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;color:var(--teal);white-space:nowrap}
+          .ea-effect{background:rgba(95,168,116,0.12);border:1px dashed var(--teal);border-radius:10px;
+            padding:9px 13px;font-size:12px;color:var(--ink);font-weight:600}
+          .ea-fb{position:absolute;right:8px;top:52px;bottom:74px;width:30px;
+            border:2px dashed var(--ea-hi);border-left:none;border-radius:0 16px 16px 0;pointer-events:none}
+          .ea-fb-lbl{position:absolute;right:-3px;top:50%;transform:translateY(-50%);
+            writing-mode:vertical-rl;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;
+            letter-spacing:.05em;color:var(--ea-hi);background:#f4eddc;padding:5px 1px}
+          .ea-panel{flex:1 1 250px;min-width:235px}
+          .ea-panel-title{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;
+            text-transform:uppercase;color:var(--gold-d);font-weight:700;margin-bottom:9px}
+          .ea-perturbs{display:flex;flex-direction:column;gap:7px}
+          .ea-perturb{text-align:left;font-family:'DM Sans',sans-serif;font-size:12.5px;font-weight:600;
+            color:var(--ink);background:#fff;border:1px solid var(--line);border-radius:8px;
+            padding:9px 12px;cursor:pointer;transition:all .15s ease}
+          .ea-perturb:hover{border-color:var(--gold-d);transform:translateX(2px)}
+          .ea-perturb.on{border-color:var(--teal);background:rgba(95,168,116,0.10);box-shadow:inset 3px 0 0 var(--teal)}
+          .ea-readout{margin-top:12px;font-size:12.5px;line-height:1.55;color:var(--ink-2);
+            background:#fff;border:1px solid var(--line);border-radius:8px;padding:11px 13px;min-height:44px}
+          .ea-readout b{color:var(--ink)}
+          .ea-reset{margin-top:10px;font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;
+            color:var(--ink-2);background:none;border:1px solid var(--line);border-radius:6px;padding:6px 11px;cursor:pointer}
+          .ea-reset:hover{border-color:var(--gold-d);color:var(--ink)}
+          @media (prefers-reduced-motion:reduce){.ea-sig{animation:none;display:none}}
+          </style>
+          <div class="endo-axis" id="endoAxis">
+            <div class="ea-head">
+              <div>
+                <p class="ea-title" id="eaTitle">Thyroid axis (HPT)</p>
+                <div class="ea-sub" id="eaSub">Hypothalamus → pituitary → gland, throttled by negative feedback. Perturb it and watch the loop re-balance.</div>
+              </div>
+              <div class="ea-pills" id="eaPills">
+                <button class="ea-pill on" data-axis="thyroid">Thyroid · HPT</button>
+                <button class="ea-pill" data-axis="adrenal">Adrenal · HPA</button>
+                <button class="ea-pill" data-axis="gonad">Gonadal · HPG</button>
+              </div>
+            </div>
+            <div class="ea-body">
+              <div class="ea-chain">
+                <div class="ea-node">
+                  <div class="ea-gland" id="eaG0">Hypothalamus</div>
+                  <div class="ea-role">releasing hormone</div>
+                  <div class="ea-horm"><span class="ea-h-name" id="eaN0">TRH</span><div class="ea-bar"><i id="eaB0"></i></div></div>
+                </div>
+                <div class="ea-arrow"><span class="ea-sig"></span><span class="ea-arrow-lbl" id="eaA0">TRH</span></div>
+                <div class="ea-node">
+                  <div class="ea-gland" id="eaG1">Anterior pituitary</div>
+                  <div class="ea-role">tropic hormone</div>
+                  <div class="ea-horm"><span class="ea-h-name" id="eaN1">TSH</span><div class="ea-bar"><i id="eaB1"></i></div></div>
+                </div>
+                <div class="ea-arrow"><span class="ea-sig"></span><span class="ea-arrow-lbl" id="eaA1">TSH</span></div>
+                <div class="ea-node">
+                  <div class="ea-gland" id="eaG2">Thyroid</div>
+                  <div class="ea-role">effector hormone</div>
+                  <div class="ea-horm"><span class="ea-h-name" id="eaN2">T₃ / T₄</span><div class="ea-bar"><i id="eaB2"></i></div></div>
+                </div>
+                <div class="ea-arrow"><span class="ea-sig"></span></div>
+                <div class="ea-effect" id="eaEffect">↑ metabolic rate · heat production · growth</div>
+                <div class="ea-fb"><span class="ea-fb-lbl">⊖ negative feedback</span></div>
+              </div>
+              <div class="ea-panel">
+                <div class="ea-panel-title">Perturb the axis</div>
+                <div class="ea-perturbs" id="eaPerturbs"></div>
+                <div class="ea-readout" id="eaReadout">Pick a perturbation. Watch the bars — and the <b>tropic hormone (TSH/ACTH/LH)</b> especially: it’s how you tell <b>primary</b> (gland problem) from <b>secondary</b> (pituitary problem).</div>
+                <button class="ea-reset" id="eaReset">↺ Reset to baseline</button>
+              </div>
+            </div>
+          </div>
+          <script>
+          (function(){
+            const root = document.getElementById('endoAxis');
+            if (!root) return;
+            const C = { lo:'#4E84A6', norm:'#5FA874', hi:'#D9694C' };
+            const colorFor = v => v < 30 ? C.lo : (v > 70 ? C.hi : C.norm);
+            const AXES = {
+              thyroid: {
+                title:'Thyroid axis (HPT)',
+                sub:'TRH → TSH → thyroid hormone, throttled by negative feedback.',
+                glands:['Hypothalamus','Anterior pituitary','Thyroid'],
+                horm:['TRH','TSH','T₃ / T₄'], arrows:['TRH','TSH'],
+                effect:'↑ metabolic rate · heat production · growth & CNS development',
+                base:[55,55,55],
+                perturbs:[
+                  {label:'Primary hypothyroidism (gland fails)', levels:[85,93,12],
+                    note:'Thyroid can’t make T₄ → effector low. Lost feedback drives TRH and <b>TSH high</b>. Primary = <b>low T₄, HIGH TSH</b> (e.g. Hashimoto’s).'},
+                  {label:'Secondary (pituitary fails)', levels:[80,12,18],
+                    note:'Pituitary can’t secrete TSH → thyroid understimulated. <b>Low T₄ with LOW TSH</b>. The TSH is what separates secondary from primary.'},
+                  {label:'Graves’ disease (auto-antibody)', levels:[6,5,93],
+                    note:'Antibody mimics TSH → thyroid floods T₄ regardless of the axis. Feedback slams TRH/TSH down. <b>High T₄, suppressed TSH</b>.'},
+                  {label:'Take T₄ pills (exogenous)', levels:[8,7,88],
+                    note:'Exogenous T₄ raises the effector signal → negative feedback suppresses TRH & TSH. Why TSH is monitored on replacement.'}
+                ]
+              },
+              adrenal: {
+                title:'Adrenal axis (HPA)',
+                sub:'CRH → ACTH → cortisol — the stress axis, with negative feedback.',
+                glands:['Hypothalamus','Anterior pituitary','Adrenal cortex'],
+                horm:['CRH','ACTH','Cortisol'], arrows:['CRH','ACTH'],
+                effect:'↑ gluconeogenesis & blood glucose · immune suppression · stress response',
+                base:[55,55,55],
+                perturbs:[
+                  {label:'Addison’s (adrenal fails)', levels:[85,90,12],
+                    note:'Cortex can’t make cortisol → low cortisol; lost feedback drives CRH and <b>ACTH high</b> (high ACTH → hyperpigmentation). Primary = <b>low cortisol, HIGH ACTH</b>.'},
+                  {label:'Secondary (pituitary fails)', levels:[80,12,16],
+                    note:'Low ACTH → adrenal understimulated → low cortisol. <b>Low cortisol, LOW ACTH</b>, and no hyperpigmentation.'},
+                  {label:'Cushing disease (ACTH tumor)', levels:[10,90,88],
+                    note:'Pituitary tumor pumps ACTH → cortisol high; hypothalamic CRH suppressed by feedback. <b>High ACTH + high cortisol</b>.'},
+                  {label:'Steroid pills (exogenous)', levels:[8,7,85],
+                    note:'Exogenous glucocorticoid acts like cortisol → suppresses CRH & ACTH → adrenal atrophy. <b>High cortisol-effect, LOW ACTH</b> — don’t stop abruptly.'}
+                ]
+              },
+              gonad: {
+                title:'Gonadal axis (HPG)',
+                sub:'GnRH → FSH/LH → sex steroids. Pulsatile GnRH stimulates; continuous suppresses.',
+                glands:['Hypothalamus','Anterior pituitary','Gonad (testis / ovary)'],
+                horm:['GnRH','FSH / LH','Sex steroids'], arrows:['GnRH','FSH/LH'],
+                effect:'gametogenesis · secondary sex characteristics',
+                base:[55,55,55],
+                perturbs:[
+                  {label:'Primary hypogonadism (gonad fails)', levels:[85,90,12],
+                    note:'Gonad fails → low sex steroids; lost feedback → <b>FSH/LH high</b>. Primary = <b>low steroids, HIGH gonadotropins</b> (e.g. Klinefelter, primary ovarian insufficiency).'},
+                  {label:'Secondary (hypothalamus/pituitary)', levels:[16,14,18],
+                    note:'Low GnRH or FSH/LH → gonad understimulated → low sex steroids. <b>Low steroids, LOW gonadotropins</b>.'},
+                  {label:'Anabolic steroids (exogenous)', levels:[10,9,90],
+                    note:'Exogenous testosterone raises the steroid signal → feedback shuts off GnRH & LH → testes shrink, sperm count falls. The classic exogenous-androgen trap.'},
+                  {label:'Continuous GnRH agonist', levels:[95,12,16],
+                    note:'Steady (non-pulsatile) GnRH <b>downregulates</b> pituitary receptors → FSH/LH fall → steroids fall. Basis of GnRH-agonist therapy: pulsatile stimulates, continuous suppresses.'}
+                ]
+              }
+            };
+            const id = s => document.getElementById(s);
+            const els = {
+              title:id('eaTitle'), sub:id('eaSub'), effect:id('eaEffect'),
+              g:[id('eaG0'),id('eaG1'),id('eaG2')], n:[id('eaN0'),id('eaN1'),id('eaN2')],
+              b:[id('eaB0'),id('eaB1'),id('eaB2')], a:[id('eaA0'),id('eaA1')],
+              perturbs:id('eaPerturbs'), readout:id('eaReadout'), reset:id('eaReset'), pills:id('eaPills')
+            };
+            const DEFAULT_NOTE = els.readout.innerHTML;
+            let current = 'thyroid';
+
+            function setLevels(L){
+              for (let i = 0; i < 3; i++){
+                els.b[i].style.width = L[i] + '%';
+                els.b[i].style.background = colorFor(L[i]);
+              }
+            }
+            function clearActivePerturb(){
+              els.perturbs.querySelectorAll('.ea-perturb.on').forEach(b => b.classList.remove('on'));
+            }
+            function renderAxis(key){
+              const a = AXES[key]; if (!a) return;
+              current = key;
+              els.title.textContent = a.title;
+              els.sub.textContent = a.sub;
+              els.effect.innerHTML = a.effect;
+              for (let i = 0; i < 3; i++){ els.g[i].textContent = a.glands[i]; els.n[i].innerHTML = a.horm[i]; }
+              els.a[0].textContent = a.arrows[0];
+              els.a[1].textContent = a.arrows[1];
+              setLevels(a.base);
+              els.perturbs.innerHTML = '';
+              a.perturbs.forEach(p => {
+                const btn = document.createElement('button');
+                btn.type = 'button'; btn.className = 'ea-perturb'; btn.textContent = p.label;
+                btn.addEventListener('click', () => {
+                  clearActivePerturb(); btn.classList.add('on');
+                  setLevels(p.levels); els.readout.innerHTML = p.note;
+                });
+                els.perturbs.appendChild(btn);
+              });
+              els.readout.innerHTML = DEFAULT_NOTE;
+            }
+            els.pills.querySelectorAll('.ea-pill').forEach(pill => {
+              pill.addEventListener('click', () => {
+                els.pills.querySelectorAll('.ea-pill').forEach(p => p.classList.remove('on'));
+                pill.classList.add('on');
+                renderAxis(pill.dataset.axis);
+              });
+            });
+            els.reset.addEventListener('click', () => {
+              clearActivePerturb(); setLevels(AXES[current].base); els.readout.innerHTML = DEFAULT_NOTE;
+            });
+            renderAxis('thyroid');
+          })();
+          </script>
           <div class="cardiac-stage">
             <div class="cardiac-canvas">
               <div class="endo-grid" id="endoGrid">
