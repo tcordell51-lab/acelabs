@@ -31,7 +31,6 @@
     <!-- Fix 7: #plan nav entry retained; section now surfaces localStorage last-session links per engine -->
     <a href="#plan" class="al-nav-link">This week</a>
     <a href="test-day-readiness.html" class="al-nav-link">Test day</a>
-    <a href="tools/casper/index.html" class="al-nav-link">Casper</a>
   </nav>
 </header>
 
@@ -273,5 +272,25 @@
 
 </div>
 <script src="shared/ace-labs-shell.js"></script>
+<script>
+/* Hidden coach access: click the AceTheDAT brand mark 5x (within 3s) to open the
+   Casper Coaching Console. Not security — just keeps it off the student nav. */
+(function () {
+  var brand = document.querySelector(".al-brand");
+  if (!brand) return;
+  var clicks = 0, timer = null;
+  brand.style.cursor = "pointer";
+  brand.title = ""; // no hint for students
+  brand.addEventListener("click", function () {
+    clicks++;
+    clearTimeout(timer);
+    timer = setTimeout(function () { clicks = 0; }, 3000);
+    if (clicks >= 5) {
+      clicks = 0;
+      window.location.href = "tools/casper/index.html";
+    }
+  });
+})();
+</script>
 </body>
 </html>
