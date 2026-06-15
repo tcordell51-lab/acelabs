@@ -249,9 +249,11 @@ function render(){
   if(S.mode==="home")      app.innerHTML = viewHome();
   else if(S.mode==="arcade") app.innerHTML = viewArcade();
   else if(S.mode==="guide")  app.innerHTML = viewGuide();
+  else if(S.mode==="video")  app.innerHTML = viewVideo();
   else                       app.innerHTML = viewScenario();
   wire();
   if(S.mode==="scenario"){ var t=$("#timer"); if(t) paintTimer(t); syncTimer(); }
+  if(S.mode==="video"){ vidPaint(); }
 }
 
 function footer(){
@@ -272,6 +274,7 @@ function viewHome(){
   var tiles =
     '<div style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:40px;">'
     + bigBtn("start-0", "Start a Scenario", "Timed 3-question flow + live scorecard", true)
+    + bigBtn("video", "Video Rehearsal", "On-camera: 30s reflect → 60s record → replay", false)
     + bigBtn("arcade", "Decision Arcade", "Rapid judgment warm-up drills", false)
     + bigBtn("guide", "Guidelines & Tips", "How Casper works + how to coach it", false)
     + '</div>';
@@ -303,6 +306,146 @@ function bigBtn(act,title,sub,primary){
     + '<div style="font-family:'+fontDisplay+';font-weight:700;font-size:18px;margin-bottom:4px;">'+esc(title)+'</div>'
     + '<div style="font-size:12.5px;opacity:.85;">'+esc(sub)+'</div>'
     + '</button>';
+}
+
+/* ---------- VIDEO REHEARSAL (on-camera: 30s reflect -> 60s record -> replay) ---------- */
+var V = { stage:"idle", remaining:0, timer:null, stream:null, recorder:null, chunks:[], blobUrl:null, scenIdx:0, qIdx:0, error:"" };
+
+function vidFmt(s){ s=Math.max(0,s); var m=Math.floor(s/60); var r=s%60; return m+":"+(r<10?"0"+r:r); }
+function vidMaxQ(){ var scen=SCENARIOS[V.scenIdx]; return Math.min(2, scen.qs.length); } // mirror the 2-question video format
+
+function vidStopTimer(){ if(V.timer){ clearInterval(V.timer); V.timer=null; } }
+function vidResetTake(){
+  vidStopTimer();
+  if(V.recorder && V.recorder.state!=="inactive"){ try{ V.recorder.stop(); }catch(e){} }
+  V.recorder=null; V.chunks=[];
+  if(V.blobUrl){ URL.revokeObjectURL(V.blobUrl); V.blobUrl=null; }
+}
+function vidCleanup(){
+  vidResetTake();
+  if(V.stream){ V.stream.getTracks().forEach(function(t){ try{t.stop();}catch(e){} }); V.stream=null; }
+  V.stage="idle"; V.error="";
+}
+
+function vidEnsureCamera(cb){
+  if(V.stream){ cb(true); return; }
+  if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+    V.error="This browser can’t access a camera. You can still rehearse with the timer only.";
+    cb(false); return;
+  }
+  navigator.mediaDevices.getUserMedia({ video:true, audio:true }).then(function(s){
+    V.stream=s; V.error=""; cb(true);
+  }).catch(function(){
+    V.error="Camera/mic unavailable or permission denied — rehearsing with the timer only.";
+    cb(false);
+  });
+}
+
+function vidTick(){
+  vidStopTimer();
+  V.timer=setInterval(function(){
+    V.remaining--;
+    var t=$("#vidTimer"); if(t) t.textContent=vidFmt(V.remaining);
+    if(V.remaining<=0){
+      vidStopTimer();
+      if(V.stage==="reflect") vidGoRecord();
+      else if(V.stage==="record") vidStopRecord();
+    }
+  },1000);
+}
+function vidGoReflect(){ V.stage="reflect"; V.remaining=30; vidPaint(); vidTick(); }
+function vidGoRecord(){
+  V.stage="record"; V.remaining=60; V.chunks=[];
+  if(V.stream && window.MediaRecorder){
+    try{
+      V.recorder=new MediaRecorder(V.stream);
+      V.recorder.ondataavailable=function(e){ if(e.data && e.data.size) V.chunks.push(e.data); };
+      V.recorder.onstop=function(){
+        if(V.chunks.length){
+          var blob=new Blob(V.chunks, { type:(V.chunks[0].type||"video/webm") });
+          V.blobUrl=URL.createObjectURL(blob);
+        }
+        V.stage="review"; vidPaint();
+      };
+      V.recorder.start();
+    }catch(e){ V.recorder=null; }
+  }
+  vidPaint(); vidTick();
+}
+function vidStopRecord(){
+  vidStopTimer();
+  if(V.recorder && V.recorder.state!=="inactive"){ V.recorder.stop(); /* onstop -> review */ }
+  else { V.stage="review"; vidPaint(); }
+}
+
+function vidPaint(){
+  var media=$("#vidMedia"), timer=$("#vidTimer"), status=$("#vidStatus"), ctrls=$("#vidControls"), qline=$("#vidQ");
+  if(!media) return;
+  var scen=SCENARIOS[V.scenIdx];
+  if(qline) qline.textContent = "Q"+(V.qIdx+1)+" of "+vidMaxQ()+": "+(scen.qs[V.qIdx]||scen.qs[0]);
+
+  var mediaBox="height:300px;border-radius:10px;overflow:hidden;background:#10231a;display:flex;align-items:center;justify-content:center;";
+  var placeholder=function(txt){ return '<div style="'+mediaBox+'color:#9fb4a6;font-size:13.5px;text-align:center;padding:0 24px;">'+esc(txt)+'</div>'; };
+
+  if(V.stage==="idle"){
+    media.innerHTML=placeholder(V.error || "Your camera preview appears here. You get 30s to plan, then 60s to record — just like the real video section.");
+    if(timer) timer.textContent="0:30";
+    if(status) status.textContent="One take on test day. Here you can re-run as many times as you like.";
+    if(ctrls) ctrls.innerHTML='<button class="btn-primary" data-vid="start">▶ Start · 30s reflect</button>';
+  } else if(V.stage==="reflect" || V.stage==="record"){
+    if(V.stream){
+      media.innerHTML='<video id="vidPreview" autoplay muted playsinline style="'+mediaBox+'width:100%;object-fit:cover;"></video>';
+      var pv=$("#vidPreview"); if(pv){ pv.srcObject=V.stream; }
+    } else {
+      media.innerHTML=placeholder("No camera — rehearsing with the timer only. Speak your answer out loud.");
+    }
+    if(timer) timer.textContent=vidFmt(V.remaining);
+    if(V.stage==="reflect"){
+      if(status) status.innerHTML='<b>Reflect</b> — jot 2–4 keywords, then speak to them.';
+      if(ctrls) ctrls.innerHTML='<button class="btn-primary" data-vid="rec-now">Skip to recording →</button>';
+    } else {
+      if(status) status.innerHTML='<span style="color:'+C.red+';font-weight:700;">● Recording</span> — aim to finish a little under time.';
+      if(ctrls) ctrls.innerHTML='<button class="btn-ghost" data-vid="stop">■ Stop &amp; review</button>';
+    }
+  } else if(V.stage==="review"){
+    if(V.blobUrl){
+      media.innerHTML='<video controls playsinline src="'+V.blobUrl+'" style="'+mediaBox+'width:100%;object-fit:contain;background:#000;"></video>';
+    } else {
+      media.innerHTML=placeholder("No recording was captured (camera was off). Debrief the delivery from memory.");
+    }
+    if(timer) timer.textContent="—";
+    if(status) status.textContent="Review the take: pacing, eye-line to the lens, filler words, did she finish in time?";
+    var nextBtn = (V.qIdx+1 < vidMaxQ()) ? '<button class="btn-primary" data-vid="next">Next question →</button>' : '';
+    if(ctrls) ctrls.innerHTML='<button class="btn-ghost" data-vid="rerun">↻ Re-run this question</button>'+nextBtn;
+  }
+}
+
+function viewVideo(){
+  var scen=SCENARIOS[V.scenIdx];
+  var qsList=scen.qs.slice(0,vidMaxQ()).map(function(q,i){
+    return '<li style="font-size:13.5px;margin-bottom:4px;color:#e8e2d2;">'+esc(q)+'</li>';
+  }).join("");
+  return '<div style="max-width:760px;margin:0 auto;padding:28px 24px;">'
+    + topbar(scen.tag+" · Video rehearsal")
+    + '<div style="background:'+C.forest+';color:'+C.cream+';border-radius:10px;padding:20px 22px;margin:20px 0 16px;">'
+      + '<span style="font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:'+C.brass+';font-weight:700;">Scenario</span>'
+      + '<p style="font-size:15px;line-height:1.55;margin:8px 0 0;">'+esc(scen.stem)+'</p>'
+      + '<ol style="margin:12px 0 0;padding-left:20px;">'+qsList+'</ol>'
+    + '</div>'
+    + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">'
+      + '<div id="vidQ" style="font-size:13px;font-weight:700;color:'+C.forest+';"></div>'
+      + '<div id="vidTimer" style="font-family:'+fontDisplay+';font-weight:900;font-size:26px;color:'+C.forest+';font-variant-numeric:tabular-nums;">0:30</div>'
+    + '</div>'
+    + '<div id="vidMedia"></div>'
+    + '<div id="vidStatus" style="font-size:13px;color:#46524a;margin:10px 0;min-height:18px;"></div>'
+    + '<div id="vidControls" style="display:flex;gap:8px;flex-wrap:wrap;"></div>'
+    + '<div style="display:flex;justify-content:space-between;margin-top:22px;">'
+      + '<button class="btn-ghost" data-vid="prev-scen">← Previous scenario</button>'
+      + '<button class="btn-ghost" data-vid="next-scen">Next scenario →</button>'
+    + '</div>'
+    + '<div style="margin-top:14px;font-size:11.5px;color:#8a9389;">Recording stays on this device — nothing is uploaded. Camera access is asked once per session.</div>'
+    + footer()
+    + '</div>';
 }
 
 /* ---------- GUIDELINES & TIPS (coach-only; lives inside the gated console) ---------- */
@@ -549,6 +692,17 @@ function flagBox(tone,title,items){
     + lis + '</div>';
 }
 
+/* ---------- video event handling ---------- */
+function handleVid(act){
+  if(act==="start"){ vidEnsureCamera(function(){ vidGoReflect(); }); return; }
+  if(act==="rec-now"){ vidStopTimer(); vidGoRecord(); return; }
+  if(act==="stop"){ vidStopRecord(); return; }
+  if(act==="rerun"){ vidResetTake(); vidGoReflect(); return; }
+  if(act==="next"){ V.qIdx++; vidResetTake(); V.stage="idle"; vidPaint(); return; }
+  if(act==="prev-scen"){ vidCleanup(); V.scenIdx=(V.scenIdx-1+SCENARIOS.length)%SCENARIOS.length; V.qIdx=0; V.stage="idle"; render(); return; }
+  if(act==="next-scen"){ vidCleanup(); V.scenIdx=(V.scenIdx+1)%SCENARIOS.length; V.qIdx=0; V.stage="idle"; render(); return; }
+}
+
 /* ============================================================
    EVENT WIRING (delegation; re-bound after each render)
    ============================================================ */
@@ -556,15 +710,19 @@ function wire(){
   var app = document.getElementById("app");
 
   app.onclick = function(e){
+    var vd = e.target.closest("[data-vid]");
+    if(vd){ handleVid(vd.getAttribute("data-vid")); return; }
+
     var el = e.target.closest("[data-act]");
     if(!el) return;
     var act = el.getAttribute("data-act");
 
-    if(act==="home"){ S.mode="home"; render(); return; }
-    if(act==="start-0"){ startScenario(0); return; }
-    if(act==="start"){ startScenario(+el.getAttribute("data-i")); return; }
-    if(act==="arcade"){ S.mode="arcade"; S.arcadeIdx=0; S.arcadePick=null; render(); return; }
-    if(act==="guide"){ S.mode="guide"; render(); return; }
+    if(act==="home"){ vidCleanup(); S.mode="home"; render(); return; }
+    if(act==="start-0"){ vidCleanup(); startScenario(0); return; }
+    if(act==="start"){ vidCleanup(); startScenario(+el.getAttribute("data-i")); return; }
+    if(act==="arcade"){ vidCleanup(); S.mode="arcade"; S.arcadeIdx=0; S.arcadePick=null; render(); return; }
+    if(act==="guide"){ vidCleanup(); S.mode="guide"; render(); return; }
+    if(act==="video"){ vidCleanup(); V.scenIdx=S.scenIdx||0; V.qIdx=0; V.stage="idle"; V.error=""; S.mode="video"; render(); return; }
 
     if(act==="pick"){
       if(S.arcadePick!==null) return;
