@@ -178,6 +178,40 @@ var SCENARIOS = [
     qs:["How do you assess what to do?","How do you decide what, if anything, to give up or renegotiate?","Who do you talk to, and what do you say?"] },
 ];
 
+/* Original model answers (weak vs strong) keyed by scenario id. Coaching exemplars. */
+var MODELS = {
+  1: {
+    weak:"Priya clearly isn't pulling her weight, so I'd report her to the instructor. It's not fair that the rest of us do the work while she coasts, and she shouldn't get the same grade as people who actually showed up.",
+    strong:"Before doing anything, I'd want to understand what's going on, because lateness and unfinished work often have a cause I can't see — illness, a family issue, or feeling lost in the material. I'd talk with Priya privately and without blame, let her know we've missed her input, and ask how she's doing and whether something is getting in the way. Then I'd focus on the immediate problem: with two days left, what can she realistically take on so the project succeeds? If she re-engages, there's no need to escalate. If the work still isn't getting done and the team's grade is at risk, I'd be honest that we may need to loop in the instructor — not to punish her, but so the situation is handled fairly for everyone.",
+    note:"The weak answer assumes the worst, judges, and jumps straight to reporting. The strong one gathers information with empathy, addresses the real deadline, and treats escalation as a conditional last step — not a first reflex."
+  },
+  2: {
+    weak:"I'd promise to keep it secret since they're my friend and they already feel bad. It's not my business to get involved, and telling anyone would just be a betrayal.",
+    strong:"I'd start by listening — my friend trusted me and is clearly feeling guilty, and I want to respond with care, not judgment. I'd acknowledge how hard it is to carry that, and gently explore why they feel guilty, since that guilt suggests they already sense it wasn't right. I'd encourage them to consider coming forward themselves, and talk through what that could look like. I'd be honest that I can't promise blanket secrecy if keeping it would mean someone else is harmed or unfairly affected. My role as a friend isn't only to comfort them, but to help them do the right thing — especially if this exam affects fairness to other students.",
+    note:"The weak answer collapses into unconditional loyalty. The strong one balances empathy and friendship with integrity and fairness to others, and nudges the friend toward ownership rather than deciding for them."
+  },
+  3: {
+    weak:"The staff member is senior and respected, so I'd assume they know better and stay out of it. It's not my place to correct someone with more experience.",
+    strong:"My first concern is the patient getting accurate information, but I also don't want to assume I'm right or undermine a colleague publicly. I'd quietly check my own understanding first. Then I'd approach the staff member privately and respectfully — framing it as a question rather than an accusation, like 'I may have misheard, could you help me understand the guidance on X?' That gives them room to correct it without losing face, and surfaces the issue if I was right. If the patient is about to act on something potentially harmful, I'd make sure it's clarified before they leave, escalating through the proper channel if needed. Respecting authority and advocating for the patient aren't opposites; the goal is the patient's safety, handled tactfully.",
+    note:"The weak answer hides behind hierarchy. The strong one verifies first, raises the concern privately and non-accusatorially, and keeps patient safety as the non-negotiable while preserving the colleague's dignity."
+  },
+  4: {
+    weak:"Sam did nothing, so he shouldn't get credit — I'd just tell the professor he didn't help and let him take the hit. Why should we cover for him?",
+    strong:"I'd separate two things: getting the project done in the next two days, and handling credit fairly. First I'd talk to Sam directly and privately to understand why he hasn't contributed — there may be something going on — and clearly invite him back in with a specific, doable task. I'd keep the rest of the team focused so the deadline isn't at risk. On credit, I believe it should reflect real contribution, so I'd be transparent: if Sam steps up, that changes things; if he doesn't, I'd have an honest conversation with him first, then, if needed, let the instructor know how the work was actually divided — factually, without hostility. Fairness to the group and fairness to Sam both matter, and giving him a genuine chance to contribute respects both.",
+    note:"The weak answer is punitive and one-sided. The strong one protects the deadline, gives Sam a fair chance with a concrete path back, and handles credit honestly and proportionately rather than vindictively."
+  },
+  5: {
+    weak:"The man without an appointment didn't book, so the mother with the appointment goes first. Rules are rules — you can't reward people for just showing up.",
+    strong:"Both people have real, competing needs, so I'd gather a little information before deciding. The elderly man is in visible discomfort, which raises a possible urgency concern; the young mother followed the process, has waited two weeks, and has a hard time limit for work. I'd quickly assess whether the man needs urgent attention — if so, that may take priority on need. If it's not urgent, I'd honor the mother's appointment, especially given her time constraint, while making sure the man is acknowledged, comfortable, and seen as soon as possible. Throughout, I'd communicate honestly and kindly to both: explaining the reasoning to each, apologizing for the wait, and offering concrete next steps so neither feels dismissed.",
+    note:"The weak answer applies a rule rigidly and ignores possible urgency. The strong one gathers information, weighs need against fairness to the person who followed the process, and communicates the decision transparently and compassionately to both."
+  },
+  6: {
+    weak:"That was unfair and embarrassing, so I'd push back right there and let them know they had no right to call me out in front of everyone.",
+    strong:"In the moment, I'd stay composed rather than react defensively, thank them for the input, and suggest we discuss the specifics afterward so we don't derail the group. Privately, I'd reflect honestly on whether there's truth in it — even harsh feedback sometimes contains something useful — and separate that from how it was delivered. I'd then talk with the person one-on-one: acknowledge any valid point, and also calmly share that being called out publicly was tough and that I'd appreciate raising things privately next time. Going forward, I'd aim to keep the working relationship constructive, because reacting with hostility would cost more than the original comment did.",
+    note:"The weak answer escalates publicly and defensively. The strong one regulates the in-the-moment reaction, shows self-awareness by mining the feedback for truth, and addresses the delivery privately while protecting the relationship."
+  }
+};
+
 var ARCADE = [
   { q:"A classmate wants to skip a required safety step because the group is tired and behind schedule. Strongest response?",
     options:["Agree, since the team is clearly exhausted and morale matters.","Acknowledge the pressure, explain why the step protects everyone, and propose doing it together quickly.","Refuse and report the classmate to the instructor immediately.","Let them skip it but document that you disagreed."],
@@ -225,6 +259,7 @@ var S = {
   remaining:210,
   running:false,
   hideScores:false,   // self-score-first: hide coach rubric until reveal
+  showModel:false,    // reveal model-answer contrast for this scenario
   scores:{},          // dim.key -> 1|2|3
   arcadeIdx:0,
   arcadePick:null,
@@ -261,7 +296,7 @@ function paintTimer(node){
 
 /* ---------- actions ---------- */
 function startScenario(i){
-  S.scenIdx=i; S.answer=""; S.remaining=S.duration; S.running=false; S.scores={}; S.mode="scenario";
+  S.scenIdx=i; S.answer=""; S.remaining=S.duration; S.running=false; S.scores={}; S.showModel=false; S.mode="scenario";
   render();
 }
 function setDim(k,v){ S.scores[k] = (S.scores[k]===v ? undefined : v); render(); }
@@ -902,6 +937,7 @@ function viewScenario(){
         + '<div style="display:flex;gap:8px;margin-bottom:12px;align-items:center;flex-wrap:wrap;">'+controls+durSel+'</div>'
         + '<textarea id="answer" placeholder="Student types her response here…" style="width:100%;min-height:220px;padding:16px;border-radius:10px;border:1.5px solid '+C.line+';font-family:'+fontBody+';font-size:14.5px;line-height:1.6;color:'+C.ink+';resize:vertical;background:'+C.paper+';">'+esc(S.answer)+'</textarea>'
         + '<div style="font-size:12px;color:#8a9389;margin-top:6px;" id="wordcount">'+words+' words</div>'
+        + modelSection(scen)
       + '</div>'
       + card
     + '</div>'
@@ -912,6 +948,25 @@ function viewScenario(){
     + footer()
     + '</div>';
 }
+function modelSection(scen){
+  var m = MODELS[scen.id];
+  if(!m) return '';
+  if(!S.showModel){
+    return '<button data-act="toggle-model" class="btn-ghost" style="margin-top:14px;">Reveal model answer (weak vs strong) ↓</button>';
+  }
+  var box=function(label,col,bg,bd,txt){
+    return '<div style="background:'+bg+';border:1px solid '+bd+';border-radius:10px;padding:14px 16px;margin-top:10px;">'
+      + '<div style="font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:'+col+';margin-bottom:6px;">'+label+'</div>'
+      + '<div style="font-size:13.5px;line-height:1.6;color:#3a4640;">'+esc(txt)+'</div></div>';
+  };
+  return '<div style="margin-top:14px;">'
+    + '<button data-act="toggle-model" class="btn-ghost">Hide model answer ↑</button>'
+    + box("✗ Weaker response (≈2nd quartile)", C.red, "#fbf4f2", "#e3c4bc", m.weak)
+    + box("✓ Stronger response (≈4th quartile)", C.green, "#f3f8f4", "#c4ddca", m.strong)
+    + '<div style="background:'+C.soft+';border-left:3px solid '+C.brass+';border-radius:0 8px 8px 0;padding:12px 14px;margin-top:10px;font-size:13px;line-height:1.55;color:#46524a;"><b>What moves it up:</b> '+esc(m.note)+'</div>'
+    + '</div>';
+}
+
 function flagBox(tone,title,items){
   var red = tone==="red";
   var head = (red?"✗ ":"✓ ")+title;
@@ -960,6 +1015,7 @@ function wire(){
     if(act==="type-new"){ typingReset(true); T.promptIdx=(T.promptIdx+1)%TYPING_PROMPTS.length; render(); return; }
     if(act==="toggle-hide"){ S.hideScores=!S.hideScores; render(); return; }
     if(act==="reveal-scores"){ S.hideScores=false; render(); return; }
+    if(act==="toggle-model"){ S.showModel=!S.showModel; render(); return; }
     if(act==="save-session"){
       if(recordSession()){ S.mode="progress"; render(); }
       else { var w=$("#scoreVerdict"); if(w){ w.textContent="Score all five dimensions before saving."; w.style.color=C.red; } }
