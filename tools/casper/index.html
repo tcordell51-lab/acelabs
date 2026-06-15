@@ -190,8 +190,8 @@ var S = {
   mode:"home",        // home | scenario | arcade
   scenIdx:0,
   answer:"",
-  duration:300,
-  remaining:300,
+  duration:210,
+  remaining:210,
   running:false,
   scores:{},          // dim.key -> 1|2|3
   arcadeIdx:0,
@@ -321,12 +321,32 @@ function viewGuide(){
   var p = function(t){ return '<p style="font-size:14.5px;line-height:1.6;color:#46524a;margin:0 0 10px;">'+t+'</p>'; };
 
   var howCard = guideCard("How Casper works",
-    p("Casper is an open-response situational-judgment test used in health-professions admissions. It shows short scenarios — some text, some video — each followed by a few probing questions you answer under a countdown.")
+    p("Casper is an open-response situational-judgment test used in health-professions admissions. It shows short scenarios — some text, some video — each followed by probing questions you answer under a countdown.")
     + guideList([
-      "<b>It is timed and one-way.</b> You get a fixed window per scenario and generally can’t return to edit earlier answers.",
-      "<b>There are no “correct” answers.</b> Trained raters score <i>how</i> you reason — your judgment, empathy, and professionalism — not which option you land on.",
-      "<b>Each scenario is rated by a different person.</b> So every answer has to stand on its own; you can’t rely on building a reputation across the test.",
-      "<b>Format changes over time.</b> The current mix of typed vs. spoken/video sections and exact timings live on the official Acuity Insights site — confirm them there before test day."
+      "<b>It is timed and one-way.</b> Each response has a fixed window, auto-submits, and you can’t go back to edit.",
+      "<b>There are no “correct” answers.</b> Trained raters score <i>how</i> you reason — judgment, empathy, professionalism — not which option you pick.",
+      "<b>Every response is rated by a different person</b> on a 1–9 scale, with no identifying info. As of the 2025–26 cycle each answer is scored <i>individually</i>, so every sub-question stands on its own.",
+      "<b>Your result is a quartile</b> (4th = top ~25%), set relative to your testing cohort; schools receive a standardized z-score.",
+      "<b>Verify the format before test day.</b> Numbers below reflect the 2025–26 cycle — confirm on the official Acuity Insights site."
+    ]));
+
+  var formatCard = guideCard("Current format (2025–26)",
+    guideList([
+      "<b>11 scenarios:</b> 4 video + 7 typed (2 questions each).",
+      "<b>Typed:</b> ~3.5 minutes per scenario. The timer here defaults to 3:30 to match.",
+      "<b>Video:</b> ~30 seconds to reflect, then ~60 seconds to record — no re-record, no going back.",
+      "<b>Whole test ~65–85 min</b>, with short optional breaks between sections.",
+      "Measures 10 traits: collaboration, communication, empathy, equity, ethics, motivation, problem-solving, professionalism, resilience, self-awareness."
+    ]));
+
+  var videoCard = guideCard("Video / spoken section",
+    p("The spoken section rewards the same reasoning as typed answers, but delivery counts too. Rehearse on camera — you only get one take.")
+    + guideList([
+      "Spend the 30-second reflection jotting 2–4 keywords, then speak to them.",
+      "Look into the <i>camera lens</i> (not the screen); sit up straight, warm up your voice, cut “um/like”.",
+      "Pace to finish a little <i>under</i> 60 seconds rather than getting cut off mid-thought.",
+      "Quiet, well-lit room, neutral background — and test webcam, mic, and internet beforehand.",
+      "Practice the full beat: read → 30s reflect → 60s record, then review the playback."
     ]));
 
   var lookCard = guideCard("What raters are really weighing",
@@ -345,11 +365,33 @@ function viewGuide(){
 
   var timeCard = guideCard("Time &amp; delivery tips",
     guideList([
-      "Read the stem once, then answer the question <i>actually</i> asked — don’t re-tell the scenario.",
-      "Budget time across the sub-questions; a brief answer to all of them beats a perfect answer to the first one.",
-      "Always reach a decision. “It depends” is fine only if you then say <i>on what</i>.",
-      "For typed sections, full sentences over bullet fragments; for spoken sections, a steady pace over cramming.",
-      "Leave a few seconds to land a closing line — the choice and why it balances the situation."
+      "Read <i>both</i> questions first, then budget the time so each gets a real answer — thin second answers now lose points on their own.",
+      "Answer the question <i>actually</i> asked; don’t re-tell the scenario.",
+      "Use the full time and don’t submit early — unfinished sentences and bullets still get read.",
+      "Bullets are allowed and spelling is ignored, but lead with a full-sentence position then support it.",
+      "Plain language over jargon — raters come from many backgrounds.",
+      "Always reach a decision. Balanced isn’t the same as wishy-washy — weigh the sides, then commit."
+    ]));
+
+  var topCard = guideCard("What pushes an answer into the 4th quartile",
+    p("The pattern that separates top responses from average ones — coach toward this:")
+    + guideList([
+      "<b>Acknowledge first, fix second.</b> Average answers jump straight to a solution; strong ones name the tension and the vulnerable party before acting.",
+      "<b>Engage the specifics.</b> Generic “I’d be empathetic and fair” scores low — react to <i>these</i> people and <i>this</i> dilemma.",
+      "<b>Show the reasoning chain</b>, not just the verdict — what you weighed and why.",
+      "<b>Turn reasoning into a concrete action</b> (a private conversation, checking policy, an escalation path) rather than a vague intention.",
+      "<b>Anecdotes only for personal “describe a time…” prompts</b> — for “what would you do?” they waste time."
+    ]));
+
+  var prepCard = guideCard("How to prepare (what the evidence supports)",
+    p("Casper is hard to cram — the test maker says coaching explains only a small slice of variance, and independent work agrees open-response SJTs resist coaching. The defensible plan builds real judgment plus format fluency:")
+    + guideList([
+      "Take the <b>free official Acuity practice test</b> under real timing at least once.",
+      "Drill the answer skeleton on timed scenarios — typed <i>and</i> on camera (that’s what this tool is for).",
+      "Get typing to ~50 WPM so speed isn’t the limiter.",
+      "Hold the four ethics pillars — autonomy, beneficence, non-maleficence, justice — as a <i>lens</i>, never a script.",
+      "Read around healthcare ethics, teamwork, and current issues to deepen genuine perspective.",
+      "Confirm the current format on the official site close to test day."
     ]));
 
   var doDont = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">'
@@ -362,7 +404,7 @@ function viewGuide(){
     + '<div class="eyebrow" style="margin:20px 0 8px;">Coach Reference</div>'
     + '<h1 style="font-family:'+fontDisplay+';font-weight:900;font-size:32px;color:'+C.forest+';line-height:1.08;margin:0 0 8px;">Coaching the Casper, end to end.</h1>'
     + p("A quick brief on how the test scores judgment and how to push a student’s answers up the rubric. Pair this with a live scenario — read it, then have her run the structure below out loud.")
-    + howCard + lookCard + structCard + timeCard
+    + howCard + formatCard + lookCard + structCard + topCard + timeCard + videoCard + prepCard
     + guideCard("Do / Don’t — phrasing", doDont)
     + '<button class="btn-primary" data-act="start-0">Run a scenario with this in mind →</button>'
     + footer()
@@ -430,7 +472,7 @@ function viewScenario(){
 
   function opt(v,label){ return '<option value="'+v+'"'+(S.duration===v?" selected":"")+'>'+label+'</option>'; }
   var durSel = '<select data-act="duration" style="margin-left:auto;padding:8px 10px;border-radius:6px;border:1px solid '+C.line+';background:'+C.paper+';color:'+C.ink+';font-family:'+fontBody+';font-size:13px;">'
-    + opt(300,"5:00 (standard)") + opt(240,"4:00") + opt(360,"6:00") + '</select>';
+    + opt(210,"3:30 (current Casper typed)") + opt(300,"5:00 (legacy)") + opt(60,"1:00 (video answer)") + '</select>';
 
   /* scorecard rows */
   var labels = {1:"Missing",2:"Implied",3:"Explicit"};
