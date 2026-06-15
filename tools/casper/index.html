@@ -20,21 +20,29 @@
   *{box-sizing:border-box;}
   body{margin:0;font-family:var(--font-body);background:var(--cream);color:var(--ink);min-height:100vh;}
   button{font-family:var(--font-body);}
-  .hdr{background:var(--forest-deep);padding:14px 24px;}
-  .hdr-in{max-width:1120px;margin:0 auto;display:flex;align-items:center;gap:10px;}
+  .hdr{background:var(--forest-deep);padding:14px 24px;position:sticky;top:0;z-index:20;box-shadow:0 1px 0 rgba(0,0,0,.15);}
+  .hdr-in{max-width:1120px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:10px;}
+  .brand-link{display:flex;align-items:center;gap:10px;text-decoration:none;}
   .logo-mark{width:34px;height:34px;border-radius:7px;background:var(--brass);color:var(--forest);
-    display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:900;font-size:19px;}
+    display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:900;font-size:19px;transition:transform .15s;}
+  .brand-link:hover .logo-mark{transform:translateY(-1px);}
   .logo-t1{font-family:var(--font-display);font-weight:900;font-size:17px;color:var(--cream);line-height:1.05;}
   .logo-t2{font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--brass);font-weight:700;line-height:1.05;}
+  .hdr-back{color:var(--brass);text-decoration:none;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+    border:1px solid rgba(184,146,61,.5);border-radius:99px;padding:6px 13px;transition:background .15s,color .15s;}
+  .hdr-back:hover{background:var(--brass);color:var(--forest-deep);}
 
   .eyebrow{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--brass);font-weight:700;}
   .btn-primary{background:var(--forest);color:var(--cream);border:none;border-radius:7px;padding:10px 18px;
-    font-size:13.5px;font-weight:700;cursor:pointer;margin-top:8px;}
+    font-size:13.5px;font-weight:700;cursor:pointer;margin-top:8px;transition:transform .12s,box-shadow .12s,filter .12s;}
+  .btn-primary:hover{filter:brightness(1.12);box-shadow:0 4px 14px rgba(31,61,46,.22);transform:translateY(-1px);}
   .btn-ghost{background:transparent;color:var(--forest);border:1.5px solid var(--line);border-radius:7px;
-    padding:9px 16px;font-size:13.5px;font-weight:700;cursor:pointer;}
+    padding:9px 16px;font-size:13.5px;font-weight:700;cursor:pointer;transition:border-color .12s,background .12s;}
+  .btn-ghost:hover{border-color:var(--brass);background:rgba(184,146,61,.07);}
 
   .topbar{display:flex;justify-content:space-between;align-items:center;}
-  .topbar a{background:none;border:none;color:var(--brass);font-weight:700;font-size:13px;cursor:pointer;letter-spacing:.04em;}
+  .topbar button{background:none;border:none;color:var(--brass);font-weight:700;font-size:13px;cursor:pointer;letter-spacing:.04em;transition:opacity .12s;}
+  .topbar button:hover{opacity:.7;}
   .topbar .right{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#8a9389;font-weight:700;}
 
   .footer{margin-top:36px;padding-top:14px;border-top:1px solid var(--line);font-size:10.5px;color:#8a9389;
@@ -42,18 +50,32 @@
 
   .scen-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:22px;margin-top:20px;align-items:start;}
   @media (max-width:860px){.scen-grid{grid-template-columns:1fr;}}
-  .sticky-card{position:sticky;top:20px;}
+  .sticky-card{position:sticky;top:78px;}
   @media (max-width:860px){.sticky-card{position:static;}}
+
+  .tile-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-bottom:40px;}
+  .tile{text-align:left;border-radius:12px;padding:18px 20px;cursor:pointer;transition:transform .14s,box-shadow .14s,border-color .14s;}
+  .tile:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(31,61,46,.13);}
+  .tile-primary{background:var(--forest);color:var(--cream);border:1.5px solid var(--forest);}
+  .tile-ghost{background:var(--paper);color:var(--forest);border:1.5px solid var(--line);}
+  .tile-ghost:hover{border-color:var(--brass);}
+  .tile-t{font-family:var(--font-display);font-weight:700;font-size:18px;margin-bottom:4px;}
+  .tile-s{font-size:12.5px;opacity:.85;line-height:1.4;}
+  .card-anim{animation:fadeUp .26s ease both;}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
 </style>
 </head>
 <body>
   <div class="hdr">
     <div class="hdr-in">
-      <div class="logo-mark">A</div>
-      <div>
-        <div class="logo-t1">AceTheDAT</div>
-        <div class="logo-t2">Casper Coaching Console</div>
-      </div>
+      <a href="../../ace-labs.html" class="brand-link" title="Back to Ace Labs">
+        <div class="logo-mark">A</div>
+        <div>
+          <div class="logo-t1">AceTheDAT</div>
+          <div class="logo-t2">Casper Coaching Console</div>
+        </div>
+      </a>
+      <a href="../../ace-labs.html" class="hdr-back">← Ace Labs</a>
     </div>
   </div>
 
@@ -182,6 +204,15 @@ var DIMENSIONS = [
   { key:"concise", label:"Concise, structured, finished", hint:"Clear order; answered all sub-questions." },
 ];
 
+/* Original ethics/teamwork-themed passages for the typing trainer. */
+var TYPING_PROMPTS = [
+  "Before I decide anything, I would want to understand the situation more fully and hear from each person involved. People often act the way they do for reasons that are not obvious at first, so I would ask questions privately and without blame before drawing a conclusion.",
+  "When two people I respect disagree, my goal is not to pick a winner but to find the option that causes the least harm. I would weigh each perspective honestly, name the trade-off out loud, and then commit to a fair and reasonable course of action.",
+  "Professionalism means doing the right thing even when no one is watching and it would be easier not to. If I made a mistake that could affect someone else, I would disclose it promptly, correct it, and take responsibility rather than hoping it goes unnoticed.",
+  "Good teams are built on trust, clear communication, and respect for every member. When a teammate is struggling, I would check in with empathy first, ask how I can help, and make sure the workload is shared fairly so that no single person carries the whole burden.",
+  "Caring for others well requires patience and humility. I try to listen more than I speak, to assume good intentions, and to remember that the person in front of me may be facing pressures I cannot see. Small acts of kindness and clear honesty go a long way.",
+];
+
 var KILLERS = ['"Obviously…"','"They should be fired."','"I would definitely report/tell."','"The right thing is clearly…"',"Silence on the other person"];
 var BUILDERS = ['"Before deciding, I\'d want to know…"','"I can understand why they\'d feel…"','"There are a few perspectives here…"','"If X, then… but if Y, then…"','"I\'d choose this because it balances…"'];
 
@@ -284,6 +315,7 @@ function render(){
   else if(S.mode==="arcade") app.innerHTML = viewArcade();
   else if(S.mode==="guide")  app.innerHTML = viewGuide();
   else if(S.mode==="progress") app.innerHTML = viewProgress();
+  else if(S.mode==="typing") app.innerHTML = viewTyping();
   else if(S.mode==="video")  app.innerHTML = viewVideo();
   else                       app.innerHTML = viewScenario();
   wire();
@@ -307,11 +339,12 @@ function topbar(right){
 /* ---------- HOME ---------- */
 function viewHome(){
   var tiles =
-    '<div style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:40px;">'
-    + bigBtn("start-0", "Start a Scenario", "Timed 3-question flow + live scorecard", true)
+    '<div class="tile-grid">'
+    + bigBtn("start-0", "Start a Scenario", "Timed flow + live scorecard", true)
     + bigBtn("video", "Video Rehearsal", "On-camera: 30s reflect → 60s record → replay", false)
+    + bigBtn("typing", "Typing Trainer", "Build speed on ethics-themed prompts", false)
     + bigBtn("arcade", "Decision Arcade", "Rapid judgment warm-up drills", false)
-    + bigBtn("progress", "Progress", "Score trend by dimension + redo weakest", false)
+    + bigBtn("progress", "Progress", "Score trend + redo weakest", false)
     + bigBtn("guide", "Guidelines & Tips", "How Casper works + how to coach it", false)
     + '</div>';
 
@@ -338,10 +371,100 @@ function viewHome(){
     + '</div>';
 }
 function bigBtn(act,title,sub,primary){
-  return '<button data-act="'+act+'" style="flex:1 1 240px;text-align:left;background:'+(primary?C.forest:C.paper)+';color:'+(primary?C.cream:C.forest)+';border:1.5px solid '+(primary?C.forest:C.line)+';border-radius:10px;padding:18px 20px;cursor:pointer;">'
-    + '<div style="font-family:'+fontDisplay+';font-weight:700;font-size:18px;margin-bottom:4px;">'+esc(title)+'</div>'
-    + '<div style="font-size:12.5px;opacity:.85;">'+esc(sub)+'</div>'
+  return '<button data-act="'+act+'" class="tile '+(primary?"tile-primary":"tile-ghost")+'">'
+    + '<div class="tile-t">'+esc(title)+'</div>'
+    + '<div class="tile-s">'+esc(sub)+'</div>'
     + '</button>';
+}
+
+/* ---------- TYPING TRAINER ---------- */
+var T = { promptIdx:0, started:false, startTime:0, timer:null, elapsed:0, finished:false, typed:"", durationT:60 };
+
+function typingReset(keepPrompt){
+  if(T.timer){ clearInterval(T.timer); T.timer=null; }
+  T.started=false; T.startTime=0; T.elapsed=0; T.finished=false; T.typed="";
+  if(!keepPrompt) T.promptIdx=0;
+}
+function typingStats(){
+  var target=TYPING_PROMPTS[T.promptIdx], typed=T.typed, correct=0;
+  for(var i=0;i<typed.length;i++){ if(typed.charAt(i)===target.charAt(i)) correct++; }
+  var mins=Math.max(T.elapsed,0.001)/60;
+  var wpm=T.started? Math.max(0,Math.round((correct/5)/mins)) : 0;
+  var acc=typed.length? Math.round((correct/typed.length)*100) : 100;
+  return { wpm:wpm, acc:acc, correct:correct, done:(typed.length>=target.length) };
+}
+function typingStart(){
+  if(T.started) return;
+  T.started=true; T.startTime=Date.now();
+  T.timer=setInterval(function(){
+    T.elapsed=(Date.now()-T.startTime)/1000;
+    if(T.elapsed>=T.durationT){ T.elapsed=T.durationT; typingFinish(); return; }
+    typingPaintStats();
+  },250);
+}
+function typingFinish(){
+  if(T.timer){ clearInterval(T.timer); T.timer=null; }
+  if(!T.elapsed) T.elapsed=(Date.now()-T.startTime)/1000;
+  T.finished=true; render();
+}
+function typingPaintStats(){
+  var st=typingStats();
+  var rem=Math.max(0,Math.ceil(T.durationT-T.elapsed));
+  var n;
+  if((n=$("#typeTimer"))) n.textContent="0:"+(rem<10?"0"+rem:rem);
+  if((n=$("#typeWpm"))) n.textContent=st.wpm;
+  if((n=$("#typeAcc"))) n.textContent=st.acc+"%";
+  var tgt=$("#typeTarget"); if(tgt) tgt.innerHTML=typingTargetHtml();
+}
+function typingTargetHtml(){
+  var target=TYPING_PROMPTS[T.promptIdx], typed=T.typed, out="";
+  for(var i=0;i<target.length;i++){
+    var ch=esc(target.charAt(i));
+    if(i<typed.length){
+      var ok=typed.charAt(i)===target.charAt(i);
+      out+='<span style="background:'+(ok?"rgba(47,122,79,.16)":"rgba(168,64,47,.22)")+';color:'+(ok?C.forest:C.red)+';">'+ch+'</span>';
+    } else if(i===typed.length){
+      out+='<span style="border-left:2px solid '+C.brass+';margin-left:-1px;">'+ch+'</span>';
+    } else { out+='<span style="color:#8a9389;">'+ch+'</span>'; }
+  }
+  return out;
+}
+
+function viewTyping(){
+  if(T.finished){
+    var st=typingStats();
+    var verdict = st.wpm>=50 ? "At or above the ~50 WPM comfort zone — speed won't be her limiter." : st.wpm>=40 ? "Near the ~40 WPM floor — a little more practice buys real content on test day." : "Below ~40 WPM — worth drilling; every extra word is a supporting sentence.";
+    return '<div style="max-width:720px;margin:0 auto;padding:32px 24px;" class="card-anim">'
+      + topbar("Typing Trainer · result")
+      + '<div class="eyebrow" style="margin:20px 0 8px;">Result</div>'
+      + '<h1 style="font-family:'+fontDisplay+';font-weight:900;font-size:34px;color:'+C.forest+';margin:0 0 16px;">'+st.wpm+' WPM · '+st.acc+'% accurate</h1>'
+      + '<div style="background:'+C.paper+';border:1px solid '+C.line+';border-left:3px solid '+C.brass+';border-radius:0 10px 10px 0;padding:14px 18px;font-size:14px;color:#46524a;line-height:1.5;margin-bottom:18px;">'+esc(verdict)+'</div>'
+      + '<div style="display:flex;gap:8px;flex-wrap:wrap;">'
+        + '<button class="btn-primary" data-act="type-again">↻ Try again</button>'
+        + '<button class="btn-ghost" data-act="type-new">New prompt</button>'
+        + '<button class="btn-ghost" data-act="home">Console home</button>'
+      + '</div>'
+      + footer() + '</div>';
+  }
+  var stat=function(id,label,val){
+    return '<div style="text-align:center;"><div id="'+id+'" style="font-family:'+fontDisplay+';font-weight:900;font-size:26px;color:'+C.forest+';font-variant-numeric:tabular-nums;">'+val+'</div>'
+      + '<div style="font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:#8a9389;font-weight:700;">'+label+'</div></div>';
+  };
+  return '<div style="max-width:720px;margin:0 auto;padding:32px 24px;" class="card-anim">'
+    + topbar("Typing Trainer · prompt "+(T.promptIdx+1)+" of "+TYPING_PROMPTS.length)
+    + '<div class="eyebrow" style="margin:20px 0 8px;">Typing Trainer</div>'
+    + '<h1 style="font-family:'+fontDisplay+';font-weight:900;font-size:30px;color:'+C.forest+';margin:0 0 6px;">Type to build speed.</h1>'
+    + '<p style="font-size:14px;color:#46524a;margin:0 0 18px;">Aim for ~50 WPM. The timer starts when you begin typing and runs 60 seconds. These passages use the reasoning patterns Casper rewards, so the muscle memory carries over.</p>'
+    + '<div style="display:flex;justify-content:space-around;background:'+C.paper+';border:1px solid '+C.line+';border-radius:10px;padding:14px;margin-bottom:14px;">'
+      + stat("typeTimer","Time left","1:00") + stat("typeWpm","WPM","0") + stat("typeAcc","Accuracy","100%")
+    + '</div>'
+    + '<div id="typeTarget" style="background:'+C.paper+';border:1px solid '+C.line+';border-radius:10px;padding:16px;font-size:16px;line-height:1.7;color:#8a9389;margin-bottom:12px;">'+typingTargetHtml()+'</div>'
+    + '<textarea id="typeInput" placeholder="Start typing the passage above…" style="width:100%;min-height:120px;padding:14px;border-radius:10px;border:1.5px solid '+C.line+';font-family:'+fontBody+';font-size:15px;line-height:1.6;color:'+C.ink+';resize:vertical;background:'+C.paper+';"></textarea>'
+    + '<div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;">'
+      + '<button class="btn-ghost" data-act="type-again">↻ Restart</button>'
+      + '<button class="btn-ghost" data-act="type-new">New prompt</button>'
+    + '</div>'
+    + footer() + '</div>';
 }
 
 /* ---------- PROGRESS (localStorage trend + redo queue) ---------- */
@@ -832,6 +955,9 @@ function wire(){
     if(act==="guide"){ vidCleanup(); S.mode="guide"; render(); return; }
     if(act==="video"){ vidCleanup(); V.scenIdx=S.scenIdx||0; V.qIdx=0; V.stage="idle"; V.error=""; S.mode="video"; render(); return; }
     if(act==="progress"){ vidCleanup(); S.mode="progress"; render(); return; }
+    if(act==="typing"){ vidCleanup(); typingReset(false); S.mode="typing"; render(); return; }
+    if(act==="type-again"){ typingReset(true); render(); return; }
+    if(act==="type-new"){ typingReset(true); T.promptIdx=(T.promptIdx+1)%TYPING_PROMPTS.length; render(); return; }
     if(act==="toggle-hide"){ S.hideScores=!S.hideScores; render(); return; }
     if(act==="reveal-scores"){ S.hideScores=false; render(); return; }
     if(act==="save-session"){
@@ -893,6 +1019,19 @@ function wire(){
     sel.onchange = function(){
       var d = +sel.value;
       S.duration=d; S.remaining=d; S.running=false; render();
+    };
+  }
+
+  /* typing trainer input */
+  var ti = $("#typeInput");
+  if(ti){
+    ti.focus();
+    ti.oninput = function(){
+      T.typed = ti.value;
+      if(!T.started && T.typed.length) typingStart();
+      var st = typingStats();
+      typingPaintStats();
+      if(st.done) typingFinish();
     };
   }
 }
