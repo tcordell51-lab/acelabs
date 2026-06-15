@@ -193,6 +193,7 @@ var S = {
   duration:210,
   remaining:210,
   running:false,
+  hideScores:false,   // self-score-first: hide coach rubric until reveal
   scores:{},          // dim.key -> 1|2|3
   arcadeIdx:0,
   arcadePick:null,
@@ -733,20 +734,34 @@ function viewScenario(){
   else if(ts>=13) verdict = "Strong: mostly 3s, no 1s.";
   else verdict = "Solid — push the 2s up to 3s by stating them out loud.";
 
-  var card = '<div style="background:'+C.paper+';border:1.5px solid '+C.forest+';border-radius:10px;overflow:hidden;" class="sticky-card">'
-    + '<div style="background:'+C.forest+';color:'+C.cream+';padding:12px 16px;font-family:'+fontDisplay+';font-weight:700;font-size:15px;display:flex;justify-content:space-between;align-items:baseline;">'
-      + '<span>Live Scorecard</span>'
-      + '<span style="font-size:13px;color:'+(hz?"#f0b8ac":C.brass)+';font-weight:700;">'+ts+'/'+maxScore+'</span>'
-    + '</div>'
-    + '<div style="padding:6px 14px 14px;">'
+  var hidden = S.hideScores;
+  var toggleLabel = hidden ? "show" : "self-score";
+  var body;
+  if(hidden){
+    body = '<div style="padding:20px 16px;text-align:center;">'
+      + '<div style="font-size:13px;color:#46524a;line-height:1.5;margin-bottom:12px;">Scoring hidden. Have her <b>self-assess out loud</b> against the five dimensions first — then reveal to compare.</div>'
+      + '<button data-act="reveal-scores" style="background:'+C.forest+';color:'+C.cream+';border:none;border-radius:6px;padding:9px 16px;font-size:12.5px;font-weight:700;cursor:pointer;">Reveal coach scoring</button>'
+      + '</div>';
+  } else {
+    body = '<div style="padding:6px 14px 14px;">'
       + rows
       + '<div id="scoreVerdict" style="margin-top:10px;font-size:11px;color:'+(hz?C.red:C.green)+';font-weight:600;">'+esc(verdict)+'</div>'
       + '<button data-act="save-session" style="margin-top:10px;width:100%;background:'+(scoredCount()>=5?C.forest:C.soft)+';color:'+(scoredCount()>=5?C.cream:"#8a9389")+';border:none;border-radius:6px;padding:9px;font-size:12px;font-weight:700;cursor:pointer;">Save session</button>'
-    + '</div>'
-    + '<div style="padding:0 14px 14px;display:grid;grid-template-columns:1fr 1fr;gap:8px;">'
+      + '</div>'
+      + '<div style="padding:0 14px 14px;display:grid;grid-template-columns:1fr 1fr;gap:8px;">'
       + flagBox("red","Score-killers",KILLERS)
       + flagBox("green","Score-builders",BUILDERS)
+      + '</div>';
+  }
+  var card = '<div style="background:'+C.paper+';border:1.5px solid '+C.forest+';border-radius:10px;overflow:hidden;" class="sticky-card">'
+    + '<div style="background:'+C.forest+';color:'+C.cream+';padding:12px 16px;font-family:'+fontDisplay+';font-weight:700;font-size:15px;display:flex;justify-content:space-between;align-items:center;">'
+      + '<span>Live Scorecard</span>'
+      + '<span style="display:flex;align-items:center;gap:10px;">'
+        + '<span style="font-size:13px;color:'+(hz?"#f0b8ac":C.brass)+';font-weight:700;">'+(hidden?"–":ts+"/"+maxScore)+'</span>'
+        + '<button data-act="toggle-hide" style="background:transparent;border:1px solid '+C.brass+';color:'+C.brass+';border-radius:99px;padding:3px 9px;font-size:9.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;">'+toggleLabel+'</button>'
+      + '</span>'
     + '</div>'
+    + body
     + '</div>';
 
   return '<div style="max-width:1120px;margin:0 auto;padding:28px 24px;">'
@@ -817,6 +832,8 @@ function wire(){
     if(act==="guide"){ vidCleanup(); S.mode="guide"; render(); return; }
     if(act==="video"){ vidCleanup(); V.scenIdx=S.scenIdx||0; V.qIdx=0; V.stage="idle"; V.error=""; S.mode="video"; render(); return; }
     if(act==="progress"){ vidCleanup(); S.mode="progress"; render(); return; }
+    if(act==="toggle-hide"){ S.hideScores=!S.hideScores; render(); return; }
+    if(act==="reveal-scores"){ S.hideScores=false; render(); return; }
     if(act==="save-session"){
       if(recordSession()){ S.mode="progress"; render(); }
       else { var w=$("#scoreVerdict"); if(w){ w.textContent="Score all five dimensions before saving."; w.style.color=C.red; } }
