@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ace Labs · 3D Stereochemistry (proof of concept)</title>
+<style>
+  :root{
+    --paper:#f4eddc; --paper2:#efe7d3; --ink:#1B3A2D; --ink2:#52605a; --mute:#8a978f;
+    --line:#e3dcc8; --gold:#C9A84C; --gold-d:#9a7d2e; --teal:#3E9B86; --card:#fffdf7;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+    color:var(--ink); background:radial-gradient(120% 130% at 50% -10%,#fefbf3 0%,var(--paper) 60%,var(--paper2) 100%);
+    min-height:100dvh; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:980px; margin:0 auto; padding:22px 18px 40px}
+  header h1{font-family:Georgia,'Times New Roman',serif; font-size:24px; margin:0 0 4px; letter-spacing:-.01em}
+  header h1 em{font-style:italic; color:var(--gold-d); font-weight:400}
+  header .lede{font-size:13.5px; color:var(--ink2); max-width:62ch; line-height:1.5; margin:0}
+  .poc{display:inline-block; font:700 10px/1 ui-monospace,Menlo,monospace; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--gold-d); background:rgba(201,168,76,.12); border:1px solid var(--gold); border-radius:999px; padding:5px 9px; margin-bottom:10px}
+  .stage{display:grid; grid-template-columns:1fr 280px; gap:16px; margin-top:18px}
+  @media (max-width:760px){ .stage{grid-template-columns:1fr} }
+  .viewer{position:relative; background:var(--card); border:1px solid var(--line); border-radius:14px; overflow:hidden;
+    box-shadow:0 10px 30px rgba(13,32,24,.08); aspect-ratio:1/1}
+  #c{display:block; width:100%; height:100%; touch-action:none; cursor:grab}
+  #c:active{cursor:grabbing}
+  .hint{position:absolute; left:12px; bottom:10px; font:600 11px/1.3 ui-monospace,monospace; color:var(--mute);
+    background:rgba(255,253,247,.78); border:1px solid var(--line); border-radius:8px; padding:5px 8px; pointer-events:none}
+  .panel{display:flex; flex-direction:column; gap:12px}
+  .badge{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:16px; text-align:center}
+  .badge .cfg{font-family:Georgia,serif; font-size:54px; font-weight:700; line-height:1; color:var(--teal)}
+  .badge .cfg.s{color:#8a5a8c}
+  .badge .sub{font:700 10px/1 ui-monospace,monospace; letter-spacing:.12em; text-transform:uppercase; color:var(--mute); margin-top:6px}
+  .legend{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:12px 14px}
+  .legend .t{font:700 10px/1 ui-monospace,monospace; letter-spacing:.12em; text-transform:uppercase; color:var(--gold-d); margin-bottom:9px}
+  .lrow{display:flex; align-items:center; gap:9px; font-size:13px; margin:6px 0; color:var(--ink2)}
+  .dot{width:13px; height:13px; border-radius:50%; flex:none; box-shadow:inset 0 0 0 1px rgba(0,0,0,.15)}
+  .lrow b{color:var(--ink); min-width:22px}
+  .pr{margin-left:auto; font:700 11px/1 ui-monospace,monospace; color:var(--mute)}
+  .btns{display:flex; flex-wrap:wrap; gap:8px}
+  button{font:600 12.5px/1 inherit; color:var(--ink); background:#fff; border:1px solid var(--line); border-radius:9px;
+    padding:9px 12px; cursor:pointer; transition:border-color .15s, background .15s}
+  button:hover{border-color:var(--gold-d)}
+  button.primary{color:#fff; background:var(--teal); border-color:var(--teal)}
+  .note{font-size:12.5px; line-height:1.55; color:var(--ink2); background:rgba(95,168,116,.10);
+    border:1px dashed var(--teal); border-radius:10px; padding:10px 12px}
+  .note b{color:var(--ink)}
+  .fallback{padding:40px 20px; text-align:center; color:var(--ink2)}
+  footer{margin-top:22px; font-size:12px; color:var(--mute); line-height:1.6}
+  code{font-family:ui-monospace,Menlo,monospace; font-size:12px; background:rgba(13,32,24,.06); padding:1px 5px; border-radius:5px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="poc">Proof of concept · OChem 3D</div>
+    <h1>Chirality you can <em>turn over in your hand</em></h1>
+    <p class="lede">A chiral carbon with four different groups. Drag to rotate. Flip it to its mirror image and watch the
+      configuration label switch — the two are <b>non-superimposable</b>. The R/S badge is computed from the actual 3D
+      geometry, so it is always correct and flips with the mirror.</p>
+  </header>
+
+  <div class="stage">
+    <div class="viewer">
+      <canvas id="c"></canvas>
+      <div class="hint">drag to rotate · scroll to zoom</div>
+    </div>
+    <div class="panel">
+      <div class="badge">
+        <div class="cfg" id="cfg">–</div>
+        <div class="sub" id="cfgsub">configuration</div>
+      </div>
+      <div class="legend">
+        <div class="t">CIP priority (highest → lowest)</div>
+        <div class="lrow"><span class="dot" style="background:#8a4b2f"></span><b>Br</b> bromine <span class="pr">#1</span></div>
+        <div class="lrow"><span class="dot" style="background:#3fa15a"></span><b>Cl</b> chlorine <span class="pr">#2</span></div>
+        <div class="lrow"><span class="dot" style="background:#b9a93f"></span><b>F</b> fluorine <span class="pr">#3</span></div>
+        <div class="lrow"><span class="dot" style="background:#e8e8e8"></span><b>H</b> hydrogen <span class="pr">#4</span></div>
+      </div>
+      <div class="btns">
+        <button class="primary" id="flip">Flip to mirror image</button>
+        <button id="look">Look down C–H</button>
+        <button id="spin">Spin: –</button>
+        <button id="reset">Reset view</button>
+      </div>
+      <div class="note">Point the <b>lowest priority (H, #4)</b> away from you, then trace <b>Br → Cl → F</b>.
+        Clockwise = <b>R</b>, counter‑clockwise = <b>S</b>. Use “Look down C–H” to set that view automatically.</div>
+    </div>
+  </div>
+
+  <footer id="foot">
+    Self-contained demo. three.js is lazy-loaded from a CDN only when this page opens (a dynamic <code>import()</code>),
+    so the rest of Ace Labs is untouched and pays zero cost. Geometry is procedural (no model assets), reduced-motion is
+    respected, and it falls back to this message if WebGL is unavailable.
+  </footer>
+</div>
+
+<script type="module">
+(async function () {
+  const canvas = document.getElementById('c');
+
+  // --- WebGL feature detection + graceful fallback -------------------------
+  function webglOK(){
+    try { const t = document.createElement('canvas');
+      return !!(window.WebGLRenderingContext && (t.getContext('webgl') || t.getContext('experimental-webgl'))); }
+    catch(e){ return false; }
+  }
+  if (!webglOK()) {
+    canvas.closest('.viewer').innerHTML =
+      '<div class="fallback">Your browser/device doesn’t support WebGL, so the 3D view can’t load.<br>' +
+      'In the real tool this would fall back to the existing 2D wedge–dash diagram.</div>';
+    return;
+  }
+
+  // --- Lazy-load three.js (this is the production pattern: pay only on open) -
+  const THREE = await import('https://unpkg.com/three@0.160.0/build/three.module.js');
+
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // --- Renderer / scene / camera -------------------------------------------
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:true });
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 100);
+  camera.position.set(0, 0, 6.4);
+
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x6b5d3e, 0.95));
+  const key = new THREE.DirectionalLight(0xffffff, 0.85); key.position.set(3, 4, 5); scene.add(key);
+  const rim = new THREE.DirectionalLight(0xffe6b0, 0.35); rim.position.set(-4, -2, -3); scene.add(rim);
+
+  const mol = new THREE.Group();
+  scene.add(mol);
+
+  // Tetrahedral unit directions, one per substituent (priority order 1..4).
+  const SUBS = [
+    { atom:'Br', color:0x8a4b2f, rad:0.50, dir:[ 1,  1,  1] },  // priority 1
+    { atom:'Cl', color:0x3fa15a, rad:0.42, dir:[ 1, -1, -1] },  // priority 2
+    { atom:'F',  color:0xb9a93f, rad:0.34, dir:[-1,  1, -1] },  // priority 3
+    { atom:'H',  color:0xe8e8e8, rad:0.26, dir:[-1, -1,  1] },  // priority 4
+  ];
+  const BOND_LEN = 1.7;
+
+  function labelSprite(text, color){
+    const cv = document.createElement('canvas'); cv.width = cv.height = 128;
+    const x = cv.getContext('2d');
+    x.beginPath(); x.arc(64,64,50,0,Math.PI*2); x.fillStyle = color; x.fill();
+    x.lineWidth = 6; x.strokeStyle = 'rgba(255,255,255,.85)'; x.stroke();
+    x.fillStyle = '#fff'; x.font = 'bold 70px sans-serif'; x.textAlign='center'; x.textBaseline='middle';
+    x.fillText(text, 64, 70);
+    const tex = new THREE.CanvasTexture(cv); tex.anisotropy = 4;
+    const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map:tex, depthTest:false, transparent:true }));
+    sp.scale.set(0.52, 0.52, 0.52);
+    return sp;
+  }
+
+  function makeBond(a, b){
+    const dir = new THREE.Vector3().subVectors(b, a);
+    const len = dir.length();
+    const m = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.085, 0.085, len, 18),
+      new THREE.MeshStandardMaterial({ color:0xcfc7b2, roughness:0.7, metalness:0.0 })
+    );
+    m.position.copy(a).addScaledVector(dir, 0.5);
+    m.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0), dir.clone().normalize());
+    return m;
+  }
+
+  let mirrored = false;
+
+  // (re)build the molecule; returns the substituent positions in priority order
+  function build(){
+    while (mol.children.length) mol.remove(mol.children[0]);
+
+    // central carbon
+    mol.add(new THREE.Mesh(
+      new THREE.SphereGeometry(0.46, 36, 28),
+      new THREE.MeshStandardMaterial({ color:0x33312c, roughness:0.45, metalness:0.0 })
+    ));
+
+    const positions = [];
+    SUBS.forEach((s, i) => {
+      const d = new THREE.Vector3(s.dir[0], s.dir[1], s.dir[2]).normalize();
+      if (mirrored) d.x = -d.x;                 // reflection across the yz-plane → enantiomer
+      const p = d.clone().multiplyScalar(BOND_LEN);
+      positions.push(p);
+
+      mol.add(makeBond(new THREE.Vector3(0,0,0), p));
+      const atom = new THREE.Mesh(
+        new THREE.SphereGeometry(s.rad, 32, 24),
+        new THREE.MeshStandardMaterial({ color:s.color, roughness:0.35, metalness:0.0 })
+      );
+      atom.position.copy(p);
+      mol.add(atom);
+
+      const lab = labelSprite(String(i+1), '#' + s.color.toString(16).padStart(6,'0'));
+      lab.position.copy(p).addScaledVector(d, s.rad + 0.18);
+      mol.add(lab);
+    });
+    return positions;
+  }
+
+  // Configuration from geometry: sign of the scalar triple product of the
+  // vectors to priorities 1,2,3 (relative to priority 4). Calibrated against a
+  // hand-built (R)-CHFClBr in three.js' right-handed frame: det < 0 ⇒ R.
+  function configFrom(positions){
+    const [p1,p2,p3,p4] = positions;
+    const a = p1.clone().sub(p4), b = p2.clone().sub(p4), c = p3.clone().sub(p4);
+    const det = a.dot(new THREE.Vector3().crossVectors(b, c));
+    return det < 0 ? 'R' : 'S';
+  }
+
+  function refresh(){
+    const positions = build();
+    const cfg = configFrom(positions);
+    const el = document.getElementById('cfg');
+    el.textContent = '(' + cfg + ')';
+    el.classList.toggle('s', cfg === 'S');
+    document.getElementById('cfgsub').textContent = (cfg === 'R' ? 'rectus' : 'sinister') + ' · ' + (mirrored ? 'mirror image' : 'original');
+  }
+  refresh();
+
+  // --- Interaction: trackball drag, wheel zoom, optional idle spin ----------
+  let dragging = false, lastX = 0, lastY = 0, targetQuat = null;
+  let spinOn = !reduced;
+  const spinBtn = document.getElementById('spin');
+  spinBtn.textContent = 'Spin: ' + (spinOn ? 'on' : 'off');
+
+  canvas.addEventListener('pointerdown', e => { dragging = true; targetQuat = null; lastX = e.clientX; lastY = e.clientY; canvas.setPointerCapture(e.pointerId); });
+  canvas.addEventListener('pointerup',   e => { dragging = false; });
+  canvas.addEventListener('pointermove', e => {
+    if (!dragging) return;
+    const dx = (e.clientX - lastX), dy = (e.clientY - lastY);
+    lastX = e.clientX; lastY = e.clientY;
+    const dq = new THREE.Quaternion().setFromEuler(new THREE.Euler(dy * 0.01, dx * 0.01, 0, 'XYZ'));
+    mol.quaternion.premultiply(dq);            // rotate about world axes (trackball feel)
+  });
+  canvas.addEventListener('wheel', e => {
+    e.preventDefault();
+    camera.position.z = Math.min(12, Math.max(3.6, camera.position.z + e.deltaY * 0.01));
+  }, { passive:false });
+
+  document.getElementById('flip').addEventListener('click', () => { mirrored = !mirrored; refresh(); });
+  document.getElementById('reset').addEventListener('click', () => { mol.quaternion.identity(); targetQuat = null; camera.position.z = 6.4; });
+  spinBtn.addEventListener('click', () => { spinOn = !spinOn; spinBtn.textContent = 'Spin: ' + (spinOn ? 'on' : 'off'); });
+
+  // Orient so the lowest-priority H points directly away from the camera.
+  document.getElementById('look').addEventListener('click', () => {
+    const d = new THREE.Vector3(SUBS[3].dir[0], SUBS[3].dir[1], SUBS[3].dir[2]).normalize();
+    if (mirrored) d.x = -d.x;
+    targetQuat = new THREE.Quaternion().setFromUnitVectors(d, new THREE.Vector3(0, 0, -1));
+  });
+
+  // --- Resize + render loop -------------------------------------------------
+  function resize(){
+    const r = canvas.getBoundingClientRect();
+    const w = Math.max(1, r.width), h = Math.max(1, r.height);
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h; camera.updateProjectionMatrix();
+  }
+  new ResizeObserver(resize).observe(canvas);
+  resize();
+
+  const spinStep = new THREE.Quaternion().setFromEuler(new THREE.Euler(0, 0.004, 0));
+  (function loop(){
+    requestAnimationFrame(loop);
+    if (targetQuat){
+      mol.quaternion.slerp(targetQuat, 0.16);
+      if (mol.quaternion.angleTo(targetQuat) < 0.005){ mol.quaternion.copy(targetQuat); targetQuat = null; }
+    } else if (spinOn && !dragging){
+      mol.quaternion.multiply(spinStep);
+    }
+    renderer.render(scene, camera);
+  })();
+})();
+</script>
+</body>
+</html>
