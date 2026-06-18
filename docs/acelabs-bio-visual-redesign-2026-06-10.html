@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ace Labs — Bio Visual Redesign Theory (2026-06-10)</title>
+<style>
+  :root{
+    --bg:#0d0d0f; --bg2:#141417; --card:#191920; --card2:#1f1f28;
+    --line:#2a2a33; --line2:#34343f;
+    --ink:#ece9e1; --ink2:#b6b3aa; --ink3:#838079;
+    --gold:#C9A84C; --gold-dim:#8a7636;
+    --bio:#5bba7d; --gc:#5b9bd5; --ochem:#a87dd5; --qr:#d56b97;
+    --green:#5bba7d; --amber:#d8a23c; --red:#dd6450; --neutral:#7e7b87;
+    --grammar:#7dc4d5;
+    --radius:14px;
+    --serif:Georgia,'Times New Roman',serif;
+    --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.62;font-size:16px;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1000px;margin:0 auto;padding:0 22px 120px}
+  header.top{border-bottom:1px solid var(--line);background:linear-gradient(180deg,#101014,#0d0d0f);padding:46px 0 34px;margin-bottom:8px}
+  header.top .wrap{padding-bottom:0}
+  .brand{font-size:12px;letter-spacing:.32em;text-transform:uppercase;color:var(--bio);font-weight:600}
+  h1{font-family:var(--serif);font-weight:600;font-size:38px;line-height:1.14;margin:14px 0 10px;letter-spacing:-.01em}
+  h1 em{color:var(--gold);font-style:italic}
+  .sub{color:var(--ink2);font-size:17px;max-width:76ch;margin:0}
+  .meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+  .meta .tag{font-size:12px;color:var(--ink2);border:1px solid var(--line2);border-radius:999px;padding:5px 12px;background:var(--bg2)}
+  .meta .tag b{color:var(--ink)}
+  nav.toc{display:flex;flex-wrap:wrap;gap:8px;margin:30px 0 8px}
+  nav.toc a{font-size:13px;color:var(--ink2);text-decoration:none;border:1px solid var(--line);padding:6px 13px;border-radius:8px;background:var(--bg2);transition:.15s}
+  nav.toc a:hover{color:var(--ink);border-color:var(--gold-dim)}
+  section{margin-top:46px;scroll-margin-top:20px}
+  h2{font-family:var(--serif);font-size:26px;font-weight:600;margin:0 0 6px;letter-spacing:-.01em}
+  h2 .num{color:var(--gold);font-size:15px;font-family:var(--sans);font-weight:700;margin-right:10px;letter-spacing:.05em}
+  h3{font-family:var(--serif);font-size:20px;font-weight:600;margin:18px 0 6px}
+  .lead{color:var(--ink2);margin:0 0 22px;max-width:78ch}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px 24px;margin:16px 0;position:relative;overflow:hidden}
+  .card.rail{padding-left:26px}
+  .card.rail::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--bio)}
+  code{font-family:'SF Mono',ui-monospace,Menlo,monospace;font-size:.85em;background:var(--bg2);border:1px solid var(--line);border-radius:5px;padding:1px 6px;color:#d9d4c4}
+  ul{margin:8px 0;padding-left:20px} li{margin:6px 0;color:var(--ink2)}
+  li b{color:var(--ink)}
+  ol{margin:8px 0;padding-left:22px} ol li{margin:7px 0;color:var(--ink2)}
+  .pill{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;padding:3px 9px;border-radius:6px;border:1px solid transparent;vertical-align:middle}
+  .p-block{background:rgba(221,100,80,.14);color:#f0a193;border-color:rgba(221,100,80,.35)}
+  .p-work{background:rgba(216,162,60,.14);color:#e6bd72;border-color:rgba(216,162,60,.34)}
+  .p-ok{background:rgba(91,186,125,.14);color:#86d3a3;border-color:rgba(91,186,125,.34)}
+  .p-gram{background:rgba(125,196,213,.14);color:#a7dbe8;border-color:rgba(125,196,213,.34)}
+  table{width:100%;border-collapse:collapse;margin:12px 0;font-size:14px}
+  th,td{text-align:left;padding:11px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);font-weight:700}
+  td{color:var(--ink2)} td b{color:var(--ink)}
+  tr:last-child td{border-bottom:none}
+  .sc{font-family:var(--serif);font-weight:700;text-align:center}
+  .sc.lo{color:var(--red)} .sc.mid{color:var(--amber)} .sc.hi{color:var(--green)}
+  .callout{background:linear-gradient(180deg,rgba(91,186,125,.07),rgba(91,186,125,.02));border:1px solid var(--bio);border-radius:var(--radius);padding:20px 24px;margin:18px 0}
+  .callout .k{font-family:var(--serif);font-size:18px;color:var(--bio);margin:0 0 6px}
+  .callout p{margin:0;color:var(--ink)}
+  .callout.gold{background:linear-gradient(180deg,rgba(201,168,76,.07),rgba(201,168,76,.02));border-color:var(--gold-dim)}
+  .callout.gold .k{color:var(--gold)}
+  .mini-h{font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;margin:18px 0 6px;color:var(--ink3)}
+  .grm{display:grid;grid-template-columns:150px 1fr;gap:8px 16px;align-items:start;padding:12px 0;border-top:1px solid var(--line)}
+  .grm:first-child{border-top:none}
+  .grm .gn{font-family:var(--serif);font-weight:600;color:var(--grammar);font-size:15px}
+  .grm .gn span{display:block;font-family:var(--sans);font-size:11px;color:var(--ink3);text-transform:uppercase;letter-spacing:.08em;margin-top:3px}
+  .grm .gd{color:var(--ink2);font-size:14px}
+  .grm .gd b{color:var(--ink)}
+  .ref{font-size:13px;color:var(--ink3);margin:6px 0}
+  .ref a{color:var(--gold-dim)}
+  .hub{font-size:11px;letter-spacing:.18em;text-transform:uppercase;font-weight:700;color:var(--bio);margin:22px 0 2px}
+  footer{margin-top:60px;padding-top:24px;border-top:1px solid var(--line);color:var(--ink3);font-size:13px}
+  footer a{color:var(--gold-dim)}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <div class="brand">Ace Labs &middot; Bio Visual Redesign Theory</div>
+    <h1>Can every Bio visual be <em>top tier?</em><br>Yes — and here is the theory for each one.</h1>
+    <p class="sub">A research-grounded redesign brief for every interactive and diagram in the Bio engine. The core problem is not ugliness — it is that ~36 visuals run on four reused interaction templates, so concepts with very different deep structure all get the same drag-bin, slider, or click-to-reveal. This document sets out an evidence base from the learning sciences, derives a taxonomy that matches each concept's <em>deep structure</em> to a distinct visual grammar, and then specifies the top-tier replacement for every existing visual — starting with the body-systems map, which today is a placeholder silhouette.</p>
+    <div class="meta">
+      <span class="tag">Date <b>2026-06-10</b></span>
+      <span class="tag">Scope <b>Bio engine · all visuals</b></span>
+      <span class="tag">Basis <b>Mayer · Fiorella · PhET · cognitive-load research</b></span>
+      <span class="tag">Companion <b>engine-ratings 2026-06-10</b></span>
+    </div>
+    <nav class="toc">
+      <a href="#thesis">Thesis</a>
+      <a href="#evidence">Evidence base</a>
+      <a href="#grammars">The 8 grammars</a>
+      <a href="#spine">Interaction spine</a>
+      <a href="#redesign">Per-visual redesign</a>
+      <a href="#body">The body map</a>
+      <a href="#verdict">Can everything be top tier?</a>
+    </nav>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- THESIS -->
+  <section id="thesis">
+    <h2><span class="num">00</span>The thesis</h2>
+    <p class="lead">A visual is "top tier" when its <b>grammar matches the concept's deep structure</b> and it forces the student to <b>generate</b> rather than watch. Both halves are settled science. The Bio engine already nails neither consistently — not because the team lacks skill, but because bespoke visuals are expensive to hand-author, so four templates got stretched over everything. Remove that constraint (which is exactly what an AI author removes) and every visual can clear the bar.</p>
+    <div class="callout gold">
+      <p class="k">The one-sentence rule</p>
+      <p>Pick the visual grammar from the concept's deep structure — cycle, gradient, network, hierarchy, mechanism, distribution, spatial map, or comparison — then wrap it in a <b>predict → manipulate → see-the-real-result → self-explain</b> loop, and strip everything that doesn't carry meaning.</p>
+    </div>
+  </section>
+
+  <!-- EVIDENCE -->
+  <section id="evidence">
+    <h2><span class="num">01</span>The evidence base</h2>
+    <p class="lead">Six findings from the learning sciences drive every recommendation below. These are not preferences; each has strong empirical support.</p>
+    <div class="card rail">
+      <ul>
+        <li><b>Spatial contiguity wins, hugely.</b> Words belong <em>on</em> the structure they label, not in a caption far away. Supported in 22 of 22 tests, median effect size ~1.10 — one of the largest in education. <span class="ref">(Mayer; Mayer &amp; Fiorella)</span></li>
+        <li><b>Segment and pause; don't autoplay.</b> Free-running animation suffers the <em>transience effect</em> — information vanishes before it's processed. System-paced steps (advance on click, one idea per step) beat both autoplay and pure learner-control, because novices don't know when to pause. <span class="ref">(Spanjers et al.; transience research)</span></li>
+        <li><b>Animation only beats a static diagram when motion is the thing being learned</b>, and only if it obeys the apprehension + congruence principles. For structure and relationships, a signposted static or step-revealed diagram is usually better and lighter. <span class="ref">(animation-vs-static meta-analyses)</span></li>
+        <li><b>Generative activity is the multiplier.</b> Drawing, predicting, self-explaining, and enacting produce better comprehension and transfer than studying a finished figure — and the <em>quality</em> of what the student generates predicts their test performance. <span class="ref">(Fiorella &amp; Mayer, generative learning)</span></li>
+        <li><b>Interactive simulations out-teach lectures and demos</b> when built on implicit scaffolding — affordances invite exploration, real-time results reward it, text is minimal, and the design is iterated on real student interviews. <span class="ref">(PhET Interactive Simulations)</span></li>
+        <li><b>For spatial/anatomical content, color-coded schematic 3D beats photorealism.</b> Realism raises cognitive load (especially for lower-spatial students); color-coding raises performance with no load penalty. <span class="ref">(Anatomical Sciences Education; Scientific Reports)</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- GRAMMARS -->
+  <section id="grammars">
+    <h2><span class="num">02</span>Eight visual grammars — matched to deep structure</h2>
+    <p class="lead">The antidote to "same format over and over" is to stop choosing the format by convenience and start choosing it by the <em>shape of the idea</em>. Eight grammars cover all of DAT Bio. Each is visually distinct, so a student always knows what kind of thinking a screen is asking for.</p>
+    <div class="card">
+      <div class="grm"><div class="gn">Cyclic dial<span>loop / phase</span></div><div class="gd">A radial loop the student steps around, with the current phase lit and the driver of the next transition called out. <b>For:</b> cardiac cycle, menstrual cycle, cell cycle, Krebs, Calvin.</div></div>
+      <div class="grm"><div class="gn">Gradient field<span>2-D continuum</span></div><div class="gd">A heatmap/contour the student <em>builds</em>, watching a quantity intensify across space. <b>For:</b> nephron countercurrent, O₂ unloading, membrane potential, resource clines.</div></div>
+      <div class="grm"><div class="gn">Routing network<span>nodes + decisions</span></div><div class="gd">A node-link graph where a token flows and branches; wrong branches visibly fail. <b>For:</b> immune response, signal transduction, energy flow up a food web, reflex arcs.</div></div>
+      <div class="grm"><div class="gn">Living tree<span>nesting / hierarchy</span></div><div class="gd">A collapsible hierarchy the student assembles; each branch reveals the trait that defines it. <b>For:</b> phylogeny, taxonomy, classification, gene-family trees.</div></div>
+      <div class="grm"><div class="gn">Mechanism player<span>ordered motion</span></div><div class="gd">A step-gated process; each step asks the student to <em>predict the next move before it plays.</em> <b>For:</b> replication, transcription/translation, sliding filament, action potential, mitosis.</div></div>
+      <div class="grm"><div class="gn">Live distribution<span>statistics / probability</span></div><div class="gd">A histogram or curve recomputed from parameters the student sets — the math is real, not staged. <b>For:</b> Hardy-Weinberg, selection, Punnett probabilities, population growth.</div></div>
+      <div class="grm"><div class="gn">Zoomable map<span>spatial anatomy</span></div><div class="gd">A color-coded schematic with semantic zoom; predict-before-reveal on each structure's job. <b>For:</b> body systems, heart, organelle atlas, brain regions.</div></div>
+      <div class="grm"><div class="gn">Synced comparator<span>contrast</span></div><div class="gd">Two views locked together with a difference-highlighter that pulses what changed. <b>For:</b> mitosis vs meiosis, innate vs adaptive, stem-cell potency, cytoskeleton filaments, prokaryote vs eukaryote.</div></div>
+    </div>
+  </section>
+
+  <!-- SPINE -->
+  <section id="spine">
+    <h2><span class="num">03</span>The universal interaction spine</h2>
+    <p class="lead">Whatever the grammar, the same four-beat loop turns a picture into a learning event. This is where generative learning, segmentation, and implicit scaffolding meet.</p>
+    <div class="card rail">
+      <ol>
+        <li><b>Predict.</b> Before anything moves or reveals, the student commits — drag, choose, or sketch. (Generative + commit-before-reveal; this is OChem's best move, absent in most Bio visuals.)</li>
+        <li><b>Manipulate.</b> One affordance, real-time response, minimal text. The student changes a variable and the visual answers immediately. (PhET implicit scaffolding.)</li>
+        <li><b>See the real result.</b> The output is <em>computed</em>, not staged — the Hill curve actually shifts, the allele frequency actually drifts, the gradient actually multiplies. Trust comes from the model being real.</li>
+        <li><b>Self-explain.</b> A short "why did that happen?" the student answers, graded with targeted feedback. (Self-explanation effect; the quality of the explanation predicts transfer.)</li>
+      </ol>
+      <p style="margin:10px 0 0;color:var(--ink3);font-size:13.5px">Segmentation rule: the loop is <b>system-paced</b> — the student advances step by step, never a slider they can blow past. Spatial-contiguity rule: every label sits on its structure. Coherence rule: the decorative 800×450 letterbox frame and gradient backgrounds go — they add load, not meaning.</p>
+    </div>
+  </section>
+
+  <!-- REDESIGN -->
+  <section id="redesign">
+    <h2><span class="num">04</span>The per-visual redesign</h2>
+    <p class="lead">Every existing Bio visual, its current effectiveness, the grammar it should use, and the top-tier replacement. Scores are the §-rubric from the visual-uniqueness audit. Grouped by hub.</p>
+
+    <div class="hub">Physiology</div>
+    <div class="card">
+      <table>
+        <thead><tr><th style="width:20%">Current visual</th><th class="sc" style="width:8%">Now</th><th style="width:16%">Grammar</th><th>Top-tier replacement</th></tr></thead>
+        <tbody>
+          <tr><td><b>Body-systems silhouette</b> (placeholder)</td><td class="sc lo">3</td><td><span class="pill p-gram">Zoomable map</span></td><td>Color-coded schematic body with <b>semantic zoom</b>: tap a system → it isolates and animates its one signature function; <b>predict</b> "what fails if this organ stops?" before the reveal. The hub that routes to every other physiology visual. (See §05.)</td></tr>
+          <tr><td><b>Nephron</b> (linear scrub)</td><td class="sc lo">6</td><td><span class="pill p-gram">Gradient field</span></td><td>A two-limb loop the student <b>assembles</b>, watching the medullary osmolarity gradient <b>multiply</b> from 300→1200 mOsm as each segment's permeability is set. Shows <em>why</em> the medulla must be hyperosmotic — the concept the DAT tests and the slider can't show.</td></tr>
+          <tr><td><b>O₂–Hb / Bohr</b> (visual shift only)</td><td class="sc mid">7</td><td><span class="pill p-gram">Live distribution</span></td><td>Same sliders, but the sigmoid is <b>computed from the Hill equation</b>; a "tissue vs lung" marker shows real % unloaded. Predict the shift direction before dragging pH/CO₂/temp.</td></tr>
+          <tr><td><b>Cardiac cycle + EKG</b></td><td class="sc hi">8</td><td><span class="pill p-gram">Cyclic dial</span></td><td>Keep — promote to the canonical dial. Add valve-state prediction per phase and lock the EKG trace to the dial position (spatial contiguity).</td></tr>
+          <tr><td><b>Action potential</b> + build-mode</td><td class="sc hi">9</td><td><span class="pill p-gram">Mechanism player</span></td><td>Keep — the model for the whole engine. Only add the "why" self-explain beat after the build.</td></tr>
+          <tr><td><b>Sliding filament / sarcomere</b></td><td class="sc hi">8</td><td><span class="pill p-gram">Mechanism player</span></td><td>Keep; add predict-the-next-step gating (where does ATP bind? what detaches the head?) instead of a free scrub.</td></tr>
+          <tr><td><b>Reproductive / menstrual cycle</b></td><td class="sc mid">7</td><td><span class="pill p-gram">Cyclic dial</span></td><td>Convert the day-slider into the radial dial with the four hormones plotted <em>on</em> the ring; predict the LH-surge trigger.</td></tr>
+          <tr><td><b>Ventilation / lung mechanics</b></td><td class="sc mid">7</td><td><span class="pill p-gram">Mechanism player</span></td><td>Step-gated pressure-volume mechanism (diaphragm → intrapleural pressure → flow); predict each pressure change before it animates.</td></tr>
+          <tr><td><b>Endocrine glands</b> (body click)</td><td class="sc mid">7</td><td><span class="pill p-gram">Routing network</span></td><td>Re-cast as an axis routing graph (hypothalamus → pituitary → target → feedback); drop a stimulus and watch the negative-feedback loop close.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="hub">Cell &amp; bioenergetics</div>
+    <div class="card">
+      <table>
+        <thead><tr><th style="width:20%">Current visual</th><th class="sc" style="width:8%">Now</th><th style="width:16%">Grammar</th><th>Top-tier replacement</th></tr></thead>
+        <tbody>
+          <tr><td><b>Cell / organelle atlas</b> (click-reveal)</td><td class="sc mid">7</td><td><span class="pill p-gram">Zoomable map</span></td><td>Color-coded schematic cell with semantic zoom; predict-before-reveal each organelle's job, and a "build the secretory pathway" route overlay (generative).</td></tr>
+          <tr><td><b>Cell cycle + checkpoints</b></td><td class="sc hi">8</td><td><span class="pill p-gram">Cyclic dial</span></td><td>Keep as a dial; add "the checkpoint asks one question" gating — predict pass/arrest given p53/Rb/cyclin state.</td></tr>
+          <tr><td><b>Replication fork</b> (view-only)</td><td class="sc mid">7</td><td><span class="pill p-gram">Mechanism player</span></td><td>Make it a build: the student lays Okazaki fragments <b>5'→3'</b> on the lagging strand and places primase/ligase; wrong polarity is rejected with the reason.</td></tr>
+          <tr><td><b>Mitosis phase scrubber</b></td><td class="sc hi">8</td><td><span class="pill p-gram">Synced comparator</span></td><td>Pair it <em>against meiosis</em> in a locked side-by-side; the difference-highlighter pulses exactly where they diverge (homolog pairing, two divisions).</td></tr>
+          <tr><td><b>Glycolysis "drag one glucose"</b></td><td class="sc mid">7</td><td><span class="pill p-gram">Mechanism player</span></td><td>Keep the walk; gate it with ATP-in/ATP-out tallying the student predicts at the investment→payoff switch.</td></tr>
+          <tr><td><b>Krebs / ETC / ATP synthase</b></td><td class="sc mid">7</td><td><span class="pill p-gram">Gradient field</span></td><td>Show the <b>proton gradient</b> as a real field that fills as carriers pump, then drives the rotor — chemiosmosis as a built-up gradient, not a labeled cartoon.</td></tr>
+          <tr><td><b>Central dogma "walk pre-mRNA"</b> + enzyme build</td><td class="sc hi">8</td><td><span class="pill p-gram">Mechanism player</span></td><td>Keep; add a predict beat at splicing and at codon→anticodon matching.</td></tr>
+          <tr><td><b>Cytoskeleton comparator</b></td><td class="sc mid">7</td><td><span class="pill p-gram">Synced comparator</span></td><td>Three filaments in a synced comparator with the difference-highlighter on diameter/subunit/function; predict which filament does a given job.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="hub">Genetics</div>
+    <div class="card">
+      <table>
+        <thead><tr><th style="width:20%">Current visual</th><th class="sc" style="width:8%">Now</th><th style="width:16%">Grammar</th><th>Top-tier replacement</th></tr></thead>
+        <tbody>
+          <tr><td><b>Meiosis (4 gametes)</b></td><td class="sc mid">7</td><td><span class="pill p-gram">Mechanism player</span></td><td>Gate crossing-over and independent assortment as <em>predict</em> steps; end on "how many unique gametes?" computed from the choices made.</td></tr>
+          <tr><td><b>Punnett builder</b></td><td class="sc mid">7</td><td><span class="pill p-gram">Live distribution</span></td><td>Promote from one square to a live ratio bar that updates as alleles are set; dihybrid and test-cross modes; predict the ratio before the fill.</td></tr>
+          <tr><td><b>Hardy-Weinberg calculator</b></td><td class="sc hi">8</td><td><span class="pill p-gram">Live distribution</span></td><td>Keep the math; visualize p²/2pq/q² as a stacked bar that the student perturbs (selection, drift) and watches re-equilibrate — connects to evolution.</td></tr>
+          <tr><td><b>Pedigree analyzer</b></td><td class="sc hi">8</td><td><span class="pill p-gram">Living tree</span></td><td>Keep; add "predict the inheritance mode" before reveal, with the disqualifying individual highlighted on a wrong guess.</td></tr>
+          <tr><td><b>Gene regulation / lac operon</b></td><td class="sc mid">7</td><td><span class="pill p-gram">Routing network</span></td><td>A logic-gate routing graph: set lactose/glucose, watch repressor and CAP states route to transcription ON/OFF; predict each of the four input combinations.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="hub">Evolution &amp; diversity</div>
+    <div class="card">
+      <table>
+        <thead><tr><th style="width:20%">Current visual</th><th class="sc" style="width:8%">Now</th><th style="width:16%">Grammar</th><th>Top-tier replacement</th></tr></thead>
+        <tbody>
+          <tr><td><b>Food-web builder</b></td><td class="sc hi">8</td><td><span class="pill p-gram">Routing network</span></td><td>Keep placement, but <b>animate the 10% energy transfer</b> as shrinking flows so the loss <em>is</em> the visual; predict how many trophic levels the input energy can support.</td></tr>
+          <tr><td><b>Natural selection / drift</b> sliders</td><td class="sc mid">7</td><td><span class="pill p-gram">Live distribution</span></td><td>A real population histogram that evolves generation-by-generation under the student's selection pressure and population size; drift visibly stronger when N is small.</td></tr>
+          <tr><td><b>Speciation diagram</b></td><td class="sc mid">7</td><td><span class="pill p-gram">Living tree</span></td><td>A branching tree the student splits under allopatric/sympatric barriers; predict whether gene flow continues.</td></tr>
+          <tr><td><b>Phylogenetic clade builder</b></td><td class="sc hi">8.5</td><td><span class="pill p-gram">Living tree</span></td><td>Keep — the exemplar for this grammar. Extend with synapomorphy-vs-plesiomorphy prediction at each node.</td></tr>
+          <tr><td><b>Domain / kingdom sorter</b></td><td class="sc lo">6</td><td><span class="pill p-gram">Living tree</span></td><td>Replace bin-sorting with a <em>key</em>: the student answers one discriminating trait at each fork and the tree routes the organism — teaches <em>why</em>, not rote bins.</td></tr>
+          <tr><td><b>Animal diversity / body plans</b></td><td class="sc mid">6.5</td><td><span class="pill p-gram">Synced comparator</span></td><td>Synced comparator across body plans (symmetry, germ layers, coelom) with the difference-highlighter; predict the phylum from two traits.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="hub">Development, immunology &amp; technique</div>
+    <div class="card">
+      <table>
+        <thead><tr><th style="width:20%">Current visual</th><th class="sc" style="width:8%">Now</th><th style="width:16%">Grammar</th><th>Top-tier replacement</th></tr></thead>
+        <tbody>
+          <tr><td><b>Fertilization &amp; gastrulation scrubber</b></td><td class="sc mid">7</td><td><span class="pill p-gram">Mechanism player</span></td><td>Step-gated; at gastrulation, branch into a <b>germ-layer fate map</b> (which layer → which tissue) — the actual DAT question — and fix the current order-of-formation accuracy bug.</td></tr>
+          <tr><td><b>Determination vs differentiation</b></td><td class="sc mid">7</td><td><span class="pill p-gram">Synced comparator</span></td><td>Two timelines locked together; the highlighter marks the commitment point that separates the concepts.</td></tr>
+          <tr><td><b>Stem-cell potency comparator</b></td><td class="sc mid">7</td><td><span class="pill p-gram">Synced comparator</span></td><td>Keep as a comparator; add "predict the potency" from a described source before reveal.</td></tr>
+          <tr><td><b>Innate vs adaptive explorer</b></td><td class="sc lo">6</td><td><span class="pill p-gram">Routing network</span></td><td>Drop a pathogen into a decision graph: it routes through barriers → innate → antigen presentation → the correct adaptive arm (B vs T, humoral vs cell-mediated); the wrong arm visibly fails. Immunity as a <em>decision</em>, not flashcards.</td></tr>
+          <tr><td><b>Micrograph ID trainer</b></td><td class="sc mid">6.5</td><td><span class="pill p-gram">Synced comparator</span></td><td>Pair confusable micrographs side-by-side and train <em>discrimination</em> ("which is which, and the one feature that tells them apart") rather than click-to-name; grow the pool.</td></tr>
+          <tr><td><b>MISSING: molecular techniques</b></td><td class="sc lo">—</td><td><span class="pill p-gram">Mechanism player</span></td><td>Build PCR (denature/anneal/extend cycling), gel electrophoresis (drag bands by size), and restriction digest — high-yield, tested every DAT, absent today.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- BODY MAP -->
+  <section id="body">
+    <h2><span class="num">05</span>The flagship: the body-systems map</h2>
+    <p class="lead">Today it is an outline silhouette with the copy "Body Systems Map flagship coming." It is the right thing to build first, because it is the front door to all of physiology and it currently undersells the whole engine.</p>
+    <div class="card rail">
+      <span class="mini-h">What top tier looks like here</span>
+      <ul>
+        <li><b>Grammar:</b> Zoomable map. A clean, <b>color-coded schematic</b> human (not photorealistic — realism raises load for exactly the anxious, lower-spatial students this product is built for), one accent per system from the existing Okabe-Ito palette.</li>
+        <li><b>Semantic zoom.</b> Tap cardiovascular → the body recedes and the heart-and-vessels schematic comes forward with its one signature animation (a single beat), a "drill into the cardiac cycle" route, and three highest-yield facts placed <em>on</em> the structures (spatial contiguity).</li>
+        <li><b>Predict-before-reveal.</b> Each system opens with one question — "If this organ stopped, what's the first thing that fails?" — answered before the overview unlocks. Generative, and it sets the diagnostic hook.</li>
+        <li><b>It is the router.</b> Every other physiology visual (cardiac dial, nephron gradient, AP player, ventilation, endocrine network) is reachable in one tap from its organ, so the map is the spatial index of the whole hub — fixing the current "stack of separate pages" feel.</li>
+        <li><b>Coherence pass.</b> No decorative gradient backdrop, no letterbox frame; the silhouette earns its pixels or they're cut.</li>
+      </ul>
+      <p style="margin:8px 0 0;color:var(--ink2)">Result: the screen that today says "coming soon" becomes the most memorable surface in Bio and the navigational spine of physiology — the difference between "laughably bad" and the thing a student opens first.</p>
+    </div>
+  </section>
+
+  <!-- VERDICT -->
+  <section id="verdict">
+    <h2><span class="num">06</span>Can everything become top tier?</h2>
+    <div class="callout">
+      <p class="k">Yes — and the work is bounded</p>
+      <p>Every Bio concept maps cleanly to one of eight grammars, and every grammar takes the same four-beat generative spine. Nothing here needs a research breakthrough; it needs <b>bespoke authoring at a volume that was previously uneconomic.</b> Roughly a third of the visuals (action potential, clade builder, cardiac dial, Hardy-Weinberg, central dogma) are already at or near top tier and only need the predict/self-explain beat added. A third need a grammar swap (nephron, immune, domain sorter, endocrine, Krebs). A third need to be computed-for-real or built fresh (Bohr/Hill, selection histogram, molecular techniques, the body map).</p>
+    </div>
+    <p class="lead" style="margin-top:18px"><b>Where Fable 5 is the unlock.</b> The reason these are templates today is that hand-authoring 36 bespoke, accessible, scientifically-verified interactives is expensive. That is precisely the constraint an AI author removes: Fable 5 can generate each visual's SVG, its step-gated interaction, the real model behind it (Hill equation, allele-frequency dynamics, countercurrent multiplication), the predict-and-self-explain copy in Riya's voice, and the keyboard/ARIA fallbacks — then verify the biology against the teaching pages. The theory in this document is the spec; producing it at quality across all 36 is now a tractable build, not a multi-year art project.</p>
+    <div class="callout gold">
+      <p class="k">Suggested first build</p>
+      <p>The <b>nephron countercurrent gradient field</b> — it is the worst format-concept mismatch, it teaches the exact thing the DAT asks and the current slider cannot, and it proves the "gradient field" grammar that several other visuals (Krebs, O₂ unloading) will reuse. Ship it next to the existing version and the difference between "templated" and "top tier" becomes self-evident.</p>
+    </div>
+  </section>
+
+  <footer>
+    <p>Generated 2026-06-10. Visual inventory read directly from <code>tools/bio/*.html</code> (≈36 distinct SVG/interactive surfaces). Design recommendations grounded in the learning-sciences sources below; effectiveness scores carry over from the visual-uniqueness audit. Companion to <code>acelabs-engine-ratings-2026-06-10.html</code> and <code>acelabs-pedagogy-2026-05-27.html</code>. Internal document; lives under <code>docs/</code> so it is not served by the Netlify deploy.</p>
+    <p class="ref"><b>Sources.</b>
+      Mayer, <a href="https://pressbooks.pub/learningenvironmentsdesign/chapter/mayer-applying-the-science-of-learning-evidence-based-principles-for-the-design-of-multimedia-instruction/">Applying the Science of Learning</a> ·
+      Mayer &amp; Fiorella, <a href="https://www.researchgate.net/publication/262915119_Principles_for_reducing_extraneous_processing_in_multimedia_learning_Coherence_signaling_redundancy_spatial_contiguity_and_temporal_contiguity_principles">Principles for Reducing Extraneous Processing</a> ·
+      Fiorella &amp; Mayer, <a href="https://link.springer.com/article/10.1007/s10648-023-09769-7">Making Sense of Generative Learning</a> / <a href="https://eric.ed.gov/?id=EJ1120458">Eight Ways to Promote Generative Learning</a> ·
+      <a href="https://phet.colorado.edu/en/research">PhET Interactive Simulations — research &amp; design</a> ·
+      Spanjers et al., <a href="https://www.sciencedirect.com/science/article/abs/pii/S0360131511003411">Segmentation, pausing and temporal cueing in animations</a> ·
+      <a href="https://www.sciencedirect.com/science/article/abs/pii/S0747563207000581">Relative effectiveness of animated vs static diagrams (prior knowledge)</a> ·
+      Berney et al., <a href="https://anatomypubs.onlinelibrary.wiley.com/doi/abs/10.1002/ase.1524">Spatial abilities and dynamic visualizations in functional anatomy</a> ·
+      <a href="https://www.nature.com/articles/s41598-023-35046-2">Spatial ability and 3D model colour-coding affect anatomy performance</a>.
+    </p>
+  </footer>
+
+</div>
+</body>
+</html>

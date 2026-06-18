@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ace Labs — Four-Engine Visual &amp; UX Analysis (2026-06-10)</title>
+<style>
+  :root{
+    --bg:#0d0d0f; --bg2:#141417; --card:#191920; --card2:#1f1f28;
+    --line:#2a2a33; --line2:#34343f;
+    --ink:#ece9e1; --ink2:#b6b3aa; --ink3:#838079;
+    --gold:#C9A84C; --gold-dim:#8a7636;
+    --bio:#5bba7d; --gc:#5b9bd5; --ochem:#a87dd5; --qr:#d56b97;
+    --green:#5bba7d; --amber:#d8a23c; --red:#dd6450; --neutral:#7e7b87;
+    --radius:14px;
+    --serif:Georgia,'Times New Roman',serif;
+    --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.62;font-size:16px;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1000px;margin:0 auto;padding:0 22px 120px}
+  header.top{border-bottom:1px solid var(--line);background:linear-gradient(180deg,#101014,#0d0d0f);padding:46px 0 34px;margin-bottom:8px}
+  header.top .wrap{padding-bottom:0}
+  .brand{font-size:12px;letter-spacing:.32em;text-transform:uppercase;color:var(--gold);font-weight:600}
+  h1{font-family:var(--serif);font-weight:600;font-size:40px;line-height:1.12;margin:14px 0 10px;letter-spacing:-.01em}
+  h1 em{color:var(--gold);font-style:italic}
+  .sub{color:var(--ink2);font-size:17px;max-width:74ch;margin:0}
+  .meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+  .meta .tag{font-size:12px;color:var(--ink2);border:1px solid var(--line2);border-radius:999px;padding:5px 12px;background:var(--bg2)}
+  .meta .tag b{color:var(--ink)}
+  nav.toc{display:flex;flex-wrap:wrap;gap:8px;margin:30px 0 8px}
+  nav.toc a{font-size:13px;color:var(--ink2);text-decoration:none;border:1px solid var(--line);padding:6px 13px;border-radius:8px;background:var(--bg2);transition:.15s}
+  nav.toc a:hover{color:var(--ink);border-color:var(--gold-dim)}
+  section{margin-top:46px;scroll-margin-top:20px}
+  h2{font-family:var(--serif);font-size:26px;font-weight:600;margin:0 0 6px;letter-spacing:-.01em}
+  h2 .num{color:var(--gold);font-size:15px;font-family:var(--sans);font-weight:700;margin-right:10px;letter-spacing:.05em}
+  h3{font-family:var(--serif);font-size:20px;font-weight:600;margin:18px 0 6px}
+  .lead{color:var(--ink2);margin:0 0 22px;max-width:78ch}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px 24px;margin:16px 0;position:relative;overflow:hidden}
+  .card.rail{padding-left:26px}
+  .card.rail::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--gold)}
+  .rail-bio::before{background:var(--bio)} .rail-gc::before{background:var(--gc)}
+  .rail-ochem::before{background:var(--ochem)} .rail-qr::before{background:var(--qr)}
+  .rail-gold::before{background:var(--gold)}
+  .eng{font-family:var(--sans);font-size:11px;letter-spacing:.2em;text-transform:uppercase;font-weight:700;display:block;margin-bottom:6px}
+  .eng-bio{color:var(--bio)} .eng-gc{color:var(--gc)} .eng-ochem{color:var(--ochem)} .eng-qr{color:var(--qr)}
+  .pill{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;padding:3px 9px;border-radius:6px;border:1px solid transparent;vertical-align:middle}
+  .p-block{background:rgba(221,100,80,.14);color:#f0a193;border-color:rgba(221,100,80,.35)}
+  .p-work{background:rgba(216,162,60,.14);color:#e6bd72;border-color:rgba(216,162,60,.34)}
+  .p-ok{background:rgba(91,186,125,.14);color:#86d3a3;border-color:rgba(91,186,125,.34)}
+  .p-info{background:rgba(126,123,135,.16);color:#b0adb8;border-color:rgba(126,123,135,.4)}
+  code{font-family:'SF Mono',ui-monospace,Menlo,monospace;font-size:.85em;background:var(--bg2);border:1px solid var(--line);border-radius:5px;padding:1px 6px;color:#d9d4c4}
+  ul{margin:8px 0;padding-left:20px} li{margin:6px 0;color:var(--ink2)}
+  li b{color:var(--ink)}
+  ol{margin:8px 0;padding-left:22px} ol li{margin:6px 0;color:var(--ink2)}
+  .twocol{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:760px){.twocol{grid-template-columns:1fr}}
+  .scorecard{display:grid;grid-template-columns:120px 1fr 64px;gap:12px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
+  .scorecard:first-child{border-top:none}
+  .scorecard .eng-name{font-family:var(--serif);font-weight:600;font-size:15px}
+  .bar{height:9px;background:var(--bg2);border-radius:4px;overflow:hidden;position:relative}
+  .bar > span{display:block;height:100%;background:linear-gradient(90deg,var(--gold-dim),var(--gold))}
+  .bar.bio > span{background:linear-gradient(90deg,#3a7a4f,var(--bio))}
+  .bar.gc > span{background:linear-gradient(90deg,#3a6694,var(--gc))}
+  .bar.ochem > span{background:linear-gradient(90deg,#6e4d96,var(--ochem))}
+  .bar.qr > span{background:linear-gradient(90deg,#9b4b6d,var(--qr))}
+  .score{font-family:var(--serif);font-weight:700;color:var(--gold);text-align:right;font-size:17px}
+  .delta{font-size:11px;font-weight:700;letter-spacing:.04em}
+  .up{color:var(--green)} .flat{color:var(--ink3)} .down{color:var(--red)}
+  table{width:100%;border-collapse:collapse;margin:12px 0;font-size:14px}
+  th,td{text-align:left;padding:11px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);font-weight:700}
+  td{color:var(--ink2)} td b{color:var(--ink)}
+  tr:last-child td{border-bottom:none}
+  .tc{text-align:center} .ok-c{color:var(--green);font-weight:700} .no-c{color:var(--red);font-weight:700} .mid-c{color:var(--amber);font-weight:700}
+  .callout{background:linear-gradient(180deg,rgba(201,168,76,.07),rgba(201,168,76,.02));border:1px solid var(--gold-dim);border-radius:var(--radius);padding:20px 24px;margin:18px 0}
+  .callout .k{font-family:var(--serif);font-size:18px;color:var(--gold);margin:0 0 6px}
+  .callout p{margin:0;color:var(--ink)}
+  .mini-h{font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;margin:18px 0 6px;color:var(--ink3)}
+  .mini-h.ok{color:var(--green)} .mini-h.work{color:var(--amber)} .mini-h.bad{color:var(--red)}
+  .metric-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:14px 0}
+  @media(max-width:760px){.metric-grid{grid-template-columns:repeat(2,1fr)}}
+  .metric{background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+  .metric .n{font-family:var(--serif);font-size:24px;font-weight:700;color:var(--ink)}
+  .metric .l{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);margin-top:2px}
+  .dims{display:grid;grid-template-columns:1fr 56px;gap:6px 12px;align-items:center;margin-top:6px}
+  .dims .dn{font-size:13px;color:var(--ink2)}
+  .dims .dv{font-family:'SF Mono',ui-monospace,Menlo,monospace;font-size:12.5px;color:var(--gold);text-align:right}
+  .step{display:flex;gap:14px;padding:14px 0;border-top:1px solid var(--line)}
+  .step:first-child{border-top:none}
+  .step .n{flex:0 0 30px;height:30px;border-radius:50%;background:var(--gold-bg,rgba(201,168,76,.12));border:1px solid var(--gold-dim);color:var(--gold);font-weight:700;display:flex;align-items:center;justify-content:center;font-size:14px}
+  .step .b{flex:1}
+  .step .b .t{font-weight:600;color:var(--ink);margin:2px 0 3px}
+  .step .b p{margin:0;color:var(--ink2);font-size:14px}
+  footer{margin-top:60px;padding-top:24px;border-top:1px solid var(--line);color:var(--ink3);font-size:13px}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <div class="brand">Ace Labs &middot; Visual &amp; Student-Experience Analysis</div>
+    <h1>How the four engines <em>look and feel</em> —<br>and what it takes to make them the best tool your students have.</h1>
+    <p class="sub">A deep read of the Quantitative Reasoning, Biology, Gen Chem, and Organic Chem engines through a visual-design and student-usability lens. The four are scored on a UX rubric — visual consistency, interactive richness, mobile readiness, accessibility, and clarity-under-stress — and each gets a concrete, prioritized list of changes that would raise the student experience. Findings are read straight from the live code.</p>
+    <div class="meta">
+      <span class="tag">Date <b>2026-06-10</b></span>
+      <span class="tag">Lens <b>Visual + UX, student-first</b></span>
+      <span class="tag">Method <b>Direct code &amp; asset inspection</b></span>
+      <span class="tag">Companion <b>pedagogy review 2026-05-27</b></span>
+    </div>
+    <nav class="toc">
+      <a href="#scorecard">Visual scorecard</a>
+      <a href="#rubric">UX rubric</a>
+      <a href="#system">Design system</a>
+      <a href="#ochem">OChem</a>
+      <a href="#gc">Gen Chem</a>
+      <a href="#qr">QR</a>
+      <a href="#bio">Bio</a>
+      <a href="#best">Best-tool roadmap</a>
+    </nav>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- ============ SCORECARD ============ -->
+  <section id="scorecard">
+    <h2><span class="num">00</span>The visual scorecard</h2>
+    <p class="lead">Scored on student experience, not just pedagogy. The ranking shifts from the pure-content view: <b>OChem</b> is the visual flagship and <b>Gen Chem</b> rises on responsiveness and its illustrated companion tools, while <b>Bio</b> — strongest on raw teaching ideas — drops to last on visual <em>consistency</em>, because its experience is fragmented across 15 separately-styled pages that don't load the shared design system.</p>
+
+    <div class="card">
+      <div class="scorecard">
+        <div class="eng-name" style="color:var(--ochem)">Organic Chem</div>
+        <div class="bar ochem"><span style="width:90%"></span></div>
+        <div class="score">9.0</div>
+      </div>
+      <div class="scorecard">
+        <div class="eng-name" style="color:var(--gc)">Gen Chem</div>
+        <div class="bar gc"><span style="width:82%"></span></div>
+        <div class="score">8.2</div>
+      </div>
+      <div class="scorecard">
+        <div class="eng-name" style="color:var(--qr)">Quant Reasoning</div>
+        <div class="bar qr"><span style="width:78%"></span></div>
+        <div class="score">7.8</div>
+      </div>
+      <div class="scorecard">
+        <div class="eng-name" style="color:var(--bio)">Biology</div>
+        <div class="bar bio"><span style="width:74%"></span></div>
+        <div class="score">7.4</div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <p class="k">The one thing to fix first</p>
+      <p>There is a beautiful, colorblind-safe design system already in the repo — <code>shared/al-tokens.css</code> (Okabe-Ito correctness palette, Playfair/DM Sans type, teal+gold brand) and <code>shared/al-motion.css</code> (which honors a student's "reduce motion" setting). <b>Only OChem and Gen Chem load it. QR and Bio do not</b> — so they drift off-palette and, more seriously, their animations ignore students who get motion-sick or anxious from movement. Wiring all four engines to the shared tokens and motion stylesheet is a half-day job that instantly raises the floor on every screen a student sees.</p>
+    </div>
+  </section>
+
+  <!-- ============ RUBRIC ============ -->
+  <section id="rubric">
+    <h2><span class="num">01</span>The student-experience rubric</h2>
+    <p class="lead">Six dimensions, weighted toward what a stressed student on a phone the night before a test actually feels.</p>
+    <table>
+      <thead><tr><th style="width:24%">Dimension</th><th style="width:8%">Wt</th><th>What earns the points</th></tr></thead>
+      <tbody>
+        <tr><td><b>Visual consistency</b></td><td>18%</td><td>Loads the shared tokens; one palette, one type stack, one button language across every screen and sub-page.</td></tr>
+        <tr><td><b>Interactive richness</b></td><td>22%</td><td>Hand-drawn diagrams, build-mode interactives, animated mechanisms — students <em>do</em>, not just read.</td></tr>
+        <tr><td><b>Mobile / responsive</b></td><td>18%</td><td>Real breakpoints; tables, diagrams, and timers usable one-handed on a phone.</td></tr>
+        <tr><td><b>Accessibility</b></td><td>17%</td><td>ARIA roles on interactive controls, colorblind-safe feedback, honors <code>prefers-reduced-motion</code>, keyboard reachable.</td></tr>
+        <tr><td><b>Clarity under stress</b></td><td>15%</td><td>Calm hierarchy, generous whitespace, unambiguous right/wrong feedback, anxiety-aware "stuck" affordances.</td></tr>
+        <tr><td><b>Motivation &amp; feedback</b></td><td>10%</td><td>Progress made visible, wins celebrated, confidence captured — the loop that brings a student back tomorrow.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============ DESIGN SYSTEM ============ -->
+  <section id="system">
+    <h2><span class="num">02</span>The shared design system — and who actually uses it</h2>
+    <p class="lead">The audit below is read directly from each engine's <code>index.html</code>. It is the clearest single picture of why the visual experience is uneven, and exactly what to standardize.</p>
+    <div class="card">
+      <table>
+        <thead><tr><th>Signal</th><th class="tc" style="color:var(--ochem)">OChem</th><th class="tc" style="color:var(--gc)">Gen Chem</th><th class="tc" style="color:var(--qr)">QR</th><th class="tc" style="color:var(--bio)">Bio*</th></tr></thead>
+        <tbody>
+          <tr><td>Loads shared <code>al-tokens</code> + <code>al-motion</code></td><td class="tc ok-c">Yes</td><td class="tc ok-c">Yes</td><td class="tc no-c">No</td><td class="tc no-c">No</td></tr>
+          <tr><td>Hand-drawn SVG diagrams (count)</td><td class="tc ok-c">275</td><td class="tc mid-c">37</td><td class="tc mid-c">54</td><td class="tc no-c">0 (hub)</td></tr>
+          <tr><td>Responsive breakpoints (<code>@media</code>)</td><td class="tc ok-c">59</td><td class="tc ok-c">65</td><td class="tc mid-c">19</td><td class="tc no-c">0 (hub)</td></tr>
+          <tr><td>ARIA roles / labels</td><td class="tc ok-c">202</td><td class="tc mid-c">8</td><td class="tc mid-c">22</td><td class="tc no-c">2 (hub)</td></tr>
+          <tr><td>Honors <code>prefers-reduced-motion</code></td><td class="tc ok-c">Yes (16)</td><td class="tc mid-c">via shared</td><td class="tc no-c">No</td><td class="tc no-c">No</td></tr>
+          <tr><td>Colorblind-safe feedback palette</td><td class="tc ok-c">Yes</td><td class="tc ok-c">Yes</td><td class="tc mid-c">local hex</td><td class="tc mid-c">local hex</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:12.5px;color:var(--ink3);margin:10px 0 0">*Bio's <code>index.html</code> is only a hub; its interactives live across 14 separate teaching pages (<code>bio-physiology.html</code>, <code>bio-cell.html</code>…). That fragmentation is itself the finding — the visual experience is governed page-by-page rather than by one system.</p>
+    </div>
+    <div class="twocol">
+      <div class="card">
+        <h3>What's genuinely excellent</h3>
+        <ul>
+          <li><b>The Okabe-Ito correctness palette</b> (<code>--al-confirmed</code> / <code>--al-needs-review</code> / <code>--al-almost</code>) is colorblind-safe — roughly 1 in 12 male students can't reliably tell red from green, and this design already solves it. Most prep tools never do.</li>
+          <li><b>Reduced-motion handling</b> in <code>al-motion.css</code> collapses every animation to 0.01ms for students who set it — anxiety- and vestibular-aware, and rare in this market.</li>
+          <li><b>A real type system</b> — Playfair Display for serif authority, DM Sans for body, JetBrains Mono for data — loaded consistently even where the tokens aren't.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>What undercuts it for students</h3>
+        <ul>
+          <li><b>Two of four engines ignore the system.</b> A student moving QR → OChem feels two different products: different button weights, different greens, different motion behavior.</li>
+          <li><b>Reduced-motion is unevenly honored.</b> Because QR and Bio don't load <code>al-motion.css</code>, their animations play regardless of the student's OS setting.</li>
+          <li><b>ARIA coverage collapses outside OChem.</b> A screen-reader or keyboard student gets a first-class experience in OChem and a thin one elsewhere.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ OCHEM ============ -->
+  <section id="ochem">
+    <h2><span class="num">03</span>Organic Chem <span class="score" style="font-size:20px">9.0 / 10</span></h2>
+    <p class="lead">The visual benchmark for the whole product. If you want to know what "best-in-class for my students" looks like, it already exists here — every other engine should be measured against it.</p>
+    <div class="card rail rail-ochem">
+      <div class="metric-grid">
+        <div class="metric"><div class="n">275</div><div class="l">SVG diagrams</div></div>
+        <div class="metric"><div class="n">202</div><div class="l">ARIA hooks</div></div>
+        <div class="metric"><div class="n">16</div><div class="l">reduced-motion blocks</div></div>
+        <div class="metric"><div class="n">107</div><div class="l">animated mech frames</div></div>
+      </div>
+      <div class="dims">
+        <div class="dn">Visual consistency</div><div class="dv">9.0</div>
+        <div class="dn">Interactive richness</div><div class="dv">9.5</div>
+        <div class="dn">Mobile / responsive</div><div class="dv">9.0</div>
+        <div class="dn">Accessibility</div><div class="dv">9.0</div>
+        <div class="dn">Clarity under stress</div><div class="dv">8.5</div>
+        <div class="dn">Motivation &amp; feedback</div><div class="dv">9.0</div>
+      </div>
+      <span class="mini-h ok">What makes it feel best-in-class</span>
+      <ul>
+        <li><b>Hand-drawn, animated mechanism diagrams</b> — curved electron-pushing arrows that move frame by frame with synchronized narration. This is the thing students screenshot and send to friends.</li>
+        <li><b>Tier 1/2/3 progressive disclosure</b> with <code>&lt;details&gt;</code> keeps the first screen calm — a student sees only the DAT-essential layer and opens depth on demand. This is the single best anti-overwhelm pattern in the build.</li>
+        <li><b>Predict-the-step commit cards</b> make the student act before the reveal — the screen physically waits for a choice.</li>
+        <li><b>Accessibility is first-class</b>: 202 ARIA hooks, reduced-motion honored, colorblind-safe outcome colors.</li>
+      </ul>
+      <span class="mini-h work">To reach 9.5</span>
+      <ul>
+        <li>The file is ~31k lines in one HTML document — fast for students but heavy to load on a weak phone connection. Consider lazy-loading the lab sub-tools.</li>
+        <li>A few decorative unicode glyphs still slip past the no-emoji house style in chair-conformation labels — replace with the text+palette treatment used everywhere else.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ GC ============ -->
+  <section id="gc">
+    <h2><span class="num">04</span>Gen Chem <span class="score" style="font-size:20px">8.2 / 10</span></h2>
+    <p class="lead">The most <em>responsive</em> engine and the richest set of illustrated companion tools. It loads the shared design system, so it already feels like the same product as OChem. Its visual ceiling is held down by thin accessibility markup and a few feedback screens that still say "Off." instead of showing the student what went wrong.</p>
+    <div class="card rail rail-gc">
+      <div class="metric-grid">
+        <div class="metric"><div class="n">65</div><div class="l">responsive breakpoints</div></div>
+        <div class="metric"><div class="n">37</div><div class="l">SVG diagrams</div></div>
+        <div class="metric"><div class="n">39</div><div class="l">Lewis Sandbox molecules</div></div>
+        <div class="metric"><div class="n">4</div><div class="l">illustrated companion tools</div></div>
+      </div>
+      <div class="dims">
+        <div class="dn">Visual consistency</div><div class="dv">8.5</div>
+        <div class="dn">Interactive richness</div><div class="dv">8.5</div>
+        <div class="dn">Mobile / responsive</div><div class="dv">9.0</div>
+        <div class="dn">Accessibility</div><div class="dv">7.0</div>
+        <div class="dn">Clarity under stress</div><div class="dv">8.0</div>
+        <div class="dn">Motivation &amp; feedback</div><div class="dv">7.5</div>
+      </div>
+      <span class="mini-h ok">Strengths students feel</span>
+      <ul>
+        <li><b>Recognition Lab</b> — a 9-second timer over hand-authored reaction-coordinate, rate-law, and Q-vs-K SVGs. Genuinely game-like pattern training.</li>
+        <li><b>Lewis Sandbox</b> — a 5-stage structure builder across 39 molecules, each with a named <code>commonTrap</code>. Students build, not watch.</li>
+        <li><b>Loads the shared tokens and motion stylesheet</b>, so it inherits the colorblind-safe palette and reduced-motion behavior automatically.</li>
+        <li><b>65 breakpoints</b> — the best phone experience of the four.</li>
+      </ul>
+      <span class="mini-h bad">What to fix for students</span>
+      <ul>
+        <li><b>Only 8 ARIA hooks across a 62k-line engine</b> — the Recognition Lab timer and the Lewis builder need roles and live-region announcements so a keyboard/screen-reader student isn't locked out.</li>
+        <li><b>~170 single-word "Off." / "Wrong." feedback stubs.</b> Visually these read as a closed door — the student sees red and no path forward. Every one is a chance to show the specific misconception instead.</li>
+        <li><b>No <code>prefers-reduced-motion</code> rules of its own</b> beyond the shared cascade — verify the Recognition Lab timer animation actually respects it.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ QR ============ -->
+  <section id="qr">
+    <h2><span class="num">05</span>Quantitative Reasoning <span class="score" style="font-size:20px">7.8 / 10</span></h2>
+    <p class="lead">Pedagogically the most sophisticated engine, but visually the one drifting furthest from the system. It doesn't load the shared tokens or motion stylesheet, carries 60 inline hex colors, and has the lightest responsive coverage of the engines that live in a single page. Strong bones, off-brand skin.</p>
+    <div class="card rail rail-qr">
+      <div class="metric-grid">
+        <div class="metric"><div class="n">54</div><div class="l">SVG diagrams</div></div>
+        <div class="metric"><div class="n">19</div><div class="l">responsive breakpoints</div></div>
+        <div class="metric"><div class="n">0</div><div class="l">shared-token links</div></div>
+        <div class="metric"><div class="n">60</div><div class="l">inline hex colors</div></div>
+      </div>
+      <div class="dims">
+        <div class="dn">Visual consistency</div><div class="dv">6.5</div>
+        <div class="dn">Interactive richness</div><div class="dv">8.0</div>
+        <div class="dn">Mobile / responsive</div><div class="dv">7.5</div>
+        <div class="dn">Accessibility</div><div class="dv">7.0</div>
+        <div class="dn">Clarity under stress</div><div class="dv">8.5</div>
+        <div class="dn">Motivation &amp; feedback</div><div class="dv">9.0</div>
+      </div>
+      <span class="mini-h ok">Strengths students feel</span>
+      <ul>
+        <li><b>The Sarah-mode coach digest</b> and confidence capture make progress and self-knowledge visible — best motivation loop of the four.</li>
+        <li><b>Pacing-sim Two-Pass Drill</b> is a genuinely novel timed experience that teaches the skip decision visually.</li>
+        <li><b>54 SVGs</b> for setup-comparators and geometry — the diagram density is there.</li>
+      </ul>
+      <span class="mini-h bad">What to fix for students</span>
+      <ul>
+        <li><b>Wire it to <code>al-tokens.css</code> + <code>al-motion.css</code>.</b> Right now QR is the screen where the brand breaks and where reduced-motion is ignored. This is the highest-leverage single change for QR.</li>
+        <li><b>Replace the 60 inline hex colors with token variables</b> so the green a student learns to trust as "correct" is the same green in every engine.</li>
+        <li><b>Only 19 breakpoints</b> — audit the Pattern Library tables and the diagnostic on a phone; multi-column setup-comparators are the likely break points.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ BIO ============ -->
+  <section id="bio">
+    <h2><span class="num">06</span>Biology <span class="score" style="font-size:20px">7.4 / 10</span></h2>
+    <p class="lead">The richest teaching <em>ideas</em> — build-mode interactives, the Trap/Rule/Move triad, the repair registry — but delivered through the most fragmented visual shell. Fourteen separately-styled pages, no shared-token adoption, and almost no accessibility markup at the hub. The content deserves a better frame than it currently has.</p>
+    <div class="card rail rail-bio">
+      <div class="metric-grid">
+        <div class="metric"><div class="n">15</div><div class="l">separate pages</div></div>
+        <div class="metric"><div class="n">5+</div><div class="l">build-mode interactives</div></div>
+        <div class="metric"><div class="n">0</div><div class="l">shared-token links</div></div>
+        <div class="metric"><div class="n">2</div><div class="l">ARIA hooks (hub)</div></div>
+      </div>
+      <div class="dims">
+        <div class="dn">Visual consistency</div><div class="dv">6.0</div>
+        <div class="dn">Interactive richness</div><div class="dv">8.5</div>
+        <div class="dn">Mobile / responsive</div><div class="dv">7.0</div>
+        <div class="dn">Accessibility</div><div class="dv">6.0</div>
+        <div class="dn">Clarity under stress</div><div class="dv">8.0</div>
+        <div class="dn">Motivation &amp; feedback</div><div class="dv">8.0</div>
+      </div>
+      <span class="mini-h ok">Strengths students feel</span>
+      <ul>
+        <li><b>Build-mode interactives</b> — replication fork, mitosis scrubber, cardiac cycle, fertilization stages. When a student drags the lagging-strand fragments into place, the concept sticks. These are the best "do, don't read" surfaces in Bio.</li>
+        <li><b>Trap / Rule / Move triad</b> gives every node a calm, scannable three-box rhythm.</li>
+        <li><b>Anxiety-aware "Stuck? Take a beat"</b> trigger respects the student's emotional state.</li>
+      </ul>
+      <span class="mini-h bad">What to fix for students</span>
+      <ul>
+        <li><b>Adopt the shared design system across all 14 pages.</b> Right now each page can drift; a student feels Bio as a stack of documents, not one tool. This is the biggest single visual lift in the product.</li>
+        <li><b>Add ARIA + keyboard support to the build-mode drag interactives.</b> Drag-and-drop without a keyboard path locks out some students entirely; pair each drag with a click-to-place fallback.</li>
+        <li><b>Verify reduced-motion on the mitosis/cardiac scrubbers</b> — none of the Bio pages load <code>al-motion.css</code>, so the animations likely ignore the setting.</li>
+        <li><b>Unify the mock and node-check feedback styling</b> with the Okabe-Ito tokens so "correct" looks identical to the other engines.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ BEST-TOOL ROADMAP ============ -->
+  <section id="best">
+    <h2><span class="num">07</span>How to make it the best tool your students have</h2>
+    <p class="lead">Sequenced by student-impact-per-hour. The first three are days, not weeks, and lift every screen at once.</p>
+    <div class="card">
+      <div class="step"><div class="n">1</div><div class="b">
+        <div class="t">Put all four engines on the shared design system</div>
+        <p>Add <code>al-tokens.css</code> + <code>al-motion.css</code> to QR and to all 14 Bio pages; replace inline hex with token variables. Outcome: one palette, one type voice, one motion contract — and reduced-motion finally honored everywhere. <span class="pill p-ok">~1 day · lifts every screen</span></p>
+      </div></div>
+      <div class="step"><div class="n">2</div><div class="b">
+        <div class="t">Make accessibility uniform at OChem's level</div>
+        <p>Port the ARIA pattern from OChem (202 hooks) to GC's Recognition Lab + Lewis builder, QR's diagnostic, and Bio's drag interactives. Add click-to-place fallbacks for every drag. Outcome: keyboard and screen-reader students get a first-class experience in all four, and the colorblind-safe palette is applied consistently. <span class="pill p-work">~3 days</span></p>
+      </div></div>
+      <div class="step"><div class="n">3</div><div class="b">
+        <div class="t">Turn every "Off." into a teaching moment</div>
+        <p>Rewrite GC's ~170 stub feedback strings (and the Bio mock stubs) so a wrong answer shows the specific misconception, not a closed door. Visually, pair each with the <code>--al-almost</code> amber state rather than hard red so a near-miss feels recoverable, not punishing. <span class="pill p-work">~1 week</span></p>
+      </div></div>
+      <div class="step"><div class="n">4</div><div class="b">
+        <div class="t">Spread the two signature visual patterns</div>
+        <p>OChem's progressive-disclosure (Tier 1/2/3) and commit-before-reveal cards are the calmest, most active surfaces in the build. Bring progressive disclosure to Bio's dense nodes and GC's worked examples; bring commit-before-reveal to every Bio interactive (drag → predict → reveal). <span class="pill p-info">~2 weeks</span></p>
+      </div></div>
+      <div class="step"><div class="n">5</div><div class="b">
+        <div class="t">Add the assessment visuals the DAT actually uses</div>
+        <p>Students never see a figure/graph/table item in the mocks today. Add chart-reading items (Bio pedigrees and experiment graphs, GC titration curves, QR data tables) — both higher DAT fidelity and more visually engaging than text stems. <span class="pill p-info">~2 weeks</span></p>
+      </div></div>
+      <div class="step"><div class="n">6</div><div class="b">
+        <div class="t">Make progress visible and mobile-first</div>
+        <p>Surface a consistent progress/streak/mastery ribbon across all four engines (QR's digest is the template), and audit every multi-column table and diagram at 375px width. The tool a student opens on their phone at 11pm has to feel as finished as the desktop one. <span class="pill p-info">ongoing</span></p>
+      </div></div>
+    </div>
+    <div class="callout">
+      <p class="k">The bottom line for your students</p>
+      <p>OChem already proves the ceiling: animated diagrams, calm progressive disclosure, commit-before-reveal, and full accessibility in one coherent skin. The work isn't inventing a better look — it's <b>propagating the look you already built</b> to the three engines that haven't caught up, and replacing punishing "Off." dead-ends with feedback that shows the way forward. Do the first three steps and every student, on every device, with any accessibility need, gets the OChem-grade experience in all four subjects.</p>
+    </div>
+  </section>
+
+  <footer>
+    Generated 2026-06-10 by direct inspection of the live engine code, shared stylesheets (<code>shared/al-tokens.css</code>, <code>shared/al-motion.css</code>), and per-engine asset counts (SVG, ARIA, <code>@media</code>, <code>prefers-reduced-motion</code>). Visual-rubric scores are a weighted blend of the six dimensions in §01. Companion to <code>acelabs-pedagogy-2026-05-27.html</code>. Internal document; lives under <code>docs/</code> so it is not served by the Netlify deploy.
+  </footer>
+
+</div>
+</body>
+</html>

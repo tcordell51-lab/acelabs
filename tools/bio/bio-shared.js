@@ -45,6 +45,7 @@ const STATE = {
   stm: { placed:{}, stage:0, retrievals:{} },  /* stem cells                       */
   vrt: { placed:{}, stage:0, retrievals:{} },  /* vertebrate classes               */
   com: { placed:{}, stage:0, retrievals:{} },  /* community ecology                */
+  end: { placed:{}, stage:0, retrievals:{} },  /* endocrine axes + hormones        */
 
 };
 
@@ -429,6 +430,20 @@ const NODES = {
       1: { rt:"Right. Ascending loop is water-IMPERMEABLE; uses NKCC2 to pump out salt.", wr:"Asc loop has tight junctions that prevent water flow but actively pumps Na+/K+/2Cl- via NKCC2. This generates the medullary osmotic gradient that powers concentration in collecting duct. Furosemide blocks NKCC2.", q:"Which nephron segment is impermeable to water but actively transports salt?", qh:"<b>Ascending loop of Henle.</b> NKCC2 pumps salt out; water can't follow.", ex:"Ascending loop of Henle (thick segment) has tight junctions that block water flow + active NKCC2 cotransporter that pumps Na+/K+/2Cl- out. Result: filtrate becomes diluted as it ascends; medullary interstitium becomes hyperosmotic. This medullary gradient is what powers water reabsorption in the descending loop and collecting duct. Loop diuretics (furosemide, \"Lasix\") inhibit NKCC2 → potent diuresis." },
       2: { rt:"Right. ADH inserts aquaporin-2 channels into collecting duct apical membrane.", wr:"ADH (vasopressin) is released by posterior pituitary in response to high blood osmolarity or low BP. Acts on V2 receptors in collecting duct → cAMP → aquaporin-2 inserted into apical membrane → water flows out of filtrate down osmotic gradient → concentrated urine.", q:"ADH (vasopressin) increases water reabsorption by acting on:", qh:"<b>Collecting duct.</b> ADH → aquaporin-2 insertion → water reabsorbed.", ex:"ADH (antidiuretic hormone, vasopressin) is made in hypothalamus, stored/released by posterior pituitary. Acts on V2 receptors of principal cells in collecting duct → cAMP signaling → aquaporin-2 insertion into apical membrane. Water flows from dilute filtrate into hyperosmotic medullary interstitium → concentrated urine. Without ADH: diabetes insipidus (massive dilute urine). Alcohol inhibits ADH → diuresis." },
       3: { rt:"Right. Aldosterone increases Na+ reabsorption and K+ excretion at the late DCT and collecting duct.", wr:"Aldosterone (adrenal cortex) acts on principal cells of late DCT and collecting duct → upregulates ENaC (Na+ channel) and Na+/K+ ATPase → Na+ in (with water passively), K+ out. Part of RAAS.", q:"Aldosterone primarily acts to increase:", qh:"<b>Sodium reabsorption + potassium excretion.</b> Acts on late DCT/collecting duct.", ex:"Aldosterone is the mineralocorticoid from adrenal cortex (zona glomerulosa). Acts on principal cells of late DCT + collecting duct. Increases ENaC (Na+ channel) on apical membrane + Na+/K+ ATPase on basolateral. Net: Na+ reabsorbed (water follows passively), K+ excreted. Part of RAAS: low BP → renin → angiotensin II → aldosterone (+ vasoconstriction + ADH). Blocked by spironolactone (K+-sparing diuretic)." },
+    },
+  },
+
+  end: {
+    name: "Endocrine",
+    retrievals: {
+      1: { rt:"Right. Steroids are lipid-soluble, so their receptors are intracellular — they alter gene transcription.", wr:"Cortisol is a STEROID (lipid-soluble, made from cholesterol). It diffuses across the plasma membrane and binds an INTRACELLULAR receptor that acts as a transcription factor, changing gene expression. Surface receptors are for water-soluble (peptide / catecholamine) hormones.", q:"Cortisol binds receptors located in the:", qh:"<b>Intracellular (cytoplasm / nucleus).</b> Cortisol is a lipid-soluble steroid — it crosses the membrane and binds an intracellular receptor that acts as a transcription factor.", ex:"Hormone class predicts receptor location. Lipid-soluble hormones — steroids (cortisol, aldosterone, sex hormones) and thyroid hormone — cross the membrane and bind intracellular receptors that act as transcription factors, giving slow, long-lasting effects (hours). Water-soluble hormones (peptides, catecholamines) can't cross the membrane, so they use surface receptors and second messengers for fast, short effects. Identify the class first and the receptor location follows." },
+      2: { rt:"Right. The hypothalamus makes ADH and oxytocin; the posterior pituitary only stores and releases them.", wr:"ADH and oxytocin are MADE by hypothalamic neurons, transported down their axons, and STORED in the posterior pituitary until release. The posterior pituitary is a storage depot, not a factory. (The anterior pituitary makes its own hormones: ACTH, TSH, FSH, LH, GH, prolactin.)", q:"ADH (vasopressin) is synthesized in the ___ and released from the ___.", qh:"<b>Hypothalamus → posterior pituitary.</b> The posterior pituitary only stores and releases ADH (and oxytocin) — it does not make them.", ex:"The posterior pituitary (neurohypophysis) is neural tissue — it stores and releases two hypothalamic peptides, ADH and oxytocin, but synthesizes neither. ADH acts on V2 receptors in the renal collecting duct → aquaporin-2 insertion → water reabsorption → concentrated urine; too little causes diabetes insipidus. Its functional antagonist is ANP (atrial natriuretic peptide) from the heart, which promotes Na+ and water excretion to lower blood volume. The anterior pituitary, by contrast, manufactures its own tropic hormones." },
+      3: { rt:"Right. Insulin uses an RTK (PI3K / Akt), not cAMP. Glucagon is the one that uses cAMP.", wr:"Insulin binds a receptor tyrosine kinase (RTK): ligand binding triggers receptor autophosphorylation → PI3K / Akt → GLUT4 translocation. It does NOT use cAMP — that is glucagon (GPCR, Gs → cAMP). Insulin is the high-yield exception among peptide hormones.", q:"Insulin's receptor is best classified as a:", qh:"<b>Receptor tyrosine kinase (RTK).</b> Insulin is the classic RTK hormone (PI3K / Akt → GLUT4) — it does NOT use cAMP.", ex:"Most peptide hormones use GPCRs with second messengers, but insulin is the classic outlier: it binds a receptor tyrosine kinase. Autophosphorylation recruits IRS-1 → PI3K → Akt, driving GLUT4 transporters to the membrane of muscle and fat for glucose uptake. Contrast glucagon, which uses a Gs-GPCR → cAMP → PKA to raise blood glucose. 'Insulin = RTK, glucagon = cAMP' is a frequently tested pair." },
+      4: { rt:"Right. Pancreatic β-cells release insulin to lower blood glucose; glucagon (α-cells) is its antagonist.", wr:"After a meal, pancreatic β-cells release INSULIN, which lowers blood glucose by driving uptake (GLUT4) and glycogenesis. Its antagonist is GLUCAGON from α-cells, which RAISES glucose during fasting (glycogenolysis, gluconeogenesis). Do not swap them: insulin lowers, glucagon raises.", q:"Blood glucose rises after a carbohydrate-rich meal. Which cell secretes the hormone that brings it down — and what is that hormone's antagonist?", qh:"<b>β-cells → insulin (lowers glucose); antagonist = glucagon.</b> Insulin drives uptake and storage; glucagon (α-cells) raises glucose when fasting.", ex:"The insulin/glucagon pair is the body's main blood-glucose thermostat, both from the pancreatic islets. High glucose (fed state) → β-cells release insulin → glucose uptake into muscle and fat (GLUT4), glycogen and fat synthesis → glucose falls. Low glucose (fasting) → α-cells release glucagon → glycogenolysis and gluconeogenesis in the liver → glucose rises. They are direct antagonists: insulin stores fuel away, glucagon mobilizes it." },
+      5: { rt:"Right. PTH raises blood calcium; calcitonin lowers it. PTH is the dominant day-to-day regulator.", wr:"Low blood Ca2+ triggers PARATHYROID HORMONE (PTH), which RAISES Ca2+: it stimulates osteoclast bone resorption, increases renal Ca2+ reabsorption, and activates vitamin D to boost gut absorption. Its antagonist is CALCITONIN (thyroid C-cells), which LOWERS Ca2+. Mnemonic: PTH 'Pulls To Higher'; calciTONIN 'tones it down.'", q:"Blood calcium falls below normal. Which hormone is released to restore it — and what is its antagonist?", qh:"<b>PTH raises blood Ca2+; antagonist = calcitonin.</b> PTH pulls Ca2+ from bone, reclaims it in the kidney, and (via vitamin D) boosts gut absorption.", ex:"Calcium is controlled by an antagonistic pair. PTH (parathyroid) is the main regulator: when Ca2+ drops, PTH raises it through three routes — bone (osteoclast resorption), kidney (Ca2+ reabsorption plus activation of vitamin D / calcitriol), and gut (vitamin-D-driven absorption). Calcitonin (thyroid C-cells) opposes it, lowering Ca2+ by inhibiting osteoclasts, but it plays a minor day-to-day role in humans. Vitamin D is PTH's partner, not its antagonist. 'OsteoBlasts Build, osteoClasts Cut' — PTH activates the Clasts." },
+      6: { rt:"Right. Low effector hormone with a HIGH tropic hormone points to the gland itself — primary failure.", wr:"Read the tropic hormone. The thyroid gland is failing (low T4). A healthy pituitary senses the low T4 and, with feedback removed, pushes TSH HIGH trying to flog the gland. Low T4 + HIGH TSH = PRIMARY hypothyroidism (gland problem). If the pituitary were the problem (secondary), TSH would be LOW.", q:"A patient has low T4 but HIGH TSH. Where is the problem?", qh:"<b>The thyroid gland itself (primary hypothyroidism).</b> The gland fails → low T4; the pituitary senses it and drives TSH up. Low hormone + HIGH tropic = primary.", ex:"This is the single highest-yield endocrine reasoning skill: read the tropic hormone to localize the lesion. In a hypothalamus → pituitary → gland axis, the gland's hormone normally feeds back to suppress the tropic hormone. If the GLAND fails (primary): effector hormone low, feedback lost, tropic hormone HIGH (low T4 + high TSH; low cortisol + high ACTH). If the PITUITARY fails (secondary / central): tropic hormone low, so the effector hormone is low too (low T4 + low/normal TSH). The same logic works for every axis." },
+      7: { rt:"Right. Low cortisol + HIGH ACTH = primary adrenal failure; the high ACTH also causes the hyperpigmentation.", wr:"Same 'read the tropic hormone' logic as the thyroid. The ADRENAL CORTEX is failing (low cortisol). The pituitary, sensing low cortisol, pushes ACTH HIGH. Low cortisol + HIGH ACTH = PRIMARY adrenal insufficiency (Addison's). Bonus clue: ACTH shares a precursor (POMC) with MSH, so high ACTH → hyperpigmentation. Secondary (pituitary) disease shows LOW ACTH and no hyperpigmentation.", q:"Low cortisol with HIGH ACTH (and skin hyperpigmentation) localizes the defect to the:", qh:"<b>Adrenal cortex — primary adrenal insufficiency (Addison's).</b> The cortex fails → low cortisol; feedback is lost so ACTH climbs, and high ACTH drives the hyperpigmentation.", ex:"Addison's disease is primary adrenal insufficiency: the cortex can't make cortisol (and often aldosterone). Cortisol is low, feedback is lost, and ACTH rises. Because ACTH is cleaved from POMC — the same precursor as melanocyte-stimulating hormone — very high ACTH drives skin hyperpigmentation, a classic Addison's clue. Contrast secondary (pituitary) insufficiency: low ACTH → low cortisol, no hyperpigmentation. High cortisol + low ACTH instead points to an adrenal tumor or exogenous steroids (Cushing)." },
+      8: { rt:"Right. Aldosterone drives Na+ reabsorption and K+ secretion in the distal nephron — it is the end of the RAAS.", wr:"Aldosterone (a steroid from the adrenal cortex, zona glomerulosa) acts on principal cells of the late distal tubule / collecting duct: it upregulates ENaC and the Na+/K+ ATPase → Na+ reabsorbed (water follows, raising blood volume / pressure), K+ secreted. ADH handles water via aquaporins; PTH handles calcium; cortisol handles glucose.", q:"Aldosterone is released from the adrenal cortex. What is its main action, and where?", qh:"<b>↑ Na+ reabsorption (and K+ secretion) in the late distal tubule / collecting duct.</b> Aldosterone is the mineralocorticoid of the RAAS; water follows the sodium.", ex:"Aldosterone is the major mineralocorticoid and the endpoint of the renin-angiotensin-aldosterone system (RAAS). Low blood pressure / volume → renin → angiotensin II → aldosterone from the zona glomerulosa. It acts on the late distal tubule and collecting duct to reabsorb Na+ (via ENaC) and secrete K+; water follows the sodium osmotically, restoring blood volume and pressure. Keep the adrenal-cortex hormones straight by layer: glomerulosa → aldosterone (salt), fasciculata → cortisol (sugar), reticularis → androgens (sex) — 'salt, sugar, sex.'" },
     },
   },
 
@@ -941,7 +956,13 @@ function makeRetrievalHandlers(nodeId, sectionEl) {
   const cards = sectionEl.querySelectorAll(".retrieval-card");
   cards.forEach(card => {
     card.querySelectorAll(".opt").forEach(opt => {
+      // Keyboard operability: each option behaves as a button (Enter/Space selects).
+      if (!opt.hasAttribute("role")) opt.setAttribute("role", "button");
+      if (!opt.hasAttribute("tabindex")) opt.setAttribute("tabindex", "0");
       opt.addEventListener("click", () => onRetrievalAnswer(nodeId, sectionEl, card, opt));
+      opt.addEventListener("keydown", e => {
+        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onRetrievalAnswer(nodeId, sectionEl, card, opt); }
+      });
     });
   });
 }
@@ -4270,16 +4291,91 @@ const ENDO_DATA = {
   thy2: { name:"Thymus", body:"<b>Thymosin</b> + thymopoietin → <b>T cell maturation</b> (positive + negative selection). Most active in childhood; involutes after puberty. T cells get their name here ('T' for thymus)." },
 };
 
+/* Per-hormone source → target/effect, color-coded by class (steroid/peptide/amine).
+   Renders compact mini-diagrams inside each gland row of the endocrine map. */
+const ENDO_HORMONES = {
+  hypo: [
+    { h:"TRH",          cls:"peptide", fx:"ant. pituitary · → TSH" },
+    { h:"CRH",          cls:"peptide", fx:"ant. pituitary · → ACTH" },
+    { h:"GnRH",         cls:"peptide", fx:"ant. pituitary · → FSH / LH" },
+    { h:"GHRH",         cls:"peptide", fx:"ant. pituitary · → GH" },
+    { h:"Somatostatin", cls:"peptide", fx:"ant. pituitary · suppresses GH" },
+    { h:"Dopamine",     cls:"amine",   fx:"ant. pituitary · suppresses prolactin" },
+  ],
+  ant: [
+    { h:"GH",        cls:"peptide", fx:"liver / body · growth, IGF-1" },
+    { h:"TSH",       cls:"peptide", fx:"thyroid · → T3 / T4" },
+    { h:"ACTH",      cls:"peptide", fx:"adrenal cortex · → cortisol" },
+    { h:"FSH",       cls:"peptide", fx:"gonads · gametes (egg / sperm)" },
+    { h:"LH",        cls:"peptide", fx:"gonads · sex steroids, ovulation" },
+    { h:"Prolactin", cls:"peptide", fx:"mammary gland · milk synthesis" },
+  ],
+  post: [
+    { h:"ADH (vasopressin)", cls:"peptide", fx:"kidney collecting duct · water retention" },
+    { h:"Oxytocin",          cls:"peptide", fx:"uterus / breast · contraction, milk letdown" },
+  ],
+  thyr: [
+    { h:"T3 / T4",    cls:"amine",   fx:"whole body · ↑ metabolic rate" },
+    { h:"Calcitonin", cls:"peptide", fx:"bone · ↓ blood Ca²⁺" },
+  ],
+  par: [
+    { h:"PTH", cls:"peptide", fx:"bone / kidney / gut · ↑ blood Ca²⁺" },
+  ],
+  cort: [
+    { h:"Aldosterone",     cls:"steroid", fx:"kidney · ↑ Na⁺ retention, ↑ K⁺ loss" },
+    { h:"Cortisol",        cls:"steroid", fx:"whole body · ↑ glucose, anti-inflammatory" },
+    { h:"Androgens (DHEA)", cls:"steroid", fx:"body · sex characteristics" },
+  ],
+  med: [
+    { h:"Epinephrine",    cls:"amine", fx:"whole body · fight-or-flight, ↑ HR / glucose" },
+    { h:"Norepinephrine", cls:"amine", fx:"blood vessels · vasoconstriction" },
+  ],
+  panc: [
+    { h:"Insulin (β)",      cls:"peptide", fx:"liver / muscle / fat · ↓ blood glucose" },
+    { h:"Glucagon (α)",     cls:"peptide", fx:"liver · ↑ blood glucose" },
+    { h:"Somatostatin (δ)", cls:"peptide", fx:"islets · damps insulin and glucagon" },
+  ],
+  ova: [
+    { h:"Estrogen",     cls:"steroid", fx:"uterus / body · endometrium, sex characteristics" },
+    { h:"Progesterone", cls:"steroid", fx:"uterus · maintains endometrium" },
+  ],
+  tes: [
+    { h:"Testosterone", cls:"steroid", fx:"body / testes · sex characteristics, sperm" },
+  ],
+  pin: [
+    { h:"Melatonin", cls:"amine", fx:"brain (SCN) · circadian / sleep" },
+  ],
+  thy2: [
+    { h:"Thymosin", cls:"peptide", fx:"T lymphocytes · T-cell maturation" },
+  ],
+};
+
 function initEndocrine() {
   const cells = document.querySelectorAll("#endoGrid .endo-cell");
   const side = document.getElementById("endoSide");
   cells.forEach(c => {
-    c.addEventListener("click", () => {
+    // Upgrade the plain hormone line into per-hormone source → target/effect mini-diagrams.
+    const horms = c.querySelector(".horms");
+    const list = ENDO_HORMONES[c.dataset.endo];
+    if (horms && list) {
+      horms.classList.add("endo-hormones");
+      horms.innerHTML = list.map(x =>
+        `<span class="hx hx-${x.cls}"><span class="hx-dot" aria-hidden="true"></span>` +
+        `<span class="hx-name">${x.h}</span><span class="hx-arrow" aria-hidden="true">→</span>` +
+        `<span class="hx-fx">${x.fx}</span></span>`
+      ).join("");
+    }
+    // Keyboard + a11y: each gland row behaves as a button.
+    if (!c.hasAttribute("role")) c.setAttribute("role", "button");
+    if (!c.hasAttribute("tabindex")) c.setAttribute("tabindex", "0");
+    const open = () => {
       cells.forEach(x => x.classList.remove("active"));
       c.classList.add("active");
       const d = ENDO_DATA[c.dataset.endo];
-      if (d) side.innerHTML = `<div class="energy-step-info"><div class="stage-lbl">Gland</div><h5>${d.name}</h5><p>${d.body}</p></div>`;
-    });
+      if (d && side) side.innerHTML = `<div class="energy-step-info"><div class="stage-lbl">Gland</div><h5>${d.name}</h5><p>${d.body}</p></div>`;
+    };
+    c.addEventListener("click", open);
+    c.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); open(); } });
   });
 }
 
@@ -15749,7 +15845,7 @@ function init() {
   ].forEach(safe);
 
   // Each node section
-  ["rep","trc","tln","mit","men","ap","mei","gly","wat","car","lip","pro","nuc","enz","pve","org","mtr","sig","krb","pho","dom","fer","nse","ped","hwb","cdv","nph","spc"].forEach(nodeId => {
+  ["rep","trc","tln","mit","men","ap","mei","gly","wat","car","lip","pro","nuc","enz","pve","org","mtr","sig","krb","pho","dom","fer","nse","ped","hwb","cdv","nph","spc","end"].forEach(nodeId => {
     const section = document.querySelector(`section.node[data-node="${nodeId}"]`);
     if (!section) return;
     makeDragHandlers(nodeId, section);

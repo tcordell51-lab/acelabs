@@ -2163,6 +2163,7 @@ body[data-theme="dark"] .dash-card .pat-due-row .go{color:var(--gold-m)}
   <a class="sb-link" data-go="tri-inv"><span class="dot"></span><span class="label">Triangle Invariance</span><span class="meta">live</span></a>
   <a class="sb-link" data-go="vol-sa"><span class="dot"></span><span class="label">Volume / Surface (cube law)</span><span class="meta">live</span></a>
   <a class="sb-link" data-go="ds"><span class="dot"></span><span class="label">Data Sufficiency</span><span class="meta">live</span></a>
+  <a class="sb-link" data-go="qc"><span class="dot"></span><span class="label">Quantitative Comparison</span><span class="meta">live</span></a>
   <a class="sb-link" data-go="exps"><span class="dot"></span><span class="label">Exponent Laws</span><span class="meta">live</span></a>
   <a class="sb-link" data-go="absval"><span class="dot"></span><span class="label">Absolute Value Inequalities</span><span class="meta">live</span></a>
   <a class="sb-link" data-go="geo-2d"><span class="dot"></span><span class="label">2D Geometry</span><span class="meta">live</span></a>
@@ -2455,6 +2456,7 @@ body[data-theme="dark"] .dash-card .pat-due-row .go{color:var(--gold-m)}
 <section class="sec" id="tri-inv" data-skill="tri-inv"></section>
 <section class="sec" id="vol-sa" data-skill="vol-sa"></section>
 <section class="sec" id="ds" data-skill="ds"></section>
+<section class="sec" id="qc" data-skill="qc" data-pf-eligible="true"></section>
 <section class="sec" id="exps" data-skill="exps"></section>
 <section class="sec" id="absval" data-skill="absval"></section>
 <section class="sec" id="binomials" data-skill="binomials"></section>
@@ -2985,6 +2987,7 @@ const SKILLS = [
   {id:'tri-inv',   tier:2, name:'Triangle Invariance',           prereqs:['coord'],        x:2, y:7},
   {id:'vol-sa',    tier:2, name:'Volume / Surface (cube law)',   prereqs:['coord'],        x:3, y:7},
   {id:'ds',        tier:2, name:'Data Sufficiency',              prereqs:['lin-eq'],       x:4, y:7},
+  {id:'qc',        tier:2, name:'Quantitative Comparison',       prereqs:['lin-eq'],       x:4, y:6},
   {id:'logs',      tier:2, name:'Logarithm Laws',                prereqs:['distrib'],      x:5, y:7},
   {id:'exps',      tier:2, name:'Exponent Laws',                 prereqs:['distrib'],      x:0, y:8},
   {id:'absval',    tier:2, name:'Absolute Value Inequalities',   prereqs:['neg-ineq'],     x:1, y:8},
@@ -3435,6 +3438,12 @@ const BANK = [
   {id:'ds1', skills:['ds'], diff:2, q:'Q: What is x? (1) x + 5 = 12. (2) x² = 49. Sufficient?', opts:['(1) alone','(2) alone','Both together','Neither'], correct:0, why:'(1) gives x = 7 unique. (2) gives x = ±7, two answers. (1) alone sufficient.', diag:{1:'(2) gives two values.', 2:'Don\'t need both.', 3:'(1) is sufficient.'}},
   {id:'ds2', skills:['ds'], diff:2, q:'Q: Is x positive? (1) x² = 9. (2) x > −2.', opts:['Neither alone','(1) alone','(2) alone','Both together (sufficient)'], correct:3, why:'(1): x = ±3, both possible. (2): x could be −1 or 5. Together: x = 3 (positive) or x = −3 (excluded by (2)) → unique. Sufficient together.', diag:{0:'Together IS sufficient.', 1:'Two values.', 2:'Range, not unique.'}},
   {id:'ds3', skills:['ds'], diff:3, q:'Q: What is the area of the rectangle? (1) Length is 4. (2) Perimeter is 14.', opts:['Both together','(1) alone','(2) alone','Neither'], correct:0, why:'(1) alone: no width. (2) alone: many shapes. Together: 2(4)+2w=14 → w=3 → area=12.', diag:{1:'Need width.', 2:'Multiple shapes.', 3:'Together works.'}},
+  {id:'qc1', skills:['qc'], diff:2, q:'Compare. Quantity A: x².  Quantity B: x.  (no constraint on x)', opts:['Quantity A is greater','Quantity B is greater','The two are equal','Cannot be determined'], correct:3, why:'No constraint on x. x=2 → A=4>B; x=½ → A=¼<B; x=1 → equal. The winner changes → cannot be determined. Trap: assuming x is an integer greater than 1.', diag:{0:'Only when |x|>1.', 1:'Only when 0<x<1.', 2:'Only at x=0 or 1.'}},
+  {id:'qc2', skills:['qc'], diff:1, q:'Compare. Quantity A: 30% of 60.  Quantity B: 60% of 30.', opts:['Quantity A is greater','Quantity B is greater','The two are equal','Cannot be determined'], correct:2, why:'a% of b = b% of a — multiplication commutes, so both equal 18. Recognize the symmetry instead of computing both.', diag:{0:'They are equal.', 1:'They are equal.', 3:'Fully determined — both are 18.'}},
+  {id:'qc3', skills:['qc'], diff:2, q:'Compare. Quantity A: the perimeter of a square whose area is 16.  Quantity B: 15.', opts:['Quantity A is greater','Quantity B is greater','The two are equal','Cannot be determined'], correct:0, why:'Area 16 → side 4 → perimeter 16. 16 > 15.', diag:{1:'A=16>15.', 2:'Not equal.', 3:'Fully determined.'}},
+  {id:'qc4', skills:['qc'], diff:3, q:'Given x > 0.  Compare. Quantity A: x + 1.  Quantity B: x² + 1.', opts:['Quantity A is greater','Quantity B is greater','The two are equal','Cannot be determined'], correct:3, why:'x>0 does NOT mean x>1. x=½ → A=1.5, B=1.25 (A>B); x=2 → A=3, B=5 (B>A). Changes → cannot be determined.', diag:{0:'Only for 0<x<1.', 1:'Only for x>1.', 2:'Only at x=1.'}},
+  {id:'qc5', skills:['qc'], diff:2, q:'Compare. Quantity A: 2¹⁰.  Quantity B: 1000.', opts:['Quantity A is greater','Quantity B is greater','The two are equal','Cannot be determined'], correct:0, why:'2¹⁰ = 1024 > 1000. Worth memorizing: 2¹⁰ ≈ 1000 (just over). No calculator needed.', diag:{1:'1024 > 1000.', 2:'Not equal.', 3:'Fully determined.'}},
+  {id:'qc6', skills:['qc'], diff:1, q:'Compare. Quantity A: the mean of {10, 20, 30}.  Quantity B: the median of {10, 20, 30}.', opts:['Quantity A is greater','Quantity B is greater','The two are equal','Cannot be determined'], correct:2, why:'Mean = 60/3 = 20; median = 20. For an evenly spaced set, mean = median.', diag:{0:'Both 20.', 1:'Both 20.', 3:'Fully determined.'}},
 
   // exps
   {id:'ex1', skills:['exps'], diff:1, q:'2³ × 2⁴ = ?', opts:['2⁷','2¹²','4⁷','2¹'], correct:0, why:'Same base, add exponents: 2³⁺⁴ = 2⁷.', diag:{1:'Multiplied exponents.', 2:'Multiplied bases.', 3:'Subtracted.'}},
@@ -5545,6 +5554,42 @@ const MODULES = {
     sarahTricks:[
       {when:'Approaching any DS question.', name:'<em>Two questions, not one</em>', move:'Test each statement INDEPENDENTLY first. Cover the other one. Ask: "with just this, do I get a unique answer?" Then test together. The order: (1) alone, (2) alone, both together, neither.', why:'Mixing statements leads to over-relying on combined info.', lock:'(1) alone, (2) alone, both, neither.', sarah:true, placeholder:true},
       {when:'A statement gives an equation with even powers.', name:'<em>±</em> ambiguity', move:'When a statement gives x² = N, x = ±√N — TWO solutions. Unless the question constrains the sign elsewhere (like "x is positive"), this is INSUFFICIENT alone.', why:'Even-power ambiguity is a constant DS trap.', lock:'Even powers split signs.'}
+    ]
+  },
+  'qc':{
+    skill:'qc', tier:2, num:'31b',
+    title:'Quantitative <em>Comparison</em>',
+    sub:'Two quantities. Don\'t compute — COMPARE. Then test the edges.',
+    pattern:'Quantitative comparison gives you Quantity A and Quantity B and asks which is larger. You rarely need exact values — you need the RELATIONSHIP. Four answers: A is greater, B is greater, the two are equal, or it cannot be determined. The whole game is that fourth option: if you can find one valid case where A&gt;B and another where B&gt;A, the answer is "cannot be determined."',
+    formula:'<span class="gold">Compare, don\'t compute.</span><br>You may add/subtract the same amount from both sides, or multiply/divide BOTH by the same <em>positive</em> number.<br>Test values: <span class="gold">0, 1, −1, and a fraction (½)</span>.',
+    visualType:'word-translate', visualData:{},
+    worked:[
+      {q:'A: x²   B: x   (no constraint on x)', steps:[
+        {what:'Don\'t assume x is a big positive integer', why:'the trap is picturing x = 2, 3, 4…'},
+        {what:'Test x = 2 → A = 4, B = 2 → A &gt; B. Test x = ½ → A = ¼, B = ½ → B &gt; A.', why:'two valid cases disagree.'},
+        {what:'Relationship changes → CANNOT BE DETERMINED', why:'one case A&gt;B, another B&gt;A.'}
+      ]},
+      {q:'A: 30% of 60   B: 60% of 30', steps:[
+        {what:'Resist computing both', why:'recognize the symmetry first.'},
+        {what:'a% of b = b% of a — multiplication commutes', why:'both are 0.30 · 0.60 · 100.'},
+        {what:'EQUAL', why:'both are 18 — but you knew it was equal before finishing.'}
+      ]},
+      {q:'Given x &gt; 0.   A: x + 1   B: x² + 1', steps:[
+        {what:'x &gt; 0 does NOT mean x &gt; 1', why:'the constraint still allows fractions.'},
+        {what:'x = ½ → A = 1.5, B = 1.25 → A &gt; B. x = 2 → A = 3, B = 5 → B &gt; A.', why:'still two cases.'},
+        {what:'CANNOT BE DETERMINED', why:'a constraint that doesn\'t pin the relationship is classic bait.'}
+      ]}
+    ],
+    faded:[
+      {prompt:'If one test value gives A&gt;B and another gives B&gt;A, the answer is __', lcd:'the relationship isn\'t fixed.', blank:'__', answer:'cannot be determined'},
+      {prompt:'You may multiply BOTH quantities by the same __ number without flipping the comparison.', lcd:'negatives flip inequalities.', blank:'__', answer:'positive'}
+    ],
+    practice:['qc1','qc2','qc3','qc4','qc5','qc6'],
+    lock:'<em>Compare, don\'t compute. Test 0, 1, −1, ½.</em>',
+    trap:'Assuming variables are positive integers. They can be negative, zero, or fractional — and that flips comparisons. Whenever the winner changes across valid values, the answer is "cannot be determined."',
+    sarahTricks:[
+      {when:'Any comparison with a variable in it.', name:'<em>Plug the four corners</em>', move:'Before deciding, test x = 0, 1, −1, and ½. If the winner ever switches, the answer is "cannot be determined." If it never switches across all four, you can usually trust the pattern.', why:'These four values expose sign flips, the identity point, and fraction behavior — the three places comparisons break.', lock:'0, 1, −1, ½.', sarah:true, placeholder:true},
+      {when:'The two quantities look like they need full computation.', name:'<em>Cancel what\'s shared</em>', move:'Subtract any term both sides share, or divide both by the same positive amount, until what\'s left is trivial. e.g., A: 7+√50 vs B: 8+√50 → cancel √50 → 7 vs 8.', why:'The comparison is preserved under the same operation on both sides (watch the sign when dividing by a negative).', lock:'Same op both sides — mind the sign.'}
     ]
   },
   'exps':{
@@ -12010,7 +12055,7 @@ const OB_STEPS = [
   {
     title:'We <em>start where you are.</em>',
     body:'Most QR struggle isn\'t about being bad at math. Something — a fraction rule, a percent shortcut — got skipped years ago and never caught. We diagnose, rebuild the floor, then climb. <b>This is a quick tour. 60 seconds.</b>',
-    vis:'<div style="text-align:center; padding:20px"><svg width="48" height="48" viewBox="0 0 22 22" style="color:var(--gold-d)" aria-hidden="true"><circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M11 3v16M3 11h16M5 5l12 12M17 5L5 17" stroke="currentColor" stroke-width="1" fill="none" opacity="0.55"/></svg><div class="up muted" style="margin-top:8px">41 skills · floor to test-day</div></div>'
+    vis:'<div style="text-align:center; padding:20px"><svg width="48" height="48" viewBox="0 0 22 22" style="color:var(--gold-d)" aria-hidden="true"><circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M11 3v16M3 11h16M5 5l12 12M17 5L5 17" stroke="currentColor" stroke-width="1" fill="none" opacity="0.55"/></svg><div class="up muted" style="margin-top:8px">42 skills · floor to test-day</div></div>'
   },
   {
     title:'Step 1 — <em>Take the diagnostic.</em>',
@@ -13713,7 +13758,7 @@ window.PATLIB = PATLIB;
   'frac-add','frac-mul','frac-dec','dec-arith','pct-of','pct-chg','pct-seq','estim','mental',
   'lin-eq','distrib','binomials','pemdas','neg-ineq',
   'ratios','rate-time','work-rate','mixture','interest','coord','units','word-decode',
-  'p-flip','p-andor','p-cond','count-pc','discr','harm','zscore','tri-inv','vol-sa','ds','exps','absval','logs',
+  'p-flip','p-andor','p-cond','count-pc','discr','harm','zscore','tri-inv','vol-sa','ds','qc','exps','absval','logs',
   'geo-2d','sets','desc-stats',
   'untimed','skip-ret','guess','mini-mock'
 ].forEach(renderModule);
