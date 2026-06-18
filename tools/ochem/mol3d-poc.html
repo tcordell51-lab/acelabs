@@ -24,11 +24,16 @@
     color:var(--gold-d); background:rgba(201,168,76,.12); border:1px solid var(--gold); border-radius:999px; padding:5px 9px; margin-bottom:10px}
   .stage{display:grid; grid-template-columns:1fr 280px; gap:16px; margin-top:18px}
   @media (max-width:760px){ .stage{grid-template-columns:1fr} }
-  .viewer{position:relative; background:var(--card); border:1px solid var(--line); border-radius:14px; overflow:hidden;
-    box-shadow:0 10px 30px rgba(13,32,24,.08); aspect-ratio:1/1}
-  #c{display:block; width:100%; height:100%; touch-action:none; cursor:grab}
-  #c:active{cursor:grabbing}
-  .hint{position:absolute; left:12px; bottom:10px; font:600 11px/1.3 ui-monospace,monospace; color:var(--mute);
+  .viewer{position:relative; background:radial-gradient(120% 120% at 50% 35%,#fffdf7,#f3ecdb);
+    border:1px solid var(--line); border-radius:14px; overflow:hidden;
+    box-shadow:0 10px 30px rgba(13,32,24,.08); aspect-ratio:1/1; touch-action:none; cursor:grab; user-select:none}
+  .viewer:active{cursor:grabbing}
+  #scene{position:absolute; inset:0}
+  #bonds{position:absolute; inset:0; width:100%; height:100%; z-index:0; pointer-events:none}
+  .atom{position:absolute; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    font:700 13px/1 -apple-system,sans-serif; will-change:transform,left,top,width,height; pointer-events:none;
+    box-shadow:inset 0 0 5px rgba(255,255,255,.35), 0 3px 8px rgba(13,32,24,.28)}
+  .hint{position:absolute; left:12px; bottom:10px; z-index:50; font:600 11px/1.3 ui-monospace,monospace; color:var(--mute);
     background:rgba(255,253,247,.78); border:1px solid var(--line); border-radius:8px; padding:5px 8px; pointer-events:none}
   .panel{display:flex; flex-direction:column; gap:12px}
   .badge{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:16px; text-align:center}
@@ -49,7 +54,6 @@
   .note{font-size:12.5px; line-height:1.55; color:var(--ink2); background:rgba(95,168,116,.10);
     border:1px dashed var(--teal); border-radius:10px; padding:10px 12px}
   .note b{color:var(--ink)}
-  .fallback{padding:40px 20px; text-align:center; color:var(--ink2)}
   footer{margin-top:22px; font-size:12px; color:var(--mute); line-height:1.6}
   code{font-family:ui-monospace,Menlo,monospace; font-size:12px; background:rgba(13,32,24,.06); padding:1px 5px; border-radius:5px}
 </style>
@@ -60,14 +64,15 @@
     <div class="poc">Proof of concept · OChem 3D</div>
     <h1>Chirality you can <em>turn over in your hand</em></h1>
     <p class="lede">A chiral carbon with four different groups. Drag to rotate. Flip it to its mirror image and watch the
-      configuration label switch — the two are <b>non-superimposable</b>. The R/S badge is computed from the actual 3D
-      geometry, so it is always correct and flips with the mirror.</p>
+      configuration switch — the two are <b>non-superimposable</b>. The R/S badge is computed from the actual 3D geometry,
+      so it is always correct and flips with the mirror. (Pure CSS/SVG — no libraries, no network.)</p>
   </header>
 
   <div class="stage">
-    <div class="viewer">
-      <canvas id="c"></canvas>
-      <div class="hint">drag to rotate · scroll to zoom</div>
+    <div class="viewer" id="viewer">
+      <svg id="bonds" viewBox="0 0 100 100" preserveAspectRatio="none"></svg>
+      <div id="scene"></div>
+      <div class="hint">drag to rotate</div>
     </div>
     <div class="panel">
       <div class="badge">
@@ -79,7 +84,7 @@
         <div class="lrow"><span class="dot" style="background:#8a4b2f"></span><b>Br</b> bromine <span class="pr">#1</span></div>
         <div class="lrow"><span class="dot" style="background:#3fa15a"></span><b>Cl</b> chlorine <span class="pr">#2</span></div>
         <div class="lrow"><span class="dot" style="background:#b9a93f"></span><b>F</b> fluorine <span class="pr">#3</span></div>
-        <div class="lrow"><span class="dot" style="background:#e8e8e8"></span><b>H</b> hydrogen <span class="pr">#4</span></div>
+        <div class="lrow"><span class="dot" style="background:#d8d8d8"></span><b>H</b> hydrogen <span class="pr">#4</span></div>
       </div>
       <div class="btns">
         <button class="primary" id="flip">Flip to mirror image</button>
@@ -88,193 +93,180 @@
         <button id="reset">Reset view</button>
       </div>
       <div class="note">Point the <b>lowest priority (H, #4)</b> away from you, then trace <b>Br → Cl → F</b>.
-        Clockwise = <b>R</b>, counter‑clockwise = <b>S</b>. Use “Look down C–H” to set that view automatically.</div>
+        Clockwise = <b>R</b>, counter‑clockwise = <b>S</b>. “Look down C–H” sets that exact view.</div>
     </div>
   </div>
 
-  <footer id="foot">
-    Self-contained demo. three.js is lazy-loaded from a CDN only when this page opens (a dynamic <code>import()</code>),
-    so the rest of Ace Labs is untouched and pays zero cost. Geometry is procedural (no model assets), reduced-motion is
-    respected, and it falls back to this message if WebGL is unavailable.
+  <footer>
+    Self-contained: the molecule is rendered with plain JavaScript 3-D math, HTML gradient spheres, and an SVG bond layer —
+    <b>no three.js, no WebGL, no network</b>, so it runs inside Ace Labs’ existing Content-Security-Policy with nothing to load.
+    Geometry is procedural and the R/S label is derived from the coordinates. (A future production version could swap in WebGL
+    once a vendored copy is served same-origin.)
   </footer>
 </div>
 
-<script type="module">
-(async function () {
-  const canvas = document.getElementById('c');
+<script>
+(function () {
+  try {
+    var viewer = document.getElementById('viewer');
+    var scene  = document.getElementById('scene');
+    var bonds  = document.getElementById('bonds');
+    var reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  // --- WebGL feature detection + graceful fallback -------------------------
-  function webglOK(){
-    try { const t = document.createElement('canvas');
-      return !!(window.WebGLRenderingContext && (t.getContext('webgl') || t.getContext('experimental-webgl'))); }
-    catch(e){ return false; }
-  }
-  if (!webglOK()) {
-    canvas.closest('.viewer').innerHTML =
-      '<div class="fallback">Your browser/device doesn’t support WebGL, so the 3D view can’t load.<br>' +
-      'In the real tool this would fall back to the existing 2D wedge–dash diagram.</div>';
-    return;
-  }
-
-  // --- Lazy-load three.js (this is the production pattern: pay only on open) -
-  const THREE = await import('https://unpkg.com/three@0.160.0/build/three.module.js');
-
-  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  // --- Renderer / scene / camera -------------------------------------------
-  const renderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:true });
-  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
-  const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 100);
-  camera.position.set(0, 0, 6.4);
-
-  scene.add(new THREE.HemisphereLight(0xffffff, 0x6b5d3e, 0.95));
-  const key = new THREE.DirectionalLight(0xffffff, 0.85); key.position.set(3, 4, 5); scene.add(key);
-  const rim = new THREE.DirectionalLight(0xffe6b0, 0.35); rim.position.set(-4, -2, -3); scene.add(rim);
-
-  const mol = new THREE.Group();
-  scene.add(mol);
-
-  // Tetrahedral unit directions, one per substituent (priority order 1..4).
-  const SUBS = [
-    { atom:'Br', color:0x8a4b2f, rad:0.50, dir:[ 1,  1,  1] },  // priority 1
-    { atom:'Cl', color:0x3fa15a, rad:0.42, dir:[ 1, -1, -1] },  // priority 2
-    { atom:'F',  color:0xb9a93f, rad:0.34, dir:[-1,  1, -1] },  // priority 3
-    { atom:'H',  color:0xe8e8e8, rad:0.26, dir:[-1, -1,  1] },  // priority 4
-  ];
-  const BOND_LEN = 1.7;
-
-  function labelSprite(text, color){
-    const cv = document.createElement('canvas'); cv.width = cv.height = 128;
-    const x = cv.getContext('2d');
-    x.beginPath(); x.arc(64,64,50,0,Math.PI*2); x.fillStyle = color; x.fill();
-    x.lineWidth = 6; x.strokeStyle = 'rgba(255,255,255,.85)'; x.stroke();
-    x.fillStyle = '#fff'; x.font = 'bold 70px sans-serif'; x.textAlign='center'; x.textBaseline='middle';
-    x.fillText(text, 64, 70);
-    const tex = new THREE.CanvasTexture(cv); tex.anisotropy = 4;
-    const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map:tex, depthTest:false, transparent:true }));
-    sp.scale.set(0.52, 0.52, 0.52);
-    return sp;
-  }
-
-  function makeBond(a, b){
-    const dir = new THREE.Vector3().subVectors(b, a);
-    const len = dir.length();
-    const m = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.085, 0.085, len, 18),
-      new THREE.MeshStandardMaterial({ color:0xcfc7b2, roughness:0.7, metalness:0.0 })
-    );
-    m.position.copy(a).addScaledVector(dir, 0.5);
-    m.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0), dir.clone().normalize());
-    return m;
-  }
-
-  let mirrored = false;
-
-  // (re)build the molecule; returns the substituent positions in priority order
-  function build(){
-    while (mol.children.length) mol.remove(mol.children[0]);
-
-    // central carbon
-    mol.add(new THREE.Mesh(
-      new THREE.SphereGeometry(0.46, 36, 28),
-      new THREE.MeshStandardMaterial({ color:0x33312c, roughness:0.45, metalness:0.0 })
-    ));
-
-    const positions = [];
-    SUBS.forEach((s, i) => {
-      const d = new THREE.Vector3(s.dir[0], s.dir[1], s.dir[2]).normalize();
-      if (mirrored) d.x = -d.x;                 // reflection across the yz-plane → enantiomer
-      const p = d.clone().multiplyScalar(BOND_LEN);
-      positions.push(p);
-
-      mol.add(makeBond(new THREE.Vector3(0,0,0), p));
-      const atom = new THREE.Mesh(
-        new THREE.SphereGeometry(s.rad, 32, 24),
-        new THREE.MeshStandardMaterial({ color:s.color, roughness:0.35, metalness:0.0 })
-      );
-      atom.position.copy(p);
-      mol.add(atom);
-
-      const lab = labelSprite(String(i+1), '#' + s.color.toString(16).padStart(6,'0'));
-      lab.position.copy(p).addScaledVector(d, s.rad + 0.18);
-      mol.add(lab);
-    });
-    return positions;
-  }
-
-  // Configuration from geometry: sign of the scalar triple product of the
-  // vectors to priorities 1,2,3 (relative to priority 4). Calibrated against a
-  // hand-built (R)-CHFClBr in three.js' right-handed frame: det < 0 ⇒ R.
-  function configFrom(positions){
-    const [p1,p2,p3,p4] = positions;
-    const a = p1.clone().sub(p4), b = p2.clone().sub(p4), c = p3.clone().sub(p4);
-    const det = a.dot(new THREE.Vector3().crossVectors(b, c));
-    return det < 0 ? 'R' : 'S';
-  }
-
-  function refresh(){
-    const positions = build();
-    const cfg = configFrom(positions);
-    const el = document.getElementById('cfg');
-    el.textContent = '(' + cfg + ')';
-    el.classList.toggle('s', cfg === 'S');
-    document.getElementById('cfgsub').textContent = (cfg === 'R' ? 'rectus' : 'sinister') + ' · ' + (mirrored ? 'mirror image' : 'original');
-  }
-  refresh();
-
-  // --- Interaction: trackball drag, wheel zoom, optional idle spin ----------
-  let dragging = false, lastX = 0, lastY = 0, targetQuat = null;
-  let spinOn = !reduced;
-  const spinBtn = document.getElementById('spin');
-  spinBtn.textContent = 'Spin: ' + (spinOn ? 'on' : 'off');
-
-  canvas.addEventListener('pointerdown', e => { dragging = true; targetQuat = null; lastX = e.clientX; lastY = e.clientY; canvas.setPointerCapture(e.pointerId); });
-  canvas.addEventListener('pointerup',   e => { dragging = false; });
-  canvas.addEventListener('pointermove', e => {
-    if (!dragging) return;
-    const dx = (e.clientX - lastX), dy = (e.clientY - lastY);
-    lastX = e.clientX; lastY = e.clientY;
-    const dq = new THREE.Quaternion().setFromEuler(new THREE.Euler(dy * 0.01, dx * 0.01, 0, 'XYZ'));
-    mol.quaternion.premultiply(dq);            // rotate about world axes (trackball feel)
-  });
-  canvas.addEventListener('wheel', e => {
-    e.preventDefault();
-    camera.position.z = Math.min(12, Math.max(3.6, camera.position.z + e.deltaY * 0.01));
-  }, { passive:false });
-
-  document.getElementById('flip').addEventListener('click', () => { mirrored = !mirrored; refresh(); });
-  document.getElementById('reset').addEventListener('click', () => { mol.quaternion.identity(); targetQuat = null; camera.position.z = 6.4; });
-  spinBtn.addEventListener('click', () => { spinOn = !spinOn; spinBtn.textContent = 'Spin: ' + (spinOn ? 'on' : 'off'); });
-
-  // Orient so the lowest-priority H points directly away from the camera.
-  document.getElementById('look').addEventListener('click', () => {
-    const d = new THREE.Vector3(SUBS[3].dir[0], SUBS[3].dir[1], SUBS[3].dir[2]).normalize();
-    if (mirrored) d.x = -d.x;
-    targetQuat = new THREE.Quaternion().setFromUnitVectors(d, new THREE.Vector3(0, 0, -1));
-  });
-
-  // --- Resize + render loop -------------------------------------------------
-  function resize(){
-    const r = canvas.getBoundingClientRect();
-    const w = Math.max(1, r.width), h = Math.max(1, r.height);
-    renderer.setSize(w, h, false);
-    camera.aspect = w / h; camera.updateProjectionMatrix();
-  }
-  new ResizeObserver(resize).observe(canvas);
-  resize();
-
-  const spinStep = new THREE.Quaternion().setFromEuler(new THREE.Euler(0, 0.004, 0));
-  (function loop(){
-    requestAnimationFrame(loop);
-    if (targetQuat){
-      mol.quaternion.slerp(targetQuat, 0.16);
-      if (mol.quaternion.angleTo(targetQuat) < 0.005){ mol.quaternion.copy(targetQuat); targetQuat = null; }
-    } else if (spinOn && !dragging){
-      mol.quaternion.multiply(spinStep);
+    // ---- tiny 3x3 rotation math (row-major; v' = M·v) -----------------------
+    function mul(A, B){
+      var C = new Array(9);
+      for (var r=0;r<3;r++) for (var c=0;c<3;c++)
+        C[r*3+c] = A[r*3]*B[c] + A[r*3+1]*B[3+c] + A[r*3+2]*B[6+c];
+      return C;
     }
-    renderer.render(scene, camera);
-  })();
+    function apply(M, v){
+      return [ M[0]*v[0]+M[1]*v[1]+M[2]*v[2],
+               M[3]*v[0]+M[4]*v[1]+M[5]*v[2],
+               M[6]*v[0]+M[7]*v[1]+M[8]*v[2] ];
+    }
+    function rotX(a){ var c=Math.cos(a),s=Math.sin(a); return [1,0,0, 0,c,-s, 0,s,c]; }
+    function rotY(a){ var c=Math.cos(a),s=Math.sin(a); return [c,0,s, 0,1,0, -s,0,c]; }
+    function norm(v){ var l=Math.hypot(v[0],v[1],v[2])||1; return [v[0]/l,v[1]/l,v[2]/l]; }
+    function cross(a,b){ return [a[1]*b[2]-a[2]*b[1], a[2]*b[0]-a[0]*b[2], a[0]*b[1]-a[1]*b[0]]; }
+    function dot(a,b){ return a[0]*b[0]+a[1]*b[1]+a[2]*b[2]; }
+    // rotation matrix that takes unit vector a onto unit vector b (Rodrigues)
+    function rotBetween(a, b){
+      a=norm(a); b=norm(b);
+      var v=cross(a,b), c=dot(a,b);
+      if (c > 0.9999) return [1,0,0,0,1,0,0,0,1];
+      if (c < -0.9999){ // 180°: rotate about any axis ⟂ a
+        var ax = Math.abs(a[0])<0.9 ? [1,0,0] : [0,1,0];
+        var k = norm(cross(a, ax));
+        return [ -1+2*k[0]*k[0], 2*k[0]*k[1], 2*k[0]*k[2],
+                  2*k[0]*k[1], -1+2*k[1]*k[1], 2*k[1]*k[2],
+                  2*k[0]*k[2], 2*k[1]*k[2], -1+2*k[2]*k[2] ];
+      }
+      var f = 1/(1+c);
+      // I + [v]x + [v]x^2 * f
+      return [ 1 + f*(-v[2]*v[2]-v[1]*v[1]),     -v[2] + f*(v[0]*v[1]),      v[1] + f*(v[0]*v[2]),
+                v[2] + f*(v[0]*v[1]),     1 + f*(-v[2]*v[2]-v[0]*v[0]),     -v[0] + f*(v[1]*v[2]),
+               -v[1] + f*(v[0]*v[2]),      v[0] + f*(v[1]*v[2]),     1 + f*(-v[1]*v[1]-v[0]*v[0]) ];
+    }
+
+    // ---- molecule (priority order: 1=highest .. 4=lowest) -------------------
+    var BOND = 1.7, FOCAL = 7;
+    var BASE = [
+      { sym:'Br', color:'#8a4b2f', rad:0.52, dark:false, dir:[ 1, 1, 1] },
+      { sym:'Cl', color:'#3fa15a', rad:0.44, dark:false, dir:[ 1,-1,-1] },
+      { sym:'F',  color:'#b9a93f', rad:0.36, dark:true,  dir:[-1, 1,-1] },
+      { sym:'H',  color:'#d8d8d8', rad:0.30, dark:true,  dir:[-1,-1, 1] }
+    ];
+    var mirrored = false;
+
+    // build DOM: one carbon + 4 substituent spheres + 4 bond lines
+    var carbon = mkAtom('C', '#3a3833', false);
+    var atoms = BASE.map(function(s){ return { def:s, el: mkAtom(s.sym, s.color, s.dark) }; });
+    var lines = BASE.map(function(){
+      var ln = document.createElementNS('http://www.w3.org/2000/svg','line');
+      ln.setAttribute('stroke', '#cabf9f'); ln.setAttribute('stroke-linecap','round');
+      bonds.appendChild(ln); return ln;
+    });
+    scene.appendChild(carbon);
+    atoms.forEach(function(a){ scene.appendChild(a.el); });
+
+    function mkAtom(sym, color, dark){
+      var d = document.createElement('div');
+      d.className = 'atom';
+      d.textContent = sym;
+      d.style.color = dark ? '#3a352a' : 'rgba(255,255,255,.92)';
+      d.style.background = 'radial-gradient(circle at 34% 30%, '+lighten(color,55)+' 0%, '+color+' 55%, '+lighten(color,-30)+' 100%)';
+      return d;
+    }
+    function lighten(hex, amt){
+      var n=parseInt(hex.slice(1),16), r=(n>>16)&255,g=(n>>8)&255,b=n&255;
+      r=Math.max(0,Math.min(255,r+amt)); g=Math.max(0,Math.min(255,g+amt)); b=Math.max(0,Math.min(255,b+amt));
+      return 'rgb('+r+','+g+','+b+')';
+    }
+    function localDir(s){ var d = norm(s.dir); if (mirrored) d=[-d[0],d[1],d[2]]; return d; }
+
+    // ---- configuration from geometry (calibrated: det<0 ⇒ R) ----------------
+    function updateRS(){
+      var p = BASE.map(function(s){ var d=localDir(s); return [d[0]*BOND,d[1]*BOND,d[2]*BOND]; });
+      var a=[p[0][0]-p[3][0],p[0][1]-p[3][1],p[0][2]-p[3][2]];
+      var b=[p[1][0]-p[3][0],p[1][1]-p[3][1],p[1][2]-p[3][2]];
+      var c=[p[2][0]-p[3][0],p[2][1]-p[3][1],p[2][2]-p[3][2]];
+      var det = dot(a, cross(b,c));
+      var cfg = det < 0 ? 'R' : 'S';
+      var el = document.getElementById('cfg');
+      el.textContent = '(' + cfg + ')';
+      el.classList.toggle('s', cfg==='S');
+      document.getElementById('cfgsub').textContent = (cfg==='R'?'rectus':'sinister')+' · '+(mirrored?'mirror image':'original');
+    }
+
+    // ---- render: rotate, weak-perspective project, depth-sort ----------------
+    var M = [1,0,0,0,1,0,0,0,1];
+    function render(){
+      var S = viewer.clientWidth, cx = S/2, cy = S/2, scale = S*0.15;
+      bonds.setAttribute('viewBox','0 0 '+S+' '+S);
+      // carbon at origin
+      place(carbon, [0,0,0], 0.46, cx, cy, scale);
+      atoms.forEach(function(a, i){
+        var w = apply(M, [localDir(a.def)[0]*BOND, localDir(a.def)[1]*BOND, localDir(a.def)[2]*BOND]);
+        var pr = FOCAL/(FOCAL - w[2]);
+        var x = cx + w[0]*scale*pr, y = cy - w[1]*scale*pr;
+        place(a.el, w, a.def.rad, cx, cy, scale);
+        // bond from carbon centre to atom centre
+        lines[i].setAttribute('x1', cx); lines[i].setAttribute('y1', cy);
+        lines[i].setAttribute('x2', x);  lines[i].setAttribute('y2', y);
+        lines[i].setAttribute('stroke-width', Math.max(2, 7*pr));
+      });
+    }
+    function place(el, w, rad, cx, cy, scale){
+      var pr = FOCAL/(FOCAL - w[2]);
+      var size = 2*rad*scale*pr;
+      var x = cx + w[0]*scale*pr, y = cy - w[1]*scale*pr;
+      el.style.width = size+'px'; el.style.height = size+'px';
+      el.style.left = (x - size/2)+'px'; el.style.top = (y - size/2)+'px';
+      el.style.fontSize = Math.max(9, size*0.34)+'px';
+      el.style.zIndex = Math.round((w[2]+10)*1000);
+      var b = 0.78 + 0.30*((w[2]/(BOND+0.6))+1)/2;   // closer = brighter
+      el.style.filter = 'brightness('+b.toFixed(3)+')';
+    }
+
+    // ---- interaction --------------------------------------------------------
+    var dragging=false, lx=0, ly=0;
+    viewer.addEventListener('pointerdown', function(e){ dragging=true; lx=e.clientX; ly=e.clientY; viewer.setPointerCapture(e.pointerId); });
+    viewer.addEventListener('pointerup',   function(){ dragging=false; });
+    viewer.addEventListener('pointercancel', function(){ dragging=false; });
+    viewer.addEventListener('pointermove', function(e){
+      if(!dragging) return;
+      var dx=(e.clientX-lx), dy=(e.clientY-ly); lx=e.clientX; ly=e.clientY;
+      M = mul(rotY(dx*0.01), M);
+      M = mul(rotX(-dy*0.01), M);
+      render();
+    });
+
+    document.getElementById('flip').addEventListener('click', function(){ mirrored=!mirrored; updateRS(); render(); });
+    document.getElementById('reset').addEventListener('click', function(){ M=[1,0,0,0,1,0,0,0,1]; render(); });
+    document.getElementById('look').addEventListener('click', function(){
+      // orient so the lowest-priority H points away from the viewer (−z, into screen)
+      M = rotBetween(localDir(BASE[3]), [0,0,-1]); render();
+    });
+
+    var spinOn = !reduced;
+    var spinBtn = document.getElementById('spin');
+    spinBtn.textContent = 'Spin: ' + (spinOn?'on':'off');
+    spinBtn.addEventListener('click', function(){ spinOn=!spinOn; spinBtn.textContent='Spin: '+(spinOn?'on':'off'); });
+
+    var spinStep = rotY(0.006);
+    (function loop(){
+      requestAnimationFrame(loop);
+      if (spinOn && !dragging){ M = mul(spinStep, M); render(); }
+    })();
+
+    new ResizeObserver(render).observe(viewer);
+    updateRS(); render();
+  } catch (err) {
+    document.getElementById('viewer').innerHTML =
+      '<div style="padding:30px;text-align:center;color:#8a5a3a;font:600 13px/1.5 sans-serif">'+
+      'The 3D view hit an error:<br><code>'+String(err && err.message || err)+'</code></div>';
+  }
 })();
 </script>
 </body>
