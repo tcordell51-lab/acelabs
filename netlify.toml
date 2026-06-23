@@ -2,6 +2,14 @@
   publish = "."
   # No build step — AceLabs is a static-asset deploy.
 
+# Serverless functions (currently just the Casper practice grader).
+# @netlify/blobs is provided by the Netlify runtime, so keep it external rather
+# than vendoring it into this otherwise dependency-free static deploy.
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+  external_node_modules = ["@netlify/blobs"]
+
 [[headers]]
   for = "/*"
   [headers.values]
