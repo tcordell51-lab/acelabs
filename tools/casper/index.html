@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Casper Coaching Console · Ace Labs</title>
-<meta name="description" content="Live 1-on-1 Casper coaching tool: run a timed scenario, score the response against five dimensions in real time, and warm up with rapid judgment drills."/>
+<title>Casper Practice Console · Ace Labs</title>
+<meta name="description" content="Practice Casper under real timing: answer scenarios typed or spoken, self-score against the five dimensions, study the 2nd-to-4th-quartile answer ladder, and rehearse on camera."/>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
@@ -20,6 +20,8 @@
   *{box-sizing:border-box;}
   body{margin:0;font-family:var(--font-body);background:var(--cream);color:var(--ink);min-height:100vh;}
   button{font-family:var(--font-body);}
+  summary{list-style:none;}
+  summary::-webkit-details-marker{display:none;}
   .hdr{background:var(--forest-deep);padding:14px 24px;position:sticky;top:0;z-index:20;box-shadow:0 1px 0 rgba(0,0,0,.15);}
   .hdr-in{max-width:1120px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:10px;}
   .brand-link{display:flex;align-items:center;gap:10px;text-decoration:none;}
@@ -72,10 +74,10 @@
         <div class="logo-mark">A</div>
         <div>
           <div class="logo-t1">AceTheDAT</div>
-          <div class="logo-t2">Casper Coaching Console</div>
+          <div class="logo-t2">Casper Practice Console</div>
         </div>
       </a>
-      <a href="../../ace-labs.html" class="hdr-back">← Ace Labs</a>
+      <a href="../../ace-labs.html" class="hdr-back">Ace Labs</a>
     </div>
   </div>
 
@@ -178,37 +180,165 @@ var SCENARIOS = [
     qs:["How do you assess what to do?","How do you decide what, if anything, to give up or renegotiate?","Who do you talk to, and what do you say?"] },
 ];
 
-/* Original model answers (weak vs strong) keyed by scenario id. Coaching exemplars. */
+/* Original model-answer LADDERS keyed by scenario id. Each shows the climb:
+   q2 (≈2nd quartile) -> q3 (≈3rd) -> q4 (≈4th), plus a note naming what moved it up.
+   AceTheDAT original coaching IP. Concise on purpose — Casper rewards concision. */
 var MODELS = {
   1: {
-    weak:"Priya clearly isn't pulling her weight, so I'd report her to the instructor. It's not fair that the rest of us do the work while she coasts, and she shouldn't get the same grade as people who actually showed up.",
-    strong:"Before doing anything, I'd want to understand what's going on, because lateness and unfinished work often have a cause I can't see — illness, a family issue, or feeling lost in the material. I'd talk with Priya privately and without blame, let her know we've missed her input, and ask how she's doing and whether something is getting in the way. Then I'd focus on the immediate problem: with two days left, what can she realistically take on so the project succeeds? If she re-engages, there's no need to escalate. If the work still isn't getting done and the team's grade is at risk, I'd be honest that we may need to loop in the instructor — not to punish her, but so the situation is handled fairly for everyone.",
-    note:"The weak answer assumes the worst, judges, and jumps straight to reporting. The strong one gathers information with empathy, addresses the real deadline, and treats escalation as a conditional last step — not a first reflex."
+    q2:"Priya clearly isn't pulling her weight, so I'd report her to the instructor. It's not fair that the rest of us do the work while she coasts, and she shouldn't get the same grade as people who actually showed up.",
+    q3:"I'd be frustrated, but before doing anything I'd talk to Priya privately and ask if everything is okay, since there might be a reason she's been absent. I'd see if she can pick up part of the work before the deadline.",
+    q4:"Before doing anything, I'd want to understand what's going on, because lateness and unfinished work often have a cause I can't see — illness, a family issue, or feeling lost in the material. I'd talk with Priya privately and without blame, let her know we've missed her input, and ask how she's doing and whether something is getting in the way. Then I'd focus on the immediate problem: with two days left, what can she realistically take on so the project succeeds? If she re-engages, there's no need to escalate. If the work still isn't getting done and the team's grade is at risk, I'd be honest that we may need to loop in the instructor — not to punish her, but so the situation is handled fairly for everyone.",
+    note:"2nd to 3rd: drops the rush to report and opens with a private, non-judgmental check-in. 3rd to 4th: says what it would want to know instead of guessing the reason, ties the conversation to the two-day deadline, and makes escalation an explicit conditional last step rather than leaving it vague."
   },
   2: {
-    weak:"I'd promise to keep it secret since they're my friend and they already feel bad. It's not my business to get involved, and telling anyone would just be a betrayal.",
-    strong:"I'd start by listening — my friend trusted me and is clearly feeling guilty, and I want to respond with care, not judgment. I'd acknowledge how hard it is to carry that, and gently explore why they feel guilty, since that guilt suggests they already sense it wasn't right. I'd encourage them to consider coming forward themselves, and talk through what that could look like. I'd be honest that I can't promise blanket secrecy if keeping it would mean someone else is harmed or unfairly affected. My role as a friend isn't only to comfort them, but to help them do the right thing — especially if this exam affects fairness to other students.",
-    note:"The weak answer collapses into unconditional loyalty. The strong one balances empathy and friendship with integrity and fairness to others, and nudges the friend toward ownership rather than deciding for them."
+    q2:"I'd promise to keep it secret since they're my friend and they already feel bad. It's not my business to get involved, and telling anyone would just be a betrayal.",
+    q3:"I'd listen and tell my friend I understand how guilty they feel. I'd gently suggest they think about coming forward, but ultimately I'd respect whatever they decide to do.",
+    q4:"I'd start by listening — my friend trusted me and is clearly feeling guilty, and I want to respond with care, not judgment. I'd acknowledge how hard it is to carry that, and gently explore why they feel guilty, since that guilt suggests they already sense it wasn't right. I'd encourage them to consider coming forward themselves, and talk through what that could look like. I'd be honest that I can't promise blanket secrecy if keeping it would mean someone else is harmed or unfairly affected. My role as a friend isn't only to comfort them, but to help them do the right thing — especially if this exam affects fairness to other students.",
+    note:"2nd to 3rd: replaces blanket secrecy with empathy plus a nudge toward ownership. 3rd to 4th: stops fully deferring — it names the limit on confidentiality when others could be harmed, and makes fairness to the other students the reason."
   },
   3: {
-    weak:"The staff member is senior and respected, so I'd assume they know better and stay out of it. It's not my place to correct someone with more experience.",
-    strong:"My first concern is the patient getting accurate information, but I also don't want to assume I'm right or undermine a colleague publicly. I'd quietly check my own understanding first. Then I'd approach the staff member privately and respectfully — framing it as a question rather than an accusation, like 'I may have misheard, could you help me understand the guidance on X?' That gives them room to correct it without losing face, and surfaces the issue if I was right. If the patient is about to act on something potentially harmful, I'd make sure it's clarified before they leave, escalating through the proper channel if needed. Respecting authority and advocating for the patient aren't opposites; the goal is the patient's safety, handled tactfully.",
-    note:"The weak answer hides behind hierarchy. The strong one verifies first, raises the concern privately and non-accusatorially, and keeps patient safety as the non-negotiable while preserving the colleague's dignity."
+    q2:"The staff member is senior and respected, so I'd assume they know better and stay out of it. It's not my place to correct someone with more experience.",
+    q3:"The patient's safety matters most, so I'd find a polite way to mention the correct information to the staff member. I wouldn't want to embarrass them, so I'd bring it up quietly.",
+    q4:"My first concern is the patient getting accurate information, but I also don't want to assume I'm right or undermine a colleague publicly. I'd quietly check my own understanding first. Then I'd approach the staff member privately and respectfully — framing it as a question rather than an accusation, like 'I may have misheard, could you help me understand the guidance on X?' That gives them room to correct it without losing face, and surfaces the issue if I was right. If the patient is about to act on something potentially harmful, I'd make sure it's clarified before they leave, escalating through the proper channel if needed. Respecting authority and advocating for the patient aren't opposites; the goal is the patient's safety, handled tactfully.",
+    note:"2nd to 3rd: stops deferring to hierarchy and prioritizes the patient. 3rd to 4th: verifies its own understanding first, frames the concern as a question rather than a correction, and adds a clear escalation path if the patient is about to act on something harmful."
   },
   4: {
-    weak:"Sam did nothing, so he shouldn't get credit — I'd just tell the professor he didn't help and let him take the hit. Why should we cover for him?",
-    strong:"I'd separate two things: getting the project done in the next two days, and handling credit fairly. First I'd talk to Sam directly and privately to understand why he hasn't contributed — there may be something going on — and clearly invite him back in with a specific, doable task. I'd keep the rest of the team focused so the deadline isn't at risk. On credit, I believe it should reflect real contribution, so I'd be transparent: if Sam steps up, that changes things; if he doesn't, I'd have an honest conversation with him first, then, if needed, let the instructor know how the work was actually divided — factually, without hostility. Fairness to the group and fairness to Sam both matter, and giving him a genuine chance to contribute respects both.",
-    note:"The weak answer is punitive and one-sided. The strong one protects the deadline, gives Sam a fair chance with a concrete path back, and handles credit honestly and proportionately rather than vindictively."
+    q2:"Sam did nothing, so he shouldn't get credit — I'd just tell the professor he didn't help and let him take the hit. Why should we cover for him?",
+    q3:"I'd talk to Sam and ask why he hasn't contributed, and give him a chance to help finish. If he still does nothing, I'd let the professor know he didn't participate.",
+    q4:"I'd separate two things: getting the project done in the next two days, and handling credit fairly. First I'd talk to Sam directly and privately to understand why he hasn't contributed — there may be something going on — and clearly invite him back in with a specific, doable task. I'd keep the rest of the team focused so the deadline isn't at risk. On credit, I believe it should reflect real contribution, so I'd be transparent: if Sam steps up, that changes things; if he doesn't, I'd have an honest conversation with him first, then, if needed, let the instructor know how the work was actually divided — factually, without hostility. Fairness to the group and fairness to Sam both matter, and giving him a genuine chance to contribute respects both.",
+    note:"2nd to 3rd: gives Sam a fair chance and asks before judging. 3rd to 4th: separates finishing the project from handling credit, keeps the rest of the team on track, and makes the credit conversation honest and proportionate — Sam first, instructor only if needed."
   },
   5: {
-    weak:"The man without an appointment didn't book, so the mother with the appointment goes first. Rules are rules — you can't reward people for just showing up.",
-    strong:"Both people have real, competing needs, so I'd gather a little information before deciding. The elderly man is in visible discomfort, which raises a possible urgency concern; the young mother followed the process, has waited two weeks, and has a hard time limit for work. I'd quickly assess whether the man needs urgent attention — if so, that may take priority on need. If it's not urgent, I'd honor the mother's appointment, especially given her time constraint, while making sure the man is acknowledged, comfortable, and seen as soon as possible. Throughout, I'd communicate honestly and kindly to both: explaining the reasoning to each, apologizing for the wait, and offering concrete next steps so neither feels dismissed.",
-    note:"The weak answer applies a rule rigidly and ignores possible urgency. The strong one gathers information, weighs need against fairness to the person who followed the process, and communicates the decision transparently and compassionately to both."
+    q2:"The man without an appointment didn't book, so the mother with the appointment goes first. Rules are rules — you can't reward people for just showing up.",
+    q3:"I'd feel torn. I'd probably see the elderly man first since he's in pain, but I'd apologize to the mother and try to get her in quickly afterward.",
+    q4:"Both people have real, competing needs, so I'd gather a little information before deciding. The elderly man is in visible discomfort, which raises a possible urgency concern; the young mother followed the process, has waited two weeks, and has a hard time limit for work. I'd quickly assess whether the man needs urgent attention — if so, that may take priority on need. If it's not urgent, I'd honor the mother's appointment, especially given her time constraint, while making sure the man is acknowledged, comfortable, and seen as soon as possible. Throughout, I'd communicate honestly and kindly to both: explaining the reasoning to each, apologizing for the wait, and offering concrete next steps so neither feels dismissed.",
+    note:"2nd to 3rd: trades the rigid rule for compassion and a rough priority. 3rd to 4th: gathers information first (is the man's discomfort actually urgent?), weighs need against the mother's hard time limit, and commits to a reasoned decision communicated kindly to both."
   },
   6: {
-    weak:"That was unfair and embarrassing, so I'd push back right there and let them know they had no right to call me out in front of everyone.",
-    strong:"In the moment, I'd stay composed rather than react defensively, thank them for the input, and suggest we discuss the specifics afterward so we don't derail the group. Privately, I'd reflect honestly on whether there's truth in it — even harsh feedback sometimes contains something useful — and separate that from how it was delivered. I'd then talk with the person one-on-one: acknowledge any valid point, and also calmly share that being called out publicly was tough and that I'd appreciate raising things privately next time. Going forward, I'd aim to keep the working relationship constructive, because reacting with hostility would cost more than the original comment did.",
-    note:"The weak answer escalates publicly and defensively. The strong one regulates the in-the-moment reaction, shows self-awareness by mining the feedback for truth, and addresses the delivery privately while protecting the relationship."
+    q2:"That was unfair and embarrassing, so I'd push back right there and let them know they had no right to call me out in front of everyone.",
+    q3:"I'd stay calm in the moment and not argue in front of everyone. Later I'd think about whether the feedback was fair, and maybe talk to the person about how it was delivered.",
+    q4:"In the moment, I'd stay composed rather than react defensively, thank them for the input, and suggest we discuss the specifics afterward so we don't derail the group. Privately, I'd reflect honestly on whether there's truth in it — even harsh feedback sometimes contains something useful — and separate that from how it was delivered. I'd then talk with the person one-on-one: acknowledge any valid point, and also calmly share that being called out publicly was tough and that I'd appreciate raising things privately next time. Going forward, I'd aim to keep the working relationship constructive, because reacting with hostility would cost more than the original comment did.",
+    note:"2nd to 3rd: regulates the reaction instead of escalating publicly. 3rd to 4th: actively mines the feedback for what's true, separates content from delivery, and commits to protecting the working relationship going forward."
+  },
+  7: {
+    q2:"I'd tell Dev he's being inconsiderate and that he needs to keep it down because I have exams. If he can't respect that, I'd consider talking to someone about it.",
+    q3:"I'd talk to Dev calmly and explain that I have major exams coming up and really need quiet in the evenings. I'd ask if we can find a solution that works for both of us.",
+    q4:"I'd start by assuming there's no bad intent — Dev may not realize how much the noise is affecting me, especially since I've only hinted so far. I'd pick a calm moment and be direct but warm: tell him I have exams this week and ask whether we can agree on quiet hours or move gatherings to another space. I'd also ask if something is going on for him, since the change is recent. If we agree on a plan and it still doesn't change, I'd revisit it honestly with him before escalating to anyone else.",
+    note:"2nd to 3rd: drops the accusatory tone for a calm, mutual ask. 3rd to 4th: assumes good intent, owns that hinting wasn't clear communication, proposes a concrete agreement, and sets a conditional next step if it doesn't work."
+  },
+  8: {
+    q2:"The group already voted, so we should stick with the materials everyone agreed on. Aisha can try to find a way to get them or use free resources on her own.",
+    q3:"I'd feel bad that Aisha is being left out, so I'd check in with her privately to see how she's doing and look for free alternatives the group could use instead.",
+    q4:"The real issue is that a group decision is quietly excluding Aisha, so I'd separate the logistics from the relationship. Privately, I'd check in with Aisha so she doesn't feel singled out, and find out what would actually help. With the group, I'd raise that our choice is leaving someone out and propose options — sharing access, splitting cost, or switching to a strong free resource — framed around keeping everyone included rather than overriding the vote. If no free alternative existed, I'd still push for a way to share what we have, because a study group only works if everyone can participate.",
+    note:"2nd to 3rd: stops hiding behind the vote and leads with empathy for Aisha. 3rd to 4th: brings it back to the group as an equity problem, offers concrete inclusive options, and still commits to a fair outcome even when the easy fix isn't available."
+  },
+  9: {
+    q2:"Marcus is the problem, so I'd tell him he's being domineering and shutting people down, and that he needs to let others talk.",
+    q3:"I'd talk to Marcus privately and let him know that some teammates have gone quiet and it would help if everyone got a chance to contribute. I'd also try to invite the quieter members into the conversation.",
+    q4:"There are two things to fix: Marcus's behavior and the quieter members' disengagement. I'd assume Marcus may not see his impact, so I'd speak with him privately and specifically — not 'you're domineering,' but 'I've noticed a few people have stopped offering ideas, and I think we'd get better work if we made room for them.' Separately, I'd actively bring the quieter members back in, for example by asking them directly for their take in meetings. If the pattern continued, I'd address it more directly with the group. The goal is good work and a team that isn't demoralized, and both depend on changing the dynamic, not punishing one person.",
+    note:"2nd to 3rd: shifts from labeling Marcus to a private, behavior-focused conversation. 3rd to 4th: treats the two problems separately, uses specific non-accusatory language, takes concrete steps to re-engage the quiet members, and names the dual goal of work quality and morale."
+  },
+  10: {
+    q2:"Maybe the failing grade is a sign this isn't for me. I'd feel like giving up and question whether I should even continue in the program.",
+    q3:"I'd be discouraged, but I'd try to learn from it. I'd look at what went wrong on the exam and study differently next time, and remind myself that one grade doesn't define me.",
+    q4:"First I'd let myself feel the disappointment without spiraling into 'I don't belong' — one exam isn't a verdict on my potential. Then I'd get concrete: review the exam to see whether the gap was content, test-taking, or how I studied, since the fix is different for each. I'd build a specific plan and decide where I need help — the professor's office hours, a study group, or academic support — rather than struggling alone. I'd also check in honestly with myself about workload and stress. The setback is real, but it's information about what to change, not proof I should quit.",
+    note:"2nd to 3rd: reframes the grade as a learning opportunity instead of a reason to quit. 3rd to 4th: diagnoses the actual cause before fixing it, commits to specific help and a plan, and separates the emotion from the decision."
+  },
+  11: {
+    q2:"Lena's mistakes are affecting the team, so the priority is making sure the errors get fixed. She needs to get back up to speed or it isn't fair to everyone else.",
+    q3:"I'd be gentle with Lena since she just lost a parent. I'd check in on how she's doing and offer support, and I'd quietly help catch any errors so they don't cause problems.",
+    q4:"Lena is grieving and the errors matter — both are true, so I wouldn't treat it as one or the other. I'd approach her with genuine care first: ask how she's doing and whether anything would make coming back easier, without making her feel watched. To the frustrated coworkers, I'd ask for some patience and remind them, kindly, that she's just been through a loss. On the errors themselves, I'd find a supportive way to add a check or share the load temporarily so work isn't affected, framed as helping her land rather than catching her out. The line is that compassion and accuracy aren't opposites — I'd protect both.",
+    note:"2nd to 3rd: leads with empathy for Lena instead of the errors. 3rd to 4th: holds both truths at once, manages the coworkers' frustration, and addresses the errors through supportive structure rather than ignoring them or policing her."
+  },
+  12: {
+    q2:"I'd just start handing out whatever we have and deal with the line as fast as possible. There's not much else to do when the truck is late and we're short-staffed.",
+    q3:"I'd stay calm and figure out what we can do with what's on hand. I'd let the people waiting know about the delay and try to keep things moving as smoothly as possible with the volunteers we have.",
+    q4:"In the moment I'd focus on the people in line, especially anyone vulnerable to the weather. First I'd get clear on the facts: when the truck will actually arrive, what we can distribute now, and how to redeploy the volunteers we do have to the highest-impact tasks. I'd communicate honestly with the people waiting — acknowledge the delay, give a realistic time, and if possible get them out of the weather or offer water. I'd prioritize the most urgent needs first, then steady throughput. Afterward I'd flag the staffing and delivery issues so the same crunch is less likely next time.",
+    note:"2nd to 3rd: replaces panic with a calmer plan and basic communication. 3rd to 4th: gathers the key facts, redeploys resources deliberately, protects the vulnerable people waiting, and adds a follow-up to prevent a repeat."
+  },
+  13: {
+    q2:"I've always wanted to do this because I want to help people and I'm good at science. I know it'll be hard but I'm a hard worker, so I'll be fine.",
+    q3:"I'm drawn to this field because I find the work meaningful and I genuinely care about patients. When it gets hard, I'd lean on that sense of purpose and the people around me to keep going.",
+    q4:"I'd be honest rather than give a polished answer. My motivation comes from a specific, real pull toward this work — the mix of science and direct care for people — not just a general wish to help. What sustains me through hard stretches is concrete: the relationships, seeing small progress, and a support system I deliberately maintain. I'd also take the mentor's real question seriously: an idealized image of the career fades, but a genuine motivation is one I've tested against the unglamorous parts and still choose. The long hours don't erase the why for me — they're the cost of something I've decided is worth it.",
+    note:"2nd to 3rd: moves from clichés to a sincere sense of purpose. 3rd to 4th: gets specific and honest, names what concretely sustains it, and directly answers the hard part — distinguishing tested motivation from an idealized image."
+  },
+  14: {
+    q2:"I'd just accept the gift so I don't hurt their feelings. It would be rude to say no when they're being so kind.",
+    q3:"I'd thank the patient warmly but explain that I'm not able to accept an expensive gift. I'd try to let them down gently so they don't feel rejected.",
+    q4:"I'd separate the patient's kindness from the professional boundary. I'd thank them sincerely and make clear the refusal isn't a rejection of them — that their recovery and trust are the real thanks, and that accepting an expensive gift wouldn't be appropriate in my role. I'd offer an alternative if one fits, like a thank-you note or a donation, so the gesture still has somewhere to go. My decision could shift with context — a small, homemade token is different from something expensive — but for a valuable gift the boundary holds. I'd also gently set the coworker's 'it's rude to refuse' aside, since professional boundaries aren't rudeness.",
+    note:"2nd to 3rd: stops accepting just to avoid discomfort and holds the boundary. 3rd to 4th: protects the relationship while declining, offers an alternative outlet for the gesture, and uses conditional reasoning about gift size rather than one flat rule."
+  },
+  15: {
+    q2:"It's not my post, so I'd stay out of it. What my classmate does on their own social media isn't my business.",
+    q3:"I'd be uncomfortable with the post since the supervisor is recognizable. I probably wouldn't comment publicly, but I might privately tell my classmate I don't think it's a good idea.",
+    q4:"Even though it's not my post, a recognizable, public complaint about a supervisor is a professionalism risk for my classmate and reflects on our placement. I wouldn't pile on or comment publicly. Privately, I'd reach out without lecturing — acknowledge the frustration is probably valid, but point out the post is identifiable and could follow them professionally, and suggest taking it down or raising the concern through a proper channel. If the supervisor had already seen it, the conversation becomes more urgent and I'd be honest that some damage control or a direct apology might be needed. I'd raise it because I'd want a peer to do the same for me.",
+    note:"2nd to 3rd: stops disengaging and at least raises a private concern. 3rd to 4th: explains the professional stakes, validates the feeling while advising a concrete fix, and adapts the response to whether the supervisor has already seen it."
+  },
+  16: {
+    q2:"The clinician already explained it, so it's not really my place to step in. If she had questions she could have asked.",
+    q3:"I'd be worried she didn't understand, so I'd try to check in with her and make sure she knows the medication schedule before she leaves.",
+    q4:"Nodding isn't the same as understanding, and a medication error could be serious, so I wouldn't let it slide. First I'd raise it with the clinician respectfully — not as a criticism, but 'I want to make sure she's clear on the schedule; can we confirm it with her?' Then I'd actually check her understanding rather than re-explaining at her: ask her to tell it back, use a phone interpreter line if available, written instructions, or an appropriate family member. The goal is that she leaves genuinely understanding her medication. If nothing worked in the moment, I'd flag it so follow-up could happen before she takes anything incorrectly.",
+    note:"2nd to 3rd: stops deferring and commits to checking her understanding. 3rd to 4th: loops in the clinician tactfully, uses concrete tools (teach-back, interpreter line, written instructions), and adds a safety net if nothing works in the moment."
+  },
+  17: {
+    q2:"I'd be surprised because I don't see myself that way. I'd probably explain to my supervisor that I'm actually pretty approachable and it might be a misunderstanding.",
+    q3:"Even though it surprises me, I'd take the feedback seriously and thank my supervisor. I'd reflect on whether there's something I do that comes across that way.",
+    q4:"My first instinct would be to defend myself, but the gap between how I see myself and how teammates experience me is exactly the thing worth taking seriously. I'd thank my supervisor and resist explaining it away. Then I'd try to find out whether it's accurate and where it shows up — by asking a trusted colleague for candid examples, or noticing my own tone and body language in meetings. If there's something real, I'd make a specific change, like inviting input more deliberately or watching how I respond when someone disagrees, and I'd circle back later to see whether people feel a difference. Being approachable is something others get to judge, not just me.",
+    note:"2nd to 3rd: replaces defensiveness with openness to the feedback. 3rd to 4th: actively seeks evidence for whether it's true, commits to a specific behavior change, and builds in a check to confirm it's working."
+  },
+  18: {
+    q2:"That's unfair, so I'd call it out and tell my supervisor they're playing favorites. People deserve to know they're being treated unequally.",
+    q3:"I'd be bothered by the favoritism. I'd probably look for a tactful way to raise it, maybe by mentioning that others would appreciate more opportunities too.",
+    q4:"I'd be careful here because I'm reading a pattern, and I want to weigh raising it against the real risk to myself and to colleagues. First I'd make sure I'm seeing it clearly rather than assuming bias — is it favoritism, or something I'm missing about workload or skills? If I'm fairly confident and it's hurting the team, I'd raise it constructively and privately, framed around impact rather than accusation: that capable people are disengaging because opportunities don't feel open to everyone, and ask whether assignments could be more transparent. If going directly felt unsafe, I'd consider a more neutral channel like HR. I'd act because disengagement is a real cost, but I'd do it in the way most likely to actually change things.",
+    note:"2nd to 3rd: trades the public call-out for a tactful approach. 3rd to 4th: checks its own read first, weighs the personal risk honestly, frames the concern around team impact, and names a fallback channel if a direct conversation isn't safe."
+  },
+  19: {
+    q2:"I'd probably just ignore it. It's their conversation and I don't want to make things awkward by saying something.",
+    q3:"I'd be uncomfortable since other people could hear. I might give them a look or quietly mention that we're not really in a private space.",
+    q4:"This is a patient-confidentiality breach happening in real time, so I'd act, but proportionately. In the moment, a quiet, low-key cue — something like 'we're not really private here' — can stop it without publicly shaming colleagues. Afterward, if it seemed like a pattern or a serious breach, I'd follow up privately, assuming good intent, to flag that the patient's details were audible. I wouldn't call them out loudly in front of others, because the goal is to protect the patient's privacy and prevent it next time, not to humiliate anyone. If it were egregious or kept happening, I'd raise it through the proper channel.",
+    note:"2nd to 3rd: stops ignoring a real breach and gives a gentle in-the-moment cue. 3rd to 4th: names it clearly as a confidentiality issue, adds a private follow-up, and scales the response from a quiet nudge up to formal escalation if it's serious or repeated."
+  },
+  20: {
+    q2:"I'd give the slot to whoever has the strongest case — probably the child with the fever, since that sounds most serious. The other two will just have to reschedule.",
+    q3:"I'd try to figure out who needs it most. The feverish child sounds urgent, so I'd lean that way, but I'd apologize to the others and help them find another time.",
+    q4:"I'd resist deciding on the loudest claim and gather a little information first: how sick the child actually is, and the real situations behind the other two. A worsening fever in a child likely points to genuine clinical urgency, which I'd weight most heavily on need. The patient who has cancelled twice and the one who feels 'promised' both matter, but neither outweighs a possible urgent case. Once I decided — most likely the child — I'd communicate it honestly and without dismissiveness to the other two: acknowledge their frustration, explain I'm prioritizing on medical urgency, and immediately offer the soonest concrete alternative, paying attention to the anxious patient who may need extra reassurance to rebook. Clear, kind communication is what keeps a hard call from feeling unfair.",
+    note:"2nd to 3rd: softens the blunt triage with apology and rebooking help. 3rd to 4th: gathers facts before judging, justifies prioritizing on medical urgency over a sense of entitlement, and tailors the communication to each person, including the anxious one."
+  },
+  21: {
+    q2:"If I could fix it quietly before anyone noticed, I probably would. There's no point worrying my manager if the problem gets solved anyway.",
+    q3:"I'd want to fix the error quickly, and I think I should tell my manager so they're not caught off guard. I'd own up to it and apologize to the client.",
+    q4:"Even though I could hide it, professionalism means disclosing a mistake that affected someone else, especially with any risk it resurfaces. I'd fix the immediate problem fast, and I'd tell my manager promptly and plainly — what happened, the impact, and what I'm already doing about it — rather than hoping it stays buried, because concealment is worse than the error if it comes out. With the client, I'd be honest and solution-focused: acknowledge the delay, apologize without over-explaining, and give the concrete step and timeline to make it right. I'd also think about what let the error happen so it doesn't repeat. Owning it costs me some short-term comfort but protects trust, which matters more.",
+    note:"2nd to 3rd: rejects the quiet cover-up and chooses to disclose. 3rd to 4th: explains why concealment fails on integrity, structures the disclosure (what happened, impact, fix), handles the client directly, and adds prevention."
+  },
+  22: {
+    q2:"Some patients just won't follow through no matter what you do, so at some point it's on them. I'd focus my energy on the ones who actually want help.",
+    q3:"I'd push back gently on the staff member's comment, because the patient's situation is probably harder than it looks. I'd try to be understanding and see how we could help him follow through.",
+    q4:"I'd challenge the assumption that he 'doesn't want help,' kindly but directly, because missed appointments and unfilled prescriptions usually reflect barriers, not indifference — for someone experiencing homelessness, that could mean no transportation, nowhere to store medication, no phone for reminders, or competing survival needs. To the staff member, I'd reframe it that way to build empathy rather than scold. For the patient, I'd get curious about his actual obstacles and adjust the plan to fit his reality: simpler or longer-acting regimens, connecting him to social work or transportation, text reminders, whatever lowers the barrier. The goal is to meet him where he is instead of blaming him for a system that isn't built for his situation.",
+    note:"2nd to 3rd: rejects the write-off and assumes a harder situation. 3rd to 4th: names the specific structural barriers, reframes it for the staff member to build empathy, and adapts the care plan with concrete, practical steps."
+  },
+  23: {
+    q2:"I wouldn't want to accuse a respected colleague, so I might keep an eye on them but probably wouldn't say anything unless something actually went wrong.",
+    q3:"Safety has to come first, so I'd find a way to talk to the colleague quietly and suggest they shouldn't start their shift. I'd try to handle it discreetly to protect their reputation.",
+    q4:"If others' safety is at stake, that outweighs the colleague's reputation and our relationship — that's the non-negotiable. I'd act right away but discreetly: pull them aside privately, express concern without a public accusation, and make clear they shouldn't begin safety-sensitive work in this state. If they insisted they were fine, I wouldn't just take their word when safety is on the line — I'd escalate to a supervisor or follow the workplace's impairment protocol, because the downside of being wrong is far smaller than the downside of letting impaired work proceed. I'd try to do it in a way that gets them help rather than only punishment, but protecting people comes first.",
+    note:"2nd to 3rd: stops avoiding and prioritizes safety with a quiet word. 3rd to 4th: states the safety-over-reputation principle explicitly, refuses to accept 'I'm fine' at face value, and commits to escalation through the proper protocol while still seeking help for the colleague."
+  },
+  24: {
+    q2:"I'd be angry and call the teammate out for lying about who did the work. Everyone should know the truth about who actually contributed.",
+    q3:"I'd be frustrated for the teammates who did the work. I'd talk to the person taking credit and let them know it isn't fair to claim it was mostly their idea.",
+    q4:"I'd separate my irritation from handling it well. First I'd address it directly but privately with the teammate, giving them a chance to correct course without a public confrontation — describe what I observed and how it's landing with the others, rather than accusing them of lying outright. The goal is accurate credit, not revenge, so where it's natural I'd make sure the group's actual contributions are visible to the people who matter, like acknowledging specific work in front of the instructor. If the person kept misrepresenting it, I'd be more direct or involve someone who can set the record straight. I'd weigh all this against not blowing up a working relationship over something a single honest conversation can often fix.",
+    note:"2nd to 3rd: moves from a public call-out to a direct private conversation. 3rd to 4th: gives the teammate a face-saving chance to correct it, focuses on making real contributions visible rather than punishing, and keeps proportion so it doesn't escalate needlessly."
+  },
+  25: {
+    q2:"They've helped me before, so I'd probably write the first draft for them. It's just helping out a friend who's overwhelmed.",
+    q3:"I'd want to help, but writing it for them feels like crossing a line. I'd offer to help in other ways, like brainstorming or giving feedback instead.",
+    q4:"I genuinely want to support my friend, but writing their personal essay would misrepresent their own voice and isn't fair to other applicants, so I wouldn't do that even though they've helped me before. I'd be honest and warm about where the line is: the essay has to be theirs. Then I'd offer the kinds of help that are legitimate and actually useful — talking through their experiences to find a story, outlining together, or giving honest feedback on their own draft. I'd also acknowledge the real problem underneath, that they're overwhelmed, and help them make a plan or find more time. Saying no to writing it isn't abandoning them; it's helping in a way that doesn't compromise either of us.",
+    note:"2nd to 3rd: recognizes the line and offers legitimate help instead. 3rd to 4th: names exactly why writing it is wrong (their voice, fairness to others), addresses the underlying overwhelm, and reframes the refusal as a different kind of support rather than a rejection."
+  },
+  26: {
+    q2:"I'd just push through and try to keep all of it going. I made these commitments, so I'd feel like I have to power through even if I'm exhausted.",
+    q3:"I'd recognize that I'm overextended and that something has to give. I'd look at my commitments and probably cut back on one of them so I can manage the rest and take care of myself.",
+    q4:"I'd treat this as a signal, not a personal failure — running on empty helps no one I've committed to. First I'd get honest about the full picture: what each commitment requires, which are time-bound versus ongoing, and where the real strain is. Then I'd decide deliberately rather than by guilt: what I can renegotiate (reduced hours, a temporary step-back), what I can ask help with, and what genuinely has to continue, with caring for my family member and my own health weighted appropriately. I'd have the honest conversations that go with that — telling a supervisor or organizer I need to scale back for a period, and asking for support rather than quietly collapsing. Protecting my capacity now is what lets me keep showing up for what matters most.",
+    note:"2nd to 3rd: stops the guilt-driven 'power through' and accepts something must change. 3rd to 4th: assesses the whole picture before cutting, decides by priority rather than guilt, and commits to the honest conversations and asking for help instead of just dropping something."
   }
 };
 
@@ -250,6 +380,26 @@ var TYPING_PROMPTS = [
 var KILLERS = ['"Obviously…"','"They should be fired."','"I would definitely report/tell."','"The right thing is clearly…"',"Silence on the other person"];
 var BUILDERS = ['"Before deciding, I\'d want to know…"','"I can understand why they\'d feel…"','"There are a few perspectives here…"','"If X, then… but if Y, then…"','"I\'d choose this because it balances…"'];
 
+/* The answer spine: 5 beats, one stem each. Hitting all five, in order, is the
+   4th-quartile pattern. Mapped to Casper's official constructs + the Technical
+   Manual's "what high scores capture" study (nuanced reading, multiple
+   perspectives, justified decision, concrete action). */
+var SPINE = [
+  { beat:"Name the tension", stem:"The real tension here is between ___ and ___, and the person most affected is ___." },
+  { beat:"Gather before deciding", stem:"Before I act, I'd want to understand ___ — I wouldn't assume ___." },
+  { beat:"Weigh the sides", stem:"There are a few perspectives: ___ on one hand, ___ on the other." },
+  { beat:"Decide conditionally", stem:"If ___, then ___; but if instead ___, then ___." },
+  { beat:"Commit and act", stem:"I'd choose ___ because it balances ___, and concretely my next step is ___." }
+];
+/* Words to say, grouped by what they do in the answer. */
+var PHRASES = [
+  { fn:"Empathy", words:["I can understand why they'd feel…","This is a hard spot for everyone involved."] },
+  { fn:"Gather info", words:["Before deciding, I'd want to know…","I wouldn't assume, so I'd ask…","It would change my answer whether…"] },
+  { fn:"Weigh", words:["There are a few perspectives here…","I have to balance ___ against ___."] },
+  { fn:"Decide (conditional)", words:["If X, then… but if Y, then…","My answer depends on…"] },
+  { fn:"Commit + act", words:["I'd choose this because it balances…","Concretely, I'd…","My next step would be…"] }
+];
+
 /* ---------- App state ---------- */
 var S = {
   mode:"home",        // home | scenario | arcade
@@ -258,7 +408,7 @@ var S = {
   duration:210,
   remaining:210,
   running:false,
-  hideScores:false,   // self-score-first: hide coach rubric until reveal
+  hideScores:true,    // self-score-first by default: rate your own answer, then reveal
   showModel:false,    // reveal model-answer contrast for this scenario
   scores:{},          // dim.key -> 1|2|3
   arcadeIdx:0,
@@ -344,7 +494,7 @@ function progressSummaryText(){
    RENDER
    ============================================================ */
 function render(){
-  stopTimer();
+  stopTimer(); stopMkTimer();
   var app = document.getElementById("app");
   if(S.mode==="home")      app.innerHTML = viewHome();
   else if(S.mode==="arcade") app.innerHTML = viewArcade();
@@ -352,21 +502,23 @@ function render(){
   else if(S.mode==="progress") app.innerHTML = viewProgress();
   else if(S.mode==="typing") app.innerHTML = viewTyping();
   else if(S.mode==="video")  app.innerHTML = viewVideo();
+  else if(S.mode==="mock")   app.innerHTML = viewMock();
   else                       app.innerHTML = viewScenario();
   wire();
   if(S.mode==="scenario"){ var t=$("#timer"); if(t) paintTimer(t); syncTimer(); }
   if(S.mode==="video"){ vidPaint(); }
+  if(S.mode==="mock" && MK.stage==="station"){ var mt=$("#mkTimer"); if(mt) paintMkTimer(mt); syncMkTimer(); }
 }
 
 function footer(){
   return '<div class="footer">'
-    + '<span>AceTheDAT · Ace Labs — internal coaching tool</span>'
+    + '<span>AceTheDAT · Ace Labs — Casper practice</span>'
     + '<span>Original scenarios · not affiliated with Casper / Acuity Insights</span>'
     + '</div>';
 }
 function topbar(right){
   return '<div class="topbar">'
-    + '<button data-act="home" style="cursor:pointer;">← Console home</button>'
+    + '<button data-act="home" style="cursor:pointer;">Console home</button>'
     + '<span class="right">'+esc(right)+'</span>'
     + '</div>';
 }
@@ -375,12 +527,13 @@ function topbar(right){
 function viewHome(){
   var tiles =
     '<div class="tile-grid">'
-    + bigBtn("start-0", "Start a Scenario", "Timed flow + live scorecard", true)
-    + bigBtn("video", "Video Rehearsal", "On-camera: 30s reflect → 60s record → replay", false)
+    + bigBtn("start-0", "Start a Scenario", "Timed answer + self-score + answer ladder", true)
+    + bigBtn("mock", "Full Timed Mock", "All 11 stations, real timing, two breaks", false)
+    + bigBtn("video", "Video Rehearsal", "On-camera: 30s reflect, 60s record, replay", false)
     + bigBtn("typing", "Typing Trainer", "Build speed on ethics-themed prompts", false)
     + bigBtn("arcade", "Decision Arcade", "Rapid judgment warm-up drills", false)
     + bigBtn("progress", "Progress", "Score trend + redo weakest", false)
-    + bigBtn("guide", "Guidelines & Tips", "How Casper works + how to coach it", false)
+    + bigBtn("guide", "Guidelines & Tips", "How Casper works + how to reach the 4th quartile", false)
     + '</div>';
 
   var bank = SCENARIOS.map(function(s,i){
@@ -389,14 +542,14 @@ function viewHome(){
         + '<span style="font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:'+C.brass+';font-weight:700;">'+esc(s.tag)+'</span>'
         + '<div style="font-size:13.5px;color:'+C.ink+';margin-top:3px;line-height:1.4;">'+esc(s.stem.slice(0,96))+'…</div>'
       + '</div>'
-      + '<span style="color:'+C.brass+';font-size:20px;flex-shrink:0;">›</span>'
+      + '<span style="color:'+C.brass+';font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;flex-shrink:0;">Open</span>'
       + '</button>';
   }).join("");
 
   return '<div style="max-width:760px;margin:0 auto;padding:48px 24px;">'
-    + '<div class="eyebrow" style="margin-bottom:10px;">Live 1-on-1 Coaching Tool</div>'
-    + '<h1 style="font-family:'+fontDisplay+';font-weight:900;font-size:40px;color:'+C.forest+';line-height:1.05;margin:0 0 14px;">Run a Casper session, score it live.</h1>'
-    + '<p style="font-size:16px;color:#4a564d;max-width:58ch;margin-bottom:32px;">Pick a scenario, start the timer, have your student type her answer, then score her against the five dimensions in real time. The rubric and phrase flags sit right beside her response.</p>'
+    + '<div class="eyebrow" style="margin-bottom:10px;">Casper Practice + Coaching</div>'
+    + '<h1 style="font-family:'+fontDisplay+';font-weight:900;font-size:40px;color:'+C.forest+';line-height:1.05;margin:0 0 14px;">Practice Casper. Score it. Climb a quartile.</h1>'
+    + '<p style="font-size:16px;color:#4a564d;max-width:58ch;margin-bottom:32px;">Pick a scenario, start the timer, and answer it under time — type your response or dictate it (Wispr, voice typing). Then score yourself against the five dimensions, reveal the answer ladder, and revise to climb a quartile. The spine and phrase bank sit right beside your answer. Coaching a student? Run the same flow and score it together.</p>'
     + tiles
     + '<div style="border-top:1px solid '+C.line+';padding-top:22px;">'
       + '<div style="font-family:'+fontDisplay+';font-weight:700;font-size:18px;color:'+C.forest+';margin-bottom:12px;">Scenario bank</div>'
@@ -468,14 +621,14 @@ function typingTargetHtml(){
 function viewTyping(){
   if(T.finished){
     var st=typingStats();
-    var verdict = st.wpm>=50 ? "At or above the ~50 WPM comfort zone — speed won't be her limiter." : st.wpm>=40 ? "Near the ~40 WPM floor — a little more practice buys real content on test day." : "Below ~40 WPM — worth drilling; every extra word is a supporting sentence.";
+    var verdict = st.wpm>=50 ? "At or above the ~50 WPM comfort zone — speed won't be your limiter." : st.wpm>=40 ? "Near the ~40 WPM floor — a little more practice buys real content on test day." : "Below ~40 WPM — worth drilling; every extra word is a supporting sentence.";
     return '<div style="max-width:720px;margin:0 auto;padding:32px 24px;" class="card-anim">'
       + topbar("Typing Trainer · result")
       + '<div class="eyebrow" style="margin:20px 0 8px;">Result</div>'
       + '<h1 style="font-family:'+fontDisplay+';font-weight:900;font-size:34px;color:'+C.forest+';margin:0 0 16px;">'+st.wpm+' WPM · '+st.acc+'% accurate</h1>'
       + '<div style="background:'+C.paper+';border:1px solid '+C.line+';border-left:3px solid '+C.brass+';border-radius:0 10px 10px 0;padding:14px 18px;font-size:14px;color:#46524a;line-height:1.5;margin-bottom:18px;">'+esc(verdict)+'</div>'
       + '<div style="display:flex;gap:8px;flex-wrap:wrap;">'
-        + '<button class="btn-primary" data-act="type-again">↻ Try again</button>'
+        + '<button class="btn-primary" data-act="type-again">Try again</button>'
         + '<button class="btn-ghost" data-act="type-new">New prompt</button>'
         + '<button class="btn-ghost" data-act="home">Console home</button>'
       + '</div>'
@@ -496,7 +649,7 @@ function viewTyping(){
     + '<div id="typeTarget" style="background:'+C.paper+';border:1px solid '+C.line+';border-radius:10px;padding:16px;font-size:16px;line-height:1.7;color:#8a9389;margin-bottom:12px;">'+typingTargetHtml()+'</div>'
     + '<textarea id="typeInput" placeholder="Start typing the passage above…" style="width:100%;min-height:120px;padding:14px;border-radius:10px;border:1.5px solid '+C.line+';font-family:'+fontBody+';font-size:15px;line-height:1.6;color:'+C.ink+';resize:vertical;background:'+C.paper+';"></textarea>'
     + '<div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;">'
-      + '<button class="btn-ghost" data-act="type-again">↻ Restart</button>'
+      + '<button class="btn-ghost" data-act="type-again">Restart</button>'
       + '<button class="btn-ghost" data-act="type-new">New prompt</button>'
     + '</div>'
     + footer() + '</div>';
@@ -513,7 +666,7 @@ function viewProgress(){
       + '<div class="eyebrow" style="margin:20px 0 8px;">Progress</div>'
       + '<h1 style="font-family:'+fontDisplay+';font-weight:900;font-size:30px;color:'+C.forest+';margin:0 0 8px;">No saved sessions yet.</h1>'
       + p("Score a scenario across all five dimensions, then press <b>Save session</b> on the scorecard. Saved sessions build a trend here so you can see which dimensions are improving and redo the weakest scenarios.")
-      + '<button class="btn-primary" data-act="start-0">Start a scenario →</button>'
+      + '<button class="btn-primary" data-act="start-0">Start a scenario</button>'
       + footer() + '</div>';
   }
 
@@ -548,8 +701,8 @@ function viewProgress(){
       + '<div style="margin-top:10px;font-size:13px;color:'+C.red+';font-weight:600;">Weakest: '+esc(weakest.label)+' — drill this next.</div>'
     + '</div>'
     + '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;">'
-      + '<button class="btn-primary" data-act="redo-weak">↺ Redo lowest-scored scenario ('+esc(lowest.tag)+')</button>'
-      + '<button class="btn-ghost" data-act="copy-progress">⧉ Copy summary</button>'
+      + '<button class="btn-primary" data-act="redo-weak">Redo lowest-scored scenario ('+esc(lowest.tag)+')</button>'
+      + '<button class="btn-ghost" data-act="copy-progress">Copy summary</button>'
       + '<button class="btn-ghost" data-act="clear-progress">Clear history</button>'
     + '</div>'
     + '<div style="background:'+C.paper+';border:1px solid '+C.line+';border-radius:10px;padding:6px 20px 14px;">'
@@ -642,7 +795,7 @@ function vidPaint(){
     media.innerHTML=placeholder(V.error || "Your camera preview appears here. You get 30s to plan, then 60s to record — just like the real video section.");
     if(timer) timer.textContent="0:30";
     if(status) status.textContent="One take on test day. Here you can re-run as many times as you like.";
-    if(ctrls) ctrls.innerHTML='<button class="btn-primary" data-vid="start">▶ Start · 30s reflect</button>';
+    if(ctrls) ctrls.innerHTML='<button class="btn-primary" data-vid="start">Start · 30s reflect</button>';
   } else if(V.stage==="reflect" || V.stage==="record"){
     if(V.stream){
       media.innerHTML='<video id="vidPreview" autoplay muted playsinline style="'+mediaBox+'width:100%;object-fit:cover;"></video>';
@@ -653,10 +806,10 @@ function vidPaint(){
     if(timer) timer.textContent=vidFmt(V.remaining);
     if(V.stage==="reflect"){
       if(status) status.innerHTML='<b>Reflect</b> — jot 2–4 keywords, then speak to them.';
-      if(ctrls) ctrls.innerHTML='<button class="btn-primary" data-vid="rec-now">Skip to recording →</button>';
+      if(ctrls) ctrls.innerHTML='<button class="btn-primary" data-vid="rec-now">Skip to recording</button>';
     } else {
-      if(status) status.innerHTML='<span style="color:'+C.red+';font-weight:700;">● Recording</span> — aim to finish a little under time.';
-      if(ctrls) ctrls.innerHTML='<button class="btn-ghost" data-vid="stop">■ Stop &amp; review</button>';
+      if(status) status.innerHTML='<span style="color:'+C.red+';font-weight:700;">Recording</span> — aim to finish a little under time.';
+      if(ctrls) ctrls.innerHTML='<button class="btn-ghost" data-vid="stop">Stop &amp; review</button>';
     }
   } else if(V.stage==="review"){
     if(V.blobUrl){
@@ -666,8 +819,8 @@ function vidPaint(){
     }
     if(timer) timer.textContent="—";
     if(status) status.textContent="Review the take: pacing, eye-line to the lens, filler words, did she finish in time?";
-    var nextBtn = (V.qIdx+1 < vidMaxQ()) ? '<button class="btn-primary" data-vid="next">Next question →</button>' : '';
-    if(ctrls) ctrls.innerHTML='<button class="btn-ghost" data-vid="rerun">↻ Re-run this question</button>'+nextBtn;
+    var nextBtn = (V.qIdx+1 < vidMaxQ()) ? '<button class="btn-primary" data-vid="next">Next question</button>' : '';
+    if(ctrls) ctrls.innerHTML='<button class="btn-ghost" data-vid="rerun">Re-run this question</button>'+nextBtn;
   }
 }
 
@@ -691,8 +844,8 @@ function viewVideo(){
     + '<div id="vidStatus" style="font-size:13px;color:#46524a;margin:10px 0;min-height:18px;"></div>'
     + '<div id="vidControls" style="display:flex;gap:8px;flex-wrap:wrap;"></div>'
     + '<div style="display:flex;justify-content:space-between;margin-top:22px;">'
-      + '<button class="btn-ghost" data-vid="prev-scen">← Previous scenario</button>'
-      + '<button class="btn-ghost" data-vid="next-scen">Next scenario →</button>'
+      + '<button class="btn-ghost" data-vid="prev-scen">Previous scenario</button>'
+      + '<button class="btn-ghost" data-vid="next-scen">Next scenario</button>'
     + '</div>'
     + '<div style="margin-top:14px;font-size:11.5px;color:#8a9389;">Recording stays on this device — nothing is uploaded. Camera access is asked once per session.</div>'
     + footer()
@@ -726,11 +879,22 @@ function viewGuide(){
 
   var formatCard = guideCard("Current format (2025–26)",
     guideList([
-      "<b>11 scenarios:</b> 4 video + 7 typed (2 questions each).",
-      "<b>Typed:</b> ~3.5 minutes per scenario. The timer here defaults to 3:30 to match.",
-      "<b>Video:</b> ~30 seconds to reflect, then ~60 seconds to record — no re-record, no going back.",
-      "<b>Whole test ~65–85 min</b>, with short optional breaks between sections.",
+      "<b>11 scenarios:</b> 4 video, then 7 typed (2 questions each).",
+      "<b>Typed:</b> 2 questions shown together, ~3.5 minutes to answer. The timer here defaults to 3:30 to match.",
+      "<b>Video:</b> 2 questions one at a time — ~30 seconds to reflect, then ~60 seconds to record each. No re-record, no going back.",
+      "<b>Breaks:</b> one up to 10 min after the video section, one up to 5 min after the 4th typed scenario. Both optional.",
+      "<b>Test time ~65–85 min</b> of content, inside a 2 hr 15 min maximum window from your start time.",
       "Measures 10 traits: collaboration, communication, empathy, equity, ethics, motivation, problem-solving, professionalism, resilience, self-awareness."
+    ]));
+
+  var rulesCard = guideCard("On test day (the rules)",
+    guideList([
+      "<b>You type your typed answers — dictation and speech-to-text are not allowed</b> on the real test (unless it is an approved accommodation). Practicing by speaking and capturing with a dictation tool is fine here, but rehearse typing too so the keyboard is never your limiter.",
+      "Chrome or Firefox only, on a desktop or laptop — no phones, tablets, or Chromebooks.",
+      "Webcam and microphone stay on and monitored the entire test, including the typed section.",
+      "Allowed at your desk: blank paper and a pen or pencil, a hardcopy dictionary, headphones, a drink and a snack.",
+      "One-way and timed: you cannot rewind, pause, or go back, and copy or paste is disabled.",
+      "Run the official system check within 6 hours beforehand, and log in about 30 minutes early."
     ]));
 
   var videoCard = guideCard("Video / spoken section",
@@ -740,11 +904,11 @@ function viewGuide(){
       "Look into the <i>camera lens</i> (not the screen); sit up straight, warm up your voice, cut “um/like”.",
       "Pace to finish a little <i>under</i> 60 seconds rather than getting cut off mid-thought.",
       "Quiet, well-lit room, neutral background — and test webcam, mic, and internet beforehand.",
-      "Practice the full beat: read → 30s reflect → 60s record, then review the playback."
+      "Practice the full beat: read, 30s reflect, 60s record, then review the playback."
     ]));
 
   var lookCard = guideCard("What raters are really weighing",
-    p("Programs use their own rubric, but in practice strong answers move the same five levers. This is exactly what the live scorecard tracks while you coach:")
+    p("Programs use their own rubric, but in practice strong answers move the same five levers. This is exactly what the live scorecard tracks:")
     + guideList(DIMENSIONS.map(function(d){ return "<b>"+esc(d.label)+"</b> — "+esc(d.hint); })));
 
   var structCard = guideCard("A repeatable answer structure",
@@ -778,10 +942,11 @@ function viewGuide(){
     ]));
 
   var prepCard = guideCard("How to prepare (what the evidence supports)",
-    p("Casper is hard to cram — the test maker says coaching explains only a small slice of variance, and independent work agrees open-response SJTs resist coaching. The defensible plan builds real judgment plus format fluency:")
+    p("Casper resists cramming, but the test maker's own data is clear on one point: <b>not preparing at all is the single biggest disadvantage.</b> What measurably helps is format fluency and real reps — getting familiar, practicing under time, studying the competencies, and rehearsing your answers. What slightly <i>hurts</i> is generic third-party 'tricks' courses. So this plan builds real judgment plus format fluency:")
     + guideList([
       "Take the <b>free official Acuity practice test</b> under real timing at least once.",
-      "Drill the answer skeleton on timed scenarios — typed <i>and</i> on camera (that’s what this tool is for).",
+      "Drill the answer spine on timed scenarios — typed <i>and</i> on camera (that’s what this tool is for).",
+      "<b>Study the 10 competencies and rehearse answers to likely question types</b> — both are among the strongest positive prep effects in Acuity's data.",
       "Get typing to ~50 WPM so speed isn’t the limiter.",
       "Hold the four ethics pillars — autonomy, beneficence, non-maleficence, justice — as a <i>lens</i>, never a script.",
       "Read around healthcare ethics, teamwork, and current issues to deepen genuine perspective.",
@@ -794,13 +959,13 @@ function viewGuide(){
     + '</div>';
 
   return '<div style="max-width:760px;margin:0 auto;padding:32px 24px;">'
-    + topbar("Guidelines & Tips · coach reference")
-    + '<div class="eyebrow" style="margin:20px 0 8px;">Coach Reference</div>'
-    + '<h1 style="font-family:'+fontDisplay+';font-weight:900;font-size:32px;color:'+C.forest+';line-height:1.08;margin:0 0 8px;">Coaching the Casper, end to end.</h1>'
-    + p("A quick brief on how the test scores judgment and how to push a student’s answers up the rubric. Pair this with a live scenario — read it, then have her run the structure below out loud.")
-    + howCard + formatCard + lookCard + structCard + topCard + timeCard + videoCard + prepCard
+    + topbar("Guidelines & Tips")
+    + '<div class="eyebrow" style="margin:20px 0 8px;">Reference</div>'
+    + '<h1 style="font-family:'+fontDisplay+';font-weight:900;font-size:32px;color:'+C.forest+';line-height:1.08;margin:0 0 8px;">The Casper playbook, end to end.</h1>'
+    + p("A quick brief on how the test scores judgment and how to push answers up the rubric. Pair it with a live scenario — read it, then run the structure below out loud, on your own or with a coach.")
+    + howCard + formatCard + rulesCard + lookCard + structCard + topCard + timeCard + videoCard + prepCard
     + guideCard("Do / Don’t — phrasing", doDont)
-    + '<button class="btn-primary" data-act="start-0">Run a scenario with this in mind →</button>'
+    + '<button class="btn-primary" data-act="start-0">Run a scenario with this in mind</button>'
     + footer()
     + '</div>';
 }
@@ -823,8 +988,8 @@ function viewArcade(){
 
   var explain = "";
   if(answered){
-    var head = (S.arcadePick===a.correct) ? "✓ Strongest move" : "Why the highlighted option is strongest";
-    var nextLabel = (S.arcadeIdx+1 < ARCADE.length) ? "Next question →" : "Finish · back home";
+    var head = (S.arcadePick===a.correct) ? "Strongest move" : "Why the highlighted option is strongest";
+    var nextLabel = (S.arcadeIdx+1 < ARCADE.length) ? "Next question" : "Finish · back home";
     explain = '<div style="margin-top:18px;background:'+C.soft+';border-left:3px solid '+C.brass+';border-radius:0 8px 8px 0;padding:14px 16px;">'
       + '<div style="font-weight:700;color:'+C.forest+';font-size:12.5px;margin-bottom:4px;">'+esc(head)+'</div>'
       + '<div style="font-size:13.5px;color:#46524a;line-height:1.5;">'+esc(a.why)+'</div>'
@@ -842,6 +1007,151 @@ function viewArcade(){
     + '</div>';
 }
 
+/* ---------- FULL TIMED MOCK (11 stations: 4 video + 7 typed, two breaks) ----------
+   Practice-only. On the real test you type (no dictation), can't go back, and are on
+   camera throughout. Here, spoken stations are captured as text so you can review and
+   export; speak them aloud (or dictate) to rehearse delivery. */
+var MK = { order:[], idx:0, stage:"intro", phase:"answer", qIdx:0, answers:{}, remaining:0, running:false, brkLen:10 };
+var mkTimerHandle=null;
+
+function scenById(id){ for(var i=0;i<SCENARIOS.length;i++){ if(SCENARIOS[i].id===id) return SCENARIOS[i]; } return SCENARIOS[0]; }
+function mockBuildOrder(){
+  var ids=SCENARIOS.map(function(s){ return s.id; });
+  for(var i=ids.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=ids[i]; ids[i]=ids[j]; ids[j]=t; }
+  var pick=ids.slice(0,11), order=[];
+  for(var k=0;k<11;k++){ order.push({ scenId:pick[k], type:(k<4?"video":"typed") }); }
+  return order;
+}
+function stopMkTimer(){ if(mkTimerHandle){ clearInterval(mkTimerHandle); mkTimerHandle=null; } }
+function paintMkTimer(node){ var m=Math.floor(MK.remaining/60), s=MK.remaining%60; node.style.color=(MK.remaining<=15?C.red:C.cream); node.textContent=m+":"+(s<10?"0"+s:s); }
+function syncMkTimer(){
+  stopMkTimer();
+  if(MK.stage==="station" && MK.running){
+    mkTimerHandle=setInterval(function(){
+      MK.remaining=Math.max(0,MK.remaining-1);
+      var t=$("#mkTimer"); if(t) paintMkTimer(t);
+      if(MK.remaining===0){ stopMkTimer(); mkAdvancePhase(); }
+    },1000);
+  }
+}
+function mockSetupStation(){
+  var st=MK.order[MK.idx];
+  MK.stage="station"; MK.qIdx=0; MK.running=true;
+  if(st.type==="typed"){ MK.phase="answer"; MK.remaining=210; if(typeof MK.answers[MK.idx]!=="string") MK.answers[MK.idx]=""; }
+  else { MK.phase="reflect"; MK.remaining=30; if(!MK.answers[MK.idx]) MK.answers[MK.idx]=["",""]; }
+}
+function mkStart(){ MK.order=mockBuildOrder(); MK.idx=0; MK.answers={}; mockSetupStation(); render(); }
+function mkAdvancePhase(){
+  var st=MK.order[MK.idx];
+  if(st.type==="typed"){ mkAdvanceStation(); return; }
+  if(MK.phase==="reflect"){ MK.phase="answer"; MK.remaining=60; MK.running=true; render(); return; }
+  if(MK.qIdx<1){ MK.qIdx++; MK.phase="reflect"; MK.remaining=30; MK.running=true; render(); return; }
+  mkAdvanceStation();
+}
+function mkAdvanceStation(){
+  var completed=MK.idx;
+  if(completed===3 || completed===7){ MK.stage="brk"; MK.brkLen=(completed===3?10:5); MK.running=false; stopMkTimer(); render(); return; }
+  mkGoNext();
+}
+function mkGoNext(){
+  MK.idx++;
+  if(MK.idx>10){ MK.stage="done"; MK.running=false; stopMkTimer(); render(); return; }
+  mockSetupStation(); render();
+}
+function mockExportText(){
+  var lines=["Casper full mock — "+MK.order.length+" stations",""];
+  MK.order.forEach(function(o,i){
+    var scen=scenById(o.scenId);
+    lines.push("Station "+(i+1)+" ("+(o.type==="video"?"video":"typed")+") — "+scen.tag);
+    lines.push(scen.stem);
+    scen.qs.slice(0,2).forEach(function(q,qi){ lines.push("  Q"+(qi+1)+": "+q); });
+    var a=MK.answers[i];
+    if(o.type==="typed"){ lines.push("  Answer: "+((a&&(""+a).trim())?(""+a).trim():"(none)")); }
+    else { lines.push("  Answer Q1: "+((a&&a[0]&&a[0].trim())?a[0].trim():"(none)")); lines.push("  Answer Q2: "+((a&&a[1]&&a[1].trim())?a[1].trim():"(none)")); }
+    lines.push("");
+  });
+  return lines.join("\n");
+}
+function viewMock(){
+  if(MK.stage==="intro"){
+    return '<div style="max-width:720px;margin:0 auto;padding:36px 24px;" class="card-anim">'
+      + topbar("Full Timed Mock")
+      + '<div class="eyebrow" style="margin:18px 0 8px;">Full Mock</div>'
+      + '<h1 style="font-family:'+fontDisplay+';font-weight:900;font-size:32px;color:'+C.forest+';margin:0 0 12px;">11 stations, real timing.</h1>'
+      + '<p style="font-size:15px;color:#46524a;line-height:1.6;margin:0 0 16px;">Four video stations (2 questions each: about 30s to reflect, 60s to answer per question), then seven typed stations (2 questions, about 3.5 minutes each), with a 10-minute break after the video section and a 5-minute break midway through typed. It runs forward only, like the real thing.</p>'
+      + '<div style="background:'+C.paper+';border:1px solid '+C.line+';border-left:3px solid '+C.brass+';border-radius:0 10px 10px 0;padding:12px 16px;font-size:13px;color:#46524a;line-height:1.5;margin-bottom:18px;">Practice note: on the real Casper you type your answers (no dictation) and you are on camera throughout. Here the spoken stations are captured as text so you can review and export — speak them aloud, or dictate, to rehearse delivery.</div>'
+      + '<button class="btn-primary" data-act="mk-start">Start the mock</button>'
+      + footer() + '</div>';
+  }
+  if(MK.stage==="brk"){
+    return '<div style="max-width:620px;margin:0 auto;padding:48px 24px;text-align:center;" class="card-anim">'
+      + topbar("Break")
+      + '<div class="eyebrow" style="margin:18px 0 8px;">Optional break</div>'
+      + '<h1 style="font-family:'+fontDisplay+';font-weight:900;font-size:30px;color:'+C.forest+';margin:0 0 10px;">Break — up to '+MK.brkLen+' minutes.</h1>'
+      + '<p style="font-size:14px;color:#46524a;line-height:1.6;margin:0 0 20px;">Stretch, hydrate, reset. On the real test this break is optional, and after the second break you take a quick webcam photo before continuing.</p>'
+      + '<button class="btn-primary" data-act="mk-continue">Continue</button>'
+      + footer() + '</div>';
+  }
+  if(MK.stage==="done"){
+    var rows=MK.order.map(function(o,i){
+      var s2=scenById(o.scenId);
+      return '<div style="padding:8px 0;border-bottom:1px solid '+C.line+';font-size:13px;display:flex;justify-content:space-between;gap:10px;">'
+        + '<span style="color:'+C.ink+';">Station '+(i+1)+' — '+esc(s2.tag)+'</span>'
+        + '<span style="color:#8a9389;">'+(o.type==="video"?"video":"typed")+'</span></div>';
+    }).join("");
+    return '<div style="max-width:720px;margin:0 auto;padding:36px 24px;" class="card-anim">'
+      + topbar("Full Timed Mock · complete")
+      + '<div class="eyebrow" style="margin:18px 0 8px;">Done</div>'
+      + '<h1 style="font-family:'+fontDisplay+';font-weight:900;font-size:30px;color:'+C.forest+';margin:0 0 10px;">Mock complete.</h1>'
+      + '<p style="font-size:14px;color:#46524a;line-height:1.6;margin:0 0 16px;">Now review: export your answers, then reopen any of these in Start a Scenario to compare against the 2nd-to-4th-quartile ladder and self-score.</p>'
+      + '<div style="background:'+C.paper+';border:1px solid '+C.line+';border-radius:10px;padding:6px 18px 12px;margin-bottom:16px;">'+rows+'</div>'
+      + '<div style="display:flex;gap:8px;flex-wrap:wrap;">'
+        + '<button class="btn-primary" data-act="mk-export">Copy all answers for your log</button>'
+        + '<button class="btn-ghost" data-act="mk-restart">New mock</button>'
+        + '<button class="btn-ghost" data-act="home">Console home</button>'
+      + '</div>'
+      + '<div id="mkExportNote" style="font-size:11px;color:#8a9389;margin-top:8px;"></div>'
+      + footer() + '</div>';
+  }
+  var st=MK.order[MK.idx];
+  var scen=scenById(st.scenId);
+  var isVideo=(st.type==="video");
+  var qsHtml;
+  if(isVideo){
+    qsHtml='<div style="font-size:14px;color:#e8e2d2;margin-top:10px;"><b>Question '+(MK.qIdx+1)+' of 2:</b> '+esc(scen.qs[MK.qIdx]||scen.qs[0])+'</div>';
+  } else {
+    qsHtml='<ol style="margin:10px 0 0;padding-left:20px;">'+scen.qs.slice(0,2).map(function(q){ return '<li style="font-size:14px;margin-bottom:5px;color:#e8e2d2;">'+esc(q)+'</li>'; }).join("")+'</ol>';
+  }
+  var phaseLabel, inputHtml, nextLabel;
+  if(isVideo && MK.phase==="reflect"){
+    phaseLabel="Reflect — jot 2 to 4 keywords, then answer aloud.";
+    inputHtml='';
+    nextLabel="Start answering";
+  } else {
+    phaseLabel=isVideo?"Answer aloud (captured as text) — about 60 seconds.":"Type your answer to both questions — about 3.5 minutes.";
+    var stored=isVideo ? ((MK.answers[MK.idx]&&MK.answers[MK.idx][MK.qIdx])||"") : (MK.answers[MK.idx]||"");
+    inputHtml='<textarea id="mkAnswer" placeholder="'+(isVideo?"Speak your answer (dictate or type to capture it).":"Type your answer here, or dictate and clean it up.")+'" style="width:100%;min-height:'+(isVideo?"120px":"200px")+';padding:14px;border-radius:10px;border:1.5px solid '+C.line+';font-family:'+fontBody+';font-size:14.5px;line-height:1.6;color:'+C.ink+';resize:vertical;background:'+C.paper+';margin-top:12px;">'+esc(stored)+'</textarea>';
+    nextLabel=(MK.idx===10 && !isVideo) ? "Finish mock" : "Next";
+  }
+  return '<div style="max-width:760px;margin:0 auto;padding:24px 24px;">'
+    + topbar("Station "+(MK.idx+1)+" of 11 · "+(isVideo?"video":"typed"))
+    + '<div style="background:'+C.forest+';color:'+C.cream+';border-radius:10px;padding:18px 20px;margin:16px 0 14px;">'
+      + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">'
+        + '<span style="font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:'+C.brass+';font-weight:700;">'+esc(scen.tag)+'</span>'
+        + '<div id="mkTimer" style="font-family:'+fontDisplay+';font-weight:900;font-size:26px;color:'+C.cream+';font-variant-numeric:tabular-nums;">'+Math.floor(MK.remaining/60)+':'+(MK.remaining%60<10?"0":"")+(MK.remaining%60)+'</div>'
+      + '</div>'
+      + '<p style="font-size:15px;line-height:1.55;margin:0;">'+esc(scen.stem)+'</p>'
+      + qsHtml
+    + '</div>'
+    + '<div style="font-size:12.5px;color:'+C.forest+';font-weight:700;margin-bottom:2px;">'+esc(phaseLabel)+'</div>'
+    + inputHtml
+    + '<div style="display:flex;justify-content:flex-end;margin-top:12px;">'
+      + '<button class="btn-primary" data-act="mk-next">'+esc(nextLabel)+'</button>'
+    + '</div>'
+    + '<div style="margin-top:10px;font-size:11px;color:#8a9389;">Forward only, like the real test. The timer advances you automatically when it reaches zero.</div>'
+    + footer() + '</div>';
+}
+
 /* ---------- SCENARIO ---------- */
 function viewScenario(){
   var scen = SCENARIOS[S.scenIdx];
@@ -854,15 +1164,15 @@ function viewScenario(){
   /* timer controls */
   var controls = "";
   if(!S.running && S.remaining===S.duration){
-    controls += '<button class="btn-primary" data-act="timer-start">▶ Start timer</button>';
+    controls += '<button class="btn-primary" data-act="timer-start">Start timer</button>';
   }
   if(S.running){
-    controls += '<button class="btn-ghost" data-act="timer-pause">⏸ Pause</button>';
+    controls += '<button class="btn-ghost" data-act="timer-pause">Pause</button>';
   }
   if(!S.running && S.remaining<S.duration && S.remaining>0){
-    controls += '<button class="btn-primary" data-act="timer-resume">▶ Resume</button>';
+    controls += '<button class="btn-primary" data-act="timer-resume">Resume</button>';
   }
-  controls += '<button class="btn-ghost" data-act="timer-reset">↺ Reset</button>';
+  controls += '<button class="btn-ghost" data-act="timer-reset">Reset</button>';
 
   function opt(v,label){ return '<option value="'+v+'"'+(S.duration===v?" selected":"")+'>'+label+'</option>'; }
   var durSel = '<select data-act="duration" style="margin-left:auto;padding:8px 10px;border-radius:6px;border:1px solid '+C.line+';background:'+C.paper+';color:'+C.ink+';font-family:'+fontBody+';font-size:13px;">'
@@ -888,23 +1198,26 @@ function viewScenario(){
   var hz = hasZero();
   var verdict;
   if(scoredCount()<5) verdict = "Score all five dimensions.";
-  else if(hz) verdict = "Has a 1 — name that gap and have her redo just that sentence.";
-  else if(ts>=13) verdict = "Strong: mostly 3s, no 1s.";
-  else verdict = "Solid — push the 2s up to 3s by stating them out loud.";
+  else if(hz) verdict = "There's a 1 here — find that missing beat, revise the answer to add it, then re-score.";
+  else if(ts>=13) verdict = "Strong: mostly 3s, no 1s. This is 4th-quartile shape.";
+  else verdict = "Solid — now revise to push the 2s up to 3s by saying each one out loud.";
 
   var hidden = S.hideScores;
   var toggleLabel = hidden ? "show" : "self-score";
   var body;
   if(hidden){
     body = '<div style="padding:20px 16px;text-align:center;">'
-      + '<div style="font-size:13px;color:#46524a;line-height:1.5;margin-bottom:12px;">Scoring hidden. Have her <b>self-assess out loud</b> against the five dimensions first — then reveal to compare.</div>'
-      + '<button data-act="reveal-scores" style="background:'+C.forest+';color:'+C.cream+';border:none;border-radius:6px;padding:9px 16px;font-size:12.5px;font-weight:700;cursor:pointer;">Reveal coach scoring</button>'
+      + '<div style="font-size:13px;color:#46524a;line-height:1.5;margin-bottom:12px;"><b>Score yourself first.</b> Rate your own answer against the five dimensions out loud, then reveal to compare. (Coaching? Have the student self-assess first, then compare with your read.)</div>'
+      + '<button data-act="reveal-scores" style="background:'+C.forest+';color:'+C.cream+';border:none;border-radius:6px;padding:9px 16px;font-size:12.5px;font-weight:700;cursor:pointer;">Reveal the scorecard</button>'
       + '</div>';
   } else {
     body = '<div style="padding:6px 14px 14px;">'
       + rows
       + '<div id="scoreVerdict" style="margin-top:10px;font-size:11px;color:'+(hz?C.red:C.green)+';font-weight:600;">'+esc(verdict)+'</div>'
       + '<button data-act="save-session" style="margin-top:10px;width:100%;background:'+(scoredCount()>=5?C.forest:C.soft)+';color:'+(scoredCount()>=5?C.cream:"#8a9389")+';border:none;border-radius:6px;padding:9px;font-size:12px;font-weight:700;cursor:pointer;">Save session</button>'
+      + '<button data-act="revise-answer" style="margin-top:8px;width:100%;background:transparent;color:'+C.forest+';border:1.5px solid '+C.line+';border-radius:6px;padding:8px;font-size:11.5px;font-weight:700;cursor:pointer;">Revise my answer to climb a quartile</button>'
+      + '<button data-act="ai-feedback" style="margin-top:8px;width:100%;background:transparent;color:#8a9389;border:1px dashed '+C.line+';border-radius:6px;padding:8px;font-size:11px;font-weight:600;cursor:pointer;">AI feedback on my answer (coming soon)</button>'
+      + '<div id="aiNote" style="font-size:10.5px;color:#8a9389;margin-top:6px;line-height:1.4;"></div>'
       + '</div>'
       + '<div style="padding:0 14px 14px;display:grid;grid-template-columns:1fr 1fr;gap:8px;">'
       + flagBox("red","Score-killers",KILLERS)
@@ -935,24 +1248,100 @@ function viewScenario(){
           + '<ol style="margin:14px 0 0;padding-left:20px;">'+qsList+'</ol>'
         + '</div>'
         + '<div style="display:flex;gap:8px;margin-bottom:12px;align-items:center;flex-wrap:wrap;">'+controls+durSel+'</div>'
-        + '<textarea id="answer" placeholder="Student types her response here…" style="width:100%;min-height:220px;padding:16px;border-radius:10px;border:1.5px solid '+C.line+';font-family:'+fontBody+';font-size:14.5px;line-height:1.6;color:'+C.ink+';resize:vertical;background:'+C.paper+';">'+esc(S.answer)+'</textarea>'
+        + '<textarea id="answer" placeholder="Type your answer here — or dictate it (Wispr, voice typing) and clean it up." style="width:100%;min-height:220px;padding:16px;border-radius:10px;border:1.5px solid '+C.line+';font-family:'+fontBody+';font-size:14.5px;line-height:1.6;color:'+C.ink+';resize:vertical;background:'+C.paper+';">'+esc(S.answer)+'</textarea>'
         + '<div style="font-size:12px;color:#8a9389;margin-top:6px;" id="wordcount">'+words+' words</div>'
+        + spineRail()
         + modelSection(scen)
+        + '<div style="margin-top:12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;"><button class="btn-ghost" data-act="export-scenario">Copy this scenario for your log</button><span id="exportNote" style="font-size:11px;color:#8a9389;"></span></div>'
       + '</div>'
       + card
     + '</div>'
     + '<div style="display:flex;justify-content:space-between;margin-top:22px;">'
-      + '<button class="btn-ghost" data-act="prev-scen">← Previous</button>'
-      + '<button class="btn-primary" data-act="next-scen">Next scenario →</button>'
+      + '<button class="btn-ghost" data-act="prev-scen">Previous</button>'
+      + '<button class="btn-primary" data-act="next-scen">Next scenario</button>'
     + '</div>'
     + footer()
     + '</div>';
+}
+/* Always-available answer spine + phrase bank, shown beside the answer box.
+   Native <details>, defaults open — keeps the 4th-quartile structure in view. */
+function spineRail(){
+  var beats = SPINE.map(function(b,i){
+    return '<div style="margin-bottom:8px;">'
+      + '<div style="font-size:12px;font-weight:700;color:'+C.forest+';">'+(i+1)+'. '+esc(b.beat)+'</div>'
+      + '<div style="font-size:12px;color:#5a655c;line-height:1.45;font-style:italic;">'+esc(b.stem)+'</div>'
+      + '</div>';
+  }).join("");
+  var phrases = PHRASES.map(function(p){
+    return '<div style="margin-bottom:6px;">'
+      + '<span style="font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:'+C.brass+';">'+esc(p.fn)+'</span> '
+      + '<span style="font-size:11.5px;color:#46524a;">'+ p.words.map(function(w){return esc(w);}).join(' &nbsp;&middot;&nbsp; ') +'</span>'
+      + '</div>';
+  }).join("");
+  var avoid = KILLERS.map(function(k){ return esc(k); }).join(' &nbsp;&middot;&nbsp; ');
+  return '<details open style="margin-top:14px;background:'+C.paper+';border:1px solid '+C.line+';border-left:3px solid '+C.brass+';border-radius:0 10px 10px 0;padding:2px 16px 14px;">'
+    + '<summary style="cursor:pointer;font-family:'+fontDisplay+';font-weight:700;font-size:15px;color:'+C.forest+';padding:11px 0;">Answer spine &amp; words to say</summary>'
+    + '<div style="font-size:11px;color:#8a9389;margin-bottom:10px;line-height:1.4;">Hit all five beats, in order, every time. This is the 4th-quartile pattern, so keep it in view while you answer.</div>'
+    + beats
+    + '<div style="border-top:1px solid '+C.line+';margin:10px 0;"></div>'
+    + '<div style="font-size:12px;font-weight:700;color:'+C.forest+';margin-bottom:6px;">Words to say</div>'
+    + phrases
+    + '<div style="margin-top:8px;font-size:11.5px;color:'+C.red+';line-height:1.45;"><b>Never say:</b> '+avoid+'</div>'
+    + '</details>';
+}
+/* AI grader — SCAFFOLDED OFF (Thomas's call 2026-06-23). When enabled, this will
+   POST {scenario, answer} to a same-origin Netlify function (CSP is connect-src
+   'self', so the call must be same-origin), grade the five dimensions, and show
+   the answer rewritten one quartile up. Keep it gated + daily-capped + Haiku,
+   and only flip the flag once auto-reload + a usage cap exist. No network call
+   happens while disabled. */
+var AI_GRADER_ENABLED = false;
+function aiFeedback(){
+  var n=$("#aiNote"); if(!n) return;
+  if(!AI_GRADER_ENABLED){
+    n.textContent="AI feedback isn't switched on yet. For now: self-score against the five dimensions, reveal the answer ladder, and revise toward the 4th-quartile target. (When enabled, this grades your answer and shows it rewritten one quartile up.)";
+    return;
+  }
+  /* Future: fetch('/.netlify/functions/casper-grade', {method:'POST', body:JSON.stringify({stem:..., qs:..., answer:S.answer})})
+     then render returned {scores, rewrite}. Same-origin keeps it within CSP. */
+}
+/* One-click export of the current scenario practice (prompt + questions + your
+   answer + self-score + the 4th-quartile target). Replaces the manual
+   copy-into-a-Google-Doc step. */
+function exportScenarioText(){
+  var scen=SCENARIOS[S.scenIdx];
+  var m=MODELS[scen.id];
+  var lines=[];
+  lines.push("Casper practice — "+scen.tag);
+  lines.push("");
+  lines.push("Scenario:");
+  lines.push(scen.stem);
+  lines.push("");
+  lines.push("Questions:");
+  scen.qs.forEach(function(q,i){ lines.push((i+1)+". "+q); });
+  lines.push("");
+  lines.push("My answer:");
+  lines.push(S.answer.trim() ? S.answer.trim() : "(none yet)");
+  lines.push("");
+  if(scoredCount()>0){
+    lines.push("Self-score (1 missing / 2 implied / 3 explicit):");
+    DIMENSIONS.forEach(function(d){ var v=S.scores[d.key]; lines.push("  - "+d.label+": "+(v?v:"-")); });
+    lines.push("  Total: "+totalScore()+"/"+(DIMENSIONS.length*3));
+    lines.push("");
+  }
+  if(m){
+    lines.push("4th-quartile target:");
+    lines.push(m.q4);
+    lines.push("");
+    lines.push("What moves it up: "+m.note);
+  }
+  return lines.join("\n");
 }
 function modelSection(scen){
   var m = MODELS[scen.id];
   if(!m) return '';
   if(!S.showModel){
-    return '<button data-act="toggle-model" class="btn-ghost" style="margin-top:14px;">Reveal model answer (weak vs strong) ↓</button>';
+    return '<button data-act="toggle-model" class="btn-ghost" style="margin-top:14px;">Reveal the answer ladder (2nd to 4th quartile)</button>';
   }
   var box=function(label,col,bg,bd,txt){
     return '<div style="background:'+bg+';border:1px solid '+bd+';border-radius:10px;padding:14px 16px;margin-top:10px;">'
@@ -960,16 +1349,17 @@ function modelSection(scen){
       + '<div style="font-size:13.5px;line-height:1.6;color:#3a4640;">'+esc(txt)+'</div></div>';
   };
   return '<div style="margin-top:14px;">'
-    + '<button data-act="toggle-model" class="btn-ghost">Hide model answer ↑</button>'
-    + box("✗ Weaker response (≈2nd quartile)", C.red, "#fbf4f2", "#e3c4bc", m.weak)
-    + box("✓ Stronger response (≈4th quartile)", C.green, "#f3f8f4", "#c4ddca", m.strong)
+    + '<button data-act="toggle-model" class="btn-ghost">Hide the answer ladder</button>'
+    + box("2nd quartile — where many answers start", C.red, "#fbf4f2", "#e3c4bc", m.q2)
+    + box("3rd quartile — better, but missing a beat", "#9a7322", "#fdf6ea", "#e7d5ab", m.q3)
+    + box("4th quartile — the target", C.green, "#f3f8f4", "#c4ddca", m.q4)
     + '<div style="background:'+C.soft+';border-left:3px solid '+C.brass+';border-radius:0 8px 8px 0;padding:12px 14px;margin-top:10px;font-size:13px;line-height:1.55;color:#46524a;"><b>What moves it up:</b> '+esc(m.note)+'</div>'
     + '</div>';
 }
 
 function flagBox(tone,title,items){
   var red = tone==="red";
-  var head = (red?"✗ ":"✓ ")+title;
+  var head = title;
   var lis = items.map(function(it){
     return '<div style="font-family:'+fontDisplay+';font-style:italic;font-size:10.5px;color:#3a4640;margin-bottom:3px;line-height:1.3;">'+esc(it)+'</div>';
   }).join("");
@@ -1011,6 +1401,12 @@ function wire(){
     if(act==="video"){ vidCleanup(); V.scenIdx=S.scenIdx||0; V.qIdx=0; V.stage="idle"; V.error=""; S.mode="video"; render(); return; }
     if(act==="progress"){ vidCleanup(); S.mode="progress"; render(); return; }
     if(act==="typing"){ vidCleanup(); typingReset(false); S.mode="typing"; render(); return; }
+    if(act==="mock"){ vidCleanup(); MK.stage="intro"; S.mode="mock"; render(); return; }
+    if(act==="mk-start"){ mkStart(); return; }
+    if(act==="mk-next"){ stopMkTimer(); mkAdvancePhase(); return; }
+    if(act==="mk-continue"){ mkGoNext(); return; }
+    if(act==="mk-restart"){ MK.stage="intro"; render(); return; }
+    if(act==="mk-export"){ var mx=mockExportText(); if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(mx); } var mn=$("#mkExportNote"); if(mn) mn.textContent="Copied — paste into your log or a Google Doc."; return; }
     if(act==="type-again"){ typingReset(true); render(); return; }
     if(act==="type-new"){ typingReset(true); T.promptIdx=(T.promptIdx+1)%TYPING_PROMPTS.length; render(); return; }
     if(act==="toggle-hide"){ S.hideScores=!S.hideScores; render(); return; }
@@ -1026,10 +1422,22 @@ function wire(){
       var lowest=arr[0]; arr.forEach(function(e){ if(e.total<lowest.total) lowest=e; });
       startScenario(lowest.scenIdx); return;
     }
+    if(act==="revise-answer"){
+      var rta=$("#answer"); if(rta){ rta.focus(); }
+      var rv=$("#scoreVerdict"); if(rv){ rv.textContent="Keep your answer, add the missing beat (see the spine), then re-score the dimension you lifted."; rv.style.color=C.forest; }
+      return;
+    }
+    if(act==="ai-feedback"){ aiFeedback(); return; }
+    if(act==="export-scenario"){
+      var ex=exportScenarioText();
+      if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(ex); }
+      var en=$("#exportNote"); if(en) en.textContent="Copied — paste into your log or a Google Doc.";
+      return;
+    }
     if(act==="copy-progress"){
       var txt=progressSummaryText();
       if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(txt); }
-      el.textContent="✓ Copied"; return;
+      el.textContent="Copied"; return;
     }
     if(act==="clear-progress"){
       if(el.getAttribute("data-confirm")){ saveProgress([]); render(); }
@@ -1066,6 +1474,17 @@ function wire(){
       S.answer = ta.value;
       var w = S.answer.trim() ? S.answer.trim().split(/\s+/).length : 0;
       var wc = $("#wordcount"); if(wc) wc.textContent = w + " words";
+    };
+  }
+
+  /* mock textarea: capture into MK.answers (string for typed, [q0,q1] for video) */
+  var mta = $("#mkAnswer");
+  if(mta){
+    mta.focus();
+    mta.oninput = function(){
+      var st = MK.order[MK.idx];
+      if(st && st.type==="typed"){ MK.answers[MK.idx] = mta.value; }
+      else { if(!MK.answers[MK.idx]) MK.answers[MK.idx]=["",""]; MK.answers[MK.idx][MK.qIdx] = mta.value; }
     };
   }
 
