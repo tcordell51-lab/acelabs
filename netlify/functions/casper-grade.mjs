@@ -31,11 +31,14 @@ Grading principles (critical):
 - Reward SPECIFICITY. An answer that engages THESE people and THIS dilemma scores higher. A generic line like "I'd be empathetic and fair" is level 1 or 2 even if it name-checks a dimension.
 - Penalize templated, formulaic, or robotic answers. If it reads like a memorized script rather than a real person reasoning, say so and score lower. Casper raters reward authentic, specific judgment, not formulas.
 - Never predict a Casper score, quartile, or percentile, and never claim what they "would get." These levels are a coaching aid only.
+- Check that the answer addresses EVERY question asked. If any question is left unanswered or only barely touched, set the "concise" dimension to level 1 and name the missing question in its note — on the real test each question is scored independently, so a skipped one is a real loss.
+- Keep every dimension note to ONE sentence.
 - Be encouraging and concrete. No shaming language.
 
 Then produce:
+- headline: one short sentence — the single most important takeaway for this answer.
 - missingBeat: the single highest-impact thing to fix, specific to THEIR answer.
-- rewrite: a stronger, top-tier version of THEIR answer. Keep their situation and any good specifics, add the missing beats, and make it sound like a thoughtful real person — natural first person, NOT a template. Be concise (Casper rewards concision): about 4 to 7 sentences.
+- rewrite: a stronger, top-tier version of THEIR answer. Keep their situation and any good specifics, add the missing beats, and make it sound like a thoughtful real person — natural first person, NOT a template. Answer every question that was asked. Be concise (Casper rewards concision): about 4 to 7 sentences.
 - note: one line naming the specific moves that moved it up.`;
 
 function dimSchema() {
@@ -53,6 +56,7 @@ const SCHEMA = {
   type: "object",
   additionalProperties: false,
   properties: {
+    headline: { type: "string" },
     dimensions: {
       type: "object",
       additionalProperties: false,
@@ -69,7 +73,7 @@ const SCHEMA = {
     rewrite: { type: "string" },
     note: { type: "string" },
   },
-  required: ["dimensions", "missingBeat", "rewrite", "note"],
+  required: ["headline", "dimensions", "missingBeat", "rewrite", "note"],
 };
 
 function json(obj, status) {

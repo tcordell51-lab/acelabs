@@ -495,6 +495,7 @@ function progressSummaryText(){
    ============================================================ */
 function render(){
   stopTimer(); stopMkTimer();
+  if(S.mode!=="mock") mkCamCleanup();
   var app = document.getElementById("app");
   if(S.mode==="home")      app.innerHTML = viewHome();
   else if(S.mode==="arcade") app.innerHTML = viewArcade();
@@ -507,7 +508,18 @@ function render(){
   wire();
   if(S.mode==="scenario"){ var t=$("#timer"); if(t) paintTimer(t); syncTimer(); }
   if(S.mode==="video"){ vidPaint(); }
-  if(S.mode==="mock" && MK.stage==="station"){ var mt=$("#mkTimer"); if(mt) paintMkTimer(mt); syncMkTimer(); }
+  if(S.mode==="mock" && MK.stage==="station"){
+    var mt=$("#mkTimer"); if(mt) paintMkTimer(mt); syncMkTimer();
+    var mst=MK.order[MK.idx];
+    if(mst && mst.type==="video" && MKCAM.available!==false){
+      mkCamEnsure(function(ok){
+        if(!ok){ if(MKCAM.available!==false){ MKCAM.available=false; render(); } return; }
+        MKCAM.available=true;
+        var pv=$("#mkPreview"); if(pv && MKCAM.stream && pv.srcObject!==MKCAM.stream){ pv.srcObject=MKCAM.stream; }
+        if(MK.phase==="answer"){ mkCamStartRecording(); }
+      });
+    }
+  }
 }
 
 function footer(){
@@ -1011,8 +1023,46 @@ function viewArcade(){
    Practice-only. On the real test you type (no dictation), can't go back, and are on
    camera throughout. Here, spoken stations are captured as text so you can review and
    export; speak them aloud (or dictate) to rehearse delivery. */
-var MK = { order:[], idx:0, stage:"intro", phase:"answer", qIdx:0, answers:{}, remaining:0, running:false, brkLen:10 };
+var MK = { order:[], idx:0, stage:"intro", phase:"answer", qIdx:0, answers:{}, videos:{}, remaining:0, running:false, brkLen:10 };
 var mkTimerHandle=null;
+
+/* Mock camera for the on-camera video stations. Browser-native, on-device, nothing
+   uploaded. available: null=unknown, true=camera ok, false=unavailable (falls back to text). */
+var MKCAM = { stream:null, recorder:null, chunks:[], available:null };
+function mkCamEnsure(cb){
+  if(MKCAM.stream){ cb(true); return; }
+  if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){ cb(false); return; }
+  navigator.mediaDevices.getUserMedia({ video:true, audio:true }).then(function(s){ MKCAM.stream=s; cb(true); }).catch(function(){ cb(false); });
+}
+function mkCamStartRecording(){
+  if(!MKCAM.stream || !window.MediaRecorder) return;
+  if(MKCAM.recorder && MKCAM.recorder.state==="recording") return;
+  var idx=MK.idx, qIdx=MK.qIdx;            // capture slot now; onstop fires after we advance
+  try{
+    MKCAM.chunks=[];
+    MKCAM.recorder=new MediaRecorder(MKCAM.stream);
+    MKCAM.recorder.ondataavailable=function(e){ if(e.data && e.data.size) MKCAM.chunks.push(e.data); };
+    MKCAM.recorder.onstop=function(){
+      if(MKCAM.chunks.length){
+        var blob=new Blob(MKCAM.chunks, { type:(MKCAM.chunks[0].type||"video/webm") });
+        if(!MK.videos[idx]) MK.videos[idx]=["",""];
+        MK.videos[idx][qIdx]=URL.createObjectURL(blob);
+      }
+    };
+    MKCAM.recorder.start();
+  }catch(e){}
+}
+function mkCamStopRecording(){
+  if(MKCAM.recorder && MKCAM.recorder.state!=="inactive"){ try{ MKCAM.recorder.stop(); }catch(e){} }
+  MKCAM.recorder=null;
+}
+function mkRevokeVideos(){
+  for(var k in MK.videos){ (MK.videos[k]||[]).forEach(function(u){ if(u){ try{ URL.revokeObjectURL(u); }catch(e){} } }); }
+}
+function mkCamCleanup(){
+  mkCamStopRecording();
+  if(MKCAM.stream){ MKCAM.stream.getTracks().forEach(function(t){ try{ t.stop(); }catch(e){} }); MKCAM.stream=null; }
+}
 
 function scenById(id){ for(var i=0;i<SCENARIOS.length;i++){ if(SCENARIOS[i].id===id) return SCENARIOS[i]; } return SCENARIOS[0]; }
 function mockBuildOrder(){
@@ -1038,11 +1088,12 @@ function mockSetupStation(){
   var st=MK.order[MK.idx];
   MK.stage="station"; MK.qIdx=0; MK.running=true;
   if(st.type==="typed"){ MK.phase="answer"; MK.remaining=210; if(typeof MK.answers[MK.idx]!=="string") MK.answers[MK.idx]=""; }
-  else { MK.phase="reflect"; MK.remaining=30; if(!MK.answers[MK.idx]) MK.answers[MK.idx]=["",""]; }
+  else { MK.phase="reflect"; MK.remaining=30; if(!MK.answers[MK.idx]) MK.answers[MK.idx]=["",""]; if(!MK.videos[MK.idx]) MK.videos[MK.idx]=["",""]; }
 }
-function mkStart(){ MK.order=mockBuildOrder(); MK.idx=0; MK.answers={}; mockSetupStation(); render(); }
+function mkStart(){ mkRevokeVideos(); MK.order=mockBuildOrder(); MK.idx=0; MK.answers={}; MK.videos={}; mockSetupStation(); render(); }
 function mkAdvancePhase(){
   var st=MK.order[MK.idx];
+  if(st.type==="video" && MK.phase==="answer"){ mkCamStopRecording(); }
   if(st.type==="typed"){ mkAdvanceStation(); return; }
   if(MK.phase==="reflect"){ MK.phase="answer"; MK.remaining=60; MK.running=true; render(); return; }
   if(MK.qIdx<1){ MK.qIdx++; MK.phase="reflect"; MK.remaining=30; MK.running=true; render(); return; }
@@ -1067,7 +1118,7 @@ function mockExportText(){
     scen.qs.slice(0,2).forEach(function(q,qi){ lines.push("  Q"+(qi+1)+": "+q); });
     var a=MK.answers[i];
     if(o.type==="typed"){ lines.push("  Answer: "+((a&&(""+a).trim())?(""+a).trim():"(none)")); }
-    else { lines.push("  Answer Q1: "+((a&&a[0]&&a[0].trim())?a[0].trim():"(none)")); lines.push("  Answer Q2: "+((a&&a[1]&&a[1].trim())?a[1].trim():"(none)")); }
+    else { var vv=MK.videos[i]||[]; var vq=function(q){ if(vv[q]) return "(recorded on camera — review in the mock)"; var t=a&&a[q]&&a[q].trim(); return t?t:"(none)"; }; lines.push("  Answer Q1: "+vq(0)); lines.push("  Answer Q2: "+vq(1)); }
     lines.push("");
   });
   return lines.join("\n");
@@ -1079,7 +1130,7 @@ function viewMock(){
       + '<div class="eyebrow" style="margin:18px 0 8px;">Full Mock</div>'
       + '<h1 style="font-family:'+fontDisplay+';font-weight:900;font-size:32px;color:'+C.forest+';margin:0 0 12px;">11 stations, real timing.</h1>'
       + '<p style="font-size:15px;color:#46524a;line-height:1.6;margin:0 0 16px;">Four video stations (2 questions each: about 30s to reflect, 60s to answer per question), then seven typed stations (2 questions, about 3.5 minutes each), with a 10-minute break after the video section and a 5-minute break midway through typed. It runs forward only, like the real thing.</p>'
-      + '<div style="background:'+C.paper+';border:1px solid '+C.line+';border-left:3px solid '+C.brass+';border-radius:0 10px 10px 0;padding:12px 16px;font-size:13px;color:#46524a;line-height:1.5;margin-bottom:18px;">Practice note: on the real Casper you type your answers (no dictation) and you are on camera throughout. Here the spoken stations are captured as text so you can review and export — speak them aloud, or dictate, to rehearse delivery.</div>'
+      + '<div style="background:'+C.paper+';border:1px solid '+C.line+';border-left:3px solid '+C.brass+';border-radius:0 10px 10px 0;padding:12px 16px;font-size:13px;color:#46524a;line-height:1.5;margin-bottom:18px;">Practice note: on the real Casper you type your typed answers (no dictation) and you are on camera throughout. Here the four video stations record on your camera so you can review your delivery at the end — nothing is uploaded. If your camera is not available, you can capture those answers as text instead.</div>'
       + '<button class="btn-primary" data-act="mk-start">Start the mock</button>'
       + footer() + '</div>';
   }
@@ -1099,11 +1150,23 @@ function viewMock(){
         + '<span style="color:'+C.ink+';">Station '+(i+1)+' — '+esc(s2.tag)+'</span>'
         + '<span style="color:#8a9389;">'+(o.type==="video"?"video":"typed")+'</span></div>';
     }).join("");
+    var videoReview=MK.order.map(function(o,i){
+      if(o.type!=="video") return "";
+      var v=MK.videos[i]||[];
+      var clips=[0,1].map(function(q){
+        if(!v[q]) return "";
+        return '<div style="margin-top:6px;"><div style="font-size:10.5px;color:#8a9389;margin-bottom:3px;">Question '+(q+1)+'</div><video controls playsinline src="'+v[q]+'" style="width:100%;border-radius:8px;background:#000;"></video></div>';
+      }).join("");
+      if(!clips) return "";
+      return '<div style="margin-bottom:14px;"><div style="font-size:12.5px;font-weight:700;color:'+C.forest+';">Station '+(i+1)+' — '+esc(scenById(o.scenId).tag)+'</div>'+clips+'</div>';
+    }).join("");
+    var videoSection = videoReview ? ('<div style="background:'+C.paper+';border:1px solid '+C.line+';border-radius:10px;padding:14px 18px;margin-bottom:16px;"><div style="font-family:'+fontDisplay+';font-weight:700;font-size:16px;color:'+C.forest+';margin-bottom:4px;">Watch your video takes</div><div style="font-size:11.5px;color:#8a9389;margin-bottom:8px;">Review your delivery: pacing, eye-line to the lens, filler words, and whether you finished in time. These stay on this device.</div>'+videoReview+'</div>') : '';
     return '<div style="max-width:720px;margin:0 auto;padding:36px 24px;" class="card-anim">'
       + topbar("Full Timed Mock · complete")
       + '<div class="eyebrow" style="margin:18px 0 8px;">Done</div>'
       + '<h1 style="font-family:'+fontDisplay+';font-weight:900;font-size:30px;color:'+C.forest+';margin:0 0 10px;">Mock complete.</h1>'
-      + '<p style="font-size:14px;color:#46524a;line-height:1.6;margin:0 0 16px;">Now review: export your answers, then reopen any of these in Start a Scenario to compare against the 2nd-to-4th-quartile ladder and self-score.</p>'
+      + '<p style="font-size:14px;color:#46524a;line-height:1.6;margin:0 0 16px;">Now review: watch your video takes below, export your typed answers, then reopen any scenario in Start a Scenario to compare against the 2nd-to-4th-quartile ladder and self-score.</p>'
+      + videoSection
       + '<div style="background:'+C.paper+';border:1px solid '+C.line+';border-radius:10px;padding:6px 18px 12px;margin-bottom:16px;">'+rows+'</div>'
       + '<div style="display:flex;gap:8px;flex-wrap:wrap;">'
         + '<button class="btn-primary" data-act="mk-export">Copy all answers for your log</button>'
@@ -1123,15 +1186,28 @@ function viewMock(){
     qsHtml='<ol style="margin:10px 0 0;padding-left:20px;">'+scen.qs.slice(0,2).map(function(q){ return '<li style="font-size:14px;margin-bottom:5px;color:#e8e2d2;">'+esc(q)+'</li>'; }).join("")+'</ol>';
   }
   var phaseLabel, inputHtml, nextLabel;
+  var camOn = isVideo && MKCAM.available!==false;
+  var previewHtml = '<div style="height:240px;border-radius:10px;overflow:hidden;background:#10231a;margin-top:12px;display:flex;align-items:center;justify-content:center;">'
+    + '<video id="mkPreview" autoplay muted playsinline style="width:100%;height:100%;object-fit:cover;"></video></div>';
   if(isVideo && MK.phase==="reflect"){
-    phaseLabel="Reflect — jot 2 to 4 keywords, then answer aloud.";
-    inputHtml='';
+    phaseLabel="Reflect — jot 2 to 4 keywords, then answer on camera.";
+    inputHtml = camOn ? previewHtml : '';
     nextLabel="Start answering";
+  } else if(isVideo){
+    if(camOn){
+      phaseLabel="Recording — speak your answer to the camera (about 60 seconds).";
+      inputHtml = previewHtml + '<div style="margin-top:8px;font-size:11.5px;color:'+C.red+';font-weight:700;">Recording. Nothing is uploaded — your take stays on this device, and you can review it at the end.</div>';
+    } else {
+      phaseLabel="Camera unavailable — answer aloud and capture it as text (about 60 seconds).";
+      var storedV=(MK.answers[MK.idx]&&MK.answers[MK.idx][MK.qIdx])||"";
+      inputHtml='<textarea id="mkAnswer" placeholder="Speak your answer and capture it here (dictate or type)." style="width:100%;min-height:120px;padding:14px;border-radius:10px;border:1.5px solid '+C.line+';font-family:'+fontBody+';font-size:14.5px;line-height:1.6;color:'+C.ink+';resize:vertical;background:'+C.paper+';margin-top:12px;">'+esc(storedV)+'</textarea>';
+    }
+    nextLabel="Next";
   } else {
-    phaseLabel=isVideo?"Answer aloud (captured as text) — about 60 seconds.":"Type your answer to both questions — about 3.5 minutes.";
-    var stored=isVideo ? ((MK.answers[MK.idx]&&MK.answers[MK.idx][MK.qIdx])||"") : (MK.answers[MK.idx]||"");
-    inputHtml='<textarea id="mkAnswer" placeholder="'+(isVideo?"Speak your answer (dictate or type to capture it).":"Type your answer here, or dictate and clean it up.")+'" style="width:100%;min-height:'+(isVideo?"120px":"200px")+';padding:14px;border-radius:10px;border:1.5px solid '+C.line+';font-family:'+fontBody+';font-size:14.5px;line-height:1.6;color:'+C.ink+';resize:vertical;background:'+C.paper+';margin-top:12px;">'+esc(stored)+'</textarea>';
-    nextLabel=(MK.idx===10 && !isVideo) ? "Finish mock" : "Next";
+    phaseLabel="Type your answer to both questions — about 3.5 minutes.";
+    var stored=(MK.answers[MK.idx]||"");
+    inputHtml='<textarea id="mkAnswer" placeholder="Type your answer here, or dictate and clean it up." style="width:100%;min-height:200px;padding:14px;border-radius:10px;border:1.5px solid '+C.line+';font-family:'+fontBody+';font-size:14.5px;line-height:1.6;color:'+C.ink+';resize:vertical;background:'+C.paper+';margin-top:12px;">'+esc(stored)+'</textarea>';
+    nextLabel=(MK.idx===10) ? "Finish mock" : "Next";
   }
   return '<div style="max-width:760px;margin:0 auto;padding:24px 24px;">'
     + topbar("Station "+(MK.idx+1)+" of 11 · "+(isVideo?"video":"typed"))
@@ -1336,6 +1412,7 @@ function aiRenderResult(d){
   }).join("");
   return '<div style="text-align:left;background:'+C.paper+';border:1px solid '+C.line+';border-radius:8px;padding:10px 12px;margin-top:6px;">'
     + '<div style="font-size:9px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:'+C.brass+';margin-bottom:6px;">AI feedback — a practice aid, not an official score</div>'
+    + ((d&&d.headline)?('<div style="font-size:13px;font-weight:700;color:'+C.forest+';margin-bottom:8px;line-height:1.4;">'+esc(d.headline)+'</div>'):'')
     + rows
     + ((d&&d.missingBeat)?('<div style="margin-top:8px;font-size:12px;color:'+C.forest+';line-height:1.45;"><b>Lift it here:</b> '+esc(d.missingBeat)+'</div>'):'')
     + ((d&&d.rewrite)?('<div style="margin-top:8px;font-size:12px;color:#3a4640;line-height:1.55;"><b>A stronger version of your answer:</b><br>'+esc(d.rewrite)+'</div>'):'')
