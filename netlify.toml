@@ -16,12 +16,12 @@
     X-Frame-Options = "DENY"
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
-    Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=()"
+    Permissions-Policy = "camera=(self), microphone=(self), geolocation=(), payment=()"
     # CSP: allow only same-origin + Google Fonts (used everywhere). No inline-script blocks
     # are eval'd — but Refused-Inline-Script is set to 'unsafe-inline' because the engine
     # HTMLs use inline <script> blocks for visualizations and event wiring. If we ever
     # extract those to external .js files, tighten this.
-    Content-Security-Policy = "default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'"
+    Content-Security-Policy = "default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self' 'unsafe-inline'; img-src 'self' data:; media-src 'self' blob:; connect-src 'self'; frame-ancestors 'none'"
 
 [[headers]]
   for = "/shared/*"
