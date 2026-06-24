@@ -1376,12 +1376,14 @@ function aiFeedback(){
   if(!AI_GRADER_ENABLED){ n.textContent="AI feedback isn't switched on yet. Self-score, reveal the ladder, and revise toward the 4th-quartile target."; return; }
   var ans = S.answer && S.answer.trim();
   if(!ans){ n.textContent="Type or dictate an answer first, then ask for feedback."; return; }
-  var code=null; try{ code=localStorage.getItem("acelabs_casper_code"); }catch(e){}
-  if(!code){
-    n.innerHTML = '<div style="font-size:11.5px;color:#46524a;margin-bottom:6px;">Enter the access code from your coach to use AI feedback:</div>'
+  var code=null, student=null; try{ code=localStorage.getItem("acelabs_casper_code"); student=localStorage.getItem("acelabs_casper_student"); }catch(e){}
+  if(!code || !student){
+    n.innerHTML = '<div style="font-size:11.5px;color:#46524a;margin-bottom:6px;">First time: enter your name and the access code from your coach, so your coach can see your progress.</div>'
+      + '<input id="aiName" type="text" autocomplete="off" placeholder="your name" style="width:100%;padding:6px 8px;border:1px solid '+C.line+';border-radius:6px;font-size:12px;font-family:'+fontBody+';margin-bottom:6px;box-sizing:border-box;"/>'
       + '<div style="display:flex;gap:6px;"><input id="aiCode" type="text" autocomplete="off" placeholder="access code" style="flex:1;padding:6px 8px;border:1px solid '+C.line+';border-radius:6px;font-size:12px;font-family:'+fontBody+';"/>'
-      + '<button data-act="ai-code-submit" class="btn-ghost" style="padding:6px 12px;font-size:11.5px;">Use</button></div>';
-    var ci=$("#aiCode"); if(ci) ci.focus();
+      + '<button data-act="ai-code-submit" class="btn-ghost" style="padding:6px 12px;font-size:11.5px;">Start</button></div>';
+    var ni=$("#aiName"); if(ni){ if(student) ni.value=student; ni.focus(); }
+    var ci=$("#aiCode"); if(ci && code) ci.value=code;
     return;
   }
   if(aiBusy) return;
@@ -1400,7 +1402,26 @@ function aiFeedback(){
     if(res.status===401){ try{localStorage.removeItem("acelabs_casper_code");}catch(e){} nn.textContent="That access code wasn't accepted. Press AI feedback to try again."; return; }
     if(!res.ok){ nn.textContent=(res.j && res.j.error) ? res.j.error : "Feedback is unavailable right now."; return; }
     nn.innerHTML=aiRenderResult(res.j);
+    aiSave(res.j);
   }).catch(function(){ aiBusy=false; var nn=$("#aiNote"); if(nn) nn.textContent="Network error — try again."; });
+}
+/* Fire-and-forget: save the graded answer to the coach's Airtable log (app-side). */
+function aiSave(d){
+  var student=null, code=null;
+  try{ student=localStorage.getItem("acelabs_casper_student"); code=localStorage.getItem("acelabs_casper_code"); }catch(e){}
+  if(!student || !code || !d) return;
+  var scen=SCENARIOS[S.scenIdx];
+  var dims=(d.dimensions)||{};
+  function lv(k){ return (dims[k] && dims[k].level) || null; }
+  fetch("/.netlify/functions/casper-save", {
+    method:"POST",
+    headers:{"content-type":"application/json"},
+    body:JSON.stringify({
+      code:code, student:student, scenario:scen.tag, mode:"scenario", answer:S.answer,
+      dimensions:{ info:lv("info"), empathy:lv("empathy"), stance:lv("stance"), ethics:lv("ethics"), concise:lv("concise") },
+      headline:d.headline||"", missingBeat:d.missingBeat||"", note:d.note||""
+    })
+  }).then(function(r){ var sv=$("#aiSaved"); if(sv){ sv.textContent = r.ok ? "Saved to your coach's log." : ""; } }).catch(function(){});
 }
 function aiRenderResult(d){
   var labels={1:"Missing",2:"Implied",3:"Explicit"};
@@ -1417,6 +1438,7 @@ function aiRenderResult(d){
     + ((d&&d.missingBeat)?('<div style="margin-top:8px;font-size:12px;color:'+C.forest+';line-height:1.45;"><b>Lift it here:</b> '+esc(d.missingBeat)+'</div>'):'')
     + ((d&&d.rewrite)?('<div style="margin-top:8px;font-size:12px;color:#3a4640;line-height:1.55;"><b>A stronger version of your answer:</b><br>'+esc(d.rewrite)+'</div>'):'')
     + ((d&&d.note)?('<div style="margin-top:8px;font-size:11px;color:#46524a;line-height:1.4;"><b>What moved it up:</b> '+esc(d.note)+'</div>'):'')
+    + '<div id="aiSaved" style="font-size:10px;color:#8a9389;margin-top:6px;"></div>'
     + '</div>';
 }
 /* One-click export of the current scenario practice (prompt + questions + your
@@ -1542,7 +1564,7 @@ function wire(){
       return;
     }
     if(act==="ai-feedback"){ aiFeedback(); return; }
-    if(act==="ai-code-submit"){ var aci=$("#aiCode"); if(aci && aci.value.trim()){ try{localStorage.setItem("acelabs_casper_code", aci.value.trim());}catch(e){} aiFeedback(); } return; }
+    if(act==="ai-code-submit"){ var aci=$("#aiCode"), ani=$("#aiName"); var cv=aci?aci.value.trim():"", nv=ani?ani.value.trim():""; if(cv){ try{localStorage.setItem("acelabs_casper_code", cv);}catch(e){} } if(nv){ try{localStorage.setItem("acelabs_casper_student", nv);}catch(e){} } aiFeedback(); return; }
     if(act==="export-scenario"){
       var ex=exportScenarioText();
       if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(ex); }
