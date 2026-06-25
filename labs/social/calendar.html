@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Content Calendar · AceTheDAT Social</title>
+<meta name="description" content="Plan and track the AceTheDAT social launch: date, post, pillar, format, saves and shares. Surfaces the top-performing pillar."/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --green:#1f3d2e;--gold:#b8923d;--cream:#f3eee1;--pine:#15291d;--ink:#243b30;
+    --line:rgba(243,238,225,.16);
+    --serif:'Playfair Display',Georgia,serif;--sans:'DM Sans',system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--pine);color:var(--cream);font-family:var(--sans);line-height:1.5;
+    background-image:radial-gradient(1200px 600px at 50% -10%, rgba(31,61,46,.9), var(--pine));min-height:100vh;padding-bottom:80px;}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 24px;}
+  header.top{padding:36px 0 22px;border-bottom:1px solid var(--line);margin-bottom:26px;}
+  .mark{font-family:var(--serif);font-size:22px;font-weight:700;}
+  .mark .gold{color:var(--gold);}
+  .kicker{font-size:11px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-top:12px;}
+  h1{font-family:var(--serif);font-size:clamp(26px,4vw,38px);margin:6px 0 6px;font-weight:700;}
+  h1 em{color:var(--gold);font-style:italic;}
+  .lede{color:rgba(243,238,225,.6);font-size:14.5px;max-width:680px;}
+
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:26px 0;}
+  @media(max-width:760px){.stats{grid-template-columns:repeat(2,1fr);}}
+  .stat{background:rgba(243,238,225,.04);border:1px solid var(--line);border-radius:14px;padding:16px 18px;}
+  .stat .lbl{font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(243,238,225,.5);}
+  .stat .num{font-family:var(--serif);font-size:30px;font-weight:700;margin-top:6px;line-height:1;}
+  .stat .num.gold{color:var(--gold);}
+  .stat .sub{font-size:11.5px;color:rgba(243,238,225,.45);margin-top:5px;}
+
+  .toolbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;gap:12px;flex-wrap:wrap;}
+  .toolbar h2{font-family:var(--serif);font-size:20px;margin:0;font-weight:700;}
+  button{font-family:var(--sans);cursor:pointer;}
+  .btn{background:var(--gold);color:var(--pine);font-weight:700;font-size:13px;border:none;padding:9px 15px;border-radius:9px;}
+  .btn.ghost{background:transparent;color:var(--cream);border:1px solid var(--line);}
+  .btn.ghost:hover{border-color:var(--gold);color:var(--gold);}
+
+  table{width:100%;border-collapse:collapse;font-size:13.5px;}
+  th{text-align:left;font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(243,238,225,.5);padding:0 10px 9px;border-bottom:1px solid var(--line);}
+  td{padding:9px 10px;border-bottom:1px solid rgba(243,238,225,.07);vertical-align:middle;}
+  tr.done td{opacity:.92;}
+  .pill{display:inline-block;font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:20px;letter-spacing:.02em;}
+  .p-niche{background:rgba(184,146,61,.16);color:var(--gold);}
+  .p-proof{background:rgba(95,168,116,.16);color:#9bd6ad;}
+  .p-diff{background:rgba(0,114,178,.18);color:#7cc0ee;}
+  .p-trust{background:rgba(243,238,225,.12);color:var(--cream);}
+  .p-value{background:rgba(184,146,61,.1);color:#d8c089;}
+  .p-convert{background:rgba(213,94,0,.18);color:#f0a36a;}
+  .fmt{font-size:11px;color:rgba(243,238,225,.55);font-weight:600;}
+  td input{width:62px;background:var(--green);border:1px solid var(--line);color:var(--cream);border-radius:7px;padding:5px 7px;font-family:var(--sans);font-size:13px;text-align:right;}
+  td input:focus{outline:none;border-color:var(--gold);}
+  .status{cursor:pointer;font-size:18px;width:22px;display:inline-block;text-align:center;user-select:none;}
+  .wk-row td{background:rgba(31,61,46,.4);font-family:var(--serif);font-style:italic;color:var(--gold);font-size:14px;padding:14px 10px 8px;}
+  .rm{background:transparent;border:none;color:rgba(243,238,225,.35);font-size:15px;cursor:pointer;}
+  .rm:hover{color:#f0a36a;}
+  .addrow{margin-top:14px;display:grid;grid-template-columns:110px 1fr 130px 120px auto;gap:8px;align-items:end;}
+  @media(max-width:760px){.addrow{grid-template-columns:1fr 1fr;}}
+  .addrow label{display:block;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(243,238,225,.45);margin-bottom:4px;}
+  .addrow input,.addrow select{width:100%;background:var(--green);border:1px solid var(--line);color:var(--cream);border-radius:8px;padding:8px;font-family:var(--sans);font-size:13px;}
+  .note{font-size:12px;color:rgba(243,238,225,.4);margin-top:18px;}
+  .note a{color:var(--gold);text-decoration:none;border-bottom:1px dashed rgba(184,146,61,.5);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="mark">Ace<span style="opacity:.85">The</span><span class="gold">DAT</span> &nbsp;<span style="font-weight:400;opacity:.5;font-size:14px">Social</span></div>
+    <div class="kicker">Content Calendar</div>
+    <h1>Plan the launch. Track what <em>actually travels</em>.</h1>
+    <p class="lede">Saves and shares are the real distribution signal, above likes. Log them after each post. The tracker surfaces your top-performing pillar so you know what to double down on. Tue to Thu mornings; adjust to Page Insights after week 2.</p>
+  </header>
+
+  <div class="stats">
+    <div class="stat"><div class="lbl">Posts logged</div><div class="num" id="sPosted">0</div><div class="sub">of <span id="sTotal">0</span> planned</div></div>
+    <div class="stat"><div class="lbl">Total saves</div><div class="num gold" id="sSaves">0</div><div class="sub">#1 signal</div></div>
+    <div class="stat"><div class="lbl">Total shares</div><div class="num gold" id="sShares">0</div><div class="sub">DM-shares = reach</div></div>
+    <div class="stat"><div class="lbl">Top pillar</div><div class="num" id="sPillar" style="font-size:20px;padding-top:7px;">&mdash;</div><div class="sub" id="sPillarSub">by saves + shares</div></div>
+  </div>
+
+  <div class="toolbar">
+    <h2>Schedule</h2>
+    <div>
+      <button class="btn ghost" id="resetBtn">Reset to plan</button>
+    </div>
+  </div>
+
+  <table id="tbl">
+    <thead>
+      <tr><th style="width:30px"></th><th style="width:90px">Date</th><th>Post</th><th style="width:120px">Pillar</th><th style="width:90px">Format</th><th style="width:80px">Saves</th><th style="width:80px">Shares</th><th style="width:30px"></th></tr>
+    </thead>
+    <tbody id="body"></tbody>
+  </table>
+
+  <div class="addrow">
+    <div><label>Date</label><input type="text" id="aDate" placeholder="Wk5 Tue"></div>
+    <div><label>Post</label><input type="text" id="aPost" placeholder="Post title / episode"></div>
+    <div><label>Pillar</label>
+      <select id="aPillar">
+        <option value="niche">Niche value</option>
+        <option value="proof">Proof</option>
+        <option value="diff">Differentiation</option>
+        <option value="trust">Trust</option>
+        <option value="value">Value</option>
+        <option value="convert">Convert</option>
+      </select>
+    </div>
+    <div><label>Format</label>
+      <select id="aFormat">
+        <option>V-ONLY</option><option>V-PIP</option><option>GRAPHIC</option><option>CAROUSEL</option>
+      </select>
+    </div>
+    <div><button class="btn" id="addBtn">Add</button></div>
+  </div>
+
+  <p class="note">Metrics priority: saves + shares &gt; reach from non-followers &gt; comments &gt; link clicks &gt; likes. Loop: rewrite hooks on the lowest performers and repost with a new first second. Package files in <a href="caption-tool.html">Caption Studio</a> &amp; <code style="color:var(--cream)">posts/</code>.</p>
+</div>
+
+<script>
+const SKEY='acethedat:content-calendar:v1';
+const PILLAR={niche:['Niche value','p-niche'],proof:['Proof','p-proof'],diff:['Differentiation','p-diff'],trust:['Trust','p-trust'],value:['Value','p-value'],convert:['Convert','p-convert']};
+
+/* default plan = Section 9 four-week calendar */
+const PLAN=[
+  {week:'Week 1 — niche + proof'},
+  {date:'Wk1 Tue',post:'Post 1 — EAS directors',pillar:'niche',format:'V-ONLY'},
+  {date:'Wk1 Wed',post:'Post 4 — Kalea 350 to 450',pillar:'proof',format:'V-PIP'},
+  {date:'Wk1 Thu',post:'Post 6 — Plateaus (founder POV)',pillar:'diff',format:'V-PIP'},
+  {date:'Wk1 —',post:'Pinned: brand intro + free tool + Book a Call',pillar:'convert',format:'GRAPHIC'},
+  {week:'Week 2 — value momentum'},
+  {date:'Wk2 Tue',post:'Post 2 — PAT keyholes',pillar:'niche',format:'V-ONLY'},
+  {date:'Wk2 Wed',post:'Post 3 — QR trap',pillar:'niche',format:'V-ONLY'},
+  {date:'Wk2 Thu',post:'Post 5 — Orgo acidity',pillar:'niche',format:'V-ONLY'},
+  {week:'Week 3 — introduce team'},
+  {date:'Wk3 Tue',post:'Post 7 — Periodic trends',pillar:'niche',format:'V-ONLY'},
+  {date:'Wk3 Wed',post:'Post 8 — Meet Chapman',pillar:'trust',format:'V-PIP'},
+  {date:'Wk3 Thu',post:'Post 9 — Orgo tool spotlight',pillar:'value',format:'V-ONLY'},
+  {week:'Week 4 — convert'},
+  {date:'Wk4 Tue',post:'Post 10 — Soft offer',pillar:'convert',format:'GRAPHIC'},
+  {date:'Wk4 Wed',post:'Meet the team 2 — Sarah + PAT insight',pillar:'trust',format:'V-PIP'},
+  {date:'Wk4 Thu',post:'Second proof — Maddie ~400 to 450',pillar:'proof',format:'V-PIP'},
+];
+
+let rows=load();
+function load(){
+  try{const s=JSON.parse(localStorage.getItem(SKEY)); if(Array.isArray(s)&&s.length) return s;}catch(e){}
+  return PLAN.map(r=> r.week?{...r}:{...r,done:false,saves:'',shares:''});
+}
+function persist(){ localStorage.setItem(SKEY, JSON.stringify(rows)); }
+
+function render(){
+  const body=document.getElementById('body'); body.innerHTML='';
+  rows.forEach((r,i)=>{
+    const tr=document.createElement('tr');
+    if(r.week){ tr.className='wk-row'; tr.innerHTML=`<td colspan="8">${r.week}</td>`; body.appendChild(tr); return; }
+    if(r.done) tr.className='done';
+    const [pname,pcls]=PILLAR[r.pillar]||['—','p-trust'];
+    tr.innerHTML=
+      `<td><span class="status" data-i="${i}" title="Toggle posted">${r.done?'●':'○'}</span></td>`+
+      `<td>${r.date||''}</td>`+
+      `<td>${r.post||''}</td>`+
+      `<td><span class="pill ${pcls}">${pname}</span></td>`+
+      `<td><span class="fmt">${r.format||''}</span></td>`+
+      `<td><input type="number" min="0" data-i="${i}" data-k="saves" value="${r.saves}" placeholder="0"></td>`+
+      `<td><input type="number" min="0" data-i="${i}" data-k="shares" value="${r.shares}" placeholder="0"></td>`+
+      `<td><button class="rm" data-i="${i}" title="Remove">×</button></td>`;
+    body.appendChild(tr);
+  });
+  wire(); stats();
+}
+function wire(){
+  document.querySelectorAll('.status').forEach(s=> s.onclick=()=>{ const i=+s.dataset.i; rows[i].done=!rows[i].done; persist(); render(); });
+  document.querySelectorAll('td input').forEach(inp=> inp.oninput=()=>{ const i=+inp.dataset.i,k=inp.dataset.k; rows[i][k]=inp.value; if(inp.value!=='') rows[i].done=true; persist(); stats(); });
+  document.querySelectorAll('.rm').forEach(b=> b.onclick=()=>{ rows.splice(+b.dataset.i,1); persist(); render(); });
+}
+function stats(){
+  const posts=rows.filter(r=>!r.week);
+  const posted=posts.filter(r=>r.done).length;
+  const saves=posts.reduce((a,r)=>a+(+r.saves||0),0);
+  const shares=posts.reduce((a,r)=>a+(+r.shares||0),0);
+  document.getElementById('sPosted').textContent=posted;
+  document.getElementById('sTotal').textContent=posts.length;
+  document.getElementById('sSaves').textContent=saves;
+  document.getElementById('sShares').textContent=shares;
+  /* top pillar by saves + shares */
+  const tally={};
+  posts.forEach(r=>{ const v=(+r.saves||0)+(+r.shares||0); if(v>0) tally[r.pillar]=(tally[r.pillar]||0)+v; });
+  const top=Object.entries(tally).sort((a,b)=>b[1]-a[1])[0];
+  document.getElementById('sPillar').textContent= top? (PILLAR[top[0]]?.[0]||top[0]) : '—';
+  document.getElementById('sPillarSub').textContent= top? `${top[1]} saves + shares` : 'log saves + shares';
+}
+
+document.getElementById('addBtn').onclick=()=>{
+  const d=document.getElementById('aDate').value.trim();
+  const p=document.getElementById('aPost').value.trim();
+  if(!p) return;
+  rows.push({date:d,post:p,pillar:document.getElementById('aPillar').value,format:document.getElementById('aFormat').value,done:false,saves:'',shares:''});
+  document.getElementById('aDate').value=''; document.getElementById('aPost').value='';
+  persist(); render();
+};
+document.getElementById('resetBtn').onclick=()=>{
+  if(!confirm('Reset the calendar to the original four-week plan? This clears logged saves and shares.')) return;
+  rows=PLAN.map(r=> r.week?{...r}:{...r,done:false,saves:'',shares:''});
+  persist(); render();
+};
+render();
+</script>
+</body>
+</html>
