@@ -15,24 +15,27 @@
 
 ### Script beat sheet (30–45s)
 1. **The challenge (0–8s):** put 3–4 acids on screen, start a mental timer.
-2. **The framework (8–35s):** ARIO — stability of the conjugate base decides acidity. Walk Atom (size/electronegativity) → Resonance → Induction → Orbital. More stable conjugate base = stronger acid.
-3. **One worked ranking (35–42s):** apply ARIO to the on-screen set, fastest decision first.
-4. **Proof tag (42–45s):** "Master the stability logic once and it is free points forever."
+2. **The one move (8–18s):** stop reciting pKa tables. Redraw the conjugate base (A⁻) first. Stronger acid = more stable conjugate base.
+3. **The framework (18–38s):** walk **CARDIO** in order and stop at the first factor that differs:
+   Charge → Atom → Resonance → inDuction → Orbital. Charge dominates (~17 units), Atom is next (~10–47 across the period), Resonance (~6–11), Induction (~1–4 per group), Orbital breaks ties.
+4. **Proof tag (38–45s):** "Master the stability logic once and it is free points forever. This is what we drill 1:1."
 
 ### Shot / visual note
-Acidity comparison on the reaction map; reveal the ranking as you apply each ARIO factor. Use `acidity-ranking.png` as the hook frame.
+Use `acidity-ranking.png` (the CARDIO ladder) as the hook frame, then reveal the
+ranking factor by factor on the reaction map. The mnemonic doubles as the brand
+tie: it literally spells CARDIO.
 
 ### Caption (keyword-rich)
-Acidity ranking shows up everywhere on DAT orgo. The trick is to stop memorizing pKa tables and rank by conjugate-base stability instead: Atom, Resonance, Induction, Orbital. Master the stability logic once and it is free points forever. Save this for your orgo review.
+Acidity ranking shows up all over DAT orgo, and the trick is to stop memorizing pKa tables. Redraw the conjugate base first, then walk CARDIO: Charge, Atom, Resonance, inDuction, Orbital. Charge wins, then atom, then resonance. Stop at the first factor that differs. Master the stability logic once and it is free points forever. Save this for your orgo review.
 
 ### Hashtags
 #dat #organicchemistry #predental
 
 ### Pinned comment (CTA — never in-video)
-Free interactive orgo reaction maps → https://acelabs.netlify.app/tools/ochem/
+Free interactive CARDIO acidity ladder + reaction maps → https://acelabs.netlify.app/tools/ochem/#acid-base-cardio
 
 ### Production checklist
 - [ ] Export clean vertical 9:16, no watermark
-- [ ] Proof captions: "acidity", "conjugate base", "resonance", "induction", "pKa"
+- [ ] Proof captions: "acidity", "conjugate base", "CARDIO", "resonance", "induction", "pKa"
 - [ ] Native upload FB + IG Reels + TikTok
 - [ ] Paste pinned comment after posting

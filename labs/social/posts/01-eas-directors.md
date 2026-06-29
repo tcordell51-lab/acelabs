@@ -15,24 +15,27 @@
 
 ### Script beat sheet (30–45s)
 1. **The trap (0–8s):** students memorize ortho/para vs meta blindly and freeze under time.
-2. **The rule (8–28s):** activating groups → ortho/para directors; deactivating groups → meta directors. The one exception you must know: **halogens are deactivating BUT still ortho/para directors.**
-3. **The visual (28–40s):** walk the director positions on the reaction map; point to where the incoming group lands.
-4. **Proof tag (40–45s):** "Drill this and you stop losing easy orgo points. This is what we drill 1:1."
+2. **The 4-word rule (8–28s):** Donor → ortho/para. Withdrawer → meta. Halogen = exception. Alkyl → ortho/para (weak). Every DAT directing question is one of those four cases.
+3. **The exception (28–38s):** halogens deactivate (σ-withdraw, so slower than benzene) BUT still direct ortho/para (π-donate). The only split substituent class.
+4. **Bonus trap (38–43s):** want meta-bromonitrobenzene? Nitrate first, then brominate. Reverse the order and Br sends you ortho/para.
+5. **Proof tag (43–45s):** "Drill this and you stop losing easy orgo points."
 
 ### Shot / visual note
-Orgo reaction visualizer EAS map fills the frame (9:16). Highlight director positions as you narrate. Use `eas-directors.png` as the cold-open hook frame.
+Use `eas-directors.png` as the cold-open hook frame (benzene ring with o/p vs meta
+positions + the halogen exception). Then walk the director positions on the orgo
+reaction visualizer's EAS map.
 
 ### Caption (keyword-rich)
-Electrophilic aromatic substitution wrecks more DAT orgo scores than almost any topic. Here is how to never miss a directors question again: activating groups send the next substituent ortho or para, deactivating groups send it meta, and halogens are the exception that breaks the pattern. Save this for your next orgo review block.
+Electrophilic aromatic substitution wrecks more DAT orgo scores than almost any topic. Here is the whole thing in four words: donors direct ortho and para, withdrawers direct meta, halogens are the exception (they deactivate but still send ortho/para), and alkyl groups are weak ortho/para directors. Bonus trap: to build a meta product, nitrate before you brominate. Save this for your next orgo review block.
 
 ### Hashtags
 #dat #predental #organicchemistry
 
 ### Pinned comment (CTA — never in-video)
-Free interactive orgo reaction maps here → https://acelabs.netlify.app/tools/ochem/
+Free interactive orgo reaction maps + EAS directing breakdown → https://acelabs.netlify.app/tools/ochem/#aromatic
 
 ### Production checklist
 - [ ] Export clean vertical 9:16, no watermark
-- [ ] Proof science-term captions: "electrophilic", "ortho/para", "meta", "deactivating", "halogen"
+- [ ] Proof science-term captions: "electrophilic", "ortho/para", "meta", "deactivate", "halogen", "nitrate", "brominate"
 - [ ] Native upload FB + IG Reels + TikTok (no cross-post links)
 - [ ] Paste pinned comment immediately after posting

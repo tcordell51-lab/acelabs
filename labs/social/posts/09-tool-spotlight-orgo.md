@@ -15,14 +15,20 @@
 
 ### Script beat sheet (30–45s)
 1. **The problem (0–8s):** students memorize reactions in isolation and never see how they connect.
-2. **The demo (8–38s):** quick screen capture of `tools/ochem/index.html` — show tapping into a reaction node, the director map, how reactions link. Narrate one real study-session use: "pick the reaction you missed, trace what feeds into it."
+2. **The demo (8–38s):** quick screen capture of the orgo visualizer. Show three things students actually use:
+   - the functional-group **roadmap** (tap a hub, see what it converts to),
+   - the **CARDIO** acidity ladder (rank by conjugate-base stability, not pKa tables),
+   - the **EAS directing** breakdown with the halogen exception.
+   Narrate one real study move: "pick the reaction you missed, trace what feeds into it."
 3. **The offer (38–45s):** "Free, no signup. Use it in your next orgo block."
 
 ### Shot / visual note
-Screen capture of the orgo reaction visualizer (`tools/ochem/index.html`) in portrait, or a clean **[GRAPHIC]** of the map with a "free, no signup" tag. Keep the UI legible at 9:16.
+Screen capture of the orgo reaction visualizer (`tools/ochem/index.html`) in portrait,
+or a clean **[GRAPHIC]** of the roadmap with a "free, no signup" tag. Keep the UI
+legible at 9:16. Deep-link sections: `#acid-base-cardio`, `#aromatic`.
 
 ### Caption (keyword-rich)
-Stop memorizing DAT organic chemistry reactions in isolation. We built a free interactive map that shows how every reaction connects — substitution, addition, directors, the lot. No signup, no email wall. Save it and pull it up during your next orgo study block.
+Stop memorizing DAT organic chemistry reactions in isolation. We built a free interactive map that shows how every reaction connects, plus a CARDIO acidity ladder and the full EAS directing breakdown with the halogen exception. No signup, no email wall. Save it and pull it up during your next orgo study block.
 
 ### Hashtags
 #dat #organicchemistry #predental
@@ -32,6 +38,6 @@ Open the free orgo reaction map → https://acelabs.netlify.app/tools/ochem/
 
 ### Production checklist
 - [ ] Screen-record the tool in portrait, legible text
-- [ ] Proof captions: "organic chemistry", "substitution", "addition"
+- [ ] Proof captions: "organic chemistry", "CARDIO", "electrophilic aromatic substitution", "halogen"
 - [ ] Native upload FB + IG Reels + TikTok
 - [ ] Paste pinned comment after posting

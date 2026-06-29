@@ -21,11 +21,18 @@ intentionally skipped).
 | `stills/src/*.html` | Source for each still. Edit, then re-render (below). |
 
 ## Free-tool links used in posts
-- Orgo reaction maps → https://acelabs.netlify.app/tools/ochem/
+- Orgo reaction maps (roadmap) → https://acelabs.netlify.app/tools/ochem/
+- Orgo · CARDIO acidity ladder → https://acelabs.netlify.app/tools/ochem/#acid-base-cardio
+- Orgo · EAS directing breakdown → https://acelabs.netlify.app/tools/ochem/#aromatic
 - Gen Chem periodic trends → https://acelabs.netlify.app/tools/gc/trends.html
 - QR pattern system → https://acelabs.netlify.app/tools/qr/qr-pattern-system-v1.html
 - Strategy call / contact → https://acethedat.com/contact.html
 - Team → https://acethedat.com/team.html
+
+The O Chem and Gen Chem posts (1, 5, 7, 9) and their stills are grounded in the
+actual Ace Labs tool content: the **CARDIO** acidity framework (Charge, Atom,
+Resonance, inDuction, Orbital), the EAS "4-word rule" + halogen exception, and the
+ionization-energy anomalies (Be > B, N > O) the trends tool drills.
 
 > Note: there is no dedicated PAT keyhole tool in Ace Labs yet. Post 2 points to
 > the Ace Labs home until one exists.
