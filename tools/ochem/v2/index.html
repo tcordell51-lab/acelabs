@@ -717,6 +717,7 @@ const CONTENT = {
         <b>3. Splitting (n+1)</b>: n neighboring H on adjacent carbons split a signal into <b>n+1</b> peaks — 0 = singlet, 1 = doublet, 2 = triplet, 3 = quartet.<br>
         <b>Shift regions (ppm):</b> alkyl ~0.9–1.5 · α-to-carbonyl ~2–2.5 · vinyl ~5–6 · aromatic ~7 · aldehyde ~9–10 · COOH ~11–12.</div>
       <div class="rule"><div class="rl">¹³C NMR</div>Number of signals = unique carbons (symmetry). Carbonyl <b>~200</b> (ketone ~205, ester/acid ~170–180) · aromatic ~120–150 · aliphatic ~0–50.</div>
+      <div class="rule"><div class="rl">Degrees of unsaturation</div>DoU = (2C + 2 + N − H − X) / 2. Each <b>ring or π bond</b> = 1; a benzene ring = <b>4</b> (three π bonds + one ring). Use it with the spectra to place rings and double bonds.</div>
       <div class="coachbox"><div class="rl">Coach trick · Thomas</div><b>OH is always a singlet</b> — the oxygen is a bad neighbor that isolates that H, so an alcohol or acid O–H shows up with no splitting. And <b>count the unique peaks first, then apply n+1</b> — they usually do not give you integration, so count how many different H environments there are, then split each by its neighbors.</div>
       <div class="depthnote"><b>DAT depth:</b> read IR key bands to name a group; count ¹H signals, apply n+1 splitting, use integration and shift regions; count ¹³C signals and use rough regions; combine spectra to deduce a small structure — yes. Coupling constants (J in Hz), 2D NMR, and second-order multiplets — not tested. (Mass spec is not on the 2026 list.)</div>`,
     worked:[
@@ -1059,9 +1060,9 @@ function drawFaded(id){
       '<button class="reveal-btn" id="rev">Reveal answer</button><div id="fans"></div></div>';
     document.getElementById('fin').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('rev').click();});
     document.getElementById('rev').addEventListener('click',()=>{
-      const typed=(document.getElementById('fin').value||'').trim().toLowerCase().replace(/[.,;]/g,'');
-      const ans=String(f.answer).trim().toLowerCase();
-      const ok=!!typed&&(typed===ans||ans.indexOf(typed)>=0||typed.indexOf(ans)>=0);
+      const norm=s=>String(s||'').trim().toLowerCase().replace(/[^a-z0-9+]/g,'');
+      const typed=norm(document.getElementById('fin').value), ans=norm(f.answer);
+      const ok=!!typed&&(typed===ans||typed.indexOf(ans)>=0||(typed.length>=3&&ans.startsWith(typed)));
       document.getElementById('fans').innerHTML='<div class="fb '+(ok?'good':'bad')+'"><div class="lab">'+(ok?'Nice — that is it':(typed?'Not quite — the answer is':'Answer'))+'</div><b>'+f.answer+'</b></div>';
       const b=document.createElement('button');b.className='next-btn';
       b.textContent=i<c.faded.length-1?'Next':'Continue to independent practice';
