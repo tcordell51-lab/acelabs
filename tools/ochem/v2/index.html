@@ -333,6 +333,22 @@ const BANK = {
     opts:['Has no lone pair','Contributes its lone pair to the ring p-system, giving 6 pi electrons','Is sp3 hybridized','Breaks the conjugation'],correct:1,
     why:'The nitrogen lone pair sits in the ring p-system, adding 2 pi electrons to the 4 from the two double bonds = 6 pi total, so pyrrole is aromatic.',
     diag:{0:'The N does have a lone pair, and it is exactly what makes pyrrole aromatic.',2:'The N is sp2 so its lone pair can join the p-system.',3:'The lone pair joins the conjugation rather than breaking it.'}},
+  sz1:{skill:'stereo',diff:2,q:'In an alkene, if the two HIGHER-priority groups (one on each double-bond carbon) are on the SAME side, the geometry is:',
+    opts:['E','Z','Always cis','It cannot be assigned'],correct:1,
+    why:'Same side of the higher-priority groups = Z (zusammen = together). Opposite sides = E (entgegen).',
+    diag:{0:'E is when the higher-priority groups are on OPPOSITE sides.',2:'cis/trans is the looser label; E/Z is the CIP-based one, and same-side is Z.',3:'With two different groups on each carbon it is fully assignable by CIP.'}},
+  sz2:{skill:'stereo',diff:3,q:'An alkene has Br and CH3 on the left carbon and Cl and H on the right carbon, with Br and Cl on OPPOSITE sides. Is it E or Z?',
+    opts:['Z','E','cis','meso'],correct:1,
+    why:'Higher priority on the left is Br (beats CH3), on the right is Cl (beats H). Those two are on opposite sides, so the alkene is E.',
+    diag:{0:'Opposite sides of the higher-priority groups is E, not Z.',2:'cis/trans is ambiguous here; use E/Z by CIP, which gives E.',3:'meso is a term for molecules with an internal mirror plane, not alkene geometry.'}},
+  sz3:{skill:'stereo',diff:2,q:'A chair ring-flip of cyclohexane converts every substituent that was axial into:',
+    opts:['Axial (no change)','Equatorial','A double bond','A different molecule'],correct:1,
+    why:'A ring-flip swaps axial and equatorial at every position. It is the same molecule in a different conformation.',
+    diag:{0:'The flip does change axial to equatorial; that is the whole point.',2:'No bonds break; nothing becomes a double bond.',3:'It is the same molecule, just a different chair.'}},
+  sz4:{skill:'stereo',diff:2,q:'In the most stable chair of methylcyclohexane, the methyl group sits:',
+    opts:['Axial','Equatorial, to avoid 1,3-diaxial strain','Either, it does not matter','Perpendicular to the ring'],correct:1,
+    why:'The larger group prefers equatorial to avoid 1,3-diaxial strain with the axial hydrogens on the same face. The bigger the group, the stronger the preference.',
+    diag:{0:'Axial is the higher-energy spot because of 1,3-diaxial bumping.',2:'It does matter: equatorial is more stable.',3:'Chair positions are axial or equatorial, not perpendicular.'}},
 };
 
 /* ---- CONTENT (per-module) ---- */
@@ -352,7 +368,7 @@ const CONTENT = {
       <div class="trapbox"><div class="rl">The classic trap</div>
         <b>D/L is not R/S.</b> For lactic acid drawn with COOH on top: OH on the <b>left = L = (S)</b>; OH on the <b>right = D = (R)</b>. Memorize the pairing, but always confirm R/S by CIP.</div>
       <div class="coachbox"><div class="rl">Coach trick · Thomas</div>In a Fischer, <b>left/right doesn't matter — horizontal vs vertical does</b>. Lowest priority (usually H) on a <b>horizontal → flip</b> your answer; on a <b>vertical → keep</b> it (the "bow-tie" rule). And the <b>meso exception</b>: two chiral centers can give <b>3</b> stereoisomers, not 4, when there's an internal mirror plane.</div>
-      <div class="depthnote"><b>DAT depth:</b> R/S, Fischer, meso, enantiomer vs diastereomer, optical activity, and Newman staggered/eclipsed — yes. (E/Z alkene geometry and chair axial/equatorial join this module in an upcoming pass.) Quantitative A-values and specific-rotation calculations — not tested.</div>`,
+      <div class="depthnote"><b>DAT depth:</b> R/S, E/Z, Fischer, meso, enantiomer vs diastereomer, optical activity, Newman staggered/eclipsed, and chair axial/equatorial (larger group equatorial) — yes. Quantitative A-values and specific-rotation calculations — not tested.</div>`,
     worked:[
       {q:'Assign R/S to 2-bromobutane with H pointing away from you.',
        steps:[
@@ -379,14 +395,28 @@ const CONTENT = {
          predict:{q:'Stereoisomers that are not mirror images are called…?',hint:'The other big category besides enantiomers.'}},
         {what:'Therefore they are diastereomers.',why:'Diastereomers differ in physical properties and can be separated by ordinary means.'},
        ], answer:'Diastereomers — only one of the two centers is inverted, so they are not mirror images.'},
+      {q:'An alkene has, on the left carbon, a –Br (top) and a –CH₃ (bottom); on the right carbon, a –Cl (top) and an –H (bottom). Is it E or Z?',
+       steps:[
+        {what:'On each double-bond carbon, rank the two groups by CIP (atomic number).',why:'E/Z is decided one carbon at a time.'},
+        {what:'Left carbon: Br (35) beats CH₃ (C=6). Right carbon: Cl (17) beats H. So the higher-priority group is Br (top-left) and Cl (top-right).',why:'Only the winner on each carbon matters.',
+         predict:{q:'Both higher-priority groups (Br and Cl) sit on top — the same side. Same side is E or Z?',hint:'Z = zusammen = together (same side).'}},
+        {what:'Both higher-priority groups on the same side → Z.',why:'Opposite sides would be E (entgegen).'},
+       ], answer:'Z — the two higher-priority groups (Br and Cl) are on the same side. E/Z is the rigorous version of cis/trans, decided by CIP on each carbon.'},
+      {q:'In the most stable chair of methylcyclohexane, is the methyl axial or equatorial?',
+       steps:[
+        {what:'Cyclohexane sits in a chair; each carbon has one axial (straight up/down) and one equatorial (out to the side) position. A ring-flip swaps every axial with equatorial.',why:'Both chairs are the same molecule, just flipped.'},
+        {what:'An axial methyl points over the ring and bumps the two axial hydrogens on the same face — 1,3-diaxial strain.',why:'That crowding raises the energy.',
+         predict:{q:'To avoid that 1,3-diaxial bumping, does the larger group prefer axial or equatorial?',hint:'Equatorial points away from the ring face.'}},
+        {what:'The methyl prefers equatorial; that chair is the more stable conformation.',why:'The bigger the group, the stronger the preference for equatorial.'},
+       ], answer:'Equatorial — the larger substituent goes equatorial to avoid 1,3-diaxial strain. (Qualitative only; the DAT does not ask for numeric A-values.)'},
     ],
     faded:[
       {prompt:'A stereocenter has priorities 1→2→3 tracing clockwise, and the lowest priority points AWAY from you. The configuration is ___.',hint:'#4 in back, clockwise.',answer:'R'},
       {prompt:'Same clockwise trace, but now the lowest priority points TOWARD you. The configuration is ___.',hint:'Toward you means reverse.',answer:'S'},
       {prompt:'Glyceraldehyde drawn in a Fischer with CHO on top and OH on the right at the bottom center is the ___ enantiomer (D or L).',hint:'OH on the right of the bottom stereocenter.',answer:'D'},
     ],
-    practice:['st1','st2','st3','st4','st6','st8'],
-    mastery:['st5','st7','st2','st3','st6','st8','st4','st1'],
+    practice:['st1','st2','st3','sz1','sz2','st6','sz3','sz4','st8'],
+    mastery:['st5','st7','sz2','sz4','st2','sz1','st6','sz3','st4','st1'],
   },
   // Concept-level seeds for a few neighbors (fuller builds come each iteration)
   bonding:{accent:'var(--t0)',sub:'Hybridization, resonance, and the curved-arrow grammar every mechanism uses.',
