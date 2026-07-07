@@ -177,7 +177,7 @@ button{font-family:inherit;cursor:pointer}
 <div class="shell">
   <nav class="tree-pane" aria-label="Course module tree">
     <p class="tree-h">The course</p>
-    <p class="tree-sub">Twenty modules. Each unlocks when its prerequisites are mastered — so there is always one clear next step.</p>
+    <p class="tree-sub">Twenty modules on a prerequisite tree. Stereochemistry, Acid-Base, and Aromaticity are fully live now; the rest are being authored pass by pass.</p>
     <div id="tree"></div>
   </nav>
   <main class="main-pane" id="main" tabindex="-1"></main>
@@ -442,7 +442,8 @@ const CONTENT = {
         <b>Atom</b> — a more electronegative atom holds charge better across a row (O &gt; N &gt; C); a larger atom spreads it out down a column, and <b>size wins going down</b> (I⁻ &gt; Br⁻ &gt; Cl⁻ &gt; F⁻, so HI &gt; HBr &gt; HCl &gt; HF).<br>
         <b>Resonance</b> — spreading the charge over several atoms is a big stabilizer. Carboxylate shares its charge over two oxygens, so RCOOH (pKa ~4–5) beats ROH (pKa ~16).<br>
         <b>Induction</b> — nearby electron-withdrawing atoms pull charge away and stabilize the anion (Cl₃C–COOH ≫ CH₃COOH).<br>
-        <b>Hybridization</b> — more s-character holds the lone pair closer to the nucleus: sp &gt; sp² &gt; sp³. A terminal alkyne C–H (sp, pKa ~25) is far more acidic than an alkane C–H (sp³, pKa ~50).</div>
+        <b>Hybridization</b> — more s-character holds the lone pair closer to the nucleus: sp &gt; sp² &gt; sp³. A terminal alkyne C–H (sp, pKa ~25) is far more acidic than an alkane C–H (sp³, pKa ~50).<br>
+        <b>Sterics</b> — a bulky base reaches a proton more slowly, so hindered bases are weaker and poorer nucleophiles (a minor factor for acidity itself).</div>
       <div class="rule"><div class="rl">pKa landmarks — lower pKa = stronger acid</div>carboxylic acid ~4–5 · ammonium (RNH₃⁺) ~10 · phenol ~10 · water ~15.7 · alcohol ~16–18 · α-carbonyl C–H ~20 · terminal alkyne ~25 · alkane ~50.</div>
       <div class="coachbox"><div class="rl">Coach trick · Thomas</div><b>More resonance = stronger acid</b> — because resonance stabilizes the conjugate base. So always <b>judge acidity by the conjugate base</b>. Flip it for bases: <b>the strongest base has the least resonance</b> (a lone pair tied up in resonance is not available to grab a proton). And do not let the word "weak" fool you: HF (pKa ~3) is still far stronger than water (pKa ~16).</div>
       <div class="depthnote"><b>DAT depth:</b> rank most acidic/most basic by conjugate-base stability (atom, resonance, induction, hybridization), use approximate pKa landmarks, identify conjugate acid/base pairs, and predict which side an equilibrium favors (toward the weaker acid and weaker base) — yes. Memorizing pKa to decimals or Ka / Henderson–Hasselbalch computation (that is Gen Chem) — no.</div>`,
@@ -529,7 +530,7 @@ function renderTree(){
       b.setAttribute('aria-label',m.name+' — '+st);
       const authored=!!(CONTENT[m.id]&&CONTENT[m.id].worked&&CONTENT[m.id].worked.length);
       b.innerHTML='<span class="dot" aria-hidden="true"></span><span class="nm">'+m.name+'</span>'+
-        (st==='locked'?'<span class="lk">locked</span>':(st==='mastered'?'<span class="lk" style="color:var(--good)">done</span>':(authored?'':'<span class="lk">soon</span>')));
+        (st==='locked'?'<span class="lk">in development</span>':(st==='mastered'?'<span class="lk" style="color:var(--good)">done</span>':(authored?'':'<span class="lk">soon</span>')));
       b.addEventListener('click',()=>openModule(m.id));
       block.appendChild(b);
     });
@@ -541,12 +542,12 @@ function renderTree(){
 /* ---- RENDER: home ---- */
 function renderHome(){
   activeId=null;renderTree();
-  const next=MODS.find(m=>isAuthored(m.id)&&ST.mastery[m.id]!=='mastered')||MODS.find(m=>statusOf(m)==='unlocked'&&ST.mastery[m.id]!=='mastered')||MODS[0];
+  const next=MODS.find(m=>isAuthored(m.id)&&ST.mastery[m.id]!=='mastered')||MODS.find(m=>isAuthored(m.id))||MODS.find(m=>hasContent(m.id))||MODS[0];
   mainEl.innerHTML=
    '<div class="hero">'+
      '<p class="eye">A guided course · not a room full of tools</p>'+
      '<h1>Organic chemistry, <em>one clear step</em> at a time.</h1>'+
-     '<p>Twenty modules on a prerequisite tree. Each one teaches the same way — concept, worked examples you predict before they reveal, fading practice, then a mastery check you have to earn. Master a module and it unlocks the next.</p>'+
+     '<p>Every module teaches the same way — concept, worked examples you predict before they reveal, fading practice, then a mastery check you have to earn. Three are fully live now (Stereochemistry, Acid-Base, Aromaticity); the rest are being authored.</p>'+
      '<p>No wall of tools. Just the next rung.</p>'+
      '<button class="cta" id="startBtn">Start: '+next.name+'</button>'+
      '<button class="cta ghost" id="stereoBtn">Jump to Stereochemistry</button>'+
@@ -607,7 +608,7 @@ function renderStage(id){
 function markStageDone(id,idx){
   const ss=stageState(id);
   if(ss.done.indexOf(idx)<0)ss.done.push(idx);
-  ss.cur=Math.min(idx+1,4);
+  ss.cur=Math.max(ss.cur,Math.min(idx+1,4));
   ST.mastery[id]=ss.done.length>=5?'mastered':'partial';
   save(ST);renderTree();
 }
@@ -728,7 +729,7 @@ function drawBankSet(id,ids,mode){
       const b=document.createElement('button');b.className='next-btn';
       b.textContent=i<ids.length-1?'Next question':'Finish this set';
       b.addEventListener('click',()=>{if(i<ids.length-1){i++;render();}else{markStageDone(id,3);renderStage(id);}});
-      fb.appendChild(b);
+      fb.appendChild(b);b.focus();
     }));
   }
   render();
@@ -758,7 +759,7 @@ function drawMastery(id){
         (correct?'':'<b>'+(q.diag[idx]||'')+'</b><br>')+q.why+'</div>';
       if(streak>=3){finishMastery(id);return;}
       const b=document.createElement('button');b.className='next-btn';b.textContent='Next';
-      b.addEventListener('click',render);fb.appendChild(b);
+      b.addEventListener('click',render);fb.appendChild(b);b.focus();
     }));
   }
   render();
@@ -770,7 +771,7 @@ function finishMastery(id){
   ss.cur=5;ST.mastery[id]='mastered';save(ST);renderTree();
   const opened=MODS.filter(x=>x.prereqs.indexOf(id)>=0&&isUnlocked(x)).map(x=>x.name);
   mainEl.innerHTML='<div class="celebrate"><h3>'+m.name+' — mastered.</h3>'+
-    '<p>Three in a row on unseen items. '+(opened.length?'You just unlocked: <b>'+opened.join(', ')+'</b>.':'Keep going — more unlocks as you clear prerequisites.')+'</p></div>'+
+    '<p>Three in a row — the module is yours. '+(opened.length?'You just unlocked: <b>'+opened.join(', ')+'</b>.':'Keep going — more unlocks as you clear prerequisites.')+'</p></div>'+
     '<button class="next-btn" id="toNext">'+(opened.length?'Open '+opened[0]:'Back to the tree')+'</button> '+
     '<button class="next-btn ghost" id="toHome">See the tree</button>';
   document.getElementById('toHome').addEventListener('click',renderHome);
