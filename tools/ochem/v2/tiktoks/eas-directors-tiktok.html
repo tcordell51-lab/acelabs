@@ -74,12 +74,12 @@ html,body{background:#000;overflow:hidden;font-family:var(--sans);color:var(--in
 </head>
 <body>
 <div class="stage" id="stage" data-phase="hook">
-  <div class="brand"><div class="brand-word">Ace The <span>DAT</span></div><div class="brand-tag">Organic · EAS Directors</div></div>
+  <div class="brand"><div class="brand-word">Ace The <span>DAT</span></div><div class="brand-tag">Organic · EAS · LPOP</div></div>
 
   <div class="hook" id="hook">
-    <div class="hook-tag">EAS · who aims where</div>
-    <div class="hook-word">The group<br/>already on<br/>the ring<br/><em>calls the shot.</em></div>
-    <div class="hook-sub">Rich rings and poor rings send the next group to different seats.</div>
+    <div class="hook-tag">EAS · the LPOP trick</div>
+    <div class="hook-word"><em>LPOP.</em><br/>Lone Pairs →<br/>Ortho-Para.</div>
+    <div class="hook-sub">The group already on the ring calls the shot. Read its electrons — plus R groups count too.</div>
   </div>
 
   <div class="demo" id="demo">
@@ -109,17 +109,17 @@ html,body{background:#000;overflow:hidden;font-family:var(--sans);color:var(--in
 
   <div class="trap" id="trap">
     <div class="trap-ribbon">The DAT trap</div>
-    <div class="trap-h">Halogens<br/><em>break the rule.</em></div>
-    <div class="trap-sub">F, Cl, Br, I <em>deactivate</em> (slow it down by pulling electrons through the bond) — yet they still send the next group <em>ortho / para</em> by donating a lone pair. Poor ring, ortho-para seats.</div>
+    <div class="trap-h">Halogens:<br/><em>LPOP wins the seat.</em></div>
+    <div class="trap-sub">Cl, Br, I keep their lone pairs → LPOP → <em>ortho / para</em>. But they still want that "magic eight" octet, so they pull electrons and <em>deactivate</em>. Ortho-para seat, slower reaction.</div>
   </div>
 
   <div class="lock" id="lock">
     <div class="lock-tag">Lock it in</div>
-    <div class="lock-word">Rich aims <em>o/p.</em><br/>Poor aims <em>meta.</em></div>
+    <div class="lock-word"><em>LPOP</em> + R → o/p.<br/>Flip the <em>W</em> → meta.</div>
     <div class="lock-decode">
-      <span class="rich">Donors (–OH, –NH₂, –OR, alkyl)</span> → ortho/para, faster<br/>
-      <span class="poor">Withdrawers (–NO₂, C=O, –SO₃H)</span> → meta, slower<br/>
-      <span class="hal">Halogens</span> → the exception: slower, but ortho/para
+      <span class="rich">Lone pairs (–OH, –NH₂, –OR) + alkyl R</span> → ortho/para, faster<br/>
+      <span class="poor">Withdrawing (–NO₂, C=O, –SO₃H)</span> → flip the W → meta, slower<br/>
+      <span class="hal">Halogens</span> → LPOP seat (o/p), but still deactivate
     </div>
   </div>
 
@@ -145,13 +145,13 @@ function lightMeta(){clearSites();['m1','m2'].forEach(s=>{$(s).classList.add('m'
 
 const TL=[
  {t:0,fn:()=>{stage.dataset.phase='hook';hook.style.opacity=1;demo.style.opacity=0;dverdict.style.opacity=0;caption.style.opacity=0;trap.style.opacity=0;lock.style.opacity=0;clearSites();}},
- {t:4500,fn:()=>{stage.dataset.phase='demo';hook.style.opacity=0;setTimeout(()=>{demo.style.opacity=1;dverdict.style.opacity=1;},420);setSub('OH');lightOP();$('dvTag').textContent='activator (donor)';$('dvTag').style.color='var(--rich)';$('dvText').textContent='ortho / para';$('dvText').style.color='var(--rich)';$('dvSub').textContent='–OH donates electrons: rich ring, faster';}},
- {t:9000,fn:()=>{caption.innerHTML='Electron <b style="color:var(--rich)">donors</b> → ortho / para';caption.style.opacity=1;}},
- {t:13000,fn:()=>{caption.style.opacity=0;setSub('NO₂');lightMeta();$('dvTag').textContent='deactivator (withdrawer)';$('dvTag').style.color='var(--poor)';$('dvText').textContent='meta';$('dvText').style.color='var(--poor)';$('dvSub').textContent='–NO₂ pulls electrons: poor ring, slower';}},
- {t:18000,fn:()=>{caption.innerHTML='Electron <b style="color:var(--poor)">withdrawers</b> → meta';caption.style.opacity=1;}},
+ {t:4500,fn:()=>{stage.dataset.phase='demo';hook.style.opacity=0;setTimeout(()=>{demo.style.opacity=1;dverdict.style.opacity=1;},420);setSub('OH');lightOP();$('dvTag').textContent='LPOP · lone pairs donate';$('dvTag').style.color='var(--rich)';$('dvText').textContent='ortho / para';$('dvText').style.color='var(--rich)';$('dvSub').textContent='lone pairs → LPOP → o/p (R groups too)';}},
+ {t:9000,fn:()=>{caption.innerHTML='Lone pairs → <b style="color:var(--rich)">LPOP</b> → ortho/para';caption.style.opacity=1;}},
+ {t:13000,fn:()=>{caption.style.opacity=0;setSub('NO₂');lightMeta();$('dvTag').textContent='flip the W → meta';$('dvTag').style.color='var(--poor)';$('dvText').textContent='meta';$('dvText').style.color='var(--poor)';$('dvSub').textContent='oxygen bullies the ring poor → meta';}},
+ {t:18000,fn:()=>{caption.innerHTML='Withdrawing? <b style="color:var(--poor)">Flip the W</b> → meta';caption.style.opacity=1;}},
  {t:22000,fn:()=>{caption.style.opacity=0;}},
  {t:24000,fn:()=>{stage.dataset.phase='trap';trap.style.opacity=1;}},
- {t:33000,fn:()=>{trap.style.opacity=0;setSub('Cl');lightOP();demo.style.opacity=1;dverdict.style.opacity=1;$('dvTag').textContent='halogen · the exception';$('dvTag').style.color='var(--trap)';$('dvText').textContent='ortho / para';$('dvText').style.color='var(--trap)';$('dvSub').textContent='deactivates, yet still o/p directing';stage.dataset.phase='demo';}},
+ {t:33000,fn:()=>{trap.style.opacity=0;setSub('Cl');lightOP();demo.style.opacity=1;dverdict.style.opacity=1;$('dvTag').textContent='halogen · LPOP wins the seat';$('dvTag').style.color='var(--trap)';$('dvText').textContent='ortho / para';$('dvText').style.color='var(--trap)';$('dvSub').textContent='LPOP seat, but still deactivates';stage.dataset.phase='demo';}},
  {t:38000,fn:()=>{demo.style.opacity=0;dverdict.style.opacity=0;stage.dataset.phase='lock';lock.style.opacity=1;}},
  {t:52000,fn:()=>{}},
  {t:58000,fn:()=>{stage.dataset.phase='hook';lock.style.opacity=0;hook.style.opacity=1;}}
