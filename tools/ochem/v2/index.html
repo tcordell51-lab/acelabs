@@ -389,6 +389,38 @@ const BANK = {
     opts:['Loss of resonance','Steric crowding','Loss of aromaticity','Induction'],correct:1,
     why:'The spot sandwiched between two groups is too crowded, so substitution favors the less-hindered open positions.',
     diag:{0:'Resonance is not what blocks that position.',2:'The ring stays aromatic throughout EAS.',3:'Induction is about electron withdrawal, not the steric block.'}},
+  sp1:{skill:'spec',diff:1,q:'A strong IR absorption near 1700-1750 cm-1 indicates:',
+    opts:['An O-H bond','A carbonyl (C=O)','A C-C single bond','An aromatic ring'],correct:1,
+    why:'The 1700-1750 band is the strong, diagnostic C=O stretch.',
+    diag:{0:'O-H is a broad band up near 3200-3550, not at 1715.',2:'A C-C single bond has no strong characteristic band here.',3:'Aromatic modes are elsewhere, not the 1715 carbonyl band.'}},
+  sp2:{skill:'spec',diff:1,q:'A broad IR absorption around 3200-3550 cm-1 signals:',
+    opts:['A carbonyl (C=O)','An O-H (alcohol or acid)','A triple bond','An sp3 C-H'],correct:1,
+    why:'A broad band in the 3200-3550 region is the O-H stretch (very broad, ~2500-3300, for carboxylic acids).',
+    diag:{0:'C=O is a sharp band near 1715, not broad at 3300.',2:'Triple bonds absorb weakly near 2100-2260.',3:'sp3 C-H sits near 2850-2960 and is sharp.'}},
+  sp3:{skill:'spec',diff:2,q:'In 1H NMR, the number of signals equals:',
+    opts:['The total number of hydrogens','The number of chemically different (non-equivalent) hydrogens','The number of carbons','The molecular weight'],correct:1,
+    why:'Each set of chemically equivalent hydrogens gives one signal; use symmetry to count the distinct environments.',
+    diag:{0:'Equivalent hydrogens share a signal, so the total H count is usually higher.',2:'Carbons are counted by 13C NMR, not 1H.',3:'Molecular weight is unrelated to signal count.'}},
+  sp4:{skill:'spec',diff:1,q:'By the n+1 rule, a hydrogen with 2 neighboring hydrogens appears as a:',
+    opts:['Singlet','Doublet','Triplet','Quartet'],correct:2,
+    why:'2 neighbors give 2+1 = 3 peaks, which is a triplet.',
+    diag:{0:'A singlet means 0 neighbors.',1:'A doublet means 1 neighbor.',3:'A quartet means 3 neighbors.'}},
+  sp5:{skill:'spec',diff:2,q:'In ethanol, the CH2 group (next to a CH3) appears as a:',
+    opts:['Singlet','Doublet','Triplet','Quartet'],correct:3,
+    why:'The CH2 has 3 neighboring hydrogens on the adjacent CH3, so 3+1 = 4 peaks = a quartet.',
+    diag:{0:'A singlet needs 0 neighbors; the CH2 has 3.',1:'A doublet needs 1 neighbor.',2:'A triplet needs 2 neighbors; here there are 3.'}},
+  sp6:{skill:'spec',diff:2,q:'An alcohol or carboxylic acid O-H proton in 1H NMR typically appears as a:',
+    opts:['Triplet','Quartet','Singlet','Doublet'],correct:2,
+    why:'The oxygen isolates the O-H (it exchanges and does not couple), so it shows up as a singlet. Thomas: OH is always a singlet.',
+    diag:{0:'The O-H does not split into a triplet; it is a singlet.',1:'Not a quartet either.',3:'Not a doublet; the O-H is isolated.'}},
+  sp7:{skill:'spec',diff:2,q:'A 1H NMR peak near 9-10 ppm is characteristic of:',
+    opts:['An alkyl CH3','An aromatic H','An aldehyde H (-CHO)','A vinyl H'],correct:2,
+    why:'The 9-10 ppm region is the diagnostic window for the aldehyde hydrogen. Alkyl ~1, aromatic ~7, vinyl ~5-6.',
+    diag:{0:'Alkyl hydrogens sit near 0.9-1.5 ppm.',1:'Aromatic hydrogens are near 7 ppm.',3:'Vinyl hydrogens are near 5-6 ppm.'}},
+  sp8:{skill:'spec',diff:2,q:'In 13C NMR, a peak near 200 ppm indicates:',
+    opts:['A carbonyl carbon (C=O)','An aromatic carbon','An alkyl carbon','No carbon'],correct:0,
+    why:'Carbonyl carbons resonate far downfield (ketone ~205, ester/acid ~170-180). Aromatic carbons are ~120-150, aliphatic ~0-50.',
+    diag:{1:'Aromatic carbons are near 120-150, not 200.',2:'Aliphatic carbons are near 0-50.',3:'A peak means a carbon is present; near 200 it is a carbonyl.'}},
 };
 
 /* ---- CONTENT (per-module) ---- */
@@ -602,6 +634,53 @@ const CONTENT = {
     ],
     practice:['se1','se2','se3','se5','se7','se8'],
     mastery:['se4','se6','se2','se5','se3','se8','se1','se7'],
+  },
+  spec:{accent:'var(--t3)',
+    sub:'IR, ¹H NMR, and ¹³C NMR — read the spectra to name a functional group and deduce a small structure. Reliably high-yield on the DAT.',
+    concept:`<h3>Three tools, one structure</h3>
+      <p>IR tells you the <b>functional group</b>, ¹H NMR tells you the <b>hydrogen environments</b>, ¹³C NMR tells you the <b>carbon environments</b>. Combine them (plus degrees of unsaturation) to pin a small molecule.</p>
+      <div class="rule"><div class="rl">IR — the key bands</div>
+        <b>C=O</b> (carbonyl) <b>~1700–1750</b> — the strongest, most diagnostic band.<br>
+        Broad <b>O–H</b> (alcohol) ~3200–3550; a carboxylic-acid O–H is even broader, ~2500–3300.<br>
+        <b>N–H</b> ~3300–3500 (sharper than O–H). <b>C≡C / C≡N</b> ~2100–2260 (weak). sp³ C–H ~2850–2960; =C–H just above 3000.</div>
+      <div class="rule"><div class="rl">¹H NMR — three questions</div>
+        <b>1. Number of signals</b> = number of chemically <em>different</em> H (use symmetry).<br>
+        <b>2. Integration</b> = relative <em>number</em> of H under each signal.<br>
+        <b>3. Splitting (n+1)</b>: n neighboring H on adjacent carbons split a signal into <b>n+1</b> peaks — 0 = singlet, 1 = doublet, 2 = triplet, 3 = quartet.<br>
+        <b>Shift regions (ppm):</b> alkyl ~0.9–1.5 · α-to-carbonyl ~2–2.5 · vinyl ~5–6 · aromatic ~7 · aldehyde ~9–10 · COOH ~11–12.</div>
+      <div class="rule"><div class="rl">¹³C NMR</div>Number of signals = unique carbons (symmetry). Carbonyl <b>~200</b> (ketone ~205, ester/acid ~170–180) · aromatic ~120–150 · aliphatic ~0–50.</div>
+      <div class="coachbox"><div class="rl">Coach trick · Thomas</div><b>OH is always a singlet</b> — the oxygen is a bad neighbor that isolates that H, so an alcohol or acid O–H shows up with no splitting. And <b>count the unique peaks first, then apply n+1</b> — they usually do not give you integration, so count how many different H environments there are, then split each by its neighbors.</div>
+      <div class="depthnote"><b>DAT depth:</b> read IR key bands to name a group; count ¹H signals, apply n+1 splitting, use integration and shift regions; count ¹³C signals and use rough regions; combine spectra to deduce a small structure — yes. Coupling constants (J in Hz), 2D NMR, and second-order multiplets — not tested. (Mass spec is not on the 2026 list.)</div>`,
+    worked:[
+      {q:'A compound shows a strong, sharp IR band at ~1715 cm⁻¹ and NO broad O–H around 3000–3500. What functional group is present?',
+       steps:[
+        {what:'The ~1700–1750 region is the C=O (carbonyl) stretch — the strongest, most diagnostic IR band.',why:'Nothing else absorbs so strongly right there.'},
+        {what:'Check for a broad O–H (3200–3550). There is none.',why:'A broad O–H would signal an alcohol or carboxylic acid.',
+         predict:{q:'Strong band at 1715 but NO broad O–H. Is this an alcohol, or a carbonyl compound?',hint:'Which band lives at 1715 — the O–H stretch or the C=O stretch?'}},
+        {what:'C=O present, O–H absent → a ketone or aldehyde.',why:'The missing O–H rules out a carboxylic acid.'},
+       ], answer:'A carbonyl (C=O) — a ketone or aldehyde (~1715). The absence of a broad O–H rules out a carboxylic acid.'},
+      {q:'For ethanol (CH₃CH₂OH): how many ¹H NMR signals, and how are the CH₃ and CH₂ split?',
+       steps:[
+        {what:'Count the different H environments: CH₃, CH₂, and OH → 3 signals.',why:'Each set of equivalent H gives one signal.'},
+        {what:'Apply n+1. The CH₃ has the 2 H of the CH₂ next to it → 2+1 = triplet.',why:'n neighbors give n+1 peaks.',
+         predict:{q:'The CH₂ has the 3 H of the neighboring CH₃ next to it. By n+1, how many peaks does the CH₂ signal show?',hint:'Count the neighbors, then add one.'}},
+        {what:'The CH₂ sees 3 neighbors → 3+1 = quartet. The OH is a singlet.',why:'Thomas: OH is always a singlet — the oxygen isolates that H.'},
+       ], answer:'3 signals: CH₃ = triplet (2 neighbors), CH₂ = quartet (3 neighbors), OH = singlet.'},
+      {q:'IR shows a strong band at ~1715 and NO broad O–H; ¹H NMR shows a 1 H peak near 9.7 ppm plus a peak near 2.2 ppm. What is the compound?',
+       steps:[
+        {what:'IR: C=O present (~1715), no O–H → aldehyde or ketone.',why:'Narrows it to a carbonyl without an acid or alcohol.'},
+        {what:'A 1 H peak near 9.7 ppm is the diagnostic aldehyde hydrogen (–CHO).',why:'The 9–10 ppm region belongs to the aldehyde H.',
+         predict:{q:'A 1 H peak near 9.7 ppm points to which group — an aldehyde H, an aromatic H, or a COOH?',hint:'Recall the shift regions: aldehyde ~9–10, aromatic ~7, COOH ~11–12.'}},
+        {what:'So it is an aldehyde; the ~2.2 peak is the α-CH₃ (this is acetaldehyde).',why:'C=O plus the CHO hydrogen pin it down.'},
+       ], answer:'An aldehyde — the C=O (IR) plus the ~9.7 ppm ¹H peak (the CHO hydrogen) identify it; the ~2.2 peak is the α-methyl. No O–H rules out an acid.'},
+    ],
+    faded:[
+      {prompt:'A strong IR band near 1700–1750 cm⁻¹ signals a ___ group.',hint:'The most diagnostic IR band.',answer:'carbonyl'},
+      {prompt:'In ¹H NMR, a signal split by n neighboring hydrogens shows ___ peaks.',hint:'The splitting rule.',answer:'n+1'},
+      {prompt:'An alcohol or acid O–H proton appears as a ___ in ¹H NMR (Thomas rule).',hint:'The oxygen isolates it.',answer:'singlet'},
+    ],
+    practice:['sp1','sp2','sp3','sp4','sp6','sp7'],
+    mastery:['sp5','sp8','sp2','sp4','sp6','sp7','sp1','sp3'],
   },
 };
 
