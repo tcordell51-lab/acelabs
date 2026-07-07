@@ -1218,7 +1218,7 @@ function drawFaded(id){
       if(document.getElementById('fans').innerHTML)return;
       const norm=s=>String(s||'').trim().toLowerCase().replace(/\b(and|the)\b/g,'').replace(/[^a-z0-9+]/g,'');
       const typed=norm(document.getElementById('fin').value), ans=norm(f.answer);
-      const ok=!!typed&&(typed===ans||typed.indexOf(ans)>=0||(typed.length>=3&&ans.startsWith(typed)));
+      const ok=!!typed&&(typed===ans||(ans.length>=4&&(typed.indexOf(ans)>=0||(ans.startsWith(typed)&&typed.length>=3))));
       document.getElementById('fans').innerHTML='<div class="fb '+(ok?'good':'bad')+'"><div class="lab">'+(ok?'Nice — that is it':(typed?'Not quite — the answer is':'Answer'))+'</div><b>'+f.answer+'</b></div>';
       const b=document.createElement('button');b.className='next-btn';
       b.textContent=i<c.faded.length-1?'Next':'Continue to independent practice';
@@ -1265,7 +1265,7 @@ function drawMastery(id){
   let streak=0,pi=0;
   function render(){
     const q=BANK[pool[pi%pool.length]];
-    let h='<div class="mastery-meter">Get <b style="color:var(--gold)">3 in a row</b> to master this module.<span class="streak">'+
+    let h='<div class="mastery-meter">Get <b style="color:var(--gold)">3 in a row</b> to master this module.<span class="streak" aria-hidden="true">'+
       [0,1,2].map(k=>'<i class="'+(k<streak?'on':'')+'"></i>').join('')+'</span></div>';
     h+='<div class="card"><h3>Mastery check</h3><p><b>'+q.q+'</b></p><div class="opts" role="group" aria-label="Answer choices">';
     q.opts.forEach((o,idx)=>{h+='<button class="opt" data-i="'+idx+'"><span class="lt">'+'ABCD'[idx]+'</span><span>'+o+'</span></button>';});
@@ -1279,7 +1279,7 @@ function drawMastery(id){
       streak=correct?streak+1:0;pi++;
       document.querySelectorAll('.streak i').forEach((el,k)=>el.classList.toggle('on',k<streak));
       const fb=document.getElementById('mfb');
-      fb.innerHTML='<div class="fb '+(correct?'good':'bad')+'"><div class="lab">'+(correct?'Correct — streak '+streak:'Streak reset')+'</div>'+
+      fb.innerHTML='<div class="fb '+(correct?'good':'bad')+'"><div class="lab">'+(correct?'Correct — streak '+streak:'Streak restarts - rebuild it')+'</div>'+
         (correct?'':'<b>'+(q.diag[idx]||'')+'</b><br>')+q.why+
         (correct?'':'<br><span style="color:var(--good);font-weight:600">Correct answer: '+'ABCD'[q.correct]+' — '+q.opts[q.correct]+'</span>')+'</div>';
       const b=document.createElement('button');b.className='next-btn';
