@@ -421,6 +421,10 @@ const BANK = {
     opts:['A carbonyl carbon (C=O)','An aromatic carbon','An alkyl carbon','No carbon'],correct:0,
     why:'Carbonyl carbons resonate far downfield (ketone ~205, ester/acid ~170-180). Aromatic carbons are ~120-150, aliphatic ~0-50.',
     diag:{1:'Aromatic carbons are near 120-150, not 200.',2:'Aliphatic carbons are near 0-50.',3:'A peak means a carbon is present; near 200 it is a carbonyl.'}},
+  sz5:{skill:'stereo',diff:3,q:'A molecule has 2 stereocenters. What is the MAXIMUM number of stereoisomers, and what can lower it?',
+    opts:['2, always','4 (that is 2^n), unless an internal mirror plane makes a meso form (then 3)','3, always','1'],correct:1,
+    why:'n stereocenters give up to 2^n stereoisomers. A meso compound (an internal mirror plane) collapses two of them into one achiral molecule, so 2 centers give 3 instead of 4.',
+    diag:{0:'Two centers give up to 2^2 = 4, not 2.',2:'3 is only the meso-reduced count; the general maximum is 4 (2^n).',3:'A single molecule is not the count of stereoisomers.'}},
 };
 
 /* ---- CONTENT (per-module) ---- */
@@ -448,7 +452,7 @@ const CONTENT = {
         {what:'Priorities: Br (1) > CH₂CH₃ (2) > CH₃ (3) > H (4).',why:'Ethyl beats methyl because its next atom is C, versus H on methyl.'},
         {what:'H (lowest) already points away — no flip needed.',why:'This is the ideal viewing setup; read the rotation directly.'},
         {what:'Trace Br → ethyl → methyl. If clockwise, it is (R).',why:'1→2→3 clockwise with #4 in back = R by definition — so counter-clockwise would be (S).',
-         predict:{q:'If that same trace had come out counter-clockwise instead, what would it be?',hint:'Clockwise = R. The opposite direction is…'}},
+         predict:{q:'If that same trace had come out counter-clockwise instead, what would it be?',hint:'You know what clockwise gives — apply that to the opposite direction.'}},
        ], answer:'Clockwise with the lowest priority in back gives (R)-2-bromobutane; counter-clockwise would be (S).'},
       {q:'Assign the configuration of lactic acid drawn in a Fischer projection: COOH top, CH₃ bottom, OH on the LEFT, H on the right.',
        fischer:'        COOH\n         |\n  HO ───C─── H\n         |\n        CH3',
@@ -488,8 +492,8 @@ const CONTENT = {
       {prompt:'Glyceraldehyde drawn in a Fischer with CHO on top and OH on the right at the bottom center is the ___ enantiomer (D or L).',hint:'OH on the right of the bottom stereocenter.',answer:'D'},
       {prompt:'A racemic mixture (50:50 enantiomers) and a meso compound both show ___ net optical rotation. (The sign +/− is measured, not predicted from R/S.)',hint:'The two rotations cancel.',answer:'zero'},
     ],
-    practice:['st1','st2','st3','sz1','sz2','st6','sz3','sz4','st8'],
-    mastery:['st5','st7','sz2','sz4','st2','sz1','st6','sz3','st4','st1'],
+    practice:['st1','st2','st3','sz1','sz2','sz5','st6','sz3','sz4','st8'],
+    mastery:['st5','st7','sz2','sz4','sz5','st2','sz1','st6','sz3','st4','st1'],
   },
   // Concept-level seeds for a few neighbors (fuller builds come each iteration)
   bonding:{accent:'var(--t0)',sub:'Hybridization, resonance, and the curved-arrow grammar every mechanism uses.',
@@ -899,8 +903,9 @@ function drawFaded(id){
     el.innerHTML='<div class="card"><h3>Faded practice '+(i+1)+' of '+c.faded.length+'</h3>'+
       '<p>'+f.prompt.replace('___','<b style=\"color:var(--gold)\">___</b>')+'</p>'+
       '<div class="predict"><div class="hint">'+f.hint+'</div></div>'+
-      '<input id="fin" type="text" placeholder="Fill the blank yourself first, then reveal" autocomplete="off" spellcheck="false" style="width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--paper-2);color:var(--ink);font:inherit;font-size:14px;margin:6px 0 10px">'+
+      '<input id="fin" type="text" aria-label="Your answer" placeholder="Fill the blank yourself first, then reveal" autocomplete="off" spellcheck="false" style="width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--paper-2);color:var(--ink);font:inherit;font-size:14px;margin:6px 0 10px">'+
       '<button class="reveal-btn" id="rev">Reveal answer</button><div id="fans"></div></div>';
+    document.getElementById('fin').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('rev').click();});
     document.getElementById('rev').addEventListener('click',()=>{
       document.getElementById('fans').innerHTML='<div class="fb good"><div class="lab">Answer</div><b>'+f.answer+'</b></div>';
       const b=document.createElement('button');b.className='next-btn';
@@ -965,9 +970,10 @@ function drawMastery(id){
       fb.innerHTML='<div class="fb '+(correct?'good':'bad')+'"><div class="lab">'+(correct?'Correct — streak '+streak:'Streak reset')+'</div>'+
         (correct?'':'<b>'+(q.diag[idx]||'')+'</b><br>')+q.why+
         (correct?'':'<br><span style="color:var(--good);font-weight:600">Correct answer: '+'ABCD'[q.correct]+' — '+q.opts[q.correct]+'</span>')+'</div>';
-      if(streak>=3){finishMastery(id);return;}
-      const b=document.createElement('button');b.className='next-btn';b.textContent='Next';
-      b.addEventListener('click',render);fb.appendChild(b);b.focus();
+      const b=document.createElement('button');b.className='next-btn';
+      if(streak>=3){b.textContent='See your result';b.addEventListener('click',()=>finishMastery(id));}
+      else{b.textContent='Next';b.addEventListener('click',render);}
+      fb.appendChild(b);b.focus();
     }));
   }
   render();
@@ -1004,15 +1010,27 @@ document.getElementById('resetBtn').addEventListener('click',()=>{
 
 /* ---- video modal (coach explainers) ---- */
 const VID={
-  _opener:null,
+  _opener:null,_trap:null,
   open(url,title){
     this._opener=document.activeElement;
     document.getElementById('vidTitle').textContent=title||'Coach explainer';
     document.getElementById('vidBody').innerHTML='<iframe src="'+url+'" allow="autoplay" title="'+(title||'coach explainer')+'"></iframe>';
     document.getElementById('vidModal').classList.add('show');
+    document.body.style.overflow='hidden';
+    const sh=document.querySelector('.shell'),tp=document.querySelector('.top');
+    if(sh)sh.setAttribute('aria-hidden','true'); if(tp)tp.setAttribute('aria-hidden','true');
+    this._trap=(e)=>{const card=document.querySelector('.vid-card');if(card&&!card.contains(e.target))document.getElementById('vidX').focus();};
+    document.addEventListener('focusin',this._trap);
     document.getElementById('vidX').focus();
   },
-  close(){document.getElementById('vidModal').classList.remove('show');document.getElementById('vidBody').innerHTML='';if(this._opener&&this._opener.focus)this._opener.focus();}
+  close(){
+    document.getElementById('vidModal').classList.remove('show');document.getElementById('vidBody').innerHTML='';
+    document.body.style.overflow='';
+    const sh=document.querySelector('.shell'),tp=document.querySelector('.top');
+    if(sh)sh.removeAttribute('aria-hidden'); if(tp)tp.removeAttribute('aria-hidden');
+    if(this._trap){document.removeEventListener('focusin',this._trap);this._trap=null;}
+    if(this._opener&&this._opener.focus)this._opener.focus();
+  }
 };
 document.getElementById('vidX').addEventListener('click',()=>VID.close());
 document.getElementById('vidModal').addEventListener('click',e=>{if(e.target.id==='vidModal')VID.close();});
