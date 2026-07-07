@@ -269,6 +269,38 @@ const BANK = {
     opts:['Eclipsed (0° torsion)','Staggered (60° torsion)','Perpendicular','Bent'],correct:1,
     why:'Staggered (60° dihedral) minimizes torsional strain and is lowest in energy; eclipsed (0°) is the maximum. The Newman projection makes this visible. (Anti vs gauche only differ once you have larger groups, as in butane.)',
     diag:{0:'Eclipsed is the HIGHEST-energy arrangement, not the most stable.',2:'Torsional angles for sp³ C–C are 0/60/120°, not 90°.',3:'Bonds are not "bent" here — this is about torsion angle.'}},
+  ab1:{skill:'acidbase',diff:1,q:'Acidity is best judged by the stability of which species?',
+    opts:['The neutral acid molecule','The conjugate base (the anion left after losing H+)','The solvent','The pKa of water'],correct:1,
+    why:'A stronger acid gives a more stable conjugate base. Rank acids by comparing the anions they leave behind.',
+    diag:{0:'What matters is the anion AFTER the proton leaves, not the neutral acid.',2:'Solvent can matter, but the core comparison is conjugate-base stability.',3:'Water is one reference point, not the judging criterion.'}},
+  ab2:{skill:'acidbase',diff:1,q:'Which is the strongest acid?',
+    opts:['Ethanol, pKa 16','Acetic acid, pKa 4.8','Water, pKa 15.7','Ammonia, pKa 38'],correct:1,
+    why:'Lower pKa = stronger acid. Acetic acid wins because its carboxylate conjugate base is resonance-stabilized over two oxygens.',
+    diag:{0:'Higher pKa means weaker; ethanol is among the weakest here.',2:'Water is weak (pKa 15.7).',3:'Ammonia is extremely weak as an acid (pKa 38).'}},
+  ab3:{skill:'acidbase',diff:2,q:'Why is a carboxylic acid (RCOOH) more acidic than an alcohol (ROH)?',
+    opts:['The carboxylic acid is a larger molecule','Resonance delocalizes the carboxylate charge over two oxygens','Alcohols have no acidic hydrogen','Alcohols are stabilized by induction'],correct:1,
+    why:'Carboxylate spreads its negative charge over two equivalent oxygens by resonance; an alkoxide cannot, so RCOOH (pKa ~4-5) beats ROH (pKa ~16).',
+    diag:{0:'Size is not the reason; resonance is.',2:'The alcohol O-H is acidic, just far less so.',3:'Induction is minor here; resonance is the dominant effect.'}},
+  ab4:{skill:'acidbase',diff:2,q:'Rank HF, HCl, HBr, HI by acidity. Which is the STRONGEST acid?',
+    opts:['HF','HCl','HBr','HI'],correct:3,
+    why:'Down a column the larger atom spreads the negative charge better, so the conjugate base is more stable. Size beats electronegativity down a group: iodide is the most stable halide, so HI is the strongest acid.',
+    diag:{0:'HF is the WEAKEST of the four; fluoride is small and holds charge tightly.',1:'HCl is strong, but iodide spreads charge better than chloride.',2:'HBr is close, but iodine is larger still.'}},
+  ab5:{skill:'acidbase',diff:3,q:'A terminal alkyne C-H (sp) is much more acidic than an alkane C-H (sp3) because:',
+    opts:['Alkynes are smaller molecules','More s-character holds the carbanion lone pair closer to the nucleus, stabilizing it','Alkynes have resonance stabilization','Induction from the triple bond'],correct:1,
+    why:'An sp carbon is 50 percent s-character, holding the lone pair close to the positive nucleus, which stabilizes the carbanion. Terminal alkyne pKa ~25 vs alkane ~50 — this is why NaNH2 makes an acetylide.',
+    diag:{0:'Molecular size is not the factor.',2:'A simple terminal acetylide has no resonance; it is hybridization.',3:'Induction is not the main driver; s-character is.'}},
+  ab6:{skill:'acidbase',diff:3,q:'Which is the strongest BASE?',
+    opts:['Acetate, CH3COO-','Ethoxide, CH3CH2O-','Chloride, Cl-','Water'],correct:1,
+    why:'Strongest base = conjugate base of the weakest acid = least-stabilized anion. Acetate is resonance-delocalized (weak base) and chloride is very stable (weak base); ethoxide, from an alcohol pKa ~16, is the strongest base here.',
+    diag:{0:'Acetate is resonance-stabilized, which makes it a WEAK base.',2:'Chloride is stable and a weak base.',3:'Water is neutral and a very weak base.'}},
+  ab7:{skill:'acidbase',diff:2,q:'An acid-base equilibrium favors the side with the:',
+    opts:['Stronger acid and stronger base','Weaker acid and weaker base','Larger number of atoms','Lower temperature'],correct:1,
+    why:'Proton transfers run downhill toward the more stable, weaker acid and weaker base.',
+    diag:{0:'It runs AWAY from the stronger acid and base, not toward them.',2:'Atom count does not set the direction.',3:'Temperature is not the deciding factor for the position here.'}},
+  ab8:{skill:'acidbase',diff:2,q:'The three chlorines in trichloroacetic acid make it MORE acidic than acetic acid because they:',
+    opts:['Add resonance to the acid','Withdraw electron density by induction, stabilizing the conjugate base','Make the molecule larger','Donate electrons to the oxygen'],correct:1,
+    why:'Electron-withdrawing groups pull negative charge away from the carboxylate by induction, stabilizing the conjugate base and strengthening the acid.',
+    diag:{0:'The chlorines act by induction, not by adding resonance.',2:'Size is not the effect.',3:'They withdraw electron density, they do not donate it.'}},
 };
 
 /* ---- CONTENT (per-module) ---- */
@@ -340,6 +372,50 @@ const CONTENT = {
       <div class="depthnote"><b>DAT depth:</b> classify activating/deactivating and o/p vs meta, predict the major product and position, and check Hückel aromaticity (magic numbers 2, 6, 10, 14) — yes. Full arrow-by-arrow EAS mechanism and benzyne/NAS — not needed.</div>
       <p>Watch the one-minute explainer above for Thomas's LPOP hook; the full five-stage module lands next build pass.</p>`,
     worked:[],faded:[],practice:[],mastery:[]},
+  acidbase:{accent:'var(--t0)',
+    sub:'Ranking most acidic and most basic — the reasoning-heavy skill the DAT loves, and one the 2026 spec weights up.',
+    concept:`<h3>The one idea</h3>
+      <p>Acidity is about the <b>stability of the conjugate base</b> — the anion left after the acid loses its proton. The more stable that anion, the more willing the acid is to give up H⁺, so the <b>stronger the acid</b>. To rank acids, take the proton off each one and ask: which anion is happiest holding the negative charge?</p>
+      <div class="rule"><div class="rl">What stabilizes the conjugate base → stronger acid</div>
+        <b>Atom</b> — a more electronegative atom holds charge better across a row (O &gt; N &gt; C); a larger atom spreads it out down a column, and <b>size wins going down</b> (I⁻ &gt; Br⁻ &gt; Cl⁻ &gt; F⁻, so HI &gt; HBr &gt; HCl &gt; HF).<br>
+        <b>Resonance</b> — spreading the charge over several atoms is a big stabilizer. Carboxylate shares its charge over two oxygens, so RCOOH (pKa ~4–5) beats ROH (pKa ~16).<br>
+        <b>Induction</b> — nearby electron-withdrawing atoms pull charge away and stabilize the anion (Cl₃C–COOH ≫ CH₃COOH).<br>
+        <b>Hybridization</b> — more s-character holds the lone pair closer to the nucleus: sp &gt; sp² &gt; sp³. A terminal alkyne C–H (sp, pKa ~25) is far more acidic than an alkane C–H (sp³, pKa ~50).</div>
+      <div class="rule"><div class="rl">pKa landmarks — lower pKa = stronger acid</div>carboxylic acid ~4–5 · ammonium (RNH₃⁺) ~10 · phenol ~10 · water ~15.7 · alcohol ~16–18 · α-carbonyl C–H ~20 · terminal alkyne ~25 · alkane ~50.</div>
+      <div class="coachbox"><div class="rl">Coach trick · Thomas</div><b>More resonance = stronger acid</b> — because resonance stabilizes the conjugate base. So always <b>judge acidity by the conjugate base</b>. Flip it for bases: <b>the strongest base has the least resonance</b> (a lone pair tied up in resonance is not available to grab a proton). And do not let the word "weak" fool you: HF (pKa ~3) is still far stronger than water (pKa ~16).</div>
+      <div class="depthnote"><b>DAT depth:</b> rank most acidic/most basic by conjugate-base stability (atom, resonance, induction, hybridization), use approximate pKa landmarks, identify conjugate acid/base pairs, and predict which side an equilibrium favors (toward the weaker acid and weaker base) — yes. Memorizing pKa to decimals or Ka / Henderson–Hasselbalch computation (that is Gen Chem) — no.</div>`,
+    worked:[
+      {q:'Rank the acidity of ethanol (CH₃CH₂OH), acetic acid (CH₃COOH), and water.',
+       steps:[
+        {what:'Take the proton off each: ethoxide (CH₃CH₂O⁻), acetate (CH₃COO⁻), hydroxide (OH⁻). Compare which anion is most stable.',why:'Acidity tracks conjugate-base stability.'},
+        {what:'Acetate has resonance — the charge is shared equally over two oxygens.',why:'Delocalization is a strong stabilizer.',
+         predict:{q:'Which conjugate base is the most stabilized — and therefore which is the strongest acid?',hint:'Resonance spreads the charge over two atoms.'}},
+        {what:'Acetate is most stable, so acetic acid is the strongest (pKa ~4.8).',why:'Resonance outweighs the other small differences here.'},
+        {what:'Ethoxide vs hydroxide: the alkyl group weakly donates electron density, slightly destabilizing ethoxide, so ethanol (pKa ~16) is a touch weaker than water (~15.7).',why:'A small donating/inductive effect, with no resonance difference.'},
+       ], answer:'Acetic acid > water > ethanol (strongest to weakest acid). The winner is set by resonance in the carboxylate.'},
+      {q:'Which is more acidic: a terminal alkyne C–H, or an alkane C–H?',
+       steps:[
+        {what:'Compare the carbanion conjugate bases and the orbital that holds the lone pair.',why:'The more stable the carbanion, the more acidic the C–H.'},
+        {what:'A terminal alkyne carbon is sp (50% s-character); an alkane carbon is sp³ (25% s).',why:'More s-character holds the electrons closer to the positive nucleus.',
+         predict:{q:'More s-character holds the lone pair closer to the nucleus. Does that stabilize or destabilize the negative charge?',hint:'Closer to the positive nucleus = lower energy.'}},
+        {what:'More s-character stabilizes the carbanion, so the sp C–H is far more acidic: terminal alkyne pKa ~25 vs alkane ~50.',why:'This is why NaNH₂ can deprotonate a terminal alkyne to make an acetylide nucleophile.'},
+       ], answer:'The terminal alkyne C–H is much more acidic (pKa ~25) than the alkane C–H (~50), because the sp carbanion is stabilized by s-character.'},
+      {q:'Rank the basicity of hydroxide (OH⁻), acetate (CH₃COO⁻), and an alkoxide (RO⁻).',
+       steps:[
+        {what:'The strongest base is the conjugate base of the weakest acid — the least-stabilized anion.',why:'Basicity is the inverse of the acidity of the parent acid.'},
+        {what:'Acetate has its charge tied up in resonance.',why:'A delocalized lone pair is less available to grab a proton.',
+         predict:{q:'Which of these has its lone pair tied up in resonance, making it the weakest base?',hint:'Strongest base = least resonance.'}},
+        {what:'Acetate is the weakest base. Alkoxide (from an alcohol, pKa ~16–18, the weakest acid here) is the strongest base.',why:'The least-stabilized lone pair is the most reactive base.'},
+       ], answer:'Alkoxide (RO⁻) > hydroxide (OH⁻) > acetate (strongest to weakest base). Strongest base = least resonance.'},
+    ],
+    faded:[
+      {prompt:'Rank acidity: HCl (pKa −7), acetic acid (~4.8), ethanol (~16). The strongest acid is ___.',hint:'Lower pKa = stronger acid.',answer:'HCl'},
+      {prompt:'A carboxylic acid is more acidic than an alcohol because ___ spreads the conjugate base charge over two oxygens.',hint:'A delocalization effect.',answer:'resonance'},
+      {prompt:'The conjugate base of the strongest acid is the ___ base.',hint:'An inverse relationship.',answer:'weakest'},
+    ],
+    practice:['ab1','ab2','ab3','ab4','ab6','ab7'],
+    mastery:['ab5','ab8','ab2','ab4','ab6','ab3','ab1','ab7'],
+  },
 };
 
 /* ---- STATE ---- */
