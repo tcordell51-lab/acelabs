@@ -1496,6 +1496,7 @@ function renderHome(){
   document.getElementById('stereoBtn').addEventListener('click',()=>openModule('stereo'));
   document.getElementById('easVidBtn').addEventListener('click',()=>VID.open('tiktoks/eas-directors-tiktok.html','EAS directors: who aims where'));
   wireFigs(mainEl);
+  try{window.scrollTo(0,0);}catch(e){}
 }
 
 /* ---- RENDER: module ---- */
@@ -1545,7 +1546,8 @@ function renderStage(id){
   if(bar){const pct=mastered?100:Math.round((far/4)*100);requestAnimationFrame(()=>{bar.style.width=pct+'%';});}
   mainEl.querySelectorAll('.stage-pills button').forEach(b=>b.addEventListener('click',()=>{const s=stageState(id);s.max=Math.max(s.max||0,s.cur);s.cur=+b.dataset.stage;save(ST);renderStage(id);}));
   drawStageBody(id);
-  const h=mainEl.querySelector('.mod-view h2'); if(h)h.focus();
+  try{window.scrollTo(0,0);}catch(e){}
+  const h=mainEl.querySelector('.mod-view h2'); if(h){try{h.focus({preventScroll:true});}catch(e){h.focus();}}
 }
 
 function markStageDone(id,idx){
@@ -1732,6 +1734,7 @@ function finishMastery(id){
   document.getElementById('toNext').addEventListener('click',()=>{
     if(opened.length){const t=MODS.find(x=>x.name===opened[0]);openModule(t.id);}else renderHome();
   });
+  try{window.scrollTo(0,0);}catch(e){}
 }
 
 /* ---- controls ---- */
