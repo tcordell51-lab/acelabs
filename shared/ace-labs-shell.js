@@ -140,7 +140,7 @@
       }
     } catch(e){}
     // Tool-specific defaults / fallbacks if no localStorage data yet
-    const totals = { qr:41, gc:37, bio:40, ochem:30 };
+    const totals = { qr:45, gc:34, bio:40, ochem:30 };
     if (out.total === 0) out.total = totals[toolKey] || 30;
     return out;
   }
@@ -380,7 +380,7 @@
             <div class="al-dash-lbl">Cross-tool mock</div>
             <div class="al-dash-num-small">100Q · 90 min</div>
             <div class="al-dash-sub">Survey of Natural Sciences format. Take one this week.</div>
-            <a href="unified-mock.html" class="al-dash-cta">Take mock</a>
+            <a href="prometric-mock.html" class="al-dash-cta">Take mock</a>
           </div>`;
       }
     }

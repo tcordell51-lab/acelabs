@@ -281,6 +281,7 @@ body[data-theme="dark"] .tm{border-bottom-color:var(--gold-m)}
 .opt.correct{border-color:var(--good); background:var(--good-bg)}
 .opt.wrong{border-color:var(--trap); background:var(--trap-bg)}
 .opt.disabled{cursor:default; opacity:0.55}
+.opt.sim-picked{border-color:var(--gold); background:var(--paper-2)}
 .opt .let{
   font-family:'JetBrains Mono',monospace; width:24px; height:24px; border-radius:6px;
   background:var(--sb); color:#ece4d4; display:flex; align-items:center; justify-content:center;
@@ -2203,7 +2204,7 @@ body[data-theme="dark"] .dash-card .pat-due-row .go{color:var(--gold-m)}
 </aside>
 <button class="mn-burger hide" id="mnBurger" aria-label="Open menu"><svg width="20" height="14" viewBox="0 0 20 14" aria-hidden="true"><line x1="1" y1="2" x2="19" y2="2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="1" y1="7" x2="19" y2="7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="1" y1="12" x2="19" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
 <div class="sb-backdrop" id="sbBackdrop"></div>
-<button class="iso-exit-pill" id="isoExitPill" onclick="exitIsolate()">↩ exit isolate · esc</button>
+<button class="iso-exit-pill" id="isoExitPill" onclick="exitIsolate()">Exit isolate · esc</button>
 
 <!-- Sarah's edit-mode banner — visible whenever edit mode is on -->
 <div class="edit-mode-banner" id="editBanner">
@@ -2310,7 +2311,7 @@ body[data-theme="dark"] .dash-card .pat-due-row .go{color:var(--gold-m)}
     <div class="stat"><div class="n">41</div><div class="l">Skills · from basic floor to test-day pacing</div></div>
     <div class="stat"><div class="n">6 steps</div><div class="l">Per skill · concept, guided, solo, mastery</div></div>
     <div class="stat"><div class="n">No clock</div><div class="l">Until you say you're ready</div></div>
-    <div class="stat"><div class="n">∞</div><div class="l">Replays · take your time, this is for you</div></div>
+    <div class="stat"><div class="n">Unlimited</div><div class="l">Replays · take your time, this is for you</div></div>
   </div>
 </section>
 
@@ -2631,7 +2632,7 @@ body[data-theme="dark"] .dash-card .pat-due-row .go{color:var(--gold-m)}
   </div>
   <div class="sim-card">
     <h3>Run a <em>full mock</em></h3>
-    <p class="sub">A 40-question set drawn from the full ~960-problem bank, weighted to match the real DAT QR distribution and laddered by difficulty (30/40/20/10 across diff 1-4). 45-minute section timer. Skip-and-return supported. Per-topic accuracy and missed-question walkthrough at the end.</p>
+    <p class="sub">A 40-question set drawn from the full problem bank, weighted to match the real DAT QR distribution and laddered by difficulty (30/40/20/10 across diff 1-4). 45-minute section timer. Skip-and-return supported. Per-topic accuracy and missed-question walkthrough at the end.</p>
     <div class="sim-stats">
       <div class="sim-stat"><div class="n" id="simAvail">—</div><div class="l">Questions available</div></div>
       <div class="sim-stat"><div class="n" id="simRuns">0</div><div class="l">Mocks taken</div></div>
@@ -5729,7 +5730,7 @@ const MODULES = {
     skill:'mini-mock', tier:3, num:'42',
     title:'Friday <em>Mini-Mock</em>',
     sub:'22 questions, 22 minutes, interleaved. The weekly pacing self-assessment.',
-    pattern:'A meta-skill, not a content skill. The mini-mock pulls 22 placeholder questions across six high-yield skills (mental math, percent change, ratios, 2D geometry, probability, word decoder) and interleaves them so no two consecutive questions share a skill. That interleaving is the W2 evidence-based design — measured effect size d = 0.83 to 1.21 on transfer relative to blocked practice. The clock matches a 22+ scorer\'s real-DAT pace at 1.0 min/q.',
+    pattern:'A meta-skill, not a content skill. The mini-mock pulls 22 placeholder questions across six high-yield skills (mental math, percent change, ratios, 2D geometry, probability, word decoder) and interleaves them so no two consecutive questions share a skill. That interleaving is the W2 evidence-based design — measured effect size d = 0.83 to 1.21 on transfer relative to blocked practice. The clock matches a strong real-DAT pace at 1.0 min/q.',
     formula:'<span class="gold">22 q in 22 min</span> · <span class="gold">interleaved</span> · calculator <span class="trap">off by default</span><br>End-of-section debrief: <em>per-skill accuracy</em> + <em>skill-recognition latency</em> (ms-to-first-input as proxy)',
     visualType:'word-translate', visualData:{},
     worked:[
@@ -6278,7 +6279,7 @@ const VISUAL_BY_SKILL = {
   'interest':'growth-curve','coord':'coord-plane','units':'unit-fraction','word-decode':'word-translate-rich',
   'p-flip':'prob-tree','p-andor':'prob-venn','p-cond':'prob-table','count-pc':'count-grid',
   'discr':'parabola-discr','harm':'harm-mean','zscore':'z-curve','tri-inv':'tri-morph',
-  'vol-sa':'solid-net','ds':'slope-rise-run','exps':'exp-rules','absval':'absval-fold',
+  'vol-sa':'solid-net','ds':'mastery-grid','exps':'exp-rules','absval':'absval-fold',
   'untimed':'mastery-grid','skip-ret':'triage-board','guess':'elim-funnel',
   'binomials':'binom-tile','geo-2d':'shape-morph','sets':'venn-2set','desc-stats':'stat-spread'
 };
@@ -6684,7 +6685,7 @@ const QR_LOCKS = {
   'coord':'<b>d = √(Δx² + Δy²).</b> Pythagoras on a grid.',
   'units':'<b>The conversion factor equals 1.</b> Multiplying by 1 only renames the units; matching units cancel like algebra.',
   'word-decode':'<b>"of" means ×. "more than X" reverses (X first).</b> Translate one phrase at a time.',
-  'p-flip':'<b>Independent: P(A and B) = P(A) · P(B).</b> No conditioning needed.',
+  'p-flip':'<b>At least one: P(at least one) = 1 − P(none).</b> Flip to the complement, then subtract from 1.',
   'p-andor':'<b>OR adds, AND multiplies, overlap subtracts.</b> P(A or B) = P(A) + P(B) − P(A and B).',
   'p-cond':'<b>Bayes inverts.</b> P(A|B) = P(A ∩ B) / P(B). Sensitivity ≠ disease probability.',
   'count-pc':'<b>Order matters: nPr. Order doesn\'t: nCr = nPr ÷ r!.</b> The "÷ r!" undoes orderings.',
@@ -6693,7 +6694,7 @@ const QR_LOCKS = {
   'zscore':'<b>z = (x − μ) / σ.</b> 68 / 95 / 99.7 inside ±1, ±2, ±3σ.',
   'tri-inv':'<b>|a − b| &lt; c &lt; a + b.</b> Each side is bounded by the other two.',
   'vol-sa':'<b>V scales as length³; SA as length².</b> Double the side: V ×8, SA ×4.',
-  'ds':'<b>Slope = Δy ÷ Δx.</b> Vertical: undefined. Horizontal: zero.',
+  'ds':'<b>Sufficient = one unique answer.</b> Don\'t solve — ask whether each statement forces a single value.',
   'exps':'<b>Exponential always wins.</b> Any positive growth rate eventually beats any line.',
   'absval':'<b>|x| is distance from zero.</b> The V-graph reflects negatives across the y-axis.',
   'untimed':'<b>Knowledge before speed.</b> 24 / 30 untimed unlocks timed practice.',
@@ -9351,6 +9352,14 @@ document.addEventListener('click', e => {
   if (!opt) return;
   const wrap = opt.parentElement;
   if (wrap.dataset.stage){
+    // Mock (SIM) mode: record the pick but never reveal correctness mid-test,
+    // and don't touch the per-stage feedback element (no diag-sim-* element exists).
+    if (wrap.dataset.stage.indexOf('sim-') === 0){
+      if (wrap.querySelector('.opt.sim-picked')) return; // already answered
+      opt.classList.add('sim-picked');
+      wrap.querySelectorAll('.opt').forEach(o => { if (o !== opt) o.classList.add('disabled'); });
+      return;
+    }
     // problem option click
     const probId = wrap.dataset.prob;
     const prob = BANK_BY_ID[probId];
@@ -10835,7 +10844,7 @@ function renderCalibration(){
    PACING LADDER
    ============================================================ */
 const PACE_TIERS = [
-  {key:'untimed', name:'<em>Untimed</em>', time:'∞', desc:'No clock. Master the move first. This is where every skill starts.', target:'80% accuracy → unlocks 90s'},
+  {key:'untimed', name:'<em>Untimed</em>', time:'No limit', desc:'No clock. Master the move first. This is where every skill starts.', target:'80% accuracy → unlocks 90s'},
   {key:'90s',     name:'<em>90 sec</em>/Q', time:'90s', desc:'Comfortable pace. Forces decisions but leaves room to think. Most skills should reach this within 2 weeks.', target:'80% accuracy → unlocks 60s'},
   {key:'60s',     name:'<em>60 sec</em>/Q', time:'60s', desc:'DAT pace. Same speed as test day. Holding 80% here unlocks the top tier.', target:'80% accuracy → unlocks DAT pace'},
   {key:'dat',     name:'<em>DAT day</em>', time:'45s', desc:'Slightly tighter than DAT actual to build margin. Nothing should rattle you here.', target:'80% accuracy → top tier locked in'},
@@ -11002,7 +11011,7 @@ const SIM = {
     const body = document.getElementById('simBody');
     body.style.display = 'block';
     body.innerHTML = '<div id="simRun"></div>';
-    SIM._state = {pool: pool.slice(0, 40), i:0, results:[], startedAt:Date.now(), durationSec:45*60};
+    SIM._state = {pool: pool.slice(0, 40), i:0, results:[], revisit:[], revisiting:false, startedAt:Date.now(), durationSec:45*60};
     SIM.startSectionTimer();
     SIM.show();
   },
@@ -11043,20 +11052,46 @@ const SIM = {
       </div>
     `;
   },
-  skip(){ const s = SIM._state; if (!s) return; s.results.push({probId:s.pool[s.i].id, correct:false, skipped:true, t:Date.now()}); s.i++; SIM.show(); },
+  skip(){
+    const s = SIM._state; if (!s) return;
+    if (!s.revisiting){
+      // Pass 1: re-queue this question so skip-and-return actually returns to it.
+      (s.revisit || (s.revisit = [])).push(s.i);
+      SIM.advance();
+      return;
+    }
+    // Revisit pass: a second skip leaves it unanswered (counts as incorrect).
+    s.results.push({probId:s.pool[s.i].id, correct:false, skipped:true, t:Date.now()});
+    SIM.advance();
+  },
+  advance(){
+    const s = SIM._state; if (!s) return;
+    if (s.revisiting){
+      if (s.revisit && s.revisit.length){ s.i = s.revisit.shift(); SIM.show(); }
+      else { SIM.finish(); }
+      return;
+    }
+    s.i++;
+    if (s.i >= s.pool.length){
+      if (s.revisit && s.revisit.length){ s.revisiting = true; s.i = s.revisit.shift(); SIM.show(); }
+      else { SIM.finish(); }
+      return;
+    }
+    SIM.show();
+  },
   next(){ SIM.recordAndAdvance(); },
   recordAndAdvance(){
     const s = SIM._state;
     const wrap = document.querySelector(`[data-stage="sim-${s.i}"]`);
-    const chosen = wrap?.querySelector('.opt.correct, .opt.wrong');
-    const correct = chosen?.classList.contains('correct') || false;
+    const chosen = wrap?.querySelector('.opt.sim-picked');
+    const correct = chosen?.dataset.c === '1';
     const answered = !!chosen;
     s.results.push({probId:s.pool[s.i].id, correct, skipped: !answered, t:Date.now()});
     // Log to attempts for weak-spot tracking
     const att = ST.get('attempts', []);
     att.push({probId: s.pool[s.i].id, skill: s.pool[s.i].skills[0], diff: s.pool[s.i].diff, correct, source:'mock', t: Date.now()});
     ST.set('attempts', att.slice(-2000));
-    s.i++; SIM.show();
+    SIM.advance();
   },
   bail(){ if (SIM._state && SIM._state.sectionInt) clearInterval(SIM._state.sectionInt); SIM._state = null; document.getElementById('simBody').style.display = 'none'; },
   finish(){

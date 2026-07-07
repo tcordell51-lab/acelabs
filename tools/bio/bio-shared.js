@@ -1096,7 +1096,7 @@ function _isAceCardPlaceholder(s) {
  * quickHit / explanation). The retrieval flow logs a console warning
  * in that case so authors can find the unfilled NODES retrieval entry.
  */
-function addAceCard({ q, quickHit, explanation, origin, subject, nodeId, why, image }) {
+function addAceCard({ q, quickHit, explanation, origin, subject, nodeId, why, image, confidence }) {
   // Guard: refuse to create a card built from placeholder source data.
   // The retrieval card on screen still gives feedback (handled in
   // onRetrievalAnswer), but no useless card joins the deck.
@@ -1114,7 +1114,7 @@ function addAceCard({ q, quickHit, explanation, origin, subject, nodeId, why, im
   const card = {
     id, q, quickHit, explanation, why: why || '', image: image || '',
     origin, subject: subject || (window.location.pathname.match(/bio-(\w+)\.html/)||[,'cell'])[1],
-    nodeId: nodeId || '',
+    nodeId: nodeId || '', confidence: confidence || '',
     ease: 2.5, interval: 0, reps: 0, lapses: 0,
     state: 'new',  // new | learning | review | mastered
     lastReviewed: null,
@@ -1166,7 +1166,8 @@ function addBioMissCard(evt) {
     why: evt.summary || '',
     origin: evt.originLabel + (title ? ' · ' + title : ''),
     subject: evt.subject,
-    nodeId: node ? node.id : (evt.nodeId || '')
+    nodeId: node ? node.id : (evt.nodeId || ''),
+    confidence: evt.confidence || ''
   });
 }
 
@@ -1239,8 +1240,10 @@ function rateAceCard(id, rating) {
       c.interval = c.interval * c.ease * 1.3;
     }
     c.nextDue = _addDays(_now(), c.interval);
-    if (c.interval >= 90 && c.lapses === 0) c.state = 'mastered';
   }
+
+  // Graduate on sustained Good/Easy performance, regardless of past lapses
+  if ((rating === 3 || rating === 4) && c.state === 'review' && c.interval >= 90) c.state = 'mastered';
 
   c.interval = Math.min(365, Math.max(0, c.interval));  // cap at 1 year
   // Leech detection: cards with 6+ lapses are flagged for special attention
@@ -1384,7 +1387,7 @@ function renderAceStack() {
 
   if (visible.length === 0) {
     if (STATE.aceCards.length === 0) {
-      stack.innerHTML = filterRow + `<div class="ace-empty"><h4>No cards yet.</h4><p>Cards spawn automatically when you miss a retrieval question. They resurface on a spaced schedule (1 / 3 / 7 / 14 / 30 days) — proven to dramatically improve long-term retention (Cepeda et al. 2008).</p></div>`;
+      stack.innerHTML = filterRow + `<div class="ace-empty"><h4>No cards yet.</h4><p>Cards spawn automatically when you miss a retrieval question. They resurface on a spaced schedule that expands each time you recall them well — proven to dramatically improve long-term retention (Cepeda et al. 2008).</p></div>`;
     } else {
       stack.innerHTML = filterRow + `<div class="ace-empty"><h4>Nothing in this filter.</h4><p>Try "All" to see other subjects' cards.</p></div>`;
     }
@@ -1424,7 +1427,7 @@ function renderAceStack() {
             <div class="ace-rate-row">
               <button class="ace-rate-btn again" data-rate="1" data-id="${c.id}"><b>Again</b><span>10 min</span></button>
               <button class="ace-rate-btn hard" data-rate="2" data-id="${c.id}"><b>Hard</b><span>${c.interval ? Math.max(1, c.interval*1.2).toFixed(1)+'d' : '1d'}</span></button>
-              <button class="ace-rate-btn good" data-rate="3" data-id="${c.id}"><b>Good</b><span>${c.interval ? (c.interval*c.ease).toFixed(1)+'d' : (c.ease).toFixed(1)+'d'}</span></button>
+              <button class="ace-rate-btn good" data-rate="3" data-id="${c.id}"><b>Good</b><span>${c.interval ? (c.interval*c.ease).toFixed(1)+'d' : '1d'}</span></button>
               <button class="ace-rate-btn easy" data-rate="4" data-id="${c.id}"><b>Easy</b><span>${c.interval ? (c.interval*c.ease*1.3).toFixed(1)+'d' : '4d'}</span></button>
             </div>
           </div>
@@ -15749,9 +15752,9 @@ function init() {
   ].forEach(safe);
 
   // Each node section
-  ["rep","trc","tln","mit","men","ap","mei","gly","wat","car","lip","pro","nuc","enz","pve","org","mtr","sig","krb","pho","dom","fer","nse","ped","hwb","cdv","nph","spc"].forEach(nodeId => {
-    const section = document.querySelector(`section.node[data-node="${nodeId}"]`);
-    if (!section) return;
+  document.querySelectorAll('section.node[data-node]').forEach(section => {
+    const nodeId = section.dataset.node;
+    if (!nodeId) return;
     makeDragHandlers(nodeId, section);
     makeRetrievalHandlers(nodeId, section);
 

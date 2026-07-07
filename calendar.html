@@ -367,15 +367,15 @@ function buildDayPlan(daysOut, weakTopics, dayIndex){
 
   let tasks;
   if(weakTopics && weakTopics.length >= 2){
-    const t1 = weakTopics[ dayIndex % weakTopics.length ];
-    const t2 = weakTopics[ (dayIndex + 1) % weakTopics.length ];
+    const t1 = weakTopics[ dayIndex % weakTopics.length ].topic;
+    const t2 = weakTopics[ (dayIndex + 1) % weakTopics.length ].topic;
     tasks = [
       { name:'Drill: ' + t1, dur:'30 min', weak:true },
       { name:'Review: ' + t2, dur:'20 min', weak:true }
     ];
   } else if(weakTopics && weakTopics.length === 1){
     tasks = [
-      { name:'Drill: ' + weakTopics[0], dur:'30 min', weak:true },
+      { name:'Drill: ' + weakTopics[0].topic, dur:'30 min', weak:true },
       { name:'Light review across all sections', dur:'20 min' }
     ];
   } else {
@@ -582,7 +582,7 @@ function renderCalendar(testDateStr, testDate, daysOut){
   let weakNoteHTML = '';
   if(weakTopics && weakTopics.length > 0){
     weakNoteHTML = `<p style="font-size:12px;color:var(--al-ink-mute);margin-bottom:14px;">
-      Drill tasks pulled from your diagnostic weak areas: <strong style="color:var(--al-needs);">${weakTopics.slice(0,3).join(', ')}</strong>${weakTopics.length > 3 ? ' and more' : ''}.
+      Drill tasks pulled from your diagnostic weak areas: <strong style="color:var(--al-needs);">${weakTopics.slice(0,3).map(t => t.topic).join(', ')}</strong>${weakTopics.length > 3 ? ' and more' : ''}.
     </p>`;
   } else {
     weakNoteHTML = `<p style="font-size:12px;color:var(--al-ink-mute);margin-bottom:14px;">
