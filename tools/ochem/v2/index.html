@@ -185,13 +185,117 @@ button{font-family:inherit;cursor:pointer}
   .fig .flow{stroke-dasharray:5 5;animation:figflow 1s linear infinite}
   @keyframes figflow{to{stroke-dashoffset:-20}}
 }
+
+/* ============ FEEL v2 — premium polish ============ */
+body{
+  background:
+    radial-gradient(1100px 560px at 12% -8%, color-mix(in srgb,var(--gold) 8%, transparent), transparent 58%),
+    radial-gradient(900px 520px at 102% -2%, color-mix(in srgb,var(--teal) 12%, transparent), transparent 54%),
+    var(--bg);
+  background-attachment:fixed;
+}
+.top{padding:11px 24px;border-bottom:1px solid var(--line);background:color-mix(in srgb,var(--bg) 82%, transparent)}
+.top .stat{display:none}
+.icon-btn{transition:border-color .15s,color .15s,transform .1s}
+.icon-btn:hover{border-color:var(--gold);color:var(--ink)}
+.icon-btn:active{transform:translateY(1px)}
+/* progress ring in the top bar */
+.pring{position:relative;width:36px;height:36px;flex-shrink:0}
+.pring svg{transform:rotate(-90deg);display:block}
+.pring .rbg{fill:none;stroke:var(--line);stroke-width:4}
+.pring .rfg{fill:none;stroke:var(--gold);stroke-width:4;stroke-linecap:round;transition:stroke-dashoffset .7s cubic-bezier(.2,.8,.2,1)}
+.pring .rnum{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--mono);font-size:11px;font-weight:700;color:var(--gold)}
+.pring .rlab{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);margin-right:2px}
+
+/* tree nodes — livelier */
+.node{transition:transform .14s cubic-bezier(.2,.8,.2,1),box-shadow .14s,border-color .14s,background .14s}
+.node:hover:not(:disabled){transform:translateX(3px);border-left-width:5px}
+.node.active{background:color-mix(in srgb,var(--gold) 7%,var(--paper));border-left-width:5px}
+.node .dot{transition:transform .2s,background .2s}
+.node.s-mastered .dot{box-shadow:0 0 0 3px var(--good-wash)}
+.node:hover:not(:disabled) .dot{transform:scale(1.25)}
+
+/* cards + surfaces */
+.card{background:linear-gradient(180deg,var(--raise),var(--paper));border-radius:16px;transition:box-shadow .25s}
+.rule,.trapbox,.coachbox{transition:transform .15s,box-shadow .15s}
+.rule:hover,.trapbox:hover,.coachbox:hover{transform:translateX(2px)}
+
+/* buttons — tactile */
+.next-btn,.reveal-btn,.cta{background:linear-gradient(180deg,color-mix(in srgb,var(--teal) 88%,#fff),var(--teal));box-shadow:0 2px 0 color-mix(in srgb,var(--teal) 55%,#000),var(--shadow);transition:transform .1s,box-shadow .1s,filter .15s}
+.next-btn:hover,.reveal-btn:hover,.cta:hover{filter:brightness(1.08)}
+.next-btn:active,.reveal-btn:active,.cta:active{transform:translateY(2px);box-shadow:0 0 0 color-mix(in srgb,var(--teal) 55%,#000),var(--shadow)}
+.next-btn.ghost,.cta.ghost{background:transparent;box-shadow:none}
+.watch-btn{background:linear-gradient(180deg,var(--gold-hi),var(--gold));box-shadow:0 2px 0 color-mix(in srgb,var(--gold) 55%,#000),var(--shadow);transition:transform .1s,filter .15s}
+.watch-btn:hover{filter:brightness(1.06)}
+.watch-btn:active{transform:translateY(2px)}
+
+/* options — nicer select + reveal mark */
+.opt{position:relative;transition:border-color .14s,background .14s,transform .1s}
+.opt:hover:not(:disabled){transform:translateX(2px)}
+.opt:active:not(:disabled){transform:translateX(0) scale(.995)}
+.opt .lt{width:20px;height:20px;border-radius:6px;background:var(--paper);border:1px solid var(--line);display:inline-flex;align-items:center;justify-content:center;font-size:11px;transition:all .15s}
+.opt.correct .lt{background:var(--good);color:#fff;border-color:var(--good)}
+.opt.wrong .lt{background:var(--trap);color:#fff;border-color:var(--trap)}
+.opt.correct::after{content:"correct";position:absolute;right:12px;top:50%;transform:translateY(-50%);font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--good);font-weight:700}
+.opt.wrong::after{content:"your pick";position:absolute;right:12px;top:50%;transform:translateY(-50%);font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--trap);font-weight:700}
+
+/* stage pills + progress track */
+.pill{transition:background .15s,color .15s,border-color .15s,transform .1s}
+.pill:hover{transform:translateY(-1px)}
+.stage-track{height:5px;border-radius:99px;background:var(--line-2);overflow:hidden;margin:-12px 0 22px}
+.stage-track i{display:block;height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,var(--gold),var(--gold-hi));transition:width .55s cubic-bezier(.2,.8,.2,1)}
+
+/* stage body slide-in */
+@media (prefers-reduced-motion:no-preference){
+  #stageBody{animation:stageIn .34s cubic-bezier(.2,.8,.2,1) both}
+  @keyframes stageIn{from{opacity:0;transform:translateY(10px)}}
+}
+
+/* feedback pop */
+@media (prefers-reduced-motion:no-preference){
+  .fb{animation:fbpop .28s cubic-bezier(.2,.9,.2,1.2) both}
+  @keyframes fbpop{from{opacity:0;transform:scale(.97)}}
+}
+
+/* mastery — a real moment */
+.celebrate{position:relative;overflow:hidden;text-align:center;padding:30px 24px}
+.celebrate .seal{width:66px;height:66px;margin:0 auto 12px;border-radius:50%;background:radial-gradient(circle at 50% 40%,var(--gold-hi),var(--gold));display:grid;place-items:center;box-shadow:0 0 0 6px var(--gold-wash),var(--shadow)}
+.celebrate .seal svg{width:34px;height:34px}
+.celebrate h3{font-size:24px}
+@media (prefers-reduced-motion:no-preference){
+  .celebrate .seal{animation:sealpop .6s cubic-bezier(.2,1.4,.3,1) both}
+  @keyframes sealpop{from{transform:scale(0) rotate(-25deg);opacity:0}}
+  .celebrate::before{content:"";position:absolute;inset:-40% -10% auto;height:200%;background:radial-gradient(circle at 50% 0,var(--gold-wash),transparent 45%);animation:rays 3.5s ease-in-out infinite;pointer-events:none}
+  @keyframes rays{0%,100%{opacity:.4}50%{opacity:.85}}
+}
+.streak i{transition:background .3s,transform .3s}
+.streak i.on{animation:dotpop .3s cubic-bezier(.2,1.5,.3,1) both}
+@keyframes dotpop{from{transform:scaleX(.2)}}
+
+/* ---- interactive figure controls ---- */
+.figctrl{display:flex;gap:7px;justify-content:center;flex-wrap:wrap;margin-top:12px}
+.figbtn{font-family:var(--mono);font-size:10px;letter-spacing:.05em;text-transform:uppercase;font-weight:700;padding:6px 13px;border-radius:99px;border:1px solid var(--line);background:var(--paper-2);color:var(--ink-3);cursor:pointer;transition:all .15s}
+.figbtn:hover{border-color:var(--gold);color:var(--ink);transform:translateY(-1px)}
+.figbtn.on{background:var(--gold);color:#1a1206;border-color:var(--gold)}
+.figdetail{margin:11px auto 0;max-width:52ch;text-align:center;font-size:13px;line-height:1.5;color:var(--ink-2);min-height:1.5em;transition:opacity .2s}
+.figdetail b{color:var(--gold)}
+.fig .hot{cursor:pointer;transition:opacity .18s,transform .12s}
+.fig .hot:hover{opacity:1}
+.fig.dim .hot:not(.sel){opacity:.28}
+.fig .hotbox{transition:stroke-width .15s,stroke .15s}
+.fig .hot.sel .hotbox,.fig .hot:hover .hotbox{stroke:var(--gold);stroke-width:2.5}
+.fig .seat{transition:r .2s,opacity .2s,fill .2s}
 </style>
 </head>
 <body>
 <header class="top">
   <div class="brand">Ace<em>The</em>DAT <span>Organic Chemistry · v2</span></div>
   <div class="spacer"></div>
-  <div class="stat">Mastered <b id="statMastered">0</b> / 20</div>
+  <span class="rlab">Mastered</span>
+  <div class="pring" title="Modules mastered">
+    <svg viewBox="0 0 36 36" aria-hidden="true"><circle class="rbg" cx="18" cy="18" r="15"/><circle class="rfg" id="pringFg" cx="18" cy="18" r="15" stroke-dasharray="94.25" stroke-dashoffset="94.25"/></svg>
+    <span class="rnum"><b id="statMastered">0</b></span>
+  </div>
   <button class="icon-btn" id="themeBtn" aria-label="Toggle light or dark theme">Theme</button>
   <button class="icon-btn" id="resetBtn" aria-label="Reset your progress">Reset</button>
 </header>
@@ -1072,14 +1176,18 @@ function renderTree(){
     treeEl.appendChild(block);
   });
   document.getElementById('statMastered').textContent=masteredCount();
+  const liveN=MODS.filter(m=>isAuthored(m.id)).length||1;
+  const frac=Math.min(1,masteredCount()/liveN);
+  const fg=document.getElementById('pringFg');
+  if(fg)fg.setAttribute('stroke-dashoffset',(94.25*(1-frac)).toFixed(1));
 }
 
-/* ---- FIG: per-module hero diagrams (inline SVG, theme-aware) ---- */
+/* ---- FIG: interactive per-module hero diagrams (inline SVG) ---- */
 const FIG = {
-stereo:`<div class="figscroll"><svg viewBox="0 0 680 300" role="img" aria-label="Two mirror-image stereocenters labelled R and S with CIP priority arrows">
+stereo:`<div class="figscroll"><svg viewBox="0 0 680 300" role="img" aria-label="Two mirror-image stereocenters labelled R and S">
   <line x1="340" y1="34" x2="340" y2="266" class="thin" stroke-dasharray="5 6"/>
   <text x="340" y="24" text-anchor="middle" class="tag" fill="var(--ink-soft)">mirror plane</text>
-  <g>
+  <g class="hot" data-k="R">
     <line class="bond" x1="180" y1="150" x2="180" y2="86"/>
     <line class="bond" x1="180" y1="150" x2="246" y2="186"/>
     <polygon points="180,150 110,192 120,204" fill="var(--ink)"/>
@@ -1093,9 +1201,9 @@ stereo:`<div class="figscroll"><svg viewBox="0 0 680 300" role="img" aria-label=
     <circle cx="132" cy="186" r="11" fill="var(--t2)"/><text x="132" y="190" text-anchor="middle" class="tag" fill="#fdf8ec">3</text>
     <circle cx="150" cy="118" r="11" fill="var(--ink-soft)"/><text x="150" y="122" text-anchor="middle" class="tag" fill="var(--paper)">4</text>
     <path class="pulse" d="M212,104 A58,58 0 0 1 158,178" fill="none" stroke="var(--good)" stroke-width="3.5" marker-end="url(#stAR)"/>
-    <text x="180" y="290" text-anchor="middle" class="atom" fill="var(--good)">( R )</text>
+    <text x="180" y="292" text-anchor="middle" class="atom" fill="var(--good)">( R )</text>
   </g>
-  <g>
+  <g class="hot" data-k="S">
     <line class="bond" x1="500" y1="150" x2="500" y2="86"/>
     <line class="bond" x1="500" y1="150" x2="434" y2="186"/>
     <polygon points="500,150 570,192 560,204" fill="var(--ink)"/>
@@ -1109,14 +1217,15 @@ stereo:`<div class="figscroll"><svg viewBox="0 0 680 300" role="img" aria-label=
     <circle cx="548" cy="186" r="11" fill="var(--t2)"/><text x="548" y="190" text-anchor="middle" class="tag" fill="#fdf8ec">3</text>
     <circle cx="530" cy="118" r="11" fill="var(--ink-soft)"/><text x="530" y="122" text-anchor="middle" class="tag" fill="var(--paper)">4</text>
     <path class="pulse" d="M468,104 A58,58 0 0 0 522,178" fill="none" stroke="var(--trap)" stroke-width="3.5" marker-end="url(#stAR2)"/>
-    <text x="500" y="290" text-anchor="middle" class="atom" fill="var(--trap)">( S )</text>
+    <text x="500" y="292" text-anchor="middle" class="atom" fill="var(--trap)">( S )</text>
   </g>
   <defs>
     <marker id="stAR" markerWidth="9" markerHeight="9" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="var(--good)"/></marker>
     <marker id="stAR2" markerWidth="9" markerHeight="9" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="var(--trap)"/></marker>
   </defs>
 </svg></div>
-<div class="cap">Same four groups, opposite hands. Put the lowest priority (<b>H</b>) on the dash so it points back, then read <b>1&#8594;2&#8594;3</b>: clockwise = <b>R</b>, counter-clockwise = <b>S</b>.</div>`,
+<div class="figdetail">Hover either hand. Lowest priority (<b>H</b>) sits on the dash, pointing back &#8212; so you read 1&#8594;2&#8594;3 directly.</div>
+<div class="cap">Same four groups, opposite hands. Clockwise = <b>R</b>, counter-clockwise = <b>S</b> &#8212; but if H points toward you, reverse what you see.</div>`,
 
 acidbase:`<div class="figscroll"><svg viewBox="0 0 680 250" role="img" aria-label="A pKa scale from strong to weak acids">
   <defs><linearGradient id="abG" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="var(--trap)"/><stop offset="1" stop-color="var(--teal)"/></linearGradient></defs>
@@ -1125,144 +1234,124 @@ acidbase:`<div class="figscroll"><svg viewBox="0 0 680 250" role="img" aria-labe
   <polygon points="52,167 66,160 66,174" fill="var(--ink)"/><polygon points="628,167 614,160 614,174" fill="var(--ink)"/>
   <text x="66" y="196" class="tag" fill="var(--trap)">stronger acid</text>
   <text x="614" y="196" text-anchor="end" class="tag" fill="var(--teal)">weaker acid</text>
-  <text x="340" y="214" text-anchor="middle" class="sub" fill="var(--ink-3)">lower pKa &#8592; more stable conjugate base &#8594; higher pKa</text>
-  <g class="lbl" text-anchor="middle">
-    <line class="thin" x1="97" y1="167" x2="97" y2="130"/><text x="97" y="122">HCl</text><text x="97" y="150" class="sub">-7</text>
-    <line class="thin" x1="145" y1="167" x2="145" y2="196"/><text x="145" y="228">H3O+</text><text x="145" y="188" class="sub">-1.7</text>
-    <line class="thin" x1="203" y1="167" x2="203" y2="130"/><text x="203" y="122">RCOOH</text><text x="203" y="150" class="sub">~5</text>
-    <line class="thin" x1="250" y1="167" x2="250" y2="196"/><text x="250" y="228">ArOH</text><text x="250" y="188" class="sub">~10</text>
-    <line class="thin" x1="301" y1="167" x2="301" y2="130"/><text x="301" y="122">H2O</text><text x="301" y="150" class="sub">15.7</text>
-    <line class="thin" x1="385" y1="167" x2="385" y2="196"/><text x="385" y="228">RC&#8801;CH</text><text x="385" y="188" class="sub">~25</text>
-    <line class="thin" x1="502" y1="167" x2="502" y2="130"/><text x="502" y="122">NH3</text><text x="502" y="150" class="sub">~38</text>
-    <line class="thin" x1="610" y1="167" x2="610" y2="196"/><text x="610" y="228">R-H</text><text x="610" y="188" class="sub">~50</text>
-  </g>
+  <g class="hot" data-k="HCl"><line class="thin" x1="97" y1="167" x2="97" y2="130"/><text x="97" y="122" class="lbl" text-anchor="middle">HCl</text><text x="97" y="150" class="sub" text-anchor="middle">-7</text><rect x="79" y="112" width="36" height="60" fill="transparent"/></g>
+  <g class="hot" data-k="H3O"><line class="thin" x1="145" y1="167" x2="145" y2="196"/><text x="145" y="228" class="lbl" text-anchor="middle">H3O+</text><text x="145" y="188" class="sub" text-anchor="middle">-1.7</text><rect x="127" y="167" width="36" height="64" fill="transparent"/></g>
+  <g class="hot" data-k="RCOOH"><line class="thin" x1="203" y1="167" x2="203" y2="130"/><text x="203" y="122" class="lbl" text-anchor="middle">RCOOH</text><text x="203" y="150" class="sub" text-anchor="middle">~5</text><rect x="180" y="112" width="46" height="60" fill="transparent"/></g>
+  <g class="hot" data-k="ArOH"><line class="thin" x1="250" y1="167" x2="250" y2="196"/><text x="250" y="228" class="lbl" text-anchor="middle">ArOH</text><text x="250" y="188" class="sub" text-anchor="middle">~10</text><rect x="232" y="167" width="36" height="64" fill="transparent"/></g>
+  <g class="hot" data-k="H2O"><line class="thin" x1="301" y1="167" x2="301" y2="130"/><text x="301" y="122" class="lbl" text-anchor="middle">H2O</text><text x="301" y="150" class="sub" text-anchor="middle">15.7</text><rect x="283" y="112" width="36" height="60" fill="transparent"/></g>
+  <g class="hot" data-k="alkyne"><line class="thin" x1="385" y1="167" x2="385" y2="196"/><text x="385" y="228" class="lbl" text-anchor="middle">RC&#8801;CH</text><text x="385" y="188" class="sub" text-anchor="middle">~25</text><rect x="360" y="167" width="50" height="64" fill="transparent"/></g>
+  <g class="hot" data-k="NH3"><line class="thin" x1="502" y1="167" x2="502" y2="130"/><text x="502" y="122" class="lbl" text-anchor="middle">NH3</text><text x="502" y="150" class="sub" text-anchor="middle">~38</text><rect x="484" y="112" width="36" height="60" fill="transparent"/></g>
+  <g class="hot" data-k="RH"><line class="thin" x1="610" y1="167" x2="610" y2="196"/><text x="610" y="228" class="lbl" text-anchor="middle">R-H</text><text x="610" y="188" class="sub" text-anchor="middle">~50</text><rect x="592" y="167" width="36" height="64" fill="transparent"/></g>
 </svg></div>
-<div class="cap">The stronger the acid, the more stable its conjugate base. Rank by <b>atom, resonance, induction, hybridization, sterics</b> &#8212; a carboxylic acid beats an alcohol because resonance spreads the negative charge.</div>`,
+<div class="figdetail">Hover an acid to see why it sits where it does.</div>
+<div class="cap">The stronger the acid, the more stable its conjugate base. Rank by <b>atom, resonance, induction, hybridization, sterics</b>.</div>`,
 
-aromatic:`<div class="figscroll"><svg viewBox="0 0 680 300" role="img" aria-label="Two benzene rings showing donor ortho-para and withdrawer meta direction">
-  <g>
-    <polygon points="170,92 220,121 220,179 170,208 120,179 120,121" fill="none" class="bond"/>
-    <circle cx="170" cy="150" r="34" fill="none" class="thin"/>
-    <line class="bond" x1="170" y1="92" x2="170" y2="64"/><text class="atom" x="170" y="56" text-anchor="middle" fill="var(--gold)">OH</text>
-    <circle cx="220" cy="121" r="9" fill="var(--good)"/><circle cx="120" cy="121" r="9" fill="var(--good)"/><circle cx="170" cy="208" r="9" fill="var(--good)"/>
-    <text x="170" y="240" text-anchor="middle" class="tag" fill="var(--good)">donor &#8594; ortho / para</text>
-  </g>
-  <g>
-    <polygon points="500,92 550,121 550,179 500,208 450,179 450,121" fill="none" class="bond"/>
-    <circle cx="500" cy="150" r="34" fill="none" class="thin"/>
-    <line class="bond" x1="500" y1="92" x2="500" y2="64"/><text class="atom" x="500" y="56" text-anchor="middle" fill="var(--trap)">NO2</text>
-    <circle cx="550" cy="179" r="9" fill="var(--trap)"/><circle cx="450" cy="179" r="9" fill="var(--trap)"/>
-    <text x="500" y="240" text-anchor="middle" class="tag" fill="var(--trap)">withdrawer &#8594; meta</text>
-  </g>
-  <text x="340" y="284" text-anchor="middle" class="sub" fill="var(--ink-3)">halogens are the exception: deactivate, yet still ortho / para</text>
+aromatic:`<div class="figscroll"><svg viewBox="0 0 680 250" role="img" aria-label="A benzene ring whose directing seats light up by substituent type">
+  <polygon points="340,70 400,105 400,175 340,210 280,175 280,105" fill="none" class="bond"/>
+  <circle cx="340" cy="140" r="40" fill="none" class="thin"/>
+  <line class="bond" x1="340" y1="70" x2="340" y2="40"/><text class="atom" id="arSub" x="340" y="32" text-anchor="middle" fill="var(--gold)">OH</text>
+  <circle class="seat" data-p="op" cx="400" cy="105" r="9" fill="var(--good)"/>
+  <circle class="seat" data-p="op" cx="280" cy="105" r="9" fill="var(--good)"/>
+  <circle class="seat" data-p="op" cx="340" cy="210" r="9" fill="var(--good)"/>
+  <circle class="seat" data-p="m" cx="400" cy="175" r="9" fill="var(--trap)" opacity="0"/>
+  <circle class="seat" data-p="m" cx="280" cy="175" r="9" fill="var(--trap)" opacity="0"/>
 </svg></div>
-<div class="cap"><b>LPOP</b> &#8212; lone-pair / alkyl donors push electron density to the <b>ortho and para</b> seats. Electron-withdrawers pull the ring poor and leave only the <b>meta</b> seats.</div>`,
+<div class="figctrl">
+  <button class="figbtn on" data-mode="donor">Donor (OH)</button>
+  <button class="figbtn" data-mode="withdrawer">Withdrawer (NO2)</button>
+  <button class="figbtn" data-mode="halogen">Halogen (Cl)</button>
+</div>
+<div class="figdetail"><b>LPOP</b> &#8212; lone-pair / alkyl donors send the next group to the ortho and para seats.</div>
+<div class="cap">Pick a substituent and watch which seats open up. Donors activate ortho/para; withdrawers leave only meta.</div>`,
 
-subelim:`<div class="figscroll"><svg viewBox="0 0 680 300" role="img" aria-label="A two by two grid mapping the four substitution and elimination mechanisms">
-  <text x="255" y="46" text-anchor="middle" class="tag" fill="var(--ink-2)">Substitution</text>
-  <text x="490" y="46" text-anchor="middle" class="tag" fill="var(--ink-2)">Elimination</text>
-  <text x="70" y="110" text-anchor="middle" class="tag" fill="var(--ink-2)">Stepwise</text>
-  <text x="70" y="126" text-anchor="middle" class="sub">(carbocation)</text>
-  <text x="70" y="205" text-anchor="middle" class="tag" fill="var(--ink-2)">Concerted</text>
-  <rect x="140" y="60" width="230" height="90" rx="10" fill="var(--teal)" opacity=".14" stroke="var(--teal)"/>
-  <text x="255" y="98" text-anchor="middle" class="atom" fill="var(--teal)">SN1</text>
-  <text x="255" y="122" text-anchor="middle" class="sub">weak Nu, protic &#8594; racemization</text>
-  <rect x="378" y="60" width="230" height="90" rx="10" fill="var(--t1)" opacity=".16" stroke="var(--t1)"/>
-  <text x="493" y="98" text-anchor="middle" class="atom" fill="var(--t1)">E1</text>
-  <text x="493" y="122" text-anchor="middle" class="sub">weak base + heat &#8594; Zaitsev</text>
-  <rect x="140" y="158" width="230" height="90" rx="10" fill="var(--teal)" opacity=".14" stroke="var(--teal)"/>
-  <text x="255" y="196" text-anchor="middle" class="atom" fill="var(--teal)">SN2</text>
-  <text x="255" y="220" text-anchor="middle" class="sub">strong small Nu &#8594; inversion</text>
-  <rect x="378" y="158" width="230" height="90" rx="10" fill="var(--t1)" opacity=".16" stroke="var(--t1)"/>
-  <text x="493" y="196" text-anchor="middle" class="atom" fill="var(--t1)">E2</text>
-  <text x="493" y="220" text-anchor="middle" class="sub">strong base &#8594; anti-periplanar</text>
-  <text x="340" y="282" text-anchor="middle" class="tag" fill="var(--trap)">heat &#8594; elimination &#183; bulky base &#8594; Hofmann</text>
+subelim:`<div class="figscroll"><svg viewBox="0 0 680 260" role="img" aria-label="A grid of the four substitution and elimination mechanisms">
+  <text x="255" y="30" text-anchor="middle" class="tag" fill="var(--ink-2)">Substitution</text>
+  <text x="490" y="30" text-anchor="middle" class="tag" fill="var(--ink-2)">Elimination</text>
+  <text x="70" y="94" text-anchor="middle" class="tag" fill="var(--ink-2)">Stepwise</text>
+  <text x="70" y="188" text-anchor="middle" class="tag" fill="var(--ink-2)">Concerted</text>
+  <g class="hot" data-k="SN1"><rect class="hotbox" x="140" y="44" width="230" height="86" rx="10" fill="var(--teal)" opacity=".14" stroke="var(--teal)"/><text x="255" y="80" text-anchor="middle" class="atom" fill="var(--teal)">SN1</text><text x="255" y="104" text-anchor="middle" class="sub">weak Nu, protic</text></g>
+  <g class="hot" data-k="E1"><rect class="hotbox" x="378" y="44" width="230" height="86" rx="10" fill="var(--t1)" opacity=".16" stroke="var(--t1)"/><text x="493" y="80" text-anchor="middle" class="atom" fill="var(--t1)">E1</text><text x="493" y="104" text-anchor="middle" class="sub">weak base + heat</text></g>
+  <g class="hot" data-k="SN2"><rect class="hotbox" x="140" y="140" width="230" height="86" rx="10" fill="var(--teal)" opacity=".14" stroke="var(--teal)"/><text x="255" y="176" text-anchor="middle" class="atom" fill="var(--teal)">SN2</text><text x="255" y="200" text-anchor="middle" class="sub">strong small Nu</text></g>
+  <g class="hot" data-k="E2"><rect class="hotbox" x="378" y="140" width="230" height="86" rx="10" fill="var(--t1)" opacity=".16" stroke="var(--t1)"/><text x="493" y="176" text-anchor="middle" class="atom" fill="var(--t1)">E2</text><text x="493" y="200" text-anchor="middle" class="sub">strong base</text></g>
 </svg></div>
-<div class="cap">Ask four questions &#8212; substrate, nucleophile/base, solvent, temperature &#8212; then read the grid. Add a leaving group (I&#8722; &gt; Br&#8722; &gt; Cl&#8722;) and you have the whole decision.</div>`,
+<div class="figdetail">Tap a mechanism to see its stereochemistry and trigger.</div>
+<div class="cap">Ask four questions &#8212; substrate, nucleophile/base, solvent, temperature. Heat pushes elimination; a bulky base gives Hofmann.</div>`,
 
-spec:`<div class="figscroll"><svg viewBox="0 0 680 320" role="img" aria-label="An IR trace and a proton NMR sketch">
+spec:`<div class="figscroll"><svg viewBox="0 0 680 320" role="img" aria-label="An IR trace and a proton NMR sketch, hoverable">
   <text x="60" y="30" class="tag" fill="var(--ink-2)">IR &#8212; functional groups</text>
   <rect x="60" y="40" width="560" height="110" rx="8" fill="var(--paper-2)" class="thin"/>
   <path d="M70,58 L120,58 C140,58 150,120 175,120 C200,120 205,60 240,60 L330,60 C355,60 358,66 372,110 C378,124 388,124 394,110 C400,96 404,60 420,60 L610,60" fill="none" stroke="var(--t3)" stroke-width="2.5"/>
-  <text x="175" y="140" text-anchor="middle" class="sub" fill="var(--t3)">O-H ~3300 (broad)</text>
-  <text x="384" y="140" text-anchor="middle" class="sub" fill="var(--t3)">C=O ~1715</text>
+  <g class="hot" data-k="OH"><rect class="hotbox" x="140" y="46" width="70" height="98" rx="6" fill="transparent" stroke="transparent"/><text x="175" y="140" text-anchor="middle" class="sub" fill="var(--t3)">O-H ~3300</text></g>
+  <g class="hot" data-k="CO"><rect class="hotbox" x="356" y="46" width="56" height="98" rx="6" fill="transparent" stroke="transparent"/><text x="384" y="140" text-anchor="middle" class="sub" fill="var(--t3)">C=O ~1715</text></g>
   <text x="66" y="150" class="sub">4000</text><text x="606" y="150" text-anchor="end" class="sub">400 cm&#8315;&#185;</text>
-  <text x="60" y="188" class="tag" fill="var(--ink-2)">&#185;H NMR &#8212; ethanol pattern</text>
+  <text x="60" y="188" class="tag" fill="var(--ink-2)">&#185;H NMR &#8212; ethanol</text>
   <line x1="60" y1="290" x2="620" y2="290" class="bond"/>
-  <g stroke="var(--gold)" stroke-width="2.5">
-    <line x1="120" y1="290" x2="120" y2="232"/><line x1="140" y1="290" x2="140" y2="210"/><line x1="160" y1="290" x2="160" y2="232"/>
-    <line x1="300" y1="290" x2="300" y2="238"/><line x1="318" y1="290" x2="318" y2="212"/><line x1="336" y1="290" x2="336" y2="212"/><line x1="354" y1="290" x2="354" y2="238"/>
-    <line x1="500" y1="290" x2="500" y2="222"/>
-  </g>
-  <text x="140" y="308" text-anchor="middle" class="sub">CH3 &#183; triplet &#183; 3H</text>
-  <text x="327" y="308" text-anchor="middle" class="sub">CH2 &#183; quartet &#183; 2H</text>
-  <text x="500" y="308" text-anchor="middle" class="sub">OH &#183; singlet &#183; 1H</text>
+  <g class="hot" data-k="CH3"><rect class="hotbox" x="108" y="200" width="66" height="92" rx="6" fill="transparent" stroke="transparent"/><g stroke="var(--gold)" stroke-width="2.5"><line x1="120" y1="290" x2="120" y2="232"/><line x1="140" y1="290" x2="140" y2="210"/><line x1="160" y1="290" x2="160" y2="232"/></g><text x="140" y="308" text-anchor="middle" class="sub">CH3 triplet</text></g>
+  <g class="hot" data-k="CH2"><rect class="hotbox" x="290" y="200" width="74" height="92" rx="6" fill="transparent" stroke="transparent"/><g stroke="var(--gold)" stroke-width="2.5"><line x1="300" y1="290" x2="300" y2="238"/><line x1="318" y1="290" x2="318" y2="212"/><line x1="336" y1="290" x2="336" y2="212"/><line x1="354" y1="290" x2="354" y2="238"/></g><text x="327" y="308" text-anchor="middle" class="sub">CH2 quartet</text></g>
+  <g class="hot" data-k="OHp"><rect class="hotbox" x="476" y="200" width="48" height="92" rx="6" fill="transparent" stroke="transparent"/><line x1="500" y1="290" x2="500" y2="222" stroke="var(--gold)" stroke-width="2.5"/><text x="500" y="308" text-anchor="middle" class="sub">OH singlet</text></g>
 </svg></div>
-<div class="cap">Read <b>IR</b> for the functional group (C=O ~1715, broad O-H ~3300), then count <b>&#185;H</b> signals and split each by <b>n+1</b>. Thomas: an O-H is always a singlet.</div>`,
+<div class="figdetail">Hover a band or a peak to read it.</div>
+<div class="cap">Read <b>IR</b> for the group, then count <b>&#185;H</b> signals and split by <b>n+1</b>. An O-H is always a singlet.</div>`,
 
-labtech:`<div class="figscroll"><svg viewBox="0 0 680 300" role="img" aria-label="A TLC plate and a separatory funnel">
+labtech:`<div class="figscroll"><svg viewBox="0 0 680 300" role="img" aria-label="A TLC plate and an interactive separatory funnel">
   <rect x="70" y="46" width="150" height="214" rx="6" fill="var(--paper-2)" class="thin"/>
   <line x1="70" y1="70" x2="220" y2="70" class="thin" stroke-dasharray="4 4"/><text x="226" y="74" class="sub">solvent front</text>
   <line x1="70" y1="238" x2="220" y2="238" class="thin" stroke-dasharray="4 4"/><text x="226" y="242" class="sub">origin</text>
-  <circle cx="120" cy="112" r="10" fill="var(--good)" opacity=".7"/><text x="120" y="150" text-anchor="middle" class="sub" fill="var(--good)">less polar</text><text x="120" y="164" text-anchor="middle" class="sub" fill="var(--good)">high Rf</text>
-  <circle cx="170" cy="214" r="10" fill="var(--trap)" opacity=".7"/><text x="170" y="196" text-anchor="middle" class="sub" fill="var(--trap)">most polar</text><text x="170" y="182" text-anchor="middle" class="sub" fill="var(--trap)">low Rf</text>
+  <g class="hot" data-k="low"><rect class="hotbox" x="96" y="88" width="48" height="48" rx="6" fill="transparent" stroke="transparent"/><circle cx="120" cy="112" r="10" fill="var(--good)" opacity=".7"/><text x="120" y="150" text-anchor="middle" class="sub" fill="var(--good)">high Rf</text></g>
+  <g class="hot" data-k="high"><rect class="hotbox" x="146" y="190" width="48" height="48" rx="6" fill="transparent" stroke="transparent"/><circle cx="170" cy="214" r="10" fill="var(--trap)" opacity=".7"/><text x="170" y="182" text-anchor="middle" class="sub" fill="var(--trap)">low Rf</text></g>
   <text x="145" y="286" text-anchor="middle" class="tag" fill="var(--ink-2)">Rf = spot &#247; front</text>
   <defs><clipPath id="ltFun"><path d="M430,80 Q430,58 470,58 Q510,58 510,80 L510,150 L484,214 L484,236 L456,236 L456,214 L430,150 Z"/></clipPath></defs>
   <g clip-path="url(#ltFun)"><rect x="426" y="58" width="90" height="86" fill="var(--teal)" opacity=".16"/><rect x="426" y="144" width="90" height="100" fill="var(--t3)" opacity=".28"/></g>
+  <circle id="ltDot" cx="470" cy="180" r="8" fill="var(--gold)"/>
   <path d="M430,80 Q430,58 470,58 Q510,58 510,80 L510,150 L484,214 L484,236 L456,236 L456,214 L430,150 Z" fill="none" class="bond"/>
   <line x1="430" y1="144" x2="510" y2="144" class="thin"/>
-  <text x="540" y="106" class="sub" fill="var(--teal)">organic layer</text><text x="540" y="120" class="sub" fill="var(--teal)">(neutral compound)</text>
-  <text x="540" y="176" class="sub" fill="var(--t3)">aqueous layer</text><text x="540" y="190" class="sub" fill="var(--t3)">(carboxylate salt)</text>
-  <text x="470" y="286" text-anchor="middle" class="tag" fill="var(--ink-2)">base pulls the acid into water</text>
+  <text x="540" y="110" class="sub" fill="var(--teal)">organic layer</text>
+  <text x="540" y="178" class="sub" fill="var(--t3)">aqueous layer</text>
 </svg></div>
-<div class="cap">On polar silica, polar compounds are <b>stuck in the mud</b> &#8212; smallest Rf = most polar. In extraction, charge a compound up (deprotonate the acid) to drag it into the aqueous layer.</div>`,
+<div class="figctrl">
+  <button class="figbtn on" data-mode="base">Add base</button>
+  <button class="figbtn" data-mode="acid">Add acid</button>
+</div>
+<div class="figdetail">Base deprotonates the acid to a charged salt &#8212; it drops into the <b>aqueous</b> layer.</div>
+<div class="cap">On silica, polar is <b>stuck in the mud</b> (low Rf). In extraction, charge a compound up to move it into water.</div>`,
 
-rcd:`<div class="figscroll"><svg viewBox="0 0 680 300" role="img" aria-label="A two-step reaction-coordinate energy diagram">
-  <line x1="64" y1="40" x2="64" y2="262" class="bond"/><line x1="64" y1="262" x2="628" y2="262" class="bond"/>
-  <text x="30" y="150" class="sub" transform="rotate(-90 30 150)" text-anchor="middle">energy</text>
-  <text x="346" y="288" text-anchor="middle" class="sub">reaction progress</text>
-  <path d="M80,168 L150,168 C176,168 176,74 214,74 C252,74 250,150 300,150 C338,150 346,150 356,150 C398,150 404,104 452,104 C500,104 520,214 610,214" fill="none" stroke="var(--t3)" stroke-width="3"/>
-  <circle class="pulse" cx="214" cy="74" r="15" fill="none" stroke="var(--trap)" stroke-width="2.5"/>
-  <text x="214" y="58" text-anchor="middle" class="tag" fill="var(--trap)">TS &#8212; RDS</text>
-  <text x="452" y="92" text-anchor="middle" class="tag" fill="var(--ink-3)">TS</text>
-  <text x="328" y="170" text-anchor="middle" class="sub" fill="var(--ink-3)">intermediate</text>
-  <text x="96" y="160" class="sub">reactants</text>
-  <text x="606" y="230" text-anchor="end" class="sub">products</text>
-  <line x1="122" y1="168" x2="122" y2="76" stroke="var(--gold)" stroke-width="1.5" marker-start="url(#rcU)" marker-end="url(#rcU2)"/>
-  <text x="112" y="128" text-anchor="end" class="tag" fill="var(--gold)">Ea</text>
-  <text x="346" y="30" text-anchor="middle" class="sub" fill="var(--good)">products below reactants &#8594; exothermic (downhill)</text>
-  <defs>
-    <marker id="rcU" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M4,0 L8,6 L0,6 Z" fill="var(--gold)"/></marker>
-    <marker id="rcU2" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M4,8 L8,2 L0,2 Z" fill="var(--gold)"/></marker>
-  </defs>
+rcd:`<div class="figscroll"><svg viewBox="0 0 680 290" role="img" aria-label="A reaction-coordinate energy diagram that toggles between one and two steps">
+  <line x1="64" y1="30" x2="64" y2="252" class="bond"/><line x1="64" y1="252" x2="628" y2="252" class="bond"/>
+  <text x="30" y="145" class="sub" transform="rotate(-90 30 145)" text-anchor="middle">energy</text>
+  <text x="346" y="278" text-anchor="middle" class="sub">reaction progress</text>
+  <path id="rcTwo" d="M80,160 L150,160 C176,160 176,66 214,66 C252,66 250,142 300,142 C338,142 346,142 356,142 C398,142 404,96 452,96 C500,96 520,206 610,206" fill="none" stroke="var(--t3)" stroke-width="3"/>
+  <path id="rcOne" d="M80,150 L160,150 C196,150 196,60 250,60 C320,60 360,206 610,206" fill="none" stroke="var(--t3)" stroke-width="3" opacity="0"/>
+  <circle id="rcRDS" class="pulse" cx="214" cy="66" r="15" fill="none" stroke="var(--trap)" stroke-width="2.5"/>
+  <text id="rcRDSl" x="214" y="50" text-anchor="middle" class="tag" fill="var(--trap)">TS &#8212; RDS</text>
+  <text id="rcInt" x="328" y="162" text-anchor="middle" class="sub" fill="var(--ink-3)">intermediate</text>
+  <text x="96" y="152" class="sub">reactants</text>
+  <text x="606" y="222" text-anchor="end" class="sub">products</text>
 </svg></div>
-<div class="cap">Peaks are <b>transition states</b>, valleys are <b>intermediates</b>, and the number of humps is the number of steps. The <b>highest peak is the slowest, rate-determining step</b>. Two humps = SN1 / E1.</div>`,
+<div class="figctrl">
+  <button class="figbtn on" data-mode="two">Stepwise (SN1 / E1)</button>
+  <button class="figbtn" data-mode="one">Concerted (SN2 / E2)</button>
+</div>
+<div class="figdetail">Two humps, a carbocation intermediate in the valley &#8212; the taller peak is rate-determining.</div>
+<div class="cap">Peaks are transition states, valleys are intermediates. The <b>highest peak is the slowest step</b>.</div>`,
 
-alkene:`<div class="figscroll"><svg viewBox="0 0 680 320" role="img" aria-label="An alkene at the centre with reagents mapping to products">
+alkene:`<div class="figscroll"><svg viewBox="0 0 680 320" role="img" aria-label="An alkene with reagents mapping to products">
   <g transform="translate(340,160)">
     <line class="bond" x1="-24" y1="-6" x2="24" y2="-6"/><line class="bond" x1="-24" y1="6" x2="24" y2="6"/>
     <text class="atom" x="-30" y="4" text-anchor="end">C</text><text class="atom" x="30" y="4" text-anchor="start">C</text>
     <text class="tag" x="0" y="34" text-anchor="middle" fill="var(--t1)">alkene</text>
   </g>
-  <g font-family="var(--mono)">
-    <line class="bond flow" x1="300" y1="140" x2="205" y2="86" marker-end="url(#akA)"/>
-    <rect x="60" y="52" width="150" height="42" rx="8" fill="var(--paper-2)" class="thin"/><text x="135" y="72" text-anchor="middle" class="lbl" fill="var(--gold)">+ HBr</text><text x="135" y="87" text-anchor="middle" class="sub">Markovnikov</text>
-    <line class="bond flow" x1="380" y1="140" x2="475" y2="86" marker-end="url(#akA)"/>
-    <rect x="470" y="52" width="150" height="42" rx="8" fill="var(--paper-2)" class="thin"/><text x="545" y="72" text-anchor="middle" class="lbl" fill="var(--gold)">+ HBr, ROOR</text><text x="545" y="87" text-anchor="middle" class="sub">anti-Markovnikov</text>
-    <line class="bond flow" x1="292" y1="160" x2="215" y2="160" marker-end="url(#akA)"/>
-    <rect x="60" y="139" width="150" height="42" rx="8" fill="var(--paper-2)" class="thin"/><text x="135" y="159" text-anchor="middle" class="lbl" fill="var(--gold)">+ H2 / Pd</text><text x="135" y="174" text-anchor="middle" class="sub">alkane (syn)</text>
-    <line class="bond flow" x1="388" y1="160" x2="465" y2="160" marker-end="url(#akA)"/>
-    <rect x="470" y="139" width="150" height="42" rx="8" fill="var(--paper-2)" class="thin"/><text x="545" y="159" text-anchor="middle" class="lbl" fill="var(--gold)">+ BH3, H2O2</text><text x="545" y="174" text-anchor="middle" class="sub">anti-Mark OH (syn)</text>
-    <line class="bond flow" x1="300" y1="180" x2="205" y2="234" marker-end="url(#akA)"/>
-    <rect x="60" y="226" width="150" height="42" rx="8" fill="var(--paper-2)" class="thin"/><text x="135" y="246" text-anchor="middle" class="lbl" fill="var(--gold)">+ Br2</text><text x="135" y="261" text-anchor="middle" class="sub">anti dibromide</text>
-    <line class="bond flow" x1="380" y1="180" x2="475" y2="234" marker-end="url(#akA)"/>
-    <rect x="470" y="226" width="150" height="42" rx="8" fill="var(--paper-2)" class="thin"/><text x="545" y="246" text-anchor="middle" class="lbl" fill="var(--gold)">+ O3, then Zn</text><text x="545" y="261" text-anchor="middle" class="sub">cleave &#8594; 2 C=O</text>
-  </g>
+  <g class="hot" data-k="0"><line class="hotbox bond flow" x1="300" y1="140" x2="205" y2="86" marker-end="url(#akA)"/><rect x="60" y="52" width="150" height="42" rx="8" fill="var(--paper-2)" class="thin"/><text x="135" y="72" text-anchor="middle" class="lbl" fill="var(--gold)">+ HBr</text><text x="135" y="87" text-anchor="middle" class="sub">Markovnikov</text></g>
+  <g class="hot" data-k="1"><line class="hotbox bond flow" x1="380" y1="140" x2="475" y2="86" marker-end="url(#akA)"/><rect x="470" y="52" width="150" height="42" rx="8" fill="var(--paper-2)" class="thin"/><text x="545" y="72" text-anchor="middle" class="lbl" fill="var(--gold)">+ HBr, ROOR</text><text x="545" y="87" text-anchor="middle" class="sub">anti-Markovnikov</text></g>
+  <g class="hot" data-k="2"><line class="hotbox bond flow" x1="292" y1="160" x2="215" y2="160" marker-end="url(#akA)"/><rect x="60" y="139" width="150" height="42" rx="8" fill="var(--paper-2)" class="thin"/><text x="135" y="159" text-anchor="middle" class="lbl" fill="var(--gold)">+ H2 / Pd</text><text x="135" y="174" text-anchor="middle" class="sub">alkane (syn)</text></g>
+  <g class="hot" data-k="3"><line class="hotbox bond flow" x1="388" y1="160" x2="465" y2="160" marker-end="url(#akA)"/><rect x="470" y="139" width="150" height="42" rx="8" fill="var(--paper-2)" class="thin"/><text x="545" y="159" text-anchor="middle" class="lbl" fill="var(--gold)">+ BH3, H2O2</text><text x="545" y="174" text-anchor="middle" class="sub">anti-Mark OH (syn)</text></g>
+  <g class="hot" data-k="4"><line class="hotbox bond flow" x1="300" y1="180" x2="205" y2="234" marker-end="url(#akA)"/><rect x="60" y="226" width="150" height="42" rx="8" fill="var(--paper-2)" class="thin"/><text x="135" y="246" text-anchor="middle" class="lbl" fill="var(--gold)">+ Br2</text><text x="135" y="261" text-anchor="middle" class="sub">anti dibromide</text></g>
+  <g class="hot" data-k="5"><line class="hotbox bond flow" x1="380" y1="180" x2="475" y2="234" marker-end="url(#akA)"/><rect x="470" y="226" width="150" height="42" rx="8" fill="var(--paper-2)" class="thin"/><text x="545" y="246" text-anchor="middle" class="lbl" fill="var(--gold)">+ O3, then Zn</text><text x="545" y="261" text-anchor="middle" class="sub">cleave &#8594; 2 C=O</text></g>
   <defs><marker id="akA" markerWidth="9" markerHeight="9" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="var(--ink-3)"/></marker></defs>
 </svg></div>
-<div class="cap">One alkene, many reagents. Fix the <b>regiochemistry</b> (Markovnikov vs anti &#8212; look for the peroxide) and the <b>stereochemistry</b> (syn vs anti) and every product falls out.</div>`,
+<div class="figdetail">Hover a reagent to see what it does to the double bond.</div>
+<div class="cap">One alkene, many reagents. Fix the <b>regiochemistry</b> (look for the peroxide) and the <b>stereochemistry</b> (syn vs anti).</div>`,
 
-carbonyl:`<div class="figscroll"><svg viewBox="0 0 680 320" role="img" aria-label="A carbonyl at the centre with nucleophiles mapping to products">
+carbonyl:`<div class="figscroll"><svg viewBox="0 0 680 320" role="img" aria-label="A carbonyl with nucleophiles mapping to products">
   <g transform="translate(340,158)">
     <line class="bond" x1="0" y1="6" x2="0" y2="-30"/><line class="bond" x1="8" y1="6" x2="8" y2="-30"/>
     <text class="atom" x="4" y="24" text-anchor="middle">C</text><text class="atom" x="4" y="-38" text-anchor="middle" fill="var(--trap)">O</text>
@@ -1270,27 +1359,117 @@ carbonyl:`<div class="figscroll"><svg viewBox="0 0 680 320" role="img" aria-labe
     <path class="pulse" d="M4,58 C4,40 4,34 4,30" fill="none" stroke="var(--good)" stroke-width="2.5" marker-end="url(#cbNu)"/>
     <text class="tag" x="4" y="74" text-anchor="middle" fill="var(--good)">Nu:</text>
   </g>
-  <g>
-    <line class="bond flow" x1="300" y1="140" x2="205" y2="86" marker-end="url(#cbA)"/>
-    <rect x="60" y="52" width="150" height="42" rx="8" fill="var(--paper-2)" class="thin"/><text x="135" y="72" text-anchor="middle" class="lbl" fill="var(--gold)">H&#8722; (NaBH4)</text><text x="135" y="87" text-anchor="middle" class="sub">alcohol</text>
-    <line class="bond flow" x1="380" y1="140" x2="475" y2="86" marker-end="url(#cbA)"/>
-    <rect x="470" y="52" width="150" height="42" rx="8" fill="var(--paper-2)" class="thin"/><text x="545" y="72" text-anchor="middle" class="lbl" fill="var(--gold)">R-MgX</text><text x="545" y="87" text-anchor="middle" class="sub">bigger alcohol</text>
-    <line class="bond flow" x1="292" y1="158" x2="215" y2="158" marker-end="url(#cbA)"/>
-    <rect x="60" y="137" width="150" height="42" rx="8" fill="var(--paper-2)" class="thin"/><text x="135" y="157" text-anchor="middle" class="lbl" fill="var(--gold)">R-NH2</text><text x="135" y="172" text-anchor="middle" class="sub">imine (C=N)</text>
-    <line class="bond flow" x1="388" y1="158" x2="465" y2="158" marker-end="url(#cbA)"/>
-    <rect x="470" y="137" width="150" height="42" rx="8" fill="var(--paper-2)" class="thin"/><text x="545" y="157" text-anchor="middle" class="lbl" fill="var(--gold)">R2NH</text><text x="545" y="172" text-anchor="middle" class="sub">enamine</text>
-    <line class="bond flow" x1="300" y1="176" x2="205" y2="234" marker-end="url(#cbA)"/>
-    <rect x="60" y="226" width="150" height="42" rx="8" fill="var(--paper-2)" class="thin"/><text x="135" y="246" text-anchor="middle" class="lbl" fill="var(--gold)">2 ROH / H+</text><text x="135" y="261" text-anchor="middle" class="sub">acetal (protected)</text>
-    <line class="bond flow" x1="380" y1="176" x2="475" y2="234" marker-end="url(#cbA)"/>
-    <rect x="470" y="226" width="150" height="42" rx="8" fill="var(--paper-2)" class="thin"/><text x="545" y="246" text-anchor="middle" class="lbl" fill="var(--gold)">ylide (Wittig)</text><text x="545" y="261" text-anchor="middle" class="sub">alkene (C=C)</text>
-  </g>
+  <g class="hot" data-k="0"><line class="hotbox bond flow" x1="300" y1="140" x2="205" y2="86" marker-end="url(#cbA)"/><rect x="60" y="52" width="150" height="42" rx="8" fill="var(--paper-2)" class="thin"/><text x="135" y="72" text-anchor="middle" class="lbl" fill="var(--gold)">H&#8722; (NaBH4)</text><text x="135" y="87" text-anchor="middle" class="sub">alcohol</text></g>
+  <g class="hot" data-k="1"><line class="hotbox bond flow" x1="380" y1="140" x2="475" y2="86" marker-end="url(#cbA)"/><rect x="470" y="52" width="150" height="42" rx="8" fill="var(--paper-2)" class="thin"/><text x="545" y="72" text-anchor="middle" class="lbl" fill="var(--gold)">R-MgX</text><text x="545" y="87" text-anchor="middle" class="sub">bigger alcohol</text></g>
+  <g class="hot" data-k="2"><line class="hotbox bond flow" x1="292" y1="158" x2="215" y2="158" marker-end="url(#cbA)"/><rect x="60" y="137" width="150" height="42" rx="8" fill="var(--paper-2)" class="thin"/><text x="135" y="157" text-anchor="middle" class="lbl" fill="var(--gold)">R-NH2</text><text x="135" y="172" text-anchor="middle" class="sub">imine (C=N)</text></g>
+  <g class="hot" data-k="3"><line class="hotbox bond flow" x1="388" y1="158" x2="465" y2="158" marker-end="url(#cbA)"/><rect x="470" y="137" width="150" height="42" rx="8" fill="var(--paper-2)" class="thin"/><text x="545" y="157" text-anchor="middle" class="lbl" fill="var(--gold)">R2NH</text><text x="545" y="172" text-anchor="middle" class="sub">enamine</text></g>
+  <g class="hot" data-k="4"><line class="hotbox bond flow" x1="300" y1="176" x2="205" y2="234" marker-end="url(#cbA)"/><rect x="60" y="226" width="150" height="42" rx="8" fill="var(--paper-2)" class="thin"/><text x="135" y="246" text-anchor="middle" class="lbl" fill="var(--gold)">2 ROH / H+</text><text x="135" y="261" text-anchor="middle" class="sub">acetal (protected)</text></g>
+  <g class="hot" data-k="5"><line class="hotbox bond flow" x1="380" y1="176" x2="475" y2="234" marker-end="url(#cbA)"/><rect x="470" y="226" width="150" height="42" rx="8" fill="var(--paper-2)" class="thin"/><text x="545" y="246" text-anchor="middle" class="lbl" fill="var(--gold)">ylide (Wittig)</text><text x="545" y="261" text-anchor="middle" class="sub">alkene (C=C)</text></g>
   <defs>
     <marker id="cbA" markerWidth="9" markerHeight="9" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="var(--ink-3)"/></marker>
     <marker id="cbNu" markerWidth="9" markerHeight="9" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="var(--good)"/></marker>
   </defs>
 </svg></div>
-<div class="cap">Oxygen makes the carbonyl carbon <b>&#948;+</b>, so nucleophiles attack there. Which nucleophile you send in decides the product &#8212; hydride and Grignard give alcohols, amines give imines or enamines.</div>`
+<div class="figdetail">Hover a nucleophile to see the product it gives.</div>
+<div class="cap">Oxygen makes the carbonyl carbon <b>&#948;+</b>, so nucleophiles attack there &#8212; and each one gives a different product.</div>`
 };
+
+/* ---- FIGX: controllers that make the figures interactive ---- */
+const FIG_TEXT = {
+  stereo:{R:'<b>R</b> &#8212; trace OH&#8594;NH2&#8594;CH3 (1&#8594;2&#8594;3). It runs clockwise, and H points back, so it reads directly as R.',
+          S:'<b>S</b> &#8212; the mirror image. The same 1&#8594;2&#8594;3 trace runs counter-clockwise, giving S.'},
+  acidbase:{HCl:'<b>HCl</b> (pKa -7): Cl&#8722; is a large, stable anion &#8212; a strong acid.',
+            H3O:'<b>H3O+</b> (pKa -1.7): the benchmark for a strong aqueous acid.',
+            RCOOH:'<b>Carboxylic acid</b> (~5): resonance spreads the charge over two oxygens &#8212; far more acidic than an alcohol.',
+            ArOH:'<b>Phenol</b> (~10): the ring delocalizes the charge, so it beats a normal alcohol.',
+            H2O:'<b>Water</b> (15.7): the usual dividing line between acidic and not.',
+            alkyne:'<b>Terminal alkyne</b> (~25): the sp C-H is weakly acidic &#8212; more s-character holds the pair tighter.',
+            NH3:'<b>Ammonia</b> (~38): nitrogen barely gives up its proton.',
+            RH:'<b>Alkane</b> (~50): essentially not acidic at all.'},
+  aromatic:{donor:{sub:'OH',fill:'var(--gold)',seats:'op',detail:'<b>LPOP</b> &#8212; lone-pair / alkyl donors send the next group to the <b>ortho and para</b> seats.'},
+            withdrawer:{sub:'NO2',fill:'var(--trap)',seats:'m',detail:'Electron-withdrawers pull the ring poor and leave only the <b>meta</b> seats.'},
+            halogen:{sub:'Cl',fill:'var(--t2)',seats:'op',detail:'Halogens are the exception: they <b>deactivate</b>, yet still direct <b>ortho / para</b>.'}},
+  subelim:{SN1:'<b>SN1</b>: weak nucleophile, protic solvent, 3&#176; substrate &#8212; via a carbocation, so <b>racemization</b>.',
+           SN2:'<b>SN2</b>: strong small nucleophile, polar aprotic &#8212; one concerted backside attack, so <b>inversion</b>.',
+           E1:'<b>E1</b>: weak base + heat &#8212; via a carbocation, giving the <b>Zaitsev</b> (more-substituted) alkene.',
+           E2:'<b>E2</b>: strong base, H and leaving group <b>anti-periplanar</b>. A bulky base gives Hofmann.'},
+  spec:{OH:'<b>Broad O-H ~3300</b> &#8212; an alcohol or acid (an acid O-H is even broader).',
+        CO:'<b>C=O ~1715</b> &#8212; the strongest, most diagnostic IR band.',
+        CH3:'<b>CH3 = triplet</b> &#8212; it has 2 neighboring H on the CH2 (n+1 = 3).',
+        CH2:'<b>CH2 = quartet</b> &#8212; it has 3 neighboring H on the CH3 (n+1 = 4).',
+        OHp:'<b>OH = singlet</b> &#8212; the oxygen isolates it, so it never splits.'},
+  labtech:{base:'Base deprotonates the acid to a charged carboxylate &#8212; it drops into the <b>aqueous</b> layer.',
+           acid:'Acid reprotonates it back to a neutral molecule &#8212; it returns to the <b>organic</b> layer.',
+           low:'<b>High Rf</b>: a less-polar compound barely sticks, so it rides up near the front.',
+           high:'<b>Low Rf</b>: a polar compound is stuck in the mud &#8212; smallest Rf = most polar.'},
+  rcd:{two:'Two humps, a carbocation intermediate in the valley &#8212; the <b>taller peak</b> is rate-determining. This is SN1 / E1.',
+       one:'One hump, no intermediate &#8212; a single concerted step. This is SN2 / E2.'},
+  alkene:['<b>HBr</b> alone adds Markovnikov &#8212; Br on the more-substituted carbon.',
+          '<b>HBr with peroxide</b> flips to anti-Markovnikov (radical). Look for the peroxide.',
+          '<b>H2 / Pd</b> adds two H to the same face (syn) &#8212; the alkane.',
+          '<b>Hydroboration</b> (BH3 then H2O2) gives the anti-Markovnikov alcohol, syn.',
+          '<b>Br2</b> adds anti through a bromonium ion &#8212; a trans dibromide.',
+          '<b>Ozonolysis</b> cleaves the C=C into two carbonyl groups.'],
+  carbonyl:['<b>Hydride</b> (NaBH4 / LiAlH4) reduces the carbonyl to an alcohol.',
+            '<b>Grignard</b> (R-MgX) adds an R, then workup gives a bigger alcohol.',
+            '<b>Primary amine</b> gives an imine (C=N, a Schiff base).',
+            '<b>Secondary amine</b> gives an enamine (C=C-N).',
+            '<b>Two alcohols</b> under acid give an acetal &#8212; a protecting group.',
+            '<b>A Wittig ylide</b> converts the C=O into a C=C alkene.']
+};
+
+function figWireHover(root, cb){
+  root.querySelectorAll('.hot').forEach(g=>{
+    const set=()=>cb(g.dataset.k,g);
+    g.addEventListener('mouseenter',set);
+    g.addEventListener('focus',set);
+    g.addEventListener('click',set);
+    g.setAttribute('tabindex','0');
+  });
+}
+function figDetail(root){return root.querySelector('.figdetail');}
+
+const FIGX = {
+  stereo(root){const d=figDetail(root);const base=d.innerHTML;figWireHover(root,k=>{d.innerHTML=FIG_TEXT.stereo[k];});root.addEventListener('mouseleave',()=>d.innerHTML=base);},
+  acidbase(root){const d=figDetail(root);const base=d.innerHTML;figWireHover(root,k=>{d.innerHTML=FIG_TEXT.acidbase[k];});root.addEventListener('mouseleave',()=>d.innerHTML=base);},
+  subelim(root){const d=figDetail(root),base=d.innerHTML;const clr=()=>{root.classList.remove('dim');root.querySelectorAll('.hot').forEach(x=>x.classList.remove('sel'));d.innerHTML=base;};figWireHover(root,(k,g)=>{d.innerHTML=FIG_TEXT.subelim[k];root.classList.add('dim');root.querySelectorAll('.hot').forEach(x=>x.classList.remove('sel'));g.classList.add('sel');});root.addEventListener('mouseleave',clr);},
+  spec(root){const d=figDetail(root);const base=d.innerHTML;figWireHover(root,k=>{d.innerHTML=FIG_TEXT.spec[k];});root.addEventListener('mouseleave',()=>d.innerHTML=base);},
+  alkene(root){const d=figDetail(root),base=d.innerHTML;const clr=()=>{root.classList.remove('dim');root.querySelectorAll('.hot').forEach(x=>x.classList.remove('sel'));d.innerHTML=base;};figWireHover(root,(k,g)=>{d.innerHTML=FIG_TEXT.alkene[+k];root.classList.add('dim');root.querySelectorAll('.hot').forEach(x=>x.classList.remove('sel'));g.classList.add('sel');});root.addEventListener('mouseleave',clr);},
+  carbonyl(root){const d=figDetail(root),base=d.innerHTML;const clr=()=>{root.classList.remove('dim');root.querySelectorAll('.hot').forEach(x=>x.classList.remove('sel'));d.innerHTML=base;};figWireHover(root,(k,g)=>{d.innerHTML=FIG_TEXT.carbonyl[+k];root.classList.add('dim');root.querySelectorAll('.hot').forEach(x=>x.classList.remove('sel'));g.classList.add('sel');});root.addEventListener('mouseleave',clr);},
+  aromatic(root){
+    const d=figDetail(root),sub=root.querySelector('#arSub');
+    const apply=m=>{const c=FIG_TEXT.aromatic[m];sub.textContent=c.sub;sub.setAttribute('fill',c.fill);
+      root.querySelectorAll('.seat').forEach(s=>{const on=s.dataset.p===c.seats;s.setAttribute('opacity',on?'1':'0');if(on&&c.seats==='op')s.setAttribute('fill',m==='halogen'?'var(--t2)':'var(--good)');});
+      d.innerHTML=c.detail;};
+    root.querySelectorAll('.figbtn').forEach(b=>b.addEventListener('click',()=>{root.querySelectorAll('.figbtn').forEach(x=>x.classList.remove('on'));b.classList.add('on');apply(b.dataset.mode);}));
+  },
+  rcd(root){
+    const d=figDetail(root),two=root.querySelector('#rcTwo'),one=root.querySelector('#rcOne'),
+      rds=root.querySelector('#rcRDS'),rdsl=root.querySelector('#rcRDSl'),intl=root.querySelector('#rcInt');
+    root.querySelectorAll('.figbtn').forEach(b=>b.addEventListener('click',()=>{
+      root.querySelectorAll('.figbtn').forEach(x=>x.classList.remove('on'));b.classList.add('on');
+      const one_=b.dataset.mode==='one';
+      two.setAttribute('opacity',one_?'0':'1');one.setAttribute('opacity',one_?'1':'0');
+      rds.setAttribute('cx',one_?'250':'214');rds.setAttribute('cy',one_?'60':'66');
+      rdsl.setAttribute('x',one_?'250':'214');rdsl.setAttribute('y',one_?'44':'50');rdsl.textContent=one_?'TS':'TS — RDS';
+      intl.setAttribute('opacity',one_?'0':'1');
+      d.innerHTML=FIG_TEXT.rcd[b.dataset.mode];
+    }));
+  },
+  labtech(root){
+    const d=figDetail(root),dot=root.querySelector('#ltDot');
+    figWireHover(root,k=>{if(FIG_TEXT.labtech[k])d.innerHTML=FIG_TEXT.labtech[k];});
+    root.querySelectorAll('.figbtn').forEach(b=>b.addEventListener('click',()=>{
+      root.querySelectorAll('.figbtn').forEach(x=>x.classList.remove('on'));b.classList.add('on');
+      const acid=b.dataset.mode==='acid';
+      dot.setAttribute('cy',acid?'100':'180');dot.setAttribute('fill',acid?'var(--teal)':'var(--gold)');
+      d.innerHTML=FIG_TEXT.labtech[b.dataset.mode];
+    }));
+  }
+};
+function wireFigs(scope){
+  (scope||document).querySelectorAll('.fig[data-fig]').forEach(f=>{const fn=FIGX[f.dataset.fig];if(fn)try{fn(f);}catch(e){}});
+}
 
 /* ---- RENDER: home ---- */
 function renderHome(){
@@ -1308,14 +1487,15 @@ function renderHome(){
      '<div style="margin-top:14px"><button class="watch-btn" id="easVidBtn">Watch a sample coach explainer: EAS directors</button></div>'+
      '<div class="pathnote"><b>Built to be seen.</b> Every module now opens with a diagram — a chirality pair, a pKa ladder, EAS director rings, the SN/E decision grid, IR and NMR traces, a TLC plate, the reaction-coordinate curve, and reagent maps — then teaches through the five-stage flow. '+liveMods.length+' modules are fully live.</div>'+
      '<div class="homefigs">'+
-       '<figure class="fig">'+FIG.rcd+'</figure>'+
-       '<figure class="fig">'+FIG.aromatic+'</figure>'+
-       '<figure class="fig">'+FIG.acidbase+'</figure>'+
+       '<figure class="fig" data-fig="rcd">'+FIG.rcd+'</figure>'+
+       '<figure class="fig" data-fig="aromatic">'+FIG.aromatic+'</figure>'+
+       '<figure class="fig" data-fig="acidbase">'+FIG.acidbase+'</figure>'+
      '</div>'+
    '</div>';
   document.getElementById('startBtn').addEventListener('click',()=>openModule(next.id));
   document.getElementById('stereoBtn').addEventListener('click',()=>openModule('stereo'));
   document.getElementById('easVidBtn').addEventListener('click',()=>VID.open('tiktoks/eas-directors-tiktok.html','EAS directors: who aims where'));
+  wireFigs(mainEl);
 }
 
 /* ---- RENDER: module ---- */
@@ -1358,8 +1538,11 @@ function renderStage(id){
     return reached
       ?'<button class="pill '+cls+'" data-stage="'+i+'">'+(i+1)+' · '+n+'</button>'
       :'<span class="pill '+cls+'">'+(i+1)+' · '+n+'</span>';}).join('')+'</div>';
+  body+='<div class="stage-track"><i id="stageBar"></i></div>';
   body+='<div id="stageBody"></div></div>';
   mainEl.innerHTML=body;
+  const bar=document.getElementById('stageBar');
+  if(bar){const pct=mastered?100:Math.round((far/4)*100);requestAnimationFrame(()=>{bar.style.width=pct+'%';});}
   mainEl.querySelectorAll('.stage-pills button').forEach(b=>b.addEventListener('click',()=>{const s=stageState(id);s.max=Math.max(s.max||0,s.cur);s.cur=+b.dataset.stage;save(ST);renderStage(id);}));
   drawStageBody(id);
   const h=mainEl.querySelector('.mod-view h2'); if(h)h.focus();
@@ -1378,9 +1561,9 @@ function drawStageBody(id){
   const c=CONTENT[id],ss=stageState(id),el=document.getElementById('stageBody');
   const stage=ss.cur;
   if(stage===0){ // Concept
-    el.innerHTML=(FIG[id]?'<figure class="fig">'+FIG[id]+'</figure>':'')+(c.videoUrl?'<button class="watch-btn" id="cWatch">Watch: '+(c.videoTitle||'coach explainer')+'</button>':'')+'<div class="card">'+c.concept+'</div><button class="next-btn" id="s0">I’ve got the idea — continue</button>';
+    el.innerHTML=(FIG[id]?'<figure class="fig" data-fig="'+id+'">'+FIG[id]+'</figure>':'')+(c.videoUrl?'<button class="watch-btn" id="cWatch">Watch: '+(c.videoTitle||'coach explainer')+'</button>':'')+'<div class="card">'+c.concept+'</div><button class="next-btn" id="s0">I’ve got the idea — continue</button>';
     const cw=document.getElementById('cWatch');if(cw)cw.addEventListener('click',()=>VID.open(c.videoUrl,c.videoTitle));
-    document.getElementById('s0').addEventListener('click',()=>{markStageDone(id,0);renderStage(id);});
+    document.getElementById('s0').addEventListener('click',()=>{markStageDone(id,0);renderStage(id);});wireFigs(el);
   } else if(stage===1){ // Worked
     drawWorked(id);
   } else if(stage===2){ // Faded
@@ -1541,7 +1724,7 @@ function finishMastery(id){
   [0,1,2,3,4].forEach(k=>{if(ss.done.indexOf(k)<0)ss.done.push(k);});
   ss.cur=5;ST.mastery[id]='mastered';save(ST);renderTree();
   const opened=MODS.filter(x=>x.prereqs.indexOf(id)>=0&&isUnlocked(x)).map(x=>x.name);
-  mainEl.innerHTML='<div class="celebrate"><h3>'+m.name+' — mastered.</h3>'+
+  mainEl.innerHTML='<div class="celebrate"><div class="seal"><svg viewBox="0 0 34 34" aria-hidden="true"><g fill="none" stroke="#1a1206" stroke-width="2.4" stroke-linecap="round"><path d="M11 7 Q5 17 11 27"/><path d="M23 7 Q29 17 23 27"/></g><circle cx="17" cy="17" r="3.4" fill="#1a1206"/></svg></div><h3>'+m.name+' — mastered.</h3>'+
     '<p>Three in a row — the module is yours. '+(opened.length?'You just unlocked: <b>'+opened.join(', ')+'</b>.':'Keep going — more unlocks as you clear prerequisites.')+'</p></div>'+
     '<button class="next-btn" id="toNext">'+(opened.length?'Open '+opened[0]:'Back to the tree')+'</button> '+
     '<button class="next-btn ghost" id="toHome">See the tree</button>';
