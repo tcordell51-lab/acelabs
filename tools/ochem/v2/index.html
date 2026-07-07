@@ -425,6 +425,38 @@ const BANK = {
     opts:['2, always','4 (that is 2^n), unless an internal mirror plane makes a meso form (then 3)','3, always','1'],correct:1,
     why:'n stereocenters give up to 2^n stereoisomers. A meso compound (an internal mirror plane) collapses two of them into one achiral molecule, so 2 centers give 3 instead of 4.',
     diag:{0:'Two centers give up to 2^2 = 4, not 2.',2:'3 is only the meso-reduced count; the general maximum is 4 (2^n).',3:'A single molecule is not the count of stereoisomers.'}},
+  lt1:{skill:'labtech',diff:1,q:'Rf in TLC is defined as:',
+    opts:['Distance the solvent front moved / distance the spot moved','Distance the spot moved / distance the solvent front moved','Spot size / plate size','Time up the plate'],correct:1,
+    why:'Rf is the distance the spot traveled divided by the distance the solvent front traveled, a value between 0 and 1.',
+    diag:{0:'That ratio is inverted; the spot distance goes on top.',2:'Rf is about distances traveled, not spot or plate size.',3:'Rf does not use time.'}},
+  lt2:{skill:'labtech',diff:1,q:'On a polar silica TLC plate, the compound with the SMALLEST Rf is:',
+    opts:['The least polar','The most polar (it sticks to the silica)','The lightest','The most volatile'],correct:1,
+    why:'Polar compounds stick to the polar silica and travel the least, so the smallest Rf is the most polar. Stuck in the mud.',
+    diag:{0:'The least polar travels farthest and has the LARGEST Rf.',2:'Molecular weight is not what determines Rf here.',3:'Volatility matters for distillation, not TLC migration.'}},
+  lt3:{skill:'labtech',diff:2,q:'To move a carboxylic acid from an organic layer into the aqueous layer, you add:',
+    opts:['A strong acid','A strong base, which deprotonates it to a charged carboxylate','More organic solvent','Water only'],correct:1,
+    why:'A base deprotonates the acid to a charged carboxylate salt, which dissolves in the aqueous layer.',
+    diag:{0:'Acid keeps it neutral and in the organic layer; base is what pulls it into water.',2:'Adding organic solvent does not change which layer it prefers.',3:'Water alone will not dissolve a neutral organic acid; you must charge it.'}},
+  lt4:{skill:'labtech',diff:2,q:'During an acid-base extraction, a neutral nonpolar compound like bromobenzene stays in:',
+    opts:['The aqueous layer','The organic layer','Neither layer','Both equally'],correct:1,
+    why:'Bromobenzene is uncharged and nonpolar, so it remains in the organic layer while the charged species moves to water.',
+    diag:{0:'Uncharged nonpolar compounds do not dissolve in water.',2:'It has to be in a layer; it stays organic.',3:'It strongly prefers organic, not both.'}},
+  lt5:{skill:'labtech',diff:2,q:'In a separatory funnel, whether an organic solvent is the top or bottom layer is decided by:',
+    opts:['Its polarity','Its density relative to water','Its color','Its boiling point'],correct:1,
+    why:'Denser-than-water solvents (dichloromethane) sink to the bottom; lighter ones (diethyl ether) float on top.',
+    diag:{0:'Polarity affects what dissolves where, not which layer is physically on top.',2:'Color is irrelevant.',3:'Boiling point matters for distillation, not layering.'}},
+  lt6:{skill:'labtech',diff:2,q:'Two liquids boil only 5 C apart. The best way to separate them is:',
+    opts:['Simple distillation','Fractional distillation','Recrystallization','Acid-base extraction'],correct:1,
+    why:'Close boiling points need a fractionating column (fractional distillation); simple distillation needs a large bp gap.',
+    diag:{0:'Simple distillation cannot resolve boiling points this close.',2:'Recrystallization purifies solids, not close-boiling liquids.',3:'Extraction separates by acidity/polarity, not boiling point.'}},
+  lt7:{skill:'labtech',diff:2,q:'A high-boiling or heat-sensitive compound is best distilled by:',
+    opts:['Simple distillation at high heat','Vacuum (reduced-pressure) distillation','Recrystallization','TLC'],correct:1,
+    why:'Lowering the pressure lowers the boiling point, so the compound distills at a safer, lower temperature.',
+    diag:{0:'High heat can decompose a heat-sensitive compound.',2:'Recrystallization is for solids, not distilling a liquid.',3:'TLC is an analytical technique, not a preparative separation.'}},
+  lt8:{skill:'labtech',diff:1,q:'An impurity in a solid sample generally makes its melting point:',
+    opts:['Higher and sharper','Lower and broader','Unchanged','Disappear entirely'],correct:1,
+    why:'Impurities depress and broaden the melting point; a sharp, high melting point indicates a pure sample.',
+    diag:{0:'Impurities lower the mp and make it broad, not higher and sharper.',2:'An impurity does change the mp.',3:'The sample still melts; the range just shifts and broadens.'}},
 };
 
 /* ---- CONTENT (per-module) ---- */
@@ -685,6 +717,49 @@ const CONTENT = {
     ],
     practice:['sp1','sp2','sp3','sp4','sp6','sp7'],
     mastery:['sp5','sp8','sp2','sp4','sp6','sp7','sp1','sp3'],
+  },
+  labtech:{accent:'var(--t3)',
+    sub:'Separation and purification — TLC, extraction, distillation, recrystallization. A DAT signature the exam tests far more than a college course does.',
+    concept:`<h3>Separate and purify</h3>
+      <p>The DAT loves "how would you separate/purify this" questions. Master four techniques and their logic.</p>
+      <div class="rule"><div class="rl">TLC / chromatography</div>
+        <b>Rf = distance the spot traveled ÷ distance the solvent front traveled</b> (a number 0–1). On <em>polar silica</em>, more polar compounds <b>stick and travel less</b> → smaller Rf; less polar compounds travel farther → larger Rf. So <b>smallest Rf = most polar</b>.</div>
+      <div class="rule"><div class="rl">Acid-base extraction</div>
+        Two layers (aqueous + organic). Move a compound between them by changing its <b>charge</b>. Deprotonate a carboxylic acid with a strong base (NaOH / NaHCO₃) → the charged carboxylate salt goes into the <b>aqueous</b> layer; neutral nonpolar compounds (bromobenzene, hydrocarbons) stay in the <b>organic</b> layer. Reverse with acid. Which layer is on top is set by <b>density</b> (dichloromethane sinks; ether floats).</div>
+      <div class="rule"><div class="rl">Distillation &amp; recrystallization</div>
+        <b>Simple</b> distillation for bp gaps &gt; ~25 °C; <b>fractional</b> for close bps; <b>vacuum</b> (reduced-pressure) for high-boiling or heat-sensitive compounds. <b>Recrystallization</b>: hot-dissolve then cool slowly so pure product crystallizes and impurities stay in solution. An impurity <b>lowers and broadens</b> a melting point (a sharp mp = pure).</div>
+      <div class="coachbox"><div class="rl">Coach trick · Thomas</div><b>TLC: "stuck in the mud."</b> Silica is polar mud — polar compounds stick and barely move, so the <b>smallest Rf is the most polar</b>. For <b>extraction</b>, ask two questions: is it acidic or basic, and how do I charge it up to pull it into the water layer? And remember: carboxylic acids are more polar than alcohols.</div>
+      <div class="depthnote"><b>DAT depth:</b> compute Rf and rank polarity/elution, design an acid-base extraction (which layer, how to switch), pick simple vs fractional vs vacuum distillation, and reason about recrystallization and mp/bp for purity — yes. Apparatus assembly and theoretical-plate math — not tested.</div>`,
+    worked:[
+      {q:'On a silica TLC plate, compound A has Rf 0.8 and compound B has Rf 0.2. Which is more polar?',
+       steps:[
+        {what:'Rf = distance the spot moved ÷ distance the solvent front moved; the silica plate is polar.',why:'The stationary phase polarity drives the separation.'},
+        {what:'On polar silica, more polar compounds stick and travel less (smaller Rf).',why:'Polar-sticks-to-polar.',
+         predict:{q:'Silica is polar mud that grabs polar compounds. Which one — the high-Rf 0.8 or the low-Rf 0.2 — is more polar?',hint:'Which one barely moved off the baseline?'}},
+        {what:'B (Rf 0.2) barely moved → it stuck to the silica → it is more polar. "Stuck in the mud."',why:'Smallest Rf = most polar.'},
+       ], answer:'B (Rf 0.2) is more polar — it stuck to the polar silica and traveled least. Smallest Rf = most polar.'},
+      {q:'A mixture of benzoic acid (a carboxylic acid) and bromobenzene (neutral, nonpolar) is dissolved in ether. How do you separate them?',
+       steps:[
+        {what:'Add aqueous strong base (NaOH or NaHCO₃) and shake the two layers.',why:'Base will react only with the acidic component.'},
+        {what:'The base deprotonates benzoic acid to a charged carboxylate salt.',why:'Charging it up changes where it dissolves.',
+         predict:{q:'The carboxylate is now a charged, ionic salt. Which layer does it move into — aqueous or organic?',hint:'Charged, ionic species prefer the water.'}},
+        {what:'The carboxylate salt moves into the AQUEOUS layer; bromobenzene (neutral, nonpolar) stays in the ORGANIC (ether) layer. Separate, then acidify the aqueous layer to recover the benzoic acid.',why:'Reprotonating returns it to a neutral, organic-soluble form.'},
+       ], answer:'Wash with aqueous base: benzoic acid becomes a water-soluble carboxylate (aqueous layer) while bromobenzene stays in the ether (organic). Separate, then acidify to recover the benzoic acid.'},
+      {q:'You need to separate two liquids whose boiling points differ by only 8 °C. Which distillation?',
+       steps:[
+        {what:'Simple distillation works only when the boiling points are far apart (more than ~25 °C).',why:'One vaporization cycle is not enough to resolve close bps.',
+         predict:{q:'The boiling points differ by only 8 °C — very close. Is simple distillation enough, or do you need fractional?',hint:'Simple distillation needs a big bp gap.'}},
+        {what:'Close boiling points (8 °C) require fractional distillation.',why:'The fractionating column provides many re-vaporization cycles.'},
+        {what:'Use vacuum (reduced-pressure) distillation instead if a compound is high-boiling or heat-sensitive.',why:'Lower pressure lowers the boiling point.'},
+       ], answer:'Fractional distillation — an 8 °C gap is too close for simple distillation; the column separates them. (Vacuum distillation if a compound is high-boiling or heat-sensitive.)'},
+    ],
+    faded:[
+      {prompt:'On polar silica TLC, the compound with the SMALLEST Rf is the ___ one.',hint:'Stuck in the mud.',answer:'most polar'},
+      {prompt:'To pull a carboxylic acid out of an organic layer, wash with aqueous ___, which makes a water-soluble carboxylate salt.',hint:'It deprotonates the acid.',answer:'base'},
+      {prompt:'When two liquids have very close boiling points, use ___ distillation.',hint:'It uses a column.',answer:'fractional'},
+    ],
+    practice:['lt1','lt2','lt3','lt4','lt6','lt8'],
+    mastery:['lt5','lt7','lt2','lt3','lt6','lt8','lt1','lt4'],
   },
 };
 
