@@ -177,7 +177,7 @@ button{font-family:inherit;cursor:pointer}
 <div class="shell">
   <nav class="tree-pane" aria-label="Course module tree">
     <p class="tree-h">The course</p>
-    <p class="tree-sub">Twenty modules on a prerequisite tree. Stereochemistry, Acid-Base, and Aromaticity are fully live now; the rest are being authored pass by pass.</p>
+    <p class="tree-sub">Twenty modules on a prerequisite tree. Lit-up nodes are ready to study now; the rest are being authored pass by pass.</p>
     <div id="tree"></div>
   </nav>
   <main class="main-pane" id="main" tabindex="-1"></main>
@@ -381,6 +381,14 @@ const BANK = {
     opts:['Syn (same side)','Anti-periplanar (180 degrees apart)','Gauche (60 degrees)','Cis'],correct:1,
     why:'E2 is concerted, so the C-H and C-leaving-group bonds must be anti-periplanar for their orbitals to align.',
     diag:{0:'Syn-periplanar elimination is rare and not the DAT default; E2 wants anti.',2:'Gauche does not give the required orbital alignment.',3:'cis/trans describes alkene geometry, not the E2 transition-state requirement.'}},
+  ar9:{skill:'aromatic',diff:3,q:'On a disubstituted ring where two groups direct to different positions, which group wins the directing contest?',
+    opts:['The weaker activator','The stronger activator (and an ortho/para director beats a meta director)','Whichever group was added first','Neither; the ring does not react'],correct:1,
+    why:'The strongest activator controls the ring electron density, so it decides the position; an ortho/para director outranks a meta director.',
+    diag:{0:'The stronger group dominates, not the weaker one.',2:'Order of addition does not decide the next position.',3:'The ring still reacts; the stronger director just sets where.'}},
+  ar10:{skill:'aromatic',diff:2,q:'The position directly between two substituents on a ring is usually avoided by an incoming electrophile because of:',
+    opts:['Loss of resonance','Steric crowding','Loss of aromaticity','Induction'],correct:1,
+    why:'The spot sandwiched between two groups is too crowded, so substitution favors the less-hindered open positions.',
+    diag:{0:'Resonance is not what blocks that position.',2:'The ring stays aromatic throughout EAS.',3:'Induction is about electron withdrawal, not the steric block.'}},
 };
 
 /* ---- CONTENT (per-module) ---- */
@@ -431,14 +439,14 @@ const CONTENT = {
        steps:[
         {what:'On each double-bond carbon, rank the two groups by CIP (atomic number).',why:'E/Z is decided one carbon at a time.'},
         {what:'Left carbon: Br (35) beats CH₃ (C=6). Right carbon: Cl (17) beats H. So the higher-priority group is Br (top-left) and Cl (top-right).',why:'Only the winner on each carbon matters.',
-         predict:{q:'Both higher-priority groups (Br and Cl) sit on top — the same side. Same side is E or Z?',hint:'Z = zusammen = together (same side).'}},
+         predict:{q:'Both higher-priority groups (Br and Cl) sit on top — the same side. Same side is E or Z?',hint:'Recall the German roots: one of E/Z means "together."'}},
         {what:'Both higher-priority groups on the same side → Z.',why:'Opposite sides would be E (entgegen).'},
        ], answer:'Z — the two higher-priority groups (Br and Cl) are on the same side. E/Z is the rigorous version of cis/trans, decided by CIP on each carbon.'},
       {q:'In the most stable chair of methylcyclohexane, is the methyl axial or equatorial?',
        steps:[
         {what:'Cyclohexane sits in a chair; each carbon has one axial (straight up/down) and one equatorial (out to the side) position. A ring-flip swaps every axial with equatorial.',why:'Both chairs are the same molecule, just flipped.'},
         {what:'An axial methyl points over the ring and bumps the two axial hydrogens on the same face — 1,3-diaxial strain.',why:'That crowding raises the energy.',
-         predict:{q:'To avoid that 1,3-diaxial bumping, does the larger group prefer axial or equatorial?',hint:'Equatorial points away from the ring face.'}},
+         predict:{q:'To avoid that 1,3-diaxial bumping, does the larger group prefer axial or equatorial?',hint:'Which position keeps the group clear of those axial hydrogens?'}},
         {what:'The methyl prefers equatorial; that chair is the more stable conformation.',why:'The bigger the group, the stronger the preference for equatorial.'},
        ], answer:'Equatorial — the larger substituent goes equatorial to avoid 1,3-diaxial strain. (Qualitative only; the DAT does not ask for numeric A-values.)'},
     ],
@@ -471,7 +479,7 @@ const CONTENT = {
        steps:[
         {what:'Identify the group already on the ring: a methyl (–CH₃), an alkyl group.',why:'The existing group sets both the rate and the position.'},
         {what:'Alkyl groups weakly donate electron density into the ring.',why:'A donor makes the ring richer.',
-         predict:{q:'A donor is an activator. Which positions does a donor send the next group to — ortho/para, or meta?',hint:'Remember LPOP: donors aim ortho/para.'}},
+         predict:{q:'A donor is an activator. Which positions does a donor send the next group to — ortho/para, or meta?',hint:'Where does a donor make the ring most electron-rich?'}},
         {what:'Donor → activator → ortho/para director. So nitration is a bit faster than benzene and the –NO₂ goes ortho and para to the methyl.',why:'Para usually dominates for sterics; some ortho forms too.'},
        ], answer:'Faster than benzene (methyl activates) and ortho/para (mostly para). Alkyl is a weak o/p-directing activator.'},
       {q:'Chlorobenzene is nitrated. Fast or slow versus benzene, and where?',
@@ -485,17 +493,24 @@ const CONTENT = {
        steps:[
         {what:'Aromatic checklist: cyclic + planar + fully conjugated + 4n+2 π electrons (magic numbers 2, 6, 10, 14). Count 2 π electrons per double bond.',why:'Cyclic/planar/conjugated but 4n electrons = anti-aromatic instead.'},
         {what:'Benzene: 3 double bonds = 6 π electrons = a magic number → aromatic.',why:'Six is the classic aromatic count.',
-         predict:{q:'Cyclobutadiene is a 4-membered ring with 2 double bonds = 4 π electrons. 4 is 4n, not a magic number. What does that make it?',hint:'Cyclic/planar/conjugated + 4n = the opposite of aromatic.'}},
+         predict:{q:'Cyclobutadiene is a 4-membered ring with 2 double bonds = 4 π electrons. 4 is 4n, not a magic number. What does that make it?',hint:'It is cyclic, planar, and conjugated, but the count is 4n rather than 4n+2.'}},
         {what:'Cyclobutadiene: 4 π electrons = 4n → anti-aromatic (and very unstable). Pyrrole: 2 double bonds (4 π) plus the nitrogen lone pair in the ring p-system (2 more) = 6 π → aromatic.',why:'Pyrrole donates its N lone pair into the ring; pyridine does not (its lone pair is in-plane).'},
        ], answer:'Benzene aromatic (6 π), cyclobutadiene anti-aromatic (4 π), pyrrole aromatic (6 π, counting the N lone pair).'},
+      {q:'A benzene ring bears a strong activator (–OH) and, para to it, a weak activator (–CH₃). Which group directs the next electrophile?',
+       steps:[
+        {what:'Both –OH and –CH₃ are activators and ortho/para directors, but they differ in strength.',why:'On a disubstituted ring, the two groups compete to control the position.'},
+        {what:'When two directors compete, the STRONGER activator wins.',why:'It donates the most electron density, so it sets where the ring is richest.',
+         predict:{q:'Both are ortho/para directors, but which one controls the position — the stronger or the weaker activator?',hint:'The group that pushes the most electron density into the ring dominates.'}},
+        {what:'–OH is far stronger than –CH₃, so it directs. The electrophile goes ortho to the –OH (para is blocked by the methyl).',why:'And the crowded spot directly between two groups is usually skipped for sterics.'},
+       ], answer:'The stronger activator (–OH) wins the directing contest, so the new group adds ortho/para to it (here ortho, since para is occupied). Rule of thumb: stronger activator directs, an o/p director beats a meta director, and skip the crowded position between two groups.'},
     ],
     faded:[
       {prompt:'An –OH group on a ring is a strong activator, so an incoming electrophile adds ___ to it.',hint:'The LPOP positions.',answer:'ortho and para'},
       {prompt:'A nitro group (–NO₂) withdraws electrons, so it is a ___ director.',hint:'Flip the W.',answer:'meta'},
       {prompt:'A ring is aromatic if it is cyclic, planar, fully conjugated, and has ___ π electrons (2, 6, 10, or 14).',hint:'The Hückel rule.',answer:'4n+2'},
     ],
-    practice:['ar1','ar2','ar3','ar4','ar5','ar8'],
-    mastery:['ar6','ar7','ar2','ar4','ar5','ar8','ar1','ar3'],
+    practice:['ar1','ar2','ar3','ar4','ar9','ar5','ar8'],
+    mastery:['ar6','ar7','ar2','ar9','ar4','ar10','ar5','ar8','ar1','ar3'],
   },
   acidbase:{accent:'var(--t0)',
     sub:'Ranking most acidic and most basic — the reasoning-heavy skill the DAT loves, and one the 2026 spec weights up.',
@@ -652,11 +667,12 @@ function renderTree(){
 function renderHome(){
   activeId=null;renderTree();
   const next=MODS.find(m=>isAuthored(m.id)&&ST.mastery[m.id]!=='mastered')||MODS.find(m=>isAuthored(m.id))||MODS.find(m=>hasContent(m.id))||MODS[0];
+  const liveMods=MODS.filter(m=>isAuthored(m.id));
   mainEl.innerHTML=
    '<div class="hero">'+
      '<p class="eye">A guided course · not a room full of tools</p>'+
      '<h1>Organic chemistry, <em>one clear step</em> at a time.</h1>'+
-     '<p>Every module teaches the same way — concept, worked examples you predict before they reveal, fading practice, then a mastery check you have to earn. Three are fully live now (Stereochemistry, Acid-Base, Aromaticity); the rest are being authored.</p>'+
+     '<p>Every module teaches the same way — concept, worked examples you predict before they reveal, fading practice, then a mastery check you have to earn. <b>'+liveMods.length+' are fully live now</b> ('+liveMods.map(m=>m.name).join(', ')+'); the rest are being authored.</p>'+
      '<p>No wall of tools. Just the next rung.</p>'+
      '<button class="cta" id="startBtn">Start: '+next.name+'</button>'+
      '<button class="cta ghost" id="stereoBtn">Jump to Stereochemistry</button>'+
@@ -804,6 +820,7 @@ function drawFaded(id){
     el.innerHTML='<div class="card"><h3>Faded practice '+(i+1)+' of '+c.faded.length+'</h3>'+
       '<p>'+f.prompt.replace('___','<b style=\"color:var(--gold)\">___</b>')+'</p>'+
       '<div class="predict"><div class="hint">'+f.hint+'</div></div>'+
+      '<input id="fin" type="text" placeholder="Fill the blank yourself first, then reveal" autocomplete="off" spellcheck="false" style="width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--paper-2);color:var(--ink);font:inherit;font-size:14px;margin:6px 0 10px">'+
       '<button class="reveal-btn" id="rev">Reveal answer</button><div id="fans"></div></div>';
     document.getElementById('rev').addEventListener('click',()=>{
       document.getElementById('fans').innerHTML='<div class="fb good"><div class="lab">Answer</div><b>'+f.answer+'</b></div>';
@@ -835,7 +852,8 @@ function drawBankSet(id,ids,mode){
       schedule(ids[i],correct);
       const fb=document.getElementById('qfb');
       fb.innerHTML='<div class="fb '+(correct?'good':'bad')+'"><div class="lab">'+(correct?'Correct':'Not quite')+'</div>'+
-        (correct?'':'<b>'+(q.diag[idx]||'Not the move.')+'</b><br>')+q.why+'</div>';
+        (correct?'':'<b>'+(q.diag[idx]||'Not the move.')+'</b><br>')+q.why+
+        (correct?'':'<br><span style="color:var(--good);font-weight:600">Correct answer: '+'ABCD'[q.correct]+' — '+q.opts[q.correct]+'</span>')+'</div>';
       const b=document.createElement('button');b.className='next-btn';
       b.textContent=i<ids.length-1?'Next question':'Finish this set';
       b.addEventListener('click',()=>{if(i<ids.length-1){i++;render();}else{markStageDone(id,3);renderStage(id);}});
@@ -866,7 +884,8 @@ function drawMastery(id){
       streak=correct?streak+1:0;pi++;
       const fb=document.getElementById('mfb');
       fb.innerHTML='<div class="fb '+(correct?'good':'bad')+'"><div class="lab">'+(correct?'Correct — streak '+streak:'Streak reset')+'</div>'+
-        (correct?'':'<b>'+(q.diag[idx]||'')+'</b><br>')+q.why+'</div>';
+        (correct?'':'<b>'+(q.diag[idx]||'')+'</b><br>')+q.why+
+        (correct?'':'<br><span style="color:var(--good);font-weight:600">Correct answer: '+'ABCD'[q.correct]+' — '+q.opts[q.correct]+'</span>')+'</div>';
       if(streak>=3){finishMastery(id);return;}
       const b=document.createElement('button');b.className='next-btn';b.textContent='Next';
       b.addEventListener('click',render);fb.appendChild(b);b.focus();
