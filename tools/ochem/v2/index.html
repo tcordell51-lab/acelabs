@@ -525,6 +525,38 @@ const BANK = {
     opts:['Anti addition','Syn addition (both H from the same face), giving the alkane','An alcohol','No reaction'],correct:1,
     why:'H2/Pd delivers both hydrogens from the same face of the catalyst (syn) to give the alkane.',
     diag:{0:'Hydrogenation is syn, not anti.',2:'It adds H atoms, not OH.',3:'The alkene is reduced to an alkane.'}},
+  cb1:{skill:'carbonyl',diff:1,q:'Why do nucleophiles attack the carbonyl CARBON?',
+    opts:['It is negatively charged','The carbon is electrophilic (delta+) because oxygen pulls electrons away','It carries a lone pair','It is aromatic'],correct:1,
+    why:'The electronegative oxygen polarizes the C=O, leaving the carbon electron-poor (delta+) and therefore electrophilic.',
+    diag:{0:'The carbon is electron-poor, not negatively charged; the oxygen is the negative end.',2:'The lone pairs are on oxygen, not the electrophilic carbon.',3:'A simple carbonyl carbon is not aromatic.'}},
+  cb2:{skill:'carbonyl',diff:1,q:'NaBH4 will reduce which of these?',
+    opts:['A carboxylic acid','An aldehyde or ketone (but not esters or acids)','An alkane','An ether'],correct:1,
+    why:'NaBH4 is a mild hydride: it reduces aldehydes and ketones to alcohols but leaves esters and carboxylic acids alone.',
+    diag:{0:'Carboxylic acids need the stronger LiAlH4.',2:'Alkanes have no carbonyl to reduce.',3:'Ethers are not reduced by NaBH4.'}},
+  cb3:{skill:'carbonyl',diff:2,q:'Compared with NaBH4, LiAlH4:',
+    opts:['Is weaker','Is stronger and also reduces carboxylic acids and esters','Does nothing','Only reduces alkenes'],correct:1,
+    why:'LiAlH4 is a stronger hydride that reduces aldehydes, ketones, carboxylic acids, and esters to alcohols.',
+    diag:{0:'LiAlH4 is stronger, not weaker, than NaBH4.',2:'It is a powerful reducing agent, not inert.',3:'Hydrides reduce carbonyls, not simple alkenes.'}},
+  cb4:{skill:'carbonyl',diff:2,q:'A ketone reacts with a Grignard reagent (then acid workup) to give a:',
+    opts:['Primary alcohol','Secondary alcohol','Tertiary alcohol','Carboxylic acid'],correct:2,
+    why:'The ketone carbon already bears two R groups; the Grignard adds a third, giving a tertiary alcohol.',
+    diag:{0:'A primary alcohol comes from formaldehyde + Grignard.',1:'A secondary alcohol comes from an aldehyde + Grignard.',3:'A Grignard adds a carbon and gives an alcohol, not an acid.'}},
+  cb5:{skill:'carbonyl',diff:2,q:'An aldehyde or ketone plus two equivalents of an alcohol under acid gives an acetal, which is used as a:',
+    opts:['Protecting group (removed later with aqueous acid)','Leaving group','Nucleophile','Catalyst'],correct:0,
+    why:'The acetal shields the carbonyl from base and nucleophiles and is cleaved back to the carbonyl with aqueous acid.',
+    diag:{1:'An acetal is not a leaving group.',2:'It is unreactive toward nucleophiles, which is why it protects.',3:'It is a protected form of the substrate, not a catalyst.'}},
+  cb6:{skill:'carbonyl',diff:2,q:'A carbonyl plus a PRIMARY amine (RNH2) forms a(n):',
+    opts:['Imine (Schiff base, C=N)','Enamine','Acetal','Alcohol'],correct:0,
+    why:'A primary amine condenses with the carbonyl and loses water to give an imine (C=N).',
+    diag:{1:'An enamine comes from a SECONDARY amine (no N-H left for a C=N).',2:'An acetal comes from alcohols, not amines.',3:'An amine gives a C=N or C=C-N, not a plain alcohol.'}},
+  cb7:{skill:'carbonyl',diff:1,q:'The Wittig reaction converts a carbonyl (C=O) into a:',
+    opts:['Carboxylic acid','Alkene (C=C)','Alcohol','Amine'],correct:1,
+    why:'A phosphorus ylide replaces the carbonyl oxygen with a carbon, forming a C=C double bond (an alkene).',
+    diag:{0:'The Wittig does not oxidize to an acid.',2:'It makes a C=C, not a C-OH.',3:'No nitrogen is introduced.'}},
+  cb8:{skill:'carbonyl',diff:1,q:'Which is more reactive toward nucleophilic addition?',
+    opts:['A ketone','An aldehyde (less steric hindrance and a more electrophilic carbon)','They are exactly equal','Neither reacts'],correct:1,
+    why:'An aldehyde has only one R group (less steric hindrance) and a more electrophilic carbonyl carbon, so it is more reactive than a ketone.',
+    diag:{0:'A ketone has two R groups, making it more hindered and less reactive.',2:'They differ: the aldehyde is more reactive.',3:'Both react; the aldehyde is faster.'}},
 };
 
 /* ---- CONTENT (per-module) ---- */
@@ -916,6 +948,49 @@ const CONTENT = {
     ],
     practice:['al1','al2','al3','al5','al7','al8'],
     mastery:['al4','al6','al2','al3','al5','al8','al1','al7'],
+  },
+  carbonyl:{accent:'var(--t2)',
+    sub:'The carbonyl (C=O) — nucleophilic addition. Match the nucleophile to the product: hydride, Grignard, alcohol, amine, ylide. High-yield recognition.',
+    concept:`<h3>Attack the carbon</h3>
+      <p>Oxygen pulls electrons, so the carbonyl <b>carbon is electrophilic (δ+)</b>. Nucleophiles attack that carbon — <b>nucleophilic addition</b>. Learn which nucleophile gives which product.</p>
+      <div class="rule"><div class="rl">Reductions (add H⁻)</div>
+        <b>NaBH₄</b> — mild: reduces aldehydes and ketones → alcohols; leaves esters and acids alone. <b>LiAlH₄</b> — strong: reduces aldehydes, ketones, <b>and</b> carboxylic acids and esters → alcohols.</div>
+      <div class="rule"><div class="rl">Carbon nucleophiles</div>
+        <b>Grignard (RMgX) / RLi</b> — adds an R to the carbonyl carbon; acid workup → an alcohol. Formaldehyde → 1° · aldehyde → 2° · ketone → 3° (ester adds twice). Water or any protic H <em>destroys</em> a Grignard. <b>HCN</b> → cyanohydrin (CN + OH).</div>
+      <div class="rule"><div class="rl">Oxygen &amp; nitrogen nucleophiles, Wittig</div>
+        <b>2 ROH</b> (acid cat.) → <b>acetal</b> (hemiacetal is the intermediate) — a <b>protecting group</b>, reversible with aqueous acid. <b>Primary amine (RNH₂)</b> → <b>imine</b> (C=N, a Schiff base). <b>Secondary amine (R₂NH)</b> → <b>enamine</b> (C=C–N). <b>Wittig ylide</b> → converts C=O to <b>C=C</b> (an alkene).</div>
+      <div class="coachbox"><div class="rl">Coach trick · Thomas</div>Match the nucleophile to the product: H⁻ (NaBH₄/LiAlH₄) → alcohol; R⁻ (Grignard) → a bigger alcohol; RNH₂ → imine, R₂NH → enamine; 2 ROH → acetal (a protecting group); ylide → alkene. And <b>aldehydes are more reactive than ketones</b> — one less R means less crowding and a more electrophilic carbon.</div>
+      <div class="depthnote"><b>DAT depth:</b> match a carbonyl + reagent to the product; know NaBH₄ vs LiAlH₄ scope, the Grignard alcohol class, acetal-as-protecting-group, imine vs enamine, Wittig, aldehyde &gt; ketone reactivity, and keto-enol tautomerism / α-acidity at recognition — yes. Full arrow-pushing and aldol/Claisen mechanism detail — not tested.</div>`,
+    worked:[
+      {q:'A molecule has BOTH a ketone and an ester. Which reagent reduces ONLY the ketone, and which reduces both?',
+       steps:[
+        {what:'NaBH₄ is the mild hydride: it reduces aldehydes and ketones but not esters or acids.',why:'It is not strong enough for the less-reactive ester.',
+         predict:{q:'NaBH₄ is the mild hydride. Does it reduce the ester too, or just the ketone?',hint:'The mild reagent leaves the less-reactive ester alone.'}},
+        {what:'NaBH₄ reduces only the ketone (to a 2° alcohol); the ester is untouched.',why:'Selectivity is the point of using the milder reagent.'},
+        {what:'LiAlH₄ is stronger and reduces BOTH the ketone and the ester to alcohols.',why:'It reduces acids and esters too.'},
+       ], answer:'NaBH₄ reduces only the ketone (mild, selective); LiAlH₄ reduces both the ketone and the ester. Use NaBH₄ when you want to spare the ester.'},
+      {q:'A Grignard reagent (RMgBr) reacts with an aldehyde, then acid workup. What class of alcohol forms? What if you use a ketone instead?',
+       steps:[
+        {what:'The Grignard adds its R to the carbonyl carbon; workup protonates the oxygen to give an alcohol.',why:'A new C–C bond forms at the carbonyl carbon.'},
+        {what:'An aldehyde carbon carries one R and one H; adding a second R gives a carbon with two R groups.',why:'Count the carbon groups on the new C–OH.',
+         predict:{q:'After the Grignard adds its R to an aldehyde, the carbinol carbon has two carbon groups. Is that a 1°, 2°, or 3° alcohol?',hint:'Count the carbon groups on the carbon bearing the OH.'}},
+        {what:'Aldehyde → 2° alcohol; a ketone (two R groups) → 3° alcohol; formaldehyde → 1° alcohol.',why:'Any water or protic H destroys the Grignard before it can add.'},
+       ], answer:'Aldehyde + Grignard → a 2° alcohol; ketone + Grignard → a 3° alcohol (formaldehyde → 1°). Grignards are destroyed by water or any protic hydrogen.'},
+      {q:'A ketone reacts with a PRIMARY amine (RNH₂). What forms? What changes with a SECONDARY amine (R₂NH)?',
+       steps:[
+        {what:'The amine adds to the carbonyl, then water is lost.',why:'This is a condensation.',
+         predict:{q:'A primary amine (RNH₂) adds, then loses water. Does it give a C=N (imine) or a C=C–N (enamine)?',hint:'A primary amine still has an N–H available to form the C=N.'}},
+        {what:'A primary amine still has an N–H, so it forms the C=N → an imine (Schiff base).',why:'Losing water leaves the C=N double bond.'},
+        {what:'A secondary amine (R₂NH) has no N–H left for a C=N, so it forms the C=C–N → an enamine.',why:'The double bond shifts to carbon instead.'},
+       ], answer:'Primary amine (RNH₂) → imine (C=N, a Schiff base); secondary amine (R₂NH) → enamine (C=C–N). Both lose water; the difference is how many N–H bonds remain.'},
+    ],
+    faded:[
+      {prompt:'The mild hydride ___ reduces aldehydes and ketones but not esters or acids.',hint:'The selective reducer.',answer:'NaBH4'},
+      {prompt:'A ketone plus a Grignard reagent (then acid workup) gives a ___ alcohol.',hint:'Three R groups on the carbinol carbon.',answer:'tertiary'},
+      {prompt:'An aldehyde or ketone plus two alcohols (acid catalyst) forms an ___, used as a protecting group.',hint:'Two OR groups on one carbon.',answer:'acetal'},
+    ],
+    practice:['cb1','cb2','cb4','cb6','cb7','cb8'],
+    mastery:['cb3','cb5','cb2','cb4','cb6','cb8','cb1','cb7'],
   },
 };
 
