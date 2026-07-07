@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=1080,initial-scale=1"/>
+<title>Ace The DAT — EAS Directors (who aims where)</title>
+<style>
+:root{
+  --sb:#0d2018; --ink:#f5f0e8; --muted:rgba(245,240,232,.58); --dim:rgba(245,240,232,.34);
+  --gold:#C9A84C; --gold-m:#E2C97A; --gold-d:#8C7235;
+  --rich:#7be08a; --rich-d:#3f9a52;     /* activators / ortho-para */
+  --poor:#5fa3ff; --poor-d:#2c6fc4;     /* deactivators / meta */
+  --trap:#f59e0b; --trap-deep:#b45309;
+  --serif:'Playfair Display',Georgia,'Times New Roman',serif;
+  --sans:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  --mono:ui-monospace,'SF Mono','Menlo',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{background:#000;overflow:hidden;font-family:var(--sans);color:var(--ink)}
+.stage{width:1080px;height:1920px;position:absolute;left:50%;top:50%;transform-origin:center center;overflow:hidden;transition:background .8s ease}
+.stage[data-phase="hook"]{background:linear-gradient(175deg,#0a1812,#0d2018 50%,#08120c)}
+.stage[data-phase="demo"]{background:linear-gradient(175deg,#0a1812,#10201f 50%,#08120c)}
+.stage[data-phase="trap"]{background:linear-gradient(175deg,#3d2706,#5c3608 50%,#2c1d04)}
+.stage[data-phase="lock"]{background:linear-gradient(175deg,#0a1812,#1a3322 50%,#0d2018)}
+.brand{position:absolute;left:0;right:0;top:50px;display:flex;align-items:center;justify-content:space-between;padding:0 70px;z-index:20}
+.brand-word{font-family:var(--serif);font-size:38px;font-weight:700;color:#fff}
+.brand-word span{color:var(--gold)}
+.brand-tag{font-size:18px;font-weight:600;color:var(--dim);letter-spacing:.18em;text-transform:uppercase}
+.hook{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;z-index:25;text-align:center;padding:0 80px;transition:opacity .5s}
+.hook-tag{font-size:24px;font-weight:700;color:var(--gold);letter-spacing:.22em;text-transform:uppercase;margin-bottom:28px;display:flex;align-items:center;gap:18px}
+.hook-tag::before,.hook-tag::after{content:'';width:30px;height:1px;background:var(--gold)}
+.hook-word{font-family:var(--serif);font-size:120px;font-weight:900;color:#fff;letter-spacing:-.03em;line-height:1.0;text-shadow:0 0 60px rgba(201,168,76,.35)}
+.hook-word em{color:var(--gold);font-style:italic}
+.hook-sub{font-size:32px;font-weight:600;color:var(--muted);margin-top:28px;max-width:840px;line-height:1.3}
+/* Ring demo */
+.demo{position:absolute;left:0;right:0;top:360px;z-index:14;opacity:0;transition:opacity .6s;text-align:center}
+.ring-svg{width:640px;height:700px}
+.pos-lbl{font-family:var(--mono);font-size:30px;font-weight:700}
+.demo-verdict{position:absolute;left:0;right:0;top:1120px;z-index:16;text-align:center;opacity:0;transition:opacity .5s}
+.dv-tag{font-size:22px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;margin-bottom:12px}
+.dv-text{font-family:var(--serif);font-size:104px;font-weight:900;line-height:.98;letter-spacing:-.03em}
+.dv-sub{font-size:32px;font-weight:600;color:var(--muted);margin-top:14px}
+.caption{position:absolute;left:50%;top:1480px;transform:translateX(-50%);z-index:18;background:#000;color:#fff;font-size:50px;font-weight:900;padding:20px 42px;border-radius:14px;line-height:1.12;box-shadow:0 12px 40px rgba(0,0,0,.6);text-align:center;opacity:0;max-width:940px;transition:opacity .4s}
+.trap{position:absolute;inset:0;background:linear-gradient(135deg,rgba(245,158,11,.96),rgba(180,83,9,.96));z-index:40;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:0 70px;opacity:0;pointer-events:none;transition:opacity .5s}
+.trap-ribbon{background:#0d2018;color:var(--gold);font-size:30px;font-weight:900;letter-spacing:.2em;padding:16px 38px;border-radius:8px;margin-bottom:44px;text-transform:uppercase;border:2px solid var(--gold)}
+.trap-h{font-family:var(--serif);font-size:120px;font-weight:900;color:#fff;line-height:1.0;letter-spacing:-.03em;margin-bottom:32px}
+.trap-h em{font-style:italic;color:#0d2018}
+.trap-sub{font-size:40px;font-weight:600;color:rgba(13,32,24,.94);line-height:1.32;max-width:900px}
+.lock{position:absolute;inset:0;z-index:35;display:flex;align-items:center;justify-content:center;flex-direction:column;opacity:0;pointer-events:none;text-align:center;padding:0 70px;transition:opacity .6s}
+.lock-tag{font-size:28px;font-weight:700;color:var(--gold);letter-spacing:.22em;text-transform:uppercase;margin-bottom:28px}
+.lock-word{font-family:var(--serif);font-size:104px;font-weight:900;color:var(--gold);line-height:1.0;letter-spacing:-.03em;text-shadow:0 0 80px rgba(201,168,76,.45)}
+.lock-word em{font-style:italic;color:#fff}
+.lock-decode{font-family:var(--mono);font-size:34px;font-weight:600;color:#fff;margin-top:46px;line-height:1.75}
+.lock-decode .rich{color:var(--rich)} .lock-decode .poor{color:var(--poor)} .lock-decode .hal{color:var(--trap)}
+.foot{position:absolute;left:80px;right:80px;bottom:80px;z-index:50}
+.scrub-wrap{position:relative;height:8px;background:rgba(245,240,232,.1);border-radius:4px;cursor:pointer}
+.scrub-fill{position:absolute;left:0;top:0;bottom:0;width:0;background:linear-gradient(90deg,var(--gold-m),var(--gold));border-radius:4px}
+.scrub-thumb{position:absolute;top:50%;transform:translate(-50%,-50%);width:28px;height:28px;background:var(--gold);border-radius:50%;box-shadow:0 0 0 4px rgba(201,168,76,.22);left:0}
+.foot-row{display:flex;justify-content:space-between;align-items:center;margin-top:24px;font-size:18px;color:var(--dim);letter-spacing:.1em}
+.foot-cta{color:var(--gold);font-weight:700;letter-spacing:.14em;text-transform:uppercase}
+.play-btn{background:var(--gold);color:#0d2018;border:none;padding:11px 24px;border-radius:6px;font-weight:700;letter-spacing:.08em;font-size:16px;cursor:pointer;font-family:inherit}
+.watermark{position:absolute;left:80px;bottom:34px;font-size:14px;letter-spacing:.2em;color:rgba(245,240,232,.28);text-transform:uppercase;z-index:50}
+/* ring atoms */
+.ring-line{stroke:rgba(245,240,232,.55);stroke-width:5;fill:none}
+.ring-inner{stroke:rgba(245,240,232,.3);stroke-width:4;fill:none}
+.site{fill:rgba(245,240,232,.12);stroke:rgba(245,240,232,.4);stroke-width:3;transition:fill .5s,stroke .5s,r .5s}
+.site.op{fill:var(--rich);stroke:var(--rich-d)}
+.site.m{fill:var(--poor);stroke:var(--poor-d)}
+.sub-badge{fill:var(--gold);stroke:#0d2018;stroke-width:4}
+.sub-txt{fill:#0d2018;font-family:var(--mono);font-weight:700;font-size:34px;text-anchor:middle}
+.site-txt{fill:#0d2018;font-family:var(--mono);font-weight:700;font-size:26px;text-anchor:middle;opacity:0;transition:opacity .4s}
+.site-txt.show{opacity:1}
+</style>
+</head>
+<body>
+<div class="stage" id="stage" data-phase="hook">
+  <div class="brand"><div class="brand-word">Ace The <span>DAT</span></div><div class="brand-tag">Organic · EAS Directors</div></div>
+
+  <div class="hook" id="hook">
+    <div class="hook-tag">EAS · who aims where</div>
+    <div class="hook-word">The group<br/>already on<br/>the ring<br/><em>calls the shot.</em></div>
+    <div class="hook-sub">Rich rings and poor rings send the next group to different seats.</div>
+  </div>
+
+  <div class="demo" id="demo">
+    <svg class="ring-svg" viewBox="0 0 400 440" xmlns="http://www.w3.org/2000/svg" aria-label="Benzene ring with directing positions">
+      <!-- hexagon vertices: top(sub), then clockwise -->
+      <polygon class="ring-line" points="200,70 320,140 320,280 200,350 80,280 80,140"/>
+      <circle class="ring-inner" cx="200" cy="210" r="70"/>
+      <!-- substituent at top -->
+      <circle class="sub-badge" cx="200" cy="70" r="34"/>
+      <text class="sub-txt" x="200" y="82" id="subTxt">G</text>
+      <!-- ortho (140,140 &amp; 260,140), meta (140,280 &amp; 260,280), para (200,350) -->
+      <circle class="site" id="o1" cx="320" cy="140" r="26"/><text class="site-txt" x="320" y="150" id="o1t">o</text>
+      <circle class="site" id="o2" cx="80"  cy="140" r="26"/><text class="site-txt" x="80"  y="150" id="o2t">o</text>
+      <circle class="site" id="m1" cx="320" cy="280" r="26"/><text class="site-txt" x="320" y="290" id="m1t">m</text>
+      <circle class="site" id="m2" cx="80"  cy="280" r="26"/><text class="site-txt" x="80"  y="290" id="m2t">m</text>
+      <circle class="site" id="p1" cx="200" cy="350" r="26"/><text class="site-txt" x="200" y="360" id="p1t">p</text>
+    </svg>
+  </div>
+
+  <div class="demo-verdict" id="dverdict">
+    <div class="dv-tag" id="dvTag">activator</div>
+    <div class="dv-text" id="dvText">ortho / para</div>
+    <div class="dv-sub" id="dvSub">electron-rich ring, faster reaction</div>
+  </div>
+
+  <div class="caption" id="caption">caption</div>
+
+  <div class="trap" id="trap">
+    <div class="trap-ribbon">The DAT trap</div>
+    <div class="trap-h">Halogens<br/><em>break the rule.</em></div>
+    <div class="trap-sub">F, Cl, Br, I <em>deactivate</em> (slow it down by pulling electrons through the bond) — yet they still send the next group <em>ortho / para</em> by donating a lone pair. Poor ring, ortho-para seats.</div>
+  </div>
+
+  <div class="lock" id="lock">
+    <div class="lock-tag">Lock it in</div>
+    <div class="lock-word">Rich aims <em>o/p.</em><br/>Poor aims <em>meta.</em></div>
+    <div class="lock-decode">
+      <span class="rich">Donors (–OH, –NH₂, –OR, alkyl)</span> → ortho/para, faster<br/>
+      <span class="poor">Withdrawers (–NO₂, C=O, –SO₃H)</span> → meta, slower<br/>
+      <span class="hal">Halogens</span> → the exception: slower, but ortho/para
+    </div>
+  </div>
+
+  <div class="foot">
+    <div class="scrub-wrap" id="scrubBar"><div class="scrub-fill" id="scrubFill"></div><div class="scrub-thumb" id="scrubThumb"></div></div>
+    <div class="foot-row"><button class="play-btn" id="playBtn">Play</button><div class="foot-cta">acethedat.com</div></div>
+  </div>
+  <div class="watermark">Ace The DAT · Organic · EAS</div>
+</div>
+
+<script>
+"use strict";
+function fitStage(){const s=document.getElementById('stage');const k=Math.min(innerWidth/1080,innerHeight/1920);s.style.transform='translate(-50%,-50%) scale('+k+')';}
+addEventListener('resize',fitStage);fitStage();
+
+const $=id=>document.getElementById(id);
+const stage=$('stage'),hook=$('hook'),demo=$('demo'),dverdict=$('dverdict'),caption=$('caption'),trap=$('trap'),lock=$('lock');
+const sites=['o1','o2','m1','m2','p1'];
+function clearSites(){sites.forEach(s=>{$(s).className.baseVal='site';$(s+'t').className.baseVal='site-txt';});}
+function setSub(t){$('subTxt').textContent=t;}
+function lightOP(){clearSites();['o1','o2','p1'].forEach(s=>{$(s).classList.add('op');$(s+'t').classList.add('show');});}
+function lightMeta(){clearSites();['m1','m2'].forEach(s=>{$(s).classList.add('m');$(s+'t').classList.add('show');});}
+
+const TL=[
+ {t:0,fn:()=>{stage.dataset.phase='hook';hook.style.opacity=1;demo.style.opacity=0;dverdict.style.opacity=0;caption.style.opacity=0;trap.style.opacity=0;lock.style.opacity=0;clearSites();}},
+ {t:4500,fn:()=>{stage.dataset.phase='demo';hook.style.opacity=0;setTimeout(()=>{demo.style.opacity=1;dverdict.style.opacity=1;},420);setSub('OH');lightOP();$('dvTag').textContent='activator (donor)';$('dvTag').style.color='var(--rich)';$('dvText').textContent='ortho / para';$('dvText').style.color='var(--rich)';$('dvSub').textContent='–OH donates electrons: rich ring, faster';}},
+ {t:9000,fn:()=>{caption.innerHTML='Electron <b style="color:var(--rich)">donors</b> → ortho / para';caption.style.opacity=1;}},
+ {t:13000,fn:()=>{caption.style.opacity=0;setSub('NO₂');lightMeta();$('dvTag').textContent='deactivator (withdrawer)';$('dvTag').style.color='var(--poor)';$('dvText').textContent='meta';$('dvText').style.color='var(--poor)';$('dvSub').textContent='–NO₂ pulls electrons: poor ring, slower';}},
+ {t:18000,fn:()=>{caption.innerHTML='Electron <b style="color:var(--poor)">withdrawers</b> → meta';caption.style.opacity=1;}},
+ {t:22000,fn:()=>{caption.style.opacity=0;}},
+ {t:24000,fn:()=>{stage.dataset.phase='trap';trap.style.opacity=1;}},
+ {t:33000,fn:()=>{trap.style.opacity=0;setSub('Cl');lightOP();demo.style.opacity=1;dverdict.style.opacity=1;$('dvTag').textContent='halogen · the exception';$('dvTag').style.color='var(--trap)';$('dvText').textContent='ortho / para';$('dvText').style.color='var(--trap)';$('dvSub').textContent='deactivates, yet still o/p directing';stage.dataset.phase='demo';}},
+ {t:38000,fn:()=>{demo.style.opacity=0;dverdict.style.opacity=0;stage.dataset.phase='lock';lock.style.opacity=1;}},
+ {t:52000,fn:()=>{}},
+ {t:58000,fn:()=>{stage.dataset.phase='hook';lock.style.opacity=0;hook.style.opacity=1;}}
+];
+const TOTAL=58000;
+let paused=true,startedAt=0,elapsed=0;
+function tick(){if(paused)return;const t=elapsed+(Date.now()-startedAt);TL.forEach(e=>{if(!e._f&&t>=e.t){e._f=true;e.fn();}});$('scrubFill').style.width=Math.min(100,t/TOTAL*100)+'%';$('scrubThumb').style.left=Math.min(100,t/TOTAL*100)+'%';if(t>=TOTAL){paused=true;$('playBtn').textContent='Replay';return;}requestAnimationFrame(tick);}
+function play(){if(elapsed>=TOTAL){TL.forEach(e=>e._f=false);elapsed=0;}paused=false;startedAt=Date.now();$('playBtn').textContent='Pause';tick();}
+function pause(){paused=true;elapsed+=Date.now()-startedAt;$('playBtn').textContent='Resume';}
+$('playBtn').addEventListener('click',()=>{paused?play():pause();});
+$('scrubBar').addEventListener('click',e=>{const r=e.currentTarget.getBoundingClientRect();const pct=(e.clientX-r.left)/r.width;elapsed=Math.max(0,Math.min(TOTAL,pct*TOTAL));TL.forEach(x=>x._f=x.t<elapsed);for(let i=TL.length-1;i>=0;i--){if(TL[i].t<=elapsed){TL[i].fn();break;}}if(!paused)startedAt=Date.now();$('scrubFill').style.width=(elapsed/TOTAL*100)+'%';$('scrubThumb').style.left=(elapsed/TOTAL*100)+'%';});
+// autostart on first load
+play();
+</script>
+</body>
+</html>
