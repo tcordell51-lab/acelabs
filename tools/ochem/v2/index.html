@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Ace Labs · Organic Chemistry (v2 course engine)</title>
+<meta name="description" content="A guided, module-based organic chemistry course — a prerequisite skill tree, a six-stage self-teaching flow, and earned mastery. DAT-scoped."/>
+<style>
+:root{
+  --bg:#f4efe6; --paper:#fffdf7; --paper-2:#f8f2e5; --raise:#fbf6ec;
+  --ink:#12241c; --ink-2:#3d4c44; --ink-3:#71776f; --ink-soft:#9aa39e;
+  --line:rgba(19,36,28,.12); --line-2:rgba(19,36,28,.07);
+  --gold:#8c6f2e; --gold-hi:#a9863b; --gold-wash:rgba(201,168,76,.12);
+  --teal:#1f4636;
+  --t0:#2c7a5b; --t1:#9a7c26; --t2:#8a5f22; --t3:#4c6774;
+  --good:#1c7a52; --good-wash:rgba(28,122,82,.11);
+  --trap:#a8371c; --trap-wash:rgba(168,55,28,.10);
+  --shadow:0 1px 2px rgba(19,36,28,.05),0 12px 30px rgba(19,36,28,.07);
+  --serif:Georgia,'Times New Roman',serif;
+  --sans:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  --mono:ui-monospace,'SF Mono','Menlo',monospace;
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#0d1411; --paper:#121b16; --paper-2:#16211b; --raise:#1a271f;
+  --ink:#ece6d7; --ink-2:#b7b0a0; --ink-3:#867f72; --ink-soft:#6b6558;
+  --line:rgba(201,168,76,.15); --line-2:rgba(236,230,215,.08);
+  --gold:#C9A84C; --gold-hi:#E6D08A; --gold-wash:rgba(201,168,76,.10); --teal:#3A6B54;
+  --t0:#4FA07E; --t1:#C9A84C; --t2:#C79149; --t3:#93AAB8;
+  --good:#57B487; --good-wash:rgba(87,180,135,.12);
+  --trap:#E36A4B; --trap-wash:rgba(227,106,75,.12);
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 16px 40px rgba(0,0,0,.34);
+}}
+:root[data-theme="light"]{
+  --bg:#f4efe6; --paper:#fffdf7; --paper-2:#f8f2e5; --raise:#fbf6ec;
+  --ink:#12241c; --ink-2:#3d4c44; --ink-3:#71776f;
+  --line:rgba(19,36,28,.12); --line-2:rgba(19,36,28,.07);
+  --gold:#8c6f2e; --gold-hi:#a9863b; --gold-wash:rgba(201,168,76,.12); --teal:#1f4636;
+  --t0:#2c7a5b; --t1:#9a7c26; --t2:#8a5f22; --t3:#4c6774;
+  --good:#1c7a52; --good-wash:rgba(28,122,82,.11); --trap:#a8371c; --trap-wash:rgba(168,55,28,.10);
+}
+:root[data-theme="dark"]{
+  --bg:#0d1411; --paper:#121b16; --paper-2:#16211b; --raise:#1a271f;
+  --ink:#ece6d7; --ink-2:#b7b0a0; --ink-3:#867f72;
+  --line:rgba(201,168,76,.15); --line-2:rgba(236,230,215,.08);
+  --gold:#C9A84C; --gold-hi:#E6D08A; --gold-wash:rgba(201,168,76,.10); --teal:#3A6B54;
+  --t0:#4FA07E; --t1:#C9A84C; --t2:#C79149; --t3:#93AAB8;
+  --good:#57B487; --good-wash:rgba(87,180,135,.12); --trap:#E36A4B; --trap-wash:rgba(227,106,75,.12);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-family:var(--serif);font-weight:600;line-height:1.15;letter-spacing:-.01em;text-wrap:balance}
+.mono{font-family:var(--mono)}
+button{font-family:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:4px}
+
+/* TOP BAR */
+.top{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:14px;padding:12px 22px;background:color-mix(in srgb, var(--bg) 88%, transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.brand{font-family:var(--serif);font-size:18px;font-weight:700}
+.brand em{font-style:italic;color:var(--gold)}
+.brand span{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3);margin-left:8px;vertical-align:middle}
+.top .spacer{flex:1}
+.top .stat{font-family:var(--mono);font-size:11px;color:var(--ink-3);letter-spacing:.04em}
+.top .stat b{color:var(--gold);font-weight:700}
+.icon-btn{background:var(--paper-2);border:1px solid var(--line);border-radius:8px;color:var(--ink-2);font-size:11px;font-family:var(--mono);letter-spacing:.06em;padding:6px 10px}
+
+/* LAYOUT */
+.shell{display:grid;grid-template-columns:minmax(300px,340px) 1fr;gap:0;min-height:calc(100vh - 52px)}
+@media (max-width:860px){.shell{grid-template-columns:1fr}.tree-pane{border-right:none;border-bottom:1px solid var(--line)}}
+.tree-pane{border-right:1px solid var(--line);padding:22px 18px 40px;overflow-y:auto}
+.main-pane{padding:26px 30px 60px;max-width:820px}
+
+/* TREE */
+.tree-h{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3);margin:0 0 4px}
+.tree-sub{font-size:12.5px;color:var(--ink-3);margin:0 0 18px}
+.tier-block{margin-bottom:20px}
+.tier-lbl{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--tc);font-weight:700;margin:0 0 9px}
+.tier-lbl::after{content:"";flex:1;height:1px;background:var(--line-2)}
+.t0b{--tc:var(--t0)} .t1b{--tc:var(--t1)} .t2b{--tc:var(--t2)} .t3b{--tc:var(--t3)}
+.node{width:100%;text-align:left;display:flex;align-items:center;gap:10px;background:var(--paper);border:1px solid var(--line);border-left:3px solid var(--tc,var(--gold));border-radius:9px;padding:9px 11px;margin-bottom:7px;color:var(--ink);transition:transform .12s,box-shadow .12s,border-color .12s}
+.node:hover:not(:disabled){transform:translateX(2px);box-shadow:var(--shadow)}
+.node:disabled{cursor:not-allowed;opacity:.5}
+.node.active{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold-wash),var(--shadow)}
+.node .nm{font-family:var(--serif);font-size:14.5px;font-weight:600;line-height:1.15;flex:1}
+.node .dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;border:1.5px solid var(--ink-soft)}
+.node.s-mastered .dot{background:var(--good);border-color:var(--good)}
+.node.s-partial .dot{background:var(--gold);border-color:var(--gold)}
+.node.s-unlocked .dot{background:transparent;border-color:var(--tc,var(--gold))}
+.node.s-locked .dot{background:var(--line);border-color:var(--line-2)}
+.node .lk{font-family:var(--mono);font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft)}
+
+/* MAIN — home */
+.hero{padding:8px 0 4px}
+.hero .eye{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin:0 0 12px}
+.hero h1{font-size:clamp(28px,4.4vw,42px);margin:0 0 14px}
+.hero h1 em{font-style:italic;color:var(--gold)}
+.hero p{font-size:16px;color:var(--ink-2);max-width:62ch;margin:0 0 8px}
+.cta{display:inline-flex;align-items:center;gap:8px;margin-top:18px;background:var(--teal);color:#fdf8ec;border:none;border-radius:99px;padding:11px 22px;font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.cta.ghost{background:transparent;color:var(--gold);border:1px solid var(--gold);margin-left:8px}
+.pathnote{margin-top:26px;padding:16px 18px;background:var(--paper);border:1px solid var(--line);border-left:3px solid var(--t0);border-radius:10px;font-size:13.5px;color:var(--ink-2)}
+.pathnote b{color:var(--ink)}
+
+/* MODULE VIEW */
+.mod-top{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:6px}
+.mod-kicker{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--mc,var(--gold));font-weight:700}
+.mod-view h2{font-size:clamp(23px,3.4vw,31px);margin:0}
+.mod-sub{color:var(--ink-2);font-size:15px;margin:6px 0 20px}
+.stage-pills{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:22px}
+.pill{font-family:var(--mono);font-size:10px;letter-spacing:.05em;text-transform:uppercase;padding:5px 10px;border-radius:99px;border:1px solid var(--line);color:var(--ink-3);background:var(--paper)}
+.pill.cur{background:var(--gold);color:#1a1206;border-color:var(--gold);font-weight:700}
+.pill.done{color:var(--good);border-color:var(--good)}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:24px 26px;box-shadow:var(--shadow);margin-bottom:18px}
+.card h3{font-size:20px;margin:0 0 12px}
+.card p{color:var(--ink-2);font-size:15px;margin:0 0 12px}
+.card p:last-child{margin-bottom:0}
+.card b{color:var(--ink)}
+.rule{background:var(--paper-2);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin:14px 0;font-size:14px}
+.rule .rl{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
+.trapbox{background:var(--trap-wash);border:1px solid color-mix(in srgb,var(--trap) 30%, transparent);border-radius:10px;padding:14px 16px;margin:14px 0;font-size:14px}
+.trapbox .rl{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--trap);margin-bottom:6px;font-weight:700}
+.fischer{font-family:var(--mono);font-size:15px;line-height:1.5;white-space:pre;background:var(--paper-2);border:1px solid var(--line);border-radius:10px;padding:16px 18px;margin:12px 0;color:var(--ink);overflow-x:auto}
+.step{border-left:2px solid var(--line);padding:2px 0 2px 16px;margin:14px 0}
+.step .what{font-size:15px;color:var(--ink);font-weight:500}
+.step .why{font-size:13.5px;color:var(--ink-3);margin-top:3px}
+.predict{background:var(--gold-wash);border:1px dashed var(--gold);border-radius:9px;padding:12px 14px;margin:10px 0}
+.predict .q{font-size:14px;color:var(--ink);font-weight:600}
+.predict .hint{font-size:12.5px;color:var(--ink-3);margin-top:4px}
+.reveal-btn,.next-btn{background:var(--teal);color:#fdf8ec;border:none;border-radius:8px;padding:9px 18px;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;margin-top:8px}
+.next-btn.ghost{background:transparent;color:var(--gold);border:1px solid var(--gold)}
+.opts{display:flex;flex-direction:column;gap:9px;margin:14px 0}
+.opt{text-align:left;background:var(--paper-2);border:1px solid var(--line);border-radius:9px;padding:12px 15px;font-size:14.5px;color:var(--ink);display:flex;gap:10px;align-items:flex-start;transition:border-color .12s,background .12s}
+.opt:hover:not(:disabled){border-color:var(--gold)}
+.opt .lt{font-family:var(--mono);font-weight:700;color:var(--ink-3);flex-shrink:0}
+.opt.correct{background:var(--good-wash);border-color:var(--good)}
+.opt.wrong{background:var(--trap-wash);border-color:var(--trap)}
+.opt:disabled{cursor:default}
+.fb{border-radius:9px;padding:12px 15px;margin:10px 0;font-size:14px;line-height:1.5}
+.fb.good{background:var(--good-wash);border:1px solid color-mix(in srgb,var(--good) 30%,transparent)}
+.fb.bad{background:var(--trap-wash);border:1px solid color-mix(in srgb,var(--trap) 30%,transparent)}
+.fb .lab{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;margin-bottom:4px}
+.fb.good .lab{color:var(--good)} .fb.bad .lab{color:var(--trap)}
+.mastery-meter{display:flex;align-items:center;gap:10px;margin:6px 0 16px;font-family:var(--mono);font-size:11px;color:var(--ink-3);letter-spacing:.04em}
+.streak{display:flex;gap:5px}
+.streak i{width:22px;height:6px;border-radius:3px;background:var(--line);display:block}
+.streak i.on{background:var(--good)}
+.celebrate{background:var(--good-wash);border:1px solid color-mix(in srgb,var(--good) 34%,transparent);border-radius:14px;padding:22px 24px;margin-bottom:18px}
+.celebrate h3{color:var(--good);margin:0 0 8px}
+.celebrate p{font-size:14.5px;color:var(--ink-2);margin:0}
+.locked-note{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:22px 24px;color:var(--ink-2)}
+.locked-note b{color:var(--ink)}
+.footer{margin-top:30px;padding-top:16px;border-top:1px solid var(--line-2);font-family:var(--mono);font-size:11px;color:var(--ink-soft);letter-spacing:.03em}
+@media (prefers-reduced-motion:no-preference){.card,.mod-view,.hero{animation:fade .4s ease both}@keyframes fade{from{opacity:0;transform:translateY(5px)}}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="brand">Ace<em>The</em>DAT <span>Organic Chemistry · v2</span></div>
+  <div class="spacer"></div>
+  <div class="stat">Mastered <b id="statMastered">0</b> / 20</div>
+  <button class="icon-btn" id="themeBtn" aria-label="Toggle light or dark theme">Theme</button>
+  <button class="icon-btn" id="resetBtn" aria-label="Reset your progress">Reset</button>
+</header>
+
+<div class="shell">
+  <nav class="tree-pane" aria-label="Course module tree">
+    <p class="tree-h">The course</p>
+    <p class="tree-sub">Twenty modules. Each unlocks when its prerequisites are mastered — so there is always one clear next step.</p>
+    <div id="tree"></div>
+  </nav>
+  <main class="main-pane" id="main" tabindex="-1"></main>
+</div>
+
+<script>
+"use strict";
+/* ============================================================
+   Ace Labs — Organic Chemistry v2 course engine
+   Self-contained. State in localStorage 'ochem-v2'.
+   Chemistry in the Stereochemistry module verified against
+   Master Organic Chemistry (Fischer R/S rules; lactic acid
+   L=(S), D=(R)).
+   ============================================================ */
+
+/* ---- MODULE TREE (SKILLS) ---- */
+const MODS = [
+  // Tier 0 — Foundations
+  {id:'bonding', tier:0, name:'Bonding, Resonance & Arrow-Pushing', prereqs:[]},
+  {id:'nomen',   tier:0, name:'Functional Groups & Nomenclature', prereqs:['bonding']},
+  {id:'acidbase',tier:0, name:'Acid–Base & pKa', prereqs:['bonding']},
+  {id:'stereo',  tier:0, name:'Stereochemistry', prereqs:['bonding']},
+  // Tier 1 — Core reactions
+  {id:'radical', tier:1, name:'Alkanes & Radical Halogenation', prereqs:['bonding','nomen']},
+  {id:'subelim', tier:1, name:'Substitution & Elimination', prereqs:['acidbase','stereo']},
+  {id:'alkene',  tier:1, name:'Alkene Addition', prereqs:['stereo','subelim']},
+  {id:'alkyne',  tier:1, name:'Alkynes', prereqs:['alkene']},
+  {id:'alcohol', tier:1, name:'Alcohols', prereqs:['subelim']},
+  {id:'ether',   tier:1, name:'Ethers & Epoxides', prereqs:['alcohol']},
+  // Tier 2 — Patterns
+  {id:'aromatic',tier:2, name:'Aromaticity & EAS', prereqs:['alkene','acidbase']},
+  {id:'carbonyl',tier:2, name:'Aldehydes & Ketones', prereqs:['alkene','acidbase']},
+  {id:'acids',   tier:2, name:'Carboxylic Acids & Derivatives', prereqs:['carbonyl']},
+  {id:'enolate', tier:2, name:'Enols, Enolates, Aldol & Claisen', prereqs:['carbonyl','acidbase']},
+  {id:'amine',   tier:2, name:'Amines', prereqs:['subelim','acidbase']},
+  {id:'diene',   tier:2, name:'Dienes & Diels–Alder', prereqs:['alkene','aromatic']},
+  // Tier 3 — Test-day & integration
+  {id:'spec',    tier:3, name:'Spectroscopy — IR / NMR / MS', prereqs:['nomen']},
+  {id:'rcd',     tier:3, name:'Reaction-Coordinate Diagrams', prereqs:['subelim']},
+  {id:'synth',   tier:3, name:'Multi-step Synthesis & Retrosynthesis', prereqs:['alkene','carbonyl','aromatic','acids']},
+  {id:'labtech', tier:3, name:'Lab Techniques & Qual Analysis', prereqs:['spec']},
+];
+const MOD_BY_ID = Object.fromEntries(MODS.map(m=>[m.id,m]));
+const TIERS = [
+  {n:0, label:'Tier 0 · Foundations', cls:'t0b'},
+  {n:1, label:'Tier 1 · Core Reactions', cls:'t1b'},
+  {n:2, label:'Tier 2 · Patterns & Advanced', cls:'t2b'},
+  {n:3, label:'Tier 3 · Test-Day & Integration', cls:'t3b'},
+];
+
+/* ---- PRACTICE BANK (Stereochemistry) — MOC-verified ---- */
+const BANK = {
+  st1:{skill:'stereo',diff:1,q:'A carbon must have how many different groups to be a stereocenter (chirality center)?',
+    opts:['Two','Three','Four different groups','Any four groups'],correct:2,
+    why:'A tetrahedral carbon is a stereocenter when all four attached groups are different — that is what makes the molecule non-superimposable on its mirror image.',
+    diag:{0:'Two different groups cannot give a non-superimposable mirror image.',1:'Three different groups (plus one repeat) is not a stereocenter.',3:'Four groups is necessary but they must be DIFFERENT from one another.'}},
+  st2:{skill:'stereo',diff:2,q:'Assigning CIP priority: which atom directly attached to a carbon has the HIGHEST priority — Br, O, N, or C?',
+    opts:['C','N','O','Br'],correct:3,
+    why:'CIP ranks by atomic number at the first point of difference. Br (35) > O (8) > N (7) > C (6). Bromine wins.',
+    diag:{0:'Carbon is the LOWEST of these (Z=6).',1:'Nitrogen (7) beats carbon but loses to O and Br.',2:'Oxygen (8) is high but Br (35) is higher.'}},
+  st3:{skill:'stereo',diff:2,q:'When the lowest-priority group points TOWARD you (out of the page), you determine 1→2→3 as drawn and then…',
+    opts:['Keep the result','Reverse the result','Re-rank the groups','It cannot be assigned'],correct:1,
+    why:'R/S is defined with the lowest priority pointing AWAY. If it points toward you, you see the mirror sense, so you flip the observed direction.',
+    diag:{0:'Keeping it gives the enantiomer of the true configuration.',2:'Priorities do not change with viewing angle.',3:'It is assignable — you just reverse.'}},
+  st4:{skill:'stereo',diff:2,q:'In a Fischer projection, the HORIZONTAL bonds point…',
+    opts:['Away from you (dashes)','Toward you (wedges)','In the plane','It depends on the molecule'],correct:1,
+    why:'Fischer convention: horizontal lines come toward the viewer (wedges); vertical lines go away (dashes). This is why a horizontal lowest-priority group triggers the flip rule.',
+    diag:{0:'That describes the VERTICAL bonds.',2:'Fischer bonds are explicitly out-of-plane, not in-plane.',3:'The convention is fixed, not molecule-dependent.'}},
+  st5:{skill:'stereo',diff:3,q:'Lactic acid is drawn in a Fischer projection with COOH on top, CH₃ on bottom, OH on the LEFT and H on the right. What is it?',
+    opts:['D-lactic acid, (R)','L-lactic acid, (S)','D-lactic acid, (S)','L-lactic acid, (R)'],correct:1,
+    why:'OH on the left of the Fischer (most-oxidized group on top) makes it L. Working the CIP: priorities OH>COOH>CH₃>H; H is horizontal (toward you) so reverse. The traced 1→2→3 is clockwise as drawn, reversed to counter-clockwise → (S). L-lactic acid is (S). (Master Organic Chemistry: OH-left = L and = S.)',
+    diag:{0:'OH on the LEFT is L, not D; and L-lactic is (S), not (R).',2:'The L/(S) pairing is right for the direction but this is L, not D.',3:'It is L, but L-lactic acid is (S), not (R) — you likely forgot to reverse for the horizontal H.'}},
+  st6:{skill:'stereo',diff:3,q:'Two molecules are mirror images but NOT superimposable, and have identical physical properties except the sign of optical rotation. They are…',
+    opts:['Diastereomers','Enantiomers','Constitutional isomers','Conformers'],correct:1,
+    why:'Non-superimposable mirror images are enantiomers; they share all scalar physical properties (mp, bp, density) and rotate plane-polarized light equally but oppositely.',
+    diag:{0:'Diastereomers are stereoisomers that are NOT mirror images and DO differ in physical properties.',2:'Constitutional isomers differ in connectivity, not just spatial arrangement.',3:'Conformers interconvert by bond rotation — same molecule.'}},
+  st7:{skill:'stereo',diff:3,q:'A molecule has two stereocenters but an internal mirror plane making it achiral overall. This is a…',
+    opts:['Pair of enantiomers','Meso compound','Racemic mixture','Chiral diastereomer'],correct:1,
+    why:'A meso compound contains stereocenters but an internal plane of symmetry, so it is achiral (optically inactive) despite having stereocenters — a classic DAT trap.',
+    diag:{0:'A single meso compound is one achiral molecule, not a pair.',2:'A racemic mixture is a 50:50 of two enantiomers — that is a mixture, not one molecule with internal symmetry.',3:'The internal mirror plane makes it achiral, not chiral.'}},
+  st8:{skill:'stereo',diff:2,q:'In the most stable conformation of ethane viewed down the C–C bond, the front and back C–H bonds are…',
+    opts:['Eclipsed (0° torsion)','Staggered (60° torsion)','Perpendicular','Bent'],correct:1,
+    why:'Staggered (anti/gauche, 60° dihedral) minimizes torsional strain and is lowest in energy; eclipsed (0°) is the maximum. The Newman projection makes this visible.',
+    diag:{0:'Eclipsed is the HIGHEST-energy arrangement, not the most stable.',2:'Torsional angles for sp³ C–C are 0/60/120°, not 90°.',3:'Bonds are not "bent" here — this is about torsion angle.'}},
+};
+
+/* ---- CONTENT (per-module) ---- */
+const CONTENT = {
+  stereo:{
+    accent:'var(--t0)',
+    sub:'Chirality, R/S, Fischer, Newman, and optical activity — the language every reaction speaks. MOC calls this the key gate of Org 1.',
+    concept:`<h3>The one idea</h3>
+      <p><b>Stereochemistry is about arrangement in space</b> when connectivity is already the same. Two molecules with identical bonds can still be different objects — like your left and right hands.</p>
+      <p>A carbon is a <b>stereocenter</b> when it holds <b>four different groups</b>. Swap any two and you get the mirror image. Non-superimposable mirror images are <b>enantiomers</b>; stereoisomers that are <em>not</em> mirror images are <b>diastereomers</b>; a molecule with stereocenters but an internal mirror plane is an achiral <b>meso</b> compound.</p>
+      <div class="rule"><div class="rl">The CIP rule for R / S</div>
+        <b>1.</b> Rank the four groups by atomic number at the first point of difference (higher Z = higher priority).<br>
+        <b>2.</b> Point the <em>lowest</em> priority group away from you.<br>
+        <b>3.</b> Trace 1 → 2 → 3. <b>Clockwise = R</b>, <b>counter-clockwise = S</b>.</div>
+      <div class="rule"><div class="rl">The Fischer flip rule</div>
+        In a Fischer projection, <b>horizontal bonds point toward you</b> (wedges), vertical go away (dashes). So the lowest-priority H is usually pointing at you — trace 1→2→3 and then <b>reverse</b> the answer.</div>
+      <div class="trapbox"><div class="rl">The classic trap</div>
+        <b>D/L is not R/S.</b> For lactic acid drawn with COOH on top: OH on the <b>left = L = (S)</b>; OH on the <b>right = D = (R)</b>. Memorize the pairing, but always confirm R/S by CIP.</div>`,
+    worked:[
+      {q:'Assign R/S to 2-bromobutane with H pointing away from you.',
+       steps:[
+        {what:'Rank the four groups on C2: Br, CH₂CH₃, CH₃, H.',why:'By atomic number at the first atom: Br(35) > C > C > H. Break the C–C tie one atom out.'},
+        {what:'Priorities: Br (1) > CH₂CH₃ (2) > CH₃ (3) > H (4).',why:'Ethyl beats methyl because its next atom is C, versus H on methyl.'},
+        {what:'H (lowest) already points away — no flip needed.',why:'This is the ideal viewing setup; read the rotation directly.'},
+        {what:'Trace Br → ethyl → methyl. If clockwise, it is (R).',why:'1→2→3 clockwise with #4 in back = R by definition.',
+         predict:{q:'If that same trace had come out counter-clockwise instead, what would it be?',hint:'Clockwise = R. The opposite direction is…'}},
+       ], answer:'Clockwise with the lowest priority in back gives (R)-2-bromobutane; counter-clockwise would be (S).'},
+      {q:'Assign the configuration of lactic acid drawn in a Fischer projection: COOH top, CH₃ bottom, OH on the LEFT, H on the right.',
+       fischer:'        COOH\n         |\n  H  ────C────  (this is drawn as: OH on LEFT, H on RIGHT)\n         |\n         CH3',
+       steps:[
+        {what:'Priorities: OH (1) > COOH (2) > CH₃ (3) > H (4).',why:'O beats C directly on the center; COOH (C bonded to O,O,O) beats CH₃.'},
+        {what:'Locate the lowest priority. H is on a HORIZONTAL bond.',why:'Horizontal in a Fischer = pointing toward you. That means we will reverse.',
+         predict:{q:'H is horizontal (toward you). Will we keep or reverse the traced direction?',hint:'Lowest priority toward the viewer means you see the mirror sense.'}},
+        {what:'Trace 1→2→3: OH(left) → COOH(top) → CH₃(bottom) is clockwise as drawn.',why:'Follow the positions on the page in priority order.'},
+        {what:'Reverse (H is toward you): clockwise → counter-clockwise → (S).',why:'The flip converts the observed rotation to the true configuration.'},
+        {what:'OH on the left also means L. So this is L-lactic acid, (S).',why:'MOC: for the most-oxidized-group-on-top Fischer, OH-left = L and = (S). Name and configuration agree.'},
+       ], answer:'L-lactic acid, (S). OH-left is L; the CIP trace with the horizontal-H flip gives (S). D-lactic acid (OH on the right) would be (R).'},
+      {q:'Are (2R,3R)- and (2S,3R)-tartaric-acid-type molecules enantiomers or diastereomers?',
+       steps:[
+        {what:'Compare each stereocenter: C2 differs (R vs S), C3 is the same (R,R).',why:'Enantiomers must have EVERY center inverted; here only one is.'},
+        {what:'Not all centers are inverted → not mirror images.',why:'They are stereoisomers that are not enantiomers.',
+         predict:{q:'Stereoisomers that are not mirror images are called…?',hint:'The other big category besides enantiomers.'}},
+        {what:'Therefore they are diastereomers.',why:'Diastereomers differ in physical properties and can be separated by ordinary means.'},
+       ], answer:'Diastereomers — only one of the two centers is inverted, so they are not mirror images.'},
+    ],
+    faded:[
+      {prompt:'A stereocenter has priorities 1→2→3 tracing clockwise, and the lowest priority points AWAY from you. The configuration is ___.',hint:'#4 in back, clockwise.',answer:'R'},
+      {prompt:'Same clockwise trace, but now the lowest priority points TOWARD you. The configuration is ___.',hint:'Toward you means reverse.',answer:'S'},
+      {prompt:'Glyceraldehyde drawn in a Fischer with CHO on top and OH on the right at the bottom center is the ___ enantiomer (D or L).',hint:'OH on the right of the bottom stereocenter.',answer:'D'},
+    ],
+    practice:['st1','st2','st3','st4','st6','st8'],
+    mastery:['st5','st7','st2','st3','st6','st8','st4','st1'],
+  },
+  // Concept-level seeds for a few neighbors (fuller builds come each iteration)
+  bonding:{accent:'var(--t0)',sub:'Hybridization, resonance, and the curved-arrow grammar every mechanism uses.',
+    concept:`<h3>Coming online next iteration</h3><p>This module is scaffolded in the tree and will be authored into the full six-stage flow — concept, worked examples with predict-before-reveal, faded practice, an independent bank, and a mastery check — in the next build pass. Stereochemistry is fully live now; open it to see the pattern every module will follow.</p>`,
+    worked:[],faded:[],practice:[],mastery:[]},
+};
+
+/* ---- STATE ---- */
+const KEY='ochem-v2';
+function load(){try{return JSON.parse(localStorage.getItem(KEY))||{}}catch(e){return {}}}
+function save(s){try{localStorage.setItem(KEY,JSON.stringify(s))}catch(e){}}
+let ST=load();
+ST.mastery=ST.mastery||{};      // {id:'partial'|'mastered'}
+ST.stages=ST.stages||{};        // {id:{cur, done:[]}}
+ST.sr=ST.sr||{};                // {bankId:{ef,interval,due,reps}}
+
+function isUnlocked(m){return m.prereqs.every(p=>ST.mastery[p]==='mastered');}
+function statusOf(m){
+  if(ST.mastery[m.id]==='mastered')return'mastered';
+  if(ST.mastery[m.id]==='partial')return'partial';
+  return isUnlocked(m)?'unlocked':'locked';
+}
+function masteredCount(){return MODS.filter(m=>ST.mastery[m.id]==='mastered').length;}
+
+/* ---- SR-lite (SM-2) ---- */
+function schedule(id,correct){
+  const s=ST.sr[id]||{ef:2.5,interval:0,due:Date.now(),reps:0};
+  if(correct){s.interval=s.reps===0?1:s.reps===1?3:Math.max(1,Math.round(s.interval*s.ef));s.reps++;}
+  else{s.reps=0;s.interval=1;}
+  s.ef=Math.max(1.3,s.ef+(correct?0.1:-0.3));
+  s.due=Date.now()+s.interval*86400000;
+  ST.sr[id]=s;save(ST);
+}
+
+/* ---- RENDER: tree ---- */
+const treeEl=document.getElementById('tree');
+const mainEl=document.getElementById('main');
+let activeId=null;
+function renderTree(){
+  treeEl.innerHTML='';
+  TIERS.forEach(t=>{
+    const block=document.createElement('div');block.className='tier-block';
+    const lbl=document.createElement('div');lbl.className='tier-lbl '+t.cls;lbl.textContent=t.label;
+    block.appendChild(lbl);
+    MODS.filter(m=>m.tier===t.n).forEach(m=>{
+      const st=statusOf(m);
+      const b=document.createElement('button');
+      b.className='node s-'+st+' '+t.cls+(m.id===activeId?' active':'');
+      b.style.setProperty('--tc','var(--t'+m.tier+')');
+      b.disabled=(st==='locked');
+      b.setAttribute('aria-label',m.name+' — '+st);
+      const authored=!!(CONTENT[m.id]&&CONTENT[m.id].worked&&CONTENT[m.id].worked.length);
+      b.innerHTML='<span class="dot" aria-hidden="true"></span><span class="nm">'+m.name+'</span>'+
+        (st==='locked'?'<span class="lk">locked</span>':(st==='mastered'?'<span class="lk" style="color:var(--good)">done</span>':(authored?'':'<span class="lk">soon</span>')));
+      b.addEventListener('click',()=>openModule(m.id));
+      block.appendChild(b);
+    });
+    treeEl.appendChild(block);
+  });
+  document.getElementById('statMastered').textContent=masteredCount();
+}
+
+/* ---- RENDER: home ---- */
+function renderHome(){
+  activeId=null;renderTree();
+  const next=MODS.find(m=>statusOf(m)==='unlocked')||MODS.find(m=>statusOf(m)==='partial')||MODS[0];
+  mainEl.innerHTML=
+   '<div class="hero">'+
+     '<p class="eye">A guided course · not a room full of tools</p>'+
+     '<h1>Organic chemistry, <em>one clear step</em> at a time.</h1>'+
+     '<p>Twenty modules on a prerequisite tree. Each one teaches the same way — concept, worked examples you predict before they reveal, fading practice, then a mastery check you have to earn. Master a module and it unlocks the next.</p>'+
+     '<p>No wall of tools. Just the next rung.</p>'+
+     '<button class="cta" id="startBtn">Start: '+next.name+'</button>'+
+     '<button class="cta ghost" id="stereoBtn">Jump to Stereochemistry</button>'+
+     '<div class="pathnote"><b>Where this is going:</b> Stereochemistry is fully live as the flagship. The remaining modules are scaffolded on the tree and get authored into the same six-stage flow each build pass — reusing the mechanism animations and trainers from the current engine as each module’s interactive core.</div>'+
+   '</div>';
+  document.getElementById('startBtn').addEventListener('click',()=>openModule(next.id));
+  document.getElementById('stereoBtn').addEventListener('click',()=>openModule('stereo'));
+}
+
+/* ---- RENDER: module ---- */
+const STAGE_NAMES=['Concept','Worked examples','Faded practice','Independent','Mastery check'];
+function stageState(id){return ST.stages[id]||(ST.stages[id]={cur:0,done:[]});}
+function openModule(id){
+  const m=MOD_BY_ID[id];activeId=id;renderTree();
+  mainEl.focus();
+  if(statusOf(m)==='locked'){
+    const need=m.prereqs.filter(p=>ST.mastery[p]!=='mastered').map(p=>MOD_BY_ID[p].name);
+    mainEl.innerHTML='<div class="locked-note"><h2 style="margin:0 0 10px">'+m.name+'</h2>'+
+      '<p><b>Locked.</b> Master these first to unlock it:</p><p>'+need.map(n=>'• '+n).join('<br>')+'</p>'+
+      '<button class="next-btn ghost" id="backHome">Back to the tree</button></div>';
+    document.getElementById('backHome').addEventListener('click',renderHome);
+    return;
+  }
+  const c=CONTENT[id];
+  if(!c||!c.worked||!c.worked.length){
+    mainEl.innerHTML='<div class="mod-view"><div class="mod-top"><span class="mod-kicker">Tier '+m.tier+'</span></div>'+
+      '<h2>'+m.name+'</h2><p class="mod-sub">This module is scaffolded and unlocked, but its full six-stage content lands in an upcoming build pass.</p>'+
+      (c&&c.concept?'<div class="card">'+c.concept+'</div>':'')+
+      '<button class="next-btn ghost" id="backHome">Back to the tree</button></div>';
+    const bh=document.getElementById('backHome');if(bh)bh.addEventListener('click',renderHome);
+    return;
+  }
+  renderStage(id);
+}
+
+function renderStage(id){
+  const m=MOD_BY_ID[id],c=CONTENT[id],ss=stageState(id);
+  let body='<div class="mod-view"><div class="mod-top"><span class="mod-kicker" style="--mc:'+(c.accent||'var(--gold)')+'">Tier '+m.tier+' · Foundations</span></div>'+
+    '<h2>'+m.name+'</h2><p class="mod-sub">'+c.sub+'</p>';
+  body+='<div class="stage-pills">'+STAGE_NAMES.map((n,i)=>{
+    const cls=ss.done.indexOf(i)>=0?'done':(i===ss.cur?'cur':'');
+    return '<span class="pill '+cls+'">'+(i+1)+' · '+n+'</span>';}).join('')+'</div>';
+  body+='<div id="stageBody"></div></div>';
+  mainEl.innerHTML=body;
+  drawStageBody(id);
+}
+
+function markStageDone(id,idx){
+  const ss=stageState(id);
+  if(ss.done.indexOf(idx)<0)ss.done.push(idx);
+  ss.cur=Math.min(idx+1,4);
+  ST.mastery[id]=ss.done.length>=5?'mastered':'partial';
+  save(ST);renderTree();
+}
+
+function drawStageBody(id){
+  const c=CONTENT[id],ss=stageState(id),el=document.getElementById('stageBody');
+  const stage=ss.cur;
+  if(stage===0){ // Concept
+    el.innerHTML='<div class="card">'+c.concept+'</div><button class="next-btn" id="s0">I’ve got the idea — continue</button>';
+    document.getElementById('s0').addEventListener('click',()=>{markStageDone(id,0);renderStage(id);});
+  } else if(stage===1){ // Worked
+    drawWorked(id);
+  } else if(stage===2){ // Faded
+    drawFaded(id);
+  } else if(stage===3){ // Independent
+    drawBankSet(id,c.practice,'independent');
+  } else if(stage===4){ // Mastery
+    drawMastery(id);
+  }
+}
+
+/* stage 1 — worked examples with predict-before-reveal */
+function drawWorked(id){
+  const c=CONTENT[id],el=document.getElementById('stageBody');
+  let i=0;
+  function render(){
+    const w=c.worked[i];
+    let h='<div class="card"><h3>Worked example '+(i+1)+' of '+c.worked.length+'</h3><p><b>'+w.q+'</b></p>';
+    if(w.fischer)h+='<div class="fischer">'+w.fischer+'</div>';
+    h+='<div id="stepwrap"></div></div>';
+    el.innerHTML=h;
+    const sw=document.getElementById('stepwrap');
+    let si=0;
+    function step(){
+      const s=w.steps[si];
+      let sh='<div class="step"><div class="what">'+s.what+'</div><div class="why">'+s.why+'</div></div>';
+      sw.insertAdjacentHTML('beforeend',sh);
+      if(s.predict){
+        const pd=document.createElement('div');pd.className='predict';
+        pd.innerHTML='<div class="q">'+s.predict.q+'</div><div class="hint">'+s.predict.hint+'</div><button class="reveal-btn">Reveal the next step</button>';
+        sw.appendChild(pd);
+        pd.querySelector('button').addEventListener('click',()=>{pd.remove();si++;advance();});
+      } else {si++;advance();}
+    }
+    function advance(){
+      if(si<w.steps.length){ if(w.steps[si-1]&&w.steps[si-1].predict){/*wait handled*/} step(); }
+      else finishExample();
+    }
+    function finishExample(){
+      const done=document.createElement('div');done.className='fb good';
+      done.innerHTML='<div class="lab">The move</div>'+w.answer;
+      sw.appendChild(done);
+      const btn=document.createElement('button');btn.className='next-btn';
+      btn.textContent=i<c.worked.length-1?'Next worked example':'Continue to faded practice';
+      btn.addEventListener('click',()=>{ if(i<c.worked.length-1){i++;render();} else {markStageDone(id,1);renderStage(id);} });
+      sw.appendChild(btn);
+    }
+    step();
+  }
+  render();
+}
+
+/* stage 2 — faded fill-in */
+function drawFaded(id){
+  const c=CONTENT[id],el=document.getElementById('stageBody');
+  let i=0;
+  function render(){
+    const f=c.faded[i];
+    el.innerHTML='<div class="card"><h3>Faded practice '+(i+1)+' of '+c.faded.length+'</h3>'+
+      '<p>'+f.prompt.replace('___','<b style=\"color:var(--gold)\">___</b>')+'</p>'+
+      '<div class="predict"><div class="hint">'+f.hint+'</div></div>'+
+      '<button class="reveal-btn" id="rev">Reveal answer</button><div id="fans"></div></div>';
+    document.getElementById('rev').addEventListener('click',()=>{
+      document.getElementById('fans').innerHTML='<div class="fb good"><div class="lab">Answer</div><b>'+f.answer+'</b></div>';
+      const b=document.createElement('button');b.className='next-btn';
+      b.textContent=i<c.faded.length-1?'Next':'Continue to independent practice';
+      b.addEventListener('click',()=>{if(i<c.faded.length-1){i++;render();}else{markStageDone(id,2);renderStage(id);}});
+      document.getElementById('fans').appendChild(b);
+      document.getElementById('rev').style.display='none';
+    });
+  }
+  render();
+}
+
+/* stage 3 — independent bank set */
+function drawBankSet(id,ids,mode){
+  const el=document.getElementById('stageBody');
+  let i=0,right=0;
+  function render(){
+    const q=BANK[ids[i]];
+    let h='<div class="card"><h3>Independent practice '+(i+1)+' of '+ids.length+'</h3><p><b>'+q.q+'</b></p><div class="opts" role="group">';
+    q.opts.forEach((o,idx)=>{h+='<button class="opt" data-i="'+idx+'"><span class="lt">'+'ABCD'[idx]+'</span><span>'+o+'</span></button>';});
+    h+='</div><div id="qfb"></div></div>';
+    el.innerHTML=h;
+    el.querySelectorAll('.opt').forEach(btn=>btn.addEventListener('click',()=>{
+      const idx=+btn.dataset.i,correct=idx===q.correct;
+      el.querySelectorAll('.opt').forEach(o=>{o.disabled=true;if(+o.dataset.i===q.correct)o.classList.add('correct');});
+      if(!correct)btn.classList.add('wrong');
+      if(correct)right++;
+      schedule(ids[i],correct);
+      const fb=document.getElementById('qfb');
+      fb.innerHTML='<div class="fb '+(correct?'good':'bad')+'"><div class="lab">'+(correct?'Correct':'Not quite')+'</div>'+
+        (correct?'':'<b>'+(q.diag[idx]||'Not the move.')+'</b><br>')+q.why+'</div>';
+      const b=document.createElement('button');b.className='next-btn';
+      b.textContent=i<ids.length-1?'Next question':'Finish this set';
+      b.addEventListener('click',()=>{if(i<ids.length-1){i++;render();}else{markStageDone(id,3);renderStage(id);}});
+      fb.appendChild(b);
+    }));
+  }
+  render();
+}
+
+/* stage 4 — mastery check: 3 correct in a row on unseen-preferred items */
+function drawMastery(id){
+  const c=CONTENT[id],el=document.getElementById('stageBody');
+  const pool=c.mastery.slice();
+  let streak=0,pi=0;
+  function render(){
+    const q=BANK[pool[pi%pool.length]];
+    let h='<div class="mastery-meter">Get <b style="color:var(--gold)">3 in a row</b> to master this module.<span class="streak">'+
+      [0,1,2].map(k=>'<i class="'+(k<streak?'on':'')+'"></i>').join('')+'</span></div>';
+    h+='<div class="card"><h3>Mastery check</h3><p><b>'+q.q+'</b></p><div class="opts" role="group">';
+    q.opts.forEach((o,idx)=>{h+='<button class="opt" data-i="'+idx+'"><span class="lt">'+'ABCD'[idx]+'</span><span>'+o+'</span></button>';});
+    h+='</div><div id="mfb"></div></div>';
+    el.innerHTML=h;
+    el.querySelectorAll('.opt').forEach(btn=>btn.addEventListener('click',()=>{
+      const idx=+btn.dataset.i,correct=idx===q.correct;
+      el.querySelectorAll('.opt').forEach(o=>{o.disabled=true;if(+o.dataset.i===q.correct)o.classList.add('correct');});
+      if(!correct)btn.classList.add('wrong');
+      schedule(pool[pi%pool.length],correct);
+      streak=correct?streak+1:0;pi++;
+      const fb=document.getElementById('mfb');
+      fb.innerHTML='<div class="fb '+(correct?'good':'bad')+'"><div class="lab">'+(correct?'Correct — streak '+streak:'Streak reset')+'</div>'+
+        (correct?'':'<b>'+(q.diag[idx]||'')+'</b><br>')+q.why+'</div>';
+      if(streak>=3){finishMastery(id);return;}
+      const b=document.createElement('button');b.className='next-btn';b.textContent='Next';
+      b.addEventListener('click',render);fb.appendChild(b);
+    }));
+  }
+  render();
+}
+
+function finishMastery(id){
+  const m=MOD_BY_ID[id],ss=stageState(id);
+  [0,1,2,3,4].forEach(k=>{if(ss.done.indexOf(k)<0)ss.done.push(k);});
+  ss.cur=5;ST.mastery[id]='mastered';save(ST);renderTree();
+  const opened=MODS.filter(x=>x.prereqs.indexOf(id)>=0&&isUnlocked(x)).map(x=>x.name);
+  mainEl.innerHTML='<div class="celebrate"><h3>'+m.name+' — mastered.</h3>'+
+    '<p>Three in a row on unseen items. '+(opened.length?'You just unlocked: <b>'+opened.join(', ')+'</b>.':'Keep going — more unlocks as you clear prerequisites.')+'</p></div>'+
+    '<button class="next-btn" id="toNext">'+(opened.length?'Open '+opened[0]:'Back to the tree')+'</button> '+
+    '<button class="next-btn ghost" id="toHome">See the tree</button>';
+  document.getElementById('toHome').addEventListener('click',renderHome);
+  document.getElementById('toNext').addEventListener('click',()=>{
+    if(opened.length){const t=MODS.find(x=>x.name===opened[0]);openModule(t.id);}else renderHome();
+  });
+}
+
+/* ---- controls ---- */
+document.getElementById('themeBtn').addEventListener('click',()=>{
+  const cur=document.documentElement.getAttribute('data-theme');
+  const isDark=cur?cur==='dark':window.matchMedia('(prefers-color-scheme:dark)').matches;
+  document.documentElement.setAttribute('data-theme',isDark?'light':'dark');
+});
+document.getElementById('resetBtn').addEventListener('click',()=>{
+  ST={mastery:{},stages:{},sr:{}};save(ST);renderHome();
+});
+
+/* ---- boot ---- */
+renderHome();
+</script>
+</body>
+</html>
