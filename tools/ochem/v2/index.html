@@ -381,6 +381,10 @@ const BANK = {
     opts:['Syn (same side)','Anti-periplanar (180 degrees apart)','Gauche (60 degrees)','Cis'],correct:1,
     why:'E2 is concerted, so the C-H and C-leaving-group bonds must be anti-periplanar for their orbitals to align.',
     diag:{0:'Syn-periplanar elimination is rare and not the DAT default; E2 wants anti.',2:'Gauche does not give the required orbital alignment.',3:'cis/trans describes alkene geometry, not the E2 transition-state requirement.'}},
+  se9:{skill:'subelim',diff:2,q:'Which is the best leaving group in a substitution or elimination?',
+    opts:['F-','Cl-','Br-','I- (the weakest base)'],correct:3,
+    why:'Leaving-group ability tracks conjugate-base weakness: the weaker and more stable the anion, the better it leaves. I- is the weakest base of the halides, so it is the best leaving group; F- is the worst.',
+    diag:{0:'F- is the strongest base of the halides, so it is the WORST leaving group.',1:'Cl- is only a moderate leaving group.',2:'Br- is good, but I- is better still.'}},
   ar9:{skill:'aromatic',diff:3,q:'On a disubstituted ring where two groups direct to different positions, which group wins the directing contest?',
     opts:['The weaker activator','The stronger activator (and an ortho/para director beats a meta director)','Whichever group was added first','Neither; the ring does not react'],correct:1,
     why:'The strongest activator controls the ring electron density, so it decides the position; an ortho/para director outranks a meta director.',
@@ -697,7 +701,8 @@ const CONTENT = {
         <b>1. Substrate.</b> Methyl / 1° → SN2 (no carbocation possible). 3° → SN1/E1 or E2, <em>never</em> SN2 (too hindered). 2° → the battleground, decided by the next three.<br>
         <b>2. Nucleophile / base.</b> Strong, small nucleophile → SN2. Strong, <em>bulky</em> base (t-BuOK, LDA) → E2. Weak nucleophile (water, ROH) → SN1/E1.<br>
         <b>3. Solvent.</b> Polar aprotic (DMSO, DMF, acetone) → SN2 (naked nucleophile). Polar protic (water, alcohols) → SN1/E1 (stabilizes the carbocation).<br>
-        <b>4. Temperature.</b> Heat → elimination (E1/E2).</div>
+        <b>4. Temperature.</b> Heat → elimination (E1/E2).<br>
+        <b>Plus — the leaving group.</b> A good leaving group (a weak, stable base) is required: I⁻ &gt; Br⁻ &gt; Cl⁻ ≫ F⁻; tosylate and mesylate are excellent; –OH, –OR, and –F are poor.</div>
       <div class="rule"><div class="rl">Stereo &amp; regiochemistry</div>
         <b>SN2</b> — backside attack → <b>inversion</b> (Walden). <b>SN1</b> — planar carbocation, both faces → <b>racemization</b>. <b>E2</b> — the H and leaving group must be <b>anti-periplanar</b>.<br>
         <b>Zaitsev</b> (the default) = the more-substituted, more-stable alkene. <b>Hofmann</b> = the less-substituted alkene, from a <em>bulky</em> base.</div>
@@ -732,8 +737,8 @@ const CONTENT = {
       {prompt:'SN2 proceeds by backside attack, so the stereocenter undergoes ___.',hint:'The configuration flips.',answer:'inversion'},
       {prompt:'Adding heat pushes an SN/E competition toward ___.',hint:'Thomas: heat is always this.',answer:'elimination'},
     ],
-    practice:['se1','se2','se3','se5','se7','se8'],
-    mastery:['se4','se6','se2','se5','se3','se8','se1','se7'],
+    practice:['se1','se2','se3','se9','se5','se7','se8'],
+    mastery:['se4','se6','se9','se2','se5','se3','se8','se1','se7'],
   },
   spec:{accent:'var(--t3)',
     sub:'IR, ¹H NMR, and ¹³C NMR — read the spectra to name a functional group and deduce a small structure. Reliably high-yield on the DAT.',
@@ -1026,15 +1031,16 @@ function renderStage(id){
   const m=MOD_BY_ID[id],c=CONTENT[id],ss=stageState(id),mastered=ST.mastery[id]==='mastered';
   let body='<div class="mod-view"><div class="mod-top"><span class="mod-kicker" style="--mc:'+(c.accent||'var(--gold)')+'">Tier '+m.tier+' · '+TIER_LABEL[m.tier]+'</span></div>'+
     '<h2 tabindex="-1">'+m.name+'</h2><p class="mod-sub">'+c.sub+'</p>';
+  const far=Math.max(ss.cur,ss.max||0,ss.done.length?Math.max.apply(null,ss.done):0);
   body+='<div class="stage-pills">'+STAGE_NAMES.map((n,i)=>{
-    const reached=ss.done.indexOf(i)>=0||i<=ss.cur||mastered;
+    const reached=ss.done.indexOf(i)>=0||i<=far||mastered;
     const cls=ss.done.indexOf(i)>=0?'done':(i===ss.cur?'cur':'');
     return reached
       ?'<button class="pill '+cls+'" data-stage="'+i+'">'+(i+1)+' · '+n+'</button>'
       :'<span class="pill '+cls+'">'+(i+1)+' · '+n+'</span>';}).join('')+'</div>';
   body+='<div id="stageBody"></div></div>';
   mainEl.innerHTML=body;
-  mainEl.querySelectorAll('.stage-pills button').forEach(b=>b.addEventListener('click',()=>{stageState(id).cur=+b.dataset.stage;save(ST);renderStage(id);}));
+  mainEl.querySelectorAll('.stage-pills button').forEach(b=>b.addEventListener('click',()=>{const s=stageState(id);s.max=Math.max(s.max||0,s.cur);s.cur=+b.dataset.stage;save(ST);renderStage(id);}));
   drawStageBody(id);
   const h=mainEl.querySelector('.mod-view h2'); if(h)h.focus();
 }
@@ -1043,6 +1049,7 @@ function markStageDone(id,idx){
   const ss=stageState(id);
   if(ss.done.indexOf(idx)<0)ss.done.push(idx);
   ss.cur=Math.max(ss.cur,Math.min(idx+1,4));
+  ss.max=Math.max(ss.max||0,ss.cur);
   ST.mastery[id]=ss.done.length>=5?'mastered':'partial';
   save(ST);renderTree();
 }
@@ -1133,7 +1140,8 @@ function drawFaded(id){
       '<button class="reveal-btn" id="rev">Reveal answer</button><div id="fans"></div></div>';
     document.getElementById('fin').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('rev').click();});
     document.getElementById('rev').addEventListener('click',()=>{
-      const norm=s=>String(s||'').trim().toLowerCase().replace(/[^a-z0-9+]/g,'');
+      if(document.getElementById('fans').innerHTML)return;
+      const norm=s=>String(s||'').trim().toLowerCase().replace(/\b(and|the)\b/g,'').replace(/[^a-z0-9+]/g,'');
       const typed=norm(document.getElementById('fin').value), ans=norm(f.answer);
       const ok=!!typed&&(typed===ans||typed.indexOf(ans)>=0||(typed.length>=3&&ans.startsWith(typed)));
       document.getElementById('fans').innerHTML='<div class="fb '+(ok?'good':'bad')+'"><div class="lab">'+(ok?'Nice — that is it':(typed?'Not quite — the answer is':'Answer'))+'</div><b>'+f.answer+'</b></div>';
@@ -1150,7 +1158,7 @@ function drawFaded(id){
 /* stage 3 — independent bank set */
 function drawBankSet(id,ids,mode){
   const el=document.getElementById('stageBody');
-  let i=0,right=0;
+  let i=0;
   function render(){
     const q=BANK[ids[i]];
     let h='<div class="card"><h3>Independent practice '+(i+1)+' of '+ids.length+'</h3><p><b>'+q.q+'</b></p><div class="opts" role="group" aria-label="Answer choices">';
@@ -1161,7 +1169,6 @@ function drawBankSet(id,ids,mode){
       const idx=+btn.dataset.i,correct=idx===q.correct;
       el.querySelectorAll('.opt').forEach(o=>{o.disabled=true;if(+o.dataset.i===q.correct)o.classList.add('correct');});
       if(!correct)btn.classList.add('wrong');
-      if(correct)right++;
       schedule(ids[i],correct);
       const fb=document.getElementById('qfb');
       fb.innerHTML='<div class="fb '+(correct?'good':'bad')+'"><div class="lab">'+(correct?'Correct':'Not quite')+'</div>'+
