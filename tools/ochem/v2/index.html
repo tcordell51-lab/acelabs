@@ -149,6 +149,15 @@ button{font-family:inherit;cursor:pointer}
 .locked-note{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:22px 24px;color:var(--ink-2)}
 .locked-note b{color:var(--ink)}
 .footer{margin-top:30px;padding-top:16px;border-top:1px solid var(--line-2);font-family:var(--mono);font-size:11px;color:var(--ink-soft);letter-spacing:.03em}
+.watch-btn{display:inline-flex;align-items:center;gap:8px;background:var(--gold);color:#1a1206;border:none;border-radius:8px;padding:10px 18px;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin:0 0 16px}
+.vid-modal{position:fixed;inset:0;z-index:100;background:rgba(4,8,6,.74);display:none;align-items:center;justify-content:center;padding:18px}
+.vid-modal.show{display:flex}
+.vid-card{background:var(--paper);border:1px solid var(--line);border-radius:14px;overflow:hidden;width:min(400px,94vw);box-shadow:var(--shadow);display:flex;flex-direction:column;max-height:94vh}
+.vid-head{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--line)}
+.vid-head .vt{font-family:var(--serif);font-weight:600;font-size:15px}
+.vid-x{background:var(--paper-2);border:1px solid var(--line);border-radius:7px;font-family:var(--mono);font-size:11px;padding:5px 11px;color:var(--ink-2);cursor:pointer}
+.vid-body{position:relative;width:100%;aspect-ratio:9/16;background:#000}
+.vid-body iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 @media (prefers-reduced-motion:no-preference){.card,.mod-view,.hero{animation:fade .4s ease both}@keyframes fade{from{opacity:0;transform:translateY(5px)}}}
 </style>
 </head>
@@ -168,6 +177,13 @@ button{font-family:inherit;cursor:pointer}
     <div id="tree"></div>
   </nav>
   <main class="main-pane" id="main" tabindex="-1"></main>
+</div>
+
+<div class="vid-modal" id="vidModal" role="dialog" aria-label="Coach explainer video">
+  <div class="vid-card">
+    <div class="vid-head"><span class="vt" id="vidTitle"></span><button class="vid-x" id="vidX">Close</button></div>
+    <div class="vid-body" id="vidBody"></div>
+  </div>
 </div>
 
 <script>
@@ -306,6 +322,14 @@ const CONTENT = {
   bonding:{accent:'var(--t0)',sub:'Hybridization, resonance, and the curved-arrow grammar every mechanism uses.',
     concept:`<h3>Coming online next iteration</h3><p>This module is scaffolded in the tree and will be authored into the full six-stage flow — concept, worked examples with predict-before-reveal, faded practice, an independent bank, and a mastery check — in the next build pass. Stereochemistry is fully live now; open it to see the pattern every module will follow.</p>`,
     worked:[],faded:[],practice:[],mastery:[]},
+  aromatic:{accent:'var(--t2)',
+    sub:'Aromaticity and electrophilic aromatic substitution — activators, deactivators, and the ortho/para/meta directing the DAT loves to test.',
+    videoUrl:'tiktoks/eas-directors-tiktok.html', videoTitle:'EAS directors: who aims where (~1 min)',
+    concept:`<h3>The pattern the DAT tests</h3><p>In electrophilic aromatic substitution, <b>the group already on the ring decides two things</b>: how fast the next substitution happens, and <em>where</em> it lands.</p>
+      <div class="rule"><div class="rl">The directing rule</div><b>Electron donors</b> (–OH, –NH₂, –OR, alkyl) make the ring richer → activate (faster) and direct <b>ortho / para</b>.<br><b>Electron withdrawers</b> (–NO₂, C=O, –SO₃H, –CF₃) make it poorer → deactivate (slower) and direct <b>meta</b>.</div>
+      <div class="trapbox"><div class="rl">The halogen exception</div>Halogens (F, Cl, Br, I) <b>deactivate</b> the ring but still direct <b>ortho / para</b> — poor ring, o/p seats. The classic DAT trap.</div>
+      <p>Watch the one-minute explainer above for the memory hook; the full six-stage module lands next build pass.</p>`,
+    worked:[],faded:[],practice:[],mastery:[]},
 };
 
 /* ---- STATE ---- */
@@ -375,10 +399,12 @@ function renderHome(){
      '<p>No wall of tools. Just the next rung.</p>'+
      '<button class="cta" id="startBtn">Start: '+next.name+'</button>'+
      '<button class="cta ghost" id="stereoBtn">Jump to Stereochemistry</button>'+
-     '<div class="pathnote"><b>Where this is going:</b> Stereochemistry is fully live as the flagship. The remaining modules are scaffolded on the tree and get authored into the same six-stage flow each build pass — reusing the mechanism animations and trainers from the current engine as each module’s interactive core.</div>'+
+     '<div style="margin-top:14px"><button class="watch-btn" id="easVidBtn">Watch a sample coach explainer: EAS directors</button></div>'+
+     '<div class="pathnote"><b>Where this is going:</b> Stereochemistry is fully live as the flagship. The remaining modules are scaffolded on the tree and get authored into the same six-stage flow each build pass — reusing the mechanism animations and trainers from the current engine as each module’s interactive core, plus short coach explainers like the EAS one above.</div>'+
    '</div>';
   document.getElementById('startBtn').addEventListener('click',()=>openModule(next.id));
   document.getElementById('stereoBtn').addEventListener('click',()=>openModule('stereo'));
+  document.getElementById('easVidBtn').addEventListener('click',()=>VID.open('tiktoks/eas-directors-tiktok.html','EAS directors: who aims where'));
 }
 
 /* ---- RENDER: module ---- */
@@ -397,10 +423,12 @@ function openModule(id){
   }
   const c=CONTENT[id];
   if(!c||!c.worked||!c.worked.length){
-    mainEl.innerHTML='<div class="mod-view"><div class="mod-top"><span class="mod-kicker">Tier '+m.tier+'</span></div>'+
-      '<h2>'+m.name+'</h2><p class="mod-sub">This module is scaffolded and unlocked, but its full six-stage content lands in an upcoming build pass.</p>'+
+    mainEl.innerHTML='<div class="mod-view"><div class="mod-top"><span class="mod-kicker" style="--mc:'+(c&&c.accent||'var(--gold)')+'">Tier '+m.tier+'</span></div>'+
+      '<h2>'+m.name+'</h2><p class="mod-sub">'+((c&&c.sub)||'This module is scaffolded and unlocked; its full six-stage content lands in an upcoming build pass.')+'</p>'+
+      (c&&c.videoUrl?'<button class="watch-btn" id="modWatch">Watch: '+(c.videoTitle||'coach explainer')+'</button>':'')+
       (c&&c.concept?'<div class="card">'+c.concept+'</div>':'')+
       '<button class="next-btn ghost" id="backHome">Back to the tree</button></div>';
+    const mw=document.getElementById('modWatch');if(mw)mw.addEventListener('click',()=>VID.open(c.videoUrl,c.videoTitle));
     const bh=document.getElementById('backHome');if(bh)bh.addEventListener('click',renderHome);
     return;
   }
@@ -589,6 +617,19 @@ document.getElementById('themeBtn').addEventListener('click',()=>{
 document.getElementById('resetBtn').addEventListener('click',()=>{
   ST={mastery:{},stages:{},sr:{}};save(ST);renderHome();
 });
+
+/* ---- video modal (coach explainers) ---- */
+const VID={
+  open(url,title){
+    document.getElementById('vidTitle').textContent=title||'Coach explainer';
+    document.getElementById('vidBody').innerHTML='<iframe src="'+url+'" allow="autoplay" title="'+(title||'coach explainer')+'"></iframe>';
+    document.getElementById('vidModal').classList.add('show');
+  },
+  close(){document.getElementById('vidModal').classList.remove('show');document.getElementById('vidBody').innerHTML='';}
+};
+document.getElementById('vidX').addEventListener('click',()=>VID.close());
+document.getElementById('vidModal').addEventListener('click',e=>{if(e.target.id==='vidModal')VID.close();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')VID.close();});
 
 /* ---- boot ---- */
 renderHome();
