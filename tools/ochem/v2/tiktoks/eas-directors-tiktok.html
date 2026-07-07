@@ -110,7 +110,7 @@ html,body{background:#000;overflow:hidden;font-family:var(--sans);color:var(--in
   <div class="trap" id="trap">
     <div class="trap-ribbon">The DAT trap</div>
     <div class="trap-h">Halogens:<br/><em>LPOP wins the seat.</em></div>
-    <div class="trap-sub">Cl, Br, I keep their lone pairs → LPOP → <em>ortho / para</em>. But they still want that "magic eight" octet, so they pull electrons and <em>deactivate</em>. Ortho-para seat, slower reaction.</div>
+    <div class="trap-sub">Cl, Br, I keep their lone pairs → LPOP → <em>ortho / para</em>. But they are very electronegative, so they pull electron density out of the ring by induction and <em>deactivate</em> it. Ortho-para seat, slower reaction.</div>
   </div>
 
   <div class="lock" id="lock">
@@ -162,7 +162,7 @@ function tick(){if(paused)return;const t=elapsed+(Date.now()-startedAt);TL.forEa
 function play(){if(elapsed>=TOTAL){TL.forEach(e=>e._f=false);elapsed=0;}paused=false;startedAt=Date.now();$('playBtn').textContent='Pause';tick();}
 function pause(){paused=true;elapsed+=Date.now()-startedAt;$('playBtn').textContent='Resume';}
 $('playBtn').addEventListener('click',()=>{paused?play():pause();});
-$('scrubBar').addEventListener('click',e=>{const r=e.currentTarget.getBoundingClientRect();const pct=(e.clientX-r.left)/r.width;elapsed=Math.max(0,Math.min(TOTAL,pct*TOTAL));TL.forEach(x=>x._f=x.t<elapsed);for(let i=TL.length-1;i>=0;i--){if(TL[i].t<=elapsed){TL[i].fn();break;}}if(!paused)startedAt=Date.now();$('scrubFill').style.width=(elapsed/TOTAL*100)+'%';$('scrubThumb').style.left=(elapsed/TOTAL*100)+'%';});
+$('scrubBar').addEventListener('click',e=>{const r=e.currentTarget.getBoundingClientRect();const pct=(e.clientX-r.left)/r.width;elapsed=Math.max(0,Math.min(TOTAL,pct*TOTAL));TL.forEach(x=>x._f=x.t<=elapsed);TL.filter(x=>x.t<=elapsed).sort((a,b)=>a.t-b.t).forEach(x=>x.fn());if(!paused)startedAt=Date.now();$('scrubFill').style.width=(elapsed/TOTAL*100)+'%';$('scrubThumb').style.left=(elapsed/TOTAL*100)+'%';});
 // autostart on first load
 play();
 </script>
