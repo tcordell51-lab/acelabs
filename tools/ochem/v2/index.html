@@ -489,6 +489,38 @@ const BANK = {
     opts:['From the products up to the peak','From a starting valley up to the next peak','From the x-axis up to the peak','Between two valleys'],correct:1,
     why:'Ea is the energy gap from the starting point (a valley) up to the transition state (the next peak).',
     diag:{0:'Ea is measured from the starting side, not from the products.',2:'It is measured from the starting valley, not the baseline axis.',3:'The gap between two valleys is the overall energy change, not Ea.'}},
+  al1:{skill:'alkene',diff:1,q:'HBr adds to an alkene (no peroxide) with which regiochemistry?',
+    opts:['Anti-Markovnikov','Markovnikov (Br to the more-substituted carbon)','Random','No reaction'],correct:1,
+    why:'Without peroxide, HBr adds Markovnikov via the more stable carbocation, so Br ends up on the more-substituted carbon.',
+    diag:{0:'Anti-Markovnikov needs a peroxide (radical conditions).',2:'The addition is regioselective, not random.',3:'The alkene definitely reacts with HBr.'}},
+  al2:{skill:'alkene',diff:1,q:'Adding a PEROXIDE (ROOR) to the HBr + alkene reaction gives:',
+    opts:['The Markovnikov product','The anti-Markovnikov product (radical mechanism)','An alcohol','No change'],correct:1,
+    why:'Peroxide switches HBr to a radical chain that adds anti-Markovnikov. Look for the peroxide.',
+    diag:{0:'Peroxide FLIPS it away from Markovnikov.',2:'HBr adds a bromide, not an OH.',3:'The peroxide changes the regiochemistry, so it is not "no change".'}},
+  al3:{skill:'alkene',diff:2,q:'Which reagent gives an anti-Markovnikov alcohol with syn addition?',
+    opts:['H2O / H+','Oxymercuration-demercuration','Hydroboration-oxidation (BH3 then H2O2/OH-)','Br2 / H2O'],correct:2,
+    why:'Hydroboration-oxidation adds OH anti-Markovnikov and syn, with no rearrangement.',
+    diag:{0:'Acid hydration gives the Markovnikov alcohol.',1:'Oxymercuration also gives the Markovnikov alcohol.',3:'Br2/H2O makes a halohydrin, not a simple anti-Markovnikov alcohol.'}},
+  al4:{skill:'alkene',diff:2,q:'Oxymercuration-demercuration adds water to an alkene as:',
+    opts:['An anti-Markovnikov OH','A Markovnikov OH with NO rearrangement','Two OH groups','An epoxide'],correct:1,
+    why:'Oxymercuration gives the Markovnikov alcohol without carbocation rearrangement, unlike acid-catalyzed hydration.',
+    diag:{0:'It is Markovnikov, not anti-Markovnikov.',2:'It adds one OH; two OH groups come from OsO4/KMnO4.',3:'An epoxide comes from mCPBA.'}},
+  al5:{skill:'alkene',diff:2,q:'Br2 adds to an alkene with what stereochemistry?',
+    opts:['Syn addition','Anti addition (trans, via a bromonium ion)','No stereochemistry','Markovnikov'],correct:1,
+    why:'The cyclic bromonium ion forces the second bromide to attack from the opposite face, giving anti (trans) addition.',
+    diag:{0:'Syn addition is hydroboration/OsO4/H2/Pd, not Br2.',2:'It is stereospecifically anti, not random.',3:'Markovnikov is a regiochemistry term; Br2 adds two identical Br atoms.'}},
+  al6:{skill:'alkene',diff:2,q:'OsO4 (or cold dilute KMnO4) converts an alkene into a:',
+    opts:['Trans diol','Cis (syn) diol','Single alcohol','Epoxide'],correct:1,
+    why:'Syn-dihydroxylation delivers two OH groups to the same face, giving a cis (syn) diol.',
+    diag:{0:'The two OH groups add syn, giving a cis diol, not trans.',2:'It adds two OH groups, not one.',3:'An epoxide comes from mCPBA, not OsO4.'}},
+  al7:{skill:'alkene',diff:1,q:'Ozonolysis (O3, then workup) does what to a C=C double bond?',
+    opts:['Adds two hydrogens','Cleaves it into two carbonyl compounds','Makes an epoxide','Adds Br2'],correct:1,
+    why:'Ozonolysis breaks the C=C, giving two carbonyls (reductive workup with DMS/Zn = aldehydes/ketones; oxidative with H2O2 = acids).',
+    diag:{0:'Adding two H is hydrogenation, not ozonolysis.',2:'An epoxide comes from mCPBA.',3:'Br2 addition is halogenation, not ozonolysis.'}},
+  al8:{skill:'alkene',diff:1,q:'Catalytic hydrogenation (H2, Pd) adds two hydrogens to an alkene with what stereochemistry, giving what?',
+    opts:['Anti addition','Syn addition (both H from the same face), giving the alkane','An alcohol','No reaction'],correct:1,
+    why:'H2/Pd delivers both hydrogens from the same face of the catalyst (syn) to give the alkane.',
+    diag:{0:'Hydrogenation is syn, not anti.',2:'It adds H atoms, not OH.',3:'The alkene is reduced to an alkane.'}},
 };
 
 /* ---- CONTENT (per-module) ---- */
@@ -838,6 +870,47 @@ const CONTENT = {
     ],
     practice:['rc1','rc2','rc3','rc5','rc6','rc8'],
     mastery:['rc4','rc7','rc2','rc3','rc6','rc8','rc1','rc5'],
+  },
+  alkene:{accent:'var(--t1)',
+    sub:'Alkene addition — match the reagent to its product with the right regiochemistry (Markovnikov?) and stereochemistry (syn/anti). High-yield recognition.',
+    concept:`<h3>The reagent map</h3>
+      <p>Alkenes are electron-rich C=C that undergo <b>addition</b>. The DAT gives you a reagent and asks for the product — with the right <b>regiochemistry</b> and <b>stereochemistry</b>. Learn the map.</p>
+      <div class="rule"><div class="rl">Regiochemistry (where things add)</div>
+        <b>Markovnikov:</b> H goes to the carbon with more H's; the OH/X goes to the <b>more-substituted</b> carbon (via the more stable carbocation). <b>Anti-Markovnikov</b> is the reverse (OH/X on the less-substituted carbon).</div>
+      <div class="rule"><div class="rl">Reagent → product</div>
+        <b>HX</b> (HBr/HCl) → Markovnikov, may rearrange. <b>HBr + peroxide (ROOR)</b> → <b>anti-Markovnikov</b> (radical).<br>
+        <b>H₂O / H⁺</b> → Markovnikov OH (may rearrange). <b>Oxymercuration</b> → Markovnikov OH, <b>no rearrangement</b>. <b>Hydroboration–oxidation</b> (BH₃, then H₂O₂/OH⁻) → <b>anti-Markovnikov OH + syn</b>.<br>
+        <b>Br₂ / Cl₂</b> → <b>anti</b> addition of two halogens (trans, via halonium). <b>Halohydrin</b> (X₂/H₂O) → Markovnikov OH + anti. <b>mCPBA</b> → epoxide. <b>OsO₄ or cold KMnO₄</b> → <b>cis (syn) diol</b>. <b>O₃ then workup</b> → <b>cleaves</b> C=C to two carbonyls. <b>H₂ / Pd</b> → <b>syn</b> addition of two H (alkane).</div>
+      <div class="coachbox"><div class="rl">Coach trick · Thomas</div><b>"Look for the peroxide."</b> HBr with peroxide (ROOR) flips to anti-Markovnikov; without it, Markovnikov. And for ozonolysis, <b>"H₂O₂ has a lot of O's"</b> → an oxidative workup gives the more-oxidized product (acids), while DMS (Zn) is "just an H" → reductive workup gives aldehydes/ketones.</div>
+      <div class="depthnote"><b>DAT depth:</b> match a reagent to its product with the correct regiochemistry (Markovnikov vs anti) and stereochemistry (syn vs anti), and recognize cleavage (ozonolysis) — yes. Full arrow-pushing mechanisms and transition-state energetics — not tested.</div>`,
+    worked:[
+      {q:'2-methylpropene reacts with HBr. Where does the Br go? What changes if peroxide (ROOR) is added?',
+       steps:[
+        {what:'HBr alone adds Markovnikov: H to the carbon with more hydrogens, Br to the more-substituted carbon (the more stable 3° carbocation).',why:'The reaction goes through the more stable carbocation.',
+         predict:{q:'HBr alone is Markovnikov. Does Br end up on the more-substituted or the less-substituted carbon?',hint:'Br follows the more stable carbocation.'}},
+        {what:'Br → the more-substituted (3°) carbon → 2-bromo-2-methylpropane (tert-butyl bromide).',why:'Markovnikov puts the halide on the more-substituted carbon.'},
+        {what:'Add PEROXIDE (ROOR): HBr now adds anti-Markovnikov (radical) → Br on the LESS-substituted carbon.',why:'The radical chain reverses the regiochemistry.'},
+       ], answer:'HBr alone = Markovnikov (Br on the more-substituted carbon, tert-butyl bromide). Add peroxide and it flips to anti-Markovnikov (Br on the less-substituted carbon). Look for the peroxide.'},
+      {q:'You want the anti-Markovnikov alcohol from an alkene. Which reagent — acid-catalyzed hydration, or hydroboration–oxidation?',
+       steps:[
+        {what:'Acid-catalyzed hydration (H₂O/H⁺) gives the Markovnikov alcohol and can rearrange.',why:'It goes through a carbocation.',
+         predict:{q:'You need the OH on the LESS-substituted carbon (anti-Markovnikov). Which reagent puts it there — H₂O/H⁺, or BH₃ then H₂O₂/OH⁻?',hint:'One of them is the anti-Markovnikov, syn-addition alcohol reagent.'}},
+        {what:'Hydroboration–oxidation (BH₃, then H₂O₂/OH⁻) gives the anti-Markovnikov alcohol with syn addition and no rearrangement.',why:'Boron adds to the less-hindered carbon; oxidation replaces it with OH.'},
+       ], answer:'Hydroboration–oxidation (BH₃, then H₂O₂/OH⁻) — anti-Markovnikov OH with syn stereochemistry. Acid hydration and oxymercuration both give the Markovnikov alcohol instead.'},
+      {q:'An alkene reacts with Br₂. Is the addition syn or anti? And what about H₂/Pd?',
+       steps:[
+        {what:'Br₂ goes through a cyclic bromonium ion; the second bromide attacks from the opposite face.',why:'The bromonium blocks one face.',
+         predict:{q:'The second bromide attacks from the opposite face of the bromonium ion. Is that syn or anti addition?',hint:'Opposite faces — which label is that?'}},
+        {what:'So Br₂ = anti addition (a trans-dibromide). H₂/Pd delivers both H atoms from the same face of the catalyst → syn addition.',why:'The metal surface adds both hydrogens from the same face.'},
+       ], answer:'Br₂ adds ANTI (trans, via the bromonium ion); H₂/Pd adds SYN. Remember the syn set (hydroboration, OsO₄, H₂/Pd, epoxidation) vs the anti set (X₂, halohydrin).'},
+    ],
+    faded:[
+      {prompt:'HBr adds to an alkene with Markovnikov regiochemistry — unless you add ___, which flips it to anti-Markovnikov.',hint:'The radical trigger.',answer:'peroxide'},
+      {prompt:'Hydroboration–oxidation (BH₃ then H₂O₂/OH⁻) gives the ___ alcohol with syn addition.',hint:'OH on the less-substituted carbon.',answer:'anti-Markovnikov'},
+      {prompt:'Ozonolysis (O₃ then workup) ___ the C=C into two carbonyl groups.',hint:'It breaks the double bond.',answer:'cleaves'},
+    ],
+    practice:['al1','al2','al3','al5','al7','al8'],
+    mastery:['al4','al6','al2','al3','al5','al8','al1','al7'],
   },
 };
 
