@@ -4,7 +4,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Ace Labs · Organic Chemistry (v2 course engine)</title>
-<meta name="description" content="A guided, module-based organic chemistry course — a prerequisite skill tree, a six-stage self-teaching flow, and earned mastery. DAT-scoped."/>
+<meta name="description" content="A guided, module-based organic chemistry course — a prerequisite skill tree, a five-stage self-teaching flow, and earned mastery. DAT-scoped."/>
 <style>
 :root{
   --bg:#f4efe6; --paper:#fffdf7; --paper-2:#f8f2e5; --raise:#fbf6ec;
@@ -183,7 +183,7 @@ button{font-family:inherit;cursor:pointer}
   <main class="main-pane" id="main" tabindex="-1"></main>
 </div>
 
-<div class="vid-modal" id="vidModal" role="dialog" aria-label="Coach explainer video">
+<div class="vid-modal" id="vidModal" role="dialog" aria-modal="true" aria-label="Coach explainer video">
   <div class="vid-card">
     <div class="vid-head"><span class="vt" id="vidTitle"></span><button class="vid-x" id="vidX">Close</button></div>
     <div class="vid-body" id="vidBody"></div>
@@ -222,7 +222,7 @@ const MODS = [
   {id:'amine',   tier:2, name:'Amines', prereqs:['subelim','acidbase']},
   {id:'diene',   tier:2, name:'Dienes & Diels–Alder', prereqs:['alkene','aromatic']},
   // Tier 3 — Test-day & integration
-  {id:'spec',    tier:3, name:'Spectroscopy — IR / NMR / MS', prereqs:['nomen']},
+  {id:'spec',    tier:3, name:'Spectroscopy — IR / NMR', prereqs:['nomen']},
   {id:'rcd',     tier:3, name:'Reaction-Coordinate Diagrams', prereqs:['subelim']},
   {id:'synth',   tier:3, name:'Multi-step Synthesis & Retrosynthesis', prereqs:['alkene','carbonyl','aromatic','acids']},
   {id:'labtech', tier:3, name:'Lab Techniques & Qual Analysis', prereqs:['spec']},
@@ -267,7 +267,7 @@ const BANK = {
     diag:{0:'A single meso compound is one achiral molecule, not a pair.',2:'A racemic mixture is a 50:50 of two enantiomers — that is a mixture, not one molecule with internal symmetry.',3:'The internal mirror plane makes it achiral, not chiral.'}},
   st8:{skill:'stereo',diff:2,q:'In the most stable conformation of ethane viewed down the C–C bond, the front and back C–H bonds are…',
     opts:['Eclipsed (0° torsion)','Staggered (60° torsion)','Perpendicular','Bent'],correct:1,
-    why:'Staggered (anti/gauche, 60° dihedral) minimizes torsional strain and is lowest in energy; eclipsed (0°) is the maximum. The Newman projection makes this visible.',
+    why:'Staggered (60° dihedral) minimizes torsional strain and is lowest in energy; eclipsed (0°) is the maximum. The Newman projection makes this visible. (Anti vs gauche only differ once you have larger groups, as in butane.)',
     diag:{0:'Eclipsed is the HIGHEST-energy arrangement, not the most stable.',2:'Torsional angles for sp³ C–C are 0/60/120°, not 90°.',3:'Bonds are not "bent" here — this is about torsion angle.'}},
 };
 
@@ -299,7 +299,7 @@ const CONTENT = {
          predict:{q:'If that same trace had come out counter-clockwise instead, what would it be?',hint:'Clockwise = R. The opposite direction is…'}},
        ], answer:'Clockwise with the lowest priority in back gives (R)-2-bromobutane; counter-clockwise would be (S).'},
       {q:'Assign the configuration of lactic acid drawn in a Fischer projection: COOH top, CH₃ bottom, OH on the LEFT, H on the right.',
-       fischer:'        COOH\n         |\n  H  ────C────  (this is drawn as: OH on LEFT, H on RIGHT)\n         |\n         CH3',
+       fischer:'        COOH\n         |\n  HO ───C─── H\n         |\n        CH3',
        steps:[
         {what:'Priorities: OH (1) > COOH (2) > CH₃ (3) > H (4).',why:'O beats C directly on the center; COOH (C bonded to O,O,O) beats CH₃.'},
         {what:'Locate the lowest priority. H is on a HORIZONTAL bond.',why:'Horizontal in a Fischer = pointing toward you. That means we will reverse.',
@@ -326,17 +326,19 @@ const CONTENT = {
   },
   // Concept-level seeds for a few neighbors (fuller builds come each iteration)
   bonding:{accent:'var(--t0)',sub:'Hybridization, resonance, and the curved-arrow grammar every mechanism uses.',
-    concept:`<h3>Coming online next iteration</h3><p>This module is scaffolded in the tree and will be authored into the full six-stage flow — concept, worked examples with predict-before-reveal, faded practice, an independent bank, and a mastery check — in the next build pass. Stereochemistry is fully live now; open it to see the pattern every module will follow.</p>`,
+    concept:`<h3>Coming online next iteration</h3><p>This module is scaffolded in the tree and will be authored into the full five-stage flow — concept, worked examples with predict-before-reveal, faded practice, an independent bank, and a mastery check — in the next build pass. Stereochemistry is fully live now; open it to see the pattern every module will follow.</p>`,
     worked:[],faded:[],practice:[],mastery:[]},
   aromatic:{accent:'var(--t2)',
     sub:'Aromaticity and electrophilic aromatic substitution — activators, deactivators, and the ortho/para/meta directing the DAT loves to test.',
     videoUrl:'tiktoks/eas-directors-tiktok.html', videoTitle:'EAS directors: who aims where (~1 min)',
-    concept:`<h3>The pattern the DAT tests</h3><p>In electrophilic aromatic substitution, <b>the group already on the ring decides two things</b>: how fast the next substitution happens, and <em>where</em> it lands.</p>
-      <div class="rule"><div class="rl">The directing rule</div><b>Electron donors</b> (–OH, –NH₂, –OR, alkyl) make the ring richer → activate (faster) and direct <b>ortho / para</b>.<br><b>Electron withdrawers</b> (–NO₂, C=O, –SO₃H, –CF₃) make it poorer → deactivate (slower) and direct <b>meta</b>.</div>
+    concept:`<h3>The pattern the DAT tests</h3>
+      <div class="rule"><div class="rl">First: is it aromatic?</div>Aromatic = <b>cyclic + planar + fully conjugated</b> (an uninterrupted ring of p-orbitals) <b>+ 4n+2 π electrons</b> — the magic numbers <b>2, 6, 10, 14</b>. Cyclic/planar/conjugated but <b>4n</b> (4, 8, 12) = <b>anti-aromatic</b>. Count 2 π electrons per double bond; a lone pair counts only if it sits in the ring's p-system (pyrrole's N lone pair counts; pyridine's does not).</div>
+      <p>Then, in electrophilic aromatic substitution, <b>the group already on the ring decides two things</b>: how fast the next substitution happens, and <em>where</em> it lands.</p>
+      <div class="rule"><div class="rl">The directing rule</div><b>Electron donors</b> (–OH, –NH₂, –OR, alkyl) make the ring richer → activate (faster) and direct <b>ortho / para</b>.<br><b>Electron withdrawers</b> (–NO₂, C=O, –SO₃H, –CF₃) make it poorer → deactivate (slower) and direct <b>meta</b>.<br><b>Strength:</b> strong activators (–NH₂, –OH) &gt; moderate (–OR) &gt; weak (alkyl); strong deactivators (–NO₂, –NR₃⁺, C=O, –SO₃H) &gt; weak deactivators (the halogens, which still direct o/p).</div>
       <div class="trapbox"><div class="rl">The halogen exception</div>Halogens (F, Cl, Br, I) <b>deactivate</b> the ring but still direct <b>ortho / para</b> — poor ring, o/p seats. The classic DAT trap.</div>
       <div class="coachbox"><div class="rl">Coach trick · Thomas</div><b>LPOP</b> — Lone Pairs → Ortho-Para (plus alkyl R groups). <b>Flip the W</b> — a Withdrawing group, flip the W upside-down, gives M for Meta. Picture it: oxygen's the bully, "give me your electrons," so carbonyls pull density out of the ring and aim meta. Halogens keep their lone pairs (LPOP → o/p) but still crave the octet, so they deactivate.</div>
       <div class="depthnote"><b>DAT depth:</b> classify activating/deactivating and o/p vs meta, predict the major product and position, and check Hückel aromaticity (magic numbers 2, 6, 10, 14) — yes. Full arrow-by-arrow EAS mechanism and benzyne/NAS — not needed.</div>
-      <p>Watch the one-minute explainer above for Thomas's LPOP hook; the full six-stage module lands next build pass.</p>`,
+      <p>Watch the one-minute explainer above for Thomas's LPOP hook; the full five-stage module lands next build pass.</p>`,
     worked:[],faded:[],practice:[],mastery:[]},
 };
 
@@ -350,10 +352,12 @@ ST.stages=ST.stages||{};        // {id:{cur, done:[]}}
 ST.sr=ST.sr||{};                // {bankId:{ef,interval,due,reps}}
 
 function isUnlocked(m){return m.prereqs.every(p=>ST.mastery[p]==='mastered');}
+function isAuthored(id){const c=CONTENT[id];return !!(c&&c.worked&&c.worked.length);}
 function statusOf(m){
   if(ST.mastery[m.id]==='mastered')return'mastered';
   if(ST.mastery[m.id]==='partial')return'partial';
-  return isUnlocked(m)?'unlocked':'locked';
+  // an authored module is always reachable so the flagship is never soft-locked
+  return (isUnlocked(m)||isAuthored(m.id))?'unlocked':'locked';
 }
 function masteredCount(){return MODS.filter(m=>ST.mastery[m.id]==='mastered').length;}
 
@@ -398,7 +402,7 @@ function renderTree(){
 /* ---- RENDER: home ---- */
 function renderHome(){
   activeId=null;renderTree();
-  const next=MODS.find(m=>statusOf(m)==='unlocked')||MODS.find(m=>statusOf(m)==='partial')||MODS[0];
+  const next=MODS.find(m=>isAuthored(m.id)&&ST.mastery[m.id]!=='mastered')||MODS.find(m=>statusOf(m)==='unlocked'&&ST.mastery[m.id]!=='mastered')||MODS[0];
   mainEl.innerHTML=
    '<div class="hero">'+
      '<p class="eye">A guided course · not a room full of tools</p>'+
@@ -408,7 +412,7 @@ function renderHome(){
      '<button class="cta" id="startBtn">Start: '+next.name+'</button>'+
      '<button class="cta ghost" id="stereoBtn">Jump to Stereochemistry</button>'+
      '<div style="margin-top:14px"><button class="watch-btn" id="easVidBtn">Watch a sample coach explainer: EAS directors</button></div>'+
-     '<div class="pathnote"><b>Where this is going:</b> Stereochemistry is fully live as the flagship. The remaining modules are scaffolded on the tree and get authored into the same six-stage flow each build pass — reusing the mechanism animations and trainers from the current engine as each module’s interactive core, plus short coach explainers like the EAS one above.</div>'+
+     '<div class="pathnote"><b>Where this is going:</b> Stereochemistry is fully live as the flagship. The remaining modules are scaffolded on the tree and get authored into the same five-stage flow each build pass — reusing the mechanism animations and trainers from the current engine as each module’s interactive core, plus short coach explainers like the EAS one above.</div>'+
    '</div>';
   document.getElementById('startBtn').addEventListener('click',()=>openModule(next.id));
   document.getElementById('stereoBtn').addEventListener('click',()=>openModule('stereo'));
@@ -424,7 +428,7 @@ function openModule(id){
   if(statusOf(m)==='locked'){
     const need=m.prereqs.filter(p=>ST.mastery[p]!=='mastered').map(p=>MOD_BY_ID[p].name);
     mainEl.innerHTML='<div class="locked-note"><h2 style="margin:0 0 10px">'+m.name+'</h2>'+
-      '<p><b>Locked.</b> Master these first to unlock it:</p><p>'+need.map(n=>'• '+n).join('<br>')+'</p>'+
+      '<p><b>Locked.</b> Master these first to unlock it:</p><ul style="margin:8px 0;padding-left:20px;color:var(--ink-2)">'+need.map(n=>'<li>'+n+'</li>').join('')+'</ul>'+
       '<button class="next-btn ghost" id="backHome">Back to the tree</button></div>';
     document.getElementById('backHome').addEventListener('click',renderHome);
     return;
@@ -432,7 +436,7 @@ function openModule(id){
   const c=CONTENT[id];
   if(!c||!c.worked||!c.worked.length){
     mainEl.innerHTML='<div class="mod-view"><div class="mod-top"><span class="mod-kicker" style="--mc:'+(c&&c.accent||'var(--gold)')+'">Tier '+m.tier+'</span></div>'+
-      '<h2>'+m.name+'</h2><p class="mod-sub">'+((c&&c.sub)||'This module is scaffolded and unlocked; its full six-stage content lands in an upcoming build pass.')+'</p>'+
+      '<h2>'+m.name+'</h2><p class="mod-sub">'+((c&&c.sub)||'This module is scaffolded and unlocked; its full five-stage content lands in an upcoming build pass.')+'</p>'+
       (c&&c.videoUrl?'<button class="watch-btn" id="modWatch">Watch: '+(c.videoTitle||'coach explainer')+'</button>':'')+
       (c&&c.concept?'<div class="card">'+c.concept+'</div>':'')+
       '<button class="next-btn ghost" id="backHome">Back to the tree</button></div>';
@@ -480,7 +484,8 @@ function drawStageBody(id){
   }
 }
 
-/* stage 1 — worked examples with predict-before-reveal */
+/* stage 1 — worked examples: reveal ONE step at a time; for predict steps the
+   'why' is withheld until the student commits, so the answer never sits above the question */
 function drawWorked(id){
   const c=CONTENT[id],el=document.getElementById('stageBody');
   let i=0;
@@ -492,31 +497,40 @@ function drawWorked(id){
     el.innerHTML=h;
     const sw=document.getElementById('stepwrap');
     let si=0;
-    function step(){
+    function showStep(){
       const s=w.steps[si];
-      let sh='<div class="step"><div class="what">'+s.what+'</div><div class="why">'+s.why+'</div></div>';
-      sw.insertAdjacentHTML('beforeend',sh);
+      const stepEl=document.createElement('div');stepEl.className='step';
+      stepEl.innerHTML='<div class="what">'+s.what+'</div>';
+      sw.appendChild(stepEl);
+      const reveal=()=>{ stepEl.insertAdjacentHTML('beforeend','<div class="why">'+s.why+'</div>'); toNext(); };
       if(s.predict){
         const pd=document.createElement('div');pd.className='predict';
-        pd.innerHTML='<div class="q">'+s.predict.q+'</div><div class="hint">'+s.predict.hint+'</div><button class="reveal-btn">Reveal the next step</button>';
+        pd.innerHTML='<div class="q">'+s.predict.q+'</div><div class="hint">'+s.predict.hint+'</div><button class="reveal-btn">Commit — reveal</button>';
         sw.appendChild(pd);
-        pd.querySelector('button').addEventListener('click',()=>{pd.remove();si++;advance();});
-      } else {si++;advance();}
+        pd.querySelector('button').addEventListener('click',()=>{pd.remove();reveal();});
+      } else {
+        const b=document.createElement('button');b.className='reveal-btn';b.textContent='Reveal why';
+        sw.appendChild(b);
+        b.addEventListener('click',()=>{b.remove();reveal();});
+      }
     }
-    function advance(){
-      if(si<w.steps.length){ if(w.steps[si-1]&&w.steps[si-1].predict){/*wait handled*/} step(); }
-      else finishExample();
+    function toNext(){
+      si++;
+      if(si<w.steps.length){
+        const nb=document.createElement('button');nb.className='next-btn ghost';nb.textContent='Next step';
+        sw.appendChild(nb);
+        nb.addEventListener('click',()=>{nb.remove();showStep();});
+      } else finishExample();
     }
     function finishExample(){
-      const done=document.createElement('div');done.className='fb good';
-      done.innerHTML='<div class="lab">The move</div>'+w.answer;
+      const done=document.createElement('div');done.className='fb good';done.innerHTML='<div class="lab">The move</div>'+w.answer;
       sw.appendChild(done);
       const btn=document.createElement('button');btn.className='next-btn';
       btn.textContent=i<c.worked.length-1?'Next worked example':'Continue to faded practice';
       btn.addEventListener('click',()=>{ if(i<c.worked.length-1){i++;render();} else {markStageDone(id,1);renderStage(id);} });
       sw.appendChild(btn);
     }
-    step();
+    showStep();
   }
   render();
 }
@@ -549,9 +563,9 @@ function drawBankSet(id,ids,mode){
   let i=0,right=0;
   function render(){
     const q=BANK[ids[i]];
-    let h='<div class="card"><h3>Independent practice '+(i+1)+' of '+ids.length+'</h3><p><b>'+q.q+'</b></p><div class="opts" role="group">';
+    let h='<div class="card"><h3>Independent practice '+(i+1)+' of '+ids.length+'</h3><p><b>'+q.q+'</b></p><div class="opts" role="group" aria-label="Answer choices">';
     q.opts.forEach((o,idx)=>{h+='<button class="opt" data-i="'+idx+'"><span class="lt">'+'ABCD'[idx]+'</span><span>'+o+'</span></button>';});
-    h+='</div><div id="qfb"></div></div>';
+    h+='</div><div id="qfb" aria-live="polite"></div></div>';
     el.innerHTML=h;
     el.querySelectorAll('.opt').forEach(btn=>btn.addEventListener('click',()=>{
       const idx=+btn.dataset.i,correct=idx===q.correct;
@@ -580,9 +594,9 @@ function drawMastery(id){
     const q=BANK[pool[pi%pool.length]];
     let h='<div class="mastery-meter">Get <b style="color:var(--gold)">3 in a row</b> to master this module.<span class="streak">'+
       [0,1,2].map(k=>'<i class="'+(k<streak?'on':'')+'"></i>').join('')+'</span></div>';
-    h+='<div class="card"><h3>Mastery check</h3><p><b>'+q.q+'</b></p><div class="opts" role="group">';
+    h+='<div class="card"><h3>Mastery check</h3><p><b>'+q.q+'</b></p><div class="opts" role="group" aria-label="Answer choices">';
     q.opts.forEach((o,idx)=>{h+='<button class="opt" data-i="'+idx+'"><span class="lt">'+'ABCD'[idx]+'</span><span>'+o+'</span></button>';});
-    h+='</div><div id="mfb"></div></div>';
+    h+='</div><div id="mfb" aria-live="polite"></div></div>';
     el.innerHTML=h;
     el.querySelectorAll('.opt').forEach(btn=>btn.addEventListener('click',()=>{
       const idx=+btn.dataset.i,correct=idx===q.correct;
@@ -617,10 +631,13 @@ function finishMastery(id){
 }
 
 /* ---- controls ---- */
+(function(){try{const t=localStorage.getItem('ochem-v2-theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 document.getElementById('themeBtn').addEventListener('click',()=>{
   const cur=document.documentElement.getAttribute('data-theme');
   const isDark=cur?cur==='dark':window.matchMedia('(prefers-color-scheme:dark)').matches;
-  document.documentElement.setAttribute('data-theme',isDark?'light':'dark');
+  const next=isDark?'light':'dark';
+  document.documentElement.setAttribute('data-theme',next);
+  try{localStorage.setItem('ochem-v2-theme',next);}catch(e){}
 });
 document.getElementById('resetBtn').addEventListener('click',()=>{
   ST={mastery:{},stages:{},sr:{}};save(ST);renderHome();
