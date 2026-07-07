@@ -457,6 +457,38 @@ const BANK = {
     opts:['Higher and sharper','Lower and broader','Unchanged','Disappear entirely'],correct:1,
     why:'Impurities depress and broaden the melting point; a sharp, high melting point indicates a pure sample.',
     diag:{0:'Impurities lower the mp and make it broad, not higher and sharper.',2:'An impurity does change the mp.',3:'The sample still melts; the range just shifts and broadens.'}},
+  rc1:{skill:'rcd',diff:1,q:'On a reaction-coordinate diagram, a peak represents a:',
+    opts:['An intermediate','A transition state','A reactant','A product'],correct:1,
+    why:'Peaks are transition states, the highest-energy points along the path, which cannot be isolated.',
+    diag:{0:'Intermediates are the valleys between peaks, not the peaks.',2:'Reactants sit at the starting valley, not the top.',3:'Products sit at the ending valley.'}},
+  rc2:{skill:'rcd',diff:1,q:'The dip (valley) between two peaks on a diagram is:',
+    opts:['A transition state','An intermediate (it can briefly exist)','The final product','Nothing at all'],correct:1,
+    why:'A valley between peaks is an intermediate, a real if short-lived species such as a carbocation.',
+    diag:{0:'Transition states are the peaks, not the valleys.',2:'The final product is at the end, not in a mid-path dip.',3:'It is a real energy minimum, so it is a species.'}},
+  rc3:{skill:'rcd',diff:1,q:'How many steps does a reaction with three humps (peaks) have?',
+    opts:['One','Two','Three','Six'],correct:2,
+    why:'The number of peaks equals the number of steps, so three peaks means three steps.',
+    diag:{0:'One hump would be one step.',1:'Two humps would be two steps.',3:'Six is not how peaks map to steps; it is one step per peak.'}},
+  rc4:{skill:'rcd',diff:2,q:'The rate-determining step of a multistep reaction is the one with the:',
+    opts:['Lowest transition state','Highest-energy transition state (biggest barrier)','Most intermediates','Shortest path'],correct:1,
+    why:'The highest-energy transition state is the biggest barrier, so it is the slowest step and controls the overall rate.',
+    diag:{0:'The lowest barrier is the fastest step, not the rate-determining one.',2:'Number of intermediates does not set the rate.',3:'Path length is not the criterion.'}},
+  rc5:{skill:'rcd',diff:1,q:'If the products are LOWER in energy than the reactants, the reaction is:',
+    opts:['Endothermic','Exothermic','At equilibrium','Impossible'],correct:1,
+    why:'Products below reactants means energy is released (downhill), which is exothermic (negative delta-G/delta-H).',
+    diag:{0:'Endothermic is when products are HIGHER than reactants.',2:'Being downhill is not the same as being at equilibrium.',3:'It is perfectly possible; it is exothermic.'}},
+  rc6:{skill:'rcd',diff:2,q:'An SN1 reaction shows how many humps on its reaction-coordinate diagram?',
+    opts:['One (concerted)','Two (with a carbocation intermediate between them)','Three','Zero'],correct:1,
+    why:'SN1 is two steps (ionize, then attack), so two humps with the carbocation intermediate in the valley. SN2 is one concerted hump.',
+    diag:{0:'One concerted hump is SN2, not SN1.',2:'SN1 is two steps, not three.',3:'A reaction has at least one hump.'}},
+  rc7:{skill:'rcd',diff:3,q:'By the Hammond postulate, the transition state of a strongly EXOTHERMIC step resembles:',
+    opts:['The products','The reactants (an early transition state)','An intermediate only','Neither'],correct:1,
+    why:'An exothermic step has an early transition state close in energy to the reactants, so the TS resembles the reactants.',
+    diag:{0:'A late TS resembling products is the ENDOthermic case.',2:'The TS resembles the reactants here, not an intermediate.',3:'Hammond does relate the TS to a real species.'}},
+  rc8:{skill:'rcd',diff:2,q:'The activation energy (Ea) of a step is the height:',
+    opts:['From the products up to the peak','From a starting valley up to the next peak','From the x-axis up to the peak','Between two valleys'],correct:1,
+    why:'Ea is the energy gap from the starting point (a valley) up to the transition state (the next peak).',
+    diag:{0:'Ea is measured from the starting side, not from the products.',2:'It is measured from the starting valley, not the baseline axis.',3:'The gap between two valleys is the overall energy change, not Ea.'}},
 };
 
 /* ---- CONTENT (per-module) ---- */
@@ -760,6 +792,51 @@ const CONTENT = {
     ],
     practice:['lt1','lt2','lt3','lt4','lt6','lt8'],
     mastery:['lt5','lt7','lt2','lt3','lt6','lt8','lt1','lt4'],
+  },
+  rcd:{accent:'var(--t3)',
+    sub:'Reading energy diagrams — transition states, intermediates, the rate-determining step, and Hammond. A new named subtopic on the 2026 DAT.',
+    concept:`<h3>Read the energy landscape</h3>
+      <p>A reaction-coordinate diagram plots energy (up) against reaction progress (across). Learn to read it — no math required.</p>
+      <div class="rule"><div class="rl">Peaks, valleys, steps</div>
+        <b>Peaks</b> = transition states (TS) — the highest points; fleeting, never isolated.<br>
+        <b>Valleys between peaks</b> = intermediates — real dips that briefly exist (a carbocation lives here).<br>
+        <b>Number of peaks (humps) = number of steps.</b> <b>Activation energy Ea</b> = the height from a starting valley up to the next peak.</div>
+      <div class="rule"><div class="rl">Which step, which direction</div>
+        <b>Rate-determining step</b> = the one with the <b>highest-energy transition state</b> (biggest barrier) — the slowest step sets the overall rate.<br>
+        <b>Exothermic</b> = products lower than reactants (downhill, negative ΔG/ΔH). <b>Endothermic</b> = products higher (uphill).<br>
+        <b>Hammond postulate:</b> a TS resembles whatever it is closer to in energy — an <em>early</em> TS (exothermic step) resembles the <b>reactants</b>; a <em>late</em> TS (endothermic step) resembles the <b>products</b>.</div>
+      <div class="trapbox"><div class="rl">Mechanism shapes</div>SN1 / E1 = <b>two humps</b> (a carbocation intermediate sits in the valley between them). SN2 / E2 = <b>one hump</b> (concerted, no intermediate).</div>
+      <div class="coachbox"><div class="rl">Coach trick · Thomas</div><b>The highest peak is the slowest step.</b> Count the humps to count the steps; the tallest one is rate-determining. A dip between peaks is an intermediate (something real); a peak is a transition state you can never bottle.</div>
+      <div class="depthnote"><b>DAT depth:</b> read a diagram for TS vs intermediate, count steps, find the rate-determining step (highest peak), read Ea, call exo- vs endothermic, and apply Hammond qualitatively — yes. The Arrhenius equation and rate-constant / kinetics math — not tested.</div>`,
+    worked:[
+      {q:'A reaction-coordinate diagram has two humps with a dip between them. How many steps, and what is the species in the dip?',
+       steps:[
+        {what:'Count the humps: two peaks means two steps.',why:'Each peak is one transition state, so one step.'},
+        {what:'Each peak is a transition state; the dip (valley) between them is a small energy minimum.',why:'A minimum can briefly exist as a real species.',
+         predict:{q:'The dip between the two peaks is a small energy minimum that briefly exists. Is it a transition state or an intermediate?',hint:'Transition states are the peaks; the valley is something else.'}},
+        {what:'The dip is an intermediate — for example, a carbocation.',why:'This two-hump shape is the SN1/E1 pattern.'},
+       ], answer:'Two steps (two peaks). The dip is an intermediate (a briefly-existing species like a carbocation); each peak is a transition state. Two humps = SN1/E1.'},
+      {q:'In a two-step diagram, the first peak is higher than the second. Which step is rate-determining?',
+       steps:[
+        {what:'The rate-determining step is the one with the highest-energy transition state (the biggest barrier).',why:'The slowest step is the bottleneck for the whole reaction.',
+         predict:{q:'The first peak is higher than the second. Which step controls the overall rate?',hint:'Highest peak = slowest step.'}},
+        {what:'The first peak is higher, so the first step is rate-determining.',why:'It is the largest barrier to climb.'},
+       ], answer:'The first step — it has the highest-energy transition state (the highest peak), so it is the slowest step and sets the overall rate.'},
+      {q:'A one-step reaction is strongly exothermic (products far below reactants). By the Hammond postulate, does the transition state resemble the reactants or the products?',
+       steps:[
+        {what:'Exothermic means the products sit lower than the reactants (downhill overall).',why:'Energy is released.'},
+        {what:'An exothermic step has an early transition state — low, and close in energy to the reactants.',why:'The TS is reached quickly, near the start.',
+         predict:{q:'The TS is early and low, close in energy to the starting materials. By Hammond, which species does it resemble?',hint:'A TS resembles whatever it is nearer to in energy.'}},
+        {what:'So the TS resembles the reactants.',why:'A late TS (endothermic step) would instead resemble the products.'},
+       ], answer:'The reactants — an exothermic step has an early transition state close in energy to the starting materials, so by Hammond the TS resembles the reactants. (Endothermic → late TS resembling products.)'},
+    ],
+    faded:[
+      {prompt:'On a reaction-coordinate diagram, the peaks are ___ and the valleys between them are intermediates.',hint:'The highest points.',answer:'transition states'},
+      {prompt:'The rate-determining step is the one with the ___ transition state.',hint:'The tallest peak.',answer:'highest-energy'},
+      {prompt:'If the products sit LOWER than the reactants, the reaction is ___.',hint:'Energy is released.',answer:'exothermic'},
+    ],
+    practice:['rc1','rc2','rc3','rc5','rc6','rc8'],
+    mastery:['rc4','rc7','rc2','rc3','rc6','rc8','rc1','rc5'],
   },
 };
 
