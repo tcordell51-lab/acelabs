@@ -592,7 +592,7 @@ const CONTENT = {
         <b>Sterics</b> — a bulky base is a much poorer nucleophile but is still a strong base (steric bulk cuts nucleophilicity, not basicity), which is why hindered bases like t-BuO⁻ and LDA push reactions toward E2 elimination.</div>
       <div class="rule"><div class="rl">pKa landmarks — lower pKa = stronger acid</div>carboxylic acid ~4–5 · ammonium (RNH₃⁺) ~10 · phenol ~10 · water ~15.7 · alcohol ~16–18 · α-carbonyl C–H ~20 · terminal alkyne ~25 · alkane ~50.</div>
       <div class="coachbox"><div class="rl">Coach trick · Thomas</div><b>More resonance = stronger acid</b> — because resonance stabilizes the conjugate base. So always <b>judge acidity by the conjugate base</b>. Flip it for bases: <b>the strongest base has the least resonance</b> (a lone pair tied up in resonance is not available to grab a proton). And do not let the word "weak" fool you: HF (pKa ~3) is still far stronger than water (pKa ~16).</div>
-      <div class="depthnote"><b>DAT depth:</b> rank most acidic/most basic by conjugate-base stability (atom, resonance, induction, hybridization), use approximate pKa landmarks, identify conjugate acid/base pairs, and predict which side an equilibrium favors (toward the weaker acid and weaker base) — yes. Memorizing pKa to decimals or Ka / Henderson–Hasselbalch computation (that is Gen Chem) — no.</div>`,
+      <div class="depthnote"><b>DAT depth:</b> rank most acidic/most basic by conjugate-base stability (atom/size, resonance, induction, hybridization, sterics), use approximate pKa landmarks, identify conjugate acid/base pairs, and predict which side an equilibrium favors (toward the weaker acid and weaker base) — yes. Memorizing pKa to decimals or Ka / Henderson–Hasselbalch computation (that is Gen Chem) — no.</div>`,
     worked:[
       {q:'Rank the acidity of ethanol (CH₃CH₂OH), acetic acid (CH₃COOH), and water.',
        steps:[
@@ -851,7 +851,7 @@ function openModule(id){
   if(statusOf(m)==='locked'){
     const need=m.prereqs.filter(p=>ST.mastery[p]!=='mastered').map(p=>MOD_BY_ID[p].name);
     mainEl.innerHTML='<div class="locked-note"><h2 style="margin:0 0 10px">'+m.name+'</h2>'+
-      '<p><b>Locked.</b> Master these first to unlock it:</p><ul style="margin:8px 0;padding-left:20px;color:var(--ink-2)">'+need.map(n=>'<li>'+n+'</li>').join('')+'</ul>'+
+      '<p><b>In development.</b> This module is being authored. When it lands, it will build on:</p><ul style="margin:8px 0;padding-left:20px;color:var(--ink-2)">'+need.map(n=>'<li>'+n+'</li>').join('')+'</ul>'+
       '<button class="next-btn ghost" id="backHome">Back to the tree</button></div>';
     document.getElementById('backHome').addEventListener('click',renderHome);
     return;
@@ -982,7 +982,10 @@ function drawFaded(id){
       '<button class="reveal-btn" id="rev">Reveal answer</button><div id="fans"></div></div>';
     document.getElementById('fin').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('rev').click();});
     document.getElementById('rev').addEventListener('click',()=>{
-      document.getElementById('fans').innerHTML='<div class="fb good"><div class="lab">Answer</div><b>'+f.answer+'</b></div>';
+      const typed=(document.getElementById('fin').value||'').trim().toLowerCase().replace(/[.,;]/g,'');
+      const ans=String(f.answer).trim().toLowerCase();
+      const ok=!!typed&&(typed===ans||ans.indexOf(typed)>=0||typed.indexOf(ans)>=0);
+      document.getElementById('fans').innerHTML='<div class="fb '+(ok?'good':'bad')+'"><div class="lab">'+(ok?'Nice — that is it':(typed?'Not quite — the answer is':'Answer'))+'</div><b>'+f.answer+'</b></div>';
       const b=document.createElement('button');b.className='next-btn';
       b.textContent=i<c.faded.length-1?'Next':'Continue to independent practice';
       b.addEventListener('click',()=>{if(i<c.faded.length-1){i++;render();}else{markStageDone(id,2);renderStage(id);}});
@@ -1041,6 +1044,7 @@ function drawMastery(id){
       if(!correct)btn.classList.add('wrong');
       schedule(pool[pi%pool.length],correct);
       streak=correct?streak+1:0;pi++;
+      document.querySelectorAll('.streak i').forEach((el,k)=>el.classList.toggle('on',k<streak));
       const fb=document.getElementById('mfb');
       fb.innerHTML='<div class="fb '+(correct?'good':'bad')+'"><div class="lab">'+(correct?'Correct — streak '+streak:'Streak reset')+'</div>'+
         (correct?'':'<b>'+(q.diag[idx]||'')+'</b><br>')+q.why+
