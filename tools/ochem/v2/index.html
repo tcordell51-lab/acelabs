@@ -414,6 +414,7 @@ const CONTENT = {
       {prompt:'A stereocenter has priorities 1→2→3 tracing clockwise, and the lowest priority points AWAY from you. The configuration is ___.',hint:'#4 in back, clockwise.',answer:'R'},
       {prompt:'Same clockwise trace, but now the lowest priority points TOWARD you. The configuration is ___.',hint:'Toward you means reverse.',answer:'S'},
       {prompt:'Glyceraldehyde drawn in a Fischer with CHO on top and OH on the right at the bottom center is the ___ enantiomer (D or L).',hint:'OH on the right of the bottom stereocenter.',answer:'D'},
+      {prompt:'A racemic mixture (50:50 enantiomers) and a meso compound both show ___ net optical rotation. (The sign +/− is measured, not predicted from R/S.)',hint:'The two rotations cancel.',answer:'zero'},
     ],
     practice:['st1','st2','st3','sz1','sz2','st6','sz3','sz4','st8'],
     mastery:['st5','st7','sz2','sz4','st2','sz1','st6','sz3','st4','st1'],
@@ -473,7 +474,7 @@ const CONTENT = {
         <b>Resonance</b> — spreading the charge over several atoms is a big stabilizer. Carboxylate shares its charge over two oxygens, so RCOOH (pKa ~4–5) beats ROH (pKa ~16).<br>
         <b>Induction</b> — nearby electron-withdrawing atoms pull charge away and stabilize the anion (Cl₃C–COOH ≫ CH₃COOH).<br>
         <b>Hybridization</b> — more s-character holds the lone pair closer to the nucleus: sp &gt; sp² &gt; sp³. A terminal alkyne C–H (sp, pKa ~25) is far more acidic than an alkane C–H (sp³, pKa ~50).<br>
-        <b>Sterics</b> — a bulky base reaches a proton more slowly, so hindered bases are weaker and poorer nucleophiles (a minor factor for acidity itself).</div>
+        <b>Sterics</b> — a bulky base is a much poorer nucleophile but is still a strong base (steric bulk cuts nucleophilicity, not basicity), which is why hindered bases like t-BuO⁻ and LDA push reactions toward E2 elimination.</div>
       <div class="rule"><div class="rl">pKa landmarks — lower pKa = stronger acid</div>carboxylic acid ~4–5 · ammonium (RNH₃⁺) ~10 · phenol ~10 · water ~15.7 · alcohol ~16–18 · α-carbonyl C–H ~20 · terminal alkyne ~25 · alkane ~50.</div>
       <div class="coachbox"><div class="rl">Coach trick · Thomas</div><b>More resonance = stronger acid</b> — because resonance stabilizes the conjugate base. So always <b>judge acidity by the conjugate base</b>. Flip it for bases: <b>the strongest base has the least resonance</b> (a lone pair tied up in resonance is not available to grab a proton). And do not let the word "weak" fool you: HF (pKa ~3) is still far stronger than water (pKa ~16).</div>
       <div class="depthnote"><b>DAT depth:</b> rank most acidic/most basic by conjugate-base stability (atom, resonance, induction, hybridization), use approximate pKa landmarks, identify conjugate acid/base pairs, and predict which side an equilibrium favors (toward the weaker acid and weaker base) — yes. Memorizing pKa to decimals or Ka / Henderson–Hasselbalch computation (that is Gen Chem) — no.</div>`,
@@ -647,7 +648,8 @@ function drawStageBody(id){
   const c=CONTENT[id],ss=stageState(id),el=document.getElementById('stageBody');
   const stage=ss.cur;
   if(stage===0){ // Concept
-    el.innerHTML='<div class="card">'+c.concept+'</div><button class="next-btn" id="s0">I’ve got the idea — continue</button>';
+    el.innerHTML=(c.videoUrl?'<button class="watch-btn" id="cWatch">Watch: '+(c.videoTitle||'coach explainer')+'</button>':'')+'<div class="card">'+c.concept+'</div><button class="next-btn" id="s0">I’ve got the idea — continue</button>';
+    const cw=document.getElementById('cWatch');if(cw)cw.addEventListener('click',()=>VID.open(c.videoUrl,c.videoTitle));
     document.getElementById('s0').addEventListener('click',()=>{markStageDone(id,0);renderStage(id);});
   } else if(stage===1){ // Worked
     drawWorked(id);
@@ -765,7 +767,7 @@ function drawBankSet(id,ids,mode){
   render();
 }
 
-/* stage 4 — mastery check: 3 correct in a row on unseen-preferred items */
+/* stage 4 — mastery check: 3 correct in a row, cycling the module's mastery pool */
 function drawMastery(id){
   const c=CONTENT[id],el=document.getElementById('stageBody');
   const pool=c.mastery.slice();
@@ -838,7 +840,7 @@ const VID={
 };
 document.getElementById('vidX').addEventListener('click',()=>VID.close());
 document.getElementById('vidModal').addEventListener('click',e=>{if(e.target.id==='vidModal')VID.close();});
-document.addEventListener('keydown',e=>{if(e.key==='Escape')VID.close();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.getElementById('vidModal').classList.contains('show'))VID.close();});
 
 /* ---- boot ---- */
 renderHome();
