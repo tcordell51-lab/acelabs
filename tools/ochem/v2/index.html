@@ -1184,48 +1184,72 @@ function renderTree(){
 
 /* ---- FIG: interactive per-module hero diagrams (inline SVG) ---- */
 const FIG = {
-stereo:`<div class="figscroll"><svg viewBox="0 0 680 300" role="img" aria-label="Two mirror-image stereocenters labelled R and S">
-  <line x1="340" y1="34" x2="340" y2="266" class="thin" stroke-dasharray="5 6"/>
-  <text x="340" y="24" text-anchor="middle" class="tag" fill="var(--ink-soft)">mirror plane</text>
-  <g class="hot" data-k="R">
-    <line class="bond" x1="180" y1="150" x2="180" y2="86"/>
-    <line class="bond" x1="180" y1="150" x2="246" y2="186"/>
-    <polygon points="180,150 110,192 120,204" fill="var(--ink)"/>
-    <g stroke="var(--ink-soft)" stroke-width="2"><line x1="172" y1="143" x2="164" y2="135"/><line x1="164" y1="149" x2="153" y2="141"/><line x1="156" y1="155" x2="142" y2="146"/></g>
-    <text class="atom" x="180" y="78" text-anchor="middle" fill="var(--gold)">OH</text>
-    <text class="atom" x="262" y="196" text-anchor="middle" fill="var(--teal)">NH2</text>
-    <text class="atom" x="98" y="210" text-anchor="middle" fill="var(--t2)">CH3</text>
-    <text class="atom" x="128" y="128" text-anchor="middle" fill="var(--ink-soft)">H</text>
-    <circle cx="205" cy="80" r="11" fill="var(--gold)"/><text x="205" y="84" text-anchor="middle" class="tag" fill="#1a1206">1</text>
-    <circle cx="266" cy="166" r="11" fill="var(--teal)"/><text x="266" y="170" text-anchor="middle" class="tag" fill="#fdf8ec">2</text>
-    <circle cx="132" cy="186" r="11" fill="var(--t2)"/><text x="132" y="190" text-anchor="middle" class="tag" fill="#fdf8ec">3</text>
-    <circle cx="150" cy="118" r="11" fill="var(--ink-soft)"/><text x="150" y="122" text-anchor="middle" class="tag" fill="var(--paper)">4</text>
-    <path class="pulse" d="M212,104 A58,58 0 0 1 158,178" fill="none" stroke="var(--good)" stroke-width="3.5" marker-end="url(#stAR)"/>
-    <text x="180" y="292" text-anchor="middle" class="atom" fill="var(--good)">( R )</text>
+stereo:`<div class="figscroll"><svg viewBox="0 0 680 300" role="img" aria-label="Stereochemistry: chirality and a Newman projection">
+  <g id="stChir">
+    <line x1="340" y1="34" x2="340" y2="266" class="thin" stroke-dasharray="5 6"/>
+    <text x="340" y="24" text-anchor="middle" class="tag" fill="var(--ink-soft)">mirror plane</text>
+    <g class="hot" data-k="R">
+      <line class="bond" x1="180" y1="150" x2="180" y2="86"/>
+      <line class="bond" x1="180" y1="150" x2="246" y2="186"/>
+      <polygon points="180,150 110,192 120,204" fill="var(--ink)"/>
+      <g stroke="var(--ink-soft)" stroke-width="2"><line x1="172" y1="143" x2="164" y2="135"/><line x1="164" y1="149" x2="153" y2="141"/><line x1="156" y1="155" x2="142" y2="146"/></g>
+      <text class="atom" x="180" y="78" text-anchor="middle" fill="var(--gold)">OH</text>
+      <text class="atom" x="262" y="196" text-anchor="middle" fill="var(--teal)">NH2</text>
+      <text class="atom" x="98" y="210" text-anchor="middle" fill="var(--t2)">CH3</text>
+      <text class="atom" x="128" y="128" text-anchor="middle" fill="var(--ink-soft)">H</text>
+      <circle cx="205" cy="80" r="11" fill="var(--gold)"/><text x="205" y="84" text-anchor="middle" class="tag" fill="#1a1206">1</text>
+      <circle cx="266" cy="166" r="11" fill="var(--teal)"/><text x="266" y="170" text-anchor="middle" class="tag" fill="#fdf8ec">2</text>
+      <circle cx="132" cy="186" r="11" fill="var(--t2)"/><text x="132" y="190" text-anchor="middle" class="tag" fill="#fdf8ec">3</text>
+      <circle cx="150" cy="118" r="11" fill="var(--ink-soft)"/><text x="150" y="122" text-anchor="middle" class="tag" fill="var(--paper)">4</text>
+      <path class="pulse" d="M212,104 A58,58 0 0 1 158,178" fill="none" stroke="var(--good)" stroke-width="3.5" marker-end="url(#stAR)"/>
+      <text x="180" y="292" text-anchor="middle" class="atom" fill="var(--good)">( R )</text>
+    </g>
+    <g class="hot" data-k="S">
+      <line class="bond" x1="500" y1="150" x2="500" y2="86"/>
+      <line class="bond" x1="500" y1="150" x2="434" y2="186"/>
+      <polygon points="500,150 570,192 560,204" fill="var(--ink)"/>
+      <g stroke="var(--ink-soft)" stroke-width="2"><line x1="508" y1="143" x2="516" y2="135"/><line x1="516" y1="149" x2="527" y2="141"/><line x1="524" y1="155" x2="538" y2="146"/></g>
+      <text class="atom" x="500" y="78" text-anchor="middle" fill="var(--gold)">OH</text>
+      <text class="atom" x="418" y="196" text-anchor="middle" fill="var(--teal)">NH2</text>
+      <text class="atom" x="582" y="210" text-anchor="middle" fill="var(--t2)">CH3</text>
+      <text class="atom" x="552" y="128" text-anchor="middle" fill="var(--ink-soft)">H</text>
+      <circle cx="475" cy="80" r="11" fill="var(--gold)"/><text x="475" y="84" text-anchor="middle" class="tag" fill="#1a1206">1</text>
+      <circle cx="414" cy="166" r="11" fill="var(--teal)"/><text x="414" y="170" text-anchor="middle" class="tag" fill="#fdf8ec">2</text>
+      <circle cx="548" cy="186" r="11" fill="var(--t2)"/><text x="548" y="190" text-anchor="middle" class="tag" fill="#fdf8ec">3</text>
+      <circle cx="530" cy="118" r="11" fill="var(--ink-soft)"/><text x="530" y="122" text-anchor="middle" class="tag" fill="var(--paper)">4</text>
+      <path class="pulse" d="M468,104 A58,58 0 0 0 522,178" fill="none" stroke="var(--trap)" stroke-width="3.5" marker-end="url(#stAR2)"/>
+      <text x="500" y="292" text-anchor="middle" class="atom" fill="var(--trap)">( S )</text>
+    </g>
   </g>
-  <g class="hot" data-k="S">
-    <line class="bond" x1="500" y1="150" x2="500" y2="86"/>
-    <line class="bond" x1="500" y1="150" x2="434" y2="186"/>
-    <polygon points="500,150 570,192 560,204" fill="var(--ink)"/>
-    <g stroke="var(--ink-soft)" stroke-width="2"><line x1="508" y1="143" x2="516" y2="135"/><line x1="516" y1="149" x2="527" y2="141"/><line x1="524" y1="155" x2="538" y2="146"/></g>
-    <text class="atom" x="500" y="78" text-anchor="middle" fill="var(--gold)">OH</text>
-    <text class="atom" x="418" y="196" text-anchor="middle" fill="var(--teal)">NH2</text>
-    <text class="atom" x="582" y="210" text-anchor="middle" fill="var(--t2)">CH3</text>
-    <text class="atom" x="552" y="128" text-anchor="middle" fill="var(--ink-soft)">H</text>
-    <circle cx="475" cy="80" r="11" fill="var(--gold)"/><text x="475" y="84" text-anchor="middle" class="tag" fill="#1a1206">1</text>
-    <circle cx="414" cy="166" r="11" fill="var(--teal)"/><text x="414" y="170" text-anchor="middle" class="tag" fill="#fdf8ec">2</text>
-    <circle cx="548" cy="186" r="11" fill="var(--t2)"/><text x="548" y="190" text-anchor="middle" class="tag" fill="#fdf8ec">3</text>
-    <circle cx="530" cy="118" r="11" fill="var(--ink-soft)"/><text x="530" y="122" text-anchor="middle" class="tag" fill="var(--paper)">4</text>
-    <path class="pulse" d="M468,104 A58,58 0 0 0 522,178" fill="none" stroke="var(--trap)" stroke-width="3.5" marker-end="url(#stAR2)"/>
-    <text x="500" y="292" text-anchor="middle" class="atom" fill="var(--trap)">( S )</text>
+  <g id="stNew" style="display:none">
+    <text x="340" y="26" text-anchor="middle" class="tag" fill="var(--ink-soft)">looking down the C&#8211;C bond</text>
+    <circle cx="340" cy="152" r="44" fill="none" stroke="var(--teal)" stroke-width="2.5"/>
+    <line class="bond" x1="340" y1="152" x2="340" y2="96"/>
+    <line class="bond" x1="340" y1="152" x2="289" y2="183"/>
+    <line class="bond" x1="340" y1="152" x2="391" y2="183"/>
+    <circle cx="340" cy="152" r="4.5" fill="var(--ink)"/>
+    <text class="atom" x="340" y="86" text-anchor="middle">H</text><text class="atom" x="279" y="196" text-anchor="middle">H</text><text class="atom" x="401" y="196" text-anchor="middle">H</text>
+    <g id="nmStag" stroke="var(--teal)" stroke-width="2.5" fill="none">
+      <line x1="340" y1="196" x2="340" y2="242"/><line x1="305" y1="123" x2="281" y2="101"/><line x1="375" y1="123" x2="399" y2="101"/>
+    </g>
+    <g id="nmStagH" fill="var(--teal)"><text class="atom" x="340" y="256" text-anchor="middle" fill="var(--teal)">H</text><text class="atom" x="272" y="93" text-anchor="middle" fill="var(--teal)">H</text><text class="atom" x="408" y="93" text-anchor="middle" fill="var(--teal)">H</text></g>
+    <g id="nmEcl" style="display:none" stroke="var(--teal)" stroke-width="2.5" fill="none">
+      <line x1="351" y1="110" x2="360" y2="90"/><line x1="300" y1="177" x2="285" y2="189"/><line x1="380" y1="177" x2="395" y2="189"/>
+    </g>
+    <g id="nmEclH" style="display:none"><text class="atom" x="366" y="82" text-anchor="middle" fill="var(--teal)">H</text><text class="atom" x="278" y="199" text-anchor="middle" fill="var(--teal)">H</text><text class="atom" x="402" y="199" text-anchor="middle" fill="var(--teal)">H</text></g>
+    <text id="nmState" x="340" y="286" text-anchor="middle" class="atom" fill="var(--good)">staggered &#183; low energy</text>
   </g>
   <defs>
     <marker id="stAR" markerWidth="9" markerHeight="9" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="var(--good)"/></marker>
     <marker id="stAR2" markerWidth="9" markerHeight="9" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="var(--trap)"/></marker>
   </defs>
 </svg></div>
-<div class="figdetail">Hover either hand. Lowest priority (<b>H</b>) sits on the dash, pointing back &#8212; so you read 1&#8594;2&#8594;3 directly.</div>
-<div class="cap">Same four groups, opposite hands. Clockwise = <b>R</b>, counter-clockwise = <b>S</b> &#8212; but if H points toward you, reverse what you see.</div>`,
+<div class="figctrl">
+  <button class="figbtn on" data-tab="chir">Chirality</button>
+  <button class="figbtn" data-tab="newman">Newman rotation</button>
+</div>
+<div class="figdetail">Hover a hand: lowest priority (<b>H</b>) sits on the dash, so you read 1&#8594;2&#8594;3 directly.</div>
+<div class="cap">Clockwise = <b>R</b>, counter-clockwise = <b>S</b> &#8212; but if H points toward you, reverse it. Switch to Newman and click to rotate.</div>`,
 
 acidbase:`<div class="figscroll"><svg viewBox="0 0 680 250" role="img" aria-label="A pKa scale from strong to weak acids">
   <defs><linearGradient id="abG" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="var(--trap)"/><stop offset="1" stop-color="var(--teal)"/></linearGradient></defs>
@@ -1430,7 +1454,32 @@ function figWireHover(root, cb){
 function figDetail(root){return root.querySelector('.figdetail');}
 
 const FIGX = {
-  stereo(root){const d=figDetail(root);const base=d.innerHTML;figWireHover(root,k=>{d.innerHTML=FIG_TEXT.stereo[k];});root.addEventListener('mouseleave',()=>d.innerHTML=base);},
+  stereo:function(root){
+  const d=figDetail(root),chir=root.querySelector('#stChir'),newm=root.querySelector('#stNew');
+  const baseChir='Hover a hand: lowest priority (<b>H</b>) sits on the dash, so you read 1&#8594;2&#8594;3 directly.';
+  let ecl=false;
+  const stag=root.querySelector('#nmStag'),stagH=root.querySelector('#nmStagH'),ecG=root.querySelector('#nmEcl'),ecH=root.querySelector('#nmEclH'),st=root.querySelector('#nmState');
+  root.querySelectorAll('.hot').forEach(g=>{
+    const show=()=>{ if(chir.style.display!=='none') d.innerHTML=FIG_TEXT.stereo[g.dataset.k]; };
+    g.addEventListener('mouseenter',show); g.addEventListener('focus',show); g.setAttribute('tabindex','0');
+  });
+  chir.addEventListener('mouseleave',()=>{ if(chir.style.display!=='none') d.innerHTML=baseChir; });
+  const setNewman=()=>{ const on=!ecl;
+    stag.style.display=on?'':'none'; stagH.style.display=on?'':'none';
+    ecG.style.display=on?'none':''; ecH.style.display=on?'none':'';
+    st.textContent=on?'staggered \\u00b7 low energy':'eclipsed \\u00b7 high energy';
+    st.setAttribute('fill',on?'var(--good)':'var(--trap)');
+    d.innerHTML=on?'<b>Staggered</b> &#8212; bonds sit in the gaps, no crowding. The lowest-energy shape.':'<b>Eclipsed</b> &#8212; back bonds line up behind the front ones, so they crowd. Torsional strain, higher energy.';
+  };
+  newm.addEventListener('click',()=>{ ecl=!ecl; setNewman(); });
+  root.querySelectorAll('.figbtn').forEach(b=>b.addEventListener('click',()=>{
+    root.querySelectorAll('.figbtn').forEach(x=>x.classList.remove('on')); b.classList.add('on');
+    const nm=b.dataset.tab==='newman';
+    chir.style.display=nm?'none':''; newm.style.display=nm?'':'none';
+    if(nm){ ecl=false; setNewman(); newm.style.cursor='pointer'; }
+    else{ d.innerHTML=baseChir; }
+  }));
+},
   acidbase(root){const d=figDetail(root);const base=d.innerHTML;figWireHover(root,k=>{d.innerHTML=FIG_TEXT.acidbase[k];});root.addEventListener('mouseleave',()=>d.innerHTML=base);},
   subelim(root){const d=figDetail(root),base=d.innerHTML;const clr=()=>{root.classList.remove('dim');root.querySelectorAll('.hot').forEach(x=>x.classList.remove('sel'));d.innerHTML=base;};figWireHover(root,(k,g)=>{d.innerHTML=FIG_TEXT.subelim[k];root.classList.add('dim');root.querySelectorAll('.hot').forEach(x=>x.classList.remove('sel'));g.classList.add('sel');});root.addEventListener('mouseleave',clr);},
   spec(root){const d=figDetail(root);const base=d.innerHTML;figWireHover(root,k=>{d.innerHTML=FIG_TEXT.spec[k];});root.addEventListener('mouseleave',()=>d.innerHTML=base);},
