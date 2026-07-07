@@ -349,6 +349,38 @@ const BANK = {
     opts:['Axial','Equatorial, to avoid 1,3-diaxial strain','Either, it does not matter','Perpendicular to the ring'],correct:1,
     why:'The larger group prefers equatorial to avoid 1,3-diaxial strain with the axial hydrogens on the same face. The bigger the group, the stronger the preference.',
     diag:{0:'Axial is the higher-energy spot because of 1,3-diaxial bumping.',2:'It does matter: equatorial is more stable.',3:'Chair positions are axial or equatorial, not perpendicular.'}},
+  se1:{skill:'subelim',diff:1,q:'A methyl or primary (1) alkyl halide with a strong, non-bulky nucleophile in a polar aprotic solvent reacts mainly by:',
+    opts:['SN1','SN2','E1','E2'],correct:1,
+    why:'Methyl and 1 substrates cannot form a carbocation, and a strong small nucleophile in polar aprotic solvent drives the concerted backside attack of SN2.',
+    diag:{0:'SN1 needs a stable carbocation; a 1 substrate cannot form one.',2:'E1 also needs a carbocation and a weak base.',3:'E2 needs a strong bulky base; a good nucleophile favors substitution here.'}},
+  se2:{skill:'subelim',diff:1,q:'SN2 is a backside attack, so at the stereocenter it causes:',
+    opts:['Retention','Inversion (Walden inversion)','Racemization','No change'],correct:1,
+    why:'The nucleophile enters opposite the leaving group, flipping the configuration.',
+    diag:{0:'Retention would need a front-side attack, which SN2 does not do.',2:'Racemization is SN1 (planar carbocation), not SN2.',3:'The configuration does change; it inverts.'}},
+  se3:{skill:'subelim',diff:2,q:'A tertiary (3) alkyl halide in water or ethanol with no strong base reacts by SN1/E1 because it:',
+    opts:['Is the least hindered substrate','Forms a stable tertiary carbocation','Cannot ionize','Is blocked by the protic solvent'],correct:1,
+    why:'A 3 center gives a stable carbocation, and a weak nucleophile in a protic solvent favors the stepwise SN1/E1 path.',
+    diag:{0:'3 is the MOST hindered, which is exactly why SN2 is impossible.',2:'It ionizes readily; that is the point of SN1.',3:'A protic solvent actually stabilizes the carbocation and promotes SN1/E1.'}},
+  se4:{skill:'subelim',diff:2,q:'Because SN1 goes through a planar carbocation attacked from both faces, a stereocenter is:',
+    opts:['Inverted','Retained','Racemized (~50:50)','Destroyed'],correct:2,
+    why:'Both faces of the flat carbocation are equally accessible, so you get a roughly 50:50 mixture of configurations.',
+    diag:{0:'Inversion is SN2 (backside), not SN1.',1:'Retention alone would require a single face; the carbocation is attacked from both.',3:'The stereocenter is scrambled, not destroyed.'}},
+  se5:{skill:'subelim',diff:2,q:'A bulky base such as t-BuOK or LDA favors which product in an elimination?',
+    opts:['Zaitsev (more-substituted alkene)','Hofmann (less-substituted alkene)','The SN2 product','No reaction'],correct:1,
+    why:'A bulky base cannot reach the crowded internal hydrogen, so it removes an accessible terminal H, giving the less-substituted Hofmann alkene.',
+    diag:{0:'Zaitsev is the default for SMALL bases; a bulky base flips it.',2:'A bulky base does elimination, not SN2.',3:'It does react; it just favors the Hofmann product.'}},
+  se6:{skill:'subelim',diff:3,q:'Which mechanisms can show a carbocation rearrangement (hydride or methyl shift)?',
+    opts:['SN2 and E2','SN1 and E1 (they pass through a carbocation)','All four','None'],correct:1,
+    why:'Only the stepwise carbocation mechanisms (SN1 and E1) can rearrange; the concerted SN2 and E2 cannot.',
+    diag:{0:'SN2 and E2 are concerted with no carbocation, so they cannot rearrange.',2:'Only the two carbocation mechanisms rearrange, not all four.',3:'SN1 and E1 definitely can rearrange.'}},
+  se7:{skill:'subelim',diff:1,q:'Adding heat to an SN/E competition pushes the outcome toward:',
+    opts:['Substitution','Elimination','No reaction','Racemization'],correct:1,
+    why:'Heat favors elimination (it makes more molecules, entropically favored). Thomas: heat is always elimination.',
+    diag:{0:'Substitution is favored at lower temperature; heat pushes the other way.',2:'The reaction still happens; heat just changes which product wins.',3:'Racemization is a stereochemical outcome, not a temperature effect.'}},
+  se8:{skill:'subelim',diff:2,q:'For an E2 elimination, the hydrogen and the leaving group must be positioned:',
+    opts:['Syn (same side)','Anti-periplanar (180 degrees apart)','Gauche (60 degrees)','Cis'],correct:1,
+    why:'E2 is concerted, so the C-H and C-leaving-group bonds must be anti-periplanar for their orbitals to align.',
+    diag:{0:'Syn-periplanar elimination is rare and not the DAT default; E2 wants anti.',2:'Gauche does not give the required orbital alignment.',3:'cis/trans describes alkene geometry, not the E2 transition-state requirement.'}},
 };
 
 /* ---- CONTENT (per-module) ---- */
@@ -509,6 +541,52 @@ const CONTENT = {
     ],
     practice:['ab1','ab2','ab3','ab4','ab6','ab7'],
     mastery:['ab5','ab8','ab2','ab4','ab6','ab3','ab1','ab7'],
+  },
+  subelim:{accent:'var(--t1)',
+    sub:'SN1, SN2, E1, E2 — pick the winner from substrate, nucleophile/base, solvent, and temperature. The single most-tested DAT reaction skill.',
+    concept:`<h3>Four reactions, one decision</h3>
+      <p>SN1, SN2, E1, and E2 all compete for the same alkyl halide. Pick the winner by asking four questions.</p>
+      <div class="rule"><div class="rl">The four questions</div>
+        <b>1. Substrate.</b> Methyl / 1° → SN2 (no carbocation possible). 3° → SN1/E1 or E2, <em>never</em> SN2 (too hindered). 2° → the battleground, decided by the next three.<br>
+        <b>2. Nucleophile / base.</b> Strong, small nucleophile → SN2. Strong, <em>bulky</em> base (t-BuOK, LDA) → E2. Weak nucleophile (water, ROH) → SN1/E1.<br>
+        <b>3. Solvent.</b> Polar aprotic (DMSO, DMF, acetone) → SN2 (naked nucleophile). Polar protic (water, alcohols) → SN1/E1 (stabilizes the carbocation).<br>
+        <b>4. Temperature.</b> Heat → elimination (E1/E2).</div>
+      <div class="rule"><div class="rl">Stereo &amp; regiochemistry</div>
+        <b>SN2</b> — backside attack → <b>inversion</b> (Walden). <b>SN1</b> — planar carbocation, both faces → <b>racemization</b>. <b>E2</b> — the H and leaving group must be <b>anti-periplanar</b>.<br>
+        <b>Zaitsev</b> (the default) = the more-substituted, more-stable alkene. <b>Hofmann</b> = the less-substituted alkene, from a <em>bulky</em> base.</div>
+      <div class="trapbox"><div class="rl">Only carbocation mechanisms rearrange</div>SN1 and E1 pass through a carbocation, which can hydride- or methyl-shift to a <b>more stable</b> carbocation (2° → 3°) before the product forms. The concerted SN2 and E2 <b>never</b> rearrange.</div>
+      <div class="coachbox"><div class="rl">Coach trick · Thomas</div><b>Heat is always elimination.</b> A <b>bulky base</b> (t-BuOK, LDA) means <b>Hofmann / E2</b>. And <b>the more stable the carbocation, the faster the reaction</b> — SN1/E1 rate tracks carbocation stability (3° &gt; 2° &gt; 1°). Tertiary substrate + strong base = E2.</div>
+      <div class="depthnote"><b>DAT depth:</b> given substrate + nucleophile/base + solvent + temperature, pick SN1/SN2/E1/E2 and the major product with the right stereochemistry (inversion / racemization / anti-periplanar) and regiochemistry (Zaitsev vs Hofmann), plus spotting carbocation rearrangements — yes. Rate-law derivation and Winstein ion-pair analysis — not tested.</div>`,
+    worked:[
+      {q:'2-Bromobutane (a 2° substrate) reacts with cyanide (CN⁻, a strong, small nucleophile) in DMSO (polar aprotic), no heat. Which mechanism, and what happens to the stereochemistry?',
+       steps:[
+        {what:'Run the four questions: substrate 2°, nucleophile strong and small, solvent polar aprotic, no heat.',why:'A strong non-bulky nucleophile in polar aprotic solvent is the classic SN2 setup.'},
+        {what:'Strong small nucleophile + polar aprotic → SN2.',why:'The naked CN⁻ attacks in one concerted step.',
+         predict:{q:'SN2 is a backside attack. What does that do to the configuration at the stereocenter?',hint:'The nucleophile comes in opposite the leaving group.'}},
+        {what:'Backside attack flips the configuration → inversion (Walden inversion).',why:'The CN ends up on the face opposite where Br left.'},
+       ], answer:'SN2, with inversion of configuration. A strong small nucleophile + polar aprotic solvent on a 2° substrate is the textbook SN2.'},
+      {q:'2-Bromo-3-methylbutane is left in warm ethanol (a weak nucleophile, polar protic). Why does the product look rearranged?',
+       steps:[
+        {what:'Substrate 2°, weak nucleophile (ethanol), polar protic → SN1/E1, which go through a carbocation.',why:'A weak nucleophile + protic solvent means a stepwise, carbocation pathway.'},
+        {what:'The 2° carbocation sits right next to a carbon bearing an extra methyl.',why:'A more-substituted neighbor can donate a hydride.',
+         predict:{q:'A 2° carbocation is next to a carbon that would give a 3° carbocation. Does it stay put, or shift?',hint:'Carbocations rearrange toward greater stability.'}},
+        {what:'A hydride shift turns the 2° carbocation into the more stable 3° carbocation; the nucleophile/base then acts there → a rearranged product.',why:'Only SN1/E1 (carbocation mechanisms) can do this; SN2/E2 cannot.'},
+       ], answer:'SN1/E1 go through a carbocation that hydride-shifts from 2° to the more stable 3°, so the product is rearranged. Concerted SN2/E2 would not rearrange.'},
+      {q:'2-Bromo-2-methylbutane (a 3° substrate) is treated with (a) sodium ethoxide (NaOEt) versus (b) bulky potassium tert-butoxide (t-BuOK). What are the major elimination products?',
+       steps:[
+        {what:'A 3° substrate with a strong base does E2. The only difference is the size of the base.',why:'3° cannot do SN2; a strong base drives E2.'},
+        {what:'The small base (NaOEt) removes the most accessible internal H to give the more-substituted alkene.',why:'That is the Zaitsev (more stable) product — the default.',
+         predict:{q:'A bulky base like t-BuOK cannot reach the crowded internal H. Which alkene does it give — the more-substituted (Zaitsev) or the less-substituted (Hofmann)?',hint:'The bulky base can only grab an accessible terminal H.'}},
+        {what:'Bulky t-BuOK removes a terminal H, giving the less-substituted Hofmann alkene.',why:'The size of the base flips the regiochemistry.'},
+       ], answer:'NaOEt gives the Zaitsev (more-substituted) alkene; the bulky t-BuOK gives the Hofmann (less-substituted) alkene. Bulky base = Hofmann.'},
+    ],
+    faded:[
+      {prompt:'A methyl or 1° substrate with a strong, non-bulky nucleophile in a polar aprotic solvent reacts by ___.',hint:'One concerted backside step.',answer:'SN2'},
+      {prompt:'SN2 proceeds by backside attack, so the stereocenter undergoes ___.',hint:'The configuration flips.',answer:'inversion'},
+      {prompt:'Adding heat pushes an SN/E competition toward ___.',hint:'Thomas: heat is always this.',answer:'elimination'},
+    ],
+    practice:['se1','se2','se3','se5','se7','se8'],
+    mastery:['se4','se6','se2','se5','se3','se8','se1','se7'],
   },
 };
 
