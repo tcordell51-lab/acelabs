@@ -31323,6 +31323,20 @@ html[data-theme="dark"] .teach-coach-line{color:#d8d0bd;}
 @keyframes teachFlash{0%{background:rgba(201,168,76,.4);}100%{background:transparent;}}
 .teach-reveal-chip{position:absolute;top:0;right:0;z-index:5;font-family:'JetBrains Mono',monospace;font-size:.62rem;letter-spacing:.1em;background:#C9A84C;color:#1B3A2D;border-radius:99px;padding:4px 12px;font-weight:700;}
 .teach-stage-wrap{position:relative;padding-top:34px;}
+.teach-stumble{max-width:980px;margin:0 auto;}
+.teach-say{background:#fff;border:1.5px solid rgba(140,114,53,.4);border-radius:16px;padding:1.2rem 1.5rem;position:relative;}
+html[data-theme="dark"] .teach-say{background:#2a2a20;}
+.teach-say-label{font-family:'JetBrains Mono',monospace;font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;color:#8C7235;margin-bottom:.5rem;}
+.teach-say-text{font-family:'Playfair Display',serif;font-style:italic;font-size:1.35rem;line-height:1.5;color:var(--ink,#2a2118);}
+html[data-theme="dark"] .teach-say-text{color:#ece6d7;}
+.teach-fix{margin-top:1.1rem;background:rgba(201,168,76,.1);border-left:4px solid #C9A84C;border-radius:12px;padding:1.05rem 1.3rem;}
+.teach-fix-label{font-family:'JetBrains Mono',monospace;font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;color:#8C7235;margin-bottom:.4rem;}
+.teach-fix-text{font-size:1.02rem;line-height:1.6;color:var(--ink,#3c2e1a);}
+html[data-theme="dark"] .teach-fix-text{color:#d8d0bd;}
+.teach-fix-rule{margin-top:.6rem;font-family:'JetBrains Mono',monospace;font-size:.8rem;color:#6b5620;font-weight:700;letter-spacing:.04em;}
+html[data-theme="dark"] .teach-fix-rule{color:#e6d08a;}
+.teach-recall{margin-top:2.2rem;text-align:left;}
+.teach-recall-label{font-family:'JetBrains Mono',monospace;font-size:.66rem;letter-spacing:.18em;text-transform:uppercase;color:#8C7235;margin:0 0 .6rem;text-align:center;}
 .teach-closer{max-width:900px;margin:0 auto;text-align:center;padding-top:4vh;}
 .teach-closer h2{font-family:'Playfair Display',serif;font-size:2.1rem;color:var(--ink,#2a2118);margin:.2em 0 .6em;}
 html[data-theme="dark"] .teach-closer h2{color:#ece6d7;}
@@ -31374,6 +31388,16 @@ html[data-theme="dark"] .teach-closer .tc-assign{color:#e6d08a;}
         { k:'The trap', t:'Two ladders, two prompts',
           sel:'#alkenes .box.box-tip', blanks:['.box-text'], reveals:[['.box-text']],
           coach:'Zaitsev question: most substituted ALKENE. Markovnikov question: most stable CARBOCATION. Students lose points mixing the ladders, not misreading structures.' },
+        { k:'A student says', t:'Same rule, right?',
+          stumble:{ say:'Zaitsev and Markovnikov are basically the same rule - both just pick the more substituted thing.',
+            fix:'Two different ladders. Zaitsev ranks the ALKENE you are making - most substituted double bond wins. Markovnikov ranks the CARBOCATION in the middle - most stable cation wins, and the X or OH follows it. Same instinct, opposite objects.',
+            rule:'Match the ladder to the question.' },
+          coach:'Let the room argue with the student for a moment before you reveal the fix. The ones who defend the student are the ones about to learn.' },
+        { k:'A student says', t:'Peroxides flip everything',
+          stumble:{ say:'Peroxides make everything anti-Markovnikov - so water plus ROOR gives the anti-Markovnikov alcohol.',
+            fix:'The peroxide effect is a radical chain that only exists for H-Br - the Br radical does the adding. Water has no radical pathway, so acid hydration stays Markovnikov no matter what is in the flask. Anti-Markovnikov OH has exactly one route: hydroboration.',
+            rule:'ROOR flips HBr. Only HBr.' },
+          coach:'This is the single most common alkene mistake on practice tests. Make them commit: does ROOR change H2O addition, yes or no?' },
         { k:'Bucket 1', t:'Open carbocation',
           sel:'.bucket-card[data-bucket="1"]', blanks:['.bucket-reactions','.bucket-cue'], reveals:[['.bucket-reactions'],['.bucket-cue']],
           coach:'Ask: if the intermediate is an open cation, what three things follow? Markovnikov, rearrangements possible, racemic. THEN reveal which reagents live here.' },
@@ -31397,7 +31421,8 @@ html[data-theme="dark"] .teach-closer .tc-assign{color:#e6d08a;}
         { k:'Lock it in', t:'The whole hub in five lines',
           closer:{ title:'Alkenes, locked in',
             chips:['Markovnikov: the rich get richer','Peroxides flip HBr to anti-Markovnikov','Open cation: rearranges, racemic','Bridged ring: anti, no rearrangement','Concerted: syn, same face'],
-            assign:'Tonight: the Alkenes set. Twelve problems.<br/>Commit before you peek — the set is where it becomes yours.' },
+            assign:'Tonight: the Alkenes set. Twelve problems.<br/>Commit before you peek — the set is where it becomes yours.',
+            recall:{hub:'alkenes', pick:[0]} },
           coach:'End on the assignment, not the summary. The set is where this becomes theirs.' }
       ]
     }
@@ -31434,6 +31459,16 @@ html[data-theme="dark"] .teach-closer .tc-assign{color:#e6d08a;}
         { k:'The exception', t:'Hofmann — when bulky wins',
           sel:'#subelim .box', selLabel:'Hofmann exception', blanks:['.box-text'], reveals:[['.box-text']],
           coach:'Strong base is not the same as small base. Ask what t-BuO minus can actually reach — then reveal.' },
+        { k:'A student says', t:'Strong nucleophile means SN2',
+          stumble:{ say:'It is a strong nucleophile, so it must be SN2 - even on that tertiary carbon.',
+            fix:'The substrate votes first and its vote is a veto. Three groups wall off the backside - there is no SN2 on a 3-degree carbon, period. A strong anionic reagent hitting a 3-degree substrate grabs a beta-H instead: E2.',
+            rule:'Substrate first. Reagent second.' },
+          coach:'Ask the four questions IN ORDER out loud. The whole point of the order is that question one can end the conversation.' },
+        { k:'A student says', t:'SN1 keeps the stereocenter',
+          stumble:{ say:'SN1 just swaps the leaving group for the nucleophile, so the product keeps the same configuration.',
+            fix:'The cation is flat and it has no memory. The nucleophile attacks either face, so a single enantiomer scrambles toward racemic - and while the cation sits there, a hydride shift can move the whole show one carbon over.',
+            rule:'Flat cation: racemized, and maybe relocated.' },
+          coach:'Draw the empty p orbital with both faces open. Once they see the flatness, racemization stops being a fact and becomes obvious.' },
         { k:'Quiz the table', t:'Substrate summary',
           sel:'#subelim table.dtbl',
           blanks:['tbody tr td:nth-child(2)','tbody tr td:nth-child(3)','tbody tr td:nth-child(4)','tbody tr td:nth-child(5)'],
@@ -31445,7 +31480,8 @@ html[data-theme="dark"] .teach-closer .tc-assign{color:#e6d08a;}
         { k:'Lock it in', t:'The whole hub in five lines',
           closer:{ title:'SN and E, locked in',
             chips:['Substrate first: methyl and 1° go SN2, 3° never does','Strong small base: E2, Zaitsev - that is Naomi','Bulky base: Hofmann - the less substituted alkene','SN2 inverts every time - the umbrella flip','Free cation: rearranges and racemizes'],
-            assign:'Tonight: the SN/E set lands after your next session.<br/>Until then: walk the flowchart on three problems and commit before you peek.' },
+            assign:'Tonight: the SN/E set lands after your next session.<br/>Until then: walk the flowchart on three problems and commit before you peek.',
+            recall:{hub:'subelim', pick:[0]} },
           coach:'End on the four questions, not the table. The questions are what they take into the test.' }
       ]
     }
@@ -31485,13 +31521,24 @@ html[data-theme="dark"] .teach-closer .tc-assign{color:#e6d08a;}
         { k:'The trap', t:'Grignard killers',
           sel:'#carbonyl .box', selLabel:'Grignard killers', blanks:['.box-text'], reveals:[['.box-text']],
           coach:'One acidic proton anywhere in the flask and the Grignard dies as a base. Ask what counts as acidic here.' },
+        { k:'A student says', t:'NaBH4 reduces everything',
+          stumble:{ say:'NaBH4 will take care of both carbonyls - the ketone and the ester go down together.',
+            fix:'NaBH4 is the gentle hydride: aldehydes and ketones, yes - esters, acids, and amides just watch. Wiping out the whole list takes LiAlH4. That selectivity gap IS the exam question.',
+            rule:'NaBH4: ketones and aldehydes only. LiAlH4: everything.' },
+          coach:'Put a ketone and an ester in the same molecule and ask what survives NaBH4. That one drawing settles it forever.' },
+        { k:'A student says', t:'Ester plus Grignard stops at the ketone',
+          stumble:{ say:'Grignard plus an ester gives a ketone, the same way it works with an acyl chloride if you are careful.',
+            fix:'The ketone is born in the middle of the reaction - and a ketone is MORE reactive toward the Grignard than the ester it came from. The second equivalent pounces before you can blink: 3-degree alcohol, two identical R groups. Cold, careful, one equivalent only works for the acyl chloride.',
+            rule:'Ester + RMgX = 3-degree alcohol, R added twice.' },
+          coach:'Ask why the reaction refuses to stop halfway. The answer - the intermediate outcompetes the starting material - shows up all over this section.' },
         { k:'You do', t:'Two more — commit each time',
           mcq:{hub:'carbonyl', pick:[1,2]},
           coach:'Hands off. Which story is each question telling — hungry carbon or acidic alpha?' },
         { k:'Lock it in', t:'The whole hub in five lines',
           closer:{ title:'Carbonyls, locked in',
             chips:['Two stories: hungry C=O carbon, acidic alpha carbon','PADPED runs every acid-catalyzed step','1 degree amine: imine · 2 degrees: enamine · 3 degrees: nothing','Acetal = armor: base-proof, undone by aqueous acid','Grignard adds twice to esters, once to nitriles - and dies on any O-H or N-H'],
-            assign:'Tonight: three carbonyl problems, committed before you peek.<br/>Say the story out loud before you touch the answers.' },
+            assign:'Tonight: three carbonyl problems, committed before you peek.<br/>Say the story out loud before you touch the answers.',
+            recall:{hub:'carbonyl', pick:[0]} },
           coach:'Close on the two stories. If they can sort any question into story one or story two, the hub is theirs.' }
       ]
     }
@@ -31522,6 +31569,16 @@ html[data-theme="dark"] .teach-closer .tc-assign{color:#e6d08a;}
         { k:'The traps', t:'Where the points get lost',
           sel:'#aromatic .box', selLabel:'Traps', blanks:['.box-text'], reveals:[['.box-text']],
           coach:'The halogen exception lives here: would Cl rather give up seven or gain one? It withdraws, but it still sends ortho-para.' },
+        { k:'A student says', t:'Deactivated means meta',
+          stumble:{ say:'Chlorobenzene is deactivated, so the next group has to go meta.',
+            fix:'Two different contests. Electronegativity wins the SPEED contest - the ring runs slower. But the lone pair wins the DIRECTION contest - it can still donate into the ortho and para positions through resonance. Halogens lose the race and still pick the seats.',
+            rule:'Halogens: slower, but still ortho-para.' },
+          coach:'This is the halogen exception wearing a disguise. Deactivator and meta-director are NOT synonyms - make them say both contests out loud.' },
+        { k:'A student says', t:'Friedel-Crafts works anywhere',
+          stumble:{ say:'Nitrobenzene plus an alkyl chloride and AlCl3 - Friedel-Crafts puts the alkyl group on, done.',
+            fix:'Friedel-Crafts is the diva of EAS: it fails on strongly deactivated rings - nitrobenzene will not alkylate at all. The nitro group has drained the ring below the minimum. If a synthesis needs both groups, the alkyl or acyl goes on FIRST, the nitro second.',
+            rule:'No Friedel-Crafts on a strongly deactivated ring.' },
+          coach:'This is an order-of-operations question in disguise - the DAT loves asking which step comes first. Nitration last.' },
         { k:'The strategy', t:'Straight chains without rearrangement',
           sel:'#aromatic .box', selLabel:'Clemmensen or Wolff-Kishner', blanks:['.box-text'], reveals:[['.box-text']],
           coach:'Ask: why can Friedel-Crafts alkylation not put n-propyl on a ring? Then show the acylate-then-reduce move.' },
@@ -31536,7 +31593,8 @@ html[data-theme="dark"] .teach-closer .tc-assign{color:#e6d08a;}
         { k:'Lock it in', t:'The whole hub in five lines',
           closer:{ title:'EAS, locked in',
             chips:['A ring plus something adding = EAS, every time','One mechanism: electrophile, arenium ion, lose H, aromatic again','Donors activate and send ortho-para - the rich get richer','Withdrawers deactivate and send meta','Halogens: deactivate but STILL ortho-para - the one exception'],
-            assign:'Tonight: three EAS problems, committed before you peek.<br/>Call donor-or-withdrawer out loud before touching the choices.' },
+            assign:'Tonight: three EAS problems, committed before you peek.<br/>Call donor-or-withdrawer out loud before touching the choices.',
+            recall:{hub:'aromatic', pick:[0]} },
           coach:'Close on recognition: ring plus addition-looking reagent equals EAS. That flag alone is worth points.' }
       ]
     }
@@ -31705,12 +31763,46 @@ html[data-theme="dark"] .teach-closer .tc-assign{color:#e6d08a;}
 
   function stripRootId(node){ node.removeAttribute('id'); return node; }
 
+  function cloneMcq(hub, pick){
+    var src=document.querySelector('.mcq-set[data-hub="'+hub+'"]');
+    if(!src) return null;
+    var node=stripRootId(src.cloneNode(true));
+    node.removeAttribute('data-wired');
+    node.querySelectorAll('.mcq-q').forEach(function(q,i){ if(pick.indexOf(i)<0) q.classList.add('teach-hidden-q'); });
+    node.querySelectorAll('.mcq-opt').forEach(function(o){ o.classList.remove('correct','wrong','disabled'); o.disabled=false; });
+    node.querySelectorAll('.mcq-explain').forEach(function(e){ e.classList.remove('show'); });
+    var sc=node.querySelector('.mcq-score'); if(sc) sc.style.display='none';
+    var rs=node.querySelector('.mcq-reset'); if(rs) rs.style.display='none';
+    try{ wireMCQSet(node); }catch(e){}
+    return node;
+  }
+
+  function buildStumble(cfg){
+    var d=document.createElement('div');
+    d.className='teach-stumble';
+    d.innerHTML='<div class="teach-say"><div class="teach-say-label">A student says</div>'
+      +'<div class="teach-say-text">&ldquo;'+cfg.say+'&rdquo;</div></div>'
+      +'<div class="teach-fix"><div class="teach-fix-label">The fix</div>'
+      +'<div class="teach-fix-text">'+cfg.fix+'</div>'
+      +(cfg.rule?'<div class="teach-fix-rule">'+cfg.rule+'</div>':'')
+      +'</div>';
+    return d;
+  }
+
   function buildCloser(cfg){
     var d=document.createElement('div');
     d.className='teach-closer';
     var chips=(cfg.chips||[]).map(function(c){return '<span class="tc-chip">'+c+'</span>'}).join('');
     d.innerHTML='<h2>'+cfg.title+'</h2><div class="tc-chips">'+chips
       +'</div><div class="tc-assign">'+cfg.assign+'</div>';
+    if(cfg.recall){
+      var wrap=document.createElement('div');
+      wrap.className='teach-recall';
+      wrap.innerHTML='<div class="teach-recall-label">Prove it moved - the exact question from the top</div>';
+      var mcq=cloneMcq(cfg.recall.hub, cfg.recall.pick);
+      if(mcq) wrap.appendChild(mcq);
+      d.appendChild(wrap);
+    }
     return d;
   }
 
@@ -31727,19 +31819,9 @@ html[data-theme="dark"] .teach-closer .tc-assign{color:#e6d08a;}
 
     var node=null;
     if(B.closer){ node=buildCloser(B.closer); }
+    else if(B.stumble){ node=buildStumble(B.stumble); }
     else if(B.mcq){
-      var src=document.querySelector('.mcq-set[data-hub="'+B.mcq.hub+'"]');
-      if(src){
-        node=stripRootId(src.cloneNode(true));
-        node.removeAttribute('data-wired');
-        var qs=node.querySelectorAll('.mcq-q');
-        qs.forEach(function(q,i){ if(B.mcq.pick.indexOf(i)<0) q.classList.add('teach-hidden-q'); });
-        node.querySelectorAll('.mcq-opt').forEach(function(o){ o.classList.remove('correct','wrong','disabled'); o.disabled=false; });
-        node.querySelectorAll('.mcq-explain').forEach(function(e){ e.classList.remove('show'); });
-        var sc=node.querySelector('.mcq-score'); if(sc) sc.style.display='none';
-        var rs=node.querySelector('.mcq-reset'); if(rs) rs.style.display='none';
-        try{ wireMCQSet(node); }catch(e){}
-      }
+      node=cloneMcq(B.mcq.hub, B.mcq.pick);
     } else if(B.mech){
       var srcM=document.querySelector(B.mech);
       if(srcM){
@@ -31764,6 +31846,7 @@ html[data-theme="dark"] .teach-closer .tc-assign{color:#e6d08a;}
     }
     if(!node){ stage.textContent='(content not found: check lesson registry)'; return; }
     stage.appendChild(node);
+    if(B.stumble && !B.blanks){ B.blanks=['.teach-fix']; B.reveals=[['.teach-fix']]; }
 
     // apply blanks not yet revealed
     if(B.blanks){
