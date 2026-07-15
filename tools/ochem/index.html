@@ -4552,6 +4552,13 @@ html[data-theme="dark"] .dt-case-select{background:var(--white);color:var(--ink)
       </div>
       <div class="sb-item-dot" style="background:#1B3A2D;"></div>
     </a>
+    <a class="sb-item" href="#" onclick="window.__openReactionWheel();return false;">
+      <div class="sb-item-body">
+        <div class="sb-item-name">Reaction Wheel</div>
+        <div class="sb-item-sub">The map-building game</div>
+      </div>
+      <div class="sb-item-dot" style="background:#C9A84C;"></div>
+    </a>
     <a class="sb-item" href="#synthesis-lab" data-sec="synthesis-lab">
       <span class="sb-icon" aria-hidden="true">
         <svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><line x1="6" y1="2.5" x2="10" y2="2.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><line x1="6.5" y1="2.5" x2="5.6" y2="7" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/><line x1="9.5" y1="2.5" x2="10.4" y2="7" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/><path d="M5.6 7 A 4 4 0 1 0 10.4 7 Z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
@@ -32026,6 +32033,315 @@ html[data-theme="dark"] .teach-closer .tc-assign{color:#e6d08a;}
     setTimeout(function(){ open(tHub, beatP, Math.min(stepP,9)); }, 60);
   }
   window.__teachOpen = open;
+})();
+</script>
+
+<!-- ══════════════════════════════════════════════════════════════════
+     REACTION WHEEL — the map-building game (2026-07-15).
+     Every DAT reaction, one wheel per starting material, played
+     commit-before-reveal. Forward lap: reagent shown, pick the product
+     (the node fills in on the board when you earn it). Reverse lap:
+     product shown, pick the reagent. Master a wheel, unlock the next.
+     Data: RXN_DB + REAGENTS (already chemistry-verified). Misses post
+     acedat:tool-miss like every other surface. Open with ?game=wheel
+     or the sidebar entry. Progress cached in localStorage.
+     ══════════════════════════════════════════════════════════════════ -->
+<style>
+#rwOverlay{position:fixed;inset:0;z-index:99985;display:none;flex-direction:column;background:var(--cream,#fdf8ee);}
+#rwOverlay.open{display:flex;}
+html[data-theme="dark"] #rwOverlay{background:var(--bg2,#20201a);}
+.rw-top{display:flex;align-items:center;gap:14px;padding:12px 24px;border-bottom:2px solid #C9A84C;flex-wrap:wrap;}
+.rw-kicker{font-family:'JetBrains Mono',monospace;font-size:.66rem;letter-spacing:.18em;text-transform:uppercase;color:#8C7235;}
+.rw-title{font-family:'Playfair Display',serif;font-size:1.35rem;font-weight:800;color:var(--ink,#2a2118);}
+html[data-theme="dark"] .rw-title{color:#ece6d7;}
+.rw-progress{margin-left:auto;display:flex;align-items:center;gap:14px;}
+.rw-mastery{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:#6b5620;}
+.rw-streak{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:#b45309;}
+.rw-exit{background:none;border:1.5px solid rgba(140,114,53,.4);border-radius:8px;padding:5px 12px;font-family:'JetBrains Mono',monospace;font-size:.68rem;color:#8C7235;cursor:pointer;}
+.rw-main{flex:1;display:flex;overflow:hidden;}
+.rw-board{flex:1.35;position:relative;overflow:hidden;min-width:0;}
+.rw-board svg.rw-lines{position:absolute;inset:0;width:100%;height:100%;}
+.rw-node{position:absolute;width:148px;min-height:64px;transform:translate(-50%,-50%);background:#fff;border:1.5px solid #1B3A2D;border-radius:10px;padding:5px 7px;text-align:center;transition:box-shadow .3s,border-color .3s;}
+html[data-theme="dark"] .rw-node{background:#2a2a20;}
+.rw-node.unknown{border-style:dashed;border-color:rgba(140,114,53,.5);background:rgba(253,248,238,.6);}
+html[data-theme="dark"] .rw-node.unknown{background:rgba(42,42,32,.6);}
+.rw-node.unknown .rw-node-q{font-family:'Playfair Display',serif;font-size:1.6rem;color:#C9A84C;padding:12px 0;}
+.rw-node.active{border-color:#C9A84C;box-shadow:0 0 0 3px rgba(201,168,76,.4);animation:rwPulse 1.4s infinite;}
+@keyframes rwPulse{0%,100%{box-shadow:0 0 0 3px rgba(201,168,76,.35);}50%{box-shadow:0 0 0 7px rgba(201,168,76,.12);}}
+.rw-node.filled{border-color:#1B3A2D;}
+.rw-node-name{font-family:'Playfair Display',serif;font-style:italic;font-size:.68rem;color:#3c2e1a;line-height:1.25;}
+html[data-theme="dark"] .rw-node-name{color:#d8d0bd;}
+.rw-node svg{max-width:100%;height:44px;display:block;margin:0 auto;}
+.rw-reagent{position:absolute;transform:translate(-50%,-50%);font-family:'JetBrains Mono',monospace;font-size:.66rem;font-weight:700;color:#8C7235;background:var(--cream,#fdf8ee);padding:2px 7px;border-radius:99px;border:1px solid rgba(140,114,53,.35);white-space:nowrap;}
+html[data-theme="dark"] .rw-reagent{background:#20201a;}
+.rw-center{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:170px;height:170px;border-radius:50%;background:#fdf8ee;border:3px solid #C9A84C;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:12px;}
+html[data-theme="dark"] .rw-center{background:#2a2a20;}
+.rw-center-name{font-family:'Playfair Display',serif;font-weight:800;font-size:1.02rem;color:#2a2118;line-height:1.2;}
+html[data-theme="dark"] .rw-center-name{color:#ece6d7;}
+.rw-center-sub{font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:#8C7235;margin-top:4px;}
+.rw-panel{flex:1;border-left:1px solid rgba(140,114,53,.3);padding:18px 22px;overflow-y:auto;min-width:380px;max-width:520px;}
+.rw-q-kicker{font-family:'JetBrains Mono',monospace;font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:#b45309;margin-bottom:4px;}
+.rw-q{font-family:'Playfair Display',serif;font-size:1.25rem;font-weight:700;color:#2a2118;margin-bottom:12px;line-height:1.3;}
+html[data-theme="dark"] .rw-q{color:#ece6d7;}
+.rw-opt{display:flex;align-items:center;gap:10px;width:100%;text-align:left;margin:7px 0;padding:9px 12px;border-radius:10px;border:1.5px solid rgba(140,114,53,.35);background:#fff;cursor:pointer;font-size:.9rem;color:#2a2118;transition:border-color .15s;}
+html[data-theme="dark"] .rw-opt{background:#2a2a20;color:#ece6d7;}
+.rw-opt:hover{border-color:#C9A84C;}
+.rw-opt.correct{border-color:#1B7A4D;box-shadow:0 0 0 1.5px #1B7A4D;}
+.rw-opt.wrong{border-color:#b3382e;box-shadow:0 0 0 1.5px #b3382e;}
+.rw-opt.dim{opacity:.5;}
+.rw-opt:disabled{cursor:default;}
+.rw-opt svg{width:96px;height:52px;flex:none;}
+.rw-opt .rw-opt-name{font-family:'Playfair Display',serif;font-style:italic;font-size:.82rem;}
+.rw-explain{margin-top:12px;background:rgba(201,168,76,.1);border-left:4px solid #C9A84C;border-radius:10px;padding:11px 14px;font-size:.87rem;line-height:1.55;color:#3c2e1a;}
+html[data-theme="dark"] .rw-explain{color:#d8d0bd;}
+.rw-verdict{font-family:'JetBrains Mono',monospace;font-size:.66rem;letter-spacing:.1em;margin-bottom:4px;color:#1B7A4D;}
+.rw-verdict.miss{color:#b45309;}
+.rw-tags{margin-top:8px;}
+.rw-tag{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:.62rem;border:1px solid rgba(140,114,53,.4);border-radius:99px;padding:3px 9px;margin:2px 4px 0 0;color:#6b5620;}
+.rw-next{margin-top:14px;background:linear-gradient(180deg,#E6D08A,#C9A84C);color:#1a1206;border:none;border-radius:10px;padding:11px 20px;font-family:'JetBrains Mono',monospace;font-size:.78rem;font-weight:700;cursor:pointer;}
+.rw-done{text-align:center;padding-top:3vh;}
+.rw-done h2{font-family:'Playfair Display',serif;font-size:1.9rem;color:#2a2118;margin:.2em 0 .5em;}
+html[data-theme="dark"] .rw-done h2{color:#ece6d7;}
+.rw-lap{font-family:'JetBrains Mono',monospace;font-size:.64rem;letter-spacing:.14em;text-transform:uppercase;color:#8C7235;margin-bottom:10px;}
+.rw-wheel-picker{display:flex;gap:8px;flex-wrap:wrap;padding:10px 24px;border-bottom:1px solid rgba(140,114,53,.25);}
+.rw-wheel-chip{font-family:'JetBrains Mono',monospace;font-size:.64rem;border:1.5px solid rgba(140,114,53,.4);border-radius:99px;padding:5px 12px;cursor:pointer;background:none;color:#6b5620;}
+html[data-theme="dark"] .rw-wheel-chip{color:#d8c893;}
+.rw-wheel-chip.now{background:#1B3A2D;color:#e6d08a;border-color:#1B3A2D;}
+.rw-wheel-chip.locked{opacity:.4;cursor:default;}
+.rw-wheel-chip.done{border-color:#1B7A4D;color:#1B7A4D;}
+@media(max-width:1000px){.rw-main{flex-direction:column;}.rw-panel{max-width:none;border-left:none;border-top:1px solid rgba(140,114,53,.3);}}
+@media print{#rwOverlay{display:none!important;}}
+</style>
+<div id="rwOverlay" role="dialog" aria-modal="true" aria-label="Reaction Wheel game">
+  <div class="rw-top">
+    <span class="rw-kicker">Reaction Wheel</span>
+    <span class="rw-title" id="rwTitle"></span>
+    <div class="rw-progress">
+      <span class="rw-mastery" id="rwMastery"></span>
+      <span class="rw-streak" id="rwStreak"></span>
+      <button class="rw-exit" id="rwExit">ESC exit</button>
+    </div>
+  </div>
+  <div class="rw-wheel-picker" id="rwPicker"></div>
+  <div class="rw-main">
+    <div class="rw-board" id="rwBoard"></div>
+    <div class="rw-panel" id="rwPanel"></div>
+  </div>
+</div>
+<script>
+(function(){
+  var WHEELS=[
+    {key:'alkene_terminal', name:'Terminal Alkene', sub:'propene-type · the center of the universe'},
+    {key:'alkene_internal', name:'Internal Alkene', sub:'2-butene-type'},
+    {key:'alkyne_terminal', name:'Terminal Alkyne', sub:'1-butyne-type · has the acidic H'},
+    {key:'alkyne_internal', name:'Internal Alkyne', sub:'2-butyne-type'},
+    {key:'halide_primary', name:'1° Alkyl Halide', sub:'SN2 territory'},
+    {key:'halide_secondary', name:'2° Alkyl Halide', sub:'the battleground'},
+    {key:'halide_tertiary', name:'3° Alkyl Halide', sub:'SN1 / E1 / E2 only'},
+    {key:'alcohol_primary', name:'1° Alcohol', sub:'the switchboard'},
+    {key:'alcohol_secondary', name:'2° Alcohol', sub:'stops at the ketone'},
+    {key:'alcohol_tertiary', name:'3° Alcohol', sub:'no oxidation for you'},
+    {key:'epoxide', name:'Epoxide', sub:'spring-loaded ring'},
+    {key:'benzene', name:'Benzene', sub:'EAS world'},
+    {key:'aniline', name:'Aniline', sub:'activated ring'},
+    {key:'aldehyde', name:'Aldehyde', sub:'the hungriest carbonyl'},
+    {key:'ketone', name:'Ketone', sub:'nucleophilic addition'},
+    {key:'ester', name:'Ester', sub:'middle of the ladder'},
+    {key:'acid', name:'Carboxylic Acid', sub:'top of the food chain'},
+    {key:'amide', name:'Amide', sub:'bottom rung'},
+    {key:'nitrile', name:'Nitrile', sub:'one-carbon homologation'}
+  ];
+  var LSKEY='atDAT_wheel_v1';
+  var state={wheel:0,queue:[],qi:0,answered:false,streak:0,frozen:false};
+  var save={};
+  try{ save=JSON.parse(localStorage.getItem(LSKEY)||'{}'); }catch(e){ save={}; }
+  function persist(){ try{ localStorage.setItem(LSKEY,JSON.stringify(save)); }catch(e){} }
+
+  function entriesFor(key){
+    var out=[];
+    Object.keys(RXN_DB).forEach(function(k){
+      if(k.indexOf(key+'__')===0){
+        var rid=k.slice(key.length+2);
+        out.push({key:k,rid:rid,e:RXN_DB[k]});
+      }
+    });
+    return out;
+  }
+  function reagentLabel(rid){ return (REAGENTS[rid]&&REAGENTS[rid].label)||rid.replace(/_/g,' '); }
+  function wheelSave(w){ save[w.key]=save[w.key]||{}; return save[w.key]; }
+  function spokeDone(w,sk){ var s=wheelSave(w)[sk]; return s&&s.f&&s.r; }
+  function wheelDone(w){ return entriesFor(w.key).every(function(sp){ return spokeDone(w,sp.key); }); }
+  function wheelUnlocked(i){ if(i===0)return true; return wheelDone(WHEELS[i-1]); }
+
+  function buildQueue(w){
+    var sp=entriesFor(w.key), ws=wheelSave(w), q=[];
+    var fwd=sp.filter(function(s){return !(ws[s.key]&&ws[s.key].f);});
+    var rev=sp.filter(function(s){return !(ws[s.key]&&ws[s.key].r);});
+    function shuffle(a){ for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i];a[i]=a[j];a[j]=t; } return a; }
+    shuffle(fwd).forEach(function(s){ q.push({sp:s,mode:'f'}); });
+    shuffle(rev).forEach(function(s){ q.push({sp:s,mode:'r'}); });
+    return q;
+  }
+
+  // board geometry
+  function renderBoard(){
+    var w=WHEELS[state.wheel], sp=entriesFor(w.key), ws=wheelSave(w);
+    var board=document.getElementById('rwBoard');
+    var W=board.clientWidth||800, H=board.clientHeight||560;
+    var cx=W/2, cy=H/2, rx=Math.min(W*0.36,420), ry=Math.min(H*0.36,260);
+    var cur=state.queue[state.qi];
+    var svg='<svg class="rw-lines" viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none">';
+    svg+='<defs><marker id="rwArr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#8C7235"/></marker></defs>';
+    var html='';
+    sp.forEach(function(s,i){
+      var a=-Math.PI/2 + i*2*Math.PI/sp.length;
+      var nx=cx+rx*Math.cos(a), ny=cy+ry*Math.sin(a);
+      var sxp=cx+95*Math.cos(a), syp=cy+95*Math.sin(a);
+      var exp=nx-80*Math.cos(a), eyp=ny-42*Math.sin(a);
+      svg+='<line x1="'+sxp+'" y1="'+syp+'" x2="'+exp+'" y2="'+eyp+'" stroke="#8C7235" stroke-width="1.5" marker-end="url(#rwArr)" opacity="'+((ws[s.key]&&ws[s.key].f)||isActive(s)?1:.35)+'"/>';
+      var mx=(sxp+exp)/2, my=(syp+eyp)/2;
+      var showLabel=(ws[s.key]&&ws[s.key].f)||(isActive(s)&&cur&&cur.mode==='f');
+      if(showLabel) html+='<span class="rw-reagent" style="left:'+mx+'px;top:'+my+'px">'+reagentLabel(s.rid)+'</span>';
+      var filled=ws[s.key]&&ws[s.key].f;
+      html+='<div class="rw-node '+(filled?'filled':'unknown')+(isActive(s)?' active':'')+'" style="left:'+nx+'px;top:'+ny+'px">'
+        +(filled? (s.e.svg||'')+'<div class="rw-node-name">'+s.e.name+'</div>' : '<div class="rw-node-q">?</div>')
+        +'</div>';
+    });
+    svg+='</svg>';
+    html+='<div class="rw-center"><div class="rw-center-name">'+w.name+'</div><div class="rw-center-sub">'+w.sub+'</div></div>';
+    board.innerHTML=svg+html;
+    function isActive(s){ return cur && cur.sp.key===s.key; }
+  }
+
+  function renderTop(){
+    var w=WHEELS[state.wheel], sp=entriesFor(w.key), ws=wheelSave(w);
+    var filled=sp.filter(function(s){return spokeDone(w,s.key);}).length;
+    document.getElementById('rwTitle').textContent=w.name+' Wheel';
+    document.getElementById('rwMastery').textContent=filled+' / '+sp.length+' spokes mastered';
+    document.getElementById('rwStreak').textContent=state.frozen?'streak paused - one more right resumes it':(state.streak>1?'streak '+state.streak:'');
+    var pk=document.getElementById('rwPicker'); pk.innerHTML='';
+    WHEELS.forEach(function(wh,i){
+      var b=document.createElement('button');
+      var done=wheelDone(wh), unlocked=wheelUnlocked(i);
+      b.className='rw-wheel-chip'+(i===state.wheel?' now':'')+(done?' done':'')+(!unlocked?' locked':'');
+      b.textContent=wh.name+(done?' - mastered':'');
+      if(unlocked) b.addEventListener('click',function(){ openWheel(i); });
+      pk.appendChild(b);
+    });
+  }
+
+  function shuffle(a){ for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i];a[i]=a[j];a[j]=t; } return a; }
+
+  function renderQuestion(){
+    var w=WHEELS[state.wheel], panel=document.getElementById('rwPanel');
+    var cur=state.queue[state.qi];
+    if(!cur){ renderWheelDone(); renderBoard(); renderTop(); return; }
+    var sp=cur.sp, all=entriesFor(w.key);
+    state.answered=false;
+    var html='';
+    if(cur.mode==='f'){
+      var pool=shuffle(all.filter(function(s){return s.key!==sp.key;})).slice(0,3).concat([sp]);
+      shuffle(pool);
+      html+='<div class="rw-q-kicker">Forward lap · build the wheel</div>';
+      html+='<div class="rw-q">'+w.name+' + <span style="color:#b45309">'+reagentLabel(sp.rid)+'</span> gives what?</div>';
+      pool.forEach(function(s){
+        html+='<button class="rw-opt" data-k="'+s.key+'">'+(s.e.svg||'')+'<span class="rw-opt-name">'+s.e.name+'</span></button>';
+      });
+    } else {
+      var poolR=shuffle(all.filter(function(s){return s.rid!==sp.rid;})).slice(0,3).concat([sp]);
+      shuffle(poolR);
+      html+='<div class="rw-q-kicker">Reverse lap · run it backwards</div>';
+      html+='<div class="rw-q">Which reagent turns '+w.name.toLowerCase()+' into <em>'+sp.e.name+'</em>?</div>';
+      html+='<div style="margin:6px 0 10px">'+(sp.e.svg||'')+'</div>';
+      poolR.forEach(function(s){
+        html+='<button class="rw-opt" data-k="'+s.key+'"><span class="rw-opt-name" style="font-family:\'JetBrains Mono\',monospace;font-style:normal;font-size:.8rem">'+reagentLabel(s.rid)+'</span></button>';
+      });
+    }
+    panel.innerHTML=html;
+    panel.querySelectorAll('.rw-opt').forEach(function(btn){
+      btn.addEventListener('click',function(){ commit(btn, btn.dataset.k===sp.key); });
+    });
+    renderBoard(); renderTop();
+  }
+
+  function commit(btn, ok){
+    if(state.answered) return;
+    state.answered=true;
+    var w=WHEELS[state.wheel], cur=state.queue[state.qi], sp=cur.sp;
+    var panel=document.getElementById('rwPanel');
+    panel.querySelectorAll('.rw-opt').forEach(function(b){
+      b.disabled=true;
+      if(b.dataset.k===sp.key) b.classList.add('correct');
+      else if(b===btn && !ok) b.classList.add('wrong');
+      else if(b!==btn) b.classList.add('dim');
+    });
+    var ws=wheelSave(w); ws[sp.key]=ws[sp.key]||{};
+    if(ok){
+      ws[sp.key][cur.mode]=1;
+      if(state.frozen){ state.frozen=false; } else { state.streak++; }
+    } else {
+      if(state.streak>0) state.frozen=true;
+      state.streak=0;
+      state.queue.push({sp:sp,mode:cur.mode}); // it comes back around - no shame
+      try{
+        if(window.parent&&window.parent!==window){
+          window.parent.postMessage({type:'acedat:tool-miss',tool:'ochem-reaction-maps',section:'OChem',
+            questionId:'wheel_'+sp.key+'_'+cur.mode,hub:sp.e.hub||'reactions',
+            stem:w.name+' + '+reagentLabel(sp.rid),pickedKey:btn.dataset.k,pickedText:btn.textContent.trim().slice(0,120),
+            correctKey:sp.key,correctText:sp.e.name,ts:Date.now()},'*');
+        }
+      }catch(e){}
+    }
+    persist();
+    var ex=document.createElement('div');
+    ex.className='rw-explain';
+    ex.innerHTML='<div class="rw-verdict'+(ok?'':' miss')+'">'+(ok?(cur.mode==='f'?'Earned - the node fills in.':'Backwards and forwards - that one is yours.'):'Good miss - it circles back around. Read this first.')+'</div>'
+      +(sp.e.explain||'')
+      +'<div class="rw-tags">'+((sp.e.tags||[]).map(function(t){return '<span class="rw-tag">'+t+'</span>';}).join(''))+'</div>';
+    var nx=document.createElement('button');
+    nx.className='rw-next'; nx.textContent='Next';
+    nx.addEventListener('click',function(){ state.qi++; renderQuestion(); });
+    panel.appendChild(ex); panel.appendChild(nx);
+    renderBoard(); renderTop();
+    nx.focus();
+  }
+
+  function renderWheelDone(){
+    var w=WHEELS[state.wheel], panel=document.getElementById('rwPanel'), sp=entriesFor(w.key);
+    var next=state.wheel+1<WHEELS.length?WHEELS[state.wheel+1]:null;
+    var html='<div class="rw-done"><div class="rw-lap">Wheel mastered - forwards and backwards</div>'
+      +'<h2>'+w.name+', owned.</h2>'
+      +'<p style="font-size:.9rem;color:#6b5620">'+sp.length+' reactions, each one earned twice. Screenshot the full wheel - it is the whole chapter on one screen.</p>';
+    if(next && wheelUnlocked(state.wheel+1)) html+='<button class="rw-next" id="rwNextWheel">Unlock the '+next.name+' wheel</button>';
+    else if(!next) html+='<p style="font-family:\'Playfair Display\',serif;font-style:italic;font-size:1.1rem">Every wheel mastered. That is the whole reaction map - go teach it to someone.</p>';
+    html+='</div>';
+    panel.innerHTML=html;
+    var b=document.getElementById('rwNextWheel');
+    if(b) b.addEventListener('click',function(){ openWheel(state.wheel+1); });
+  }
+
+  function openWheel(i){
+    state.wheel=i; state.queue=buildQueue(WHEELS[i]); state.qi=0; state.streak=0; state.frozen=false;
+    renderQuestion();
+  }
+  function openGame(){
+    document.getElementById('rwOverlay').classList.add('open');
+    document.body.style.overflow='hidden';
+    var start=0;
+    for(var i=0;i<WHEELS.length;i++){ if(wheelUnlocked(i)&&!wheelDone(WHEELS[i])){ start=i; break; } if(wheelDone(WHEELS[i])) start=Math.min(i+1,WHEELS.length-1); }
+    openWheel(start);
+  }
+  function closeGame(){ document.getElementById('rwOverlay').classList.remove('open'); document.body.style.overflow=''; }
+  document.getElementById('rwExit').addEventListener('click',closeGame);
+  document.addEventListener('keydown',function(e){
+    if(!document.getElementById('rwOverlay').classList.contains('open'))return;
+    if(e.key==='Escape'){ closeGame(); }
+    if(e.key==='Enter'&&state.answered){ var nx=document.querySelector('#rwPanel .rw-next'); if(nx){e.preventDefault();nx.click();} }
+  });
+  window.addEventListener('resize',function(){ if(document.getElementById('rwOverlay').classList.contains('open')) renderBoard(); });
+  window.__openReactionWheel=openGame;
+  var rwParams=new URLSearchParams(location.search);
+  if(rwParams.get('game')==='wheel'){ setTimeout(openGame,80); }
 })();
 </script>
 
