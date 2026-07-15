@@ -31321,7 +31321,7 @@ html[data-theme="dark"] .teach-coach-line{color:#d8d0bd;}
 .teach-blank{filter:blur(13px);user-select:none;pointer-events:none;transition:filter .28s;}
 .teach-blank-flash{animation:teachFlash 1s ease;}
 @keyframes teachFlash{0%{background:rgba(201,168,76,.4);}100%{background:transparent;}}
-.teach-reveal-chip{position:absolute;top:-30px;right:0;z-index:5;font-family:'JetBrains Mono',monospace;font-size:.62rem;letter-spacing:.1em;background:#C9A84C;color:#1B3A2D;border-radius:99px;padding:4px 12px;font-weight:700;}
+.teach-reveal-chip{position:absolute;top:0;right:0;z-index:5;font-family:'JetBrains Mono',monospace;font-size:.62rem;letter-spacing:.1em;background:#C9A84C;color:#1B3A2D;border-radius:99px;padding:4px 12px;font-weight:700;}
 .teach-stage-wrap{position:relative;padding-top:34px;}
 .teach-closer{max-width:900px;margin:0 auto;text-align:center;padding-top:4vh;}
 .teach-closer h2{font-family:'Playfair Display',serif;font-size:2.1rem;color:var(--ink,#2a2118);margin:.2em 0 .6em;}
@@ -31395,8 +31395,58 @@ html[data-theme="dark"] .teach-closer .tc-assign{color:#e6d08a;}
           mcq:{hub:'alkenes', pick:[1,2]},
           coach:'Hands off. Let the silence sit. A committed wrong answer tonight is worth more than ten nods.' },
         { k:'Lock it in', t:'The whole hub in five lines',
-          closer:true,
+          closer:{ title:'Alkenes, locked in',
+            chips:['Markovnikov: the rich get richer','Peroxides flip HBr to anti-Markovnikov','Open cation: rearranges, racemic','Bridged ring: anti, no rearrangement','Concerted: syn, same face'],
+            assign:'Tonight: the Alkenes set. Twelve problems.<br/>Commit before you peek — the set is where it becomes yours.' },
           coach:'End on the assignment, not the summary. The set is where this becomes theirs.' }
+      ]
+    }
+    ,subelim: {
+      title: 'SN1 / SN2 / E1 / E2 — the four questions',
+      beats: [
+        { k:'Cold open · commit first', t:'Can you answer this?',
+          mcq:{hub:'subelim', pick:[0]},
+          coach:'Commit out loud before anything moves. This is the highest-yield decision on the whole OChem section — we end tonight owning it.' },
+        { k:'The frame', t:'One decision, four outcomes',
+          sel:'#subelim .sec-intro',
+          coach:'You never memorize four reactions. You ask the four questions in order — substrate, reagent, solvent, heat — and the mechanism falls out.' },
+        { k:'See the map', t:'The decision flowchart, once',
+          sel:'#subelim .atlas-wrap',
+          coach:'Orient, do not memorize. Every branch here is one of the four questions being answered. By the end you will walk it blind.' },
+        { k:'SN2 rule', t:'The stereo lock',
+          sel:'#subelim .box', selLabel:'Stereo lock', blanks:['.box-text'], reveals:[['.box-text']],
+          coach:'Ask first: what happens to a chiral center in SN2, every single time? Make them say the umbrella flip before you show it.' },
+        { k:'Watch it move', t:'SN2 — backside attack',
+          mech:'.mech-player[data-mech="sn2"]',
+          coach:'One step, no intermediate. The nucleophile comes in exactly opposite the leaving group — that geometry IS the inversion.' },
+        { k:'SN1 risk', t:'The rearrangement alert',
+          sel:'#subelim .box', selLabel:'Rearrangement alert', blanks:['.box-text'], reveals:[['.box-text']],
+          coach:'If a free cation forms, ask its neighbors: can a hydride shift make it happier? The DAT hides a rearrangement in every third SN1 question.' },
+        { k:'Watch it move', t:'SN1 — the cation decides everything',
+          mech:'.mech-player[data-mech="sn1"]',
+          coach:'Two steps. The slow one makes the cation; after that the nucleophile attacks either face — that is where racemization comes from.' },
+        { k:'Meet Naomi', t:'The base you will see everywhere',
+          sel:'#subelim .box', selLabel:'Coach note · meet Naomi', blanks:['.box-text'], reveals:[['.box-text']],
+          coach:'NaOMe walks into the room. Who is she and what does she want? Say it in one line, then reveal.' },
+        { k:'E2 geometry', t:'Anti-periplanar or nothing',
+          sel:'#subelim .box', selLabel:'Coach note · the anti-periplanar requirement', blanks:['.box-text'], reveals:[['.box-text']],
+          coach:'E2 is picky: leaving group and beta-H at 180 degrees, both axial on a chair. The locked t-butyl chair question lives here.' },
+        { k:'The exception', t:'Hofmann — when bulky wins',
+          sel:'#subelim .box', selLabel:'Hofmann exception', blanks:['.box-text'], reveals:[['.box-text']],
+          coach:'Strong base is not the same as small base. Ask what t-BuO minus can actually reach — then reveal.' },
+        { k:'Quiz the table', t:'Substrate summary',
+          sel:'#subelim table.dtbl',
+          blanks:['tbody tr td:nth-child(2)','tbody tr td:nth-child(3)','tbody tr td:nth-child(4)','tbody tr td:nth-child(5)'],
+          reveals:[['tbody tr td:nth-child(2)'],['tbody tr td:nth-child(3)'],['tbody tr td:nth-child(4)'],['tbody tr td:nth-child(5)']],
+          coach:'Call a substrate, make them run all four columns out loud. Reveal one mechanism column at a time - SN2, SN1, E2, E1.' },
+        { k:'You do', t:'Two more — commit each time',
+          mcq:{hub:'subelim', pick:[1,2]},
+          coach:'Hands off the pen. A committed wrong answer beats ten nods.' },
+        { k:'Lock it in', t:'The whole hub in five lines',
+          closer:{ title:'SN and E, locked in',
+            chips:['Substrate first: methyl and 1° go SN2, 3° never does','Strong small base: E2, Zaitsev - that is Naomi','Bulky base: Hofmann - the less substituted alkene','SN2 inverts every time - the umbrella flip','Free cation: rearranges and racemizes'],
+            assign:'Tonight: the SN/E set lands after your next session.<br/>Until then: walk the flowchart on three problems and commit before you peek.' },
+          coach:'End on the four questions, not the table. The questions are what they take into the test.' }
       ]
     }
   };
@@ -31408,16 +31458,12 @@ html[data-theme="dark"] .teach-closer .tc-assign{color:#e6d08a;}
 
   function stripRootId(node){ node.removeAttribute('id'); return node; }
 
-  function buildCloser(){
+  function buildCloser(cfg){
     var d=document.createElement('div');
     d.className='teach-closer';
-    d.innerHTML='<h2>Alkenes, locked in</h2><div class="tc-chips">'
-      +'<span class="tc-chip">Markovnikov: the rich get richer</span>'
-      +'<span class="tc-chip">Peroxides flip HBr to anti-Markovnikov</span>'
-      +'<span class="tc-chip">Open cation: rearranges, racemic</span>'
-      +'<span class="tc-chip">Bridged ring: anti, no rearrangement</span>'
-      +'<span class="tc-chip">Concerted: syn, same face</span>'
-      +'</div><div class="tc-assign">Tonight: the Alkenes set. Twelve problems.<br/>Commit before you peek — the set is where it becomes yours.</div>';
+    var chips=(cfg.chips||[]).map(function(c){return '<span class="tc-chip">'+c+'</span>'}).join('');
+    d.innerHTML='<h2>'+cfg.title+'</h2><div class="tc-chips">'+chips
+      +'</div><div class="tc-assign">'+cfg.assign+'</div>';
     return d;
   }
 
@@ -31433,7 +31479,7 @@ html[data-theme="dark"] .teach-closer .tc-assign{color:#e6d08a;}
     stage.innerHTML='';
 
     var node=null;
-    if(B.closer){ node=buildCloser(); }
+    if(B.closer){ node=buildCloser(B.closer); }
     else if(B.mcq){
       var src=document.querySelector('.mcq-set[data-hub="'+B.mcq.hub+'"]');
       if(src){
@@ -31455,7 +31501,18 @@ html[data-theme="dark"] .teach-closer .tc-assign{color:#e6d08a;}
         try{ wireMechPlayer(node); }catch(e){}
       }
     } else if(B.sel){
-      var srcS=document.querySelector(B.sel);
+      var srcS=null;
+      if(B.selLabel){
+        var cands=document.querySelectorAll(B.sel);
+        for(var ci=0;ci<cands.length;ci++){
+          var lb=cands[ci].querySelector('.box-label');
+          if(lb && lb.textContent.trim()===B.selLabel){ srcS=cands[ci]; break; }
+        }
+      } else if(B.selIndex!=null){
+        srcS=document.querySelectorAll(B.sel)[B.selIndex]||null;
+      } else {
+        srcS=document.querySelector(B.sel);
+      }
       if(srcS) node=stripRootId(srcS.cloneNode(true));
     }
     if(!node){ stage.textContent='(content not found: check lesson registry)'; return; }
