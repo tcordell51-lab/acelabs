@@ -11247,8 +11247,8 @@ html[data-theme="dark"] .dt-case-select{background:var(--white);color:var(--ink)
                   <line class="sk-bond" x1="-50" y1="18" x2="-20" y2="0"/>
                   <line class="sk-bond" x1="-20" y1="0" x2="18" y2="0"/>
                   <line class="sk-bond" x1="-18" y1="-8" x2="16" y2="-8"/>
-                  <text class="sk-label-atlas" x="-20" y="22" text-anchor="middle">C2 · more subst.</text>
-                  <text class="sk-label-atlas" x="18" y="22" text-anchor="middle">C1 · less hindered</text>
+                  <text class="sk-label-atlas" x="-34" y="34" text-anchor="middle">C2 · more subst.</text>
+                  <text class="sk-label-atlas" x="30" y="16" text-anchor="middle">C1 · less hindered</text>
                 </g>
                 <!-- BH3 on right with δ+ on B (electrophile, empty p-orbital) -->
                 <g transform="translate(560 120)">
@@ -31287,6 +31287,256 @@ window.MolMini = (function(){
     const reveal = block.querySelector('.answer-reveal');
     if (reveal) reveal.classList.add('show');
   });
+})();
+</script>
+
+<!-- ══════════════════════════════════════════════════════════════════
+     TEACH MODE — coach-facing presentation layer (additive, 2026-07-15).
+     Opens with ?teach=<hubId>. Zero student-visible change without params.
+     Re-choreographs EXISTING verified engine content into full-screen,
+     blank-then-reveal lesson beats (I-do / we-do), ending in the assigned
+     set (you-do). Keyboard: Right/Space advance · R reveal · Left back ·
+     Esc exit. Verification params: &beat=N&step=N.
+     ══════════════════════════════════════════════════════════════════ -->
+<style>
+#teachOverlay{position:fixed;inset:0;z-index:99990;display:none;background:var(--cream,#fdf8ee);}
+#teachOverlay.open{display:flex;flex-direction:column;}
+html[data-theme="dark"] #teachOverlay{background:var(--bg2,#20201a);}
+.teach-top{display:flex;align-items:baseline;gap:14px;padding:14px 26px 10px;border-bottom:2px solid #C9A84C;}
+.teach-kicker{font-family:'JetBrains Mono','Courier New',monospace;font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;color:#8C7235;}
+.teach-title{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:800;color:var(--ink,#2a2118);}
+html[data-theme="dark"] .teach-title{color:var(--ink,#ece6d7);}
+.teach-count{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:.72rem;color:#8C7235;}
+.teach-stage{flex:1;overflow:auto;display:flex;align-items:flex-start;justify-content:center;padding:22px 30px;}
+.teach-stage-inner{width:min(1150px,96%);zoom:1.18;}
+.teach-stage-inner > *{margin-left:auto;margin-right:auto;}
+.teach-coach{border-top:1px solid rgba(140,114,53,.35);padding:12px 26px 14px;display:flex;gap:18px;align-items:center;}
+.teach-coach-label{font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:#8C7235;white-space:nowrap;}
+.teach-coach-line{font-family:'Playfair Display',serif;font-style:italic;font-size:1.02rem;color:var(--ink,#3c2e1a);}
+html[data-theme="dark"] .teach-coach-line{color:#d8d0bd;}
+.teach-dots{margin-left:auto;display:flex;gap:6px;align-items:center;}
+.teach-dot{width:8px;height:8px;border-radius:50%;background:rgba(140,114,53,.28);}
+.teach-dot.on{background:#C9A84C;}
+.teach-keys{font-family:'JetBrains Mono',monospace;font-size:.62rem;color:#8C7235;margin-left:14px;white-space:nowrap;}
+.teach-blank{filter:blur(13px);user-select:none;pointer-events:none;transition:filter .28s;}
+.teach-blank-flash{animation:teachFlash 1s ease;}
+@keyframes teachFlash{0%{background:rgba(201,168,76,.4);}100%{background:transparent;}}
+.teach-reveal-chip{position:absolute;top:-30px;right:0;z-index:5;font-family:'JetBrains Mono',monospace;font-size:.62rem;letter-spacing:.1em;background:#C9A84C;color:#1B3A2D;border-radius:99px;padding:4px 12px;font-weight:700;}
+.teach-stage-wrap{position:relative;padding-top:34px;}
+.teach-closer{max-width:900px;margin:0 auto;text-align:center;padding-top:4vh;}
+.teach-closer h2{font-family:'Playfair Display',serif;font-size:2.1rem;color:var(--ink,#2a2118);margin:.2em 0 .6em;}
+html[data-theme="dark"] .teach-closer h2{color:#ece6d7;}
+.teach-closer .tc-chips{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:1.2rem 0;}
+.teach-closer .tc-chip{font-family:'JetBrains Mono',monospace;font-size:.78rem;border:1.5px solid #C9A84C;border-radius:99px;padding:8px 16px;color:#6b5620;background:rgba(201,168,76,.08);}
+html[data-theme="dark"] .teach-closer .tc-chip{color:#d8c893;}
+.teach-closer .tc-assign{margin-top:2rem;font-family:'Playfair Display',serif;font-size:1.25rem;font-style:italic;color:#1B3A2D;background:rgba(201,168,76,.14);border:2px solid #C9A84C;border-radius:14px;padding:1.1rem 1.6rem;display:inline-block;}
+html[data-theme="dark"] .teach-closer .tc-assign{color:#e6d08a;}
+#teachLauncher{position:fixed;right:16px;bottom:16px;z-index:99980;display:none;flex-direction:column;gap:8px;}
+#teachLauncher.show{display:flex;}
+#teachLauncher button{font-family:'JetBrains Mono',monospace;font-size:.72rem;letter-spacing:.08em;background:#1B3A2D;color:#e6d08a;border:1.5px solid #C9A84C;border-radius:10px;padding:9px 16px;cursor:pointer;}
+#teachLauncher button:hover{background:#C9A84C;color:#1B3A2D;}
+.teach-hidden-q{display:none !important;}
+@media print{#teachOverlay,#teachLauncher{display:none !important;}}
+</style>
+<div id="teachOverlay" role="dialog" aria-modal="true" aria-label="Teach Mode">
+  <div class="teach-top">
+    <span class="teach-kicker" id="teachKicker">Teach Mode</span>
+    <span class="teach-title" id="teachTitle"></span>
+    <span class="teach-count" id="teachCount"></span>
+  </div>
+  <div class="teach-stage"><div class="teach-stage-inner"><div class="teach-stage-wrap" id="teachStage"></div></div></div>
+  <div class="teach-coach">
+    <span class="teach-coach-label">Coach line</span>
+    <span class="teach-coach-line" id="teachCoach"></span>
+    <div class="teach-dots" id="teachDots"></div>
+    <span class="teach-keys">SPACE next · R reveal · LEFT back · ESC exit</span>
+  </div>
+</div>
+<div id="teachLauncher"></div>
+<script>
+(function(){
+  var LESSONS = {
+    alkenes: {
+      title: 'Alkenes — the center of the universe',
+      beats: [
+        { k:'Cold open · commit first', t:'Can you answer this?',
+          mcq:{hub:'alkenes', pick:[0]},
+          coach:'Say a letter out loud before anything else happens. Wrong is fine — wrong is data. We come back to this exact question at the end.' },
+        { k:'The frame', t:'One nucleophile, ten endings',
+          sel:'#alkenes .sec-intro',
+          coach:'The pi bond is a nucleophile looking for an electrophile. Every reaction in this hub is that one sentence wearing a different reagent.' },
+        { k:'See the map', t:'Plate III — the whole hub, once',
+          sel:'#alkene-atlas',
+          coach:'Do not memorize this. Orient. Ten spokes, one starting material. By the end of tonight you will be able to cover any box and name it.' },
+        { k:'The rule', t:'Markovnikov — the rich get richer',
+          sel:'#alkenes .box.box-mem', blanks:['.box-text'], reveals:[['.box-text']],
+          coach:'Before I show it: where does the H go, and why? Make them say carbocation stability before you reveal.' },
+        { k:'The trap', t:'Two ladders, two prompts',
+          sel:'#alkenes .box.box-tip', blanks:['.box-text'], reveals:[['.box-text']],
+          coach:'Zaitsev question: most substituted ALKENE. Markovnikov question: most stable CARBOCATION. Students lose points mixing the ladders, not misreading structures.' },
+        { k:'Bucket 1', t:'Open carbocation',
+          sel:'.bucket-card[data-bucket="1"]', blanks:['.bucket-reactions','.bucket-cue'], reveals:[['.bucket-reactions'],['.bucket-cue']],
+          coach:'Ask: if the intermediate is an open cation, what three things follow? Markovnikov, rearrangements possible, racemic. THEN reveal which reagents live here.' },
+        { k:'Bucket 2', t:'Three-membered ring',
+          sel:'.bucket-card[data-bucket="2"]', blanks:['.bucket-reactions','.bucket-cue'], reveals:[['.bucket-reactions'],['.bucket-cue']],
+          coach:'Bridged means locked: no rearrangement, backside attack, anti. Trust the intermediate — it answers the stereochemistry question for you.' },
+        { k:'Bucket 3', t:'Concerted — same face',
+          sel:'.bucket-card[data-bucket="3"]', blanks:['.bucket-reactions','.bucket-cue'], reveals:[['.bucket-reactions'],['.bucket-cue']],
+          coach:'One step, both atoms land together, same face: syn. If both new pieces arrive holding hands, they sit on the same side.' },
+        { k:'Watch it move', t:'Hydroboration — anti-Markovnikov, syn',
+          mech:'.mech-player[data-mech="hydroboration"]',
+          coach:'Walk it slowly. Boron is the electrophile but lands on the LESS substituted carbon — sterics, not charge, pick the seat. This is the exception that proves you understand the rule.' },
+        { k:'Quiz the table', t:'Regiochemistry at a glance',
+          sel:'#alkenes table.dtbl',
+          blanks:['tbody tr td:nth-child(2)','tbody tr td:nth-child(3)','tbody tr td:nth-child(4)'],
+          reveals:[['tbody tr td:nth-child(2)'],['tbody tr td:nth-child(3)'],['tbody tr td:nth-child(4)']],
+          coach:'Go reagent by reagent down column one and make them call the whole row. Reveal one column at a time: regio, then stereo, then rearrangement risk.' },
+        { k:'You do', t:'Two more — commit each time',
+          mcq:{hub:'alkenes', pick:[1,2]},
+          coach:'Hands off. Let the silence sit. A committed wrong answer tonight is worth more than ten nods.' },
+        { k:'Lock it in', t:'The whole hub in five lines',
+          closer:true,
+          coach:'End on the assignment, not the summary. The set is where this becomes theirs.' }
+      ]
+    }
+  };
+
+  var params = new URLSearchParams(location.search);
+  var state = { lesson:null, beat:0, step:0 };
+  var overlay = document.getElementById('teachOverlay');
+  var stage = document.getElementById('teachStage');
+
+  function stripRootId(node){ node.removeAttribute('id'); return node; }
+
+  function buildCloser(){
+    var d=document.createElement('div');
+    d.className='teach-closer';
+    d.innerHTML='<h2>Alkenes, locked in</h2><div class="tc-chips">'
+      +'<span class="tc-chip">Markovnikov: the rich get richer</span>'
+      +'<span class="tc-chip">Peroxides flip HBr to anti-Markovnikov</span>'
+      +'<span class="tc-chip">Open cation: rearranges, racemic</span>'
+      +'<span class="tc-chip">Bridged ring: anti, no rearrangement</span>'
+      +'<span class="tc-chip">Concerted: syn, same face</span>'
+      +'</div><div class="tc-assign">Tonight: the Alkenes set. Twelve problems.<br/>Commit before you peek — the set is where it becomes yours.</div>';
+    return d;
+  }
+
+  function render(){
+    var L=LESSONS[state.lesson]; if(!L) return;
+    var B=L.beats[state.beat];
+    document.getElementById('teachTitle').textContent=B.t;
+    document.getElementById('teachKicker').textContent=B.k;
+    document.getElementById('teachCount').textContent=(state.beat+1)+' / '+L.beats.length;
+    document.getElementById('teachCoach').textContent=B.coach||'';
+    var dots=document.getElementById('teachDots'); dots.innerHTML='';
+    L.beats.forEach(function(_,i){ var s=document.createElement('span'); s.className='teach-dot'+(i===state.beat?' on':''); dots.appendChild(s); });
+    stage.innerHTML='';
+
+    var node=null;
+    if(B.closer){ node=buildCloser(); }
+    else if(B.mcq){
+      var src=document.querySelector('.mcq-set[data-hub="'+B.mcq.hub+'"]');
+      if(src){
+        node=stripRootId(src.cloneNode(true));
+        node.removeAttribute('data-wired');
+        var qs=node.querySelectorAll('.mcq-q');
+        qs.forEach(function(q,i){ if(B.mcq.pick.indexOf(i)<0) q.classList.add('teach-hidden-q'); });
+        node.querySelectorAll('.mcq-opt').forEach(function(o){ o.classList.remove('correct','wrong','disabled'); o.disabled=false; });
+        node.querySelectorAll('.mcq-explain').forEach(function(e){ e.classList.remove('show'); });
+        var sc=node.querySelector('.mcq-score'); if(sc) sc.style.display='none';
+        var rs=node.querySelector('.mcq-reset'); if(rs) rs.style.display='none';
+        try{ wireMCQSet(node); }catch(e){}
+      }
+    } else if(B.mech){
+      var srcM=document.querySelector(B.mech);
+      if(srcM){
+        node=stripRootId(srcM.cloneNode(true));
+        node.removeAttribute('data-wired');
+        try{ wireMechPlayer(node); }catch(e){}
+      }
+    } else if(B.sel){
+      var srcS=document.querySelector(B.sel);
+      if(srcS) node=stripRootId(srcS.cloneNode(true));
+    }
+    if(!node){ stage.textContent='(content not found: check lesson registry)'; return; }
+    stage.appendChild(node);
+
+    // apply blanks not yet revealed
+    if(B.blanks){
+      B.blanks.forEach(function(sel,gi){
+        if(gi < state.step) return; // this group already revealed
+        node.querySelectorAll(sel).forEach(function(el){ el.classList.add('teach-blank'); });
+      });
+      if(state.step < (B.reveals||[]).length){
+        var chip=document.createElement('span'); chip.className='teach-reveal-chip'; chip.textContent='HIDDEN - R TO REVEAL';
+        stage.appendChild(chip);
+      }
+    }
+  }
+
+  function revealNext(){
+    var B=LESSONS[state.lesson].beats[state.beat];
+    if(!B.reveals || state.step>=B.reveals.length) return false;
+    var group=B.reveals[state.step];
+    group.forEach(function(sel){
+      stage.querySelectorAll(sel).forEach(function(el){
+        el.classList.remove('teach-blank'); el.classList.add('teach-blank-flash');
+      });
+    });
+    state.step++;
+    if(state.step>=B.reveals.length){ var c=stage.querySelector('.teach-reveal-chip'); if(c)c.remove(); }
+    return true;
+  }
+  function mechNext(){
+    var btn=stage.querySelector('.mech-controls [data-act="next"]');
+    if(btn && !btn.disabled){ btn.click(); return true; }
+    return false;
+  }
+  function advance(){
+    var L=LESSONS[state.lesson], B=L.beats[state.beat];
+    if(B.mech && mechNext()) return;
+    if(revealNext()) return;
+    if(state.beat < L.beats.length-1){ state.beat++; state.step=0; render(); }
+  }
+  function back(){ if(state.beat>0){ state.beat--; state.step=0; render(); } }
+  function exit(){ overlay.classList.remove('open'); document.body.style.overflow=''; }
+
+  function open(lesson, beat, step){
+    if(!LESSONS[lesson]) return;
+    state.lesson=lesson; state.beat=Math.min(beat||0, LESSONS[lesson].beats.length-1); state.step=step||0;
+    overlay.classList.add('open'); document.body.style.overflow='hidden';
+    render();
+    if(state.step>0){ // re-apply reveals up to step for verification URLs
+      var s=state.step; state.step=0; render();
+      for(var i=0;i<s;i++) revealNext();
+    }
+  }
+
+  document.addEventListener('keydown',function(e){
+    if(!overlay.classList.contains('open')) return;
+    if(e.key==='ArrowRight'||e.key===' '){ e.preventDefault(); advance(); }
+    else if(e.key==='r'||e.key==='R'){ e.preventDefault(); if(!revealNext()){ var B=LESSONS[state.lesson].beats[state.beat]; if(B.mech) mechNext(); } }
+    else if(e.key==='ArrowLeft'){ e.preventDefault(); back(); }
+    else if(e.key==='Escape'){ exit(); }
+  });
+
+  // coach launcher (?coach=1) + auto-open (?teach=hub)
+  if(params.get('coach')==='1'){
+    var la=document.getElementById('teachLauncher'); la.classList.add('show');
+    Object.keys(LESSONS).forEach(function(k){
+      var b=document.createElement('button'); b.textContent='Teach: '+LESSONS[k].title.split(' - ')[0].split(' — ')[0];
+      b.addEventListener('click',function(){ open(k,0,0); });
+      la.appendChild(b);
+    });
+  }
+  var tHub=params.get('teach');
+  if(tHub && LESSONS[tHub]){
+    var beatP=parseInt(params.get('beat')||'0',10)||0;
+    var stepP=parseInt(params.get('step')||'0',10)||0;
+    // wait for engine wiring (wireMCQSet etc. defined at parse time; DOM ready enough at end of body)
+    setTimeout(function(){ open(tHub, beatP, Math.min(stepP,9)); }, 60);
+  }
+  window.__teachOpen = open;
 })();
 </script>
 
