@@ -31318,6 +31318,12 @@ html[data-theme="dark"] .teach-coach-line{color:#d8d0bd;}
 .teach-dot{width:8px;height:8px;border-radius:50%;background:rgba(140,114,53,.28);}
 .teach-dot.on{background:#C9A84C;}
 .teach-keys{font-family:'JetBrains Mono',monospace;font-size:.62rem;color:#8C7235;margin-left:14px;white-space:nowrap;}
+#teachPen{position:absolute;inset:0;z-index:50;display:none;cursor:crosshair;}
+#teachPen.on{display:block;}
+.teach-dot{cursor:pointer;}
+.teach-dot:hover{transform:scale(1.5);background:#8C7235;}
+.teach-pen-note{font-family:'JetBrains Mono',monospace;font-size:.62rem;color:#b45309;margin-left:10px;display:none;}
+.teach-pen-note.on{display:inline;}
 .teach-blank{filter:blur(13px);user-select:none;pointer-events:none;transition:filter .28s;}
 .teach-blank-flash{animation:teachFlash 1s ease;}
 @keyframes teachFlash{0%{background:rgba(201,168,76,.4);}100%{background:transparent;}}
@@ -31358,12 +31364,12 @@ html[data-theme="dark"] .teach-closer .tc-assign{color:#e6d08a;}
     <span class="teach-title" id="teachTitle"></span>
     <span class="teach-count" id="teachCount"></span>
   </div>
-  <div class="teach-stage"><div class="teach-stage-inner"><div class="teach-stage-wrap" id="teachStage"></div></div></div>
+  <div class="teach-stage" id="teachStageOuter" style="position:relative"><div class="teach-stage-inner"><div class="teach-stage-wrap" id="teachStage"></div></div><canvas id="teachPen"></canvas></div>
   <div class="teach-coach">
     <span class="teach-coach-label">Coach line</span>
     <span class="teach-coach-line" id="teachCoach"></span>
     <div class="teach-dots" id="teachDots"></div>
-    <span class="teach-keys">SPACE next · R reveal · LEFT back · ESC exit</span>
+    <span class="teach-keys">SPACE next · R reveal · P pen · C clear · LEFT back · ESC exit</span><span class="teach-pen-note" id="teachPenNote">PEN ON - draw with the mouse</span>
   </div>
 </div>
 <div id="teachLauncher"></div>
@@ -31872,6 +31878,28 @@ html[data-theme="dark"] .teach-closer .tc-assign{color:#e6d08a;}
     return d;
   }
 
+  // annotation pen: press P to toggle, C to clear; strokes clear on beat change
+  var pen={on:false,drawing:false,ctx:null,el:null};
+  function penSetup(){
+    pen.el=document.getElementById('teachPen');
+    var outer=document.getElementById('teachStageOuter');
+    function size(){ if(!pen.el)return; pen.el.width=outer.clientWidth; pen.el.height=outer.clientHeight; }
+    size(); window.addEventListener('resize',size);
+    pen.ctx=pen.el.getContext('2d');
+    pen.el.addEventListener('mousedown',function(e){ pen.drawing=true; var r=pen.el.getBoundingClientRect(); pen.ctx.beginPath(); pen.ctx.moveTo(e.clientX-r.left,e.clientY-r.top); });
+    pen.el.addEventListener('mousemove',function(e){ if(!pen.drawing)return; var r=pen.el.getBoundingClientRect(); pen.ctx.lineTo(e.clientX-r.left,e.clientY-r.top); pen.ctx.stroke(); });
+    ['mouseup','mouseleave'].forEach(function(ev){ pen.el.addEventListener(ev,function(){ pen.drawing=false; }); });
+  }
+  function penStyle(){ pen.ctx.strokeStyle='#b45309'; pen.ctx.lineWidth=3.5; pen.ctx.lineCap='round'; pen.ctx.lineJoin='round'; }
+  function penClear(){ if(pen.ctx&&pen.el) pen.ctx.clearRect(0,0,pen.el.width,pen.el.height); }
+  function penToggle(force){
+    if(!pen.ctx){ penSetup(); }
+    pen.on=(force!=null&&force!==undefined)?force:!pen.on;
+    pen.el.classList.toggle('on',pen.on);
+    var note=document.getElementById('teachPenNote'); if(note)note.classList.toggle('on',pen.on);
+    penStyle();
+  }
+
   function render(){
     var L=LESSONS[state.lesson]; if(!L) return;
     var B=L.beats[state.beat];
@@ -31879,8 +31907,14 @@ html[data-theme="dark"] .teach-closer .tc-assign{color:#e6d08a;}
     document.getElementById('teachKicker').textContent=B.k;
     document.getElementById('teachCount').textContent=(state.beat+1)+' / '+L.beats.length;
     document.getElementById('teachCoach').textContent=B.coach||'';
+    penClear(); if(pen.on) penToggle(false);
     var dots=document.getElementById('teachDots'); dots.innerHTML='';
-    L.beats.forEach(function(_,i){ var s=document.createElement('span'); s.className='teach-dot'+(i===state.beat?' on':''); dots.appendChild(s); });
+    L.beats.forEach(function(bt,i){
+      var s=document.createElement('span'); s.className='teach-dot'+(i===state.beat?' on':'');
+      s.title=(i+1)+' · '+bt.t;
+      s.addEventListener('click',function(){ state.beat=i; state.step=0; render(); });
+      dots.appendChild(s);
+    });
     stage.innerHTML='';
 
     var node=null;
@@ -31969,6 +32003,8 @@ html[data-theme="dark"] .teach-closer .tc-assign{color:#e6d08a;}
     if(!overlay.classList.contains('open')) return;
     if(e.key==='ArrowRight'||e.key===' '){ e.preventDefault(); advance(); }
     else if(e.key==='r'||e.key==='R'){ e.preventDefault(); if(!revealNext()){ var B=LESSONS[state.lesson].beats[state.beat]; if(B.mech) mechNext(); } }
+    else if(e.key==='p'||e.key==='P'){ e.preventDefault(); penToggle(); }
+    else if(e.key==='c'||e.key==='C'){ e.preventDefault(); penClear(); }
     else if(e.key==='ArrowLeft'){ e.preventDefault(); back(); }
     else if(e.key==='Escape'){ exit(); }
   });
