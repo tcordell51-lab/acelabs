@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>OChem, Retold — Night 1 · The Only Reaction</title>
+<meta name="description" content="Organic chemistry as one story: something electron-rich attacks something electron-poor. Night 1 of the Ace the DAT retelling."/>
+<style>
+:root{--cream:#fdf8ee;--ink:#2a2118;--ink2:#5c5348;--ink3:#8a8168;--gold:#C9A84C;--goldhi:#b45309;
+--rich:#1B7A4D;--richbg:rgba(27,122,77,.12);--poor:#b3382e;--poorbg:rgba(179,56,46,.1);
+--serif:'Playfair Display',Georgia,serif;--mono:'JetBrains Mono',ui-monospace,Menlo,monospace;--sans:system-ui,-apple-system,'Segoe UI',sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--cream);color:var(--ink);font-family:var(--sans);line-height:1.6}
+.top{display:flex;align-items:baseline;gap:14px;padding:14px 26px;border-bottom:2px solid var(--gold);flex-wrap:wrap;position:sticky;top:0;background:var(--cream);z-index:10}
+.brand{font-family:var(--serif);font-weight:800;font-size:1.1rem}
+.brand em{color:var(--gold);font-style:italic}
+.kick{font-family:var(--mono);font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;color:var(--goldhi)}
+.mode{margin-left:auto;display:flex;gap:8px}
+.mode button{font-family:var(--mono);font-size:.68rem;letter-spacing:.08em;border:1.5px solid rgba(140,114,53,.4);background:none;border-radius:99px;padding:6px 14px;cursor:pointer;color:var(--ink2)}
+.mode button.on{background:#1B3A2D;color:#e6d08a;border-color:#1B3A2D}
+.wrap{max-width:880px;margin:0 auto;padding:34px 22px 90px}
+.night{font-family:var(--mono);font-size:.66rem;letter-spacing:.2em;text-transform:uppercase;color:var(--goldhi)}
+h1{font-family:var(--serif);font-size:clamp(28px,5vw,40px);line-height:1.15;margin:8px 0 10px}
+.lede{font-size:1.05rem;color:var(--ink2);max-width:60ch}
+.scene{margin:44px 0;border:1.5px solid rgba(140,114,53,.3);border-radius:16px;overflow:hidden;background:#fff}
+.scene.locked{opacity:.35;pointer-events:none;filter:grayscale(.4)}
+.scene-head{display:flex;align-items:baseline;gap:12px;padding:14px 20px;border-bottom:1px solid rgba(140,114,53,.2)}
+.scene-num{font-family:var(--mono);font-size:.62rem;letter-spacing:.16em;color:var(--goldhi);text-transform:uppercase}
+.scene-title{font-family:var(--serif);font-size:1.35rem;font-weight:800}
+.scene-body{padding:20px}
+.scene svg{display:block;width:100%;height:auto;max-width:780px;margin:0 auto}
+.say{font-size:1rem;color:var(--ink2);max-width:66ch;margin:14px auto 0}
+.say b{color:var(--ink)}
+.teachline{margin:14px auto 0;max-width:66ch;background:rgba(201,168,76,.1);border-left:4px solid var(--gold);border-radius:10px;padding:10px 14px;font-family:var(--serif);font-style:italic;font-size:1rem;color:#6b5620}
+.teachline .lb{font-family:var(--mono);font-size:.58rem;letter-spacing:.16em;text-transform:uppercase;color:var(--goldhi);display:block;margin-bottom:3px;font-style:normal}
+.commit{margin:18px auto 0;max-width:66ch;border:1.5px solid rgba(140,114,53,.35);border-radius:12px;padding:14px 16px}
+.commit .q{font-weight:650;margin-bottom:10px}
+.commit button.opt{display:block;width:100%;text-align:left;margin:6px 0;padding:10px 13px;border-radius:9px;border:1.5px solid rgba(140,114,53,.3);background:var(--cream);cursor:pointer;font-size:.92rem;color:var(--ink)}
+.commit button.opt:hover{border-color:var(--gold)}
+.commit button.opt.ok{border-color:var(--rich);box-shadow:0 0 0 1.5px var(--rich)}
+.commit button.opt.no{border-color:var(--poor);box-shadow:0 0 0 1.5px var(--poor)}
+.commit button.opt:disabled{cursor:default}
+.commit .ex{margin-top:10px;font-size:.88rem;color:var(--ink2);background:rgba(201,168,76,.08);border-radius:8px;padding:9px 12px}
+.commit .ex .v{font-family:var(--mono);font-size:.6rem;letter-spacing:.12em;color:var(--rich);display:block;margin-bottom:3px}
+.commit .ex .v.miss{color:var(--goldhi)}
+.reveal-mask{filter:blur(12px);transition:filter .3s;pointer-events:none}
+.reveal-btn{display:block;margin:10px auto 0;font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;background:var(--gold);border:none;border-radius:99px;padding:7px 16px;cursor:pointer;color:#1a1206;font-weight:700}
+.gate{margin-top:50px;text-align:center;border-top:2px solid var(--gold);padding-top:30px}
+.gate h2{font-family:var(--serif);font-size:1.7rem}
+.gate .links{margin-top:16px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.gate a{font-family:var(--mono);font-size:.72rem;letter-spacing:.06em;border:1.5px solid var(--gold);border-radius:10px;padding:10px 18px;color:#6b5620;text-decoration:none}
+.gate a:hover{background:rgba(201,168,76,.15)}
+.legend{display:flex;gap:16px;justify-content:center;margin:10px 0 0;font-family:var(--mono);font-size:.66rem;letter-spacing:.08em}
+.legend .rich{color:var(--rich)} .legend .poor{color:var(--poor)}
+.progress{position:fixed;bottom:0;left:0;right:0;background:var(--cream);border-top:1px solid rgba(140,114,53,.3);padding:8px 24px;display:flex;gap:10px;align-items:center;font-family:var(--mono);font-size:.64rem;color:var(--ink3);z-index:10}
+.pbar{flex:1;height:6px;border-radius:99px;background:rgba(140,114,53,.18);overflow:hidden}
+.pfill{height:100%;background:linear-gradient(90deg,var(--gold),#e6d08a);width:0%;transition:width .4s}
+@media print{.mode,.progress{display:none}}
+</style>
+</head>
+<body>
+<div class="top">
+  <span class="brand">OChem, <em>Retold</em></span>
+  <span class="kick">Ace the DAT · a different way in</span>
+  <div class="mode">
+    <button id="mWalk" class="on">Walk it yourself</button>
+    <button id="mTeach">Teach mode</button>
+  </div>
+</div>
+<div class="wrap">
+  <div class="night">Night 1 of 10</div>
+  <h1>The Only Reaction in Organic Chemistry</h1>
+  <p class="lede">You are about to learn a hundred reactions. Here is the secret nobody says out loud:
+  they are all the <b>same sentence</b>. Something rich in electrons attacks something poor in electrons.
+  Learn to see rich and poor, and organic chemistry stops being memorization and starts being recognition.</p>
+  <div class="legend"><span class="rich">GREEN = ELECTRON-RICH (the attacker)</span><span class="poor">RED = ELECTRON-POOR (the target)</span></div>
+  <div id="scenes"></div>
+  <div class="gate" id="gate" style="display:none">
+    <h2>You can see it now.</h2>
+    <p style="max-width:56ch;margin:8px auto;color:var(--ink2)">Every reaction you meet from tonight on, ask the same two questions first:
+    <b>who is rich, and who is poor?</b> The arrows, the products, the mechanisms - they all follow from that.</p>
+    <div class="links">
+      <a href="../ochem/index.html?game=wheel">Earn the reactions - play the Reaction Wheel</a>
+      <a href="../ochem/index.html">Open the full Reaction Maps</a>
+    </div>
+  </div>
+</div>
+<div class="progress"><span id="pcount"></span><div class="pbar"><div class="pfill" id="pfill"></div></div><span id="plabel">commit to advance</span></div>
+<script>
+(function(){
+var RICH='#1B7A4D', POOR='#b3382e', INK='#2a2118', INK3='#8a8168', GOLD='#C9A84C';
+function atom(x,y,t,c,s){return '<text x="'+x+'" y="'+y+'" font-family="system-ui" font-size="'+(s||22)+'" font-weight="700" fill="'+(c||INK)+'" text-anchor="middle">'+t+'</text>'}
+function lbl(x,y,t,c,s,anchor){return '<text x="'+x+'" y="'+y+'" font-family="JetBrains Mono,monospace" font-size="'+(s||12)+'" letter-spacing="1" fill="'+(c||INK3)+'" text-anchor="'+(anchor||'middle')+'">'+t+'</text>'}
+function serif(x,y,t,c,s){return '<text x="'+x+'" y="'+y+'" font-family="Georgia,serif" font-style="italic" font-size="'+(s||15)+'" fill="'+(c||INK)+'" text-anchor="middle">'+t+'</text>'}
+function bond(x1,y1,x2,y2,w){return '<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'" stroke="'+INK+'" stroke-width="'+(w||2.4)+'" stroke-linecap="round"/>'}
+function glow(x,y,r,c){return '<circle cx="'+x+'" cy="'+y+'" r="'+r+'" fill="'+c+'" opacity="0.14"/><circle cx="'+x+'" cy="'+y+'" r="'+(r*0.62)+'" fill="'+c+'" opacity="0.12"/>'}
+function arrow(x1,y1,qx,qy,x2,y2,c){
+  return '<path d="M '+x1+' '+y1+' Q '+qx+' '+qy+' '+x2+' '+y2+'" fill="none" stroke="'+(c||RICH)+'" stroke-width="3" marker-end="url(#ah)"/>'}
+var DEFS='<defs><marker id="ah" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1B7A4D"/></marker></defs>';
+
+var SCENES=[
+{ n:'Scene 1', t:'One sentence runs the whole subject',
+  svg:'<svg viewBox="0 0 800 240">'+DEFS
+    +glow(210,120,64,RICH)+atom(210,130,'Nu',RICH,34)+lbl(210,178,'ELECTRON-RICH',RICH,11)
+    +glow(590,120,64,POOR)+atom(592,130,'E',POOR,34)+atom(614,116,'+',POOR,18)+lbl(590,178,'ELECTRON-POOR',POOR,11)
+    +arrow(268,110,400,52,528,104)
+    +serif(400,225,'rich attacks poor. that is the entire course.',INK,17)
+    +'</svg>',
+  walk:'Read it once more, slowly: <b>something rich in electrons attacks something poor in electrons.</b> Chemists say nucleophile (rich, loves a nucleus) and electrophile (poor, loves electrons). Every mechanism you will ever draw is this picture wearing a costume.',
+  teach:'Open with the claim, full stop: this is the only reaction in organic chemistry. Let it hang. Then promise them: everything tonight proves it.',
+  q:{stem:'In this one sentence, who moves first?', opts:[
+    'The electron-poor species reaches out and takes electrons',
+    'The electron-rich species attacks - electrons always flow FROM rich TO poor',
+    'They collide randomly and either can start',
+    'The solvent decides who moves'],
+   correct:1, explain:'Arrows in organic chemistry are electron movement, and electrons live on the rich species - so the rich one always throws the first punch. The green attacks the red, never the reverse.'}},
+
+{ n:'Scene 2', t:'How to spot RICH in the wild',
+  svg:'<svg viewBox="0 0 800 300">'+DEFS
+    +glow(140,120,56,RICH)+atom(140,128,'O',RICH,26)+atom(108,112,'H',INK,18)+bond(118,116,126,120)
+    +'<circle cx="128" cy="98" r="3.4" fill="'+RICH+'"/><circle cx="140" cy="94" r="3.4" fill="'+RICH+'"/>'
+    +'<circle cx="156" cy="98" r="3.4" fill="'+RICH+'"/><circle cx="166" cy="108" r="3.4" fill="'+RICH+'"/>'
+    +atom(170,140,'-',RICH,26)+lbl(140,200,'LONE PAIRS + CHARGE',RICH,10.5)+serif(140,222,'hydroxide',INK3,13)
+    +glow(400,120,56,RICH)+bond(360,140,440,140,2.6)+bond(364,130,436,130,2.6)+lbl(400,200,'A PI BOND STICKING UP',RICH,10.5)+serif(400,222,'any alkene',INK3,13)
+    +glow(660,120,56,RICH)+atom(640,132,'C',INK,22)+bond(654,126,684,114)+atom(700,112,'MgBr',INK3,15)
+    +'<text x="628" y="112" font-size="15" font-weight="800" fill="'+RICH+'">δ−</text>'
+    +lbl(660,200,'C BONDED TO A METAL',RICH,10.5)+serif(660,222,'Grignard',INK3,13)
+    +serif(400,278,'rich = has electrons to spare: lone pairs, pi bonds, negative charge, or a metal handing them over',INK,15)
+    +'</svg>',
+  walk:'Three faces of rich. <b>Lone pairs and negative charges</b> are stored electrons. <b>Pi bonds</b> are electrons sticking out of the skeleton, exposed. And <b>carbon attached to a metal</b> is carbon that has been handed the electrons in the relationship. See any of these, think: this one attacks.',
+  teach:'Point at each and ask the room WHY it is rich before you say it. Hydroxide has extras. The pi bond is exposed. The metal is more generous than carbon.',
+  q:{stem:'Which of these is NOT electron-rich?', opts:[
+    'The oxygen of water (two lone pairs)',
+    'The pi bond of 2-butene',
+    'The carbon of CH3-MgBr',
+    'The carbon of CH3-Br'],
+   correct:3, explain:'Bromine is more electronegative than carbon, so it PULLS electrons away - that carbon is delta-positive, electron-POOR. Same skeleton as the Grignard, opposite role: the metal gives, the halogen takes.'}},
+
+{ n:'Scene 3', t:'How to spot POOR in the wild',
+  svg:'<svg viewBox="0 0 800 300">'+DEFS
+    +glow(140,120,56,POOR)+atom(120,132,'C',INK,22)+bond(134,126,160,114)+atom(174,112,'Br',INK3,17)
+    +'<text x="106" y="108" font-size="15" font-weight="800" fill="'+POOR+'">δ+</text>'
+    +lbl(140,200,'C NEXT TO AN EN ATOM',POOR,10.5)+serif(140,222,'alkyl halide',INK3,13)
+    +glow(400,120,56,POOR)+atom(390,132,'C',INK,22)+bond(402,120,422,104,2.6)+bond(408,126,428,110,2.6)+atom(438,100,'O',INK3,18)
+    +'<text x="374" y="108" font-size="15" font-weight="800" fill="'+POOR+'">δ+</text>'
+    +lbl(400,200,'CARBONYL CARBON',POOR,10.5)+serif(400,222,'aldehyde / ketone',INK3,13)
+    +glow(660,120,56,POOR)+atom(655,132,'C',INK,24)+atom(686,116,'+',POOR,22)
+    +lbl(660,200,'A FULL POSITIVE CHARGE',POOR,10.5)+serif(660,222,'carbocation',INK3,13)
+    +serif(400,278,'poor = missing electron density: delta-plus beside an electronegative atom, or an outright cation',INK,15)
+    +'</svg>',
+  walk:'Three faces of poor. A carbon <b>next to something electronegative</b> (halogen, oxygen) has had its electrons pulled away - delta-plus. The <b>carbonyl carbon</b> is the most famous victim: double-bonded to oxygen, permanently shortchanged. And a <b>carbocation</b> is poverty itself - a full empty seat.',
+  teach:'The move to model out loud: find the electronegative atom, then look at what it is ATTACHED to. The EN atom is fine - its NEIGHBOR is the target.',
+  q:{stem:'In CH3-C(=O)-CH3 (acetone), where does a nucleophile attack?', opts:[
+    'The oxygen - it is the most electronegative atom',
+    'The carbonyl carbon - oxygen pulled its electrons away, leaving it delta-plus',
+    'A methyl hydrogen',
+    'It cannot be attacked - acetone is neutral'],
+   correct:1, explain:'The classic trap: the EN atom itself is RICH (it hoarded the electrons). Its neighbor is the poor one. Oxygen took, carbon lost - the nucleophile goes for the carbon.'}},
+
+{ n:'Scene 4', t:'Arrows are electrons moving - nothing else',
+  svg:'<svg viewBox="0 0 800 260">'+DEFS
+    +glow(170,130,50,RICH)+atom(170,138,'HO',RICH,24)+atom(206,124,'-',RICH,22)
+    +glow(560,130,50,POOR)+atom(545,138,'C',INK,22)
+    +'<text x="530" y="112" font-size="14" font-weight="800" fill="'+POOR+'">δ+</text>'
+    +bond(560,132,600,120)+atom(618,116,'Br',INK3,17)
+    +arrow(220,116,380,60,522,116)
+    +lbl(385,52,'THE ARROW STARTS AT ELECTRONS, ENDS AT THE HUNGRY ATOM',RICH,10)
+    +serif(400,238,'never draw an arrow from an atom - draw it from a lone pair or a bond',INK,15)
+    +'</svg>',
+  walk:'The curved arrow is the entire grammar of mechanisms, and it has one rule: <b>it starts where electrons ARE (a lone pair or a bond) and points where they are GOING</b> (the poor atom). If you ever catch yourself drawing an arrow from a plain atom, or toward a rich atom, stop - the sentence got reversed.',
+  teach:'Push electrons, never atoms. Have them narrate every arrow they draw tonight in words: these electrons, moving here, because it is poor.',
+  q:{stem:'A student draws an arrow FROM the carbocation TO the alkene. What is wrong?', opts:[
+    'Nothing - the cation is reacting, so the arrow starts there',
+    'Arrows track electrons, and the cation has none to give - the arrow must go FROM the alkene pi bond TO the cation',
+    'The arrow should be straight, not curved',
+    'Cations never react with alkenes'],
+   correct:1, explain:'The cation is the poorest thing on the page - it cannot donate what it does not have. The pi bond (rich) attacks the cation (poor). Rich to poor, every single time.'}},
+
+{ n:'Scene 5', t:'The same sentence, four costumes',
+  svg:'<svg viewBox="0 0 800 430">'+DEFS
+    +lbl(200,30,'SN2',INK3,11)+glow(120,70,30,RICH)+atom(120,76,'HO',RICH,17)+atom(146,66,'-',RICH,15)
+      +glow(285,70,30,POOR)+atom(278,76,'C',INK,16)+bond(288,72,310,64,2)+atom(324,62,'Br',INK3,13)+arrow(150,62,215,38,262,60)
+    +lbl(600,30,'ALKENE + HBr',INK3,11)+glow(520,70,30,RICH)+bond(495,80,545,80,2.2)+bond(498,72,542,72,2.2)
+      +glow(690,70,30,POOR)+atom(686,76,'H',INK,16)+bond(696,72,716,64,2)+atom(730,62,'Br',INK3,13)+arrow(550,62,615,38,666,60)
+    +lbl(200,250,'GRIGNARD + KETONE',INK3,11)+glow(110,290,30,RICH)+atom(105,296,'C',INK,16)
+      +'<text x="92" y="274" font-size="12" font-weight="800" fill="'+RICH+'">δ−</text>'+atom(140,286,'MgBr',INK3,11)
+      +glow(285,290,30,POOR)+atom(278,296,'C',INK,16)+bond(288,288,306,274,2)+bond(293,294,311,280,2)+atom(320,270,'O',INK3,13)+arrow(140,282,210,258,258,282)
+    +lbl(600,250,'ENOLATE + CARBONYL (ALDOL)',INK3,11)+glow(520,290,30,RICH)+atom(515,296,'C',RICH,16)+atom(543,284,'-',RICH,15)
+      +glow(690,290,30,POOR)+atom(683,296,'C',INK,16)+bond(693,288,711,274,2)+bond(698,294,716,280,2)+atom(725,270,'O',INK3,13)+arrow(548,282,618,258,663,282)
+    +'<line x1="60" y1="150" x2="740" y2="150" stroke="rgba(140,114,53,.25)"/>'
+    +'<line x1="60" y1="370" x2="740" y2="370" stroke="rgba(140,114,53,.25)"/>'
+    +serif(400,405,'four chapters of your textbook. one sentence. green attacks red.',INK,17)
+    +'</svg>',
+  walk:'Look at all four at once. A substitution, an addition, a Grignard, an aldol - the reactions students learn in four different months, drawn side by side. <b>Every arrow starts green and lands red.</b> When the DAT shows you a reaction you have never seen, you now have a move: find the green, find the red, draw the arrow.',
+  teach:'This is the payoff slide - reveal the four quadrants one at a time and make them call green and red BEFORE each reveal. End on the line: you did not just learn four reactions, you learned the pattern that writes all of them.',
+  q:{stem:'A reaction you have never seen shows an amine (R-NH2) meeting an acyl chloride (R-COCl). Who attacks whom?', opts:[
+    'The acyl chloride attacks the amine - chlorine makes it aggressive',
+    'The nitrogen lone pair (rich) attacks the carbonyl carbon (poor)',
+    'The chlorine attacks the nitrogen',
+    'No reaction - neither is charged'],
+   correct:1, explain:'You have never seen it, and you still got it right - that is the whole point. Nitrogen has a lone pair: rich. The carbonyl carbon sits between O and Cl, doubly robbed: poor. Rich attacks poor. You can now predict chemistry you were never taught.'}}
+];
+
+var mode = new URLSearchParams(location.search).get('mode')==='teach' ? 'teach' : 'walk';
+var LS='atDAT_retold_n1';
+var done={};
+try{ done=JSON.parse(localStorage.getItem(LS)||'{}'); }catch(e){}
+function save(){ try{ localStorage.setItem(LS,JSON.stringify(done)); }catch(e){} }
+
+function render(){
+  var host=document.getElementById('scenes'); host.innerHTML='';
+  var unlocked=0;
+  SCENES.forEach(function(sc,i){ if(done['s'+i]) unlocked=i+1; });
+  SCENES.forEach(function(sc,i){
+    var open = mode==='teach' || i<=unlocked;
+    var d=document.createElement('div');
+    d.className='scene'+(open?'':' locked');
+    var inner='<div class="scene-head"><span class="scene-num">'+sc.n+'</span><span class="scene-title">'+sc.t+'</span></div><div class="scene-body">';
+    if(mode==='teach'){
+      inner+='<div id="mask'+i+'" class="'+(i>0?'reveal-mask':'')+'">'+sc.svg+'</div>';
+      if(i>0) inner+='<button class="reveal-btn" data-r="'+i+'">REVEAL</button>';
+      inner+='<div class="teachline"><span class="lb">Coach line</span>'+sc.teach+'</div>';
+    } else {
+      inner+=sc.svg+'<p class="say">'+sc.walk+'</p>';
+      if(open && !done['s'+i]){
+        inner+='<div class="commit"><div class="q">'+sc.q.stem+'</div>';
+        sc.q.opts.forEach(function(o,k){ inner+='<button class="opt" data-s="'+i+'" data-k="'+k+'">'+o+'</button>'; });
+        inner+='</div>';
+      } else if(done['s'+i]){
+        inner+='<div class="commit"><div class="q">'+sc.q.stem+'</div><div class="ex"><span class="v">COMMITTED - '+(done['s'+i]==='ok'?'FIRST TRY':'EARNED ON THE REREAD')+'</span>'+sc.q.explain+'</div></div>';
+      }
+    }
+    inner+='</div>';
+    d.innerHTML=inner;
+    host.appendChild(d);
+  });
+  // wire commits
+  host.querySelectorAll('button.opt').forEach(function(b){
+    b.addEventListener('click',function(){
+      var si=+b.dataset.s, k=+b.dataset.k, sc=SCENES[si];
+      var box=b.closest('.commit');
+      box.querySelectorAll('.opt').forEach(function(x){ x.disabled=true;
+        if(+x.dataset.k===sc.q.correct) x.classList.add('ok'); });
+      var ok = k===sc.q.correct;
+      if(!ok) b.classList.add('no');
+      var ex=document.createElement('div'); ex.className='ex';
+      ex.innerHTML='<span class="v'+(ok?'':' miss')+'">'+(ok?'THAT IS THE SENTENCE.':'GOOD MISS - READ THIS, THEN THE NEXT SCENE IS OPEN ANYWAY.')+'</span>'+sc.q.explain;
+      box.appendChild(ex);
+      done['s'+si]= ok?'ok':'read'; save();
+      var nx=document.createElement('button'); nx.className='reveal-btn'; nx.textContent='CONTINUE';
+      nx.addEventListener('click',render);
+      box.appendChild(nx);
+      updateBar();
+    });
+  });
+  host.querySelectorAll('.reveal-btn[data-r]').forEach(function(b){
+    b.addEventListener('click',function(){ document.getElementById('mask'+b.dataset.r).classList.remove('reveal-mask'); b.remove(); });
+  });
+  var all = SCENES.every(function(_,i){ return done['s'+i]; });
+  document.getElementById('gate').style.display = (mode==='walk' && all)?'block':'none';
+  updateBar();
+}
+function updateBar(){
+  var n=SCENES.filter(function(_,i){return done['s'+i]}).length;
+  document.getElementById('pcount').textContent = mode==='teach' ? 'TEACH MODE' : 'NIGHT 1 · '+n+' / '+SCENES.length+' scenes committed';
+  document.getElementById('pfill').style.width = (mode==='teach'?100:(n/SCENES.length*100))+'%';
+  document.getElementById('plabel').textContent = mode==='teach' ? 'reveal as you go' : (n===SCENES.length?'night complete':'commit to advance');
+}
+function setMode(m){
+  mode=m;
+  document.getElementById('mWalk').classList.toggle('on',m==='walk');
+  document.getElementById('mTeach').classList.toggle('on',m==='teach');
+  render();
+  window.scrollTo(0,0);
+}
+document.getElementById('mWalk').addEventListener('click',function(){setMode('walk')});
+document.getElementById('mTeach').addEventListener('click',function(){setMode('teach')});
+setMode(mode);
+})();
+</script>
+</body>
+</html>
