@@ -24,7 +24,11 @@ button{font:inherit}
 .mode button{font-family:var(--mono);font-size:.68rem;letter-spacing:.08em;border:1.5px solid rgba(140,114,53,.4);background:none;border-radius:99px;padding:6px 14px;cursor:pointer;color:var(--ink2)}
 .mode button.on{background:#1B3A2D;color:#e6d08a;border-color:#1B3A2D}
 .wrap{max-width:880px;margin:0 auto;padding:34px 22px 90px}
+.nightbar{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
 .night{font-family:var(--mono);font-size:.66rem;letter-spacing:.2em;text-transform:uppercase;color:var(--goldhi)}
+.nightnav{margin-left:auto;display:flex;gap:8px}
+.nightnav a{font-family:var(--mono);font-size:.6rem;letter-spacing:.1em;border:1px solid rgba(140,114,53,.4);border-radius:99px;padding:4px 12px;color:#6b5620;text-decoration:none;white-space:nowrap}
+.nightnav a:hover{background:rgba(201,168,76,.15);border-color:var(--gold)}
 h1{font-family:var(--serif);font-size:clamp(28px,5vw,40px);line-height:1.15;margin:8px 0 10px}
 .lede{font-size:1.05rem;color:var(--ink2);max-width:60ch}
 .scene{margin:44px 0;border:1.5px solid rgba(140,114,53,.3);border-radius:18px;overflow:hidden;background:#fff;box-shadow:0 1px 2px rgba(42,33,24,.05),0 18px 44px -30px rgba(42,33,24,.3);transition:opacity .4s,filter .4s}
@@ -150,7 +154,7 @@ h1{font-family:var(--serif);font-size:clamp(28px,5vw,40px);line-height:1.15;marg
   </div>
 </div>
 <div class="wrap">
-  <div class="night" id="nightLine">Night 1 of 13 · in sync with your Booster bank: The Fundamentals</div>
+  <div class="nightbar"><div class="night" id="nightLine">Night 1 of 13 · in sync with your Booster bank: The Fundamentals</div><nav class="nightnav" id="nightNav" aria-label="Night navigation"></nav></div>
   <h1 id="nightTitle">The Only Reaction in Organic Chemistry</h1>
 <p class="lede" id="nightLede"></p>
   <div class="legend"><span class="rich">GREEN = ELECTRON-RICH (the attacker)</span><span class="poor">RED = ELECTRON-POOR (the target)</span></div>
@@ -869,6 +873,14 @@ var qsp=new URLSearchParams(location.search);
 var CUR=parseInt(qsp.get('night')||'1',10); if(!NIGHTS[CUR]) CUR=1;
 var SCENES=NIGHTS[CUR].scenes;
 document.getElementById('nightLine').textContent='Night '+CUR+' of 13 · in sync with your Booster bank: '+NIGHTS[CUR].booster;
+(function(){
+  var nav=document.getElementById('nightNav'), h='';
+  var qs=new URLSearchParams(location.search);
+  function href(n){ qs.set('night',n); return '?'+qs.toString(); }
+  if(NIGHTS[CUR-1]) h+='<a href="'+href(CUR-1)+'">BACK: NIGHT '+(CUR-1)+'</a>';
+  if(NIGHTS[CUR+1]) h+='<a href="'+href(CUR+1)+'">NEXT: NIGHT '+(CUR+1)+'</a>';
+  nav.innerHTML=h;
+})();
 document.getElementById('nightTitle').textContent=NIGHTS[CUR].t;
 document.getElementById('nightLede').innerHTML=NIGHTS[CUR].lede;
 document.title='OChem, Retold — Night '+CUR+' · '+NIGHTS[CUR].t;
