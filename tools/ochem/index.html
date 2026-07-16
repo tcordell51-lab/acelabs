@@ -32327,6 +32327,13 @@ html[data-theme="dark"] .rw-wheel-chip{color:#d8c893;}
   function openGame(){
     document.getElementById('rwOverlay').classList.add('open');
     document.body.style.overflow='hidden';
+    // ?wheel=<family key> deep-links straight to that wheel - the Retold
+    // nights send students to their own night's reps without making them
+    // grind the unlock chain first. Coach-directed context earns the jump.
+    var want=new URLSearchParams(location.search).get('wheel');
+    if(want){
+      for(var w=0;w<WHEELS.length;w++){ if(WHEELS[w].key===want){ openWheel(w); return; } }
+    }
     var start=0;
     for(var i=0;i<WHEELS.length;i++){ if(wheelUnlocked(i)&&!wheelDone(WHEELS[i])){ start=i; break; } if(wheelDone(WHEELS[i])) start=Math.min(i+1,WHEELS.length-1); }
     openWheel(start);
