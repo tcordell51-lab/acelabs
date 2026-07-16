@@ -80,6 +80,24 @@ h1{font-family:var(--serif);font-size:clamp(28px,5vw,40px);line-height:1.15;marg
 .pair{border:1px solid rgba(140,114,53,.25);border-radius:12px;padding:10px}
 .pair .pt{font-family:var(--mono);font-size:.6rem;letter-spacing:.12em;color:var(--ink3);text-align:center;margin-bottom:4px}
 .caption{font-family:var(--serif);font-style:italic;font-size:1rem;text-align:center;margin:12px 0 0;color:var(--ink)}
+.anim-stage{border:1px solid rgba(140,114,53,.25);border-radius:14px;background:#fff;padding:8px}
+.anim-cap{font-family:var(--serif);font-style:italic;text-align:center;font-size:1.02rem;color:var(--ink);margin:8px 0 4px;min-height:1.4em}
+.anim-ctl{display:flex;gap:10px;justify-content:center;align-items:center;margin-top:6px}
+.anim-ctl button{font-family:var(--mono);font-size:.68rem;letter-spacing:.08em;border:1.5px solid rgba(140,114,53,.4);background:var(--cream);border-radius:99px;padding:7px 16px;cursor:pointer;color:var(--ink2)}
+.anim-ctl button.primary{background:var(--gold);border-color:var(--gold);color:#1a1206;font-weight:700}
+.anim-dots{display:flex;gap:5px}
+.anim-dot{width:7px;height:7px;border-radius:50%;background:rgba(140,114,53,.25)}
+.anim-dot.on{background:var(--gold)}
+.eflow{stroke-dasharray:600;stroke-dashoffset:600;animation:eflowDraw 1.1s ease forwards}
+@keyframes eflowDraw{to{stroke-dashoffset:0}}
+.tapwrap{text-align:center}
+.tap-atom{cursor:pointer}
+.tap-atom circle{fill:rgba(201,168,76,.13);stroke:rgba(140,114,53,.55);stroke-width:1.5;transition:all .15s}
+.tap-atom:hover circle{stroke:var(--gold);stroke-width:2.5}
+.tap-atom.sel circle{fill:rgba(27,122,77,.2);stroke:var(--rich);stroke-width:3}
+.tap-atom.hit circle{fill:rgba(179,56,46,.16);stroke:var(--poor);stroke-width:3}
+.tap-atom.bad circle{stroke:#b3382e;stroke-dasharray:4 3}
+.tap-state{font-family:var(--mono);font-size:.66rem;letter-spacing:.12em;color:var(--goldhi);margin-top:8px;text-transform:uppercase}
 @media(max-width:700px){.pairgrid{grid-template-columns:1fr}}
 .legend{display:flex;gap:16px;justify-content:center;margin:10px 0 0;font-family:var(--mono);font-size:.66rem;letter-spacing:.08em}
 .legend .rich{color:var(--rich)} .legend .poor{color:var(--poor)}
@@ -187,7 +205,21 @@ NIGHTS[1]={ t:'The Only Reaction in Organic Chemistry', booster:'The Fundamental
     'Cations never react with alkenes'],
    correct:1, explain:'The cation is the poorest thing on the page - it cannot donate what it does not have. The pi bond (rich) attacks the cation (poor). Rich to poor, every single time.'}},
 
-{ n:'Scene 5', t:'The same sentence, four costumes',
+{ n:'Scene 5', t:'Watch the sentence happen',
+  anim:{frames:[
+   {svg:'<svg viewBox="0 0 760 240" style="max-width:760px"><circle cx="114" cy="128" r="3" fill="#1B7A4D"/><circle cx="126" cy="128" r="3" fill="#1B7A4D"/><text x="148" y="136" font-family="system-ui" font-size="24" font-weight="800" fill="#cf3b3b" text-anchor="middle">O</text><text x="172" y="124" font-family="system-ui" font-size="20" font-weight="700" fill="#1B7A4D" text-anchor="middle">&#8722;</text><text x="120" y="168" font-family="system-ui" font-size="20" font-weight="700" fill="#2a2118" text-anchor="middle"></text><text x="140" y="196" font-family="JetBrains Mono,monospace" font-size="11" letter-spacing="1" fill="#8a8168" text-anchor="middle">HYDROXIDE - LINED UP BEHIND CARBON</text><text x="430" y="137" font-family="system-ui" font-size="22" font-weight="800" fill="#2a2118" text-anchor="middle">C</text><line x1="444" y1="130" x2="482" y2="130" stroke="#2a2118" stroke-width="2.6" stroke-linecap="round"/><text x="502" y="137" font-family="system-ui" font-size="20" font-weight="700" fill="#8a4a2a" text-anchor="middle">Br</text><line x1="420" y1="128" x2="449.50159883593557" y2="157.8511695058257" stroke="#2a2118" stroke-width="2.2" stroke-linecap="round"/><text x="441.50159883593557" y="162.8511695058257" font-family="system-ui" font-size="15" font-weight="600" fill="#8a8168" text-anchor="middle">H</text><line x1="420" y1="128" x2="449.50159883593557" y2="102.14883049417429" stroke="#2a2118" stroke-width="2.2" stroke-linecap="round"/><text x="441.50159883593557" y="107.14883049417429" font-family="system-ui" font-size="15" font-weight="600" fill="#8a8168" text-anchor="middle">H</text><line x1="420" y1="130" x2="460.0" y2="130.0" stroke="#2a2118" stroke-width="2.2" stroke-linecap="round"/><text x="452.0" y="135.0" font-family="system-ui" font-size="15" font-weight="600" fill="#8a8168" text-anchor="middle">H</text><text x="470" y="196" font-family="JetBrains Mono,monospace" font-size="11" letter-spacing="1" fill="#8a8168" text-anchor="middle">BROMOMETHANE - BACKSIDE OPEN</text></svg>', say:'The nucleophile lines up exactly opposite the leaving group.'},
+   {svg:'<svg viewBox="0 0 760 240" style="max-width:760px"><circle cx="174" cy="128" r="3" fill="#1B7A4D"/><circle cx="186" cy="128" r="3" fill="#1B7A4D"/><text x="208" y="136" font-family="system-ui" font-size="24" font-weight="800" fill="#cf3b3b" text-anchor="middle">O</text><path class="eflow" d="M 214 118 Q 280 82 342 116" fill="none" stroke="#1B7A4D" stroke-width="3.2" stroke-linecap="round"/><line x1="238" y1="130" x2="330" y2="130" stroke="#2a2118" stroke-width="2" stroke-linecap="round" stroke-dasharray="6 5"/><text x="430" y="137" font-family="system-ui" font-size="22" font-weight="800" fill="#2a2118" text-anchor="middle">C</text><line x1="444" y1="130" x2="482" y2="130" stroke="#2a2118" stroke-width="2" stroke-linecap="round" stroke-dasharray="6 5"/><text x="502" y="137" font-family="system-ui" font-size="20" font-weight="700" fill="#8a4a2a" text-anchor="middle">Br</text><line x1="420" y1="128" x2="449.50159883593557" y2="157.8511695058257" stroke="#2a2118" stroke-width="2.2" stroke-linecap="round"/><text x="441.50159883593557" y="162.8511695058257" font-family="system-ui" font-size="15" font-weight="600" fill="#8a8168" text-anchor="middle">H</text><line x1="420" y1="128" x2="449.50159883593557" y2="102.14883049417429" stroke="#2a2118" stroke-width="2.2" stroke-linecap="round"/><text x="441.50159883593557" y="107.14883049417429" font-family="system-ui" font-size="15" font-weight="600" fill="#8a8168" text-anchor="middle">H</text><line x1="420" y1="130" x2="460.0" y2="130.0" stroke="#2a2118" stroke-width="2.2" stroke-linecap="round"/><text x="452.0" y="135.0" font-family="system-ui" font-size="15" font-weight="600" fill="#8a8168" text-anchor="middle">H</text><path class="eflow" d="M 452 122 Q 480 88 508 116" fill="none" stroke="#1B7A4D" stroke-width="3.2" stroke-linecap="round"/><text x="380" y="208" font-family="JetBrains Mono,monospace" font-size="10" letter-spacing="1" fill="#8a8168" text-anchor="middle">ONE MOMENT: O-C FORMING WHILE C-BR BREAKS - THE TRANSITION STATE</text></svg>', say:'Both arrows fire at once: O attacks the carbon while the C-Br bond gives its electrons to bromine.'},
+   {svg:'<svg viewBox="0 0 760 240" style="max-width:760px"><text x="300" y="136" font-family="system-ui" font-size="24" font-weight="800" fill="#cf3b3b" text-anchor="middle">O</text><line x1="316" y1="130" x2="352" y2="130" stroke="#2a2118" stroke-width="2.6" stroke-linecap="round"/><text x="368" y="137" font-family="system-ui" font-size="22" font-weight="800" fill="#2a2118" text-anchor="middle">C</text><line x1="380" y1="124" x2="404" y2="110" stroke="#2a2118" stroke-width="2.2" stroke-linecap="round"/><text x="412" y="106" font-family="system-ui" font-size="15" font-weight="600" fill="#8a8168" text-anchor="middle">H</text><line x1="380" y1="136" x2="404" y2="150" stroke="#2a2118" stroke-width="2.2" stroke-linecap="round"/><text x="412" y="158" font-family="system-ui" font-size="15" font-weight="600" fill="#8a8168" text-anchor="middle">H</text><line x1="360" y1="146" x2="352" y2="166" stroke="#2a2118" stroke-width="2.2" stroke-linecap="round"/><text x="350" y="180" font-family="system-ui" font-size="15" font-weight="600" fill="#8a8168" text-anchor="middle">H</text><text x="560" y="136" font-family="system-ui" font-size="22" font-weight="800" fill="#8a4a2a" text-anchor="middle">Br</text><text x="588" y="124" font-family="system-ui" font-size="20" font-weight="700" fill="#b3382e" text-anchor="middle">&#8722;</text><circle cx="554" cy="108" r="3" fill="#b3382e"/><circle cx="566" cy="108" r="3" fill="#b3382e"/><text x="380" y="212" font-family="JetBrains Mono,monospace" font-size="10" letter-spacing="1" fill="#8a8168" text-anchor="middle">DONE: THE UMBRELLA FLIPPED INSIDE OUT - INVERSION - AND BROMIDE LEFT</text></svg>', say:'One step. The umbrella flipped inside out, and bromide left with the electrons.'}
+  ]},
+  walk:'Step through it slowly. This is the sentence with motion: the green electrons FLOW from the rich oxygen to the poor carbon, and the leaving group walks off with the old bond. Every mechanism you ever draw will be some remix of these three frames.',
+  teach:'Play it, then play it again and make a student narrate each frame. The narration is the learning.',
+  q:{stem:'In the middle frame - the transition state - which bonds exist?', opts:[
+    'Only the old C-Br bond',
+    'Only the new O-C bond',
+    'Both partially - the new bond forms AS the old one breaks',
+    'Neither - the carbon is a free cation'],
+   correct:2, explain:'Concerted means one moment where both half-bonds exist: O-C forming, C-Br breaking. No intermediate, no cation - that single fact separates SN2 from SN1.'}},
+{ n:'Scene 6', t:'The same sentence, four costumes',
   svg:'<div class="pairgrid"><div class="pair"><div class="pt">SN2 - SUBSTITUTION</div><div class="rxnline"><div class="molcard rich"><span class="badge">&#8722;</span><canvas data-smiles="[OH-]" width="110" height="90"></canvas><div class="mol-lbl"></div><div class="mol-sub">hydroxide</div></div><svg class="arr" viewBox="0 0 120 44"><defs><marker id="ah2" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1B7A4D"/></marker></defs><path d="M 8 30 Q 60 6 112 26" fill="none" stroke="#1B7A4D" stroke-width="3" marker-end="url(#ah2)"/></svg><div class="molcard poor"><span class="badge">&#948;+</span><canvas data-smiles="CC[C@@H](C)Br" width="180" height="100"></canvas><div class="mol-lbl"></div><div class="mol-sub">(R)-2-bromobutane</div></div></div></div><div class="pair"><div class="pt">ALKENE ADDITION</div><div class="rxnline"><div class="molcard rich"><span class="badge">&#960;</span><canvas data-smiles="C=C(C)C" width="150" height="95"></canvas><div class="mol-lbl"></div><div class="mol-sub">isobutylene</div></div><svg class="arr" viewBox="0 0 120 44"><defs><marker id="ah2" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1B7A4D"/></marker></defs><path d="M 8 30 Q 60 6 112 26" fill="none" stroke="#1B7A4D" stroke-width="3" marker-end="url(#ah2)"/></svg><div class="molcard poor"><span class="badge">&#948;+</span><canvas data-smiles="Br" width="110" height="90"></canvas><div class="mol-lbl"></div><div class="mol-sub">H-Br (the H end)</div></div></div></div><div class="pair"><div class="pt">ACYL SUBSTITUTION</div><div class="rxnline"><div class="molcard rich"><span class="badge">&#948;&#8722;</span><canvas data-smiles="CCN" width="140" height="95"></canvas><div class="mol-lbl"></div><div class="mol-sub">ethylamine</div></div><svg class="arr" viewBox="0 0 120 44"><defs><marker id="ah2" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1B7A4D"/></marker></defs><path d="M 8 30 Q 60 6 112 26" fill="none" stroke="#1B7A4D" stroke-width="3" marker-end="url(#ah2)"/></svg><div class="molcard poor"><span class="badge">&#948;+</span><canvas data-smiles="CCC(=O)Cl" width="170" height="100"></canvas><div class="mol-lbl"></div><div class="mol-sub">propanoyl chloride</div></div></div></div><div class="pair"><div class="pt">CYANOHYDRIN ADDITION</div><div class="rxnline"><div class="molcard rich"><span class="badge">&#8722;</span><canvas data-smiles="[C-]#N" width="120" height="90"></canvas><div class="mol-lbl"></div><div class="mol-sub">cyanide</div></div><svg class="arr" viewBox="0 0 120 44"><defs><marker id="ah2" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1B7A4D"/></marker></defs><path d="M 8 30 Q 60 6 112 26" fill="none" stroke="#1B7A4D" stroke-width="3" marker-end="url(#ah2)"/></svg><div class="molcard poor"><span class="badge">&#948;+</span><canvas data-smiles="CC(C)=O" width="150" height="95"></canvas><div class="mol-lbl"></div><div class="mol-sub">acetone</div></div></div></div></div><p class="caption">four chapters of your textbook. one sentence. green attacks red.</p>',
   walk:'Look at all four at once. A substitution, an addition, a Grignard, an aldol - the reactions students learn in four different months, drawn side by side. <b>Every arrow starts green and lands red.</b> When the DAT shows you a reaction you have never seen, you now have a move: find the green, find the red, draw the arrow.',
   teach:'This is the payoff slide - reveal the four quadrants one at a time and make them call green and red BEFORE each reveal. End on the line: you did not just learn four reactions, you learned the pattern that writes all of them.',
@@ -196,7 +228,18 @@ NIGHTS[1]={ t:'The Only Reaction in Organic Chemistry', booster:'The Fundamental
     'The sulfur lone pair (rich) attacks the carbon next to bromine (poor)',
     'The S-H hydrogen attacks the bromine',
     'No reaction - neither is charged'],
-   correct:1, explain:'You were never taught this reaction, and you still called it - that is the whole point of tonight. Sulfur carries lone pairs: rich. The carbon next to bromine is delta-plus: poor. Rich attacks poor, bromide leaves. You can now predict chemistry you have never seen.'}}
+   correct:1, explain:'You were never taught this reaction, and you still called it - that is the whole point of tonight. Sulfur carries lone pairs: rich. The carbon next to bromine is delta-plus: poor. Rich attacks poor, bromide leaves. You can now predict chemistry you have never seen.'}},
+{ n:'Scene 7', t:'Draw your first arrow',
+  tap:{svg:'<svg viewBox="0 0 720 250" style="max-width:720px"><defs></defs><g class="tap-atom" data-atom="cn"><circle cx="140" cy="120" r="34"/><text x="128" y="128" font-family="system-ui" font-size="22" font-weight="800" fill="#1B7A4D" text-anchor="middle">C</text><text x="158" y="116" font-family="system-ui" font-size="20" font-weight="700" fill="#2a2118" text-anchor="middle">N</text><line x1="140" y1="112" x2="150" y2="108" stroke="#2a2118" stroke-width="2" stroke-linecap="round"/><text x="108" y="104" font-family="system-ui" font-size="18" font-weight="700" fill="#1B7A4D" text-anchor="middle">&#8722;</text></g><text x="140" y="186" font-family="JetBrains Mono,monospace" font-size="11" letter-spacing="1" fill="#8a8168" text-anchor="middle">CYANIDE</text><text x="360" y="50" font-family="system-ui" font-size="22" font-weight="800" fill="#cf3b3b" text-anchor="middle">O</text><line x1="348" y1="62" x2="332" y2="86" stroke="#2a2118" stroke-width="2.6" stroke-linecap="round"/><line x1="360" y1="62" x2="344" y2="86" stroke="#2a2118" stroke-width="2.6" stroke-linecap="round"/><g class="tap-atom" data-atom="cc"><circle cx="330" cy="106" r="30"/><text x="330" y="114" font-family="system-ui" font-size="22" font-weight="800" fill="#b3382e" text-anchor="middle">C</text></g><line x1="310" y1="116" x2="266" y2="140" stroke="#2a2118" stroke-width="2.4" stroke-linecap="round"/><text x="252" y="152" font-family="JetBrains Mono,monospace" font-size="10" letter-spacing="1" fill="#8a8168" text-anchor="middle">CH3</text><line x1="350" y1="116" x2="394" y2="140" stroke="#2a2118" stroke-width="2.4" stroke-linecap="round"/><text x="410" y="152" font-family="JetBrains Mono,monospace" font-size="10" letter-spacing="1" fill="#8a8168" text-anchor="middle">CH3</text><text x="330" y="196" font-family="JetBrains Mono,monospace" font-size="11" letter-spacing="1" fill="#8a8168" text-anchor="middle">ACETONE</text><g class="tap-atom" data-atom="o"><circle cx="360" cy="44" r="24"/></g><g class="tap-atom" data-atom="me"><circle cx="252" cy="146" r="24"/></g></svg>', from:'cn', to:'cc', arrow:'M 172 108 Q 250 60 316 92',
+   win:'CYANIDE TO CARBONYL CARBON - CYANOHYDRIN CHEMISTRY, AND YOU DREW IT.'},
+  walk:'No options this time - YOU draw the arrow. Tap the atom with electrons to give, then tap the atom that is starving. If you can do this on a molecule you barely know, you are doing organic chemistry.',
+  teach:'Hand the pen literally: a student comes up and taps the two atoms. Wrong taps are gold - ask the room why the oxygen is not the target.',
+  q:{stem:'Why does the nucleophile attack the carbonyl CARBON and not the oxygen?', opts:[
+    'Oxygen is too small',
+    'The oxygen is electron-RICH (it hoards the density) - the carbon it robbed is the poor one',
+    'Carbon is bigger',
+    'It attacks oxygen first, then migrates'],
+   correct:1, explain:'The EN atom is never the target - it is the thief, not the victim. Electron-rich attacks electron-poor, and the poor atom is the carbon the oxygen robbed.'}}
 ]};
 NIGHTS[2]={ t:'Names Are Directions', booster:'IUPAC Nomenclature',
   lede:'A name is not vocabulary - it is a set of directions to draw the molecule. Three rules generate every name on the DAT. Learn the rules, and any name becomes a drawing; any drawing becomes a name.',
@@ -277,7 +320,7 @@ NIGHTS[3]={ t:'Molecules in 3D', booster:'Conformations & Stereochemistry',
     'On the same carbon'],
    correct:2, explain:'Eclipsed methyls stack the two biggest groups face to face - maximum torsional strain. Anti is the floor of the energy curve, methyl-methyl eclipsed is the peak.'}},
 { n:'Scene 4', t:'The chair: big goes equatorial',
-  svg:'<div class="molrow"><div class="molcard"><canvas data-smiles="CC1CCCCC1" width="220" height="115"></canvas><div class="mol-lbl" style="color:#8a8168">METHYLCYCLOHEXANE</div><div class="mol-sub">the methyl wants equatorial</div></div></div><p class="caption">axial sticks up like a sail; equatorial drags along the waterline - bulky groups ride equatorial</p>',
+  svg:'<svg viewBox="0 0 760 260" style="max-width:760px"><path d="M 180 160 L 260 120 L 360 150 L 470 110 L 560 150 L 480 190 Z" fill="none" stroke="#2a2118" stroke-width="3"/><line x1="260" y1="120" x2="260" y2="60" stroke="#b3382e" stroke-width="2.6" stroke-linecap="round"/><text x="260" y="48" font-family="JetBrains Mono,monospace" font-size="10" letter-spacing="1" fill="#b3382e" text-anchor="middle">AXIAL = THE SAIL</text><line x1="560" y1="150" x2="625" y2="165" stroke="#1B7A4D" stroke-width="2.6" stroke-linecap="round"/><text x="648" y="182" font-family="JetBrains Mono,monospace" font-size="9" letter-spacing="1" fill="#1B7A4D" text-anchor="middle">EQUATORIAL = THE WATERLINE</text><text x="380" y="236" font-family="JetBrains Mono,monospace" font-size="10" letter-spacing="1" fill="#8a8168" text-anchor="middle">BULKY GROUPS DEMAND THE EQUATORIAL SEAT - THE BOAT STAYS CALM</text></svg>',
   walk:'Picture the chair as a <b>flat boat</b>. Axial groups stick straight up like a sail and make the boat top-heavy; equatorial groups drag low along the water, calm and stable. So bulky groups - tert-butyl especially - demand the equatorial seat, and the ring flips to give it to them.',
   teach:'The boat-with-a-sail image carries the whole chair topic. And remember: what you control is up versus down; axial and equatorial just happen.',
   q:{stem:'In the most stable chair of tert-butylcyclohexane, the tert-butyl group sits:', opts:[
@@ -341,7 +384,31 @@ NIGHTS[4]={ t:'The Four Questions', booster:'Substitution & Elimination',
     'No alkene forms - 3° substrates cannot eliminate',
     'A racemic alcohol'],
    correct:1, explain:'Bulky base overrides Zaitsev: tert-butoxide cannot reach the interior hydrogens, so it deprotonates the exposed methyl edge and the less substituted alkene wins.'}},
-{ n:'Scene 5', t:'The whole decision in one breath',
+{ n:'Scene 5', t:'The energy story: one hump or two',
+  svg:'<svg viewBox="0 0 760 300" style="max-width:760px"><path d="M 60 230 C 130 230 150 90 210 90 C 270 90 290 230 350 230" fill="none" stroke="#1B7A4D" stroke-width="3"/><text x="210" y="70" font-family="JetBrains Mono,monospace" font-size="11" letter-spacing="1" fill="#1B7A4D" text-anchor="middle">ONE HUMP = ONE STEP</text><text x="205" y="260" font-family="JetBrains Mono,monospace" font-size="10" letter-spacing="1" fill="#8a8168" text-anchor="middle">SN2 - CONCERTED, NO INTERMEDIATE</text><path d="M 420 230 C 470 230 480 100 520 100 C 545 100 550 150 575 150 C 600 150 605 80 640 80 C 680 80 690 230 730 230" fill="none" stroke="#b3382e" stroke-width="3"/><circle cx="575" cy="150" r="5" fill="#b3382e"/><text x="575" y="180" font-family="JetBrains Mono,monospace" font-size="10" letter-spacing="1" fill="#b3382e" text-anchor="middle">THE CATION LIVES HERE</text><text x="575" y="260" font-family="JetBrains Mono,monospace" font-size="10" letter-spacing="1" fill="#8a8168" text-anchor="middle">SN1 - TWO HUMPS, A REAL INTERMEDIATE IN THE VALLEY</text><line x1="40" y1="240" x2="750" y2="240" stroke="#8a8168" stroke-width="2" stroke-linecap="round"/><line x1="40" y1="240" x2="40" y2="60" stroke="#8a8168" stroke-width="2" stroke-linecap="round"/><text x="50" y="52" font-family="JetBrains Mono,monospace" font-size="10" letter-spacing="1" fill="#8a8168" text-anchor="middle">ENERGY</text></svg>',
+  walk:'Draw the energy of the reaction as a landscape. SN2 is ONE hump: everything happens crossing a single pass - no intermediate anywhere. SN1 is TWO humps with a valley between them - and the thing living in that valley is the carbocation. Every question about intermediates, rate steps, and rearrangements is asking which landscape you are on.',
+  teach:'This diagram is on the 2026 spec. Ask: where on the SN1 curve does the rearrangement happen? In the valley - the cation has time to think.',
+  q:{stem:'A reaction coordinate diagram shows two maxima with a shallow valley between them. The species in the valley is:', opts:[
+    'The transition state',
+    'A real intermediate - for SN1, the carbocation',
+    'The product',
+    'The solvent'],
+   correct:1, explain:'Valleys are real species you could in principle bottle for an instant; peaks are transition states you never can. Two humps means a genuine intermediate - the flat, forgetful cation - lives between them.'}},
+{ n:'Scene 6', t:'Watch SN1 happen',
+  anim:{frames:[
+   {svg:'<svg viewBox="0 0 760 240" style="max-width:760px"><text x="300" y="127" font-family="system-ui" font-size="22" font-weight="800" fill="#2a2118" text-anchor="middle">C</text><line x1="286" y1="110" x2="254" y2="90" stroke="#2a2118" stroke-width="2.4" stroke-linecap="round"/><text x="240" y="84" font-family="JetBrains Mono,monospace" font-size="10" letter-spacing="1" fill="#8a8168" text-anchor="middle">CH3</text><line x1="314" y1="110" x2="346" y2="90" stroke="#2a2118" stroke-width="2.4" stroke-linecap="round"/><text x="360" y="84" font-family="JetBrains Mono,monospace" font-size="10" letter-spacing="1" fill="#8a8168" text-anchor="middle">CH3</text><line x1="300" y1="134" x2="300" y2="164" stroke="#2a2118" stroke-width="2.4" stroke-linecap="round"/><text x="300" y="178" font-family="JetBrains Mono,monospace" font-size="10" letter-spacing="1" fill="#8a8168" text-anchor="middle">CH3</text><line x1="314" y1="114" x2="368" y2="96" stroke="#2a2118" stroke-width="2.4" stroke-linecap="round"/><text x="388" y="92" font-family="system-ui" font-size="20" font-weight="700" fill="#8a4a2a" text-anchor="middle">Br</text><text x="340" y="208" font-family="JetBrains Mono,monospace" font-size="10" letter-spacing="1" fill="#8a8168" text-anchor="middle">TERT-BUTYL BROMIDE - NOBODY ATTACKED YET</text></svg>', say:'Nobody has attacked. The leaving group decides to go on its own.'},
+   {svg:'<svg viewBox="0 0 760 240" style="max-width:760px"><text x="280" y="127" font-family="system-ui" font-size="22" font-weight="800" fill="#b3382e" text-anchor="middle">C</text><line x1="266" y1="110" x2="234" y2="90" stroke="#2a2118" stroke-width="2.4" stroke-linecap="round"/><text x="220" y="84" font-family="JetBrains Mono,monospace" font-size="10" letter-spacing="1" fill="#8a8168" text-anchor="middle">CH3</text><line x1="294" y1="110" x2="326" y2="90" stroke="#2a2118" stroke-width="2.4" stroke-linecap="round"/><text x="340" y="84" font-family="JetBrains Mono,monospace" font-size="10" letter-spacing="1" fill="#8a8168" text-anchor="middle">CH3</text><line x1="280" y1="134" x2="280" y2="164" stroke="#2a2118" stroke-width="2.4" stroke-linecap="round"/><text x="280" y="178" font-family="JetBrains Mono,monospace" font-size="10" letter-spacing="1" fill="#8a8168" text-anchor="middle">CH3</text><text x="302" y="106" font-family="system-ui" font-size="22" font-weight="800" fill="#b3382e" text-anchor="middle">+</text><path class="eflow" d="M 320 104 Q 380 70 440 92" fill="none" stroke="#1B7A4D" stroke-width="3.2" stroke-linecap="round"/><text x="500" y="100" font-family="system-ui" font-size="22" font-weight="800" fill="#8a4a2a" text-anchor="middle">Br</text><text x="528" y="88" font-family="system-ui" font-size="18" font-weight="700" fill="#b3382e" text-anchor="middle">&#8722;</text><ellipse cx="280" cy="82" rx="26" ry="13" fill="none" stroke="#b3382e" stroke-width="1.6" stroke-dasharray="4 4"/><ellipse cx="280" cy="158" rx="26" ry="13" fill="none" stroke="#b3382e" stroke-width="1.6" stroke-dasharray="4 4"/><text x="390" y="210" font-family="JetBrains Mono,monospace" font-size="10" letter-spacing="1" fill="#8a8168" text-anchor="middle">THE LEAVING GROUP LEFT FIRST - FLAT CATION, EMPTY P ORBITAL, BOTH FACES OPEN</text></svg>', say:'Bromide takes both electrons and leaves a flat cation - empty p orbital, both faces open.'},
+   {svg:'<svg viewBox="0 0 760 250" style="max-width:760px"><text x="380" y="127" font-family="system-ui" font-size="22" font-weight="800" fill="#b3382e" text-anchor="middle">C</text><line x1="366" y1="110" x2="334" y2="90" stroke="#2a2118" stroke-width="2.4" stroke-linecap="round"/><text x="320" y="84" font-family="JetBrains Mono,monospace" font-size="10" letter-spacing="1" fill="#8a8168" text-anchor="middle">CH3</text><line x1="394" y1="110" x2="426" y2="90" stroke="#2a2118" stroke-width="2.4" stroke-linecap="round"/><text x="440" y="84" font-family="JetBrains Mono,monospace" font-size="10" letter-spacing="1" fill="#8a8168" text-anchor="middle">CH3</text><line x1="380" y1="134" x2="380" y2="164" stroke="#2a2118" stroke-width="2.4" stroke-linecap="round"/><text x="380" y="178" font-family="JetBrains Mono,monospace" font-size="10" letter-spacing="1" fill="#8a8168" text-anchor="middle">CH3</text><text x="402" y="106" font-family="system-ui" font-size="22" font-weight="800" fill="#b3382e" text-anchor="middle">+</text><circle cx="244" cy="66" r="3" fill="#1B7A4D"/><circle cx="256" cy="66" r="3" fill="#1B7A4D"/><text x="276" y="74" font-family="system-ui" font-size="20" font-weight="800" fill="#cf3b3b" text-anchor="middle">O</text><text x="296" y="64" font-family="system-ui" font-size="14" font-weight="700" fill="#8a8168" text-anchor="middle">H</text><path class="eflow" d="M 290 82 Q 330 92 362 106" fill="none" stroke="#1B7A4D" stroke-width="3.2" stroke-linecap="round"/><circle cx="244" cy="192" r="3" fill="#1B7A4D"/><circle cx="256" cy="192" r="3" fill="#1B7A4D"/><text x="276" y="200" font-family="system-ui" font-size="20" font-weight="800" fill="#cf3b3b" text-anchor="middle">O</text><text x="296" y="190" font-family="system-ui" font-size="14" font-weight="700" fill="#8a8168" text-anchor="middle">H</text><path class="eflow" d="M 290 184 Q 330 168 362 140" fill="none" stroke="#1B7A4D" stroke-width="3.2" stroke-linecap="round"/><text x="560" y="120" font-family="JetBrains Mono,monospace" font-size="13" letter-spacing="1" fill="#8a8168" text-anchor="middle">50 / 50</text><text x="390" y="228" font-family="JetBrains Mono,monospace" font-size="10" letter-spacing="1" fill="#8a8168" text-anchor="middle">THE NUCLEOPHILE ATTACKS EITHER FACE - RACEMIC PRODUCT</text></svg>', say:'The nucleophile arrives late and attacks either face equally: racemic.'}
+  ]},
+  walk:'Step it through. The whole SN1 personality - racemization, rearrangement, rate depending only on the substrate - is visible in frame two: the cation exists, alone, flat, with time on its hands.',
+  teach:'Freeze on frame two and interrogate it: what can this cation do while it waits? Get attacked on either face; shift a hydride. Everything testable lives in that frame.',
+  q:{stem:'Why does SN1 rate depend ONLY on the substrate concentration?', opts:[
+    'The nucleophile is consumed first',
+    'The slow step - ionization - involves only the substrate; the nucleophile arrives after the hard part',
+    'Solvents block the nucleophile',
+    'It does not - SN1 is second order'],
+   correct:1, explain:'Rate = k[R-X]. The energy summit is the leaving group leaving, and the nucleophile plays no part in that step - it attacks the already-formed cation downhill.'}},
+{ n:'Scene 7', t:'The whole decision in one breath',
   svg:'<div class="molrow"><div class="molcard"><canvas data-smiles="CC[C@@H](C)Br" width="220" height="115"></canvas><div class="mol-lbl" style="color:#8a8168">THE BATTLEGROUND SUBSTRATE</div><div class="mol-sub">2° - all four paths open</div></div></div><p class="caption">substrate, reagent, solvent, heat: strong-small = SN2 · strong-bulky or heat = E2 · weak + protic = SN1/E1</p>',
   walk:'Run it as one breath: <b>substrate</b> (methyl/1° = SN2; 3° = no SN2), <b>reagent</b> (strong small nucleophile = SN2; strong base = E2; bulky = Hofmann E2; weak = the SN1/E1 world), <b>solvent</b> (aprotic helps SN2; protic helps ionization), <b>heat</b> (heat loves elimination). Four questions, every problem.',
   teach:'Close by having a student run the four questions on a fresh problem, out loud, unassisted. That recitation is the deliverable of the night.',
@@ -697,7 +764,7 @@ NIGHTS[13]={ t:'Reading the Machines', booster:'Spectroscopy & Lab Techniques',
   lede:'The machines tell you what you made. IR names the bonds, NMR counts the neighborhoods, mass spec weighs the pieces - and each one is two or three reads, not a memorized table.',
   scenes:[
 { n:'Scene 1', t:'IR: the tongue and the dagger',
-  svg:'<div class="molrow"><div class="molcard"><canvas data-smiles="CC(=O)O" width="200" height="105"></canvas><div class="mol-lbl" style="color:#8a8168">BOTH SIGNALS AT ONCE</div><div class="mol-sub">acetic acid: broad O-H over a sharp C=O</div></div></div><p class="caption">O-H: one broad tongue near 3300 · C=O: the sharp dagger at about 1700 · N-H of NH2: the double dip</p>',
+  svg:'<svg viewBox="0 0 760 260" style="max-width:760px"><path d="M 60 90 C 110 90 120 200 170 200 C 220 200 230 90 280 90 L 420 90 C 435 90 438 210 452 210 C 466 210 469 90 484 90 L 700 90" fill="none" stroke="#2a2118" stroke-width="3"/><text x="170" y="230" font-family="JetBrains Mono,monospace" font-size="11" letter-spacing="1" fill="#1B7A4D" text-anchor="middle">THE BROAD TONGUE ~3300 = O-H</text><text x="452" y="230" font-family="JetBrains Mono,monospace" font-size="11" letter-spacing="1" fill="#b3382e" text-anchor="middle">THE SHARP DAGGER ~1700 = C=O</text><text x="380" y="40" font-family="JetBrains Mono,monospace" font-size="10" letter-spacing="1" fill="#8a8168" text-anchor="middle">ONE GLANCE: BOTH LANDMARKS = CARBOXYLIC ACID</text></svg>',
   walk:'IR is two landmarks and a silhouette. A <b>broad tongue</b> swallowing 3300 is an O-H. A <b>sharp dagger</b> at about 1700 is a C=O. See both at once: carboxylic acid. And an NH2 gives the <b>double dip</b> - two small notches like the roots of a tooth, where the O-H would be one broad sweep.',
   teach:'The tongue and the dagger carry ninety percent of DAT IR. Draw the silhouettes, not wavenumber tables.',
   q:{stem:'An IR spectrum shows a broad absorption near 3300 AND a sharp peak near 1700. The compound is likely:', opts:[
@@ -707,7 +774,7 @@ NIGHTS[13]={ t:'Reading the Machines', booster:'Spectroscopy & Lab Techniques',
     'An amine with no carbonyl'],
    correct:1, explain:'One broad O-H plus one sharp C=O in the same spectrum is the carboxylic acid signature - the two most valuable IR landmarks appearing together.'}},
 { n:'Scene 2', t:'NMR: count worlds, then count neighbors',
-  svg:'<div class="molrow"><div class="molcard"><canvas data-smiles="CCO" width="180" height="100"></canvas><div class="mol-lbl" style="color:#8a8168">THREE WORLDS</div><div class="mol-sub">ethanol: CH3, CH2, OH</div></div></div><p class="caption">step one: count the distinct H environments = number of signals · step two: n+1 splitting from H neighbors · OH is the loner singlet</p>',
+  svg:'<svg viewBox="0 0 760 260" style="max-width:760px"><line x1="40" y1="210" x2="730" y2="210" stroke="#8a8168" stroke-width="2" stroke-linecap="round"/><line x1="169.5" y1="210" x2="169.5" y2="150.0" stroke="#2a2118" stroke-width="2.6" stroke-linecap="round"/><line x1="176.5" y1="210" x2="176.5" y2="90" stroke="#2a2118" stroke-width="2.6" stroke-linecap="round"/><line x1="183.5" y1="210" x2="183.5" y2="120.0" stroke="#2a2118" stroke-width="2.6" stroke-linecap="round"/><line x1="190.5" y1="210" x2="190.5" y2="180.0" stroke="#2a2118" stroke-width="2.6" stroke-linecap="round"/><text x="180" y="236" font-family="JetBrains Mono,monospace" font-size="10" letter-spacing="1" fill="#8a8168" text-anchor="middle">CH2 - QUARTET (3+1)</text><line x1="420.0" y1="210" x2="420.0" y2="120" stroke="#2a2118" stroke-width="2.6" stroke-linecap="round"/><text x="420" y="236" font-family="JetBrains Mono,monospace" font-size="10" letter-spacing="1" fill="#8a8168" text-anchor="middle">OH - LONER SINGLET</text><line x1="593.0" y1="210" x2="593.0" y2="145.0" stroke="#2a2118" stroke-width="2.6" stroke-linecap="round"/><line x1="600.0" y1="210" x2="600.0" y2="80" stroke="#2a2118" stroke-width="2.6" stroke-linecap="round"/><line x1="607.0" y1="210" x2="607.0" y2="145.0" stroke="#2a2118" stroke-width="2.6" stroke-linecap="round"/><text x="600" y="236" font-family="JetBrains Mono,monospace" font-size="10" letter-spacing="1" fill="#8a8168" text-anchor="middle">CH3 - TRIPLET (2+1)</text><text x="120" y="52" font-family="JetBrains Mono,monospace" font-size="10" letter-spacing="1" fill="#8a8168" text-anchor="middle">DOWNFIELD</text><text x="660" y="52" font-family="JetBrains Mono,monospace" font-size="10" letter-spacing="1" fill="#8a8168" text-anchor="middle">UPFIELD</text></svg>',
   walk:'Two steps answer most NMR questions. <b>Count the worlds</b>: how many distinct H environments? That is the signal count - cross out any answer that disagrees. Then <b>n+1</b>: each signal splits by (neighboring H + 1). Ethanol: CH3 sees two neighbors - triplet; CH2 sees three - quartet; the OH stands alone - singlet, because the oxygen blocks its coupling.',
   teach:'Count the worlds first, always. Half the answer choices die before you ever think about splitting.',
   q:{stem:'In the 1H NMR of ethanol, the CH2 appears as a:', opts:[
@@ -777,13 +844,14 @@ function render(){
     var d=document.createElement('div');
     d.className='scene'+(open?'':' locked');
     var inner='<div class="scene-head"><span class="scene-num">'+sc.n+'</span><span class="scene-title">'+sc.t+'</span></div><div class="scene-body">';
+    var interactive = sc.anim || sc.tap;
     if(mode==='teach'){
-      var masked = i>0 && new URLSearchParams(location.search).get('reveal')!=='all';
-      inner+='<div id="mask'+i+'" class="'+(masked?'reveal-mask':'')+'">'+sc.svg+'</div>';
+      var masked = i>0 && !interactive && new URLSearchParams(location.search).get('reveal')!=='all';
+      inner+='<div id="mask'+i+'" class="'+(masked?'reveal-mask':'')+'">'+(sc.anim?animShell(i):(sc.tap?tapShell(i):sc.svg))+'</div>';
       if(masked) inner+='<button class="reveal-btn" data-r="'+i+'">REVEAL</button>';
       inner+='<div class="teachline"><span class="lb">Coach line</span>'+sc.teach+'</div>';
     } else {
-      inner+=sc.svg+'<p class="say">'+sc.walk+'</p>';
+      inner+=(sc.anim?animShell(i):(sc.tap?tapShell(i):sc.svg))+'<p class="say">'+sc.walk+'</p>';
       if(open && !done['s'+i]){
         inner+='<div class="commit"><div class="q">'+sc.q.stem+'</div>';
         sc.q.opts.forEach(function(o,k){ inner+='<button class="opt" data-s="'+i+'" data-k="'+k+'">'+o+'</button>'; });
@@ -796,6 +864,7 @@ function render(){
     d.innerHTML=inner;
     host.appendChild(d);
   });
+  SCENES.forEach(function(sc,i){ if(sc.anim) animInit(i); if(sc.tap) tapInit(i); });
   // wire commits
   host.querySelectorAll('button.opt').forEach(function(b){
     b.addEventListener('click',function(){
@@ -827,6 +896,76 @@ function updateBar(){
   document.getElementById('pcount').textContent = mode==='teach' ? 'TEACH MODE' : 'NIGHT '+CUR+' · '+n+' / '+SCENES.length+' scenes committed';
   document.getElementById('pfill').style.width = (mode==='teach'?100:(n/SCENES.length*100))+'%';
   document.getElementById('plabel').textContent = mode==='teach' ? 'reveal as you go' : (n===SCENES.length?'night complete':'commit to advance');
+}
+function animShell(i){
+  return '<div class="anim-stage"><div id="animFrame'+i+'"></div></div>'
+    +'<div class="anim-cap" id="animCap'+i+'"></div>'
+    +'<div class="anim-ctl"><button data-ab="'+i+'" data-d="-1">Back</button>'
+    +'<div class="anim-dots" id="animDots'+i+'"></div>'
+    +'<button class="primary" data-ab="'+i+'" data-d="1">Play next step</button></div>';
+}
+function animInit(i){
+  var sc=SCENES[i], st={f:0};
+  function show(){
+    var fr=sc.anim.frames[st.f];
+    var host=document.getElementById('animFrame'+i); if(!host) return;
+    host.innerHTML=fr.svg;
+    document.getElementById('animCap'+i).textContent=fr.say||'';
+    var dots=document.getElementById('animDots'+i); dots.innerHTML='';
+    sc.anim.frames.forEach(function(_,k){ var d=document.createElement('span'); d.className='anim-dot'+(k===st.f?' on':''); dots.appendChild(d); });
+    host.querySelectorAll('path.eflow').forEach(function(pth){
+      var ns='http://www.w3.org/2000/svg';
+      var dot=document.createElementNS(ns,'circle');
+      dot.setAttribute('r','4.2'); dot.setAttribute('fill','#1B7A4D');
+      var am=document.createElementNS(ns,'animateMotion');
+      am.setAttribute('dur','1.15s'); am.setAttribute('fill','freeze');
+      am.setAttribute('path',pth.getAttribute('d'));
+      dot.appendChild(am); pth.parentNode.appendChild(dot);
+    });
+  }
+  document.querySelectorAll('[data-ab="'+i+'"]').forEach(function(b){
+    b.addEventListener('click',function(){
+      st.f=Math.max(0,Math.min(sc.anim.frames.length-1, st.f + (+b.dataset.d)));
+      show();
+    });
+  });
+  show();
+}
+function tapShell(i){
+  return '<div class="tapwrap"><div id="tapSvg'+i+'">'+SCENES[i].tap.svg+'</div>'
+    +'<div class="tap-state" id="tapState'+i+'">STEP 1 - TAP THE ATOM THAT ATTACKS</div></div>';
+}
+function tapInit(i){
+  var sc=SCENES[i], st={from:null,done:false};
+  var host=document.getElementById('tapSvg'+i); if(!host) return;
+  var stateEl=document.getElementById('tapState'+i);
+  host.querySelectorAll('.tap-atom').forEach(function(g){
+    g.addEventListener('click',function(){
+      if(st.done) return;
+      var id=g.getAttribute('data-atom');
+      if(!st.from){
+        if(id===sc.tap.from){ st.from=id; g.classList.add('sel'); stateEl.textContent='STEP 2 - NOW TAP THE ATOM IT ATTACKS'; }
+        else { g.classList.add('bad'); stateEl.textContent='NOT THAT ONE - WHO HAS ELECTRONS TO GIVE?'; setTimeout(function(){g.classList.remove('bad')},900); }
+      } else {
+        if(id===sc.tap.to){
+          st.done=true; g.classList.add('hit');
+          stateEl.textContent='THAT IS THE ARROW. '+(sc.tap.win||'RICH ATTACKS POOR.');
+          var ns='http://www.w3.org/2000/svg';
+          var svg=host.querySelector('svg');
+          var pth=document.createElementNS(ns,'path');
+          pth.setAttribute('d',sc.tap.arrow); pth.setAttribute('class','eflow');
+          pth.setAttribute('fill','none'); pth.setAttribute('stroke','#1B7A4D'); pth.setAttribute('stroke-width','3.5');
+          svg.appendChild(pth);
+          var dot=document.createElementNS(ns,'circle');
+          dot.setAttribute('r','4.5'); dot.setAttribute('fill','#1B7A4D');
+          var am=document.createElementNS(ns,'animateMotion');
+          am.setAttribute('dur','1.15s'); am.setAttribute('fill','freeze');
+          am.setAttribute('path',sc.tap.arrow);
+          dot.appendChild(am); svg.appendChild(dot);
+        } else { g.classList.add('bad'); stateEl.textContent='NOT THAT ONE - WHO IS MISSING DENSITY?'; setTimeout(function(){g.classList.remove('bad')},900); }
+      }
+    });
+  });
 }
 var sdReady=null;
 function loadSD(){
