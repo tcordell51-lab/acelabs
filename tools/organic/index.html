@@ -110,6 +110,8 @@ h1{font-family:var(--serif);font-size:clamp(28px,5vw,40px);line-height:1.15;marg
 .anim-dot.on{background:var(--gold)}
 .eflow{stroke-dasharray:600;stroke-dashoffset:600;animation:eflowDraw 1.1s ease forwards}
 @keyframes eflowDraw{to{stroke-dashoffset:0}}
+.scene.recall{border-color:rgba(201,168,76,.55);background:rgba(201,168,76,.04)}
+.rq-src{display:block;font-family:var(--mono);font-size:.56rem;letter-spacing:.14em;color:var(--goldhi);margin-bottom:4px}
 .tapwrap{text-align:center}
 .tap-atom{cursor:pointer}
 .tap-atom circle{fill:rgba(201,168,76,.13);stroke:rgba(140,114,53,.55);stroke-width:1.5;transition:all .15s}
@@ -977,12 +979,47 @@ document.getElementById('nightLede').innerHTML=NIGHTS[CUR].lede;
 document.title='OChem, Retold — Night '+CUR+' · '+NIGHTS[CUR].t;
 var mode = qsp.get('mode')==='teach' ? 'teach' : 'walk';
 var LS='atDAT_retold_n'+CUR;
+var LSR='atDAT_retold_recall_n'+CUR;
+// Spaced recall (research-backed): nights 2+ open with up to three re-asks
+// from prior nights the student has already walked - misses first. They
+// never gate the night; the tone stays warm either way.
+var RECALL=[];
+if(CUR>1){
+  var rMissed=[], rSeen=[];
+  for(var pn=1;pn<CUR;pn++){
+    var pst={}; try{ pst=JSON.parse(localStorage.getItem('atDAT_retold_n'+pn)||'{}'); }catch(e){}
+    NIGHTS[pn].scenes.forEach(function(sc,si){
+      if(!pst['s'+si]||!sc.q) return;
+      (pst['s'+si]==='read'?rMissed:rSeen).push({n:pn,q:sc.q});
+    });
+  }
+  RECALL=rMissed.slice(0,3);
+  while(RECALL.length<3&&rSeen.length){ RECALL.push(rSeen.splice(Math.floor(Math.random()*rSeen.length),1)[0]); }
+}
 var done={};
 try{ done=JSON.parse(localStorage.getItem(LS)||'{}'); }catch(e){}
 function save(){ try{ localStorage.setItem(LS,JSON.stringify(done)); }catch(e){} }
 
 function render(){
   var host=document.getElementById('scenes'); host.innerHTML='';
+  if(mode==='walk'&&RECALL.length){
+    var rdSt={}; try{ rdSt=JSON.parse(localStorage.getItem(LSR)||'{}'); }catch(e){}
+    var rEl=document.createElement('div'); rEl.className='scene recall';
+    var rHtml='<div class="scene-head"><span class="scene-num">Before tonight</span><span class="scene-title">Prove the earlier nights moved in</span></div><div class="scene-body">'
+      +'<p class="say" style="margin-top:0">Quick recall from ground you already own - answer from memory, then walk tonight. These never block the night.</p>';
+    RECALL.forEach(function(r,k){
+      rHtml+='<div class="commit"><div class="q"><span class="rq-src">FROM NIGHT '+r.n+'</span>'+r.q.stem+'</div>';
+      if(rdSt['i'+k]!=null){
+        rHtml+='<div class="ex"><span class="v">'+(rdSt['i'+k]==='ok'?'STILL YOURS':'BACK IN YOUR POCKET NOW')+'</span>'+r.q.explain
+          +' <a href="?night='+r.n+'" style="color:#a8641a">Revisit Night '+r.n+'</a></div>';
+      } else {
+        r.q.opts.forEach(function(o,oi){ rHtml+='<button class="opt ropt" data-rk="'+k+'" data-oi="'+oi+'">'+o+'</button>'; });
+      }
+      rHtml+='</div>';
+    });
+    rEl.innerHTML=rHtml+'</div>';
+    host.appendChild(rEl);
+  }
   var unlocked=0;
   SCENES.forEach(function(sc,i){ if(done['s'+i]) unlocked=i+1; });
   SCENES.forEach(function(sc,i){
@@ -1032,6 +1069,22 @@ function render(){
   });
   host.querySelectorAll('.reveal-btn[data-r]').forEach(function(b){
     b.addEventListener('click',function(){ document.getElementById('mask'+b.dataset.r).classList.remove('reveal-mask'); b.remove(); });
+  });
+  host.querySelectorAll('button.ropt').forEach(function(b){
+    b.addEventListener('click',function(){
+      var k=+b.dataset.rk, r=RECALL[k], ok=(+b.dataset.oi)===r.q.correct;
+      var box=b.closest('.commit');
+      box.querySelectorAll('.ropt').forEach(function(x){ x.disabled=true;
+        if(+x.dataset.oi===r.q.correct) x.classList.add('ok'); });
+      if(!ok) b.classList.add('no');
+      var ex=document.createElement('div'); ex.className='ex';
+      ex.innerHTML='<span class="v'+(ok?'':' miss')+'">'+(ok?'STILL YOURS.':'GOOD - IT IS BACK IN YOUR POCKET NOW.')+'</span>'+r.q.explain
+        +' <a href="?night='+r.n+'" style="color:#a8641a">Revisit Night '+r.n+'</a>';
+      box.appendChild(ex);
+      var rdSt={}; try{ rdSt=JSON.parse(localStorage.getItem(LSR)||'{}'); }catch(e){}
+      rdSt['i'+k]=ok?'ok':'read';
+      try{ localStorage.setItem(LSR,JSON.stringify(rdSt)); }catch(e){}
+    });
   });
   var all = SCENES.every(function(_,i){ return done['s'+i]; });
   var gate=document.getElementById('gate');
