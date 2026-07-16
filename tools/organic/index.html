@@ -63,7 +63,7 @@ h1{font-family:var(--serif);font-size:clamp(28px,5vw,40px);line-height:1.15;marg
 .syll .st{font-family:var(--mono);font-size:.56rem;letter-spacing:.1em;border-radius:99px;padding:3px 9px}
 .syll .st.live{background:rgba(27,122,77,.14);color:var(--rich)}
 .syll .st.soon{background:rgba(140,114,53,.12);color:var(--ink3)}
-.molrow{display:flex;gap:18px;justify-content:center;flex-wrap:wrap;margin:6px 0 2px}
+.molrow{display:flex;gap:18px;justify-content:center;align-items:center;flex-wrap:wrap;margin:6px 0 2px}
 .molcard{position:relative;border-radius:14px;padding:14px 14px 10px;text-align:center;border:1.5px solid rgba(140,114,53,.25);background:#fff;min-width:200px}
 .molcard.rich{background:radial-gradient(ellipse at 50% 38%,rgba(27,122,77,.10),transparent 70%),#fff;border-color:rgba(27,122,77,.35)}
 .molcard.poor{background:radial-gradient(ellipse at 50% 38%,rgba(179,56,46,.09),transparent 70%),#fff;border-color:rgba(179,56,46,.32)}
@@ -75,7 +75,7 @@ h1{font-family:var(--serif);font-size:clamp(28px,5vw,40px);line-height:1.15;marg
 .mol-sub{font-family:var(--serif);font-style:italic;font-size:.82rem;color:var(--ink3)}
 .rxnline{display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap}
 .rxnline .plus{font-family:var(--serif);font-size:1.5rem;color:var(--ink3)}
-.rxnline svg.arr{width:120px;height:44px;flex:none}
+.scene svg.arr{width:120px;height:44px;flex:none}
 .pairgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .pair{border:1px solid rgba(140,114,53,.25);border-radius:12px;padding:10px}
 .pair .pt{font-family:var(--mono);font-size:.6rem;letter-spacing:.12em;color:var(--ink3);text-align:center;margin-bottom:4px}
@@ -99,11 +99,9 @@ h1{font-family:var(--serif);font-size:clamp(28px,5vw,40px);line-height:1.15;marg
   </div>
 </div>
 <div class="wrap">
-  <div class="night">Night 1 of 13 · in sync with your Booster bank: The Fundamentals</div>
-  <h1>The Only Reaction in Organic Chemistry</h1>
-  <p class="lede">You are about to learn a hundred reactions. Here is the secret nobody says out loud:
-  they are all the <b>same sentence</b>. Something rich in electrons attacks something poor in electrons.
-  Learn to see rich and poor, and organic chemistry stops being memorization and starts being recognition.</p>
+  <div class="night" id="nightLine">Night 1 of 13 · in sync with your Booster bank: The Fundamentals</div>
+  <h1 id="nightTitle">The Only Reaction in Organic Chemistry</h1>
+<p class="lede" id="nightLede"></p>
   <div class="legend"><span class="rich">GREEN = ELECTRON-RICH (the attacker)</span><span class="poor">RED = ELECTRON-POOR (the target)</span></div>
   <div id="scenes"></div>
   <div class="gate" id="gate" style="display:none">
@@ -136,7 +134,10 @@ function arrow(x1,y1,qx,qy,x2,y2,c){
   return '<path d="M '+x1+' '+y1+' Q '+qx+' '+qy+' '+x2+' '+y2+'" fill="none" stroke="'+(c||RICH)+'" stroke-width="3" marker-end="url(#ah)"/>'}
 var DEFS='<defs><marker id="ah" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1B7A4D"/></marker></defs>';
 
-var SCENES=[
+var NIGHTS={};
+NIGHTS[1]={ t:'The Only Reaction in Organic Chemistry', booster:'The Fundamentals',
+  lede:'You are about to learn a hundred reactions. Here is the secret nobody says out loud: they are all the <b>same sentence</b>. Something rich in electrons attacks something poor in electrons. Learn to see rich and poor, and organic chemistry stops being memorization and starts being recognition.',
+  scenes:[
 { n:'Scene 1', t:'One sentence runs the whole subject',
   svg:'<svg viewBox="0 0 800 240">'+DEFS
     +glow(210,120,64,RICH)+atom(210,130,'Nu',RICH,34)+lbl(210,178,'ELECTRON-RICH',RICH,11)
@@ -196,25 +197,573 @@ var SCENES=[
     'The S-H hydrogen attacks the bromine',
     'No reaction - neither is charged'],
    correct:1, explain:'You were never taught this reaction, and you still called it - that is the whole point of tonight. Sulfur carries lone pairs: rich. The carbon next to bromine is delta-plus: poor. Rich attacks poor, bromide leaves. You can now predict chemistry you have never seen.'}}
-];
+]};
+NIGHTS[2]={ t:'Names Are Directions', booster:'IUPAC Nomenclature',
+  lede:'A name is not vocabulary - it is a set of directions to draw the molecule. Three rules generate every name on the DAT. Learn the rules, and any name becomes a drawing; any drawing becomes a name.',
+  scenes:[
+{ n:'Scene 1', t:'A name is a drawing, compressed',
+  svg:'<div class="molrow"><div class="molcard"><canvas data-smiles="CC[C@@H](C)Br" width="220" height="115"></canvas><div class="mol-lbl" style="color:#8a8168">READ: 2-BROMOBUTANE</div><div class="mol-sub">four carbons, Br on C2</div></div></div><p class="caption">butane = the street. 2-bromo = the house number. Every name works this way.</p>',
+  walk:'Take the name apart: <b>butane</b> says the longest chain is four carbons. <b>2-bromo</b> says a bromine hangs on carbon two. That is all a name ever is: a parent chain plus street addresses.',
+  teach:'Write a name on the board and have them draw it before any rules are stated. Names are directions - let them feel that first.',
+  q:{stem:'What does the parent name pentan- tell you, before any prefixes?', opts:[
+    'The molecule has five total atoms',
+    'The longest carbon chain is five carbons',
+    'There are five substituents',
+    'It boils at a higher temperature'],
+   correct:1, explain:'The parent is the street: pentan- means the longest continuous carbon chain is five. Prefixes and locants are addresses hung on that street.'}},
+{ n:'Scene 2', t:'Rule one: the chain must contain the star',
+  svg:'<div class="molrow"><div class="molcard"><canvas data-smiles="C=CC(C)(C)Cl" width="220" height="115"></canvas><div class="mol-lbl" style="color:#8a8168">WHICH CHAIN WINS?</div><div class="mol-sub">the C=C must be inside it</div></div></div><p class="caption">the longest chain CONTAINING the functional group beats a longer chain without it</p>',
+  walk:'Rule one: find the longest chain <b>that contains the functional group</b>. A six-carbon chain that misses the double bond loses to a five-carbon chain that includes it. The star of the molecule rides inside the parent.',
+  teach:'Draw a branched alkene where the naive longest chain skips the C=C. Let someone fall for it, then name the rule.',
+  q:{stem:'A molecule has a 7-carbon chain with no C=C and a 6-carbon chain containing the C=C. Which is the parent?', opts:[
+    'The 7-carbon chain - longest always wins',
+    'The 6-carbon chain - the parent must contain the functional group',
+    'Either works if the locants match',
+    'Neither - count both as parents'],
+   correct:1, explain:'The functional group is the star: the parent chain must contain it. Longest-chain-no-matter-what is the most common nomenclature trap on the test.'}},
+{ n:'Scene 3', t:'Rule two: the star gets the lowest number',
+  svg:'<div class="molrow"><div class="molcard"><canvas data-smiles="CC(O)CCC" width="220" height="115"></canvas><div class="mol-lbl" style="color:#8a8168">NUMBER FROM WHICH END?</div><div class="mol-sub">the OH decides</div></div></div><p class="caption">number the chain so the functional group gets the LOWEST locant - substituents come second</p>',
+  walk:'Rule two: number from the end that gives the <b>functional group</b> the lowest locant. Pentan-2-ol, never pentan-4-ol. Substituents only break ties after the star is seated.',
+  teach:'Ask which end to number from and WHY before revealing. The answer is always: serve the star first.',
+  q:{stem:'For CH3-CH(OH)-CH2-CH2-CH3, the correct name is:', opts:[
+    'Pentan-4-ol',
+    'Pentan-2-ol',
+    '2-pentanol and pentan-2-ol are both wrong',
+    '4-hydroxypentane'],
+   correct:1, explain:'Number from the end nearest the OH: it lands on C2. Pentan-2-ol. The star takes the lowest number available, always.'}},
+{ n:'Scene 4', t:'Rule three: the strongest group owns the suffix',
+  svg:'<div class="molrow"><div class="molcard poor"><span class="badge">&#948;+</span><canvas data-smiles="CC(=O)O" width="180" height="100"></canvas><div class="mol-lbl">ACID OUTRANKS EVERYTHING</div><div class="mol-sub">acetic acid</div></div><div class="molcard rich"><span class="badge">&#948;&#8722;</span><canvas data-smiles="CCO" width="170" height="100"></canvas><div class="mol-lbl">ALCOHOL RANKS LOWER</div><div class="mol-sub">ethanol</div></div></div><p class="caption">when two groups compete, the higher-priority group takes the suffix; the loser becomes a prefix</p>',
+  walk:'Rule three: when a molecule carries two functional groups, the <b>higher-priority group owns the suffix</b> and the other demotes to a prefix. Carboxylic acid beats everything; then esters, amides, aldehydes, ketones, alcohols, amines. An OH in an acid molecule becomes hydroxy-.',
+  teach:'Give them a molecule with both an OH and a COOH and ask for the suffix. The ladder settles every argument.',
+  q:{stem:'A molecule contains both a ketone and an OH. The name ends in:', opts:[
+    '-ol, with oxo- as a prefix for the ketone',
+    '-one, with hydroxy- as a prefix for the OH',
+    'Both suffixes: -ol-one',
+    '-ane - functional groups never change the suffix'],
+   correct:1, explain:'Ketone outranks alcohol, so the name ends -one and the alcohol demotes to hydroxy-. One suffix per molecule; the priority ladder picks it.'}}
+]};
+
+NIGHTS[3]={ t:'Molecules in 3D', booster:'Conformations & Stereochemistry',
+  lede:'Same atoms, same bonds, different arrangement in space - and the DAT loves the differences. Tonight: the isomer family tree, the R/S trace, elbow room, and the chair.',
+  scenes:[
+{ n:'Scene 1', t:'Same formula is not same molecule',
+  svg:'<div class="molrow"><div class="molcard"><canvas data-smiles="CCO" width="220" height="115"></canvas><div class="mol-lbl" style="color:#8a8168">C2H6O</div><div class="mol-sub">ethanol</div></div><div class="molcard"><canvas data-smiles="COC" width="220" height="115"></canvas><div class="mol-lbl" style="color:#8a8168">C2H6O</div><div class="mol-sub">dimethyl ether</div></div></div><p class="caption">same molecular formula, different connectivity: constitutional isomers</p>',
+  walk:'Ethanol and dimethyl ether share a formula and nothing else - different connectivity makes them <b>constitutional isomers</b>. Same connectivity but different 3D arrangement makes <b>stereoisomers</b>. That fork is the first question of every isomer problem.',
+  teach:'Draw both, ask what is the same and what is different. Connectivity is the fork in the family tree.',
+  q:{stem:'Two molecules have identical formulas and identical connectivity, but differ in 3D arrangement. They are:', opts:[
+    'Constitutional isomers',
+    'Stereoisomers',
+    'The same compound drawn twice',
+    'Resonance structures'],
+   correct:1, explain:'Same connectivity plus different spatial arrangement is the definition of stereoisomers. Different connectivity would make them constitutional isomers instead.'}},
+{ n:'Scene 2', t:'R and S: trace one-two-three',
+  svg:'<div class="molrow"><div class="molcard rich"><span class="badge">&#948;&#8722;</span><canvas data-smiles="CC[C@@H](C)Br" width="240" height="120"></canvas><div class="mol-lbl">ONE STEREOCENTER</div><div class="mol-sub">(R)-2-bromobutane</div></div></div><p class="caption">rank the four groups by atomic number, trace 1 to 2 to 3, then check where priority 4 points</p>',
+  walk:'Rank the four groups (higher atomic number wins). Trace 1 to 2 to 3: clockwise reads R, counterclockwise reads S - <b>but only if priority 4 points away</b>. H on a dash: take the answer as drawn. H on a wedge: the molecule is facing you backwards - flip the answer.',
+  teach:'The wedge flip is the whole trick: dash means read it straight, wedge means flip. Drill it as a reflex, not a derivation.',
+  q:{stem:'You trace 1-2-3 clockwise, but the lowest priority group sits on a WEDGE pointing at you. The center is:', opts:[
+    'R - clockwise always means R',
+    'S - priority 4 faces you, so flip the reading',
+    'Meso',
+    'Impossible to assign'],
+   correct:1, explain:'Clockwise would mean R only with priority 4 pointing away. On a wedge it points at you - you are reading the mirror, so flip: S.'}},
+{ n:'Scene 3', t:'Newman: everyone wants elbow room',
+  svg:'<div class="molrow"><div class="molcard"><canvas data-smiles="CCCC" width="220" height="115"></canvas><div class="mol-lbl" style="color:#8a8168">BUTANE, SIGHTED DOWN C2-C3</div><div class="mol-sub">anti puts the methyls 180 degrees apart</div></div></div><p class="caption">anti beats gauche beats eclipsed - big groups want to be as far apart as possible</p>',
+  walk:'Sight down a C-C bond and the molecule becomes a steering wheel. The big groups want <b>elbow room</b>: anti (180 degrees apart) is happiest, gauche (60) is cramped, eclipsed (0) is a solar eclipse of strain. Nine of ten Newman questions just ask: most or least stable?',
+  teach:'Elbow room is the whole lecture. Just like we do as humans - we want our space.',
+  q:{stem:'In a Newman projection of butane, the LEAST stable conformation places the two methyl groups:', opts:[
+    '180 degrees apart (anti)',
+    '60 degrees apart (gauche)',
+    'Eclipsing each other at 0 degrees',
+    'On the same carbon'],
+   correct:2, explain:'Eclipsed methyls stack the two biggest groups face to face - maximum torsional strain. Anti is the floor of the energy curve, methyl-methyl eclipsed is the peak.'}},
+{ n:'Scene 4', t:'The chair: big goes equatorial',
+  svg:'<div class="molrow"><div class="molcard"><canvas data-smiles="CC1CCCCC1" width="220" height="115"></canvas><div class="mol-lbl" style="color:#8a8168">METHYLCYCLOHEXANE</div><div class="mol-sub">the methyl wants equatorial</div></div></div><p class="caption">axial sticks up like a sail; equatorial drags along the waterline - bulky groups ride equatorial</p>',
+  walk:'Picture the chair as a <b>flat boat</b>. Axial groups stick straight up like a sail and make the boat top-heavy; equatorial groups drag low along the water, calm and stable. So bulky groups - tert-butyl especially - demand the equatorial seat, and the ring flips to give it to them.',
+  teach:'The boat-with-a-sail image carries the whole chair topic. And remember: what you control is up versus down; axial and equatorial just happen.',
+  q:{stem:'In the most stable chair of tert-butylcyclohexane, the tert-butyl group sits:', opts:[
+    'Axial - big groups like the top',
+    'Equatorial - big groups demand the low seat',
+    'Half axial, half equatorial',
+    'It leaves the ring'],
+   correct:1, explain:'The bulkiest group takes equatorial in the winning chair; tert-butyl is so insistent it effectively locks the ring in that chair.'}},
+{ n:'Scene 5', t:'Meso: the hot-dog bun',
+  svg:'<div class="molrow"><div class="molcard"><canvas data-smiles="C[C@H](Br)[C@@H](Br)C" width="220" height="115"></canvas><div class="mol-lbl" style="color:#8a8168">TWO CENTERS, ONE MIRROR</div><div class="mol-sub">2,3-dibromobutane - the meso form</div></div></div><p class="caption">two chiral centers plus an internal mirror plane = achiral overall - the R half cancels the S half</p>',
+  walk:'Two chiral centers do not guarantee a chiral molecule. Fold it like a <b>hot-dog bun</b>: if the two halves stack - an internal mirror plane - the molecule is <b>meso</b>, achiral, optically silent. (2R,3S) and (2S,3R) of this molecule are the same compound.',
+  teach:'Students see two centers and assume chiral. Always check for the internal mirror first - the fold test takes two seconds.',
+  q:{stem:'A molecule has two stereocenters and an internal mirror plane. It is:', opts:[
+    'Chiral - two centers always means chiral',
+    'Meso: achiral despite the stereocenters',
+    'A racemic mixture',
+    'A constitutional isomer of itself'],
+   correct:1, explain:'The internal mirror means one half cancels the other - no net optical activity. Meso is the exam trap that punishes counting centers without checking symmetry.'}}
+]};
+
+NIGHTS[4]={ t:'The Four Questions', booster:'Substitution & Elimination',
+  lede:'One decision produces four mechanisms, and you never memorize them separately. You ask four questions in order - substrate, reagent, solvent, heat - and the answer falls out. This is the highest-yield decision on the OChem section.',
+  scenes:[
+{ n:'Scene 1', t:'Substrate first - and its vote is a veto',
+  svg:'<div class="molrow"><div class="molcard poor"><span class="badge">&#948;+</span><canvas data-smiles="CBr" width="150" height="95"></canvas><div class="mol-lbl">METHYL: SN2 ONLY</div><div class="mol-sub">bromomethane</div></div><div class="molcard poor"><span class="badge">&#948;+</span><canvas data-smiles="CC[C@@H](C)Br" width="200" height="105"></canvas><div class="mol-lbl">2°: THE BATTLEGROUND</div><div class="mol-sub">2-bromobutane</div></div><div class="molcard poor"><span class="badge">&#948;+</span><canvas data-smiles="CC(C)(C)Br" width="180" height="105"></canvas><div class="mol-lbl">3°: NEVER SN2</div><div class="mol-sub">tert-butyl bromide</div></div></div><p class="caption">question one: what carbon holds the leaving group? methyl and 1° go SN2; 3° is walled off</p>',
+  walk:'Question one: <b>what is the substrate?</b> Methyl and primary carbons have an open backside: SN2 country. Tertiary carbons are walled off - no SN2, period - but they make stable cations: SN1 and E1 country. Secondary is the battleground where the next questions decide.',
+  teach:'Ask the four questions IN ORDER, out loud, every time. Question one can end the conversation - that is why it goes first.',
+  q:{stem:'A strong nucleophile meets a tertiary alkyl halide. What happens?', opts:[
+    'SN2 - strong nucleophiles always win',
+    'E2 - the backside is blocked, so a strong anionic reagent takes a beta-H instead',
+    'SN1 - strong nucleophiles force ionization',
+    'Nothing'],
+   correct:1, explain:'The substrate vetoes first: three groups wall off the backside, so SN2 is impossible on 3°. A strong base-like reagent grabs a beta-hydrogen: E2.'}},
+{ n:'Scene 2', t:'SN2: one step, one flip',
+  svg:'<div class="molrow"><div class="molcard rich"><span class="badge">&#8722;</span><canvas data-smiles="[OH-]" width="130" height="100"></canvas><div class="mol-lbl">THE ATTACKER</div><div class="mol-sub">hydroxide</div></div><svg class="arr" viewBox="0 0 120 44"><defs><marker id="ahx" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1B7A4D"/></marker></defs><path d="M 8 30 Q 60 6 112 26" fill="none" stroke="#1B7A4D" stroke-width="3" marker-end="url(#ahx)"/></svg><div class="molcard poor"><span class="badge">&#948;+</span><canvas data-smiles="CC[C@@H](C)Br" width="200" height="105"></canvas><div class="mol-lbl">BACKSIDE ONLY</div><div class="mol-sub">(R)-2-bromobutane</div></div></div><p class="caption">backside attack inverts the center every time - the Walden umbrella flip</p>',
+  walk:'SN2 is one concerted step: the nucleophile comes in exactly opposite the leaving group, and the stereocenter <b>inverts like an umbrella in the wind</b> - every single time. R becomes S. Strong small nucleophile, polar aprotic solvent (DMSO, DMF, acetone) - that is SN2 weather.',
+  teach:'That backside geometry IS the inversion - show them the umbrella, not a rule to memorize.',
+  q:{stem:'(R)-2-bromobutane reacts with NaOH in DMSO. The product alcohol is:', opts:[
+    '(R) - retention',
+    '(S) - the backside attack inverts the center',
+    'Racemic - both faces get attacked',
+    'No reaction in DMSO'],
+   correct:1, explain:'2° substrate + strong small anionic nucleophile + polar aprotic solvent = SN2, and SN2 inverts: the R center flips to S.'}},
+{ n:'Scene 3', t:'SN1: the flat cation forgets everything',
+  svg:'<div class="molrow"><div class="molcard poor"><span class="badge">+</span><canvas data-smiles="C[C+](C)C" width="190" height="105"></canvas><div class="mol-lbl">FLAT AND FORGETFUL</div><div class="mol-sub">tert-butyl cation</div></div></div><p class="caption">the planar cation is attacked from both faces (racemization) and can hydride-shift to a happier carbon</p>',
+  walk:'If the leaving group leaves FIRST, you get a flat carbocation - and a flat cation has <b>no memory</b>. The nucleophile attacks either face: a single enantiomer scrambles toward racemic. Worse, the cation can walk: a hydride shift moves it next door if a more substituted carbon is available. Weak nucleophile, protic solvent, 3° or 2° substrate - SN1 weather.',
+  teach:'Draw the empty p orbital with both lobes open. Racemization stops being a fact to memorize the moment they see the flatness.',
+  q:{stem:'The tell that a reaction went through a free carbocation is:', opts:[
+    'Perfect retention of configuration',
+    'Racemization - and sometimes a skeleton that rearranged',
+    'Anti addition only',
+    'It needs a polar aprotic solvent'],
+   correct:1, explain:'Both faces of the flat cation are open (racemization) and 1,2-shifts are possible (rearrangement). Those two fingerprints mean cation, which means SN1 or E1.'}},
+{ n:'Scene 4', t:'E2: Naomi and the Zaitsev-Hofmann fork',
+  svg:'<div class="molrow"><div class="molcard rich"><span class="badge">&#8722;</span><canvas data-smiles="CC[O-]" width="180" height="100"></canvas><div class="mol-lbl">SMALL STRONG BASE</div><div class="mol-sub">ethoxide - Zaitsev</div></div><div class="molcard rich"><span class="badge">&#8722;</span><canvas data-smiles="CC(C)(C)[O-]" width="190" height="105"></canvas><div class="mol-lbl">BULKY BASE</div><div class="mol-sub">tert-butoxide - Hofmann</div></div></div><p class="caption">small strong base takes the more substituted alkene; a bulky base can only reach the exposed edge</p>',
+  walk:'A strong small base (NaOMe - Naomi - or NaOEt) grabs whatever beta-H is anti to the leaving group and gives the <b>more substituted alkene</b>: Zaitsev. Swap in a bulky base - tert-butoxide, LDA - and it physically cannot reach the crowded interior H: it takes the exposed edge and gives the <b>less substituted alkene</b>: Hofmann. And the geometry rule underneath: the H and the leaving group must be anti-periplanar, 180 degrees apart.',
+  teach:'Naomi is small, strong, and loves eliminating - default E2 Zaitsev. Strong base is not the same as small base: check the size before predicting the alkene.',
+  q:{stem:'2-bromo-2-methylbutane is treated with potassium tert-butoxide. The major alkene is:', opts:[
+    'The more substituted alkene - Zaitsev always wins',
+    'The less substituted alkene - the bulky base can only reach the exposed beta-H (Hofmann)',
+    'No alkene forms - 3° substrates cannot eliminate',
+    'A racemic alcohol'],
+   correct:1, explain:'Bulky base overrides Zaitsev: tert-butoxide cannot reach the interior hydrogens, so it deprotonates the exposed methyl edge and the less substituted alkene wins.'}},
+{ n:'Scene 5', t:'The whole decision in one breath',
+  svg:'<div class="molrow"><div class="molcard"><canvas data-smiles="CC[C@@H](C)Br" width="220" height="115"></canvas><div class="mol-lbl" style="color:#8a8168">THE BATTLEGROUND SUBSTRATE</div><div class="mol-sub">2° - all four paths open</div></div></div><p class="caption">substrate, reagent, solvent, heat: strong-small = SN2 · strong-bulky or heat = E2 · weak + protic = SN1/E1</p>',
+  walk:'Run it as one breath: <b>substrate</b> (methyl/1° = SN2; 3° = no SN2), <b>reagent</b> (strong small nucleophile = SN2; strong base = E2; bulky = Hofmann E2; weak = the SN1/E1 world), <b>solvent</b> (aprotic helps SN2; protic helps ionization), <b>heat</b> (heat loves elimination). Four questions, every problem.',
+  teach:'Close by having a student run the four questions on a fresh problem, out loud, unassisted. That recitation is the deliverable of the night.',
+  q:{stem:'A 2° halide meets a weak nucleophile in hot ethanol (protic). Expect:', opts:[
+    'Pure SN2',
+    'A mix of SN1 and E1 through the carbocation - heat tilting toward the alkene',
+    'Pure E2 - Zaitsev',
+    'No reaction'],
+   correct:1, explain:'Weak nucleophile + protic solvent = ionization chemistry: the cation forms and both SN1 and E1 products appear, with heat favoring elimination.'}}
+]};
+
+NIGHTS[5]={ t:'The Center of the Universe', booster:'Alkene Addition Reactions',
+  lede:'The pi bond is a nucleophile looking for an electrophile - almost every alkene reaction is that one sentence. Master where the pieces land (regiochemistry) and which face they land on (stereochemistry) and you own this hub.',
+  scenes:[
+{ n:'Scene 1', t:'The pi bond attacks first',
+  svg:'<div class="molrow"><div class="molcard rich"><span class="badge">&#960;</span><canvas data-smiles="C=C(C)C" width="190" height="105"></canvas><div class="mol-lbl">THE NUCLEOPHILE</div><div class="mol-sub">isobutylene</div></div><svg class="arr" viewBox="0 0 120 44"><defs><marker id="ahx" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1B7A4D"/></marker></defs><path d="M 8 30 Q 60 6 112 26" fill="none" stroke="#1B7A4D" stroke-width="3" marker-end="url(#ahx)"/></svg><div class="molcard poor"><span class="badge">&#948;+</span><canvas data-smiles="Br" width="130" height="95"></canvas><div class="mol-lbl">THE ELECTROPHILE</div><div class="mol-sub">H-Br, the H end</div></div></div><p class="caption">electrophilic addition: the exposed pi electrons attack, then a nucleophile closes in</p>',
+  walk:'Every addition starts the same way: the exposed pi electrons reach out and grab something electron-poor. Then whatever is left over closes in on the cation. Two steps, one story - and the whole hub is variations on where and how.',
+  teach:'Anchor them here: the alkene is the attacker. Once they see the pi bond as green, every reagent is just a different red.',
+  q:{stem:'In alkene + HBr, which bond forms FIRST?', opts:[
+    'C-Br - bromide attacks the alkene',
+    'C-H - the pi bond attacks the proton, making a carbocation',
+    'Both form simultaneously',
+    'H-Br must break heterolytically before anything'],
+   correct:1, explain:'The pi bond (rich) attacks the proton end of HBr (poor) first, creating the carbocation; bromide catches it second. Rich attacks poor, in that order.'}},
+{ n:'Scene 2', t:'Markovnikov: the rich get richer',
+  svg:'<div class="molrow"><div class="molcard poor"><span class="badge">+</span><canvas data-smiles="C[C+](C)C" width="190" height="105"></canvas><div class="mol-lbl">THE 3° CATION WINS</div><div class="mol-sub">the stable intermediate</div></div></div><p class="caption">H adds to the carbon that already has more H - so the CATION lands on the more substituted carbon</p>',
+  walk:'The H adds to the carbon with more hydrogens - <b>the rich get richer</b> - because that parks the positive charge on the more substituted carbon, where hyperconjugation stabilizes it: 3° beats 2° beats 1°. The X or OH then follows the cation.',
+  teach:'Make them say WHY before the reveal: it is carbocation stability driving the bus, not a naming rule.',
+  q:{stem:'Isobutylene + HBr. The Br ends up on:', opts:[
+    'The CH2 carbon - less crowded',
+    'The central carbon - the cation formed there because 3° is most stable',
+    'Both carbons equally',
+    'Neither - HBr does not add'],
+   correct:1, explain:'Protonation puts the cation on the tertiary center (most stable); bromide lands where the cation is. Markovnikov = stability of the intermediate.'}},
+{ n:'Scene 3', t:'The one flip: peroxides, HBr only',
+  svg:'<div class="molrow"><div class="molcard"><canvas data-smiles="CCCBr" width="220" height="115"></canvas><div class="mol-lbl" style="color:#8a8168">ANTI-MARKOVNIKOV PRODUCT</div><div class="mol-sub">1-bromopropane, radical route</div></div></div><p class="caption">ROOR flips HBr to anti-Markovnikov via a radical chain - water and HCl do not get flipped</p>',
+  walk:'Add peroxides and the HBr story becomes a <b>radical chain</b>: bromine radical adds first, to the LESS substituted carbon, so the product flips anti-Markovnikov. The flip works for HBr only - water has no radical route, so hydration stays Markovnikov no matter what is in the flask. Anti-Markovnikov OH has exactly one door: hydroboration.',
+  teach:'The most common alkene mistake on practice tests is flipping everything when ROOR appears. Ask: does peroxide change water addition, yes or no?',
+  q:{stem:'Propene + HBr + ROOR gives:', opts:[
+    '2-bromopropane - Markovnikov',
+    '1-bromopropane - the radical route lands Br on the terminal carbon',
+    'Propane-1,2-diol',
+    '2-propanol'],
+   correct:1, explain:'Peroxides start a radical chain: Br radical adds to the less substituted end so the CARBON radical sits secondary (more stable). Anti-Markovnikov, HBr only.'}},
+{ n:'Scene 4', t:'Three buckets decide the stereochemistry',
+  svg:'<div class="molrow"><div class="molcard"><canvas data-smiles="C[C+](C)C" width="220" height="115"></canvas><div class="mol-lbl" style="color:#8a8168">BUCKET 1: OPEN CATION</div><div class="mol-sub">rearranges, racemic</div></div><div class="molcard"><canvas data-smiles="CC1CO1" width="180" height="100"></canvas><div class="mol-lbl" style="color:#8a8168">BUCKET 3 RESULT: SAME FACE</div><div class="mol-sub">epoxide - syn delivery</div></div></div><p class="caption">open cation: rearranges + racemic · bridged ring: anti, no rearrangement · concerted: syn, same face</p>',
+  walk:'Sort every addition by its intermediate. <b>Open cation</b> (HX, H3O+): rearrangements possible, racemic. <b>Bridged three-membered ring</b> (Br2, halohydrin, oxymercuration): locked - backside attack, anti, no rearrangement. <b>Concerted</b> (hydrogenation, hydroboration, epoxidation, dihydroxylation): both pieces land together, same face, syn. Trust the intermediate - it answers the stereochemistry question for you.',
+  teach:'Which bucket does this fall into? is the question that replaces memorizing eleven reactions.',
+  q:{stem:'Br2 adds to cyclohexene. The two bromines end up:', opts:[
+    'Same face (syn) - they arrive together',
+    'Opposite faces (anti) - the bromonium bridge forces backside attack',
+    'Randomly - the cation is open',
+    'On the same carbon'],
+   correct:1, explain:'Bromination goes through the bridged bromonium ion: the second bromide must attack from the back side of the bridge. Anti, every time, no rearrangements.'}},
+{ n:'Scene 5', t:'Cleavage: ozone is scissors',
+  svg:'<div class="molrow"><div class="molcard rich"><span class="badge">&#960;</span><canvas data-smiles="C=C(C)C" width="180" height="100"></canvas><div class="mol-lbl">BEFORE</div><div class="mol-sub">isobutylene</div></div><svg class="arr" viewBox="0 0 120 44"><defs><marker id="ahx" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1B7A4D"/></marker></defs><path d="M 8 30 Q 60 6 112 26" fill="none" stroke="#1B7A4D" stroke-width="3" marker-end="url(#ahx)"/></svg><div class="molcard"><canvas data-smiles="CC(C)=O" width="180" height="100"></canvas><div class="mol-lbl" style="color:#8a8168">AFTER: TWO CARBONYLS</div><div class="mol-sub">acetone + formaldehyde</div></div></div><p class="caption">O3 cuts the C=C completely; the workup decides aldehydes (Zn or DMS) versus further oxidation</p>',
+  walk:'Ozonolysis does not add across the double bond - it <b>cuts it</b>. Every C=C becomes two C=O. Count your carbons on each side of the cut and you have the products. The reductive workup (Zn/H2O or DMS) keeps aldehydes; oxidative workup pushes to acids.',
+  teach:'See O3, think scissors. Then it is just carbon bookkeeping - count both halves.',
+  q:{stem:'Ozonolysis of 2-methyl-2-butene (reductive workup) gives:', opts:[
+    'One 5-carbon diol',
+    'Acetone and acetaldehyde - the alkene cut into its two carbonyl halves',
+    '2-methylbutane',
+    'A bromohydrin'],
+   correct:1, explain:'Cut the C=C: the (CH3)2C= half becomes acetone, the =CHCH3 half becomes acetaldehyde. Cleavage is counting, not mechanism.'}}
+]};
+
+NIGHTS[6]={ t:'Pay Twice, Plus the Acidic H', booster:'Alkyne Reactions',
+  lede:'Everything alkenes do, alkynes can do twice - and terminal alkynes carry the one acidic C-H on the whole test, which buys you the only free carbon nucleophile you will ever get.',
+  scenes:[
+{ n:'Scene 1', t:'Two pi bonds, double the addition',
+  svg:'<div class="molrow"><div class="molcard rich"><span class="badge">&#960;&#960;</span><canvas data-smiles="C#CCC" width="190" height="100"></canvas><div class="mol-lbl">TWO PI BONDS</div><div class="mol-sub">1-butyne</div></div></div><p class="caption">one equivalent adds once; excess adds twice - stoichiometry is part of the question</p>',
+  walk:'A triple bond is two pi bonds stacked. One equivalent of HX or X2 adds once and leaves an alkene; excess adds twice. Read the stoichiometry line of every alkyne question - it IS the question.',
+  teach:'Alkenes with a second life. Ask on every problem: one equivalent or excess?',
+  q:{stem:'1-butyne + 2 equivalents of HBr gives:', opts:[
+    '1-bromo-1-butene',
+    '2,2-dibromobutane - Markovnikov twice onto the same carbon',
+    '1,2-dibromobutane',
+    'Butane'],
+   correct:1, explain:'Each addition follows Markovnikov, and both put Br on the same more-substituted carbon: a geminal dibromide, 2,2-dibromobutane.'}},
+{ n:'Scene 2', t:'The partial reduction fork: C equals Cis',
+  svg:'<div class="molrow"><div class="molcard"><canvas data-smiles="CC#CC" width="220" height="115"></canvas><div class="mol-lbl" style="color:#8a8168">INTERNAL ALKYNE</div><div class="mol-sub">2-butyne - the fork matters here</div></div><div class="molcard"><canvas data-smiles="C/C=C\\C" width="180" height="100"></canvas><div class="mol-lbl" style="color:#8a8168">LINDLAR: CIS</div><div class="mol-sub">C equals Cis</div></div></div><p class="caption">Lindlar catalyst stops at the cis alkene; Na/NH3 gives trans - and TERMINAL alkynes have no cis/trans at all</p>',
+  walk:'Two partial reductions, one letter of mnemonic: Lindlar gives <b>Cis</b> (C = Cis); dissolving metal Na/NH3 gives trans. But look at the substrate first: a TERMINAL alkyne reduces to a terminal alkene, which has no cis or trans to be - both reagents hand you the same product.',
+  teach:'C equals Cis - let them guess the mnemonic before you say it. Then spring the terminal-alkyne trap immediately.',
+  q:{stem:'Na/NH3 on 1-butyne gives:', opts:[
+    'trans-1-butene',
+    'cis-1-butene',
+    '1-butene - terminal alkenes have no cis/trans',
+    'Butane'],
+   correct:2, explain:'The famous cis/trans fork only exists for internal alkynes. 1-butene is terminal - a CH2 end - so Lindlar and Na/NH3 give the same alkene here.'}},
+{ n:'Scene 3', t:'The acidic H and the acetylide franchise',
+  svg:'<div class="molrow"><div class="molcard rich"><span class="badge">&#8722;</span><canvas data-smiles="[C-]#CCC" width="190" height="100"></canvas><div class="mol-lbl">THE ACETYLIDE</div><div class="mol-sub">deprotonated 1-butyne</div></div><svg class="arr" viewBox="0 0 120 44"><defs><marker id="ahx" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1B7A4D"/></marker></defs><path d="M 8 30 Q 60 6 112 26" fill="none" stroke="#1B7A4D" stroke-width="3" marker-end="url(#ahx)"/></svg><div class="molcard poor"><span class="badge">&#948;+</span><canvas data-smiles="CBr" width="140" height="95"></canvas><div class="mol-lbl">1° HALIDES ONLY</div><div class="mol-sub">bromomethane</div></div></div><p class="caption">NaNH2 rips off the terminal H (pKa 25); the acetylide is a carbon nucleophile that builds C-C bonds</p>',
+  walk:'The terminal sp C-H sits at pKa 25 - acidic enough for NaNH2 to remove. The <b>acetylide</b> that remains is the one free carbon nucleophile on the test: it attacks primary halides SN2-style and grows the carbon chain. But it is also a strong base: hand it a 2° halide and it eliminates instead.',
+  teach:'This is how the test builds bigger molecules from smaller ones - the acetylide is the franchise. One rule: 1° halides only.',
+  q:{stem:'Sodium acetylide + 2-bromopropane gives mostly:', opts:[
+    'The SN2 coupling product',
+    'Propene - the acetylide acts as a base and eliminates',
+    'An acetal',
+    'No reaction'],
+   correct:1, explain:'On a 2° halide the acetylide behaves as the strong base it is: E2 elimination beats substitution. C-C coupling needs methyl or 1° halides.'}},
+{ n:'Scene 4', t:'Hydration lands on an enol - briefly',
+  svg:'<div class="molrow"><div class="molcard"><canvas data-smiles="C=C(O)CC" width="220" height="115"></canvas><div class="mol-lbl" style="color:#8a8168">THE ENOL - A TOURIST</div><div class="mol-sub">never stays</div></div><svg class="arr" viewBox="0 0 120 44"><defs><marker id="ahx" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1B7A4D"/></marker></defs><path d="M 8 30 Q 60 6 112 26" fill="none" stroke="#1B7A4D" stroke-width="3" marker-end="url(#ahx)"/></svg><div class="molcard"><canvas data-smiles="CCC(C)=O" width="180" height="100"></canvas><div class="mol-lbl" style="color:#8a8168">THE KETONE - HOME</div><div class="mol-sub">tautomerized product</div></div></div><p class="caption">water adds to give an enol, which tautomerizes instantly to the carbonyl - Markov gives the methyl ketone; hydroboration gives the aldehyde</p>',
+  walk:'Hydrate an alkyne and you briefly make an <b>enol</b> - an OH on a double bond - which immediately tautomerizes to the real product: a carbonyl. HgSO4/H2SO4 water goes Markovnikov: methyl ketone. Hydroboration-oxidation goes anti-Markovnikov: aldehyde. Same alkyne, two different carbonyls - choose by reagent.',
+  teach:'The enol is a tourist, not a resident. Ask what it becomes the moment nobody is watching.',
+  q:{stem:'1-butyne + H2O/H2SO4/HgSO4 gives:', opts:[
+    'Butanal (an aldehyde)',
+    '2-butanone (the methyl ketone) - Markovnikov OH, then tautomerize',
+    '1-buten-1-ol, stable',
+    'Butanoic acid'],
+   correct:1, explain:'Markovnikov puts the OH on C2, the enol tautomerizes, and the carbonyl lands on C2: the methyl ketone. The aldehyde requires the hydroboration route.'}}
+]};
+
+NIGHTS[7]={ t:'The Hungry Carbon', booster:'Ketones & Aldehydes',
+  lede:'Two stories run this hub: the carbonyl carbon is electrophilic (nucleophiles attack it), and the alpha carbon is acidic (bases make enolates there). Every carbonyl question is one of these two stories - name the story first.',
+  scenes:[
+{ n:'Scene 1', t:'The most famous poor carbon in chemistry',
+  svg:'<div class="molrow"><div class="molcard poor"><span class="badge">&#948;+</span><canvas data-smiles="CC(C)=O" width="190" height="105"></canvas><div class="mol-lbl">OXYGEN ROBS THE CARBON</div><div class="mol-sub">acetone</div></div></div><p class="caption">the C=O carbon is permanently delta-plus: story one is everyone attacking it</p>',
+  walk:'Oxygen hogs the pi electrons, leaving the carbonyl carbon permanently shortchanged - the most reliable electrophile on the test. Aldehydes are hungrier than ketones (less crowded, less donation). Story one of the hub: nucleophiles line up to attack this carbon.',
+  teach:'Reconnect to Night 1: find the EN atom, look at its NEIGHBOR. The whole hub is that move.',
+  q:{stem:'Which is MORE reactive toward nucleophilic attack?', opts:[
+    'Acetone - two methyl groups help',
+    'An aldehyde - less crowded and less electron-donated than a ketone',
+    'They are identical',
+    'Neither reacts with nucleophiles'],
+   correct:1, explain:'Aldehydes beat ketones both sterically (one less R group in the way) and electronically (one less donor pushing density at the hungry carbon).'}},
+{ n:'Scene 2', t:'PADPED: every acid-catalyzed step',
+  svg:'<div class="molrow"><div class="molcard"><canvas data-smiles="CCO" width="220" height="115"></canvas><div class="mol-lbl" style="color:#8a8168">THE NUCLEOPHILE</div><div class="mol-sub">ethanol</div></div><svg class="arr" viewBox="0 0 120 44"><defs><marker id="ahx" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1B7A4D"/></marker></defs><path d="M 8 30 Q 60 6 112 26" fill="none" stroke="#1B7A4D" stroke-width="3" marker-end="url(#ahx)"/></svg><div class="molcard poor"><span class="badge">&#948;+</span><canvas data-smiles="CC(C)=O" width="180" height="100"></canvas><div class="mol-lbl">PROTONATE FIRST</div><div class="mol-sub">acetone under acid</div></div></div><p class="caption">Protonate, Add, Deprotonate, Protonate, Eliminate, Deprotonate - acetal formation is the template</p>',
+  walk:'Acid-catalyzed carbonyl chemistry runs on one engine: <b>PADPED</b>. Protonate the carbonyl (making it even hungrier), Add the nucleophile, Deprotonate; then Protonate the OH, Eliminate water, Deprotonate. Acetals, imines, Fischer esterification - the same six beats.',
+  teach:'Walk acetal formation calling each step by its letter. Once they hear the rhythm, esters and imines are the same song.',
+  q:{stem:'Under acid catalysis, what happens BEFORE the nucleophile adds to a carbonyl?', opts:[
+    'The nucleophile deprotonates',
+    'The carbonyl oxygen is protonated, making the carbon even more electrophilic',
+    'Water leaves',
+    'The alpha carbon deprotonates'],
+   correct:1, explain:'P comes first: protonating the carbonyl oxygen supercharges the delta-plus on carbon. That is why weak nucleophiles like alcohols can attack at all under acid.'}},
+{ n:'Scene 3', t:'Amines: the fork at the iminium',
+  svg:'<div class="molrow"><div class="molcard rich"><span class="badge">&#948;&#8722;</span><canvas data-smiles="CCN" width="170" height="100"></canvas><div class="mol-lbl">1° AMINE: IMINE</div><div class="mol-sub">ethylamine</div></div><div class="molcard rich"><span class="badge">&#948;&#8722;</span><canvas data-smiles="CCNC" width="180" height="100"></canvas><div class="mol-lbl">2° AMINE: ENAMINE</div><div class="mol-sub">N-methylethylamine</div></div></div><p class="caption">same first steps; the fork is one deprotonation - a 3° amine has no N-H and does nothing</p>',
+  walk:'Amine plus carbonyl runs the same road to the <b>iminium</b>, then forks on one question: is there a second N-H? Primary amine: yes - lose it, form the C=N imine. Secondary amine: no - the alpha carbon pays instead, forming the enamine. Tertiary amine: no N-H at all - it cannot even reach the fork. Dead.',
+  teach:'The quick kill question: R3N plus ketone under acid - product? Make them commit to NOTHING before revealing.',
+  q:{stem:'A secondary amine condenses with acetone. The product is:', opts:[
+    'An imine (C=N)',
+    'An enamine - no second N-H, so the alpha carbon deprotonates instead',
+    'A 3° alcohol',
+    'No reaction'],
+   correct:1, explain:'At the iminium stage a 2° amine has no N-H left to lose, so the neighboring alpha C-H goes instead: C=C-N, the enamine.'}},
+{ n:'Scene 4', t:'Grignards and hydrides: who reduces what',
+  svg:'<div class="molrow"><div class="molcard rich"><span class="badge">&#8722;</span><canvas data-smiles="[C-]#N" width="160" height="95"></canvas><div class="mol-lbl">CARBON NUCLEOPHILES ADD</div><div class="mol-sub">cyanide, Grignards, acetylides</div></div><svg class="arr" viewBox="0 0 120 44"><defs><marker id="ahx" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1B7A4D"/></marker></defs><path d="M 8 30 Q 60 6 112 26" fill="none" stroke="#1B7A4D" stroke-width="3" marker-end="url(#ahx)"/></svg><div class="molcard poor"><span class="badge">&#948;+</span><canvas data-smiles="CC(C)=O" width="170" height="100"></canvas><div class="mol-lbl">THE TARGET</div><div class="mol-sub">acetone</div></div></div><p class="caption">NaBH4: aldehydes and ketones only · LiAlH4: everything · Grignard + ester: adds TWICE</p>',
+  walk:'Hydrides and carbanions are story one at full volume. <b>NaBH4</b> is the gentle hydride: aldehydes and ketones only - esters and acids just watch. <b>LiAlH4</b> flattens everything. And the Grignard trap: on an ester it adds <b>twice</b> - the mid-flight ketone is more reactive than the ester that born it - giving a 3° alcohol with two identical R groups.',
+  teach:'Put a ketone and an ester in one molecule and ask what NaBH4 touches. That drawing settles the selectivity question forever.',
+  q:{stem:'CH3MgBr (2 equivalents) + an ester gives:', opts:[
+    'A ketone - it stops after one addition',
+    'A 3° alcohol with two identical methyl groups - the intermediate ketone outcompetes the ester',
+    'A 1° alcohol',
+    'A carboxylic acid'],
+   correct:1, explain:'The first addition kicks out the OR and makes a ketone - which is MORE electrophilic than the ester was. The second equivalent pounces: 3° alcohol, two identical R groups.'}},
+{ n:'Scene 5', t:'Acetals: armor you can remove',
+  svg:'<div class="molrow"><div class="molcard"><canvas data-smiles="CC1(C)OCCO1" width="220" height="115"></canvas><div class="mol-lbl" style="color:#8a8168">THE PROTECTED CARBONYL</div><div class="mol-sub">a cyclic acetal - armored</div></div></div><p class="caption">stable to base, Grignards, hydrides - removed by aqueous acid when you need the carbonyl back</p>',
+  walk:'An acetal is a carbonyl wearing armor: stable to base, to Grignards, to hydrides - but aqueous acid takes the armor off and returns the C=O. That asymmetry is the point: protect one carbonyl, do chemistry elsewhere, deprotect. The classic multi-step synthesis move.',
+  teach:'Pose the puzzle first: two carbonyls, you need to Grignard only one. Let them invent protection before naming it.',
+  q:{stem:'Which conditions remove an acetal protecting group?', opts:[
+    'NaOH',
+    'Aqueous acid - the PADPED steps run in reverse',
+    'LiAlH4',
+    'A Grignard reagent'],
+   correct:1, explain:'Acetals shrug off base and nucleophiles but hydrolyze under aqueous acid - the same acid chemistry that built them, run backwards. That one-way door is what makes them armor.'}}
+]};
+
+NIGHTS[8]={ t:'The Reactivity Ladder', booster:'Carboxylic Acid Derivatives',
+  lede:'Acyl chloride, anhydride, ester, amide: one ladder, and everything flows downhill. Every derivatives question is two compounds and one comparison - who is higher?',
+  scenes:[
+{ n:'Scene 1', t:'One ladder runs the hub',
+  svg:'<div class="molrow"><div class="molcard poor"><span class="badge">&#948;+</span><canvas data-smiles="CCC(=O)Cl" width="190" height="100"></canvas><div class="mol-lbl">TOP: ACYL CHLORIDE</div><div class="mol-sub">most reactive</div></div><div class="molcard poor"><span class="badge">&#948;+</span><canvas data-smiles="CC(=O)N" width="170" height="100"></canvas><div class="mol-lbl">BOTTOM: AMIDE</div><div class="mol-sub">least reactive</div></div></div><p class="caption">acyl chloride > anhydride > ester > amide - downhill conversions are free, uphill needs force</p>',
+  walk:'Rank by leaving group: chloride leaves happily (top of the ladder), the amide anion barely leaves at all (bottom). Any derivative converts DOWNHILL to anything below it just by adding the right nucleophile. Uphill conversions need activation. One picture, the whole hub.',
+  teach:'Draw the ladder before any reactions. Every question tonight is: place both compounds, find which way is downhill.',
+  q:{stem:'Which conversion happens easily, without special activation?', opts:[
+    'Amide to acyl chloride',
+    'Acyl chloride to amide - straight downhill',
+    'Ester to acyl chloride',
+    'Amide to ester'],
+   correct:1, explain:'Acyl chloride sits at the top; amide at the bottom. Downhill (chloride to amide) is free - just add the amine. Climbing the ladder needs forcing reagents.'}},
+{ n:'Scene 2', t:'Why the amide refuses',
+  svg:'<div class="molrow"><div class="molcard rich"><span class="badge">&#948;&#8722;</span><canvas data-smiles="CC(=O)N" width="200" height="105"></canvas><div class="mol-lbl">THE N DONATES IN</div><div class="mol-sub">the amide resonance</div></div></div><p class="caption">nitrogen feeds its lone pair into the carbonyl - deadened C=O plus a terrible leaving group</p>',
+  walk:'The amide is the bottom rung for one reason: nitrogen <b>donates its lone pair into the carbonyl</b>, calming the hungry carbon, and an N anion is a miserable leaving group. Hydrolyzing an amide takes strong acid or base AND heat - which is why the peptide bonds holding you together survive a glass of water.',
+  teach:'Connect it to biology: proteins ARE amides. If amides hydrolyzed easily, we would dissolve.',
+  q:{stem:'Amide hydrolysis requires forcing conditions because:', opts:[
+    'Nitrogen is electronegative and attracts nucleophiles',
+    'The N lone pair deadens the carbonyl and the N leaving group is terrible',
+    'Amides are aromatic',
+    'Water cannot reach the carbonyl'],
+   correct:1, explain:'Resonance donation from N makes the carbonyl least electrophilic of all derivatives, and NR2 minus does not want to leave. Both story lines say: bottom of the ladder.'}},
+{ n:'Scene 3', t:'Fischer vs saponification: read the conditions',
+  svg:'<div class="molrow"><div class="molcard"><canvas data-smiles="CCO" width="220" height="115"></canvas><div class="mol-lbl" style="color:#8a8168">+ ACID + RCOOH</div><div class="mol-sub">Fischer: reversible</div></div><div class="molcard"><canvas data-smiles="CC(=O)OCC" width="180" height="100"></canvas><div class="mol-lbl" style="color:#8a8168">THE ESTER</div><div class="mol-sub">battleground molecule</div></div></div><p class="caption">acid conditions: Fischer equilibrium (remove water to win) · base conditions: saponification, one-way</p>',
+  walk:'Same ester, two worlds. <b>Acid + alcohol</b>: Fischer esterification, an equilibrium you win with Le Chatelier - flood the alcohol or pull out the water. <b>Base</b>: saponification, irreversible - the carboxylate that forms is resonance-happy and refuses further attack. The conditions line of the question tells you which world you are in.',
+  teach:'A catalyst never moves the finish line - it speeds both directions. Fischer is won by Le Chatelier, not by more acid.',
+  q:{stem:'Why is base-mediated ester hydrolysis (saponification) irreversible?', opts:[
+    'Base evaporates the alcohol',
+    'The product carboxylate is resonance-stabilized and will not be attacked again - a dead end',
+    'Esters are aromatic in base',
+    'It is actually reversible'],
+   correct:1, explain:'Deprotonation hands you the carboxylate - delocalized, electron-rich, and closed for business. That dead end pulls the whole reaction one way.'}}
+]};
+
+NIGHTS[9]={ t:'The Switchboard', booster:'Alcohols, Ethers, & Epoxides',
+  lede:'An OH can become almost anything - alkene, halide, ketone, acid, ether. The skill is choosing the operator. And the quiet ethers hide one spring-loaded exception: the epoxide.',
+  scenes:[
+{ n:'Scene 1', t:'Nobody leaves as OH minus',
+  svg:'<div class="molrow"><div class="molcard rich"><span class="badge">&#948;&#8722;</span><canvas data-smiles="CCCCO" width="200" height="105"></canvas><div class="mol-lbl">TERRIBLE LEAVING GROUP</div><div class="mol-sub">1-butanol</div></div></div><p class="caption">dress the oxygen up first: protonate it (water leaves) or tosylate it (great LG, stereocenter untouched)</p>',
+  walk:'Hydroxide never walks away on its own. To substitute an alcohol you dress the oxygen first: <b>protonate</b> it so it leaves as neutral water, or cap it as a <b>tosylate</b> - a superb leaving group installed without touching the stereocenter. SOCl2 and PBr3 do the swap with clean inversion and no rearrangement.',
+  teach:'Two dress-up moves: protonate or tosylate. That pair answers half the alcohol questions on the test.',
+  q:{stem:'To run clean SN2 on an alcohol without scrambling the stereocenter, you:', opts:[
+    'Add strong base and heat',
+    'Convert the OH to a tosylate, then add the nucleophile',
+    'Just add NaCN - OH leaves fine',
+    'Oxidize it first'],
+   correct:1, explain:'Tosylation converts the terrible OH into a great leaving group while leaving the C-O bond - and the stereocenter - untouched. Then SN2 proceeds normally.'}},
+{ n:'Scene 2', t:'PCC parks, Jones floors it',
+  svg:'<div class="molrow"><div class="molcard"><canvas data-smiles="CCCCO" width="220" height="115"></canvas><div class="mol-lbl" style="color:#8a8168">1° ALCOHOL</div><div class="mol-sub">two possible destinations</div></div><svg class="arr" viewBox="0 0 120 44"><defs><marker id="ahx" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1B7A4D"/></marker></defs><path d="M 8 30 Q 60 6 112 26" fill="none" stroke="#1B7A4D" stroke-width="3" marker-end="url(#ahx)"/></svg><div class="molcard"><canvas data-smiles="CCCC=O" width="170" height="100"></canvas><div class="mol-lbl" style="color:#8a8168">PCC STOPS HERE</div><div class="mol-sub">butanal</div></div></div><p class="caption">PCC (anhydrous): 1° alcohol stops at the aldehyde · Jones (aqueous): runs through the hydrate to the acid · 2° alcohols stop at the ketone either way</p>',
+  walk:'Both oxidize; the difference is water. <b>PCC</b> is anhydrous: the aldehyde never meets water, never forms the hydrate, and the oxidation parks there. <b>Jones</b> runs in water: the aldehyde hydrates and gets oxidized a second time, all the way to the acid. Secondary alcohols stop at the ketone with either - there is no second H to lose.',
+  teach:'Chromium Jones burns everything to the top oxidation state; PCC is the gentle one. Ask WHY water is the difference.',
+  q:{stem:'A 2° alcohol + Jones reagent gives:', opts:[
+    'A carboxylic acid',
+    'A ketone - and it stops there with either oxidant',
+    'An aldehyde',
+    'An ester'],
+   correct:1, explain:'Ketones have no H left on the carbonyl carbon to oxidize further (no easy hydrate route onward) - 2° alcohols stop at the ketone under PCC or Jones alike.'}},
+{ n:'Scene 3', t:'The epoxide: acid or base decides the carbon',
+  svg:'<div class="molrow"><div class="molcard"><canvas data-smiles="CC1CO1" width="180" height="100"></canvas><div class="mol-lbl" style="color:#8a8168">SPRING-LOADED</div><div class="mol-sub">propylene oxide</div></div></div><p class="caption">acid opening: nucleophile hits the MORE substituted carbon · base opening: SN2 at the LESS hindered carbon</p>',
+  walk:'Ethers are the quiet solvents of chemistry - inert to base, cleaved only by strong HX. The exception is the <b>epoxide</b>: sixty degrees of ring strain, spring-loaded. One question decides every opening: acid or base? Acid puts cation character on the more substituted carbon - the nucleophile goes there. Base is pure SN2 - less hindered carbon. And a Grignard plus ethylene oxide adds two carbons and an alcohol in one move.',
+  teach:'Acid: more substituted. Base: less hindered. Drill that reflex - it is the entire epoxide topic.',
+  q:{stem:'Methoxide (strong base) opens propylene oxide at:', opts:[
+    'The more substituted carbon - always better',
+    'The less hindered CH2 - base conditions are pure SN2',
+    'The oxygen',
+    'It cannot open an epoxide'],
+   correct:1, explain:'Under base there is no cation character anywhere: it is a clean SN2, and SN2 goes where the crowd is not. The acid rule (more substituted) belongs to the other world.'}}
+]};
+
+NIGHTS[10]={ t:'The Alpha Carbon Wakes Up', booster:'Enolate Reactions',
+  lede:'Story two of the carbonyl world: the alpha C-H is acidic (pKa about 20), and deprotonating it turns the carbonyl into a NUCLEOPHILE. Every name reaction in this bank - aldol, Claisen, Michael, malonic - is an enolate attacking a carbonyl.',
+  scenes:[
+{ n:'Scene 1', t:'pKa 20: the hidden acid',
+  svg:'<div class="molrow"><div class="molcard rich"><span class="badge">&#948;&#8722;</span><canvas data-smiles="C=C(O)CC" width="200" height="105"></canvas><div class="mol-lbl">THE ENOLATE IDEA</div><div class="mol-sub">carbon turned nucleophile</div></div></div><p class="caption">base removes the alpha H; the resulting enolate is carbon-rich and hungry to attack</p>',
+  walk:'Next to every carbonyl sits an alpha C-H at pKa around 20 - acidic because the anion left behind delocalizes onto oxygen. That anion, the <b>enolate</b>, is the great role reversal of the course: the carbonyl compound stops being the target and becomes the attacker.',
+  teach:'Reconnect to Naomi - the same strong bases that eliminate also make enolates. Same character, second job.',
+  q:{stem:'Deprotonating the alpha carbon of a ketone produces:', opts:[
+    'A carbocation',
+    'An enolate - a resonance-stabilized carbon nucleophile',
+    'An acetal',
+    'A Grignard reagent'],
+   correct:1, explain:'The negative charge shares between the alpha carbon and the oxygen. On carbon, it is a nucleophile - the attacker in every reaction of this bank.'}},
+{ n:'Scene 2', t:'The aldol: enolate meets carbonyl',
+  svg:'<div class="molrow"><div class="molcard rich"><span class="badge">&#8722;</span><canvas data-smiles="C=C(O)CC" width="180" height="100"></canvas><div class="mol-lbl">THE ATTACKER</div><div class="mol-sub">an enolate</div></div><svg class="arr" viewBox="0 0 120 44"><defs><marker id="ahx" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1B7A4D"/></marker></defs><path d="M 8 30 Q 60 6 112 26" fill="none" stroke="#1B7A4D" stroke-width="3" marker-end="url(#ahx)"/></svg><div class="molcard poor"><span class="badge">&#948;+</span><canvas data-smiles="CCC=O" width="170" height="100"></canvas><div class="mol-lbl">THE TARGET</div><div class="mol-sub">propanal</div></div></div><p class="caption">product: a beta-hydroxy carbonyl · heat then eliminates to the alpha-beta unsaturated carbonyl</p>',
+  walk:'One molecule becomes the enolate (rich), a second stays a plain carbonyl (poor), and the enolate attacks: the product is a <b>beta-hydroxy carbonyl</b>. Warm it and water eliminates to give the conjugated alpha-beta unsaturated carbonyl. That two-step - aldol, then condensation - is the most-asked name reaction in the bank.',
+  teach:'It is Night 1 again: find the green, find the red. The aldol is just the sentence with both roles played by carbonyls.',
+  q:{stem:'The immediate aldol addition product of two aldehydes is:', opts:[
+    'An ester',
+    'A beta-hydroxy aldehyde - the enolate carbon bonded to the other carbonyl carbon',
+    'A carboxylic acid',
+    'An epoxide'],
+   correct:1, explain:'The enolate alpha-carbon attacks the second aldehyde carbonyl: new C-C bond, alkoxide then protonates - a beta-hydroxy carbonyl. Heat takes it on to the enone.'}},
+{ n:'Scene 3', t:'Claisen and the decarboxylation trick',
+  svg:'<div class="molrow"><div class="molcard"><canvas data-smiles="CC(=O)OCC" width="190" height="100"></canvas><div class="mol-lbl" style="color:#8a8168">ESTERS DO IT TOO</div><div class="mol-sub">Claisen makes beta-ketoesters</div></div></div><p class="caption">Claisen = the aldol idea with esters (beta-ketoester product) · beta-keto acids + heat lose CO2</p>',
+  walk:'Run the same enolate attack with esters and you get the <b>Claisen condensation</b>: a beta-ketoester. And the finishing move of the whole bank: any <b>beta-keto ACID loses CO2 on heating</b> - the malonic and acetoacetic ester syntheses are just enolate alkylation, hydrolysis, then that decarboxylation. Three beats: attack, hydrolyze, pop the CO2.',
+  teach:'The exam pattern: if you see a beta-keto acid plus heat, CO2 is leaving. Ask what six-membered transition state makes that easy.',
+  q:{stem:'A beta-keto carboxylic acid is heated. The product is:', opts:[
+    'A diol',
+    'A ketone plus CO2 - beta-keto acids decarboxylate on heating',
+    'An anhydride',
+    'No change - acids are stable to heat'],
+   correct:1, explain:'The beta-carbonyl makes a tidy six-membered transition state for losing CO2: heat a beta-keto acid and it pops out carbon dioxide, leaving the ketone.'}}
+]};
+
+NIGHTS[11]={ t:'The Ring That Refuses', booster:'Aromaticity & Benzene Reactions',
+  lede:'Benzene is electron-rich but refuses to add - addition would break aromaticity. It substitutes instead: electrophile in, H out, ring restored. Five reactions, one mechanism, and a directing game that decides where the second group lands.',
+  scenes:[
+{ n:'Scene 1', t:'If you see a ring, think EAS',
+  svg:'<div class="molrow"><div class="molcard rich"><span class="badge">&#960;</span><canvas data-smiles="c1ccccc1" width="180" height="105"></canvas><div class="mol-lbl">THE AROMATIC NUCLEOPHILE</div><div class="mol-sub">benzene</div></div></div><p class="caption">ring + something being added = electrophilic aromatic substitution, every time</p>',
+  walk:'The recognition move that pays for the whole night: <b>a ring plus something being added equals EAS</b>. It looks like addition, but a ring hydrogen is what leaves so aromaticity survives. One mechanism - attack, arenium ion, lose H+ - wearing five reagent costumes: nitration, halogenation, sulfonation, and the two Friedel-Crafts.',
+  teach:'This family is my favorite - tell them that. Recognition alone is worth points before any mechanism.',
+  q:{stem:'Why does benzene substitute instead of adding like an alkene?', opts:[
+    'Benzene has no pi electrons',
+    'Addition would destroy aromaticity; substitution restores it after the arenium ion',
+    'Benzene is electron-poor',
+    'The H atoms block addition'],
+   correct:1, explain:'The ring will spend its aromaticity briefly (the arenium ion) but always buys it back by kicking out H+. Keeping aromaticity is the whole story.'}},
+{ n:'Scene 2', t:'The directing game: donors and withdrawers',
+  svg:'<div class="molrow"><div class="molcard rich"><span class="badge">&#948;&#8722;</span><canvas data-smiles="Nc1ccccc1" width="190" height="105"></canvas><div class="mol-lbl">DONOR: ORTHO/PARA + FASTER</div><div class="mol-sub">aniline</div></div><div class="molcard poor"><span class="badge">&#948;+</span><canvas data-smiles="O=[N+]([O-])c1ccccc1" width="200" height="105"></canvas><div class="mol-lbl">WITHDRAWER: META + SLOWER</div><div class="mol-sub">nitrobenzene</div></div></div><p class="caption">donate in = speeds up = ortho/para · pull out = slows down = meta</p>',
+  walk:'A group already on the ring runs the seating chart for the next one. <b>Donors</b> (NH2, OH, OR, alkyl) push density in: the ring runs faster and the newcomer sits ortho or para - the rich get richer. <b>Withdrawers</b> (NO2, carbonyls, CN) drain the ring: slower, and the newcomer is pushed meta.',
+  teach:'Make them say WHY with resonance, not just the labels: where does the donated density pile up? Ortho and para.',
+  q:{stem:'Toluene undergoes nitration. The NO2 lands mostly:', opts:[
+    'Meta - methyl withdraws',
+    'Ortho and para - the alkyl group donates and directs there',
+    'Ipso, replacing the methyl',
+    'Nitration fails on toluene'],
+   correct:1, explain:'Alkyl groups are weak donors: they activate the ring and direct ortho/para. Meta belongs to the withdrawers.'}},
+{ n:'Scene 3', t:'The halogen exception: two contests',
+  svg:'<div class="molrow"><div class="molcard poor"><span class="badge">&#948;+</span><canvas data-smiles="Clc1ccccc1" width="190" height="105"></canvas><div class="mol-lbl">SLOWER, BUT STILL O/P</div><div class="mol-sub">chlorobenzene</div></div></div><p class="caption">electronegativity wins the SPEED contest (deactivates); the lone pair wins the DIRECTION contest (ortho/para)</p>',
+  walk:'Halogens break the pattern by winning different contests. Their electronegativity <b>drains</b> the ring - slower, deactivated. But their lone pairs can still <b>donate into ortho and para</b> through resonance - so direction stays ortho/para. Deactivator and meta-director are NOT synonyms; halogens prove it.',
+  teach:'Would Cl rather give up seven electrons or gain one? It withdraws - but the lone pair still picks the seats.',
+  q:{stem:'Chlorobenzene undergoes EAS. Compared to benzene it reacts:', opts:[
+    'Faster, ortho/para',
+    'Slower, but still ortho/para - the halogen exception',
+    'Slower, meta',
+    'Faster, meta'],
+   correct:1, explain:'EN drains the ring (slower) while resonance donation of the lone pair still directs ortho/para. Two contests, two different winners.'}},
+{ n:'Scene 4', t:'Friedel-Crafts: the diva',
+  svg:'<div class="molrow"><div class="molcard poor"><span class="badge">&#948;+</span><canvas data-smiles="O=[N+]([O-])c1ccccc1" width="200" height="105"></canvas><div class="mol-lbl">TOO DRAINED FOR FC</div><div class="mol-sub">nitrobenzene refuses</div></div></div><p class="caption">FC alkylation rearranges + polyalkylates · FC fails entirely on strongly deactivated rings - order of operations matters</p>',
+  walk:'Friedel-Crafts has demands. Alkylation runs through a cation - so it <b>rearranges</b> (n-propyl arrives as isopropyl) and <b>overshoots</b> (the product ring is more activated than the starting one). And on a strongly deactivated ring - nitrobenzene - FC refuses to run at all. The fixes: acylate-then-reduce for straight chains, and in synthesis, install the alkyl or acyl BEFORE the nitro.',
+  teach:'This is an order-of-operations hub: the DAT loves asking which step comes first. Nitration last.',
+  q:{stem:'To put an unrearranged n-propyl chain on benzene, you:', opts:[
+    'FC alkylation with n-propyl chloride',
+    'FC acylation, then reduce the ketone to CH2 (Clemmensen or Wolff-Kishner)',
+    'Nitrate first, then alkylate',
+    'Use excess propyl chloride'],
+   correct:1, explain:'Direct alkylation rearranges via the cation. Acylation has no rearrangement (the acylium is stabilized); reducing the ketone afterward leaves the clean straight chain.'}}
+]};
+
+NIGHTS[12]={ t:'Different Arrows', booster:'Free Radical & Diels Alder Cycloaddition Reactions',
+  lede:'Two special mechanisms with their own arrows: radicals move ONE electron at a time (fishhooks), and the Diels-Alder moves six at once in a single handshake. Different grammar, same ladder logic.',
+  scenes:[
+{ n:'Scene 1', t:'Fishhooks and the chain',
+  svg:'<div class="molrow"><div class="molcard"><canvas data-smiles="CCCC" width="220" height="115"></canvas><div class="mol-lbl" style="color:#8a8168">ALKANES ONLY WAKE FOR RADICALS</div><div class="mol-sub">butane + X2 + light</div></div></div><p class="caption">initiation once, propagation forever, termination cleans up - half arrows move single electrons</p>',
+  walk:'Alkanes ignore polar chemistry; they only wake up for radicals. Light cracks X2 (<b>initiation</b>), then the chain carries itself: abstract an H, attack X2, repeat (<b>propagation</b>), until two radicals meet (<b>termination</b>). Every arrow is a <b>fishhook</b> - half an arrowhead, one electron.',
+  teach:'Ask why a radical step needs TWO fishhooks where polar chemistry drew one full arrow. One electron each.',
+  q:{stem:'In radical halogenation, the propagation steps:', opts:[
+    'Happen once, at the start',
+    'Carry the chain - each step regenerates a radical that feeds the next',
+    'Destroy radicals',
+    'Require a nucleophile'],
+   correct:1, explain:'Propagation is self-sustaining: the carbon radical attacks X2 and hands back an X radical, which abstracts another H. Initiation only has to happen once.'}},
+{ n:'Scene 2', t:'The radical ladder, and why Br is picky',
+  svg:'<div class="molrow"><div class="molcard"><canvas data-smiles="CC(C)C" width="220" height="115"></canvas><div class="mol-lbl" style="color:#8a8168">WHICH H GOES?</div><div class="mol-sub">isobutane: one 3° H vs nine 1° H</div></div></div><p class="caption">stability: benzylic/allylic > 3° > 2° > 1° · Br (slow, late TS) feels the gap and picks carefully; Cl sprays</p>',
+  walk:'Radicals rank like cations - benzylic and allylic on top, then 3°, 2°, 1° - and resonance beats hyperconjugation. Selectivity is Hammond: <b>bromine</b> abstraction is endothermic, its transition state is late and looks like the radical, so Br feels the stability gap and commits to the best position. <b>Chlorine</b> is exothermic and sloppy - a real mixture, and you must count every equivalent H.',
+  teach:'Slow and late means selective - say it in one breath. Then make them run the H-count times reactivity product before any numbers.',
+  q:{stem:'Monobromination of isobutane gives mostly:', opts:[
+    '1-bromo-2-methylpropane - nine primary H beat one tertiary',
+    '2-bromo-2-methylpropane - Br is selective for the 3° position',
+    'An equal mixture',
+    'No reaction without acid'],
+   correct:1, explain:'Bromine is the picky radical: the late transition state feels the 3° radical stability, so even one tertiary H beats nine primary ones.'}},
+{ n:'Scene 3', t:'Diels-Alder: the six-electron handshake',
+  svg:'<div class="molrow"><div class="molcard rich"><span class="badge">&#960;&#960;</span><canvas data-smiles="C=CC=C" width="190" height="100"></canvas><div class="mol-lbl">THE DIENE - MUST BE S-CIS</div><div class="mol-sub">butadiene</div></div><svg class="arr" viewBox="0 0 120 44"><defs><marker id="ahx" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1B7A4D"/></marker></defs><path d="M 8 30 Q 60 6 112 26" fill="none" stroke="#1B7A4D" stroke-width="3" marker-end="url(#ahx)"/></svg><div class="molcard poor"><span class="badge">&#948;+</span><canvas data-smiles="C=CC=O" width="180" height="100"></canvas><div class="mol-lbl">THE DIENOPHILE</div><div class="mol-sub">acrolein - EWG helps</div></div></div><p class="caption">one concerted step: diene + dienophile close a cyclohexene ring - no intermediate, stereochemistry preserved</p>',
+  walk:'The Diels-Alder is one concerted <b>handshake</b>: an electron-rich diene (locked s-cis) meets an electron-poor dienophile (an EWG makes it hungrier), and six electrons shuffle at once to close a cyclohexene ring. No intermediate, so whatever stereochemistry the partners bring is preserved in the product. Still Night 1: the rich diene attacks the poor dienophile.',
+  teach:'Two checks before predicting any DA: can the diene reach s-cis, and does the dienophile carry an EWG?',
+  q:{stem:'Which dienophile reacts FASTEST in a Diels-Alder?', opts:[
+    'Ethylene, plain',
+    'Acrolein (C=C-CHO) - the carbonyl withdraws and makes the alkene hungrier',
+    '2,3-dimethyl-2-butene - more substituted',
+    'Benzene'],
+   correct:1, explain:'The diene is the rich partner, so the best dienophile is the poorest alkene: an electron-withdrawing group like the aldehyde supercharges it. Plain or donor-rich alkenes are sluggish.'}}
+]};
+
+NIGHTS[13]={ t:'Reading the Machines', booster:'Spectroscopy & Lab Techniques',
+  lede:'The machines tell you what you made. IR names the bonds, NMR counts the neighborhoods, mass spec weighs the pieces - and each one is two or three reads, not a memorized table.',
+  scenes:[
+{ n:'Scene 1', t:'IR: the tongue and the dagger',
+  svg:'<div class="molrow"><div class="molcard"><canvas data-smiles="CC(=O)O" width="200" height="105"></canvas><div class="mol-lbl" style="color:#8a8168">BOTH SIGNALS AT ONCE</div><div class="mol-sub">acetic acid: broad O-H over a sharp C=O</div></div></div><p class="caption">O-H: one broad tongue near 3300 · C=O: the sharp dagger at about 1700 · N-H of NH2: the double dip</p>',
+  walk:'IR is two landmarks and a silhouette. A <b>broad tongue</b> swallowing 3300 is an O-H. A <b>sharp dagger</b> at about 1700 is a C=O. See both at once: carboxylic acid. And an NH2 gives the <b>double dip</b> - two small notches like the roots of a tooth, where the O-H would be one broad sweep.',
+  teach:'The tongue and the dagger carry ninety percent of DAT IR. Draw the silhouettes, not wavenumber tables.',
+  q:{stem:'An IR spectrum shows a broad absorption near 3300 AND a sharp peak near 1700. The compound is likely:', opts:[
+    'An ether',
+    'A carboxylic acid - the O-H tongue plus the C=O dagger together',
+    'An alkane',
+    'An amine with no carbonyl'],
+   correct:1, explain:'One broad O-H plus one sharp C=O in the same spectrum is the carboxylic acid signature - the two most valuable IR landmarks appearing together.'}},
+{ n:'Scene 2', t:'NMR: count worlds, then count neighbors',
+  svg:'<div class="molrow"><div class="molcard"><canvas data-smiles="CCO" width="180" height="100"></canvas><div class="mol-lbl" style="color:#8a8168">THREE WORLDS</div><div class="mol-sub">ethanol: CH3, CH2, OH</div></div></div><p class="caption">step one: count the distinct H environments = number of signals · step two: n+1 splitting from H neighbors · OH is the loner singlet</p>',
+  walk:'Two steps answer most NMR questions. <b>Count the worlds</b>: how many distinct H environments? That is the signal count - cross out any answer that disagrees. Then <b>n+1</b>: each signal splits by (neighboring H + 1). Ethanol: CH3 sees two neighbors - triplet; CH2 sees three - quartet; the OH stands alone - singlet, because the oxygen blocks its coupling.',
+  teach:'Count the worlds first, always. Half the answer choices die before you ever think about splitting.',
+  q:{stem:'In the 1H NMR of ethanol, the CH2 appears as a:', opts:[
+    'Singlet',
+    'Triplet',
+    'Quartet - it sees the three CH3 protons: 3+1',
+    'Doublet'],
+   correct:2, explain:'n+1: the CH2 protons couple to the three methyl H next door, so 3+1 = quartet. The OH does not add coupling across the oxygen.'}},
+{ n:'Scene 3', t:'Downfield means deshielded',
+  svg:'<div class="molrow"><div class="molcard"><canvas data-smiles="CCOC(C)=O" width="200" height="105"></canvas><div class="mol-lbl" style="color:#8a8168">WHO SITS DOWNFIELD?</div><div class="mol-sub">ethyl acetate: the OCH2 does</div></div></div><p class="caption">electronegative neighbors pull electron density away - deshielded H shift left (downfield); aldehyde H near 9-10</p>',
+  walk:'Chemical shift is Night 1 wearing an NMR costume: hydrogens near <b>electron-withdrawing neighbors</b> lose their electronic shielding and slide downfield (left). Plain alkyl H sit near 1; H on a carbon next to O sit near 3 to 4; the aldehyde H stands famously alone near 9 to 10.',
+  teach:'One rule instead of a chart: the closer to the electron thief, the further downfield. Then anchor the aldehyde H as the flagpole.',
+  q:{stem:'A 1H signal at 9.7 ppm most likely belongs to:', opts:[
+    'A CH3 far from any group',
+    'An aldehyde H - the classic far-downfield loner',
+    'An aromatic H',
+    'An alkene H'],
+   correct:1, explain:'The aldehyde hydrogen, deshielded by the carbonyl, lives near 9-10 ppm - further downfield than aromatics (7-8) and a landmark worth banking.'}},
+{ n:'Scene 4', t:'Mass spec: the molecule weighs itself',
+  svg:'<div class="molrow"><div class="molcard"><canvas data-smiles="CCCC=O" width="190" height="100"></canvas><div class="mol-lbl" style="color:#8a8168">M+ = 72</div><div class="mol-sub">butanal - watch for m/z 44</div></div></div><p class="caption">M+ = molecular weight · fragments = pieces after clean breaks · McLafferty: carbonyl + gamma-H loses ethene, leaving an even-mass ion</p>',
+  walk:'The molecular ion M+ is the whole molecule weighing itself. Fragments are the pieces after favorable breaks - loss of 15 is a methyl, 29 an ethyl or CHO. The star rearrangement: <b>McLafferty</b> - a carbonyl with a gamma-H runs a six-membered H transfer, spits out ethene, and leaves an <b>even-mass</b> cation. Even-mass fragments are the tell that a rearrangement happened.',
+  teach:'Fragments are usually odd; an even-mass fragment is the McLafferty flag. For butanal: 72 up top, 44 shouting rearrangement.',
+  q:{stem:'In a mass spectrum of a carbonyl compound, a strong EVEN-mass fragment ion suggests:', opts:[
+    'Simple methyl loss',
+    'A McLafferty rearrangement - the six-membered H transfer produces even-mass ions',
+    'The molecular ion is wrong',
+    'Contamination'],
+   correct:1, explain:'Simple bond cleavages of typical organics give odd-mass fragment cations; the McLafferty rearrangement produces the even-mass enol cation - the diagnostic exception.'}}
+]};
+
+
 
 var SYLLABUS=[
-  {t:'The Only Reaction', b:'The Fundamentals', live:true, links:[['Teach it','../ochem/index.html?teach=cardio']]},
-  {t:'Names Are Directions', b:'IUPAC Nomenclature', links:[['Engine chapter','../ochem/index.html#nomenclature']]},
-  {t:'Molecules in 3D', b:'Conformations & Stereochemistry', links:[['Stereo Lab','../ochem/index.html#stereo-lab']]},
-  {t:'The Four Questions', b:'Substitution & Elimination', links:[['Teach it','../ochem/index.html?teach=subelim'],['Play the wheel','../ochem/index.html?game=wheel']]},
-  {t:'The Center of the Universe', b:'Alkene Addition Reactions', links:[['Teach it','../ochem/index.html?teach=alkenes'],['Play the wheel','../ochem/index.html?game=wheel']]},
-  {t:'Pay Twice, Plus the Acidic H', b:'Alkyne Reactions', links:[['Teach it','../ochem/index.html?teach=alkynes']]},
-  {t:'The Hungry Carbon', b:'Ketones & Aldehydes', links:[['Teach it','../ochem/index.html?teach=carbonyl']]},
-  {t:'The Reactivity Ladder', b:'Carboxylic Acid Derivatives', links:[['Teach it','../ochem/index.html?teach=acids']]},
-  {t:'The Switchboard', b:'Alcohols, Ethers, & Epoxides', links:[['Teach it','../ochem/index.html?teach=alcohols'],['Ethers','../ochem/index.html?teach=ethers']]},
-  {t:'The Alpha Carbon Wakes Up', b:'Enolate Reactions', links:[['Engine chapter','../ochem/index.html#alpha-condensation']]},
-  {t:'The Ring That Refuses', b:'Aromaticity & Benzene Reactions', links:[['Teach it','../ochem/index.html?teach=aromatic']]},
-  {t:'Radicals and the Handshake', b:'Free Radical & Diels Alder Cycloaddition Reactions', links:[['Teach it','../ochem/index.html?teach=alkanes']]},
-  {t:'Reading the Machines', b:'Spectroscopy & Lab Techniques', links:[['Spec Trainer','../ochem/index.html#spec-trainer']]}
+  {t:'The Only Reaction', b:'The Fundamentals'},
+  {t:'Names Are Directions', b:'IUPAC Nomenclature'},
+  {t:'Molecules in 3D', b:'Conformations & Stereochemistry'},
+  {t:'The Four Questions', b:'Substitution & Elimination', extra:[['Teach the hub','../ochem/index.html?teach=subelim']]},
+  {t:'The Center of the Universe', b:'Alkene Addition Reactions', extra:[['Teach the hub','../ochem/index.html?teach=alkenes'],['Play the wheel','../ochem/index.html?game=wheel']]},
+  {t:'Pay Twice, Plus the Acidic H', b:'Alkyne Reactions', extra:[['Teach the hub','../ochem/index.html?teach=alkynes']]},
+  {t:'The Hungry Carbon', b:'Ketones & Aldehydes', extra:[['Teach the hub','../ochem/index.html?teach=carbonyl']]},
+  {t:'The Reactivity Ladder', b:'Carboxylic Acid Derivatives', extra:[['Teach the hub','../ochem/index.html?teach=acids']]},
+  {t:'The Switchboard', b:'Alcohols, Ethers, & Epoxides', extra:[['Teach the hub','../ochem/index.html?teach=alcohols']]},
+  {t:'The Alpha Carbon Wakes Up', b:'Enolate Reactions', extra:[['Engine chapter','../ochem/index.html#alpha-condensation']]},
+  {t:'The Ring That Refuses', b:'Aromaticity & Benzene Reactions', extra:[['Teach the hub','../ochem/index.html?teach=aromatic']]},
+  {t:'Different Arrows', b:'Free Radical & Diels Alder Cycloaddition Reactions', extra:[['Teach the hub','../ochem/index.html?teach=alkanes']]},
+  {t:'Reading the Machines', b:'Spectroscopy & Lab Techniques', extra:[['Spec Trainer','../ochem/index.html#spec-trainer']]}
 ];
-var mode = new URLSearchParams(location.search).get('mode')==='teach' ? 'teach' : 'walk';
-var LS='atDAT_retold_n1';
+var qsp=new URLSearchParams(location.search);
+var CUR=parseInt(qsp.get('night')||'1',10); if(!NIGHTS[CUR]) CUR=1;
+var SCENES=NIGHTS[CUR].scenes;
+document.getElementById('nightLine').textContent='Night '+CUR+' of 13 · in sync with your Booster bank: '+NIGHTS[CUR].booster;
+document.getElementById('nightTitle').textContent=NIGHTS[CUR].t;
+document.getElementById('nightLede').innerHTML=NIGHTS[CUR].lede;
+document.title='OChem, Retold — Night '+CUR+' · '+NIGHTS[CUR].t;
+var mode = qsp.get('mode')==='teach' ? 'teach' : 'walk';
+var LS='atDAT_retold_n'+CUR;
 var done={};
 try{ done=JSON.parse(localStorage.getItem(LS)||'{}'); }catch(e){}
 function save(){ try{ localStorage.setItem(LS,JSON.stringify(done)); }catch(e){} }
@@ -275,7 +824,7 @@ function render(){
 }
 function updateBar(){
   var n=SCENES.filter(function(_,i){return done['s'+i]}).length;
-  document.getElementById('pcount').textContent = mode==='teach' ? 'TEACH MODE' : 'NIGHT 1 · '+n+' / '+SCENES.length+' scenes committed';
+  document.getElementById('pcount').textContent = mode==='teach' ? 'TEACH MODE' : 'NIGHT '+CUR+' · '+n+' / '+SCENES.length+' scenes committed';
   document.getElementById('pfill').style.width = (mode==='teach'?100:(n/SCENES.length*100))+'%';
   document.getElementById('plabel').textContent = mode==='teach' ? 'reveal as you go' : (n===SCENES.length?'night complete':'commit to advance');
 }
@@ -321,10 +870,12 @@ document.getElementById('mTeach').addEventListener('click',function(){setMode('t
   var ol=document.getElementById('syllList');
   SYLLABUS.forEach(function(nx,i){
     var li=document.createElement('li');
+    var links=[['Open Night '+(i+1),'?night='+(i+1)]].concat(nx.extra||[]);
+    var here=(i+1)===CUR;
     li.innerHTML='<span class="nnum">NIGHT '+(i+1)+'</span><span class="ntitle">'+nx.t+'</span>'
       +'<span class="nsync">BOOSTER: '+nx.b+'</span>'
-      +'<span class="st '+(nx.live?'live':'soon')+'">'+(nx.live?'LIVE - THIS PAGE':'IN THE WORKS')+'</span>'
-      +'<span class="nlinks">'+nx.links.map(function(l){return '<a href="'+l[1]+'">'+l[0]+'</a>'}).join('')+'</span>';
+      +'<span class="st live">'+(here?'YOU ARE HERE':'LIVE')+'</span>'
+      +'<span class="nlinks">'+links.map(function(l){return '<a href="'+l[1]+'">'+l[0]+'</a>'}).join('')+'</span>';
     ol.appendChild(li);
   });
 })();
