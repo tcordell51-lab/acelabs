@@ -76,6 +76,8 @@ h1{font-family:var(--serif);font-size:clamp(28px,5vw,40px);line-height:1.15;marg
 .syll .nlinks a{font-family:var(--mono);font-size:.58rem;letter-spacing:.06em;border:1px solid rgba(140,114,53,.4);border-radius:99px;padding:3px 10px;color:#6b5620;text-decoration:none}
 .syll .st{font-family:var(--mono);font-size:.56rem;letter-spacing:.1em;border-radius:99px;padding:3px 9px}
 .syll .st.live{background:rgba(27,122,77,.14);color:var(--rich)}
+.syll .st.walked{background:#1B7A4D;color:#eaf6ef}
+.syll .st.part{background:rgba(201,168,76,.2);color:#8a6d24}
 .syll .st.soon{background:rgba(140,114,53,.12);color:var(--ink3)}
 .molrow{display:flex;gap:18px;justify-content:center;align-items:center;flex-wrap:wrap;margin:6px 0 2px}
 .molcard{position:relative;border-radius:14px;padding:14px 14px 10px;text-align:center;border:1.5px solid rgba(140,114,53,.25);background:#fff;min-width:200px;box-shadow:0 1px 2px rgba(42,33,24,.04),0 10px 24px -20px rgba(42,33,24,.35)}
@@ -1066,9 +1068,16 @@ document.getElementById('mTeach').addEventListener('click',function(){setMode('t
     var li=document.createElement('li');
     var links=[['Open Night '+(i+1),'?night='+(i+1)]].concat(nx.extra||[]);
     var here=(i+1)===CUR;
+    var nsc=(NIGHTS[i+1]&&NIGHTS[i+1].scenes.length)||0, got=0;
+    try{ var st=JSON.parse(localStorage.getItem('atDAT_retold_n'+(i+1))||'{}');
+      for(var k=0;k<nsc;k++) if(st['s'+k]) got++; }catch(e){}
+    var pill = here ? '<span class="st live">YOU ARE HERE</span>'
+      : got>=nsc&&nsc>0 ? '<span class="st walked">WALKED</span>'
+      : got>0 ? '<span class="st part">'+got+' / '+nsc+' SCENES</span>'
+      : '<span class="st soon">NOT YET WALKED</span>';
     li.innerHTML='<span class="nnum">NIGHT '+(i+1)+'</span><span class="ntitle">'+nx.t+'</span>'
       +'<span class="nsync">BOOSTER: '+nx.b+'</span>'
-      +'<span class="st live">'+(here?'YOU ARE HERE':'LIVE')+'</span>'
+      +pill
       +'<span class="nlinks">'+links.map(function(l){return '<a href="'+l[1]+'">'+l[0]+'</a>'}).join('')+'</span>';
     ol.appendChild(li);
   });
