@@ -30,3 +30,12 @@ Rules of the loop:
 ## Ledger
 
 - 16:53 loop opened. Iteration 1 (recall openers) starting.
+- 16:58 SHIPPED 1: spaced recall openers (a6ccc0b) - verified with seeded
+  misses; Night 2 opened with both Night 1 misses re-asked first.
+- 17:00 SHIPPED 2: wheel deep-links (b530f87) - ?wheel=aldehyde verified
+  landing directly on the Aldehyde Wheel; 7 front-door reps repointed.
+- 17:02 SHIPPED 3: Retold misses -> Ace Log (452c323) - iframe parent probe
+  received acedat:tool-miss retold_n1_s0 with full payload.
+- 17:03 SHIPPED 4: error-class feedback, Night 1 (f084076) - all 7 questions
+  carry per-option named patterns; probe screenshot confirmed "BLAMING THE
+  SOLVENT" label on the miss. Iteration 5 (extend to Nights 4+5) starting.
