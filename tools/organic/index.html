@@ -1000,6 +1000,16 @@ var done={};
 try{ done=JSON.parse(localStorage.getItem(LS)||'{}'); }catch(e){}
 function save(){ try{ localStorage.setItem(LS,JSON.stringify(done)); }catch(e){} }
 
+// Misses feed the same Ace Log pipeline as every other OChem surface -
+// the portal shim listens for this exact shape (same tool id as the engine
+// so coaching queries see one OChem, with retold_* questionIds to trace).
+function emitMiss(qid,hub,q,pickedIdx){
+  try{ window.parent.postMessage({type:'acedat:tool-miss',tool:'ochem-reaction-maps',section:'OChem',
+    questionId:qid,hub:hub,stem:q.stem,
+    pickedKey:String(pickedIdx),pickedText:String(q.opts[pickedIdx]).slice(0,120),
+    correctKey:String(q.correct),correctText:String(q.opts[q.correct]).slice(0,120),
+    ts:Date.now()},'*'); }catch(e){}
+}
 function render(){
   var host=document.getElementById('scenes'); host.innerHTML='';
   if(mode==='walk'&&RECALL.length){
@@ -1060,6 +1070,7 @@ function render(){
       var ex=document.createElement('div'); ex.className='ex';
       ex.innerHTML='<span class="v'+(ok?'':' miss')+'">'+(ok?'THAT IS THE SENTENCE.':'GOOD MISS - READ THIS, THEN THE NEXT SCENE IS OPEN ANYWAY.')+'</span>'+sc.q.explain;
       box.appendChild(ex);
+      if(!ok) emitMiss('retold_n'+CUR+'_s'+si,'retold-night-'+CUR,sc.q,k);
       done['s'+si]= ok?'ok':'read'; save();
       var nx=document.createElement('button'); nx.className='reveal-btn'; nx.textContent='CONTINUE';
       nx.addEventListener('click',function(){render();drawMols();});
@@ -1081,6 +1092,7 @@ function render(){
       ex.innerHTML='<span class="v'+(ok?'':' miss')+'">'+(ok?'STILL YOURS.':'GOOD - IT IS BACK IN YOUR POCKET NOW.')+'</span>'+r.q.explain
         +' <a href="?night='+r.n+'" style="color:#a8641a">Revisit Night '+r.n+'</a>';
       box.appendChild(ex);
+      if(!ok) emitMiss('retold_recall_n'+CUR+'_from_n'+r.n,'retold-night-'+r.n,r.q,+b.dataset.oi);
       var rdSt={}; try{ rdSt=JSON.parse(localStorage.getItem(LSR)||'{}'); }catch(e){}
       rdSt['i'+k]=ok?'ok':'read';
       try{ localStorage.setItem(LSR,JSON.stringify(rdSt)); }catch(e){}
