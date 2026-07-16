@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;0,900;1,600;1,700&family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet"/>
+<script src="../../shared/ochem-ledger.js"></script>
 <style>
 :root{--cream:#fdf8ee;--ink:#2a2118;--ink2:#5c5348;--ink3:#8a8168;--gold:#C9A84C;--goldhi:#b45309;
 --rich:#1B7A4D;--richbg:rgba(27,122,77,.12);--poor:#b3382e;--poorbg:rgba(179,56,46,.1);
@@ -137,6 +138,18 @@ h1{font-family:var(--serif);font-size:clamp(28px,5vw,40px);line-height:1.15;marg
 .cat-tag.cut{background:#b3382e;color:#ffe9e6;border-color:#b3382e}
 @media(max-width:720px){.cat-row{grid-template-columns:1fr}.cat-arrow{display:none}}
 @media(max-width:700px){.pairgrid{grid-template-columns:1fr}}
+.cont{margin:30px 0 8px;border:1.5px solid rgba(140,114,53,.35);border-radius:16px;background:#fff;padding:20px 22px;display:flex;gap:18px;align-items:center;flex-wrap:wrap;box-shadow:0 1px 2px rgba(42,33,24,.05),0 18px 44px -30px rgba(42,33,24,.3)}
+.cont .ck{font-family:var(--mono);font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:var(--goldhi);display:block;margin-bottom:4px}
+.cont .ct{font-family:var(--serif);font-size:1.3rem;font-weight:800}
+.cont .cs{font-size:.9rem;color:var(--ink2);margin-top:2px}
+.cont a.go{margin-left:auto;font-family:var(--mono);font-size:.72rem;letter-spacing:.08em;background:linear-gradient(180deg,#eede9f,var(--gold));border-radius:12px;padding:13px 22px;color:#1a1206;font-weight:700;text-decoration:none;box-shadow:0 1px 2px rgba(42,33,24,.15),0 6px 14px -8px rgba(140,114,53,.5)}
+.cont a.go:hover{transform:translateY(-1px)}
+.enginecard{margin-top:26px;border:1.5px solid rgba(140,114,53,.25);border-radius:14px;padding:16px 20px;background:rgba(201,168,76,.05)}
+.enginecard .et{font-family:var(--serif);font-weight:700;font-size:1.05rem}
+.enginecard p{font-size:.9rem;color:var(--ink2);max-width:70ch;margin:6px 0 10px}
+.enginecard .links{display:flex;gap:10px;flex-wrap:wrap}
+.enginecard .links a{font-family:var(--mono);font-size:.62rem;letter-spacing:.08em;border:1px solid rgba(140,114,53,.4);border-radius:99px;padding:5px 13px;color:#6b5620;text-decoration:none}
+.enginecard .links a:hover{background:rgba(201,168,76,.15);border-color:var(--gold)}
 .legend{display:flex;gap:16px;justify-content:center;margin:10px 0 0;font-family:var(--mono);font-size:.66rem;letter-spacing:.08em}
 .legend .rich{color:var(--rich)} .legend .poor{color:var(--poor)}
 .progress{position:fixed;bottom:0;left:0;right:0;background:var(--cream);border-top:1px solid rgba(140,114,53,.3);padding:8px 24px;display:flex;gap:10px;align-items:center;font-family:var(--mono);font-size:.64rem;color:var(--ink3);z-index:10}
@@ -858,29 +871,103 @@ NIGHTS[13]={ t:'Reading the Machines', booster:'Spectroscopy & Lab Techniques',
 
 
 
+var ENGINE='../ochem/index.html';
 var SYLLABUS=[
-  {t:'The Only Reaction', b:'The Fundamentals'},
-  {t:'Names Are Directions', b:'IUPAC Nomenclature'},
-  {t:'Molecules in 3D', b:'Conformations & Stereochemistry'},
-  {t:'The Four Questions', b:'Substitution & Elimination', extra:[['Teach the hub','../ochem/index.html?teach=subelim']]},
-  {t:'The Center of the Universe', b:'Alkene Addition Reactions', extra:[['Teach the hub','../ochem/index.html?teach=alkenes'],['Play the wheel','../ochem/index.html?game=wheel']]},
-  {t:'Pay Twice, Plus the Acidic H', b:'Alkyne Reactions', extra:[['Teach the hub','../ochem/index.html?teach=alkynes']]},
-  {t:'The Hungry Carbon', b:'Ketones & Aldehydes', extra:[['Teach the hub','../ochem/index.html?teach=carbonyl']]},
-  {t:'The Reactivity Ladder', b:'Carboxylic Acid Derivatives', extra:[['Teach the hub','../ochem/index.html?teach=acids']]},
-  {t:'The Switchboard', b:'Alcohols, Ethers, & Epoxides', extra:[['Teach the hub','../ochem/index.html?teach=alcohols']]},
-  {t:'The Alpha Carbon Wakes Up', b:'Enolate Reactions', extra:[['Engine chapter','../ochem/index.html#alpha-condensation']]},
-  {t:'The Ring That Refuses', b:'Aromaticity & Benzene Reactions', extra:[['Teach the hub','../ochem/index.html?teach=aromatic']]},
-  {t:'Different Arrows', b:'Free Radical & Diels Alder Cycloaddition Reactions', extra:[['Teach the hub','../ochem/index.html?teach=alkanes']]},
-  {t:'Reading the Machines', b:'Spectroscopy & Lab Techniques', extra:[['Spec Trainer','../ochem/index.html#spec-trainer']]}
+  {t:'The Only Reaction', b:'The Fundamentals', teach:null,
+   reps:[['Start the wheel',ENGINE+'?game=wheel']], wheels:[]},
+  {t:'Names Are Directions', b:'IUPAC Nomenclature', teach:null,
+   reps:[['Naming drills',ENGINE+'#nomenclature']], wheels:[]},
+  {t:'Molecules in 3D', b:'Conformations & Stereochemistry', teach:null,
+   reps:[['Stereo lab',ENGINE+'#stereo-lab']], wheels:[]},
+  {t:'The Four Questions', b:'Substitution & Elimination', teach:ENGINE+'?teach=subelim',
+   reps:[['Halide wheels',ENGINE+'?game=wheel'],['Reaction trainer',ENGINE+'#reaction-trainer']],
+   wheels:['halide_primary','halide_secondary','halide_tertiary']},
+  {t:'The Center of the Universe', b:'Alkene Addition Reactions', teach:ENGINE+'?teach=alkenes',
+   reps:[['Alkene wheels',ENGINE+'?game=wheel'],['Reaction trainer',ENGINE+'#reaction-trainer']],
+   wheels:['alkene_terminal','alkene_internal']},
+  {t:'Pay Twice, Plus the Acidic H', b:'Alkyne Reactions', teach:ENGINE+'?teach=alkynes',
+   reps:[['Alkyne wheels',ENGINE+'?game=wheel']], wheels:['alkyne_terminal','alkyne_internal']},
+  {t:'The Hungry Carbon', b:'Ketones & Aldehydes', teach:ENGINE+'?teach=carbonyl',
+   reps:[['Carbonyl wheels',ENGINE+'?game=wheel'],['Mechanism library',ENGINE+'#mech-library']],
+   wheels:['aldehyde','ketone']},
+  {t:'The Reactivity Ladder', b:'Carboxylic Acid Derivatives', teach:ENGINE+'?teach=acids',
+   reps:[['Derivative wheels',ENGINE+'?game=wheel']], wheels:['ester','acid','amide','nitrile']},
+  {t:'The Switchboard', b:'Alcohols, Ethers, & Epoxides', teach:ENGINE+'?teach=alcohols',
+   reps:[['Alcohol + epoxide wheels',ENGINE+'?game=wheel'],['Synthesis lab',ENGINE+'#synthesis-lab']],
+   wheels:['alcohol_primary','alcohol_secondary','alcohol_tertiary','epoxide']},
+  {t:'The Alpha Carbon Wakes Up', b:'Enolate Reactions', teach:null,
+   reps:[['Engine chapter',ENGINE+'#alpha-condensation'],['Reaction trainer',ENGINE+'#reaction-trainer']], wheels:[]},
+  {t:'The Ring That Refuses', b:'Aromaticity & Benzene Reactions', teach:ENGINE+'?teach=aromatic',
+   reps:[['Aromatic wheels',ENGINE+'?game=wheel']], wheels:['benzene','aniline']},
+  {t:'Different Arrows', b:'Free Radical & Diels Alder Cycloaddition Reactions', teach:ENGINE+'?teach=alkanes',
+   reps:[['Reaction trainer',ENGINE+'#reaction-trainer']], wheels:[]},
+  {t:'Reading the Machines', b:'Spectroscopy & Lab Techniques', teach:null,
+   reps:[['Spec trainer',ENGINE+'#spec-trainer'],['Mass spec',ENGINE+'#mass-spec'],['Lab techniques',ENGINE+'#lab-techniques']], wheels:[]}
 ];
 var qsp=new URLSearchParams(location.search);
+var HOME=!qsp.get('night');
 var CUR=parseInt(qsp.get('night')||'1',10); if(!NIGHTS[CUR]) CUR=1;
 var SCENES=NIGHTS[CUR].scenes;
+
+if(HOME){
+  // THE FRONT DOOR - one board for the whole OChem system. Walk the story
+  // here; every night hands you its reps in the engine. No second entry point.
+  document.title='OChem, Retold — the front door';
+  document.querySelector('.mode').style.display='none';
+  document.querySelector('.legend').style.display='none';
+  document.querySelector('.syll').style.display='none';
+  document.getElementById('nightLine').textContent='The organic chemistry front door · thirteen nights, in step with DAT Booster';
+  document.getElementById('nightTitle').textContent='OChem, Retold';
+  document.getElementById('nightLede').innerHTML='One story runs the whole subject: <b>something electron-rich attacks something electron-poor.</b> Each night below teaches one Booster bank as a chapter of that story - watch the Booster videos, sit the night with your coach or walk it yourself, then earn the reactions in the reps. Four passes over the same ground, each one deeper.';
+  var walked=0, firstOpen=0;
+  for(var n=1;n<=13;n++){
+    var tot=NIGHTS[n].scenes.length;
+    var led=window.AceOChemLedger?window.AceOChemLedger.night(n,tot):{walked:false,started:false,done:0};
+    if(led.walked) walked++;
+    else if(!firstOpen) firstOpen=n;
+  }
+  if(!firstOpen) firstOpen=13;
+  var contLed=window.AceOChemLedger?window.AceOChemLedger.night(firstOpen,NIGHTS[firstOpen].scenes.length):{done:0};
+  var h='<div class="cont"><div><span class="ck">'+(walked===0?'Begin the story':(walked>=13?'The story is yours - run it again':'Continue the story'))+'</span>'
+    +'<div class="ct">Night '+firstOpen+': '+NIGHTS[firstOpen].t+'</div>'
+    +'<div class="cs">'+(contLed.done>0?contLed.done+' of '+NIGHTS[firstOpen].scenes.length+' scenes committed - pick up where you left off':'Booster bank: '+NIGHTS[firstOpen].booster)+'</div></div>'
+    +'<a class="go" href="?night='+firstOpen+'">'+(contLed.done>0?'CONTINUE NIGHT '+firstOpen:'OPEN NIGHT '+firstOpen)+'</a></div>';
+  h+='<div class="syll" style="margin-top:34px;border-top:none;padding-top:0"><h2>The 13 Nights</h2>'
+    +'<p class="sub">Every night: walk it, teach it, then earn it. The pills are yours - they fill in as you commit scenes and win reactions on the wheel.</p><ol id="homeList"></ol></div>';
+  h+='<div class="enginecard"><div class="et">The deep engine - Reaction Maps</div>'
+    +'<p>Everything above runs on the full engine: eleven reaction-map hubs, the mechanism library, synthesis and stereo labs, spectroscopy trainers, and the exam simulator. The nights hand you the right chapter at the right time - or open the whole thing.</p>'
+    +'<div class="links"><a href="'+ENGINE+'">Open the full Reaction Maps</a><a href="'+ENGINE+'?game=wheel">Reaction Wheel</a><a href="'+ENGINE+'#exam-sim">Exam simulator - the capstone after Night 13</a></div></div>';
+  document.getElementById('scenes').innerHTML=h;
+  var ol=document.getElementById('homeList');
+  SYLLABUS.forEach(function(nx,i){
+    var li=document.createElement('li');
+    var links=[['Walk it','?night='+(i+1)]];
+    if(nx.teach) links.push(['Teach it',nx.teach]);
+    (nx.reps||[]).forEach(function(r){ links.push(r); });
+    var nsc=NIGHTS[i+1].scenes.length;
+    var led=window.AceOChemLedger?window.AceOChemLedger.night(i+1,nsc):{done:0,walked:false,started:false};
+    var earned=(window.AceOChemLedger&&nx.wheels&&nx.wheels.length)?window.AceOChemLedger.wheelEarned(nx.wheels):0;
+    var pill = led.walked ? '<span class="st walked">WALKED</span>'
+      : led.started ? '<span class="st part">'+led.done+' / '+nsc+' SCENES</span>'
+      : '<span class="st soon">NOT YET WALKED</span>';
+    if(earned>0) pill+='<span class="st part">'+earned+' EARNED ON THE WHEEL</span>';
+    li.innerHTML='<span class="nnum">NIGHT '+(i+1)+'</span><span class="ntitle">'+nx.t+'</span>'
+      +'<span class="nsync">BOOSTER: '+nx.b+'</span>'+pill
+      +'<span class="nlinks">'+links.map(function(l){return '<a href="'+l[1]+'">'+l[0]+'</a>'}).join('')+'</span>';
+    ol.appendChild(li);
+  });
+  document.getElementById('pcount').textContent=walked+' / 13 nights walked';
+  document.getElementById('pfill').style.width=(walked/13*100)+'%';
+  document.getElementById('plabel').textContent='the story so far';
+  return;
+}
+
 document.getElementById('nightLine').textContent='Night '+CUR+' of 13 · in sync with your Booster bank: '+NIGHTS[CUR].booster;
 (function(){
   var nav=document.getElementById('nightNav'), h='';
   var qs=new URLSearchParams(location.search);
   function href(n){ qs.set('night',n); return '?'+qs.toString(); }
+  h+='<a href="./">ALL NIGHTS</a>';
   if(NIGHTS[CUR-1]) h+='<a href="'+href(CUR-1)+'">BACK: NIGHT '+(CUR-1)+'</a>';
   if(NIGHTS[CUR+1]) h+='<a href="'+href(CUR+1)+'">NEXT: NIGHT '+(CUR+1)+'</a>';
   nav.innerHTML=h;
@@ -953,7 +1040,13 @@ function render(){
     gate.dataset.ritual='1';
     var know=SCENES.map(function(sc){return '<span class="know-chip">'+sc.t+'</span>'}).join('');
     var tease=NIGHTS[CUR+1]?'<p class="tease">Tomorrow, Night '+(CUR+1)+': <b>'+NIGHTS[CUR+1].t+'</b> - same sentence, new costume.</p>':'<p class="tease">That was the last night. The whole story is yours now.</p>';
-    var head='<h2>Night '+CUR+' of 13 - walked.</h2><div class="knowrow">'+know+'</div>'+tease;
+    var head='<h2>Night '+CUR+' of 13 - walked.</h2><div class="knowrow">'+know+'</div>';
+    var sy=SYLLABUS[CUR-1];
+    if(sy&&sy.reps&&sy.reps.length){
+      head+='<p class="tease">Now earn it - tonight&#39;s reps:</p><div class="links">'
+        +sy.reps.map(function(r){return '<a href="'+r[1]+'">'+r[0]+'</a>'}).join('')+'</div>';
+    }
+    head+=tease;
     if(NIGHTS[CUR+1]) head+='<div class="links"><a href="?night='+(CUR+1)+'">Open Night '+(CUR+1)+'</a></div>';
     gate.insertAdjacentHTML('afterbegin',head);
   }
@@ -1093,15 +1186,18 @@ document.getElementById('mTeach').addEventListener('click',function(){setMode('t
   var ol=document.getElementById('syllList');
   SYLLABUS.forEach(function(nx,i){
     var li=document.createElement('li');
-    var links=[['Open Night '+(i+1),'?night='+(i+1)]].concat(nx.extra||[]);
+    var links=[['Walk Night '+(i+1),'?night='+(i+1)]];
+    if(nx.teach) links.push(['Teach it',nx.teach]);
+    (nx.reps||[]).forEach(function(r){ links.push(r); });
     var here=(i+1)===CUR;
-    var nsc=(NIGHTS[i+1]&&NIGHTS[i+1].scenes.length)||0, got=0;
-    try{ var st=JSON.parse(localStorage.getItem('atDAT_retold_n'+(i+1))||'{}');
-      for(var k=0;k<nsc;k++) if(st['s'+k]) got++; }catch(e){}
+    var nsc=(NIGHTS[i+1]&&NIGHTS[i+1].scenes.length)||0;
+    var led=window.AceOChemLedger?window.AceOChemLedger.night(i+1,nsc):{done:0,walked:false,started:false};
+    var earned=(window.AceOChemLedger&&nx.wheels&&nx.wheels.length)?window.AceOChemLedger.wheelEarned(nx.wheels):0;
     var pill = here ? '<span class="st live">YOU ARE HERE</span>'
-      : got>=nsc&&nsc>0 ? '<span class="st walked">WALKED</span>'
-      : got>0 ? '<span class="st part">'+got+' / '+nsc+' SCENES</span>'
+      : led.walked ? '<span class="st walked">WALKED</span>'
+      : led.started ? '<span class="st part">'+led.done+' / '+nsc+' SCENES</span>'
       : '<span class="st soon">NOT YET WALKED</span>';
+    if(earned>0) pill+='<span class="st part">'+earned+' EARNED ON THE WHEEL</span>';
     li.innerHTML='<span class="nnum">NIGHT '+(i+1)+'</span><span class="ntitle">'+nx.t+'</span>'
       +'<span class="nsync">BOOSTER: '+nx.b+'</span>'
       +pill
