@@ -50,6 +50,19 @@ h1{font-family:var(--serif);font-size:clamp(28px,5vw,40px);line-height:1.15;marg
 .gate .links{margin-top:16px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
 .gate a{font-family:var(--mono);font-size:.72rem;letter-spacing:.06em;border:1.5px solid var(--gold);border-radius:10px;padding:10px 18px;color:#6b5620;text-decoration:none}
 .gate a:hover{background:rgba(201,168,76,.15)}
+.syll{margin-top:60px;border-top:2px solid var(--gold);padding-top:26px}
+.syll h2{font-family:var(--serif);font-size:1.5rem;margin:0 0 4px}
+.syll .sub{font-size:.92rem;color:var(--ink2);max-width:64ch}
+.syll ol{list-style:none;padding:0;margin:18px 0 0}
+.syll li{display:flex;gap:14px;align-items:baseline;padding:10px 4px;border-bottom:1px solid rgba(140,114,53,.18);flex-wrap:wrap}
+.syll .nnum{font-family:var(--mono);font-size:.64rem;letter-spacing:.12em;color:var(--goldhi);flex:0 0 66px}
+.syll .ntitle{font-family:var(--serif);font-weight:700;font-size:1rem;flex:1 1 240px}
+.syll .nsync{font-family:var(--mono);font-size:.6rem;letter-spacing:.06em;color:var(--ink3)}
+.syll .nlinks{display:flex;gap:8px}
+.syll .nlinks a{font-family:var(--mono);font-size:.58rem;letter-spacing:.06em;border:1px solid rgba(140,114,53,.4);border-radius:99px;padding:3px 10px;color:#6b5620;text-decoration:none}
+.syll .st{font-family:var(--mono);font-size:.56rem;letter-spacing:.1em;border-radius:99px;padding:3px 9px}
+.syll .st.live{background:rgba(27,122,77,.14);color:var(--rich)}
+.syll .st.soon{background:rgba(140,114,53,.12);color:var(--ink3)}
 .legend{display:flex;gap:16px;justify-content:center;margin:10px 0 0;font-family:var(--mono);font-size:.66rem;letter-spacing:.08em}
 .legend .rich{color:var(--rich)} .legend .poor{color:var(--poor)}
 .progress{position:fixed;bottom:0;left:0;right:0;background:var(--cream);border-top:1px solid rgba(140,114,53,.3);padding:8px 24px;display:flex;gap:10px;align-items:center;font-family:var(--mono);font-size:.64rem;color:var(--ink3);z-index:10}
@@ -68,7 +81,7 @@ h1{font-family:var(--serif);font-size:clamp(28px,5vw,40px);line-height:1.15;marg
   </div>
 </div>
 <div class="wrap">
-  <div class="night">Night 1 of 10</div>
+  <div class="night">Night 1 of 13 · in sync with your Booster bank: The Fundamentals</div>
   <h1>The Only Reaction in Organic Chemistry</h1>
   <p class="lede">You are about to learn a hundred reactions. Here is the secret nobody says out loud:
   they are all the <b>same sentence</b>. Something rich in electrons attacks something poor in electrons.
@@ -83,6 +96,13 @@ h1{font-family:var(--serif);font-size:clamp(28px,5vw,40px);line-height:1.15;marg
       <a href="../ochem/index.html?game=wheel">Earn the reactions - play the Reaction Wheel</a>
       <a href="../ochem/index.html">Open the full Reaction Maps</a>
     </div>
+  </div>
+  <div class="syll">
+    <h2>The 13 Nights — in step with DAT Booster</h2>
+    <p class="sub">One night per Booster Organic question bank, same order, same names. Watch the Booster
+    videos, sit the night with your coach, walk it yourself, then run the bank - four passes over the
+    same ground, each one deeper.</p>
+    <ol id="syllList"></ol>
   </div>
 </div>
 <div class="progress"><span id="pcount"></span><div class="pbar"><div class="pfill" id="pfill"></div></div><span id="plabel">commit to advance</span></div>
@@ -201,6 +221,21 @@ var SCENES=[
    correct:1, explain:'You have never seen it, and you still got it right - that is the whole point. Nitrogen has a lone pair: rich. The carbonyl carbon sits between O and Cl, doubly robbed: poor. Rich attacks poor. You can now predict chemistry you were never taught.'}}
 ];
 
+var SYLLABUS=[
+  {t:'The Only Reaction', b:'The Fundamentals', live:true, links:[['Teach it','../ochem/index.html?teach=cardio']]},
+  {t:'Names Are Directions', b:'IUPAC Nomenclature', links:[['Engine chapter','../ochem/index.html#nomenclature']]},
+  {t:'Molecules in 3D', b:'Conformations & Stereochemistry', links:[['Stereo Lab','../ochem/index.html#stereo-lab']]},
+  {t:'The Four Questions', b:'Substitution & Elimination', links:[['Teach it','../ochem/index.html?teach=subelim'],['Play the wheel','../ochem/index.html?game=wheel']]},
+  {t:'The Center of the Universe', b:'Alkene Addition Reactions', links:[['Teach it','../ochem/index.html?teach=alkenes'],['Play the wheel','../ochem/index.html?game=wheel']]},
+  {t:'Pay Twice, Plus the Acidic H', b:'Alkyne Reactions', links:[['Teach it','../ochem/index.html?teach=alkynes']]},
+  {t:'The Hungry Carbon', b:'Ketones & Aldehydes', links:[['Teach it','../ochem/index.html?teach=carbonyl']]},
+  {t:'The Reactivity Ladder', b:'Carboxylic Acid Derivatives', links:[['Teach it','../ochem/index.html?teach=acids']]},
+  {t:'The Switchboard', b:'Alcohols, Ethers, & Epoxides', links:[['Teach it','../ochem/index.html?teach=alcohols'],['Ethers','../ochem/index.html?teach=ethers']]},
+  {t:'The Alpha Carbon Wakes Up', b:'Enolate Reactions', links:[['Engine chapter','../ochem/index.html#alpha-condensation']]},
+  {t:'The Ring That Refuses', b:'Aromaticity & Benzene Reactions', links:[['Teach it','../ochem/index.html?teach=aromatic']]},
+  {t:'Radicals and the Handshake', b:'Free Radical & Diels Alder Cycloaddition Reactions', links:[['Teach it','../ochem/index.html?teach=alkanes']]},
+  {t:'Reading the Machines', b:'Spectroscopy & Lab Techniques', links:[['Spec Trainer','../ochem/index.html#spec-trainer']]}
+];
 var mode = new URLSearchParams(location.search).get('mode')==='teach' ? 'teach' : 'walk';
 var LS='atDAT_retold_n1';
 var done={};
@@ -275,6 +310,17 @@ function setMode(m){
 }
 document.getElementById('mWalk').addEventListener('click',function(){setMode('walk')});
 document.getElementById('mTeach').addEventListener('click',function(){setMode('teach')});
+(function renderSyll(){
+  var ol=document.getElementById('syllList');
+  SYLLABUS.forEach(function(nx,i){
+    var li=document.createElement('li');
+    li.innerHTML='<span class="nnum">NIGHT '+(i+1)+'</span><span class="ntitle">'+nx.t+'</span>'
+      +'<span class="nsync">BOOSTER: '+nx.b+'</span>'
+      +'<span class="st '+(nx.live?'live':'soon')+'">'+(nx.live?'LIVE - THIS PAGE':'IN THE WORKS')+'</span>'
+      +'<span class="nlinks">'+nx.links.map(function(l){return '<a href="'+l[1]+'">'+l[0]+'</a>'}).join('')+'</span>';
+    ol.appendChild(li);
+  });
+})();
 setMode(mode);
 })();
 </script>
