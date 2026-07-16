@@ -63,6 +63,24 @@ h1{font-family:var(--serif);font-size:clamp(28px,5vw,40px);line-height:1.15;marg
 .syll .st{font-family:var(--mono);font-size:.56rem;letter-spacing:.1em;border-radius:99px;padding:3px 9px}
 .syll .st.live{background:rgba(27,122,77,.14);color:var(--rich)}
 .syll .st.soon{background:rgba(140,114,53,.12);color:var(--ink3)}
+.molrow{display:flex;gap:18px;justify-content:center;flex-wrap:wrap;margin:6px 0 2px}
+.molcard{position:relative;border-radius:14px;padding:14px 14px 10px;text-align:center;border:1.5px solid rgba(140,114,53,.25);background:#fff;min-width:200px}
+.molcard.rich{background:radial-gradient(ellipse at 50% 38%,rgba(27,122,77,.10),transparent 70%),#fff;border-color:rgba(27,122,77,.35)}
+.molcard.poor{background:radial-gradient(ellipse at 50% 38%,rgba(179,56,46,.09),transparent 70%),#fff;border-color:rgba(179,56,46,.32)}
+.molcard .badge{position:absolute;top:8px;right:10px;font-family:var(--mono);font-size:.8rem;font-weight:800}
+.molcard.rich .badge{color:var(--rich)} .molcard.poor .badge{color:var(--poor)}
+.molcard canvas{display:block;margin:0 auto;max-width:100%;height:auto}
+.mol-lbl{font-family:var(--mono);font-size:.6rem;letter-spacing:.12em;margin-top:6px}
+.molcard.rich .mol-lbl{color:var(--rich)} .molcard.poor .mol-lbl{color:var(--poor)}
+.mol-sub{font-family:var(--serif);font-style:italic;font-size:.82rem;color:var(--ink3)}
+.rxnline{display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap}
+.rxnline .plus{font-family:var(--serif);font-size:1.5rem;color:var(--ink3)}
+.rxnline svg.arr{width:120px;height:44px;flex:none}
+.pairgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.pair{border:1px solid rgba(140,114,53,.25);border-radius:12px;padding:10px}
+.pair .pt{font-family:var(--mono);font-size:.6rem;letter-spacing:.12em;color:var(--ink3);text-align:center;margin-bottom:4px}
+.caption{font-family:var(--serif);font-style:italic;font-size:1rem;text-align:center;margin:12px 0 0;color:var(--ink)}
+@media(max-width:700px){.pairgrid{grid-template-columns:1fr}}
 .legend{display:flex;gap:16px;justify-content:center;margin:10px 0 0;font-family:var(--mono);font-size:.66rem;letter-spacing:.08em}
 .legend .rich{color:var(--rich)} .legend .poor{color:var(--poor)}
 .progress{position:fixed;bottom:0;left:0;right:0;background:var(--cream);border-top:1px solid rgba(140,114,53,.3);padding:8px 24px;display:flex;gap:10px;align-items:center;font-family:var(--mono);font-size:.64rem;color:var(--ink3);z-index:10}
@@ -136,17 +154,7 @@ var SCENES=[
    correct:1, explain:'Arrows in organic chemistry are electron movement, and electrons live on the rich species - so the rich one always throws the first punch. The green attacks the red, never the reverse.'}},
 
 { n:'Scene 2', t:'How to spot RICH in the wild',
-  svg:'<svg viewBox="0 0 800 300">'+DEFS
-    +glow(140,120,56,RICH)+atom(140,128,'O',RICH,26)+atom(108,112,'H',INK,18)+bond(118,116,126,120)
-    +'<circle cx="128" cy="98" r="3.4" fill="'+RICH+'"/><circle cx="140" cy="94" r="3.4" fill="'+RICH+'"/>'
-    +'<circle cx="156" cy="98" r="3.4" fill="'+RICH+'"/><circle cx="166" cy="108" r="3.4" fill="'+RICH+'"/>'
-    +atom(170,140,'-',RICH,26)+lbl(140,200,'LONE PAIRS + CHARGE',RICH,10.5)+serif(140,222,'hydroxide',INK3,13)
-    +glow(400,120,56,RICH)+bond(360,140,440,140,2.6)+bond(364,130,436,130,2.6)+lbl(400,200,'A PI BOND STICKING UP',RICH,10.5)+serif(400,222,'any alkene',INK3,13)
-    +glow(660,120,56,RICH)+atom(640,132,'C',INK,22)+bond(654,126,684,114)+atom(700,112,'MgBr',INK3,15)
-    +'<text x="628" y="112" font-size="15" font-weight="800" fill="'+RICH+'">δ−</text>'
-    +lbl(660,200,'C BONDED TO A METAL',RICH,10.5)+serif(660,222,'Grignard',INK3,13)
-    +serif(400,278,'rich = has electrons to spare: lone pairs, pi bonds, negative charge, or a metal handing them over',INK,15)
-    +'</svg>',
+  svg:'<div class="molrow"><div class="molcard rich"><span class="badge">&#948;&#8722;</span><canvas data-smiles="CCN" width="230" height="120"></canvas><div class="mol-lbl">LONE PAIR ON NITROGEN</div><div class="mol-sub">ethylamine</div></div><div class="molcard rich"><span class="badge">&#960;</span><canvas data-smiles="C=C(C)C" width="230" height="120"></canvas><div class="mol-lbl">A PI BOND STICKING UP</div><div class="mol-sub">isobutylene</div></div><div class="molcard rich"><span class="badge">&#8722;</span><canvas data-smiles="[OH-]" width="150" height="110"></canvas><div class="mol-lbl">NEGATIVE CHARGE</div><div class="mol-sub">hydroxide</div></div></div><p class="caption">rich = electrons to spare: a lone pair, a pi bond, a negative charge - or carbon borrowing electrons from a metal (Grignards, later)</p>',
   walk:'Three faces of rich. <b>Lone pairs and negative charges</b> are stored electrons. <b>Pi bonds</b> are electrons sticking out of the skeleton, exposed. And <b>carbon attached to a metal</b> is carbon that has been handed the electrons in the relationship. See any of these, think: this one attacks.',
   teach:'Point at each and ask the room WHY it is rich before you say it. Hydroxide has extras. The pi bond is exposed. The metal is more generous than carbon.',
   q:{stem:'Which of these is NOT electron-rich?', opts:[
@@ -157,17 +165,7 @@ var SCENES=[
    correct:3, explain:'Bromine is more electronegative than carbon, so it PULLS electrons away - that carbon is delta-positive, electron-POOR. Same skeleton as the Grignard, opposite role: the metal gives, the halogen takes.'}},
 
 { n:'Scene 3', t:'How to spot POOR in the wild',
-  svg:'<svg viewBox="0 0 800 300">'+DEFS
-    +glow(140,120,56,POOR)+atom(120,132,'C',INK,22)+bond(134,126,160,114)+atom(174,112,'Br',INK3,17)
-    +'<text x="106" y="108" font-size="15" font-weight="800" fill="'+POOR+'">δ+</text>'
-    +lbl(140,200,'C NEXT TO AN EN ATOM',POOR,10.5)+serif(140,222,'alkyl halide',INK3,13)
-    +glow(400,120,56,POOR)+atom(390,132,'C',INK,22)+bond(402,120,422,104,2.6)+bond(408,126,428,110,2.6)+atom(438,100,'O',INK3,18)
-    +'<text x="374" y="108" font-size="15" font-weight="800" fill="'+POOR+'">δ+</text>'
-    +lbl(400,200,'CARBONYL CARBON',POOR,10.5)+serif(400,222,'aldehyde / ketone',INK3,13)
-    +glow(660,120,56,POOR)+atom(655,132,'C',INK,24)+atom(686,116,'+',POOR,22)
-    +lbl(660,200,'A FULL POSITIVE CHARGE',POOR,10.5)+serif(660,222,'carbocation',INK3,13)
-    +serif(400,278,'poor = missing electron density: delta-plus beside an electronegative atom, or an outright cation',INK,15)
-    +'</svg>',
+  svg:'<div class="molrow"><div class="molcard poor"><span class="badge">&#948;+</span><canvas data-smiles="CC(C)(C)Br" width="230" height="120"></canvas><div class="mol-lbl">THE C NEXT TO BROMINE</div><div class="mol-sub">tert-butyl bromide</div></div><div class="molcard poor"><span class="badge">&#948;+</span><canvas data-smiles="CC(C)=O" width="230" height="120"></canvas><div class="mol-lbl">THE CARBONYL CARBON</div><div class="mol-sub">acetone</div></div><div class="molcard poor"><span class="badge">+</span><canvas data-smiles="C[C+](C)C" width="230" height="120"></canvas><div class="mol-lbl">A FULL EMPTY SEAT</div><div class="mol-sub">tert-butyl cation</div></div></div><p class="caption">poor = missing electron density: delta-plus beside an electronegative atom, or an outright cation</p>',
   walk:'Three faces of poor. A carbon <b>next to something electronegative</b> (halogen, oxygen) has had its electrons pulled away - delta-plus. The <b>carbonyl carbon</b> is the most famous victim: double-bonded to oxygen, permanently shortchanged. And a <b>carbocation</b> is poverty itself - a full empty seat.',
   teach:'The move to model out loud: find the electronegative atom, then look at what it is ATTACHED to. The EN atom is fine - its NEIGHBOR is the target.',
   q:{stem:'In CH3-C(=O)-CH3 (acetone), where does a nucleophile attack?', opts:[
@@ -178,15 +176,7 @@ var SCENES=[
    correct:1, explain:'The classic trap: the EN atom itself is RICH (it hoarded the electrons). Its neighbor is the poor one. Oxygen took, carbon lost - the nucleophile goes for the carbon.'}},
 
 { n:'Scene 4', t:'Arrows are electrons moving - nothing else',
-  svg:'<svg viewBox="0 0 800 260">'+DEFS
-    +glow(170,130,50,RICH)+atom(170,138,'HO',RICH,24)+atom(206,124,'-',RICH,22)
-    +glow(560,130,50,POOR)+atom(545,138,'C',INK,22)
-    +'<text x="530" y="112" font-size="14" font-weight="800" fill="'+POOR+'">δ+</text>'
-    +bond(560,132,600,120)+atom(618,116,'Br',INK3,17)
-    +arrow(220,116,380,60,522,116)
-    +lbl(385,52,'THE ARROW STARTS AT ELECTRONS, ENDS AT THE HUNGRY ATOM',RICH,10)
-    +serif(400,238,'never draw an arrow from an atom - draw it from a lone pair or a bond',INK,15)
-    +'</svg>',
+  svg:'<div class="rxnline"><div class="molcard rich"><span class="badge">&#8722;</span><canvas data-smiles="[OH-]" width="140" height="110"></canvas><div class="mol-lbl">THE ATTACKER</div><div class="mol-sub">hydroxide</div></div><svg class="arr" viewBox="0 0 120 44"><defs><marker id="ah2" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1B7A4D"/></marker></defs><path d="M 8 30 Q 60 6 112 26" fill="none" stroke="#1B7A4D" stroke-width="3" marker-end="url(#ah2)"/></svg><div class="molcard poor"><span class="badge">&#948;+</span><canvas data-smiles="CC[C@@H](C)Br" width="230" height="120"></canvas><div class="mol-lbl">THE TARGET C, BACKSIDE</div><div class="mol-sub">(R)-2-bromobutane</div></div></div><p class="caption">the arrow starts at the lone pair and ends at the delta-plus carbon - electrons move, atoms follow</p>',
   walk:'The curved arrow is the entire grammar of mechanisms, and it has one rule: <b>it starts where electrons ARE (a lone pair or a bond) and points where they are GOING</b> (the poor atom). If you ever catch yourself drawing an arrow from a plain atom, or toward a rich atom, stop - the sentence got reversed.',
   teach:'Push electrons, never atoms. Have them narrate every arrow they draw tonight in words: these electrons, moving here, because it is poor.',
   q:{stem:'A student draws an arrow FROM the carbocation TO the alkene. What is wrong?', opts:[
@@ -197,28 +187,15 @@ var SCENES=[
    correct:1, explain:'The cation is the poorest thing on the page - it cannot donate what it does not have. The pi bond (rich) attacks the cation (poor). Rich to poor, every single time.'}},
 
 { n:'Scene 5', t:'The same sentence, four costumes',
-  svg:'<svg viewBox="0 0 800 430">'+DEFS
-    +lbl(200,30,'SN2',INK3,11)+glow(120,70,30,RICH)+atom(120,76,'HO',RICH,17)+atom(146,66,'-',RICH,15)
-      +glow(285,70,30,POOR)+atom(278,76,'C',INK,16)+bond(288,72,310,64,2)+atom(324,62,'Br',INK3,13)+arrow(150,62,215,38,262,60)
-    +lbl(600,30,'ALKENE + HBr',INK3,11)+glow(520,70,30,RICH)+bond(495,80,545,80,2.2)+bond(498,72,542,72,2.2)
-      +glow(690,70,30,POOR)+atom(686,76,'H',INK,16)+bond(696,72,716,64,2)+atom(730,62,'Br',INK3,13)+arrow(550,62,615,38,666,60)
-    +lbl(200,250,'GRIGNARD + KETONE',INK3,11)+glow(110,290,30,RICH)+atom(105,296,'C',INK,16)
-      +'<text x="92" y="274" font-size="12" font-weight="800" fill="'+RICH+'">δ−</text>'+atom(140,286,'MgBr',INK3,11)
-      +glow(285,290,30,POOR)+atom(278,296,'C',INK,16)+bond(288,288,306,274,2)+bond(293,294,311,280,2)+atom(320,270,'O',INK3,13)+arrow(140,282,210,258,258,282)
-    +lbl(600,250,'ENOLATE + CARBONYL (ALDOL)',INK3,11)+glow(520,290,30,RICH)+atom(515,296,'C',RICH,16)+atom(543,284,'-',RICH,15)
-      +glow(690,290,30,POOR)+atom(683,296,'C',INK,16)+bond(693,288,711,274,2)+bond(698,294,716,280,2)+atom(725,270,'O',INK3,13)+arrow(548,282,618,258,663,282)
-    +'<line x1="60" y1="150" x2="740" y2="150" stroke="rgba(140,114,53,.25)"/>'
-    +'<line x1="60" y1="370" x2="740" y2="370" stroke="rgba(140,114,53,.25)"/>'
-    +serif(400,405,'four chapters of your textbook. one sentence. green attacks red.',INK,17)
-    +'</svg>',
+  svg:'<div class="pairgrid"><div class="pair"><div class="pt">SN2 - SUBSTITUTION</div><div class="rxnline"><div class="molcard rich"><span class="badge">&#8722;</span><canvas data-smiles="[OH-]" width="110" height="90"></canvas><div class="mol-lbl"></div><div class="mol-sub">hydroxide</div></div><svg class="arr" viewBox="0 0 120 44"><defs><marker id="ah2" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1B7A4D"/></marker></defs><path d="M 8 30 Q 60 6 112 26" fill="none" stroke="#1B7A4D" stroke-width="3" marker-end="url(#ah2)"/></svg><div class="molcard poor"><span class="badge">&#948;+</span><canvas data-smiles="CC[C@@H](C)Br" width="180" height="100"></canvas><div class="mol-lbl"></div><div class="mol-sub">(R)-2-bromobutane</div></div></div></div><div class="pair"><div class="pt">ALKENE ADDITION</div><div class="rxnline"><div class="molcard rich"><span class="badge">&#960;</span><canvas data-smiles="C=C(C)C" width="150" height="95"></canvas><div class="mol-lbl"></div><div class="mol-sub">isobutylene</div></div><svg class="arr" viewBox="0 0 120 44"><defs><marker id="ah2" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1B7A4D"/></marker></defs><path d="M 8 30 Q 60 6 112 26" fill="none" stroke="#1B7A4D" stroke-width="3" marker-end="url(#ah2)"/></svg><div class="molcard poor"><span class="badge">&#948;+</span><canvas data-smiles="Br" width="110" height="90"></canvas><div class="mol-lbl"></div><div class="mol-sub">H-Br (the H end)</div></div></div></div><div class="pair"><div class="pt">ACYL SUBSTITUTION</div><div class="rxnline"><div class="molcard rich"><span class="badge">&#948;&#8722;</span><canvas data-smiles="CCN" width="140" height="95"></canvas><div class="mol-lbl"></div><div class="mol-sub">ethylamine</div></div><svg class="arr" viewBox="0 0 120 44"><defs><marker id="ah2" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1B7A4D"/></marker></defs><path d="M 8 30 Q 60 6 112 26" fill="none" stroke="#1B7A4D" stroke-width="3" marker-end="url(#ah2)"/></svg><div class="molcard poor"><span class="badge">&#948;+</span><canvas data-smiles="CCC(=O)Cl" width="170" height="100"></canvas><div class="mol-lbl"></div><div class="mol-sub">propanoyl chloride</div></div></div></div><div class="pair"><div class="pt">CYANOHYDRIN ADDITION</div><div class="rxnline"><div class="molcard rich"><span class="badge">&#8722;</span><canvas data-smiles="[C-]#N" width="120" height="90"></canvas><div class="mol-lbl"></div><div class="mol-sub">cyanide</div></div><svg class="arr" viewBox="0 0 120 44"><defs><marker id="ah2" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1B7A4D"/></marker></defs><path d="M 8 30 Q 60 6 112 26" fill="none" stroke="#1B7A4D" stroke-width="3" marker-end="url(#ah2)"/></svg><div class="molcard poor"><span class="badge">&#948;+</span><canvas data-smiles="CC(C)=O" width="150" height="95"></canvas><div class="mol-lbl"></div><div class="mol-sub">acetone</div></div></div></div></div><p class="caption">four chapters of your textbook. one sentence. green attacks red.</p>',
   walk:'Look at all four at once. A substitution, an addition, a Grignard, an aldol - the reactions students learn in four different months, drawn side by side. <b>Every arrow starts green and lands red.</b> When the DAT shows you a reaction you have never seen, you now have a move: find the green, find the red, draw the arrow.',
   teach:'This is the payoff slide - reveal the four quadrants one at a time and make them call green and red BEFORE each reveal. End on the line: you did not just learn four reactions, you learned the pattern that writes all of them.',
-  q:{stem:'A reaction you have never seen shows an amine (R-NH2) meeting an acyl chloride (R-COCl). Who attacks whom?', opts:[
-    'The acyl chloride attacks the amine - chlorine makes it aggressive',
-    'The nitrogen lone pair (rich) attacks the carbonyl carbon (poor)',
-    'The chlorine attacks the nitrogen',
+  q:{stem:'A reaction you have never seen: a thiol (R-S-H, sulfur with two lone pairs) meets bromomethane (CH3-Br). Who attacks whom?', opts:[
+    'The bromine attacks the sulfur - halogens are aggressive',
+    'The sulfur lone pair (rich) attacks the carbon next to bromine (poor)',
+    'The S-H hydrogen attacks the bromine',
     'No reaction - neither is charged'],
-   correct:1, explain:'You have never seen it, and you still got it right - that is the whole point. Nitrogen has a lone pair: rich. The carbonyl carbon sits between O and Cl, doubly robbed: poor. Rich attacks poor. You can now predict chemistry you were never taught.'}}
+   correct:1, explain:'You were never taught this reaction, and you still called it - that is the whole point of tonight. Sulfur carries lone pairs: rich. The carbon next to bromine is delta-plus: poor. Rich attacks poor, bromide leaves. You can now predict chemistry you have never seen.'}}
 ];
 
 var SYLLABUS=[
@@ -252,8 +229,9 @@ function render(){
     d.className='scene'+(open?'':' locked');
     var inner='<div class="scene-head"><span class="scene-num">'+sc.n+'</span><span class="scene-title">'+sc.t+'</span></div><div class="scene-body">';
     if(mode==='teach'){
-      inner+='<div id="mask'+i+'" class="'+(i>0?'reveal-mask':'')+'">'+sc.svg+'</div>';
-      if(i>0) inner+='<button class="reveal-btn" data-r="'+i+'">REVEAL</button>';
+      var masked = i>0 && new URLSearchParams(location.search).get('reveal')!=='all';
+      inner+='<div id="mask'+i+'" class="'+(masked?'reveal-mask':'')+'">'+sc.svg+'</div>';
+      if(masked) inner+='<button class="reveal-btn" data-r="'+i+'">REVEAL</button>';
       inner+='<div class="teachline"><span class="lb">Coach line</span>'+sc.teach+'</div>';
     } else {
       inner+=sc.svg+'<p class="say">'+sc.walk+'</p>';
@@ -283,7 +261,7 @@ function render(){
       box.appendChild(ex);
       done['s'+si]= ok?'ok':'read'; save();
       var nx=document.createElement('button'); nx.className='reveal-btn'; nx.textContent='CONTINUE';
-      nx.addEventListener('click',render);
+      nx.addEventListener('click',function(){render();drawMols();});
       box.appendChild(nx);
       updateBar();
     });
@@ -301,11 +279,40 @@ function updateBar(){
   document.getElementById('pfill').style.width = (mode==='teach'?100:(n/SCENES.length*100))+'%';
   document.getElementById('plabel').textContent = mode==='teach' ? 'reveal as you go' : (n===SCENES.length?'night complete':'commit to advance');
 }
+var sdReady=null;
+function loadSD(){
+  if(window.SmilesDrawer) return Promise.resolve();
+  if(!sdReady){ sdReady=new Promise(function(res,rej){
+    var sc=document.createElement('script'); sc.src='../../shared/smiles-drawer.min.js';
+    sc.onload=res; sc.onerror=rej; document.head.appendChild(sc); }); }
+  return sdReady;
+}
+var sdInst=null, sdSeq=0;
+function drawMols(){
+  var cs=document.querySelectorAll('canvas[data-smiles]');
+  if(!cs.length) return;
+  loadSD().then(function(){
+    cs.forEach(function(cv){
+      if(cv.dataset.drawn) return; cv.dataset.drawn='1';
+      if(!cv.id) cv.id='rtmol'+(sdSeq++);
+      var key=cv.width+'x'+cv.height;
+      if(!sdInst) sdInst={};
+      if(!sdInst[key]){
+        try{ sdInst[key]=new window.SmiDrawer({width:+cv.width,height:+cv.height,bondLength:16,compactDrawing:true,
+          themes:{light:{C:'#1a1d20',O:'#cf3b3b',N:'#3a78c4',Cl:'#2e8a3e',Br:'#8a4a2a',F:'#3aa83a',S:'#b8860b',BACKGROUND:'transparent'}}}); }
+        catch(e){ sdInst[key]=false; }
+      }
+      if(!sdInst[key]) return;
+      try{ sdInst[key].draw(cv.dataset.smiles,'#'+cv.id,'light'); }catch(e){}
+    });
+  }).catch(function(){});
+}
 function setMode(m){
   mode=m;
   document.getElementById('mWalk').classList.toggle('on',m==='walk');
   document.getElementById('mTeach').classList.toggle('on',m==='teach');
   render();
+  drawMols();
   window.scrollTo(0,0);
 }
 document.getElementById('mWalk').addEventListener('click',function(){setMode('walk')});
