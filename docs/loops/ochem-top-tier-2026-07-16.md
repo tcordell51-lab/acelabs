@@ -39,3 +39,14 @@ Rules of the loop:
 - 17:03 SHIPPED 4: error-class feedback, Night 1 (f084076) - all 7 questions
   carry per-option named patterns; probe screenshot confirmed "BLAMING THE
   SOLVENT" label on the miss. Iteration 5 (extend to Nights 4+5) starting.
+- 17:17 SHIPPED 5: error patterns for Nights 4+5 (46b5de4) - 20 questions
+  total now named; automated validator confirmed every array aligns with
+  its correct index.
+- (session gap) SHIPPED 6: Night 7 carbonyl movie (89b9268) - the master
+  mechanism as a 3-frame stepper + auto paper frame, two craft fixes after
+  screenshot review (forming bond clear of the nitrile, retreat arrow on
+  the open face).
+- 21:5x LOOP CLOSED: all six increments verified live on
+  acelabs.netlify.app in one sweep. Remaining backlog (fading, catalog
+  stat-lines, gameboard, non-reaction nights, the Map) stays in
+  docs/retold-visual-research-2026-07-16.md ranked order.
