@@ -32110,6 +32110,16 @@ html[data-theme="dark"] .rw-wheel-chip{color:#d8c893;}
 .rw-wheel-chip.locked{opacity:.4;cursor:default;}
 .rw-wheel-chip.done{border-color:#1B7A4D;color:#1B7A4D;}
 @media(max-width:1000px){.rw-main{flex-direction:column;}.rw-panel{max-width:none;border-left:none;border-top:1px solid rgba(140,114,53,.3);}}
+.rw-blank{border:2.5px dashed #C9A84C;border-radius:16px;padding:30px 18px;text-align:center;font-family:'Playfair Display',Georgia,serif;font-size:2.2rem;color:#C9A84C;margin:12px 0;background:rgba(201,168,76,.06)}
+.rw-flipbtn{display:block;width:100%;font-family:'JetBrains Mono',monospace;font-size:.72rem;letter-spacing:.1em;background:linear-gradient(180deg,#eede9f,#C9A84C);border:none;border-radius:12px;padding:13px 18px;cursor:pointer;color:#1a1206;font-weight:700;margin-top:8px}
+.rw-reveal{border:1.5px solid rgba(140,114,53,.35);border-radius:16px;padding:16px;text-align:center;margin:12px 0;background:#fff}
+html[data-theme="dark"] .rw-reveal{background:rgba(255,255,255,.05)}
+.rw-reveal .rw-opt-name{display:block;font-weight:700;margin-top:6px}
+.rw-grade{display:flex;gap:10px;margin-top:12px}
+.rw-grade button{flex:1;font-family:'JetBrains Mono',monospace;font-size:.7rem;letter-spacing:.08em;border-radius:12px;padding:12px;cursor:pointer;font-weight:700}
+.rw-grade .had{background:#1B3A2D;color:#e6d08a;border:none}
+.rw-grade .notyet{background:none;border:1.5px solid rgba(140,114,53,.5);color:#8a6d24}
+.rw-test-miss{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:#8a6d24;padding:4px 0;border-bottom:1px solid rgba(140,114,53,.2)}
 @media print{#rwOverlay{display:none!important;}}
 </style>
 <div id="rwOverlay" role="dialog" aria-modal="true" aria-label="Reaction Wheel game">
@@ -32119,6 +32129,7 @@ html[data-theme="dark"] .rw-wheel-chip{color:#d8c893;}
     <div class="rw-progress">
       <span class="rw-mastery" id="rwMastery"></span>
       <span class="rw-streak" id="rwStreak"></span>
+      <button class="rw-exit" id="rwTestBtn" style="border-color:#C9A84C;color:#8a6d24">Test this wheel</button>
       <button class="rw-exit" id="rwExit">ESC exit</button>
     </div>
   </div>
@@ -32185,7 +32196,8 @@ html[data-theme="dark"] .rw-wheel-chip{color:#d8c893;}
 
   // board geometry
   function renderBoard(){
-    var w=WHEELS[state.wheel], sp=entriesFor(w.key), ws=wheelSave(w);
+    var w=WHEELS[state.wheel], sp=entriesFor(w.key);
+    var ws=state.test?(state.tgot||{}):wheelSave(w);
     var board=document.getElementById('rwBoard');
     var W=board.clientWidth||800, H=board.clientHeight||560;
     var cx=W/2, cy=H/2, rx=Math.min(W*0.36,420), ry=Math.min(H*0.36,260);
@@ -32216,9 +32228,12 @@ html[data-theme="dark"] .rw-wheel-chip{color:#d8c893;}
   function renderTop(){
     var w=WHEELS[state.wheel], sp=entriesFor(w.key), ws=wheelSave(w);
     var filled=sp.filter(function(s){return spokeDone(w,s.key);}).length;
-    document.getElementById('rwTitle').textContent=w.name+' Wheel';
-    document.getElementById('rwMastery').textContent=filled+' / '+sp.length+' spokes mastered';
-    document.getElementById('rwStreak').textContent=state.frozen?'streak paused - one more right resumes it':(state.streak>1?'streak '+state.streak:'');
+    document.getElementById('rwTitle').textContent=w.name+' Wheel'+(state.test?' - test yourself':'');
+    document.getElementById('rwMastery').textContent=state.test
+      ? state.qi+' / '+state.queue.length+' flipped'
+      : filled+' / '+sp.length+' spokes mastered';
+    document.getElementById('rwStreak').textContent=state.test?'say it out loud before you flip':(state.frozen?'streak paused - one more right resumes it':(state.streak>1?'streak '+state.streak:''));
+    document.getElementById('rwTestBtn').textContent=state.test?'Back to building':'Test this wheel';
     var pk=document.getElementById('rwPicker'); pk.innerHTML='';
     WHEELS.forEach(function(wh,i){
       var b=document.createElement('button');
@@ -32320,7 +32335,98 @@ html[data-theme="dark"] .rw-wheel-chip{color:#d8c893;}
     if(b) b.addEventListener('click',function(){ openWheel(state.wheel+1); });
   }
 
+  // ── TEST MODE: the fill-in-the-blank self-test over a whole wheel ──
+  // Every spoke, both directions, shuffled. Commit out loud, flip, grade
+  // yourself honestly. Not-yets come back around until the wheel is clean;
+  // nothing here touches the build-mode mastery save.
+  var TKEY='atDAT_wheeltest_v1';
+  var tsave={};
+  try{ tsave=JSON.parse(localStorage.getItem(TKEY)||'{}'); }catch(e){ tsave={}; }
+  function buildTestQueue(w){
+    var q=[];
+    entriesFor(w.key).forEach(function(s){ q.push({sp:s,mode:'f'}); q.push({sp:s,mode:'r'}); });
+    return shuffle(q);
+  }
+  function startTest(){
+    var w=WHEELS[state.wheel];
+    state.test=true; state.tgot={}; state.tHad=0; state.tMisses=[];
+    state.queue=buildTestQueue(w); state.tTotal=state.queue.length; state.qi=0; state.answered=false;
+    renderTest();
+  }
+  function exitTest(){ state.test=false; openWheel(state.wheel); }
+  function renderTest(){
+    var w=WHEELS[state.wheel], panel=document.getElementById('rwPanel');
+    var cur=state.queue[state.qi];
+    if(!cur){ renderTestDone(); renderBoard(); renderTop(); return; }
+    var sp=cur.sp;
+    var html='<div class="rw-q-kicker">Test yourself · '+(cur.mode==='f'?'forward':'reverse')+' · no options, just you</div>';
+    if(cur.mode==='f'){
+      html+='<div class="rw-q">'+w.name+' + <span style="color:#b45309">'+reagentLabel(sp.rid)+'</span> gives what?</div>';
+      html+='<div class="rw-blank">?</div>';
+    } else {
+      html+='<div class="rw-q">Which reagent turns '+w.name.toLowerCase()+' into <em>'+sp.e.name+'</em>?</div>';
+      html+='<div style="margin:6px 0 10px">'+(sp.e.svg||'')+'</div>';
+      html+='<div class="rw-blank">?</div>';
+    }
+    html+='<button class="rw-flipbtn" id="rwFlip">I SAID MY ANSWER - FLIP IT</button>';
+    panel.innerHTML=html;
+    document.getElementById('rwFlip').addEventListener('click',function(){
+      var reveal = cur.mode==='f'
+        ? '<div class="rw-reveal">'+(sp.e.svg||'')+'<span class="rw-opt-name">'+sp.e.name+'</span></div>'
+        : '<div class="rw-reveal"><span class="rw-opt-name" style="font-family:\'JetBrains Mono\',monospace;font-size:.85rem">'+reagentLabel(sp.rid)+'</span></div>';
+      this.outerHTML=reveal
+        +'<div class="rw-grade"><button class="had">I HAD IT</button><button class="notyet">NOT YET - COMING BACK AROUND</button></div>';
+      panel.querySelector('.rw-grade .had').addEventListener('click',function(){ gradeTest(cur,true); });
+      panel.querySelector('.rw-grade .notyet').addEventListener('click',function(){ gradeTest(cur,false); });
+    });
+    renderBoard(); renderTop();
+  }
+  function gradeTest(cur,had){
+    var w=WHEELS[state.wheel], sp=cur.sp;
+    if(had){
+      state.tgot[sp.key]=state.tgot[sp.key]||{}; state.tgot[sp.key][cur.mode]=1;
+      if(!cur.re) state.tHad++;
+    } else {
+      if(!cur.re){
+        state.tMisses.push(cur);
+        try{
+          if(window.parent&&window.parent!==window){
+            window.parent.postMessage({type:'acedat:tool-miss',tool:'ochem-reaction-maps',section:'OChem',
+              questionId:'wheeltest_'+sp.key+'_'+cur.mode,hub:sp.e.hub||'reactions',
+              stem:(cur.mode==='f'?w.name+' + '+reagentLabel(sp.rid):'reagent for '+w.name+' to '+sp.e.name),
+              pickedKey:'self',pickedText:'self-graded: not yet',correctKey:sp.key,correctText:sp.e.name,
+              ts:Date.now()},'*');
+          }
+        }catch(e){}
+      }
+      state.queue.push({sp:sp,mode:cur.mode,re:true});
+    }
+    state.qi++;
+    renderTest();
+  }
+  function renderTestDone(){
+    var w=WHEELS[state.wheel], panel=document.getElementById('rwPanel');
+    var prev=tsave[w.key];
+    var firstSay=state.tHad, total=state.tTotal;
+    tsave[w.key]={had:firstSay,total:total,ts:Date.now()};
+    try{ localStorage.setItem(TKEY,JSON.stringify(tsave)); }catch(e){}
+    var html='<div class="rw-q-kicker">Wheel tested - every blank filled</div>';
+    html+='<div class="rw-q">'+firstSay+' of '+total+' on the first say'+(firstSay===total?' - the whole wheel is yours from memory.':'.')+'</div>';
+    if(prev) html+='<p style="font-family:\'JetBrains Mono\',monospace;font-size:.68rem;color:#8a6d24">LAST RUN: '+prev.had+' / '+prev.total+'</p>';
+    if(state.tMisses.length){
+      html+='<p style="font-size:.85rem;color:#6b5620;margin:10px 0 4px">The ones that came back around - each one is now a rep, not a gap:</p>';
+      state.tMisses.forEach(function(m){
+        html+='<div class="rw-test-miss">'+(m.mode==='f'?reagentLabel(m.sp.rid)+' &rarr; '+m.sp.e.name:m.sp.e.name+' &larr; '+reagentLabel(m.sp.rid))+'</div>';
+      });
+    }
+    html+='<div class="rw-grade" style="margin-top:16px"><button class="had" id="rwTestAgain">RUN IT AGAIN</button><button class="notyet" id="rwTestBack">BACK TO BUILDING</button></div>';
+    panel.innerHTML=html;
+    document.getElementById('rwTestAgain').addEventListener('click',startTest);
+    document.getElementById('rwTestBack').addEventListener('click',exitTest);
+  }
+
   function openWheel(i){
+    if(state.test){ state.wheel=i; startTest(); return; }
     state.wheel=i; state.queue=buildQueue(WHEELS[i]); state.qi=0; state.streak=0; state.frozen=false;
     renderQuestion();
   }
@@ -32330,16 +32436,21 @@ html[data-theme="dark"] .rw-wheel-chip{color:#d8c893;}
     // ?wheel=<family key> deep-links straight to that wheel - the Retold
     // nights send students to their own night's reps without making them
     // grind the unlock chain first. Coach-directed context earns the jump.
-    var want=new URLSearchParams(location.search).get('wheel');
+    var pp=new URLSearchParams(location.search);
+    var want=pp.get('wheel'), wantTest=pp.get('test')==='1';
+    var start=0, found=false;
     if(want){
-      for(var w=0;w<WHEELS.length;w++){ if(WHEELS[w].key===want){ openWheel(w); return; } }
+      for(var w=0;w<WHEELS.length;w++){ if(WHEELS[w].key===want){ start=w; found=true; break; } }
     }
-    var start=0;
-    for(var i=0;i<WHEELS.length;i++){ if(wheelUnlocked(i)&&!wheelDone(WHEELS[i])){ start=i; break; } if(wheelDone(WHEELS[i])) start=Math.min(i+1,WHEELS.length-1); }
-    openWheel(start);
+    if(!found){
+      for(var i=0;i<WHEELS.length;i++){ if(wheelUnlocked(i)&&!wheelDone(WHEELS[i])){ start=i; break; } if(wheelDone(WHEELS[i])) start=Math.min(i+1,WHEELS.length-1); }
+    }
+    if(wantTest){ state.wheel=start; startTest(); renderTop(); }
+    else openWheel(start);
   }
   function closeGame(){ document.getElementById('rwOverlay').classList.remove('open'); document.body.style.overflow=''; }
   document.getElementById('rwExit').addEventListener('click',closeGame);
+  document.getElementById('rwTestBtn').addEventListener('click',function(){ if(state.test) exitTest(); else startTest(); });
   document.addEventListener('keydown',function(e){
     if(!document.getElementById('rwOverlay').classList.contains('open'))return;
     if(e.key==='Escape'){ closeGame(); }
