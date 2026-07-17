@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Ace PAT Studio — Top Front End: Solid Means Seen</title>
+<style>
+:root{--bg:#0d1411;--card:#121b16;--panel:#15110b;--line:rgba(201,168,76,.22);--ink:#ece6d7;--ink2:#b7b0a0;--ink3:#867f72;--gold:#C9A84C;--goldhi:#E6D08A;--amber:#D98A2B;--good:#57B487;--bad:#C06A62;--serif:Georgia,'Times New Roman',serif;--mono:ui-monospace,'SF Mono',Menlo,monospace;--sans:system-ui,-apple-system,'Segoe UI',sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(700px 420px at 85% -5%,rgba(201,168,76,.07),transparent 60%),var(--bg);color:var(--ink);font-family:var(--sans)}
+.wrap{max-width:1160px;margin:0 auto;padding:26px 22px 60px}
+.top{display:flex;align-items:baseline;gap:14px;border-bottom:1px solid var(--line);padding-bottom:14px;margin-bottom:20px;flex-wrap:wrap}
+.top .brand{font-family:var(--serif);font-size:20px}
+.top .brand span{color:var(--gold)}
+.kick{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--amber)}
+h1{font-family:var(--serif);font-size:30px;margin:0 0 6px}
+.lede{color:var(--ink2);max-width:76ch;margin:0 0 18px;font-size:15px}
+.lede b{color:var(--goldhi)}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.card{background:var(--card);border:1px solid var(--line);border-top:3px solid var(--amber);border-radius:14px;padding:16px 18px}
+.card h2{font-family:var(--serif);font-size:17px;margin:0 0 2px}
+.card .k{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--amber)}
+svg{display:block;width:100%;height:auto}
+button{background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:9px;padding:9px 15px;font-family:var(--mono);font-size:12px;cursor:pointer}
+button:hover{border-color:var(--gold)}
+button.primary{background:linear-gradient(180deg,var(--goldhi),var(--gold));color:#1a1206;border:none;font-weight:700}
+.controls{display:flex;gap:9px;flex-wrap:wrap;margin-top:12px}
+.coach{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:11px 14px;margin-top:12px;font-size:13.5px;line-height:1.5;color:var(--ink2)}
+.coach b{color:var(--goldhi)}
+.opts{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:10px}
+.opt{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px;cursor:pointer;text-align:center}
+.opt:hover{border-color:var(--gold)}
+.opt.correct{border-color:var(--good);box-shadow:0 0 0 1px var(--good)}
+.opt.wrong{border-color:var(--bad);box-shadow:0 0 0 1px var(--bad)}
+.opt .lab{font-family:var(--mono);font-size:11px;color:var(--ink2);margin-bottom:4px}
+.hint{font-size:12px;color:var(--ink3);margin-top:8px}
+@media(max-width:1000px){.cols{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div class="brand">Ace <span>PAT</span> Studio</div>
+    <div class="kick">Module 2 · Top - Front - End</div>
+  </div>
+  <h1>Solid Means Seen. Dashed Means Hidden.</h1>
+  <p class="lede">Every problem here <b>forces the solid-vs-dashed decision</b> — the load-bearing skill of real TFE. Don't build the 3D object in your head: orient for 5-10 seconds, find one distinguishing feature, get to a 50-50. <b>Width pairs top and front. Height pairs front and end. Depth pairs top and end — the tough one.</b></p>
+  <div class="cols">
+    <div class="card">
+      <div class="k">The object + its three computed views</div>
+      <h2 id="ltitle">Teach: the inspector's three stops</h2>
+      <svg id="teach" viewBox="0 0 560 470"></svg>
+      <div class="controls">
+        <button id="hid" class="primary">Highlight hidden edges</button>
+        <button id="iso3d">Show object: On</button>
+        <button id="newq">New object</button>
+      </div>
+      <div class="coach" id="lcoach"><b>Google Maps.</b> Satellite view = top. Drop the little guy on the street = front. He walks around the corner = end. On the end view never say left-right: <b>end-left is the front, end-right is the back.</b></div>
+    </div>
+    <div class="card">
+      <div class="k">Drill · choose the correct END view</div>
+      <h2>Two views given. Find the third.</h2>
+      <svg id="given" viewBox="0 0 560 250"></svg>
+      <div class="opts" id="opts"></div>
+      <div class="hint">Height must match the FRONT view exactly - height never comes from the top. Then check depth against the TOP.</div>
+      <div class="coach" id="rcoach"><b>Can you see it from the end? No - dash.</b> An overhang means a dash somewhere.</div>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+var INK='#ece6d7', INK2='#b7b0a0', INK3='#867f72', GOLD='#C9A84C', GOLDHI='#E6D08A', GOOD='#57B487', BAD='#C06A62', BG='#0d1411';
+var FT='#54655a', FF='#3b4a41', FR='#2a352e';
+var MONO='ui-monospace,Menlo,monospace';
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+var qp=new URLSearchParams(location.search);
+var seed=parseInt(qp.get('seed')||'31',10), rng=mulberry32(seed);
+function ri(n){return Math.floor(rng()*n)}
+
+// ---- solid = heightmap h[x][y], front = y0 side, viewer of FRONT at y=-inf ----
+var W=0,D=0,H=null;
+function h(x,y){return (x<0||y<0||x>=W||y>=D)?0:H[x][y]}
+
+// FRONT view segments (unit coords: u=x right, v=z up), computed with visibility
+function frontView(){
+  var segs=[];
+  // horizontal edges: tops of columns + ground
+  for(var x=0;x<W;x++){
+    var tops={};
+    for(var y=0;y<D;y++){var t=h(x,y); if(t>0){ if(tops[t]==null||y<tops[t]) tops[t]=y; }}
+    Object.keys(tops).forEach(function(ts){
+      var t=+ts, y0=tops[t], dash=false;
+      for(var y2=0;y2<y0;y2++) if(h(x,y2)>t){dash=true;break}
+      // coplanar continuation: if a NEARER column has same height, skip (edge drawn from that column)
+      var nearerSame=false; for(var y3=0;y3<y0;y3++) if(h(x,y3)===t){nearerSame=true;break}
+      if(!nearerSame) segs.push({a:[x,t],b:[x+1,t],dash:dash});
+    });
+    // ground line under occupied columns
+    var occ=false; for(var y4=0;y4<D;y4++) if(h(x,y4)>0){occ=true;break}
+    if(occ) segs.push({a:[x,0],b:[x+1,0],dash:false});
+  }
+  // vertical edges at x-boundaries
+  var zmax=4;
+  for(var b=0;b<=W;b++){
+    for(var z=0;z<zmax;z++){
+      var y0=-1;
+      for(var y=0;y<D;y++){
+        var L=h(b-1,y)>z, R=h(b,y)>z;
+        if(L!==R){y0=y;break}
+      }
+      if(y0<0)continue;
+      var dash=false;
+      for(var y5=0;y5<y0;y5++) if(Math.max(h(b-1,y5),h(b,y5))>z){dash=true;break}
+      segs.push({a:[b,z],b:[b,z+1],dash:dash});
+    }
+  }
+  return segs;
+}
+// END view (viewer at x=+inf): u=y (left=front), v=z
+function endView(HH,Wd,Dd){
+  var hh=function(x,y){return (x<0||y<0||x>=Wd||y>=Dd)?0:HH[x][y]};
+  var segs=[];
+  for(var y=0;y<Dd;y++){
+    var tops={};
+    for(var x=0;x<Wd;x++){var t=hh(x,y); if(t>0){ if(tops[t]==null||x>tops[t]) tops[t]=x; }}
+    Object.keys(tops).forEach(function(ts){
+      var t=+ts, x0=tops[t], dash=false;
+      for(var x2=x0+1;x2<Wd;x2++) if(hh(x2,y)>t){dash=true;break}
+      var nearerSame=false; for(var x3=x0+1;x3<Wd;x3++) if(hh(x3,y)===t){nearerSame=true;break}
+      if(!nearerSame) segs.push({a:[y,t],b:[y+1,t],dash:dash});
+    });
+    var occ=false; for(var x4=0;x4<Wd;x4++) if(hh(x4,y)>0){occ=true;break}
+    if(occ) segs.push({a:[y,0],b:[y+1,0],dash:false});
+  }
+  for(var b=0;b<=Dd;b++){
+    for(var z=0;z<4;z++){
+      var x0=-1;
+      for(var x=Wd-1;x>=0;x--){
+        var L=hh(x,b-1)>z, R=hh(x,b)>z;
+        if(L!==R){x0=x;break}
+      }
+      if(x0<0)continue;
+      var dash=false;
+      for(var x5=x0+1;x5<Wd;x5++) if(Math.max(hh(x5,b-1),hh(x5,b))>z){dash=true;break}
+      segs.push({a:[b,z],b:[b,z+1],dash:dash});
+    }
+  }
+  return segs;
+}
+// TOP view: u=x, v=row (y=0 back at top... front y0 at BOTTOM row index = 0? draw with y0 at bottom: v = y)
+function topView(){
+  var segs=[];
+  for(var x=0;x<W;x++)for(var y=0;y<D;y++){
+    if(h(x,y)!==h(x-1,y)) segs.push({a:[x,y],b:[x,y+1],dash:false});
+    if(h(x,y)!==h(x,y-1)) segs.push({a:[x,y],b:[x+1,y],dash:false});
+  }
+  for(var x2=0;x2<W;x2++) if(h(x2,D-1)>0||true){ if(h(x2,D-1)!==0) segs.push({a:[x2,D],b:[x2+1,D],dash:false}); }
+  for(var y2=0;y2<D;y2++) if(h(W-1,y2)!==0) segs.push({a:[W,y2],b:[W,y2+1],dash:false});
+  return segs;
+}
+function key(segs){return segs.map(function(s){return s.a[0]+','+s.a[1]+','+s.b[0]+','+s.b[1]+','+(s.dash?1:0)}).sort().join('|')}
+
+// render a view's segments into svg string. v-axis: z up OR top-view rows.
+function drawSegs(segs,ox,oy,s,vmax,hl){
+  var o='';
+  segs.forEach(function(sg){
+    var x1=ox+sg.a[0]*s, x2=ox+sg.b[0]*s;
+    var y1=oy+(vmax-sg.a[1])*s, y2=oy+(vmax-sg.b[1])*s;
+    o+='<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'" stroke="'+(sg.dash?(hl?GOLDHI:GOLD):INK)+'" stroke-width="'+(sg.dash&&hl?3:2)+'"'+(sg.dash?' stroke-dasharray="6 4"':'')+' stroke-linecap="square"/>';
+  });
+  return o;
+}
+function txt(x,y,st,size,fill,anchor){
+  return '<text x="'+x+'" y="'+y+'" fill="'+(fill||INK2)+'" font-size="'+(size||10)+'" font-family="'+MONO+'" text-anchor="'+(anchor||'middle')+'" letter-spacing="1">'+st+'</text>';
+}
+// iso: mirror y so the front (y=0) faces the viewer
+function isoObj(ox,oy,s){
+  var o='';
+  function Pr(x,y,z){var ym=D-y; return [ox+(x-ym)*0.866*s, oy+(x+ym)*0.5*s - z*s]}
+  var cols=[];
+  for(var x=0;x<W;x++)for(var y=0;y<D;y++) if(h(x,y)>0) cols.push([x,y]);
+  cols.sort(function(a,b){ return (a[0]+(D-a[1]))-(b[0]+(D-b[1])) });
+  cols.forEach(function(c){
+    var x=c[0],y=c[1],ht=h(x,y);
+    function poly(pts,fill){return '<polygon points="'+pts.map(function(p){var q=Pr(p[0],p[1],p[2]);return q[0].toFixed(1)+','+q[1].toFixed(1)}).join(' ')+'" fill="'+fill+'" stroke="'+BG+'" stroke-width="1.4" stroke-linejoin="round"/>'}
+    o+=poly([[x,y,ht],[x+1,y,ht],[x+1,y+1,ht],[x,y+1,ht]],FT);
+    o+=poly([[x,y,0],[x+1,y,0],[x+1,y,ht],[x,y,ht]],FF);      // front face (y=0 side faces viewer after mirror)
+    o+=poly([[x+1,y,0],[x+1,y+1,0],[x+1,y+1,ht],[x+1,y,ht]],FR); // right/end face
+  });
+  return o;
+}
+
+var P=null; // {top, front, end, opts:[{segs,ok,why}]}
+function gen(){
+  rng=mulberry32(seed);
+  for(var att=0;att<200;att++){
+    W=3+ri(2); D=2+ri(2); H=[];
+    for(var x=0;x<W;x++){H.push([]);for(var y=0;y<D;y++)H[x].push(ri(4))}
+    // ensure some mass + variety
+    var tot=0,hs={};
+    for(var x1=0;x1<W;x1++)for(var y1=0;y1<D;y1++){tot+=H[x1][y1];hs[H[x1][y1]]=1}
+    if(tot<5||Object.keys(hs).length<3)continue;
+    var fv=frontView(), ev=endView(H,W,D), tv=topView();
+    var hasDash=fv.concat(ev).some(function(s){return s.dash});
+    if(!hasDash)continue;
+    // distractors for END view
+    var okKey=key(ev), opts=[{segs:ev,ok:true}], seen={}; seen[okKey]=1;
+    // 1) mirror front-back (his classic trap)
+    var Hm=[]; for(var x2=0;x2<W;x2++){Hm.push([]);for(var y2=0;y2<D;y2++)Hm[x2].push(H[x2][D-1-y2])}
+    var mv=endView(Hm,W,D);
+    if(!seen[key(mv)]){seen[key(mv)]=1;opts.push({segs:mv,ok:false,why:'front and back swapped - end-left must be the FRONT'})}
+    // 2) dashed edge drawn solid (or dropped)
+    var sv=ev.map(function(s){return {a:s.a,b:s.b,dash:s.dash}});
+    var di=sv.findIndex(function(s){return s.dash});
+    if(di>=0){sv[di]={a:sv[di].a,b:sv[di].b,dash:false};}
+    if(!seen[key(sv)]){seen[key(sv)]=1;opts.push({segs:sv,ok:false,why:'a hidden edge drawn solid - you cannot see that edge from the end'})}
+    // 3) mutated column height
+    var Hx=null, tries=0;
+    while(tries++<20){
+      var Hc=H.map(function(col){return col.slice()});
+      var mx=ri(W),my=ri(D), dl=ri(2)?1:-1;
+      Hc[mx][my]=Math.max(0,Math.min(3,Hc[mx][my]+dl));
+      var v2=endView(Hc,W,D);
+      if(!seen[key(v2)]){seen[key(v2)]=1;opts.push({segs:v2,ok:false,why:'wrong height profile - height must match the FRONT view'});break}
+    }
+    if(opts.length<4)continue;
+    // shuffle
+    for(var i=opts.length-1;i>0;i--){var j=ri(i+1);var t=opts[i];opts[i]=opts[j];opts[j]=t}
+    return {top:tv,front:fv,end:ev,opts:opts};
+  }
+  seed++; return gen();
+}
+
+var HL=false, ISO=true, answered=false;
+function renderTeach(){
+  var o='', s=30;
+  if(ISO) o+=isoObj(120,120,26)+txt(120,236,'THE OBJECT',9,INK3);
+  var tx=300, ty=30;
+  o+=drawSegs(P.top,tx,ty,s,D,HL)+txt(tx+W*s/2,ty+D*s+18,'TOP',9,INK3);
+  var fy=ty+D*s+44;
+  o+=drawSegs(P.front,tx,fy,s,3,HL)+txt(tx+W*s/2,fy+3*s+18,'FRONT',9,INK3);
+  var ex2=tx+W*s+40;
+  o+=drawSegs(P.end,ex2,fy,s,3,HL)+txt(ex2+D*s/2,fy+3*s+18,'END',9,INK3);
+  // legend
+  o+='<line x1="30" y1="300" x2="66" y2="300" stroke="'+INK+'" stroke-width="2"/>'+txt(74,304,'solid = you can see it',9.5,INK2,'start');
+  o+='<line x1="30" y1="322" x2="66" y2="322" stroke="'+GOLD+'" stroke-width="2" stroke-dasharray="6 4"/>'+txt(74,326,'dashed = hidden behind the shape',9.5,INK2,'start');
+  o+=txt(30,354,'WIDTH: TOP+FRONT   HEIGHT: FRONT+END   DEPTH: TOP+END',9,INK3,'start');
+  document.getElementById('teach').innerHTML=o;
+}
+function renderDrill(){
+  var s=34, o='';
+  o+=drawSegs(P.top,60,30,s,D,false)+txt(60+W*s/2,30+D*s+18,'TOP',9,INK3);
+  o+=drawSegs(P.front,320,30,s,3,false)+txt(320+W*s/2,30+3*s+18,'FRONT',9,INK3);
+  document.getElementById('given').innerHTML=o;
+  var w=document.getElementById('opts'); w.innerHTML='';
+  P.opts.forEach(function(op,i){
+    var div=document.createElement('div'); div.className='opt';
+    var vb=(D+1)*30+20;
+    div.innerHTML='<div class="lab">'+'ABCD'[i]+'</div><svg viewBox="0 0 '+vb+' 130">'+drawSegs(op.segs,14,14,30,3,false)+'</svg>';
+    div.addEventListener('click',function(){
+      if(answered)return; answered=true;
+      Array.prototype.forEach.call(w.children,function(ch,ix){
+        if(P.opts[ix].ok)ch.classList.add('correct');
+      });
+      if(!op.ok){div.classList.add('wrong');
+        document.getElementById('rcoach').innerHTML='<b>The trap:</b> '+op.why+'. Check the green one against the front view line by line.';
+      } else {
+        document.getElementById('rcoach').innerHTML='<b>That is it.</b> You matched height to the front and depth to the top - the two pairings that decide every end view.';
+      }
+    });
+    w.appendChild(div);
+  });
+  answered=false;
+  document.getElementById('rcoach').innerHTML='<b>Can you see it from the end? No - dash.</b> An overhang means a dash somewhere.';
+}
+function render(){renderTeach();renderDrill()}
+document.getElementById('hid').addEventListener('click',function(){HL=!HL;this.textContent=HL?'Hidden edges: highlighted':'Highlight hidden edges';renderTeach()});
+document.getElementById('iso3d').addEventListener('click',function(){ISO=!ISO;this.textContent='Show object: '+(ISO?'On':'Off');renderTeach()});
+document.getElementById('newq').addEventListener('click',function(){seed++;P=gen();render()});
+P=gen(); render();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Ace PAT Studio — Angle Discrimination Trainer</title>
+<style>
+:root{--bg:#0d1411;--card:#121b16;--panel:#15110b;--line:rgba(201,168,76,.22);--ink:#ece6d7;--ink2:#b7b0a0;--ink3:#867f72;--gold:#C9A84C;--goldhi:#E6D08A;--amber:#D98A2B;--good:#57B487;--bad:#C06A62;--serif:Georgia,'Times New Roman',serif;--mono:ui-monospace,'SF Mono',Menlo,monospace;--sans:system-ui,-apple-system,'Segoe UI',sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(700px 420px at 85% -5%,rgba(201,168,76,.07),transparent 60%),var(--bg);color:var(--ink);font-family:var(--sans)}
+.wrap{max-width:1080px;margin:0 auto;padding:26px 22px 60px}
+.top{display:flex;align-items:baseline;gap:14px;border-bottom:1px solid var(--line);padding-bottom:14px;margin-bottom:20px;flex-wrap:wrap}
+.top .brand{font-family:var(--serif);font-size:20px}
+.top .brand span{color:var(--gold)}
+.kick{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--amber)}
+h1{font-family:var(--serif);font-size:30px;margin:0 0 6px}
+.lede{color:var(--ink2);max-width:74ch;margin:0 0 18px;font-size:15px}
+.lede b{color:var(--goldhi)}
+.card{background:var(--card);border:1px solid var(--line);border-top:3px solid var(--amber);border-radius:14px;padding:16px 18px;margin-bottom:16px}
+.card .k{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--amber)}
+.dialrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:10px 0 2px}
+.dialrow .lab{font-family:var(--mono);font-size:11px;color:var(--ink3);letter-spacing:.08em;margin-right:4px}
+button{background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:9px;padding:8px 14px;font-family:var(--mono);font-size:12px;cursor:pointer}
+button:hover{border-color:var(--gold)}
+button.on{background:linear-gradient(180deg,var(--goldhi),var(--gold));color:#1a1206;border:none;font-weight:700}
+button.choice{font-size:14px;padding:12px 20px;letter-spacing:.14em}
+button.choice.right{border-color:var(--good);box-shadow:0 0 0 1px var(--good);color:var(--good)}
+button.choice.wrong{border-color:var(--bad);box-shadow:0 0 0 1px var(--bad);color:var(--bad)}
+button:disabled{cursor:default;opacity:.9}
+svg{display:block;width:100%;height:auto}
+.choices{display:flex;gap:12px;flex-wrap:wrap;margin:8px 0 2px;justify-content:center}
+.meta{font-family:var(--mono);font-size:11px;color:var(--ink3);letter-spacing:.06em;text-align:center;margin-top:8px}
+.meta b{color:var(--goldhi)}
+.coach{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:11px 14px;margin-top:12px;font-size:13.5px;line-height:1.5;color:var(--ink2)}
+.coach b{color:var(--goldhi)}
+.statrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.chip{font-family:var(--mono);font-size:11px;letter-spacing:.05em;border:1px solid var(--line);border-radius:99px;padding:5px 12px;color:var(--ink2)}
+.chip b{color:var(--goldhi)}
+.chip.now{border-color:var(--gold)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div class="brand">Ace <span>PAT</span> Studio</div>
+    <div class="kick">Module 3 · Angle Discrimination</div>
+  </div>
+  <h1>The Calibrated Angle Trainer</h1>
+  <p class="lede">Rank the four angles from <b>smallest to largest</b>. The gap between angles is a real, published number — start at 10 degrees and work down to the <b>2-3 degree zone where hard test forms live</b>. Gut-shot it: the quicker you move, the more accurate you will be.</p>
+
+  <div class="card">
+    <div class="k">Difficulty dial · gap between angles, in degrees</div>
+    <div class="dialrow">
+      <span class="lab">GAP</span>
+      <button data-g="10">10</button><button data-g="7">7</button><button data-g="5" class="on">5</button><button data-g="3">3</button><button data-g="2">2 · worst-case form</button>
+      <span style="flex:1"></span>
+      <span class="lab">ARM-LENGTH TRAP</span>
+      <button id="trap">Off</button>
+    </div>
+    <div class="statrow" id="stats"></div>
+  </div>
+
+  <div class="card">
+    <div class="k" id="qlab">Question</div>
+    <svg id="stage" viewBox="0 0 1040 330"></svg>
+    <div class="choices" id="choices"></div>
+    <div class="meta" id="meta"></div>
+    <div class="coach" id="coach"><b>Read the answers first</b> — they anchor smallest and largest. Then move. When you sit and decipher between the final two is when you trip yourself up.</div>
+  </div>
+</div>
+<script>
+(function(){
+var INK='#ece6d7', INK2='#b7b0a0', INK3='#867f72', GOLD='#C9A84C', GOLDHI='#E6D08A', GOOD='#57B487', BAD='#C06A62', BG='#0d1411';
+var MONO='ui-monospace,Menlo,monospace';
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+var q=new URLSearchParams(location.search);
+var seed=parseInt(q.get('seed')||'11',10), rng=mulberry32(seed);
+function ri(n){return Math.floor(rng()*n)}
+var GAP=5, TRAP=false, revealed=false, t0=0;
+var stats={}; // per gap: {n, ok, ms}
+var COACH=[
+ 'The quicker you move through it, the more accurate you will be.',
+ 'The longer you stare, the worse it gets. Gut shot, next question.',
+ 'These are toss-ups by design - 9 or 10 out of 15 here is a strong day.',
+ 'Long arms lie. The angle lives at the vertex.',
+ 'Find the obvious smallest and largest first; only argue about the pair that is left.'
+];
+
+var Q=null; // {degs[4], rots[4], arms[4][2], order (indices sorted), choices[], correctIdx}
+function gen(){
+  rng=mulberry32(seed);
+  var base=20+ri(110);
+  var vals=[0,1,2,3].map(function(i){return base+i*GAP});
+  // shuffle assignment
+  var idx=[0,1,2,3];
+  for(var i=3;i>0;i--){var j=ri(i+1);var t=idx[i];idx[i]=idx[j];idx[j]=t}
+  var degs=idx.map(function(k){return vals[k]});
+  var rots=degs.map(function(){return ri(360)});
+  var arms=degs.map(function(d){
+    if(!TRAP){var r=52+ri(16);return [r,r-ri(8)]}
+    // trap: smaller angle gets LONGER arms
+    var rank=vals.indexOf(d); var r=76-rank*14+ri(6); return [r,r-ri(6)];
+  });
+  var order=[0,1,2,3].sort(function(a,b){return degs[a]-degs[b]});
+  var key=function(o){return o.map(function(i){return i+1}).join('-')};
+  var correct=key(order);
+  // distractors: swap closest pair (0,1), swap (2,3), swap (1,2)
+  function swapped(o,a,b){var c=o.slice();var t=c[a];c[a]=c[b];c[b]=t;return key(c)}
+  var set={}; set[correct]=1;
+  var opts=[correct];
+  [ [0,1],[1,2],[2,3],[0,2] ].forEach(function(pr){
+    var k2=swapped(order,pr[0],pr[1]);
+    if(!set[k2]&&opts.length<4){set[k2]=1;opts.push(k2)}
+  });
+  // shuffle options
+  for(var i2=opts.length-1;i2>0;i2--){var j2=ri(i2+1);var t2=opts[i2];opts[i2]=opts[j2];opts[j2]=t2}
+  return {degs:degs,rots:rots,arms:arms,correct:correct,opts:opts};
+}
+
+function arm(cx,cy,deg,r){var a=deg*Math.PI/180;return [cx+r*Math.cos(a), cy-r*Math.sin(a)]}
+function glyph(cx,cy,deg,rot,r1,r2,col,w){
+  var e1=arm(cx,cy,rot,r1), e2=arm(cx,cy,rot+deg,r2);
+  return '<line x1="'+cx+'" y1="'+cy+'" x2="'+e1[0].toFixed(1)+'" y2="'+e1[1].toFixed(1)+'" stroke="'+col+'" stroke-width="'+w+'" stroke-linecap="round"/>'
+       + '<line x1="'+cx+'" y1="'+cy+'" x2="'+e2[0].toFixed(1)+'" y2="'+e2[1].toFixed(1)+'" stroke="'+col+'" stroke-width="'+w+'" stroke-linecap="round"/>'
+       + '<circle cx="'+cx+'" cy="'+cy+'" r="2.6" fill="'+GOLD+'"/>';
+}
+function arc(cx,cy,deg,rot,r){
+  var p1=arm(cx,cy,rot,r), p2=arm(cx,cy,rot+deg,r);
+  return '<path d="M '+p1[0].toFixed(1)+' '+p1[1].toFixed(1)+' A '+r+' '+r+' 0 '+(deg>180?1:0)+' 0 '+p2[0].toFixed(1)+' '+p2[1].toFixed(1)+'" fill="none" stroke="'+GOLD+'" stroke-width="2"/>';
+}
+function txt(x,y,s,size,fill,anchor){
+  return '<text x="'+x+'" y="'+y+'" fill="'+(fill||INK2)+'" font-size="'+(size||10)+'" font-family="'+MONO+'" text-anchor="'+(anchor||'middle')+'" letter-spacing="1">'+s+'</text>';
+}
+function renderStage(){
+  var o='', xs=[150,400,650,900];
+  Q.degs.forEach(function(d,i){
+    o+=glyph(xs[i],110,d,Q.rots[i],Q.arms[i][0],Q.arms[i][1],INK,3);
+    o+=txt(xs[i],216,String(i+1),13,INK2);
+  });
+  if(revealed){
+    o+='<line x1="20" y1="236" x2="1020" y2="236" stroke="rgba(201,168,76,.14)"/>';
+    o+=txt(24,254,'SCISSORS CLOSED - ONE ARM FLAT, EQUAL ARMS, EQUAL ARC',9.5,INK3,'start');
+    Q.degs.forEach(function(d,i){
+      o+=glyph(xs[i],296,d,0,42,42,INK,2.5);
+      o+=arc(xs[i],296,d,0,15);
+      o+=txt(xs[i]+4,322,d+' deg',10,GOLDHI);
+    });
+  }
+  document.getElementById('stage').innerHTML=o;
+}
+function renderChoices(){
+  var c=document.getElementById('choices'); c.innerHTML='';
+  Q.opts.forEach(function(op){
+    var b=document.createElement('button'); b.className='choice'; b.textContent=op;
+    b.addEventListener('click',function(){answer(op,b)});
+    c.appendChild(b);
+  });
+  document.getElementById('qlab').textContent='Question · gap '+GAP+' deg'+(TRAP?' · arm-length trap on':'');
+  document.getElementById('meta').innerHTML='rank <b>smallest to largest</b>';
+}
+function answer(op,btn){
+  if(revealed)return; revealed=true;
+  var ms=Date.now()-t0, ok=op===Q.correct;
+  var s=stats[GAP]||(stats[GAP]={n:0,ok:0,ms:0}); s.n++; s.ms+=ms; if(ok)s.ok++;
+  Array.prototype.forEach.call(document.querySelectorAll('.choice'),function(b){
+    b.disabled=true;
+    if(b.textContent===Q.correct)b.classList.add('right');
+  });
+  if(!ok)btn.classList.add('wrong');
+  renderStage();
+  document.getElementById('meta').innerHTML=(ok?'<b>Got it</b>':'Close one - the closed scissors below show it straight')+' · '+(ms/1000).toFixed(1)+'s';
+  document.getElementById('coach').innerHTML='<b>'+(ok?'Bank it, move.':'No sweat - toss-ups are the deal here.')+'</b> '+COACH[ri(COACH.length)]
+    +' <button id="nextq" style="margin-left:12px">Next question</button>';
+  document.getElementById('nextq').addEventListener('click',next);
+  renderStats();
+}
+function renderStats(){
+  var el=document.getElementById('stats'), h='';
+  [10,7,5,3,2].forEach(function(g){
+    var s=stats[g];
+    h+='<span class="chip'+(g===GAP?' now':'')+'">'+g+' deg - '+(s?('<b>'+s.ok+'/'+s.n+'</b> - avg '+(s.ms/s.n/1000).toFixed(1)+'s'):'not yet')+'</span>';
+  });
+  el.innerHTML=h;
+}
+function next(){ seed++; revealed=false; Q=gen(); t0=Date.now(); renderStage(); renderChoices();
+  document.getElementById('coach').innerHTML='<b>Read the answers first</b> - they anchor smallest and largest. Then move.';
+}
+Array.prototype.forEach.call(document.querySelectorAll('[data-g]'),function(b){
+  b.addEventListener('click',function(){
+    GAP=parseInt(b.dataset.g,10);
+    Array.prototype.forEach.call(document.querySelectorAll('[data-g]'),function(x){x.classList.remove('on')});
+    b.classList.add('on'); next();
+  });
+});
+document.getElementById('trap').addEventListener('click',function(){
+  TRAP=!TRAP; this.textContent=TRAP?'On':'Off'; this.classList.toggle('on',TRAP); next();
+});
+Q=gen(); t0=Date.now();
+if(q.get('gap')){GAP=parseInt(q.get('gap'),10)||5;Q=gen();
+  Array.prototype.forEach.call(document.querySelectorAll('[data-g]'),function(x){x.classList.toggle('on',parseInt(x.dataset.g,10)===GAP)});
+}
+if(q.get('reveal')==='1'){revealed=true}
+renderStage(); renderChoices(); renderStats();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Ace PAT Studio — Pattern Folding: Stay 2D</title>
+<style>
+:root{--bg:#0d1411;--card:#121b16;--panel:#15110b;--line:rgba(201,168,76,.22);--ink:#ece6d7;--ink2:#b7b0a0;--ink3:#867f72;--gold:#C9A84C;--goldhi:#E6D08A;--amber:#D98A2B;--good:#57B487;--bad:#C06A62;--serif:Georgia,'Times New Roman',serif;--mono:ui-monospace,'SF Mono',Menlo,monospace;--sans:system-ui,-apple-system,'Segoe UI',sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(700px 420px at 85% -5%,rgba(201,168,76,.07),transparent 60%),var(--bg);color:var(--ink);font-family:var(--sans)}
+.wrap{max-width:1160px;margin:0 auto;padding:26px 22px 60px}
+.top{display:flex;align-items:baseline;gap:14px;border-bottom:1px solid var(--line);padding-bottom:14px;margin-bottom:20px;flex-wrap:wrap}
+.top .brand{font-family:var(--serif);font-size:20px}
+.top .brand span{color:var(--gold)}
+.kick{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--amber)}
+h1{font-family:var(--serif);font-size:30px;margin:0 0 6px}
+.lede{color:var(--ink2);max-width:76ch;margin:0 0 18px;font-size:15px}
+.lede b{color:var(--goldhi)}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.card{background:var(--card);border:1px solid var(--line);border-top:3px solid var(--amber);border-radius:14px;padding:16px 18px}
+.card h2{font-family:var(--serif);font-size:17px;margin:0 0 2px}
+.card .k{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--amber)}
+svg{display:block;width:100%;height:auto}
+button{background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:9px;padding:9px 15px;font-family:var(--mono);font-size:12px;cursor:pointer}
+button:hover{border-color:var(--gold)}
+button.primary{background:linear-gradient(180deg,var(--goldhi),var(--gold));color:#1a1206;border:none;font-weight:700}
+button:disabled{opacity:.35;cursor:default}
+.controls{display:flex;gap:9px;flex-wrap:wrap;margin-top:12px}
+.coach{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:11px 14px;margin-top:12px;font-size:13.5px;line-height:1.5;color:var(--ink2)}
+.coach b{color:var(--goldhi)}
+.stepline{font-family:var(--mono);font-size:11px;color:var(--ink3);margin-top:10px;letter-spacing:.04em}
+.stepline b{color:var(--goldhi)}
+.opts{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:10px}
+.opt{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px;cursor:pointer;text-align:center}
+.opt:hover{border-color:var(--gold)}
+.opt.correct{border-color:var(--good);box-shadow:0 0 0 1px var(--good)}
+.opt.wrong{border-color:var(--bad);box-shadow:0 0 0 1px var(--bad)}
+.opt .lab{font-family:var(--mono);font-size:11px;color:var(--ink2);margin-bottom:2px}
+@media(max-width:1000px){.cols{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div class="brand">Ace <span>PAT</span> Studio</div>
+    <div class="kick">Module 6 · 3D Form Development</div>
+  </div>
+  <h1>Stay 2D. Fold One Crease at a Time.</h1>
+  <p class="lede">Never fold the whole net in your head. <b>Anchor one face, hold it still</b>, and walk the neighbors over their shared edges — folds go <b>into the plane</b>, never outward. Then check the answers two faces at a time: shaded-to-shaded, white-to-white. The number-one trap is the <b>mirror</b> — a pattern flipped the way no fold can flip it.</p>
+  <div class="cols">
+    <div class="card">
+      <div class="k">The net · fold it face by face</div>
+      <h2 id="ltitle">Teach: walk the creases</h2>
+      <svg id="net" viewBox="0 0 560 420"></svg>
+      <div class="controls">
+        <button id="back">Previous</button>
+        <button id="next" class="primary">Fold next face</button>
+        <button id="newq">New net</button>
+      </div>
+      <div class="stepline" id="stepline"></div>
+      <div class="coach" id="lcoach"></div>
+    </div>
+    <div class="card">
+      <div class="k">Drill · which figure comes from this net?</div>
+      <h2>Same orientation on purpose — hunt the difference</h2>
+      <div class="opts" id="opts"></div>
+      <div class="coach" id="rcoach"><b>Lump the look-alikes into pairs</b> and find what separates them. Judge by proportion and connection, not vibes — then trust the number that is speaking to you.</div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:18px">
+    <div class="k">Sarah&#39;s playbook · white, colored, and dice questions</div>
+    <h2>Never fold it in your head - eliminate with the tricks</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1.4fr;gap:16px;margin-top:10px" class="sb-grid">
+      <div>
+        <div style="font-family:var(--mono);font-size:10px;letter-spacing:.16em;color:var(--goldhi);margin-bottom:6px">WHITE QUESTIONS</div>
+        <div style="font-size:13px;color:var(--ink2);line-height:1.55">Most abundant type. <b style="color:var(--goldhi)">Answer choices first.</b> Pick out a
+        <b style="color:var(--goldhi)">unique shape</b> - anything that is not just a rectangle or triangle (or the only one of its kind; big, small,
+        odd, a trapezoid - something identifiable). Use unique shapes as your identifiers. Start with choice A unless
+        something in B, C, or D is calling you.</div>
+      </div>
+      <div>
+        <div style="font-family:var(--mono);font-size:10px;letter-spacing:.16em;color:var(--goldhi);margin-bottom:6px">COLORED QUESTIONS</div>
+        <div style="font-size:13px;color:var(--ink2);line-height:1.55">Same method: find a <b style="color:var(--goldhi)">unique colored shape</b> as
+        your guide - where you start depends on what you are given. And the clock rule: <b style="color:var(--goldhi)">when a choice is right on
+        everything, click it and move on.</b> You do not have to prove every other choice wrong.</div>
+      </div>
+      <div>
+        <div style="font-family:var(--mono);font-size:10px;letter-spacing:.16em;color:var(--goldhi);margin-bottom:6px">DICE QUESTIONS - THE FIVE RULES</div>
+        <div style="font-size:13px;color:var(--ink2);line-height:1.55">
+        <b style="color:var(--goldhi)">1 - Rule of 6.</b> The 6 is a train track - arrows pointing at two things. Rotate faces with the rule of 90 degrees.<br/>
+        <b style="color:var(--goldhi)">2 - Rule of 2 and 3.</b> The pips are either parallel or a V. Parallel in the net must stay parallel in the answer - never flips.<br/>
+        <b style="color:var(--goldhi)">3 - Top / front / bottom.</b> Decide which face is the top, then read left and right from that orientation. Flip the die upside down and left-right swap.<br/>
+        <b style="color:var(--goldhi)">4 - Three in a row.</b> In a row of three or more, two dice one full die apart never touch in the answer. Works vertically too, and with the rule of 90.<br/>
+        <b style="color:var(--goldhi)">5 - Cut and paste.</b> Cut along the line, reattach at the furthest end: draw the furthest horizontal line you can and paste the section underneath it.</div>
+      </div>
+    </div>
+    <div class="coach" style="margin-top:14px"><b>Sarah&#39;s line:</b> I really never want you to fold it in your head. We are able to eliminate all the choices with just the tricks.</div>
+  </div>
+  <style>@media(max-width:1000px){.sb-grid{grid-template-columns:1fr!important}}</style>
+</div>
+<script>
+(function(){
+var INK='#ece6d7', INK2='#b7b0a0', INK3='#867f72', GOLD='#C9A84C', GOLDHI='#E6D08A', GOOD='#57B487', BAD='#C06A62', BG='#0d1411';
+var FT='#54655a', FF='#3b4a41', FR='#2a352e';
+var SH='#C9A84C';
+var MONO='ui-monospace,Menlo,monospace';
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+var qp=new URLSearchParams(location.search);
+var seed=parseInt(qp.get('seed')||'41',10), rng=mulberry32(seed);
+function ri(n){return Math.floor(rng()*n)}
+
+// ---- nets (grid cells). BFS + rolling frame assigns each cell a face. ----
+var NETS=[
+  [[1,0],[0,1],[1,1],[2,1],[3,1],[1,2]],              // cross variant
+  [[0,0],[1,0],[2,0],[1,1],[1,2],[1,3]],              // T
+  [[1,0],[1,1],[1,2],[1,3],[2,0],[0,2]],              // column + opposite flaps
+  [[0,0],[1,0],[1,1],[2,1],[2,2],[3,2]]               // staircase
+];
+// frame propagation: M_B = M_A composed with the local fold about the shared edge.
+// Frames store M's columns: u=M(ex), v=M(ey), n=M(ez). Fold INTO the plane; anchor = top face.
+function neg(p){return [-p[0],-p[1],-p[2]]}
+var STEPS={
+  right:function(f){return {u:neg(f.n), v:f.v, n:f.u}},
+  left: function(f){return {u:f.n, v:f.v, n:neg(f.u)}},
+  below:function(f){return {u:f.u, v:neg(f.n), n:f.v}},
+  above:function(f){return {u:f.u, v:f.n, n:neg(f.v)}}
+};
+function fold(net, anchorIdx){
+  var map={}; net.forEach(function(c,i){map[c[0]+','+c[1]]=i});
+  var frames=new Array(net.length).fill(null);
+  frames[anchorIdx]={n:[0,0,1],u:[1,0,0],v:[0,1,0]};
+  var order=[anchorIdx], queue=[anchorIdx], via=new Array(net.length).fill(null);
+  while(queue.length){
+    var i=queue.shift(), c=net[i], f=frames[i];
+    [[1,0,'right'],[-1,0,'left'],[0,1,'below'],[0,-1,'above']].forEach(function(d){
+      var k=(c[0]+d[0])+','+(c[1]+d[1]), j=map[k];
+      if(j==null||frames[j])return;
+      frames[j]=STEPS[d[2]](f);
+      via[j]={from:i,dir:d[2]};
+      order.push(j); queue.push(j);
+    });
+  }
+  if(order.length!==net.length)return null;
+  // validate: 6 distinct normals
+  var seen={};
+  for(var i2=0;i2<net.length;i2++){var n=frames[i2].n.join(','); if(seen[n])return null; seen[n]=1}
+  return {frames:frames,order:order,via:via};
+}
+function faceName(n){
+  var k=n.join(',');
+  return {'0,0,1':'top','0,0,-1':'bottom','1,0,0':'right','-1,0,0':'left','0,1,0':'front','0,-1,0':'back'}[k];
+}
+
+// ---- patterns: polygons in cell coords (a,b) in [0,1]^2, plus a fill flag ----
+var PATTERNS={
+  tri:   {polys:[[[0,0],[1,0],[1,1]]], name:'half-shade'},          // chiral
+  band:  {polys:[[[0,0],[1,0],[1,0.3],[0,0.3]]], name:'edge band'}, // directional
+  corner:{polys:[[[0.62,0.06],[0.94,0.06],[0.94,0.38],[0.62,0.38]]], name:'corner square'},
+  solid: {polys:[[[0.08,0.08],[0.92,0.08],[0.92,0.92],[0.08,0.92]]], name:'shaded'},
+  blank: {polys:[], name:'blank'}
+};
+var P=null; // {net, fold, pats[], opts[]}
+function gen(){
+  rng=mulberry32(seed);
+  for(var att=0;att<120;att++){
+    var net=NETS[ri(NETS.length)];
+    var F=fold(net, ri(net.length));
+    if(!F)continue;
+    // assign patterns; require the 3 display-visible faces (top,front,right) to include tri + one other directional
+    var keys=['tri','band','corner','solid','blank','blank'];
+    for(var i=keys.length-1;i>0;i--){var j=ri(i+1);var t=keys[i];keys[i]=keys[j];keys[j]=t}
+    var visNames=['top','front','right'], visPats=[];
+    for(var i2=0;i2<net.length;i2++){var fn=faceName(F.frames[i2].n); if(visNames.indexOf(fn)>=0)visPats.push(keys[i2])}
+    if(visPats.indexOf('tri')<0)continue;
+    if(visPats.filter(function(k){return k!=='blank'}).length<2)continue;
+    var opts=makeOpts(net,F,keys);
+    if(!opts)continue;
+    return {net:net,F:F,pats:keys,opts:opts};
+  }
+  seed++; return gen();
+}
+
+// ---- render folded cube (display: top/front/right visible) ----
+function iso(ox,oy,s){return function(x,y,z){return [ox+(x-y)*0.866*s, oy+(x+y)*0.5*s - z*s]}}
+// face geometry: for face normal name -> quad corner + axes in cube coords
+var FACES={
+  top:  {c:[0.5,0.5,1]}, front:{c:[0.5,1,0.5]}, right:{c:[1,0.5,0.5]}
+};
+function cubeSVG(ox,oy,s,rendered){ // rendered: {top:{pat,u,v,mirror,rot}, ...} u,v = world vectors of pattern axes
+  var Pr=iso(ox,oy,s), o='';
+  function quad(pts,fill){return '<polygon points="'+pts.map(function(p){var q=Pr(p[0],p[1],p[2]);return q[0].toFixed(1)+','+q[1].toFixed(1)}).join(' ')+'" fill="'+fill+'" stroke="'+BG+'" stroke-width="1.6" stroke-linejoin="round"/>'}
+  o+=quad([[0,0,1],[1,0,1],[1,1,1],[0,1,1]],FT);
+  o+=quad([[0,1,0],[1,1,0],[1,1,1],[0,1,1]],FF);
+  o+=quad([[1,0,0],[1,1,0],[1,1,1],[1,0,1]],FR);
+  ['top','front','right'].forEach(function(fn){
+    var r=rendered[fn]; if(!r||!r.pat||!PATTERNS[r.pat].polys.length)return;
+    var C=FACES[fn].c;
+    PATTERNS[r.pat].polys.forEach(function(poly){
+      var pts=poly.map(function(ab){
+        var a=ab[0], b=ab[1];
+        if(r.rot){var t=a;a=b;b=1-t}          // rotate 90
+        if(r.mirror){a=1-a}                    // mirror across v
+        var p=[C[0]+(a-0.5)*r.u[0]+(b-0.5)*r.v[0],
+               C[1]+(a-0.5)*r.u[1]+(b-0.5)*r.v[1],
+               C[2]+(a-0.5)*r.u[2]+(b-0.5)*r.v[2]];
+        var q=Pr(p[0],p[1],p[2]);
+        return q[0].toFixed(1)+','+q[1].toFixed(1);
+      }).join(' ');
+      o+='<polygon points="'+pts+'" fill="'+SH+'" opacity="0.92"/>';
+    });
+  });
+  return o;
+}
+function renderedFaces(F,pats,upto){
+  var out={};
+  var count = (upto==null)? F.order.length : upto;
+  for(var oi=0;oi<count;oi++){
+    var i=F.order[oi], fr=F.frames[i], fn=faceName(fr.n);
+    if(fn==='top'||fn==='front'||fn==='right') out[fn]={pat:pats[i],u:fr.u,v:fr.v};
+  }
+  return out;
+}
+function serial(r){
+  return ['top','front','right'].map(function(fn){
+    var x=r[fn]; if(!x||!x.pat)return fn+':-';
+    return fn+':'+x.pat+':'+x.u.join('')+x.v.join('')+':'+(x.mirror?1:0)+(x.rot?1:0);
+  }).join('|');
+}
+function makeOpts(net,F,pats){
+  var correct=renderedFaces(F,pats,null);
+  var seen={}; seen[serial(correct)]=1;
+  var opts=[{r:correct,ok:true}];
+  function clone(){var c={};['top','front','right'].forEach(function(fn){var x=correct[fn];c[fn]=x?{pat:x.pat,u:x.u,v:x.v,mirror:x.mirror,rot:x.rot}:null});return c}
+  // mirror trap on a chiral visible face
+  var m=clone(), tf=['top','front','right'].filter(function(fn){return m[fn]&&(m[fn].pat==='tri')});
+  if(tf.length){m[tf[0]].mirror=true; if(!seen[serial(m)]){seen[serial(m)]=1;opts.push({r:m,ok:false,why:'the mirror trap - that half-shade is flipped a way no fold can flip it'})}}
+  // rotation trap on a directional face
+  var r2=clone(), rf=['top','front','right'].filter(function(fn){return r2[fn]&&['tri','band','corner'].indexOf(r2[fn].pat)>=0});
+  if(rf.length){var pick=rf[rf.length-1]; r2[pick].rot=true; if(!seen[serial(r2)]){seen[serial(r2)]=1;opts.push({r:r2,ok:false,why:'right faces, wrong orientation - check what the pattern touches along the shared edge'})}}
+  // adjacency swap
+  var s2=clone(), names=['top','front','right'].filter(function(fn){return s2[fn]});
+  if(names.length>=2){
+    var a=s2[names[0]].pat; s2[names[0]].pat=s2[names[1]].pat; s2[names[1]].pat=a;
+    if(!seen[serial(s2)]){seen[serial(s2)]=1;opts.push({r:s2,ok:false,why:'those two patterns cannot be neighbors like that - the net puts them elsewhere'})}
+  }
+  if(opts.length<4)return null;
+  for(var i=opts.length-1;i>0;i--){var j=ri(i+1);var t=opts[i];opts[i]=opts[j];opts[j]=t}
+  return opts;
+}
+
+// ---- net rendering + teach steps ----
+var step=0, answered=false;
+function renderNet(){
+  var net=P.net, F=P.F, s=54;
+  var minx=Math.min.apply(null,net.map(function(c){return c[0]}));
+  var miny=Math.min.apply(null,net.map(function(c){return c[1]}));
+  var maxx=Math.max.apply(null,net.map(function(c){return c[0]}));
+  var ox=40+ (4-(maxx-minx))*20, oy=44, o='';
+  var placedIdx={}; for(var k=0;k<step&&k<F.order.length;k++)placedIdx[F.order[k]]=k+1;
+  net.forEach(function(c,i){
+    var x=ox+(c[0]-minx)*s, y=oy+(c[1]-miny)*s;
+    var placed=placedIdx[i]!=null, anchor=(F.order[0]===i);
+    o+='<rect x="'+x+'" y="'+y+'" width="'+s+'" height="'+s+'" fill="rgba(236,230,215,'+(placed?0.13:0.05)+')" stroke="'+(placed?GOLDHI:INK2)+'" stroke-width="'+(placed?2:1.4)+'"/>';
+    PATTERNS[P.pats[i]].polys.forEach(function(poly){
+      o+='<polygon points="'+poly.map(function(ab){return (x+ab[0]*s).toFixed(1)+','+(y+ab[1]*s).toFixed(1)}).join(' ')+'" fill="'+SH+'" opacity="0.92"/>';
+    });
+    if(anchor)o+='<text x="'+(x+s/2)+'" y="'+(y+s/2+3)+'" fill="'+BG+'" font-size="9" font-family="'+MONO+'" text-anchor="middle" letter-spacing="1"'+(P.pats[i]==='solid'?'':' fill="'+INK3+'"')+'>HOLD</text>';
+    if(placed)o+='<circle cx="'+(x+s-10)+'" cy="'+(y+10)+'" r="8" fill="'+BG+'" stroke="'+GOLD+'" stroke-width="1.3"/><text x="'+(x+s-10)+'" y="'+(y+13.4)+'" fill="'+GOLDHI+'" font-size="9" font-family="'+MONO+'" text-anchor="middle">'+placedIdx[i]+'</text>';
+  });
+  // building cube at right
+  o+=cubeSVG(430,150,68,renderedFaces(F,P.pats,step));
+  o+='<text x="430" y="280" fill="'+INK3+'" font-size="9" font-family="'+MONO+'" text-anchor="middle" letter-spacing="1">THE CUBE SO FAR</text>';
+  document.getElementById('net').innerHTML=o;
+  var sl=document.getElementById('stepline'), lc=document.getElementById('lcoach');
+  if(step===0){
+    sl.innerHTML='STEP 0 - pick the anchor. It reads HOLD - it will not move.';
+    lc.innerHTML='<b>Coach line</b> - hold one face still and fold the rest around it, one crease at a time. Folds go INTO the plane - folding outward is the number-one misconception.';
+  } else if(step<=P.net.length){
+    var i=P.F.order[step-1], fn=faceName(P.F.frames[i].n), via=P.F.via[i];
+    var visible=(fn==='top'||fn==='front'||fn==='right');
+    sl.innerHTML='FOLD <b>'+(step-1)+'</b> - the cell '+(via?via.dir+' of face '+placedName(via.from):'(anchor)')+' becomes the <b>'+fn.toUpperCase()+'</b>'+(visible?'':' - out of sight on this drawing, still placed');
+    lc.innerHTML='<b>Coach line</b> - one crease. The pattern rides the fold - whatever edge it touched on the net, it touches on the cube.';
+  }
+  function placedName(idx){return faceName(P.F.frames[idx].n).toUpperCase()}
+  document.getElementById('back').disabled=step===0;
+  document.getElementById('next').disabled=step===P.net.length;
+}
+function renderOpts(){
+  var w=document.getElementById('opts'); w.innerHTML=''; answered=false;
+  P.opts.forEach(function(op,i){
+    var div=document.createElement('div'); div.className='opt';
+    div.innerHTML='<div class="lab">'+'ABCD'[i]+'</div><svg viewBox="0 0 240 190">'+cubeSVG(120,86,62,op.r)+'</svg>';
+    div.addEventListener('click',function(){
+      if(answered)return; answered=true;
+      Array.prototype.forEach.call(w.children,function(ch,ix){ if(P.opts[ix].ok)ch.classList.add('correct') });
+      var rc=document.getElementById('rcoach');
+      if(!op.ok){div.classList.add('wrong'); rc.innerHTML='<b>The trap:</b> '+op.why+'.';}
+      else rc.innerHTML='<b>That is the one.</b> Two faces at a time, shared edges checked - that is the whole method.';
+    });
+    w.appendChild(div);
+  });
+}
+function render(){renderNet();renderOpts()}
+document.getElementById('next').addEventListener('click',function(){if(step<P.net.length){step++;renderNet()}});
+document.getElementById('back').addEventListener('click',function(){if(step>0){step--;renderNet()}});
+document.getElementById('newq').addEventListener('click',function(){seed++;P=gen();step=0;render()});
+P=gen();
+if(qp.get('step'))step=Math.min(P.net.length,parseInt(qp.get('step'),10)||0);
+render();
+})();
+</script>
+</body>
+</html>

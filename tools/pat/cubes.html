@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Ace PAT Studio — Cube Counting: The T-Chart</title>
+<style>
+:root{--bg:#0d1411;--card:#121b16;--panel:#15110b;--line:rgba(201,168,76,.22);--ink:#ece6d7;--ink2:#b7b0a0;--ink3:#867f72;--gold:#C9A84C;--goldhi:#E6D08A;--amber:#D98A2B;--good:#57B487;--bad:#C06A62;--serif:Georgia,'Times New Roman',serif;--mono:ui-monospace,'SF Mono',Menlo,monospace;--sans:system-ui,-apple-system,'Segoe UI',sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(700px 420px at 85% -5%,rgba(201,168,76,.07),transparent 60%),var(--bg);color:var(--ink);font-family:var(--sans)}
+.wrap{max-width:1150px;margin:0 auto;padding:26px 22px 60px}
+.top{display:flex;align-items:baseline;gap:14px;border-bottom:1px solid var(--line);padding-bottom:14px;margin-bottom:20px;flex-wrap:wrap}
+.top .brand{font-family:var(--serif);font-size:20px}
+.top .brand span{color:var(--gold)}
+.kick{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--amber)}
+h1{font-family:var(--serif);font-size:30px;margin:0 0 6px}
+.lede{color:var(--ink2);max-width:76ch;margin:0 0 18px;font-size:15px}
+.lede b{color:var(--goldhi)}
+.cols{display:grid;grid-template-columns:600px 1fr;gap:18px}
+.card{background:var(--card);border:1px solid var(--line);border-top:3px solid var(--amber);border-radius:14px;padding:16px 18px}
+.card h2{font-family:var(--serif);font-size:17px;margin:0 0 2px}
+.card .k{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--amber)}
+svg{display:block;width:100%;height:auto}
+button{background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:9px;padding:9px 15px;font-family:var(--mono);font-size:12px;cursor:pointer}
+button:hover{border-color:var(--gold)}
+button.primary{background:linear-gradient(180deg,var(--goldhi),var(--gold));color:#1a1206;border:none;font-weight:700}
+button.on{border-color:var(--gold);color:var(--goldhi)}
+button:disabled{opacity:.35;cursor:default}
+.controls{display:flex;gap:9px;flex-wrap:wrap;margin-top:12px}
+.coach{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:11px 14px;margin-top:12px;font-size:13.5px;line-height:1.5;color:var(--ink2)}
+.coach b{color:var(--goldhi)}
+.qrow{display:flex;gap:9px;flex-wrap:wrap;margin-top:10px}
+button.ans.right{border-color:var(--good);box-shadow:0 0 0 1px var(--good);color:var(--good)}
+button.ans.wrong{border-color:var(--bad);box-shadow:0 0 0 1px var(--bad);color:var(--bad)}
+.stepline{font-family:var(--mono);font-size:11px;color:var(--ink3);margin-top:10px;letter-spacing:.04em}
+.stepline b{color:var(--goldhi)}
+@media(max-width:1020px){.cols{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div class="brand">Ace <span>PAT</span> Studio</div>
+    <div class="kick">Module 5 · Cube Counting</div>
+  </div>
+  <h1>The T-Chart</h1>
+  <p class="lede"><b>Bottom to top, front to back, left to right — bottom first.</b> Number every cube in one clean sweep; the moment your eyes leave the order is when you mess up. Tally each cube by painted faces, then verify: <b>total tally marks must equal total cubes</b>.</p>
+  <div class="cols">
+    <div class="card">
+      <div class="k">The stack</div>
+      <h2 id="title">Sweep it in order</h2>
+      <svg id="stage" viewBox="0 0 600 460"></svg>
+      <div class="controls">
+        <button id="mode" class="on">Mode: Teach</button>
+        <button id="back">Previous</button>
+        <button id="next" class="primary">Next cube</button>
+        <button id="newq">New stack</button>
+      </div>
+      <div class="stepline" id="stepline"></div>
+    </div>
+    <div class="card">
+      <div class="k">Your scratch paper</div>
+      <h2>T-chart</h2>
+      <svg id="chart" viewBox="0 0 460 330"></svg>
+      <div id="drill"></div>
+      <div class="coach" id="coach"></div>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+var INK='#ece6d7', INK2='#b7b0a0', INK3='#867f72', GOLD='#C9A84C', GOLDHI='#E6D08A', GOOD='#57B487', BAD='#C06A62', BG='#0d1411';
+var FT='#54655a', FF='#3b4a41', FR='#2a352e';
+var MONO='ui-monospace,Menlo,monospace';
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+var qp=new URLSearchParams(location.search);
+var seed=parseInt(qp.get('seed')||'21',10), rng=mulberry32(seed);
+function ri(n){return Math.floor(rng()*n)}
+
+// ---- generation: heightmap 4x3, heights 0-3, 7-12 cubes ----
+var P=null; // {cubes[[x,y,z]...] in sweep order, counts[], hist, total, question:{n, answer}}
+function gen(){
+  rng=mulberry32(seed);
+  for(var att=0;att<80;att++){
+    var W=3+ri(2), D=2+ri(2), h={}, total=0;
+    for(var x=0;x<W;x++)for(var y=0;y<D;y++){var v=ri(4); if(x===0&&y===0&&v===0)v=1; h[x+','+y]=v; total+=v;}
+    if(total<7||total>12)continue;
+    var cubes=[];
+    for(var x2=0;x2<W;x2++)for(var y2=0;y2<D;y2++)for(var z=0;z<h[x2+','+y2];z++)cubes.push([x2,y2,z]);
+    var S={}; cubes.forEach(function(c){S[c.join(',')]=1});
+    var has=function(x,y,z){return S[x+','+y+','+z]===1};
+    var painted=function(c){var x=c[0],y=c[1],z=c[2],n=0;
+      if(!has(x+1,y,z))n++; if(!has(x-1,y,z))n++;
+      if(!has(x,y+1,z))n++; if(!has(x,y-1,z))n++;
+      if(!has(x,y,z+1))n++; return n;};
+    // sweep order: bottom to top, front to back (y desc = front first), left to right (x asc)
+    cubes.sort(function(a,b){return a[2]-b[2] || b[1]-a[1] || a[0]-b[0]});
+    var counts=cubes.map(painted), hist={};
+    counts.forEach(function(n){hist[n]=(hist[n]||0)+1});
+    // question: pick n with answer 1..5
+    var opts=Object.keys(hist).map(Number).filter(function(n){return hist[n]>=1&&hist[n]<=5});
+    if(!opts.length)continue;
+    var qn=opts[ri(opts.length)];
+    return {cubes:cubes,counts:counts,hist:hist,total:cubes.length,has:has,question:{n:qn,answer:hist[qn]}};
+  }
+  seed++; return gen();
+}
+
+// ---- iso rendering ----
+function iso(ox,oy,s){return function(x,y,z){return [ox+(x-y)*0.866*s, oy+(x+y)*0.5*s - z*s]}}
+function poly(Pr,pts,fill){
+  var d=pts.map(function(c){var p=Pr(c[0],c[1],c[2]);return p[0].toFixed(1)+','+p[1].toFixed(1)}).join(' ');
+  return '<polygon points="'+d+'" fill="'+fill+'" stroke="'+BG+'" stroke-width="1.4" stroke-linejoin="round"/>';
+}
+function box(Pr,x,y,z){
+  return poly(Pr,[[x,y,z+1],[x+1,y,z+1],[x+1,y+1,z+1],[x,y+1,z+1]],FT)
+       + poly(Pr,[[x,y+1,z],[x+1,y+1,z],[x+1,y+1,z+1],[x,y+1,z+1]],FF)
+       + poly(Pr,[[x+1,y,z],[x+1,y+1,z],[x+1,y+1,z+1],[x+1,y,z+1]],FR);
+}
+function txt(x,y,s,size,fill,anchor){
+  return '<text x="'+x+'" y="'+y+'" fill="'+(fill||INK2)+'" font-size="'+(size||10)+'" font-family="'+MONO+'" text-anchor="'+(anchor||'middle')+'" letter-spacing="1">'+s+'</text>';
+}
+var MODE='teach', step=0, answered=false;
+
+function renderStage(){
+  var Pr=iso(230,170,44), o='';
+  var draw=P.cubes.slice().sort(function(a,b){return (a[0]+a[1])-(b[0]+b[1]) || a[2]-b[2]});
+  draw.forEach(function(c){o+=box(Pr,c[0],c[1],c[2])});
+  if(MODE==='teach'){
+    for(var i=0;i<step&&i<P.cubes.length;i++){
+      var c=P.cubes[i], x=c[0],y=c[1],z=c[2], pos=null, ghost=false;
+      if(!P.has(x,y,z+1)) pos=Pr(x+0.5,y+0.5,z+1);
+      else if(!P.has(x,y+1,z)) pos=Pr(x+0.5,y+1,z+0.5);
+      else if(!P.has(x+1,y,z)) pos=Pr(x+1,y+0.5,z+0.5);
+      else {pos=Pr(x+0.5,y+0.5,z+0.6); ghost=true;
+        var hx=[[x,y,z+1],[x+1,y,z+1],[x+1,y,z],[x+1,y+1,z],[x,y+1,z],[x,y+1,z+1]];
+        o+='<polygon points="'+hx.map(function(cc){var p=Pr(cc[0],cc[1],cc[2]);return p[0].toFixed(1)+','+p[1].toFixed(1)}).join(' ')+'" fill="none" stroke="'+GOLD+'" stroke-width="1.3" stroke-dasharray="4 4"/>';
+      }
+      var cur=(i===step-1);
+      o+='<circle cx="'+pos[0].toFixed(1)+'" cy="'+pos[1].toFixed(1)+'" r="9" fill="'+BG+'" stroke="'+(cur?GOOD:GOLD)+'" stroke-width="'+(cur?2:1.3)+'"'+(ghost?' stroke-dasharray="3 3"':'')+'/>';
+      o+='<text x="'+pos[0].toFixed(1)+'" y="'+(pos[1]+3.4).toFixed(1)+'" fill="'+(cur?GOOD:GOLDHI)+'" font-size="10" font-family="'+MONO+'" text-anchor="middle">'+(i+1)+'</text>';
+    }
+  }
+  document.getElementById('stage').innerHTML=o;
+  var sl=document.getElementById('stepline');
+  if(MODE==='teach'){
+    if(step===0) sl.innerHTML='STEP 0 - eyes on the bottom layer. <b>Bottom first</b> - that is where the hidden cubes hide.';
+    else if(step<=P.cubes.length){var c2=P.cubes[step-1];
+      sl.innerHTML='CUBE <b>'+step+' of '+P.total+'</b> - painted faces: <b>'+P.counts[step-1]+'</b>'+(isHidden(c2)?' - <b>a cube you cannot see</b>':'');
+    }
+    else sl.innerHTML='VERIFY - tally marks = <b>'+P.total+'</b> = cube count. Chart checks out.';
+    document.getElementById('title').textContent='Sweep it in order';
+  } else {
+    sl.innerHTML='DRILL - answer from the figure, then flip to Teach to see the sweep.';
+    document.getElementById('title').textContent='How many cubes have exactly '+P.question.n+' painted sides?';
+  }
+}
+function isHidden(c){var x=c[0],y=c[1],z=c[2];return P.has(x,y,z+1)&&P.has(x,y+1,z)&&P.has(x+1,y,z)}
+function renderChart(){
+  var o='', x0=60, y0=40, w=340, rowH=38;
+  var upto = MODE==='teach' ? Math.min(step,P.cubes.length) : (answered?P.cubes.length:0);
+  var hist={}; for(var i=0;i<upto;i++){var n=P.counts[i];hist[n]=(hist[n]||0)+1}
+  o+=txt(x0+70,y0-14,'PAINTED SIDES',9,INK3);
+  o+=txt(x0+240,y0-14,'TALLY',9,INK3);
+  o+='<line x1="'+(x0+150)+'" y1="'+(y0-24)+'" x2="'+(x0+150)+'" y2="'+(y0+5*rowH)+'" stroke="'+INK2+'" stroke-width="1.6"/>';
+  o+='<line x1="'+(x0-20)+'" y1="'+(y0-4)+'" x2="'+(x0+w)+'" y2="'+(y0-4)+'" stroke="'+INK2+'" stroke-width="1.6"/>';
+  [1,2,3,4,5].forEach(function(k,r){
+    var yy=y0+r*rowH+22;
+    o+=txt(x0+70,yy,String(k),13,INK2);
+    var n=hist[k]||0;
+    for(var t=0;t<n;t++){
+      var tx=x0+170+t*16;
+      if((t+1)%5===0){ o+='<line x1="'+(tx-64)+'" y1="'+(yy-14)+'" x2="'+(tx+2)+'" y2="'+(yy+2)+'" stroke="'+GOLDHI+'" stroke-width="2.4"/>'; }
+      else o+='<line x1="'+tx+'" y1="'+(yy-13)+'" x2="'+tx+'" y2="'+(yy+1)+'" stroke="'+GOLDHI+'" stroke-width="2.4"/>';
+    }
+  });
+  var tot=0; Object.keys(hist).forEach(function(k){tot+=hist[k]});
+  o+=txt(x0+70,y0+5*rowH+26,'TOTAL: '+tot+(upto>=P.cubes.length&&tot===P.total?' = '+P.total+' CUBES':''),10.5,(upto>=P.cubes.length?GOOD:INK3));
+  document.getElementById('chart').innerHTML=o;
+}
+function renderDrill(){
+  var d=document.getElementById('drill');
+  if(MODE!=='drill'){d.innerHTML='';renderCoach();return}
+  var h='<div class="qrow">';
+  [1,2,3,4,5].forEach(function(n){h+='<button class="ans" data-n="'+n+'">'+n+' cube'+(n>1?'s':'')+'</button>'});
+  h+='</div>';
+  d.innerHTML=h;
+  Array.prototype.forEach.call(d.querySelectorAll('.ans'),function(b){
+    b.addEventListener('click',function(){
+      if(answered)return; answered=true;
+      Array.prototype.forEach.call(d.querySelectorAll('.ans'),function(x){
+        x.disabled=true;
+        if(parseInt(x.dataset.n,10)===P.question.answer)x.classList.add('right');
+      });
+      if(parseInt(b.dataset.n,10)!==P.question.answer)b.classList.add('wrong');
+      renderChart(); renderCoach();
+    });
+  });
+  renderCoach();
+}
+function renderCoach(){
+  var c=document.getElementById('coach');
+  if(MODE==='teach'){
+    if(step===0)c.innerHTML='<b>Coach line</b> - draw the T-chart before you read a single question. One chart answers all the questions on this figure.';
+    else if(step<=P.cubes.length){var cc=P.cubes[step-1];
+      c.innerHTML='<b>Coach line</b> - '+(isHidden(cc)?'this one is buried - it still gets a number and a tally. Only assume a cube exists if something rests on it.':'structure bottom never painted; faces touching a neighbor never painted; everything else painted.');}
+    else c.innerHTML='<b>Coach line</b> - the verify step catches a missed or extra cube. If the totals do not match, redo it - 45 seconds is worth it.';
+  } else {
+    c.innerHTML=answered
+      ? '<b>Answer: '+P.question.answer+'</b>. Flip to Teach mode and watch the sweep fill the chart - the chart already knew.'
+      : '<b>Coach line</b> - do not answer from squinting. Sweep, tally, then read the chart.';
+  }
+}
+function total(){return P.cubes.length+1}
+function render(){renderStage();renderChart();renderDrill();
+  document.getElementById('back').disabled=(MODE!=='teach'||step===0);
+  document.getElementById('next').disabled=(MODE!=='teach'||step===total());
+}
+document.getElementById('next').addEventListener('click',function(){if(step<total()){step++;render()}});
+document.getElementById('back').addEventListener('click',function(){if(step>0){step--;render()}});
+document.getElementById('newq').addEventListener('click',function(){seed++;P=gen();step=0;answered=false;render()});
+document.getElementById('mode').addEventListener('click',function(){
+  MODE=(MODE==='teach')?'drill':'teach'; this.textContent='Mode: '+(MODE==='teach'?'Teach':'Drill');
+  step=0; answered=false; render();
+});
+P=gen();
+if(qp.get('step')){step=Math.min(total(),parseInt(qp.get('step'),10)||0)}
+if(qp.get('mode')==='drill'){MODE='drill';document.getElementById('mode').textContent='Mode: Drill'}
+render();
+})();
+</script>
+</body>
+</html>

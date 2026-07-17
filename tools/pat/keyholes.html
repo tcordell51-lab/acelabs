@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Ace PAT Studio — Keyholes: Get to the 50-50 Fast</title>
+<style>
+:root{--bg:#0d1411;--card:#121b16;--panel:#15110b;--line:rgba(201,168,76,.22);--ink:#ece6d7;--ink2:#b7b0a0;--ink3:#867f72;--gold:#C9A84C;--goldhi:#E6D08A;--amber:#D98A2B;--good:#57B487;--bad:#C06A62;--serif:Georgia,'Times New Roman',serif;--mono:ui-monospace,'SF Mono',Menlo,monospace;--sans:system-ui,-apple-system,'Segoe UI',sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(700px 420px at 85% -5%,rgba(201,168,76,.07),transparent 60%),var(--bg);color:var(--ink);font-family:var(--sans)}
+.wrap{max-width:1160px;margin:0 auto;padding:26px 22px 60px}
+.top{display:flex;align-items:baseline;gap:14px;border-bottom:1px solid var(--line);padding-bottom:14px;margin-bottom:20px;flex-wrap:wrap}
+.top .brand{font-family:var(--serif);font-size:20px}
+.top .brand span{color:var(--gold)}
+.top a{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--gold);text-decoration:none}
+.kick{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--amber)}
+h1{font-family:var(--serif);font-size:30px;margin:0 0 6px}
+.lede{color:var(--ink2);max-width:76ch;margin:0 0 18px;font-size:15px}
+.lede b{color:var(--goldhi)}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.card{background:var(--card);border:1px solid var(--line);border-top:3px solid var(--amber);border-radius:14px;padding:16px 18px}
+.card h2{font-family:var(--serif);font-size:17px;margin:0 0 2px}
+.card .k{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--amber)}
+svg{display:block;width:100%;height:auto}
+button{background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:9px;padding:9px 15px;font-family:var(--mono);font-size:12px;cursor:pointer}
+button:hover{border-color:var(--gold)}
+button.primary{background:linear-gradient(180deg,var(--goldhi),var(--gold));color:#1a1206;border:none;font-weight:700}
+.controls{display:flex;gap:9px;flex-wrap:wrap;margin-top:12px}
+.coach{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:11px 14px;margin-top:12px;font-size:13.5px;line-height:1.5;color:var(--ink2)}
+.coach b{color:var(--goldhi)}
+.opts{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:10px}
+.opt{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:6px;cursor:pointer;text-align:center}
+.opt:hover{border-color:var(--gold)}
+.opt.correct{border-color:var(--good);box-shadow:0 0 0 1px var(--good)}
+.opt.wrong{border-color:var(--bad);box-shadow:0 0 0 1px var(--bad)}
+.opt.dim{opacity:.45}
+.opt .lab{font-family:var(--mono);font-size:11px;color:var(--ink2);margin-bottom:3px}
+.opt .why{font-family:var(--mono);font-size:9px;letter-spacing:.04em;color:var(--ink3);margin-top:4px;min-height:2.4em;line-height:1.3}
+.opt .why.bad{color:var(--bad)} .opt .why.good{color:var(--good)}
+.hint{font-size:12px;color:var(--ink3);margin-top:8px}
+.score{font-family:var(--mono);font-size:11px;color:var(--ink3);margin-top:8px}
+@media(max-width:1000px){.cols{grid-template-columns:1fr}.opts{grid-template-columns:repeat(3,1fr)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div class="brand">Ace <span>PAT</span> Studio</div>
+    <div class="kick">Module 1 · Keyholes</div>
+    <a href="index.html">ALL MODULES</a>
+  </div>
+  <h1>Outline Only. Get to the 50-50 Fast.</h1>
+  <p class="lede">The keyhole is the object's <b>exact silhouette</b> from some direction - nothing more. Internal
+  features are traps: the aperture only cares about the outline. Orient for 5-10 seconds, eliminate down to a
+  <b>50-50</b>, then win it with your gut plus <b>one dimension check</b> - is that opening too wide, too short,
+  or notched in the wrong place?</p>
+  <div class="cols">
+    <div class="card">
+      <div class="k">Teach · the object and its three true apertures</div>
+      <h2>Every object owns exactly three honest keyholes</h2>
+      <svg id="teach" viewBox="0 0 560 430"></svg>
+      <div class="controls">
+        <button id="lblBtn" class="primary">Label the viewpoints</button>
+        <button id="newTeach">New object</button>
+      </div>
+      <div class="coach"><b>Teach inside keyholes first - exposure therapy.</b> The three apertures are just the
+      three views with everything internal erased. If an answer choice is not one of these outlines - in some
+      turn of the object - it is a trap wearing a costume.</div>
+    </div>
+    <div class="card">
+      <div class="k">Drill · which aperture does it pass through?</div>
+      <h2>Five doors. One exact fit.</h2>
+      <svg id="dObj" viewBox="0 0 560 200"></svg>
+      <div class="opts" id="opts"></div>
+      <div class="controls">
+        <button id="newDrill" class="primary">New problem</button>
+      </div>
+      <div class="score" id="score"></div>
+      <div class="coach" id="dcoach"><b>The final 50-50 is usually one dimension.</b> Check ONE distinguishing
+      feature - a width, a notch position - against the object. Do not rebuild the whole solid in your head.</div>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+var INK='#ece6d7', INK2='#b7b0a0', INK3='#867f72', GOLD='#C9A84C', GOLDHI='#E6D08A', GOOD='#57B487', BAD='#C06A62';
+var MONO="ui-monospace,Menlo,monospace";
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+var qp=new URLSearchParams(location.search);
+var seed=parseInt(qp.get('seed')||String(1+Math.floor(Math.random()*99999)),10);
+var rng=mulberry32(seed);
+function ri(n){return Math.floor(rng()*n)}
+
+// ── solid: heightmap W x D, heights 0..HMAX ──
+var W,D,HM,H;
+function h(x,y){return (x<0||y<0||x>=W||y>=D)?0:H[x][y]}
+function keepLargestComponent(){
+  var seen={},best=null;
+  for(var x=0;x<W;x++)for(var y=0;y<D;y++){
+    if(H[x][y]<=0||seen[x+','+y])continue;
+    var comp=[],q=[[x,y]];seen[x+','+y]=1;
+    while(q.length){var c=q.pop();comp.push(c);
+      [[1,0],[-1,0],[0,1],[0,-1]].forEach(function(d){
+        var nx=c[0]+d[0],ny=c[1]+d[1];
+        if(nx<0||ny<0||nx>=W||ny>=D)return;
+        if(H[nx][ny]>0&&!seen[nx+','+ny]){seen[nx+','+ny]=1;q.push([nx,ny]);}
+      });}
+    if(!best||comp.length>best.length)best=comp;
+  }
+  if(!best)return 0;
+  var keep={};best.forEach(function(c){keep[c[0]+','+c[1]]=1;});
+  for(x=0;x<W;x++)for(y=0;y<D;y++)if(H[x][y]>0&&!keep[x+','+y])H[x][y]=0;
+  return best.length;
+}
+function genSolid(){
+  W=3+ri(2); D=3+ri(2); HM=2+ri(2);
+  for(var tries=0;tries<80;tries++){
+    H=[];
+    for(var x=0;x<W;x++){H.push([]);for(var y=0;y<D;y++)H[x].push(ri(HM+2)>1?1+ri(HM):0);}
+    var filled=keepLargestComponent();
+    if(filled<Math.max(4,W*D*0.45) || filled>=W*D) continue;
+    // footprint must not enclose a hole - no donut solids, no island apertures
+    var fp=[]; for(var fy=0;fy<D;fy++){fp.push([]);for(var fx=0;fx<W;fx++)fp[fy].push(H[fx][fy]>0);}
+    if(noHoles(fp)) break;
+  }
+}
+
+// ── the three silhouette masks (2D boolean grids) ──
+function maskTop(){var m=[];for(var y=0;y<D;y++){m.push([]);for(var x=0;x<W;x++)m[y].push(h(x,y)>0);}return m}
+function maskFront(){var zm=zmax();var m=[];for(var z=zm-1;z>=0;z--){var row=[];for(var x=0;x<W;x++){var f=false;for(var y=0;y<D;y++)if(h(x,y)>z){f=true;break}row.push(f);}m.push(row);}return m}
+function maskEnd(){var zm=zmax();var m=[];for(var z=zm-1;z>=0;z--){var row=[];for(var y=0;y<D;y++){var f=false;for(var x=0;x<W;x++)if(h(x,y)>z){f=true;break}row.push(f);}m.push(row);}return m}
+function zmax(){var z=0;for(var x=0;x<W;x++)for(var y=0;y<D;y++)if(h(x,y)>z)z=h(x,y);return z}
+
+// ── canonical form under the dihedral group (all 8 flips/rotations) ──
+// A keyhole is passable in ANY turn of the object, so the ONLY safe traps are
+// masks that match no orientation of any true silhouette.
+function rot90(m){var R=m.length,C=m[0].length,o=[];for(var c=0;c<C;c++){var row=[];for(var r=R-1;r>=0;r--)row.push(m[r][c]);o.push(row);}return o}
+function flip(m){return m.map(function(r){return r.slice().reverse()})}
+function ser(m){return m.map(function(r){return r.map(function(b){return b?'1':'0'}).join('')}).join('|')}
+function canon(m){
+  var best=null,cur=m;
+  for(var i=0;i<4;i++){
+    [cur,flip(cur)].forEach(function(v){var s=ser(v); if(best===null||s<best)best=s;});
+    cur=rot90(cur);
+  }
+  return best;
+}
+function trimMask(m){
+  var R=m.length,C=m[0].length,r0=R,r1=-1,c0=C,c1=-1;
+  for(var r=0;r<R;r++)for(var c=0;c<C;c++)if(m[r][c]){if(r<r0)r0=r;if(r>r1)r1=r;if(c<c0)c0=c;if(c>c1)c1=c;}
+  if(r1<0)return [[true]];
+  var o=[];for(r=r0;r<=r1;r++){var row=[];for(c=c0;c<=c1;c++)row.push(m[r][c]);o.push(row);}
+  return o;
+}
+
+// ── outline segments of a mask (boundary only - internal features do not exist) ──
+function outline(m){
+  var R=m.length,C=m[0].length,segs=[];
+  function at(r,c){return r>=0&&c>=0&&r<R&&c<C&&m[r][c]}
+  for(var r=0;r<R;r++)for(var c=0;c<C;c++){
+    if(!at(r,c))continue;
+    if(!at(r-1,c))segs.push([c,r,c+1,r]);
+    if(!at(r+1,c))segs.push([c,r+1,c+1,r+1]);
+    if(!at(r,c-1))segs.push([c,r,c,r+1]);
+    if(!at(r,c+1))segs.push([c+1,r,c+1,r+1]);
+  }
+  return segs;
+}
+function drawAperture(m,ox,oy,s,color,sx){
+  sx=sx||1;
+  var segs=outline(m),o='';
+  segs.forEach(function(g){
+    o+='<line x1="'+(ox+g[0]*s*sx)+'" y1="'+(oy+g[1]*s)+'" x2="'+(ox+g[2]*s*sx)+'" y2="'+(oy+g[3]*s)+'" stroke="'+(color||INK)+'" stroke-width="2.2" stroke-linecap="square"/>';
+  });
+  return o;
+}
+function fitScale(m,boxW,boxH,sx){
+  sx=sx||1;
+  return Math.min(boxW/(m[0].length*sx),boxH/m.length);
+}
+function txt(x,y,st,size,fill,anchor){
+  return '<text x="'+x+'" y="'+y+'" fill="'+(fill||INK2)+'" font-size="'+(size||10)+'" font-family="'+MONO+'" text-anchor="'+(anchor||'middle')+'" letter-spacing="1">'+st+'</text>';
+}
+
+// ── iso object render (painter order) ──
+function iso(ox,oy,s){
+  var o='';
+  function Pr(x,y,z){var ym=D-y;return [ox+(x-ym)*0.866*s, oy+(x+ym)*0.5*s - z*s*0.9]}
+  function face(pts,fill){o+='<path d="M '+pts.map(function(p){return p[0]+' '+p[1]}).join(' L ')+' Z" fill="'+fill+'" stroke="#0d1411" stroke-width="1"/>'}
+  var cells=[];
+  for(var x=0;x<W;x++)for(var y=0;y<D;y++)for(var z=0;z<h(x,y);z++)cells.push([x,y,z]);
+  cells.sort(function(a,b){return (a[0]+(D-a[1])+a[2])-(b[0]+(D-b[1])+b[2])});
+  cells.forEach(function(c){
+    var x=c[0],y=c[1],z=c[2];
+    if(z===h(x,y)-1) face([Pr(x,y,z+1),Pr(x+1,y,z+1),Pr(x+1,y+1,z+1),Pr(x,y+1,z+1)],'#54655a');
+    if(y===0||h(x,y-1)<=z) face([Pr(x,y,z),Pr(x+1,y,z),Pr(x+1,y,z+1),Pr(x,y,z+1)],'#3b4a41');
+    if(x===W-1||h(x+1,y)<=z) face([Pr(x+1,y,z),Pr(x+1,y+1,z),Pr(x+1,y+1,z+1),Pr(x+1,y,z+1)],'#2a352e');
+  });
+  return o;
+}
+
+// ── traps: mutate the correct mask until it is not ANY orientation of ANY true view ──
+function maskConnected(m){
+  var R=m.length,C=m[0].length,start=null,total=0;
+  for(var r=0;r<R;r++)for(var c=0;c<C;c++)if(m[r][c]){total++;if(!start)start=[r,c];}
+  if(!total)return false;
+  var seen={},q=[start],n=0;seen[start[0]+','+start[1]]=1;
+  while(q.length){var cur=q.pop();n++;
+    [[1,0],[-1,0],[0,1],[0,-1]].forEach(function(d){
+      var nr=cur[0]+d[0],nc=cur[1]+d[1];
+      if(nr<0||nc<0||nr>=R||nc>=C)return;
+      if(m[nr][nc]&&!seen[nr+','+nc]){seen[nr+','+nc]=1;q.push([nr,nc]);}
+    });}
+  return n===total;
+}
+function noHoles(m){
+  var R=m.length,C=m[0].length;
+  var seen={},q=[];
+  function push(r,c){var k=r+','+c;if(r<-1||c<-1||r>R||c>C)return;if(seen[k])return;
+    var filled=(r>=0&&c>=0&&r<R&&c<C)?m[r][c]:false;
+    if(filled)return; seen[k]=1;q.push([r,c]);}
+  push(-1,-1);
+  while(q.length){var cur=q.pop();
+    push(cur[0]+1,cur[1]);push(cur[0]-1,cur[1]);push(cur[0],cur[1]+1);push(cur[0],cur[1]-1);}
+  for(var r=0;r<R;r++)for(var c=0;c<C;c++)
+    if(!m[r][c]&&!seen[r+','+c])return false;
+  return true;
+}
+function mutate(m){
+  var c=m.map(function(r){return r.slice()});
+  var R=c.length,C=c[0].length;
+  for(var t=0;t<40;t++){
+    var r=ri(R),cc=ri(C);
+    c[r][cc]=!c[r][cc];
+    // must stay one connected piece AND have no enclosed empty cells - a
+    // keyhole plate cannot hold a floating island
+    if(maskConnected(c)&&noHoles(c)) return trimMask(c);
+    c[r][cc]=!c[r][cc];
+  }
+  return null;
+}
+
+var VIEWNAME={t:'TOP',f:'FRONT',e:'END'};
+var stats={right:0,total:0};
+
+function buildProblem(){
+  genSolid();
+  var masks={t:trimMask(maskTop()),f:trimMask(maskFront()),e:trimMask(maskEnd())};
+  var truth={}; Object.keys(masks).forEach(function(k){truth[canon(masks[k])]=k;});
+  var pickKeys=Object.keys(masks);
+  var ansView=pickKeys[ri(pickKeys.length)];
+  var correct={m:masks[ansView],sx:1,why:'THE EXACT '+VIEWNAME[ansView]+' SILHOUETTE',good:true};
+  var opts=[correct];
+  // proportion trap: same outline, wrong width - the dimension check catches it
+  opts.push({m:masks[ansView],sx:(ri(2)?1.3:0.75),why:'PROPORTION TRAP - RIGHT SHAPE, WRONG WIDTH'});
+  // mutation traps from the three views
+  var used={};
+  var mutViews=[ansView, pickKeys[(pickKeys.indexOf(ansView)+1)%3], pickKeys[(pickKeys.indexOf(ansView)+2)%3]];
+  for(var i=0;i<mutViews.length&&opts.length<5;i++){
+    for(var tries=0;tries<40;tries++){
+      var mm=mutate(masks[mutViews[i]]);
+      if(!mm)continue;
+      var cn=canon(mm);
+      if(truth[cn]!=null)continue;        // still a real silhouette in some turn - not a trap
+      if(used[cn])continue;
+      used[cn]=1;
+      opts.push({m:mm,why:'NOT A SILHOUETTE FROM ANY DIRECTION - A NOTCH LIES'});
+      break;
+    }
+  }
+  while(opts.length<5) opts.push({m:masks[ansView],sx:0.6,why:'PROPORTION TRAP - TOO NARROW'});
+  // shuffle
+  for(var s2=opts.length-1;s2>0;s2--){var j=ri(s2+1);var tmp=opts[s2];opts[s2]=opts[j];opts[j]=tmp;}
+  return {opts:opts,masks:masks,ansView:ansView};
+}
+
+function renderTeach(labeled){
+  genSolid();
+  var svg='';
+  svg+=iso(120,60,26);
+  svg+=txt(120,196,'THE OBJECT',10,INK3);
+  var masks={t:trimMask(maskTop()),f:trimMask(maskFront()),e:trimMask(maskEnd())};
+  var xs=[70,280,470],ks=['t','f','e'];
+  ks.forEach(function(k,i){
+    var m=masks[k],sc=Math.min(fitScale(m,130,120),24);
+    var w=m[0].length*sc,hh=m.length*sc;
+    svg+='<rect x="'+(xs[i]-w/2-14)+'" y="'+(258-14)+'" width="'+(w+28)+'" height="'+(hh+28)+'" rx="8" fill="#15110b" stroke="rgba(201,168,76,.25)"/>';
+    svg+=drawAperture(m,xs[i]-w/2,258,sc,GOLDHI);
+    svg+=txt(xs[i],258+hh+24,labeled?VIEWNAME[k]+' APERTURE':'?',10,labeled?GOLD:INK3);
+  });
+  svg+=txt(280,420,labeled?'THREE VIEWS, EVERYTHING INTERNAL ERASED - THESE ARE THE ONLY HONEST DOORS':'WHICH VIEWPOINT MADE EACH DOOR?',9,INK3);
+  document.getElementById('teach').innerHTML=svg;
+}
+
+var teachLabeled=false;
+function drawDrill(){
+  var P=buildProblem();
+  document.getElementById('dObj').innerHTML=iso(280,44,24)+txt(280,190,'PASS IT THROUGH - EXACT FIT ONLY',9,INK3);
+  var host=document.getElementById('opts');host.innerHTML='';
+  var letters=['A','B','C','D','E'];
+  P.opts.forEach(function(o,i){
+    var d=document.createElement('div');d.className='opt';
+    var sc=fitScale(o.m,86,80,o.sx||1);sc=Math.min(sc,18);
+    var w=o.m[0].length*sc*(o.sx||1),hh=o.m.length*sc;
+    d.innerHTML='<div class="lab">'+letters[i]+'</div>'
+      +'<svg viewBox="0 0 100 96"><rect x="2" y="2" width="96" height="92" rx="6" fill="#15110b"/>'
+      +drawAperture(o.m,(100-w)/2,(96-hh)/2,sc,INK,o.sx||1)+'</svg>'
+      +'<div class="why" data-w="'+o.why+'"></div>';
+    d.addEventListener('click',function(){
+      if(host.dataset.done)return; host.dataset.done='1';
+      stats.total++;
+      if(o.good)stats.right++;
+      [].forEach.call(host.children,function(el,k){
+        var oo=P.opts[k], whyEl=el.querySelector('.why');
+        whyEl.textContent=oo.why;
+        whyEl.className='why '+(oo.good?'good':'bad');
+        if(oo.good)el.classList.add('correct');
+        else if(el===d)el.classList.add('wrong');
+        else el.classList.add('dim');
+      });
+      document.getElementById('score').textContent=stats.right+' / '+stats.total+' this sitting'+(o.good?' - that is the fit.':' - good miss: name the trap out loud, then next problem.');
+    });
+    host.appendChild(d);
+  });
+  delete host.dataset.done;
+  document.getElementById('score').textContent=stats.total?stats.right+' / '+stats.total+' this sitting':'';
+}
+
+document.getElementById('lblBtn').addEventListener('click',function(){teachLabeled=!teachLabeled;renderTeach(teachLabeled);this.textContent=teachLabeled?'Hide the labels':'Label the viewpoints';});
+document.getElementById('newTeach').addEventListener('click',function(){renderTeach(teachLabeled)});
+document.getElementById('newDrill').addEventListener('click',drawDrill);
+renderTeach(false);
+drawDrill();
+})();
+</script>
+</body>
+</html>
