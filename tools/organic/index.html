@@ -909,6 +909,13 @@ NIGHTS[13]={ t:'Reading the Machines', booster:'Spectroscopy & Lab Techniques',
 
 
 var ENGINE='../ochem/index.html';
+// every engine link handed out by a night carries its return address
+function fromize(url,n){
+  if(url.indexOf(ENGINE)!==0) return url;
+  var f='from=night'+n;
+  if(url.indexOf('#')>-1){var p=url.split('#');return p[0]+(p[0].indexOf('?')>-1?'&':'?')+f+'#'+p[1];}
+  return url+(url.indexOf('?')>-1?'&':'?')+f;
+}
 var SYLLABUS=[
   {t:'The Only Reaction', b:'The Fundamentals', teach:null,
    reps:[['Start the wheel',ENGINE+'?game=wheel']], wheels:[]},
@@ -979,8 +986,8 @@ if(HOME){
   SYLLABUS.forEach(function(nx,i){
     var li=document.createElement('li');
     var links=[['Walk it','?night='+(i+1)]];
-    if(nx.teach) links.push(['Teach it',nx.teach]);
-    (nx.reps||[]).forEach(function(r){ links.push(r); });
+    if(nx.teach) links.push(['Teach it',fromize(nx.teach,i+1)]);
+    (nx.reps||[]).forEach(function(r){ links.push([r[0],fromize(r[1],i+1)]); });
     var nsc=NIGHTS[i+1].scenes.length;
     var led=window.AceOChemLedger?window.AceOChemLedger.night(i+1,nsc):{done:0,walked:false,started:false};
     var earned=(window.AceOChemLedger&&nx.wheels&&nx.wheels.length)?window.AceOChemLedger.wheelEarned(nx.wheels):0;
@@ -1148,7 +1155,7 @@ function render(){
     var sy=SYLLABUS[CUR-1];
     if(sy&&sy.reps&&sy.reps.length){
       head+='<p class="tease">Now earn it - tonight&#39;s reps:</p><div class="links">'
-        +sy.reps.map(function(r){return '<a href="'+r[1]+'">'+r[0]+'</a>'}).join('')+'</div>';
+        +sy.reps.map(function(r){return '<a href="'+fromize(r[1],CUR)+'">'+r[0]+'</a>'}).join('')+'</div>';
     }
     head+=tease;
     if(NIGHTS[CUR+1]) head+='<div class="links"><a href="?night='+(CUR+1)+'">Open Night '+(CUR+1)+'</a></div>';
@@ -1291,8 +1298,8 @@ document.getElementById('mTeach').addEventListener('click',function(){setMode('t
   SYLLABUS.forEach(function(nx,i){
     var li=document.createElement('li');
     var links=[['Walk Night '+(i+1),'?night='+(i+1)]];
-    if(nx.teach) links.push(['Teach it',nx.teach]);
-    (nx.reps||[]).forEach(function(r){ links.push(r); });
+    if(nx.teach) links.push(['Teach it',fromize(nx.teach,i+1)]);
+    (nx.reps||[]).forEach(function(r){ links.push([r[0],fromize(r[1],i+1)]); });
     var here=(i+1)===CUR;
     var nsc=(NIGHTS[i+1]&&NIGHTS[i+1].scenes.length)||0;
     var led=window.AceOChemLedger?window.AceOChemLedger.night(i+1,nsc):{done:0,walked:false,started:false};
