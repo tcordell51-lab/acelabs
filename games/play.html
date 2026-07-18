@@ -271,7 +271,11 @@ function renderDone(){
     h+='</div>'; }
   var missCount=Object.keys(state.misses).length;
   h+='<p class="endnote">'+(missCount?'The ones you missed quietly return in future rounds on a growing interval - that is the game doing the remembering for you.':'Nothing waiting to come back - run another round to keep it that way.')+'</p>';
-  h+='<button class="nextbtn" id="again">PLAY ANOTHER ROUND</button></div>';
+  h+='<button class="nextbtn" id="again">PLAY ANOTHER ROUND</button>';
+  var others=Object.keys(SUBJECTS).filter(function(k){ return k!==SUB; });
+  h+='<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">'
+    +others.map(function(k){ return '<a href="play.html?subject='+k+'" style="flex:1;min-width:120px;text-align:center;font-family:var(--mono);font-size:11px;letter-spacing:.06em;border:1px solid var(--line);border-radius:10px;padding:9px;color:var(--gold);text-decoration:none">'+SUBJECTS[k].name.toUpperCase()+'</a>'; }).join('')
+    +'</div></div>';
   document.getElementById('stage').innerHTML=h;
   document.getElementById('again').addEventListener('click',function(){ location.reload(); });
 }
