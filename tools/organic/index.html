@@ -968,22 +968,32 @@ function renderMap(){
   var st={}; MAP_NODES.forEach(function(n){ st[n.id]=nodeState(n); });
   var svg='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Your reaction map">';
   // edges first, behind nodes
+  function warm(id){ return st[id].frac>0 || st[id].taught; }
   MAP_EDGES.forEach(function(e){
     var a=pos[e[0]], b=pos[e[1]];
-    var lit=Math.min(st[e[0]].frac>0?1:0, st[e[1]].frac>0?1:0);
+    var lit = warm(e[0]) && warm(e[1]);
+    var mastered = st[e[0]].frac>0 && st[e[1]].frac>0;
     var op=lit?0.55:0.16;
-    svg+='<line x1="'+a.x+'" y1="'+a.y+'" x2="'+b.x+'" y2="'+b.y+'" stroke="'+(lit?'#1B7A4D':'#8a8168')+'" stroke-width="'+(lit?2.4:1.4)+'" opacity="'+op+'"/>';
+    var col = mastered?'#1B7A4D':(lit?'#c9a84c':'#8a8168');
+    svg+='<line x1="'+a.x+'" y1="'+a.y+'" x2="'+b.x+'" y2="'+b.y+'" stroke="'+col+'" stroke-width="'+(lit?2.4:1.4)+'" opacity="'+op+'"/>';
   });
   // nodes
   MAP_NODES.forEach(function(n){
     var s=st[n.id];
-    var fill = s.frac>=1 ? '#1B7A4D' : s.frac>0 ? '#e6c86a' : '#e9e2d0';
+    // walking a night that teaches this group warms the station even before any
+    // wheel spoke is earned - the fog lifts the moment you learn, then deepens
+    // to green as you prove it on the wheel.
+    var warm = s.frac>0 || s.taught;
+    var fill = s.frac>=1 ? '#1B7A4D' : s.frac>0 ? '#e6c86a' : s.taught ? '#f2e6bd' : '#e9e2d0';
     var txtc = s.frac>=1 ? '#eaf6ef' : '#3a2f1e';
     var ring = s.taught ? '#8a6d24' : 'rgba(140,114,53,.4)';
     var rw = s.taught ? 3 : 1.5;
     var bw=Math.max(84, n.label.length*8.2), bh=44, x=n.x-bw/2, y=n.y-bh/2;
     var tgt='../ochem/index.html?game=wheel&wheel='+n.fam[0];
+    var tip=n.label+' - '+s.earned+' of '+n.total+' reactions earned'+(s.taught?', taught in a night you walked':'')+'. Click to drill it on the wheel.';
+    n._warm=warm;
     svg+='<a class="map-node" href="'+tgt+'" aria-label="'+n.label+', '+s.earned+' of '+n.total+' earned">'
+      +'<title>'+tip+'</title>'
       +'<rect class="nbox" x="'+x+'" y="'+y+'" width="'+bw+'" height="'+bh+'" rx="11" fill="'+fill+'" stroke="'+ring+'" stroke-width="'+rw+'"/>'
       +'<text x="'+n.x+'" y="'+(n.y-3)+'" text-anchor="middle" font-family="Playfair Display,Georgia,serif" font-weight="700" font-size="13.5" fill="'+txtc+'">'+n.label+'</text>'
       +'<text x="'+n.x+'" y="'+(n.y+13)+'" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9.5" letter-spacing="0.5" fill="'+txtc+'" opacity="0.82">'+s.earned+' / '+n.total+'</text>'
