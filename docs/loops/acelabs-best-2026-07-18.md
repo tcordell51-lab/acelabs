@@ -36,4 +36,19 @@ finish the in-flight item, write the final ledger entry, report.
 - SHIPPED 5 (43f272c): wheel done-screen -> "See it on your reaction map".
 - SHIPPED 6 (238ff96): FIX - OChem game structures were dark-on-dark (nearly
   invisible); now white paper cards. Real legibility defect.
-- Iteration 7 (game done-screen subject switch) starting.
+- SHIPPED 7 (6830ac7): game done-screen one-tap subject switch.
+- SHIPPED 8 (7335e1e): Game Central a11y - reduced-motion + live regions.
+- QA 9 (verified): Bio + GChem + QR text games render clean, legible, correct.
+- QA 10 (verified): PAT ledger records end-to-end live (keyholes -> localStorage).
+- SHIPPED 11 (14b9c91): honest count - OChem 1,213 -> 1,212 playable; all four
+  bank counts verified (508/517/1018/1212, sum 3255, tile "3,250+" honest).
+- QA 12 (verified): front door + map render correctly at 390px mobile; map
+  scrolls in its own container, body does not break.
+- 17:10 LOOP CLOSED. 9 shipped increments + 3 QA verifications, all live-
+  confirmed on acelabs.netlify.app in one final sweep. Biggest catch: OChem
+  game structures were dark-on-dark (invisible) - real defect fixed. Safe
+  high-value backlog exhausted; remaining items (worked-example fading,
+  acidity/resonance/spectra spine nights) are CONTENT authoring that needs
+  chemistry review, not autonomous - deliberately left for a supervised
+  session. Portal engine sync skipped this loop: the portal force-redirects
+  /ace-labs/* to acelabs, so acelabs pushes reach portal students directly.
