@@ -294,6 +294,7 @@ function renderOpts(){
       if(answered)return; answered=true;
       Array.prototype.forEach.call(w.children,function(ch,ix){ if(P.opts[ix].ok)ch.classList.add('correct') });
       var rc=document.getElementById('rcoach');
+      if(window.PatLedger)PatLedger.record('patternfold',!!op.ok);
       if(!op.ok){div.classList.add('wrong'); rc.innerHTML='<b>The trap:</b> '+op.why+'.';}
       else rc.innerHTML='<b>That is the one.</b> Two faces at a time, shared edges checked - that is the whole method.';
     });
@@ -309,5 +310,6 @@ if(qp.get('step'))step=Math.min(P.net.length,parseInt(qp.get('step'),10)||0);
 render();
 })();
 </script>
+<script src="pat-ledger.js"></script>
 </body>
 </html>

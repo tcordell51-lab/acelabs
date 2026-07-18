@@ -310,6 +310,7 @@ function drawDrill(){
       if(host.dataset.done)return; host.dataset.done='1';
       stats.total++;
       if(o.good)stats.right++;
+      if(window.PatLedger)PatLedger.record('keyholes',o.good);
       [].forEach.call(host.children,function(el,k){
         var oo=P.opts[k], whyEl=el.querySelector('.why');
         whyEl.textContent=oo.why;
@@ -333,5 +334,6 @@ renderTeach(false);
 drawDrill();
 })();
 </script>
+<script src="pat-ledger.js"></script>
 </body>
 </html>

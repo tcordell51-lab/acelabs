@@ -161,6 +161,7 @@ function renderChoices(){
 function answer(op,btn){
   if(revealed)return; revealed=true;
   var ms=Date.now()-t0, ok=op===Q.correct;
+  if(window.PatLedger)PatLedger.record('angles',ok);
   var s=stats[GAP]||(stats[GAP]={n:0,ok:0,ms:0}); s.n++; s.ms+=ms; if(ok)s.ok++;
   Array.prototype.forEach.call(document.querySelectorAll('.choice'),function(b){
     b.disabled=true;
@@ -203,5 +204,6 @@ if(q.get('reveal')==='1'){revealed=true}
 renderStage(); renderChoices(); renderStats();
 })();
 </script>
+<script src="pat-ledger.js"></script>
 </body>
 </html>

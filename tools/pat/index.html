@@ -33,35 +33,35 @@ a.mod.dim{opacity:.55;pointer-events:none}
   <h1>Ace PAT Studio</h1>
   <p class="lede">Six subsections, one visual language. Every problem is <b>generated from real geometry with a computed, guaranteed-correct answer</b> — and every module teaches the named Ace method, not just the drill. Built for live coaching: pose a problem, step the procedure, hand the pen.</p>
   <div class="grid">
-    <a class="mod" href="keyholes.html">
+    <a class="mod" href="keyholes.html" data-mod="keyholes">
       <div class="k">Module 1 · Apertures</div><h2>Keyholes</h2>
       <p>Get to the 50-50 fast: outline only, computed silhouettes, and traps that are provably not the object from any direction. Win the final 50-50 with one dimension check.</p>
-      <span class="st">LIVE</span>
+      <span class="st">LIVE</span><span class="prog" style="display:block;font-family:var(--mono);font-size:10px;color:var(--ink3);margin-top:8px"></span>
     </a>
-    <a class="mod" href="tfe.html">
+    <a class="mod" href="tfe.html" data-mod="tfe">
       <div class="k">Module 2 · View Recognition</div><h2>Top - Front - End</h2>
       <p>Computed three-view projections that force the solid-vs-dashed decision on every item. The inspector's three stops.</p>
-      <span class="st">LIVE</span>
+      <span class="st">LIVE</span><span class="prog" style="display:block;font-family:var(--mono);font-size:10px;color:var(--ink3);margin-top:8px"></span>
     </a>
-    <a class="mod" href="angles.html">
+    <a class="mod" href="angles.html" data-mod="angles">
       <div class="k">Module 3 · Angle Discrimination</div><h2>The Calibrated Angle Trainer</h2>
       <p>A transparent difficulty dial in real degrees, down to the 2-3 degree zone where hard forms live. Gut-shot training with the scissors-closed reveal.</p>
-      <span class="st">LIVE</span>
+      <span class="st">LIVE</span><span class="prog" style="display:block;font-family:var(--mono);font-size:10px;color:var(--ink3);margin-top:8px"></span>
     </a>
-    <a class="mod" href="holepunch.html">
+    <a class="mod" href="holepunch.html" data-mod="holepunch">
       <div class="k">Module 4 · Paper Folding</div><h2>The Grid Method</h2>
       <p>Fold engine with mathematically-computed unfolds. What piece over what line of symmetry - the grid remembers for you.</p>
-      <span class="st">LIVE</span>
+      <span class="st">LIVE</span><span class="prog" style="display:block;font-family:var(--mono);font-size:10px;color:var(--ink3);margin-top:8px"></span>
     </a>
     <a class="mod" href="cubes.html">
       <div class="k">Module 5 · Cube Counting</div><h2>The T-Chart</h2>
       <p>Bottom to top, front to back, left to right. Numbered sweep, live tally, and the verify step that catches every missed cube.</p>
-      <span class="st">LIVE</span>
+      <span class="st">LIVE</span><span class="prog" style="display:block;font-family:var(--mono);font-size:10px;color:var(--ink3);margin-top:8px"></span>
     </a>
-    <a class="mod" href="patternfold.html">
+    <a class="mod" href="patternfold.html" data-mod="patternfold">
       <div class="k">Module 6 · 3D Form Development</div><h2>Pattern Folding</h2>
       <p>Drivable fold engine: anchor a face, walk the creases, watch the cube build. Drill traps are the real ones - mirror, rotation, wrong neighbor.</p>
-      <span class="st">LIVE</span>
+      <span class="st">LIVE</span><span class="prog" style="display:block;font-family:var(--mono);font-size:10px;color:var(--ink3);margin-top:8px"></span>
     </a>
   </div>
   <div class="links">
@@ -69,5 +69,18 @@ a.mod.dim{opacity:.55;pointer-events:none}
     Built from the Ace coaching methods. For Thomas + Sarah: pose it on screen, step the procedure, hand the pen.
   </div>
 </div>
+<script src="pat-ledger.js"></script>
+<script>
+(function(){
+  function ago(ts){ if(!ts) return ''; var d=(Date.now()-ts)/86400000;
+    return d<1?'today':d<2?'yesterday':Math.floor(d)+' days ago'; }
+  document.querySelectorAll('a.mod[data-mod]').forEach(function(a){
+    var el=a.querySelector('.prog'); if(!el||!window.PatLedger) return;
+    var s=PatLedger.summary(a.dataset.mod);
+    if(!s){ el.textContent='not yet practiced'; return; }
+    el.textContent=s.acc+'% over '+s.attempts+' · best streak '+s.best+' · '+ago(s.lastTs);
+  });
+})();
+</script>
 </body>
 </html>

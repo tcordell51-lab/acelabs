@@ -374,6 +374,7 @@ function renderAnswers(){
       Array.prototype.forEach.call(wrap.querySelectorAll('.choice'),function(e2){
         if(e2.classList.contains('isok'))e2.classList.add('correct');
       });
+      if(window.PatLedger)PatLedger.record('holepunch',el.classList.contains('isok'));
       if(!el.classList.contains('isok'))el.classList.add('wrong');
     });
   });
@@ -395,5 +396,6 @@ if(q.get('step')) step=Math.min(totalSteps(),Math.max(0,parseInt(q.get('step'),1
 render();
 })();
 </script>
+<script src="pat-ledger.js"></script>
 </body>
 </html>

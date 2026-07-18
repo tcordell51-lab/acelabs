@@ -262,6 +262,7 @@ function renderDrill(){
       Array.prototype.forEach.call(w.children,function(ch,ix){
         if(P.opts[ix].ok)ch.classList.add('correct');
       });
+      if(window.PatLedger)PatLedger.record('tfe',!!op.ok);
       if(!op.ok){div.classList.add('wrong');
         document.getElementById('rcoach').innerHTML='<b>The trap:</b> '+op.why+'. Check the green one against the front view line by line.';
       } else {
@@ -280,5 +281,6 @@ document.getElementById('newq').addEventListener('click',function(){seed++;P=gen
 P=gen(); render();
 })();
 </script>
+<script src="pat-ledger.js"></script>
 </body>
 </html>
