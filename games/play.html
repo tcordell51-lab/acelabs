@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Ace Game Central — Play</title>
+<style>
+:root{--bg:#14120c;--card:#1c1912;--panel:#221e14;--line:rgba(201,168,76,.24);--ink:#ece6d7;--ink2:#b7b0a0;--ink3:#867f72;--gold:#C9A84C;--goldhi:#E6D08A;--good:#57B487;--warm:#D98A2B;--serif:Georgia,'Times New Roman',serif;--mono:ui-monospace,'SF Mono',Menlo,monospace;--sans:system-ui,-apple-system,'Segoe UI',sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(700px 420px at 85% -5%,rgba(201,168,76,.08),transparent 60%),var(--bg);color:var(--ink);font-family:var(--sans)}
+.wrap{max-width:860px;margin:0 auto;padding:24px 20px 70px}
+.top{display:flex;align-items:baseline;gap:14px;border-bottom:1px solid var(--line);padding-bottom:12px;margin-bottom:16px;flex-wrap:wrap}
+.top .brand{font-family:var(--serif);font-size:19px}
+.top .brand span{color:var(--gold)}
+.top a{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--gold);text-decoration:none}
+.kick{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--warm)}
+.meta{display:flex;gap:14px;align-items:center;font-family:var(--mono);font-size:11px;color:var(--ink3);margin-bottom:10px;flex-wrap:wrap}
+.meta .streak{color:var(--goldhi)}
+.tbar{height:5px;border-radius:99px;background:rgba(201,168,76,.15);overflow:hidden;margin:2px 0 16px}
+.tfill{height:100%;background:linear-gradient(90deg,var(--gold),var(--goldhi));width:100%;transition:width 1s linear}
+.card{background:var(--card);border:1px solid var(--line);border-top:3px solid var(--warm);border-radius:14px;padding:18px 20px}
+.topic{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--warm);margin-bottom:8px}
+.stem{font-size:16.5px;line-height:1.55;margin:0 0 8px}
+.stemfig{margin:10px 0}
+.stemfig canvas{border-radius:10px;max-width:100%;height:auto;display:block}
+.opts{display:grid;gap:9px;margin-top:14px}
+.opts.structs{grid-template-columns:repeat(auto-fill,minmax(200px,1fr))}
+button.opt{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:11px 14px;cursor:pointer;text-align:left;font-size:14.5px;color:var(--ink);font-family:var(--sans);line-height:1.45;transition:border-color .12s}
+button.opt:hover{border-color:var(--gold)}
+button.opt .lt{font-family:var(--mono);font-size:11px;color:var(--ink3);margin-right:8px}
+button.opt.correct{border-color:var(--good);box-shadow:0 0 0 1px var(--good)}
+button.opt.wrong{border-color:var(--warm);box-shadow:0 0 0 1px var(--warm)}
+button.opt.dim{opacity:.5}
+button.opt:disabled{cursor:default}
+button.opt canvas{display:block;margin:4px auto 0;max-width:100%;height:auto;border-radius:8px}
+.why{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:10px;padding:12px 14px;margin-top:14px;font-size:14px;line-height:1.55;color:var(--ink2)}
+.why .v{font-family:var(--mono);font-size:10px;letter-spacing:.14em;display:block;margin-bottom:5px;color:var(--good)}
+.why .v.miss{color:var(--warm)}
+.nextbtn{display:block;width:100%;margin-top:14px;background:linear-gradient(180deg,var(--goldhi),var(--gold));color:#1a1206;border:none;border-radius:11px;padding:13px;font-family:var(--mono);font-size:13px;font-weight:700;letter-spacing:.06em;cursor:pointer}
+.done h2{font-family:var(--serif);font-size:26px;margin:4px 0 6px}
+.done .big{font-family:var(--mono);font-size:13px;color:var(--goldhi)}
+.trow{display:flex;justify-content:space-between;font-size:13px;color:var(--ink2);padding:7px 2px;border-bottom:1px solid rgba(201,168,76,.12)}
+.trow .n{font-family:var(--mono);font-size:11px;color:var(--ink3)}
+.endnote{font-size:13px;color:var(--ink2);margin-top:12px;line-height:1.5}
+:focus-visible{outline:2px solid var(--goldhi);outline-offset:2px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div class="brand">Ace <span>Game Central</span></div>
+    <div class="kick" id="subKick"></div>
+    <a href="index.html">ALL GAMES</a>
+  </div>
+  <div class="meta">
+    <span id="qCount"></span><span id="score"></span><span class="streak" id="streak"></span><span id="timerTxt"></span>
+  </div>
+  <div class="tbar"><div class="tfill" id="tfill"></div></div>
+  <div id="stage"><div class="card"><p class="stem">Loading the bank...</p></div></div>
+</div>
+<script src="../shared/smiles-drawer.min.js"></script>
+<script>
+(function(){
+/* Ace Game Central round engine - a faithful standalone port of the portal's
+   gameRound.js + gameBanks.js. Rounds are mostly fresh questions weighted
+   toward topics this student keeps missing HERE, plus up to four of their own
+   previous misses resurfacing on a doubling interval. All state is local to
+   this browser. HARD RULE carried over from the portal: game misses are
+   drill volume, not signal - they are never emitted to the Ace Log. */
+var ROUND_SIZE=12, MAX_RESURFACE=4, RESURFACE_INTERVALS=[1,3,7,14,30,60];
+var QUESTION_SECONDS=60;
+var LETTERS=['A','B','C','D','E','F'];
+var SUBJECTS={
+  bio:{name:'Biology',bank:'bio.json'},
+  gchem:{name:'General Chemistry',bank:'gchem.json'},
+  qr:{name:'Quantitative Reasoning',bank:'qr.json'},
+  ochem:{name:'Organic Chemistry',bank:'ochem-bank-1000.js'}
+};
+var qp=new URLSearchParams(location.search);
+var SUB=qp.get('subject'); if(!SUBJECTS[SUB]) SUB='bio';
+document.getElementById('subKick').textContent=SUBJECTS[SUB].name+' - round of '+ROUND_SIZE;
+document.title='Ace Game Central - '+SUBJECTS[SUB].name;
+
+var LS='atDAT_games_'+SUB;
+var state={}; try{ state=JSON.parse(localStorage.getItem(LS)||'{}'); }catch(e){ state={}; }
+state.misses=state.misses||{}; state.topicStats=state.topicStats||{}; state.best=state.best||0;
+function save(){ try{ localStorage.setItem(LS,JSON.stringify(state)); }catch(e){} }
+
+function cleanText(t){ return String(t||'').replace(/\s*[—–]\s*/g,' - '); }
+function cleanWhy(why){
+  if(!why) return '';
+  var sentences=String(why).split(/(?<=\.)\s+/);
+  var kept=sentences.filter(function(s){ return !/rdkit|keyed index|smiles/i.test(s); });
+  var base=(kept.length?kept:sentences.slice(0,1)).join(' ');
+  return cleanText(base).replace(/\bopts?(\d)\b/gi,function(m,d){ return 'option '+(LETTERS[+d]||d); }).trim();
+}
+function mintId(item){
+  if(item&&item.id) return String(item.id);
+  var basis=(item.q||'')+'::'+((item.opts||[])[item.correct]||'');
+  var h=5381; for(var i=0;i<basis.length;i++) h=((h*33)^basis.charCodeAt(i))>>>0;
+  return SUB+'-h'+h.toString(36);
+}
+function normalizeJson(bank){
+  return (bank||[]).filter(function(q){ return q&&q.q&&Array.isArray(q.opts)&&q.opts.length>=2&&q.correct>=0&&q.correct<q.opts.length; })
+    .map(function(q){ return {id:mintId(q),topic:q.topic||'',difficulty:q.difficulty||1,q:cleanText(q.q),qSmiles:'',optsAreStructures:false,opts:q.opts.map(cleanText),correct:q.correct,why:cleanText(q.why)}; });
+}
+function normalizeOchem(db){
+  var seen={},items=[];
+  (db||[]).forEach(function(q){
+    if(!q||q.keep===false||q.smiles_valid===false) return;
+    if(!q.q||!Array.isArray(q.opts)||!(q.correct>=0&&q.correct<q.opts.length)) return;
+    var id=mintId(q); if(seen[id]) return; seen[id]=1;
+    items.push({id:id,topic:q.group||'misc',difficulty:q.difficulty||1,q:cleanText(q.q),qSmiles:q.q_smiles||'',
+      optsAreStructures:!!q.opts_are_structures,opts:q.opts_are_structures?q.opts:q.opts.map(cleanText),
+      correct:q.correct,why:cleanWhy(q.why)});
+  });
+  return items;
+}
+
+// ── SMILES rendering (v2 SmiDrawer, per-size instances, HiDPI 2x) ──
+var sdInst={},sdSeq=0;
+function drawMols(){
+  if(!window.SmiDrawer) return;
+  document.querySelectorAll('canvas[data-smiles]').forEach(function(cv){
+    if(cv.dataset.drawn) return; cv.dataset.drawn='1';
+    if(!cv.id) cv.id='gcmol'+(sdSeq++);
+    if(!cv.dataset.hidpi){ cv.dataset.hidpi='1';
+      cv.style.width=cv.width+'px'; cv.style.maxWidth='100%';
+      cv.width=+cv.width*2; cv.height=+cv.height*2; }
+    var key=cv.width+'x'+cv.height;
+    if(!sdInst[key]){
+      try{ sdInst[key]=new window.SmiDrawer({width:+cv.width,height:+cv.height,bondLength:26,bondThickness:1.1,
+        bondSpacing:4.7,fontSizeLarge:18,fontSizeSmall:5,compactDrawing:false,
+        themes:{light:{C:'#1a1d20',O:'#cf3b3b',N:'#3a78c4',Cl:'#2e8a3e',Br:'#8a4a2a',F:'#3aa83a',S:'#b8860b',BACKGROUND:'#ffffff'}}}); }
+      catch(e){ sdInst[key]=false; }
+    }
+    if(!sdInst[key]) return;
+    try{ sdInst[key].draw(cv.dataset.smiles,'#'+cv.id,'light'); }catch(e){}
+  });
+}
+
+// ── round building: fresh + weak-topic weighting + resurfacing misses ──
+function shuffle(a){ for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i];a[i]=a[j];a[j]=t; } return a; }
+function buildRound(bank){
+  var byId={}; bank.forEach(function(it){ byId[it.id]=it; });
+  var now=Date.now(), round=[];
+  // 1. due misses come back first, oldest due first, capped
+  var due=Object.keys(state.misses).map(function(id){ return {id:id,m:state.misses[id]}; })
+    .filter(function(x){ return byId[x.id]&&x.m.due<=now; })
+    .sort(function(a,b){ return a.m.due-b.m.due; }).slice(0,MAX_RESURFACE);
+  due.forEach(function(x){ round.push(byId[x.id]); });
+  // 2. fresh fill, weighted toward topics with a weak local record
+  var used={}; round.forEach(function(it){ used[it.id]=1; });
+  var pool=bank.filter(function(it){ return !used[it.id]; });
+  function weight(it){
+    var ts=state.topicStats[it.topic];
+    if(!ts||ts.seen<3) return 1;
+    var acc=ts.correct/ts.seen;
+    return acc<0.5?3:(acc<0.75?2:1);
+  }
+  var weighted=[]; pool.forEach(function(it){ var w=weight(it); for(var k=0;k<w;k++) weighted.push(it); });
+  shuffle(weighted);
+  var seen={}; for(var i=0;i<weighted.length&&round.length<ROUND_SIZE;i++){
+    var it=weighted[i]; if(seen[it.id]) continue; seen[it.id]=1; round.push(it);
+  }
+  return shuffle(round);
+}
+
+// ── play state ──
+var round=[],qi=0,score=0,streak=0,bestStreak=0,answered=false,timer=null,timeLeft=0;
+var topicRound={};
+function updateMeta(){
+  document.getElementById('qCount').textContent='Q '+Math.min(qi+1,round.length)+' / '+round.length;
+  document.getElementById('score').textContent='score '+score;
+  document.getElementById('streak').textContent=streak>1?'streak '+streak:'';
+}
+function startTimer(){
+  clearInterval(timer); timeLeft=QUESTION_SECONDS;
+  var fill=document.getElementById('tfill'); fill.style.transition='none'; fill.style.width='100%';
+  void fill.offsetWidth; fill.style.transition='width 1s linear';
+  document.getElementById('timerTxt').textContent=timeLeft+'s';
+  timer=setInterval(function(){
+    timeLeft--;
+    document.getElementById('timerTxt').textContent=Math.max(0,timeLeft)+'s';
+    fill.style.width=(Math.max(0,timeLeft)/QUESTION_SECONDS*100)+'%';
+    if(timeLeft<=0){ clearInterval(timer); if(!answered) reveal(-1); }
+  },1000);
+}
+function optionHtml(it,i){
+  if(it.optsAreStructures)
+    return '<button class="opt" data-k="'+i+'"><span class="lt">'+LETTERS[i]+'</span><canvas data-smiles="'+it.opts[i].replace(/"/g,'&quot;')+'" width="200" height="104"></canvas></button>';
+  return '<button class="opt" data-k="'+i+'"><span class="lt">'+LETTERS[i]+'</span>'+it.opts[i]+'</button>';
+}
+function esc(t){ return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
+function renderQ(){
+  answered=false;
+  var it=round[qi];
+  if(!it){ renderDone(); return; }
+  updateMeta(); startTimer();
+  var h='<div class="card">';
+  h+='<div class="topic">'+esc(it.topic||SUBJECTS[SUB].name)+'</div>';
+  h+='<p class="stem">'+esc(it.q)+'</p>';
+  if(it.qSmiles) h+='<div class="stemfig"><canvas data-smiles="'+it.qSmiles.replace(/"/g,'&quot;')+'" width="240" height="130"></canvas></div>';
+  h+='<div class="opts'+(it.optsAreStructures?' structs':'')+'">'+it.opts.map(function(_,i){return optionHtml(it,i);}).join('')+'</div>';
+  h+='<div id="whyHost"></div></div>';
+  document.getElementById('stage').innerHTML=h;
+  drawMols();
+  document.querySelectorAll('button.opt').forEach(function(b){
+    b.addEventListener('click',function(){ if(!answered) reveal(+b.dataset.k); });
+  });
+}
+function reveal(picked){
+  answered=true; clearInterval(timer);
+  var it=round[qi], ok=picked===it.correct;
+  var ts=state.topicStats[it.topic]=state.topicStats[it.topic]||{seen:0,correct:0};
+  ts.seen++; if(ok) ts.correct++;
+  topicRound[it.topic]=topicRound[it.topic]||{seen:0,correct:0};
+  topicRound[it.topic].seen++; if(ok) topicRound[it.topic].correct++;
+  if(ok){
+    score++; streak++; bestStreak=Math.max(bestStreak,streak);
+    var m=state.misses[it.id];
+    if(m){ m.passes=(m.passes||0)+1;
+      if(m.passes>=RESURFACE_INTERVALS.length){ delete state.misses[it.id]; }
+      else m.due=Date.now()+RESURFACE_INTERVALS[m.passes]*864e5; }
+  } else {
+    streak=0;
+    state.misses[it.id]={due:Date.now()+RESURFACE_INTERVALS[0]*864e5,passes:0};
+  }
+  save(); updateMeta();
+  document.querySelectorAll('button.opt').forEach(function(b){
+    b.disabled=true;
+    var k=+b.dataset.k;
+    if(k===it.correct) b.classList.add('correct');
+    else if(k===picked) b.classList.add('wrong');
+    else b.classList.add('dim');
+  });
+  var head= ok?'YOURS.':(picked<0?'CLOCK GOT THIS ONE - IT COMES BACK AROUND.':'GOOD MISS - IT COMES BACK AROUND.');
+  var whyH='<div class="why"><span class="v'+(ok?'':' miss')+'">'+head+'</span>'
+    +(it.why?esc(it.why):('The answer is '+LETTERS[it.correct]+'.'))
+    +'</div><button class="nextbtn" id="nextQ">'+(qi+1<round.length?'NEXT QUESTION':'SEE THE ROUND')+'</button>';
+  document.getElementById('whyHost').innerHTML=whyH;
+  document.getElementById('nextQ').addEventListener('click',function(){ qi++; renderQ(); });
+  document.getElementById('nextQ').focus();
+}
+function renderDone(){
+  clearInterval(timer);
+  document.getElementById('timerTxt').textContent='';
+  document.getElementById('tfill').style.width='0%';
+  var prevBest=state.best; if(score>state.best){ state.best=score; save(); }
+  var h='<div class="card done"><div class="kick">Round complete</div>';
+  h+='<h2>'+score+' / '+round.length+(score===round.length?' - clean sweep.':'')+'</h2>';
+  h+='<div class="big">best streak '+bestStreak+(score>prevBest?' - new personal best for this subject':(state.best?' - personal best '+state.best:''))+'</div>';
+  var topics=Object.keys(topicRound);
+  if(topics.length){ h+='<div style="margin-top:14px">';
+    topics.sort().forEach(function(t){ var r=topicRound[t];
+      h+='<div class="trow"><span>'+esc(t||'general')+'</span><span class="n">'+r.correct+' / '+r.seen+'</span></div>'; });
+    h+='</div>'; }
+  var missCount=Object.keys(state.misses).length;
+  h+='<p class="endnote">'+(missCount?'The ones you missed quietly return in future rounds on a growing interval - that is the game doing the remembering for you.':'Nothing waiting to come back - run another round to keep it that way.')+'</p>';
+  h+='<button class="nextbtn" id="again">PLAY ANOTHER ROUND</button></div>';
+  document.getElementById('stage').innerHTML=h;
+  document.getElementById('again').addEventListener('click',function(){ location.reload(); });
+}
+
+// ── bank load ──
+function begin(items){
+  if(!items.length){ document.getElementById('stage').innerHTML='<div class="card"><p class="stem">This bank came back empty - tell your coach.</p></div>'; return; }
+  round=buildRound(items); qi=0; score=0; streak=0; bestStreak=0; topicRound={};
+  renderQ();
+}
+if(SUB==='ochem'){
+  var s=document.createElement('script'); s.src='ochem-bank-1000.js';
+  s.onload=function(){ begin(normalizeOchem(window.OCHEM_DB)); };
+  s.onerror=function(){ document.getElementById('stage').innerHTML='<div class="card"><p class="stem">Could not load the Organic bank - refresh to retry.</p></div>'; };
+  document.head.appendChild(s);
+} else {
+  fetch(SUBJECTS[SUB].bank).then(function(r){ if(!r.ok) throw 0; return r.json(); })
+    .then(function(b){ begin(normalizeJson(b)); })
+    .catch(function(){ document.getElementById('stage').innerHTML='<div class="card"><p class="stem">Could not load this bank - refresh to retry.</p></div>'; });
+}
+})();
+</script>
+</body>
+</html>
