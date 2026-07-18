@@ -209,6 +209,20 @@ function renderQ(){
     b.addEventListener('click',function(){ if(!answered) reveal(+b.dataset.k); });
   });
 }
+// Keyboard: 1-6 (or A-F) picks an option before answering; Enter/Space advances
+// after. One handler for the whole game, guarded by state.
+document.addEventListener('keydown',function(e){
+  if(!round.length) return;
+  var it=round[qi]; if(!it) return;
+  if(!answered){
+    var idx=-1;
+    if(e.key>='1'&&e.key<='6') idx=+e.key-1;
+    else { var u=e.key.toUpperCase(); if(u>='A'&&u<='F') idx=u.charCodeAt(0)-65; }
+    if(idx>=0&&idx<it.opts.length){ e.preventDefault(); reveal(idx); }
+  } else if(e.key==='Enter'||e.key===' '){
+    var nx=document.getElementById('nextQ'); if(nx){ e.preventDefault(); nx.click(); }
+  }
+});
 function reveal(picked){
   answered=true; clearInterval(timer);
   var it=round[qi], ok=picked===it.correct;
