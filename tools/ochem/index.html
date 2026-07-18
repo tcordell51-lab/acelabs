@@ -32388,6 +32388,11 @@ html[data-theme="dark"] .rw-reveal{background:rgba(255,255,255,.05)}
       +'<p style="font-size:.9rem;color:#6b5620">'+sp.length+' reactions, each one earned twice. Screenshot the full wheel - it is the whole chapter on one screen.</p>';
     if(next && wheelUnlocked(state.wheel+1)) html+='<button class="rw-next" id="rwNextWheel">Unlock the '+next.name+' wheel</button>';
     else if(!next) html+='<p style="font-family:\'Playfair Display\',serif;font-style:italic;font-size:1.1rem">Every wheel mastered. That is the whole reaction map - go teach it to someone.</p>';
+    // Close the loop: send them back to watch their map light up where they
+    // just earned. Carry ?student through so scope holds.
+    var stu2=new URLSearchParams(location.search).get('student');
+    var mapHref='../organic/'+(stu2?'?student='+encodeURIComponent(stu2):'');
+    html+='<a class="rw-next" style="display:inline-block;text-decoration:none;margin-top:8px;background:none;border:1.5px solid #C9A84C;color:#8a6d24" href="'+mapHref+'">See it on your reaction map</a>';
     html+='</div>';
     panel.innerHTML=html;
     var b=document.getElementById('rwNextWheel');
