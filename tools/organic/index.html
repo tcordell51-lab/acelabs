@@ -949,6 +949,21 @@ var SYLLABUS=[
    reps:[['Spec trainer',ENGINE+'#spec-trainer'],['Mass spec',ENGINE+'#mass-spec'],['Lab techniques',ENGINE+'#lab-techniques']], wheels:[]}
 ];
 var qsp=new URLSearchParams(location.search);
+// Portal scope: when embedded in the AceTheDAT portal the iframe carries
+// ?student=<id>, which student-scope.js uses to namespace localStorage. That
+// namespacing only holds if EVERY internal navigation keeps the param, so we
+// stamp it onto every relative link at click time - board, nights, and engine
+// deep-links included. Harmless (no-op) on the standalone acelabs site.
+(function(){
+  var stu=qsp.get('student'); if(!stu) return;
+  document.addEventListener('click',function(e){
+    var a=e.target.closest&&e.target.closest('a'); if(!a) return;
+    var href=a.getAttribute('href'); if(!href) return;
+    if(/^(https?:|mailto:|#|\/\/)/.test(href)) return;      // external / anchor: leave alone
+    if(/[?&]student=/.test(href)) return;                    // already carries it
+    a.setAttribute('href', href+(href.indexOf('?')>-1?'&':'?')+'student='+encodeURIComponent(stu));
+  }, true);
+})();
 var HOME=!qsp.get('night');
 var CUR=parseInt(qsp.get('night')||'1',10); if(!NIGHTS[CUR]) CUR=1;
 var SCENES=NIGHTS[CUR].scenes;
