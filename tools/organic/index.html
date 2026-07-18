@@ -146,6 +146,16 @@ h1{font-family:var(--serif);font-size:clamp(28px,5vw,40px);line-height:1.15;marg
 .cont .cs{font-size:.9rem;color:var(--ink2);margin-top:2px}
 .cont a.go{margin-left:auto;font-family:var(--mono);font-size:.72rem;letter-spacing:.08em;background:linear-gradient(180deg,#eede9f,var(--gold));border-radius:12px;padding:13px 22px;color:#1a1206;font-weight:700;text-decoration:none;box-shadow:0 1px 2px rgba(42,33,24,.15),0 6px 14px -8px rgba(140,114,53,.5)}
 .cont a.go:hover{transform:translateY(-1px)}
+.mapwrap{margin-top:34px}
+.mapwrap h2{font-family:var(--serif);font-size:1.5rem;margin:0 0 4px}
+.mapwrap .sub{font-size:.92rem;color:var(--ink2);max-width:64ch;margin:0 0 6px}
+.mapstage{border:1.5px solid rgba(140,114,53,.3);border-radius:16px;background:radial-gradient(900px 420px at 50% 0,#fffdf6,transparent 75%),#fff;padding:8px;overflow-x:auto;box-shadow:0 1px 2px rgba(42,33,24,.05),0 18px 44px -30px rgba(42,33,24,.3)}
+.mapstage svg{display:block;width:100%;min-width:640px;height:auto}
+.map-node{cursor:pointer}
+.map-node .nbox{transition:all .3s}
+.map-node:hover .nbox{stroke:var(--gold);stroke-width:2.5}
+.map-legend{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin:10px 0 2px;font-family:var(--mono);font-size:.62rem;letter-spacing:.06em;color:var(--ink3)}
+.map-legend b{width:11px;height:11px;border-radius:3px;display:inline-block;vertical-align:-1px;margin-right:5px}
 .enginecard{margin-top:26px;border:1.5px solid rgba(140,114,53,.25);border-radius:14px;padding:16px 20px;background:rgba(201,168,76,.05)}
 .enginecard .et{font-family:var(--serif);font-weight:700;font-size:1.05rem}
 .enginecard p{font-size:.9rem;color:var(--ink2);max-width:70ch;margin:6px 0 10px}
@@ -909,6 +919,84 @@ NIGHTS[13]={ t:'Reading the Machines', booster:'Spectroscopy & Lab Techniques',
 
 
 var ENGINE='../ochem/index.html';
+
+// ── THE PERSONAL REACTION MAP ─────────────────────────────────────────────
+// The whole functional-group landscape as one map that fills in as the student
+// earns it. Each station = a functional-group family; its fill is the fraction
+// of that family's wheel spokes earned (from the shared ledger), its ring lights
+// when a night that teaches it has been walked. Edges are the canonical DAT
+// interconversions - hand-authored, the real teaching skeleton - and brighten as
+// both ends come alive. Click a station to go earn it. Totals are the live spoke
+// counts per family (sum = 105); update if the bank grows.
+var MAP_NODES=[
+  {id:'alkane',   label:'Alkane',            x:110, y:90,  fam:['alkane'], total:2},
+  {id:'alkyne',   label:'Alkyne',            x:110, y:250, fam:['alkyne_terminal','alkyne_internal'], total:11},
+  {id:'halide',   label:'Alkyl Halide',      x:300, y:150, fam:['halide_primary','halide_secondary','halide_tertiary'], total:10},
+  {id:'alkene',   label:'Alkene',            x:300, y:330, fam:['alkene_terminal','alkene_internal','diene'], total:20},
+  {id:'alcohol',  label:'Alcohol',           x:500, y:250, fam:['alcohol_primary','alcohol_secondary','alcohol_tertiary'], total:15},
+  {id:'epoxide',  label:'Epoxide',           x:500, y:410, fam:['epoxide'], total:3},
+  {id:'carbonyl', label:'Aldehyde / Ketone', x:690, y:150, fam:['aldehyde','ketone'], total:18},
+  {id:'acid',     label:'Acids & Derivatives',x:690, y:340, fam:['acid','acid_chloride','ester','amide'], total:13},
+  {id:'nitrile',  label:'Nitrile',           x:500, y:90,  fam:['nitrile'], total:2},
+  {id:'aromatic', label:'Aromatic',          x:110, y:410, fam:['benzene','aniline','toluene'], total:11}
+];
+var MAP_EDGES=[
+  ['alkane','halide'],['alkyne','alkene'],['halide','alkene'],['halide','alcohol'],
+  ['alkene','alcohol'],['alkene','epoxide'],['alkene','carbonyl'],['epoxide','alcohol'],
+  ['alcohol','carbonyl'],['alcohol','halide'],['carbonyl','acid'],['carbonyl','alcohol'],
+  ['carbonyl','nitrile'],['nitrile','acid'],['alkyne','carbonyl'],['alcohol','alkene']
+];
+// night -> the families it teaches (from SYLLABUS.wheels, plus story nights)
+function nodeState(node){
+  var earned=window.AceOChemLedger?window.AceOChemLedger.wheelEarned(node.fam):0;
+  var frac=node.total?Math.min(1,earned/node.total):0;
+  // "taught": any walked night whose wheels intersect this node's families
+  var taught=false;
+  if(window.AceOChemLedger){
+    for(var n=1;n<=13;n++){
+      var sy=SYLLABUS[n-1]; if(!sy||!sy.wheels||!sy.wheels.length) continue;
+      var hit=sy.wheels.some(function(w){ return node.fam.indexOf(w)>-1; });
+      if(hit && window.AceOChemLedger.night(n,NIGHTS[n].scenes.length).walked){ taught=true; break; }
+    }
+  }
+  return {earned:earned, frac:frac, taught:taught};
+}
+function renderMap(){
+  var host=document.getElementById('mapHost'); if(!host) return;
+  var W=800, H=480;
+  var pos={}; MAP_NODES.forEach(function(n){ pos[n.id]=n; });
+  var st={}; MAP_NODES.forEach(function(n){ st[n.id]=nodeState(n); });
+  var svg='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Your reaction map">';
+  // edges first, behind nodes
+  MAP_EDGES.forEach(function(e){
+    var a=pos[e[0]], b=pos[e[1]];
+    var lit=Math.min(st[e[0]].frac>0?1:0, st[e[1]].frac>0?1:0);
+    var op=lit?0.55:0.16;
+    svg+='<line x1="'+a.x+'" y1="'+a.y+'" x2="'+b.x+'" y2="'+b.y+'" stroke="'+(lit?'#1B7A4D':'#8a8168')+'" stroke-width="'+(lit?2.4:1.4)+'" opacity="'+op+'"/>';
+  });
+  // nodes
+  MAP_NODES.forEach(function(n){
+    var s=st[n.id];
+    var fill = s.frac>=1 ? '#1B7A4D' : s.frac>0 ? '#e6c86a' : '#e9e2d0';
+    var txtc = s.frac>=1 ? '#eaf6ef' : '#3a2f1e';
+    var ring = s.taught ? '#8a6d24' : 'rgba(140,114,53,.4)';
+    var rw = s.taught ? 3 : 1.5;
+    var bw=Math.max(84, n.label.length*8.2), bh=44, x=n.x-bw/2, y=n.y-bh/2;
+    var tgt='../ochem/index.html?game=wheel&wheel='+n.fam[0];
+    svg+='<a class="map-node" href="'+tgt+'" aria-label="'+n.label+', '+s.earned+' of '+n.total+' earned">'
+      +'<rect class="nbox" x="'+x+'" y="'+y+'" width="'+bw+'" height="'+bh+'" rx="11" fill="'+fill+'" stroke="'+ring+'" stroke-width="'+rw+'"/>'
+      +'<text x="'+n.x+'" y="'+(n.y-3)+'" text-anchor="middle" font-family="Playfair Display,Georgia,serif" font-weight="700" font-size="13.5" fill="'+txtc+'">'+n.label+'</text>'
+      +'<text x="'+n.x+'" y="'+(n.y+13)+'" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9.5" letter-spacing="0.5" fill="'+txtc+'" opacity="0.82">'+s.earned+' / '+n.total+'</text>'
+      +'</a>';
+  });
+  svg+='</svg>';
+  host.innerHTML=svg;
+  // carry ?student through the map's engine links (same rule as the interceptor)
+  var stu=qsp.get('student');
+  if(stu) host.querySelectorAll('a.map-node').forEach(function(a){
+    var hr=a.getAttribute('href'); if(hr&&!/[?&]student=/.test(hr)) a.setAttribute('href',hr+'&student='+encodeURIComponent(stu));
+  });
+}
 // every engine link handed out by a night carries its return address
 function fromize(url,n){
   if(url.indexOf(ENGINE)!==0) return url;
@@ -991,12 +1079,17 @@ if(HOME){
     +'<div class="ct">Night '+firstOpen+': '+NIGHTS[firstOpen].t+'</div>'
     +'<div class="cs">'+(contLed.done>0?contLed.done+' of '+NIGHTS[firstOpen].scenes.length+' scenes committed - pick up where you left off':'Booster bank: '+NIGHTS[firstOpen].booster)+'</div></div>'
     +'<a class="go" href="?night='+firstOpen+'">'+(contLed.done>0?'CONTINUE NIGHT '+firstOpen:'OPEN NIGHT '+firstOpen)+'</a></div>';
+  h+='<div class="mapwrap"><h2>Your reaction map</h2>'
+    +'<p class="sub">The whole landscape of DAT organic chemistry as one map. It starts dark and lights up as you earn it - walk a night, win reactions on the wheel, and the group you just learned glows in. The gaps are what is left.</p>'
+    +'<div class="mapstage"><div id="mapHost"></div></div>'
+    +'<div class="map-legend"><span><b style="background:#e9e2d0"></b>not yet touched</span><span><b style="background:#e6c86a"></b>started</span><span><b style="background:#1B7A4D"></b>mastered</span><span><b style="background:none;border:2px solid #8a6d24"></b>night walked</span></div></div>';
   h+='<div class="syll" style="margin-top:34px;border-top:none;padding-top:0"><h2>The 13 Nights</h2>'
     +'<p class="sub">Every night: walk it, teach it, then earn it. The pills are yours - they fill in as you commit scenes and win reactions on the wheel.</p><ol id="homeList"></ol></div>';
   h+='<div class="enginecard"><div class="et">The deep engine - Reaction Maps</div>'
     +'<p>Everything above runs on the full engine: eleven reaction-map hubs, the mechanism library, synthesis and stereo labs, spectroscopy trainers, and the exam simulator. The nights hand you the right chapter at the right time - or open the whole thing.</p>'
     +'<div class="links"><a href="'+ENGINE+'">Open the full Reaction Maps</a><a href="'+ENGINE+'?game=wheel">Reaction Wheel</a><a href="'+ENGINE+'#exam-sim">Exam simulator - the capstone after Night 13</a></div></div>';
   document.getElementById('scenes').innerHTML=h;
+  renderMap();
   var ol=document.getElementById('homeList');
   SYLLABUS.forEach(function(nx,i){
     var li=document.createElement('li');
