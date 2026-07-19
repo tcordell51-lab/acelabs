@@ -152,6 +152,9 @@ h1{font-family:var(--serif);font-size:clamp(28px,5vw,40px);line-height:1.15;marg
 .mapstage{border:1.5px solid rgba(140,114,53,.3);border-radius:16px;background:radial-gradient(900px 420px at 50% 0,#fffdf6,transparent 75%),#fff;padding:8px;overflow-x:auto;box-shadow:0 1px 2px rgba(42,33,24,.05),0 18px 44px -30px rgba(42,33,24,.3)}
 .mapstage svg{display:block;width:100%;min-width:640px;height:auto}
 .map-node{cursor:pointer}
+.map-edge{cursor:pointer}
+.map-edge:hover rect{fill:#fffdf6;stroke-width:2}
+.map-edge text{pointer-events:none}
 .map-node .nbox{transition:all .3s}
 .map-node:hover .nbox{stroke:var(--gold);stroke-width:2.5}
 .map-legend{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin:10px 0 2px;font-family:var(--mono);font-size:.62rem;letter-spacing:.06em;color:var(--ink3)}
@@ -940,11 +943,27 @@ var MAP_NODES=[
   {id:'nitrile',  label:'Nitrile',           x:500, y:90,  fam:['nitrile'], total:2},
   {id:'aromatic', label:'Aromatic',          x:110, y:410, fam:['benzene','aniline','toluene'], total:11}
 ];
+// Each edge names the transformation and the night that teaches it. When lit,
+// the edge shows its label and becomes clickable straight to that night - the
+// map is now a navigable reaction map, not just a fog. (Labels/targets only;
+// no new chemistry - every transformation is already taught in its night.)
 var MAP_EDGES=[
-  ['alkane','halide'],['alkyne','alkene'],['halide','alkene'],['halide','alcohol'],
-  ['alkene','alcohol'],['alkene','epoxide'],['alkene','carbonyl'],['epoxide','alcohol'],
-  ['alcohol','carbonyl'],['alcohol','halide'],['carbonyl','acid'],['carbonyl','alcohol'],
-  ['carbonyl','nitrile'],['nitrile','acid'],['alkyne','carbonyl'],['alcohol','alkene']
+  ['alkane','halide','radical X₂',12],
+  ['alkyne','alkene','Lindlar / Na-NH₃',6],
+  ['halide','alkene','E2',4],
+  ['halide','alcohol','SN (OH⁻)',4],
+  ['alkene','alcohol','H₂O / BH₃',5],
+  ['alkene','epoxide','mCPBA',5],
+  ['alkene','carbonyl','ozonolysis',5],
+  ['epoxide','alcohol','Nu opens ring',9],
+  ['alcohol','carbonyl','PCC / Jones',9],
+  ['alcohol','halide','HX / SOCl₂ / PBr₃',9],
+  ['carbonyl','acid','oxidation',8],
+  ['carbonyl','alcohol','reduce / Grignard',7],
+  ['carbonyl','nitrile','cyanohydrin',7],
+  ['nitrile','acid','hydrolysis',8],
+  ['alkyne','carbonyl','hydration',6],
+  ['alcohol','alkene','dehydration',9]
 ];
 // night -> the families it teaches (from SYLLABUS.wheels, plus story nights)
 function nodeState(node){
@@ -969,6 +988,7 @@ function renderMap(){
   var svg='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Your reaction map">';
   // edges first, behind nodes
   function warm(id){ return st[id].frac>0 || st[id].taught; }
+  var edgeLabels='';
   MAP_EDGES.forEach(function(e){
     var a=pos[e[0]], b=pos[e[1]];
     var lit = warm(e[0]) && warm(e[1]);
@@ -976,6 +996,22 @@ function renderMap(){
     var op=lit?0.55:0.16;
     var col = mastered?'#1B7A4D':(lit?'#c9a84c':'#8a8168');
     svg+='<line x1="'+a.x+'" y1="'+a.y+'" x2="'+b.x+'" y2="'+b.y+'" stroke="'+col+'" stroke-width="'+(lit?2.4:1.4)+'" opacity="'+op+'"/>';
+    // once lit, the edge shows its transformation and links to its night
+    if(lit && e[2]){
+      var mx=(a.x+b.x)/2, my=(a.y+b.y)/2, lw=e[2].length*5.4+12;
+      // nudge the label off any station it would overlap, perpendicular to the edge
+      var dx=b.x-a.x, dy=b.y-a.y, len=Math.sqrt(dx*dx+dy*dy)||1, px=-dy/len, py=dx/len;
+      for(var pass=0;pass<6;pass++){
+        var hit=false;
+        for(var k=0;k<MAP_NODES.length;k++){ var nn=MAP_NODES[k], nbw=Math.max(84,nn.label.length*8.2);
+          if(Math.abs(mx-nn.x)<nbw/2+lw/2-6 && Math.abs(my-nn.y)<22+8){ hit=true; break; } }
+        if(!hit) break;
+        mx+=px*22; my+=py*22;
+      }
+      edgeLabels+='<a class="map-edge" href="?night='+e[3]+'"><title>'+e[2]+' - taught in Night '+e[3]+'. Click to open it.</title>'
+        +'<rect x="'+(mx-lw/2)+'" y="'+(my-8)+'" width="'+lw+'" height="16" rx="8" fill="#fdf8ee" stroke="'+(mastered?'#1B7A4D':'#c9a84c')+'" stroke-width="1"/>'
+        +'<text x="'+mx+'" y="'+(my+4)+'" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8.5" fill="'+(mastered?'#1B7A4D':'#8a6d24')+'">'+e[2]+'</text></a>';
+    }
   });
   // nodes
   MAP_NODES.forEach(function(n){
@@ -999,12 +1035,13 @@ function renderMap(){
       +'<text x="'+n.x+'" y="'+(n.y+13)+'" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9.5" letter-spacing="0.5" fill="'+txtc+'" opacity="0.82">'+s.earned+' / '+n.total+'</text>'
       +'</a>';
   });
+  svg+=edgeLabels;  // transformation labels sit above nodes and edges
   svg+='</svg>';
   host.innerHTML=svg;
-  // carry ?student through the map's engine links (same rule as the interceptor)
+  // carry ?student through the map's links (nodes -> wheels, edges -> nights)
   var stu=qsp.get('student');
-  if(stu) host.querySelectorAll('a.map-node').forEach(function(a){
-    var hr=a.getAttribute('href'); if(hr&&!/[?&]student=/.test(hr)) a.setAttribute('href',hr+'&student='+encodeURIComponent(stu));
+  if(stu) host.querySelectorAll('a.map-node, a.map-edge').forEach(function(a){
+    var hr=a.getAttribute('href'); if(hr&&!/[?&]student=/.test(hr)) a.setAttribute('href',hr+(hr.indexOf('?')>-1?'&':'?')+'student='+encodeURIComponent(stu));
   });
 }
 // every engine link handed out by a night carries its return address
