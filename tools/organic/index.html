@@ -166,6 +166,10 @@ h1{font-family:var(--serif);font-size:clamp(28px,5vw,40px);line-height:1.15;marg
 .enginecard .links a{font-family:var(--mono);font-size:.62rem;letter-spacing:.08em;border:1px solid rgba(140,114,53,.4);border-radius:99px;padding:5px 13px;color:#6b5620;text-decoration:none}
 .enginecard .links a:hover{background:rgba(201,168,76,.15);border-color:var(--gold)}
 .legend{display:flex;gap:16px;justify-content:center;margin:10px 0 0;font-family:var(--mono);font-size:.66rem;letter-spacing:.08em}
+.coachreps{margin:16px auto 0;max-width:66ch;border:1.5px dashed rgba(201,168,76,.55);border-radius:12px;padding:10px 14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;background:rgba(201,168,76,.06)}
+.coachreps .lb{font-family:var(--mono);font-size:.58rem;letter-spacing:.14em;text-transform:uppercase;color:var(--goldhi)}
+.coachreps a{font-family:var(--mono);font-size:.64rem;letter-spacing:.06em;border:1.5px solid var(--gold);border-radius:99px;padding:6px 13px;color:#6b5620;text-decoration:none;background:var(--cream)}
+.coachreps a:hover{background:rgba(201,168,76,.18)}
 .legend .rich{color:var(--rich)} .legend .poor{color:var(--poor)}
 .progress{position:fixed;bottom:0;left:0;right:0;background:var(--cream);border-top:1px solid rgba(140,114,53,.3);padding:8px 24px;display:flex;gap:10px;align-items:center;font-family:var(--mono);font-size:.64rem;color:var(--ink3);z-index:10}
 .pbar{flex:1;height:6px;border-radius:99px;background:rgba(140,114,53,.18);overflow:hidden}
@@ -191,6 +195,7 @@ h1{font-family:var(--serif);font-size:clamp(28px,5vw,40px);line-height:1.15;marg
   <h1 id="nightTitle">The Only Reaction in Organic Chemistry</h1>
 <p class="lede" id="nightLede"></p>
   <div class="legend"><span class="rich">GREEN = ELECTRON-RICH (the attacker)</span><span class="poor">RED = ELECTRON-POOR (the target)</span></div>
+  <div id="coachReps"></div>
   <div id="scenes"></div>
   <div class="gate" id="gate" style="display:none">
     <p style="max-width:56ch;margin:8px auto;color:var(--ink2)">Every reaction you meet from tonight on, ask the same two questions first:
@@ -347,7 +352,7 @@ NIGHTS[2]={ t:'Names Are Directions', booster:'IUPAC Nomenclature',
   q:{stem:'For CH3-CH(OH)-CH2-CH2-CH3, the correct name is:', opts:[
     'Pentan-4-ol',
     'Pentan-2-ol',
-    '2-pentanol and pentan-2-ol are both wrong',
+    'Pentan-3-ol',
     '4-hydroxypentane'],
    correct:1, explain:'Number from the end nearest the OH: it lands on C2. Pentan-2-ol. The star takes the lowest number available, always.'}},
 { n:'Scene 4', t:'Rule three: the strongest group owns the suffix',
@@ -435,7 +440,7 @@ NIGHTS[4]={ t:'The Four Questions', booster:'Substitution & Elimination',
   svg:'<div class="molrow"><div class="molcard rich"><span class="badge">&#8722;</span><svg viewBox="0 0 130 100" style="width:130px;max-width:100%"><circle cx="35" cy="48" r="3" fill="#1B7A4D"/><circle cx="43" cy="48" r="3" fill="#1B7A4D"/><text x="59" y="59" font-family="system-ui" font-size="27" font-weight="800" fill="#cf3b3b" text-anchor="middle">O</text><text x="63" y="36" font-family="system-ui" font-size="16" font-weight="700" fill="#2a2118" text-anchor="middle">&#8722;</text><line x1="70" y1="51" x2="79" y2="51" stroke="#2a2118" stroke-width="2.4" stroke-linecap="round"/><text x="89" y="59" font-family="system-ui" font-size="24" font-weight="700" fill="#5c5348" text-anchor="middle">H</text></svg><div class="mol-lbl">THE ATTACKER</div><div class="mol-sub">hydroxide</div></div><svg class="arr" viewBox="0 0 120 44"><defs><marker id="ahx" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1B7A4D"/></marker></defs><path d="M 8 30 Q 60 6 112 26" fill="none" stroke="#1B7A4D" stroke-width="3" marker-end="url(#ahx)"/></svg><div class="molcard poor"><span class="badge">&#948;+</span><canvas data-smiles="CCC(C)Br" width="200" height="105"></canvas><div class="mol-lbl">BACKSIDE ONLY</div><div class="mol-sub">2-bromobutane</div></div></div><p class="caption">backside attack inverts the center every time - the Walden umbrella flip</p>',
   walk:'SN2 is one concerted step: the nucleophile comes in exactly opposite the leaving group, and the stereocenter <b>inverts like an umbrella in the wind</b> - every single time. R becomes S. Strong small nucleophile, polar aprotic solvent (DMSO, DMF, acetone) - that is SN2 weather.',
   teach:'That backside geometry IS the inversion - show them the umbrella, not a rule to memorize.',
-  q:{stem:'2-bromobutane reacts with NaOH in DMSO. The product alcohol is:', opts:[
+  q:{stem:'(R)-2-bromobutane reacts with NaOH in DMSO. The product alcohol is:', opts:[
     '(R) - retention',
     '(S) - the backside attack inverts the center',
     'Racemic - both faces get attacked',
@@ -1211,6 +1216,17 @@ function emitMiss(qid,hub,q,pickedIdx){
     ts:Date.now()},'*'); }catch(e){}
 }
 function render(){
+  // Teach mode: a coach strip so the wheels are one click away DURING the lesson -
+  // teach the scenes, then drill the exact reactions on the wheel without leaving.
+  var cr=document.getElementById('coachReps');
+  if(cr){
+    var sy=SYLLABUS[CUR-1];
+    if(mode==='teach' && sy && sy.reps && sy.reps.length){
+      var stu=qsp.get('student');
+      var links=sy.reps.map(function(r){ var u=r[1]; if(stu&&!/[?&]student=/.test(u)) u+=(u.indexOf('?')>-1?'&':'?')+'student='+encodeURIComponent(stu); return '<a href="'+u+'">'+r[0]+'</a>'; }).join('');
+      cr.className='coachreps'; cr.innerHTML='<span class="lb">Drill it now</span>'+links;
+    } else { cr.className=''; cr.innerHTML=''; }
+  }
   var host=document.getElementById('scenes'); host.innerHTML='';
   if(mode==='walk'&&RECALL.length){
     var rdSt={}; try{ rdSt=JSON.parse(localStorage.getItem(LSR)||'{}'); }catch(e){}
