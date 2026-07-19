@@ -270,6 +270,18 @@ function renderDone(){
     topics.sort().forEach(function(t){ var r=topicRound[t];
       h+='<div class="trow"><span>'+esc(t||'general')+'</span><span class="n">'+r.correct+' / '+r.seen+'</span></div>'; });
     h+='</div>'; }
+  // Persistent weak-topic review across every round you have played this
+  // subject - the coach-view line: where to spend your next session.
+  var weak=Object.keys(state.topicStats||{})
+    .map(function(t){ var s2=state.topicStats[t]; return {t:t,seen:s2.seen,acc:s2.seen?s2.correct/s2.seen:1}; })
+    .filter(function(x){ return x.seen>=3 && x.acc<0.75; })
+    .sort(function(a,b){ return a.acc-b.acc; }).slice(0,3);
+  if(weak.length){
+    h+='<div style="margin-top:14px;border-top:1px solid rgba(201,168,76,.2);padding-top:12px">'
+      +'<div style="font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--warm);margin-bottom:6px">WHERE TO SPEND YOUR NEXT SESSION</div>'
+      +weak.map(function(x){ return '<div class="trow"><span>'+esc(x.t||'general')+'</span><span class="n">'+Math.round(x.acc*100)+'% over '+x.seen+'</span></div>'; }).join('')
+      +'<p class="endnote" style="margin-top:8px">The game already leans your next rounds toward these - you do not have to chase them.</p></div>';
+  }
   var missCount=Object.keys(state.misses).length;
   h+='<p class="endnote">'+(missCount?'The ones you missed quietly return in future rounds on a growing interval - that is the game doing the remembering for you.':'Nothing waiting to come back - run another round to keep it that way.')+'</p>';
   h+='<button class="nextbtn" id="again">PLAY ANOTHER ROUND</button>';
