@@ -1143,8 +1143,8 @@ if(HOME){
   var ol=document.getElementById('homeList');
   SYLLABUS.forEach(function(nx,i){
     var li=document.createElement('li');
-    var links=[['Walk it','?night='+(i+1)]];
-    if(nx.teach) links.push(['Teach it',fromize(nx.teach,i+1)]);
+    var links=[['Walk it','?night='+(i+1)],['Teach it','?night='+(i+1)+'&mode=teach']];
+    if(nx.teach) links.push(['Deep hub',fromize(nx.teach,i+1)]);
     (nx.reps||[]).forEach(function(r){ links.push([r[0],fromize(r[1],i+1)]); });
     var nsc=NIGHTS[i+1].scenes.length;
     var led=window.AceOChemLedger?window.AceOChemLedger.night(i+1,nsc):{done:0,walked:false,started:false};
@@ -1447,16 +1447,66 @@ function setMode(m){
   document.getElementById('mTeach').classList.toggle('on',m==='teach');
   render();
   drawMols();
+  if(window.__coachChrome) window.__coachChrome();
   window.scrollTo(0,0);
 }
 document.getElementById('mWalk').addEventListener('click',function(){setMode('walk')});
 document.getElementById('mTeach').addEventListener('click',function(){setMode('teach')});
+
+// ── LIVE-COACHING LAYER (teach mode only) ────────────────────────────────
+// A coach teaching at the board needs two things the mouse gets in the way of:
+// advance without reaching, and draw on the structures by hand. Space/R reveal
+// the next hidden scene; P toggles a gold pen over the whole page; C clears it;
+// arrows scroll scene to scene. Nothing here touches walk mode.
+(function coachLayer(){
+  var pen=document.createElement('canvas');
+  pen.id='coachPen';
+  pen.style.cssText='position:fixed;inset:0;z-index:60;pointer-events:none;display:none';
+  var hint=document.createElement('div');
+  hint.id='coachHint';
+  hint.style.cssText='position:fixed;bottom:44px;left:50%;transform:translateX(-50%);z-index:61;font-family:var(--mono);font-size:.6rem;letter-spacing:.12em;color:#8a6d24;background:rgba(253,248,238,.92);border:1px solid rgba(201,168,76,.5);border-radius:99px;padding:6px 14px;display:none';
+  document.body.appendChild(pen); document.body.appendChild(hint);
+  var ctx, penOn=false, drawing=false;
+  function size(){ pen.width=innerWidth; pen.height=innerHeight; ctx=pen.getContext('2d'); ctx.strokeStyle='#C9A84C'; ctx.lineWidth=3.2; ctx.lineCap='round'; ctx.lineJoin='round'; }
+  size(); addEventListener('resize',function(){ var d=pen.toDataURL&&null; size(); });
+  function pt(e){ var t=e.touches?e.touches[0]:e; return [t.clientX,t.clientY]; }
+  function down(e){ if(!penOn)return; drawing=true; var p=pt(e); ctx.beginPath(); ctx.moveTo(p[0],p[1]); e.preventDefault(); }
+  function move(e){ if(!penOn||!drawing)return; var p=pt(e); ctx.lineTo(p[0],p[1]); ctx.stroke(); e.preventDefault(); }
+  function up(){ drawing=false; }
+  pen.addEventListener('mousedown',down); pen.addEventListener('mousemove',move); addEventListener('mouseup',up);
+  pen.addEventListener('touchstart',down,{passive:false}); pen.addEventListener('touchmove',move,{passive:false}); addEventListener('touchend',up);
+  function setPen(on){ penOn=on; pen.style.pointerEvents=on?'auto':'none'; pen.style.cursor=on?'crosshair':'default';
+    hint.textContent=on?'PEN ON - draw anywhere · P off · C clear':'P pen · C clear · SPACE reveal next'; }
+  function clearPen(){ if(ctx) ctx.clearRect(0,0,pen.width,pen.height); }
+  function updateChrome(){
+    var teaching = mode==='teach';
+    pen.style.display=teaching?'block':'none';
+    hint.style.display=teaching?'block':'none';
+    if(!teaching){ setPen(false); clearPen(); }
+    else hint.textContent='P pen · C clear · SPACE reveal next';
+  }
+  window.__coachChrome=updateChrome;
+  document.addEventListener('keydown',function(e){
+    if(mode!=='teach') return;
+    var tag=(e.target.tagName||'').toLowerCase();
+    if(tag==='input'||tag==='textarea') return;
+    var k=e.key.toLowerCase();
+    if(k==='p'){ e.preventDefault(); setPen(!penOn); }
+    else if(k==='c'){ e.preventDefault(); clearPen(); }
+    else if(k===' '||k==='r'){ e.preventDefault();
+      var b=document.querySelector('.reveal-btn[data-r]'); if(b){ b.click(); clearPen(); }
+      else { window.scrollBy({top:innerHeight*0.72,behavior:'smooth'}); } }
+    else if(k==='arrowdown'){ e.preventDefault(); window.scrollBy({top:innerHeight*0.72,behavior:'smooth'}); }
+    else if(k==='arrowup'){ e.preventDefault(); window.scrollBy({top:-innerHeight*0.72,behavior:'smooth'}); }
+  });
+  updateChrome();
+})();
 (function renderSyll(){
   var ol=document.getElementById('syllList');
   SYLLABUS.forEach(function(nx,i){
     var li=document.createElement('li');
-    var links=[['Walk Night '+(i+1),'?night='+(i+1)]];
-    if(nx.teach) links.push(['Teach it',fromize(nx.teach,i+1)]);
+    var links=[['Walk Night '+(i+1),'?night='+(i+1)],['Teach it','?night='+(i+1)+'&mode=teach']];
+    if(nx.teach) links.push(['Deep hub',fromize(nx.teach,i+1)]);
     (nx.reps||[]).forEach(function(r){ links.push([r[0],fromize(r[1],i+1)]); });
     var here=(i+1)===CUR;
     var nsc=(NIGHTS[i+1]&&NIGHTS[i+1].scenes.length)||0;
