@@ -34,6 +34,11 @@ h1{font-family:var(--serif);font-size:clamp(28px,5vw,40px);line-height:1.15;marg
 .lede{font-size:1.05rem;color:var(--ink2);max-width:60ch}
 .scene{margin:44px 0;border:1.5px solid rgba(140,114,53,.3);border-radius:18px;overflow:hidden;background:#fff;box-shadow:0 1px 2px rgba(42,33,24,.05),0 18px 44px -30px rgba(42,33,24,.3);transition:opacity .4s,filter .4s}
 .scene.locked{opacity:.35;pointer-events:none;filter:grayscale(.4)}
+.scene-audio{margin-left:auto;align-items:center}
+.aud-btn{font-family:var(--mono);font-size:.58rem;letter-spacing:.1em;border:1.5px solid var(--gold);background:var(--cream);color:#6b5620;border-radius:99px;padding:5px 12px;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.aud-btn::before{content:"";width:0;height:0;border-left:7px solid #8a6d24;border-top:5px solid transparent;border-bottom:5px solid transparent}
+.aud-btn.on{background:#1B3A2D;color:#e6d08a;border-color:#1B3A2D}
+.aud-btn.on::before{border:none;width:7px;height:8px;border-left:2.5px solid #e6d08a;border-right:2.5px solid #e6d08a}
 .scene.done{border-color:rgba(201,168,76,.55)}
 .scene.done .scene-num{color:#8a6d24;border-color:rgba(201,168,76,.6);background:rgba(201,168,76,.12)}
 .scene-head{display:flex;align-items:baseline;gap:12px;padding:14px 20px;border-bottom:1px solid rgba(140,114,53,.2);background:linear-gradient(180deg,rgba(201,168,76,.06),transparent)}
@@ -1406,7 +1411,8 @@ function render(){
     var open = mode==='teach' || i<=unlocked;
     var d=document.createElement('div');
     d.className='scene'+(open?'':' locked')+(done['s'+i]?' done':'');
-    var inner='<div class="scene-head"><span class="scene-num">'+sc.n+'</span><span class="scene-title">'+sc.t+'</span></div><div class="scene-body">';
+    var inner='<div class="scene-head"><span class="scene-num">'+sc.n+'</span><span class="scene-title">'+sc.t+'</span>'
+      +'<span class="scene-audio" id="aud'+i+'" data-s="'+i+'" style="display:none"></span></div><div class="scene-body">';
     var interactive = sc.anim || sc.tap;
     if(mode==='teach'){
       var masked = i>0 && !interactive && new URLSearchParams(location.search).get('reveal')!=='all';
@@ -1428,6 +1434,32 @@ function render(){
     host.appendChild(d);
   });
   SCENES.forEach(function(sc,i){ if(sc.anim) animInit(i); if(sc.tap) tapInit(i); });
+  // Coach voice per scene (the verified-unowned moat): drop an mp3 at
+  // audio/n<night>-s<scene>.mp3 and a play control appears here automatically -
+  // no code change per clip. Silent until a real recording exists.
+  SCENES.forEach(function(sc,i){
+    var slot=document.getElementById('aud'+i); if(!slot) return;
+    // try mp3 then m4a (coach can drop either); explicit sc.audio wins
+    var cands = sc.audio ? [sc.audio] : ['audio/n'+CUR+'-s'+(i+1)+'.mp3','audio/n'+CUR+'-s'+(i+1)+'.m4a'];
+    var ci=0;
+    var a=new Audio(); a.preload='metadata';
+    a.addEventListener('loadedmetadata',function(){
+      slot.style.display='inline-flex';
+      slot.innerHTML='<button class="aud-btn" aria-label="Play the coach on this scene">PLAY COACH</button>';
+      var btn=slot.querySelector('.aud-btn'), playing=false;
+      btn.addEventListener('click',function(e){ e.preventDefault();
+        // stop any other scene's audio first
+        document.querySelectorAll('.scene-audio audio').forEach(function(o){ if(o!==a){o.pause();} });
+        if(playing){ a.pause(); } else { a.play(); }
+      });
+      a.addEventListener('play',function(){ playing=true; btn.textContent='PAUSE'; btn.classList.add('on'); });
+      a.addEventListener('pause',function(){ playing=false; btn.textContent='PLAY COACH'; btn.classList.remove('on'); });
+      a.addEventListener('ended',function(){ playing=false; btn.textContent='PLAY COACH'; btn.classList.remove('on'); });
+      slot.appendChild(a);
+    });
+    a.addEventListener('error',function(){ ci++; if(ci<cands.length){ a.src=cands[ci]; } /* else no clip - stay hidden */ });
+    a.src=cands[0];
+  });
   // wire commits
   host.querySelectorAll('button.opt').forEach(function(b){
     b.addEventListener('click',function(){
