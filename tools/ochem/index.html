@@ -4397,12 +4397,30 @@ html[data-theme="dark"] .dt-case-select{background:var(--white);color:var(--ink)
 <div id="retoldHome" style="position:fixed;bottom:14px;left:14px;z-index:99990"></div>
 <script>
 (function(){
-  var f=new URLSearchParams(location.search).get('from');
+  var qs=new URLSearchParams(location.search);
+  var f=qs.get('from'), stu=qs.get('student');
   var m=f&&f.match(/^night(\d{1,2})$/);
   var host=document.getElementById('retoldHome');
-  var href=m?'../organic/?night='+m[1]:'../organic/';
+  var sfx=stu?'&student='+encodeURIComponent(stu):'';
+  var href=m?('../organic/?night='+m[1]+sfx):('../organic/'+(stu?'?student='+encodeURIComponent(stu):''));
   var label=m?'BACK TO NIGHT '+m[1]:'OCHEM, RETOLD - THE NIGHTS';
   host.innerHTML='<a href="'+href+'" style="font-family:\'JetBrains Mono\',ui-monospace,monospace;font-size:10px;letter-spacing:.12em;background:#1B3A2D;color:#e6d08a;border:1px solid #C9A84C;border-radius:99px;padding:8px 14px;text-decoration:none;box-shadow:0 4px 14px rgba(0,0,0,.35);display:inline-block">'+label+'</a>';
+  // Came from a night: the Retold nights ARE the path, so hide the engine's
+  // competing "study path - start here" panel.
+  if(m){ var ip=document.querySelector('.intro-path'); if(ip) ip.style.display='none'; }
+  // Preserve the night + student thread across any full-page internal navigation,
+  // so drilling in the engine never drops the student's place (mirrors ?student).
+  if(f||stu){
+    document.addEventListener('click',function(e){
+      var a=e.target.closest?e.target.closest('a[href]'):null; if(!a) return;
+      var h=a.getAttribute('href')||''; if(!h||/^(https?:|mailto:|#|javascript:|\.\.\/organic)/.test(h)||h.indexOf('//')===0) return;
+      var u; try{ u=new URL(a.href, location.href); }catch(_){ return; }
+      if(u.origin!==location.origin || !/\/tools\/ochem\//.test(u.pathname)) return;
+      if(f&&!u.searchParams.get('from')) u.searchParams.set('from',f);
+      if(stu&&!u.searchParams.get('student')) u.searchParams.set('student',stu);
+      a.setAttribute('href', u.pathname+u.search+u.hash);
+    },true);
+  }
 })();
 </script>
 
@@ -4858,7 +4876,7 @@ html[data-theme="dark"] .dt-case-select{background:var(--white);color:var(--ink)
   <div class="hubs-inner">
     <div class="hubs-kicker">Master roadmap · prereq-aware</div>
     <h1 class="hubs-h">Pick a hub.<br/><em>Master it. Unlock the next.</em></h1>
-    <p class="hubs-sub">10 functional-group hubs (alkanes through amines) plus 6 foundation sections (Bonding, Nomenclature, CARDIO, Lab Techniques, Alpha-Condensation, Reagent QR). Interactive, gamified, prereq-aware. The Introduction above is the better entry point for new students; this view tracks progress across the whole engine.</p>
+    <p class="hubs-sub">10 functional-group hubs (alkanes through amines) plus 6 foundation sections (Bonding, Nomenclature, CARDIO, Lab Techniques, Alpha-Condensation, Reagent QR). Interactive, gamified, prereq-aware. This view tracks your progress across the whole engine - the reactions you earn walking the Retold nights light up here.</p>
     <div class="hubs-progress">
       <span><b id="hubsProgressMastered">0</b> / <b id="hubsProgressTotal">10</b> functional-group hubs mastered</span>
       <div class="hubs-progress-bar"><div class="hubs-progress-bar-fill" id="hubsProgressFill"></div></div>
@@ -21068,7 +21086,10 @@ html[data-theme="dark"] .dt-case-select{background:var(--white);color:var(--ink)
 (function(){
   const KEY='atDAT_welcome_v1';
   let seen=false;try{seen=!!localStorage.getItem(KEY);}catch(e){}
-  if(!seen){
+  // Retold is the canonical front door: if the student arrived from a night,
+  // do not pop the engine's own welcome - it would be a competing entry point.
+  var fromNight=/[?&]from=night\d/.test(location.search);
+  if(!seen && !fromNight){
     setTimeout(()=>{
       document.getElementById('welcomeBackdrop')?.classList.add('open');
       document.getElementById('welcomeCard')?.classList.add('open');
@@ -32100,6 +32121,8 @@ html[data-theme="dark"] .teach-closer .tc-assign{color:#e6d08a;}
 #rwOverlay.open{display:flex;}
 html[data-theme="dark"] #rwOverlay{background:var(--bg2,#20201a);}
 .rw-top{display:flex;align-items:center;gap:14px;padding:12px 24px;border-bottom:2px solid #C9A84C;flex-wrap:wrap;}
+#rwRestart{border-color:#b46a55;color:#b46a55}
+#rwRestart.armed{background:#b46a55;color:#fff;border-color:#b46a55}
 .rw-kicker{font-family:'JetBrains Mono',monospace;font-size:.66rem;letter-spacing:.18em;text-transform:uppercase;color:#8C7235;}
 .rw-title{font-family:'Playfair Display',serif;font-size:1.35rem;font-weight:800;color:var(--ink,#2a2118);}
 html[data-theme="dark"] .rw-title{color:#ece6d7;}
@@ -32181,6 +32204,7 @@ html[data-theme="dark"] .rw-reveal{background:rgba(255,255,255,.05)}
       <span class="rw-mastery" id="rwMastery"></span>
       <span class="rw-streak" id="rwStreak"></span>
       <button class="rw-exit" id="rwTestBtn" style="border-color:#C9A84C;color:#8a6d24">Test this wheel</button>
+      <button class="rw-exit" id="rwRestart" title="Clear this wheel's progress and start it over">Restart wheel</button>
       <button class="rw-exit" id="rwExit">ESC exit</button>
     </div>
   </div>
@@ -32393,10 +32417,13 @@ html[data-theme="dark"] .rw-reveal{background:rgba(255,255,255,.05)}
     var stu2=new URLSearchParams(location.search).get('student');
     var mapHref='../organic/'+(stu2?'?student='+encodeURIComponent(stu2):'');
     html+='<a class="rw-next" style="display:inline-block;text-decoration:none;margin-top:8px;background:none;border:1.5px solid #C9A84C;color:#8a6d24" href="'+mapHref+'">See it on your reaction map</a>';
+    html+='<button class="rw-next" id="rwAgain" style="margin-top:8px;background:none;border:1.5px solid #b46a55;color:#b46a55">Run this wheel again</button>';
     html+='</div>';
     panel.innerHTML=html;
     var b=document.getElementById('rwNextWheel');
     if(b) b.addEventListener('click',function(){ openWheel(state.wheel+1); });
+    var ag=document.getElementById('rwAgain');
+    if(ag) ag.addEventListener('click',function(){ var w=WHEELS[state.wheel]; save[w.key]={}; persist(); state.queue=buildQueue(w); state.qi=0; state.streak=0; state.frozen=false; renderQuestion(); renderBoard(); renderTop(); });
   }
 
   // ── TEST MODE: the fill-in-the-blank self-test over a whole wheel ──
@@ -32491,6 +32518,7 @@ html[data-theme="dark"] .rw-reveal{background:rgba(255,255,255,.05)}
   }
 
   function openWheel(i){
+    if(window.__rwDisarmRestart) window.__rwDisarmRestart();
     if(state.test){ state.wheel=i; startTest(); return; }
     state.wheel=i; state.queue=buildQueue(WHEELS[i]); state.qi=0; state.streak=0; state.frozen=false;
     renderQuestion();
@@ -32516,6 +32544,21 @@ html[data-theme="dark"] .rw-reveal{background:rgba(255,255,255,.05)}
   function closeGame(){ document.getElementById('rwOverlay').classList.remove('open'); document.body.style.overflow=''; }
   document.getElementById('rwExit').addEventListener('click',closeGame);
   document.getElementById('rwTestBtn').addEventListener('click',function(){ if(state.test) exitTest(); else startTest(); });
+  // Restart this wheel: two-tap (arms, then clears) so it is easy but not accidental
+  (function(){
+    var rb=document.getElementById('rwRestart'); if(!rb) return;
+    var armed=false, timer=null;
+    function disarm(){ armed=false; rb.textContent='Restart wheel'; rb.classList.remove('armed'); if(timer){clearTimeout(timer);timer=null;} }
+    window.__rwDisarmRestart=disarm; // openWheel can reset it
+    rb.addEventListener('click',function(){
+      if(!armed){ armed=true; rb.textContent='Tap again to clear'; rb.classList.add('armed'); timer=setTimeout(disarm,3500); return; }
+      disarm();
+      var w=WHEELS[state.wheel]; save[w.key]={}; persist();
+      if(state.test) exitTest();
+      state.queue=buildQueue(w); state.qi=0; state.streak=0; state.frozen=false;
+      renderQuestion(); renderBoard(); renderTop();
+    });
+  })();
   document.addEventListener('keydown',function(e){
     if(!document.getElementById('rwOverlay').classList.contains('open'))return;
     if(e.key==='Escape'){ closeGame(); }
