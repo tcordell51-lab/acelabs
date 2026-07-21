@@ -57,7 +57,9 @@ h1{font-family:var(--serif);font-size:clamp(28px,5vw,40px);line-height:1.15;marg
 .scene-body.mv-run .molrow>*:nth-child(3){animation-delay:.22s}
 .scene-body.mv-run .molrow>*:nth-child(4){animation-delay:.33s}
 @keyframes mvrise{from{opacity:0;transform:translateY(10px) scale(.98)}to{opacity:1;transform:none}}
-@media (prefers-reduced-motion:reduce){.scene-body.mv-run .molrow>*{opacity:1;animation:none}.say w{transition:none}}
+.molcard.mv-hi{animation:mvhi 1.1s ease}
+@keyframes mvhi{0%{box-shadow:0 0 0 0 rgba(201,168,76,0)}28%{box-shadow:0 0 22px 2px rgba(201,168,76,.5)}100%{box-shadow:0 0 0 0 rgba(201,168,76,0)}}
+@media (prefers-reduced-motion:reduce){.scene-body.mv-run .molrow>*{opacity:1;animation:none}.say w{transition:none}.molcard.mv-hi{animation:none}}
 .teachline{margin:14px auto 0;max-width:66ch;background:rgba(201,168,76,.1);border-left:4px solid var(--gold);border-radius:10px;padding:10px 14px;font-family:var(--serif);font-style:italic;font-size:1rem;color:#6b5620}
 .teachline .lb{font-family:var(--mono);font-size:.58rem;letter-spacing:.16em;text-transform:uppercase;color:var(--goldhi);display:block;margin-bottom:3px;font-style:normal}
 .commit{margin:18px auto 0;max-width:66ch;border:1.5px solid rgba(140,114,53,.35);border-radius:12px;padding:14px 16px}
@@ -1520,11 +1522,22 @@ function render(){
           requestAnimationFrame(function(){ p.style.transition='stroke-dashoffset 1s ease-out'; p.style.strokeDashoffset=0; }); }catch(e){}
       }); }
       var say=body.querySelector('.say'), words=say?tokenize(say):null;
+      // label-sync: light each molecule card when its name is spoken
+      var cards=[].slice.call(body.querySelectorAll('.molcard')); cards.forEach(function(c){c.classList.remove('mv-hi');});
+      var cardCues=[];
+      if(!RM && cue && cue.words){ cards.forEach(function(card){
+        var sub=card.querySelector('.mol-sub'), lbl=card.querySelector('.mol-lbl');
+        var txt=(((sub&&sub.textContent)||'')+' '+((lbl&&lbl.textContent)||'')).toLowerCase();
+        var key=(txt.match(/[a-z]{4,}/g)||[]).sort(function(a,b){return b.length-a.length;})[0], time=null;
+        if(key) for(var i=0;i<cue.words.length;i++){ var w=cue.words[i][0].toLowerCase().replace(/[^a-z]/g,''); if(w.length>=4 && (w.indexOf(key)>-1||key.indexOf(w)>-1)){ time=cue.words[i][1]; break; } }
+        cardCues.push({el:card,time:time,fired:false});
+      }); }
       if(raf) cancelAnimationFrame(raf);
       (function loop(){
         var t=audio.currentTime||0;
         if(words && cue && cue.words){ for(var i=0;i<words.length;i++){ var cw=cue.words[i]; if(!cw) continue;
           words[i].className = t>=cw[2]?'spoken':(t>=cw[1]?'now':''); } }
+        cardCues.forEach(function(c){ if(c.time!=null && !c.fired && t>=c.time){ c.fired=true; c.el.classList.remove('mv-hi'); void c.el.offsetWidth; c.el.classList.add('mv-hi'); } });
         if(!audio.paused && !audio.ended){ raf=requestAnimationFrame(loop); }
       })();
     }
