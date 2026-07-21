@@ -16,7 +16,9 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
 const API_KEY = process.env.ELEVEN_API_KEY;
-const VOICE_ID = process.env.ELEVEN_VOICE_ID;
+// Default = "Thomas Coach", the clone built 2026-07 from a clean 195s solo Zoom
+// teaching segment (far better than the old ~20s "Tommy"). Override with env.
+const VOICE_ID = process.env.ELEVEN_VOICE_ID || '8wDRDuMDgxEoTr8RxAWE';
 const MODEL = process.env.ELEVEN_MODEL || 'eleven_multilingual_v2';
 const FORCE = process.argv.includes('--force');
 const HERE = dirname(fileURLToPath(import.meta.url));
