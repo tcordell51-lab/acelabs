@@ -48,6 +48,16 @@ h1{font-family:var(--serif);font-size:clamp(28px,5vw,40px);line-height:1.15;marg
 .scene svg{display:block;width:100%;height:auto;max-width:780px;margin:0 auto}
 .say{font-size:1rem;color:var(--ink2);max-width:66ch;margin:14px auto 0}
 .say b{color:var(--ink)}
+/* moving-scene engine: karaoke narration + entrance motion */
+.say w{transition:color .12s ease, text-shadow .12s ease}
+.say w.spoken{color:var(--ink)}
+.say w.now{color:var(--gold);text-shadow:0 0 16px rgba(201,168,76,.38)}
+.scene-body.mv-run .molrow>*{opacity:0;animation:mvrise .5s ease forwards}
+.scene-body.mv-run .molrow>*:nth-child(2){animation-delay:.11s}
+.scene-body.mv-run .molrow>*:nth-child(3){animation-delay:.22s}
+.scene-body.mv-run .molrow>*:nth-child(4){animation-delay:.33s}
+@keyframes mvrise{from{opacity:0;transform:translateY(10px) scale(.98)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.scene-body.mv-run .molrow>*{opacity:1;animation:none}.say w{transition:none}}
 .teachline{margin:14px auto 0;max-width:66ch;background:rgba(201,168,76,.1);border-left:4px solid var(--gold);border-radius:10px;padding:10px 14px;font-family:var(--serif);font-style:italic;font-size:1rem;color:#6b5620}
 .teachline .lb{font-family:var(--mono);font-size:.58rem;letter-spacing:.16em;text-transform:uppercase;color:var(--goldhi);display:block;margin-bottom:3px;font-style:normal}
 .commit{margin:18px auto 0;max-width:66ch;border:1.5px solid rgba(140,114,53,.35);border-radius:12px;padding:14px 16px}
@@ -1480,6 +1490,47 @@ function render(){
     host.appendChild(d);
   });
   SCENES.forEach(function(sc,i){ if(sc.anim) animInit(i); if(sc.tap) tapInit(i); });
+  // ---- moving-scene engine: diagram builds + narration lights in your voice ----
+  if(!window.__cues){ window.__cues={}; fetch('audio/cues.json').then(function(r){return r.ok?r.json():{};}).then(function(j){window.__cues=j||{};}).catch(function(){}); }
+  if(!window.__moveScene){ window.__moveScene=(function(){
+    var RM = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var raf=null, curBody=null;
+    function tokenize(say){
+      if(say.__tok) return say.__words;
+      var words=[];
+      (function walk(node){
+        [].slice.call(node.childNodes).forEach(function(ch){
+          if(ch.nodeType===3){
+            var parts=ch.textContent.split(/(\s+)/), frag=document.createDocumentFragment();
+            parts.forEach(function(p){ if(p.trim()){ var w=document.createElement('w'); w.textContent=p; frag.appendChild(w); words.push(w); } else if(p){ frag.appendChild(document.createTextNode(p)); } });
+            node.replaceChild(frag,ch);
+          } else if(ch.nodeType===1 && ch.tagName!=='W'){ walk(ch); }
+        });
+      })(say);
+      say.__tok=true; say.__words=words; return words;
+    }
+    function start(slot, clipId, audio){
+      var scene=slot.closest('.scene'); if(!scene) return;
+      var body=scene.querySelector('.scene-body'); if(!body) return; curBody=body;
+      var cue=window.__cues&&window.__cues[clipId];
+      body.classList.remove('mv-run'); void body.offsetWidth; if(!RM) body.classList.add('mv-run');
+      if(!RM){ body.querySelectorAll('svg path').forEach(function(p){
+        var f=p.getAttribute('fill'); if(((f && f!=='none') || !p.getAttribute('stroke')) && !p.classList.contains('eflow')) return;
+        try{ var L=p.getTotalLength(); if(!L) return; p.style.transition='none'; p.style.strokeDasharray=L; p.style.strokeDashoffset=L;
+          requestAnimationFrame(function(){ p.style.transition='stroke-dashoffset 1s ease-out'; p.style.strokeDashoffset=0; }); }catch(e){}
+      }); }
+      var say=body.querySelector('.say'), words=say?tokenize(say):null;
+      if(raf) cancelAnimationFrame(raf);
+      (function loop(){
+        var t=audio.currentTime||0;
+        if(words && cue && cue.words){ for(var i=0;i<words.length;i++){ var cw=cue.words[i]; if(!cw) continue;
+          words[i].className = t>=cw[2]?'spoken':(t>=cw[1]?'now':''); } }
+        if(!audio.paused && !audio.ended){ raf=requestAnimationFrame(loop); }
+      })();
+    }
+    function stop(){ if(raf){cancelAnimationFrame(raf);raf=null;} if(curBody) curBody.querySelectorAll('.say w.now').forEach(function(w){w.className='spoken';}); }
+    return {start:start, stop:stop};
+  })(); }
   // Coach voice per scene (the verified-unowned moat): drop an mp3 at
   // audio/n<night>-s<scene>.mp3 and a play control appears here automatically -
   // no code change per clip. Silent until a real recording exists.
@@ -1504,9 +1555,9 @@ function render(){
           document.querySelectorAll('.scene-audio audio').forEach(function(o){ if(o!==a){o.pause();} });
           if(!a){
             a=new Audio(src); slot.appendChild(a);
-            a.addEventListener('play',function(){ playing=true; btn.textContent='PAUSE'; btn.classList.add('on'); });
-            a.addEventListener('pause',function(){ playing=false; btn.textContent='PLAY COACH'; btn.classList.remove('on'); });
-            a.addEventListener('ended',function(){ playing=false; btn.textContent='PLAY COACH'; btn.classList.remove('on'); });
+            a.addEventListener('play',function(){ playing=true; btn.textContent='PAUSE'; btn.classList.add('on'); if(window.__moveScene)__moveScene.start(slot,'n'+CUR+'-s'+(i+1),a); });
+            a.addEventListener('pause',function(){ playing=false; btn.textContent='PLAY COACH'; btn.classList.remove('on'); if(window.__moveScene)__moveScene.stop(); });
+            a.addEventListener('ended',function(){ playing=false; btn.textContent='PLAY COACH'; btn.classList.remove('on'); if(window.__moveScene)__moveScene.stop(); });
           }
           if(playing){ a.pause(); } else { a.play(); }
         });
