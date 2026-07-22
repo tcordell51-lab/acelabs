@@ -32571,6 +32571,26 @@ html[data-theme="dark"] .rw-reveal{background:rgba(255,255,255,.05)}
 })();
 </script>
 
+  <script>
+  // Fix 3: tie each engine hub to the Retold night that teaches it - one unit, one name.
+  (function(){
+    var MAP={bonding:1,'acid-base-cardio':1,nomenclature:2,'stereo-lab':3,subelim:4,alkenes:5,alkynes:6,carbonyl:7,amines:7,acids:8,alcohols:9,ethers:9,'alpha-condensation':10,aromatic:11,'spec-trainer':13,'mass-spec':13,'lab-techniques':13};
+    var stu=new URLSearchParams(location.search).get('student');
+    function go(){
+      Object.keys(MAP).forEach(function(id){
+        var sec=document.getElementById(id); if(!sec) return;
+        var head=sec.querySelector('.sec-header'); if(!head||head.querySelector('.hub-night-tie')) return;
+        var n=MAP[id], a=document.createElement('a');
+        a.className='hub-night-tie';
+        a.href='../organic/?night='+n+(stu?'&student='+encodeURIComponent(stu):'');
+        a.style.cssText='display:inline-block;margin-top:8px;font-family:\'JetBrains Mono\',ui-monospace,monospace;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:#8a6d24;text-decoration:none;border:1px solid rgba(201,168,76,.45);border-radius:99px;padding:4px 11px';
+        a.textContent='Taught in Night '+n+' · OChem Retold';
+        head.appendChild(a);
+      });
+    }
+    if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',go); else go();
+  })();
+  </script>
   <script src="/shared/acelabs-nav.js" defer></script>
 </body>
 </html>
