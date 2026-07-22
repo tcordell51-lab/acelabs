@@ -214,7 +214,7 @@
   //             (the same activity unit the OChem tile uses)
   function getRecentPractice(data){
     const ENGINE_LABELS = { qr:'Quantitative Reasoning', bio:'Biology', gc:'Gen Chem', ochem:'Organic Chem' };
-    const ENGINE_HREFS = { qr:'tools/qr/index.html', bio:'tools/bio/index.html', gc:'tools/gc/index.html', ochem:'tools/ochem/index.html' };
+    const ENGINE_HREFS = { qr:'tools/qr/index.html', bio:'tools/bio/index.html', gc:'tools/gc/index.html', ochem:'tools/organic/' };
     let freshest = null, ts = null;
     Object.keys(data).forEach(k => {
       const t = data[k] && data[k].lastSession;
@@ -364,12 +364,14 @@
       const weakest = tools.map(t => ({ t, ratio: data[t].total > 0 ? data[t].mastered / data[t].total : 0 })).sort((a,b) => a.ratio - b.ratio)[0];
       const labels = { qr:'Quantitative Reasoning', bio:'Biology', gc:'Gen Chem', ochem:'Organic Chem' };
       if (weakest && totalMastered > 0){
+        // OChem's canonical front door is tools/organic/ (tools/ochem/ is the deprecated engine)
+        const weakestHref = weakest.t === 'ochem' ? 'tools/organic/' : `tools/${weakest.t}/index.html`;
         planGrid.innerHTML = `
           <div class="al-dash-card" style="border-left:4px solid var(--al-trap); background:rgba(217,83,79,0.05)">
             <div class="al-dash-lbl">Suggested focus this week</div>
             <div class="al-dash-num-small" style="color:var(--al-trap)">${labels[weakest.t]}</div>
             <div class="al-dash-sub">Your weakest subject — only ${Math.round(100*weakest.ratio)}% of modules mastered.</div>
-            <a href="tools/${weakest.t}/index.html" target="_blank" class="al-dash-cta">Open ${labels[weakest.t]}</a>
+            <a href="${weakestHref}" target="_blank" class="al-dash-cta">Open ${labels[weakest.t]}</a>
           </div>
           <div class="al-dash-card">
             <div class="al-dash-lbl">Cards due across tools</div>

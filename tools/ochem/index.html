@@ -24584,7 +24584,9 @@ function plBuildQuestion() {
     const sameSub = pool.filter(r => r.sub === correct.sub && r.key !== correct.key);
     const otherFam = pool.filter(r => r.key !== correct.key && r.name !== correct.name);
     const distractorPool = [...sameSub, ...plShuffle(otherFam).slice(0, 6)];
-    distractors = plShuffle(distractorPool).filter(r => r.name !== correct.name).slice(0, 3);
+    // Exclude chemically identical products (same name OR same formula), so a
+    // right answer can never appear as a "wrong" option and be graded wrong.
+    distractors = plShuffle(distractorPool).filter(r => r.name !== correct.name && !(r.formula && r.formula === correct.formula)).slice(0, 3);
     optionField = 'name';
   } else if (mode === 'reagent') {
     promptHTML =
@@ -24594,10 +24596,17 @@ function plBuildQuestion() {
       arrow +
       slot('Product', `<div class="pl-slot-name">${correct.name}</div><div class="pl-flash-product-formula">${correct.formula}</div>`);
     // distractors: other reagents that COULD apply to this substrate (give different products)
-    const sameSub = pool.filter(r => r.sub === correct.sub && r.reag !== correct.reag);
+    // A reagent is NOT a valid distractor if, on this substrate, it yields the
+    // same product (e.g. Jones vs PCC on a 2° alcohol both give the ketone) -
+    // that would grade correct chemistry as wrong.
+    const plReagGivesSameProduct = (r) => {
+      const alt = RXN_DB[correct.sub + '__' + r.reag];
+      return !!(alt && (alt.name === correct.name || (alt.formula && alt.formula === correct.formula)));
+    };
+    const sameSub = pool.filter(r => r.sub === correct.sub && r.reag !== correct.reag && !plReagGivesSameProduct(r));
     distractors = plShuffle(sameSub).slice(0, 3);
     if (distractors.length < 3) {
-      const extra = plShuffle(pool.filter(r => r.reag !== correct.reag && !sameSub.find(s => s.reag === r.reag))).slice(0, 3 - distractors.length);
+      const extra = plShuffle(pool.filter(r => r.reag !== correct.reag && !sameSub.find(s => s.reag === r.reag) && !plReagGivesSameProduct(r))).slice(0, 3 - distractors.length);
       distractors = [...distractors, ...extra];
     }
     // Override option labels to be reagent labels not reaction names
@@ -24609,9 +24618,23 @@ function plBuildQuestion() {
       slot('Reagent', `<div class="pl-reagent-chip">${reagLabel}</div>`) +
       arrow +
       slot('Product', `<div class="pl-slot-name">${correct.name}</div><div class="pl-flash-product-formula">${correct.formula}</div>`);
-    // distractors: other substrates from this family that aren't the correct one
+    // distractors: other substrates from this family that aren't the correct one.
+    // A substrate is NOT a valid distractor if, with this same reagent, it
+    // yields the same product (e.g. internal alkene / terminal alkyne / diene
+    // all give butane with H2/Pt) - that would grade correct chemistry as wrong.
+    const plSubGivesSameProduct = (s) => {
+      const alt = RXN_DB[s + '__' + correct.reag];
+      return !!(alt && (alt.name === correct.name || (alt.formula && alt.formula === correct.formula)));
+    };
     const sameFam = pool.filter(r => r.sub !== correct.sub);
-    const uniqSubs = [...new Set(sameFam.map(r => r.sub))];
+    let uniqSubs = [...new Set(sameFam.map(r => r.sub))].filter(s => !plSubGivesSameProduct(s));
+    if (uniqSubs.length < 3) {
+      // Small families (e.g. ethers has one substrate) would otherwise render a
+      // one-button "quiz" - pad with real substrate distractors from the full DB.
+      const allSubs = [...new Set(Object.keys(RXN_DB).map(k => k.split('__')[0]))]
+        .filter(s => s !== correct.sub && uniqSubs.indexOf(s) === -1 && !plSubGivesSameProduct(s));
+      uniqSubs = [...uniqSubs, ...plShuffle(allSubs).slice(0, 3 - uniqSubs.length)];
+    }
     distractors = plShuffle(uniqSubs).slice(0, 3).map(s => ({ sub: s, name: SUBSTRATE_NAME[s] || s }));
     optionField = '__substrate';
   }
@@ -31144,10 +31167,18 @@ window.MolMini = (function(){
       if (missing === 'reagent') return r.reagent.label !== reaction.reagent.label;
       return r.start.name !== reaction.start.name;
     });
-    /* If we don't have 3 distinct same-family options, pad with cross-family */
+    /* If we don't have 3 distinct same-family options, pad with cross-family.
+       The padding must pass the same distinctness check for the missing slot —
+       otherwise a duplicate of the correct answer (same reagent label or same
+       starting material) can appear as a "wrong" option and grade a right
+       answer as wrong. */
     let pool = distinct;
     if (pool.length < 3){
-      const others = REACTIONS.filter(r => r.id !== reaction.id && pool.indexOf(r) === -1);
+      const others = REACTIONS.filter(r => r.id !== reaction.id && pool.indexOf(r) === -1).filter(r => {
+        if (missing === 'product') return r.product.name !== reaction.product.name;
+        if (missing === 'reagent') return r.reagent.label !== reaction.reagent.label;
+        return r.start.name !== reaction.start.name;
+      });
       pool = pool.concat(others);
     }
     /* Shuffle and take 3 */
@@ -32336,7 +32367,24 @@ html[data-theme="dark"] .rw-reveal{background:rgba(255,255,255,.05)}
     state.answered=false;
     var html='';
     if(cur.mode==='f'){
-      var pool=shuffle(all.filter(function(s){return s.key!==sp.key;})).slice(0,3).concat([sp]);
+      // Distractors must be chemically different products: exclude spokes with
+      // the same product name or formula (e.g. Lindlar vs Na/NH3 on a terminal
+      // alkyne both give 1-butene) so a right answer is never graded wrong.
+      var samePF=function(e){ return e.name===sp.e.name || (e.formula && e.formula===sp.e.formula); };
+      var fpool=all.filter(function(s){return s.key!==sp.key && !samePF(s.e);});
+      if(!fpool.length){
+        // 1-spoke wheel (e.g. amide): borrow real product distractors from
+        // other wheels instead of showing a one-button quiz.
+        var seenN={}; seenN[sp.e.name]=1;
+        Object.keys(RXN_DB).forEach(function(k){
+          if(k.indexOf(w.key+'__')===0) return;
+          var e=RXN_DB[k];
+          if(samePF(e) || seenN[e.name]) return;
+          seenN[e.name]=1;
+          fpool.push({key:k,rid:k.split('__')[1],e:e});
+        });
+      }
+      var pool=shuffle(fpool).slice(0,3).concat([sp]);
       shuffle(pool);
       html+='<div class="rw-q-kicker">Forward lap · build the wheel</div>';
       html+='<div class="rw-q">'+w.name+' + <span style="color:#b45309">'+reagentLabel(sp.rid)+'</span> gives what?</div>';
@@ -32345,7 +32393,26 @@ html[data-theme="dark"] .rw-reveal{background:rgba(255,255,255,.05)}
         html+='<button class="rw-opt" data-k="'+s.key+'">'+(s.e.svg||'')+'<span class="rw-opt-name">'+s.e.name+'</span></button>';
       });
     } else {
-      var poolR=shuffle(all.filter(function(s){return s.rid!==sp.rid;})).slice(0,3).concat([sp]);
+      // A reagent that gives the SAME product from this substrate (same name or
+      // formula) is an equally correct answer, not a distractor - exclude it
+      // (e.g. Na/NH3 vs Lindlar both turn a terminal alkyne into 1-butene).
+      var samePR=function(e){ return e.name===sp.e.name || (e.formula && e.formula===sp.e.formula); };
+      var rpool=all.filter(function(s){return s.rid!==sp.rid && !samePR(s.e);});
+      if(!rpool.length){
+        // 1-spoke wheel (e.g. amide): borrow reagent distractors from other
+        // wheels instead of showing a one-button quiz. Skip any reagent that,
+        // on THIS substrate, would give the same product.
+        var seenR={}; seenR[sp.rid]=1;
+        Object.keys(RXN_DB).forEach(function(k){
+          var rid=k.split('__')[1];
+          if(seenR[rid]) return;
+          var own=RXN_DB[w.key+'__'+rid];
+          if(own && samePR(own)) return;
+          seenR[rid]=1;
+          rpool.push({key:k,rid:rid,e:RXN_DB[k]});
+        });
+      }
+      var poolR=shuffle(rpool).slice(0,3).concat([sp]);
       shuffle(poolR);
       html+='<div class="rw-q-kicker">Reverse lap · run it backwards</div>';
       html+='<div class="rw-q">Which reagent turns '+w.name.toLowerCase()+' into <em>'+sp.e.name+'</em>?</div>';

@@ -193,10 +193,25 @@ function optionHtml(it,i){
   return '<button class="opt" data-k="'+i+'"><span class="lt">'+LETTERS[i]+'</span>'+it.opts[i]+'</button>';
 }
 function esc(t){ return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
+// Shuffle each item's options once, at first render, so answer position is not
+// a tell (some banks are heavily biased toward one slot). Correct index is
+// recomputed so grading stays exact. We skip items whose explanation names a
+// fixed option letter/number/position - shuffling those would make the why
+// point at the wrong choice.
+function shuffleOptions(it){
+  if(it._optShuffled) return; it._optShuffled=true;
+  if(it.why && /(?:option|choice)\s+[a-f]\b|\bopt\s?\d|\((?:option\s*)?[a-f]\)/i.test(it.why)) return;
+  var oldOpts=it.opts, oldCorrect=it.correct;
+  var order=oldOpts.map(function(_,i){ return i; });
+  shuffle(order);
+  it.opts=order.map(function(oi){ return oldOpts[oi]; });
+  it.correct=order.indexOf(oldCorrect);
+}
 function renderQ(){
   answered=false;
   var it=round[qi];
   if(!it){ renderDone(); return; }
+  shuffleOptions(it);
   updateMeta(); startTimer();
   var h='<div class="card">';
   h+='<div class="topic">'+esc(it.topic||SUBJECTS[SUB].name)+'</div>';

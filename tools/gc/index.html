@@ -3356,6 +3356,7 @@ body[data-mode="B"] .sb-link[data-go="quick-ref"]{background:rgba(201,168,76,.10
   <a class="sb-link" data-go="buffers"><span class="dot"></span><span class="label">Acid-Base · Buffers (HH)</span><span class="meta">live</span></a>
   <a class="sb-link" data-go="titration"><span class="dot"></span><span class="label">Acid-Base · Titration Curves</span><span class="meta">live</span></a>
   <a class="sb-link" data-go="colligative"><span class="dot"></span><span class="label">Colligative Properties</span><span class="meta">live</span></a>
+  <a class="sb-link" data-go="sol-rules"><span class="dot"></span><span class="label">Solubility Rules &amp; Net-Ionic</span><span class="meta">live</span></a>
 
   <div class="sb-section sb-mode-a-only">Patterns · Tier 2</div>
   <a class="sb-link" data-go="ksp"><span class="dot"></span><span class="label">Solubility (Ksp)</span><span class="meta">live</span></a>
@@ -3371,6 +3372,7 @@ body[data-mode="B"] .sb-link[data-go="quick-ref"]{background:rgba(201,168,76,.10
   <a class="sb-link" data-go="untimed"><span class="dot"></span><span class="label">Untimed Mastery</span><span class="meta">live</span></a>
   <a class="sb-link" data-go="skip-ret"><span class="dot"></span><span class="label">Skip &amp; Return</span><span class="meta">live</span></a>
   <a class="sb-link" data-go="guess"><span class="dot"></span><span class="label">Educated Guessing on GC Traps</span><span class="meta">live</span></a>
+  <a class="sb-link" data-go="no-calc"><span class="dot"></span><span class="label">No-Calc Shortcuts &amp; Estimation</span><span class="meta">live</span></a>
 
   <div class="sb-section">Specialized Tools</div>
   <a class="sb-link" data-go="tool-ptable"><span class="dot"></span><span class="label">Periodic Table Explorer</span><span class="meta">tool</span></a>
@@ -4353,6 +4355,7 @@ body[data-mode="B"] .sb-link[data-go="quick-ref"]{background:rgba(201,168,76,.10
 <section class="sec" id="buffers" data-skill="buffers"></section>
 <section class="sec" id="titration" data-skill="titration"></section>
 <section class="sec" id="colligative" data-skill="colligative"></section>
+<section class="sec" id="sol-rules" data-skill="sol-rules"></section>
 <!-- Tier 2 — Patterns -->
 <section class="sec" id="ksp" data-skill="ksp"></section>
 <section class="sec" id="galvanic" data-skill="galvanic"></section>
@@ -4375,6 +4378,7 @@ body[data-mode="B"] .sb-link[data-go="quick-ref"]{background:rgba(201,168,76,.10
 <section class="sec" id="untimed" data-skill="untimed"></section>
 <section class="sec" id="skip-ret" data-skill="skip-ret"></section>
 <section class="sec" id="guess" data-skill="guess"></section>
+<section class="sec" id="no-calc" data-skill="no-calc"></section>
 
 <!-- ===================== DASHBOARD ===================== -->
 <section class="sec" id="dashboard">
@@ -4451,7 +4455,7 @@ body[data-mode="B"] .sb-link[data-go="quick-ref"]{background:rgba(201,168,76,.10
   </div>
   <div class="sim-card">
     <h3>Run a <em>mock test</em></h3>
-    <p class="sub">Pulls from a 600+ problem bank with topic distribution matching the ADA's published Gen Chem outline. You can flag questions, skip-and-return, and jump back to previous Qs. After submission: per-topic accuracy breakdown + missed-question walkthrough.</p>
+    <p class="sub">Pulls from a 600+ problem bank, weighted toward the highest-yield DAT Gen Chem topics. You can flag questions, skip-and-return, and jump back to previous Qs. After submission: per-topic accuracy breakdown + missed-question walkthrough.</p>
     <div class="sim-stats">
       <div class="sim-stat"><div class="n" id="simAvail">—</div><div class="l">Total in bank</div></div>
       <div class="sim-stat"><div class="n" id="simRuns">0</div><div class="l">Mocks taken</div></div>
@@ -7332,13 +7336,12 @@ function renderTricksPanel(tricks){
         <div class="ttl">Coach <em>tricks</em> for this skill</div>
       </div>
       ${tricks.map(t => `
-        <div class="trick-card ${t.coach?'coach':''} ${t.placeholder?'placeholder':''}">
+        <div class="trick-card ${t.coach?'coach':''}">
           <div class="when">When · ${t.when}</div>
           <div class="name">${t.name}</div>
           <div class="move">${t.move}</div>
           <div class="why"><b>Why it works:</b> ${t.why}</div>
           <div class="lock-q">${t.lock}</div>
-          ${t.placeholder ? '<div class="tricks-cta" style="margin-top:10px">↑ <b>Placeholder</b> — this slot is built, but the metaphor needs your coach to confirm or replace with their actual line. The structure stays; the words swap in.</div>' : ''}
         </div>
       `).join('')}
       <div class="tricks-cta">
@@ -18855,10 +18858,10 @@ function renderShortcutDeck(){
 
 [
   'sig-figs','atomic','quantum-numbers','periodic','bonding','lewis','vsepr','hybridization','mole-conv','lim-react','solutions','imf-rank','lab-techniques',
-  'gas-laws','enthalpy','calorimetry','entropy','gibbs','rate-laws','arrhenius','colligative','eq-kc','eq-lechat','eq-ice',
+  'gas-laws','enthalpy','calorimetry','entropy','gibbs','rate-laws','arrhenius','colligative','sol-rules','eq-kc','eq-lechat','eq-ice',
   'ph-basics','strong-weak','buffers','titration',
   'ksp','galvanic','red-pot','nernst','electrolysis','nuclear','phase-diag','heating-curve',
-  'untimed','skip-ret','guess'
+  'untimed','skip-ret','guess','no-calc'
 ].forEach(renderModule);
 renderShortcutDeck();
 renderTools();

@@ -2461,6 +2461,8 @@ body[data-theme="dark"] .dash-card .pat-due-row .go{color:var(--gold-m)}
 <section class="sec" id="geo-2d" data-skill="geo-2d"></section>
 <section class="sec" id="sets" data-skill="sets"></section>
 <section class="sec" id="desc-stats" data-skill="desc-stats"></section>
+<section class="sec" id="trig" data-skill="trig"></section>
+<section class="sec" id="data-interp" data-skill="data-interp"></section>
 <section class="sec" id="untimed" data-skill="untimed"></section>
 <section class="sec" id="skip-ret" data-skill="skip-ret"></section>
 <section class="sec" id="guess" data-skill="guess"></section>
@@ -2480,7 +2482,7 @@ body[data-theme="dark"] .dash-card .pat-due-row .go{color:var(--gold-m)}
     <div class="card-h">
       <div class="mark teal">P</div>
       <div class="ttl">
-        <h3>9 fully-animated patterns + 5 stubs</h3>
+        <h3>9 full pattern walkthroughs + 5 stubs</h3>
         <div class="sub">Same brand shell, same Coach mode controller. Lives in <span class="kbd">qr-pattern-system-v1.html</span> in this folder.</div>
       </div>
     </div>
@@ -4047,11 +4049,11 @@ const BANK = [
   {"id":"pfl1514","skills":["p-flip"],"diff":2,"q":"4 fair coin flips. P(at least one head)?","opts":["0.94","0.47","0.06","1.88"],"correct":0,"why":"1 − P(none) = 1 − (1/2)^4 = 0.9375.","diag":{}},
   {"id":"pfl1515","skills":["p-flip"],"diff":3,"q":"5 fair coin flips. P(exactly one head)?","opts":["0.31","0.84","0.08","0.16"],"correct":3,"why":"C(5,1) × (1/2)^5 = 5 × 0.0313 = 0.1563.","diag":{}},
   {"id":"pfl1516","skills":["p-flip"],"diff":3,"q":"5 fair coin flips. P(heads on every flip)?","opts":["0.02","0.97","0.06","0.03"],"correct":3,"why":"(1/2)^5 = 0.0313.","diag":{}},
-  {"id":"pfl1517","skills":["p-flip"],"diff":3,"q":"8 fair coin flips. P(heads on every flip)?","opts":["0.01","0","1","0"],"correct":1,"why":"(1/2)^8 = 0.0039.","diag":{}},
+  {"id":"pfl1517","skills":["p-flip"],"diff":3,"q":"8 fair coin flips. P(heads on every flip)?","opts":["0.01","0.004","1","0.03"],"correct":1,"why":"(1/2)^8 = 0.0039.","diag":{}},
   {"id":"pfl1518","skills":["p-flip"],"diff":3,"q":"7 fair coin flips. P(exactly one head)?","opts":["0.03","0.95","0.11","0.05"],"correct":3,"why":"C(7,1) × (1/2)^7 = 7 × 0.0078 = 0.0547.","diag":{}},
   {"id":"pfl1519","skills":["p-flip"],"diff":3,"q":"8 fair coin flips. P(exactly one head)?","opts":["0.97","0.06","0.03","0.02"],"correct":2,"why":"C(8,1) × (1/2)^8 = 8 × 0.0039 = 0.0313.","diag":{}},
   {"id":"pfl1520","skills":["p-flip"],"diff":4,"q":"7 fair coin flips. P(heads on every flip)?","opts":["0","0.02","0.99","0.01"],"correct":3,"why":"(1/2)^7 = 0.0078.","diag":{}},
-  {"id":"pfl1521","skills":["p-flip"],"diff":4,"q":"8 fair coin flips. P(heads on every flip)?","opts":["0","0","0.01","1"],"correct":0,"why":"(1/2)^8 = 0.0039.","diag":{}},
+  {"id":"pfl1521","skills":["p-flip"],"diff":4,"q":"8 fair coin flips. P(heads on every flip)?","opts":["0.004","0.03","0.01","1"],"correct":0,"why":"(1/2)^8 = 0.0039.","diag":{}},
   {"id":"pfl1522","skills":["p-flip"],"diff":4,"q":"7 fair coin flips. P(heads on every flip)?","opts":["0.99","0.01","0.02","0"],"correct":1,"why":"(1/2)^7 = 0.0078.","diag":{}},
   {"id":"pan1523","skills":["p-andor"],"diff":1,"q":"Independent events: P(A) = 0.5, P(B) = 0.2. P(A and B)?","opts":["0.5","0.7","0.3","0.1"],"correct":3,"why":"P(A and B) = 0.1.","diag":{}},
   {"id":"pan1524","skills":["p-andor"],"diff":1,"q":"Independent events: P(A) = 0.6, P(B) = 0.3. P(A or B)?","opts":["0.3","0.72","0.18","0.9"],"correct":1,"why":"P(A or B) = P(A) + P(B) − P(A and B) = 0.6 + 0.3 − 0.18 = 0.72.","diag":{}},
@@ -9360,13 +9362,17 @@ document.addEventListener('click', e => {
     const idx = +opt.dataset.i;
     opt.classList.add(correct ? 'correct' : 'wrong');
     wrap.querySelectorAll('.opt').forEach(o => { if (o !== opt) o.classList.add('disabled'); });
+    // Mock (sim-N) stages render no diag element — feedback is deferred to the
+    // post-mock review, so guard the lookup instead of assuming it exists.
     const fb = document.getElementById('diag-' + wrap.dataset.stage);
-    fb.className = 'diag ' + (correct ? 'correct' : 'wrong') + ' show';
-    if (correct){
-      fb.innerHTML = `<span class="why-lbl">YES</span>${prob.why}`;
-    } else {
-      const diag = (prob.diag && prob.diag[idx]) || 'Not the move. Correct answer: ' + prob.opts[prob.correct] + '.';
-      fb.innerHTML = `<span class="why-lbl">CHECK</span><b>What likely happened:</b> ${diag}<br><br><b>Why the answer is ${prob.opts[prob.correct]}:</b> ${prob.why}`;
+    if (fb){
+      fb.className = 'diag ' + (correct ? 'correct' : 'wrong') + ' show';
+      if (correct){
+        fb.innerHTML = `<span class="why-lbl">YES</span>${prob.why}`;
+      } else {
+        const diag = (prob.diag && prob.diag[idx]) || 'Not the move. Correct answer: ' + prob.opts[prob.correct] + '.';
+        fb.innerHTML = `<span class="why-lbl">CHECK</span><b>What likely happened:</b> ${diag}<br><br><b>Why the answer is ${prob.opts[prob.correct]}:</b> ${prob.why}`;
+      }
     }
     // tally
     const att = ST.get('attempts', []);
@@ -13714,7 +13720,7 @@ window.PATLIB = PATLIB;
   'lin-eq','distrib','binomials','pemdas','neg-ineq',
   'ratios','rate-time','work-rate','mixture','interest','coord','units','word-decode',
   'p-flip','p-andor','p-cond','count-pc','discr','harm','zscore','tri-inv','vol-sa','ds','exps','absval','logs',
-  'geo-2d','sets','desc-stats',
+  'geo-2d','sets','desc-stats','trig','data-interp',
   'untimed','skip-ret','guess','mini-mock'
 ].forEach(renderModule);
 renderTree();
@@ -13728,7 +13734,7 @@ PATLIB.render();
 
 // Boot tip
 console.log('%c AceTheDAT QR · Remediation v2 ', 'background:#0d2018;color:#E2C97A;padding:6px 12px;border-radius:4px;font-family:Playfair Display');
-console.log('Modules live: 41 · Tree nodes: 41 · Diagnostic: 22 questions · Weak3 routing: ready · Sarah dash: ready · Pattern Library: 30 chunks');
+console.log('Modules live: 44 · Tree nodes: 45 · Diagnostic: 22 questions · Weak3 routing: ready · Sarah dash: ready · Pattern Library: 30 chunks');
 </script>
   <script src="/shared/acelabs-nav.js" defer></script>
 </body>

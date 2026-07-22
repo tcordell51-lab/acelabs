@@ -114,7 +114,7 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
   </div>
 
   <div class="hero">
-    <span class="badge"><span class="pulse"></span>14 patterns &middot; 9 animated &middot; 5 stubs</span>
+    <span class="badge"><span class="pulse"></span>14 patterns &middot; 9 full walkthroughs &middot; 5 stubs</span>
     <h1>The pattern <em>path</em>.</h1>
     <p class="lede">The remediation engine builds the <b>floor</b>. This is where you stack the speed shortcuts and DAT-trap recognition that turn a 21 into a 25. Each card opens to a worked example, the formula in your own handwriting, and the most common trap that catches people who learned this from a textbook.</p>
   </div>
@@ -126,14 +126,14 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
       <div class="sub">marked "got it"</div>
     </div>
     <div class="stat-card">
-      <div class="lbl">Animated</div>
+      <div class="lbl">Full walkthroughs</div>
       <div class="num">9</div>
-      <div class="sub">full walk-throughs</div>
+      <div class="sub">worked example + formula + trap</div>
     </div>
     <div class="stat-card">
       <div class="lbl">Stubs</div>
       <div class="num">5</div>
-      <div class="sub">written, animation pending</div>
+      <div class="sub">written, fuller build pending</div>
     </div>
     <div class="stat-card">
       <div class="lbl">Tier</div>
@@ -144,7 +144,7 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
 
   <div class="tier-tabs">
     <button class="tier-tab active" data-filter="all">All 14</button>
-    <button class="tier-tab" data-filter="animated">Animated only</button>
+    <button class="tier-tab" data-filter="animated">Full walkthroughs</button>
     <button class="tier-tab" data-filter="stub">Stubs</button>
     <button class="tier-tab" data-filter="gotit">Got it</button>
     <button class="tier-tab" data-filter="open">Open</button>
@@ -284,7 +284,7 @@ const PATTERNS = [
     desc:'Mix x% solution with y% solution to get z%. The lever-arm trick beats algebra every time.',
     formula:'(z − x) : (y − z) = volume of y : volume of x',
     full:{
-      lede:'Lever arm: imagine a balance with x and y on the ends, fulcrum at z. The volume ratio inversely matches the distance to fulcrum. Animated walkthrough coming.',
+      lede:'Lever arm: imagine a balance with x and y on the ends, fulcrum at z. The volume ratio inversely matches the distance to fulcrum. Fuller walkthrough coming.',
       worked:[{
         q:'How much 60% acid mixed with 20% acid yields 30% acid? (in ratio)',
         steps:['Distances from target (30): 60−30=30 (acid side), 30−20=10 (water side)','Ratio of volumes inversely: 60% : 20% = 10 : 30 = <b>1 : 3</b>'],
@@ -368,7 +368,7 @@ function render(){
     if (gotit) cls.push('gotit');
     if (p.status === 'stub') cls.push('stub');
     const statCls = gotit ? 'gotit' : (p.status === 'stub' ? 'stub' : '');
-    const statLbl = gotit ? 'Got it' : (p.status === 'stub' ? 'Stub' : 'Animated');
+    const statLbl = gotit ? 'Got it' : (p.status === 'stub' ? 'Stub' : 'Walkthrough');
     return `<div class="${cls.join(' ')}" data-id="${p.id}">
       <div class="meta">
         <span>${p.tag}</span>
@@ -393,12 +393,12 @@ function openDetail(id){
   const f = p.full || {};
   card.innerHTML = `
     <button class="detail-close" aria-label="Close">&times;</button>
-    <div class="tag">${p.tag} &middot; ${p.status === 'stub' ? 'Stub &middot; animation pending' : 'Animated walkthrough'}</div>
+    <div class="tag">${p.tag} &middot; ${p.status === 'stub' ? 'Stub' : 'Full walkthrough'}</div>
     <h2>${p.title}</h2>
     <p class="lede">${f.lede || p.desc}</p>
     <h4>The pattern</h4>
     <div class="formula-block">${p.formula}</div>
-    ${p.status === 'stub' ? `<div class="empty-stub"><b>Animation pending.</b> The text walkthrough below covers everything you need; the visual is queued for a follow-up build.</div>` : ''}
+    ${p.status === 'stub' ? `<div class="empty-stub"><b>Stub.</b> The text walkthrough below covers everything you need; a fuller version is queued for a follow-up build.</div>` : ''}
     ${(f.worked || []).map(w => `
       <h4>Worked example</h4>
       <div class="worked">

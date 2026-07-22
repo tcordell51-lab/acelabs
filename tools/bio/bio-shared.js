@@ -986,7 +986,8 @@ function onRetrievalAnswer(nodeId, sectionEl, card, opt) {
 function finishRetrievalAnswer(nodeId, sectionEl, card, opt, correct, qNum, confidence) {
   card.classList.add("locked");
   card.dataset.awaiting = "";
-  const data = NODES[nodeId].retrievals[qNum];
+  const nodeReg = NODES[nodeId];
+  const data = (nodeReg && nodeReg.retrievals && nodeReg.retrievals[qNum]) || {};
 
   // Hide the picker, show selection state.
   const picker = card.querySelector(".confidence-picker");
@@ -1020,6 +1021,10 @@ function finishRetrievalAnswer(nodeId, sectionEl, card, opt, correct, qNum, conf
 
   // STATE shape: backward-compatible. Older saves stored a string;
   // new saves store an object so the calibration view can read it.
+  // Some authored nodes (revived from the DOM) have no pre-seeded STATE
+  // entry — create one so answering doesn't throw and progress persists.
+  if (!STATE[nodeId]) STATE[nodeId] = { placed:{}, stage:0, retrievals:{} };
+  if (!STATE[nodeId].retrievals) STATE[nodeId].retrievals = {};
   STATE[nodeId].retrievals[qNum] = {
     result: correct ? "correct" : "wrong",
     confidence: confidence,
@@ -1041,7 +1046,7 @@ function finishRetrievalAnswer(nodeId, sectionEl, card, opt, correct, qNum, conf
     const subject = (window.location.pathname.match(/bio-(\w+)\.html/)||[,'cell'])[1];
     addAceCard({
       q: data.q, quickHit: data.qh, explanation: data.ex,
-      origin: NODES[nodeId].name + " · Q" + qNum + (fragile ? " (fragile)" : ""),
+      origin: ((nodeReg && nodeReg.name) || nodeId) + " · Q" + qNum + (fragile ? " (fragile)" : ""),
       subject, nodeId,
     });
   }
@@ -15748,10 +15753,17 @@ function init() {
     initInheritanceTree, initAlleleSim, initSelectionModes, initSpeciation, initFoodWeb,
   ].forEach(safe);
 
-  // Each node section
-  ["rep","trc","tln","mit","men","ap","mei","gly","wat","car","lip","pro","nuc","enz","pve","org","mtr","sig","krb","pho","dom","fer","nse","ped","hwb","cdv","nph","spc"].forEach(nodeId => {
-    const section = document.querySelector(`section.node[data-node="${nodeId}"]`);
-    if (!section) return;
+  // Each node section — bind to EVERY authored node present in the DOM.
+  // Previously this iterated a hardcoded allowlist that omitted ~90 quiz
+  // cards whose nodes weren't listed (they silently no-op'd). Deriving the
+  // list from the DOM revives every authored section; nodes without drag/
+  // sandbox markup simply bind nothing there, and the guards below tolerate
+  // sections that have no matching STATE/NODES registry entry.
+  const _boundNodes = new Set();
+  document.querySelectorAll("section.node[data-node]").forEach(section => {
+    const nodeId = section.getAttribute("data-node");
+    if (!nodeId || _boundNodes.has(nodeId)) return;
+    _boundNodes.add(nodeId);
     makeDragHandlers(nodeId, section);
     makeRetrievalHandlers(nodeId, section);
 
@@ -15786,7 +15798,8 @@ function init() {
       const isObj = raw && typeof raw === "object";
       const correct = isObj ? raw.result === "correct" : raw === "correct";
       const fragile = isObj && raw.fragile;
-      const data = NODES[nodeId].retrievals[q];
+      const nodeReg = NODES[nodeId];
+      const data = (nodeReg && nodeReg.retrievals && nodeReg.retrievals[q]) || {};
       card.querySelectorAll(".opt").forEach(o => {
         o.classList.add("disabled");
         if (o.dataset.correct === "true") o.classList.add("correct");
@@ -15804,7 +15817,15 @@ function init() {
         ? (fragile ? "Right — but you guessed. Spaced-review queued."
                    : "Correct")
         : "Why this is the answer";
-      fb.innerHTML = `<span class="lbl">${lbl}</span>${correct ? data.rt : data.wr}`;
+      let restoredBody = correct ? data.rt : data.wr;
+      if (_isAceCardPlaceholder(restoredBody)) {
+        const correctOpt = card.querySelector('.opt[data-correct="true"]');
+        const correctText = correctOpt ? correctOpt.textContent.replace(/^[A-D]\s*/, "").trim() : "";
+        restoredBody = correct
+          ? "Correct. " + (correctText || "")
+          : "The correct answer is: " + (correctText || "(see node above)") + ".";
+      }
+      fb.innerHTML = `<span class="lbl">${lbl}</span>${restoredBody}`;
     });
   });
 
