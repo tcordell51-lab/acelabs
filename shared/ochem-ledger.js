@@ -13,8 +13,10 @@
     try{ return JSON.parse(localStorage.getItem(key)||'{}'); }catch(e){ return {}; }
   }
   window.AceOChemLedger={
+    _prefix:'retold',
+    setPrefix:function(p){ this._prefix=p||'retold'; return this; },
     night:function(n,total){
-      var st=read('atDAT_retold_n'+n), done=0;
+      var st=read('atDAT_'+this._prefix+'_n'+n), done=0;
       for(var i=0;i<total;i++) if(st['s'+i]) done++;
       return {done:done,total:total,walked:total>0&&done>=total,started:done>0};
     },

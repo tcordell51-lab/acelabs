@@ -45,9 +45,10 @@
       route:'tools/qr/index.html' }
   ];
 
+  // PAT moved to covered 2026-07: the six-module PAT studio (tools/pat/) ships
+  // drills + teaching. It is still excluded from the TIMED Prometric mock, which
+  // matches the real-DAT break placement (see MOCKS note below).
   var NOT_COVERED = [
-    { key:'pat', name:'Perceptual Ability Test',  shortName:'PAT',
-      reason:'image bank not yet shipped' },
     { key:'rc',  name:'Reading Comprehension',    shortName:'RC',
       reason:'passage bank not yet shipped' }
   ];
@@ -97,7 +98,7 @@
     repairTool:
       'Ace Labs is a supplemental Bio, Gen Chem, OChem, and QR repair tool. Keep using your main DAT prep source.',
     noPatRc:
-      'Ace Labs does not include PAT (Perceptual Ability Test) or Reading Comprehension prep.',
+      'Ace Labs covers the four sciences plus a six-module PAT studio. It does not yet include Reading Comprehension prep, and PAT is excluded from the timed Prometric mock (matching the real-DAT break placement).',
     practiceEstimate:
       'Scores shown in Ace Labs are unofficial practice estimates, not ADA score reports.',
     noReviewerCredentials:
