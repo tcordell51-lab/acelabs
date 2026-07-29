@@ -104,6 +104,40 @@
   </div>
 </section>
 
+<!-- First-run / personalization banner: makes onboarding data (test date + flagged
+     weak sections) actually drive the home page. Additive, self-contained. -->
+<script>
+(function(){
+  function ready(fn){ if(document.readyState!=='loading') fn(); else document.addEventListener('DOMContentLoaded',fn); }
+  ready(function(){
+    var dash=document.getElementById('dashboard'); if(!dash) return;
+    var ob=null; try{ ob=JSON.parse(localStorage.getItem('aceLabs:onboarding')||'null'); }catch(e){}
+    var LABEL={bio:'Biology',gc:'General Chemistry',ochem:'Organic Chemistry',qr:'Quantitative Reasoning'};
+    var LEARN={bio:'tools/bio-retold/',gc:'tools/gchem/',ochem:'tools/organic/',qr:'tools/qr-retold/'};
+    var A='color:var(--al-gold-d,#8a6d24);font-weight:700;text-decoration:none;border-bottom:1px solid rgba(138,109,36,.4)';
+    var card='display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px;margin-bottom:18px;padding:14px 18px;border:1px solid var(--al-gold-border,rgba(201,168,76,.35));border-left:3px solid var(--al-gold,#c9a84c);border-radius:12px;background:var(--al-gold-bg,rgba(201,168,76,.08));font-size:14px;color:var(--al-ink,#2a2118)';
+    var html='';
+    if(!ob){
+      html='<div style="'+card+'"><span><b>New to Ace Labs?</b> Two minutes to set your test date and flag your weak sections &mdash; then the home page points you at the right place first.</span>'
+        +'<span style="margin-left:auto;white-space:nowrap"><a href="onboarding.html" style="'+A+'">Set up my path</a> &middot; <a href="diagnostic.html" style="'+A+'">take the free diagnostic</a></span></div>';
+    } else {
+      var bits=[];
+      if(ob.testDate){
+        var today=new Date(); today.setHours(0,0,0,0);
+        var dt=new Date(ob.testDate+'T00:00:00'); var days=Math.round((dt-today)/86400000);
+        if(days>=0 && days<3650){ bits.push('<b>'+days+' day'+(days===1?'':'s')+'</b> to your test'+(days<=14?' &mdash; <a href="test-week.html" style="'+A+'">open test-week mode</a>':'')); }
+      }
+      if(Array.isArray(ob.weakAreas)&&ob.weakAreas.length){
+        var links=ob.weakAreas.filter(function(k){return LABEL[k];}).map(function(k){ return '<a href="'+LEARN[k]+'" style="'+A+'">'+LABEL[k]+'</a>'; });
+        if(links.length) bits.push('You flagged '+links.join(', ')+' &mdash; start there in Retold');
+      }
+      if(bits.length) html='<div style="'+card+'"><span>'+bits.join('<span style="opacity:.5;margin:0 4px">&middot;</span>')+'</span></div>';
+    }
+    if(html){ var w=document.createElement('div'); w.innerHTML=html; if(w.firstChild) dash.insertBefore(w.firstChild, dash.firstChild); }
+  });
+})();
+</script>
+
 <!-- ========== LEARN TRACK — RETOLD ========== -->
 <section class="al-tools" id="retold-track">
   <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--al-gold-d);margin-bottom:6px;">Learn it &middot; content review</div>
@@ -256,6 +290,30 @@
         <span class="al-tool-stat" id="ochemMasteryStat">— mastered</span>
       </div>
     </a>
+    <a class="al-tool-tile al-tool-ochem" href="tools/pat/" target="_blank" rel="noopener">
+      <div class="al-tool-tag">Section · PAT · studio</div>
+      <h3 class="al-tool-name">Perceptual <em>Ability</em></h3>
+      <p class="al-tool-desc">The full PAT studio: six modules &mdash; keyholes, top-front-end, angle ranking, hole punching, pattern folding, cube counting &mdash; each with drills and teaching. The one section pure repetition actually moves.</p>
+      <div class="al-tool-features">
+        <span class="al-feat">Coach &middot; Thomas</span>
+        <span class="al-feat">6 modules</span>
+        <span class="al-feat">Drill + teach</span>
+      </div>
+      <div class="al-tool-foot"><span class="al-tool-cta">Open the PAT studio</span></div>
+    </a>
+
+    <a class="al-tool-tile al-tool-gc" href="tools/casper/" target="_blank" rel="noopener">
+      <div class="al-tool-tag">Applications &middot; Casper</div>
+      <h3 class="al-tool-name">Casper <em>Trainer</em></h3>
+      <p class="al-tool-desc">Self-training for the Casper situational-judgment test: response ladders, self-scoring, an eleven-station timed mock, and export. Rehearse the SJT the way schools actually read it.</p>
+      <div class="al-tool-features">
+        <span class="al-feat">Coach &middot; Thomas</span>
+        <span class="al-feat">11-station mock</span>
+        <span class="al-feat">Self-score</span>
+      </div>
+      <div class="al-tool-foot"><span class="al-tool-cta">Open the Casper trainer</span></div>
+    </a>
+
     <a class="al-classic-link" href="tools/ochem/v2/" target="_blank" rel="noopener" style="grid-column:1/-1;display:block;text-align:center;margin-top:4px;font-size:.82rem;color:#8a6d24;text-decoration:none;opacity:.82">Prefer to study topic by topic? Open the classic OChem course engine.</a>
 
   </div>

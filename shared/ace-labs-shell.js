@@ -382,7 +382,7 @@
             <div class="al-dash-lbl">Cross-tool mock</div>
             <div class="al-dash-num-small">100Q · 90 min</div>
             <div class="al-dash-sub">Survey of Natural Sciences format. Take one this week.</div>
-            <a href="unified-mock.html" class="al-dash-cta">Take mock</a>
+            <a href="prometric-mock.html" class="al-dash-cta">Take mock</a>
           </div>`;
       }
     }
