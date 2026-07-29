@@ -25,7 +25,7 @@
 .mock-row:hover{box-shadow:0 4px 14px rgba(13,32,24,.06); border-color:var(--al-line-2)}
 .mock-row[data-tier="diagnostic"]{border-left:5px solid #6e7c74}
 .mock-row[data-tier="standard"]{border-left:5px solid var(--al-gold-d)}
-.mock-row[data-tier="hard"]{border-left:5px solid #c25b3f}
+.mock-row[data-tier="final"]{border-left:5px solid var(--al-teal)}
 .mock-num{font-family:'Playfair Display',serif; font-size:32px; font-weight:900; color:var(--al-gold-d); line-height:1; text-align:center}
 .mock-info .mock-name{font-family:'Playfair Display',serif; font-size:18px; font-weight:700; line-height:1.2}
 .mock-info .mock-name em{color:var(--al-gold-d); font-style:italic}
@@ -66,7 +66,7 @@
 </header>
 
 <h1 class="cat-h">The mock <em>catalog.</em></h1>
-<p class="cat-sub">Three Prometric-style practice tests run through a timed proctored interface — the closest rehearsal Ace Labs ships for Sciences + QR. Each test is fixed and fully independent, with zero question overlap across the three.</p>
+<p class="cat-sub">Three Prometric-style practice tests run through a timed proctored interface — the closest rehearsal Ace Labs ships for Sciences + QR. All three are equivalent-difficulty forms drawn from the same banks — fixed, fully independent, with zero question overlap across the three.</p>
 <!-- Auto-hydrated by shared/scope.js -->
 <div id="alScopeStrip"></div>
 
@@ -82,7 +82,7 @@
 </div>
 
 <h2 style="font-family:'Playfair Display',serif; font-size:24px; font-weight:700; margin:0 0 6px">The 3 tests · <em style="color:var(--al-gold-d); font-style:italic">what each one is for</em></h2>
-<p class="cat-sub" style="margin-bottom:18px">Each test has a distinct role in your study arc. Take Test 1 early to read your floor, Test 2 mid-prep to confirm growth, and Test 3 close to your date as a final simulation.</p>
+<p class="cat-sub" style="margin-bottom:18px">The three tests are equivalent in difficulty — same banks, same difficulty mix, zero shared questions. What changes is when you take each one: Test 1 early to read your floor, Test 2 mid-prep to confirm growth, and Test 3 close to your date as a final simulation.</p>
 
 <div class="cat-cap-grid">
   <div class="cat-cap"><div class="lbl">Bio bank</div><div class="num">158 Q</div><div class="sub">rewritten + expert pool · used in mocks</div></div>
@@ -99,21 +99,27 @@
     <thead><tr><th>When</th><th>Test</th><th>Why</th></tr></thead>
     <tbody>
       <tr><td>Day 0 (week 1)</td><td>Test 1 · Diagnostic</td><td>Read your floor. Identify weakest subject.</td></tr>
-      <tr><td>Midpoint of prep</td><td>Test 2 · Standard</td><td>DAT-realistic difficulty. Confirm growth since Test 1.</td></tr>
-      <tr><td>1-2 weeks out</td><td>Test 3 · Final sim</td><td>Full pacing simulation. Use for confidence calibration, not cramming.</td></tr>
+      <tr><td>Midpoint of prep</td><td>Test 2 · Progress check</td><td>Same difficulty, all-new questions. Confirm growth since Test 1.</td></tr>
+      <tr><td>1-2 weeks out</td><td>Test 3 · Final sim</td><td>Full pacing simulation under test-week conditions. Not for cramming.</td></tr>
     </tbody>
   </table>
 </div>
 
 </div>
 <script>
+// All three tests are equivalent-difficulty, zero-overlap forms. They draw from
+// the same banks with an identical difficulty mix (verified: each test is
+// 11 level-1 / 74 level-2 / 43 level-3 / 12 level-4 items, about 8/53/30/9%).
+// only real differences are the questions themselves (no overlap) and when in
+// your prep you take each one — so every row shows the same difficulty profile.
+const SHARED_DIFF = [8, 53, 30, 9];
 const TESTS = [
-  {n:1, name:'<em>Diagnostic</em>', tier:'diagnostic', tag:'Take first · floor reading',  diff:[55,35,10,0],
-   desc:'Take this before heavy studying. Reads your accuracy floor across Bio, GC, OChem, and QR so you can see which topics need the most work.'},
-  {n:2, name:'Standard',            tier:'standard',   tag:'Midpoint · DAT-realistic',   diff:[30,50,20,0],
-   desc:'DAT-realistic difficulty mix. Compare your raw counts and per-topic accuracy to Test 1 to see where your prep has moved the needle.'},
-  {n:3, name:'Final sim',           tier:'hard',       tag:'1-2 weeks out · full sim',   diff:[20,45,25,10],
-   desc:'Hardest draw. Simulate test-week conditions: same time of day, no interruptions, timed end-to-end. Use the result to find any topics still missing, not for last-minute cramming.'}
+  {n:1, name:'<em>Diagnostic</em>', tier:'diagnostic', tag:'Take first · floor reading',  diff:SHARED_DIFF,
+   desc:'Take this before heavy studying. An equivalent-difficulty form that reads your accuracy floor across Bio, GC, OChem, and QR so you can see which topics need the most work.'},
+  {n:2, name:'Progress check',      tier:'standard',   tag:'Midpoint · confirm growth',  diff:SHARED_DIFF,
+   desc:'The same difficulty mix as Test 1 with a completely different, non-overlapping question set. Compare your raw counts and per-topic accuracy to Test 1 to see where your prep has moved the needle.'},
+  {n:3, name:'Final sim',           tier:'final',      tag:'1-2 weeks out · full sim',   diff:SHARED_DIFF,
+   desc:'A third independent form at the same difficulty. Simulate test-week conditions: same time of day, no interruptions, timed end-to-end. Use the result to find any topics still missing, not for last-minute cramming.'}
 ];
 
 const list = document.getElementById('mockList');
@@ -133,10 +139,10 @@ list.innerHTML = TESTS.map((m, idx) => `
         <div class="x" style="width:${m.diff[3]}%"></div>
       </div>
       <div class="legend">
-        <span><i style="background:var(--al-good)"></i>${m.diff[0]}% easy</span>
-        <span><i style="background:var(--al-gold)"></i>${m.diff[1]}% med</span>
+        <span><i style="background:var(--al-good)"></i>${m.diff[0]}% easiest</span>
+        <span><i style="background:var(--al-gold)"></i>${m.diff[1]}% core</span>
         <span><i style="background:#c25b3f"></i>${m.diff[2]}% hard</span>
-        ${m.diff[3] > 0 ? `<span><i style="background:var(--al-trap)"></i>${m.diff[3]}% trap</span>` : ''}
+        ${m.diff[3] > 0 ? `<span><i style="background:var(--al-trap)"></i>${m.diff[3]}% hardest</span>` : ''}
       </div>
     </div>
     <a class="mock-cta" href="prometric-mock.html?test=${idx}">Take Test ${m.n}</a>

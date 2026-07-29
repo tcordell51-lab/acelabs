@@ -485,6 +485,25 @@ body[data-page="gc-reco"]{
     saveMastery(m);
   }
 
+  // ── Engine bridge ────────────────────────────────────────────
+  // Mirror each graded recognition attempt into the GC engine's own
+  // attempt log so companion practice is not an isolated data island.
+  // One-way and additive: it resolves the active-student namespace the
+  // same way the engine does, then appends. It never trims the shared
+  // attempts array — that array belongs to the engine.
+  function gcEngineLogAttempt(rec){
+    try {
+      let active = null;
+      try { active = JSON.parse(localStorage.getItem('gc-rem-v1-meta:active')); } catch(e){}
+      const key = (active ? ('gc-rem-v1:student:' + active) : 'gc-rem-v1') + ':attempts';
+      let log;
+      try { log = JSON.parse(localStorage.getItem(key)); } catch(e){ log = null; }
+      if (!Array.isArray(log)) log = [];
+      log.push(rec);
+      localStorage.setItem(key, JSON.stringify(log));
+    } catch(e){}
+  }
+
   // ── Bootstrap ────────────────────────────────────────────────
   fetch('recognition-stimuli.json', { cache: 'no-store' })
     .then(r => r.json())
@@ -728,6 +747,14 @@ body[data-page="gc-reco"]{
     hist.push(round);
     saveHistory(hist);
     updateMastery(STATE.results);
+    // Bridge each graded item into the engine's attempt log.
+    const bridgeTs = Date.now();
+    STATE.results.forEach(r => gcEngineLogAttempt({
+      src: 'companion', tool: 'reco',
+      label: 'Recognition: ' + r.topic,
+      probId: 'reco:' + r.stimulusId,
+      correct: !!r.correct, ms: r.ms, t: bridgeTs
+    }));
 
     renderSummary();
     elSummary.classList.add('active');

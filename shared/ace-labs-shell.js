@@ -145,6 +145,54 @@
     return out;
   }
 
+  // ── Retold learning-track progress ───────────────────────────────────────
+  // The four Retold front doors write one localStorage key per night:
+  //   atDAT_<prefix>_n<N>  →  { s0:'ok'|'read', s1:..., ... }  (committed scenes)
+  // Prefixes: OChem='retold', GChem='gchem', Bio='bioret', QR='qrret'.
+  // These keys carry NO timestamp, so Retold SEEDS the freshness tiles only as a
+  // fallback (when no engine session exists) and drives the Resume card — it never
+  // competes with the engines on "most recent". Keyed to the same tool ids the
+  // engine rollup uses (qr/bio/gc/ochem) so both can share the subjects grid.
+  const RETOLD = {
+    ochem: { prefix:'retold', label:'OChem', href:'tools/organic/',    nights:13 },
+    gc:    { prefix:'gchem',  label:'GChem', href:'tools/gchem/',      nights:14 },
+    bio:   { prefix:'bioret', label:'Bio',   href:'tools/bio-retold/', nights:14 },
+    qr:    { prefix:'qrret',  label:'QR',    href:'tools/qr-retold/',  nights:14 }
+  };
+  function getRetoldFor(key){
+    const cfg = RETOLD[key];
+    const out = { touched:0, maxNight:0, scenes:0 };
+    if (!cfg) return out;
+    for (let n = 1; n <= cfg.nights; n++){
+      let p = null;
+      try { p = JSON.parse(localStorage.getItem('atDAT_' + cfg.prefix + '_n' + n) || 'null'); } catch(e){}
+      if (p && typeof p === 'object'){
+        const k = Object.keys(p).length;
+        if (k > 0){ out.touched++; out.scenes += k; if (n > out.maxNight) out.maxNight = n; }
+      }
+    }
+    return out;
+  }
+  function readOnboarding(){
+    try { return JSON.parse(localStorage.getItem('aceLabs:onboarding') || 'null'); } catch(e){ return null; }
+  }
+  // Which Retold track to feature. Prefer an onboarding-flagged weak area that has
+  // progress; otherwise the track the student has invested most in (most nights
+  // opened, then furthest night). Returns null when no track has been opened.
+  function pickRetoldResume(retold, ob){
+    const order = ['ochem','gc','bio','qr'];
+    const started = order.filter(k => retold[k] && retold[k].touched > 0);
+    if (!started.length) return null;
+    if (ob && Array.isArray(ob.weakAreas)){
+      for (let i = 0; i < ob.weakAreas.length; i++){
+        const w = ob.weakAreas[i];
+        if (retold[w] && retold[w].touched > 0) return w;
+      }
+    }
+    started.sort((a,b) => (retold[b].touched - retold[a].touched) || (retold[b].maxNight - retold[a].maxNight));
+    return started[0];
+  }
+
   // Aggregate due cards across tools.
   //   QR:      qr-rem-v2:sr is a single object keyed by question id —
   //            { [probId]: { ef, interval, due (ms epoch), reps, lastQ } }.
@@ -277,6 +325,14 @@
     const data = {};
     tools.forEach(t => data[t] = getMasteryFor(t));
 
+    // Retold learning-track rollup — seeds the freshness tiles as a fallback and
+    // drives the Resume card. Computed once, used by several tiles below.
+    const retold = {};
+    tools.forEach(t => retold[t] = getRetoldFor(t));
+    const ob = readOnboarding();
+    const retoldResume = pickRetoldResume(retold, ob);
+    const totalRetoldNights = tools.reduce((s, t) => s + retold[t].touched, 0);
+
     // Top-line numbers
     const cardsDue = aggregateCardsDue();
     const dashCardsDue = document.getElementById('dashCardsDue');
@@ -291,24 +347,39 @@
     const dashFill = document.getElementById('dashMasteryFill');
     if (dashFill) dashFill.style.width = overallPct + '%';
     const dashSub = document.getElementById('dashMasterySub');
-    if (dashSub) dashSub.textContent = totalMastered + ' of ' + totalModules + ' modules mastered across QR / Bio / GC / OChem';
+    if (dashSub){
+      if (totalMastered === 0 && totalRetoldNights === 0){
+        dashSub.textContent = 'Take the diagnostic to see this — mastery fills in as you use the engines.';
+      } else {
+        let masteryTxt = totalMastered + ' of ' + totalModules + ' modules mastered across QR / Bio / GC / OChem';
+        if (totalRetoldNights > 0) masteryTxt += ' · ' + totalRetoldNights + ' Retold night' + (totalRetoldNights === 1 ? '' : 's') + ' opened';
+        dashSub.textContent = masteryTxt;
+      }
+    }
 
-    // Last session
+    // Last session — engine timestamp wins; Retold (no timestamp) is the fallback.
     const last = getLastSessionAcrossTools(data);
+    const dashLast = document.getElementById('dashLastSession');
+    const dashLastSub = document.getElementById('dashLastSessionSub');
     if (last.ts){
-      const dashLast = document.getElementById('dashLastSession');
-      const dashLastSub = document.getElementById('dashLastSessionSub');
       if (dashLast) dashLast.textContent = fmtRelTime(last.ts);
       if (dashLastSub) dashLastSub.textContent = 'In the ' + ({qr:'QR',bio:'Bio',gc:'Gen Chem',ochem:'OChem'}[last.source] || 'unknown') + ' engine';
+    } else if (retoldResume){
+      const cfg = RETOLD[retoldResume];
+      if (dashLast) dashLast.textContent = 'Night ' + retold[retoldResume].maxNight + ' · ' + cfg.label + ' Retold';
+      if (dashLastSub) dashLastSub.textContent = 'In the Retold learning track';
+    } else {
+      if (dashLast) dashLast.textContent = 'No sessions yet';
+      if (dashLastSub) dashLastSub.textContent = 'Open an engine to start your streak';
     }
 
     // Recent practice tile (replaces former "Last Prometric mock" tile 2026-05-07).
     // No scores, no predictions — only freshness + activity volume + a CTA.
     const recent = getRecentPractice(data);
+    const dashRecentDate = document.getElementById('dashRecentDate');
+    const dashRecentSub = document.getElementById('dashRecentSub');
+    const dashRecentCta = document.getElementById('dashRecentCta');
     if (recent){
-      const dashRecentDate = document.getElementById('dashRecentDate');
-      const dashRecentSub = document.getElementById('dashRecentSub');
-      const dashRecentCta = document.getElementById('dashRecentCta');
       if (dashRecentDate) dashRecentDate.textContent = fmtRelTime(recent.ts);
       if (dashRecentSub){
         if (recent.weekCount > 0){
@@ -322,6 +393,47 @@
         dashRecentCta.setAttribute('target', '_blank');
         dashRecentCta.setAttribute('rel', 'noopener');
         dashRecentCta.textContent = 'Open ' + recent.label;
+      }
+    } else if (retoldResume){
+      // No engine practice yet, but the student has opened a Retold night — surface it.
+      const cfg = RETOLD[retoldResume];
+      const n = retold[retoldResume].maxNight;
+      if (dashRecentDate) dashRecentDate.textContent = cfg.label + ' Retold';
+      if (dashRecentSub) dashRecentSub.textContent = 'Night ' + n + ' of ' + cfg.nights + ' in the learning track';
+      if (dashRecentCta){
+        dashRecentCta.setAttribute('href', cfg.href + '?night=' + n);
+        dashRecentCta.setAttribute('target', '_blank');
+        dashRecentCta.setAttribute('rel', 'noopener');
+        dashRecentCta.textContent = 'Resume Night ' + n;
+      }
+    } else {
+      if (dashRecentDate) dashRecentDate.textContent = 'No sessions yet';
+      if (dashRecentSub) dashRecentSub.textContent = 'Open an engine or a Retold night to begin';
+      if (dashRecentCta){
+        dashRecentCta.setAttribute('href', 'retold/');
+        dashRecentCta.removeAttribute('target');
+        dashRecentCta.removeAttribute('rel');
+        dashRecentCta.textContent = 'Start with Retold';
+      }
+    }
+
+    // Resume card — Retold continuity, the learn-first track everyone starts in.
+    // Rendered into #dashResume at the top of the dashboard; empty when no track
+    // has been opened (so a brand-new user sees no misleading "Resume" prompt).
+    const resumeHost = document.getElementById('dashResume');
+    if (resumeHost){
+      if (retoldResume){
+        const cfg = RETOLD[retoldResume];
+        const n = retold[retoldResume].maxNight;
+        resumeHost.innerHTML =
+          '<div class="al-dash-card" style="border-left:4px solid var(--al-gold);background:var(--al-gold-bg);margin-bottom:14px">'
+          + '<div class="al-dash-lbl">Resume your learning track</div>'
+          + '<div class="al-dash-num-small">' + cfg.label + ' Retold — Night ' + n + ' of ' + cfg.nights + '</div>'
+          + '<div class="al-dash-sub">Pick up where you left off. Retold is the learn-first track — one night at a time in Thomas’s voice.</div>'
+          + '<a href="' + cfg.href + '?night=' + n + '" target="_blank" rel="noopener" class="al-dash-cta">Resume Night ' + n + ' — ' + cfg.label + ' Retold</a>'
+          + '</div>';
+      } else {
+        resumeHost.innerHTML = '';
       }
     }
 
@@ -351,9 +463,14 @@
       grid.innerHTML = tools.map(t => {
         const d = data[t];
         const pct = d.total > 0 ? Math.round(100 * d.mastered / d.total) : 0;
+        const r = retold[t];
+        const retoldLine = (r && r.touched > 0)
+          ? `<div style="font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--al-ink-mute); margin-top:4px">Retold · Night ${r.maxNight} / ${RETOLD[t].nights}</div>`
+          : '';
         return `<div class="al-dash-subject ${t}">
           <div class="lbl">${labels[t]}</div>
           <div class="pct">${d.mastered} / ${d.total}<span style="color:var(--al-ink-mute); font-weight:600; margin-left:6px">(${pct}%)</span></div>
+          ${retoldLine}
         </div>`;
       }).join('');
     }

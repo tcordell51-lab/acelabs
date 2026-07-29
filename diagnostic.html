@@ -782,9 +782,16 @@ body{
       <div class="diag-weak-list" id="weakList"></div>
     </div>
 
+    <!-- Next-step handoffs (populated in renderResults) -->
+    <div class="diag-weak-section" id="diagNextSteps" style="display:none">
+      <h3>What to do next</h3>
+      <p style="font-size:.86rem;color:var(--al-ink-mute);margin-bottom:1rem">Turn this diagnostic into action — start with your weakest section, then rehearse full pacing under real timing.</p>
+      <div class="diag-result-actions" id="diagHandoffs"></div>
+    </div>
+
     <!-- Actions -->
     <div class="diag-result-actions">
-      <button class="btn-primary" onclick="retakeDiagnostic()">Retake diagnostic</button>
+      <button class="btn-secondary" onclick="retakeDiagnostic()">Retake diagnostic</button>
       <a class="btn-secondary" href="ace-labs.html">Back to home</a>
     </div>
   </div>
@@ -1401,6 +1408,31 @@ function renderResults(result){
   const overall = totalQ > 0 ? Math.round((totalCorrect/totalQ)*100) : 0;
   document.getElementById('resultSubline').textContent =
     `${totalCorrect} of ${totalQ} correct (${overall}% overall). Focus on the three areas listed below.`;
+
+  // Next-step handoffs — route to the weakest section's engine plus a full mock,
+  // so the results screen leads somewhere instead of dead-ending at the homepage.
+  const SECTION_ENGINES = {
+    bio:   { href:'tools/bio/index.html',   label:'Biology' },
+    gc:    { href:'tools/gc/index.html',    label:'Gen Chem' },
+    ochem: { href:'tools/ochem/index.html', label:'Org Chem' },
+    qr:    { href:'tools/qr/index.html',    label:'Quant Reasoning' },
+  };
+  const ranked = Object.entries(perSection)
+    .filter(([, d]) => d && d.total > 0)
+    .sort((a, b) => a[1].pct - b[1].pct);
+  const weakestKey = ranked.length ? ranked[0][0] : null;
+  const eng = weakestKey ? SECTION_ENGINES[weakestKey] : null;
+  const handoffs = document.getElementById('diagHandoffs');
+  const nextWrap = document.getElementById('diagNextSteps');
+  if(handoffs && nextWrap){
+    const parts = [];
+    if(eng){
+      parts.push(`<a class="btn-primary" href="${eng.href}">Study ${eng.label} &mdash; your weakest section</a>`);
+    }
+    parts.push(`<a class="btn-primary" href="prometric-mock.html">Take a full mock next</a>`);
+    handoffs.innerHTML = parts.join('');
+    nextWrap.style.display = 'block';
+  }
 }
 
 /* ── Review prior result ────────────────────────────────── */

@@ -510,6 +510,27 @@ function saveMastered(){
   try{ localStorage.setItem(LS_KEY_MASTERED, JSON.stringify([...state.mastered])); }catch(e){}
 }
 
+/* ---------- Engine bridge ----------
+   Log each completed molecule into the GC engine's storage namespace as a
+   lightweight engagement signal so companion work is not an isolated data
+   island. One-way and additive; resolves the active-student namespace the
+   same way the engine does, then appends (capped so it cannot grow without
+   bound). Kept out of the engine's graded attempt log on purpose — a molecule
+   completion is an engagement event, not a scored question. */
+function gcEngineLogReview(rec){
+  try{
+    var active = null;
+    try{ active = JSON.parse(localStorage.getItem('gc-rem-v1-meta:active')); }catch(e){}
+    var key = (active ? ('gc-rem-v1:student:' + active) : 'gc-rem-v1') + ':companion-review';
+    var log;
+    try{ log = JSON.parse(localStorage.getItem(key)); }catch(e){ log = null; }
+    if(!Array.isArray(log)) log = [];
+    log.push(rec);
+    if(log.length > 100) log = log.slice(-100);
+    localStorage.setItem(key, JSON.stringify(log));
+  }catch(e){}
+}
+
 /* ---------- Tier unlock ---------- */
 function tierUnlocked(tier){
   if(!tier.unlockRule) return true;
@@ -1339,6 +1360,11 @@ function finishMolecule(){
   state.done = true;
   state.mastered.add(state.active.id);
   saveMastered();
+  gcEngineLogReview({
+    src:'companion', tool:'lewis',
+    label:'Lewis: ' + (state.active.formula || state.active.name || state.active.id),
+    itemId:'lewis:' + state.active.id, t:Date.now()
+  });
   renderTiers();
   renderWorkspace();
 }

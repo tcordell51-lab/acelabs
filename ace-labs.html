@@ -56,6 +56,9 @@
 
 <!-- ========== UNIFIED DASHBOARD ========== -->
 <section class="al-dash" id="dashboard">
+  <!-- Retold continuity: filled by shell render() when the student has opened any
+       Retold night (learn-first track). Empty otherwise — no card, no gap. -->
+  <div id="dashResume"></div>
   <div class="al-dash-row">
     <div class="al-dash-card al-dash-today">
       <div class="al-dash-lbl">Today</div>
@@ -63,20 +66,20 @@
            storage shape directly (Bio aceCards array; GC/QR `<ns>:sr` object keyed by
            question id with .due timestamp). No engine writes a single `<ns>:sr-due`
            aggregate key — see aggregateCardsDue() in shared/ace-labs-shell.js. -->
-      <div class="al-dash-num" id="dashCardsDue">—</div>
+      <div class="al-dash-num" id="dashCardsDue">0</div>
       <div class="al-dash-sub">retrieval cards due now (across all tools)</div>
       <a href="#tools" class="al-dash-cta">Study now</a>
     </div>
     <div class="al-dash-card">
       <div class="al-dash-lbl">Last study session</div>
-      <div class="al-dash-num-small" id="dashLastSession">No data yet</div>
-      <div class="al-dash-sub" id="dashLastSessionSub">Open any tool to start tracking</div>
+      <div class="al-dash-num-small" id="dashLastSession">No sessions yet</div>
+      <div class="al-dash-sub" id="dashLastSessionSub">Open an engine to start your streak</div>
     </div>
     <div class="al-dash-card al-dash-mastery">
       <div class="al-dash-lbl">Overall mastery</div>
-      <div class="al-dash-num" id="dashMasteryPct">—%</div>
+      <div class="al-dash-num" id="dashMasteryPct">0%</div>
       <div class="al-dash-bar"><div class="al-dash-bar-fill" id="dashMasteryFill" style="width:0%"></div></div>
-      <div class="al-dash-sub" id="dashMasterySub">— of — modules mastered across QR / Bio / GC / OChem</div>
+      <div class="al-dash-sub" id="dashMasterySub">Take the diagnostic to see this — mastery fills in as you use the engines.</div>
     </div>
     <div class="al-dash-card al-dash-recent">
       <div class="al-dash-lbl">Recent practice</div>
@@ -90,8 +93,8 @@
            Fallback (when no explicit lastSession): most recent attempt timestamp
            in <ns>:attempts. Question count = attempts in the last 7 days for the
            freshest engine. See renderRecentPractice() in shared/ace-labs-shell.js. -->
-      <div class="al-dash-num-small" id="dashRecentDate">No data yet</div>
-      <div class="al-dash-sub" id="dashRecentSub">Open any engine to start tracking</div>
+      <div class="al-dash-num-small" id="dashRecentDate">No sessions yet</div>
+      <div class="al-dash-sub" id="dashRecentSub">Open an engine or a Retold night to begin</div>
       <a href="#tools" class="al-dash-cta" id="dashRecentCta">Open the engine you used last</a>
     </div>
   </div>

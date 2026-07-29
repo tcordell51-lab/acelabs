@@ -507,6 +507,24 @@ body[data-page="gc-traps"]{
     elList.innerHTML = '<div class="tr-empty"><h3>Could not load trap library.</h3><p>' + escHtml(msg) + '</p></div>';
   }
 
+  // ── Engine bridge ────────────────────────────────────────────
+  // Record that the student opened the traps reference as a lightweight
+  // engagement signal in the GC engine's storage namespace, so this
+  // reference is not an isolated data island. One-way, additive, capped.
+  function gcEngineLogReview(rec){
+    try {
+      let active = null;
+      try { active = JSON.parse(localStorage.getItem('gc-rem-v1-meta:active')); } catch(e){}
+      const key = (active ? ('gc-rem-v1:student:' + active) : 'gc-rem-v1') + ':companion-review';
+      let log;
+      try { log = JSON.parse(localStorage.getItem(key)); } catch(e){ log = null; }
+      if (!Array.isArray(log)) log = [];
+      log.push(rec);
+      if (log.length > 100) log = log.slice(-100);
+      localStorage.setItem(key, JSON.stringify(log));
+    } catch(e){}
+  }
+
   // Load data
   fetch('traps-library.json', { cache: 'no-store' })
     .then(r => {
@@ -519,6 +537,7 @@ body[data-page="gc-traps"]{
       buildSummary(meta, STATE.all);
       wireFilters();
       render();
+      gcEngineLogReview({ src:'companion', tool:'traps', label:'Reviewed trap patterns', t:Date.now() });
     })
     .catch(err => {
       showError('Could not fetch traps-library.json — ' + err.message + '. If you are opening this file directly from disk, run a local server (e.g. python3 -m http.server) so the page can fetch the JSON.');

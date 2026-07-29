@@ -360,8 +360,158 @@ const STATE = {
   calcMemory: null,         // memory register (null = empty, M indicator off)
   ptOpen: false,            // periodic table popup state
   refOpen: false,           // OChem reagent reference popup state
+  onBreak: false,           // true while the optional break screen is showing
   visited: {}               // { sectionKey: Set of visited item idx }
 };
+
+// ---- In-progress persistence -----------------------------------------------
+// A running section is 80-90 minutes of work; a refresh, an accidental tab
+// close, or a phone auto-lock must not destroy it. We snapshot the live STATE
+// (answers, marks, section index, item index, and section-elapsed via the raw
+// timestamps) to localStorage on every answer, every navigation, and every
+// timer tick, and offer a Resume path on reload. Timing uses pause semantics:
+// on resume every stored timestamp is shifted forward by however long the test
+// was closed, so the section/break clock picks up exactly where it stopped
+// rather than expiring while the tab was shut.
+const PM_PROGRESS_KEY = 'al:prometricInProgress';
+
+function savePmProgress(){
+  if (STATE.finished) return;
+  if (STATE.testId == null) return;
+  try {
+    const snap = {
+      v: 1,
+      testId: STATE.testId,
+      testIdx: STATE.testIdx,
+      sectionIdx: STATE.sectionIdx,
+      itemIdx: STATE.itemIdx,
+      onBreak: !!STATE.onBreak,
+      answers: STATE.answers,
+      marked: STATE.marked,
+      visited: {
+        sons: Array.from((STATE.visited && STATE.visited.sons) || []),
+        qr:   Array.from((STATE.visited && STATE.visited.qr)   || [])
+      },
+      sectionStartedAt: STATE.sectionStartedAt,
+      sectionEndedAt: STATE.sectionEndedAt,
+      breakStartedAt: STATE.breakStartedAt,
+      testStartedAt: window._pmTestStartedAt || null,
+      savedAt: Date.now()
+    };
+    localStorage.setItem(PM_PROGRESS_KEY, JSON.stringify(snap));
+  } catch(e){}
+}
+
+function clearPmProgress(){
+  try { localStorage.removeItem(PM_PROGRESS_KEY); } catch(e){}
+}
+
+function readPmProgress(){
+  let s;
+  try { s = JSON.parse(localStorage.getItem(PM_PROGRESS_KEY) || 'null'); }
+  catch(e){ return null; }
+  if (!s || s.v !== 1 || s.testId == null) return null;
+  const tests = window.DAT_MOCK_TESTS || [];
+  let idx = tests.findIndex(t => t.id === s.testId);
+  if (idx < 0 && typeof s.testIdx === 'number' && s.testIdx >= 0 && s.testIdx < tests.length) idx = s.testIdx;
+  if (idx < 0) return null;
+  s._resolvedIdx = idx;
+  return s;
+}
+
+function buildSectionItems(t){
+  SECTIONS[0].items = [
+    ...t.sections.bio.map(p => ({ ...p, _sub: 'Biology' })),
+    ...t.sections.gc.map(p => ({ ...p, _sub: 'Gen Chem' })),
+    ...t.sections.ochem.map(p => ({ ...p, _sub: 'OChem' }))
+  ];
+  SECTIONS[1].items = t.sections.qr.map(p => ({ ...p, _sub: 'QR' }));
+}
+
+function resumePmProgress(s){
+  const tests = window.DAT_MOCK_TESTS || [];
+  const t = tests[s._resolvedIdx];
+  if (!t) return;
+  buildSectionItems(t);
+
+  STATE.testIdx = s._resolvedIdx;
+  STATE.testId = t.id;
+  STATE.sectionIdx = (s.sectionIdx === 1) ? 1 : 0;
+  const maxIdx = SECTIONS[STATE.sectionIdx].items.length - 1;
+  STATE.itemIdx = Math.min(Math.max(0, s.itemIdx || 0), Math.max(0, maxIdx));
+  STATE.answers = {
+    sons: (s.answers && s.answers.sons) || {},
+    qr:   (s.answers && s.answers.qr)   || {}
+  };
+  STATE.marked = {
+    sons: (s.marked && s.marked.sons) || {},
+    qr:   (s.marked && s.marked.qr)   || {}
+  };
+  STATE.visited = {
+    sons: new Set((s.visited && s.visited.sons) || []),
+    qr:   new Set((s.visited && s.visited.qr)   || [])
+  };
+  STATE.finished = false;
+  STATE.results = null;
+  STATE.onBreak = !!s.onBreak;
+
+  // Pause semantics: shift every stored timestamp forward by the closed duration
+  // so the section/break clock resumes where it stopped instead of burning the
+  // time the tab was shut.
+  const pauseOffset = Math.max(0, Date.now() - (s.savedAt || Date.now()));
+  STATE.sectionStartedAt = (s.sectionStartedAt || Date.now()) + pauseOffset;
+  window._pmTestStartedAt = (s.testStartedAt || s.sectionStartedAt || Date.now()) + pauseOffset;
+  STATE.breakStartedAt = s.breakStartedAt ? s.breakStartedAt + pauseOffset : null;
+  const se = {};
+  const srcSe = s.sectionEndedAt || {};
+  for (const k in srcSe){ if (srcSe[k]) se[k] = srcSe[k] + pauseOffset; }
+  STATE.sectionEndedAt = se;
+
+  const banner = document.getElementById('pmResumeBanner');
+  if (banner) banner.remove();
+  document.getElementById('pmStage').style.display = 'none';
+  enterRunMode();
+  if (STATE.onBreak){
+    showBreak(true);
+  } else {
+    startSectionTimer();
+    renderRun();
+  }
+}
+
+function renderResumeBanner(){
+  const existing = document.getElementById('pmResumeBanner');
+  if (existing) existing.remove();
+  const s = readPmProgress();
+  if (!s) return;
+  const tests = window.DAT_MOCK_TESTS || [];
+  const t = tests[s._resolvedIdx];
+  if (!t) return;
+  const answered = Object.keys((s.answers && s.answers.sons) || {}).length
+                 + Object.keys((s.answers && s.answers.qr)   || {}).length;
+  const where = s.onBreak
+    ? 'the optional break'
+    : (s.sectionIdx === 1 ? 'Quantitative Reasoning' : 'Survey of Natural Sciences');
+  const posLabel = s.onBreak ? '' : ` &middot; question ${(s.itemIdx || 0) + 1}`;
+  const banner = document.createElement('div');
+  banner.id = 'pmResumeBanner';
+  banner.className = 'pm-card';
+  banner.style.cssText = 'border:1px solid var(--al-gold-d); background:var(--al-gold-bg); margin-bottom:16px';
+  banner.innerHTML = `
+    <h3 style="margin-bottom:6px">Resume your in-progress test</h3>
+    <p style="margin-bottom:12px">You have an unfinished attempt on <b>${t.name}</b> &mdash; currently in ${where}${posLabel}, with ${answered} question${answered === 1 ? '' : 's'} answered. Your answers and section time were saved, so you can pick up exactly where you left off.</p>
+    <div style="display:flex; gap:10px; flex-wrap:wrap">
+      <button class="pm-start" id="pmResumeBtn" style="width:auto; padding:12px 22px">Resume test</button>
+      <button id="pmDiscardBtn" style="padding:12px 22px; background:var(--al-paper); border:1px solid var(--al-line); color:var(--al-ink-2); border-radius:12px; font-family:'JetBrains Mono',monospace; font-size:12px; font-weight:700; letter-spacing:.10em; text-transform:uppercase; cursor:pointer">Discard and start over</button>
+    </div>
+  `;
+  const stage = document.getElementById('pmStage');
+  const pill = stage.querySelector('.pm-pill');
+  if (pill && pill.nextSibling) stage.insertBefore(banner, pill.nextSibling);
+  else stage.insertBefore(banner, stage.firstChild);
+  document.getElementById('pmResumeBtn').addEventListener('click', () => resumePmProgress(s));
+  document.getElementById('pmDiscardBtn').addEventListener('click', () => { clearPmProgress(); banner.remove(); });
+}
 
 // ---- Splash: render test cards --------------------------------------------
 function renderTests(){
@@ -393,6 +543,7 @@ function renderTests(){
   }
 }
 renderTests();
+renderResumeBanner();
 
 document.getElementById('pmStartBtn').addEventListener('click', () => {
   const tests = window.DAT_MOCK_TESTS;
@@ -463,6 +614,9 @@ function actuallyStartTest(t){
   STATE.marked = { sons: {}, qr: {} };
   STATE.visited = { sons: new Set([0]), qr: new Set() };
   STATE.sectionStartedAt = Date.now();
+  STATE.sectionEndedAt = {};
+  STATE.breakStartedAt = null;
+  STATE.onBreak = false;
   STATE.finished = false;
   STATE.results = null;
   window._pmTestStartedAt = Date.now();
@@ -523,6 +677,7 @@ function startSectionTimer(){
       t.textContent = fmtTime(rem);
       t.classList.toggle('warn', rem < 300);
     }
+    savePmProgress();
     if (rem === 0){
       clearInterval(STATE.timerId);
       endSection(true);
@@ -623,6 +778,7 @@ function renderRun(){
     wrap.querySelectorAll('.pm-opt').forEach(x => x.classList.remove('selected'));
     o.classList.add('selected');
     renderGrid();
+    savePmProgress();
   }));
   // Toolrow Mark checkbox — only present on QR section now (toolrow is QR-only)
   const markCb = document.getElementById('pmMark');
@@ -650,6 +806,7 @@ function renderRun(){
       if (confirm('Exit the test now? Your progress will be lost.')){
         if (STATE.timerId) clearInterval(STATE.timerId);
         STATE.finished = true;
+        clearPmProgress();
         exitRunMode();
       }
     });
@@ -690,6 +847,7 @@ function renderRun(){
   renderMoleculeCanvases(wrap);
 
   renderGrid();
+  savePmProgress();
 }
 
 // ---- OChem reagent quick-reference popup ----------------------------------
@@ -879,9 +1037,11 @@ function endSection(timeExpired){
   }
 }
 
-function showBreak(){
-  STATE.breakStartedAt = Date.now();
+function showBreak(resuming){
+  if (!resuming) STATE.breakStartedAt = Date.now();
   STATE.breakRemaining = 30 * 60;
+  STATE.onBreak = true;
+  savePmProgress();
   const r = document.getElementById('pmRun');
   if (r) r.style.display = 'none';
 
@@ -904,6 +1064,7 @@ function showBreak(){
     const rem = Math.max(0, STATE.breakRemaining - elapsed);
     const t = document.getElementById('pmBreakTimer');
     if (t) t.textContent = fmtTime(rem);
+    savePmProgress();
     if (rem === 0){
       clearInterval(breakTick);
       startQrSection();
@@ -919,6 +1080,7 @@ function startQrSection(){
   if (b) b.remove();
   const r = document.getElementById('pmRun');
   if (r) r.style.display = '';
+  STATE.onBreak = false;
   STATE.sectionIdx = 1;
   STATE.itemIdx = 0;
   STATE.sectionStartedAt = Date.now();
@@ -1194,6 +1356,7 @@ function sanitizeMockRecord(rec){
 
 function finishTest(){
   STATE.finished = true;
+  clearPmProgress();
   if (STATE.timerId){ clearInterval(STATE.timerId); STATE.timerId = null; }
 
   // Tally per subject

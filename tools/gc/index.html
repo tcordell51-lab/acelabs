@@ -4409,6 +4409,15 @@ body[data-mode="B"] .sb-link[data-go="quick-ref"]{background:rgba(201,168,76,.10
     <div class="calib-grid" id="calibGrid"></div>
     <div class="muted" style="font-size:12.5px; margin-top:10px" id="calibInsight"></div>
   </div>
+  <div class="dash-card" style="margin-top:18px">
+    <h4>Back up &amp; restore progress</h4>
+    <div class="muted up" style="margin-bottom:10px">Your progress is saved on this device only. Download a backup file to keep it safe, then restore it if you clear your browser or move to another device.</div>
+    <div style="display:flex; gap:8px; flex-wrap:wrap">
+      <button class="btn sm" id="dashExportBtn">Download backup</button>
+      <button class="btn sm" id="dashImportBtn">Restore from file</button>
+      <input type="file" id="dashImportFile" accept="application/json" style="display:none"/>
+    </div>
+  </div>
 </section>
 
 <!-- ===================== PACING LADDER ===================== -->
@@ -4840,9 +4849,11 @@ const STUDENT = {
       }
       const targetSlug = obj.student;
       const existing = this.roster().find(s => s.slug === targetSlug);
-      const msg = existing
-        ? `Overwrite existing student "${existing.name}" (${targetSlug}) with this import?`
-        : `Import student "${obj.studentName || targetSlug}" as a new student?`;
+      const msg = targetSlug === 'default'
+        ? 'Restore this backup? It will replace the progress currently saved on this device.'
+        : existing
+          ? `Overwrite existing student "${existing.name}" (${targetSlug}) with this import?`
+          : `Import student "${obj.studentName || targetSlug}" as a new student?`;
       if (!confirm(msg)) return;
       // Wipe target namespace
       const targetNs = (targetSlug === 'default') ? this.defaultNs : (this.defaultNs + ':student:' + targetSlug);
@@ -17078,8 +17089,10 @@ const CHECKPOINT = {
   },
 
   _showFollowUpCard(type, opts){
-    // Recent attempts during this checkpoint (last 5/10/12 in attempts log)
-    const att = ST.get('attempts', []);
+    // Recent attempts during this checkpoint (last 5/10/12 in attempts log).
+    // Companion-sourced attempts are excluded so this reflects the checkpoint
+    // drill the student just finished, not interleaved companion practice.
+    const att = ST.get('attempts', []).filter(a => a.src !== 'companion');
     const checkpointSizes = {graduation: 5, tier: 10, weekly: 12};
     const n = checkpointSizes[type] || 5;
     const recent = att.slice(-n);
@@ -17311,14 +17324,20 @@ function renderCoachDash(){
       <button class="btn ghost">Generate fresh plan</button>
     </div>
   `;
-  // activity
-  const recent = att.slice(-10).reverse();
-  document.getElementById('coachActivity').innerHTML = recent.length === 0
+  // activity — engine attempts (including bridged companion drills) merged
+  // with companion engagement events, most recent first
+  const reviews = ST.get('companion-review', []).map(r => ({ t:r.t, label:r.label, correct:null }));
+  const acts = att
+    .map(a => ({ t:a.t, label: a.label || SKILL_BY_ID[a.skill]?.name || a.skill, correct: a.correct }))
+    .concat(reviews)
+    .sort((x, y) => y.t - x.t)
+    .slice(0, 10);
+  document.getElementById('coachActivity').innerHTML = acts.length === 0
     ? '— no activity yet —'
-    : '<div style="display:grid; gap:6px">' + recent.map(a => {
-        const skill = SKILL_BY_ID[a.skill]?.name || a.skill;
+    : '<div style="display:grid; gap:6px">' + acts.map(a => {
+        const dot = a.correct == null ? 'var(--gold)' : (a.correct ? 'var(--good)' : 'var(--trap)');
         const when = new Date(a.t).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
-        return `<div style="display:flex; gap:10px; align-items:center; padding:6px 10px; background:var(--paper-2); border-radius:7px; font-size:13px"><span class="dot" style="width:8px;height:8px;border-radius:50%;background:${a.correct?'var(--good)':'var(--trap)'}"></span><span style="flex:1">${skill}</span><span class="muted" style="font-size:11px">${when}</span></div>`;
+        return `<div style="display:flex; gap:10px; align-items:center; padding:6px 10px; background:var(--paper-2); border-radius:7px; font-size:13px"><span class="dot" style="width:8px;height:8px;border-radius:50%;background:${dot}"></span><span style="flex:1">${a.label}</span><span class="muted" style="font-size:11px">${when}</span></div>`;
       }).join('') + '</div>';
   // stuck
   document.getElementById('coachStuck').innerHTML = stuck.length === 0
@@ -17393,6 +17412,21 @@ document.getElementById('studentImportFile').addEventListener('change', (e) => {
   if (f) STUDENT.importFile(f);
   e.target.value = ''; // reset for re-pick
 });
+
+// Dashboard-level backup/restore — surfaces the same export/import as the
+// roster modal so a student can survive a cache clear without opening Coach Mode.
+(function(){
+  const exportBtn = document.getElementById('dashExportBtn');
+  const importBtn = document.getElementById('dashImportBtn');
+  const importFile = document.getElementById('dashImportFile');
+  if (exportBtn) exportBtn.addEventListener('click', () => STUDENT.exportCurrent());
+  if (importBtn && importFile) importBtn.addEventListener('click', () => importFile.click());
+  if (importFile) importFile.addEventListener('change', (e) => {
+    const f = e.target.files && e.target.files[0];
+    if (f) STUDENT.importFile(f);
+    e.target.value = '';
+  });
+})();
 
 // Show active student name in coach bar tag
 (function(){

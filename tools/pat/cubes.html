@@ -12,6 +12,7 @@ body{margin:0;background:radial-gradient(700px 420px at 85% -5%,rgba(201,168,76,
 .top{display:flex;align-items:baseline;gap:14px;border-bottom:1px solid var(--line);padding-bottom:14px;margin-bottom:20px;flex-wrap:wrap}
 .top .brand{font-family:var(--serif);font-size:20px}
 .top .brand span{color:var(--gold)}
+.top a{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--gold);text-decoration:none}
 .kick{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--amber)}
 h1{font-family:var(--serif);font-size:30px;margin:0 0 6px}
 .lede{color:var(--ink2);max-width:76ch;margin:0 0 18px;font-size:15px}
@@ -42,6 +43,7 @@ button.ans.wrong{border-color:var(--bad);box-shadow:0 0 0 1px var(--bad);color:v
   <div class="top">
     <div class="brand">Ace <span>PAT</span> Studio</div>
     <div class="kick">Module 5 · Cube Counting</div>
+    <a href="index.html">ALL MODULES</a>
   </div>
   <h1>The T-Chart</h1>
   <p class="lede"><b>Bottom to top, front to back, left to right — bottom first.</b> Number every cube in one clean sweep; the moment your eyes leave the order is when you mess up. Tally each cube by painted faces, then verify: <b>total tally marks must equal total cubes</b>.</p>
@@ -188,6 +190,8 @@ function renderDrill(){
   Array.prototype.forEach.call(d.querySelectorAll('.ans'),function(b){
     b.addEventListener('click',function(){
       if(answered)return; answered=true;
+      var ok=parseInt(b.dataset.n,10)===P.question.answer;
+      if(window.PatLedger)PatLedger.record('cubes',ok);
       Array.prototype.forEach.call(d.querySelectorAll('.ans'),function(x){
         x.disabled=true;
         if(parseInt(x.dataset.n,10)===P.question.answer)x.classList.add('right');
@@ -229,6 +233,7 @@ if(qp.get('mode')==='drill'){MODE='drill';document.getElementById('mode').textCo
 render();
 })();
 </script>
+<script src="pat-ledger.js"></script>
   <script src="/shared/acelabs-nav.js" defer></script>
 </body>
 </html>

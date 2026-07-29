@@ -209,8 +209,8 @@ h1{font-family:var(--serif);font-size:clamp(28px,5vw,40px);line-height:1.15;marg
   </div>
 </div>
 <div class="wrap">
-  <div class="nightbar"><div class="night" id="nightLine">Night 1 of 14 · in sync with your Booster bank: The Fundamentals</div><nav class="nightnav" id="nightNav" aria-label="Night navigation"></nav></div>
-  <h1 id="nightTitle">The Two Questions</h1>
+  <div class="nightbar"><div class="night" id="nightLine"></div><nav class="nightnav" id="nightNav" aria-label="Night navigation"></nav></div>
+  <h1 id="nightTitle"></h1>
 <p class="lede" id="nightLede"></p>
   <div class="legend" style="justify-content:center"><span style="color:var(--muted)">One idea, every organism: <b style="color:var(--ink)">read the structure</b>, and the function falls out.</span></div>
   <div id="coachReps"></div>
@@ -225,7 +225,7 @@ h1{font-family:var(--serif);font-size:clamp(28px,5vw,40px);line-height:1.15;marg
   </div>
   <div class="syll" style="display:none">
     <h2>The 14 Nights — in step with DAT Booster</h2>
-    <p class="sub">One night per Booster Organic question bank, same order, same names. Watch the Booster
+    <p class="sub">One night per Booster question bank, same order, same names. Watch the Booster
     videos, sit the night with your coach, walk it yourself, then run the bank - four passes over the
     same ground, each one deeper.</p>
     <ol id="syllList"></ol>
@@ -339,7 +339,7 @@ var CUR=parseInt(qsp.get('night')||'1',10); if(!NIGHTS[CUR]) CUR=1;
 var SCENES=NIGHTS[CUR].scenes;
 
 if(HOME){
-  // THE FRONT DOOR - one board for the whole OChem system. Walk the story
+  // THE FRONT DOOR - one board for the whole Bio system. Walk the story
   // here; every night hands you its reps in the engine. No second entry point.
   document.title='Bio, Retold — the front door';
   document.querySelector('.mode').style.display='none';
@@ -355,7 +355,7 @@ if(HOME){
     if(led.walked) walked++;
     else if(!firstOpen) firstOpen=n;
   }
-  if(!firstOpen) firstOpen=13;
+  if(!firstOpen) firstOpen=14;
   var contLed=window.AceOChemLedger?window.AceOChemLedger.night(firstOpen,NIGHTS[firstOpen].scenes.length):{done:0};
   var h='<div class="cont"><div><span class="ck">'+(walked===0?'Begin':(walked>=14?'You have walked all fourteen - run it again':'Continue'))+'</span>'
     +'<div class="ct">Night '+firstOpen+': '+NIGHTS[firstOpen].t+'</div>'
@@ -364,7 +364,7 @@ if(HOME){
   var mapEarned=0, mapTotal=0;
   MAP_NODES.forEach(function(nn){ mapTotal+=nn.total; mapEarned+=(window.AceOChemLedger?window.AceOChemLedger.wheelEarned(nn.fam):0); });
   h+='<div class="mapwrap" style="display:none">'
-    +'<p class="sub">Every master equation of gen chem, wired into one web. It starts dark and lights up as you finish nights - the quantity you just learned, and the equation that ties it in, glow on. '
+    +'<p class="sub">Every core idea, wired into one web. It starts dark and lights up as you finish nights - the quantity you just learned, and the equation that ties it in, glow on. '
     +(mapEarned>0?'<b style="color:#8a6d24">You have earned '+mapEarned+' of '+mapTotal+' reactions so far.</b>':'The gaps are what is left.')+'</p>'
     +'<div class="mapstage"><div id="mapHost"></div></div>'
     +'<div class="map-legend"><span><b style="background:#e9e2d0"></b>not yet touched</span><span><b style="background:#e6c86a"></b>started</span><span><b style="background:#1B7A4D"></b>mastered</span><span><b style="background:none;border:2px solid #8a6d24"></b>night walked</span></div></div>';
@@ -394,7 +394,7 @@ if(HOME){
     ol.appendChild(li);
   });
   document.getElementById('pcount').textContent=walked+' / 14 nights walked';
-  document.getElementById('pfill').style.width=(walked/13*100)+'%';
+  document.getElementById('pfill').style.width=(walked/14*100)+'%';
   document.getElementById('plabel').textContent='the story so far';
   return;
 }
@@ -435,11 +435,11 @@ var done={};
 try{ done=JSON.parse(localStorage.getItem(LS)||'{}'); }catch(e){}
 function save(){ try{ localStorage.setItem(LS,JSON.stringify(done)); }catch(e){} }
 
-// Misses feed the same Ace Log pipeline as every other OChem surface -
-// the portal shim listens for this exact shape (same tool id as the engine
-// so coaching queries see one OChem, with retold_* questionIds to trace).
+// Misses feed the same Ace Log pipeline as every other surface - the portal
+// shim listens for this exact shape, tagged per course (tool bio-retold /
+// section Biology, bio-retold_* questionIds) so the log gets one row per subject.
 function emitMiss(qid,hub,q,pickedIdx){
-  try{ window.parent.postMessage({type:'acedat:tool-miss',tool:'ochem-reaction-maps',section:'OChem',
+  try{ window.parent.postMessage({type:'acedat:tool-miss',tool:'bio-retold',section:'Biology',
     questionId:qid,hub:hub,stem:q.stem,
     pickedKey:String(pickedIdx),pickedText:String(q.opts[pickedIdx]).slice(0,120),
     correctKey:String(q.correct),correctText:String(q.opts[q.correct]).slice(0,120),
@@ -604,7 +604,7 @@ function render(){
       ex.innerHTML='<span class="v'+(ok?'':' miss')+'">'+(ok?'THAT IS THE SENTENCE.'
         :(pat?pat+'. THE NEXT SCENE IS OPEN ANYWAY.':'GOOD MISS - READ THIS, THEN THE NEXT SCENE IS OPEN ANYWAY.'))+'</span>'+sc.q.explain;
       box.appendChild(ex);
-      if(!ok) emitMiss('retold_n'+CUR+'_s'+si,'retold-night-'+CUR,sc.q,k);
+      if(!ok) emitMiss('bio-retold_n'+CUR+'_s'+si,'retold-night-'+CUR,sc.q,k);
       done['s'+si]= ok?'ok':'read'; save();
       var nx=document.createElement('button'); nx.className='reveal-btn'; nx.textContent='CONTINUE';
       nx.addEventListener('click',function(){render();drawMols();});
@@ -628,7 +628,7 @@ function render(){
         :(rpat?rpat+'. BACK IN YOUR POCKET NOW.':'GOOD - IT IS BACK IN YOUR POCKET NOW.'))+'</span>'+r.q.explain
         +' <a href="?night='+r.n+'" style="color:#a8641a">Revisit Night '+r.n+'</a>';
       box.appendChild(ex);
-      if(!ok) emitMiss('retold_recall_n'+CUR+'_from_n'+r.n,'retold-night-'+r.n,r.q,+b.dataset.oi);
+      if(!ok) emitMiss('bio-retold_recall_n'+CUR+'_from_n'+r.n,'retold-night-'+r.n,r.q,+b.dataset.oi);
       var rdSt={}; try{ rdSt=JSON.parse(localStorage.getItem(LSR)||'{}'); }catch(e){}
       rdSt['i'+k]=ok?'ok':'read';
       try{ localStorage.setItem(LSR,JSON.stringify(rdSt)); }catch(e){}
@@ -640,13 +640,12 @@ function render(){
   if(mode==='walk' && all && !gate.dataset.ritual){
     gate.dataset.ritual='1';
     var know=SCENES.map(function(sc){return '<span class="know-chip">'+sc.t+'</span>'}).join('');
-    var tease=NIGHTS[CUR+1]?'<p class="tease">Tomorrow, Night '+(CUR+1)+': <b>'+NIGHTS[CUR+1].t+'</b> - same sentence, new costume.</p>':'<p class="tease">That was the last night. The whole story is yours now.</p>';
+    var tease=NIGHTS[CUR+1]?'<p class="tease">Tomorrow, Night '+(CUR+1)+': <b>'+NIGHTS[CUR+1].t+'</b> - same idea, new system.</p>':'<p class="tease">That was the last night. The whole story is yours now.</p>';
     var head='<h2>Night '+CUR+' of 14 - walked.</h2><div class="knowrow">'+know+'</div>';
     var sy=SYLLABUS[CUR-1];
-    if(sy&&sy.reps&&sy.reps.length){
-      head+='<p class="tease">Now earn it - tonight&#39;s reps:</p><div class="links">'
-        +sy.reps.map(function(r){return '<a href="'+fromize(r[1],CUR)+'">'+r[0]+'</a>'}).join('')+'</div>';
-    }
+    var reps=(sy&&sy.reps&&sy.reps.length)?sy.reps:[['Drill it in the Bio engine',ENGINE]];
+    head+='<p class="tease">Now earn it - tonight&#39;s reps:</p><div class="links">'
+      +reps.map(function(r){return '<a href="'+fromize(r[1],CUR)+'">'+r[0]+'</a>'}).join('')+'</div>';
     head+=tease;
     if(NIGHTS[CUR+1]) head+='<div class="links"><a href="?night='+(CUR+1)+'">Open Night '+(CUR+1)+'</a></div>';
     gate.insertAdjacentHTML('afterbegin',head);

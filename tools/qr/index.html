@@ -2182,7 +2182,7 @@ body[data-theme="dark"] .dash-card .pat-due-row .go{color:var(--gold-m)}
   <a class="sb-link" data-go="drill"><span class="dot"></span><span class="label">Daily Drill</span><span class="meta">5 min · spaced</span></a>
   <a class="sb-link" data-go="pacing"><span class="dot"></span><span class="label">Pacing Ladder</span><span class="meta">4-tier</span></a>
   <a class="sb-link" data-go="test-sim"><span class="dot"></span><span class="label">Test-Day Simulation</span><span class="meta">40 Q</span></a>
-  <a class="sb-link" data-go="sarah-dash"><span class="dot"></span><span class="label">Coach Dashboard</span><span class="meta">tutor</span></a>
+  <a class="sb-link" data-go="sarah-dash" style="display:none"><span class="dot"></span><span class="label">Coach Dashboard</span><span class="meta">tutor</span></a>
 
   <div class="sb-stuck-btn" id="stuckBtn">I need a sec</div>
 
@@ -2214,7 +2214,7 @@ body[data-theme="dark"] .dash-card .pat-due-row .go{color:var(--gold-m)}
 </div>
 
 <!-- Feedback pill — bottom-right -->
-<button class="fb-pill" id="fbPill" onclick="FEEDBACK.open()" title="Leave a note for Tommy"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2 3h10a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1H6l-3 2v-2H2a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg><span class="fb-count" id="fbCount">0</span></button>
+<button class="fb-pill" id="fbPill" onclick="FEEDBACK.open()" title="Leave a note for Tommy" style="display:none"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2 3h10a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1H6l-3 2v-2H2a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg><span class="fb-count" id="fbCount">0</span></button>
 
 <!-- Feedback modal -->
 <div class="fb-modal" id="fbModal">
@@ -2273,14 +2273,16 @@ body[data-theme="dark"] .dash-card .pat-due-row .go{color:var(--gold-m)}
 <div class="topbar">
   <div class="tb-crumbs"><b id="crumbWhere">Welcome</b> · QR Remediation</div>
   <div class="tb-spacer"></div>
-  <!-- Edit Mode is tutor-only — hidden by default; revealed when ?coach=1 in URL OR localStorage 'qr-rem-v2:coach-mode'='on'. Students never see it. -->
+  <!-- Coach-only surfaces are hidden by default; revealed when ?coach=1 in URL OR localStorage 'qr-rem-v2:coach-mode'='on'. Students never see them. -->
   <button class="sarah-edit-toggle" id="btnEdit" title="Edit any trick or text in place" style="display:none">Edit Mode</button>
   <button class="sound-toggle" id="btnSound" title="Toggle sound feedback">Sound</button>
   <button class="btn ghost sm" id="btnTheme" title="Toggle dark mode">Theme</button>
   <button class="btn ghost sm" id="btnIso" title="Hide chrome">Isolate</button>
-  <button class="btn gold sm" id="btnSarah">Coach Mode</button>
+  <button class="btn gold sm" id="btnSarah" style="display:none">Coach Mode</button>
   <script>
-    // Coach-mode gate: Edit button visible only when explicitly opted in.
+    // Coach-mode gate: coach-only surfaces (Edit Mode, Coach Mode, the Coach
+    // Dashboard sidebar link, and the "Note for Tommy" feedback pill) are visible
+    // only when explicitly opted in. Default (no ?coach=1) keeps them hidden.
     (function(){
       try {
         var url = new URL(window.location.href);
@@ -2288,8 +2290,12 @@ body[data-theme="dark"] .dash-card .pat-due-row .go{color:var(--gold-m)}
           localStorage.setItem('qr-rem-v2:coach-mode', 'on');
         }
         if (localStorage.getItem('qr-rem-v2:coach-mode') === 'on') {
-          var btn = document.getElementById('btnEdit');
-          if (btn) btn.style.display = '';
+          ['btnEdit', 'btnSarah', 'fbPill'].forEach(function(id){
+            var el = document.getElementById(id);
+            if (el) el.style.display = '';
+          });
+          var dash = document.querySelector('.sb-link[data-go="sarah-dash"]');
+          if (dash) dash.style.display = '';
         }
       } catch (e) { /* noop */ }
     })();

@@ -108,7 +108,7 @@
     { id:'cdv', hub:'physiology', title:'Cardiovascular',      anchor:'node-cardiovascular',  tier:P.HIGH,   status:S.LIVE,    card:true,  diagnostic:true,  analytics:true },
     { id:'nph', hub:'physiology', title:'Renal · nephron',     anchor:'node-nephron',         tier:P.HIGH,   status:S.LIVE,    card:true,  diagnostic:true,  analytics:true },
     { id:'rsp', hub:'physiology', title:'Respiratory',         anchor:'node-respiratory',     tier:P.HIGH,   status:S.LIVE,    card:true,  diagnostic:true,  analytics:true },
-    { id:'end', hub:'physiology', title:'Endocrine',           anchor:'node-endocrine',       tier:P.HIGH,   status:S.LIVE,    card:true,  diagnostic:false, analytics:true },
+    { id:'end', hub:'physiology', title:'Endocrine',           anchor:'node-endocrine',       tier:P.HIGH,   status:S.LIVE,    card:true,  diagnostic:true, analytics:true },
     { id:'dig', hub:'physiology', title:'Digestive',           anchor:'node-digestive',       tier:P.MEDIUM, status:S.LIVE,    card:true,  diagnostic:false, analytics:true },
     { id:'rpd', hub:'physiology', title:'Reproductive',        anchor:'node-reproductive',    tier:P.MEDIUM, status:S.LIVE,    card:true,  diagnostic:false, analytics:true },
     { id:'imn', hub:'physiology', title:'Immune',              anchor:'node-immune',          tier:P.HIGH,   status:S.LIVE,    card:true,  diagnostic:false, analytics:true },
