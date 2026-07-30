@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Ace The DAT — Voiceover Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,700&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#0d2018; --paper:#f5f0e8; --paper-2:#ece5d6; --paper-3:#dfd4be;
+  --ink:#0d2018; --ink-2:#3a4a42; --ink-mute:#6e7c74;
+  --gold:#C9A84C; --gold-m:#E2C97A; --gold-d:#8C7235; --gold-bg:rgba(201,168,76,.10);
+  --teal:#1B3A2D; --teal-2:#2A5240; --teal-3:#3A6B54;
+  --line:rgba(13,32,24,.12);
+  --rec:#dc2626; --rec-bg:#fee2e2;
+  --good:#5FA874; --good-bg:#e3efe6;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);min-height:100vh;line-height:1.5;}
+.app{display:grid;grid-template-columns:320px 1fr;min-height:100vh;}
+
+/* Sidebar */
+.sb{background:var(--bg);color:var(--paper);padding:30px 20px;display:flex;flex-direction:column;gap:14px;}
+.sb-brand{margin-bottom:16px;}
+.sb-brand .mark{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--paper);}
+.sb-brand .mark em{color:var(--gold-m);font-style:italic;}
+.sb-brand .sub{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold-m);margin-top:4px;}
+.sb-h{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:rgba(245,240,232,.45);font-weight:700;margin-top:16px;margin-bottom:6px;}
+.tk-link{padding:12px 14px;background:rgba(245,240,232,.04);border:1px solid rgba(245,240,232,.10);border-left:3px solid var(--gold-d);border-radius:8px;cursor:pointer;transition:all .18s;display:flex;flex-direction:column;gap:4px;}
+.tk-link:hover{background:rgba(245,240,232,.08);border-left-color:var(--gold);}
+.tk-link.active{background:var(--gold);color:var(--ink);border-color:var(--gold);}
+.tk-link.active .tk-mod{color:var(--ink);}
+.tk-link.active .tk-prog{color:var(--ink);}
+.tk-link .tk-t{font-family:'Playfair Display',serif;font-size:14px;font-weight:700;line-height:1.2;}
+.tk-link .tk-mod{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(245,240,232,.55);font-weight:600;}
+.tk-link .tk-prog{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--gold-m);font-weight:700;margin-top:2px;}
+.tk-link.templated{border-left-color:var(--teal-3);}
+.tk-link.templated:hover{border-left-color:#5fa3ff;}
+.tk-link.active.templated{background:var(--gold);border-left-color:var(--gold-d);}
+.sb-group-h{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold-m);font-weight:700;margin-top:14px;margin-bottom:6px;padding-left:4px;opacity:.85;}
+.sb-group-h:first-child{margin-top:0;}
+.sb-foot{margin-top:auto;padding-top:14px;border-top:1px solid rgba(245,240,232,.10);font-size:11px;color:rgba(245,240,232,.45);line-height:1.55;}
+
+/* Main */
+.mn{padding:32px 40px;max-width:1100px;}
+.mn-h{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:8px;}
+.mn-h-l h1{font-family:'Playfair Display',serif;font-size:36px;font-weight:700;line-height:1.1;letter-spacing:-.02em;}
+.mn-h-l h1 em{color:var(--gold-d);font-style:italic;}
+.mn-h-l .module-tag{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--gold-d);letter-spacing:.16em;text-transform:uppercase;font-weight:700;margin-bottom:4px;}
+.mn-h-r{display:flex;gap:10px;flex-wrap:wrap;}
+.btn{padding:9px 18px;font-size:12px;background:var(--paper);border:1px solid var(--line);border-radius:7px;cursor:pointer;font-weight:700;font-family:'DM Sans',sans-serif;color:var(--ink);transition:all .15s;letter-spacing:.04em;}
+.btn:hover{border-color:var(--gold-d);color:var(--gold-d);}
+.btn.gold{background:var(--gold);border-color:var(--gold-d);color:var(--ink);}
+.btn.gold:hover{background:var(--gold-d);color:var(--paper);}
+.btn.teal{background:var(--teal);color:var(--paper);border-color:var(--teal);}
+.btn.teal:hover{background:var(--teal-2);}
+.btn:disabled{opacity:.4;cursor:not-allowed;}
+.intro{padding:14px 18px;background:var(--gold-bg);border-left:3px solid var(--gold-d);border-radius:6px;font-size:13px;line-height:1.55;color:var(--ink-2);margin-bottom:24px;margin-top:18px;}
+.intro b{color:var(--ink);}
+
+/* Status row */
+.status-row{display:flex;gap:14px;align-items:center;margin-bottom:18px;font-size:12px;color:var(--ink-2);}
+.status-pill{padding:3px 10px;border-radius:99px;background:var(--paper-2);font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;}
+.status-pill.recorded{background:var(--good-bg);color:var(--good);}
+.status-pill.empty{background:var(--paper-3);color:var(--ink-mute);}
+
+/* Mic permission warning */
+.mic-warn{padding:14px 18px;background:#fef3c7;border-left:3px solid #d97706;border-radius:6px;font-size:13px;color:#78350f;margin-bottom:18px;display:none;}
+.mic-warn.show{display:block;}
+.mic-warn b{color:#451a03;}
+
+/* Scene cards */
+.scenes{display:flex;flex-direction:column;gap:12px;}
+.scene{padding:18px 20px;background:var(--paper);border:1px solid var(--line);border-left:4px solid var(--ink-mute);border-radius:10px;transition:all .18s;}
+.scene.recorded{border-left-color:var(--good);}
+.scene.recording{border-left-color:var(--rec);background:var(--rec-bg);}
+.scene-h{display:flex;align-items:center;gap:14px;margin-bottom:10px;flex-wrap:wrap;}
+.scene-num{font-family:'JetBrains Mono',monospace;font-size:11px;background:var(--paper-2);padding:3px 8px;border-radius:4px;color:var(--ink-mute);font-weight:700;letter-spacing:.04em;}
+.scene-time{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--gold-d);font-weight:700;}
+.scene-tag{font-size:10px;padding:2px 8px;background:var(--paper-2);border:1px solid var(--line);border-radius:99px;color:var(--ink-mute);text-transform:uppercase;letter-spacing:.08em;font-weight:700;}
+.scene-tag.hook{background:rgba(95,168,116,.15);color:#3e7c54;border-color:#3e7c54;}
+.scene-tag.demo{background:rgba(106,138,168,.15);color:#1e6691;border-color:#1e6691;}
+.scene-tag.trap{background:rgba(245,158,11,.15);color:#b45309;border-color:#d97706;}
+.scene-tag.lock{background:rgba(201,168,76,.15);color:var(--gold-d);border-color:var(--gold-d);}
+.scene-status{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ink-mute);font-weight:700;letter-spacing:.04em;}
+.scene-status.ok{color:var(--good);}
+.scene-script{font-family:'Playfair Display',serif;font-size:18px;line-height:1.5;color:var(--ink);padding:12px 16px;background:var(--paper-2);border-radius:8px;margin-bottom:12px;font-style:italic;}
+.scene-script::before{content:'"';color:var(--gold-d);font-size:24px;}
+.scene-script::after{content:'"';color:var(--gold-d);font-size:24px;}
+.scene-meta{font-size:11px;color:var(--ink-mute);margin-bottom:10px;font-family:'JetBrains Mono',monospace;}
+.scene-meta b{color:var(--ink-2);}
+.scene-ctl{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+.audio-preview{flex:1;min-width:200px;}
+.audio-preview audio{width:100%;height:36px;}
+
+/* Recording dot pulse */
+.rec-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--rec);margin-right:6px;animation:pulse-rec 1.2s infinite;}
+@keyframes pulse-rec { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(1.2)} }
+
+/* Toast */
+.toast{position:fixed;bottom:20px;right:20px;padding:12px 18px;background:var(--ink);color:var(--paper);border-radius:8px;font-size:13px;font-weight:600;box-shadow:0 8px 24px rgba(0,0,0,.3);transform:translateY(100px);transition:transform .3s;z-index:100;max-width:380px;}
+.toast.show{transform:translateY(0);}
+.toast.error{background:var(--rec);}
+.toast.success{background:var(--good);}
+
+/* Mode toggle + face preview */
+.mode-row{display:flex;align-items:center;gap:14px;margin-bottom:18px;flex-wrap:wrap;}
+.mode-label{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-mute);font-weight:700;}
+.mode-toggle{display:inline-flex;background:var(--paper-2);border:1px solid var(--line);border-radius:99px;padding:3px;}
+.mode-opt{padding:6px 14px;font-size:12px;background:transparent;border:none;cursor:pointer;color:var(--ink-mute);font-weight:700;font-family:'DM Sans',sans-serif;border-radius:99px;transition:all .18s;}
+.mode-opt:hover{color:var(--ink);}
+.mode-opt.active{background:var(--gold);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12);}
+.mode-preview{display:flex;align-items:center;gap:10px;}
+.mode-preview video{width:90px;height:90px;border-radius:50%;object-fit:cover;border:3px solid var(--gold);box-shadow:0 4px 12px rgba(0,0,0,.18);background:var(--ink);}
+.mode-preview-label{font-size:10px;color:var(--gold-d);font-weight:700;letter-spacing:.12em;text-transform:uppercase;}
+
+/* Per-scene video preview (audio + face mode) */
+.scene-video-preview{flex:1;min-width:200px;display:flex;align-items:center;gap:10px;}
+.scene-video-preview video{width:60px;height:60px;border-radius:50%;object-fit:cover;border:2px solid var(--gold-d);background:var(--ink);}
+.scene-video-preview .vp-meta{font-size:10px;color:var(--ink-mute);font-family:'JetBrains Mono',monospace;font-weight:700;}
+
+/* Assembly workflow */
+.assembly{margin-top:32px;padding:22px 24px;background:var(--paper-2);border:1px solid var(--line);border-left:3px solid var(--teal);border-radius:10px;}
+.assembly h3{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;margin-bottom:12px;color:var(--ink);}
+.assembly ol{margin:0 0 14px 22px;line-height:1.7;font-size:14px;color:var(--ink-2);}
+.assembly ol li{margin-bottom:6px;}
+.assembly ol li b{color:var(--ink);}
+.assembly ol li code{font-family:'JetBrains Mono',monospace;font-size:12px;background:var(--paper);padding:1px 6px;border-radius:4px;color:var(--gold-d);border:1px solid var(--line);}
+.assembly .note{font-size:13px;color:var(--ink-2);font-style:italic;padding:10px 14px;background:var(--gold-bg);border-radius:6px;line-height:1.55;}
+.assembly .note b{color:var(--gold-d);font-style:normal;}
+
+@media (max-width:780px){
+  .app{grid-template-columns:1fr;}
+  .sb{padding:20px;}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+<aside class="sb">
+  <div class="sb-brand">
+    <div class="mark">Ace<em>The</em>DAT</div>
+    <div class="sub">Voiceover Studio</div>
+  </div>
+  <div class="sb-h">TikToks · Gen Chem</div>
+  <div id="tkList"></div>
+  <div class="sb-foot">
+    Records <b>per scene</b> using your browser's mic. Each scene saves as a separate <code>.webm</code> file. Bulk-download a TikTok's set, or download individual scenes.
+    <br><br>
+    Files are named <code>&lt;tiktok&gt;-&lt;scene&gt;.webm</code> for easy assembly in your audio editor.
+  </div>
+</aside>
+
+<main class="mn">
+  <div class="mn-h">
+    <div class="mn-h-l">
+      <div class="module-tag" id="modTag">Module · gen chem</div>
+      <h1 id="tkTitle">Pick a TikTok →</h1>
+    </div>
+    <div class="mn-h-r">
+      <button class="btn" id="btnPreview" onclick="previewTikTok()" title="Open the TikTok in a new tab">▶ Preview TikTok</button>
+      <button class="btn gold" id="btnDownloadAll" onclick="downloadAll()" disabled>⤓ Download all recordings</button>
+    </div>
+  </div>
+
+  <div class="intro">
+    <b>How to use:</b> Pick a recording mode (audio or audio+face), click <b>🎤 Record</b> on a scene, read the script aloud, click <b>⏹ Stop</b>. <b>▶</b> to preview, <b>🔄</b> to redo, <b>⤓</b> to download. Recordings live in your browser only — they're never uploaded anywhere. <b>Audio+face</b> mode captures your webcam alongside the mic so you have face-cam clips ready for picture-in-picture in your final TikTok edit (CapCut / DaVinci / Final Cut).
+  </div>
+
+  <div class="mode-row">
+    <span class="mode-label">Recording mode:</span>
+    <div class="mode-toggle">
+      <button class="mode-opt active" id="modeAudio" onclick="setMode('audio')">🎤 Audio only</button>
+      <button class="mode-opt" id="modeFace" onclick="setMode('face')">📹 Audio + face cam</button>
+    </div>
+    <div class="mode-preview" id="facePreviewWrap" style="display:none">
+      <video id="facePreview" autoplay muted playsinline></video>
+      <span class="mode-preview-label">live mic-on preview</span>
+    </div>
+  </div>
+
+  <div class="mic-warn" id="micWarn">
+    <b>⚠ Microphone access blocked.</b> Click the mic icon in your browser's address bar and allow microphone access for this page, then refresh.
+  </div>
+
+  <div class="status-row" id="statusRow"></div>
+  <div class="scenes" id="scenes"></div>
+
+  <div class="assembly">
+    <h3>Assembly workflow — turn your scenes into a real TikTok</h3>
+    <ol>
+      <li><b>Pick a mode.</b> Audio-only if you'll voiceover the existing animated TikTok template. Audio+face if you want picture-in-picture for native TikTok feel.</li>
+      <li><b>Record each scene.</b> Read the script aloud at the pace you'd say it during a lesson. Re-record any that don't feel right.</li>
+      <li><b>Download all.</b> Files arrive named <code>&lt;tiktok&gt;-&lt;scene&gt;-&lt;phase&gt;-&lt;mode&gt;.webm</code>.</li>
+      <li><b>Drop into your editor.</b> CapCut Web (free), DaVinci Resolve, or Final Cut. Import the animated TikTok HTML as a screen recording (or open it and screen-capture full-screen).</li>
+      <li><b>Layer the audio</b> over the screen recording — each audio scene aligns to its <code>t=</code> timestamp in the original timeline.</li>
+      <li><b>(Face mode)</b> Drop the face videos as a circle picture-in-picture (CapCut: "Mask" → Circle). Position top-right or bottom-left. Standard TikTok face-cam size: ~25% of screen height.</li>
+      <li><b>Add music</b> (royalty-free or TikTok library). Trending sounds boost reach but use lower volume so voice cuts through.</li>
+      <li><b>Trim aggressively.</b> If your final cut is over 45 sec, the algorithm typically penalizes. Cut intro silence, tighten beats.</li>
+      <li><b>Export 1080×1920 MP4</b> and post.</li>
+    </ol>
+    <p class="note"><b>Pro tip:</b> Record face scenes against a clean wall in good light. The voice quality matters more than the cinematography — students will forgive a plain background but not a muddy mic.</p>
+  </div>
+</main>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="topics.js"></script>
+<script>
+/* ============================================================
+   SCRIPTS — extracted from each TikTok's voice timeline
+   The 5 hand-crafted TikToks have bespoke per-scene scripts.
+   The 29 templated TikToks auto-generate from window.TOPICS (5 scenes each).
+   ============================================================ */
+const TIKTOKS = {
+  'buffers-hh': {
+    title: 'Buffers are ratios',
+    module: 'buffers',
+    file: 'buffers-hh-tiktok.html',
+    scenes: [
+      {t:0,     phase:'hook', text:"Buffers are ratios. Stop calculating, start comparing."},
+      {t:4500,  phase:'demo', text:"The Henderson-Hasselbalch equation. pH equals pKa plus log of base over acid."},
+      {t:11000, phase:'demo', text:"Equal HA and A minus. Ratio is one. Log of one is zero. pH equals the pKa exactly."},
+      {t:22000, phase:'demo', text:"Now add more acid. HA goes up, A minus stays. Ratio drops below one. pH drops below pKa."},
+      {t:32000, phase:'demo', text:"Reverse it. Add base. A minus dominates. Ratio above one. pH climbs."},
+      {t:43000, phase:'trap', text:"Trap. Invert the ratio. Base on top. Always. Mix it up, wrong sign on log, wrong pH."},
+      {t:51000, phase:'lock', text:"Lock it in. Buffers are ratios. More HA, pH down. More A minus, pH up. Equal, pH equals pKa."},
+      {t:70000, phase:'hook', text:"Buffers are ratios."}
+    ]
+  },
+  'weak-acid-sqrt': {
+    title: 'Weak = square root',
+    module: 'strong-weak',
+    file: 'weak-acid-sqrt-tiktok.html',
+    scenes: [
+      {t:0,     phase:'hook', text:"Weak equals square root. Skip the I-C-E table."},
+      {t:4500,  phase:'demo', text:"Hydrogen ion concentration equals the square root of K-a times initial concentration."},
+      {t:11000, phase:'demo', text:"Let's run a real example. Zero point one molar acetic acid. K-a equals one point eight times ten to the negative five."},
+      {t:18000, phase:'demo', text:"Step one. Plug in. Square root of K-a times C."},
+      {t:22000, phase:'demo', text:"Multiply inside. Square root of one point eight times ten to the negative six."},
+      {t:26000, phase:'demo', text:"Take the root. One point three four times ten to the negative three molar."},
+      {t:30000, phase:'demo', text:"Negative log gives pH of two point eight seven. Done. No I-C-E table needed."},
+      {t:40000, phase:'trap', text:"Trap. Don't treat weak like strong. Zero point one molar weak acid is not pH one. Always check the strong-acid list first."},
+      {t:48000, phase:'lock', text:"Lock it in. Weak equals square root. H plus equals root K-a C. O-H minus equals root K-b C. When K is less than ten to the negative three."},
+      {t:68000, phase:'hook', text:"Weak equals square root."}
+    ]
+  },
+  'gibbs-quadrant': {
+    title: 'Read the signs (4-quadrant ΔG)',
+    module: 'gibbs',
+    file: 'gibbs-quadrant-tiktok.html',
+    scenes: [
+      {t:0,     phase:'hook', text:"Four quadrants. Skip the math. Read the signs."},
+      {t:4500,  phase:'demo', text:"Delta G equals delta H minus T delta S. Sign of delta G tells you spontaneity."},
+      {t:11000, phase:'demo', text:"Negative delta H, positive delta S. Both forces drive forward. Always spontaneous. Doesn't matter what T is."},
+      {t:19500, phase:'demo', text:"Positive delta H, negative delta S. Both forces fight you. Never spontaneous. T cannot help."},
+      {t:27500, phase:'demo', text:"Positive delta H, positive delta S. Endothermic but disorder helps. Spontaneous only at high T, when T delta S overcomes delta H."},
+      {t:36500, phase:'demo', text:"Negative delta H, negative delta S. Exothermic helps but ordering hurts. Only spontaneous at low T, when delta H wins over T delta S."},
+      {t:46000, phase:'trap', text:"Trap. Mixing kilojoules and joules per kelvin. Delta S is in joules. Delta H is in kilojoules. Convert before computing or you're off by a thousand."},
+      {t:55000, phase:'lock', text:"Lock it in. Read the signs. Negative H positive S, always. Both positive, high T. Both negative, low T. Positive H negative S, never."},
+      {t:75000, phase:'hook', text:"Read the signs."}
+    ]
+  },
+  'q-vs-k': {
+    title: 'Q points the way (Q vs K)',
+    module: 'eq-kc',
+    file: 'q-vs-k-tiktok.html',
+    scenes: [
+      {t:0,     phase:'hook', text:"Q tells direction. K tells destination."},
+      {t:5000,  phase:'demo', text:"Compute Q. Compare to K. The marker tells you what happens."},
+      {t:10500, phase:'demo', text:"Q equals K. Already balanced. Nothing happens."},
+      {t:15000, phase:'demo', text:"Q smaller than K. Not enough products. System pushes right to make more."},
+      {t:24000, phase:'demo', text:"Q bigger than K. Too many products. System pushes left to undo some."},
+      {t:34000, phase:'demo', text:"Direction is set by where Q sits relative to K. K itself only moves if temperature changes."},
+      {t:38000, phase:'trap', text:"Trap. Memorize the direction. Q less than K, shift right toward products. Q greater than K, shift left toward reactants."},
+      {t:48000, phase:'lock', text:"Lock it in. Q points the way. Q less than K, right. Q greater than K, left. Q equals K, you're done."},
+      {t:67000, phase:'hook', text:"Q points the way."}
+    ]
+  },
+  'ksp-common-ion': {
+    title: 'Common ion kills solubility',
+    module: 'ksp',
+    file: 'ksp-common-ion-tiktok.html',
+    scenes: [
+      {t:0,     phase:'hook', text:"Common ion kills solubility. Silver chloride in pure water versus salt water. Watch what happens."},
+      {t:5500,  phase:'demo', text:"Silver chloride. Pure water on the left, point one molar sodium chloride on the right. Same K-s-p."},
+      {t:13000, phase:'demo', text:"On the left, silver chloride dissolves to about thirteen micromolar."},
+      {t:17000, phase:'demo', text:"On the right, the chloride is already there. Equilibrium shifts left. Almost nothing dissolves."},
+      {t:23000, phase:'demo', text:"Solubility drops by a factor of seven thousand four hundred. Three orders of magnitude."},
+      {t:35000, phase:'trap', text:"Trap. Same K-s-p does not mean same solubility. Adding any shared ion pushes equilibrium left."},
+      {t:44000, phase:'lock', text:"Lock it in. For an A-B salt, solubility goes from root K-s-p to K-s-p divided by the common ion concentration. Massive drop."},
+      {t:65000, phase:'hook', text:"Common ion kills."}
+    ]
+  }
+};
+
+/* ============================================================
+   AUTO-WIRE templated TikToks from window.TOPICS
+   Each templated topic produces 5 voice scenes matching the timeline
+   in topic-tiktok.html (hook → formula → bullets intro → trap → lock).
+   ============================================================ */
+(function autoWireTemplatedTikToks(){
+  if (!window.TOPICS) return;
+  // Tier ordering for sidebar grouping
+  const tierTag = (tag) => /Tier 0/.test(tag) ? 0 : /Tier 1/.test(tag) ? 1 : /Tier 2/.test(tag) ? 2 : 3;
+  Object.entries(window.TOPICS).forEach(([key, topic]) => {
+    if (TIKTOKS[key]) return; // skip if already custom
+    const stripHtml = s => (s||'').replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+    const sk = topic.speak || {};
+    TIKTOKS[key] = {
+      title: topic.title,
+      module: key,
+      file: 'topic-tiktok.html?topic=' + key,
+      tier: tierTag(topic.tag || ''),
+      templated: true,
+      scenes: [
+        {t:0,     phase:'hook',  text: sk.hook     || stripHtml(topic.hookSub) || stripHtml(topic.hookWord)},
+        {t:4500,  phase:'demo',  text: sk.formula  || stripHtml(topic.formula)},
+        {t:11000, phase:'demo',  text: sk.bulletsIntro || ('Three or four things to remember about ' + topic.title.toLowerCase() + '.')},
+        {t:36000, phase:'trap',  text: sk.trap     || ('Trap. ' + stripHtml(topic.trapH) + '. ' + stripHtml(topic.trapSub))},
+        {t:46000, phase:'lock',  text: sk.lock     || ('Lock it in. ' + stripHtml(topic.lockWord) + '. ' + stripHtml(topic.lockDecode))}
+      ]
+    };
+  });
+})();
+
+/* ============================================================
+   STATE
+   ============================================================ */
+const STATE = {
+  active: null,              // current TikTok key
+  recordings: {},            // {tikkey:{sceneIdx: {blob, mode}}}
+  recorder: null,            // active MediaRecorder
+  recordingScene: null,      // {tikkey, sceneIdx}
+  audioStream: null,         // active mic-only stream
+  faceStream: null,          // active mic+webcam stream
+  mode: 'audio',             // 'audio' or 'face'
+};
+
+/* Persistence — save blob URLs only as a recovery hint, blobs themselves
+   die with the page. Tell the user to download before closing. */
+function persistMeta(){
+  const meta = {};
+  Object.entries(STATE.recordings).forEach(([k, v]) => {
+    meta[k] = Object.keys(v).length;
+  });
+  try { localStorage.setItem('vo-studio:meta', JSON.stringify(meta)); } catch(e){}
+}
+
+/* ============================================================
+   TIKTOK SIDEBAR
+   ============================================================ */
+function renderTkList(){
+  const el = document.getElementById('tkList');
+  // Group by section: custom (5 hand-crafted), tier 0/1/2 templated
+  const groups = {custom:[], tier0:[], tier1:[], tier2:[]};
+  Object.entries(TIKTOKS).forEach(([k, t]) => {
+    if (!t.templated) groups.custom.push([k, t]);
+    else if (t.tier === 0) groups.tier0.push([k, t]);
+    else if (t.tier === 1) groups.tier1.push([k, t]);
+    else groups.tier2.push([k, t]);
+  });
+  const renderItem = ([k, t]) => {
+    const recCount = STATE.recordings[k] ? Object.keys(STATE.recordings[k]).length : 0;
+    const total = t.scenes.length;
+    const isActive = STATE.active === k;
+    return `<div class="tk-link ${isActive?'active':''} ${t.templated?'templated':''}" onclick="pickTikTok('${k}')">
+      <div class="tk-t">${t.title}</div>
+      <div class="tk-mod">${t.module}${t.templated?' · template':' · custom'}</div>
+      <div class="tk-prog">${recCount}/${total} scenes</div>
+    </div>`;
+  };
+  let html = '';
+  if (groups.custom.length){ html += '<div class="sb-group-h">★ Hand-crafted</div>' + groups.custom.map(renderItem).join(''); }
+  if (groups.tier0.length){ html += '<div class="sb-group-h">Tier 0 — Foundations</div>' + groups.tier0.map(renderItem).join(''); }
+  if (groups.tier1.length){ html += '<div class="sb-group-h">Tier 1 — Quantitative</div>' + groups.tier1.map(renderItem).join(''); }
+  if (groups.tier2.length){ html += '<div class="sb-group-h">Tier 2 — Patterns</div>' + groups.tier2.map(renderItem).join(''); }
+  el.innerHTML = html;
+}
+
+function pickTikTok(key){
+  STATE.active = key;
+  STATE.recordings[key] = STATE.recordings[key] || {};
+  renderTkList();
+  renderScenes();
+  document.getElementById('btnDownloadAll').disabled = false;
+}
+
+/* ============================================================
+   SCENE RENDERING
+   ============================================================ */
+function fmtTime(ms){
+  const total = Math.round(ms / 1000);
+  const m = Math.floor(total / 60);
+  const s = total % 60;
+  return `${m}:${s.toString().padStart(2, '0')}`;
+}
+
+function renderScenes(){
+  const tk = TIKTOKS[STATE.active]; if (!tk) return;
+  document.getElementById('tkTitle').textContent = tk.title;
+  document.getElementById('modTag').textContent = `Module · ${tk.module} · file: tiktoks/${tk.file}`;
+  const recs = STATE.recordings[STATE.active] || {};
+  const recordedCount = Object.keys(recs).length;
+  const total = tk.scenes.length;
+  document.getElementById('statusRow').innerHTML = `
+    <span class="status-pill ${recordedCount === total ? 'recorded' : 'empty'}">${recordedCount}/${total} scenes</span>
+    <span>est. total runtime: <b>${fmtTime(tk.scenes[tk.scenes.length-1].t + 5000)}</b></span>
+    <span style="margin-left:auto;color:var(--ink-mute);font-style:italic">Tip: read with the mood the scene suggests — hook = energetic, lock = grounded</span>
+  `;
+  const el = document.getElementById('scenes');
+  el.innerHTML = tk.scenes.map((s, i) => {
+    const rec = recs[i];
+    const recorded = !!rec;
+    const isFaceMode = recorded && rec.mode === 'face';
+    const isRec = STATE.recordingScene && STATE.recordingScene.tikkey === STATE.active && STATE.recordingScene.sceneIdx === i;
+    const ext = isFaceMode ? 'webm' : 'webm';
+    const modeTag = isFaceMode ? '📹 face' : '🎤 audio';
+    return `<div class="scene ${recorded?'recorded':''} ${isRec?'recording':''}" id="scene-${i}">
+      <div class="scene-h">
+        <span class="scene-num">SCENE ${(i+1).toString().padStart(2,'0')}</span>
+        <span class="scene-time">${fmtTime(s.t)}</span>
+        <span class="scene-tag ${s.phase}">${s.phase}</span>
+        <span class="scene-status ${recorded?'ok':''}">${isRec?'<span class="rec-dot"></span>RECORDING…':recorded?'✓ '+modeTag:'empty'}</span>
+      </div>
+      <div class="scene-script">${s.text}</div>
+      <div class="scene-meta">Filename: <b>${STATE.active}-${(i+1).toString().padStart(2,'0')}-${s.phase}.${ext}</b> · approx ${Math.ceil(s.text.split(' ').length / 2.5)} sec at conversational pace</div>
+      <div class="scene-ctl">
+        ${isRec
+          ? `<button class="btn" onclick="stopRecording()">⏹ Stop</button>`
+          : `<button class="btn gold" onclick="startRecording(${i})">${recorded?'🔄 Re-record':(STATE.mode==='face'?'📹 Record (face)':'🎤 Record')}</button>`}
+        ${recorded && !isFaceMode ? `<div class="audio-preview"><audio src="${URL.createObjectURL(rec.blob)}" controls></audio></div>` : ''}
+        ${recorded && isFaceMode ? `<div class="scene-video-preview"><video src="${URL.createObjectURL(rec.blob)}" controls muted></video><span class="vp-meta">face + audio · ~${Math.ceil(rec.blob.size/1024)} KB</span></div>` : ''}
+        ${recorded ? `<button class="btn" onclick="downloadScene(${i})">⤓ Download</button>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ============================================================
+   RECORDING — MediaRecorder API (audio-only OR audio+webcam)
+   ============================================================ */
+async function setMode(mode){
+  if (STATE.recorder) stopRecording();
+  STATE.mode = mode;
+  document.getElementById('modeAudio').classList.toggle('active', mode === 'audio');
+  document.getElementById('modeFace').classList.toggle('active', mode === 'face');
+  // Stop existing streams when switching
+  if (STATE.audioStream){ STATE.audioStream.getTracks().forEach(t => t.stop()); STATE.audioStream = null; }
+  if (STATE.faceStream){ STATE.faceStream.getTracks().forEach(t => t.stop()); STATE.faceStream = null; }
+  const previewWrap = document.getElementById('facePreviewWrap');
+  if (mode === 'face'){
+    try {
+      const s = await navigator.mediaDevices.getUserMedia({
+        audio: {echoCancellation:true, noiseSuppression:true, sampleRate:48000},
+        video: {width:{ideal:720}, height:{ideal:720}, facingMode:'user', frameRate:{ideal:30}}
+      });
+      STATE.faceStream = s;
+      const v = document.getElementById('facePreview');
+      v.srcObject = s;
+      previewWrap.style.display = 'flex';
+      document.getElementById('micWarn').classList.remove('show');
+    } catch(e){
+      document.getElementById('micWarn').classList.add('show');
+      toast('Camera or mic access denied — check browser permissions', 'error');
+      previewWrap.style.display = 'none';
+      // Roll back to audio mode
+      STATE.mode = 'audio';
+      document.getElementById('modeAudio').classList.add('active');
+      document.getElementById('modeFace').classList.remove('active');
+    }
+  } else {
+    previewWrap.style.display = 'none';
+  }
+  renderScenes();
+}
+
+async function ensureStream(){
+  if (STATE.mode === 'face'){
+    if (STATE.faceStream) return STATE.faceStream;
+    // Re-acquire if dropped
+    await setMode('face');
+    return STATE.faceStream;
+  }
+  if (STATE.audioStream) return STATE.audioStream;
+  try {
+    const s = await navigator.mediaDevices.getUserMedia({audio: {
+      echoCancellation: true, noiseSuppression: true, sampleRate: 48000
+    }});
+    STATE.audioStream = s;
+    document.getElementById('micWarn').classList.remove('show');
+    return s;
+  } catch(e){
+    document.getElementById('micWarn').classList.add('show');
+    toast('Mic access denied — check browser permissions', 'error');
+    throw e;
+  }
+}
+
+async function startRecording(sceneIdx){
+  if (STATE.recorder) stopRecording();
+  try {
+    const stream = await ensureStream();
+    if (!stream) return;
+    const isFace = STATE.mode === 'face';
+    let mime;
+    if (isFace){
+      mime = MediaRecorder.isTypeSupported('video/webm;codecs=vp9,opus') ? 'video/webm;codecs=vp9,opus'
+        : MediaRecorder.isTypeSupported('video/webm;codecs=vp8,opus') ? 'video/webm;codecs=vp8,opus'
+        : 'video/webm';
+    } else {
+      mime = MediaRecorder.isTypeSupported('audio/webm;codecs=opus') ? 'audio/webm;codecs=opus' : 'audio/webm';
+    }
+    const opts = isFace
+      ? {mimeType: mime, audioBitsPerSecond: 128000, videoBitsPerSecond: 2_500_000}
+      : {mimeType: mime, audioBitsPerSecond: 128000};
+    const rec = new MediaRecorder(stream, opts);
+    const chunks = [];
+    rec.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
+    rec.onstop = () => {
+      const blob = new Blob(chunks, {type: mime});
+      STATE.recordings[STATE.active] = STATE.recordings[STATE.active] || {};
+      STATE.recordings[STATE.active][sceneIdx] = {blob, mode: STATE.mode};
+      STATE.recordingScene = null;
+      STATE.recorder = null;
+      persistMeta();
+      renderTkList();
+      renderScenes();
+      toast('Scene ' + (sceneIdx+1) + ' recorded (' + (isFace?'face+audio':'audio') + ')', 'success');
+    };
+    rec.start();
+    STATE.recorder = rec;
+    STATE.recordingScene = {tikkey: STATE.active, sceneIdx};
+    renderScenes();
+  } catch(e){
+    console.error(e);
+  }
+}
+
+function stopRecording(){
+  if (STATE.recorder && STATE.recorder.state === 'recording'){
+    STATE.recorder.stop();
+  }
+}
+
+/* ============================================================
+   DOWNLOADS
+   ============================================================ */
+function downloadBlob(blob, filename){
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+function downloadScene(sceneIdx){
+  const tk = TIKTOKS[STATE.active];
+  const rec = STATE.recordings[STATE.active] && STATE.recordings[STATE.active][sceneIdx];
+  if (!rec) return;
+  const phase = tk.scenes[sceneIdx].phase;
+  const ext = rec.mode === 'face' ? 'webm' : 'webm';
+  const tag = rec.mode === 'face' ? 'face' : 'audio';
+  const fname = `${STATE.active}-${(sceneIdx+1).toString().padStart(2,'0')}-${phase}-${tag}.${ext}`;
+  downloadBlob(rec.blob, fname);
+}
+
+function downloadAll(){
+  if (!STATE.active) return;
+  const tk = TIKTOKS[STATE.active];
+  const recs = STATE.recordings[STATE.active] || {};
+  const keys = Object.keys(recs).sort((a,b) => a-b);
+  if (keys.length === 0){ toast('No recordings yet for this TikTok', 'error'); return; }
+  let i = 0;
+  function next(){
+    if (i >= keys.length){ toast(`Downloaded ${keys.length} files`, 'success'); return; }
+    const sceneIdx = +keys[i];
+    const phase = tk.scenes[sceneIdx].phase;
+    const rec = recs[sceneIdx];
+    const tag = rec.mode === 'face' ? 'face' : 'audio';
+    const fname = `${STATE.active}-${(sceneIdx+1).toString().padStart(2,'0')}-${phase}-${tag}.webm`;
+    downloadBlob(rec.blob, fname);
+    i++;
+    setTimeout(next, 350);
+  }
+  next();
+}
+
+function previewTikTok(){
+  if (!STATE.active) return;
+  const tk = TIKTOKS[STATE.active];
+  window.open(tk.file, '_blank');
+}
+
+/* ============================================================
+   TOAST
+   ============================================================ */
+let toastTimer = null;
+function toast(msg, kind){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (kind ? ' ' + kind : '');
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2400);
+}
+
+/* ============================================================
+   BOOT
+   ============================================================ */
+renderTkList();
+// Auto-pick first TikTok
+pickTikTok('buffers-hh');
+// Warn before unload if there are unsaved recordings
+window.addEventListener('beforeunload', e => {
+  const totalRecs = Object.values(STATE.recordings).reduce((acc, r) => acc + Object.keys(r).length, 0);
+  if (totalRecs > 0){
+    e.preventDefault();
+    e.returnValue = 'You have recordings that will be lost. Download them first.';
+  }
+});
+</script>
+  <script src="/shared/acelabs-nav.js" defer></script>
+</body>
+</html>
