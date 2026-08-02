@@ -143,7 +143,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);m
     <div class="mark">Ace<em>The</em>DAT</div>
     <div class="sub">Voiceover Studio</div>
   </div>
-  <div class="sb-h">TikToks · Gen Chem</div>
+  <div class="sb-h">TikToks · Trick Series</div>
   <div id="tkList"></div>
   <div class="sb-foot">
     Records <b>per scene</b> using your browser's mic. Each scene saves as a separate <code>.webm</code> file. Bulk-download a TikTok's set, or download individual scenes.
@@ -155,7 +155,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);m
 <main class="mn">
   <div class="mn-h">
     <div class="mn-h-l">
-      <div class="module-tag" id="modTag">Module · gen chem</div>
+      <div class="module-tag" id="modTag">Module · Trick Series</div>
       <h1 id="tkTitle">Pick a TikTok →</h1>
     </div>
     <div class="mn-h-r">
@@ -212,90 +212,10 @@ body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);m
 <script>
 /* ============================================================
    SCRIPTS — extracted from each TikTok's voice timeline
-   The 5 hand-crafted TikToks have bespoke per-scene scripts.
-   The 29 templated TikToks auto-generate from window.TOPICS (5 scenes each).
+   The Trick Series has no hand-crafted clips.
+   All Trick Series shorts auto-generate from window.TOPICS (5 scenes each).
    ============================================================ */
-const TIKTOKS = {
-  'buffers-hh': {
-    title: 'Buffers are ratios',
-    module: 'buffers',
-    file: 'buffers-hh-tiktok.html',
-    scenes: [
-      {t:0,     phase:'hook', text:"Buffers are ratios. Stop calculating, start comparing."},
-      {t:4500,  phase:'demo', text:"The Henderson-Hasselbalch equation. pH equals pKa plus log of base over acid."},
-      {t:11000, phase:'demo', text:"Equal HA and A minus. Ratio is one. Log of one is zero. pH equals the pKa exactly."},
-      {t:22000, phase:'demo', text:"Now add more acid. HA goes up, A minus stays. Ratio drops below one. pH drops below pKa."},
-      {t:32000, phase:'demo', text:"Reverse it. Add base. A minus dominates. Ratio above one. pH climbs."},
-      {t:43000, phase:'trap', text:"Trap. Invert the ratio. Base on top. Always. Mix it up, wrong sign on log, wrong pH."},
-      {t:51000, phase:'lock', text:"Lock it in. Buffers are ratios. More HA, pH down. More A minus, pH up. Equal, pH equals pKa."},
-      {t:70000, phase:'hook', text:"Buffers are ratios."}
-    ]
-  },
-  'weak-acid-sqrt': {
-    title: 'Weak = square root',
-    module: 'strong-weak',
-    file: 'weak-acid-sqrt-tiktok.html',
-    scenes: [
-      {t:0,     phase:'hook', text:"Weak equals square root. Skip the I-C-E table."},
-      {t:4500,  phase:'demo', text:"Hydrogen ion concentration equals the square root of K-a times initial concentration."},
-      {t:11000, phase:'demo', text:"Let's run a real example. Zero point one molar acetic acid. K-a equals one point eight times ten to the negative five."},
-      {t:18000, phase:'demo', text:"Step one. Plug in. Square root of K-a times C."},
-      {t:22000, phase:'demo', text:"Multiply inside. Square root of one point eight times ten to the negative six."},
-      {t:26000, phase:'demo', text:"Take the root. One point three four times ten to the negative three molar."},
-      {t:30000, phase:'demo', text:"Negative log gives pH of two point eight seven. Done. No I-C-E table needed."},
-      {t:40000, phase:'trap', text:"Trap. Don't treat weak like strong. Zero point one molar weak acid is not pH one. Always check the strong-acid list first."},
-      {t:48000, phase:'lock', text:"Lock it in. Weak equals square root. H plus equals root K-a C. O-H minus equals root K-b C. When K is less than ten to the negative three."},
-      {t:68000, phase:'hook', text:"Weak equals square root."}
-    ]
-  },
-  'gibbs-quadrant': {
-    title: 'Read the signs (4-quadrant ΔG)',
-    module: 'gibbs',
-    file: 'gibbs-quadrant-tiktok.html',
-    scenes: [
-      {t:0,     phase:'hook', text:"Four quadrants. Skip the math. Read the signs."},
-      {t:4500,  phase:'demo', text:"Delta G equals delta H minus T delta S. Sign of delta G tells you spontaneity."},
-      {t:11000, phase:'demo', text:"Negative delta H, positive delta S. Both forces drive forward. Always spontaneous. Doesn't matter what T is."},
-      {t:19500, phase:'demo', text:"Positive delta H, negative delta S. Both forces fight you. Never spontaneous. T cannot help."},
-      {t:27500, phase:'demo', text:"Positive delta H, positive delta S. Endothermic but disorder helps. Spontaneous only at high T, when T delta S overcomes delta H."},
-      {t:36500, phase:'demo', text:"Negative delta H, negative delta S. Exothermic helps but ordering hurts. Only spontaneous at low T, when delta H wins over T delta S."},
-      {t:46000, phase:'trap', text:"Trap. Mixing kilojoules and joules per kelvin. Delta S is in joules. Delta H is in kilojoules. Convert before computing or you're off by a thousand."},
-      {t:55000, phase:'lock', text:"Lock it in. Read the signs. Negative H positive S, always. Both positive, high T. Both negative, low T. Positive H negative S, never."},
-      {t:75000, phase:'hook', text:"Read the signs."}
-    ]
-  },
-  'q-vs-k': {
-    title: 'Q points the way (Q vs K)',
-    module: 'eq-kc',
-    file: 'q-vs-k-tiktok.html',
-    scenes: [
-      {t:0,     phase:'hook', text:"Q tells direction. K tells destination."},
-      {t:5000,  phase:'demo', text:"Compute Q. Compare to K. The marker tells you what happens."},
-      {t:10500, phase:'demo', text:"Q equals K. Already balanced. Nothing happens."},
-      {t:15000, phase:'demo', text:"Q smaller than K. Not enough products. System pushes right to make more."},
-      {t:24000, phase:'demo', text:"Q bigger than K. Too many products. System pushes left to undo some."},
-      {t:34000, phase:'demo', text:"Direction is set by where Q sits relative to K. K itself only moves if temperature changes."},
-      {t:38000, phase:'trap', text:"Trap. Memorize the direction. Q less than K, shift right toward products. Q greater than K, shift left toward reactants."},
-      {t:48000, phase:'lock', text:"Lock it in. Q points the way. Q less than K, right. Q greater than K, left. Q equals K, you're done."},
-      {t:67000, phase:'hook', text:"Q points the way."}
-    ]
-  },
-  'ksp-common-ion': {
-    title: 'Common ion kills solubility',
-    module: 'ksp',
-    file: 'ksp-common-ion-tiktok.html',
-    scenes: [
-      {t:0,     phase:'hook', text:"Common ion kills solubility. Silver chloride in pure water versus salt water. Watch what happens."},
-      {t:5500,  phase:'demo', text:"Silver chloride. Pure water on the left, point one molar sodium chloride on the right. Same K-s-p."},
-      {t:13000, phase:'demo', text:"On the left, silver chloride dissolves to about thirteen micromolar."},
-      {t:17000, phase:'demo', text:"On the right, the chloride is already there. Equilibrium shifts left. Almost nothing dissolves."},
-      {t:23000, phase:'demo', text:"Solubility drops by a factor of seven thousand four hundred. Three orders of magnitude."},
-      {t:35000, phase:'trap', text:"Trap. Same K-s-p does not mean same solubility. Adding any shared ion pushes equilibrium left."},
-      {t:44000, phase:'lock', text:"Lock it in. For an A-B salt, solubility goes from root K-s-p to K-s-p divided by the common ion concentration. Massive drop."},
-      {t:65000, phase:'hook', text:"Common ion kills."}
-    ]
-  }
-};
+const TIKTOKS = {};
 
 /* ============================================================
    AUTO-WIRE templated TikToks from window.TOPICS
@@ -355,7 +275,7 @@ function persistMeta(){
    ============================================================ */
 function renderTkList(){
   const el = document.getElementById('tkList');
-  // Group by section: custom (5 hand-crafted), tier 0/1/2 templated
+  // One group: the Trick Series shorts (all templated from window.TOPICS)
   const groups = {custom:[], tier0:[], tier1:[], tier2:[]};
   Object.entries(TIKTOKS).forEach(([k, t]) => {
     if (!t.templated) groups.custom.push([k, t]);
@@ -369,7 +289,7 @@ function renderTkList(){
     const isActive = STATE.active === k;
     return `<div class="tk-link ${isActive?'active':''} ${t.templated?'templated':''}" onclick="pickTikTok('${k}')">
       <div class="tk-t">${t.title}</div>
-      <div class="tk-mod">${t.module}${t.templated?' · template':' · custom'}</div>
+      <div class="tk-mod">${t.module}</div>
       <div class="tk-prog">${recCount}/${total} scenes</div>
     </div>`;
   };
@@ -377,7 +297,7 @@ function renderTkList(){
   if (groups.custom.length){ html += '<div class="sb-group-h">★ Hand-crafted</div>' + groups.custom.map(renderItem).join(''); }
   if (groups.tier0.length){ html += '<div class="sb-group-h">Tier 0 — Foundations</div>' + groups.tier0.map(renderItem).join(''); }
   if (groups.tier1.length){ html += '<div class="sb-group-h">Tier 1 — Quantitative</div>' + groups.tier1.map(renderItem).join(''); }
-  if (groups.tier2.length){ html += '<div class="sb-group-h">Tier 2 — Patterns</div>' + groups.tier2.map(renderItem).join(''); }
+  if (groups.tier2.length){ html += '<div class="sb-group-h">The Trick Series</div>' + groups.tier2.map(renderItem).join(''); }
   el.innerHTML = html;
 }
 
@@ -612,7 +532,7 @@ function toast(msg, kind){
    ============================================================ */
 renderTkList();
 // Auto-pick first TikTok
-pickTikTok('buffers-hh');
+pickTikTok(Object.keys(TIKTOKS)[0]);
 // Warn before unload if there are unsaved recordings
 window.addEventListener('beforeunload', e => {
   const totalRecs = Object.values(STATE.recordings).reduce((acc, r) => acc + Object.keys(r).length, 0);
