@@ -49,7 +49,8 @@
       for (var i = 0; i < cands.length; i++) {
         var el = cands[i]; if (el === a) continue;
         var r = el.getBoundingClientRect();
-        if (r.top <= 16 && r.width > vw * 0.6 && r.height >= 26 && r.height < 170) {
+        // wide top bar starting at the left edge: give it a left gutter so its brand clears the chip
+        if (r.top <= 16 && r.left <= 16 && r.width > vw * 0.6 && r.height >= 26 && r.height < 170) {
           var padL = parseFloat(getComputedStyle(el).paddingLeft) || 0;
           if (padL < need) el.style.paddingLeft = need + 'px';
           return;
