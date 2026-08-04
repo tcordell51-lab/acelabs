@@ -138,3 +138,25 @@ window.MINITEST_TRICKS = {
     },
   },
 };
+
+
+/* Black-background bespoke videos (~/acethedat-tiktok-studio, ported CSP-safe to /tricks/videos/).
+   Where a topic has one, the review prefers it over the green templated short. */
+window.MINITEST_BLACK = {
+  base: "/tricks/videos/",
+  map: {
+    ochem: {
+      "Aromaticity & EAS": "eas-directing",
+      "Acidity & pKa": "acidity-ranking",
+      "SN1/SN2/E1/E2": "sn1-vs-sn2",
+      "Stereochemistry (R/S, chirality)": "rs-configuration",
+      "IR & H-NMR spectroscopy": "nmr-two-steps",
+      "Alkene addition reactions": "alkene-map",
+    },
+    gchem: {
+      "Electrochemistry": "red-cat-an-ox",
+      "Moles & stoichiometry": "limiting-reagent",
+      "Periodic trends": "periodic-trends",
+    },
+  },
+};

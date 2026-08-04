@@ -189,6 +189,7 @@
 var BANK = window.MINITEST_BANK || {tests:[]};
 var REM  = window.MINITEST_REMEDIATION || {};
 var TK   = window.MINITEST_TRICKS || {series:{}, seriesBase:''};
+var BK   = window.MINITEST_BLACK || {base:'/tricks/videos/', map:{}};
 var LETTERS = ['A','B','C','D','E'];
 var SECT = {bio:'Biology', gchem:'General Chemistry', ochem:'Organic Chemistry', qr:'Quantitative Reasoning'};
 var RUNG_NAME = ['Foothills','First Ascent','The Ridge','The Steep Face','High Camp','The Traverse','The Ice Wall','The Cornice','The Death Zone','The Summit'];
@@ -207,6 +208,8 @@ store.lastDay  = store.lastDay  || null;
 function hash(s){ var h=0; for(var i=0;i<s.length;i++){ h=((h<<5)-h+s.charCodeAt(i))|0; } return (h>>>0).toString(36); }
 function qkey(q){ return q.section+'|'+q.topic+'|'+hash(q.stem); }
 function trickUrl(section, topic){
+  var b = BK.map && BK.map[section] && BK.map[section][topic];   // prefer the black bespoke video
+  if(b) return BK.base + b + '.html';
   var m = TK.series && TK.series[section]; var k = m && m[topic];
   return k ? (TK.seriesBase + k) : null;
 }
@@ -423,7 +426,7 @@ function missCard(q, pickedIdx, opts){
        : '<div class="ans">Correct: <b class="ok">'+LETTERS[q.correct]+') '+q.choices[q.correct]+'</b></div>')+
     '<div class="exp">'+q.explanation+'</div>'+
     '<div class="fixrow">'+
-      (trick?'<a class="fx trick" onclick="toggleTrick(\''+id+'\',\''+trick+'\')">Watch the 15-sec trick</a>':'')+
+      (trick?'<a class="fx trick" onclick="toggleTrick(\''+id+'\',\''+trick+'\')">Watch the trick</a>':'')+
       '<a class="fx learn" href="'+learn+'" target="_blank" rel="noopener">Learn it · Retold ('+hint+')</a>'+
       '<a class="fx drill" href="'+review+'" target="_blank" rel="noopener">Drill it · engine</a>'+
     '</div><div class="trick-embed" id="'+id+'"></div>'+
