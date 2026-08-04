@@ -485,6 +485,22 @@ function renderMistakes(){
     '<a class="back" onclick="go(\'ladder\')">To the Ladder</a>';
 }
 
+/* one-time migration: pull misses from pre-existing attempts (old shape carried misses[])
+   into the new master list, reconstructing each question from the bank by test + index. Idempotent. */
+(function migrateMisses(){
+  if(!store.attempts||!store.attempts.length) return; var changed=false;
+  store.attempts.forEach(function(a){
+    if(!a.misses||!a.misses.length||!(a.n>=1)) return;
+    var t=testByN(a.n); if(!t) return;
+    a.misses.forEach(function(mm){
+      var q=t.questions[mm.qi]; if(!q) return; var key=qkey(q);
+      if(store.mistakes[key]) return;
+      store.mistakes[key]={section:q.section,topic:q.topic,tier:a.tier||t.tier,q:q,wrong:1,resolved:false,ts:Date.now()}; changed=true;
+    });
+  });
+  if(changed) save();
+})();
+
 /* boot */
 renderStreak(); renderLadder();
 </script>
