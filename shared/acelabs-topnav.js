@@ -13,6 +13,7 @@
     { l: 'Engines · Review',  h: '/ace-labs.html#tools' },
     { l: 'Prometric mocks',   h: '/prometric-mock.html' },
     { l: 'Mock catalog',      h: '/mocks-catalog.html' },
+    { l: 'The Climb',         h: '/tools/minitests/' },
     { l: 'PAT',               h: '/tools/pat/' },
     { l: 'Trick sheets',      h: '/tricks/' },
     { l: 'This week',         h: '/ace-labs.html#plan' },
