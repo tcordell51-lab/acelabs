@@ -104,6 +104,13 @@ window.MINITEST_TRICKS = {
       'Periodic trends': 'periodic-trends',
       'Electrochemistry': 'electrochem',
       'Moles & stoichiometry': 'limiting-reagent',
+      'Atomic structure & quantum numbers': 'gchem-atomic',
+      'Bonding, Lewis & VSEPR': 'gchem-bonding',
+      'Gas laws': 'gchem-gas',
+      'Thermochemistry': 'gchem-thermo',
+      'Kinetics': 'gchem-kinetics',
+      'Equilibrium': 'gchem-equilibrium',
+      'Acids, bases & pH': 'gchem-acids',
     },
     bio: {
       'Biomolecules': 'bio-biomolecules',
