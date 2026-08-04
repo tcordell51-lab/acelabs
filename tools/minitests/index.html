@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>The Climb — Ace Labs Mini Tests</title>
-<meta name="description" content="Ten DAT mini tests that climb in difficulty, sciences + QR, timed, with every miss routed to the exact fix.">
+<meta name="description" content="Ten DAT mini tests that climb in difficulty, sciences + QR, timed. Every miss lands on a master mistake list and routes to the exact trick, night, and drill that fixes it.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,700&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
@@ -24,8 +24,6 @@
   h1,h2,h3{font-family:var(--serif);font-weight:700;margin:0;letter-spacing:-.01em}
   a{color:inherit}
   .wrap{max-width:1080px;margin:0 auto;padding:0 22px 90px}
-
-  /* top bar */
   .top{display:flex;align-items:center;gap:16px;padding:20px 0 18px;border-bottom:1px solid var(--line);flex-wrap:wrap}
   .brand{font-family:var(--serif);font-size:20px;font-weight:800}
   .brand em{font-style:italic;color:var(--gold)}
@@ -33,18 +31,31 @@
   .top .sp{flex:1}
   .streak{font-family:var(--mono);font-size:12px;letter-spacing:.06em;color:var(--ink2);border:1px solid var(--line);border-radius:99px;padding:6px 13px}
   .streak b{color:var(--gold);font-weight:700}
-  .navlink{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink2);text-decoration:none;padding:7px 12px;border-radius:8px;cursor:pointer}
+  .navlink{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink2);text-decoration:none;padding:7px 12px;border-radius:8px;cursor:pointer;position:relative}
   .navlink:hover{background:var(--gold-bg);color:var(--ink)}
   .navlink.on{background:var(--ink);color:var(--bg)}
+  .navlink .ct{font-size:10px;color:var(--bad);font-weight:700;margin-left:5px}
 
-  /* ladder */
   .hero{padding:38px 0 10px}
   .eyebrow{font-family:var(--mono);font-size:11.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold)}
   h1.big{font-size:clamp(34px,6.5vw,54px);line-height:1.03;margin:12px 0 0}
   h1.big em{font-style:italic;color:var(--gold)}
-  .lede{color:var(--ink2);font-size:17px;max-width:64ch;margin:16px 0 0}
+  .lede{color:var(--ink2);font-size:17px;max-width:66ch;margin:16px 0 0}
   .lede b{color:var(--ink)}
-  .ladder{display:grid;gap:12px;margin-top:34px}
+
+  /* mistake banner (ladder) */
+  .mbanner{margin-top:26px;background:linear-gradient(160deg,rgba(217,138,126,.12),#101813 70%);border:1px solid rgba(217,138,126,.4);border-radius:16px;padding:18px 22px;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+  .mbanner .t{font-family:var(--serif);font-size:20px}
+  .mbanner .t b{color:var(--bad)}
+  .mbanner p{margin:2px 0 0;font-size:13.5px;color:var(--ink2)}
+  .mbanner .sp{flex:1}
+
+  .daily{margin-top:14px;background:linear-gradient(160deg,#17140c,#101813);border:1px solid var(--line2);border-radius:16px;padding:16px 22px;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+  .daily .t{font-family:var(--serif);font-size:18px}
+  .daily p{margin:2px 0 0;font-size:13px;color:var(--ink2)}
+  .daily .sp{flex:1}
+
+  .ladder{display:grid;gap:12px;margin-top:26px}
   .rung{display:grid;grid-template-columns:66px 1fr auto;gap:18px;align-items:center;background:var(--panel2);
     border:1px solid var(--line);border-radius:16px;padding:16px 20px;cursor:pointer;transition:transform .14s,border-color .14s,background .14s;text-decoration:none;color:inherit}
   .rung:hover{transform:translateY(-2px);border-color:var(--gold);background:var(--raise)}
@@ -61,24 +72,19 @@
   .rung .best span{font-size:13px;color:var(--ink3)}
   .pbar{height:5px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden;margin-top:9px}
   .pbar > i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),var(--goldhi))}
-
   .subrow{display:flex;gap:8px;margin-top:9px;flex-wrap:wrap}
   .chip{font-family:var(--mono);font-size:9.5px;letter-spacing:.05em;text-transform:uppercase;padding:3px 8px;border-radius:5px;color:var(--ink2)}
   .chip.bio{background:rgba(87,180,135,.14);color:var(--bio)} .chip.gchem{background:rgba(91,143,214,.14);color:var(--gchem)}
   .chip.ochem{background:rgba(155,123,208,.14);color:var(--ochem)} .chip.qr{background:rgba(217,138,168,.14);color:var(--qr)}
 
-  .daily{margin-top:26px;background:linear-gradient(160deg,#17140c,#101813);border:1px solid var(--line2);border-radius:16px;padding:18px 22px;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
-  .daily .t{font-family:var(--serif);font-size:19px}
-  .daily p{margin:2px 0 0;font-size:13.5px;color:var(--ink2)}
-  .daily .sp{flex:1}
-
-  /* buttons */
   button{font:inherit;cursor:pointer;border-radius:10px;border:1px solid var(--line2);background:var(--panel);color:var(--ink);padding:11px 18px;transition:background .14s,border-color .14s}
   button:hover{background:var(--raise)}
   button.gold{background:linear-gradient(180deg,var(--goldhi),var(--gold));color:#1a1206;border:none;font-weight:700;font-family:var(--mono);font-size:12.5px;letter-spacing:.06em;text-transform:uppercase}
   button.gold:hover{filter:brightness(1.05)}
+  button.bad{background:linear-gradient(180deg,#e6b0a6,var(--bad));color:#2a1410;border:none;font-weight:700;font-family:var(--mono);font-size:12.5px;letter-spacing:.06em;text-transform:uppercase}
   button:disabled{opacity:.4;cursor:default}
   button.ghost{background:transparent}
+  :focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 
   /* test player */
   .thead{display:flex;align-items:center;gap:14px;padding:18px 0 14px;border-bottom:1px solid var(--line);flex-wrap:wrap}
@@ -103,15 +109,12 @@
   .choice.correct{border-color:var(--ok);background:rgba(87,180,135,.12)}
   .choice.wrong{border-color:var(--bad);background:rgba(217,138,126,.12)}
   .choice.correct .ltr{color:var(--ok)} .choice.wrong .ltr{color:var(--bad)}
-
   .side{position:sticky;top:14px}
   .navgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
   .navgrid button{padding:0;height:34px;border-radius:8px;font-family:var(--mono);font-size:12px;border:1px solid var(--line);background:var(--panel)}
   .navgrid button.answered{background:var(--gold-bg);border-color:var(--line2);color:var(--gold)}
   .navgrid button.cur{outline:2px solid var(--gold);outline-offset:1px}
   .navgrid button.marked{border-color:var(--warn);color:var(--warn)}
-  .navgrid button i{font-style:normal;position:relative}
-  .navgrid button.marked i::after{content:"";position:absolute;top:-9px;right:-8px;width:5px;height:5px;border-radius:50%;background:var(--warn)}
   .sidebtns{display:grid;gap:8px;margin-top:14px}
   .tfoot{display:flex;gap:10px;margin-top:18px;align-items:center;flex-wrap:wrap}
   .tfoot .sp{flex:1}
@@ -130,7 +133,8 @@
   .sb .track{height:6px;border-radius:3px;background:rgba(255,255,255,.06);margin-top:8px;overflow:hidden}.sb .track > i{display:block;height:100%}
   .rbtns{display:flex;gap:12px;justify-content:center;margin-top:32px;flex-wrap:wrap}
 
-  /* review + remediation */
+  /* review + mistakes */
+  h2.view{font-size:28px;margin-top:26px}
   .rev{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin-top:14px}
   .rev.correct{border-left:3px solid var(--ok)} .rev.wrong{border-left:3px solid var(--bad)}
   .rev .rt{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);margin-bottom:8px}
@@ -138,24 +142,32 @@
   .rev .ans{font-size:13.5px;margin:4px 0}
   .rev .ans b.ok{color:var(--ok)} .rev .ans b.no{color:var(--bad)}
   .rev .exp{font-size:13.5px;color:var(--ink2);margin-top:10px;line-height:1.55;border-top:1px solid var(--line);padding-top:10px}
-  .rev .fix{display:inline-flex;gap:8px;margin-top:12px;flex-wrap:wrap}
-  .rev .fix a{font-family:var(--mono);font-size:11px;letter-spacing:.04em;color:var(--gold);text-decoration:none;border:1px solid var(--line2);border-radius:8px;padding:6px 12px}
-  .rev .fix a:hover{background:var(--gold-bg)}
-  .clue{font-family:var(--mono);font-size:11px;color:var(--warn);cursor:pointer;margin-top:8px;display:inline-block}
-  .clue-body{display:none;font-size:13px;color:var(--ink2);margin-top:6px;font-style:italic}
-  .clue-body.on{display:block}
+  .fixrow{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;align-items:center}
+  .fixrow .fx{font-family:var(--mono);font-size:11px;letter-spacing:.03em;text-decoration:none;border:1px solid var(--line2);border-radius:8px;padding:7px 12px;display:inline-flex;gap:6px;align-items:center;cursor:pointer;color:var(--ink)}
+  .fixrow .fx:hover{background:var(--gold-bg)}
+  .fixrow .fx.trick{border-color:rgba(201,168,76,.6);color:var(--goldhi);background:var(--gold-bg)}
+  .fixrow .fx.learn{color:var(--gold)} .fixrow .fx.drill{color:var(--ink2)}
+  .trick-embed{margin-top:12px;display:none}
+  .trick-embed.on{display:block}
+  .trick-embed iframe{width:100%;max-width:400px;height:720px;border:1px solid var(--line2);border-radius:16px;background:#000;display:block}
 
-  .weak{display:grid;gap:10px;margin-top:16px}
-  .wk{display:grid;grid-template-columns:1fr auto auto;gap:16px;align-items:center;background:var(--panel2);border:1px solid var(--line);border-radius:13px;padding:14px 18px}
+  .weak{display:grid;gap:10px;margin-top:14px}
+  .wk{display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:center;background:var(--panel2);border:1px solid var(--line);border-radius:13px;padding:14px 18px}
+  .wk .rk{font-family:var(--mono);font-size:12px;color:var(--ink3);width:20px;text-align:right}
   .wk .tp{font-size:15px;color:var(--ink)}
   .wk .tp small{display:block;font-family:var(--mono);font-size:10.5px;color:var(--ink3);margin-top:2px}
-  .wk .rate{font-family:var(--serif);font-size:20px;font-weight:700}
-  .wk .go a{font-family:var(--mono);font-size:10.5px;color:var(--gold);text-decoration:none;border:1px solid var(--line2);border-radius:8px;padding:6px 11px;display:inline-block;margin-left:6px}
-  .wk .go a:hover{background:var(--gold-bg)}
-  .empty{color:var(--ink3);font-size:14px;text-align:center;padding:40px 0}
+  .wk .rate{font-family:var(--serif);font-size:20px;font-weight:700;text-align:right;min-width:64px}
+  .wk .rate small{font-size:11px;color:var(--ink3)}
+  .wkfix{grid-column:1 / -1;margin-top:2px}
   .section-h{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin:26px 0 4px}
-  h2.view{font-size:28px;margin-top:26px}
-  .back{font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--gold);cursor:pointer;text-decoration:none;display:inline-block;margin-top:20px}
+  .empty{color:var(--ink3);font-size:14px;text-align:center;padding:44px 0}
+  .empty b{color:var(--ink)}
+  .back{font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--gold);cursor:pointer;text-decoration:none;display:inline-block;margin-top:22px}
+  .mhead{display:flex;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-top:6px}
+  .mhead .big-n{font-family:var(--serif);font-size:52px;font-weight:800;color:var(--bad);line-height:.9}
+  .mhead .big-n.zero{color:var(--ok)}
+  .mhead .msub{font-size:14px;color:var(--ink2)}
+  .mhead .sp{flex:1}
 </style>
 </head>
 <body>
@@ -165,7 +177,7 @@
     <div class="sp"></div>
     <span class="streak" id="streak">STREAK <b>0</b></span>
     <a class="navlink on" id="nav-ladder" onclick="go('ladder')">The Ladder</a>
-    <a class="navlink" id="nav-rem" onclick="go('remediation')">Remediation</a>
+    <a class="navlink" id="nav-mistakes" onclick="go('mistakes')">Mistake List<span class="ct" id="navMistCt"></span></a>
   </div>
   <div id="app"></div>
 </div>
@@ -173,127 +185,147 @@
 <script src="remediation-map.js"></script>
 <script src="bank.js"></script>
 <script>
-/* ============================================================ state ============================================================ */
+/* ============================================================ data ============================================================ */
 var BANK = window.MINITEST_BANK || {tests:[]};
-var REM = window.MINITEST_REMEDIATION || {};
+var REM  = window.MINITEST_REMEDIATION || {};
+var TK   = window.MINITEST_TRICKS || {series:{}, seriesBase:''};
 var LETTERS = ['A','B','C','D','E'];
 var SECT = {bio:'Biology', gchem:'General Chemistry', ochem:'Organic Chemistry', qr:'Quantitative Reasoning'};
 var RUNG_NAME = ['Foothills','First Ascent','The Ridge','The Steep Face','High Camp','The Traverse','The Ice Wall','The Cornice','The Death Zone','The Summit'];
-var PASS = 0.75; // 75% to clear a rung
+var PASS = 0.75;
 var LS = 'atDAT_minitest';
 function load(){ try{return JSON.parse(localStorage.getItem(LS))||{}}catch(e){return {}} }
-function save(s){ try{localStorage.setItem(LS, JSON.stringify(s))}catch(e){} }
+function save(){ try{localStorage.setItem(LS, JSON.stringify(store))}catch(e){} }
 var store = load();
-store.best = store.best || {};         // {testN: pct}
-store.attempts = store.attempts || []; // [{n,tier,correct,total,dateISO,misses:[{section,topic,qi}]}]
-store.streak = store.streak || 0; store.lastDay = store.lastDay || null;
+store.best     = store.best     || {};
+store.attempts = store.attempts || [];
+store.mistakes = store.mistakes || {};   // key -> {section,topic,tier,q,wrong,resolved,ts}
+store.streak   = store.streak   || 0;
+store.lastDay  = store.lastDay  || null;
 
-/* streak: bump when a test is completed on a new day; reset if a day was skipped */
-function todayKey(d){ return d.slice(0,10); }
+/* stable per-question key (content-based, survives across sessions/tiers) */
+function hash(s){ var h=0; for(var i=0;i<s.length;i++){ h=((h<<5)-h+s.charCodeAt(i))|0; } return (h>>>0).toString(36); }
+function qkey(q){ return q.section+'|'+q.topic+'|'+hash(q.stem); }
+function trickUrl(section, topic){
+  var m = TK.series && TK.series[section]; var k = m && m[topic];
+  return k ? (TK.seriesBase + k) : null;
+}
+function openMistakes(){ return Object.keys(store.mistakes).filter(function(k){return !store.mistakes[k].resolved;}); }
+
+/* streak: bump on a completed session on a new day */
 function bumpStreak(nowISO){
-  var t = todayKey(nowISO);
-  if(store.lastDay === t) return;                    // already counted today
-  if(store.lastDay){
-    var prev = new Date(store.lastDay+'T00:00:00'), cur = new Date(t+'T00:00:00');
-    var days = Math.round((cur-prev)/86400000);
-    store.streak = (days === 1) ? store.streak+1 : 1;
-  } else store.streak = 1;
+  var t = nowISO.slice(0,10);
+  if(store.lastDay === t) return;
+  if(store.lastDay){ var days=Math.round((new Date(t)-new Date(store.lastDay))/86400000); store.streak = days===1 ? store.streak+1 : 1; }
+  else store.streak = 1;
   store.lastDay = t;
 }
-function renderStreak(){ document.getElementById('streak').innerHTML = 'STREAK <b>'+(store.streak||0)+'</b>'; }
+function renderStreak(){
+  document.getElementById('streak').innerHTML = 'STREAK <b>'+(store.streak||0)+'</b>';
+  var n = openMistakes().length;
+  document.getElementById('navMistCt').textContent = n ? ('· '+n) : '';
+}
 
 /* ============================================================ router ============================================================ */
-var T = {}; // active test session
+var T = {};
 function go(view, arg){
   document.getElementById('nav-ladder').classList.toggle('on', view==='ladder');
-  document.getElementById('nav-rem').classList.toggle('on', view==='remediation');
+  document.getElementById('nav-mistakes').classList.toggle('on', view==='mistakes');
   if(T.ticker){ clearInterval(T.ticker); T.ticker=null; }
   window.scrollTo(0,0);
   if(view==='ladder') return renderLadder();
   if(view==='test') return startTest(arg);
   if(view==='results') return renderResults();
   if(view==='review') return renderReview();
-  if(view==='remediation') return renderRemediation();
+  if(view==='mistakes') return renderMistakes();
+  if(view==='retry') return startRetry();
 }
 
 /* ============================================================ ladder ============================================================ */
 function testByN(n){ return BANK.tests.find(function(t){return t.n===n}); }
+function tierLabel(t){ return t<=2?'foundational':t<=4?'standard':t<=6?'multi-step':t<=8?'integrated':'brutal'; }
 function renderLadder(){
-  var live = BANK.tests.map(function(t){return t.n;});
   var rows = '';
   for(var n=1;n<=10;n++){
-    var t = testByN(n);
-    var tier = n, name = RUNG_NAME[n-1];
-    var best = store.best[n];
-    var has = !!t;
+    var t = testByN(n), name = RUNG_NAME[n-1], best = store.best[n], has = !!t;
     var badge = best!=null ? (best>=PASS*100 ? '<span class="badge pass">Cleared</span>' : '<span class="badge try">'+best+'%</span>')
                            : (has ? '<span class="badge new">Open</span>' : '<span class="badge new" style="opacity:.5">Soon</span>');
     var right = best!=null ? '<div class="best">'+best+'<span>%</span></div>' : '';
-    var pct = best!=null ? best : 0;
     rows += '<a class="rung" '+(has?('onclick="go(\'test\','+n+')"'):'style="opacity:.5;cursor:default"')+'>'+
-      '<div class="tier">'+tier+'<small>TIER</small></div>'+
-      '<div><h3>'+name+'</h3>'+
-        '<div class="meta">40 questions'+(t?'':' · coming soon')+' · '+tierLabel(tier)+'</div>'+
+      '<div class="tier">'+n+'<small>TIER</small></div>'+
+      '<div><h3>'+name+'</h3><div class="meta">40 questions'+(t?'':' · coming soon')+' · '+tierLabel(n)+'</div>'+
         '<div class="subrow"><span class="chip bio">Bio</span><span class="chip gchem">Gen Chem</span><span class="chip ochem">Orgo</span><span class="chip qr">QR</span></div>'+
-        '<div class="pbar"><i style="width:'+pct+'%"></i></div>'+
-      '</div>'+
+        '<div class="pbar"><i style="width:'+(best!=null?best:0)+'%"></i></div></div>'+
       '<div class="right">'+badge+right+'</div></a>';
   }
   var doneCount = Object.keys(store.best).filter(function(k){return store.best[k]>=PASS*100}).length;
+  var miss = openMistakes().length;
+  var mbanner = miss ?
+    '<div class="mbanner"><div><div class="t"><b>'+miss+'</b> question'+(miss===1?'':'s')+' on your mistake list</div>'+
+      '<p>This is the most important screen in the tool. Master them - each one hands you the trick, the night, and the drill that fixes it.</p></div>'+
+      '<div class="sp"></div><button class="bad" onclick="go(\'mistakes\')">Open my mistake list</button></div>' : '';
   document.getElementById('app').innerHTML =
     '<div class="hero"><div class="eyebrow">Sciences + QR · ten rungs · timed</div>'+
     '<h1 class="big">The <em>Climb</em>.</h1>'+
-    '<p class="lede">Ten mini tests, each 40 questions across Biology, Gen Chem, Orgo and QR. Same topics every rung &mdash; the <b>difficulty climbs</b> from base camp to the summit. Clear '+(PASS*100)+'% to log the rung. Every miss routes to the exact night that teaches it.</p>'+
-    '<div class="daily"><div><div class="t">Cleared '+doneCount+' of 10 rungs</div><p>Come back daily to keep your streak alive and climb one rung at a time.</p></div><div class="sp"></div>'+
-      '<button class="gold" onclick="dailyDrop()">Daily Drop &middot; quick 5</button></div>'+
+    '<p class="lede">Ten mini tests, 40 questions each across Biology, Gen Chem, Orgo and QR. Same topics every rung - the <b>difficulty climbs</b> to the summit. But the climb is not the point: <b>every miss lands on your mistake list</b> and routes to the exact fix. Clear '+(PASS*100)+'% to log a rung.</p>'+
+    mbanner+
+    '<div class="daily"><div><div class="t">Cleared '+doneCount+' of 10 rungs</div><p>Come back daily to keep your streak alive.</p></div><div class="sp"></div>'+
+      '<button class="gold" onclick="dailyDrop()">Daily Drop · quick 5</button></div>'+
     '<div class="ladder">'+rows+'</div></div>';
-}
-function tierLabel(t){
-  return t<=2?'foundational':t<=4?'standard':t<=6?'multi-step':t<=8?'integrated':'brutal';
 }
 
 /* ============================================================ test player ============================================================ */
 function startTest(n){
-  var t = testByN(n); if(!t){ return renderLadder(); }
-  var qs = t.questions.slice();
+  var t = testByN(n); if(!t) return renderLadder();
+  var qs = t.questions.map(function(q){ return q; });
   var minutes = Math.max(6, Math.round((48 - (t.tier-1)*0.9) * (qs.length/40)));
-  T = { n:n, tier:t.tier, qs:qs, cur:0, ans:new Array(qs.length).fill(-1), mark:new Array(qs.length).fill(false),
-        secsLeft:minutes*60, ticker:null, submitted:false };
+  T = { mode:'test', n:n, tier:t.tier, qs:qs, cur:0, ans:new Array(qs.length).fill(-1), mark:new Array(qs.length).fill(false),
+        secsLeft:minutes*60, ticker:null, submitted:false, title:'Tier '+t.tier+' · '+RUNG_NAME[n-1] };
+  runPlayer();
+}
+function startRetry(){
+  var keys = openMistakes();
+  if(!keys.length) return renderMistakes();
+  var qs = keys.map(function(k){ return store.mistakes[k].q; });
+  for(var i=qs.length-1;i>0;i--){ var j=Math.floor((i*2654435761)%(i+1)); var tmp=qs[i];qs[i]=qs[j];qs[j]=tmp; }
+  T = { mode:'retry', n:0, tier:0, qs:qs, cur:0, ans:new Array(qs.length).fill(-1), mark:new Array(qs.length).fill(false),
+        secsLeft:qs.length*70, ticker:null, submitted:false, title:'Retry your mistakes' };
+  runPlayer();
+}
+function dailyDrop(){
+  var all=[]; BANK.tests.forEach(function(t){ t.questions.forEach(function(q){ all.push(q); }); });
+  if(!all.length) return;
+  for(var i=all.length-1;i>0;i--){ var j=Math.floor((i*40503)%(i+1)); var tmp=all[i];all[i]=all[j];all[j]=tmp; }
+  var qs=all.slice(0,Math.min(5,all.length));
+  T = { mode:'daily', n:0, tier:0, qs:qs, cur:0, ans:new Array(qs.length).fill(-1), mark:new Array(qs.length).fill(false),
+        secsLeft:qs.length*60, ticker:null, submitted:false, title:'Daily Drop' };
+  runPlayer();
+}
+function runPlayer(){
   renderTest();
-  T.ticker = setInterval(function(){
-    T.secsLeft--; paintTimer();
-    if(T.secsLeft<=0){ clearInterval(T.ticker); submitTest(); }
-  }, 1000);
+  T.ticker = setInterval(function(){ T.secsLeft--; paintTimer(); if(T.secsLeft<=0){ clearInterval(T.ticker); submitTest(); } }, 1000);
 }
 function fmt(s){ var m=Math.floor(s/60), sec=s%60; return m+':'+(sec<10?'0':'')+sec; }
-function sessTitle(){ return T.daily ? 'Daily Drop' : ('Tier '+T.tier+' &middot; '+RUNG_NAME[T.n-1]); }
 function paintTimer(){ var el=document.getElementById('timer'); if(!el)return; el.textContent=fmt(T.secsLeft); el.classList.toggle('warn', T.secsLeft<=60); }
 function renderTest(){
-  var q = T.qs[T.cur];
-  var grid='';
-  for(var i=0;i<T.qs.length;i++){
-    grid += '<button class="'+(T.ans[i]>-1?'answered ':'')+(T.mark[i]?'marked ':'')+(i===T.cur?'cur':'')+'" onclick="jump('+i+')"><i>'+(i+1)+'</i></button>';
-  }
-  var choices = q.choices.map(function(c,i){
-    return '<button class="choice'+(T.ans[T.cur]===i?' sel':'')+'" onclick="pick('+i+')"><span class="ltr">'+LETTERS[i]+'</span><span>'+c+'</span></button>';
-  }).join('');
+  var q=T.qs[T.cur], grid='';
+  for(var i=0;i<T.qs.length;i++) grid += '<button class="'+(T.ans[i]>-1?'answered ':'')+(T.mark[i]?'marked ':'')+(i===T.cur?'cur':'')+'" onclick="jump('+i+')">'+(i+1)+'</button>';
+  var choices = q.choices.map(function(c,i){ return '<button class="choice'+(T.ans[T.cur]===i?' sel':'')+'" onclick="pick('+i+')"><span class="ltr">'+LETTERS[i]+'</span><span>'+c+'</span></button>'; }).join('');
   var answered = T.ans.filter(function(a){return a>-1}).length;
   document.getElementById('app').innerHTML =
-    '<div class="thead"><h2>'+sessTitle()+'</h2><div class="sp"></div>'+
+    '<div class="thead"><h2>'+T.title+'</h2><div class="sp"></div>'+
       '<span style="font-family:var(--mono);font-size:11px;color:var(--ink3)">'+answered+' / '+T.qs.length+' answered</span>'+
       '<span class="timer" id="timer">'+fmt(T.secsLeft)+'</span></div>'+
     '<div class="tgrid"><div class="qcard">'+
       '<span class="qnum">Question '+(T.cur+1)+' of '+T.qs.length+'</span>'+
-      '<span class="qtag '+q.section+'">'+SECT[q.section]+' &middot; '+q.topic+'</span>'+
-      '<p class="stem">'+q.stem+'</p>'+
-      (q.figureSvg?('<div class="fig">'+q.figureSvg+'</div>'):'')+
+      '<span class="qtag '+q.section+'">'+SECT[q.section]+' · '+q.topic+'</span>'+
+      '<p class="stem">'+q.stem+'</p>'+(q.figureSvg?('<div class="fig">'+q.figureSvg+'</div>'):'')+
       '<div class="choices">'+choices+'</div>'+
       '<div class="tfoot"><button class="ghost" onclick="nav(-1)" '+(T.cur===0?'disabled':'')+'>Previous</button>'+
         '<button class="'+(T.mark[T.cur]?'gold':'ghost')+'" onclick="toggleMark()">'+(T.mark[T.cur]?'Marked':'Mark for review')+'</button>'+
         '<div class="sp"></div><button class="ghost" onclick="nav(1)" '+(T.cur===T.qs.length-1?'disabled':'')+'>Next</button></div>'+
-    '</div>'+
-    '<div class="side"><div class="navgrid">'+grid+'</div>'+
-      '<div class="sidebtns"><button class="gold" onclick="confirmSubmit()">Submit test</button>'+
+    '</div><div class="side"><div class="navgrid">'+grid+'</div>'+
+      '<div class="sidebtns"><button class="gold" onclick="confirmSubmit()">Submit</button>'+
       '<button class="ghost" onclick="quitTest()">Leave</button></div></div></div>';
   paintTimer();
 }
@@ -301,140 +333,156 @@ function pick(i){ T.ans[T.cur]=i; renderTest(); }
 function jump(i){ T.cur=i; renderTest(); }
 function nav(d){ T.cur=Math.min(T.qs.length-1,Math.max(0,T.cur+d)); renderTest(); }
 function toggleMark(){ T.mark[T.cur]=!T.mark[T.cur]; renderTest(); }
-function quitTest(){ if(confirm('Leave this test? Progress on it will not be saved.')){ clearInterval(T.ticker); go('ladder'); } }
+function quitTest(){ if(confirm('Leave? Progress on this attempt is not saved.')){ clearInterval(T.ticker); go(T.mode==='test'?'ladder':'mistakes'); } }
 function confirmSubmit(){
-  var un = T.ans.filter(function(a){return a<0}).length;
-  if(un>0 && !confirm(un+' question(s) still blank. Submit anyway? (No penalty for wrong answers, so a guess beats a blank.)')) return;
+  var un=T.ans.filter(function(a){return a<0}).length;
+  if(un>0 && !confirm(un+' still blank. Submit anyway? (No penalty for wrong answers - a guess beats a blank.)')) return;
   submitTest();
 }
 function submitTest(){
   if(T.submitted) return; T.submitted=true; clearInterval(T.ticker);
-  var correct=0, misses=[], sect={};
+  var correct=0, misses=[], sect={}, nowISO=new Date().toISOString();
   T.qs.forEach(function(q,i){
     sect[q.section]=sect[q.section]||{c:0,t:0}; sect[q.section].t++;
-    var right = T.ans[i]===q.correct;
-    if(right){ correct++; sect[q.section].c++; }
-    else{
+    var right = T.ans[i]===q.correct, key=qkey(q);
+    if(right){
+      correct++; sect[q.section].c++;
+      if(store.mistakes[key] && !store.mistakes[key].resolved){ store.mistakes[key].resolved=true; store.mistakes[key].ts=Date.now(); }
+    } else {
+      var m = store.mistakes[key] || { section:q.section, topic:q.topic, tier:(T.tier||1), q:q, wrong:0, resolved:false };
+      m.wrong++; m.resolved=false; m.q=q; m.ts=Date.now(); store.mistakes[key]=m;
       misses.push({section:q.section, topic:q.topic, qi:i, picked:T.ans[i]});
       emitMiss(q, i, T.ans[i]);
     }
   });
-  var pct = Math.round(100*correct/T.qs.length);
-  var nowISO = new Date().toISOString();
-  store.best[T.n] = Math.max(store.best[T.n]||0, pct);
-  store.attempts.push({n:T.n, tier:T.tier, correct:correct, total:T.qs.length, pct:pct, dateISO:nowISO, sect:sect, misses:misses});
-  bumpStreak(nowISO); save(store); renderStreak();
+  var pct=Math.round(100*correct/T.qs.length);
+  if(T.mode==='test'){ store.best[T.n]=Math.max(store.best[T.n]||0, pct); }
+  store.attempts.push({mode:T.mode, n:T.n, tier:T.tier, pct:pct, correct:correct, total:T.qs.length, dateISO:nowISO});
+  bumpStreak(nowISO); save(); renderStreak();
   T.result = {correct:correct, total:T.qs.length, pct:pct, sect:sect, misses:misses};
   go('results');
 }
-/* Ace Log: feed misses to the portal, tagged as this tool + real section */
-function emitMiss(q, i, picked){
+function emitMiss(q,i,picked){
   try{ window.parent.postMessage({type:'acedat:tool-miss', tool:'minitest', section:SECT[q.section],
-    questionId:'minitest_t'+T.tier+'_q'+i, hub:'minitest-tier-'+T.tier, stem:q.stem,
+    questionId:'minitest_'+qkey(q), hub:'minitest-'+(T.mode||'test'), stem:q.stem,
     pickedKey:String(picked), pickedText:String(picked>-1?q.choices[picked]:'(blank)').slice(0,120),
     correctKey:String(q.correct), correctText:String(q.choices[q.correct]).slice(0,120), ts:Date.now()},'*'); }catch(e){}
 }
 
 /* ============================================================ results ============================================================ */
 function renderResults(){
-  var r=T.result; var pass=r.pct>=PASS*100;
+  var r=T.result, pass=r.pct>=PASS*100, isTest=T.mode==='test';
   var bars='';
-  ['bio','gchem','ochem','qr'].forEach(function(s){
-    var d=r.sect[s]; if(!d)return; var p=Math.round(100*d.c/d.t);
-    bars += '<div class="sb"><div class="lab"><span>'+SECT[s]+'</span><span>'+d.c+'/'+d.t+'</span></div>'+
-      '<div class="n" style="color:var(--'+s+')">'+p+'%</div><div class="track"><i style="width:'+p+'%;background:var(--'+s+')"></i></div></div>';
-  });
+  ['bio','gchem','ochem','qr'].forEach(function(s){ var d=r.sect[s]; if(!d)return; var p=Math.round(100*d.c/d.t);
+    bars += '<div class="sb"><div class="lab"><span>'+SECT[s]+'</span><span>'+d.c+'/'+d.t+'</span></div><div class="n" style="color:var(--'+s+')">'+p+'%</div><div class="track"><i style="width:'+p+'%;background:var(--'+s+')"></i></div></div>'; });
+  var openN = openMistakes().length;
+  var lead = T.mode==='retry'
+    ? (r.total-r.correct===0 ? 'Every mistake retried correct - cleared off your list. That is mastery.' : (r.correct+' of '+r.total+' retried correct and cleared; the rest stay on your list.'))
+    : 'You got <b>'+r.correct+' of '+r.total+'</b>. '+(pass?'Strong.':'Now the part that moves your score:')+' review every miss below.';
   document.getElementById('app').innerHTML =
-    '<div class="rwrap"><div class="eyebrow">'+sessTitle()+'</div>'+
+    '<div class="rwrap"><div class="eyebrow">'+T.title+'</div>'+
     '<div class="score-big">'+r.pct+'<small>%</small></div>'+
-    '<div class="verdict-pill '+(pass?'pass':'miss')+'">'+(pass?'Rung cleared':'Keep climbing &middot; '+(PASS*100)+'% to clear')+'</div>'+
-    '<p class="lede" style="margin:16px auto 0">You got <b>'+r.correct+' of '+r.total+'</b>. '+
-      (pass?'Strong. The next rung is steeper.':'Review the misses below, then run it again &mdash; each one links to the fix.')+'</p>'+
-    '<div class="sectbars">'+bars+'</div>'+
-    '<div class="rbtns"><button class="gold" onclick="go(\'review\')">Review '+r.misses.length+' miss'+(r.misses.length===1?'':'es')+'</button>'+
-      (T.daily?'':(pass && testByN(T.n+1)?'<button onclick="go(\'test\','+(T.n+1)+')">Next rung</button>':'<button onclick="go(\'test\','+T.n+')">Retry this rung</button>'))+
+    (isTest?'<div class="verdict-pill '+(pass?'pass':'miss')+'">'+(pass?'Rung cleared':'Keep climbing · '+(PASS*100)+'% to clear')+'</div>':'')+
+    '<p class="lede" style="margin:16px auto 0">'+lead+'</p>'+
+    (r.misses.length?'<div class="sectbars">'+bars+'</div>':'')+
+    '<div class="rbtns">'+
+      (r.misses.length?'<button class="gold" onclick="go(\'review\')">Review your '+r.misses.length+' miss'+(r.misses.length===1?'':'es')+' now</button>':'')+
+      (openN?'<button class="bad" onclick="go(\'mistakes\')">Mistake list ('+openN+')</button>':'')+
+      (isTest && pass && testByN(T.n+1)?'<button onclick="go(\'test\','+(T.n+1)+')">Next rung</button>':(isTest?'<button onclick="go(\'test\','+T.n+')">Retry rung</button>':''))+
       '<button class="ghost" onclick="go(\'ladder\')">The Ladder</button></div></div>';
 }
 
-/* ============================================================ review (per question) ============================================================ */
+/* ============================================================ per-miss card (shared by review + mistake list) ============================================================ */
+var _tid=0;
+function missCard(q, pickedIdx, opts){
+  opts=opts||{};
+  var right = pickedIdx===q.correct;
+  var rem=(REM[q.section]||{}), learn=rem.learn||'/retold/', review=rem.review||'/ace-labs.html#tools';
+  var hint=(rem.topics&&rem.topics[q.topic])||q.topic;
+  var trick=trickUrl(q.section, q.topic);
+  var id='tk'+(_tid++);
+  var wrongN = opts.wrongN;
+  var h='<div class="rev '+(right?'correct':'wrong')+'">'+
+    '<div class="rt">'+SECT[q.section]+' · '+q.topic+(opts.tier?' · tier '+opts.tier:'')+(wrongN?' · missed '+wrongN+'x':'')+'</div>'+
+    '<div class="st">'+q.stem+'</div>'+
+    (q.figureSvg?('<div class="fig" style="text-align:left">'+q.figureSvg+'</div>'):'')+
+    (pickedIdx>-1 && !right ? '<div class="ans">You chose <b class="no">'+LETTERS[pickedIdx]+') '+q.choices[pickedIdx]+'</b> · correct is <b class="ok">'+LETTERS[q.correct]+') '+q.choices[q.correct]+'</b></div>'
+       : '<div class="ans">Correct: <b class="ok">'+LETTERS[q.correct]+') '+q.choices[q.correct]+'</b></div>')+
+    '<div class="exp">'+q.explanation+'</div>'+
+    '<div class="fixrow">'+
+      (trick?'<a class="fx trick" onclick="toggleTrick(\''+id+'\',\''+trick+'\')">Watch the 15-sec trick</a>':'')+
+      '<a class="fx learn" href="'+learn+'" target="_blank" rel="noopener">Learn it · Retold ('+hint+')</a>'+
+      '<a class="fx drill" href="'+review+'" target="_blank" rel="noopener">Drill it · engine</a>'+
+    '</div><div class="trick-embed" id="'+id+'"></div>'+
+  '</div>';
+  return h;
+}
+function toggleTrick(id, url){
+  var el=document.getElementById(id); if(!el)return;
+  if(el.classList.contains('on')){ el.classList.remove('on'); el.innerHTML=''; }
+  else { el.innerHTML='<iframe src="'+url+'" title="Trick short" loading="lazy" allow="autoplay"></iframe>'; el.classList.add('on'); }
+}
+
+/* ============================================================ review (immediate, misses from the last attempt) ============================================================ */
 function renderReview(){
   var r=T.result;
-  var html='<h2 class="view">Review &mdash; '+(T.daily?'Daily Drop':'Tier '+T.tier)+'</h2><p class="lede" style="margin-top:6px">Every question, with the fix for each miss. On a miss, peek the clue before the full answer.</p>';
-  T.qs.forEach(function(q,i){
-    var right=T.ans[i]===q.correct;
-    var rem = (REM[q.section]||{});
-    var learn = rem.learn||'/retold/', review = rem.review||'/ace-labs.html#tools';
-    var hint = (rem.topics&&rem.topics[q.topic])||q.topic;
-    html+='<div class="rev '+(right?'correct':'wrong')+'">'+
-      '<div class="rt">Q'+(i+1)+' &middot; '+SECT[q.section]+' &middot; '+q.topic+' &middot; '+(right?'correct':'missed')+'</div>'+
-      '<div class="st">'+q.stem+'</div>'+
-      (q.figureSvg?('<div class="fig" style="text-align:left">'+q.figureSvg+'</div>'):'')+
-      (right? '<div class="ans">Your answer: <b class="ok">'+LETTERS[q.correct]+'. '+q.choices[q.correct]+'</b></div>'
-            : '<div class="ans">You chose: <b class="no">'+(T.ans[i]>-1?LETTERS[T.ans[i]]+'. '+q.choices[T.ans[i]]:'(blank)')+'</b><br>Correct: <b class="ok">'+LETTERS[q.correct]+'. '+q.choices[q.correct]+'</b></div>')+
-      (right?'':'<div class="clue" onclick="this.nextElementSibling.classList.toggle(\'on\')">Peek the clue</div><div class="clue-body">Look again at &ldquo;'+hint+'&rdquo; &mdash; the trap here is the tempting distractor, not the concept.</div>')+
-      '<div class="exp">'+q.explanation+'</div>'+
-      (right?'':'<div class="fix"><a href="'+learn+'" target="_blank" rel="noopener">Learn it &middot; Retold</a>'+
-        '<a href="'+review+'" target="_blank" rel="noopener">Drill it &middot; engine</a></div>')+
-    '</div>';
-  });
-  html+='<a class="back" onclick="go(\'results\')">Back to results</a>';
+  var wrong = T.qs.map(function(q,i){ return {q:q,i:i}; }).filter(function(x){ return T.ans[x.i]!==x.q.correct; });
+  var html='<h2 class="view">Review - '+T.title+'</h2>'+
+    '<p class="lede" style="margin-top:6px">'+(wrong.length?'Fix each one at the source. Watch the trick, walk the night, drill it - then retry them from your mistake list until they stick.':'No misses on this attempt. Onward.')+'</p>';
+  wrong.forEach(function(x){ html += missCard(x.q, T.ans[x.i], {tier:(T.tier||undefined)}); });
+  html+='<div class="rbtns" style="justify-content:flex-start">'+
+    (openMistakes().length?'<button class="bad" onclick="go(\'mistakes\')">Your full mistake list</button>':'')+
+    '<button class="ghost" onclick="go(\'results\')">Back to results</button></div>';
   document.getElementById('app').innerHTML=html;
 }
 
-/* ============================================================ remediation (aggregate weakness) ============================================================ */
-function renderRemediation(){
-  // aggregate misses across ALL attempts, by section + topic
-  var agg={}; // key section|topic -> {section,topic,miss,seen}
-  store.attempts.forEach(function(a){
-    // count seen per topic from misses + corrects isn't stored per-topic, so approximate seen via tests taken
-  });
-  // rebuild seen/miss from stored attempts' misses + totals: we track miss counts + attempts count as "encounters"
-  var seenByTopic={}, missByTopic={}, order=[];
-  store.attempts.forEach(function(a){
-    (a.misses||[]).forEach(function(m){
-      var k=m.section+'|'+m.topic;
-      if(!(k in missByTopic)){ missByTopic[k]=0; order.push({section:m.section,topic:m.topic,key:k}); }
-      missByTopic[k]++;
-    });
-  });
-  var html='<h2 class="view">Remediation</h2><p class="lede" style="margin-top:6px">Your misses across every rung, ranked. Each topic routes to the night that teaches it and the engine that drills it. This is what to fix next.</p>';
-  if(!order.length){
-    html+='<div class="empty">No misses logged yet. Take a rung on the Ladder and your weak spots will surface here.</div>';
-    html+='<a class="back" onclick="go(\'ladder\')">To the Ladder</a>';
-    document.getElementById('app').innerHTML=html; return;
+/* ============================================================ MISTAKE LIST (the centerpiece) ============================================================ */
+function renderMistakes(){
+  var keys = openMistakes();
+  var masteredN = Object.keys(store.mistakes).filter(function(k){return store.mistakes[k].resolved;}).length;
+  var app=document.getElementById('app');
+  if(!keys.length){
+    app.innerHTML='<h2 class="view">Your Mistake List</h2>'+
+      '<div class="empty"><b>Nothing to master right now.</b><br>'+
+      (masteredN?('You have cleared '+masteredN+' mistake'+(masteredN===1?'':'s')+' off this list. '):'')+
+      'Take a rung on the Ladder - anything you miss lands here with its fix.</div>'+
+      '<a class="back" onclick="go(\'ladder\')">To the Ladder</a>';
+    return;
   }
-  order.sort(function(a,b){ return missByTopic[b.key]-missByTopic[a.key]; });
-  // group by section
+  // weakness ranking by (section, topic)
+  var agg={}, order=[];
+  keys.forEach(function(k){ var m=store.mistakes[k], ky=m.section+'|'+m.topic;
+    if(!agg[ky]){ agg[ky]={section:m.section, topic:m.topic, n:0}; order.push(ky); } agg[ky].n++; });
+  order.sort(function(a,b){ return agg[b].n-agg[a].n; });
+  var rankRows = order.slice(0,6).map(function(ky,idx){
+    var a=agg[ky], rem=(REM[a.section]||{}), hint=(rem.topics&&rem.topics[a.topic])||'';
+    var trick=trickUrl(a.section,a.topic), tid='wt'+(_tid++);
+    return '<div class="wk"><div class="rk">'+(idx+1)+'</div>'+
+      '<div class="tp">'+a.topic+'<small>'+SECT[a.section]+(hint?' · '+hint:'')+'</small></div>'+
+      '<div class="rate" style="color:var(--'+a.section+')">'+a.n+'<small> open</small></div>'+
+      '<div class="wkfix fixrow">'+
+        (trick?'<a class="fx trick" onclick="toggleTrick(\''+tid+'\',\''+trick+'\')">Watch the trick</a>':'')+
+        '<a class="fx learn" href="'+(rem.learn||'/retold/')+'" target="_blank" rel="noopener">Learn</a>'+
+        '<a class="fx drill" href="'+(rem.review||'/ace-labs.html#tools')+'" target="_blank" rel="noopener">Drill</a>'+
+      '</div><div class="trick-embed" id="'+tid+'" style="grid-column:1/-1"></div></div>';
+  }).join('');
+  // full missed-question list grouped by section
+  var listHtml='';
   ['bio','gchem','ochem','qr'].forEach(function(s){
-    var rows=order.filter(function(o){return o.section===s;});
-    if(!rows.length) return;
-    var rem=REM[s]||{};
-    html+='<div class="section-h" style="color:var(--'+s+')">'+SECT[s]+'</div><div class="weak">';
-    rows.forEach(function(o){
-      var miss=missByTopic[o.key];
-      var hint=(rem.topics&&rem.topics[o.topic])||'';
-      html+='<div class="wk"><div class="tp">'+o.topic+'<small>'+hint+'</small></div>'+
-        '<div class="rate" style="color:var(--'+s+')">'+miss+'<span style="font-size:12px;color:var(--ink3)"> miss'+(miss===1?'':'es')+'</span></div>'+
-        '<div class="go"><a href="'+(rem.learn||'/retold/')+'" target="_blank" rel="noopener">Learn</a>'+
-        '<a href="'+(rem.review||'/ace-labs.html#tools')+'" target="_blank" rel="noopener">Drill</a></div></div>';
-    });
-    html+='</div>';
+    var ks=keys.filter(function(k){return store.mistakes[k].section===s;});
+    if(!ks.length) return;
+    ks.sort(function(a,b){return store.mistakes[b].wrong-store.mistakes[a].wrong;});
+    listHtml+='<div class="section-h" style="color:var(--'+s+')">'+SECT[s]+' · '+ks.length+'</div>';
+    ks.forEach(function(k){ var m=store.mistakes[k]; listHtml += missCard(m.q, -1, {tier:m.tier, wrongN:m.wrong}); });
   });
-  html+='<a class="back" onclick="go(\'ladder\')">To the Ladder</a>';
-  document.getElementById('app').innerHTML=html;
-}
-
-/* ============================================================ daily drop (5 random) ============================================================ */
-function dailyDrop(){
-  var all=[]; BANK.tests.forEach(function(t){ t.questions.forEach(function(q){ all.push({q:q,tier:t.tier,n:t.n}); }); });
-  if(all.length<1) return;
-  // pseudo-shuffle, take up to 5
-  for(var i=all.length-1;i>0;i--){ var j=Math.floor((i*9301+49297)%(i+1)); var tmp=all[i];all[i]=all[j];all[j]=tmp; }
-  var pick=all.slice(0,Math.min(5,all.length));
-  T={ n:0, tier:0, qs:pick.map(function(p){return p.q;}), cur:0, ans:new Array(pick.length).fill(-1),
-      mark:new Array(pick.length).fill(false), secsLeft:pick.length*60, ticker:null, submitted:false, daily:true };
-  renderTest();
-  T.ticker=setInterval(function(){ T.secsLeft--; paintTimer(); if(T.secsLeft<=0){clearInterval(T.ticker);submitTest();} },1000);
+  app.innerHTML=
+    '<h2 class="view">Your Mistake List</h2>'+
+    '<div class="mhead"><div class="big-n">'+keys.length+'</div>'+
+      '<div class="msub">question'+(keys.length===1?'':'s')+' to master'+(masteredN?(' · <b style="color:var(--ok)">'+masteredN+' already cleared</b>'):'')+'<br>This is what stands between you and your target. Fix them, then retry.</div>'+
+      '<div class="sp"></div><button class="bad" onclick="go(\'retry\')">Retry all '+keys.length+' now</button></div>'+
+    '<div class="section-h">Work on these most</div><div class="weak">'+rankRows+'</div>'+
+    '<div class="section-h" style="margin-top:30px">Every open mistake</div>'+listHtml+
+    '<a class="back" onclick="go(\'ladder\')">To the Ladder</a>';
 }
 
 /* boot */

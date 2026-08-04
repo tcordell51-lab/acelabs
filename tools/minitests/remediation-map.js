@@ -1,9 +1,9 @@
 /* ============================================================
    Mini-Test Remediation Map
    For every (section, topic) a miss can carry, this routes the student to
-   the exact place to repair it: the Retold night that teaches it, and the
-   review engine that drills it. The mini-test tool + the remediation view
-   both read this, so a wrong answer always has a next step.
+   the exact place to repair it: the Retold night that teaches it, the review
+   engine that drills it, AND the 15-second Trick short that fixes it. The
+   review + master-mistake list read this, so a wrong answer always has a fix.
    ============================================================ */
 window.MINITEST_REMEDIATION = {
   bio: {
@@ -76,6 +76,34 @@ window.MINITEST_REMEDIATION = {
       'Probability': 'Count the wins over the total',
       'Statistics (mean/median/SD)': 'Center and spread',
       'Word problems (rate/work/mixture)': 'The setup is the hard part',
+    },
+  },
+};
+
+/* Trick shorts (the 15-second fixes). Maps a (section, topic) to a Trick Series
+   short key -> /tricks/series/topic-tiktok.html?topic=<key>. Only OChem and some
+   GChem topics have a short today (the Trick Series is Orgo/GChem); the rest lean
+   on the Retold night + engine. GChem also routes to the Gen Chem tiktok player
+   for topics the Trick Series doesn't cover. */
+window.MINITEST_TRICKS = {
+  seriesBase: '/tricks/series/topic-tiktok.html?topic=',   // + key
+  gcBase: '/tools/gc/tiktoks/topic-tiktok.html?topic=',     // + key (Gen Chem set)
+  series: {
+    ochem: {
+      'Stereochemistry (R/S, chirality)': 'rs-three-moves',
+      'SN1/SN2/E1/E2': 'sn-e',
+      'Alkene addition reactions': 'alkene-map',
+      'Aromaticity & EAS': 'eas-directors',
+      'Alcohols & carbonyls': 'rich-poor',
+      'Acidity & pKa': 'acidity-cardio',
+      'IR & H-NMR spectroscopy': 'hnmr',
+      'Synthesis / roadmap': 'alkene-map',
+      'Resonance & stability': 'rich-poor',
+    },
+    gchem: {
+      'Periodic trends': 'periodic-trends',
+      'Electrochemistry': 'electrochem',
+      'Moles & stoichiometry': 'limiting-reagent',
     },
   },
 };
