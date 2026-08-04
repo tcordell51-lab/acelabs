@@ -211,6 +211,9 @@ function trickUrl(section, topic){
   return k ? (TK.seriesBase + k) : null;
 }
 function openMistakes(){ return Object.keys(store.mistakes).filter(function(k){return !store.mistakes[k].resolved;}); }
+var DAY=86400000, INTERVAL=[0, DAY, 3*DAY, 7*DAY];   // spaced-review intervals by box level
+function dueMistakes(){ var now=Date.now(); return Object.keys(store.mistakes).filter(function(k){var m=store.mistakes[k];return !m.resolved && (m.due||0)<=now;}); }
+function scheduledMistakes(){ var now=Date.now(); return Object.keys(store.mistakes).filter(function(k){var m=store.mistakes[k];return !m.resolved && (m.due||0)>now;}); }
 
 /* streak: bump on a completed session on a new day */
 function bumpStreak(nowISO){
@@ -238,7 +241,7 @@ function go(view, arg){
   if(view==='results') return renderResults();
   if(view==='review') return renderReview();
   if(view==='mistakes') return renderMistakes();
-  if(view==='retry') return startRetry();
+  if(view==='retry') return startRetry(arg);
 }
 
 /* ============================================================ ladder ============================================================ */
@@ -259,11 +262,15 @@ function renderLadder(){
       '<div class="right">'+badge+right+'</div></a>';
   }
   var doneCount = Object.keys(store.best).filter(function(k){return store.best[k]>=PASS*100}).length;
-  var miss = openMistakes().length;
-  var mbanner = miss ?
-    '<div class="mbanner"><div><div class="t"><b>'+miss+'</b> question'+(miss===1?'':'s')+' on your mistake list</div>'+
-      '<p>This is the most important screen in the tool. Master them - each one hands you the trick, the night, and the drill that fixes it.</p></div>'+
-      '<div class="sp"></div><button class="bad" onclick="go(\'mistakes\')">Open my mistake list</button></div>' : '';
+  var dueN = dueMistakes().length, openN = openMistakes().length;
+  var mbanner = dueN ?
+    '<div class="mbanner"><div><div class="t"><b>'+dueN+'</b> question'+(dueN===1?'':'s')+' due for review</div>'+
+      '<p>Spaced review - master them now while they are due. Each hands you the trick, the night, and the drill that fixes it.</p></div>'+
+      '<div class="sp"></div><button class="bad" onclick="go(\'mistakes\')">Review now</button></div>'
+    : (openN ?
+    '<div class="mbanner" style="border-color:var(--line2);background:linear-gradient(160deg,rgba(201,168,76,.08),#101813 70%)"><div><div class="t"><b style="color:var(--gold)">'+openN+'</b> scheduled on your mistake list</div>'+
+      '<p>Nothing due this moment - they resurface on schedule. Peek the list any time.</p></div>'+
+      '<div class="sp"></div><button class="ghost" onclick="go(\'mistakes\')">Open mistake list</button></div>' : '');
   document.getElementById('app').innerHTML =
     '<div class="hero"><div class="eyebrow">Sciences + QR · ten rungs · timed</div>'+
     '<h1 class="big">The <em>Climb</em>.</h1>'+
@@ -283,13 +290,13 @@ function startTest(n){
         secsLeft:minutes*60, ticker:null, submitted:false, title:'Tier '+t.tier+' · '+RUNG_NAME[n-1] };
   runPlayer();
 }
-function startRetry(){
-  var keys = openMistakes();
+function startRetry(scope){
+  var keys = scope==='all' ? openMistakes() : dueMistakes();
   if(!keys.length) return renderMistakes();
   var qs = keys.map(function(k){ return store.mistakes[k].q; });
   for(var i=qs.length-1;i>0;i--){ var j=Math.floor((i*2654435761)%(i+1)); var tmp=qs[i];qs[i]=qs[j];qs[j]=tmp; }
   T = { mode:'retry', n:0, tier:0, qs:qs, cur:0, ans:new Array(qs.length).fill(-1), mark:new Array(qs.length).fill(false),
-        secsLeft:qs.length*70, ticker:null, submitted:false, title:'Retry your mistakes' };
+        secsLeft:qs.length*70, ticker:null, submitted:false, title:(scope==='all'?'Retry all mistakes':'Retry due mistakes') };
   runPlayer();
 }
 function dailyDrop(){
@@ -347,10 +354,16 @@ function submitTest(){
     var right = T.ans[i]===q.correct, key=qkey(q);
     if(right){
       correct++; sect[q.section].c++;
-      if(store.mistakes[key] && !store.mistakes[key].resolved){ store.mistakes[key].resolved=true; store.mistakes[key].ts=Date.now(); }
+      var mr=store.mistakes[key];
+      if(mr && !mr.resolved){
+        mr.streak=(mr.streak||0)+1; mr.ts=Date.now();
+        if(mr.streak>=2){ mr.resolved=true; }                       // two correct, spaced -> mastered
+        else { mr.box=Math.min((mr.box||0)+1,3); mr.due=Date.now()+INTERVAL[mr.box]; }
+      }
     } else {
-      var m = store.mistakes[key] || { section:q.section, topic:q.topic, tier:(T.tier||1), q:q, wrong:0, resolved:false };
-      m.wrong++; m.resolved=false; m.q=q; m.ts=Date.now(); store.mistakes[key]=m;
+      var m = store.mistakes[key] || { section:q.section, topic:q.topic, tier:(T.tier||1), q:q, wrong:0 };
+      m.wrong=(m.wrong||0)+1; m.streak=0; m.box=0; m.due=Date.now(); m.resolved=false; m.q=q; m.ts=Date.now();
+      store.mistakes[key]=m;
       misses.push({section:q.section, topic:q.topic, qi:i, picked:T.ans[i]});
       emitMiss(q, i, T.ans[i]);
     }
@@ -403,7 +416,7 @@ function missCard(q, pickedIdx, opts){
   var id='tk'+(_tid++);
   var wrongN = opts.wrongN;
   var h='<div class="rev '+(right?'correct':'wrong')+'">'+
-    '<div class="rt">'+SECT[q.section]+' · '+q.topic+(opts.tier?' · tier '+opts.tier:'')+(wrongN?' · missed '+wrongN+'x':'')+'</div>'+
+    '<div class="rt">'+SECT[q.section]+' · '+q.topic+(opts.tier?' · tier '+opts.tier:'')+(wrongN?' · missed '+wrongN+'x':'')+(opts.status?' · <span style="color:'+opts.status.color+'">'+opts.status.text+'</span>':'')+'</div>'+
     '<div class="st">'+q.stem+'</div>'+
     (q.figureSvg?('<div class="fig" style="text-align:left">'+q.figureSvg+'</div>'):'')+
     (pickedIdx>-1 && !right ? '<div class="ans">You chose <b class="no">'+LETTERS[pickedIdx]+') '+q.choices[pickedIdx]+'</b> · correct is <b class="ok">'+LETTERS[q.correct]+') '+q.choices[q.correct]+'</b></div>'
@@ -438,23 +451,22 @@ function renderReview(){
 
 /* ============================================================ MISTAKE LIST (the centerpiece) ============================================================ */
 function renderMistakes(){
-  var keys = openMistakes();
-  var masteredN = Object.keys(store.mistakes).filter(function(k){return store.mistakes[k].resolved;}).length;
   var app=document.getElementById('app');
-  if(!keys.length){
+  var open=openMistakes(), due=dueMistakes(), sched=scheduledMistakes();
+  var masteredN=Object.keys(store.mistakes).filter(function(k){return store.mistakes[k].resolved;}).length;
+  if(!open.length){
     app.innerHTML='<h2 class="view">Your Mistake List</h2>'+
       '<div class="empty"><b>Nothing to master right now.</b><br>'+
-      (masteredN?('You have cleared '+masteredN+' mistake'+(masteredN===1?'':'s')+' off this list. '):'')+
-      'Take a rung on the Ladder - anything you miss lands here with its fix.</div>'+
+      (masteredN?('You have mastered '+masteredN+' question'+(masteredN===1?'':'s')+' off this list. '):'')+
+      'Take a rung on the Ladder - anything you miss lands here on a spaced-review schedule until you own it.</div>'+
       '<a class="back" onclick="go(\'ladder\')">To the Ladder</a>';
     return;
   }
-  // weakness ranking by (section, topic)
   var agg={}, order=[];
-  keys.forEach(function(k){ var m=store.mistakes[k], ky=m.section+'|'+m.topic;
-    if(!agg[ky]){ agg[ky]={section:m.section, topic:m.topic, n:0}; order.push(ky); } agg[ky].n++; });
-  order.sort(function(a,b){ return agg[b].n-agg[a].n; });
-  var rankRows = order.slice(0,6).map(function(ky,idx){
+  open.forEach(function(k){ var m=store.mistakes[k], ky=m.section+'|'+m.topic;
+    if(!agg[ky]){ agg[ky]={section:m.section,topic:m.topic,n:0}; order.push(ky);} agg[ky].n++; });
+  order.sort(function(a,b){return agg[b].n-agg[a].n;});
+  var rankRows=order.slice(0,6).map(function(ky,idx){
     var a=agg[ky], rem=(REM[a.section]||{}), hint=(rem.topics&&rem.topics[a.topic])||'';
     var trick=trickUrl(a.section,a.topic), tid='wt'+(_tid++);
     return '<div class="wk"><div class="rk">'+(idx+1)+'</div>'+
@@ -466,20 +478,29 @@ function renderMistakes(){
         '<a class="fx drill" href="'+(rem.review||'/ace-labs.html#tools')+'" target="_blank" rel="noopener">Drill</a>'+
       '</div><div class="trick-embed" id="'+tid+'" style="grid-column:1/-1"></div></div>';
   }).join('');
-  // full missed-question list grouped by section
+  var now=Date.now();
+  open.sort(function(a,b){ return (store.mistakes[a].due||0)-(store.mistakes[b].due||0); });
   var listHtml='';
   ['bio','gchem','ochem','qr'].forEach(function(s){
-    var ks=keys.filter(function(k){return store.mistakes[k].section===s;});
+    var ks=open.filter(function(k){return store.mistakes[k].section===s;});
     if(!ks.length) return;
-    ks.sort(function(a,b){return store.mistakes[b].wrong-store.mistakes[a].wrong;});
     listHtml+='<div class="section-h" style="color:var(--'+s+')">'+SECT[s]+' · '+ks.length+'</div>';
-    ks.forEach(function(k){ var m=store.mistakes[k]; listHtml += missCard(m.q, -1, {tier:m.tier, wrongN:m.wrong}); });
+    ks.forEach(function(k){ var m=store.mistakes[k];
+      var isDue=(m.due||0)<=now, days=Math.max(1,Math.ceil(((m.due||0)-now)/DAY));
+      var st={ text:(isDue?'due now':'back in '+days+'d')+' · '+(m.streak||0)+'/2 mastered', color:isDue?'var(--bad)':'var(--ink3)' };
+      listHtml += missCard(m.q, -1, {tier:m.tier, wrongN:m.wrong, status:st});
+    });
   });
+  var retryBtn = due.length
+    ? '<button class="bad" onclick="go(\'retry\',\'due\')">Retry '+due.length+' due now</button>'
+    : (sched.length ? '<button disabled>All caught up · next due in '+Math.max(1,Math.ceil((Math.min.apply(null,sched.map(function(k){return store.mistakes[k].due;}))-now)/DAY))+'d</button>' : '');
+  var allBtn = (open.length>due.length) ? '<button class="ghost" onclick="go(\'retry\',\'all\')">Drill all '+open.length+' now</button>' : '';
   app.innerHTML=
     '<h2 class="view">Your Mistake List</h2>'+
-    '<div class="mhead"><div class="big-n">'+keys.length+'</div>'+
-      '<div class="msub">question'+(keys.length===1?'':'s')+' to master'+(masteredN?(' · <b style="color:var(--ok)">'+masteredN+' already cleared</b>'):'')+'<br>This is what stands between you and your target. Fix them, then retry.</div>'+
-      '<div class="sp"></div><button class="bad" onclick="go(\'retry\')">Retry all '+keys.length+' now</button></div>'+
+    '<div class="mhead"><div class="big-n">'+open.length+'</div>'+
+      '<div class="msub">open · <b style="color:var(--bad)">'+due.length+' due now</b>'+(sched.length?(' · '+sched.length+' scheduled'):'')+(masteredN?(' · <b style="color:var(--ok)">'+masteredN+' mastered</b>'):'')+
+      '<br>Spaced review: a question needs <b>two correct, spaced out,</b> to master. Miss it and it comes back sooner.</div>'+
+      '<div class="sp"></div>'+retryBtn+allBtn+'</div>'+
     '<div class="section-h">Work on these most</div><div class="weak">'+rankRows+'</div>'+
     '<div class="section-h" style="margin-top:30px">Every open mistake</div>'+listHtml+
     '<a class="back" onclick="go(\'ladder\')">To the Ladder</a>';
@@ -495,7 +516,7 @@ function renderMistakes(){
     a.misses.forEach(function(mm){
       var q=t.questions[mm.qi]; if(!q) return; var key=qkey(q);
       if(store.mistakes[key]) return;
-      store.mistakes[key]={section:q.section,topic:q.topic,tier:a.tier||t.tier,q:q,wrong:1,resolved:false,ts:Date.now()}; changed=true;
+      store.mistakes[key]={section:q.section,topic:q.topic,tier:a.tier||t.tier,q:q,wrong:1,streak:0,box:0,due:Date.now(),resolved:false,ts:Date.now()}; changed=true;
     });
   });
   if(changed) save();
