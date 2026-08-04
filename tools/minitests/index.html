@@ -279,7 +279,7 @@ function renderStreak(){
   document.getElementById('streak').innerHTML = 'STREAK <b>'+(store.streak||0)+'</b>';
   var n = openMistakes().length;
   document.getElementById('navMistCt').textContent = n ? ('· '+n) : '';
-  var d = dueMistakes().length, dc = document.getElementById('navDueCt');
+  var d = dueMistakes().length + maintenanceDue().length, dc = document.getElementById('navDueCt');
   if(dc){ dc.textContent = d ? ('· '+d) : ''; dc.style.color = 'var(--gold)'; }
 }
 
@@ -412,15 +412,12 @@ function submitTest(){
     if(right){
       correct++; sect[q.section].c++;
       var mr=store.mistakes[key];
-      if(mr && !mr.resolved){
-        mr.streak=(mr.streak||0)+1; mr.ts=Date.now();
-        if(mr.streak>=2){ mr.resolved=true; }                       // two correct, spaced -> mastered
-        else { mr.box=Math.min((mr.box||0)+1,3); mr.due=Date.now()+INTERVAL[mr.box]; }
-      }
+      if(mr && !mr.resolved){ schedLearnCorrect(mr); }                    // advance toward mastery via SM-2
     } else {
-      var m = store.mistakes[key] || { section:q.section, topic:q.topic, tier:(T.tier||1), q:q, wrong:0 };
-      m.wrong=(m.wrong||0)+1; m.streak=0; m.box=0; m.due=Date.now(); m.resolved=false; m.q=q; m.ts=Date.now();
+      var m = store.mistakes[key]; var fresh=!m;
+      if(fresh) m = { section:q.section, topic:q.topic, tier:(T.tier||1), q:q, wrong:0 };
       store.mistakes[key]=m;
+      schedLapse(m);                                                      // wrong -> lapse (learning or maintenance)
       misses.push({section:q.section, topic:q.topic, qi:i, picked:T.ans[i]});
       emitMiss(q, i, T.ans[i]);
     }
@@ -613,13 +610,42 @@ function interleave(arr){                                   // round-robin by se
   while(any){ any=false; order.forEach(function(s){ if(by[s].length){ out.push(by[s].shift()); any=true; } }); }
   return out;
 }
+/* ---- SM-2-lite scheduler (Phase 2): per-card ease governs the spacing. Two spaced novel wins
+   still master (Thomas's bar). But a mastered concept doesn't vanish - it enters MAINTENANCE and
+   resurfaces at growing intervals (21d -> ~50d -> ...) so it can't silently decay; forget it and
+   it lapses straight back into learning. ---- */
+function cardEF(m){ return m.ef==null ? 2.5 : m.ef; }
+function schedLearnCorrect(m){                 // correct on an open (learning) card
+  m.reps=(m.reps||0)+1; m.streak=(m.streak||0)+1; m.ts=Date.now();
+  if(m.streak>=2){ schedMaster(m); return 'mastered'; }
+  m.ivl=1; m.box=Math.min((m.box||0)+1,3); m.due=Date.now()+m.ivl*DAY;   // one spaced win in; next win masters
+  return 'advanced';
+}
+function schedMaster(m){                        // retire from the daily queue, begin maintenance
+  m.resolved=true; m.phase='maintain'; m.ef=cardEF(m);
+  m.ivl=21; m.due=Date.now()+m.ivl*DAY;
+}
+function schedMaintainCorrect(m){               // a mastered concept, still sharp -> push it further out
+  m.reps=(m.reps||0)+1; m.ts=Date.now(); m.ef=cardEF(m);
+  m.ivl=Math.min(Math.round((m.ivl||21)*m.ef), 180); m.due=Date.now()+m.ivl*DAY;
+}
+function schedLapse(m){                          // wrong on a learning OR a maintained card
+  m.ef=Math.max(1.3, cardEF(m)-0.2);            // keep easiness, nudge down (SM-2 lapse)
+  m.resolved=false; m.phase='learn'; m.streak=0; m.reps=0; m.box=0; m.ivl=0; m.due=Date.now();
+  m.wrong=(m.wrong||0)+1; m.lapses=(m.lapses||0)+1; m.ts=Date.now();
+}
+function maintenanceDue(){ var now=Date.now();
+  return Object.keys(store.mistakes).filter(function(k){ var m=store.mistakes[k]; return m.resolved && m.phase==='maintain' && (m.due||0)<=now; }); }
+
 function buildDailyQueue(){
   var dueKeys=dueMistakes();
   dueKeys.sort(function(a,b){ var ma=store.mistakes[a], mb=store.mistakes[b];   // highest-risk first
     return (mb.lapses||mb.wrong||0)-(ma.lapses||ma.wrong||0) || (ma.due||0)-(mb.due||0); });
   var due=dueKeys.map(function(k){ var m=store.mistakes[k];
     return {kind:'review', key:k, q:(pickVariant(m.section,m.topic,k)||m.q), section:m.section, topic:m.topic, tier:m.tier}; });
-  return interleave(due).concat(interleave(buildNew(NEW_CAP)));
+  var maint=maintenanceDue().map(function(k){ var m=store.mistakes[k];
+    return {kind:'maintain', key:k, q:(pickVariant(m.section,m.topic,k)||m.q), section:m.section, topic:m.topic, tier:m.tier}; });
+  return interleave(due).concat(interleave(maint)).concat(interleave(buildNew(NEW_CAP)));
 }
 
 function weakThree(){
@@ -643,6 +669,7 @@ function stateChips(){
 function renderToday(){
   var q=buildDailyQueue();
   var dueN=q.filter(function(x){return x.kind==='review';}).length;
+  var maintN=q.filter(function(x){return x.kind==='maintain';}).length;
   var newN=q.filter(function(x){return x.kind==='new';}).length;
   var openN=openMistakes().length;
   var app=document.getElementById('app');
@@ -664,6 +691,7 @@ function renderToday(){
     '<h1 class="big">Today\'s <em>climb</em>.</h1>'+
     '<div class="tq-head">'+
       (dueN?'<div class="tqn"><b>'+dueN+'</b>due for review</div>':'')+
+      (maintN?'<div class="tqn"><b>'+maintN+'</b>keeping sharp</div>':'')+
       (newN?'<div class="tqn new"><b>'+newN+'</b>new to learn</div>':'')+
       '<div class="tqn new"><b>'+q.length+'</b>total today</div>'+
     '</div>'+
@@ -697,7 +725,7 @@ function renderCheck(){
   if(!C.queue || C.i>=C.queue.length) return renderCheckDone();
   var it=C.queue[C.i], q=it.q, prog=Math.round(100*C.i/C.queue.length);
   var head='<div class="check-wrap"><div class="cprog"><span>'+(C.i+1)+' / '+C.queue.length+'</span>'+
-    '<div class="bar"><i style="width:'+prog+'%"></i></div><span class="kind">'+(it.kind==='review'?'review':'new')+'</span></div>'+
+    '<div class="bar"><i style="width:'+prog+'%"></i></div><span class="kind">'+(it.kind==='new'?'new':it.kind==='maintain'?'keep sharp':'review')+'</span></div>'+
     '<div class="qcard"><span class="qtag '+q.section+'">'+SECT[q.section]+' · '+q.topic+'</span>'+
     '<p class="stem">'+q.stem+'</p>'+(q.figureSvg?('<div class="fig">'+q.figureSvg+'</div>'):'');
   var body='';
@@ -706,9 +734,11 @@ function renderCheck(){
       '<div class="cbtnrow"><button class="gold" '+(C.pick<0?'disabled':'')+' onclick="checkSubmit()">Check answer</button>'+
       '<button class="ghost" onclick="quitCheck()">Leave</button></div>';
   } else if(C.stage==='correct'){
+    var mc=store.mistakes[it.key], tail='';
+    if(it.kind==='review') tail = (mc&&mc.resolved) ? ' &nbsp;Two spaced wins - mastered. It moves to maintenance so it stays sharp.' : ' &nbsp;One spaced win in - one more, on a fresh question, and the concept is yours.';
+    else if(it.kind==='maintain') tail = ' &nbsp;Still sharp - back in '+(mc?mc.ivl:'')+' days.';
     body='<div class="choices">'+choiceHtml(q,C.pick,true)+'</div>'+
-      '<div class="correct-note"><b>Correct.</b> '+q.explanation+
-        (it.kind==='review'?' &nbsp;This concept moves toward mastered.':'')+'</div>'+
+      '<div class="correct-note"><b>Correct.</b> '+q.explanation+tail+'</div>'+
       '<div class="cbtnrow"><button class="gold" onclick="checkNext()">'+(C.i+1>=C.queue.length?'Finish':'Next')+'</button></div>';
   } else if(C.stage==='lockin'){
     body=lockPanel(it,q);
@@ -727,10 +757,12 @@ function checkSubmit(){
     C.right++;
     if(it.kind==='review'){
       var m=store.mistakes[it.key];
-      if(m && !m.resolved){ m.streak=(m.streak||0)+1; m.reps=(m.reps||0)+1; m.ts=Date.now();
-        if(m.streak>=2){ m.resolved=true; C.mastered++; }                 // two spaced novel corrects -> mastered
-        else { m.box=Math.min((m.box||0)+1,3); m.due=Date.now()+INTERVAL[m.box]; } }
-      logReview({key:it.key, grade:GRADE.good, correct:true, section:q.section, topic:q.topic, tier:it.tier, box:m?m.box:null, due:m?m.due:null});
+      if(m && !m.resolved){ if(schedLearnCorrect(m)==='mastered') C.mastered++; }
+      logReview({key:it.key, grade:GRADE.good, correct:true, section:q.section, topic:q.topic, tier:it.tier, box:m?m.box:null, due:m?m.due:null, ef:m?m.ef:null, ivl:m?m.ivl:null});
+    } else if(it.kind==='maintain'){
+      var mM=store.mistakes[it.key];
+      if(mM && mM.resolved) schedMaintainCorrect(mM);
+      logReview({key:it.key, grade:GRADE.good, correct:true, section:q.section, topic:q.topic, tier:it.tier, due:mM?mM.due:null, ef:mM?mM.ef:null, ivl:mM?mM.ivl:null});
     } else {
       store.seen[qkey(q)]=Date.now();                                     // new answered right = known
       logReview({key:qkey(q), grade:GRADE.good, correct:true, section:q.section, topic:q.topic, tier:it.tier});
@@ -739,9 +771,9 @@ function checkSubmit(){
   } else {
     var key=it.key || qkey(q);
     var mm=store.mistakes[key] || {section:q.section, topic:q.topic, tier:it.tier||1, q:q, wrong:0};
-    mm.wrong=(mm.wrong||0)+1; mm.lapses=(mm.lapses||0)+1; mm.streak=0; mm.box=0; mm.due=Date.now(); mm.resolved=false; mm.ts=Date.now();
-    if(it.kind!=='review') mm.q=q;                                        // review cards keep their canonical question
+    if(it.kind!=='review' && it.kind!=='maintain') mm.q=q;                // review/maintain cards keep their canonical question
     store.mistakes[key]=mm; it.key=key;
+    schedLapse(mm);                                                       // wrong -> lapse (learning or maintenance)
     emitMiss(q, 0, C.pick, 'check');
     C.diag=null; C.conf=null; C.locked=undefined; C.lockPick=-1;
     C.stage='diagnose'; save(); renderStreak();
@@ -805,7 +837,7 @@ function lockPick(i){ C.lockPick=i; renderCheck(); }
 function lockSubmit(){
   var it=C.queue[C.i], q=it.q, ok=C.lockPick===q.correct, key=it.key||qkey(q), m=store.mistakes[key];
   C.locked=ok;
-  if(m){ m.reps=(m.reps||0)+1; if(ok){ m.box=1; m.due=Date.now()+INTERVAL[1]; } else { m.box=0; m.due=Date.now(); } }  // same-item lock-in: no streak credit
+  if(m){ m.reps=(m.reps||0)+1; if(ok){ m.ivl=1; m.box=1; m.due=Date.now()+DAY; } else { m.ivl=0; m.box=0; m.due=Date.now(); } }  // same-item lock-in: no streak/mastery credit
   logReview({key:key, grade:ok?GRADE.hard:GRADE.again, correct:ok, section:q.section, topic:q.topic, tier:it.tier, diag:C.diag, conf:C.conf, box:m?m.box:0, due:m?m.due:0});
   save(); renderStreak(); renderCheck();
 }
