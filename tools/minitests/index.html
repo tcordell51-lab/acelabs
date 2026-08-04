@@ -422,6 +422,9 @@ function submitTest(){
       emitMiss(q, i, T.ans[i]);
     }
   });
+  var tbk={};                                                              // per-topic accuracy for portal telemetry
+  T.qs.forEach(function(q,i){ var tk=q.section+'|'+q.topic; tbk[tk]=tbk[tk]||{section:q.section,topic:q.topic,c:0,t:0}; tbk[tk].t++; if(T.ans[i]===q.correct)tbk[tk].c++; });
+  recordSessions(Object.keys(tbk).map(function(k){ return tbk[k]; }));
   var pct=Math.round(100*correct/T.qs.length);
   if(T.mode==='test'){ store.best[T.n]=Math.max(store.best[T.n]||0, pct); }
   store.attempts.push({mode:T.mode, n:T.n, tier:T.tier, pct:pct, correct:correct, total:T.qs.length, dateISO:nowISO});
@@ -430,8 +433,8 @@ function submitTest(){
   go('results');
 }
 function emitMiss(q,i,picked,mode){
-  try{ window.parent.postMessage({type:'acedat:tool-miss', tool:'minitest', section:SECT[q.section],
-    questionId:'minitest_'+qkey(q), hub:'minitest-'+(mode||T.mode||'test'), stem:q.stem,
+  try{ window.parent.postMessage({type:'acedat:tool-miss', tool:'minitest', section:SECT[q.section], topic:q.topic,
+    questionId:'minitest_'+qkey(q), hub:'minitest-'+(mode||T.mode||'test'), stem:q.stem, studentId:ATCTX.studentId||null,
     pickedKey:String(picked), pickedText:String(picked>-1?q.choices[picked]:'(blank)').slice(0,120),
     correctKey:String(q.correct), correctText:String(q.choices[q.correct]).slice(0,120), ts:Date.now()},'*'); }catch(e){}
 }
@@ -569,9 +572,34 @@ function logReview(o){
   store.reviews = store.reviews || [];
   store.reviews.push({ k:o.key, t:Date.now(), g:o.grade, correct:!!o.correct,
     sec:o.section, top:o.topic, tier:o.tier||null, diag:o.diag||null, conf:o.conf||null,
-    box:(o.box==null?null:o.box), due:(o.due||null) });
+    ef:(o.ef==null?null:o.ef), ivl:(o.ivl==null?null:o.ivl), box:(o.box==null?null:o.box), due:(o.due||null) });
   if(store.reviews.length>4000) store.reviews = store.reviews.slice(-4000);
 }
+
+/* ---- portal companion handshake (honors src/utils/aceLabsTelemetry.js in AceDatPortal).
+   When embedded in the portal it learns the studentId, then writes the exact session record the
+   portal already consumes: localStorage['acethedat.acelabs.sessions'] = [{engine,topic,accuracy,
+   durationMin,completedAt,studentId}]. Mirrored up via postMessage so a cross-origin portal can
+   persist it too. Standalone: still writes locally (studentId null) - harmless, feeds nothing. ---- */
+var EMBEDDED = (function(){ try{ return window.parent && window.parent !== window.self; }catch(e){ return false; } })();
+var ATCTX = { studentId:null };
+var TELE_KEY = 'acethedat.acelabs.sessions';
+function teleRead(){ try{ return JSON.parse(localStorage.getItem(TELE_KEY))||[]; }catch(e){ return []; } }
+function recordSessions(rows){
+  if(!rows || !rows.length) return;
+  var now=new Date().toISOString(), all=teleRead();
+  rows.forEach(function(r){ if(!r.t) return;
+    var rec={ engine:'the-climb', section:r.section||null, topic:r.topic,
+      accuracy:Math.round(100*r.c/r.t)/100, durationMin:r.durationMin||null,
+      completedAt:now, studentId:ATCTX.studentId||null };
+    all.push(rec);
+    if(EMBEDDED){ try{ window.parent.postMessage({type:'acedat:session', tool:'minitest', session:rec},'*'); }catch(e){} }
+  });
+  try{ localStorage.setItem(TELE_KEY, JSON.stringify(all.slice(-400))); }catch(e){}
+}
+if(EMBEDDED){ try{ window.parent.postMessage({type:'acedat:hello', tool:'minitest'},'*'); }catch(e){} }
+window.addEventListener('message', function(e){ var d=e.data;
+  if(d && d.type==='acedat:identify' && d.studentId){ ATCTX.studentId=d.studentId; } });
 
 /* every spaced re-test pulls a NOT-just-seen question on the SAME concept - proves understanding, not memorized answer. */
 function bankByTopic(section, topic){
@@ -705,7 +733,7 @@ function renderToday(){
 var C = {};
 function startCheck(){
   C = { queue:buildDailyQueue(), i:0, stage:'answer', pick:-1, done:0, right:0, mastered:0,
-        diag:null, conf:null, lockPick:-1, locked:undefined };
+        diag:null, conf:null, lockPick:-1, locked:undefined, topics:{} };
   if(!C.queue.length) return renderToday();
   document.getElementById('nav-today').classList.add('on');
   document.getElementById('nav-ladder').classList.remove('on');
@@ -753,6 +781,9 @@ function checkPick(i){ C.pick=i; renderCheck(); }
 function checkSubmit(){
   var it=C.queue[C.i], q=it.q, right=C.pick===q.correct;
   C.done++;
+  var tk=it.section+'|'+it.topic;                                          // per-topic accuracy for portal telemetry
+  C.topics[tk]=C.topics[tk]||{section:it.section, topic:it.topic, c:0, t:0};
+  C.topics[tk].t++; if(right) C.topics[tk].c++;
   if(right){
     C.right++;
     if(it.kind==='review'){
@@ -845,6 +876,7 @@ function checkNext(){ C.i++; C.stage='answer'; C.pick=-1; C.diag=null; C.conf=nu
 function quitCheck(){ if(confirm('Leave today\'s check? Everything you have answered is already saved.')){ bumpStreak(new Date().toISOString()); save(); renderStreak(); go('today'); } }
 function renderCheckDone(){
   bumpStreak(new Date().toISOString()); save(); renderStreak();
+  recordSessions(Object.keys(C.topics||{}).map(function(k){ return C.topics[k]; }));   // -> portal activity + miss signals
   var app=document.getElementById('app'), dueLeft=dueMistakes().length;
   app.innerHTML='<div class="check-done"><div class="eyebrow">Today · done</div>'+
     '<div class="score-big">'+C.right+'<small> / '+C.done+'</small></div>'+
