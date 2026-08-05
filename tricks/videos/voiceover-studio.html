@@ -136,8 +136,9 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);min-height:10
   <div class="sb-h">Bespoke videos · 13</div>
   <div id="tkList"></div>
   <div class="sb-foot">
-    Records <b>per scene</b> with your browser mic (or mic + face cam). Each scene saves as a
-    <code>.webm</code>. Nothing is uploaded — recordings live in your browser only. Download before you close.
+    Records <b>per scene</b> with your browser mic (or mic + face cam). <b>Download all as ZIP</b> bundles a
+    video's clips into one <code>&lt;video&gt;.zip</code> — audio as <code>.wav</code> (opens in any editor),
+    named with each scene's timestamp. Nothing is uploaded; recordings live in your browser only — <b>download before you close.</b>
   </div>
 </aside>
 
@@ -149,7 +150,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);min-height:10
     </div>
     <div class="mn-h-r">
       <button class="btn" id="btnPreview" onclick="previewVideo()" title="Open the video full-screen in a new tab">Open full-screen</button>
-      <button class="btn gold" id="btnDownloadAll" onclick="downloadAll()" disabled>Download all recordings</button>
+      <button class="btn gold" id="btnDownloadAll" onclick="downloadAll()" disabled>Download all as ZIP</button>
     </div>
   </div>
 
@@ -190,7 +191,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);min-height:10
     <h3>From clips to a posted video</h3>
     <ol>
       <li><b>Record every scene</b> at the pace you'd teach it. Re-record any that don't feel right.</li>
-      <li><b>Download all</b> — files arrive as <code>&lt;video&gt;-&lt;scene&gt;-&lt;phase&gt;.webm</code>.</li>
+      <li><b>Download all as ZIP</b> — one <code>&lt;video&gt;.zip</code> of clips named <code>&lt;video&gt;-&lt;scene&gt;-&lt;time&gt;-&lt;phase&gt;.wav</code>, so they sort into place by name.</li>
       <li><b>Screen-record the animation</b> full-screen (Cmd+Shift+5), or drop the video HTML into your editor as a source.</li>
       <li><b>Layer each audio clip</b> at its <code>t=</code> timestamp — that's the exact playhead time the scene appears in the animation.</li>
       <li><b>(Face mode)</b> Add the face clips as a circle picture-in-picture (~25% height, top-right or bottom-left).</li>
@@ -346,28 +347,72 @@ async function startRecording(sceneIdx){
 }
 function stopRecording(){ if(STATE.recorder && STATE.recorder.state==='recording') STATE.recorder.stop(); }
 
-/* ---- downloads ---- */
+/* ---- downloads: one ZIP per video, timestamped names, audio -> WAV (universal) ---- */
 function downloadBlob(blob, filename){
   const url = URL.createObjectURL(blob); const a=document.createElement('a');
   a.href=url; a.download=filename; document.body.appendChild(a); a.click(); document.body.removeChild(a);
-  setTimeout(()=>URL.revokeObjectURL(url),1000);
+  setTimeout(()=>URL.revokeObjectURL(url),1500);
 }
-function downloadScene(sceneIdx){
-  const v = VIDEOS[STATE.active]; const rec = STATE.recordings[STATE.active] && STATE.recordings[STATE.active][sceneIdx];
-  if(!rec) return; const phase = v.scenes[sceneIdx].phase;
-  downloadBlob(rec.blob, `${STATE.active}-${(sceneIdx+1).toString().padStart(2,'0')}-${phase}.webm`);
+function stamp(ms){ const t=Math.round(ms/1000); return Math.floor(t/60)+'m'+String(t%60).padStart(2,'0')+'s'; }
+function clipName(slug, idx, scene, ext){ return `${slug}-${String(idx+1).padStart(2,'0')}-${stamp(scene.t)}-${scene.phase}.${ext}`; }
+
+/* Decode the recorded audio and re-encode as 16-bit PCM WAV so it opens in any
+   editor (CapCut, DaVinci, Final Cut, Premiere). Face-cam clips stay .webm (video). */
+let __actx=null;
+function actx(){ return __actx || (__actx = new (window.AudioContext||window.webkitAudioContext)()); }
+async function toWav(blob){
+  const audio = await actx().decodeAudioData(await blob.arrayBuffer());
+  const ch=audio.numberOfChannels, len=audio.length, rate=audio.sampleRate;
+  const dv=new DataView(new ArrayBuffer(44 + len*ch*2));
+  const w=(o,s)=>{ for(let i=0;i<s.length;i++) dv.setUint8(o+i, s.charCodeAt(i)); };
+  w(0,'RIFF'); dv.setUint32(4,36+len*ch*2,true); w(8,'WAVE'); w(12,'fmt '); dv.setUint32(16,16,true);
+  dv.setUint16(20,1,true); dv.setUint16(22,ch,true); dv.setUint32(24,rate,true); dv.setUint32(28,rate*ch*2,true);
+  dv.setUint16(32,ch*2,true); dv.setUint16(34,16,true); w(36,'data'); dv.setUint32(40,len*ch*2,true);
+  const chans=[]; for(let c=0;c<ch;c++) chans.push(audio.getChannelData(c));
+  let off=44; for(let i=0;i<len;i++){ for(let c=0;c<ch;c++){ let s=Math.max(-1,Math.min(1,chans[c][i])); dv.setInt16(off, s<0?s*0x8000:s*0x7FFF, true); off+=2; } }
+  return new Blob([dv], {type:'audio/wav'});
 }
-function downloadAll(){
-  if(!STATE.active) return; const v=VIDEOS[STATE.active]; const recs=STATE.recordings[STATE.active]||{};
-  const keys = Object.keys(recs).sort((a,b)=>a-b);
+async function clipFor(rec){ return rec.mode==='face' ? {blob:rec.blob, ext:'webm'} : {blob:await toWav(rec.blob), ext:'wav'}; }
+
+/* Minimal store-only ZIP writer (no dependency) — bundles a video's clips into one file. */
+const __crcT=(()=>{ const t=new Uint32Array(256); for(let n=0;n<256;n++){ let c=n; for(let k=0;k<8;k++) c=(c&1)?(0xEDB88320^(c>>>1)):(c>>>1); t[n]=c>>>0; } return t; })();
+function crc32(u8){ let c=0xFFFFFFFF; for(let i=0;i<u8.length;i++) c=__crcT[(c^u8[i])&0xFF]^(c>>>8); return (c^0xFFFFFFFF)>>>0; }
+function u16(n){ return new Uint8Array([n&255,(n>>8)&255]); }
+function u32(n){ return new Uint8Array([n&255,(n>>8)&255,(n>>16)&255,(n>>24)&255]); }
+function concat(arrs){ let len=0; arrs.forEach(a=>len+=a.length); const out=new Uint8Array(len); let o=0; arrs.forEach(a=>{ out.set(a,o); o+=a.length; }); return out; }
+async function makeZip(files){
+  const enc=new TextEncoder(), locals=[], central=[]; let offset=0;
+  for(const f of files){
+    const name=enc.encode(f.name), data=new Uint8Array(await f.blob.arrayBuffer()), crc=crc32(data);
+    const local=concat([u32(0x04034b50),u16(20),u16(0),u16(0),u16(0),u16(0),u32(crc),u32(data.length),u32(data.length),u16(name.length),u16(0),name,data]);
+    locals.push(local);
+    central.push(concat([u32(0x02014b50),u16(20),u16(20),u16(0),u16(0),u16(0),u16(0),u32(crc),u32(data.length),u32(data.length),u16(name.length),u16(0),u16(0),u16(0),u16(0),u32(0),u32(offset),name]));
+    offset+=local.length;
+  }
+  const cd=concat(central);
+  const end=concat([u32(0x06054b50),u16(0),u16(0),u16(files.length),u16(files.length),u32(cd.length),u32(offset),u16(0)]);
+  return new Blob([concat(locals),cd,end],{type:'application/zip'});
+}
+
+async function downloadScene(sceneIdx){
+  const v=VIDEOS[STATE.active], rec=STATE.recordings[STATE.active] && STATE.recordings[STATE.active][sceneIdx];
+  if(!rec) return;
+  toast('Preparing clip…');
+  const {blob,ext}=await clipFor(rec);
+  downloadBlob(blob, clipName(STATE.active, sceneIdx, v.scenes[sceneIdx], ext));
+}
+async function downloadAll(){
+  if(!STATE.active) return;
+  const v=VIDEOS[STATE.active], recs=STATE.recordings[STATE.active]||{};
+  const keys=Object.keys(recs).sort((a,b)=>a-b);
   if(!keys.length){ toast('No recordings yet for this video','error'); return; }
-  let i=0;
-  (function next(){
-    if(i>=keys.length){ toast(`Downloaded ${keys.length} files`,'success'); return; }
-    const idx=+keys[i], phase=v.scenes[idx].phase;
-    downloadBlob(recs[idx].blob, `${STATE.active}-${(idx+1).toString().padStart(2,'0')}-${phase}.webm`);
-    i++; setTimeout(next,350);
-  })();
+  toast('Packaging '+keys.length+' clip'+(keys.length===1?'':'s')+'…');
+  try{
+    const files=[];
+    for(const k of keys){ const idx=+k; const {blob,ext}=await clipFor(recs[idx]); files.push({name:clipName(STATE.active, idx, v.scenes[idx], ext), blob}); }
+    downloadBlob(await makeZip(files), STATE.active+'.zip');
+    toast('Downloaded '+STATE.active+'.zip · '+keys.length+' clip'+(keys.length===1?'':'s'), 'success');
+  }catch(e){ console.error(e); toast('Could not package the zip — try downloading scenes individually','error'); }
 }
 
 /* ---- toast ---- */
