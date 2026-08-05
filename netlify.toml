@@ -13,10 +13,10 @@
 [[headers]]
   for = "/*"
   [headers.values]
-    # SAMEORIGIN (not DENY): the engines embed their own /tools/*/tiktoks/* explainer
-    # pages in an in-app modal iframe (e.g. GC "Watch" -> VID.open). DENY blocked those
-    # same-origin frames, leaving a blank player. External framing is still blocked.
-    X-Frame-Options = "SAMEORIGIN"
+    # Framing is controlled by CSP frame-ancestors below (X-Frame-Options is dropped
+    # because it has no multi-origin form). 'self' keeps the in-app same-origin explainer
+    # iframes working (e.g. GC "Watch" -> VID.open); the AceTheDAT portal is allowed so it
+    # can embed the study tools (e.g. The Climb) same as a same-origin tool.
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
     Permissions-Policy = "camera=(self), microphone=(self), geolocation=(), payment=()"
@@ -24,7 +24,7 @@
     # are eval'd — but Refused-Inline-Script is set to 'unsafe-inline' because the engine
     # HTMLs use inline <script> blocks for visualizations and event wiring. If we ever
     # extract those to external .js files, tighten this.
-    Content-Security-Policy = "default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self' 'unsafe-inline'; img-src 'self' data:; media-src 'self' blob:; connect-src 'self'; frame-ancestors 'self'"
+    Content-Security-Policy = "default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self' 'unsafe-inline'; img-src 'self' data:; media-src 'self' blob:; connect-src 'self'; frame-ancestors 'self' https://acethedat-portal.netlify.app"
 
 [[headers]]
   for = "/shared/*"
