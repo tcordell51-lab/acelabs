@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Ace The DAT — Video Voiceover Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#0a0a0a; --panel:#121212; --panel2:#181818; --raise:#1e1e1e;
+  --ink:#f2efe6; --ink2:#b7b2a6; --ink3:#7d7869; --line:rgba(255,255,255,.09); --line2:rgba(201,168,76,.34);
+  --gold:#C9A84C; --goldhi:#e6cf8f; --gold-bg:rgba(201,168,76,.10);
+  --rec:#e0675c; --rec-bg:rgba(224,103,92,.14); --good:#6bbf8a; --good-bg:rgba(107,191,138,.14);
+  --serif:'Newsreader',Georgia,serif; --sans:'Hanken Grotesk',system-ui,sans-serif; --mono:'JetBrains Mono',ui-monospace,monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);min-height:100vh;line-height:1.5;-webkit-font-smoothing:antialiased;}
+.app{display:grid;grid-template-columns:300px 1fr;min-height:100vh;}
+
+/* Sidebar */
+.sb{background:#070707;border-right:1px solid var(--line);padding:28px 18px;display:flex;flex-direction:column;gap:8px;position:sticky;top:0;height:100vh;overflow-y:auto;}
+.sb-brand{margin-bottom:14px;}
+.sb-brand .mark{font-family:var(--serif);font-size:23px;font-weight:600;}
+.sb-brand .mark em{color:var(--gold);font-style:italic;}
+.sb-brand .sub{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-top:4px;}
+.sb-h{font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);font-weight:700;margin:12px 0 6px;}
+.tk-link{padding:11px 13px;background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--ink3);border-radius:8px;cursor:pointer;transition:all .16s;display:flex;flex-direction:column;gap:3px;}
+.tk-link:hover{background:var(--raise);border-left-color:var(--gold);}
+.tk-link.active{background:var(--gold-bg);border-left-color:var(--gold);}
+.tk-link .tk-t{font-family:var(--serif);font-size:15px;font-weight:600;line-height:1.15;}
+.tk-link .tk-mod{font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);font-weight:600;}
+.tk-link .tk-prog{font-family:var(--mono);font-size:10.5px;color:var(--gold);font-weight:700;margin-top:2px;}
+.tk-link.done{border-left-color:var(--good);}
+.tk-link.done .tk-prog{color:var(--good);}
+.sb-foot{margin-top:auto;padding-top:14px;border-top:1px solid var(--line);font-size:10.5px;color:var(--ink3);line-height:1.55;}
+.sb-foot code{font-family:var(--mono);color:var(--gold);}
+
+/* Main */
+.mn{padding:28px 34px 60px;max-width:1180px;}
+.mn-h{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:18px;}
+.mn-h-l .module-tag{font-family:var(--mono);font-size:10.5px;color:var(--gold);letter-spacing:.16em;text-transform:uppercase;font-weight:700;margin-bottom:6px;}
+.mn-h-l h1{font-family:var(--serif);font-size:34px;font-weight:600;line-height:1.08;letter-spacing:-.01em;}
+.mn-h-l h1 em{color:var(--gold);font-style:italic;}
+.mn-h-r{display:flex;gap:10px;flex-wrap:wrap;}
+.btn{padding:9px 16px;font-size:12px;background:var(--panel);border:1px solid var(--line2);border-radius:8px;cursor:pointer;font-weight:700;font-family:var(--sans);color:var(--ink);transition:all .15s;letter-spacing:.03em;}
+.btn:hover{background:var(--raise);border-color:var(--gold);color:var(--goldhi);}
+.btn.gold{background:linear-gradient(180deg,var(--goldhi),var(--gold));border:none;color:#1a1408;}
+.btn.gold:hover{filter:brightness(1.06);}
+.btn:disabled{opacity:.4;cursor:not-allowed;}
+
+/* Preview panel — the black video, playing silent, to voice over */
+.preview-panel{display:flex;gap:22px;align-items:flex-start;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:22px;flex-wrap:wrap;}
+.preview-frame{width:266px;height:473px;flex:none;border-radius:14px;overflow:hidden;background:#000;border:1px solid var(--line2);box-shadow:0 12px 40px rgba(0,0,0,.5);}
+.preview-frame iframe{width:266px;height:473px;border:0;display:block;}
+.preview-side{flex:1;min-width:220px;}
+.preview-side h3{font-family:var(--serif);font-size:19px;font-weight:600;margin-bottom:8px;}
+.preview-side p{font-size:13px;color:var(--ink2);line-height:1.6;margin-bottom:14px;}
+.preview-side .pv-meta{font-family:var(--mono);font-size:11px;color:var(--ink3);margin-bottom:14px;}
+.preview-side .pv-meta b{color:var(--gold);}
+
+.intro{padding:13px 16px;background:var(--gold-bg);border-left:3px solid var(--gold);border-radius:6px;font-size:12.5px;line-height:1.55;color:var(--ink2);margin-bottom:20px;}
+.intro b{color:var(--ink);}
+
+.mode-row{display:flex;align-items:center;gap:14px;margin-bottom:16px;flex-wrap:wrap;}
+.mode-label{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3);font-weight:700;}
+.mode-toggle{display:inline-flex;background:var(--panel);border:1px solid var(--line);border-radius:99px;padding:3px;}
+.mode-opt{padding:6px 14px;font-size:12px;background:transparent;border:none;cursor:pointer;color:var(--ink3);font-weight:700;font-family:var(--sans);border-radius:99px;transition:all .16s;}
+.mode-opt:hover{color:var(--ink);}
+.mode-opt.active{background:var(--gold);color:#1a1408;}
+.mode-preview{display:flex;align-items:center;gap:10px;}
+.mode-preview video{width:74px;height:74px;border-radius:50%;object-fit:cover;border:2px solid var(--gold);background:#000;}
+.mode-preview-label{font-size:10px;color:var(--gold);font-weight:700;letter-spacing:.1em;text-transform:uppercase;}
+
+.mic-warn{padding:13px 16px;background:rgba(224,103,92,.12);border-left:3px solid var(--rec);border-radius:6px;font-size:12.5px;color:#f0b8b1;margin-bottom:16px;display:none;}
+.mic-warn.show{display:block;}
+.mic-warn b{color:#fff;}
+
+.status-row{display:flex;gap:12px;align-items:center;margin-bottom:16px;font-size:12px;color:var(--ink3);flex-wrap:wrap;}
+.status-pill{padding:3px 10px;border-radius:99px;background:var(--panel);font-family:var(--mono);font-size:11px;font-weight:700;color:var(--ink2);}
+.status-pill.recorded{background:var(--good-bg);color:var(--good);}
+
+/* Scene cards */
+.scenes{display:flex;flex-direction:column;gap:11px;}
+.scene{padding:16px 18px;background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--ink3);border-radius:10px;transition:all .16s;}
+.scene.recorded{border-left-color:var(--good);}
+.scene.recording{border-left-color:var(--rec);background:var(--rec-bg);}
+.scene-h{display:flex;align-items:center;gap:12px;margin-bottom:9px;flex-wrap:wrap;}
+.scene-num{font-family:var(--mono);font-size:10.5px;background:var(--raise);padding:3px 8px;border-radius:4px;color:var(--ink3);font-weight:700;}
+.scene-time{font-family:var(--mono);font-size:11px;color:var(--gold);font-weight:700;}
+.scene-tag{font-size:9.5px;padding:2px 8px;background:var(--raise);border:1px solid var(--line);border-radius:99px;color:var(--ink3);text-transform:uppercase;letter-spacing:.08em;font-weight:700;}
+.scene-tag.hook{color:var(--good);border-color:rgba(107,191,138,.4);}
+.scene-tag.demo{color:#7fb0e6;border-color:rgba(127,176,230,.4);}
+.scene-tag.trap{color:#e0a95c;border-color:rgba(224,169,92,.4);}
+.scene-tag.quiz{color:#b79be6;border-color:rgba(183,155,230,.4);}
+.scene-tag.lock{color:var(--gold);border-color:var(--line2);}
+.scene-status{margin-left:auto;font-family:var(--mono);font-size:10px;color:var(--ink3);font-weight:700;}
+.scene-status.ok{color:var(--good);}
+.scene-script{font-family:var(--serif);font-size:18px;line-height:1.5;color:var(--ink);padding:11px 15px;background:var(--panel2);border-radius:8px;margin-bottom:10px;}
+.scene-meta{font-size:10.5px;color:var(--ink3);margin-bottom:9px;font-family:var(--mono);}
+.scene-meta b{color:var(--ink2);}
+.scene-ctl{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+.audio-preview{flex:1;min-width:200px;}
+.audio-preview audio{width:100%;height:34px;}
+.scene-video-preview{flex:1;min-width:200px;display:flex;align-items:center;gap:10px;}
+.scene-video-preview video{width:54px;height:54px;border-radius:50%;object-fit:cover;border:2px solid var(--gold);background:#000;}
+.scene-video-preview .vp-meta{font-size:10px;color:var(--ink3);font-family:var(--mono);font-weight:700;}
+.rec-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--rec);margin-right:6px;animation:pulse-rec 1.2s infinite;}
+@keyframes pulse-rec{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(1.2)}}
+
+.assembly{margin-top:30px;padding:20px 22px;background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:10px;}
+.assembly h3{font-family:var(--serif);font-size:19px;font-weight:600;margin-bottom:11px;}
+.assembly ol{margin:0 0 12px 20px;line-height:1.7;font-size:13.5px;color:var(--ink2);}
+.assembly ol li b{color:var(--ink);}
+.assembly ol li code{font-family:var(--mono);font-size:11.5px;background:var(--panel2);padding:1px 6px;border-radius:4px;color:var(--gold);}
+.assembly .note{font-size:12.5px;color:var(--ink2);font-style:italic;padding:10px 13px;background:var(--gold-bg);border-radius:6px;line-height:1.55;}
+.assembly .note b{color:var(--gold);font-style:normal;}
+
+.toast{position:fixed;bottom:20px;right:20px;padding:12px 18px;background:#000;border:1px solid var(--line2);color:var(--ink);border-radius:8px;font-size:13px;font-weight:600;box-shadow:0 8px 24px rgba(0,0,0,.5);transform:translateY(120px);transition:transform .3s;z-index:100;max-width:360px;}
+.toast.show{transform:translateY(0);}
+.toast.error{border-color:var(--rec);color:#f0b8b1;}
+.toast.success{border-color:var(--good);color:var(--good);}
+
+@media (max-width:820px){ .app{grid-template-columns:1fr;} .sb{position:static;height:auto;} }
+</style>
+</head>
+<body>
+<div class="app">
+
+<aside class="sb">
+  <div class="sb-brand">
+    <div class="mark">Ace<em>The</em>DAT</div>
+    <div class="sub">Video Voiceover Studio</div>
+  </div>
+  <div class="sb-h">Bespoke videos · 13</div>
+  <div id="tkList"></div>
+  <div class="sb-foot">
+    Records <b>per scene</b> with your browser mic (or mic + face cam). Each scene saves as a
+    <code>.webm</code>. Nothing is uploaded — recordings live in your browser only. Download before you close.
+  </div>
+</aside>
+
+<main class="mn">
+  <div class="mn-h">
+    <div class="mn-h-l">
+      <div class="module-tag" id="modTag">Pick a video</div>
+      <h1 id="tkTitle">Voiceover <em>Studio</em></h1>
+    </div>
+    <div class="mn-h-r">
+      <button class="btn" id="btnPreview" onclick="previewVideo()" title="Open the video full-screen in a new tab">Open full-screen</button>
+      <button class="btn gold" id="btnDownloadAll" onclick="downloadAll()" disabled>Download all recordings</button>
+    </div>
+  </div>
+
+  <div class="preview-panel">
+    <div class="preview-frame"><iframe id="vidFrame" title="video preview" allow="autoplay"></iframe></div>
+    <div class="preview-side">
+      <h3 id="pvTitle">The animation, playing silent</h3>
+      <p>Press play in the frame and record your voice over it, scene by scene. The video runs with no audio here — <b>your</b> voice is the track. Each scene below shows exactly what to say and when it lands on the timeline.</p>
+      <div class="pv-meta" id="pvMeta"></div>
+      <button class="btn" onclick="reloadFrame()">Restart the animation</button>
+    </div>
+  </div>
+
+  <div class="intro">
+    <b>How to use:</b> Pick a recording mode, hit play in the preview, then click <b>Record</b> on a scene, read the script at its timestamp, and <b>Stop</b>. Preview, re-record, or download each clip. <b>Audio + face cam</b> also captures your webcam for a picture-in-picture edit.
+  </div>
+
+  <div class="mode-row">
+    <span class="mode-label">Recording mode</span>
+    <div class="mode-toggle">
+      <button class="mode-opt active" id="modeAudio" onclick="setMode('audio')">Audio only</button>
+      <button class="mode-opt" id="modeFace" onclick="setMode('face')">Audio + face cam</button>
+    </div>
+    <div class="mode-preview" id="facePreviewWrap" style="display:none">
+      <video id="facePreview" autoplay muted playsinline></video>
+      <span class="mode-preview-label">live preview</span>
+    </div>
+  </div>
+
+  <div class="mic-warn" id="micWarn">
+    <b>Microphone access blocked.</b> Click the mic icon in your browser's address bar, allow access for this page, then refresh.
+  </div>
+
+  <div class="status-row" id="statusRow"></div>
+  <div class="scenes" id="scenes"></div>
+
+  <div class="assembly">
+    <h3>From clips to a posted video</h3>
+    <ol>
+      <li><b>Record every scene</b> at the pace you'd teach it. Re-record any that don't feel right.</li>
+      <li><b>Download all</b> — files arrive as <code>&lt;video&gt;-&lt;scene&gt;-&lt;phase&gt;.webm</code>.</li>
+      <li><b>Screen-record the animation</b> full-screen (Cmd+Shift+5), or drop the video HTML into your editor as a source.</li>
+      <li><b>Layer each audio clip</b> at its <code>t=</code> timestamp — that's the exact playhead time the scene appears in the animation.</li>
+      <li><b>(Face mode)</b> Add the face clips as a circle picture-in-picture (~25% height, top-right or bottom-left).</li>
+      <li><b>Trim tight, add music low, export 1080×1920</b> and post.</li>
+    </ol>
+    <p class="note"><b>Pro tip:</b> The scene timestamps come straight from the animation's own timeline, so your voice lands in sync with the visuals with almost no nudging.</p>
+  </div>
+</main>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="vo-scripts.js"></script>
+<script>
+/* ============================================================
+   DATA — the 13 black bespoke videos + their per-scene scripts
+   (window.VIDEO_SCRIPTS from vo-scripts.js). Each: {title, tip,
+   totalDuration, scenes:[{t(ms), id, phase, text}]}.
+   ============================================================ */
+const VIDEOS = window.VIDEO_SCRIPTS || {};
+const ORDER = Object.keys(VIDEOS);
+const fileFor = (slug) => slug + '.html';
+
+const STATE = {
+  active: null, recordings: {}, recorder: null, recordingScene: null,
+  audioStream: null, faceStream: null, mode: 'audio',
+};
+
+function fmtTime(ms){ const total=Math.round(ms/1000); const m=Math.floor(total/60); const s=total%60; return `${m}:${s.toString().padStart(2,'0')}`; }
+
+/* ---- sidebar ---- */
+function renderTkList(){
+  const el = document.getElementById('tkList');
+  el.innerHTML = ORDER.map(slug => {
+    const v = VIDEOS[slug];
+    const recCount = STATE.recordings[slug] ? Object.keys(STATE.recordings[slug]).length : 0;
+    const total = v.scenes.length;
+    const done = recCount === total && total > 0;
+    return `<div class="tk-link ${STATE.active===slug?'active':''} ${done?'done':''}" onclick="pickVideo('${slug}')">
+      <div class="tk-t">${v.title}</div>
+      <div class="tk-mod">${v.tip?('Tip '+v.tip+' · '):''}${total} scenes</div>
+      <div class="tk-prog">${recCount}/${total} recorded</div>
+    </div>`;
+  }).join('');
+}
+
+function pickVideo(slug){
+  STATE.active = slug;
+  STATE.recordings[slug] = STATE.recordings[slug] || {};
+  const frame = document.getElementById('vidFrame');
+  frame.src = fileFor(slug);
+  document.getElementById('pvTitle').textContent = VIDEOS[slug].title;
+  renderTkList();
+  renderScenes();
+  document.getElementById('btnDownloadAll').disabled = false;
+}
+function reloadFrame(){ const f=document.getElementById('vidFrame'); if(STATE.active) f.src = fileFor(STATE.active); }
+function previewVideo(){ if(STATE.active) window.open(fileFor(STATE.active),'_blank'); }
+
+/* ---- scene rendering ---- */
+function renderScenes(){
+  const v = VIDEOS[STATE.active]; if(!v) return;
+  document.getElementById('tkTitle').innerHTML = v.title;
+  document.getElementById('modTag').textContent = `${v.tip?('Tip '+v.tip+' · '):''}tricks/videos/${STATE.active}.html`;
+  const recs = STATE.recordings[STATE.active] || {};
+  const recordedCount = Object.keys(recs).length;
+  const total = v.scenes.length;
+  const runtime = v.totalDuration ? fmtTime(v.totalDuration*1000) : fmtTime(v.scenes[v.scenes.length-1].t + 5000);
+  document.getElementById('pvMeta').innerHTML = `<b>${total}</b> scenes · runtime <b>${runtime}</b> · <b>${recordedCount}</b> recorded`;
+  document.getElementById('statusRow').innerHTML = `
+    <span class="status-pill ${recordedCount===total?'recorded':''}">${recordedCount}/${total} scenes</span>
+    <span>runtime <b style="color:var(--ink2)">${runtime}</b></span>
+    <span style="margin-left:auto;color:var(--ink3);font-style:italic">Read with the scene's mood — hook energetic, lock grounded</span>`;
+  const el = document.getElementById('scenes');
+  el.innerHTML = v.scenes.map((s,i) => {
+    const rec = recs[i], recorded = !!rec, isFaceMode = recorded && rec.mode==='face';
+    const isRec = STATE.recordingScene && STATE.recordingScene.slug===STATE.active && STATE.recordingScene.sceneIdx===i;
+    const modeTag = isFaceMode ? 'face' : 'audio';
+    return `<div class="scene ${recorded?'recorded':''} ${isRec?'recording':''}" id="scene-${i}">
+      <div class="scene-h">
+        <span class="scene-num">SCENE ${(i+1).toString().padStart(2,'0')}</span>
+        <span class="scene-time">${fmtTime(s.t)}</span>
+        <span class="scene-tag ${s.phase}">${s.phase}</span>
+        <span class="scene-status ${recorded?'ok':''}">${isRec?'<span class="rec-dot"></span>RECORDING…':recorded?'recorded · '+modeTag:'empty'}</span>
+      </div>
+      <div class="scene-script">${s.text}</div>
+      <div class="scene-meta">Filename: <b>${STATE.active}-${(i+1).toString().padStart(2,'0')}-${s.phase}.webm</b> · approx ${Math.ceil(s.text.split(' ').length/2.5)} sec at conversational pace</div>
+      <div class="scene-ctl">
+        ${isRec
+          ? `<button class="btn" onclick="stopRecording()">Stop</button>`
+          : `<button class="btn gold" onclick="startRecording(${i})">${recorded?'Re-record':(STATE.mode==='face'?'Record (face)':'Record')}</button>`}
+        ${recorded && !isFaceMode ? `<div class="audio-preview"><audio src="${URL.createObjectURL(rec.blob)}" controls></audio></div>` : ''}
+        ${recorded && isFaceMode ? `<div class="scene-video-preview"><video src="${URL.createObjectURL(rec.blob)}" controls muted></video><span class="vp-meta">face + audio · ~${Math.ceil(rec.blob.size/1024)} KB</span></div>` : ''}
+        ${recorded ? `<button class="btn" onclick="downloadScene(${i})">Download</button>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ---- recording engine (MediaRecorder: audio-only or audio+webcam) ---- */
+async function setMode(mode){
+  if(STATE.recorder) stopRecording();
+  STATE.mode = mode;
+  document.getElementById('modeAudio').classList.toggle('active', mode==='audio');
+  document.getElementById('modeFace').classList.toggle('active', mode==='face');
+  if(STATE.audioStream){ STATE.audioStream.getTracks().forEach(t=>t.stop()); STATE.audioStream=null; }
+  if(STATE.faceStream){ STATE.faceStream.getTracks().forEach(t=>t.stop()); STATE.faceStream=null; }
+  const previewWrap = document.getElementById('facePreviewWrap');
+  if(mode==='face'){
+    try{
+      const s = await navigator.mediaDevices.getUserMedia({ audio:{echoCancellation:true,noiseSuppression:true,sampleRate:48000}, video:{width:{ideal:720},height:{ideal:720},facingMode:'user',frameRate:{ideal:30}} });
+      STATE.faceStream = s; document.getElementById('facePreview').srcObject = s;
+      previewWrap.style.display='flex'; document.getElementById('micWarn').classList.remove('show');
+    }catch(e){
+      document.getElementById('micWarn').classList.add('show');
+      toast('Camera or mic access denied — check browser permissions','error');
+      previewWrap.style.display='none'; STATE.mode='audio';
+      document.getElementById('modeAudio').classList.add('active'); document.getElementById('modeFace').classList.remove('active');
+    }
+  } else { previewWrap.style.display='none'; }
+  renderScenes();
+}
+async function ensureStream(){
+  if(STATE.mode==='face'){ if(STATE.faceStream) return STATE.faceStream; await setMode('face'); return STATE.faceStream; }
+  if(STATE.audioStream) return STATE.audioStream;
+  try{
+    const s = await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,sampleRate:48000}});
+    STATE.audioStream = s; document.getElementById('micWarn').classList.remove('show'); return s;
+  }catch(e){ document.getElementById('micWarn').classList.add('show'); toast('Mic access denied — check browser permissions','error'); throw e; }
+}
+async function startRecording(sceneIdx){
+  if(STATE.recorder) stopRecording();
+  try{
+    const stream = await ensureStream(); if(!stream) return;
+    const isFace = STATE.mode==='face';
+    const mime = isFace
+      ? (MediaRecorder.isTypeSupported('video/webm;codecs=vp9,opus')?'video/webm;codecs=vp9,opus':MediaRecorder.isTypeSupported('video/webm;codecs=vp8,opus')?'video/webm;codecs=vp8,opus':'video/webm')
+      : (MediaRecorder.isTypeSupported('audio/webm;codecs=opus')?'audio/webm;codecs=opus':'audio/webm');
+    const opts = isFace ? {mimeType:mime,audioBitsPerSecond:128000,videoBitsPerSecond:2500000} : {mimeType:mime,audioBitsPerSecond:128000};
+    const rec = new MediaRecorder(stream, opts); const chunks=[];
+    rec.ondataavailable = e => { if(e.data.size>0) chunks.push(e.data); };
+    rec.onstop = () => {
+      const blob = new Blob(chunks,{type:mime});
+      STATE.recordings[STATE.active] = STATE.recordings[STATE.active] || {};
+      STATE.recordings[STATE.active][sceneIdx] = {blob, mode:STATE.mode};
+      STATE.recordingScene=null; STATE.recorder=null;
+      renderTkList(); renderScenes();
+      toast('Scene '+(sceneIdx+1)+' recorded ('+(isFace?'face+audio':'audio')+')','success');
+    };
+    rec.start(); STATE.recorder=rec; STATE.recordingScene={slug:STATE.active, sceneIdx}; renderScenes();
+  }catch(e){ console.error(e); }
+}
+function stopRecording(){ if(STATE.recorder && STATE.recorder.state==='recording') STATE.recorder.stop(); }
+
+/* ---- downloads ---- */
+function downloadBlob(blob, filename){
+  const url = URL.createObjectURL(blob); const a=document.createElement('a');
+  a.href=url; a.download=filename; document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+function downloadScene(sceneIdx){
+  const v = VIDEOS[STATE.active]; const rec = STATE.recordings[STATE.active] && STATE.recordings[STATE.active][sceneIdx];
+  if(!rec) return; const phase = v.scenes[sceneIdx].phase;
+  downloadBlob(rec.blob, `${STATE.active}-${(sceneIdx+1).toString().padStart(2,'0')}-${phase}.webm`);
+}
+function downloadAll(){
+  if(!STATE.active) return; const v=VIDEOS[STATE.active]; const recs=STATE.recordings[STATE.active]||{};
+  const keys = Object.keys(recs).sort((a,b)=>a-b);
+  if(!keys.length){ toast('No recordings yet for this video','error'); return; }
+  let i=0;
+  (function next(){
+    if(i>=keys.length){ toast(`Downloaded ${keys.length} files`,'success'); return; }
+    const idx=+keys[i], phase=v.scenes[idx].phase;
+    downloadBlob(recs[idx].blob, `${STATE.active}-${(idx+1).toString().padStart(2,'0')}-${phase}.webm`);
+    i++; setTimeout(next,350);
+  })();
+}
+
+/* ---- toast ---- */
+let toastTimer=null;
+function toast(msg,kind){ const t=document.getElementById('toast'); t.textContent=msg; t.className='toast show'+(kind?' '+kind:''); if(toastTimer)clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.classList.remove('show'),2400); }
+
+/* ---- boot ---- */
+renderTkList();
+if(ORDER.length) pickVideo(ORDER[0]);
+window.addEventListener('beforeunload', e => {
+  const totalRecs = Object.values(STATE.recordings).reduce((a,r)=>a+Object.keys(r).length,0);
+  if(totalRecs>0){ e.preventDefault(); e.returnValue='You have recordings that will be lost. Download them first.'; }
+});
+</script>
+<script src="/shared/acelabs-nav.js" defer></script>
+</body>
+</html>
