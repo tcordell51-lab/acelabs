@@ -152,6 +152,7 @@ window.MINITEST_BLACK = {
       "Stereochemistry (R/S, chirality)": "rs-configuration",
       "IR & H-NMR spectroscopy": "nmr-two-steps",
       "Alkene addition reactions": "alkene-map",
+      "Synthesis / roadmap": "ozonolysis",
     },
     gchem: {
       "Electrochemistry": "red-cat-an-ox",
