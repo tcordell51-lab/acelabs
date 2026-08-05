@@ -582,7 +582,8 @@ function logReview(o){
    durationMin,completedAt,studentId}]. Mirrored up via postMessage so a cross-origin portal can
    persist it too. Standalone: still writes locally (studentId null) - harmless, feeds nothing. ---- */
 var EMBEDDED = (function(){ try{ return window.parent && window.parent !== window.self; }catch(e){ return false; } })();
-var ATCTX = { studentId:null };
+// studentId: the portal passes it as ?student=<portalId> (its iframe convention); acedat:identify can also set it.
+var ATCTX = { studentId:(function(){ try{ return (new URLSearchParams(location.search).get('student')||'').trim()||null; }catch(e){ return null; } })() };
 var TELE_KEY = 'acethedat.acelabs.sessions';
 function teleRead(){ try{ return JSON.parse(localStorage.getItem(TELE_KEY))||[]; }catch(e){ return []; } }
 function recordSessions(rows){
