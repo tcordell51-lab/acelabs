@@ -449,6 +449,21 @@ function Stage({
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [duration]);
+
+  // Expose the playhead to a same-origin parent (locked-sync VO preview / export). Embed-only.
+  React.useEffect(() => {
+    if (typeof window === 'undefined' || window.self === window.top) return;
+    window.__acePlayer = {
+      setTime,
+      setPlaying,
+      getDuration: () => duration
+    };
+    return () => {
+      try {
+        delete window.__acePlayer;
+      } catch (e) {}
+    };
+  }, [duration]);
   const displayTime = hoverTime != null ? hoverTime : time;
   const ctxValue = React.useMemo(() => ({
     time: displayTime,
