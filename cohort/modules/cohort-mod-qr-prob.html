@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Probability &amp; Counting — DAT Quantitative Reasoning crash course</title>
+<style>
+  :root{
+    color-scheme: light;
+    --serif:'Iowan Old Style',Georgia,'Times New Roman',serif;
+    --surface-1:#ffffff; --page:#faf7f0;
+    --ink:#211e17; --ink-2:#5c5545; --muted:#8a8270;
+    --grid:#e7dfcd; --axis:#d8ceb4; --ring:rgba(154,122,36,.20);
+    --gold:#9a7a24; --gold2:#b8922f;
+    --rail:#c2506e; --rail-soft:rgba(224,125,151,.14);
+    --s3:#2f7d4f;
+    --good:#2f7d4f; --crit:#b23a2e; --warn:#c9902a;
+    --card:#ffffff; --wash:#f6f1e7;
+  }
+  :root[data-theme="dark"]{
+    color-scheme: dark;
+    --surface-1:#211f16; --page:#14130e;
+    --ink:#f1e9d2; --ink-2:#a79e86; --muted:#6e6858;
+    --grid:#332f24; --axis:#4a4436; --ring:rgba(201,168,76,.16);
+    --gold:#c9a84c; --gold2:#d9bc6a;
+    --rail:#e07d97; --rail-soft:rgba(224,125,151,.13);
+    --s3:#5fb07e;
+    --good:#5fb07e; --crit:#e0685a; --warn:#d9bc6a;
+    --card:#1c1a13; --wash:#211f16;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--page);color:var(--ink);font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif;}
+  .wrap{max-width:980px;margin:0 auto;padding:0 20px 96px}
+  header.top{position:sticky;top:0;z-index:50;background:var(--page);border-bottom:1px solid var(--ring);padding:14px 0 12px;margin-bottom:8px;}
+  header.top .bar{max-width:980px;margin:0 auto;padding:0 20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+  h1{font-size:19px;margin:0;letter-spacing:-.01em;font-family:var(--serif);font-weight:600}
+  h1 span{color:var(--muted);font-weight:400}
+  h1 .brand{color:var(--gold);font-weight:700;font-family:var(--serif)}
+  h1 .rail{color:var(--rail);font-weight:600}
+  .btn{font:inherit;font-size:13px;padding:6px 12px;border-radius:8px;cursor:pointer;background:var(--card);color:var(--ink);border:1px solid var(--ring);}
+  .btn:hover{background:var(--wash)}
+  nav.toc{display:flex;flex-wrap:wrap;gap:6px;margin:18px 0 20px}
+  nav.toc a{font-size:13px;text-decoration:none;color:var(--ink-2);background:var(--card);border:1px solid var(--ring);border-radius:999px;padding:5px 11px;}
+  nav.toc a:hover{background:var(--wash);color:var(--ink)}
+  section{margin:0 0 44px;scroll-margin-top:78px}
+  h2{font-size:23px;margin:34px 0 6px;letter-spacing:-.01em;padding-top:14px;border-top:2px solid var(--rail);font-family:var(--serif);font-weight:600;}
+  h2 .num{color:var(--gold);font-weight:700;margin-right:10px}
+  h3{font-size:16px;margin:24px 0 6px}
+  p{margin:10px 0}
+  .lead{color:var(--ink-2);font-size:15px;margin-top:2px}
+  .card{background:var(--card);border:1px solid var(--ring);border-radius:12px;padding:18px 20px;margin:16px 0;}
+  .key{border-left:3px solid var(--rail)} .trap{border-left:3px solid var(--crit)}
+  .trap h4,.key h4{margin:0 0 6px;font-size:14px;letter-spacing:.02em;text-transform:uppercase}
+  .trap h4{color:var(--crit)} .key h4{color:var(--rail)}
+  .analogy{background:var(--wash);border:1px solid var(--ring);border-left:3px solid var(--s3);border-radius:12px;padding:14px 18px;margin:16px 0}
+  .analogy h4{margin:0 0 6px;font-size:12.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--s3)}
+  .analogy p{margin:0}
+  .eq{background:var(--wash);border:1px solid var(--ring);border-radius:10px;padding:14px 16px;margin:14px 0;text-align:center;font-size:17px;overflow-x:auto;}
+  .eq b{color:var(--rail)}
+  .eq .note{display:block;font-size:13px;color:var(--ink-2);margin-top:7px;text-align:center}
+  table{border-collapse:collapse;width:100%;margin:14px 0;font-size:14.5px}
+  th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--grid);vertical-align:top}
+  th{font-size:12.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);font-weight:600}
+  td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.93em}
+  sub,sup{font-size:.72em}
+  ul,ol{margin:10px 0;padding-left:22px} li{margin:5px 0}
+  .pill{display:inline-block;font-size:12px;padding:2px 8px;border-radius:999px;background:var(--wash);border:1px solid var(--ring);color:var(--ink-2);margin-left:6px}
+  .footnote{font-size:13px;color:var(--muted);margin-top:6px}
+  svg{display:block;max-width:100%;height:auto}
+  /* interactive: name the move */
+  .tool{background:var(--card);border:1px solid var(--ring);border-radius:12px;padding:18px 20px;margin:20px 0}
+  .tool h4{margin:0 0 4px;font-size:15px}
+  .tool .hint{font-size:13px;color:var(--ink-2);margin:0 0 14px}
+  .tool select{font:inherit;font-size:14px;padding:8px 10px;border-radius:8px;width:100%;max-width:560px;border:1px solid var(--ring);background:var(--surface-1);color:var(--ink);}
+  .opgrid{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+  .opgrid button{font:inherit;font-size:13.5px;padding:8px 13px;border-radius:9px;border:1px solid var(--ring);background:var(--wash);color:var(--ink);cursor:pointer}
+  .opgrid button:hover{border-color:var(--rail)}
+  .opgrid button[aria-pressed="true"]{border-color:var(--rail);box-shadow:inset 0 0 0 1px var(--rail)}
+  .out{background:var(--wash);border-radius:9px;padding:13px 15px;font-size:14.5px;border:1px solid var(--ring);}
+  /* commit-before-reveal practice engine */
+  .pq{border:1px solid var(--ring);border-radius:12px;background:var(--card);padding:16px 18px;margin:12px 0}
+  .pq.win{border-left:3px solid var(--good)}
+  .pq .qn{font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  .pq .qn .w{color:var(--good)}
+  .pq .qn .tag{background:var(--rail-soft);border:1px solid var(--ring);color:var(--rail);border-radius:999px;padding:1px 9px;letter-spacing:.03em}
+  .pq .qt{font-size:15.5px;margin:8px 0 12px;color:var(--ink)}
+  .pq .choices{display:flex;flex-direction:column;gap:8px}
+  .pq .choice{display:flex;gap:11px;align-items:flex-start;text-align:left;font:inherit;font-size:14.5px;padding:10px 13px;border-radius:9px;border:1px solid var(--ring);background:var(--wash);color:var(--ink);cursor:pointer;width:100%}
+  .pq .choice:hover{border-color:var(--rail)}
+  .pq .choice[aria-pressed="true"]{border-color:var(--rail);box-shadow:inset 0 0 0 1px var(--rail)}
+  .pq .choice.correct{border-color:var(--good);background:rgba(95,176,126,.13)}
+  .pq .choice.wrong{border-color:var(--crit);background:rgba(224,104,90,.11)}
+  .pq .choice .cl{flex:none;width:22px;height:22px;border-radius:6px;border:1px solid var(--ring);display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:var(--gold2);background:var(--card)}
+  .pq .choice.correct .cl{color:var(--good);border-color:var(--good)}
+  .pq .choice.wrong .cl{color:var(--crit);border-color:var(--crit)}
+  .pq .choice .ct{flex:1;font-variant-numeric:tabular-nums}
+  .pq .choice .cr{display:block;font-size:12.5px;color:var(--ink-2);margin-top:6px;line-height:1.5;font-variant-numeric:normal}
+  .pq .confrow{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:12px;font-size:12.5px;color:var(--muted)}
+  .seg{display:inline-flex;border:1px solid var(--ring);border-radius:9px;overflow:hidden;flex-wrap:wrap}
+  .seg button{font:inherit;font-size:13.5px;padding:7px 14px;border:0;cursor:pointer;background:var(--card);color:var(--ink-2);border-right:1px solid var(--ring);}
+  .seg button:last-child{border-right:0}
+  .seg button[aria-pressed="true"]{background:var(--gold);color:#14130e}
+  .pq .checkbtn{font:inherit;font-size:13.5px;font-weight:700;padding:8px 16px;border-radius:9px;border:0;cursor:pointer;background:var(--gold);color:#14130e;margin-top:12px}
+  .pq .checkbtn:disabled{opacity:.4;cursor:not-allowed}
+  .pq .fb{margin-top:12px;font-size:14px;line-height:1.5;font-weight:600}
+  .pq .fb.ok{color:var(--good)} .pq .fb.no{color:var(--crit)}
+  .move{margin-top:12px;padding:11px 14px;border-radius:9px;background:var(--rail-soft);border:1px solid var(--ring);border-left:3px solid var(--rail);font-size:14px;line-height:1.55}
+  .move .lab{display:block;font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--rail);margin-bottom:3px}
+  .etype{margin-top:12px;padding:12px 14px;border-radius:9px;background:var(--wash);border:1px solid var(--ring)}
+  .etype .lab{font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--gold2)}
+  .etype .rulebox{width:100%;margin-top:8px;font:inherit;font-size:13.5px;padding:8px 10px;border-radius:8px;border:1px solid var(--ring);background:var(--card);color:var(--ink);resize:vertical;min-height:44px}
+  .calib{border:2px solid var(--gold);border-radius:12px;background:var(--card);padding:16px 18px;margin:18px 0}
+  .calib h4{margin:0 0 8px;color:var(--gold2);font-size:13px;text-transform:uppercase;letter-spacing:.04em}
+  /* self-rate + progress */
+  .rate{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:16px 0 0;font-size:13px;color:var(--muted)}
+  .rate .lbl{text-transform:uppercase;letter-spacing:.04em;font-size:11.5px}
+  .rate .seg button[data-v="1"][aria-pressed="true"]{background:var(--crit)}
+  .rate .seg button[data-v="2"][aria-pressed="true"]{background:var(--warn);color:#0b0b0b}
+  .rate .seg button[data-v="3"][aria-pressed="true"]{background:var(--good)}
+  .prog{background:var(--card);border:1px solid var(--ring);border-radius:12px;padding:12px 16px;margin:6px 0 22px;font-size:13.5px;color:var(--ink-2);display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+  .prog .bar{flex:1;min-width:160px;height:8px;background:var(--wash);border-radius:99px;overflow:hidden;border:1px solid var(--ring)}
+  .prog .bar i{display:block;height:100%;width:0;background:var(--rail);transition:width .3s}
+  .phonecard{background:var(--card);border:2px solid var(--rail);border-radius:14px;padding:16px 18px;margin:14px 0;max-width:440px}
+  .phonecard h4{margin:0 0 8px;font-size:14px;color:var(--rail);text-transform:uppercase;letter-spacing:.04em}
+  .phonecard li{font-size:14px}
+  .phonecard .k{color:var(--rail);font-weight:700}
+  .stick{background:var(--wash);border:1px solid var(--ring);border-radius:12px;padding:18px 20px;margin:16px 0}
+  @media print{header.top{position:static} nav.toc,.rate,.prog{display:none} .card,.tool,.pq{break-inside:avoid}}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="bar">
+    <h1><span class="brand">Ace the DAT</span> &middot; <span class="rail">Probability &amp; Counting</span> <span>&middot; Quantitative Reasoning</span></h1>
+    <button class="btn" id="theme" style="margin-left:auto">Light mode</button>
+    <button class="btn" id="exportBtn">Export progress</button>
+    <button class="btn" id="importBtn">Import</button>
+    <input type="file" id="importFile" accept="application/json" hidden>
+  </div>
+</header>
+
+<div class="wrap">
+
+<p class="lead">Probability looks like a hundred different problems. It is really <b>five moves</b>, and every question is asking which one (or two) to run. The top of this page names the moves &mdash; fast. The rest is you <em>doing</em> them: ten real DAT-style items, commit your answer first, then see exactly why each choice lives or dies. Doing is what makes it stick.</p>
+
+<div class="prog"><span>Anchor progress</span><div class="bar"><i id="progFill"></i></div><span id="progText">0 / 5 moves marked</span></div>
+
+<nav class="toc">
+  <a href="#s1">1 &middot; The core ratio</a>
+  <a href="#s2">2 &middot; AND / OR</a>
+  <a href="#s3">3 &middot; Independent vs dependent</a>
+  <a href="#s4">4 &middot; The complement trick</a>
+  <a href="#s5">5 &middot; When to count</a>
+  <a href="#s6">6 &middot; Name the move</a>
+  <a href="#s7">7 &middot; Practice (10)</a>
+  <a href="#s8">8 &middot; Phone card</a>
+</nav>
+
+<!-- ===== 1 ===== -->
+<section id="s1">
+<h2><span class="num">1</span>The core ratio &mdash; favorable over total</h2>
+<p>Every probability is one fraction. Count the outcomes you <b>want</b>, count <b>all</b> the equally likely outcomes, and divide.</p>
+<div class="eq">P(event) = <b>favorable outcomes / total outcomes</b><span class="note">Always a number from 0 (impossible) to 1 (certain). If your answer is above 1, you counted wrong.</span></div>
+<svg viewBox="0 0 900 92" role="img" aria-label="probability scale from 0 impossible to 1 certain">
+  <line x1="60" y1="40" x2="840" y2="40" stroke="var(--axis)" stroke-width="2"/>
+  <g font-family="ui-monospace,Menlo,monospace" font-size="12" fill="var(--muted)" text-anchor="middle">
+    <line x1="60"  y1="34" x2="60"  y2="46" stroke="var(--axis)"/><text x="60"  y="66">0</text>
+    <line x1="255" y1="34" x2="255" y2="46" stroke="var(--axis)"/><text x="255" y="66">1/4</text>
+    <line x1="450" y1="34" x2="450" y2="46" stroke="var(--axis)"/><text x="450" y="66">1/2</text>
+    <line x1="645" y1="34" x2="645" y2="46" stroke="var(--axis)"/><text x="645" y="66">3/4</text>
+    <line x1="840" y1="34" x2="840" y2="46" stroke="var(--axis)"/><text x="840" y="66">1</text>
+  </g>
+  <g font-family="system-ui" font-size="12" fill="var(--ink)" text-anchor="middle">
+    <text x="60" y="22">impossible</text>
+    <text x="450" y="22">even chance</text>
+    <text x="840" y="22">certain</text>
+  </g>
+</svg>
+<div class="analogy"><h4>Picture it</h4><p>You are pulling a name out of a hat. The chance you pull yours is <em>your slips over everybody&rsquo;s slips</em>. That is the whole idea &mdash; count the winners, count the room, divide.</p></div>
+<div class="card trap"><h4>Trap</h4><p style="margin-bottom:0">The denominator is <b>everybody</b>, not everybody-else. If 3 of 10 marbles are blue, blue is 3/10 &mdash; not 3/7 (blue over non-blue).</p></div>
+<div class="rate" data-topic="s1"></div>
+</section>
+
+<!-- ===== 2 ===== -->
+<section id="s2">
+<h2><span class="num">2</span>AND multiplies, OR adds</h2>
+<p>Two events chained together are either an <b>AND</b> (both must happen) or an <b>OR</b> (either one will do). That single word tells you the operation.</p>
+<svg viewBox="0 0 900 180" role="img" aria-label="AND is doors in a row you multiply through; OR is separate lanes you add">
+  <g font-family="system-ui">
+    <text x="30" y="30" font-size="15" font-weight="700" fill="var(--rail)">AND &mdash; pass through both</text>
+    <rect x="30" y="55" width="120" height="56" rx="9" fill="var(--wash)" stroke="var(--ring)"/>
+    <text x="90" y="88" font-size="15" fill="var(--ink)" text-anchor="middle">P(A)</text>
+    <text x="172" y="90" font-size="22" fill="var(--rail)" text-anchor="middle">&times;</text>
+    <rect x="195" y="55" width="120" height="56" rx="9" fill="var(--wash)" stroke="var(--ring)"/>
+    <text x="255" y="88" font-size="15" fill="var(--ink)" text-anchor="middle">P(B)</text>
+    <text x="90" y="140" font-size="12.5" fill="var(--ink-2)" text-anchor="middle">both must happen</text>
+    <text x="255" y="140" font-size="12.5" fill="var(--ink-2)" text-anchor="middle">gate after gate</text>
+
+    <line x1="430" y1="30" x2="430" y2="160" stroke="var(--grid)" stroke-width="1"/>
+
+    <text x="475" y="30" font-size="15" font-weight="700" fill="var(--rail)">OR &mdash; either lane works</text>
+    <rect x="475" y="50" width="120" height="42" rx="9" fill="var(--wash)" stroke="var(--ring)"/>
+    <text x="535" y="76" font-size="15" fill="var(--ink)" text-anchor="middle">P(A)</text>
+    <text x="617" y="90" font-size="22" fill="var(--rail)" text-anchor="middle">+</text>
+    <rect x="475" y="100" width="120" height="42" rx="9" fill="var(--wash)" stroke="var(--ring)"/>
+    <text x="535" y="126" font-size="15" fill="var(--ink)" text-anchor="middle">P(B)</text>
+    <text x="700" y="96" font-size="12.5" fill="var(--ink-2)">either one counts</text>
+  </g>
+</svg>
+<table>
+  <tr><th>Word</th><th>Operation</th><th>The rule</th></tr>
+  <tr><td><b>AND</b> (both)</td><td>Multiply</td><td>Independent events: P(A) &times; P(B)</td></tr>
+  <tr><td><b>OR</b> (either)</td><td>Add</td><td>Mutually exclusive (can&rsquo;t both happen): P(A) + P(B)</td></tr>
+  <tr><td>OR, but they can overlap</td><td>Add, then remove overlap</td><td>P(A) + P(B) &minus; P(A and B)</td></tr>
+</table>
+<div class="analogy"><h4>Picture it</h4><p>AND is a hallway of doors you must clear <em>in a row</em> &mdash; each door shrinks what gets through, so you multiply. OR is two separate lanes to the same finish line &mdash; either gets you there, so you add the lanes. (Just don&rsquo;t count the spot where the lanes cross twice.)</p></div>
+<div class="card trap"><h4>Trap</h4><p style="margin-bottom:0">Multiplying two probabilities makes the number <em>smaller</em>; adding makes it <em>bigger</em>. If an &ldquo;AND&rdquo; answer came out larger than the pieces, you added by mistake.</p></div>
+<div class="rate" data-topic="s2"></div>
+</section>
+
+<!-- ===== 3 ===== -->
+<section id="s3">
+<h2><span class="num">3</span>Independent vs dependent &mdash; does the pool reset or shrink?</h2>
+<p>When you draw more than once, ask one question: <b>after the first pick, is the pool the same or smaller?</b></p>
+<table>
+  <tr><th>Setup</th><th>Type</th><th>What happens to the denominator</th></tr>
+  <tr><td><b>With</b> replacement (put it back)</td><td>Independent</td><td>Pool resets &mdash; same probability every draw</td></tr>
+  <tr><td><b>Without</b> replacement (keep it)</td><td>Dependent</td><td>Pool shrinks &mdash; top <em>and</em> bottom drop by one each draw</td></tr>
+</table>
+<div class="eq">3 white left of 9 total &rarr; next white = <b>3/9</b>, not 4/10<span class="note">Start with 4 white of 10; remove one white and both the whites remaining and the total remaining go down.</span></div>
+<div class="analogy"><h4>Picture it</h4><p>A deck you deal from never heals: every card you take is gone. That is &ldquo;without replacement&rdquo; &mdash; the pool shrinks under your hand. Rolling a die is the opposite; the die has no memory, so the pool resets every roll.</p></div>
+<div class="card trap"><h4>Trap</h4><p style="margin-bottom:0">The classic slip: shrinking the <em>numerator</em> to 3 but leaving the <em>denominator</em> at 10. Both move together &mdash; 4/10 &times; 3/9.</p></div>
+<div class="rate" data-topic="s3"></div>
+</section>
+
+<!-- ===== 4 ===== -->
+<section id="s4">
+<h2><span class="num">4</span>The complement trick &mdash; &ldquo;at least one&rdquo;</h2>
+<p>When a problem says <b>&ldquo;at least one,&rdquo;</b> stop. Adding up one, two, three&hellip; is slow and error-prone. Flip it: find the single case you <em>don&rsquo;t</em> want and subtract from 1.</p>
+<div class="eq">P(at least one) = <b>1 &minus; P(none)</b><span class="note">&ldquo;None&rdquo; is one clean case to compute; &ldquo;at least one&rdquo; is everything else.</span></div>
+<svg viewBox="0 0 340 190" role="img" aria-label="a pie where the small none slice is subtracted from the whole to give at least one">
+  <circle cx="110" cy="95" r="72" fill="var(--rail-soft)" stroke="var(--rail)" stroke-width="2"/>
+  <path d="M110,95 L110,23 A72,72 0 0,1 160.9,44.1 Z" fill="var(--crit)" opacity="0.85"/>
+  <text x="150" y="30" font-size="12.5" font-family="system-ui" fill="var(--crit)">P(none)</text>
+  <text x="95" y="120" font-size="13" font-family="system-ui" fill="var(--ink)" text-anchor="middle">at least</text>
+  <text x="95" y="138" font-size="13" font-family="system-ui" fill="var(--ink)" text-anchor="middle">one</text>
+  <g font-family="system-ui" font-size="13.5" fill="var(--ink)">
+    <text x="215" y="88">whole circle = 1</text>
+    <text x="215" y="112" fill="var(--crit)">minus the small slice</text>
+    <text x="215" y="136" fill="var(--rail)">= everything else</text>
+  </g>
+</svg>
+<div class="analogy"><h4>Picture it</h4><p>&ldquo;At least one head in three flips&rdquo; has a messy front door (one head, or two, or three). The back door is tiny: the only way to fail is <em>all tails</em>. Compute that one case, subtract from 1, done.</p></div>
+<div class="card trap"><h4>Trap</h4><p style="margin-bottom:0">Finish the flip. P(none) is the case you rule out &mdash; you still owe the &ldquo;1 &minus; &rdquo; step. Handing in P(none) is the most common miss on these.</p></div>
+<div class="rate" data-topic="s4"></div>
+</section>
+
+<!-- ===== 5 ===== -->
+<section id="s5">
+<h2><span class="num">5</span>When to count &mdash; principle, permutation, combination</h2>
+<p>Some problems ask &ldquo;how many ways?&rdquo; before any probability. Three tools, and one question sorts them: <b>does order matter?</b></p>
+<table>
+  <tr><th>Tool</th><th>Use it when</th><th>Formula</th><th>Trigger words</th></tr>
+  <tr><td><b>Counting principle</b></td><td>Independent choices at each stage</td><td>multiply the counts</td><td>&ldquo;one of each&rdquo;, menus, outfits</td></tr>
+  <tr><td><b>Permutation</b></td><td>Order <b>matters</b></td><td>nPr = n! / (n &minus; r)!</td><td>arrange, rank, seat, 1st/2nd/3rd, offices</td></tr>
+  <tr><td><b>Combination</b></td><td>Order does <b>not</b> matter</td><td>nCr = n! / [ r!(n &minus; r)! ]</td><td>choose, group, committee, handful, team</td></tr>
+</table>
+<div class="analogy"><h4>Picture it</h4><p>Ask: if I swap two of my picks, is it a <em>different</em> result? Seating people in numbered chairs &mdash; yes, swapping changes it, that is a <b>permutation</b>. Grabbing a handful of people for a committee &mdash; no, same group either way, that is a <b>combination</b>. Same numbers, but a permutation is always the bigger count because it counts every rearrangement.</p></div>
+<div class="card key"><h4>The link</h4><p style="margin-bottom:0">A combination is just a permutation with the duplicate orderings divided out: nCr = nPr / r!. Pick 3 of 6 courses = 6P3 / 3! = 120 / 6 = 20.</p></div>
+<div class="rate" data-topic="s5"></div>
+</section>
+
+<!-- ===== 6 ===== -->
+<section id="s6">
+<h2><span class="num">6</span>Name the move</h2>
+<p class="lead">Before you compute anything, you have to spot which move a problem wants. Read each scenario, pick the move, <em>then</em> reveal. Naming it right is 80% of the work.</p>
+<div class="tool">
+  <h4>Which move does this scenario call for? <span class="pill">decide first</span></h4>
+  <p class="hint">Choose a scenario, tap the move you would run, then check.</p>
+  <select id="nmSel" aria-label="scenario"></select>
+  <div class="opgrid" id="nmOps" role="group" aria-label="pick the move">
+    <button data-op="mult" type="button">Multiply (AND)</button>
+    <button data-op="add" type="button">Add (OR)</button>
+    <button data-op="comp" type="button">Complement (1 &minus; not)</button>
+    <button data-op="perm" type="button">Permutation</button>
+    <button data-op="comb" type="button">Combination</button>
+  </div>
+  <div class="out" id="nmOut">Pick a scenario, then choose the move.</div>
+</div>
+</section>
+
+<!-- ===== 7 ===== -->
+<section id="s7">
+<h2><span class="num">7</span>Practice &mdash; ten DAT-style items</h2>
+<p class="lead">Standard DAT multiple choice: five options, one right. Pick your answer <em>and</em> rate how sure you are &mdash; Check only unlocks once you commit to both. On reveal you get every option explained and the move named. Missed ones become a one-line rule, and your calibration builds at the bottom.</p>
+<div id="practice"></div>
+<div id="calib"></div>
+</section>
+
+<!-- ===== 8 ===== -->
+<section id="s8">
+<h2><span class="num">8</span>One-page summary</h2>
+<div class="card">
+<h3 style="margin-top:0">The five moves</h3>
+<table>
+  <tr><th>Move</th><th>The tell</th><th>Do this</th></tr>
+  <tr><td><b>Core ratio</b></td><td>&ldquo;probability that&hellip;&rdquo;</td><td>favorable / total (0 to 1)</td></tr>
+  <tr><td><b>AND</b></td><td>both happen</td><td>multiply: P(A) &times; P(B)</td></tr>
+  <tr><td><b>OR</b></td><td>either happens</td><td>add: P(A) + P(B) (&minus; overlap if any)</td></tr>
+  <tr><td><b>Dependent</b></td><td>&ldquo;without replacement&rdquo;</td><td>shrink top and bottom each draw</td></tr>
+  <tr><td><b>Complement</b></td><td>&ldquo;at least one&rdquo;</td><td>1 &minus; P(none)</td></tr>
+  <tr><td><b>Permutation</b></td><td>order matters (arrange, rank)</td><td>nPr = n!/(n&minus;r)!</td></tr>
+  <tr><td><b>Combination</b></td><td>order does not (choose, group)</td><td>nCr = n!/[r!(n&minus;r)!]</td></tr>
+</table>
+</div>
+
+<div class="card trap"><h4>The five traps</h4><ol style="margin-bottom:0">
+  <li>Denominator is <b>everybody</b>, not everybody-else.</li>
+  <li>AND is <b>multiply</b>, OR is add &mdash; a bigger &ldquo;AND&rdquo; answer means you added.</li>
+  <li>Without replacement, shrink <b>both</b> numerator and denominator.</li>
+  <li>&ldquo;At least one&rdquo; means <b>finish the 1 &minus;</b>; don&rsquo;t hand in P(none).</li>
+  <li>Order matters &rarr; permutation (bigger); order-free &rarr; combination (smaller). Never repeat a person unless the problem allows it.</li>
+</ol></div>
+
+<div class="phonecard">
+  <h4>Phone card &mdash; screenshot this</h4>
+  <div style="font-size:14px;margin-bottom:6px"><b>P = favorable / total</b> &nbsp;(always 0 to 1)</div>
+  <ol style="margin:6px 0 0">
+    <li><span class="k">AND</span> &rarr; multiply &nbsp; P(A)&times;P(B)</li>
+    <li><span class="k">OR</span> &rarr; add &nbsp; P(A)+P(B) (&minus; overlap)</li>
+    <li><span class="k">Without replacement</span> &rarr; pool shrinks, both drop</li>
+    <li><span class="k">&ldquo;At least one&rdquo;</span> &rarr; 1 &minus; P(none)</li>
+    <li><span class="k">Order matters</span> &rarr; permutation nPr</li>
+    <li><span class="k">Order doesn&rsquo;t</span> &rarr; combination nCr</li>
+  </ol>
+  <div style="font-size:12.5px;color:var(--ink-2);margin-top:9px">Ask first: order? replacement? &ldquo;at least&rdquo;? Then compute.</div>
+</div>
+</section>
+
+<!-- ===== stick ===== -->
+<section id="stick">
+<h2>Make it stick</h2>
+<div class="stick">
+<p style="margin-top:0">You just <em>worked</em> these, which holds far better than watching them solved. Lock it in:</p>
+<ol>
+  <li><b>Prove it now</b> &mdash; a short, focused <b>Booster QR &rarr; Probability &amp; Counting</b> set, timed. Nothing else mixed in.</li>
+  <li><b>Come back in 2 days</b> &mdash; reopen this page and redo the ten from memory before revealing. Any move still red on your progress bar is where you start.</li>
+  <li><b>Then again in 1 week</b> &mdash; one more pass, and this topic joins your weekly Mixed 10.</li>
+  <li><b>Re-test</b> &mdash; watch for it on your next full-length. When you name the move on sight, it is yours.</li>
+</ol>
+<p style="margin-bottom:0">Screenshot the phone card so the five moves ride in your pocket. Every probability question is just asking which one to run.</p>
+</div>
+</section>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var root = document.documentElement;
+
+  /* theme */
+  var tBtn=document.getElementById('theme');
+  tBtn.addEventListener('click',function(){
+    var dark=root.getAttribute('data-theme')==='dark';
+    root.setAttribute('data-theme',dark?'light':'dark');
+    tBtn.textContent=dark?'Dark mode':'Light mode';
+  });
+
+  /* export / import progress */
+  var PREFIX='qr-prob-';
+  document.getElementById('exportBtn').addEventListener('click',function(){
+    var data={};
+    for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i); if(k.indexOf(PREFIX)===0) data[k]=localStorage.getItem(k);}
+    var blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+    var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='qr-probability-progress.json'; document.body.appendChild(a); a.click(); a.remove();
+  });
+  var impBtn=document.getElementById('importBtn'), impFile=document.getElementById('importFile');
+  impBtn.addEventListener('click',function(){ impFile.click(); });
+  impFile.addEventListener('change',function(e){
+    var f=e.target.files[0]; if(!f) return;
+    var r=new FileReader();
+    r.onload=function(){ try{ var d=JSON.parse(r.result); for(var k in d){ if(k.indexOf(PREFIX)===0) localStorage.setItem(k,d[k]); } location.reload(); }
+      catch(err){ impBtn.textContent='Import failed'; setTimeout(function(){impBtn.textContent='Import';},2000); } };
+    r.readAsText(f);
+  });
+
+  /* ---- Name the move tool ---- */
+  var NM=[
+    {s:'A fair die is rolled and a fair coin is flipped. What is the probability of rolling a 6 AND flipping heads?',op:'mult',
+     why:'Two independent events joined by AND &rarr; <b>multiply</b>. 1/6 &times; 1/2 = 1/12.'},
+    {s:'One card is drawn from a standard deck. What is the probability it is a heart OR a spade?',op:'add',
+     why:'Mutually exclusive events (a card can&rsquo;t be both) joined by OR &rarr; <b>add</b>. 13/52 + 13/52 = 1/2.'},
+    {s:'A fair die is rolled 4 times. What is the probability of getting at least one 6?',op:'comp',
+     why:'&ldquo;At least one&rdquo; &rarr; <b>complement</b>. 1 &minus; P(no sixes) = 1 &minus; (5/6)<sup>4</sup>.'},
+    {s:'In how many ways can 5 runners finish a race in 1st, 2nd, and 3rd place (no ties)?',op:'perm',
+     why:'Finishing places are distinct, so order matters &rarr; <b>permutation</b>. 5 &times; 4 &times; 3 = 60.'},
+    {s:'How many different 3-person study groups can be formed from 8 students?',op:'comb',
+     why:'A group is the same set however you list it, so order does not matter &rarr; <b>combination</b>. 8C3 = 56.'},
+    {s:'Two cards are drawn from a deck without replacement. What is the probability both are aces?',op:'mult',
+     why:'AND with a shrinking pool &rarr; <b>multiply</b>, dependent. 4/52 &times; 3/51 = 1/221.'}
+  ];
+  var OPNAME={mult:'Multiply (AND)',add:'Add (OR)',comp:'Complement (1 &minus; not)',perm:'Permutation',comb:'Combination'};
+  var nmSel=document.getElementById('nmSel'), nmOut=document.getElementById('nmOut'), nmOps=document.getElementById('nmOps');
+  NM.forEach(function(x,i){ var o=document.createElement('option'); o.value=i; o.textContent='Scenario '+(i+1)+': '+x.s.slice(0,58)+(x.s.length>58?'…':''); nmSel.appendChild(o); });
+  function nmRender(){
+    nmOps.querySelectorAll('button').forEach(function(b){b.setAttribute('aria-pressed','false');});
+    var x=NM[+nmSel.value];
+    nmOut.innerHTML='<b>'+x.s+'</b><br><br>Which move?';
+  }
+  nmOps.querySelectorAll('button').forEach(function(b){
+    b.addEventListener('click',function(){
+      nmOps.querySelectorAll('button').forEach(function(y){y.setAttribute('aria-pressed',y===b?'true':'false');});
+      var x=NM[+nmSel.value], correct=(b.dataset.op===x.op);
+      nmOut.innerHTML='<b style="color:'+(correct?'var(--good)':'var(--crit)')+'">'+(correct?'Right move.':'Not the move here.')+'</b> Correct: <b>'+OPNAME[x.op]+'</b>.<br><br>'+x.why;
+    });
+  });
+  nmSel.addEventListener('change',nmRender); nmRender();
+
+  /* ---- practice engine: commit-before-reveal + confidence + error-type + one-line rule ---- */
+  var PQ=[
+    {id:'q1',win:true,tag:'Favorable / total',
+     q:'A bag contains 5 red, 3 blue, and 2 green marbles. One marble is drawn at random. What is the probability it is blue?',
+     choices:[
+       {L:'A',t:'3/10',correct:true,r:'Winners over everybody: 3 blue out of 10 marbles total. That is the whole ratio.'},
+       {L:'B',t:'1/3',correct:false,r:'This treats the three colors as equally likely (1 of 3 colors). The colors have different counts &mdash; use the marble counts, not the color count.'},
+       {L:'C',t:'3/7',correct:false,r:'This is blue over the non-blue marbles. The denominator must be the total, 10, not just the ones you did not want.'},
+       {L:'D',t:'3/5',correct:false,r:'That is 3 over the red count. The denominator is every marble (10), not the reds.'},
+       {L:'E',t:'7/10',correct:false,r:'That is P(not blue) &mdash; the complement, not the event asked.'}
+     ],
+     move:'Count the winners (3 blue), count everybody (10), divide: P = favorable / total = 3/10.',
+     rule:'Probability = favorable / total; the denominator is everybody.'},
+
+    {id:'q2',tag:'AND &middot; multiply',
+     q:'A fair six-sided die is rolled twice. What is the probability of rolling a 4 on the first roll AND an even number on the second roll?',
+     choices:[
+       {L:'A',t:'1/36',correct:false,r:'This reads &ldquo;even&rdquo; as one specific face (1/6 &times; 1/6). But even means 2, 4, or 6 &mdash; three of six faces, so P(even) = 1/2.'},
+       {L:'B',t:'1/12',correct:true,r:'P(4) = 1/6 and P(even) = 3/6 = 1/2. Two independent events joined by AND, so multiply: 1/6 &times; 1/2 = 1/12.'},
+       {L:'C',t:'1/6',correct:false,r:'This uses only the first roll and drops the second event.'},
+       {L:'D',t:'1/2',correct:false,r:'This uses only P(even) on the second roll and drops the first event.'},
+       {L:'E',t:'2/3',correct:false,r:'This ADDS the two probabilities (1/6 + 1/2). AND means multiply; adding is for OR.'}
+     ],
+     move:'AND joins the events, and the rolls are independent, so multiply: P(4) &times; P(even) = 1/6 &times; 1/2.',
+     rule:'AND → multiply. Read “even” as 3 of 6 faces.'},
+
+    {id:'q3',tag:'No replacement &middot; dependent',
+     q:'A drawer holds 4 white and 6 black socks. You pull two socks at random without replacement. What is the probability both are white?',
+     choices:[
+       {L:'A',t:'3/25',correct:false,r:'This shrinks the numerator (4 to 3) but forgets the denominator: 4/10 &times; 3/10. After you remove a white sock, the total left drops to 9 too.'},
+       {L:'B',t:'2/15',correct:true,r:'First white: 4/10. Now 3 whites remain out of 9 socks, so second white: 3/9. Multiply: 4/10 &times; 3/9 = 12/90 = 2/15.'},
+       {L:'C',t:'4/25',correct:false,r:'This treats the draws as WITH replacement: 4/10 &times; 4/10. Without replacement the pool shrinks, so the second draw is 3/9.'},
+       {L:'D',t:'2/5',correct:false,r:'That is only P(first white) = 4/10. You still need the second draw.'},
+       {L:'E',t:'11/15',correct:false,r:'This ADDS the two draws (4/10 + 3/9). Both socks white is an AND &mdash; multiply, don&rsquo;t add.'}
+     ],
+     move:'Dependent AND (no replacement): multiply and shrink the pool each draw &mdash; 4/10 &times; 3/9.',
+     rule:'Without replacement, both numerator and denominator drop each draw.'},
+
+    {id:'q4',tag:'OR &middot; add',
+     q:'A single card is drawn from a standard 52-card deck. What is the probability it is a king OR a queen?',
+     choices:[
+       {L:'A',t:'1/169',correct:false,r:'This MULTIPLIES (4/52 &times; 4/52). One draw can&rsquo;t be a king and a queen at once &mdash; this is an OR, so add.'},
+       {L:'B',t:'1/26',correct:false,r:'This counts just one king and one queen (2/52). There are 4 kings and 4 queens.'},
+       {L:'C',t:'1/13',correct:false,r:'That is only the kings (4/52). You still must add the queens.'},
+       {L:'D',t:'2/13',correct:true,r:'4 kings + 4 queens = 8 winning cards out of 52. A card can&rsquo;t be both, so add: 8/52 = 2/13.'},
+       {L:'E',t:'3/13',correct:false,r:'12/52 counts all face cards (kings, queens, AND jacks). The question asked only kings or queens.'}
+     ],
+     move:'OR joins mutually exclusive events (no card is both), so add: 4/52 + 4/52 = 8/52 = 2/13.',
+     rule:'OR (mutually exclusive) → add. There are 4 of each rank.'},
+
+    {id:'q5',tag:'At least one &middot; complement',
+     q:'A fair coin is flipped 3 times. What is the probability of getting at least one head?',
+     choices:[
+       {L:'A',t:'1/8',correct:false,r:'This is P(no heads) = (1/2)<sup>3</sup> &mdash; the case you don&rsquo;t want. You still owe the 1 &minus; step.'},
+       {L:'B',t:'3/8',correct:false,r:'This counts EXACTLY one head (3 ways out of 8). &ldquo;At least one&rdquo; includes one, two, or three heads.'},
+       {L:'C',t:'1/2',correct:false,r:'That is P(head) on a single flip; it ignores that there are three flips.'},
+       {L:'D',t:'7/8',correct:true,r:'&ldquo;At least one&rdquo; &rarr; complement. P(no heads) = (1/2)<sup>3</sup> = 1/8, so P(at least one) = 1 &minus; 1/8 = 7/8.'},
+       {L:'E',t:'1',correct:false,r:'A head is not guaranteed &mdash; you could flip all tails. The chance is high (7/8) but not certain.'}
+     ],
+     move:'&ldquo;At least one&rdquo; is the tell for the complement: 1 &minus; P(none) = 1 &minus; (1/2)<sup>3</sup>.',
+     rule:'“At least one” → 1 − P(none). Finish the 1 − step.'},
+
+    {id:'q6',tag:'Counting principle',
+     q:'A deli offers 4 breads, 5 meats, and 3 cheeses. How many different sandwiches can be made using exactly one bread, one meat, and one cheese?',
+     choices:[
+       {L:'A',t:'12',correct:false,r:'This ADDS (4 + 5 + 3). When you make one independent choice at each stage, multiply the counts.'},
+       {L:'B',t:'15',correct:false,r:'That is 5 &times; 3 &mdash; meat and cheese only. You dropped the bread choice.'},
+       {L:'C',t:'20',correct:false,r:'That is 4 &times; 5 &mdash; bread and meat only. You dropped the cheese choice.'},
+       {L:'D',t:'23',correct:false,r:'This multiplies two and adds the third (4 &times; 5 + 3). Every stage multiplies.'},
+       {L:'E',t:'60',correct:true,r:'Fundamental counting principle: choices multiply across stages. 4 &times; 5 &times; 3 = 60.'}
+     ],
+     move:'Fundamental counting principle: multiply the number of choices at each independent stage &mdash; 4 &times; 5 &times; 3.',
+     rule:'Independent stages of a choice → multiply the counts.'},
+
+    {id:'q7',tag:'Permutation',
+     q:'A club of 7 members must choose a president, a vice-president, and a treasurer (no one holds two offices). In how many ways can this be done?',
+     choices:[
+       {L:'A',t:'35',correct:false,r:'That is 7C3, a combination &mdash; it treats the offices as interchangeable. The offices are distinct, so order matters.'},
+       {L:'B',t:'42',correct:false,r:'That is 7 &times; 6 &mdash; only two offices filled. There are three offices.'},
+       {L:'C',t:'210',correct:true,r:'Order matters (distinct offices). 7 for president &times; 6 left for VP &times; 5 left for treasurer = 210 (that is 7P3).'},
+       {L:'D',t:'343',correct:false,r:'That is 7<sup>3</sup> &mdash; it lets one person hold more than one office. The pool must shrink: 7 &times; 6 &times; 5.'},
+       {L:'E',t:'5040',correct:false,r:'That is 7! &mdash; arranging all seven members. Only three offices are filled: 7 &times; 6 &times; 5.'}
+     ],
+     move:'Distinct roles mean order matters &rarr; permutation. 7 &times; 6 &times; 5 = 7P3 = 210.',
+     rule:'Distinct roles/positions → permutation (nPr); shrink the pool, no repeats.'},
+
+    {id:'q8',tag:'Combination',
+     q:'A student must choose 3 courses from a list of 6 electives. How many different course selections are possible?',
+     choices:[
+       {L:'A',t:'15',correct:false,r:'That is 6C2 &mdash; choosing 2, not 3. Re-read: three courses are chosen.'},
+       {L:'B',t:'18',correct:false,r:'That is 6 &times; 3, which is not a counting rule here. Use the combination formula.'},
+       {L:'C',t:'20',correct:true,r:'A selection has no order (the set is the same however you list it) &rarr; combination. 6C3 = (6&times;5&times;4)/(3&times;2&times;1) = 20.'},
+       {L:'D',t:'120',correct:false,r:'That is 6P3 = 6 &times; 5 &times; 4, a permutation. Order does not matter, so divide out the 3! orderings: 120/6 = 20.'},
+       {L:'E',t:'216',correct:false,r:'That is 6<sup>3</sup> &mdash; it allows the same course to be picked twice. The three courses must be different.'}
+     ],
+     move:'A group/selection is order-free &rarr; combination. 6C3 = 6P3 / 3! = 120/6 = 20.',
+     rule:'A group/selection (order-free) → combination (nCr).'},
+
+    {id:'q9',tag:'Cases &middot; multiply then add',
+     q:'A jar contains 3 red and 5 green jellybeans. Two are drawn at random without replacement. What is the probability that both are the same color?',
+     choices:[
+       {L:'A',t:'3/28',correct:false,r:'That is P(both red) = 3/8 &times; 2/7 = 6/56 = 3/28 only. &ldquo;Same color&rdquo; also includes both green.'},
+       {L:'B',t:'5/14',correct:false,r:'That is P(both green) = 5/8 &times; 4/7 = 20/56 = 5/14 only. You must also add P(both red).'},
+       {L:'C',t:'13/28',correct:true,r:'Same color = both red OR both green. Both red: 3/8 &times; 2/7 = 6/56. Both green: 5/8 &times; 4/7 = 20/56. Add: 26/56 = 13/28. (Check: 1 &minus; P(different) = 1 &minus; 15/28 = 13/28.)'},
+       {L:'D',t:'17/32',correct:false,r:'This treats the draws as WITH replacement: (3/8)<sup>2</sup> + (5/8)<sup>2</sup> = 9/64 + 25/64 = 17/32. Here there is no replacement, so the pool shrinks.'},
+       {L:'E',t:'15/28',correct:false,r:'That is P(different colors) &mdash; the complement of what is asked. One of each = 2 &times; (3/8 &times; 5/7) = 30/56 = 15/28.'}
+     ],
+     move:'Split into cases (both red OR both green), multiply within each case, then add. Draws are dependent, so shrink the pool.',
+     rule:'Compound event → add the mutually exclusive cases; multiply within each.'},
+
+    {id:'q10',tag:'At least one &middot; complement',
+     q:'A box contains 7 light bulbs, 2 of which are defective. If 2 bulbs are chosen at random, what is the probability that at least one is defective?',
+     choices:[
+       {L:'A',t:'1/21',correct:false,r:'That is P(both defective) = 2C2 / 7C2 = 1/21. &ldquo;At least one&rdquo; also includes exactly one defective.'},
+       {L:'B',t:'2/7',correct:false,r:'That is the chance a single bulb is defective; it ignores that two bulbs are chosen.'},
+       {L:'C',t:'10/21',correct:false,r:'That is P(no defectives) = 5C2 / 7C2 = 10/21 &mdash; the case you don&rsquo;t want. Subtract it from 1.'},
+       {L:'D',t:'11/21',correct:true,r:'&ldquo;At least one&rdquo; &rarr; complement. Total ways = 7C2 = 21. P(none) = 5C2/21 = 10/21. So P(at least one) = 1 &minus; 10/21 = 11/21.'},
+       {L:'E',t:'4/7',correct:false,r:'This adds 2/7 + 2/7 for &ldquo;two draws.&rdquo; Overlapping-draw probabilities don&rsquo;t add like that &mdash; use the complement.'}
+     ],
+     move:'&ldquo;At least one&rdquo; plus a shrinking pool &rarr; complement with combinations: 1 &minus; P(none) = 1 &minus; 5C2/7C2.',
+     rule:'“At least one” → 1 − P(none); count the ways with nCr.'}
+  ];
+
+  var PKEY='qr-prob-practice', pstate={};
+  try{ pstate=JSON.parse(localStorage.getItem(PKEY)||'{}'); }catch(e){ pstate={}; }
+  function psave(){ try{ localStorage.setItem(PKEY,JSON.stringify(pstate)); }catch(e){} }
+  var ETYPES=[['content','Didn’t know it'],['misread','Misread / trap'],['careless','Careless slip'],['timing','Ran out of time']];
+  var pWrap=document.getElementById('practice');
+
+  PQ.forEach(function(q,qi){
+    var correctIdx=0; q.choices.forEach(function(c,i){ if(c.correct) correctIdx=i; });
+    var correctL=q.choices[correctIdx].L;
+    var card=document.createElement('div'); card.className='pq'+(q.win?' win':'');
+    card.innerHTML='<div class="qn"><span>Q'+(qi+1)+(q.win?' <span class="w">&middot; warm-up win</span>':'')+'</span><span class="tag">'+q.tag+'</span></div><div class="qt">'+q.q+'</div>';
+    var chosen=null, conf=null, locked=false;
+    var choicesWrap=document.createElement('div'); choicesWrap.className='choices';
+    q.choices.forEach(function(c,ci){
+      var b=document.createElement('button'); b.type='button'; b.className='choice';
+      b.innerHTML='<span class="cl">'+c.L+'</span><span class="ct">'+c.t+'</span>';
+      b.addEventListener('click',function(){
+        if(locked) return;
+        chosen=ci; choicesWrap.querySelectorAll('.choice').forEach(function(x){x.setAttribute('aria-pressed','false');});
+        b.setAttribute('aria-pressed','true'); upd();
+      });
+      choicesWrap.appendChild(b);
+    });
+    card.appendChild(choicesWrap);
+
+    var confRow=document.createElement('div'); confRow.className='confrow'; confRow.innerHTML='<span>How sure?</span>';
+    var cseg=document.createElement('span'); cseg.className='seg';
+    [['sure','Sure'],['shaky','Shaky'],['no','No idea']].forEach(function(cv){
+      var cb=document.createElement('button'); cb.type='button'; cb.textContent=cv[1];
+      cb.addEventListener('click',function(){ if(locked) return; conf=cv[0]; cseg.querySelectorAll('button').forEach(function(x){x.setAttribute('aria-pressed',x===cb?'true':'false');}); upd(); });
+      cseg.appendChild(cb);
+    });
+    confRow.appendChild(cseg); card.appendChild(confRow);
+
+    var chk=document.createElement('button'); chk.type='button'; chk.className='checkbtn'; chk.textContent='Check answer'; chk.disabled=true; card.appendChild(chk);
+    var fb=document.createElement('div'); fb.className='fb'; card.appendChild(fb);
+    function upd(){ chk.disabled=!(chosen!==null && conf); }
+
+    chk.addEventListener('click',function(){
+      if(chosen===null||!conf) return;
+      locked=true; chk.style.display='none';
+      var correct=q.choices[chosen].correct;
+      choicesWrap.querySelectorAll('.choice').forEach(function(x,xi){
+        x.innerHTML='<span class="cl">'+q.choices[xi].L+'</span><span class="ct">'+q.choices[xi].t+'<span class="cr">'+q.choices[xi].r+'</span></span>';
+        if(q.choices[xi].correct) x.classList.add('correct'); else if(xi===chosen) x.classList.add('wrong');
+      });
+      fb.className='fb '+(correct?'ok':'no');
+      fb.innerHTML=correct?('Correct.'+(conf!=='sure'?' You were not fully sure &mdash; worth one more look so it is automatic.':' Locked in.')):('Not yet &mdash; the answer is '+correctL+', highlighted above. Retrieval like this is exactly what builds the memory.');
+      var mv=document.createElement('div'); mv.className='move'; mv.innerHTML='<span class="lab">The move</span>'+q.move; card.appendChild(mv);
+      pstate[q.id]={done:true,correct:correct,conf:conf,rule:(pstate[q.id]&&pstate[q.id].rule)||''}; psave(); renderCalib();
+      if(!correct){
+        var et=document.createElement('div'); et.className='etype';
+        et.innerHTML='<div class="lab">Why did you miss it?</div>';
+        var etseg=document.createElement('span'); etseg.className='seg'; etseg.style.marginTop='6px';
+        ETYPES.forEach(function(t){ var tb=document.createElement('button'); tb.type='button'; tb.textContent=t[1];
+          tb.addEventListener('click',function(){ etseg.querySelectorAll('button').forEach(function(x){x.setAttribute('aria-pressed',x===tb?'true':'false');}); pstate[q.id].etype=t[0]; psave(); });
+          etseg.appendChild(tb); });
+        et.appendChild(etseg);
+        var lab2=document.createElement('div'); lab2.className='lab'; lab2.style.marginTop='10px'; lab2.textContent='Write it as a one-line rule you will keep:';
+        et.appendChild(lab2);
+        var ta=document.createElement('textarea'); ta.className='rulebox'; ta.placeholder=q.rule; ta.value=pstate[q.id].rule||'';
+        ta.addEventListener('input',function(){ pstate[q.id].rule=ta.value; psave(); renderCalib(); });
+        et.appendChild(ta);
+        card.appendChild(et);
+      }
+    });
+    pWrap.appendChild(card);
+  });
+
+  function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
+  function renderCalib(){
+    var cal=document.getElementById('calib');
+    var ids=Object.keys(pstate).filter(function(k){ return pstate[k] && pstate[k].done; });
+    if(!ids.length){ cal.innerHTML=''; return; }
+    var n=ids.length, correct=0, sureN=0, sureWrong=0;
+    ids.forEach(function(k){ var s=pstate[k]; if(s.correct) correct++; if(s.conf==='sure'){ sureN++; if(!s.correct) sureWrong++; } });
+    var rules=ids.filter(function(k){ return pstate[k].rule && pstate[k].rule.trim(); }).map(function(k){ return pstate[k].rule; });
+    var html='<div class="calib"><h4>Your calibration &mdash; '+n+' of '+PQ.length+' answered</h4>';
+    html+='<p style="margin:0 0 6px">Accuracy so far: <b>'+correct+' / '+n+'</b>.';
+    if(sureN) html+=' You felt <b>Sure</b> on '+sureN+' &mdash; '+(sureWrong?('and missed <b>'+sureWrong+'</b> of those. Confident misses are the ones to re-test first &mdash; that surprise is what makes the fix stick.'):'and got them all. Well calibrated.');
+    html+='</p>';
+    if(rules.length){ html+='<div style="font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--gold2);margin-top:8px">Your rules to keep</div><ul style="margin:6px 0 0">'+rules.map(function(r){return '<li>'+esc(r)+'</li>';}).join('')+'</ul>'; }
+    html+='</div>';
+    cal.innerHTML=html;
+  }
+  renderCalib();
+
+  /* ---- self-rate + progress (localStorage) ---- */
+  var KEY='qr-prob-rate', store={};
+  try{ store=JSON.parse(localStorage.getItem(KEY)||'{}'); }catch(e){ store={}; }
+  var labels={1:'Shaky',2:'Getting it',3:'Solid'};
+  var strips=document.querySelectorAll('.rate');
+  function saveProg(){
+    try{ localStorage.setItem(KEY,JSON.stringify(store)); }catch(e){}
+    var total=strips.length, done=0;
+    strips.forEach(function(s){ if(store[s.dataset.topic]) done++; });
+    document.getElementById('progFill').style.width=(100*done/total)+'%';
+    document.getElementById('progText').textContent=done+' / '+total+' moves marked';
+  }
+  strips.forEach(function(strip){
+    var topic=strip.dataset.topic;
+    strip.innerHTML='<span class="lbl">How solid is this move?</span>';
+    var seg=document.createElement('span'); seg.className='seg';
+    [1,2,3].forEach(function(v){
+      var b=document.createElement('button'); b.dataset.v=v; b.textContent=labels[v];
+      b.setAttribute('aria-pressed', store[topic]===v?'true':'false');
+      b.addEventListener('click',function(){
+        store[topic]=v;
+        seg.querySelectorAll('button').forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false');});
+        saveProg();
+      });
+      seg.appendChild(b);
+    });
+    strip.appendChild(seg);
+  });
+  saveProg();
+})();
+</script>
+</body>
+</html>

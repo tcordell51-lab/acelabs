@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ace the DAT — Cohort</title>
+<style>
+  :root{
+    --serif:'Iowan Old Style',Georgia,'Times New Roman',serif;
+    --sans:-apple-system,'Segoe UI',Roboto,system-ui,sans-serif;
+    --mono:ui-monospace,SFMono-Regular,Menlo,monospace;
+    --page:#14130e; --card:#1c1a13; --wash:#211f16; --ink:#f1e9d2; --ink2:#a79e86; --muted:#6e6858;
+    --line:#332f24; --ring:rgba(201,168,76,.16); --gold:#c9a84c; --gold2:#d9bc6a;
+    --chem:#b98fe0; --patqr:#e07d97; --rc:#5fb0a6; --good:#5fb07e;
+  }
+  *{box-sizing:border-box} html,body{margin:0}
+  body{background:var(--page);color:var(--ink);font:16px/1.6 var(--sans);}
+  a{color:var(--gold2)}
+  .wrap{max-width:1040px;margin:0 auto;padding:0 22px 90px}
+  /* access gate */
+  #gate{position:fixed;inset:0;background:var(--page);z-index:100;display:flex;align-items:center;justify-content:center;padding:24px}
+  #gate .box{max-width:420px;text-align:center}
+  #gate .eyebrow{font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--gold);font-weight:800}
+  #gate h1{font-family:var(--serif);font-weight:600;font-size:30px;margin:10px 0 6px}
+  #gate p{color:var(--ink2);font-size:14.5px}
+  #gate input{font:inherit;font-size:16px;text-align:center;letter-spacing:.12em;text-transform:uppercase;padding:12px 14px;border-radius:10px;border:1px solid var(--ring);background:var(--card);color:var(--ink);width:100%;margin-top:14px}
+  #gate button{font:inherit;font-weight:700;font-size:15px;margin-top:12px;padding:11px 22px;border:0;border-radius:10px;background:var(--gold);color:var(--page);cursor:pointer}
+  #gate .err{color:#e0685a;font-size:13px;margin-top:10px;min-height:16px}
+  header.top{border-bottom:2px solid var(--gold);padding:26px 0 14px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap}
+  .brand .eyebrow{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);font-weight:800}
+  h1.title{font-family:var(--serif);font-weight:600;font-size:30px;line-height:1.03;margin:6px 0 0}
+  .wk-chip{flex-shrink:0;text-align:center;border:1px solid var(--gold);border-radius:12px;background:rgba(201,168,76,.08);padding:8px 16px}
+  .wk-chip .k{font-size:8px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--gold)}
+  .wk-chip .d{font-family:var(--serif);font-size:20px}
+  .lede{color:var(--ink2);font-size:15px;max-width:66ch;margin:14px 0 0}
+  .prog{background:var(--card);border:1px solid var(--ring);border-radius:12px;padding:12px 16px;margin:18px 0;display:flex;gap:14px;align-items:center;flex-wrap:wrap;font-size:13.5px;color:var(--ink2)}
+  .prog .bar{flex:1;min-width:160px;height:8px;background:var(--wash);border-radius:99px;overflow:hidden;border:1px solid var(--ring)}
+  .prog .bar i{display:block;height:100%;width:0;background:var(--gold);transition:width .35s}
+  h2{font-family:var(--serif);font-weight:600;font-size:22px;margin:34px 0 4px;padding-top:12px;border-top:2px solid var(--line)}
+  .sub{color:var(--muted);font-size:13px;margin:0 0 10px}
+  /* rhythm legend */
+  .legend{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 4px}
+  .pill{font-size:11.5px;font-weight:700;padding:3px 10px;border-radius:99px;border:1px solid var(--ring)}
+  .pill.chem{color:var(--chem)} .pill.patqr{color:var(--patqr)} .pill.rc{color:var(--rc)}
+  /* week map */
+  .week{border:1px solid var(--line);border-radius:14px;background:var(--card);margin:12px 0;overflow:hidden}
+  .week.now{border-color:var(--gold)}
+  .week .whead{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:11px 16px;background:var(--wash);border-bottom:1px solid var(--line)}
+  .week .whead .wn{font-family:var(--serif);font-size:16px}
+  .week .whead .wt{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+  .week .whead .now-tag{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--gold);background:rgba(201,168,76,.14);border:1px solid var(--ring);border-radius:99px;padding:2px 9px}
+  .sessions{display:grid;grid-template-columns:repeat(3,1fr);gap:0}
+  @media(max-width:760px){.sessions{grid-template-columns:1fr}}
+  .sess{padding:13px 15px;border-right:1px solid var(--line);border-top:1px solid var(--line);display:flex;flex-direction:column;gap:7px;min-height:118px}
+  .sess:nth-child(3n){border-right:0}
+  .sess .slot{font-size:10px;font-weight:800;letter-spacing:.05em;text-transform:uppercase}
+  .sess.s-chem .slot{color:var(--chem)} .sess.s-patqr .slot{color:var(--patqr)} .sess.s-rc .slot{color:var(--rc)}
+  .sess .t{font-size:13.5px;line-height:1.4;color:var(--ink)}
+  .sess .by{font-size:11.5px;color:var(--muted)}
+  .sess .act{margin-top:auto;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .sess .open{font:inherit;font-size:12.5px;font-weight:700;padding:5px 12px;border-radius:8px;background:var(--gold);color:var(--page);text-decoration:none;border:0;cursor:pointer}
+  .sess .soon{font-size:11.5px;color:var(--muted);font-style:italic}
+  .sess .done-lbl{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--ink2);cursor:pointer;user-select:none}
+  .sess .done-lbl input{accent-color:var(--good);width:15px;height:15px}
+  /* orientation + discord cards */
+  .card{background:var(--card);border:1px solid var(--ring);border-radius:14px;padding:18px 20px;margin:14px 0}
+  .card.rail-gold{border-left:3px solid var(--gold)}
+  .card h3{margin:0 0 6px;font-family:var(--serif);font-size:18px}
+  .card p{margin:6px 0;color:var(--ink2);font-size:14px}
+  .card .cta{display:inline-block;margin-top:8px;font-weight:700;font-size:14px;padding:9px 18px;border-radius:10px;background:var(--gold);color:var(--page);text-decoration:none}
+  .rhythm{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px}
+  @media(max-width:640px){.rhythm{grid-template-columns:1fr}}
+  .rhythm .r{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--wash)}
+  .rhythm .r b{display:block;font-size:13px} .rhythm .r span{font-size:12px;color:var(--muted)}
+  .foot{margin-top:34px;border-top:1px solid var(--line);padding-top:14px;color:var(--muted);font-size:12.5px}
+</style>
+</head>
+<body>
+
+<!-- access gate -->
+<div id="gate">
+  <div class="box">
+    <div class="eyebrow">Ace the DAT · Cohort</div>
+    <h1>Welcome in.</h1>
+    <p>Enter the access code from your welcome email to open your cohort home base.</p>
+    <input id="code" placeholder="access code" autocomplete="off" autocapitalize="characters">
+    <button id="enter">Open my cohort</button>
+    <div class="err" id="err"></div>
+  </div>
+</div>
+
+<div class="wrap" id="app" style="display:none">
+  <header class="top">
+    <div class="brand">
+      <div class="eyebrow">Ace the DAT · Cohort</div>
+      <h1 class="title">Your home base</h1>
+    </div>
+    <div class="wk-chip"><div class="k">This week</div><div class="d" id="wkNum">Week 1</div></div>
+  </header>
+
+  <p class="lede">Everything for the cohort lives here. Each week has three short sessions &mdash; taught live, then hammered with questions you can redo anytime. Do that week&rsquo;s line, check it off, and the plan takes care of the rest. You&rsquo;re never studying alone.</p>
+
+  <div class="prog"><span>Your progress</span><div class="bar"><i id="progFill"></i></div><span id="progText">0 of 30 sessions done</span></div>
+
+  <div class="card rail-gold">
+    <h3>How the week works</h3>
+    <p>Three touchpoints a week, each run by the specialist &mdash; you show up for the live session, then the module below is yours to redo until it&rsquo;s automatic.</p>
+    <div class="rhythm">
+      <div class="r"><b style="color:var(--chem)">Chemistry</b><span>Gen Chem &amp; Organic &mdash; the mechanism &amp; problem work</span></div>
+      <div class="r"><b style="color:var(--patqr)">PAT + QR</b><span>The visual and quantitative sections</span></div>
+      <div class="r"><b style="color:var(--rc)">RC + Test-Craft</b><span>Reading, pacing, and the practice-test review lab</span></div>
+    </div>
+  </div>
+
+  <h2>The 10 weeks</h2>
+  <p class="sub">Live modules open now; the rest unlock as we reach them. Bio rides the recorded library + Discord until the Bio coach joins.</p>
+  <div class="legend"><span class="pill chem">Chemistry</span><span class="pill patqr">PAT + QR</span><span class="pill rc">RC + Test-Craft</span></div>
+  <div id="map"></div>
+
+  <div class="card rail-gold">
+    <h3>The room: our Discord</h3>
+    <p>This is where the cohort lives between sessions &mdash; ask questions, drop what you&rsquo;re stuck on, get recordings, and keep each other honest. Channels by section, office hours by voice.</p>
+    <a class="cta" id="discord" href="#">Join the cohort Discord</a>
+  </div>
+
+  <div class="foot">Ace the DAT &middot; Cohort home base &middot; v1. Questions? Post in Discord or reply to your welcome email.</div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  // ---- config (Thomas edits these) ----
+  var ACCESS_CODES = ["ACEFALL26"];          // add per-cohort codes here
+  var START_DATE   = "2026-09-22";            // cohort week 1 Monday; drives the "current week"
+  var DISCORD_URL  = "#";                     // paste the invite link
+  var MODULES_LIVE = true;                    // open live modules regardless of week (v1 demo)
+
+  // ---- the 10-week x 3-session catalog ----
+  var W = [
+    {chem:["GChem spine: stoichiometry, atomic structure, periodic trends","Chapman"], patqr:["PAT: Keyholes + seeing in 3D · QR: algebra reset","Sarah / Thomas"], rc:["Orientation: the DAT map, 200–600 scoring, your weekly system","Thomas"]},
+    {chem:["OChem spine: hybridization, resonance, nomenclature","Thomas / Chapman"], patqr:["PAT: Top-Front-End views · QR: word problems & translation","Sarah / Thomas"], rc:["RC: pick your method (Search vs Map vs Read)","Thomas"]},
+    {chem:["GChem: Lewis/VSEPR, gases, solutions","Chapman"], patqr:["PAT: Angle Ranking (Grid Method) · QR: ratios, %, proportion","Sarah / Thomas"], rc:["Study-system lab: Booster PTs + Ace Log + the FL-driven week","Thomas"]},
+    {chem:["OChem: Acids & Bases (CARDIO) + SN1/SN2/E1/E2","Thomas","modules/cohort-mod-oc-acids.html"], patqr:["PAT: Hole Punching · QR: Probability & Counting","Sarah / Thomas","modules/cohort-mod-qr-prob.html"], rc:["RC: question types, tone/detail/inference, timing","Sarah"]},
+    {chem:["GChem: thermo + kinetics (reaction-coordinate diagrams)","Chapman"], patqr:["PAT: Cube Counting · QR: geometry + trig","Sarah / Thomas"], rc:["FL-Review Lab #1 (after PT1): the 6-line debrief + error triage","Thomas"]},
+    {chem:["OChem: alkenes/alkynes + aromatics (Markovnikov / anti)","Thomas / Chapman"], patqr:["PAT: Pattern Folding · QR: mixed + timing","Sarah / Thomas"], rc:["RC: hard passages under fatigue","Sarah"]},
+    {chem:["GChem: equilibrium + buffers","Chapman"], patqr:["PAT + QR: full-section timing + traps","Sarah / Thomas"], rc:["FL-Review Lab #2 (PT2): targeted repair routing","Thomas"]},
+    {chem:["OChem: carbonyls, alcohols, spectroscopy (IR/NMR)","Thomas / Chapman"], patqr:["PAT + QR: weak-area repair from the full-length","Sarah / Thomas"], rc:["Test-day logistics + the mental game (anxiety, taper)","Thomas"]},
+    {chem:["GChem: electrochem + mixed traps","Chapman"], patqr:["PAT + QR: speed + traps","Sarah / Thomas"], rc:["FL-Review Lab #3 (PT3): closing the last gaps","Thomas"]},
+    {chem:["OChem: synthesis maps + rank/predict traps","Thomas"], patqr:["PAT + QR: final review + pacing","Sarah / Thomas"], rc:["Capstone: test-week plan, taper, send-off + office hours","Rotating"]}
+  ];
+
+  // ---- access gate ----
+  var gate=document.getElementById('gate'), app=document.getElementById('app');
+  function unlock(){ gate.style.display='none'; app.style.display='block'; render(); }
+  document.getElementById('enter').addEventListener('click', tryCode);
+  document.getElementById('code').addEventListener('keydown', function(e){ if(e.key==='Enter') tryCode(); });
+  function tryCode(){
+    var v=(document.getElementById('code').value||'').trim().toUpperCase();
+    if(ACCESS_CODES.indexOf(v)>=0){ localStorage.setItem('cohort-access','1'); unlock(); }
+    else document.getElementById('err').textContent='That code didn’t match. Check your welcome email.';
+  }
+
+  // ---- progress store ----
+  var done={}; try{ done=JSON.parse(localStorage.getItem('cohort-done')||'{}'); }catch(e){ done={}; }
+  function saveDone(){ try{ localStorage.setItem('cohort-done',JSON.stringify(done)); }catch(e){} updateProg(); }
+
+  // ---- current week from start date (no Date-based test here — real browser) ----
+  function currentWeek(){
+    try{
+      var start=new Date(START_DATE+'T00:00:00');
+      var now=new Date();
+      var wk=Math.floor((now-start)/(7*864e5))+1;
+      return Math.max(1, Math.min(10, wk));
+    }catch(e){ return 1; }
+  }
+
+  function sessCell(slotKey, label, data, wi){
+    var id=slotKey+'-'+wi;
+    var mod=data[2];
+    var openable = mod && MODULES_LIVE;
+    var act = openable
+      ? '<a class="open" href="'+mod+'">Open module</a>'
+      : (mod ? '<a class="open" href="'+mod+'">Open module</a>' : '<span class="soon">Module opens this week</span>');
+    return '<div class="sess s-'+slotKey+'">'+
+      '<div class="slot">'+label+'</div>'+
+      '<div class="t">'+data[0]+'</div>'+
+      '<div class="by">'+data[1]+'</div>'+
+      '<div class="act">'+act+
+        '<label class="done-lbl"><input type="checkbox" data-id="'+id+'" '+(done[id]?'checked':'')+'> done</label>'+
+      '</div></div>';
+  }
+
+  function render(){
+    var cw=currentWeek();
+    document.getElementById('wkNum').textContent='Week '+cw;
+    document.getElementById('discord').href=DISCORD_URL;
+    var html='';
+    W.forEach(function(w,i){
+      var wi=i+1, isNow=(wi===cw);
+      html+='<div class="week'+(isNow?' now':'')+'">'+
+        '<div class="whead"><span class="wn">Week '+wi+'</span>'+
+          (isNow?'<span class="now-tag">This week</span>':'<span class="wt">'+(wi<cw?'done / open':'upcoming')+'</span>')+
+        '</div><div class="sessions">'+
+          sessCell('chem','Chemistry', w.chem, wi)+
+          sessCell('patqr','PAT + QR', w.patqr, wi)+
+          sessCell('rc','RC + Test-Craft', w.rc, wi)+
+        '</div></div>';
+    });
+    document.getElementById('map').innerHTML=html;
+    document.querySelectorAll('.done-lbl input').forEach(function(cb){
+      cb.addEventListener('change',function(){ if(cb.checked) done[cb.dataset.id]=1; else delete done[cb.dataset.id]; saveDone(); });
+    });
+    updateProg();
+  }
+  function updateProg(){
+    var total=W.length*3, d=Object.keys(done).length;
+    var f=document.getElementById('progFill'); if(f) f.style.width=(100*d/total)+'%';
+    var t=document.getElementById('progText'); if(t) t.textContent=d+' of '+total+' sessions done';
+  }
+
+  // ---- returning student: skip the gate if they've entered a valid code before ----
+  if(localStorage.getItem('cohort-access')==='1') unlock();
+})();
+</script>
+</body>
+</html>

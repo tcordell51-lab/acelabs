@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Acid-Base CARDIO — Cohort Module — Ace the DAT</title>
+<style>
+  :root{
+    color-scheme: light;
+    --serif:'Iowan Old Style',Georgia,'Times New Roman',serif;
+    --surface-1:#ffffff; --page:#faf7f0;
+    --ink:#211e17; --ink-2:#5c5545; --muted:#8a8270;
+    --grid:#e7dfcd; --axis:#d8ceb4; --ring:rgba(154,122,36,.20);
+    --gold:#9a7a24; --gold2:#b8922f;
+    --s1:#7a4bb0; --s2:#9a7a24; --s3:#2f7d4f; --s4:#7a4bb0;
+    --good:#2f7d4f; --crit:#b23a2e; --warn:#c9902a;
+    --card:#ffffff; --wash:#f6f1e7;
+  }
+  :root[data-theme="dark"]{
+    color-scheme: dark;
+    --surface-1:#211f16; --page:#14130e;
+    --ink:#f1e9d2; --ink-2:#a79e86; --muted:#6e6858;
+    --grid:#332f24; --axis:#4a4436; --ring:rgba(201,168,76,.16);
+    --gold:#c9a84c; --gold2:#d9bc6a;
+    --s1:#b98fe0; --s2:#d9bc6a; --s3:#5fb07e; --s4:#b98fe0;
+    --good:#5fb07e; --crit:#e0685a; --warn:#d9bc6a;
+    --card:#1c1a13; --wash:#211f16;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--page);color:var(--ink);font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif;}
+  .wrap{max-width:980px;margin:0 auto;padding:0 20px 96px}
+  header.top{position:sticky;top:0;z-index:50;background:var(--page);border-bottom:1px solid var(--ring);padding:14px 0 12px;margin-bottom:8px;}
+  header.top .bar{max-width:980px;margin:0 auto;padding:0 20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+  h1{font-size:19px;margin:0;letter-spacing:-.01em;font-family:var(--serif);font-weight:600}
+  h1 span{color:var(--muted);font-weight:400}
+  h1 .brand{color:var(--gold);font-weight:700;font-family:var(--serif)}
+  .btn{font:inherit;font-size:13px;padding:6px 12px;border-radius:8px;cursor:pointer;background:var(--card);color:var(--ink);border:1px solid var(--ring);}
+  .btn:hover{background:var(--wash)}
+  nav.toc{display:flex;flex-wrap:wrap;gap:6px;margin:18px 0 20px}
+  nav.toc a{font-size:13px;text-decoration:none;color:var(--ink-2);background:var(--card);border:1px solid var(--ring);border-radius:999px;padding:5px 11px;}
+  nav.toc a:hover{background:var(--wash);color:var(--ink)}
+  section{margin:0 0 42px;scroll-margin-top:78px}
+  h2{font-size:23px;margin:34px 0 6px;letter-spacing:-.01em;padding-top:14px;border-top:2px solid var(--s1);font-family:var(--serif);font-weight:600;}
+  h2 .num{color:var(--gold);font-weight:700;margin-right:10px}
+  h3{font-size:16px;margin:24px 0 6px}
+  p{margin:10px 0}
+  .lead{color:var(--ink-2);font-size:15px;margin-top:2px}
+  .card{background:var(--card);border:1px solid var(--ring);border-radius:12px;padding:18px 20px;margin:16px 0;}
+  .key{border-left:3px solid var(--s1)} .trap{border-left:3px solid var(--crit)}
+  .trap h4,.key h4{margin:0 0 6px;font-size:14px;letter-spacing:.02em;text-transform:uppercase}
+  .trap h4{color:var(--crit)} .key h4{color:var(--s1)}
+  .analogy{background:var(--wash);border:1px solid var(--ring);border-left:3px solid var(--s3);border-radius:12px;padding:14px 18px;margin:16px 0}
+  .analogy h4{margin:0 0 6px;font-size:12.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--s3)}
+  .analogy p{margin:0}
+  .eq{background:var(--wash);border:1px solid var(--ring);border-radius:10px;padding:14px 16px;margin:14px 0;text-align:center;font-size:17px;overflow-x:auto;}
+  .eq .note{display:block;font-size:13px;color:var(--ink-2);margin-top:7px;text-align:center}
+  table{border-collapse:collapse;width:100%;margin:14px 0;font-size:14.5px}
+  th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--grid)}
+  th{font-size:12.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);font-weight:600}
+  td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.93em}
+  sub,sup{font-size:.72em}
+  .tool{background:var(--card);border:1px solid var(--ring);border-radius:12px;padding:18px 20px;margin:20px 0}
+  .tool h4{margin:0 0 4px;font-size:15px}
+  .tool .hint{font-size:13px;color:var(--ink-2);margin:0 0 14px}
+  .row{display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end;margin-bottom:14px}
+  label.f{display:flex;flex-direction:column;gap:4px;font-size:12.5px;color:var(--ink-2)}
+  label.f select{font:inherit;font-size:14px;padding:7px 9px;border-radius:8px;width:300px;max-width:100%;border:1px solid var(--ring);background:var(--surface-1);color:var(--ink);}
+  .seg{display:inline-flex;border:1px solid var(--ring);border-radius:9px;overflow:hidden;flex-wrap:wrap}
+  .seg button{font:inherit;font-size:13.5px;padding:7px 14px;border:0;cursor:pointer;background:var(--card);color:var(--ink-2);border-right:1px solid var(--ring);}
+  .seg button:last-child{border-right:0}
+  .seg button[aria-pressed="true"]{background:var(--gold);color:#14130e}
+  .out{background:var(--wash);border-radius:9px;padding:13px 15px;font-size:14.5px;border:1px solid var(--ring);}
+  .out b{font-variant-numeric:tabular-nums}
+  svg{display:block;max-width:100%;height:auto}
+  ul,ol{margin:10px 0;padding-left:22px} li{margin:5px 0}
+  .pill{display:inline-block;font-size:12px;padding:2px 8px;border-radius:999px;background:var(--wash);border:1px solid var(--ring);color:var(--ink-2);margin-left:6px}
+  .footnote{font-size:13px;color:var(--muted);margin-top:6px}
+  /* recipe banner */
+  .recipe{background:var(--card);border:1px solid var(--ring);border-left:3px solid var(--gold);border-radius:12px;padding:16px 20px;margin:14px 0 8px}
+  .recipe h4{margin:0 0 6px;font-size:12.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--gold2)}
+  .recipe p{margin:6px 0 0;font-size:14.5px}
+  .recipe .split{display:flex;gap:0;margin-top:12px;border-radius:8px;overflow:hidden;border:1px solid var(--ring);font-size:12px;text-align:center}
+  .recipe .split div{padding:7px 6px}
+  .recipe .split .teach{background:rgba(185,143,224,.16);color:var(--ink);flex:0 0 45%}
+  .recipe .split .do{background:rgba(201,168,76,.16);color:var(--ink);flex:1}
+  /* part divider */
+  .partlabel{font-family:var(--serif);font-size:15px;letter-spacing:.06em;text-transform:uppercase;color:var(--gold2);margin:40px 0 -8px;padding-bottom:8px;border-bottom:1px dashed var(--ring)}
+  /* progress banner */
+  .prog{background:var(--card);border:1px solid var(--ring);border-radius:12px;padding:12px 16px;margin:6px 0 22px;font-size:13.5px;color:var(--ink-2);display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+  .prog .bar{flex:1;min-width:160px;height:8px;background:var(--wash);border-radius:99px;overflow:hidden;border:1px solid var(--ring)}
+  .prog .bar i{display:block;height:100%;width:0;background:var(--gold);transition:width .3s}
+  /* CARDIO ladder */
+  .cardio{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px;margin:14px 0}
+  .cardio .l{background:var(--card);border:1px solid var(--ring);border-radius:10px;padding:12px 14px;border-top:3px solid var(--s4)}
+  .cardio .l b{display:block;font-size:15px;color:var(--s4);font-family:var(--serif)}
+  .cardio .l .rule{font-size:13px;color:var(--ink);margin:4px 0 5px}
+  .cardio .l .ex{font-size:12.5px;color:var(--ink-2);font-family:ui-monospace,Menlo,monospace}
+  .cardio .l.pair{border-top-color:var(--gold)}
+  .cardio .l.pair b{color:var(--gold2)}
+  .stick{background:var(--wash);border:1px solid var(--ring);border-radius:12px;padding:18px 20px;margin:16px 0}
+  .phonecard{background:var(--card);border:2px solid var(--s4);border-radius:14px;padding:16px 18px;margin:14px 0;max-width:430px}
+  .phonecard h4{margin:0 0 8px;font-size:14px;color:var(--s4);text-transform:uppercase;letter-spacing:.04em}
+  .phonecard li{font-size:14px}
+  .phonecard .tag{display:block;font-size:15px;font-weight:700;margin-bottom:2px}
+  /* deeper link */
+  .deeper{background:var(--card);border:1px solid var(--ring);border-left:3px solid var(--s4);border-radius:12px;padding:18px 20px;margin:16px 0}
+  .deeper h4{margin:0 0 4px;font-size:15px;color:var(--s4)}
+  .deeper a.go{display:inline-block;margin-top:10px;font:inherit;font-size:14px;font-weight:700;padding:9px 16px;border-radius:9px;background:var(--gold);color:#14130e;text-decoration:none}
+  .deeper a.go:hover{filter:brightness(1.06)}
+  /* self-rate strip */
+  .rate{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:16px 0 0;font-size:13px;color:var(--muted)}
+  .rate .lbl{text-transform:uppercase;letter-spacing:.04em;font-size:11.5px}
+  .rate .seg button[data-v="1"][aria-pressed="true"]{background:var(--crit)}
+  .rate .seg button[data-v="2"][aria-pressed="true"]{background:var(--warn);color:#0b0b0b}
+  .rate .seg button[data-v="3"][aria-pressed="true"]{background:var(--good)}
+  /* commit-before-reveal practice engine */
+  .pq{border:1px solid var(--ring);border-radius:12px;background:var(--card);padding:16px 18px;margin:12px 0}
+  .pq.win{border-left:3px solid var(--good)}
+  .pq .qn{font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .pq .qn .w{color:var(--good)}
+  .pq .qn .tier{color:var(--gold2);border:1px solid var(--ring);border-radius:999px;padding:1px 8px;font-size:10px}
+  .pq .qt{font-size:15.5px;margin:6px 0 12px;color:var(--ink)}
+  .pq .choices{display:flex;flex-direction:column;gap:8px}
+  .pq .choice{text-align:left;font:inherit;font-size:14px;padding:10px 13px;border-radius:9px;border:1px solid var(--ring);background:var(--wash);color:var(--ink);cursor:pointer;display:flex;gap:9px;align-items:flex-start}
+  .pq .choice .ltr{font-weight:800;color:var(--muted);flex:none}
+  .pq .choice:hover{border-color:var(--gold)}
+  .pq .choice[aria-pressed="true"]{border-color:var(--gold);box-shadow:inset 0 0 0 1px var(--gold)}
+  .pq .choice.correct{border-color:var(--good);background:rgba(95,176,126,.13)}
+  .pq .choice.correct .ltr{color:var(--good)}
+  .pq .choice.wrong{border-color:var(--crit);background:rgba(224,104,90,.11)}
+  .pq .choice.wrong .ltr{color:var(--crit)}
+  .pq .choice .body{display:block}
+  .pq .choice .cr{display:block;font-size:12.5px;color:var(--ink-2);margin-top:5px}
+  .pq .confrow{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:12px;font-size:12.5px;color:var(--muted)}
+  .pq .checkbtn{font:inherit;font-size:13.5px;font-weight:700;padding:8px 16px;border-radius:9px;border:0;cursor:pointer;background:var(--gold);color:#14130e;margin-top:12px}
+  .pq .checkbtn:disabled{opacity:.4;cursor:not-allowed}
+  .pq .fb{margin-top:12px;font-size:14px;line-height:1.5;font-weight:600}
+  .pq .fb.ok{color:var(--good)} .pq .fb.no{color:var(--crit)}
+  .etype{margin-top:12px;padding:12px 14px;border-radius:9px;background:var(--wash);border:1px solid var(--ring)}
+  .etype .lab{font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--gold2)}
+  .etype .rulebox{width:100%;margin-top:8px;font:inherit;font-size:13.5px;padding:8px 10px;border-radius:8px;border:1px solid var(--ring);background:var(--card);color:var(--ink);resize:vertical;min-height:44px}
+  .calib{border:2px solid var(--gold);border-radius:12px;background:var(--card);padding:16px 18px;margin:18px 0}
+  .calib h4{margin:0 0 8px;color:var(--gold2);font-size:13px;text-transform:uppercase;letter-spacing:.04em}
+  @media print{header.top{position:static} nav.toc,.rate,.prog{display:none} .card,.tool,.pq{break-inside:avoid}}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="bar">
+    <h1><span class="brand">Ace the DAT</span> &middot; Acid-Base CARDIO <span>&middot; Organic Chemistry &middot; Cohort Module</span></h1>
+    <button class="btn" id="theme" style="margin-left:auto">Light mode</button>
+    <button class="btn" id="exportBtn">Export progress</button>
+    <button class="btn" id="importBtn">Import</button>
+    <input type="file" id="importFile" accept="application/json" hidden>
+  </div>
+</header>
+
+<div class="wrap">
+
+<div class="recipe">
+  <h4>How this module works &mdash; teach, then hammer</h4>
+  <p>One idea sits under every acidity question on the DAT: <b>acidity = how stable is the conjugate base?</b> You&rsquo;ll read a short anchor to lock the picture, then spend the bigger half <em>doing</em> &mdash; the skill being tested is ranking anions under pressure, and doing is also what makes it stick. Read Part 1 once. Earn Part 2.</p>
+  <div class="split"><div class="teach">Part 1 &middot; The anchor &mdash; teach</div><div class="do">Part 2 &middot; The hammer &mdash; do (the bigger half)</div></div>
+</div>
+
+<div class="prog"><span>Questions hammered</span><div class="bar"><i id="progFill"></i></div><span id="progText">0 of 10</span></div>
+
+<nav class="toc">
+  <a href="#s1">1 &middot; The one move</a>
+  <a href="#s2">2 &middot; The CARDIO ladder</a>
+  <a href="#s3">3 &middot; The pK<sub>a</sub> ladder</a>
+  <a href="#s4">4 &middot; You call it</a>
+  <a href="#s5">5 &middot; The habit</a>
+  <a href="#s6">6 &middot; The hammer</a>
+  <a href="#s7">7 &middot; Go deeper</a>
+  <a href="#s8">8 &middot; Phone card</a>
+</nav>
+
+<div class="partlabel">Part 1 &middot; The anchor</div>
+
+<!-- ===== 1 ===== -->
+<section id="s1">
+<h2><span class="num">1</span>The one move</h2>
+<p>An acid gives up a proton (H<sup>+</sup>). What&rsquo;s left behind is the <b>conjugate base</b>, and it carries the leftover negative charge. The entire topic collapses to one line:</p>
+<div class="eq">stronger acid &nbsp;&harr;&nbsp; <b>more stable conjugate base</b> &nbsp;&harr;&nbsp; lower pK<sub>a</sub><span class="note">Every rule below is just a different reason that leftover anion is more (or less) comfortable.</span></div>
+
+<div class="analogy">
+  <h4>Picture it &mdash; the hot potato</h4>
+  <p>An acid is only as willing to hand off its proton as its leftover anion is <em>comfortable holding the negative charge</em>. Treat that charge as a hot potato. The more hands it can pass to (resonance), the bigger the palm it lands in (a larger atom), or the more someone nearby keeps tugging it away (induction) &mdash; the comfier the anion, and the more happily the acid let the proton go.</p>
+</div>
+
+<div class="card key"><h4>Name the move</h4><p style="margin-bottom:0">Never judge an acid by staring at the neutral molecule. <b>Take the proton off first, then ask how stable the anion is.</b> Whatever stabilizes that anion is what made the acid stronger.</p></div>
+
+<div class="card"><h4 style="margin:0 0 6px;font-size:14px">Now you hold the pen</h4>
+<p style="margin:0">Deprotonate ethanol on paper: <span class="mono">CH<sub>3</sub>CH<sub>2</sub>O<sup>&#8722;</sup></span>. Now deprotonate acetic acid: <span class="mono">CH<sub>3</sub>COO<sup>&#8722;</sup></span>. Push the arrows on the second one. Which anion can spread its charge, and which is stuck holding all of it? That single difference is the whole reason acetic acid is over a hundred billion times more acidic than ethanol. Hold that question &mdash; it is the move you&rsquo;ll run ten times below.</p></div>
+</section>
+
+<!-- ===== 2 ===== -->
+<section id="s2">
+<h2><span class="num">2</span>The CARDIO ladder</h2>
+<p>There are six letters &mdash; really five ideas, since D and I are one idea with two doorways &mdash; and they spell <b>CARDIO</b>. Walk the two anions letter by letter; the first real difference between them is your answer &mdash; and your explanation.</p>
+<div class="cardio">
+  <div class="l"><b>C &mdash; Charge</b><div class="rule">Neutral, or charge spread thin, beats a full charge stacked on one atom. A cationic acid (its conjugate base comes out neutral) is much stronger than its neutral relative.</div><div class="ex">NH<sub>4</sub><sup>+</sup> (9) &raquo; NH<sub>3</sub> (38)</div></div>
+  <div class="l"><b>A &mdash; Atom</b><div class="rule">Which atom holds the charge? Across a row the more electronegative atom wins; down a column the bigger atom wins.</div><div class="ex">row: HF &gt; H<sub>2</sub>O &gt; NH<sub>3</sub> &gt; CH<sub>4</sub><br>column: HI &gt; HBr &gt; HCl &gt; HF</div></div>
+  <div class="l"><b>R &mdash; Resonance</b><div class="rule">Spread the charge over several atoms and the anion relaxes. The single biggest lever on the DAT.</div><div class="ex">acetate (2 equal O): 4.8<br>vs ethanol 16</div></div>
+  <div class="l pair"><b>D &mdash; Dipole</b><div class="rule">A polar bond&rsquo;s field steadies the charge <em>through space</em>. The through-space twin of induction.</div><div class="ex">the field-effect half of D/I</div></div>
+  <div class="l pair"><b>I &mdash; Induction</b><div class="rule">Electron-withdrawing groups drain charge <em>through the sigma bonds</em>. More groups and closer groups pull harder &mdash; and it fades fast with distance.</div><div class="ex">Cl<sub>3</sub>CCOOH 0.7 vs CH<sub>3</sub>COOH 4.8</div></div>
+  <div class="l"><b>O &mdash; Orbital</b><div class="rule">More s-character holds a lone pair tighter to the nucleus. The last tiebreaker, not the first.</div><div class="ex">sp (25) &gt; sp<sup>2</sup> (44) &gt; sp<sup>3</sup> (50)</div></div>
+</div>
+<p class="footnote"><b>D and I are one idea with two doorways</b> &mdash; the through-space dipole/field and the through-bond induction &mdash; both just &ldquo;pull the charge away.&rdquo; The live engine writes them as a single <span class="mono">D/I</span> check, and so should you.</p>
+<div class="card key"><h4>How to run it</h4><p style="margin-bottom:0">Two acids to compare &rarr; deprotonate both &rarr; say the letters: Charge&hellip; Atom&hellip; Resonance&hellip; Dipole/Induction&hellip; Orbital. The moment one anion wins a check, stop &mdash; that&rsquo;s your reason. Most questions are built so one factor clearly dominates; your job is to find which one.</p></div>
+</section>
+
+<!-- ===== 3 ===== -->
+<section id="s3">
+<h2><span class="num">3</span>The pK<sub>a</sub> ladder &mdash; anchors worth knowing cold</h2>
+<p>Lower pK<sub>a</sub> = stronger acid. A handful of reference points frame every ranking question. Learn where these live and you can place almost anything between them.</p>
+<svg viewBox="0 0 900 130" role="img" aria-label="pKa scale from strong acids near minus ten to alkanes near fifty">
+  <line x1="40" y1="70" x2="860" y2="70" stroke="var(--axis)" stroke-width="2"/>
+  <g font-family="ui-monospace,Menlo,monospace" font-size="11" fill="var(--muted)" text-anchor="middle">
+    <line x1="60"  y1="66" x2="60"  y2="74" stroke="var(--axis)"/><text x="60"  y="90">-10</text>
+    <line x1="192" y1="66" x2="192" y2="74" stroke="var(--axis)"/><text x="192" y="90">0</text>
+    <line x1="323" y1="66" x2="323" y2="74" stroke="var(--axis)"/><text x="323" y="90">10</text>
+    <line x1="455" y1="66" x2="455" y2="74" stroke="var(--axis)"/><text x="455" y="90">20</text>
+    <line x1="587" y1="66" x2="587" y2="74" stroke="var(--axis)"/><text x="587" y="90">30</text>
+    <line x1="718" y1="66" x2="718" y2="74" stroke="var(--axis)"/><text x="718" y="90">40</text>
+    <line x1="850" y1="66" x2="850" y2="74" stroke="var(--axis)"/><text x="850" y="90">50</text>
+  </g>
+  <g font-family="system-ui" font-size="11.5" fill="var(--ink)">
+    <g><line x1="100" y1="44" x2="100" y2="70" stroke="var(--crit)" stroke-width="3"/><text x="100" y="38" text-anchor="middle">HCl -7</text></g>
+    <g><line x1="255" y1="44" x2="255" y2="70" stroke="var(--s2)" stroke-width="3"/><text x="255" y="38" text-anchor="middle">RCOOH ~5</text></g>
+    <g><line x1="323" y1="52" x2="323" y2="70" stroke="var(--s2)" stroke-width="3"/><text x="323" y="30" text-anchor="middle">phenol 10</text></g>
+    <g><line x1="402" y1="44" x2="402" y2="70" stroke="var(--s1)" stroke-width="3"/><text x="402" y="38" text-anchor="middle">H&#8322;O 16</text></g>
+    <g><line x1="521" y1="52" x2="521" y2="70" stroke="var(--s4)" stroke-width="3"/><text x="521" y="30" text-anchor="middle">alkyne 25</text></g>
+    <g><line x1="768" y1="44" x2="768" y2="70" stroke="var(--muted)" stroke-width="3"/><text x="768" y="38" text-anchor="middle">alkene 44</text></g>
+    <g><line x1="850" y1="52" x2="850" y2="70" stroke="var(--muted)" stroke-width="3"/><text x="836" y="30" text-anchor="middle">alkane 50</text></g>
+  </g>
+</svg>
+<p class="footnote">Left = strong (loves to give up H<sup>+</sup>). Right = barely acidic at all. Notice a terminal alkyne (~25) is astronomically more acidic than an alkane (~50) &mdash; that gap is the O in CARDIO doing its work.</p>
+
+<h3>The highest-yield factor, drawn</h3>
+<p>Resonance is the biggest lever, so it&rsquo;s worth seeing once. A carboxylate&rsquo;s charge lives half on each of two identical oxygens:</p>
+<div class="eq" style="text-align:center">
+  <svg viewBox="0 0 460 120" role="img" aria-label="carboxylate resonance: negative charge shared over two oxygens">
+    <g font-family="system-ui" font-size="15" fill="var(--ink)">
+      <text x="20" y="60">R</text>
+      <line x1="34" y1="55" x2="60" y2="55" stroke="var(--ink)" stroke-width="2"/>
+      <text x="66" y="60">C</text>
+      <line x1="80" y1="50" x2="104" y2="34" stroke="var(--ink)" stroke-width="2"/><line x1="83" y1="55" x2="107" y2="39" stroke="var(--ink)" stroke-width="2"/>
+      <text x="108" y="34">O</text>
+      <line x1="80" y1="62" x2="104" y2="78" stroke="var(--ink)" stroke-width="2"/>
+      <text x="108" y="86">O</text><text x="126" y="80" fill="var(--crit)" font-size="13">&#8722;</text>
+      <text x="185" y="62" fill="var(--muted)" font-size="20">&#8596;</text>
+      <text x="240" y="60">R</text>
+      <line x1="254" y1="55" x2="280" y2="55" stroke="var(--ink)" stroke-width="2"/>
+      <text x="286" y="60">C</text>
+      <line x1="300" y1="50" x2="324" y2="34" stroke="var(--ink)" stroke-width="2"/>
+      <text x="328" y="34">O</text><text x="346" y="28" fill="var(--crit)" font-size="13">&#8722;</text>
+      <line x1="300" y1="62" x2="324" y2="78" stroke="var(--ink)" stroke-width="2"/><line x1="303" y1="66" x2="327" y2="82" stroke="var(--ink)" stroke-width="2"/>
+      <text x="328" y="86">O</text>
+      <text x="370" y="62" fill="var(--s3)" font-size="13">charge shared<tspan x="370" y="80">over both O&rsquo;s</tspan></text>
+    </g>
+  </svg>
+  <span class="note">The two oxygens are identical by resonance &mdash; half a charge on each is far comfier than a full charge on one. That is why RCOOH (~5) crushes ROH (~16).</span>
+</div>
+</section>
+
+<!-- ===== 4 ===== -->
+<section id="s4">
+<h2><span class="num">4</span>You call it &mdash; predict first</h2>
+<p class="lead">Before the graded set, one rep with the safety on. Pick a pair, commit to which is stronger, <em>then</em> reveal the CARDIO letter that decides. Predicting first is the point &mdash; a guess you commit to sticks whether it&rsquo;s right or wrong.</p>
+<div class="tool">
+  <h4>Which is the stronger acid? <span class="pill">predict, then reveal</span></h4>
+  <div class="row">
+    <label class="f">Compare
+      <select id="pair">
+        <option value="0">HF  vs  HI</option>
+        <option value="1">ethanol (CH&#8323;CH&#8322;OH)  vs  acetic acid (CH&#8323;COOH)</option>
+        <option value="2">acetic acid  vs  trichloroacetic acid</option>
+        <option value="3">ethane C&#8211;H  vs  ethyne (terminal alkyne) C&#8211;H</option>
+        <option value="4">water  vs  ammonia (NH&#8323;)</option>
+        <option value="5">cyclohexanol  vs  phenol</option>
+      </select>
+    </label>
+    <label class="f">Your call
+      <span class="seg" id="guess" role="group" aria-label="pick the stronger acid">
+        <button data-g="L" aria-pressed="false">Left</button>
+        <button data-g="R" aria-pressed="false">Right</button>
+      </span>
+    </label>
+  </div>
+  <div class="out" id="pairOut">Pick a pair and make your call.</div>
+</div>
+</section>
+
+<!-- ===== 5 ===== -->
+<section id="s5">
+<h2><span class="num">5</span>The habit that carries into the hammer</h2>
+<div class="card key"><h4>Say the letters out loud</h4><p style="margin-bottom:0">When a ranking question shows up, <b>draw each conjugate base and walk CARDIO out loud</b>: &ldquo;Charge&hellip; Atom&hellip; Resonance&hellip; Dipole/Induction&hellip; Orbital.&rdquo; The first letter that separates them is your reason. If you can name the letter, you can defend the answer &mdash; and a defended answer is one you own.</p></div>
+<div class="card trap"><h4>The five traps waiting below</h4><ol style="margin-bottom:0">
+  <li>Judge the <b>conjugate base</b>, never the neutral acid.</li>
+  <li>Across a period electronegativity wins; <b>down a group size wins</b> (HI &gt; HF).</li>
+  <li>Resonance only counts if the charge can actually delocalize <em>in the anion</em>.</li>
+  <li>Induction fades with <b>distance</b> &mdash; position, not just presence.</li>
+  <li>Orbital (hybridization) is the <b>last</b> tiebreaker, not the first.</li>
+</ol></div>
+<div class="rate" data-topic="anchor"></div>
+</section>
+
+<div class="partlabel">Part 2 &middot; The hammer</div>
+
+<!-- ===== 6 ===== -->
+<section id="s6">
+<h2><span class="num">6</span>Ten to earn it</h2>
+<p class="lead">Pick an answer <em>and</em> rate how sure you are &mdash; the Check button stays locked until you commit to both. On a miss, name why and write the one-line rule you&rsquo;ll keep. Your calibration lands at the end. Full five-choice items, tuned to real DAT difficulty.</p>
+<div id="practice"></div>
+<div id="calib"></div>
+</section>
+
+<div class="partlabel">After the hammer</div>
+
+<!-- ===== 7 ===== -->
+<section id="s7">
+<h2><span class="num">7</span>Go deeper &mdash; the live engine</h2>
+<p>This module gets CARDIO into your hands. The <b>Acid-Base CARDIO engine</b> in Ace Labs is where you drill it to reflex: the full ranking map, timed sets, spaced flashcards, and every functional-group hub it feeds into. Use them together &mdash; this module to <em>learn the move</em>, the engine to <em>wear a groove</em>.</p>
+<div class="deeper">
+  <h4>Acid-Base CARDIO &mdash; Organic Chemistry engine</h4>
+  <p style="margin:6px 0 0;font-size:14px;color:var(--ink-2)">The canonical hub. Ranking map, timed drills, and flashcards that route straight back to the six letters you just practiced.</p>
+  <a class="go" href="https://acelabs.netlify.app/tools/ochem/#acid-base-cardio" target="_blank" rel="noopener">Open the Acid-Base CARDIO engine</a>
+</div>
+</section>
+
+<!-- ===== 8 ===== -->
+<section id="s8">
+<h2><span class="num">8</span>Phone card &amp; make it stick</h2>
+<div class="phonecard">
+  <h4>Screenshot this</h4>
+  <span class="tag">Acidity = how stable is the conjugate base?</span>
+  <ol style="margin:8px 0 0">
+    <li><b>C</b>harge &mdash; spread or neutral is better</li>
+    <li><b>A</b>tom &mdash; period: EN wins; group: size wins</li>
+    <li><b>R</b>esonance &mdash; delocalize the charge</li>
+    <li><b>D/I</b> &mdash; nearby EWG pulls it away (closer = stronger)</li>
+    <li><b>O</b>rbital &mdash; sp &gt; sp<sup>2</sup> &gt; sp<sup>3</sup></li>
+  </ol>
+  <p style="margin:10px 0 0;font-size:12.5px;color:var(--ink-2)">Run top down. Stop at the first real difference &mdash; that&rsquo;s the answer and the reason.</p>
+</div>
+
+<div class="stick">
+<p style="margin-top:0">You just <em>did</em> this, which is why it will hold better than watching a video. Now lock it in:</p>
+<ol>
+  <li><b>Prove it now</b> &mdash; a short, focused Booster OChem &rarr; Acidity/Basicity set, timed, nothing else mixed in.</li>
+  <li><b>Come back in two days</b> &mdash; reopen this page and redo the ten from memory before revealing. Any rule still fuzzy is where you start.</li>
+  <li><b>Then again in a week</b> &mdash; one more pass, plus this topic joins your weekly Mixed 10 and the live engine&rsquo;s spaced deck.</li>
+  <li><b>Re-test</b> &mdash; it will show up on your next full length. When you get it there, it&rsquo;s yours.</li>
+</ol>
+<p style="margin-bottom:0">Screenshot the card above so CARDIO rides in your pocket. When a ranking question appears, say the five letters and stop at the first difference.</p>
+</div>
+</section>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var root = document.documentElement;
+  var PREFIX='acedat-cohort-oc-acids-';
+
+  /* theme */
+  var tBtn=document.getElementById('theme');
+  tBtn.addEventListener('click',function(){
+    var dark=root.getAttribute('data-theme')==='dark';
+    root.setAttribute('data-theme',dark?'light':'dark');
+    tBtn.textContent=dark?'Dark mode':'Light mode';
+  });
+
+  /* ---- export / import progress ---- */
+  document.getElementById('exportBtn').addEventListener('click',function(){
+    var data={};
+    for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i); if(k.indexOf(PREFIX)===0) data[k]=localStorage.getItem(k);}
+    var blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+    var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='oc-acids-cardio-progress.json'; document.body.appendChild(a); a.click(); a.remove();
+  });
+  var impBtn=document.getElementById('importBtn'), impFile=document.getElementById('importFile');
+  impBtn.addEventListener('click',function(){ impFile.click(); });
+  impFile.addEventListener('change',function(e){
+    var f=e.target.files[0]; if(!f) return;
+    var r=new FileReader();
+    r.onload=function(){ try{ var d=JSON.parse(r.result); for(var k in d){ if(k.indexOf(PREFIX)===0) localStorage.setItem(k,d[k]); } location.reload(); }
+      catch(err){ impBtn.textContent='Import failed'; setTimeout(function(){impBtn.textContent='Import';},2000); } };
+    r.readAsText(f);
+  });
+
+  /* ---- practice engine: commit-before-reveal + confidence + error-type + one-line rule ---- */
+  var PQ=[
+    {id:'q1',win:true,tier:'Warm-up',q:'You are asked which of two molecules is the stronger acid. What single thing is the most reliable to compare?',
+     choices:[
+       {t:'The number of hydrogens each molecule can lose',correct:false,r:'How many protons it can shed does not set how strong it is per proton. The reliable lens is the leftover anion.'},
+       {t:'The stability of the conjugate base each one leaves behind',correct:true,r:'That is the whole game. Take the proton off, then ask how comfortable the leftover anion is. Everything in CARDIO is a reason that anion is more or less stable.'},
+       {t:'The strength of the X&ndash;H bond in the neutral acid',correct:false,r:'Bond strength plays a part, but resonance and induction act on the anion, not the neutral bond. Judge the conjugate base.'},
+       {t:'The molecular weight of the neutral acid',correct:false,r:'Overall size or mass of the molecule does not decide acidity.'},
+       {t:'How electronegative the most electronegative atom anywhere in the molecule is',correct:false,r:'Electronegativity matters only for how well the atom that actually holds the charge carries it, not as a standalone tally.'}
+     ],rule:'Acidity = how stable is the conjugate base.'},
+
+    {id:'q2',tier:'Core',q:'Each of these loses one proton. Reading across the second row of the periodic table, which is the strongest acid?',
+     choices:[
+       {t:'HF',correct:true,r:'Across a row, the most electronegative atom holds the negative charge best: F over O over N over C. HF wins (pKa ~3.2 vs H₂O 15.7 vs NH₃ 38 vs CH₄ ~50).'},
+       {t:'H₂O',correct:false,r:'Oxygen is electronegative, but fluorine is more so. HF is the stronger acid across this row.'},
+       {t:'NH₃',correct:false,r:'Nitrogen holds charge worse than O or F. Amide (NH₂⁻) is a high-energy anion; NH₃ pKa ~38.'},
+       {t:'CH₄',correct:false,r:'Carbon is the worst of the four at holding a negative charge. Methane is essentially non-acidic (~50).'},
+       {t:'They are all equally strong',correct:false,r:'They differ by roughly fifty orders of magnitude. Across a row, electronegativity separates them clearly.'}
+     ],rule:'Across a period, more electronegative wins: HF > H2O > NH3 > CH4.'},
+
+    {id:'q3',tier:'Core &middot; trap',q:'Which hydrohalic acid is the strongest: HF, HCl, HBr, or HI?',
+     choices:[
+       {t:'HI',correct:true,r:'Down a column, size beats electronegativity. Big, soft iodide spreads the charge over a huge volume, so HI is the strongest (pKa ~ -10).'},
+       {t:'HF',correct:false,r:'The classic trap. Fluorine is the most electronegative, but going DOWN the halogens size takes over, and tiny fluoride grips the charge tightly. HF is actually the weakest (pKa ~3.2).'},
+       {t:'HCl',correct:false,r:'Stronger than HF but weaker than HBr and HI. Size keeps rising down the group.'},
+       {t:'HBr',correct:false,r:'Strong, but iodide is even bigger, so HI edges it out.'},
+       {t:'They are all equally strong because they are all strong acids',correct:false,r:'Three of them look strong in water, but their intrinsic pKa still ranks HI > HBr > HCl >> HF.'}
+     ],rule:'Down a group, size wins: HI > HBr > HCl > HF.'},
+
+    {id:'q4',tier:'Core',q:'Acetic acid (pKa 4.8) is over a hundred billion times more acidic than ethanol (pKa 16), even though both simply lose an O&ndash;H proton. The main reason is that the acetate anion is:',
+     choices:[
+       {t:'delocalized — its negative charge is shared over two equivalent oxygens by resonance',correct:true,r:'Yes. Half a charge on each of two oxygens is far comfier than a full charge on one. Ethoxide has no such escape.'},
+       {t:'sitting on a larger atom than ethoxide is',correct:false,r:'Both put the charge on oxygen. Same atom, so Atom is a tie. Resonance is the real difference.'},
+       {t:'held right next to an sp-hybridized carbon',correct:false,r:'The carbonyl carbon is sp², and orbital character is not what separates these two. Resonance is.'},
+       {t:'neutral overall, unlike the ethoxide anion',correct:false,r:'Acetate carries a full negative charge just like ethoxide. It is more stable because that charge is spread, not because it is neutral.'},
+       {t:'stabilized by an internal hydrogen bond to the second oxygen',correct:false,r:'No intramolecular H-bond is doing the work here. Delocalization over the two oxygens is the stabilizer.'}
+     ],rule:'Resonance spreads the anion charge: RCOOH >> ROH.'},
+
+    {id:'q5',tier:'Core',q:'Rank these strongest to weakest acid: ethanol, phenol, acetic acid.',
+     choices:[
+       {t:'acetic acid &gt; phenol &gt; ethanol',correct:true,r:'Resonance extent decides. Carboxylate spreads charge over two equivalent O; phenoxide spreads it into the ring; ethoxide has none. pKa 4.8, 10, 16.'},
+       {t:'phenol &gt; acetic acid &gt; ethanol',correct:false,r:'Close, but carboxylate resonance over two equivalent oxygens beats phenoxide resonance into the ring. Acetic acid is strongest.'},
+       {t:'acetic acid &gt; ethanol &gt; phenol',correct:false,r:'Phenol has ring resonance in its anion; ethanol has none. Phenol must sit above ethanol.'},
+       {t:'ethanol &gt; phenol &gt; acetic acid',correct:false,r:'That is exactly reversed — weakest to strongest.'},
+       {t:'they are all about equal since each loses an O–H proton',correct:false,r:'Same bond type, wildly different anions. pKa runs 4.8, 10, 16.'}
+     ],rule:'More/better resonance = stronger: RCOOH > phenol > ROH.'},
+
+    {id:'q6',tier:'Core',q:'Trichloroacetic acid (pKa 0.7) is far stronger than acetic acid (pKa 4.8). Both carboxylates have identical resonance. The extra stabilization of the trichloroacetate anion comes from:',
+     choices:[
+       {t:'three electron-withdrawing chlorines pulling charge away (induction)',correct:true,r:'Right. Same resonance in both, so R ties. The three Cl atoms drain electron density off the carboxylate through the bonds and through space — the D/I check.'},
+       {t:'extra resonance structures contributed by the chlorine lone pairs',correct:false,r:'The chlorines are not conjugated into the carboxylate here; they help by induction, not resonance.'},
+       {t:'the greater molecular weight of trichloroacetic acid',correct:false,r:'Mass does not stabilize charge. The inductive pull of the electron-withdrawing groups does.'},
+       {t:'chlorine raising the s-character of the carbon that holds the charge',correct:false,r:'Hybridization is unchanged; orbital character is not the lever here.'},
+       {t:'hydrogen bonding between the chlorines and the O–H group',correct:false,r:'No such H-bond stabilizes the anion. Induction from the three Cl is the cause.'}
+     ],rule:'Nearby electron-withdrawing groups stabilize the anion by induction (more groups = stronger).'},
+
+    {id:'q7',tier:'Stretch',q:'Three isomers: 2-, 3-, and 4-chlorobutanoic acid. Which is the strongest acid?',
+     choices:[
+       {t:'2-chlorobutanoic acid',correct:true,r:'The chlorine sits on the carbon nearest the carboxylate, so its inductive pull is strongest. Induction falls off fast with distance.'},
+       {t:'3-chlorobutanoic acid',correct:false,r:'Intermediate distance, intermediate strength. Closer would help more.'},
+       {t:'4-chlorobutanoic acid',correct:false,r:'Farthest chlorine, weakest pull, weakest acid of the three.'},
+       {t:'all three are equal because they share the same molecular formula',correct:false,r:'Same formula, but induction depends on distance, not formula. Position is everything.'},
+       {t:'4-chlorobutanoic acid, because the chlorine is farthest from the crowded acid group',correct:false,r:'Distance weakens induction; it does not help. The nearest chlorine (2-) gives the strongest acid.'}
+     ],rule:'Induction weakens with distance: closer electron-withdrawing group = stronger acid.'},
+
+    {id:'q8',tier:'Core',q:'Which C&ndash;H bond is the most acidic?',
+     choices:[
+       {t:'the terminal C–H of ethyne (an alkyne)',correct:true,r:'The sp carbon is 50% s-character, holding the carbanion lone pair close to the nucleus. pKa ~25, acidic enough for NaNH₂ to deprotonate.'},
+       {t:'a C–H of ethane (an alkane)',correct:false,r:'sp³ (25% s) barely stabilizes a carbanion. Alkanes are the least acidic C–H there is (~50).'},
+       {t:'a C–H of ethene (an alkene)',correct:false,r:'sp² (33% s) is in between, but still far weaker than the alkyne (~44).'},
+       {t:'all C–H bonds are equally acidic',correct:false,r:'Hybridization sets s-character, which swings acidity by more than twenty orders of magnitude across sp, sp², sp³.'},
+       {t:'ethane, because it has the most C–H bonds to give away',correct:false,r:'Number of bonds does not set acidity per bond. s-character does, and sp wins.'}
+     ],rule:'More s-character = more acidic: sp > sp2 > sp3.'},
+
+    {id:'q9',tier:'Core',q:'A cationic acid tends to be much stronger than its neutral relative, because its conjugate base comes out neutral. Which of these is the strongest acid?',
+     choices:[
+       {t:'NH₄⁺ (ammonium)',correct:true,r:'Losing H⁺ from ammonium gives neutral NH₃. Reaching neutral is a big stabilization, so ammonium (pKa ~9) beats every neutral N–H and C–H acid here.'},
+       {t:'NH₃ (ammonia)',correct:false,r:'Its conjugate base is amide, NH₂⁻ — a full charge stacked on nitrogen. pKa ~38.'},
+       {t:'CH₄ (methane)',correct:false,r:'The carbanion CH₃⁻ is extremely unstable. Methane is about the weakest acid on this whole topic (~50).'},
+       {t:'CH₃CH₃ (ethane)',correct:false,r:'Same story as methane: an unstable carbanion, pKa ~50.'},
+       {t:'CH₃NH₂ (methylamine)',correct:false,r:'A neutral amine like ammonia; its conjugate base is a nitrogen anion (~40). The cation, ammonium, is far stronger.'}
+     ],rule:'A cationic acid (neutral conjugate base) is much stronger. Check charge first.'},
+
+    {id:'q10',tier:'Stretch &middot; synthesis',q:'Which is the strongest acid?',
+     choices:[
+       {t:'4-nitrophenol',correct:true,r:'The para nitro group is a strong electron-withdrawing group: it delocalizes the phenoxide charge directly onto its own oxygens by resonance AND pulls inductively. R and I both stack in its favor (pKa ~7.2 vs phenol ~10).'},
+       {t:'phenol',correct:false,r:'Good ring resonance, but no extra electron-withdrawing group. The nitro version beats it.'},
+       {t:'4-methylphenol',correct:false,r:'A methyl group donates electrons weakly, slightly destabilizing the anion. This is a touch weaker than phenol, not stronger.'},
+       {t:'cyclohexanol',correct:false,r:'No ring resonance reaches the O⁻ (the ring is saturated). Nothing spreads the charge; pKa ~16.'},
+       {t:'ethanol',correct:false,r:'A plain alkoxide — no resonance, no electron-withdrawing help. pKa ~16.'}
+     ],rule:'An electron-withdrawing group (especially NO2) para to a phenol adds resonance + induction: strongest phenol acid.'}
+  ];
+
+  var PKEY=PREFIX+'practice', pstate={};
+  try{ pstate=JSON.parse(localStorage.getItem(PKEY)||'{}'); }catch(e){ pstate={}; }
+  function psave(){ try{ localStorage.setItem(PKEY,JSON.stringify(pstate)); }catch(e){} }
+  var ETYPES=[['content','Didn’t know it'],['misread','Misread / trap'],['careless','Careless slip'],['timing','Ran out of time']];
+  var LETTERS=['A','B','C','D','E'];
+  var pWrap=document.getElementById('practice');
+
+  PQ.forEach(function(q,qi){
+    var card=document.createElement('div'); card.className='pq'+(q.win?' win':'');
+    var tierTxt=q.tier?('<span class="tier">'+q.tier+'</span>'):'';
+    card.innerHTML='<div class="qn"><span>Q'+(qi+1)+(q.win?' <span class="w">&middot; warm-up win</span>':'')+'</span>'+tierTxt+'</div><div class="qt">'+q.q+'</div>';
+    var chosen=null, conf=null, locked=false;
+    var choicesWrap=document.createElement('div'); choicesWrap.className='choices';
+    q.choices.forEach(function(c,ci){
+      var b=document.createElement('button'); b.type='button'; b.className='choice';
+      b.innerHTML='<span class="ltr">'+LETTERS[ci]+'</span><span class="body">'+c.t+'</span>';
+      b.addEventListener('click',function(){
+        if(locked) return;
+        chosen=ci; choicesWrap.querySelectorAll('.choice').forEach(function(x){x.setAttribute('aria-pressed','false');});
+        b.setAttribute('aria-pressed','true'); upd();
+      });
+      choicesWrap.appendChild(b);
+    });
+    card.appendChild(choicesWrap);
+    var confRow=document.createElement('div'); confRow.className='confrow'; confRow.innerHTML='<span>How sure?</span>';
+    var cseg=document.createElement('span'); cseg.className='seg';
+    [['sure','Sure'],['shaky','Shaky'],['no','No idea']].forEach(function(cv){
+      var cb=document.createElement('button'); cb.type='button'; cb.textContent=cv[1];
+      cb.addEventListener('click',function(){ if(locked) return; conf=cv[0]; cseg.querySelectorAll('button').forEach(function(x){x.setAttribute('aria-pressed',x===cb?'true':'false');}); upd(); });
+      cseg.appendChild(cb);
+    });
+    confRow.appendChild(cseg); card.appendChild(confRow);
+    var chk=document.createElement('button'); chk.type='button'; chk.className='checkbtn'; chk.textContent='Check answer'; chk.disabled=true; card.appendChild(chk);
+    var fb=document.createElement('div'); fb.className='fb'; card.appendChild(fb);
+    function upd(){ chk.disabled=!(chosen!==null && conf); }
+    chk.addEventListener('click',function(){
+      if(chosen===null||!conf) return;
+      locked=true; chk.style.display='none';
+      var correct=q.choices[chosen].correct;
+      choicesWrap.querySelectorAll('.choice').forEach(function(x,xi){
+        x.innerHTML='<span class="ltr">'+LETTERS[xi]+'</span><span class="body">'+q.choices[xi].t+'<span class="cr">'+q.choices[xi].r+'</span></span>';
+        if(q.choices[xi].correct) x.classList.add('correct'); else if(xi===chosen) x.classList.add('wrong');
+      });
+      fb.className='fb '+(correct?'ok':'no');
+      fb.innerHTML=correct?('Correct.'+(conf!=='sure'?' You were not sure — worth one more look so it becomes automatic.':' Locked in.')):'Not yet — the right choice is highlighted above. That surprise is exactly what builds the memory.';
+      pstate[q.id]={done:true,correct:correct,conf:conf,rule:(pstate[q.id]&&pstate[q.id].rule)||''}; psave(); renderCalib();
+      if(!correct){
+        var et=document.createElement('div'); et.className='etype';
+        et.innerHTML='<div class="lab">Why did you miss it?</div>';
+        var etseg=document.createElement('span'); etseg.className='seg'; etseg.style.marginTop='6px';
+        ETYPES.forEach(function(t){ var tb=document.createElement('button'); tb.type='button'; tb.textContent=t[1];
+          tb.addEventListener('click',function(){ etseg.querySelectorAll('button').forEach(function(x){x.setAttribute('aria-pressed',x===tb?'true':'false');}); pstate[q.id].etype=t[0]; psave(); });
+          etseg.appendChild(tb); });
+        et.appendChild(etseg);
+        var lab2=document.createElement('div'); lab2.className='lab'; lab2.style.marginTop='10px'; lab2.textContent='Write it as a one-line rule you will keep:';
+        et.appendChild(lab2);
+        var ta=document.createElement('textarea'); ta.className='rulebox'; ta.placeholder=q.rule; ta.value=pstate[q.id].rule||'';
+        ta.addEventListener('input',function(){ pstate[q.id].rule=ta.value; psave(); renderCalib(); });
+        et.appendChild(ta);
+        card.appendChild(et);
+      }
+    });
+    pWrap.appendChild(card);
+  });
+
+  function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
+  function updateProg(n){
+    var pct=100*n/PQ.length;
+    var fill=document.getElementById('progFill'); if(fill) fill.style.width=pct+'%';
+    var txt=document.getElementById('progText'); if(txt) txt.textContent=n+' of '+PQ.length;
+  }
+  function renderCalib(){
+    var cal=document.getElementById('calib');
+    var ids=Object.keys(pstate).filter(function(k){ return pstate[k] && pstate[k].done; });
+    updateProg(ids.length);
+    if(!ids.length){ cal.innerHTML=''; return; }
+    var n=ids.length, correct=0, sureN=0, sureWrong=0;
+    ids.forEach(function(k){ var s=pstate[k]; if(s.correct) correct++; if(s.conf==='sure'){ sureN++; if(!s.correct) sureWrong++; } });
+    var rules=ids.filter(function(k){ return pstate[k].rule && pstate[k].rule.trim(); }).map(function(k){ return pstate[k].rule; });
+    var html='<div class="calib"><h4>Your calibration — '+n+' of '+PQ.length+' answered</h4>';
+    html+='<p style="margin:0 0 6px">Accuracy so far: <b>'+correct+' / '+n+'</b>.';
+    if(sureN) html+=' You felt <b>Sure</b> on '+sureN+' — '+(sureWrong?('and missed <b>'+sureWrong+'</b> of those. Confident misses are the ones to re-test first — that surprise is exactly what makes the fix stick.'):'and got them all. Well calibrated.');
+    html+='</p>';
+    if(rules.length){ html+='<div style="font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--gold2);margin-top:8px">Your rules to keep</div><ul style="margin:6px 0 0">'+rules.map(function(r){return '<li>'+esc(r)+'</li>';}).join('')+'</ul>'; }
+    if(n===PQ.length){ html+='<p style="margin:10px 0 0;font-size:13.5px;color:var(--ink-2)">All ten done. Take your kept rules to the live engine and drill them to reflex — the link is just below.</p>'; }
+    html+='</div>';
+    cal.innerHTML=html;
+  }
+  renderCalib();
+
+  /* ---- predict-first pair comparator ---- */
+  var pairs=[
+    {l:"HF",r:"HI",win:"R",letter:"A (Atom)",why:"Down the halogen group, <b>size beats electronegativity</b>. Iodide is huge and spreads the charge best, so HI is the stronger acid. pK<sub>a</sub>: HF 3.2, HI ~ -10."},
+    {l:"ethanol",r:"acetic acid",win:"R",letter:"R (Resonance)",why:"Acetate spreads its charge over <b>two equivalent oxygens</b>; ethoxide has no resonance. Acetic acid wins easily. pK<sub>a</sub>: ethanol 16, acetic 4.8."},
+    {l:"acetic acid",r:"trichloroacetic acid",win:"R",letter:"D/I (Induction)",why:"Same carboxylate resonance in both — the <b>three chlorines pull charge away</b> by induction. pK<sub>a</sub>: acetic 4.8, trichloroacetic 0.7."},
+    {l:"ethane",r:"ethyne",win:"R",letter:"O (Orbital)",why:"The alkyne carbon is <b>sp (50% s-character)</b>, holding the carbanion lone pair tight. pK<sub>a</sub>: ethane ~50, ethyne ~25."},
+    {l:"water",r:"ammonia",win:"L",letter:"A (Atom)",why:"Across the period, <b>oxygen is more electronegative than nitrogen</b>, so it holds the charge better. Water is more acidic. pK<sub>a</sub>: water 15.7, ammonia 38."},
+    {l:"cyclohexanol",r:"phenol",win:"R",letter:"R (Resonance)",why:"Phenoxide <b>delocalizes into the ring</b>; cyclohexanol’s anion cannot. Phenol wins. pK<sub>a</sub>: cyclohexanol 16, phenol 10."}
+  ];
+  var pairSel=document.getElementById('pair'), pairOut=document.getElementById('pairOut'), guessWrap=document.getElementById('guess'), myGuess=null;
+  function renderPair(){
+    myGuess=null;
+    guessWrap.querySelectorAll('button').forEach(function(b){b.setAttribute('aria-pressed','false');});
+    var p=pairs[+pairSel.value];
+    pairOut.innerHTML='Which is stronger: <b>'+p.l+'</b> (Left) or <b>'+p.r+'</b> (Right)? Make your call above.';
+  }
+  guessWrap.querySelectorAll('button').forEach(function(b){
+    b.addEventListener('click',function(){
+      guessWrap.querySelectorAll('button').forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false');});
+      myGuess=b.dataset.g;
+      var p=pairs[+pairSel.value];
+      var correct=(myGuess===p.win);
+      var winner = p.win==='L'? p.l : p.r;
+      pairOut.innerHTML='<b style="color:'+(correct?'var(--good)':'var(--crit)')+'">'+(correct?'Right call.':'Not quite.')+'</b> Stronger acid: <b>'+winner+'</b>. Decided by <b>'+p.letter+'</b>.<br><br>'+p.why;
+    });
+  });
+  pairSel.addEventListener('change',renderPair); renderPair();
+
+  /* ---- self-rate strip (anchor) ---- */
+  var KEY=PREFIX+'rate';
+  var store={};
+  try{ store=JSON.parse(localStorage.getItem(KEY)||'{}'); }catch(e){ store={}; }
+  var labels={1:'Shaky',2:'Getting it',3:'Solid'};
+  document.querySelectorAll('.rate').forEach(function(strip){
+    var topic=strip.dataset.topic;
+    strip.innerHTML='<span class="lbl">Before you hammer &mdash; how solid is CARDIO?</span>';
+    var seg=document.createElement('span'); seg.className='seg';
+    [1,2,3].forEach(function(v){
+      var b=document.createElement('button'); b.dataset.v=v; b.textContent=labels[v];
+      b.setAttribute('aria-pressed', store[topic]===v?'true':'false');
+      b.addEventListener('click',function(){
+        store[topic]=v;
+        seg.querySelectorAll('button').forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false');});
+        try{ localStorage.setItem(KEY,JSON.stringify(store)); }catch(e){}
+      });
+      seg.appendChild(b);
+    });
+    strip.appendChild(seg);
+  });
+})();
+</script>
+</body>
+</html>
