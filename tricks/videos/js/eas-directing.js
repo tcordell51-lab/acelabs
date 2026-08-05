@@ -1005,6 +1005,8 @@ function Ring() {
   const t = useTime();
   const panelIn = clamp((t - 10.3) / 0.7, 0, 1);
   const ringOut = 1 - clamp((t - 70.8) / 0.5, 0, 1);
+  // fully hide the single-ring demo while the "same δ+ atom" trio is on screen (53.6–63.6)
+  const trioDim = 1 - (clamp((t - 53.4) / 0.7, 0, 1) - clamp((t - 63.6) / 0.7, 0, 1));
   const panelS = 0.95 + 0.05 * Easing.easeOutBack(panelIn);
   const contentOp = panelIn;
 
@@ -1085,7 +1087,7 @@ function Ring() {
     style: {
       position: 'absolute',
       inset: 0,
-      opacity: ringOut
+      opacity: ringOut * trioDim
     }
   }, /*#__PURE__*/React.createElement("div", {
     style: {
@@ -1657,6 +1659,206 @@ function VoiceTrack({
 }
 
 // ── ROOT ─────────────────────────────────────────────────────
+// ── a small benzene ring (schematic) ─────────────────────────
+function miniHex(cx, cy, r, stroke) {
+  const pts = [0, 1, 2, 3, 4, 5].map(k => {
+    const ang = Math.PI / 2 + k * Math.PI / 3;
+    return [cx + r * Math.cos(ang), cy - r * Math.sin(ang)];
+  });
+  const d = 'M' + pts.map(p => p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' L') + ' Z';
+  return /*#__PURE__*/React.createElement("g", null, /*#__PURE__*/React.createElement("path", {
+    d: d,
+    fill: "none",
+    stroke: stroke,
+    strokeWidth: "5",
+    strokeLinejoin: "round"
+  }), /*#__PURE__*/React.createElement("circle", {
+    cx: cx,
+    cy: cy,
+    r: r * 0.56,
+    fill: "none",
+    stroke: stroke,
+    strokeWidth: "3.5",
+    opacity: "0.5"
+  }));
+}
+
+// ── the unifying beat: every withdrawer puts a δ+ atom STRAIGHT on the ring ──
+function MetaSameAtom({
+  start,
+  end
+}) {
+  const t = useTime();
+  if (t < start - 0.3 || t > end + 0.4) return null;
+  const p = clamp((t - start) / 0.6, 0, 1) * (1 - clamp((t - (end - 0.5)) / 0.5, 0, 1));
+  const UNITS = [{
+    group: 'C=O',
+    atom: 'C',
+    term: '=O',
+    name: 'carbonyl',
+    at: start + 0.7
+  }, {
+    group: '–C≡N',
+    atom: 'C',
+    term: '≡N',
+    name: 'nitrile',
+    at: start + 1.6
+  }, {
+    group: '–NO₂',
+    atom: 'N',
+    term: 'O O',
+    name: 'nitro',
+    at: start + 2.5
+  }];
+  const cap = clamp((t - start - 3.6) / 0.6, 0, 1);
+  return /*#__PURE__*/React.createElement("div", {
+    style: {
+      position: 'absolute',
+      left: 0,
+      right: 0,
+      top: 300,
+      textAlign: 'center',
+      opacity: p
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontFamily: MONO,
+      fontSize: 24,
+      letterSpacing: '0.18em',
+      color: POOR,
+      marginBottom: 8
+    }
+  }, "SAME STORY · A δ+ FIRST ATOM"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontFamily: SANS,
+      fontSize: 28,
+      color: INK2,
+      marginBottom: 34
+    }
+  }, "carbonyl, nitrile, nitro — all pull the ring’s electrons out"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      justifyContent: 'center',
+      gap: 34
+    }
+  }, UNITS.map((u, i) => {
+    const a = clamp((t - u.at) / 0.5, 0, 1);
+    const pulse = 0.5 + 0.5 * Math.sin((t - u.at) * 3.2);
+    return /*#__PURE__*/React.createElement("div", {
+      key: i,
+      style: {
+        opacity: a,
+        transform: `translateY(${(1 - a) * 22}px)`,
+        width: 300
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        fontFamily: SERIF,
+        fontWeight: 600,
+        fontSize: 46,
+        color: INK,
+        marginBottom: 6
+      }
+    }, u.group), /*#__PURE__*/React.createElement("svg", {
+      width: "300",
+      height: "360",
+      viewBox: "0 0 300 360",
+      style: {
+        overflow: 'visible'
+      }
+    }, /*#__PURE__*/React.createElement("text", {
+      x: "150",
+      y: "58",
+      textAnchor: "middle",
+      fontFamily: SERIF,
+      fontWeight: "600",
+      fontSize: "40",
+      fill: INK2
+    }, u.term), /*#__PURE__*/React.createElement("line", {
+      x1: "150",
+      y1: "150",
+      x2: "150",
+      y2: "76",
+      stroke: INK3,
+      strokeWidth: "5"
+    }), /*#__PURE__*/React.createElement("circle", {
+      cx: "150",
+      cy: "150",
+      r: 44,
+      fill: POOR,
+      opacity: (0.22 + 0.2 * pulse) * a,
+      style: {
+        filter: 'blur(15px)'
+      }
+    }), /*#__PURE__*/React.createElement("circle", {
+      cx: "150",
+      cy: "150",
+      r: "35",
+      fill: POOR
+    }), /*#__PURE__*/React.createElement("text", {
+      x: "150",
+      y: "164",
+      textAnchor: "middle",
+      fontFamily: SERIF,
+      fontWeight: "700",
+      fontSize: "42",
+      fill: "#1a140c"
+    }, u.atom), /*#__PURE__*/React.createElement("text", {
+      x: "208",
+      y: "138",
+      textAnchor: "middle",
+      fontFamily: MONO,
+      fontWeight: "700",
+      fontSize: "27",
+      fill: POOR
+    }, "δ+"), /*#__PURE__*/React.createElement("line", {
+      x1: "150",
+      y1: "185",
+      x2: "150",
+      y2: "236",
+      stroke: INK3,
+      strokeWidth: "5"
+    }), miniHex(150, 296, 54, INK2), /*#__PURE__*/React.createElement("g", {
+      opacity: a
+    }, /*#__PURE__*/React.createElement("line", {
+      x1: "150",
+      y1: "250",
+      x2: "150",
+      y2: "200",
+      stroke: SPARED,
+      strokeWidth: "4"
+    }), /*#__PURE__*/React.createElement("path", {
+      d: "M150 196 l -9 15 l 18 0 z",
+      fill: SPARED
+    }))), /*#__PURE__*/React.createElement("div", {
+      style: {
+        fontFamily: SANS,
+        fontSize: 26,
+        color: INK3,
+        marginTop: 2
+      }
+    }, u.name));
+  })), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontFamily: SERIF,
+      fontWeight: 600,
+      fontSize: 42,
+      color: INK,
+      marginTop: 34,
+      opacity: cap,
+      padding: '0 70px',
+      lineHeight: 1.3
+    }
+  }, "the ", /*#__PURE__*/React.createElement("b", {
+    style: {
+      color: POOR
+    }
+  }, "first atom connected to the ring"), " is δ+ — it drains the ring, forcing E⁺ ", /*#__PURE__*/React.createElement("b", {
+    style: {
+      color: SPARED
+    }
+  }, "meta")));
+}
 function EASDirectingVideo() {
   return /*#__PURE__*/React.createElement(Stage, {
     width: CW,
@@ -1955,13 +2157,13 @@ function EASDirectingVideo() {
     sub: "deactivates, but still directs o/p"
   }), /*#__PURE__*/React.createElement(Header, {
     start: 48.2,
-    end: 53.5,
+    end: 53.6,
     top: 150
   }, /*#__PURE__*/React.createElement(Lineup, {
-    title: "④ MODERATE DEACTIVATORS",
+    title: "④⑤ THE WITHDRAWERS",
     titleColor: POOR,
-    base: 48.6,
-    sub: "O hogs the electrons → ring carbon goes δ+, draining it",
+    base: 48.8,
+    sub: "O and N hog the electrons — the first atom turns δ+, draining the ring",
     cards: [{
       formula: 'C=O',
       annot: 'δ+ carbon',
@@ -1972,62 +2174,94 @@ function EASDirectingVideo() {
       annot: 'δ+ carbon',
       tag: 'nitriles',
       color: POOR
-    }]
-  })), /*#__PURE__*/React.createElement(ResultBanner, {
-    start: 51.0,
-    end: 57.0,
-    color: SPARED,
-    kicker: "E⁺ FORCED TO META",
-    big: "meta",
-    sub: "carbonyls · nitriles"
-  }), /*#__PURE__*/React.createElement(Header, {
-    start: 57.2,
-    end: 62.0,
-    top: 150
-  }, /*#__PURE__*/React.createElement(Lineup, {
-    title: "⑤ STRONG DEACTIVATOR",
-    titleColor: POOR,
-    base: 57.6,
-    sub: "net dipole · the hardest pull of all",
-    cards: [{
+    }, {
       formula: '–NO₂',
       annot: 'δ+ nitrogen',
       tag: 'nitro',
       color: POOR
     }]
-  })), /*#__PURE__*/React.createElement(ResultBanner, {
-    start: 59.6,
-    end: 64.0,
+  })), /*#__PURE__*/React.createElement(MetaSameAtom, {
+    start: 53.9,
+    end: 64.2
+  }), /*#__PURE__*/React.createElement(ResultBanner, {
+    start: 61.0,
+    end: 64.2,
     color: SPARED,
-    kicker: "STRONGEST PULL",
+    kicker: "EVERY δ+ RING-ATOM",
     big: "meta",
-    sub: "nitro locks it in"
+    sub: "carbonyl · nitrile · nitro — all forced here"
   }), /*#__PURE__*/React.createElement(Header, {
-    start: 64.2,
+    start: 64.4,
     end: 71.0,
-    top: 138
+    top: 140
   }, /*#__PURE__*/React.createElement("div", {
     style: {
       fontFamily: MONO,
-      fontSize: 24,
-      letterSpacing: '0.22em',
-      color: SPARED,
+      fontSize: 23,
+      letterSpacing: '0.14em',
+      color: GOLD,
+      marginBottom: 6
+    }
+  }, "THE FIRST ATOM CONNECTED TO THE RING"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontFamily: SERIF,
+      fontStyle: 'italic',
+      fontSize: 34,
+      color: INK2,
+      marginBottom: 20
+    }
+  }, "tells the whole story"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'inline-flex',
+      gap: 20,
+      justifyContent: 'center',
       marginBottom: 8
     }
-  }, "REMEMBER THIS · DEACTIVATORS"), /*#__PURE__*/React.createElement(FlipWM, {
-    start: 65.0
-  }), /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: CARD2,
+      border: `1px solid ${RICH}`,
+      borderRadius: 18,
+      padding: '16px 26px'
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontFamily: SERIF,
+      fontWeight: 600,
+      fontSize: 40,
+      color: RICH
+    }
+  }, "lone pair → in"), /*#__PURE__*/React.createElement("div", {
     style: {
       fontFamily: SANS,
-      fontSize: 30,
+      fontSize: 24,
       color: INK2,
-      marginTop: 14
+      marginTop: 4
     }
-  }, "every withdrawer → ", /*#__PURE__*/React.createElement("b", {
+  }, "donates · ortho / para")), /*#__PURE__*/React.createElement("div", {
     style: {
-      color: SPARED
+      background: CARD2,
+      border: `1px solid ${POOR}`,
+      borderRadius: 18,
+      padding: '16px 26px'
     }
-  }, "meta"))), /*#__PURE__*/React.createElement(Ring, null), /*#__PURE__*/React.createElement(SpectrumLadder, {
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontFamily: SERIF,
+      fontWeight: 600,
+      fontSize: 40,
+      color: POOR
+    }
+  }, "δ+ → out"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontFamily: SANS,
+      fontSize: 24,
+      color: INK2,
+      marginTop: 4
+    }
+  }, "drains · meta"))), /*#__PURE__*/React.createElement(FlipWM, {
+    start: 66.4
+  })), /*#__PURE__*/React.createElement(Ring, null), /*#__PURE__*/React.createElement(SpectrumLadder, {
     start: 71.2,
     end: 83.0
   }), /*#__PURE__*/React.createElement(QuizBeat, {
