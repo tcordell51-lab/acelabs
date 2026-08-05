@@ -1003,65 +1003,57 @@ function flowDots(t, start, end, targets, color, inward) {
 // ── benzene ring (time-driven, all three acts) ───────────────
 function Ring() {
   const t = useTime();
-  const panelIn = clamp((t - 10.3) / 0.7, 0, 1);
-  const ringOut = 1 - clamp((t - 70.8) / 0.5, 0, 1);
-  // fully hide the single-ring demo while the "same δ+ atom" trio is on screen (53.6–63.6)
-  const trioDim = 1 - (clamp((t - 53.4) / 0.7, 0, 1) - clamp((t - 63.6) / 0.7, 0, 1));
+  const panelIn = clamp((t - 14.0) / 0.7, 0, 1);
+  const ringOut = 1 - clamp((t - 82.5) / 0.5, 0, 1);
+  // fully hide the single-ring demo while the "same δ+ first-atom" trio is on screen (59–74)
+  const trioDim = 1 - (clamp((t - 58.8) / 0.7, 0, 1) - clamp((t - 74.2) / 0.7, 0, 1));
   const panelS = 0.95 + 0.05 * Easing.easeOutBack(panelIn);
   const contentOp = panelIn;
 
   // substituent on the ring + where the electrophile (E⁺) lands, by tier
   const TIERS = [{
-    t0: 10.3,
-    t1: 19.0,
+    t0: 14.0,
+    t1: 22.0,
     sub: 'OH',
     mark: ':',
     mc: RICH,
     dir: 'op',
     gc: RICH
   }, {
-    t0: 19.0,
-    t1: 26.0,
+    t0: 22.0,
+    t1: 29.0,
     sub: 'CH₃',
     mark: '+I',
     mc: RICH,
     dir: 'op',
     gc: RICH
   }, {
-    t0: 26.0,
-    t1: 33.0,
+    t0: 29.0,
+    t1: 37.0,
     sub: 'OH',
     mark: ':',
     mc: RICH,
     dir: 'op',
     gc: RICH
   }, {
-    t0: 33.0,
-    t1: 48.0,
+    t0: 37.0,
+    t1: 53.0,
     sub: 'Cl',
     mark: ':',
     mc: GOLD,
     dir: 'op',
     gc: GOLD
   }, {
-    t0: 48.0,
-    t1: 57.0,
+    t0: 53.0,
+    t1: 74.0,
     sub: 'C=O',
     mark: 'δ+',
     mc: POOR,
     dir: 'meta',
     gc: SPARED
   }, {
-    t0: 57.0,
-    t1: 64.0,
-    sub: 'NO₂',
-    mark: 'δ+',
-    mc: POOR,
-    dir: 'meta',
-    gc: SPARED
-  }, {
-    t0: 64.0,
-    t1: 71.0,
+    t0: 74.0,
+    t1: 82.5,
     sub: 'NO₂',
     mark: 'δ+',
     mc: POOR,
@@ -1859,13 +1851,284 @@ function MetaSameAtom({
     }
   }, "meta")));
 }
+
+// ── dedicated FLIP W → M beat (its own screen, big + clean) ──
+function FlipBeat({
+  start,
+  end
+}) {
+  const t = useTime();
+  if (t < start - 0.3 || t > end + 0.4) return null;
+  const inOp = clamp((t - start) / 0.5, 0, 1) * (1 - clamp((t - (end - 0.5)) / 0.5, 0, 1));
+  const fp = clamp((t - start - 1.4) / 1.6, 0, 1); // the flip itself — slow, deliberate
+  const rot = 180 * Easing.easeInOutCubic(fp);
+  const flipped = fp >= 0.5;
+  const col = flipped ? SPARED : POOR;
+  const wl = clamp((t - start - 0.3) / 0.5, 0, 1); // "W = Withdrawer"
+  const ml = clamp((t - start - 3.2) / 0.5, 0, 1); // "M = Meta"
+  const groups = clamp((t - start - 3.9) / 0.6, 0, 1);
+  return /*#__PURE__*/React.createElement("div", {
+    style: {
+      position: 'absolute',
+      inset: 0,
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      opacity: inOp,
+      padding: '0 70px',
+      boxSizing: 'border-box'
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontFamily: MONO,
+      fontSize: 26,
+      letterSpacing: '0.24em',
+      color: GOLD,
+      marginBottom: 10
+    }
+  }, "THE ONE TRICK · WITHDRAWERS"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontFamily: SANS,
+      fontSize: 34,
+      color: INK2,
+      marginBottom: 44,
+      opacity: wl
+    }
+  }, "every withdrawer is a ", /*#__PURE__*/React.createElement("b", {
+    style: {
+      color: POOR
+    }
+  }, "W"), " — so just flip it"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: 56
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      gap: 14
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontFamily: SERIF,
+      fontWeight: 700,
+      fontSize: 260,
+      lineHeight: 0.9,
+      color: col,
+      transform: `rotate(${rot}deg)`,
+      transition: 'color 200ms',
+      display: 'inline-block'
+    }
+  }, "W"), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontFamily: SANS,
+      fontSize: 30,
+      color: flipped ? SPARED : POOR,
+      opacity: flipped ? ml : wl
+    }
+  }, flipped ? 'M — meta' : 'W — withdrawer'))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontFamily: SERIF,
+      fontWeight: 600,
+      fontSize: 52,
+      color: INK,
+      marginTop: 40,
+      textAlign: 'center',
+      lineHeight: 1.25,
+      opacity: ml
+    }
+  }, "flip the ", /*#__PURE__*/React.createElement("b", {
+    style: {
+      color: POOR
+    }
+  }, "W"), "ithdrawer → ", /*#__PURE__*/React.createElement("b", {
+    style: {
+      color: SPARED
+    }
+  }, "M"), "eta"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      gap: 14,
+      marginTop: 30,
+      opacity: groups,
+      flexWrap: 'wrap',
+      justifyContent: 'center'
+    }
+  }, ['C=O', '–C≡N', '–NO₂', '–SO₃H', '–CF₃'].map((g, i) => /*#__PURE__*/React.createElement("span", {
+    key: i,
+    style: {
+      fontFamily: SERIF,
+      fontWeight: 600,
+      fontSize: 38,
+      color: POOR,
+      background: CARD2,
+      border: `1px solid ${POOR}`,
+      borderRadius: 14,
+      padding: '10px 22px'
+    }
+  }, g))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontFamily: SANS,
+      fontSize: 28,
+      color: INK3,
+      marginTop: 18,
+      opacity: groups
+    }
+  }, "no lone pair to give → they can only pull → meta"));
+}
+
+// ── THE COMPLETE BOARD — every group, ranked, screenshot-worthy ──
+function GroupsBoard({
+  start,
+  end
+}) {
+  const t = useTime();
+  if (t < start - 0.3 || t > end + 0.4) return null;
+  const inOp = clamp((t - start) / 0.5, 0, 1) * (1 - clamp((t - (end - 0.6)) / 0.6, 0, 1));
+  const ROWS = [{
+    k: 'STRONG ACTIVATORS',
+    ex: '–NH₂ · –OH · –OR',
+    why: 'lone pair floods in',
+    dir: 'ortho / para',
+    c: RICH
+  }, {
+    k: 'WEAK ACTIVATORS',
+    ex: '–R (alkyl) · –C₆H₅',
+    why: 'gentle +I push',
+    dir: 'ortho / para',
+    c: RICH
+  }, {
+    k: 'HALOGENS · THE EXCEPTION',
+    ex: '–F · –Cl · –Br · –I',
+    why: 'pull, but lone pairs win',
+    dir: 'ortho / para',
+    c: GOLD
+  }, {
+    k: 'MODERATE DEACTIVATORS',
+    ex: '–CHO · –COR · –CO₂H · –C≡N · –SO₃H',
+    why: 'δ+ first atom drains',
+    dir: 'meta',
+    c: POOR
+  }, {
+    k: 'STRONG DEACTIVATORS',
+    ex: '–NO₂ · –NR₃⁺ · –CF₃',
+    why: 'the hardest pull',
+    dir: 'meta',
+    c: POOR
+  }];
+  return /*#__PURE__*/React.createElement("div", {
+    style: {
+      position: 'absolute',
+      left: 54,
+      right: 54,
+      top: 150,
+      opacity: inOp
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontFamily: MONO,
+      fontSize: 24,
+      letterSpacing: '0.2em',
+      color: INK3,
+      textAlign: 'center',
+      marginBottom: 8
+    }
+  }, "THE WHOLE BOARD"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontFamily: SERIF,
+      fontWeight: 600,
+      fontSize: 58,
+      color: INK,
+      textAlign: 'center',
+      letterSpacing: '-0.01em'
+    }
+  }, "donate ", /*#__PURE__*/React.createElement("b", {
+    style: {
+      color: RICH
+    }
+  }, "in"), " ↑ o/p\xA0\xA0·\xA0\xA0pull ", /*#__PURE__*/React.createElement("b", {
+    style: {
+      color: POOR
+    }
+  }, "out"), " ↓ meta"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontFamily: MONO,
+      fontSize: 22,
+      color: GOLD,
+      textAlign: 'center',
+      margin: '14px 0 26px',
+      letterSpacing: '0.06em'
+    }
+  }, "screenshot this — it’s every group you need"), ROWS.map((r, i) => {
+    const rv = clamp((t - start - 0.5 - i * 0.55) / 0.5, 0, 1);
+    return /*#__PURE__*/React.createElement("div", {
+      key: i,
+      style: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        gap: 22,
+        background: CARD2,
+        border: `1px solid ${r.c}`,
+        borderRadius: 22,
+        padding: '22px 30px',
+        marginBottom: 16,
+        opacity: rv,
+        transform: `translateX(${(1 - rv) * -26}px)`,
+        boxShadow: '0 12px 26px rgba(0,0,0,.4)'
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        minWidth: 0
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        fontFamily: MONO,
+        fontSize: 19,
+        letterSpacing: '0.08em',
+        color: r.c
+      }
+    }, r.k), /*#__PURE__*/React.createElement("div", {
+      style: {
+        fontFamily: SERIF,
+        fontWeight: 600,
+        fontSize: 40,
+        color: INK,
+        marginTop: 6,
+        lineHeight: 1.05
+      }
+    }, r.ex), /*#__PURE__*/React.createElement("div", {
+      style: {
+        fontFamily: SANS,
+        fontSize: 23,
+        color: INK3,
+        marginTop: 4
+      }
+    }, r.why)), /*#__PURE__*/React.createElement("div", {
+      style: {
+        fontFamily: MONO,
+        fontWeight: 700,
+        fontSize: 24,
+        color: '#1a140c',
+        background: r.c,
+        borderRadius: 999,
+        padding: '12px 22px',
+        whiteSpace: 'nowrap'
+      }
+    }, r.dir));
+  }));
+}
 function EASDirectingVideo() {
   return /*#__PURE__*/React.createElement(Stage, {
     width: CW,
     height: CH,
-    duration: 108,
+    duration: 150,
     background: BG,
-    persistKey: "eas-directing-02"
+    persistKey: "eas-directing-02b"
   }, /*#__PURE__*/React.createElement(VoiceTrack, null), /*#__PURE__*/React.createElement("div", {
     style: {
       position: 'absolute',
@@ -1874,7 +2137,7 @@ function EASDirectingVideo() {
     }
   }), /*#__PURE__*/React.createElement(BrandBug, null), /*#__PURE__*/React.createElement(TipTag, null), /*#__PURE__*/React.createElement(Header, {
     start: 0.2,
-    end: 4.3,
+    end: 5.5,
     top: 680
   }, /*#__PURE__*/React.createElement("div", {
     style: {
@@ -1909,8 +2172,8 @@ function EASDirectingVideo() {
       letterSpacing: '0.06em'
     }
   }, "comment your pick — answer at the end")), /*#__PURE__*/React.createElement(Header, {
-    start: 4.5,
-    end: 10.3,
+    start: 5.7,
+    end: 13.5,
     top: 280
   }, /*#__PURE__*/React.createElement("div", {
     style: {
@@ -1920,7 +2183,7 @@ function EASDirectingVideo() {
       color: INK3,
       marginBottom: 24
     }
-  }, "DONATE IN  ·  PULL OUT"), /*#__PURE__*/React.createElement("div", {
+  }, "THE WHOLE GAME · IN ONE LINE"), /*#__PURE__*/React.createElement("div", {
     style: {
       fontFamily: SERIF,
       fontWeight: 600,
@@ -1966,15 +2229,15 @@ function EASDirectingVideo() {
       color: GOLD,
       marginTop: 14
     }
-  }, "… except the halogens.")), /*#__PURE__*/React.createElement(Header, {
-    start: 10.7,
-    end: 16.0,
+  }, "… except the halogens. hold that thought.")), /*#__PURE__*/React.createElement(Header, {
+    start: 14.0,
+    end: 21.5,
     top: 150
   }, /*#__PURE__*/React.createElement(Lineup, {
     title: "① STRONG ACTIVATORS",
     titleColor: RICH,
-    base: 11.1,
-    sub: "lone pairs flood the ring",
+    base: 14.6,
+    sub: "a lone pair floods the ring with electrons",
     cards: [{
       formula: '–NH₂',
       annot: ': lone pair',
@@ -1992,20 +2255,20 @@ function EASDirectingVideo() {
       color: RICH
     }]
   })), /*#__PURE__*/React.createElement(ResultBanner, {
-    start: 14.0,
-    end: 19.0,
+    start: 18.0,
+    end: 21.8,
     color: RICH,
     kicker: "E⁺ LANDS ORTHO & PARA",
     big: "ortho / para",
     sub: "amines · alcohols · ethers"
   }), /*#__PURE__*/React.createElement(Header, {
-    start: 19.2,
-    end: 24.0,
+    start: 22.0,
+    end: 28.5,
     top: 150
   }, /*#__PURE__*/React.createElement(Lineup, {
     title: "② WEAK ACTIVATORS",
     titleColor: RICH,
-    base: 19.6,
+    base: 22.6,
     sub: "a gentle nudge in — no lone pair needed",
     cards: [{
       formula: '–CH₃',
@@ -2014,15 +2277,15 @@ function EASDirectingVideo() {
       color: RICH
     }]
   })), /*#__PURE__*/React.createElement(ResultBanner, {
-    start: 21.6,
-    end: 25.8,
+    start: 24.6,
+    end: 28.8,
     color: RICH,
     kicker: "A GENTLE PUSH IN",
     big: "ortho / para",
     sub: "any alkyl R-group"
   }), /*#__PURE__*/React.createElement(Header, {
-    start: 26.0,
-    end: 33.0,
+    start: 29.0,
+    end: 37.0,
     top: 158
   }, /*#__PURE__*/React.createElement("div", {
     style: {
@@ -2039,19 +2302,23 @@ function EASDirectingVideo() {
       color: INK2,
       marginTop: 18
     }
-  }, "lone pair → ortho/para, ", /*#__PURE__*/React.createElement("b", {
+  }, /*#__PURE__*/React.createElement("b", {
+    style: {
+      color: GOLD
+    }
+  }, "LPOP"), " — lone pair → ortho/para, ", /*#__PURE__*/React.createElement("b", {
     style: {
       color: RICH
     }
   }, "plus R-groups"))), /*#__PURE__*/React.createElement(Header, {
-    start: 33.2,
-    end: 39.0,
+    start: 37.2,
+    end: 43.5,
     top: 150
   }, /*#__PURE__*/React.createElement(Lineup, {
     title: "③ THE EXCEPTION · HALOGENS",
     titleColor: GOLD,
-    base: 33.6,
-    sub: "electronegative — they pull electrons in",
+    base: 37.8,
+    sub: "electronegative — they pull electrons OUT",
     cards: [{
       formula: '–F',
       annot: ': lone pairs',
@@ -2074,8 +2341,8 @@ function EASDirectingVideo() {
       color: GOLD
     }]
   })), /*#__PURE__*/React.createElement(Header, {
-    start: 39.2,
-    end: 48.0,
+    start: 43.7,
+    end: 53.0,
     top: 172
   }, /*#__PURE__*/React.createElement("div", {
     style: {
@@ -2144,26 +2411,26 @@ function EASDirectingVideo() {
     style: {
       color: POOR
     }
-  }, "withdraws"), " — but lone pairs still point ", /*#__PURE__*/React.createElement("b", {
+  }, "withdraws"), " — but those lone pairs still point ", /*#__PURE__*/React.createElement("b", {
     style: {
       color: GOLD
     }
   }, "ortho / para"))), /*#__PURE__*/React.createElement(ResultBanner, {
-    start: 42.0,
-    end: 48.0,
+    start: 47.0,
+    end: 53.0,
     color: GOLD,
     kicker: "LONE PAIRS OVERRIDE",
     big: "ortho / para",
-    sub: "deactivates, but still directs o/p"
+    sub: "slower — but still ortho / para"
   }), /*#__PURE__*/React.createElement(Header, {
-    start: 48.2,
-    end: 53.6,
+    start: 53.2,
+    end: 59.0,
     top: 150
   }, /*#__PURE__*/React.createElement(Lineup, {
     title: "④⑤ THE WITHDRAWERS",
     titleColor: POOR,
-    base: 48.8,
-    sub: "O and N hog the electrons — the first atom turns δ+, draining the ring",
+    base: 53.8,
+    sub: "no lone pair to give — O and N hog the electrons instead",
     cards: [{
       formula: 'C=O',
       annot: 'δ+ carbon',
@@ -2181,19 +2448,19 @@ function EASDirectingVideo() {
       color: POOR
     }]
   })), /*#__PURE__*/React.createElement(MetaSameAtom, {
-    start: 53.9,
-    end: 64.2
+    start: 59.3,
+    end: 74.0
   }), /*#__PURE__*/React.createElement(ResultBanner, {
-    start: 61.0,
-    end: 64.2,
+    start: 70.5,
+    end: 74.0,
     color: SPARED,
-    kicker: "EVERY δ+ RING-ATOM",
+    kicker: "EVERY δ+ FIRST ATOM",
     big: "meta",
     sub: "carbonyl · nitrile · nitro — all forced here"
   }), /*#__PURE__*/React.createElement(Header, {
-    start: 64.4,
-    end: 71.0,
-    top: 140
+    start: 74.3,
+    end: 82.5,
+    top: 200
   }, /*#__PURE__*/React.createElement("div", {
     style: {
       fontFamily: MONO,
@@ -2208,33 +2475,32 @@ function EASDirectingVideo() {
       fontStyle: 'italic',
       fontSize: 34,
       color: INK2,
-      marginBottom: 20
+      marginBottom: 24
     }
   }, "tells the whole story"), /*#__PURE__*/React.createElement("div", {
     style: {
       display: 'inline-flex',
       gap: 20,
-      justifyContent: 'center',
-      marginBottom: 8
+      justifyContent: 'center'
     }
   }, /*#__PURE__*/React.createElement("div", {
     style: {
       background: CARD2,
       border: `1px solid ${RICH}`,
       borderRadius: 18,
-      padding: '16px 26px'
+      padding: '18px 28px'
     }
   }, /*#__PURE__*/React.createElement("div", {
     style: {
       fontFamily: SERIF,
       fontWeight: 600,
-      fontSize: 40,
+      fontSize: 42,
       color: RICH
     }
   }, "lone pair → in"), /*#__PURE__*/React.createElement("div", {
     style: {
       fontFamily: SANS,
-      fontSize: 24,
+      fontSize: 25,
       color: INK2,
       marginTop: 4
     }
@@ -2243,43 +2509,49 @@ function EASDirectingVideo() {
       background: CARD2,
       border: `1px solid ${POOR}`,
       borderRadius: 18,
-      padding: '16px 26px'
+      padding: '18px 28px'
     }
   }, /*#__PURE__*/React.createElement("div", {
     style: {
       fontFamily: SERIF,
       fontWeight: 600,
-      fontSize: 40,
+      fontSize: 42,
       color: POOR
     }
   }, "δ+ → out"), /*#__PURE__*/React.createElement("div", {
     style: {
       fontFamily: SANS,
-      fontSize: 24,
+      fontSize: 25,
       color: INK2,
       marginTop: 4
     }
-  }, "drains · meta"))), /*#__PURE__*/React.createElement(FlipWM, {
-    start: 66.4
-  })), /*#__PURE__*/React.createElement(Ring, null), /*#__PURE__*/React.createElement(SpectrumLadder, {
-    start: 71.2,
-    end: 83.0
+  }, "drains · meta")))), /*#__PURE__*/React.createElement(Ring, null), /*#__PURE__*/React.createElement(FlipBeat, {
+    start: 83.0,
+    end: 93.0
+  }), /*#__PURE__*/React.createElement(GroupsBoard, {
+    start: 93.5,
+    end: 110.0
   }), /*#__PURE__*/React.createElement(QuizBeat, {
-    start: 83.2,
+    start: 110.5,
     qs: [{
       q: '–OCH₃ is on the ring. The next group goes…',
       opts: ['ortho / para — it donates in', 'meta — it withdraws', 'nowhere — the ring is dead'],
       ans: 0,
       why: 'Lone pair on the oxygen — LPOP. Activator, ortho-para.'
     }, {
+      q: '–NO₂ is on the ring: rate and direction?',
+      opts: ['faster · ortho / para', 'slower · meta', 'slower · ortho / para'],
+      ans: 1,
+      why: 'δ+ nitrogen straight on the ring — it drains, so meta. Flip the W.'
+    }, {
       q: '–Cl on the ring: rate and direction?',
       opts: ['faster · ortho / para', 'slower · meta', 'slower · but still ortho / para'],
       ans: 2,
-      why: 'The exception — it withdraws, but the lone pairs still point ortho-para.'
+      why: 'The exception — it withdraws (slower), but the lone pairs still point ortho-para.'
     }]
   }), /*#__PURE__*/React.createElement(Sprite, {
-    start: 99.8,
-    end: 108
+    start: 135.5,
+    end: 150
   }, ({
     progress
   }) => {

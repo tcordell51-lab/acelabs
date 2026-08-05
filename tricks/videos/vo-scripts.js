@@ -1,108 +1,132 @@
 /* Per-scene voiceover scripts for the black bespoke videos (tricks/videos/*.html).
    Extracted from ~/acethedat-tiktok-studio/voiceover/<tip>/script.json (the AI-VO source of
-   truth, "Thomas Coach" voice). t = playhead ms, text = what to say. Regenerate with
-   scratchpad extraction if the studio scripts change. */
+   truth, "Thomas Coach" voice). t = playhead ms, text = what to say. EAS (Tip 02) was
+   re-authored 2026-08-05 to the slower 150s cut (fixed W->M flip + full groups board). */
 window.VIDEO_SCRIPTS = {
  "eas-directing": {
   "title": "EAS Directing",
   "tip": "02",
-  "totalDuration": 108,
+  "totalDuration": 150,
   "scenes": [
    {
-    "t": 500,
+    "t": 200,
     "id": "01-hook",
     "phase": "hook",
-    "text": "O-C-H-three on the ring — where does the next group go? Comment your pick."
+    "text": "O-C-H-three sits on the ring. Where does the next group go — ortho, para, or meta? Comment your pick, and stick with me, because by the end you'll never miss one of these again."
    },
    {
-    "t": 4700,
+    "t": 5700,
     "id": "02-rule",
     "phase": "demo",
-    "text": "Donate in — activator: faster, ortho-para. Pull out — deactivator: slower, meta."
+    "text": "Here's the whole game in one line. Donate electrons IN, you're an activator — ortho and para. Pull electrons OUT, you're a deactivator — meta. In speeds up, out slows down. One exception, the halogens. Hold that thought."
    },
    {
-    "t": 10900,
+    "t": 14000,
     "id": "03-strong-act",
     "phase": "demo",
-    "text": "Strong activators all have lone pairs that donate in — alcohols, ethers, and amines."
+    "text": "Start with the strong activators. Amine, alcohol, ether. Each one has a lone pair, and that lone pair floods the ring with electrons."
    },
    {
-    "t": 19400,
+    "t": 22000,
     "id": "04-weak-act",
     "phase": "demo",
-    "text": "R-groups have no lone pair, but they push in by induction — weak activators."
+    "text": "Then the weak activators — the alkyl R-groups. No lone pair, but they still nudge a little density in. Gentle push, same direction, ortho and para."
    },
    {
-    "t": 26300,
+    "t": 29000,
     "id": "05-lpop",
     "phase": "demo",
-    "text": "The trick for all of them: lone pair, ortho-para — LPOP — plus R-groups. Every activator points ortho, para."
+    "text": "So here's your activator mnemonic. LPOP. Lone Pair, Ortho Para — plus the R-groups. Every activator points ortho and para."
    },
    {
-    "t": 34000,
-    "id": "06-halogen",
+    "t": 37000,
+    "id": "06-halogens",
     "phase": "demo",
-    "text": "Now the exception — halogens. They've still got lone pairs, so LPOP says ortho-para."
+    "text": "Now the one exception on the whole test — the halogens. Fluorine, chlorine, bromine, iodine. They're electronegative, so they pull electrons out. That makes them deactivators."
    },
    {
-    "t": 39400,
+    "t": 43700,
     "id": "07-halogen-why",
     "phase": "demo",
-    "text": "But would chlorine rather give up seven electrons, or gain one? Gain one — so it's electron-withdrawing, the one deactivator that still points ortho, para."
+    "text": "But watch. Would chlorine rather give up seven electrons, or gain just one to fill its octet? Gain one, easy. So it withdraws and slows the ring down — but those lone pairs still steer the next group ortho and para. Slower, but ortho-para. That's the exception."
    },
    {
-    "t": 48400,
-    "id": "08-moderate",
+    "t": 53200,
+    "id": "08-withdrawers",
     "phase": "demo",
-    "text": "Other side — carbonyls. Oxygen hogs the electrons, the ring carbon sits partially positive, and the ring drains. Nitriles too — moderate deactivators."
+    "text": "Now the deactivators — the withdrawers. Carbonyls, nitriles, and nitro. These have no lone pair to give. Instead the oxygen or the nitrogen hogs the electrons."
    },
    {
-    "t": 57400,
-    "id": "09-strong-deact",
+    "t": 59300,
+    "id": "09-trio",
     "phase": "demo",
-    "text": "The one strong deactivator to know is nitro — it leaves the ring strongly partially positive, the hardest pull on the board."
+    "text": "And here's the thing I want you to really see. Look at the first atom — the one bonded straight to the ring. On a carbonyl, it's a carbon, and it's delta plus. On a nitrile, a carbon, delta plus. On nitro, a nitrogen, delta plus. Same story, every single time."
    },
    {
-    "t": 64400,
-    "id": "10-flipw",
+    "t": 66500,
+    "id": "10-drain",
     "phase": "demo",
-    "text": "And the trick for every withdrawer: flip the W upside down — it becomes an M, for meta. They send the electrophile meta."
+    "text": "That delta-plus first atom sits right on the ring and drains its electrons out. A drained ring has nothing to spare ortho or para — so the electrophile is forced to the only spot left. Meta."
    },
    {
-    "t": 71400,
-    "id": "11-summary",
+    "t": 74300,
+    "id": "11-throughline",
+    "phase": "demo",
+    "text": "So the whole trick comes down to one atom. The first atom connected to the ring tells the story. Lone pair pointing in? It donates — ortho, para. Delta plus pointing out? It drains — meta."
+   },
+   {
+    "t": 83000,
+    "id": "12-flip",
     "phase": "lock",
-    "text": "So: lone pairs and R-groups — LPOP — ortho-para. Withdrawers — flip the W — meta. And halogens are the lone-pair exception."
+    "text": "And here's how you'll never forget it. Every withdrawer is a W. Flip the W upside down, and it becomes an M — for meta. Carbonyl, nitrile, nitro, sulfonic acid, C-F-three. No lone pair to give, so they can only pull. Flip the W, get meta."
    },
    {
-    "t": 83600,
-    "id": "12-quiz1q",
-    "phase": "quiz",
-    "text": "Your turn — the opener. O-C-H-three on the ring: where does the next group go? Pause it."
-   },
-   {
-    "t": 88300,
-    "id": "12-quiz1a",
-    "phase": "quiz",
-    "text": "Lone pair on the oxygen. LPOP — ortho, para."
-   },
-   {
-    "t": 91800,
-    "id": "13-quiz2q",
-    "phase": "quiz",
-    "text": "One more — chlorine on the ring. Rate, and direction?"
-   },
-   {
-    "t": 96500,
-    "id": "13-quiz2a",
-    "phase": "quiz",
-    "text": "Slower — it withdraws — but the lone pairs still say ortho, para. The exception."
-   },
-   {
-    "t": 100000,
-    "id": "14-outro",
+    "t": 93500,
+    "id": "13-board",
     "phase": "lock",
-    "text": "Get this, and acidity rankings fall right into place — that's our next video. Ace the DAT."
+    "text": "Here's every group you need, on one board. Screenshot this. Top — donate in, ortho para. Strong activators: amine, alcohol, ether. Weak: the alkyl R-groups. The exception, halogens — they pull, but the lone pairs still win ortho-para. Bottom — pull out, meta. Moderate deactivators: aldehydes, ketones, acids, nitriles, sulfonic acids. And the strongest: nitro, ammonium, C-F-three. That's the whole test."
+   },
+   {
+    "t": 110500,
+    "id": "14-quiz1",
+    "phase": "quiz",
+    "text": "Your turn. O-C-H-three on the ring — where does the next group go? Pause it."
+   },
+   {
+    "t": 115000,
+    "id": "14-quiz1a",
+    "phase": "quiz",
+    "text": "Lone pair on the oxygen. LPOP — ortho, para. Activator."
+   },
+   {
+    "t": 118700,
+    "id": "15-quiz2",
+    "phase": "quiz",
+    "text": "Next. Nitro on the ring — rate and direction?"
+   },
+   {
+    "t": 123200,
+    "id": "15-quiz2a",
+    "phase": "quiz",
+    "text": "Delta-plus nitrogen straight on the ring — it drains. Slower, and meta. Flip the W."
+   },
+   {
+    "t": 126900,
+    "id": "16-quiz3",
+    "phase": "quiz",
+    "text": "Last one. Chlorine on the ring?"
+   },
+   {
+    "t": 131400,
+    "id": "16-quiz3a",
+    "phase": "quiz",
+    "text": "The exception — it withdraws, so slower — but the lone pairs still point ortho, para."
+   },
+   {
+    "t": 135500,
+    "id": "17-outro",
+    "phase": "lock",
+    "text": "That's EAS. LPOP plus R-groups for ortho-para, flip the W for meta, halogens are the exception. Get this, and acidity rankings fall right into place — that's next. Ace the DAT."
    }
   ]
  },
