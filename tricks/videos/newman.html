@@ -15,6 +15,37 @@
 <script src="vendor/react-dom.production.min.js"></script>
 <script src="js/newman.js"></script>
 <script>ReactDOM.render(React.createElement(window.NewmanVideo), document.getElementById('root'));</script>
+<script>
+/* Climb review embed: with ?embed=review, hide the social-only CTA (a review has no comments).
+   The teaching + quiz + branding all stay; only "comment your pick / answer at the end" go. */
+(function(){
+  try{ if(new URLSearchParams(location.search).get('embed')!=='review') return; }catch(e){ return; }
+  var RX=[/comment your (pick|answer)/i,/answer at the end/i,/reveal at the end/i,/follow for the rest/i,/is next/i];
+  function hideIn(root){
+    if(!root||root.nodeType!==1) return;
+    var n=root.querySelectorAll('div,span,p'), i, el, t;
+    for(i=0;i<n.length;i++){ el=n[i];
+      t=(el.textContent||'').trim();
+      if(t.length<=80 && RX.some(function(r){return r.test(t);})){
+        if(el.style.getPropertyValue('display')!=='none') el.style.setProperty('display','none','important');
+      }
+    }
+  }
+  function boot(){
+    var root=document.getElementById('root'); if(!root){ setTimeout(boot,40); return; }
+    function tick(){ hideIn(root); }
+    tick();
+    // Triple-redundant so a matched CTA never survives a real (foreground) playback:
+    //  - rAF fires before every paint while the player animates -> hidden before it can show
+    //  - the observer catches mutations even in a background/hidden tab
+    //  - the interval covers a foreground-paused frame
+    (function raf(){ tick(); requestAnimationFrame(raf); })();
+    try{ new MutationObserver(tick).observe(root,{childList:true,subtree:true,characterData:true}); }catch(e){}
+    setInterval(tick, 250);
+  }
+  boot();
+})();
+</script>
 <script src="/shared/acelabs-nav.js" defer></script>
 </body>
 </html>
