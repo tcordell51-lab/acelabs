@@ -239,6 +239,7 @@ var TK   = window.MINITEST_TRICKS || {series:{}, seriesBase:''};
 var BK   = window.MINITEST_BLACK || {base:'/tricks/videos/', map:{}};
 var LETTERS = ['A','B','C','D','E'];
 var SECT = {bio:'Biology', gchem:'General Chemistry', ochem:'Organic Chemistry', qr:'Quantitative Reasoning'};
+var SECT_SHORT = {bio:'Bio', gchem:'GChem', ochem:'OChem', qr:'QR'};   // portal Ace Log section codes
 var RUNG_NAME = ['Foothills','First Ascent','The Ridge','The Steep Face','High Camp','The Traverse','The Ice Wall','The Cornice','The Death Zone','The Summit'];
 var PASS = 0.75;
 var LS = 'atDAT_minitest';
@@ -433,7 +434,7 @@ function submitTest(){
   go('results');
 }
 function emitMiss(q,i,picked,mode){
-  try{ window.parent.postMessage({type:'acedat:tool-miss', tool:'minitest', section:SECT[q.section], topic:q.topic,
+  try{ window.parent.postMessage({type:'acedat:tool-miss', tool:'minitest', section:SECT_SHORT[q.section]||SECT[q.section], topic:q.topic,
     questionId:'minitest_'+qkey(q), hub:'minitest-'+(mode||T.mode||'test'), stem:q.stem, studentId:ATCTX.studentId||null,
     pickedKey:String(picked), pickedText:String(picked>-1?q.choices[picked]:'(blank)').slice(0,120),
     correctKey:String(q.correct), correctText:String(q.choices[q.correct]).slice(0,120), ts:Date.now()},'*'); }catch(e){}
