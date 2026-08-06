@@ -1,0 +1,736 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Acids &amp; Bases &middot; CARDIO &middot; Ace the DAT</title>
+<style>
+:root{
+  --page:#14130e; --panel:#1b1910; --panel2:#211e14; --ink:#f4ecd7; --ink-2:#cdc3a9;
+  --muted:#8f8670; --line:rgba(233,222,190,.12); --line2:rgba(233,222,190,.22);
+  --gold:#c9a84c; --gold2:#e3ca7d; --oc:#c49af0; --oc-dim:#8a6cb0;
+  --ok:#79c58e; --ok-dim:#2c5a3a; --crit:#e78a7f; --crit-dim:#5c2f2b; --green:#7cc59a;
+  --shadow:0 24px 60px -30px rgba(0,0,0,.8);
+}
+@media (prefers-color-scheme: light){
+  :root{
+    --page:#f4efe3; --panel:#fffdf7; --panel2:#faf5e9; --ink:#241f16; --ink-2:#5c5442;
+    --muted:#8a8069; --line:rgba(40,34,20,.12); --line2:rgba(40,34,20,.2);
+    --gold:#9c7d24; --gold2:#7c6216; --oc:#7a4fb0; --oc-dim:#a488c8;
+    --ok:#2f7d4c; --ok-dim:#bfe4cb; --crit:#b23b2e; --crit-dim:#f2cfca; --green:#2f7d4c;
+    --shadow:0 24px 60px -34px rgba(60,45,10,.35);
+  }
+}
+:root[data-theme=dark]{
+  --page:#14130e; --panel:#1b1910; --panel2:#211e14; --ink:#f4ecd7; --ink-2:#cdc3a9;
+  --muted:#8f8670; --line:rgba(233,222,190,.12); --line2:rgba(233,222,190,.22);
+  --gold:#c9a84c; --gold2:#e3ca7d; --oc:#c49af0; --oc-dim:#8a6cb0;
+  --ok:#79c58e; --ok-dim:#2c5a3a; --crit:#e78a7f; --crit-dim:#5c2f2b; --green:#7cc59a;
+  --shadow:0 24px 60px -30px rgba(0,0,0,.8);
+}
+:root[data-theme=light]{
+  --page:#f4efe3; --panel:#fffdf7; --panel2:#faf5e9; --ink:#241f16; --ink-2:#5c5442;
+  --muted:#8a8069; --line:rgba(40,34,20,.12); --line2:rgba(40,34,20,.2);
+  --gold:#9c7d24; --gold2:#7c6216; --oc:#7a4fb0; --oc-dim:#a488c8;
+  --ok:#2f7d4c; --ok-dim:#bfe4cb; --crit:#b23b2e; --crit-dim:#f2cfca; --green:#2f7d4c;
+  --shadow:0 24px 60px -34px rgba(60,45,10,.35);
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{
+  background:var(--page); color:var(--ink);
+  font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  -webkit-font-smoothing:antialiased; min-height:100vh;
+}
+.serif{font-family:Georgia,"Times New Roman",serif}
+.mono{font-family:ui-monospace,Menlo,"SF Mono",monospace}
+sub,sup{font-size:.72em}
+
+/* ---------- top bar ---------- */
+.top{
+  position:sticky; top:0; z-index:40; display:flex; align-items:center; gap:14px;
+  padding:12px 20px; background:color-mix(in srgb,var(--page) 88%,transparent);
+  backdrop-filter:blur(10px); border-bottom:1px solid var(--line);
+}
+.brand{font-family:Georgia,serif; font-size:15px; letter-spacing:.01em; color:var(--ink)}
+.brand b{color:var(--gold)}
+.utag{
+  font-size:10.5px; font-weight:800; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--oc); border:1px solid var(--oc-dim); border-radius:999px; padding:3px 9px;
+}
+.top .sp{flex:1}
+.mini{
+  font:600 12px/1 system-ui; color:var(--muted); background:transparent;
+  border:1px solid var(--line2); border-radius:8px; padding:7px 11px; cursor:pointer;
+}
+.mini:hover{color:var(--ink); border-color:var(--gold)}
+.beatcount{font:700 12px/1 ui-monospace,monospace; color:var(--ink-2); letter-spacing:.03em}
+
+/* ---------- progress rail ---------- */
+.rail{height:3px; background:var(--line); position:sticky; top:57px; z-index:39}
+.rail i{display:block; height:100%; width:0; background:linear-gradient(90deg,var(--oc),var(--gold)); transition:width .4s cubic-bezier(.2,.8,.2,1)}
+
+/* ---------- stage frame ---------- */
+.deck{max-width:860px; margin:0 auto; padding:0 22px}
+.stage{display:none; min-height:calc(100vh - 190px); padding:44px 0 40px; animation:rise .5s cubic-bezier(.2,.8,.2,1)}
+.stage.on{display:flex; flex-direction:column; justify-content:center}
+@keyframes rise{from{opacity:0; transform:translateY(14px)}to{opacity:1; transform:none}}
+.act{
+  font-size:11px; font-weight:800; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--oc); margin:0 0 18px; display:flex; align-items:center; gap:10px;
+}
+.act::before{content:""; width:22px; height:2px; background:var(--oc); display:inline-block}
+h1.big{font-family:Georgia,serif; font-weight:600; font-size:clamp(30px,5.4vw,50px); line-height:1.08; letter-spacing:-.01em; margin:0 0 18px; text-wrap:balance}
+h2.beat{font-family:Georgia,serif; font-weight:600; font-size:clamp(24px,3.6vw,34px); line-height:1.14; margin:0 0 14px; text-wrap:balance}
+.lead{font-size:clamp(16px,2.2vw,19px); color:var(--ink-2); max-width:60ch; margin:0 0 22px}
+p{max-width:62ch}
+
+/* the one-line thesis */
+.thesis{
+  font-family:Georgia,serif; font-size:clamp(22px,3.4vw,32px); line-height:1.28;
+  border-left:3px solid var(--gold); padding:16px 0 16px 22px; margin:8px 0 22px; text-wrap:balance;
+}
+.thesis b{color:var(--gold2)}
+
+/* generic panel */
+.panel{background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:22px 24px; box-shadow:var(--shadow)}
+.panel + .panel{margin-top:16px}
+.figure{background:var(--panel2); border:1px solid var(--line); border-radius:16px; padding:26px; text-align:center; margin:6px 0 18px}
+.figure svg{max-width:100%; height:auto}
+.cap{font-size:14px; color:var(--ink-2); max-width:64ch; margin:14px auto 0}
+.cap b{color:var(--ink)}
+
+/* callout tints */
+.note{border-left:3px solid var(--green); background:color-mix(in srgb,var(--green) 9%,transparent); border-radius:0 12px 12px 0; padding:14px 18px; margin:14px 0}
+.note h4,.warn h4,.key h4{margin:0 0 6px; font-size:12px; font-weight:800; letter-spacing:.08em; text-transform:uppercase}
+.note h4{color:var(--green)}
+.warn{border-left:3px solid var(--crit); background:color-mix(in srgb,var(--crit) 9%,transparent); border-radius:0 12px 12px 0; padding:14px 18px; margin:14px 0}
+.warn h4{color:var(--crit)}
+.key{border-left:3px solid var(--oc); background:color-mix(in srgb,var(--oc) 10%,transparent); border-radius:0 12px 12px 0; padding:14px 18px; margin:14px 0}
+.key h4{color:var(--oc)}
+.callout p{margin:0; max-width:64ch}
+
+/* CARDIO grid */
+.cardio{display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin:6px 0 4px}
+@media(max-width:640px){.cardio{grid-template-columns:repeat(2,1fr)}}
+.cletter{
+  background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:14px 15px;
+  opacity:0; transform:translateY(10px); animation:pop .5s forwards;
+}
+.cletter .lh{display:flex; align-items:baseline; gap:9px; margin-bottom:5px}
+.cletter b{font-family:Georgia,serif; font-size:26px; color:var(--oc); line-height:1}
+.cletter .nm{font-weight:700; font-size:13px; letter-spacing:.02em}
+.cletter p{margin:0; font-size:13px; color:var(--ink-2); line-height:1.42}
+.cletter .ex{margin-top:7px; font:12px/1.3 ui-monospace,monospace; color:var(--muted)}
+@keyframes pop{to{opacity:1; transform:none}}
+
+/* route cards (drill there) */
+.routes{display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin:8px 0 4px}
+@media(max-width:720px){.routes{grid-template-columns:1fr}}
+.route{display:flex; flex-direction:column; background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:16px 16px 15px}
+.route .k{font-size:10.5px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:var(--gold); margin-bottom:7px}
+.route h4{margin:0 0 5px; font-family:Georgia,serif; font-size:18px; font-weight:600}
+.route p{margin:0 0 14px; font-size:13px; color:var(--ink-2); flex:1}
+.route a{
+  align-self:flex-start; text-decoration:none; font:700 13px/1 system-ui; color:var(--page);
+  background:var(--gold); padding:9px 13px; border-radius:9px; transition:transform .12s
+}
+.route a:hover{transform:translateY(-1px)}
+.route.locked a{background:transparent; color:var(--muted); border:1px solid var(--line2); cursor:default}
+.route.locked a:hover{transform:none}
+.route a.soon{background:transparent; color:var(--muted); border:1px dashed var(--line2); cursor:default; pointer-events:none; font-weight:600}
+.route a.soon:hover{transform:none}
+
+/* interactive: pair comparator */
+.tool{background:var(--panel); border:1px solid var(--line2); border-radius:16px; padding:20px 22px; margin:6px 0}
+.tool h4{margin:0 0 14px; font-size:15px}
+.field{display:block; font-size:12px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--muted); margin-bottom:6px}
+select{
+  width:100%; background:var(--panel2); color:var(--ink); border:1px solid var(--line2);
+  border-radius:10px; padding:11px 12px; font:15px system-ui; margin-bottom:14px
+}
+.seg{display:inline-flex; gap:6px}
+.seg button{
+  background:var(--panel2); color:var(--ink-2); border:1px solid var(--line2); border-radius:9px;
+  padding:9px 15px; font:600 14px system-ui; cursor:pointer; transition:.12s
+}
+.seg button[aria-pressed=true]{background:var(--oc); color:#1a1420; border-color:var(--oc); font-weight:700}
+.out{margin-top:14px; padding:14px 16px; border-radius:12px; background:var(--panel2); border:1px dashed var(--line2); font-size:14.5px; color:var(--ink-2); min-height:20px}
+.out.hit{border-style:solid; border-color:var(--ok); background:color-mix(in srgb,var(--ok) 10%,transparent); color:var(--ink)}
+.out b{color:var(--gold2)}
+
+/* proof engine */
+.pqhead{display:flex; align-items:center; justify-content:space-between; margin-bottom:14px}
+.pqhead .qnum{font:700 13px ui-monospace,monospace; color:var(--ink-2)}
+.pqhead .letter{font-size:11px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:var(--oc); border:1px solid var(--oc-dim); border-radius:999px; padding:3px 10px}
+.qt{font-family:Georgia,serif; font-size:20px; line-height:1.34; margin:0 0 18px; text-wrap:pretty}
+.choices{display:flex; flex-direction:column; gap:9px}
+.choice{
+  display:flex; gap:12px; text-align:left; width:100%; cursor:pointer;
+  background:var(--panel2); border:1px solid var(--line2); border-radius:12px; padding:13px 15px;
+  color:var(--ink); font:15px/1.45 system-ui; transition:.12s
+}
+.choice:hover{border-color:var(--oc-dim)}
+.choice[aria-pressed=true]{border-color:var(--oc); background:color-mix(in srgb,var(--oc) 12%,transparent)}
+.choice .ltr{font:800 14px ui-monospace,monospace; color:var(--muted); flex:none; width:16px; text-align:center; margin-top:1px}
+.choice[aria-pressed=true] .ltr{color:var(--oc)}
+.choice.correct{border-color:var(--ok); background:color-mix(in srgb,var(--ok) 14%,transparent)}
+.choice.wrong{border-color:var(--crit); background:color-mix(in srgb,var(--crit) 14%,transparent)}
+.choice.correct .ltr{color:var(--ok)} .choice.wrong .ltr{color:var(--crit)}
+.cr{display:block; margin-top:7px; font-size:13px; line-height:1.5; color:var(--ink-2)}
+.confrow{display:flex; align-items:center; gap:12px; margin:16px 0 4px; font-size:13px; color:var(--muted)}
+.checkbtn{
+  margin-top:16px; width:100%; background:var(--gold); color:#17130a; border:0; border-radius:11px;
+  padding:13px; font:800 15px system-ui; cursor:pointer; transition:.12s
+}
+.checkbtn:disabled{background:var(--panel2); color:var(--muted); cursor:not-allowed}
+.checkbtn:not(:disabled):hover{filter:brightness(1.05)}
+.fb{margin-top:14px; padding:13px 16px; border-radius:11px; font-size:14.5px; display:none}
+.fb.show{display:block}
+.fb.ok{background:color-mix(in srgb,var(--ok) 12%,transparent); border:1px solid var(--ok); color:var(--ink)}
+.fb.no{background:color-mix(in srgb,var(--crit) 12%,transparent); border:1px solid var(--crit); color:var(--ink)}
+.etype{margin-top:14px; border-top:1px solid var(--line); padding-top:14px}
+.etype .lab{font-size:12px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--muted); margin-bottom:7px}
+.rulebox{width:100%; background:var(--panel2); color:var(--ink); border:1px solid var(--line2); border-radius:10px; padding:11px 12px; font:14px system-ui; resize:vertical; min-height:46px; margin-top:6px}
+.pnext{margin-top:18px; display:none; width:100%; background:transparent; color:var(--ink); border:1px solid var(--gold); border-radius:11px; padding:12px; font:700 14px system-ui; cursor:pointer}
+.pnext.show{display:block}
+.pnext:hover{background:color-mix(in srgb,var(--gold) 14%,transparent)}
+
+/* calibration */
+.calib{background:var(--panel); border:1px solid var(--line2); border-radius:16px; padding:22px 24px; margin-top:8px}
+.calib h4{margin:0 0 10px; font-family:Georgia,serif; font-size:20px; font-weight:600}
+.calib .big-n{font:800 15px system-ui}
+.rules-k{font-size:11px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; color:var(--gold2); margin-top:14px}
+.calib ul{margin:8px 0 0; padding-left:18px} .calib li{margin:4px 0; color:var(--ink-2)}
+
+/* phone card */
+.phonecard{max-width:340px; background:var(--panel2); border:1px solid var(--gold); border-radius:16px; padding:18px 20px; margin:8px 0 18px}
+.phonecard .h{font-size:11px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:var(--gold); margin-bottom:8px}
+.phonecard .thesis-s{font-family:Georgia,serif; font-size:16px; color:var(--ink); margin-bottom:12px; display:block}
+.phonecard ol{margin:0; padding-left:20px; font-size:13.5px; line-height:1.7}
+.phonecard b{color:var(--oc)}
+.phonecard .ft{margin-top:11px; font-size:12px; color:var(--muted)}
+
+/* bottom nav */
+.nav{
+  position:sticky; bottom:0; z-index:40; display:flex; align-items:center; gap:16px;
+  max-width:860px; margin:0 auto; padding:14px 22px 18px;
+  background:linear-gradient(0deg,var(--page) 60%,transparent);
+}
+.nav .dots{flex:1; display:flex; gap:7px; flex-wrap:wrap; justify-content:center}
+.dot{width:8px; height:8px; border-radius:999px; background:var(--line2); border:0; padding:0; cursor:pointer; transition:.2s}
+.dot.done{background:var(--oc-dim)}
+.dot.cur{background:var(--gold); transform:scale(1.5)}
+.nbtn{
+  background:var(--panel); color:var(--ink); border:1px solid var(--line2); border-radius:11px;
+  padding:11px 20px; font:700 14px system-ui; cursor:pointer; transition:.12s; display:flex; align-items:center; gap:7px
+}
+.nbtn:hover:not(:disabled){border-color:var(--gold); color:var(--gold)}
+.nbtn:disabled{opacity:.32; cursor:not-allowed}
+.nbtn.primary{background:var(--gold); color:#17130a; border-color:var(--gold)}
+.nbtn.primary:hover{filter:brightness(1.06); color:#17130a}
+
+@media (prefers-reduced-motion: reduce){
+  .stage,.cletter{animation:none!important; opacity:1!important; transform:none!important}
+  .rail i{transition:none}
+}
+</style>
+
+<div class="top">
+  <span class="utag">OChem &middot; Unit 2</span>
+  <span class="brand serif"><b>Ace</b> the DAT</span>
+  <span class="sp"></span>
+  <span class="beatcount" id="beatcount">1 / 12</span>
+  <button class="mini" id="exportBtn">Export</button>
+  <button class="mini" id="theme">Light</button>
+</div>
+<div class="rail"><i id="railfill"></i></div>
+
+<div class="deck" id="deck">
+
+  <!-- 0 COVER -->
+  <section class="stage on" data-act="Acid &amp; Base">
+    <div class="act">The reference lesson</div>
+    <h1 class="big">Acids &amp; Bases:<br>the one move that ranks them all.</h1>
+    <p class="lead">Every acidity question on the DAT is the same question wearing a different costume. In the next few minutes you&rsquo;ll learn the one move, watch it drawn, then prove it on real items &mdash; and walk out able to defend any ranking out loud.</p>
+    <div class="key callout"><h4>How this works</h4><p>Short teach beats, one idea per screen. Then a hands-on rep, then six graded items where you commit before you peek. Bulk drilling lives in the live engine &mdash; this is where you learn the move.</p></div>
+  </section>
+
+  <!-- 1 ANCHOR: the one line -->
+  <section class="stage" data-act="Anchor">
+    <div class="act">Anchor &middot; the one idea</div>
+    <h2 class="beat">Forget the acid. Judge what it leaves behind.</h2>
+    <div class="thesis">Acidity = <b>how stable is the conjugate base?</b></div>
+    <p class="lead">An acid gives up a proton (H<sup>+</sup>). What&rsquo;s left is the <b>conjugate base</b>, holding the leftover negative charge. A strong acid is simply one whose leftover anion is <em>comfortable</em> holding that charge. Everything else today is just a different reason that anion is more or less comfortable.</p>
+    <div class="note callout"><h4>The whole topic, one line</h4><p>stronger acid &nbsp;&harr;&nbsp; more stable conjugate base &nbsp;&harr;&nbsp; lower pK<sub>a</sub>.</p></div>
+  </section>
+
+  <!-- 2 ANCHOR: hot potato -->
+  <section class="stage" data-act="Anchor">
+    <div class="act">Anchor &middot; the picture</div>
+    <h2 class="beat">Treat the charge like a hot potato.</h2>
+    <div class="figure">
+      <svg viewBox="0 0 520 180" role="img" aria-label="A charge crammed on one small atom is unstable; the same charge spread over several atoms is stable">
+        <g font-family="system-ui" font-size="13">
+          <!-- cramped -->
+          <circle cx="90" cy="92" r="34" fill="none" stroke="var(--crit)" stroke-width="2"/>
+          <circle cx="90" cy="92" r="12" fill="var(--crit)" opacity=".9"/>
+          <text x="90" y="97" text-anchor="middle" fill="#fff" font-size="14" font-weight="700">&minus;</text>
+          <text x="90" y="150" text-anchor="middle" fill="var(--ink)" font-weight="700">Crammed on one atom</text>
+          <text x="90" y="168" text-anchor="middle" fill="var(--crit)">unstable &rarr; weaker acid</text>
+          <!-- arrow -->
+          <text x="248" y="97" text-anchor="middle" fill="var(--muted)" font-size="26">&rarr;</text>
+          <!-- spread -->
+          <g>
+            <circle cx="360" cy="76" r="20" fill="none" stroke="var(--ok)" stroke-width="1.6"/>
+            <circle cx="410" cy="104" r="20" fill="none" stroke="var(--ok)" stroke-width="1.6"/>
+            <circle cx="460" cy="76" r="20" fill="none" stroke="var(--ok)" stroke-width="1.6"/>
+            <text x="360" y="81" text-anchor="middle" fill="var(--ok)" font-size="12">&minus;&frac13;</text>
+            <text x="410" y="109" text-anchor="middle" fill="var(--ok)" font-size="12">&minus;&frac13;</text>
+            <text x="460" y="81" text-anchor="middle" fill="var(--ok)" font-size="12">&minus;&frac13;</text>
+          </g>
+          <text x="410" y="150" text-anchor="middle" fill="var(--ink)" font-weight="700">Shared across several</text>
+          <text x="410" y="168" text-anchor="middle" fill="var(--ok)">stable &rarr; stronger acid</text>
+        </g>
+      </svg>
+      <p class="cap">The more hands the charge can be passed to &mdash; a bigger atom, resonance, a nearby group tugging &mdash; the comfier the anion, and the more willingly the acid let its proton go. <b>Comfort of the anion is the entire game.</b></p>
+    </div>
+  </section>
+
+  <!-- 3 ANCHOR: name the move -->
+  <section class="stage" data-act="Anchor">
+    <div class="act">Anchor &middot; the move</div>
+    <h2 class="beat">Take the proton off <em>first</em>. Then look.</h2>
+    <div class="figure">
+      <svg viewBox="0 0 460 96" role="img" aria-label="H-A dissociates into H plus and A minus; judge A minus">
+        <g font-family="ui-monospace,monospace" font-size="24" fill="var(--ink)">
+          <text x="18" y="58">H&ndash;A</text>
+          <text x="150" y="58" fill="var(--muted)" font-size="22">&rarr;</text>
+          <text x="210" y="58">H<tspan font-size="15" dy="-10">+</tspan></text>
+          <text x="270" y="58" fill="var(--muted)">+</text>
+          <g>
+            <rect x="310" y="30" width="118" height="44" rx="10" fill="none" stroke="var(--oc)" stroke-width="1.6"/>
+            <text x="330" y="58" fill="var(--oc)">A<tspan font-size="15" dy="-10">&minus;</tspan></text>
+          </g>
+        </g>
+      </svg>
+      <p class="cap">Never rank acids by staring at the neutral molecule. <b>Pull the proton, draw the anion, then ask how stable it is.</b> Whatever stabilizes that anion is exactly what made the acid stronger.</p>
+    </div>
+    <div class="warn callout"><h4>Trap #1</h4><p>Judge the <b>conjugate base</b>, never the neutral acid. This one habit prevents most ranking mistakes.</p></div>
+  </section>
+
+  <!-- 4 MOVE: CARDIO -->
+  <section class="stage" data-act="The Move">
+    <div class="act">The Move &middot; the checklist</div>
+    <h2 class="beat">Six letters, really five ideas: <span class="serif" style="color:var(--oc)">CARDIO</span></h2>
+    <p class="lead">There are only so many reasons an anion is stable. Their initials spell CARDIO. Walk two anions letter by letter; the <b>first real difference</b> is your answer &mdash; and your explanation. (D and I are one idea with two doorways.)</p>
+    <div class="cardio" id="cardio">
+      <div class="cletter"><div class="lh"><b>C</b><span class="nm">Charge</span></div><p>Spread or neutral beats a full charge on one atom.</p><div class="ex">NH&#8324;&#8314; (9) &raquo; NH&#8323; (38)</div></div>
+      <div class="cletter"><div class="lh"><b>A</b><span class="nm">Atom</span></div><p>Which atom holds it? Row: EN wins. Column: size wins.</p><div class="ex">HF&gt;H&#8322;O&gt;NH&#8323; &middot; HI&gt;HF</div></div>
+      <div class="cletter"><div class="lh"><b>R</b><span class="nm">Resonance</span></div><p>Spread the charge over several atoms. Biggest lever on the DAT.</p><div class="ex">acetate 4.8 vs ethanol 16</div></div>
+      <div class="cletter"><div class="lh"><b>D</b><span class="nm">Dipole</span></div><p>A polar bond&rsquo;s field steadies the charge through space.</p><div class="ex">the field half of D/I</div></div>
+      <div class="cletter"><div class="lh"><b>I</b><span class="nm">Induction</span></div><p>EWGs drain charge through the bonds. Closer &amp; more = stronger.</p><div class="ex">Cl&#8323;CCOOH 0.7 vs 4.8</div></div>
+      <div class="cletter"><div class="lh"><b>O</b><span class="nm">Orbital</span></div><p>More s-character holds the pair tighter. Last tiebreaker.</p><div class="ex">sp 25 &gt; sp&sup2; 44 &gt; sp&sup3; 50</div></div>
+    </div>
+  </section>
+
+  <!-- 5 MOVE: resonance drawn -->
+  <section class="stage" data-act="The Move">
+    <div class="act">The Move &middot; the biggest lever, drawn</div>
+    <h2 class="beat">R is the one to see once.</h2>
+    <p class="lead">Resonance moves the needle further than anything else on this topic, so it&rsquo;s worth drawing. A carboxylate&rsquo;s charge doesn&rsquo;t sit on one oxygen &mdash; it lives half on each of two identical oxygens:</p>
+    <div class="figure">
+      <svg viewBox="0 0 460 120" role="img" aria-label="carboxylate resonance: negative charge shared over two oxygens">
+        <g font-family="system-ui" font-size="15" fill="var(--ink)">
+          <text x="20" y="60">R</text>
+          <line x1="34" y1="55" x2="60" y2="55" stroke="var(--ink)" stroke-width="2"/>
+          <text x="66" y="60">C</text>
+          <line x1="80" y1="50" x2="104" y2="34" stroke="var(--ink)" stroke-width="2"/><line x1="83" y1="55" x2="107" y2="39" stroke="var(--ink)" stroke-width="2"/>
+          <text x="108" y="34">O</text>
+          <line x1="80" y1="62" x2="104" y2="78" stroke="var(--ink)" stroke-width="2"/>
+          <text x="108" y="86">O</text><text x="126" y="80" fill="var(--crit)" font-size="13">&minus;</text>
+          <text x="185" y="62" fill="var(--muted)" font-size="20">&harr;</text>
+          <text x="240" y="60">R</text>
+          <line x1="254" y1="55" x2="280" y2="55" stroke="var(--ink)" stroke-width="2"/>
+          <text x="286" y="60">C</text>
+          <line x1="300" y1="50" x2="324" y2="34" stroke="var(--ink)" stroke-width="2"/>
+          <text x="328" y="34">O</text><text x="346" y="28" fill="var(--crit)" font-size="13">&minus;</text>
+          <line x1="300" y1="62" x2="324" y2="78" stroke="var(--ink)" stroke-width="2"/><line x1="303" y1="66" x2="327" y2="82" stroke="var(--ink)" stroke-width="2"/>
+          <text x="328" y="86">O</text>
+          <text x="372" y="58" fill="var(--green)" font-size="12.5">charge shared<tspan x="372" y="75">over both O&rsquo;s</tspan></text>
+        </g>
+      </svg>
+      <p class="cap">Two identical oxygens, half a charge on each &mdash; far comfier than a full charge on one. That single fact is why <b>acetic acid (pK<sub>a</sub> ~5) crushes ethanol (~16)</b>, over a hundred billion times more acidic, from the same O&ndash;H bond.</p>
+    </div>
+  </section>
+
+  <!-- 6 MOVE: pKa ladder -->
+  <section class="stage" data-act="The Move">
+    <div class="act">The Move &middot; anchors to know cold</div>
+    <h2 class="beat">A handful of pK<sub>a</sub>&rsquo;s frame every ranking.</h2>
+    <p class="lead">Lower pK<sub>a</sub> = stronger acid. Learn where these few reference points live and you can place almost anything between them.</p>
+    <div class="figure">
+      <svg viewBox="0 0 900 130" role="img" aria-label="pKa ladder from -10 (strong) to 50 (weak)">
+        <line x1="60" y1="66" x2="850" y2="66" stroke="var(--line2)" stroke-width="1.4"/>
+        <g font-family="ui-monospace,monospace" font-size="11" fill="var(--muted)" text-anchor="middle">
+          <line x1="60"  y1="66" x2="60"  y2="74" stroke="var(--line2)"/><text x="60"  y="90">-10</text>
+          <line x1="192" y1="66" x2="192" y2="74" stroke="var(--line2)"/><text x="192" y="90">0</text>
+          <line x1="323" y1="66" x2="323" y2="74" stroke="var(--line2)"/><text x="323" y="90">10</text>
+          <line x1="455" y1="66" x2="455" y2="74" stroke="var(--line2)"/><text x="455" y="90">20</text>
+          <line x1="587" y1="66" x2="587" y2="74" stroke="var(--line2)"/><text x="587" y="90">30</text>
+          <line x1="718" y1="66" x2="718" y2="74" stroke="var(--line2)"/><text x="718" y="90">40</text>
+          <line x1="850" y1="66" x2="850" y2="74" stroke="var(--line2)"/><text x="850" y="90">50</text>
+        </g>
+        <g font-family="system-ui" font-size="11.5" fill="var(--ink)">
+          <g><line x1="100" y1="44" x2="100" y2="70" stroke="var(--crit)" stroke-width="3"/><text x="100" y="38" text-anchor="middle">HCl -7</text></g>
+          <g><line x1="255" y1="44" x2="255" y2="70" stroke="var(--gold)" stroke-width="3"/><text x="255" y="38" text-anchor="middle">RCOOH ~5</text></g>
+          <g><line x1="323" y1="52" x2="323" y2="70" stroke="var(--gold)" stroke-width="3"/><text x="323" y="30" text-anchor="middle">phenol 10</text></g>
+          <g><line x1="402" y1="44" x2="402" y2="70" stroke="var(--oc)" stroke-width="3"/><text x="402" y="38" text-anchor="middle">H&#8322;O 16</text></g>
+          <g><line x1="521" y1="52" x2="521" y2="70" stroke="var(--oc)" stroke-width="3"/><text x="521" y="30" text-anchor="middle">alkyne 25</text></g>
+          <g><line x1="768" y1="44" x2="768" y2="70" stroke="var(--muted)" stroke-width="3"/><text x="768" y="38" text-anchor="middle">alkene 44</text></g>
+          <g><line x1="850" y1="52" x2="850" y2="70" stroke="var(--muted)" stroke-width="3"/><text x="836" y="30" text-anchor="middle">alkane 50</text></g>
+        </g>
+      </svg>
+      <p class="cap"><b>Left = strong</b> (loves to give up H<sup>+</sup>); <b>right = barely acidic</b>. Notice the alkyne (~25) sits astronomically left of the alkane (~50) &mdash; that gap is the O in CARDIO doing its work.</p>
+    </div>
+  </section>
+
+  <!-- 7 MOVE: hand the pen -->
+  <section class="stage" data-act="The Move">
+    <div class="act">The Move &middot; you call it</div>
+    <h2 class="beat">Now you hold the pen.</h2>
+    <p class="lead">One rep with the safety on. Pick a pair, commit to which is the stronger acid, <em>then</em> reveal the CARDIO letter that decides it. Predicting first is the point &mdash; a call you commit to sticks whether it&rsquo;s right or wrong.</p>
+    <div class="tool">
+      <label class="field" for="pair">Which is the stronger acid?</label>
+      <select id="pair">
+        <option value="0">HF &nbsp;vs&nbsp; HI</option>
+        <option value="1">ethanol (CH&#8323;CH&#8322;OH) &nbsp;vs&nbsp; acetic acid (CH&#8323;COOH)</option>
+        <option value="2">acetic acid &nbsp;vs&nbsp; trichloroacetic acid</option>
+        <option value="3">ethane C&ndash;H &nbsp;vs&nbsp; ethyne (terminal alkyne) C&ndash;H</option>
+        <option value="4">water &nbsp;vs&nbsp; ammonia (NH&#8323;)</option>
+        <option value="5">cyclohexanol &nbsp;vs&nbsp; phenol</option>
+      </select>
+      <span class="field">Your call</span>
+      <span class="seg" id="guess" role="group" aria-label="pick the stronger acid">
+        <button type="button" data-g="L" aria-pressed="false">Left</button>
+        <button type="button" data-g="R" aria-pressed="false">Right</button>
+      </span>
+      <div class="out" id="pairOut">Pick a pair and make your call.</div>
+    </div>
+  </section>
+
+  <!-- 8 REPS: drill there -->
+  <section class="stage" data-act="The Reps">
+    <div class="act">The Reps &middot; wear the groove</div>
+    <h2 class="beat">You learned the move here. Drill it there.</h2>
+    <p class="lead">This lesson gets CARDIO into your hands. Reflex comes from reps &mdash; and those live in the tools built for volume. Learn the move here; wear a groove there.</p>
+    <div class="routes">
+      <div class="route">
+        <span class="k">Engine &middot; drill to reflex</span>
+        <h4>Acid-Base CARDIO</h4>
+        <p>The canonical hub: full ranking map, timed sets, and spaced flashcards that route straight back to the six letters.</p>
+        <a href="https://acelabs.netlify.app/tools/ochem/#acid-base-cardio" target="_blank" rel="noopener">Open the engine</a>
+      </div>
+      <div class="route">
+        <span class="k">Retold &middot; hear it told</span>
+        <h4>The Acidity night</h4>
+        <p>The story-first walkthrough if a letter still feels shaky &mdash; the same move, told scene by scene.</p>
+        <a href="https://acelabs.netlify.app/tools/ochem/#acid-base-cardio" target="_blank" rel="noopener">Open Retold</a>
+      </div>
+      <div class="route">
+        <span class="k">Booster &middot; prove it timed</span>
+        <h4>Acidity/Basicity set</h4>
+        <p>A short, focused Booster OChem set, timed, nothing else mixed in. Then bring your misses to your Ace Log.</p>
+        <a class="soon">In your Booster</a>
+      </div>
+    </div>
+    <div class="key callout" style="margin-top:18px"><h4>The habit that carries into the hammer</h4><p>When a ranking question appears, <b>draw each conjugate base and say the letters out loud</b> &mdash; &ldquo;Charge&hellip; Atom&hellip; Resonance&hellip; Dipole/Induction&hellip; Orbital.&rdquo; The first letter that separates them is your reason. Name the letter and you can defend the answer.</p></div>
+  </section>
+
+  <!-- 9 PROOF intro -->
+  <section class="stage" data-act="The Proof">
+    <div class="act">The Proof &middot; earn it</div>
+    <h2 class="beat">Six items. Commit before you peek.</h2>
+    <p class="lead">One for each CARDIO letter. For each: pick an answer <em>and</em> how sure you are &mdash; the Check button stays locked until you commit to both. On a miss, name why and write the one-line rule you&rsquo;ll keep. Your calibration lands at the end.</p>
+    <div class="warn callout"><h4>Why commit first</h4><p>A committed guess &mdash; right or wrong &mdash; is what makes the answer stick. Peeking first feels good and teaches nothing. Lock it in, then look.</p></div>
+  </section>
+
+  <!-- 10 PROOF arena -->
+  <section class="stage" data-act="The Proof">
+    <div class="act">The Proof &middot; walk the letters</div>
+    <div class="pqhead"><span class="qnum" id="qnum">Question 1 of 6</span><span class="letter" id="qletter">C &middot; Charge</span></div>
+    <div id="arena"></div>
+  </section>
+
+  <!-- 11 CLOSE -->
+  <section class="stage" data-act="Make it stick">
+    <div class="act">Close &middot; it&rsquo;s yours now</div>
+    <h2 class="beat">You didn&rsquo;t watch this. You did it.</h2>
+    <div id="closeCalib"></div>
+    <p style="margin:20px 0 8px; font-weight:700">Where it goes from here</p>
+    <div class="routes">
+      <div class="route">
+        <span class="k">Now</span><h4>Drill to reflex</h4>
+        <p>Take your kept rules to the live CARDIO engine &mdash; timed sets and the spaced deck.</p>
+        <a href="https://acelabs.netlify.app/tools/ochem/#acid-base-cardio" target="_blank" rel="noopener">Open the engine</a>
+      </div>
+      <div class="route">
+        <span class="k">In 2 days</span><h4>Redo from memory</h4>
+        <p>Reopen this page and rerun the six before revealing. Any fuzzy rule is where you start.</p>
+        <a class="soon">Come back here</a>
+      </div>
+      <div class="route">
+        <span class="k">Re-test</span><h4>Catch it on a PT</h4>
+        <p>It shows on your next full length. Land it there and it&rsquo;s locked &mdash; log any miss.</p>
+        <a class="soon">Booster PT</a>
+      </div>
+    </div>
+    <p style="margin:22px 0 8px; font-weight:700">Screenshot this &mdash; CARDIO in your pocket</p>
+    <div class="phonecard">
+      <div class="h">Acid-Base CARDIO</div>
+      <span class="thesis-s">Acidity = how stable is the conjugate base?</span>
+      <ol>
+        <li><b>C</b>harge &mdash; spread or neutral is better</li>
+        <li><b>A</b>tom &mdash; row: EN wins; column: size wins</li>
+        <li><b>R</b>esonance &mdash; delocalize the charge</li>
+        <li><b>D/I</b> &mdash; nearby EWG pulls it away (closer = stronger)</li>
+        <li><b>O</b>rbital &mdash; sp &gt; sp&sup2; &gt; sp&sup3;</li>
+      </ol>
+      <div class="ft">Run top down. Stop at the first real difference &mdash; that&rsquo;s the answer and the reason.</div>
+    </div>
+  </section>
+
+</div>
+
+<div class="nav">
+  <button class="nbtn" id="back" disabled>&larr; Back</button>
+  <div class="dots" id="dots"></div>
+  <button class="nbtn primary" id="next">Next &rarr;</button>
+</div>
+
+<input type="file" id="importFile" accept="application/json" style="display:none">
+
+<script>
+(function(){
+  "use strict";
+  var root=document.documentElement, PREFIX='acedat-ref-oc-acids-';
+
+  /* theme */
+  var tBtn=document.getElementById('theme');
+  tBtn.addEventListener('click',function(){
+    var dark=(root.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'))==='dark';
+    root.setAttribute('data-theme',dark?'light':'dark'); tBtn.textContent=dark?'Dark':'Light';
+  });
+
+  /* ---------- deck navigation ---------- */
+  var stages=[].slice.call(document.querySelectorAll('.stage'));
+  var N=stages.length, cur=0;
+  var back=document.getElementById('back'), next=document.getElementById('next');
+  var railfill=document.getElementById('railfill'), beatcount=document.getElementById('beatcount');
+  var dotsWrap=document.getElementById('dots'); var dots=[];
+  stages.forEach(function(_,i){ var d=document.createElement('button'); d.className='dot'; d.setAttribute('aria-label','Go to beat '+(i+1)); d.addEventListener('click',function(){go(i);}); dotsWrap.appendChild(d); dots.push(d); });
+  function go(i){
+    if(i<0||i>=N) return;
+    stages[cur].classList.remove('on'); cur=i; stages[cur].classList.add('on');
+    window.scrollTo(0,0);
+    back.disabled=cur===0;
+    next.textContent = cur===N-1 ? 'Done' : 'Next →';
+    next.disabled = cur===N-1;
+    beatcount.textContent=(cur+1)+' / '+N;
+    railfill.style.width=(100*(cur+1)/N)+'%';
+    dots.forEach(function(d,di){ d.classList.toggle('cur',di===cur); d.classList.toggle('done',di<cur); });
+    if(cur===11) renderClose();
+  }
+  back.addEventListener('click',function(){go(cur-1);});
+  next.addEventListener('click',function(){go(cur+1);});
+  document.addEventListener('keydown',function(e){
+    if(e.target.tagName==='TEXTAREA'||e.target.tagName==='SELECT') return;
+    if(e.key==='ArrowRight') go(cur+1); else if(e.key==='ArrowLeft') go(cur-1);
+  });
+
+  /* ---------- pair comparator (hand the pen) ---------- */
+  var pairs=[
+    {win:"R",letter:"A &mdash; Atom (size)",why:"Down the halogen group, <b>size beats electronegativity</b>. Iodide is huge and spreads the charge best, so HI is stronger. pK<sub>a</sub>: HF 3.2, HI ~ -10."},
+    {win:"R",letter:"R &mdash; Resonance",why:"Acetate spreads its charge over <b>two equivalent oxygens</b>; ethoxide has none. Acetic acid wins easily. pK<sub>a</sub>: ethanol 16, acetic 4.8."},
+    {win:"R",letter:"I &mdash; Induction",why:"Same resonance in both, so R ties. <b>Three electron-withdrawing chlorines</b> drain charge off the anion. pK<sub>a</sub>: acetic 4.8, trichloroacetic 0.7."},
+    {win:"R",letter:"O &mdash; Orbital",why:"The alkyne C&ndash;H is on an <b>sp carbon (50% s)</b>, holding the pair tight; ethane is sp&sup3;. pK<sub>a</sub>: alkyne ~25, alkane ~50."},
+    {win:"L",letter:"A &mdash; Atom (row)",why:"Across a row, <b>O holds charge better than N</b>. Hydroxide beats amide, so water is the stronger acid. pK<sub>a</sub>: water 15.7, ammonia ~38."},
+    {win:"R",letter:"R &mdash; Resonance",why:"Phenoxide spreads its charge <b>into the ring</b>; cyclohexanol&rsquo;s anion has no resonance. Phenol wins. pK<sub>a</sub>: cyclohexanol ~16, phenol ~10."}
+  ];
+  var pairSel=document.getElementById('pair'), pairOut=document.getElementById('pairOut'), gWrap=document.getElementById('guess');
+  var myGuess=null;
+  function pairShow(){
+    var p=pairs[+pairSel.value];
+    if(!myGuess){ pairOut.className='out'; pairOut.innerHTML='Pick a pair and make your call.'; return; }
+    var right=myGuess===p.win;
+    pairOut.className='out hit';
+    pairOut.innerHTML=(right?'Nice &mdash; ':'Not quite &mdash; ')+'the stronger acid is the <b>'+(p.win==='L'?'left':'right')+'</b>. Deciding letter: <b>'+p.letter+'</b>.<br>'+p.why;
+  }
+  gWrap.querySelectorAll('button').forEach(function(b){ b.addEventListener('click',function(){
+    myGuess=b.dataset.g; gWrap.querySelectorAll('button').forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false');}); pairShow();
+  });});
+  pairSel.addEventListener('change',function(){ gWrap.querySelectorAll('button').forEach(function(x){x.setAttribute('aria-pressed','false');}); myGuess=null; pairShow(); });
+
+  /* ---------- proof engine: 6 CARDIO items, commit-before-reveal ---------- */
+  var PQ=[
+    {id:'c',letter:'C &middot; Charge',q:'A cationic acid tends to be much stronger than its neutral relative, because its conjugate base comes out neutral. Which of these is the strongest acid?',
+     choices:[
+       {t:'NH₄⁺ (ammonium)',correct:true,r:'Losing H⁺ from ammonium gives neutral NH₃. Reaching neutral is a big stabilization, so ammonium (pKa ~9) beats every neutral N–H and C–H acid here.'},
+       {t:'NH₃ (ammonia)',correct:false,r:'Its conjugate base is amide, NH₂⁻ — a full charge stacked on nitrogen. pKa ~38.'},
+       {t:'CH₄ (methane)',correct:false,r:'The carbanion CH₃⁻ is extremely unstable. Methane is about the weakest acid on this topic (~50).'},
+       {t:'CH₃CH₃ (ethane)',correct:false,r:'Same story as methane: an unstable carbanion, pKa ~50.'},
+       {t:'CH₃NH₂ (methylamine)',correct:false,r:'A neutral amine like ammonia; its conjugate base is a nitrogen anion (~40). The cation, ammonium, is far stronger.'}
+     ],rule:'A cationic acid (neutral conjugate base) is much stronger. Check charge first.'},
+    {id:'a1',letter:'A &middot; Atom (row)',q:'Each of these loses one proton. Reading across the second row of the periodic table, which is the strongest acid?',
+     choices:[
+       {t:'HF',correct:true,r:'Across a row, the most electronegative atom holds the negative charge best: F over O over N over C. HF wins (pKa ~3.2 vs H₂O 15.7 vs NH₃ 38 vs CH₄ ~50).'},
+       {t:'H₂O',correct:false,r:'Oxygen is electronegative, but fluorine is more so. HF is the stronger acid across this row.'},
+       {t:'NH₃',correct:false,r:'Nitrogen holds charge worse than O or F. Amide (NH₂⁻) is a high-energy anion; NH₃ pKa ~38.'},
+       {t:'CH₄',correct:false,r:'Carbon is the worst of the four at holding a negative charge. Methane is essentially non-acidic (~50).'},
+       {t:'They are all equally strong',correct:false,r:'They differ by roughly fifty orders of magnitude. Across a row, electronegativity separates them clearly.'}
+     ],rule:'Across a period, more electronegative wins: HF > H2O > NH3 > CH4.'},
+    {id:'a2',letter:'A &middot; Atom (column)',q:'Which hydrohalic acid is the strongest: HF, HCl, HBr, or HI?',
+     choices:[
+       {t:'HI',correct:true,r:'Down a column, size beats electronegativity. Big, soft iodide spreads the charge over a huge volume, so HI is the strongest (pKa ~ -10).'},
+       {t:'HF',correct:false,r:'The classic trap. Fluorine is the most electronegative, but going DOWN the halogens size takes over, and tiny fluoride grips the charge tightly. HF is actually the weakest (pKa ~3.2).'},
+       {t:'HCl',correct:false,r:'Stronger than HF but weaker than HBr and HI. Size keeps rising down the group.'},
+       {t:'HBr',correct:false,r:'Strong, but iodide is even bigger, so HI edges it out.'},
+       {t:'They are all equally strong because they are all strong acids',correct:false,r:'Three look strong in water, but their intrinsic pKa still ranks HI > HBr > HCl >> HF.'}
+     ],rule:'Down a group, size wins: HI > HBr > HCl > HF.'},
+    {id:'r',letter:'R &middot; Resonance',q:'Acetic acid (pKa 4.8) is over a hundred billion times more acidic than ethanol (pKa 16), even though both simply lose an O–H proton. The main reason is that the acetate anion is:',
+     choices:[
+       {t:'delocalized — its negative charge is shared over two equivalent oxygens by resonance',correct:true,r:'Yes. Half a charge on each of two oxygens is far comfier than a full charge on one. Ethoxide has no such escape.'},
+       {t:'sitting on a larger atom than ethoxide is',correct:false,r:'Both put the charge on oxygen. Same atom, so Atom is a tie. Resonance is the real difference.'},
+       {t:'held right next to an sp-hybridized carbon',correct:false,r:'The carbonyl carbon is sp², and orbital character is not what separates these two. Resonance is.'},
+       {t:'neutral overall, unlike the ethoxide anion',correct:false,r:'Acetate carries a full negative charge just like ethoxide. It is more stable because that charge is spread, not because it is neutral.'},
+       {t:'stabilized by an internal hydrogen bond to the second oxygen',correct:false,r:'No intramolecular H-bond is doing the work here. Delocalization over the two oxygens is the stabilizer.'}
+     ],rule:'Resonance spreads the anion charge: RCOOH >> ROH.'},
+    {id:'i',letter:'I &middot; Induction',q:'Trichloroacetic acid (pKa 0.7) is far stronger than acetic acid (pKa 4.8). Both carboxylates have identical resonance. The extra stabilization of the trichloroacetate anion comes from:',
+     choices:[
+       {t:'three electron-withdrawing chlorines pulling charge away (induction)',correct:true,r:'Right. Same resonance in both, so R ties. The three Cl atoms drain electron density off the carboxylate through the bonds and through space — the D/I check.'},
+       {t:'extra resonance structures contributed by the chlorine lone pairs',correct:false,r:'The chlorines are not conjugated into the carboxylate here; they help by induction, not resonance.'},
+       {t:'the greater molecular weight of trichloroacetic acid',correct:false,r:'Mass does not stabilize charge. The inductive pull of the electron-withdrawing groups does.'},
+       {t:'chlorine raising the s-character of the carbon that holds the charge',correct:false,r:'Hybridization is unchanged; orbital character is not the lever here.'},
+       {t:'hydrogen bonding between the chlorines and the O–H group',correct:false,r:'No such H-bond stabilizes the anion. Induction from the three Cl is the cause.'}
+     ],rule:'Nearby electron-withdrawing groups stabilize the anion by induction (more groups = stronger).'},
+    {id:'o',letter:'O &middot; Orbital',q:'Which C–H bond is the most acidic?',
+     choices:[
+       {t:'the terminal C–H of ethyne (an alkyne)',correct:true,r:'The sp carbon is 50% s-character, holding the carbanion lone pair close to the nucleus. pKa ~25, acidic enough for NaNH₂ to deprotonate.'},
+       {t:'a C–H of ethane (an alkane)',correct:false,r:'sp³ (25% s) barely stabilizes a carbanion. Alkanes are the least acidic C–H there is (~50).'},
+       {t:'a C–H of ethene (an alkene)',correct:false,r:'sp² (33% s) is in between, but still far weaker than the alkyne (~44).'},
+       {t:'all C–H bonds are equally acidic',correct:false,r:'Hybridization sets s-character, which swings acidity by more than twenty orders of magnitude across sp, sp², sp³.'},
+       {t:'ethane, because it has the most C–H bonds to give away',correct:false,r:'Number of bonds does not set acidity per bond. s-character does, and sp wins.'}
+     ],rule:'More s-character = more acidic: sp > sp2 > sp3.'}
+  ];
+  var LETTERS=['A','B','C','D','E'];
+  var ETYPES=[['content','Didn’t know it'],['misread','Misread / trap'],['careless','Careless slip'],['timing','Ran out of time']];
+  var PKEY=PREFIX+'proof', pstate={};
+  try{ pstate=JSON.parse(localStorage.getItem(PKEY)||'{}'); }catch(e){ pstate={}; }
+  function psave(){ try{ localStorage.setItem(PKEY,JSON.stringify(pstate)); }catch(e){} }
+  var arena=document.getElementById('arena'), qnum=document.getElementById('qnum'), qletter=document.getElementById('qletter');
+  var pi=0;
+  function renderQ(){
+    var q=PQ[pi];
+    qnum.textContent='Question '+(pi+1)+' of '+PQ.length;
+    qletter.innerHTML=q.letter;
+    arena.innerHTML='';
+    var qt=document.createElement('div'); qt.className='qt'; qt.textContent=q.q; arena.appendChild(qt);
+    var chosen=null, conf=null, locked=(pstate[q.id]&&pstate[q.id].done);
+    var choicesWrap=document.createElement('div'); choicesWrap.className='choices';
+    q.choices.forEach(function(c,ci){
+      var b=document.createElement('button'); b.type='button'; b.className='choice';
+      b.innerHTML='<span class="ltr">'+LETTERS[ci]+'</span><span class="body">'+c.t+'</span>';
+      b.addEventListener('click',function(){ if(locked) return; chosen=ci;
+        choicesWrap.querySelectorAll('.choice').forEach(function(x){x.setAttribute('aria-pressed','false');});
+        b.setAttribute('aria-pressed','true'); upd(); });
+      choicesWrap.appendChild(b);
+    });
+    arena.appendChild(choicesWrap);
+    var confRow=document.createElement('div'); confRow.className='confrow'; confRow.innerHTML='<span>How sure?</span>';
+    var cseg=document.createElement('span'); cseg.className='seg';
+    [['sure','Sure'],['shaky','Shaky'],['no','No idea']].forEach(function(cv){
+      var cb=document.createElement('button'); cb.type='button'; cb.textContent=cv[1];
+      cb.addEventListener('click',function(){ if(locked) return; conf=cv[0];
+        cseg.querySelectorAll('button').forEach(function(x){x.setAttribute('aria-pressed',x===cb?'true':'false');}); upd(); });
+      cseg.appendChild(cb);
+    });
+    confRow.appendChild(cseg); arena.appendChild(confRow);
+    var chk=document.createElement('button'); chk.type='button'; chk.className='checkbtn'; chk.textContent='Check answer'; chk.disabled=true; arena.appendChild(chk);
+    var fb=document.createElement('div'); fb.className='fb'; arena.appendChild(fb);
+    var pnext=document.createElement('button'); pnext.type='button'; pnext.className='pnext';
+    pnext.textContent = pi<PQ.length-1 ? 'Next question →' : 'See my calibration →';
+    pnext.addEventListener('click',function(){ if(pi<PQ.length-1){ pi++; renderQ(); } else { go(11); } });
+    arena.appendChild(pnext);
+    function upd(){ chk.disabled=!(chosen!==null && conf); }
+    function reveal(chosenIdx){
+      choicesWrap.querySelectorAll('.choice').forEach(function(x,xi){
+        x.style.cursor='default';
+        x.innerHTML='<span class="ltr">'+LETTERS[xi]+'</span><span class="body">'+q.choices[xi].t+'<span class="cr">'+q.choices[xi].r+'</span></span>';
+        if(q.choices[xi].correct) x.classList.add('correct'); else if(xi===chosenIdx) x.classList.add('wrong');
+      });
+      var correct=q.choices[chosenIdx] && q.choices[chosenIdx].correct;
+      fb.className='fb show '+(correct?'ok':'no');
+      fb.innerHTML=correct?('Correct.'+((pstate[q.id]&&pstate[q.id].conf!=='sure')?' You weren’t fully sure — worth one more look so it becomes automatic.':' Locked in.')):'Not yet — the right choice is highlighted. That surprise is exactly what builds the memory.';
+      cseg.querySelectorAll('button').forEach(function(x){x.disabled=true;});
+      chk.style.display='none'; pnext.classList.add('show');
+      if(!correct){
+        var et=document.createElement('div'); et.className='etype';
+        et.innerHTML='<div class="lab">Why did you miss it?</div>';
+        var etseg=document.createElement('span'); etseg.className='seg'; etseg.style.marginTop='2px';
+        ETYPES.forEach(function(t){ var tb=document.createElement('button'); tb.type='button'; tb.textContent=t[1];
+          if(pstate[q.id]&&pstate[q.id].etype===t[0]) tb.setAttribute('aria-pressed','true');
+          tb.addEventListener('click',function(){ etseg.querySelectorAll('button').forEach(function(x){x.setAttribute('aria-pressed',x===tb?'true':'false');}); pstate[q.id].etype=t[0]; psave(); });
+          etseg.appendChild(tb); });
+        et.appendChild(etseg);
+        var lab2=document.createElement('div'); lab2.className='lab'; lab2.style.marginTop='12px'; lab2.textContent='Write it as a one-line rule you will keep:';
+        et.appendChild(lab2);
+        var ta=document.createElement('textarea'); ta.className='rulebox'; ta.placeholder=q.rule; ta.value=(pstate[q.id]&&pstate[q.id].rule)||'';
+        ta.addEventListener('input',function(){ pstate[q.id].rule=ta.value; psave(); });
+        et.appendChild(ta);
+        arena.appendChild(et);
+      }
+    }
+    chk.addEventListener('click',function(){
+      if(chosen===null||!conf) return; locked=true;
+      pstate[q.id]={done:true,correct:q.choices[chosen].correct,conf:conf,chosen:chosen,rule:(pstate[q.id]&&pstate[q.id].rule)||'',etype:(pstate[q.id]&&pstate[q.id].etype)||''};
+      psave(); reveal(chosen);
+    });
+    if(locked){ // already answered on a prior visit
+      choicesWrap.querySelectorAll('.choice').forEach(function(x){x.setAttribute('aria-pressed','false');});
+      reveal(pstate[q.id].chosen);
+    }
+  }
+  renderQ();
+
+  /* ---------- close: calibration ---------- */
+  function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
+  function renderClose(){
+    var box=document.getElementById('closeCalib');
+    var ids=Object.keys(pstate).filter(function(k){ return pstate[k]&&pstate[k].done; });
+    var n=ids.length;
+    if(!n){ box.innerHTML='<div class="calib"><h4>Your six are still waiting</h4><p style="margin:0;color:var(--ink-2)">Head back to The Proof and run the items — your calibration builds here as you go.</p></div>'; return; }
+    var correct=0,sureN=0,sureWrong=0;
+    ids.forEach(function(k){ var s=pstate[k]; if(s.correct)correct++; if(s.conf==='sure'){sureN++; if(!s.correct)sureWrong++;} });
+    var rules=ids.filter(function(k){return pstate[k].rule&&pstate[k].rule.trim();}).map(function(k){return pstate[k].rule;});
+    var h='<div class="calib"><h4>Your calibration — '+n+' of '+PQ.length+' answered</h4>';
+    h+='<p style="margin:0 0 4px">Accuracy: <span class="big-n">'+correct+' / '+n+'</span>.';
+    if(sureN) h+=' You felt <b>Sure</b> on '+sureN+' — '+(sureWrong?('and missed <b>'+sureWrong+'</b> of those. Confident misses are the ones to re-test first — that surprise is what makes the fix stick.'):'and got them all. Well calibrated.');
+    h+='</p>';
+    if(rules.length){ h+='<div class="rules-k">Your rules to keep</div><ul>'+rules.map(function(r){return '<li>'+esc(r)+'</li>';}).join('')+'</ul>'; }
+    else h+='<p style="margin:8px 0 0;font-size:13px;color:var(--muted)">Clean sweep — no misses to rule-capture. Take CARDIO to the engine and drill for speed.</p>';
+    h+='</div>';
+    box.innerHTML=h;
+  }
+
+  /* ---------- export / import ---------- */
+  document.getElementById('exportBtn').addEventListener('click',function(){
+    var data={}; for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i); if(k.indexOf(PREFIX)===0) data[k]=localStorage.getItem(k);}
+    var blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+    var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='oc-acids-cardio-progress.json'; document.body.appendChild(a); a.click(); a.remove();
+  });
+  var impFile=document.getElementById('importFile');
+  impFile.addEventListener('change',function(e){ var f=e.target.files[0]; if(!f) return; var r=new FileReader();
+    r.onload=function(){ try{ var d=JSON.parse(r.result); for(var k in d){ if(k.indexOf(PREFIX)===0) localStorage.setItem(k,d[k]); } location.reload(); }catch(err){} };
+    r.readAsText(f); });
+
+  /* ---------- start the deck (after all state + handlers exist) ---------- */
+  go(0);
+})();
+</script>

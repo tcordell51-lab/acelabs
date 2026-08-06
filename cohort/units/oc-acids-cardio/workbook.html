@@ -1,0 +1,363 @@
+<meta charset="utf-8">
+<title>Acids &amp; Bases CARDIO — Crash-Course Workbook</title>
+<style>
+:root{
+  --paper:#fbf7ee; --ink:#2a2417; --ink2:#5a5140; --muted:#8a8069;
+  --gold:#9c7d24; --gold-line:#c8ab52; --oc:#6d4f9c; --rule:#d9cfb6;
+  --box:#efe8d6; --crit:#a8392c; --ok:#3f7a4e;
+}
+*{box-sizing:border-box}
+html,body{margin:0; background:#e9e3d4}
+body{font-family:"Helvetica Neue",Arial,system-ui,sans-serif; color:var(--ink); -webkit-print-color-adjust:exact; print-color-adjust:exact}
+.serif{font-family:Georgia,"Times New Roman",serif}
+.mono{font-family:"SF Mono",ui-monospace,Menlo,monospace}
+sub,sup{font-size:.72em}
+
+.page{
+  width:8.5in; min-height:11in; background:var(--paper); margin:18px auto; padding:0.62in 0.68in;
+  position:relative; box-shadow:0 6px 24px rgba(0,0,0,.18);
+}
+.page::after{content:""; position:absolute; left:0.68in; right:0.68in; bottom:0.42in; border-top:1px solid var(--rule)}
+.pfoot{position:absolute; left:0.68in; right:0.68in; bottom:0.24in; display:flex; justify-content:space-between; font-size:9px; letter-spacing:.06em; text-transform:uppercase; color:var(--muted)}
+
+.eyebrow{font-size:10.5px; font-weight:800; letter-spacing:.16em; text-transform:uppercase; color:var(--oc); margin:0 0 8px; display:flex; align-items:center; gap:9px}
+.eyebrow::before{content:""; width:20px; height:2px; background:var(--oc); display:inline-block}
+h1{font-family:Georgia,serif; font-weight:600; font-size:40px; line-height:1.06; margin:0 0 6px; letter-spacing:-.01em}
+h2{font-family:Georgia,serif; font-weight:600; font-size:25px; line-height:1.14; margin:0 0 12px}
+h3{font-family:Georgia,serif; font-weight:600; font-size:17px; margin:18px 0 8px}
+p{font-size:13.5px; line-height:1.6; margin:0 0 11px; max-width:64ch}
+.lead{font-size:14.5px; color:var(--ink2)}
+b,strong{color:var(--ink)}
+
+/* thesis */
+.thesis{font-family:Georgia,serif; font-size:22px; line-height:1.3; border-left:3px solid var(--gold); padding:10px 0 10px 16px; margin:6px 0 16px}
+.thesis b{color:var(--gold)}
+
+/* callouts */
+.box{background:var(--box); border:1px solid var(--rule); border-radius:10px; padding:14px 16px; margin:12px 0}
+.box .k{font-size:10px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:var(--gold); margin-bottom:6px}
+.box p{margin:0; font-size:13px}
+
+/* markable affordances */
+.fill{display:inline-block; border-bottom:1.5px solid var(--gold-line); min-width:60px; height:1.05em; vertical-align:baseline}
+.lines{margin:10px 0}
+.lines .ln{border-bottom:1px solid var(--rule); height:26px}
+.writebox{border:1.5px dashed var(--gold-line); border-radius:10px; background:rgba(255,255,255,.4); min-height:120px; position:relative}
+.writebox .tag{position:absolute; top:8px; left:12px; font-size:10.5px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--muted)}
+.chk{display:inline-block; width:12px; height:12px; border:1.4px solid var(--muted); border-radius:3px; vertical-align:-1px; margin-right:4px}
+
+/* CARDIO table */
+table{width:100%; border-collapse:collapse; margin:6px 0 4px; font-size:12.5px}
+th,td{text-align:left; padding:9px 10px; border-bottom:1px solid var(--rule); vertical-align:top}
+th{font-size:10px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); border-bottom:1.5px solid var(--gold-line)}
+td .L{font-family:Georgia,serif; font-size:20px; color:var(--oc); line-height:1}
+.excol{background:rgba(156,125,36,.05); border-left:1px solid var(--gold-line)}
+
+/* figures */
+.fig{text-align:center; margin:12px 0}
+.fig svg{max-width:100%; height:auto}
+.cap{font-size:11.5px; color:var(--ink2); margin-top:8px}
+
+/* practice */
+.q{border:1px solid var(--rule); border-radius:10px; padding:14px 16px; margin:12px 0; break-inside:avoid}
+.q .qh{display:flex; justify-content:space-between; align-items:center; margin-bottom:8px}
+.q .qn{font-weight:800; font-size:12px; letter-spacing:.04em; color:var(--oc)}
+.q .tag{font-size:10px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); border:1px solid var(--rule); border-radius:999px; padding:2px 8px}
+.q .stem{font-size:13.5px; line-height:1.5; margin:0 0 10px}
+.opt{display:flex; gap:9px; font-size:13px; padding:4px 0; align-items:flex-start}
+.opt .o{width:18px; height:18px; border:1.4px solid var(--muted); border-radius:50%; font:700 10px/16px "SF Mono",monospace; text-align:center; color:var(--muted); flex:none}
+.work{margin-top:10px; border-top:1px dashed var(--rule); padding-top:8px; display:flex; justify-content:space-between; align-items:center}
+.work .sure{font-size:11px; color:var(--muted)}
+.work .rule{font-size:11px; color:var(--muted)}
+
+/* answer key */
+.akey{font-size:12.5px}
+.akey .row{display:flex; gap:12px; padding:8px 0; border-bottom:1px solid var(--rule)}
+.akey .a{font-weight:800; color:var(--ok); min-width:74px}
+.akey .r{color:var(--ink2)}
+
+/* cheat card */
+.cheat{border:1.5px dashed var(--gold-line); border-radius:14px; padding:18px 20px; max-width:3.4in; margin:8px 0}
+.cheat .k{font-size:10px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:var(--gold); margin-bottom:6px}
+.cheat .t{font-family:Georgia,serif; font-size:15px; margin-bottom:10px}
+.cheat ol{margin:0; padding-left:20px; font-size:12.5px; line-height:1.65}
+.cheat b{color:var(--oc)}
+
+@media print{
+  html,body{background:#fff}
+  .page{margin:0; box-shadow:none; width:8.5in; min-height:11in; break-after:page; page-break-after:always}
+  .page:last-child{break-after:auto; page-break-after:auto}
+  @page{size:letter; margin:0}
+}
+</style>
+
+<!-- ========== PAGE 1 · COVER ========== -->
+<section class="page">
+  <div style="display:flex; align-items:center; gap:10px; margin-bottom:52px">
+    <span class="serif" style="font-size:17px"><b style="color:var(--gold)">Ace</b> the DAT</span>
+    <span style="flex:1"></span>
+    <span style="font-size:10.5px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:var(--oc); border:1px solid var(--oc); border-radius:999px; padding:3px 10px">OChem &middot; Unit 2</span>
+  </div>
+  <div style="margin-top:1.4in">
+    <div class="eyebrow">Crash-Course Workbook</div>
+    <h1 style="font-size:52px">Acids &amp; Bases</h1>
+    <div class="serif" style="font-size:30px; color:var(--oc); margin-top:2px">the CARDIO ladder</div>
+    <p class="lead" style="margin-top:20px; max-width:52ch">One move ranks every acid on the DAT: <b>acidity = how stable is the conjugate base.</b> This workbook is yours to mark up &mdash; fill the blanks live, work the six, and keep the rules you write.</p>
+  </div>
+  <div style="margin-top:1.1in; display:flex; gap:30px">
+    <div style="flex:1">Name <span class="fill" style="min-width:180px"></span></div>
+    <div>Date <span class="fill" style="min-width:120px"></span></div>
+  </div>
+  <div class="box" style="margin-top:34px">
+    <div class="k">How to use this</div>
+    <p>Follow along in the live session and <b>write in it</b>. Do the six questions cold before checking the key. Every rule you write in your own words is one you keep. Bulk drilling lives in the Ace Labs engine &mdash; this is where you learn the move.</p>
+  </div>
+  <div class="pfoot"><span>Ace the DAT &middot; Crash Course</span><span>Acids &amp; Bases &middot; CARDIO</span></div>
+</section>
+
+<!-- ========== PAGE 2 · THE ONE MOVE ========== -->
+<section class="page">
+  <div class="eyebrow">The one move</div>
+  <h2>Forget the acid. Judge what it leaves behind.</h2>
+  <div class="thesis">Acidity = <b>how stable is the conjugate base?</b></div>
+  <p>An acid gives up a proton (H<sup>+</sup>). What&rsquo;s left is the <b>conjugate base</b>, holding the leftover negative charge. A strong acid is one whose leftover anion is <em>comfortable</em> holding that charge.</p>
+  <div class="fig">
+    <svg viewBox="0 0 460 70" width="380">
+      <g font-family="ui-monospace,monospace" font-size="22" fill="var(--ink)">
+        <text x="10" y="44">H&ndash;A</text>
+        <text x="130" y="44" fill="var(--muted)">&rarr;</text>
+        <text x="185" y="44">H<tspan font-size="14" dy="-9">+</tspan></text>
+        <text x="240" y="44" fill="var(--muted)">+</text>
+        <rect x="285" y="20" width="110" height="38" rx="8" fill="none" stroke="var(--oc)" stroke-width="1.5"/>
+        <text x="305" y="44" fill="var(--oc)">A<tspan font-size="14" dy="-9">&minus;</tspan></text>
+        <text x="410" y="44" font-size="11" fill="var(--muted)">judge<tspan x="410" y="52">this</tspan></text>
+      </g>
+    </svg>
+  </div>
+  <div class="box">
+    <div class="k">The picture &mdash; hot potato</div>
+    <p>Treat the charge like a hot potato. The more hands it can be passed to &mdash; a bigger atom, resonance, a nearby group tugging &mdash; the comfier the anion, and the stronger the acid. <b>Crammed on one atom = unstable = weaker acid. Spread out = stable = stronger acid.</b></p>
+  </div>
+  <div class="box" style="border-color:var(--crit); background:rgba(168,57,44,.06)">
+    <div class="k" style="color:var(--crit)">Trap #1</div>
+    <p>Judge the <b>conjugate base</b>, never the neutral acid. Pull the proton, draw the anion, <em>then</em> ask how stable it is.</p>
+  </div>
+  <h3>In your words: what does &ldquo;stable conjugate base&rdquo; mean?</h3>
+  <div class="lines"><div class="ln"></div><div class="ln"></div></div>
+  <div class="pfoot"><span>Ace the DAT &middot; Crash Course</span><span>2</span></div>
+</section>
+
+<!-- ========== PAGE 3 · CARDIO LADDER ========== -->
+<section class="page">
+  <div class="eyebrow">The move &middot; the checklist</div>
+  <h2>Six letters, really five ideas: <span class="serif" style="color:var(--oc)">CARDIO</span></h2>
+  <p>Walk two anions letter by letter. The <b>first real difference</b> is your answer &mdash; and your explanation. Fill the last column with your own example as we go. (D and I are one idea, two doorways.)</p>
+  <table>
+    <tr><th style="width:18px"></th><th style="width:88px">Reason</th><th>The rule</th><th class="excol" style="width:150px">Your example</th></tr>
+    <tr><td><span class="L">C</span></td><td><b>Charge</b></td><td>Spread or neutral beats a full charge on one atom. A cationic acid (neutral conjugate base) is much stronger than its neutral relative.</td><td class="excol">&nbsp;</td></tr>
+    <tr><td><span class="L">A</span></td><td><b>Atom</b></td><td>Which atom holds the charge? Across a row the more electronegative wins; down a column the bigger atom wins.</td><td class="excol">&nbsp;</td></tr>
+    <tr><td><span class="L">R</span></td><td><b>Resonance</b></td><td>Spread the charge over several atoms. The biggest lever on the DAT.</td><td class="excol">&nbsp;</td></tr>
+    <tr><td><span class="L">D</span></td><td><b>Dipole</b></td><td>A polar bond&rsquo;s field steadies the charge through space (the field half of D/I).</td><td class="excol">&nbsp;</td></tr>
+    <tr><td><span class="L">I</span></td><td><b>Induction</b></td><td>Electron-withdrawing groups drain charge through the bonds. Closer and more groups = stronger.</td><td class="excol">&nbsp;</td></tr>
+    <tr><td><span class="L">O</span></td><td><b>Orbital</b></td><td>More s-character holds the pair tighter. The last tiebreaker: sp &gt; sp&sup2; &gt; sp&sup3;.</td><td class="excol">&nbsp;</td></tr>
+  </table>
+  <div class="box"><div class="k">The habit</div><p>When a ranking question appears, draw each conjugate base and <b>say the letters out loud</b>. Stop at the first letter that separates them &mdash; that&rsquo;s the answer and the reason.</p></div>
+  <div class="pfoot"><span>Ace the DAT &middot; Crash Course</span><span>3</span></div>
+</section>
+
+<!-- ========== PAGE 4 · R + pKa ladder ========== -->
+<section class="page">
+  <div class="eyebrow">The move &middot; the biggest lever, drawn</div>
+  <h2>Resonance is the one to see once.</h2>
+  <p>A carboxylate&rsquo;s charge lives half on each of two identical oxygens &mdash; far comfier than a full charge on one. That&rsquo;s why acetic acid (~5) crushes ethanol (~16) from the same O&ndash;H bond.</p>
+  <div class="fig">
+    <svg viewBox="0 0 460 110" width="420">
+      <g font-family="Arial,system-ui" font-size="15" fill="var(--ink)">
+        <text x="20" y="58">R</text><line x1="34" y1="53" x2="60" y2="53" stroke="var(--ink)" stroke-width="1.6"/>
+        <text x="66" y="58">C</text>
+        <line x1="80" y1="48" x2="104" y2="34" stroke="var(--ink)" stroke-width="1.6"/><line x1="83" y1="53" x2="107" y2="39" stroke="var(--ink)" stroke-width="1.6"/>
+        <text x="108" y="36">O</text>
+        <line x1="80" y1="60" x2="104" y2="74" stroke="var(--ink)" stroke-width="1.6"/>
+        <text x="108" y="82">O</text><text x="126" y="76" fill="var(--crit)" font-size="13">&minus;</text>
+        <text x="182" y="60" fill="var(--muted)" font-size="19">&harr;</text>
+        <text x="236" y="58">R</text><line x1="250" y1="53" x2="276" y2="53" stroke="var(--ink)" stroke-width="1.6"/>
+        <text x="282" y="58">C</text>
+        <line x1="296" y1="48" x2="320" y2="34" stroke="var(--ink)" stroke-width="1.6"/>
+        <text x="324" y="36">O</text><text x="342" y="30" fill="var(--crit)" font-size="13">&minus;</text>
+        <line x1="296" y1="60" x2="320" y2="74" stroke="var(--ink)" stroke-width="1.6"/><line x1="299" y1="64" x2="323" y2="78" stroke="var(--ink)" stroke-width="1.6"/>
+        <text x="324" y="82">O</text>
+        <text x="366" y="56" fill="var(--ok)" font-size="12">charge shared<tspan x="366" y="72">over both O&rsquo;s</tspan></text>
+      </g>
+    </svg>
+  </div>
+  <h3>The pK<sub>a</sub> anchors &mdash; know where these live</h3>
+  <div class="fig">
+    <svg viewBox="0 0 900 120" width="620">
+      <line x1="60" y1="66" x2="850" y2="66" stroke="var(--muted)" stroke-width="1.2"/>
+      <g font-family="ui-monospace,monospace" font-size="11" fill="var(--muted)" text-anchor="middle">
+        <line x1="60" y1="66" x2="60" y2="74" stroke="var(--muted)"/><text x="60" y="90">-10</text>
+        <line x1="192" y1="66" x2="192" y2="74" stroke="var(--muted)"/><text x="192" y="90">0</text>
+        <line x1="323" y1="66" x2="323" y2="74" stroke="var(--muted)"/><text x="323" y="90">10</text>
+        <line x1="455" y1="66" x2="455" y2="74" stroke="var(--muted)"/><text x="455" y="90">20</text>
+        <line x1="587" y1="66" x2="587" y2="74" stroke="var(--muted)"/><text x="587" y="90">30</text>
+        <line x1="718" y1="66" x2="718" y2="74" stroke="var(--muted)"/><text x="718" y="90">40</text>
+        <line x1="850" y1="66" x2="850" y2="74" stroke="var(--muted)"/><text x="850" y="90">50</text>
+      </g>
+      <g font-family="Arial,system-ui" font-size="11" fill="var(--ink)">
+        <g><line x1="100" y1="46" x2="100" y2="70" stroke="var(--crit)" stroke-width="2.6"/><text x="100" y="40" text-anchor="middle">HCl -7</text></g>
+        <g><line x1="255" y1="46" x2="255" y2="70" stroke="var(--gold)" stroke-width="2.6"/><text x="255" y="40" text-anchor="middle">RCOOH ~5</text></g>
+        <g><line x1="323" y1="54" x2="323" y2="70" stroke="var(--gold)" stroke-width="2.6"/><text x="323" y="32" text-anchor="middle">phenol 10</text></g>
+        <g><line x1="402" y1="46" x2="402" y2="70" stroke="var(--oc)" stroke-width="2.6"/><text x="402" y="40" text-anchor="middle">H&#8322;O 16</text></g>
+        <g><line x1="521" y1="54" x2="521" y2="70" stroke="var(--oc)" stroke-width="2.6"/><text x="521" y="32" text-anchor="middle">alkyne 25</text></g>
+        <g><line x1="768" y1="46" x2="768" y2="70" stroke="var(--muted)" stroke-width="2.6"/><text x="768" y="40" text-anchor="middle">alkene 44</text></g>
+        <g><line x1="850" y1="54" x2="850" y2="70" stroke="var(--muted)" stroke-width="2.6"/><text x="836" y="32" text-anchor="middle">alkane 50</text></g>
+      </g>
+    </svg>
+    <div class="cap">Left = strong (loves to give up H<sup>+</sup>); right = barely acidic. Lower pK<sub>a</sub> = stronger acid.</div>
+  </div>
+  <div class="box"><div class="k">Your rep &middot; place them</div><p>Where would <b>ammonium (NH&#8324;<sup>+</sup>)</b>, <b>ethanol</b>, and <b>trichloroacetic acid</b> sit on the ladder above? Mark an arrow for each and write its pK<sub>a</sub>.</p></div>
+  <div class="pfoot"><span>Ace the DAT &middot; Crash Course</span><span>4</span></div>
+</section>
+
+<!-- ========== PAGE 5 · YOU HOLD THE PEN ========== -->
+<section class="page">
+  <div class="eyebrow">The move &middot; you call it</div>
+  <h2>Now you hold the pen.</h2>
+  <p>Deprotonate each alcohol below. Draw the conjugate base (the anion) in each box. Then decide: <b>which anion can spread its charge?</b> That one came from the stronger acid.</p>
+  <div style="display:flex; gap:16px; margin:10px 0">
+    <div style="flex:1">
+      <div style="font-size:12px; font-weight:700; margin-bottom:6px">Ethanol &nbsp;<span class="mono" style="color:var(--ink2)">CH&#8323;CH&#8322;OH</span></div>
+      <div class="writebox"><span class="tag">draw the anion</span></div>
+    </div>
+    <div style="flex:1">
+      <div style="font-size:12px; font-weight:700; margin-bottom:6px">Acetic acid &nbsp;<span class="mono" style="color:var(--ink2)">CH&#8323;COOH</span></div>
+      <div class="writebox"><span class="tag">draw the anion</span></div>
+    </div>
+  </div>
+  <div style="margin:16px 0 6px; font-size:13.5px">Which anion spreads its charge? <span class="fill" style="min-width:220px"></span></div>
+  <div style="margin:8px 0; font-size:13.5px">So the stronger acid is <span class="fill" style="min-width:150px"></span> because <span class="fill" style="min-width:230px"></span></div>
+  <div class="box" style="margin-top:18px"><div class="k">Check yourself</div><p>Acetate spreads its charge over two equivalent oxygens by resonance; ethoxide has none. Acetic acid wins &mdash; by over a hundred billion times. Same O&ndash;H bond, different anion. That&rsquo;s the whole topic in one pair.</p></div>
+  <h3>Scratch space</h3>
+  <div class="lines"><div class="ln"></div><div class="ln"></div><div class="ln"></div></div>
+  <div class="pfoot"><span>Ace the DAT &middot; Crash Course</span><span>5</span></div>
+</section>
+
+<!-- ========== PAGE 6 · THE SIX (1-3) ========== -->
+<section class="page">
+  <div class="eyebrow">The proof &middot; walk the letters</div>
+  <h2>The six. Commit before you check.</h2>
+  <p class="lead">One for each CARDIO letter. Circle your answer and rate how sure you are &mdash; then check the key on the last page. A committed guess is what makes it stick.</p>
+
+  <div class="q">
+    <div class="qh"><span class="qn">Q1</span><span class="tag">C &middot; Charge</span></div>
+    <div class="stem">A cationic acid tends to be much stronger than its neutral relative, because its conjugate base comes out neutral. Which is the strongest acid?</div>
+    <div class="opt"><span class="o">A</span><span>NH&#8324;<sup>+</sup> (ammonium)</span></div>
+    <div class="opt"><span class="o">B</span><span>NH&#8323; (ammonia)</span></div>
+    <div class="opt"><span class="o">C</span><span>CH&#8324; (methane)</span></div>
+    <div class="opt"><span class="o">D</span><span>CH&#8323;CH&#8323; (ethane)</span></div>
+    <div class="opt"><span class="o">E</span><span>CH&#8323;NH&#8322; (methylamine)</span></div>
+    <div class="work"><span class="sure"><span class="chk"></span>Sure &nbsp; <span class="chk"></span>Shaky &nbsp; <span class="chk"></span>No idea</span><span class="rule">why: _______________________</span></div>
+  </div>
+
+  <div class="q">
+    <div class="qh"><span class="qn">Q2</span><span class="tag">A &middot; Atom (row)</span></div>
+    <div class="stem">Each loses one proton. Across the second row of the periodic table, which is the strongest acid?</div>
+    <div class="opt"><span class="o">A</span><span>HF</span></div>
+    <div class="opt"><span class="o">B</span><span>H&#8322;O</span></div>
+    <div class="opt"><span class="o">C</span><span>NH&#8323;</span></div>
+    <div class="opt"><span class="o">D</span><span>CH&#8324;</span></div>
+    <div class="opt"><span class="o">E</span><span>They are all equally strong</span></div>
+    <div class="work"><span class="sure"><span class="chk"></span>Sure &nbsp; <span class="chk"></span>Shaky &nbsp; <span class="chk"></span>No idea</span><span class="rule">why: _______________________</span></div>
+  </div>
+
+  <div class="q">
+    <div class="qh"><span class="qn">Q3</span><span class="tag">A &middot; Atom (column)</span></div>
+    <div class="stem">Which hydrohalic acid is the strongest: HF, HCl, HBr, or HI?</div>
+    <div class="opt"><span class="o">A</span><span>HI</span></div>
+    <div class="opt"><span class="o">B</span><span>HF</span></div>
+    <div class="opt"><span class="o">C</span><span>HCl</span></div>
+    <div class="opt"><span class="o">D</span><span>HBr</span></div>
+    <div class="opt"><span class="o">E</span><span>All equally strong (all strong acids)</span></div>
+    <div class="work"><span class="sure"><span class="chk"></span>Sure &nbsp; <span class="chk"></span>Shaky &nbsp; <span class="chk"></span>No idea</span><span class="rule">why: _______________________</span></div>
+  </div>
+  <div class="pfoot"><span>Ace the DAT &middot; Crash Course</span><span>6</span></div>
+</section>
+
+<!-- ========== PAGE 7 · THE SIX (4-6) ========== -->
+<section class="page">
+  <div class="eyebrow">The proof &middot; walk the letters</div>
+  <div class="q">
+    <div class="qh"><span class="qn">Q4</span><span class="tag">R &middot; Resonance</span></div>
+    <div class="stem">Acetic acid (pK<sub>a</sub> 4.8) is over a hundred billion times more acidic than ethanol (16), though both lose an O&ndash;H proton. The main reason is that the acetate anion is:</div>
+    <div class="opt"><span class="o">A</span><span>delocalized &mdash; its charge is shared over two equivalent oxygens by resonance</span></div>
+    <div class="opt"><span class="o">B</span><span>sitting on a larger atom than ethoxide is</span></div>
+    <div class="opt"><span class="o">C</span><span>held right next to an sp-hybridized carbon</span></div>
+    <div class="opt"><span class="o">D</span><span>neutral overall, unlike ethoxide</span></div>
+    <div class="opt"><span class="o">E</span><span>stabilized by an internal hydrogen bond</span></div>
+    <div class="work"><span class="sure"><span class="chk"></span>Sure &nbsp; <span class="chk"></span>Shaky &nbsp; <span class="chk"></span>No idea</span><span class="rule">why: _______________________</span></div>
+  </div>
+
+  <div class="q">
+    <div class="qh"><span class="qn">Q5</span><span class="tag">I &middot; Induction</span></div>
+    <div class="stem">Trichloroacetic acid (pK<sub>a</sub> 0.7) is far stronger than acetic acid (4.8). Both carboxylates have identical resonance. The extra stabilization comes from:</div>
+    <div class="opt"><span class="o">A</span><span>three electron-withdrawing chlorines pulling charge away (induction)</span></div>
+    <div class="opt"><span class="o">B</span><span>extra resonance from the chlorine lone pairs</span></div>
+    <div class="opt"><span class="o">C</span><span>the greater molecular weight</span></div>
+    <div class="opt"><span class="o">D</span><span>chlorine raising the s-character of the carbon</span></div>
+    <div class="opt"><span class="o">E</span><span>hydrogen bonding between the Cl and the O&ndash;H</span></div>
+    <div class="work"><span class="sure"><span class="chk"></span>Sure &nbsp; <span class="chk"></span>Shaky &nbsp; <span class="chk"></span>No idea</span><span class="rule">why: _______________________</span></div>
+  </div>
+
+  <div class="q">
+    <div class="qh"><span class="qn">Q6</span><span class="tag">O &middot; Orbital</span></div>
+    <div class="stem">Which C&ndash;H bond is the most acidic?</div>
+    <div class="opt"><span class="o">A</span><span>the terminal C&ndash;H of ethyne (an alkyne)</span></div>
+    <div class="opt"><span class="o">B</span><span>a C&ndash;H of ethane (an alkane)</span></div>
+    <div class="opt"><span class="o">C</span><span>a C&ndash;H of ethene (an alkene)</span></div>
+    <div class="opt"><span class="o">D</span><span>all C&ndash;H bonds are equally acidic</span></div>
+    <div class="opt"><span class="o">E</span><span>ethane, because it has the most C&ndash;H bonds</span></div>
+    <div class="work"><span class="sure"><span class="chk"></span>Sure &nbsp; <span class="chk"></span>Shaky &nbsp; <span class="chk"></span>No idea</span><span class="rule">why: _______________________</span></div>
+  </div>
+  <div class="pfoot"><span>Ace the DAT &middot; Crash Course</span><span>7</span></div>
+</section>
+
+<!-- ========== PAGE 8 · ANSWER KEY ========== -->
+<section class="page">
+  <div class="eyebrow">Answer key &middot; check after you commit</div>
+  <h2>The six, decided.</h2>
+  <div class="akey">
+    <div class="row"><span class="a">Q1 &rarr; A</span><span class="r"><b>Charge.</b> Ammonium loses H<sup>+</sup> to give neutral NH&#8323; &mdash; reaching neutral is a big stabilization (pK<sub>a</sub> ~9), so it beats every neutral N&ndash;H and C&ndash;H acid here.</span></div>
+    <div class="row"><span class="a">Q2 &rarr; A</span><span class="r"><b>Atom, across a row.</b> The most electronegative atom holds the charge best: F &gt; O &gt; N &gt; C. HF wins (3.2 vs 15.7 vs 38 vs ~50).</span></div>
+    <div class="row"><span class="a">Q3 &rarr; A</span><span class="r"><b>Atom, down a column.</b> Size beats electronegativity going down; big iodide spreads the charge, so HI is strongest (~ -10). HF is actually the <em>weakest</em> halide &mdash; the classic trap.</span></div>
+    <div class="row"><span class="a">Q4 &rarr; A</span><span class="r"><b>Resonance.</b> Half a charge on each of two equivalent oxygens beats a full charge on one. Ethoxide has no such escape.</span></div>
+    <div class="row"><span class="a">Q5 &rarr; A</span><span class="r"><b>Induction.</b> Same resonance in both, so R ties. The three Cl atoms drain charge off the anion through the bonds and space (the D/I check) &mdash; not resonance or mass.</span></div>
+    <div class="row"><span class="a">Q6 &rarr; A</span><span class="r"><b>Orbital.</b> The sp carbon is 50% s-character, holding the pair close (~25). More s-character = more acidic: sp &gt; sp&sup2; &gt; sp&sup3;.</span></div>
+  </div>
+  <div class="box" style="margin-top:18px"><div class="k">Your rules to keep</div>
+    <p style="margin-bottom:8px">Write, in your own words, the one-line rule behind each miss &mdash; then drill it in the Ace Labs engine.</p>
+    <div class="lines"><div class="ln"></div><div class="ln"></div><div class="ln"></div><div class="ln"></div></div>
+  </div>
+  <div class="pfoot"><span>Ace the DAT &middot; Crash Course</span><span>8</span></div>
+</section>
+
+<!-- ========== PAGE 9 · CHEAT CARD ========== -->
+<section class="page">
+  <div class="eyebrow">Keep this &middot; CARDIO in your pocket</div>
+  <h2>Cut it out. Carry it.</h2>
+  <p>When a ranking question appears, run this top-down and stop at the first real difference &mdash; that&rsquo;s the answer and the reason.</p>
+  <div class="cheat">
+    <div class="k">Acid-Base CARDIO</div>
+    <div class="t">Acidity = how stable is the conjugate base?</div>
+    <ol>
+      <li><b>C</b>harge &mdash; spread or neutral is better</li>
+      <li><b>A</b>tom &mdash; row: EN wins; column: size wins</li>
+      <li><b>R</b>esonance &mdash; delocalize the charge</li>
+      <li><b>D/I</b> &mdash; nearby EWG pulls it away (closer = stronger)</li>
+      <li><b>O</b>rbital &mdash; sp &gt; sp&sup2; &gt; sp&sup3;</li>
+    </ol>
+  </div>
+  <div class="box" style="margin-top:22px"><div class="k">Where it goes from here</div>
+    <p><b>Now:</b> drill CARDIO to reflex in the Ace Labs Acid-Base engine (timed sets + spaced deck). &nbsp; <b>In 2 days:</b> redo the six from memory before checking. &nbsp; <b>Re-test:</b> catch it on your next full length &mdash; land it there and it&rsquo;s yours.</p>
+  </div>
+  <div class="pfoot"><span>Ace the DAT &middot; Crash Course</span><span>9</span></div>
+</section>
