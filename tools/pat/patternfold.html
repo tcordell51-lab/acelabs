@@ -47,7 +47,7 @@
   <div class="bar">
     <button id="newq" class="primary">New net</button>
     <button class="ghost" id="export" disabled>Export log (CSV)</button>
-    <span class="pill"><span class="timer" id="timer">0.0s</span></span>
+    <span class="pill"><span class="timer" id="timer">0.0s</span><span class="tgt">aim <b>50s</b></span></span>
   </div>
 
   <div class="cols">
@@ -265,7 +265,7 @@ function makeOpts(net,F,pats){
 // ---- timer + session stats + CSV export ----
 function fmt(ms){return (ms/1000).toFixed(1)+'s'}
 function startTimer(){ stopTimer(); t0=Date.now(); var el=document.getElementById('timer'); if(!el)return;
-  tick=setInterval(function(){ el.textContent=fmt(Date.now()-t0); el.classList.toggle('warn',(Date.now()-t0)>20000); },100); }
+  tick=setInterval(function(){ el.textContent=fmt(Date.now()-t0); el.classList.toggle('warn',(Date.now()-t0)>50000); },100); }
 function stopTimer(){ if(tick){clearInterval(tick);tick=null;} }
 function renderStats(){
   var acc=totals.n?Math.round(100*totals.ok/totals.n)+'%':'—', avg=totals.n?(totals.ms/totals.n/1000).toFixed(1)+'s':'—';

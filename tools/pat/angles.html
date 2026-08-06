@@ -37,7 +37,7 @@
     <span class="lab" style="margin-left:8px">Arm-length trap</span>
     <button id="trap" class="ghost">Off</button>
     <button class="ghost" id="export" disabled>Export log (CSV)</button>
-    <span class="pill"><span class="timer" id="timer">0.0s</span></span>
+    <span class="pill"><span class="timer" id="timer">0.0s</span><span class="tgt">aim <b>20s</b></span></span>
   </div>
 
   <div class="card">
@@ -134,7 +134,7 @@ function renderStage(){
 }
 function fmt(ms){return (ms/1000).toFixed(1)+'s'}
 function startTimer(){ stopTimer(); t0=Date.now(); var el=document.getElementById('timer');
-  tick=setInterval(function(){ el.textContent=fmt(Date.now()-t0); el.classList.toggle('warn',(Date.now()-t0)>8000); },100); }
+  tick=setInterval(function(){ el.textContent=fmt(Date.now()-t0); el.classList.toggle('warn',(Date.now()-t0)>20000); },100); }
 function stopTimer(){ if(tick){clearInterval(tick);tick=null;} }
 function renderChoices(){
   var c=document.getElementById('choices'); c.innerHTML='';

@@ -36,7 +36,7 @@
   <div class="bar">
     <span class="lab">Timer starts in Drill mode</span>
     <button class="ghost" id="export" disabled>Export log (CSV)</button>
-    <span class="pill"><span class="timer" id="timer">0.0s</span></span>
+    <span class="pill"><span class="timer" id="timer">0.0s</span><span class="tgt">aim <b>25s</b></span></span>
   </div>
 
   <div class="cols">
@@ -85,7 +85,7 @@ var LOG=[];
 function fmt(ms){return (ms/1000).toFixed(1)+'s'}
 function startTimer(){ stopTimer(); t0=Date.now(); var el=document.getElementById('timer');
   el.textContent='0.0s'; el.classList.remove('warn');
-  tick=setInterval(function(){ el.textContent=fmt(Date.now()-t0); el.classList.toggle('warn',(Date.now()-t0)>8000); },100); }
+  tick=setInterval(function(){ el.textContent=fmt(Date.now()-t0); el.classList.toggle('warn',(Date.now()-t0)>25000); },100); }
 function stopTimer(){ if(tick){clearInterval(tick);tick=null;} }
 function resetTimerDisplay(){ var el=document.getElementById('timer'); el.textContent='0.0s'; el.classList.remove('warn'); }
 function renderStats(){

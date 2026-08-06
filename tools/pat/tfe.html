@@ -37,7 +37,7 @@
   <div class="bar">
     <button id="newq" class="primary">New object</button>
     <button class="ghost" id="export" disabled>Export log (CSV)</button>
-    <span class="pill"><span class="timer" id="timer">0.0s</span></span>
+    <span class="pill"><span class="timer" id="timer">0.0s</span><span class="tgt">aim <b>45s</b></span></span>
   </div>
 
   <div class="grid2">
@@ -84,7 +84,7 @@ var stats={n:0,ok:0,ms:0};
 var LOG=[];
 function fmt(ms){return (ms/1000).toFixed(1)+'s'}
 function startTimer(){ stopTimer(); t0=Date.now(); var el=document.getElementById('timer');
-  tick=setInterval(function(){ el.textContent=fmt(Date.now()-t0); el.classList.toggle('warn',(Date.now()-t0)>8000); },100); }
+  tick=setInterval(function(){ el.textContent=fmt(Date.now()-t0); el.classList.toggle('warn',(Date.now()-t0)>45000); },100); }
 function stopTimer(){ if(tick){clearInterval(tick);tick=null;} }
 function renderStats(){
   var s=stats;

@@ -37,6 +37,8 @@
   .pill{margin-left:auto;display:flex;gap:8px;align-items:center}
   .timer{font-variant-numeric:tabular-nums;font-size:20px;font-weight:600;min-width:66px;text-align:right}
   .timer.warn{color:var(--bad)}
+  .tgt{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);white-space:nowrap;margin-left:8px}
+  .tgt b{color:var(--brass);font-weight:700}
 
   .frame{border:2px solid var(--ink);background:#fff;padding:0;display:flex;overflow-x:auto}
   .cell{flex:1 0 0;min-width:150px;border-right:1px solid #8d8d8d;position:relative;
@@ -115,7 +117,7 @@
     <button class="ghost" id="reveal">Reveal &nbsp;<kbd>R</kbd></button>
     <button class="ghost" id="export" disabled>Export log (CSV)</button>
     <span class="pill">
-      <span class="timer" id="timer">0.0s</span>
+      <span class="timer" id="timer">0.0s</span><span class="tgt">aim <b>45s</b></span>
     </span>
   </div>
 
@@ -954,7 +956,7 @@ function tick() {
   const s = (performance.now() - S.t0) / 1000;
   const el = $('timer');
   el.textContent = s.toFixed(1) + 's';
-  el.classList.toggle('warn', s > 25);
+  el.classList.toggle('warn', s > 45);
 }
 
 function draw() {
