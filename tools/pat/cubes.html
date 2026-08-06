@@ -4,49 +4,41 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Ace PAT Studio — Cube Counting: The T-Chart</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="pat-cream.css">
 <style>
-:root{--bg:#0d1411;--card:#121b16;--panel:#15110b;--line:rgba(201,168,76,.22);--ink:#ece6d7;--ink2:#b7b0a0;--ink3:#867f72;--gold:#C9A84C;--goldhi:#E6D08A;--amber:#D98A2B;--good:#57B487;--bad:#C06A62;--serif:Georgia,'Times New Roman',serif;--mono:ui-monospace,'SF Mono',Menlo,monospace;--sans:system-ui,-apple-system,'Segoe UI',sans-serif}
-*{box-sizing:border-box}
-body{margin:0;background:radial-gradient(700px 420px at 85% -5%,rgba(201,168,76,.07),transparent 60%),var(--bg);color:var(--ink);font-family:var(--sans)}
-.wrap{max-width:1150px;margin:0 auto;padding:26px 22px 60px}
-.top{display:flex;align-items:baseline;gap:14px;border-bottom:1px solid var(--line);padding-bottom:14px;margin-bottom:20px;flex-wrap:wrap}
-.top .brand{font-family:var(--serif);font-size:20px}
-.top .brand span{color:var(--gold)}
-.top a{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--gold);text-decoration:none}
-.kick{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--amber)}
-h1{font-family:var(--serif);font-size:30px;margin:0 0 6px}
-.lede{color:var(--ink2);max-width:76ch;margin:0 0 18px;font-size:15px}
-.lede b{color:var(--goldhi)}
-.cols{display:grid;grid-template-columns:600px 1fr;gap:18px}
-.card{background:var(--card);border:1px solid var(--line);border-top:3px solid var(--amber);border-radius:14px;padding:16px 18px}
-.card h2{font-family:var(--serif);font-size:17px;margin:0 0 2px}
-.card .k{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--amber)}
-svg{display:block;width:100%;height:auto}
-button{background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:9px;padding:9px 15px;font-family:var(--mono);font-size:12px;cursor:pointer}
-button:hover{border-color:var(--gold)}
-button.primary{background:linear-gradient(180deg,var(--goldhi),var(--gold));color:#1a1206;border:none;font-weight:700}
-button.on{border-color:var(--gold);color:var(--goldhi)}
-button:disabled{opacity:.35;cursor:default}
-.controls{display:flex;gap:9px;flex-wrap:wrap;margin-top:12px}
-.coach{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:11px 14px;margin-top:12px;font-size:13.5px;line-height:1.5;color:var(--ink2)}
-.coach b{color:var(--goldhi)}
-.qrow{display:flex;gap:9px;flex-wrap:wrap;margin-top:10px}
-button.ans.right{border-color:var(--good);box-shadow:0 0 0 1px var(--good);color:var(--good)}
-button.ans.wrong{border-color:var(--bad);box-shadow:0 0 0 1px var(--bad);color:var(--bad)}
-.stepline{font-family:var(--mono);font-size:11px;color:var(--ink3);margin-top:10px;letter-spacing:.04em}
-.stepline b{color:var(--goldhi)}
-@media(max-width:1020px){.cols{grid-template-columns:1fr}}
+  /* module-specific layout only — palette + chrome come from pat-cream.css */
+  h1.title{font-size:30px;margin:2px 0 6px}
+  .cols{display:grid;grid-template-columns:600px 1fr;gap:18px}
+  @media(max-width:1020px){.cols{grid-template-columns:1fr}}
+  #stage{width:100%;background:#DCDCDC;border-radius:10px}
+  #chart{width:100%}
+  .controls{display:flex;gap:9px;flex-wrap:wrap;margin-top:12px}
+  .stepline{font-size:11px;color:var(--muted);margin-top:10px;letter-spacing:.03em;line-height:1.55}
+  .stepline b{color:var(--ink)}
 </style>
 </head>
 <body>
+<header>
+  <h1>Cube Counting</h1>
+  <span class="tag">AceTheDAT &middot; PAT drilling</span>
+  <span class="spacer"></span>
+  <span class="seed" id="seedTag"></span>
+  <a class="back" href="index.html">All modules</a>
+</header>
+
 <div class="wrap">
-  <div class="top">
-    <div class="brand">Ace <span>PAT</span> Studio</div>
-    <div class="kick">Module 5 · Cube Counting</div>
-    <a href="index.html">ALL MODULES</a>
-  </div>
-  <h1>The T-Chart</h1>
+  <h1 class="title">The T-Chart</h1>
   <p class="lede"><b>Bottom to top, front to back, left to right — bottom first.</b> Number every cube in one clean sweep; the moment your eyes leave the order is when you mess up. Tally each cube by painted faces, then verify: <b>total tally marks must equal total cubes</b>.</p>
+
+  <div class="bar">
+    <span class="lab">Timer starts in Drill mode</span>
+    <button class="ghost" id="export" disabled>Export log (CSV)</button>
+    <span class="pill"><span class="timer" id="timer">0.0s</span></span>
+  </div>
+
   <div class="cols">
     <div class="card">
       <div class="k">The stack</div>
@@ -68,16 +60,51 @@ button.ans.wrong{border-color:var(--bad);box-shadow:0 0 0 1px var(--bad);color:v
       <div class="coach" id="coach"></div>
     </div>
   </div>
+
+  <div class="card">
+    <div class="k">This session</div>
+    <div class="stat" id="totals"></div>
+  </div>
 </div>
 <script>
 (function(){
-var INK='#ece6d7', INK2='#b7b0a0', INK3='#867f72', GOLD='#C9A84C', GOLDHI='#E6D08A', GOOD='#57B487', BAD='#C06A62', BG='#0d1411';
-var FT='#54655a', FF='#3b4a41', FR='#2a352e';
+/* cream SVG palette (matches pat-cream.css drawing colors) */
+var INK='#16241C', INK2='#6E7A70', INK3='#A7B0A6', GOLD='#B08D3F', GOLDHI='#8a6d1e', GOOD='#2F7D52', BAD='#A8342B';
+var EDGE='#16241C';                        // cube edges on cream
+var FT='#EAE3D2', FF='#CDBF9E', FR='#B9A87F';   // iso cube faces: top / front / right
 var MONO='ui-monospace,Menlo,monospace';
 function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
 var qp=new URLSearchParams(location.search);
 var seed=parseInt(qp.get('seed')||'21',10), rng=mulberry32(seed);
 function ri(n){return Math.floor(rng()*n)}
+
+// ---- session state: live timer, stats, CSV log ----
+var t0=0, tick=null;
+var stats={n:0,ok:0,ms:0};
+var LOG=[];
+function fmt(ms){return (ms/1000).toFixed(1)+'s'}
+function startTimer(){ stopTimer(); t0=Date.now(); var el=document.getElementById('timer');
+  el.textContent='0.0s'; el.classList.remove('warn');
+  tick=setInterval(function(){ el.textContent=fmt(Date.now()-t0); el.classList.toggle('warn',(Date.now()-t0)>8000); },100); }
+function stopTimer(){ if(tick){clearInterval(tick);tick=null;} }
+function resetTimerDisplay(){ var el=document.getElementById('timer'); el.textContent='0.0s'; el.classList.remove('warn'); }
+function renderStats(){
+  var n=stats.n, ok=stats.ok;
+  var acc=n?Math.round(100*ok/n)+'%':'—', avg=n?(stats.ms/n/1000).toFixed(1)+'s':'—';
+  document.getElementById('totals').innerHTML=
+    '<div><b>'+n+'</b><span>attempted</span></div>'+
+    '<div><b>'+ok+'</b><span>correct</span></div>'+
+    '<div><b>'+acc+'</b><span>accuracy</span></div>'+
+    '<div><b>'+avg+'</b><span>avg time</span></div>';
+}
+function exportCSV(){
+  if(!LOG.length)return;
+  var rows=[['seed','params','chosen','correct','correct_flag','seconds']];
+  LOG.forEach(function(r){rows.push([r.seed,r.params,r.chosen,r.correct,r.ok,(r.ms/1000).toFixed(2)])});
+  var csv=rows.map(function(r){return r.join(',')}).join('\n');
+  var a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+  a.download='pat-cubes-log.csv'; document.body.appendChild(a); a.click(); document.body.removeChild(a);
+}
 
 // ---- generation: heightmap 4x3, heights 0-3, 7-12 cubes ----
 var P=null; // {cubes[[x,y,z]...] in sweep order, counts[], hist, total, question:{n, answer}}
@@ -112,7 +139,7 @@ function gen(){
 function iso(ox,oy,s){return function(x,y,z){return [ox+(x-y)*0.866*s, oy+(x+y)*0.5*s - z*s]}}
 function poly(Pr,pts,fill){
   var d=pts.map(function(c){var p=Pr(c[0],c[1],c[2]);return p[0].toFixed(1)+','+p[1].toFixed(1)}).join(' ');
-  return '<polygon points="'+d+'" fill="'+fill+'" stroke="'+BG+'" stroke-width="1.4" stroke-linejoin="round"/>';
+  return '<polygon points="'+d+'" fill="'+fill+'" stroke="'+EDGE+'" stroke-width="1.4" stroke-linejoin="round"/>';
 }
 function box(Pr,x,y,z){
   return poly(Pr,[[x,y,z+1],[x+1,y,z+1],[x+1,y+1,z+1],[x,y+1,z+1]],FT)
@@ -139,7 +166,7 @@ function renderStage(){
         o+='<polygon points="'+hx.map(function(cc){var p=Pr(cc[0],cc[1],cc[2]);return p[0].toFixed(1)+','+p[1].toFixed(1)}).join(' ')+'" fill="none" stroke="'+GOLD+'" stroke-width="1.3" stroke-dasharray="4 4"/>';
       }
       var cur=(i===step-1);
-      o+='<circle cx="'+pos[0].toFixed(1)+'" cy="'+pos[1].toFixed(1)+'" r="9" fill="'+BG+'" stroke="'+(cur?GOOD:GOLD)+'" stroke-width="'+(cur?2:1.3)+'"'+(ghost?' stroke-dasharray="3 3"':'')+'/>';
+      o+='<circle cx="'+pos[0].toFixed(1)+'" cy="'+pos[1].toFixed(1)+'" r="9" fill="#fff" stroke="'+(cur?GOOD:GOLD)+'" stroke-width="'+(cur?2:1.3)+'"'+(ghost?' stroke-dasharray="3 3"':'')+'/>';
       o+='<text x="'+pos[0].toFixed(1)+'" y="'+(pos[1]+3.4).toFixed(1)+'" fill="'+(cur?GOOD:GOLDHI)+'" font-size="10" font-family="'+MONO+'" text-anchor="middle">'+(i+1)+'</text>';
     }
   }
@@ -183,21 +210,25 @@ function renderChart(){
 function renderDrill(){
   var d=document.getElementById('drill');
   if(MODE!=='drill'){d.innerHTML='';renderCoach();return}
-  var h='<div class="qrow">';
-  [1,2,3,4,5].forEach(function(n){h+='<button class="ans" data-n="'+n+'">'+n+' cube'+(n>1?'s':'')+'</button>'});
+  var h='<div class="choices">';
+  [1,2,3,4,5].forEach(function(n){h+='<button class="choice" data-n="'+n+'">'+n+' cube'+(n>1?'s':'')+'</button>'});
   h+='</div>';
   d.innerHTML=h;
-  Array.prototype.forEach.call(d.querySelectorAll('.ans'),function(b){
+  Array.prototype.forEach.call(d.querySelectorAll('.choice'),function(b){
     b.addEventListener('click',function(){
       if(answered)return; answered=true;
+      var ms=Date.now()-t0; stopTimer();
       var ok=parseInt(b.dataset.n,10)===P.question.answer;
       if(window.PatLedger)PatLedger.record('cubes',ok);
-      Array.prototype.forEach.call(d.querySelectorAll('.ans'),function(x){
+      stats.n++; stats.ms+=ms; if(ok)stats.ok++;
+      LOG.push({seed:seed,params:'faces='+P.question.n+';cubes='+P.total,chosen:parseInt(b.dataset.n,10),correct:P.question.answer,ok:ok?1:0,ms:ms});
+      document.getElementById('export').disabled=false;
+      Array.prototype.forEach.call(d.querySelectorAll('.choice'),function(x){
         x.disabled=true;
         if(parseInt(x.dataset.n,10)===P.question.answer)x.classList.add('right');
       });
       if(parseInt(b.dataset.n,10)!==P.question.answer)b.classList.add('wrong');
-      renderChart(); renderCoach();
+      renderChart(); renderCoach(); renderStats();
     });
   });
   renderCoach();
@@ -217,20 +248,26 @@ function renderCoach(){
 }
 function total(){return P.cubes.length+1}
 function render(){renderStage();renderChart();renderDrill();
+  document.getElementById('seedTag').textContent='seed '+seed;
   document.getElementById('back').disabled=(MODE!=='teach'||step===0);
   document.getElementById('next').disabled=(MODE!=='teach'||step===total());
 }
 document.getElementById('next').addEventListener('click',function(){if(step<total()){step++;render()}});
 document.getElementById('back').addEventListener('click',function(){if(step>0){step--;render()}});
-document.getElementById('newq').addEventListener('click',function(){seed++;P=gen();step=0;answered=false;render()});
+document.getElementById('newq').addEventListener('click',function(){seed++;P=gen();step=0;answered=false;render();
+  if(MODE==='drill')startTimer(); else resetTimerDisplay();});
 document.getElementById('mode').addEventListener('click',function(){
   MODE=(MODE==='teach')?'drill':'teach'; this.textContent='Mode: '+(MODE==='teach'?'Teach':'Drill');
   step=0; answered=false; render();
+  if(MODE==='drill')startTimer(); else {stopTimer();resetTimerDisplay();}
 });
+document.getElementById('export').addEventListener('click',exportCSV);
 P=gen();
 if(qp.get('step')){step=Math.min(total(),parseInt(qp.get('step'),10)||0)}
 if(qp.get('mode')==='drill'){MODE='drill';document.getElementById('mode').textContent='Mode: Drill'}
 render();
+renderStats();
+if(MODE==='drill')startTimer();
 })();
 </script>
 <script src="pat-ledger.js"></script>

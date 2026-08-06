@@ -4,50 +4,43 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Ace PAT Studio — Top Front End: Solid Means Seen</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="pat-cream.css">
 <style>
-:root{--bg:#0d1411;--card:#121b16;--panel:#15110b;--line:rgba(201,168,76,.22);--ink:#ece6d7;--ink2:#b7b0a0;--ink3:#867f72;--gold:#C9A84C;--goldhi:#E6D08A;--amber:#D98A2B;--good:#57B487;--bad:#C06A62;--serif:Georgia,'Times New Roman',serif;--mono:ui-monospace,'SF Mono',Menlo,monospace;--sans:system-ui,-apple-system,'Segoe UI',sans-serif}
-*{box-sizing:border-box}
-body{margin:0;background:radial-gradient(700px 420px at 85% -5%,rgba(201,168,76,.07),transparent 60%),var(--bg);color:var(--ink);font-family:var(--sans)}
-.wrap{max-width:1160px;margin:0 auto;padding:26px 22px 60px}
-.top{display:flex;align-items:baseline;gap:14px;border-bottom:1px solid var(--line);padding-bottom:14px;margin-bottom:20px;flex-wrap:wrap}
-.top .brand{font-family:var(--serif);font-size:20px}
-.top .brand span{color:var(--gold)}
-.top a{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--gold);text-decoration:none}
-.kick{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--amber)}
-h1{font-family:var(--serif);font-size:30px;margin:0 0 6px}
-.lede{color:var(--ink2);max-width:76ch;margin:0 0 18px;font-size:15px}
-.lede b{color:var(--goldhi)}
-.cols{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-.card{background:var(--card);border:1px solid var(--line);border-top:3px solid var(--amber);border-radius:14px;padding:16px 18px}
-.card h2{font-family:var(--serif);font-size:17px;margin:0 0 2px}
-.card .k{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--amber)}
-svg{display:block;width:100%;height:auto}
-button{background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:9px;padding:9px 15px;font-family:var(--mono);font-size:12px;cursor:pointer}
-button:hover{border-color:var(--gold)}
-button.primary{background:linear-gradient(180deg,var(--goldhi),var(--gold));color:#1a1206;border:none;font-weight:700}
-.controls{display:flex;gap:9px;flex-wrap:wrap;margin-top:12px}
-.coach{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:11px 14px;margin-top:12px;font-size:13.5px;line-height:1.5;color:var(--ink2)}
-.coach b{color:var(--goldhi)}
-.opts{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:10px}
-.opt{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px;cursor:pointer;text-align:center}
-.opt:hover{border-color:var(--gold)}
-.opt.correct{border-color:var(--good);box-shadow:0 0 0 1px var(--good)}
-.opt.wrong{border-color:var(--bad);box-shadow:0 0 0 1px var(--bad)}
-.opt .lab{font-family:var(--mono);font-size:11px;color:var(--ink2);margin-bottom:4px}
-.hint{font-size:12px;color:var(--ink3);margin-top:8px}
-@media(max-width:1000px){.cols{grid-template-columns:1fr}}
+  /* module-specific layout only — palette + chrome come from pat-cream.css */
+  h1.title{font-size:30px;margin:0 0 6px}
+  .controls{display:flex;gap:9px;flex-wrap:wrap;margin-top:12px}
+  .opts{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:10px}
+  .opt{background:#DCDCDC;border:1px solid #C6BCA2;border-radius:10px;padding:8px;cursor:pointer;text-align:center}
+  .opt:hover{border-color:var(--brass)}
+  .opt.correct{border-color:var(--ok);box-shadow:0 0 0 1px var(--ok)}
+  .opt.wrong{border-color:var(--bad);box-shadow:0 0 0 1px var(--bad)}
+  .opt .lab{font-family:var(--sans);font-size:11px;color:var(--muted);margin-bottom:4px}
+  svg{width:100%}
 </style>
 </head>
 <body>
+<header>
+  <h1>Top Front End</h1>
+  <span class="tag">AceTheDAT &middot; PAT drilling</span>
+  <span class="spacer"></span>
+  <span class="seed" id="seedTag"></span>
+  <a class="back" href="index.html">All modules</a>
+</header>
+
 <div class="wrap">
-  <div class="top">
-    <div class="brand">Ace <span>PAT</span> Studio</div>
-    <div class="kick">Module 2 · Top - Front - End</div>
-    <a href="index.html">ALL MODULES</a>
-  </div>
-  <h1>Solid Means Seen. Dashed Means Hidden.</h1>
+  <h1 class="title">Solid Means Seen. Dashed Means Hidden.</h1>
   <p class="lede">Every problem here <b>forces the solid-vs-dashed decision</b> — the load-bearing skill of real TFE. Don't build the 3D object in your head: orient for 5-10 seconds, find one distinguishing feature, get to a 50-50. <b>Width pairs top and front. Height pairs front and end. Depth pairs top and end — the tough one.</b></p>
-  <div class="cols">
+
+  <div class="bar">
+    <button id="newq" class="primary">New object</button>
+    <button class="ghost" id="export" disabled>Export log (CSV)</button>
+    <span class="pill"><span class="timer" id="timer">0.0s</span></span>
+  </div>
+
+  <div class="grid2">
     <div class="card">
       <div class="k">The object + its three computed views</div>
       <h2 id="ltitle">Teach: the inspector's three stops</h2>
@@ -55,7 +48,6 @@ button.primary{background:linear-gradient(180deg,var(--goldhi),var(--gold));colo
       <div class="controls">
         <button id="hid" class="primary">Highlight hidden edges</button>
         <button id="iso3d">Show object: On</button>
-        <button id="newq">New object</button>
       </div>
       <div class="coach" id="lcoach"><b>Google Maps.</b> Satellite view = top. Drop the little guy on the street = front. He walks around the corner = end. On the end view never say left-right: <b>end-left is the front, end-right is the back.</b></div>
     </div>
@@ -68,16 +60,49 @@ button.primary{background:linear-gradient(180deg,var(--goldhi),var(--gold));colo
       <div class="coach" id="rcoach"><b>Can you see it from the end? No - dash.</b> An overhang means a dash somewhere.</div>
     </div>
   </div>
+
+  <div class="card">
+    <div class="k">This session</div>
+    <div class="stat" id="totals"></div>
+  </div>
 </div>
 <script>
 (function(){
-var INK='#ece6d7', INK2='#b7b0a0', INK3='#867f72', GOLD='#C9A84C', GOLDHI='#E6D08A', GOOD='#57B487', BAD='#C06A62', BG='#0d1411';
-var FT='#54655a', FF='#3b4a41', FR='#2a352e';
-var MONO='ui-monospace,Menlo,monospace';
+/* cream SVG palette (matches pat-cream.css drawing colors) */
+var INK='#16241C', INK2='#6E7A70', INK3='#A7B0A6', GOLD='#B08D3F', GOLDHI='#8a6d1e', GOOD='#2F7D52', BAD='#A8342B';
+/* isometric object faces (top lightest -> end darkest) + crisp ink edge on cream */
+var FT='#DCDCDC', FF='#BFBFBF', FR='#A7B0A6', EDGE='#16241C';
+var MONO="'DM Sans',system-ui,sans-serif";
 function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
 var qp=new URLSearchParams(location.search);
 var seed=parseInt(qp.get('seed')||'31',10), rng=mulberry32(seed);
 function ri(n){return Math.floor(rng()*n)}
+
+/* session loop: timer + stats + CSV log */
+var t0=0, tick=null;
+var stats={n:0,ok:0,ms:0};
+var LOG=[];
+function fmt(ms){return (ms/1000).toFixed(1)+'s'}
+function startTimer(){ stopTimer(); t0=Date.now(); var el=document.getElementById('timer');
+  tick=setInterval(function(){ el.textContent=fmt(Date.now()-t0); el.classList.toggle('warn',(Date.now()-t0)>8000); },100); }
+function stopTimer(){ if(tick){clearInterval(tick);tick=null;} }
+function renderStats(){
+  var s=stats;
+  var acc=s.n?Math.round(100*s.ok/s.n)+'%':'—', avg=s.n?(s.ms/s.n/1000).toFixed(1)+'s':'—';
+  document.getElementById('totals').innerHTML=
+    '<div><b>'+s.n+'</b><span>attempted</span></div>'+
+    '<div><b>'+s.ok+'</b><span>correct</span></div>'+
+    '<div><b>'+acc+'</b><span>accuracy</span></div>'+
+    '<div><b>'+avg+'</b><span>avg time</span></div>';
+}
+function exportCSV(){
+  if(!LOG.length)return;
+  var rows=[['seed','params','chosen','correct','correct_flag','seconds']];
+  LOG.forEach(function(r){rows.push([r.seed,r.params,r.chosen,r.correct,r.ok,(r.ms/1000).toFixed(2)])});
+  var csv=rows.map(function(r){return r.join(',')}).join('\n');
+  var a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+  a.download='pat-tfe-log.csv'; document.body.appendChild(a); a.click(); document.body.removeChild(a);
+}
 
 // ---- solid = heightmap h[x][y], front = y0 side, viewer of FRONT at y=-inf ----
 var W=0,D=0,H=null;
@@ -184,7 +209,7 @@ function isoObj(ox,oy,s){
   cols.sort(function(a,b){ return (a[0]+(D-a[1]))-(b[0]+(D-b[1])) });
   cols.forEach(function(c){
     var x=c[0],y=c[1],ht=h(x,y);
-    function poly(pts,fill){return '<polygon points="'+pts.map(function(p){var q=Pr(p[0],p[1],p[2]);return q[0].toFixed(1)+','+q[1].toFixed(1)}).join(' ')+'" fill="'+fill+'" stroke="'+BG+'" stroke-width="1.4" stroke-linejoin="round"/>'}
+    function poly(pts,fill){return '<polygon points="'+pts.map(function(p){var q=Pr(p[0],p[1],p[2]);return q[0].toFixed(1)+','+q[1].toFixed(1)}).join(' ')+'" fill="'+fill+'" stroke="'+EDGE+'" stroke-width="1.4" stroke-linejoin="round"/>'}
     o+=poly([[x,y,ht],[x+1,y,ht],[x+1,y+1,ht],[x,y+1,ht]],FT);
     o+=poly([[x,y,0],[x+1,y,0],[x+1,y,ht],[x,y,ht]],FF);      // front face (y=0 side faces viewer after mirror)
     o+=poly([[x+1,y,0],[x+1,y+1,0],[x+1,y+1,ht],[x+1,y,ht]],FR); // right/end face
@@ -261,6 +286,14 @@ function renderDrill(){
     div.innerHTML='<div class="lab">'+'ABCD'[i]+'</div><svg viewBox="0 0 '+vb+' 130">'+drawSegs(op.segs,14,14,30,3,false)+'</svg>';
     div.addEventListener('click',function(){
       if(answered)return; answered=true;
+      stopTimer();
+      var ms=Date.now()-t0;
+      stats.n++; stats.ms+=ms; if(op.ok)stats.ok++;
+      var correctIdx=0; P.opts.forEach(function(o2,ix){if(o2.ok)correctIdx=ix;});
+      var params=W+'x'+D+' h='+H.map(function(col){return col.join('')}).join(';');
+      LOG.push({seed:seed, params:params, chosen:'ABCD'[i], correct:'ABCD'[correctIdx], ok:op.ok?1:0, ms:ms});
+      document.getElementById('export').disabled=false;
+      renderStats();
       Array.prototype.forEach.call(w.children,function(ch,ix){
         if(P.opts[ix].ok)ch.classList.add('correct');
       });
@@ -276,11 +309,12 @@ function renderDrill(){
   answered=false;
   document.getElementById('rcoach').innerHTML='<b>Can you see it from the end? No - dash.</b> An overhang means a dash somewhere.';
 }
-function render(){renderTeach();renderDrill()}
+function render(){renderTeach();renderDrill();startTimer();document.getElementById('seedTag').textContent='seed '+seed;}
 document.getElementById('hid').addEventListener('click',function(){HL=!HL;this.textContent=HL?'Hidden edges: highlighted':'Highlight hidden edges';renderTeach()});
 document.getElementById('iso3d').addEventListener('click',function(){ISO=!ISO;this.textContent='Show object: '+(ISO?'On':'Off');renderTeach()});
 document.getElementById('newq').addEventListener('click',function(){seed++;P=gen();render()});
-P=gen(); render();
+document.getElementById('export').addEventListener('click',exportCSV);
+P=gen(); render(); renderStats();
 })();
 </script>
 <script src="pat-ledger.js"></script>

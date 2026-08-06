@@ -4,57 +4,47 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Ace PAT Studio — Hole Punching: The Grid Method</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="pat-cream.css">
 <style>
-:root{--bg:#0d1411;--card:#121b16;--panel:#15110b;--line:rgba(201,168,76,.22);--ink:#ece6d7;--ink2:#b7b0a0;--ink3:#867f72;--gold:#C9A84C;--goldhi:#E6D08A;--amber:#D98A2B;--good:#57B487;--serif:Georgia,'Times New Roman',serif;--mono:ui-monospace,'SF Mono',Menlo,monospace;--sans:system-ui,-apple-system,'Segoe UI',sans-serif}
-*{box-sizing:border-box}
-body{margin:0;background:radial-gradient(700px 420px at 85% -5%,rgba(201,168,76,.07),transparent 60%),var(--bg);color:var(--ink);font-family:var(--sans)}
-.wrap{max-width:1200px;margin:0 auto;padding:26px 22px 60px}
-.top{display:flex;align-items:baseline;gap:14px;border-bottom:1px solid var(--line);padding-bottom:14px;margin-bottom:20px;flex-wrap:wrap}
-.top .brand{font-family:var(--serif);font-size:20px}
-.top .brand span{color:var(--gold)}
-.top a{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--gold);text-decoration:none}
-.kick{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--amber)}
-h1{font-family:var(--serif);font-size:30px;margin:0}
-.cols{display:grid;grid-template-columns:560px 1fr;gap:20px}
-.card{background:var(--card);border:1px solid var(--line);border-top:3px solid var(--amber);border-radius:14px;padding:16px}
-.card h2{font-family:var(--serif);font-size:17px;margin:0 0 2px}
-.card .k{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--amber)}
-svg{display:block;width:100%;height:auto}
-.controls{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0 4px}
-button{background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:9px;padding:9px 16px;font-family:var(--mono);font-size:12px;letter-spacing:.06em;cursor:pointer}
-button:hover{border-color:var(--gold)}
-button.primary{background:linear-gradient(180deg,var(--goldhi),var(--gold));color:#1a1206;border:none;font-weight:700}
-button.ghost{color:var(--ink2)}
-button:disabled{opacity:.35;cursor:default}
-.coach{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-top:12px;font-size:14px;line-height:1.5;color:var(--ink2)}
-.coach b{color:var(--goldhi);font-weight:600}
-.coach .who{font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--amber);display:block;margin-bottom:4px}
-.steps{font-family:var(--mono);font-size:11px;color:var(--ink3);letter-spacing:.04em;margin-top:10px}
-.steps b{color:var(--goldhi)}
-.mantra{margin-top:18px;color:var(--ink3);font-size:12.5px;font-family:var(--mono);letter-spacing:.02em;line-height:1.8}
-.mantra b{color:var(--ink2)}
-.choicewrap{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}
-.choice{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px;cursor:pointer;text-align:center}
-.choice:hover{border-color:var(--gold)}
-.choice.correct{border-color:var(--good);box-shadow:0 0 0 1px var(--good)}
-.choice.wrong{border-color:#B4574F;box-shadow:0 0 0 1px #B4574F}
-.choice .lab{font-family:var(--mono);font-size:11px;color:var(--ink2);margin-bottom:4px}
-.hint{font-size:12px;color:var(--ink3);margin-top:8px}
-@media(max-width:1060px){.cols{grid-template-columns:1fr}}
+  /* module-specific layout only — palette + chrome come from pat-cream.css */
+  h1.title{font-size:30px;margin:0 0 8px}
+  .cols{display:grid;grid-template-columns:560px 1fr;gap:20px}
+  @media(max-width:1060px){.cols{grid-template-columns:1fr}}
+  .controls{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0 4px}
+  .steps{font-size:12px;color:var(--muted);letter-spacing:.02em;margin-top:10px}
+  .steps b{color:var(--ink)}
+  .mantra{margin-top:18px;color:var(--muted);font-size:13px;line-height:1.7}
+  .mantra b{color:var(--ink)}
+  .coach .who{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--brass);font-weight:600;display:block;margin-bottom:4px}
+  .choicewrap{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}
+  .choice{background:#fff;border:1px solid #D8CDB2;border-radius:10px;padding:8px;cursor:pointer;text-align:center}
+  .choice:hover{border-color:var(--brass)}
+  .choice.correct{border-color:var(--ok);box-shadow:0 0 0 1px var(--ok)}
+  .choice.wrong{border-color:var(--bad);box-shadow:0 0 0 1px var(--bad)}
+  .choice .lab{font-size:11px;color:var(--muted);margin-bottom:4px;font-weight:600}
 </style>
 </head>
 <body>
+<header>
+  <h1>Hole Punching</h1>
+  <span class="tag">AceTheDAT &middot; PAT drilling</span>
+  <span class="spacer"></span>
+  <span class="seed" id="seedTag"></span>
+  <a class="back" href="index.html">All modules</a>
+</header>
+
 <div class="wrap">
-  <div class="top">
-    <div class="brand">Ace <span>PAT</span> Studio</div>
-    <div class="kick">Module 4 · Hole Punching</div>
-    <a href="index.html">ALL MODULES</a>
+  <h1 class="title">The Grid Method</h1>
+  <p class="lede">The 4×4 grid is the sixteen possible holes. Per fold, ask one question — <b>"what piece over what line of symmetry?"</b> — then mirror your marks across each crease, one at a time. You don't have to remember what you did. The grid remembers for you.</p>
+
+  <div class="bar">
+    <span class="pill" style="margin-left:0"><span class="timer" id="timer">0.0s</span></span>
+    <button class="ghost" id="export" disabled style="margin-left:auto">Export log (CSV)</button>
   </div>
-  <h1>The Grid Method</h1>
-  <p style="color:var(--ink2);max-width:760px;margin:8px 0 18px;font-size:15px">
-    The 4x4 grid is the sixteen possible holes. Per fold, ask one question — <b style="color:var(--goldhi)">"what piece over what line of symmetry?"</b> —
-    then mirror your marks across each crease, one at a time. You don't have to remember what you did. The grid remembers for you.
-  </p>
+
   <div class="cols">
     <div class="card">
       <div class="k">Paper theater</div>
@@ -63,7 +53,7 @@ button:disabled{opacity:.35;cursor:default}
       <div class="controls">
         <button id="back" class="ghost">Previous</button>
         <button id="next" class="primary">Next step</button>
-        <button id="newq">New problem</button>
+        <button id="newq" class="ghost">New problem</button>
         <button id="symbol" class="ghost">Marks: O</button>
       </div>
       <div class="steps" id="stepline"></div>
@@ -76,6 +66,12 @@ button:disabled{opacity:.35;cursor:default}
       <div id="answers"></div>
     </div>
   </div>
+
+  <div class="card" style="margin-top:20px">
+    <div class="k">This session</div>
+    <div class="stat" id="totals"></div>
+  </div>
+
   <p class="mantra">
     <b>Pre-draw all 15 grids during the science section.</b> Circles by default; X's if you like seeing half-holes.
     No process of elimination — the grid produces the answer. Target: under 10 minutes, and never leave a question unanswered.
@@ -83,17 +79,15 @@ button:disabled{opacity:.35;cursor:default}
 </div>
 <script>
 (function(){
-var INK='#ece6d7', INK2='#b7b0a0', INK3='#867f72', GOLD='#C9A84C', GOLDHI='#E6D08A', AMBER='#D98A2B', BG='#0d1411', GOOD='#57B487';
-var MONO='ui-monospace,Menlo,monospace';
+/* cream SVG palette (matches pat-cream.css drawing colors) */
+var INK='#16241C', INK2='#6E7A70', INK3='#A7B0A6', BRASS='#B08D3F', BRASSD='#8a6d1e', GOOD='#2F7D52', HOLE='#F6F1E4';
+var GRIDLN='rgba(22,36,28,';   // ink-with-alpha for faint grid/packet lines on cream
 
-// seeded RNG
 function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
 var seed = 7, rng = mulberry32(seed);
 function ri(n){return Math.floor(rng()*n)}
 
 // ---- fold engine (absolute coords on [0,4]^2, y down) ----
-// fold: {axis:'v'|'h', c:crease, side:'hi'|'lo'} — the `side` part folds across c onto the other side.
-// rect: [x0,x1,y0,y1]
 function applyFold(rect, f){
   var r=rect.slice();
   if(f.axis==='v'){ if(f.side==='hi') r[1]=f.c; else r[0]=f.c; }
@@ -109,14 +103,12 @@ function legalFolds(rect){
   ['v','h'].forEach(function(ax){
     var lo=ax==='v'?rect[0]:rect[2], hi=ax==='v'?rect[1]:rect[3];
     for(var c=lo+1;c<hi;c++){
-      // hi side folds onto lo: needs c-(hi-c) >= lo ; lo side onto hi: needs c+(c-lo) <= hi
       if(c-(hi-c)>=lo) out.push({axis:ax,c:c,side:'hi'});
       if(c+(c-lo)<=hi) out.push({axis:ax,c:c,side:'lo'});
     }
   });
   return out;
 }
-// unfold one fold: for each point, if it sits in the landing zone, add its mirror
 function unfoldPoints(pts, rectBefore, f){
   var w=flapW(rectBefore,f), out=[];
   pts.forEach(function(p){
@@ -133,12 +125,12 @@ function unfoldPoints(pts, rectBefore, f){
 }
 
 // ---- problem generation ----
-var P=null; // {folds, rects[], punches, sets[] per unfold stage, answer set}
+var P=null;
 function gen(){
   rng = mulberry32(seed);
   for(var attempt=0;attempt<60;attempt++){
     var rect=[0,4,0,4], folds=[], rects=[rect.slice()];
-    var nF = 2 + (ri(2)); // 2-3 folds
+    var nF = 2 + (ri(2));
     var ok=true;
     for(var i=0;i<nF;i++){
       var legal=legalFolds(rect).filter(function(f){return true;});
@@ -148,7 +140,6 @@ function gen(){
     }
     if(!ok) continue;
     if((rect[1]-rect[0])*(rect[3]-rect[2])<1) continue;
-    // punches at cell centers inside final rect
     var cells=[];
     for(var x=rect[0];x<rect[1];x++)for(var y=rect[2];y<rect[3];y++)cells.push([x+0.5,y+0.5]);
     var nP = (nF===2 && cells.length>1 && ri(2)===1)?2:1;
@@ -156,7 +147,6 @@ function gen(){
     while(punches.length<nP){
       var c=cells.splice(ri(cells.length),1)[0]; punches.push(c);
     }
-    // unfold stage sets
     var sets=[punches.slice()];
     for(var i=nF-1;i>=0;i--){
       sets.push(unfoldPoints(sets[sets.length-1], rects[i], folds[i]));
@@ -174,14 +164,10 @@ function mirrorSet(s,axis,c){return s.map(function(p){return axis==='v'?[2*c-p[0
 function inPaper(p){return p[0]>0&&p[0]<4&&p[1]>0&&p[1]<4}
 function distractors(P){
   var cand=[], correct=keySet(P.answer);
-  // 1: forget the FIRST fold's mirror (skip last unfold)
   cand.push(P.sets[P.sets.length-2]);
-  // 2: whole answer mirrored across center vertical / horizontal
   cand.push(mirrorSet(P.answer,'v',2));
   cand.push(mirrorSet(P.answer,'h',2));
-  // 3: extra phantom mirror of the punches across an unused center line
   cand.push(P.answer.concat(mirrorSet(P.punches,'v',2)).concat([]));
-  // 4: drop one hole
   cand.push(P.answer.slice(1));
   var out=[],seen={};seen[correct]=1;
   cand.forEach(function(s){
@@ -207,29 +193,26 @@ function mark(cx,cy,r,color,half){
   return '<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="'+color+'" stroke-width="3"/>';
 }
 function txt(x,y,s,size,fill,anchor,ls){
-  return '<text x="'+x+'" y="'+y+'" fill="'+(fill||INK2)+'" font-size="'+(size||10)+'" font-family="'+MONO+'" text-anchor="'+(anchor||'middle')+'" letter-spacing="'+(ls==null?1:ls)+'">'+s+'</text>';
+  return '<text x="'+x+'" y="'+y+'" fill="'+(fill||INK2)+'" font-size="'+(size||10)+'" font-family="\'DM Sans\',system-ui,sans-serif" text-anchor="'+(anchor||'middle')+'" letter-spacing="'+(ls==null?1:ls)+'">'+s+'</text>';
 }
-var PS=96, POX=100, POY=54; // paper scale/origin in theater
+var PS=96, POX=100, POY=54;
 function px(x){return POX+x*PS} function py(y){return POY+y*PS}
 function paperGridLines(alpha){
   var s='';
   for(var i=1;i<4;i++){
-    s+='<line x1="'+px(i)+'" y1="'+py(0)+'" x2="'+px(i)+'" y2="'+py(4)+'" stroke="rgba(236,230,215,'+alpha+')"/>';
-    s+='<line x1="'+px(0)+'" y1="'+py(i)+'" x2="'+px(4)+'" y2="'+py(i)+'" stroke="rgba(236,230,215,'+alpha+')"/>';
+    s+='<line x1="'+px(i)+'" y1="'+py(0)+'" x2="'+px(i)+'" y2="'+py(4)+'" stroke="'+GRIDLN+alpha+')"/>';
+    s+='<line x1="'+px(0)+'" y1="'+py(i)+'" x2="'+px(4)+'" y2="'+py(i)+'" stroke="'+GRIDLN+alpha+')"/>';
   }
   return s;
 }
 function foldWords(f, rect){
-  var names;
-  if(f.axis==='v') names = f.side==='hi' ? 'right piece over, to the left' : 'left piece over, to the right';
-  else             names = f.side==='hi' ? 'bottom piece up, over the line' : 'top piece down, over the line';
-  return names;
+  if(f.axis==='v') return f.side==='hi' ? 'right piece over, to the left' : 'left piece over, to the right';
+  return f.side==='hi' ? 'bottom piece up, over the line' : 'top piece down, over the line';
 }
 function creaseLabel(f){
   return (f.axis==='v'?'vertical line at ':'horizontal line at ')+f.c;
 }
 
-// step model: 0=start, 1..F folds, F+1 punch, F+2..2F+1 unfolds, 2F+2 answer
 var step=0;
 function totalSteps(){return P.folds.length*2+2}
 
@@ -240,25 +223,24 @@ function renderPaper(){
   if(step===0){
     o+=packet(P.rects[0],1);
     title='A flat sheet of paper';
-    line='STEP 0 - the paper, unfolded. <b>'+(F)+' folds coming.</b>';
+    line='STEP 0 — the paper, unfolded. <b>'+(F)+' folds coming.</b>';
   } else if(step>=1 && step<=F){
     var f=P.folds[step-1], before=P.rects[step-1], after=P.rects[step];
-    o+=packet(before,0.45);
+    o+=packet(before,0.4);
     o+=packet(after,1);
     o+=crease(f,before);
     o+=foldArrow(f,before);
     title='Fold '+step+': '+foldWords(f,before);
-    line='STEP '+step+' - <b>fold '+step+' of '+F+'</b> - '+creaseLabel(f);
+    line='STEP '+step+' — <b>fold '+step+' of '+F+'</b> — '+creaseLabel(f);
   } else if(step===F+1){
     var rect=P.rects[F];
     o+=packet(rect,1);
-    P.punches.forEach(function(p){ o+='<circle cx="'+px(p[0])+'" cy="'+py(p[1])+'" r="11" fill="'+BG+'" stroke="'+GOLDHI+'" stroke-width="3.5"/>'; });
-    var layers=P.answer.length/P.punches.length;
+    P.punches.forEach(function(p){ o+='<circle cx="'+px(p[0])+'" cy="'+py(p[1])+'" r="11" fill="'+HOLE+'" stroke="'+BRASS+'" stroke-width="3.5"/>'; });
     title='Punch. It goes through every layer.';
-    line='STEP '+(F+1)+' - <b>'+P.punches.length+' punch'+(P.punches.length>1?'es':'')+'</b> through the packet -> '+P.answer.length+' holes total';
+    line='STEP '+(F+1)+' — <b>'+P.punches.length+' punch'+(P.punches.length>1?'es':'')+'</b> through the packet → '+P.answer.length+' holes total';
   } else if(step>=F+2 && step<=2*F+1){
-    var u=step-(F+1); // unfold count done
-    var fi=F-u;       // fold index just undone
+    var u=step-(F+1);
+    var fi=F-u;
     var f=P.folds[fi], before=P.rects[fi];
     o+=packet(before,1);
     o+=crease(f,before);
@@ -266,29 +248,29 @@ function renderPaper(){
     var prevK={}; prev.forEach(function(p){prevK[p[0]+','+p[1]]=1});
     pts.forEach(function(p){
       var isNew=!prevK[p[0]+','+p[1]];
-      o+='<circle cx="'+px(p[0])+'" cy="'+py(p[1])+'" r="11" fill="'+BG+'" stroke="'+(isNew?GOOD:GOLDHI)+'" stroke-width="3.5"/>';
+      o+='<circle cx="'+px(p[0])+'" cy="'+py(p[1])+'" r="11" fill="'+HOLE+'" stroke="'+(isNew?GOOD:BRASS)+'" stroke-width="3.5"/>';
     });
     title='Unfold '+u+': mirror across the crease';
-    line='UNFOLD '+u+' of '+F+' - what piece over <b>'+creaseLabel(f)+'</b>? Green = the new mirrored holes.';
+    line='UNFOLD '+u+' of '+F+' — what piece over <b>'+creaseLabel(f)+'</b>? Green = the new mirrored holes.';
   } else {
     o+=packet(P.rects[0],1);
-    P.answer.forEach(function(p){ o+='<circle cx="'+px(p[0])+'" cy="'+py(p[1])+'" r="11" fill="'+BG+'" stroke="'+GOLDHI+'" stroke-width="3.5"/>'; });
+    P.answer.forEach(function(p){ o+='<circle cx="'+px(p[0])+'" cy="'+py(p[1])+'" r="11" fill="'+HOLE+'" stroke="'+BRASS+'" stroke-width="3.5"/>'; });
     title='Fully open: '+P.answer.length+' holes';
-    line='DONE - read your grid against the answers. <b>No process of elimination needed.</b>';
+    line='DONE — read your grid against the answers. <b>No process of elimination needed.</b>';
   }
   document.getElementById('paper').innerHTML=o;
   document.getElementById('stageTitle').textContent=title;
   document.getElementById('stepline').innerHTML=line;
 }
 function paperOutline(){
-  return '<rect x="'+px(0)+'" y="'+py(0)+'" width="'+(4*PS)+'" height="'+(4*PS)+'" fill="none" stroke="rgba(236,230,215,.18)" stroke-dasharray="6 6" stroke-width="1.5"/>'+paperGridLines(.05);
+  return '<rect x="'+px(0)+'" y="'+py(0)+'" width="'+(4*PS)+'" height="'+(4*PS)+'" fill="none" stroke="'+GRIDLN+'.22)" stroke-dasharray="6 6" stroke-width="1.5"/>'+paperGridLines(.08);
 }
 function packet(r,alpha){
-  return '<rect x="'+px(r[0])+'" y="'+py(r[2])+'" width="'+((r[1]-r[0])*PS)+'" height="'+((r[3]-r[2])*PS)+'" fill="rgba(236,230,215,'+(0.07*alpha).toFixed(3)+')" stroke="'+INK2+'" stroke-opacity="'+alpha+'" stroke-width="2"/>';
+  return '<rect x="'+px(r[0])+'" y="'+py(r[2])+'" width="'+((r[1]-r[0])*PS)+'" height="'+((r[3]-r[2])*PS)+'" fill="'+GRIDLN+(0.06*alpha).toFixed(3)+')" stroke="'+INK+'" stroke-opacity="'+(0.55*alpha)+'" stroke-width="2"/>';
 }
 function crease(f,rect){
-  if(f.axis==='v') return '<line x1="'+px(f.c)+'" y1="'+py(rect[2])+'" x2="'+px(f.c)+'" y2="'+py(rect[3])+'" stroke="'+GOLD+'" stroke-width="2" stroke-dasharray="7 5"/>';
-  return '<line x1="'+px(rect[0])+'" y1="'+py(f.c)+'" x2="'+px(rect[1])+'" y2="'+py(f.c)+'" stroke="'+GOLD+'" stroke-width="2" stroke-dasharray="7 5"/>';
+  if(f.axis==='v') return '<line x1="'+px(f.c)+'" y1="'+py(rect[2])+'" x2="'+px(f.c)+'" y2="'+py(rect[3])+'" stroke="'+BRASS+'" stroke-width="2" stroke-dasharray="7 5"/>';
+  return '<line x1="'+px(rect[0])+'" y1="'+py(f.c)+'" x2="'+px(rect[1])+'" y2="'+py(f.c)+'" stroke="'+BRASS+'" stroke-width="2" stroke-dasharray="7 5"/>';
 }
 function foldArrow(f,rect){
   var w=flapW(rect,f), a,b,mid;
@@ -303,18 +285,17 @@ function foldArrow(f,rect){
     a=[px(rect[0])-8,py(fy)]; b=[px(rect[0])-8,py(ty)]; mid=[px(rect[0])-26,py(f.c)];
   }
   var ang=Math.atan2(b[1]-mid[1],b[0]-mid[0]);
-  var ah='<polygon points="'+b[0]+','+b[1]+' '+(b[0]-10*Math.cos(ang-0.45))+','+(b[1]-10*Math.sin(ang-0.45))+' '+(b[0]-10*Math.cos(ang+0.45))+','+(b[1]-10*Math.sin(ang+0.45))+'" fill="'+GOLD+'"/>';
-  return '<path d="M '+a[0]+' '+a[1]+' Q '+mid[0]+' '+mid[1]+' '+b[0]+' '+b[1]+'" fill="none" stroke="'+GOLD+'" stroke-width="2"/>'+ah;
+  var ah='<polygon points="'+b[0]+','+b[1]+' '+(b[0]-10*Math.cos(ang-0.45))+','+(b[1]-10*Math.sin(ang-0.45))+' '+(b[0]-10*Math.cos(ang+0.45))+','+(b[1]-10*Math.sin(ang+0.45))+'" fill="'+BRASS+'"/>';
+  return '<path d="M '+a[0]+' '+a[1]+' Q '+mid[0]+' '+mid[1]+' '+b[0]+' '+b[1]+'" fill="none" stroke="'+BRASS+'" stroke-width="2"/>'+ah;
 }
 
-// grid panel: 4x4 with A-D rows, 1-4 cols; marks appear during unfold steps
 var GS=74, GOX=120, GOY=40;
 function renderGrid(){
   var o='', F=P.folds.length;
-  o+='<rect x="'+GOX+'" y="'+GOY+'" width="'+(4*GS)+'" height="'+(4*GS)+'" fill="rgba(236,230,215,.05)" stroke="'+INK2+'" stroke-width="1.8"/>';
+  o+='<rect x="'+GOX+'" y="'+GOY+'" width="'+(4*GS)+'" height="'+(4*GS)+'" fill="'+GRIDLN+'.04)" stroke="'+INK+'" stroke-width="1.8"/>';
   for(var i=1;i<4;i++){
-    o+='<line x1="'+(GOX+i*GS)+'" y1="'+GOY+'" x2="'+(GOX+i*GS)+'" y2="'+(GOY+4*GS)+'" stroke="rgba(236,230,215,.14)"/>';
-    o+='<line x1="'+GOX+'" y1="'+(GOY+i*GS)+'" x2="'+(GOX+4*GS)+'" y2="'+(GOY+i*GS)+'" stroke="rgba(236,230,215,.14)"/>';
+    o+='<line x1="'+(GOX+i*GS)+'" y1="'+GOY+'" x2="'+(GOX+i*GS)+'" y2="'+(GOY+4*GS)+'" stroke="'+GRIDLN+'.16)"/>';
+    o+='<line x1="'+GOX+'" y1="'+(GOY+i*GS)+'" x2="'+(GOX+4*GS)+'" y2="'+(GOY+i*GS)+'" stroke="'+GRIDLN+'.16)"/>';
   }
   'ABCD'.split('').forEach(function(ch,i){ o+=txt(GOX-22,GOY+i*GS+GS/2+4,ch,12,INK3); });
   [1,2,3,4].forEach(function(n,i){ o+=txt(GOX+i*GS+GS/2,GOY-14,String(n),12,INK3); });
@@ -328,7 +309,7 @@ function renderGrid(){
   else if(step===2*F+2){ pts=P.answer; }
   pts.forEach(function(p){
     var cx=GOX+p[0]*GS, cy=GOY+p[1]*GS;
-    o+=mark(cx,cy,16,newK[p[0]+','+p[1]]?GOOD:GOLDHI);
+    o+=mark(cx,cy,16,newK[p[0]+','+p[1]]?GOOD:BRASS);
   });
   if(pts.length) o+=txt(GOX+2*GS,GOY+4*GS+26,pts.length+' MARK'+(pts.length===1?'':'S')+' ON THE GRID',10,INK3);
   document.getElementById('grid').innerHTML=o;
@@ -348,12 +329,12 @@ function cellName(p){ return 'ABCD'[Math.floor(p[1])] + (Math.floor(p[0])+1); }
 // answers
 function miniGrid(pts,cls,lab){
   var s2=26, w=4*s2, o='<div class="choice '+(cls||'')+'" data-k="'+keySet(pts)+'"><div class="lab">'+lab+'</div><svg viewBox="0 0 '+(w+8)+' '+(w+8)+'">';
-  o+='<rect x="4" y="4" width="'+w+'" height="'+w+'" fill="rgba(236,230,215,.05)" stroke="'+INK2+'"/>';
+  o+='<rect x="4" y="4" width="'+w+'" height="'+w+'" fill="'+GRIDLN+'.04)" stroke="'+INK2+'"/>';
   for(var i=1;i<4;i++){
-    o+='<line x1="'+(4+i*s2)+'" y1="4" x2="'+(4+i*s2)+'" y2="'+(4+w)+'" stroke="rgba(236,230,215,.12)"/>';
-    o+='<line x1="4" y1="'+(4+i*s2)+'" x2="'+(4+w)+'" y2="'+(4+i*s2)+'" stroke="rgba(236,230,215,.12)"/>';
+    o+='<line x1="'+(4+i*s2)+'" y1="4" x2="'+(4+i*s2)+'" y2="'+(4+w)+'" stroke="'+GRIDLN+'.14)"/>';
+    o+='<line x1="4" y1="'+(4+i*s2)+'" x2="'+(4+w)+'" y2="'+(4+i*s2)+'" stroke="'+GRIDLN+'.14)"/>';
   }
-  pts.forEach(function(p){ o+='<circle cx="'+(4+p[0]*s2)+'" cy="'+(4+p[1]*s2)+'" r="6.5" fill="'+GOLDHI+'"/>'; });
+  pts.forEach(function(p){ o+='<circle cx="'+(4+p[0]*s2)+'" cy="'+(4+p[1]*s2)+'" r="6.5" fill="'+BRASS+'"/>'; });
   return o+'</svg></div>';
 }
 var answered=false;
@@ -362,7 +343,6 @@ function renderAnswers(){
   if(step!==2*F+2){wrap.innerHTML='';return}
   var opts=distractors(P).map(function(s){return{s:s,ok:false}});
   opts.push({s:P.answer,ok:true});
-  // deterministic shuffle from seed
   var r2=mulberry32(seed+99);
   for(var i=opts.length-1;i>0;i--){var j=Math.floor(r2()*(i+1));var t=opts[i];opts[i]=opts[j];opts[j]=t}
   var html='<div class="choicewrap">';
@@ -372,30 +352,62 @@ function renderAnswers(){
   answered=false;
   Array.prototype.forEach.call(wrap.querySelectorAll('.choice'),function(el){
     el.addEventListener('click',function(){
-      if(answered)return; answered=true;
+      if(answered)return; answered=true; stopTimer();
+      var ok=el.classList.contains('isok');
       Array.prototype.forEach.call(wrap.querySelectorAll('.choice'),function(e2){
         if(e2.classList.contains('isok'))e2.classList.add('correct');
       });
-      if(window.PatLedger)PatLedger.record('holepunch',el.classList.contains('isok'));
-      if(!el.classList.contains('isok'))el.classList.add('wrong');
+      if(window.PatLedger)PatLedger.record('holepunch',ok);
+      if(!ok)el.classList.add('wrong');
+      recordAttempt(ok);
     });
   });
+}
+
+// ---- session loop: timer + stats + CSV export ----
+var t0=0, tick=null, sess={n:0,ok:0,ms:0}, LOG=[];
+function fmt(ms){return (ms/1000).toFixed(1)+'s'}
+function startTimer(){ stopTimer(); t0=Date.now(); var el=document.getElementById('timer');
+  tick=setInterval(function(){ el.textContent=fmt(Date.now()-t0); el.classList.toggle('warn',(Date.now()-t0)>60000); },100); }
+function stopTimer(){ if(tick){clearInterval(tick);tick=null;} }
+function recordAttempt(ok){
+  var ms=Date.now()-t0; sess.n++; sess.ms+=ms; if(ok)sess.ok++;
+  LOG.push({seed:seed,folds:P.folds.length,punches:P.punches.length,holes:P.answer.length,ok:ok?1:0,ms:ms});
+  document.getElementById('export').disabled=false;
+  renderTotals();
+}
+function renderTotals(){
+  var acc=sess.n?Math.round(100*sess.ok/sess.n)+'%':'—', avg=sess.n?(sess.ms/sess.n/1000).toFixed(1)+'s':'—';
+  document.getElementById('totals').innerHTML=
+    '<div><b>'+sess.n+'</b><span>attempted</span></div>'+
+    '<div><b>'+sess.ok+'</b><span>correct</span></div>'+
+    '<div><b>'+acc+'</b><span>accuracy</span></div>'+
+    '<div><b>'+avg+'</b><span>avg time</span></div>';
+}
+function exportCSV(){
+  if(!LOG.length)return;
+  var rows=[['seed','folds','punches','holes','correct_flag','seconds']];
+  LOG.forEach(function(r){rows.push([r.seed,r.folds,r.punches,r.holes,r.ok,(r.ms/1000).toFixed(2)])});
+  var a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([rows.map(function(r){return r.join(',')}).join('\n')],{type:'text/csv'}));
+  a.download='pat-holepunch-log.csv'; document.body.appendChild(a); a.click(); document.body.removeChild(a);
 }
 
 function render(){ renderPaper(); renderGrid(); renderAnswers();
   document.getElementById('back').disabled = step===0;
   document.getElementById('next').disabled = step===totalSteps();
+  document.getElementById('seedTag').textContent='seed '+seed;
 }
 document.getElementById('next').addEventListener('click',function(){ if(step<totalSteps()){step++;render()} });
 document.getElementById('back').addEventListener('click',function(){ if(step>0){step--;render()} });
-document.getElementById('newq').addEventListener('click',function(){ seed++; P=gen(); step=0; render(); });
+document.getElementById('newq').addEventListener('click',function(){ seed++; P=gen(); step=0; startTimer(); render(); });
 document.getElementById('symbol').addEventListener('click',function(){ useX=!useX; this.textContent='Marks: '+(useX?'X':'O'); render(); });
+document.getElementById('export').addEventListener('click',exportCSV);
 
 var q=new URLSearchParams(location.search);
 if(q.get('seed')) seed=parseInt(q.get('seed'),10)||seed;
 P=gen();
 if(q.get('step')) step=Math.min(totalSteps(),Math.max(0,parseInt(q.get('step'),10)||0));
-render();
+renderTotals(); startTimer(); render();
 })();
 </script>
 <script src="pat-ledger.js"></script>

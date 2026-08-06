@@ -4,60 +4,60 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Ace PAT Studio — Pattern Folding: Stay 2D</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="pat-cream.css">
 <style>
-:root{--bg:#0d1411;--card:#121b16;--panel:#15110b;--line:rgba(201,168,76,.22);--ink:#ece6d7;--ink2:#b7b0a0;--ink3:#867f72;--gold:#C9A84C;--goldhi:#E6D08A;--amber:#D98A2B;--good:#57B487;--bad:#C06A62;--serif:Georgia,'Times New Roman',serif;--mono:ui-monospace,'SF Mono',Menlo,monospace;--sans:system-ui,-apple-system,'Segoe UI',sans-serif}
-*{box-sizing:border-box}
-body{margin:0;background:radial-gradient(700px 420px at 85% -5%,rgba(201,168,76,.07),transparent 60%),var(--bg);color:var(--ink);font-family:var(--sans)}
-.wrap{max-width:1160px;margin:0 auto;padding:26px 22px 60px}
-.top{display:flex;align-items:baseline;gap:14px;border-bottom:1px solid var(--line);padding-bottom:14px;margin-bottom:20px;flex-wrap:wrap}
-.top .brand{font-family:var(--serif);font-size:20px}
-.top .brand span{color:var(--gold)}
-.top a{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--gold);text-decoration:none}
-.kick{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--amber)}
-h1{font-family:var(--serif);font-size:30px;margin:0 0 6px}
-.lede{color:var(--ink2);max-width:76ch;margin:0 0 18px;font-size:15px}
-.lede b{color:var(--goldhi)}
-.cols{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-.card{background:var(--card);border:1px solid var(--line);border-top:3px solid var(--amber);border-radius:14px;padding:16px 18px}
-.card h2{font-family:var(--serif);font-size:17px;margin:0 0 2px}
-.card .k{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--amber)}
-svg{display:block;width:100%;height:auto}
-button{background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:9px;padding:9px 15px;font-family:var(--mono);font-size:12px;cursor:pointer}
-button:hover{border-color:var(--gold)}
-button.primary{background:linear-gradient(180deg,var(--goldhi),var(--gold));color:#1a1206;border:none;font-weight:700}
-button:disabled{opacity:.35;cursor:default}
-.controls{display:flex;gap:9px;flex-wrap:wrap;margin-top:12px}
-.coach{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:11px 14px;margin-top:12px;font-size:13.5px;line-height:1.5;color:var(--ink2)}
-.coach b{color:var(--goldhi)}
-.stepline{font-family:var(--mono);font-size:11px;color:var(--ink3);margin-top:10px;letter-spacing:.04em}
-.stepline b{color:var(--goldhi)}
-.opts{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:10px}
-.opt{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px;cursor:pointer;text-align:center}
-.opt:hover{border-color:var(--gold)}
-.opt.correct{border-color:var(--good);box-shadow:0 0 0 1px var(--good)}
-.opt.wrong{border-color:var(--bad);box-shadow:0 0 0 1px var(--bad)}
-.opt .lab{font-family:var(--mono);font-size:11px;color:var(--ink2);margin-bottom:2px}
-@media(max-width:1000px){.cols{grid-template-columns:1fr}}
+  /* module-specific layout only — palette + chrome come from pat-cream.css */
+  h1.title{font-size:30px;margin:2px 0 6px;line-height:1.12}
+  .cols{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  @media(max-width:1000px){.cols{grid-template-columns:1fr}}
+  #net{width:100%}
+  .controls{display:flex;gap:9px;flex-wrap:wrap;margin-top:12px}
+  .stepline{font-family:var(--sans);font-size:12px;color:var(--muted);margin-top:10px;letter-spacing:.02em}
+  .stepline b{color:#8a6d1e}
+  .opts{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:10px}
+  .opt{background:#fff;border:1px solid #C6BCA2;border-radius:10px;padding:8px;cursor:pointer;text-align:center}
+  .opt:hover{border-color:var(--brass)}
+  .opt.correct{border-color:var(--ok);box-shadow:0 0 0 1px var(--ok);background:#EAF3EC}
+  .opt.wrong{border-color:var(--bad);box-shadow:0 0 0 1px var(--bad);background:#F7ECEA}
+  .opt svg{width:100%;height:auto;display:block}
+  .opt .lab{font-size:12px;letter-spacing:.1em;color:var(--brass);font-weight:600;margin-bottom:2px}
+  .sb-grid{display:grid;grid-template-columns:1fr 1fr 1.4fr;gap:16px;margin-top:10px}
+  @media(max-width:1000px){.sb-grid{grid-template-columns:1fr}}
+  .sb-lab{font-family:var(--sans);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--brass);font-weight:600;margin-bottom:6px}
+  .sb-body{font-size:13px;color:var(--muted);line-height:1.55}
+  .sb-body b{color:#8a6d1e}
 </style>
 </head>
 <body>
+<header>
+  <h1>Pattern Folding</h1>
+  <span class="tag">AceTheDAT &middot; PAT drilling</span>
+  <span class="spacer"></span>
+  <span class="seed" id="seedTag"></span>
+  <a class="back" href="index.html">All modules</a>
+</header>
+
 <div class="wrap">
-  <div class="top">
-    <div class="brand">Ace <span>PAT</span> Studio</div>
-    <div class="kick">Module 6 · 3D Form Development</div>
-    <a href="index.html">ALL MODULES</a>
-  </div>
-  <h1>Stay 2D. Fold One Crease at a Time.</h1>
+  <h1 class="title">Stay 2D. Fold One Crease at a Time.</h1>
   <p class="lede">Never fold the whole net in your head. <b>Anchor one face, hold it still</b>, and walk the neighbors over their shared edges — folds go <b>into the plane</b>, never outward. Then check the answers two faces at a time: shaded-to-shaded, white-to-white. The number-one trap is the <b>mirror</b> — a pattern flipped the way no fold can flip it.</p>
+
+  <div class="bar">
+    <button id="newq" class="primary">New net</button>
+    <button class="ghost" id="export" disabled>Export log (CSV)</button>
+    <span class="pill"><span class="timer" id="timer">0.0s</span></span>
+  </div>
+
   <div class="cols">
     <div class="card">
       <div class="k">The net · fold it face by face</div>
       <h2 id="ltitle">Teach: walk the creases</h2>
       <svg id="net" viewBox="0 0 560 420"></svg>
       <div class="controls">
-        <button id="back">Previous</button>
+        <button id="back" class="ghost">Previous</button>
         <button id="next" class="primary">Fold next face</button>
-        <button id="newq">New net</button>
       </div>
       <div class="stepline" id="stepline"></div>
       <div class="coach" id="lcoach"></div>
@@ -69,47 +69,58 @@ button:disabled{opacity:.35;cursor:default}
       <div class="coach" id="rcoach"><b>Lump the look-alikes into pairs</b> and find what separates them. Judge by proportion and connection, not vibes — then trust the number that is speaking to you.</div>
     </div>
   </div>
-  <div class="card" style="margin-top:18px">
+
+  <div class="card">
+    <div class="k">This session</div>
+    <div class="stat" id="totals"></div>
+  </div>
+
+  <div class="card">
     <div class="k">Sarah&#39;s playbook · white, colored, and dice questions</div>
     <h2>Never fold it in your head - eliminate with the tricks</h2>
-    <div style="display:grid;grid-template-columns:1fr 1fr 1.4fr;gap:16px;margin-top:10px" class="sb-grid">
+    <div class="sb-grid">
       <div>
-        <div style="font-family:var(--mono);font-size:10px;letter-spacing:.16em;color:var(--goldhi);margin-bottom:6px">WHITE QUESTIONS</div>
-        <div style="font-size:13px;color:var(--ink2);line-height:1.55">Most abundant type. <b style="color:var(--goldhi)">Answer choices first.</b> Pick out a
-        <b style="color:var(--goldhi)">unique shape</b> - anything that is not just a rectangle or triangle (or the only one of its kind; big, small,
+        <div class="sb-lab">WHITE QUESTIONS</div>
+        <div class="sb-body">Most abundant type. <b>Answer choices first.</b> Pick out a
+        <b>unique shape</b> - anything that is not just a rectangle or triangle (or the only one of its kind; big, small,
         odd, a trapezoid - something identifiable). Use unique shapes as your identifiers. Start with choice A unless
         something in B, C, or D is calling you.</div>
       </div>
       <div>
-        <div style="font-family:var(--mono);font-size:10px;letter-spacing:.16em;color:var(--goldhi);margin-bottom:6px">COLORED QUESTIONS</div>
-        <div style="font-size:13px;color:var(--ink2);line-height:1.55">Same method: find a <b style="color:var(--goldhi)">unique colored shape</b> as
-        your guide - where you start depends on what you are given. And the clock rule: <b style="color:var(--goldhi)">when a choice is right on
+        <div class="sb-lab">COLORED QUESTIONS</div>
+        <div class="sb-body">Same method: find a <b>unique colored shape</b> as
+        your guide - where you start depends on what you are given. And the clock rule: <b>when a choice is right on
         everything, click it and move on.</b> You do not have to prove every other choice wrong.</div>
       </div>
       <div>
-        <div style="font-family:var(--mono);font-size:10px;letter-spacing:.16em;color:var(--goldhi);margin-bottom:6px">DICE QUESTIONS - THE FIVE RULES</div>
-        <div style="font-size:13px;color:var(--ink2);line-height:1.55">
-        <b style="color:var(--goldhi)">1 - Rule of 6.</b> The 6 is a train track - arrows pointing at two things. Rotate faces with the rule of 90 degrees.<br/>
-        <b style="color:var(--goldhi)">2 - Rule of 2 and 3.</b> The pips are either parallel or a V. Parallel in the net must stay parallel in the answer - never flips.<br/>
-        <b style="color:var(--goldhi)">3 - Top / front / bottom.</b> Decide which face is the top, then read left and right from that orientation. Flip the die upside down and left-right swap.<br/>
-        <b style="color:var(--goldhi)">4 - Three in a row.</b> In a row of three or more, two dice one full die apart never touch in the answer. Works vertically too, and with the rule of 90.<br/>
-        <b style="color:var(--goldhi)">5 - Cut and paste.</b> Cut along the line, reattach at the furthest end: draw the furthest horizontal line you can and paste the section underneath it.</div>
+        <div class="sb-lab">DICE QUESTIONS - THE FIVE RULES</div>
+        <div class="sb-body">
+        <b>1 - Rule of 6.</b> The 6 is a train track - arrows pointing at two things. Rotate faces with the rule of 90 degrees.<br/>
+        <b>2 - Rule of 2 and 3.</b> The pips are either parallel or a V. Parallel in the net must stay parallel in the answer - never flips.<br/>
+        <b>3 - Top / front / bottom.</b> Decide which face is the top, then read left and right from that orientation. Flip the die upside down and left-right swap.<br/>
+        <b>4 - Three in a row.</b> In a row of three or more, two dice one full die apart never touch in the answer. Works vertically too, and with the rule of 90.<br/>
+        <b>5 - Cut and paste.</b> Cut along the line, reattach at the furthest end: draw the furthest horizontal line you can and paste the section underneath it.</div>
       </div>
     </div>
     <div class="coach" style="margin-top:14px"><b>Sarah&#39;s line:</b> I really never want you to fold it in your head. We are able to eliminate all the choices with just the tricks.</div>
   </div>
-  <style>@media(max-width:1000px){.sb-grid{grid-template-columns:1fr!important}}</style>
 </div>
 <script>
 (function(){
-var INK='#ece6d7', INK2='#b7b0a0', INK3='#867f72', GOLD='#C9A84C', GOLDHI='#E6D08A', GOOD='#57B487', BAD='#C06A62', BG='#0d1411';
-var FT='#54655a', FF='#3b4a41', FR='#2a352e';
-var SH='#C9A84C';
-var MONO='ui-monospace,Menlo,monospace';
+/* cream SVG palette (matches pat-cream.css drawing colors) */
+var INK='#16241C', INK2='#6E7A70', INK3='#A7B0A6', GOLD='#B08D3F', GOLDHI='#8a6d1e', GOOD='#2F7D52', BAD='#A8342B', BG='#16241C';
+var FT='#E4E4E4', FF='#CFCFCF', FR='#BFBFBF';   // cube faces: top / front / right — light greys with depth
+var SH='#B08D3F';                                // shaded pattern fill (brass)
+var MONO="'DM Sans',system-ui,sans-serif";
 function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
 var qp=new URLSearchParams(location.search);
 var seed=parseInt(qp.get('seed')||'41',10), rng=mulberry32(seed);
 function ri(n){return Math.floor(rng()*n)}
+
+// ---- session tracking (timer + stats + CSV log) ----
+var t0=0, tick=null;
+var totals={n:0,ok:0,ms:0};
+var LOG=[];
 
 // ---- nets (grid cells). BFS + rolling frame assigns each cell a face. ----
 var NETS=[
@@ -161,11 +172,12 @@ var PATTERNS={
   solid: {polys:[[[0.08,0.08],[0.92,0.08],[0.92,0.92],[0.08,0.92]]], name:'shaded'},
   blank: {polys:[], name:'blank'}
 };
-var P=null; // {net, fold, pats[], opts[]}
+var P=null; // {net, fold, pats[], opts[], netIdx}
 function gen(){
   rng=mulberry32(seed);
   for(var att=0;att<120;att++){
-    var net=NETS[ri(NETS.length)];
+    var netIdx=ri(NETS.length);
+    var net=NETS[netIdx];
     var F=fold(net, ri(net.length));
     if(!F)continue;
     // assign patterns; require the 3 display-visible faces (top,front,right) to include tri + one other directional
@@ -177,7 +189,7 @@ function gen(){
     if(visPats.filter(function(k){return k!=='blank'}).length<2)continue;
     var opts=makeOpts(net,F,keys);
     if(!opts)continue;
-    return {net:net,F:F,pats:keys,opts:opts};
+    return {net:net,F:F,pats:keys,opts:opts,netIdx:netIdx};
   }
   seed++; return gen();
 }
@@ -250,6 +262,28 @@ function makeOpts(net,F,pats){
   return opts;
 }
 
+// ---- timer + session stats + CSV export ----
+function fmt(ms){return (ms/1000).toFixed(1)+'s'}
+function startTimer(){ stopTimer(); t0=Date.now(); var el=document.getElementById('timer'); if(!el)return;
+  tick=setInterval(function(){ el.textContent=fmt(Date.now()-t0); el.classList.toggle('warn',(Date.now()-t0)>20000); },100); }
+function stopTimer(){ if(tick){clearInterval(tick);tick=null;} }
+function renderStats(){
+  var acc=totals.n?Math.round(100*totals.ok/totals.n)+'%':'—', avg=totals.n?(totals.ms/totals.n/1000).toFixed(1)+'s':'—';
+  document.getElementById('totals').innerHTML=
+    '<div><b>'+totals.n+'</b><span>attempted</span></div>'+
+    '<div><b>'+totals.ok+'</b><span>correct</span></div>'+
+    '<div><b>'+acc+'</b><span>accuracy</span></div>'+
+    '<div><b>'+avg+'</b><span>avg time</span></div>';
+}
+function exportCSV(){
+  if(!LOG.length)return;
+  var rows=[['seed','net_index','anchor_face','chosen','correct','correct_flag','seconds']];
+  LOG.forEach(function(r){rows.push([r.seed,r.netIdx,r.anchor,r.chosen,r.correct,r.ok,(r.ms/1000).toFixed(2)])});
+  var csv=rows.map(function(r){return r.join(',')}).join('\n');
+  var a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+  a.download='pat-patternfold-log.csv'; document.body.appendChild(a); a.click(); document.body.removeChild(a);
+}
+
 // ---- net rendering + teach steps ----
 var step=0, answered=false;
 function renderNet(){
@@ -262,12 +296,12 @@ function renderNet(){
   net.forEach(function(c,i){
     var x=ox+(c[0]-minx)*s, y=oy+(c[1]-miny)*s;
     var placed=placedIdx[i]!=null, anchor=(F.order[0]===i);
-    o+='<rect x="'+x+'" y="'+y+'" width="'+s+'" height="'+s+'" fill="rgba(236,230,215,'+(placed?0.13:0.05)+')" stroke="'+(placed?GOLDHI:INK2)+'" stroke-width="'+(placed?2:1.4)+'"/>';
+    o+='<rect x="'+x+'" y="'+y+'" width="'+s+'" height="'+s+'" fill="'+(placed?'rgba(176,141,63,0.16)':'#ffffff')+'" stroke="'+(placed?GOLD:INK2)+'" stroke-width="'+(placed?2:1.4)+'"/>';
     PATTERNS[P.pats[i]].polys.forEach(function(poly){
       o+='<polygon points="'+poly.map(function(ab){return (x+ab[0]*s).toFixed(1)+','+(y+ab[1]*s).toFixed(1)}).join(' ')+'" fill="'+SH+'" opacity="0.92"/>';
     });
-    if(anchor)o+='<text x="'+(x+s/2)+'" y="'+(y+s/2+3)+'" fill="'+BG+'" font-size="9" font-family="'+MONO+'" text-anchor="middle" letter-spacing="1"'+(P.pats[i]==='solid'?'':' fill="'+INK3+'"')+'>HOLD</text>';
-    if(placed)o+='<circle cx="'+(x+s-10)+'" cy="'+(y+10)+'" r="8" fill="'+BG+'" stroke="'+GOLD+'" stroke-width="1.3"/><text x="'+(x+s-10)+'" y="'+(y+13.4)+'" fill="'+GOLDHI+'" font-size="9" font-family="'+MONO+'" text-anchor="middle">'+placedIdx[i]+'</text>';
+    if(anchor)o+='<text x="'+(x+s/2)+'" y="'+(y+s/2+3)+'" fill="'+INK+'" font-size="9" font-family="'+MONO+'" text-anchor="middle" letter-spacing="1">HOLD</text>';
+    if(placed)o+='<circle cx="'+(x+s-10)+'" cy="'+(y+10)+'" r="8" fill="#ffffff" stroke="'+GOLD+'" stroke-width="1.3"/><text x="'+(x+s-10)+'" y="'+(y+13.4)+'" fill="'+GOLDHI+'" font-size="9" font-family="'+MONO+'" text-anchor="middle">'+placedIdx[i]+'</text>';
   });
   // building cube at right
   o+=cubeSVG(430,150,68,renderedFaces(F,P.pats,step));
@@ -293,23 +327,31 @@ function renderOpts(){
     var div=document.createElement('div'); div.className='opt';
     div.innerHTML='<div class="lab">'+'ABCD'[i]+'</div><svg viewBox="0 0 240 190">'+cubeSVG(120,86,62,op.r)+'</svg>';
     div.addEventListener('click',function(){
-      if(answered)return; answered=true;
+      if(answered)return; answered=true; stopTimer();
+      var ms=Date.now()-t0, ok=!!op.ok;
+      var correctIdx=0; P.opts.forEach(function(o2,ix){ if(o2.ok)correctIdx=ix; });
       Array.prototype.forEach.call(w.children,function(ch,ix){ if(P.opts[ix].ok)ch.classList.add('correct') });
       var rc=document.getElementById('rcoach');
-      if(window.PatLedger)PatLedger.record('patternfold',!!op.ok);
-      if(!op.ok){div.classList.add('wrong'); rc.innerHTML='<b>The trap:</b> '+op.why+'.';}
+      if(window.PatLedger)PatLedger.record('patternfold',ok);
+      if(!ok){div.classList.add('wrong'); rc.innerHTML='<b>The trap:</b> '+op.why+'.';}
       else rc.innerHTML='<b>That is the one.</b> Two faces at a time, shared edges checked - that is the whole method.';
+      totals.n++; totals.ms+=ms; if(ok)totals.ok++;
+      LOG.push({seed:seed,netIdx:P.netIdx,anchor:faceName(P.F.frames[P.F.order[0]].n),chosen:'ABCD'[i],correct:'ABCD'[correctIdx],ok:ok?1:0,ms:ms});
+      document.getElementById('export').disabled=false;
+      renderStats();
     });
     w.appendChild(div);
   });
 }
-function render(){renderNet();renderOpts()}
+function render(){renderNet();renderOpts();startTimer();var st=document.getElementById('seedTag');if(st)st.textContent='seed '+seed;}
 document.getElementById('next').addEventListener('click',function(){if(step<P.net.length){step++;renderNet()}});
 document.getElementById('back').addEventListener('click',function(){if(step>0){step--;renderNet()}});
 document.getElementById('newq').addEventListener('click',function(){seed++;P=gen();step=0;render()});
+document.getElementById('export').addEventListener('click',exportCSV);
 P=gen();
 if(qp.get('step'))step=Math.min(P.net.length,parseInt(qp.get('step'),10)||0);
 render();
+renderStats();
 })();
 </script>
 <script src="pat-ledger.js"></script>
