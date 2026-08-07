@@ -35,6 +35,8 @@
   <p class="lede">Every problem here <b>forces the solid-vs-dashed decision</b> — the load-bearing skill of real TFE. Don't build the 3D object in your head: orient for 5-10 seconds, find one distinguishing feature, get to a 50-50. <b>Width pairs top and front. Height pairs front and end. Depth pairs top and end — the tough one.</b></p>
 
   <div class="bar">
+    <span class="lab">Level</span>
+    <button data-lv="1">1</button><button data-lv="2" class="on">2</button><button data-lv="3">3</button>
     <button id="newq" class="primary">New object</button>
     <button class="ghost" id="export" disabled>Export log (CSV)</button>
     <span class="pill"><span class="timer" id="timer">0.0s</span><span class="tgt">aim <b>45s</b></span></span>
@@ -76,6 +78,7 @@ var MONO="'DM Sans',system-ui,sans-serif";
 function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
 var qp=new URLSearchParams(location.search);
 var seed=parseInt(qp.get('seed')||'31',10), rng=mulberry32(seed);
+var LEVEL=parseInt(qp.get('lv')||'2',10)||2;
 function ri(n){return Math.floor(rng()*n)}
 
 /* session loop: timer + stats + CSV log */
@@ -218,18 +221,34 @@ function isoObj(ox,oy,s){
 }
 
 var P=null; // {top, front, end, opts:[{segs,ok,why}]}
+// difficulty -> pure generation params only (view + hidden-line math never change).
+// height ceiling stays <=3 (views render at fixed vmax=3); footprint stays <=4x3
+// (W+D<=7) so the teach panel never clips. L1 small/low/few-dashes, L2 = current
+// baseline, L3 big footprint + max height variety + more dashes + tighter distractors.
+function lvCfg(){
+  if(LEVEL===1) return {wlo:3,wsz:1, dlo:2,dsz:1, hmax:3, tmin:3, tmax:8,  varMin:2, dashMin:1, tight:false};
+  if(LEVEL===3) return {wlo:4,wsz:1, dlo:3,dsz:1, hmax:4, tmin:13,tmax:99, varMin:4, dashMin:3, tight:true};
+  return          {wlo:3,wsz:2, dlo:2,dsz:2, hmax:4, tmin:5, tmax:99, varMin:3, dashMin:1, tight:false};
+}
+function segDiff(a,b){
+  var ka={};a.forEach(function(s){ka[s.a[0]+','+s.a[1]+','+s.b[0]+','+s.b[1]+','+(s.dash?1:0)]=1});
+  var kb={};b.forEach(function(s){kb[s.a[0]+','+s.a[1]+','+s.b[0]+','+s.b[1]+','+(s.dash?1:0)]=1});
+  var d=0;Object.keys(ka).forEach(function(k){if(!kb[k])d++});Object.keys(kb).forEach(function(k){if(!ka[k])d++});return d;
+}
 function gen(){
   rng=mulberry32(seed);
   for(var att=0;att<200;att++){
-    W=3+ri(2); D=2+ri(2); H=[];
-    for(var x=0;x<W;x++){H.push([]);for(var y=0;y<D;y++)H[x].push(ri(4))}
-    // ensure some mass + variety
+    var cf=lvCfg();
+    W=cf.wlo+ri(cf.wsz); D=cf.dlo+ri(cf.dsz); H=[];
+    for(var x=0;x<W;x++){H.push([]);for(var y=0;y<D;y++)H[x].push(ri(cf.hmax))}
+    // ensure some mass + variety (thresholds scale with level)
     var tot=0,hs={};
     for(var x1=0;x1<W;x1++)for(var y1=0;y1<D;y1++){tot+=H[x1][y1];hs[H[x1][y1]]=1}
-    if(tot<5||Object.keys(hs).length<3)continue;
+    if(tot<cf.tmin||tot>cf.tmax)continue;
+    if(Object.keys(hs).length<cf.varMin)continue;
     var fv=frontView(), ev=endView(H,W,D), tv=topView();
-    var hasDash=fv.concat(ev).some(function(s){return s.dash});
-    if(!hasDash)continue;
+    var dashCount=fv.concat(ev).filter(function(s){return s.dash}).length;
+    if(dashCount<cf.dashMin)continue;
     // distractors for END view
     var okKey=key(ev), opts=[{segs:ev,ok:true}], seen={}; seen[okKey]=1;
     // 1) mirror front-back (his classic trap)
@@ -241,15 +260,20 @@ function gen(){
     var di=sv.findIndex(function(s){return s.dash});
     if(di>=0){sv[di]={a:sv[di].a,b:sv[di].b,dash:false};}
     if(!seen[key(sv)]){seen[key(sv)]=1;opts.push({segs:sv,ok:false,why:'a hidden edge drawn solid - you cannot see that edge from the end'})}
-    // 3) mutated column height
-    var Hx=null, tries=0;
-    while(tries++<20){
+    // 3) mutated column height. L1/L2: first distinct view. L3 (tight): among
+    //    candidates, keep the one closest to the correct end view (hardest to reject).
+    var best=null, bestDiff=1e9, tries=0;
+    while(tries++<(cf.tight?40:20)){
       var Hc=H.map(function(col){return col.slice()});
       var mx=ri(W),my=ri(D), dl=ri(2)?1:-1;
-      Hc[mx][my]=Math.max(0,Math.min(3,Hc[mx][my]+dl));
-      var v2=endView(Hc,W,D);
-      if(!seen[key(v2)]){seen[key(v2)]=1;opts.push({segs:v2,ok:false,why:'wrong height profile - height must match the FRONT view'});break}
+      Hc[mx][my]=Math.max(0,Math.min(cf.hmax-1,Hc[mx][my]+dl));
+      var v2=endView(Hc,W,D), k2=key(v2);
+      if(seen[k2])continue;
+      if(!cf.tight){best={segs:v2,key:k2};break}
+      var df=segDiff(v2,ev);
+      if(df<bestDiff){bestDiff=df;best={segs:v2,key:k2}}
     }
+    if(best){seen[best.key]=1;opts.push({segs:best.segs,ok:false,why:'wrong height profile - height must match the FRONT view'});}
     if(opts.length<4)continue;
     // shuffle
     for(var i=opts.length-1;i>0;i--){var j=ri(i+1);var t=opts[i];opts[i]=opts[j];opts[j]=t}
@@ -314,6 +338,14 @@ document.getElementById('hid').addEventListener('click',function(){HL=!HL;this.t
 document.getElementById('iso3d').addEventListener('click',function(){ISO=!ISO;this.textContent='Show object: '+(ISO?'On':'Off');renderTeach()});
 document.getElementById('newq').addEventListener('click',function(){seed++;P=gen();render()});
 document.getElementById('export').addEventListener('click',exportCSV);
+Array.prototype.forEach.call(document.querySelectorAll('[data-lv]'),function(b){
+  b.addEventListener('click',function(){
+    LEVEL=parseInt(b.dataset.lv,10);
+    Array.prototype.forEach.call(document.querySelectorAll('[data-lv]'),function(x){x.classList.remove('on')});
+    b.classList.add('on'); seed++; P=gen(); render();
+  });
+});
+Array.prototype.forEach.call(document.querySelectorAll('[data-lv]'),function(x){x.classList.toggle('on',parseInt(x.dataset.lv,10)===LEVEL)});
 P=gen(); render(); renderStats();
 })();
 </script>

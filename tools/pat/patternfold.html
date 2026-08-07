@@ -45,6 +45,8 @@
   <p class="lede">Never fold the whole net in your head. <b>Anchor one face, hold it still</b>, and walk the neighbors over their shared edges — folds go <b>into the plane</b>, never outward. Then check the answers two faces at a time: shaded-to-shaded, white-to-white. The number-one trap is the <b>mirror</b> — a pattern flipped the way no fold can flip it.</p>
 
   <div class="bar">
+    <span class="lab">Level</span>
+    <button data-lv="1">1</button><button data-lv="2" class="on">2</button><button data-lv="3">3</button>
     <button id="newq" class="primary">New net</button>
     <button class="ghost" id="export" disabled>Export log (CSV)</button>
     <span class="pill"><span class="timer" id="timer">0.0s</span><span class="tgt">aim <b>50s</b></span></span>
@@ -115,6 +117,7 @@ var MONO="'DM Sans',system-ui,sans-serif";
 function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
 var qp=new URLSearchParams(location.search);
 var seed=parseInt(qp.get('seed')||'41',10), rng=mulberry32(seed);
+var LEVEL=parseInt(qp.get('lv')||'2',10)||2;
 function ri(n){return Math.floor(rng()*n)}
 
 // ---- session tracking (timer + stats + CSV log) ----
@@ -173,6 +176,13 @@ var PATTERNS={
   blank: {polys:[], name:'blank'}
 };
 var P=null; // {net, fold, pats[], opts[], netIdx}
+// difficulty pattern-density knob: fewer shaded faces at L1 (less orientation to track),
+// more at L3. Always keeps the chiral 'tri' so the mirror trap stays available. Fresh array each call.
+function keysForLevel(){
+  if(LEVEL===1) return ['tri','band','solid','blank','blank','blank']; // 3 patterned (1 non-directional)
+  if(LEVEL===3) return ['tri','band','corner','solid','solid','blank']; // 5 patterned
+  return ['tri','band','corner','solid','blank','blank'];                // 4 patterned (baseline)
+}
 function gen(){
   rng=mulberry32(seed);
   for(var att=0;att<120;att++){
@@ -181,7 +191,7 @@ function gen(){
     var F=fold(net, ri(net.length));
     if(!F)continue;
     // assign patterns; require the 3 display-visible faces (top,front,right) to include tri + one other directional
-    var keys=['tri','band','corner','solid','blank','blank'];
+    var keys=keysForLevel();
     for(var i=keys.length-1;i>0;i--){var j=ri(i+1);var t=keys[i];keys[i]=keys[j];keys[j]=t}
     var visNames=['top','front','right'], visPats=[];
     for(var i2=0;i2<net.length;i2++){var fn=faceName(F.frames[i2].n); if(visNames.indexOf(fn)>=0)visPats.push(keys[i2])}
@@ -240,22 +250,75 @@ function serial(r){
     return fn+':'+x.pat+':'+x.u.join('')+x.v.join('')+':'+(x.mirror?1:0)+(x.rot?1:0);
   }).join('|');
 }
+// Difficulty lives ONLY in which distractors get chosen. The correct figure is never
+// touched (opts[0] is the true fold), and every distractor is a mutation of a COPY that
+// is checked against serial() so it can never equal the answer or another choice.
+//   L1 easy   -> mirror + clearly-different (blank-out / fully-shade) figures
+//   L2 std    -> baseline family: mirror + rotation + adjacency swap
+//   L3 hard   -> the near-miss family: mirror + two rotations + opposite-face, all
+//                single-face differences (adjacency last as fallback)
 function makeOpts(net,F,pats){
   var correct=renderedFaces(F,pats,null);
   var seen={}; seen[serial(correct)]=1;
   var opts=[{r:correct,ok:true}];
-  function clone(){var c={};['top','front','right'].forEach(function(fn){var x=correct[fn];c[fn]=x?{pat:x.pat,u:x.u,v:x.v,mirror:x.mirror,rot:x.rot}:null});return c}
-  // mirror trap on a chiral visible face
-  var m=clone(), tf=['top','front','right'].filter(function(fn){return m[fn]&&(m[fn].pat==='tri')});
-  if(tf.length){m[tf[0]].mirror=true; if(!seen[serial(m)]){seen[serial(m)]=1;opts.push({r:m,ok:false,why:'the mirror trap - that half-shade is flipped a way no fold can flip it'})}}
-  // rotation trap on a directional face
-  var r2=clone(), rf=['top','front','right'].filter(function(fn){return r2[fn]&&['tri','band','corner'].indexOf(r2[fn].pat)>=0});
-  if(rf.length){var pick=rf[rf.length-1]; r2[pick].rot=true; if(!seen[serial(r2)]){seen[serial(r2)]=1;opts.push({r:r2,ok:false,why:'right faces, wrong orientation - check what the pattern touches along the shared edge'})}}
-  // adjacency swap
-  var s2=clone(), names=['top','front','right'].filter(function(fn){return s2[fn]});
-  if(names.length>=2){
+  var VIS=['top','front','right'];
+  function clone(){var c={};VIS.forEach(function(fn){var x=correct[fn];c[fn]=x?{pat:x.pat,u:x.u,v:x.v,mirror:x.mirror,rot:x.rot}:null});return c}
+  // full face-name -> pattern map (needed for the opposite-face trap)
+  var byFace={}; for(var fi=0;fi<net.length;fi++){byFace[faceName(F.frames[fi].n)]=pats[fi];}
+
+  // --- distractor generators: each returns {r,ok:false,why} or null ---
+  function gMirror(){ // near-miss: chiral half-shade flipped a way no fold can flip it
+    var m=clone(), tf=VIS.filter(function(fn){return m[fn]&&m[fn].pat==='tri'});
+    if(!tf.length)return null;
+    m[tf[0]].mirror=true;
+    return {r:m,ok:false,why:'the mirror trap - that half-shade is flipped a way no fold can flip it'};
+  }
+  function gRotate(fromEnd){ // near-miss: one directional face turned a quarter off
+    var r2=clone(), rf=VIS.filter(function(fn){return r2[fn]&&['tri','band','corner'].indexOf(r2[fn].pat)>=0});
+    if(!rf.length)return null;
+    var pick=fromEnd?rf[rf.length-1]:rf[0]; r2[pick].rot=true;
+    return {r:r2,ok:false,why:'right faces, wrong orientation - check what the pattern touches along the shared edge'};
+  }
+  function gAdjSwap(){ // two visible patterns swapped to neighbors they never share
+    var s2=clone(), names=VIS.filter(function(fn){return s2[fn]});
+    if(names.length<2)return null;
     var a=s2[names[0]].pat; s2[names[0]].pat=s2[names[1]].pat; s2[names[1]].pat=a;
-    if(!seen[serial(s2)]){seen[serial(s2)]=1;opts.push({r:s2,ok:false,why:'those two patterns cannot be neighbors like that - the net puts them elsewhere'})}
+    return {r:s2,ok:false,why:'those two patterns cannot be neighbors like that - the net puts them elsewhere'};
+  }
+  function gOpposite(){ // near-miss: a visible face shows the pattern of its OPPOSITE face
+    var opp={top:'bottom',front:'back',right:'left'};
+    for(var vi=0;vi<VIS.length;vi++){
+      var fn=VIS[vi]; if(!correct[fn])continue;
+      var pat=byFace[opp[fn]];
+      if(pat==null||pat===correct[fn].pat)continue;
+      var c=clone(); c[fn].pat=pat;
+      return {r:c,ok:false,why:fn+' shows what belongs on the opposite face - two opposite faces can never be seen at once'};
+    }
+    return null;
+  }
+  function gBlankOut(){ // clearly different: a shaded face comes up blank
+    var cand=VIS.filter(function(fn){return correct[fn]&&correct[fn].pat&&correct[fn].pat!=='blank'});
+    if(!cand.length)return null;
+    var fn=cand[cand.length-1], c=clone(); c[fn].pat='blank';
+    return {r:c,ok:false,why:'a shaded face turned up blank - the net clearly paints that one'};
+  }
+  function gSolidize(){ // clearly different: a partly-shaded face is fully filled
+    var cand=VIS.filter(function(fn){return correct[fn]&&['tri','band','corner'].indexOf(correct[fn].pat)>=0});
+    if(!cand.length)return null;
+    var fn=cand[0], c=clone(); c[fn].pat='solid';
+    return {r:c,ok:false,why:'that face is filled in completely - the net only shades part of it'};
+  }
+
+  // primary pool = the difficulty family for this level; the rest keep builds robust (graceful fallback)
+  var pool;
+  if(LEVEL===1)      pool=[gMirror, gBlankOut, gSolidize, gAdjSwap, gRotate.bind(null,true), gOpposite];
+  else if(LEVEL===3) pool=[gMirror, gRotate.bind(null,true), gRotate.bind(null,false), gOpposite, gAdjSwap, gBlankOut];
+  else               pool=[gMirror, gRotate.bind(null,true), gAdjSwap, gOpposite, gRotate.bind(null,false), gBlankOut];
+
+  for(var gi=0; gi<pool.length && opts.length<4; gi++){
+    var d=pool[gi](); if(!d)continue;
+    var key=serial(d.r); if(seen[key])continue;
+    seen[key]=1; opts.push(d);
   }
   if(opts.length<4)return null;
   for(var i=opts.length-1;i>0;i--){var j=ri(i+1);var t=opts[i];opts[i]=opts[j];opts[j]=t}
@@ -348,6 +411,14 @@ document.getElementById('next').addEventListener('click',function(){if(step<P.ne
 document.getElementById('back').addEventListener('click',function(){if(step>0){step--;renderNet()}});
 document.getElementById('newq').addEventListener('click',function(){seed++;P=gen();step=0;render()});
 document.getElementById('export').addEventListener('click',exportCSV);
+Array.prototype.forEach.call(document.querySelectorAll('[data-lv]'),function(b){
+  b.addEventListener('click',function(){
+    LEVEL=parseInt(b.dataset.lv,10);
+    Array.prototype.forEach.call(document.querySelectorAll('[data-lv]'),function(x){x.classList.remove('on')});
+    b.classList.add('on'); seed++; P=gen(); step=0; answered=false; render();
+  });
+});
+Array.prototype.forEach.call(document.querySelectorAll('[data-lv]'),function(x){x.classList.toggle('on',parseInt(x.dataset.lv,10)===LEVEL)});
 P=gen();
 if(qp.get('step'))step=Math.min(P.net.length,parseInt(qp.get('step'),10)||0);
 render();
