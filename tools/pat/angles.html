@@ -47,7 +47,7 @@
     <div class="choices" id="choices"></div>
     <div id="teachctl" style="display:none;align-items:center;gap:10px;flex-wrap:wrap;margin-top:6px">
       <span class="lab">Show as</span>
-      <button data-mp="plain" class="on">Plain</button><button data-mp="knife">Knife</button><button data-mp="laptop">Laptop</button>
+      <button data-mp="auto" class="on">Auto</button><button data-mp="knife">Knife · acute</button><button data-mp="laptop">Laptop · obtuse</button><button data-mp="plain">Plain</button>
       <span style="flex:1;min-width:16px"></span>
       <button id="tprev" class="ghost">Prev</button>
       <span id="tstepLabel" class="lab"></span>
@@ -73,7 +73,7 @@ var q=new URLSearchParams(location.search);
 var seed=parseInt(q.get('seed')||'11',10), rng=mulberry32(seed);
 function ri(n){return Math.floor(rng()*n)}
 var GAP=5, TRAP=false, revealed=false, t0=0, tick=null;
-var MODE='drill', TSTEP=0, MP='plain', NSTEP=6;   // teach: the mechanics walkthrough
+var MODE='drill', TSTEP=0, MP='auto', NSTEP=6;   // teach: the mechanics walkthrough. MP auto = knife for acute, laptop for obtuse
 var stats={};           // per gap: {n, ok, ms}
 var LOG=[];             // attempts for CSV export
 var COACH=[
@@ -144,13 +144,15 @@ function renderStage(){
 }
 /* ---- TEACH MODE: the mechanics ---- */
 // equal-arm glyph that honors the current metaphor (plain / knife blade / laptop hinge)
+// Auto picks the right tool per angle: knife for ACUTE (<90°), laptop for OBTUSE (>=90°)
+function metaphorFor(deg){ return MP==='auto' ? (deg<90?'knife':'laptop') : MP; }
 function eglyph(cx,cy,deg,rot,r,col,w,dim){
-  var e1=arm(cx,cy,rot,r), e2=arm(cx,cy,rot+deg,r), opa=dim?0.26:1, o='';
+  var mp=metaphorFor(deg), e1=arm(cx,cy,rot,r), e2=arm(cx,cy,rot+deg,r), opa=dim?0.26:1, o='';
   function ln(p,ww,c,op){return '<line x1="'+cx+'" y1="'+cy+'" x2="'+p[0].toFixed(1)+'" y2="'+p[1].toFixed(1)+'" stroke="'+c+'" stroke-width="'+ww+'" stroke-linecap="round" opacity="'+op+'"/>';}
-  if(MP==='knife'){                              // filled blade wedge — sharper point = smaller angle
+  if(mp==='knife'){                              // filled blade wedge — sharpest point = smallest acute angle
     o+='<polygon points="'+cx.toFixed(1)+','+cy.toFixed(1)+' '+e1[0].toFixed(1)+','+e1[1].toFixed(1)+' '+e2[0].toFixed(1)+','+e2[1].toFixed(1)+'" fill="'+col+'" fill-opacity="'+(dim?0.05:0.16)+'"/>';
     o+=ln(e1,w,col,opa)+ln(e2,w,col,opa);
-  } else if(MP==='laptop'){                      // base bar + screen bar — more open = bigger
+  } else if(mp==='laptop'){                      // base bar + screen bar — widest-open lid = biggest obtuse angle
     o+=ln(e1,w+6,'#9AA79B',opa)+ln(e2,w+6,col,opa);
   } else {
     o+=ln(e1,w,col,opa)+ln(e2,w,col,opa);
@@ -169,11 +171,13 @@ function renderTeach(){
   } else if(TSTEP===1){                           // trim the arms
     Q.degs.forEach(function(d,i){ o+=eglyph(xs[i],cy,d,Q.rots[i],R,INK,3,false); o+=txt(xs[i],cy+96,String(i+1),14,INK2); });
     coach='<b>Trim every arm to the same length.</b> Leg length is a lie — the angle lives only at the vertex. Same tips now; only the opening differs.';
-  } else if(TSTEP===2){                           // lay one arm flat + metaphor
-    Q.degs.forEach(function(d,i){ o+=eglyph(xs[i],cy,d,0,R,INK,3,false); o+=txt(xs[i],cy+96,String(i+1),14,INK2); });
-    coach = MP==='knife' ? '<b>The knife.</b> See each as a blade — the <b>sharper the point, the smaller the angle</b>. Rank by how sharp the tip is.'
-      : MP==='laptop' ? '<b>The laptop.</b> One arm is the base, the other the screen. The <b>more closed the lid, the smaller the angle</b>.'
-      : '<b>Lay one arm flat.</b> Now every angle starts from the same line — rank by how far the top arm swings up. Try the <b>Knife</b> or <b>Laptop</b> view.';
+  } else if(TSTEP===2){                           // lay one arm flat + metaphor (per angle type)
+    Q.degs.forEach(function(d,i){ o+=eglyph(xs[i],cy,d,0,R,INK,3,false); o+=txt(xs[i],cy+96,String(i+1),14,INK2);
+      var isAcute=d<90; o+=txt(xs[i],cy+118,(isAcute?'acute · knife':'obtuse · laptop'),9.5,isAcute?GOOD:BRASSD); });
+    coach = MP==='knife' ? '<b>The knife — for acute angles.</b> Picture each as a blade: the <b>sharpest point is the smallest</b> angle.'
+      : MP==='laptop' ? '<b>The laptop — for obtuse angles.</b> One arm is the base, the other the lid: the <b>widest-open lid is the biggest</b> angle.'
+      : MP==='plain' ? '<b>Lay one arm flat.</b> Every angle now starts from the same line — rank by how far the top arm swings up.'
+      : '<b>Match the tool to the angle.</b> <b style="color:'+GOOD+'">Acute</b> (under 90°) → the <b>knife</b>: sharpest point is smallest. <b style="color:'+BRASSD+'">Obtuse</b> (over 90°) → the <b>laptop</b>: widest-open lid is biggest.';
   } else if(TSTEP===3){                           // anchor the extremes
     Q.degs.forEach(function(d,i){ var isMin=rank[i]===0,isMax=rank[i]===3,dim=!(isMin||isMax);
       o+=eglyph(xs[i],cy,d,0,R,isMin?GOOD:isMax?BRASS:INK,3,dim); o+=txt(xs[i],cy+96,String(i+1),14,dim?INK3:INK2);
