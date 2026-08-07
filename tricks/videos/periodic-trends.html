@@ -13,7 +13,7 @@
 <div id="root"></div>
 <script src="vendor/react.production.min.js"></script>
 <script src="vendor/react-dom.production.min.js"></script>
-<script src="js/periodic-trends.js?h=3avsxy"></script>
+<script src="js/periodic-trends.js?h=1cb5gt8"></script>
 <script>ReactDOM.render(React.createElement(window.NobleGasVideo), document.getElementById('root'));</script>
 <script>
 /* Climb review embed: with ?embed=review, hide the social-only CTA (a review has no comments).
@@ -44,6 +44,17 @@
     setInterval(tick, 250);
   }
   boot();
+})();
+</script>
+<script>
+/* Clean capture mode: with ?capture=1, hide the Ace Labs nav chip + the cursor for a pristine
+   full-frame recording (the playback bar itself is skipped in the component at ?capture=1).
+   The video autoplays from 0 and teaches via its on-screen text — record, add music, post. */
+(function(){
+  try{ if(new URLSearchParams(location.search).get('capture')!=='1') return; }catch(e){ return; }
+  var s=document.createElement('style');
+  s.textContent='#al-home{display:none!important}html,body{cursor:none!important}';
+  document.head.appendChild(s);
 })();
 </script>
 <script src="/shared/acelabs-nav.js" defer></script>

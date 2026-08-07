@@ -508,7 +508,7 @@ function Stage({
     }
   }, /*#__PURE__*/React.createElement(TimelineContext.Provider, {
     value: ctxValue
-  }, children))), /*#__PURE__*/React.createElement(PlaybackBar, {
+  }, children))), !(typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('capture') === '1') && /*#__PURE__*/React.createElement(PlaybackBar, {
     time: displayTime,
     actualTime: time,
     duration: duration,
