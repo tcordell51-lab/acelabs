@@ -16,6 +16,7 @@
     { l: 'The Climb',         h: '/tools/minitests/' },
     { l: 'PAT',               h: '/tools/pat/' },
     { l: 'Trick sheets',      h: '/tricks/' },
+    { l: 'Trick videos',      h: '/tricks/videos/' },
     { l: 'This week',         h: '/ace-labs.html#plan' },
     { l: 'Test day',          h: '/test-day-readiness.html' }
   ];
