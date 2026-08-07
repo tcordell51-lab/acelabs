@@ -30,7 +30,8 @@
   <p class="lede">Rank the four angles from <b>smallest to largest</b>. The gap between angles is a real, published number — start at 10 degrees and work down to the <b>2–3 degree zone where hard test forms live</b>. Gut-shot it: the quicker you move, the more accurate you will be.</p>
 
   <div class="bar">
-    <span class="lab">Gap (deg)</span>
+    <button id="mode" class="on">Mode: Drill</button>
+    <span class="lab" style="margin-left:6px">Gap (deg)</span>
     <div class="dialrow">
       <button data-g="10">10</button><button data-g="7">7</button><button data-g="5" class="on">5</button><button data-g="3">3</button><button data-g="2">2 · worst-case</button>
     </div>
@@ -44,6 +45,14 @@
     <div class="k" id="qlab">Question</div>
     <svg id="stage" viewBox="0 0 1040 330"></svg>
     <div class="choices" id="choices"></div>
+    <div id="teachctl" style="display:none;align-items:center;gap:10px;flex-wrap:wrap;margin-top:6px">
+      <span class="lab">Show as</span>
+      <button data-mp="plain" class="on">Plain</button><button data-mp="knife">Knife</button><button data-mp="laptop">Laptop</button>
+      <span style="flex:1;min-width:16px"></span>
+      <button id="tprev" class="ghost">Prev</button>
+      <span id="tstepLabel" class="lab"></span>
+      <button id="tnext" class="primary">Next step</button>
+    </div>
     <div class="meta" id="meta"></div>
     <div class="coach" id="coach"><b>Read the answers first</b> — they anchor smallest and largest. Then move. When you sit and decipher between the final two is when you trip yourself up.</div>
   </div>
@@ -64,6 +73,7 @@ var q=new URLSearchParams(location.search);
 var seed=parseInt(q.get('seed')||'11',10), rng=mulberry32(seed);
 function ri(n){return Math.floor(rng()*n)}
 var GAP=5, TRAP=false, revealed=false, t0=0, tick=null;
+var MODE='drill', TSTEP=0, MP='plain', NSTEP=6;   // teach: the mechanics walkthrough
 var stats={};           // per gap: {n, ok, ms}
 var LOG=[];             // attempts for CSV export
 var COACH=[
@@ -132,6 +142,70 @@ function renderStage(){
   }
   document.getElementById('stage').innerHTML=o;
 }
+/* ---- TEACH MODE: the mechanics ---- */
+// equal-arm glyph that honors the current metaphor (plain / knife blade / laptop hinge)
+function eglyph(cx,cy,deg,rot,r,col,w,dim){
+  var e1=arm(cx,cy,rot,r), e2=arm(cx,cy,rot+deg,r), opa=dim?0.26:1, o='';
+  function ln(p,ww,c,op){return '<line x1="'+cx+'" y1="'+cy+'" x2="'+p[0].toFixed(1)+'" y2="'+p[1].toFixed(1)+'" stroke="'+c+'" stroke-width="'+ww+'" stroke-linecap="round" opacity="'+op+'"/>';}
+  if(MP==='knife'){                              // filled blade wedge — sharper point = smaller angle
+    o+='<polygon points="'+cx.toFixed(1)+','+cy.toFixed(1)+' '+e1[0].toFixed(1)+','+e1[1].toFixed(1)+' '+e2[0].toFixed(1)+','+e2[1].toFixed(1)+'" fill="'+col+'" fill-opacity="'+(dim?0.05:0.16)+'"/>';
+    o+=ln(e1,w,col,opa)+ln(e2,w,col,opa);
+  } else if(MP==='laptop'){                      // base bar + screen bar — more open = bigger
+    o+=ln(e1,w+6,'#9AA79B',opa)+ln(e2,w+6,col,opa);
+  } else {
+    o+=ln(e1,w,col,opa)+ln(e2,w,col,opa);
+  }
+  o+='<circle cx="'+cx+'" cy="'+cy+'" r="3" fill="'+BRASS+'" opacity="'+opa+'"/>';
+  return o;
+}
+function renderTeach(){
+  var xs=[150,400,650,900], cy=150, R=54, o='';
+  var ord=[0,1,2,3].slice().sort(function(a,b){return Q.degs[a]-Q.degs[b]});   // idx smallest..largest
+  var rank={}; ord.forEach(function(idx,r){rank[idx]=r;});
+  var coach='';
+  if(TSTEP===0){                                 // the lie: as drawn
+    Q.degs.forEach(function(d,i){ o+=glyph(xs[i],cy,d,Q.rots[i],Q.arms[i][0],Q.arms[i][1],INK,3); o+=txt(xs[i],cy+96,String(i+1),14,INK2); });
+    coach='<b>Your eye is being played.</b> Long arms look bigger and the rotation scrambles the comparison. Do NOT rank from this picture — that is the whole trap.';
+  } else if(TSTEP===1){                           // trim the arms
+    Q.degs.forEach(function(d,i){ o+=eglyph(xs[i],cy,d,Q.rots[i],R,INK,3,false); o+=txt(xs[i],cy+96,String(i+1),14,INK2); });
+    coach='<b>Trim every arm to the same length.</b> Leg length is a lie — the angle lives only at the vertex. Same tips now; only the opening differs.';
+  } else if(TSTEP===2){                           // lay one arm flat + metaphor
+    Q.degs.forEach(function(d,i){ o+=eglyph(xs[i],cy,d,0,R,INK,3,false); o+=txt(xs[i],cy+96,String(i+1),14,INK2); });
+    coach = MP==='knife' ? '<b>The knife.</b> See each as a blade — the <b>sharper the point, the smaller the angle</b>. Rank by how sharp the tip is.'
+      : MP==='laptop' ? '<b>The laptop.</b> One arm is the base, the other the screen. The <b>more closed the lid, the smaller the angle</b>.'
+      : '<b>Lay one arm flat.</b> Now every angle starts from the same line — rank by how far the top arm swings up. Try the <b>Knife</b> or <b>Laptop</b> view.';
+  } else if(TSTEP===3){                           // anchor the extremes
+    Q.degs.forEach(function(d,i){ var isMin=rank[i]===0,isMax=rank[i]===3,dim=!(isMin||isMax);
+      o+=eglyph(xs[i],cy,d,0,R,isMin?GOOD:isMax?BRASS:INK,3,dim); o+=txt(xs[i],cy+96,String(i+1),14,dim?INK3:INK2);
+      if(isMin)o+=txt(xs[i],cy+120,'SMALLEST',10,GOOD); if(isMax)o+=txt(xs[i],cy+120,'LARGEST',10,BRASSD); });
+    coach='<b>Anchor the extremes first.</b> The clearly-smallest and clearly-largest are almost always right — lock them, and most answer orderings die on the spot.';
+  } else if(TSTEP===4){                           // the close pair, stacked
+    var a=ord[1], b=ord[2], cxo=520, cyo=170, small=Q.degs[a]<Q.degs[b]?a:b;
+    o+=eglyph(cxo,cyo,Q.degs[a],0,86,GOOD,4,false); o+=eglyph(cxo,cyo,Q.degs[b],0,86,BRASS,4,false);
+    o+=txt(cxo,cyo+112,'the two closest — stack them on one vertex',12,INK2);
+    coach='<b>Only the close pair is left.</b> Stack them on a shared vertex — the top arm that sits <b>inside</b> the other is the smaller angle. Here that is <b>#'+(small+1)+'</b>.';
+  } else {                                        // the truth
+    Q.degs.forEach(function(d,i){ o+=eglyph(xs[i],cy,d,0,R,INK,3,false); o+=arc(xs[i],cy,d,0,17); o+=txt(xs[i],cy+96,'#'+(i+1)+' · '+d+'&deg;',12,BRASSD); });
+    o+=txt(520,cy+130,'smallest to largest:  '+ord.map(function(idx){return '#'+(idx+1)}).join('  ,  '),14,INK);
+    coach='<b>There it is.</b> Trimmed and aligned, the order is obvious — and you never measured a thing. Five seconds, gut-shot, done.';
+  }
+  document.getElementById('stage').innerHTML=o;
+  document.getElementById('coach').innerHTML=coach;
+  document.getElementById('qlab').textContent='Teach · the mechanics · gap '+GAP+' deg';
+  document.getElementById('meta').innerHTML='smaller gap = harder eye — drop the gap dial to make it brutal';
+  document.getElementById('tstepLabel').textContent='Step '+(TSTEP+1)+' / '+NSTEP;
+  document.getElementById('tprev').disabled=TSTEP===0;
+  document.getElementById('tnext').textContent=TSTEP===NSTEP-1?'New example':'Next step';
+}
+function setMode(m){
+  MODE=m; var teach=m==='teach';
+  document.getElementById('choices').style.display=teach?'none':'';
+  document.getElementById('teachctl').style.display=teach?'flex':'none';
+  document.getElementById('mode').textContent='Mode: '+(teach?'Teach — the mechanics':'Drill');
+  if(teach){ stopTimer(); revealed=false; TSTEP=0; renderTeach(); }
+  else { revealed=false; renderStage(); renderChoices(); startTimer();
+    document.getElementById('coach').innerHTML='<b>Read the answers first</b> — they anchor smallest and largest. Then move.'; }
+}
 function fmt(ms){return (ms/1000).toFixed(1)+'s'}
 function startTimer(){ stopTimer(); t0=Date.now(); var el=document.getElementById('timer');
   tick=setInterval(function(){ el.textContent=fmt(Date.now()-t0); el.classList.toggle('warn',(Date.now()-t0)>20000); },100); }
@@ -179,8 +253,10 @@ function renderStats(){
   });
   el.innerHTML=h;
 }
-function next(){ seed++; revealed=false; Q=gen(); renderStage(); renderChoices(); startTimer();
+function next(){ seed++; revealed=false; Q=gen();
   document.getElementById('seedTag').textContent='seed '+seed+' · gap '+GAP;
+  if(MODE==='teach'){ TSTEP=0; renderTeach(); return; }
+  renderStage(); renderChoices(); startTimer();
   document.getElementById('coach').innerHTML='<b>Read the answers first</b> — they anchor smallest and largest. Then move.';
 }
 function exportCSV(){
@@ -202,6 +278,14 @@ document.getElementById('trap').addEventListener('click',function(){
   TRAP=!TRAP; this.textContent=TRAP?'On':'Off'; this.classList.toggle('on',TRAP); next();
 });
 document.getElementById('export').addEventListener('click',exportCSV);
+document.getElementById('mode').addEventListener('click',function(){ setMode(MODE==='teach'?'drill':'teach'); });
+Array.prototype.forEach.call(document.querySelectorAll('[data-mp]'),function(b){
+  b.addEventListener('click',function(){ MP=b.dataset.mp;
+    Array.prototype.forEach.call(document.querySelectorAll('[data-mp]'),function(x){x.classList.remove('on')});
+    b.classList.add('on'); if(MODE==='teach')renderTeach(); });
+});
+document.getElementById('tprev').addEventListener('click',function(){ if(TSTEP>0){TSTEP--;renderTeach();} });
+document.getElementById('tnext').addEventListener('click',function(){ if(TSTEP<NSTEP-1){TSTEP++;renderTeach();} else { next(); } });
 Q=gen();
 if(q.get('gap')){GAP=parseInt(q.get('gap'),10)||5;Q=gen();
   Array.prototype.forEach.call(document.querySelectorAll('[data-g]'),function(x){x.classList.toggle('on',parseInt(x.dataset.g,10)===GAP)});
@@ -209,6 +293,7 @@ if(q.get('gap')){GAP=parseInt(q.get('gap'),10)||5;Q=gen();
 document.getElementById('seedTag').textContent='seed '+seed+' · gap '+GAP;
 renderStage(); renderChoices(); renderStats(); startTimer();
 if(q.get('reveal')==='1'){revealed=true; renderStage();}
+if(q.get('mode')==='teach') setMode('teach');
 })();
 </script>
 <script src="pat-ledger.js"></script>
