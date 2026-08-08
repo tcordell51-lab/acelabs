@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ace the DAT — Short</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;0,6..72,700;1,6..72,500&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0a0a; --ink:#f2efe6; --ink2:#b7b2a6; --ink3:#7f7a6c;
+    --line:rgba(255,255,255,.09); --gold:#C9A84C; --goldhi:#e6cf8f;
+    --ochem:#c6a3ea; --gchem:#7fb0e6;
+    --serif:"Newsreader",Georgia,serif; --sans:"Hanken Grotesk",-apple-system,system-ui,sans-serif; --mono:"JetBrains Mono",ui-monospace,monospace;
+    --accent:var(--gold);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;background:#000}
+  #wrap{position:fixed;inset:0;display:grid;place-items:center;background:#000}
+  #stage{position:relative;width:min(100vw,56.25vh);height:min(177.78vw,100vh);background:var(--bg);overflow:hidden;container-type:size;
+    background-image:radial-gradient(120% 60% at 50% -8%,rgba(201,168,76,.10),transparent 55%)}
+  #stage.ochem{--accent:var(--ochem)} #stage.gchem{--accent:var(--gchem)}
+
+  /* progress */
+  #prog{position:absolute;top:0;left:0;height:0.55cqw;width:0;background:linear-gradient(90deg,var(--gold),var(--goldhi));z-index:9;box-shadow:0 0 8px rgba(201,168,76,.5)}
+
+  /* header chrome */
+  header{position:absolute;top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;padding:5.2cqw 4.8cqw;z-index:6}
+  .logo{display:flex;align-items:center;gap:2cqw}
+  .logo .mark{width:6.6cqw;height:6.6cqw;border-radius:1.6cqw;background:#181410;border:0.18cqw solid rgba(201,168,76,.5);display:grid;place-items:center;font-family:var(--serif);font-weight:700;color:var(--gold);font-size:3.6cqw}
+  .logo .txt{font-family:var(--serif);font-weight:700;font-size:3.0cqw;color:var(--ink);line-height:1}
+  .logo .txt small{display:block;font-family:var(--mono);font-size:1.5cqw;letter-spacing:.2em;color:var(--accent);margin-top:.7cqw;text-transform:uppercase}
+  .chip{font-family:var(--mono);font-size:1.7cqw;letter-spacing:.16em;color:var(--gold);border:0.16cqw solid rgba(201,168,76,.5);border-radius:6cqw;padding:1.1cqw 2.4cqw;text-transform:uppercase}
+
+  /* beat stage */
+  .beats{position:absolute;inset:0;display:grid;place-items:center;padding:0 8cqw;text-align:center}
+  .beat{grid-area:1/1;width:100%;opacity:0;transform:translateY(2.4cqw);transition:opacity .5s ease,transform .6s cubic-bezier(.2,.7,.2,1);pointer-events:none;will-change:opacity,transform}
+  .beat.show{opacity:1;transform:none}
+
+  .kick{font-family:var(--mono);font-size:2.0cqw;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);margin-bottom:3cqw}
+  .kick.acc{color:var(--accent)}
+  .q{font-family:var(--serif);font-weight:700;font-size:8.4cqw;line-height:1.04;letter-spacing:-.01em;color:var(--ink)}
+  .q sub{font-size:.62em}
+  .qsub{font-family:var(--mono);font-size:2.2cqw;letter-spacing:.1em;color:var(--ink3);margin-top:2.6cqw}
+  .qsub sub{font-size:.7em}
+  .ask{font-family:var(--serif);font-style:italic;font-size:4.0cqw;color:var(--goldhi);margin-top:4.4cqw}
+
+  .big{font-family:var(--serif);font-size:6.0cqw;line-height:1.16;color:var(--ink);font-weight:600}
+  .big.it{font-style:italic;color:var(--ink)}
+  .big b{color:var(--goldhi);font-weight:700}
+  .big sub{font-size:.62em}
+  .mid{font-family:var(--sans);font-size:3.7cqw;line-height:1.4;color:var(--ink2);font-weight:500}
+  .mid b{color:var(--ink);font-weight:700}
+  .mid sub{font-size:.7em}
+
+  .ans .kick{color:var(--gold)}
+  .ans .big{font-family:var(--serif);font-weight:700;font-size:6.8cqw;color:var(--goldhi);line-height:1.1}
+
+  /* CTA */
+  .cta{display:flex;flex-direction:column;align-items:center;gap:2.2cqw}
+  .cta .mk{width:11cqw;height:11cqw;border-radius:2.6cqw;background:#181410;border:0.2cqw solid rgba(201,168,76,.5);display:grid;place-items:center;font-family:var(--serif);font-weight:700;color:var(--gold);font-size:6cqw;margin-bottom:1.6cqw}
+  .cta .l1{font-family:var(--sans);font-size:3.4cqw;color:var(--ink2);line-height:1.4;max-width:70cqw}
+  .cta .l2{font-family:var(--mono);font-size:2.0cqw;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-top:1.4cqw}
+  .cta .brand{font-family:var(--serif);font-weight:700;font-size:6.4cqw;color:var(--goldhi);margin-top:2.2cqw}
+
+  html.cap,html.cap body{cursor:none!important}
+</style>
+</head>
+<body>
+<div id="wrap"><div id="stage">
+  <div id="prog"></div>
+  <header>
+    <div class="logo"><span class="mark">A</span><span class="txt">Ace the DAT<small id="subj">Orgo</small></span></div>
+    <span class="chip" id="chip">TRICK 00</span>
+  </header>
+  <div class="beats" id="beats"></div>
+</div></div>
+
+<script src="shorts-data.js"></script>
+<script>
+(function(){
+  var P = new URLSearchParams(location.search);
+  if(P.get('capture')==='1') document.documentElement.className='cap';
+  var slug = P.get('topic') || 'acidity';
+  var D = (window.SHORTS||{})[slug];
+  var stage = document.getElementById('stage');
+  if(!D){ document.getElementById('beats').innerHTML='<div class="beat show"><div class="big">Unknown topic</div></div>'; return; }
+
+  stage.classList.add(D.accent||'ochem');
+  document.getElementById('subj').textContent = D.subj + ' · ' + D.topic;
+  document.getElementById('chip').textContent = 'TRICK ' + D.trick;
+
+  // build the six beats
+  var beats = document.getElementById('beats');
+  beats.innerHTML =
+    '<div class="beat" data-b="1">'
+      +'<div class="kick">Can you answer this?</div>'
+      +'<div class="q">'+D.q+'</div>'
+      +'<div class="qsub">'+D.qsub+'</div>'
+      +'<div class="ask">'+D.ask+'</div>'
+    +'</div>'
+    +'<div class="beat" data-b="2"><div class="big it">'+D.tension+'</div></div>'
+    +'<div class="beat" data-b="3"><div class="kick acc">'+(D.insightKicker||'The trick')+'</div><div class="big"><b>'+D.insight+'</b></div></div>'
+    +'<div class="beat" data-b="4"><div class="kick">Work it</div><div class="mid">'+D.apply+'</div></div>'
+    +'<div class="beat ans" data-b="5"><div class="kick">Answer</div><div class="big">'+D.answer+'</div></div>'
+    +'<div class="beat" data-b="6"><div class="cta">'
+      +'<div class="mk">A</div>'
+      +'<div class="l1">The full 90-second breakdown lives on our page.</div>'
+      +'<div class="l2">follow for one trick a day</div>'
+      +'<div class="brand">acethedat.com</div>'
+    +'</div></div>';
+
+  var els = [].slice.call(beats.querySelectorAll('.beat'));
+  var prog = document.getElementById('prog');
+
+  // timeline: [showAt, hideAt] in seconds
+  var TL = [
+    [0.30, 7.60],   // hook
+    [7.75, 13.10],  // tension
+    [13.25, 24.60], // insight
+    [24.75, 32.60], // apply
+    [32.75, 37.60], // answer
+    [37.75, 42.00]  // cta (holds to end)
+  ];
+  var TOTAL = 42.0;
+  var timers = [];
+  function clearAll(){ timers.forEach(clearTimeout); timers=[]; els.forEach(function(e){e.classList.remove('show');}); }
+  function play(){
+    clearAll();
+    // progress bar restart
+    prog.style.transition='none'; prog.style.width='0';
+    // force reflow
+    void prog.offsetWidth;
+    prog.style.transition='width '+TOTAL+'s linear'; prog.style.width='100%';
+    TL.forEach(function(t,i){
+      timers.push(setTimeout(function(){ els[i].classList.add('show'); }, t[0]*1000));
+      if(i < TL.length-1) timers.push(setTimeout(function(){ els[i].classList.remove('show'); }, t[1]*1000));
+    });
+  }
+  window.playShort = play;
+  // capture pipeline triggers with key '0'; viewers get an auto-start once fonts settle
+  document.addEventListener('keydown', function(e){ if(e.key==='0') play(); });
+  (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve())
+    .then(function(){ setTimeout(play, 250); })
+    .catch(function(){ setTimeout(play, 250); });
+})();
+</script>
+</body>
+</html>

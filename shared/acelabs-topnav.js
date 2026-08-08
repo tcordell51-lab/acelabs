@@ -17,6 +17,7 @@
     { l: 'PAT',               h: '/tools/pat/' },
     { l: 'Trick sheets',      h: '/tricks/' },
     { l: 'Trick videos',      h: '/tricks/videos/' },
+    { l: 'Trick shorts',      h: '/tricks/shorts/' },
     { l: 'This week',         h: '/ace-labs.html#plan' },
     { l: 'Test day',          h: '/test-day-readiness.html' }
   ];
