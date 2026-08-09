@@ -3,6 +3,16 @@
    Copy is house-clean: no em dashes, no emojis, no decorative glyphs.
    Beats: hook (question) -> tension -> insight (the trick) -> apply -> answer -> CTA. */
 window.SHORTS = {
+  'one-move': {
+    subj: 'ORGO', topic: 'THE ONE MOVE', trick: '01', accent: 'ochem',
+    q: 'What drives<br>every mechanism?', qsub: 'every arrow you will ever draw',
+    ask: 'the one rule?',
+    tension: 'Stop learning arrows one reaction at a time.',
+    insightKicker: 'THE TRICK',
+    insight: 'Rich attacks poor. Electrons always flow from the electron-rich site to the electron-poor site.',
+    apply: 'Find the nucleophile: a lone pair, a negative charge, or a pi bond. It attacks the electrophile: a positive or partial-positive carbon, or a good leaving group.',
+    answer: 'Rich attacks poor. That is every mechanism.'
+  },
   eas: {
     subj: 'ORGO', topic: 'EAS DIRECTING', trick: '02', accent: 'ochem',
     q: 'Where does<br>the next group add?', qsub: 'a substituted benzene ring',
@@ -134,4 +144,4 @@ window.SHORTS = {
     answer: 'One idea, every trend.'
   }
 };
-window.SHORTS_ORDER = ['acidity','sn1-vs-sn2','periodic-trends','red-cat-an-ox','ir-peaks','rs-configuration','limiting-reagent','nmr-two-steps','alkene-map','newman','ozonolysis','redox-balancing','eas'];
+window.SHORTS_ORDER = ['one-move','acidity','sn1-vs-sn2','periodic-trends','red-cat-an-ox','ir-peaks','rs-configuration','limiting-reagent','nmr-two-steps','alkene-map','newman','ozonolysis','redox-balancing','eas'];
