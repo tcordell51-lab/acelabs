@@ -22,9 +22,15 @@ Build the atom once; sell it every way.
 
 ## The 4-beat spine (both lesson and workbook follow it)
 1. **Anchor** — the one idea + one killer visual + a physical-story analogy. *This is what gets taught live.*
-2. **The Move** — the named procedure, drawn, a worked example fading to hand-the-pen.
+2. **The Move** — the named procedure, **walked ONE STEP PER BEAT** (the CARDIO reference walks C · A · R · D/I · O, one letter per screen, each with a drawn example so a coach can teach each step live).
 3. **The Reps** — a few inline; the bulk **routed** to the engine / Retold / Climb / Booster.
 4. **The Proof** — commit-before-reveal DAT items → calibration → misses to the Ace Log.
+
+**Locked reference (v6 · `oc-acids-cardio/lesson.html`, Priya SHIP-AS-IS):** engine `sk-*` skeletal visuals;
+**every teaching beat is ACTIVE** via tap-to-fill **fill-in-the-blanks** (student supplies the key term, not passive
+reading); **You-do questions DRAW the compounds** (real skeletal structures in a labeled panel, like the real DAT — not
+text names); **everything is RETRYABLE** (redo any blank, per-question Try-again, "Redo all" with attempt tracking);
+DAT-scoped only (no MCAT-level aromatic para/meta nuance). This is the bar every unit clones.
 
 ## Craft floor (every unit, no exceptions)
 - Thomas's teaching DNA: **drawing-first, one physical-story analogy, a named move, hand-the-pen.**

@@ -1,6 +1,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Acids &amp; Bases &middot; CARDIO &middot; Ace the DAT</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700;800&display=swap">
 <style>
 :root{
   --page:#14130e; --panel:#1b1910; --panel2:#211e14; --ink:#f4ecd7; --ink-2:#cdc3a9;
@@ -42,11 +45,13 @@ body{
 .serif{font-family:Georgia,"Times New Roman",serif}
 .mono{font-family:ui-monospace,Menlo,"SF Mono",monospace}
 sub,sup{font-size:.72em}
+:focus-visible{outline:2px solid var(--gold); outline-offset:2px; border-radius:4px}
+select:focus-visible,textarea:focus-visible,.rulebox:focus-visible,.mini:focus-visible,.nbtn:focus-visible,.checkbtn:focus-visible,button:focus-visible{outline:2px solid var(--gold); outline-offset:2px}
 
 /* ---------- top bar ---------- */
 .top{
   position:sticky; top:0; z-index:40; display:flex; align-items:center; gap:14px;
-  padding:12px 20px; background:color-mix(in srgb,var(--page) 88%,transparent);
+  padding:12px 20px; background:color-mix(in srgb,var(--page) 98%,transparent);
   backdrop-filter:blur(10px); border-bottom:1px solid var(--line);
 }
 .brand{font-family:Georgia,serif; font-size:15px; letter-spacing:.01em; color:var(--ink)}
@@ -70,7 +75,8 @@ sub,sup{font-size:.72em}
 /* ---------- stage frame ---------- */
 .deck{max-width:860px; margin:0 auto; padding:0 22px}
 .stage{display:none; min-height:calc(100vh - 190px); padding:44px 0 40px; animation:rise .5s cubic-bezier(.2,.8,.2,1)}
-.stage.on{display:flex; flex-direction:column; justify-content:center}
+.stage.on{display:flex; flex-direction:column; justify-content:flex-start}
+h1.big,h2.beat{scroll-margin-top:78px}
 @keyframes rise{from{opacity:0; transform:translateY(14px)}to{opacity:1; transform:none}}
 .act{
   font-size:11px; font-weight:800; letter-spacing:.16em; text-transform:uppercase;
@@ -227,9 +233,236 @@ select{
 .nbtn.primary{background:var(--gold); color:#17130a; border-color:var(--gold)}
 .nbtn.primary:hover{filter:brightness(1.06); color:#17130a}
 
+/* ===========================================================
+   SKELETAL STRUCTURE SYSTEM — lifted from the live Ace Labs OChem
+   engine (sk-* primitives + atlas), re-themed to dark+gold via
+   CSS variables so bonds/atoms/charges flip cleanly per theme.
+   =========================================================== */
+:root{
+  --sk-ink:#e9dfc2; --sk-halo:#211e14;
+  --sk-O:#ff9d9d; --sk-N:#93c5fd; --sk-X:#6bd68a; --sk-S:#e2c97a; --sk-P:#f0a878; --sk-M:#c49af0;
+  --sk-plus:#ff9d9d; --sk-minus:#93c5fd; --sk-push:#c49af0; --sk-trace:#79c58e; --sk-trace2:#e3ca7d;
+}
+@media (prefers-color-scheme: light){
+  :root{
+    --sk-ink:#241f16; --sk-halo:#faf5e9;
+    --sk-O:#b91c1c; --sk-N:#1d4ed8; --sk-X:#15803d; --sk-S:#ca8a04; --sk-P:#c2410c; --sk-M:#6d28d9;
+    --sk-plus:#b91c1c; --sk-minus:#1d4ed8; --sk-push:#6d28d9; --sk-trace:#2f7d4c; --sk-trace2:#9c7d24;
+  }
+}
+:root[data-theme=dark]{
+  --sk-ink:#e9dfc2; --sk-halo:#211e14;
+  --sk-O:#ff9d9d; --sk-N:#93c5fd; --sk-X:#6bd68a; --sk-S:#e2c97a; --sk-P:#f0a878; --sk-M:#c49af0;
+  --sk-plus:#ff9d9d; --sk-minus:#93c5fd; --sk-push:#c49af0; --sk-trace:#79c58e; --sk-trace2:#e3ca7d;
+}
+:root[data-theme=light]{
+  --sk-ink:#241f16; --sk-halo:#faf5e9;
+  --sk-O:#b91c1c; --sk-N:#1d4ed8; --sk-X:#15803d; --sk-S:#ca8a04; --sk-P:#c2410c; --sk-M:#6d28d9;
+  --sk-plus:#b91c1c; --sk-minus:#1d4ed8; --sk-push:#6d28d9; --sk-trace:#2f7d4c; --sk-trace2:#9c7d24;
+}
+.sk-bond{stroke:var(--sk-ink);stroke-width:1.8;stroke-linecap:round;fill:none}
+.sk-bond-thin{stroke:var(--sk-ink);stroke-width:1.4;stroke-linecap:round;fill:none}
+.sk-atom{font-family:'DM Sans',system-ui,sans-serif;font-size:13px;font-weight:600;text-anchor:middle;dominant-baseline:central;fill:var(--sk-ink);paint-order:stroke;stroke:var(--sk-halo);stroke-width:3.4px;stroke-linejoin:round}
+.sk-atom.O{fill:var(--sk-O)} .sk-atom.N{fill:var(--sk-N)} .sk-atom.X{fill:var(--sk-X)} .sk-atom.S{fill:var(--sk-S)} .sk-atom.P{fill:var(--sk-P)} .sk-atom.M{fill:var(--sk-M)}
+.sk-atom-sm{font-family:'DM Sans',system-ui,sans-serif;font-size:12px;font-weight:700;text-anchor:middle;dominant-baseline:central;fill:var(--sk-ink);paint-order:normal;stroke:none}
+.sk-atom-sm.O{fill:var(--sk-O)} .sk-atom-sm.N{fill:var(--sk-N)} .sk-atom-sm.X{fill:var(--sk-X)} .sk-atom-sm.S{fill:var(--sk-S)}
+.sk-charge-circle{fill:var(--sk-halo);stroke-width:1.3}
+.sk-charge-circle.plus{stroke:var(--sk-plus)} .sk-charge-circle.minus{stroke:var(--sk-minus)}
+.sk-charge-text{font-family:'DM Sans',system-ui,sans-serif;font-size:10px;font-weight:700;text-anchor:middle;dominant-baseline:central}
+.sk-charge-text.plus{fill:var(--sk-plus)} .sk-charge-text.minus{fill:var(--sk-minus)}
+.sk-lp{fill:var(--sk-ink)} .sk-lp-O{fill:var(--sk-O)} .sk-lp-N{fill:var(--sk-N)} .sk-lp-X{fill:var(--sk-X)}
+.sk-dot-trace{fill:var(--sk-trace)}
+.sk-delta{font-family:'DM Sans',system-ui,sans-serif;font-size:9px;font-weight:700;fill:var(--sk-minus)}
+.sk-note{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:9px;fill:var(--muted)}
+.sk-push{stroke:var(--sk-push);stroke-width:2.6;fill:none;stroke-linecap:round;stroke-linejoin:round;opacity:.92}
+.push-head{fill:var(--sk-push)}
+.pka-num{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:10.5px;font-weight:800}
+.pka-name{font-family:Georgia,serif;font-style:italic;font-size:10.5px;fill:var(--ink)}
+
+/* skeletal "plate": a known-color canvas so the sk-atom halo erases bonds cleanly */
+.sk-plate{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:10px 12px}
+
+/* keyframes lifted from the engine (bondGlow / atomPulse / confirmedTrace / drawArrow / productPulse / shake), retheme'd */
+@keyframes bondGlow{0%,100%{opacity:.75}50%{opacity:1;filter:drop-shadow(0 0 4px var(--sk-trace))}}
+@keyframes atomPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.22)}}
+@keyframes drawArrow{from{stroke-dashoffset:var(--pl,220)}to{stroke-dashoffset:0}}
+@keyframes commitFlash{0%{background:color-mix(in srgb,var(--gold) 42%,transparent);box-shadow:inset 0 0 0 3px var(--gold);transform:scale(1.012)}55%{transform:scale(1)}100%{background:color-mix(in srgb,var(--ok) 14%,transparent);box-shadow:none;transform:none}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@keyframes popStep{0%{transform:scale(.6);opacity:0}60%{transform:scale(1.12)}100%{transform:scale(1);opacity:1}}
+@keyframes cgConfirm{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--ok) 85%,transparent),inset 0 0 0 2px var(--ok)}55%{box-shadow:0 0 0 12px color-mix(in srgb,var(--gold) 0%,transparent),inset 0 0 0 2px var(--gold)}100%{box-shadow:0 0 0 0 transparent,inset 0 0 0 1px var(--gold)}}
+@keyframes shakeX{0%,100%{transform:translateX(0)}20%{transform:translateX(-5px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(3px)}}
+/* resonance oscillation: two Kekulé forms cross-fade; the traced pair keeps its color as it shifts */
+@keyframes resoA{0%,42%{opacity:1}58%,100%{opacity:0}}
+@keyframes resoB{0%,42%{opacity:0}58%,100%{opacity:1}}
+.sk-push-draw{stroke-dasharray:var(--pl,220);stroke-dashoffset:var(--pl,220);animation:drawArrow 1s ease-out forwards}
+
+/* CARDIO grid mini-structures (stage 4) */
+.cl-sk{display:block;margin:8px 0 0;width:100%;max-width:150px;height:44px}
+.cletter .lh{margin-bottom:5px}
+
+/* resonance star (stage 5) */
+.reso-wrap{display:grid;grid-template-columns:1.35fr 1fr;gap:14px;align-items:stretch;margin:6px 0 4px}
+@media(max-width:640px){.reso-wrap{grid-template-columns:1fr}}
+.reso-live,.reso-truth{background:var(--panel2);border:1px solid var(--line);border-radius:16px;padding:16px 16px 12px;display:flex;flex-direction:column}
+.reso-live{border-color:color-mix(in srgb,var(--oc) 34%,var(--line))}
+.reso-k{font-size:10.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--oc);margin-bottom:6px}
+.reso-truth .reso-k{color:var(--gold)}
+.reso-live svg,.reso-truth svg{width:100%;height:auto;max-height:300px}
+.reso-cap{font-size:12px;color:var(--ink-2);margin:8px 0 0;line-height:1.42}
+.reso-cap b{color:var(--ink)}
+.dbl-o1{animation:resoA 3s ease-in-out infinite}
+.dbl-o2{animation:resoB 3s ease-in-out infinite}
+.grp-o2{animation:resoA 3s ease-in-out infinite}
+.grp-o1{animation:resoB 3s ease-in-out infinite}
+
+/* pKa skeletal ladder (stage 6) */
+.pka-ladder{background:var(--panel2);border:1px solid var(--line);border-radius:16px;padding:18px 14px 10px}
+.pka-ladder svg{width:100%;height:auto}
+
+/* -- engine-grade interactive: "tap the more stable conjugate base" (stage 7) -- */
+.cardio-tool{background:var(--panel);border:1px solid var(--line2);border-radius:16px;padding:18px 18px 16px;margin:6px 0}
+.cardio-tool .cg-head{font-size:15px;font-weight:700;margin:0 0 4px}
+.cardio-tool .cg-sub{font-size:12.5px;color:var(--muted);margin:0 0 14px}
+.cg-pair{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:stretch}
+@media(max-width:560px){.cg-pair{grid-template-columns:1fr;gap:12px}.cg-vs{display:none}}
+.cg-card{position:relative;background:var(--panel2);border:1.5px solid var(--line2);border-radius:14px;padding:14px 12px 12px;cursor:pointer;text-align:center;transition:transform .14s,border-color .14s,box-shadow .2s;display:flex;flex-direction:column;align-items:center;gap:6px}
+.cg-card:hover{transform:translateY(-2px);border-color:var(--oc-dim);box-shadow:0 8px 20px -12px rgba(0,0,0,.5)}
+.cg-card:focus-visible{outline:2.5px solid var(--gold);outline-offset:2px}
+.cg-card .cg-lbl{font:800 10px 'JetBrains Mono',ui-monospace,monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.cg-card .cg-name{font-family:'DM Sans',system-ui,sans-serif;font-weight:700;font-size:15px;color:var(--ink)}
+.cg-card svg{width:100%;max-width:190px;height:70px}
+.cg-card .cg-pka{font:800 11px 'JetBrains Mono',ui-monospace,monospace;letter-spacing:.06em;color:var(--gold2);background:var(--panel);border:1px solid var(--line2);border-radius:12px;padding:3px 9px}
+.cg-vs{display:flex;align-items:center;justify-content:center;font-family:Georgia,serif;font-style:italic;color:var(--muted);font-size:15px}
+.cg-card.win{border-color:var(--ok);animation:cgConfirm .55s ease-out forwards}
+.cg-card.win .cg-name{color:var(--ok)}
+.cg-card.win svg .sk-emph{animation:atomPulse 1.3s ease-in-out 2;transform-origin:center;transform-box:fill-box}
+.cg-card.miss{border-color:var(--crit)}
+.cg-card.win::after{content:'stronger acid';position:absolute;top:8px;right:8px;font:800 8.5px 'JetBrains Mono',ui-monospace,monospace;letter-spacing:.1em;text-transform:uppercase;color:#17130a;background:var(--gold);border-radius:9px;padding:2px 7px}
+.cardio-tool.shake{animation:shakeX .4s ease}
+.cg-walk{display:flex;gap:7px;justify-content:center;margin:14px 0 2px}
+.cg-walk[hidden]{display:none}
+.cg-step{width:30px;height:30px;border-radius:8px;border:1px solid var(--line2);display:flex;align-items:center;justify-content:center;font-family:Georgia,serif;font-weight:700;font-size:15px;color:var(--muted);background:var(--panel2)}
+.cg-step.checked{color:var(--ink-2)}
+.cg-step.win{color:#17130a;background:var(--gold);border-color:var(--gold);box-shadow:0 0 0 3px color-mix(in srgb,var(--gold) 28%,transparent)}
+.cg-step.skip{opacity:.4}
+.cg-fb{margin-top:12px}
+.cg-fb.out.hit{border-style:solid}
+.cg-fb.miss{border-style:solid;border-color:var(--crit);background:color-mix(in srgb,var(--crit) 10%,transparent);color:var(--ink)}
+.cg-fb b{color:var(--gold2)}
+.cg-actions{margin-top:14px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.cg-actions .cg-count{font:700 11px 'JetBrains Mono',ui-monospace,monospace;letter-spacing:.08em;color:var(--muted);text-transform:uppercase}
+
+/* proof correct-commit flourish + reasoning animates in (You-do) */
+.choice.correct.just-committed{animation:commitFlash .34s ease-out}
+.fb.show{animation:fadeUp .3s ease}
+.choices .cr{animation:fadeUp .3s ease both}
+/* We-do widget: feedback + deciding-letter animate in on commit */
+.cg-fb.hit,.cg-fb.miss,.cg-fb.hint{animation:fadeUp .3s ease}
+.cg-fb.hint{border-style:solid;border-color:var(--oc-dim);background:color-mix(in srgb,var(--oc) 8%,transparent);color:var(--ink)}
+.cg-walk .cg-step.win{animation:popStep .34s ease-out}
+
+/* You-do proof: drawn-structure panel (the compounds are the hero — read the structures) */
+.pq-structs{display:flex;flex-wrap:wrap;gap:10px;margin:2px 0 18px;justify-content:center}
+.pq-struct{position:relative;flex:1 1 128px;max-width:162px;min-width:104px;background:var(--panel2);border:1.5px solid var(--line2);border-radius:12px;padding:12px 8px 8px;display:flex;flex-direction:column;align-items:center;gap:4px}
+.pq-slabel{position:absolute;top:6px;left:9px;font:800 11px 'JetBrains Mono',ui-monospace,monospace;color:var(--oc);letter-spacing:.05em}
+.pq-struct svg{width:100%;height:92px;display:block}
+.pq-sname{font-size:11px;color:var(--muted);text-align:center;line-height:1.25}
+.pq-struct.struct-correct{border-color:var(--ok);animation:cgConfirm .55s ease-out forwards}
+.pq-struct.struct-correct .pq-slabel{color:var(--ok)}
+.pq-struct.struct-correct svg{animation:atomPulse 1.3s ease-in-out 2;transform-origin:center;transform-box:fill-box}
+@media(max-width:520px){ .pq-struct{flex:1 1 42%;max-width:none} }
+@media(max-width:360px){ .pq-struct{flex:1 1 100%} }
+/* mobile: keep the top bar and deck from overflowing the viewport */
+@media(max-width:560px){
+  html,body{overflow-x:hidden}
+  .top{gap:8px; padding:10px 12px}
+  .utag{display:none}
+  .beatcount{display:none}
+  .brand{font-size:13px}
+  .mini{padding:6px 9px; font-size:11px}
+  .rail{top:46px}
+  .deck{padding:0 14px}
+  .nav{padding:12px 14px 16px}
+  .pqhead{flex-wrap:wrap; gap:8px}
+}
+
+/* -- EWG / EDG teaching beat -- */
+.ewg-lists{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:8px 0 6px}
+@media(max-width:640px){.ewg-lists{grid-template-columns:1fr}}
+.ewg-col{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:15px 16px}
+.ewg-col.ewg-strong{border-left:3px solid var(--crit)}
+.ewg-col.ewg-weak{border-left:3px solid var(--oc)}
+.ewg-col .k{font-size:10.5px;font-weight:800;letter-spacing:.11em;text-transform:uppercase;margin-bottom:3px}
+.ewg-col.ewg-strong .k{color:var(--crit)}
+.ewg-col.ewg-weak .k{color:var(--oc)}
+.ewg-col .sub{font-size:12px;color:var(--muted);margin-bottom:11px}
+.grp-chain{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.grp-chip{font-family:'JetBrains Mono',ui-monospace,monospace;font-weight:800;font-size:12.5px;color:var(--gold2);background:var(--panel2);border:1px solid var(--line2);border-radius:8px;padding:5px 9px;white-space:nowrap}
+.grp-gt{color:var(--muted);font-weight:800;font-family:'JetBrains Mono',ui-monospace,monospace}
+.rank-lad{display:flex;flex-wrap:wrap;gap:7px;align-items:center;margin:4px 0;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12.5px}
+.rank-item{background:var(--panel2);border:1px solid var(--line2);border-radius:8px;padding:5px 9px;color:var(--ink-2);white-space:nowrap}
+.rank-item b{color:var(--gold2)}
+.rank-item.hi{border-color:var(--crit)}
+.rank-item.ref{border-style:dashed}
+.rank-item.lo{border-color:var(--oc-dim)}
+
+/* two-speed ranking method */
+.twospeed{display:grid;gap:12px;margin:6px 0 4px}
+.tstep{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 18px;display:flex;gap:14px;align-items:flex-start}
+.tstep .n{flex:none;width:30px;height:30px;border-radius:9px;background:var(--gold);color:#17130a;font:800 15px system-ui;display:flex;align-items:center;justify-content:center}
+.tstep h4{margin:0 0 4px;font-size:15px}
+.tstep p{margin:0;font-size:13.5px;color:var(--ink-2);max-width:60ch}
+.classbar{display:flex;flex-wrap:wrap;gap:7px;margin-top:9px}
+.classbar span{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:11.5px;background:var(--panel2);border:1px solid var(--line2);border-radius:7px;padding:4px 8px;color:var(--ink-2)}
+.classbar span b{color:var(--gold2)}
+
+/* -- fill-in-the-blank (active recall, tap-to-fill, retryable) -- */
+@keyframes fibLock{0%{background:color-mix(in srgb,var(--gold) 42%,transparent)}100%{background:transparent}}
+.fib-hint{font-size:12.5px;color:var(--muted);margin:0 0 18px}
+.fib-line{margin:14px 0 6px;padding:12px 16px;background:var(--panel2);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:0 12px 12px 0;font-size:15.5px;line-height:2;color:var(--ink);max-width:64ch}
+.fib-line .fk{display:block;font-size:11px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--gold2);margin-bottom:5px}
+.fib{display:inline-flex;align-items:center;gap:5px;flex-wrap:wrap;vertical-align:baseline}
+.fib-slot{display:inline-flex;gap:5px;flex-wrap:wrap}
+.fib-chip{font:600 14px/1 system-ui;color:var(--ink);background:var(--panel);border:1px dashed var(--line2);border-radius:8px;padding:6px 11px;cursor:pointer;transition:border-color .12s,color .12s}
+.fib-chip:hover{border-color:var(--gold);color:var(--gold2)}
+.fib-chip:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.fib-chip.bad{animation:shakeX .4s ease;border-color:var(--crit);color:var(--crit)}
+.fib-letters .fib-chip{font-family:Georgia,serif;font-weight:700;min-width:32px;justify-content:center;text-align:center}
+.fib-done{display:inline-flex;align-items:center;gap:7px;vertical-align:baseline}
+.fib-lock{font-weight:700;color:var(--gold2);border-bottom:2px solid var(--gold);padding:0 2px;animation:fibLock .6s ease-out}
+.fib-redo{font:600 11px/1 system-ui;color:var(--muted);background:transparent;border:1px solid var(--line2);border-radius:7px;padding:4px 8px;cursor:pointer}
+.fib-redo:hover{color:var(--ink);border-color:var(--gold)}
+
+/* -- retryable proof: per-question try-again + redo-all -- */
+.pretry{margin-top:12px;background:transparent;color:var(--ink-2);border:1px solid var(--line2);border-radius:10px;padding:9px 15px;font:600 13px system-ui;cursor:pointer;transition:.12s}
+.pretry:hover{border-color:var(--gold);color:var(--gold)}
+.redo-all{margin-top:16px;width:100%;background:var(--gold);color:#17130a;border:0;border-radius:11px;padding:13px;font:800 15px system-ui;cursor:pointer;transition:.12s}
+.redo-all:hover{filter:brightness(1.05)}
+.redo-note{margin:10px 0 0;font-size:13px;color:var(--ink-2)}
+.attempt-line{margin:6px 0 0;font-size:13.5px;color:var(--gold2);font-weight:700}
+
+/* -- CARDIO step walk: per-letter beat header + overview rail -- */
+.step-hd{display:flex;align-items:flex-start;gap:15px;margin:0 0 10px}
+.step-badge{flex:none;min-width:54px;height:54px;padding:0 8px;border-radius:15px;background:var(--panel2);border:1px solid var(--line2);display:flex;align-items:center;justify-content:center;font-family:Georgia,serif;font-weight:600;font-size:30px;line-height:1;color:var(--oc);box-shadow:var(--shadow)}
+.step-badge.di{font-size:20px;letter-spacing:.01em}
+.step-meta{flex:1;min-width:0}
+.step-nm{display:block;font-size:11px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--gold2);margin:3px 0 5px}
+.step-beat{margin:0}
+.acro-rail{display:grid;gap:9px;margin:8px 0 6px}
+.acro{display:flex;align-items:center;gap:15px;background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:11px 16px}
+.acro b{flex:none;min-width:46px;text-align:center;font-family:Georgia,serif;font-weight:600;font-size:24px;line-height:1;color:var(--oc)}
+.acro .an{display:block;font-weight:700;font-size:14px}
+.acro .ad{display:block;font-size:12.5px;color:var(--ink-2);line-height:1.4}
+@media(max-width:560px){.step-badge{min-width:46px;height:46px;font-size:25px}.step-badge.di{font-size:17px}.acro b{min-width:38px;font-size:21px}}
+
 @media (prefers-reduced-motion: reduce){
   .stage,.cletter{animation:none!important; opacity:1!important; transform:none!important}
   .rail i{transition:none}
+  .sk-push-draw,.dbl-o1,.dbl-o2,.grp-o1,.grp-o2,.cg-card.win,.cg-card.win svg .sk-emph,.cardio-tool.shake,.choice.just-committed,.fb.show,.choices .cr,.cg-fb.hit,.cg-fb.miss,.cg-fb.hint,.cg-walk .cg-step.win,.pq-struct.struct-correct,.pq-struct.struct-correct svg,.fib-chip.bad,.fib-lock,[class*="atomPulse"]{animation:none!important}
+  .sk-push-draw{stroke-dashoffset:0!important}
+  /* freeze resonance on the symmetric hybrid so the payoff is always legible */
+  .dbl-o1,.dbl-o2{opacity:.55!important}
+  .grp-o1,.grp-o2{opacity:.6!important}
 }
 </style>
 
@@ -237,8 +470,9 @@ select{
   <span class="utag">OChem &middot; Unit 2</span>
   <span class="brand serif"><b>Ace</b> the DAT</span>
   <span class="sp"></span>
-  <span class="beatcount" id="beatcount">1 / 12</span>
+  <span class="beatcount" id="beatcount">1 / 17</span>
   <button class="mini" id="exportBtn">Export</button>
+  <button class="mini" id="importBtn">Import</button>
   <button class="mini" id="theme">Light</button>
 </div>
 <div class="rail"><i id="railfill"></i></div>
@@ -250,173 +484,488 @@ select{
     <div class="act">The reference lesson</div>
     <h1 class="big">Acids &amp; Bases:<br>the one move that ranks them all.</h1>
     <p class="lead">Every acidity question on the DAT is the same question wearing a different costume. In the next few minutes you&rsquo;ll learn the one move, watch it drawn, then prove it on real items &mdash; and walk out able to defend any ranking out loud.</p>
-    <div class="key callout"><h4>How this works</h4><p>Short teach beats, one idea per screen. Then a hands-on rep, then six graded items where you commit before you peek. Bulk drilling lives in the live engine &mdash; this is where you learn the move.</p></div>
+    <div class="key callout"><h4>How this works &mdash; I do, we do, you do</h4><p><b>I do:</b> watch the move drawn and animated, one idea per screen. <b>We do:</b> we work one ranking together &mdash; you call it, we reason it out. <b>You do:</b> eight DAT-shaped ranking items you commit to before you peek. Bulk drilling lives in the live engine &mdash; this is where you learn the move.</p></div>
   </section>
 
-  <!-- 1 ANCHOR: the one line -->
   <section class="stage" data-act="Anchor">
-    <div class="act">Anchor &middot; the one idea</div>
+    <div class="act">I do &middot; the one idea</div>
     <h2 class="beat">Forget the acid. Judge what it leaves behind.</h2>
-    <div class="thesis">Acidity = <b>how stable is the conjugate base?</b></div>
+    <div class="thesis">Acidity = how stable is the <span class="fib" data-a="conjugate base" data-c="proton|conjugate base|neutral acid"></span>?</div>
+    <p class="fib-hint">Tap the word that finishes the one-liner &mdash; that is the whole topic in a sentence.</p>
     <p class="lead">An acid gives up a proton (H<sup>+</sup>). What&rsquo;s left is the <b>conjugate base</b>, holding the leftover negative charge. A strong acid is simply one whose leftover anion is <em>comfortable</em> holding that charge. Everything else today is just a different reason that anion is more or less comfortable.</p>
     <div class="note callout"><h4>The whole topic, one line</h4><p>stronger acid &nbsp;&harr;&nbsp; more stable conjugate base &nbsp;&harr;&nbsp; lower pK<sub>a</sub>.</p></div>
   </section>
 
-  <!-- 2 ANCHOR: hot potato -->
   <section class="stage" data-act="Anchor">
-    <div class="act">Anchor &middot; the picture</div>
+    <div class="act">I do &middot; the picture</div>
     <h2 class="beat">Treat the charge like a hot potato.</h2>
-    <div class="figure">
-      <svg viewBox="0 0 520 180" role="img" aria-label="A charge crammed on one small atom is unstable; the same charge spread over several atoms is stable">
-        <g font-family="system-ui" font-size="13">
-          <!-- cramped -->
-          <circle cx="90" cy="92" r="34" fill="none" stroke="var(--crit)" stroke-width="2"/>
-          <circle cx="90" cy="92" r="12" fill="var(--crit)" opacity=".9"/>
-          <text x="90" y="97" text-anchor="middle" fill="#fff" font-size="14" font-weight="700">&minus;</text>
-          <text x="90" y="150" text-anchor="middle" fill="var(--ink)" font-weight="700">Crammed on one atom</text>
-          <text x="90" y="168" text-anchor="middle" fill="var(--crit)">unstable &rarr; weaker acid</text>
-          <!-- arrow -->
-          <text x="248" y="97" text-anchor="middle" fill="var(--muted)" font-size="26">&rarr;</text>
-          <!-- spread -->
-          <g>
-            <circle cx="360" cy="76" r="20" fill="none" stroke="var(--ok)" stroke-width="1.6"/>
-            <circle cx="410" cy="104" r="20" fill="none" stroke="var(--ok)" stroke-width="1.6"/>
-            <circle cx="460" cy="76" r="20" fill="none" stroke="var(--ok)" stroke-width="1.6"/>
-            <text x="360" y="81" text-anchor="middle" fill="var(--ok)" font-size="12">&minus;&frac13;</text>
-            <text x="410" y="109" text-anchor="middle" fill="var(--ok)" font-size="12">&minus;&frac13;</text>
-            <text x="460" y="81" text-anchor="middle" fill="var(--ok)" font-size="12">&minus;&frac13;</text>
+    <div class="figure sk-plate">
+      <svg viewBox="0 0 520 190" role="img" aria-label="Ethoxide crams a full negative charge on one oxygen and is unstable; acetate spreads the same charge over two equivalent oxygens and is stable">
+        <!-- LEFT: ethoxide — charge trapped on one O -->
+        <g transform="translate(20 0)">
+          <text class="sk-atom-sm" x="18" y="86" font-size="11">H&#8323;C</text>
+          <line class="sk-bond" x1="40" y1="82" x2="66" y2="66"/>
+          <line class="sk-bond" x1="66" y1="66" x2="92" y2="82"/>
+          <text class="sk-atom O" x="112" y="76">O</text>
+          <!-- the lonely full charge, pulsing to read as unstable -->
+          <g class="sk-emph" style="transform-origin:130px 60px;transform-box:view-box;animation:atomPulse 1.5s ease-in-out infinite">
+            <circle class="sk-charge-circle minus" cx="130" cy="60" r="8"/>
+            <text class="sk-charge-text minus" x="130" y="60" font-size="12">&minus;</text>
           </g>
-          <text x="410" y="150" text-anchor="middle" fill="var(--ink)" font-weight="700">Shared across several</text>
-          <text x="410" y="168" text-anchor="middle" fill="var(--ok)">stable &rarr; stronger acid</text>
+          <circle class="sk-lp-O" cx="108" cy="90" r="1.6"/><circle class="sk-lp-O" cx="116" cy="90" r="1.6"/>
+          <text x="70" y="128" text-anchor="middle" fill="var(--ink)" font-weight="700" font-size="12.5">ethoxide</text>
+          <text x="70" y="146" text-anchor="middle" fill="var(--crit)" font-size="11.5">full &minus; trapped on one O</text>
+          <text x="70" y="163" text-anchor="middle" fill="var(--crit)" font-size="11.5">unstable &rarr; weaker acid</text>
+        </g>
+        <text x="255" y="72" text-anchor="middle" fill="var(--muted)" font-family="Georgia,serif" font-size="26">&rarr;</text>
+        <!-- RIGHT: acetate — charge shared over two equivalent O -->
+        <g transform="translate(300 0)">
+          <text class="sk-atom-sm" x="16" y="66" font-size="11">H&#8323;C</text>
+          <line class="sk-bond" x1="38" y1="62" x2="66" y2="62"/>
+          <text class="sk-atom-sm" x="74" y="62" font-size="11">C</text>
+          <!-- upper C–O, partial double -->
+          <line class="sk-bond" x1="82" y1="56" x2="104" y2="42"/>
+          <line class="sk-bond-thin" x1="85" y1="61" x2="103" y2="49" stroke-dasharray="3,3"/>
+          <text class="sk-atom O" x="112" y="38">O</text>
+          <text class="sk-charge-text minus" x="130" y="34" font-size="11">&frac12;&minus;</text>
+          <!-- lower C–O, partial double -->
+          <line class="sk-bond" x1="82" y1="68" x2="104" y2="82"/>
+          <line class="sk-bond-thin" x1="85" y1="63" x2="103" y2="75" stroke-dasharray="3,3"/>
+          <text class="sk-atom O" x="112" y="86">O</text>
+          <text class="sk-charge-text minus" x="130" y="90" font-size="11">&frac12;&minus;</text>
+          <!-- shared-cloud hint -->
+          <ellipse cx="112" cy="62" rx="30" ry="34" fill="var(--sk-trace)" opacity=".10"/>
+          <text x="86" y="128" text-anchor="middle" fill="var(--ink)" font-weight="700" font-size="12.5">acetate</text>
+          <text x="86" y="146" text-anchor="middle" fill="var(--green)" font-size="11.5">&frac12; on each of two equal O</text>
+          <text x="86" y="163" text-anchor="middle" fill="var(--green)" font-size="11.5">stable &rarr; stronger acid</text>
         </g>
       </svg>
-      <p class="cap">The more hands the charge can be passed to &mdash; a bigger atom, resonance, a nearby group tugging &mdash; the comfier the anion, and the more willingly the acid let its proton go. <b>Comfort of the anion is the entire game.</b></p>
+      <p class="cap">Same O&ndash;H bond, same element holding the charge &mdash; the only difference is <b>how many hands the charge gets passed to</b>. Ethoxide is stuck holding a whole negative on one oxygen; acetate splits it over two identical oxygens. <b>Comfort of the anion is the entire game.</b></p>
     </div>
+    <div class="fib-line"><span class="fk">Say it back</span>Charge crammed on one atom = <span class="fib" data-a="unstable" data-c="unstable|stable"></span> = <span class="fib" data-a="weaker" data-c="stronger|weaker"></span> acid; spread over many = stable = stronger acid.</div>
   </section>
 
-  <!-- 3 ANCHOR: name the move -->
   <section class="stage" data-act="Anchor">
-    <div class="act">Anchor &middot; the move</div>
+    <div class="act">I do &middot; the move</div>
     <h2 class="beat">Take the proton off <em>first</em>. Then look.</h2>
-    <div class="figure">
-      <svg viewBox="0 0 460 96" role="img" aria-label="H-A dissociates into H plus and A minus; judge A minus">
-        <g font-family="ui-monospace,monospace" font-size="24" fill="var(--ink)">
-          <text x="18" y="58">H&ndash;A</text>
-          <text x="150" y="58" fill="var(--muted)" font-size="22">&rarr;</text>
-          <text x="210" y="58">H<tspan font-size="15" dy="-10">+</tspan></text>
-          <text x="270" y="58" fill="var(--muted)">+</text>
-          <g>
-            <rect x="310" y="30" width="118" height="44" rx="10" fill="none" stroke="var(--oc)" stroke-width="1.6"/>
-            <text x="330" y="58" fill="var(--oc)">A<tspan font-size="15" dy="-10">&minus;</tspan></text>
-          </g>
+    <div class="figure sk-plate">
+      <svg viewBox="0 0 470 120" role="img" aria-label="H-Cl loses its proton: a curved arrow shows the bonding pair staying with chlorine, giving H plus and the conjugate base chloride, which is what you judge">
+        <defs>
+          <marker id="pHead" markerUnits="userSpaceOnUse" markerWidth="8" markerHeight="8" refX="4.6" refY="4" orient="auto"><path class="push-head" d="M0,0 L8,4 L0,8 Z"/></marker>
+        </defs>
+        <!-- neutral acid H-Cl -->
+        <text class="sk-atom" x="40" y="62">H</text>
+        <line class="sk-bond" x1="52" y1="62" x2="76" y2="62"/>
+        <text class="sk-atom X" x="90" y="62">Cl</text>
+        <!-- curved arrow: bonding pair leaves H, stays on Cl -->
+        <path class="sk-push sk-push-draw" style="--pl:120" d="M66 52 C 70 34, 96 34, 100 50" fill="none" marker-end="url(#pHead)"/>
+        <text class="sk-note" x="83" y="30" text-anchor="middle">pair stays with Cl</text>
+        <!-- yields -->
+        <text x="150" y="67" text-anchor="middle" fill="var(--muted)" font-family="Georgia,serif" font-size="24">&rarr;</text>
+        <text class="sk-atom" x="196" y="62">H</text>
+        <circle class="sk-charge-circle plus" cx="210" cy="48" r="7"/><text class="sk-charge-text plus" x="210" y="48">+</text>
+        <text x="248" y="67" text-anchor="middle" fill="var(--muted)" font-family="Georgia,serif" font-size="22">+</text>
+        <!-- conjugate base, highlighted -->
+        <g>
+          <rect x="290" y="34" width="150" height="56" rx="12" fill="none" stroke="var(--oc)" stroke-width="1.6"/>
+          <text class="sk-atom X" x="330" y="62">Cl</text>
+          <circle class="sk-charge-circle minus" cx="348" cy="48" r="7"/><text class="sk-charge-text minus" x="348" y="48">&minus;</text>
+          <circle class="sk-lp-X" cx="322" cy="74" r="1.6"/><circle class="sk-lp-X" cx="330" cy="74" r="1.6"/><circle class="sk-lp-X" cx="338" cy="74" r="1.6"/>
+          <text x="365" y="108" text-anchor="middle" fill="var(--oc)" font-size="11" font-weight="700" font-family="'JetBrains Mono',ui-monospace,monospace" letter-spacing=".08em">JUDGE THIS ANION</text>
         </g>
       </svg>
-      <p class="cap">Never rank acids by staring at the neutral molecule. <b>Pull the proton, draw the anion, then ask how stable it is.</b> Whatever stabilizes that anion is exactly what made the acid stronger.</p>
+      <p class="cap">Never rank acids by staring at the neutral molecule. <b>Pull the proton, draw the anion, then ask how stable it is.</b> Whatever stabilizes that conjugate base is exactly what made the acid stronger.</p>
     </div>
     <div class="warn callout"><h4>Trap #1</h4><p>Judge the <b>conjugate base</b>, never the neutral acid. This one habit prevents most ranking mistakes.</p></div>
+    <div class="fib-line"><span class="fk">Name the move</span>Take the proton off <span class="fib" data-a="first" data-c="first|last"></span>, then judge the <span class="fib" data-a="anion" data-c="acid|anion|proton"></span>.</div>
   </section>
 
-  <!-- 4 MOVE: CARDIO -->
   <section class="stage" data-act="The Move">
-    <div class="act">The Move &middot; the checklist</div>
+    <div class="act">I do &middot; the checklist</div>
     <h2 class="beat">Six letters, really five ideas: <span class="serif" style="color:var(--oc)">CARDIO</span></h2>
-    <p class="lead">There are only so many reasons an anion is stable. Their initials spell CARDIO. Walk two anions letter by letter; the <b>first real difference</b> is your answer &mdash; and your explanation. (D and I are one idea with two doorways.)</p>
-    <div class="cardio" id="cardio">
-      <div class="cletter"><div class="lh"><b>C</b><span class="nm">Charge</span></div><p>Spread or neutral beats a full charge on one atom.</p><div class="ex">NH&#8324;&#8314; (9) &raquo; NH&#8323; (38)</div></div>
-      <div class="cletter"><div class="lh"><b>A</b><span class="nm">Atom</span></div><p>Which atom holds it? Row: EN wins. Column: size wins.</p><div class="ex">HF&gt;H&#8322;O&gt;NH&#8323; &middot; HI&gt;HF</div></div>
-      <div class="cletter"><div class="lh"><b>R</b><span class="nm">Resonance</span></div><p>Spread the charge over several atoms. Biggest lever on the DAT.</p><div class="ex">acetate 4.8 vs ethanol 16</div></div>
-      <div class="cletter"><div class="lh"><b>D</b><span class="nm">Dipole</span></div><p>A polar bond&rsquo;s field steadies the charge through space.</p><div class="ex">the field half of D/I</div></div>
-      <div class="cletter"><div class="lh"><b>I</b><span class="nm">Induction</span></div><p>EWGs drain charge through the bonds. Closer &amp; more = stronger.</p><div class="ex">Cl&#8323;CCOOH 0.7 vs 4.8</div></div>
-      <div class="cletter"><div class="lh"><b>O</b><span class="nm">Orbital</span></div><p>More s-character holds the pair tighter. Last tiebreaker.</p><div class="ex">sp 25 &gt; sp&sup2; 44 &gt; sp&sup3; 50</div></div>
+    <p class="lead">There are only so many reasons an anion is stable, and their initials spell CARDIO. This screen is the map &mdash; the next five walk one letter each, drawn. (D and I are one idea with two doorways, so they share a beat.)</p>
+    <div class="acro-rail">
+      <div class="acro"><b>C</b><div><span class="an">Charge</span><span class="ad">spread or neutral beats a full charge on one atom</span></div></div>
+      <div class="acro"><b>A</b><div><span class="an">Atom</span><span class="ad">row: electronegativity wins &middot; column: size wins</span></div></div>
+      <div class="acro"><b>R</b><div><span class="an">Resonance</span><span class="ad">spread the charge over several atoms &mdash; biggest lever</span></div></div>
+      <div class="acro"><b>D/I</b><div><span class="an">Dipole / Induction</span><span class="ad">a nearby electron-withdrawing group pulls charge away</span></div></div>
+      <div class="acro"><b>O</b><div><span class="an">Orbital</span><span class="ad">more s-character holds the pair tighter</span></div></div>
     </div>
+    <div class="key callout"><h4>How to run it</h4><p>Walk the letters <b>top-down</b> on the two anions. <b>Stop at the first factor that differs</b> &mdash; that letter is your answer <em>and</em> your reason. You rarely reach O.</p></div>
+    <div class="fib-line"><span class="fk">Quick call</span>Ethanol vs acetic acid: the same atom (O) holds the charge, so the deciding letter is <span class="fib fib-letters" data-a="R" data-c="C|A|R|D|I|O"></span>.</div>
   </section>
 
-  <!-- 5 MOVE: resonance drawn -->
   <section class="stage" data-act="The Move">
-    <div class="act">The Move &middot; the biggest lever, drawn</div>
-    <h2 class="beat">R is the one to see once.</h2>
-    <p class="lead">Resonance moves the needle further than anything else on this topic, so it&rsquo;s worth drawing. A carboxylate&rsquo;s charge doesn&rsquo;t sit on one oxygen &mdash; it lives half on each of two identical oxygens:</p>
-    <div class="figure">
-      <svg viewBox="0 0 460 120" role="img" aria-label="carboxylate resonance: negative charge shared over two oxygens">
-        <g font-family="system-ui" font-size="15" fill="var(--ink)">
-          <text x="20" y="60">R</text>
-          <line x1="34" y1="55" x2="60" y2="55" stroke="var(--ink)" stroke-width="2"/>
-          <text x="66" y="60">C</text>
-          <line x1="80" y1="50" x2="104" y2="34" stroke="var(--ink)" stroke-width="2"/><line x1="83" y1="55" x2="107" y2="39" stroke="var(--ink)" stroke-width="2"/>
-          <text x="108" y="34">O</text>
-          <line x1="80" y1="62" x2="104" y2="78" stroke="var(--ink)" stroke-width="2"/>
-          <text x="108" y="86">O</text><text x="126" y="80" fill="var(--crit)" font-size="13">&minus;</text>
-          <text x="185" y="62" fill="var(--muted)" font-size="20">&harr;</text>
-          <text x="240" y="60">R</text>
-          <line x1="254" y1="55" x2="280" y2="55" stroke="var(--ink)" stroke-width="2"/>
-          <text x="286" y="60">C</text>
-          <line x1="300" y1="50" x2="324" y2="34" stroke="var(--ink)" stroke-width="2"/>
-          <text x="328" y="34">O</text><text x="346" y="28" fill="var(--crit)" font-size="13">&minus;</text>
-          <line x1="300" y1="62" x2="324" y2="78" stroke="var(--ink)" stroke-width="2"/><line x1="303" y1="66" x2="327" y2="82" stroke="var(--ink)" stroke-width="2"/>
-          <text x="328" y="86">O</text>
-          <text x="372" y="58" fill="var(--green)" font-size="12.5">charge shared<tspan x="372" y="75">over both O&rsquo;s</tspan></text>
+    <div class="act">I do &middot; walk the letters</div>
+    <div class="step-hd"><span class="step-badge">C</span><div class="step-meta"><span class="step-nm">Charge &mdash; factor 1 of 5</span><h2 class="beat step-beat">Neutral beats a full charge on one atom.</h2></div></div>
+    <p class="lead">First question every time: <b>what charge is the conjugate base left holding?</b> A base that comes out <em>neutral</em> is far comfier than one stuck with a whole negative on a single atom. That is exactly why a <b>cationic</b> acid &mdash; whose conjugate base is neutral &mdash; is such a strong acid.</p>
+    <div class="figure sk-plate">
+      <svg viewBox="0 0 560 200" role="img" aria-label="Ammonium loses a proton to give neutral ammonia, a very comfortable conjugate base, so ammonium is the stronger acid; ammonia loses a proton to give amide, which carries a full negative charge on one nitrogen, so ammonia is a far weaker acid">
+        <g transform="translate(8 0)">
+          <text class="sk-atom N" x="40" y="70">N</text>
+          <text class="sk-atom" x="18" y="70">H</text><line class="sk-bond" x1="26" y1="70" x2="33" y2="70"/>
+          <text class="sk-atom" x="62" y="70">H</text><line class="sk-bond" x1="54" y1="70" x2="47" y2="70"/>
+          <text class="sk-atom" x="40" y="50">H</text><line class="sk-bond" x1="40" y1="58" x2="40" y2="55"/>
+          <text class="sk-atom" x="40" y="90">H</text><line class="sk-bond" x1="40" y1="82" x2="40" y2="85"/>
+          <circle class="sk-charge-circle plus" cx="58" cy="52" r="6"/><text class="sk-charge-text plus" x="58" y="52">+</text>
+          <text x="112" y="74" text-anchor="middle" fill="var(--muted)" font-family="Georgia,serif" font-size="22">&rarr;</text>
+          <text class="sk-atom N" x="168" y="70">N</text>
+          <text class="sk-atom" x="146" y="70">H</text><line class="sk-bond" x1="154" y1="70" x2="161" y2="70"/>
+          <text class="sk-atom" x="190" y="70">H</text><line class="sk-bond" x1="182" y1="70" x2="175" y2="70"/>
+          <text class="sk-atom" x="168" y="90">H</text><line class="sk-bond" x1="168" y1="82" x2="168" y2="85"/>
+          <circle class="sk-lp-N" cx="164" cy="52" r="1.7"/><circle class="sk-lp-N" cx="172" cy="52" r="1.7"/>
+          <text x="100" y="132" text-anchor="middle" fill="var(--ink)" font-weight="700" font-size="12.5">ammonium &rarr; ammonia</text>
+          <text x="100" y="150" text-anchor="middle" fill="var(--green)" font-size="11.5">base comes out neutral &mdash; comfy</text>
+          <text x="100" y="167" text-anchor="middle" fill="var(--green)" font-size="11.5">stronger acid &middot; pKa 9</text>
+        </g>
+        <line x1="280" y1="28" x2="280" y2="172" stroke="var(--line2)" stroke-dasharray="4,4"/>
+        <g transform="translate(300 0)">
+          <text class="sk-atom N" x="40" y="70">N</text>
+          <text class="sk-atom" x="18" y="70">H</text><line class="sk-bond" x1="26" y1="70" x2="33" y2="70"/>
+          <text class="sk-atom" x="62" y="70">H</text><line class="sk-bond" x1="54" y1="70" x2="47" y2="70"/>
+          <text class="sk-atom" x="40" y="90">H</text><line class="sk-bond" x1="40" y1="82" x2="40" y2="85"/>
+          <circle class="sk-lp-N" cx="36" cy="52" r="1.7"/><circle class="sk-lp-N" cx="44" cy="52" r="1.7"/>
+          <text x="112" y="74" text-anchor="middle" fill="var(--muted)" font-family="Georgia,serif" font-size="22">&rarr;</text>
+          <text class="sk-atom N" x="176" y="70">N</text>
+          <text class="sk-atom" x="154" y="70">H</text><line class="sk-bond" x1="162" y1="70" x2="169" y2="70"/>
+          <text class="sk-atom" x="176" y="90">H</text><line class="sk-bond" x1="176" y1="82" x2="176" y2="85"/>
+          <circle class="sk-charge-circle minus" cx="194" cy="54" r="7"/><text class="sk-charge-text minus" x="194" y="54">&minus;</text>
+          <circle class="sk-lp-N" cx="170" cy="52" r="1.7"/><circle class="sk-lp-N" cx="184" cy="52" r="1.7"/>
+          <text x="108" y="132" text-anchor="middle" fill="var(--ink)" font-weight="700" font-size="12.5">ammonia &rarr; amide</text>
+          <text x="108" y="150" text-anchor="middle" fill="var(--crit)" font-size="11.5">full &minus; trapped on one N</text>
+          <text x="108" y="167" text-anchor="middle" fill="var(--crit)" font-size="11.5">weaker acid &middot; pKa 38</text>
         </g>
       </svg>
-      <p class="cap">Two identical oxygens, half a charge on each &mdash; far comfier than a full charge on one. That single fact is why <b>acetic acid (pK<sub>a</sub> ~5) crushes ethanol (~16)</b>, over a hundred billion times more acidic, from the same O&ndash;H bond.</p>
+      <p class="cap">Pull a proton off <b>ammonium</b> and you get <b>neutral ammonia</b> &mdash; no charge to hold, totally comfortable. Pull one off ammonia itself and you dump a <b>full negative on one nitrogen</b> (amide) &mdash; miserable. Same element, wildly different comfort, decided entirely by the <b>charge left behind</b>.</p>
     </div>
+    <div class="fib-line"><span class="fk">Say it back</span>NH<sub>4</sub><sup>+</sup> lets go of H<sup>+</sup> to leave a <span class="fib" data-a="neutral" data-c="neutral|negative|positive"></span> conjugate base &mdash; comfier than a full charge on one N, so the cation is the <span class="fib" data-a="stronger" data-c="stronger|weaker"></span> acid.</div>
   </section>
 
-  <!-- 6 MOVE: pKa ladder -->
   <section class="stage" data-act="The Move">
-    <div class="act">The Move &middot; anchors to know cold</div>
+    <div class="act">I do &middot; walk the letters</div>
+    <div class="step-hd"><span class="step-badge">A</span><div class="step-meta"><span class="step-nm">Atom &mdash; factor 2 of 5</span><h2 class="beat step-beat">Which atom holds the charge? Two rules.</h2></div></div>
+    <p class="lead">When the charge sits on <em>different</em> atoms, the periodic table decides. Two directions, two rules &mdash; and the column rule is the classic DAT trap because it runs opposite to the row.</p>
+    <div class="figure sk-plate">
+      <svg viewBox="0 0 620 250" role="img" aria-label="Across a row, acidity rises with electronegativity: methane, ammonia, water, then hydrogen fluoride the strongest. Down a column, acidity rises with size: hydrogen fluoride versus hydrogen iodide, where the large iodine spreads the charge best so hydrogen iodide is far stronger.">
+        <text x="20" y="24" fill="var(--gold2)" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="11" font-weight="800">ACROSS A ROW &rarr; electronegativity wins</text>
+        <g transform="translate(0 42)">
+          <g transform="translate(60 20)"><text class="sk-atom-sm" x="-16" y="0" font-size="11">H&#8323;C</text><line class="sk-bond" x1="-3" y1="0" x2="11" y2="0"/><text class="sk-atom" x="21" y="0">H</text></g>
+          <text x="60" y="62" text-anchor="middle" class="pka-num" fill="var(--muted)">pKa ~50</text>
+          <text x="128" y="26" text-anchor="middle" fill="var(--muted)" font-size="17">&lt;</text>
+          <g transform="translate(190 20)"><text class="sk-atom N" x="0" y="0">N</text><text class="sk-atom" x="-20" y="0">H</text><line class="sk-bond" x1="-12" y1="0" x2="-8" y2="0"/><text class="sk-atom" x="20" y="0">H</text><line class="sk-bond" x1="12" y1="0" x2="8" y2="0"/><text class="sk-atom" x="0" y="18">H</text><line class="sk-bond" x1="0" y1="9" x2="0" y2="11"/></g>
+          <text x="190" y="62" text-anchor="middle" class="pka-num" fill="var(--muted)">pKa ~38</text>
+          <text x="255" y="26" text-anchor="middle" fill="var(--muted)" font-size="17">&lt;</text>
+          <g transform="translate(320 20)"><text class="sk-atom" x="-22" y="0">H</text><line class="sk-bond" x1="-14" y1="0" x2="-8" y2="0"/><text class="sk-atom O" x="0" y="0">O</text><line class="sk-bond" x1="8" y1="0" x2="14" y2="0"/><text class="sk-atom" x="22" y="0">H</text></g>
+          <text x="320" y="62" text-anchor="middle" class="pka-num" fill="var(--oc)">pKa 15.7</text>
+          <text x="388" y="26" text-anchor="middle" fill="var(--muted)" font-size="17">&lt;</text>
+          <g transform="translate(452 20)"><text class="sk-atom" x="-18" y="0">H</text><line class="sk-bond" x1="-10" y1="0" x2="2" y2="0"/><text class="sk-atom X" x="12" y="0">F</text><text class="sk-delta" x="-18" y="-14">&delta;+</text><text class="sk-delta" x="12" y="-14">&delta;&minus;</text></g>
+          <text x="452" y="62" text-anchor="middle" class="pka-num" fill="var(--crit)">pKa 3.2</text>
+          <text x="535" y="26" text-anchor="middle" fill="var(--crit)" font-size="10.5" font-weight="700" font-family="'JetBrains Mono',ui-monospace,monospace">strongest</text>
+        </g>
+        <line x1="20" y1="132" x2="600" y2="132" stroke="var(--line2)" stroke-dasharray="4,4"/>
+        <text x="20" y="160" fill="var(--gold2)" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="11" font-weight="800">DOWN A COLUMN &rarr; size wins (the trap)</text>
+        <g transform="translate(0 178)">
+          <g transform="translate(100 22)"><text class="sk-atom" x="-18" y="0">H</text><line class="sk-bond" x1="-10" y1="0" x2="2" y2="0"/><text class="sk-atom X" x="12" y="0">F</text></g>
+          <text x="100" y="50" text-anchor="middle" class="pka-num" fill="var(--muted)">HF &middot; pKa 3.2</text>
+          <text x="100" y="66" text-anchor="middle" class="sk-note">small &mdash; charge crammed</text>
+          <text x="300" y="28" text-anchor="middle" fill="var(--muted)" font-size="17">&lt;</text>
+          <g transform="translate(470 22)"><text class="sk-atom" x="-24" y="0">H</text><line class="sk-bond" x1="-16" y1="0" x2="-4" y2="0"/><text class="sk-atom X" x="8" y="0">I</text><circle cx="8" cy="0" r="18" fill="none" stroke="var(--sk-X)" stroke-width=".9" stroke-dasharray="3,3" opacity=".5"/></g>
+          <text x="470" y="50" text-anchor="middle" class="pka-num" fill="var(--crit)">HI &middot; pKa ~ &minus;10</text>
+          <text x="470" y="66" text-anchor="middle" class="sk-note">big &mdash; charge spread, strongest</text>
+        </g>
+      </svg>
+      <p class="cap">Two opposite-looking rules, one letter. <b>Across a row</b>, the more electronegative atom is happier holding the charge (F &gt; O &gt; N &gt; C). <b>Down a column</b>, the bigger atom wins because it spreads the charge over more volume &mdash; so <b>HI is a far stronger acid than HF</b>, the reverse of the row rule.</p>
+    </div>
+    <div class="fib-line"><span class="fk">Two rules, one letter</span>Across a <b>row</b> the more <span class="fib" data-a="electronegative" data-c="electronegative|electropositive"></span> atom wins; down a <b>column</b>, the <span class="fib" data-a="bigger" data-c="bigger|smaller"></span> atom wins (HI &gt; HF).</div>
+  </section>
+
+  <section class="stage" data-act="The Move">
+    <div class="act">I do &middot; walk the letters</div>
+    <div class="step-hd"><span class="step-badge">R</span><div class="step-meta"><span class="step-nm">Resonance &mdash; factor 3 of 5</span><h2 class="beat step-beat">R is the one to see once.</h2></div></div>
+    <p class="lead">Resonance moves the needle further than anything else on this topic, so it&rsquo;s worth drawing. A carboxylate&rsquo;s charge doesn&rsquo;t sit on one oxygen &mdash; it lives half on each of two identical oxygens:</p>
+    <div class="reso-wrap">
+      <div class="reso-live">
+        <div class="reso-k">watch the pair move</div>
+        <svg viewBox="0 0 300 210" role="img" aria-label="Carboxylate resonance: a green electron pair and the negative charge shift back and forth between two equivalent oxygens as curved arrows push, showing the charge is delocalized">
+          <defs>
+            <marker id="pHeadG" markerUnits="userSpaceOnUse" markerWidth="8" markerHeight="8" refX="4.6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="var(--sk-trace)"/></marker>
+          </defs>
+          <!-- shared electron cloud -->
+          <ellipse cx="196" cy="105" rx="34" ry="52" fill="var(--sk-trace)" opacity=".10"/>
+          <!-- R group + backbone -->
+          <text class="sk-atom-sm" x="78" y="105" font-size="12">H&#8323;C</text>
+          <line class="sk-bond" x1="100" y1="105" x2="138" y2="105"/>
+          <text class="sk-atom-sm" x="150" y="105" font-size="12">C</text>
+          <!-- C-O1 (upper): single bond + swappable inner line = double when charge is on O2 -->
+          <line class="sk-bond" x1="160" y1="98" x2="192" y2="76"/>
+          <line class="sk-bond dbl-o1" x1="164" y1="103" x2="196" y2="81"/>
+          <text class="sk-atom O" x="204" y="70">O</text>
+          <!-- C-O2 (lower) -->
+          <line class="sk-bond" x1="160" y1="112" x2="192" y2="134"/>
+          <line class="sk-bond dbl-o2" x1="164" y1="107" x2="196" y2="129"/>
+          <text class="sk-atom O" x="204" y="140">O</text>
+          <!-- traced pair + charge, phase A: on O2 (lower) -->
+          <g class="grp-o2">
+            <circle class="sk-dot-trace" cx="214" cy="152" r="2.1"/><circle class="sk-dot-trace" cx="222" cy="150" r="2.1"/>
+            <circle class="sk-charge-circle minus" cx="228" cy="140" r="7"/><text class="sk-charge-text minus" x="228" y="140">&minus;</text>
+          </g>
+          <!-- traced pair + charge, phase B: on O1 (upper) -->
+          <g class="grp-o1">
+            <circle class="sk-dot-trace" cx="214" cy="58" r="2.1"/><circle class="sk-dot-trace" cx="222" cy="60" r="2.1"/>
+            <circle class="sk-charge-circle minus" cx="228" cy="70" r="7"/><text class="sk-charge-text minus" x="228" y="70">&minus;</text>
+          </g>
+          <!-- curved arrows (green = the moving pair) drawn in on entry -->
+          <path class="sk-push sk-push-draw" style="--pl:70;stroke:var(--sk-trace)" d="M176 84 C 184 68, 202 64, 208 74" fill="none" marker-end="url(#pHeadG)"/>
+          <path class="sk-push sk-push-draw" style="--pl:70;stroke:var(--sk-trace)" d="M204 150 C 190 148, 176 140, 176 126" fill="none" marker-end="url(#pHeadG)"/>
+        </svg>
+        <p class="reso-cap">The same green pair &mdash; and the negative charge &mdash; never settles. It is <b>shared</b>, riding between two identical oxygens.</p>
+      </div>
+      <div class="reso-truth">
+        <div class="reso-k">the truth</div>
+        <svg viewBox="0 0 240 210" role="img" aria-label="The real carboxylate is one hybrid with one-and-a-half bonds to each oxygen and half a negative charge on each">
+          <text class="sk-atom-sm" x="52" y="105" font-size="12">H&#8323;C</text>
+          <line class="sk-bond" x1="74" y1="105" x2="112" y2="105"/>
+          <text class="sk-atom-sm" x="124" y="105" font-size="12">C</text>
+          <line class="sk-bond" x1="134" y1="98" x2="168" y2="74"/>
+          <line class="sk-bond-thin" x1="138" y1="103" x2="170" y2="81" stroke-dasharray="3,3"/>
+          <text class="sk-atom O" x="180" y="68">O</text>
+          <text class="sk-charge-text minus" x="200" y="62" font-size="12">&frac12;&minus;</text>
+          <line class="sk-bond" x1="134" y1="112" x2="168" y2="136"/>
+          <line class="sk-bond-thin" x1="138" y1="107" x2="170" y2="129" stroke-dasharray="3,3"/>
+          <text class="sk-atom O" x="180" y="142">O</text>
+          <text class="sk-charge-text minus" x="200" y="148" font-size="12">&frac12;&minus;</text>
+          <ellipse cx="172" cy="105" rx="30" ry="48" fill="var(--sk-trace)" opacity=".12"/>
+        </svg>
+        <p class="reso-cap">Two identical one-and-a-half bonds; <b>half a charge on each O</b>. Far comfier than a full charge on one &mdash; which is why <b>acetic acid (pK<sub>a</sub> ~5) crushes ethanol (~16)</b>, over a hundred billion times more acidic from the same O&ndash;H bond.</p>
+      </div>
+    </div>
+    <div class="fib-line"><span class="fk">Why it wins</span>Acetate spreads its charge over <span class="fib" data-a="two" data-c="one|two|three"></span> equivalent oxygens &mdash; far more stable than ethoxide, which has none.</div>
+  </section>
+
+  <section class="stage" data-act="The Move">
+    <div class="act">I do &middot; walk the letters</div>
+    <div class="step-hd"><span class="step-badge di">D/I</span><div class="step-meta"><span class="step-nm">Dipole / Induction &mdash; factor 4 of 5</span><h2 class="beat step-beat">A neighbor can pull the charge away &mdash; or push it back.</h2></div></div>
+    <p class="lead">Most DAT acidity items aren&rsquo;t about the acidic atom itself &mdash; they&rsquo;re about the <b>groups around it</b>. An electron-<em>withdrawing</em> group (EWG) drains density off the conjugate base, so the acid is stronger. An electron-<em>donating</em> group (EDG) pushes density in, so it&rsquo;s weaker. Same move as always: judge the anion.</p>
+    <div class="note callout"><h4>One line</h4><p>EWG &rarr; pulls density away &rarr; stabler anion &rarr; <b>stronger acid (lower pK<sub>a</sub>)</b>. &nbsp;EDG &rarr; pushes density in &rarr; <b>weaker acid</b>.</p></div>
+    <div class="ewg-lists">
+      <div class="ewg-col ewg-strong">
+        <div class="k">EWG &middot; strengthen the acid</div>
+        <div class="sub">strongest pull first</div>
+        <div class="grp-chain">
+          <span class="grp-chip">&ndash;NO&#8322;</span><span class="grp-gt">&gt;</span>
+          <span class="grp-chip">&ndash;CN</span><span class="grp-gt">&gt;</span>
+          <span class="grp-chip">&ndash;CF&#8323;</span><span class="grp-gt">&gt;</span>
+          <span class="grp-chip">&ndash;C=O</span><span class="grp-gt">&gt;</span>
+          <span class="grp-chip">&ndash;X&nbsp;(F&gt;Cl&gt;Br&gt;I)</span>
+        </div>
+      </div>
+      <div class="ewg-col ewg-weak">
+        <div class="k">EDG &middot; weaken the acid</div>
+        <div class="sub">strongest donor first</div>
+        <div class="grp-chain">
+          <span class="grp-chip">&ndash;O&#8315;</span><span class="grp-gt">&gt;</span>
+          <span class="grp-chip">&ndash;NH&#8322;</span><span class="grp-gt">&gt;</span>
+          <span class="grp-chip">&ndash;OR&nbsp;/&nbsp;&ndash;OH</span><span class="grp-gt">&gt;</span>
+          <span class="grp-chip">&ndash;NHCOR</span><span class="grp-gt">&gt;</span>
+          <span class="grp-chip">&ndash;alkyl</span>
+        </div>
+      </div>
+    </div>
+    <div class="fib-line"><span class="fk">Say it back</span>An EWG <span class="fib" data-a="pulls" data-c="pulls|pushes"></span> electron density away &mdash; a <span class="fib" data-a="more" data-c="less|more"></span> stable anion &mdash; a <span class="fib" data-a="stronger" data-c="stronger|weaker"></span> acid.</div>
+    <div class="fib-line"><span class="fk">The flip side</span>&ndash;CH<sub>3</sub> is an <span class="fib" data-a="EDG" data-c="EWG|EDG"></span> &mdash; a <span class="fib" data-a="weaker" data-c="weaker|stronger"></span> acid.</div>
+    <div class="figure sk-plate">
+      <svg viewBox="0 0 620 150" role="img" aria-label="The chloroacetic acid series: acetic acid then one, two, and three chlorines, each pulling more density off the carboxylate and lowering the pKa from 4.76 to 0.65">
+        <g transform="translate(78 56)">
+          <text class="sk-atom-sm" x="-40" y="0" font-size="11">H&#8323;C</text><line class="sk-bond" x1="-26" y1="0" x2="-12" y2="0"/><text class="sk-atom-sm" x="-6" y="0" font-size="11">C</text>
+          <line class="sk-bond" x1="-6" y1="-6" x2="-6" y2="-18"/><line class="sk-bond" x1="-3" y1="-6" x2="-3" y2="-18"/><text class="sk-atom O" x="-6" y="-22">O</text>
+          <line class="sk-bond" x1="0" y1="0" x2="16" y2="0"/><text class="sk-atom O" x="24" y="0">OH</text>
+          <text class="pka-num" x="0" y="36" text-anchor="middle" fill="var(--muted)">pKa 4.76</text>
+        </g>
+        <g transform="translate(233 56)">
+          <text class="sk-atom-sm" x="-44" y="0" font-size="11">ClH&#8322;C</text><line class="sk-bond" x1="-26" y1="0" x2="-12" y2="0"/><text class="sk-atom-sm" x="-6" y="0" font-size="11">C</text>
+          <line class="sk-bond" x1="-6" y1="-6" x2="-6" y2="-18"/><line class="sk-bond" x1="-3" y1="-6" x2="-3" y2="-18"/><text class="sk-atom O" x="-6" y="-22">O</text>
+          <line class="sk-bond" x1="0" y1="0" x2="16" y2="0"/><text class="sk-atom O" x="24" y="0">OH</text>
+          <text class="pka-num" x="0" y="36" text-anchor="middle" fill="var(--gold2)">pKa 2.86</text>
+        </g>
+        <g transform="translate(388 56)">
+          <text class="sk-atom-sm" x="-44" y="0" font-size="11">Cl&#8322;HC</text><line class="sk-bond" x1="-26" y1="0" x2="-12" y2="0"/><text class="sk-atom-sm" x="-6" y="0" font-size="11">C</text>
+          <line class="sk-bond" x1="-6" y1="-6" x2="-6" y2="-18"/><line class="sk-bond" x1="-3" y1="-6" x2="-3" y2="-18"/><text class="sk-atom O" x="-6" y="-22">O</text>
+          <line class="sk-bond" x1="0" y1="0" x2="16" y2="0"/><text class="sk-atom O" x="24" y="0">OH</text>
+          <text class="pka-num" x="0" y="36" text-anchor="middle" fill="var(--gold)">pKa 1.29</text>
+        </g>
+        <g transform="translate(543 56)">
+          <text class="sk-atom-sm" x="-42" y="0" font-size="11">Cl&#8323;C</text><line class="sk-bond" x1="-26" y1="0" x2="-12" y2="0"/><text class="sk-atom-sm" x="-6" y="0" font-size="11">C</text>
+          <line class="sk-bond" x1="-6" y1="-6" x2="-6" y2="-18"/><line class="sk-bond" x1="-3" y1="-6" x2="-3" y2="-18"/><text class="sk-atom O" x="-6" y="-22">O</text>
+          <line class="sk-bond" x1="0" y1="0" x2="16" y2="0"/><text class="sk-atom O" x="24" y="0">OH</text>
+          <text class="pka-num" x="0" y="36" text-anchor="middle" fill="var(--crit)">pKa 0.65</text>
+        </g>
+        <text x="310" y="128" text-anchor="middle" class="sk-note">more chlorines &rarr; more inductive pull &rarr; stronger acid</text>
+      </svg>
+      <p class="cap"><b>Induction is additive.</b> Each chlorine drains a little more density off the carboxylate through the &sigma; bonds. Two mechanisms are in play everywhere: <b>induction</b> (through &sigma; bonds, any EWG, fades fast with distance) and <b>resonance</b> (through &pi;, only &ndash;NO&#8322;/&ndash;C=O/&ndash;CN).</p>
+    </div>
+    <div class="fib-line"><span class="fk">Induction</span>More chlorines = <span class="fib" data-a="stronger" data-c="weaker|stronger"></span>; a chlorine <span class="fib" data-a="closer" data-c="closer|farther"></span> to the COOH pulls harder.</div>
+  </section>
+
+  <section class="stage" data-act="The Move">
+    <div class="act">I do &middot; walk the letters</div>
+    <div class="step-hd"><span class="step-badge">O</span><div class="step-meta"><span class="step-nm">Orbital &mdash; factor 5 of 5</span><h2 class="beat step-beat">More s-character holds the pair tighter.</h2></div></div>
+    <p class="lead">The last tiebreaker &mdash; it decides only when the charge sits on the <em>same</em> kind of atom in every option. An <b>sp</b> orbital is 50% s, so it hugs its electrons close to the nucleus and holds the charge happily; sp<sup>3</sup> is only 25% s and holds loosely. So acidity runs <b>sp &gt; sp<sup>2</sup> &gt; sp<sup>3</sup></b>.</p>
+    <div class="figure sk-plate">
+      <svg viewBox="0 0 600 180" role="img" aria-label="Comparing carbon hybridization for a C to H bond: a terminal alkyne is sp with 50 percent s character and pKa about 25, a terminal alkene is sp2 with 33 percent s and pKa about 44, and an alkane is sp3 with 25 percent s and pKa about 50; more s character means a stronger acid">
+        <g transform="translate(30 30)">
+          <text class="sk-atom" x="0" y="20">H</text>
+          <line class="sk-bond" x1="8" y1="16" x2="30" y2="16"/><line class="sk-bond" x1="8" y1="20" x2="30" y2="20"/><line class="sk-bond" x1="8" y1="24" x2="30" y2="24"/>
+          <line class="sk-bond" x1="30" y1="20" x2="46" y2="20"/><text class="sk-atom-sm" x="54" y="20" font-size="11">R</text>
+          <text x="30" y="48" text-anchor="middle" class="sk-note">sp &middot; 50% s</text>
+          <text x="30" y="72" text-anchor="middle" class="pka-num" fill="var(--crit)">pKa ~25</text>
+          <text x="30" y="90" text-anchor="middle" fill="var(--crit)" font-size="10.5" font-weight="700" font-family="'JetBrains Mono',ui-monospace,monospace">most acidic</text>
+        </g>
+        <text x="210" y="54" text-anchor="middle" fill="var(--muted)" font-size="19">&gt;</text>
+        <g transform="translate(270 30)">
+          <text class="sk-atom" x="-8" y="20">H</text>
+          <line class="sk-bond" x1="0" y1="20" x2="18" y2="12"/>
+          <line class="sk-bond" x1="18" y1="12" x2="38" y2="20"/><line class="sk-bond" x1="18" y1="16" x2="38" y2="24"/>
+          <line class="sk-bond" x1="38" y1="20" x2="54" y2="12"/><text class="sk-atom-sm" x="60" y="12" font-size="11">R</text>
+          <text x="27" y="48" text-anchor="middle" class="sk-note">sp&sup2; &middot; 33% s</text>
+          <text x="27" y="72" text-anchor="middle" class="pka-num" fill="var(--muted)">pKa ~44</text>
+        </g>
+        <text x="400" y="54" text-anchor="middle" fill="var(--muted)" font-size="19">&gt;</text>
+        <g transform="translate(460 30)">
+          <text class="sk-atom" x="-8" y="20">H</text>
+          <line class="sk-bond" x1="0" y1="20" x2="18" y2="12"/>
+          <line class="sk-bond" x1="18" y1="12" x2="38" y2="20"/>
+          <line class="sk-bond" x1="18" y1="12" x2="18" y2="0"/>
+          <text class="sk-atom-sm" x="46" y="20" font-size="11">R</text>
+          <text x="24" y="48" text-anchor="middle" class="sk-note">sp&sup3; &middot; 25% s</text>
+          <text x="24" y="72" text-anchor="middle" class="pka-num" fill="var(--muted)">pKa ~50</text>
+          <text x="24" y="90" text-anchor="middle" fill="var(--muted)" font-size="10.5" font-weight="700" font-family="'JetBrains Mono',ui-monospace,monospace">least acidic</text>
+        </g>
+      </svg>
+      <p class="cap">Same element (carbon), same neutral-looking C&ndash;H &mdash; the only difference is the <b>orbital</b> the pair lives in. The alkyne&rsquo;s <b>sp</b> carbon (50% s) sits astronomically left of the alkane on the ladder: pK<sub>a</sub> ~25 vs ~50, the O in CARDIO doing its quiet work.</p>
+    </div>
+    <div class="fib-line"><span class="fk">Last tiebreaker</span>More <span class="fib" data-a="s-character" data-c="s-character|p-character"></span> holds the pair tighter, so acidity runs sp &gt; sp<sup>2</sup> &gt; sp<sup>3</sup> &mdash; the terminal <span class="fib" data-a="alkyne" data-c="alkyne|alkane"></span> C&ndash;H is the acidic one.</div>
+  </section>
+
+  <section class="stage" data-act="The Move">
+    <div class="act">I do &middot; anchors to know cold</div>
     <h2 class="beat">A handful of pK<sub>a</sub>&rsquo;s frame every ranking.</h2>
     <p class="lead">Lower pK<sub>a</sub> = stronger acid. Learn where these few reference points live and you can place almost anything between them.</p>
-    <div class="figure">
-      <svg viewBox="0 0 900 130" role="img" aria-label="pKa ladder from -10 (strong) to 50 (weak)">
-        <line x1="60" y1="66" x2="850" y2="66" stroke="var(--line2)" stroke-width="1.4"/>
-        <g font-family="ui-monospace,monospace" font-size="11" fill="var(--muted)" text-anchor="middle">
-          <line x1="60"  y1="66" x2="60"  y2="74" stroke="var(--line2)"/><text x="60"  y="90">-10</text>
-          <line x1="192" y1="66" x2="192" y2="74" stroke="var(--line2)"/><text x="192" y="90">0</text>
-          <line x1="323" y1="66" x2="323" y2="74" stroke="var(--line2)"/><text x="323" y="90">10</text>
-          <line x1="455" y1="66" x2="455" y2="74" stroke="var(--line2)"/><text x="455" y="90">20</text>
-          <line x1="587" y1="66" x2="587" y2="74" stroke="var(--line2)"/><text x="587" y="90">30</text>
-          <line x1="718" y1="66" x2="718" y2="74" stroke="var(--line2)"/><text x="718" y="90">40</text>
-          <line x1="850" y1="66" x2="850" y2="74" stroke="var(--line2)"/><text x="850" y="90">50</text>
+    <div class="pka-ladder">
+      <svg viewBox="0 0 840 300" role="img" aria-label="A pKa landmark ladder on an acidity spine running from pKa -10 (strong) on the left to 50 (barely acidic) on the right, with real skeletal structures for hydrogen chloride, a carboxylic acid, phenol, water, a terminal alkyne, an alkene, and an alkane placed at their pKa values">
+        <defs>
+          <linearGradient id="acidSpine" x1="0" x2="1" y1="0" y2="0">
+            <stop offset="0%" stop-color="#d9645a"/><stop offset="32%" stop-color="#c9a84c"/><stop offset="64%" stop-color="#9a78c8"/><stop offset="100%" stop-color="#8f8670"/>
+          </linearGradient>
+        </defs>
+        <!-- spine -->
+        <rect x="48" y="152" width="744" height="14" rx="7" fill="url(#acidSpine)" opacity=".92"/>
+        <text x="56" y="146" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="10.5" font-weight="800" fill="#d9645a">stronger acid &middot; stable A&#8315;</text>
+        <text x="784" y="146" text-anchor="end" font-family="'JetBrains Mono',ui-monospace,monospace" font-size="10.5" font-weight="800" fill="#9a78c8">weaker acid &middot; unstable A&#8315;</text>
+        <!-- axis ticks -->
+        <g font-family="'JetBrains Mono',ui-monospace,monospace" font-size="9" fill="var(--muted)" text-anchor="middle">
+          <text x="48" y="184">&minus;10</text><text x="172" y="184">0</text><text x="296" y="184">10</text><text x="420" y="184">20</text><text x="544" y="184">30</text><text x="668" y="184">40</text><text x="792" y="184">50</text>
         </g>
-        <g font-family="system-ui" font-size="11.5" fill="var(--ink)">
-          <g><line x1="100" y1="44" x2="100" y2="70" stroke="var(--crit)" stroke-width="3"/><text x="100" y="38" text-anchor="middle">HCl -7</text></g>
-          <g><line x1="255" y1="44" x2="255" y2="70" stroke="var(--gold)" stroke-width="3"/><text x="255" y="38" text-anchor="middle">RCOOH ~5</text></g>
-          <g><line x1="323" y1="52" x2="323" y2="70" stroke="var(--gold)" stroke-width="3"/><text x="323" y="30" text-anchor="middle">phenol 10</text></g>
-          <g><line x1="402" y1="44" x2="402" y2="70" stroke="var(--oc)" stroke-width="3"/><text x="402" y="38" text-anchor="middle">H&#8322;O 16</text></g>
-          <g><line x1="521" y1="52" x2="521" y2="70" stroke="var(--oc)" stroke-width="3"/><text x="521" y="30" text-anchor="middle">alkyne 25</text></g>
-          <g><line x1="768" y1="44" x2="768" y2="70" stroke="var(--muted)" stroke-width="3"/><text x="768" y="38" text-anchor="middle">alkene 44</text></g>
-          <g><line x1="850" y1="52" x2="850" y2="70" stroke="var(--muted)" stroke-width="3"/><text x="836" y="30" text-anchor="middle">alkane 50</text></g>
+        <!-- tick dots on spine -->
+        <g fill="var(--sk-halo)" stroke="var(--line2)"><circle cx="85" cy="159" r="3.4"/><circle cx="234" cy="159" r="3.4"/><circle cx="296" cy="159" r="3.4"/><circle cx="370" cy="159" r="3.4"/><circle cx="482" cy="159" r="3.4"/><circle cx="718" cy="159" r="3.4"/><circle cx="792" cy="159" r="3.4"/></g>
+        <!-- leaders -->
+        <g stroke="var(--line2)" stroke-width="1" stroke-dasharray="3,3">
+          <line x1="85" y1="100" x2="85" y2="152"/><line x1="296" y1="100" x2="296" y2="152"/><line x1="482" y1="100" x2="482" y2="152"/><line x1="792" y1="100" x2="774" y2="152"/>
+          <line x1="234" y1="166" x2="234" y2="176"/><line x1="370" y1="166" x2="370" y2="176"/><line x1="718" y1="166" x2="718" y2="176"/>
+        </g>
+
+        <!-- HCl (above) pKa -7 -->
+        <g>
+          <rect x="19" y="12" width="132" height="88" rx="12" fill="var(--panel)" stroke="var(--crit)" stroke-width="1.4"/>
+          <g transform="translate(85 40)"><text class="sk-atom" x="-16" y="0">H</text><line class="sk-bond" x1="-8" y1="0" x2="6" y2="0"/><text class="sk-atom X" x="16" y="0">Cl</text></g>
+          <text class="pka-name" x="85" y="72" text-anchor="middle">hydrogen chloride</text>
+          <text x="85" y="90" text-anchor="middle" class="pka-num" fill="var(--crit)">pKa &minus;7</text>
+        </g>
+        <!-- RCOOH (below) pKa ~5 -->
+        <g>
+          <rect x="168" y="176" width="132" height="88" rx="12" fill="var(--panel)" stroke="var(--gold)" stroke-width="1.4"/>
+          <g transform="translate(228 206)"><text class="sk-atom-sm" x="-40" y="0" font-size="11">R</text><line class="sk-bond" x1="-32" y1="0" x2="-16" y2="0"/><text class="sk-atom-sm" x="-10" y="0" font-size="11">C</text><line class="sk-bond" x1="-10" y1="-6" x2="-10" y2="-18"/><line class="sk-bond" x1="-7" y1="-6" x2="-7" y2="-18"/><text class="sk-atom O" x="-10" y="-22">O</text><line class="sk-bond" x1="-4" y1="0" x2="12" y2="0"/><text class="sk-atom O" x="20" y="0">OH</text></g>
+          <text class="pka-name" x="234" y="238" text-anchor="middle">carboxylic acid</text>
+          <text x="234" y="256" text-anchor="middle" class="pka-num" fill="var(--gold2)">pKa ~5</text>
+        </g>
+        <!-- phenol (above) pKa 10 -->
+        <g>
+          <rect x="230" y="12" width="132" height="88" rx="12" fill="var(--panel)" stroke="var(--gold)" stroke-width="1.4"/>
+          <g transform="translate(288 42)"><line class="sk-bond" x1="-12" y1="-7" x2="0" y2="-14"/><line class="sk-bond" x1="0" y1="-14" x2="12" y2="-7"/><line class="sk-bond" x1="12" y1="-7" x2="12" y2="7"/><line class="sk-bond" x1="12" y1="7" x2="0" y2="14"/><line class="sk-bond" x1="0" y1="14" x2="-12" y2="7"/><line class="sk-bond" x1="-12" y1="7" x2="-12" y2="-7"/><circle class="sk-bond" cx="0" cy="0" r="6"/><line class="sk-bond" x1="12" y1="-7" x2="26" y2="-14"/><text class="sk-atom O" x="34" y="-14">OH</text></g>
+          <text class="pka-name" x="296" y="72" text-anchor="middle">phenol</text>
+          <text x="296" y="90" text-anchor="middle" class="pka-num" fill="var(--gold2)">pKa 10</text>
+        </g>
+        <!-- H2O (below) pKa 16 -->
+        <g>
+          <rect x="304" y="176" width="132" height="88" rx="12" fill="var(--panel)" stroke="var(--oc)" stroke-width="1.4"/>
+          <g transform="translate(370 206)"><text class="sk-atom" x="-22" y="0">H</text><line class="sk-bond" x1="-14" y1="0" x2="-8" y2="0"/><text class="sk-atom O" x="0" y="0">O</text><line class="sk-bond" x1="8" y1="0" x2="14" y2="0"/><text class="sk-atom" x="22" y="0">H</text></g>
+          <text class="pka-name" x="370" y="238" text-anchor="middle">water / alcohol</text>
+          <text x="370" y="256" text-anchor="middle" class="pka-num" fill="var(--oc)">pKa 16</text>
+        </g>
+        <!-- alkyne (above) pKa 25 -->
+        <g>
+          <rect x="416" y="12" width="132" height="88" rx="12" fill="var(--panel)" stroke="var(--oc)" stroke-width="1.4"/>
+          <g transform="translate(482 40)"><text class="sk-atom" x="-28" y="0">H</text><line class="sk-bond" x1="-20" y1="0" x2="-2" y2="0"/><line class="sk-bond" x1="-20" y1="-4" x2="-2" y2="-4"/><line class="sk-bond" x1="-20" y1="4" x2="-2" y2="4"/><line class="sk-bond" x1="-2" y1="0" x2="12" y2="0"/><text class="sk-atom-sm" x="20" y="0" font-size="11">R</text></g>
+          <text class="pka-name" x="482" y="72" text-anchor="middle">terminal alkyne (sp)</text>
+          <text x="482" y="90" text-anchor="middle" class="pka-num" fill="var(--oc)">pKa 25</text>
+        </g>
+        <!-- alkene (below) pKa 44 -->
+        <g>
+          <rect x="652" y="176" width="132" height="88" rx="12" fill="var(--panel)" stroke="var(--muted)" stroke-width="1.4"/>
+          <g transform="translate(718 206)"><line class="sk-bond" x1="-18" y1="4" x2="-2" y2="-4"/><line class="sk-bond" x1="-2" y1="-4" x2="14" y2="4"/><line class="sk-bond" x1="-1" y1="-8" x2="13" y2="0"/></g>
+          <text class="pka-name" x="718" y="238" text-anchor="middle">alkene (sp&sup2;)</text>
+          <text x="718" y="256" text-anchor="middle" class="pka-num" fill="var(--muted)">pKa 44</text>
+        </g>
+        <!-- alkane (above) pKa 50 -->
+        <g>
+          <rect x="708" y="12" width="132" height="88" rx="12" fill="var(--panel)" stroke="var(--muted)" stroke-width="1.4"/>
+          <g transform="translate(774 42)"><line class="sk-bond" x1="-18" y1="4" x2="-2" y2="-4"/><line class="sk-bond" x1="-2" y1="-4" x2="14" y2="4"/><text class="sk-note" x="-2" y="-14" text-anchor="middle">sp&sup3;</text></g>
+          <text class="pka-name" x="774" y="72" text-anchor="middle">alkane (sp&sup3;)</text>
+          <text x="774" y="90" text-anchor="middle" class="pka-num" fill="var(--muted)">pKa 50</text>
         </g>
       </svg>
-      <p class="cap"><b>Left = strong</b> (loves to give up H<sup>+</sup>); <b>right = barely acidic</b>. Notice the alkyne (~25) sits astronomically left of the alkane (~50) &mdash; that gap is the O in CARDIO doing its work.</p>
+      <p class="cap" style="margin:14px auto 0"><b>Left = strong</b> (loves to give up H<sup>+</sup>); <b>right = barely acidic</b>. Notice the alkyne (~25) sits astronomically left of the alkane (~50) &mdash; that gap is the O in CARDIO doing its work.</p>
     </div>
+    <div class="fib-line"><span class="fk">The rule</span>Lower pK<sub>a</sub> = <span class="fib" data-a="stronger" data-c="weaker|stronger"></span> acid.</div>
   </section>
 
-  <!-- 7 MOVE: hand the pen -->
   <section class="stage" data-act="The Move">
-    <div class="act">The Move &middot; you call it</div>
-    <h2 class="beat">Now you hold the pen.</h2>
-    <p class="lead">One rep with the safety on. Pick a pair, commit to which is the stronger acid, <em>then</em> reveal the CARDIO letter that decides it. Predicting first is the point &mdash; a call you commit to sticks whether it&rsquo;s right or wrong.</p>
-    <div class="tool">
-      <label class="field" for="pair">Which is the stronger acid?</label>
-      <select id="pair">
-        <option value="0">HF &nbsp;vs&nbsp; HI</option>
-        <option value="1">ethanol (CH&#8323;CH&#8322;OH) &nbsp;vs&nbsp; acetic acid (CH&#8323;COOH)</option>
-        <option value="2">acetic acid &nbsp;vs&nbsp; trichloroacetic acid</option>
-        <option value="3">ethane C&ndash;H &nbsp;vs&nbsp; ethyne (terminal alkyne) C&ndash;H</option>
-        <option value="4">water &nbsp;vs&nbsp; ammonia (NH&#8323;)</option>
-        <option value="5">cyclohexanol &nbsp;vs&nbsp; phenol</option>
-      </select>
-      <span class="field">Your call</span>
-      <span class="seg" id="guess" role="group" aria-label="pick the stronger acid">
-        <button type="button" data-g="L" aria-pressed="false">Left</button>
-        <button type="button" data-g="R" aria-pressed="false">Right</button>
-      </span>
-      <div class="out" id="pairOut">Pick a pair and make your call.</div>
+    <div class="act">I do &middot; rank four fast</div>
+    <h2 class="beat">Two speeds: bucket first, walk the letters only if you must.</h2>
+    <p class="lead">The real test hands you four structures and says &ldquo;rank them.&rdquo; You don&rsquo;t CARDIO all four &mdash; you sort by class first, and most rankings fall right out.</p>
+    <div class="twospeed">
+      <div class="tstep"><div class="n">1</div><div>
+        <h4>Speed 1 &middot; bucket onto the class ladder</h4>
+        <p>Name each structure&rsquo;s class at a glance and drop it on the ladder. Structures in a ranking item usually span classes, so this alone gives you the order.</p>
+        <div class="classbar"><span><b>carboxylic</b> ~5</span><span><b>phenol</b> ~10</span><span><b>alcohol / water</b> ~16</span><span><b>alkyne</b> ~25</span><span><b>amine</b> ~38</span><span><b>alkane</b> ~50</span></div>
+      </div></div>
+      <div class="tstep"><div class="n">2</div><div>
+        <h4>Speed 2 &middot; CARDIO only as the tiebreaker</h4>
+        <p>When two land in the <b>same bucket</b> &mdash; both carboxylic, both phenols &mdash; then walk the letters. Same class &rarr; walk the letters; usually one letter (<b>R</b> or <b>I</b>) decides.</p>
+      </div></div>
+    </div>
+    <div class="note callout"><h4>That is the whole ranking skill</h4><p>Sort by class, break same-class ties with one CARDIO letter. You&rsquo;ll drill the letters next, then rank like the real test.</p></div>
+    <div class="fib-line"><span class="fk">The whole method</span>Bucket by <span class="fib" data-a="class" data-c="class|charge"></span> first; run CARDIO only as the <span class="fib" data-a="tiebreaker" data-c="tiebreaker|first move"></span>.</div>
+  </section>
+
+  <section class="stage" data-act="We do">
+    <div class="act">We do &middot; together</div>
+    <h2 class="beat">Let&rsquo;s do one together.</h2>
+    <p class="lead">Same move, side by side. You make the call &mdash; tap the stronger acid &mdash; and the moment you commit we walk the reasoning together: the deciding CARDIO letter lights up and the winning structure comes alive. Nothing is graded here. This is the rehearsal before you fly solo.</p>
+    <div class="cardio-tool" id="cardioTool">
+      <div class="cg-head">Which one is the stronger acid? Make the call &mdash; we&rsquo;ll walk it together.</div>
+      <div class="cg-sub">Not sure yet? Tap <b>Show me the tell</b> for a nudge. Otherwise just commit and we&rsquo;ll reason it out &mdash; no grade.</div>
+      <div class="cg-pair" id="cgPair"></div>
+      <div class="cg-walk" id="cgWalk" hidden aria-label="CARDIO factor walk"></div>
+      <div class="out cg-fb" id="cgFb">Two acids, drawn for real. Tap the one that lets go of its proton more easily.</div>
+      <div class="cg-actions">
+        <button type="button" class="mini" id="cgHint">Show me the tell</button>
+        <button type="button" class="nbtn" id="cgNext">New pair &rarr;</button>
+        <button type="button" class="mini" id="cgReset">Reset this pair</button>
+        <span class="cg-count">6 pairs &middot; redo any pair</span>
+      </div>
     </div>
   </section>
 
-  <!-- 8 REPS: drill there -->
   <section class="stage" data-act="The Reps">
     <div class="act">The Reps &middot; wear the groove</div>
     <h2 class="beat">You learned the move here. Drill it there.</h2>
@@ -432,7 +981,7 @@ select{
         <span class="k">Retold &middot; hear it told</span>
         <h4>The Acidity night</h4>
         <p>The story-first walkthrough if a letter still feels shaky &mdash; the same move, told scene by scene.</p>
-        <a href="https://acelabs.netlify.app/tools/ochem/#acid-base-cardio" target="_blank" rel="noopener">Open Retold</a>
+        <a class="soon">Retold night &mdash; coming soon</a>
       </div>
       <div class="route">
         <span class="k">Booster &middot; prove it timed</span>
@@ -444,22 +993,19 @@ select{
     <div class="key callout" style="margin-top:18px"><h4>The habit that carries into the hammer</h4><p>When a ranking question appears, <b>draw each conjugate base and say the letters out loud</b> &mdash; &ldquo;Charge&hellip; Atom&hellip; Resonance&hellip; Dipole/Induction&hellip; Orbital.&rdquo; The first letter that separates them is your reason. Name the letter and you can defend the answer.</p></div>
   </section>
 
-  <!-- 9 PROOF intro -->
   <section class="stage" data-act="The Proof">
-    <div class="act">The Proof &middot; earn it</div>
-    <h2 class="beat">Six items. Commit before you peek.</h2>
-    <p class="lead">One for each CARDIO letter. For each: pick an answer <em>and</em> how sure you are &mdash; the Check button stays locked until you commit to both. On a miss, name why and write the one-line rule you&rsquo;ll keep. Your calibration lands at the end.</p>
+    <div class="act">You do &middot; earn it</div>
+    <h2 class="beat">Eight items. Rank it like the real test.</h2>
+    <p class="lead">These are DAT-shaped ranking questions &mdash; put species in order, spot the trap. For each: pick an answer <em>and</em> how sure you are &mdash; the Check button stays locked until you commit to both. On a miss, name why and write the one-line rule you&rsquo;ll keep. Your calibration lands at the end.</p>
     <div class="warn callout"><h4>Why commit first</h4><p>A committed guess &mdash; right or wrong &mdash; is what makes the answer stick. Peeking first feels good and teaches nothing. Lock it in, then look.</p></div>
   </section>
 
-  <!-- 10 PROOF arena -->
   <section class="stage" data-act="The Proof">
-    <div class="act">The Proof &middot; walk the letters</div>
-    <div class="pqhead"><span class="qnum" id="qnum">Question 1 of 6</span><span class="letter" id="qletter">C &middot; Charge</span></div>
+    <div class="act">You do &middot; rank it like the test</div>
+    <div class="pqhead"><span class="qnum" id="qnum">Question 1 of 8</span><span class="letter" id="qletter">Rank &middot; class ladder</span></div>
     <div id="arena"></div>
   </section>
 
-  <!-- 11 CLOSE -->
   <section class="stage" data-act="Make it stick">
     <div class="act">Close &middot; it&rsquo;s yours now</div>
     <h2 class="beat">You didn&rsquo;t watch this. You did it.</h2>
@@ -473,7 +1019,7 @@ select{
       </div>
       <div class="route">
         <span class="k">In 2 days</span><h4>Redo from memory</h4>
-        <p>Reopen this page and rerun the six before revealing. Any fuzzy rule is where you start.</p>
+        <p>Reopen this page and rerun the eight before revealing. Any fuzzy rule is where you start.</p>
         <a class="soon">Come back here</a>
       </div>
       <div class="route">
@@ -511,13 +1057,16 @@ select{
 (function(){
   "use strict";
   var root=document.documentElement, PREFIX='acedat-ref-oc-acids-';
+  try{ var _st=localStorage.getItem(PREFIX+'theme'); if(_st==='dark'||_st==='light'){ root.setAttribute('data-theme',_st); } }catch(e){}
 
   /* theme */
   var tBtn=document.getElementById('theme');
   tBtn.addEventListener('click',function(){
     var dark=(root.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'))==='dark';
-    root.setAttribute('data-theme',dark?'light':'dark'); tBtn.textContent=dark?'Dark':'Light';
+    var nt=dark?'light':'dark'; root.setAttribute('data-theme',nt); tBtn.textContent=dark?'Dark':'Light';
+    try{ localStorage.setItem(PREFIX+'theme',nt); }catch(e){}
   });
+  (function(){ var d=(root.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'))==='dark'; tBtn.textContent=d?'Light':'Dark'; })();
 
   /* ---------- deck navigation ---------- */
   var stages=[].slice.call(document.querySelectorAll('.stage'));
@@ -533,97 +1082,206 @@ select{
     back.disabled=cur===0;
     next.textContent = cur===N-1 ? 'Done' : 'Next →';
     next.disabled = cur===N-1;
+    next.style.display = (cur===15) ? 'none' : '';  /* proof arena: force use of the in-arena Next so no question is skipped */
     beatcount.textContent=(cur+1)+' / '+N;
     railfill.style.width=(100*(cur+1)/N)+'%';
     dots.forEach(function(d,di){ d.classList.toggle('cur',di===cur); d.classList.toggle('done',di<cur); });
-    if(cur===11) renderClose();
+    if(cur===16) renderClose();
   }
   back.addEventListener('click',function(){go(cur-1);});
   next.addEventListener('click',function(){go(cur+1);});
   document.addEventListener('keydown',function(e){
     if(e.target.tagName==='TEXTAREA'||e.target.tagName==='SELECT') return;
-    if(e.key==='ArrowRight') go(cur+1); else if(e.key==='ArrowLeft') go(cur-1);
+    if(e.key==='ArrowRight'){ if(cur===15) return; go(cur+1); } else if(e.key==='ArrowLeft') go(cur-1);
   });
 
-  /* ---------- pair comparator (hand the pen) ---------- */
-  var pairs=[
-    {win:"R",letter:"A &mdash; Atom (size)",why:"Down the halogen group, <b>size beats electronegativity</b>. Iodide is huge and spreads the charge best, so HI is stronger. pK<sub>a</sub>: HF 3.2, HI ~ -10."},
-    {win:"R",letter:"R &mdash; Resonance",why:"Acetate spreads its charge over <b>two equivalent oxygens</b>; ethoxide has none. Acetic acid wins easily. pK<sub>a</sub>: ethanol 16, acetic 4.8."},
-    {win:"R",letter:"I &mdash; Induction",why:"Same resonance in both, so R ties. <b>Three electron-withdrawing chlorines</b> drain charge off the anion. pK<sub>a</sub>: acetic 4.8, trichloroacetic 0.7."},
-    {win:"R",letter:"O &mdash; Orbital",why:"The alkyne C&ndash;H is on an <b>sp carbon (50% s)</b>, holding the pair tight; ethane is sp&sup3;. pK<sub>a</sub>: alkyne ~25, alkane ~50."},
-    {win:"L",letter:"A &mdash; Atom (row)",why:"Across a row, <b>O holds charge better than N</b>. Hydroxide beats amide, so water is the stronger acid. pK<sub>a</sub>: water 15.7, ammonia ~38."},
-    {win:"R",letter:"R &mdash; Resonance",why:"Phenoxide spreads its charge <b>into the ring</b>; cyclohexanol&rsquo;s anion has no resonance. Phenol wins. pK<sub>a</sub>: cyclohexanol ~16, phenol ~10."}
+  /* ---------- interactive (hand the pen): tap the stronger acid — engine CARDIO-wizard pattern ---------- */
+  /* Skeletal structures reuse the live engine's sk-* geometry, re-themed via CSS vars. */
+  var CG_MOL={
+    HF:'<g class="sk-emph"><g transform="translate(110,44)"><text class="sk-atom" x="-22" y="0">H</text><line class="sk-bond" x1="-14" y1="0" x2="-2" y2="0"/><text class="sk-atom X" x="6" y="0">F</text><text class="sk-delta" x="-22" y="-14">δ+</text><text class="sk-delta" x="6" y="-14">δ−</text></g></g>',
+    HI:'<g class="sk-emph"><g transform="translate(110,44)"><text class="sk-atom" x="-24" y="0">H</text><line class="sk-bond" x1="-16" y1="0" x2="-4" y2="0"/><text class="sk-atom X" x="8" y="0">I</text><circle cx="8" cy="0" r="18" fill="none" stroke="var(--sk-X)" stroke-width=".9" stroke-dasharray="3,3" opacity=".5"/><text class="sk-note" x="8" y="28" text-anchor="middle">large · diffuse</text></g></g>',
+    EtOH:'<g class="sk-emph"><g transform="translate(110,44)"><line class="sk-bond" x1="-34" y1="8" x2="-14" y2="-4"/><line class="sk-bond" x1="-14" y1="-4" x2="6" y2="8"/><line class="sk-bond" x1="6" y1="8" x2="24" y2="-2"/><text class="sk-atom O" x="34" y="-2">OH</text></g></g>',
+    AcOH:'<g class="sk-emph"><g transform="translate(110,44)"><text class="sk-atom-sm" x="-42" y="0" font-size="11">H₃C</text><line class="sk-bond" x1="-30" y1="0" x2="-14" y2="0"/><text class="sk-atom-sm" x="-8" y="0" font-size="11">C</text><line class="sk-bond" x1="-8" y1="-6" x2="-8" y2="-18"/><line class="sk-bond" x1="-5" y1="-6" x2="-5" y2="-18"/><text class="sk-atom O" x="-8" y="-22">O</text><line class="sk-bond" x1="-2" y1="0" x2="14" y2="0"/><text class="sk-atom O" x="22" y="0">OH</text></g></g>',
+    TCA:'<g class="sk-emph"><g transform="translate(120,44)"><text class="sk-atom X" x="-72" y="-14">Cl</text><text class="sk-atom X" x="-72" y="0">Cl</text><text class="sk-atom X" x="-72" y="14">Cl</text><line class="sk-bond" x1="-62" y1="-12" x2="-46" y2="-2"/><line class="sk-bond" x1="-62" y1="0" x2="-46" y2="0"/><line class="sk-bond" x1="-62" y1="12" x2="-46" y2="2"/><text class="sk-atom-sm" x="-40" y="0" font-size="11">C</text><line class="sk-bond" x1="-34" y1="0" x2="-18" y2="0"/><text class="sk-atom-sm" x="-12" y="0" font-size="11">C</text><line class="sk-bond" x1="-12" y1="-6" x2="-12" y2="-18"/><line class="sk-bond" x1="-9" y1="-6" x2="-9" y2="-18"/><text class="sk-atom O" x="-12" y="-22">O</text><line class="sk-bond" x1="-6" y1="0" x2="10" y2="0"/><text class="sk-atom O" x="18" y="0">OH</text></g></g>',
+    ethane:'<g class="sk-emph"><g transform="translate(110,46)"><line class="sk-bond" x1="-22" y1="6" x2="-2" y2="-4"/><line class="sk-bond" x1="-2" y1="-4" x2="18" y2="6"/><text class="sk-note" x="-2" y="-12" text-anchor="middle">sp³ C–H</text></g></g>',
+    HCCH:'<g class="sk-emph"><g transform="translate(110,46)"><text class="sk-atom" x="-30" y="0">H</text><line class="sk-bond" x1="-22" y1="-4" x2="-2" y2="-4"/><line class="sk-bond" x1="-22" y1="0" x2="-2" y2="0"/><line class="sk-bond" x1="-22" y1="4" x2="-2" y2="4"/><line class="sk-bond" x1="-2" y1="0" x2="14" y2="0"/><text class="sk-atom" x="22" y="0">H</text><text class="sk-note" x="-8" y="-14" text-anchor="middle">sp · 50% s</text></g></g>',
+    H2O:'<g class="sk-emph"><g transform="translate(110,44)"><text class="sk-atom" x="-30" y="0">H</text><line class="sk-bond" x1="-22" y1="0" x2="-8" y2="0"/><text class="sk-atom O" x="0" y="0">O</text><line class="sk-bond" x1="8" y1="0" x2="22" y2="0"/><text class="sk-atom" x="30" y="0">H</text><circle class="sk-lp-O" cx="-2" cy="-12" r="1.5"/><circle class="sk-lp-O" cx="2" cy="-12" r="1.5"/><circle class="sk-lp-O" cx="-2" cy="12" r="1.5"/><circle class="sk-lp-O" cx="2" cy="12" r="1.5"/></g></g>',
+    NH3:'<g class="sk-emph"><g transform="translate(110,42)"><text class="sk-atom N" x="0" y="2">N</text><text class="sk-atom" x="-26" y="2">H</text><line class="sk-bond" x1="-18" y1="2" x2="-8" y2="2"/><text class="sk-atom" x="26" y="2">H</text><line class="sk-bond" x1="18" y1="2" x2="8" y2="2"/><text class="sk-atom" x="0" y="22">H</text><line class="sk-bond" x1="0" y1="10" x2="0" y2="15"/><circle class="sk-lp-N" cx="-3" cy="-12" r="1.5"/><circle class="sk-lp-N" cx="3" cy="-12" r="1.5"/></g></g>',
+    cyclohexanol:'<g class="sk-emph"><g transform="translate(100,44)"><line class="sk-bond" x1="-12" y1="-7" x2="0" y2="-14"/><line class="sk-bond" x1="0" y1="-14" x2="12" y2="-7"/><line class="sk-bond" x1="12" y1="-7" x2="12" y2="7"/><line class="sk-bond" x1="12" y1="7" x2="0" y2="14"/><line class="sk-bond" x1="0" y1="14" x2="-12" y2="7"/><line class="sk-bond" x1="-12" y1="7" x2="-12" y2="-7"/><line class="sk-bond" x1="-12" y1="-7" x2="-30" y2="-14"/><text class="sk-atom O" x="-36" y="-14">OH</text></g></g>',
+    PhOH:'<g class="sk-emph"><g transform="translate(100,44)"><line class="sk-bond" x1="-12" y1="-7" x2="0" y2="-14"/><line class="sk-bond" x1="0" y1="-14" x2="12" y2="-7"/><line class="sk-bond" x1="12" y1="-7" x2="12" y2="7"/><line class="sk-bond" x1="12" y1="7" x2="0" y2="14"/><line class="sk-bond" x1="0" y1="14" x2="-12" y2="7"/><line class="sk-bond" x1="-12" y1="7" x2="-12" y2="-7"/><circle class="sk-bond" cx="0" cy="0" r="6"/><line class="sk-bond" x1="-12" y1="-7" x2="-30" y2="-14"/><text class="sk-atom O" x="-36" y="-14">OH</text></g></g>'
+  };
+  var CG=[
+    {a:{n:"HF",m:"HF",k:"pKa 3.2"},         b:{n:"HI",m:"HI",k:"pKa ~ -10"},                 win:"b", walk:"A", letter:"A &mdash; Atom (size)",   why:"Down the halogen group, <b>size beats electronegativity</b>. Iodide is huge and spreads the charge best, so HI is stronger. pK<sub>a</sub>: HF 3.2, HI ~ -10."},
+    {a:{n:"ethanol",m:"EtOH",k:"pKa 16"},   b:{n:"acetic acid",m:"AcOH",k:"pKa 4.8"},        win:"b", walk:"R", letter:"R &mdash; Resonance",     why:"Acetate spreads its charge over <b>two equivalent oxygens</b>; ethoxide has none. Acetic acid wins easily. pK<sub>a</sub>: ethanol 16, acetic 4.8."},
+    {a:{n:"acetic acid",m:"AcOH",k:"pKa 4.8"}, b:{n:"trichloroacetic acid",m:"TCA",k:"pKa 0.65"}, win:"b", walk:"DI", letter:"D/I &mdash; Induction",  why:"Same resonance in both, so R ties. <b>Three electron-withdrawing chlorines</b> drain charge off the anion. pK<sub>a</sub>: acetic 4.8, trichloroacetic 0.65."},
+    {a:{n:"ethane",m:"ethane",k:"pKa ~50"}, b:{n:"ethyne",m:"HCCH",k:"pKa ~25"},              win:"b", walk:"O", letter:"O &mdash; Orbital",       why:"The alkyne C&ndash;H is on an <b>sp carbon (50% s)</b>, holding the pair tight; ethane is sp&sup3;. pK<sub>a</sub>: alkyne ~25, alkane ~50."},
+    {a:{n:"water",m:"H2O",k:"pKa 15.7"},    b:{n:"ammonia",m:"NH3",k:"pKa ~38"},             win:"a", walk:"A", letter:"A &mdash; Atom (row)",    why:"Across a row, <b>O holds charge better than N</b>. Hydroxide beats amide, so water is the stronger acid. pK<sub>a</sub>: water 15.7, ammonia ~38."},
+    {a:{n:"cyclohexanol",m:"cyclohexanol",k:"pKa ~16"}, b:{n:"phenol",m:"PhOH",k:"pKa ~10"}, win:"b", walk:"R", letter:"R &mdash; Resonance",     why:"Phenoxide spreads its charge <b>into the ring</b>; cyclohexanol&rsquo;s anion has no resonance. Phenol wins. pK<sub>a</sub>: cyclohexanol ~16, phenol ~10."}
   ];
-  var pairSel=document.getElementById('pair'), pairOut=document.getElementById('pairOut'), gWrap=document.getElementById('guess');
-  var myGuess=null;
-  function pairShow(){
-    var p=pairs[+pairSel.value];
-    if(!myGuess){ pairOut.className='out'; pairOut.innerHTML='Pick a pair and make your call.'; return; }
-    var right=myGuess===p.win;
-    pairOut.className='out hit';
-    pairOut.innerHTML=(right?'Nice &mdash; ':'Not quite &mdash; ')+'the stronger acid is the <b>'+(p.win==='L'?'left':'right')+'</b>. Deciding letter: <b>'+p.letter+'</b>.<br>'+p.why;
+  var CG_WALK=['C','A','R','D','I','O'];
+  function cgWalkHTML(r){
+    var wins=(r.walk==='DI')?[3,4]:[CG_WALK.indexOf(r.walk)];
+    var firstWin=Math.min.apply(null,wins);
+    return CG_WALK.map(function(f,i){ var cls=(wins.indexOf(i)>=0)?'win':(i<firstWin?'checked':'skip'); return '<span class="cg-step '+cls+'">'+f+'</span>'; }).join('');
   }
-  gWrap.querySelectorAll('button').forEach(function(b){ b.addEventListener('click',function(){
-    myGuess=b.dataset.g; gWrap.querySelectorAll('button').forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false');}); pairShow();
-  });});
-  pairSel.addEventListener('change',function(){ gWrap.querySelectorAll('button').forEach(function(x){x.setAttribute('aria-pressed','false');}); myGuess=null; pairShow(); });
-
-  /* ---------- proof engine: 6 CARDIO items, commit-before-reveal ---------- */
-  var PQ=[
-    {id:'c',letter:'C &middot; Charge',q:'A cationic acid tends to be much stronger than its neutral relative, because its conjugate base comes out neutral. Which of these is the strongest acid?',
-     choices:[
-       {t:'NH₄⁺ (ammonium)',correct:true,r:'Losing H⁺ from ammonium gives neutral NH₃. Reaching neutral is a big stabilization, so ammonium (pKa ~9) beats every neutral N–H and C–H acid here.'},
-       {t:'NH₃ (ammonia)',correct:false,r:'Its conjugate base is amide, NH₂⁻ — a full charge stacked on nitrogen. pKa ~38.'},
-       {t:'CH₄ (methane)',correct:false,r:'The carbanion CH₃⁻ is extremely unstable. Methane is about the weakest acid on this topic (~50).'},
-       {t:'CH₃CH₃ (ethane)',correct:false,r:'Same story as methane: an unstable carbanion, pKa ~50.'},
-       {t:'CH₃NH₂ (methylamine)',correct:false,r:'A neutral amine like ammonia; its conjugate base is a nitrogen anion (~40). The cation, ammonium, is far stronger.'}
-     ],rule:'A cationic acid (neutral conjugate base) is much stronger. Check charge first.'},
-    {id:'a1',letter:'A &middot; Atom (row)',q:'Each of these loses one proton. Reading across the second row of the periodic table, which is the strongest acid?',
-     choices:[
-       {t:'HF',correct:true,r:'Across a row, the most electronegative atom holds the negative charge best: F over O over N over C. HF wins (pKa ~3.2 vs H₂O 15.7 vs NH₃ 38 vs CH₄ ~50).'},
-       {t:'H₂O',correct:false,r:'Oxygen is electronegative, but fluorine is more so. HF is the stronger acid across this row.'},
-       {t:'NH₃',correct:false,r:'Nitrogen holds charge worse than O or F. Amide (NH₂⁻) is a high-energy anion; NH₃ pKa ~38.'},
-       {t:'CH₄',correct:false,r:'Carbon is the worst of the four at holding a negative charge. Methane is essentially non-acidic (~50).'},
-       {t:'They are all equally strong',correct:false,r:'They differ by roughly fifty orders of magnitude. Across a row, electronegativity separates them clearly.'}
-     ],rule:'Across a period, more electronegative wins: HF > H2O > NH3 > CH4.'},
-    {id:'a2',letter:'A &middot; Atom (column)',q:'Which hydrohalic acid is the strongest: HF, HCl, HBr, or HI?',
-     choices:[
-       {t:'HI',correct:true,r:'Down a column, size beats electronegativity. Big, soft iodide spreads the charge over a huge volume, so HI is the strongest (pKa ~ -10).'},
-       {t:'HF',correct:false,r:'The classic trap. Fluorine is the most electronegative, but going DOWN the halogens size takes over, and tiny fluoride grips the charge tightly. HF is actually the weakest (pKa ~3.2).'},
-       {t:'HCl',correct:false,r:'Stronger than HF but weaker than HBr and HI. Size keeps rising down the group.'},
-       {t:'HBr',correct:false,r:'Strong, but iodide is even bigger, so HI edges it out.'},
-       {t:'They are all equally strong because they are all strong acids',correct:false,r:'Three look strong in water, but their intrinsic pKa still ranks HI > HBr > HCl >> HF.'}
-     ],rule:'Down a group, size wins: HI > HBr > HCl > HF.'},
-    {id:'r',letter:'R &middot; Resonance',q:'Acetic acid (pKa 4.8) is over a hundred billion times more acidic than ethanol (pKa 16), even though both simply lose an O–H proton. The main reason is that the acetate anion is:',
-     choices:[
-       {t:'delocalized — its negative charge is shared over two equivalent oxygens by resonance',correct:true,r:'Yes. Half a charge on each of two oxygens is far comfier than a full charge on one. Ethoxide has no such escape.'},
-       {t:'sitting on a larger atom than ethoxide is',correct:false,r:'Both put the charge on oxygen. Same atom, so Atom is a tie. Resonance is the real difference.'},
-       {t:'held right next to an sp-hybridized carbon',correct:false,r:'The carbonyl carbon is sp², and orbital character is not what separates these two. Resonance is.'},
-       {t:'neutral overall, unlike the ethoxide anion',correct:false,r:'Acetate carries a full negative charge just like ethoxide. It is more stable because that charge is spread, not because it is neutral.'},
-       {t:'stabilized by an internal hydrogen bond to the second oxygen',correct:false,r:'No intramolecular H-bond is doing the work here. Delocalization over the two oxygens is the stabilizer.'}
-     ],rule:'Resonance spreads the anion charge: RCOOH >> ROH.'},
-    {id:'i',letter:'I &middot; Induction',q:'Trichloroacetic acid (pKa 0.7) is far stronger than acetic acid (pKa 4.8). Both carboxylates have identical resonance. The extra stabilization of the trichloroacetate anion comes from:',
-     choices:[
-       {t:'three electron-withdrawing chlorines pulling charge away (induction)',correct:true,r:'Right. Same resonance in both, so R ties. The three Cl atoms drain electron density off the carboxylate through the bonds and through space — the D/I check.'},
-       {t:'extra resonance structures contributed by the chlorine lone pairs',correct:false,r:'The chlorines are not conjugated into the carboxylate here; they help by induction, not resonance.'},
-       {t:'the greater molecular weight of trichloroacetic acid',correct:false,r:'Mass does not stabilize charge. The inductive pull of the electron-withdrawing groups does.'},
-       {t:'chlorine raising the s-character of the carbon that holds the charge',correct:false,r:'Hybridization is unchanged; orbital character is not the lever here.'},
-       {t:'hydrogen bonding between the chlorines and the O–H group',correct:false,r:'No such H-bond stabilizes the anion. Induction from the three Cl is the cause.'}
-     ],rule:'Nearby electron-withdrawing groups stabilize the anion by induction (more groups = stronger).'},
-    {id:'o',letter:'O &middot; Orbital',q:'Which C–H bond is the most acidic?',
-     choices:[
-       {t:'the terminal C–H of ethyne (an alkyne)',correct:true,r:'The sp carbon is 50% s-character, holding the carbanion lone pair close to the nucleus. pKa ~25, acidic enough for NaNH₂ to deprotonate.'},
-       {t:'a C–H of ethane (an alkane)',correct:false,r:'sp³ (25% s) barely stabilizes a carbanion. Alkanes are the least acidic C–H there is (~50).'},
-       {t:'a C–H of ethene (an alkene)',correct:false,r:'sp² (33% s) is in between, but still far weaker than the alkyne (~44).'},
-       {t:'all C–H bonds are equally acidic',correct:false,r:'Hybridization sets s-character, which swings acidity by more than twenty orders of magnitude across sp, sp², sp³.'},
-       {t:'ethane, because it has the most C–H bonds to give away',correct:false,r:'Number of bonds does not set acidity per bond. s-character does, and sp wins.'}
-     ],rule:'More s-character = more acidic: sp > sp2 > sp3.'}
+  var CG_HINT=[
+    'Both put the charge on a halogen &mdash; so ask <b>Atom</b>: going down a column, the bigger atom spreads it better.',
+    'Same atom (O) holds the charge in both &mdash; so jump to <b>Resonance</b>: can either one spread it out?',
+    'Resonance ties here &mdash; so look at <b>Dipole / Induction</b>: are there electron-withdrawing groups nearby?',
+    'Same atom, no resonance, no EWGs &mdash; it comes down to <b>Orbital</b>: which carbon is more s-rich?',
+    'Different atoms hold the charge &mdash; ask <b>Atom</b>: across a row, the more electronegative wins.',
+    'Same atom (O) in both &mdash; so <b>Resonance</b>: can the ring help spread the charge?'
   ];
+  var cgIdx=0, cgLocked=false;
+  var cgPair=document.getElementById('cgPair'), cgWalk=document.getElementById('cgWalk'), cgFb=document.getElementById('cgFb'), cgTool=document.getElementById('cardioTool'), cgHintBtn=document.getElementById('cgHint');
+  function cgMol(k){ return '<svg viewBox="0 0 220 88" aria-hidden="true">'+(CG_MOL[k]||'')+'</svg>'; }
+  function cgLoad(){
+    cgLocked=false; var r=CG[cgIdx];
+    cgWalk.hidden=true; cgWalk.innerHTML=''; cgTool.classList.remove('shake');
+    if(cgHintBtn){ cgHintBtn.disabled=false; }
+    cgFb.className='out cg-fb'; cgFb.innerHTML='Two acids, drawn for real. Tap the one that lets go of its proton more easily.';
+    cgPair.innerHTML=
+      '<button type="button" class="cg-card" data-side="a"><span class="cg-lbl">Choice A</span><span class="cg-name">'+r.a.n+'</span>'+cgMol(r.a.m)+'<span class="cg-pka" hidden>'+r.a.k+'</span></button>'+
+      '<div class="cg-vs">vs</div>'+
+      '<button type="button" class="cg-card" data-side="b"><span class="cg-lbl">Choice B</span><span class="cg-name">'+r.b.n+'</span>'+cgMol(r.b.m)+'<span class="cg-pka" hidden>'+r.b.k+'</span></button>';
+    cgPair.querySelectorAll('.cg-card').forEach(function(card){ card.addEventListener('click',function(){ if(cgLocked) return; cgPick(card,r); }); });
+  }
+  function cgPick(card,r){
+    cgLocked=true; if(cgHintBtn){ cgHintBtn.disabled=true; } var correct=card.dataset.side===r.win;
+    cgPair.querySelectorAll('.cg-card').forEach(function(c){
+      c.style.pointerEvents='none';
+      if(c.dataset.side===r.win) c.classList.add('win');
+      else if(c===card) c.classList.add('miss');
+    });
+    if(!correct) cgTool.classList.add('shake');
+    cgPair.querySelectorAll('.cg-pka').forEach(function(el){ el.hidden=false; });  /* reveal pKa only after commit */
+    cgWalk.hidden=false;
+    cgWalk.innerHTML=cgWalkHTML(r);
+    var name=r[r.win].n;
+    cgFb.className='out cg-fb '+(correct?'hit':'miss');
+    cgFb.innerHTML=(correct?'Confirmed &mdash; ':'Not quite &mdash; ')+'the stronger acid is <b>'+name+'</b>. Deciding letter: <b>'+r.letter+'</b>.<br>'+r.why;
+  }
+  function cgHint(){
+    if(cgLocked) return; var r=CG[cgIdx];
+    cgWalk.hidden=false;
+    cgWalk.innerHTML=cgWalkHTML(r);
+    cgFb.className='out cg-fb hint';
+    cgFb.innerHTML='<b>The tell:</b> '+CG_HINT[cgIdx]+' Now make your call.';
+  }
+  if(cgHintBtn){ cgHintBtn.addEventListener('click',cgHint); }
+  document.getElementById('cgNext').addEventListener('click',function(){ cgIdx=(cgIdx+1)%CG.length; cgLoad(); });
+  var cgResetBtn=document.getElementById('cgReset'); if(cgResetBtn){ cgResetBtn.addEventListener('click',function(){ cgLoad(); }); }
+  cgLoad();
+
+  /* ---------- proof engine: 8 authentic DAT ranking items, commit-before-reveal ---------- */
+  var PQ=[
+    {id:'ladder',letter:'Rank &middot; class ladder',q:'Rank these by DECREASING acidity — strongest first. (The structures are drawn below.)',
+     choices:[
+       {t:'III > II > I',correct:true,r:'Carboxylic acid (~4.8) > phenol (~10) > alcohol (~16). Acetate spreads its charge over two equivalent O; phenoxide delocalizes into the ring; ethoxide has neither. Sort by class first and this is instant.'},
+       {t:'II > III > I',correct:false,r:'The “aromatic must be strongest” trap. Phenol (~10) is a weaker acid than a carboxylic acid (~4.8) — spreading over two O beats spreading into a ring.'},
+       {t:'III > I > II',correct:false,r:'Puts the alcohol above phenol. Ethanol (~16) is weaker than phenol (~10); phenoxide gets ring resonance, ethoxide gets none.'},
+       {t:'I > II > III',correct:false,r:'Inverted — this ranks the neutral molecules, not their conjugate bases. Judge the anion and the order flips.'},
+       {t:'II > I > III',correct:false,r:'Two errors at once: aromatic on top and alcohol above carboxylic. The class ladder is carboxylic > phenol > alcohol.'}
+     ],rule:'Rank by class first: carboxylic (~5) > phenol (~10) > alcohol (~16).'},
+    {id:'additive',letter:'Rank &middot; additive induction',q:'Rank these by DECREASING acidity — strongest first.',
+     choices:[
+       {t:'trichloroacetic > dichloroacetic > chloroacetic > acetic',correct:true,r:'Each added Cl drains more density off the carboxylate by induction: trichloro 0.65 < dichloro 1.29 < chloro 2.86 < acetic 4.76. More EWGs = stronger acid.'},
+       {t:'acetic > chloroacetic > dichloroacetic > trichloroacetic',correct:false,r:'Treats Cl as a donor. Chlorine is electron-withdrawing — it lowers pKa, not raises it. This is exactly backwards.'},
+       {t:'trichloroacetic > chloroacetic > dichloroacetic > acetic',correct:false,r:'Middle two are swapped. Two Cl withdraw more than one, so dichloroacetic (1.29) is stronger than chloroacetic (2.86).'},
+       {t:'all equal — every one is a carboxylic acid',correct:false,r:'Same functional group, but the substituents differ. Induction from the Cl atoms shifts pKa by four units across this series.'},
+       {t:'dichloroacetic > trichloroacetic > chloroacetic > acetic',correct:false,r:'The “three Cl crowd and cancel” myth. Inductive pull is additive — three Cl (0.65) beat two (1.29).'}
+     ],rule:'More electron-withdrawing groups = stronger acid; the inductive pull is additive.'},
+    {id:'halogen',letter:'Trap &middot; halogen identity',q:'Which is the STRONGEST acid?',
+     choices:[
+       {t:'fluoroacetic acid',correct:true,r:'As an EWG on the chain, a halogen withdraws by induction, which follows electronegativity: F is the most electronegative, so fluoroacetic is strongest (2.59).'},
+       {t:'chloroacetic acid',correct:false,r:'Strong (2.86), but Cl is less electronegative than F, so fluoroacetic edges it out.'},
+       {t:'bromoacetic acid',correct:false,r:'About 2.90 — weaker still. Down the halogens electronegativity drops, so the inductive pull drops.'},
+       {t:'acetic acid',correct:false,r:'No halogen at all (4.76), the weakest here — there is nothing extra to drain the charge.'},
+       {t:'iodoacetic acid, because iodine is the largest atom',correct:false,r:'The reverse-of-HX trap. Size wins when the charge sits ON the atom (HI > HF). Here the halogen is a remote withdrawer acting through bonds, so electronegativity rules and iodine is weakest (3.18).'}
+     ],rule:'A halogen AS an EWG follows electronegativity (F strongest); size only wins when the charge is on the atom itself.'},
+    {id:'benzoicid',letter:'Aromatic &middot; substituent identity',q:'Rank these benzoic acids by DECREASING acidity — strongest first. (Structures drawn below.)',
+     choices:[
+       {t:'I > II > III',correct:true,r:'A nitro group is a strong EWG, so it drops the pKa below benzoic (~3.4 vs 4.2); a methyl is an EDG, so it raises it (~4.4). Sort by substituent identity: EWG below, EDG above.'},
+       {t:'III > II > I',correct:false,r:'Fully inverted — this treats the donating methyl as a strengthener and the withdrawing nitro as a weakener. EWGs make the stronger acids.'},
+       {t:'II > I > III',correct:false,r:'Puts plain benzoic above the nitro one. –NO₂ withdraws density from the carboxylate, so a nitro-benzoic acid (~3.4) is stronger than benzoic (4.2), not weaker.'},
+       {t:'I > III > II',correct:false,r:'Nitro on top is right, but this lifts the methyl above plain benzoic. An alkyl group is a weak EDG, so a methyl-benzoic acid (~4.4) sits below benzoic, not above.'},
+       {t:'II > III > I',correct:false,r:'The “any substituent must add acidity” error. A substituent can weaken too — the nitro (EWG) is strongest and the methyl (EDG) is weakest.'}
+     ],rule:'Benzoic acids: rank by substituent identity — an EWG (nitro) drops below benzoic 4.2, an EDG (methyl) rises above it.'},
+    {id:'distance',letter:'Induction &middot; distance decides',q:'Which is the STRONGEST acid? (Note where each chlorine sits on the chain.)',
+     choices:[
+       {t:'2-chlorobutanoic acid (Cl next to the COOH)',correct:true,r:'Induction is strongest at close range. With the Cl right beside the carboxyl it drains the most charge off the anion (~2.86) — the strongest here.'},
+       {t:'4-chlorobutanoic acid (Cl three carbons away)',correct:false,r:'Inductive pull fades fast through the σ bonds. Three carbons out the Cl barely helps (~4.5) — nearly plain butanoic.'},
+       {t:'3-chlorobutanoic acid',correct:false,r:'Closer than the 4-position but still not adjacent; every carbon of separation weakens the effect (~4.05), so it cannot beat the 2-chloro.'},
+       {t:'butanoic acid',correct:false,r:'No halogen at all (~4.82) — nothing extra to withdraw the charge, so it is the weakest of the four drawn.'},
+       {t:'they are equal — one chlorine is one chlorine',correct:false,r:'The “distance doesn’t matter” trap. Induction acts through the bonds and decays with every carbon, so where the Cl sits changes the acidity a lot.'}
+     ],rule:'Induction fades with distance: a Cl next to the COOH strengthens far more than one several carbons away.'},
+    {id:'phenolid',letter:'Phenols &middot; identity &amp; class',q:'Rank these by DECREASING acidity — strongest first. (Structures drawn below.)',
+     choices:[
+       {t:'I > II > III',correct:true,r:'The nitro delocalizes the phenoxide charge onto its own oxygens (~7.15); plain phenol spreads into the ring only (~9.95); cyclohexanol has no ring resonance at all (~16).'},
+       {t:'III > II > I',correct:false,r:'Fully inverted — this ranks the least-stabilized anion first. Cyclohexanol (~16) is the weakest and the nitrophenol (~7.15) the strongest.'},
+       {t:'II > I > III',correct:false,r:'Puts plain phenol above the nitro one. –NO₂ is a strong EWG that further stabilizes phenoxide, so the nitrophenol (~7.15) beats phenol (~9.95).'},
+       {t:'I > III > II',correct:false,r:'Nitro on top is right, but this lifts cyclohexanol above phenol. Cyclohexanol’s anion has no resonance, so it is weaker than phenol, not stronger.'},
+       {t:'II > III > I',correct:false,r:'The “aromatic ring alone wins” error, treating nitro as weakening. Both the ring and the nitro stabilize the charge, so the nitrophenol is strongest, not weakest.'}
+     ],rule:'Phenols: a nitro (EWG) drops it well below phenol; no ring resonance at all (cyclohexanol) is the weakest.'},
+    {id:'anion',letter:'Anion &middot; most stable base',q:'Which of these CONJUGATE BASES is the MOST stable?',
+     choices:[
+       {t:'acetate',correct:true,r:'Its charge is shared over two equivalent oxygens (parent acid pKa 4.76, the lowest here → the most stable anion). Base stability is exactly what acidity measures.'},
+       {t:'phenoxide',correct:false,r:'Delocalized, but into the ring onto carbons rather than O, so less effective than acetate’s two-oxygen spread. Parent phenol ~10.'},
+       {t:'ethoxide',correct:false,r:'Charge localized on one oxygen, no delocalization. Parent ethanol ~16 — a much less stable anion than acetate.'},
+       {t:'isopropoxide',correct:false,r:'Two electron-donating alkyls push density onto the O⁻, destabilizing it a touch more than ethoxide (~17).'},
+       {t:'tert-butoxide',correct:false,r:'Three alkyl donors make this the LEAST stable alkoxide (~18) — the opposite of most stable.'}
+     ],rule:'Most stable anion = strongest parent acid (lowest pKa): delocalized over O beats localized; alkyl donors destabilize.'},
+    {id:'capstone',letter:'Capstone &middot; mixed rank',q:'Rank these by DECREASING acidity — strongest first.',
+     choices:[
+       {t:'trichloroacetic > acetic > phenol > ethanol > ethyne',correct:true,r:'Induction makes trichloroacetic strongest (0.65), then the class ladder: acetic 4.76 > phenol 10 > ethanol 16 > ethyne 25.'},
+       {t:'acetic > trichloroacetic > phenol > ethanol > ethyne',correct:false,r:'Misses the three Cl. Induction drives trichloroacetic (0.65) far below acetic (4.76).'},
+       {t:'trichloroacetic > acetic > phenol > ethyne > ethanol',correct:false,r:'Swaps the last two. A terminal alkyne (~25) is LESS acidic than an alcohol (~16).'},
+       {t:'trichloroacetic > phenol > acetic > ethanol > ethyne',correct:false,r:'Puts phenol above a carboxylic acid. Acetic (4.76) is a stronger acid than phenol (~10).'},
+       {t:'ethyne > ethanol > phenol > acetic > trichloroacetic',correct:false,r:'Fully inverted — this ranks weakest to strongest. Trichloroacetic (0.65) is strongest, ethyne (~25) weakest.'}
+     ],rule:'Bucket by class, then let induction break ties: EWG-loaded carboxylic acids sit lowest of all.'}
+  ];
+  /* ---- drawn-structure builders for the You-do proof (uniform 0 0 132 116 sk-* frame) ---- */
+  function _b(x1,y1,x2,y2){return '<line class="sk-bond" x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'"/>';}
+  function _a(c,x,y,t,fs){return '<text class="'+c+'" x="'+x+'" y="'+y+'"'+(fs?' font-size="'+fs+'"':'')+'>'+t+'</text>';}
+  function _ring(cx,cy,ar){var v=[[cx,cy-16],[cx+14,cy-8],[cx+14,cy+8],[cx,cy+16],[cx-14,cy+8],[cx-14,cy-8]],s='',i;for(i=0;i<6;i++){var a=v[i],b=v[(i+1)%6];s+=_b(a[0],a[1],b[0],b[1]);}if(ar)s+='<circle class="sk-bond" cx="'+cx+'" cy="'+cy+'" r="8"/>';return s;}
+  function _cooh(cx,cy){return _a('sk-atom-sm',cx,cy,'C',12)+_b(cx-2,cy-7,cx-2,cy-19)+_b(cx+1,cy-7,cx+1,cy-19)+_a('sk-atom O',cx-1,cy-24,'O')+_b(cx+7,cy,cx+20,cy)+_a('sk-atom O',cx+29,cy,'OH');}
+  function _coo(cx,cy){return _a('sk-atom-sm',cx,cy,'C',12)+_b(cx-4,cy-6,cx-15,cy-15)+_b(cx-2,cy-9,cx-13,cy-18)+_a('sk-atom O',cx-23,cy-17,'O')+_b(cx+5,cy+3,cx+16,cy+12)+_a('sk-atom O',cx+24,cy+14,'O')+'<circle class="sk-charge-circle minus" cx="'+(cx+40)+'" cy="'+(cy+8)+'" r="7"/>'+_a('sk-charge-text minus',cx+40,cy+8,'&minus;');}
+  function _no2(px,py){var ny=py+16;return _b(px,py,px,ny-6)+_a('sk-atom N',px,ny,'N')+_b(px-6,ny+6,px-16,ny+16)+_b(px-3,ny+8,px-13,ny+18)+_a('sk-atom O',px-22,ny+18,'O')+_b(px+6,ny+6,px+16,ny+16)+_a('sk-atom O',px+22,ny+18,'O');}
+  function _sub(px,py,c,t,fs){return _b(px,py,px,py+9)+_a(c,px,py+15,t,fs);}
+  function _omin(ox,oy){return _a('sk-atom O',ox,oy,'O')+'<circle class="sk-charge-circle minus" cx="'+(ox+15)+'" cy="'+(oy-9)+'" r="7"/>'+_a('sk-charge-text minus',ox+15,oy-9,'&minus;');}
+  function _haloAc(h){return _a('sk-atom X',18,46,h)+_b(26,50,44,64)+_b(44,64,58,64)+_cooh(66,64);}
+  var S_ethanol=_b(28,62,52,48)+_b(52,48,74,62)+_a('sk-atom O',82,62,'OH');
+  var S_acetic=_a('sk-atom-sm',20,64,'H&#8323;C',11)+_b(32,64,46,64)+_cooh(54,64);
+  var S_phenol=_ring(60,64,true)+_b(60,48,60,36)+_a('sk-atom O',60,30,'OH');
+  var S_dichloro=_a('sk-atom X',16,44,'Cl')+_b(24,48,44,64)+_a('sk-atom X',16,84,'Cl')+_b(24,80,44,64)+_b(44,64,58,64)+_cooh(66,64);
+  var S_trichloro=_a('sk-atom X',14,42,'Cl')+_b(22,46,42,64)+_a('sk-atom X',8,64,'Cl')+_b(18,64,42,64)+_a('sk-atom X',14,86,'Cl')+_b(22,82,42,64)+_b(42,64,56,64)+_cooh(64,64);
+  var S_benzoicCore=_ring(62,62,true)+_b(62,46,62,36)+_cooh(62,30);
+  var S_phenolCore=_ring(60,58,true)+_b(60,42,60,32)+_a('sk-atom O',60,26,'OH');
+  var S_butChain=_b(30,60,50,48)+_b(50,48,70,60)+_b(70,60,83,52)+_cooh(90,48);
+  var S_butanoic=S_butChain;
+  var S_chlorobut2=S_butChain+_sub(70,60,'sk-atom X','Cl');
+  var S_chlorobut3=S_butChain+_b(50,48,50,38)+_a('sk-atom X',50,32,'Cl');
+  var S_chlorobut4=S_butChain+_b(30,60,16,60)+_a('sk-atom X',9,60,'Cl');
+  var PQ_STRUCTS={
+    ladder:[{label:'I',name:'ethanol',svg:S_ethanol},{label:'II',name:'phenol',svg:S_phenol},{label:'III',name:'acetic acid',svg:S_acetic}],
+    additive:[{label:'I',name:'acetic',svg:S_acetic},{label:'II',name:'chloroacetic',svg:_haloAc('Cl')},{label:'III',name:'dichloroacetic',svg:S_dichloro},{label:'IV',name:'trichloroacetic',svg:S_trichloro}],
+    halogen:[{label:'A',name:'fluoroacetic',svg:_haloAc('F')},{label:'B',name:'chloroacetic',svg:_haloAc('Cl')},{label:'C',name:'bromoacetic',svg:_haloAc('Br')},{label:'D',name:'acetic',svg:S_acetic},{label:'E',name:'iodoacetic',svg:_haloAc('I')}],
+    benzoicid:[{label:'I',name:'a nitro-benzoic acid',svg:S_benzoicCore+_no2(62,78)},{label:'II',name:'benzoic acid',svg:S_benzoicCore},{label:'III',name:'a methyl-benzoic acid',svg:S_benzoicCore+_sub(62,78,'sk-atom-sm','CH&#8323;',11)}],
+    distance:[{label:'A',name:'2-chlorobutanoic acid',svg:S_chlorobut2},{label:'B',name:'4-chlorobutanoic acid',svg:S_chlorobut4},{label:'C',name:'3-chlorobutanoic acid',svg:S_chlorobut3},{label:'D',name:'butanoic acid',svg:S_butanoic}],
+    phenolid:[{label:'I',name:'4-nitrophenol',svg:S_phenolCore+_no2(60,74)},{label:'II',name:'phenol',svg:S_phenolCore},{label:'III',name:'cyclohexanol',svg:_ring(60,58,false)+_b(60,42,60,32)+_a('sk-atom O',60,26,'OH')}],
+    anion:[{label:'A',name:'acetate',svg:_a('sk-atom-sm',22,60,'H&#8323;C',11)+_b(34,60,48,60)+_coo(56,60)},{label:'B',name:'phenoxide',svg:_ring(56,66,true)+_b(56,50,56,40)+_omin(56,34)},{label:'C',name:'ethoxide',svg:_b(26,64,50,50)+_b(50,50,70,62)+_omin(78,62)},{label:'D',name:'isopropoxide',svg:_a('sk-atom-sm',18,44,'H&#8323;C',11)+_b(28,48,52,60)+_a('sk-atom-sm',18,80,'CH&#8323;',11)+_b(28,76,52,60)+_b(52,60,68,60)+_omin(76,60)},{label:'E',name:'tert-butoxide',svg:_a('sk-atom-sm',16,42,'H&#8323;C',11)+_b(26,46,50,60)+_a('sk-atom-sm',6,62,'CH&#8323;',11)+_b(20,62,50,60)+_a('sk-atom-sm',16,82,'CH&#8323;',11)+_b(26,78,50,60)+_b(50,60,66,60)+_omin(74,60)}],
+    capstone:[{label:'I',name:'trichloroacetic',svg:S_trichloro},{label:'II',name:'acetic',svg:S_acetic},{label:'III',name:'phenol',svg:S_phenol},{label:'IV',name:'ethanol',svg:S_ethanol},{label:'V',name:'ethyne',svg:_a('sk-atom',30,62,'H')+_b(38,62,52,62)+_b(52,57,72,57)+_b(52,62,72,62)+_b(52,67,72,67)+_b(72,62,86,62)+_a('sk-atom',94,62,'H')}]
+  };
+  var PQ_KIND={ladder:'rank',additive:'rank',halogen:'which',benzoicid:'rank',distance:'which',phenolid:'rank',anion:'which',capstone:'rank'};
+  PQ.forEach(function(q){ q.structures=PQ_STRUCTS[q.id]||null; q.kind=PQ_KIND[q.id]||'rank'; });
   var LETTERS=['A','B','C','D','E'];
   var ETYPES=[['content','Didn’t know it'],['misread','Misread / trap'],['careless','Careless slip'],['timing','Ran out of time']];
   var PKEY=PREFIX+'proof', pstate={};
   try{ pstate=JSON.parse(localStorage.getItem(PKEY)||'{}'); }catch(e){ pstate={}; }
   function psave(){ try{ localStorage.setItem(PKEY,JSON.stringify(pstate)); }catch(e){} }
+  var AKEY=PREFIX+'attempts', attempts=[];
+  try{ attempts=JSON.parse(localStorage.getItem(AKEY)||'[]'); if(!Array.isArray(attempts)) attempts=[]; }catch(e){ attempts=[]; }
+  function asave(){ try{ localStorage.setItem(AKEY,JSON.stringify(attempts)); }catch(e){} }
   var arena=document.getElementById('arena'), qnum=document.getElementById('qnum'), qletter=document.getElementById('qletter');
   var pi=0;
   function renderQ(){
@@ -632,6 +1290,15 @@ select{
     qletter.innerHTML=q.letter;
     arena.innerHTML='';
     var qt=document.createElement('div'); qt.className='qt'; qt.textContent=q.q; arena.appendChild(qt);
+    if(q.structures && q.structures.length){
+      var sp=document.createElement('div'); sp.className='pq-structs';
+      q.structures.forEach(function(st){
+        var card=document.createElement('div'); card.className='pq-struct'; card.setAttribute('data-label',st.label);
+        card.innerHTML='<span class="pq-slabel">'+st.label+'</span><svg viewBox="0 0 132 116" aria-hidden="true">'+st.svg+'</svg><span class="pq-sname">'+st.name+'</span>';
+        sp.appendChild(card);
+      });
+      arena.appendChild(sp);
+    }
     var chosen=null, conf=null, locked=(pstate[q.id]&&pstate[q.id].done);
     var choicesWrap=document.createElement('div'); choicesWrap.className='choices';
     q.choices.forEach(function(c,ci){
@@ -656,15 +1323,21 @@ select{
     var fb=document.createElement('div'); fb.className='fb'; arena.appendChild(fb);
     var pnext=document.createElement('button'); pnext.type='button'; pnext.className='pnext';
     pnext.textContent = pi<PQ.length-1 ? 'Next question →' : 'See my calibration →';
-    pnext.addEventListener('click',function(){ if(pi<PQ.length-1){ pi++; renderQ(); } else { go(11); } });
+    pnext.addEventListener('click',function(){ if(pi<PQ.length-1){ pi++; renderQ(); } else { go(16); } });
     arena.appendChild(pnext);
     function upd(){ chk.disabled=!(chosen!==null && conf); }
-    function reveal(chosenIdx){
+    function reveal(chosenIdx,flourish){
       choicesWrap.querySelectorAll('.choice').forEach(function(x,xi){
         x.style.cursor='default';
         x.innerHTML='<span class="ltr">'+LETTERS[xi]+'</span><span class="body">'+q.choices[xi].t+'<span class="cr">'+q.choices[xi].r+'</span></span>';
-        if(q.choices[xi].correct) x.classList.add('correct'); else if(xi===chosenIdx) x.classList.add('wrong');
+        if(q.choices[xi].correct){ x.classList.add('correct'); if(flourish) x.classList.add('just-committed'); }
+        else if(xi===chosenIdx) x.classList.add('wrong');
       });
+      if(q.kind==='which'){
+        var _wi=-1,_wj; for(_wj=0;_wj<q.choices.length;_wj++){ if(q.choices[_wj].correct){ _wi=_wj; break; } }
+        var _wc=_wi>=0 && arena.querySelector('.pq-struct[data-label="'+LETTERS[_wi]+'"]');
+        if(_wc) _wc.classList.add('struct-correct');
+      }
       var correct=q.choices[chosenIdx] && q.choices[chosenIdx].correct;
       fb.className='fb show '+(correct?'ok':'no');
       fb.innerHTML=correct?('Correct.'+((pstate[q.id]&&pstate[q.id].conf!=='sure')?' You weren’t fully sure — worth one more look so it becomes automatic.':' Locked in.')):'Not yet — the right choice is highlighted. That surprise is exactly what builds the memory.';
@@ -686,37 +1359,61 @@ select{
         et.appendChild(ta);
         arena.appendChild(et);
       }
+      var retry=document.createElement('button'); retry.type='button'; retry.className='pretry';
+      retry.textContent='Try this one again';
+      retry.addEventListener('click',function(){ tryAgain(q.id); });
+      arena.appendChild(retry);
     }
     chk.addEventListener('click',function(){
       if(chosen===null||!conf) return; locked=true;
       pstate[q.id]={done:true,correct:q.choices[chosen].correct,conf:conf,chosen:chosen,rule:(pstate[q.id]&&pstate[q.id].rule)||'',etype:(pstate[q.id]&&pstate[q.id].etype)||''};
-      psave(); reveal(chosen);
+      psave(); reveal(chosen,true);
     });
     if(locked){ // already answered on a prior visit
       choicesWrap.querySelectorAll('.choice').forEach(function(x){x.setAttribute('aria-pressed','false');});
-      reveal(pstate[q.id].chosen);
+      reveal(pstate[q.id].chosen,false);
     }
   }
   renderQ();
+
+  function tryAgain(qid){ var old=pstate[qid]||{}; pstate[qid]={done:false,rule:old.rule||'',etype:old.etype||''}; psave(); renderQ(); }
+  function redoAll(){
+    var correct=0,n=0;
+    PQ.forEach(function(q){ var st=pstate[q.id]; if(st&&st.done){ n++; if(st.correct) correct++; } });
+    if(n){ attempts.push({correct:correct,total:PQ.length,answered:n,ts:Date.now()}); asave(); }
+    PQ.forEach(function(q){ var old=pstate[q.id]||{}; pstate[q.id]={done:false,rule:old.rule||'',etype:old.etype||''}; }); psave();
+    pi=0; renderQ(); go(15);
+  }
 
   /* ---------- close: calibration ---------- */
   function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
   function renderClose(){
     var box=document.getElementById('closeCalib');
-    var ids=Object.keys(pstate).filter(function(k){ return pstate[k]&&pstate[k].done; });
-    var n=ids.length;
-    if(!n){ box.innerHTML='<div class="calib"><h4>Your six are still waiting</h4><p style="margin:0;color:var(--ink-2)">Head back to The Proof and run the items — your calibration builds here as you go.</p></div>'; return; }
+    var curIds={}; PQ.forEach(function(q){ curIds[q.id]=1; });
+    var ids=Object.keys(pstate).filter(function(k){ return curIds[k]&&pstate[k]&&pstate[k].done; });
+    var n=ids.length, attemptNo=attempts.length+1;
+    if(!n){ box.innerHTML='<div class="calib"><h4>Your eight are still waiting</h4><p style="margin:0;color:var(--ink-2)">Head back to The Proof and run the items — your calibration builds here as you go. You can redo the whole set as many times as you like.</p></div>'; return; }
     var correct=0,sureN=0,sureWrong=0;
-    ids.forEach(function(k){ var s=pstate[k]; if(s.correct)correct++; if(s.conf==='sure'){sureN++; if(!s.correct)sureWrong++;} });
+    ids.forEach(function(k){ var st=pstate[k]; if(st.correct)correct++; if(st.conf==='sure'){sureN++; if(!st.correct)sureWrong++;} });
     var rules=ids.filter(function(k){return pstate[k].rule&&pstate[k].rule.trim();}).map(function(k){return pstate[k].rule;});
     var h='<div class="calib"><h4>Your calibration — '+n+' of '+PQ.length+' answered</h4>';
-    h+='<p style="margin:0 0 4px">Accuracy: <span class="big-n">'+correct+' / '+n+'</span>.';
+    var al='Attempt '+attemptNo+' &middot; '+correct+'/'+n;
+    if(attempts.length){ var pv=attempts[attempts.length-1];
+      if(correct>pv.correct) al+=' — up from '+pv.correct+'/'+pv.total+'. That climb is the learning.';
+      else if(correct===pv.correct) al+=' — holding at '+pv.correct+'/'+pv.total+'. One more pass makes it automatic.';
+      else al+=' — last run was '+pv.correct+'/'+pv.total+'. Reset the fuzzy ones and run it again.';
+    }
+    h+='<p class="attempt-line">'+al+'</p>';
+    h+='<p style="margin:8px 0 4px">Accuracy: <span class="big-n">'+correct+' / '+n+'</span>.';
     if(sureN) h+=' You felt <b>Sure</b> on '+sureN+' — '+(sureWrong?('and missed <b>'+sureWrong+'</b> of those. Confident misses are the ones to re-test first — that surprise is what makes the fix stick.'):'and got them all. Well calibrated.');
     h+='</p>';
     if(rules.length){ h+='<div class="rules-k">Your rules to keep</div><ul>'+rules.map(function(r){return '<li>'+esc(r)+'</li>';}).join('')+'</ul>'; }
     else h+='<p style="margin:8px 0 0;font-size:13px;color:var(--muted)">Clean sweep — no misses to rule-capture. Take CARDIO to the engine and drill for speed.</p>';
+    h+='<button type="button" class="redo-all" id="redoAll">Redo all '+PQ.length+' &rarr;</button>';
+    h+='<p class="redo-note">Missed one? Reset and run it again — redo until it’s automatic. Your last score stays so you can watch it climb.</p>';
     h+='</div>';
     box.innerHTML=h;
+    var rb=document.getElementById('redoAll'); if(rb) rb.addEventListener('click',redoAll);
   }
 
   /* ---------- export / import ---------- */
@@ -725,10 +1422,40 @@ select{
     var blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
     var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='oc-acids-cardio-progress.json'; document.body.appendChild(a); a.click(); a.remove();
   });
+  document.getElementById('importBtn').addEventListener('click',function(){ impFile.click(); });
   var impFile=document.getElementById('importFile');
   impFile.addEventListener('change',function(e){ var f=e.target.files[0]; if(!f) return; var r=new FileReader();
     r.onload=function(){ try{ var d=JSON.parse(r.result); for(var k in d){ if(k.indexOf(PREFIX)===0) localStorage.setItem(k,d[k]); } location.reload(); }catch(err){} };
     r.readAsText(f); });
+
+  /* ---------- fill-in-the-blank: active recall, tap-to-fill, retryable ---------- */
+  function buildFib(el){
+    var ans=el.getAttribute('data-a')||'';
+    var chips=(el.getAttribute('data-c')||'').split('|').filter(function(x){return x.length;});
+    function renderChips(){
+      el.innerHTML='';
+      var slot=document.createElement('span'); slot.className='fib-slot'; slot.setAttribute('role','group'); slot.setAttribute('aria-label','fill in the blank');
+      chips.forEach(function(txt){
+        var b=document.createElement('button'); b.type='button'; b.className='fib-chip'; b.textContent=txt;
+        b.addEventListener('click',function(){
+          if(txt===ans){ lock(); }
+          else { b.classList.remove('bad'); void b.offsetWidth; b.classList.add('bad'); setTimeout(function(){ b.classList.remove('bad'); },420); }
+        });
+        slot.appendChild(b);
+      });
+      el.appendChild(slot);
+    }
+    function lock(){
+      el.innerHTML='';
+      var wrap=document.createElement('span'); wrap.className='fib-done';
+      var lk=document.createElement('span'); lk.className='fib-lock'; lk.textContent=ans;
+      var rd=document.createElement('button'); rd.type='button'; rd.className='fib-redo'; rd.textContent='Redo'; rd.setAttribute('aria-label','redo this blank');
+      rd.addEventListener('click',renderChips);
+      wrap.appendChild(lk); wrap.appendChild(rd); el.appendChild(wrap);
+    }
+    renderChips();
+  }
+  (function(){ [].slice.call(document.querySelectorAll('.fib')).forEach(buildFib); })();
 
   /* ---------- start the deck (after all state + handlers exist) ---------- */
   go(0);
