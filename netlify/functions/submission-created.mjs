@@ -57,7 +57,7 @@ export const handler = async (event) => {
   const rk = process.env.RESEND_API_KEY;
   if (rk) {
     await sendEmail(rk, {
-      to: NOTIFY_TO,
+      to: NOTIFY_TO.split(",").map(s => s.trim()).filter(Boolean),
       subject: "New trick-library email: " + email,
       html: "<div style=\"font-family:Georgia,serif;color:#16241c\">"
           + "<p>New signup on the free trick library.</p>"
@@ -85,6 +85,6 @@ async function sendEmail(key, { to, subject, html }) {
   return fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: { "content-type": "application/json", "authorization": "Bearer " + key },
-    body: JSON.stringify({ from: FROM, to: [to], subject, html }),
+    body: JSON.stringify({ from: FROM, to: Array.isArray(to) ? to : [to], subject, html }),
   });
 }
