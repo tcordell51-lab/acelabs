@@ -4,352 +4,347 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Ace PAT Studio — Top Front End: Solid Means Seen</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="pat-cream.css">
 <style>
-  /* module-specific layout only — palette + chrome come from pat-cream.css */
-  h1.title{font-size:30px;margin:0 0 6px}
-  .controls{display:flex;gap:9px;flex-wrap:wrap;margin-top:12px}
-  .opts{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:10px}
-  .opt{background:#DCDCDC;border:1px solid #C6BCA2;border-radius:10px;padding:8px;cursor:pointer;text-align:center}
-  .opt:hover{border-color:var(--brass)}
-  .opt.correct{border-color:var(--ok);box-shadow:0 0 0 1px var(--ok)}
-  .opt.wrong{border-color:var(--bad);box-shadow:0 0 0 1px var(--bad)}
-  .opt .lab{font-family:var(--sans);font-size:11px;color:var(--muted);margin-bottom:4px}
-  svg{width:100%}
+:root{
+  --bg:#0d1411;--card:#121b16;--panel:#0f1712;--panel2:#15110b;--line:rgba(201,168,76,.22);
+  --ink:#ece6d7;--ink2:#b7b0a0;--ink3:#867f72;--gold:#C9A84C;--goldhi:#E6D08A;--amber:#D98A2B;
+  --good:#57B487;--good-bg:rgba(87,180,135,.12);--bad:#C06A62;--bad-bg:rgba(192,106,98,.12);
+  --serif:Georgia,'Times New Roman',serif;--mono:ui-monospace,'SF Mono',Menlo,monospace;--sans:system-ui,-apple-system,'Segoe UI',sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(760px 440px at 85% -6%,rgba(201,168,76,.07),transparent 60%),var(--bg);color:var(--ink);font-family:var(--sans);font-size:14px;line-height:1.5}
+.wrap{max-width:1180px;margin:0 auto;padding:24px 22px 70px}
+.top{display:flex;align-items:baseline;gap:14px;border-bottom:1px solid var(--line);padding-bottom:14px;margin-bottom:18px;flex-wrap:wrap}
+.top .brand{font-family:var(--serif);font-size:20px}
+.top .brand span{color:var(--gold)}
+.top .kick{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--amber)}
+.top a.all{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--gold);text-decoration:none}
+h1{font-family:var(--serif);font-size:29px;margin:0 0 6px}
+.lede{color:var(--ink2);max-width:80ch;margin:0 0 16px;font-size:14.5px}
+.lede b{color:var(--goldhi)}
+.tabs{display:inline-flex;background:var(--card);border:1px solid var(--line);border-radius:11px;padding:4px;gap:4px;margin-bottom:18px}
+.tab{font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink2);background:none;border:none;border-radius:8px;padding:8px 15px;cursor:pointer}
+.tab:hover{color:var(--ink)}
+.tab.on{background:linear-gradient(180deg,var(--goldhi),var(--gold));color:#1a1206;font-weight:700}
+.tab .n{opacity:.55;margin-right:5px}
+.cols{display:grid;grid-template-columns:1.05fr .95fr;gap:18px;align-items:start}
+@media(max-width:1000px){.cols{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-top:3px solid var(--amber);border-radius:14px;padding:16px 18px}
+.card h2{font-family:var(--serif);font-size:17px;margin:0 0 2px}
+.card .k{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--amber)}
+svg{display:block;width:100%;height:auto}
+button{background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:9px;padding:9px 14px;font-family:var(--mono);font-size:12px;cursor:pointer}
+button:hover{border-color:var(--gold)}
+button.primary{background:linear-gradient(180deg,var(--goldhi),var(--gold));color:#1a1206;border:none;font-weight:700}
+button:disabled{opacity:.4;cursor:default}
+.controls{display:flex;gap:9px;flex-wrap:wrap;margin-top:12px;align-items:center}
+.coach{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-top:12px;font-size:13.5px;line-height:1.55;color:var(--ink2)}
+.coach b{color:var(--goldhi)}
+.opts{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:12px}
+.opt{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 8px 6px;cursor:pointer;text-align:center;transition:border-color .1s}
+.opt:hover{border-color:var(--gold)}
+.opt.correct{border-color:var(--good);box-shadow:0 0 0 1px var(--good);background:var(--good-bg)}
+.opt.wrong{border-color:var(--bad);box-shadow:0 0 0 1px var(--bad);background:var(--bad-bg)}
+.opt .lab{font-family:var(--mono);font-size:12px;color:var(--ink2);margin-bottom:2px;font-weight:700}
+.hint{font-size:12px;color:var(--ink3);margin-top:9px}
+.legend{display:flex;gap:18px;flex-wrap:wrap;font-size:12px;color:var(--ink2);margin-top:10px}
+.legend i{display:inline-block;width:26px;height:0;vertical-align:middle;margin-right:7px}
+.pair{font-family:var(--mono);font-size:11px;color:var(--ink3);letter-spacing:.04em;margin-top:9px}
+.pair b{color:var(--gold)}
+.statbar{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin:2px 0 14px}
+.pill{font-family:var(--mono);font-size:11px;letter-spacing:.05em;border:1px solid var(--line);border-radius:99px;padding:5px 12px;color:var(--ink2)}
+.pill b{color:var(--ink)}
+.pill.good b{color:var(--good)} .pill.warn b{color:var(--amber)}
+.tiers{display:inline-flex;gap:4px}
+.tierbtn{font-family:var(--mono);font-size:11px;padding:6px 11px}
+.tierbtn.on{background:var(--panel2);border-color:var(--gold);color:var(--gold)}
+.tax{margin-top:12px;font-size:12px}
+.tax .row{display:flex;justify-content:space-between;gap:10px;padding:5px 0;border-bottom:1px solid rgba(201,168,76,.10);color:var(--ink2)}
+.tax .row:last-child{border:none}
+.tax .row b{color:var(--bad);font-variant-numeric:tabular-nums}
+.timer{font-family:var(--mono);font-size:12px;color:var(--ink3);font-variant-numeric:tabular-nums}
+.steps{display:flex;gap:6px;margin-top:12px}
+.dot{width:8px;height:8px;border-radius:99px;background:var(--line)}
+.dot.on{background:var(--gold)}
+.feat{font-family:var(--mono);font-size:10px;color:var(--ink3);margin-top:6px;text-align:center}
 </style>
 </head>
 <body>
-<header>
-  <h1>Top Front End</h1>
-  <span class="tag">AceTheDAT &middot; PAT drilling</span>
-  <span class="spacer"></span>
-  <span class="seed" id="seedTag"></span>
-  <a class="back" href="index.html">All modules</a>
-</header>
-
 <div class="wrap">
-  <h1 class="title">Solid Means Seen. Dashed Means Hidden.</h1>
-  <p class="lede">Every problem here <b>forces the solid-vs-dashed decision</b> — the load-bearing skill of real TFE. Don't build the 3D object in your head: orient for 5-10 seconds, find one distinguishing feature, get to a 50-50. <b>Width pairs top and front. Height pairs front and end. Depth pairs top and end — the tough one.</b></p>
-
-  <div class="bar">
-    <span class="lab">Level</span>
-    <button data-lv="1">1</button><button data-lv="2" class="on">2</button><button data-lv="3">3</button>
-    <button id="newq" class="primary">New object</button>
-    <button class="ghost" id="export" disabled>Export log (CSV)</button>
-    <span class="pill"><span class="timer" id="timer">0.0s</span><span class="tgt">aim <b>45s</b></span></span>
+  <div class="top">
+    <div class="brand">Ace <span>PAT</span> Studio</div>
+    <div class="kick">Module 2 · Top - Front - End</div>
+    <a class="all" href="index.html">ALL MODULES</a>
   </div>
+  <h1>Solid Means Seen. Dashed Means Hidden.</h1>
+  <p class="lede">The load-bearing skill of TFE is the <b>solid-vs-dashed decision</b> — not counting lines (the ADA made that trap dead). Real solids here: <b>tunnels, holes, notches, and overhangs</b>, each with a computed, guaranteed-correct answer. Build the object, then check three pairings: <b>width = top + front · height = front + end · depth = top + end</b>.</p>
 
-  <div class="grid2">
-    <div class="card">
-      <div class="k">The object + its three computed views</div>
-      <h2 id="ltitle">Teach: the inspector's three stops</h2>
-      <svg id="teach" viewBox="0 0 560 470"></svg>
-      <div class="controls">
-        <button id="hid" class="primary">Highlight hidden edges</button>
-        <button id="iso3d">Show object: On</button>
-      </div>
-      <div class="coach" id="lcoach"><b>Google Maps.</b> Satellite view = top. Drop the little guy on the street = front. He walks around the corner = end. On the end view never say left-right: <b>end-left is the front, end-right is the back.</b></div>
-    </div>
-    <div class="card">
-      <div class="k">Drill · choose the correct END view</div>
-      <h2>Two views given. Find the third.</h2>
-      <svg id="given" viewBox="0 0 560 250"></svg>
-      <div class="opts" id="opts"></div>
-      <div class="hint">Height must match the FRONT view exactly - height never comes from the top. Then check depth against the TOP.</div>
-      <div class="coach" id="rcoach"><b>Can you see it from the end? No - dash.</b> An overhang means a dash somewhere.</div>
-    </div>
+  <div class="tabs" id="tabs">
+    <button class="tab on" data-tab="learn"><span class="n">1</span>Learn</button>
+    <button class="tab" data-tab="guided"><span class="n">2</span>Guided</button>
+    <button class="tab" data-tab="drill"><span class="n">3</span>Drill</button>
   </div>
-
-  <div class="card">
-    <div class="k">This session</div>
-    <div class="stat" id="totals"></div>
-  </div>
+  <div id="stage"></div>
 </div>
+
 <script>
 (function(){
-/* cream SVG palette (matches pat-cream.css drawing colors) */
-var INK='#16241C', INK2='#6E7A70', INK3='#A7B0A6', GOLD='#B08D3F', GOLDHI='#8a6d1e', GOOD='#2F7D52', BAD='#A8342B';
-/* isometric object faces (top lightest -> end darkest) + crisp ink edge on cream */
-var FT='#DCDCDC', FF='#BFBFBF', FR='#A7B0A6', EDGE='#16241C';
-var MONO="'DM Sans',system-ui,sans-serif";
+var INK='#ece6d7',INK2='#b7b0a0',INK3='#867f72',GOLD='#C9A84C',GOLDHI='#E6D08A',GOOD='#57B487',BAD='#C06A62',BG='#0d1411';
+var FT='#61756a',FL='#495b50',FR='#313d36',FE='#0b100d',FIN='#212b25'; // top,left,right,edge, interior(hole wall)
+var MONO='ui-monospace,Menlo,monospace';
 function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
-var qp=new URLSearchParams(location.search);
-var seed=parseInt(qp.get('seed')||'31',10), rng=mulberry32(seed);
-var LEVEL=parseInt(qp.get('lv')||'2',10)||2;
+var seed=(parseInt(new URLSearchParams(location.search).get('seed')||'0',10))||Math.floor(Math.random()*1e9);
+var rng=mulberry32(seed);
 function ri(n){return Math.floor(rng()*n)}
 
-/* session loop: timer + stats + CSV log */
-var t0=0, tick=null;
-var stats={n:0,ok:0,ms:0};
-var LOG=[];
-function fmt(ms){return (ms/1000).toFixed(1)+'s'}
-function startTimer(){ stopTimer(); t0=Date.now(); var el=document.getElementById('timer');
-  tick=setInterval(function(){ el.textContent=fmt(Date.now()-t0); el.classList.toggle('warn',(Date.now()-t0)>45000); },100); }
-function stopTimer(){ if(tick){clearInterval(tick);tick=null;} }
-function renderStats(){
-  var s=stats;
-  var acc=s.n?Math.round(100*s.ok/s.n)+'%':'—', avg=s.n?(s.ms/s.n/1000).toFixed(1)+'s':'—';
-  document.getElementById('totals').innerHTML=
-    '<div><b>'+s.n+'</b><span>attempted</span></div>'+
-    '<div><b>'+s.ok+'</b><span>correct</span></div>'+
-    '<div><b>'+acc+'</b><span>accuracy</span></div>'+
-    '<div><b>'+avg+'</b><span>avg time</span></div>';
-}
-function exportCSV(){
-  if(!LOG.length)return;
-  var rows=[['seed','params','chosen','correct','correct_flag','seconds']];
-  LOG.forEach(function(r){rows.push([r.seed,r.params,r.chosen,r.correct,r.ok,(r.ms/1000).toFixed(2)])});
-  var csv=rows.map(function(r){return r.join(',')}).join('\n');
-  var a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
-  a.download='pat-tfe-log.csv'; document.body.appendChild(a); a.click(); document.body.removeChild(a);
-}
+/* =========================================================================
+   VOXEL ENGINE.  V[x][y][z] occupancy.  x=width(left→right), y=depth(front→back,
+   front=0), z=height(bottom→top).  Views computed with exact hidden-line removal.
+   ========================================================================= */
+var NX=3,NY=3,NZ=3,V=null,FEAT='';
+function occ(x,y,z){return (x<0||y<0||z<0||x>=NX||y>=NY||z>=NZ)?false:!!V[x][y][z]}
+function newGrid(){V=[];for(var x=0;x<NX;x++){V.push([]);for(var y=0;y<NY;y++){V[x].push([]);for(var z=0;z<NZ;z++)V[x][y][z]=false}}}
 
-// ---- solid = heightmap h[x][y], front = y0 side, viewer of FRONT at y=-inf ----
-var W=0,D=0,H=null;
-function h(x,y){return (x<0||y<0||x>=W||y>=D)?0:H[x][y]}
-
-// FRONT view segments (unit coords: u=x right, v=z up), computed with visibility
-function frontView(){
-  var segs=[];
-  // horizontal edges: tops of columns + ground
-  for(var x=0;x<W;x++){
-    var tops={};
-    for(var y=0;y<D;y++){var t=h(x,y); if(t>0){ if(tops[t]==null||y<tops[t]) tops[t]=y; }}
-    Object.keys(tops).forEach(function(ts){
-      var t=+ts, y0=tops[t], dash=false;
-      for(var y2=0;y2<y0;y2++) if(h(x,y2)>t){dash=true;break}
-      // coplanar continuation: if a NEARER column has same height, skip (edge drawn from that column)
-      var nearerSame=false; for(var y3=0;y3<y0;y3++) if(h(x,y3)===t){nearerSame=true;break}
-      if(!nearerSame) segs.push({a:[x,t],b:[x+1,t],dash:dash});
-    });
-    // ground line under occupied columns
-    var occ=false; for(var y4=0;y4<D;y4++) if(h(x,y4)>0){occ=true;break}
-    if(occ) segs.push({a:[x,0],b:[x+1,0],dash:false});
-  }
-  // vertical edges at x-boundaries
-  var zmax=4;
-  for(var b=0;b<=W;b++){
-    for(var z=0;z<zmax;z++){
-      var y0=-1;
-      for(var y=0;y<D;y++){
-        var L=h(b-1,y)>z, R=h(b,y)>z;
-        if(L!==R){y0=y;break}
-      }
-      if(y0<0)continue;
-      var dash=false;
-      for(var y5=0;y5<y0;y5++) if(Math.max(h(b-1,y5),h(b,y5))>z){dash=true;break}
-      segs.push({a:[b,z],b:[b,z+1],dash:dash});
+/* --- hidden-line: build the 2D segment set for a view ---
+   O(u,v,w): occupancy at screen-cell (u,v) and depth index w (0..nw-1).
+   nearHi: true if the NEAR side of the viewer is the LARGER depth index.
+   A boundary segment is drawn where the two cells across it differ at some depth;
+   it is DASHED iff solid fills BOTH cells at a nearer depth (occludes the edge). */
+function buildView(nu,nv,nw,O,nearHi){
+  var segs=[],u,v,i,w,seq=[];
+  if(nearHi){for(w=nw-1;w>=0;w--)seq.push(w)} else {for(w=0;w<nw;w++)seq.push(w)}
+  // horizontal segments (parallel to u), on each v-line, per u-cell
+  for(v=0;v<=nv;v++)for(u=0;u<nu;u++){
+    var found=false,occl=false;
+    for(i=0;i<seq.length;i++){w=seq[i];
+      var a=(v-1>=0)&&O(u,v-1,w),b=(v<nv)&&O(u,v,w);
+      if(a!==b){found=true;break} if(a&&b)occl=true;
     }
+    if(found)segs.push({a:[u,v],b:[u+1,v],dash:occl});
   }
-  return segs;
-}
-// END view (viewer at x=+inf): u=y (left=front), v=z
-function endView(HH,Wd,Dd){
-  var hh=function(x,y){return (x<0||y<0||x>=Wd||y>=Dd)?0:HH[x][y]};
-  var segs=[];
-  for(var y=0;y<Dd;y++){
-    var tops={};
-    for(var x=0;x<Wd;x++){var t=hh(x,y); if(t>0){ if(tops[t]==null||x>tops[t]) tops[t]=x; }}
-    Object.keys(tops).forEach(function(ts){
-      var t=+ts, x0=tops[t], dash=false;
-      for(var x2=x0+1;x2<Wd;x2++) if(hh(x2,y)>t){dash=true;break}
-      var nearerSame=false; for(var x3=x0+1;x3<Wd;x3++) if(hh(x3,y)===t){nearerSame=true;break}
-      if(!nearerSame) segs.push({a:[y,t],b:[y+1,t],dash:dash});
-    });
-    var occ=false; for(var x4=0;x4<Wd;x4++) if(hh(x4,y)>0){occ=true;break}
-    if(occ) segs.push({a:[y,0],b:[y+1,0],dash:false});
-  }
-  for(var b=0;b<=Dd;b++){
-    for(var z=0;z<4;z++){
-      var x0=-1;
-      for(var x=Wd-1;x>=0;x--){
-        var L=hh(x,b-1)>z, R=hh(x,b)>z;
-        if(L!==R){x0=x;break}
-      }
-      if(x0<0)continue;
-      var dash=false;
-      for(var x5=x0+1;x5<Wd;x5++) if(Math.max(hh(x5,b-1),hh(x5,b))>z){dash=true;break}
-      segs.push({a:[b,z],b:[b,z+1],dash:dash});
+  // vertical segments (parallel to v), on each u-line, per v-cell
+  for(u=0;u<=nu;u++)for(v=0;v<nv;v++){
+    var found=false,occl=false;
+    for(i=0;i<seq.length;i++){w=seq[i];
+      var a=(u-1>=0)&&O(u-1,v,w),b=(u<nu)&&O(u,v,w);
+      if(a!==b){found=true;break} if(a&&b)occl=true;
     }
+    if(found)segs.push({a:[u,v],b:[u,v+1],dash:occl});
   }
   return segs;
 }
-// TOP view: u=x, v=row (y=0 back at top... front y0 at BOTTOM row index = 0? draw with y0 at bottom: v = y)
-function topView(){
-  var segs=[];
-  for(var x=0;x<W;x++)for(var y=0;y<D;y++){
-    if(h(x,y)!==h(x-1,y)) segs.push({a:[x,y],b:[x,y+1],dash:false});
-    if(h(x,y)!==h(x,y-1)) segs.push({a:[x,y],b:[x+1,y],dash:false});
-  }
-  for(var x2=0;x2<W;x2++) if(h(x2,D-1)>0||true){ if(h(x2,D-1)!==0) segs.push({a:[x2,D],b:[x2+1,D],dash:false}); }
-  for(var y2=0;y2<D;y2++) if(h(W-1,y2)!==0) segs.push({a:[W,y2],b:[W,y2+1],dash:false});
-  return segs;
-}
-function key(segs){return segs.map(function(s){return s.a[0]+','+s.a[1]+','+s.b[0]+','+s.b[1]+','+(s.dash?1:0)}).sort().join('|')}
+function frontView(gg){var g=gg||V; return buildView(NX,NZ,NY,function(u,v,w){return !!g[u][w][v]},false)} // u=x,v=z,w=y near=small
+function endView(gg){var g=gg||V; return buildView(NY,NZ,NX,function(u,v,w){return !!g[w][u][v]},true)}    // u=y,v=z,w=x near=large
+function topView(gg){var g=gg||V; return buildView(NX,NY,NZ,function(u,v,w){return !!g[u][v][w]},true)}    // u=x,v=y,w=z near=large
+function keyOf(segs){return segs.map(function(s){return s.a[0]+','+s.a[1]+','+s.b[0]+','+s.b[1]+','+(s.dash?1:0)}).sort().join('|')}
 
-// render a view's segments into svg string. v-axis: z up OR top-view rows.
+/* --- rendering --- */
 function drawSegs(segs,ox,oy,s,vmax,hl){
   var o='';
   segs.forEach(function(sg){
-    var x1=ox+sg.a[0]*s, x2=ox+sg.b[0]*s;
-    var y1=oy+(vmax-sg.a[1])*s, y2=oy+(vmax-sg.b[1])*s;
-    o+='<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'" stroke="'+(sg.dash?(hl?GOLDHI:GOLD):INK)+'" stroke-width="'+(sg.dash&&hl?3:2)+'"'+(sg.dash?' stroke-dasharray="6 4"':'')+' stroke-linecap="square"/>';
+    var x1=ox+sg.a[0]*s,x2=ox+sg.b[0]*s,y1=oy+(vmax-sg.a[1])*s,y2=oy+(vmax-sg.b[1])*s;
+    var col=sg.dash?(hl?GOLDHI:GOLD):INK,wt=sg.dash?(hl?3:1.8):2.4;
+    o+='<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'" stroke="'+col+'" stroke-width="'+wt+'"'+(sg.dash?' stroke-dasharray="6 4.5"':'')+' stroke-linecap="round"/>';
   });
   return o;
 }
-function txt(x,y,st,size,fill,anchor){
-  return '<text x="'+x+'" y="'+y+'" fill="'+(fill||INK2)+'" font-size="'+(size||10)+'" font-family="'+MONO+'" text-anchor="'+(anchor||'middle')+'" letter-spacing="1">'+st+'</text>';
+function txt(x,y,st,size,fill,anchor,weight){
+  return '<text x="'+x+'" y="'+y+'" fill="'+(fill||INK2)+'" font-size="'+(size||10)+'" font-family="'+MONO+'" text-anchor="'+(anchor||'middle')+'" letter-spacing="1"'+(weight?' font-weight="'+weight+'"':'')+'>'+st+'</text>';
 }
-// iso: mirror y so the front (y=0) faces the viewer
+function viewPanel(segs,ox,oy,s,uext,vext,label,hl){
+  var pw=uext*s,ph=vext*s,pad=13;
+  var o='<rect x="'+(ox-pad)+'" y="'+(oy-pad)+'" width="'+(pw+pad*2)+'" height="'+(ph+pad*2+16)+'" rx="9" fill="#0f1712" stroke="rgba(201,168,76,.14)"/>';
+  o+=drawSegs(segs,ox,oy,s,vext,hl);
+  o+=txt(ox+pw/2,oy+ph+pad+9,label,9.5,INK3,'middle',700);
+  return o;
+}
+// shaded isometric voxel object. front (y=0) faces viewer (mirror y). draw a face only
+// if the neighbor in that direction is empty (so internal faces vanish, holes show through).
 function isoObj(ox,oy,s){
-  var o='';
-  function Pr(x,y,z){var ym=D-y; return [ox+(x-ym)*0.866*s, oy+(x+ym)*0.5*s - z*s]}
-  var cols=[];
-  for(var x=0;x<W;x++)for(var y=0;y<D;y++) if(h(x,y)>0) cols.push([x,y]);
-  cols.sort(function(a,b){ return (a[0]+(D-a[1]))-(b[0]+(D-b[1])) });
-  cols.forEach(function(c){
-    var x=c[0],y=c[1],ht=h(x,y);
-    function poly(pts,fill){return '<polygon points="'+pts.map(function(p){var q=Pr(p[0],p[1],p[2]);return q[0].toFixed(1)+','+q[1].toFixed(1)}).join(' ')+'" fill="'+fill+'" stroke="'+EDGE+'" stroke-width="1.4" stroke-linejoin="round"/>'}
-    o+=poly([[x,y,ht],[x+1,y,ht],[x+1,y+1,ht],[x,y+1,ht]],FT);
-    o+=poly([[x,y,0],[x+1,y,0],[x+1,y,ht],[x,y,ht]],FF);      // front face (y=0 side faces viewer after mirror)
-    o+=poly([[x+1,y,0],[x+1,y+1,0],[x+1,y+1,ht],[x+1,y,ht]],FR); // right/end face
+  var o='',x,y,z,cells=[];
+  function Pr(x,y,z){var ym=NY-y;return [ox+(x-ym)*0.866*s, oy+(x+ym)*0.5*s - z*s]}
+  for(x=0;x<NX;x++)for(y=0;y<NY;y++)for(z=0;z<NZ;z++) if(occ(x,y,z)) cells.push([x,y,z]);
+  cells.sort(function(a,b){return (a[0]+(NY-a[1])+a[2])-(b[0]+(NY-b[1])+b[2])}); // far→near painter's
+  function face(pts,fill){return '<polygon points="'+pts.map(function(p){var q=Pr(p[0],p[1],p[2]);return q[0].toFixed(1)+','+q[1].toFixed(1)}).join(' ')+'" fill="'+fill+'" stroke="'+FE+'" stroke-width="1" stroke-linejoin="round"/>'}
+  cells.forEach(function(c){
+    var x=c[0],y=c[1],z=c[2];
+    if(!occ(x,y,z+1)) o+=face([[x,y,z+1],[x+1,y,z+1],[x+1,y+1,z+1],[x,y+1,z+1]], occ(x,y,z-1)&&false?FIN:FT); // top
+    if(!occ(x,y-1,z)) o+=face([[x,y,z],[x+1,y,z],[x+1,y,z+1],[x,y,z+1]], FL);   // front (viewer) face
+    if(!occ(x+1,y,z)) o+=face([[x+1,y,z],[x+1,y+1,z],[x+1,y+1,z+1],[x+1,y,z+1]], FR); // right/end face
   });
   return o;
 }
 
-var P=null; // {top, front, end, opts:[{segs,ok,why}]}
-// difficulty -> pure generation params only (view + hidden-line math never change).
-// height ceiling stays <=3 (views render at fixed vmax=3); footprint stays <=4x3
-// (W+D<=7) so the teach panel never clips. L1 small/low/few-dashes, L2 = current
-// baseline, L3 big footprint + max height variety + more dashes + tighter distractors.
-function lvCfg(){
-  if(LEVEL===1) return {wlo:3,wsz:1, dlo:2,dsz:1, hmax:3, tmin:3, tmax:8,  varMin:2, dashMin:1, tight:false};
-  if(LEVEL===3) return {wlo:4,wsz:1, dlo:3,dsz:1, hmax:4, tmin:13,tmax:99, varMin:4, dashMin:3, tight:true};
-  return          {wlo:3,wsz:2, dlo:2,dsz:2, hmax:4, tmin:5, tmax:99, varMin:3, dashMin:1, tight:false};
-}
-function segDiff(a,b){
-  var ka={};a.forEach(function(s){ka[s.a[0]+','+s.a[1]+','+s.b[0]+','+s.b[1]+','+(s.dash?1:0)]=1});
-  var kb={};b.forEach(function(s){kb[s.a[0]+','+s.a[1]+','+s.b[0]+','+s.b[1]+','+(s.dash?1:0)]=1});
-  var d=0;Object.keys(ka).forEach(function(k){if(!kb[k])d++});Object.keys(kb).forEach(function(k){if(!ka[k])d++});return d;
-}
-function gen(){
-  rng=mulberry32(seed);
-  for(var att=0;att<200;att++){
-    var cf=lvCfg();
-    W=cf.wlo+ri(cf.wsz); D=cf.dlo+ri(cf.dsz); H=[];
-    for(var x=0;x<W;x++){H.push([]);for(var y=0;y<D;y++)H[x].push(ri(cf.hmax))}
-    // ensure some mass + variety (thresholds scale with level)
-    var tot=0,hs={};
-    for(var x1=0;x1<W;x1++)for(var y1=0;y1<D;y1++){tot+=H[x1][y1];hs[H[x1][y1]]=1}
-    if(tot<cf.tmin||tot>cf.tmax)continue;
-    if(Object.keys(hs).length<cf.varMin)continue;
-    var fv=frontView(), ev=endView(H,W,D), tv=topView();
-    var dashCount=fv.concat(ev).filter(function(s){return s.dash}).length;
-    if(dashCount<cf.dashMin)continue;
-    // distractors for END view
-    var okKey=key(ev), opts=[{segs:ev,ok:true}], seen={}; seen[okKey]=1;
-    // 1) mirror front-back (his classic trap)
-    var Hm=[]; for(var x2=0;x2<W;x2++){Hm.push([]);for(var y2=0;y2<D;y2++)Hm[x2].push(H[x2][D-1-y2])}
-    var mv=endView(Hm,W,D);
-    if(!seen[key(mv)]){seen[key(mv)]=1;opts.push({segs:mv,ok:false,why:'front and back swapped - end-left must be the FRONT'})}
-    // 2) dashed edge drawn solid (or dropped)
-    var sv=ev.map(function(s){return {a:s.a,b:s.b,dash:s.dash}});
-    var di=sv.findIndex(function(s){return s.dash});
-    if(di>=0){sv[di]={a:sv[di].a,b:sv[di].b,dash:false};}
-    if(!seen[key(sv)]){seen[key(sv)]=1;opts.push({segs:sv,ok:false,why:'a hidden edge drawn solid - you cannot see that edge from the end'})}
-    // 3) mutated column height. L1/L2: first distinct view. L3 (tight): among
-    //    candidates, keep the one closest to the correct end view (hardest to reject).
-    var best=null, bestDiff=1e9, tries=0;
-    while(tries++<(cf.tight?40:20)){
-      var Hc=H.map(function(col){return col.slice()});
-      var mx=ri(W),my=ri(D), dl=ri(2)?1:-1;
-      Hc[mx][my]=Math.max(0,Math.min(cf.hmax-1,Hc[mx][my]+dl));
-      var v2=endView(Hc,W,D), k2=key(v2);
-      if(seen[k2])continue;
-      if(!cf.tight){best={segs:v2,key:k2};break}
-      var df=segDiff(v2,ev);
-      if(df<bestDiff){bestDiff=df;best={segs:v2,key:k2}}
-    }
-    if(best){seen[best.key]=1;opts.push({segs:best.segs,ok:false,why:'wrong height profile - height must match the FRONT view'});}
-    if(opts.length<4)continue;
-    // shuffle
-    for(var i=opts.length-1;i>0;i--){var j=ri(i+1);var t=opts[i];opts[i]=opts[j];opts[j]=t}
-    return {top:tv,front:fv,end:ev,opts:opts};
+/* --- object generator: base heightmap, then carve tunnels + notches --- */
+function ground(){var x,y,z; for(x=0;x<NX;x++)for(y=0;y<NY;y++)if(occ(x,y,0))return true; return false;}
+function connected(){ // all solids reachable from a z=0 solid via 6-neighbourhood
+  var seen={},stack=[],x,y,z,tot=0;
+  for(x=0;x<NX;x++)for(y=0;y<NY;y++)for(z=0;z<NZ;z++)if(occ(x,y,z)){tot++; if(z===0)stack.push([x,y,z])}
+  var cnt=0; while(stack.length){var c=stack.pop(),k=c.join(','); if(seen[k])continue; if(!occ(c[0],c[1],c[2]))continue; seen[k]=1;cnt++;
+    [[1,0,0],[-1,0,0],[0,1,0],[0,-1,0],[0,0,1],[0,0,-1]].forEach(function(d){stack.push([c[0]+d[0],c[1]+d[1],c[2]+d[2]])});
   }
-  seed++; return gen();
+  return cnt===tot && tot>0;
+}
+function anyDash(){return frontView().concat(endView()).concat(topView()).some(function(s){return s.dash})}
+function carveTunnel(){ // remove a 1x1 channel straight through, if fully solid first
+  var axis=ri(2),tries=0;
+  while(tries++<24){
+    if(axis===0){ // along x
+      var y0=ri(NY),z0=ri(NZ),ok=true,x;
+      for(x=0;x<NX;x++)if(!occ(x,y0,z0))ok=false;
+      if(ok){for(x=0;x<NX;x++)V[x][y0][z0]=false; return 'a horizontal tunnel'}
+    } else { // along y (front→back)
+      var x0=ri(NX),z1=ri(NZ),ok2=true,y;
+      for(y=0;y<NY;y++)if(!occ(x0,y,z1))ok2=false;
+      if(ok2){for(y=0;y<NY;y++)V[x0][y][z1]=false; return 'a front-to-back tunnel'}
+    }
+    axis=1-axis;
+  }
+  return '';
+}
+function carveNotch(){var x0=ri(NX),y0=ri(NY),z0=NZ-1-ri(2); if(z0<1)return ''; if(occ(x0,y0,z0)){V[x0][y0][z0]=false; return 'a corner notch'} return ''}
+function fallbackObj(){NX=3;NY=3;NZ=3;newGrid();var x,y,z;for(x=0;x<3;x++)for(y=0;y<3;y++)for(z=0;z<3;z++)V[x][y][z]=true;for(x=0;x<3;x++)V[x][1][1]=false;FEAT='a horizontal tunnel'}
+function makeObject(tier){
+  for(var att=0;att<220;att++){
+    NX=(tier<=1?3:3+ri(2)); NY=2+ri(2); NZ=(tier<=1?3:3+ri(1)); newGrid();
+    var x,y,z,maxH=tier<=1?3:NZ;
+    for(x=0;x<NX;x++)for(y=0;y<NY;y++){var hh=1+ri(maxH); for(z=0;z<hh&&z<NZ;z++)V[x][y][z]=true;}
+    var feats=[],r=rng();
+    if(r<(tier<=1?0.55:0.9)){var t=carveTunnel(); if(t)feats.push(t);}
+    if(tier>=2&&rng()<0.5){var n=carveNotch(); if(n)feats.push(n);}
+    if(ground()&&connected()&&anyDash()){FEAT=feats.join(' + ')||'stepped steps'; return;}
+  }
+  fallbackObj();
+}
+function cloneV(){var g=[],x,y,z;for(x=0;x<NX;x++){g.push([]);for(y=0;y<NY;y++){g[x].push([]);for(z=0;z<NZ;z++)g[x][y][z]=V[x][y][z]}}return g}
+function mirrorY(){var g=cloneV(),x,y,z;for(x=0;x<NX;x++)for(y=0;y<NY;y++)for(z=0;z<NZ;z++)g[x][y][z]=V[x][NY-1-y][z];return g}
+// a drill item: TOP + FRONT given, choose the END view. distractors carry a named trap.
+function makeDrill(tier){
+  makeObject(tier);
+  var ev=endView(),okKey=keyOf(ev),opts=[{segs:ev,ok:true}],seen={};seen[okKey]=1;
+  var mv=endView(mirrorY());
+  if(!seen[keyOf(mv)]){seen[keyOf(mv)]=1;opts.push({segs:mv,ok:false,tax:'mirror',why:'Front and back are swapped. On the END view, <b>end-left is the FRONT of the object</b>, not the back.'})}
+  var sv=ev.map(function(s){return {a:s.a,b:s.b,dash:s.dash}}),di=sv.map(function(s,i){return s.dash?i:-1}).filter(function(i){return i>=0});
+  if(di.length){var pick=di[ri(di.length)]; sv[pick]={a:sv[pick].a,b:sv[pick].b,dash:false}; if(!seen[keyOf(sv)]){seen[keyOf(sv)]=1;opts.push({segs:sv,ok:false,tax:'dash',why:'A hidden edge is drawn SOLID. You cannot see that edge from the end — it must be dashed.'})}}
+  var tries=0;
+  while(tries++<40&&opts.length<4){
+    var g=cloneV(),x=ri(NX),y=ri(NY),z=ri(NZ); g[x][y][z]=!g[x][y][z];
+    var v2=endView(g);
+    if(!seen[keyOf(v2)]){seen[keyOf(v2)]=1;opts.push({segs:v2,ok:false,tax:'height',why:'Wrong profile — a step is in the wrong place. <b>Height must match the FRONT, depth must match the TOP.</b>'})}
+  }
+  if(opts.length<4)return makeDrill(tier);
+  for(var i=opts.length-1;i>0;i--){var j=ri(i+1),t=opts[i];opts[i]=opts[j];opts[j]=t}
+  return {top:topView(),front:frontView(),end:ev,opts:opts,feat:FEAT};
 }
 
-var HL=false, ISO=true, answered=false;
-function renderTeach(){
-  var o='', s=30;
-  if(ISO) o+=isoObj(120,120,26)+txt(120,236,'THE OBJECT',9,INK3);
-  var tx=300, ty=30;
-  o+=drawSegs(P.top,tx,ty,s,D,HL)+txt(tx+W*s/2,ty+D*s+18,'TOP',9,INK3);
-  var fy=ty+D*s+44;
-  o+=drawSegs(P.front,tx,fy,s,3,HL)+txt(tx+W*s/2,fy+3*s+18,'FRONT',9,INK3);
-  var ex2=tx+W*s+40;
-  o+=drawSegs(P.end,ex2,fy,s,3,HL)+txt(ex2+D*s/2,fy+3*s+18,'END',9,INK3);
-  // legend
-  o+='<line x1="30" y1="300" x2="66" y2="300" stroke="'+INK+'" stroke-width="2"/>'+txt(74,304,'solid = you can see it',9.5,INK2,'start');
-  o+='<line x1="30" y1="322" x2="66" y2="322" stroke="'+GOLD+'" stroke-width="2" stroke-dasharray="6 4"/>'+txt(74,326,'dashed = hidden behind the shape',9.5,INK2,'start');
-  o+=txt(30,354,'WIDTH: TOP+FRONT   HEIGHT: FRONT+END   DEPTH: TOP+END',9,INK3,'start');
-  document.getElementById('teach').innerHTML=o;
+/* =======================================================================
+   LAYER 1 — LEARN
+   ======================================================================= */
+var learnStep=0,learnP=null,learnHL=false;
+var LEARN=[
+  {t:'Meet the object',c:'<b>Do not count lines.</b> Orient the solid and name its features — a step, a notch, a tunnel. Then read it the way an inspector walks a building: three stops.',show:['obj']},
+  {t:'Stop 1 — the TOP view',c:'<b>Satellite view.</b> Straight down. You see the footprint and where heights change. A vertical hole shows here as a real opening; a horizontal tunnel is hidden — <b>dashed</b>.',show:['obj','top']},
+  {t:'Stop 2 — the FRONT view',c:'<b>Drop the guy on the street.</b> A <b>solid</b> line is a change in elevation you can SEE. Height is decided here — front and end must agree on height.',show:['obj','top','front']},
+  {t:'Stop 3 — the END view',c:'<b>Walk around the corner.</b> Near steps now hide the far ones: a <b>dashed</b> line is an edge you know is there but cannot see. On the end, <b>end-left = the front</b>.',show:['obj','top','front','end'],hl:true},
+  {t:'The three pairings',c:'The whole check: <b>WIDTH = top + front. HEIGHT = front + end. DEPTH = top + end</b> (the tough one). Every correct view obeys all three.',show:['obj','top','front','end'],pairs:true}
+];
+function renderLearn(){
+  var st=LEARN[learnStep],host=document.getElementById('learnStage'); if(!host)return;
+  var s=28,o='<svg viewBox="0 0 560 320">';
+  if(st.show.indexOf('obj')>=0){o+=isoObj(120,170,25)+txt(120,290,'THE OBJECT',9,INK3);}
+  var tx=300,ty=16;
+  if(st.show.indexOf('top')>=0)o+=viewPanel(learnP.top,tx,ty,s,NX,NY,'TOP',false);
+  var fy=ty+NY*s+42;
+  if(st.show.indexOf('front')>=0)o+=viewPanel(learnP.front,tx,fy,s,NX,NZ,'FRONT',false);
+  var ex=tx+NX*s+52;
+  if(st.show.indexOf('end')>=0)o+=viewPanel(learnP.end,ex,fy,s,NY,NZ,'END',st.hl&&learnHL);
+  o+='</svg>';
+  host.innerHTML=o;
+  document.getElementById('learnTitle').textContent=(learnStep+1)+' · '+st.t;
+  document.getElementById('learnCoach').innerHTML=st.c;
+  document.getElementById('learnFeat').textContent=learnStep===0?('features: '+FEAT):'';
+  document.getElementById('learnPairs').style.display=st.pairs?'block':'none';
+  var dots='';for(var i=0;i<LEARN.length;i++)dots+='<span class="dot'+(i<=learnStep?' on':'')+'"></span>';
+  document.getElementById('learnDots').innerHTML=dots;
+  document.getElementById('learnPrev').disabled=learnStep===0;
+  document.getElementById('learnNext').textContent=learnStep===LEARN.length-1?'New object':'Next stop →';
+  document.getElementById('learnHid').style.display=st.hl?'inline-block':'none';
 }
-function renderDrill(){
-  var s=34, o='';
-  o+=drawSegs(P.top,60,30,s,D,false)+txt(60+W*s/2,30+D*s+18,'TOP',9,INK3);
-  o+=drawSegs(P.front,320,30,s,3,false)+txt(320+W*s/2,30+3*s+18,'FRONT',9,INK3);
-  document.getElementById('given').innerHTML=o;
-  var w=document.getElementById('opts'); w.innerHTML='';
+function mountLearn(){
+  learnStep=0;learnHL=false;makeObject(2);learnP={top:topView(),front:frontView(),end:endView()};
+  document.getElementById('stage').innerHTML=
+    '<div class="cols"><div class="card"><div class="k">Teach · the inspector\'s three stops</div>'+
+      '<h2 id="learnTitle"></h2><div id="learnStage"></div><div class="feat" id="learnFeat"></div>'+
+      '<div class="controls"><button id="learnPrev">← Back</button><button id="learnNext" class="primary"></button><button id="learnHid">Highlight hidden edge</button></div>'+
+      '<div class="steps" id="learnDots"></div></div>'+
+      '<div class="card"><div class="k">The method</div><h2>Solid = seen · Dashed = hidden</h2>'+
+        '<div class="coach" id="learnCoach"></div>'+
+        '<div class="legend"><span><i style="border-top:2.4px solid '+INK+'"></i>solid — you can see it</span><span><i style="border-top:2px dashed '+GOLD+'"></i>dashed — hidden behind the shape</span></div>'+
+        '<div class="pair" id="learnPairs">WIDTH: <b>top + front</b> · HEIGHT: <b>front + end</b> · DEPTH: <b>top + end</b></div>'+
+        '<div class="coach" style="margin-top:14px"><b>Google Maps.</b> Satellite = top. Drop the guy on the street = front. He walks around the corner = end. On the end, never say left-right — <b>end-left is the front, end-right is the back.</b></div></div></div>';
+  document.getElementById('learnPrev').onclick=function(){if(learnStep>0){learnStep--;learnHL=false;renderLearn()}};
+  document.getElementById('learnNext').onclick=function(){if(learnStep===LEARN.length-1){mountLearn();return}learnStep++;learnHL=false;renderLearn()};
+  document.getElementById('learnHid').onclick=function(){learnHL=!learnHL;this.textContent=learnHL?'Hidden edge: shown':'Highlight hidden edge';renderLearn()};
+  renderLearn();
+}
+
+/* =======================================================================
+   GUIDED + DRILL
+   ======================================================================= */
+var tier=2,P=null,answered=false,timed=false,tStart=0,tInt=null,TAX={mirror:0,dash:0,height:0};
+function statsFor(){var su=window.PatLedger?PatLedger.summary('tfe'):null;return su||{acc:0,attempts:0,best:0}}
+function renderTax(){var el=document.getElementById('tax');if(!el)return;var L={mirror:'Front/back swapped',dash:'Hidden edge drawn solid',height:'Wrong profile'};
+  el.innerHTML='<div class="k" style="margin-bottom:6px">Your trap tally</div>'+Object.keys(TAX).map(function(k){return '<div class="row"><span>'+L[k]+'</span><b>'+TAX[k]+'</b></div>'}).join('');}
+function mountItem(mode){
+  timed=(mode==='drill'); var su=statsFor();
+  var head=timed?
+    '<div class="statbar"><span class="pill '+(su.acc>=80?'good':'warn')+'">accuracy <b>'+(su.attempts?su.acc+'%':'--')+'</b></span><span class="pill">attempts <b>'+su.attempts+'</b></span><span class="pill">best streak <b>'+su.best+'</b></span><span class="tiers">'+[1,2,3].map(function(n){return '<button class="tierbtn'+(n===tier?' on':'')+'" data-tier="'+n+'">Lvl '+n+'</button>'}).join('')+'</span><span class="timer" id="timer">0.0s</span></div>':
+    '<div class="statbar"><span class="pill">Untimed · full feedback on every pick</span><span class="tiers">'+[1,2,3].map(function(n){return '<button class="tierbtn'+(n===tier?' on':'')+'" data-tier="'+n+'">Lvl '+n+'</button>'}).join('')+'</span></div>';
+  var scaffold=timed?'':'<div class="coach"><b>Walk it:</b> the given views are TOP and FRONT. (1) build the object. (2) the answer\'s <b>height must match the FRONT</b>. (3) its <b>depth must match the TOP</b>. (4) any far step hidden behind a near one is <b>dashed</b>. Now pick the END.</div>';
+  document.getElementById('stage').innerHTML=head+
+    '<div class="cols"><div class="card"><div class="k">'+(timed?'Drill':'Guided')+' · choose the END view</div><h2>Two views given. Find the third.</h2><div id="givenStage"></div>'+scaffold+
+      '<div class="opts" id="opts"></div><div class="hint">Height comes from the FRONT · depth from the TOP · end-left is the front.</div></div>'+
+      '<div class="card"><div class="k">Coach</div><h2 id="fbTitle">Read before you pick</h2><div class="coach" id="fb"><b>Can you see it from the end? No — dash.</b> An overhang or a tunnel means a dash somewhere. Match height to the front, depth to the top.</div>'+(timed?'<div class="tax" id="tax"></div>':'')+'</div></div>';
+  Array.prototype.forEach.call(document.querySelectorAll('.tierbtn'),function(b){b.onclick=function(){tier=+b.dataset.tier;mountItem(mode)}});
+  if(timed)renderTax();
+  nextItem(mode);
+}
+function nextItem(mode){
+  P=makeDrill(tier);answered=false;
+  var s=30,o='<svg viewBox="0 0 560 250">';
+  o+=viewPanel(P.top,40,20,s,NX,NY,'TOP',false);
+  o+=viewPanel(P.front,330,20,s,NX,NZ,'FRONT',false);
+  o+='</svg>';
+  document.getElementById('givenStage').innerHTML=o;
+  var w=document.getElementById('opts');w.innerHTML='';
   P.opts.forEach(function(op,i){
-    var div=document.createElement('div'); div.className='opt';
-    var vb=(D+1)*30+20;
-    div.innerHTML='<div class="lab">'+'ABCD'[i]+'</div><svg viewBox="0 0 '+vb+' 130">'+drawSegs(op.segs,14,14,30,3,false)+'</svg>';
-    div.addEventListener('click',function(){
-      if(answered)return; answered=true;
-      stopTimer();
-      var ms=Date.now()-t0;
-      stats.n++; stats.ms+=ms; if(op.ok)stats.ok++;
-      var correctIdx=0; P.opts.forEach(function(o2,ix){if(o2.ok)correctIdx=ix;});
-      var params=W+'x'+D+' h='+H.map(function(col){return col.join('')}).join(';');
-      LOG.push({seed:seed, params:params, chosen:'ABCD'[i], correct:'ABCD'[correctIdx], ok:op.ok?1:0, ms:ms});
-      document.getElementById('export').disabled=false;
-      renderStats();
-      Array.prototype.forEach.call(w.children,function(ch,ix){
-        if(P.opts[ix].ok)ch.classList.add('correct');
-      });
+    var div=document.createElement('div');div.className='opt';
+    var vbw=NY*30+28,vbh=NZ*30+28;
+    div.innerHTML='<div class="lab">'+'ABCD'[i]+'</div><svg viewBox="0 0 '+vbw+' '+vbh+'">'+drawSegs(op.segs,14,14,30,NZ,false)+'</svg>';
+    div.onclick=function(){if(answered)return;answered=true;if(tInt){clearInterval(tInt);tInt=null;}
+      Array.prototype.forEach.call(w.children,function(ch,ix){if(P.opts[ix].ok)ch.classList.add('correct')});
       if(window.PatLedger)PatLedger.record('tfe',!!op.ok);
-      if(!op.ok){div.classList.add('wrong');
-        document.getElementById('rcoach').innerHTML='<b>The trap:</b> '+op.why+'. Check the green one against the front view line by line.';
-      } else {
-        document.getElementById('rcoach').innerHTML='<b>That is it.</b> You matched height to the front and depth to the top - the two pairings that decide every end view.';
-      }
-    });
+      var fb=document.getElementById('fb'),ft=document.getElementById('fbTitle');
+      if(!op.ok){div.classList.add('wrong'); if(op.tax&&TAX[op.tax]!=null){TAX[op.tax]++;if(timed)renderTax();}
+        ft.textContent='The trap';ft.style.color=BAD; fb.innerHTML=op.why+'<br><br>Now check the green one against the front view, edge by edge.';
+      } else {ft.textContent='That is it.';ft.style.color=GOOD; fb.innerHTML='<b>Matched.</b> Height agreed with the front, depth with the top — the two pairings that decide every end view.';}
+      if(timed){var su=statsFor(),ab=document.querySelector('.statbar .pill');if(ab)ab.outerHTML='<span class="pill '+(su.acc>=80?'good':'warn')+'">accuracy <b>'+su.acc+'%</b></span>';}
+      var host=document.getElementById('fb').parentNode;
+      if(!document.getElementById('nextBtn')){var bt=document.createElement('button');bt.id='nextBtn';bt.className='primary';bt.textContent='Next →';bt.style.marginTop='12px';bt.onclick=function(){nextItem(mode)};host.appendChild(bt);}
+    };
     w.appendChild(div);
   });
-  answered=false;
-  document.getElementById('rcoach').innerHTML='<b>Can you see it from the end? No - dash.</b> An overhang means a dash somewhere.';
+  var old=document.getElementById('nextBtn');if(old)old.remove();
+  if(timed){tStart=Date.now();if(tInt)clearInterval(tInt);tInt=setInterval(function(){var el=document.getElementById('timer');if(el)el.textContent=((Date.now()-tStart)/1000).toFixed(1)+'s'},100);}
 }
-function render(){renderTeach();renderDrill();startTimer();document.getElementById('seedTag').textContent='seed '+seed;}
-document.getElementById('hid').addEventListener('click',function(){HL=!HL;this.textContent=HL?'Hidden edges: highlighted':'Highlight hidden edges';renderTeach()});
-document.getElementById('iso3d').addEventListener('click',function(){ISO=!ISO;this.textContent='Show object: '+(ISO?'On':'Off');renderTeach()});
-document.getElementById('newq').addEventListener('click',function(){seed++;P=gen();render()});
-document.getElementById('export').addEventListener('click',exportCSV);
-Array.prototype.forEach.call(document.querySelectorAll('[data-lv]'),function(b){
-  b.addEventListener('click',function(){
-    LEVEL=parseInt(b.dataset.lv,10);
-    Array.prototype.forEach.call(document.querySelectorAll('[data-lv]'),function(x){x.classList.remove('on')});
-    b.classList.add('on'); seed++; P=gen(); render();
-  });
-});
-Array.prototype.forEach.call(document.querySelectorAll('[data-lv]'),function(x){x.classList.toggle('on',parseInt(x.dataset.lv,10)===LEVEL)});
-P=gen(); render(); renderStats();
+
+function go(tab){Array.prototype.forEach.call(document.querySelectorAll('.tab'),function(b){b.classList.toggle('on',b.dataset.tab===tab)});
+  if(tInt){clearInterval(tInt);tInt=null;} if(tab==='learn')mountLearn();else if(tab==='guided')mountItem('guided');else mountItem('drill');}
+Array.prototype.forEach.call(document.querySelectorAll('.tab'),function(b){b.onclick=function(){go(b.dataset.tab)}});
+mountLearn();
 })();
 </script>
 <script src="pat-ledger.js"></script>
-  <script src="/shared/acelabs-nav.js" defer></script>
+<script src="/shared/acelabs-nav.js" defer></script>
 </body>
 </html>
