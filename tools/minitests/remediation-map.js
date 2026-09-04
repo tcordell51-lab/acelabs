@@ -45,7 +45,7 @@ window.MINITEST_REMEDIATION = {
   ochem: {
     name: 'Organic Chemistry',
     learn: '/tools/organic/',
-    review: '/tools/organic/',
+    review: '/tools/ochem/',   // the engine (was the Retold course twice; fixed 2026-09-03)
     rail: '#9b7bd0',
     topics: {
       'IUPAC nomenclature': 'Reading and naming the skeleton',

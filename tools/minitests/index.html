@@ -146,7 +146,7 @@
   .fixrow .fx{font-family:var(--mono);font-size:11px;letter-spacing:.03em;text-decoration:none;border:1px solid var(--line2);border-radius:8px;padding:7px 12px;display:inline-flex;gap:6px;align-items:center;cursor:pointer;color:var(--ink)}
   .fixrow .fx:hover{background:var(--gold-bg)}
   .fixrow .fx.trick{border-color:rgba(201,168,76,.6);color:var(--goldhi);background:var(--gold-bg)}
-  .fixrow .fx.learn{color:var(--gold)} .fixrow .fx.drill{color:var(--ink2)}
+  .fixrow .fx.learn{color:var(--gold)} .fixrow .fx.drill{color:var(--ink2)} .fixrow .fx.root{color:var(--goldhi);border-color:rgba(201,168,76,.6)}
   .trick-embed{margin-top:12px;display:none}
   .trick-embed.on{display:block}
   .trick-embed iframe{width:100%;max-width:400px;height:720px;border:1px solid var(--line2);border-radius:16px;background:#000;display:block}
@@ -230,6 +230,7 @@
 </div>
 
 <script src="remediation-map.js"></script>
+<script type="module">import { rootsUrl } from "../ochem/roots/route.js"; window.ROOTS_URL = rootsUrl;</script>
 <script src="bank.js"></script>
 <script>
 /* ============================================================ data ============================================================ */
@@ -484,6 +485,7 @@ function missCard(q, pickedIdx, opts){
       (trick?'<a class="fx trick" onclick="toggleTrick(\''+id+'\',\''+trick+'\')">Watch the trick</a>':'')+
       '<a class="fx learn" href="'+learn+'" target="_blank" rel="noopener">Learn it · Retold ('+hint+')</a>'+
       '<a class="fx drill" href="'+review+'" target="_blank" rel="noopener">Drill it · engine</a>'+
+      (q.section==='ochem' && window.ROOTS_URL ? '<a class="fx root" href="'+window.ROOTS_URL({topic:q.topic, text:q.stem}, '/tools/ochem/roots/')+'" target="_blank" rel="noopener">Fix the root</a>' : '')+
     '</div><div class="trick-embed" id="'+id+'"></div>'+
   '</div>';
   return h;

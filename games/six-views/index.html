@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Six Views · Ace Labs</title>
+<style>
+/* Game Central dark tokens, copied from acelabs/games/play.html so a new game
+   matches the existing hub. Not al-tokens.css (that is the light paper theme). */
+:root{--bg:#14120c;--card:#1c1912;--panel:#221e14;--line:rgba(201,168,76,.24);--ink:#ece6d7;--ink2:#b7b0a0;--ink3:#867f72;--gold:#C9A84C;--goldhi:#E6D08A;--good:#57B487;--warm:#D98A2B;--serif:Georgia,'Times New Roman',serif;--mono:ui-monospace,'SF Mono',Menlo,monospace;--sans:system-ui,-apple-system,'Segoe UI',sans-serif}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.5}
+body{background:var(--bg) radial-gradient(700px 420px at 85% -5%, rgba(201,168,76,.08), transparent 60%)}
+button{font:inherit;color:inherit;cursor:pointer}
+button:disabled{cursor:not-allowed}
+:focus-visible{outline:2px solid var(--goldhi);outline-offset:2px}
+.wrap{max-width:960px;margin:0 auto;padding:22px 18px 60px}
+.top{display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:14px}
+.brand{font-family:var(--serif);font-size:22px;color:var(--gold);letter-spacing:.01em}
+.brand small{font-family:var(--mono);font-size:11px;color:var(--ink3);letter-spacing:.14em;text-transform:uppercase;margin-left:10px}
+.spine{font-family:var(--serif);font-size:19px;color:var(--gold);margin:6px 0 18px;line-height:1.35}
+.dots{display:flex;gap:6px;align-items:center}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--panel);border:1px solid var(--line)}
+.dot.done{background:var(--gold);border-color:var(--gold)}
+.dot.now{border-color:var(--goldhi);box-shadow:0 0 0 2px rgba(230,208,138,.25)}
+.card{background:var(--card);border:1px solid var(--line);border-top:3px solid var(--warm);border-radius:14px;padding:22px}
+.label{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+h2{font-family:var(--serif);font-weight:400;font-size:24px;margin:4px 0 14px}
+.given{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:12px 0 18px}
+.view{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 12px 12px}
+.view .label{margin-bottom:6px;display:block}
+.view svg{width:100%;height:auto;display:block}
+.iso{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px;margin:12px 0 18px}
+.iso svg{width:100%;max-width:420px;height:auto;display:block;margin:0 auto}
+.ask{font-size:17px;margin:0 0 12px}
+.conf{display:flex;gap:10px;align-items:center;margin:0 0 14px;flex-wrap:wrap}
+.conf .hint{color:var(--ink2);font-size:14px}
+.chip{min-height:44px;padding:8px 18px;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:var(--ink2)}
+.chip[aria-pressed="true"]{border-color:var(--gold);color:var(--ink);background:rgba(201,168,76,.12)}
+.opts{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.opt{display:grid;grid-template-columns:34px 1fr;gap:10px;align-items:center;text-align:left;min-height:56px;padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:var(--panel)}
+.opt:not(:disabled):hover{border-color:var(--gold)}
+.opt .k{font-family:var(--mono);font-size:13px;color:var(--gold);width:30px;height:30px;border:1px solid var(--line);border-radius:8px;display:grid;place-items:center}
+.opt svg{width:100%;height:auto;display:block;max-height:120px}
+.opt .num{font-family:var(--serif);font-size:26px}
+.opt.picked{border-color:var(--goldhi);box-shadow:0 0 0 2px rgba(230,208,138,.25)}
+.opt.ok{border-color:var(--good)}
+.opt:disabled{opacity:.92}
+.locked .opt:not(.picked):not(.ok){opacity:.55}
+.stage{position:relative;width:100%;aspect-ratio:16/10;background:#0e0c08;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.stage canvas{display:block;width:100%;height:100%}
+.stage .fallback{position:absolute;inset:0;display:grid;place-items:center;color:var(--ink2);padding:24px;text-align:center}
+.hud{position:absolute;left:12px;bottom:12px;display:flex;gap:8px;flex-wrap:wrap}
+.hud button{min-height:40px;padding:6px 12px;border-radius:9px;border:1px solid var(--line);background:rgba(20,18,12,.85);color:var(--ink2);font-family:var(--mono);font-size:12px}
+.hud button.on{border-color:var(--gold);color:var(--ink)}
+.help{position:absolute;right:12px;top:12px;font-family:var(--mono);font-size:11px;color:var(--ink3);background:rgba(20,18,12,.7);padding:6px 9px;border-radius:8px}
+.verdict{font-family:var(--serif);font-size:22px;margin:16px 0 6px}
+.verdict.good{color:var(--good)}
+.verdict.notyet{color:var(--goldhi)}
+.coach{font-size:16px;color:var(--ink);background:var(--panel);border-left:3px solid var(--gold);border-radius:8px;padding:12px 14px;margin:8px 0 14px}
+.triage{margin:10px 0 16px}
+.triage .label{display:block;margin-bottom:8px}
+.triage .row{display:flex;gap:8px;flex-wrap:wrap}
+.triage button{min-height:44px;padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:var(--ink2)}
+.triage button[aria-pressed="true"]{border-color:var(--gold);color:var(--ink)}
+.primary{min-height:48px;padding:10px 22px;border-radius:12px;border:0;background:linear-gradient(180deg,var(--goldhi),var(--gold));color:#1a160c;font-weight:600;font-size:16px}
+.secondary{min-height:48px;padding:10px 18px;border-radius:12px;border:1px solid var(--line);background:var(--panel);color:var(--ink2)}
+.actions{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-top:6px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin:14px 0 20px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.stat b{display:block;font-family:var(--serif);font-weight:400;font-size:34px;color:var(--gold);line-height:1.05}
+.stat span{display:block;color:var(--ink2);font-size:14px;margin-top:4px}
+.gallery{margin:6px 0 18px}
+.shelves{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-top:10px}
+.shelf{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px;min-height:112px;display:flex;flex-direction:column;justify-content:flex-end;gap:6px}
+.shelf .model{height:56px;border-radius:8px;background:repeating-linear-gradient(135deg,rgba(255,255,255,.03) 0 6px,transparent 6px 12px)}
+.shelf.lit .model{background:linear-gradient(180deg,rgba(230,208,138,.55),rgba(201,168,76,.35));box-shadow:0 0 18px rgba(201,168,76,.35)}
+.shelf .name{font-size:13px;color:var(--ink2);min-height:1.5em}
+.shelf.lit .name{color:var(--ink)}
+.done{font-family:var(--serif);font-size:20px;color:var(--ink);margin:10px 0 18px;line-height:1.45}
+.muted{color:var(--ink2);font-size:14px}
+.sr{position:absolute;left:-9999px}
+@media (max-width:640px){.given,.opts{grid-template-columns:1fr}}
+@media (prefers-reduced-motion: reduce){*{transition:none !important;animation:none !important}}
+</style>
+</head>
+<body>
+<div class="wrap" id="app">
+  <div class="top">
+    <div class="brand">Six Views<small>Ace Labs · PAT</small></div>
+    <div class="dots" id="dots" aria-label="Round progress"></div>
+  </div>
+  <p class="spine" id="spine">SPINE_SENTENCE</p>
+
+  <section class="card" id="prompt" hidden></section>
+
+  <section class="card" id="reveal" hidden>
+    <span class="label" id="revealLabel">The room</span>
+    <div class="stage" id="stage">
+      <div class="help">drag to look · W A S D to walk · 1 front · 2 top · 3 end</div>
+      <div class="hud">
+        <button type="button" data-station="front">1 Front</button>
+        <button type="button" data-station="top">2 Top</button>
+        <button type="button" data-station="end">3 End</button>
+      </div>
+    </div>
+    <div class="verdict" id="verdict"></div>
+    <div class="coach" id="coach"></div>
+    <div class="triage" id="triage" hidden>
+      <span class="label">What happened there? One tap.</span>
+      <div class="row">
+        <button type="button" data-triage="hidden line">Hidden line</button>
+        <button type="button" data-triage="miscount">Miscount</button>
+        <button type="button" data-triage="rushed">Rushed</button>
+        <button type="button" data-triage="misread">Misread</button>
+      </div>
+    </div>
+    <div class="actions"><button type="button" class="primary" id="continue">Continue</button></div>
+  </section>
+
+  <section class="card" id="roundEnd" hidden></section>
+</div>
+
+<script src="../../tools/pat/pat-ledger.js"></script>
+
+<script>
+(function(){
+// Lifted verbatim from acelabs/tools/pat/tfe.html by tools/extract-seed.py.
+// Generation logic only, no rendering. Do not edit here; edit the source tool.
+// Answers are computed geometrically, never authored, so they cannot be wrong.
+// Stateful by design: call setSeed(n) before generating so items are reproducible.
+var seed=0, rng=null, NX=3, NY=3, NZ=3, V=null, FEAT='';
+function setSeed(s){ seed = s | 0; rng = mulberry32(seed); return seed; }
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function ri(n){return Math.floor(rng()*n)}
+function occ(x,y,z){return (x<0||y<0||z<0||x>=NX||y>=NY||z>=NZ)?false:!!V[x][y][z]}
+function newGrid(){V=[];for(var x=0;x<NX;x++){V.push([]);for(var y=0;y<NY;y++){V[x].push([]);for(var z=0;z<NZ;z++)V[x][y][z]=false}}}
+function buildView(nu,nv,nw,O,nearHi){
+  var segs=[],u,v,i,w,seq=[];
+  if(nearHi){for(w=nw-1;w>=0;w--)seq.push(w)} else {for(w=0;w<nw;w++)seq.push(w)}
+  // horizontal segments (parallel to u), on each v-line, per u-cell
+  for(v=0;v<=nv;v++)for(u=0;u<nu;u++){
+    var found=false,occl=false;
+    for(i=0;i<seq.length;i++){w=seq[i];
+      var a=(v-1>=0)&&O(u,v-1,w),b=(v<nv)&&O(u,v,w);
+      if(a!==b){found=true;break} if(a&&b)occl=true;
+    }
+    if(found)segs.push({a:[u,v],b:[u+1,v],dash:occl});
+  }
+  // vertical segments (parallel to v), on each u-line, per v-cell
+  for(u=0;u<=nu;u++)for(v=0;v<nv;v++){
+    var found=false,occl=false;
+    for(i=0;i<seq.length;i++){w=seq[i];
+      var a=(u-1>=0)&&O(u-1,v,w),b=(u<nu)&&O(u,v,w);
+      if(a!==b){found=true;break} if(a&&b)occl=true;
+    }
+    if(found)segs.push({a:[u,v],b:[u,v+1],dash:occl});
+  }
+  return segs;
+}
+function frontView(gg){var g=gg||V; return buildView(NX,NZ,NY,function(u,v,w){return !!g[u][w][v]},false)}
+function endView(gg){var g=gg||V; return buildView(NY,NZ,NX,function(u,v,w){return !!g[w][u][v]},true)}
+function topView(gg){var g=gg||V; return buildView(NX,NY,NZ,function(u,v,w){return !!g[u][v][w]},true)}
+function keyOf(segs){return segs.map(function(s){return s.a[0]+','+s.a[1]+','+s.b[0]+','+s.b[1]+','+(s.dash?1:0)}).sort().join('|')}
+function ground(){var x,y,z; for(x=0;x<NX;x++)for(y=0;y<NY;y++)if(occ(x,y,0))return true; return false;}
+function connected(){ // all solids reachable from a z=0 solid via 6-neighbourhood
+  var seen={},stack=[],x,y,z,tot=0;
+  for(x=0;x<NX;x++)for(y=0;y<NY;y++)for(z=0;z<NZ;z++)if(occ(x,y,z)){tot++; if(z===0)stack.push([x,y,z])}
+  var cnt=0; while(stack.length){var c=stack.pop(),k=c.join(','); if(seen[k])continue; if(!occ(c[0],c[1],c[2]))continue; seen[k]=1;cnt++;
+    [[1,0,0],[-1,0,0],[0,1,0],[0,-1,0],[0,0,1],[0,0,-1]].forEach(function(d){stack.push([c[0]+d[0],c[1]+d[1],c[2]+d[2]])});
+  }
+  return cnt===tot && tot>0;
+}
+function anyDash(){return frontView().concat(endView()).concat(topView()).some(function(s){return s.dash})}
+function carveTunnel(){ // remove a 1x1 channel straight through, if fully solid first
+  var axis=ri(2),tries=0;
+  while(tries++<24){
+    if(axis===0){ // along x
+      var y0=ri(NY),z0=ri(NZ),ok=true,x;
+      for(x=0;x<NX;x++)if(!occ(x,y0,z0))ok=false;
+      if(ok){for(x=0;x<NX;x++)V[x][y0][z0]=false; return 'a horizontal tunnel'}
+    } else { // along y (fronttoback)
+      var x0=ri(NX),z1=ri(NZ),ok2=true,y;
+      for(y=0;y<NY;y++)if(!occ(x0,y,z1))ok2=false;
+      if(ok2){for(y=0;y<NY;y++)V[x0][y][z1]=false; return 'a front-to-back tunnel'}
+    }
+    axis=1-axis;
+  }
+  return '';
+}
+function carveNotch(){var x0=ri(NX),y0=ri(NY),z0=NZ-1-ri(2); if(z0<1)return ''; if(occ(x0,y0,z0)){V[x0][y0][z0]=false; return 'a corner notch'} return ''}
+function fallbackObj(){NX=3;NY=3;NZ=3;newGrid();var x,y,z;for(x=0;x<3;x++)for(y=0;y<3;y++)for(z=0;z<3;z++)V[x][y][z]=true;for(x=0;x<3;x++)V[x][1][1]=false;FEAT='a horizontal tunnel'}
+function makeObject(tier){
+  for(var att=0;att<220;att++){
+    NX=(tier<=1?3:3+ri(2)); NY=2+ri(2); NZ=(tier<=1?3:3+ri(1)); newGrid();
+    var x,y,z,maxH=tier<=1?3:NZ;
+    for(x=0;x<NX;x++)for(y=0;y<NY;y++){var hh=1+ri(maxH); for(z=0;z<hh&&z<NZ;z++)V[x][y][z]=true;}
+    var feats=[],r=rng();
+    if(r<(tier<=1?0.55:0.9)){var t=carveTunnel(); if(t)feats.push(t);}
+    if(tier>=2&&rng()<0.5){var n=carveNotch(); if(n)feats.push(n);}
+    if(ground()&&connected()&&anyDash()){FEAT=feats.join(' + ')||'stepped steps'; return;}
+  }
+  fallbackObj();
+}
+function cloneV(){var g=[],x,y,z;for(x=0;x<NX;x++){g.push([]);for(y=0;y<NY;y++){g[x].push([]);for(z=0;z<NZ;z++)g[x][y][z]=V[x][y][z]}}return g}
+function mirrorY(){var g=cloneV(),x,y,z;for(x=0;x<NX;x++)for(y=0;y<NY;y++)for(z=0;z<NZ;z++)g[x][y][z]=V[x][NY-1-y][z];return g}
+function makeDrill(tier){
+  makeObject(tier);
+  var ev=endView(),okKey=keyOf(ev),opts=[{segs:ev,ok:true}],seen={};seen[okKey]=1;
+  var mv=endView(mirrorY());
+  if(!seen[keyOf(mv)]){seen[keyOf(mv)]=1;opts.push({segs:mv,ok:false,tax:'mirror',why:'Front and back are swapped. On the END view, <b>end-left is the FRONT of the object</b>, not the back.'})}
+  var sv=ev.map(function(s){return {a:s.a,b:s.b,dash:s.dash}}),di=sv.map(function(s,i){return s.dash?i:-1}).filter(function(i){return i>=0});
+  if(di.length){var pick=di[ri(di.length)]; sv[pick]={a:sv[pick].a,b:sv[pick].b,dash:false}; if(!seen[keyOf(sv)]){seen[keyOf(sv)]=1;opts.push({segs:sv,ok:false,tax:'dash',why:'A hidden edge is drawn SOLID. You cannot see that edge from the end  -  it must be dashed.'})}}
+  var tries=0;
+  while(tries++<40&&opts.length<4){
+    var g=cloneV(),x=ri(NX),y=ri(NY),z=ri(NZ); g[x][y][z]=!g[x][y][z];
+    var v2=endView(g);
+    if(!seen[keyOf(v2)]){seen[keyOf(v2)]=1;opts.push({segs:v2,ok:false,tax:'height',why:'Wrong profile  -  a step is in the wrong place. <b>Height must match the FRONT, depth must match the TOP.</b>'})}
+  }
+  if(opts.length<4)return makeDrill(tier);
+  for(var i=opts.length-1;i>0;i--){var j=ri(i+1),t=opts[i];opts[i]=opts[j];opts[j]=t}
+  return {top:topView(),front:frontView(),end:ev,opts:opts,feat:FEAT};
+}
+window.TFE = {
+  setSeed: setSeed, makeDrill: makeDrill, keyOf: keyOf,
+  get V(){ return V; }, get NX(){ return NX; }, get NY(){ return NY; }, get NZ(){ return NZ; }
+};
+})();
+</script>
+
+<script>
+(function(){
+// Lifted verbatim from acelabs/tools/pat/cubes.html by tools/extract-seed.py.
+// Generation logic only, no rendering. Do not edit here; edit the source tool.
+// Answers are computed geometrically, never authored, so they cannot be wrong.
+// Stateful by design: call setSeed(n) before generating so items are reproducible.
+var seed=0, rng=null, P=null;  // P: the current object, isHidden() reads it
+function setSeed(s){ seed = s | 0; rng = mulberry32(seed); return seed; }
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function ri(n){return Math.floor(rng()*n)}
+function gen(){
+  rng=mulberry32(seed);
+  for(var att=0;att<80;att++){
+    var W=3+ri(2), D=2+ri(2), h={}, total=0;
+    for(var x=0;x<W;x++)for(var y=0;y<D;y++){var v=ri(4); if(x===0&&y===0&&v===0)v=1; h[x+','+y]=v; total+=v;}
+    if(total<7||total>12)continue;
+    var cubes=[];
+    for(var x2=0;x2<W;x2++)for(var y2=0;y2<D;y2++)for(var z=0;z<h[x2+','+y2];z++)cubes.push([x2,y2,z]);
+    var S={}; cubes.forEach(function(c){S[c.join(',')]=1});
+    var has=function(x,y,z){return S[x+','+y+','+z]===1};
+    var painted=function(c){var x=c[0],y=c[1],z=c[2],n=0;
+      if(!has(x+1,y,z))n++; if(!has(x-1,y,z))n++;
+      if(!has(x,y+1,z))n++; if(!has(x,y-1,z))n++;
+      if(!has(x,y,z+1))n++; return n;};
+    // sweep order: bottom to top, front to back (y desc = front first), left to right (x asc)
+    cubes.sort(function(a,b){return a[2]-b[2] || b[1]-a[1] || a[0]-b[0]});
+    var counts=cubes.map(painted), hist={};
+    counts.forEach(function(n){hist[n]=(hist[n]||0)+1});
+    // question: pick n with answer 1..5
+    var opts=Object.keys(hist).map(Number).filter(function(n){return hist[n]>=1&&hist[n]<=5});
+    if(!opts.length)continue;
+    var qn=opts[ri(opts.length)];
+    return {cubes:cubes,counts:counts,hist:hist,total:cubes.length,has:has,question:{n:qn,answer:hist[qn]}};
+  }
+  seed++; return gen();
+}
+function isHidden(c){var x=c[0],y=c[1],z=c[2];return P.has(x,y,z+1)&&P.has(x,y+1,z)&&P.has(x+1,y,z)}
+function total(){return P.cubes.length+1}
+window.CUBES = { setSeed: setSeed, gen: function(){ P = gen(); return P; }, isHidden: isHidden };
+})();
+</script>
+
+<script type="module">
+import * as THREE from '../../shared/three.module.min.js';
+
+/* ------------------------------------------------------------------ */
+/* House style at the boundary                                        */
+/* ------------------------------------------------------------------ */
+
+function cleanText(s){
+  return String(s == null ? '' : s)
+    .replace(/<[^>]+>/g, '')
+    .replace(/[\u2014\u2013]/g, ' - ')
+    .replace(/\u2026/g, '...')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+/* ------------------------------------------------------------------ */
+/* Storage: one key, local only, never sent anywhere                   */
+/* ------------------------------------------------------------------ */
+
+const KEY = 'atDAT_sixviews_v1';
+const INTERVALS = [1, 3, 7, 14, 30, 60];
+const DAY = 86400000;
+
+function fresh(){
+  return { v: 1, items: {}, lifetime: { correct: 0, sureRight: 0, sureTotal: 0, rounds: 0 }, gallery: {}, testPace: false };
+}
+function load(){
+  try {
+    const raw = localStorage.getItem(KEY);
+    if (!raw) return fresh();
+    const s = JSON.parse(raw);
+    if (!s || s.v !== 1) return fresh();
+    s.items = s.items || {}; s.gallery = s.gallery || {};
+    s.lifetime = Object.assign({ correct: 0, sureRight: 0, sureTotal: 0, rounds: 0 }, s.lifetime || {});
+    return s;
+  } catch (e) { return fresh(); }
+}
+function save(s){ try { localStorage.setItem(KEY, JSON.stringify(s)); } catch (e) {} }
+
+const state = load();
+
+/* ------------------------------------------------------------------ */
+/* Items. Everything comes from the seeds; this only reshapes it.      */
+/* ------------------------------------------------------------------ */
+
+function copyGrid(V, NX, NY, NZ){
+  const g = [];
+  for (let x = 0; x < NX; x++){ g.push([]); for (let y = 0; y < NY; y++){ g[x].push([]); for (let z = 0; z < NZ; z++) g[x][y][z] = !!V[x][y][z]; } }
+  return g;
+}
+
+function makeTfeItem(seed, tier){
+  TFE.setSeed(seed);
+  const d = TFE.makeDrill(tier);
+  const NX = TFE.NX, NY = TFE.NY, NZ = TFE.NZ;
+  const V = copyGrid(TFE.V, NX, NY, NZ);
+  const options = d.opts.map((o, i) => ({ label: 'ABCD'[i], segs: o.segs, ok: !!o.ok, tax: o.tax || '', why: cleanText(o.why || '') }));
+  return {
+    key: 'tfe:' + seed, subtest: 'tfe', seed, tier,
+    family: cleanText(d.feat || 'a stepped block'),
+    top: d.top, front: d.front, end: d.end,
+    options, correct: options.findIndex(o => o.ok),
+    model: { V, NX, NY, NZ }
+  };
+}
+
+const CUBE_COACH = {
+  low: 'The count came up short. Use the T-chart sweep: one column at a time, count exposed faces, and remember that a cube with a neighbour above AND behind AND right shows nothing from the front. That is the one people forget.',
+  high: 'The count came up high. A face only counts as painted if nothing touches it. Sweep the T-chart column by column and check each cube against its neighbours before you count it.',
+  far: 'Rebuild it with the T-chart sweep rather than eyeballing the picture. Column by column, write the exposed-face count for each cube, then total the ones that match.'
+};
+
+function makeCubesItem(seed){
+  CUBES.setSeed(seed);
+  const g = CUBES.gen();
+  const answer = g.question.answer, n = g.question.n;
+  const cand = [answer, answer - 1, answer + 1, answer + 2, answer - 2, answer + 3].filter(v => v >= 0);
+  const uniq = [];
+  for (const v of cand){ if (!uniq.includes(v)) uniq.push(v); if (uniq.length === 4) break; }
+  // deterministic shuffle from the seed so resurfacing shows the same order
+  let r = seed;
+  const rnd = () => { r = (r * 1103515245 + 12345) & 0x7fffffff; return r / 0x7fffffff; };
+  for (let i = uniq.length - 1; i > 0; i--){ const j = Math.floor(rnd() * (i + 1)); const t = uniq[i]; uniq[i] = uniq[j]; uniq[j] = t; }
+  const options = uniq.map((v, i) => ({
+    label: 'ABCD'[i], value: v, ok: v === answer,
+    why: v === answer ? '' : (v < answer ? CUBE_COACH.low : (v - answer === 1 ? CUBE_COACH.high : CUBE_COACH.far))
+  }));
+  const hidden = g.cubes.filter(c => CUBES.isHidden(c)).map(c => c.join(','));
+  return {
+    key: 'cubes:' + seed, subtest: 'cubes', seed, tier: g.cubes.length > 9 ? 2 : 1,
+    family: g.cubes.length + ' cubes',
+    cubes: g.cubes, counts: g.counts, hist: g.hist, n, answer, hidden,
+    options, correct: options.findIndex(o => o.ok),
+    model: { cubes: g.cubes }
+  };
+}
+
+function buildItem(key){
+  const [sub, seedStr] = key.split(':');
+  const seed = parseInt(seedStr, 10);
+  return sub === 'tfe' ? makeTfeItem(seed, tierFor('tfe')) : makeCubesItem(seed);
+}
+
+/* ------------------------------------------------------------------ */
+/* Round building                                                      */
+/* ------------------------------------------------------------------ */
+
+function recent(sub){
+  return Object.entries(state.items).filter(([k]) => k.startsWith(sub + ':')).sort((a, b) => (b[1].lastTs || 0) - (a[1].lastTs || 0)).slice(0, 10).map(([, v]) => v);
+}
+function accuracy(sub){
+  const r = recent(sub); if (r.length < 10) return null;
+  return r.reduce((n, v) => n + (v.lastOk ? 1 : 0), 0) / r.length;
+}
+function tierFor(sub){ const a = accuracy(sub); return a != null && a >= 0.8 ? 2 : 1; }
+
+function dueItems(now){
+  return Object.entries(state.items)
+    .filter(([, v]) => v.due && v.due <= now)
+    .sort((a, b) => a[1].due - b[1].due)
+    .map(([k]) => k);
+}
+
+function newSeed(sub){
+  let s = 1000 + Math.floor(Math.random() * 900000);
+  while (state.items[sub + ':' + s]) s++;
+  return s;
+}
+
+function buildRound(){
+  const now = Date.now();
+  const due = dueItems(now).slice(0, 4);
+  const keys = [];
+  // item one is a seeded early win: a due item last answered right, else a fresh tier-1 TFE
+  const easyDue = due.find(k => state.items[k].lastOk);
+  if (easyDue){ keys.push(easyDue); due.splice(due.indexOf(easyDue), 1); }
+  else keys.push('tfe:' + newSeed('tfe'));
+  let sub = keys[0].startsWith('tfe') ? 'cubes' : 'tfe';
+  while (keys.length < 10){
+    const k = due.length ? due.shift() : sub + ':' + newSeed(sub);
+    keys.push(k);
+    sub = k.startsWith('tfe') ? 'cubes' : 'tfe';
+  }
+  const items = keys.map(buildItem);
+  // hardest in the middle, moderate finish: sort positions 2..8 by tier desc, keep last item tier 1 if possible
+  const mid = items.slice(2, 9).sort((a, b) => b.tier - a.tier);
+  const arranged = [items[0], items[1], ...mid, items[9]];
+  if (arranged[9].tier === 2){ const i = arranged.findIndex((it, idx) => idx > 1 && idx < 9 && it.tier === 1); if (i > 0){ const t = arranged[9]; arranged[9] = arranged[i]; arranged[i] = t; } }
+  return arranged;
+}
+
+/* ------------------------------------------------------------------ */
+/* Recording                                                           */
+/* ------------------------------------------------------------------ */
+
+function record(item, ok, sure){
+  const now = Date.now();
+  const rec = state.items[item.key] || { seen: 0, correct: 0, level: 0, sure: 0, shaky: 0, triage: [], spacedCorrect: 0, lastCorrectTs: 0 };
+  rec.seen++; if (ok) rec.correct++;
+  rec.lastOk = ok; rec.lastTs = now;
+  if (sure) rec.sure++; else rec.shaky++;
+  if (ok && sure){ rec.level = Math.min(rec.level + 1, INTERVALS.length - 1); rec.due = now + INTERVALS[rec.level] * DAY; }
+  else { rec.level = 0; rec.due = now + INTERVALS[0] * DAY; }
+  state.items[item.key] = rec;
+
+  state.lifetime.sureTotal += sure ? 1 : 0;
+  if (ok){
+    state.lifetime.correct++;
+    if (sure) state.lifetime.sureRight++;
+    const fam = state.gallery[item.family] || { spacedCorrect: 0, lit: false, lastTs: 0 };
+    if (now - (fam.lastTs || 0) > 20 * 3600000){ fam.spacedCorrect++; fam.lastTs = now; }
+    if (fam.spacedCorrect >= 3) fam.lit = true;
+    state.gallery[item.family] = fam;
+  }
+  save(state);
+  try { if (window.PatLedger && typeof window.PatLedger.record === 'function') window.PatLedger.record(item.subtest, ok); } catch (e) {}
+}
+
+function recordTriage(item, what){
+  const rec = state.items[item.key]; if (!rec) return;
+  rec.triage = (rec.triage || []).concat(what).slice(-6);
+  save(state);
+}
+
+/* ------------------------------------------------------------------ */
+/* 2D rendering: flat, DAT format, exactly what the seed says          */
+/* ------------------------------------------------------------------ */
+
+function svgView(segs, nu, nv, label){
+  const S = 28, P = 10, W = nu * S + P * 2, H = nv * S + P * 2;
+  const X = u => P + u * S, Y = v => P + (nv - v) * S;
+  let d = '';
+  for (const s of segs){
+    d += `<line x1="${X(s.a[0])}" y1="${Y(s.a[1])}" x2="${X(s.b[0])}" y2="${Y(s.b[1])}" stroke="${s.dash ? 'var(--ink2)' : 'var(--ink)'}" stroke-width="2" stroke-linecap="round"${s.dash ? ' stroke-dasharray="6 4"' : ''}/>`;
+  }
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${label}">${d}</svg>`;
+}
+
+function isoPt(x, y, z){ return [(x - y) * 0.866, (x + y) * 0.5 - z]; }
+function svgCubes(cubes){
+  const S = 34, has = new Set(cubes.map(c => c.join(',')));
+  const sorted = cubes.slice().sort((a, b) => (a[0] + a[1] + a[2] * 0.01) - (b[0] + b[1] + b[2] * 0.01));
+  let minx = 1e9, maxx = -1e9, miny = 1e9, maxy = -1e9;
+  const P = (x, y, z) => { const p = isoPt(x, y, z); return [p[0] * S, p[1] * S]; };
+  const polys = [];
+  for (const [x, y, z] of sorted){
+    const f = [P(x, y, z), P(x + 1, y, z), P(x + 1, y, z + 1), P(x, y, z + 1)];       // front (y face)
+    const r = [P(x + 1, y, z), P(x + 1, y + 1, z), P(x + 1, y + 1, z + 1), P(x + 1, y, z + 1)]; // right (x face)
+    const t = [P(x, y, z + 1), P(x + 1, y, z + 1), P(x + 1, y + 1, z + 1), P(x, y + 1, z + 1)]; // top
+    if (!has.has([x, y - 1, z].join(','))) polys.push([f, '#3a3324']);
+    if (!has.has([x + 1, y, z].join(','))) polys.push([r, '#2b261a']);
+    if (!has.has([x, y, z + 1].join(','))) polys.push([t, '#4a4130']);
+    for (const q of [f, r, t]) for (const [px, py] of q){ minx = Math.min(minx, px); maxx = Math.max(maxx, px); miny = Math.min(miny, py); maxy = Math.max(maxy, py); }
+  }
+  const pad = 12, W = maxx - minx + pad * 2, H = maxy - miny + pad * 2;
+  let d = '';
+  for (const [q, fill] of polys){
+    d += `<polygon points="${q.map(([px, py]) => (px - minx + pad).toFixed(1) + ',' + (py - miny + pad).toFixed(1)).join(' ')}" fill="${fill}" stroke="var(--ink)" stroke-width="1.5" stroke-linejoin="round"/>`;
+  }
+  return `<svg viewBox="0 0 ${W.toFixed(0)} ${H.toFixed(0)}" role="img" aria-label="A stack of cubes">${d}</svg>`;
+}
+
+/* ------------------------------------------------------------------ */
+/* 3D reveal                                                           */
+/* ------------------------------------------------------------------ */
+
+// Map a 2D segment from one of the seed's views back to its 3D edge.
+// buildView does not record depth, so re-scan the grid the same way it did.
+function segTo3D(view, seg, m){
+  const { V, NX, NY, NZ } = m;
+  const O = (x, y, z) => (x < 0 || y < 0 || z < 0 || x >= NX || y >= NY || z >= NZ) ? false : !!V[x][y][z];
+  const [u0, v0] = seg.a, [u1, v1] = seg.b;
+  const horiz = v0 === v1;
+  let nu, nv, nw, occ, nearHi;
+  if (view === 'front'){ nu = NX; nv = NZ; nw = NY; occ = (u, v, w) => O(u, w, v); nearHi = false; }
+  else if (view === 'end'){ nu = NY; nv = NZ; nw = NX; occ = (u, v, w) => O(w, u, v); nearHi = true; }
+  else { nu = NX; nv = NY; nw = NZ; occ = (u, v, w) => O(u, v, w); nearHi = true; }
+  const seq = []; if (nearHi){ for (let w = nw - 1; w >= 0; w--) seq.push(w); } else { for (let w = 0; w < nw; w++) seq.push(w); }
+  let depth = -1;
+  for (const w of seq){
+    let a, b;
+    if (horiz){ const u = Math.min(u0, u1), v = v0; a = (v - 1 >= 0) && occ(u, v - 1, w); b = (v < nv) && occ(u, v, w); }
+    else { const u = u0, v = Math.min(v0, v1); a = (u - 1 >= 0) && occ(u - 1, v, w); b = (u < nu) && occ(u, v, w); }
+    if (a !== b){ depth = w; break; }
+  }
+  if (depth < 0) return null;
+  const P = (u, v) => {
+    if (view === 'front') return [u, depth, v];
+    if (view === 'end') return [depth + 1, u, v];
+    return [u, v, depth + 1];
+  };
+  return [P(u0, v0), P(u1, v1)];
+}
+
+class Reveal {
+  constructor(stage){
+    this.stage = stage; this.ok = false; this.reduced = false;
+    try { this.reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+    try {
+      this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+      this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+      this.renderer.setClearColor(0x0e0c08, 1);
+      this.stage.insertBefore(this.renderer.domElement, this.stage.firstChild);
+      this.ok = true;
+    } catch (e) {
+      const f = document.createElement('div'); f.className = 'fallback';
+      f.textContent = 'The 3D room needs WebGL, which this browser has turned off. The views and coaching above still apply.';
+      this.stage.appendChild(f);
+      return;
+    }
+    this.scene = new THREE.Scene();
+    this.camera = new THREE.PerspectiveCamera(55, 16 / 10, 0.05, 100);
+    this.camera.up.set(0, 0, 1);
+    this.scene.add(new THREE.AmbientLight(0xffffff, 0.75));
+    const fill = new THREE.DirectionalLight(0xd8e4ff, 0.35); fill.position.set(-4, 3, 2); this.scene.add(fill);
+    const sun = new THREE.DirectionalLight(0xfff2d0, 0.9); sun.position.set(3, -4, 6); this.scene.add(sun);
+    this.room = new THREE.Group(); this.scene.add(this.room);
+    this.obj = new THREE.Group(); this.scene.add(this.obj);
+    this.glow = new THREE.Group(); this.scene.add(this.glow);
+    this.pos = new THREE.Vector3(); this.yaw = 0; this.pitch = 0; this.keys = {};
+    this.center = new THREE.Vector3(); this.radius = 2; this.eye = 1.1;
+    this.bindControls();
+    this.resize();
+    window.addEventListener('resize', () => this.resize());
+    this.loop();
+  }
+  resize(){
+    if (!this.ok) return;
+    const w = this.stage.clientWidth || 960, h = this.stage.clientHeight || 600;
+    this.renderer.setSize(w, h, false); this.camera.aspect = w / h; this.camera.updateProjectionMatrix();
+  }
+  clear(g){ while (g.children.length){ const c = g.children.pop(); if (c.geometry) c.geometry.dispose(); if (c.material) c.material.dispose(); } }
+  buildRoom(size){
+    this.clear(this.room);
+    const wallMat = new THREE.MeshLambertMaterial({ color: 0x221e14 });
+    const floor = new THREE.Mesh(new THREE.PlaneGeometry(size * 2, size * 2), new THREE.MeshLambertMaterial({ color: 0x1c1912 }));
+    floor.position.set(this.center.x, this.center.y, 0); this.room.add(floor);
+    const h = 3.2;
+    const mk = (w, d, x, y, rz) => { const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), wallMat); m.position.set(x, y, h / 2); m.rotation.x = Math.PI / 2; m.rotation.y = rz; return m; };
+    const s = size;
+    const w1 = mk(s * 2, 0, this.center.x, this.center.y + s, 0); w1.rotation.set(Math.PI / 2, 0, 0); this.room.add(w1);
+    const w2 = mk(s * 2, 0, this.center.x, this.center.y - s, 0); w2.rotation.set(Math.PI / 2, 0, Math.PI); this.room.add(w2);
+    const w3 = mk(s * 2, 0, this.center.x + s, this.center.y, 0); w3.rotation.set(Math.PI / 2, 0, -Math.PI / 2); this.room.add(w3);
+    const w4 = mk(s * 2, 0, this.center.x - s, this.center.y, 0); w4.rotation.set(Math.PI / 2, 0, Math.PI / 2); this.room.add(w4);
+    const ped = new THREE.Mesh(new THREE.CylinderGeometry(0.9, 1.0, 0.7, 40), new THREE.MeshLambertMaterial({ color: 0x2a2519 }));
+    ped.rotation.x = Math.PI / 2; ped.position.set(this.center.x, this.center.y, 0.35); this.room.add(ped);
+  }
+  buildObject(model){
+    this.clear(this.obj); this.clear(this.glow);
+    const cubes = model.cubes ? model.cubes : [];
+    if (!model.cubes){ for (let x = 0; x < model.NX; x++) for (let y = 0; y < model.NY; y++) for (let z = 0; z < model.NZ; z++) if (model.V[x][y][z]) cubes.push([x, y, z]); }
+    let mx = 0, my = 0, mz = 0; for (const c of cubes){ mx = Math.max(mx, c[0] + 1); my = Math.max(my, c[1] + 1); mz = Math.max(mz, c[2] + 1); }
+    this.dims = [mx, my, mz];
+    this.lift = 0.7;
+    this.offset = new THREE.Vector3(-mx / 2, -my / 2, this.lift);
+    this.center.set(0, 0, this.lift + mz / 2);
+    const mat = new THREE.MeshLambertMaterial({ color: 0x8a7a55 });
+    const edge = new THREE.LineBasicMaterial({ color: 0x6b5a35 });
+    const geo = new THREE.BoxGeometry(1, 1, 1), egeo = new THREE.EdgesGeometry(geo);
+    for (const [x, y, z] of cubes){
+      const m = new THREE.Mesh(geo, mat); m.position.set(x + 0.5 + this.offset.x, y + 0.5 + this.offset.y, z + 0.5 + this.offset.z); this.obj.add(m);
+      const e = new THREE.LineSegments(egeo, edge); e.position.copy(m.position); this.obj.add(e);
+    }
+    this.radius = Math.max(mx, my, mz) * 1.6 + 1.2;
+    this.buildRoom(this.radius + 2.5);
+  }
+  glowLines(pairs, color){
+    // WebGL lines are always one pixel, so hidden edges are drawn as thin bars
+    // with depth testing off. That is the point of the reveal: the student is
+    // standing at the front and can see the edge they could not see, through
+    // the solid, before walking to the station where it becomes visible.
+    const mat = new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.95, depthTest: false, depthWrite: false });
+    const halo = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.18, depthTest: false, depthWrite: false });
+    for (const [a, b] of pairs){
+      const A = new THREE.Vector3(a[0] + this.offset.x, a[1] + this.offset.y, a[2] + this.offset.z);
+      const B = new THREE.Vector3(b[0] + this.offset.x, b[1] + this.offset.y, b[2] + this.offset.z);
+      const len = A.distanceTo(B); if (len < 1e-6) continue;
+      for (const [m, t] of [[halo, 0.09], [mat, 0.045]]){
+        const bar = new THREE.Mesh(new THREE.BoxGeometry(t, t, len + t), m);
+        bar.position.copy(A).add(B).multiplyScalar(0.5);
+        bar.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), B.clone().sub(A).normalize());
+        bar.renderOrder = 10; this.glow.add(bar);
+      }
+    }
+  }
+  glowCubes(list){
+    const geo = new THREE.BoxGeometry(1.04, 1.04, 1.04);
+    const mat = new THREE.MeshBasicMaterial({ color: 0xe6d08a, transparent: true, opacity: 0.42, depthTest: false, depthWrite: false });
+    for (const [x, y, z] of list){ const m = new THREE.Mesh(geo, mat); m.position.set(x + 0.5 + this.offset.x, y + 0.5 + this.offset.y, z + 0.5 + this.offset.z); m.renderOrder = 10; this.glow.add(m); }
+  }
+  station(name){
+    const c = this.center, r = this.radius;
+    if (name === 'front'){ this.pos.set(c.x, c.y - r, this.eye); this.yaw = Math.PI / 2; this.pitch = Math.atan2(c.z - this.eye, r); }
+    else if (name === 'end'){ this.pos.set(c.x + r, c.y, this.eye); this.yaw = Math.PI; this.pitch = Math.atan2(c.z - this.eye, r); }
+    else { this.pos.set(c.x, c.y - 0.001, c.z + r); this.yaw = Math.PI / 2; this.pitch = -1.52; }
+    this.current = name;
+    for (const b of this.stage.querySelectorAll('[data-station]')) b.classList.toggle('on', b.dataset.station === name);
+  }
+  bindControls(){
+    const el = this.renderer.domElement;
+    let drag = null;
+    el.addEventListener('pointerdown', e => { drag = { x: e.clientX, y: e.clientY }; el.setPointerCapture(e.pointerId); });
+    el.addEventListener('pointerup', () => { drag = null; });
+    el.addEventListener('pointermove', e => {
+      if (!drag) return;
+      this.yaw -= (e.clientX - drag.x) * 0.005; this.pitch -= (e.clientY - drag.y) * 0.005;
+      this.pitch = Math.max(-1.52, Math.min(1.52, this.pitch)); drag = { x: e.clientX, y: e.clientY }; this.current = null;
+      for (const b of this.stage.querySelectorAll('[data-station]')) b.classList.remove('on');
+    });
+    window.addEventListener('keydown', e => {
+      if (this.stage.closest('section').hidden) return;
+      const k = e.key.toLowerCase();
+      if (k === '1') this.station('front'); else if (k === '2') this.station('top'); else if (k === '3') this.station('end');
+      else this.keys[k] = true;
+    });
+    window.addEventListener('keyup', e => { this.keys[e.key.toLowerCase()] = false; });
+    for (const b of this.stage.querySelectorAll('[data-station]')) b.addEventListener('click', () => this.station(b.dataset.station));
+  }
+  step(){
+    const sp = 0.06;
+    const fx = Math.cos(this.yaw), fy = Math.sin(this.yaw);
+    let dx = 0, dy = 0;
+    if (this.keys.w || this.keys.arrowup){ dx += fx; dy += fy; }
+    if (this.keys.s || this.keys.arrowdown){ dx -= fx; dy -= fy; }
+    if (this.keys.a || this.keys.arrowleft){ dx -= fy; dy += fx; }
+    if (this.keys.d || this.keys.arrowright){ dx += fy; dy -= fx; }
+    if (dx || dy){
+      const lim = this.radius + 2.0;
+      this.pos.x = Math.max(this.center.x - lim, Math.min(this.center.x + lim, this.pos.x + dx * sp));
+      this.pos.y = Math.max(this.center.y - lim, Math.min(this.center.y + lim, this.pos.y + dy * sp));
+      if (this.current !== 'top'){ this.pos.z = this.eye; }
+    }
+  }
+  loop(){
+    const tick = () => {
+      if (this.ok && !this.stage.closest('section').hidden){
+        this.step();
+        const d = new THREE.Vector3(Math.cos(this.pitch) * Math.cos(this.yaw), Math.cos(this.pitch) * Math.sin(this.yaw), Math.sin(this.pitch));
+        this.camera.position.copy(this.pos); this.camera.lookAt(this.pos.clone().add(d));
+        this.renderer.render(this.scene, this.camera);
+      }
+      requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }
+  show(item, pickedIdx){
+    if (!this.ok) return;
+    this.buildObject(item.model);
+    if (item.subtest === 'tfe'){
+      const picked = item.options[pickedIdx], right = item.options[item.correct];
+      const keyOf = s => s.a[0] + ',' + s.a[1] + ',' + s.b[0] + ',' + s.b[1] + ',' + (s.dash ? 1 : 0);
+      let segs;
+      if (picked.ok){ segs = item.end.filter(s => s.dash); }
+      else {
+        const rightKeys = new Set(right.segs.map(keyOf)), pickedKeys = new Set(picked.segs.map(keyOf));
+        segs = right.segs.filter(s => !pickedKeys.has(keyOf(s)));
+        if (!segs.length) segs = right.segs.filter(s => s.dash);
+      }
+      const pairs = segs.map(s => segTo3D('end', s, item.model)).filter(Boolean);
+      this.glowLines(pairs, 0xe6d08a);
+      this.station('front');
+    } else {
+      this.glowCubes(item.hidden.map(k => k.split(',').map(Number)));
+      this.station('front');
+    }
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Screens                                                             */
+/* ------------------------------------------------------------------ */
+
+const $ = id => document.getElementById(id);
+const promptEl = $('prompt'), revealEl = $('reveal'), endEl = $('roundEnd'), dotsEl = $('dots');
+let reveal = null;
+let round = [], idx = 0, current = null, confidence = null, roundStats = { correct: 0, sureRight: 0, sureTotal: 0 };
+
+function drawDots(){
+  dotsEl.innerHTML = round.map((_, i) => `<span class="dot${i < idx ? ' done' : ''}${i === idx ? ' now' : ''}"></span>`).join('');
+}
+
+function renderPrompt(item){
+  current = item; confidence = null;
+  promptEl.hidden = false; revealEl.hidden = true; endEl.hidden = true;
+  drawDots();
+  let given = '', ask = '';
+  if (item.subtest === 'tfe'){
+    const nu = item.model.NX, nv = item.model.NZ;
+    given = `<div class="given">
+      <div class="view"><span class="label">Top</span>${svgView(item.top, item.model.NX, item.model.NY, 'Top view')}</div>
+      <div class="view"><span class="label">Front</span>${svgView(item.front, nu, nv, 'Front view')}</div>
+    </div>`;
+    ask = 'Which one is the End view?';
+  } else {
+    given = `<div class="iso">${svgCubes(item.cubes)}</div>`;
+    ask = `Every face you can see is painted, and the bottoms are not. How many cubes have exactly ${item.n} painted face${item.n === 1 ? '' : 's'}?`;
+  }
+  const opts = item.options.map((o, i) => `<button type="button" class="opt" data-i="${i}" disabled>
+      <span class="k">${o.label}</span>
+      ${item.subtest === 'tfe' ? svgView(o.segs, item.model.NY, item.model.NZ, 'Option ' + o.label) : `<span class="num">${o.value}</span>`}
+    </button>`).join('');
+  promptEl.innerHTML = `
+    <span class="label">${item.subtest === 'tfe' ? 'Top, Front, End' : 'Cube counting'} · item ${idx + 1} of ${round.length}</span>
+    ${given}
+    <p class="ask">${ask}</p>
+    <div class="conf">
+      <button type="button" class="chip" data-conf="sure" aria-pressed="false">Sure</button>
+      <button type="button" class="chip" data-conf="shaky" aria-pressed="false">Shaky</button>
+      <span class="hint" id="confHint">Tap how you feel first, then pick. Neither one is the right one.</span>
+    </div>
+    <div class="opts" id="opts">${opts}</div>`;
+  for (const c of promptEl.querySelectorAll('[data-conf]')) c.addEventListener('click', () => {
+    confidence = c.dataset.conf;
+    for (const x of promptEl.querySelectorAll('[data-conf]')) x.setAttribute('aria-pressed', String(x === c));
+    for (const o of promptEl.querySelectorAll('.opt')) o.disabled = false;
+    $('confHint').textContent = 'Now pick.';
+  });
+  for (const o of promptEl.querySelectorAll('.opt')) o.addEventListener('click', () => commit(parseInt(o.dataset.i, 10)));
+  promptEl.scrollIntoView({ block: 'start' });
+}
+
+function commit(i){
+  const item = current, ok = item.options[i].ok, sure = confidence === 'sure';
+  for (const o of promptEl.querySelectorAll('.opt')){ o.disabled = true; o.classList.toggle('picked', parseInt(o.dataset.i, 10) === i); o.classList.toggle('ok', item.options[parseInt(o.dataset.i, 10)].ok); }
+  promptEl.classList.add('locked');
+  record(item, ok, sure);
+  roundStats.sureTotal += sure ? 1 : 0; if (ok){ roundStats.correct++; if (sure) roundStats.sureRight++; }
+  renderReveal(item, i, ok);
+}
+
+function renderReveal(item, i, ok){
+  revealEl.hidden = false;
+  if (!reveal) reveal = new Reveal($('stage'));
+  reveal.resize();
+  reveal.show(item, i);
+  const v = $('verdict'), c = $('coach'), t = $('triage');
+  v.className = 'verdict ' + (ok ? 'good' : 'notyet');
+  if (ok){
+    v.textContent = 'You can see through it.';
+    c.textContent = item.subtest === 'tfe'
+      ? `The gold edges are the ones hidden from the End. Walk to the End station (press 3) and watch them turn into dashed lines. ${item.family ? 'This one has ' + item.family + '.' : ''}`
+      : 'The glowing cubes are the ones you cannot see from the front. Walk around and find them. Those are the ones people forget.';
+    t.hidden = true;
+  } else {
+    v.textContent = 'Not yet. Here is the move.';
+    c.textContent = item.subtest === 'tfe'
+      ? (item.options[i].why || 'Compare the End view against the Front for height and against the Top for depth.') + ' The gold edges are the ones that rule out ' + item.options[i].label + '. Press 3 to stand at the End and see why.'
+      : (item.options[i].why || CUBE_COACH.far) + ' The glowing cubes are the hidden ones.';
+    t.hidden = false;
+    for (const b of t.querySelectorAll('[data-triage]')){ b.setAttribute('aria-pressed', 'false'); b.onclick = () => { for (const x of t.querySelectorAll('[data-triage]')) x.setAttribute('aria-pressed', String(x === b)); recordTriage(item, b.dataset.triage); }; }
+  }
+  $('continue').onclick = next;
+  revealEl.scrollIntoView({ block: 'start' });
+}
+
+function next(){
+  idx++;
+  promptEl.classList.remove('locked');
+  if (idx < round.length) renderPrompt(round[idx]); else finishRound();
+}
+
+function finishRound(){
+  state.lifetime.rounds++; save(state);
+  promptEl.hidden = true; revealEl.hidden = true; endEl.hidden = false;
+  idx = round.length; drawDots();
+  const L = state.lifetime;
+  const trustLife = L.sureTotal ? Math.round(100 * L.sureRight / L.sureTotal) : null;
+  const trustRound = roundStats.sureTotal ? Math.round(100 * roundStats.sureRight / roundStats.sureTotal) : null;
+  const fams = Object.entries(state.gallery);
+  const shelves = fams.length ? fams.map(([name, f]) => `<div class="shelf${f.lit ? ' lit' : ''}"><div class="model"></div><div class="name">${f.lit ? name : ''}</div></div>`).join('') : '<div class="muted">Your first shapes are on their way. Three spaced looks at a family and it takes its place here.</div>';
+  const paceOffer = ['tfe', 'cubes'].some(s => (accuracy(s) || 0) >= 0.8) && !state.testPace
+    ? `<p class="muted">Your accuracy is steady enough that a calm pace bar is available if you want it. <button type="button" class="secondary" id="paceOn">Turn on test pace</button></p>` : '';
+  endEl.innerHTML = `
+    <span class="label">Round complete</span>
+    <h2>That is a real session.</h2>
+    <div class="stats">
+      <div class="stat"><b>${L.correct}</b><span>views you can see through, all time</span></div>
+      <div class="stat"><b>${trustLife == null ? '-' : trustLife + '%'}</b><span>your gut is getting more trustworthy${trustRound != null && trustRound >= (trustLife || 0) ? ' · ' + trustRound + '% this round' : ''}</span></div>
+      <div class="stat"><b>${L.rounds}</b><span>sessions completed</span></div>
+    </div>
+    <div class="gallery"><span class="label">The gallery</span><div class="shelves">${shelves}</div></div>
+    ${paceOffer}
+    <div class="actions">
+      <button type="button" class="primary" id="again">Another round</button>
+      <button type="button" class="secondary" id="doneBtn">Done for today</button>
+    </div>
+    <div class="done" id="doneMsg" hidden>Come back tomorrow. The shapes you were shaky on will be waiting, and they will look smaller than they do right now.</div>`;
+  $('again').onclick = startRound;
+  $('doneBtn').onclick = () => { $('doneMsg').hidden = false; $('again').hidden = true; $('doneBtn').hidden = true; };
+  const p = $('paceOn'); if (p) p.onclick = () => { state.testPace = true; save(state); p.textContent = 'Test pace is on'; p.disabled = true; };
+  endEl.scrollIntoView({ block: 'start' });
+}
+
+function startRound(){
+  round = buildRound(); idx = 0; roundStats = { correct: 0, sureRight: 0, sureTotal: 0 };
+  renderPrompt(round[0]);
+}
+
+window.SixViews = { version: '1.0.0', startRound, state, get round(){ return round; } };
+startRound();
+</script>
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Roots of Organic · Ace Labs</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="roots.css">
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div class="brand">The Roots of Organic<small>Ace Labs · Organic foundations</small></div>
+    <nav class="nav"><a href="#level-1">Level 1</a><a href="#level-2">Level 2</a><a href="#level-3">Level 3</a><a href="#after">What comes after</a></nav>
+  </div>
+  <h1>Organic stops being a list the day you can <em>see</em> it.</h1>
+  <p class="lede">Every question you have ever missed in organic chemistry is standing on one of eighteen roots. Most people try to memorize the reactions before the roots are in the ground, and that is why nothing holds under pressure. <b>Fix a root and several questions fix themselves.</b> Each root here is a drawing you can turn, push, or flip with your own hands, one named move, one trap, and a hand-on-the-pen check that will not let you fool yourself. Own all eighteen and the reactions in the next tier stop feeling like memorizing and start feeling like reading.</p>
+  <div class="start" id="start"></div>
+  <div class="map" id="map"></div>
+  <div class="legend"><span><i style="background:var(--gold)"></i>gold is the answer, the thing to keep</span><span><i style="background:var(--blue)"></i>blue is electron rich</span><span><i style="background:var(--coral)"></i>coral is electron poor</span><span><i style="background:var(--green)"></i>green is stable</span><span><i style="background:var(--amber)"></i>amber is high energy</span><span><i style="background:var(--grey)"></i>grey is scaffolding</span></div>
+  <div id="roots"></div>
+  <section class="after" id="after">
+    <span class="eyebrow">What comes after</span>
+    <h2>Once the roots are in, the tree.</h2>
+    <p class="lede">The 2026 DAT organic section is thirty questions, and the ADA rewrote its specification this year to weigh acid-base reasoning and curved-arrow mechanisms more heavily and rote reaction recall less. That is good news for anyone who owns the roots, because every tier below is those same eighteen ideas applied. Work them in this order.</p>
+    <div class="stages" id="stages"></div>
+    <p class="foot">Built from Thomas's own coaching sessions, the ADA 2026 candidate guide, and the way the major question banks organize the section. Every check on this page is generated and its answer is computed from the same drawing you see, so it cannot be wrong.</p>
+  </section>
+</div>
+<script type="module">
+import { boot } from './shell.js';
+const STAGES = [
+  { n: 4, name: 'Recognize the reagent, name the move', ada: 'Chemical synthesis · one-step', p: 'Level 4 is pattern recognition: you see the reagent and you know its one move before you read the choices. It only sticks because levels one to three are underneath it.',
+    items: ['Alkenes and alkynes: Markovnikov versus anti-Markovnikov, syn versus anti, the two separate questions', 'Substitution and elimination: the carbocation as the master key, then the reagent decides', 'Alcohols, ethers and epoxides', 'Oxidation and reduction: count the bonds to oxygen, the reagent sets how far you climb', 'Carbonyls and their derivatives: only down the ladder, never up without help', 'Aromatics: if you see a ring, think EAS, then LPOP for where it goes'],
+    tool: 'Ace Labs: the Organic engine, the 13 Retold nights, the reagent map' },
+  { n: 5, name: 'Push the arrows', ada: 'Mechanisms · curved arrows, single and combined, reaction coordinate diagrams', p: 'Level 5 is level two under a rule set. The ADA now names single mechanisms, combined mechanisms and reaction coordinate diagrams as their own subtopics, so this is where the 2026 test moved its weight.',
+    items: ['Proton transfer, addition, elimination, substitution, radical, rearrangement, Diels-Alder: three arrows every time', 'Combined mechanisms: two moves in a row, the intermediate is the whole question', 'Reaction coordinate diagrams: the hill is the rate, the landing is the energy, a catalyst lowers only the hill'],
+    tool: 'Ace Labs: the mechanism decider, the Organic engine worked mechanisms' },
+  { n: 6, name: 'Build it in two and three steps', ada: 'Chemical synthesis · two-step, multi-step, reactivity across functional groups', p: 'Synthesis questions are level four moves chained. The skill is working backward from the product and protecting what has to survive.',
+    items: ['Two-step: which reagent first so the second still works', 'Multi-step: retrosynthesis, one disconnection at a time', 'Reactivity across groups: what the reagent touches and what it leaves alone'],
+    tool: 'Ace Labs: Lab Order drills in the Organic trainer' },
+  { n: 7, name: 'Read the evidence', ada: 'Chemical and physical properties · spectroscopy, lab techniques, structure', p: 'Working backward from data to structure. The tongue and the dagger, count the peaks first, n plus one, then the ppm landmarks.',
+    items: ['IR: the tongue near 3400 and the dagger near 1700, cross out the fingerprint', 'H-NMR: count unique peaks first, then neighbors plus one, then where they sit', 'C-NMR: the carbonyl carbon lives up high', 'Polarity, intermolecular forces, boiling point, solubility', 'Lab: distillation, extraction, recrystallization, chromatography'],
+    tool: 'Ace Labs: the spectroscopy triage' },
+  { n: 8, name: 'Do it fast and know what to skip', ada: 'Full section · thirty questions', p: 'Speed does not pick up until the practice test phase, and it should not. When accuracy is there, this level is timed sections, the six-line debrief, and the sixty percent redo rule.',
+    items: ['Timed organic sections inside full-length practice tests', 'Every miss goes through the debrief: which root was missing', 'Redo the missed set until it is sixty percent or better before moving on'],
+    tool: 'Ace Labs: The Climb mini-tests, the Chirality Bench and the other games for maintenance' }
+];
+const st = document.getElementById('stages');
+for (const s of STAGES){
+  const d = document.createElement('div'); d.className = 'stage';
+  const ada = document.createElement('div'); ada.className = 'ada'; ada.textContent = 'Level ' + s.n + ' · ADA 2026: ' + s.ada;
+  const h = document.createElement('h3'); h.textContent = s.name;
+  const p = document.createElement('p'); p.textContent = s.p;
+  const ul = document.createElement('ul'); for (const it of s.items){ const li = document.createElement('li'); li.textContent = it; ul.append(li); }
+  const t = document.createElement('div'); t.className = 'tool'; t.textContent = s.tool;
+  d.append(ada, h, p, ul, t); st.append(d);
+}
+boot();
+</script>
+</body>
+</html>

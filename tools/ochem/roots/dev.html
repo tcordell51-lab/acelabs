@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Root dev harness</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="roots.css">
+</head>
+<body>
+<div class="wrap"><div id="roots"></div></div>
+<script type="module">
+import { renderRoot } from './shell.js';
+const id = new URLSearchParams(location.search).get('root');
+const mod = await import(`./roots/${id}.js`);
+renderRoot(mod, document.getElementById('roots'), 1);
+window.RootsDev = { id, meta: mod.meta };
+</script>
+</body>
+</html>

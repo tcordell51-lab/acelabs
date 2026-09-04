@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chirality Bench · Ace Labs</title>
+<style>
+/* Game Central dark tokens, copied from acelabs/games/play.html so a new game
+   matches the existing hub. Not al-tokens.css (that is the light paper theme). */
+:root{--bg:#14120c;--card:#1c1912;--panel:#221e14;--line:rgba(201,168,76,.24);--ink:#ece6d7;--ink2:#b7b0a0;--ink3:#867f72;--gold:#C9A84C;--goldhi:#E6D08A;--good:#57B487;--warm:#D98A2B;--serif:Georgia,'Times New Roman',serif;--mono:ui-monospace,'SF Mono',Menlo,monospace;--sans:system-ui,-apple-system,'Segoe UI',sans-serif}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.5}
+body{background:var(--bg) radial-gradient(700px 420px at 85% -5%, rgba(201,168,76,.08), transparent 60%)}
+button{font:inherit;color:inherit;cursor:pointer}
+button:disabled{cursor:not-allowed}
+:focus-visible{outline:2px solid var(--goldhi);outline-offset:2px}
+.wrap{max-width:960px;margin:0 auto;padding:22px 18px 60px}
+.top{display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:14px}
+.brand{font-family:var(--serif);font-size:22px;color:var(--gold)}
+.brand small{font-family:var(--mono);font-size:11px;color:var(--ink3);letter-spacing:.14em;text-transform:uppercase;margin-left:10px}
+.spine{font-family:var(--serif);font-size:19px;color:var(--gold);margin:6px 0 18px;line-height:1.35}
+.dots{display:flex;gap:6px;align-items:center}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--panel);border:1px solid var(--line)}
+.dot.done{background:var(--gold);border-color:var(--gold)}
+.dot.now{border-color:var(--goldhi);box-shadow:0 0 0 2px rgba(230,208,138,.25)}
+.card{background:var(--card);border:1px solid var(--line);border-top:3px solid var(--warm);border-radius:14px;padding:22px}
+.label{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+h2{font-family:var(--serif);font-weight:400;font-size:24px;margin:4px 0 14px}
+.mol{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px;margin:12px 0 18px}
+.mol svg{width:100%;max-width:380px;height:auto;display:block;margin:0 auto}
+.ask{font-size:17px;margin:0 0 12px}
+.conf{display:flex;gap:10px;align-items:center;margin:0 0 14px;flex-wrap:wrap}
+.conf .hint{color:var(--ink2);font-size:14px}
+.chip{min-height:44px;padding:8px 18px;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:var(--ink2)}
+.chip[aria-pressed="true"]{border-color:var(--gold);color:var(--ink);background:rgba(201,168,76,.12)}
+.opts{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.opt{display:grid;grid-template-columns:34px 1fr;gap:10px;align-items:center;text-align:left;min-height:56px;padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:var(--panel);font-size:16px}
+.opt:not(:disabled):hover{border-color:var(--gold)}
+.opt .k{font-family:var(--mono);font-size:13px;color:var(--gold);width:30px;height:30px;border:1px solid var(--line);border-radius:8px;display:grid;place-items:center}
+.opt.picked{border-color:var(--goldhi);box-shadow:0 0 0 2px rgba(230,208,138,.25)}
+.opt.ok{border-color:var(--good)}
+.locked .opt:not(.picked):not(.ok){opacity:.55}
+.stage{position:relative;width:100%;aspect-ratio:16/10;background:#0e0c08;border:1px solid var(--line);border-radius:12px;overflow:hidden;box-shadow:0 30px 60px -30px rgba(0,0,0,.8), inset 0 0 0 1px rgba(255,255,255,.02)}
+.stage canvas{display:block;width:100%;height:100%}
+.stage .fallback{position:absolute;inset:0;display:grid;place-items:center;color:var(--ink2);padding:24px;text-align:center}
+.labels{position:absolute;inset:0;pointer-events:none}
+.lab{position:absolute;left:0;top:0;font-family:var(--serif);font-weight:600;font-size:19px;line-height:1;color:#f4efe2;background:rgba(18,16,11,.78);padding:5px 9px 6px;border-radius:7px;white-space:nowrap;transition:opacity .25s;letter-spacing:.01em;box-shadow:0 1px 6px rgba(0,0,0,.5)}
+.lab sub{font-size:.62em;vertical-align:-.25em;margin-left:1px}
+.lab.lit{color:var(--goldhi);box-shadow:0 0 0 1px rgba(230,208,138,.7),0 1px 6px rgba(0,0,0,.5)}
+.badge{position:absolute;left:0;top:0;width:24px;height:24px;border-radius:50%;background:linear-gradient(180deg,#f3e2a6,#c9a84c);color:#1a160c;font-family:var(--mono);font-weight:700;font-size:13px;display:grid;place-items:center;box-shadow:0 2px 6px rgba(0,0,0,.7),0 0 0 2px rgba(18,16,11,.85);opacity:0;scale:.4;transition:opacity .35s,scale .45s cubic-bezier(.2,1.4,.4,1)}
+.badge.in{opacity:1;scale:1}
+.letter{position:absolute;right:22px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:14px;align-items:flex-end;pointer-events:none}
+.glyph{display:flex;flex-direction:column;align-items:center;opacity:0;transform:translateX(12px);transition:opacity .5s,transform .5s,filter .5s}
+.glyph.in{opacity:1;transform:none}
+.glyph b{font-family:var(--serif);font-weight:400;font-size:64px;line-height:1;color:#a9a294;text-shadow:0 2px 10px rgba(0,0,0,.8)}
+.glyph span{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-top:4px}
+.glyph.truth b{color:var(--goldhi);text-shadow:0 0 22px rgba(230,208,138,.55),0 2px 10px rgba(0,0,0,.8);font-size:86px}
+.glyph.truth span{color:var(--gold)}
+.glyph.ghost.dim{opacity:.45;filter:blur(.3px)}
+.hud{position:absolute;left:12px;bottom:12px;display:flex;gap:8px;flex-wrap:wrap}
+.hud button{min-height:40px;padding:6px 12px;border-radius:9px;border:1px solid var(--line);background:rgba(20,18,12,.85);color:var(--ink2);font-family:var(--mono);font-size:12px}
+.hud button.on{border-color:var(--gold);color:var(--ink)}
+.help{position:absolute;right:12px;top:12px;font-family:var(--mono);font-size:11px;color:var(--ink3);background:rgba(20,18,12,.7);padding:6px 9px;border-radius:8px}
+.beat{position:absolute;left:12px;top:12px;font-family:var(--serif);font-size:15px;color:var(--goldhi);background:rgba(20,18,12,.75);padding:6px 10px;border-radius:8px;max-width:60%}
+.verdict{font-family:var(--serif);font-size:22px;margin:16px 0 6px}
+.verdict.good{color:var(--good)}
+.verdict.notyet{color:var(--goldhi)}
+.coach{font-size:16px;color:var(--ink);background:var(--panel);border-left:3px solid var(--gold);border-radius:8px;padding:12px 14px;margin:8px 0 14px}
+.triage{margin:10px 0 16px}
+.triage .label{display:block;margin-bottom:8px}
+.triage .row{display:flex;gap:8px;flex-wrap:wrap}
+.triage button{min-height:44px;padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:var(--ink2)}
+.triage button[aria-pressed="true"]{border-color:var(--gold);color:var(--ink)}
+.primary{min-height:48px;padding:10px 22px;border-radius:12px;border:0;background:linear-gradient(180deg,var(--goldhi),var(--gold));color:#1a160c;font-weight:600;font-size:16px}
+.secondary{min-height:48px;padding:10px 18px;border-radius:12px;border:1px solid var(--line);background:var(--panel);color:var(--ink2)}
+.actions{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-top:6px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin:14px 0 20px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.stat b{display:block;font-family:var(--serif);font-weight:400;font-size:34px;color:var(--gold);line-height:1.05}
+.stat span{display:block;color:var(--ink2);font-size:14px;margin-top:4px}
+.gallery{margin:6px 0 18px}
+.shelves{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-top:10px}
+.shelf{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px;min-height:112px;display:flex;flex-direction:column;justify-content:flex-end;gap:6px}
+.shelf .model{height:56px;border-radius:8px;background:repeating-linear-gradient(135deg,rgba(255,255,255,.03) 0 6px,transparent 6px 12px)}
+.shelf.lit .model{background:linear-gradient(180deg,rgba(230,208,138,.55),rgba(201,168,76,.35));box-shadow:0 0 18px rgba(201,168,76,.35)}
+.shelf .name{font-size:13px;color:var(--ink2);min-height:1.5em}
+.shelf.lit .name{color:var(--ink)}
+.done{font-family:var(--serif);font-size:20px;color:var(--ink);margin:10px 0 18px;line-height:1.45}
+.muted{color:var(--ink2);font-size:14px}
+@media (max-width:640px){.opts{grid-template-columns:1fr}}
+@media (prefers-reduced-motion: reduce){*{transition:none !important;animation:none !important}}
+</style>
+</head>
+<body>
+<div class="wrap" id="app">
+  <div class="top">
+    <div class="brand">Chirality Bench<small>Ace Labs · Organic</small></div>
+    <div class="dots" id="dots" aria-label="Round progress"></div>
+  </div>
+  <p class="spine" id="spine">SPINE_SENTENCE</p>
+
+  <section class="card" id="prompt" hidden></section>
+
+  <section class="card" id="reveal" hidden>
+    <span class="label">The bench</span>
+    <div class="stage" id="stage">
+      <div class="beat" id="beat"></div>
+      <div class="help">drag to turn it</div>
+      <div class="hud">
+        <button type="button" data-view="page">Page view</button>
+        <button type="button" data-view="away">H away</button>
+      </div>
+    </div>
+    <div class="verdict" id="verdict"></div>
+    <div class="coach" id="coach"></div>
+    <div class="triage" id="triage" hidden>
+      <span class="label">What happened there? One tap.</span>
+      <div class="row">
+        <button type="button" data-triage="priorities">Priorities</button>
+        <button type="button" data-triage="the flip">The flip</button>
+        <button type="button" data-triage="rushed">Rushed</button>
+        <button type="button" data-triage="misread">Misread</button>
+      </div>
+    </div>
+    <div class="actions"><button type="button" class="primary" id="continue">Continue</button></div>
+  </section>
+
+  <section class="card" id="roundEnd" hidden></section>
+</div>
+
+<script>
+(function(){
+// chirality-generator.js - correct-by-construction R/S items.
+//
+// An item is a tetrahedral carbon with four substituents placed in 3D. The
+// configuration is COMPUTED from the geometry (signed volume of the priority
+// vectors with the lowest priority pointing away), never authored, so it cannot
+// be wrong. The 2D wedge-dash drawing the student sees is a projection of the
+// same coordinates. Distractors are named traps with their own coaching line.
+//
+// The one thing that is a judgement rather than geometry is the CIP priority
+// table. It is deliberately small and every pairwise order in it is textbook
+// unambiguous (first-atom atomic number, then the attached set). That table is
+// the subject-matter gate for this module. Groups that tie at the first sphere
+// (phenyl vs tert-butyl, alkynes) are excluded on purpose.
+//
+// Sign convention calibrated against the dat-sme verified atom
+// oc-09-stereochemistry, worked example: butan-2-ol with CH3 left, CH2CH3 right,
+// OH on a dash up, H on a wedge down is S. See tools/test-chirality.mjs.
+//
+// Stateful by design: call setSeed(n) before makeItem so items are reproducible.
+
+var seed = 0, rng = null;
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function setSeed(s){ seed = s | 0; rng = mulberry32(seed); return seed; }
+function ri(n){ return Math.floor(rng() * n); }
+
+// Priority 1 is highest. `why` is the plain-words reason it outranks the next
+// group down, used in coaching when a student mis-ranks.
+var GROUPS = [
+  { key: 'Br',    label: 'Br',       rank: 1,  atom: 'Br', why: 'bromine has the highest atomic number here' },
+  { key: 'Cl',    label: 'Cl',       rank: 2,  atom: 'Cl', why: 'chlorine outranks any oxygen, nitrogen or carbon group' },
+  { key: 'OH',    label: 'OH',       rank: 3,  atom: 'O',  why: 'oxygen beats nitrogen and every carbon group' },
+  { key: 'NH2',   label: 'NH2',      rank: 4,  atom: 'N',  why: 'nitrogen beats any carbon group' },
+  { key: 'COOH',  label: 'COOH',     rank: 5,  atom: 'C',  why: 'a carbon holding three oxygens beats one holding fewer' },
+  { key: 'CHO',   label: 'CHO',      rank: 6,  atom: 'C',  why: 'a carbon with two oxygen bonds beats one with a single oxygen' },
+  { key: 'CH2OH', label: 'CH2OH',    rank: 7,  atom: 'C',  why: 'a carbon attached to an oxygen beats one attached only to carbons and hydrogens' },
+  { key: 'Et',    label: 'CH2CH3',   rank: 8,  atom: 'C',  why: 'ethyl beats methyl because its carbon is attached to another carbon' },
+  { key: 'Me',    label: 'CH3',      rank: 9,  atom: 'C',  why: 'methyl is the smallest carbon group' },
+  { key: 'H',     label: 'H',        rank: 10, atom: 'H',  why: 'hydrogen is always lowest' }
+];
+function groupByKey(k){ for (var i = 0; i < GROUPS.length; i++) if (GROUPS[i].key === k) return GROUPS[i]; return null; }
+
+// Canonical pose: a REGULAR tetrahedron (every bond angle 109.47 degrees),
+// rotated 25 degrees about the vertical so the two upper bonds splay left and
+// right in projection instead of stacking on one screen point. The lower pair
+// reads as in-plane (|z| = 0.35, under the wedge/dash threshold of 0.5); the
+// upper pair is one wedge (toward, +z) and one dash (away, -z), the way the
+// DAT draws a stereocenter. A hand-drawn pose that looked right in 2D had
+// bond angles from 85 to 120 degrees and made real molecules clash.
+var POSE = [
+  [-0.739, -0.577,  0.345],   // in plane, lower left
+  [ 0.739, -0.577, -0.345],   // in plane, lower right
+  [ 0.345,  0.577,  0.739],   // toward the viewer: WEDGE, upper right
+  [-0.345,  0.577, -0.739]    // away from the viewer: DASH, upper left
+];
+function norm(v){ var l = Math.sqrt(v[0]*v[0]+v[1]*v[1]+v[2]*v[2]); return [v[0]/l, v[1]/l, v[2]/l]; }
+function sub(a,b){ return [a[0]-b[0], a[1]-b[1], a[2]-b[2]]; }
+function cross(a,b){ return [a[1]*b[2]-a[2]*b[1], a[2]*b[0]-a[0]*b[2], a[0]*b[1]-a[1]*b[0]]; }
+function dot(a,b){ return a[0]*b[0]+a[1]*b[1]+a[2]*b[2]; }
+
+// Rotate the pose about the viewing axis (z) so the drawing is not always in
+// the same orientation, and optionally mirror across x. Mirroring across the
+// page plane would swap wedge and dash, which is a different item; mirroring
+// across x keeps wedge/dash and changes handedness, which is what makes R and
+// S items equally common.
+function rotZ(v, a){ var c = Math.cos(a), s = Math.sin(a); return [v[0]*c - v[1]*s, v[0]*s + v[1]*c, v[2]]; }
+
+/**
+ * Configuration from geometry. `pos` is an array of four [x,y,z] for
+ * priorities 1..4 in order (index 3 is the lowest). Returns 'R' or 'S'.
+ *
+ * Method: view from the side opposite the lowest priority, so it points
+ * away. In that view, going 1 -> 2 -> 3 clockwise is R. The sign of the
+ * triple product (p1-p4) . ((p2-p4) x (p3-p4)) decides clockwise vs
+ * counterclockwise; which sign means R is fixed by calibration against the
+ * verified worked example, not assumed.
+ */
+function configFromGeometry(pos){
+  var a = sub(pos[0], pos[3]), b = sub(pos[1], pos[3]), c = sub(pos[2], pos[3]);
+  var vol = dot(a, cross(b, c));
+  return vol < 0 ? 'R' : 'S';
+}
+
+/** What a student sees if they trace 1-2-3 straight off the page, ignoring where H is. */
+function apparentFromPage(pos){
+  // Looking down -z at the page: clockwise on screen.
+  var a = pos[0], b = pos[1], c = pos[2];
+  var cr = (b[0]-a[0])*(c[1]-a[1]) - (b[1]-a[1])*(c[0]-a[0]);
+  return cr < 0 ? 'R' : 'S';   // negative cross = clockwise on a y-up screen
+}
+
+/**
+ * makeItem(tier)
+ * tier 1: four distinct groups, H on a wedge or dash.
+ * tier 2: as tier 1, but one item in five is a decoy with two identical groups
+ *         (not a stereocenter), because spotting the non-center is a DAT trap.
+ * Returns:
+ *   { kind: 'RS' | 'achiral', groups: [{key,label,rank,pos:[x,y,z], depth:'wedge'|'dash'|'plane'}],
+ *     answer: 'R'|'S'|'achiral', apparent: 'R'|'S', hAt: 'wedge'|'dash',
+ *     opts: [{ text, ok, tax, why }], seq: [i1,i2,i3] indexes of priorities 1,2,3 in groups }
+ */
+function makeItem(tier){
+  var decoy = tier >= 2 && ri(5) === 0;
+  // pick three heavy groups with distinct ranks, plus H
+  var pool = GROUPS.slice(0, 9), chosen = [];
+  while (chosen.length < 3){ var g = pool[ri(pool.length)]; if (chosen.indexOf(g) < 0) chosen.push(g); }
+  if (decoy) chosen[2] = chosen[1];               // duplicate one group: no stereocenter
+  var four = chosen.concat([groupByKey('H')]);
+  // Assign to pose slots. H always takes the wedge or the dash (slots 2 and
+  // 3), never an in-plane bond: the DAT draws it that way, and the whole
+  // flip rule the student is learning is about where H sits in depth.
+  var heavy = [0, 1, ri(2) === 0 ? 2 : 3];
+  for (var i = heavy.length - 1; i > 0; i--){ var j = ri(i + 1), t = heavy[i]; heavy[i] = heavy[j]; heavy[j] = t; }
+  var hSlot = heavy.indexOf(2) >= 0 ? 3 : 2;
+  var slots = heavy.concat([hSlot]);
+  var angle = ri(4) * (Math.PI / 2), mirror = ri(2) === 1;
+  var groups = four.map(function(g, k){
+    var p = POSE[slots[k]].slice();
+    if (mirror) p[0] = -p[0];
+    p = rotZ(p, angle);
+    return { key: g.key, label: g.label, rank: g.rank, why: g.why, pos: p, depth: p[2] > 0.5 ? 'wedge' : (p[2] < -0.5 ? 'dash' : 'plane') };
+  });
+  // priority order among the four
+  var order = groups.map(function(g, i){ return i; }).sort(function(x, y){ return groups[x].rank - groups[y].rank; });
+  var pos = order.map(function(i){ return groups[i].pos; });
+  var hIdx = order[3], hAt = groups[hIdx].depth;
+  var answer, apparent = apparentFromPage(pos);
+  if (decoy) answer = 'achiral'; else answer = configFromGeometry(pos);
+
+  var opts, seq = order.slice(0, 3);
+  var hFlipWhy = hAt === 'wedge'
+    ? 'You traced it right, then skipped the last step. H is on a WEDGE, pointing at you, so you judged it from the wrong side. Flip the letter.'
+    : 'H is on a DASH, already pointing away, so the letter you traced is the letter you keep. Go back to the priorities: the order is ' + order.slice(0, 3).map(function(i){ return groups[i].label; }).join(', then ') + '.';
+  if (!decoy){
+    var other = answer === 'R' ? 'S' : 'R';
+    opts = [
+      { text: 'R', ok: answer === 'R', tax: answer === 'R' ? '' : 'flip', why: answer === 'R' ? '' : hFlipWhy },
+      { text: 'S', ok: answer === 'S', tax: answer === 'S' ? '' : 'flip', why: answer === 'S' ? '' : hFlipWhy },
+      { text: 'Achiral, not a stereocenter', ok: false, tax: 'center', why: 'Four DIFFERENT groups on one carbon is a stereocenter every time. Look for two matching groups before you call anything achiral.' },
+      { text: 'Cannot be determined from the drawing', ok: false, tax: 'cannot', why: 'A wedge-dash drawing tells you everything. Rank the three drawn groups, trace 1-2-3, then check where H is.' }
+    ];
+  } else {
+    opts = [
+      { text: 'R', ok: false, tax: 'center', why: 'Look again at the groups. Two of them are the same, so this carbon is not a stereocenter and has no R or S.' },
+      { text: 'S', ok: false, tax: 'center', why: 'Look again at the groups. Two of them are the same, so this carbon is not a stereocenter and has no R or S.' },
+      { text: 'Achiral, not a stereocenter', ok: true, tax: '', why: '' },
+      { text: 'Meso', ok: false, tax: 'meso', why: 'Meso needs at least two stereocenters and an internal mirror plane. This is one carbon with two matching groups, which is simply not a stereocenter.' }
+    ];
+  }
+  // shuffle options deterministically
+  for (var m = opts.length - 1; m > 0; m--){ var n = ri(m + 1), tmp = opts[m]; opts[m] = opts[n]; opts[n] = tmp; }
+  return { kind: decoy ? 'achiral' : 'RS', groups: groups, order: order, seq: seq, answer: answer, apparent: apparent, hAt: hAt, opts: opts };
+}
+// molecule-builder.js - grow a full ball-and-stick molecule from a seed item.
+//
+// The chirality seed gives four substituent directions on one carbon. This
+// turns each substituent key into its real atoms: a methyl becomes a carbon
+// with three hydrogens, an ethyl a two-carbon chain, a carboxyl a carbon with
+// a double-bonded and a single-bonded oxygen, and so on. Geometry is ideal
+// tetrahedral (sp3) or trigonal (sp2) with standard bond lengths, oriented so
+// each substituent's back bond points at the stereocenter. Every hydrogen is
+// present, so what the student sees is the molecule, not a diagram of one.
+//
+// Nothing here decides R or S. That stays in the chirality seed.
+//
+// Output: { atoms: [{el, p:[x,y,z], group:i|null, role}], bonds: [{a, b, order}] }
+// where role is 'center' for the stereocenter and 'anchor' for the atom of a
+// substituent that bonds to it (the one a label belongs to).
+
+var BOND = { CC: 1.54, CO: 1.43, CN: 1.47, CCl: 1.77, CBr: 1.94, CH: 1.09, OH: 0.96, NH: 1.01, 'C=O': 1.23 };
+var TET = 109.47 * Math.PI / 180;
+
+function v3(x, y, z){ return [x, y, z]; }
+function add(a, b){ return [a[0]+b[0], a[1]+b[1], a[2]+b[2]]; }
+function scale(a, s){ return [a[0]*s, a[1]*s, a[2]*s]; }
+function len(a){ return Math.sqrt(a[0]*a[0]+a[1]*a[1]+a[2]*a[2]); }
+function unit(a){ var l = len(a) || 1; return [a[0]/l, a[1]/l, a[2]/l]; }
+function crossV(a, b){ return [a[1]*b[2]-a[2]*b[1], a[2]*b[0]-a[0]*b[2], a[0]*b[1]-a[1]*b[0]]; }
+function dotV(a, b){ return a[0]*b[0]+a[1]*b[1]+a[2]*b[2]; }
+
+// An orthonormal frame around axis u (unit). Returns [u, e1, e2].
+function frame(u, hint){
+  var h = hint && Math.abs(dotV(unit(hint), u)) < 0.95 ? unit(hint) : (Math.abs(u[1]) < 0.9 ? [0,1,0] : [1,0,0]);
+  var e1 = unit(crossV(u, h)), e2 = crossV(u, e1);
+  return [u, e1, e2];
+}
+
+// Three sp3 directions around an atom whose back bond points along `back`
+// (a unit vector from the atom toward its parent). `phase` rotates them so
+// substituents stagger relative to the parent's other bonds.
+function sp3Dirs(back, phase){
+  var f = frame(back), u = f[0], e1 = f[1], e2 = f[2];
+  var out = [], tilt = Math.PI - TET; // angle between -back and each new bond
+  for (var k = 0; k < 3; k++){
+    var a = phase + k * 2 * Math.PI / 3;
+    var d = add(scale(u, -Math.cos(tilt)), add(scale(e1, Math.sin(tilt) * Math.cos(a)), scale(e2, Math.sin(tilt) * Math.sin(a))));
+    out.push(unit(d));
+  }
+  return out;
+}
+// Two sp2 directions (120 degrees) around an atom with back bond `back`.
+function sp2Dirs(back, phase){
+  var f = frame(back), u = f[0], e1 = f[1], e2 = f[2], out = [];
+  var tilt = Math.PI - 2 * Math.PI / 3; // 60 degrees between -back and each new bond, so 120 from the back bond
+  for (var k = 0; k < 2; k++){
+    var a = phase + Math.PI / 2 + k * Math.PI; // opposite each other: planar with the back bond
+    var d = add(scale(u, -Math.cos(tilt)), add(scale(e1, Math.sin(tilt) * Math.cos(a)), scale(e2, Math.sin(tilt) * Math.sin(a))));
+    out.push(unit(d));
+  }
+  return out;
+}
+
+/**
+ * buildMolecule(item) -> { atoms, bonds }
+ * item.groups[i].pos are unit vectors from the stereocenter; item.groups[i].key
+ * is one of Br, Cl, OH, NH2, COOH, CHO, CH2OH, Et, Me, H.
+ */
+function buildMolecule(item){
+  var atoms = [], bonds = [];
+  var C0 = atoms.push({ el: 'C', p: [0,0,0], group: null, role: 'center' }) - 1;
+
+  function atom(el, p, group, role){ return atoms.push({ el: el, p: p, group: group, role: role || '' }) - 1; }
+  function bond(a, b, order){ bonds.push({ a: a, b: b, order: order || 1 }); }
+
+  // Build one substituent at a given torsion phase, into scratch arrays.
+  function grow(g, gi, d, phase, sub, atoms, bonds){
+    function atom(el, p, group, role){ return atoms.push({ el: el, p: p, group: group, role: role || '' }) - 1; }
+    function bond(a, b, order){ bonds.push({ a: a, b: b, order: order || 1 }); }
+    switch (g.key){
+      case 'H': { var h = atom('H', scale(d, BOND.CH), gi, 'anchor'); bond(-1, h); break; }
+      case 'Cl': { var cl = atom('Cl', scale(d, BOND.CCl), gi, 'anchor'); bond(-1, cl); break; }
+      case 'Br': { var br = atom('Br', scale(d, BOND.CBr), gi, 'anchor'); bond(-1, br); break; }
+      case 'OH': {
+        var o = atom('O', scale(d, BOND.CO), gi, 'anchor'); bond(-1, o);
+        var od = sp3Dirs(scale(d, -1), phase)[0];
+        var oh = atom('H', add(atoms[o].p, scale(od, BOND.OH)), gi); bond(o, oh); break;
+      }
+      case 'NH2': {
+        var n = atom('N', scale(d, BOND.CN), gi, 'anchor'); bond(-1, n);
+        var nd = sp3Dirs(scale(d, -1), phase);
+        for (var k = 0; k < 2; k++){ var nh = atom('H', add(atoms[n].p, scale(nd[k], BOND.NH)), gi); bond(n, nh); }
+        break;
+      }
+      case 'Me': {
+        var c = atom('C', scale(d, BOND.CC), gi, 'anchor'); bond(-1, c);
+        sp3Dirs(scale(d, -1), phase).forEach(function(dd){ var h = atom('H', add(atoms[c].p, scale(dd, BOND.CH)), gi); bond(c, h); });
+        break;
+      }
+      case 'Et': {
+        var c1 = atom('C', scale(d, BOND.CC), gi, 'anchor'); bond(-1, c1);
+        var ds = sp3Dirs(scale(d, -1), phase);
+        var c2 = atom('C', add(atoms[c1].p, scale(ds[0], BOND.CC)), gi); bond(c1, c2);
+        for (var k2 = 1; k2 < 3; k2++){ var h2 = atom('H', add(atoms[c1].p, scale(ds[k2], BOND.CH)), gi); bond(c1, h2); }
+        sp3Dirs(scale(ds[0], -1), sub).forEach(function(dd){ var h3 = atom('H', add(atoms[c2].p, scale(dd, BOND.CH)), gi); bond(c2, h3); });
+        break;
+      }
+      case 'CH2OH': {
+        var cc = atom('C', scale(d, BOND.CC), gi, 'anchor'); bond(-1, cc);
+        var dsc = sp3Dirs(scale(d, -1), phase);
+        var oo = atom('O', add(atoms[cc].p, scale(dsc[0], BOND.CO)), gi); bond(cc, oo);
+        for (var k3 = 1; k3 < 3; k3++){ var hh = atom('H', add(atoms[cc].p, scale(dsc[k3], BOND.CH)), gi); bond(cc, hh); }
+        var ohd = sp3Dirs(scale(dsc[0], -1), sub)[0];
+        var ohh = atom('H', add(atoms[oo].p, scale(ohd, BOND.OH)), gi); bond(oo, ohh);
+        break;
+      }
+      case 'CHO': {
+        var ca = atom('C', scale(d, BOND.CC), gi, 'anchor'); bond(-1, ca);
+        var da = sp2Dirs(scale(d, -1), phase);
+        var oa = atom('O', add(atoms[ca].p, scale(da[0], BOND['C=O'])), gi); bond(ca, oa, 2);
+        var ha = atom('H', add(atoms[ca].p, scale(da[1], BOND.CH)), gi); bond(ca, ha);
+        break;
+      }
+      case 'COOH': {
+        var cb = atom('C', scale(d, BOND.CC), gi, 'anchor'); bond(-1, cb);
+        var db = sp2Dirs(scale(d, -1), phase);
+        var ob1 = atom('O', add(atoms[cb].p, scale(db[0], BOND['C=O'])), gi); bond(cb, ob1, 2);
+        var ob2 = atom('O', add(atoms[cb].p, scale(db[1], BOND.CO)), gi); bond(cb, ob2);
+        var hb = atom('H', add(atoms[ob2].p, scale(sp3Dirs(scale(db[1], -1), sub)[0], BOND.OH)), gi); bond(ob2, hb);
+        break;
+      }
+    }
+  }
+
+  // Place substituents largest first, and for each try 24 torsion phases (and
+  // six torsions of any second-level rotor such as the CH3 on an ethyl),
+  // keeping the one whose atoms stay farthest from everything already placed.
+  // A fixed stagger clashed hydrogens on neighbouring groups.
+  // Every substituent's anchor atom sits at a fixed distance along its bond,
+  // independent of torsion. Reserve those positions first so an early group
+  // cannot swing a hydrogen into the spot a later group's anchor must occupy.
+  // Real crowded carbons open the angles between bulky groups a few degrees
+  // and close the angles to H. Push each heavy direction away from the other
+  // heavy ones (about 3.5 degrees). Handedness is untouched: the signed volume
+  // of a near-regular tetrahedron is far from zero.
+  var dirs = item.groups.map(function(g){ return unit(g.pos); });
+  var heavy = item.groups.map(function(g){ return g.key !== 'H'; });
+  var relaxed = dirs.map(function(d, i){
+    if (!heavy[i]) return d;
+    var push = [0, 0, 0];
+    dirs.forEach(function(e, j){ if (j !== i && heavy[j]) push = add(push, e); });
+    return unit(add(d, scale(push, -0.06)));
+  });
+  var ANCHOR_LEN = { H: BOND.CH, Cl: BOND.CCl, Br: BOND.CBr, OH: BOND.CO, NH2: BOND.CN, Me: BOND.CC, Et: BOND.CC, CH2OH: BOND.CC, CHO: BOND.CC, COOH: BOND.CC };
+  var reserved = item.groups.map(function(g, i){ return { p: scale(relaxed[i], ANCHOR_LEN[g.key]), gi: null }; });
+  var order = item.groups.map(function(g, i){ return i; }).sort(function(a, b){ return SIZE[item.groups[b].key] - SIZE[item.groups[a].key]; });
+  var placed = {}; // gi -> { A, B }
+
+  function dist(p, q){ return Math.sqrt((p[0]-q[0])*(p[0]-q[0])+(p[1]-q[1])*(p[1]-q[1])+(p[2]-q[2])*(p[2]-q[2])); }
+  // Best torsion for group gi against every other group's current atoms (or,
+  // before a group is placed, its reserved anchor position).
+  function bestFor(gi){
+    var g = item.groups[gi], d = relaxed[gi], best = null, bestScore = -1;
+    var against = [];
+    item.groups.forEach(function(_, k){
+      if (k === gi) return;
+      if (placed[k]) placed[k].A.forEach(function(a){ against.push(a.p); }); else against.push(reserved[k].p);
+    });
+    for (var t = 0; t < 24 * 6; t++){
+      var phase = (t % 24) * Math.PI / 12, sub = Math.floor(t / 24) * Math.PI / 3, A = [], B = [];
+      grow(g, gi, d, phase, sub, A, B);
+      var score = 9;
+      for (var i = 1; i < A.length; i++) for (var j = 0; j < against.length; j++){ // i = 0 is the fixed anchor
+        var dd = dist(A[i].p, against[j]); if (dd < score) score = dd;
+      }
+      if (score > bestScore){ bestScore = score; best = { A: A, B: B, score: score }; }
+    }
+    return best;
+  }
+
+  // Greedy pass largest first, then three rounds of coordinate descent so the
+  // early groups can re-twist once they know where the later ones landed.
+  order.forEach(function(gi){ placed[gi] = bestFor(gi); });
+  for (var round = 0; round < 3; round++){
+    var moved = false;
+    order.forEach(function(gi){
+      var b = bestFor(gi);
+      if (b.score > placed[gi].score + 1e-6){ placed[gi] = b; moved = true; }
+    });
+    if (!moved) break;
+  }
+  item.groups.forEach(function(_, gi){
+    var base = atoms.length;
+    placed[gi].A.forEach(function(a){ atoms.push(a); });
+    placed[gi].B.forEach(function(b){ bonds.push({ a: b.a < 0 ? C0 : b.a + base, b: b.b + base, order: b.order }); });
+  });
+  return { atoms: atoms, bonds: bonds };
+}
+var SIZE = { COOH: 6, CH2OH: 5, Et: 5, CHO: 4, NH2: 3, OH: 2, Me: 4, Br: 1, Cl: 1, H: 0 };
+window.CHIRAL = { setSeed: setSeed, makeItem: makeItem, buildMolecule: buildMolecule };
+})();
+</script>
+
+<script type="module">
+import * as THREE from '../../shared/three.module.min.js';
+
+function cleanText(s){
+  return String(s == null ? '' : s).replace(/<[^>]+>/g, '').replace(/[\u2014\u2013]/g, ' - ').replace(/\u2026/g, '...').replace(/\s+/g, ' ').trim();
+}
+
+/* ------------------------------------------------------------------ */
+/* Storage                                                             */
+/* ------------------------------------------------------------------ */
+const KEY = 'atDAT_chirality_v1';
+const INTERVALS = [1, 3, 7, 14, 30, 60];
+const DAY = 86400000;
+function fresh(){ return { v: 1, items: {}, lifetime: { correct: 0, sureRight: 0, sureTotal: 0, rounds: 0 }, gallery: {} }; }
+function load(){
+  try { const raw = localStorage.getItem(KEY); if (!raw) return fresh(); const s = JSON.parse(raw); if (!s || s.v !== 1) return fresh();
+    s.items = s.items || {}; s.gallery = s.gallery || {}; s.lifetime = Object.assign({ correct: 0, sureRight: 0, sureTotal: 0, rounds: 0 }, s.lifetime || {}); return s; }
+  catch (e){ return fresh(); }
+}
+function save(s){ try { localStorage.setItem(KEY, JSON.stringify(s)); } catch (e) {} }
+const state = load();
+
+/* ------------------------------------------------------------------ */
+/* Items and rounds                                                    */
+/* ------------------------------------------------------------------ */
+function recent(){ return Object.values(state.items).sort((a, b) => (b.lastTs || 0) - (a.lastTs || 0)).slice(0, 10); }
+function accuracy(){ const r = recent(); if (r.length < 10) return null; return r.reduce((n, v) => n + (v.lastOk ? 1 : 0), 0) / r.length; }
+function tierNow(){ const a = accuracy(); return a != null && a >= 0.8 ? 2 : 1; }
+
+function buildItem(key){
+  const seed = parseInt(key.split(':')[1], 10);
+  CHIRAL.setSeed(seed);
+  const it = CHIRAL.makeItem(tierNow());
+  const options = it.opts.map((o, i) => ({ label: 'ABCD'[i], text: o.text, ok: !!o.ok, tax: o.tax || '', why: cleanText(o.why || '') }));
+  // the trap this item teaches, for the gallery
+  const trap = it.kind === 'achiral' ? 'the decoy' : (it.hAt === 'wedge' ? 'the flip' : 'the priorities');
+  return { key, seed, ...it, options, correct: options.findIndex(o => o.ok), trap };
+}
+function newSeed(){ let s = 1000 + Math.floor(Math.random() * 900000); while (state.items['c:' + s]) s++; return s; }
+function dueItems(now){ return Object.entries(state.items).filter(([, v]) => v.due && v.due <= now).sort((a, b) => a[1].due - b[1].due).map(([k]) => k); }
+function buildRound(){
+  const now = Date.now(), due = dueItems(now).slice(0, 4), keys = [];
+  const easy = due.find(k => state.items[k].lastOk);
+  if (easy){ keys.push(easy); due.splice(due.indexOf(easy), 1); } else keys.push('c:' + newSeed());
+  while (keys.length < 10) keys.push(due.length ? due.shift() : 'c:' + newSeed());
+  const items = keys.map(buildItem);
+  // keep decoys out of slot one and slot ten
+  for (const edge of [0, 9]){ if (items[edge].kind === 'achiral'){ const j = items.findIndex((x, i) => i > 0 && i < 9 && x.kind === 'RS'); if (j > 0){ const t = items[edge]; items[edge] = items[j]; items[j] = t; } } }
+  return items;
+}
+
+function record(item, ok, sure){
+  const now = Date.now();
+  const rec = state.items[item.key] || { seen: 0, correct: 0, level: 0, sure: 0, shaky: 0, triage: [] };
+  rec.seen++; if (ok) rec.correct++; rec.lastOk = ok; rec.lastTs = now; if (sure) rec.sure++; else rec.shaky++;
+  if (ok && sure){ rec.level = Math.min(rec.level + 1, INTERVALS.length - 1); rec.due = now + INTERVALS[rec.level] * DAY; }
+  else { rec.level = 0; rec.due = now + INTERVALS[0] * DAY; }
+  state.items[item.key] = rec;
+  state.lifetime.sureTotal += sure ? 1 : 0;
+  if (ok){
+    state.lifetime.correct++; if (sure) state.lifetime.sureRight++;
+    const g = state.gallery[item.trap] || { spacedCorrect: 0, lit: false, lastTs: 0 };
+    if (now - (g.lastTs || 0) > 20 * 3600000){ g.spacedCorrect++; g.lastTs = now; }
+    if (g.spacedCorrect >= 3) g.lit = true;
+    state.gallery[item.trap] = g;
+  }
+  save(state);
+}
+function recordTriage(item, what){ const r = state.items[item.key]; if (!r) return; r.triage = (r.triage || []).concat(what).slice(-6); save(state); }
+
+/* ------------------------------------------------------------------ */
+/* 2D: the wedge-dash drawing, exactly as the DAT draws it              */
+/* ------------------------------------------------------------------ */
+function svgMolecule(item){
+  const S = 92, C = [150, 130], L = 78;
+  let d = '';
+  const end = (p) => [C[0] + p[0] * L, C[1] - p[1] * L];
+  for (const g of item.groups){
+    const [ex, ey] = end(g.pos), dx = ex - C[0], dy = ey - C[1], len = Math.hypot(dx, dy), ux = dx / len, uy = dy / len, px = -uy, py = ux;
+    if (g.depth === 'wedge'){
+      d += `<polygon points="${C[0]},${C[1]} ${ex + px * 7},${ey + py * 7} ${ex - px * 7},${ey - py * 7}" fill="var(--ink)"/>`;
+    } else if (g.depth === 'dash'){
+      for (let t = 0.18; t <= 1; t += 0.14){ const w = 2 + t * 6, x = C[0] + dx * t, y = C[1] + dy * t; d += `<line x1="${x + px * w}" y1="${y + py * w}" x2="${x - px * w}" y2="${y - py * w}" stroke="var(--ink)" stroke-width="2.4" stroke-linecap="round"/>`; }
+    } else {
+      d += `<line x1="${C[0]}" y1="${C[1]}" x2="${ex}" y2="${ey}" stroke="var(--ink)" stroke-width="2.6" stroke-linecap="round"/>`;
+    }
+    const lx = ex + ux * 20, ly = ey + uy * 20;
+    d += `<text x="${lx}" y="${ly + 5}" text-anchor="middle" font-family="var(--mono)" font-size="15" fill="var(--ink)">${g.label}</text>`;
+  }
+  d += `<circle cx="${C[0]}" cy="${C[1]}" r="4" fill="var(--ink)"/>`;
+  return `<svg viewBox="0 0 300 260" role="img" aria-label="A carbon with four groups drawn with wedges and dashes">${d}</svg>`;
+}
+
+/* ------------------------------------------------------------------ */
+/* 3D bench: the drawing becomes the molecule                           */
+/*                                                                     */
+/* The reveal opens on the same wedge-dash drawing the student just    */
+/* answered, printed on a sheet of paper. The molecule lifts off the   */
+/* sheet into real depth, every atom and every hydrogen, lit by a      */
+/* studio environment and casting its shadow back onto the page. Then  */
+/* the priorities are badged, the arc the student traced is drawn, the */
+/* molecule turns until H points away, and the true arc is drawn in    */
+/* gold. The letter is never asserted: it is read off the arc.         */
+/* ------------------------------------------------------------------ */
+const SCALE = 0.78;                                   // angstrom -> scene units
+const RADIUS = { C: 0.34, N: 0.33, O: 0.32, Cl: 0.44, Br: 0.5, H: 0.2 };
+const ELEMENT = {
+  C:  { color: 0x2b2926, rough: 0.32 },
+  H:  { color: 0xf4f1e9, rough: 0.42 },
+  O:  { color: 0xc42f1d, rough: 0.28 },
+  N:  { color: 0x2c5ad4, rough: 0.28 },
+  Cl: { color: 0x3fb257, rough: 0.28 },
+  Br: { color: 0x8c2810, rough: 0.28 }
+};
+const GOLD = 0xe6d08a, GHOST = 0x8a8375, PAPER_Z = -1.7;
+function subscripted(label){ return String(label).replace(/\d/g, d => '<sub>' + d + '</sub>'); }
+function easeInOut(k){ return k < 0.5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2; }
+function easeOut(k){ return 1 - Math.pow(1 - k, 3); }
+
+// A small studio: warm key overhead, cool fill left, warm rim behind, a soft
+// bounce from the camera side. Baked to a prefiltered environment so every
+// sphere and bond reflects a real room instead of a flat colour.
+function studioEnvironment(renderer){
+  const pm = new THREE.PMREMGenerator(renderer);
+  const room = new THREE.Scene();
+  room.add(new THREE.Mesh(new THREE.BoxGeometry(24, 24, 24), new THREE.MeshStandardMaterial({ color: 0x16140f, side: THREE.BackSide, roughness: 1 })));
+  const panel = (w, h, color, intensity, pos) => {
+    const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ color: new THREE.Color(color).multiplyScalar(intensity), side: THREE.DoubleSide }));
+    m.position.set(pos[0], pos[1], pos[2]); m.lookAt(0, 0, 0); room.add(m);
+  };
+  panel(7, 3.5, 0xfff0d2, 9,   [0, 9, 3]);
+  panel(3, 7, 0xd6e3ff, 3.5,   [-10, 2, 4]);
+  panel(4, 5, 0xffe2b0, 5,     [8, 3, -8]);
+  panel(12, 2, 0xffffff, 1.2,  [0, -4, 10]);
+  const tex = pm.fromScene(room, 0.04).texture;
+  pm.dispose();
+  return tex;
+}
+
+// The sheet of paper: the DAT drawing of this molecule, drawn from the same
+// coordinates the 3D model uses so the flattened molecule sits exactly on it.
+function paperTexture(item, mol){
+  const W = 1280, H = 880, PPU = 180, cx = W / 2, cy = H / 2;
+  const c = document.createElement('canvas'); c.width = W; c.height = H;
+  const x = c.getContext('2d');
+  const g = x.createRadialGradient(cx, cy, 80, cx, cy, 900); g.addColorStop(0, '#f3ecda'); g.addColorStop(1, '#e3dac3');
+  x.fillStyle = g; x.fillRect(0, 0, W, H);
+  x.fillStyle = 'rgba(80,60,30,0.05)';
+  for (let i = 0; i < 2600; i++){ x.fillRect(Math.random() * W, Math.random() * H, 1.5, 1.5); }
+  const ink = '#1c1913';
+  const P = (p) => [cx + p[0] * SCALE * PPU, cy - p[1] * SCALE * PPU];
+  const center = mol.atoms.find(a => a.role === 'center');
+  const anchors = mol.atoms.filter(a => a.role === 'anchor');
+  const C = P(center.p);
+  for (const a of anchors){
+    const grp = item.groups[a.group], E = P(a.p);
+    const dx = E[0] - C[0], dy = E[1] - C[1], L = Math.hypot(dx, dy), ux = dx / L, uy = dy / L, px = -uy, py = ux;
+    x.fillStyle = ink; x.strokeStyle = ink; x.lineCap = 'round';
+    if (grp.depth === 'wedge'){
+      x.beginPath(); x.moveTo(C[0], C[1]); x.lineTo(E[0] + px * 13, E[1] + py * 13); x.lineTo(E[0] - px * 13, E[1] - py * 13); x.closePath(); x.fill();
+    } else if (grp.depth === 'dash'){
+      x.lineWidth = 5;
+      for (let t = 0.16; t <= 1.001; t += 0.12){ const w = 3 + t * 11, X = C[0] + dx * t, Y = C[1] + dy * t; x.beginPath(); x.moveTo(X + px * w, Y + py * w); x.lineTo(X - px * w, Y - py * w); x.stroke(); }
+    } else {
+      x.lineWidth = 6; x.beginPath(); x.moveTo(C[0], C[1]); x.lineTo(E[0], E[1]); x.stroke();
+    }
+    // label just past the bond end, with real subscripts
+    const lx = E[0] + ux * 46, ly = E[1] + uy * 46;
+    const runs = String(grp.label).split(/(\d+)/).filter(Boolean);
+    x.textBaseline = 'middle'; x.fillStyle = ink;
+    let width = 0; const parts = runs.map(r => { const sub = /^\d+$/.test(r); x.font = (sub ? '600 30px' : '600 46px') + ' Georgia, serif'; const w = x.measureText(r).width; width += w; return { r, sub, w }; });
+    let X = lx - width / 2;
+    for (const p of parts){ x.font = (p.sub ? '600 30px' : '600 46px') + ' Georgia, serif'; x.textAlign = 'left'; x.fillText(p.r, X, ly + (p.sub ? 12 : 0)); X += p.w; }
+  }
+  x.fillStyle = ink; x.beginPath(); x.arc(C[0], C[1], 7, 0, Math.PI * 2); x.fill();
+  const tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 8; tex.needsUpdate = true;
+  return tex;
+}
+
+class Bench {
+  constructor(stage){
+    this.stage = stage; this.ok = false;
+    try { this.reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e){ this.reduced = false; }
+    try {
+      this.renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
+      this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+      this.renderer.shadowMap.enabled = true; this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+      this.renderer.toneMapping = THREE.ACESFilmicToneMapping; this.renderer.toneMappingExposure = 1.05;
+      this.renderer.outputColorSpace = THREE.SRGBColorSpace;
+      this.renderer.setClearColor(0x0e0c08, 1);
+      stage.insertBefore(this.renderer.domElement, stage.firstChild);
+      this.ok = true;
+    } catch (e){
+      const f = document.createElement('div'); f.className = 'fallback';
+      f.textContent = 'The bench needs WebGL, which this browser has turned off. The coaching below still applies.';
+      stage.appendChild(f); return;
+    }
+    this.scene = new THREE.Scene();
+    this.env = studioEnvironment(this.renderer);
+    this.scene.environment = this.env;
+    this.scene.background = this.env; this.scene.backgroundBlurriness = 1; this.scene.backgroundIntensity = 0.16;
+    this.camera = new THREE.PerspectiveCamera(34, 16 / 10, 0.1, 60);
+    this.camera.position.set(0, 0.15, 7.4); this.camera.lookAt(0, 0, 0);
+
+    const key = new THREE.DirectionalLight(0xfff1d8, 2.4); key.position.set(2.6, 4.2, 5.5); key.castShadow = true;
+    key.shadow.mapSize.set(2048, 2048); key.shadow.bias = -0.0004; key.shadow.normalBias = 0.02;
+    Object.assign(key.shadow.camera, { left: -5, right: 5, top: 5, bottom: -5, near: 1, far: 20 });
+    this.scene.add(key);
+    const fill = new THREE.DirectionalLight(0xcfdcff, 0.55); fill.position.set(-4, 1, 3); this.scene.add(fill);
+    this.scene.add(new THREE.HemisphereLight(0x9a917f, 0x14120e, 0.35));
+
+    // the page and the bench it lies on
+    this.paper = new THREE.Mesh(new THREE.PlaneGeometry(7.1, 4.9), new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.96, metalness: 0 }));
+    this.paper.position.z = PAPER_Z; this.paper.receiveShadow = true; this.scene.add(this.paper);
+    const slab = new THREE.Mesh(new THREE.PlaneGeometry(40, 40), new THREE.MeshStandardMaterial({ color: 0x0f0d09, roughness: 0.85, metalness: 0.1 }));
+    slab.position.z = PAPER_Z - 0.03; slab.receiveShadow = true; this.scene.add(slab);
+
+    this.spin = new THREE.Group();            // the student's drag
+    this.mol = new THREE.Group();             // rotated by the reveal
+    this.body = new THREE.Group();            // atoms and bonds
+    this.arcs = new THREE.Group();
+    this.mol.add(this.body); this.mol.add(this.arcs); this.spin.add(this.mol); this.scene.add(this.spin);
+
+    this.labels = document.createElement('div'); this.labels.className = 'labels'; stage.appendChild(this.labels);
+    this.letterEl = document.createElement('div'); this.letterEl.className = 'letter'; stage.appendChild(this.letterEl);
+
+    this.tweens = []; this.timers = []; this.dragging = false; this.swayFrom = 0;
+    this.bind(); this.resize(); window.addEventListener('resize', () => this.resize()); this.loop();
+  }
+  resize(){ if (!this.ok) return; const w = this.stage.clientWidth || 960, h = this.stage.clientHeight || 600; this.renderer.setSize(w, h, false); this.camera.aspect = w / h; this.camera.updateProjectionMatrix(); }
+  clear(g){ while (g.children.length){ const c = g.children.pop(); c.traverse && c.traverse(o => { if (o.geometry) o.geometry.dispose(); if (o.material){ if (o.material.map) o.material.map.dispose(); o.material.dispose(); } }); } }
+  bind(){
+    const el = this.renderer.domElement; let drag = null;
+    el.addEventListener('pointerdown', e => { drag = { x: e.clientX, y: e.clientY }; this.dragging = true; el.setPointerCapture(e.pointerId); });
+    el.addEventListener('pointerup', () => { drag = null; this.dragging = false; });
+    el.addEventListener('pointercancel', () => { drag = null; this.dragging = false; });
+    el.addEventListener('pointermove', e => { if (!drag) return; this.spin.rotation.y += (e.clientX - drag.x) * 0.008; this.spin.rotation.x += (e.clientY - drag.y) * 0.008; drag = { x: e.clientX, y: e.clientY }; });
+    for (const b of this.stage.querySelectorAll('[data-view]')) b.addEventListener('click', () => this.view(b.dataset.view));
+  }
+  view(name){
+    this.spin.rotation.set(0, 0, 0); this.swayFrom = performance.now();
+    this.mol.quaternion.copy(name === 'away' ? this.qAway : new THREE.Quaternion());
+    for (const b of this.stage.querySelectorAll('[data-view]')) b.classList.toggle('on', b.dataset.view === name);
+  }
+  tween(ms, fn, done){ const t = { t0: performance.now(), ms: this.reduced ? 0 : ms, fn, done }; this.tweens.push(t); if (!t.ms){ fn(1); done && done(); this.tweens.pop(); } return t; }
+  later(ms, fn){ if (this.reduced){ fn(); return; } this.timers.push(setTimeout(fn, ms)); }
+  cancelAll(){ for (const t of this.timers) clearTimeout(t); this.timers = []; this.tweens = []; }
+
+  // place a unit cylinder between two points
+  setBond(mesh, a, b, radius){
+    const d = b.clone().sub(a), L = d.length();
+    mesh.position.copy(a).add(b).multiplyScalar(0.5);
+    mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), d.normalize());
+    mesh.scale.set(radius, Math.max(L, 0.001), radius);
+  }
+
+  build(item){
+    this.cancelAll();
+    this.clear(this.body); this.clear(this.arcs); this.labels.innerHTML = ''; this.letterEl.innerHTML = ''; this.letterEl.className = 'letter';
+    this.mol.quaternion.identity(); this.spin.rotation.set(0, 0, 0); this.mol.position.set(0, 0, 0);
+    const mol = CHIRAL.buildMolecule(item);
+    this.molData = mol;
+    if (this.paper.material.map) this.paper.material.map.dispose();
+    this.paper.material.map = paperTexture(item, mol); this.paper.material.needsUpdate = true;
+
+    this.atoms = mol.atoms.map((a) => {
+      const el = ELEMENT[a.el], r = RADIUS[a.el];
+      const m = new THREE.Mesh(new THREE.SphereGeometry(r, 48, 32), new THREE.MeshPhysicalMaterial({ color: el.color, roughness: el.rough, metalness: 0, clearcoat: 0.7, clearcoatRoughness: 0.22, envMapIntensity: 1.1 }));
+      m.castShadow = true; m.receiveShadow = true;
+      m.userData.home = new THREE.Vector3(a.p[0], a.p[1], a.p[2]).multiplyScalar(SCALE);
+      m.userData.child = !(a.role === 'center' || a.role === 'anchor');
+      m.userData.atom = a; this.body.add(m); return m;
+    });
+    const bondMat = new THREE.MeshStandardMaterial({ color: 0xb9a878, roughness: 0.32, metalness: 0.7, envMapIntensity: 1.0 });
+    const unitCyl = new THREE.CylinderGeometry(1, 1, 1, 24, 1, true);
+    this.bonds = [];
+    for (const b of mol.bonds){
+      const toH = mol.atoms[b.a].el === 'H' || mol.atoms[b.b].el === 'H';
+      const n = b.order === 2 ? 2 : 1;
+      for (let k = 0; k < n; k++){
+        const m = new THREE.Mesh(unitCyl, bondMat); m.castShadow = true; m.receiveShadow = true;
+        m.userData = { a: b.a, b: b.b, radius: n === 2 ? 0.055 : (toH ? 0.062 : 0.088), offset: n === 2 ? (k ? 0.1 : -0.1) : 0 };
+        this.body.add(m); this.bonds.push(m);
+      }
+    }
+    // labels on anchors, in HTML so they are crisp with real subscripts
+    this.labelNodes = [];
+    for (const m of this.atoms){
+      const a = m.userData.atom; if (a.role !== 'anchor') continue;
+      const d = document.createElement('div'); d.className = 'lab'; d.innerHTML = subscripted(item.groups[a.group].label);
+      this.labels.appendChild(d); this.labelNodes.push({ el: d, mesh: m, off: RADIUS[a.el] + 0.34, group: a.group });
+    }
+    this.badgeNodes = [];
+    const h = item.groups[item.order[3]];
+    this.qAway = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(h.pos[0], h.pos[1], h.pos[2]).normalize(), new THREE.Vector3(0, 0, -1));
+    // fit the camera to this molecule
+    let rad = 0; for (const m of this.atoms) rad = Math.max(rad, m.userData.home.length() + RADIUS[m.userData.atom.el]);
+    const dist = Math.max(6.4, (rad + 0.9) / Math.tan(this.camera.fov * Math.PI / 360) * 1.02);
+    this.camera.position.set(0, 0.15, dist); this.camera.lookAt(0, 0, 0);
+    this.pose(this.reduced ? 1 : 0);
+  }
+  // t = 0: the molecule flattened onto the page, exactly on the drawing, no
+  // hydrogens yet. t = 1: the real molecule floating in front of the page.
+  pose(t){
+    const k = easeOut(Math.min(1, Math.max(0, t)));
+    this.mol.position.z = PAPER_Z * (1 - k) + 0.02;
+    for (const m of this.atoms){
+      const h = m.userData.home; m.position.set(h.x, h.y, h.z * k);
+      const s = m.userData.child ? Math.max(0.001, easeOut(Math.max(0, (t - 0.35) / 0.65))) : 1; m.scale.setScalar(s);
+    }
+    for (const b of this.bonds){
+      const A = this.atoms[b.userData.a], B = this.atoms[b.userData.b];
+      const pa = A.position.clone(), pb = B.position.clone();
+      if (b.userData.offset){ const dir = pb.clone().sub(pa).normalize(); const perp = new THREE.Vector3().crossVectors(dir, Math.abs(dir.y) < 0.9 ? new THREE.Vector3(0, 1, 0) : new THREE.Vector3(1, 0, 0)).normalize().multiplyScalar(b.userData.offset); pa.add(perp); pb.add(perp); }
+      const vis = !(A.userData.child && A.scale.x < 0.02) && !(B.userData.child && B.scale.x < 0.02);
+      b.visible = vis; if (vis) this.setBond(b, pa, pb, b.userData.radius);
+    }
+  }
+  badges(item){
+    item.seq.forEach((gi, k) => {
+      const node = this.labelNodes.find(n => n.group === gi); if (!node) return;
+      const d = document.createElement('div'); d.className = 'badge'; d.textContent = String(k + 1); this.labels.appendChild(d);
+      this.badgeNodes.push({ el: d, mesh: node.mesh, group: gi, badge: true });
+      this.later(k * 140, () => d.classList.add('in'));
+    });
+  }
+  // Arc 1 -> 2 -> 3 in the plane facing the camera AFTER q, as a glowing tube.
+  // Returns the letter the arc reads, so tests can compare it to the seed.
+  drawArc(item, q, kind){
+    const gold = kind === 'truth';
+    const pts = item.seq.map(gi => { const g = item.groups[gi]; return new THREE.Vector3(g.pos[0], g.pos[1], g.pos[2]).applyQuaternion(q); });
+    const ang = pts.map(p => Math.atan2(p.y, p.x));
+    const a0 = ang[0], a1 = ang[1], a2 = ang[2];
+    const cw = ((a1 - a0 + Math.PI * 3) % (Math.PI * 2) - Math.PI) < 0;
+    const total = cw ? ((a0 - a2 + Math.PI * 2) % (Math.PI * 2)) : ((a2 - a0 + Math.PI * 2) % (Math.PI * 2));
+    const R = 1.12, Z = 1.05, inv = q.clone().invert(), N = 48, path = [];
+    for (let i = 0; i <= N; i++){ const a = a0 + (cw ? -1 : 1) * total * (i / N); path.push(new THREE.Vector3(Math.cos(a) * R, Math.sin(a) * R, Z).applyQuaternion(inv)); }
+    const curve = new THREE.CatmullRomCurve3(path);
+    const group = new THREE.Group();
+    const color = gold ? GOLD : GHOST;
+    const core = new THREE.Mesh(new THREE.TubeGeometry(curve, 96, gold ? 0.05 : 0.035, 12, false), new THREE.MeshBasicMaterial({ color, toneMapped: false, depthTest: false, transparent: true, opacity: gold ? 1 : 0.7 }));
+    const glow = new THREE.Mesh(new THREE.TubeGeometry(curve, 96, gold ? 0.15 : 0.08, 12, false), new THREE.MeshBasicMaterial({ color, toneMapped: false, transparent: true, opacity: gold ? 0.14 : 0.05, depthTest: false, depthWrite: false, blending: THREE.AdditiveBlending }));
+    core.renderOrder = 20; glow.renderOrder = 19; group.add(glow); group.add(core);
+    const aEnd = a0 + (cw ? -total : total), tip = new THREE.Vector3(Math.cos(aEnd) * R, Math.sin(aEnd) * R, Z).applyQuaternion(inv);
+    const tangent = new THREE.Vector3(-Math.sin(aEnd), Math.cos(aEnd), 0).multiplyScalar(cw ? -1 : 1).applyQuaternion(inv);
+    const cone = new THREE.Mesh(new THREE.ConeGeometry(gold ? 0.11 : 0.08, gold ? 0.26 : 0.2, 20), core.material);
+    cone.position.copy(tip).add(tangent.clone().multiplyScalar(0.1)); cone.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), tangent); cone.renderOrder = 20; cone.visible = false; group.add(cone);
+    group.userData.mats = [core.material, glow.material];
+    if (gold && this.ghostGroup){ const g = this.ghostGroup; this.tween(700, k => { g.userData.mats[0].opacity = 0.7 - 0.5 * k; g.userData.mats[1].opacity = 0.05 - 0.05 * k; }); }
+    if (!gold) this.ghostGroup = group;
+    this.arcs.add(group);
+    // draw it on
+    const per = 12 * 6, count = core.geometry.index.count;
+    core.geometry.setDrawRange(0, 0); glow.geometry.setDrawRange(0, 0);
+    this.tween(gold ? 900 : 800, k => { const n = Math.floor(easeInOut(k) * count / per) * per; core.geometry.setDrawRange(0, n); glow.geometry.setDrawRange(0, n); }, () => { cone.visible = true; });
+    return cw ? 'R' : 'S';
+  }
+  letter(kind, ch, caption){
+    const d = document.createElement('div'); d.className = 'glyph ' + kind; d.innerHTML = `<b>${ch}</b><span>${caption}</span>`;
+    this.letterEl.appendChild(d); this.later(30, () => d.classList.add('in'));
+    if (kind === 'truth'){ const g = this.letterEl.querySelector('.ghost'); if (g) g.classList.add('dim'); }
+  }
+  glowPair(item){
+    const ranks = item.groups.map(g => g.rank), dup = ranks.find((r, i) => ranks.indexOf(r) !== i);
+    item.groups.forEach((g, i) => {
+      if (g.rank !== dup) return;
+      for (const m of this.atoms) if (m.userData.atom.group === i){
+        const halo = new THREE.Mesh(new THREE.SphereGeometry(RADIUS[m.userData.atom.el] + 0.16, 32, 24), new THREE.MeshBasicMaterial({ color: GOLD, transparent: true, opacity: 0.0, depthTest: false, depthWrite: false, blending: THREE.AdditiveBlending }));
+        halo.renderOrder = 18; m.add(halo); this.tween(700, k => { halo.material.opacity = 0.42 * easeOut(k); });
+      }
+      const node = this.labelNodes.find(n => n.group === i); if (node) node.el.classList.add('lit');
+    });
+  }
+  show(item, onBeat){
+    if (!this.ok){ onBeat && onBeat(3); return; }
+    this.build(item); this.ghostGroup = null; this.letters = { ghost: null, truth: null };
+    for (const b of this.stage.querySelectorAll('[data-view]')) b.classList.remove('on');
+    this.swayFrom = performance.now(); this.settled = false;
+    const lift = () => this.tween(1500, k => this.pose(k));
+    const turn = () => this.tween(1600, k => { this.mol.quaternion.slerpQuaternions(new THREE.Quaternion(), this.qAway, easeInOut(k)); }, () => { this.stage.querySelector('[data-view="away"]').classList.add('on'); });
+    if (this.reduced){
+      this.pose(1); this.badges(item);
+      if (item.kind === 'RS'){ this.letters.ghost = this.drawArc(item, new THREE.Quaternion(), 'ghost'); this.mol.quaternion.copy(this.qAway); this.letters.truth = this.drawArc(item, this.qAway, 'truth'); this.letter('ghost', this.letters.ghost, 'off the page'); this.letter('truth', this.letters.truth, 'H away'); }
+      else { this.mol.quaternion.copy(this.qAway); this.glowPair(item); }
+      this.stage.querySelector('[data-view="away"]').classList.add('on'); this.settled = true; onBeat(3); return;
+    }
+    onBeat(0); lift();
+    if (item.kind === 'RS'){
+      this.later(1500, () => { this.badges(item); onBeat(1); });
+      this.later(1900, () => { this.letters.ghost = this.drawArc(item, new THREE.Quaternion(), 'ghost'); this.letter('ghost', this.letters.ghost, 'traced off the page'); });
+      this.later(3300, () => { turn(); onBeat(2); });
+      this.later(5100, () => { this.letters.truth = this.drawArc(item, this.qAway, 'truth'); this.letter('truth', this.letters.truth, 'with H away'); onBeat(3); this.settled = true; });
+    } else {
+      this.later(1500, () => { this.glowPair(item); onBeat(1); });
+      this.later(2600, () => { turn(); onBeat(3); this.settled = true; });
+    }
+  }
+  project(v){ const p = v.clone().project(this.camera); const w = this.stage.clientWidth, h = this.stage.clientHeight; return { x: (p.x + 1) / 2 * w, y: (1 - p.y) / 2 * h, z: p.z }; }
+  placeLabels(){
+    if (!this.labelNodes) return;
+    const center = new THREE.Vector3(); this.mol.getWorldPosition(center);
+    const cs = this.project(center);
+    const camDir = new THREE.Vector3(); this.camera.getWorldDirection(camDir);
+    const h = this.stage.clientHeight || 600, dist = this.camera.position.length();
+    const pxPerUnit = (h / 2) / (dist * Math.tan(this.camera.fov * Math.PI / 360));
+    for (const n of this.labelNodes.concat(this.badgeNodes || [])){
+      const wp = new THREE.Vector3(); n.mesh.getWorldPosition(wp);
+      const s = this.project(wp);
+      const depth = wp.clone().sub(center).dot(camDir);        // positive = farther from the camera
+      let x = s.x, y = s.y;
+      if (!n.badge){
+        let dx = s.x - cs.x, dy = s.y - cs.y, L = Math.hypot(dx, dy);
+        if (L < 14){ dx = 0; dy = 1; L = 1; s.y += 22; }        // pointing straight at or away from you: hang the label well below
+        const rPx = RADIUS[n.mesh.userData.atom.el] * pxPerUnit;
+        x = s.x + dx / L * (rPx + 24); y = s.y + dy / L * (rPx + 24);
+      }
+      n.el.style.transform = `translate(-50%,-50%) translate(${x.toFixed(1)}px,${y.toFixed(1)}px)`;
+      n.el.style.opacity = depth > 0.9 ? (n.badge ? '0.8' : '0.5') : '1';
+      n.el.style.zIndex = depth > 0 ? '1' : '3';
+    }
+  }
+  loop(){
+    const tick = () => {
+      if (this.ok && !this.stage.closest('section').hidden){
+        const now = performance.now();
+        for (const t of this.tweens.slice()){ const k = Math.min(1, (now - t.t0) / t.ms); t.fn(k); if (k >= 1){ this.tweens.splice(this.tweens.indexOf(t), 1); t.done && t.done(); } }
+        if (this.settled && !this.dragging && !this.reduced){ const s = (now - this.swayFrom) / 1000; this.spin.rotation.y = Math.sin(s * 0.5) * 0.07; this.spin.rotation.x = Math.sin(s * 0.33) * 0.03; }
+        this.renderer.render(this.scene, this.camera);
+        this.placeLabels();
+      }
+      requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Screens                                                             */
+/* ------------------------------------------------------------------ */
+const $ = id => document.getElementById(id);
+const promptEl = $('prompt'), revealEl = $('reveal'), endEl = $('roundEnd'), dotsEl = $('dots');
+let bench = null, round = [], idx = 0, current = null, confidence = null, roundStats = { correct: 0, sureRight: 0, sureTotal: 0 };
+
+function drawDots(){ dotsEl.innerHTML = round.map((_, i) => `<span class="dot${i < idx ? ' done' : ''}${i === idx ? ' now' : ''}"></span>`).join(''); }
+
+function renderPrompt(item){
+  current = item; confidence = null;
+  promptEl.hidden = false; revealEl.hidden = true; endEl.hidden = true; drawDots();
+  promptEl.innerHTML = `
+    <span class="label">R or S · item ${idx + 1} of ${round.length}</span>
+    <div class="mol">${svgMolecule(item)}</div>
+    <p class="ask">What is the configuration at this carbon?</p>
+    <div class="conf">
+      <button type="button" class="chip" data-conf="sure" aria-pressed="false">Sure</button>
+      <button type="button" class="chip" data-conf="shaky" aria-pressed="false">Shaky</button>
+      <span class="hint" id="confHint">Tap how you feel first, then pick. Neither one is the right one.</span>
+    </div>
+    <div class="opts">${item.options.map((o, i) => `<button type="button" class="opt" data-i="${i}" disabled><span class="k">${o.label}</span><span>${o.text}</span></button>`).join('')}</div>`;
+  for (const c of promptEl.querySelectorAll('[data-conf]')) c.addEventListener('click', () => {
+    confidence = c.dataset.conf;
+    for (const x of promptEl.querySelectorAll('[data-conf]')) x.setAttribute('aria-pressed', String(x === c));
+    for (const o of promptEl.querySelectorAll('.opt')) o.disabled = false;
+    $('confHint').textContent = 'Now pick.';
+  });
+  for (const o of promptEl.querySelectorAll('.opt')) o.addEventListener('click', () => commit(parseInt(o.dataset.i, 10)));
+  promptEl.scrollIntoView({ block: 'start' });
+}
+
+function commit(i){
+  const item = current, ok = item.options[i].ok, sure = confidence === 'sure';
+  for (const o of promptEl.querySelectorAll('.opt')){ o.disabled = true; const k = parseInt(o.dataset.i, 10); o.classList.toggle('picked', k === i); o.classList.toggle('ok', item.options[k].ok); }
+  promptEl.classList.add('locked');
+  record(item, ok, sure);
+  roundStats.sureTotal += sure ? 1 : 0; if (ok){ roundStats.correct++; if (sure) roundStats.sureRight++; }
+  renderReveal(item, i, ok);
+}
+
+function renderReveal(item, i, ok){
+  revealEl.hidden = false;
+  if (!bench) bench = new Bench($('stage'));
+  bench.resize();
+  const v = $('verdict'), c = $('coach'), t = $('triage'), beat = $('beat');
+  v.className = 'verdict ' + (ok ? 'good' : 'notyet');
+  v.textContent = ok ? 'You can read it.' : 'Not yet. Here is the move.';
+  const seqNames = item.seq.map(gi => item.groups[gi].label).join(', then ');
+  const beatText = {
+    0: 'The drawing becomes the molecule.',
+    1: item.kind === 'RS' ? `Traced straight off the page: ${item.apparent}. Now watch H.` : 'Look at the two groups that light up.',
+    2: `Turning until H points away from you.`,
+    3: item.kind === 'RS' ? `With H away, 1 to 2 to 3 reads ${item.answer}.` : 'Two matching groups. Not a stereocenter.'
+  };
+  beat.textContent = '';
+  bench.show(item, (n) => { beat.textContent = beatText[n] || ''; });
+  if (ok){
+    c.textContent = item.kind === 'RS'
+      ? `Priorities ${seqNames}. ${item.hAt === 'wedge' ? 'H was on a wedge, so you flipped the letter you traced. That is the whole move.' : 'H was on a dash, already pointing away, so the letter you traced is the letter you keep.'}`
+      : 'Two of the groups match, so this carbon was never a stereocenter. Spotting that before you start tracing is the skill.';
+    t.hidden = true;
+  } else {
+    c.textContent = item.options[i].why || 'Rank the three drawn groups, trace 1-2-3, then check where H sits.';
+    t.hidden = false;
+    for (const b of t.querySelectorAll('[data-triage]')){ b.setAttribute('aria-pressed', 'false'); b.onclick = () => { for (const x of t.querySelectorAll('[data-triage]')) x.setAttribute('aria-pressed', String(x === b)); recordTriage(item, b.dataset.triage); }; }
+  }
+  $('continue').onclick = next;
+  revealEl.scrollIntoView({ block: 'start' });
+}
+
+function next(){ idx++; promptEl.classList.remove('locked'); if (idx < round.length) renderPrompt(round[idx]); else finishRound(); }
+
+function finishRound(){
+  state.lifetime.rounds++; save(state);
+  promptEl.hidden = true; revealEl.hidden = true; endEl.hidden = false; idx = round.length; drawDots();
+  const L = state.lifetime;
+  const trustLife = L.sureTotal ? Math.round(100 * L.sureRight / L.sureTotal) : null;
+  const trustRound = roundStats.sureTotal ? Math.round(100 * roundStats.sureRight / roundStats.sureTotal) : null;
+  const names = ['the flip', 'the priorities', 'the decoy'];
+  const shelves = names.map(n => { const g = state.gallery[n]; const lit = g && g.lit; return `<div class="shelf${lit ? ' lit' : ''}"><div class="model"></div><div class="name">${lit ? n : ''}</div></div>`; }).join('');
+  endEl.innerHTML = `
+    <span class="label">Round complete</span>
+    <h2>That is a real session.</h2>
+    <div class="stats">
+      <div class="stat"><b>${L.correct}</b><span>centers you can read, all time</span></div>
+      <div class="stat"><b>${trustLife == null ? '-' : trustLife + '%'}</b><span>your gut is getting more trustworthy${trustRound != null && trustRound >= (trustLife || 0) ? ' · ' + trustRound + '% this round' : ''}</span></div>
+      <div class="stat"><b>${L.rounds}</b><span>sessions completed</span></div>
+    </div>
+    <div class="gallery"><span class="label">The gallery</span><div class="shelves">${shelves}</div><p class="muted">A trap takes its shelf after you beat it three times on three different days.</p></div>
+    <div class="actions">
+      <button type="button" class="primary" id="again">Another round</button>
+      <button type="button" class="secondary" id="doneBtn">Done for today</button>
+    </div>
+    <div class="done" id="doneMsg" hidden>Come back tomorrow. The ones you were shaky on will be waiting, and the flip will feel more automatic than it does right now.</div>`;
+  $('again').onclick = startRound;
+  $('doneBtn').onclick = () => { $('doneMsg').hidden = false; $('again').hidden = true; $('doneBtn').hidden = true; };
+  endEl.scrollIntoView({ block: 'start' });
+}
+
+function startRound(){ round = buildRound(); idx = 0; roundStats = { correct: 0, sureRight: 0, sureTotal: 0 }; renderPrompt(round[0]); }
+
+window.ChiralityBench = { version: '1.0.0', startRound, state, get round(){ return round; }, get bench(){ return bench; } };
+startRound();
+</script>
+</body>
+</html>
