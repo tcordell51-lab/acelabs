@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tree module dev harness</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="tree.css">
+<script src="../../../shared/smiles-drawer.min.js"></script>
+<script src="../../../games/ochem-bank-1000.js"></script>
+</head>
+<body>
+<div class="wrap"><div id="roots"></div></div>
+<script type="module">
+import { renderRoot } from './shell.js';
+const id = new URLSearchParams(location.search).get('module');
+const mod = await import(`./modules/${id}.js`);
+renderRoot(mod, document.getElementById('roots'), 1);
+window.TreeDev = { id, meta: mod.meta };
+</script>
+</body>
+</html>

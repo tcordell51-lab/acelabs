@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><link rel="icon" href="data:,"><title>smiles probe</title></head>
+<body style="background:#14120c;color:#eee;font-family:monospace">
+<div id="out"></div>
+<script src="../../../shared/smiles-drawer.min.js"></script>
+<script>
+// Render every SMILES in ?s=a,b,c and report parse failures in window.RESULT
+const list = (new URLSearchParams(location.search).get('s') || 'CCO,CC(=O)C,c1ccccc1,C/C=C/C,C[C@H](O)CC').split(',');
+const drawer = new SmilesDrawer.SvgDrawer({ width: 260, height: 180, bondThickness: 1.5, bondLength: 22, shortBondLength: 0.8, fontSizeLarge: 9, fontSizeSmall: 6.5, padding: 14, compactDrawing: false, terminalCarbons: false, explicitHydrogens: false, themes: { dark: { C: '#ece6d7', O: '#e0705a', N: '#5b8def', F: '#9ad39a', CL: '#3fb257', BR: '#c47a4a', I: '#a06bd6', P: '#f0a05a', S: '#e2c34b', B: '#d8a0a0', SI: '#b0b0b0', H: '#ece6d7', BACKGROUND: '#14120c' } } });
+window.RESULT = { ok: [], bad: [] };
+let i = 0;
+for (const s of list){
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); svg.setAttribute('id', 'm' + (i++)); svg.setAttribute('width', 260); svg.setAttribute('height', 180); document.getElementById('out').appendChild(svg);
+  try { SmilesDrawer.parse(s, tree => { drawer.draw(tree, svg, 'dark'); window.RESULT.ok.push(s); }, err => { window.RESULT.bad.push(s + ' :: ' + err); }); }
+  catch (e){ window.RESULT.bad.push(s + ' :: ' + e.message); }
+}
+</script>
+</body></html>
