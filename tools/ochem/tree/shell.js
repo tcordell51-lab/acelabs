@@ -8,6 +8,7 @@ import { rootsFor } from '../roots/route.js';
 import * as RX from './shared/reactions.js';
 import { GROUP_MAP, bankItems, bankToItem } from './shared/bank-map.js';
 import { drawSmiles } from './draw.js';
+import { makeStage, STAGE_CSS, tetraAround, unit, sub as vsub, vadd, vmul } from './stage3d.js';
 
 const KEY = 'atDAT_ochemTree_v1';
 function load(){ try { const r = localStorage.getItem(KEY); const s = r ? JSON.parse(r) : null; return s && s.v === 1 ? s : { v: 1, roots: {} }; } catch (e){ return { v: 1, roots: {} }; } }
@@ -46,6 +47,13 @@ function svg(tag, attrs, ...children){
 }
 
 export { drawSmiles };
+let _stageCss = false;
+function injectStageCss(){
+  if (_stageCss || typeof document === 'undefined') return;
+  _stageCss = true;
+  const st = document.createElement('style'); st.id = 's3d-style'; st.textContent = STAGE_CSS; document.head.append(st);
+}
+
 export function makeApi(id, opts = {}){
   const coachEl = opts.coachEl;
   return {
@@ -54,6 +62,10 @@ export function makeApi(id, opts = {}){
     shuffle(a){ const b = a.slice(); for (let i = b.length - 1; i > 0; i--){ const j = Math.floor(mulberry() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; } return b; },
     colors, THREE: opts.needs3D ? THREE : null, el, svg, reduced,
     drawSmiles(target, smiles, o){ return drawSmiles(target, smiles, o); },
+    // A three-dimensional stage, for the questions where a flat drawing lies.
+    // Only handed out when the module declares needs3D, since it loads Three.js.
+    stage3d(o){ if (!opts.needs3D) throw new Error('declare needs3D in meta to use api.stage3d'); injectStageCss(); return makeStage(this, o); },
+    geom: { tetraAround, unit, sub: vsub, add: vadd, mul: vmul },
     reactions: { REACTIONS: RX.REACTIONS, SUBSTRATES: RX.SUBSTRATES, FAMILIES: RX.FAMILIES, byFamily: RX.byFamily, siblings: RX.siblings, find: RX.find },
     bank: { items: bankItems, toItem: bankToItem, GROUP_MAP },
     report(ok){ const r = rec(id); r.tries++; if (ok){ r.firstTry++; r.run++; } else r.run = 0; if (r.run >= 3) r.owned = true; save(state); opts.onReport && opts.onReport(r); },

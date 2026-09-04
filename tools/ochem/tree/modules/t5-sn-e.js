@@ -6,7 +6,7 @@ export const meta = {
   id: 't5-sn-e',
   level: 5,
   order: 2,
-  needs3D: false,
+  needs3D: true,
   title: 'Four mechanisms, two shapes',
   concept: 'SN2, SN1, E2 and E1',
   tagline: 'One step or two. Count the steps, then read the center.',
@@ -841,6 +841,214 @@ function shapeBadges(api, host, mech){
     badge(stereoText, mech.stereo === 'invert' ? C.blue : mech.stereo === 'racemize' ? C.coral : C.grey)));
 }
 
+
+/* ------------------------------------------------------------------ */
+/* The 3D model: what a flat drawing cannot show                        */
+/*                                                                     */
+/* Two things on this page are geometry, not bookkeeping, and a page    */
+/* quietly lies about both. SN2 turns the center inside out like an     */
+/* umbrella, and E2 only fires when the hydrogen and the leaving group  */
+/* are anti-periplanar. Build them and let the student turn them.       */
+/* ------------------------------------------------------------------ */
+const M3D = {
+  sn2: {
+    chip: 'SN2: the umbrella turns inside out',
+    title: 'Backside attack, and the center turns inside out',
+    line: 'The nucleophile can only reach the lobe on the far side of the leaving group, so it arrives opposite the bromine. As the new bond forms the other three groups sweep past flat and keep going, exactly like an umbrella in the wind. That is why one product comes out and the center is flipped.',
+    tag: 'ONE STEP, ONE PRODUCT, FLIPPED'
+  },
+  e2: {
+    chip: 'E2: anti-periplanar or nothing',
+    title: 'The hydrogen has to be opposite the leaving group',
+    line: 'Look straight down the bond between the two carbons. The base can only take a hydrogen that sits opposite the bromine, because the C to H bond and the C to Br bond have to line up to become the new pi bond. Turn the front carbon and watch the reaction switch on and off.',
+    tag: 'TURN IT UNTIL IT LINES UP'
+  }
+};
+
+function mount3D(container, api){
+  const { el } = api, C = api.colors, G = api.geom;
+  const holder = el('div', { style: { marginTop: '18px', paddingTop: '14px', borderTop: '1px solid ' + C.line } });
+  holder.append(el('span', { class: 'eyebrow', text: 'Turn it yourself: the part a flat drawing cannot show' }));
+  const S = api.stage3d({ label: 'A three dimensional model of the reacting molecule. Drag to turn it.' });
+  const cap = el('div', { class: 's3d-cap' }); const capName = el('b'); const capTag = el('span', { class: 'tag' });
+  cap.append(capName, capTag); S.stage.append(cap);
+  S.stage.append(el('div', { class: 's3d-hint', text: 'DRAG TO TURN' }));
+  // The same reaction as the test prints it, so the model is never a separate
+  // world: a student reads left, then right, and the two are the same molecule.
+  const paper = el('div', { class: 's3d-paper' });
+  const paperRow = el('div', { class: 'row' });
+  const paperCap = el('div', { class: 'cap' });
+  paper.append(el('span', { class: 'head', text: 'On the test it looks like this' }), paperRow, paperCap);
+  const pair = el('div', { class: 's3d-pair' }, paper, S.stage);
+  const line = el('p', { style: { margin: '10px 0 0', color: C.ink2, fontSize: '15px', maxWidth: '70ch', lineHeight: '1.55' } });
+  const controls = el('div', { class: 'controls' });
+  holder.append(pair, controls, line);
+
+  // what the printed version of each mechanism looks like
+  const PAPER = {
+    sn2: { sub: 'CC[C@@H](C)Br', reagent: 'NaOH', cond: 'DMSO', prod: 'CC[C@H](C)O',
+      cap: 'Flat on the page you get a wedge and a dash and you are expected to know the center flipped. ' },
+    e2: { sub: 'CC(C)Br', reagent: 'NaOEt', cond: 'EtOH, heat', prod: 'C=CC',
+      cap: 'The page shows no geometry at all. You are expected to know the hydrogen had to be anti to the bromine. ' }
+  };
+  function drawPaper(k){
+    paperRow.replaceChildren(); paperCap.replaceChildren();
+    const P = PAPER[k];
+    const a = el('div', { style: { width: '116px', flex: '0 0 auto' } }); api.drawSmiles(a, P.sub, { width: 116, height: 88, label: 'starting material' });
+    const b = el('div', { style: { width: '116px', flex: '0 0 auto' } }); api.drawSmiles(b, P.prod, { width: 116, height: 88, label: 'product' });
+    paperRow.append(a, el('div', { class: 'arrow' }, el('span', { class: 'reagent', text: P.reagent }), el('div', { class: 'line' }), el('span', { class: 'reagent', text: P.cond })), b);
+    paperCap.append(P.cap, el('b', { text: 'The model on the right is that same reaction, turned.' }));
+  }
+  container.append(holder);
+  if (!S.ok){ line.textContent = M3D.sn2.line; return; }
+
+  let which = 'sn2', t = 0, playing = null;
+  const V = a => new api.THREE.Vector3(a[0], a[1], a[2]);
+  const labelFor = (text, cls) => el('div', { class: 's3d-lab' + (cls ? ' ' + cls : ''), text });
+
+  /* ---- SN2: one carbon, three spectator groups, Br leaving, OH arriving ---- */
+  function buildSN2(){
+    S.clear(); S.clearLabels();
+    const axis = [0, 0, 1];                       // Br sits at +z, hydroxide comes from -z
+    const spokes = G.tetraAround(axis, Math.PI / 2);  // the three groups, umbrella open toward -z
+    const C0 = V([0, 0, 0]);
+    const carbon = S.atom('C', C0);
+    const brStart = 1.94, nuStart = 3.2;
+    S.camera.position.set(0, 0.2, 9.8); S.camera.lookAt(0, 0, 0);
+    S.spin.position.set(0.63, 0, 0);         // centre the Br-to-nucleophile span on screen
+    const br = S.atom('Br', V([0, 0, brStart]));
+    const nu = S.atom('O', V([0, 0, -nuStart]));
+    const nuH = S.atom('H', V([0.55, 0.55, -nuStart - 0.5]));
+    S.bond(nu.position, nuH.position, 0.06);
+    const spokeAtoms = spokes.map((d, i) => S.atom(i === 0 ? 'C' : 'H', V(G.mul(d, i === 0 ? 1.54 : 1.09))));
+    const spokeBonds = spokeAtoms.map(a => S.bond(C0, a.position, 0.075));
+    const brBond = S.bond(C0, br.position, 0.085);
+    const nuBond = S.ghostBond(C0, nu.position, 0x8fb4ff);
+    S.addLabel(labelFor('Br', 'gold'), v => br.getWorldPosition(v), { radial: 30 });
+    S.addLabel(labelFor('HO', 'blue'), v => nu.getWorldPosition(v), { radial: 30 });
+    capName.textContent = 'A secondary carbon, hydroxide coming from the far side';
+    capTag.textContent = M3D.sn2.tag;
+
+    // t from 0 (start) to 1 (product): the umbrella sweeps through flat and inverts
+    S.setT = k => {
+      const inv = k;                                  // 0 = original pyramid, 1 = inverted
+      for (let i = 0; i < 3; i++){
+        // rotate each spoke from its start direction toward the mirrored direction
+        const d0 = spokes[i], d1 = [d0[0], d0[1], -d0[2]];
+        const d = G.unit([d0[0] * (1 - inv) + d1[0] * inv, d0[1] * (1 - inv) + d1[1] * inv, d0[2] * (1 - inv) + d1[2] * inv]);
+        const len = i === 0 ? 1.54 : 1.09;
+        spokeAtoms[i].position.set(d[0] * len, d[1] * len, d[2] * len);
+        S.place(spokeBonds[i], C0, spokeAtoms[i].position, 0.075);
+      }
+      br.position.set(0, 0, brStart + k * 2.2);
+      nu.position.set(0, 0, -(nuStart - k * (nuStart - 1.43)));
+      nuH.position.set(0.55, 0.55, nu.position.z - 0.5);
+      brBond.visible = k < 0.75;
+      if (brBond.visible) S.place(brBond, C0, br.position, 0.085 * (1 - k));
+      nuBond.visible = true;
+      S.clear(nuBond);
+      const g = S.ghostBond(C0, nu.position, k > 0.6 ? 0xb9a878 : 0x8fb4ff, nuBond);
+      S.needs = true;
+    };
+    S.setT(0);
+  }
+
+  /* ---- E2: two carbons, look down the bond, turn the front one ---- */
+  function buildE2(){
+    S.clear(); S.clearLabels();
+    S.camera.position.set(0, 0.2, 8.4); S.camera.lookAt(0, 0, 0); S.spin.position.set(0, 0, 0);
+    const half = 0.77;
+    const CB = V([0, 0, half]);     // the front carbon, carries the hydrogens
+    const CA = V([0, 0, -half]);    // the back carbon, carries the bromine
+    const cb = S.atom('C', CB), ca = S.atom('C', CA);
+    S.bond(CA, CB, 0.09);
+    const backDirs = G.tetraAround([0, 0, -1], Math.PI / 2);   // on CA, pointing away from CB
+    const br = S.atom('Br', V(G.add([0, 0, -half], G.mul(backDirs[0], 1.94))));
+    S.bond(CA, br.position, 0.085);
+    const caH = [1, 2].map(i => { const a = S.atom('H', V(G.add([0, 0, -half], G.mul(backDirs[i], 1.09)))); S.bond(CA, a.position, 0.065); return a; });
+    const frontBase = G.tetraAround([0, 0, 1], 0);
+    const cbAtoms = [0, 1, 2].map(i => S.atom(i === 0 ? 'H' : 'C', V([0, 0, 0])));
+    const cbBonds = cbAtoms.map(a => S.bond(CB, CB, 0.065));
+    const baseO = S.atom('O', V([0, 3.2, 2.2]));
+    const baseH = S.atom('H', V([0.5, 3.7, 2.5]));
+    S.bond(baseO.position, baseH.position, 0.06);
+    S.addLabel(labelFor('Br', 'gold'), v => br.getWorldPosition(v), { radial: 30 });
+    S.addLabel(labelFor('EtO', 'blue'), v => baseO.getWorldPosition(v), { radial: 30 });
+    const hLab = labelFor('H', 'small');
+    S.addLabel(hLab, v => cbAtoms[0].getWorldPosition(v), { radial: 24 });
+    capTag.textContent = M3D.e2.tag;
+
+    // dihedral: the angle of the front carbon's H measured from the Br
+    S.setT = k => {
+      const ang = k * Math.PI * 2;
+      const dirs = G.tetraAround([0, 0, 1], ang);
+      for (let i = 0; i < 3; i++){
+        const len = i === 0 ? 1.09 : 1.54;
+        const p = G.add([0, 0, half], G.mul(dirs[i], len));
+        cbAtoms[i].position.set(p[0], p[1], p[2]);
+        S.place(cbBonds[i], CB, cbAtoms[i].position, i === 0 ? 0.065 : 0.075);
+      }
+      // the dihedral between the front H and the back Br, in degrees
+      const hv = G.unit([cbAtoms[0].position.x, cbAtoms[0].position.y, 0]);
+      const bv = G.unit([br.position.x, br.position.y, 0]);
+      let deg = Math.acos(Math.max(-1, Math.min(1, G.dot ? G.dot(hv, bv) : hv[0] * bv[0] + hv[1] * bv[1]))) * 180 / Math.PI;
+      if (!isFinite(deg)) deg = 0;
+      const anti = deg > 155;
+      // the base moves in over the H when it is lined up
+      const hp = cbAtoms[0].position;
+      baseO.position.set(hp.x * 2.1, hp.y * 2.1 + 0.4, hp.z + 1.3);
+      baseH.position.set(baseO.position.x + 0.5, baseO.position.y + 0.5, baseO.position.z + 0.3);
+      capName.textContent = anti ? 'Anti-periplanar: 180 degrees. This one reacts.' : Math.round(deg) + ' degrees apart. Not lined up, nothing happens.';
+      capTag.textContent = anti ? 'E2 CAN FIRE' : 'KEEP TURNING';
+      capTag.style.background = anti ? '' : 'rgba(255,255,255,.08)';
+      capTag.style.color = anti ? '' : C.ink2;
+      hLab.className = 's3d-lab small' + (anti ? ' gold' : '');
+      S.needs = true;
+    };
+    S.setT(0.5);
+  }
+
+  function build(){
+    if (playing){ clearInterval(playing); playing = null; }
+    if (which === 'sn2'){
+      buildSN2(); t = 0;
+      // side on: the attack line runs across the screen so the bromine leaving,
+      // the three spokes and the nucleophile arriving are all visible at once
+      S.spin.quaternion.setFromAxisAngle(new api.THREE.Vector3(0, 1, 0), Math.PI / 2);
+      S.needs = true;
+    }
+    else { buildE2(); t = 0.5; S.focus(V([0, 0, 1]), false, 0); }
+    line.textContent = M3D[which].line;
+    drawPaper(which);
+    if (which === 'sn2'){ capName.textContent = 'A secondary carbon, hydroxide coming from the far side'; }
+    rebuild();
+  }
+
+  function rebuild(){
+    controls.replaceChildren();
+    for (const k of ['sn2', 'e2']){
+      controls.append(el('button', { type: 'button', class: 'chip' + (which === k ? ' on' : ''), 'aria-pressed': String(which === k), text: M3D[k].chip,
+        onClick: () => { which = k; build(); } }));
+    }
+    if (which === 'sn2'){
+      controls.append(el('button', { type: 'button', class: 'primary', text: 'Push it through', onClick: () => {
+        S.tween(1800, k => { S.setT(k); }, () => { capName.textContent = 'The center is flipped, and there is only one product.'; });
+      } }));
+      controls.append(el('button', { type: 'button', class: 'secondary', text: 'Reset', onClick: () => { S.setT(0); S.spin.quaternion.setFromAxisAngle(new api.THREE.Vector3(0, 1, 0), Math.PI / 2); S.needs = true; capName.textContent = 'A secondary carbon, hydroxide coming from the far side'; } }));
+      controls.append(el('button', { type: 'button', class: 'secondary', text: 'Look down the attack line', onClick: () => S.focus(V([0, 0, -1]), false) }));
+      controls.append(el('button', { type: 'button', class: 'secondary', text: 'Side on', onClick: () => { const from = S.spin.quaternion.clone(), to = new api.THREE.Quaternion().setFromAxisAngle(new api.THREE.Vector3(0, 1, 0), Math.PI / 2); S.tween(700, k => { S.spin.quaternion.slerpQuaternions(from, to, k); S.needs = true; }); } }));
+    } else {
+      const slider = el('input', { type: 'range', min: '0', max: '360', step: '1', value: String(Math.round(t * 360)), 'aria-label': 'Turn the front carbon' });
+      slider.addEventListener('input', () => { t = (+slider.value) / 360; S.setT(t); });
+      controls.append(el('label', { class: 'slider' }, 'Turn the front carbon ', slider));
+      controls.append(el('button', { type: 'button', class: 'primary', text: 'Snap to anti-periplanar', onClick: () => { t = 0.5; slider.value = '180'; S.setT(0.5); } }));
+      controls.append(el('button', { type: 'button', class: 'secondary', text: 'Look down the bond', onClick: () => S.focus(V([0, 0, 1]), false) }));
+    }
+  }
+  build();
+  return { build };
+}
+
 export function mount(slots, api){
   mountStage(slots, api, {
     mechanisms: MECHANISMS,
@@ -848,5 +1056,6 @@ export function mount(slots, api){
     extra: (host, mech) => shapeBadges(api, host, mech)
   });
   mountShapePanel(slots.visual, api);
+  mount3D(slots.visual, api);
   mountTry(slots, api, { gen: rng => genItem(rng, api), groups: ['sn1-sn2', 'e1-e2', 'sub-vs-elim'] });
 }
