@@ -6,6 +6,8 @@
 // teaches them and the roots they stand on. Modules pull their group's items
 // through bankItems(); the Summit draws a whole section through it.
 
+import { aceItems, aceToItem, weighted } from '../../bank/ace.js';
+
 export const GROUP_MAP = {
   'alkene-hx': { module: 't4-alkene', roots: ['l2-carbocation'] },
   'alkene-hydration': { module: 't4-alkene', roots: ['l2-carbocation'] },
@@ -61,13 +63,20 @@ export const GROUP_MAP = {
   'misc': { module: 'roots', roots: ['l1-skeletal'] }
 };
 
-/** All bank items (window.OCHEM_DB) for a module id, or for a group. Empty if the bank is not loaded. */
-export function bankItems(where){
+/** Verified bank items (window.OCHEM_DB) for a module id, or for a group. */
+export function verifiedItems(where){
   const db = (typeof window !== 'undefined' && window.OCHEM_DB) || [];
   return db.filter(it => it.keep !== false && it.scope_ok !== false && it.smiles_valid !== false && (GROUP_MAP[it.group] && (GROUP_MAP[it.group].module === where || it.group === where)));
 }
-/** Normalize a bank item to the Summit item shape. */
+
+/** The draw pool for a rung: Thomas's own items, weighted, then the verified bank. */
+export function bankItems(where){
+  return weighted(aceItems(where), verifiedItems(where));
+}
+
+/** Normalize a bank item to the Summit item shape, from either source. */
 export function bankToItem(it){
+  if (it.source === 'ace') return aceToItem(it);
   const g = GROUP_MAP[it.group] || { module: 'roots', roots: [] };
   const structural = !!it.opts_are_structures;
   return {

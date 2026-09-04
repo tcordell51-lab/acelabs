@@ -25,7 +25,7 @@ function hasChargedCarbon(smiles){ return /\[C[H0-9]*[+-]\]/.test(smiles); }
 function drawer(w, h, bondLength, terminal){
   if (!window.SmilesDrawer) return null;
   if (!_drawer || _drawer._w !== w || _drawer._h !== h || _drawer._bl !== bondLength || _drawer._tc !== terminal){
-    _drawer = new window.SmilesDrawer.SvgDrawer({ width: w, height: h, bondThickness: 1.5, bondLength: bondLength, shortBondLength: 0.8, fontSizeLarge: 9, fontSizeSmall: 6.5, padding: 14, compactDrawing: false, terminalCarbons: terminal, explicitHydrogens: false,
+    _drawer = new window.SmilesDrawer.SvgDrawer({ width: w, height: h, bondThickness: 1.5, bondLength: bondLength, shortBondLength: 0.8, fontSizeLarge: 9.5, fontSizeSmall: 8, padding: 6, compactDrawing: false, terminalCarbons: terminal, explicitHydrogens: false,
       themes: { dark: { C: '#ece6d7', O: '#e0705a', N: '#5b8def', F: '#9ad39a', CL: '#3fb257', BR: '#c47a4a', I: '#a06bd6', P: '#f0a05a', S: '#e2c34b', B: '#d8a0a0', SI: '#b0b0b0', H: '#ece6d7', BACKGROUND: 'transparent' } } });
     _drawer._w = w; _drawer._h = h; _drawer._bl = bondLength; _drawer._tc = terminal;
   }
@@ -50,15 +50,75 @@ function bondTwoLabels(node){
   node.append(line);                               // outside the mask group
 }
 
+// A charged carbon in the middle of a chain gets no label at all: the drawer
+// only writes text for heteroatoms and chain ends, so the tert-butyl cation
+// drew as plain neopentane and the whole question turned on nothing. Chemists
+// draw that charge as a sign sitting at the vertex, so put one there, on the
+// side of the atom with the most room. Terminal charged carbons already come
+// out as H2C+ and are left alone.
+const SVGNS = 'http://www.w3.org/2000/svg';
+function stampCharges(node, d){
+  const g = d.preprocessor && d.preprocessor.graph;
+  if (!g || !g.vertices) return;
+  const labeled = [...node.querySelectorAll('mask circle')]
+    .map(c => [parseFloat(c.getAttribute('cx')), parseFloat(c.getAttribute('cy'))]);
+  for (const v of g.vertices){
+    const q = (v.value.bracket && v.value.bracket.charge) || v.value.charge || 0;
+    if (!q) continue;
+    const x = v.position.x, y = v.position.y;
+    if (!isFinite(x) || !isFinite(y)) continue;
+    if (labeled.some(([cx, cy]) => Math.hypot(cx - x, cy - y) < 1.5)) continue;
+    // Put the sign in the widest gap between this atom's bonds. Averaging the
+    // bond directions and going opposite works for a chain but collapses on a
+    // symmetric junction like the tert-butyl cation, where it landed the plus
+    // on top of a bond.
+    const ang = [];
+    for (const id of (v.neighbours || [])){
+      const n = g.vertices[id]; if (!n || !n.position) continue;
+      ang.push(Math.atan2(n.position.y - y, n.position.x - x));
+    }
+    let dir = -Math.PI / 3;                       // up and to the right by default
+    if (ang.length === 1) dir = ang[0] + Math.PI;
+    else if (ang.length > 1){
+      ang.sort((a, b) => a - b);
+      let best = -1;
+      for (let i = 0; i < ang.length; i++){
+        const a = ang[i], b = i + 1 < ang.length ? ang[i + 1] : ang[0] + 2 * Math.PI;
+        if (b - a > best){ best = b - a; dir = a + (b - a) / 2; }
+      }
+    }
+    const ox = Math.cos(dir), oy = Math.sin(dir);
+    const t = document.createElementNS(SVGNS, 'text');
+    t.setAttribute('x', x + ox * 7.5); t.setAttribute('y', y + oy * 7.5 + 3);
+    t.setAttribute('text-anchor', 'middle');
+    t.setAttribute('fill', '#ece6d7');
+    t.setAttribute('style', 'font: 9pt Arial, Helvetica, sans-serif');
+    t.textContent = q > 0 ? '+' : '-';
+    node.append(t);
+  }
+}
+
+// The fitted viewBox stops at the letters, so a subscript's tail and a stamped
+// charge sit right on the edge and the first thing a small render loses is the
+// 3 in CH3. Give the box a little air.
+function breathe(node){
+  const vb = (node.getAttribute('viewBox') || '').split(/\s+/).map(Number);
+  if (vb.length !== 4 || !vb.every(v => isFinite(v)) || !vb[2] || !vb[3]) return;
+  const p = Math.max(vb[2], vb[3]) * 0.07;
+  node.setAttribute('viewBox', `${vb[0] - p} ${vb[1] - p} ${vb[2] + 2 * p} ${vb[3] + 2 * p}`);
+}
+
 export function drawSmiles(target, smiles, o = {}){
   const w = o.width || 240, h = o.height || 160;
   const node = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
   node.setAttribute('viewBox', `0 0 ${w} ${h}`); node.setAttribute('width', w); node.setAttribute('height', h); node.setAttribute('role', 'img'); node.setAttribute('aria-label', o.label || 'a molecule');
   node.classList.add('mol');
   if (target) target.append(node);
-  const d = drawer(w, h, o.bondLength || (heavyAtoms(smiles) <= 3 ? 42 : 22), o.terminalCarbons != null ? o.terminalCarbons : hasChargedCarbon(smiles));
+  const bl = o.bondLength || (heavyAtoms(smiles) <= 3 ? 42 : 22);
+  node.dataset.bond = String(bl);            // so a caller can size several drawings to one scale
+  const d = drawer(w, h, bl, o.terminalCarbons != null ? o.terminalCarbons : hasChargedCarbon(smiles));
   if (!d){ const t = document.createElementNS('http://www.w3.org/2000/svg', 'title'); t.textContent = 'structure'; node.append(t); return node; }
-  try { window.SmilesDrawer.parse(smiles, tree => { d.draw(tree, node, 'dark'); if (heavyAtoms(smiles) === 2) bondTwoLabels(node); }, err => { console.error('smiles', smiles, err); }); }
+  try { window.SmilesDrawer.parse(smiles, tree => { d.draw(tree, node, 'dark'); stampCharges(node, d); if (heavyAtoms(smiles) === 2) bondTwoLabels(node); breathe(node); }, err => { console.error('smiles', smiles, err); }); }
   catch (e){ console.error('smiles', smiles, e); }
   node.removeAttribute('width'); node.removeAttribute('height');
   return node;

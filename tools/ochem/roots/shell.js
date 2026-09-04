@@ -3,6 +3,9 @@
 import * as THREE from '../../../shared/three.module.min.js';
 import { LEVELS, ROOTS } from './registry.js';
 import { rootsFor } from './route.js';
+import { drawSmiles } from '../tree/draw.js';
+import { aceItems, aceToItem } from '../bank/ace.js';
+import { playItem } from '../bank/play.js';
 
 const KEY = 'atDAT_ochemRoots_v1';
 function load(){ try { const r = localStorage.getItem(KEY); const s = r ? JSON.parse(r) : null; return s && s.v === 1 ? s : { v: 1, roots: {} }; } catch (e){ return { v: 1, roots: {} }; } }
@@ -47,6 +50,8 @@ export function makeApi(id, opts = {}){
     pick(a){ return a[Math.floor(mulberry() * a.length)]; },
     shuffle(a){ const b = a.slice(); for (let i = b.length - 1; i > 0; i--){ const j = Math.floor(mulberry() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; } return b; },
     colors, THREE: opts.needs3D ? THREE : null, el, svg, reduced,
+    drawSmiles(target, smiles, o){ return drawSmiles(target, smiles, o); },
+    ace: { items: aceItems, toItem: aceToItem },
     report(ok){ const r = rec(id); r.tries++; if (ok){ r.firstTry++; r.run++; } else r.run = 0; if (r.run >= 3) r.owned = true; save(state); opts.onReport && opts.onReport(r); },
     coach(t){ if (coachEl) coachEl.textContent = String(t || ''); },
     clearCoach(){ if (coachEl) coachEl.textContent = ''; }
@@ -73,7 +78,26 @@ export function renderRoot(mod, container, index){
   const api = makeApi(m.id, { needs3D: !!m.needs3D, coachEl, onReport(rr){ head.querySelector('.owned-badge').style.display = rr.owned ? '' : 'none'; refreshMap(); refreshWalkbar(); } });
   try { mod.mount({ visual, try: tryEl }, api); }
   catch (e){ visual.append(el('p', { class: 'missing-note', text: 'This visual hit a snag loading. The move and the trap above still stand.' })); console.error(m.id, e); }
+  mountAceChecks(sec, m, api);
   return sec;
+}
+
+// Thomas's own questions for this root, if he has written any. They sit under
+// the module's own you-try because they are the ones in his voice, and a miss
+// on one names the root it stands on.
+function mountAceChecks(sec, m, api){
+  const mine = aceItems(m.id);
+  if (!mine.length) return;
+  const box = el('div', { class: 'try ace-block' },
+    el('span', { class: 'label eyebrow', text: 'From Thomas. Same question, his words.' }));
+  const slot = el('div', {}); box.append(slot);
+  sec.insertBefore(box, sec.querySelector('.trap'));
+  let n = Math.floor(Math.random() * mine.length);
+  const show = () => playItem(slot, api, aceToItem(mine[n++ % mine.length]),
+    { badge: false, next: mine.length > 1 ? show : null,
+      rootHref: id => '#' + id,
+      rootName: id => { const sc = sections.find(x => x.id === id); return sc ? sc.meta.concept || sc.meta.title : id; } });
+  show();
 }
 
 const loaded = new Map();
