@@ -4,6 +4,7 @@
 import { MODULES } from '../tree/registry.js';
 import * as RX from '../tree/shared/reactions.js';
 import { GROUP_MAP, bankToItem } from '../tree/shared/bank-map.js';
+import { aceToItem, weighted } from '../bank/ace.js';
 import { drawSmiles } from '../tree/draw.js';
 import { buildSection, rootsOf } from './build.js';
 
@@ -37,7 +38,14 @@ async function loadMakers(){
   for (const id of MODULES){ try { const m = await import(`../tree/modules/${id}.js`); if (typeof m.makeItem === 'function') makers[id] = m.makeItem; } catch (e){} }
   return Object.keys(makers).length;
 }
-function bankPool(){ return ((window.OCHEM_DB) || []).filter(it => GROUP_MAP[it.group] && it.keep !== false && it.scope_ok !== false && it.smiles_valid !== false).map(bankToItem); }
+// Thomas's own items sit in the same pool as the verified bank, weighted the
+// way the tree weights them. Reading only OCHEM_DB here is what kept them off
+// the Summit after they were already showing up everywhere else.
+function bankPool(){
+  const mine = ((window.ACE_BANK) || []).map(aceToItem);
+  const rest = ((window.OCHEM_DB) || []).filter(it => GROUP_MAP[it.group] && it.keep !== false && it.scope_ok !== false && it.smiles_valid !== false).map(bankToItem);
+  return weighted(mine, rest);
+}
 const baseApi = { reactions: { REACTIONS: RX.REACTIONS, SUBSTRATES: RX.SUBSTRATES, FAMILIES: RX.FAMILIES, byFamily: RX.byFamily, siblings: RX.siblings, find: RX.find }, bank: { items: (w) => bankPool().filter(it => it.home === w || it.group === w), toItem: bankToItem, GROUP_MAP }, reduced: false };
 
 /* ------------------------------------------------------------------ */
