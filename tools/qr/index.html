@@ -5737,7 +5737,7 @@ const MODULES = {
     skill:'mini-mock', tier:3, num:'44',
     title:'Friday <em>Mini-Mock</em>',
     sub:'22 questions, 22 minutes, interleaved. The weekly pacing self-assessment.',
-    pattern:'A meta-skill, not a content skill. The mini-mock pulls 22 placeholder questions across six high-yield skills (mental math, percent change, ratios, 2D geometry, probability, word decoder) and interleaves them so no two consecutive questions share a skill. That interleaving is the W2 evidence-based design — measured effect size d = 0.83 to 1.21 on transfer relative to blocked practice. The clock matches a 22+ scorer\'s real-DAT pace at 1.0 min/q.',
+    pattern:'A meta-skill, not a content skill. The mini-mock pulls 22 beta practice questions (still being upgraded to full DAT-grade items) across six high-yield skills (mental math, percent change, ratios, 2D geometry, probability, word decoder) and interleaves them so no two consecutive questions share a skill. That interleaving is the W2 evidence-based design — measured effect size d = 0.83 to 1.21 on transfer relative to blocked practice. The clock runs at 1.0 min per question, a touch quicker than real-DAT QR pace (about 1.1 min per question).',
     formula:'<span class="gold">22 q in 22 min</span> · <span class="gold">interleaved</span> · calculator <span class="trap">off by default</span><br>End-of-section debrief: <em>per-skill accuracy</em> + <em>skill-recognition latency</em> (ms-to-first-input as proxy)',
     visualType:'word-translate', visualData:{},
     worked:[
@@ -6262,13 +6262,13 @@ function renderTricksPanel(tricks){
         <div class="ttl"><em>Coach tricks</em> for this skill</div>
       </div>
       ${tricks.map(t => `
-        <div class="trick-card ${t.sarah?'sarah':''} ${t.placeholder?'placeholder':''}">
+        <div class="trick-card ${t.sarah?'sarah':''}">
           <div class="when">When · ${t.when}</div>
           <div class="name">${t.name}</div>
           <div class="move">${t.move}</div>
           <div class="why"><b>Why it works:</b> ${t.why}</div>
           <div class="lock-q">${t.lock}</div>
-          ${t.placeholder ? '<div class="tricks-cta" style="margin-top:10px">↑ <b>Placeholder</b> — this slot is built, but the metaphor needs your coach to confirm or replace with their actual line. The structure stays; the words swap in.</div>' : ''}
+          <!-- t.placeholder marks tricks still awaiting coach sign-off; kept in data, not shown to students. -->
         </div>
       `).join('')}
       <div class="tricks-cta">
@@ -9335,7 +9335,7 @@ function renderIndependent(skillId){
 
 function renderProblems(skillId, stageNum, probs){
   if (probs.length === 0){
-    return `<div class="muted" style="padding:14px">More problems coming in next pass.</div><button class="btn gold" onclick="markStageDone('${skillId}',${stageNum})">Mark complete →</button>`;
+    return `<div class="muted" style="padding:14px">Practice problems for this stage are still being written.</div><button class="btn gold" onclick="markStageDone('${skillId}',${stageNum})">Mark complete →</button>`;
   }
   return probs.map((p, i) => `
     <div class="card" style="margin-bottom:12px; padding:18px 20px; box-shadow:none; border:1px solid var(--line)">
@@ -9827,7 +9827,7 @@ const LOCKMOD = {
   },
   openComingSoon(skill){
     document.getElementById('lockmodTitle').innerHTML = skill.name;
-    document.querySelector('#lockmodBack .small').textContent = 'Available · module in next pass';
+    document.querySelector('#lockmodBack .small').textContent = 'Available · module still being built';
     document.getElementById('lockmodLede').innerHTML = '<b>'+skill.name+'</b> is unlocked but the module isn\'t fully built yet. The prereqs are green — that means once we ship its content, you can walk straight into it. In the meantime, the modules to your left and right are live.';
     const wrap = document.getElementById('lockmodPreqs');
     const liveOptions = Object.keys(MODULES).filter(id => !(MODULES[id] && MODULES[id].meta));
