@@ -57,16 +57,17 @@
   // 3 fixed Prometric-style practice tests. Each test draws 140 unique
   // problems with zero overlap → 420 unique problems across all 3.
   // Sciences (40 Bio + 30 GC + 30 OChem · 90 min) + QR (40 Q · 45 min).
-  // Total seat time per test: 135 min (no break in Ace Labs version,
-  // since PAT/RC are not present and the real DAT break is between
-  // PAT and RC, not between Sciences and QR).
+  // Total seat time per test: 135 min, not counting the optional
+  // 30-min break the runner offers between Sciences and QR. The real
+  // DAT break sits between PAT and RC; the mock has neither section,
+  // so it places the same-length break at its only section boundary.
   var MOCKS = {
     count: 3,
     questionsPerTest: 140,
     minutesPerTest: 135,
     uniqueQuestionsTotal: 420,
     sectionMix: 'Sciences (40 Bio + 30 GC + 30 OChem · 90 min) followed by QR (40 Q · 45 min)',
-    breakNote: 'Ace Labs does not include the official DAT 30-minute break, since the real-DAT break sits between PAT and RC and Ace Labs does not ship those sections.'
+    breakNote: 'The practice tests offer an optional 30-minute break between Sciences and QR. On the real DAT, the one scheduled break (optional, 30 minutes) sits between PAT and RC.'
   };
 
   /* ---- Diagnostic -------------------------------------------------- */
