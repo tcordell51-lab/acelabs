@@ -41,7 +41,7 @@
       bankCount: 388, bankLabel:'engine bank',
       route:'tools/ochem/index.html' },
     { key:'qr',    name:'Quantitative Reasoning', shortName:'QR',
-      bankCount: 767, bankLabel:'engine bank',
+      bankCount: 925, bankLabel:'engine bank (distinct problems)',
       route:'tools/qr/index.html' }
   ];
 
@@ -71,11 +71,12 @@
   };
 
   /* ---- Diagnostic -------------------------------------------------- */
-  // Cross-section diagnostic. NOTE: today the diagnostic is a 60-Q /
-  // 45-min test. The audit-prescribed 15-min diagnostic is a future
+  // Cross-section diagnostic. NOTE: today the diagnostic is a 53-Q /
+  // 45-min test (15 Bio + 15 GC + 15 OChem + 8 QR; the QR expert pool
+  // in scripts/dat-mock-bank.json holds 8). The audit-prescribed 15-min diagnostic is a future
   // feature; do not claim it here until it ships.
   var DIAGNOSTIC = {
-    questions: 60,
+    questions: 53,
     minutes: 45,
     sections: ['bio', 'gc', 'ochem', 'qr']
   };
