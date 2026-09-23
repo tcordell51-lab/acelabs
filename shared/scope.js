@@ -49,8 +49,10 @@
   // drills + teaching. It is still excluded from the TIMED Prometric mock, which
   // matches the real-DAT break placement (see MOCKS note below).
   var NOT_COVERED = [
-    { key:'rc',  name:'Reading Comprehension',    shortName:'RC',
-      reason:'passage bank not yet shipped' }
+    // RC: the 10-night strategy course (tools/rc-retold/) is live, but there
+    // is no timed passage bank and no RC section in the Prometric mock.
+    { key:'rc',  name:'Reading Comprehension',    shortName:'RC passage practice',
+      reason:'strategy course live; passage bank not yet shipped' }
   ];
 
   /* ---- Mocks ------------------------------------------------------- */
@@ -100,7 +102,7 @@
     repairTool:
       'Ace Labs is a supplemental Bio, Gen Chem, OChem, and QR repair tool. Keep using your main DAT prep source.',
     noPatRc:
-      'Ace Labs covers the four sciences plus a six-module PAT studio. It does not yet include Reading Comprehension prep, and PAT is excluded from the timed Prometric mock (matching the real-DAT break placement).',
+      'Ace Labs covers Bio, Gen Chem, OChem, and QR, plus a six-module PAT studio and a 10-night Reading Comprehension strategy course. There is no timed RC passage practice yet, and the timed Prometric mock covers Sciences and QR only.',
     practiceEstimate:
       'Scores shown in Ace Labs are unofficial practice estimates, not ADA score reports.',
     noReviewerCredentials:
