@@ -41,7 +41,7 @@
       bankCount: 388, bankLabel:'engine bank',
       route:'tools/ochem/index.html' },
     { key:'qr',    name:'Quantitative Reasoning', shortName:'QR',
-      bankCount: 767, bankLabel:'engine bank',
+      bankCount: 925, bankLabel:'engine bank (distinct problems)',
       route:'tools/qr/index.html' }
   ];
 
@@ -49,32 +49,36 @@
   // drills + teaching. It is still excluded from the TIMED Prometric mock, which
   // matches the real-DAT break placement (see MOCKS note below).
   var NOT_COVERED = [
-    { key:'rc',  name:'Reading Comprehension',    shortName:'RC',
-      reason:'passage bank not yet shipped' }
+    // RC: the 10-night strategy course (tools/rc-retold/) is live, but there
+    // is no timed passage bank and no RC section in the Prometric mock.
+    { key:'rc',  name:'Reading Comprehension',    shortName:'RC passage practice',
+      reason:'strategy course live; passage bank not yet shipped' }
   ];
 
   /* ---- Mocks ------------------------------------------------------- */
   // 3 fixed Prometric-style practice tests. Each test draws 140 unique
   // problems with zero overlap → 420 unique problems across all 3.
   // Sciences (40 Bio + 30 GC + 30 OChem · 90 min) + QR (40 Q · 45 min).
-  // Total seat time per test: 135 min (no break in Ace Labs version,
-  // since PAT/RC are not present and the real DAT break is between
-  // PAT and RC, not between Sciences and QR).
+  // Total seat time per test: 135 min, not counting the optional
+  // 30-min break the runner offers between Sciences and QR. The real
+  // DAT break sits between PAT and RC; the mock has neither section,
+  // so it places the same-length break at its only section boundary.
   var MOCKS = {
     count: 3,
     questionsPerTest: 140,
     minutesPerTest: 135,
     uniqueQuestionsTotal: 420,
     sectionMix: 'Sciences (40 Bio + 30 GC + 30 OChem · 90 min) followed by QR (40 Q · 45 min)',
-    breakNote: 'Ace Labs does not include the official DAT 30-minute break, since the real-DAT break sits between PAT and RC and Ace Labs does not ship those sections.'
+    breakNote: 'The practice tests offer an optional 30-minute break between Sciences and QR. On the real DAT, the one scheduled break (optional, 30 minutes) sits between PAT and RC.'
   };
 
   /* ---- Diagnostic -------------------------------------------------- */
-  // Cross-section diagnostic. NOTE: today the diagnostic is a 60-Q /
-  // 45-min test. The audit-prescribed 15-min diagnostic is a future
+  // Cross-section diagnostic. NOTE: today the diagnostic is a 53-Q /
+  // 45-min test (15 Bio + 15 GC + 15 OChem + 8 QR; the QR expert pool
+  // in scripts/dat-mock-bank.json holds 8). The audit-prescribed 15-min diagnostic is a future
   // feature; do not claim it here until it ships.
   var DIAGNOSTIC = {
-    questions: 60,
+    questions: 53,
     minutes: 45,
     sections: ['bio', 'gc', 'ochem', 'qr']
   };
@@ -98,7 +102,7 @@
     repairTool:
       'Ace Labs is a supplemental Bio, Gen Chem, OChem, and QR repair tool. Keep using your main DAT prep source.',
     noPatRc:
-      'Ace Labs covers the four sciences plus a six-module PAT studio. It does not yet include Reading Comprehension prep, and PAT is excluded from the timed Prometric mock (matching the real-DAT break placement).',
+      'Ace Labs covers Bio, Gen Chem, OChem, and QR, plus a six-module PAT studio and a 10-night Reading Comprehension strategy course. There is no timed RC passage practice yet, and the timed Prometric mock covers Sciences and QR only.',
     practiceEstimate:
       'Scores shown in Ace Labs are unofficial practice estimates, not ADA score reports.',
     noReviewerCredentials:

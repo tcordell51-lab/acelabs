@@ -648,7 +648,7 @@ body{
     <span class="al-product">Ace Labs</span>
   </a>
   <div class="al-top-right">
-    <span class="diag-progress-pill" id="topProgress" style="display:none">— / 60</span>
+    <span class="diag-progress-pill" id="topProgress" style="display:none">1 / 53</span>
     <span class="diag-timer" id="topTimer" style="display:none">45:00</span>
   </div>
 </header>
@@ -661,11 +661,11 @@ body{
     <div class="diag-prev-banner" id="prevBanner"></div>
     <div class="diag-intro-card">
       <h1>Cross-Section <em>Diagnostic</em></h1>
-      <p class="lede">60 questions across all four DAT sections. 45 minutes. At the end you will see per-section accuracy and your three weakest topic areas — so you know exactly where to focus this week.</p>
+      <p class="lede">53 questions across the four sections Ace Labs covers: 15 Biology, 15 General Chemistry, 15 Organic Chemistry, and 8 Quantitative Reasoning. 45 minutes. At the end you will see per-section accuracy and your three weakest topic areas, so you know exactly where to focus this week.</p>
 
       <div class="diag-meta-row">
         <div class="diag-meta-item">
-          <strong>60</strong>
+          <strong>53</strong>
           <span>questions total</span>
         </div>
         <div class="diag-meta-item">
@@ -673,7 +673,7 @@ body{
           <span>time limit</span>
         </div>
         <div class="diag-meta-item">
-          <strong>~45 s</strong>
+          <strong>~50 s</strong>
           <span>per question</span>
         </div>
         <div class="diag-meta-item">
@@ -697,7 +697,7 @@ body{
         </div>
         <div class="diag-section-pill qr">
           <span class="pill-label">Quant Reasoning</span>
-          15 questions
+          8 questions
         </div>
       </div>
 
@@ -728,7 +728,7 @@ body{
     <!-- Section strip -->
     <div class="diag-section-strip">
       <span class="diag-section-badge" id="qSectionBadge">Bio</span>
-      <span class="diag-q-counter" id="qCounter">Q1 of 60</span>
+      <span class="diag-q-counter" id="qCounter">Q1 of 53</span>
       <span class="diag-q-topic" id="qTopic"></span>
     </div>
 
@@ -758,7 +758,7 @@ body{
     <!-- Submit zone (appears near end) -->
     <div class="diag-submit-zone" id="submitZone" style="display:none">
       <p>
-        <span class="diag-answered-count" id="answeredCount">0</span> of 60 answered.
+        <span class="diag-answered-count" id="answeredCount">0</span> of <span id="answeredTotal">53</span> answered.
         Unanswered questions count as incorrect.
       </p>
       <button class="btn-primary" onclick="confirmSubmit()">Submit and see results</button>
@@ -808,7 +808,7 @@ body{
 'use strict';
 
 /* ── State ─────────────────────────────────────────────── */
-let pool = [];           // 60 drawn questions
+let pool = [];           // 53 drawn questions (15 Bio + 15 GC + 15 OChem + 8 QR)
 let currentIdx = 0;
 let answers = {};        // { idx: choiceIndex }
 let timerInterval = null;
@@ -978,7 +978,7 @@ async function loadBank(){
   return { bioPool, gcPool, ochemPool, qrPool };
 }
 
-/* ── Draw 60 questions ──────────────────────────────────── */
+/* ── Draw the diagnostic set ──────────────────────────────────── */
 function drawQuestions(pools){
   const { bioPool, gcPool, ochemPool, qrPool } = pools;
 
@@ -986,10 +986,10 @@ function drawQuestions(pools){
   const gc    = sample(gcPool,    Math.min(15, gcPool.length));
   const ochem = sample(ochemPool, Math.min(15, ochemPool.length));
 
-  // QR pool may be small (8); pad with a note but use what we have
+  // QR expert pool is 8 today, so the diagnostic uses all 8 (53 total)
   const qr = sample(qrPool, Math.min(15, qrPool.length));
 
-  // Interleave: Bio 1-15, GC 16-30, OChem 31-45, QR 46-60
+  // Order: Bio, GC, OChem, then QR
   return [...bio, ...gc, ...ochem, ...qr];
 }
 
@@ -1045,6 +1045,8 @@ window.addEventListener('DOMContentLoaded', async () => {
 /* ── Start ──────────────────────────────────────────────── */
 function startDiagnostic(){
   pool = drawQuestions(window._diagPools);
+  const totalEl = document.getElementById('answeredTotal');
+  if (totalEl) totalEl.textContent = pool.length;
   currentIdx = 0;
   answers = {};
   submitted = false;

@@ -367,9 +367,9 @@ if(HOME){
     +'<div class="map-legend"><span><b style="background:#e9e2d0"></b>not yet touched</span><span><b style="background:#e6c86a"></b>started</span><span><b style="background:#1B7A4D"></b>mastered</span><span><b style="background:none;border:2px solid #8a6d24"></b>night walked</span></div></div>';
   h+='<div class="syll" style="margin-top:34px;border-top:none;padding-top:0"><h2>The '+NIGHT_COUNT+' Nights</h2>'
     +'<p class="sub">Every night: walk it, teach it, then earn it. The pills are yours - they fill in as you commit each scene to memory.</p><ol id="homeList"></ol></div>';
-  h+='<div class="enginecard"><div class="et">Drill it under time - full passages, real clock</div>'
-    +'<p>The ten nights teach the method; the mock is where you run it against the clock. Sit full DAT-format Reading Comprehension in the Prometric mock - three passages, sixty minutes - and prove the search holds up under pressure. The nights give you the method, the mock gives you the reps.</p>'
-    +'<div class="links"><a href="'+ENGINE+'">Open a full Prometric mock</a></div></div>';
+  h+='<div class="enginecard"><div class="et">What this course is, and what is still coming</div>'
+    +'<p>These ten nights are the complete RC strategy course: map the passage, run the search, read the traps, and pace all three passages. Every scene checks the move with a question. Ace Labs does not have a timed RC passage bank yet, and the Prometric mock covers Sciences and QR only, so run the search on timed passages from your main prep source. When a passage bank ships, this card will point to it.</p>'
+    +'<div class="links"><a href="?night=1">Start with Night 1</a></div></div>';
   document.getElementById('scenes').innerHTML=h;
   renderMap();
   var ol=document.getElementById('homeList');
@@ -640,9 +640,14 @@ function render(){
     var tease=NIGHTS[CUR+1]?'<p class="tease">Tomorrow, Night '+(CUR+1)+': <b>'+NIGHTS[CUR+1].t+'</b> - same two questions, new problem.</p>':'<p class="tease">That was the last night. The whole story is yours now.</p>';
     var head='<h2>Night '+CUR+' of '+NIGHT_COUNT+' - walked.</h2><div class="knowrow">'+know+'</div>';
     var sy=SYLLABUS[CUR-1];
-    var reps=(sy&&sy.reps&&sy.reps.length)?sy.reps:[['Drill it under time in a Prometric mock',ENGINE]];
-    head+='<p class="tease">Now earn it - tonight&#39;s reps:</p><div class="links">'
-      +reps.map(function(r){return '<a href="'+fromize(r[1],CUR)+'">'+r[0]+'</a>'}).join('')+'</div>';
+    var reps=(sy&&sy.reps&&sy.reps.length)?sy.reps:[];
+    if(reps.length){
+      head+='<p class="tease">Now earn it - tonight&#39;s reps:</p><div class="links">'
+        +reps.map(function(r){return '<a href="'+fromize(r[1],CUR)+'">'+r[0]+'</a>'}).join('')+'</div>';
+    } else {
+      // No RC passage bank ships yet, so do not point at a mock with no RC section.
+      head+='<p class="tease">Tonight&#39;s reps are the scene questions you just answered. Timed RC passage practice is not in Ace Labs yet, so try tonight&#39;s move on a timed passage from your main prep source.</p>';
+    }
     head+=tease;
     if(NIGHTS[CUR+1]) head+='<div class="links"><a href="?night='+(CUR+1)+'">Open Night '+(CUR+1)+'</a></div>';
     gate.insertAdjacentHTML('afterbegin',head);
