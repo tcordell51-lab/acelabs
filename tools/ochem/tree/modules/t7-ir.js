@@ -36,7 +36,7 @@ const ROOTS = ['l1-groups', 'l1-unsat'];
 /* ------------------------------------------------------------------ */
 /* The curated table. Every peak is a Gaussian dip: c = center (cm-1),  */
 /* d = depth (% transmittance lost), w = full width. kind names the    */
-/* bond; tier is the Alaina-packet tier (1 must know, 2 commit next,   */
+/* bond; tier is the study-packet tier (1 must know, 2 commit next,   */
 /* 3 recognize). words is the spectrum in plain words for the Summit.   */
 /* ------------------------------------------------------------------ */
 const P = (c, d, w, kind, label, tier) => ({ c, d, w, kind, label, tier });

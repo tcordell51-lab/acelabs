@@ -1,6 +1,6 @@
 // Author 30+ long-form DAT-realistic questions matching BoosterPrep depth.
 // Real DAT prompts are 1-3 sentences with reaction setup, conditions, and
-// often data tables. Topics drawn from Stephen Percival's actual practice
+// often data tables. Topics drawn from a student's actual practice
 // test review (2026-04-30) + ADA spec topics.
 //
 // Each question goes into the bank with difficulty 3-4 so the composer
