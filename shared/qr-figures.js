@@ -232,7 +232,7 @@
         const y0 = y(Math.max(0, sc.lo)); const yv = y(v);
         const p = v >= 0 ? barPath(x, yv, bw, y0 - yv, false) : `<path d="M${r1(x)} ${r1(y0)}H${r1(x + bw)}V${r1(yv)}H${r1(x)}Z"`;
         if (p) s += `${p} fill="${k > 1 ? SERIES[j] : SERIES[0]}"/>`;
-        if (labels) s += txt(x + bw / 2, yv - 6, fmt(v, spec.unit === '%' ? '%' : ''), { size: 11.5, anchor: 'middle', fill: 'var(--qf-ink)' });
+        if (labels) s += txt(x + bw / 2, v >= 0 ? yv - 6 : yv + 15, fmt(v, spec.unit === '%' ? '%' : ''), { size: 11.5, anchor: 'middle', fill: 'var(--qf-ink)' });
       });
       s += multiline(left + slot * i + slot / 2, top + plotH + small + 6, catLines[i], small, { anchor: 'middle', fill: 'var(--qf-ink2)' });
     });

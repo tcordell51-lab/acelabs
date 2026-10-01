@@ -164,6 +164,8 @@ const FUNCS = {
   isprime: (x) => { if (!x.isInt() || x.n < 2n) return false; for (let i = 2n; i * i <= x.n; i++) if (x.n % i === 0n) return false; return true; },
   // number of primes p with a <= p <= b
   countprimes: (a, b) => { let c = 0n; for (let i = a.ceil().n; i <= b.floor().n; i++) if (FUNCS.isprime(new Q(i))) c++; return new Q(c); },
+  // smallest whole n >= 0 with start * ratio^n > target (ratio > 1)
+  steps: (start, ratio, target) => { if (ratio.cmp(1) <= 0) throw new Error('steps needs ratio > 1'); let n = 0n; let v = start; while (v.cmp(target) <= 0) { v = v.mul(ratio); n++; if (n > 1000n) throw new Error('steps runaway'); } return new Q(n); },
   // number of positive divisors of a positive integer
   ndivisors: (x) => { if (!x.isInt() || x.n < 1n) throw new Error('ndivisors needs a positive integer'); let c = 0n; for (let i = 1n; i <= x.n; i++) if (x.n % i === 0n) c++; return new Q(c); }
 };
