@@ -34,3 +34,26 @@ steel (rc-p02-q09 otherwise needed outside knowledge).
 
 The prep app's own passages were left untouched in `~/code/acethedat-prep`; the fixes
 above live only here.
+
+## 2026-10-01: fifteen full sections
+
+- **Twenty new originals** (`rc-o07` to `rc-o26`, 340 questions), each written to
+  `verification/AUTHOR.md`, validated, then answered by a blind examiner from a key-stripped
+  pack. Result: 340 / 340 blind answers equal the key. Two items were tightened before entry:
+  rc-o22-q04 (stem now excludes type AB, the one literal second reading) and rc-o15's Nobel
+  sentence (the posthumous rule stated precisely).
+- **All 19 migrated passages trimmed** from about 1,700 words to 1,318 to 1,400 (the ADA
+  length), keeping every paragraph and every proof line; proof sentence indices were relocated
+  by quote text. Four (rc-p01, rc-p05, rc-p10, rc-p15) gained a 17th question, an application
+  item. Every trimmed passage was re-answered blind: 308 / 308.
+- **Accuracy corrections the examiners caught:** rc-p01 no longer credits the tun's radiation
+  tolerance to the glass (hydrated tardigrades resist ionizing radiation about as well; q09 now
+  asks about heat); rc-p19 no longer says one isoflurane enantiomer is "twice" as potent;
+  rc-p04's integron cassette count softened; two pre-existing distractor notes that misdescribed
+  their passage (rc-p18-q14, rc-p19-q06) rewritten.
+- **The validator now holds every passage to 1,100 to 1,400 words.**
+- **Sections:** 15, each two 17-question passages and one 16-question passage (50 questions).
+  `rc-s1` to `rc-s3` are unchanged; `rc-s4` to `rc-s15` are new, one migrated 16-question
+  passage plus two 17-question passages, mixed by field.
+
+Totals: 45 passages, 750 questions, 15 sections. Raw examiner outputs: `verification/blind/`.

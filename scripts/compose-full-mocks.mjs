@@ -312,6 +312,9 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.a
   if (CHECK) {
     const mocks = loadWindow('tools/mock/data/full-mocks.js', 'ACE_FULL_MOCKS').mocks;
     const errs = checkMocks(mocks);
+    // Shipping rule: every science and QR item has passed a blind re-solve.
+    const ver = new Set(fs.existsSync(VERIFIED) ? JSON.parse(fs.readFileSync(VERIFIED, 'utf8')).map((x) => x.id) : []);
+    for (const mk of mocks) for (const [k, list] of Object.entries(mk.sections)) for (const it of list) if (!ver.has(it.id)) errs.push(`${mk.id} ${k}: ${it.id} has not passed the blind re-solve`);
     errs.forEach((e) => console.log('  ERROR ' + e));
     console.log(errs.length ? `FAIL: ${errs.length} error(s)` : `PASS: ${mocks.length} full mocks`);
     process.exit(errs.length ? 1 : 0);
