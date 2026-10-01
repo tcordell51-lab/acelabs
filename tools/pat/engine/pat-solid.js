@@ -103,25 +103,45 @@
   function hide(o, k, v) { Object.defineProperty(o, k, { value: v, enumerable: false, writable: true }); return v; }
   /* ---------------- ray intervals ---------------- */
   /* one primitive: at most one interval (all primitives are convex) */
+  function prep(p) {
+    if (p._pp) return p._pp;
+    var pl = primPlanes(p), n = pl.length, P = { nx: new Float64Array(n), ny: new Float64Array(n), nz: new Float64Array(n), d: new Float64Array(n), k: [], round: p.t === 'cyl' || p.t === 'cone' };
+    for (var i = 0; i < n; i++) { P.nx[i] = pl[i][0][0]; P.ny[i] = pl[i][0][1]; P.nz[i] = pl[i][0][2]; P.d[i] = pl[i][1]; P.k.push(planeKey(pl[i][0], pl[i][1])); }
+    if (P.round) {
+      P.sk = sideKey(p); P.i = (p.ax + 1) % 3; P.j = (p.ax + 2) % 3;
+      var bb = primBox(p); P.lo = bb[0]; P.hi = bb[1];
+    }
+    return hide(p, '_pp', P);
+  }
   function primRay(p, o, d) {
-    var t0 = -BIG, t1 = BIG, k0 = null, k1 = null, pl = p._pl || hide(p, '_pl', primPlanes(p).map(function (x) { return [x[0], x[1], planeKey(x[0], x[1])]; }));
-    for (var m = 0; m < pl.length; m++) {
-      var n = pl[m][0], nd = dot(n, d), pd = pl[m][1] - dot(n, o);
-      if (Math.abs(nd) < 1e-13) { if (pd < 0) return null; continue; }
+    var P = prep(p), t0 = -BIG, t1 = BIG, k0 = null, k1 = null, n = P.d.length;
+    if (P.round) {          // quick reject against the bounding box (all axes)
+      var a0 = -BIG, a1 = BIG;
+      for (var q = 0; q < 3; q++) {
+        if (d[q] === 0) { if (o[q] < P.lo[q] || o[q] > P.hi[q]) return null; continue; }
+        var ta = (P.lo[q] - o[q]) / d[q], tb = (P.hi[q] - o[q]) / d[q];
+        if (ta > tb) { var tt = ta; ta = tb; tb = tt; }
+        if (ta > a0) a0 = ta; if (tb < a1) a1 = tb;
+        if (a0 > a1) return null;
+      }
+    }
+    for (var m = 0; m < n; m++) {
+      var nd = P.nx[m] * d[0] + P.ny[m] * d[1] + P.nz[m] * d[2], pd = P.d[m] - (P.nx[m] * o[0] + P.ny[m] * o[1] + P.nz[m] * o[2]);
+      if (nd < 1e-13 && nd > -1e-13) { if (pd < 0) return null; continue; }
       var t = pd / nd;
-      if (nd > 0) { if (t < t1) { t1 = t; k1 = pl[m][2]; } } else if (t > t0) { t0 = t; k0 = pl[m][2]; }
+      if (nd > 0) { if (t < t1) { t1 = t; k1 = P.k[m]; } } else if (t > t0) { t0 = t; k0 = P.k[m]; }
       if (t0 >= t1) return null;
     }
-    if (p.t === 'box' || p.t === 'hs') return [t0, t1, k0, k1];
-    var i = (p.ax + 1) % 3, j = (p.ax + 2) % 3, qu = o[i] - p.c[0], qv = o[j] - p.c[1], du = d[i], dv = d[j], sk = p._sk || hide(p, '_sk', sideKey(p));
+    if (!P.round) return [t0, t1, k0, k1];
+    var i = P.i, j = P.j, qu = o[i] - p.c[0], qv = o[j] - p.c[1], du = d[i], dv = d[j], sk = P.sk;
     if (p.t === 'cyl') {
       var A = du * du + dv * dv, B = 2 * (qu * du + qv * dv), Cq = qu * qu + qv * qv - p.r * p.r;
       if (A < 1e-14) { if (Cq > 0) return null; return [t0, t1, k0, k1]; }
       var disc = B * B - 4 * A * Cq;
       if (disc <= 0) return null;
-      var sq = Math.sqrt(disc), ta = (-B - sq) / (2 * A), tb = (-B + sq) / (2 * A);
-      if (ta > t0) { t0 = ta; k0 = sk; }
-      if (tb < t1) { t1 = tb; k1 = sk; }
+      var sq = Math.sqrt(disc), r1 = (-B - sq) / (2 * A), r2 = (-B + sq) / (2 * A);
+      if (r1 > t0) { t0 = r1; k0 = sk; }
+      if (r2 < t1) { t1 = r2; k1 = sk; }
       return t0 < t1 ? [t0, t1, k0, k1] : null;
     }
     // frustum: convex, so the inside set along the line is one interval; find it from the roots
@@ -130,13 +150,13 @@
     var cands = [[t0, k0], [t1, k1]];
     if (Math.abs(A2) < 1e-14) { if (Math.abs(B2) > 1e-14) cands.push([-C2 / B2, sk]); }
     else { var D2 = B2 * B2 - 4 * A2 * C2; if (D2 > 0) { var s2 = Math.sqrt(D2); cands.push([(-B2 - s2) / (2 * A2), sk], [(-B2 + s2) / (2 * A2), sk]); } }
-    cands = cands.filter(function (c) { return c[0] >= t0 - 1e-12 && c[0] <= t1 + 1e-12; }).sort(function (a, b) { return a[0] - b[0]; });
+    cands = cands.filter(function (c) { return c[0] >= t0 - 1e-12 && c[0] <= t1 + 1e-12; }).sort(function (x, y) { return x[0] - y[0]; });
     var res = null;
     for (var c = 0; c + 1 < cands.length; c++) {
       var ta2 = cands[c][0], tb2 = cands[c + 1][0];
       if (tb2 - ta2 < 1e-12) continue;
       var tm = (ta2 + tb2) / 2;
-      if (primInside(p, add(o, d, tm))) {
+      if (primInside(p, [o[0] + d[0] * tm, o[1] + d[1] * tm, o[2] + d[2] * tm])) {
         if (!res) res = [ta2, tb2, cands[c][1], cands[c + 1][1]];
         else if (Math.abs(res[1] - ta2) < 1e-12) { res[1] = tb2; res[3] = cands[c + 1][1]; }
       }
@@ -180,12 +200,23 @@
     return out.sort(function (x, y) { return x[0] - y[0]; });
   }
   function ray(node, o, d) {
-    if (isPrim(node)) { var iv = primRay(node, o, d); return iv && iv[1] - iv[0] > 1e-12 ? [iv] : []; }
-    var parts = node.a.map(function (k) { return ray(k, o, d); });
-    if (node.op === 'u') return parts.reduce(function (x, y) { return ivUnion(x, y); }, []);
-    if (node.op === 'i') return parts.slice(1).reduce(function (x, y) { return ivInter(x, y); }, parts[0]);
-    var rest = parts.slice(1).reduce(function (x, y) { return ivUnion(x, y); }, []);
-    return ivDiff(parts[0], rest);
+    if (node.t) { var iv = primRay(node, o, d); return iv && iv[1] - iv[0] > 1e-12 ? [iv] : []; }
+    var a = node.a, k, acc;
+    if (node.op === 'u') {
+      acc = [];
+      for (k = 0; k < a.length; k++) { var r = ray(a[k], o, d); if (r.length) acc = acc.length ? ivUnion(acc, r) : r; }
+      return acc;
+    }
+    if (node.op === 'i') {
+      acc = ray(a[0], o, d);
+      for (k = 1; k < a.length && acc.length; k++) acc = ivInter(acc, ray(a[k], o, d));
+      return acc;
+    }
+    acc = ray(a[0], o, d);
+    if (!acc.length) return acc;
+    var rest = [];
+    for (k = 1; k < a.length; k++) { var r2 = ray(a[k], o, d); if (r2.length) rest = rest.length ? ivUnion(rest, r2) : r2; }
+    return rest.length ? ivDiff(acc, rest) : acc;
   }
 
   /* ---------------- transforms (signed permutations) ---------------- */
@@ -372,7 +403,7 @@
     return out;
   }
   function bisect(fn, a, b, sa) {
-    for (var i = 0; i < 22; i++) { var m = (a + b) / 2; if (fn(m) === sa) a = m; else b = m; }
+    for (var i = 0; i < 16; i++) { var m = (a + b) / 2; if (fn(m) === sa) a = m; else b = m; }
     return (a + b) / 2;
   }
 

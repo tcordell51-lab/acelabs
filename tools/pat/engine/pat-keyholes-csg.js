@@ -126,6 +126,48 @@
     for (var j = 0; j < nv; j++) { var row = []; for (var i = 0; i < nu; i++) row.push(S.pointInLoops(L, (i + 0.5) / R, (j + 0.5) / R) ? 1 : 0); g.push(row); }
     return { w: b[2], h: b[3], g: g };
   }
+  /* cheap silhouette raster straight from rays (rows top to bottom), trimmed */
+  function rayRaster(sol, axis, R) {
+    var V = AXV[axis], b = S.bboxOf(sol), ui = V.eu.indexOf(1), vi = V.ev.indexOf(1), g = [];
+    for (var v = b[1][vi] - 0.5 / R; v > b[0][vi]; v -= 1 / R) {
+      var row = [];
+      for (var u = b[0][ui] + 0.5 / R; u < b[1][ui]; u += 1 / R) row.push(S.hits(sol, V, u, v) ? 1 : 0);
+      g.push(row);
+    }
+    return trimG(g);
+  }
+  function trimG(g) {
+    var r0 = 0, r1 = g.length - 1, c0 = 0, c1 = g[0].length - 1;
+    var rowE = function (r) { return g[r].every(function (x) { return !x; }); }, colE = function (c) { return g.every(function (row) { return !row[c]; }); };
+    while (r0 <= r1 && rowE(r0)) r0++; while (r1 >= r0 && rowE(r1)) r1--;
+    if (r0 > r1) return [[0]];
+    while (c0 <= c1 && colE(c0)) c0++; while (c1 >= c0 && colE(c1)) c1--;
+    return g.slice(r0, r1 + 1).map(function (row) { return row.slice(c0, c1 + 1); });
+  }
+  function gRot(g) { var R = g.length, Cc = g[0].length, o = []; for (var c = 0; c < Cc; c++) { o.push([]); for (var r = R - 1; r >= 0; r--) o[c].push(g[r][c]); } return o; }
+  function gFlip(g) { return g.map(function (r) { return r.slice().reverse(); }); }
+  function gIoU(A, B) {
+    var best = 0, cur = B;
+    for (var t = 0; t < 4; t++) {
+      [cur, gFlip(cur)].forEach(function (Bt) {
+        for (var dy = -1; dy <= 1; dy++) for (var dx = -1; dx <= 1; dx++) {
+          var inter = 0, uni = 0, H = Math.max(A.length, Bt.length + dy) + 2, Wd = Math.max(A[0].length, Bt[0].length + dx) + 2;
+          for (var j = Math.min(0, dy); j < H; j++) for (var i = Math.min(0, dx); i < Wd; i++) {
+            var a = (A[j] && A[j][i]) ? 1 : 0, bj = j - dy, bi = i - dx, bb = (Bt[bj] && Bt[bj][bi]) ? 1 : 0;
+            if (a && bb) inter++; if (a || bb) uni++;
+          }
+          if (uni && inter / uni > best) best = inter / uni;
+        }
+      });
+      cur = gRot(cur);
+    }
+    return best;
+  }
+  function gSame(A, B) {
+    var cur = B, ka = JSON.stringify(A);
+    for (var t = 0; t < 4; t++) { if (JSON.stringify(cur) === ka || JSON.stringify(gFlip(cur)) === ka) return true; cur = gRot(cur); }
+    return false;
+  }
   /* best IoU over the 8 turns/flips, small shifts allowed (confusability) */
   function iou(A, B) {
     var best = 0;
@@ -209,6 +251,10 @@
       var p = randParams(rng);
       if (!legal(p) || profileCount(p) < 2) continue;
       var turn = rng.pick(SHOWN), sol = orient(build(p), turn);
+      // cheap screen first: no plain-rectangle outline, three different outlines
+      var scr = [0, 1, 2].map(function (a) { return rayRaster(sol, a, 4); });
+      if (scr.some(function (g) { return g.every(function (r) { return r.every(function (x) { return x; }); }); })) continue;
+      if (gSame(scr[0], scr[1]) || gSame(scr[0], scr[2]) || gSame(scr[1], scr[2])) continue;
       var sils = [0, 1, 2].map(function (a) { return outline(sol, a); });
       if (sils.some(function (s) { return !s; })) continue;
       // three distinct outlines, none a plain rectangle
@@ -228,15 +274,22 @@
       var keyAxis = rng.int(3), key = sils[keyAxis];
       var keyR = { L: key, r8: raster(key, 8) };
       // candidates
-      var cands = [];
+      var cands = [], keyG = rayRaster(sol, keyAxis, 4), silG = [0, 1, 2].map(function (a) { return a === keyAxis ? keyG : rayRaster(sol, a, 4); });
+      // screen every variant on cheap rasters, then trace exact outlines for the closest few
+      var pre = [];
       variants(p, rng).forEach(function (vt) {
         if (!legal(vt[0])) return;
-        var vs = orient(build(vt[0]), turn), o = outline(vs, keyAxis);
-        if (!o) return;
-        if (sils.some(function (s) { return sameOutline(s, o); })) return;
-        var x = iou(keyR, { L: o });
+        var vs = orient(build(vt[0]), turn), g = rayRaster(vs, keyAxis, 4);
+        if (silG.some(function (sg) { return gSame(sg, g); })) return;
+        var x = gIoU(keyG, g);
         if (x >= 0.985 || x < 0.55) return;
-        cands.push({ loops: o, trap: vt[1], iou: x });
+        pre.push({ vs: vs, trap: vt[1], iou: x });
+      });
+      pre.sort(function (a, b) { return b.iou - a.iou; });
+      pre.slice(0, 7).forEach(function (c) {
+        var o = outline(c.vs, keyAxis);
+        if (!o || sils.some(function (s2) { return sameOutline(s2, o); })) return;
+        cands.push({ loops: o, trap: c.trap, iou: c.iou });
       });
       if (cands.length < 3) continue;
       cands.sort(function (x, y) { return y.iou - x.iou; });
@@ -300,6 +353,7 @@
   function renderFigure(item) { return '<figure class="pat-panel pat-wide"><div class="pat-paper">' + objectSVG(item.figure) + '</div><figcaption>Object</figcaption></figure>'; }
   function renderOption(item, i) { var o = item.options[i]; return '<div class="pat-paper pat-small pat-hole">' + openingSVG(o.loops, o.scale, optionBox(item)) + '</div>'; }
 
+  if (PAT.keyholes && PAT.keyholes.TRAPS && !PAT.keyholes.TRAPS.CURVE) PAT.keyholes.TRAPS.CURVE = { label: 'Curve and slant swapped', note: 'The right outline with one curved edge drawn as a slant or square corner (or the other way round). Arcs stay arcs and slants stay slants in every view.' };
   PAT.keyholesCSG = { generate: generate, renderFigure: renderFigure, renderOption: renderOption, build: build, orient: orient, outline: outline, TURNS: TURNS, SHOWN: SHOWN, TRAPS: TRAPS2, featureEvidence: featureEvidence };
   if (typeof module === 'object' && module.exports) module.exports = PAT;
 })(typeof self !== 'undefined' ? self : globalThis);

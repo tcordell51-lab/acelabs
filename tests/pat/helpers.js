@@ -2,18 +2,24 @@
 /* Loads the browser engine into Node exactly as the page loads it (same files). */
 const path = require('path');
 const ENGINE = path.join(__dirname, '..', '..', 'tools', 'pat', 'engine');
+/* same order as the <script> tags in tools/pat/test.html */
+const ENGINE_FILES = ['solid', 'keyholes', 'keyholes-csg', 'tfe', 'tfe-csg', 'angles', 'holepunch', 'cubes', 'patternfold', 'patternfold-poly', 'test', 'store'];
 function loadEngine() {
   const PAT = require(path.join(ENGINE, 'pat-core.js'));
-  ['keyholes', 'tfe', 'angles', 'holepunch', 'cubes', 'patternfold', 'test', 'store'].forEach((n) => require(path.join(ENGINE, 'pat-' + n + '.js')));
+  ENGINE_FILES.forEach((n) => require(path.join(ENGINE, 'pat-' + n + '.js')));
   return PAT;
 }
 const V = require(path.join(__dirname, '..', '..', 'scripts', 'pat', 'verify.js'));
+const VS = require(path.join(__dirname, '..', '..', 'scripts', 'pat', 'verify-solid.js'));
 
 /* Independent checks, one per type. Each returns a list of problems (empty = pass). */
-function checkItem(PAT, it) {
+function checkItem(PAT, it, opts) {
   const p = [];
   const n = it.options.length;
   if (!(it.answer >= 0 && it.answer < n)) p.push('answer index out of range');
+  if (it.figure && it.figure.kind === 'machined' && it.type === 'tfe') return p.concat(VS.checkTfeMachined(it, opts));
+  if (it.figure && it.figure.kind === 'machined' && it.type === 'keyholes') return p.concat(VS.checkKeyholesMachined(it));
+  if (it.figure && it.figure.kind === 'poly' && it.type === 'patternfold') return p.concat(VS.checkPatternPoly(it));
   if (it.type === 'angles') {
     const r = V.verifyAngles(it.figure.degs, it.options.map((o) => o.text), it.answer);
     p.push(...r.issues);
@@ -33,7 +39,13 @@ function checkItem(PAT, it) {
     if (n !== 4) p.push('TFE must have 4 choices');
   } else if (it.type === 'holepunch') {
     const truth = V.holepunchForward(it.figure.steps.map((s) => s.fold), it.figure.punches);
-    if (V.holeKey(truth) !== V.holeKey(it.options[it.answer].holes)) p.push('keyed holes differ from forward simulation');
+    if (!it.meta.halfHoles && V.holeKey(truth) !== V.holeKey(it.options[it.answer].holes)) p.push('keyed holes differ from forward simulation');
+    // exact physical check (also covers punches on a fold edge)
+    const tri = V.holepunchTriangles(it.figure.steps.map((s) => s.fold), it.figure.punches);
+    if (tri.partial.length) p.push('a cell is only partly punched');
+    if (tri.missed.length) p.push('a punch hits no paper');
+    if (V.holeKey(tri.holes) !== V.holeKey(it.options[it.answer].holes)) p.push('keyed holes differ from the triangle simulation');
+    it.options.forEach((o, i) => { if (i !== it.answer && V.holeKey(o.holes) === V.holeKey(tri.holes)) p.push('distractor ' + i + ' is the true sheet'); });
     const keys = it.options.map((o) => V.holeKey(o.holes));
     if (new Set(keys).size !== n) p.push('duplicate options');
     if (n !== 5) p.push('hole punching must have 5 choices');
@@ -76,4 +88,4 @@ function checkItem(PAT, it) {
   return p;
 }
 
-module.exports = { loadEngine, V, checkItem };
+module.exports = { loadEngine, V, VS, checkItem, ENGINE_FILES };

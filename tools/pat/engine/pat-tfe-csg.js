@@ -125,7 +125,7 @@
       var ps = [];
       for (var k = 0; k < M.H.length; k++) if (M.H[k] || rng.chance(0.08)) ps.push([true, k, M.H[k]]);
       for (var k2 = 0; k2 < M.V.length; k2++) if (M.V[k2] || rng.chance(0.08)) ps.push([false, k2, M.V[k2]]);
-      return ps;
+      return rng.shuffle(ps);          // random order: a member that differs fails on an early probe
     });
     var keys = maps.map(S.mapKey), out = [];
     for (var i = 0; i < FAMILY.length; i++) {

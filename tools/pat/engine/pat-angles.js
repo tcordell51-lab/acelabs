@@ -16,14 +16,22 @@
   var C = PAT.core;
 
   var GAP_BAG = [2, 2, 3, 3, 3, 4, 4, 4, 5, 6];
+  var GAP_BAG_1 = [1, 1, 2, 2, 3, 3, 4];
 
   function orderKey(order) { return order.map(function (i) { return i + 1; }).join('-'); }
 
   function generate(seed, opts) {
     opts = opts || {};
     var rng = C.makeRng(seed);
-    var gaps = [rng.pick(GAP_BAG), rng.pick(GAP_BAG), rng.pick(GAP_BAG)];
-    if (Math.min(gaps[0], gaps[1], gaps[2]) > 3 && rng.chance(0.7)) gaps[rng.int(3)] = rng.pick([2, 3]);
+    var gaps;
+    if (opts.tier === '1deg') {
+      // optional expert tier: at least one pair exactly 1 degree apart
+      gaps = [rng.pick(GAP_BAG_1), rng.pick(GAP_BAG_1), rng.pick(GAP_BAG_1)];
+      if (Math.min(gaps[0], gaps[1], gaps[2]) > 1) gaps[rng.int(3)] = 1;
+    } else {
+      gaps = [rng.pick(GAP_BAG), rng.pick(GAP_BAG), rng.pick(GAP_BAG)];
+      if (Math.min(gaps[0], gaps[1], gaps[2]) > 3 && rng.chance(0.7)) gaps[rng.int(3)] = rng.pick([2, 3]);
+    }
     var span = gaps[0] + gaps[1] + gaps[2];
     var lo = 14 + rng.int(150 - span - 14);              // smallest angle 14..(150-span), largest <= ~150
     var sorted = [lo, lo + gaps[0], lo + gaps[0] + gaps[1], lo + span];

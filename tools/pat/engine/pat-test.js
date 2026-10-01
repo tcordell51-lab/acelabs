@@ -14,17 +14,45 @@
   var C = PAT.core;
 
   var NUMBERED = 15;
+  /* Engine versions. A test is fully determined by (testId, version, options).
+     v1: the original generators, kept byte-for-byte so every saved v1 attempt
+         still maps answer-for-answer onto the same 90 items.
+     v2: adds machined-part keyholes and TFE (slants, cylinders, cones, holes,
+         curved cut-outs), non-cube pattern folding, two- and three-fold hole
+         punching only (some with a punch on a fold edge), and an optional
+         1-degree angle tier (off by default). New attempts use VERSION. */
+  var VERSION = 2;
   function seedFor(testId) {
     if (typeof testId === 'number') return C.hashStr('acethedat-pat-test-' + testId);
     var m = /^F(\d+)$/.exec(String(testId));
     if (m) return parseInt(m[1], 10) >>> 0;
     throw new Error('unknown test id ' + testId);
   }
-  function labelFor(testId) { return typeof testId === 'number' ? 'PAT Test ' + testId : 'Fresh test ' + String(testId).slice(1); }
+  function labelFor(testId, opts) { return (typeof testId === 'number' ? 'PAT Test ' + testId : 'Fresh test ' + String(testId).slice(1)) + (opts && opts.angles1deg ? ' (1-degree angles)' : ''); }
   function freshId() { return 'F' + ((Math.random() * 4294967295) >>> 0); }
+  function normOpts(opts) { opts = opts || {}; return { version: opts.version || VERSION, angles1deg: !!opts.angles1deg }; }
 
   /* the plan of generator calls for one test: deterministic from the seed */
-  function plan(seed) {
+  function plan(seed, opts) {
+    opts = normOpts(opts);
+    if (opts.version === 1) return planV1(seed);
+    var rng = C.makeRng(C.childSeed(seed, 'plan2'));
+    var kh = rng.shuffle(['medium', 'medium', 'medium', 'hard', 'hard', 'hard', 'hard', 'hard', 'hard', 'hard', 'brutal', 'brutal', 'brutal', 'hard', 'medium']);
+    var khM = rng.shuffle([1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0]);           // 9 machined, 6 block parts
+    var tfM = rng.shuffle([1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0]);
+    var hp = rng.shuffle([2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3]);           // every item has multiple folds
+    var hpHalf = rng.shuffle([1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);       // a punch on a fold edge allowed
+    var pf = rng.shuffle(['cube', 'cube', 'cube', 'cube', 'cube', 'cube', 'cube', 'cube', 'box', 'box', 'triprism', 'triprism', 'pyramid', 'pyramid', 'tetra']);
+    var steps = [], i;
+    for (i = 0; i < 15; i++) steps.push(khM[i] ? { type: 'keyholesM', seed: C.childSeed(seed, 'khm' + i), arg: kh[i] } : { type: 'keyholes', seed: C.childSeed(seed, 'kh' + i), arg: kh[i] });
+    for (i = 0; i < 15; i++) steps.push(tfM[i] ? { type: 'tfeM', seed: C.childSeed(seed, 'tfem' + i) } : { type: 'tfe', seed: C.childSeed(seed, 'tfe' + i) });
+    for (i = 0; i < 15; i++) steps.push({ type: 'angles', seed: C.childSeed(seed, 'ang' + i), arg: opts.angles1deg ? { tier: '1deg' } : undefined });
+    for (i = 0; i < 15; i++) steps.push({ type: 'holepunch', seed: C.childSeed(seed, 'hp2-' + i), arg: hpHalf[i] ? { folds: hp[i], halfHoles: true } : { folds: hp[i] } });
+    [['A', 4], ['B', 4], ['C', 4], ['D', 3]].forEach(function (fg) { steps.push({ type: 'cubes', seed: C.childSeed(seed, 'cube' + fg[0]), arg: fg }); });
+    for (i = 0; i < 15; i++) steps.push(pf[i] === 'cube' ? { type: 'patternfold', seed: C.childSeed(seed, 'pf' + i) } : { type: 'patternfoldP', seed: C.childSeed(seed, 'pfp' + i), arg: { kind: pf[i] } });
+    return steps;
+  }
+  function planV1(seed) {
     var rng = C.makeRng(C.childSeed(seed, 'plan'));
     var kh = rng.shuffle(['medium', 'medium', 'medium', 'hard', 'hard', 'hard', 'hard', 'hard', 'hard', 'hard', 'brutal', 'brutal', 'brutal', 'hard', 'medium']);
     var hp = rng.shuffle([1, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3]);
@@ -32,39 +60,44 @@
     for (var i = 0; i < 15; i++) steps.push({ type: 'keyholes', seed: C.childSeed(seed, 'kh' + i), arg: kh[i] });
     for (var j = 0; j < 15; j++) steps.push({ type: 'tfe', seed: C.childSeed(seed, 'tfe' + j) });
     for (var k = 0; k < 15; k++) steps.push({ type: 'angles', seed: C.childSeed(seed, 'ang' + k) });
-    for (var l = 0; l < 15; l++) steps.push({ type: 'holepunch', seed: C.childSeed(seed, 'hp' + l), arg: hp[l] });
+    for (var l = 0; l < 15; l++) steps.push({ type: 'holepunch', seed: C.childSeed(seed, 'hp' + l), arg: { folds: hp[l] } });
     [['A', 4], ['B', 4], ['C', 4], ['D', 3]].forEach(function (fg) { steps.push({ type: 'cubes', seed: C.childSeed(seed, 'cube' + fg[0]), arg: fg }); });
     for (var m = 0; m < 15; m++) steps.push({ type: 'patternfold', seed: C.childSeed(seed, 'pf' + m) });
     return steps;
   }
   function runStep(st) {
     if (st.type === 'keyholes') return [PAT.keyholes.generate(st.seed, st.arg)];
+    if (st.type === 'keyholesM') return [PAT.keyholesCSG.generate(st.seed, st.arg)];
     if (st.type === 'tfe') return [PAT.tfe.generate(st.seed)];
-    if (st.type === 'angles') return [PAT.angles.generate(st.seed)];
-    if (st.type === 'holepunch') return [PAT.holepunch.generate(st.seed, { folds: st.arg })];
+    if (st.type === 'tfeM') return [PAT.tfeCSG.generate(st.seed)];
+    if (st.type === 'angles') return [PAT.angles.generate(st.seed, st.arg)];
+    if (st.type === 'holepunch') return [PAT.holepunch.generate(st.seed, st.arg)];
     if (st.type === 'cubes') return PAT.cubes.generateSet(st.seed, st.arg[1], st.arg[0]);
     if (st.type === 'patternfold') return [PAT.patternfold.generate(st.seed)];
+    if (st.type === 'patternfoldP') return [PAT.patternfoldPoly.generate(st.seed, st.arg)];
     throw new Error('step ' + st.type);
   }
-  function finish(testId, seed, items) {
+  function finish(testId, seed, items, opts) {
     items.forEach(function (it, i) { it.n = i + 1; });
     if (items.length !== 90) throw new Error('test has ' + items.length + ' items');
-    return { id: String(testId), testId: testId, seed: seed, label: labelFor(testId), items: items };
+    return { id: String(testId), testId: testId, seed: seed, version: opts.version, opts: opts, label: labelFor(testId, opts), items: items };
   }
-  function build(testId) {
+  function build(testId, opts) {
+    opts = normOpts(opts);
     var seed = seedFor(testId), items = [];
-    plan(seed).forEach(function (st) { items.push.apply(items, runStep(st)); });
-    return finish(testId, seed, items);
+    plan(seed, opts).forEach(function (st) { items.push.apply(items, runStep(st)); });
+    return finish(testId, seed, items, opts);
   }
-  function buildAsync(testId, onProgress) {
-    var seed = seedFor(testId), steps = plan(seed), items = [], i = 0;
+  function buildAsync(testId, onProgress, opts) {
+    opts = normOpts(opts);
+    var seed = seedFor(testId), steps = plan(seed, opts), items = [], i = 0;
     return new Promise(function (resolve, reject) {
       function tick() {
         try {
           var until = Date.now() + 40;
           while (i < steps.length && Date.now() < until) { items.push.apply(items, runStep(steps[i])); i++; }
           if (onProgress) onProgress(items.length / 90);
-          if (i < steps.length) setTimeout(tick, 0); else resolve(finish(testId, seed, items));
+          if (i < steps.length) setTimeout(tick, 0); else resolve(finish(testId, seed, items, opts));
         } catch (e) { reject(e); }
       }
       setTimeout(tick, 0);
@@ -90,12 +123,12 @@
     patternfold: { studio: 'patternfold.html', canon: CANON + 'pat-pattern-folding.html' }
   };
   var TRAP_NAMES = {
-    keyholes: { FILL: 'Dropped feature', CARVE: 'Added notch', LIMB: 'Impossible combination', SCALE: 'Wrong proportions', ISLAND: 'Floating island', MIRROR: 'Near-mirror', FOREIGN: 'Different object', SIZE: 'Right shape, wrong size' },
-    tfe: { mirror: 'Front and back (or left and right) swapped', 'dash-as-solid': 'Hidden edge drawn solid', 'solid-as-dash': 'Visible edge drawn dashed', profile: 'A step in the wrong place' },
+    keyholes: { FILL: 'Dropped feature', CARVE: 'Added notch', LIMB: 'Impossible combination', SCALE: 'Wrong proportions', ISLAND: 'Floating island', MIRROR: 'Near-mirror', FOREIGN: 'Different object', SIZE: 'Right shape, wrong size', CURVE: 'Curve and slant swapped' },
+    tfe: { mirror: 'Front and back (or left and right) swapped', 'dash-as-solid': 'Hidden edge drawn solid', 'solid-as-dash': 'Visible edge drawn dashed', profile: 'A step in the wrong place', feature: 'A feature changed (shape, size or place)', dropped: 'A feature left out' },
     angles: { swap: 'Swapped a close pair', double: 'Swapped two pairs', shift: 'Misplaced one angle by two spots' },
     holepunch: { 'missed-unfold': 'Skipped one unfold', 'wrong-line': 'Mirrored across the wrong line', flipped: 'Read the sheet flipped', shifted: 'One hole off by a cell', dropped: 'One hole missing' },
     cubes: {},
-    patternfold: { mirror: 'Mirror image cube', rotation: 'A face turned the wrong way', neighbor: 'Two faces traded places', opposite: 'Opposite faces shown side by side' }
+    patternfold: { mirror: 'Mirror image cube', rotation: 'A face turned the wrong way', neighbor: 'Two faces traded places', opposite: 'Opposite faces shown side by side', shade: 'Shading on the wrong face', hidden: 'A face from the far side shown' }
   };
 
   function bucketRows(items, attempt, keyFn, labels) {
@@ -122,16 +155,19 @@
   var PATTERN = {
     keyholes: function (items, at) {
       var LB = { sym: 'Symmetric outline', near: 'Nearly symmetric outline', asym: 'Clearly lopsided outline' };
-      return { title: 'By symmetry of the answer outline', rows: bucketRows(items, at, function (it) {
+      var mixed = items.some(function (it) { return it.meta.shape === 'machined'; });
+      var res = { title: 'By symmetry of the answer outline', rows: bucketRows(items.filter(function (it) { return it.meta.shape !== 'machined'; }), at, function (it) {
         return (it.meta.keySymmetry > 1 || it.meta.mirrorCloseness >= 0.999) ? 'sym' : it.meta.mirrorCloseness >= 0.82 ? 'near' : 'asym';
       }, function (k) { return LB[k]; }).sort(function (a, b) { return ['sym', 'near', 'asym'].indexOf(a.key) - ['sym', 'near', 'asym'].indexOf(b.key); }) };
+      if (mixed) { res.title = 'By object type'; res.extra = { title: 'Block parts, by symmetry of the answer outline', rows: res.rows }; res.rows = bucketRows(items, at, function (it) { return it.meta.shape === 'machined' ? 'mach' : 'block'; }, function (k) { return k === 'mach' ? 'Curved and slanted parts' : 'Block parts'; }); }
+      return res;
     },
     tfe: function (items, at) {
       return { title: 'By hidden lines in the answer', rows: bucketRows(items, at, function (it) { var h = it.meta.hiddenLines; return h === 0 ? '0' : h <= 2 ? '1-2' : '3+'; }, function (k) { return k === '0' ? 'No hidden lines' : k + ' hidden lines'; }).sort(function (a, b) { return a.key < b.key ? -1 : 1; }),
         extra: { title: 'By missing view', rows: bucketRows(items, at, function (it) { return it.meta.missing; }, function (k) { return k.charAt(0).toUpperCase() + k.slice(1) + ' view missing'; }) } };
     },
     angles: function (items, at) {
-      return { title: 'By closest gap in the set', rows: bucketRows(items, at, function (it) { var g = it.meta.minGap; return g <= 2 ? '2' : g === 3 ? '3' : '4+'; }, function (k) { return k === '4+' ? '4 or more degrees apart' : k + ' degrees apart'; }).sort(function (a, b) { return a.key < b.key ? -1 : 1; }),
+      return { title: 'By closest gap in the set', rows: bucketRows(items, at, function (it) { var g = it.meta.minGap; return g <= 1 ? '1' : g <= 2 ? '2' : g === 3 ? '3' : '4+'; }, function (k) { return k === '4+' ? '4 or more degrees apart' : k === '1' ? '1 degree apart' : k + ' degrees apart'; }).sort(function (a, b) { return a.key < b.key ? -1 : 1; }),
         missedGaps: items.map(function (it) { var a = at.answers[it.n - 1]; return (a == null || a === it.answer) ? null : PAT.angles.missedGap(it, a); }).filter(function (g) { return g != null; }) };
     },
     holepunch: function (items, at) {
@@ -158,7 +194,9 @@
     var L = LINKS[type], s = [], wr = weakestRow(pat.rows), topTrap = traps[0];
     var studio = function (q) { return L.studio + (q || ''); };
     if (type === 'keyholes') {
-      if (wr && (wr.key === 'sym' || wr.key === 'near')) s.push({ text: 'Symmetric and nearly symmetric outlines are where the misses sit. Before you look at the choices, name each true view (top, front, end), then compare two look-alike choices against EACH OTHER, not against the object.', href: studio() });
+      if (wr && wr.key === 'mach') s.push({ text: 'Curved and slanted parts cost the most. Trace the outline edge by edge: an arc stays an arc, a slant stays a slant, and a drilled hole never changes an outline.', href: studio() });
+      else if (wr && wr.key === 'block') s.push({ text: 'Block parts were the tricky ones. Spend 5 seconds orienting, then trace only the outline: the inside features are traps.', href: studio() });
+      else if (wr && (wr.key === 'sym' || wr.key === 'near')) s.push({ text: 'Symmetric and nearly symmetric outlines are where the misses sit. Before you look at the choices, name each true view (top, front, end), then compare two look-alike choices against EACH OTHER, not against the object.', href: studio() });
       else if (wr) s.push({ text: 'Lopsided outlines were the tricky ones. Spend 5 seconds orienting, then trace only the outline: the inside features are traps.', href: studio() });
       if (topTrap && topTrap.key === 'SIZE') s.push({ text: 'You picked a right-shape, wrong-size opening. Check proportions last: width against height, then against the object.', href: studio() });
       else if (topTrap) s.push({ text: 'Your misses leaned toward "' + topTrap.label + '". Run the Aperture Trainer on Hard and watch for that trap in its tally.', href: studio() });
@@ -218,6 +256,6 @@
     return { total: total, of: 90, answered: answered, sections: sections, weak: weak };
   }
 
-  PAT.test = { NUMBERED: NUMBERED, seedFor: seedFor, labelFor: labelFor, freshId: freshId, plan: plan, build: build, buildAsync: buildAsync, order: order, analyze: analyze, LINKS: LINKS, TRAP_NAMES: TRAP_NAMES };
+  PAT.test = { VERSION: VERSION, NUMBERED: NUMBERED, seedFor: seedFor, labelFor: labelFor, freshId: freshId, plan: plan, build: build, buildAsync: buildAsync, order: order, analyze: analyze, LINKS: LINKS, TRAP_NAMES: TRAP_NAMES };
   if (typeof module === 'object' && module.exports) module.exports = PAT;
 })(typeof self !== 'undefined' ? self : globalThis);

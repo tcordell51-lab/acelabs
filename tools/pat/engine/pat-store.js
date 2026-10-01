@@ -16,6 +16,7 @@
 
   Attempt shape:
     { id, testId, label, mode: 'standard'|'thomas', status: 'in-progress'|'finished',
+      engine: generator version the attempt was built with (missing = 1), opts: {angles1deg},
       createdAt, updatedAt, finishedAt, remainingSec, cursor,
       answers: [90 x (0-4|null)], marked: [90 x bool], timeSpent: [90 x seconds],
       summary: { total, of, sections: [{type, correct, of, timeSec}] } }
@@ -48,6 +49,7 @@
     var n = test.items.length, now = Date.now();
     return {
       id: test.id + '-' + now.toString(36), testId: test.testId, label: test.label, mode: mode || 'standard',
+      engine: test.version || 1, opts: { angles1deg: !!(test.opts && test.opts.angles1deg) },
       status: 'in-progress', createdAt: now, updatedAt: now, finishedAt: null,
       remainingSec: 3600, cursor: 0,
       answers: new Array(n).fill(null), marked: new Array(n).fill(false), timeSpent: new Array(n).fill(0)
