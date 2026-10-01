@@ -7,6 +7,9 @@
 // Each question has:
 //   q_svg — inline SVG showing starting material with arrows (or product)
 //   opts_svg[] — inline SVG for each multiple-choice option (or null for text)
+//
+// After regenerating, run node scripts/debias/apply-debias.mjs: later length repairs and fifth
+// choices for these items live in scripts/debias/edits and are re-applied there.
 
 const fs = require('fs');
 const bank = require('/tmp/dat-mock-bank.json');
@@ -269,15 +272,18 @@ questions.push({
     <text x="220" y="84" class="atom">[+H, -H2O, ~H]</text>
     <text x="40" y="140" class="lbl">Secondary carbocation rearranges via 1,2-hydride shift to tertiary</text>
   `, 360, 160),
+  // Repaired 2026-09-30 (ADA comparison): the old choice C, 3-bromo-3-methylbutane, was a
+  // misnumbered name for the keyed product, and the keyed choice carried its own justification.
   opts: [
-    '2-bromo-3-methylbutane (no rearrangement)',
-    '2-bromo-2-methylbutane (after hydride shift to 3° cation)',
-    '3-bromo-3-methylbutane',
-    '1-bromo-3-methylbutane'
+    '2-bromo-3-methylbutane',
+    '2-bromo-2-methylbutane',
+    '2-methyl-2-butene',
+    '1-bromo-3-methylbutane',
+    '1-bromo-2-methylbutane'
   ],
-  opts_smiles: ['CC(Br)C(C)C', 'CC(Br)(C)CC', null, null],
+  opts_smiles: ['CC(Br)C(C)C', 'CC(Br)(C)CC', 'CC=C(C)C', 'BrCCC(C)C', 'BrCC(C)CC'],
   correct: 1,
-  why: 'Initial 2° carbocation undergoes 1,2-hydride shift to form a more stable 3° cation. Br− attacks → 2-bromo-2-methylbutane.',
+  why: 'Protonation of the OH and loss of water gives a secondary carbocation at C2. A 1,2-hydride shift from C3 turns it into the more stable tertiary cation, and bromide traps that carbon to give 2-bromo-2-methylbutane. 2-Bromo-3-methylbutane is the unrearranged product, 2-methyl-2-butene is an E1 alkene that excess HBr would convert to the same bromide, and the two 1-bromo isomers put bromine on a primary carbon that never carries the positive charge.',
   _ada_category: 'Mechanisms'
 });
 

@@ -24,7 +24,11 @@
 //   3 tests × 40 = 120 items — within pool. Dropped to 3 to maintain uniqueness.
 
 const fs = require('fs');
-const bank = require('/tmp/dat-mock-bank.json');
+const path = require('path');
+// Read the bank in the repo (it used to be a /tmp copy, which drifted from what shipped).
+const bank = require(path.join(__dirname, 'dat-mock-bank.json'));
+// Key placement: spreads keys across A-E with no letter more than twice running. See scripts/debias.
+const { planLetters, moveKey, isOrderBound } = require('./debias/placement.cjs');
 
 function rng(seed) {
   let s = seed >>> 0;
@@ -269,5 +273,13 @@ for (const t of tests){
   }
 }
 console.log('Duplicate IDs across tests:', dupes);
+// Place keys in every section so no letter carries more than its share and none runs.
+// The answer-bias gate (scripts/gate-answer-bias.mjs) checks the result in npm test.
+for (const t of tests){
+  for (const list of Object.values(t.sections)){
+    const plan = planLetters(list.map(q => ({ id: q.id, n: q.opts.length, key: q.correct, fixed: isOrderBound(q.opts) })));
+    list.forEach((q, i) => { if (!isOrderBound(q.opts)) moveKey(q, plan[i], { optsKey: 'opts', whyKey: null, parallel: ['opts_smiles', 'opts_svg'] }); });
+  }
+}
 fs.writeFileSync('/tmp/dat-mock-tests.json', JSON.stringify(tests));
 console.log('Wrote /tmp/dat-mock-tests.json (' + (fs.statSync('/tmp/dat-mock-tests.json').size/1024).toFixed(1) + ' KB)');
