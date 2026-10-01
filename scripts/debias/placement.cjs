@@ -101,9 +101,9 @@ function permutation(n, from, to) {
 // The capital A is also an article, so a bare A only counts when a verb follows it.
 const VERB = 'is|are|was|were|would|will|can|could|might|does|do|describes|reverses|gives|names|confuses|ignores|uses|forgets|treats|computes|drops|assumes|applies|adds|multiplies|subtracts|swaps|wrongly|correctly|reflects|comes|routes|reads|counts|picks|puts|states|places|claims|misreads|inverts|doubles|halves|has|lacks|matches|represents|results|misapplies|fails|overlooks|omits|reports|mistakes|takes|tempts|sends|keeps|makes|writes|copies|simply|just|also|requires|require|reverse|pair|pairs|mixes|predicts|labels|calls|says|stops|skips|counts|ranks|misses|sounds|looks|seems|refers|equals|cannot|can\'t|isn\'t|and|or';
 const REF = new RegExp(
-  String.raw`(\(\s*)([A-E])(\s*\))` + '|' +
+  String.raw`((?<![\w\]])\(\s*)([A-E])(\s*\))` + '|' +
   String.raw`(\b(?:[Cc]hoices?|[Oo]ptions?|[Aa]nswers?|[Ll]etters?)\s+\(?)([A-E])\b` + '|' +
-  String.raw`(\b(?:and|or|vs\.?|nor)\s+)([A-E])\b(?=[\s,).:;/])` + '|' +
+  String.raw`(\b(?:and|or|vs\.?|nor|so|thus|hence|then|making|while|whereas|but)\s+)([A-E])\b(?=[\s,).:;/])` + '|' +
   String.raw`((?:^|[.;:!?]\s+|,\s+|\(\s*))([A-E])(?=(?:\s+(?:` + VERB + String.raw`)\b)|\s*[,)/:])`,
   'g');
 
@@ -149,4 +149,16 @@ function moveKey(item, target, { optsKey, whyKey, parallel = [] }) {
   return { moved: true, refs };
 }
 
-module.exports = { LETTERS, isOrderBound, planLetters, moveKey, remapLetters, permutation, hash };
+// Questions that use capital letters as names (pipe A, event B, rate = k[A], A and B) cannot have
+// their explanation letters remapped safely, so such items keep their authored key position.
+const ENTITY = /\b(?:pipes?|cars?|trains?|events?|persons?|points?|workers?|machines?|students?|taps?|sets?|groups?|samples?|compounds?|solutions?|boxes|box|bags?|stocks?|funds?|accounts?|cities|city|towns?|lines?|tanks?|drains?|sides?|species|genes?|alleles?|strains?|populations?|reactants?|products?|substances?|cells?|tubes?|flasks?|beakers?|isomers?|molecules?|atoms?|elements?)\s+[A-E]\b|\bP\(\s*[A-E]|\[[A-E]\]|\b[A-E]\s+and\s+[A-E]\b|\b[A-E],\s*[A-E]\b|\b[A-E]\s*(?:->|\u2192|\+)\s*[A-E]?\b/i;
+// In an explanation, "C and D" is how authors cite two choices, so only the unambiguous naming
+// forms (pipe A, P(A), [A]) count there; the stem is checked with every form.
+const ENTITY_IN_EXPLANATION = new RegExp(ENTITY.source.split('|\\b[A-E]\\s+and')[0], 'i');
+function namesLetterEntities(stem, explanation) {
+  return ENTITY.test(String(stem || '')) || ENTITY_IN_EXPLANATION.test(String(explanation || ''));
+}
+
+function hasLetterRefs(text) { REF.lastIndex = 0; const hit = REF.test(String(text || '')); REF.lastIndex = 0; return hit; }
+
+module.exports = { hasLetterRefs, namesLetterEntities, LETTERS, isOrderBound, planLetters, moveKey, remapLetters, permutation, hash };

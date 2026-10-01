@@ -12,7 +12,7 @@
 //
 // Sets checked (fixed-form, served in authored order):
 //   shared/dat-mock-tests.js   3 practice tests x 4 sections   (prometric-mock.html)
-//   tools/minitests/bank.js    The Climb, 10 tests x 4 sections of 10
+//   tools/minitests/bank.js    The Climb, 10 tests x 4 sections of 10, and each whole 40-question rung
 //
 // Rules, per set:
 //   - each letter carries 15% to 25% of the keys (5-choice sets; rounded to whole items)
@@ -103,6 +103,8 @@ export function collectSets() {
     const bySec = {};
     t.questions.forEach((q, k) => (bySec[q.section] = bySec[q.section] || []).push({ id: `climb${t.n}-${k + 1}`, shape: itemShape(q.choices, q.correct) }));
     for (const [sec, items] of Object.entries(bySec)) sets.push({ name: `Climb ${t.n} ${sec}`, items });
+    // The whole rung as served (sections back to back), so a run cannot hide across a section break.
+    sets.push({ name: `Climb ${t.n} all`, items: t.questions.map((q, k) => ({ id: `climb${t.n}-${k + 1}`, shape: itemShape(q.choices, q.correct) })) });
   }
   return sets;
 }
