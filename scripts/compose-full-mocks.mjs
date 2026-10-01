@@ -65,6 +65,9 @@ const STRIPPED_DEGREE = /\b[1234] (?:cation|carbocation|carbon|alcohol|amine|hal
 const ABOVE = /\b(all|none|both|neither) of the (above|these)\b/i;
 const norm = (s) => String(s).toLowerCase().replace(/<[^>]+>/g, ' ').replace(/[^a-z0-9]+/g, ' ').trim();
 const stemKey = (q) => norm(q).slice(0, 90);
+// Two items built from one template ("A $50 item is marked up 50%...") must not share a mock.
+const shapeKey = (it) => String(it.q).toLowerCase().replace(/[0-9][0-9.,]*/g, '#').replace(/[^a-z# ]/g, ' ').split(/\s+/).filter(Boolean).slice(0, 9).join(' ');
+const templateKeys = (it) => [/^generated:/.test(it.i) ? it.i.split('#')[0] : null, 'shape:' + shapeKey(it)].filter(Boolean);
 
 export function keyNotLongest(opts, key) {
   const len = opts.map((o) => String(o).length);
@@ -259,12 +262,14 @@ export function compose({ count = COUNT, source = SRC } = {}) {
     // letters can still come out even once the other items are reordered.
     const cap = sec.n / 5;
     const fixedCount = mocks.map(() => [0, 0, 0, 0, 0]);
+    const usedTpl = mocks.map(() => new Set());
     for (const [st, k] of Object.entries(q)) for (let i = 0; i < k; i++) for (let m = 0; m < n; m++) {
       const qu = queues[st];
-      let j = qu.findIndex((x) => !x._natural || fixedCount[m][x._naturalKey] < cap);
+      let j = qu.findIndex((x) => (!x._natural || fixedCount[m][x._naturalKey] < cap) && !templateKeys(x).some((t) => usedTpl[m].has(t)));
       if (j < 0) throw new Error(`${sec.key} stop ${st}: no item fits the key balance`);
       const it = qu.splice(j, 1)[0];
       if (it._natural) fixedCount[m][it._naturalKey]++;
+      templateKeys(it).forEach((t) => usedTpl[m].add(t));
       deal[m].push(it);
     }
     deal.forEach((items, m) => {
