@@ -105,7 +105,7 @@ function renderSection(){
   sec.append(bar);
   const it = run.items[run.at];
   const card = el('div', { class: 'item' });
-  card.append(el('span', { class: 'eyebrow', text: it.area + (it.source === 'bank' ? ' · verified bank' : ' · generated') }));
+  card.append(el('span', { class: 'eyebrow', text: it.area + (it.source === 'bank' ? ' · verified bank' : it.source === 'ochem-2026' ? ' · test format' : ' · generated') }));
   card.append(el('p', { class: 'stem', text: it.stem }));
   if (it.fig){ injectMdCss(); const f = el('div', {}); card.append(f); renderItemFigure(f, it, {}); }
   else if (it.sub || it.reagent || it.prod){
