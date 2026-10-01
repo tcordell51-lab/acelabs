@@ -1,0 +1,137 @@
+/* ace-shell.css : the ONE Ace Labs top bar.
+   Loaded by shared/ace-shell.js INSIDE a shadow root, so nothing here leaks
+   into a tool page and no tool page's CSS leaks in. Dark forest + gold, Georgia
+   display, Hanken Grotesk body (self-hosted; the @font-face is declared on the
+   document by ace-shell.js because fonts cannot be declared in a shadow root).
+   Token values match the Visual Canon (ace-system/visuals/canon.css). */
+
+:host {
+  all: initial;
+  display: block;
+  position: relative;
+  z-index: 2147482000;
+  contain: layout style;
+  --bg: #09160e;
+  --bg-deep: #050c07;
+  --gold: #c9a84c;
+  --gold-light: #e2c97a;
+  --gold-border: rgba(201, 168, 76, 0.28);
+  --text-hi: rgba(244, 237, 224, 0.92);
+  --text-mid: rgba(244, 237, 224, 0.68);
+  --focus: #e2c97a;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+.bar {
+  background: linear-gradient(180deg, var(--bg) 0%, var(--bg-deep) 100%);
+  border-bottom: 1px solid var(--gold-border);
+  font-family: "Hanken Grotesk", "Helvetica Neue", Arial, sans-serif;
+  color: var(--text-hi);
+  -webkit-font-smoothing: antialiased;
+}
+
+.inner {
+  max-width: 1180px;
+  margin: 0 auto;
+  height: 52px;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 7px;
+  flex: 0 0 auto;
+  text-decoration: none;
+  color: var(--text-hi);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 0.005em;
+  line-height: 1;
+  white-space: nowrap;
+}
+.brand b { color: var(--gold); font-weight: 700; }
+.brand small {
+  font-family: "Hanken Grotesk", "Helvetica Neue", Arial, sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-mid);
+  margin-left: 2px;
+}
+
+nav { flex: 1 1 auto; height: 100%; min-width: 0; }
+.doors {
+  display: flex;
+  align-items: stretch;
+  justify-content: flex-end;
+  gap: 2px;
+  height: 100%;
+  list-style: none;
+}
+.doors li { display: flex; }
+
+.door {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 14px;
+  height: 100%;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--text-mid);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color 0.15s ease;
+}
+.door:hover { color: var(--text-hi); }
+.door::after {
+  content: "";
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 0;
+  height: 2px;
+  border-radius: 2px 2px 0 0;
+  background: transparent;
+  transition: background 0.15s ease;
+}
+.door:hover::after { background: rgba(201, 168, 76, 0.35); }
+.door[aria-current="page"] { color: var(--gold-light); }
+.door[aria-current="page"]::after { background: var(--gold); }
+
+a:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: -4px;
+  border-radius: 4px;
+}
+
+/* Phone: one compact row of six doors, no brand, no wrap. */
+@media (max-width: 720px) {
+  .inner { height: 46px; padding: 0 4px; gap: 0; }
+  .brand { display: none; }
+  .doors { width: 100%; gap: 0; justify-content: stretch; }
+  .doors li { flex: 1 1 0; min-width: 0; }
+  .door {
+    width: 100%;
+    padding: 0 2px;
+    font-size: 12.5px;
+    letter-spacing: 0;
+  }
+  .door::after { left: 18%; right: 18%; }
+}
+@media (max-width: 340px) {
+  .door { font-size: 11.5px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .door, .door::after { transition: none; }
+}
