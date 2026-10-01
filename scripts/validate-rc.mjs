@@ -125,6 +125,18 @@ export function validatePassage(p, file = p && p.id) {
   if (original) {
     for (const [t, min] of Object.entries(ORIGINAL_MIN)) if ((typeCount[t] || 0) < min) err(`needs at least ${min} ${t} question(s); has ${typeCount[t] || 0}`);
   }
+  // Keys must not follow a rotation a student could exploit (random keys repeat at a
+  // fixed offset about 20 percent of the time; 45 percent or more is a pattern).
+  const keys = qs.map((q) => q.key);
+  for (let per = 2; per <= 6 && keys.length > per + 4; per++) {
+    let same = 0;
+    for (let i = 0; i + per < keys.length; i++) if (keys[i] === keys[i + per]) same++;
+    if (same / (keys.length - per) >= 0.45) { err(`key letters repeat every ${per} questions (${keys.map((k) => 'ABCDE'[k]).join('')}); reorder choices (tools/rc/scripts/shuffle_choices.py)`); break; }
+  }
+  // Explanations must not name answer letters: choices may be reordered.
+  qs.forEach((q) => [q.why, ...(q.distractorNotes || [])].forEach((t) => {
+    if (typeof t === 'string' && /\b(?:[Cc]hoice|[Oo]ption|[Oo]nly|[Aa]nswer|[Ll]etter)\s+[A-E]\b|\([A-E]\)|\b[A-E] through [A-E]\b/.test(t)) err(`${q.id} explanation names an answer letter: "${t.slice(0, 80)}"`);
+  }));
   const most = Math.max(...keyCount);
   if (qs.length && most / qs.length > 0.4) warn(`key letter spread is lopsided: ${keyCount.map((c, i) => 'ABCDE'[i] + c).join(' ')}`);
   return { errors, warns, typeCount, keyCount, words: wc, questions: qs.length };

@@ -79,4 +79,6 @@ Migrated items keep their original label in `subtype` (`locate`, `purpose`, `str
 - No em dashes, en dashes, or emoji anywhere in the text.
 - Original passages: 1,100 to 1,400 words, 16 or 17 questions, and the DAT mix
   (at least 5 detail, 2 inference, 1 each of the other six types).
+- Key letters do not follow a rotation, and explanations never name an answer letter
+  (choices may be reordered by `tools/rc/scripts/shuffle_choices.py`).
 - Sections: three distinct passages, 48 to 50 questions.
