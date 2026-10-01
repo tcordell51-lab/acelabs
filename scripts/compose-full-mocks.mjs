@@ -90,6 +90,7 @@ export function eligible(it, seen, rejected) {
   }
   if (it.os && it.qs && it.o.includes(it.qs)) why.push('drawn structure is one of the choices');
   if (/\b(from earlier|continuing|previous (question|item|problem))\b/i.test(it.q)) why.push('stem leans on another item');
+  if (/\bMCAT\b|\bGPA\b|on track|pacing|study (plan|strategy|session)|practice test score/i.test(it.q)) why.push('study-strategy item, not a content question');
   if (!Array.isArray(it.o) || it.o.length !== 5) why.push('not five choices');
   else {
     if (new Set(it.o.map((o) => String(o).trim().toLowerCase().replace(/\s+/g, ' '))).size !== 5) why.push('duplicate choices');
