@@ -62,7 +62,7 @@
 
   /* ---------------- session ---------------- */
   var S = null;   // persisted state
-  var R = { items: null, patTest: null, patBuilding: null, view: 'q', lastTick: 0, timer: null, sinceSave: 0, calc: null, pt: false, calcOpen: false, rcTab: 'p', smi: null };
+  var R = { items: null, patTest: null, patBuilding: null, view: 'q', lastTick: 0, timer: null, sinceSave: 0, calc: null, pt: false, calcOpen: false, rcTab: 'p', smi: null, molN: 0 };
 
   function fresh(mockId) {
     var o = { v: 1, mockId: mockId, at: 'intro', sec: 'sons', idx: 0, answers: {}, marked: {}, spent: {}, elapsed: { sons: 0, pat: 0, rc: 0, qr: 0, brk: 0 }, done: {}, startedAt: Date.now(), savedAt: Date.now() };
@@ -73,7 +73,10 @@
 
   function rcItems(sectionId) {
     if (!RC) return [];
-    var sec = (RC.sections || []).filter(function (s) { return s.id === sectionId; })[0];
+    var all = RC.sections || [];
+    var sec = all.filter(function (s) { return s.id === sectionId; })[0];
+    // A bank with fewer sections than the mock expects still gives every mock a full section.
+    if (!sec && all.length) sec = all[(all.length - 1) - ((parseInt(String(sectionId).replace(/\D/g, ''), 10) || 1) - 1) % all.length];
     if (!sec) return [];
     var out = [];
     sec.passages.forEach(function (pid, pi) {
@@ -342,7 +345,8 @@
     }
     Array.prototype.forEach.call(cs, function (c) {
       var smi = c.getAttribute('data-smiles');
-      try { if (!R.smi) throw new Error('no drawer'); R.smi.draw(smi, c, 'light'); }
+      if (!c.id) c.id = 'mol' + (++R.molN);
+      try { if (!R.smi) throw new Error('no drawer'); R.smi.draw(smi, '#' + c.id, 'light'); }
       catch (e) { var ctx = c.getContext && c.getContext('2d'); if (ctx) { ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, c.width, c.height); ctx.fillStyle = '#1a1d20'; ctx.font = '14px monospace'; ctx.fillText(smi, 8, c.height / 2); } }
     });
   }
@@ -666,7 +670,7 @@
   function drawReportMolecules(box) {
     var cs = box.querySelectorAll('canvas[data-smiles]'); if (!cs.length) return;
     if (R.smi === null) drawMolecules();
-    Array.prototype.forEach.call(cs, function (c) { try { if (R.smi) R.smi.draw(c.getAttribute('data-smiles'), c, 'light'); } catch (e) { /* text fallback not needed in review */ } });
+    Array.prototype.forEach.call(cs, function (c) { if (!c.id) c.id = 'mol' + (++R.molN); try { if (R.smi) R.smi.draw(c.getAttribute('data-smiles'), '#' + c.id, 'light'); } catch (e) { /* the answer text is shown beside it */ } });
   }
 
   /* ---------------- test hook (headless checks) ---------------- */
