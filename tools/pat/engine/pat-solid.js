@@ -480,8 +480,21 @@
         return visibleAt(S, V, p, t) ? 1 : 2;
       });
     });
-    return prims;
+    return dedupe(prims);
   }
+  function dedupe(prims) {
+    var seen = {}, out = [];
+    prims.forEach(function (p) {
+      var k;
+      if (p.k === 'L') { var a = p.a.join(','), b = p.b.join(','); k = 'L' + (a < b ? a + ';' + b : b + ';' + a); }
+      else if (p.k === 'A') k = 'A' + p.c.join(',') + ':' + p.r + ':' + S6(p.a0) + ':' + S6(p.a1);
+      else return out.push(p);
+      k += p.dash ? 'h' : 'v';
+      if (!seen[k]) { seen[k] = 1; out.push(p); }
+    });
+    return out;
+  }
+  function S6(a) { var x = a % (2 * Math.PI); if (x < 0) x += 2 * Math.PI; return Math.round(x * 1e5); }
 
   /* ---------------- raster line maps ---------------- */
   /* window: [u0, v0, u1, v1]; R rays per unit. Ray positions are offset off the
