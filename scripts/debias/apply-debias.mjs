@@ -53,6 +53,7 @@ function applyEdit(q, e) {
   }
   q.opts = e.opts.slice();
   q.correct = e.key;
+  if (Array.isArray(e.opts_smiles)) q.opts_smiles = e.opts_smiles.slice();
   if (e.stem) q.q = e.stem;
   if (e.why) q.why = e.why;
   if (Array.isArray(q.opts_smiles)) while (q.opts_smiles.length < q.opts.length) q.opts_smiles.push(null);
