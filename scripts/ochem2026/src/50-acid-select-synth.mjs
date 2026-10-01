@@ -62,7 +62,7 @@ export default [
       { text: 'Products; phenol is an acid, so bicarbonate pulls it into water' },
       { text: 'Products; phenoxide is stabilized by resonance into the ring' },
       { text: 'Neither; the two pKa values are the same' },
-      { text: 'Reactants; phenol mostly stays put' },
+      { text: 'Reactants; phenol is a weaker acid than carbonic acid' },
       { text: 'Products; carbonic acid falls apart to CO2, which drags it forward' }
     ],
     correct: 3,
@@ -105,7 +105,7 @@ export default [
     stem: 'Acetone is treated with LDA, lithium diisopropylamide, at -78 C. The conjugate acid of LDA is diisopropylamine. Which side of the deprotonation equilibrium is favored?',
     choices: [
       { text: 'Reactants, since LDA is too bulky to reach the alpha hydrogen' },
-      { text: 'Products, essentially completely' },
+      { text: 'Products, since diisopropylamine is the far weaker acid' },
       { text: 'Reactants, since the cold temperature stops the proton transfer' },
       { text: 'Neither, since an amine and a ketone are about equally acidic' },
       { text: 'Reactants, since nitrogen is more electronegative than carbon' }
@@ -121,7 +121,7 @@ export default [
     choices: [
       { text: 'Reactants, since hydride is a nucleophile, not a base' },
       { text: 'Reactants, since tert-butoxide is a stronger base than hydride' },
-      { text: 'Products, with H2 bubbling out' },
+      { text: 'Products, since H2 is a far weaker acid than the alcohol' },
       { text: 'Neither, since an alcohol cannot lose a proton to a hydride' },
       { text: 'Reactants, since tert-butanol is a stronger acid than water and holds on' }
     ],
@@ -172,7 +172,7 @@ export default [
     correct: 0,
     verify: { distinct: true },
     coach: 'Draw each conjugate base and ask where the negative charge lives: on oxygen and spread by resonance beats everything here.',
-    why: 'Acetate spreads its charge over two equal oxygens, so acetic acid (pKa about 4.8) wins. Phenoxide spreads charge into the ring but mostly onto carbon (about 10). Ethoxide has no resonance (about 16). The enolate of acetone puts charge on carbon and oxygen (about 19), and the propynide anion sits on carbon (about 25).'
+    why: 'Acetate spreads its charge over two equal oxygens, so acetic acid (pKa about 4.8) wins. Phenoxide spreads the charge from oxygen into the ortho and para carbons of the ring, but carbon holds it poorly (pKa about 10). Ethoxide has no resonance (about 16). The enolate of acetone puts charge on carbon and oxygen (about 19), and the propynide anion sits on carbon (about 25).'
   },
   {
     id: 'eq-12', type: 'equilibrium', roots: ACID, difficulty: 2,
@@ -195,7 +195,7 @@ export default [
     choices: [
       { text: 'Reactants; HCl stays whole and is the strongest acid present' },
       { text: 'Neither; HCl and hydronium are equally strong in water' },
-      { text: 'Products; hydronium ion, H3O+' },
+      { text: 'Products; H3O+ is a far weaker acid than HCl' },
       { text: 'Products; HCl itself remains the strongest acid in solution' },
       { text: 'Reactants; chloride is a stronger base than water' }
     ],
@@ -432,7 +432,7 @@ export default [
   },
   {
     id: 'al-04', type: 'alpha', roots: ALPHA, difficulty: 2,
-    stem: 'Benzaldehyde and acetone, one equivalent each, are heated with NaOH in ethanol and water. What is the major product?',
+    stem: 'Benzaldehyde is treated with excess acetone and NaOH in aqueous ethanol, with warming. What is the major product?',
     choices: [
       { smiles: 'CC(=O)CC(O)c1ccccc1' },
       { smiles: 'O=C(/C=C/c1ccccc1)/C=C/c1ccccc1' },
@@ -443,7 +443,7 @@ export default [
     correct: 2,
     verify: { distinct: true },
     coach: 'Only acetone has alpha hydrogens, so it is the enolate; benzaldehyde is the better electrophile, and heat removes water to make the conjugated enone.',
-    why: 'Benzaldehyde has no alpha hydrogen, so it can only be attacked. The acetone enolate adds to it, and with heat the beta-hydroxy ketone loses water to form the alkene conjugated to both the ring and the carbonyl: benzalacetone, the E isomer of 4-phenylbut-3-en-2-one. A second condensation needs a second equivalent of benzaldehyde.'
+    why: 'Benzaldehyde has no alpha hydrogen, so it can only be attacked. The acetone enolate adds to it, and with heat the beta-hydroxy ketone loses water to form the alkene conjugated to both the ring and the carbonyl: benzalacetone, the E isomer of 4-phenylbut-3-en-2-one. Excess acetone keeps a second condensation from competing.'
   },
   {
     id: 'al-05', type: 'alpha', roots: ALPHA, difficulty: 2,

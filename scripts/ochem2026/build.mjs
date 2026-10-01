@@ -50,7 +50,7 @@ const DELTA = /\bdelta\b|\bpartial (positive|negative) charge symbol\b/i;
 function strings(o, out = []){
   if (typeof o === 'string') out.push(o);
   else if (Array.isArray(o)) o.forEach(v => strings(v, out));
-  else if (o && typeof o === 'object') for (const [k, v] of Object.entries(o)) if (!['smi', 'smiles', 'sub', 'prod', 'lp', 'rad', 'from', 'to', 'verify'].includes(k)) strings(v, out);
+  else if (o && typeof o === 'object') for (const [k, v] of Object.entries(o)) if (!['smi', 'smiles', 'sub', 'prod', 'lp', 'rad', 'from', 'to', 'verify', 'adds', 'drops', 'species', 'product'].includes(k)) strings(v, out);
   return out;
 }
 function choiceKey(c){ return (c.text || '') + '|' + (c.smiles || '') + '|' + (c.fig ? JSON.stringify(c.fig.arrows || c.fig) : ''); }
@@ -73,6 +73,10 @@ export function lint(items){
       if (texts.every(t => t)){
         const kl = texts[it.correct].length, others = Math.max(...texts.filter((_, i) => i !== it.correct).map(t => t.length));
         if (kl >= others) p('the key is the longest choice (' + kl + ' vs ' + others + ')');
+        // the opposite tell: a key far shorter than the choices around it
+        const ds = texts.filter((_, i) => i !== it.correct).map(t => t.length).sort((a, b) => a - b);
+        const med = (ds[1] + ds[2]) / 2;
+        if (kl < 0.6 * med && med > 12) p('the key is much shorter than the distractors (' + kl + ' vs median ' + med + ')');
       }
     }
     if (/arrows|fishhook-(forward|reverse)/.test(it.type) && it.type !== 'fishhook-concept' && !(it.fig && it.fig.kind === 'mech')) p('arrow items need a mech figure');
@@ -90,6 +94,10 @@ export function lint(items){
       if (/\bCARBO\b/.test(s)) p('it is CARDIO, not CARBO');
     }
   }
+  // across the set, the key may not be the shortest text choice too often either
+  const textItems = items.filter(it => Array.isArray(it.choices) && it.choices.length === 5 && it.choices.every(c => (c.text || '').trim() && !c.smiles && !c.fig) && it.choices.some(c => c.text.length > 12));
+  const shortest = textItems.filter(it => { const L = it.choices.map(c => c.text.trim().length); return L[it.correct] < Math.min(...L.filter((_, i) => i !== it.correct)); });
+  if (textItems.length > 20 && shortest.length > 0.3 * textItems.length) P.push('set: the key is the unique shortest choice in ' + shortest.length + ' of ' + textItems.length + ' text items: ' + shortest.map(it => it.id).join(' '));
   return P;
 }
 
@@ -128,22 +136,28 @@ function rcdCheck(it){
   return out;
 }
 
-// Put the key in a slot that keeps every home's keys spread across all five letters.
-const PATTERN = [2, 0, 4, 1, 3, 1, 4, 0, 3, 2];
+// Put the key in a slot that keeps every home's keys spread across all five letters,
+// in an order seeded by the ids so no run of consecutive items reads A, B, C, D, E.
+function hash(str){ let h = 2166136261; for (let i = 0; i < str.length; i++){ h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
 export function arrange(items){
   const byHome = {};
   for (const it of items) (byHome[it.home] = byHome[it.home] || []).push(it);
   const out = [];
-  let off = 0;
   for (const home of Object.keys(byHome).sort()){
-    byHome[home].sort((a, b) => a.id.localeCompare(b.id, 'en', { numeric: true })).forEach((it, i) => {
-      const slot = PATTERN[(i + off) % PATTERN.length];
+    const list = byHome[home].sort((a, b) => a.id.localeCompare(b.id, 'en', { numeric: true }));
+    const slots = list.map((_, i) => i % 5);
+    let seed = hash(home);
+    const rnd = () => { seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0; return seed / 4294967296; };
+    for (let i = slots.length - 1; i > 0; i--){ const j = Math.floor(rnd() * (i + 1)); [slots[i], slots[j]] = [slots[j], slots[i]]; }
+    list.forEach((it, i) => {
+      const slot = slots[i];
       const key = it.choices[it.correct];
       const rest = it.choices.filter((_, j) => j !== it.correct);
-      const choices = rest.slice(0, slot).concat([key], rest.slice(slot));
+      // distractors keep their authored order but rotate by the id, so position carries no signal either
+      const r = hash(it.id) % rest.length, rot = rest.slice(r).concat(rest.slice(0, r));
+      const choices = rot.slice(0, slot).concat([key], rot.slice(slot));
       out.push(Object.assign({}, it, { choices, correct: slot }));
     });
-    off += 3;
   }
   return out;
 }

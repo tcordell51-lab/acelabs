@@ -18,17 +18,17 @@ export default [
     choices: [{ text: 'octanoic acid' }, { text: 'octane' }, { text: '2-octanone' }, { text: '1-chlorooctane' }, { text: '1-octanol' }],
     correct: 0,
     coach: 'Lowest Rf means stuck to the silica the hardest, and the carboxylic acid is the best hydrogen bonder on the list.',
-    why: 'A carboxylic acid both donates and accepts hydrogen bonds through two oxygens, so it grips the polar silica harder than the alcohol, the ketone, the alkyl chloride or the alkane. The tighter the grip, the shorter the trip, so octanoic acid has the lowest Rf. 1-Octanol is close, but it has only one O-H to hold on with.'
+    why: 'A carboxylic acid both donates and accepts hydrogen bonds through two oxygens, so it grips the polar silica harder than the alcohol, the ketone, the alkyl chloride or the alkane. The tighter the grip, the shorter the trip, so octanoic acid has the lowest Rf. 1-Octanol is close, but the O-H of the acid is more polarized and its C=O adds a second strong hydrogen-bond acceptor, so the acid holds on tighter.'
   },
   {
     id: 'lab-03', type: 'lab', roots: ['l1-groups'], difficulty: 2,
     stem: 'A TLC plate run in pure hexane leaves every spot near the baseline. The student reruns it in 1:1 hexane and ethyl acetate. What happens to the spots?',
     choices: [
-      { text: 'Every Rf goes up' },
-      { text: 'Every Rf goes down, because the solvent now competes for the silica' },
-      { text: 'The Rf values stay the same, because Rf depends only on the compound' },
-      { text: 'The polar spots move up and the nonpolar spots move down' },
-      { text: 'The order of the spots reverses' }
+      { text: 'Every Rf value goes up' },
+      { text: 'Every Rf goes down' },
+      { text: 'Every Rf stays the same' },
+      { text: 'Polar spots rise, nonpolar spots fall' },
+      { text: 'The spot order reverses' }
     ],
     correct: 0,
     coach: 'A more polar solvent competes with the compounds for the silica and pulls everything off it faster, so every spot climbs.',
@@ -52,11 +52,11 @@ export default [
     id: 'lab-05', type: 'lab', roots: ['l2-acidity'], difficulty: 2,
     stem: 'A diethyl ether solution contains benzoic acid, phenol and naphthalene. It is shaken with saturated aqueous sodium bicarbonate. What ends up in the aqueous layer?',
     choices: [
-      { text: 'sodium benzoate' },
+      { text: 'sodium benzoate only' },
       { text: 'sodium benzoate and sodium phenoxide' },
       { text: 'sodium phenoxide only' },
-      { text: 'naphthalene, pulled in by the salt' },
-      { text: 'nothing, since bicarbonate is too weak to react' }
+      { text: 'dissolved naphthalene' },
+      { text: 'nothing, bicarbonate is too weak' }
     ],
     correct: 0,
     coach: 'Bicarbonate only deprotonates acids stronger than carbonic acid: the carboxylic acid at pKa about 4 yes, phenol at about 10 no.',
@@ -65,9 +65,9 @@ export default [
   {
     id: 'lab-06', type: 'lab', roots: ['l2-acidity'], difficulty: 2,
     stem: 'After a bicarbonate wash has removed a carboxylic acid, the ether layer still holds phenol and naphthalene. Which aqueous wash pulls the phenol into the water and leaves the naphthalene in the ether?',
-    choices: [{ text: '1 M NaOH' }, { text: 'another saturated NaHCO3 wash' }, { text: '1 M HCl' }, { text: 'saturated NaCl (brine)' }, { text: 'plain distilled water' }],
+    choices: [{ text: '1 M aqueous NaOH' }, { text: 'another saturated NaHCO3 wash' }, { text: '1 M aqueous HCl' }, { text: 'saturated NaCl (brine)' }, { text: 'plain distilled water' }],
     correct: 0,
-    coach: 'Phenol needs a base stronger than its conjugate base, phenoxide; hydroxide (water pKa about 15.7) can do it, bicarbonate cannot.',
+    coach: 'Phenol (pKa about 10) needs a base whose conjugate acid is weaker: hydroxide (water, pKa about 15.7) works, bicarbonate (carbonic acid, pKa about 6.4) does not.',
     why: 'Phenol has a pKa near 10. Hydroxide is the conjugate base of water (pKa about 15.7), so the equilibrium lies far toward sodium phenoxide, a salt that dissolves in water. Bicarbonate already failed to deprotonate it, acid only protonates bases, and brine or water alone leave a neutral phenol mostly in the ether.'
   },
   {
@@ -88,9 +88,9 @@ export default [
     id: 'lab-08', type: 'lab', roots: ['l1-groups'], difficulty: 1,
     stem: 'A product is extracted from water into dichloromethane (density about 1.33 g/mL) in a separatory funnel. Where is the product after the layers separate?',
     choices: [
-      { text: 'In the bottom layer' },
-      { text: 'In the top layer, because organic solvents always float on water' },
-      { text: 'In the top layer, because dichloromethane is less polar than water' },
+      { text: 'In the bottom, denser layer' },
+      { text: 'In the top layer, organic floats' },
+      { text: 'In the top layer, DCM is less polar' },
       { text: 'Split evenly between the layers' },
       { text: 'In the layer that is larger by volume' }
     ],
@@ -116,9 +116,9 @@ export default [
     id: 'lab-10', type: 'lab', roots: ['l1-groups'], difficulty: 2,
     stem: 'During a recrystallization, a student dissolves the crude solid in three times the minimum volume of hot solvent, then cools it in ice. What is the most likely result?',
     choices: [
-      { text: 'A low recovery of crystals' },
-      { text: 'Crystals that are less pure, because extra solvent traps impurities' },
-      { text: 'A higher recovery, because more solvent dissolves more compound' },
+      { text: 'A low recovery, since product stays dissolved' },
+      { text: 'Less pure crystals, since solvent traps impurities' },
+      { text: 'A higher recovery, since more solvent dissolves more' },
       { text: 'A lower melting point for the crystals that form' },
       { text: 'No change, since excess solvent all evaporates on cooling' }
     ],
@@ -144,7 +144,7 @@ export default [
     id: 'lab-12', type: 'lab', roots: ['l1-groups'], difficulty: 2,
     stem: 'A liquid boils at 290 degrees C at 1 atm but starts to decompose near 220 degrees C. Why does vacuum distillation let a chemist purify it?',
     choices: [
-      { text: 'Lower pressure lowers the boiling point' },
+      { text: 'Lower pressure lowers the boiling point, so it distills cooler' },
       { text: 'Lower pressure raises its vapor pressure at every temperature' },
       { text: 'The vacuum removes oxygen, so it no longer decomposes when hot' },
       { text: 'Lower pressure raises the decomposition temperature above 290 degrees C' },
@@ -206,7 +206,7 @@ export default [
     choices: [{ text: '3' }, { text: '2' }, { text: '4' }, { text: '5, one per carbon' }, { text: '1' }],
     correct: 0, verify: { c13: 'COC(C)(C)C' },
     coach: 'The three methyls on the tert-butyl carbon are identical; the methyl on oxygen is a different neighborhood.',
-    why: 'There is the O-CH3 carbon, the quaternary carbon bonded to oxygen, and the three equivalent methyls of the tert-butyl group. Three signals; the two carbons bonded to oxygen land in the 50 to 80 ppm range and the tert-butyl methyls near 27 ppm.'
+    why: 'There is the O-CH3 carbon, the quaternary carbon bonded to oxygen, and the three equivalent methyls of the tert-butyl group. Three signals; the two carbons bonded to oxygen appear near 49 ppm (O-CH3) and 73 ppm (the quaternary C-O) and the tert-butyl methyls near 27 ppm.'
   },
   {
     id: 'cn-05', type: 'cnmr', roots: ['l1-skeletal'], difficulty: 2,
@@ -229,7 +229,7 @@ export default [
     stem: 'In the 13C NMR spectrum of ethyl acetate, CH3C(=O)OCH2CH3, which carbon appears farthest downfield?',
     sub: 'CCOC(C)=O',
     choices: [
-      { text: 'the C=O carbon' },
+      { text: 'the C=O carbon of the ester' },
       { text: 'the O-CH2 carbon of the ethyl group' },
       { text: 'the CH3 bonded to the carbonyl' },
       { text: 'the CH3 at the end of the ethyl group' },
@@ -332,7 +332,7 @@ export default [
     choices: [{ smiles: 'CCC=O' }, { smiles: 'CC(C)=O' }, { smiles: 'C=CCO' }, { smiles: 'C=COC' }, { smiles: 'C1COC1' }],
     correct: 0, verify: { formulaEach: 'C3H6O', distinct: true },
     coach: 'The 2720 and 2820 pair plus a proton near 9.8 ppm is the aldehyde fingerprint.',
-    why: 'The pair of C-H stretches near 2720 and 2820 cm-1 and the 1H signal near 9.8 ppm both belong to an aldehyde H. It is a triplet because the CH2 next door has two neighbors to split it. That is propanal. Acetone has the carbonyl but no aldehyde H, and the other three isomers have no carbonyl at all.'
+    why: 'The pair of C-H stretches near 2720 and 2820 cm-1 and the 1H signal near 9.8 ppm both belong to an aldehyde H. It is a triplet because the CH2 next door carries two H, and n plus 1 is 3. That is propanal. Acetone has the carbonyl but no aldehyde H, and the other three isomers have no carbonyl at all.'
   },
   {
     id: 'ms-05', type: 'multi-spec', roots: ['l1-groups', 'l1-skeletal'], difficulty: 2,

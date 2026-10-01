@@ -50,8 +50,12 @@ export function buildSection({ seed = 1, makers = {}, bank = [], api = {} }){
     return false;
   }
   function note(it){ if (it.sub) usedSub[it.sub] = (usedSub[it.sub] || 0) + 1; usedStem[(it.stem || '').slice(0, 60)] = (usedStem[(it.stem || '').slice(0, 60)] || 0) + 1; }
+  // The 2026 test-format items are the newest and the most figure-heavy. Keep them to
+  // about a third of a section so the verified bank and the generators still carry it.
+  const SET_CAP = 10;
+  let setUsed = 0;
   function fromBank(groups, homes){
-    const pool = bank.filter(it => (groups.includes(it.group) || homes.includes(it.home)) && !seen.has(itemKey(it)));
+    const pool = bank.filter(it => (groups.includes(it.group) || homes.includes(it.home)) && !seen.has(itemKey(it)) && (it.source !== 'ochem-2026' || setUsed < SET_CAP));
     if (!pool.length) return null;
     // prefer homes used least so far
     pool.sort((x, y) => (usedHome[x.home] || 0) - (usedHome[y.home] || 0) || rng() - 0.5);
@@ -67,7 +71,7 @@ export function buildSection({ seed = 1, makers = {}, bank = [], api = {} }){
     for (let tries = 0; tries < 12; tries++){
       const h = have[Math.min(have.length - 1, Math.floor(rng() * Math.min(have.length, 3)))];
       let it = null; try { it = makers[h](a); } catch (e){ it = null; }
-      if (it && valid(it) && !seen.has(itemKey(it)) && (tries < 8 ? !tooSimilar(it) : true)) return Object.assign({ source: it.source || 'generated', home: it.home || h }, it);
+      if (it && valid(it) && !seen.has(itemKey(it)) && !(it.source === 'ochem-2026' && setUsed >= SET_CAP) && (tries < 8 ? !tooSimilar(it) : true)) return Object.assign({ source: it.source || 'generated', home: it.home || h }, it);
     }
     return null;
   }
@@ -81,6 +85,7 @@ export function buildSection({ seed = 1, makers = {}, bank = [], api = {} }){
       if (!it) it = wantBank ? (fromBank(b.groups, b.homes) || fromModule(b.homes)) : (fromModule(b.homes) || fromBank(b.groups, b.homes));
       if (!it) continue;
       seen.add(itemKey(it)); usedHome[it.home] = (usedHome[it.home] || 0) + 1; note(it);
+      if (it.source === 'ochem-2026') setUsed++;
       out.push(Object.assign({ area: b.area }, it));
     }
   }

@@ -52,6 +52,14 @@ PKA = {
 }
 
 
+def _canon_table(t):
+    out = {}
+    for k, v in t.items():
+        m = Chem.MolFromSmiles(k)
+        out[Chem.MolToSmiles(m) if m else k] = v
+    return out
+
+
 def canon(smi):
     m = Chem.MolFromSmiles(smi)
     return None if m is None else Chem.MolToSmiles(m)
@@ -75,6 +83,7 @@ class Electrons:
             m = parse_keep_h(smi)
             if m is None:
                 raise ValueError('species %d does not parse: %s' % (s, smi))
+            Chem.Kekulize(m, clearAromaticFlags=True)   # count electrons on one Kekule structure
             base = len(self.atoms)
             for a in m.GetAtoms():
                 sym = a.GetSymbol()
@@ -213,6 +222,37 @@ def try_apply(species, arrows):
         return None, str(ex)
 
 
+def look(species, arrows):
+    """What a student SEES for an arrow set, the way mechdraw.js draws it: where each tail
+    sits and where each head lands. Two sets with the same look are the same picture."""
+    E = Electrons(species)
+    out = []
+    for ar in arrows:
+        f, t = ar['from'], ar['to']
+        if 'lp' in f:
+            tail = ('lp', E.ref(f['lp'])); src = {E.ref(f['lp'])}
+        elif 'e' in f:
+            tail = ('e', E.ref(f['e'])); src = {E.ref(f['e'])}
+        else:
+            a, b = sorted(E.ref(x) for x in f['bond']); src = {a, b}; tail = ('bond', a, b, None)
+        if 'atom' in t:
+            head = ('at', E.ref(t['atom']))
+        else:
+            a, b = (E.ref(x) for x in t['bond'])
+            if frozenset((a, b)) in E.bonds:
+                head = ('mid',) + tuple(sorted((a, b)))
+            elif a in src or b in src:
+                far = b if a in src else a
+                near = a if a in src else b
+                head = ('at', far)
+                if tail[0] == 'bond':
+                    tail = tail[:3] + (near,)       # the tail leans toward the atom that makes the new bond
+            else:
+                head = ('mid',) + tuple(sorted((a, b)))
+        out.append((tail, head, bool(ar.get('fish'))))
+    return tuple(sorted(out))
+
+
 def c13(smi):
     m = Chem.MolFromSmiles(smi)
     ranks = list(Chem.CanonicalRankAtoms(m, breakTies=False))
@@ -240,6 +280,9 @@ def dou_formula(formula):
         elif el in ('F', 'Cl', 'Br', 'I'):
             x += k
     return (2 * c + 2 + n - h - x) / 2
+
+
+PKA = _canon_table(PKA)
 
 
 def all_smiles(it):
@@ -321,6 +364,17 @@ def check(it):
                     if i != k and c.get('smiles') and frag_set([c['smiles']]) == got:
                         P.append('choice %d is also what the arrows give' % i)
         if t in ('arrows-reverse', 'fishhook-reverse'):
+            seen = {}
+            for i, c in enumerate(ch):
+                arrows = (c.get('fig') or {}).get('arrows')
+                if arrows:
+                    try:
+                        sig = look(spec_smiles(fig['species']), arrows)
+                        if sig in seen:
+                            P.append('choices %d and %d draw the same picture' % (seen[sig], i))
+                        seen[sig] = i
+                    except Exception:
+                        pass
             want = frag_set(spec_smiles(fig['product']))
             for i, c in enumerate(ch):
                 arrows = (c.get('fig') or {}).get('arrows')

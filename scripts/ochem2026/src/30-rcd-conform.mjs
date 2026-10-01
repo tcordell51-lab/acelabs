@@ -72,7 +72,7 @@ export default [
   {
     id: 'rcd-05', type: 'rcd', roots: ['l2-carbocation'], difficulty: 2,
     stem: 'For this two-step reaction, which labeled distance is the activation energy of the rate-determining step?',
-    fig: two(0, 60, 40, 110, -10, { marks: [{ from: 0, to: 1, label: 'w' }, { from: 2, to: 3, label: 'x' }, { from: 0, to: 3, label: 'y', dx: 26 }, { from: 0, to: 4, label: 'z', dx: 30 }] }),
+    fig: two(0, 60, 30, 110, -10, { marks: [{ from: 0, to: 1, label: 'w' }, { from: 2, to: 3, label: 'x' }, { from: 0, to: 3, label: 'y', dx: 26 }, { from: 0, to: 4, label: 'z', dx: 30 }] }),
     choices: [{ text: 'x' }, { text: 'w' }, { text: 'y' }, { text: 'z' }, { text: 'w plus x' }],
     correct: 0, verify: { rcd: 'rdsMark' },
     coach: 'Measure each climb from the valley it starts in; the biggest climb is the slow step.',
@@ -91,7 +91,7 @@ export default [
     id: 'rcd-13', type: 'rcd', roots: ['l2-carbocation'], difficulty: 2,
     stem: 'Which step of the reaction drawn here is the fastest?',
     fig: two(0, 85, 50, 62, -20),
-    choices: [{ text: 'Step 2' }, { text: 'Step 1' }, { text: 'Both steps run at the same rate' }, { text: 'It cannot be told without numbers' }, { text: 'The overall reaction' }],
+    choices: [{ text: 'The second step' }, { text: 'The first step' }, { text: 'Both run at one rate' }, { text: 'It cannot be told' }, { text: 'The overall reaction' }],
     correct: 0,
     coach: 'Fast means a small climb from the valley the step starts in.',
     why: 'Step 1 climbs 85 from the reactants; step 2 climbs only 12 from the intermediate valley at 50. The smaller hill is the faster step, so step 2 is fast and step 1 is rate-determining. Starting low does not make a step fast; the height of its own hill does.'
@@ -111,7 +111,7 @@ export default [
     id: 'rcd-07', type: 'rcd', roots: ['l2-carbocation'], difficulty: 1,
     stem: 'Is the overall reaction drawn here exothermic or endothermic?',
     fig: { kind: 'rcd', yLabel: 'Enthalpy', points: [{ kind: 'start', y: 10 }, { kind: 'ts', y: 90 }, { kind: 'end', y: 45 }] },
-    choices: [{ text: 'Endothermic' }, { text: 'Exothermic' }, { text: 'It depends on the temperature' }, { text: 'Neither, products match reactants' }, { text: 'It depends on a catalyst' }],
+    choices: [{ text: 'Endothermic' }, { text: 'Exothermic' }, { text: 'Depends on temperature' }, { text: 'Thermoneutral' }, { text: 'Depends on a catalyst' }],
     correct: 0, verify: { rcd: 'heat' },
     coach: 'Read the landing and ignore the hill: products above reactants means heat went in.',
     why: 'The products finish higher than the reactants started, so energy was taken in: endothermic. The height of the hill tells you how fast, not which way the heat flows.'
@@ -120,7 +120,7 @@ export default [
     id: 'rcd-26', type: 'rcd', roots: ['l2-carbocation'], difficulty: 2,
     stem: 'This three-step reaction passes through high-energy intermediates. What is the overall reaction?',
     fig: { kind: 'rcd', yLabel: 'Enthalpy', points: [{ kind: 'start', y: 20 }, { kind: 'ts', y: 100 }, { kind: 'int', y: 70 }, { kind: 'ts', y: 85 }, { kind: 'int', y: 55 }, { kind: 'ts', y: 75 }, { kind: 'end', y: -10 }] },
-    choices: [{ text: 'Exothermic' }, { text: 'Endothermic' }, { text: 'Thermoneutral overall' }, { text: 'Exothermic in step 1 only' }, { text: 'It cannot be read from this' }],
+    choices: [{ text: 'Exothermic' }, { text: 'Endothermic' }, { text: 'Thermoneutral' }, { text: 'Exothermic in step 1 only' }, { text: 'Cannot be read' }],
     correct: 0, verify: { rcd: 'heat' },
     coach: 'Only the start and the finish decide the heat of reaction; the middle is just the route.',
     why: 'The products land below where the reactants started, so the overall reaction gives off heat. The intermediates being high only means the route is uphill for a while. Step 1 on its own is uphill, the opposite of the fourth choice.'
@@ -189,7 +189,7 @@ export default [
     id: 'rcd-14', type: 'rcd', roots: ['l2-carbocation'], difficulty: 2,
     stem: 'One starting material can form two products. The solid gold curve leads to product A, the dashed curve to product B. Which product dominates at low temperature with a short reaction time?',
     fig: { kind: 'rcd', yLabel: 'Free energy', points: [{ kind: 'start', y: 0 }, { kind: 'ts', y: 60 }, { kind: 'end', y: -20 }], alt: { points: [{ kind: 'start', y: 0 }, { kind: 'ts', y: 85 }, { kind: 'end', y: -50 }], label: 'path to product B' }, names: { 2: 'A' } },
-    choices: [{ text: 'Product A' }, { text: 'Product B' }, { text: 'Equal amounts of A and B' }, { text: 'Neither, both barriers are too high' }, { text: 'Only the starting material remains' }],
+    choices: [{ text: 'Product A' }, { text: 'Product B' }, { text: 'Equal A and B' }, { text: 'Neither product' }, { text: 'Only starting material' }],
     correct: 0,
     coach: 'Cold and quick, the lower hill wins: kinetic control.',
     why: 'At low temperature most molecules can only clear the lower barrier, the path to A, and nothing has the energy to come back. So the faster-forming product A dominates. B is more stable, but stability only wins when there is heat and time to reach equilibrium.'
@@ -198,7 +198,7 @@ export default [
     id: 'rcd-15', type: 'rcd', roots: ['l2-carbocation'], difficulty: 2,
     stem: 'Same two products: the solid gold curve leads to product A, the dashed curve to product B. The reaction is heated for a long time so both paths can run backward. Which product dominates?',
     fig: { kind: 'rcd', yLabel: 'Free energy', points: [{ kind: 'start', y: 0 }, { kind: 'ts', y: 60 }, { kind: 'end', y: -20 }], alt: { points: [{ kind: 'start', y: 0 }, { kind: 'ts', y: 85 }, { kind: 'end', y: -50 }], label: 'path to product B' }, names: { 2: 'A' } },
-    choices: [{ text: 'Product B' }, { text: 'Product A' }, { text: 'Neither, both revert fully' }, { text: 'A one-to-one mixture of the two' }, { text: 'The starting material' }],
+    choices: [{ text: 'Product B' }, { text: 'Product A' }, { text: 'Neither product' }, { text: 'A 1:1 mixture' }, { text: 'Starting material' }],
     correct: 0,
     coach: 'Heat and time let everything go back over the hills and settle in the lowest landing.',
     why: 'With enough heat, A keeps reverting and the mixture drains toward the most stable product, B, which sits lowest. That is thermodynamic control. Forming faster only matters when the reaction cannot reverse.'
@@ -218,14 +218,14 @@ export default [
     id: 'rcd-17', type: 'rcd', roots: ['l2-carbocation'], difficulty: 3,
     stem: 'For this strongly exothermic one-step reaction, the transition state most closely resembles which species?',
     fig: { kind: 'rcd', yLabel: 'Energy', points: [{ kind: 'start', y: 60 }, { kind: 'ts', y: 75 }, { kind: 'end', y: -40 }] },
-    choices: [{ text: 'The reactants' }, { text: 'The products' }, { text: 'Neither, it sits halfway' }, { text: 'Both equally, like every transition state' }, { text: 'A carbocation intermediate' }],
+    choices: [{ text: 'The reactants' }, { text: 'The products' }, { text: 'Halfway between' }, { text: 'Both equally' }, { text: 'A carbocation' }],
     correct: 0,
     coach: 'Hammond: a transition state looks like whichever neighbor is closer to it in energy.',
     why: 'The peak sits only a little above the reactants and far above the products, so it is an early transition state that looks like the reactants. That is the Hammond postulate. An endothermic step flips it: a late transition state that looks like the products.'
   },
   {
     id: 'rcd-18', type: 'rcd', roots: ['l2-carbocation'], difficulty: 3,
-    stem: 'This is the SN1 reaction of tert-butyl bromide with azide ion. By the Hammond postulate, transition state 2 most closely resembles which numbered point?',
+    stem: 'This is the SN1 reaction of tert-butyl bromide with azide ion. By the Hammond postulate, the transition state at point 2 most closely resembles which numbered point?',
     fig: { kind: 'rcd', yLabel: 'Energy', points: tagAll(two(0, 90, 72, 80, -20).points) },
     choices: [{ text: 'Point 3' }, { text: 'Point 1' }, { text: 'Point 5' }, { text: 'Point 4' }, { text: 'None of the drawn points' }],
     correct: 0,
@@ -238,7 +238,7 @@ export default [
     id: 'rcd-19', type: 'rcd', roots: ['l2-arrows'], difficulty: 1,
     stem: 'Which mechanism matches this reaction coordinate diagram?',
     fig: { kind: 'rcd', yLabel: 'Energy', points: [{ kind: 'start', y: 30 }, { kind: 'ts', y: 85 }, { kind: 'end', y: 5 }] },
-    choices: [{ text: 'SN2' }, { text: 'SN1' }, { text: 'E1' }, { text: 'SN1 with a hydride shift' }, { text: 'Acid-catalyzed hydration of an alkene' }],
+    choices: [{ text: 'SN2 reaction' }, { text: 'SN1 substitution' }, { text: 'E1 elimination' }, { text: 'SN1 plus a shift' }, { text: 'Acid hydration' }],
     correct: 0,
     coach: 'One peak and no valley is one concerted step.',
     why: 'A single hill with no intermediate is a one-step, concerted mechanism. SN2 forms the new bond and breaks the old one at the same moment. SN1, E1 and acid-catalyzed hydration all pass through a carbocation, which would show up as a valley.'
@@ -249,7 +249,7 @@ export default [
     fig: two(0, 95, 55, 65, -15),
     choices: [{ text: 'SN1' }, { text: 'SN2' }, { text: 'E2' }, { text: 'Diels-Alder' }, { text: 'Any one-step concerted reaction' }],
     correct: 0,
-    coach: 'A slow first hill into a valley is ionization to a carbocation.',
+    coach: 'A slow first hill into a valley is ionization to a carbocation. With a neutral nucleophile like water, a third proton-transfer hill appears.',
     why: 'SN1 starts with a slow ionization that makes a carbocation, the valley, and then a fast attack by the nucleophile. SN2, E2 and Diels-Alder are concerted: one hill, no valley.'
   },
   {
@@ -267,7 +267,7 @@ export default [
     id: 'rcd-25', type: 'rcd', roots: ['l2-carbocation'], difficulty: 2,
     stem: 'The reaction drawn here is warmed by 20 degrees. What happens to the curve itself?',
     fig: { kind: 'rcd', yLabel: 'Potential energy', points: [{ kind: 'start', y: 20 }, { kind: 'ts', y: 90 }, { kind: 'end', y: 0 }] },
-    choices: [{ text: 'Nothing, it stays put' }, { text: 'The peak gets lower' }, { text: 'The products move up' }, { text: 'Lowers the barrier and the products together' }, { text: 'The heat of reaction flips sign' }],
+    choices: [{ text: 'Nothing, it stays put' }, { text: 'The peak gets lower' }, { text: 'The products move up' }, { text: 'The barrier and the products both drop' }, { text: 'The heat of reaction flips sign' }],
     correct: 0,
     coach: 'Heat gives more molecules enough energy to clear the same hill; it does not move the hill.',
     why: 'Temperature changes how many molecules have enough energy to get over the barrier, so the rate rises, but the barrier and the landing stay where they are. Only a catalyst lowers the peak.'
@@ -323,7 +323,7 @@ export default [
     id: 'cf-07', type: 'conform', roots: ['l3-newman'], difficulty: 1,
     stem: 'This is the energy of ethane as it spins about its C-C bond. Energies are in kJ/mol. What is the barrier to rotation?',
     fig: { kind: 'rcd', yLabel: 'Energy, kJ/mol', xLabel: 'Dihedral angle, degrees', xTicks: TICKS, points: [{ kind: 'ts', y: 12, show: true }, { kind: 'min', y: 0, show: true }, { kind: 'ts', y: 12 }, { kind: 'min', y: 0 }, { kind: 'ts', y: 12 }, { kind: 'min', y: 0 }, { kind: 'ts', y: 12 }] },
-    choices: [{ text: '12 kJ/mol' }, { text: '0 kJ/mol' }, { text: '4 kJ/mol' }, { text: '24 kJ/mol' }, { text: '0 kJ/mol, all conformations are equal' }],
+    choices: [{ text: '12 kJ/mol' }, { text: '8 kJ/mol' }, { text: '4 kJ/mol' }, { text: '24 kJ/mol' }, { text: '0 kJ/mol, all conformations are equal' }],
     correct: 0, verify: { rcd: 'value', kind: 'ea', from: 1, to: 0 },
     coach: 'Barrier is peak minus valley: eclipsed 12 minus staggered 0.',
     why: 'Staggered ethane sits at 0 and eclipsed at 12 kJ/mol, so it must climb 12 kJ/mol to rotate, about 4 kJ/mol for each of the three eclipsing H-H pairs. That is small enough that ethane spins freely at room temperature, but the conformations are not equal in energy.'
@@ -332,7 +332,7 @@ export default [
     id: 'cf-08', type: 'conform', roots: ['l3-chair'], difficulty: 1,
     stem: 'Methylcyclohexane flips between two chair conformations. Which chair dominates at room temperature?',
     sub: 'CC1CCCCC1',
-    choices: [{ text: 'Methyl equatorial' }, { text: 'Methyl axial' }, { text: 'A 50:50 mix of the two chairs' }, { text: 'The boat, which avoids crowding' }, { text: 'Neither, the ring cannot flip' }],
+    choices: [{ text: 'The methyl-equatorial chair' }, { text: 'The methyl-axial chair' }, { text: 'A 50:50 mix of the two chairs' }, { text: 'The boat, which avoids crowding' }, { text: 'Neither, the ring cannot flip' }],
     correct: 0,
     coach: 'Big groups go equatorial, out at the edge where they have elbow room.',
     why: 'Equatorial methyl points out along the ring edge with nothing in its way. Axial methyl points straight up like a sail and bumps the axial hydrogens two carbons away, costing about 7.3 kJ/mol, so roughly 95 percent of the molecules sit in the equatorial chair. The boat is higher in energy than either chair.'
@@ -341,7 +341,7 @@ export default [
     id: 'cf-09', type: 'conform', roots: ['l3-chair'], difficulty: 2,
     stem: 'Why is axial methylcyclohexane higher in energy than equatorial methylcyclohexane?',
     sub: 'CC1CCCCC1',
-    choices: [{ text: '1,3-diaxial crowding' }, { text: 'Angle strain in the ring' }, { text: 'Eclipsed bonds around the ring' }, { text: 'Hydrogen bonding between ring carbons' }, { text: 'Axial bonds are longer than equatorial' }],
+    choices: [{ text: 'Steric crowding with 1,3-diaxial H' }, { text: 'Angle strain in the ring' }, { text: 'Eclipsed bonds around the ring' }, { text: 'Hydrogen bonding between ring carbons' }, { text: 'Axial bonds are longer than equatorial' }],
     correct: 0,
     coach: 'An axial group is on the same side as the axial hydrogens two carbons over, and they crowd each other.',
     why: 'An axial methyl sits parallel to the axial hydrogens on carbons 3 and 5, close enough to bump them: 1,3-diaxial interactions, the same crowding as gauche butane twice over. Both chairs have the same ideal angles and all-staggered bonds, so angle and eclipsing strain do not explain the difference.'

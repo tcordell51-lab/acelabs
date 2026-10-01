@@ -77,7 +77,9 @@ export function rcdModel(spec, o = {}){
 }
 
 export function drawRcd(target, spec, o = {}){
-  const C = palette(), M = rcdModel(spec, o);
+  // on a phone the same diagram gets a narrower canvas, so its labels stay readable
+  const avail = o.width || (target && target.clientWidth) || (typeof window !== 'undefined' ? window.innerWidth : 640);
+  const C = palette(), M = rcdModel(spec, Object.assign({}, o, avail && avail < 520 ? { W: 430, H: 300 } : {}));
   const s = S('svg', { viewBox: '0 0 ' + M.W + ' ' + M.H, class: 'md-rcd', role: 'img', 'aria-label': o.label || 'a reaction coordinate diagram', preserveAspectRatio: 'xMidYMid meet' });
   const mono = 'ui-monospace, Menlo, Consolas, monospace';
   // axes with arrowheads
@@ -126,6 +128,7 @@ export function drawRcd(target, spec, o = {}){
     s.append(S('line', { x1: M.W - 170, y1: M.T - 6, x2: M.W - 146, y2: M.T - 6, stroke: C.blue, 'stroke-width': 2, 'stroke-dasharray': '6 5' }));
     s.append(S('text', { x: M.W - 140, y: M.T - 2, fill: C.ink2, 'font-family': 'Georgia, serif', 'font-size': 12, text: M.alt.label }));
   }
+  s.mdModel = M;                              // so a module can place a marker on the curve
   if (target) target.append(s);
   return s;
 }
@@ -154,7 +157,7 @@ export function arrowGeom(tail, head, side, fish, o = {}){
   const amp = Math.max(o.minAmp || 13, Math.min(L * 0.42, o.maxAmp || 44)) * side;
   const cx = (tail.x + head.x) / 2 + nx * amp, cy = (tail.y + head.y) / 2 + ny * amp;
   const tx = head.x - cx, ty = head.y - cy, tl = Math.hypot(tx, ty) || 1, ux = tx / tl, uy = ty / tl;
-  const hl = 7.5, hw = 3.6;
+  const hl = o.hl || 9, hw = o.hw || 4.2;
   const bx = head.x - ux * hl, by = head.y - uy * hl;
   // the shaft stops inside the head so the tip stays sharp
   const sx = head.x - ux * hl * 0.6, sy = head.y - uy * hl * 0.6;
@@ -195,9 +198,25 @@ export function structGeom(smi){
     at.h = h;
     at.labeled = at.el !== 'C' || at.nb.length === 0;
   }
+  // A carbon is a corner in skeletal drawing, so it vanishes when there is no corner:
+  // in a molecule of two or three heavy atoms, or where its two bonds run straight
+  // through it (not a triple bond). Write those carbons out as CH3, CH2.
+  const heavy = atoms.filter(a => a.el !== 'H').length;
+  for (const at of atoms){
+    if (at.el !== 'C' || at.labeled) continue;
+    if (heavy <= 3){ at.labeled = true; continue; }
+    if (at.nb.length === 2){
+      const [p, q] = at.nb.map(j => atoms[j]);
+      const a1 = Math.atan2(p.y - at.y, p.x - at.x), a2 = Math.atan2(q.y - at.y, q.x - at.x);
+      const d = Math.abs(((a1 - a2) % (2 * Math.PI) + 3 * Math.PI) % (2 * Math.PI) - Math.PI);
+      const triple = at.nb.some(j => order[a2key(at.i, j)] === 3);
+      if (d > 2.97 && !triple) at.labeled = true;
+    }
+  }
   return { atoms, bonds: g.bonds };
 }
 function a2(a, b){ return a < b ? a + '-' + b : b + '-' + a; }
+const a2key = a2;
 function colorOf(C, el){ const k = ELC[el]; if (!k) return C.ink; return C[k] || k; }
 
 // transform t: { mx: bool, my: bool } about the atoms' center
@@ -211,10 +230,26 @@ function drawStruct(layer, C, geo, P, rad){
   const { atoms, bonds } = geo;
   const at = i => atoms[i], pos = i => P[i];
   const g = S('g', { class: 'md-struct' });
-  const shrink = (i, toward) => at(i).labeled ? 9.5 : 0;
+  // which side each label writes its hydrogens on, decided before the bonds so a bond
+  // can stop short of the whole label, not just the element letter
+  const HALF = { C: 4.9, O: 5.3, N: 4.9, S: 4.5, P: 4.5, F: 4.1, H: 4.9, B: 4.5, I: 1.9, Br: 6.8, Cl: 6.4, Mg: 7.9, Li: 5.3, Na: 7.3, K: 4.9 };
+  atoms.forEach((a, i) => {
+    a.hSide = 0;
+    if (!a.labeled || !a.h) return;
+    const p = pos(i); let mdx = 0; for (const j of a.nb) mdx += pos(j).x - p.x;
+    const hLeft = a.nb.length ? mdx > 0.5 : 'OSFClBrI'.includes(a.el) && a.el !== 'C' && a.el !== 'N';
+    a.hSide = hLeft ? -1 : 1;
+  });
+  const shrink = (i, ux, uy) => {
+    const a = at(i); if (!a.labeled) return 0;
+    const half = HALF[a.el] || 5, hw = a.h ? 9.8 + (a.h > 1 ? 5.4 : 0) : 0;
+    const right = half + (a.hSide > 0 ? hw : 0), left = half + (a.hSide < 0 ? hw : 0);
+    const ext = (ux > 0 ? right : left) * Math.abs(ux) + 7.5 * Math.abs(uy);
+    return Math.max(7.5, Math.min(ext + 2.5, 28));
+  };
   for (const b of bonds){
     const A = pos(b.a), B = pos(b.b), dx = B.x - A.x, dy = B.y - A.y, L = Math.hypot(dx, dy) || 1, ux = dx / L, uy = dy / L;
-    const sa = shrink(b.a), sb = shrink(b.b);
+    const sa = shrink(b.a, ux, uy), sb = shrink(b.b, -ux, -uy);
     const x1 = A.x + ux * sa, y1 = A.y + uy * sa, x2 = B.x - ux * sb, y2 = B.y - uy * sb;
     const line = (ox, oy, t1, t2) => g.append(S('line', { x1: r1(x1 + ox + ux * t1), y1: r1(y1 + oy + uy * t1), x2: r1(x2 + ox - ux * t2), y2: r1(y2 + oy - uy * t2), stroke: C.ink, 'stroke-width': 1.7, 'stroke-linecap': 'round' }));
     const nx = -uy, ny = ux;
@@ -230,29 +265,23 @@ function drawStruct(layer, C, geo, P, rad){
   }
   atoms.forEach((a, i) => {
     const p = pos(i), col = colorOf(C, a.el);
-    a.hSide = 0;
     if (a.labeled){
-      // hydrogens go on the side away from the bonds; an isolated O, S or halogen writes them first (H2O, HBr)
-      let mdx = 0; for (const j of a.nb) mdx += pos(j).x - p.x;
-      const hLeft = a.nb.length ? mdx > 0.5 : 'OSFClBrI'.includes(a.el) && a.el !== 'C' && a.el !== 'N';
-      a.hSide = a.h ? (hLeft ? -1 : 1) : 0;
-      const t = S('text', { x: r1(p.x), y: r1(p.y + 4.6), fill: col, 'font-family': 'Arial, Helvetica, sans-serif', 'font-size': 13.5, 'text-anchor': 'middle' });
-      t.append(S('tspan', { text: a.el }));
+      // one text run, anchored so the element symbol itself sits centered on the atom:
+      // CH2, OH, NH3 read left to right; H3C, HO, H2O put the hydrogens first
+      const half = HALF[a.el] || 5;
+      const left = a.hSide < 0;
+      const t = S('text', { x: r1(left ? p.x + half : p.x - half), y: r1(p.y + 4.6), fill: col, 'font-family': 'Arial, Helvetica, sans-serif', 'font-size': 13.5, 'text-anchor': left ? 'end' : 'start' });
+      const hPart = () => { const k = [S('tspan', { text: 'H' })]; if (a.h > 1){ k.push(S('tspan', { 'font-size': 9.5, dy: 3.5, text: String(a.h) })); } return k; };
+      if (!a.h) t.append(S('tspan', { text: a.el }));
+      else if (left){ hPart().forEach(n => t.append(n)); t.append(S('tspan', { dy: a.h > 1 ? -3.5 : null, text: a.el })); }
+      else { t.append(S('tspan', { text: a.el })); hPart().forEach(n => t.append(n)); }
       g.append(t);
-      if (a.h){
-        const w = a.el.length > 1 ? 9 : 5;
-        const hx = hLeft ? p.x - w - (a.h > 1 ? 10 : 5) : p.x + w + 4.5;
-        const ht = S('text', { x: r1(hx), y: r1(p.y + 4.6), fill: col, 'font-family': 'Arial, Helvetica, sans-serif', 'font-size': 13.5, 'text-anchor': 'middle' });
-        ht.append(S('tspan', { text: 'H' }));
-        if (a.h > 1) ht.append(S('tspan', { 'font-size': 9.5, dy: 3.5, text: String(a.h) }));
-        g.append(ht);
-      }
     }
   });
   layer.append(g);
 }
 function chargeMark(layer, C, p, q, t){
-  const col = q > 0 ? C.coral : C.blue, R = 5, x = p.x + Math.cos(t) * 12, y = p.y + Math.sin(t) * 12;
+  const col = q > 0 ? C.coral : C.blue, R = 4.8, x = p.x + Math.cos(t) * 13.5, y = p.y + Math.sin(t) * 13.5;
   layer.append(S('circle', { cx: r1(x), cy: r1(y), r: R, fill: C.panel, stroke: col, 'stroke-width': 1.2 }));
   layer.append(S('line', { x1: r1(x - 2.8), y1: r1(y), x2: r1(x + 2.8), y2: r1(y), stroke: col, 'stroke-width': 1.4, 'stroke-linecap': 'round' }));
   if (q > 0) layer.append(S('line', { x1: r1(x), y1: r1(y - 2.8), x2: r1(x), y2: r1(y + 2.8), stroke: col, 'stroke-width': 1.4, 'stroke-linecap': 'round' }));
@@ -294,12 +323,15 @@ export function drawMech(target, spec, o = {}){
   const hideProduct = !!o.hideProduct && right.length === 0;
 
   // turn each reacting species so the atoms its arrows reach face their partner
-  const cross = arrows.map(ar => {
+  // o.orientBy: the arrows used to choose how each species is turned. An item passes the
+  // union of every choice's arrows, so all five choices (and the stem) share one layout and
+  // the layout itself never hints at the key.
+  const cross = (o.orientBy || arrows).map(ar => {
     const s1 = ar.from.lp || ar.from.e || (ar.from.bond && ar.from.bond[0]);
     const tg = ar.to.atom || (ar.to.bond && (ar.to.bond.find(r => refParts(r).s !== refParts(s1).s) || ar.to.bond[1]));
     return [s1, tg];
   }).filter(([a, b]) => a && b && refParts(a).s !== refParts(b).s);
-  const leaving = arrows.filter(ar => ar.from.bond && ar.to.atom && ar.from.bond.includes(ar.to.atom)).map(ar => ar.to.atom);
+  const leaving = (o.orientBy || arrows).filter(ar => ar.from.bond && ar.to.atom && ar.from.bond.includes(ar.to.atom)).map(ar => ar.to.atom);
   const choices = [{ mx: false, my: false }, { mx: true, my: false }, { mx: false, my: true }, { mx: true, my: true }];
   function layoutRow(parts, x0, mid){
     let X = x0; const plus = [];
@@ -328,7 +360,7 @@ export function drawMech(target, spec, o = {}){
   const rowWidth = parts => parts.reduce((w, p) => w + boxOf(p)[2], 0) + Math.max(0, parts.length - 1) * GAP;
   const rxnW = spec.reagent ? Math.max(76, spec.reagent.length * 6.8 + 24) : 60;
   const leftW = rowWidth(left), rightW = right.length ? rowWidth(right) : (hideProduct ? 70 : 0);
-  const avail = o.width || (target && target.clientWidth) || 640;
+  const avail = o.width || (target && target.clientWidth) || (typeof window !== 'undefined' && window.innerWidth ? Math.min(640, window.innerWidth - 56) : 640);
   const scaleWanted = o.scale || 1.6;
   const oneRowW = leftW + (rightW ? rxnW + rightW : 0);
   const wrap = rightW && avail < oneRowW * scaleWanted * 0.8 && !o.noWrap;
@@ -414,7 +446,13 @@ export function drawMech(target, spec, o = {}){
       const [ra, rb] = ar.to.bond, a = ptOf(left, ra), b = ptOf(left, rb);
       const bonded = a && b && a.part === b.part && a.atom.nb.includes(b.atom.i);
       if (bonded) head = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
-      else if (srcAtoms.includes(ra)) tgt = b; else if (srcAtoms.includes(rb)) tgt = a;
+      else if (srcAtoms.includes(ra) || srcAtoms.includes(rb)){
+        tgt = srcAtoms.includes(ra) ? b : a;
+        // electrons leaving a pi bond to make a new bond: start the tail on the end of the
+        // pi bond that forms it, so Markovnikov and anti-Markovnikov arrows look different
+        const near = srcAtoms.includes(ra) ? ra : rb;
+        if (bondMid){ const n = ptOf(left, near), o = near === ar.from.bond[0] ? bondMid.b : bondMid.a; tail = { x: o.x * 0.3 + n.x * 0.7, y: o.y * 0.3 + n.y * 0.7 }; }
+      }
       else if (a && b){
         // electrons from a bond reaching out to a new partner: land on whichever new-bond atom is not in the source
         const inSrc = r => bondMid && (r === ar.from.bond[0] || r === ar.from.bond[1]);
@@ -424,8 +462,14 @@ export function drawMech(target, spec, o = {}){
     }
     if (!tail || (!head && !tgt)) return;
     if (tgt && !head){
-      const off = tgt.atom.labeled ? 10 : 5, dx = tail.x - tgt.x, dy = tail.y - tgt.y, L = Math.hypot(dx, dy) || 1;
-      head = { x: tgt.x + dx / L * off, y: tgt.y + dy / L * off };
+      const dx = tail.x - tgt.x, dy = tail.y - tgt.y, L = Math.hypot(dx, dy) || 1;
+      if (tgt.atom.labeled && L > 30){
+        // land on top of (or under) the letter, where a hand-drawn arrow lands, not on its hydrogens
+        head = { x: tgt.x, y: tgt.y + (dy <= 6 ? -11 : 11) };
+      } else {
+        const off = tgt.atom.labeled ? 10 : 5;
+        head = { x: tgt.x + dx / L * off, y: tgt.y + dy / L * off };
+      }
     }
     const mx = (tail.x + head.x) / 2, my = (tail.y + head.y) / 2, dx = head.x - tail.x, dy = head.y - tail.y, L = Math.hypot(dx, dy) || 1;
     const nx = -dy / L, ny = dx / L;
@@ -444,7 +488,7 @@ export function drawMech(target, spec, o = {}){
       tail = { x: tail.x + nx * side * 3, y: tail.y + ny * side * 3 };
     }
     if (ar.bend === -1) side = -side;
-    const geo = arrowGeom(tail, head, side, !!ar.fish, { minAmp: L < 26 ? 11 : 14, maxAmp: 46 });
+    const geo = arrowGeom(tail, head, side, !!ar.fish, { minAmp: L < 26 ? 12 : 14, maxAmp: 46 });
     extent.push({ x: (tail.x + 2 * geo.ctrl.x + head.x) / 4, y: (tail.y + 2 * geo.ctrl.y + head.y) / 4 }, tail, head);
     marksLayer.append(S('path', { d: geo.d, fill: 'none', stroke: C.goldhi, 'stroke-width': 1.8, 'stroke-linecap': 'round', class: ar.fish ? 'md-fish' : 'md-arrow' }));
     marksLayer.append(S('path', { d: geo.headD, fill: C.goldhi, class: 'md-head' }));
@@ -459,7 +503,8 @@ export function drawMech(target, spec, o = {}){
   const vbW = maxX - minX, vbH = maxY - minY;
   outer.setAttribute('viewBox', [minX, minY, vbW, vbH].map(r1).join(' '));
   outer.style.width = '100%';
-  outer.style.maxWidth = Math.round(vbW * scaleWanted) + 'px';
+  // small figures (Br2, one bond) draw bigger, so a fishhook's half head reads as half
+  outer.style.maxWidth = Math.round(vbW * (vbW < 170 ? Math.max(scaleWanted, 2.5) : scaleWanted)) + 'px';
   outer.style.height = 'auto';
   outer.style.display = 'block';
   return outer;
@@ -553,9 +598,16 @@ export function legend(){
 /* ================================================================== */
 const LET = 'ABCDE';
 /** Render the stem area of an item (figure and reaction row) into a node. Used by the set player and the summit. */
+/** Every arrow an item draws anywhere, so its figures can share one orientation. */
+export function itemArrows(it){
+  const all = [];
+  if (it.fig && it.fig.arrows) all.push(...it.fig.arrows);
+  for (const c of it.choices || []) if (c.fig && c.fig.arrows) all.push(...c.fig.arrows);
+  return all.length ? all : null;
+}
 export function renderItemFigure(target, it, o = {}){
   injectMdCss();
-  if (it.fig){ const f = H('div', { class: 'md-fig' }); target.append(f); drawFigure(f, it.fig, { width: o.width || target.clientWidth || 640, hideProduct: it.fig.hideProduct, hide: it.fig.hide }); }
+  if (it.fig){ const f = H('div', { class: 'md-fig' }); target.append(f); drawFigure(f, it.fig, { width: o.width || target.clientWidth || 0, hideProduct: it.fig.hideProduct, hide: it.fig.hide, orientBy: itemArrows(it) }); }
   if (it.sub || it.reagent || it.prod){
     const row = H('div', { class: 'md-rxn' });
     if (it.sub){ const b = H('div', {}); drawSmiles(b, it.sub, { width: 240, height: 150, label: 'starting material' }); row.append(b); }
@@ -567,7 +619,7 @@ export function renderItemFigure(target, it, o = {}){
 }
 /** Render one choice body (text, a structure, or a figure). */
 export function renderChoiceBody(target, c, i, o = {}){
-  if (c.fig){ drawFigure(target, c.fig, { width: o.width || 560, label: 'choice ' + LET[i], noWrap: true }); if (c.text) target.append(H('div', { text: c.text })); }
+  if (c.fig){ drawFigure(target, c.fig, { width: o.width || 560, label: 'choice ' + LET[i], noWrap: true, orientBy: o.orientBy || null }); if (c.text) target.append(H('div', { text: c.text })); }
   else if (c.smiles){ drawSmiles(target, c.smiles, { width: 220, height: 130, label: 'choice ' + LET[i] }); if (c.text) target.append(H('div', { text: c.text })); }
   else target.append(document.createTextNode(c.text));
 }
@@ -592,7 +644,7 @@ export function mountSet(slot, items, api, o = {}){
       const body = H('span', { class: 'body' });
       const b = H('button', { type: 'button', class: cls, 'aria-pressed': String(picked === i), disabled: solved ? '' : null, onclick: () => { picked = i; checked = false; render(); } }, H('span', { class: 'k', text: LET[i] }), body);
       opts.append(b);
-      renderChoiceBody(body, c, i, { width: 520 });
+      renderChoiceBody(body, c, i, { width: 520, orientBy: itemArrows(it) });
     });
     wrap.append(opts);
     const actions = H('div', { class: 'md-actions' });

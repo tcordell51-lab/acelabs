@@ -89,16 +89,21 @@ await ok('summit: required homes and 2026 items in every section', async () => {
   const B = await imp(join(ROOT, 'tools/ochem/summit/build.js'));
   const makers = {};
   for (const id of MODULES){ const m = await imp(join(T, 'modules', id + '.js')); if (m.makeItem) makers[id] = m.makeItem; }
-  const pool = SET2026.map(it => Object.assign({}, it, { source: 'ochem-2026' }));
-  let n2026 = 0;
+  // the same pool the page builds: the verified bank (MS held back) plus the 2026 set
+  const src = readFileSync(join(ROOT, 'games/ochem-bank-1000.js'), 'utf8');
+  const db = JSON.parse(src.slice(src.indexOf('['), src.lastIndexOf(']') + 1));
+  const bank = db.filter(it => BM.GROUP_MAP[it.group] && it.keep !== false && it.scope_ok !== false && it.smiles_valid !== false && !BM.offSpec(it)).map(BM.bankToItem);
+  const pool = bank.concat(SET2026.map(it => Object.assign({}, it, { source: 'ochem-2026' })));
+  let n2026 = 0, maxSet = 0;
   for (let seed = 1; seed <= 40; seed++){
     const sec = B.buildSection({ seed, makers, bank: pool, api: Object.assign({ sets: SETS, reduced: false }, deps) });
     assert.equal(sec.items.length, 30, 'seed ' + seed + ' has ' + sec.items.length);
     const homes = new Set(sec.items.map(i => i.home));
     for (const need of [['t4-alpha'], ['t6-two-step', 't6-retro'], ['t5-rcd'], ['t5-arrows-forward', 't5-arrows-reverse'], ['t5-fishhook', 't5-mech-chain']]) assert.ok(need.some(h => homes.has(h)), 'seed ' + seed + ' missing ' + need.join('/'));
-    n2026 += sec.items.filter(i => i.source === 'ochem-2026').length;
+    const k = sec.items.filter(i => i.source === 'ochem-2026').length; n2026 += k; maxSet = Math.max(maxSet, k);
+    assert.ok(k <= 12, 'seed ' + seed + ' has ' + k + ' test-format items');
   }
-  return 'avg ' + (n2026 / 40).toFixed(1) + ' test-format items per section';
+  return 'avg ' + (n2026 / 40).toFixed(1) + ' test-format items per section, max ' + maxSet;
 });
 
 await ok('mass spectrometry is filtered from the served bank', async () => {
@@ -119,7 +124,7 @@ await ok('house rules on every touched file', () => {
     const s = readFileSync(join(ROOT, f), 'utf8');
     s.split('\n').forEach((l, i) => {
       if (glyph.test(l)) bad.push(f + ':' + (i + 1) + ' glyph');
-      if (/\$\d|\b(price|paid|balance|package|subscription|purchase)\b/i.test(l)) bad.push(f + ':' + (i + 1) + ' money');
+      if (/\$\d|\b(price|paid|balance|package|subscription|purchase)\b/i.test(l) && !/text-wrap\s*:\s*balance/.test(l)) bad.push(f + ':' + (i + 1) + ' money');
       if (/\b(off[- ]pace|overdue|catch up|falling behind|streak)\b/i.test(l)) bad.push(f + ':' + (i + 1) + ' pace');
       if (/\b(predicted score|projected score|percentile|readiness score)\b/i.test(l)) bad.push(f + ':' + (i + 1) + ' predictor');
       if (/\b(fetch\(|XMLHttpRequest|sendBeacon)\b/.test(l)) bad.push(f + ':' + (i + 1) + ' network');

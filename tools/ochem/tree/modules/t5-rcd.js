@@ -19,7 +19,7 @@ export function makeItem(api){
   const set = setOf(api);
   if (!set.length) return null;
   const it = api.pick(set);
-  return Object.assign({}, it, { home: HOME, roots: it.roots && it.roots.length ? it.roots : ROOTS, choices: it.choices.slice() });
+  return Object.assign({}, it, { source: 'ochem-2026', home: HOME, roots: it.roots && it.roots.length ? it.roots : ROOTS, choices: it.choices.slice() });
 }
 
 /* ------------------------------------------------------------------ */

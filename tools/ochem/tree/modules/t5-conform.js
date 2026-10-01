@@ -5,7 +5,7 @@
 // choices at a time by api.mountSet. Generated from one template so the six
 // 2026 modules behave the same. No imports (contract).
 
-export const meta = { "id": "t5-conform", "level": 5, "order": 13, "needs3D": false, "ownsSet": true, "title": "The shape it actually sits in", "concept": "Conformations and their energies", "tagline": "Bonds spin. Groups want elbow room. The energy diagram shows the price of crowding.", "story": "A single bond spins like an axle, so a molecule is always passing through shapes called conformations. Spin butane around its middle bond and plot the energy, and you get a wave. When the big groups line up on top of each other it is eclipsed, like a solar eclipse, and that is a peak. When they are staggered but next door it is gauche, two groups battling, a small bump. When they are opposite each other it is anti, maximum elbow room, the lowest point. Rings follow the same idea: in a chair, a big group wants to sit equatorial, out at the equator, not axial, sticking up like a sail. Rule of thumb: crowding costs energy, so the big groups go far apart.", "moveName": "Find the big groups, then give them elbow room", "move": [ "On a rotation diagram, peaks are eclipsed and valleys are staggered.", "The highest peak has the two biggest groups eclipsed; the lowest valley is anti.", "In a chair, put the biggest group equatorial. A tert-butyl group basically locks it there.", "A chair flip turns every axial group equatorial and back, but up stays up and down stays down.", "For E2 on a ring, the hydrogen and the leaving group must both be axial, trans to each other." ], "trap": "Careful: gauche is staggered, not eclipsed. It is a valley on the diagram, just a slightly higher valley than anti, so never pick gauche as the highest-energy conformation.", "holdsUp": [ "Newman projections", "Rotation energy diagrams", "Chair stability", "Cis and trans rings", "E2 on cyclohexanes" ], "drill": "Booster OChem: Conformations and Stereochemistry" };
+export const meta = { "id": "t5-conform", "level": 5, "order": 13, "needs3D": false, "ownsSet": true, "title": "The shape it actually sits in", "concept": "Conformations and their energies", "tagline": "Bonds spin. Groups want elbow room. The energy diagram shows the cost of crowding.", "story": "A single bond spins like an axle, so a molecule is always passing through shapes called conformations. Spin butane around its middle bond and plot the energy, and you get a wave. When the big groups line up on top of each other it is eclipsed, like a solar eclipse, and that is a peak. When they are staggered but next door it is gauche, two groups battling, a small bump. When they are opposite each other it is anti, maximum elbow room, the lowest point. Rings follow the same idea: in a chair, a big group wants to sit equatorial, out at the equator, not axial, sticking up like a sail. Rule of thumb: crowding costs energy, so the big groups go far apart.", "moveName": "Find the big groups, then give them elbow room", "move": [ "On a rotation diagram, peaks are eclipsed and valleys are staggered.", "The highest peak has the two biggest groups eclipsed; the lowest valley is anti.", "In a chair, put the biggest group equatorial. A tert-butyl group basically locks it there.", "A chair flip turns every axial group equatorial and back, but up stays up and down stays down.", "For E2 on a ring, the hydrogen and the leaving group must both be axial, trans to each other." ], "trap": "Careful: gauche is staggered, not eclipsed. It is a valley on the diagram, just a slightly higher valley than anti, so never pick gauche as the highest-energy conformation.", "holdsUp": [ "Newman projections", "Rotation energy diagrams", "Chair stability", "Cis and trans rings", "E2 on cyclohexanes" ], "drill": "Booster OChem: Conformations and Stereochemistry" };
 
 export const SMILES = [];
 const HOME = 't5-conform';
@@ -19,7 +19,7 @@ export function makeItem(api){
   const set = setOf(api);
   if (!set.length) return null;
   const it = api.pick(set);
-  return Object.assign({}, it, { home: HOME, roots: it.roots && it.roots.length ? it.roots : ROOTS, choices: it.choices.slice() });
+  return Object.assign({}, it, { source: 'ochem-2026', home: HOME, roots: it.roots && it.roots.length ? it.roots : ROOTS, choices: it.choices.slice() });
 }
 
 /* ------------------------------------------------------------------ */
@@ -88,16 +88,12 @@ function mountConform(slot, api, V){
   function draw(){
     fig.textContent = '';
     const s = api.drawRcd(fig, V.fig, { label: 'rotation energy of butane' });
-    // a marker riding on the curve at the chosen angle
-    const pts = V.fig.points, ticks = V.fig.xTicks.length;
+    // a marker riding on the curve at the chosen angle, placed by the drawn model
     const A = V.angles[at], i = A.deg / 60;
-    const W = 640, L = 58, R = 30, T = 30, B = 52, H = 330;
-    const ys = pts.map(p => p.y), lo = Math.min(...ys), hi = Math.max(...ys), pad = (hi - lo) * 0.14;
-    const y0 = lo - pad, y1 = hi + pad * 1.4;
-    const x = L + (W - L - R) * (i / (ticks - 1)), y = (H - B) - (pts[i].y - y0) / (y1 - y0) * (H - B - T);
+    const pt = s.mdModel.pts[i], x = pt.x, y = pt.y;
     s.append(svg('circle', { cx: x, cy: y, r: 8, fill: 'none', stroke: C.goldhi, 'stroke-width': 2 }), svg('circle', { cx: x, cy: y, r: 3.5, fill: C.goldhi }));
     cap.textContent = '';
-    cap.append(el('div', { style: { fontFamily: 'Georgia, serif', color: C.goldhi, fontSize: '18px' }, text: A.deg + ' degrees: ' + A.name + ', about ' + A.e + ' kJ/mol above anti' }), el('p', { style: { margin: '4px 0 0', color: C.ink2, fontSize: '15px', maxWidth: '72ch', lineHeight: '1.55' }, text: A.say }));
+    cap.append(el('div', { style: { fontFamily: 'Georgia, serif', color: C.goldhi, fontSize: '18px' }, text: A.deg + ' degrees: ' + A.name + (A.e === '0' ? ', the bottom of the curve' : ', about ' + A.e + ' kJ/mol above anti') }), el('p', { style: { margin: '4px 0 0', color: C.ink2, fontSize: '15px', maxWidth: '72ch', lineHeight: '1.55' }, text: A.say }));
     chips.textContent = '';
     V.angles.forEach((a, k) => chips.append(el('button', { type: 'button', class: 'chip' + (k === at ? ' on' : ''), 'aria-pressed': String(k === at), text: a.deg + ' degrees, ' + a.name, onclick: () => { at = k; draw(); } })));
   }
