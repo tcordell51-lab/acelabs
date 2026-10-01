@@ -19,7 +19,7 @@ TYPE_MAP = {'detail': 'detail', 'vocab': 'vocab', 'inference': 'inference', 'mai
             'purpose': 'function', 'structure': 'mainidea', 'tone': 'tone', 'except': 'except',
             'locate': 'detail'}
 FIELD = {1: 'zoology', 2: 'materials chemistry', 3: 'marine biology', 4: 'microbiology', 5: 'geology',
-         6: 'microbiology', 7: 'ocean chemistry', 8: 'neuroscience', 9: 'pharmacology', 10: 'ecology',
+         6: 'microbiology', 7: 'ocean chemistry', 8: 'neuroscience', 9: 'electrochemistry', 10: 'ecology',
          11: 'molecular biology', 12: 'physiology', 13: 'chemistry', 14: 'animal behavior',
          15: 'history of science', 16: 'history of science', 17: 'earth science', 18: 'pharmacology',
          19: 'neuroscience'}

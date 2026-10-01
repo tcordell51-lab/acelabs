@@ -87,14 +87,14 @@
       : [id];
     S = newSession(mode, ids, mode === 'section' ? id : null);
     Store.saveActive(S);
-    hlMode = false; pickMode = false;
+    hlMode = false; syncPick();
     renderTest();
   }
 
   function resume() {
     var a = Store.active();
     if (!a) return renderHome();
-    S = a; hlMode = false; pickMode = false;
+    S = a; hlMode = false; syncPick();
     renderTest();
   }
 
@@ -505,10 +505,13 @@
     for (var i = S.qi + dir; i >= 0 && i < S.order.length; i += dir) if (passesFilter(i)) return i;
     return -1;
   }
+  function syncPick() {
+    pickMode = !S.done && S.proofFirst && !S.revealed[cur().qid] && S.answers[cur().qid] === undefined;
+  }
   function goQ(i) {
     if (i < 0 || i >= S.order.length) return;
     S.qi = i;
-    pickMode = !S.done && S.proofFirst && !S.revealed[cur().qid] && S.answers[cur().qid] === undefined;
+    syncPick();
     if (!S.done) Store.saveActive(S);
     renderTest();
   }
@@ -791,5 +794,6 @@
     home: renderHome
   };
 
+  window.addEventListener('hashchange', function () { if (view !== 'test') boot(); });
   boot();
 })();
