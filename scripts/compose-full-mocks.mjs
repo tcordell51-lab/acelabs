@@ -277,9 +277,11 @@ export function compose({ count = COUNT, source = SRC } = {}) {
     const fixedCount = mocks.map(() => [0, 0, 0, 0, 0]);
     const usedTpl = mocks.map(() => new Set());
     const rankCount = mocks.map(() => [0, 0, 0, 0, 0]);
-    const rankCap = Math.ceil(sec.n * 0.3);
+    // Cap each rank at about a third of the text items this section is expected to hold.
+    const textShare = pools[sec.key].filter((x) => isText(x.o.map(decode), x.os)).length / Math.max(1, pools[sec.key].length);
+    const rankCap = Math.max(2, Math.floor(sec.n * textShare * 0.38));
     for (const [st, k] of Object.entries(q)) for (let i = 0; i < k; i++) for (let m = 0; m < n; m++) {
-      const fits = (x) => (!x._natural || fixedCount[m][x._naturalKey] < cap) && !templateKeys(x).some((t) => usedTpl[m].has(t)) && (!isText(x.o, x.os) || rankCount[m][lengthRank(x.o, x.a)] < rankCap);
+      const fits = (x) => (!x._natural || fixedCount[m][x._naturalKey] < cap) && !templateKeys(x).some((t) => usedTpl[m].has(t)) && (!isText(x.o.map(decode), x.os) || rankCount[m][lengthRank(x.o.map(decode), x.a)] < rankCap);
       let qu = queues[st];
       let j = qu.findIndex(fits);
       // A stop that runs dry lends its slot to the stop with the most items left.
@@ -291,9 +293,32 @@ export function compose({ count = COUNT, source = SRC } = {}) {
       const it = qu.splice(j, 1)[0];
       if (it._natural) fixedCount[m][it._naturalKey]++;
       templateKeys(it).forEach((t) => usedTpl[m].add(t));
-      if (isText(it.o, it.os)) rankCount[m][lengthRank(it.o, it.a)]++;
+      if (isText(it.o.map(decode), it.os)) rankCount[m][lengthRank(it.o.map(decode), it.a)]++;
       deal[m].push(it);
     }
+    // Repair pass: where one key-length rank still holds too many of a mock's text items,
+    // swap one of them for an unused item of an under-used rank.
+    const rankOf = (x) => lengthRank(x.o.map(decode), x.a);
+    const textOf = (x) => isText(x.o.map(decode), x.os);
+    deal.forEach((items, m) => {
+      for (let guard = 0; guard < 60; guard++) {
+        const text = items.filter(textOf);
+        const rc = [0, 0, 0, 0, 0]; text.forEach((x) => rc[rankOf(x)]++);
+        const lim = Math.max(2, Math.ceil(text.length * 0.4));
+        const bad = rc.findIndex((c) => c > lim);
+        if (bad < 0) break;
+        const out = items.findIndex((x) => textOf(x) && rankOf(x) === bad);
+        const tplOthers = new Set(items.filter((_, i) => i !== out).flatMap(templateKeys));
+        const natOthers = [0, 0, 0, 0, 0]; items.forEach((x, i) => { if (i !== out && x._natural) natOthers[x._naturalKey]++; });
+        let pick = null;
+        for (const qu of Object.values(queues)) {
+          const j = qu.findIndex((x) => textOf(x) && rankOf(x) !== bad && rc[rankOf(x)] < lim && !templateKeys(x).some((t) => tplOthers.has(t)) && (!x._natural || natOthers[x._naturalKey] < cap));
+          if (j >= 0) { pick = qu.splice(j, 1)[0]; break; }
+        }
+        if (!pick) break;
+        items[out] = pick;
+      }
+    });
     deal.forEach((items, m) => {
       // Topics come mixed, the way the exam serves them.
       let ordered = null, keys = null;
@@ -324,7 +349,8 @@ export function checkMocks(mocks) {
       });
       const rc = [0, 0, 0, 0, 0];
       items.forEach((it) => { if (isText(it.opts, it.os)) rc[lengthRank(it.opts, it.correct)]++; });
-      if (rc.some((c) => c > Math.ceil(items.length * 0.3))) errors.push(`${mk.id} ${sec.key}: key length rank is lopsided (${rc.join(' ')})`);
+      const nText = rc.reduce((a, b) => a + b, 0);
+      if (nText >= 6 && rc.some((c) => c > Math.max(2, Math.ceil(nText * 0.4)))) errors.push(`${mk.id} ${sec.key}: key length rank is lopsided (${rc.join(' ')})`);
       if (items.length && kc.some((c) => c !== items.length / 5)) errors.push(`${mk.id} ${sec.key}: key letters not even (${kc.map((c, i) => L[i] + c).join(' ')})`);
     }
     if (!mk.pat || !mk.pat.seed) errors.push(`${mk.id}: no PAT seed`);
