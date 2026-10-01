@@ -32,11 +32,11 @@ module.exports = [
     figure: { type: 'pie', title: 'Preferred study method of 400 surveyed students', show: 'value',
       slices: [{ label: 'Flashcards', value: 120 }, { label: 'Practice tests', value: 100 }, { label: 'Videos', value: 80 }, { label: 'Textbook', value: 60 }, { label: 'Group study', value: 40 }] },
     stem: 'According to the chart, what percent of the surveyed students chose neither flashcards nor practice tests?',
-    opts: ['25%', '30%', '35%', '40%', '45%'],
+    opts: ['30%', '35%', '40%', '45%', '55%'],
     answer: '45%',
     move: '"Neither" means add up everything else, or take the total minus the named groups.',
     why: 'Students who chose neither: 400 - 120 - 100 = 180 (the same as 80 + 60 + 40). As a percent of everyone surveyed: 180 / 400 = 0.45 = 45%. The 55% choice is the share that did pick flashcards or practice tests, the complement of what was asked.',
-    diag: {'30%': 'Videos and group study alone give 30%. Textbook readers also chose neither flashcards nor practice tests.'},
+    diag: {'30%': 'Videos and group study alone give 30%. Textbook readers also chose neither flashcards nor practice tests.', '55%': 'That is the share who did choose flashcards or practice tests (220 / 400), the complement of what was asked.'},
     check: { num: '(pietotal() - slice("Flashcards") - slice("Practice tests")) / pietotal() * 100' }
   },
   {
@@ -104,11 +104,11 @@ module.exports = [
     figure: { type: 'table', title: 'Monthly rainfall in two cities (mm)', columns: ['Month', 'City A', 'City B'],
       rows: [['Apr', 82, 64], ['May', 95, 71], ['Jun', 60, 88], ['Jul', 45, 102], ['Aug', 38, 96]] },
     stem: 'What was the difference between the mean monthly rainfall of City B and the mean monthly rainfall of City A over these five months, in millimeters?',
-    opts: ['12', '16.4', '20.2', '24', '57'],
+    opts: ['12', '16.4', '20.2', '28', '57'],
     answer: '20.2',
     move: 'Difference of means = (difference of totals) / count; one subtraction instead of two averages.',
     why: 'City A total: 82 + 95 + 60 + 45 + 38 = 320, mean 64. City B total: 64 + 71 + 88 + 102 + 96 = 421, mean 84.2. Difference: 84.2 - 64 = 20.2 mm. Shortcut: (421 - 320) / 5 = 101 / 5 = 20.2.',
-    diag: { '24': 'That is the difference of the medians (88 - 64). The question asks about means.' },
+    diag: { '28': 'That is the difference of the medians (88 - 60). The question asks about means.' },
     check: { num: 'col("City B")/5 - col("City A")/5' }
   },
   {
@@ -413,7 +413,7 @@ module.exports = [
   {
     id: 'di-035', format: 'di', topic: 'rates', diff: 4,
     figure: { type: 'line', title: 'Monthly subscribers to two apps (thousands)', x: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-      series: [{ name: 'App A', values: [20, 25, 30, 35, 40, 45] }, { name: 'App B', values: [5, 10, 20, 30, 40, 50] }], yLabel: 'Thousands', valueLabels: false },
+      series: [{ name: 'App A', values: [20, 25, 30, 35, 40, 45] }, { name: 'App B', values: [5, 10, 20, 30, 40, 50] }], yLabel: 'Thousands', valueLabels: true },
     stem: 'Define each app\'s growth factor as its June total divided by its January total. App B\'s growth factor is how many times App A\'s growth factor, to the nearest hundredth?',
     opts: ['2.25', '4.44', '6.25', '8', '10'],
     answer: '4.44',

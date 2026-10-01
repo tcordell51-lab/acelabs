@@ -238,7 +238,7 @@ module.exports = [
     answer: '100 dollars',
     move: 'Undo the steps in reverse order: add back the coupon first, then divide by the percent multipliers.',
     why: 'Before the coupon the sale price was 109 + 10 = 119 dollars. The markup and discount multiply: 1.40 × 0.85 = 1.19. So cost = 119 / 1.19 = 100 dollars. Dividing 109 by 1.19 (forgetting the coupon) gives about 91.6.',
-    diag: { '91.6 dollars': 'Add the 10-dollar coupon back first: the sale price was 119.', '84 dollars': 'That treats the changes as +40% - 15% - 10 dollars in the wrong order. Multiply 1.4 × 0.85 = 1.19.' },
+    diag: { '91.6 dollars': 'Add the 10-dollar coupon back first: the sale price was 119.', '84 dollars': 'Plug it back in: 84 × 1.4 × 0.85 = 99.96, and after the 10-dollar coupon the customer would pay about 90, not 109.' },
     check: { num: '(109 + 10)/(1.4*0.85)' }
   },
   {
@@ -344,11 +344,11 @@ module.exports = [
   {
     id: 'aw-035', format: 'aw', topic: 'probability', diff: 3,
     stem: 'A committee of 3 students is chosen at random from a group of 5 biology majors and 4 chemistry majors. What is the probability that the committee contains exactly 2 biology majors?',
-    opts: ['5/21', '20/63', '10/21', '5/9', '2/3'],
+    opts: ['5/42', '20/63', '10/21', '5/9', '2/3'],
     answer: '10/21',
     move: 'Count favorable groups by choosing from each pool, then divide by all possible groups.',
     why: 'All committees: C(9,3) = 84. Exactly 2 biology and 1 chemistry: C(5,2) × C(4,1) = 10 × 4 = 40. Probability: 40 / 84 = 10/21. Forgetting to choose the chemistry member gives 10/84 = 5/42.',
-    diag: { '5/21': 'Choose the chemistry member too: 10 biology pairs times 4 chemistry choices is 40, not 20.' },
+    diag: { '5/42': 'That counts only the 10 biology pairs. Each pair can go with any of the 4 chemistry majors, so there are 40 favorable committees.' },
     check: { num: 'C(5,2)*C(4,1)/C(9,3)' }
   },
   {
@@ -393,12 +393,12 @@ module.exports = [
   },
   {
     id: 'aw-040', format: 'aw', topic: 'statistics', diff: 4,
-    stem: 'A course grade is weighted 30% homework, 30% midterm, and 40% final exam. A student has a homework average of 90 and a midterm score of 70. What final exam score does the student need to earn an overall grade of exactly 80?',
-    opts: ['70', '72', '75', '78', '80'],
-    answer: '80',
+    stem: 'A course grade is weighted 30% homework, 30% midterm, and 40% final exam. A student has a homework average of 90 and a midterm score of 60. What final exam score does the student need to earn an overall grade of exactly 80?',
+    opts: ['80', '82.5', '87.5', '90', '92.5'],
+    answer: '87.5',
     move: 'Weighted average: sum of (weight × score) equals the target, then solve for the one unknown.',
-    why: 'Points so far: 0.30 × 90 + 0.30 × 70 = 27 + 21 = 48. Needed overall: 80. The final must supply 80 - 48 = 32 weighted points, so 0.40 × final = 32 and the final = 80.',
-    diag: { '70': 'That treats the three parts as equally weighted. The final counts 40%.' },
-    check: { num: '(80 - 0.30*90 - 0.30*70)/0.40' }
+    why: 'Points so far: 0.30 × 90 + 0.30 × 60 = 27 + 18 = 45. Needed overall: 80. The final must supply 80 - 45 = 35 weighted points, so 0.40 × final = 35 and the final = 87.5. Check: 27 + 18 + 0.40 × 87.5 = 27 + 18 + 35 = 80.',
+    diag: { '90': 'That treats the three parts as equally weighted: (90 + 60 + x) / 3 = 80 gives 90. The final counts 40%, so it needs less.', '80': 'That is the target grade itself. The final has to make up for the 60 on the midterm.' },
+    check: { num: '(80 - 0.30*90 - 0.30*60)/0.40' }
   }
 ];
