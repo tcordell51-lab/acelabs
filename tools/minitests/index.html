@@ -368,6 +368,7 @@ function dailyDrop(){
   runPlayer();
 }
 function runPlayer(){
+  T.startedAt=Date.now();                                                  // seat time, read by /performance/
   renderTest();
   T.ticker = setInterval(function(){ T.secsLeft--; paintTimer(); if(T.secsLeft<=0){ clearInterval(T.ticker); submitTest(); } }, 1000);
 }
@@ -429,7 +430,8 @@ function submitTest(){
   recordSessions(Object.keys(tbk).map(function(k){ return tbk[k]; }));
   var pct=Math.round(100*correct/T.qs.length);
   if(T.mode==='test'){ store.best[T.n]=Math.max(store.best[T.n]||0, pct); }
-  store.attempts.push({mode:T.mode, n:T.n, tier:T.tier, pct:pct, correct:correct, total:T.qs.length, dateISO:nowISO});
+  store.attempts.push({mode:T.mode, n:T.n, tier:T.tier, pct:pct, correct:correct, total:T.qs.length, dateISO:nowISO,
+    sect:sect, timeSec:T.startedAt?Math.round((Date.now()-T.startedAt)/1000):null});   // sect + timeSec: raw facts for /performance/
   bumpStreak(nowISO); save(); renderStreak();
   T.result = {correct:correct, total:T.qs.length, pct:pct, sect:sect, misses:misses};
   go('results');
@@ -469,7 +471,7 @@ var _tid=0;
 function missCard(q, pickedIdx, opts){
   opts=opts||{};
   var right = pickedIdx===q.correct;
-  var rem=(REM[q.section]||{}), learn=rem.learn||'/retold/', review=rem.review||'/ace-labs.html#tools';
+  var rem=(REM[q.section]||{}), learn=rem.learn||'/retold/', review=rem.review||'/practice/';
   var hint=(rem.topics&&rem.topics[q.topic])||q.topic;
   var trick=trickUrl(q.section, q.topic);
   var id='tk'+(_tid++);
@@ -535,7 +537,7 @@ function renderMistakes(){
       '<div class="wkfix fixrow">'+
         (trick?'<a class="fx trick" onclick="toggleTrick(\''+tid+'\',\''+trick+'\')">Watch the trick</a>':'')+
         '<a class="fx learn" href="'+(rem.learn||'/retold/')+'" target="_blank" rel="noopener">Learn</a>'+
-        '<a class="fx drill" href="'+(rem.review||'/ace-labs.html#tools')+'" target="_blank" rel="noopener">Drill</a>'+
+        '<a class="fx drill" href="'+(rem.review||'/practice/')+'" target="_blank" rel="noopener">Drill</a>'+
       '</div><div class="trick-embed" id="'+tid+'" style="grid-column:1/-1"></div></div>';
   }).join('');
   var now=Date.now();
@@ -833,7 +835,7 @@ function checkToFix(){
   save(); C.stage='fix'; renderCheck();
 }
 function fixPanel(it,q){
-  var rem=(REM[q.section]||{}), learn=rem.learn||'/retold/', review=rem.review||'/ace-labs.html#tools';
+  var rem=(REM[q.section]||{}), learn=rem.learn||'/retold/', review=rem.review||'/practice/';
   var hint=(rem.topics&&rem.topics[q.topic])||q.topic;
   var trick=trickUrl(q.section,q.topic), id='ck'+(_tid++), order, lead;
   if(C.diag==='gap'){ lead='Re-teach the idea, then drill it.'; order=['trick','learn','drill']; }

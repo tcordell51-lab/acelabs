@@ -1,495 +1,195 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Ace Labs · DAT Prep Companion</title>
-<meta name="description" content="Your DAT prep companion from AceTheDAT. Quantitative Reasoning, Biology, Gen Chem, Organic Chem — interactive engines, honest-format mocks, last-week review tools."/>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400;1,700&family=DM+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="shared/al-tokens.css">
-<link rel="stylesheet" href="shared/al-motion.css">
-<link rel="stylesheet" href="shared/ace-labs-shell.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ace Labs · Today</title>
+<meta name="description" content="Ace Labs by AceTheDAT: today's DAT study, your misses to fix next, and your next test.">
+<link rel="stylesheet" href="/shared/ace-pages.css?v=1">
+<style>
+  .home-head { padding: 40px 0 20px; }
+  .home-head .when { display: flex; gap: 14px; flex-wrap: wrap; align-items: baseline; }
+  .home-head .days { font-size: 14px; font-weight: 700; color: var(--text-mid); }
+  .home-head .days b { color: var(--gold-light); font-variant-numeric: lining-nums tabular-nums; }
+  .today { margin: 6px 0 0; }
+  .today ol { list-style: none; margin: 14px 0 18px; padding: 0; border-top: 1px solid var(--border); }
+  .today li { display: flex; gap: 14px; align-items: baseline; padding: 13px 0; border-bottom: 1px solid var(--border); }
+  .today li .i { flex: 0 0 auto; width: 26px; color: var(--gold-text); font-weight: 750; font-variant-numeric: lining-nums tabular-nums; }
+  .today li .t { flex: 1 1 auto; min-width: 0; }
+  .today li .t a { color: var(--text-hi); text-decoration: none; font-weight: 650; }
+  .today li .t a:hover { color: var(--gold-light); }
+  .today li .t span { display: block; color: var(--text-mid); font-size: 14px; }
+  .today li .m { flex: 0 0 auto; color: var(--text-mid); font-size: 14px; font-variant-numeric: lining-nums tabular-nums; white-space: nowrap; }
+  .today .foot-line { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+  .today .total { color: var(--text-mid); font-size: 14px; }
+  .pair { display: grid; grid-template-columns: 1.4fr 1fr; gap: 14px; margin-top: 14px; }
+  @media (max-width: 820px) { .pair { grid-template-columns: 1fr; } }
+  .fix .rows > li { padding: 12px 0; }
+  .first ol { margin: 12px 0 18px; padding-left: 20px; color: var(--text-mid); }
+  .first ol li { margin: 4px 0; }
+  .quiet { margin-top: 18px; font-size: 14px; color: var(--text-mid); }
+  .quiet a { color: var(--gold-light); text-decoration: none; }
+  [data-view] { display: none; }
+  body.is-first [data-view="first"], body.is-back [data-view="back"] { display: block; }
+</style>
 </head>
-<body data-page="home">
-<div class="al-app">
-
-<!-- ========== TOP BAR ========== -->
-<header class="al-top">
-  <div class="al-brand">
-    <span class="al-mark">Ace<em>The</em>DAT</span>
-    <span class="al-divider"></span>
-    <span class="al-product">Ace Labs</span>
-    <span class="al-build">v1 · 2026-05</span>
-  </div>
-  <nav class="al-nav">
-    <a href="ace-labs.html" class="al-nav-link active">Home</a>
-    <a href="retold/" class="al-nav-link">Retold · Learn</a>
-    <a href="#tools" class="al-nav-link">Engines · Review</a>
-    <a href="prometric-mock.html" class="al-nav-link">Prometric mocks</a>
-    <a href="mocks-catalog.html" class="al-nav-link">Mock catalog</a>
-    <a href="tools/minitests/" class="al-nav-link">The Climb</a>
-    <a href="tools/pat/" class="al-nav-link">PAT</a>
-    <a href="tricks/" class="al-nav-link">Trick sheets</a>
-    <a href="booster-map.html" class="al-nav-link">Booster map</a>
-    <!-- Fix 7: #plan nav entry retained; section now surfaces localStorage last-session links per engine -->
-    <a href="#plan" class="al-nav-link">This week</a>
-    <a href="test-day-readiness.html" class="al-nav-link">Test day</a>
-  </nav>
-</header>
-
-<!-- ========== HERO ========== -->
-<!-- Fix 1: Consolidated to one primary pill; secondary links demoted to small text below lede -->
-<!-- Fix 43: Headline softened from "The DAT Mastery System, under one roof" -->
-<section class="al-hero">
-  <span class="al-hero-badge"><span class="pulse"></span>Two modes · learn with Retold · review in the engines · DAT-format mocks</span>
-  <a href="test-week.html" style="display:inline-block;margin-left:10px;padding:7px 14px;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--al-teal);background:rgba(27,58,45,.08);border:1px solid var(--al-teal);border-radius:99px;text-decoration:none;vertical-align:middle;transition:all .15s;" onmouseover="this.style.background='rgba(27,58,45,.16)'" onmouseout="this.style.background='rgba(27,58,45,.08)'">Test in less than 2 weeks? Open test-week mode</a>
-  <h1>Learn the subject, <em>then review it cold.</em></h1>
-  <p class="al-lede">Ace Labs runs in two modes. <strong>Retold</strong> is the learning track — Thomas walks you through a whole subject one night at a time, building everything from a single idea, for when a topic is new or you're rebuilding it. The <strong>engines</strong> are the review track — deep-dive nodes, timed drills, and DAT-format mocks that prove you can do it under pressure. Learn it in Retold; sharpen it in the engines.</p>
-  <p style="margin-top:14px;font-size:13px;font-family:'JetBrains Mono',monospace;letter-spacing:.06em;">
-    <a href="test-day-readiness.html" style="color:var(--al-gold-d);text-decoration:none;border-bottom:1px dashed var(--al-gold-d);">Test-day mechanics briefing</a>
-    <span style="margin:0 10px;color:var(--al-muted);">·</span>
-    <a href="onboarding.html" style="color:var(--al-gold-d);text-decoration:none;border-bottom:1px dashed var(--al-gold-d);">First time here? Set up your path</a>
-  </p>
-  <!-- Auto-hydrated by shared/scope.js -->
-  <div id="alScopeStrip"></div>
-</section>
-
-<!-- ========== TRICK LIBRARY / TIKTOK FRONT DOOR (additive) ========== -->
-<section style="max-width:1100px;margin:10px auto 0;padding:0 22px;">
-  <a href="tricks/" style="display:flex;align-items:center;gap:20px;flex-wrap:wrap;background:linear-gradient(100deg,rgba(201,168,76,.11),rgba(27,58,45,.06));border:1px solid rgba(201,168,76,.32);border-radius:16px;padding:20px 24px;text-decoration:none;color:inherit;transition:border-color .15s;" onmouseover="this.style.borderColor='rgba(201,168,76,.62)'" onmouseout="this.style.borderColor='rgba(201,168,76,.32)'">
-    <div style="flex:1 1 320px;">
-      <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--al-gold-d);margin-bottom:6px;">As seen on TikTok &middot; free</div>
-      <div style="font-family:Georgia,'Times New Roman',serif;font-size:23px;font-weight:700;line-height:1.18;">The DAT trick library</div>
-      <div style="color:var(--al-muted);font-size:14.5px;margin-top:5px;max-width:52ch;">Every trick from the series in three formats: 40-second question shorts, full breakdowns, and one-page cheat sheets. No login.</div>
+<body>
+<main class="wrap" id="main">
+  <header class="home-head">
+    <div class="when">
+      <p class="eyebrow" id="eyebrow">Ace Labs</p>
+      <span class="days" id="days"></span>
     </div>
-    <span style="flex:0 0 auto;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#1a1206;background:linear-gradient(180deg,#E6D08A,#C9A84C);border-radius:99px;padding:12px 22px;">Open the library</span>
-  </a>
-</section>
+    <h1 id="hello">Welcome to <em>Ace Labs</em>.</h1>
+  </header>
 
-<!-- ========== UNIFIED DASHBOARD ========== -->
-<section class="al-dash" id="dashboard">
-  <!-- Retold continuity: filled by shell render() when the student has opened any
-       Retold night (learn-first track). Empty otherwise — no card, no gap. -->
-  <div id="dashResume"></div>
-  <div class="al-dash-row">
-    <div class="al-dash-card al-dash-today">
-      <div class="al-dash-lbl">Today</div>
-      <!-- Fix 13 (addressed 2026-05): dashCardsDue now scans each engine's actual SR
-           storage shape directly (Bio aceCards array; GC/QR `<ns>:sr` object keyed by
-           question id with .due timestamp). No engine writes a single `<ns>:sr-due`
-           aggregate key — see aggregateCardsDue() in shared/ace-labs-shell.js. -->
-      <div class="al-dash-num" id="dashCardsDue">0</div>
-      <div class="al-dash-sub">retrieval cards due now (across all tools)</div>
-      <a href="#tools" class="al-dash-cta">Study now</a>
+  <!-- First visit: onboarding, then the diagnostic. -->
+  <section data-view="first" aria-labelledby="h-first">
+    <div class="card hero first">
+      <p class="eyebrow">Start here</p>
+      <h2 id="h-first">Two minutes, then one short check.</h2>
+      <ol>
+        <li>Set your test date and the sections that feel shakiest.</li>
+        <li>Take the diagnostic, a short check across the sections.</li>
+        <li>Come back here: Today will hold your plan and your misses.</li>
+      </ol>
+      <div class="actions">
+        <a class="btn primary big" id="setup" href="/onboarding.html">Set up my path</a>
+        <a class="btn" href="/diagnostic.html">Go straight to the diagnostic</a>
+      </div>
     </div>
-    <div class="al-dash-card">
-      <div class="al-dash-lbl">Last study session</div>
-      <div class="al-dash-num-small" id="dashLastSession">No sessions yet</div>
-      <div class="al-dash-sub" id="dashLastSessionSub">Open an engine to start your streak</div>
+    <p class="quiet">Just looking around? <a href="/learn/">Learn</a>, <a href="/practice/">Practice</a> and <a href="/tests/">Tests</a> are open.</p>
+  </section>
+
+  <!-- Returning student. -->
+  <section data-view="back" aria-labelledby="h-today">
+    <div class="card hero today" id="todayCard">
+      <p class="eyebrow" id="todayFrom">Today</p>
+      <h2 id="h-today">Today's work</h2>
+      <ol id="tasks"></ol>
+      <div class="foot-line">
+        <a class="btn primary big" id="start" href="/practice/">Start</a>
+        <span class="total" id="total"></span>
+      </div>
     </div>
-    <div class="al-dash-card al-dash-mastery">
-      <div class="al-dash-lbl">Overall mastery</div>
-      <div class="al-dash-num" id="dashMasteryPct">0%</div>
-      <div class="al-dash-bar"><div class="al-dash-bar-fill" id="dashMasteryFill" style="width:0%"></div></div>
-      <div class="al-dash-sub" id="dashMasterySub">Take the diagnostic to see this — mastery fills in as you use the engines.</div>
+
+    <div class="pair">
+      <div class="card fix" aria-labelledby="h-fix">
+        <div class="section-head">
+          <h2 id="h-fix">Fix these next</h2>
+          <a class="small muted" href="/review/">All of Review</a>
+        </div>
+        <ul class="rows" id="fix"></ul>
+      </div>
+      <div class="card" aria-labelledby="h-next">
+        <p class="eyebrow">Next test</p>
+        <h2 id="h-next">Next test</h2>
+        <p id="nextDetail"></p>
+        <div class="actions"><a class="btn" id="nextGo" href="/tests/">Open</a></div>
+        <p class="small muted" id="nextWhen"></p>
+      </div>
     </div>
-    <div class="al-dash-card al-dash-recent">
-      <div class="al-dash-lbl">Recent practice</div>
-      <!-- Outcome-forecasting removed 2026-05-07. This tile now reports the most
-           recent practice activity across engines without any score, percentile,
-           or DAT-outcome mapping. Freshness precedence (most recent ts wins):
-             1. acethedat_bio_last_session   (Bio engine)
-             2. qr-rem-v2:lastSession        (QR engine)
-             3. gc-rem-v1:lastSession        (Gen Chem engine)
-             4. ochem-rem-v1:lastSession     (OChem engine)
-           Fallback (when no explicit lastSession): most recent attempt timestamp
-           in <ns>:attempts. Question count = attempts in the last 7 days for the
-           freshest engine. See renderRecentPractice() in shared/ace-labs-shell.js. -->
-      <div class="al-dash-num-small" id="dashRecentDate">No sessions yet</div>
-      <div class="al-dash-sub" id="dashRecentSub">Open an engine or a Retold night to begin</div>
-      <a href="#tools" class="al-dash-cta" id="dashRecentCta">Open the engine you used last</a>
-    </div>
-  </div>
-  <div class="al-dash-row al-dash-row-by-subject">
-    <div class="al-dash-subjects-head">
-      <h3>Mastery by subject</h3>
-      <span class="al-dash-subjects-sub" id="dashSubjectsSub">Composite from each tool's localStorage. Open a tool to update its slice.</span>
-    </div>
-    <div class="al-dash-subjects-grid" id="dashSubjectsGrid"></div>
-  </div>
-</section>
+  </section>
 
-<!-- First-run / personalization banner: makes onboarding data (test date + flagged
-     weak sections) actually drive the home page. Additive, self-contained. -->
-<script>
-(function(){
-  function ready(fn){ if(document.readyState!=='loading') fn(); else document.addEventListener('DOMContentLoaded',fn); }
-  ready(function(){
-    var dash=document.getElementById('dashboard'); if(!dash) return;
-    var ob=null; try{ ob=JSON.parse(localStorage.getItem('aceLabs:onboarding')||'null'); }catch(e){}
-    var LABEL={bio:'Biology',gc:'General Chemistry',ochem:'Organic Chemistry',qr:'Quantitative Reasoning'};
-    var LEARN={bio:'tools/bio-retold/',gc:'tools/gchem/',ochem:'tools/organic/',qr:'tools/qr-retold/'};
-    var A='color:var(--al-gold-d,#8a6d24);font-weight:700;text-decoration:none;border-bottom:1px solid rgba(138,109,36,.4)';
-    var card='display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px;margin-bottom:18px;padding:14px 18px;border:1px solid var(--al-gold-border,rgba(201,168,76,.35));border-left:3px solid var(--al-gold,#c9a84c);border-radius:12px;background:var(--al-gold-bg,rgba(201,168,76,.08));font-size:14px;color:var(--al-ink,#2a2118)';
-    var html='';
-    if(!ob){
-      html='<div style="'+card+'"><span><b>New to Ace Labs?</b> Two minutes to set your test date and flag your weak sections &mdash; then the home page points you at the right place first.</span>'
-        +'<span style="margin-left:auto;white-space:nowrap"><a href="onboarding.html" style="'+A+'">Set up my path</a> &middot; <a href="diagnostic.html" style="'+A+'">take the free diagnostic</a></span></div>';
-    } else {
-      var bits=[];
-      if(ob.testDate){
-        var today=new Date(); today.setHours(0,0,0,0);
-        var dt=new Date(ob.testDate+'T00:00:00'); var days=Math.round((dt-today)/86400000);
-        if(days>=0 && days<3650){ bits.push('<b>'+days+' day'+(days===1?'':'s')+'</b> to your test'+(days<=14?' &mdash; <a href="test-week.html" style="'+A+'">open test-week mode</a>':'')); }
-      }
-      if(Array.isArray(ob.weakAreas)&&ob.weakAreas.length){
-        var links=ob.weakAreas.filter(function(k){return LABEL[k];}).map(function(k){ return '<a href="'+LEARN[k]+'" style="'+A+'">'+LABEL[k]+'</a>'; });
-        if(links.length) bits.push('You flagged '+links.join(', ')+' &mdash; start there in Retold');
-      }
-      if(bits.length) html='<div style="'+card+'"><span>'+bits.join('<span style="opacity:.5;margin:0 4px">&middot;</span>')+'</span></div>';
-    }
-    if(html){ var w=document.createElement('div'); w.innerHTML=html; if(w.firstChild) dash.insertBefore(w.firstChild, dash.firstChild); }
-  });
-})();
-</script>
+  <noscript><p class="lede">Ace Labs needs JavaScript for Today. Everything is still one click away: <a href="/learn/">Learn</a>, <a href="/practice/">Practice</a>, <a href="/tests/">Tests</a>.</p></noscript>
+</main>
 
-<!-- ========== LEARN TRACK — RETOLD ========== -->
-<section class="al-tools" id="retold-track">
-  <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--al-gold-d);margin-bottom:6px;">Learn it &middot; content review</div>
-  <h2 class="al-section-title">Start with <em>Retold</em>.</h2>
-  <p class="al-section-sub">When a subject is new &mdash; or you're rebuilding it from the ground up &mdash; start here. Retold walks you through the whole subject one night at a time, in Thomas's voice, building everything from a single idea. The story before the reps. <a href="retold/" style="color:var(--al-gold-d);border-bottom:1px dashed var(--al-gold-d);text-decoration:none;">See the full Retold track</a>.</p>
-
-  <div class="al-tools-grid">
-
-    <a class="al-tool-tile al-tool-ochem" href="tools/organic/" target="_blank" rel="noopener">
-      <div class="al-tool-tag">Learn &middot; Organic Chem &middot; 13 nights</div>
-      <h3 class="al-tool-name">OChem, <em>Retold</em></h3>
-      <p class="al-tool-desc">One story runs the whole subject: electron-rich attacks electron-poor. Thirteen nights in step with your DAT Booster banks &mdash; walk each night, watch the mechanism move, then earn its reactions in the deep engine.</p>
-      <div class="al-tool-features">
-        <span class="al-feat">Coach &middot; Thomas</span>
-        <span class="al-feat">13 nights</span>
-        <span class="al-feat">Moving scenes</span>
-      </div>
-      <div class="al-tool-foot"><span class="al-tool-cta">Start OChem Retold</span></div>
-    </a>
-
-    <a class="al-tool-tile al-tool-gc" href="tools/gchem/" target="_blank" rel="noopener">
-      <div class="al-tool-tag">Learn &middot; Gen Chem &middot; 14 nights</div>
-      <h3 class="al-tool-name">GChem, <em>Retold</em></h3>
-      <p class="al-tool-desc">Two questions run the whole subject: how many particles, and which way does the energy go? Fourteen nights in step with your Booster banks &mdash; walk each night's story, watch it move, then earn its reps in the engine. Your equation web fills in as you go.</p>
-      <div class="al-tool-features">
-        <span class="al-feat">Coach &middot; Thomas</span>
-        <span class="al-feat">14 nights</span>
-        <span class="al-feat">Equation web</span>
-      </div>
-      <div class="al-tool-foot"><span class="al-tool-cta">Start GChem Retold</span></div>
-    </a>
-
-    <a class="al-tool-tile al-tool-bio" href="tools/bio-retold/" target="_blank" rel="noopener">
-      <div class="al-tool-tag">Learn &middot; Bio &middot; 14 nights</div>
-      <h3 class="al-tool-name">Bio, <em>Retold</em></h3>
-      <p class="al-tool-desc">The living-systems story, night by night, built on one idea: structure tells you function. Fourteen nights of drawn cells, membranes, DNA and Punnett squares &mdash; read the shape, know the job.</p>
-      <div class="al-tool-features">
-        <span class="al-feat">Coach &middot; Thomas</span>
-        <span class="al-feat">14 nights</span>
-        <span class="al-feat">Structure-first</span>
-      </div>
-      <div class="al-tool-foot"><span class="al-tool-cta">Start Bio Retold</span></div>
-    </a>
-
-    <a class="al-tool-tile al-tool-qr" href="tools/qr-retold/" target="_blank" rel="noopener">
-      <div class="al-tool-tag">Learn &middot; QR &middot; 14 nights</div>
-      <h3 class="al-tool-name">QR, <em>Retold</em></h3>
-      <p class="al-tool-desc">The whole math section built from setup-first thinking, one night at a time. Fourteen nights in step with your Booster banks &mdash; turn the words into a picture or an equation, and the arithmetic falls out.</p>
-      <div class="al-tool-features">
-        <span class="al-feat">Coach &middot; Thomas</span>
-        <span class="al-feat">14 nights</span>
-        <span class="al-feat">Setup-first</span>
-      </div>
-      <div class="al-tool-foot"><span class="al-tool-cta">Start QR Retold</span></div>
-    </a>
-  </div>
-</section>
-
-<!-- ========== REVIEW TRACK — ENGINES & DRILLS ========== -->
-<section class="al-tools" id="tools">
-  <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--al-teal);margin-bottom:6px;">Review it &middot; retrieval practice</div>
-  <h2 class="al-section-title">Then <em>drill it</em> in the engines.</h2>
-  <p class="al-section-sub">Once you know the content, sharpen it. Deep-dive nodes, timed drills, and DAT-format mocks &mdash; retrieval practice that proves you can do it under pressure. Progress saves to localStorage and rolls up on your dashboard above.</p>
-
-  <div class="al-tools-grid">
-
-    <a class="al-tool-tile al-tool-qr" href="games/index.html" target="_blank" rel="noopener">
-      <div class="al-tool-tag">All sections · Game Central</div>
-      <h3 class="al-tool-name">Game <em>Central</em></h3>
-      <p class="al-tool-desc">Timed multiple-choice rounds across every subject - Biology, General Chemistry, QR, and structure-based Organic. Twelve questions a round with the why behind each answer; the ones you miss come back around until they stick. 3,250+ questions in one place.</p>
-      <div class="al-tool-features">
-        <span class="al-feat">Coach · Thomas</span>
-        <span class="al-feat">Bio · GChem · QR · Organic</span>
-        <span class="al-feat">Spaced miss recovery</span>
-      </div>
-      <div class="al-tool-foot">
-        <span class="al-tool-cta">Open Game Central</span>
-        <span class="al-tool-stat">4 subject banks</span>
-      </div>
-    </a>
-
-    <!-- Reading Comprehension player (added 2026-09-30) -->
-    <a class="al-tool-tile al-tool-qr" href="tools/rc/" target="_blank" rel="noopener">
-      <div class="al-tool-tag">Section · Reading Comprehension</div>
-      <h3 class="al-tool-name">Reading <em>Comprehension</em></h3>
-      <p class="al-tool-desc">Full timed sections (three passages, 60 minutes) and single-passage practice on a 10 and 10 pace bar. Highlighter, flag, cross-out. Review shows the proof line in the passage for every answer, the question type, and why each other choice falls short.</p>
-      <div class="al-tool-features">
-        <span class="al-feat">Coach · Thomas</span>
-        <span class="al-feat">Proof line first</span>
-        <span class="al-feat">Results by question type</span>
-      </div>
-      <div class="al-tool-foot">
-        <span class="al-tool-cta">Open Reading</span>
-      </div>
-    </a>
-
-    <!-- Fix 21: corrected problem count 1010 -> 767. 2026-09-23: 925 = distinct stems in tools/qr BANK (1,020 rows, some repeated). -->
-    <!-- Fix 22: removed unreliable "35 distinct" count; rewritten as "11+ interactive visualizers" -->
-    <!-- Fix 49: corrected module count 41 -> 45 (added sys-eq, profit-loss, data-graph, trig) -->
-    <a class="al-tool-tile al-tool-qr" href="tools/qr/index.html" target="_blank" rel="noopener">
-      <div class="al-tool-tag">Section · QR</div>
-      <h3 class="al-tool-name">Quantitative <em>Reasoning</em></h3>
-      <p class="al-tool-desc">45 modules, 11+ interactive visualizers, 925 problems with 4-tier difficulty ladder. Full 40-question, 45-minute DAT-format mock.</p>
-      <div class="al-tool-features">
-        <span class="al-feat">Coach · Thomas</span>
-        <span class="al-feat" id="qrFeatPartial">— in progress</span>
-        <span class="al-feat" id="qrFeatActivity">— attempts</span>
-        <span class="al-feat" id="qrFeatLast">No sessions yet</span>
-      </div>
-      <div class="al-tool-foot">
-        <span class="al-tool-cta">Open QR engine</span>
-        <span class="al-tool-stat" id="qrMasteryStat">— mastered</span>
-      </div>
-    </a>
-
-    <!-- Fix 23: rewrote hub description to accurately reflect live vs. in-progress state -->
-    <!-- Fix 24: removed "500-Q bank" claim; actual expert pool is 158 questions -->
-    <a class="al-tool-tile al-tool-bio" href="tools/bio/index.html" target="_blank" rel="noopener">
-      <div class="al-tool-tag">Section · Bio</div>
-      <h3 class="al-tool-name"><em>Biology</em></h3>
-      <p class="al-tool-desc">Cell Lab + Genetics Studio fully live; Physiology, Diversity, Developmental, Evolution shipping deep-dive nodes. 40-question fixed mock, diagnostic, 60-day plan, analytics, micrograph ID, bonus topics. SM-2 spaced retrieval via Ace Cards.</p>
-      <div class="al-tool-features">
-        <span class="al-feat">Coach · Thomas</span>
-        <span class="al-feat" id="bioFeatPartial">— in progress</span>
-        <span class="al-feat" id="bioFeatActivity">— retrievals</span>
-        <span class="al-feat" id="bioFeatLast">No sessions yet</span>
-      </div>
-      <div class="al-tool-foot">
-        <span class="al-tool-cta">Open Bio engine</span>
-        <span class="al-tool-stat" id="bioMasteryStat">— mastered</span>
-      </div>
-    </a>
-
-    <!-- Fix 25 (re-verified 2026-09-23): tools/gc SKILLS has 41 entries, 37 in tiers 0-2 + 4 in tier 3 -->
-    <a class="al-tool-tile al-tool-gc" href="tools/gc/index.html" target="_blank" rel="noopener">
-      <div class="al-tool-tag">Section · Gen Chem</div>
-      <h3 class="al-tool-name">General <em>Chemistry</em></h3>
-      <p class="al-tool-desc">37 core + 4 strategy modules across 4 tiers (Foundations, Quantitative, Patterns, Test-day). Skill tree with progressive disclosure, 605-problem bank, full DAT-format mock.</p>
-      <div class="al-tool-features">
-        <span class="al-feat">Coach · Thomas</span>
-        <span class="al-feat" id="gcFeatPartial">— in progress</span>
-        <span class="al-feat" id="gcFeatActivity">— attempts</span>
-        <span class="al-feat" id="gcFeatLast">No sessions yet</span>
-      </div>
-      <div class="al-tool-foot">
-        <span class="al-tool-cta">Open GC engine</span>
-        <span class="al-tool-stat" id="gcMasteryStat">— mastered</span>
-      </div>
-    </a>
-
-    <!-- Organic mastery path: roots, tree, summit (added 2026-09-03) -->
-    <a class="al-tool-tile al-tool-ochem" id="tileRoots" href="tools/ochem/roots/" target="_blank" rel="noopener">
-      <div class="al-tool-tag">Section · Organic Chem · foundations</div>
-      <h3 class="al-tool-name">The Roots of <em>Organic</em></h3>
-      <p class="al-tool-desc">Eighteen foundations in three levels, each a drawing you turn, push or flip, with Thomas's named move, the trap, and a hand-on-the-pen check that cannot be wrong. Start here if organic feels like a list.</p>
-      <div class="al-tool-features"><span class="al-feat">Coach · Thomas</span><span class="al-feat">3D chairs, Newman, wedge-dash</span><span class="al-feat">Walk mode</span></div>
-      <div class="al-tool-foot"><span class="al-tool-cta">Fix the roots</span></div>
-    </a>
-    <a class="al-tool-tile al-tool-ochem" href="tools/ochem/tree/" target="_blank" rel="noopener">
-      <div class="al-tool-tag">Section · Organic Chem · mastery</div>
-      <h3 class="al-tool-name">The Tree of <em>Organic</em></h3>
-      <p class="al-tool-desc">Reagents, mechanisms, synthesis and the evidence, built on a verified reaction table and a bank of checked questions. Every item is generated from real structures; every miss points back to its root.</p>
-      <div class="al-tool-features"><span class="al-feat">Coach · Thomas</span><span class="al-feat">Arrow pushing, live</span><span class="al-feat">ADA 2026 weighting</span></div>
-      <div class="al-tool-foot"><span class="al-tool-cta">Climb the tree</span></div>
-    </a>
-    <a class="al-tool-tile al-tool-ochem" href="tools/ochem/summit/" target="_blank" rel="noopener">
-      <div class="al-tool-tag">Section · Organic Chem · the summit</div>
-      <h3 class="al-tool-name">The <em>Summit</em></h3>
-      <p class="al-tool-desc">Thirty organic questions, untimed first and then at test pace. A debrief that sends each miss to the exact move and root, and a redo loop until it is clean. Thirty of thirty, timed, is the summit.</p>
-      <div class="al-tool-features"><span class="al-feat">Coach · Thomas</span><span class="al-feat">Fresh section every time</span><span class="al-feat">Perfect-score goal</span></div>
-      <div class="al-tool-foot"><span class="al-tool-cta">Take a section</span></div>
-    </a>
-    <!-- Fix 26: removed "1230-question bank" claim; actual is 388 questions -->
-    <!-- Fix 27: removed "94 lessons" (legacy v3 claim); v1 canonical has 11 hubs -->
-    <a class="al-tool-tile al-tool-ochem" href="tools/ochem/" target="_blank" rel="noopener">
-      <div class="al-tool-tag">Section · Organic Chem · deep engine</div>
-      <h3 class="al-tool-name">Organic <em>Chemistry</em></h3>
-      <p class="al-tool-desc">The review engine behind Retold: 11 reaction-map hubs, animated mechanisms, the Reaction Wheel, synthesis + stereo + spectroscopy trainers, and a full DAT-format exam sim. Drill reactions until they are automatic. New to OChem? Start in Retold (the tile above) first.</p>
-      <div class="al-tool-features">
-        <span class="al-feat">Coach · Thomas</span>
-        <span class="al-feat" id="ochemFeatPartial">— in progress</span>
-        <span class="al-feat" id="ochemFeatActivity">— hubs touched</span>
-        <span class="al-feat" id="ochemFeatLast">No sessions yet</span>
-      </div>
-      <div class="al-tool-foot">
-        <span class="al-tool-cta">Open the OChem engine</span>
-        <span class="al-tool-stat" id="ochemMasteryStat">— mastered</span>
-      </div>
-    </a>
-    <a class="al-tool-tile al-tool-ochem" href="tools/pat/" target="_blank" rel="noopener">
-      <div class="al-tool-tag">Section · PAT · studio</div>
-      <h3 class="al-tool-name">Perceptual <em>Ability</em></h3>
-      <p class="al-tool-desc">The full PAT studio: six modules &mdash; keyholes, top-front-end, angle ranking, hole punching, pattern folding, cube counting &mdash; each with drills and teaching. The one section pure repetition actually moves.</p>
-      <div class="al-tool-features">
-        <span class="al-feat">Coach &middot; Thomas</span>
-        <span class="al-feat">6 modules</span>
-        <span class="al-feat">Drill + teach</span>
-      </div>
-      <div class="al-tool-foot"><span class="al-tool-cta">Open the PAT studio</span></div>
-    </a>
-
-    <a class="al-tool-tile al-tool-gc" href="tools/casper/" target="_blank" rel="noopener">
-      <div class="al-tool-tag">Applications &middot; Casper</div>
-      <h3 class="al-tool-name">Casper <em>Trainer</em></h3>
-      <p class="al-tool-desc">Self-training for the Casper situational-judgment test: response ladders, self-scoring, an eleven-station timed mock, and export. Rehearse the SJT the way schools actually read it.</p>
-      <div class="al-tool-features">
-        <span class="al-feat">Coach &middot; Thomas</span>
-        <span class="al-feat">11-station mock</span>
-        <span class="al-feat">Self-score</span>
-      </div>
-      <div class="al-tool-foot"><span class="al-tool-cta">Open the Casper trainer</span></div>
-    </a>
-
-    <a class="al-classic-link" href="tools/ochem/v2/" target="_blank" rel="noopener" style="grid-column:1/-1;display:block;text-align:center;margin-top:4px;font-size:.82rem;color:#8a6d24;text-decoration:none;opacity:.82">Prefer to study topic by topic? Open the classic OChem course engine.</a>
-
-  </div>
-</section>
-
-<!-- ========== GEN CHEM COMPANION TOOLS ========== -->
-<!-- Discoverability cross-links for four standalone GC companion pages.
-     Each opens in its own tab; matches the AL light + gold + teal theme. -->
-<section class="al-tools" id="gc-companions" style="padding-top:0;">
-  <h2 class="al-section-title">Gen Chem <em>companion tools</em>.</h2>
-  <p class="al-section-sub">Standalone companions to the Gen Chem engine. Drill traps, recognize patterns at speed, master periodic trends, and build Lewis structures with guided checks.</p>
-  <div class="al-tools-grid" style="grid-template-columns:repeat(auto-fit,minmax(240px,1fr));">
-    <a class="al-tool-tile al-tool-gc" href="tools/gc/traps.html" target="_blank" rel="noopener" style="padding:22px 24px;">
-      <div class="al-tool-tag">Reference · GC</div>
-      <h3 class="al-tool-name" style="font-size:22px;">Common <em>Traps</em></h3>
-      <p class="al-tool-desc">1,815 trap entries clustered into 74 patterns the DAT recycles across Gen Chem topics.</p>
-      <div class="al-tool-foot"><span class="al-tool-cta">Open the trap reference</span></div>
-    </a>
-    <a class="al-tool-tile al-tool-gc" href="tools/gc/recognition-lab.html" target="_blank" rel="noopener" style="padding:22px 24px;">
-      <div class="al-tool-tag">Drill · GC</div>
-      <h3 class="al-tool-name" style="font-size:22px;">Recognition <em>Lab</em></h3>
-      <p class="al-tool-desc">Timed visual speed-drill across 15 topics and 62 stimuli — train pattern recognition under time pressure.</p>
-      <div class="al-tool-foot"><span class="al-tool-cta">Open the speed-drill</span></div>
-    </a>
-    <a class="al-tool-tile al-tool-gc" href="tools/gc/trends.html" target="_blank" rel="noopener" style="padding:22px 24px;">
-      <div class="al-tool-tag">Drill · GC</div>
-      <h3 class="al-tool-name" style="font-size:22px;">Periodic <em>Trends</em></h3>
-      <p class="al-tool-desc">Heatmap explorer, speed drill, and iso-electronic ranker for atomic radius, IE, EN, and EA.</p>
-      <div class="al-tool-foot"><span class="al-tool-cta">Open the trends pack</span></div>
-    </a>
-    <a class="al-tool-tile al-tool-gc" href="tools/gc/lewis-sandbox.html" target="_blank" rel="noopener" style="padding:22px 24px;">
-      <div class="al-tool-tag">Sandbox · GC</div>
-      <h3 class="al-tool-name" style="font-size:22px;">Lewis &amp; <em>VSEPR Sandbox</em></h3>
-      <p class="al-tool-desc">18 molecules, 5-stage guided builder — count valence, place atoms, draw bonds, check octets and geometry.</p>
-      <div class="al-tool-foot"><span class="al-tool-cta">Open the sandbox</span></div>
-    </a>
-  </div>
-</section>
-
-<!-- ========== UNIFIED MOCK CTA ========== -->
-<section class="al-cta-section">
-  <a class="al-mock-cta" href="prometric-mock.html">
-    <div class="al-mock-cta-tag">PROMETRIC MOCKS · 3 fixed tests · 140 Q · 135 min · zero overlap</div>
-    <h2 class="al-mock-cta-h">The <em>partial DAT simulation</em> mock.</h2>
-    <p class="al-mock-cta-sub">Sciences (40 Bio + 30 GC + 30 OChem · 90 min) followed by QR (40 Q · 45 min). Question nav panel, mark-for-review, end-of-section review screen, periodic table for Gen Chem, and calculator widget for QR — the closest simulation Ace Labs ships for the sections it currently covers. PAT and Reading Comp are not included; the real DAT places the scheduled 30-minute break after PAT, so this is a high-fidelity two-section simulation rather than a full-length DAT.</p>
-    <span class="al-mock-cta-link">Take a Prometric mock</span>
-  </a>
-</section>
-
-<!-- ========== THE CLIMB (MINI TESTS) ========== -->
-<section class="al-cta-section">
-  <a class="al-mock-cta" href="tools/minitests/">
-    <div class="al-mock-cta-tag">THE CLIMB &middot; 10 mini tests &middot; 400 questions &middot; difficulty tiers 1-10</div>
-    <h2 class="al-mock-cta-h">Climb the <em>ten rungs</em>.</h2>
-    <p class="al-mock-cta-sub">Ten timed 40-question mini tests across Biology, Gen Chem, Orgo and QR &mdash; the same topics every rung, the difficulty climbing from base camp to the summit. Fully explained, five-choice, DAT-representative. But the climb is not the point: every miss lands on a <b>master mistake list</b> and hands you the 15-second trick short (playable right there), the Retold night, and the drill that fixes it - then you retry them until they stick. Fully explained, five-choice, DAT-representative.</p>
-    <span class="al-mock-cta-link">Start climbing</span>
-  </a>
-</section>
-
-<!-- ========== THIS WEEK PLAN ========== -->
-<!-- Fix 7: #plan section populated with localStorage-driven last-session links per engine -->
-<section class="al-plan" id="plan">
-  <h2 class="al-section-title">Pick up where you <em>left off</em>.</h2>
-  <p class="al-section-sub">Last-session links surface from each engine's localStorage. Open a tool to start building your history.</p>
-  <div class="al-plan-grid" id="planGrid">
-    <div class="al-plan-empty">Open at least one engine and complete a session — your recent activity will surface here.</div>
-  </div>
-</section>
-
-<!-- ========== FOOT ========== -->
-<!-- Fix 39: tightened footer copy from aspirational/informal to factual -->
-<!-- Auto-hydrated by shared/scope.js -->
-<div id="alDisclaimer" style="max-width:980px;margin:24px auto 0;padding:0 22px"></div>
-
-<footer class="al-foot">
-  <div class="al-foot-row">
-    <span>Ace Labs · standalone v1</span>
-    <span>Your study data stays in your browser. No accounts, no tracking, no servers.</span>
-    <span><a href="scope.html">Scope &amp; evidence</a> · <a href="https://acethedat-portal.netlify.app" target="_blank">AceTheDAT tutor portal</a> (in progress)</span>
-    <span style="font-size:11px;color:var(--al-muted)">Ace Labs is not affiliated with the American Dental Association or Prometric.</span>
+<footer class="foot">
+  <div class="wrap">
+    <nav aria-label="More">
+      <a href="/onboarding.html">Set up your path</a>
+      <a href="/performance/">Performance</a>
+      <a href="/test-week.html">Test week</a>
+      <a href="/test-day-readiness.html">Test-day briefing</a>
+      <a href="/for-retakers.html">Going again</a>
+      <a href="/scope.html">Scope and evidence</a>
+    </nav>
+    <p>Ace Labs is not affiliated with the American Dental Association or Prometric.</p>
   </div>
 </footer>
-<script src="shared/scope.js"></script>
 
-<!-- ========== DIAGNOSTIC PANEL ========== -->
-<!-- Hidden by default. Appears only when URL has ?debug=1.
-     Lists every localStorage key matching the AL engine prefixes with truncated value.
-     Populated by shared/ace-labs-shell.js renderDebugPanel(). -->
-<section class="al-dash" id="debugPanel" style="display:none; margin-top:54px;">
-  <div class="al-dash-subjects-head">
-    <h3>Diagnostic · localStorage keys</h3>
-    <span class="al-dash-subjects-sub" id="debugPanelSub">Hidden by default. Toggle by appending ?debug=1 to the URL.</span>
-  </div>
-  <div class="al-dash-card" style="padding:0; overflow:hidden;">
-    <div style="display:grid; grid-template-columns:minmax(220px, 36%) 1fr; gap:0; font-family:'JetBrains Mono',monospace; font-size:11.5px;">
-      <div style="padding:10px 14px; background:var(--al-paper-2); border-bottom:1px solid var(--al-line); font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--al-ink-mute); font-size:10px;">Key</div>
-      <div style="padding:10px 14px; background:var(--al-paper-2); border-bottom:1px solid var(--al-line); border-left:1px solid var(--al-line); font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--al-ink-mute); font-size:10px;">Value (truncated to 200 chars)</div>
-      <div id="debugPanelBody" style="display:contents;"></div>
-    </div>
-  </div>
-</section>
-
-</div>
-<script src="shared/ace-labs-shell.js"></script>
+<script src="/shared/ace-index.js?v=1"></script>
+<script src="/shared/ace-route.js?v=1"></script>
+<script src="/shared/ace-progress.js?v=1"></script>
 <script>
-/* Hidden coach access: click the AceTheDAT brand mark 5x (within 3s) to open the
-   Casper Coaching Console. Not security — just keeps it off the student nav. */
 (function () {
-  var brand = document.querySelector(".al-brand");
-  if (!brand) return;
-  var clicks = 0, timer = null;
-  brand.style.cursor = "pointer";
-  brand.title = ""; // no hint for students
-  brand.addEventListener("click", function () {
-    clicks++;
-    clearTimeout(timer);
-    timer = setTimeout(function () { clicks = 0; }, 3000);
-    if (clicks >= 5) {
-      clicks = 0;
-      window.location.href = "tools/casper/index.html";
-    }
+  var P = window.AceProgress, R = window.AceRoute;
+  var $ = function (id) { return document.getElementById(id); };
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  var S = P.withStudent;
+
+  var prof = P.profile();
+  var h = new Date().getHours();
+  var part = h < 12 ? 'Good morning' : (h < 18 ? 'Good afternoon' : 'Good evening');
+  if (prof.daysToTest != null && prof.daysToTest >= 0 && prof.daysToTest < 1000) {
+    $('days').innerHTML = prof.daysToTest === 0 ? '<b>Test day</b>' : '<b>' + prof.daysToTest + '</b> day' + (prof.daysToTest === 1 ? '' : 's') + ' to test';
+  }
+
+  var first = !prof.onboarded && !prof.diagnosed && !P.hasActivity();
+  if (first) {
+    document.body.className = 'is-first';
+    $('hello').innerHTML = 'Welcome to <em>Ace Labs</em>.';
+    $('setup').href = S('/onboarding.html');
+    return;
+  }
+  document.body.className = 'is-back';
+  $('hello').innerHTML = esc(part) + '.';
+
+  function fmtMin(m) { if (!m) return ''; if (m < 60) return m + ' min'; var hr = Math.floor(m / 60), mm = m % 60; return hr + ' hr' + (mm ? ' ' + mm + ' min' : ''); }
+
+  function renderTasks(tasks, fromCoach) {
+    $('todayFrom').textContent = fromCoach ? 'Today, from your coach' : 'Today, from your recent work';
+    $('h-today').textContent = fromCoach ? 'Your plan for today' : 'Here is today';
+    var total = 0;
+    $('tasks').innerHTML = tasks.map(function (t, i) {
+      total += t.minutes || 0;
+      var title = t.href ? '<a href="' + esc(S(t.href)) + '">' + esc(t.title) + '</a>' : esc(t.title);
+      return '<li><span class="i">' + (i + 1) + '</span><span class="t">' + title + (t.detail ? '<span>' + esc(t.detail) + '</span>' : '') + '</span>' +
+        '<span class="m">' + esc(fmtMin(t.minutes)) + '</span></li>';
+    }).join('');
+    var firstLink = tasks.filter(function (t) { return t.href; })[0];
+    $('start').href = S(firstLink ? firstLink.href : '/practice/');
+    $('start').textContent = 'Start';
+    $('total').textContent = total ? 'About ' + fmtMin(total) + ' in all' : '';
+  }
+
+  /* Coach plan task -> where it opens. */
+  var SEC_HREF = { bio: '/tools/bio/', gchem: '/tools/gc/', ochem: '/tools/ochem/tree/', qr: '/tools/qr/', pat: '/tools/pat/', rc: '/tools/rc/' };
+  function planTask(t) {
+    var s = R.section(t.section);
+    var text = String(t.text || '');
+    var href = /practice test|full length|mock/i.test(text) ? '/tests/' : (/review|miss/i.test(text) ? '/review/' : (s ? SEC_HREF[s] : '/practice/'));
+    return { title: text, detail: t.section || '', minutes: t.minutes || null, href: href };
+  }
+
+  renderTasks(P.today(), false);
+  P.plan().then(function (pl) {
+    if (!pl) return;
+    if (pl.firstName) $('hello').innerHTML = esc(part) + ', ' + esc(pl.firstName) + '.';
+    renderTasks(pl.tasks.map(planTask), true);
   });
+
+  /* Fix these next: the top three open misses. */
+  var ms = P.misses().slice(0, 3);
+  if (!ms.length) {
+    $('fix').innerHTML = '<li><span class="what"><b>Nothing open right now.</b><span>Misses from any test or drill land here with a fix attached.</span></span></li>';
+  } else {
+    $('fix').innerHTML = ms.map(function (m) {
+      var l = R.links(m);
+      return '<li><span class="what"><b>' + esc(m.concept) + '</b><span>' + esc(R.SECTION_SHORT[m.section] || '') + ' &middot; ' + esc(m.sourceLabel) + '</span></span>' +
+        '<span class="links"><a href="' + esc(l.sheet) + '" target="_blank" rel="noopener">Sheet</a><a href="' + esc(S(l.learn)) + '">Learn</a><a href="' + esc(S(l.drill)) + '">Drill</a></span></li>';
+    }).join('');
+  }
+
+  var nt = P.nextTest();
+  $('h-next').textContent = nt.title;
+  $('nextDetail').textContent = nt.detail;
+  $('nextGo').href = S(nt.href);
+  $('nextGo').textContent = 'Open ' + nt.title.charAt(0).toLowerCase() + nt.title.slice(1);
+  if (prof.testDate) {
+    var d = new Date(prof.testDate + 'T00:00:00');
+    if (!isNaN(d)) $('nextWhen').textContent = 'Your DAT: ' + d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }) + '.';
+  }
 })();
 </script>
 <script src="/shared/ace-shell.js?v=1" defer></script>

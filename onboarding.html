@@ -500,7 +500,10 @@ body[data-page="onboarding"]{
     } else if(attempt === 'retake'){
       window.location.href = 'for-retakers.html';
     } else {
-      window.location.href = 'ace-labs.html';
+      // First visit: onboarding, then the diagnostic, then Today.
+      var diagnosed = false;
+      try { diagnosed = !!localStorage.getItem('acelabs_diagnostic_v1'); } catch(e){}
+      window.location.href = diagnosed ? '/' : 'diagnostic.html';
     }
   };
 
