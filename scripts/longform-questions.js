@@ -346,7 +346,7 @@ gc.push({
 
 gc.push({
   id: 'GC_lf009', section: 'GC', topic: 'stoich', difficulty: 4,
-  q: 'A 5.00 g sample of an unknown hydrocarbon is combusted completely in excess oxygen. Analysis of the products yields 15.4 g of CO2 and 6.30 g of H2O. The molar mass of the compound is determined separately to be 86 g/mol. What is the molecular formula?',
+  q: 'A 5.00 g sample of an unknown hydrocarbon is combusted completely in excess oxygen. Analysis of the products yields 15.4 g of CO2 and 7.32 g of H2O. The molar mass of the compound is determined separately to be 86 g/mol. What is the molecular formula?',
   opts: [
     'C5H10 (cyclopentane)',
     'C6H10 (cyclohexene)',
@@ -355,7 +355,7 @@ gc.push({
     'C5H12 (pentane)'
   ],
   correct: 2,
-  why: 'mol C = 15.4/44 = 0.350; mol H = 2(6.30/18) = 0.700. C:H = 0.350:0.700 = 1:2 → empirical CH2 (mass 14). MW 86 → 86/14 = 6.14 ≈ 6 → C6H14 (hexane), but 6×14 = 84, not 86 — using 86/MW(CH2) = 86/14.03 ≈ 6.13 close to 6; the molecular formula is C6H14 (M = 86.18).'
+  why: 'mol C = 15.4/44 = 0.350; mol H = 2(7.32/18) = 0.813. C:H = 0.350:0.813 = 1:2.32, which is 3:7, so the empirical formula is C3H7 (43 g/mol). 86/43 = 2, so the molecular formula is C6H14 (hexane, 86 g/mol). Mass check: 0.350(12) + 0.813(1) = 5.01 g, matching the 5.00 g sample.'
 });
 
 gc.push({
