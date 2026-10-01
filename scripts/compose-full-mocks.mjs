@@ -38,8 +38,9 @@ import { fileURLToPath } from 'node:url';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const OUT = path.join(ROOT, 'tools/mock/data/full-mocks.js');
 const REJECTED = path.join(ROOT, 'tools/mock/verification/rejected.json');
+const VERIFIED = path.join(ROOT, 'tools/mock/verification/verified.json');
 const arg = (name, dflt) => { const i = process.argv.indexOf(name); return i > 0 ? process.argv[i + 1] : dflt; };
-const COUNT = parseInt(arg('--count', '6'), 10);
+const COUNT = parseInt(arg('--count', '5'), 10);
 const SRC = arg('--source', path.join(os.homedir(), 'code/acethedat-prep/site/data/bank'));
 const CHECK = process.argv.includes('--check');
 const L = 'ABCDE';
@@ -74,8 +75,21 @@ export function keyNotLongest(opts, key) {
 const numeric = (o) => /^-?[$]?\d[\d,]*(\.\d+)?%?$/.test(String(o).trim());
 const numVal = (o) => parseFloat(String(o).replace(/[$,%]/g, ''));
 
+const ENT = { '&gt;': '>', '&lt;': '<', '&amp;': '&', '&quot;': '"', '&#39;': "'", '&apos;': "'" };
+const decode = (t) => (typeof t === 'string' ? t.replace(/&(gt|lt|amp|quot|#39|apos);/g, (m) => ENT[m]) : t);
+const words = (o) => String(o).trim().split(/\s+/).length;
+
 export function eligible(it, seen, rejected) {
   const why = [];
+  // Wording tells and flashcard register the blind solvers flagged in the first pass.
+  if (Array.isArray(it.o) && it.o.length === 5 && !it.os) {
+    const k = it.a;
+    if (String(it.o[k]).includes('(') && it.o.filter((o) => String(o).includes('(')).length === 1) why.push('only the key carries a parenthetical');
+    if (it.o.filter((o, i) => i !== k && words(o) <= 2).length >= 2 && words(it.o[k]) >= 4) why.push('flashcard choices beside a full-sentence key');
+    if (it.st && /^bio/.test(it.st) && it.o.some((o) => / \+ /.test(String(o)))) why.push('shorthand choices');
+  }
+  if (it.os && it.qs && it.o.includes(it.qs)) why.push('drawn structure is one of the choices');
+  if (/\b(from earlier|continuing|previous (question|item|problem))\b/i.test(it.q)) why.push('stem leans on another item');
   if (!Array.isArray(it.o) || it.o.length !== 5) why.push('not five choices');
   else {
     if (new Set(it.o.map((o) => String(o).trim().toLowerCase().replace(/\s+/g, ' '))).size !== 5) why.push('duplicate choices');
@@ -170,8 +184,8 @@ function place(it, target, r) {
   const traps = Array.isArray(it.t) ? order.map((i) => it.t[i] || null) : null;
   return {
     id: it.i, sub: it._sub, stop: it.st, topic: it._topic, nights: it._nights, d: it.d,
-    q: it.q, opts: order.map((i) => it.o[i]), correct: order.indexOf(it.a),
-    why: it.w, traps: traps && traps.some(Boolean) ? traps.map((t, i) => (i === order.indexOf(it.a) ? null : t)) : null,
+    q: decode(it.q), opts: order.map((i) => decode(it.o[i])), correct: order.indexOf(it.a),
+    why: decode(it.w), traps: traps && traps.some(Boolean) ? traps.map((t, i) => (i === order.indexOf(it.a) ? null : decode(t))) : null,
     qs: it.qs || null, os: !!it.os, src: it.x,
   };
 }
@@ -180,6 +194,7 @@ export function compose({ count = COUNT, source = SRC } = {}) {
   const seen = seenStems();
   const rejected = new Set(fs.existsSync(REJECTED) ? JSON.parse(fs.readFileSync(REJECTED, 'utf8')).map((x) => x.id || x) : []);
   const titles = stopTitles();
+  const verified = new Set(fs.existsSync(VERIFIED) ? JSON.parse(fs.readFileSync(VERIFIED, 'utf8')).map((x) => x.id) : []);
   const report = {};
   const pools = {};
   for (const sec of SECTIONS) {
@@ -232,7 +247,9 @@ export function compose({ count = COUNT, source = SRC } = {}) {
     const queues = {};
     for (const [st, list] of Object.entries(byStop)) {
       const sh = shuffle(list, r);
-      queues[st] = [...sh.filter((x) => x.d >= 3), ...sh.filter((x) => x.d === 2), ...sh.filter((x) => !(x.d >= 2))];
+      // Items that already passed the blind re-solve come first, then harder before easier.
+      const lvl = (list) => [...list.filter((x) => x.d >= 3), ...list.filter((x) => x.d === 2), ...list.filter((x) => !(x.d >= 2))];
+      queues[st] = [...lvl(sh.filter((x) => verified.has(x.i))), ...lvl(sh.filter((x) => !verified.has(x.i)))];
     }
     // Deal round-robin so every mock gets the same difficulty shape.
     const deal = mocks.map(() => []);

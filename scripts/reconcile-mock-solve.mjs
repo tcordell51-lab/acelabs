@@ -1,7 +1,10 @@
 #!/usr/bin/env node
 // Merge blind re-solves of the full-mock science and QR items into the verification record.
 //
-//   node scripts/reconcile-mock-solve.mjs SOLVE_DIR
+//   node scripts/reconcile-mock-solve.mjs SOLVE_DIR KEYMAP.json
+//
+// KEYMAP maps every pack item label (FULL_1-bio-07) to {id, key} as packed, so answers
+// stay attached to the right item even after the mocks are recomposed.
 //
 // Each SOLVE_DIR/<MOCK>-<sec>.json holds a blind solver's answers for one section of one
 // full mock (letters as the solver saw them, item ids like FULL_1-bio-07). An item PASSES
@@ -11,16 +14,12 @@
 // passing items go to verified.json. The composer never draws a rejected item again.
 import fs from 'node:fs';
 import path from 'node:path';
-import vm from 'node:vm';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const VER = path.join(ROOT, 'tools/mock/verification');
 const dir = process.argv[2];
-const ctx = { window: {} };
-vm.runInNewContext(fs.readFileSync(path.join(ROOT, 'tools/mock/data/full-mocks.js'), 'utf8'), ctx);
-const mocks = ctx.window.ACE_FULL_MOCKS.mocks;
-const L = 'ABCDE';
+const keymap = JSON.parse(fs.readFileSync(process.argv[3], 'utf8'));
 const load = (f, d) => (fs.existsSync(f) ? JSON.parse(fs.readFileSync(f, 'utf8')) : d);
 const rejected = load(path.join(VER, 'rejected.json'), []);
 const verified = load(path.join(VER, 'verified.json'), []);
@@ -30,13 +29,11 @@ let pass = 0, fail = 0;
 for (const f of fs.readdirSync(dir).filter((x) => x.endsWith('.json'))) {
   const s = JSON.parse(fs.readFileSync(path.join(dir, f), 'utf8'));
   const [mockId, sec] = s.pack.split('-');
-  const mk = mocks.find((m) => m.id === mockId);
-  if (!mk) continue;
   for (const a of s.answers) {
-    const n = parseInt(a.id.split('-').pop(), 10) - 1;
-    const it = mk.sections[sec][n];
-    if (!it) continue;
-    const key = L[it.correct];
+    const km = keymap[a.id];
+    if (!km) continue;
+    const it = { id: km.id, q: km.q || '' };
+    const key = km.key;
     const reasons = [];
     if (a.answer !== key) reasons.push(`blind answer ${a.answer}, key ${key}`);
     if ((a.alsoDefensible || []).length) reasons.push(`also defensible: ${a.alsoDefensible.join(',')}`);
