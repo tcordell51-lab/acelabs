@@ -276,7 +276,7 @@
   }
   /* real edge of the solid at p (curve tangent t): the solid around p, seen in the
      plane across the curve, is neither empty, full, nor a flat half-plane */
-  var NDIR = 24;
+  var NDIR = 8;
   function isCrease(S, p, t) {
     var B = perpBasis(t), ins = [], n = 0, eps = 1e-4;
     for (var k = 0; k < NDIR; k++) {
@@ -361,9 +361,11 @@
     var out = [], start = 0;
     for (var k2 = 1; k2 <= n; k2++) {
       if (k2 < n && st[k2] === st[start]) continue;
-      var a = start === 0 ? 0 : null, b = k2 === n ? 1 : null;
-      if (a === null) a = bisect(fn, ss[start - 1], ss[start], st[start - 1], st[start]);
-      if (b === null) b = bisect(fn, ss[k2 - 1], ss[k2], st[k2 - 1], st[k2]);
+      var a, b;
+      if (start > 0) a = bisect(fn, ss[start - 1], ss[start], st[start - 1]);
+      else { var f0 = fn(0); a = f0 === st[0] ? 0 : bisect(fn, 0, ss[0], f0); }
+      if (k2 < n) b = bisect(fn, ss[k2 - 1], ss[k2], st[k2 - 1]);
+      else { var f1 = fn(1); b = f1 === st[n - 1] ? 1 : bisect(fn, ss[n - 1], 1, st[n - 1]); }
       out.push({ s0: a, s1: b, state: st[start] });
       start = k2;
     }
@@ -380,7 +382,7 @@
     var out = [];
     candidates(S).forEach(function (c) {
       var L = curveLen(c); if (L < 1e-6) return;
-      var n = Math.max(6, Math.ceil(L / 0.05));
+      var n = Math.max(6, Math.ceil(L / 0.1));
       runs(function (s) { return isCrease(S, curvePoint(c, s), curveTangent(c, s)) ? 1 : 0; }, n).forEach(function (r) {
         if (r.state !== 1 || r.s1 - r.s0 < 1e-9) return;
         var piece = c.k === 'L' ? { k: 'L', a: curvePoint(c, r.s0), b: curvePoint(c, r.s1) }
@@ -588,8 +590,14 @@
   function hits(S, V, u, v) { return ray(S, unproj(V, u, v), V.d).length > 0; }
   /* visible drawing pieces that separate "ray hits the solid" from "ray misses" */
   function outlinePieces(S, V) {
-    var out = [];
-    drawing(S, V, { visibleOnly: true }).forEach(function (pr) {
+    var out = [], cand = [];
+    // every projected crease and contour (an outline piece is visible by definition)
+    creases(S).forEach(function (c) {
+      if (c.k === 'L' && len(cross(unit(sub(c.b, c.a)), V.d)) < 1e-9) return;
+      var pc = piece2D(V, c, 0, 1, false); if (pc) cand.push(pc);
+    });
+    contours(S, V).forEach(function (c) { var pc = piece2D(V, c, 0, 1, false); if (pc) cand.push(pc); });
+    dedupe(cand).forEach(function (pr) {
       var pts = pr.k === 'L' ? [pr.a, pr.b] : pr.k === 'A' ? arcPts(pr, Math.PI / 90) : pr.pts;
       for (var k = 0; k + 1 < pts.length; k++) {
         var a = pts[k], b = pts[k + 1], du = b[0] - a[0], dv = b[1] - a[1], l = Math.hypot(du, dv);
@@ -611,26 +619,58 @@
     for (var k = 0; k <= n; k++) { var a = pr.a0 + (pr.a1 - pr.a0) * k / n; pts.push([pr.c[0] + pr.r * Math.cos(a), pr.c[1] + pr.r * Math.sin(a)]); }
     return pts;
   }
-  /* chain short segments into closed loops */
+  /* chain short segments into closed loops: snap, split at T-junctions, drop
+     duplicate pieces, then walk the graph (every vertex of a clean outline has degree 2) */
   function loops(segs) {
-    var key = function (p) { return Math.round(p[0] * 1e4) + ',' + Math.round(p[1] * 1e4); };
-    var adj = {};
-    segs.forEach(function (s, i) { [0, 1].forEach(function (e) { var k = key(s[e]); (adj[k] = adj[k] || []).push([i, e]); }); });
-    var used = new Array(segs.length).fill(false), out = [];
-    for (var i = 0; i < segs.length; i++) {
+    var reps = [], sn = function (p) {
+      for (var i = 0; i < reps.length; i++) if (Math.abs(reps[i][0] - p[0]) < 2e-3 && Math.abs(reps[i][1] - p[1]) < 2e-3) return reps[i];
+      var r = [Math.round(p[0] * 1e4) / 1e4, Math.round(p[1] * 1e4) / 1e4]; reps.push(r); return r;
+    };
+    segs = segs.map(function (s) { return [sn(s[0]), sn(s[1])]; }).filter(function (s) { return s[0][0] !== s[1][0] || s[0][1] !== s[1][1]; });
+    var pts = [], seenP = {};
+    segs.forEach(function (s) { s.forEach(function (p) { var k = p.join(','); if (!seenP[k]) { seenP[k] = 1; pts.push(p); } }); });
+    var atoms = {};
+    segs.forEach(function (s) {
+      var a = s[0], b = s[1], dx = b[0] - a[0], dy = b[1] - a[1], L2 = dx * dx + dy * dy, ts = [0, 1];
+      pts.forEach(function (p) {
+        var t = ((p[0] - a[0]) * dx + (p[1] - a[1]) * dy) / L2;
+        if (t <= 1e-9 || t >= 1 - 1e-9) return;
+        var ex = a[0] + dx * t - p[0], ey = a[1] + dy * t - p[1];
+        if (ex * ex + ey * ey < 4e-6) ts.push(t);
+      });
+      ts.sort(function (x, y) { return x - y; });
+      for (var i = 0; i + 1 < ts.length; i++) {
+        var P = sn([a[0] + dx * ts[i], a[1] + dy * ts[i]]), Q = sn([a[0] + dx * ts[i + 1], a[1] + dy * ts[i + 1]]);
+        var k1 = P.join(','), k2 = Q.join(',');
+        if (k1 === k2) continue;
+        atoms[k1 < k2 ? k1 + ';' + k2 : k2 + ';' + k1] = [P, Q];
+      }
+    });
+    var list = Object.keys(atoms).map(function (k) { return atoms[k]; }), adj = {};
+    list.forEach(function (s, i) { [0, 1].forEach(function (e) { var k = s[e].join(','); (adj[k] = adj[k] || []).push([i, e]); }); });
+    // close tiny gaps (cone tips, tangent points): pair up dangling ends closer than 0.03
+    var dang = Object.keys(adj).filter(function (k) { return adj[k].length === 1; }).map(function (k) { return k.split(',').map(Number); });
+    while (dang.length >= 2) {
+      var best = null;
+      for (var a = 0; a < dang.length; a++) for (var b = a + 1; b < dang.length; b++) { var dd = Math.hypot(dang[a][0] - dang[b][0], dang[a][1] - dang[b][1]); if (!best || dd < best[2]) best = [a, b, dd]; }
+      if (best[2] > 0.03) break;
+      var P2 = dang[best[0]], Q2 = dang[best[1]], ni = list.length;
+      list.push([P2, Q2]); adj[P2.join(',')].push([ni, 0]); adj[Q2.join(',')].push([ni, 1]);
+      dang = dang.filter(function (x, i) { return i !== best[0] && i !== best[1]; });
+    }
+    if (Object.keys(adj).some(function (k) { return adj[k].length !== 2; })) return null;
+    var used = new Array(list.length).fill(false), out = [];
+    for (var i = 0; i < list.length; i++) {
       if (used[i]) continue;
       used[i] = true;
-      var loop = [segs[i][0], segs[i][1]], end = segs[i][1], guard = 0, closed = false;
-      while (guard++ < 100000) {
-        if (key(end) === key(loop[0]) && loop.length > 2) { closed = true; break; }
-        var nx = (adj[key(end)] || []).filter(function (x) { return !used[x[0]]; })[0];
-        if (!nx) break;
-        used[nx[0]] = true;
-        end = segs[nx[0]][1 - nx[1]];
+      var loop = [list[i][0]], end = list[i][1], start = list[i][0].join(',');
+      while (end.join(',') !== start) {
         loop.push(end);
+        var nx = adj[end.join(',')].filter(function (x) { return !used[x[0]]; })[0];
+        if (!nx) return null;
+        used[nx[0]] = true;
+        end = list[nx[0]][1 - nx[1]];
       }
-      if (!closed) return null;
-      loop.pop();
       out.push(simplify(loop));
     }
     return out;
