@@ -58,7 +58,7 @@ function skills(rel) {
   const out = {};
   const re = /\{\s*id\s*:\s*'([a-z0-9-]+)'\s*,\s*tier\s*:\s*\d+\s*,\s*name\s*:\s*'([^']+)'/g;
   let m;
-  while ((m = re.exec(src))) out[m[1]] = m[2];
+  while ((m = re.exec(src))) out[m[1]] = unent(m[2]).replace(/\s*:\s*/g, ': ');
   return out;
 }
 const skillNames = { qr: skills('tools/qr/index.html'), gchem: skills('tools/gc/index.html') };

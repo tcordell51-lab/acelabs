@@ -29,7 +29,7 @@
   'use strict';
   var NS = 'ace.v1.';
   var DAY = 864e5;
-  var LEITNER = [1, 3, 7];           // days: box 0 -> 1 -> 2 -> mastered after the 7-day retry
+  var LEITNER = [1, 3, 7];           // days between clean retries; a clean 7-day retry = mastered
   var R = window.AceRoute || { section: function (s) { return s; }, skillName: function () { return null; } };
 
   /* ---------------- raw storage ---------------- */
@@ -315,8 +315,9 @@
     r.seen = (r.seen || 0) + 1;
     r.last = Date.now();
     if (ok) {
-      if (r.box >= LEITNER.length - 1) { r.mastered = true; r.due = 0; }
-      else { r.box += 1; r.due = Date.now() + LEITNER[r.box] * DAY; }
+      r.box += 1;                                  // box 1 -> back in 1 day, 2 -> 3 days, 3 -> 7 days
+      if (r.box > LEITNER.length) { r.mastered = true; r.due = 0; r.box = LEITNER.length; }
+      else r.due = Date.now() + LEITNER[r.box - 1] * DAY;
     } else {
       r.box = 0; r.mastered = false; r.due = Date.now() + LEITNER[0] * DAY;
     }
