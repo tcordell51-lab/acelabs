@@ -1,0 +1,18 @@
+<!doctype html><html><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1">
+<link rel=stylesheet href="../../tools/ochem/tree/tree.css">
+<script src="../../shared/smiles-drawer.min.js"></script></head>
+<body><div class="wrap" id=o style="max-width:900px;margin:0 auto;padding:16px"></div>
+<script type=module>
+import { drawMech, drawRcd, drawChain, injectMdCss, legend } from '../../tools/ochem/tree/mechdraw.js';
+injectMdCss();
+const o = document.getElementById('o');
+const box = t => { const d = document.createElement('div'); d.style.cssText='border:1px solid #333;margin:10px 0;padding:8px'; const h=document.createElement('p'); h.textContent=t; d.append(h); o.append(d); return d; };
+drawMech(box('SN2'), { species:[{smi:'[OH-]'},{smi:'CCBr'}], arrows:[{from:{lp:'0.0'},to:{bond:['0.0','1.1']}},{from:{bond:['1.1','1.2']},to:{atom:'1.2'}}], product:[{smi:'CCO'},{smi:'[Br-]',lp:[0]}] });
+drawMech(box('homolysis'), { species:[{smi:'BrBr'}], arrows:[{fish:true,from:{bond:['0.0','0.1']},to:{atom:'0.0'}},{fish:true,from:{bond:['0.0','0.1']},to:{atom:'0.1'}}], product:[{smi:'[Br]',rad:[0]},{smi:'[Br]',rad:[0]}] });
+drawMech(box('radical addition'), { species:[{smi:'[Br]',rad:[0]},{smi:'C=CC'}], arrows:[{fish:true,from:{e:'0.0'},to:{bond:['0.0','1.0']}},{fish:true,from:{bond:['1.0','1.1']},to:{bond:['0.0','1.0']}},{fish:true,from:{bond:['1.0','1.1']},to:{atom:'1.1'}}], product:[{smi:'BrC[CH]C',rad:[2]}] });
+drawMech(box('E2 hidden product'), { species:[{smi:'CC[O-]'},{smi:'[H]C(C)C(C)(C)Br'}], arrows:[{from:{lp:'0.2'},to:{bond:['0.2','1.0']}},{from:{bond:['1.0','1.1']},to:{bond:['1.1','1.3']}},{from:{bond:['1.3','1.6']},to:{atom:'1.6'}}], reagent:'' }, { hideProduct:true });
+drawRcd(box('rcd'), { points:[{kind:'start',y:0,tag:'1'},{kind:'ts',y:95,tag:'2'},{kind:'int',y:55,tag:'3'},{kind:'ts',y:70,tag:'4'},{kind:'end',y:-30,tag:'5'}], marks:[{from:0,to:1,label:'w'},{from:2,to:3,label:'x'},{from:0,to:4,label:'y',dx:24}], alt:{points:[{kind:'start',y:0},{kind:'ts',y:60},{kind:'int',y:40},{kind:'ts',y:50},{kind:'end',y:-30}],label:'with catalyst'} });
+drawRcd(box('butane'), { yLabel:'Energy', xLabel:'Dihedral angle, degrees', xTicks:['0','60','120','180','240','300','360'], points:[{kind:'ts',y:19,tag:'1'},{kind:'min',y:3.8,tag:'2'},{kind:'ts',y:16},{kind:'min',y:0,tag:'3'},{kind:'ts',y:16},{kind:'min',y:3.8},{kind:'ts',y:19}] });
+o.append(legend());
+window.done = true;
+</script></body></html>
