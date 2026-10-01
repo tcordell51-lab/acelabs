@@ -287,11 +287,11 @@
   }
 
   /* ---------- rendering ---------- */
-  var CELL = 26;
+  var CELL = 32;
   function viewSVG(segs, nu, nv, flipV) {
     // flipV: v grows upward on paper for front/end (height); for top, v=y grows toward the BACK (up the page)
     var pad = 10, w = nu * CELL + pad * 2, h = nv * CELL + pad * 2;
-    var o = '<svg class="pat-svg" viewBox="0 0 ' + w + ' ' + h + '" width="' + w + '" height="' + h + '">';
+    var o = '<svg class="pat-svg tfe-fixed" viewBox="0 0 ' + w + ' ' + h + '" width="' + w + '" height="' + h + '">';
     var runs = mergeRuns(segs);
     runs.sort(function (a, b) { return (a.dash ? 0 : 1) - (b.dash ? 0 : 1); });     // solid on top of dashed
     runs.forEach(function (s) {
@@ -305,8 +305,8 @@
   function renderFigure(item) {
     var f = item.figure, d = f.dims;
     function cell(name) {
-      if (name === f.missing) return '<div class="tfe-slot tfe-missing"><span>' + name.toUpperCase() + '</span></div>';
       var wh = dimsOf(name, d);
+      if (name === f.missing) return '<div class="tfe-slot"><div class="tfe-missing" style="width:' + (wh[0] * CELL + 36) + 'px;height:' + (wh[1] * CELL + 36) + 'px"><span>' + name.toUpperCase() + '</span></div><span class="tfe-lab">&nbsp;</span></div>';
       return '<div class="tfe-slot"><div class="pat-paper">' + viewSVG(f.given[name], wh[0], wh[1]) + '</div><span class="tfe-lab">' + name.toUpperCase() + '</span></div>';
     }
     return '<div class="tfe-board"><div class="tfe-top">' + cell('top') + '</div><div class="tfe-bottom">' + cell('front') + cell('end') + '</div></div>';

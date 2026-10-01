@@ -49,7 +49,7 @@
     return {
       id: test.id + '-' + now.toString(36), testId: test.testId, label: test.label, mode: mode || 'standard',
       status: 'in-progress', createdAt: now, updatedAt: now, finishedAt: null,
-      remainingSec: 3600, cursor: mode === 'thomas' ? 30 : 0, jumpedBack: false,
+      remainingSec: 3600, cursor: 0,
       answers: new Array(n).fill(null), marked: new Array(n).fill(false), timeSpent: new Array(n).fill(0)
     };
   }

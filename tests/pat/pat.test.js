@@ -123,7 +123,8 @@ test('student-facing text: no em dashes, no emojis, no predictions, no pace-sham
 test('store: save, resume, finish, and a sync adapter receives pushes', async () => {
   const T = PAT.test.build(6);
   const a = PAT.store.newAttempt(T, 'thomas');
-  assert.equal(a.cursor, 30);
+  assert.equal(a.cursor, 0);
+  assert.equal(PAT.test.order(a.mode)[a.cursor], 31);
   a.answers[30] = 2; PAT.store.save(a);
   assert.equal(PAT.store.inProgressFor(6).id, a.id);
   const pushed = [];
