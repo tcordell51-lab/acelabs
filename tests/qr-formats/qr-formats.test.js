@@ -72,7 +72,7 @@ test('every item has a worked solution and a named move', () => {
   items.forEach((it) => {
     assert.ok(it.why.length >= 80, it.id);
     assert.ok(it.move.length >= 15, it.id);
-    assert.ok(!/[–—]/.test(it.why + it.move + it.stem), it.id + ' has a dash glyph');
+    assert.ok(!/[\u2013\u2014]/.test(it.why + it.move + it.stem), it.id + ' has a dash glyph');
   });
 });
 
