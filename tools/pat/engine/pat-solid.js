@@ -68,15 +68,46 @@
     var r = p.t === 'cyl' ? p.r : coneR(p, s);
     return u * u + v * v <= r * r;
   }
-  function inside(node, q) {
-    if (isPrim(node)) return primInside(node, q);
-    var a = node.a, i;
-    if (node.op === 'u') { for (i = 0; i < a.length; i++) if (inside(a[i], q)) return true; return false; }
-    if (node.op === 'i') { for (i = 0; i < a.length; i++) if (!inside(a[i], q)) return false; return true; }
-    if (!inside(a[0], q)) return false;
-    for (i = 1; i < a.length; i++) if (inside(a[i], q)) return false;
+  /* Every node is compiled once into one uniform shape (kept in a WeakMap, never on the
+     item), so the hot ray and inside code always sees the same object layout. */
+  var COMPILED = typeof WeakMap === 'function' ? new WeakMap() : null;
+  function Prim(p) {
+    var tc = p.t === 'cyl' ? 1 : p.t === 'cone' ? 2 : 0, pl = primPlanes(p), n = pl.length;
+    this.tc = tc; this.ax = tc ? p.ax : 0; this.i = tc ? (p.ax + 1) % 3 : 0; this.j = tc ? (p.ax + 2) % 3 : 0;
+    this.c0 = tc ? p.c[0] : 0; this.c1 = tc ? p.c[1] : 0; this.r = tc === 1 ? p.r : 0; this.r0 = tc === 2 ? p.r0 : 0; this.r1 = tc === 2 ? p.r1 : 0;
+    this.s0 = tc ? p.s0 : 0; this.s1 = tc ? p.s1 : 0;
+    var bb = primBox(p); this.lo = new Float64Array(bb[0]); this.hi = new Float64Array(bb[1]);
+    this.nx = new Float64Array(n); this.ny = new Float64Array(n); this.nz = new Float64Array(n); this.d = new Float64Array(n); this.k = new Array(n);
+    for (var q = 0; q < n; q++) { this.nx[q] = pl[q][0][0]; this.ny[q] = pl[q][0][1]; this.nz[q] = pl[q][0][2]; this.d[q] = pl[q][1]; this.k[q] = planeKey(pl[q][0], pl[q][1]); }
+    this.sk = tc ? sideKey(p) : '';
+  }
+  function CNode(kind, prim, kids) { this.kind = kind; this.prim = prim; this.kids = kids; }
+  function compile(node) {
+    var c = COMPILED && COMPILED.get(node);
+    if (c) return c;
+    if (node.t) c = new CNode(0, new Prim(node), null);
+    else c = new CNode(node.op === 'u' ? 1 : node.op === 'i' ? 2 : 3, null, node.a.map(compile));
+    if (COMPILED) COMPILED.set(node, c);
+    return c;
+  }
+  function pIn(P, x, y, z) {
+    var n = P.d.length;
+    for (var m = 0; m < n; m++) if (P.nx[m] * x + P.ny[m] * y + P.nz[m] * z > P.d[m]) return false;
+    if (P.tc === 0) return true;
+    var s = P.ax === 0 ? x : P.ax === 1 ? y : z, u = (P.i === 0 ? x : P.i === 1 ? y : z) - P.c0, v = (P.j === 0 ? x : P.j === 1 ? y : z) - P.c1;
+    var r = P.tc === 1 ? P.r : P.r0 + (P.r1 - P.r0) * (s - P.s0) / (P.s1 - P.s0);
+    return u * u + v * v <= r * r;
+  }
+  function inC(c, x, y, z) {
+    if (c.kind === 0) return pIn(c.prim, x, y, z);
+    var a = c.kids, i;
+    if (c.kind === 1) { for (i = 0; i < a.length; i++) if (inC(a[i], x, y, z)) return true; return false; }
+    if (c.kind === 2) { for (i = 0; i < a.length; i++) if (!inC(a[i], x, y, z)) return false; return true; }
+    if (!inC(a[0], x, y, z)) return false;
+    for (i = 1; i < a.length; i++) if (inC(a[i], x, y, z)) return false;
     return true;
   }
+  function inside(node, q) { return inC(compile(node), q[0], q[1], q[2]); }
 
   /* planes of a primitive: outward normal n, inside n.p <= d */
   function primPlanes(p) {
@@ -100,26 +131,14 @@
       : 'K' + p.ax + ',' + r6(p.c[0]) + ',' + r6(p.c[1]) + ',' + r6(p.r0) + ',' + r6(p.r1) + ',' + r6(p.s0) + ',' + r6(p.s1);
   }
 
-  function hide(o, k, v) { Object.defineProperty(o, k, { value: v, enumerable: false, writable: true }); return v; }
-  /* ---------------- ray intervals ---------------- */
   /* one primitive: at most one interval (all primitives are convex) */
-  function prep(p) {
-    if (p._pp) return p._pp;
-    var pl = primPlanes(p), n = pl.length, P = { nx: new Float64Array(n), ny: new Float64Array(n), nz: new Float64Array(n), d: new Float64Array(n), k: [], round: p.t === 'cyl' || p.t === 'cone' };
-    for (var i = 0; i < n; i++) { P.nx[i] = pl[i][0][0]; P.ny[i] = pl[i][0][1]; P.nz[i] = pl[i][0][2]; P.d[i] = pl[i][1]; P.k.push(planeKey(pl[i][0], pl[i][1])); }
-    if (P.round) {
-      P.sk = sideKey(p); P.i = (p.ax + 1) % 3; P.j = (p.ax + 2) % 3;
-      var bb = primBox(p); P.lo = bb[0]; P.hi = bb[1];
-    }
-    return hide(p, '_pp', P);
-  }
-  function primRay(p, o, d) {
-    var P = prep(p), t0 = -BIG, t1 = BIG, k0 = null, k1 = null, n = P.d.length;
-    if (P.round) {          // quick reject against the bounding box (all axes)
+  function primRay(P, o, d) {
+    var t0 = -BIG, t1 = BIG, k0 = null, k1 = null, n = P.d.length, q, ta, tb;
+    if (P.tc) {             // quick reject against the bounding box
       var a0 = -BIG, a1 = BIG;
-      for (var q = 0; q < 3; q++) {
+      for (q = 0; q < 3; q++) {
         if (d[q] === 0) { if (o[q] < P.lo[q] || o[q] > P.hi[q]) return null; continue; }
-        var ta = (P.lo[q] - o[q]) / d[q], tb = (P.hi[q] - o[q]) / d[q];
+        ta = (P.lo[q] - o[q]) / d[q]; tb = (P.hi[q] - o[q]) / d[q];
         if (ta > tb) { var tt = ta; ta = tb; tb = tt; }
         if (ta > a0) a0 = ta; if (tb < a1) a1 = tb;
         if (a0 > a1) return null;
@@ -132,10 +151,10 @@
       if (nd > 0) { if (t < t1) { t1 = t; k1 = P.k[m]; } } else if (t > t0) { t0 = t; k0 = P.k[m]; }
       if (t0 >= t1) return null;
     }
-    if (!P.round) return [t0, t1, k0, k1];
-    var i = P.i, j = P.j, qu = o[i] - p.c[0], qv = o[j] - p.c[1], du = d[i], dv = d[j], sk = P.sk;
-    if (p.t === 'cyl') {
-      var A = du * du + dv * dv, B = 2 * (qu * du + qv * dv), Cq = qu * qu + qv * qv - p.r * p.r;
+    if (P.tc === 0) return [t0, t1, k0, k1];
+    var qu = o[P.i] - P.c0, qv = o[P.j] - P.c1, du = d[P.i], dv = d[P.j], sk = P.sk;
+    if (P.tc === 1) {
+      var A = du * du + dv * dv, B = 2 * (qu * du + qv * dv), Cq = qu * qu + qv * qv - P.r * P.r;
       if (A < 1e-14) { if (Cq > 0) return null; return [t0, t1, k0, k1]; }
       var disc = B * B - 4 * A * Cq;
       if (disc <= 0) return null;
@@ -145,20 +164,22 @@
       return t0 < t1 ? [t0, t1, k0, k1] : null;
     }
     // frustum: convex, so the inside set along the line is one interval; find it from the roots
-    var kk = (p.r1 - p.r0) / (p.s1 - p.s0), e = p.r0 + kk * (o[p.ax] - p.s0), g = kk * d[p.ax];
+    var kk = (P.r1 - P.r0) / (P.s1 - P.s0), e = P.r0 + kk * (o[P.ax] - P.s0), g = kk * d[P.ax];
     var A2 = du * du + dv * dv - g * g, B2 = 2 * (qu * du + qv * dv - e * g), C2 = qu * qu + qv * qv - e * e;
-    var cands = [[t0, k0], [t1, k1]];
-    if (Math.abs(A2) < 1e-14) { if (Math.abs(B2) > 1e-14) cands.push([-C2 / B2, sk]); }
-    else { var D2 = B2 * B2 - 4 * A2 * C2; if (D2 > 0) { var s2 = Math.sqrt(D2); cands.push([(-B2 - s2) / (2 * A2), sk], [(-B2 + s2) / (2 * A2), sk]); } }
-    cands = cands.filter(function (c) { return c[0] >= t0 - 1e-12 && c[0] <= t1 + 1e-12; }).sort(function (x, y) { return x[0] - y[0]; });
+    var ts = [t0, t1], ks = [k0, k1];
+    if (Math.abs(A2) < 1e-14) { if (Math.abs(B2) > 1e-14) { ts.push(-C2 / B2); ks.push(sk); } }
+    else { var D2 = B2 * B2 - 4 * A2 * C2; if (D2 > 0) { var s2 = Math.sqrt(D2); ts.push((-B2 - s2) / (2 * A2), (-B2 + s2) / (2 * A2)); ks.push(sk, sk); } }
+    var ord = [];
+    for (q = 0; q < ts.length; q++) if (ts[q] >= t0 - 1e-12 && ts[q] <= t1 + 1e-12) ord.push(q);
+    ord.sort(function (x, y) { return ts[x] - ts[y]; });
     var res = null;
-    for (var c = 0; c + 1 < cands.length; c++) {
-      var ta2 = cands[c][0], tb2 = cands[c + 1][0];
+    for (var c = 0; c + 1 < ord.length; c++) {
+      var ta2 = ts[ord[c]], tb2 = ts[ord[c + 1]];
       if (tb2 - ta2 < 1e-12) continue;
       var tm = (ta2 + tb2) / 2;
-      if (primInside(p, [o[0] + d[0] * tm, o[1] + d[1] * tm, o[2] + d[2] * tm])) {
-        if (!res) res = [ta2, tb2, cands[c][1], cands[c + 1][1]];
-        else if (Math.abs(res[1] - ta2) < 1e-12) { res[1] = tb2; res[3] = cands[c + 1][1]; }
+      if (pIn(P, o[0] + d[0] * tm, o[1] + d[1] * tm, o[2] + d[2] * tm)) {
+        if (!res) res = [ta2, tb2, ks[ord[c]], ks[ord[c + 1]]];
+        else if (Math.abs(res[1] - ta2) < 1e-12) { res[1] = tb2; res[3] = ks[ord[c + 1]]; }
       }
     }
     return res;
@@ -199,25 +220,26 @@
     });
     return out.sort(function (x, y) { return x[0] - y[0]; });
   }
-  function ray(node, o, d) {
-    if (node.t) { var iv = primRay(node, o, d); return iv && iv[1] - iv[0] > 1e-12 ? [iv] : []; }
-    var a = node.a, k, acc;
-    if (node.op === 'u') {
+  function rayC(c, o, d) {
+    if (c.kind === 0) { var iv = primRay(c.prim, o, d); return iv && iv[1] - iv[0] > 1e-12 ? [iv] : []; }
+    var a = c.kids, k, acc;
+    if (c.kind === 1) {
       acc = [];
-      for (k = 0; k < a.length; k++) { var r = ray(a[k], o, d); if (r.length) acc = acc.length ? ivUnion(acc, r) : r; }
+      for (k = 0; k < a.length; k++) { var r = rayC(a[k], o, d); if (r.length) acc = acc.length ? ivUnion(acc, r) : r; }
       return acc;
     }
-    if (node.op === 'i') {
-      acc = ray(a[0], o, d);
-      for (k = 1; k < a.length && acc.length; k++) acc = ivInter(acc, ray(a[k], o, d));
+    if (c.kind === 2) {
+      acc = rayC(a[0], o, d);
+      for (k = 1; k < a.length && acc.length; k++) acc = ivInter(acc, rayC(a[k], o, d));
       return acc;
     }
-    acc = ray(a[0], o, d);
+    acc = rayC(a[0], o, d);
     if (!acc.length) return acc;
     var rest = [];
-    for (k = 1; k < a.length; k++) { var r2 = ray(a[k], o, d); if (r2.length) rest = rest.length ? ivUnion(rest, r2) : r2; }
+    for (k = 1; k < a.length; k++) { var r2 = rayC(a[k], o, d); if (r2.length) rest = rest.length ? ivUnion(rest, r2) : r2; }
     return rest.length ? ivDiff(acc, rest) : acc;
   }
+  function ray(node, o, d) { return rayC(compile(node), o, d); }
 
   /* ---------------- transforms (signed permutations) ---------------- */
   /* T = {m: 3x3 signed permutation, o: offset}; p' = m p + o */
@@ -407,9 +429,10 @@
     return (a + b) / 2;
   }
 
-  /* crease pieces: view independent, cached on the solid */
+  var CREASES = typeof WeakMap === 'function' ? new WeakMap() : null;
+  /* crease pieces: view independent, cached per solid */
   function creases(S) {
-    if (S._creases) return S._creases;
+    var cached = CREASES && CREASES.get(S); if (cached) return cached;
     var out = [];
     candidates(S).forEach(function (c) {
       var L = curveLen(c); if (L < 1e-6) return;
@@ -421,7 +444,7 @@
         if (curveLen(piece) > 1e-4) out.push(piece);
       });
     });
-    Object.defineProperty(S, '_creases', { value: out, enumerable: false, writable: true });
+    if (CREASES) CREASES.set(S, out);
     return out;
   }
   /* contour (silhouette) lines of round surfaces for view direction d */
