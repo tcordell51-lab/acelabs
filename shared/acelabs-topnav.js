@@ -15,6 +15,7 @@
     { l: 'Mock catalog',      h: '/mocks-catalog.html' },
     { l: 'The Climb',         h: '/tools/minitests/' },
     { l: 'PAT',               h: '/tools/pat/' },
+    { l: 'Reading',           h: '/tools/rc/' },
     { l: 'Trick sheets',      h: '/tricks/' },
     { l: 'Trick videos',      h: '/tricks/videos/' },
     { l: 'Trick shorts',      h: '/tricks/shorts/' },
