@@ -84,6 +84,9 @@
       </div>
     </div>
     <div class="card" style="margin-top:18px">
+      <label class="check"><input type="checkbox" id="chkAng1"/> <span>Expert angle ranking: some pairs only 1 degree apart (optional, harder than the real test needs).</span></label>
+    </div>
+    <div class="card" style="margin-top:18px">
       <h3 style="font-size:19px;margin-bottom:6px" id="orderTitle">Straight through</h3>
       <ul class="rules" id="orderRules"></ul>
     </div>
@@ -169,12 +172,16 @@
 </div>
 
 <script src="engine/pat-core.js"></script>
+<script src="engine/pat-solid.js"></script>
 <script src="engine/pat-keyholes.js"></script>
+<script src="engine/pat-keyholes-csg.js"></script>
 <script src="engine/pat-tfe.js"></script>
+<script src="engine/pat-tfe-csg.js"></script>
 <script src="engine/pat-angles.js"></script>
 <script src="engine/pat-holepunch.js"></script>
 <script src="engine/pat-cubes.js"></script>
 <script src="engine/pat-patternfold.js"></script>
+<script src="engine/pat-patternfold-poly.js"></script>
 <script src="engine/pat-test.js"></script>
 <script src="engine/pat-store.js"></script>
 <script>
@@ -257,7 +264,7 @@
       'Never leave a question blank. If time is short, put a guess on every open question; there is no penalty for guessing.'
     ];
     $('orderRules').innerHTML = rules.map(function (r) { return '<li>' + r + '</li>'; }).join('');
-    $('chkGrids').checked = false; $('chkCharts').checked = false; updateBegin();
+    $('chkGrids').checked = false; $('chkCharts').checked = false; $('chkAng1').checked = false; updateBegin();
     show('scratch');
   }
   function updateBegin() {
@@ -266,14 +273,22 @@
   }
 
   /* ---------------- build + run ---------------- */
-  function loadTest(testId) {
+  /* A saved attempt is always rebuilt with the engine version it was taken on
+     (attempts saved before versions existed are v1), so its answers keep mapping
+     onto the same 90 items. New attempts use the current version. */
+  function buildOpts(attempt) {
+    if (attempt) return { version: attempt.engine || 1, angles1deg: !!(attempt.opts && attempt.opts.angles1deg) };
+    return { version: PAT.test.VERSION, angles1deg: !!$('chkAng1').checked };
+  }
+  function loadTest(testId, attempt) {
+    var opts = buildOpts(attempt);
     show('loading'); $('loadBar').style.width = '0%';
-    $('loadKicker').textContent = 'Building ' + PAT.test.labelFor(testId);
-    return PAT.test.buildAsync(testId, function (p) { $('loadBar').style.width = Math.round(p * 100) + '%'; });
+    $('loadKicker').textContent = 'Building ' + PAT.test.labelFor(testId, opts);
+    return PAT.test.buildAsync(testId, function (p) { $('loadBar').style.width = Math.round(p * 100) + '%'; }, opts);
   }
   function begin() {
     var id = ui.pendingTestId;
-    return loadTest(id).then(function (T) {
+    return loadTest(id, null).then(function (T) {
       ui.test = T;
       ui.attempt = PAT.store.newAttempt(T, ui.mode);
       PAT.store.save(ui.attempt);
@@ -282,7 +297,7 @@
   }
   function resume(attempt) {
     ui.mode = attempt.mode;
-    return loadTest(attempt.testId).then(function (T) { ui.test = T; ui.attempt = attempt; startRun(); });
+    return loadTest(attempt.testId, attempt).then(function (T) { ui.test = T; ui.attempt = attempt; startRun(); });
   }
   function startRun() {
     ui.order = PAT.test.order(ui.attempt.mode);
@@ -425,7 +440,7 @@
   /* ---------------- results ---------------- */
   function openResults(attempt) {
     ui.mode = attempt.mode;
-    return loadTest(attempt.testId).then(function (T) {
+    return loadTest(attempt.testId, attempt).then(function (T) {
       ui.test = T; ui.attempt = attempt; ui.analysis = PAT.test.analyze(T, attempt); renderResults(false);
     });
   }
@@ -479,9 +494,9 @@
 
   /* ---------------- item review ---------------- */
   var SIZE_NOTE = 'Right outline, wrong size. Openings are drawn to the same scale as the object, so an opening can match the shape and still be too big or too small.';
-  var TFE_WHY = { mirror: 'This one is the view with front and back (or left and right) swapped. On the end view, end-left is the FRONT of the object.', 'dash-as-solid': 'A hidden edge is drawn solid here. If you cannot see an edge from this side, it must be dashed.', 'solid-as-dash': 'A visible edge is drawn dashed here. Any edge you can see from this side is solid.', profile: 'A step sits in the wrong place. Heights must match the front, depths must match the top.' };
+  var TFE_WHY = { mirror: 'This one is the view with front and back (or left and right) swapped. On the end view, end-left is the FRONT of the object.', 'dash-as-solid': 'A hidden edge is drawn solid here. If you cannot see an edge from this side, it must be dashed.', 'solid-as-dash': 'A visible edge is drawn dashed here. Any edge you can see from this side is solid.', profile: 'A step sits in the wrong place. Heights must match the front, depths must match the top.', feature: 'A feature has the wrong shape, size or place here. Line up every circle, slant and edge with the matching edge in the other two views.', dropped: 'A feature is missing from this view. Every hole, boss and cut shows in all three views, dashed when it is hidden.' };
   var HP_WHY = { 'missed-unfold': 'This choice skips one unfold. Undo every fold in reverse, one crease at a time.', 'wrong-line': 'This choice mirrors a hole across the wrong line. Each hole reflects across the crease it was folded over.', flipped: 'This is the right pattern read upside down or mirrored. Keep the grid in the same orientation as the paper.', shifted: 'One hole is off by a cell. Mark the punch in the exact cell before unfolding.', dropped: 'One hole is missing. Count your grid marks against the choice.' };
-  var PF_WHY = { mirror: 'This is the mirror image of the folded cube. Folding never flips which way a half-shade leans.', rotation: 'One face is turned the wrong way. Check what that face touches along its shared edge.', neighbor: 'Two faces traded places. They are on the cube, but not next to each other like that.', opposite: 'This shows two faces that are opposite each other on the cube, and opposite faces can never be seen at the same time.' };
+  var PF_WHY = { mirror: 'This is the mirror image of the folded cube. Folding never flips which way a half-shade leans.', rotation: 'One face is turned the wrong way. Check what that face touches along its shared edge.', neighbor: 'Two faces traded places. They are on the cube, but not next to each other like that.', opposite: 'This shows two faces that are opposite each other on the cube, and opposite faces can never be seen at the same time.', shade: 'The shading sits on the wrong face. Find each shaded face in the pattern and check which faces it touches.', hidden: 'This face shows a marking from a face that cannot be in view here. Check what touches each visible face along its shared edges.' };
   function explain(it, chosen) {
     var t = it.type, parts = [];
     if (t === 'keyholes') {
@@ -496,11 +511,12 @@
       if (chosen != null && chosen !== it.answer) { var g = PAT.angles.missedGap(it, chosen); if (g != null) parts.push('Your order swapped two angles ' + g + ' degrees apart. Lock the clear smallest and largest first, then compare only the close pair.'); }
     } else if (t === 'holepunch') {
       parts.push(it.meta.folds + ' fold' + (it.meta.folds === 1 ? '' : 's') + (it.meta.diagonal ? ', including a diagonal one' : '') + '. Unfolded, the paper has ' + it.meta.holes + ' holes.');
+      if (it.meta.halfHoles) parts.push('One punch sits right on a fold edge: only half of it cuts paper, and unfolding joins the two halves into one full hole.');
       if (chosen != null && chosen !== it.answer) parts.push(HP_WHY[it.options[chosen].trap] || '');
     } else if (t === 'cubes') {
       parts.push('Highlighted: the cubes with exactly ' + it.meta.k + ' painted side' + (it.meta.k === 1 ? '' : 's') + '.' + (it.meta.hiddenInAnswer ? ' ' + it.meta.hiddenInAnswer + ' of them cannot be seen; they hold up the cubes above.' : ''));
     } else if (t === 'patternfold') {
-      parts.push('Pattern type: ' + it.meta.netType + ' net.');
+      parts.push(it.figure.kind === 'poly' ? 'This pattern folds into a ' + it.meta.netType + '.' : 'Pattern type: ' + it.meta.netType + ' net.');
       if (chosen != null && chosen !== it.answer) parts.push(PF_WHY[it.options[chosen].trap] || '');
     }
     if (chosen == null) parts.push('This one was left open. On test day, a guess is always worth putting down.');
