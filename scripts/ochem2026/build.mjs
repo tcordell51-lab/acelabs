@@ -19,6 +19,7 @@ import { spawnSync } from 'node:child_process';
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(HERE, '../..');
 const CHECK = process.argv.includes('--check');
+const ONLY = (process.argv.find(a => a.startsWith('--only=')) || '').slice(7);   // check one source file while authoring
 
 export const TYPES = {
   'rcd': { home: 't5-rcd', area: 'Mechanisms', name: 'Reaction coordinate diagram' },
@@ -77,6 +78,7 @@ export function lint(items){
     if (/arrows|fishhook-(forward|reverse)/.test(it.type) && it.type !== 'fishhook-concept' && !(it.fig && it.fig.kind === 'mech')) p('arrow items need a mech figure');
     if (it.type === 'rcd' && !(it.fig && it.fig.kind === 'rcd')) p('rcd items need a drawn diagram');
     if (/-reverse$/.test(it.type) && it.choices && it.choices.some(c => !(c.fig && c.fig.arrows))) p('reverse items need an arrow figure in every choice');
+    if (it.verify && it.verify.rcd) for (const m of rcdCheck(it)) p(m);
     for (const r of it.roots || []) if (!ROOTS.includes(r)) p('unknown root ' + r);
     for (const s of strings(it)){
       const g = s.match(GLYPH); if (g) p('glyph ' + JSON.stringify(g[0]) + ' in: ' + s.slice(0, 60));
@@ -89,6 +91,41 @@ export function lint(items){
     }
   }
   return P;
+}
+
+// Reaction coordinate claims are recomputed from the drawn levels, never trusted.
+//   verify.rcd: 'steps' | 'intermediates' | 'rds' | 'rdsMark' | 'heat' | 'value' | 'lowestTs' | 'mark'
+export function rcdFacts(fig){
+  const P = fig.points, ts = P.map((p, i) => p.kind === 'ts' ? i : -1).filter(i => i >= 0);
+  let floor = P[0].y, rds = -1, climb = -Infinity, valley = 0, rdsFrom = 0;
+  P.forEach((p, i) => { if (p.kind === 'ts'){ const c = p.y - floor; if (c > climb + 1e-9){ climb = c; rds = i; rdsFrom = valley; } } else { floor = p.y; valley = i; } });
+  const ties = ts.filter(i => { let f = P[0].y; for (let j = 0; j < i; j++) if (P[j].kind !== 'ts') f = P[j].y; return Math.abs((P[i].y - f) - climb) < 1e-9; }).length;
+  return { steps: ts.length, intermediates: P.filter(p => p.kind === 'int').length, rds, rdsStep: ts.indexOf(rds) + 1, rdsFrom, climb, ties, dh: P[P.length - 1].y - P[0].y };
+}
+function rcdCheck(it){
+  const out = [], f = rcdFacts(it.fig), v = it.verify, key = String(it.choices[it.correct].text || '').toLowerCase();
+  const P = it.fig.points;
+  for (let i = 1; i < P.length - 1; i++){
+    if (P[i].kind === 'ts' && !(P[i].y > P[i - 1].y && P[i].y > P[i + 1].y)) out.push('peak ' + i + ' is not above both neighbours');
+    if ((P[i].kind === 'int' || P[i].kind === 'min') && !(P[i].y < P[i - 1].y && P[i].y < P[i + 1].y)) out.push('valley ' + i + ' is not below both neighbours');
+  }
+  if (f.ties > 1 && /rds/.test(v.rcd)) out.push('two climbs tie for rate-determining');
+  const num = s => { const m = s.match(/-?\d+(\.\d+)?/); return m ? Number(m[0]) : NaN; };
+  if (v.rcd === 'steps' && num(key) !== f.steps) out.push('diagram has ' + f.steps + ' steps, key says ' + key);
+  if (v.rcd === 'intermediates' && num(key) !== f.intermediates) out.push('diagram has ' + f.intermediates + ' intermediates');
+  if (v.rcd === 'rds' && num(key) !== f.rdsStep) out.push('rate-determining step is ' + f.rdsStep + ', key says ' + key);
+  if (v.rcd === 'rdsMark'){ const m = (it.fig.marks || []).find(m => m.to === f.rds && m.from === f.rdsFrom); if (!m || key !== m.label) out.push('the rds mark is ' + (m ? m.label : 'missing')); }
+  if (v.rcd === 'heat'){ const exo = f.dh < 0; if (exo !== /exothermic/.test(key) || /endothermic/.test(key) === exo) out.push('diagram is ' + (exo ? 'exothermic' : 'endothermic') + ', key says ' + key); }
+  if (v.rcd === 'mark'){ const m = (it.fig.marks || []).find(m => m.from === v.from && m.to === v.to); if (!m || key !== m.label) out.push('mark from ' + v.from + ' to ' + v.to + ' is ' + (m ? m.label : 'missing')); }
+  if (v.rcd === 'value'){
+    let want = NaN;
+    if (v.kind === 'dh') want = f.dh;
+    else if (v.kind === 'ea') want = P[v.to].y - P[v.from].y;
+    else if (v.kind === 'rdsEa') want = f.climb;
+    if (num(key) !== want) out.push('computed ' + v.kind + ' is ' + want + ', key says ' + key);
+  }
+  if (v.rcd === 'lowestTs'){ const lo = Math.min(...P.filter(p => p.kind === 'ts').map(p => p.y)); const i = P.findIndex(p => p.kind === 'ts' && p.y === lo); if (!P[i].tag || num(key) !== Number(P[i].tag)) out.push('lowest peak is tagged ' + P[i].tag); }
+  return out;
 }
 
 // Put the key in a slot that keeps every home's keys spread across all five letters.
@@ -113,7 +150,7 @@ export function arrange(items){
 
 export async function loadSources(){
   const dir = join(HERE, 'src');
-  const files = readdirSync(dir).filter(f => f.endsWith('.mjs')).sort();
+  const files = readdirSync(dir).filter(f => f.endsWith('.mjs') && (!ONLY || f === ONLY)).sort();
   const items = [];
   for (const f of files){
     const m = await import(pathToFileURL(join(dir, f)).href);
@@ -149,7 +186,7 @@ async function main(){
   console.log('PASS  ' + items.length + ' items, RDKit checked ' + V.checked);
   console.log('  by type: ' + Object.entries(counts).map(([k, v]) => k + ' ' + v).join(', '));
   console.log('  keys A-E: ' + letters.join(' / '));
-  if (CHECK) return;
+  if (CHECK || ONLY) return;
   const clean = items.map(({ src, ...it }) => it);
   const head = '// GENERATED by scripts/ochem2026/build.mjs from scripts/ochem2026/src. Do not hand-edit.\n// Every structure parsed and sanitized in RDKit; every arrow item was proven by pushing\n// its arrows (scripts/ochem2026/verify.py); five choices, keys spread, key never the longest.\n';
   writeFileSync(join(ROOT, 'tools/ochem/tree/shared/set-2026.js'), head + 'export const SET2026 = ' + JSON.stringify(clean) + ';\n' +

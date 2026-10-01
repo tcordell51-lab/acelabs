@@ -276,6 +276,27 @@ def check(it):
                 P.append('SMILES does not parse: ' + part)
     if P:
         return P
+    # drawn radical dots must sit on the atoms RDKit says carry the unpaired electron
+    def rad_check(lst, where):
+        for sp in lst or []:
+            if isinstance(sp, dict):
+                m = parse_keep_h(sp['smi'])
+                real = sorted(a.GetIdx() for a in m.GetAtoms() if a.GetNumRadicalElectrons())
+                if sorted(sp.get('rad', [])) != real:
+                    P.append('%s: rad dots %s but RDKit radicals at %s in %s' % (where, sp.get('rad', []), real, sp['smi']))
+    def walk_figs(o, where):
+        if isinstance(o, dict):
+            if o.get('kind') in ('mech',) or 'species' in o:
+                rad_check(o.get('species'), where); rad_check(o.get('product'), where)
+            for k, v in o.items():
+                if k in ('fig', 'steps', 'choices') or isinstance(v, (dict, list)):
+                    walk_figs(v, where)
+        elif isinstance(o, list):
+            for v in o:
+                walk_figs(v, where)
+    walk_figs(it.get('fig'), 'figure')
+    for i, c in enumerate(it.get('choices', [])):
+        walk_figs(c.get('fig'), 'choice %d' % i)
     t = it.get('type')
     fig = it.get('fig') or {}
     ch = it['choices']
@@ -323,8 +344,17 @@ def check(it):
                     P.append('step %d arrows: %s' % (si + 1, err))
                     break
                 nxt = fig['steps'][si + 1]['species'] if si + 1 < len(fig['steps']) else fig['product']
-                if got != frag_set(spec_smiles(nxt)):
-                    P.append('step %d gives %s, next shows %s' % (si + 1, got, frag_set(spec_smiles(nxt))))
+                adds = frag_set(fig['steps'][si + 1].get('adds', [])) if si + 1 < len(fig['steps']) else []
+                drops = frag_set(st.get('drops', []))
+                expect = list(got)
+                for d in drops:
+                    if d in expect:
+                        expect.remove(d)
+                    else:
+                        P.append('step %d drops %s but it was never made' % (si + 1, d))
+                expect = sorted(expect + adds)
+                if expect != frag_set(spec_smiles(nxt)):
+                    P.append('step %d gives %s (after drops/adds %s), next shows %s' % (si + 1, got, expect, frag_set(spec_smiles(nxt))))
                 states.append(got)
             if 'stateAfter' in V and not P:
                 want = states[V['stateAfter']]
