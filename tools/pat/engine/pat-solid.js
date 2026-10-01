@@ -317,11 +317,9 @@
       if (dl < 1e-9) continue;
       var bx = boxInter(A.box, Bp.box, 1e-6); if (!bx) continue;
       bx = boxInter(bx, sbox, 0); if (!bx) continue;
+      // point on both planes: (d1 (n2 x u) + d2 (u x n1)) / |u|^2 with u = n1 x n2
+      var u3 = dir, P0 = add(cross(Bp.n, u3).map(function (x) { return x * A.d; }), cross(u3, A.n), Bp.d).map(function (x) { return x / (dl * dl); });
       dir = [dir[0] / dl, dir[1] / dl, dir[2] / dl];
-      // point on both planes: solve with the third direction
-      var n1 = A.n, n2 = Bp.n, d1 = A.d, d2 = Bp.d;
-      var P0 = add(cross(n2, dir).map(function (x) { return x * d1; }), cross(dir, n1), d2).map(function (x) { return x / dot(dir, cross(n1, n2).map(function (y) { return y / dl; })); });
-      P0 = [P0[0] / dl, P0[1] / dl, P0[2] / dl];
       var seg = clipLine(P0, dir, bx[0], bx[1]);
       if (seg) out.push({ k: 'L', a: seg[0], b: seg[1] });
     }
