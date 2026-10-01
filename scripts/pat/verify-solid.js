@@ -511,4 +511,158 @@ function checkKeyholesMachined(it) {
   return p;
 }
 
-module.exports = { checkKeyholesMachined, vExtent, vSilhouette, outlineMismatch, vIsoMap, csgInside, vLayers, vLineMap, vVectorMap, vDiff, vEnds, vKey, vGrid, primsOf, famMembers, famSolid, famWindow, famTable, checkTfeMachined, VVIEW };
+
+/* ---------------- PATTERN FOLDING, non-cube solids ----------------
+   The verifier builds the solid itself, then folds the 2D net onto it:
+   the first net face is laid on every congruent face of the solid in every
+   cyclic alignment; each neighbour across a net crease must land on the solid
+   face that shares that 3D edge, congruently. Every complete fold carries the
+   printed marks (by the same rigid maps) onto the solid. A drawing is valid
+   iff some quarter-turn pose of some complete fold draws it. */
+const R3 = Math.sqrt(3);
+function vSolid(kind, dims) {
+  let V, F;
+  if (kind === 'box') {
+    const [a, b, c] = dims;
+    V = [[0, 0, 0], [a, 0, 0], [a, b, 0], [0, b, 0], [0, 0, c], [a, 0, c], [a, b, c], [0, b, c]];
+    F = [[0, 1, 2, 3], [4, 5, 6, 7], [0, 1, 5, 4], [1, 2, 6, 5], [2, 3, 7, 6], [3, 0, 4, 7]];
+  } else if (kind === 'triprism') {
+    const L = dims[0];
+    V = [[0, 0, 0], [0, 2, 0], [0, 1, R3], [L, 0, 0], [L, 2, 0], [L, 1, R3]];
+    F = [[0, 1, 2], [3, 4, 5], [0, 1, 4, 3], [1, 2, 5, 4], [2, 0, 3, 5]];
+  } else if (kind === 'pyramid') {
+    V = [[0, 0, 0], [2, 0, 0], [2, 2, 0], [0, 2, 0], [1, 1, dims[0]]];
+    F = [[0, 1, 2, 3], [0, 1, 4], [1, 2, 4], [2, 3, 4], [3, 0, 4]];
+  } else {
+    V = [[0, 0, 0], [2, 0, 0], [1, R3, 0], [1, R3 / 3, 2 * Math.sqrt(2 / 3)]];
+    F = [[0, 1, 2], [0, 1, 3], [1, 2, 3], [2, 0, 3]];
+  }
+  const c = V.reduce((s, v) => s.map((x, i) => x + v[i] / V.length), [0, 0, 0]);
+  F = F.map((f) => {
+    const a = V[f[0]], b = V[f[1]], cc = V[f[2]];
+    const n = [(b[1] - a[1]) * (cc[2] - a[2]) - (b[2] - a[2]) * (cc[1] - a[1]), (b[2] - a[2]) * (cc[0] - a[0]) - (b[0] - a[0]) * (cc[2] - a[2]), (b[0] - a[0]) * (cc[1] - a[1]) - (b[1] - a[1]) * (cc[0] - a[0])];
+    return d3(n, [a[0] - c[0], a[1] - c[1], a[2] - c[2]]) > 0 ? f : f.slice().reverse();
+  });
+  return { V, F, c };
+}
+const dist2 = (a, b) => Math.hypot(...a.map((x, i) => x - b[i]));
+/* rigid map from a 2D polygon onto 3D points (same order); null unless every vertex lands within 1e-5 */
+function rigid2to3(P2, P3) {
+  const ex = [P2[1][0] - P2[0][0], P2[1][1] - P2[0][1]], l = Math.hypot(...ex), ux = [ex[0] / l, ex[1] / l], uy = [-ux[1], ux[0]];
+  const E1 = P3[1].map((x, i) => (x - P3[0][i]) / l);
+  const n = [0, 0, 0];
+  // in-plane perpendicular: from the third point's component orthogonal to E1
+  const q = P3[2].map((x, i) => x - P3[0][i]), q2 = [P2[2][0] - P2[0][0], P2[2][1] - P2[0][1]];
+  const qy = q2[0] * uy[0] + q2[1] * uy[1], qx = q2[0] * ux[0] + q2[1] * ux[1];
+  if (Math.abs(qy) < 1e-9) return null;
+  const E2 = q.map((x, i) => (x - qx * E1[i]) / qy);
+  const map = (p) => { const d = [p[0] - P2[0][0], p[1] - P2[0][1]], x = d[0] * ux[0] + d[1] * ux[1], y = d[0] * uy[0] + d[1] * uy[1]; return P3[0].map((v, i) => v + x * E1[i] + y * E2[i]); };
+  if (Math.abs(Math.hypot(...E2) - 1) > 1e-5 || Math.abs(d3(E1, E2)) > 1e-5) return null;
+  for (let k = 0; k < P2.length; k++) if (dist2(map(P2[k]), P3[k]) > 1e-5) return null;
+  void n;
+  return map;
+}
+function netNeighbours(net) {
+  const out = net.map(() => []);
+  const same = (p, q) => Math.abs(p[0] - q[0]) < 1e-5 && Math.abs(p[1] - q[1]) < 1e-5;
+  net.forEach((A, i) => net.forEach((B, j) => {
+    if (i >= j) return;
+    A.pts.forEach((p, a) => { const p2 = A.pts[(a + 1) % A.pts.length]; B.pts.forEach((q, b) => { const q2 = B.pts[(b + 1) % B.pts.length]; if (same(p, q2) && same(p2, q)) { out[i].push([j, a]); out[j].push([i, b]); } }); });
+  }));
+  return out;
+}
+function foldNet(fig) {
+  const sd = vSolid(fig.solid.kind, fig.solid.dims), net = fig.net, nb = netNeighbours(net), folds = [];
+  const P3 = (fi) => sd.F[fi].map((v) => sd.V[v]);
+  for (let F0 = 0; F0 < sd.F.length; F0++) {
+    if (sd.F[F0].length !== net[0].pts.length) continue;
+    for (let sh = 0; sh < net[0].pts.length; sh++) {
+      const n0 = net[0].pts.length, tgt = net[0].pts.map((_, k) => sd.F[F0][(k + sh) % n0]);
+      const m0 = rigid2to3(net[0].pts, tgt.map((v) => sd.V[v]));
+      if (!m0) continue;
+      const assign = new Array(net.length).fill(null); assign[0] = { face: F0, verts: tgt, map: m0 };
+      const used = new Set([F0]), queue = [0]; let ok = true;
+      while (queue.length && ok) {
+        const i = queue.shift();
+        for (const [j, a] of nb[i]) {
+          if (assign[j]) continue;
+          const Pv = assign[i].verts[a], Qv = assign[i].verts[(a + 1) % assign[i].verts.length];
+          const G = sd.F.findIndex((f, gi) => gi !== assign[i].face && f.includes(Pv) && f.includes(Qv));
+          if (G < 0 || used.has(G) || sd.F[G].length !== net[j].pts.length) { ok = false; break; }
+          // in net face j the shared edge runs from Q to P
+          const m = net[j].pts.length, b = nb[j].find((x) => x[0] === i)[1];
+          const gq = sd.F[G].indexOf(Qv);
+          const verts = net[j].pts.map((_, k) => sd.F[G][(gq + k - b + m * 4) % m]);
+          if (verts[(b + 1) % m] !== Pv) { ok = false; break; }
+          const mp = rigid2to3(net[j].pts, verts.map((v) => sd.V[v]));
+          if (!mp) { ok = false; break; }
+          assign[j] = { face: G, verts, map: mp }; used.add(G); queue.push(j);
+        }
+      }
+      if (!ok || assign.some((x) => !x) || used.size !== sd.F.length) continue;
+      folds.push(net.map((f, i) => ({ P: assign[i].verts.map((v) => sd.V[v]), shade: f.shade, marks: f.marks.map((mk) => mk.map(assign[i].map)) })));
+    }
+  }
+  return { sd, folds };
+}
+function rot24() {
+  const out = [];
+  const perms = [[0, 1, 2], [0, 2, 1], [1, 0, 2], [1, 2, 0], [2, 0, 1], [2, 1, 0]];
+  for (const p of perms) for (let s = 0; s < 8; s++) {
+    const M = [[0, 0, 0], [0, 0, 0], [0, 0, 0]];
+    for (let r = 0; r < 3; r++) M[r][p[r]] = (s >> r) & 1 ? -1 : 1;
+    const det = M[0][0] * (M[1][1] * M[2][2] - M[1][2] * M[2][1]) - M[0][1] * (M[1][0] * M[2][2] - M[1][2] * M[2][0]) + M[0][2] * (M[1][0] * M[2][1] - M[1][1] * M[2][0]);
+    if (det === 1) out.push(M);
+  }
+  return out;
+}
+function poseDrawing(fold, c, M) {
+  const tr = (p) => { const q = p.map((x, i) => x - c[i]); return [d3(M[0], q), d3(M[1], q), d3(M[2], q)]; };
+  const pj = (p) => [(p[1] - p[0]) * 0.866, (p[0] + p[1]) * 0.5 - p[2]];
+  const faces = [], marks = [];
+  fold.forEach((f) => {
+    const P = f.P.map(tr), a = P[0], b = P[1], cc = P[2];
+    const n = [(b[1] - a[1]) * (cc[2] - a[2]) - (b[2] - a[2]) * (cc[1] - a[1]), (b[2] - a[2]) * (cc[0] - a[0]) - (b[0] - a[0]) * (cc[2] - a[2]), (b[0] - a[0]) * (cc[1] - a[1]) - (b[1] - a[1]) * (cc[0] - a[0])];
+    if (n[0] + n[1] + n[2] <= 1e-9) return;
+    faces.push({ pts: P.map(pj), shade: f.shade });
+    f.marks.forEach((mk) => marks.push(mk.map(tr).map(pj)));
+  });
+  return { faces, marks };
+}
+/* two drawings equal up to translation: same face polygons (with shading) and mark polygons, within tol */
+function sameDrawing(A, B, tol = 3e-3) {
+  if (A.faces.length !== B.faces.length || A.marks.length !== B.marks.length) return false;
+  const box = (D) => { const xs = D.faces.flatMap((f) => f.pts.map((p) => p[0])), ys = D.faces.flatMap((f) => f.pts.map((p) => p[1])); return [Math.min(...xs), Math.min(...ys)]; };
+  const ba = box(A), bb = box(B);
+  const norm = (P, b) => P.map((p) => [p[0] - b[0], p[1] - b[1]]);
+  const polySame = (P, Q) => P.length === Q.length && P.every((p) => Q.some((q) => Math.abs(p[0] - q[0]) < tol && Math.abs(p[1] - q[1]) < tol));
+  const match = (as, bs) => { const left = bs.slice(); return as.every((a) => { const k = left.findIndex((b) => b.shade === a.shade && polySame(a.P, b.P)); if (k < 0) return false; left.splice(k, 1); return true; }); };
+  return match(A.faces.map((f) => ({ P: norm(f.pts, ba), shade: !!f.shade })), B.faces.map((f) => ({ P: norm(f.pts, bb), shade: !!f.shade })))
+    && match(A.marks.map((m) => ({ P: norm(m, ba), shade: 0 })), B.marks.map((m) => ({ P: norm(m, bb), shade: 0 })));
+}
+function checkPatternPoly(it) {
+  const p = [], f = it.figure;
+  for (let i = 0; i < f.net.length; i++) for (let j = i + 1; j < f.net.length; j++) {
+    const A = f.net[i].pts, B = f.net[j].pts;
+    const sep = [A, B].some((P) => P.some((a, k) => {
+      const b = P[(k + 1) % P.length], ax = [-(b[1] - a[1]), b[0] - a[0]], pa = A.map((q) => q[0] * ax[0] + q[1] * ax[1]), pb = B.map((q) => q[0] * ax[0] + q[1] * ax[1]), L = Math.hypot(...ax);
+      return Math.max(...pa) <= Math.min(...pb) + 1e-6 * L || Math.max(...pb) <= Math.min(...pa) + 1e-6 * L;
+    }));
+    if (!sep) p.push('net faces ' + i + ' and ' + j + ' overlap');
+  }
+  const { sd, folds } = foldNet(f);
+  if (!folds.length) { p.push('net does not fold onto the solid'); return p; }
+  const poses = [];
+  folds.forEach((fd) => rot24().forEach((M) => poses.push(poseDrawing(fd, sd.c, M))));
+  it.options.forEach((o, i) => {
+    const ok = poses.some((d) => sameDrawing(d, o));
+    if (i === it.answer && !ok) p.push('keyed figure is not a fold of the net');
+    if (i !== it.answer && ok) p.push('distractor ' + i + ' (' + o.trap + ') is also a valid fold');
+  });
+  for (let a = 0; a < it.options.length; a++) for (let b = a + 1; b < it.options.length; b++) if (sameDrawing(it.options[a], it.options[b])) p.push('options ' + a + ' and ' + b + ' are the same');
+  if (it.options.length !== 4) p.push('pattern folding must have 4 choices');
+  p.folds = folds.length;
+  return p;
+}
+
+module.exports = { checkPatternPoly, foldNet, sameDrawing, checkKeyholesMachined, vExtent, vSilhouette, outlineMismatch, vIsoMap, csgInside, vLayers, vLineMap, vVectorMap, vDiff, vEnds, vKey, vGrid, primsOf, famMembers, famSolid, famWindow, famTable, checkTfeMachined, VVIEW };
