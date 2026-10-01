@@ -8,11 +8,13 @@
 // consecutive items share a source or a home.
 
 export const BLUEPRINT = [
-  { area: 'Mechanisms', n: 7, homes: ['t5-proton', 't5-sn-e', 't5-addition', 't5-acyl', 't5-eas', 't5-combined', 't5-coordinate'], groups: [] },
-  { area: 'Chemical synthesis', n: 9, homes: ['t4-alkene', 't4-alkyne', 't4-subelim', 't4-alcohol', 't4-carbonyl', 't4-acid-deriv', 't4-alpha', 't4-aromatic', 't4-radical-pericyclic', 't6-two-step', 't6-retro', 't6-selectivity'], groups: [] },
+  { area: 'Mechanisms', n: 7, homes: ['t5-proton', 't5-sn-e', 't5-addition', 't5-acyl', 't5-eas', 't5-combined', 't5-coordinate', 't5-arrows-forward', 't5-arrows-reverse', 't5-fishhook', 't5-rcd', 't5-mech-chain'], groups: [],
+    // the 2026 spec names these as item types, so every section carries them
+    must: [['t5-arrows-forward', 't5-arrows-reverse'], ['t5-rcd'], ['t5-fishhook', 't5-mech-chain']] },
+  { area: 'Chemical synthesis', n: 9, must: [['t4-alpha'], ['t6-two-step', 't6-retro']], homes: ['t4-alkene', 't4-alkyne', 't4-subelim', 't4-alcohol', 't4-carbonyl', 't4-acid-deriv', 't4-alpha', 't4-aromatic', 't4-radical-pericyclic', 't6-two-step', 't6-retro', 't6-selectivity'], groups: [] },
   { area: 'Acid-base chemistry', n: 4, homes: ['t5-proton'], groups: ['acid-base-pka'] },
   { area: 'Chemical and physical properties', n: 5, homes: ['t7-ir', 't7-hnmr', 't7-cnmr', 't7-multi', 't7-properties', 't7-lab'], groups: [] },
-  { area: 'Structural evaluation', n: 5, homes: [], groups: ['nomenclature', 'stereo-rs-ez', 'stereo-relationships', 'hybridization-geometry', 'resonance-stability', 'functional-group-id'] }
+  { area: 'Structural evaluation', n: 5, homes: ['t5-conform'], groups: ['nomenclature', 'stereo-rs-ez', 'stereo-relationships', 'hybridization-geometry', 'resonance-stability', 'functional-group-id'] }
 ];
 
 export function mulberry(seed){ let a = seed | 0; return function(){ a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
@@ -72,7 +74,11 @@ export function buildSection({ seed = 1, makers = {}, bank = [], api = {} }){
   for (const b of BLUEPRINT){
     for (let k = 0; k < b.n; k++){
       const wantBank = (k % 2 === 1) || !b.homes.length;
-      let it = wantBank ? (fromBank(b.groups, b.homes) || fromModule(b.homes)) : (fromModule(b.homes) || fromBank(b.groups, b.homes));
+      let it = null;
+      // the first picks of an area fill its required homes, from the bank or the module
+      const must = (b.must || [])[k];
+      if (must) it = fromBank([], must) || fromModule(must);
+      if (!it) it = wantBank ? (fromBank(b.groups, b.homes) || fromModule(b.homes)) : (fromModule(b.homes) || fromBank(b.groups, b.homes));
       if (!it) continue;
       seen.add(itemKey(it)); usedHome[it.home] = (usedHome[it.home] || 0) + 1; note(it);
       out.push(Object.assign({ area: b.area }, it));

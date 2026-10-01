@@ -539,8 +539,8 @@ export function injectMdCss(){ if (_css || typeof document === 'undefined') retu
 export function legend(){
   const C = palette();
   const mk = (draw, text) => { const s = S('svg', { viewBox: '0 0 30 16' }); draw(s); return H('span', {}, s, text); };
-  const full = arrowGeom({ x: 3, y: 13 }, { x: 27, y: 11 }, 1, false, { minAmp: 9, maxAmp: 9 });
-  const fish = arrowGeom({ x: 3, y: 13 }, { x: 27, y: 11 }, 1, true, { minAmp: 9, maxAmp: 9 });
+  const full = arrowGeom({ x: 3, y: 13 }, { x: 27, y: 13 }, -1, false, { minAmp: 7, maxAmp: 7 });
+  const fish = arrowGeom({ x: 3, y: 13 }, { x: 27, y: 13 }, -1, true, { minAmp: 7, maxAmp: 7 });
   return H('div', { class: 'md-legend' },
     mk(s => s.append(S('path', { d: full.d, fill: 'none', stroke: C.goldhi, 'stroke-width': 1.7 }), S('path', { d: full.headD, fill: C.goldhi })), 'full head: two electrons move'),
     mk(s => s.append(S('path', { d: fish.d, fill: 'none', stroke: C.goldhi, 'stroke-width': 1.7 }), S('path', { d: fish.headD, fill: C.goldhi })), 'fishhook: one electron moves'),
@@ -620,6 +620,15 @@ export function mountSet(slot, items, api, o = {}){
   return { next, get index(){ return at; } };
 }
 
+// What step k itself makes: the next step's species without the ones that join
+// there (adds are listed last), plus whatever leaves the stage after step k.
+function madeBy(chain, k){
+  if (k === chain.steps.length - 1) return chain.product;
+  const nx = chain.steps[k + 1], n = (nx.adds || []).length;
+  const kept = nx.species.slice(0, nx.species.length - n);
+  const gone = (chain.steps[k].drops || []).map(smi => ({ smi, rad: /^\[(Br|Cl|I)\]$/.test(smi) ? [0] : [] }));
+  return kept.concat(gone);
+}
 /** A step-through stage: show a chain one step at a time with a caption per step. */
 export function mountStepper(slot, chains, o = {}){
   injectMdCss();
@@ -635,7 +644,7 @@ export function mountStepper(slot, chains, o = {}){
   function draw(){
     fig.textContent = '';
     const st = cur.steps[k];
-    if (st) drawMech(fig, { species: st.species, arrows: st.arrows, product: k === cur.steps.length - 1 ? cur.product : (cur.steps[k + 1] || {}).species, reagent: st.reagent || null }, { width: fig.clientWidth || 640, label: cur.name + ', step ' + (k + 1) });
+    if (st) drawMech(fig, { species: st.species, arrows: st.arrows, product: madeBy(cur, k), reagent: st.reagent || null }, { width: fig.clientWidth || 640, label: cur.name + ', step ' + (k + 1) });
     cap.textContent = '';
     cap.append(H('div', { style: { fontFamily: 'Georgia, serif', color: C.goldhi, fontSize: '18px' }, text: cur.name + ' · step ' + (k + 1) + ' of ' + cur.steps.length + (st && st.name ? ': ' + st.name : '') }), H('p', { style: { margin: '4px 0 0', color: C.ink2, fontSize: '15px', maxWidth: '72ch', lineHeight: '1.55' }, text: (st && st.say) || '' }));
     nav.textContent = '';

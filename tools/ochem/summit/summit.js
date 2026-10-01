@@ -6,6 +6,9 @@ import * as RX from '../tree/shared/reactions.js';
 import { GROUP_MAP, bankToItem } from '../tree/shared/bank-map.js';
 import { aceToItem, weighted } from '../bank/ace.js';
 import { drawSmiles } from '../tree/draw.js';
+import { SET2026 } from '../tree/shared/set-2026.js';
+import { renderItemFigure, renderChoiceBody, injectMdCss } from '../tree/mechdraw.js';
+import { offSpec } from '../tree/shared/bank-map.js';
 import { buildSection, rootsOf } from './build.js';
 
 const KEY = 'atDAT_ochemSummit_v1';
@@ -42,9 +45,11 @@ async function loadMakers(){
 // way the tree weights them. Reading only OCHEM_DB here is what kept them off
 // the Summit after they were already showing up everywhere else.
 function bankPool(){
-  const mine = ((window.ACE_BANK) || []).map(aceToItem);
-  const rest = ((window.OCHEM_DB) || []).filter(it => GROUP_MAP[it.group] && it.keep !== false && it.scope_ok !== false && it.smiles_valid !== false).map(bankToItem);
-  return weighted(mine, rest);
+  const mine = ((window.ACE_BANK) || []).filter(it => !offSpec(it)).map(aceToItem);
+  const rest = ((window.OCHEM_DB) || []).filter(it => GROUP_MAP[it.group] && it.keep !== false && it.scope_ok !== false && it.smiles_valid !== false && !offSpec(it)).map(bankToItem);
+  // the 2026 test-format set: five choices, drawn figures, every arrow proven in RDKit
+  const set = SET2026.map(it => Object.assign({}, it, { source: 'ochem-2026' }));
+  return weighted(mine, rest).concat(set);
 }
 const baseApi = { reactions: { REACTIONS: RX.REACTIONS, SUBSTRATES: RX.SUBSTRATES, FAMILIES: RX.FAMILIES, byFamily: RX.byFamily, siblings: RX.siblings, find: RX.find }, bank: { items: (w) => bankPool().filter(it => it.home === w || it.group === w), toItem: bankToItem, GROUP_MAP }, reduced: false };
 
@@ -102,7 +107,8 @@ function renderSection(){
   const card = el('div', { class: 'item' });
   card.append(el('span', { class: 'eyebrow', text: it.area + (it.source === 'bank' ? ' · verified bank' : ' · generated') }));
   card.append(el('p', { class: 'stem', text: it.stem }));
-  if (it.sub || it.reagent || it.prod){
+  if (it.fig){ injectMdCss(); const f = el('div', {}); card.append(f); renderItemFigure(f, it, { width: card.clientWidth || 640 }); }
+  else if (it.sub || it.reagent || it.prod){
     const fig = el('div', { class: 'figure' });
     if (it.sub){ const b = el('div', { class: 'box' }); drawSmiles(b, it.sub, { width: 240, height: 150, label: 'starting material' }); fig.append(b); }
     if (it.reagent) fig.append(el('div', { class: 'arrow' }, el('span', { class: 'reagent', text: it.reagent }), el('div', { class: 'line' })));
@@ -112,7 +118,8 @@ function renderSection(){
   const opts = el('div', { class: 'opts' });
   it.choices.forEach((c, i) => {
     const o = el('button', { type: 'button', class: 'opt' + (c.smiles ? ' struct' : '') + (run.answers[run.at] === i ? ' picked' : ''), onclick: () => { run.answers[run.at] = i; renderSection(); } }, el('span', { class: 'k', text: LETTERS[i] }));
-    if (c.smiles){ const holder = el('span', {}); drawSmiles(holder, c.smiles, { width: 220, height: 130, label: 'choice ' + LETTERS[i] }); o.append(holder); if (c.text) o.append(el('span', { text: c.text })); }
+    if (c.fig){ injectMdCss(); const holder = el('span', { style: { flex: '1', minWidth: '0' } }); o.append(holder); renderChoiceBody(holder, c, i, { width: 520 }); }
+    else if (c.smiles){ const holder = el('span', {}); drawSmiles(holder, c.smiles, { width: 220, height: 130, label: 'choice ' + LETTERS[i] }); o.append(holder); if (c.text) o.append(el('span', { text: c.text })); }
     else o.append(el('span', { text: c.text }));
     opts.append(o);
   });

@@ -109,3 +109,6 @@ step number), `'rdsMark'` (key text is the label of the mark from the valley bef
 - `{ distinct: true }` no two structure choices are the same molecule.
 Any SMILES anywhere must parse. Items with no machine claim still need every structure to parse and must
 survive the skeptical review, so keep them squarely in DAT-standard chemistry.
+
+Chain convention: list a step's `adds` species LAST in that step's `species`, so the stepper can show
+exactly what the previous step made.
