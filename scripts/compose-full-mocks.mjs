@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Composes the Ace Labs four-section full-length mocks (tools/mock/full.html).
 //
-//   node scripts/compose-full-mocks.mjs [--count N] [--source DIR] [--check]
+//   node scripts/compose-full-mocks.mjs [--count N] [--source DIR] [--verified-only] [--check]
 //
 // Science (Bio 40, GChem 30, OChem 30) and QR (40) items are drawn from the AceTheDAT
 // question pool built by the prep app out of Ace Labs' own engine banks and the coaching
@@ -15,7 +15,12 @@
 //   - no em or en dashes, no emoji, no partial-charge delta shorthand, no raw HTML
 //   - not already used by The Climb (tools/minitests) or the Prometric mocks
 //     (shared/dat-mock-tests.js), so a full mock never repeats an item a student has seen
-//   - not rejected by the blind re-solve (tools/mock/verification/rejected.json)
+//   - not rejected by the blind re-solve (tools/mock/verification/rejected.json); the shipping
+//     build (--verified-only, npm run compose:mocks) draws only items in verified.json, and
+//     --check fails on any item that has not passed a blind re-solve
+//   - no wording tells or flashcard register the blind solvers flagged (a parenthetical only on
+//     the key, fragment choices beside a sentence key, a drawn structure that is a choice,
+//     study-strategy or clinical-shorthand stems), and one item per template per mock section
 //
 // Keys are then spread: inside every section each letter A to E is the key the same number
 // of times (8 each in a 40, 6 each in a 30), with no run of three identical keys in a row.
@@ -40,9 +45,11 @@ const OUT = path.join(ROOT, 'tools/mock/data/full-mocks.js');
 const REJECTED = path.join(ROOT, 'tools/mock/verification/rejected.json');
 const VERIFIED = path.join(ROOT, 'tools/mock/verification/verified.json');
 const arg = (name, dflt) => { const i = process.argv.indexOf(name); return i > 0 ? process.argv[i + 1] : dflt; };
-const COUNT = parseInt(arg('--count', '5'), 10);
+const COUNT = parseInt(arg('--count', '4'), 10);
 const SRC = arg('--source', path.join(os.homedir(), 'code/acethedat-prep/site/data/bank'));
 const CHECK = process.argv.includes('--check');
+// Final build: draw only from items that already passed the blind re-solve.
+const VERIFIED_ONLY = process.argv.includes('--verified-only');
 const L = 'ABCDE';
 
 export const SECTIONS = [
@@ -75,6 +82,10 @@ export function keyNotLongest(opts, key) {
   const maxOther = Math.max(...len.filter((_, i) => i !== key));
   return kl < maxOther || (kl === maxOther && kl <= 20);
 }
+// Where the key falls in length order (0 = shortest, 3 = second longest; never 4, the longest).
+// Removing longest keys can leave a "second longest" habit; the composer caps any one rank.
+const isText = (opts, os) => !os && !opts.every((o) => /^[-$]?[\d.,/ ]+[a-zA-Z%°]*$/.test(String(o).trim()));
+export const lengthRank = (opts, key) => opts.filter((o, i) => i !== key && String(o).length < String(opts[key]).length).length;
 const numeric = (o) => /^-?[$]?\d[\d,]*(\.\d+)?%?$/.test(String(o).trim());
 const numVal = (o) => parseFloat(String(o).replace(/[$,%]/g, ''));
 
@@ -93,6 +104,7 @@ export function eligible(it, seen, rejected) {
   }
   if (it.os && it.qs && it.o.includes(it.qs)) why.push('drawn structure is one of the choices');
   if (/\b(from earlier|continuing|previous (question|item|problem))\b/i.test(it.q)) why.push('stem leans on another item');
+  if (/\b(sensitivity|specificity)\b/i.test(it.q) || /^[a-z]/.test(String(it.q).trim())) why.push('clinical shorthand or a fragment stem');
   if (/\bMCAT\b|\bGPA\b|on track|pacing|study (plan|strategy|session)|practice test score/i.test(it.q)) why.push('study-strategy item, not a content question');
   if (!Array.isArray(it.o) || it.o.length !== 5) why.push('not five choices');
   else {
@@ -208,6 +220,7 @@ export function compose({ count = COUNT, source = SRC } = {}) {
     const fp = new Set();
     for (const it of items) {
       const why = eligible(it, seen, rejected);
+      if (VERIFIED_ONLY && !verified.has(it.i)) why.push('not yet blind re-solved');
       const k = stemKey(it.q) + '|' + (it.o || []).map(norm).sort().join('|');
       if (!why.length && fp.has(k)) why.push('duplicate item');
       if (why.length) { for (const w of why) reasons[w] = (reasons[w] || 0) + 1; continue; }
@@ -263,13 +276,22 @@ export function compose({ count = COUNT, source = SRC } = {}) {
     const cap = sec.n / 5;
     const fixedCount = mocks.map(() => [0, 0, 0, 0, 0]);
     const usedTpl = mocks.map(() => new Set());
+    const rankCount = mocks.map(() => [0, 0, 0, 0, 0]);
+    const rankCap = Math.ceil(sec.n * 0.3);
     for (const [st, k] of Object.entries(q)) for (let i = 0; i < k; i++) for (let m = 0; m < n; m++) {
-      const qu = queues[st];
-      let j = qu.findIndex((x) => (!x._natural || fixedCount[m][x._naturalKey] < cap) && !templateKeys(x).some((t) => usedTpl[m].has(t)));
-      if (j < 0) throw new Error(`${sec.key} stop ${st}: no item fits the key balance`);
+      const fits = (x) => (!x._natural || fixedCount[m][x._naturalKey] < cap) && !templateKeys(x).some((t) => usedTpl[m].has(t)) && (!isText(x.o, x.os) || rankCount[m][lengthRank(x.o, x.a)] < rankCap);
+      let qu = queues[st];
+      let j = qu.findIndex(fits);
+      // A stop that runs dry lends its slot to the stop with the most items left.
+      if (j < 0) {
+        const alt = Object.keys(queues).filter((o) => o !== st).sort((a, b) => queues[b].length - queues[a].length).find((o) => queues[o].some(fits));
+        if (!alt) throw new Error(`${sec.key} stop ${st}: no item fits the key balance`);
+        qu = queues[alt]; j = qu.findIndex(fits);
+      }
       const it = qu.splice(j, 1)[0];
       if (it._natural) fixedCount[m][it._naturalKey]++;
       templateKeys(it).forEach((t) => usedTpl[m].add(t));
+      if (isText(it.o, it.os)) rankCount[m][lengthRank(it.o, it.a)]++;
       deal[m].push(it);
     }
     deal.forEach((items, m) => {
@@ -280,7 +302,7 @@ export function compose({ count = COUNT, source = SRC } = {}) {
       mocks[m].sections[sec.key] = ordered.map((it, i) => place(it, keys[i], r));
     });
   }
-  return { mocks, report };
+  return { mocks, report, pools };
 }
 
 /* ------------------------------------------------------------------ checks */
@@ -300,6 +322,9 @@ export function checkMocks(mocks) {
         kc[it.correct]++;
         if (i >= 2 && items[i - 1].correct === it.correct && items[i - 2].correct === it.correct) errors.push(`${mk.id} ${sec.key}: three ${L[it.correct]} keys in a row at ${i + 1}`);
       });
+      const rc = [0, 0, 0, 0, 0];
+      items.forEach((it) => { if (isText(it.opts, it.os)) rc[lengthRank(it.opts, it.correct)]++; });
+      if (rc.some((c) => c > Math.ceil(items.length * 0.3))) errors.push(`${mk.id} ${sec.key}: key length rank is lopsided (${rc.join(' ')})`);
       if (items.length && kc.some((c) => c !== items.length / 5)) errors.push(`${mk.id} ${sec.key}: key letters not even (${kc.map((c, i) => L[i] + c).join(' ')})`);
     }
     if (!mk.pat || !mk.pat.seed) errors.push(`${mk.id}: no PAT seed`);
