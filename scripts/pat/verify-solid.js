@@ -405,7 +405,13 @@ function vSilhouette(node, a, ext) {
   const V = [VVIEW.end, VVIEW.front, VVIEW.top][a], prims = primsOf(node);
   const ui = V.u.indexOf(1), vi = V.v.indexOf(1);
   const w = ext.hi[ui] - ext.lo[ui], h = ext.hi[vi] - ext.lo[vi];
+  const memo = new Map();
   const hit = (u, v) => {        // u from the left, v down from the top
+    const mk = Math.round(u * 1e5) + ',' + Math.round(v * 1e5);
+    if (memo.has(mk)) return memo.get(mk);
+    const r = hit0(u, v); memo.set(mk, r); return r;
+  };
+  const hit0 = (u, v) => {
     const o = [0, 0, 0]; o[ui] = ext.lo[ui] + u; o[vi] = ext.hi[vi] - v; o[a] = -50;
     const d = [0, 0, 0]; d[a] = 1;
     return vLayers(node, prims, o, d).length > 0;
