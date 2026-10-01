@@ -414,7 +414,7 @@ module.exports = [
     id: 'di-035', format: 'di', topic: 'rates', diff: 4,
     figure: { type: 'line', title: 'Monthly subscribers to two apps (thousands)', x: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
       series: [{ name: 'App A', values: [20, 25, 30, 35, 40, 45] }, { name: 'App B', values: [5, 10, 20, 30, 40, 50] }], yLabel: 'Thousands', valueLabels: false },
-    stem: 'From January to June, App B\'s subscriber count grew by what factor more than App A\'s, comparing each app\'s June total to its own January total?',
+    stem: 'Define each app\'s growth factor as its June total divided by its January total. App B\'s growth factor is how many times App A\'s growth factor, to the nearest hundredth?',
     opts: ['2.25', '4.44', '6.25', '8', '10'],
     answer: '4.44',
     move: 'Growth factor = end / start for each line; then compare the two factors.',
@@ -509,7 +509,7 @@ module.exports = [
   {
     id: 'di-043', format: 'di', topic: 'statistics', diff: 2,
     figure: { type: 'line', title: 'Quarterly unemployment rate', x: ['Q1', 'Q2', 'Q3', 'Q4', 'Q5', 'Q6', 'Q7', 'Q8'],
-      series: [{ name: 'Rate', values: [5.2, 5.0, 4.8, 4.9, 4.6, 4.4, 4.5, 4.0] }], yLabel: 'Percent', unit: '%' },
+      series: [{ name: 'Rate', values: [5.2, 5.0, 4.8, 4.9, 4.6, 4.4, 4.5, 4.0] }], yLabel: 'Percent', unit: '%', yMin: 3.5, yMax: 5.5, yStep: 0.5 },
     stem: 'What is the median of the eight quarterly unemployment rates shown?',
     opts: ['4.5%', '4.6%', '4.65%', '4.675%', '4.7%'],
     answer: '4.7%',

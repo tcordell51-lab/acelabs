@@ -126,7 +126,8 @@
     (x, y, c) => `<path d="M${r1(x)} ${r1(y - 5.5)}L${r1(x + 5.5)} ${r1(y + 4.5)}L${r1(x - 5.5)} ${r1(y + 4.5)}Z" fill="${c}" stroke="var(--qf-surface)" stroke-width="2" stroke-linejoin="round"/>`
   ];
   function svgOpen(w, h, label) {
-    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${Math.round(w)} ${Math.round(h)}" width="${Math.round(w)}" height="${Math.round(h)}" role="img" aria-label="${esc(label)}">`;
+    // max-width keeps a narrow drawing (a small table) at its true size instead of scaling it up
+    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${Math.round(w)} ${Math.round(h)}" width="${Math.round(w)}" height="${Math.round(h)}" style="max-width:${Math.round(w)}px" role="img" aria-label="${esc(label)}">`;
   }
   function describe(spec) {
     if (spec.type === 'table') return spec.columns.join(', ') + '. ' + spec.rows.map((r) => r.join(', ')).join('; ');
@@ -145,7 +146,10 @@
       const pad = size * 0.9;
       const bodyW = spec.columns.map((_, j) => Math.max(...cells.slice(1).map((r) => textW(r[j], size, j === 0))) + pad * 2);
       const headMin = spec.columns.map((h) => Math.max(...String(h).split(/\s+/).map((w) => textW(w, size, true))) + pad * 2);
-      const need = bodyW.map((b, j) => Math.max(b, headMin[j]));
+      // prefer one-line headers when the full header text fits the width
+      const headFull = spec.columns.map((h) => textW(h, size, true) + pad * 2);
+      const oneLine = bodyW.map((b, j) => Math.max(b, headFull[j]));
+      const need = oneLine.reduce((a, b) => a + b, 0) <= W ? oneLine : bodyW.map((b, j) => Math.max(b, headMin[j]));
       const total = need.reduce((a, b) => a + b, 0);
       if (total <= W || size <= 11) {
         // share extra room proportionally, capped so short tables do not sprawl
@@ -247,7 +251,7 @@
     const left = catMax + 10;
     const valW = labels ? Math.max(...all.map((v) => textW(fmt(v, spec.unit === '%' ? '%' : ''), 11.5))) + 8 : 6;
     const bt = 16; const gap = 2; const groupH = k * bt + (k - 1) * gap; const rowH = Math.max(groupH + 14, Math.max(...catLines.map((l) => l.length)) * small * 1.2 + 10);
-    const top = 6; const plotH = rowH * n; const axisH = 22 + (spec.xLabel ? 20 : 0) + (spec.yLabel ? 0 : 0);
+    const top = 6; const plotH = rowH * n; const axisH = 24 + ((spec.yLabel || spec.xLabel) ? 20 : 0);
     const H = top + plotH + axisH;
     const plotW = W - left - valW;
     const sc = yScale(all, spec, plotW * 0.6);
@@ -310,11 +314,17 @@
       ser.values.forEach((v, i) => { s += MARKERS[j % 3](X(i), Y(v), c); });
     });
     if (labels) {
-      // label above unless the neighbour slope puts the label on the line
-      spec.series.forEach((ser) => ser.values.forEach((v, i) => {
-        const prev = i > 0 ? ser.values[i - 1] : v; const nxt = i < n - 1 ? ser.values[i + 1] : v;
-        const below = v < prev && v < nxt; // local minimum: label below
-        s += txt(X(i), below ? Y(v) + 19 : Y(v) - 10, fmt(v, spec.unit === '%' ? '%' : ''), { size: 11.5, anchor: 'middle', fill: 'var(--qf-ink)' });
+      // One series: label above, or below at a local minimum. Several series:
+      // at each x the highest point is labeled above and the others below, so
+      // labels at shared or nearby points never stack. Labels at the two ends
+      // are nudged inward so they never cross the axis or the edge.
+      spec.series.forEach((ser, j) => ser.values.forEach((v, i) => {
+        let below;
+        if (k === 1) { const prev = i > 0 ? ser.values[i - 1] : v; const nxt = i < n - 1 ? ser.values[i + 1] : v; below = v < prev && v < nxt; }
+        else { const col = spec.series.map((x) => x.values[i]); const top = col.indexOf(Math.max(...col)); below = j !== top; }
+        const label = fmt(v, spec.unit === '%' ? '%' : ''); const half = textW(label, 11.5) / 2;
+        const x = Math.min(W - right + 12 - half, Math.max(left + half + 3, X(i)));
+        s += txt(x, below ? Y(v) + 19 : Y(v) - 10, label, { size: 11.5, anchor: 'middle', fill: 'var(--qf-ink)' });
       }));
     }
     if (spec.xLabel) s += txt(left + plotW / 2, H - 6, spec.xLabel, { size: small, anchor: 'middle' });
