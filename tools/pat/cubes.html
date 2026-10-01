@@ -118,6 +118,8 @@ function lvCfg(){
   if(LEVEL===3) return {W:3+ri(2), D:3, hlo:1, hhi:4, tmin:12, tmax:20};
   return {W:3+ri(2), D:2+ri(2), hlo:0, hhi:4, tmin:8, tmax:12};
 }
+function rayHitsBox(p,d,b){var t0=1e-6,t1=Infinity;for(var k=0;k<3;k++){var a=(b[k]-p[k])/d[k],c=(b[k]+1-p[k])/d[k];if(a>c){var t=a;a=c;c=t}t0=Math.max(t0,a);t1=Math.min(t1,c);if(t0>=t1-1e-9)return false}return true}
+function topVis(cubes,c){var n=6,v=0;for(var i=0;i<n;i++)for(var j=0;j<n;j++){var p=[c[0]+(i+.5)/n,c[1]+(j+.5)/n,c[2]+1],hit=false;for(var k=0;k<cubes.length;k++){if(cubes[k]!==c&&rayHitsBox(p,[1,1,1],cubes[k])){hit=true;break}}if(!hit)v++}return v/(n*n)}
 function gen(){
   rng=mulberry32(seed);
   for(var att=0;att<80;att++){
@@ -135,6 +137,10 @@ function gen(){
       if(!has(x,y,z+1))n++; return n;};
     // sweep order: bottom to top, front to back (y desc = front first), left to right (x asc)
     cubes.sort(function(a,b){return a[2]-b[2] || b[1]-a[1] || a[0]-b[0]});
+    // DAT rule (audit 2026-09-30): hidden cubes only where they hold up a visible one.
+    // Every column top must show >= 25% of its top face along the view (1,1,1).
+    var topsOk=cubes.every(function(c){ if(has(c[0],c[1],c[2]+1))return true; return topVis(cubes,c)>=0.25; });
+    if(!topsOk)continue;
     var counts=cubes.map(painted), hist={};
     counts.forEach(function(n){hist[n]=(hist[n]||0)+1});
     // question: pick n with answer 1..5

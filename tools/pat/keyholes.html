@@ -730,6 +730,70 @@ function makeCandidate(rng, name, sils, cfg, mag, key) {
   return null;
 }
 
+/* Outline evidence, per silhouette axis (0 = along x / end, 1 = along y /
+   front, 2 = along z / top). Counts outline cells whose state the pictorial
+   view cannot support. View direction matches renderObject: (1, 1, 1.087). */
+function outlineEvidence(S) {
+  const N = S.N, d = [1, 1, 1.087];
+  const occ = (x, y, z) => (x < 0 || y < 0 || z < 0 || x >= N || y >= N || z >= N) ? 0 : S.d[idx(S, x, y, z)];
+  const blocked = (p) => {
+    for (let t = 0.04; t < 3 * N; t += 0.04) {
+      const ix = Math.floor(p[0] + d[0] * t), iy = Math.floor(p[1] + d[1] * t), iz = Math.floor(p[2] + d[2] * t);
+      if (ix >= N || iy >= N || iz >= N) return false;
+      if (occ(ix, iy, iz)) return true;
+    }
+    return false;
+  };
+  const S3 = [0.2, 0.5, 0.8];
+  const mE = new Map(), mF = new Map(), mH = new Map();
+  const emptyVisible = (x, y, z) => {
+    const k = x + ',' + y + ',' + z; if (mE.has(k)) return mE.get(k);
+    let v = false;
+    outer: for (const a of S3) for (const b of S3) for (const c of S3) if (!blocked([x + a, y + b, z + c])) { v = true; break outer; }
+    mE.set(k, v); return v;
+  };
+  const hiddenVoid = (x, y, z) => {               // empty AND every sample ray blocked
+    const k = x + ',' + y + ',' + z; if (mH.has(k)) return mH.get(k);
+    const v = !occ(x, y, z) && !emptyVisible(x, y, z);
+    mH.set(k, v); return v;
+  };
+  const solidVisible = (x, y, z) => {
+    const k = x + ',' + y + ',' + z; if (mF.has(k)) return mF.get(k);
+    let v = false;
+    outer: for (const f of [[1, 0, 0], [0, 1, 0], [0, 0, 1]]) {
+      if (occ(x + f[0], y + f[1], z + f[2])) continue;
+      for (const a of S3) for (const b of S3) {
+        const p = f[0] ? [x + 1 + 1e-3, y + a, z + b] : f[1] ? [x + a, y + 1 + 1e-3, z + b] : [x + a, y + b, z + 1 + 1e-3];
+        if (!blocked(p)) { v = true; break outer; }
+      }
+    }
+    mF.set(k, v); return v;
+  };
+  // object bounding box (hidden voids only count inside it)
+  let bb = [N, N, N, -1, -1, -1];
+  for (let x = 0; x < N; x++) for (let y = 0; y < N; y++) for (let z = 0; z < N; z++) if (occ(x, y, z)) { bb = [Math.min(bb[0], x), Math.min(bb[1], y), Math.min(bb[2], z), Math.max(bb[3], x), Math.max(bb[4], y), Math.max(bb[5], z)]; }
+  const inBB = (c) => c[0] >= bb[0] && c[1] >= bb[1] && c[2] >= bb[2] && c[0] <= bb[3] && c[1] <= bb[4] && c[2] <= bb[5];
+  const counts = [];
+  for (let a = 0; a < 3; a++) {
+    const line = (i, j) => { const arr = []; for (let t = 0; t < N; t++) arr.push(a === 0 ? [t, i, j] : a === 1 ? [i, t, j] : [i, j, t]); return arr; };
+    const fill = [];
+    for (let i = 0; i < N; i++) { fill.push([]); for (let j = 0; j < N; j++) fill[i].push(line(i, j).some((c) => occ(c[0], c[1], c[2]))); }
+    const F = (i, j) => (i >= 0 && j >= 0 && i < N && j < N) ? fill[i][j] : false;
+    let n = 0;
+    for (let i = 0; i < N; i++) for (let j = 0; j < N; j++) {
+      const nb = [F(i - 1, j), F(i + 1, j), F(i, j - 1), F(i, j + 1)];
+      if (!(fill[i][j] ? nb.some((v) => !v) : nb.some((v) => v))) continue;
+      const L = line(i, j);
+      if (!fill[i][j]) {
+        if (!L.some((c) => inBB(c) && hiddenVoid(c[0], c[1], c[2]))) continue;
+        if (!L.some((c) => !occ(c[0], c[1], c[2]) && !hiddenVoid(c[0], c[1], c[2]) && inBB(c) && emptyVisible(c[0], c[1], c[2]))) n++;
+      } else if (!L.some((c) => occ(c[0], c[1], c[2]) && solidVisible(c[0], c[1], c[2]))) n++;
+    }
+    counts.push(n);
+  }
+  return counts;
+}
+
 function buildItem(seed, difficulty) {
   const cfg = DIFFICULTY[difficulty] || DIFFICULTY.medium;
   const rng = makeRng(seed);
@@ -747,7 +811,11 @@ function buildItem(seed, difficulty) {
     if (sils.some(s => area(s) === s.length * s[0].length)) continue;
 
     const truth = new Set(cans);
-    const answerAxis = ri(rng, 3);
+    // audit 2026-09-30: the keyed outline must be fully readable from the drawing
+    const ev = outlineEvidence(S);
+    const readable = [0, 1, 2].filter((ax) => ev[ax] === 0);
+    if (!readable.length) continue;
+    const answerAxis = readable[ri(rng, readable.length)];
     const answer = sils[answerAxis];
     const keyArea = area(answer);
     const used = new Set([canonical(answer)]);
