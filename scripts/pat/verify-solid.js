@@ -61,19 +61,25 @@ function crossings(p, o, dir, out) {
       A = dir[i] ** 2 + dir[j] ** 2 - g * g; B = 2 * (qu * dir[i] + qv * dir[j] - e * g); Cc = qu * qu + qv * qv - e * e;
       key = 'K' + p.ax + ',' + [p.c[0], p.c[1], p.r0, p.r1, p.s0, p.s1].map(rr6).join(',');
     }
-    if (Math.abs(A) < 1e-14) { if (Math.abs(B) > 1e-14) out.push([-Cc / B, key]); }
-    else { const D = B * B - 4 * A * Cc; if (D >= 0) { const s = Math.sqrt(D); out.push([(-B - s) / (2 * A), key], [(-B + s) / (2 * A), key]); } }
+    const nrm = (t) => {
+      const q = [o[0] + dir[0] * t, o[1] + dir[1] * t, o[2] + dir[2] * t], n = [0, 0, 0];
+      n[i] = q[i] - p.c[0]; n[j] = q[j] - p.c[1];
+      if (p.t === 'cone') n[p.ax] = -(p.r1 - p.r0) / (p.s1 - p.s0) * Math.hypot(n[i], n[j]);
+      const L = Math.hypot(n[0], n[1], n[2]) || 1; return n.map((x) => x / L);
+    };
+    if (Math.abs(A) < 1e-14) { if (Math.abs(B) > 1e-14) out.push([-Cc / B, key, nrm(-Cc / B)]); }
+    else { const D = B * B - 4 * A * Cc; if (D >= 0) { const s = Math.sqrt(D); [(-B - s) / (2 * A), (-B + s) / (2 * A)].forEach((t) => out.push([t, key, nrm(t)])); } }
   }
-  planes.forEach(([n, d]) => { const nd = d3(n, dir); if (Math.abs(nd) > 1e-13) out.push([(d - d3(n, o)) / nd, vPlaneKey(n, d)]); });
+  planes.forEach(([n, d]) => { const nd = d3(n, dir); if (Math.abs(nd) > 1e-13) { const L = Math.hypot(n[0], n[1], n[2]); out.push([(d - d3(n, o)) / nd, vPlaneKey(n, d), n.map((x) => x / L)]); } });
 }
 function primsOf(n, out = []) { if (n.t) out.push(n); else n.a.forEach((k) => primsOf(k, out)); return out; }
 /* ordered surface layers along the ray, from the viewer (high t) inward */
-function vLayers(node, prims, o, dir) {
+function vLayers(node, prims, o, dir, full) {
   const cs = [];
   prims.forEach((p) => crossings(p, o, dir, cs));
   cs.sort((a, b) => a[0] - b[0] || (a[1] < b[1] ? -1 : 1));
   const ts = [];
-  cs.forEach((c) => { const L = ts[ts.length - 1]; if (L && c[0] - L[0] < 1e-9) { if (c[1] < L[1]) L[1] = c[1]; } else ts.push(c.slice()); });
+  cs.forEach((c) => { const L = ts[ts.length - 1]; if (L && c[0] - L[0] < 1e-9) { if (c[1] < L[1]) { L[1] = c[1]; L[2] = c[2]; } } else ts.push(c.slice()); });
   const at = (t) => [o[0] + dir[0] * t, o[1] + dir[1] * t, o[2] + dir[2] * t];
   const state = [];
   for (let k = 0; k <= ts.length; k++) {
@@ -81,7 +87,7 @@ function vLayers(node, prims, o, dir) {
     state.push(csgInside(node, at(t)));
   }
   const keys = [];
-  for (let k = ts.length - 1; k >= 0; k--) if (state[k] !== state[k + 1]) keys.push(ts[k][1]);
+  for (let k = ts.length - 1; k >= 0; k--) if (state[k] !== state[k + 1]) keys.push(full ? ts[k] : ts[k][1]);
   return keys;
 }
 
@@ -318,4 +324,185 @@ function checkTfeMachined(it, opt = {}) {
   return p;
 }
 
-module.exports = { csgInside, vLayers, vLineMap, vVectorMap, vDiff, vEnds, vKey, vGrid, primsOf, famMembers, famSolid, famWindow, famTable, checkTfeMachined, VVIEW };
+
+/* ---------------- machined KEYHOLES ---------------- */
+const ISOV = (() => { const d = [1, 1, 1 / 0.92], L = Math.hypot(...d); return { u: [0.866, -0.866, 0], v: [0.5, 0.5, -0.92], d: d.map((x) => x / L) }; })();
+function solve3(rows, rhs) {
+  const [a, b, c] = rows, det = d3(a, [b[1] * c[2] - b[2] * c[1], b[2] * c[0] - b[0] * c[2], b[0] * c[1] - b[1] * c[0]]);
+  const col = (k) => { const m = rows.map((r, i) => r.map((x, j) => (j === k ? rhs[i] : x))); return d3(m[0], [m[1][1] * m[2][2] - m[1][2] * m[2][1], m[1][2] * m[2][0] - m[1][0] * m[2][2], m[1][0] * m[2][1] - m[1][1] * m[2][0]]) / det; };
+  return [col(0), col(1), col(2)];
+}
+/* line map in the pictorial direction, visible lines only */
+function vIsoMap(node, win, R) {
+  const G = vGrid(win, R), prims = primsOf(node), sig = [];
+  for (let i = 0; i < G.nu; i++) for (let j = 0; j < G.nv; j++) {
+    const o = solve3([ISOV.u, ISOV.v, ISOV.d], [G.u(i), G.v(j), 0]);
+    sig.push(vLayers(node, prims, o, ISOV.d, true));
+  }
+  const cmp = (a, b) => {
+    if (!a.length || !b.length) return a.length === b.length ? 0 : 1;
+    const A = a[0], B = b[0];
+    if (A[1] === B[1]) return 0;
+    if (!A[2] || !B[2]) return 1;
+    const cosang = d3(A[2], B[2]);
+    return cosang < Math.cos(10 * Math.PI / 180) || Math.abs(A[0] - B[0]) > 0.2 ? 1 : 0;
+  };
+  const H = new Uint8Array((G.nu - 1) * G.nv), Vv = new Uint8Array(G.nu * (G.nv - 1));
+  for (let i = 0; i + 1 < G.nu; i++) for (let j = 0; j < G.nv; j++) H[i * G.nv + j] = cmp(sig[i * G.nv + j], sig[(i + 1) * G.nv + j]);
+  for (let i = 0; i < G.nu; i++) for (let j = 0; j + 1 < G.nv; j++) Vv[i * (G.nv - 1) + j] = cmp(sig[i * G.nv + j], sig[i * G.nv + j + 1]);
+  return { G, H, V: Vv };
+}
+/* lines present in one map with no line of the other map within tol (both directions) */
+function nearMiss(A, B, tol) {
+  const G = A.G, pos = (arr, horiz) => { const out = []; for (let k = 0; k < arr.length; k++) if (arr[k]) { if (horiz) { const i = Math.floor(k / G.nv), j = k % G.nv; out.push([(G.u(i) + G.u(i + 1)) / 2, G.v(j)]); } else { const i = Math.floor(k / (G.nv - 1)), j = k % (G.nv - 1); out.push([G.u(i), (G.v(j) + G.v(j + 1)) / 2]); } } return out; };
+  const a = pos(A.H, true).concat(pos(A.V, false)), b = pos(B.H, true).concat(pos(B.V, false));
+  const cell = (q) => Math.floor(q[0] / tol) + ',' + Math.floor(q[1] / tol), idx = (pts) => { const m = {}; pts.forEach((q) => { (m[cell(q)] = m[cell(q)] || []).push(q); }); return m; };
+  const ia = idx(a), ib = idx(b);
+  const has = (m, q) => { const cx = Math.floor(q[0] / tol), cy = Math.floor(q[1] / tol); for (let dx = -1; dx <= 1; dx++) for (let dy = -1; dy <= 1; dy++) for (const r of m[(cx + dx) + ',' + (cy + dy)] || []) if (Math.hypot(r[0] - q[0], r[1] - q[1]) <= tol) return true; return false; };
+  return a.filter((q) => !has(ib, q)).length + b.filter((q) => !has(ia, q)).length;
+}
+/* exact extent of the solid along each axis (first entry / last exit over a ray grid) */
+function vExtent(node) {
+  const prims = primsOf(node), lo = [1e9, 1e9, 1e9], hi = [-1e9, -1e9, -1e9];
+  for (let ax = 0; ax < 3; ax++) {
+    const i = (ax + 1) % 3, j = (ax + 2) % 3, d = [0, 0, 0]; d[ax] = 1;
+    // first entry and last exit of the ray through (u, v) along the axis
+    const span = (u, v) => {
+      const o = [0, 0, 0]; o[i] = u; o[j] = v; o[ax] = -50;
+      const cs = []; prims.forEach((p) => crossings(p, o, d, cs));
+      cs.sort((a, b) => a[0] - b[0]);
+      let f = null, l = null;
+      for (let k = 0; k + 1 < cs.length; k++) {
+        const t0 = cs[k][0], t1 = cs[k + 1][0];
+        if (t1 - t0 > 1e-9 && csgInside(node, [o[0] + d[0] * (t0 + t1) / 2, o[1] + d[1] * (t0 + t1) / 2, o[2] + d[2] * (t0 + t1) / 2])) { if (f === null) f = t0 - 50; l = t1 - 50; }
+      }
+      return f === null ? null : [f, l];
+    };
+    // coarse grid, then zoom in around the best ray (finds sharp tips exactly)
+    for (const which of [0, 1]) {
+      let best = null, bu = 0, bv = 0, step = 0.125;
+      for (let u = -0.5 + 0.0613; u < 7.5; u += step) for (let v = -0.5 + 0.0591; v < 7.5; v += step) {
+        const sp = span(u, v); if (!sp) continue;
+        const val = which ? sp[1] : -sp[0];
+        if (best === null || val > best) { best = val; bu = u; bv = v; }
+      }
+      for (let it = 0; it < 14; it++) {
+        const s0 = step; step /= 4; let nb = best, nu = bu, nv = bv;
+        for (let a = -4; a <= 4; a++) for (let b = -4; b <= 4; b++) {
+          const sp = span(bu + a * step, bv + b * step); if (!sp) continue;
+          const val = which ? sp[1] : -sp[0];
+          if (val > nb) { nb = val; nu = bu + a * step; nv = bv + b * step; }
+        }
+        best = nb; bu = nu; bv = nv; if (s0 < 1e-7) break;
+      }
+      if (which) hi[ax] = best; else lo[ax] = -best;
+    }
+  }
+  return { lo, hi };
+}
+/* silhouette along axis a, as a sampler in the opening's frame (u right, v down, origin top-left) */
+function vSilhouette(node, a, ext) {
+  const V = [VVIEW.end, VVIEW.front, VVIEW.top][a], prims = primsOf(node);
+  const ui = V.u.indexOf(1), vi = V.v.indexOf(1);
+  const w = ext.hi[ui] - ext.lo[ui], h = ext.hi[vi] - ext.lo[vi];
+  const hit = (u, v) => {        // u from the left, v down from the top
+    const o = [0, 0, 0]; o[ui] = ext.lo[ui] + u; o[vi] = ext.hi[vi] - v; o[a] = -50;
+    const d = [0, 0, 0]; d[a] = 1;
+    return vLayers(node, prims, o, d).length > 0;
+  };
+  return { w, h, hit };
+}
+function polyIn(loops, x, y) {
+  let wn = 0;
+  for (const L of loops) for (let i = 0; i < L.length; i++) {
+    const a = L[i], b = L[(i + 1) % L.length];
+    if (a[1] <= y) { if (b[1] > y && (b[0] - a[0]) * (y - a[1]) - (x - a[0]) * (b[1] - a[1]) > 0) wn++; }
+    else if (b[1] <= y && (b[0] - a[0]) * (y - a[1]) - (x - a[0]) * (b[1] - a[1]) < 0) wn--;
+  }
+  return wn !== 0;
+}
+function polyDist(loops, x, y) {
+  let best = 1e9;
+  for (const L of loops) for (let i = 0; i < L.length; i++) {
+    const a = L[i], b = L[(i + 1) % L.length], dx = b[0] - a[0], dy = b[1] - a[1], l2 = dx * dx + dy * dy;
+    const t = l2 ? Math.max(0, Math.min(1, ((x - a[0]) * dx + (y - a[1]) * dy) / l2)) : 0;
+    best = Math.min(best, Math.hypot(a[0] + dx * t - x, a[1] + dy * t - y));
+  }
+  return best;
+}
+/* the 8 turns/flips of an opening, each normalized to its own box at the opening's scale */
+function vD4(loops, scale) {
+  const out = [];
+  for (let r = 0; r < 4; r++) for (const f of [false, true]) {
+    let L = loops.map((P) => P.map((q) => [q[0] * scale, q[1] * scale]));
+    for (let k = 0; k < r; k++) L = L.map((P) => P.map((q) => [q[1], -q[0]]));
+    if (f) L = L.map((P) => P.map((q) => [-q[0], q[1]]));
+    const xs = L.flat().map((q) => q[0]), ys = L.flat().map((q) => q[1]), x0 = Math.min(...xs), y0 = Math.min(...ys);
+    L = L.map((P) => P.map((q) => [q[0] - x0, q[1] - y0]));
+    out.push({ L, w: Math.max(...xs) - x0, h: Math.max(...ys) - y0 });
+  }
+  return out;
+}
+/* mismatched samples between an opening (any turn/flip) and a true silhouette; Infinity if sizes differ */
+function outlineMismatch(sil, loops, scale) {
+  let best = Infinity;
+  for (const T of vD4(loops, scale)) {
+    if (Math.abs(T.w - sil.w) > 0.03 || Math.abs(T.h - sil.h) > 0.03) continue;
+    let bad = 0;
+    for (let v = 0.0391; v < sil.h; v += 0.0625) for (let u = 0.0313; u < sil.w; u += 0.0625) {
+      if (polyDist(T.L, u, v) < 0.02) continue;
+      if (polyIn(T.L, u, v) !== sil.hit(u, v)) bad++;
+    }
+    best = Math.min(best, bad);
+  }
+  return best;
+}
+function checkKeyholesMachined(it) {
+  const p = [], f = it.figure, sol = f.csg, ext = vExtent(sol);
+  const sils = [0, 1, 2].map((a) => vSilhouette(sol, a, ext));
+  // each opening against each true outline
+  it.options.forEach((o, i) => {
+    const mm = sils.map((s) => outlineMismatch(s, o.loops, o.scale || 1));
+    const best = Math.min(...mm);
+    if (i === it.answer) {
+      if (best !== 0) p.push('keyed opening is not a true outline (' + best + ' samples off)');
+      if (mm[it.meta.keyAxis] !== 0) p.push('meta.keyAxis does not match the key');
+    } else if (best < 8) p.push('distractor ' + i + ' (' + o.trap + ') is within ' + best + ' samples of a true outline');
+    if (o.trap === 'SIZE' && Math.abs((o.scale || 1) - 1) < 0.25) p.push('size trap too close to true size');
+  });
+  // no hidden irregularities: every feature shows a real area in the drawing
+  const feats = [], signs = [];
+  if (sol.op === 'd') { if (sol.a[0].op === 'u') sol.a[0].a.slice(1).forEach((x) => { feats.push(x); signs.push(-1); }); sol.a.slice(1).forEach((x) => { feats.push(x); signs.push(1); }); }
+  else if (sol.op === 'u') sol.a.slice(1).forEach((x) => { feats.push(x); signs.push(-1); });
+  const corners = [];
+  for (const x of [ext.lo[0], ext.hi[0]]) for (const y of [ext.lo[1], ext.hi[1]]) for (const z of [ext.lo[2], ext.hi[2]]) corners.push([d3([x, y, z], ISOV.u), d3([x, y, z], ISOV.v)]);
+  const win = [Math.min(...corners.map((c) => c[0])) - 0.2, Math.min(...corners.map((c) => c[1])) - 0.2, Math.max(...corners.map((c) => c[0])) + 0.2, Math.max(...corners.map((c) => c[1])) + 0.2];
+  const prims = primsOf(sol), counts = feats.map(() => 0);
+  for (let u = win[0] + 0.043; u < win[2]; u += 0.09) for (let v = win[1] + 0.037; v < win[3]; v += 0.09) {
+    const o = solve3([ISOV.u, ISOV.v, ISOV.d], [u, v, 0]);
+    const cs = []; prims.forEach((q) => crossings(q, o, ISOV.d, cs));
+    cs.sort((a, b) => b[0] - a[0]);
+    const at = (t) => [o[0] + ISOV.d[0] * t, o[1] + ISOV.d[1] * t, o[2] + ISOV.d[2] * t];
+    let tHit = null;
+    for (let k = 0; k + 1 < cs.length; k++) if (cs[k][0] - cs[k + 1][0] > 1e-9 && csgInside(sol, at((cs[k][0] + cs[k + 1][0]) / 2))) { tHit = cs[k][0]; break; }
+    if (tHit === null) continue;
+    feats.forEach((g, i) => { if (csgInside(g, at(tHit + 2e-3 * signs[i]))) counts[i]++; });
+  }
+  counts.forEach((n, i) => { if (n < 20) p.push('feature ' + i + ' barely shows in the drawing (' + n + ' samples)'); });
+  // the drawing itself shows the object: visible lines match an iso raster
+  const pts = f.lines.flatMap((q) => (q.k === 'L' ? [q.a, q.b] : q.k === 'P' ? q.pts : [[q.c[0] - q.r, q.c[1] - q.r], [q.c[0] + q.r, q.c[1] + q.r]]));
+  const dw = [Math.min(...pts.map((q) => q[0])) - 0.3, Math.min(...pts.map((q) => q[1])) - 0.3, Math.max(...pts.map((q) => q[0])) + 0.3, Math.max(...pts.map((q) => q[1])) + 0.3];
+  const M = vIsoMap(sol, dw, 16), VM = vVectorMap(f.lines.map((q) => Object.assign({}, q, { dash: false })), M.G);
+  const dn = nearMiss(M, VM, 0.075);
+  if (dn) p.push('pictorial drawing differs from the solid in ' + dn + ' places');
+  const cans = it.options.map((o) => o);
+  for (let a = 0; a < cans.length; a++) for (let b = a + 1; b < cans.length; b++) {
+    const A = vD4(cans[a].loops, cans[a].scale || 1)[0];
+    const silA = { w: A.w, h: A.h, hit: (u, v) => polyIn(A.L, u, v) };
+    if (outlineMismatch(silA, cans[b].loops, cans[b].scale || 1) < 8) p.push('options ' + a + ' and ' + b + ' are the same opening');
+  }
+  if (it.options.length !== 5) p.push('keyholes must have 5 choices');
+  return p;
+}
+
+module.exports = { checkKeyholesMachined, vExtent, vSilhouette, outlineMismatch, vIsoMap, csgInside, vLayers, vLineMap, vVectorMap, vDiff, vEnds, vKey, vGrid, primsOf, famMembers, famSolid, famWindow, famTable, checkTfeMachined, VVIEW };
