@@ -785,7 +785,7 @@
     state: function () { return S; },
     view: function () { return view; },
     start: start,
-    answer: function (i) { S.answers[cur().qid] = i; S.revealed[cur().qid] = true; renderTest(); },
+    answer: function (i) { S.answers[cur().qid] = i; S.revealed[cur().qid] = true; syncPick(); renderTest(); },
     go: goQ,
     finish: finish,
     review: function (filter) { openReview(Store.attempt(S.id) || S, filter); },

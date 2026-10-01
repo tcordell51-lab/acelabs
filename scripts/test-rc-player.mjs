@@ -199,6 +199,7 @@ async function run(width, height) {
 
     // light theme renders
     await ev(`document.getElementById('themeBtn').click()`);
+    await sleep(600); // let the color transitions settle before the shot
     const theme = await ev(`document.documentElement.getAttribute('data-theme')`);
     ok(theme === 'light', 'theme toggles to the light page');
     const sLight = await shot(`rc-light-${width}`);

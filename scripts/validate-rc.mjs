@@ -26,7 +26,7 @@ export const TYPES = {
 };
 const ORIGINAL_MIN = { detail: 5, inference: 2, mainidea: 1, function: 1, except: 1, tone: 1, application: 1, vocab: 1 };
 
-const BAD_CHARS = /[—–]/; // em dash, en dash
+const BAD_CHARS = /[\u2014\u2013]/; // em dash, en dash
 const EMOJI = /\p{Extended_Pictographic}/u;
 export const wordCount = (paras) => paras.flat().join(' ').trim().split(/\s+/).filter(Boolean).length;
 
