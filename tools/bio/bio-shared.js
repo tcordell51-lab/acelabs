@@ -1122,6 +1122,8 @@ function addAceCard({ q, quickHit, explanation, origin, subject, nodeId, why, im
     }
     return null;
   }
+  // A first visit has no saved state yet, so the deck may not exist.
+  if (!STATE.aceCards) STATE.aceCards = [];
   // Dedupe: if a card with same q + origin already exists and isn't mastered, don't duplicate
   const dup = STATE.aceCards.find(c => c.q === q && c.origin === origin && !c.closed);
   if (dup) { dup.lapses = (dup.lapses || 0) + 1; saveState(); flashAcePill(); return dup; }
