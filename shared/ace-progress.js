@@ -89,7 +89,7 @@
   }
   function strip(html, n) {
     var s = String(html == null ? '' : html).replace(/<[^>]*>/g, ' ').replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&')
-      .replace(/&[a-z#0-9]+;/g, ' ').replace(/\s*[—–]\s*/g, ', ').replace(/\s+/g, ' ').trim();
+      .replace(/&[a-z#0-9]+;/g, ' ').replace(/\s*[\u2014\u2013]\s*/g, ', ').replace(/\s+/g, ' ').trim();
     return n && s.length > n ? s.slice(0, n - 1).replace(/\s+\S*$/, '') + '...' : s;
   }
   function ts(v) {

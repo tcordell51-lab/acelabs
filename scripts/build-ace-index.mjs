@@ -32,7 +32,7 @@ const COURSES = {
 };
 
 const read = (rel) => fs.readFileSync(path.join(ROOT, rel), 'utf8');
-const unent = (s) => s.replace(/&amp;/g, '&').replace(/&#39;|&rsquo;/g, "'").replace(/&[a-z]+;/g, ' ').replace(/\s*[—–]\s*/g, ': ');
+const unent = (s) => s.replace(/&amp;/g, '&').replace(/&#39;|&rsquo;/g, "'").replace(/&[a-z]+;/g, ' ').replace(/\s*[\u2014\u2013]\s*/g, ': ');
 
 /* Extra matching words per night, so a concept label from any tool finds its night. */
 const EXTRA = {
