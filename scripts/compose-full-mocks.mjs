@@ -65,7 +65,7 @@ const RC_SECTIONS = ['rc-s15', 'rc-s14', 'rc-s13', 'rc-s12', 'rc-s11', 'rc-s10',
 const patSeed = (n) => 'F' + (20261000 + n);
 
 /* ------------------------------------------------------------------ rules */
-const BAD = /[—–]|\p{Extended_Pictographic}/u;
+const BAD = /[\u2014\u2013]|\p{Extended_Pictographic}/u;
 const DELTA = /δ\s*[+\-−]|delta[ -]?(plus|minus)/i;
 const LETTER_REF = /\b(?:[Cc]hoices?|[Oo]ptions?|[Aa]nswers?|[Ll]etters?)\s+[A-E]\b|\([A-E]\)|\b[A-E] (?:and|or) [A-E]\b|\b[A-E] through [A-E]\b/;
 const STRIPPED_DEGREE = /\b[1234] (?:cation|carbocation|carbon|alcohol|amine|halide|radical|chloride|bromide|alkyl)\b/;
