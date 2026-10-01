@@ -79,6 +79,14 @@ for (const form of tests) {
       const f = fixes.find((x) => x.id === q.id && x.files.includes('shared/dat-mock-tests.js'));
       if (f) { applyFix(q, f); report.fixed.push(q.id); }
     }
+    // Drawn structures on only some choices mark those choices out (often the key). Unless every
+    // choice has a drawing, the choices are shown as text only.
+    for (const q of list) {
+      if (Array.isArray(q.opts_smiles) && q.opts_smiles.some(Boolean) && !(q.opts_smiles.length >= q.opts.length && q.opts.every((_, i) => q.opts_smiles[i]))) {
+        q.opts_smiles = q.opts.map(() => null);
+        report.drawingsCleared = (report.drawingsCleared || 0) + 1;
+      }
+    }
     const plan = planLetters(list.map((q) => ({ id: q.id, n: q.opts.length, key: q.correct, fixed: isOrderBound(q.opts) })));
     list.forEach((q, i) => {
       if (isOrderBound(q.opts)) { if (plan[i] !== q.correct) report.unmoved.push(q.id); return; }
@@ -121,6 +129,7 @@ for (const file of GAME_FILES) {
 }
 
 console.log(`practice tests: ${report.edited} items rewritten (${report.fifth} given a fifth choice), ${report.moved} keys moved, ${report.letterRefs} letter references in explanations remapped`);
+if (report.drawingsCleared) console.log(`${report.drawingsCleared} items had drawings on only some choices; shown as text only now`);
 console.log(`bank: ${synced} items synced from the tests; fixes applied: ${report.fixed.join(', ')}`);
 if (report.unmoved.length) console.log(`left in place (order-bound choices): ${report.unmoved.join(', ')}`);
 if (!CHECK) {
