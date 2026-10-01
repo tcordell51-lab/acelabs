@@ -1,198 +1,28 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Ace PAT Studio — Aperture Trainer (Keyholes)</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --forest:#1E3A2B; --forest-2:#2A5240; --brass:#B08D3F; --brass-lt:#D9BE7E;
-    --cream:#F6F1E4; --cream-2:#EFE8D6; --ink:#16241C; --muted:#6E7A70;
-    --panel:#BFBFBF; --panel-2:#D2D2D2; --ok:#2F7D52; --bad:#A8342B;
-  }
-  *{box-sizing:border-box}
-  body{margin:0;background:var(--cream);color:var(--ink);
-    font-family:'DM Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
-    -webkit-font-smoothing:antialiased}
-  h1,h2,h3{font-family:'Playfair Display',Georgia,'Times New Roman',serif;font-weight:700;margin:0}
-  header{background:var(--forest);color:var(--cream);padding:18px 24px;
-    display:flex;align-items:baseline;gap:16px;flex-wrap:wrap;border-bottom:3px solid var(--brass)}
-  header h1{font-size:22px;letter-spacing:.2px}
-  header .tag{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--brass-lt)}
-  header .spacer{flex:1}
-  header .seed{font-size:12px;color:#9FB3A6;font-variant-numeric:tabular-nums}
-  .wrap{max-width:1280px;margin:0 auto;padding:20px 24px 60px}
+/*
+  pat-keyholes.js : Keyholes / apertures (PAT questions 1-15).
 
-  .bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:16px}
-  .bar label{font-size:12px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted)}
-  select,button{font:inherit;border-radius:6px;border:1px solid #C6BCA2;background:#fff;
-    padding:8px 12px;cursor:pointer;color:var(--ink)}
-  button.primary{background:var(--forest);color:var(--cream);border-color:var(--forest)}
-  button.primary:hover{background:var(--forest-2)}
-  button.ghost:hover{background:var(--cream-2)}
-  button:disabled{opacity:.45;cursor:default}
-  .pill{margin-left:auto;display:flex;gap:8px;align-items:center}
-  .timer{font-variant-numeric:tabular-nums;font-size:20px;font-weight:600;min-width:66px;text-align:right}
-  .timer.warn{color:var(--bad)}
-  .tgt{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);white-space:nowrap;margin-left:8px}
-  .tgt b{color:var(--brass);font-weight:700}
+  An irregular solid and five openings (A-E). Exactly one opening is the
+  object's outline seen straight along one of its three axes; the object may be
+  turned any way before passing through, so outlines are compared under all
+  eight turns and flips of the square.
 
-  .frame{border:2px solid var(--ink);background:#fff;padding:0;display:flex;overflow-x:auto}
-  .cell{flex:1 0 0;min-width:150px;border-right:1px solid #8d8d8d;position:relative;
-    display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14px 8px 30px}
-  .cell:last-child{border-right:none}
-  .cell.obj{background:#DCDCDC;flex:1.15 0 0}
-  .cell.opt{background:var(--panel);cursor:pointer;transition:background .12s}
-  .cell.opt:hover{background:var(--panel-2)}
-  .cell .lab{position:absolute;bottom:6px;font-family:'Playfair Display',Georgia,serif;
-    font-size:17px;letter-spacing:.06em}
-  .cell.struck svg{opacity:.25}
-  .cell.struck .lab{text-decoration:line-through;opacity:.5}
-  .cell.chosen{outline:3px solid var(--brass);outline-offset:-3px}
-  .cell.right{background:#BEDCC8}
-  .cell.wrong{background:#E4BDB8}
-  .cell .trap{position:absolute;top:6px;left:6px;right:6px;font-size:10px;line-height:1.25;
-    text-transform:uppercase;letter-spacing:.06em;color:#3a3a3a;text-align:center;
-    opacity:0;transition:opacity .2s}
-  .cell.revealed .trap{opacity:1}
-  .hint{font-size:12px;color:var(--muted);margin:10px 2px 0}
+  GEOMETRY CORE: carried over unchanged from the Studio Aperture Trainer
+  (tools/pat/keyholes.html, the golden standard): machined voxel solids, exact
+  orthographic silhouettes, and the seven machine-verified trap families.
 
-  .verdict{margin:16px 0 0;padding:14px 16px;border-radius:8px;border-left:4px solid var(--brass);
-    background:#fff;display:none}
-  .verdict.on{display:block}
-  .verdict h3{font-size:16px;margin-bottom:6px}
-  .verdict p{margin:6px 0 0;font-size:14px;line-height:1.5}
-  .verdict .views{display:flex;gap:18px;margin-top:12px;flex-wrap:wrap;align-items:flex-end}
-  .verdict .views figure{margin:0;text-align:center;display:flex;flex-direction:column;
-    justify-content:flex-end;align-items:center}
-  .verdict .views figcaption{font-size:11px;text-transform:uppercase;letter-spacing:.08em;
-    color:var(--muted);margin-top:4px}
-
-  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:26px}
-  @media(max-width:900px){.grid2{grid-template-columns:1fr}}
-  .card{background:#fff;border:1px solid #E0D8C2;border-radius:10px;padding:16px 18px}
-  .card h2{font-size:17px;margin-bottom:10px}
-  table{width:100%;border-collapse:collapse;font-size:13px}
-  th,td{text-align:left;padding:6px 4px;border-bottom:1px solid #EFE8D6}
-  th{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600}
-  td.num{text-align:right;font-variant-numeric:tabular-nums}
-  .stat{display:flex;gap:22px;flex-wrap:wrap}
-  .stat div{min-width:74px}
-  .stat b{display:block;font-size:24px;font-family:'Playfair Display',Georgia,serif}
-  .stat span{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
-  details summary{cursor:pointer;font-weight:600;font-size:14px}
-  details p, details li{font-size:13px;line-height:1.55}
-  ul{margin:8px 0 0 18px;padding:0}
-  kbd{background:var(--cream-2);border:1px solid #D8CDB2;border-bottom-width:2px;border-radius:4px;
-    padding:1px 5px;font-size:11px;font-family:inherit;color:var(--ink)}
-  .foot{margin-top:26px;font-size:12px;color:var(--muted);line-height:1.6}
-</style>
-</head>
-<body>
-<header>
-  <h1>Aperture Trainer</h1>
-  <span class="tag">AceTheDAT &middot; PAT drilling</span>
-  <span class="spacer"></span>
-  <span class="seed" id="seedTag"></span>
-</header>
-
-<div class="wrap">
-  <div class="bar">
-    <label for="diff">Difficulty</label>
-    <select id="diff">
-      <option value="easy">Easy</option>
-      <option value="medium" selected>Medium</option>
-      <option value="hard">Hard</option>
-      <option value="brutal">Brutal</option>
-    </select>
-    <label for="mode">Mode</label>
-    <select id="mode">
-      <option value="full">Full item (5 options)</option>
-      <option value="final2">Final two (twin-pair drill)</option>
-    </select>
-    <button class="primary" id="next">New item &nbsp;<kbd>N</kbd></button>
-    <button class="ghost" id="reveal">Reveal &nbsp;<kbd>R</kbd></button>
-    <button class="ghost" id="export" disabled>Export log (CSV)</button>
-    <span class="pill">
-      <span class="timer" id="timer">0.0s</span><span class="tgt">aim <b>45s</b></span>
-    </span>
-  </div>
-
-  <div class="frame" id="frame"></div>
-  <p class="hint">Click a panel to answer &middot; <kbd>A</kbd>–<kbd>E</kbd> to select &middot;
-     <kbd>Shift</kbd>+letter to strike a panel out &middot; <kbd>N</kbd> next &middot; <kbd>R</kbd> reveal</p>
-
-  <div class="verdict" id="verdict"></div>
-
-  <div class="grid2">
-    <div class="card">
-      <h2>This session</h2>
-      <div class="stat">
-        <div><b id="sAtt">0</b><span>Attempted</span></div>
-        <div><b id="sCor">0</b><span>Correct</span></div>
-        <div><b id="sPct">—</b><span>Accuracy</span></div>
-        <div><b id="sAvg">—</b><span>Avg time</span></div>
-        <div><b id="sStr">0</b><span>Streak</span></div>
-      </div>
-      <table style="margin-top:14px">
-        <thead><tr><th>Trap type chosen when wrong</th><th class="num">Misses</th></tr></thead>
-        <tbody id="trapTable"><tr><td colspan="2" style="color:#8a8a8a">No misses yet.</td></tr></tbody>
-      </table>
-      <p class="hint">This is your MQL error taxonomy, live. A student who keeps picking
-        <em>dropped feature</em> needs feature-checklist work; one picking <em>wrong scale</em>
-        needs proportion work. Different fixes.</p>
-    </div>
-
-    <div class="card">
-      <h2>The four rules</h2>
-      <ul>
-        <li><b>Rotation is free.</b> Orientation on the page means nothing — turn it any way.</li>
-        <li><b>Mirroring is legal.</b> Flipping the object 180° presents the mirrored outline, so a
-            "backwards" match still counts. Two options that are mirrors of each other are therefore
-            both wrong.</li>
-        <li><b>Interior features don't exist.</b> Holes, slots, grooves, cylinders — if it doesn't
-            touch the perimeter, ignore it. A floating island in an option is an instant kill.</li>
-        <li><b>Scale is disqualifying.</b> Right shape, wrong proportions is still wrong.</li>
-      </ul>
-      <details style="margin-top:12px">
-        <summary>How to drill this for speed</summary>
-        <ul>
-          <li><b>Feature checklist first.</b> Name the object's 3–4 signature features
-              <em>before</em> looking at any option. Eliminate on one missing feature.</li>
-          <li><b>Diff the twins, don't re-scan the object.</b> When two options survive, compare them
-              to <em>each other</em>, find the 2–3 spots they differ, then ask one targeted question
-              of the object.</li>
-          <li><b>Use "Final two" mode.</b> It removes the three easy eliminations so the student only
-              practises the step that actually decides the item.</li>
-          <li><b>Speed ladder.</b> Same difficulty three passes: untimed → 20s → 12s. The point is
-              seeing which step breaks first under compression.</li>
-        </ul>
-      </details>
-    </div>
-  </div>
-
-  <p class="foot">
-    Objects are machined solids — a union of large blocks with slots and through-holes cut from them, sampled on a fine grid. The correct option is a computed
-    orthographic silhouette, so every key is exact. Distractors are built by applying one labelled
-    error pattern and are machine-verified to differ from all three true views under every rotation
-    and reflection — so there is always exactly one valid aperture.
-    Stats are in-memory and reset on reload - use Export log to keep a session. The CSV carries one row per attempt with seed, trap type chosen, and seconds, so it drops straight into a tracker. Seeds are shown so any item can be reproduced.
-  </p>
-</div>
-
-<script>
-/* ============================================================
-   PAT Aperture Item Generator - geometry core (v2)
-
-   Objects are machined-looking solids: a union of a few LARGE boxes
-   with rectangular slots and through-holes subtracted, sampled on a
-   fine grid. Nothing is a unit cube, and rendering fuses coplanar
-   faces so only real geometric edges are drawn.
-   ============================================================ */
-
+  TEST-MODE ADDITIONS (below the core):
+  - Readable key: the keyed outline must be fully supported by what the
+    drawing shows. Every outline cell of the key has visible evidence in the
+    pictorial view (no notch or lump that only hidden material creates).
+  - Near-miss traps are cut from the KEY outline, so the deciding difference
+    is always in a part of the object the student can see.
+  - Same-scale drawing: all five openings are drawn at one common scale (the
+    DAT draws the object and openings to the same scale), which makes the
+    "right shape, wrong size" trap meaningful; it appears in about a third of items.
+*/
+(function (root) {
+'use strict';
+var PAT = root.PAT || (typeof require === 'function' ? require('./pat-core.js') : null);
 /* ---------- deterministic PRNG ---------- */
 function makeRng(seed) {
   let a = seed >>> 0;
@@ -730,70 +560,6 @@ function makeCandidate(rng, name, sils, cfg, mag, key) {
   return null;
 }
 
-/* Outline evidence, per silhouette axis (0 = along x / end, 1 = along y /
-   front, 2 = along z / top). Counts outline cells whose state the pictorial
-   view cannot support. View direction matches renderObject: (1, 1, 1.087). */
-function outlineEvidence(S) {
-  const N = S.N, d = [1, 1, 1.087];
-  const occ = (x, y, z) => (x < 0 || y < 0 || z < 0 || x >= N || y >= N || z >= N) ? 0 : S.d[idx(S, x, y, z)];
-  const blocked = (p) => {
-    for (let t = 0.04; t < 3 * N; t += 0.04) {
-      const ix = Math.floor(p[0] + d[0] * t), iy = Math.floor(p[1] + d[1] * t), iz = Math.floor(p[2] + d[2] * t);
-      if (ix >= N || iy >= N || iz >= N) return false;
-      if (occ(ix, iy, iz)) return true;
-    }
-    return false;
-  };
-  const S3 = [0.2, 0.5, 0.8];
-  const mE = new Map(), mF = new Map(), mH = new Map();
-  const emptyVisible = (x, y, z) => {
-    const k = x + ',' + y + ',' + z; if (mE.has(k)) return mE.get(k);
-    let v = false;
-    outer: for (const a of S3) for (const b of S3) for (const c of S3) if (!blocked([x + a, y + b, z + c])) { v = true; break outer; }
-    mE.set(k, v); return v;
-  };
-  const hiddenVoid = (x, y, z) => {               // empty AND every sample ray blocked
-    const k = x + ',' + y + ',' + z; if (mH.has(k)) return mH.get(k);
-    const v = !occ(x, y, z) && !emptyVisible(x, y, z);
-    mH.set(k, v); return v;
-  };
-  const solidVisible = (x, y, z) => {
-    const k = x + ',' + y + ',' + z; if (mF.has(k)) return mF.get(k);
-    let v = false;
-    outer: for (const f of [[1, 0, 0], [0, 1, 0], [0, 0, 1]]) {
-      if (occ(x + f[0], y + f[1], z + f[2])) continue;
-      for (const a of S3) for (const b of S3) {
-        const p = f[0] ? [x + 1 + 1e-3, y + a, z + b] : f[1] ? [x + a, y + 1 + 1e-3, z + b] : [x + a, y + b, z + 1 + 1e-3];
-        if (!blocked(p)) { v = true; break outer; }
-      }
-    }
-    mF.set(k, v); return v;
-  };
-  // object bounding box (hidden voids only count inside it)
-  let bb = [N, N, N, -1, -1, -1];
-  for (let x = 0; x < N; x++) for (let y = 0; y < N; y++) for (let z = 0; z < N; z++) if (occ(x, y, z)) { bb = [Math.min(bb[0], x), Math.min(bb[1], y), Math.min(bb[2], z), Math.max(bb[3], x), Math.max(bb[4], y), Math.max(bb[5], z)]; }
-  const inBB = (c) => c[0] >= bb[0] && c[1] >= bb[1] && c[2] >= bb[2] && c[0] <= bb[3] && c[1] <= bb[4] && c[2] <= bb[5];
-  const counts = [];
-  for (let a = 0; a < 3; a++) {
-    const line = (i, j) => { const arr = []; for (let t = 0; t < N; t++) arr.push(a === 0 ? [t, i, j] : a === 1 ? [i, t, j] : [i, j, t]); return arr; };
-    const fill = [];
-    for (let i = 0; i < N; i++) { fill.push([]); for (let j = 0; j < N; j++) fill[i].push(line(i, j).some((c) => occ(c[0], c[1], c[2]))); }
-    const F = (i, j) => (i >= 0 && j >= 0 && i < N && j < N) ? fill[i][j] : false;
-    let n = 0;
-    for (let i = 0; i < N; i++) for (let j = 0; j < N; j++) {
-      const nb = [F(i - 1, j), F(i + 1, j), F(i, j - 1), F(i, j + 1)];
-      if (!(fill[i][j] ? nb.some((v) => !v) : nb.some((v) => v))) continue;
-      const L = line(i, j);
-      if (!fill[i][j]) {
-        if (!L.some((c) => inBB(c) && hiddenVoid(c[0], c[1], c[2]))) continue;
-        if (!L.some((c) => !occ(c[0], c[1], c[2]) && !hiddenVoid(c[0], c[1], c[2]) && inBB(c) && emptyVisible(c[0], c[1], c[2]))) n++;
-      } else if (!L.some((c) => occ(c[0], c[1], c[2]) && solidVisible(c[0], c[1], c[2]))) n++;
-    }
-    counts.push(n);
-  }
-  return counts;
-}
-
 function buildItem(seed, difficulty) {
   const cfg = DIFFICULTY[difficulty] || DIFFICULTY.medium;
   const rng = makeRng(seed);
@@ -811,11 +577,7 @@ function buildItem(seed, difficulty) {
     if (sils.some(s => area(s) === s.length * s[0].length)) continue;
 
     const truth = new Set(cans);
-    // audit 2026-09-30: the keyed outline must be fully readable from the drawing
-    const ev = outlineEvidence(S);
-    const readable = [0, 1, 2].filter((ax) => ev[ax] === 0);
-    if (!readable.length) continue;
-    const answerAxis = readable[ri(rng, readable.length)];
+    const answerAxis = ri(rng, 3);
     const answer = sils[answerAxis];
     const keyArea = area(answer);
     const used = new Set([canonical(answer)]);
@@ -893,284 +655,266 @@ function buildItem(seed, difficulty) {
 }
 
 
-</script>
 
-<script>
-/* ============================================================
-   Rendering + UI
-   ============================================================ */
-const LETTERS = ['A','B','C','D','E'];
-const $ = id => document.getElementById(id);
+/* ===================== TEST-MODE ADDITIONS ===================== */
+/* Outline evidence, per silhouette axis (0 = along x / end, 1 = along y /
+   front, 2 = along z / top). Counts outline cells whose state the pictorial
+   view cannot support. View direction matches renderObject: (1, 1, 1.087). */
+function outlineEvidence(S) {
+  const N = S.N, d = [1, 1, 1.087];
+  const occ = (x, y, z) => (x < 0 || y < 0 || z < 0 || x >= N || y >= N || z >= N) ? 0 : S.d[idx(S, x, y, z)];
+  const blocked = (p) => {
+    for (let t = 0.04; t < 3 * N; t += 0.04) {
+      const ix = Math.floor(p[0] + d[0] * t), iy = Math.floor(p[1] + d[1] * t), iz = Math.floor(p[2] + d[2] * t);
+      if (ix >= N || iy >= N || iz >= N) return false;
+      if (occ(ix, iy, iz)) return true;
+    }
+    return false;
+  };
+  const S3 = [0.2, 0.5, 0.8];
+  const mE = new Map(), mF = new Map(), mH = new Map();
+  const emptyVisible = (x, y, z) => {
+    const k = x + ',' + y + ',' + z; if (mE.has(k)) return mE.get(k);
+    let v = false;
+    outer: for (const a of S3) for (const b of S3) for (const c of S3) if (!blocked([x + a, y + b, z + c])) { v = true; break outer; }
+    mE.set(k, v); return v;
+  };
+  const hiddenVoid = (x, y, z) => {               // empty AND every sample ray blocked
+    const k = x + ',' + y + ',' + z; if (mH.has(k)) return mH.get(k);
+    const v = !occ(x, y, z) && !emptyVisible(x, y, z);
+    mH.set(k, v); return v;
+  };
+  const solidVisible = (x, y, z) => {
+    const k = x + ',' + y + ',' + z; if (mF.has(k)) return mF.get(k);
+    let v = false;
+    outer: for (const f of [[1, 0, 0], [0, 1, 0], [0, 0, 1]]) {
+      if (occ(x + f[0], y + f[1], z + f[2])) continue;
+      for (const a of S3) for (const b of S3) {
+        const p = f[0] ? [x + 1 + 1e-3, y + a, z + b] : f[1] ? [x + a, y + 1 + 1e-3, z + b] : [x + a, y + b, z + 1 + 1e-3];
+        if (!blocked(p)) { v = true; break outer; }
+      }
+    }
+    mF.set(k, v); return v;
+  };
+  // object bounding box (hidden voids only count inside it)
+  let bb = [N, N, N, -1, -1, -1];
+  for (let x = 0; x < N; x++) for (let y = 0; y < N; y++) for (let z = 0; z < N; z++) if (occ(x, y, z)) { bb = [Math.min(bb[0], x), Math.min(bb[1], y), Math.min(bb[2], z), Math.max(bb[3], x), Math.max(bb[4], y), Math.max(bb[5], z)]; }
+  const inBB = (c) => c[0] >= bb[0] && c[1] >= bb[1] && c[2] >= bb[2] && c[0] <= bb[3] && c[1] <= bb[4] && c[2] <= bb[5];
+  const counts = [];
+  for (let a = 0; a < 3; a++) {
+    const line = (i, j) => { const arr = []; for (let t = 0; t < N; t++) arr.push(a === 0 ? [t, i, j] : a === 1 ? [i, t, j] : [i, j, t]); return arr; };
+    const fill = [];
+    for (let i = 0; i < N; i++) { fill.push([]); for (let j = 0; j < N; j++) fill[i].push(line(i, j).some((c) => occ(c[0], c[1], c[2]))); }
+    const F = (i, j) => (i >= 0 && j >= 0 && i < N && j < N) ? fill[i][j] : false;
+    let n = 0;
+    for (let i = 0; i < N; i++) for (let j = 0; j < N; j++) {
+      const nb = [F(i - 1, j), F(i + 1, j), F(i, j - 1), F(i, j + 1)];
+      if (!(fill[i][j] ? nb.some((v) => !v) : nb.some((v) => v))) continue;
+      const L = line(i, j);
+      if (!fill[i][j]) {
+        if (!L.some((c) => inBB(c) && hiddenVoid(c[0], c[1], c[2]))) continue;
+        if (!L.some((c) => !occ(c[0], c[1], c[2]) && !hiddenVoid(c[0], c[1], c[2]) && inBB(c) && emptyVisible(c[0], c[1], c[2]))) n++;
+      } else if (!L.some((c) => occ(c[0], c[1], c[2]) && solidVisible(c[0], c[1], c[2]))) n++;
+    }
+    counts.push(n);
+  }
+  return counts;
+}
 
-/* ---------- isometric rendering of a fused solid ----------
-   Coplanar neighbouring faces are NOT outlined, so the result reads as a
-   machined part rather than a heap of unit cubes. An edge is drawn only
-   where the surface genuinely turns. */
+/* symmetry order of an outline under the 8 turns/flips (1, 2, 4 or 8) */
+function symmetryOrder(g) {
+  const base = gridStr(trim(g));
+  return transformsOf(g).filter((t) => gridStr(trim(t)) === base).length;
+}
+
+/* how close an outline is to its own mirror image (best IoU over the four
+   turns of the flipped outline, small shifts allowed). 1 = mirror-symmetric. */
+function mirrorCloseness(g) {
+  const A = trim(g), aR = A.length, aC = A[0].length;
+  let best = 0, cur = flipH(A);
+  for (let r = 0; r < 4; r++) {
+    const B = trim(cur), bR = B.length, bC = B[0].length;
+    for (let dr = -1; dr <= 1 + Math.max(0, aR - bR); dr++) for (let dc = -1; dc <= 1 + Math.max(0, aC - bC); dc++) {
+      let inter = 0, uni = 0;
+      const R = Math.max(aR, bR + dr) + 1, Cc = Math.max(aC, bC + dc) + 1;
+      for (let i = Math.min(0, dr); i < R; i++) for (let j = Math.min(0, dc); j < Cc; j++) {
+        const av = (i >= 0 && j >= 0 && i < aR && j < aC) ? A[i][j] : 0;
+        const bi = i - dr, bj = j - dc;
+        const bv = (bi >= 0 && bj >= 0 && bi < bR && bj < bC) ? B[bi][bj] : 0;
+        if (av && bv) inter++; if (av || bv) uni++;
+      }
+      if (uni && inter / uni > best) best = inter / uni;
+    }
+    cur = rot90(cur);
+  }
+  return best;
+}
+
+const TEST_LEVELS = {
+  medium: DIFFICULTY.medium, hard: DIFFICULTY.hard, brutal: DIFFICULTY.brutal
+};
+
+/* Test-mode item: readable key, near-misses cut from the key, common scale. */
+function generate(seed, difficulty) {
+  const level = difficulty || 'hard';
+  const cfg = TEST_LEVELS[level] || DIFFICULTY.hard;
+  const rng = makeRng(seed);
+  for (let attempt = 0; attempt < 400; attempt++) {
+    let S = genSolid(rng, cfg);
+    if (!S) continue;
+    S = randomlyOrient(rng, S);
+    const sils = [0, 1, 2].map((a) => silhouette(S, a));
+    if (!sils.every((g) => isSaneOutline(g, cfg.minRun))) continue;
+    if (sils.some(hasEnclosedHole)) continue;
+    const cans = sils.map(canonical);
+    if (new Set(cans).size !== 3) continue;
+    if (sils.some((s) => area(s) === s.length * s[0].length)) continue;
+    const ev = outlineEvidence(S);
+    const readable = [0, 1, 2].filter((a) => ev[a] === 0);
+    if (!readable.length) continue;
+    const answerAxis = readable[ri(rng, readable.length)];
+    const answer = sils[answerAxis];
+    const keyArea = area(answer);
+    const truth = new Set(cans);
+    const used = new Set([canonical(answer)]);
+    const useSize = rng() < 0.35;
+    const nSlots = useSize ? 3 : 4;
+    const nSmaller = ri(rng, nSlots + 1);
+    const sides = [];
+    for (let i = 0; i < nSlots; i++) sides.push(i < nSmaller ? -1 : +1);
+    for (let i = sides.length - 1; i > 0; i--) { const j = ri(rng, i + 1); [sides[i], sides[j]] = [sides[j], sides[i]]; }
+    const pool = cfg.pool.slice();
+    for (let i = pool.length - 1; i > 0; i--) { const j = ri(rng, i + 1); [pool[i], pool[j]] = [pool[j], pool[i]]; }
+    const keySils = [answer, answer, answer];              // near-miss traps are cut from the key
+    const chosen = [];
+    let ok = true;
+    for (let slot = 0; slot < nSlots && ok; slot++) {
+      const target = cfg.targets[slot];
+      const side = sides[slot];
+      let best = null, bestErr = Infinity, bestTrap = null, bestIdx = -1;
+      for (let pi = 0; pi < pool.length; pi++) {
+        const name = pool[pi];
+        for (let tries = 0; tries < 15; tries++) {
+          const mag = Math.min(1, (tries + rng() * 0.9) / 15);
+          let cand = makeCandidate(rng, name, keySils, cfg, mag, answer);
+          if (!cand) continue;
+          cand = trim(cand);
+          const wantHole = (name === 'ISLAND');
+          if (hasEnclosedHole(cand) !== wantHole) continue;
+          if (!wantHole && !isSaneOutline(cand, cfg.minRun)) continue;
+          if (wantHole && (area(cand) < 12 || !isConnected(cand))) continue;
+          const cc = canonical(cand);
+          if (truth.has(cc) || used.has(cc)) continue;
+          const a = area(cand);
+          if (a === keyArea) continue;
+          if ((a < keyArea ? -1 : +1) !== side) continue;
+          const iou = bestIoU(answer, cand);
+          if (iou >= 0.995) continue;
+          if (iou > target + 0.06) continue;
+          const err = Math.abs(iou - target);
+          if (err < bestErr) { bestErr = err; best = cand; bestTrap = name; bestIdx = pi; }
+        }
+        if (bestErr < 0.10) break;
+      }
+      if (!best) { ok = false; break; }
+      used.add(canonical(best));
+      pool.splice(bestIdx, 1);
+      chosen.push({ grid: best, trap: bestTrap, scale: 1 });
+    }
+    if (!ok) continue;
+    if (useSize) chosen.push({ grid: answer, trap: 'SIZE', scale: rng() < 0.5 ? 1.32 : 0.74 });
+    const kTurns = ri(rng, 4), kFlip = rng() < 0.5;
+    const options = [{ grid: applyTransform(answer, kTurns, kFlip), correct: true, trap: null, scale: 1 }];
+    for (const c of chosen) {
+      const g = c.trap === 'MIRROR' ? applyTransform(c.grid, kTurns, !kFlip) : randomTransform(rng, c.grid);
+      options.push({ grid: g, correct: false, trap: c.trap, scale: c.scale });
+    }
+    for (let i = options.length - 1; i > 0; i--) { const j = ri(rng, i + 1); [options[i], options[j]] = [options[j], options[i]]; }
+    const answerIndex = options.findIndex((o) => o.correct);
+    return {
+      type: 'keyholes', seed,
+      prompt: 'The object may be turned any way. Which opening would it pass through exactly?',
+      figure: { N: S.N, d: Array.from(S.d) },
+      options: options.map((o) => ({ grid: o.grid, scale: o.scale, trap: o.trap })),
+      answer: answerIndex,
+      meta: { difficulty: level, keyAxis: answerAxis, keySymmetry: symmetryOrder(answer), mirrorCloseness: Math.round(mirrorCloseness(answer) * 100) / 100, traps: options.map((o) => o.trap), evidence: ev }
+    };
+  }
+  throw new Error('keyholes: no item for seed ' + seed);
+}
+
+/* ---------- rendering for the test ---------- */
 const FACE_AXES = [
-  { n:[1,0,0], u:[0,1,0], v:[0,0,1], fill:'#E4DFD2' },   // +x
-  { n:[0,1,0], u:[1,0,0], v:[0,0,1], fill:'#CBC5B4' },   // +y
-  { n:[0,0,1], u:[1,0,0], v:[0,1,0], fill:'#FDFDFB' }    // +z (top)
+  { n: [1, 0, 0], u: [0, 1, 0], v: [0, 0, 1], fill: '#E9E6DE' },
+  { n: [0, 1, 0], u: [1, 0, 0], v: [0, 0, 1], fill: '#C9C5BA' },
+  { n: [0, 0, 1], u: [1, 0, 0], v: [0, 1, 0], fill: '#FFFFFF' }
 ];
-const add3 = (a, b, s) => [a[0]+b[0]*(s||1), a[1]+b[1]*(s||1), a[2]+b[2]*(s||1)];
-
-function renderObject(S, size) {
-  const N = S.N, k = size || 12;
-  const W = k * 0.866, H = k * 0.5, V = k * 0.92;
-  const P = p => [ (p[0]-p[1])*W, (p[0]+p[1])*H - p[2]*V ];
-  const at = (x,y,z) => (x<0||y<0||z<0||x>=N||y>=N||z>=N) ? 0 : S.d[(x*N+y)*N+z];
-
+const add3 = (a, b, s) => [a[0] + b[0] * (s || 1), a[1] + b[1] * (s || 1), a[2] + b[2] * (s || 1)];
+const UNIT = 13;                                    // px per voxel edge, object and openings alike
+function objectSVG(fig) {
+  const N = fig.N, k = UNIT, dd = fig.d;
+  const W = k * 0.866, H = k * 0.5, Vv = k * 0.92;
+  const P = (p) => [(p[0] - p[1]) * W, (p[0] + p[1]) * H - p[2] * Vv];
+  const at = (x, y, z) => (x < 0 || y < 0 || z < 0 || x >= N || y >= N || z >= N) ? 0 : dd[(x * N + y) * N + z];
   const order = [];
-  for (let x=0;x<N;x++) for (let y=0;y<N;y++) for (let z=0;z<N;z++)
-    if (S.d[(x*N+y)*N+z]) order.push([x,y,z]);
-  order.sort((a,b) => (a[0]+a[1]+a[2]) - (b[0]+b[1]+b[2]));
-
-  const quads = [], lines = [];
-  let minX=1e9,maxX=-1e9,minY=1e9,maxY=-1e9;
-  const note = p => { if(p[0]<minX)minX=p[0]; if(p[0]>maxX)maxX=p[0]; if(p[1]<minY)minY=p[1]; if(p[1]>maxY)maxY=p[1]; };
-
+  for (let x = 0; x < N; x++) for (let y = 0; y < N; y++) for (let z = 0; z < N; z++) if (dd[(x * N + y) * N + z]) order.push([x, y, z]);
+  order.sort((a, b) => (a[0] + a[1] + a[2]) - (b[0] + b[1] + b[2]));
+  const items = [];
+  let minX = 1e9, maxX = -1e9, minY = 1e9, maxY = -1e9;
   for (const base of order) {
     for (const F of FACE_AXES) {
       const nb = add3(base, F.n);
-      if (at(nb[0], nb[1], nb[2])) continue;              // face not exposed
-      const P0 = nb;
-      const c = [P0, add3(P0,F.u), add3(add3(P0,F.u),F.v), add3(P0,F.v)].map(P);
-      // inflate a hair around the centroid so coplanar neighbours fuse seamlessly
-      const cx = (c[0][0]+c[1][0]+c[2][0]+c[3][0])/4, cy = (c[0][1]+c[1][1]+c[2][1]+c[3][1])/4;
-      const inf = c.map(p => [cx + (p[0]-cx)*1.03, cy + (p[1]-cy)*1.03]);
-      inf.forEach(note);
-      quads.push({ pts: inf, fill: F.fill, order: quads.length + lines.length });
-
-      // an edge is real unless the surface continues flat across it
-      const flat = t => {
-        const a = add3(base, t), b = add3(a, F.n);
-        return at(a[0],a[1],a[2]) && !at(b[0],b[1],b[2]);
-      };
-      const seg = [];
-      if (!flat(F.u)) seg.push([c[1], c[2]]);
-      if (!flat(add3([0,0,0], F.u, -1))) seg.push([c[3], c[0]]);
-      if (!flat(F.v)) seg.push([c[2], c[3]]);
-      if (!flat(add3([0,0,0], F.v, -1))) seg.push([c[0], c[1]]);
-      for (const s of seg) lines.push({ a:s[0], b:s[1], order: quads.length + lines.length });
+      if (at(nb[0], nb[1], nb[2])) continue;
+      const c = [nb, add3(nb, F.u), add3(add3(nb, F.u), F.v), add3(nb, F.v)].map(P);
+      const cx = (c[0][0] + c[1][0] + c[2][0] + c[3][0]) / 4, cy = (c[0][1] + c[1][1] + c[2][1] + c[3][1]) / 4;
+      const inf = c.map((p) => [cx + (p[0] - cx) * 1.03, cy + (p[1] - cy) * 1.03]);
+      inf.forEach((p) => { minX = Math.min(minX, p[0]); maxX = Math.max(maxX, p[0]); minY = Math.min(minY, p[1]); maxY = Math.max(maxY, p[1]); });
+      items.push({ pts: inf, fill: F.fill });
+      const flat = (t) => { const a = add3(base, t), b = add3(a, F.n); return at(a[0], a[1], a[2]) && !at(b[0], b[1], b[2]); };
+      if (!flat(F.u)) items.push({ a: c[1], b: c[2] });
+      if (!flat(add3([0, 0, 0], F.u, -1))) items.push({ a: c[3], b: c[0] });
+      if (!flat(F.v)) items.push({ a: c[2], b: c[3] });
+      if (!flat(add3([0, 0, 0], F.v, -1))) items.push({ a: c[0], b: c[1] });
     }
   }
-
-  const pad = 10;
-  const w = (maxX-minX)+pad*2, h = (maxY-minY)+pad*2;
-  let svg = `<svg viewBox="${(minX-pad).toFixed(1)} ${(minY-pad).toFixed(1)} ${w.toFixed(1)} ${h.toFixed(1)}" `
-          + `width="100%" style="max-width:270px;max-height:280px" preserveAspectRatio="xMidYMid meet">`;
-  // interleave by draw order so nearer material overpaints farther edges
-  const all = quads.concat(lines).sort((a,b) => a.order - b.order);
-  svg += `<g stroke-linecap="round">`;
-  for (const o of all) {
-    if (o.pts) svg += `<polygon points="${o.pts.map(p=>p[0].toFixed(2)+','+p[1].toFixed(2)).join(' ')}" fill="${o.fill}" stroke="none"/>`;
-    else svg += `<line x1="${o.a[0].toFixed(2)}" y1="${o.a[1].toFixed(2)}" x2="${o.b[0].toFixed(2)}" y2="${o.b[1].toFixed(2)}" stroke="#16241C" stroke-width="1.3"/>`;
+  const pad = 8, w = maxX - minX + pad * 2, h = maxY - minY + pad * 2;
+  let svg = '<svg class="pat-svg" viewBox="' + (minX - pad).toFixed(1) + ' ' + (minY - pad).toFixed(1) + ' ' + w.toFixed(1) + ' ' + h.toFixed(1) + '" style="max-width:' + Math.round(w) + 'px">';
+  for (const o of items) {
+    if (o.pts) svg += '<polygon points="' + o.pts.map((p) => p[0].toFixed(2) + ',' + p[1].toFixed(2)).join(' ') + '" fill="' + o.fill + '"/>';
+    else svg += '<line x1="' + o.a[0].toFixed(2) + '" y1="' + o.a[1].toFixed(2) + '" x2="' + o.b[0].toFixed(2) + '" y2="' + o.b[1].toFixed(2) + '" stroke="#111" stroke-width="1.2" stroke-linecap="round"/>';
   }
-  return svg + '</g></svg>';
+  return svg + '</svg>';
 }
-
-/* ---------- aperture rendering from traced polygons ----------
-   Real polygons with long straight edges - no per-cell seams, and
-   interior islands come out as proper holes via even-odd fill. */
-function renderShape(grid, maxPx) {
-  const rows = grid.length, cols = grid[0].length;
-  const u = 20, w = cols * u, h = rows * u;
-  const cap = maxPx || 130;
-  const scale = Math.min(cap / Math.max(w, h), 2.2);
+/* every opening shares one viewBox, so CSS scaling keeps them at one scale */
+function optionBox(item) {
+  let m = 0;
+  item.options.forEach((o) => { m = Math.max(m, o.grid.length * o.scale, o.grid[0].length * o.scale); });
+  return Math.ceil(m) + 2;
+}
+function openingSVG(grid, scale, box) {
+  const rows = grid.length, cols = grid[0].length, s = scale || 1;
+  const ox = (box - cols * s) / 2, oy = (box - rows * s) / 2;
   const loops = tracePolygons(grid);
-  const d = loops.map(L => 'M' + L.map(p => (p[0]*u) + ' ' + (p[1]*u)).join(' L') + ' Z').join(' ');
-  return `<svg viewBox="-3 -3 ${w+6} ${h+6}" width="${(w*scale).toFixed(1)}" height="${(h*scale).toFixed(1)}">`
-       + `<path d="${d}" fill="#FFFFFF" fill-rule="evenodd" stroke="#16241C" stroke-width="2.6" stroke-linejoin="miter"/></svg>`;
+  const d = loops.map((L) => 'M' + L.map((p) => (ox + p[0] * s).toFixed(3) + ' ' + (oy + p[1] * s).toFixed(3)).join(' L') + ' Z').join(' ');
+  return '<svg class="pat-svg" viewBox="0 0 ' + box + ' ' + box + '" style="max-width:' + (box * UNIT) + 'px"><path d="' + d + '" fill="#fff" fill-rule="evenodd" stroke="#111" stroke-width="' + (0.17).toFixed(2) + '" stroke-linejoin="miter"/></svg>';
+}
+function renderFigure(item) {
+  return '<figure class="pat-panel pat-wide"><div class="pat-paper">' + objectSVG(item.figure) + '</div><figcaption>Object</figcaption></figure>';
+}
+function renderOption(item, i) {
+  const o = item.options[i];
+  return '<div class="pat-paper pat-small pat-hole">' + openingSVG(o.grid, o.scale, optionBox(item)) + '</div>';
+}
+/* review: the three true outlines */
+function trueOutlines(item) {
+  const S = { N: item.figure.N, d: Uint8Array.from(item.figure.d) };
+  return [0, 1, 2].map((a) => silhouette(S, a));
 }
 
-/* ---------- state ---------- */
-const S = {
-  item:null, shown:[], answered:false, revealed:false, chosen:-1,
-  t0:0, ticker:null,
-  att:0, cor:0, streak:0, best:0, times:[], trapMisses:{}, log:[]
+PAT.keyholes = {
+  generate, renderFigure, renderOption, outlineEvidence, symmetryOrder, mirrorCloseness, trueOutlines, openingSVG, objectSVG,
+  TRAPS, _legacy: { buildItem, silhouette, canonical, trim, makeRng, genSolid, randomlyOrient, DIFFICULTY }
 };
-const AXIS_NAME = ['End view (along X)','Front view (along Y)','Top view (along Z)'];
+if (typeof module === 'object' && module.exports) module.exports = PAT;
 
-function newItem() {
-  const diff = $('diff').value;
-  const mode = $('mode').value;
-  let item = null, seed = 0, guard = 0;
-  while (!item && guard++ < 60) {
-    seed = (Math.floor(Math.random() * 4294967295)) >>> 0;
-    item = buildItem(seed, diff);
-  }
-  if (!item) return;
-  S.item = item; S.answered = false; S.revealed = false; S.chosen = -1;
-
-  if (mode === 'final2') {
-    const correct = item.options[item.answerIndex];
-    const rest = item.options.filter(o => !o.correct);
-    // hardest distractor = the one closest in area to the correct answer
-    rest.sort((a,b) => Math.abs(area(a.grid)-area(correct.grid)) - Math.abs(area(b.grid)-area(correct.grid)));
-    S.shown = Math.random() < 0.5 ? [correct, rest[0]] : [rest[0], correct];
-  } else {
-    S.shown = item.options.slice();
-  }
-
-  $('seedTag').textContent = 'seed ' + seed + ' · ' + diff;
-  $('verdict').classList.remove('on');
-  draw();
-  S.t0 = performance.now();
-  clearInterval(S.ticker);
-  S.ticker = setInterval(tick, 100);
-  tick();
-}
-
-function tick() {
-  const s = (performance.now() - S.t0) / 1000;
-  const el = $('timer');
-  el.textContent = s.toFixed(1) + 's';
-  el.classList.toggle('warn', s > 45);
-}
-
-function draw() {
-  const f = $('frame');
-  let html = `<div class="cell obj">${renderObject(S.item.solid, S.item.N >= 13 ? 13 : (S.item.N >= 11 ? 15 : 18))}</div>`;
-  S.shown.forEach((o, i) => {
-    html += `<div class="cell opt" data-i="${i}">
-      <div class="trap"></div>
-      ${renderShape(o.grid, S.shown.length === 2 ? 170 : 128)}
-      <div class="lab">${LETTERS[i]}</div></div>`;
-  });
-  f.innerHTML = html;
-  f.querySelectorAll('.cell.opt').forEach(el => {
-    el.addEventListener('click', ev => {
-      const i = +el.dataset.i;
-      if (ev.shiftKey) { el.classList.toggle('struck'); return; }
-      choose(i);
-    });
-  });
-}
-
-function choose(i) {
-  if (S.answered) return;
-  S.answered = true; S.chosen = i;
-  clearInterval(S.ticker);
-  const secs = (performance.now() - S.t0) / 1000;
-  S.times.push(secs);
-  const right = S.shown[i].correct;
-  S.att++;
-  if (right) { S.cor++; S.streak++; S.best = Math.max(S.best, S.streak); }
-  else {
-    S.streak = 0;
-    const t = S.shown[i].trap;
-    if (t) S.trapMisses[t] = (S.trapMisses[t] || 0) + 1;
-  }
-  const correctOpt = S.shown.find(o => o.correct);
-  S.log.push({
-    n: S.att,
-    seed: S.item.seed,
-    difficulty: S.item.difficulty,
-    mode: $('mode').value,
-    key_letter: LETTERS[S.shown.indexOf(correctOpt)],
-    key_view: AXIS_NAME[correctOpt.axis],
-    chosen_letter: LETTERS[i],
-    correct: right ? 1 : 0,
-    trap_code: right ? '' : S.shown[i].trap,
-    trap_label: right ? '' : (TRAPS[S.shown[i].trap] ? TRAPS[S.shown[i].trap].label : ''),
-    seconds: secs.toFixed(2)
-  });
-  $('export').disabled = false;
-  showAnswer(secs);
-  updateStats();
-}
-
-function showAnswer(secs) {
-  S.revealed = true;
-  const cells = $('frame').querySelectorAll('.cell.opt');
-  S.shown.forEach((o, i) => {
-    const el = cells[i];
-    el.classList.add('revealed');
-    el.classList.toggle('right', o.correct);
-    el.classList.toggle('wrong', !o.correct && i === S.chosen);
-    el.querySelector('.trap').textContent = o.correct ? 'valid aperture' : (TRAPS[o.trap] ? TRAPS[o.trap].label : '');
-    if (i === S.chosen) el.classList.add('chosen');
-  });
-
-  const v = $('verdict');
-  const correctOpt = S.shown.find(o => o.correct);
-  const chosen = S.chosen >= 0 ? S.shown[S.chosen] : null;
-  let h = '';
-  if (chosen && chosen.correct) {
-    h += `<h3 style="color:var(--ok)">Correct${secs ? ' — ' + secs.toFixed(1) + 's' : ''}</h3>`;
-    h += `<p>That outline is the object's <b>${AXIS_NAME[correctOpt.axis].toLowerCase()}</b>.</p>`;
-  } else if (chosen) {
-    h += `<h3 style="color:var(--bad)">Missed — you chose ${TRAPS[chosen.trap].label.toLowerCase()}</h3>`;
-    h += `<p>${TRAPS[chosen.trap].note}</p>`;
-    h += `<p>The valid aperture was <b>${LETTERS[S.shown.indexOf(correctOpt)]}</b>, the object's
-          ${AXIS_NAME[correctOpt.axis].toLowerCase()}.</p>`;
-  } else {
-    h += `<h3>Revealed</h3><p>The valid aperture is <b>${LETTERS[S.shown.indexOf(correctOpt)]}</b> —
-          the object's ${AXIS_NAME[correctOpt.axis].toLowerCase()}.</p>`;
-  }
-  h += `<div class="views">`;
-  S.item.trueSilhouettes.forEach((g, ax) => {
-    h += `<figure>${renderShape(g, 92)}<figcaption>${AXIS_NAME[ax]}</figcaption></figure>`;
-  });
-  h += `</div><p style="color:var(--muted);font-size:12.5px">All three views above are valid apertures
-        for this solid — any rotation or mirror of them would also pass. Every option you did not pick
-        was verified to match none of them.</p>`;
-  v.innerHTML = h;
-  v.classList.add('on');
-}
-
-function updateStats() {
-  $('sAtt').textContent = S.att;
-  $('sCor').textContent = S.cor;
-  $('sPct').textContent = S.att ? Math.round(100 * S.cor / S.att) + '%' : '—';
-  $('sAvg').textContent = S.times.length ? (S.times.reduce((a,b)=>a+b,0)/S.times.length).toFixed(1)+'s' : '—';
-  $('sStr').textContent = S.streak + (S.best > S.streak ? ' (best ' + S.best + ')' : '');
-  const rows = Object.entries(S.trapMisses).sort((a,b) => b[1]-a[1]);
-  $('trapTable').innerHTML = rows.length
-    ? rows.map(([k,v]) => `<tr><td><b>${TRAPS[k].label}</b><br><span style="color:#7d7d7d;font-size:11.5px">${TRAPS[k].note}</span></td><td class="num">${v}</td></tr>`).join('')
-    : '<tr><td colspan="2" style="color:#8a8a8a">No misses yet.</td></tr>';
-}
-
-function exportCsv() {
-  if (!S.log.length) return;
-  const cols = ['n','seed','difficulty','mode','key_letter','key_view','chosen_letter','correct','trap_code','trap_label','seconds'];
-  const esc = v => {
-    const t = String(v == null ? '' : v);
-    return /[",\n]/.test(t) ? '"' + t.replace(/"/g, '""') + '"' : t;
-  };
-  const rows = [cols.join(',')].concat(S.log.map(r => cols.map(c => esc(r[c])).join(',')));
-  const blob = new Blob([rows.join('\n')], { type: 'text/csv;charset=utf-8' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  const stamp = new Date().toISOString().slice(0, 16).replace(/[:T]/g, '-');
-  a.href = url; a.download = 'aperture-log-' + stamp + '.csv';
-  document.body.appendChild(a); a.click(); document.body.removeChild(a);
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
-}
-$('export').addEventListener('click', exportCsv);
-$('next').addEventListener('click', newItem);
-$('reveal').addEventListener('click', () => {
-  if (S.revealed) return;
-  clearInterval(S.ticker); S.answered = true; showAnswer(0);
-});
-$('diff').addEventListener('change', newItem);
-$('mode').addEventListener('change', newItem);
-
-document.addEventListener('keydown', e => {
-  if (e.target.tagName === 'SELECT') return;
-  const k = e.key.toUpperCase();
-  if (k === 'N') { newItem(); return; }
-  if (k === 'R') { if (!S.revealed) { clearInterval(S.ticker); S.answered = true; showAnswer(0); } return; }
-  const idx = LETTERS.indexOf(k);
-  if (idx >= 0 && idx < S.shown.length) {
-    if (e.shiftKey) {
-      const el = $('frame').querySelectorAll('.cell.opt')[idx];
-      if (el) el.classList.toggle('struck');
-    } else choose(idx);
-  }
-});
-
-newItem();
-</script>
-<script src="/shared/acelabs-nav.js" defer></script>
-</body>
-</html>
+})(typeof self !== 'undefined' ? self : globalThis);

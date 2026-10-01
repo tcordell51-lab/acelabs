@@ -172,17 +172,20 @@ function distractors(P){
   cand.push(mirrorSet(P.answer,'h',2));
   cand.push(P.answer.concat(mirrorSet(P.punches,'v',2)).concat([]));
   cand.push(P.answer.slice(1));
+  // one hole nudged a cell (keeps a 5th choice available, as on the DAT)
+  P.answer.forEach(function(p0,ix){ [[1,0],[-1,0],[0,1],[0,-1]].forEach(function(d){
+    cand.push(P.answer.map(function(p,j){return j===ix?[p[0]+d[0],p[1]+d[1]]:p;})); }); });
   var out=[],seen={};seen[correct]=1;
   cand.forEach(function(s){
     var ded={},cl=[];s.forEach(function(p){var k=p[0]+','+p[1];if(!ded[k]&&inPaper(p)){ded[k]=1;cl.push(p)}});
     var k2=keySet(cl);
     if(!seen[k2]&&cl.length>=2){seen[k2]=1;out.push(cl)}
   });
-  while(out.length<3){
+  while(out.length<4){
     var s=P.answer.slice(0, Math.max(2,P.answer.length-1-out.length));
     var k3=keySet(s); if(seen[k3])break; seen[k3]=1; out.push(s);
   }
-  return out.slice(0,3);
+  return out.slice(0,4);
 }
 
 // ---- rendering ----
@@ -324,7 +327,7 @@ function renderCoach(){
   else if(step<=F) m='<span class="who">Coach line</span>Don\'t mark anything yet. Just watch the creases — each one is a <b>line of symmetry</b> you\'ll mirror across on the way back out.';
   else if(step===F+1) m='<span class="who">Coach line</span>Mark the punch on your grid — one mark per punch, exactly where it sits in the folded packet. Say the cell out loud: <b>'+P.punches.map(cellName).join(', ')+'</b>.';
   else if(step<=2*F+1){var u=step-(F+1);var f=P.folds[F-u];m='<span class="who">Coach line</span>Unfold one crease. Ask it: <b>what piece over what line of symmetry?</b> Mirror every mark across the '+creaseLabel(f)+'. The green ones are the mirrors you just added.';}
-  else m='<span class="who">Coach line</span>Now read your grid against the four answers. The grid already IS the answer — you\'re just finding its twin below.';
+  else m='<span class="who">Coach line</span>Now read your grid against the five answers. The grid already IS the answer — you\'re just finding its twin below.';
   c.innerHTML=m;
 }
 function cellName(p){ return 'ABCD'[Math.floor(p[1])] + (Math.floor(p[0])+1); }
@@ -349,7 +352,7 @@ function renderAnswers(){
   var r2=mulberry32(seed+99);
   for(var i=opts.length-1;i>0;i--){var j=Math.floor(r2()*(i+1));var t=opts[i];opts[i]=opts[j];opts[j]=t}
   var html='<div class="choicewrap">';
-  opts.forEach(function(op,i){ html+=miniGrid(op.s, op.ok?'isok':'', 'ABCD'[i]); });
+  opts.forEach(function(op,i){ html+=miniGrid(op.s, op.ok?'isok':'', 'ABCDE'[i]); });
   html+='</div><div class="hint">Click the answer your grid matches.</div>';
   wrap.innerHTML=html;
   answered=false;

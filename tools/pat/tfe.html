@@ -179,7 +179,7 @@ function isoObj(ox,oy,s){
 function ground(){var x,y,z; for(x=0;x<NX;x++)for(y=0;y<NY;y++)if(occ(x,y,0))return true; return false;}
 function connected(){ // all solids reachable from a z=0 solid via 6-neighbourhood
   var seen={},stack=[],x,y,z,tot=0;
-  for(x=0;x<NX;x++)for(y=0;y<NY;y++)for(z=0;z<NZ;z++)if(occ(x,y,z)){tot++; if(z===0)stack.push([x,y,z])}
+  for(x=0;x<NX;x++)for(y=0;y<NY;y++)for(z=0;z<NZ;z++)if(occ(x,y,z)){tot++; if(z===0&&!stack.length)stack.push([x,y,z])} // ONE seed: the solid must be a single piece (audit 2026-09-30)
   var cnt=0; while(stack.length){var c=stack.pop(),k=c.join(','); if(seen[k])continue; if(!occ(c[0],c[1],c[2]))continue; seen[k]=1;cnt++;
     [[1,0,0],[-1,0,0],[0,1,0],[0,-1,0],[0,0,1],[0,0,-1]].forEach(function(d){stack.push([c[0]+d[0],c[1]+d[1],c[2]+d[2]])});
   }

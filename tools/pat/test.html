@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>PAT Full Test</title>
+<meta name="description" content="AceTheDAT full Perceptual Ability Test: 90 questions, six sections, 60 minutes, with a section-by-section review."/>
+<link rel="stylesheet" href="pat-test.css"/>
+</head>
+<body>
+
+<!-- ======================= LANDING ======================= -->
+<section id="landing">
+  <header class="topbar">
+    <span class="brand">AceTheDAT <em>PAT</em></span>
+    <span class="spacer"></span>
+    <a class="back" href="index.html">PAT Studio</a>
+  </header>
+  <div class="wrap">
+    <p class="phone-note"><b>Desktop recommended.</b> The test works on a phone, but PAT figures are small at this size. A laptop or tablet is closer to the real screen.</p>
+    <div class="hero">
+      <div class="rail">
+        <div class="kicker">Full-length Perceptual Ability Test</div>
+        <h1>Ninety questions. Six sections. <em>Sixty minutes.</em></h1>
+        <p class="lede">The same order and timing as test day. Mark questions, jump around with the navigator, and when you finish you get a section-by-section review that shows where the points went and exactly what to drill next.</p>
+        <div class="facts">
+          <div><b>90</b><span>questions</span></div>
+          <div><b>60</b><span>minutes</span></div>
+          <div><b>6 x 15</b><span>sections</span></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="kicker">Section order</div>
+        <ul class="sections-list" id="secList"></ul>
+        <div class="kicker" style="margin-top:16px">How you will move through it</div>
+        <div class="order-toggle" role="group" aria-label="Section order">
+          <button type="button" id="ordStd" aria-pressed="true"><b>Straight through</b><span>Question 1 to 90 in order. The default for most students.</span></button>
+          <button type="button" id="ordThomas" aria-pressed="false"><b>Thomas order</b><span>Start at 31 (angles), run to 90, then one jump back to keyholes and TFE.</span></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="kicker">Choose a test</div>
+    <p class="note" style="margin:6px 0 0">Each numbered test is fixed, so Test 4 is the same Test 4 every time you take it. Every item is generated from real geometry with a computed answer.</p>
+    <div class="tests" id="tests"></div>
+    <div class="fresh">
+      <button class="btn" id="freshBtn" type="button">Start a fresh test</button>
+      <span class="note">A brand-new set of 90. Its code is saved so you can retake it.</span>
+    </div>
+
+    <div class="history" id="history"></div>
+  </div>
+</section>
+
+<!-- ======================= SCRATCH PAD ======================= -->
+<section id="scratch" class="hidden">
+  <header class="topbar">
+    <span class="brand">AceTheDAT <em>PAT</em></span>
+    <span class="spacer"></span>
+    <button class="back btn ghost" id="scratchBack" type="button" style="min-height:0">All tests</button>
+  </header>
+  <div class="wrap">
+    <div class="rail">
+      <div class="kicker" id="scratchKicker">Before the clock starts</div>
+      <h1 style="font-size:clamp(26px,3.6vw,38px);margin:8px 0 10px">Set up your scratch paper first.</h1>
+      <p class="lede">On test day you draw these on the noteboard during the science section, so the PAT starts with everything ready. Do the same now. The 60 minutes do not start until you press the button below.</p>
+    </div>
+    <div class="scratch">
+      <div class="card">
+        <h3>15 grids for hole punching</h3>
+        <p class="note">One 4 by 4 grid per question. Mark the punch, then mirror it across each fold in reverse.</p>
+        <div class="sketch" aria-hidden="true">
+          <svg viewBox="0 0 100 100"><rect x="6" y="6" width="88" height="88" fill="none" stroke="#111" stroke-width="2.4"/><g stroke="#111" stroke-width="1.2"><line x1="28" y1="6" x2="28" y2="94"/><line x1="50" y1="6" x2="50" y2="94"/><line x1="72" y1="6" x2="72" y2="94"/><line x1="6" y1="28" x2="94" y2="28"/><line x1="6" y1="50" x2="94" y2="50"/><line x1="6" y1="72" x2="94" y2="72"/></g><circle cx="39" cy="61" r="6" fill="none" stroke="#111" stroke-width="2"/></svg>
+        </div>
+        <label class="check"><input type="checkbox" id="chkGrids"/> <span>I have 15 grids drawn.</span></label>
+      </div>
+      <div class="card">
+        <h3>7 T-charts for cube counting</h3>
+        <p class="note">Rows 1 to 5 for painted sides. Count bottom to top, front to back, left to right, and tally as you go.</p>
+        <div class="sketch" aria-hidden="true">
+          <svg viewBox="0 0 120 100"><line x1="44" y1="8" x2="44" y2="94" stroke="#111" stroke-width="2"/><line x1="8" y1="22" x2="112" y2="22" stroke="#111" stroke-width="2"/><g font-family="Georgia" font-size="11" fill="#111"><text x="22" y="40">1</text><text x="22" y="54">2</text><text x="22" y="68">3</text><text x="22" y="82">4</text><text x="22" y="94">5</text></g><g stroke="#111" stroke-width="1.6"><line x1="56" y1="31" x2="56" y2="42"/><line x1="62" y1="31" x2="62" y2="42"/><line x1="56" y1="45" x2="56" y2="56"/></g></svg>
+        </div>
+        <label class="check"><input type="checkbox" id="chkCharts"/> <span>I have 7 T-charts drawn.</span></label>
+      </div>
+    </div>
+    <div class="card" style="margin-top:18px">
+      <h3 style="font-size:19px;margin-bottom:6px" id="orderTitle">Straight through</h3>
+      <ul class="rules" id="orderRules"></ul>
+    </div>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:20px;align-items:center">
+      <button class="btn gold" id="beginBtn" type="button">Start the 60 minutes</button>
+      <span class="note" id="beginNote">Ready when your paper is.</span>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= LOADING ======================= -->
+<section id="loading" class="hidden">
+  <div class="loading">
+    <div class="kicker" id="loadKicker">Building your test</div>
+    <h2 style="font-size:26px;margin-top:8px">Computing 90 items from real geometry</h2>
+    <p class="note">Every answer is checked as it is built. This takes a few seconds.</p>
+    <div class="bar"><i id="loadBar"></i></div>
+  </div>
+</section>
+
+<!-- ======================= RUNNER ======================= -->
+<section id="run" class="run hidden" aria-live="polite">
+  <div class="run-top">
+    <div class="t-left"><small id="runSection">Section</small><span id="runLabel">PAT</span></div>
+    <div class="qcount"><span id="qcount">Question 1 of 90</span><small id="qsec"></small></div>
+    <div class="t-right">
+      <button class="markbox" id="markBtn" type="button" aria-pressed="false">Mark</button>
+      <div class="timer"><small>Time left</small><span id="timer">60:00</span></div>
+    </div>
+  </div>
+  <div class="run-body" id="runBody">
+    <div id="qView">
+      <div class="banner hidden" id="banner"></div>
+      <div class="prompt" id="prompt"></div>
+      <div class="stem" id="stem"></div>
+      <div class="opts" id="opts" role="radiogroup" aria-label="Answer choices"></div>
+    </div>
+    <div id="revView" class="hidden">
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap">
+        <div><div class="kicker">Review</div><h2 style="font-size:24px;margin-top:6px">All 90 questions</h2></div>
+        <div class="filters" role="group" aria-label="Filter">
+          <button class="btn ghost" data-f="all" aria-pressed="true" type="button">All</button>
+          <button class="btn ghost" data-f="marked" aria-pressed="false" type="button">Marked</button>
+          <button class="btn ghost" data-f="open" aria-pressed="false" type="button">Unanswered</button>
+        </div>
+      </div>
+      <div class="legend"><span><i style="background:var(--panel-3);border-color:var(--gold-d)"></i>Answered</span><span><i></i>Unanswered</span><span><i style="background:var(--gold);border-radius:50%"></i>Marked</span><span id="revCounts"></span></div>
+      <div id="navGrid"></div>
+    </div>
+  </div>
+  <div class="run-foot">
+    <button class="btn" id="prevBtn" type="button">Previous</button>
+    <span class="kbd-hint">Keys: A-E answer, N next, P previous, M mark, R review</span>
+    <div class="mid">
+      <button class="btn" id="revBtn" type="button">Review</button>
+      <button class="btn gold" id="nextBtn" type="button">Next</button>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= RESULTS ======================= -->
+<section id="results" class="hidden">
+  <header class="topbar">
+    <span class="brand">AceTheDAT <em>PAT</em></span>
+    <span class="spacer"></span>
+    <button class="back btn ghost" id="resBack" type="button" style="min-height:0">All tests</button>
+  </header>
+  <div class="wrap" id="resWrap"></div>
+</section>
+
+<!-- ======================= ITEM REVIEW ======================= -->
+<section id="itemRev" class="hidden">
+  <header class="topbar">
+    <span class="brand">AceTheDAT <em>PAT</em></span>
+    <span class="spacer"></span>
+    <button class="back btn ghost" id="irBack" type="button" style="min-height:0">Back to review</button>
+  </header>
+  <div class="wrap" id="irWrap"></div>
+</section>
+
+<div class="modal hidden" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="card"><h3 id="modalTitle"></h3><p class="lede" id="modalText" style="font-size:15px"></p><div class="row" id="modalRow"></div></div>
+</div>
+
+<script src="engine/pat-core.js"></script>
+<script src="engine/pat-keyholes.js"></script>
+<script src="engine/pat-tfe.js"></script>
+<script src="engine/pat-angles.js"></script>
+<script src="engine/pat-holepunch.js"></script>
+<script src="engine/pat-cubes.js"></script>
+<script src="engine/pat-patternfold.js"></script>
+<script src="engine/pat-test.js"></script>
+<script src="engine/pat-store.js"></script>
+<script>
+(function () {
+  'use strict';
+  var PAT = window.PAT, $ = function (id) { return document.getElementById(id); };
+  var PREF = 'atDAT_patTest_pref';
+  var TARGET = { keyholes: 45, tfe: 45, angles: 20, holepunch: 22, cubes: 25, patternfold: 50 };   // seconds per item, Ace pacing
+  var ui = { mode: 'standard', test: null, attempt: null, order: [], pos: 0, qStart: 0, tick: null, lastTick: 0, view: 'q', filter: 'all', fiveMin: false, pendingTestId: null, irIndex: 0, analysis: null, sinceSave: 0 };
+
+  function readPref() { try { return JSON.parse(localStorage.getItem(PREF) || '{}'); } catch (e) { return {}; } }
+  function writePref(p) { try { localStorage.setItem(PREF, JSON.stringify(p)); } catch (e) { /* convenience only */ } }
+  function show(id) {
+    ['landing', 'scratch', 'loading', 'run', 'results', 'itemRev'].forEach(function (s) { $(s).classList.toggle('hidden', s !== id); });
+    window.scrollTo(0, 0);
+  }
+  function mmss(sec) { sec = Math.max(0, Math.round(sec)); var m = Math.floor(sec / 60), s = sec % 60; return m + ':' + (s < 10 ? '0' : '') + s; }
+  function secOf(n) { return PAT.SECTIONS.filter(function (s) { return n >= s.from && n <= s.to; })[0]; }
+  function esc(s) { return PAT.core.esc(s); }
+
+  /* ---------------- landing ---------------- */
+  function renderLanding() {
+    $('secList').innerHTML = PAT.SECTIONS.map(function (s) { return '<li>' + s.name + '<span>' + s.from + ' to ' + s.to + '</span></li>'; }).join('');
+    setMode(readPref().mode || 'standard');
+    var h = '';
+    for (var n = 1; n <= PAT.test.NUMBERED; n++) {
+      var prog = PAT.store.inProgressFor(n), done = PAT.store.latestFinished(n), st = 'Not started', cls = '';
+      if (prog) { st = 'Resume, ' + mmss(prog.remainingSec) + ' left'; cls = ' prog'; }
+      else if (done && done.summary) { st = done.summary.total + ' of 90 correct'; cls = ' done'; }
+      h += '<button type="button" class="tcard' + cls + '" data-test="' + n + '"><div class="n">' + n + '</div><div class="lbl">PAT Test</div><div class="st">' + st + '</div></button>';
+    }
+    $('tests').innerHTML = h;
+    Array.prototype.forEach.call($('tests').querySelectorAll('.tcard'), function (b) {
+      b.addEventListener('click', function () { chooseTest(parseInt(b.dataset.test, 10)); });
+    });
+    // fresh tests in progress get a resume chip too
+    var list = PAT.store.list();
+    var freshProg = list.filter(function (a) { return a.status === 'in-progress' && typeof a.testId === 'string'; })[0];
+    var fin = list.filter(function (a) { return a.status === 'finished'; });
+    var hh = '';
+    if (freshProg) hh += '<p><button class="btn" type="button" id="resumeFresh">Resume ' + esc(freshProg.label) + ' (' + mmss(freshProg.remainingSec) + ' left)</button></p>';
+    if (fin.length) {
+      hh += '<div class="kicker">Your finished tests</div><table><thead><tr><th>Test</th><th>Date</th><th>Correct</th><th class="hide-sm">Order</th><th></th></tr></thead><tbody>' +
+        fin.slice(0, 20).map(function (a) {
+          return '<tr><td>' + esc(a.label) + '</td><td>' + new Date(a.finishedAt).toLocaleDateString() + '</td><td>' + (a.summary ? a.summary.total + ' / 90' : '') + '</td><td class="hide-sm">' + (a.mode === 'thomas' ? 'Thomas order' : 'Straight') + '</td><td><button class="btn ghost" type="button" data-open="' + esc(a.id) + '" style="min-height:34px;padding:6px 12px">Open review</button></td></tr>';
+        }).join('') + '</tbody></table>';
+    }
+    $('history').innerHTML = hh;
+    if (freshProg) $('resumeFresh').addEventListener('click', function () { resume(freshProg); });
+    Array.prototype.forEach.call($('history').querySelectorAll('[data-open]'), function (b) {
+      b.addEventListener('click', function () { openResults(PAT.store.get(b.dataset.open)); });
+    });
+    show('landing');
+  }
+  function setMode(m) {
+    ui.mode = m;
+    $('ordStd').setAttribute('aria-pressed', String(m === 'standard'));
+    $('ordThomas').setAttribute('aria-pressed', String(m === 'thomas'));
+    writePref({ mode: m });
+  }
+  function chooseTest(testId) {
+    var prog = PAT.store.inProgressFor(testId);
+    if (prog) { resume(prog); return; }
+    ui.pendingTestId = testId;
+    renderScratch();
+  }
+
+  /* ---------------- scratch pad ---------------- */
+  function renderScratch() {
+    var thomas = ui.mode === 'thomas';
+    $('scratchKicker').textContent = PAT.test.labelFor(ui.pendingTestId) + ' : before the clock starts';
+    $('orderTitle').textContent = thomas ? 'Thomas order: start at 31, one jump back' : 'Straight through: 1 to 90';
+    var rules = thomas ? [
+      'You start at question 31, angle ranking: the three fast sections first (angles, hole punching, cube counting), then pattern folding.',
+      'After question 90 you make ONE jump back to question 1 and finish keyholes and TFE last.',
+      'Never leave a question blank. If time is short, put a guess on every open question; there is no penalty for guessing.'
+    ] : [
+      'Keyholes, TFE, angle ranking, hole punching, cube counting, pattern folding, in that order.',
+      'Mark anything you want to revisit and keep moving; the Review screen shows every marked and open question.',
+      'Never leave a question blank. If time is short, put a guess on every open question; there is no penalty for guessing.'
+    ];
+    $('orderRules').innerHTML = rules.map(function (r) { return '<li>' + r + '</li>'; }).join('');
+    $('chkGrids').checked = false; $('chkCharts').checked = false; updateBegin();
+    show('scratch');
+  }
+  function updateBegin() {
+    var ok = $('chkGrids').checked && $('chkCharts').checked;
+    $('beginNote').textContent = ok ? 'Paper ready. Good luck, you have prepared for this.' : 'Tick both boxes once your paper is set up (you can still start without them).';
+  }
+
+  /* ---------------- build + run ---------------- */
+  function loadTest(testId) {
+    show('loading'); $('loadBar').style.width = '0%';
+    $('loadKicker').textContent = 'Building ' + PAT.test.labelFor(testId);
+    return PAT.test.buildAsync(testId, function (p) { $('loadBar').style.width = Math.round(p * 100) + '%'; });
+  }
+  function begin() {
+    var id = ui.pendingTestId;
+    return loadTest(id).then(function (T) {
+      ui.test = T;
+      ui.attempt = PAT.store.newAttempt(T, ui.mode);
+      PAT.store.save(ui.attempt);
+      startRun();
+    });
+  }
+  function resume(attempt) {
+    ui.mode = attempt.mode;
+    return loadTest(attempt.testId).then(function (T) { ui.test = T; ui.attempt = attempt; startRun(); });
+  }
+  function startRun() {
+    ui.order = PAT.test.order(ui.attempt.mode);
+    ui.pos = ui.attempt.cursor || 0;
+    ui.view = 'q'; ui.fiveMin = ui.attempt.remainingSec <= 300;
+    $('runLabel').textContent = ui.test.label + (ui.attempt.mode === 'thomas' ? ' (Thomas order)' : '');
+    show('run');
+    renderQ(true);
+    ui.lastTick = Date.now();
+    clearInterval(ui.tick);
+    ui.tick = setInterval(tickTimer, 250);
+    renderTimer();
+  }
+  function tickTimer() {
+    var now = Date.now(), dt = (now - ui.lastTick) / 1000; ui.lastTick = now;
+    ui.attempt.remainingSec = Math.max(0, ui.attempt.remainingSec - dt);
+    renderTimer();
+    ui.sinceSave += dt;
+    if (ui.sinceSave > 5) { ui.sinceSave = 0; commitTime(); PAT.store.save(ui.attempt); }
+    if (!ui.fiveMin && ui.attempt.remainingSec <= 300) { ui.fiveMin = true; if (ui.view === 'q') renderQ(false); }
+    if (ui.attempt.remainingSec <= 0) finish(true);
+  }
+  function renderTimer() { $('timer').textContent = mmss(ui.attempt.remainingSec); }
+  function curN() { return ui.order[ui.pos]; }
+  function commitTime() {
+    if (ui.view !== 'q' || !ui.qStart) return;
+    var now = Date.now(), n = curN();
+    ui.attempt.timeSpent[n - 1] += (now - ui.qStart) / 1000;
+    ui.qStart = now;
+  }
+  function optClass(type) {
+    if (type === 'angles' || type === 'cubes') return 'opts text';
+    return (type === 'keyholes' || type === 'holepunch') ? 'opts cols-5' : 'opts cols-4';
+  }
+  function bannerFor(n) {
+    var a = ui.attempt, sec = secOf(n), first = ui.pos === 0;
+    if (ui.fiveMin) return '<b>About five minutes left.</b> Put a guess on every open question first; the Review screen lists them.';
+    if (a.mode === 'thomas' && first) return '<b>Thomas order.</b> You are starting at question 31, angle ranking. Trust your first read on angles, then keep moving.';
+    if (a.mode === 'thomas' && ui.pos === 60) return '<b>The one jump back.</b> Questions 1 to 30: keyholes, then TFE. Put a guess on every one.';
+    if (n === sec.from) return '<b>' + sec.name + '</b>, questions ' + sec.from + ' to ' + sec.to + '.' + (sec.type === 'holepunch' ? ' One grid per question.' : sec.type === 'cubes' ? ' One T-chart per figure answers all its questions.' : '');
+    return '';
+  }
+  function renderQ(resetClock) {
+    var n = curN(), it = ui.test.items[n - 1], sec = secOf(n), a = ui.attempt;
+    if (resetClock) ui.qStart = Date.now();
+    $('qView').classList.remove('hidden'); $('revView').classList.add('hidden'); ui.view = 'q';
+    $('qcount').textContent = 'Question ' + n + ' of 90';
+    $('qsec').textContent = sec.name;
+    $('runSection').textContent = sec.name;
+    var b = bannerFor(n); $('banner').innerHTML = b; $('banner').classList.toggle('hidden', !b);
+    $('prompt').textContent = it.prompt;
+    $('stem').innerHTML = PAT[it.type].renderFigure(it);
+    var o = $('opts'); o.className = optClass(it.type);
+    o.innerHTML = it.options.map(function (op, i) {
+      var sel = a.answers[n - 1] === i;
+      return '<button type="button" class="opt" role="radio" aria-checked="' + sel + '" data-i="' + i + '"><span class="let"><i></i>' + PAT.LETTERS[i] + '</span>' + PAT[it.type].renderOption(it, i) + '</button>';
+    }).join('');
+    Array.prototype.forEach.call(o.querySelectorAll('.opt'), function (btn) { btn.addEventListener('click', function () { pick(parseInt(btn.dataset.i, 10)); }); });
+    $('markBtn').setAttribute('aria-pressed', String(!!a.marked[n - 1]));
+    $('markBtn').textContent = a.marked[n - 1] ? 'Marked' : 'Mark';
+    $('prevBtn').disabled = ui.pos === 0;
+    $('nextBtn').textContent = ui.pos === 89 ? 'Review' : 'Next';
+    $('revBtn').textContent = 'Review';
+  }
+  function pick(i) {
+    var n = curN(); ui.attempt.answers[n - 1] = i;
+    Array.prototype.forEach.call($('opts').querySelectorAll('.opt'), function (b) { b.setAttribute('aria-checked', String(parseInt(b.dataset.i, 10) === i)); });
+    save();
+  }
+  function save() { commitTime(); ui.attempt.cursor = ui.pos; PAT.store.save(ui.attempt); }
+  function go(pos) { commitTime(); ui.pos = Math.max(0, Math.min(89, pos)); ui.attempt.cursor = ui.pos; PAT.store.save(ui.attempt); renderQ(true); window.scrollTo(0, 0); }
+  function next() { if (ui.view !== 'q') { go(ui.pos); return; } if (ui.pos >= 89) { openReview(); return; } go(ui.pos + 1); }
+  function prev() { if (ui.view !== 'q') { go(ui.pos); return; } if (ui.pos > 0) go(ui.pos - 1); }
+  function toggleMark() { if (ui.view !== 'q') return; var n = curN(); ui.attempt.marked[n - 1] = !ui.attempt.marked[n - 1]; save(); renderQ(false); }
+
+  /* ---------------- review / navigator ---------------- */
+  function openReview() {
+    commitTime(); ui.view = 'review';
+    $('qView').classList.add('hidden'); $('revView').classList.remove('hidden');
+    $('qcount').textContent = 'Review'; $('qsec').textContent = 'Jump to any question';
+    $('prevBtn').disabled = false; $('prevBtn').textContent = 'Back to question';
+    $('nextBtn').textContent = 'End test'; $('revBtn').textContent = 'Return';
+    renderNav(); window.scrollTo(0, 0);
+  }
+  function renderNav() {
+    var a = ui.attempt, open = 0, marked = 0;
+    a.answers.forEach(function (x) { if (x == null) open++; }); a.marked.forEach(function (m) { if (m) marked++; });
+    $('revCounts').textContent = (90 - open) + ' answered, ' + open + ' open, ' + marked + ' marked';
+    var h = '';
+    PAT.SECTIONS.forEach(function (s) {
+      h += '<div class="nav-sec"><h3>' + s.name + '</h3><span>' + s.from + ' to ' + s.to + '</span></div><div class="nav-grid">';
+      for (var n = s.from; n <= s.to; n++) {
+        var ans = a.answers[n - 1] != null, mk = a.marked[n - 1];
+        var dim = (ui.filter === 'marked' && !mk) || (ui.filter === 'open' && ans);
+        h += '<button type="button" class="navcell' + (ans ? ' ans' : ' empty') + (mk ? ' mk' : '') + (n === curN() ? ' cur' : '') + (dim ? ' dim' : '') + '" data-n="' + n + '" aria-label="Question ' + n + (ans ? ', answered ' + PAT.LETTERS[a.answers[n - 1]] : ', open') + (mk ? ', marked' : '') + '">' + n + (ans ? ' ' + PAT.LETTERS[a.answers[n - 1]] : '') + '</button>';
+      }
+      h += '</div>';
+    });
+    $('navGrid').innerHTML = h;
+    Array.prototype.forEach.call($('navGrid').querySelectorAll('.navcell'), function (b) {
+      b.addEventListener('click', function () { $('prevBtn').textContent = 'Previous'; go(ui.order.indexOf(parseInt(b.dataset.n, 10))); });
+    });
+  }
+  function endFlow() {
+    var open = ui.attempt.answers.filter(function (x) { return x == null; }).length;
+    if (open) {
+      modal('Put a guess on every one', 'You have ' + open + ' open question' + (open === 1 ? '' : 's') + '. A guess can only help, so give each one a letter before you finish.', [
+        { t: 'Go to the first open one', gold: true, fn: function () { var n = ui.attempt.answers.indexOf(null) + 1; $('prevBtn').textContent = 'Previous'; go(ui.order.indexOf(n)); } },
+        { t: 'End the test anyway', fn: function () { finish(false); } }
+      ]);
+    } else {
+      modal('End the test?', 'All 90 are answered. Ending opens your section-by-section review.', [
+        { t: 'Keep checking', fn: function () {} },
+        { t: 'End and review', gold: true, fn: function () { finish(false); } }
+      ]);
+    }
+  }
+  function modal(title, text, btns) {
+    $('modalTitle').textContent = title; $('modalText').textContent = text;
+    $('modalRow').innerHTML = '';
+    btns.forEach(function (b) {
+      var el = document.createElement('button'); el.type = 'button'; el.className = 'btn' + (b.gold ? ' gold' : ''); el.textContent = b.t;
+      el.addEventListener('click', function () { $('modal').classList.add('hidden'); b.fn(); });
+      $('modalRow').appendChild(el);
+    });
+    $('modal').classList.remove('hidden');
+    var f = $('modalRow').querySelector('.gold') || $('modalRow').firstChild; if (f) f.focus();
+  }
+  function finish(timeUp) {
+    clearInterval(ui.tick); commitTime();
+    var a = ui.attempt;
+    a.status = 'finished'; a.finishedAt = Date.now(); a.cursor = ui.pos;
+    var A = PAT.test.analyze(ui.test, a);
+    a.summary = { total: A.total, of: 90, timeUp: !!timeUp, sections: A.sections.map(function (s) { return { type: s.type, correct: s.correct, of: s.of, timeSec: s.timeSec }; }) };
+    PAT.store.save(a);
+    ui.analysis = A;
+    renderResults(timeUp);
+  }
+
+  /* ---------------- results ---------------- */
+  function openResults(attempt) {
+    ui.mode = attempt.mode;
+    return loadTest(attempt.testId).then(function (T) {
+      ui.test = T; ui.attempt = attempt; ui.analysis = PAT.test.analyze(T, attempt); renderResults(false);
+    });
+  }
+  function rowsHTML(rows) {
+    return rows.map(function (r) {
+      var pct = r.total ? Math.round(100 * r.correct / r.total) : 0;
+      return '<div class="prow"><span>' + esc(r.label) + '</span><span class="v">' + r.correct + ' of ' + r.total + '</span><span class="m"><i style="width:' + pct + '%"></i></span></div>';
+    }).join('');
+  }
+  function renderResults(timeUp) {
+    var A = ui.analysis, a = ui.attempt, used = A.sections.reduce(function (t, x) { return t + x.timeSec; }, 0);
+    var h = '<div class="res-head"><div class="big">' + A.total + '<small> / 90</small></div><div class="rail"><div class="kicker">' + esc(ui.test.label) + (a.mode === 'thomas' ? ' : Thomas order' : '') + '</div>' +
+      '<h1 style="font-size:clamp(24px,3.4vw,34px);margin:8px 0 6px">Your section-by-section review</h1>' +
+      '<p class="note" style="margin:0">Questions answered correctly, out of 90. This is a raw count to learn from, not a scaled score. Time used: ' + mmss(used) + (timeUp ? ' (the full hour)' : '') + '.</p></div></div>';
+    h += '<div class="card"><table class="sec-table"><thead><tr><th>Section</th><th>Correct</th><th class="hide-sm">Questions</th><th>Time used</th><th class="hide-sm">Ace pacing</th></tr></thead><tbody>';
+    A.sections.forEach(function (s) {
+      h += '<tr><td>' + s.name + '</td><td class="num">' + s.correct + ' / ' + s.of + '<span class="meter"><i style="width:' + Math.round(100 * s.correct / s.of) + '%"></i></span></td><td class="num hide-sm">' + s.from + ' to ' + s.to + '</td><td class="num">' + mmss(s.timeSec) + '</td><td class="num hide-sm">about ' + mmss(TARGET[s.type] * s.of) + '</td></tr>';
+    });
+    h += '</tbody></table></div>';
+    var order = A.weak.concat(A.sections.map(function (s) { return s.type; }).filter(function (t) { return A.weak.indexOf(t) < 0; }));
+    h += '<div class="sec-cards">';
+    order.forEach(function (t) {
+      var s = A.sections.filter(function (x) { return x.type === t; })[0], weak = A.weak.indexOf(t) >= 0;
+      h += '<div class="card sec-card"><h3>' + s.name + '<span>' + s.correct + ' / ' + s.of + '</span></h3>';
+      h += '<div class="sub">' + esc(s.pattern.title) + '</div>' + rowsHTML(s.pattern.rows);
+      if (s.pattern.extra) h += '<div class="sub">' + esc(s.pattern.extra.title) + '</div>' + rowsHTML(s.pattern.extra.rows);
+      if (s.traps.length) h += '<div class="sub">When a choice slipped, it was</div><ul class="traps">' + s.traps.slice(0, 3).map(function (tr) { return '<li>' + esc(tr.label) + ' (' + tr.count + ')</li>'; }).join('') + '</ul>';
+      if (weak && s.steps.length) {
+        h += '<div class="sub">Next steps</div><ol class="steps">' + s.steps.map(function (st) {
+          var ext = /^https?:/.test(st.href);
+          return '<li>' + esc(st.text) + ' <a href="' + esc(st.href) + '"' + (ext ? ' target="_blank" rel="noopener"' : '') + '>' + (ext ? 'Canon sheet' : 'Open the trainer') + '</a></li>';
+        }).join('') + '</ol>';
+      } else if (s.correct === s.of) h += '<p class="clean">A clean section. Keep it warm with one short set a week.</p>';
+      else h += '<p class="note" style="margin-top:10px">Close to clean. The questions below show the ' + (s.of - s.correct) + ' to revisit. <a href="' + esc(s.links.studio) + '">Trainer</a> and <a href="' + esc(s.links.canon) + '" target="_blank" rel="noopener">Canon sheet</a>.</p>';
+      h += '</div>';
+    });
+    h += '</div>';
+    h += '<div class="card" style="margin-top:20px"><div class="kicker">Every question</div><p class="note" style="margin:6px 0 0">Open any question to see the correct choice and why the others fail.</p><div class="items-list">';
+    ui.test.items.forEach(function (it) {
+      var x = a.answers[it.n - 1], cls = x == null ? 'u' : x === it.answer ? 'r' : 'w';
+      h += '<button type="button" class="' + cls + '" data-n="' + it.n + '" aria-label="Question ' + it.n + (cls === 'r' ? ' correct' : cls === 'w' ? ' missed' : ' open') + '">' + it.n + '</button>';
+    });
+    h += '</div></div>';
+    h += '<div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:22px"><button class="btn gold" type="button" id="retake">Retake this test</button><button class="btn" type="button" id="allTests">All tests</button></div>';
+    $('resWrap').innerHTML = h;
+    Array.prototype.forEach.call($('resWrap').querySelectorAll('.items-list button'), function (b) { b.addEventListener('click', function () { openItem(parseInt(b.dataset.n, 10)); }); });
+    $('retake').addEventListener('click', function () { ui.pendingTestId = ui.test.testId; renderScratch(); });
+    $('allTests').addEventListener('click', renderLanding);
+    show('results');
+  }
+
+  /* ---------------- item review ---------------- */
+  var SIZE_NOTE = 'Right outline, wrong size. Openings are drawn to the same scale as the object, so an opening can match the shape and still be too big or too small.';
+  var TFE_WHY = { mirror: 'This one is the view with front and back (or left and right) swapped. On the end view, end-left is the FRONT of the object.', 'dash-as-solid': 'A hidden edge is drawn solid here. If you cannot see an edge from this side, it must be dashed.', 'solid-as-dash': 'A visible edge is drawn dashed here. Any edge you can see from this side is solid.', profile: 'A step sits in the wrong place. Heights must match the front, depths must match the top.' };
+  var HP_WHY = { 'missed-unfold': 'This choice skips one unfold. Undo every fold in reverse, one crease at a time.', 'wrong-line': 'This choice mirrors a hole across the wrong line. Each hole reflects across the crease it was folded over.', flipped: 'This is the right pattern read upside down or mirrored. Keep the grid in the same orientation as the paper.', shifted: 'One hole is off by a cell. Mark the punch in the exact cell before unfolding.', dropped: 'One hole is missing. Count your grid marks against the choice.' };
+  var PF_WHY = { mirror: 'This is the mirror image of the folded cube. Folding never flips which way a half-shade leans.', rotation: 'One face is turned the wrong way. Check what that face touches along its shared edge.', neighbor: 'Two faces traded places. They are on the cube, but not next to each other like that.', opposite: 'This shows two faces that are opposite each other on the cube, and opposite faces can never be seen at the same time.' };
+  function explain(it, chosen) {
+    var t = it.type, parts = [];
+    if (t === 'keyholes') {
+      parts.push('The correct opening is the object\'s ' + ['end', 'front', 'top'][it.meta.keyAxis] + ' outline, turned to fit.');
+      if (chosen != null && chosen !== it.answer) { var tr = it.options[chosen].trap; parts.push(tr === 'SIZE' ? SIZE_NOTE : ((PAT.keyholes.TRAPS[tr] || {}).note || '')); }
+    } else if (t === 'tfe') {
+      parts.push('The ' + it.meta.missing + ' view has ' + it.meta.hiddenLines + ' hidden line' + (it.meta.hiddenLines === 1 ? '' : 's') + '.');
+      if (chosen != null && chosen !== it.answer) parts.push(TFE_WHY[it.options[chosen].trap] || '');
+    } else if (t === 'angles') {
+      var d = it.figure.degs;
+      parts.push('True sizes: ' + d.map(function (x, i) { return (i + 1) + ' is ' + x + ' degrees'; }).join(', ') + '.');
+      if (chosen != null && chosen !== it.answer) { var g = PAT.angles.missedGap(it, chosen); if (g != null) parts.push('Your order swapped two angles ' + g + ' degrees apart. Lock the clear smallest and largest first, then compare only the close pair.'); }
+    } else if (t === 'holepunch') {
+      parts.push(it.meta.folds + ' fold' + (it.meta.folds === 1 ? '' : 's') + (it.meta.diagonal ? ', including a diagonal one' : '') + '. Unfolded, the paper has ' + it.meta.holes + ' holes.');
+      if (chosen != null && chosen !== it.answer) parts.push(HP_WHY[it.options[chosen].trap] || '');
+    } else if (t === 'cubes') {
+      parts.push('Highlighted: the cubes with exactly ' + it.meta.k + ' painted side' + (it.meta.k === 1 ? '' : 's') + '.' + (it.meta.hiddenInAnswer ? ' ' + it.meta.hiddenInAnswer + ' of them cannot be seen; they hold up the cubes above.' : ''));
+    } else if (t === 'patternfold') {
+      parts.push('Pattern type: ' + it.meta.netType + ' net.');
+      if (chosen != null && chosen !== it.answer) parts.push(PF_WHY[it.options[chosen].trap] || '');
+    }
+    if (chosen == null) parts.push('This one was left open. On test day, a guess is always worth putting down.');
+    return parts.filter(Boolean).join(' ');
+  }
+  function openItem(n) {
+    ui.irIndex = n;
+    var it = ui.test.items[n - 1], a = ui.attempt, chosen = a.answers[n - 1], sec = secOf(n);
+    var fig = it.type === 'angles' ? PAT.angles.renderTruth(it) : it.type === 'cubes' ? PAT.cubes.renderFigure(it, { highlight: PAT.cubes.kCubes(it) }) : PAT[it.type].renderFigure(it);
+    var h = '<div class="kicker">' + sec.name + '</div><h2 style="font-size:24px;margin:6px 0 4px">Question ' + n + '</h2>' +
+      '<p class="note" style="margin:0 0 12px">' + (chosen == null ? 'Left open' : chosen === it.answer ? 'Correct' : 'You chose ' + PAT.LETTERS[chosen] + '; the answer is ' + PAT.LETTERS[it.answer]) + ' &middot; ' + Math.round(a.timeSpent[n - 1] || 0) + ' seconds</p>' +
+      '<div class="prompt">' + esc(it.prompt) + '</div><div class="stem">' + fig + '</div><div class="' + optClass(it.type) + '">';
+    it.options.forEach(function (op, i) {
+      var cls = i === it.answer ? ' is-key' : (i === chosen ? ' is-miss' : '');
+      var tag = i === it.answer ? 'Correct' : (op.trap ? ((PAT.test.TRAP_NAMES[it.type] || {})[op.trap] || (op.trap === 'SIZE' ? 'Right shape, wrong size' : '')) : '');
+      h += '<div class="opt' + cls + '"><span class="let"><i></i>' + PAT.LETTERS[i] + (i === chosen ? ' (your choice)' : '') + '</span>' + PAT[it.type].renderOption(it, i) + (tag ? '<span class="tag">' + esc(tag) + '</span>' : '') + '</div>';
+    });
+    h += '</div><div class="explain">' + esc(explain(it, chosen)) + '</div>';
+    h += '<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:18px"><button class="btn" type="button" id="irPrev"' + (n === 1 ? ' disabled' : '') + '>Previous question</button><button class="btn" type="button" id="irNext"' + (n === 90 ? ' disabled' : '') + '>Next question</button><button class="btn ghost" type="button" id="irNextMiss">Next one to revisit</button></div>';
+    $('irWrap').innerHTML = h;
+    $('irPrev').addEventListener('click', function () { openItem(n - 1); });
+    $('irNext').addEventListener('click', function () { openItem(n + 1); });
+    $('irNextMiss').addEventListener('click', function () {
+      for (var k = n + 1; k <= 90; k++) { if (a.answers[k - 1] !== ui.test.items[k - 1].answer) { openItem(k); return; } }
+      renderResults(false);
+    });
+    show('itemRev');
+  }
+
+  /* ---------------- wiring ---------------- */
+  $('ordStd').addEventListener('click', function () { setMode('standard'); });
+  $('ordThomas').addEventListener('click', function () { setMode('thomas'); });
+  $('freshBtn').addEventListener('click', function () { ui.pendingTestId = PAT.test.freshId(); renderScratch(); });
+  $('scratchBack').addEventListener('click', renderLanding);
+  $('chkGrids').addEventListener('change', updateBegin);
+  $('chkCharts').addEventListener('change', updateBegin);
+  $('beginBtn').addEventListener('click', begin);
+  $('nextBtn').addEventListener('click', function () { if (ui.view === 'review') endFlow(); else next(); });
+  $('prevBtn').addEventListener('click', function () { if (ui.view === 'review') { $('prevBtn').textContent = 'Previous'; go(ui.pos); } else prev(); });
+  $('revBtn').addEventListener('click', function () { if (ui.view === 'review') { $('prevBtn').textContent = 'Previous'; go(ui.pos); } else openReview(); });
+  $('markBtn').addEventListener('click', toggleMark);
+  $('resBack').addEventListener('click', renderLanding);
+  $('irBack').addEventListener('click', function () { renderResults(false); });
+  Array.prototype.forEach.call(document.querySelectorAll('[data-f]'), function (b) {
+    b.addEventListener('click', function () {
+      ui.filter = b.dataset.f;
+      Array.prototype.forEach.call(document.querySelectorAll('[data-f]'), function (x) { x.setAttribute('aria-pressed', String(x === b)); });
+      renderNav();
+    });
+  });
+  document.addEventListener('keydown', function (e) {
+    if ($('run').classList.contains('hidden') || !$('modal').classList.contains('hidden')) return;
+    if (e.ctrlKey || e.metaKey) return;
+    var k = e.key.toLowerCase();
+    if (ui.view === 'q' && /^[a-e]$/.test(k)) { var i = k.charCodeAt(0) - 97, it = ui.test.items[curN() - 1]; if (i < it.options.length) { pick(i); e.preventDefault(); } return; }
+    if (k === 'n' || k === 'arrowright') { if (ui.view === 'review') return; next(); e.preventDefault(); }
+    else if (k === 'p' || k === 'arrowleft') { if (ui.view === 'review') return; prev(); e.preventDefault(); }
+    else if (k === 'm') { toggleMark(); e.preventDefault(); }
+    else if (k === 'r') { if (ui.view === 'review') go(ui.pos); else openReview(); e.preventDefault(); }
+  });
+  window.addEventListener('pagehide', function () { if (ui.attempt && ui.attempt.status === 'in-progress') { commitTime(); PAT.store.save(ui.attempt); } });
+
+  /* hooks for automated checks (headless screenshots, tests) */
+  window.PATUI = {
+    state: ui,
+    start: function (testId, mode) { setMode(mode || 'standard'); ui.pendingTestId = testId; return begin(); },
+    goTo: function (n) { go(ui.order.indexOf(n)); },
+    review: openReview,
+    answerAll: function (rate) { ui.test.items.forEach(function (it, i) { ui.attempt.answers[i] = (i * 7 % 10) < (rate || 7) * 1 ? it.answer : (it.answer + 1) % it.options.length; ui.attempt.timeSpent[i] = 15 + (i * 13) % 40; }); },
+    finish: function () { finish(false); },
+    item: openItem,
+    scratch: function (testId, mode) { setMode(mode || 'standard'); ui.pendingTestId = testId; renderScratch(); }
+  };
+  renderLanding();
+})();
+</script>
+<script src="/shared/acelabs-nav.js" defer></script>
+</body>
+</html>
