@@ -127,12 +127,6 @@ export default [
     'The base takes the alpha H, the C to H electrons become the C=C, and the C=O pi electrons go onto oxygen.',
     'LDA, drawn as its nitrogen anion, grabs an alpha hydrogen. Those bond electrons form a C=C and the carbonyl pi bond moves onto oxygen, giving the enolate and neutral diisopropylamine. LDA is bulky, so it takes a proton instead of adding to the carbonyl.'),
 
-  fwd('af-19', 3, ['l2-arrows', 'l1-unsat'], 'Cyclopentadiene and ethylene react as drawn. What do the arrows make?', ['C1=CC=CC1', 'C=C'],
-    [A(B('0.2', '0.3'), B('0.3', '1.0')), A(B('1.0', '1.1'), B('1.1', '0.0')), A(B('0.0', '0.1'), B('0.1', '0.2'))],
-    [['norbornene', 'C1CC2C=CC1C2'], ['norbornane', 'C1CC2CCC1C2'], ['norbornadiene', 'C1=CC2C=CC1C2'], ['3-vinylcyclopentene', 'C=CC1C=CCC1'], ['no change, both alkenes survive', 'C1=CC=CC1.C=C']],
-    'Three arrows in a circle: two new sigma bonds to the ends of the diene and one new pi bond in the middle.',
-    'Each arrow moves a pi bond one position around the ring of six atoms. The diene ends bond to the two ethylene carbons, and the old diene middle becomes the one remaining double bond. Cyclopentadiene is locked s-cis, so it makes the bicyclic norbornene in one concerted step.'),
-
   fwd('af-20', 3, ['l2-arrows'], FWD, ['C[O-]', 'CC1CO1'],
     [A(L('0.1'), B('0.1', '1.2')), A(B('1.2', '1.3'), At('1.3'))],
     [['the alkoxide with methoxy on the end carbon', 'COCC(C)[O-]'], ['the alkoxide with methoxy on the inner carbon', 'COC(C)C[O-]'], ['1-methoxy-2-propanol, neutral', 'COCC(C)O'], ['propane-1,2-diol', 'CC(O)CO'], ['no change', 'CC1CO1.C[O-]']],
@@ -256,15 +250,6 @@ export default [
     [A(L('0.0'), B('0.0', '1.0')), A(B('1.2', '1.4'), At('1.4'))]
   ], 'To reach the oxyanion enolate: base takes the alpha H, that bond becomes C=C, and the C=O pi bond goes onto oxygen.',
     'Three arrows: hydroxide to the alpha hydrogen, the C to H bond into a new C=C, and the carbonyl pi bond up onto oxygen. Leave out the last arrow and the carbonyl carbon would hold five bonds. Hydroxide attacking the carbonyl carbon is addition, not enolate formation.'),
-
-  rev('ar-10', 3, ['l2-arrows', 'l1-unsat'], REV, ['C1=CC=CC1', 'C=C'], ['C1CC2C=CC1C2'], [
-    [A(B('0.2', '0.3'), B('0.3', '1.0')), A(B('1.0', '1.1'), B('1.1', '0.0')), A(B('0.0', '0.1'), B('0.1', '0.2'))],
-    [A(B('0.2', '0.3'), B('0.3', '1.0')), A(B('1.0', '1.1'), B('1.1', '0.0'))],
-    [A(B('0.2', '0.3'), B('0.3', '1.0')), A(B('1.0', '1.1'), B('1.1', '0.4')), A(B('0.0', '0.1'), B('0.1', '0.2'))],
-    [A(B('0.2', '0.3'), B('0.3', '1.0')), A(B('1.0', '1.1'), B('1.1', '0.0')), A(B('0.0', '0.1'), At('0.1'))],
-    [A(B('0.2', '0.3'), B('0.3', '1.0')), A(B('0.0', '0.1'), B('0.1', '0.2'))]
-  ], 'A Diels-Alder is three arrows in a loop: diene end to dienophile, dienophile pi to the other diene end, and the leftover diene pi into the middle.',
-    'Three pi bonds go in and two sigma bonds plus one pi bond come out, so you need all three arrows, each moving one pi bond one position around the six-atom ring. Stopping at two leaves charges stranded, and bonding to the saturated CH2 gives that carbon five bonds.'),
 
   rev('ar-11', 3, ['l2-arrows'], REV, ['C[O-]', 'CC1CO1'], ['COCC(C)[O-]'], [
     [A(L('0.1'), B('0.1', '1.2')), A(B('1.2', '1.3'), At('1.3'))],

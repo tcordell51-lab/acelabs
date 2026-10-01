@@ -461,6 +461,19 @@ export function drawMech(target, spec, o = {}){
       }
     }
     if (!tail || (!head && !tgt)) return;
+    // a fishhook into a bond being made carries one of its two electrons: it stops in the
+    // middle of the new bond, where its partner fishhook meets it from the other side
+    let meetKey = null;
+    if (ar.fish && ar.to.bond && tgt){
+      const [ra, rb] = ar.to.bond, a = ptOf(left, ra), b = ptOf(left, rb);
+      if (a && b && !(a.part === b.part && a.atom.nb.includes(b.atom.i))){
+        const other = tgt === a ? b : a;
+        head = { x: other.x * 0.42 + tgt.x * 0.58, y: other.y * 0.42 + tgt.y * 0.58 };
+        // between two separate species the middle is where the plus sign sits: meet just above it
+        if (a.part !== b.part) head.y -= 15;
+        meetKey = ar.to.bond.slice().sort().join('|');
+      }
+    }
     if (tgt && !head){
       const dx = tail.x - tgt.x, dy = tail.y - tgt.y, L = Math.hypot(dx, dy) || 1;
       if (tgt.atom.labeled && L > 30){
@@ -487,6 +500,12 @@ export function drawMech(target, spec, o = {}){
       // start a little off the bond on the side it bows to, so two tails do not sit on one point
       tail = { x: tail.x + nx * side * 3, y: tail.y + ny * side * 3 };
     }
+    // two fishhooks meeting in one new bond bow on the same face, like a pair of wings
+    if (meetKey){
+      const prev = usedBondSide.get('meet:' + meetKey);
+      if (prev && prev.x * nx * side + prev.y * ny * side < 0) side = -side;
+      if (!prev){ if (Math.abs(ny) > 0.2 && ny * side > 0) side = -side; usedBondSide.set('meet:' + meetKey, { x: nx * side, y: ny * side }); }   // the pair bows upward, over the drawing
+    }
     if (ar.bend === -1) side = -side;
     const geo = arrowGeom(tail, head, side, !!ar.fish, { minAmp: L < 26 ? 12 : 14, maxAmp: 46 });
     extent.push({ x: (tail.x + 2 * geo.ctrl.x + head.x) / 4, y: (tail.y + 2 * geo.ctrl.y + head.y) / 4 }, tail, head);
@@ -504,7 +523,7 @@ export function drawMech(target, spec, o = {}){
   outer.setAttribute('viewBox', [minX, minY, vbW, vbH].map(r1).join(' '));
   outer.style.width = '100%';
   // small figures (Br2, one bond) draw bigger, so a fishhook's half head reads as half
-  outer.style.maxWidth = Math.round(vbW * (vbW < 170 ? Math.max(scaleWanted, 2.5) : scaleWanted)) + 'px';
+  outer.style.maxWidth = Math.round(vbW * (vbW < 170 && o.noWrap ? Math.max(scaleWanted, 2.5) : scaleWanted)) + 'px';
   outer.style.height = 'auto';
   outer.style.display = 'block';
   return outer;
@@ -617,9 +636,14 @@ export function renderItemFigure(target, it, o = {}){
     target.append(row);
   }
 }
+// Charged species and multi-fragment answers read better in the figure style (circled
+// charges, every fragment shown with a plus). Aromatic SMILES stay with SmilesDrawer,
+// which draws the ring properly.
+function houseDrawable(smi){ return (/[+-]\]/.test(smi) || smi.includes('.')) && !/(^|[^A-Z])[cnops](?![a-z])/.test(smi.replace(/\[[^\]]*\]/g, 'X')) && !/\[(c|n|o|s)/.test(smi); }
 /** Render one choice body (text, a structure, or a figure). */
 export function renderChoiceBody(target, c, i, o = {}){
   if (c.fig){ drawFigure(target, c.fig, { width: o.width || 560, label: 'choice ' + LET[i], noWrap: true, orientBy: o.orientBy || null }); if (c.text) target.append(H('div', { text: c.text })); }
+  else if (c.smiles && houseDrawable(c.smiles)){ drawMech(target, { species: c.smiles.split('.').map(smi => ({ smi })) }, { width: o.width || 520, label: 'choice ' + LET[i], noWrap: true, scale: 1.5 }); if (c.text) target.append(H('div', { text: c.text })); }
   else if (c.smiles){ drawSmiles(target, c.smiles, { width: 220, height: 130, label: 'choice ' + LET[i] }); if (c.text) target.append(H('div', { text: c.text })); }
   else target.append(document.createTextNode(c.text));
 }
