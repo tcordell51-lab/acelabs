@@ -87,7 +87,13 @@ function vLayers(node, prims, o, dir, full) {
     state.push(csgInside(node, at(t)));
   }
   const keys = [];
-  for (let k = ts.length - 1; k >= 0; k--) if (state[k] !== state[k + 1]) keys.push(full ? ts[k] : ts[k][1]);
+  for (let k = ts.length - 1; k >= 0; k--) if (state[k] !== state[k + 1]) {
+    if (!full) { keys.push(ts[k][1]); continue; }
+    // orient the normal from material to air: entering material along +t means the normal opposes the ray
+    const e = ts[k].slice(); const entering = !state[k] && state[k + 1];
+    if (e[2]) { const dn = d3(e[2], dir); if ((entering && dn > 0) || (!entering && dn < 0)) e[2] = e[2].map((x) => -x); }
+    keys.push(e);
+  }
   return keys;
 }
 
@@ -335,21 +341,33 @@ function solve3(rows, rhs) {
 /* line map in the pictorial direction, visible lines only */
 function vIsoMap(node, win, R) {
   const G = vGrid(win, R), prims = primsOf(node), sig = [];
-  for (let i = 0; i < G.nu; i++) for (let j = 0; j < G.nv; j++) {
-    const o = solve3([ISOV.u, ISOV.v, ISOV.d], [G.u(i), G.v(j), 0]);
-    sig.push(vLayers(node, prims, o, ISOV.d, true));
-  }
-  const cmp = (a, b) => {
+  const first = (u, v) => { const o = solve3([ISOV.u, ISOV.v, ISOV.d], [u, v, 0]); return vLayers(node, prims, o, ISOV.d, true); };
+  for (let i = 0; i < G.nu; i++) for (let j = 0; j < G.nv; j++) sig.push(first(G.u(i), G.v(j)));
+  /* a visible line lies between two rays when the first surface changes AND, at the
+     exact switch point (found by bisection), the two surfaces meet at a crease or a
+     depth step. Smooth tangent seams (a flat meeting a round) are not lines. */
+  const cmp = (a, b, P, Q) => {
     if (!a.length || !b.length) return a.length === b.length ? 0 : 1;
-    const A = a[0], B = b[0];
-    if (A[1] === B[1]) return 0;
-    if (!A[2] || !B[2]) return 1;
-    const cosang = d3(A[2], B[2]);
-    return cosang < Math.cos(10 * Math.PI / 180) || Math.abs(A[0] - B[0]) > 0.2 ? 1 : 0;
+    if (a[0][1] === b[0][1]) return 0;
+    // walk every switch of first surface between the two rays (there may be several)
+    const at = (m) => first(P[0] + (Q[0] - P[0]) * m, P[1] + (Q[1] - P[1]) * m);
+    let start = 0, ka = a[0][1];
+    for (let guard = 0; guard < 6; guard++) {
+      let lo = start, hi = 1;
+      for (let it = 0; it < 30; it++) { const m = (lo + hi) / 2, L = at(m); if (L.length && L[0][1] === ka) lo = m; else hi = m; }
+      const A = at(lo), B = at(hi);
+      if (!A.length || !B.length) return 1;
+      const x = A[0], y = B[0];
+      if (!x[2] || !y[2]) return 1;
+      if (d3(x[2], y[2]) < Math.cos(3 * Math.PI / 180) || Math.abs(x[0] - y[0]) > 0.01) return 1;
+      if (y[1] === b[0][1]) return 0;
+      start = hi; ka = y[1];
+    }
+    return 1;
   };
   const H = new Uint8Array((G.nu - 1) * G.nv), Vv = new Uint8Array(G.nu * (G.nv - 1));
-  for (let i = 0; i + 1 < G.nu; i++) for (let j = 0; j < G.nv; j++) H[i * G.nv + j] = cmp(sig[i * G.nv + j], sig[(i + 1) * G.nv + j]);
-  for (let i = 0; i < G.nu; i++) for (let j = 0; j + 1 < G.nv; j++) Vv[i * (G.nv - 1) + j] = cmp(sig[i * G.nv + j], sig[i * G.nv + j + 1]);
+  for (let i = 0; i + 1 < G.nu; i++) for (let j = 0; j < G.nv; j++) H[i * G.nv + j] = cmp(sig[i * G.nv + j], sig[(i + 1) * G.nv + j], [G.u(i), G.v(j)], [G.u(i + 1), G.v(j)]);
+  for (let i = 0; i < G.nu; i++) for (let j = 0; j + 1 < G.nv; j++) Vv[i * (G.nv - 1) + j] = cmp(sig[i * G.nv + j], sig[i * G.nv + j + 1], [G.u(i), G.v(j)], [G.u(i), G.v(j + 1)]);
   return { G, H, V: Vv };
 }
 /* lines present in one map with no line of the other map within tol (both directions) */

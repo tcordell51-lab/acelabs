@@ -46,7 +46,7 @@ for (const type of Object.keys(GEN).filter((t) => !only || only.includes(t))) {
     if (type === 'angles' || type === 'angles1deg') add('minGap', m.minGap);
     if (type === 'tfe' || type === 'tfeMachined') { add('missing', m.missing); add('hiddenLines', m.hiddenLines); }
     if (type === 'tfeMachined') { add('validMissing', m.validMissing); add('traps', it.options.map((o) => o.trap).filter(Boolean).sort().join('+')); m.feats.forEach((f) => add('feature', f)); }
-    if (type === 'keyholesMachined') { add('keyAxis', m.keyAxis); add('traps', m.traps.filter(Boolean).sort().join('+')); Object.keys(it.figure.params).forEach((k) => { if (!['w', 'h', 'L'].includes(k)) add('feature', k + ':' + (it.figure.params[k].k || 'yes')); }); }
+    if (type === 'keyholesMachined') { add('keyAxis', m.keyAxis); add('traps', m.traps.filter(Boolean).sort().join('+')); Object.keys(it.figure.params).forEach((k) => { if (!['w', 'h', 'L'].includes(k) && it.figure.params[k]) add('feature', k + ':' + (it.figure.params[k].k || 'yes')); }); }
     if (type === 'patternfoldPoly') { add('solid', m.solid); add('traps', m.traps.filter(Boolean).sort().join('+')); }
     if (type === 'holepunch' || type === 'holepunchV2') { add('folds', m.folds); add('diagonal', m.diagonal); add('holes', m.holes); if (type === 'holepunchV2') add('halfHoles', m.halfHoles || 0); }
     if (type === 'cubes') { add('total', m.total); add('hiddenCubes', m.hiddenCubes); }
