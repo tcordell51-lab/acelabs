@@ -42,7 +42,7 @@
         <rect x="10" y="74" width="130" height="30" rx="8" fill="var(--paper-2)" stroke="var(--line-strong)"/><text x="75" y="94" text-anchor="middle">(2) alone enough?</text>
         <rect x="200" y="74" width="130" height="30" rx="8" fill="var(--paper-2)" stroke="var(--line-strong)"/><text x="265" y="94" text-anchor="middle">(2) alone enough?</text>
         <path d="M140 36 L90 74 M200 36 L250 74" stroke="var(--ink-mute)" fill="none"/>
-        <text x="100" y="56" fill="var(--good-d)">yes</text><text x="228" y="56" fill="var(--trap-d)">no</text>
+        <text x="92" y="52" fill="var(--good-d)">yes</text><text x="232" y="52" fill="var(--trap-d)">no</text>
         <path d="M45 104 L30 140 M105 104 L120 140 M235 104 L220 140 M295 104 L310 140" stroke="var(--ink-mute)" fill="none"/>
         <g font-family="Georgia,serif" font-size="16" font-weight="700" text-anchor="middle">
           <circle cx="30" cy="156" r="15" fill="none" stroke="var(--gold-d)"/><text x="30" y="162">D</text>
@@ -50,8 +50,8 @@
           <circle cx="220" cy="156" r="15" fill="none" stroke="var(--gold-d)"/><text x="220" y="162">B</text>
           <text x="310" y="162">C/E</text>
         </g>
-        <text x="20" y="128" font-size="11" fill="var(--good-d)">yes</text><text x="112" y="128" font-size="11" fill="var(--trap-d)">no</text>
-        <text x="206" y="128" font-size="11" fill="var(--good-d)">yes</text><text x="300" y="128" font-size="11" fill="var(--trap-d)">no</text>
+        <text x="12" y="126" font-size="11" fill="var(--good-d)">yes</text><text x="120" y="126" font-size="11" fill="var(--trap-d)">no</text>
+        <text x="200" y="126" font-size="11" fill="var(--good-d)">yes</text><text x="310" y="126" font-size="11" fill="var(--trap-d)">no</text>
         <text x="270" y="186" font-size="11" fill="var(--ink-mute)" text-anchor="middle">then try both together</text>
       </g></svg>`,
     di: `<svg viewBox="0 0 320 170" role="img" aria-label="Two bars with the change between them marked over the starting bar" style="width:100%;max-width:340px;display:block">
