@@ -250,7 +250,7 @@ function setReport(items) {
     }
   }
   const ids = new Set(); items.forEach((i) => { if (ids.has(i.id)) out.problems.push('duplicate id ' + i.id); ids.add(i.id); });
-  const stems = new Map(); items.forEach((i) => { const k = plain(i.stem + (i.colA || '') + (i.colB || '') + (i.s1 || '')).toLowerCase().replace(/\s+/g, ' '); if (stems.has(k)) out.problems.push('duplicate stem ' + i.id + ' / ' + stems.get(k)); stems.set(k, i.id); });
+  const stems = new Map(); items.forEach((i) => { const k = plain(i.stem + (i.colA || '') + (i.colB || '') + (i.s1 || '') + (i.s2 || '')).toLowerCase().replace(/\s+/g, ' '); if (stems.has(k)) out.problems.push('duplicate stem ' + i.id + ' / ' + stems.get(k)); stems.set(k, i.id); });
   return out;
 }
 
