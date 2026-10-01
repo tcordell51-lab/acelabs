@@ -100,10 +100,11 @@
       : 'K' + p.ax + ',' + r6(p.c[0]) + ',' + r6(p.c[1]) + ',' + r6(p.r0) + ',' + r6(p.r1) + ',' + r6(p.s0) + ',' + r6(p.s1);
   }
 
+  function hide(o, k, v) { Object.defineProperty(o, k, { value: v, enumerable: false, writable: true }); return v; }
   /* ---------------- ray intervals ---------------- */
   /* one primitive: at most one interval (all primitives are convex) */
   function primRay(p, o, d) {
-    var t0 = -BIG, t1 = BIG, k0 = null, k1 = null, pl = p._pl || (p._pl = primPlanes(p).map(function (x) { return [x[0], x[1], planeKey(x[0], x[1])]; }));
+    var t0 = -BIG, t1 = BIG, k0 = null, k1 = null, pl = p._pl || hide(p, '_pl', primPlanes(p).map(function (x) { return [x[0], x[1], planeKey(x[0], x[1])]; }));
     for (var m = 0; m < pl.length; m++) {
       var n = pl[m][0], nd = dot(n, d), pd = pl[m][1] - dot(n, o);
       if (Math.abs(nd) < 1e-13) { if (pd < 0) return null; continue; }
@@ -112,7 +113,7 @@
       if (t0 >= t1) return null;
     }
     if (p.t === 'box' || p.t === 'hs') return [t0, t1, k0, k1];
-    var i = (p.ax + 1) % 3, j = (p.ax + 2) % 3, qu = o[i] - p.c[0], qv = o[j] - p.c[1], du = d[i], dv = d[j], sk = p._sk || (p._sk = sideKey(p));
+    var i = (p.ax + 1) % 3, j = (p.ax + 2) % 3, qu = o[i] - p.c[0], qv = o[j] - p.c[1], du = d[i], dv = d[j], sk = p._sk || hide(p, '_sk', sideKey(p));
     if (p.t === 'cyl') {
       var A = du * du + dv * dv, B = 2 * (qu * du + qv * dv), Cq = qu * qu + qv * qv - p.r * p.r;
       if (A < 1e-14) { if (Cq > 0) return null; return [t0, t1, k0, k1]; }
