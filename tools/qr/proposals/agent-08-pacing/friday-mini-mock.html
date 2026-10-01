@@ -134,7 +134,7 @@ em.gold{font-style:italic; color:var(--gold-d); font-family:'Playfair Display',s
 .skill-tag.mental{background:rgba(201,168,76,0.18); color:var(--gold-d)}
 .skill-tag.pct-chg{background:var(--plum-bg); color:var(--plum)}
 .skill-tag.ratios{background:var(--good-bg); color:var(--good-d)}
-.skill-tag.geo-2d{background:var(--info-bg); color:var(--info)}
+.skill-tag.qc{background:var(--info-bg); color:var(--info)}
 .skill-tag.prob{background:var(--trap-bg); color:var(--trap-d)}
 .skill-tag.word-decode{background:rgba(27,58,45,0.10); color:var(--teal)}
 .qtimer{margin-left:auto; font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--ink-mute); font-weight:600}
@@ -222,7 +222,7 @@ em.gold{font-style:italic; color:var(--gold-d); font-family:'Playfair Display',s
   <!-- Setup -->
   <div class="card" id="setup">
     <h3>Mini-mock settings</h3>
-    <p style="font-size:13.5px; color:var(--ink-mute); margin:0 0 14px">22 questions interleaved across 6 skills: <b>mental math</b>, <b>percent change</b>, <b>ratios</b>, <b>2D geometry</b>, <b>probability</b>, <b>word decoder</b>. The mix is fixed; the order is the same interleaved sequence every session so you can compare runs week over week.</p>
+    <p style="font-size:13.5px; color:var(--ink-mute); margin:0 0 14px">22 questions interleaved across 6 skills: <b>mental math</b>, <b>percent change</b>, <b>ratios</b>, <b>quantitative comparison</b>, <b>probability</b>, <b>word decoder</b>. The mix is fixed; the order is the same interleaved sequence every session so you can compare runs week over week.</p>
     <div class="calc-row">
       <span class="l">Calculator</span>
       <button class="toggle off" id="calc-toggle">OFF · default</button>
@@ -368,12 +368,12 @@ const SKILL_LABEL = {
   'mental':      'mental math',
   'pct-chg':     'percent change',
   'ratios':      'ratios',
-  'geo-2d':      '2d geometry',
+  'qc':          'quantitative comparison',
   'prob':        'probability',
   'word-decode': 'word decoder'
 };
 
-/* 22 q · interleaved sequence: M P R G B W M P R G B W M P R G B W M P R G */
+/* 22 q · interleaved sequence: M P R Q B W M P R Q B W M P R Q B W M P R Q */
 const QBANK = [
   // 01 mental
   {skill:'mental', q:'25 × 16 = ?',
@@ -387,10 +387,10 @@ const QBANK = [
   {skill:'ratios', q:'If 4 mL of stock yields 12 mL of working solution, how much stock is needed for 45 mL of working solution?',
     opts:['15 mL','12 mL','13.5 mL','11 mL'], correct:0,
     why:'Ratio 4:12 = 1:3. So 45 / 3 = 15 mL of stock.'},
-  // 04 geo-2d
-  {skill:'geo-2d', q:'A square has perimeter 36. What is its area?',
-    opts:['81','64','72','144'], correct:0,
-    why:'Side = 36/4 = 9. Area = 9² = 81.'},
+  // 04 qc
+  {skill:'qc', q:'Quantity A: 40% of 65. Quantity B: 65% of 40.',
+    opts:['Quantity A is greater','Quantity B is greater','The two quantities are equal','The relationship cannot be determined from the information given'], correct:2,
+    why:'Both equal (40 × 65) / 100 = 26. a% of b always equals b% of a.'},
   // 05 prob
   {skill:'prob', q:'A bag has 3 red and 5 blue marbles. P(red on first draw)?',
     opts:['3/8','5/8','3/5','1/3'], correct:0,
@@ -411,10 +411,10 @@ const QBANK = [
   {skill:'ratios', q:'A class has boys to girls in ratio 5:7. If there are 36 students, how many girls?',
     opts:['15','18','21','14'], correct:2,
     why:'12 parts = 36 → 1 part = 3. Girls = 7 × 3 = 21.'},
-  // 10 geo-2d
-  {skill:'geo-2d', q:'A circle has radius 5. What is its circumference (use π ≈ 3.14)?',
-    opts:['15.7','25','31.4','78.5'], correct:2,
-    why:'C = 2πr = 2 · 3.14 · 5 = 31.4.'},
+  // 10 qc
+  {skill:'qc', q:'x < 0. Quantity A: x³. Quantity B: x².',
+    opts:['Quantity A is greater','Quantity B is greater','The two quantities are equal','The relationship cannot be determined from the information given'], correct:1,
+    why:'An odd power of a negative stays negative; an even power is positive. Quantity B is greater for every negative x.'},
   // 11 prob
   {skill:'prob', q:'Two fair coins are flipped. P(at least one head)?',
     opts:['1/4','1/2','3/4','1'], correct:2,
@@ -435,10 +435,10 @@ const QBANK = [
   {skill:'ratios', q:'A map scale is 1 in : 24 mi. Two cities are 3.5 in apart on the map. Real distance?',
     opts:['72 mi','84 mi','96 mi','120 mi'], correct:1,
     why:'3.5 × 24 = 84 mi.'},
-  // 16 geo-2d
-  {skill:'geo-2d', q:'A right triangle has legs 6 and 8. Hypotenuse?',
-    opts:['10','12','14','9'], correct:0,
-    why:'6-8-10 family (3-4-5 × 2). Hyp = 10.'},
+  // 16 qc
+  {skill:'qc', q:'Class X: 20 students, mean 80. Class Y: 30 students, mean 90. Quantity A: the mean of all 50 students. Quantity B: 85.',
+    opts:['Quantity A is greater','Quantity B is greater','The two quantities are equal','The relationship cannot be determined from the information given'], correct:0,
+    why:'(20 × 80 + 30 × 90) / 50 = 4,300 / 50 = 86. The bigger class pulls the combined mean toward 90.'},
   // 17 prob
   {skill:'prob', q:'A standard die is rolled twice. P(both rolls show even)?',
     opts:['1/2','1/3','1/4','1/6'], correct:2,
@@ -459,10 +459,10 @@ const QBANK = [
   {skill:'ratios', q:'A recipe needs 3 cups flour for 12 cookies. How much flour for 20 cookies?',
     opts:['4 cups','5 cups','4.5 cups','6 cups'], correct:1,
     why:'3 cups / 12 = 0.25 cups per cookie. 20 × 0.25 = 5 cups.'},
-  // 22 geo-2d
-  {skill:'geo-2d', q:'A rectangle is twice as long as it is wide. Its perimeter is 36. What is its area?',
-    opts:['72','64','81','48'], correct:0,
-    why:'Width = w, length = 2w, P = 6w = 36 → w = 6, l = 12. Area = 72.'},
+  // 22 qc
+  {skill:'qc', q:'|x - 3| = 5. Quantity A: x. Quantity B: 0.',
+    opts:['Quantity A is greater','Quantity B is greater','The two quantities are equal','The relationship cannot be determined from the information given'], correct:3,
+    why:'x = 8 or x = -2. One makes Quantity A greater, the other makes Quantity B greater, so it cannot be determined.'},
 ];
 
 /* ===== State ===== */
