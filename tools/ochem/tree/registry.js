@@ -8,7 +8,7 @@ export const LEVELS = [
 ];
 export const MODULES = [
   't4-alkene', 't4-alkyne', 't4-subelim', 't4-alcohol', 't4-carbonyl', 't4-acid-deriv', 't4-alpha', 't4-aromatic', 't4-radical-pericyclic',
-  't5-proton', 't5-sn-e', 't5-addition', 't5-acyl', 't5-eas', 't5-coordinate', 't5-combined',
+  't5-proton', 't5-arrows-forward', 't5-arrows-reverse', 't5-fishhook', 't5-sn-e', 't5-addition', 't5-acyl', 't5-eas', 't5-coordinate', 't5-rcd', 't5-combined', 't5-mech-chain', 't5-conform',
   't6-two-step', 't6-retro', 't6-selectivity',
   't7-ir', 't7-hnmr', 't7-cnmr', 't7-multi', 't7-properties', 't7-lab'
 ];

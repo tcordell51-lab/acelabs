@@ -63,15 +63,23 @@ export const GROUP_MAP = {
   'misc': { module: 'roots', roots: ['l1-skeletal'] }
 };
 
+// Mass spectrometry is in neither the old nor the 2026 DAT organic spec, so its
+// items stay in the bank file but are never served by the tree or the summit.
+const MS = /mass spec|\bm\/z\b|molecular ion|\bM\+[12]\b|base peak|\bM\+ peak|fragmentation pattern/i;
+export function offSpec(it){
+  const text = [it.q, it.why, ...(Array.isArray(it.opts) ? it.opts : [])].filter(x => typeof x === 'string').join(' ');
+  return MS.test(text);
+}
+
 /** Verified bank items (window.OCHEM_DB) for a module id, or for a group. */
 export function verifiedItems(where){
   const db = (typeof window !== 'undefined' && window.OCHEM_DB) || [];
-  return db.filter(it => it.keep !== false && it.scope_ok !== false && it.smiles_valid !== false && (GROUP_MAP[it.group] && (GROUP_MAP[it.group].module === where || it.group === where)));
+  return db.filter(it => it.keep !== false && it.scope_ok !== false && it.smiles_valid !== false && !offSpec(it) && (GROUP_MAP[it.group] && (GROUP_MAP[it.group].module === where || it.group === where)));
 }
 
 /** The draw pool for a rung: Thomas's own items, weighted, then the verified bank. */
 export function bankItems(where){
-  return weighted(aceItems(where), verifiedItems(where));
+  return weighted(aceItems(where).filter(it => !offSpec(it)), verifiedItems(where));
 }
 
 /** Normalize a bank item to the Summit item shape, from either source. */

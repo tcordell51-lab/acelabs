@@ -8,6 +8,12 @@ import { rootsFor } from '../roots/route.js';
 import * as RX from './shared/reactions.js';
 import { GROUP_MAP, bankItems, bankToItem } from './shared/bank-map.js';
 import { drawSmiles } from './draw.js';
+import { SET2026 } from './shared/set-2026.js';
+import { drawRcd, drawMech, drawChain, drawFigure, mountSet, mountStepper, legend as mdLegend, injectMdCss } from './mechdraw.js';
+
+// The 2026 test-format items (scripts/ochem2026), grouped by the module that teaches them.
+const SETS = {};
+for (const it of SET2026) (SETS[it.home] = SETS[it.home] || []).push(it);
 import { makeStage, STAGE_CSS, tetraAround, unit, sub as vsub, vadd, vmul } from './stage3d.js';
 
 const KEY = 'atDAT_ochemTree_v1';
@@ -66,6 +72,15 @@ export function makeApi(id, opts = {}){
     // Only handed out when the module declares needs3D, since it loads Three.js.
     stage3d(o){ if (!opts.needs3D) throw new Error('declare needs3D in meta to use api.stage3d'); injectStageCss(); return makeStage(this, o); },
     geom: { tetraAround, unit, sub: vsub, add: vadd, mul: vmul },
+    // the 2026 figures and the five-choice set player (mechdraw.js)
+    sets: SETS,
+    drawRcd(target, spec, o){ injectMdCss(); return drawRcd(target, spec, o); },
+    drawMech(target, spec, o){ injectMdCss(); return drawMech(target, spec, o); },
+    drawChain(target, chain, o){ injectMdCss(); return drawChain(target, chain, o); },
+    drawFigure(target, fig, o){ injectMdCss(); return drawFigure(target, fig, o); },
+    mountSet(slot, items, o){ return mountSet(slot, items, this, o); },
+    mountStepper(slot, chains, o){ return mountStepper(slot, chains, o); },
+    arrowLegend(){ injectMdCss(); return mdLegend(); },
     reactions: { REACTIONS: RX.REACTIONS, SUBSTRATES: RX.SUBSTRATES, FAMILIES: RX.FAMILIES, byFamily: RX.byFamily, siblings: RX.siblings, find: RX.find },
     bank: { items: bankItems, toItem: bankToItem, GROUP_MAP },
     report(ok){ const r = rec(id); r.tries++; if (ok){ r.firstTry++; r.run++; } else r.run = 0; if (r.run >= 3) r.owned = true; save(state); opts.onReport && opts.onReport(r); },
@@ -95,6 +110,17 @@ export function renderRoot(mod, container, index){
   const api = makeApi(m.id, { needs3D: !!m.needs3D, coachEl, onReport(rr){ head.querySelector('.owned-badge').style.display = rr.owned ? '' : 'none'; refreshMap(); refreshWalkbar(); } });
   try { mod.mount({ visual, try: tryEl }, api); }
   catch (e){ visual.append(el('p', { class: 'missing-note', text: 'This visual hit a snag loading. The move and the trap above still stand.' })); console.error(m.id, e); }
+  // Modules that predate the 2026 set get its test-format items under their own you-try,
+  // through the same five-choice player the new modules use.
+  if (!m.ownsSet && SETS[m.id] && SETS[m.id].length){
+    const setWrap = el('div', { class: 'try set2026' });
+    setWrap.append(el('span', { class: 'label eyebrow', text: 'Test format, five choices: ' + SETS[m.id].length + ' items' }));
+    const setCoach = el('div', { class: 'coach' });
+    const slot = el('div', {}); setWrap.append(slot, setCoach);
+    tryWrap.after(setWrap);
+    const sapi = makeApi(m.id, { coachEl: setCoach, onReport(rr){ head.querySelector('.owned-badge').style.display = rr.owned ? '' : 'none'; refreshMap(); refreshWalkbar(); } });
+    try { sapi.mountSet(slot, SETS[m.id], { title: 'Test format' }); } catch (e){ console.error(m.id, 'set', e); }
+  }
   return sec;
 }
 

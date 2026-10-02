@@ -1,0 +1,23 @@
+<!doctype html><html><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1">
+<title>2026 set gallery</title>
+<link rel=stylesheet href="../../tools/ochem/tree/tree.css">
+<script src="../../shared/smiles-drawer.min.js"></script></head>
+<body><div class="wrap" id=o></div>
+<script type=module>
+// Every 2026 item with a drawn figure, stem plus all five choices, for a visual legibility pass.
+// ?type=arrows-reverse&from=0&n=10 picks a slice.
+import { SET2026 } from '../../tools/ochem/tree/shared/set-2026.js';
+import { renderItemFigure, renderChoiceBody, itemArrows, injectMdCss } from '../../tools/ochem/tree/mechdraw.js';
+injectMdCss();
+const q = new URLSearchParams(location.search), type = q.get('type');
+const list = SET2026.filter(it => (it.fig || it.choices.some(c => c.fig)) && (!type || it.type === type)).slice(+(q.get('from') || 0), +(q.get('from') || 0) + +(q.get('n') || 999));
+const o = document.getElementById('o');
+for (const it of list){
+  const d = document.createElement('div'); d.className = 'md-set'; d.style.cssText = 'border-top:1px solid #444;padding:10px 0';
+  const h = document.createElement('p'); h.className = 'md-stem'; h.textContent = it.id + ' (key ' + 'ABCDE'[it.correct] + '): ' + it.stem; d.append(h); o.append(d);
+  renderItemFigure(d, it, {});
+  const opts = document.createElement('div'); opts.className = 'md-opts'; d.append(opts);
+  it.choices.forEach((c, i) => { const b = document.createElement('div'); b.className = 'md-opt'; const k = document.createElement('span'); k.className = 'k'; k.textContent = 'ABCDE'[i]; const body = document.createElement('span'); body.className = 'body'; b.append(k, body); opts.append(b); renderChoiceBody(body, c, i, { width: 520, orientBy: itemArrows(it) }); });
+}
+window.done = list.length;
+</script></body></html>

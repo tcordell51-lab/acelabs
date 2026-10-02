@@ -124,3 +124,39 @@ export function drawSmiles(target, smiles, o = {}){
   return node;
 }
 
+
+// drawSmilesGeom: the same drawing, plus where every atom landed. Used by the
+// arrow figures (mechdraw.js), which need to start an arrow at a lone pair and
+// land it on an atom. Atom i is the i-th atom written in the SMILES, explicit
+// [H] included, which is the order RDKit numbers them too, so the picture and
+// the RDKit proof point at the same atoms. Coordinates are in the svg's own
+// viewBox units.
+let _gdrawer = null;
+export function drawSmilesGeom(target, smiles, o = {}){
+  const bl = o.bondLength || 26;
+  const node = document.createElementNS(SVGNS, 'svg');
+  node.setAttribute('role', 'img'); node.setAttribute('aria-label', o.label || 'a molecule');
+  node.classList.add('mol');
+  if (target) target.append(node);
+  const out = { node, atoms: [], bonds: [], vb: [0, 0, 1, 1] };
+  if (!window.SmilesDrawer) return out;
+  if (!_gdrawer || _gdrawer._bl !== bl){
+    _gdrawer = new window.SmilesDrawer.SvgDrawer({ width: 400, height: 300, bondThickness: 1.6, bondLength: bl, shortBondLength: 0.8, fontSizeLarge: 10.5, fontSizeSmall: 8.5, padding: 4, compactDrawing: false, terminalCarbons: false, explicitHydrogens: true,
+      themes: { dark: { C: '#ece6d7', O: '#e0705a', N: '#5b8def', F: '#9ad39a', CL: '#3fb257', BR: '#c47a4a', I: '#a06bd6', P: '#f0a05a', S: '#e2c34b', B: '#d8a0a0', SI: '#b0b0b0', H: '#ece6d7', MG: '#b0b0b0', LI: '#b0b0b0', NA: '#b0b0b0', BACKGROUND: 'transparent' } } });
+    _gdrawer._bl = bl;
+  }
+  const d = _gdrawer;
+  try {
+    window.SmilesDrawer.parse(smiles, tree => {
+      d.draw(tree, node, 'dark');
+      stampCharges(node, d);
+      const g = d.preprocessor.graph;
+      out.atoms = g.vertices.map(v => ({ i: v.id, x: v.position.x, y: v.position.y, el: v.value.element, nb: v.neighbours.slice(), q: (v.value.bracket && v.value.bracket.charge) || 0, hc: v.value.bracket ? (v.value.bracket.hcount || 0) : null, labeled: v.value.element !== 'C' || (v.value.bracket && !!v.value.bracket.charge) }));
+      out.bonds = g.edges.map(e => ({ a: e.sourceId, b: e.targetId, order: e.bondType === '=' ? 2 : e.bondType === '#' ? 3 : e.bondType === '.' ? 0 : 1 })).filter(e => e.order > 0);
+    }, err => { console.error('smiles', smiles, err); });
+  } catch (e){ console.error('smiles', smiles, e); }
+  const vb = (node.getAttribute('viewBox') || '0 0 1 1').split(/\s+/).map(Number);
+  out.vb = vb;
+  node.removeAttribute('width'); node.removeAttribute('height'); node.removeAttribute('style');
+  return out;
+}
