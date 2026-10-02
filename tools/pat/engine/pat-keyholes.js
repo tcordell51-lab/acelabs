@@ -899,9 +899,11 @@ function openingSVG(grid, scale, box) {
   return '<svg class="pat-svg" viewBox="0 0 ' + box + ' ' + box + '" style="max-width:' + (box * UNIT) + 'px"><path d="' + d + '" fill="#fff" fill-rule="evenodd" stroke="#111" stroke-width="' + (0.17).toFixed(2) + '" stroke-linejoin="miter"/></svg>';
 }
 function renderFigure(item) {
+  if (item.figure && item.figure.kind === 'machined') return PAT.keyholesCSG.renderFigure(item);
   return '<figure class="pat-panel pat-wide"><div class="pat-paper">' + objectSVG(item.figure) + '</div><figcaption>Object</figcaption></figure>';
 }
 function renderOption(item, i) {
+  if (item.figure && item.figure.kind === 'machined') return PAT.keyholesCSG.renderOption(item, i);
   const o = item.options[i];
   return '<div class="pat-paper pat-small pat-hole">' + openingSVG(o.grid, o.scale, optionBox(item)) + '</div>';
 }

@@ -298,8 +298,10 @@
     cube.forEach(function (f) { o += '<polygon points="' + f.pts.map(function (p) { var q = P(proj(p)); return q[0].toFixed(1) + ',' + q[1].toFixed(1); }).join(' ') + '" fill="none" stroke="#111" stroke-width="1.6" stroke-linejoin="round"/>'; });
     return o + '</svg>';
   }
-  function renderFigure(item) { return '<figure class="pat-panel pat-wide"><div class="pat-paper">' + netSVG(item.figure.net, item.figure.marks) + '</div><figcaption>Pattern</figcaption></figure>'; }
-  function renderOption(item, i) { return '<div class="pat-paper pat-small">' + cubeSVG(item.options[i].polys) + '</div>'; }
+  function renderFigure(item) {
+  if (item.figure && item.figure.kind === 'poly') return PAT.patternfoldPoly.renderFigure(item); return '<figure class="pat-panel pat-wide"><div class="pat-paper">' + netSVG(item.figure.net, item.figure.marks) + '</div><figcaption>Pattern</figcaption></figure>'; }
+  function renderOption(item, i) {
+  if (item.figure && item.figure.kind === 'poly') return PAT.patternfoldPoly.renderOption(item, i); return '<div class="pat-paper pat-small">' + cubeSVG(item.options[i].polys) + '</div>'; }
 
   PAT.patternfold = {
     generate: generate, renderFigure: renderFigure, renderOption: renderOption, NETS: NETS, MARKS: MARKS, netType: netType,

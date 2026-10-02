@@ -303,6 +303,7 @@
   }
   function dimsOf(name, dims) { return name === 'top' ? [dims[0], dims[1]] : name === 'front' ? [dims[0], dims[2]] : [dims[1], dims[2]]; }
   function renderFigure(item) {
+  if (item.figure && item.figure.kind === 'machined') return PAT.tfeCSG.renderFigure(item);
     var f = item.figure, d = f.dims;
     function cell(name) {
       var wh = dimsOf(name, d);
@@ -312,6 +313,7 @@
     return '<div class="tfe-board"><div class="tfe-top">' + cell('top') + '</div><div class="tfe-bottom">' + cell('front') + cell('end') + '</div></div>';
   }
   function renderOption(item, i) {
+  if (item.figure && item.figure.kind === 'machined') return PAT.tfeCSG.renderOption(item, i);
     var wh = dimsOf(item.figure.missing, item.figure.dims);
     return '<div class="pat-paper pat-small">' + viewSVG(item.options[i].segs, wh[0], wh[1]) + '</div>';
   }

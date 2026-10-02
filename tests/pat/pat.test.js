@@ -6,7 +6,8 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('fs');
 const path = require('path');
-const { loadEngine, checkItem } = require('./helpers.js');
+const { loadEngine, checkItem, ENGINE_FILES } = require('./helpers.js');
+const crypto = require('crypto');
 
 // minimal localStorage for the store tests (installed before the engine loads)
 const mem = {};
@@ -21,6 +22,18 @@ const GEN = {
   holepunch: (s, i) => PAT.holepunch.generate(s, { folds: 1 + (i % 3) }),
   cubes: (s, i) => PAT.cubes.generateSet(s, 4, 'A')[i % 4],
   patternfold: (s) => PAT.patternfold.generate(s)
+};
+/* engine v2 item kinds (heavier checks, so 12 seeds here; the audit runs 50) */
+const SEEDS2 = SEEDS.slice(0, 12);
+const GEN2 = {
+  'keyholes machined': (s) => PAT.keyholesCSG.generate(s),
+  'tfe machined': (s) => PAT.tfeCSG.generate(s),
+  'patternfold prism': (s) => PAT.patternfoldPoly.generate(s, { kind: 'box' }),
+  'patternfold triangular prism': (s) => PAT.patternfoldPoly.generate(s, { kind: 'triprism' }),
+  'patternfold pyramid': (s) => PAT.patternfoldPoly.generate(s, { kind: 'pyramid' }),
+  'patternfold tetrahedron': (s) => PAT.patternfoldPoly.generate(s, { kind: 'tetra' }),
+  'holepunch half-holes': (s, i) => PAT.holepunch.generate(s, { folds: 2 + (i % 2), halfHoles: true }),
+  'angles 1-degree tier': (s) => PAT.angles.generate(s, { tier: '1deg' })
 };
 
 for (const type of Object.keys(GEN)) {
@@ -45,6 +58,73 @@ for (const type of Object.keys(GEN)) {
     assert.notDeepEqual(checkItem(PAT, bad), [], 'mutated ' + type + ' item was not caught');
   });
 }
+
+for (const name of Object.keys(GEN2)) {
+  test(name + ': fixed-seed items, every key independently verified, no second correct answer', () => {
+    SEEDS2.forEach((sd, i) => {
+      const it = GEN2[name](sd, i);
+      assert.deepEqual(checkItem(PAT, it), [], name + ' seed ' + sd + ': ' + checkItem(PAT, it).join('; '));
+    });
+  });
+  test(name + ': same seed gives the identical item', () => {
+    assert.equal(JSON.stringify(GEN2[name](SEEDS2[3], 3)), JSON.stringify(GEN2[name](SEEDS2[3], 3)));
+  });
+}
+test('v2 verifiers catch broken items (mutation checks)', () => {
+  const kh = PAT.keyholesCSG.generate(SEEDS[1]);
+  const kh1 = JSON.parse(JSON.stringify(kh)); kh1.answer = (kh.answer + 1) % 5;
+  assert.notDeepEqual(checkItem(PAT, kh1), [], 'keyholes wrong key');
+  const kh2 = JSON.parse(JSON.stringify(kh)); kh2.options[kh.answer].loops = kh2.options[kh.answer].loops.map((L) => L.map((q) => [q[0] * 1.08, q[1]]));
+  assert.notDeepEqual(checkItem(PAT, kh2), [], 'keyholes stretched key');
+  const kh3 = JSON.parse(JSON.stringify(kh)); kh3.figure.lines.splice(0, 4);
+  assert.notDeepEqual(checkItem(PAT, kh3), [], 'keyholes drawing with missing lines');
+  const tf = PAT.tfeCSG.generate(SEEDS[1]);
+  const tf1 = JSON.parse(JSON.stringify(tf)); tf1.answer = (tf.answer + 1) % 4;
+  assert.notDeepEqual(checkItem(PAT, tf1, { family: false }), [], 'tfe wrong key');
+  const tf2 = JSON.parse(JSON.stringify(tf)), key = tf2.options[tf.answer].prims, g = PAT.tfeCSG.groups(key)[0];
+  g.forEach((i) => { key[i].dash = !key[i].dash; });
+  assert.notDeepEqual(checkItem(PAT, tf2, { family: false }), [], 'tfe key with a line flipped solid/dashed');
+  const tf3 = JSON.parse(JSON.stringify(tf)); const gv = Object.keys(tf3.figure.given)[0]; tf3.figure.given[gv].splice(0, 2);
+  assert.notDeepEqual(checkItem(PAT, tf3, { family: false }), [], 'tfe given view with lines missing');
+  const pf = PAT.patternfoldPoly.generate(SEEDS[1]);
+  const pf1 = JSON.parse(JSON.stringify(pf)); pf1.answer = (pf.answer + 1) % 4;
+  assert.notDeepEqual(checkItem(PAT, pf1), [], 'pattern folding wrong key');
+  const hp = PAT.holepunch.generate(SEEDS[2], { folds: 2, halfHoles: true });
+  const hp1 = JSON.parse(JSON.stringify(hp)); hp1.answer = (hp.answer + 1) % 5;
+  assert.notDeepEqual(checkItem(PAT, hp1), [], 'hole punching wrong key');
+});
+test('TFE machined: the family search proves every distractor wrong (engine and verifier agree)', () => {
+  SEEDS2.slice(0, 4).forEach((sd) => {
+    const it = PAT.tfeCSG.generate(sd), probs = checkItem(PAT, it);
+    assert.deepEqual(probs, []);
+    assert.ok(it.meta.validMissing >= 1);
+  });
+});
+
+/* v1 must stay byte-identical so every saved v1 attempt maps onto the same items */
+const V1_HASH = { 1: '01f2b411e76a1989', 2: '349095f322061eb2', 3: '0de0b1938358fef6', 4: 'a3286c62fdbd420a', 5: 'd7bca3b7b98e0f54', 6: '8cb03bac96eb5a8f', 7: 'e3abdb3510f7d14c', 8: 'a83123eddc17f7cd', 9: '12743c4f42ad7344', 10: '519a75b40ddc07fa', 11: '5d9ad4a16d78d21f', 12: 'a1a2603f23e71b22', 13: 'fa4412d9ee83a3b3', 14: '61d6a74f2bef4f41', 15: 'f7affbad801d0b74', F123456: '2ab1c516fbed3663' };
+test('engine v1: all 15 numbered tests and a fresh test are byte-identical to the pre-v2 engine', () => {
+  for (const k of Object.keys(V1_HASH)) {
+    const id = k[0] === 'F' ? k : Number(k);
+    const h = crypto.createHash('sha256').update(JSON.stringify(PAT.test.build(id, { version: 1 }).items)).digest('hex').slice(0, 16);
+    assert.equal(h, V1_HASH[k], 'v1 test ' + k + ' changed');
+  }
+});
+test('versions: new attempts record v2; v1 and v2 differ; v2 has only multi-fold hole punching', () => {
+  assert.equal(PAT.test.VERSION, 2);
+  const T2 = PAT.test.build(9), T1 = PAT.test.build(9, { version: 1 });
+  assert.equal(T2.version, 2); assert.equal(T1.version, 1);
+  assert.notEqual(JSON.stringify(T1.items), JSON.stringify(T2.items));
+  const a = PAT.store.newAttempt(T2, 'standard');
+  assert.equal(a.engine, 2);
+  T2.items.filter((it) => it.type === 'holepunch').forEach((it) => assert.ok(it.meta.folds >= 2, 'one-fold item in v2'));
+  assert.ok(T1.items.filter((it) => it.type === 'holepunch').some((it) => it.meta.folds === 1), 'v1 still has its original one-fold items');
+  const kinds = new Set(T2.items.map((it) => it.type + ':' + (it.figure.kind || 'classic')));
+  ['keyholes:machined', 'tfe:machined', 'patternfold:poly', 'keyholes:classic', 'tfe:classic', 'patternfold:classic'].forEach((k) => assert.ok(kinds.has(k), 'v2 test lacks ' + k));
+  const E = PAT.test.build(9, { angles1deg: true });
+  assert.ok(E.items.filter((it) => it.type === 'angles').every((it) => it.meta.minGap === 1));
+  assert.ok(T2.items.filter((it) => it.type === 'angles').every((it) => it.meta.minGap >= 2), '1-degree tier is off by default');
+});
 
 test('full test: 90 items in real order with real choice counts', () => {
   const T = PAT.test.build(1);
@@ -107,7 +187,7 @@ test('analyzer: per-section scores, time, patterns, and 2-3 next steps for weak 
 });
 
 test('student-facing text: no em dashes, no emojis, no predictions, no pace-shaming', () => {
-  const files = ['engine/pat-test.js', 'engine/pat-angles.js', 'engine/pat-holepunch.js', 'engine/pat-cubes.js', 'engine/pat-patternfold.js', 'engine/pat-tfe.js', 'engine/pat-keyholes.js', 'test.html', 'pat-test.css', 'engine/pat-store.js', 'engine/pat-core.js'];
+  const files = ENGINE_FILES.map((n) => 'engine/pat-' + n + '.js').concat(['engine/pat-core.js', 'test.html', 'pat-test.css']);
   const dir = path.join(__dirname, '..', '..', 'tools', 'pat');
   files.forEach((f) => {
     const src = fs.readFileSync(path.join(dir, f), 'utf8');

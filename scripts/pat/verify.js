@@ -234,6 +234,27 @@ function holepunchForward(folds, punches) {
   }
   return out;
 }
+/* Exact physical check (handles punches on a fold edge): every original
+   triangle of the 4 x 4 sheet (each cell cut by both diagonals) is moved by its
+   centroid through the folds; it is cut when it ends inside a punched cell.
+   Returns {holes, partial, missed}: cells cut whole, cells cut only in part
+   (a visible part-hole), and punches that hit no paper. */
+function holepunchTriangles(folds, punches) {
+  const cellOf = (p) => Math.floor(p[0]) + ',' + Math.floor(p[1]);
+  const pset = new Set(punches.map(cellOf)), hit = new Set(), count = {};
+  for (let i = 0; i < 4; i++) for (let j = 0; j < 4; j++) {
+    const c = [i + 0.5, j + 0.5];
+    for (const off of [[0, -1 / 3], [1 / 3, 0], [0, 1 / 3], [-1 / 3, 0]]) {
+      let p = [c[0] + off[0], c[1] + off[1]];
+      for (const f of folds) { if (Math.sign(sdist(f, p)) === f.moveSide) p = reflect(f, p); }
+      const k = cellOf(p);
+      if (pset.has(k)) { hit.add(k); count[i + ',' + j] = (count[i + ',' + j] || 0) + 1; }
+    }
+  }
+  const holes = [], partial = [];
+  for (const k of Object.keys(count)) { const [a, b] = k.split(',').map(Number); (count[k] === 4 ? holes : partial).push([a + 0.5, b + 0.5]); }
+  return { holes, partial, missed: [...pset].filter((k) => !hit.has(k)) };
+}
 const holeKey = (pts) => pts.map((p) => p[0] + ',' + p[1]).sort().join('|');
 
 /* ======================================================================
@@ -559,7 +580,7 @@ function verifyKeyholes(occ, N, optionGrids, keyIndex, opts) {
 module.exports = {
   verifyAngles,
   segKey, viewByEdges, tfeValidMissingKeys,
-  holepunchForward, holeKey, sdist, reflect,
+  holepunchForward, holepunchTriangles, holeKey, sdist, reflect,
   cubePaintedCounts, topFaceVisibility, verifyCubeFigure,
   foldNetByRolling, validCubeDrawings, drawingSig, projectRH, all24, matVec,
   trimG, canonG, similar, silhouettesOf, hiddenFill, outlineEvidence, verifyKeyholes

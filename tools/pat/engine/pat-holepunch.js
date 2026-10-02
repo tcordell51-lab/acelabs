@@ -93,6 +93,24 @@
     out.forEach(function (p) { var k = p[0] + ',' + p[1]; if (!seen[k]) { seen[k] = 1; ded.push(p); } });
     return ded;
   }
+  /* Triangle-level forward simulation: push every original triangle through the
+     folds (all layers on the moving side move); a triangle is cut when it ends in a
+     punched cell. Each original cell must be cut whole (4 triangles) or not at all,
+     otherwise the unfolded sheet would show a part-hole: then return null. */
+  function triangleHoles(steps, punches) {
+    var pc = {}; punches.forEach(function (p) { pc[Math.floor(p[0]) + ',' + Math.floor(p[1])] = 1; });
+    var cut = {}, hit = {};
+    for (var i = 0; i < 4; i++) for (var j = 0; j < 4; j++) TRI.forEach(function (t) {
+      var pos = i + ',' + j + ',' + t;
+      steps.forEach(function (st) { if (st.flap[pos]) pos = reflectTri(st.fold, pos); });
+      var q = pos.split(','), ck = q[0] + ',' + q[1];
+      if (pc[ck]) { cut[i + ',' + j] = (cut[i + ',' + j] || 0) + 1; hit[ck] = 1; }
+    });
+    if (Object.keys(pc).some(function (k) { return !hit[k]; })) return null;
+    var out = [];
+    for (var k in cut) { if (cut[k] !== 4) return null; var a = k.split(',').map(Number); out.push([a[0] + 0.5, a[1] + 0.5]); }
+    return out;
+  }
   var hk = function (pts) { return pts.map(function (p) { return p[0] + ',' + p[1]; }).sort().join('|'); };
 
   function generate(seed, opts) {
@@ -106,7 +124,7 @@
         if (!cands.length) { ok = false; break; }
         var diag = cands.filter(function (c) { return c.fold.kind === 'd1' || c.fold.kind === 'd2'; });
         var orth = cands.filter(function (c) { return c.fold.kind === 'v' || c.fold.kind === 'h'; });
-        var pool = (diag.length && rng.chance(0.35)) ? diag : (orth.length ? orth : diag);
+        var pool = (diag.length && rng.chance(opts.halfHoles ? 0.7 : 0.35)) ? diag : (orth.length ? orth : diag);
         var ch = rng.pick(pool);
         var flapSet = {}; ch.flap.forEach(function (t) { flapSet[t] = 1; });
         steps.push({ fold: ch.fold, before: shape, after: ch.rest, flap: flapSet });
@@ -118,18 +136,32 @@
       if (!cells.length) continue;
       var nP = cells.length > 1 && rng.chance(0.3) ? 2 : 1;
       rng.shuffle(cells);
-      var punches = cells.slice(0, nP);
+      var punches = cells.slice(0, nP), nHalf = 0;
       var holes = punches.slice(), chain = [holes], bad = false;
-      for (var s = steps.length - 1; s >= 0; s--) {
-        holes = unfoldOnce(holes, steps[s].fold, steps[s].flap);
-        if (!holes) { bad = true; break; }
-        chain.push(holes);
+      if (opts.halfHoles) {
+        // a punch may sit on a diagonal fold edge, through a half-covered cell
+        var halves = [];
+        for (var hi = 0; hi < 4; hi++) for (var hj = 0; hj < 4; hj++) {
+          var tri = TRI.filter(function (t) { return shape[hi + ',' + hj + ',' + t]; });
+          if (tri.length === 2 && (TRI.indexOf(tri[1]) - TRI.indexOf(tri[0]) === 1 || (tri[0] === 'N' && tri[1] === 'W'))) halves.push([hi + 0.5, hj + 0.5]);
+        }
+        if (halves.length && rng.chance(0.75)) { punches[0] = rng.pick(halves); nHalf = 1; }
+        holes = triangleHoles(steps, punches);
+        if (!holes) continue;
+        chain = [punches, holes];
+      } else {
+        for (var s = steps.length - 1; s >= 0; s--) {
+          holes = unfoldOnce(holes, steps[s].fold, steps[s].flap);
+          if (!holes) { bad = true; break; }
+          chain.push(holes);
+        }
       }
       if (bad) continue;
       if (holes.length < 2 || holes.length > 12) continue;
       var dis = makeDistractors(rng, steps, punches, holes);
       if (!dis) continue;
       var placed = C.placeAnswer(rng, { holes: holes, trap: null }, dis);
+      var extraMeta = opts.halfHoles ? { halfHoles: nHalf } : {};
       var diagonal = steps.some(function (st) { return st.fold.kind === 'd1' || st.fold.kind === 'd2'; });
       return {
         type: 'holepunch', seed: seed,
@@ -140,7 +172,7 @@
         },
         options: placed.options,
         answer: placed.answer,
-        meta: { folds: steps.length, diagonal: diagonal, holes: holes.length, punches: punches.length, chain: chain.map(function (h) { return h.length; }) }
+        meta: { folds: steps.length, diagonal: diagonal, holes: holes.length, punches: punches.length, chain: chain.map(function (h) { return h.length; }), halfHoles: extraMeta.halfHoles }
       };
     }
     throw new Error('holepunch: no item for seed ' + seed);
@@ -248,13 +280,18 @@
     });
     return h;
   }
+  var CLIP = 0;
   function stepSVG(st, punches, isLast) {
     var S = 30, ox = 15, oy = 15, size = 4 * S + 30;
     var h = '<svg class="pat-svg" viewBox="0 0 ' + size + ' ' + size + '">';
     // the flap's original position, dashed (where the paper came from)
     h += polySet(st.flap, S, ox, oy, 'none', '#6b6b6b', true);
     h += polySet(st.after, S, ox, oy, '#ffffff', '#111', false);
-    if (isLast) punches.forEach(function (p) { h += '<circle cx="' + (ox + p[0] * S) + '" cy="' + (oy + p[1] * S) + '" r="7" fill="#111"/>'; });
+    if (isLast) {
+      var cid = 'hpclip' + (++CLIP);
+      h += '<clipPath id="' + cid + '">' + st.after.map(function (k) { var q = k.split(','), v = triVerts(+q[0], +q[1], q[2]); return '<polygon points="' + v.map(function (z) { return (ox + z[0] * S).toFixed(1) + ',' + (oy + z[1] * S).toFixed(1); }).join(' ') + '"/>'; }).join('') + '</clipPath>';
+      punches.forEach(function (p) { h += '<circle cx="' + (ox + p[0] * S) + '" cy="' + (oy + p[1] * S) + '" r="7" fill="#111" clip-path="url(#' + cid + ')"/>'; });
+    }
     return h + '</svg>';
   }
   function renderFigure(item) {
@@ -274,7 +311,7 @@
 
   PAT.holepunch = {
     generate: generate, renderFigure: renderFigure, renderOption: renderOption, sheetSVG: sheetSVG,
-    _internal: { candidateFolds: candidateFolds, reflectP: reflectP, sdist: sdist, fullSheet: fullSheet }
+    _internal: { triangleHoles: triangleHoles, candidateFolds: candidateFolds, reflectP: reflectP, sdist: sdist, fullSheet: fullSheet }
   };
   if (typeof module === 'object' && module.exports) module.exports = PAT;
 })(typeof self !== 'undefined' ? self : globalThis);
