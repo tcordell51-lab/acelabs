@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Learn · Ace Labs</title>
+<meta name="description" content="The six Retold courses, night by night, each night paired with its Canon sheet, plus the OChem foundations.">
+<link rel="stylesheet" href="/shared/ace-pages.css?v=1">
+</head>
+<body>
+<main class="wrap" id="main">
+  <header class="page-head">
+    <p class="eyebrow">Learn</p>
+    <h1>Learn it once, <em>the right way</em>.</h1>
+    <p class="lede">Each Retold course walks a whole subject one night at a time, in Thomas's voice, building everything from one idea. Every night pairs with its Canon sheet, the one drawing you will meet again in sessions, recaps and drills.</p>
+  </header>
+
+  <section class="section" aria-labelledby="h-courses">
+    <div class="section-head">
+      <div>
+        <h2 id="h-courses">The six Retold courses</h2>
+        <p>Open a course where you left off, or pick a night.</p>
+      </div>
+    </div>
+    <div class="grid" id="courses"></div>
+  </section>
+
+  <section class="section" aria-labelledby="h-ochem">
+    <div class="section-head">
+      <div>
+        <h2 id="h-ochem">OChem foundations</h2>
+        <p>The ground floor under the OChem course. Roots first, then climb the Tree.</p>
+      </div>
+    </div>
+    <div class="grid">
+      <a class="card" data-section="ochem" href="/tools/ochem/roots/">
+        <span class="sec-label">Organic Chemistry</span>
+        <h3>The Roots of Organic</h3>
+        <p>The handful of ideas every reaction grows from: charge, electrons, acids and bases, resonance. Three levels each.</p>
+        <span class="go">Open the Roots</span>
+      </a>
+      <a class="card" data-section="ochem" href="/tools/ochem/tree/">
+        <span class="sec-label">Organic Chemistry</span>
+        <h3>The Tree of Organic</h3>
+        <p>Each reaction family as a branch you walk and then own: predict, draw, check. The OChem practice engine.</p>
+        <span class="go">Climb the Tree</span>
+      </a>
+      <a class="card" data-section="ochem" href="/tools/ochem/decide/">
+        <span class="sec-label">Organic Chemistry</span>
+        <h3>The Two Decisions</h3>
+        <p>Stereo relationships and substitution versus elimination as two decision trees you can run on any question.</p>
+        <span class="go">Run the decisions</span>
+      </a>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="h-more">
+    <div class="section-head">
+      <div>
+        <h2 id="h-more">Quick refreshers</h2>
+        <p>Short and visual, for the night before or the minute before.</p>
+      </div>
+    </div>
+    <div class="grid">
+      <a class="card" href="/tricks/">
+        <span class="sec-label" data-section="strategy">All sections</span>
+        <h3>The trick library</h3>
+        <p>Every trick three ways: a short question, a full breakdown, and a one-page sheet.</p>
+        <span class="go">Open the library</span>
+      </a>
+      <a class="card" href="/cheat-sheets.html">
+        <span class="sec-label" data-section="strategy">All sections</span>
+        <h3>Cheat sheets</h3>
+        <p>One-page summaries by section, built for a last look before a block.</p>
+        <span class="go">Open the sheets</span>
+      </a>
+      <a class="card" href="https://acethedat-portal.netlify.app/canon/" target="_blank" rel="noopener">
+        <span class="sec-label" data-section="strategy">All sections</span>
+        <h3>The Canon</h3>
+        <p>Every concept drawn once, correctly, as a printable sheet. Opens in the portal.</p>
+        <span class="go">Open the Canon</span>
+      </a>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <nav aria-label="More">
+      <a href="/onboarding.html">Set up your path</a>
+      <a href="/performance/">Performance</a>
+      <a href="/test-week.html">Test week</a>
+      <a href="/test-day-readiness.html">Test-day briefing</a>
+      <a href="/for-retakers.html">Going again</a>
+      <a href="/scope.html">Scope and evidence</a>
+    </nav>
+    <p>Ace Labs is not affiliated with the American Dental Association or Prometric.</p>
+  </div>
+</footer>
+
+<script src="/shared/ace-index.js?v=1"></script>
+<script src="/shared/ace-route.js?v=1"></script>
+<script src="/shared/ace-progress.js?v=1"></script>
+<script>
+(function () {
+  var I = window.AceIndex, R = window.AceRoute, P = window.AceProgress;
+  var ORDER = ['bio', 'gchem', 'ochem', 'qr', 'pat', 'rc'];
+  var BLURB = {
+    bio: 'From the structure-function contract to the body\'s control systems.',
+    gchem: 'Two questions, how much and which way, answer the whole subject.',
+    ochem: 'One reaction, electron-rich attacks electron-poor, told thirteen ways.',
+    qr: 'Set it up and the answer falls out: arithmetic to test-day pacing.',
+    pat: 'A method for each of the six PAT question types, then the traps.',
+    rc: 'Search, do not study: the map, the hunt, and the pacing plan.'
+  };
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  var withStudent = (P && P.withStudent) || function (u) { return u; };
+  var html = ORDER.map(function (sec) {
+    var c = I.courses[sec], ns = I.nights[sec] || [];
+    var prog = P && P.learnProgress ? P.learnProgress(sec, ns.length) : null;
+    var next = prog && prog.next ? prog.next : 1;
+    var started = prog && prog.started;
+    var items = ns.map(function (n) {
+      var sheet = R.sheetFor(sec, n.t + ' ' + n.k);
+      var done = prog && prog.walked && prog.walked.indexOf(n.n) >= 0;
+      return '<li><a class="n" href="' + esc(withStudent(c.url + '?night=' + n.n)) + '"><span class="num">' + n.n + '</span>' + esc(n.t) + (done ? ' <span class="tag mastered">Walked</span>' : '') + '</a>' +
+        (sheet ? '<a class="sheet" href="' + esc(R.CANON + 'sheets/' + sheet.id + '.html') + '" target="_blank" rel="noopener" title="' + esc(sheet.t) + '">Sheet</a>' : '') + '</li>';
+    }).join('');
+    return '<article class="card" data-section="' + sec + '">' +
+      '<span class="sec-label">' + esc(c.name) + '</span>' +
+      '<h3>' + esc(R.SECTION_SHORT[sec]) + ', Retold</h3>' +
+      '<p>' + esc(BLURB[sec]) + ' <span class="num">' + ns.length + '</span> nights.</p>' +
+      '<div class="actions"><a class="btn small primary" href="' + esc(withStudent(c.url + '?night=' + next)) + '">' + (started ? 'Continue with night ' + next : 'Start night 1') + '</a></div>' +
+      '<details class="nights"><summary>All ' + ns.length + ' nights</summary><ol>' + items + '</ol></details>' +
+      '</article>';
+  }).join('');
+  document.getElementById('courses').innerHTML = html;
+})();
+</script>
+<script src="/shared/ace-shell.js?v=1" defer></script>
+</body>
+</html>

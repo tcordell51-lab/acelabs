@@ -1394,7 +1394,15 @@ function finishTest(){
     testName: tests[STATE.testIdx].name,
     ts: Date.now(),
     subjects: Object.fromEntries(Object.entries(subjResults).map(([k,v])=>[k,{correct:v.correct,total:v.total,pct: v.total > 0 ? Math.round(100*v.correct/v.total) : 0}])),
-    sonsCorrect, sonsTotal
+    sonsCorrect, sonsTotal,
+    // Raw facts for /performance/ and /review/: misses by topic and seat time per section. No forecast.
+    byTopic: Object.fromEntries(Object.entries(subjResults).map(([k,v])=>[k, v.byTopic])),
+    timeSec: (function(){
+      const t0 = window._pmTestStartedAt || null, se = STATE.sectionEndedAt || {};
+      const sons = (t0 && se.sons) ? Math.max(0, Math.floor((se.sons - t0)/1000)) : null;
+      const qr = (se.sons && se.qr) ? Math.min(45*60, Math.max(0, Math.floor((se.qr - se.sons)/1000))) : null;
+      return { sons, qr };
+    })()
   };
   try {
     localStorage.setItem('al:lastPrometric', JSON.stringify(record));
@@ -1597,7 +1605,6 @@ function showWrongAnswerReview(wrong){
 }
 </script>
 <script src="shared/scope.js"></script>
-  <script src="/shared/acelabs-nav.js" defer></script>
-  <script src="/shared/acelabs-topnav.js" defer></script>
+  <script src="/shared/ace-shell.js?v=1" defer></script>
 </body>
 </html>

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Review · Ace Labs</title>
+<meta name="description" content="Every miss from every Ace Labs tool in one list, on a 1, 3 and 7 day retry ladder, each with its sheet, lesson and drill.">
+<link rel="stylesheet" href="/shared/ace-pages.css?v=1">
+<style>
+  .rv-top { display: flex; gap: 12px; align-items: center; justify-content: space-between; flex-wrap: wrap; margin-bottom: 6px; }
+  .counts { display: flex; gap: 18px; flex-wrap: wrap; color: var(--text-mid); font-size: 14px; }
+  .counts b { color: var(--text-hi); font-variant-numeric: lining-nums tabular-nums; }
+  .rows .meta { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 4px; }
+  .rows .meta .src { color: var(--text-mid); font-size: 13.5px; }
+  .rows .detail { display: block; color: var(--text-lo); font-size: 13.5px; margin-top: 3px; }
+  .retry { display: flex; gap: 6px; flex-wrap: wrap; }
+  .retry button { font-size: 13px; font-weight: 700; border-radius: 999px; padding: 6px 12px; cursor: pointer; background: transparent; }
+  .retry .ok { color: var(--good-ink); border: 1px solid rgba(143, 214, 164, 0.35); }
+  .retry .no { color: var(--text-mid); border: 1px solid var(--rule); }
+  .row-r { display: flex; flex-direction: column; gap: 8px; align-items: flex-end; }
+  @media (max-width: 720px) { .row-r { align-items: flex-start; width: 100%; } }
+  .ladder { margin: 18px 0 0; font-size: 14px; color: var(--text-mid); }
+  .toast { position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%); background: var(--bg-panel-elevated); border: 1px solid var(--gold-border); color: var(--text-hi); padding: 10px 16px; border-radius: 999px; font-size: 14px; opacity: 0; transition: opacity .2s; pointer-events: none; }
+  .toast.on { opacity: 1; }
+</style>
+</head>
+<body>
+<main class="wrap" id="main">
+  <header class="page-head">
+    <p class="eyebrow">Review</p>
+    <h1>Every miss, <em>one list</em>.</h1>
+    <p class="lede">Misses from practice tests, Reading, PAT, the Climb, the engines and games land here on their own. Practice-test misses come first. Retry each one on a 1, 3 and 7 day ladder until it is yours.</p>
+  </header>
+
+  <section class="section" aria-labelledby="h-list">
+    <h2 id="h-list" class="sr-only">Your misses</h2>
+    <div class="rv-top">
+      <div class="tabs" id="status" role="group" aria-label="Show">
+        <button type="button" data-f="due">Due now</button>
+        <button type="button" data-f="open" aria-pressed="true">All open</button>
+        <button type="button" data-f="learning">Learning</button>
+        <button type="button" data-f="reviewing">Reviewing</button>
+        <button type="button" data-f="mastered">Mastered</button>
+      </div>
+      <div class="counts" id="counts"></div>
+    </div>
+    <div class="tabs" id="sections" role="group" aria-label="Section"></div>
+    <ul class="rows" id="list"></ul>
+    <p class="ladder">How the ladder works: say Got it and the miss comes back in 1 day, then 3, then 7. Got it on the 7-day retry and it moves to Mastered. Missed again sends it back to tomorrow. Nothing is ever late here; due just means ready.</p>
+    <p class="note">Want the trend over time? <a href="/performance/">Performance</a> has every timed result.</p>
+  </section>
+</main>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<footer class="foot">
+  <div class="wrap">
+    <nav aria-label="More">
+      <a href="/onboarding.html">Set up your path</a>
+      <a href="/performance/">Performance</a>
+      <a href="/test-week.html">Test week</a>
+      <a href="/test-day-readiness.html">Test-day briefing</a>
+      <a href="/for-retakers.html">Going again</a>
+      <a href="/scope.html">Scope and evidence</a>
+    </nav>
+    <p>Ace Labs is not affiliated with the American Dental Association or Prometric.</p>
+  </div>
+</footer>
+
+<script src="/shared/ace-index.js?v=1"></script>
+<script src="/shared/ace-route.js?v=1"></script>
+<script src="/shared/ace-progress.js?v=1"></script>
+<script>
+(function () {
+  var P = window.AceProgress, R = window.AceRoute, S = P.withStudent;
+  var $ = function (id) { return document.getElementById(id); };
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  var qp = new URLSearchParams(location.search);
+  var state = { f: qp.get('due') ? 'due' : 'open', s: qp.get('section') || 'all' };
+  var askAce = function () { return !!(window.__aceButton || document.querySelector('script[src*="ace-button.js"]')); };
+  var TAG = { learning: 'Learning', reviewing: 'Reviewing', mastered: 'Mastered' };
+  var DAY = 864e5;
+
+  function when(t) {
+    if (!t) return 'Ready now';
+    var d = Math.round((t - Date.now()) / DAY);
+    if (d <= 0) return 'Ready now';
+    return 'Next retry in ' + d + ' day' + (d === 1 ? '' : 's');
+  }
+  function toast(msg) { var t = $('toast'); t.textContent = msg; t.classList.add('on'); clearTimeout(toast.h); toast.h = setTimeout(function () { t.classList.remove('on'); }, 2200); }
+
+  function render() {
+    var all = P.misses({ includeMastered: true });
+    var open = all.filter(function (m) { return m.status !== 'mastered'; });
+    var due = open.filter(function (m) { return m.isDue; });
+    $('counts').innerHTML = '<span><b>' + due.length + '</b> due</span><span><b>' + open.length + '</b> open</span><span><b>' + (all.length - open.length) + '</b> mastered</span>';
+    var secs = {};
+    all.forEach(function (m) { secs[m.section] = (secs[m.section] || 0) + 1; });
+    var order = ['bio', 'gchem', 'ochem', 'qr', 'pat', 'rc'].filter(function (k) { return secs[k]; });
+    $('sections').innerHTML = order.length > 1 ? ['all'].concat(order).map(function (k) {
+      return '<button type="button" data-s="' + k + '" aria-pressed="' + (state.s === k) + '">' + (k === 'all' ? 'All sections' : esc(R.SECTION_SHORT[k])) + '</button>';
+    }).join('') : '';
+    [].forEach.call($('status').querySelectorAll('button'), function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-f') === state.f)); });
+
+    var rows = state.f === 'due' ? due : state.f === 'open' ? open : all.filter(function (m) { return m.status === state.f; });
+    if (state.s !== 'all') rows = rows.filter(function (m) { return m.section === state.s; });
+
+    if (!all.length) {
+      $('list').innerHTML = '<li><div class="empty">Nothing here yet. Take the <a href="' + esc(S('/diagnostic.html')) + '">diagnostic</a> or a <a href="' + esc(S('/tests/')) + '">test</a>; every miss comes here with a sheet, a lesson and a drill attached.</div></li>';
+      return;
+    }
+    if (!rows.length) {
+      $('list').innerHTML = '<li><div class="empty">' + (state.f === 'due' ? 'Nothing is ready right now. The next retries come back on their day.' : 'Nothing in this view.') + '</div></li>';
+      return;
+    }
+    $('list').innerHTML = rows.map(function (m) {
+      var l = R.links(m);
+      var ask = askAce() ? '<a href="' + esc(S('/tutor/?miss=' + encodeURIComponent(m.id))) + '">Ask Ace</a>' : '';
+      var retry = m.status === 'mastered'
+        ? '<div class="retry"><button type="button" class="no" data-undo="' + esc(m.id) + '">Back to review</button></div>'
+        : '<div class="retry"><button type="button" class="ok" data-ok="' + esc(m.id) + '">Got it</button><button type="button" class="no" data-no="' + esc(m.id) + '">Missed again</button></div>';
+      return '<li><div class="what"><b>' + esc(m.concept) + '</b>' +
+        '<div class="meta"><span class="sec-label" data-section="' + esc(m.section) + '">' + esc(R.SECTION_SHORT[m.section] || '') + '</span>' +
+        '<span class="tag ' + m.status + '">' + TAG[m.status] + '</span>' +
+        '<span class="src">' + esc(m.sourceLabel) + (m.detail && m.source !== 'climb' && m.source !== 'bio-engine' ? ', ' + esc(m.detail) : '') + (m.status !== 'mastered' ? ' &middot; ' + esc(when(m.due)) : '') + '</span></div>' +
+        (m.detail && (m.source === 'climb' || m.source === 'bio-engine') ? '<span class="detail">' + esc(m.detail) + '</span>' : '') +
+        '</div><div class="row-r"><div class="links">' +
+        '<a href="' + esc(l.sheet) + '" target="_blank" rel="noopener" title="' + esc(l.sheetTitle || 'The Canon') + '">Sheet</a>' +
+        '<a href="' + esc(S(l.learn)) + '" title="' + esc(l.nightTitle ? 'Night ' + l.night + ': ' + l.nightTitle : 'Retold') + '">Learn</a>' +
+        '<a href="' + esc(S(l.drill)) + '">Drill</a>' + ask + '</div>' + retry + '</div></li>';
+    }).join('');
+  }
+
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest('button'); if (!b) return;
+    if (b.hasAttribute('data-f')) { state.f = b.getAttribute('data-f'); render(); return; }
+    if (b.hasAttribute('data-s')) { state.s = b.getAttribute('data-s'); render(); return; }
+    if (b.hasAttribute('data-ok')) { var r = P.mark(b.getAttribute('data-ok'), true); toast(r.mastered ? 'Mastered. It leaves the open list.' : 'Nice. Back in ' + P.LEITNER_DAYS[r.box - 1] + ' day' + (P.LEITNER_DAYS[r.box - 1] === 1 ? '' : 's') + '.'); render(); return; }
+    if (b.hasAttribute('data-no')) { P.mark(b.getAttribute('data-no'), false); toast('Back tomorrow. Try the sheet first.'); render(); return; }
+    if (b.hasAttribute('data-undo')) { P.mark(b.getAttribute('data-undo'), false); toast('Back on the ladder.'); render(); }
+  });
+  render();
+})();
+</script>
+<script src="/shared/ace-shell.js?v=1" defer></script>
+</body>
+</html>

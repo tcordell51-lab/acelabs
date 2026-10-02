@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Performance · Ace Labs</title>
+<meta name="description" content="Every timed Ace Labs result over time: raw scores by section, time per section and misses by topic.">
+<link rel="stylesheet" href="/shared/ace-pages.css?v=1">
+<style>
+  .chart { width: 100%; height: auto; display: block; }
+  .chart .ax { stroke: var(--rule); stroke-width: 1; }
+  .chart .gl { stroke: rgba(245, 240, 232, 0.06); stroke-width: 1; }
+  .chart text { fill: var(--text-lo); font-family: var(--body); font-size: 11px; font-variant-numeric: lining-nums tabular-nums; }
+  .chart .ln { fill: none; stroke: var(--rail); stroke-width: 2; }
+  .chart .pt { fill: var(--rail); stroke: var(--bg-panel); stroke-width: 2; }
+  .chart .lab { fill: var(--text-mid); font-size: 11.5px; }
+  .tbl { width: 100%; border-collapse: collapse; font-size: 14.5px; }
+  .tbl th { text-align: left; font-size: 11.5px; font-weight: 750; letter-spacing: .12em; text-transform: uppercase; color: var(--text-lo); padding: 8px 10px 8px 0; border-bottom: 1px solid var(--rule); }
+  .tbl td { padding: 11px 10px 11px 0; border-bottom: 1px solid var(--border); vertical-align: top; font-variant-numeric: lining-nums tabular-nums; }
+  .tbl td.t { color: var(--text-hi); font-weight: 650; }
+  .tbl .secs { display: flex; gap: 6px 14px; flex-wrap: wrap; color: var(--text-mid); }
+  .tbl .secs b { color: var(--text-hi); font-weight: 650; }
+  .scroll { overflow-x: auto; }
+  .bars { list-style: none; margin: 0; padding: 0; display: grid; gap: 9px; }
+  .bars li { display: grid; grid-template-columns: 11rem minmax(0, 1fr) 9.5rem; gap: 12px; align-items: center; font-size: 14.5px; }
+  .bars .nm { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .bars .nm a { color: var(--text-hi); text-decoration: none; }
+  .bars .nm a:hover { color: var(--gold-light); }
+  .bars .track { height: 10px; border-radius: 5px; background: rgba(245, 240, 232, 0.06); overflow: hidden; }
+  .bars .fill { height: 100%; border-radius: 5px; background: var(--rail); }
+  .bars .v { color: var(--text-mid); font-variant-numeric: lining-nums tabular-nums; white-space: nowrap; }
+  @media (max-width: 520px) { .bars li { grid-template-columns: minmax(0, 1fr) auto; } .bars .track { grid-column: 1 / -1; order: 3; } }
+  .bars .v { text-align: right; }
+  @media (max-width: 600px) { .tbl th:nth-child(4), .tbl td:nth-child(4) { display: none; } }
+  .keyline { font-size: 13px; color: var(--text-lo); margin: 6px 0 0; }
+</style>
+</head>
+<body>
+<main class="wrap" id="main">
+  <header class="page-head">
+    <p class="eyebrow">Performance</p>
+    <h1>Your timed work, <em>in one place</em>.</h1>
+    <p class="lede">Every timed result from Ace Labs: practice tests, Climb rungs, PAT tests, Reading sections, the Summit and the diagnostic. Raw counts only. What matters is which topics keep showing up, and Review has the fix for each.</p>
+  </header>
+  <div class="tabs" id="kinds" role="group" aria-label="Show"></div>
+  <div id="empty"></div>
+  <section class="section" id="sec-trend" aria-labelledby="h-trend">
+    <div class="section-head"><div><h2 id="h-trend">By section, over time</h2><p>Percent correct on each timed attempt, with the raw count on every point.</p></div></div>
+    <div class="grid two" id="trend"></div>
+  </section>
+  <section class="section" id="sec-time" aria-labelledby="h-time">
+    <div class="section-head"><div><h2 id="h-time">Time per section</h2><p>Seat time on your most recent attempt of each, against the test-day clock.</p></div></div>
+    <div class="card"><ul class="bars time" id="time"></ul><p class="keyline" id="timeNote"></p></div>
+  </section>
+  <section class="section" id="sec-topics" aria-labelledby="h-topics">
+    <div class="section-head"><div><h2 id="h-topics">Misses by topic</h2><p>Added up across the results shown. Tap a topic to work it in Review.</p></div></div>
+    <div class="card"><ul class="bars" id="topics"></ul></div>
+  </section>
+  <section class="section" id="sec-all" aria-labelledby="h-all">
+    <div class="section-head"><div><h2 id="h-all">Every result</h2></div></div>
+    <div class="card scroll"><table class="tbl"><thead><tr><th>Date</th><th>What</th><th>Correct</th><th>By section</th><th>Time</th></tr></thead><tbody id="rows"></tbody></table></div>
+  </section>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <nav aria-label="More">
+      <a href="/onboarding.html">Set up your path</a>
+      <a href="/performance/">Performance</a>
+      <a href="/test-week.html">Test week</a>
+      <a href="/test-day-readiness.html">Test-day briefing</a>
+      <a href="/for-retakers.html">Going again</a>
+      <a href="/scope.html">Scope and evidence</a>
+    </nav>
+    <p>Ace Labs is not affiliated with the American Dental Association or Prometric.</p>
+  </div>
+</footer>
+
+<script src="/shared/ace-index.js?v=1"></script>
+<script src="/shared/ace-route.js?v=1"></script>
+<script src="/shared/ace-progress.js?v=1"></script>
+<script>
+(function () {
+  var P = window.AceProgress, R = window.AceRoute, S = P.withStudent;
+  var $ = function (id) { return document.getElementById(id); };
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  var KINDS = [['all', 'Everything'], ['practice-test', 'Practice tests'], ['climb', 'The Climb'], ['pat-test', 'PAT tests'], ['reading', 'Reading'], ['summit', 'The Summit'], ['diagnostic', 'Diagnostic']];
+  var ORDER = ['bio', 'gchem', 'ochem', 'qr', 'pat', 'rc'];
+  /* Test-day clock per timed block, minutes. */
+  var CLOCK = { sons: 90, qr: 45, pat: 60, rc: 60 };
+  var all = P.results(), kind = 'all';
+  function fmtDate(t) { return new Date(t).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }); }
+  function fmtT(sec) { if (!sec) return ''; var m = Math.round(sec / 60); return m < 60 ? m + ' min' : Math.floor(m / 60) + ' hr ' + (m % 60) + ' min'; }
+
+  function chart(sec, pts) {
+    var W = 460, H = 170, L = 34, Rr = 28, T = 16, B = 26;
+    var n = pts.length, x = function (i) { return n === 1 ? (L + W - Rr) / 2 : L + i * (W - L - Rr) / (n - 1); };
+    var y = function (p) { return T + (1 - p) * (H - T - B); };
+    var g = '';
+    [0, 0.5, 1].forEach(function (v) { g += '<line class="gl" x1="' + L + '" x2="' + (W - Rr) + '" y1="' + y(v) + '" y2="' + y(v) + '"/><text x="' + (L - 6) + '" y="' + (y(v) + 4) + '" text-anchor="end">' + Math.round(v * 100) + '%</text>'; });
+    var path = pts.map(function (p, i) { return (i ? 'L' : 'M') + x(i).toFixed(1) + ' ' + y(p.c / p.t).toFixed(1); }).join(' ');
+    var dots = pts.map(function (p, i) {
+      var lx = x(i), ly = y(p.c / p.t);
+      return '<circle class="pt" cx="' + lx.toFixed(1) + '" cy="' + ly.toFixed(1) + '" r="4.5"><title>' + esc(p.label) + ': ' + p.c + ' of ' + p.t + '</title></circle>' +
+        '<text class="lab" x="' + lx.toFixed(1) + '" y="' + (ly - 9).toFixed(1) + '" text-anchor="middle">' + p.c + '/' + p.t + '</text>' +
+        '<text x="' + lx.toFixed(1) + '" y="' + (H - 7) + '" text-anchor="middle">' + esc(fmtDate(p.when)) + '</text>';
+    }).join('');
+    return '<svg class="chart" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="' + esc(R.SECTION_NAMES[sec]) + ' percent correct over time">' + g +
+      '<line class="ax" x1="' + L + '" x2="' + (W - Rr) + '" y1="' + y(0) + '" y2="' + y(0) + '"/>' + (n > 1 ? '<path class="ln" d="' + path + '"/>' : '') + dots + '</svg>';
+  }
+
+  function render() {
+    var rs = kind === 'all' ? all : all.filter(function (r) { return r.kind === kind; });
+    $('kinds').innerHTML = all.length ? KINDS.filter(function (k) { return k[0] === 'all' || all.some(function (r) { return r.kind === k[0]; }); })
+      .map(function (k) { return '<button type="button" data-k="' + k[0] + '" aria-pressed="' + (kind === k[0]) + '">' + k[1] + '</button>'; }).join('') : '';
+    var has = rs.length > 0;
+    ['sec-trend', 'sec-time', 'sec-topics', 'sec-all'].forEach(function (id) { $(id).hidden = !has; });
+    $('empty').innerHTML = has ? '' : '<div class="empty">No timed results yet. The <a href="' + esc(S('/diagnostic.html')) + '">diagnostic</a> is a good first one; everything timed you take after that shows up here.</div>';
+    if (!has) return;
+
+    /* trend by section */
+    var by = {};
+    rs.slice().sort(function (a, b) { return a.when - b.when; }).forEach(function (r) {
+      (r.sections || []).forEach(function (s) {
+        if (!s.section || !s.total) return;
+        (by[s.section] = by[s.section] || []).push({ c: s.correct, t: s.total, when: r.when, label: r.label });
+      });
+    });
+    $('trend').innerHTML = ORDER.filter(function (k) { return by[k]; }).map(function (k) {
+      var pts = by[k].slice(-10);
+      return '<div class="card" data-section="' + k + '"><span class="sec-label">' + esc(R.SECTION_NAMES[k]) + '</span>' + chart(k, pts) +
+        '<p class="keyline">' + pts.length + ' attempt' + (pts.length === 1 ? '' : 's') + (by[k].length > 10 ? ', latest 10 shown' : '') + '</p></div>';
+    }).join('');
+
+    /* time per section: most recent of each block */
+    var blocks = [];
+    function latest(k) { return rs.filter(function (r) { return r.kind === k && r.timeSec; })[0]; }
+    var pt = rs.filter(function (r) { return r.kind === 'practice-test' && (r.sciencesTimeSec || r.timeSec); })[0];
+    if (pt && pt.sciencesTimeSec) blocks.push({ name: 'Sciences', sec: 'fl', used: pt.sciencesTimeSec, clock: CLOCK.sons, from: pt.label });
+    if (pt) { var q = (pt.sections || []).filter(function (s) { return s.section === 'qr'; })[0]; if (q && q.timeSec) blocks.push({ name: 'QR', sec: 'qr', used: q.timeSec, clock: CLOCK.qr, from: pt.label }); }
+    var pat = latest('pat-test'); if (pat) blocks.push({ name: 'PAT', sec: 'pat', used: pat.timeSec, clock: CLOCK.pat, from: pat.label });
+    var rc = latest('reading'); if (rc) blocks.push({ name: 'Reading', sec: 'rc', used: rc.timeSec, clock: CLOCK.rc, from: rc.label });
+    var cl = latest('climb'); if (cl) blocks.push({ name: 'Climb rung', sec: 'strategy', used: cl.timeSec, clock: null, from: cl.label });
+    $('sec-time').hidden = !blocks.length;
+    $('time').innerHTML = blocks.map(function (b) {
+      var pct = b.clock ? Math.min(100, Math.round(100 * b.used / (b.clock * 60))) : 100;
+      return '<li data-section="' + b.sec + '"><span class="nm" title="' + esc(b.from) + '">' + esc(b.name) + '</span><span class="track"><span class="fill" style="width:' + pct + '%;display:block"></span></span>' +
+        '<span class="v">' + esc(fmtT(b.used)) + (b.clock ? ' of ' + b.clock + ' min' : '') + '</span></li>';
+    }).join('');
+    $('timeNote').textContent = pat && pat.parts ? 'PAT by part, last test: ' + pat.parts.filter(function (p) { return p.timeSec; }).map(function (p) { return p.label + ' ' + fmtT(p.timeSec); }).join(', ') + '.' : '';
+
+    /* misses by topic */
+    var tp = {};
+    rs.forEach(function (r) { (r.topics || []).forEach(function (t) { if (!t.missed) return; var k = t.section + '|' + t.topic; tp[k] = tp[k] || { section: t.section, topic: t.topic, missed: 0, total: 0 }; tp[k].missed += t.missed; tp[k].total += t.total; }); });
+    var list = Object.keys(tp).map(function (k) { return tp[k]; }).sort(function (a, b) { return b.missed - a.missed; }).slice(0, 12);
+    var max = list.length ? list[0].missed : 1;
+    $('sec-topics').hidden = !list.length;
+    $('topics').innerHTML = list.map(function (t) {
+      return '<li data-section="' + esc(t.section) + '"><span class="nm"><a href="' + esc(S('/review/?section=' + t.section)) + '">' + esc(t.topic === 'general' ? 'Mixed' : t.topic.charAt(0).toUpperCase() + t.topic.slice(1)) + '</a></span>' +
+        '<span class="track"><span class="fill" style="width:' + Math.max(4, Math.round(100 * t.missed / max)) + '%;display:block"></span></span><span class="v">' + t.missed + ' of ' + t.total + ' missed</span></li>';
+    }).join('');
+
+    /* every result */
+    $('rows').innerHTML = rs.map(function (r) {
+      return '<tr><td>' + esc(fmtDate(r.when)) + '</td><td class="t">' + esc(r.label) + '</td><td>' + r.correct + ' of ' + r.total + '</td><td><span class="secs">' +
+        (r.sections.length > 1 ? r.sections.map(function (s) { return '<span>' + esc(s.label) + ' <b>' + s.correct + '/' + s.total + '</b></span>'; }).join('') : '') +
+        '</span></td><td>' + esc(fmtT(r.timeSec)) + '</td></tr>';
+    }).join('');
+  }
+  document.addEventListener('click', function (e) { var b = e.target.closest('button[data-k]'); if (b) { kind = b.getAttribute('data-k'); render(); } });
+  render();
+})();
+</script>
+<script src="/shared/ace-shell.js?v=1" defer></script>
+</body>
+</html>
