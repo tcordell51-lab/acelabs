@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>QR Figures Harness</title>
+<style>
+  :root{--ink:#0f1814;--ink-2:#3a4a42;--ink-mute:#6e7c74;--paper:#fffdf7;--paper-2:#f9f3e6;--paper-3:#f3ecdb;--line:rgba(13,32,24,.12);--bg:#f5f0e8}
+  :root[data-theme="dark"]{--ink:#ece4d4;--ink-2:#c9c0ad;--ink-mute:#8a9088;--paper:#15211c;--paper-2:#1a2823;--paper-3:#1f2e28;--line:rgba(236,228,212,.10);--bg:#0d1612}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,sans-serif}
+  main{max-width:720px;margin:0 auto;padding:16px}
+  .slot{margin-bottom:8px}
+  .id{font:12px/1 monospace;color:var(--ink-mute);margin:10px 0 0}
+</style>
+</head>
+<body>
+<!-- Test harness for tests/qr-formats/render-figures.mjs: renders pool figures by id. -->
+<main id="out"></main>
+<script src="/shared/qr-figures.js"></script>
+<script src="/shared/qr-formats-bank.js"></script>
+<script src="/shared/qr-formats.js"></script>
+<script>
+  const qs = new URLSearchParams(location.search);
+  if (qs.get('theme')) document.documentElement.setAttribute('data-theme', qs.get('theme'));
+  const ids = (qs.get('ids') || '').split(',').filter(Boolean);
+  const out = document.getElementById('out');
+  out.innerHTML = ids.map(id => `<div class="id">${id}</div><div class="slot" data-id="${id}">${QRFigures.html(QRFormats.get(id).figure)}</div>`).join('');
+</script>
+</body>
+</html>
