@@ -77,7 +77,9 @@ Migrated items keep their original label in `subtype` (`locate`, `purpose`, `str
 - Every proof line exists and its quote is found in it.
 - `type` is one of the eight above; EXCEPT items carry EXCEPT, NOT or LEAST in capitals.
 - No em dashes, en dashes, or emoji anywhere in the text.
-- Original passages: 1,100 to 1,400 words, 16 or 17 questions, and the DAT mix
+- Every passage: 1,100 to 1,400 words (the ADA length; the migrated passages were trimmed to it
+  on 2026-10-01). Migrated passages: 15 to 17 questions.
+- Original passages: 16 or 17 questions, and the DAT mix
   (at least 5 detail, 2 inference, 1 each of the other six types).
 - Key letters do not follow a rotation, and explanations never name an answer letter
   (choices may be reordered by `tools/rc/scripts/shuffle_choices.py`).

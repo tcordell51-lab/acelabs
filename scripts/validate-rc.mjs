@@ -59,7 +59,8 @@ export function validatePassage(p, file = p && p.id) {
   const wc = wordCount(p.paragraphs);
   if (p.words !== wc) err(`words is ${p.words} but the paragraphs hold ${wc}`);
   if (original && (wc < 1100 || wc > 1400)) err(`original passage is ${wc} words; must be 1,100 to 1,400`);
-  if (!original && (wc < 1000 || wc > 1800)) err(`passage is ${wc} words; outside 1,000 to 1,800`);
+  // Migrated passages were trimmed to the ADA length on 2026-10-01; every passage now sits in the spec.
+  if (!original && (wc < 1100 || wc > 1400)) err(`passage is ${wc} words; must be 1,100 to 1,400`);
 
   const qs = Array.isArray(p.questions) ? p.questions : [];
   if (!qs.length) err('no questions');
