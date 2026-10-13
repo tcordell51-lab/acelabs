@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Caption Studio · AceTheDAT Social · DAT in 60 Seconds</title>
+<meta name="description" content="Generate the on-screen hook, keyword-rich caption, lowercase hashtags, and pinned comment for an AceTheDAT DAT-in-60-seconds post."/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400;1,700&family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --green:#1f3d2e;   /* forest green */
+    --gold:#b8923d;    /* brass gold */
+    --cream:#f3eee1;   /* cream */
+    --pine:#15291d;    /* deep pine */
+    --ink:#243b30;     /* ink */
+    --line:rgba(243,238,225,.16);
+    --serif:'Playfair Display',Georgia,serif;
+    --sans:'DM Sans',system-ui,-apple-system,sans-serif;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;background:var(--pine);color:var(--cream);
+    font-family:var(--sans);line-height:1.55;
+    background-image:radial-gradient(1200px 600px at 50% -10%, rgba(31,61,46,.9), var(--pine));
+    min-height:100vh;padding:0 0 80px;
+  }
+  .wrap{max-width:1080px;margin:0 auto;padding:0 24px;}
+  header.top{padding:38px 0 26px;border-bottom:1px solid var(--line);margin-bottom:30px;}
+  .mark{font-family:var(--serif);font-size:22px;font-weight:700;letter-spacing:.2px;}
+  .mark .gold{color:var(--gold);}
+  .kicker{font-size:11px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-top:14px;}
+  h1{font-family:var(--serif);font-size:clamp(28px,4.4vw,42px);line-height:1.08;margin:8px 0 8px;font-weight:700;}
+  h1 em{color:var(--gold);font-style:italic;}
+  .lede{color:rgba(243,238,225,.62);font-size:15px;max-width:640px;}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:26px;align-items:start;}
+  @media(max-width:840px){.grid{grid-template-columns:1fr;}}
+  .card{background:rgba(243,238,225,.04);border:1px solid var(--line);border-radius:16px;padding:24px;}
+  .card h2{font-family:var(--serif);font-size:19px;margin:0 0 16px;font-weight:700;}
+  label{display:block;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(243,238,225,.55);margin:16px 0 6px;}
+  label:first-of-type{margin-top:0;}
+  input[type=text],textarea,select{
+    width:100%;background:var(--pine);border:1px solid var(--line);border-radius:10px;
+    color:var(--cream);font-family:var(--sans);font-size:14.5px;padding:11px 13px;
+  }
+  input:focus,textarea:focus,select:focus{outline:none;border-color:var(--gold);}
+  textarea{resize:vertical;min-height:62px;}
+  .hint{font-size:11.5px;color:rgba(243,238,225,.42);margin-top:5px;}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  button{font-family:var(--sans);cursor:pointer;border:none;}
+  .gen{margin-top:22px;width:100%;background:var(--gold);color:var(--pine);font-weight:700;font-size:14px;letter-spacing:.04em;padding:13px;border-radius:11px;}
+  .gen:hover{filter:brightness(1.07);}
+  .out-block{margin-bottom:18px;}
+  .out-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+  .out-label{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);}
+  .copy{background:transparent;border:1px solid var(--line);color:var(--cream);font-size:11px;font-weight:600;padding:4px 10px;border-radius:7px;}
+  .copy:hover{border-color:var(--gold);color:var(--gold);}
+  .copy.done{border-color:var(--gold);color:var(--gold);}
+  .out-text{background:var(--green);border:1px solid var(--line);border-radius:10px;padding:13px 14px;font-size:14px;white-space:pre-wrap;word-break:break-word;}
+  .out-text.hook{font-family:var(--serif);font-size:18px;line-height:1.25;}
+  .out-text.mono{font-family:var(--sans);}
+  .tags span{display:inline-block;color:var(--gold);margin-right:10px;}
+  .meta{font-size:11.5px;color:rgba(243,238,225,.4);margin-top:8px;}
+  .warn{background:rgba(184,146,61,.12);border:1px solid rgba(184,146,61,.4);border-radius:10px;padding:11px 13px;font-size:13px;color:var(--cream);margin-bottom:18px;}
+  .warn b{color:var(--gold);}
+  .links{margin-top:26px;font-size:13px;color:rgba(243,238,225,.5);}
+  .links a{color:var(--gold);text-decoration:none;border-bottom:1px dashed rgba(184,146,61,.5);}
+  .copyall{margin-top:6px;width:100%;background:transparent;border:1px solid var(--gold);color:var(--gold);font-weight:700;font-size:13px;padding:11px;border-radius:11px;}
+  .copyall:hover{background:rgba(184,146,61,.12);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="mark">Ace<span style="opacity:.85">The</span><span class="gold">DAT</span> &nbsp;<span style="font-weight:400;opacity:.5;font-size:14px">Social</span></div>
+    <div class="kicker">Caption Studio</div>
+    <h1>One concept in, a full <em>post package</em> out.</h1>
+    <p class="lede">Drop in the concept, the hook, and the free-tool link. Get the on-screen hook text, a keyword-rich caption, lowercase hashtags, and the pinned comment. Built for the DAT in 60 Seconds series. Captions are starting points. Always proof the science terms before posting.</p>
+  </header>
+
+  <div class="grid">
+    <!-- INPUTS -->
+    <section class="card">
+      <h2>Inputs</h2>
+
+      <label for="section">Section</label>
+      <select id="section">
+        <option value="organicchemistry">Organic Chemistry</option>
+        <option value="generalchemistry">General Chemistry</option>
+        <option value="biology">Biology</option>
+        <option value="patprep">Perceptual Ability (PAT)</option>
+        <option value="datprep">Quantitative Reasoning (QR)</option>
+        <option value="readingcomprehension">Reading Comprehension</option>
+        <option value="proof">Proof / score win</option>
+        <option value="founder">Founder POV</option>
+        <option value="team">Meet the team</option>
+        <option value="offer">Soft offer</option>
+      </select>
+
+      <label for="concept">Concept (the one thing this post teaches)</label>
+      <input type="text" id="concept" placeholder="e.g. EAS directors, acidity ranking, periodic trends">
+      <div class="hint">Keep it to one concept. This becomes the spine of the caption.</div>
+
+      <label for="hook">Hook (on-screen text, 0 to 1s)</label>
+      <textarea id="hook" placeholder="Pain or payoff. Not &quot;today we'll cover X.&quot;"></textarea>
+      <div class="hint">Example: "Everyone gets EAS directors backwards."</div>
+
+      <label for="payoff">Payoff line (what they walk away knowing)</label>
+      <textarea id="payoff" placeholder="The rule, fix, or shortcut in one sentence."></textarea>
+
+      <div class="row">
+        <div>
+          <label for="cta">Pinned-comment type</label>
+          <select id="cta">
+            <option value="tool">Free tool link</option>
+            <option value="call">Strategy call</option>
+            <option value="team">Meet the team</option>
+            <option value="book">Book a call (offer)</option>
+          </select>
+        </div>
+        <div>
+          <label for="link">Link</label>
+          <input type="text" id="link" placeholder="https://acelabs.netlify.app/tools/ochem/">
+        </div>
+      </div>
+      <div class="hint" id="linkHint"></div>
+
+      <button class="gen" id="gen">Generate post package</button>
+    </section>
+
+    <!-- OUTPUTS -->
+    <section class="card">
+      <h2>Post package</h2>
+      <div class="warn"><b>Proof before you post.</b> Auto-captions butcher science terms (electrophilic, nucleophile, carbocation). Check every term in the hook and caption.</div>
+
+      <div class="out-block">
+        <div class="out-head"><span class="out-label">On-screen hook</span><button class="copy" data-target="oHook">Copy</button></div>
+        <div class="out-text hook" id="oHook">&mdash;</div>
+      </div>
+
+      <div class="out-block">
+        <div class="out-head"><span class="out-label">Caption (FB / IG / TikTok)</span><button class="copy" data-target="oCap">Copy</button></div>
+        <div class="out-text mono" id="oCap">&mdash;</div>
+        <div class="meta" id="capMeta"></div>
+      </div>
+
+      <div class="out-block">
+        <div class="out-head"><span class="out-label">Hashtags</span><button class="copy" data-target="oTags">Copy</button></div>
+        <div class="out-text tags" id="oTags">&mdash;</div>
+      </div>
+
+      <div class="out-block">
+        <div class="out-head"><span class="out-label">Pinned comment</span><button class="copy" data-target="oPin">Copy</button></div>
+        <div class="out-text mono" id="oPin">&mdash;</div>
+      </div>
+
+      <button class="copyall" id="copyAll">Copy whole package</button>
+    </section>
+  </div>
+
+  <div class="links">
+    Package files live in <code style="color:var(--cream)">labs/social/posts/</code> · Design briefs in <code style="color:var(--cream)">DESIGN-SPECS.md</code> · Track performance in <a href="calendar.html">the content calendar</a>.
+  </div>
+</div>
+
+<script>
+/* ---- section → hashtag map (always lowercase, 2 to 3) ---- */
+const TAGS = {
+  organicchemistry:['#dat','#organicchemistry','#predental'],
+  generalchemistry:['#dat','#generalchemistry','#predental'],
+  biology:['#dat','#datbiology','#predental'],
+  patprep:['#dat','#predental','#patprep'],
+  datprep:['#dat','#predental','#datprep'],
+  readingcomprehension:['#dat','#predental','#datprep'],
+  proof:['#dat','#predental','#dentalschool'],
+  founder:['#dat','#predental','#dentalschool'],
+  team:['#dat','#predental','#dentalschool'],
+  offer:['#dat','#predental','#dentalschool'],
+};
+const SECTION_LABEL = {
+  organicchemistry:'DAT organic chemistry', generalchemistry:'DAT general chemistry',
+  biology:'DAT biology', patprep:'the PAT', datprep:'DAT Quantitative Reasoning',
+  readingcomprehension:'DAT Reading Comprehension', proof:'the DAT',
+  founder:'the DAT', team:'the DAT', offer:'the DAT',
+};
+const LINK_DEFAULT = {
+  tool:'https://acelabs.netlify.app', call:'https://acethedat.com/contact.html',
+  team:'https://acethedat.com/team.html', book:'https://acethedat.com/contact.html',
+};
+const PIN_PREFIX = {
+  tool:'Free interactive DAT tools here → ',
+  call:'Want a plan built around how you test? Free strategy call → ',
+  team:'Meet the whole team → ',
+  book:'Book a free strategy call → ',
+};
+
+const $ = id => document.getElementById(id);
+const SKEY = 'acethedat:caption-studio:v1';
+
+function syncLinkHint(){
+  const t = $('cta').value;
+  $('linkHint').textContent = 'Suggested: ' + LINK_DEFAULT[t];
+}
+function fill(){
+  try{
+    const s = JSON.parse(localStorage.getItem(SKEY)||'{}');
+    ['section','concept','hook','payoff','cta','link'].forEach(k=>{ if(s[k]!=null) $(k).value = s[k]; });
+  }catch(e){}
+  syncLinkHint();
+}
+function save(){
+  const s={}; ['section','concept','hook','payoff','cta','link'].forEach(k=> s[k]=$(k).value);
+  try{localStorage.setItem(SKEY, JSON.stringify(s));}catch(e){}
+}
+
+/* strip em dashes per brand rule, normalize whitespace */
+function clean(t){ return (t||'').replace(/—|–|--/g,', ').replace(/\s+,/g,',').replace(/\s+/g,' ').trim(); }
+function sentence(t){ t=clean(t); if(!t) return ''; t=t[0].toUpperCase()+t.slice(1); if(!/[.!?]$/.test(t)) t+='.'; return t; }
+
+function generate(){
+  const section=$('section').value;
+  const concept=clean($('concept').value);
+  const hook=clean($('hook').value);
+  const payoff=clean($('payoff').value);
+  const ctaType=$('cta').value;
+  let link=clean($('link').value)||LINK_DEFAULT[ctaType];
+
+  /* hook */
+  $('oHook').textContent = hook || (concept ? concept[0].toUpperCase()+concept.slice(1)+', the part everyone gets wrong.' : 'Add a hook.');
+
+  /* caption: concept-led, keyword-rich, save prompt, soft proof tag */
+  const subj = SECTION_LABEL[section];
+  const parts=[];
+  if(concept){ parts.push(`${sentence(concept[0].toUpperCase()+concept.slice(1)+' shows up all over '+subj)}`); }
+  if(payoff){ parts.push(sentence(payoff)); }
+  else if(concept){ parts.push(`Here is how to stop losing those points.`); }
+  if(['proof','founder','team','offer'].includes(section)){
+    /* conversion-leaning sections: lighter on "save", warmer close */
+    parts.push('Founder-led coaching built around how you actually test.');
+  } else {
+    parts.push('Save this for your next study block.');
+  }
+  const caption = parts.join(' ');
+  $('oCap').textContent = caption || 'Add a concept.';
+  const words = caption ? caption.trim().split(/\s+/).length : 0;
+  $('capMeta').textContent = caption ? `${caption.length} chars · ${words} words · em-dash-free` : '';
+
+  /* tags */
+  const tags = TAGS[section];
+  $('oTags').innerHTML = tags.map(t=>`<span>${t}</span>`).join('');
+  $('oTags').dataset.plain = tags.join(' ');
+
+  /* pinned comment */
+  $('oPin').textContent = PIN_PREFIX[ctaType] + link;
+
+  save();
+}
+
+/* copy handlers */
+function copyText(text, btn){
+  navigator.clipboard.writeText(text).then(()=>{
+    const old=btn.textContent; btn.textContent='Copied'; btn.classList.add('done');
+    setTimeout(()=>{btn.textContent=old;btn.classList.remove('done');},1200);
+  });
+}
+document.querySelectorAll('.copy').forEach(b=>{
+  b.addEventListener('click',()=>{
+    const el=$(b.dataset.target);
+    const text = el.dataset.plain || el.textContent;
+    copyText(text, b);
+  });
+});
+$('copyAll').addEventListener('click',()=>{
+  const pkg =
+`HOOK (on-screen):
+${$('oHook').textContent}
+
+CAPTION:
+${$('oCap').textContent}
+
+HASHTAGS:
+${$('oTags').dataset.plain||''}
+
+PINNED COMMENT:
+${$('oPin').textContent}`;
+  copyText(pkg, $('copyAll'));
+});
+
+$('gen').addEventListener('click', generate);
+$('cta').addEventListener('change', syncLinkHint);
+['section','concept','hook','payoff','cta','link'].forEach(k=> $(k).addEventListener('input', save));
+fill();
+</script>
+</body>
+</html>
