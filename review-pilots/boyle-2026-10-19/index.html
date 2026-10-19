@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Review pilot only: not linked from any Ace page and not for publication. -->
+<meta name="robots" content="noindex, nofollow">
+<title>Boyle's Law Pilot</title>
+<link rel="stylesheet" href="boyle.css">
+</head>
+<body>
+<a class="skip-link" href="#explore">Skip to the interactive piston</a>
+<main class="module">
+
+  <section class="stage" id="stage" aria-labelledby="module-title">
+    <header class="stage-head">
+      <p class="eyebrow">Gas laws review pilot</p>
+      <h1 id="module-title">Boyle&rsquo;s law: halve the volume</h1>
+      <p id="objective">Objective: predict and explain how the absolute pressure of a sealed gas changes when its volume changes at constant temperature.</p>
+    </header>
+
+    <figure class="scene-wrap">
+      <svg id="scene" viewBox="0 0 1000 740" role="img" aria-labelledby="scene-title scene-summary" focusable="false">
+        <title id="scene-title">Piston cross-section with a pressure gauge</title>
+        <defs>
+          <clipPath id="gas-clip"><rect x="200" y="100" width="340" height="532"></rect></clipPath>
+        </defs>
+
+        <!-- Heat bath (thermostat) around the cylinder -->
+        <g id="heat-bath">
+          <rect x="160" y="96" width="420" height="572" rx="18" class="bath"></rect>
+          <path class="bath-wave" d="M174 140 q6 10 0 20 t0 20 t0 20 t0 20 t0 20 t0 20 t0 20 t0 20 t0 20 t0 20 t0 20 t0 20 t0 20 t0 20 t0 20 t0 20 t0 20 t0 20 t0 20 t0 20 t0 20 t0 20 t0 20"></path>
+          <path class="bath-wave" d="M566 140 q6 10 0 20 t0 20 t0 20 t0 20 t0 20 t0 20 t0 20 t0 20 t0 20 t0 20 t0 20 t0 20 t0 20 t0 20 t0 20 t0 20 t0 20 t0 20 t0 20 t0 20 t0 20 t0 20 t0 20"></path>
+          <text x="370" y="716" class="lbl" text-anchor="middle">Heat bath holds T at 300 K</text>
+        </g>
+
+        <!-- Volume scale (linear: piston height tracks volume) -->
+        <g id="volume-scale" class="scale"></g>
+
+        <!-- Cylinder: fixed cross-section -->
+        <g id="cylinder">
+          <rect x="200" y="100" width="340" height="532" class="cyl-inside"></rect>
+          <rect x="188" y="100" width="12" height="544" class="wall"></rect>
+          <rect x="540" y="100" width="12" height="544" class="wall"></rect>
+          <rect x="188" y="632" width="364" height="12" class="wall"></rect>
+        </g>
+
+        <rect id="gas-region" x="200" y="372" width="340" height="260" class="gas"></rect>
+        <g id="particles"></g>
+
+        <g id="piston-head">
+          <rect id="piston-rod" x="362" y="20" width="16" height="326" class="wall"></rect>
+          <rect id="piston-handle" x="310" y="12" width="120" height="16" rx="4" class="wall"></rect>
+          <rect id="piston-plate" x="200" y="346" width="340" height="26" class="piston"></rect>
+        </g>
+        <g id="contacts" clip-path="url(#gas-clip)"></g>
+
+        <!-- Absolute-pressure gauge linked to the gas by a tube -->
+        <path id="gauge-tube" d="M552 612 H612 V215 H686" class="tube"></path>
+        <g id="gauge">
+          <text x="800" y="40" class="lbl" text-anchor="middle">Absolute pressure</text>
+          <circle cx="800" cy="215" r="115" class="dial"></circle>
+          <g id="gauge-ticks"></g>
+          <g id="gauge-needle-g">
+            <line id="gauge-needle" x1="800" y1="215" x2="800" y2="120" class="needle"></line>
+            <circle cx="800" cy="215" r="10" class="hub"></circle>
+          </g>
+          <text id="gauge-readout" x="800" y="400" class="readout num" text-anchor="middle">1.00 atm</text>
+        </g>
+
+        <!-- Speed distribution: fixed by the 300 K bath, unchanged by volume -->
+        <g id="speed-hist">
+          <text x="820" y="478" class="lbl" text-anchor="middle">Dot speeds (24 dots)</text>
+          <g id="speed-bars"></g>
+          <line x1="672" y1="636" x2="968" y2="636" class="axis"></line>
+          <text x="672" y="676" class="lbl small">slow</text>
+          <text x="968" y="676" class="lbl small" text-anchor="end">fast</text>
+          <text x="820" y="722" class="lbl small" text-anchor="middle">unchanged by volume</text>
+        </g>
+      </svg>
+      <figcaption id="scene-summary" class="scene-summary"></figcaption>
+    </figure>
+
+    <aside class="panel" aria-label="Quantities">
+      <dl class="quant">
+        <div class="q-row"><dt>Volume, <i>V</i></dt><dd id="volume-value" class="num">2.00 L</dd></div>
+        <div class="q-row"><dt>Pressure, <i>P</i> <span class="abs-tag">absolute</span></dt><dd id="pressure-value" class="num">1.00 atm</dd></div>
+        <div class="q-row" id="pv-row"><dt>Product, <i>PV</i></dt><dd id="pv-value" class="num">2.00 L&middot;atm</dd></div>
+      </dl>
+      <ul class="badges">
+        <li id="temperature-fixed"><span class="badge-k">T fixed</span> <span class="num">300 K</span></li>
+        <li id="amount-fixed"><span class="badge-k">n fixed</span> <span class="num">0.0812 mol</span></li>
+      </ul>
+
+      <div class="card" id="panel-card">
+        <div class="story-card" data-card="predict" aria-hidden="true">
+          <p class="card-k">Predict</p>
+          <p class="card-big">Halve the volume</p>
+          <p class="card-big num">2.00 L &rarr; 1.00 L</p>
+          <p class="card-q">What will the pressure be?</p>
+          <p class="pills"><span class="pill num">0.50 atm</span><span class="pill num">1.00 atm</span><span class="pill num">2.00 atm</span></p>
+        </div>
+        <div class="story-card" data-card="compress" aria-hidden="true">
+          <p class="card-k">Same gas, half the space</p>
+          <p class="card-big num" id="card-v">V&nbsp; 2.00 L</p>
+          <p class="card-big num" id="card-p">P&nbsp; 1.00 atm</p>
+          <p class="card-note">n and T unchanged</p>
+        </div>
+        <div class="story-card" data-card="speeds" aria-hidden="true">
+          <p class="card-k">Constant temperature</p>
+          <ul class="card-list">
+            <li>Same 24 dots</li>
+            <li>Same speed distribution</li>
+            <li>Smaller space: more wall contacts each second</li>
+          </ul>
+          <p class="card-note"><span class="contact-key"></span>Wall marks are illustrative, not measured.</p>
+        </div>
+        <div class="story-card" data-card="products" aria-hidden="true">
+          <p class="card-k">Boyle&rsquo;s law</p>
+          <p class="product num" id="product-a">1.00 atm &times; 2.00 L = 2.00 L&middot;atm</p>
+          <p class="product num" id="product-b">2.00 atm &times; 1.00 L = 2.00 L&middot;atm</p>
+          <p class="pv-badge num" id="pv-badge"><i>PV</i> = 2.00 L&middot;atm</p>
+        </div>
+        <div class="story-card" data-card="try" aria-hidden="true">
+          <p class="card-k">Try the piston</p>
+          <div class="mock-row"><span class="mock-label">Volume</span><span class="mock-track"><span class="mock-thumb"></span></span></div>
+          <p class="pills"><span class="pill num">0.5 L</span><span class="pill num">1 L</span><span class="pill num">2 L</span><span class="pill num">4 L</span></p>
+          <div class="mock-row"><span class="mock-label">Pressure</span><span class="pill pill-dark">Hidden: predict first</span></div>
+        </div>
+        <div class="graph-card" data-card="graph">
+          <svg id="graph" viewBox="0 0 640 430" role="img" aria-labelledby="graph-title graph-desc" focusable="false">
+            <title id="graph-title">Pressure versus volume</title>
+            <desc id="graph-desc"></desc>
+            <defs>
+              <marker id="arrowhead" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path d="M0 0 L10 5 L0 10 z" class="arrowhead"></path>
+              </marker>
+            </defs>
+            <g id="graph-grid"></g>
+            <g id="graph-axes"></g>
+            <path id="pv-curve" class="curve" d=""></path>
+            <g id="graph-points"></g>
+            <g id="graph-halving"></g>
+            <circle id="current-point" r="11" class="current" cx="0" cy="0"></circle>
+          </svg>
+        </div>
+      </div>
+    </aside>
+
+    <div id="caption-band" class="caption-band" role="region" aria-label="Captions">
+      <p id="caption-text"></p>
+    </div>
+  </section>
+
+  <!-- Playback: animatic time is separate from the learner's piston state -->
+  <section class="controls playback" aria-label="Animatic playback">
+    <div class="btn-row">
+      <button type="button" id="play-pause" class="btn btn-primary">Play</button>
+      <button type="button" id="replay" class="btn">Replay</button>
+      <button type="button" id="step-back" class="btn">Previous step</button>
+      <button type="button" id="step-forward" class="btn">Next step</button>
+    </div>
+    <div class="timeline-row">
+      <label for="timeline">Animatic time</label>
+      <input type="range" id="timeline" min="0" max="55" step="0.1" value="0">
+      <output id="time-readout" for="timeline" class="num">0:00 / 0:55</output>
+    </div>
+    <p class="hint" id="mode-note">Showing: animatic (silent, captioned). Use the piston controls below to explore on your own.</p>
+  </section>
+
+  <section class="controls explore" id="explore" aria-labelledby="explore-h">
+    <h2 id="explore-h">Explore the piston</h2>
+    <p class="hint">Temperature (300 K) and amount (0.0812 mol) stay fixed. Predict the pressure before revealing it.</p>
+    <div class="field">
+      <label for="volume-slider">Volume (L), 0.50 to 4.00 in 0.05 L steps</label>
+      <input type="range" id="volume-slider" min="0.5" max="4" step="0.05" value="2" aria-valuetext="2.00 liters">
+    </div>
+    <div class="field inline">
+      <label for="volume-input">Type a volume (L)</label>
+      <input type="number" id="volume-input" min="0.5" max="4" step="0.05" value="2.00" inputmode="decimal" aria-describedby="volume-error">
+      <button type="button" id="volume-set" class="btn">Set volume</button>
+      <p id="volume-error" class="field-msg" role="status"></p>
+    </div>
+    <div class="field">
+      <span class="field-label" id="presets-label">Presets</span>
+      <div class="btn-row" role="group" aria-labelledby="presets-label">
+        <button type="button" class="btn preset" data-v="0.5">0.50 L</button>
+        <button type="button" class="btn preset" data-v="1">1.00 L</button>
+        <button type="button" class="btn preset" data-v="2">2.00 L</button>
+        <button type="button" class="btn preset" data-v="4">4.00 L</button>
+      </div>
+    </div>
+    <div class="field btn-row">
+      <button type="button" id="reveal-toggle" class="btn" aria-pressed="false">Reveal pressure</button>
+      <label class="check"><input type="checkbox" id="contacts-toggle"> Show wall contacts (illustrative)</label>
+    </div>
+    <fieldset class="field">
+      <legend>Graph</legend>
+      <label class="check"><input type="radio" name="graph-mode" value="P-vs-V" checked> <i>P</i> versus <i>V</i> (curve)</label>
+      <label class="check"><input type="radio" name="graph-mode" value="P-vs-invV"> <i>P</i> versus 1/<i>V</i> (straight line)</label>
+    </fieldset>
+    <details class="table-wrap">
+      <summary>Numerical table (same data as the graph)</summary>
+      <table id="pv-table">
+        <caption>Fixed n = 0.0812 mol, T = 300 K. Pressures are absolute.</caption>
+        <thead><tr><th scope="col">V (L)</th><th scope="col">1/V (L<sup>&minus;1</sup>)</th><th scope="col">P (atm)</th><th scope="col">PV (L&middot;atm)</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </details>
+  </section>
+
+  <section class="controls checks" aria-labelledby="checks-h">
+    <h2 id="checks-h">Check your understanding</h2>
+
+    <fieldset id="prediction" class="field">
+      <legend>At 1.00 L, what is the pressure?</legend>
+      <label class="check"><input type="radio" name="prediction" value="0.50"> 0.50 atm</label>
+      <label class="check"><input type="radio" name="prediction" value="1.00"> 1.00 atm</label>
+      <label class="check"><input type="radio" name="prediction" value="2.00"> 2.00 atm</label>
+      <button type="button" id="prediction-check" class="btn">Check prediction</button>
+      <p id="feedback" class="feedback" aria-live="polite"></p>
+    </fieldset>
+
+    <div id="transfer" class="field">
+      <label for="transfer-input">The same sealed sample reaches 0.80 L at 300 K. What is its absolute pressure (atm)?</label>
+      <div class="inline">
+        <input type="text" id="transfer-input" inputmode="decimal" autocomplete="off" aria-describedby="transfer-feedback">
+        <button type="button" id="transfer-check" class="btn">Check answer</button>
+      </div>
+      <div id="transfer-feedback" class="feedback" aria-live="polite"></div>
+    </div>
+
+    <fieldset id="leak-check" class="field">
+      <legend>If the gas leaks, can we still apply this fixed-amount curve?</legend>
+      <label class="check"><input type="radio" name="leak" value="yes"> Yes</label>
+      <label class="check"><input type="radio" name="leak" value="no"> No</label>
+      <button type="button" id="leak-submit" class="btn">Check</button>
+      <p id="leak-feedback" class="feedback" aria-live="polite"></p>
+    </fieldset>
+
+    <button type="button" id="reset" class="btn btn-rust">Reset module</button>
+    <p class="hint">Reset returns the piston to 2.00 L, hides the pressure and clears your answers. Replay only restarts the animatic.</p>
+  </section>
+
+  <details id="model-assumptions" class="notes">
+    <summary>Model assumptions</summary>
+    <ul>
+      <li>Ideal gas in a sealed cylinder: amount fixed at n = 2.00/(0.082057 &times; 300) &asymp; 0.08124 mol.</li>
+      <li>Temperature fixed at 300 K by the heat bath. Changes are treated as slow (quasi-static) and thermostatted, so compression does not heat the gas in this model.</li>
+      <li>Starting point V = 2.00 L, P = 1.00 atm (absolute), so PV = 2.00 L&middot;atm and P = 2.00/V for 0.50&ndash;4.00 L.</li>
+      <li>The 24 dots are schematic, not a molecular-dynamics simulation. Their count, size and speeds never change with volume.</li>
+      <li>Wall-contact marks are illustrative only and are not measured data.</li>
+      <li>The piston height is drawn proportional to volume (fixed cross-section).</li>
+    </ul>
+  </details>
+
+  <section id="transcript" class="notes" aria-labelledby="transcript-h">
+    <h2 id="transcript-h">Transcript and visual description</h2>
+    <ol id="transcript-list"></ol>
+  </section>
+
+  <footer class="notes small-print">
+    <p>Original script, questions and diagrams. Facts checked against OpenStax Chemistry 2e, sections
+      <a href="https://openstax.org/books/chemistry-2e/pages/9-2-relating-pressure-volume-amount-and-temperature-the-ideal-gas-law">9.2</a> and
+      <a href="https://openstax.org/books/chemistry-2e/pages/9-5-the-kinetic-molecular-theory">9.5</a>; no OpenStax text or figures are reproduced.
+      Review pilot: chemistry sign-off and an accessibility audit are still required.</p>
+  </footer>
+
+  <div id="announcer" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+</main>
+<script src="boyle-model.js"></script>
+<script src="boyle-app.js"></script>
+</body>
+</html>
