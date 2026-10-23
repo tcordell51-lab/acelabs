@@ -145,8 +145,9 @@ required.forEach(({ file, needs }) => {
 });
 
 /* ---- 6. Home links to scope.html --------------------------------- */
+// Relative or root-relative: the home is served at / so both resolve to /scope.html.
 const home = readText(path.join(ROOT, 'ace-labs.html'));
-if (!/href\s*=\s*["']scope\.html["']/.test(home)) {
+if (!/href\s*=\s*["'](?:\.?\/)?scope\.html["']/.test(home)) {
   err('ace-labs.html does not link to scope.html');
 }
 
