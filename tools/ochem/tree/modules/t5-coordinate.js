@@ -23,7 +23,7 @@ export const meta = {
   ],
   trap: 'Careful: a transition state is a peak and an intermediate is a valley, and only the valley is a real molecule you could in principle put in a bottle. Calling the carbocation a transition state is the single most common slip on this topic.',
   holdsUp: ['SN1 against SN2 rates', 'Why rearrangements happen', 'Catalysis questions', 'Kinetic against thermodynamic products', 'Hammond arguments'],
-  drill: 'Booster OChem: The Fundamentals'
+  drill: 'The Fundamentals, in your OChem question bank'
 };
 
 export const SMILES = [];

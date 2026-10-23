@@ -24,7 +24,7 @@ export const meta = {
   ],
   trap: 'Careful: A 90 degree rotation of a Fischer projection is a different molecule, because the groups that were coming toward you are now going away.',
   holdsUp: ['Sugars in bio', 'Meso identification', 'Comparing two Fischer projections', 'Every R and S question'],
-  drill: 'Booster OChem: Conformations and Stereochemistry'
+  drill: 'Conformations and Stereochemistry, in your OChem question bank'
 };
 
 /* ------------------------------------------------------------------ */

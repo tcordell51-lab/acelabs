@@ -19,7 +19,7 @@ export const meta = {
   ],
   trap: 'Careful: aldehyde versus ketone comes down to whether the carbonyl carbon has a hydrogen on it. At the end of a chain it does (aldehyde); in the middle with carbons on both sides it does not (ketone).',
   holdsUp: ['Nomenclature suffixes', 'Reagent recognition', 'Carbonyl reactivity ladder', 'Spectroscopy'],
-  drill: 'Booster OChem: The Fundamentals'
+  drill: 'The Fundamentals, in your OChem question bank'
 };
 
 // ---------------------------------------------------------------- helpers

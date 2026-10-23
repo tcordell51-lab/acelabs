@@ -19,7 +19,7 @@ export const meta = {
   ],
   trap: 'Careful: a benzene ring is four degrees, one for the ring and three for the double bonds, whether it is drawn with three lines or with a circle.',
   holdsUp: ['Spectroscopy triage', 'Aromaticity', 'Reading products', 'Molecular formulas'],
-  drill: 'Booster OChem: The Fundamentals'
+  drill: 'The Fundamentals, in your OChem question bank'
 };
 
 // ---------------------------------------------------------------- geometry helpers

@@ -25,7 +25,7 @@ export const meta = {
   ],
   trap: 'Careful: The flip only applies when the LOWEST priority group is pointing at you; a wedge on group 1 or 2 changes nothing about the letter you traced.',
   holdsUp: ['Every R and S question', 'Fischer projections', 'SN2 inversion', 'Enantiomer relationships', 'Meso identification'],
-  drill: 'Booster OChem: Conformations and Stereochemistry'
+  drill: 'Conformations and Stereochemistry, in your OChem question bank'
 };
 
 /* ------------------------------------------------------------------ */

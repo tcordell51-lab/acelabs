@@ -19,7 +19,7 @@ export const meta = {
   ],
   trap: 'Careful: cis and trans are about up and down, not axial and equatorial. Two groups can both be equatorial and still be trans.',
   holdsUp: ['Stability rankings', 'E2 in rings needs an axial leaving group', 'Glucose chairs in bio', 'Wedge-dash to chair conversion'],
-  drill: 'Booster OChem: Conformations and Stereochemistry'
+  drill: 'Conformations and Stereochemistry, in your OChem question bank'
 };
 
 /* ------------------------------------------------------------------ */

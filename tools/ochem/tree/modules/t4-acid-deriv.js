@@ -19,7 +19,7 @@ export const meta = {
   ],
   trap: 'Careful: LiAlH4 turns an amide into an amine, not an alcohol. The nitrogen stays and the oxygen is the one that leaves.',
   holdsUp: ['Every acyl substitution', 'Saponification versus hydrolysis', 'Which hydride stops where', 'Amine synthesis from amides and nitriles', 'Multi-step synthesis through the acid chloride'],
-  drill: 'Booster OChem: Carboxylic Acid Derivatives'
+  drill: 'Carboxylic Acid Derivatives, in your OChem question bank'
 };
 
 // Every SMILES this module draws that is not in shared/reactions.js.

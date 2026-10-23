@@ -20,7 +20,7 @@ export const meta = {
   ],
   trap: 'Careful: down a column size beats electronegativity, so H-I is a stronger acid than H-F even though F pulls harder.',
   holdsUp: ['Every acid-base ranking', 'Which base deprotonates what', 'Enolate formation', 'Grignard incompatibility'],
-  drill: 'Booster OChem: Acids and Bases'
+  drill: 'Acids and Bases, in your OChem question bank'
 };
 
 

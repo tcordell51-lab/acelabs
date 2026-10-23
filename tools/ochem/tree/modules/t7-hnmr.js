@@ -26,7 +26,7 @@ export const meta = {
   ],
   trap: 'Careful: an O-H or N-H is a singlet no matter how many neighbors it has; the heteroatom blocks the splitting, and a shake with D2O makes that peak vanish.',
   holdsUp: ['Unknown structure problems', 'Isomer questions', 'Symmetry counting', 'D2O shake questions'],
-  drill: 'Booster OChem: Spectroscopy & Lab Techniques'
+  drill: 'Spectroscopy & Lab Techniques, in your OChem question bank'
 };
 
 const SERIF = 'Georgia, "Times New Roman", serif';

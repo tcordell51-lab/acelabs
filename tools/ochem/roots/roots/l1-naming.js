@@ -19,7 +19,7 @@ export const meta = {
   ],
   trap: 'Careful: the longest chain may turn a corner. The straight line the drawing hands you is not always the chain, so trace every path before you count.',
   holdsUp: ['Every question that names a product', 'Reagent recognition', 'Reading the answer choices', 'Spectroscopy structure problems'],
-  drill: 'Booster OChem: IUPAC Nomenclature'
+  drill: 'IUPAC Nomenclature, in your OChem question bank'
 };
 
 // ---------------------------------------------------------------- helpers

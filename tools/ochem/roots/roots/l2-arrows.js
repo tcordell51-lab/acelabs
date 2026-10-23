@@ -20,7 +20,7 @@ export const meta = {
   ],
   trap: 'Careful: arrows show electrons moving, never atoms, and an arrow never starts at a positive charge, because a plus has nothing to give.',
   holdsUp: ['Every mechanism question', 'SN1 versus SN2', 'Carbonyl chemistry', 'Acid-base'],
-  drill: 'Booster OChem: The Fundamentals'
+  drill: 'The Fundamentals, in your OChem question bank'
 };
 
 

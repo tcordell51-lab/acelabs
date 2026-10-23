@@ -21,7 +21,7 @@ export const meta = {
   ],
   trap: 'Careful: SN1 and E1 share the exact same first step, so they always travel together; a tertiary halide in warm water hands you both the alcohol and the alkene, and the real question is which one dominates, never which one happens.',
   holdsUp: ['Williamson ether synthesis', 'Alcohol to halide swaps', 'Zaitsev versus Hofmann', 'Product stereochemistry', 'Energy diagrams'],
-  drill: 'Booster OChem: Substitution & Elimination'
+  drill: 'Substitution & Elimination, in your OChem question bank'
 };
 
 // Every SMILES this module draws. The (R)-2-bromobutane to (S)-2-butanol pair and the

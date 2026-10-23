@@ -20,7 +20,7 @@ export const meta = {
   ],
   trap: 'Careful: resonance never moves an atom and never breaks a sigma bond, so if your arrow moved a hydrogen or snapped a single bond, that is not resonance, that is a different molecule.',
   holdsUp: ['Carbocation stability', 'Acidity', 'EAS directing', 'Aromaticity', 'Amide rigidity'],
-  drill: 'Booster OChem: The Fundamentals'
+  drill: 'The Fundamentals, in your OChem question bank'
 };
 
 

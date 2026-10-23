@@ -20,7 +20,7 @@ export const meta = {
   ],
   trap: 'Careful: an acetal is invisible to base, to hydride and to a Grignard, which is exactly why it is a protecting group. The only thing that removes it is aqueous acid, so if a question protects a ketone and never adds acid at the end, the acetal is still there in the answer.',
   holdsUp: ['Multi-step synthesis', 'Reagent choice questions', 'Grignard planning', 'Reading a long reaction scheme'],
-  drill: 'Booster OChem: Synthesis'
+  drill: 'Synthesis, in your OChem question bank'
 };
 
 // Every SMILES drawn here (render-checked by the sheet test).

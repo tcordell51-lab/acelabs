@@ -32,7 +32,7 @@ export const meta = {
   ],
   trap: 'Careful: do not fall in love with the first structure that fits one clue. A structure has to survive every clue, and the clue students skip most is the formula itself.',
   holdsUp: ['Unknown structure problems', 'Isomer questions', 'Degrees of unsaturation', 'Reading IR and NMR together'],
-  drill: 'Booster OChem: Spectroscopy & Lab Techniques'
+  drill: 'Spectroscopy & Lab Techniques, in your OChem question bank'
 };
 
 const SERIF = 'Georgia, "Times New Roman", serif';

@@ -25,7 +25,7 @@ export const meta = {
   ],
   trap: 'Careful: the handoff is in the answer choices on purpose. An enol, an imine before the hydride, a beta-hydroxy aldehyde before the heat, the ketone in the middle of a double Grignard: every one of them is a real species, every one of them gets drawn, and not one of them is where the reaction stops.',
   holdsUp: ['Alkyne hydration', 'Aldol condensation', 'Reductive amination', 'A Grignard on an ester', 'Gabriel and Sandmeyer'],
-  drill: 'Booster OChem: Ketones & Aldehydes'
+  drill: 'Ketones & Aldehydes, in your OChem question bank'
 };
 
 // Every SMILES this module draws.

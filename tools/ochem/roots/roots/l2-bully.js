@@ -19,7 +19,7 @@ export const meta = {
   ],
   trap: 'Careful: Grignard and organolithium reagents flip it, because Mg and Li pull weaker than carbon, so that carbon becomes the electron-rich nucleophile.',
   holdsUp: ['Nucleophile versus electrophile', 'Carbonyl chemistry', 'SN2 targets', 'Acidity by induction'],
-  drill: 'Booster OChem: The Fundamentals'
+  drill: 'The Fundamentals, in your OChem question bank'
 };
 
 

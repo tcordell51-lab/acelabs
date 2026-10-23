@@ -27,7 +27,7 @@ export const meta = {
   ],
   trap: 'Careful: aromatic rings substitute, they do not add, so the halogen never ends up with a partner on the next carbon the way it would on an alkene. And the arenium ion is not aromatic for that one step, which is the whole reason the ring is willing to hand the proton back.',
   holdsUp: ['Bromination, nitration, sulfonation', 'Friedel-Crafts alkylation and acylation', 'Ortho, para and meta directing', 'Activating versus deactivating', 'Planning a disubstituted benzene'],
-  drill: 'Booster OChem: Aromaticity & Benzene Reactions'
+  drill: 'Aromaticity & Benzene Reactions, in your OChem question bank'
 };
 
 // Every SMILES this module draws. Arenium ions are explicit Kekule forms.

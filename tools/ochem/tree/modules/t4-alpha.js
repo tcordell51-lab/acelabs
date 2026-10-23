@@ -19,7 +19,7 @@ export const meta = {
   ],
   trap: 'Careful: A stabilized enolate meeting an enone goes 1,4 to the beta carbon, and a cold aldol keeps its OH; only heat dehydrates it to the enone.',
   holdsUp: ['Aldol and Claisen products', 'Michael and Robinson', 'Acetoacetic and malonic ester endings', 'Alpha alkylation with LDA', 'Alpha halogenation and haloform'],
-  drill: 'Booster OChem: Enolate Reactions'
+  drill: 'Enolate Reactions, in your OChem question bank'
 };
 
 // Every SMILES this module draws that is not in shared/reactions.js: the intermediates and the partners.

@@ -20,7 +20,7 @@ export const meta = {
   ],
   trap: 'Careful: a terminal alkyne has no cis or trans to make, so Lindlar and Na/NH3 give the same terminal alkene there; the cis versus trans question only exists for an internal alkyne.',
   holdsUp: ['Alkene additions, twice', 'Keto-enol tautomerization', 'Acetylide chain building', 'E and Z geometry', 'Multi-step synthesis'],
-  drill: 'Booster OChem: Alkyne Reactions'
+  drill: 'Alkyne Reactions, in your OChem question bank'
 };
 
 // SMILES used here that are not in shared/reactions.js (render-checked by the sheet test).

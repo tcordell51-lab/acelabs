@@ -224,9 +224,9 @@ h1{font-family:var(--serif);font-size:clamp(28px,5vw,40px);line-height:1.15;marg
     </div>
   </div>
   <div class="syll" style="display:none">
-    <h2>The 14 Nights — in step with DAT Booster</h2>
-    <p class="sub">One night per Booster question bank, same order, same names. Watch the Booster
-    videos, sit the night with your coach, walk it yourself, then run the bank - four passes over the
+    <h2>The 14 Nights, in step with your question bank</h2>
+    <p class="sub">One night per chapter set of your question bank, same order, same names. Watch the videos
+    that go with it, sit the night with your coach, walk it yourself, then run the bank - four passes over the
     same ground, each one deeper.</p>
     <ol id="syllList"></ol>
   </div>
@@ -345,9 +345,9 @@ if(HOME){
   document.querySelector('.mode').style.display='none';
   document.querySelector('.legend').style.display='none';
   document.querySelector('.syll').style.display='none';
-  document.getElementById('nightLine').textContent='The Quantitative Reasoning front door · fourteen nights, in step with DAT Booster';
+  document.getElementById('nightLine').textContent='The Quantitative Reasoning front door - fourteen nights, in step with your question bank';
   document.getElementById('nightTitle').textContent='QR, Retold';
-  document.getElementById('nightLede').innerHTML='One move runs the whole section: <b>find the setup, and the answer falls out.</b> Each night below takes one Booster bank and turns its words into a picture or an equation - watch the Booster videos, sit the night with your coach, or walk it yourself. Four passes over the same ground, each one deeper.';
+  document.getElementById('nightLede').innerHTML='One move runs the whole section: <b>find the setup, and the answer falls out.</b> Each night below takes one chapter set of your question bank and turns its words into a picture or an equation - watch the videos that go with it, sit the night with your coach, or walk it yourself. Four passes over the same ground, each one deeper.';
   var walked=0, firstOpen=0;
   for(var n=1;n<=14;n++){
     var tot=NIGHTS[n].scenes.length;
@@ -359,7 +359,7 @@ if(HOME){
   var contLed=window.AceOChemLedger?window.AceOChemLedger.night(firstOpen,NIGHTS[firstOpen].scenes.length):{done:0};
   var h='<div class="cont"><div><span class="ck">'+(walked===0?'Begin':(walked>=14?'You have walked all fourteen - run it again':'Continue'))+'</span>'
     +'<div class="ct">Night '+firstOpen+': '+NIGHTS[firstOpen].t+'</div>'
-    +'<div class="cs">'+(contLed.done>0?contLed.done+' of '+NIGHTS[firstOpen].scenes.length+' scenes committed - pick up where you left off':'Booster bank: '+NIGHTS[firstOpen].booster)+'</div></div>'
+    +'<div class="cs">'+(contLed.done>0?contLed.done+' of '+NIGHTS[firstOpen].scenes.length+' scenes committed - pick up where you left off':'Question bank: '+NIGHTS[firstOpen].booster)+'</div></div>'
     +'<a class="go" href="?night='+firstOpen+'">'+(contLed.done>0?'CONTINUE NIGHT '+firstOpen:'OPEN NIGHT '+firstOpen)+'</a></div>';
   var mapEarned=0, mapTotal=0;
   MAP_NODES.forEach(function(nn){ mapTotal+=nn.total; mapEarned+=(window.AceOChemLedger?window.AceOChemLedger.wheelEarned(nn.fam):0); });
@@ -389,7 +389,7 @@ if(HOME){
       : '<span class="st soon">NOT YET WALKED</span>';
     if(earned>0) pill+='<span class="st part">'+earned+' EARNED ON THE WHEEL</span>';
     li.innerHTML='<span class="nnum">NIGHT '+(i+1)+'</span><span class="ntitle">'+nx.t+'</span>'
-      +'<span class="nsync">BOOSTER: '+nx.b+'</span>'+pill
+      +'<span class="nsync">QUESTION BANK: '+nx.b+'</span>'+pill
       +'<span class="nlinks">'+links.map(function(l){return '<a href="'+l[1]+'">'+l[0]+'</a>'}).join('')+'</span>';
     ol.appendChild(li);
   });
@@ -399,7 +399,7 @@ if(HOME){
   return;
 }
 
-document.getElementById('nightLine').textContent='Night '+CUR+' of 14 · in sync with your Booster bank: '+NIGHTS[CUR].booster;
+document.getElementById('nightLine').textContent='Night '+CUR+' of 14 - in sync with your question bank: '+NIGHTS[CUR].booster;
 (function(){
   var nav=document.getElementById('nightNav'), h='';
   var qs=new URLSearchParams(location.search);
@@ -849,7 +849,7 @@ document.getElementById('mTeach').addEventListener('click',function(){setMode('t
       : '<span class="st soon">NOT YET WALKED</span>';
     if(earned>0) pill+='<span class="st part">'+earned+' EARNED ON THE WHEEL</span>';
     li.innerHTML='<span class="nnum">NIGHT '+(i+1)+'</span><span class="ntitle">'+nx.t+'</span>'
-      +'<span class="nsync">BOOSTER: '+nx.b+'</span>'
+      +'<span class="nsync">QUESTION BANK: '+nx.b+'</span>'
       +pill
       +'<span class="nlinks">'+links.map(function(l){return '<a href="'+l[1]+'">'+l[0]+'</a>'}).join('')+'</span>';
     ol.appendChild(li);

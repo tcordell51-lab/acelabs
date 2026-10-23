@@ -25,7 +25,7 @@ export const meta = {
   ],
   trap: 'Careful: a Grignard is destroyed by any acidic proton, so it can never follow a step that leaves an OH, an NH or a COOH standing. Make the carbonyl first, or protect. The reversed pair is always one of the four choices.',
   holdsUp: ['Alcohol to aldehyde to anything', 'Benzene to aniline', 'Acid to acid chloride to ester or amide', 'Alkene to alcohol to carbonyl', 'Every retrosynthesis question'],
-  drill: 'Booster OChem: Synthesis'
+  drill: 'Synthesis, in your OChem question bank'
 };
 
 // Every structure drawn here comes from shared/reactions.js.

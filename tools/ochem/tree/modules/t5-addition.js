@@ -21,7 +21,7 @@ export const meta = {
   ],
   trap: 'Careful: a rearrangement can only happen when a free carbocation actually forms, so HBr and acid water are on the table while bromine, mercury and hydroboration are not; if you shift a hydride inside a bromonium bridge you have invented chemistry that does not exist.',
   holdsUp: ['Markovnikov addition', 'Halohydrins and epoxides', 'Alkyne hydration', 'Alcohol synthesis', 'Multi-step synthesis'],
-  drill: 'Booster OChem: Alkene Addition Reactions'
+  drill: 'Alkene Addition Reactions, in your OChem question bank'
 };
 
 // Every SMILES this module draws. The substrates and products come from the verified

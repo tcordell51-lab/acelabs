@@ -20,7 +20,7 @@ export const meta = {
   ],
   trap: 'Careful: induction is not resonance. It runs through sigma bonds and dies with distance, so a chlorine four carbons away barely counts.',
   holdsUp: ['Acidity rankings', 'Carbocation stability', 'Carbonyl reactivity'],
-  drill: 'Booster OChem: Acids and Bases'
+  drill: 'Acids and Bases, in your OChem question bank'
 };
 
 

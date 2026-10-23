@@ -20,7 +20,7 @@ export const meta = {
   ],
   trap: 'Careful: a Grignard cannot be anywhere near an alcohol, an acid or an amine, so if your backward cut leaves a molecule with one of those in it, the forward route needs a protecting group or a different disconnection.',
   holdsUp: ['Multi-step synthesis questions', 'Reagent choice', 'Which starting material questions', 'Reading a long scheme'],
-  drill: 'Booster OChem: Synthesis'
+  drill: 'Synthesis, in your OChem question bank'
 };
 
 export const SMILES = [];

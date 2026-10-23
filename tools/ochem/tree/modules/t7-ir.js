@@ -26,7 +26,7 @@ export const meta = {
   ],
   trap: 'Careful: a carboxylic acid O-H is so broad it swallows the whole C-H region down to 2500; that smear plus a 1700 spike is an acid, not an alcohol sitting next to a ketone.',
   holdsUp: ['Unknown structure problems', 'Product checks after an oxidation', 'Amine versus alcohol', 'Aldehyde versus ketone'],
-  drill: 'Booster OChem: Spectroscopy & Lab Techniques'
+  drill: 'Spectroscopy & Lab Techniques, in your OChem question bank'
 };
 
 const SERIF = 'Georgia, "Times New Roman", serif';

@@ -21,7 +21,7 @@ export const meta = {
   ],
   trap: 'Careful: NBS and light take a hydrogen from the carbon NEXT to the pi system, never from the pi system itself, because a vinylic radical has no resonance holding it up; that is the same reason a vinylic cation is a bad idea.',
   holdsUp: ['Allylic and benzylic positions', 'Resonance stability', 'Building rings', 'Predicting mixtures', 'Multi-step synthesis'],
-  drill: 'Booster OChem: Free Radical & Diels Alder Cycloaddition Reactions'
+  drill: 'Free Radical & Diels Alder Cycloaddition Reactions, in your OChem question bank'
 };
 
 // Every SMILES this module draws. Substrates and major products come from the verified

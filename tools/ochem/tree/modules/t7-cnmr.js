@@ -26,7 +26,7 @@ export const meta = {
   ],
   trap: 'Careful: never mix the two NMR scales. An aldehyde hydrogen shows up near 9 or 10 on the proton axis, but the aldehyde carbon shows up near 195 on the carbon axis, and 9 on a carbon axis is just a plain alkyl carbon.',
   holdsUp: ['Ketone versus ester', 'Symmetry counting', 'Unknown structure problems', 'Aromatic substitution patterns'],
-  drill: 'Booster OChem: Spectroscopy & Lab Techniques'
+  drill: 'Spectroscopy & Lab Techniques, in your OChem question bank'
 };
 
 const SERIF = 'Georgia, "Times New Roman", serif';

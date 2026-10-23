@@ -21,7 +21,7 @@ export const meta = {
   ],
   trap: 'Careful: the substrate decides before the reagent does; the same NaOEt that builds an ether on a primary halide runs E2 on a secondary or tertiary one, and with no beta hydrogen it can only substitute.',
   holdsUp: ['Williamson ether synthesis', 'Alcohol to halide swaps', 'Acetylide alkylation', 'Enolate alkylation', 'Product stereochemistry'],
-  drill: 'Booster OChem: Substitution & Elimination'
+  drill: 'Substitution & Elimination, in your OChem question bank'
 };
 
 // SMILES used here that are not in shared/reactions.js (render-checked by the sheet test).

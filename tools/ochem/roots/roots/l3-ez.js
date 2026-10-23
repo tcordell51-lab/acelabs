@@ -23,7 +23,7 @@ export const meta = {
   ],
   trap: 'Careful: The biggest group is not always the highest priority; Cl beats an ethyl even though the ethyl is bigger, because priority is atomic number, not size.',
   holdsUp: ['Alkene nomenclature', 'Product stereochemistry of additions', 'Naming E2 products', 'Reading cis and trans honestly'],
-  drill: 'Booster OChem: Conformations and Stereochemistry'
+  drill: 'Conformations and Stereochemistry, in your OChem question bank'
 };
 
 /* ------------------------------------------------------------------ */

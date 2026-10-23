@@ -19,7 +19,7 @@ export const meta = {
   ],
   trap: 'Careful: Halogens direct ortho/para but deactivate the ring, and neither Friedel-Crafts reaction works on a strongly deactivated ring like nitrobenzene.',
   holdsUp: ['Every EAS product', 'Directing on a substituted ring', 'Friedel-Crafts limits', 'Aniline and diazonium routes', 'Huckel calls on any ring', 'Side-chain oxidation and bromination'],
-  drill: 'Booster OChem: Aromaticity & Benzene Reactions'
+  drill: 'Aromaticity & Benzene Reactions, in your OChem question bank'
 };
 
 // Every SMILES this module draws that is not in shared/reactions.js: the Huckel gallery.
