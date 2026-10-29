@@ -768,7 +768,7 @@
           <path d="M260 78h8v14h16v12h-24z" fill="#fbbf24" fill-opacity=".75"/>
           <text class="cap" x="160" y="132" text-anchor="middle">MATCH THE OBJECT TO ITS VIEWS</text>
         </svg>
-        <span class="tx"><b>Six Views</b><small>Match the object to its views, against the clock you choose.</small><span class="tg">PAT</span></span></a>
+        <span class="tx"><b>Six Views</b><small>Match the object to its top, front and end views, and say how sure you are first.</small><span class="tg">PAT</span></span></a>
 
       <div class="tool soon" data-section="bio" aria-label="Mnemon: Biology, coming soon">
         <svg class="art" viewBox="0 0 320 140" aria-hidden="true" focusable="false">
@@ -912,6 +912,11 @@
     var href = /practice test|full length|full-length|mock/i.test(text) ? '/tests/' : (/review|miss/i.test(text) ? '/review/' : (s ? SEC_HREF[s] : '/practice/'));
     return { title: text, detail: s ? (NAMES[s] || t.section) : (t.section || ''), minutes: t.minutes || null, href: href };
   }
+  /* A student who arrived from the portal (coach link or handoff) has a coach to message, not a sales page. */
+  try {
+    var fromPortal = new URLSearchParams(location.search).get('student') || /(?:^|;\s*)ace_who=/.test(document.cookie || '');
+    if (fromPortal) { var ca = document.querySelector('#coach a'); if (ca) { ca.href = 'https://acethedat-portal.netlify.app/student/messages'; ca.textContent = 'Message your coach'; } }
+  } catch (e) {}
   P.plan().then(function (pl) {
     if (!pl || !pl.tasks || !pl.tasks.length) return;
     document.body.classList.remove('is-first');

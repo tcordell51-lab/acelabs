@@ -463,8 +463,9 @@ body[data-page="onboarding"]{
 
   // ---- step 3 ----
   window.toggleSection = function(el, section){
-    var cb = document.getElementById('cb' + section.charAt(0).toUpperCase() + section.slice(1));
-    // The click on the label will toggle the checkbox — read after tick
+    var cb = el.querySelector('input[type="checkbox"]') || document.querySelector('.ob-check-option input[type="checkbox"][value="'+section+'"]');
+    if(!cb) return;
+    // The click on the label will toggle the checkbox; read after tick
     setTimeout(function(){
       if(cb.checked){ weakSections[section] = true; el.classList.add('selected'); }
       else { delete weakSections[section]; el.classList.remove('selected'); }

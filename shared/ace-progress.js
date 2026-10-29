@@ -202,7 +202,7 @@
     if (!d || !d.topWeakTopics) return [];
     return d.topWeakTopics.filter(function (t) { return t && t.correct < t.total; }).map(function (t) {
       var s = sec(t.section);
-      return { id: 'diag:' + s + '|' + t.topic, section: s, concept: t.topic, topic: t.topic, source: 'diagnostic', sourceLabel: 'Diagnostic',
+      return { id: 'diag:' + s + '|' + t.topic, section: s, concept: t.label || t.topic, topic: t.topic, source: 'diagnostic', sourceLabel: 'Diagnostic',
         when: ts(d.ts), detail: (t.total - t.correct) + ' of ' + t.total + ' missed', rank: 1.5 };
     });
   });
@@ -440,7 +440,7 @@
       detail: 'Practice-test misses first. Sheet, learn or drill each one.', minutes: Math.min(30, 4 * Math.min(due.length, 8)), href: '/review/?due=1' });
     var cq = climbQueue();
     if (cq.started) tasks.push({ kind: 'climb', title: cq.due ? 'The Climb: today\'s queue' : 'The Climb: rung ' + cq.nextRung,
-      detail: cq.due ? cq.due + ' concept' + (cq.due === 1 ? '' : 's') + ' due, each as a fresh question.' : 'Forty questions, then the misses come back on schedule.', minutes: cq.due ? 15 : 40, href: '/tools/minitests/' });
+      detail: cq.due ? cq.due + ' concept' + (cq.due === 1 ? '' : 's') + ' due, each as a fresh question.' : 'Forty questions, then the misses come back on schedule.', minutes: cq.due ? 15 : 50, href: '/tools/minitests/' });
     var ws = weakestSection(ms);
     if (ws && window.AceIndex && window.AceIndex.courses[ws]) {
       var top = ms.filter(function (m) { return m.section === ws; })[0];
@@ -451,7 +451,12 @@
         detail: (window.AceRoute ? window.AceRoute.nightTitle(ws, n) : '') || 'Pick up the course where it helps most.', minutes: 30, href: window.AceIndex.courses[ws].url + '?night=' + n });
     }
     var nt = nextTest();
-    if (tasks.length < 3 || !profile().diagnosed) tasks.push({ kind: 'test', title: nt.title, detail: nt.detail, minutes: nt.minutes, href: nt.href });
+    // The first timed test waits a day: a 45-minute diagnostic and a 150-minute practice
+    // test on the same afternoon is not a first day anyone keeps.
+    var dg = read('acelabs_diagnostic_v1', null), diagToday = false;
+    try { diagToday = !!(dg && dg.ts && new Date(dg.ts).toDateString() === new Date().toDateString()); } catch (e) {}
+    var holdTest = diagToday && nt.minutes >= 120;
+    if ((tasks.length < 3 || !profile().diagnosed) && !holdTest) tasks.push({ kind: 'test', title: nt.title, detail: nt.detail, minutes: nt.minutes, href: nt.href });
     return tasks.slice(0, 4);
   }
 
