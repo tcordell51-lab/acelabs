@@ -3660,11 +3660,11 @@ function renderOperon() {
       rnaPol.style.display = "none"; mrna.style.display = "none";
     } else if (OPERON_STATE.glucose) {
       state = "LOW transcription · CAP not bound";
-      body = "<b>Lactose present + glucose present.</b> Repressor is OFF (lactose binds it as inducer). But glucose lowers cAMP → CAP can't bind → only weak transcription. Cell prefers glucose, so this prevents wasteful synthesis of lac enzymes when glucose is available.";
+      body = "<b>Lactose present + glucose present.</b> Repressor is OFF (allolactose, made from lactose, binds it as inducer). But glucose lowers cAMP → CAP can't bind → only weak transcription. Cell prefers glucose, so this prevents wasteful synthesis of lac enzymes when glucose is available.";
       rnaPol.style.display = ""; mrna.style.display = "none";
     } else {
       state = "ON · MAX transcription";
-      body = "<b>Lactose present + glucose absent.</b> Repressor OFF (lactose binds it). cAMP is HIGH (no glucose) → CAP-cAMP binds promoter → recruits RNA pol. <b>Maximum transcription.</b> Operon fully ON.";
+      body = "<b>Lactose present + glucose absent.</b> Repressor OFF (allolactose binds it). cAMP is HIGH (no glucose) → CAP-cAMP binds promoter → recruits RNA pol. <b>Maximum transcription.</b> Operon fully ON.";
       rnaPol.style.display = ""; mrna.style.display = "";
     }
     stateEl.textContent = state;
@@ -3687,7 +3687,7 @@ function renderOperon() {
     let state, body;
     if (OPERON_STATE.trp) {
       state = "OFF · trp + repressor → operator";
-      body = "<b>Tryptophan abundant.</b> Trp acts as corepressor — binds the inactive trp repressor and activates it. Active repressor binds operator → blocks transcription. Why make trp if you have it? Cell shuts off synthesis. <b>Plus: attenuation</b> (a separate, finer-grained mechanism that uses ribosome stalling to terminate transcription early when trp is plentiful).";
+      body = "<b>Tryptophan abundant.</b> Trp acts as corepressor — binds the inactive trp repressor and activates it. Active repressor binds operator → blocks transcription. Why make trp if you have it? Cell shuts off synthesis. <b>Plus: attenuation</b> (a separate, finer mechanism in the leader). When trp is plentiful the ribosome moves through the leader quickly, a terminator hairpin forms, and transcription stops early. When trp is scarce the ribosome stalls and transcription continues.";
       rnaPol.style.display = "none"; mrna.style.display = "none";
     } else {
       state = "ON · default transcription";
@@ -3840,7 +3840,7 @@ function reproRender() {
 function reproPhaseExplanation(day) {
   if (day <= 5) return 'Menses: low estrogen + progesterone (no corpus luteum) → endometrium sheds. Pituitary FSH rising as inhibition lifts.';
   if (day < 13) return 'Follicular: FSH stimulates follicle growth. Estrogen rises sharply as follicle matures. Endometrium proliferates.';
-  if (day < 15) return 'Ovulation: peak estrogen flips to <b>positive feedback</b> on pituitary → LH SURGE → mature follicle ruptures, releases ovum. Most fertile window.';
+  if (day < 15) return 'Ovulation: peak estrogen flips to <b>positive feedback</b> on pituitary → LH SURGE → mature follicle ruptures, releases a secondary oocyte (arrested in metaphase II). Most fertile window.';
   if (day < 24) return 'Luteal: corpus luteum (former follicle) makes progesterone + estrogen. Endometrium thickens (secretory). Negative feedback suppresses FSH/LH.';
   return 'Late luteal: corpus luteum regresses (no hCG = no pregnancy) → progesterone drops → endometrium loses support → menses begins. New cycle starts.';
 }
@@ -4185,7 +4185,7 @@ function updateBohr() {
   document.getElementById("bohrCO2Val").textContent = co2 > 5 ? "high (tissue)" : co2 < -5 ? "low (lung)" : "normal";
   document.getElementById("bohrPHVal").textContent = ph > 5 ? "low (~7.2)" : ph < -5 ? "high (~7.6)" : "7.4";
   document.getElementById("bohrTempVal").textContent = (37 + tmp * 0.1).toFixed(1) + "°C";
-  document.getElementById("bohrBPGVal").textContent = bpg > 5 ? "high" : bpg < -5 ? "low (fetal)" : "normal";
+  document.getElementById("bohrBPGVal").textContent = bpg > 5 ? "high" : bpg < -5 ? "low (mimics fetal Hb)" : "normal";
 
   const side = document.getElementById("bohrSide");
   let summary;
@@ -4232,7 +4232,7 @@ const NEPHRON_DATA = {
   glom: { name:"Glomerulus + Bowman's capsule", body:"<b>Filtration</b>: blood pressure pushes water + small solutes (ions, glucose, amino acids, urea) into Bowman's space. Proteins + cells stay in blood (size barrier). Net filtration ~125 mL/min in humans (GFR). Mesangial cells regulate filtration." },
   pct: { name:"Proximal Convoluted Tubule (PCT)", body:"<b>Bulk reabsorption</b>: ~65% of filtered Na⁺ + water, <b>100% of glucose + amino acids</b> (secondary active transport coupled to Na⁺ via SGLT). Bicarbonate reabsorbed. <b>Brush border</b> + many mitochondria. Site of most drug secretion (organic anion/cation transporters)." },
   descending: { name:"Descending Loop of Henle", body:"<b>Permeable to WATER ONLY.</b> Water exits down osmotic gradient (medullary interstitium is hyperosmotic). Filtrate becomes more concentrated. <b>Contributes to medullary gradient</b>." },
-  ascending: { name:"Ascending Loop of Henle (Thick)", body:"<b>Permeable to SALT, IMPERMEABLE TO WATER</b> (gotcha! key DAT distinction). Active transport via <b>NKCC2</b> cotransporter pumps Na⁺/K⁺/2Cl⁻ out. Loop diuretics (<b>furosemide</b>) inhibit NKCC2. Generates the medullary gradient that powers the descending limb + collecting duct concentration." },
+  ascending: { name:"Ascending Loop of Henle (Thick)", body:"<b>Permeable to SALT, IMPERMEABLE TO WATER</b> (gotcha! key DAT distinction). Secondary active transport: <b>NKCC2</b> moves Na+, K+ and 2 Cl- out of the filtrate, powered by the basolateral Na+/K+ pump. Loop diuretics (<b>furosemide</b>) inhibit NKCC2. Generates the medullary gradient that powers the descending limb + collecting duct concentration." },
   dct: { name:"Distal Convoluted Tubule (DCT)", body:"<b>Fine-tuning</b>. Early DCT: Na⁺/Cl⁻ via NCC (target of <b>thiazide diuretics</b>). Late DCT: <b>aldosterone</b>-sensitive — Na⁺ in via ENaC, K⁺ out (principal cells). <b>PTH</b> stimulates Ca²⁺ reabsorption here." },
   cd: { name:"Collecting Duct", body:"<b>Final water concentration</b>. <b>ADH</b> (vasopressin) inserts <b>aquaporin-2</b> into apical membrane → water reabsorbed → concentrated urine. No ADH = dilute urine (diabetes insipidus). <b>Aldosterone</b> also acts here on principal cells. Intercalated cells handle acid-base (H⁺ secretion)." },
 };
@@ -4255,8 +4255,8 @@ function initNephron() {
 function initSlidingFilament() {
   const states = {
     relaxed: { zL:100, zR:620, actinL:[100,320], actinR:[620,400], myosinX:260, myosinW:200, hZone:[330,390], readout:"<b>Relaxed.</b> Sarcomere full length (Z to Z = 520). Actin and myosin overlap in A-band only. I-bands (actin alone) wide. H-zone (myosin alone) wide." },
-    contracting: { zL:140, zR:580, actinL:[140,330], actinR:[580,390], myosinX:260, myosinW:200, hZone:[340,380], readout:"<b>Contracting.</b> Z-lines moving closer (Z to Z = 440). Actin slides over myosin via cross-bridges. <b>I-bands shrink</b>, <b>H-zone shrinks</b>. <b>A-band UNCHANGED</b> (myosin length is constant)." },
-    contracted: { zL:180, zR:540, actinL:[180,340], actinR:[540,380], myosinX:260, myosinW:200, hZone:[360,360], readout:"<b>Fully contracted.</b> Z-lines maximally close (Z to Z = 360). H-zone disappears (actin completely overlaps myosin). I-bands shortest. A-band still constant. <b>Rigor mortis = no ATP, myosin can't detach from actin.</b>" },
+    contracting: { zL:120, zR:600, actinL:[120,340], actinR:[600,380], myosinX:260, myosinW:200, hZone:[340,380], readout:"<b>Contracting.</b> Z-lines moving closer (Z to Z = 480). Actin slides over myosin via cross-bridges. <b>I-bands shrink</b>, <b>H-zone shrinks</b>. <b>A-band UNCHANGED</b> (myosin length is constant)." },
+    contracted: { zL:140, zR:580, actinL:[140,360], actinR:[580,360], myosinX:260, myosinW:200, hZone:[360,360], readout:"<b>Fully contracted.</b> Z-lines maximally close (Z to Z = 440). H-zone disappears (actin completely overlaps myosin). I-bands shortest. A-band still constant. <b>Rigor mortis = no ATP, myosin can't detach from actin.</b>" },
   };
 
   const apply = (s) => {
@@ -4286,7 +4286,7 @@ const ENDO_DATA = {
   thyr: { name:"Thyroid", body:"<b>T3/T4</b> (require iodine, made in follicular cells): ↑metabolic rate, growth, development. T3 more potent. Negative feedback to TSH/TRH. <b>Calcitonin</b> (parafollicular C cells): ↓blood Ca²⁺ (deposits in bone). Hypothyroid → cold/sluggish; hyperthyroid → hot/fast." },
   par: { name:"Parathyroid", body:"<b>PTH</b> (4 small glands behind thyroid): ↑blood Ca²⁺. Acts on bone (resorption), kidney (Ca²⁺ reabsorption + activation of vit D), gut (indirect via vit D). Antagonist to calcitonin." },
   cort: { name:"Adrenal Cortex (3 layers)", body:"<b>Mnemonic: GFR / salt-sugar-sex.</b> Zona <b>Glomerulosa</b> → <b>aldosterone</b> (Na⁺ retention). Zona <b>Fasciculata</b> → <b>cortisol</b> (stress, ↑glucose, anti-inflammatory). Zona <b>Reticularis</b> → androgens (DHEA). All steroid hormones (cholesterol-derived)." },
-  med: { name:"Adrenal Medulla", body:"<b>Modified sympathetic ganglion.</b> Chromaffin cells secrete <b>epinephrine + norepinephrine</b> (catecholamines, peptide-like signaling). Fight or flight: ↑HR, vasoconstriction (skin/gut) + vasodilation (skeletal muscle), ↑glucose, bronchodilation." },
+  med: { name:"Adrenal Medulla", body:"<b>Modified sympathetic ganglion.</b> Chromaffin cells secrete <b>epinephrine + norepinephrine</b> (amine hormones made from tyrosine; like peptides, they act on surface receptors). Fight or flight: ↑HR, vasoconstriction (skin/gut) + vasodilation (skeletal muscle), ↑glucose, bronchodilation." },
   panc: { name:"Pancreas (Islets of Langerhans)", body:"<b>α cells: glucagon</b> (↑blood glucose via glycogenolysis + gluconeogenesis). <b>β cells: insulin</b> (↓blood glucose via uptake + glycogen synthesis). <b>δ cells: somatostatin</b> (inhibits both). Mnemonic: A=Glucagon, B=Insulin (alphabetical reverse pair)." },
   ova: { name:"Ovaries", body:"<b>Estrogen</b> (granulosa cells, follicular phase): builds endometrium, secondary sex characteristics. <b>Progesterone</b> (corpus luteum, luteal phase): maintains endometrium. <b>LH surge</b> on day 14 (positive feedback from high estrogen) triggers ovulation. <b>hCG</b> from blastocyst maintains corpus luteum if pregnancy." },
   tes: { name:"Testes", body:"<b>Testosterone</b> (Leydig cells, LH-driven). Spermatogenesis (Sertoli cells, FSH-driven). Testosterone → secondary sex characteristics (deeper voice, body hair, libido). 5α-reductase converts testosterone → DHT for prostate/external genitalia." },
@@ -4586,11 +4586,11 @@ function initMorpher() {
 /* ---- EMBRYO TIMELINE ---- */
 const EMBRYO_DATA = {
   zygote: { name:"Zygote (1-cell)", body:"<b>Day 0.</b> Diploid (2n) cell formed by sperm + egg fusion. Single, large cell. Nucleus contains genome from both parents. Sex of organism determined here (XX or XY in mammals)." },
-  cleavage: { name:"Cleavage", body:"<b>Days 1-3.</b> Rapid mitotic divisions WITHOUT growth — cells get smaller (only S + M, no G1/G2). Total mass unchanged. <b>Holoblastic</b> = complete cleavage (sea urchin, frog, mammal — little/moderate yolk). <b>Meroblastic</b> = incomplete (bird, reptile, insect — lots of yolk). <b>Radial</b> (deutero) vs <b>spiral</b> (proto). <b>Determinate</b> (proto, fates fixed) vs <b>indeterminate</b> (deutero, totipotent cells)." },
+  cleavage: { name:"Cleavage", body:"<b>Days 1-3.</b> Rapid mitotic divisions WITHOUT growth — cells get smaller (in frogs and sea urchins: only S + M, no G1/G2; mammalian cleavage is slower). Total mass unchanged. <b>Holoblastic</b> = complete cleavage (sea urchin, frog, mammal — little/moderate yolk). <b>Meroblastic</b> = incomplete (bird, reptile, insect — lots of yolk). <b>Radial</b> (deutero) vs <b>spiral</b> (proto). <b>Determinate</b> (proto, fates fixed) vs <b>indeterminate</b> (deutero, totipotent cells)." },
   blastula: { name:"Blastula (Blastocyst)", body:"<b>Days 4-6.</b> Hollow ball of cells around <b>blastocoel</b> cavity. <b>Mammal version = blastocyst</b>: <b>inner cell mass (ICM)</b> → embryo proper; <b>trophoblast</b> → placenta + extraembryonic membranes. Implantation begins (mammal) at this stage." },
   gastrula: { name:"Gastrula", body:"<b>~Day 14.</b> Cells migrate inward (invagination) → forms <b>archenteron</b> (primitive gut) opening at <b>blastopore</b>. <b>3 germ layers form: ectoderm (outer), mesoderm (middle), endoderm (inner)</b>. Frog: organizer at dorsal lip of blastopore. Chick/mammal: primitive streak performs equivalent role." },
   neurula: { name:"Neurula", body:"<b>~Day 22.</b> Notochord (mesoderm) signals overlying ectoderm. <b>Neural plate</b> → folds into <b>neural groove</b> with <b>neural folds</b> → fuses into <b>neural tube</b> (becomes brain + spinal cord). <b>Neural crest cells</b> pinch off — give rise to PNS, melanocytes, adrenal medulla, facial cartilage, Schwann cells." },
-  organo: { name:"Organogenesis", body:"<b>Weeks 4-8.</b> Major organs form. Heart loops + chambers form (3-chambered → 4-chambered). <b>Somites</b> segment along axis (give rise to vertebrae, ribs, dermis, skeletal muscle). Limb buds outgrow. Kidney progresses through 3 stages: pronephros → mesonephros → metanephros (the final kidney). <b>Pharyngeal arches</b> form structures of head + neck. By end: recognizable embryo with all major organ rudiments." },
+  organo: { name:"Organogenesis", body:"<b>Weeks 4-8.</b> Major organs form. Heart tube loops, then septa divide it into 4 chambers. <b>Somites</b> segment along axis (give rise to vertebrae, ribs, dermis, skeletal muscle). Limb buds outgrow. Kidney progresses through 3 stages: pronephros → mesonephros → metanephros (the final kidney). <b>Pharyngeal arches</b> form structures of head + neck. By end: recognizable embryo with all major organ rudiments." },
 };
 
 function initEmbryoTimeline() {
@@ -6947,7 +6947,7 @@ const BLOOD_DATA = {
         <g transform="translate(480,30)">
           <text x="40" y="0" font-size="10" font-weight="700" fill="#1B3A2D">Type O</text>
           <circle cx="40" cy="40" r="35" fill="#c19a3e" stroke="#1B3A2D" stroke-width="2"/>
-          <text x="40" y="100" text-anchor="middle" font-size="9" font-weight="700" fill="#1B3A2D">No antigens</text>
+          <text x="40" y="100" text-anchor="middle" font-size="9" font-weight="700" fill="#1B3A2D">No A or B antigens</text>
           <text x="40" y="115" text-anchor="middle" font-size="9" font-weight="700" fill="#5FA874">→ universal donor</text>
         </g>
       </g>
@@ -6956,7 +6956,7 @@ const BLOOD_DATA = {
         <text x="15" y="22" font-size="11" font-weight="700" fill="#1B3A2D">COMPATIBILITY (PLASMA ANTIBODIES SHOULD NOT FIND DONOR ANTIGEN)</text>
         <text x="15" y="50" font-size="10" fill="#1B3A2D"><b>Type A</b> can receive A + O · <b>Type B</b> can receive B + O</text>
         <text x="15" y="68" font-size="10" fill="#1B3A2D"><b>Type AB</b> can receive ALL (universal recipient — no antibodies in plasma)</text>
-        <text x="15" y="86" font-size="10" fill="#1B3A2D"><b>Type O</b> can receive only O (has anti-A AND anti-B). But O can DONATE to all.</text>
+        <text x="15" y="86" font-size="10" fill="#1B3A2D"><b>Type O</b> can receive only O (has anti-A AND anti-B). But O negative can DONATE red cells to all.</text>
         <text x="15" y="120" font-size="11" font-weight="700" fill="#1B3A2D">Rh FACTOR (D antigen)</text>
         <text x="15" y="140" font-size="10" fill="#1B3A2D"><b>Rh⁺</b> (85%): has D antigen, no anti-D antibodies.</text>
         <text x="15" y="156" font-size="10" fill="#1B3A2D"><b>Rh⁻</b> (15%): no D antigen, makes anti-D <b>only after exposure</b>.</text>
@@ -6964,7 +6964,7 @@ const BLOOD_DATA = {
         <text x="15" y="190" font-size="10" font-weight="700" fill="#C25B3F">RhoGAM (anti-D Ig) given to Rh⁻ moms at 28 weeks + post-delivery prevents sensitization.</text>
       </g>
     </svg>`,
-    info:'<b>ABO:</b> classic codominance + multiple alleles.<br>• <b>Type A</b>: A antigen, anti-B in plasma.<br>• <b>Type B</b>: B antigen, anti-A.<br>• <b>Type AB</b>: both antigens, no antibodies → <b>universal recipient</b>.<br>• <b>Type O</b>: no antigens, both antibodies → <b>universal donor</b>.<br><b>Rh:</b> D antigen present (Rh⁺) or absent (Rh⁻). Rh⁻ doesn\'t make anti-D until exposed.<br><b>HDN:</b> Rh⁻ mom carrying 2nd Rh⁺ baby — antibodies from 1st pregnancy attack fetal RBCs. Prevented by RhoGAM.<br><b>Transfusion mismatch</b> = Type II hypersensitivity → hemolysis.',
+    info:'<b>ABO:</b> classic codominance + multiple alleles.<br>• <b>Type A</b>: A antigen, anti-B in plasma.<br>• <b>Type B</b>: B antigen, anti-A.<br>• <b>Type AB</b>: both antigens, no antibodies → <b>universal recipient</b>.<br>• <b>Type O</b>: no A or B antigen, both antibodies, so <b>universal donor</b> (O negative).<br><b>Rh:</b> D antigen present (Rh⁺) or absent (Rh⁻). Rh⁻ doesn\'t make anti-D until exposed.<br><b>HDN:</b> Rh⁻ mom carrying 2nd Rh⁺ baby — antibodies from 1st pregnancy attack fetal RBCs. Prevented by RhoGAM.<br><b>Transfusion mismatch</b> = Type II hypersensitivity → hemolysis.',
   },
   hemo: {
     label:'Hemoglobin & Erythrocytes',
@@ -11762,7 +11762,7 @@ const EVID_DATA = {
   },
   anat: {
     label:'Comparative anatomy',
-    info:'<b>Homologous structures</b> — same evolutionary origin, different function. Mammalian forelimbs (human arm, bat wing, whale flipper, horse leg) all share the same bone pattern (humerus → radius/ulna → carpals → metacarpals → phalanges).<br><br><b>Analogous structures</b> — same function, different origin (convergent evolution): wings of insects vs birds vs bats; eyes evolved independently many times.<br><br><b>Vestigial structures</b> — reduced or non-functional remnants of ancestral features:<br>• Human appendix, tailbone, wisdom teeth, body hair, ear-wiggling muscles<br>• Whale pelvis (no longer connects to limb)<br>• Snake hindlimb stubs (boas, pythons)<br>• Cave-dwelling fish eyes',
+    info:'<b>Homologous structures</b> — same evolutionary origin, different function. Mammalian forelimbs (human arm, bat wing, whale flipper, horse leg) all share the same bone pattern (humerus → radius/ulna → carpals → metacarpals → phalanges).<br><br><b>Analogous structures</b> — same function, different origin (convergent evolution): wings of insects vs birds or bats (bird and bat wings are analogous as wings but homologous as forelimbs); eyes evolved independently many times.<br><br><b>Vestigial structures</b> — reduced or non-functional remnants of ancestral features:<br>• Human appendix, tailbone, wisdom teeth, body hair, ear-wiggling muscles<br>• Whale pelvis (no longer connects to limb)<br>• Snake hindlimb stubs (boas, pythons)<br>• Cave-dwelling fish eyes',
   },
   embryo: {
     label:'Comparative embryology',
@@ -13125,7 +13125,7 @@ const TONICITY_HTML = `
     </div>
     <input id="tonSolute" type="range" min="0" max="100" step="1" value="50" style="width:100%;accent-color:#C25B3F">
     <div style="text-align:center;margin-top:6px;font-family:'JetBrains Mono',monospace;font-size:13px;color:#1B3A2D">
-      External solute: <span id="tonSoluteVal" style="font-weight:700">50%</span> (cell internal = 50%)
+      External solute: <span id="tonSoluteVal" style="font-weight:700">50</span> (relative units; cell = 50)
     </div>
   </div>
 
@@ -13156,7 +13156,7 @@ const TONICITY_HTML = `
 
   <!-- Quick scenario buttons -->
   <div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap">
-    <button class="ton-preset" data-val="10" style="flex:1;min-width:90px;font-size:11px;padding:6px;background:#fff;border:1.5px solid #1B3A2D;border-radius:6px;cursor:pointer;font-weight:700;color:#1B3A2D">Pure water (hypo)</button>
+    <button class="ton-preset" data-val="0" style="flex:1;min-width:90px;font-size:11px;padding:6px;background:#fff;border:1.5px solid #1B3A2D;border-radius:6px;cursor:pointer;font-weight:700;color:#1B3A2D">Pure water (hypo)</button>
     <button class="ton-preset" data-val="50" style="flex:1;min-width:90px;font-size:11px;padding:6px;background:#fff;border:1.5px solid #1B3A2D;border-radius:6px;cursor:pointer;font-weight:700;color:#1B3A2D">Saline (iso)</button>
     <button class="ton-preset" data-val="90" style="flex:1;min-width:90px;font-size:11px;padding:6px;background:#fff;border:1.5px solid #1B3A2D;border-radius:6px;cursor:pointer;font-weight:700;color:#1B3A2D">5% NaCl (hyper)</button>
   </div>
@@ -13321,7 +13321,7 @@ function initTonicity() {
     svg.innerHTML = svgInner;
 
     // Update text readouts
-    document.getElementById('tonSoluteVal').textContent = externalSolute + '%';
+    document.getElementById('tonSoluteVal').textContent = String(externalSolute);
     document.getElementById('tonStateName').textContent = state;
     document.getElementById('tonStateName').style.color = stateClass;
     document.getElementById('tonStateExplain').innerHTML = (
@@ -13694,7 +13694,7 @@ function initCrossBridgeCycle() {
     const mLeft = 280, mRight = 520;
     const aBand = mRight - mLeft;
     // Actin filaments extend from each Z to past M-line (anchored at Z, length actinLen)
-    const actinLen = 320;
+    const actinLen = 280;  // constant: filaments slide, they never shorten
     const actinLEnd = zL + actinLen;
     const actinREnd = zR - actinLen;
     // I-band: from Z to start of myosin overlap (Z-line to mLeft on left side)
@@ -13702,8 +13702,8 @@ function initCrossBridgeCycle() {
     const iBandTotalEachSide = iBandWidth;
     // H-zone: myosin region with no actin overlap. As actin slides in, H shrinks.
     // Actin slides in by `shrink` pixels per side (because Z-lines move toward M)
-    const hZoneStart = mLeft + Math.max(0, actinLen - (mLeft - zL) - shrink);
-    const hZoneEnd = mRight - Math.max(0, actinLen - (zR - mRight) - shrink);
+    const hZoneStart = zL + actinLen;
+    const hZoneEnd = zR - actinLen;
     let hZone = Math.max(0, hZoneEnd - hZoneStart);
 
     // Myosin head positions and rotations based on cycle stage
@@ -13725,19 +13725,19 @@ function initCrossBridgeCycle() {
 
     // Actin filaments (thin, blue)
     // Left actin
-    inner += `<rect x="${zL}" y="120" width="${actinLen - shrink}" height="6" fill="#5cabe6" stroke="#1B3A2D" stroke-width="0.8"/>`;
-    inner += `<rect x="${zL}" y="160" width="${actinLen - shrink}" height="6" fill="#5cabe6" stroke="#1B3A2D" stroke-width="0.8"/>`;
+    inner += `<rect x="${zL}" y="120" width="${actinLen}" height="6" fill="#5cabe6" stroke="#1B3A2D" stroke-width="0.8"/>`;
+    inner += `<rect x="${zL}" y="160" width="${actinLen}" height="6" fill="#5cabe6" stroke="#1B3A2D" stroke-width="0.8"/>`;
     // Tropomyosin / dots on actin (decorative)
     for (let i = 0; i < 6; i++) {
-      const dotX = zL + 30 + i * ((actinLen - shrink - 60) / 5);
+      const dotX = zL + 30 + i * ((actinLen - 60) / 5);
       inner += `<circle cx="${dotX}" cy="123" r="2" fill="#1B3A2D" opacity="0.6"/>`;
       inner += `<circle cx="${dotX}" cy="163" r="2" fill="#1B3A2D" opacity="0.6"/>`;
     }
     // Right actin
-    inner += `<rect x="${zR - (actinLen - shrink)}" y="120" width="${actinLen - shrink}" height="6" fill="#5cabe6" stroke="#1B3A2D" stroke-width="0.8"/>`;
-    inner += `<rect x="${zR - (actinLen - shrink)}" y="160" width="${actinLen - shrink}" height="6" fill="#5cabe6" stroke="#1B3A2D" stroke-width="0.8"/>`;
+    inner += `<rect x="${zR - actinLen}" y="120" width="${actinLen}" height="6" fill="#5cabe6" stroke="#1B3A2D" stroke-width="0.8"/>`;
+    inner += `<rect x="${zR - actinLen}" y="160" width="${actinLen}" height="6" fill="#5cabe6" stroke="#1B3A2D" stroke-width="0.8"/>`;
     for (let i = 0; i < 6; i++) {
-      const dotX = zR - (actinLen - shrink) + 30 + i * ((actinLen - shrink - 60) / 5);
+      const dotX = zR - actinLen + 30 + i * ((actinLen - 60) / 5);
       inner += `<circle cx="${dotX}" cy="123" r="2" fill="#1B3A2D" opacity="0.6"/>`;
       inner += `<circle cx="${dotX}" cy="163" r="2" fill="#1B3A2D" opacity="0.6"/>`;
     }
@@ -14117,7 +14117,7 @@ const KREBS_STAGES = [
     note: 'Glycolysis only — pyruvate must enter mitochondria for the rest' },
   { range: [20, 35], name: 'Stage 2 · Pyruvate dehydrogenase (matrix)', atp: 2, nadh: 4, fadh: 0, co2: 2,
     explain: '<span style="font-weight:700;color:#5FA874">PDH · linker step.</span> Each pyruvate (3C) enters the matrix and is decarboxylated to acetyl-CoA (2C) + 1 CO&#8322; + 1 NADH. Per glucose (2 pyruvates): <b>+2 NADH</b>, <b>+2 CO&#8322;</b>. Pyruvate dehydrogenase is the catalyst.',
-    note: '4 of 6 carbons of glucose still left as carbon — Krebs takes the other 4' },
+    note: '4 of glucose\'s 6 carbons remain, in 2 acetyl-CoA. Krebs releases them as CO2.' },
   { range: [35, 55], name: 'Stage 3 · Krebs cycle (matrix · runs twice)', atp: 4, nadh: 10, fadh: 2, co2: 6,
     explain: '<span style="font-weight:700;color:#1B3A2D">Krebs cycle · matrix.</span> Each acetyl-CoA enters the cycle and is fully oxidized over 8 steps. Per turn: <b>3 NADH + 1 FADH&#8322; + 1 GTP (=ATP) + 2 CO&#8322;</b>. Cycle runs <b>twice per glucose</b> (once per acetyl-CoA). Per glucose: <b>+6 NADH, +2 FADH&#8322;, +2 GTP, +4 CO&#8322;</b>. All 6 carbons of glucose now released as CO&#8322;.',
     note: 'All 6 carbons of glucose released as CO₂. ETC + ATP synthase still to come.' },
@@ -14126,7 +14126,7 @@ const KREBS_STAGES = [
     note: 'Proton gradient is the energy currency. ATP synthase converts it to ATP next.' },
   { range: [85, 100], name: 'Stage 5 · ATP synthase (chemiosmosis)', atp: 32, nadh: 10, fadh: 2, co2: 6,
     explain: '<span style="font-weight:700;color:#5cabe6">ATP synthase · chemiosmosis.</span> Protons flow back through ATP synthase down their gradient, spinning the rotor and driving ATP synthesis. Per NADH: ~2.5 ATP. Per FADH&#8322;: ~1.5 ATP. <b>Total per glucose: ~30–32 ATP</b> (counting glycolytic NADH shuttle costs; older textbooks said 36–38).',
-    note: 'Final yield per glucose: ~30–32 ATP. O₂ is the silent hero — without it, the chain backs up and the whole pathway halts.' },
+    note: 'Final yield per glucose: ~30–32 ATP. O2 is the final electron acceptor. Without it the chain backs up and Krebs and the ETC stop; only glycolysis, with fermentation, keeps going.' },
 ];
 
 function initKrebsScrubber() {
@@ -15537,28 +15537,28 @@ const AP_PHASES = [
     trap: 'Sub-threshold stimuli produce graded potentials but NO AP. Above threshold, every AP reaches the same +30 mV peak. Stimulus strength is encoded by AP FREQUENCY, not amplitude.'
   },
   {
-    range: [30, 42], label: 'Stage 3 · Peak (+30 mV) — Na⁺ inactivates', vm: 30,
+    range: [30, 36], label: 'Stage 3 · Peak (+30 mV) — Na⁺ inactivates', vm: 30,
     na: 'INACTIVATED', naColor: '#888',
     k: 'opening (out)', kColor: '#5cabe6',
     explain: '<b>Vm reaches +30 mV.</b> Voltage-gated Na⁺ channels INACTIVATE (a third state, distinct from "closed" — they have an inactivation gate that swings shut). Voltage-gated K⁺ channels are slow to respond but now OPEN. K⁺ begins flowing out down its gradient.',
     trap: 'Na⁺ channels have THREE states: closed (resting), open (during depol), and inactivated (during peak/repol). The inactivation gate is what makes the absolute refractory period.'
   },
   {
-    range: [42, 60], label: 'Stage 4 · Repolarization', vm: -50,
+    range: [36, 55], label: 'Stage 4 · Repolarization', vm: -50,
     na: 'INACTIVATED', naColor: '#888',
     k: 'OPEN (out)', kColor: '#5cabe6',
     explain: '<b>K⁺ efflux brings Vm back down.</b> Na⁺ channels remain inactivated (cannot reopen). K⁺ channels stay open and continue letting K⁺ leave the cell. Vm rapidly drops back toward resting.',
-    trap: 'K⁺ flowing OUT depolarizes? No — K⁺ leaving a positive ion REMOVES positive charge from inside, so it HYPER-polarizes (drives Vm more negative). This is the opposite of what students often guess.'
+    trap: 'K+ leaving the cell removes positive charge from inside, so Vm falls back toward rest (repolarization). Overshooting past rest comes next (hyperpolarization).'
   },
   {
-    range: [60, 80], label: 'Stage 5 · Hyperpolarization', vm: -85,
+    range: [55, 85], label: 'Stage 5 · Hyperpolarization', vm: -85,
     na: 'recovering', naColor: '#888',
     k: 'still open', kColor: '#5cabe6',
     explain: '<b>Vm overshoots resting and goes more negative (~-85 mV).</b> K⁺ channels are slow to close, so K⁺ keeps flowing out past the resting point. Na⁺ channels are still recovering from inactivation back to closed. Eventually K⁺ channels close and the membrane returns to -70 mV.',
     trap: 'During this period (relative refractory), a second AP can fire but only with a STRONGER-than-normal stimulus. Combined with absolute refractory (Na inactivated), this prevents APs from running backward along the axon.'
   },
   {
-    range: [80, 100], label: 'Stage 6 · Reset to resting (-70 mV)', vm: -70,
+    range: [85, 100], label: 'Stage 6 · Reset to resting (-70 mV)', vm: -70,
     na: 'CLOSED', naColor: '#C25B3F',
     k: 'closing', kColor: '#888',
     explain: '<b>Membrane returns to resting potential.</b> K⁺ channels close, Na⁺ channels reset from inactivated → closed (ready to open again). Na/K pump runs continuously to maintain the gradient (it never stops; just unrelated to the AP itself). Cell is ready for the next stimulus.',
