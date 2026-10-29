@@ -180,7 +180,7 @@ function updateMeta(){
 function startTimer(){
   clearInterval(timer); timeLeft=QUESTION_SECONDS;
   var fill=document.getElementById('tfill'); fill.style.transition='none'; fill.style.width='100%';
-  void fill.offsetWidth; fill.style.transition='width 1s linear';
+  void fill.offsetWidth; fill.style.transition=(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)?'none':'width 1s linear';
   document.getElementById('timerTxt').textContent=timeLeft+'s';
   timer=setInterval(function(){
     timeLeft--;
