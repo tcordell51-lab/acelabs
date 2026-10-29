@@ -15,7 +15,10 @@ const HUBS = [
 const SHARED = 'bio-shared.js';
 const DIR = path.join(__dirname, '..', 'tools', 'bio');
 
-const js = fs.readFileSync(path.join(DIR, SHARED), 'utf8');
+// bio-shared.js plus the "Call it first" layer, as one script: three classic
+// <script> tags share the page's global lexical scope in a browser.
+const js = [SHARED, 'bio-bone.js', 'bio-stick-data.js', 'bio-stick.js']
+  .map((f) => fs.readFileSync(path.join(DIR, f), 'utf8')).join('\n;\n');
 
 let totalErrors = 0;
 

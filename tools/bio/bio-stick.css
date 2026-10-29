@@ -1,0 +1,104 @@
+/* =====================================================================
+   Bio Stick Layer: styles (panels built by bio-stick.js)
+   Matches the Bio engine's paper / forest / gold look (bio-shared.css
+   tokens). Phone first: 44 px targets, single column under 680 px,
+   every motion rule wrapped for prefers-reduced-motion.
+   ===================================================================== */
+
+.stick{
+  --stick-ok:var(--good-d,#007a59);
+  --stick-ok-bg:var(--good-bg,rgba(0,158,115,.10));
+  --stick-review:var(--trap-d,#9b4500);
+  --stick-review-bg:var(--trap-bg,rgba(213,94,0,.10));
+  position:relative;
+  max-width:100%;
+  min-width:0;
+  box-sizing:border-box;
+  margin:0 0 16px;
+  padding:16px 18px 14px;
+  background:var(--paper,#fffdf7);
+  border:1px solid var(--line,rgba(13,32,24,.12));
+  border-left:4px solid var(--gold,#C9A84C);
+  border-radius:14px;
+  box-shadow:var(--shadow,0 1px 3px rgba(13,32,24,.06));
+  color:var(--ink,#0f1814);
+  font-family:'DM Sans',system-ui,-apple-system,sans-serif;
+  scroll-margin-top:96px;
+}
+.stick *,.stick *::before,.stick *::after{box-sizing:border-box}
+.stick[hidden],.stick [hidden]{display:none!important}
+
+.stick-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;margin-bottom:6px}
+.stick-kicker{font-size:10px;letter-spacing:.18em;text-transform:uppercase;font-weight:700;color:var(--gold-d,#8C7235)}
+.stick-title{font-size:12px;font-weight:600;color:var(--ink-mute,#5c6a63)}
+.stick-sub{margin:0 0 10px;font-size:13px;line-height:1.5;color:var(--ink-2,#3a4a42)}
+.stick-q{margin:0 0 12px;font-family:'Playfair Display',serif;font-size:18px;font-weight:600;line-height:1.35;color:var(--ink,#0f1814)}
+
+.stick-opts{display:grid;gap:8px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:681px){.stick.is-fresh .stick-opts,.stick.is-checking .stick-opts{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.stick-opt{
+  display:flex;align-items:center;gap:10px;width:100%;min-height:44px;min-width:0;
+  padding:10px 12px;text-align:left;cursor:pointer;
+  font:inherit;font-size:14px;line-height:1.35;color:var(--ink,#0f1814);
+  background:var(--paper-2,#f9f3e6);border:1.5px solid var(--line,rgba(13,32,24,.12));border-radius:10px;
+}
+.stick-opt:hover:not(:disabled){border-color:var(--gold,#C9A84C)}
+.stick-opt:focus-visible{outline:3px solid var(--gold,#C9A84C);outline-offset:2px}
+.stick-opt:disabled{cursor:default;opacity:1}
+.stick-let{flex:0 0 auto;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;background:var(--sb,#0d2018);color:#ece4d4;padding:2px 7px;border-radius:5px}
+.stick-opt-t{min-width:0;overflow-wrap:anywhere}
+.stick-opt.is-picked{border-color:var(--teal,#1B3A2D);background:var(--paper-3,#f3ecdb)}
+.stick-opt.is-picked:not(.is-key){border-color:var(--stick-review);background:var(--stick-review-bg)}
+.stick-opt.is-picked:not(.is-key) .stick-let{background:var(--stick-review)}
+.stick-opt.is-key{border-color:var(--stick-ok);background:var(--stick-ok-bg)}
+.stick-opt.is-key .stick-let{background:var(--stick-ok)}
+
+.stick-stage{margin:14px 0 4px;padding:10px;background:#fff;border:1px solid var(--line,rgba(13,32,24,.12));border-radius:10px;min-width:0;overflow:hidden}
+.stick-frame{min-width:0;max-width:100%}
+.stick-frame > *{max-width:100%!important;width:auto!important;min-width:0!important;margin:0 auto!important;float:none!important;position:static!important}
+.stick-frame svg{display:block;width:100%!important;height:auto!important;max-height:340px}
+.stick-frame .body-side,.stick-frame .energy-step-info{border:0;box-shadow:none;padding:4px 2px;background:transparent}
+.stick-cap{margin:8px 0 0;font-size:12px;font-weight:700;letter-spacing:.04em;color:var(--teal,#1B3A2D);text-align:center}
+
+.stick-verdict{margin-top:12px}
+.stick-verdict-row{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;margin-bottom:6px}
+.stick-lbl{font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;padding:4px 9px;border-radius:999px}
+.is-ok .stick-lbl{color:var(--stick-ok);background:var(--stick-ok-bg)}
+.is-review .stick-lbl{color:var(--stick-review);background:var(--stick-review-bg)}
+.stick-key{font-size:13px;font-weight:600;color:var(--ink,#0f1814)}
+.stick-trap,.stick-why,.stick-hook,.stick-saved{margin:6px 0 0;font-size:14px;line-height:1.55;color:var(--ink-2,#3a4a42)}
+.stick-trap b{color:var(--stick-review)}
+.stick-hook{font-family:'Playfair Display',serif;font-style:italic;color:var(--gold-d,#8C7235)}
+.stick-saved{font-size:13px;color:var(--teal,#1B3A2D);font-weight:600}
+
+.stick-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.stick-btn{min-height:44px;padding:10px 16px;font:inherit;font-size:14px;font-weight:700;cursor:pointer;border-radius:10px;border:1.5px solid var(--teal,#1B3A2D);background:var(--teal,#1B3A2D);color:#fff}
+.stick-btn:focus-visible,.stick-link:focus-visible{outline:3px solid var(--gold,#C9A84C);outline-offset:2px}
+.stick-btn-quiet{background:transparent;color:var(--teal,#1B3A2D)}
+.stick-link{min-height:44px;padding:10px 4px;font:inherit;font-size:13px;color:var(--ink-mute,#5c6a63);background:none;border:0;text-decoration:underline;cursor:pointer}
+
+.stick.is-compact{padding:10px 14px;border-left-color:var(--line-strong,rgba(13,32,24,.22))}
+.stick-compact{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px}
+.stick-compact-t{flex:1 1 200px;min-width:0;font-size:13px;color:var(--ink-2,#3a4a42)}
+.stick-compact-actions{display:flex;flex-wrap:wrap;gap:8px}
+.stick.is-compact .stick-btn{min-height:44px;padding:8px 12px;font-size:13px}
+
+/* The visualizer waits under a soft veil until the prediction is in. */
+.stick-veiled{opacity:.45;filter:blur(2px) saturate(.5);pointer-events:none;user-select:none}
+
+/* Card back in the Ace Cards stack */
+.stick-card-pic{margin:10px 0;padding:8px;background:#fff;border:1px solid var(--line,rgba(13,32,24,.12));border-radius:8px;max-width:100%;overflow:hidden}
+.stick-card-pic > *{max-width:100%!important;width:auto!important;margin:0 auto!important;float:none!important;position:static!important}
+.stick-card-pic svg{display:block;width:100%!important;height:auto!important;max-height:180px}
+
+.stick-card-link a{display:inline-block;min-height:44px;padding:10px 0;color:var(--gold-m,#E2C97A);font-weight:700;text-decoration:underline}
+.stick-card-link a:focus-visible{outline:3px solid var(--gold,#C9A84C);outline-offset:2px}
+
+@media (max-width:420px){
+  .stick{padding:14px 14px 12px}
+  .stick-q{font-size:17px}
+}
+@media (prefers-reduced-motion: no-preference){
+  .stick-veiled{transition:opacity .25s ease, filter .25s ease}
+  .stick-opt{transition:border-color .15s ease, background-color .15s ease}
+}
