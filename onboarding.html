@@ -487,6 +487,7 @@ body[data-page="onboarding"]{
       }));
       // Dual-write so test-week.html and calendar.html can read a consistent key
       if(testDate) localStorage.setItem('acelabs_test_date', testDate);
+      else localStorage.removeItem('acelabs_test_date');
     } catch(e){}
 
     // Route decision
@@ -516,7 +517,7 @@ body[data-page="onboarding"]{
       if(Array.isArray(saved.weakAreas)){
         saved.weakAreas.forEach(function(s){
           weakSections[s] = true;
-          var cb = document.getElementById('cb' + s.charAt(0).toUpperCase() + s.slice(1));
+          var cb = document.querySelector('.ob-check-option input[type="checkbox"][value="'+s+'"]');
           if(cb){ cb.checked = true; }
           var el = document.querySelector('.ob-check-option[data-section="'+s+'"]');
           if(el) el.classList.add('selected');

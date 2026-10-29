@@ -332,6 +332,11 @@ body[data-page="test-week"]{background:linear-gradient(180deg,var(--al-bg) 0%,va
   'use strict';
 
   var STORAGE_KEY = 'acelabs_test_date';
+  // The home reads the onboarding record first, so a date changed here must land there too.
+  function mirrorOnboardingDate(val){
+    try{ var ob=JSON.parse(localStorage.getItem('aceLabs:onboarding')||'null');
+      if(ob&&typeof ob==='object'){ ob.testDate=val; ob.setAt=Date.now(); localStorage.setItem('aceLabs:onboarding',JSON.stringify(ob)); } }catch(e){}
+  }
 
   // ── Date helpers ──────────────────────────────────────────────
   function parseLocalDate(iso){
@@ -397,6 +402,7 @@ body[data-page="test-week"]{background:linear-gradient(180deg,var(--al-bg) 0%,va
       } else {
         // Bad value — clear and prompt
         localStorage.removeItem(STORAGE_KEY);
+        mirrorOnboardingDate(null);
         showPrompt();
       }
     } else {
@@ -417,6 +423,7 @@ body[data-page="test-week"]{background:linear-gradient(180deg,var(--al-bg) 0%,va
       var d = parseLocalDate(val);
       if(!d){ return; }
       localStorage.setItem(STORAGE_KEY, val);
+      mirrorOnboardingDate(val);
       datePrompt.classList.remove('visible');
       renderHero(daysUntil(d));
     });

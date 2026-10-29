@@ -83,6 +83,7 @@ document.title='Ace Game Central - '+SUBJECTS[SUB].name;
 
 var LS='atDAT_games_'+SUB;
 var state={}; try{ state=JSON.parse(localStorage.getItem(LS)||'{}'); }catch(e){ state={}; }
+if(!state||typeof state!=='object'||Array.isArray(state)) state={};   // a stored literal null or primitive must not strand the page on "Loading"
 state.misses=state.misses||{}; state.topicStats=state.topicStats||{}; state.best=state.best||0;
 function save(){ try{ localStorage.setItem(LS,JSON.stringify(state)); }catch(e){} }
 
@@ -143,6 +144,8 @@ function drawMols(){
 function shuffle(a){ for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i];a[i]=a[j];a[j]=t; } return a; }
 function buildRound(bank){
   var byId={}; bank.forEach(function(it){ byId[it.id]=it; });
+  // Misses whose question left the bank can never come back around; drop them so they stop counting.
+  Object.keys(state.misses).forEach(function(id){ if(!byId[id]) delete state.misses[id]; });
   var now=Date.now(), round=[];
   // 1. due misses come back first, oldest due first, capped
   var due=Object.keys(state.misses).map(function(id){ return {id:id,m:state.misses[id]}; })

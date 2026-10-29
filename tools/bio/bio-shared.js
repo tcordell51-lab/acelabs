@@ -1218,11 +1218,20 @@ function migrateAceCards() {
  * SM-2 lite review. Rating: 1=Again, 2=Hard, 3=Good, 4=Easy.
  * Adjusts ease + interval; sets nextDue.
  */
+// The weakness scan (bio-mock.html) keeps its runs under its own key; the dashboard reads them here.
+function _bioMockRuns() {
+  try { const r = JSON.parse(localStorage.getItem('acethedat_bio_mock_runs') || '[]'); return Array.isArray(r) ? r : []; } catch (e) { return []; }
+}
+
 function rateAceCard(id, rating) {
   const c = STATE.aceCards.find(c => c.id === id);
   if (!c) return;
   c.lastReviewed = _now();
   c.reps = (c.reps || 0) + 1;
+  // The analytics heatmap reads this log; keep the last 60 ratings per card.
+  c.reviews = Array.isArray(c.reviews) ? c.reviews : [];
+  c.reviews.push({ t: c.lastReviewed, rating: rating });
+  if (c.reviews.length > 60) c.reviews = c.reviews.slice(-60);
 
   if (rating === 1) {
     // Again — reset to learning
@@ -1776,9 +1785,8 @@ function renderStudyDashboard() {
   // Last session — most recent reviewed card or saved session marker
   let lastTs = 0;
   cards.forEach(c => { if (c.lastReviewed && c.lastReviewed > lastTs) lastTs = c.lastReviewed; });
-  if (STATE.mockHistory && STATE.mockHistory.length) {
-    STATE.mockHistory.forEach(m => { if (m.ts > lastTs) lastTs = m.ts; });
-  }
+  const mockRuns = _bioMockRuns();
+  mockRuns.forEach(m => { if (m.ts > lastTs) lastTs = m.ts; });
   const dashLast = document.getElementById('dashLastSession');
   const dashLastSub = document.getElementById('dashLastSessionSub');
   if (lastTs === 0) {
@@ -1811,7 +1819,7 @@ function renderStudyDashboard() {
   if (dashSub) dashSub.textContent = total > 0 ? `${learned} of ${total} cards in review · ${mastered} mastered` : 'No cards yet — start any subject';
 
   // Last mock
-  const mocks = STATE.mockHistory || [];
+  const mocks = mockRuns;
   const dashMockScore = document.getElementById('dashMockScore');
   const dashMockSub = document.getElementById('dashMockSub');
   if (mocks.length === 0) {
@@ -1939,9 +1947,9 @@ function computeRecommendations(cards, mocks) {
   // Always include a "weak topic mock" rec
   if (cards.some(c => c.lapses >= 2)) {
     recs.push({
-      tag:'ADAPTIVE DRILL',
-      title:'Weak-topic mock',
-      body:'20 questions auto-pulled from your highest-lapse subjects. Sharpens what\'s wobbly.',
+      tag:'WEAKNESS SCAN',
+      title:'Fixed 40-question scan',
+      body:'Forty questions across the six hubs, no adaptive pull yet. Sharpens what is wobbly and shows you which hub it is.',
       href:'bio-mock.html'
     });
   }
@@ -1959,8 +1967,7 @@ function computeRecommendations(cards, mocks) {
 function seedSubjectCards() {
   // Auto-seed cards for the current subject's high-yield concepts (only on first visit)
   const subject = (window.location.pathname.match(/bio-(\w+)\.html/)||[])[1];
-  // Use expanded deck if loaded, fallback to built-in
-  const cardPool = (window.EXPANDED_SEED_CARDS && window.EXPANDED_SEED_CARDS[subject]) || SEED_CARDS[subject];
+  const cardPool = SEED_CARDS[subject];
   if (!subject || !cardPool) return;
   // Already seeded?
   if (STATE.aceCards && STATE.aceCards.some(c => c.subject === subject && c.origin && c.origin.startsWith('seed'))) return;

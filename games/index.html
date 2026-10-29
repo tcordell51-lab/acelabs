@@ -75,7 +75,14 @@ a.gcard:hover{border-color:var(--gold)}
 (function(){
   document.querySelectorAll('[data-best]').forEach(function(el){
     try{
-      var st=JSON.parse(localStorage.getItem('atDAT_games_'+el.dataset.best)||'{}');
+      var k=el.dataset.best;
+      if(k==='chirality'||k==='sixviews'){
+        // These two keep their own record: lifetime rounds and clean answers, ten-item rounds.
+        var g=JSON.parse(localStorage.getItem('atDAT_'+k+'_v1')||'{}'), lt=g&&g.lifetime;
+        if(lt&&lt.rounds) el.textContent=lt.rounds+(lt.rounds===1?' round':' rounds')+' played, '+(lt.correct||0)+' clean';
+        return;
+      }
+      var st=JSON.parse(localStorage.getItem('atDAT_games_'+k)||'{}');
       if(st.best) el.textContent='personal best '+st.best+' / 12';
     }catch(e){}
   });

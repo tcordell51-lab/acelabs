@@ -265,7 +265,7 @@ function trickUrl(section, topic){
   return k ? (TK.seriesBase + k) : null;
 }
 function openMistakes(){ return Object.keys(store.mistakes).filter(function(k){return !store.mistakes[k].resolved;}); }
-var DAY=86400000, INTERVAL=[0, DAY, 3*DAY, 7*DAY];   // spaced-review intervals by box level
+var DAY=86400000;
 function dueMistakes(){ var now=Date.now(); return Object.keys(store.mistakes).filter(function(k){var m=store.mistakes[k];return !m.resolved && (m.due||0)<=now;}); }
 function scheduledMistakes(){ var now=Date.now(); return Object.keys(store.mistakes).filter(function(k){var m=store.mistakes[k];return !m.resolved && (m.due||0)>now;}); }
 
@@ -431,7 +431,8 @@ function submitTest(){
   var pct=Math.round(100*correct/T.qs.length);
   if(T.mode==='test'){ store.best[T.n]=Math.max(store.best[T.n]||0, pct); }
   store.attempts.push({mode:T.mode, n:T.n, tier:T.tier, pct:pct, correct:correct, total:T.qs.length, dateISO:nowISO,
-    sect:sect, timeSec:T.startedAt?Math.round((Date.now()-T.startedAt)/1000):null});   // sect + timeSec: raw facts for /performance/
+    sect:sect, timeSec:T.startedAt?Math.round((Date.now()-T.startedAt)/1000):null,
+    byTopic:Object.keys(tbk).map(function(k){ return tbk[k]; })});   // sect + timeSec + byTopic: raw facts for /performance/
   bumpStreak(nowISO); save(); renderStreak();
   T.result = {correct:correct, total:T.qs.length, pct:pct, sect:sect, misses:misses};
   go('results');
