@@ -198,9 +198,16 @@ function esc(t){ return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
 // recomputed so grading stays exact. We skip items whose explanation names a
 // fixed option letter/number/position - shuffling those would make the why
 // point at the wrong choice.
+function whyNamesAChoice(why){
+  return /(?:option|choice|answer|letter)s?\s+\(?[a-f]\b|\bopts?\s*\[?\s*\d\]?|\((?:option\s*)?[a-f]\)|\[\d\]/i.test(why)
+    || /\b[A-E](?:\/[A-E])+\b|\b[A-E]\s+(?:is|are|was|were|has|have|drops|adds|puts|gives|lists|shows|names|keeps|lacks|uses|reports|would|miscounts?)\b/.test(why);
+}
 function shuffleOptions(it){
   if(it._optShuffled) return; it._optShuffled=true;
-  if(it.why && /(?:option|choice)\s+[a-f]\b|\bopt\s?\d|\((?:option\s*)?[a-f]\)/i.test(it.why)) return;
+  // Keep the authored order when the explanation names a choice by letter or index in any
+  // form ("option B", "opt[1]", "[3] is", "B/C miscount", "D is the acid"); shuffling would
+  // point those references at the wrong choices.
+  if(it.why && whyNamesAChoice(it.why)) return;
   var oldOpts=it.opts, oldCorrect=it.correct;
   var order=oldOpts.map(function(_,i){ return i; });
   shuffle(order);
