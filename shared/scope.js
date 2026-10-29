@@ -24,12 +24,13 @@
   'use strict';
 
   /* ---- Last verified ----------------------------------------------- */
-  var LAST_VERIFIED = '2026-05-27';
+  var LAST_VERIFIED = '2026-10-29';
 
   /* ---- Sections ---------------------------------------------------- */
   // Real DAT (per ADA Candidate Guide): Survey of Natural Sciences,
   // PAT, optional break, Reading Comprehension, Quantitative Reasoning.
-  // Ace Labs ships banks for Sciences (Bio + GC + OChem) + QR only.
+  // Ace Labs ships banks for Sciences (Bio + GC + OChem) + QR, a PAT studio with
+  // full PAT tests, and Reading passages with timed sections.
   var COVERED = [
     { key:'bio',   name:'Biology',           shortName:'Bio',
       bankCount: 158, bankLabel:'expert + rewritten pool',
@@ -42,18 +43,20 @@
       route:'tools/ochem/index.html' },
     { key:'qr',    name:'Quantitative Reasoning', shortName:'QR',
       bankCount: 925, bankLabel:'engine bank (distinct problems)',
-      route:'tools/qr/index.html' }
+      route:'tools/qr/index.html' },
+    { key:'pat',   name:'Perceptual Ability',   shortName:'PAT',
+      bankCount: 15, bankLabel:'full 90-question tests plus six drills',
+      route:'tools/pat/index.html' },
+    { key:'rc',    name:'Reading Comprehension', shortName:'Reading',
+      bankCount: 750, bankLabel:'questions across 45 passages, 15 timed sections',
+      route:'tools/rc/index.html' }
   ];
 
-  // PAT moved to covered 2026-07: the six-module PAT studio (tools/pat/) ships
-  // drills + teaching. It is still excluded from the TIMED Prometric mock, which
-  // matches the real-DAT break placement (see MOCKS note below).
-  var NOT_COVERED = [
-    // RC: the 10-night strategy course (tools/rc-retold/) is live, but there
-    // is no timed passage bank and no RC section in the Prometric mock.
-    { key:'rc',  name:'Reading Comprehension',    shortName:'RC passage practice',
-      reason:'strategy course live; passage bank not yet shipped' }
-  ];
+  // PAT moved to covered 2026-07 (six-module studio plus full tests); RC moved
+  // to covered 2026-10 (45 passages, 750 questions, 15 timed sections). Both
+  // are still outside the three TIMED Prometric-style practice tests, which
+  // cover Sciences and QR; the full-length DAT (tools/mock/) runs all four.
+  var NOT_COVERED = [];
 
   /* ---- Mocks ------------------------------------------------------- */
   // 3 fixed Prometric-style practice tests. Each test draws 140 unique
@@ -92,7 +95,7 @@
     scaleMax: 600,
     scaleEffective: '2025-03-01',
     legacyScale: '1-30 (retired 2025-02-28)',
-    estimateNote: 'Practice estimates are directional only — not psychometrically equated, not an ADA score report.'
+    estimateNote: 'Ace Labs shows raw counts and time per section only. It does not produce a scaled score, a percentile or an ADA score report.'
   };
 
   /* ---- Disclaimers ------------------------------------------------- */
@@ -100,11 +103,11 @@
     notAffiliated:
       'Ace Labs is not affiliated with the American Dental Association (ADA) or Prometric.',
     repairTool:
-      'Ace Labs is a supplemental Bio, Gen Chem, OChem, and QR repair tool. Keep using your main DAT prep source.',
+      'Ace Labs is a supplemental Bio, Gen Chem, OChem, QR, PAT and Reading repair tool. Keep using your main DAT prep source.',
     noPatRc:
-      'Ace Labs covers Bio, Gen Chem, OChem, and QR, plus a six-module PAT studio and a 10-night Reading Comprehension strategy course. There is no timed RC passage practice yet, and the timed Prometric mock covers Sciences and QR only.',
+      'Ace Labs covers Bio, Gen Chem, OChem and QR engines, a six-module PAT studio with full PAT tests, and Reading with a 10-night strategy course and 15 timed three-passage sections. The three Prometric-style practice tests cover Sciences and QR; the full-length DAT covers all four sections.',
     practiceEstimate:
-      'Scores shown in Ace Labs are unofficial practice estimates, not ADA score reports.',
+      'Ace Labs shows raw counts and time per section only. It does not produce an ADA score, a scaled score or a percentile.',
     noReviewerCredentials:
       'Reviewer credentials: not yet published. Content is authored by AceTheDAT and revised against the current ADA outline.'
   };
@@ -274,9 +277,9 @@
       '<div class="al-scope-strip" role="note" aria-label="Scope">',
       '  <span class="al-scope-label">Covered</span>',
       '  <span class="al-scope-value">' + covered + '</span>',
-      '  <span class="al-scope-sep" aria-hidden="true">·</span>',
-      '  <span class="al-scope-label al-scope-label-warn">Not covered</span>',
-      '  <span class="al-scope-value al-scope-value-warn">' + notCov + '</span>',
+      (notCov ? '  <span class="al-scope-sep" aria-hidden="true">·</span>\n' +
+                '  <span class="al-scope-label al-scope-label-warn">Not covered</span>\n' +
+                '  <span class="al-scope-value al-scope-value-warn">' + notCov + '</span>' : ''),
       '  <span class="al-scope-sep" aria-hidden="true">·</span>',
       '  <span class="al-scope-meta">Supplemental repair tool · not affiliated with ADA or Prometric</span>',
       '  <a class="al-scope-link" href="scope.html">Full scope</a>',

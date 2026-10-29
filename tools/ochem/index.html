@@ -9,7 +9,7 @@
 <meta name="description" content="Interactive DAT organic chemistry reaction roadmap: master functional-group interconversion map plus per-hub reaction pages with full mechanisms, stereochemistry, and regiochemistry notes."/>
 <meta name="theme-color" content="#0d2018"/>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="../../shared/al-tokens.css"/>
+<link rel="stylesheet" href="../../shared/al-tokens.css?v=1"/>
 <style>
 :root{
   --sb:#0d2018; --sb2:#112618; --sb3:#162e1e;
@@ -4389,7 +4389,7 @@ html[data-theme="dark"] .fischer-toggle-btn{background:var(--teal-pale);}
 html[data-theme="dark"] .dt-flowchart{background:linear-gradient(180deg,#23231d,#1a1810);}
 html[data-theme="dark"] .dt-case-select{background:var(--white);color:var(--ink);}
 </style>
-<link rel="stylesheet" href="../../shared/al-motion.css">
+<link rel="stylesheet" href="../../shared/al-motion.css?v=1">
 </head>
 <body>
 <!-- The way home: the engine is the library of OChem, Retold - never a dead end.
@@ -26092,7 +26092,7 @@ function downloadPage(){
 <!-- ════════════════════════════════════════════════════════
      WAVE 3 — load 1230-question bank + Mol primitives
      ════════════════════════════════════════════════════════ -->
-<script src="../../shared/ochem-bank.js"></script>
+<script src="../../shared/ochem-bank.js?v=1"></script>
 <script>
 /* Inline Mol primitive subset — keep v1 dependency-free for production deploys */
 window.MolMini = (function(){
@@ -29219,7 +29219,7 @@ window.MolMini = (function(){
 
   /* ── Reveal panel + resonance mini-SVG ────────────────────── */
   function showReveal(sub, clickedType, isCorrect){
-    const verdict = isCorrect ? '<span class="verdict correct">Correct</span>' : '<span class="verdict wrong">Wrong</span>';
+    const verdict = isCorrect ? '<span class="verdict correct">Confirmed</span>' : '<span class="verdict wrong">Needs review</span>';
     const targetLandsAt = sub.direction === 'op' ? '<b>ortho or para</b>' : '<b>meta</b>';
     const tierBadge = '<span style="display:inline-block;font-family:\'JetBrains Mono\',monospace;font-size:.62rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;padding:.14rem .5rem;border-radius:4px;background:' + sub.tier + ';color:#fff;margin-right:.4rem;">' + sub.tierName + '</span>';
 
@@ -29561,7 +29561,7 @@ window.MolMini = (function(){
       html += '<span class="verdict success">Target reached</span>';
       html += '<span style="font-family:Playfair Display,serif;font-size:.95rem;font-weight:700;font-style:italic;color:var(--ink);">'+MOLECULES[state].display+'</span>';
     } else {
-      html += '<span class="verdict fail">Wrong product</span>';
+      html += '<span class="verdict fail">Not the target product</span>';
       html += '<span style="font-family:Playfair Display,serif;font-size:.95rem;font-weight:700;font-style:italic;color:var(--ink);">got: '+MOLECULES[state].display+'</span>';
       html += '<span style="margin-left:auto;font-family:JetBrains Mono,monospace;font-size:.7rem;color:var(--muted);">target: '+MOLECULES[currentPuzzle.target].display+'</span>';
     }

@@ -59,7 +59,6 @@ button.opt canvas{display:block;margin:4px auto 0;max-width:100%;height:auto;bor
   <div class="tbar"><div class="tfill" id="tfill"></div></div>
   <div id="stage" role="region" aria-label="Question"><div class="card"><p class="stem">Loading the bank...</p></div></div>
 </div>
-<script src="../shared/smiles-drawer.min.js"></script>
 <script>
 (function(){
 /* Ace Game Central round engine - a faithful standalone port of the portal's
@@ -322,10 +321,17 @@ function begin(items){
   renderQ();
 }
 if(SUB==='ochem'){
-  var s=document.createElement('script'); s.src='ochem-bank-1000.js';
-  s.onload=function(){ begin(normalizeOchem(window.OCHEM_DB)); };
-  s.onerror=function(){ document.getElementById('stage').innerHTML='<div class="card"><p class="stem">Could not load the Organic bank - refresh to retry.</p></div>'; };
-  document.head.appendChild(s);
+  // The SMILES renderer (246 KB) is only needed for drawn structures, so it loads here, not on every subject.
+  var bankFail=function(){ document.getElementById('stage').innerHTML='<div class="card"><p class="stem">Could not load the Organic bank - refresh to retry.</p></div>'; };
+  var sd=document.createElement('script'); sd.src='../shared/smiles-drawer.min.js';
+  sd.onload=function(){
+    var s=document.createElement('script'); s.src='ochem-bank-1000.js';
+    s.onload=function(){ begin(normalizeOchem(window.OCHEM_DB)); };
+    s.onerror=bankFail;
+    document.head.appendChild(s);
+  };
+  sd.onerror=bankFail;
+  document.head.appendChild(sd);
 } else {
   fetch(SUBJECTS[SUB].bank).then(function(r){ if(!r.ok) throw 0; return r.json(); })
     .then(function(b){ begin(normalizeJson(b)); })

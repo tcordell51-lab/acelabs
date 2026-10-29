@@ -403,7 +403,7 @@ function toggleMark(){ T.mark[T.cur]=!T.mark[T.cur]; renderTest(); }
 function quitTest(){ if(confirm('Leave? Progress on this attempt is not saved.')){ clearInterval(T.ticker); go(T.mode==='test'?'ladder':'mistakes'); } }
 function confirmSubmit(){
   var un=T.ans.filter(function(a){return a<0}).length;
-  if(un>0 && !confirm(un+' still blank. Submit anyway? (No penalty for wrong answers - a guess beats a blank.)')) return;
+  if(un>0 && !confirm(un+' still blank. Submit anyway? (No penalty for a miss - a guess beats a blank.)')) return;
   submitTest();
 }
 function submitTest(){
@@ -818,7 +818,7 @@ function checkSubmit(){
   renderCheck();
 }
 function diagPanel(){
-  var D=[['gap','Concept gap',"I didn't know the idea"],['slip','Procedure slip','Knew it, executed wrong'],
+  var D=[['gap','Concept gap',"I didn't know the idea"],['slip','Procedure slip','Knew it, slipped on a step'],
          ['misread','Misread / trap','Fell for a distractor or misread'],['guess','Guessed','No real basis']];
   var dg=D.map(function(d){ return '<button class="dbtn'+(C.diag===d[0]?' sel':'')+'" onclick="setDiag(\''+d[0]+'\')">'+d[1]+'<small>'+d[2]+'</small></button>'; }).join('');
   var cf=[['sure','Sure'],['unsure','Unsure']].map(function(c){ return '<button class="dbtn'+(C.conf===c[0]?' sel':'')+'" onclick="setConf(\''+c[0]+'\')">'+c[1]+'</button>'; }).join('');
