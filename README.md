@@ -49,7 +49,8 @@ AceDAT-AceLabs/
 │   ├── al-tokens.css          # Canonical design tokens (Bio + OChem adopt; QR + GC pending)
 │   ├── al-motion.css          # Reduced-motion stylesheet
 │   ├── ace-labs-shell.css     # Home brand vars + dashboard styles
-│   ├── ace-labs-shell.js      # Cross-tool localStorage aggregator (read-only)
+│   ├── ace-shell.js           # The one Ace Labs navigation (six doors), on every student page
+│   ├── ace-progress.js        # Cross-tool progress: miss adapters, Review ladder, today()
 │   ├── scope.js               # Canonical ACE_SCOPE data registry
 │   ├── dat-mock-tests.js      # Prometric runner bank
 │   ├── ochem-bank.js          # OChem bank for legacy unified-mock
@@ -79,7 +80,7 @@ AceDAT-AceLabs/
 
 ## Cross-tool localStorage aggregation
 
-`shared/ace-labs-shell.js` reads each engine's namespace and rolls up to the home dashboard. Pure read-only — never writes back into engine state.
+`shared/ace-progress.js` reads each engine's namespace through one miss adapter per tool and rolls it up to the home (today()), Review and Performance pages. It never writes back into engine state; its only own keys are `ace.v1.*`.
 
 | Engine | localStorage prefix | What's read |
 |---|---|---|

@@ -175,7 +175,7 @@
     'specs/',
     'tools/gc/research/',
     'tools/gc/QBANK_AUDIT.md',
-    'tools/gc/MOCK_CALIBRATION_PLAN.md',
+    'tools/gc/MOCK_CALIBRATION_PLAN.defunct.md',
     'tools/gc/FSRS_PORT_SPEC.md',
     'tools/gc/MISCONCEPTION_TAXONOMY_SPEC.md',
     'tools/gc/RECOGNITION_LAB_V2_SPEC.md',
