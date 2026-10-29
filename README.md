@@ -99,6 +99,19 @@ If an engine hasn't been opened yet, the dashboard shows fallback module counts 
 - **No localStorage-only student input.** Any student-written content that's not already a Thomas-visible note must persist to Airtable.
 - **OChem v1 is canonical.** Augment in place; no parallel v2/v3.
 
+## Ship gates
+
+```
+npm test        # under 30 s: house rules, bank integrity, shell unit tests, the Bio init smoke
+npm run test:all   # the above plus the PAT engine suite (about 6 min) and the Bio browser smoke (needs `npm run serve` on :4000)
+```
+
+`npm test` runs in tiers so one failure does not hide the rest of its tier's output:
+
+- `test:gates`: no competitor names; no unreplaced placeholder tokens; every local link and path literal resolves (honouring the redirects); every `/shared/` include carries a `?v=` that is newer than the file's last change (the cache is immutable for a year); every literal localStorage read has a writer; no new em dashes or glyphs beyond `scripts/glyph-baseline.json` (re-baseline with `npm run glyphs:baseline` only after removing some).
+- `test:banks`: answer-position bias, the Climb bank matches its source, the Bio registry, the scope registry, count claims on the home and hubs against the banks, the RC bank, the full-length composition.
+- `test:unit`: the QR formats and shell unit tests.
+
 ## Validate the scope
 
 ```
