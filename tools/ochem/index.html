@@ -23114,10 +23114,10 @@ function newmanEnergy(angle){
 }
 function newmanLabel(angle){
   const n=((angle%360)+360)%360;
-  if(Math.abs(n-0)<5||Math.abs(n-360)<5)return 'eclipsed (methyl-methyl) · highest energy';
-  if(Math.abs(n-60)<5||Math.abs(n-300)<5)return 'gauche · ~3.8 kJ/mol above anti';
-  if(Math.abs(n-120)<5||Math.abs(n-240)<5)return 'eclipsed (methyl-H) · ~15 kJ/mol';
-  if(Math.abs(n-180)<5)return 'anti · LOWEST energy (0 kJ/mol)';
+  if(Math.abs(n-0)<5||Math.abs(n-360)<5)return 'eclipsed (methyl-methyl), highest';
+  if(Math.abs(n-60)<5||Math.abs(n-300)<5)return 'gauche';
+  if(Math.abs(n-120)<5||Math.abs(n-240)<5)return 'eclipsed (methyl-H)';
+  if(Math.abs(n-180)<5)return 'anti, lowest';
   if(n<60||n>300)return 'near eclipsed (methyl-methyl)';
   if(n>120&&n<240)return 'near anti (low energy)';
   return 'near eclipsed (methyl-H)';
@@ -23127,7 +23127,10 @@ function drawNewman(angle){
   if(!svg)return;
   const cx=110, cy=110, rBack=80, rFront=55;
   // Back circle and three back groups fixed at 90°, 210°, 330° (top = CH3, others = H)
-  const backAngles=[90, 210, 330];
+  // At an eclipsed dihedral the back groups are drawn a few degrees off so they peek out
+  // from behind the front ones (the textbook convention); otherwise the labels stack.
+  const dEcl=((angle%120)+120)%120, peek=Math.min(dEcl,120-dEcl)<8?12:0;
+  const backAngles=[90+peek, 210+peek, 330+peek];
   const backLabels=['CH₃','H','H'];
   // Front angles rotate with dihedral — front CH3 starts at 90° - angle
   const frontAngles=[90-angle, 210-angle, 330-angle];
@@ -23158,7 +23161,7 @@ function drawNewman(angle){
   svg.innerHTML=s;
   // Readout
   const e=newmanEnergy(angle);
-  document.getElementById('newmanReadout').textContent=`dihedral: ${angle}° · ${newmanLabel(angle)} · ${e.toFixed(1)} kJ/mol`;
+  document.getElementById('newmanReadout').textContent=`dihedral: ${angle}° · ${newmanLabel(angle)} · ${e.toFixed(1)} kJ/mol above anti`;
   // Update energy curve
   drawNewmanEnergy(angle);
 }
@@ -23189,7 +23192,7 @@ function drawNewmanEnergy(currentAngle){
     const y=padT+graphH-(newmanEnergy(m.a)/28)*graphH;
     const lines=m.lbl.split('\n');
     return `<circle cx="${x}" cy="${y}" r="3" fill="${m.color}"/>
-            ${lines.map((l,i)=>`<text x="${x}" y="${padT-2+i*9}" font-size="8" fill="${m.color}" text-anchor="middle" font-weight="700">${l}</text>`).join('')}`;
+            ${lines.map((l,i)=>`<text x="${x}" y="${padT-2+i*9}" font-size="8" fill="${m.color}" text-anchor="${m.a===0?'start':'middle'}" font-weight="700">${l}</text>`).join('')}`;
   }).join('');
   svg.innerHTML=`
     <line x1="${padL}" y1="${padT+graphH}" x2="${w-padR}" y2="${padT+graphH}" stroke="#5c5348" stroke-width="1"/>
@@ -26336,8 +26339,9 @@ window.MolMini = (function(){
     // Back substituents — rotate with angle. Bonds extend OUTSIDE the disk (visible past the front).
     // Convention: -90° is up; offsets at -90, +30, +150 (top, bot-right, bot-left) at angle=0.
     const backLabels = ['CH₃','H','H'];
+    const dEcl = ((angle % 120) + 120) % 120, peek = Math.min(dEcl, 120 - dEcl) < 8 ? 12 : 0; // eclipsed: back groups peek out
     for (let i = 0; i < 3; i++){
-      const a = (-90 + i*120 + angle) * Math.PI / 180;
+      const a = (-90 + i*120 + angle + peek) * Math.PI / 180;
       const x1 = cx + r * Math.cos(a), y1 = cy + r * Math.sin(a);
       const x2 = cx + (r+30) * Math.cos(a), y2 = cy + (r+30) * Math.sin(a);
       html += `<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}" stroke="#8C7235" stroke-width="2.4" stroke-linecap="round"/>`;
@@ -26365,7 +26369,7 @@ window.MolMini = (function(){
     html += `<circle cx="${cx}" cy="${cy}" r="7" fill="#0d2018"/>`;
 
     // Dihedral angle label
-    html += `<text x="${cx}" y="248" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" font-weight="800" fill="#5c5348">dihedral · ${angle}°</text>`;
+    html += `<text x="${cx}" y="20" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" font-weight="800" fill="#5c5348">dihedral · ${angle}°</text>`;
 
     svg.innerHTML = html;
 
