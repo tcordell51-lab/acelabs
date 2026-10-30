@@ -39,6 +39,12 @@
                          Review dot reads, and fires window 'acelabs:due'. A miss
                          with no date of its own lights the dot on its next day
                          only (once[]); see writeDue
+     dueState(m), dueCount(rows)   one rule for "back today", which Today, Review and
+                         the Review dot all use, so their counts tell the same story:
+                         a scheduled card is due once its date has come; an undated
+                         miss (no review date, no date of its own) is due on its next
+                         day only and Open after it. misses() rows are unchanged
+                         (isDue keeps its v3 meaning); read dueState for counts
      settings(), saveSettings(patch)   daily minutes, test date, shakiest sections
      todayPlan(opts)     the plan behind Today (spec 1.7): a coach line, an
                          honest source line, at most 4 steps (step 1 playable
@@ -493,6 +499,35 @@
     return out;
   }
 
+  /* dueState(m, opts): is this card back today? One rule for Today, Review and the
+     Review dot (writeDue below reads it too), so a count never disagrees with the dot.
+       'kept'   mastered
+       'due'    scheduled (a review date on the Leitner ladder, or the engine's own
+                due date) and the date has come; or an undated miss (a test, reading,
+                game or engine miss with no date of its own) on its next day, the day
+                after it was made
+       'later'  scheduled for a later date; or an undated miss made today
+       'open'   an undated miss whose next day has passed: it waits in Review as
+                Open and never comes due by itself (reviewing it once schedules it)
+     m is a misses() row (it carries status, due, when, native); opts.now and opts.rs
+     (the review state) let a caller over a list read the store once. */
+  function dueState(m, opts) {
+    opts = opts || {};
+    var now = opts.now == null ? Date.now() : opts.now, rs = opts.rs || reviewState();
+    if (!m || m.status === 'mastered') return 'kept';
+    var scheduled = !!rs[m.id] || !!(m.native && m.native.due);
+    if (scheduled) return (m.due || 0) <= now ? 'due' : 'later';
+    if (!m.when) return 'open';
+    var t = tomorrowAt(m.when);
+    if (now < t) return 'later';
+    return now < t + DAY ? 'due' : 'open';
+  }
+  function dueCount(rows, opts) {
+    opts = opts || {};
+    var o = { now: opts.now == null ? Date.now() : opts.now, rs: opts.rs || reviewState() };
+    return (rows || misses()).filter(function (m) { return dueState(m, o) === 'due'; }).length;
+  }
+
   /* acelabs.v1.dueToday: the cache the shell's Review dot reads on every page
      (most pages never load this file). A derived cache: written raw, never
      synced, and only when it changes.
@@ -511,18 +546,18 @@
   function writeDue(rows, rs) {
     var now = Date.now(), n = 0, later = [], once = [], back = 0;
     rs = rs || {};
+    var o = { now: now, rs: rs };
     rows.forEach(function (m) {
-      if (!m || m.status === 'mastered') return;
+      var state = dueState(m, o);
+      if (state === 'kept') return;
       var scheduled = !!rs[m.id] || !!(m.native && m.native.due);
       if (!scheduled) {
-        if (!m.when) return;
-        var t = tomorrowAt(m.when);
-        if (t + DAY <= now) return;            /* its next day has passed: Review keeps it, the dot lets it rest */
-        once.push(t);
-        if (t <= now) back++;
+        if (state === 'open') return;           /* no date, or its next day has passed: Review keeps it as Open, the dot lets it rest */
+        once.push(tomorrowAt(m.when));
+        if (state === 'due') back++;
         return;
       }
-      if (m.isDue) n++;
+      if (state === 'due') n++;
       else if (m.due > now) later.push(m.due);
     });
     later.sort(function (a, b) { return a - b; });
@@ -688,7 +723,7 @@
   /* A finite local queue, built from what the student actually did: due misses,
      the Climb's queue, one Learn night where the misses cluster, the next test. */
   function today() {
-    var tasks = [], ms = misses(), due = ms.filter(function (m) { return m.isDue; });
+    var tasks = [], ms = misses(), dueOpts = { rs: reviewState() }, due = ms.filter(function (m) { return dueState(m, dueOpts) === 'due'; });
     if (due.length) tasks.push({ kind: 'review', title: 'Retry ' + Math.min(due.length, 8) + ' miss' + (Math.min(due.length, 8) === 1 ? '' : 'es') + ' in Review',
       detail: 'Practice-test misses first. Sheet, learn or drill each one.', minutes: Math.min(30, 4 * Math.min(due.length, 8)), href: '/review/?due=1' });
     var cq = climbQueue();
@@ -990,8 +1025,9 @@
     if (todays.length) pick = { play: playById(todays[0]), done: true, why: 'today', rec: seen[todays[0]] };
     else if (firstRun) pick = { play: playById('tonicity') || PLAYS[0], why: 'first' };
     if (!pick) {
+      var dueOpts = { now: now, rs: reviewState() };
       for (var i = 0; i < ms.length && !pick; i++) {
-        if (!ms[i].isDue) continue;
+        if (dueState(ms[i], dueOpts) !== 'due') continue;
         var pf = playFor(ms[i]);
         if (pf) pick = { play: pf, why: 'due', miss: ms[i] };
       }
@@ -1014,7 +1050,7 @@
 
     /* ---------- the rest, in priority order ---------- */
     var cands = [];
-    var dueN = ms.filter(function (m) { return m.isDue; }).length;
+    var dueN = dueCount(ms, { now: now });
     if (!p.onboarded) cands.push({ key: 'setup', kind: 'setup', door: 'today', section: null, title: 'Three questions', detail: 'Your test date, shakiest sections, minutes on a normal day.', minutes: 1, href: withStudent('/?first=1'), essential: true });
     if (p.onboarded && !p.diagnosed && !onboardedToday) cands.push({ key: 'diagnostic', kind: 'test', door: 'tests', section: null, title: 'The diagnostic', detail: 'About 45 minutes, untimed. A map of where to start, not a score.', minutes: 45, href: withStudent('/diagnostic.html'), essential: true });
     var cap = REVIEW_CAP[phase === 'taper' ? 'taper' : mode];
@@ -1159,6 +1195,8 @@
     api: 4, addPlayCard: addPlayCard, notePlay: notePlay, playCards: function () { var s = playStore(); return Object.keys(s.cards).map(function (k) { return s.cards[k]; }); },
     plays: plays, registerPlays: registerPlays, playFor: playFor, playsSeen: playsSeen,
     settings: settings, saveSettings: saveSettings, todayPlan: todayPlan, phaseOf: phaseOf,
-    dueToday: function () { return read(DUE_KEY, null); }, PLAY_KEY: PLAY_KEY, DUE_KEY: DUE_KEY, SETTINGS_KEY: SETTINGS_KEY
+    dueToday: function () { return read(DUE_KEY, null); }, PLAY_KEY: PLAY_KEY, DUE_KEY: DUE_KEY, SETTINGS_KEY: SETTINGS_KEY,
+    /* B1.1, additive: one due rule for Today, Review and the dot */
+    dueState: dueState, dueCount: dueCount
   };
 })();
