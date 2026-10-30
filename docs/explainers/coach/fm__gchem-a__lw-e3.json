@@ -1,0 +1,219 @@
+{
+ "schema": "ace.explainer-coach/1",
+ "qid": "fm:gchem-a:lw-e3",
+ "pid": "GC-1",
+ "batch": "pilot/pilot",
+ "source": "content/explainers-src/pilot/pilot.js",
+ "servedAs": "Full-Length Test 3, Natural Sciences, question 68",
+ "sidecar": "content/explainers/gc/bonding/fm__gchem-a__lw-e3.json",
+ "checksum": "5c174e23fe9454f8",
+ "servesAlso": [],
+ "flags": [
+  {
+   "kind": "stem-style",
+   "text": "Stem is shorthand (\"Lone pairs on central P in PCl3?\"), not DAT style. Suggested wording for Thomas to review (not applied): \"How many lone pairs of electrons are on the central phosphorus atom in phosphorus trichloride, PCl3?\" Key unchanged."
+  },
+  {
+   "kind": "tool-gap",
+   "text": "PCl3 is not in tools/gc/lewis-molecules.json, and the sandbox cannot open a molecule from the URL. Adding both lets this link open the exact molecule."
+  }
+ ],
+ "review": {
+  "status": "draft",
+  "by": null,
+  "at": null,
+  "batch": "pilot/pilot",
+  "checksum": "5c174e23fe9454f8",
+  "approvedChecksum": null
+ },
+ "held": null,
+ "routing": "Page works today. PCl3 is not in tools/gc/lewis-molecules.json yet, and the sandbox has no URL parameter for the molecule.",
+ "playWithExpect": [
+  "layoutPositions"
+ ],
+ "gate": {
+  "pass": true,
+  "issues": [],
+  "warnings": [],
+  "checks": [
+   "key text matches the bank (\"1\", index 1)",
+   "trap families from the closed list: other-conditions, other-unit, neighbor-fact, one-step-too-far",
+   "every served choice (5) has a note; one key",
+   "copy rules: ASCII, no dashes, no banned words, no letters, no competitor names, no timer or score words, budgets (explainer and visual text)",
+   "step 1 opens with a move: \"Count the\"",
+   "voice: 8 sentences, mean 10.5 words, shortest 4",
+   "stem-style hits, flagged for Thomas (not applied): shorthand stem (7 words)",
+   "playWith target tools/gc/lewis-sandbox.html found with layoutPositions; no timer or score markers",
+   "Lewis ledger recomputed: 26 valence electrons; P 5 - 3 = 2 electrons = 1 lone pair"
+  ]
+ },
+ "changes": [
+  "lockIt: \"(valence electrons - one per bond) / 2\"",
+  "Notes for 0 (BF3 contrast) and 3 (bonding pairs on P, pairs on each Cl) rewritten to name the pull",
+  "Families: other-conditions, other-unit (concept), neighbor-fact, one-step-too-far",
+  "Caption says what the picture adds; P pair drawn larger, Cl pairs spread around each atom; video slot equals subtopic"
+ ],
+ "preview": {
+  "pick": "3"
+ },
+ "served": {
+  "stem": "Lone pairs on central P in PCl₃?",
+  "choices": [
+   "0",
+   "1",
+   "2",
+   "3",
+   "10"
+  ],
+  "keyIndex": 1,
+  "bankWhy": "P has 5 valence; 3 P−Cl bonds use 3, leaving 2 e⁻ = 1 LP.",
+  "extra": {
+   "mock": "FULL_3",
+   "section": "gc",
+   "n": 28
+  }
+ },
+ "student": {
+  "schema": "ace.explainer/1",
+  "qid": "fm:gchem-a:lw-e3",
+  "servesAlso": [],
+  "bank": {
+   "file": "tools/mock/data/full-mocks.js",
+   "locator": {
+    "mock": "FULL_3",
+    "section": "gc",
+    "id": "gchem-a:lw-e3"
+   },
+   "keyText": "1",
+   "stemHash": "bc54457292f63e4c085ab76ea1014ac36b94dd54",
+   "choiceTexts": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "10"
+   ]
+  },
+  "section": "gc",
+  "subtopic": "gc.bonding.lewis.lone-pairs",
+  "difficulty": {
+   "band": 1,
+   "from": "bank field d (1-3)"
+  },
+  "premises": [],
+  "answer": {
+   "text": "1",
+   "line": "P brings 5 valence electrons, spends 3 on bonds, and keeps 2 as one lone pair."
+  },
+  "steps": [
+   "Count the central atom first. P is in group 15, so it brings 5 valence electrons.",
+   "Spend them on bonds. Three P-Cl single bonds use 3 of the 5.",
+   "What is left becomes lone pairs: 5 - 3 = 2 electrons, which is 1 pair. That pair is why PCl3 is a pyramid and not flat."
+  ],
+  "choices": [
+   {
+    "text": "0",
+    "role": "trap",
+    "family": "other-conditions",
+    "missType": "content",
+    "trap": "Forgot the leftover pair",
+    "note": "0 fits BF3, where B brings only 3 electrons. P brings 5, so 2 are left after 3 bonds."
+   },
+   {
+    "text": "1",
+    "role": "key",
+    "note": "5 valence - 3 in bonds = 2 electrons = 1 pair."
+   },
+   {
+    "text": "2",
+    "role": "trap",
+    "family": "other-unit",
+    "missType": "concept",
+    "trap": "Electrons, not pairs",
+    "note": "2 is the leftover electron count. Two electrons make one pair."
+   },
+   {
+    "text": "3",
+    "role": "trap",
+    "family": "neighbor-fact",
+    "missType": "content",
+    "trap": "Read an outer atom",
+    "note": "3 is the bonding pairs on P, and the lone pairs on each Cl. The stem asks for lone pairs on P."
+   },
+   {
+    "text": "10",
+    "role": "trap",
+    "family": "one-step-too-far",
+    "missType": "misread",
+    "trap": "Counted the whole molecule",
+    "note": "9 pairs on the chlorines plus 1 on P is 10. Only the central atom was asked."
+   }
+  ],
+  "lockIt": "Central lone pairs = (valence electrons - one per bond) / 2.",
+  "hook": "Three bonds plus one pair: NH3 and PCl3, same pyramid.",
+  "playWith": {
+   "label": "Lewis sandbox: build NH3, the same three-bonds-plus-one-pair pattern",
+   "href": "tools/gc/lewis-sandbox.html",
+   "state": {
+    "molecule": "nh3"
+   }
+  },
+  "video": {
+   "slot": "gc.bonding.lewis.lone-pairs",
+   "title": "Counting lone pairs on the central atom",
+   "id": null,
+   "start": null
+  },
+  "visual": {
+   "type": "chem.lewis",
+   "molecule": {
+    "id": "pcl3",
+    "formula": "PCl3",
+    "name": "Phosphorus trichloride",
+    "charge": 0,
+    "totalValenceElectrons": 26,
+    "centralAtom": "P",
+    "bondPattern": [
+     {
+      "atomA": "P",
+      "atomB": "Cl1",
+      "order": 1
+     },
+     {
+      "atomA": "P",
+      "atomB": "Cl2",
+      "order": 1
+     },
+     {
+      "atomA": "P",
+      "atomB": "Cl3",
+      "order": 1
+     }
+    ],
+    "lonePairCounts": {
+     "P": 1,
+     "Cl1": 3,
+     "Cl2": 3,
+     "Cl3": 3
+    },
+    "electronGeometry": "tetrahedral",
+    "molecularGeometry": "trigonal-pyramidal"
+   },
+   "focus": "central-lone-pairs",
+   "layoutAngles": [
+    155,
+    90,
+    25
+   ],
+   "spreadTerminalPairs": true,
+   "ledger": {
+    "atom": "P",
+    "valence": 5,
+    "inBonds": 3
+   },
+   "reuse": "Copy of the Lewis sandbox layout and drawing functions (tools/gc/lewis-sandbox.html); record shape matches tools/gc/lewis-molecules.json",
+   "alt": "Lewis structure of PCl3: phosphorus in the center with single bonds to three chlorines, each chlorine holding three lone pairs, and one outlined lone pair on top of phosphorus. A ledger reads: P has 5 valence electrons, 3 used in bonds, 2 left, which is 1 lone pair.",
+   "caption": "The pair on top is the one asked about. It pushes the three Cl down into a pyramid."
+  }
+ }
+}

@@ -1,0 +1,334 @@
+{
+ "schema": "ace.explainer-coach/1",
+ "qid": "fm:own-organic:ace-0002",
+ "pid": "OC-2",
+ "batch": "pilot/pilot",
+ "source": "content/explainers-src/pilot/pilot.js",
+ "servedAs": "Full-Length Test 1, Natural Sciences, question 82",
+ "sidecar": "content/explainers/ochem/carbocations/fm__own-organic__ace-0002.json",
+ "checksum": "132af1928eccc95d",
+ "servesAlso": [],
+ "flags": [
+  {
+   "kind": "bank-copy",
+   "text": "Bank explanation says \"The skeleton you started with is not the skeleton you finish with.\" A 1,2-hydride shift keeps the carbon skeleton (3-methylbut-1-ene and 2-bromo-2-methylbutane share it); only H, the charge and the Br position move. Wording only; key unchanged. Suggested: \"The charge you started with is not where it ends up.\""
+  }
+ ],
+ "review": {
+  "status": "draft",
+  "by": null,
+  "at": null,
+  "batch": "pilot/pilot",
+  "checksum": "132af1928eccc95d",
+  "approvedChecksum": null
+ },
+ "held": null,
+ "routing": "Needs a route to open a module and an item from the URL.",
+ "playWithExpect": [],
+ "gate": {
+  "pass": true,
+  "issues": [],
+  "warnings": [],
+  "checks": [
+   "key text matches the bank (\"CCC(C)(C)Br\", index 2)",
+   "trap families from the closed list: other-conditions, other-conditions, one-step-short, other-conditions",
+   "every served choice (5) has a note; one key",
+   "copy rules: ASCII, no dashes, no banned words, no letters, no competitor names, no timer or score words, budgets (explainer and visual text)",
+   "step 1 opens with a move: \"Protonate the\"",
+   "voice: 9 sentences, mean 10.7 words, shortest 3",
+   "playWith target tools/ochem/tree/index.html found; no timer or score markers",
+   "2026 set ch-07 figure ends in the key product CCC(C)(C)Br (arrows proven by scripts/ochem2026/verify.py)",
+   "RDKit parsed all 6 SMILES"
+  ]
+ },
+ "changes": [
+  "Step 3 explains the renumbering to 2-bromo-2-methylbutane",
+  "No-shift note: \"Some of this forms, but most cations shift before bromide arrives.\"",
+  "lockIt: a cation shifts when the move makes it more stable",
+  "Visual: product panel off, mechanism a stepper on phones, energy labels \"secondary cation\" and \"tertiary cation\" in sans, start label clear of the axis",
+  "Families: other-conditions and one-step-short"
+ ],
+ "preview": {
+  "pick": "CC(Br)C(C)C"
+ },
+ "served": {
+  "stem": "3-methyl-1-butene is treated with HBr. Which product comes out of the flask in the largest amount?",
+  "choices": [
+   "BrCCC(C)C",
+   "CCC(C)(C)O",
+   "CCC(C)(C)Br",
+   "CC(Br)C(C)C",
+   "CC=C(C)C"
+  ],
+  "keyIndex": 2,
+  "bankWhy": "The proton lands on the end carbon and leaves a secondary cation sitting right next to a tertiary carbon. A hydrogen slides over with its pair, the charge moves to the better spot, and the bromide finds it there. The skeleton you started with is not the skeleton you finish with.",
+  "extra": {
+   "mock": "FULL_1",
+   "section": "ochem",
+   "n": 12,
+   "qs": "C=CC(C)C",
+   "os": true
+  }
+ },
+ "student": {
+  "schema": "ace.explainer/1",
+  "qid": "fm:own-organic:ace-0002",
+  "servesAlso": [],
+  "bank": {
+   "file": "tools/mock/data/full-mocks.js",
+   "locator": {
+    "mock": "FULL_1",
+    "section": "ochem",
+    "id": "own-organic:ace-0002"
+   },
+   "keyText": "CCC(C)(C)Br",
+   "stemHash": "75a6c7011f9597ef373b5ffa278fd7c2ef9d9a3f",
+   "choiceTexts": [
+    "BrCCC(C)C",
+    "CCC(C)(C)O",
+    "CCC(C)(C)Br",
+    "CC(Br)C(C)C",
+    "CC=C(C)C"
+   ]
+  },
+  "section": "ochem",
+  "subtopic": "oc.carbocations.rearrangement",
+  "difficulty": {
+   "band": 2,
+   "from": "bank field d (1-3)"
+  },
+  "premises": [],
+  "answer": {
+   "text": "CCC(C)(C)Br",
+   "line": "The secondary cation slides a hydride over and becomes tertiary before bromide arrives."
+  },
+  "steps": [
+   "Protonate the alkene the Markovnikov way. H+ adds to the end carbon, and the plus charge sits on C2: a secondary cation.",
+   "Look next door. C3 is tertiary and carries an H. That H slides over with its bonding pair, a 1,2-hydride shift, and the plus moves to C3.",
+   "Bromide attacks the tertiary cation. Number from the other end and that carbon is C2: 2-bromo-2-methylbutane."
+  ],
+  "choices": [
+   {
+    "text": "BrCCC(C)C",
+    "display": "1-bromo-3-methylbutane (Br on the end carbon)",
+    "role": "trap",
+    "family": "other-conditions",
+    "missType": "content",
+    "trap": "Peroxide path",
+    "note": "Br on the end carbon comes from HBr with peroxides, a radical path. There is no peroxide here."
+   },
+   {
+    "text": "CCC(C)(C)O",
+    "display": "2-methylbutan-2-ol (an alcohol)",
+    "role": "trap",
+    "family": "other-conditions",
+    "missType": "content",
+    "trap": "Water as the nucleophile",
+    "note": "An alcohol needs water to trap the cation. The only nucleophile in this flask is bromide."
+   },
+   {
+    "text": "CCC(C)(C)Br",
+    "display": "2-bromo-2-methylbutane",
+    "role": "key",
+    "note": "Hydride shift first, then bromide on the tertiary carbon."
+   },
+   {
+    "text": "CC(Br)C(C)C",
+    "display": "2-bromo-3-methylbutane",
+    "role": "trap",
+    "family": "one-step-short",
+    "missType": "concept",
+    "trap": "No shift",
+    "note": "This is Markovnikov without the rearrangement. It pulls because it is the first cation you draw. Some of this forms, but most cations shift before bromide arrives."
+   },
+   {
+    "text": "CC=C(C)C",
+    "display": "2-methylbut-2-ene (an alkene)",
+    "role": "trap",
+    "family": "other-conditions",
+    "missType": "content",
+    "trap": "Elimination, not addition",
+    "note": "Losing H+ from the cation gives this alkene. With bromide right there and no heat, addition wins."
+   }
+  ],
+  "lockIt": "A cation shifts a hydride or methyl when the move makes it more stable, then the nucleophile adds.",
+  "hook": "Secondary next to tertiary? Expect a shift.",
+  "playWith": {
+   "label": "Tree, combined mechanism: this exact reaction, step by step with arrows (item ch-07)",
+   "href": "tools/ochem/tree/",
+   "state": {
+    "module": "t5-mech-chain",
+    "item": "ch-07"
+   }
+  },
+  "video": {
+   "slot": "oc.carbocations.rearrangement",
+   "title": "Carbocation shifts",
+   "id": null,
+   "start": null
+  },
+  "visual": {
+   "type": "stack",
+   "alt": "Three mechanism steps with curved arrows: the alkene takes H+ from HBr to form a secondary cation; a hydride shifts from the neighboring carbon, moving the charge to a tertiary carbon; bromide attacks to give 2-bromo-2-methylbutane. Below, an energy diagram shows the tertiary cation sitting lower than the secondary one.",
+   "caption": "Step through the arrows, then look below: the tertiary cation sits lower, so the charge moves before bromide arrives.",
+   "panels": [
+    {
+     "type": "chem.mechanism",
+     "ref": {
+      "file": "tools/ochem/tree/shared/set-2026.js",
+      "id": "ch-07",
+      "field": "fig"
+     },
+     "showProduct": false,
+     "stepper": "phone",
+     "reuse": "drawChain() in tools/ochem/tree/mechdraw.js with showProduct false; figure copied by the build from 2026 set item ch-07 (same reaction, arrows proven by scripts/ochem2026/verify.py)",
+     "fig": {
+      "kind": "chain",
+      "steps": [
+       {
+        "name": "protonate the alkene",
+        "species": [
+         {
+          "smi": "C=CC([H])(C)C"
+         },
+         {
+          "smi": "Br[H]"
+         }
+        ],
+        "arrows": [
+         {
+          "from": {
+           "bond": [
+            "0.0",
+            "0.1"
+           ]
+          },
+          "to": {
+           "bond": [
+            "0.0",
+            "1.1"
+           ]
+          }
+         },
+         {
+          "from": {
+           "bond": [
+            "1.0",
+            "1.1"
+           ]
+          },
+          "to": {
+           "atom": "1.0"
+          }
+         }
+        ]
+       },
+       {
+        "name": "the shift",
+        "species": [
+         {
+          "smi": "C[CH+]C([H])(C)C"
+         },
+         {
+          "smi": "[Br-]"
+         }
+        ],
+        "arrows": [
+         {
+          "from": {
+           "bond": [
+            "0.2",
+            "0.3"
+           ]
+          },
+          "to": {
+           "bond": [
+            "0.1",
+            "0.3"
+           ]
+          }
+         }
+        ]
+       },
+       {
+        "name": "bromide attacks",
+        "species": [
+         {
+          "smi": "CC[C+](C)C"
+         },
+         {
+          "smi": "[Br-]"
+         }
+        ],
+        "arrows": [
+         {
+          "from": {
+           "lp": "1.0"
+          },
+          "to": {
+           "bond": [
+            "1.0",
+            "0.2"
+           ]
+          }
+         }
+        ]
+       }
+      ],
+      "product": [
+       {
+        "smi": "CCC(C)(C)Br"
+       }
+      ]
+     }
+    },
+    {
+     "type": "chem.energy",
+     "yLabel": "Energy",
+     "xLabel": "Reaction progress",
+     "points": [
+      {
+       "kind": "start",
+       "y": 0
+      },
+      {
+       "kind": "ts",
+       "y": 62,
+       "tag": "1"
+      },
+      {
+       "kind": "int",
+       "y": 38
+      },
+      {
+       "kind": "ts",
+       "y": 44,
+       "tag": "2"
+      },
+      {
+       "kind": "int",
+       "y": 20
+      },
+      {
+       "kind": "ts",
+       "y": 27,
+       "tag": "3"
+      },
+      {
+       "kind": "end",
+       "y": -30
+      }
+     ],
+     "names": {
+      "0": "alkene + HBr",
+      "2": "secondary cation",
+      "4": "tertiary cation",
+      "6": "product"
+     },
+     "qualitative": true,
+     "reuse": "drawRcd() in tools/ochem/tree/mechdraw.js"
+    }
+   ]
+  }
+ }
+}

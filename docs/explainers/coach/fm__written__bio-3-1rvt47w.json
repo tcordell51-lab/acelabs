@@ -1,0 +1,203 @@
+{
+ "schema": "ace.explainer-coach/1",
+ "qid": "fm:written:bio-3-1rvt47w",
+ "pid": "BIO-2",
+ "batch": "pilot/pilot",
+ "source": "content/explainers-src/pilot/pilot.js",
+ "servedAs": "Full-Length Test 4, Natural Sciences, question 27",
+ "sidecar": "content/explainers/bio/cell/fm__written__bio-3-1rvt47w.json",
+ "checksum": "e9dd6d72dca307b2",
+ "servesAlso": [],
+ "flags": [
+  {
+   "kind": "bank-copy",
+   "text": "Bank trap note for the 600 mOsm choice reads \"This multiplies by four, 0.15 M NaCl yields 0.30 osmol per liter.\" (a run-on). Wording only; key unchanged."
+  },
+  {
+   "kind": "true-to-life",
+   "text": "Uses the BioReal red cell view. Per the decisions doc, Thomas signs off every true-to-life view."
+  },
+  {
+   "kind": "renderer-gap",
+   "text": "BioReal.tonicity() draws its own labels (LIGHT MICROSCOPE, scale bar, solute strip) at about 9 px on a 390 px phone, because its 400-unit drawing is shown about 330 px wide. The fix belongs in tools/bio/bio-real.js (a phone layout or larger label sizes); the explainer caption carries the point meanwhile. This is the one known exception to the 12 px rule in the pilot."
+  }
+ ],
+ "review": {
+  "status": "draft",
+  "by": null,
+  "at": null,
+  "batch": "pilot/pilot",
+  "checksum": "e9dd6d72dca307b2",
+  "approvedChecksum": null
+ },
+ "held": null,
+ "routing": "The anchor works today. The slider value needs a state reader.",
+ "playWithExpect": [
+  "initTonicity"
+ ],
+ "gate": {
+  "pass": true,
+  "issues": [],
+  "warnings": [],
+  "checks": [
+   "key text matches the bank (\"It stays the same, because the outside is also 300 mOsm\", index 0)",
+   "trap families from the closed list: other-conditions, half-right, other-unit, one-step-too-far",
+   "every served choice (5) has a note; one key",
+   "copy rules: ASCII, no dashes, no banned words, no letters, no competitor names, no timer or score words, budgets (explainer and visual text)",
+   "step 1 opens with a move: \"Count particles,\"",
+   "voice: 10 sentences, mean 8.8 words, shortest 5",
+   "playWith target tools/bio/bio-cell.html found with initTonicity; no timer or score markers",
+   "osmolarity recomputed: 0.15 M x 2 particles = 300 mOsm outside, 300 inside"
+  ]
+ },
+ "changes": [
+  "Sodium trap relabeled \"Moved the salt, not water\", family other-conditions, note explains the permeant-solute case",
+  "Hook rewritten: \"Count the ions: NaCl gives 2, CaCl2 gives 3, glucose gives 1.\"",
+  "BioReal small labels kept as the one flagged exception (fix belongs in tools/bio/bio-real.js)"
+ ],
+ "preview": {
+  "pick": "It swells, because 150 mOsm outside is well below the 300 mOsm inside"
+ },
+ "served": {
+  "stem": "A cell with an internal osmolarity of 300 mOsm is placed in a 0.15 M solution of NaCl, which dissociates completely. What happens to the cell volume?",
+  "choices": [
+   "It stays the same, because the outside is also 300 mOsm",
+   "It swells, because sodium enters and water follows it in",
+   "It shrinks, because 300 mOsm of NaCl outdraws the cytoplasm",
+   "It swells, because 150 mOsm outside is well below the 300 mOsm inside",
+   "It shrinks, because 0.15 M NaCl comes to 600 mOsm"
+  ],
+  "keyIndex": 0,
+  "bankWhy": "The whole question turns on counting particles rather than molecules. Each NaCl unit splits into two particles in solution, so 0.15 M times 2 gives 0.30 osmol per liter, which is 300 mOsm and matches the cell exactly. Equal osmolarity on both sides means no net water movement and no volume change. Multiply molarity by the number of ions a salt releases before comparing anything.",
+  "extra": {
+   "mock": "FULL_4",
+   "section": "bio",
+   "n": 27
+  }
+ },
+ "student": {
+  "schema": "ace.explainer/1",
+  "qid": "fm:written:bio-3-1rvt47w",
+  "servesAlso": [],
+  "bank": {
+   "file": "tools/mock/data/full-mocks.js",
+   "locator": {
+    "mock": "FULL_4",
+    "section": "bio",
+    "id": "written:bio-3-1rvt47w"
+   },
+   "keyText": "It stays the same, because the outside is also 300 mOsm",
+   "stemHash": "e5002e0ce5a0edefa7c7a41cf0671b4cb1098ce6",
+   "choiceTexts": [
+    "It stays the same, because the outside is also 300 mOsm",
+    "It swells, because sodium enters and water follows it in",
+    "It shrinks, because 300 mOsm of NaCl outdraws the cytoplasm",
+    "It swells, because 150 mOsm outside is well below the 300 mOsm inside",
+    "It shrinks, because 0.15 M NaCl comes to 600 mOsm"
+   ]
+  },
+  "section": "bio",
+  "subtopic": "bio.cell.membrane.tonicity",
+  "difficulty": {
+   "band": 3,
+   "from": "bank field d (1-3)"
+  },
+  "premises": [],
+  "answer": {
+   "text": "It stays the same, because the outside is also 300 mOsm",
+   "line": "0.15 M NaCl is 300 mOsm, the same as the inside, so water has no net reason to move."
+  },
+  "steps": [
+   "Count particles, not formula units. NaCl splits into Na+ and Cl-, so 0.15 M becomes 0.15 x 2 = 0.30 osmol per liter.",
+   "0.30 osmol per liter is 300 mOsm. The inside is 300 mOsm too.",
+   "Same on both sides is isotonic. Water still crosses, but equally both ways. No net flow, no change in volume."
+  ],
+  "choices": [
+   {
+    "text": "It stays the same, because the outside is also 300 mOsm",
+    "role": "key",
+    "note": "0.15 M x 2 particles = 300 mOsm. A match for the inside."
+   },
+   {
+    "text": "It swells, because sodium enters and water follows it in",
+    "role": "trap",
+    "family": "other-conditions",
+    "missType": "content",
+    "trap": "Moved the salt, not water",
+    "note": "Swelling is what a solute that crosses, like urea, would cause. Na+ gets pumped back out, so it acts as if it stays outside, and 300 against 300 moves no water."
+   },
+   {
+    "text": "It shrinks, because 300 mOsm of NaCl outdraws the cytoplasm",
+    "role": "trap",
+    "family": "half-right",
+    "missType": "concept",
+    "trap": "Equal read as greater",
+    "note": "The 300 is right. But 300 equals 300, and water only moves toward a difference."
+   },
+   {
+    "text": "It swells, because 150 mOsm outside is well below the 300 mOsm inside",
+    "role": "trap",
+    "family": "other-unit",
+    "missType": "concept",
+    "trap": "Counted units, not particles",
+    "note": "150 is the NaCl before it splits. Each unit gives two ions, so the outside is 300."
+   },
+   {
+    "text": "It shrinks, because 0.15 M NaCl comes to 600 mOsm",
+    "role": "trap",
+    "family": "one-step-too-far",
+    "missType": "misread",
+    "trap": "Doubled twice",
+    "note": "NaCl gives two particles, not four. 0.15 x 2 = 0.30 osmol per liter, which is 300 mOsm."
+   }
+  ],
+  "lockIt": "Osmolarity is molarity times particles. Water moves only when the two sides differ.",
+  "hook": "Count the ions: NaCl gives 2, CaCl2 gives 3, glucose gives 1.",
+  "playWith": {
+   "label": "Tonicity simulator: set the outside to match the inside and watch the red cells hold their shape",
+   "href": "tools/bio/bio-cell.html#node-membrane",
+   "state": {
+    "visualizer": "initTonicity",
+    "cellType": "animal",
+    "externalSolute": 50
+   }
+  },
+  "video": {
+   "slot": "bio.cell.membrane.tonicity",
+   "title": "Tonicity: count the particles first",
+   "id": null,
+   "start": null
+  },
+  "visual": {
+   "type": "stack",
+   "alt": "Top: a tally turning 0.15 M NaCl into 0.15 M Na+ plus 0.15 M Cl-, 300 mOsm outside, next to 300 mOsm inside, an even balance. Bottom: a light microscope view of red blood cells in a matched solution, normal biconcave discs, with no net water flow.",
+   "caption": "Count ions, then compare. Equal on both sides, so the cells keep their normal disc shape.",
+   "panels": [
+    {
+     "type": "bio.osmolarity",
+     "solute": {
+      "formula": "NaCl",
+      "molarity": 0.15,
+      "ions": [
+       "Na+",
+       "Cl-"
+      ]
+     },
+     "inside": 300,
+     "units": "mOsm",
+     "reuse": "new"
+    },
+    {
+     "type": "bio.real",
+     "view": "tonicity",
+     "params": {
+      "cellType": "animal",
+      "externalSolute": 50
+     },
+     "smallTextKnown": "renderer-gap flag",
+     "reuse": "BioReal.tonicity() in tools/bio/bio-real.js (externalSolute 50 = matched to the inside; viewBox 0 0 400 320 as in bio-shared.js)"
+    }
+   ]
+  }
+ }
+}
