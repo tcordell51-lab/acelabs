@@ -459,7 +459,8 @@ test('tonicity camera views: true scale, red cell shapes, Elodea, solute strip, 
   for (const e of [20, 50, 75, 92]) {
     const s = ton('plant', e);
     assert.match(caption(s), /Elodea leaf cells/);
-    assert.equal(count(s), 56 * cells(s), 'chloroplasts at ' + e);
+    // 56 per cell, less the strokes wholly outside the camera crop (left out; cells.test.js checks every cell inside the crop keeps 56)
+    assert.ok(count(s) <= 56 * cells(s) && count(s) >= 56 * cells(s) - 420, 'chloroplasts at ' + e + ': ' + count(s) + ' of ' + 56 * cells(s));
     if (e < 70) assert.doesNotMatch(s, /stroke="#9db07a"/, 'no strands at ' + e);
   }
   assert.match(ton('plant', 92), /stroke="#9db07a"/);

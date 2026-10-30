@@ -13230,7 +13230,7 @@ function initTonicity() {
   function render(externalSolute) {
     const internal = 50;
     const diff = externalSolute - internal;  // -50 (max hypo) to +50 (max hyper)
-    // Cell volume scale: hypotonic → swell, hypertonic → shrink
+    // Cell volume scale: hypotonic, swell; hypertonic, shrink
     // Animal: scale 0.55 (max shrink) to 1.45 (max swell, then LYSED beyond)
     // Plant: scale 0.65 (plasmolyzed) to 1.0 (turgid; capped by wall)
 
@@ -13240,7 +13240,10 @@ function initTonicity() {
     // Compute scale + outcome
     let scale, state, stateClass, waterFlow, outcome, outcomeBorder;
     const lysed = (cellType === 'animal' && externalSolute < 12);
-    const plasmolyzed = (cellType === 'plant' && externalSolute > 80);
+    // Plant cells plasmolyze once the outside is clearly saltier than the
+    // cell (above 60, the cell being 50): early plasmolysis up to 70, then
+    // the protoplasts round up and pull well clear of the walls.
+    const plasmolyzed = (cellType === 'plant' && externalSolute > 60);
 
     if (Math.abs(diff) < 5) {
       // Isotonic
@@ -13251,12 +13254,12 @@ function initTonicity() {
       outcome = '<span style="font-weight:700">Stable.</span> Cell holds normal shape and volume.';
       outcomeBorder = '#5FA874';
     } else if (diff < 0) {
-      // Hypotonic — water flows IN
+      // Hypotonic: water flows IN
       const t = Math.min(1, Math.abs(diff) / 50);
       scale = 1.0 + (cellType === 'plant' ? 0.0 : 0.45) * t;
       state = 'HYPOTONIC';
       stateClass = '#5cabe6';
-      waterFlow = 'water flows IN →';
+      waterFlow = 'water flows IN';
       if (lysed) {
         outcome = '<span style="font-weight:700;color:#C25B3F">LYSED.</span> Animal cell burst. Membrane could not contain incoming water.';
         outcomeBorder = '#C25B3F';
@@ -13268,13 +13271,16 @@ function initTonicity() {
         outcomeBorder = '#5cabe6';
       }
     } else {
-      // Hypertonic — water flows OUT
+      // Hypertonic: water flows OUT
       const t = Math.min(1, diff / 50);
       scale = 1.0 - 0.45 * t;
       state = 'HYPERTONIC';
       stateClass = '#C25B3F';
-      waterFlow = '← water flows OUT';
-      if (cellType === 'plant' && plasmolyzed) {
+      waterFlow = 'water flows OUT';
+      if (cellType === 'plant' && plasmolyzed && externalSolute <= 70) {
+        outcome = '<span style="font-weight:700;color:#a378a5">EARLY PLASMOLYSIS.</span> Water leaves; the membrane starts to pull off the wall. More solute pulls it further.';
+        outcomeBorder = '#a378a5';
+      } else if (cellType === 'plant' && plasmolyzed) {
         outcome = '<span style="font-weight:700;color:#a378a5">PLASMOLYZED.</span> Membrane pulled away from rigid wall. Plant wilts.';
         outcomeBorder = '#a378a5';
       } else if (cellType === 'animal') {
@@ -13290,7 +13296,7 @@ function initTonicity() {
     const r = 80 * scale;
     const wallR = 90;  // plant wall (rigid)
     let svgInner = '';
-    // Background solute density (deterministic — no flicker on slider drag)
+    // Background solute density (deterministic, so no flicker on slider drag)
     const bgDots = Math.round(20 + externalSolute * 0.6);
     let dots = '';
     for (let i = 0; i < bgDots && i < dotPool.length; i++) {

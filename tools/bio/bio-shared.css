@@ -1744,6 +1744,24 @@ foreignObject table td, foreignObject table th{padding:6px 8px !important;line-h
   .lab [style*="grid-template-columns: 160px 1fr 1fr 1fr"]{grid-template-columns:1fr 1fr!important}
 }
 
+/* Tonicity sandbox on a phone: two nested 18 px paddings left the
+   microscope picture 284 px wide at 390, so its labels read near 8 CSS px.
+   With them trimmed it takes the full card width (labels about 9 to 10
+   px), and the cell toggle, slider and scenario buttons are 44 px tap
+   targets. */
+@media (max-width:480px){
+  #tonicityBody{padding:0!important}
+  #tonicityBody > div{padding:10px!important}
+  #tonicityBody .ton-cell-btn{min-height:44px;padding:6px 10px!important}
+  #tonicityBody .ton-preset{min-height:44px}
+  #tonicityBody #tonSolute{height:44px;margin:0}
+  /* the three slider labels wrap; keep a gap between them and align
+     each to its end of the slider */
+  #tonicityBody div[style*="justify-content:space-between"]{gap:12px}
+  #tonicityBody div[style*="justify-content:space-between"] > span:nth-child(2){text-align:center}
+  #tonicityBody div[style*="justify-content:space-between"] > span:last-child{text-align:right}
+}
+
 /* Ace Cards: a flipped card takes the height of its back. The back is
    absolutely positioned for the flip, so a long explanation (or a
    visualizer picture from the stick layer) used to spill out of the card
