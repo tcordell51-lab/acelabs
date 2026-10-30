@@ -153,6 +153,32 @@ html.al body{margin:0;background:var(--s-page);color:var(--s-ink);font:var(--fon
 .al .door-head .k{margin-bottom:8px}
 .al .door-head h1{margin-bottom:10px}
 
+/* =====================================================================
+   TOOL HEADER: what every engine opens with (one-product rule 2; the door
+   header is for the doors and section pages). Section eyebrow, tool title,
+   one-line method, then the controls, always in the same place: a row under
+   the method on phones, the right of the title block from 760 px.
+     <header class="tool-head" data-sec="pat">
+       <p class="k"><i class="sw" aria-hidden="true"></i>PAT / Trainer</p>
+       <h1>Hole Punching</h1>
+       <p class="method">Unfold backwards.</p>
+       <div class="th-controls"><button class="btn">Stuck?</button> ...</div>
+     </header>
+   ===================================================================== */
+.al .tool-head{display:grid;grid-template-columns:minmax(0,1fr);gap:6px;padding:20px 0 14px;margin-bottom:16px;border-bottom:1px solid var(--c-line)}
+.al .tool-head .k{color:var(--c-ink-3)}
+.al .tool-head .k .sw{display:block;width:10px;height:10px;border-radius:2px;background:var(--sec);transform:skewX(-20deg)}
+.al .tool-head h1{font:var(--font-h1);letter-spacing:var(--ls-display);color:var(--c-ink)}
+.al .tool-head .method{font:var(--font-read);color:var(--c-ink-2);max-width:62ch}
+.al .tool-head .th-controls{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:6px}
+@media (min-width:760px){
+  .al .tool-head{grid-template-columns:minmax(0,1fr) auto;column-gap:24px}
+  .al .tool-head .k{grid-column:1;grid-row:1}
+  .al .tool-head h1{grid-column:1;grid-row:2}
+  .al .tool-head .method{grid-column:1;grid-row:3}
+  .al .tool-head .th-controls{grid-column:2;grid-row:1 / span 3;align-self:end;justify-content:flex-end;margin-top:0}
+}
+
 /* mini loop: four slanted pips, which loop stages a tool runs */
 .al .miniloop{display:inline-flex;align-items:center;gap:4px;padding-left:2px}
 .al .miniloop i{display:block;width:13px;height:5px;border-radius:1px;transform:skewX(-38deg);background:var(--c-line-2)}
