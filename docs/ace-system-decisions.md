@@ -77,6 +77,13 @@ Thomas signs off every true-to-life view and every new batch of explainers with
 a 10-minute checklist before students see it. Nothing new reaches students
 without his approval.
 
+Explainer sign-off (Thomas, 2026-10-30): groups G1 to G4 (the free full test,
+the diagnostics, full tests 2 to 4, practice tests 1 to 3) get item-by-item
+sign-off. From G5 on, one 10-minute sitting per batch covers every flagged
+item, every item the expert changed and a random sample of 8; if the sample
+passes the rest of the batch is approved, and any Hold sends the whole batch
+back.
+
 ## Release
 
 - Free public tier: the visualizers and play, one full practice test, the first
