@@ -47,7 +47,8 @@ AceDAT-AceLabs/
 ├── unified-mock.html          # Legacy OChem-only prototype (301-redirected to Prometric runner)
 ├── shared/
 │   ├── al-tokens.css          # Design tokens v2: --al-* (never themed), --s-* paper roles (light/dark), --b-* bench, mint brand accent, type, motion
-│   ├── al-fonts.css           # Self-hosted @font-face: Sora (display), DM Sans (body), JetBrains Mono (labels)
+│   ├── al-fonts.css           # Self-hosted @font-face: Sora (display), DM Sans (body), JetBrains Mono (labels); every page loads it (no font host, the CSP allows none)
+│   ├── al-fonts-legacy.css    # Old family names answered from the same files: Playfair Display and Newsreader to Sora (italic to DM Sans italic), Hanken Grotesk to its own file
 │   ├── fonts/                 # Versioned latin woff2 files (name-vN.woff2) + OFL license texts
 │   ├── brand/                 # ACEDAT logo: lockup, reversed lockup, AD mark, reversed mark, app icon
 │   ├── al-motion.css          # Reduced-motion stylesheet
