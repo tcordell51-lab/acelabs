@@ -314,10 +314,11 @@ test('the words: two DAT-style stems per set, the kinds just missed first', () =
   const kinds = ids.map((id) => B.words.find((w) => w.id === id).kind);
   assert.deepEqual(Array.from(kinds).sort(), ['animal-hyper', 'plant-iso']);
   assert.deepEqual(Array.from(B.chooseWords(12345, ['plant-iso', 'animal-hyper'])), Array.from(B.chooseWords(12345, ['plant-iso', 'animal-hyper'])));
-  // nothing missed: one red and one plant stem
+  // nothing missed: one red and one plant stem, in two different states
   for (let s = 1; s < 30; s++) {
-    const k = Array.from(B.chooseWords(s, [])).map((id) => B.words.find((w) => w.id === id).kind.split('-')[0]).sort();
-    assert.deepEqual(k, ['animal', 'plant']);
+    const k = Array.from(B.chooseWords(s, [])).map((id) => B.words.find((w) => w.id === id).kind.split('-'));
+    assert.deepEqual(k.map((x) => x[0]).sort(), ['animal', 'plant']);
+    assert.notEqual(k[0][1], k[1][1], 'two states in set ' + s);
   }
 });
 

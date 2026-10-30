@@ -269,7 +269,8 @@
 
   // Two stems for this set, chosen when the pictures are done: first the
   // kinds just missed (one red, one plant if both slipped), then others,
-  // one of each cell type where possible. Same set seed, same pair.
+  // one of each cell type and two different states where possible. Same
+  // set seed, same pair.
   function chooseWords(seed, missedKinds) {
     var R = seeded(seed ^ 0x1B873593), chosen = [];
     function take(list) {
@@ -282,9 +283,10 @@
       take(WORDS_POOL.filter(function (w) { return w.kind === k; }));
     });
     while (chosen.length < WORDS) {
-      var used = cellsUsed(), kindsUsed = chosen.map(function (w) { return w.kind; });
-      var fresh = WORDS_POOL.filter(function (w) { return used.indexOf(w.kind.split('-')[0]) < 0 && kindsUsed.indexOf(w.kind) < 0; });
-      take(fresh.length ? fresh : WORDS_POOL);
+      var used = cellsUsed(), states = chosen.map(function (w) { return w.kind.split('-')[1]; });
+      var otherCell = WORDS_POOL.filter(function (w) { return used.indexOf(w.kind.split('-')[0]) < 0; });
+      var fresh = otherCell.filter(function (w) { return states.indexOf(w.kind.split('-')[1]) < 0; });
+      take(fresh.length ? fresh : otherCell.length ? otherCell : WORDS_POOL);
     }
     return chosen.map(function (w) { return w.id; });
   }
