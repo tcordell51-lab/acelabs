@@ -40,6 +40,9 @@ let FAM = {};
 
 /* ------------------------------------------------------------- helpers */
 async function getText(url) { const r = await fetch(url, { cache: 'no-store' }); if (!r.ok) throw new Error(r.status + ' ' + url); return r.text(); }
+// Index entries hold file paths; qids can carry "#" (fm:generated:...#id), so every
+// path segment is encoded before it becomes a URL (the player must do the same).
+const relUrl = (p, base) => new URL(String(p).split('/').map(encodeURIComponent).join('/'), base);
 async function getJson(url) { const t = await getText(url); try { return JSON.parse(t); } catch (e) { throw new Error('not JSON: ' + url); } }
 async function digest(alg, text) { const b = await crypto.subtle.digest(alg, new TextEncoder().encode(text)); return [...new Uint8Array(b)].map((x) => x.toString(16).padStart(2, '0')).join(''); }
 const norm = (s) => String(s).replace(/\s+/g, ' ').trim();
@@ -98,10 +101,10 @@ function indexPage(ix) {
 async function loadQuestion(ix, qid) {
   const item = ix.items[qid];
   if (!item) throw new Error('No explainer built for ' + qid + '. Aliases open from the record they serve.');
-  const coach = await getJson(new URL(item.file, DOCS));
+  const coach = await getJson(relUrl(item.file, DOCS));
   const s = coach.served, x = s.extra || {};
   const served = { stem: s.stem, choices: s.choices, key: s.keyIndex, why: s.bankWhy, figure: x.figure || null, qs: x.qs || null, os: !!x.os, patItem: x.patItem || null, move: x.move || null, passage: null };
-  if (x.passage) served.passage = await getJson(new URL(x.passage.file, DOCS));
+  if (x.passage) served.passage = await getJson(relUrl(x.passage.file, DOCS));
   // the sidecar, read the way the player reads it: section index, file, checksum
   let rec = null, guard = { published: false, ok: false, notes: [] };
   if (coach.sidecar) {
@@ -110,7 +113,7 @@ async function loadQuestion(ix, qid) {
     const entry = sx.items[qid];
     if (!entry) guard.notes.push('not in the section index');
     else {
-      const text = await getText(new URL(entry.file, CONTENT));
+      const text = await getText(relUrl(entry.file, CONTENT));
       rec = JSON.parse(text);
       guard.published = true;
       guard.status = entry.status;

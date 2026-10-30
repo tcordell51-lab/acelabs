@@ -219,7 +219,11 @@ register('chem.mechanism', (s, box, ctx) => {
     show();
   }
 });
+// chem.energy kinds other than the reaction-coordinate default register here
+// (chem-gc.js adds levels, an enthalpy ladder).
+export const ENERGY_KINDS = {};
 register('chem.energy', (s, box) => {
+  if (s.kind && s.kind !== 'rcd') { const fn = ENERGY_KINDS[s.kind]; if (!fn) throw new Error('no chem.energy kind ' + s.kind); return fn(s, box); }
   injectMdCss();
   const W = width(box);
   const svg = drawRcd(box, s, { width: W });
@@ -256,16 +260,26 @@ register('chem.lewis', (s, box) => {
     spread.forEach((da) => { const a = away + da, r = 31, cx2 = pos[atom].x + Math.cos(a) * r, cy2 = pos[atom].y + Math.sin(a) * r, px = -Math.sin(a) * 4.2, py = Math.cos(a) * 4.2; out.push({ x: cx2 + px, y: cy2 + py }, { x: cx2 - px, y: cy2 - py }); });
     return out;
   };
+  // central pairs at set angles (a spec can place them: XeF4 top and bottom, ClF3 on the left)
+  const centralPairs = (n) => { const p = pos[m.centralAtom], out = []; s.centralPairAngles.slice(0, n).forEach((deg) => { const a = deg * Math.PI / 180, cx2 = p.x + Math.cos(a) * 37, cy2 = p.y + Math.sin(a) * 37, px = -Math.sin(a) * 4.6, py = Math.cos(a) * 4.6; out.push({ x: cx2 + px, y: cy2 + py }, { x: cx2 - px, y: cy2 - py }); }); return out; };
   for (const [atom, n] of Object.entries(m.lonePairCounts)) {
     if (!n) continue;
-    const dots = (s.spreadTerminalPairs && atom !== m.centralAtom) ? terminalPairs(atom, n) : L.lonePairOffsets(atom, m, pos, pos[atom], n, 24);
     const central = atom === m.centralAtom;
+    const dots = central && s.centralPairAngles ? centralPairs(n) : (s.spreadTerminalPairs && !central) ? terminalPairs(atom, n) : L.lonePairOffsets(atom, m, pos, pos[atom], n, 24);
     dots.forEach((d) => { g += `<circle class="lp-dot${central ? ' is-key' : ''}" cx="${r1(d.x)}" cy="${r1(d.y)}" r="${central ? 4.4 : 2.6}"/>`; });
     if (central) {
-      const xs = dots.map((d) => d.x), ys = dots.map((d) => d.y);
-      const x0 = Math.min(...xs) - 9, y0 = Math.min(...ys) - 9, x1 = Math.max(...xs) + 9, y1 = Math.max(...ys) + 9;
-      g += `<rect x="${r1(x0)}" y="${r1(y0)}" width="${r1(x1 - x0)}" height="${r1(y1 - y0)}" rx="8" fill="none" stroke="${C.key}" stroke-width="2" stroke-dasharray="4 3"/>`;
-      g += badge(x1 + 8, (y0 + y1) / 2 + 5, '1 lone pair', { size: 13.5 });
+      // one dashed outline per pair; the label names the count and sits by the first pair
+      let first = null;
+      for (let k = 0; k < dots.length; k += 2) {
+        const pr = dots.slice(k, k + 2), xs = pr.map((d) => d.x), ys = pr.map((d) => d.y);
+        const x0 = Math.min(...xs) - 9, y0 = Math.min(...ys) - 9, x1 = Math.max(...xs) + 9, y1 = Math.max(...ys) + 9;
+        if (!first) first = { x0, y0, x1, y1 };
+        g += `<rect x="${r1(x0)}" y="${r1(y0)}" width="${r1(x1 - x0)}" height="${r1(y1 - y0)}" rx="8" fill="none" stroke="${C.key}" stroke-width="2" stroke-dasharray="4 3"/>`;
+      }
+      const label = n + ' lone pair' + (n === 1 ? '' : 's');
+      g += s.pairLabelSide === 'left' ? badge(first.x0 - 8, (first.y0 + first.y1) / 2 + 5, label, { size: 13.5, anchor: 'end' })
+        : s.pairLabelSide === 'top' ? badge(pos[m.centralAtom].x, Math.min(...dots.map((d) => d.y)) - 17, label, { size: 13.5, anchor: 'middle' })
+          : badge(first.x1 + 8, (first.y0 + first.y1) / 2 + 5, label, { size: 13.5 });
     }
   }
   for (const [name, p] of Object.entries(pos)) {
@@ -273,19 +287,31 @@ register('chem.lewis', (s, box) => {
     g += `<g><circle class="atom-circle${name === m.centralAtom ? ' is-central' : ''}" cx="${r1(p.x)}" cy="${r1(p.y)}" r="24"/><text class="atom-label" x="${r1(p.x)}" y="${r1(p.y)}">${esc(el)}</text></g>`;
   }
   const mol = `<svg class="ls-canvas" viewBox="0 0 ${MW} ${MH}" width="100%" style="max-width:${MW}px;display:block;margin:0 auto" aria-hidden="true">${g}</svg>`;
+  // the ledger, every line built from the spec: group from the valence count
+  // (main group), bonds counted on the central atom, extra lines from the spec
   const lg = s.ledger;
+  const group = lg.group != null ? lg.group : lg.valence <= 2 ? lg.valence : lg.valence + 10;
+  const cb = m.bondPattern.filter((b) => b.atomA === m.centralAtom || b.atomB === m.centralAtom);
+  const bondWords = cb.every((b) => b.order === 1) ? 'Used in ' + cb.length + ' single bond' + (cb.length === 1 ? '' : 's') : 'Used in bonds';
+  const extraKey = (lg.extra || []).some((x) => x.key);
   const ledger = h('div', { class: 'ledger' },
     h('div', { class: 'ledger-h', text: 'Ledger for ' + lg.atom }),
-    h('div', { class: 'ledger-r' }, h('span', { text: 'Valence electrons (group 15)' }), h('b', { text: String(lg.valence) })),
-    h('div', { class: 'ledger-r' }, h('span', { text: 'Used in 3 single bonds' }), h('b', { text: '- ' + lg.inBonds })),
+    h('div', { class: 'ledger-r' }, h('span', { text: 'Valence electrons (group ' + group + ')' }), h('b', { text: String(lg.valence) })),
+    h('div', { class: 'ledger-r' }, h('span', { text: bondWords }), h('b', { text: '- ' + lg.inBonds })),
     h('div', { class: 'ledger-r is-sum' }, h('span', { text: 'Left over' }), h('b', { text: (lg.valence - lg.inBonds) + ' electrons' })),
-    h('div', { class: 'ledger-r is-key' }, h('span', { text: 'Lone pairs on ' + lg.atom }), h('b', { text: String((lg.valence - lg.inBonds) / 2) })),
+    h('div', { class: 'ledger-r ' + (extraKey ? 'is-sum' : 'is-key') }, h('span', { text: 'Lone pairs on ' + lg.atom }), h('b', { text: String((lg.valence - lg.inBonds) / 2) })),
+    ...(lg.extra || []).map((x) => h('div', { class: 'ledger-r' + (x.key ? ' is-key' : '') }, h('span', { text: x.label }), h('b', { text: x.value }))),
     h('div', { class: 'ledger-f', text: 'Shape: ' + m.molecularGeometry.replace(/-/g, ' ') }));
   const row = h('div', { class: wide ? 'lewis-row wide' : 'lewis-row' });
   const mcell = h('div', { class: 'lewis-mol', html: mol });
   row.append(mcell, ledger);
   box.append(row);
+  // s.fit: crop the canvas to the drawing, so a phone panel keeps the steps within reach
+  if (s.fit) { try { const sv = mcell.querySelector('svg'), bb = sv.getBBox(), pad = 8; sv.setAttribute('viewBox', [bb.x - pad, bb.y - pad, bb.width + 2 * pad, bb.height + 2 * pad].map((v) => v.toFixed(1)).join(' ')); sv.style.maxWidth = Math.ceil(bb.width + 2 * pad) + 'px'; } catch (e) { /* not laid out */ } }
+  LEWIS_EXTRAS.forEach((fn) => fn(s, box));
 });
+// add-ons drawn under a Lewis structure (chem-gc.js: the domain-count ladder)
+export const LEWIS_EXTRAS = [];
 
 /* ---------------- chem.trend ---------------- */
 register('chem.trend', (s, box) => {
@@ -322,7 +348,11 @@ register('chem.trend', (s, box) => {
 });
 
 /* ---------------- chem.curve (titration) ---------------- */
+// Other curve kinds register here (chem-gc.js: gibbs, decay, half-lives,
+// ph-scale, buffer, phase).
+export const CURVE_KINDS = {};
 register('chem.curve', (s, box) => {
+  if (s.kind !== 'titration') { const fn = CURVE_KINDS[s.kind]; if (!fn) throw new Error('no chem.curve kind ' + s.kind); return fn(s, box); }
   const W = width(box), H = W < 520 ? 300 : 320;
   const L = 44, R = 18, T = 20, B = 46, pw = W - L - R, ph = H - T - B;
   const X = (v) => L + (v / s.xMaxMl) * pw, Y = (p) => T + ph - (p / 14) * ph;

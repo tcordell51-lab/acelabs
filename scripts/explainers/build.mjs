@@ -75,6 +75,7 @@ const { copyIssues, words } = await import('./copy-rules.mjs');
 const { CATALOG } = await import(pathToFileURL(path.join(ROOT, 'tools/explain/visuals/catalog.js')).href);
 const COMPUTE = await import(pathToFileURL(path.join(ROOT, 'tools/explain/visuals/compute.js')).href);
 const BIOC = await import(pathToFileURL(path.join(ROOT, 'tools/explain/visuals/compute-bio.js')).href);
+const GCC = await import(pathToFileURL(path.join(ROOT, 'tools/explain/visuals/compute-gc.js')).href);
 
 /* ------------------------------------------------------------------ helpers */
 const rd = (rel) => fs.readFileSync(path.join(ROOT, rel), 'utf8');
@@ -398,6 +399,11 @@ function buildEntry(S, e) {
 function recompute(R, p, facts) {
   const { issues, checks, e, served } = R;
   const keyText = e.keyText;
+  // the Gen Chem pictures (batch B003 on): the key and every trap route a note claims, chains, ICE tables,
+  // gas states and mixtures, phase regions, crossovers, half-lives, cells, level ladders, ions, Lewis domains
+  if (p.verify || ['chem.ledger', 'chem.gas', 'chem.cell', 'chem.orbital'].includes(p.type) || (p.type === 'chem.curve' && p.kind !== 'titration') || (p.type === 'chem.energy' && p.kind === 'levels') || (p.type === 'chem.lewis' && p.domains)) {
+    const r = GCC.checkPanel(p, keyText, served.choices); issues.push(...r.issues); checks.push(...r.checks);
+  }
   if (p.type === 'chem.trend') {
     const vals = p.series.map((sym) => { const el = TRENDS.elements.find((x) => x.symbol === sym); if (!el || el[p.property] == null) { issues.push('trend: no ' + p.property + ' for ' + sym + ' in trends-data.json'); return { sym, v: null, z: null }; } return { sym, v: el[p.property], z: el.z }; });
     facts.values = vals;

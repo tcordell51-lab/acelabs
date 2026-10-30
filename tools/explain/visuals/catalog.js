@@ -20,7 +20,11 @@ export const CATALOG = {
   'chem.energy': { module: 'chem', built: true, required: ['points', 'names'] },
   'chem.lewis': { module: 'chem', built: true, required: ['molecule', 'ledger'] },
   'chem.trend': { module: 'chem', built: true, required: ['property', 'series', 'highlight'] },
-  'chem.curve': { module: 'chem', built: true, required: ['kind', 'marks'], variants: { kind: ['titration'] } },
+  'chem.curve': { module: 'chem', built: true, required: ['kind'], variants: { kind: ['titration', 'gibbs', 'decay', 'half-lives', 'ph-scale', 'buffer', 'phase'] } },   // titration in chem.js; the rest in chem-gc.js
+  'chem.ledger': { module: 'chem-gc', built: true, required: [] },   // blocks: tokens, shift, ice, chain, beakers, bars, rows, rules, sigfigs, formulas, scale, imf
+  'chem.gas': { module: 'chem-gc', built: true, required: [] },   // states (cylinders) or mixture
+  'chem.cell': { module: 'chem-gc', built: true, required: ['view'], variants: { view: ['concentration', 'e-to-k'] } },
+  'chem.orbital': { module: 'chem-gc', built: true, required: ['config'] },
   'qr.figure': { module: 'qr', built: true, required: ['highlight'] },
   'qr.partwhole': { module: 'qr', built: true, required: ['total', 'parts', 'rest'] },
   'qr.triangle': { module: 'qr', built: true, required: ['a', 'b', 'angleDeg'] },
@@ -34,10 +38,6 @@ export const CATALOG = {
 
   // planned (production-plan.md, section 4): no renderer yet
   'bio.pedigree': { module: 'bio', built: false },
-  'chem.ledger': { module: 'chem', built: false },
-  'chem.gas': { module: 'chem', built: false },
-  'chem.orbital': { module: 'chem', built: false },
-  'chem.cell': { module: 'chem', built: false },
   'chem.spectrum': { module: 'chem', built: false },
   'chem.lab': { module: 'chem', built: false },
   'qr.work': { module: 'qr', built: false },

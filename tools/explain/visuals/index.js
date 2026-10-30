@@ -10,6 +10,7 @@ import './bio-chart.js';
 import './bio-schematics.js';
 import './bio-punnett.js';
 import { drawChoiceStructure } from './chem.js';
+import './chem-gc.js';
 import { highlightBars } from './qr.js';
 import { patQuestion } from './pat.js';
 import './rc.js';
