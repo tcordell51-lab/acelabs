@@ -17,10 +17,29 @@
    - answer: one plain sentence; it becomes the card's label on Today
    - hub must be one of: cell genetics physiology diversity devo evolution
 
-   Steps (setup and frames):
+   Steps (setup, frames and checkFrame):
      { set: '#selector', value: n }  sets an input and fires input/change
      { click: '#selector' }          fires a bubbling click (works on SVG)
      { operon: { mode, lactose, glucose, trp } }  lac/trp operon state
+
+   An Ace Card must show its own question: picture, hook and replay
+   link. A card about the prediction uses the last frame, hook, and a
+   link that replays the prediction. A card about the check uses the
+   check's own view when the entry has one:
+     checkFrame  steps run when the card is saved (after the student
+                 has answered). They must set the whole state the check
+                 is about, since the student may have played with the
+                 visualizer after the reveal.
+     checkStill  the parts to copy for the check (selectors like still);
+                 still is used when it is left out. For a check about
+                 another part of the visualizer (its explainer text, a
+                 side panel), with or without checkFrame.
+   Either one also points the card's link at #stick-<id>-check, a
+   replay that ends on that view. An entry with neither reuses the last
+   prediction frame; the comment on it says why that picture fits.
+     checkHook   the hook line on a check card. A check card carries no
+                 hook without it (the prediction hook can name the
+                 check's trap), so every entry here has one.
    ===================================================================== */
 (function (root) {
   'use strict';
@@ -54,7 +73,10 @@
         [{ set: '#tonSolute', value: 4 }]
       ],
       still: ['#tonCellSvg'], caption: '#tonStateName', captionExtra: '#tonOutcome',
+      // the check is a plant cell in salt water: Elodea, plasmolyzed
+      checkFrame: [{ click: '#tonPlant' }, { set: '#tonSolute', value: 92 }],
       hook: 'Water chases solute.',
+      checkHook: 'Water chases solute: into salt water it leaves, and the membrane pulls off the wall.',
       predict: {
         q: 'An animal cell drops into pure water. What happens to it?',
         options: [
@@ -100,7 +122,14 @@
         [{ set: '#krbStage', value: 100 }]
       ],
       still: ['#krbSvg'], caption: '#krbStageName', captionExtra: '#krbTotalATP',
+      // the check is where Krebs runs: the Krebs stage explainer
+      // ("Krebs cycle . matrix"). Not the ETC picture, whose biggest label
+      // is the inner membrane (the check's trap A), nor the Krebs-stage
+      // diagram, which still shows only the membrane while the ETC waits
+      checkFrame: [{ set: '#krbStage', value: 45 }],
+      checkStill: ['#krbExplain'],
       hook: 'Glycolysis and Krebs load the trucks. The ETC cashes them in.',
+      checkHook: 'Glycolysis in the cytoplasm; pyruvate oxidation and Krebs in the matrix; the ETC on the inner membrane.',
       predict: {
         q: 'Follow one glucose all the way through. Where is most of the ATP made?',
         options: [
@@ -143,7 +172,10 @@
         [{ click: '[data-endo="post"]' }]
       ],
       still: ['#endoSide'],
+      // the check is T4 feedback on TSH: the thyroid card names it
+      checkFrame: [{ click: '[data-endo="thyr"]' }],
       hook: 'Hypothalamus makes it, posterior pituitary ships it.',
+      checkHook: 'High T4 brakes its own boss: less TRH, less TSH.',
       predict: {
         q: 'Where is ADH made?',
         options: [
@@ -185,7 +217,10 @@
         [{ click: '#nephronSvg .seg[data-seg="ascending"]' }]
       ],
       still: ['#nephronSvg', '#nephronSide'],
+      // the check is where ADH acts: the collecting duct
+      checkFrame: [{ click: '#nephronSvg .seg[data-seg="cd"]' }],
       hook: 'Going down drops water. Coming up pumps salt.',
+      checkHook: 'ADH opens the collecting duct to water (aquaporin-2).',
       predict: {
         q: 'Filtrate climbs the thick ascending limb. What leaves the tubule there?',
         options: [
@@ -230,7 +265,10 @@
         [{ set: '#apStage', value: 51 }]
       ],
       still: ['#apScrubberSvg'], caption: '#apStageName',
+      // the check is the undershoot: the hyperpolarization stage
+      checkFrame: [{ set: '#apStage', value: 70 }],
       hook: 'Na+ in to rise, K+ out to fall.',
+      checkHook: 'K+ gates close late, so the voltage dips below rest.',
       predict: {
         q: 'The membrane just hit its +30 mV peak. What brings it back down?',
         options: [
@@ -276,7 +314,15 @@
         [{ set: '#cbStage', value: 90 }]
       ],
       still: ['#cbSvg'], caption: '#cbStageName', pairId: 'muscle',
+      // the check is what calcium starts: heads binding the uncovered
+      // actin sites (the cross-bridge stage), not the rigor end state,
+      // with the stage explainer that says Ca2+ on troponin C pulls
+      // tropomyosin off the myosin-binding sites (tropomyosin stays on
+      // the thin filament; it only rolls off the sites)
+      checkFrame: [{ set: '#cbStage', value: 50 }],
+      checkStill: ['#cbSvg', '#cbExplain'],
       hook: 'ATP binding lets go; ATP splitting cocks. No ATP, no letting go.',
+      checkHook: 'Calcium grabs troponin, tropomyosin rolls off the binding sites, and the heads can bind.',
       predict: {
         q: 'A muscle runs out of ATP. Where does the myosin head end up?',
         options: [
@@ -306,8 +352,8 @@
           'The stroke runs on ATP hydrolysis and Pi release. Calcium only uncovers the binding sites.',
           'Pumping calcium back into the SR is how the muscle relaxes.'
         ],
-        why: 'Calcium from the SR binds troponin C. Troponin drags tropomyosin off actin, exposing the sites myosin binds.',
-        answer: 'Calcium binds troponin, which moves tropomyosin off actin binding sites.'
+        why: 'Calcium from the SR binds troponin C. Troponin drags tropomyosin off the myosin-binding sites on actin, exposing them.',
+        answer: 'Calcium binds troponin, which moves tropomyosin off the myosin-binding sites on actin.'
       }
     },
 
@@ -319,7 +365,10 @@
         [{ click: '[data-sf="contracted"]' }]
       ],
       still: ['#sfSvg', '#sfTem'], pairId: 'muscle',
+      // no checkFrame: the fully contracted frame is the check's picture,
+      // thin and thick filaments at their own lengths with the overlap grown
       hook: 'A band stays (it is myosin). I and H shrink.',
+      checkHook: 'Filaments slide; they never shrink. The overlap grows.',
       predict: {
         q: 'A sarcomere contracts fully. Which band keeps its length?',
         options: [
@@ -361,7 +410,13 @@
         [{ click: '#bohrPresetTissue' }]
       ],
       still: ['#bohrSvg'], caption: '#bohrSide h5',
+      // the check is fetal Hb: the fetal preset shifts the curve left,
+      // and the side panel says fetal Hb is left-shifted against adult
+      // (the curves themselves carry no fetal or adult label)
+      checkFrame: [{ click: '#bohrPresetFetal' }],
+      checkStill: ['#bohrSvg', '#bohrSide'],
       hook: 'CADET, face right: CO2, Acid, 2,3-BPG, Exercise, Temperature.',
+      checkHook: 'Fetal Hb sits left: it grips O2 tighter and pulls it off mom.',
       predict: {
         q: 'Working muscle: more CO2, more acid, warmer. Which way does the hemoglobin curve shift?',
         options: [
@@ -402,7 +457,9 @@
         [{ click: '[data-blood="abo"]' }]
       ],
       still: ['#bloodBody'],
+      // no checkFrame: the ABO chart lists type A with its anti-B antibody
       hook: 'O negative: no A, no B, no D on the cell, so anti-A, anti-B and anti-D have nothing to grab.',
+      checkHook: 'You carry antibodies to the ABO antigen you lack: type A, anti-B.',
       predict: {
         q: 'Type O negative red cells. Who can receive them in an emergency?',
         options: [
@@ -446,7 +503,13 @@
         [{ set: '#reproSlider', value: 14 }]
       ],
       still: ['#reproSvg'], caption: '#reproPhaseTag', captionExtra: '#reproDayTag',
+      // the check is the corpus luteum: day 21, luteal phase, progesterone
+      // high. The chart shows progesterone up but names no structure; the
+      // side panel names the corpus luteum as its source
+      checkFrame: [{ set: '#reproSlider', value: 21 }],
+      checkStill: ['#reproSvg', '#reproSide'],
       hook: 'Estrogen flips the switch, LH pulls the trigger.',
+      checkHook: 'The empty follicle becomes the corpus luteum, the progesterone source.',
       predict: {
         q: 'What triggers ovulation around day 14?',
         options: [
@@ -489,7 +552,10 @@
         [{ set: '#boneStage', value: 3 }]
       ],
       still: ['#boneSvg'], caption: '#boneStageName',
-      hook: 'Peri is the perimeter. Endo is inside. Haversian runs the length; Volkmann goes across.',
+      // the check is the center of an osteon: the ground-section stop
+      checkFrame: [{ set: '#boneStage', value: 2 }],
+      hook: 'Peri is the perimeter. Endo is inside.',
+      checkHook: 'Haversian runs the length through each osteon; Volkmann goes across.',
       predict: {
         q: 'Peel a long bone from the outside in. Which membrane lines its hollow center?',
         options: [
@@ -534,7 +600,13 @@
         [{ operon: { mode: 'lac', lactose: true, glucose: false } }]
       ],
       still: ['#operonSvg'], caption: '#operonState',
+      // the check is the trp operon with plenty of tryptophan: repressor
+      // on, with the state line and the side panel that name trp as the
+      // corepressor (the diagram labels are small on a phone)
+      checkFrame: [{ click: '[data-omode="trp"]' }, { operon: { mode: 'trp', trp: true } }],
+      checkStill: ['#operonSvg', '#operonState', '.lab-module[data-module="operon"] .gen-side .energy-step-info'],
       hook: 'Lactose lifts the brake. Low glucose hits the gas.',
+      checkHook: 'Trp is the corepressor: plenty of trp, repressor on, operon off.',
       predict: {
         q: 'Lactose is around and glucose is gone. What is the lac operon doing?',
         options: [
@@ -575,7 +647,12 @@
         [{ set: '#hwQ2', value: 0.0625 }]
       ],
       still: ['.lab-module[data-module="hw"] .hw-bars'], caption: '#hwCarriers', captionLabel: 'Carriers (2pq): ',
+      // the check is the equilibrium conditions: the module's side panel
+      // lists all five (random mating among them). No checkFrame: that
+      // panel does not change with the inputs
+      checkStill: ['.lab-module[data-module="hw"] .gen-side .energy-step-info'],
       hook: 'Square root first. Affected is q squared; carriers are 2pq.',
+      checkHook: 'Five conditions: large population, random mating, no mutation, no migration, no selection.',
       predict: {
         q: 'A population is in Hardy-Weinberg equilibrium. 1 in 16 people show a recessive trait (q squared = 0.0625). What fraction are carriers (Aa)?',
         options: [
@@ -621,7 +698,14 @@
         [{ click: '[data-emb="gastrula"]' }]
       ],
       still: ['#embryoTL .embryo-stage.active .em-svg', '#timelineSide'],
+      // the check is the nervous system: the neurula, where ectoderm
+      // folds into the neural tube. Only the side panel goes on the card:
+      // the neurula icon is a small unlabeled oval that names no germ
+      // layer, and blown up to card width it teaches nothing
+      checkFrame: [{ click: '[data-emb="neurula"]' }],
+      checkStill: ['#timelineSide'],
       hook: 'Ball, then hollow ball, then the fold that makes three layers.',
+      checkHook: 'Ectoderm makes the outside and the nerves; the neural tube folds in from it.',
       predict: {
         q: 'At which stage does the embryo first have three germ layers?',
         options: [
@@ -666,7 +750,10 @@
         [{ click: '[data-evid="anat"]' }]
       ],
       still: ['#evidBody'],
+      // no checkFrame: the comparative anatomy card covers analogous
+      // structures (insect and bird wings) right under homologous ones
       hook: 'Same bones, different jobs: homologous.',
+      checkHook: 'Same job, separate origins: analogous, by convergent evolution.',
       predict: {
         q: 'A human arm and a bat wing share the same bones but do different jobs. What kind of evidence is that?',
         options: [
