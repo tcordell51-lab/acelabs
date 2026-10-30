@@ -266,7 +266,7 @@ DIAGRAMS['gastric-gland'] = (s, W) => {
   const H = Math.max(bot + 30, insetY + insetH + 8);
   const M = uid('gg');
   let out = `<defs>${marker(M, C.trap)}</defs>`;
-  out += `<rect x="${r1(ox + 2)}" y="4" width="${r1(Wd - 4)}" height="34" rx="8" fill="#eef3fb" stroke="#c9d6ea"/>` + t(ox + 12, 26, s.lumenLabel, { size: 13, weight: 700, fill: C.blue });
+  out += `<rect x="${r1(ox + 2)}" y="4" width="${r1(Wd - 4)}" height="34" rx="8" fill="#eef3fb" stroke="#c9d6ea"/>` + t(ox + Wd - 12, 26, s.lumenLabel, { size: 13, weight: 700, anchor: 'end', fill: C.blue });
   out += `<rect x="${r1(ox + 2)}" y="40" width="${r1(Wd - 4)}" height="${r1(H - 44)}" rx="8" fill="#fbf1ec" stroke="#ead7cc"/>`;
   // the gland: a tube from the surface down, its lumen open to the stomach
   const zone = (id) => ({ surface: [top, 76], neck: [76, 126], parietal: [126, 214], chief: [214, bot] })[id];
@@ -285,9 +285,9 @@ DIAGRAMS['gastric-gland'] = (s, W) => {
   // the base of the gland and its lumen
   out += `<path d="M${r1(gx - lum - wall)},${bot} Q${r1(gx)},${bot + 26} ${r1(gx + lum + wall)},${bot}" fill="${fill.chief}" stroke="#8e9bb0" stroke-width="1"/>`;
   out += `<path d="M${r1(gx - lum + 2)},38 V${bot + 2} Q${r1(gx)},${bot + 12} ${r1(gx + lum - 2)},${bot + 2} V38" fill="#fff" stroke="none"/>`;
-  // HCl out of a parietal cell, up the lumen
-  out += `<path d="M${r1(gx + lum + 4)},170 Q${r1(gx)},168 ${r1(gx)},140 V62" stroke="${C.trap}" stroke-width="2.4" fill="none" marker-end="url(#${M})"/>`;
-  out += halo(t(gx + lum + 6, 60, s.acidLabel, { size: 13, weight: 700, fill: C.trap }), '#fbf1ec');
+  // HCl out of a parietal cell, up the gland's lumen and into the stomach lumen
+  out += `<path d="M${r1(gx + lum + 4)},170 Q${r1(gx)},168 ${r1(gx)},140 V16" stroke="${C.trap}" stroke-width="2.4" fill="none" marker-end="url(#${M})"/>`;
+  out += halo(t(gx + 9, 26, s.acidLabel, { size: 13, weight: 700, fill: C.trap }), '#eef3fb');
   // cells that live elsewhere (a G cell in the antrum, a goblet cell in the intestine): an inset
   if (away.length) {
     const bw = 116, rh = 46, bh = insetH, bx = ox + Wd - bw - 8, by = insetY;
@@ -393,8 +393,9 @@ DIAGRAMS.glomerulus = (s, W) => {
 DIAGRAMS['etc-chain'] = (s, W) => {
   const x0 = 6, n = s.complexes.length + 1, sw = (W - 2 * x0) / n, M = uid('etc');
   const plugged = s.synthase.state === 'plugged';
-  const yIms = 40, yMemT = 76, yMemB = 108, yMat = 178;
-  let out = `<defs>${marker(M, C.blue)}${marker(M + 'e', '#6b3aa8')}${marker(M + 'i', C.ink2)}</defs>`;
+  const yIms = 40, yMemT = 76, yMemB = 124, yMat = 194, yMid = (yMemT + yMemB) / 2;
+  const E = '#6b3aa8', dash = plugged ? 'stroke-dasharray="5 4"' : '';
+  let out = `<defs>${marker(M, C.blue)}${marker(M + 'e', E, 8)}${marker(M + 'i', C.ink2)}</defs>`;
   out += `<rect x="${x0}" y="2" width="${r1(W - 2 * x0)}" height="${yMemT - 2}" rx="8" fill="#eef3fb"/>`;
   out += t(x0 + 6, 18, s.regions.top, { size: 12.5, weight: 700, fill: C.blue });
   out += `<rect x="${x0}" y="${yMemT}" width="${r1(W - 2 * x0)}" height="${yMemB - yMemT}" fill="#f3ead2"/>`;
@@ -402,15 +403,28 @@ DIAGRAMS['etc-chain'] = (s, W) => {
   out += `<rect x="${x0}" y="${yMemB}" width="${r1(W - 2 * x0)}" height="${yMat - yMemB + 14}" rx="8" fill="#f9f4e6"/>`;
   out += t(x0 + 6, yMat + 8, s.regions.bottom, { size: 12.5, weight: 700, fill: '#7a5f17' });
   const cx = (i) => x0 + sw * i + sw / 2;
-  // electrons along the chain: carriers into I and II, on to III and IV
-  const pumpers = s.complexes.map((c, i) => ({ c, i })).filter((o) => o.c.name !== 'II');
-  out += `<path d="M${r1(cx(0))},${yMemT + 16} Q${r1((cx(0) + cx(2)) / 2)},${yMemT + 2} ${r1(cx(2))},${yMemT + 16} Q${r1((cx(2) + cx(3)) / 2)},${yMemT + 2} ${r1(cx(3))},${yMemT + 16}" fill="none" stroke="#6b3aa8" stroke-width="2" ${plugged ? 'stroke-dasharray="5 4"' : ''}/>`;
-  out += `<path d="M${r1(cx(1))},${yMemT + 16} Q${r1((cx(1) + cx(2)) / 2)},${yMemT + 30} ${r1(cx(2) - 12)},${yMemT + 20}" fill="none" stroke="#6b3aa8" stroke-width="2" ${plugged ? 'stroke-dasharray="5 4"' : ''} marker-end="url(#${M}e)"/>`;
+  const bw = Math.min(40, sw - 14);
+  // a complex that pumps spans the membrane; one that pumps nothing (II) is drawn
+  // short, on the matrix half, so the electron path from I visibly runs over it
+  const box = (c) => (c.pumps ? { y1: yMemT - 10, y2: yMemB + 10 } : { y1: yMid + 6, y2: yMemB + 12 });
+  // electrons: I hands them along the upper membrane, over II, to the mobile
+  // carrier (s.carrier, Q); II's own arrow feeds the same carrier; it passes them
+  // to the next complex, and that one on to the last
+  const yE = yMemT + 12, iShort = s.complexes.findIndex((c) => !c.pumps);
+  if (iShort > 0 && iShort < s.complexes.length - 1) {
+    const qx = (cx(iShort) + cx(iShort + 1)) / 2, qr = 8.5;
+    out += `<path d="M${r1(cx(0))},${yE} H${r1(qx - qr - 1)}" fill="none" stroke="${E}" stroke-width="2" ${dash} marker-end="url(#${M}e)"/>`;
+    const sx0 = cx(iShort) + 6, sy0 = box(s.complexes[iShort]).y1 - 1, dx = qx - sx0, dy = yE - sy0, d = Math.hypot(dx, dy);
+    out += `<path d="M${r1(sx0)},${r1(sy0)} L${r1(qx - dx / d * (qr + 1))},${r1(yE - dy / d * (qr + 1))}" fill="none" stroke="${E}" stroke-width="2" ${dash} marker-end="url(#${M}e)"/>`;
+    out += `<path d="M${r1(qx + qr)},${yE} H${r1(cx(iShort + 1))}" fill="none" stroke="${E}" stroke-width="2" ${dash}/>`;
+    for (let i = iShort + 1; i < s.complexes.length - 1; i++) out += `<path d="M${r1(cx(i))},${yE} H${r1(cx(i + 1) - bw / 2 - 1)}" fill="none" stroke="${E}" stroke-width="2" ${dash} marker-end="url(#${M}e)"/>`;
+    out += `<circle cx="${r1(qx)}" cy="${yE}" r="${qr}" fill="#fff" stroke="${E}" stroke-width="1.6"/>` + t(qx, yE + 4.5, s.carrier || 'Q', { size: 12.5, weight: 700, anchor: 'middle', fill: E });
+  }
   // the complexes
   s.complexes.forEach((c, i) => {
-    const w = Math.min(40, sw - 14);
-    out += `<rect x="${r1(cx(i) - w / 2)}" y="${yMemT - 10}" width="${r1(w)}" height="${yMemB - yMemT + 20}" rx="7" fill="${c.pumps ? '#7a4fb0' : '#d9cfe9'}" stroke="#4c2f73" stroke-width="1.2"/>`;
-    out += t(cx(i), (yMemT + yMemB) / 2 + 5, c.name, { size: 14, weight: 700, anchor: 'middle', fill: c.pumps ? '#fff' : '#3b2a59' });
+    const w = bw, b = box(c);
+    out += `<rect x="${r1(cx(i) - w / 2)}" y="${r1(b.y1)}" width="${r1(w)}" height="${r1(b.y2 - b.y1)}" rx="7" fill="${c.pumps ? '#7a4fb0' : '#d9cfe9'}" stroke="#4c2f73" stroke-width="1.2"/>`;
+    out += t(cx(i), (b.y1 + b.y2) / 2 + 5, c.name, { size: 14, weight: 700, anchor: 'middle', fill: c.pumps ? '#fff' : '#3b2a59' });
     if (c.pumps) {
       const ax = cx(i) + w / 2 + 3;
       out += `<path d="M${r1(ax)},${yMemB + 16} V${yIms + 8}" stroke="${C.blue}" stroke-width="2" fill="none" ${plugged ? 'stroke-dasharray="4 3"' : ''} marker-end="url(#${M})"/>`;
@@ -436,7 +450,9 @@ DIAGRAMS['etc-chain'] = (s, W) => {
     between.forEach((bx, j) => { out += t(bx, yIms + 16 + (j % 2) * 4, 'H+', { size: 12, weight: 700, fill: C.blue }); });
     out += t(W - x0 - 6, 18, s.synthase.plugLabel, { size: 12.5, weight: 700, anchor: 'end', fill: C.trap });
   } else {
-    out += `<path d="M${r1(sx + 12)},${yIms + 6} C${r1(sx + 14)},${yMemT} ${r1(sx + 14)},${yMemB} ${r1(sx + 18)},${sy - 8}" stroke="${C.blue}" stroke-width="2" fill="none" marker-end="url(#${M})"/>`;
+    // H+ comes back down through the stalk to the head, where ATP is made
+    out += `<path d="M${r1(sx)},${yIms + 8} V${sy - 17}" stroke="${C.blue}" stroke-width="2" fill="none" marker-end="url(#${M})"/>`;
+    out += halo(t(sx, yIms + 4, 'H+', { size: 12.5, weight: 700, anchor: 'middle', fill: C.blue }), '#eef3fb');
   }
   let y = yMat + 22;
   // what the picture adds: a carrier ledger, or the chain of effects
@@ -467,20 +483,25 @@ DIAGRAMS['etc-chain'] = (s, W) => {
 };
 
 /* =============================================================== ap-trace */
-// One plot: membrane potential against time, drawn from the trace kind.
+// One plot: membrane potential against time, drawn from the trace kind. Every
+// label is emitted after the trace, so its halo paints over any stroke it meets,
+// and each sits where the trace leaves room (a spike train starts after a lead-in
+// at rest, which holds the threshold label left of the first spike).
 function apPlot(s, tr, x, y, w, h) {
   const v0 = -90, v1 = 45, Yv = (v) => y + h - (v - v0) / (v1 - v0) * h, lm = 34, px = x + lm, pw = w - lm - 8;
   const rest = s.rest, thr = s.threshold, peak = s.peak;
-  const key = !!tr.key;
+  const key = !!tr.key, bg = key ? C.keyBg : '#f7f9f8';
   const extra = tr.kind === 'train' ? 42 : 0;
-  let g = `<rect x="${r1(x)}" y="${r1(y - 26)}" width="${r1(w)}" height="${r1(h + 34 + extra)}" rx="9" fill="${key ? C.keyBg : '#f7f9f8'}" stroke="${key ? C.key : '#d3dbd6'}" stroke-width="${key ? 2.2 : 1}"/>`;
-  g += t(x + 8, y - 8, tr.label, { size: 13, weight: 700, fill: key ? C.key : C.ink });
-  if (key) g += badge(x + w - 6, y - 8, 'answer', { anchor: 'end', size: 12 });
-  // axis and guide lines (paths, labels carry halos)
+  let g = `<rect x="${r1(x)}" y="${r1(y - 26)}" width="${r1(w)}" height="${r1(h + 34 + extra)}" rx="9" fill="${bg}" stroke="${key ? C.key : '#d3dbd6'}" stroke-width="${key ? 2.2 : 1}"/>`;
+  let lab = t(x + 8, y - 8, tr.label, { size: 13, weight: 700, fill: key ? C.key : C.ink });
+  if (key) lab += badge(x + w - 6, y - 8, 'answer', { anchor: 'end', size: 12 });
+  // axis and guide lines
   g += `<path d="M${r1(px)},${r1(Yv(v1))} V${r1(Yv(v0))}" stroke="${C.ink2}" stroke-width="1.2" fill="none"/>`;
-  [[peak, '+' + peak], [0, '0'], [rest, String(rest)]].forEach(([v, lab]) => { g += t(px - 4, Yv(v) + 4, lab, { size: 12, anchor: 'end', fill: C.mute }); });
+  [[peak, '+' + peak], [0, '0'], [rest, String(rest)]].forEach(([v, l]) => { lab += t(px - 4, Yv(v) + 4, l, { size: 12, anchor: 'end', fill: C.mute }); });
   g += `<path d="M${r1(px)},${r1(Yv(thr))} H${r1(px + pw)}" stroke="${C.trap}" stroke-width="1.2" stroke-dasharray="5 4" fill="none"/>`;
-  g += halo(t(px + pw - 2, Yv(thr) - 4, s.thresholdLabel, { size: 12, anchor: 'end', fill: C.trap }), key ? C.keyBg : '#f7f9f8');
+  const thrW = textW(s.thresholdLabel, 12);
+  const train = tr.kind === 'train', lead = train ? Math.min(0.4, (thrW + 14) / pw) : 0;
+  lab += halo(train ? t(px + 6, Yv(thr) - 4, s.thresholdLabel, { size: 12, fill: C.trap }) : t(px + pw - 2, Yv(thr) - 4, s.thresholdLabel, { size: 12, anchor: 'end', fill: C.trap }), bg);
   const T = (f) => px + pw * f;
   let d = '';
   const spike = (f0, f1) => {      // one action potential from f0 (threshold reached) to f1 (back at rest)
@@ -490,27 +511,28 @@ function apPlot(s, tr, x, y, w, h) {
   if (tr.kind === 'spike') {
     d = `M${r1(px)},${r1(Yv(rest))} L${r1(T(0.18))},${r1(Yv(rest))} Q${r1(T(0.24))},${r1(Yv(rest + 4))} ${r1(T(0.28))},${r1(Yv(thr))}` + spike(0.28, 0.78).replace(/^ L[^L]*/, '') + ` L${r1(T(1))},${r1(Yv(rest))}`;
     if (s.marks) {
-      g += halo(t(T(0.31) - 6, Yv(10), s.marks.up, { size: 12, weight: 700, anchor: 'end', fill: C.blue }), '#f7f9f8');
-      g += halo(t(T(0.42) + 4, Yv(-10), s.marks.down, { size: 12, weight: 700, fill: C.ink2 }), '#f7f9f8');
+      lab += halo(t(T(0.31) - 6, Yv(10), s.marks.up, { size: 12, weight: 700, anchor: 'end', fill: C.blue }), bg);
+      lab += halo(t(T(0.42) + 4, Yv(-10), s.marks.down, { size: 12, weight: 700, fill: C.ink2 }), bg);
     }
   } else if (tr.kind === 'blocked') {
     d = `M${r1(px)},${r1(Yv(rest))} L${r1(T(0.18))},${r1(Yv(rest))} Q${r1(T(0.26))},${r1(Yv(thr - 1))} ${r1(T(0.32))},${r1(Yv(thr - 2))} Q${r1(T(0.42))},${r1(Yv(rest + 2))} ${r1(T(0.6))},${r1(Yv(rest))} L${r1(T(1))},${r1(Yv(rest))}`;
-    if (s.marks && s.marks.blocked) g += halo(t(T(0.36), Yv(12), s.marks.blocked, { size: 12, weight: 700, fill: C.key }), C.keyBg);
-    if (s.marks && s.marks.rest) g += halo(t(T(0.98), Yv(rest) + 16, s.marks.rest, { size: 12, anchor: 'end', fill: C.ink2 }), C.keyBg);
-  } else if (tr.kind === 'train') {
-    const nS = tr.count, span = 0.92 / nS;
+    if (s.marks && s.marks.blocked) lab += halo(t(T(0.36), Yv(12), s.marks.blocked, { size: 12, weight: 700, fill: C.key }), bg);
+    if (s.marks && s.marks.rest) lab += halo(t(T(0.98), Yv(rest) + 16, s.marks.rest, { size: 12, anchor: 'end', fill: C.ink2 }), bg);
+  } else if (train) {
+    // the same stretch of time for every train: rest until the stimulus starts, then the spikes
+    const nS = tr.count, span = (0.98 - lead) / nS;
     d = `M${r1(px)},${r1(Yv(rest))}`;
-    for (let i = 0; i < nS; i++) { const f0 = 0.04 + i * span + span * 0.1; d += ` L${r1(T(f0))},${r1(Yv(rest))}` + spike(f0 + span * 0.04, f0 + span * 0.9); }
+    for (let i = 0; i < nS; i++) { const f0 = lead + i * span + span * 0.1; d += ` L${r1(T(f0))},${r1(Yv(rest))}` + spike(f0 + span * 0.04, f0 + span * 0.9); }
     d += ` L${r1(T(1))},${r1(Yv(rest))}`;
     g += `<path d="M${r1(px)},${r1(Yv(peak))} H${r1(px + pw)}" stroke="${C.ink2}" stroke-width="1" stroke-dasharray="2 4" fill="none"/>`;
-    // the stimulus under the trace, its height the strength
+    // the stimulus under the trace, its height the strength, from the moment it starts
     const sh = 4 + 16 * tr.strength;
-    g += `<rect x="${r1(px)}" y="${r1(y + h + 26 - sh)}" width="${r1(pw)}" height="${r1(sh)}" fill="#c9d6ea" stroke="#6f7f95" stroke-width="1"/>`;
-    g += t(px, y + h + 42, s.stimulusLabel + ': ' + tr.strengthWord, { size: 12, fill: C.ink2 });
-    g += halo(t(px + pw - 2, Yv(peak) - 4, nS + ' ' + s.countWord, { size: 12.5, weight: 700, anchor: 'end', fill: key ? C.key : C.ink }), key ? C.keyBg : '#f7f9f8');
+    g += `<rect x="${r1(T(lead))}" y="${r1(y + h + 26 - sh)}" width="${r1(pw * (1 - lead))}" height="${r1(sh)}" fill="#c9d6ea" stroke="#6f7f95" stroke-width="1"/>`;
+    lab += t(T(lead), y + h + 42, s.stimulusLabel + ': ' + tr.strengthWord, { size: 12, fill: C.ink2 });
+    lab += halo(t(px + pw - 2, Yv(peak) - 4, nS + ' ' + s.countWord, { size: 12.5, weight: 700, anchor: 'end', fill: key ? C.key : C.ink }), bg);
   }
   g += `<path d="${d}" fill="none" stroke="${key ? C.key : C.ink}" stroke-width="2.2" stroke-linejoin="round"/>`;
-  return g;
+  return g + lab;
 }
 DIAGRAMS['ap-trace'] = (s, W) => {
   const wide = W >= 560, x0 = 6, hh = s.traces.some((tr) => tr.kind === 'train') ? 120 : 132;

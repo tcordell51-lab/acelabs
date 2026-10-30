@@ -30,7 +30,7 @@ const SWATCH_ETC = [
   { sw: '#7a4fb0', label: 'Complexes I, III, IV pump H+' },
   { sw: '#d9cfe9', label: 'Complex II pumps none' },
   { sw: '#c9a84c', label: 'ATP synthase' },
-  { sw: '#6b3aa8', label: 'Electrons along the chain' }
+  { sw: '#6b3aa8', label: 'Electrons: I and II both pass them to Q, then on to III and IV' }
 ];
 
 const ENTRIES = [
@@ -46,7 +46,7 @@ const ENTRIES = [
     keyText: 'All sons affected, all daughters carriers',
     answer: { line: 'Both of the mother\'s X chromosomes carry the allele, so every child gets one. Sons have no second X to mask it.' },
     steps: [
-      'Write the parents first. She is X^n X^n, colorblind on both X chromosomes. He is X^N Y.',
+      'Write the parents first. She is X^n X^n: the allele sits on both X chromosomes. He is X^N Y.',
       'Every child gets one X from her, and both of hers carry n. So every child gets an n.',
       'Sons get the Y from him. X^n Y has nothing to mask the n, so every son is colorblind.',
       'Daughters get his X^N, which covers the n. X^N X^n sees color normally and carries the allele.'
@@ -139,7 +139,7 @@ const ENTRIES = [
       'The third gene changes nothing here.'
     ],
     choices: [
-      { text: '5%', role: 'trap', family: 'unit-slip', trap: 'Shrank the distance', note: 'No rule turns 25 map units into 5%. That value fits genes about 5 centimorgans apart, linked far more tightly.' },
+      { text: '5%', role: 'trap', family: 'other-conditions', trap: 'Genes linked more tightly', note: 'No rule turns 25 map units into 5%. That value fits genes about 5 centimorgans apart, linked far more tightly.' },
       { text: '12.5%', role: 'trap', family: 'one-step-too-far', trap: 'Halved the distance', note: 'Halving is a step the definition already took care of. Each recombinant class is 12.5%, but there are two, and together they make 25%.' },
       { text: '25%', role: 'key', note: 'Map units are percent recombinants, by definition.' },
       { text: '50%', role: 'trap', family: 'other-conditions', trap: 'Unlinked genes', note: '50% is what genes show when they assort independently, unlinked or very far apart. These two are linked at 25 map units.' },
@@ -233,7 +233,7 @@ const ENTRIES = [
     steps: [
       'Picture the map. Sweat glands are not spread evenly: density changes several-fold from one region to the next.',
       'Palms and soles lead for eccrine glands, the watery, cooling kind. That is why nervous sweat shows up in your hands first.',
-      'Add the axillae for the other kind: apocrine glands cluster there. Together they make the concentrated set.',
+      'Add the axillae (armpits) for the other kind: apocrine glands cluster there. Together they make the concentrated set.',
       'Cross off the low-density sites.'
     ],
     choices: [
@@ -282,7 +282,7 @@ const ENTRIES = [
     keyText: 'Parietal cells',
     answer: { line: 'Parietal cells pump H+ into the stomach with their H+/K+ ATPase, and Cl- follows. They also make intrinsic factor.' },
     steps: [
-      'Sort the lining by product. One cell, one job.',
+      'Sort the lining by what each cell makes.',
       'Parietal cells make the acid with a proton pump, plus intrinsic factor for vitamin B12.',
       'Chief cells make pepsinogen, which the acid switches on. Mucous cells make mucus, and G cells make gastrin.'
     ],
@@ -312,7 +312,7 @@ const ENTRIES = [
         { id: 'goblet', n: 5, label: 'Goblet cells: mucus in the intestine and airways', where: 'Small intestine' }
       ],
       reuse: 'new schematic, styled to match the physiology hub',
-      alt: 'A gastric gland cut lengthwise: mucous neck cells near the top, large parietal cells in the middle, outlined as the answer, with an arrow carrying HCl up into the stomach lumen, and chief cells at the base. An inset shows the cells that live elsewhere: a G cell in the antrum glands and a goblet cell in the small intestine.',
+      alt: 'A gastric gland cut lengthwise: mucous neck cells near the top, parietal cells in the middle, numbered 2 and marked as the answer, with an arrow carrying HCl into the stomach lumen, and chief cells at the base. An inset shows cells found elsewhere: a G cell in the antrum glands and a goblet cell in the small intestine.',
       caption: 'Follow the HCl arrow back to the cell it starts from. Each number names one choice.'
     },
     demoPick: 'Chief cells',
@@ -340,7 +340,7 @@ const ENTRIES = [
       { text: '~65%', role: 'key', note: 'About two thirds of the filtered sodium, in the first segment.' },
       { text: '~95%', role: 'trap', family: 'other-question', trap: 'The whole nephron', note: 'Nearly all filtered sodium is reclaimed across the whole nephron. The stem asks about one segment, the proximal tubule.' }
     ],
-    lockIt: 'The proximal tubule reclaims about two thirds; the later segments fine-tune the rest.',
+    lockIt: 'Proximal tubule: about two thirds. Thick ascending limb: about a quarter. The distal end fine-tunes the rest.',
     hook: null,
     playWith: { label: 'Nephron lab: tap each segment to see what it reclaims, starting with the proximal tubule', href: 'tools/bio/bio-physiology.html', state: { visualizer: 'initNephron', segment: 'pct' }, expect: ['initNephron', 'data-seg="pct"', 'NEPHRON_DATA'], routing: 'Works today: Nephron is a physiology lab tab with no deep link yet; a segment opens on tap.' },
     video: { slot: 'bio.physiology.nephron', title: 'The nephron: filter, reclaim, fine-tune', id: null, start: null },
@@ -360,7 +360,7 @@ const ENTRIES = [
       restLabel: 'left in urine',
       urineLabel: 'urine',
       reuse: 'new schematic; shares as in the Nephron lab data in tools/bio/bio-shared.js (about 65 percent in the proximal tubule)',
-      alt: 'A nephron drawn as a tube: capsule, the proximal tubule numbered 1 and outlined as the answer, the thick ascending limb 2, the distal tubule 3, the collecting duct 4. Below, a strip splits 100 filtered sodium ions: 65 proximal tubule, 25 thick ascending limb, 5 distal tubule, 4 collecting duct, 1 left in urine.',
+      alt: 'A nephron drawn as a tube: capsule, the proximal tubule numbered 1 and marked as the answer, the thick ascending limb 2, the distal tubule 3, the collecting duct 4. Below, a strip splits 100 filtered sodium ions: 65 proximal tubule, 25 thick ascending limb, 5 distal tubule, 4 collecting duct, 1 left in urine.',
       caption: 'Read the strip left to right: the first segment takes the biggest bite, and each later one takes less.'
     },
     demoPick: '~25%',
@@ -378,16 +378,16 @@ const ENTRIES = [
     keyText: 'Hydrostatic pressure',
     answer: { line: 'Blood pressure in the glomerular capillaries pushes water and small solutes into the capsule. It is bulk flow, and it costs no ATP.' },
     steps: [
-      'Name the forces at the glomerulus. Capillary blood pressure pushes fluid out; plasma proteins and capsule fluid push back.',
+      'Name the forces at the glomerulus. Capillary blood pressure pushes fluid out. Plasma proteins pull it back, and capsule fluid pushes back.',
       'Look at the plumbing. A wide afferent arteriole in and a narrow efferent one out hold that blood pressure high.',
-      'So the push wins. Net filtration is hydrostatic pressure minus the two pull-backs.'
+      'So the push wins. Net filtration is hydrostatic pressure minus the two opposing forces.'
     ],
     choices: [
       { text: 'Colloid osmotic pressure of the plasma proteins', role: 'trap', family: 'reversed', trap: 'The pull-back force', note: 'The plasma proteins stay in the capillary, and their osmotic pull draws fluid back in. It works against filtration, not for it.' },
       { text: 'Active transport', role: 'trap', family: 'neighbor-fact', trap: 'Belongs to the tubule', note: 'Active transport does its work later, when the tubule reabsorbs. Filtration itself spends no ATP.' },
-      { text: 'Aquaporin gradient', role: 'trap', family: 'neighbor-fact', trap: 'Water channels downstream', note: 'Aquaporins are water channels in the collecting duct, set by ADH, far downstream. Nothing called an aquaporin gradient drives filtration.' },
+      { text: 'Aquaporin gradient', role: 'trap', family: 'neighbor-fact', trap: 'Water channels downstream', note: 'The aquaporins ADH controls sit in the collecting duct, far downstream. Nothing called an aquaporin gradient drives filtration.' },
       { text: 'Hydrostatic pressure', role: 'key', note: 'Capillary blood pressure drives bulk flow into the capsule.' },
-      { text: 'Diffusion only', role: 'trap', family: 'other-conditions', trap: 'One solute at a time', note: 'Diffusion moves each solute down its own gradient, as in gas exchange. Filtration pushes water and small solutes through together, in bulk.' }
+      { text: 'Diffusion only', role: 'trap', family: 'other-conditions', trap: 'One gradient per solute', note: 'Diffusion moves each solute down its own gradient, as in gas exchange. Filtration pushes water and small solutes through together, in bulk.' }
     ],
     lockIt: 'Filtration is pressure: blood pressure pushes out, plasma proteins pull back, and the push wins.',
     hook: 'Wide in, narrow out: pressure stays high.',
@@ -405,9 +405,9 @@ const ENTRIES = [
         { id: 'oncotic', n: 4, label: 'Colloid osmotic pressure: plasma proteins pull fluid back' },
         { id: 'capsule', n: 5, label: 'Capsule pressure: filtrate already there pushes back' }
       ],
-      net: 'Net filtration: the push out minus both pull-backs',
+      net: 'Net filtration: the push out minus both opposing forces',
       reuse: 'new schematic, styled to match the Nephron lab',
-      alt: 'The glomerulus inside Bowman\'s capsule: a wide afferent arteriole brings blood in and a narrow efferent arteriole carries it out. Thick arrows from the capillary tuft into the capsule, outlined as the answer, show hydrostatic pressure pushing fluid out; thin arrows show the plasma protein pull and capsule pressure pushing back.',
+      alt: 'The glomerulus inside Bowman\'s capsule: a wide afferent arteriole brings blood in and a narrow efferent arteriole carries it out. Thick arrows from the capillary tuft into the capsule, numbered 3 and marked as the answer, show hydrostatic pressure pushing fluid out; thin arrows show the plasma protein pull and capsule pressure pushing back.',
       caption: 'Compare the arrow sizes: the push out is the big one, held high by the narrow exit.'
     },
     demoPick: 'Colloid osmotic pressure of the plasma proteins',
@@ -518,7 +518,7 @@ const ENTRIES = [
       ],
       reuse: 'new schematic; the steps as in the Glycolysis node of tools/bio/bio-cell.html',
       alt: 'Glycolysis as a ladder of nine molecules from glucose to 2 pyruvate. In the first half, hexokinase and phosphofructokinase-1 are tagged spends 1 ATP and outlined as the answer; every other step is tagged no ATP, makes NADH or makes ATP, with the payoff half below.',
-      caption: 'Scan the tags in the first half: only two steps spend ATP. Every other enzyme in the choices sits elsewhere.'
+      caption: 'Scan the tags in the first half: only two steps spend ATP. Every other enzyme in the choices carries a different tag.'
     },
     demoPick: 'Hexokinase and pyruvate kinase',
     flags: [
@@ -561,6 +561,7 @@ const ENTRIES = [
         { name: 'III', pumps: true },
         { name: 'IV', pumps: true, exit: 'O2' }
       ],
+      carrier: 'Q',
       synthase: { name: 'ATP synthase', state: 'working' },
       regions: { top: 'Intermembrane space', bottom: 'Matrix' },
       ledger: [
@@ -570,7 +571,7 @@ const ENTRIES = [
       totalLabel: 'Total',
       swatches: SWATCH_ETC,
       reuse: 'new schematic, matching the pilot mitochondrion (complexes I to IV, II pumps none, ATP synthase); ledger computed by compute-bio.js',
-      alt: 'The inner membrane with complexes I to IV and ATP synthase: NADH enters at complex I and FADH2 at complex II, which pumps no H+. Below, a ledger: 6 NADH times 2.5 is 15, 2 FADH2 times 1.5 is 3, and the total, 18, is outlined as the answer.',
+      alt: 'The inner membrane with complexes I to IV and ATP synthase: NADH enters at complex I and FADH2 at complex II, which pumps no H+, and both pass electrons to Q. Below, a ledger: 6 NADH times 2.5 is 15, 2 FADH2 times 1.5 is 3, and the total, 18, is outlined as the answer.',
       caption: 'See where each carrier enters: FADH2 skips complex I\'s pump, so its line earns less.'
     },
     demoPick: '20',
@@ -588,7 +589,7 @@ const ENTRIES = [
     keyText: 'It slows, because the gradient builds and pumping against it gets harder',
     answer: { line: 'The chain and ATP synthase are coupled through the gradient. Plug the synthase and the gradient backs up, so electron flow slows.' },
     steps: [
-      'Trace the protons. The chain pumps them out of the matrix, and ATP synthase is their only way back in.',
+      'Trace the protons. The chain pumps them out of the matrix, and ATP synthase is their main way back in.',
       'Plug the synthase and protons pile up outside. The gradient gets steeper.',
       'Pumping against a steeper gradient gets harder, so electron flow slows, and so does oxygen use.'
     ],
@@ -614,10 +615,11 @@ const ENTRIES = [
         { name: 'III', pumps: true },
         { name: 'IV', pumps: true, exit: 'O2' }
       ],
+      carrier: 'Q',
       synthase: { name: 'ATP synthase', state: 'plugged', plugLabel: 'Oligomycin plug' },
       regions: { top: 'Intermembrane space', bottom: 'Matrix' },
       chain: [
-        { text: 'The plug closes the only way back in for H+' },
+        { text: 'The plug closes the main way back in for H+' },
         { text: 'H+ piles up outside: the gradient steepens' },
         { text: 'The pumps push against it, so electron flow slows', key: true }
       ],
@@ -824,7 +826,38 @@ const ENTRIES = [
   }
 ];
 
-const CHANGES = {};
+// Fixes from the expert review of B001 (coach record only).
+const CHANGES = {
+  'fm:bio:BIO_g064': ['Step 1 says the allele sits on both X chromosomes (was "colorblind on both X chromosomes")'],
+  'fm:bio:BIO_g061': ['5% family set to other-conditions (was unit-slip), label "Genes linked more tightly", to match its note (genes about 5 cM apart)'],
+  'fm:bio:BIO_p090': ['Step 3 glosses the axillae as the armpits'],
+  'fm:bio:BIO_p019': [
+    'Step 1 is "Sort the lining by what each cell makes." ("One cell, one job" contradicted step 2: parietal cells make HCl and intrinsic factor)',
+    'Alt text: the parietal cells are numbered 2 and marked as the answer (they were never outlined)',
+    'Picture: the HCl label moved off the top mucous cell into the stomach lumen band, the arrow now runs up into the lumen, and the lumen label sits at the band\'s right end'
+  ],
+  'fm:bio:BIO_p057': [
+    'Lock it in names both bulk sites: proximal tubule about two thirds, thick ascending limb about a quarter, the distal end fine-tunes the rest (it had put the thick ascending limb under fine-tuning)',
+    'Alt text: the proximal tubule is numbered 1 and marked as the answer'
+  ],
+  'fm:bio:BIO_p056': [
+    'Aquaporin gradient note: the aquaporins ADH controls sit in the collecting duct (it had implied aquaporins exist only there)',
+    'Step 1: plasma proteins pull fluid back, capsule fluid pushes back; step 3 and the picture\'s net line say "opposing forces" (was "pull-backs", but capsule pressure pushes)',
+    'Diffusion only label is "One gradient per solute" (was "One solute at a time"; the review\'s "Each solute on its own gradient" is 6 words, over the 5-word label budget)',
+    'Alt text: the hydrostatic arrows are numbered 3 and marked as the answer'
+  ],
+  'fm:written:bio-4-dmpc6': ['Caption: every other enzyme in the choices carries a different tag (was "sits elsewhere", but three of them are first-half enzymes)'],
+  'fm:written:bio-4-158brxy': [
+    'etc-chain picture: complex II is a short box on the matrix half; the electron path from I runs through the upper membrane over II to Q, II\'s own arrow feeds Q, and Q passes on to III and IV (the old curve ran from I into II, showing the linear I-II-III misconception)',
+    'The working ATP synthase\'s H+ arrow runs down through the stalk to the head, with its own H+ label',
+    'Alt text and the electron swatch name Q'
+  ],
+  'fm:written:bio-4-1hr4sgo': [
+    'Same etc-chain fix: no electron line from complex I into complex II; both feed Q',
+    'Step 1 and chain card 1: ATP synthase is the main way back in for H+ (was "only"; there is basal proton leak)'
+  ],
+  'fm:originals:ab-0de0fec7bd': ['ap-trace: every label is drawn after the trace, and each spike train starts after a lead-in at rest that holds the threshold label left of the first spike, so no spike stroke crosses it; the stimulus bar starts where the firing starts']
+};
 
 module.exports = {
   schema: 'ace.explainer-src/1',
