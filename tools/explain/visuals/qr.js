@@ -30,7 +30,11 @@ register('qr.figure', (s, box) => {
 });
 
 /* ---------------- qr.partwhole ---------------- */
+// Styles beyond the pilot's grid and strip register here (qr-work.js adds
+// groups, bars and fractions), the way chem.js takes curve kinds.
+export const PARTWHOLE_STYLES = {};
 register('qr.partwhole', (s, box) => {
+  if (s.style && PARTWHOLE_STYLES[s.style]) return PARTWHOLE_STYLES[s.style](s, box);
   if (s.style === 'strip') return partStrip(s, box);
   const W = width(box), cols = 10, rows = Math.ceil(s.total / cols);
   const cell = Math.min(24, Math.floor((Math.min(W, 420) - 32) / cols) - 2), gap = 2;

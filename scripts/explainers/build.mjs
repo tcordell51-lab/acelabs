@@ -80,6 +80,7 @@ const { CATALOG } = await import(pathToFileURL(path.join(ROOT, 'tools/explain/vi
 const COMPUTE = await import(pathToFileURL(path.join(ROOT, 'tools/explain/visuals/compute.js')).href);
 const BIOC = await import(pathToFileURL(path.join(ROOT, 'tools/explain/visuals/compute-bio.js')).href);
 const GCC = await import(pathToFileURL(path.join(ROOT, 'tools/explain/visuals/compute-gc.js')).href);
+const QRC = await import(pathToFileURL(path.join(ROOT, 'tools/explain/visuals/compute-qr.js')).href);
 
 /* ------------------------------------------------------------------ helpers */
 const rd = (rel) => fs.readFileSync(path.join(ROOT, rel), 'utf8');
@@ -418,6 +419,12 @@ function recompute(R, p, facts) {
   if (p.verify || ['chem.ledger', 'chem.gas', 'chem.cell', 'chem.orbital'].includes(p.type) || (p.type === 'chem.curve' && p.kind !== 'titration') || (p.type === 'chem.energy' && p.kind === 'levels') || (p.type === 'chem.lewis' && p.domains)) {
     const r = GCC.checkPanel(p, keyText, served.choices); issues.push(...r.issues); checks.push(...r.checks);
   }
+  // the QR pictures (batch B005 on): the check block (the key and the route behind every trap note,
+  // inputs found in the stem), every block the picture draws, and the arithmetic in the explainer's words
+  if (['qr.work', 'qr.geometry'].includes(p.type) || (p.type === 'qr.partwhole' && QRC.PARTWHOLE_STYLES.includes(p.style))) {
+    const r = QRC.checkPanel(p, keyText, served.choices, { stem: served.stem, texts: [e.answer.line, ...e.steps, ...e.choices.map((c) => c.note), e.lockIt, e.hook] });
+    issues.push(...r.issues); checks.push(...r.checks);
+  }
   if (p.type === 'chem.trend') {
     const vals = p.series.map((sym) => { const el = TRENDS.elements.find((x) => x.symbol === sym); if (!el || el[p.property] == null) { issues.push('trend: no ' + p.property + ' for ' + sym + ' in trends-data.json'); return { sym, v: null, z: null }; } return { sym, v: el[p.property], z: el.z }; });
     facts.values = vals;
@@ -448,7 +455,9 @@ function recompute(R, p, facts) {
     if (!fig) { issues.push('qr.figure: the served question has no figure'); return; }
     (p.highlight || []).forEach((h) => { if (!(fig.categories || []).includes(h)) issues.push('qr.figure highlight not a category: ' + h); });
   }
-  if (p.type === 'qr.partwhole') {
+  if (p.type === 'qr.partwhole' && !QRC.PARTWHOLE_STYLES.includes(p.style)) {
+    const miss = ['total', 'parts', 'rest'].filter((f) => p[f] == null);
+    if (miss.length) { issues.push('qr.partwhole ' + (p.style || 'grid') + ' needs ' + miss.join(', ')); return; }
     const part = p.parts.reduce((a, b) => a + b.n, 0);
     if (part + p.rest.n !== p.total) issues.push('partwhole parts and rest do not add to the total');
     const fig = served.extra && served.extra.figure;

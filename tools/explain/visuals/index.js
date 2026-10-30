@@ -13,6 +13,7 @@ import { drawChoiceStructure } from './chem.js';
 import './chem-oc.js';
 import './chem-gc.js';
 import { highlightBars } from './qr.js';
+import './qr-work.js';
 import { patQuestion } from './pat.js';
 import './rc.js';
 import { CATALOG, BUILT_TYPES } from './catalog.js';

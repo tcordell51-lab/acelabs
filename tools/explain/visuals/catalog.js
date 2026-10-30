@@ -27,10 +27,12 @@ export const CATALOG = {
   'chem.cell': { module: 'chem-gc', built: true, required: ['view'], variants: { view: ['concentration', 'e-to-k'] } },
   'chem.orbital': { module: 'chem-gc', built: true, required: ['config'] },
   'qr.figure': { module: 'qr', built: true, required: ['highlight'] },
-  'qr.partwhole': { module: 'qr', built: true, required: ['total', 'parts', 'rest'] },
+  'qr.partwhole': { module: 'qr', built: true, required: [], variants: { style: ['grid', 'strip', 'groups', 'bars', 'fractions'] } },   // grid and strip need total, parts, rest (the build checks); groups, bars, fractions in qr-work.js
   'qr.triangle': { module: 'qr', built: true, required: ['a', 'b', 'angleDeg'] },
   'qr.tree': { module: 'qr', built: true, required: ['root', 'branches', 'result'] },
   'qr.numberline': { module: 'qr', built: true, required: ['min', 'max', 'step'] },
+  'qr.work': { module: 'qr-work', built: true, required: ['check'] },   // blocks: lines, numberline, parabolas, columns, tree, chips, rows
+  'qr.geometry': { module: 'qr-work', built: true, required: ['shape', 'check'], variants: { shape: ['sphere'] } },
   'pat.angles': { module: 'pat', built: true, required: ['item'] },
   'pat.unfold': { module: 'pat', built: true, required: ['item'] },
   'pat.cubes': { module: 'pat', built: true, required: ['item'] },
@@ -40,10 +42,8 @@ export const CATALOG = {
   // planned (production-plan.md, section 4): no renderer yet
   'bio.pedigree': { module: 'bio', built: false },
   'chem.lab': { module: 'chem', built: false },
-  'qr.work': { module: 'qr', built: false },
   'qr.dataset': { module: 'qr', built: false },
   'qr.plane': { module: 'qr', built: false },
-  'qr.geometry': { module: 'qr', built: false },
   'qr.venn': { module: 'qr', built: false },
   'pat.keyhole': { module: 'pat', built: false },
   'pat.tfe': { module: 'pat', built: false },
