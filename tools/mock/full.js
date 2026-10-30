@@ -340,7 +340,7 @@
     if (!cs.length) return;
     if (R.smi === null) {
       try {
-        R.smi = typeof window.SmiDrawer === 'function' ? new window.SmiDrawer({ width: 300, height: 140, padding: 6, bondThickness: 1.2, bondLength: 18, shortBondLength: 0.85, compactDrawing: true, fontSizeLarge: 11, fontSizeSmall: 8, themes: { light: { C: '#1a1d20', O: '#cf3b3b', N: '#3a78c4', Cl: '#2e8a3e', Br: '#8a4a2a', F: '#3aa83a', I: '#7a3a8a', S: '#a08a1a', P: '#c06a1a', H: '#1a1d20', BACKGROUND: '#fff' } } }) : false;
+        R.smi = typeof window.SmiDrawer === 'function' ? new window.SmiDrawer({ width: 300, height: 140, padding: 6, bondThickness: 1.2, bondLength: 18, shortBondLength: 0.85, compactDrawing: true, explicitHydrogens: false, fontSizeLarge: 11, fontSizeSmall: 8, themes: { light: { C: '#1a1d20', O: '#cf3b3b', N: '#3a78c4', Cl: '#2e8a3e', Br: '#8a4a2a', F: '#3aa83a', I: '#7a3a8a', S: '#a08a1a', P: '#c06a1a', H: '#1a1d20', BACKGROUND: '#fff' } } }) : false;
       } catch (e) { R.smi = false; }
     }
     Array.prototype.forEach.call(cs, function (c) {
