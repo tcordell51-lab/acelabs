@@ -110,8 +110,12 @@ export const BENCH_PAIRS = [
   P('#16120A', '--b-gold'), P('--al-ink', '--b-gold-hi'),
   ...['bio', 'gchem', 'ochem', 'pat', 'rc', 'qr'].map((s) => P(`--al-sec-${s}-lite`, '--b-bg')),
 ];
+// the exam layer: tokens plus the fixed colors of the test-day screen (spec 2.3; mock/assets/exam.css):
+// tool text #4a5158 and the tool link #2b5f7a on the tool row, and the two choice tags after Check
 export const EXAM_PAIRS = [
   P('#ffffff', '--al-exam'), P('#ffffff', '--al-exam-d'), P('--al-exam-ink', '#ffffff'), P('--al-exam-ink', '--al-exam-bg'), P('--al-exam-ink', '--al-exam-tool'),
+  P('#4a5158', '--al-exam-tool'), P('#2b5f7a', '--al-exam-tool'), P('#4a5158', '#ffffff'),
+  P('#005c43', '#dff3ea'), P('#8a3d00', '#fbe6d7'),
 ];
 
 export function check(cssText) {

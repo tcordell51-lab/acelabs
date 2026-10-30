@@ -125,8 +125,8 @@
     'A portal note is quoted verbatim and signed ({ kind: "coach", text, sign }), never paraphrased and never merged into a line.',
     'No line presents itself as written by Thomas that morning: no first person, no "this morning", no "I wrote".',
     'A re-plan says what changed and why in one sentence, with the source "Changed just now, from your call."',
-    'No loss framing ("cost you", "fall behind", "running out"), no countdowns ("N days left"), no streaks, points or scores as grades.',
-    'Plain ASCII, no em or en dashes, no exclamation marks, no emoji; never wrong, incorrect or failed.'
+    'No loss framing ("cost you", "fall behind", "running out"), no countdowns ("N days left"), no streaks, points or scores as grades.',  // copy-gate-ok: a rule for line authors, not student copy
+    'Plain ASCII, no em or en dashes, no exclamation marks, no emoji; never wrong, incorrect or failed.'  // copy-gate-ok: a rule for line authors, not student copy
   ];
 
   /* ---------- the copy rules every line (and every fallback) must pass ---------- */

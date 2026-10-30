@@ -78,8 +78,8 @@
     [/[^\x09\x0a\x0d\x20-\x7e]/, 'non-ASCII character'],
     [/\b(wrong|incorrect|failed)\b/i, 'a verdict word other than Confirmed / Needs review'],
     [/\bstreaks?\b/i, 'streak'], [/\b(\d+|earn(ed)?|bonus|your|total)\s+points\b/i, 'points'], [/\bXP\b/, 'XP'],
-    [/\bleaderboards?\b/i, 'leaderboard'], [/\bbest scores?\b/i, 'best score'], [/\bbadges?\b/i, 'badge'],
-    [/\bdays? (left|to go)\b/i, 'countdown'], [/\bconfiden(ce|t)\s+(rating|level|scale)\b/i, 'confidence rating']
+    [/\bleaderboards?\b/i, 'leaderboard'], [/\bbest scores?\b/i, 'best score'], [/\bbadges?\b/i, 'badge'],  // copy-gate-ok: rule labels for validators, not student copy
+    [/\bdays? (left|to go)\b/i, 'countdown'], [/\bconfiden(ce|t)\s+(rating|level|scale)\b/i, 'confidence rating']  // copy-gate-ok: rule labels for validators, not student copy
   ];
   function copyProblems(s) {
     var out = [];
