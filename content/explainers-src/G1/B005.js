@@ -33,6 +33,10 @@
 // CHANGES (each coach record lists its own). The abs1739 label collision was a
 // renderer fix (levels() in qr-work.js), and the render gate now tests dashed
 // leader lines of any width against tags, backing rect included.
+//
+// Re-review (needs-work, 18 of 19 pass, no key disputes): the one blocked item
+// (fra1028, the 8/12 note) and the four optional notes (fam5, pem1303,
+// exp1720, abs1739) are fixed here, each listed in CHANGES.
 'use strict';
 
 const FM = 'tools/mock/data/full-mocks.js';
@@ -164,7 +168,7 @@ const ENTRIES = [
       { text: '-6 or 6', role: 'trap', family: 'half-right', trap: 'Measured from 0', note: '6 is real. -6 comes from putting the plus-or-minus on x itself, as if the distance ran from 0. It runs from the setting, 10.' },
       { text: '14', role: 'trap', family: 'one-step-short', trap: 'Only the warm side', note: '14 is 4 degrees above the setting. The room could just as well be 4 degrees below it, at 6.' },
       { text: '4 or -4', role: 'trap', family: 'other-question', trap: 'The gaps, not temperatures', note: '4 and -4 are the gaps x - 10, how far the room sits above or below 10. The stem asks for the temperatures, x itself.' },
-      { text: '6 or -14', role: 'trap', family: 'sign-slip', trap: 'Setting and gap swapped', note: 'This solves |x + 4| = 10: the 10 and the 4 swapped, and the sign on the center lost. 6 survives by luck; -14 is 24 degrees from the setting.' }
+      { text: '6 or -14', role: 'trap', family: 'sign-slip', trap: 'Swapped numbers, lost a sign', note: 'This solves |x + 4| = 10: the 10 and the 4 swapped, and the sign on the center lost. 6 survives by luck; -14 is 24 degrees from the setting.' }
     ],
     lockIt: 'Exactly d away from c means two answers: c + d and c - d.',
     hook: null,
@@ -267,7 +271,7 @@ const ENTRIES = [
     choices: [
       { text: '7/6', role: 'trap', family: 'miscount', trap: 'Renamed 1/2 as 2/6', note: 'Renaming 1/2 as 2/6 takes back too little: 9/6 - 2/6 = 7/6. Half of six sixths is 3/6.' },
       { text: '2', role: 'trap', family: 'other-question', trap: 'Miles driven', note: '2 is every mile the driver covered, 4/6 + 5/6 + 3/6. True, but the stem asks how far from the start, so the half mile back comes off.' },
-      { text: '5/6', role: 'trap', family: 'miscount', trap: 'Renamed 1/2 as 4/6', note: 'Renaming 1/2 as 4/6 takes back too much: 9/6 - 4/6 = 5/6. Half a mile is 3/6, not 4/6.' },
+      { text: '5/6', role: 'trap', family: 'other-question', trap: 'Second leg alone', note: '5/6 is just the second leg from the stem. The driver went out 9/6 and came back 3/6, so 6/6 from the start.' },
       { text: '3/4', role: 'trap', family: 'operation-flip', trap: 'Halved instead', note: 'Reading doubles back 1/2 as halve the distance gives 3/2 x 1/2 = 3/4. Doubling back is a half-mile trip, so subtract it.' },
       { text: '1', role: 'key', note: 'Out 9/6, back 3/6: 6/6 from the start.' }
     ],
@@ -284,7 +288,7 @@ const ENTRIES = [
         jumps: [{ from: 0, by: '4/6', label: '+ 4/6' }, { from: '4/6', by: '5/6', label: '+ 5/6' }, { from: '9/6', by: '-3/6', label: 'back 3/6', key: true, choice: '1' }],
         points: [{ x: 1, key: true, label: '1 mile from the start', choice: '1' }, { x: 2, trap: true, label: '2: miles driven', choice: '2' }]
       },
-      check: { vars: { a: '2/3', b: '5/6', c: '1/2' }, key: 'a + b - c', routes: [{ choice: '7/6', expr: '4/6 + 5/6 - 2/6' }, { choice: '2', expr: 'a + b + c' }, { choice: '5/6', expr: '4/6 + 5/6 - 4/6' }, { choice: '3/4', expr: '(a + b)*c' }] },
+      check: { vars: { a: '2/3', b: '5/6', c: '1/2' }, key: 'a + b - c', routes: [{ choice: '7/6', expr: '4/6 + 5/6 - 2/6' }, { choice: '2', expr: 'a + b + c' }, { choice: '5/6', expr: 'b' }, { choice: '3/4', expr: '(a + b)*c' }] },
       reuse: 'new: qr.work block numberline (tools/explain/visuals/qr-work.js); the build checks every arc lands where it is drawn and recomputes every trap route in sixths',
       alt: 'A number line in sixths from the start to 2 miles. Arcs go forward 4/6 and then 5/6 to 3/2, and a third arc comes back 3/6 to land on 1, outlined as the answer. An orange marker at 2 shows the total miles driven.',
       caption: 'Follow the arcs, not the odometer. Out to 3/2 and back to 1: the last arc decides where the driver stands.'
@@ -293,7 +297,7 @@ const ENTRIES = [
     flags: [
       { kind: 'stem-style', text: 'The stem assumes the route runs in a straight line; legs that turn would change the distance from the start. Suggested wording for Thomas to review (not applied): "How many miles along the route is the driver from the start?" Key unchanged.' },
       { kind: 'bank-copy', text: 'The bank trap note on 3/4 ("You drifted into fourths") names no route. The note here names the one that lands on 3/4: reading "doubles back 1/2" as halving, 3/2 x 1/2.' },
-      { kind: 'note', text: 'The bank stores 7/6 and 5/6 as the two renaming slips (1/2 as 2/6 and as 4/6); the notes follow the bank. 5/6 is also the second leg on its own, a number from the stem.' }
+      { kind: 'note', text: 'The bank stores 7/6 and 5/6 as the two renaming slips (1/2 as 2/6 and as 4/6). The 7/6 note follows the bank. The 5/6 note names the stronger pull, the second leg as printed in the stem; renaming 1/2 as 4/6, or 2/3 as 3/6, lands there too.' }
     ]
   },
   {
@@ -356,7 +360,7 @@ const ENTRIES = [
     choices: [
       { text: '11/7', role: 'trap', family: 'miscount', trap: 'Rounded 4/5 up to 1', note: '11/7 is 1 + 4/7, as if the second hour moved a whole tank. It moved 4/5 of one, which is 28/35.' },
       { text: '16/35', role: 'trap', family: 'operation-flip', trap: 'Multiplied instead', note: '4/7 x 4/5 = 16/35 multiplies the hours. Two hours of pumping add, and a product of two fractions under 1 is smaller than either.' },
-      { text: '8/12', role: 'trap', family: 'half-right', trap: 'Added tops and bottoms', note: 'Adding the tops is fine; adding the bottoms is not. 8/12 is 2/3, less than the second hour alone.' },
+      { text: '8/12', role: 'trap', family: 'half-right', trap: 'Added tops and bottoms', note: 'Tops add only once the bottoms match, and the bottom then stays put. 8/12 is 2/3, less than the second hour alone.' },
       { text: '8/35', role: 'trap', family: 'one-step-short', trap: 'Never renamed the tops', note: '35 is the right denominator, but the tops never changed. 4/7 becomes 20/35 and 4/5 becomes 28/35, not 4/35 each.' },
       { text: '48/35', role: 'key', note: '20/35 + 28/35: one tank and 13/35 more.' }
     ],
@@ -498,7 +502,7 @@ const ENTRIES = [
       { text: '36', role: 'trap', family: 'operation-flip', trap: 'Squared as times 2', note: 'Reading 3^2 as 3 x 2 = 6 gives 6 + 30 = 36. Squaring multiplies 3 by itself: 9.' },
       { text: '39', role: 'key', note: 'Nine plus thirty.' },
       { text: '45', role: 'trap', family: 'reversed', trap: 'Added before multiplying', note: '(3 + 6) x 5 = 45 adds before it multiplies, and drops the square too. Multiplication comes before addition wherever it sits in the line.' },
-      { text: '90', role: 'trap', family: 'miscount', trap: 'Multiplied everything', note: '3 x 6 x 5 = 90 treats every sign as a multiply and skips the square. No single rule leads here.' }
+      { text: '90', role: 'trap', family: 'miscount', trap: 'Multiplied everything', note: '3 x 6 x 5 = 90 takes two slips at once: the plus read as a times, and the square dropped.' }
     ],
     lockIt: 'Exponents, then multiplication and division, then addition and subtraction. Split at the plus signs first.',
     hook: null,
@@ -518,7 +522,7 @@ const ENTRIES = [
     },
     demoPick: '36',
     flags: [
-      { kind: 'note', text: 'Concept-first rule: 45 needs two slips (left to right, and the square dropped) and 90 follows no single rule. The one-slip left-to-right value, (9 + 6) x 5 = 75, is not offered and would test order of operations more cleanly. Key unchanged.' }
+      { kind: 'note', text: 'Concept-first rule: 45 needs two slips (left to right, and the square dropped), and so does 90 (the plus read as a times, and the square dropped). The one-slip left-to-right value, (9 + 6) x 5 = 75, is not offered and would test order of operations more cleanly. Key unchanged.' }
     ]
   },
 
@@ -826,7 +830,7 @@ const ENTRIES = [
       'Evaluate: 5^6 = 15625, and one more 5 gives 5 x 15625 = 78125.'
     ],
     choices: [
-      { text: '0', role: 'trap', family: 'miscount', trap: 'No route here', note: 'No rule gives 0. Multiplying positive numbers can never make 0.' },
+      { text: '0', role: 'trap', family: 'miscount', trap: 'A product cannot be 0', note: 'No rule gives 0. Multiplying positive numbers can never make 0.' },
       { text: '15625', role: 'trap', family: 'operation-flip', trap: 'Multiplied the exponents', note: '1 x 6 = 6 multiplies the exponents and lands on 5^6. Multiplying powers of one base adds the exponents: 1 + 6 = 7.' },
       { text: '15630', role: 'trap', family: 'operation-flip', trap: 'Added the values', note: '5 + 15625 = 15630 adds the two powers. The stem multiplies them: 5 x 15625 = 78125.' },
       { text: '78125', role: 'key', note: 'Seven 5s multiplied.' },
@@ -961,10 +965,16 @@ const CHANGES = {
   'fm:qr-a:lin1255': ['The first dashed exit names the slip behind -6: x moved across without changing its sign, -3x + x, giving -2x - 2 = 10 (it said adding x, which done to both sides gives -2x - 2 = 2x + 10); the alt says the same'],
   'fm:qr-a:pct1184': ['Caption: the hatched cut is 25 percent of 137.50, not of 125, so it is bigger, and that pulls the bill below the dashed 106.25 (it called the second bar longer, though both bars are 137.50, and its reason only explained ending below 125)', 'Desktop layout: the "25 percent off: 34.38" label hangs below the bar, as on the phone, instead of inside the hatched piece 2 px from the dashed 106.25 line (bars renderer in qr-work.js: a label inside its piece keeps clear of a ghost line)'],
   'fm:qr-a:dis1600': ['The "no real roots" label reads "Kept the minus" (it read "Squared the minus away", which is the right move, not the slip); family and note unchanged'],
-  'fm:qr-a:abs1739': ['Phone layout: the "setting: 10" tag drops a level and sits centered under 10, so the dotted leader from x = 14 no longer runs through it. Renderer fix in levels() (tools/explain/visuals/qr-work.js): a label first keeps off every other mark in its row; the render gate now tests dashed leaders of any width, a tag\'s backing rect included'],
+  'fm:qr-a:abs1739': ['Phone layout: the "setting: 10" tag drops a level and sits centered under 10, so the dotted leader from x = 14 no longer runs through it. Renderer fix in levels() (tools/explain/visuals/qr-work.js): a label first keeps off every other mark in its row; the render gate now tests dashed leaders of any width, a tag\'s backing rect included', 'Re-review, optional note taken: the 6 or -14 label reads "Swapped numbers, lost a sign", naming both slips, so it matches the sign-slip family (it read "Setting and gap swapped"); note unchanged'],
   'fm:qr-a:neg1332': ['Phone layout only (the same levels() fix): both test-point tags now sit on one level, each beside its own point'],
   'fm:qr-a:dis1285': ['Optional note taken: the 16 note says it subtracts the 4 clinics as if they were crates, and its label reads "Clinics taken as crates" (the family is other-unit)'],
-  'fm:qr-a:fam5': ['Optional note taken: the alt calls the mark at 2 an orange marker, as drawn (it said dashed)'],
+  'fm:qr-a:fam5': [
+    'Optional note taken: the alt calls the mark at 2 an orange marker, as drawn (it said dashed)',
+    'Re-review, optional note taken: 5/6 is labeled "Second leg alone", family other-question, and its note says it is the second leg from the stem; the driver went out 9/6 and came back 3/6 (it named renaming 1/2 as 4/6, a weaker pull); the trap route is the second leg, b'
+  ],
+  'fm:qr-a:fra1028': ['Re-review, blocked item: the 8/12 note opens "Tops add only once the bottoms match, and the bottom then stays put." (it said adding the tops is fine, which is untrue over unlike bottoms and contradicted the 8/35 note; 8/12 is the preview pick, so this is the first line a phone reader sees). Family half-right and label unchanged'],
+  'fm:qr-a:pem1303': ['Re-review, optional note taken: the 90 note says it takes two slips at once, the plus read as a times and the square dropped (it named that route and then said no single rule leads there); the concept-first flag says the same'],
+  'fm:qr-a:exp1720': ['Re-review, optional note taken: the 0 label reads "A product cannot be 0" (it read "No route here", which names no pull); family and note unchanged'],
   'fm:generated:qr-sci-notation-product#b96vmp': ['Optional note taken: step 3, the 3.5 x 10^-1 note, the last move tag and the caption say "ten times smaller" or "divided by 10" (not "shrinks by 10" or "down by 10", which read as minus 10)'],
   'fm:qr-a:pct1127': ['Optional note taken: caption "three and a half of the ten, 35 percent" (not "three tenths and a half", which can read as 3/10 + 1/2)']
 };
