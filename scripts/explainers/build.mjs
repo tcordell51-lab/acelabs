@@ -74,6 +74,7 @@ const { FAMILIES } = require('./families.js');
 const { copyIssues, words } = await import('./copy-rules.mjs');
 const { CATALOG } = await import(pathToFileURL(path.join(ROOT, 'tools/explain/visuals/catalog.js')).href);
 const COMPUTE = await import(pathToFileURL(path.join(ROOT, 'tools/explain/visuals/compute.js')).href);
+const BIOC = await import(pathToFileURL(path.join(ROOT, 'tools/explain/visuals/compute-bio.js')).href);
 
 /* ------------------------------------------------------------------ helpers */
 const rd = (rel) => fs.readFileSync(path.join(ROOT, rel), 'utf8');
@@ -537,6 +538,52 @@ function recompute(R, p, facts) {
   if (p.type === 'bio.hardy-weinberg') {
     const q = Math.sqrt(p.q2);
     if (p.focus === 'q' && /^\d*\.\d+$/.test(keyText)) { if (Math.abs(q - +keyText) > 1e-9) issues.push('the square root of q squared ' + p.q2 + ' is ' + q + ', the key is ' + keyText); else checks.push('Hardy-Weinberg recomputed: q = root ' + p.q2 + ' = ' + keyText); }
+  }
+  if (p.type === 'bio.punnett') {
+    let P;
+    try { P = BIOC.punnettCross(p.cross); } catch (err) { issues.push('punnett: ' + err.message); return; }
+    if (P.mode === 'xlinked') {
+      const claim = p.claim || {};
+      const all = (sex, st) => { const k = P.cells.flat().filter((c) => c.sex === sex); return k.length > 0 && k.every((c) => c.status === st); };
+      if (!claim.sons || !claim.daughters) issues.push('x-linked Punnett needs claim {sons, daughters}');
+      else if (!all('son', claim.sons) || !all('daughter', claim.daughters)) issues.push('Punnett square does not give every son ' + claim.sons + ' and every daughter ' + claim.daughters + ': ' + JSON.stringify(P.cells.flat()));
+      else if (!new RegExp('sons ' + claim.sons, 'i').test(keyText) || !new RegExp('daughters ' + claim.daughters, 'i').test(keyText)) issues.push('the Punnett claim (sons ' + claim.sons + ', daughters ' + claim.daughters + ') is not what the key says: ' + keyText);
+      else checks.push('Punnett recomputed: ' + p.cross.p1 + ' x ' + p.cross.p2 + ' gives ' + P.cells.flat().map((c) => c.geno + ' ' + c.status + ' ' + c.sex).join(', ') + '; matches the key');
+    }
+    if (P.mode === 'testcross') {
+      if (/%$/.test(keyText) && P.recombinantPct + '%' !== keyText) issues.push('testcross recombinants add to ' + P.recombinantPct + '%, the key is ' + keyText);
+      else checks.push('testcross recomputed from ' + p.cross.mapDistance + ' map units: recombinant classes ' + P.rows.filter((r) => r.kind === 'recombinant').map((r) => r.pct).join(' + ') + ' = ' + P.recombinantPct + '%, parental ' + P.parentalPct + '%');
+    }
+  }
+  if (p.type === 'bio.diagram' && p.diagram === 'codon') {
+    try {
+      const a = BIOC.translateCodon(p.codon.from), b = BIOC.translateCodon(p.codon.to);
+      const diff = [...p.codon.from].filter((x, i) => x !== p.codon.to[i]).length;
+      const key = (p.outcomes || []).filter((o) => o.key);
+      if (diff !== 1) issues.push('codon picture changes ' + diff + ' bases; a point mutation changes one');
+      if (key.length !== 1 || key[0].name !== keyText) issues.push('codon outcomes: exactly one key row, named as the key (' + keyText + ')');
+      const outcome = a === b ? 'Silent' : b === 'Stop' ? 'Nonsense' : 'Missense';
+      if (key.length === 1 && key[0].name !== outcome) issues.push('the genetic code makes ' + p.codon.from + ' to ' + p.codon.to + ' a ' + outcome + ' change, the key row says ' + key[0].name);
+      else checks.push('genetic code: ' + p.codon.from + ' (' + a + ') to ' + p.codon.to + ' (' + b + ') is ' + outcome.toLowerCase() + '; synonyms ' + BIOC.synonymsOf(p.codon.from).join(' '));
+    } catch (err) { issues.push('codon: ' + err.message); }
+  }
+  if (p.type === 'bio.diagram' && p.ledger) {
+    const L = BIOC.ledger(p.ledger);
+    if (/^\d+(\.\d+)?$/.test(keyText) && L.total !== +keyText) issues.push('ledger totals ' + L.total + ', the key is ' + keyText);
+    else checks.push('ledger recomputed: ' + L.items.map((it, i) => it.n + ' ' + p.ledger[i].carrier + ' x ' + it.rate + ' = ' + it.value).join(', ') + ', total ' + L.total);
+    const said = [...e.steps.join(' ').matchAll(/(\d+) x (\d+(?:\.\d+)?) = (\d+(?:\.\d+)?)/g)];
+    said.forEach((m) => { if (Math.abs(+m[1] * +m[2] - +m[3]) > 1e-9) issues.push('step arithmetic ' + m[0] + ' does not hold'); });
+  }
+  if (p.type === 'bio.diagram' && p.diagram === 'nephron-budget') {
+    const b = BIOC.budget(p.segments), key = p.segments.filter((g) => g.key);
+    if (b.rest < 0) issues.push('nephron budget shares add to ' + b.used + ', over 100');
+    if (key.length !== 1 || !new RegExp('^~?' + key[0].share + '%$').test(keyText)) issues.push('nephron budget key segment share differs from the key ' + keyText);
+    else checks.push('sodium budget: ' + p.segments.map((g) => g.label + ' ' + g.share).join(', ') + ', rest ' + b.rest + '; key segment ' + key[0].label + ' = ' + keyText);
+  }
+  if (p.type === 'bio.diagram' && p.diagram === 'ap-trace') {
+    const counts = (p.traces || []).filter((tr) => tr.kind === 'train').map((tr) => tr.count);
+    if (counts.length > 1 && !(p.traces.filter((tr) => tr.kind === 'train').every((tr, i, a) => i === 0 || (tr.strength > a[i - 1].strength) === (tr.count > a[i - 1].count)))) issues.push('spike trains: a stronger stimulus must fire more often');
+    if ((p.traces || []).filter((tr) => tr.key).length !== 1) issues.push('ap-trace: exactly one trace is the key');
   }
   if (p.type === 'bio.osmolarity') {
     const osm = Math.round(p.solute.molarity * p.solute.ions.length * 1000);

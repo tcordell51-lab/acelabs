@@ -7,10 +7,11 @@
 // a record that needs it waits, and the build names the gap.
 
 export const CATALOG = {
+  'bio.punnett': { module: 'bio', built: true, required: ['cross'], variants: { mode: ['xlinked', 'testcross'] } },
   'bio.hardy-weinberg': { module: 'bio', built: true, required: ['q2'] },
   'bio.osmolarity': { module: 'bio', built: true, required: ['solute', 'inside', 'units'] },
   'bio.real': { module: 'bio', built: true, required: ['view', 'params'], trueToLife: true },
-  'bio.diagram': { module: 'bio', built: true, required: ['diagram', 'labels', 'focus'], variants: { diagram: ['mitochondrion'] } },
+  'bio.diagram': { module: 'bio', built: true, required: ['diagram', 'labels', 'focus'], variants: { diagram: ['mitochondrion', 'codon', 'step-ladder', 'compare-table', 'acid-base', 'gland-density', 'gastric-gland', 'nephron-budget', 'glomerulus', 'etc-chain', 'ap-trace', 'collecting-duct'] } },
   'chem.molecule': { module: 'chem', built: true, required: ['smi'] },
   'chem.reaction': { module: 'chem', built: true, required: ['reactants', 'reagent', 'products'] },
   'chem.mechanism': { module: 'chem', built: true, required: ['ref'] },
@@ -30,7 +31,6 @@ export const CATALOG = {
   stack: { module: 'core', built: true, required: ['panels'] },
 
   // planned (production-plan.md, section 4): no renderer yet
-  'bio.punnett': { module: 'bio', built: false },
   'bio.pedigree': { module: 'bio', built: false },
   'bio.tree': { module: 'bio', built: false },
   'bio.chart': { module: 'bio', built: false },

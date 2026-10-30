@@ -1,6 +1,7 @@
 // bio.js: bio.hardy-weinberg (pure port of the Genetics hub visualizer state),
 // bio.osmolarity (new tally), bio.real (BioReal true-to-life views, reused),
-// bio.diagram (new schematic library; mitochondrion for the pilot).
+// bio.diagram (new schematic library; mitochondrion for the pilot, more
+// drawings added by bio-schematics.js through the exported DIAGRAMS map).
 // Ported from the pilot preview (question-system/preview/renderers/bio.js).
 import { register, C, t, r1, svgOpen, width, badge, arrowDefs, uid, h, wrap } from './core.js';
 
@@ -91,7 +92,7 @@ register('bio.real', (s, box) => {
 });
 
 /* ---------------- bio.diagram ---------------- */
-const DIAGRAMS = {
+export const DIAGRAMS = {
   mitochondrion(s, W) {
     const narrow = W < 560;
     const Wd = narrow ? Math.max(W, 330) : W;
@@ -149,11 +150,15 @@ const DIAGRAMS = {
   }
 };
 register('bio.diagram', (s, box) => {
-  const W = width(box), d = DIAGRAMS[s.diagram](s, W);
+  const fn = DIAGRAMS[s.diagram];
+  if (!fn) throw new Error('no bio.diagram drawing named ' + s.diagram);
+  const W = width(box), d = fn(s, W);
   box.innerHTML = svgOpen(d.W, d.H) + d.svg + '</svg>';
-  const ul = h('ol', { class: 'vis-legend' });
-  d.legend.forEach((m) => ul.append(h('li', { class: m.key ? 'is-key' : '' }, h('span', { class: 'n', text: String(m.n) }), h('span', { text: m.label + (m.key ? '  (answer)' : '') }))));
-  box.append(ul);
+  if (d.legend && d.legend.length) {
+    const ul = h('ol', { class: 'vis-legend' });
+    d.legend.forEach((m) => ul.append(h('li', { class: m.key ? 'is-key' : '' }, h('span', { class: 'n', text: String(m.n) }), h('span', { text: m.label + (m.key ? '  (answer)' : '') }))));
+    box.append(ul);
+  }
   if (d.extraLegend) {
     const ex = h('div', { class: 'vis-swatches' });
     d.extraLegend.forEach((x) => ex.append(h('span', {}, h('i', { style: 'background:' + x.sw }), x.label)));

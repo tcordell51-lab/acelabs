@@ -4,6 +4,8 @@
 // tools/bio/bio-real.js, the PAT engine and tools/explain/vendor/gc/lewis-layout.js).
 import { render, has, types, resolvePanel, DRAWN } from './core.js';
 import './bio.js';
+import './bio-schematics.js';
+import './bio-punnett.js';
 import { drawChoiceStructure } from './chem.js';
 import { highlightBars } from './qr.js';
 import { patQuestion } from './pat.js';
