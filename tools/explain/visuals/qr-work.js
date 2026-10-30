@@ -87,7 +87,10 @@ const supPad = (str) => (parts(str).some((p) => p.sup) ? 5 : 0);
 const hr = (tag0, attrs, str) => { const n = h(tag0, attrs); n.append(rich(str)); return n; };
 const num = (v) => (typeof v === 'number' ? v : evalExpr(String(v)));
 // labels on a row without collisions: greedy levels, and a label never sits
-// across the leader line of a label on a lower level
+// across the leader line of a label on a lower level. A label also keeps off the
+// mark of every other item in the row, placed yet or not: an item placed later
+// can drop to a lower level, and its leader would then run down through this
+// label (B005 review, abs1739: the x = 14 leader through "setting: 10")
 function levels(items, size, gap = 8) {
   const placed = [];
   const clamp = (it, w, x0) => { if (it.minX != null) x0 = Math.max(it.minX, x0); if (it.maxX != null) x0 = Math.min(it.maxX - w, x0); return x0; };
@@ -97,10 +100,13 @@ function levels(items, size, gap = 8) {
     const opts = [it.x - w / 2, it.x + 10 - w, it.x - 10].map((x0) => clamp(it, w, x0));
     const overlap = (l, x0) => placed.some((p) => p.lv === l && !(x0 > p.x1 + gap || x0 + w < p.x0 - gap));
     const leaders = (l, x0) => placed.some((p) => (p.lv < l && it.x > p.x0 - 3 && it.x < p.x1 + 3) || (p.lv > l && p.it.x > x0 - 3 && p.it.x < x0 + w + 3));
-    // first choice: the lowest level where nothing overlaps and no leader line crosses a label;
-    // if there is none, the lowest level with no overlap (always found)
+    const marks = (x0) => items.some((o) => o !== it && o.x > x0 - 3 && o.x < x0 + w + 3);
+    // first choice: the lowest level where nothing overlaps, no leader line crosses a label and
+    // the label covers no other item's mark; then the same without the mark rule (marks packed
+    // too close for any span to miss them all lay out as before); if there is none, the lowest
+    // level with no overlap (always found)
     let lv = -1, x0 = opts[0];
-    for (let l = 0; l < 8 && lv < 0; l++) for (const o of opts) if (lv < 0 && !overlap(l, o) && !leaders(l, o)) { lv = l; x0 = o; }
+    for (const strict of [true, false]) for (let l = 0; l < 8 && lv < 0; l++) for (const o of opts) if (lv < 0 && !overlap(l, o) && !leaders(l, o) && !(strict && marks(o))) { lv = l; x0 = o; }
     if (lv < 0) { lv = 0; x0 = opts[0]; while (overlap(lv, x0)) lv++; }
     placed.push({ it, lv, x0, x1: x0 + w, w });
   });
@@ -502,7 +508,12 @@ PARTWHOLE_STYLES.bars = (s, box) => {
       }
       if (pc.label) {
         const tw = measure(pc.label, size, pc.kind === 'key');
-        if (tw + 10 < w && !pc.cells) g += rt(xa + w / 2, by + barH / 2 + 4.5, pc.label, { size, weight: pc.kind === 'key' ? 700 : 400, anchor: 'middle', fill: k.ink });
+        // a label inside its piece keeps clear of a ghost line through it: centered on the wider
+        // side of the line when it fits there, else below with the others
+        let cx = xa + w / 2, inside = tw + 10 < w && !pc.cells;
+        const cut = inside ? ghosts.map((gh) => X(gh.at)).find((gx) => gx > xa && gx < xz && Math.abs(gx - cx) < tw / 2 + 2) : undefined;
+        if (cut !== undefined) { const lw = cut - xa, rw = xz - cut; if (Math.max(lw, rw) > tw + 20) cx = lw > rw ? xa + lw / 2 : cut + rw / 2; else inside = false; }
+        if (inside) g += rt(cx, by + barH / 2 + 4.5, pc.label, { size, weight: pc.kind === 'key' ? 700 : 400, anchor: 'middle', fill: k.ink });
         else below.push({ x: xa + w / 2, text: pc.label, kind: pc.kind === 'key' ? 'key' : pc.kind === 'off' ? 'trap' : pc.kind === 'add' ? 'info' : 'plain' });
       }
       x += pc.n;

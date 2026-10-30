@@ -19,7 +19,12 @@
 //   - text in pictures is 12 px or larger (only panels flagged data-small-known
 //     are exempt; the build requires a renderer-gap flag for those)
 //   - no label on another label, and no line, polyline or ellipse stroke through
-//     a label without a halo or a filled backing drawn over the stroke
+//     a label without a halo or a filled backing drawn over the stroke. Strokes
+//     of 1.2 px and up count, and dashed or dotted ones (leader lines) of any
+//     width; a tag's backing (the filled rect drawn just before its text, fitted
+//     to it) counts as part of the label, so a leader through a tag's padding
+//     is caught too (B005 review: a 1 px dotted leader ran through the
+//     "setting: 10" tag beside its text)
 //   - each picture panel at most 600 px tall on the phone (target 560)
 //   - stereo: every structure drawn on the page (question card and explainer)
 //     is rebuilt in RDKit from its drawn positions and wedges and must depict
@@ -89,12 +94,24 @@ function measure(PANEL_MAX_) {
   // label collisions inside each drawing: text on text, and text crossed by a stroke (lines, polylines, ellipses)
   const clash = [];
   document.querySelectorAll('.vis svg').forEach((svg) => {
-    const texts = [...svg.querySelectorAll('text')].filter((t) => t.textContent.trim()).map((t) => ({ t, b: t.getBoundingClientRect(), halo: t.getAttribute('paint-order') === 'stroke' }));
+    // a tag: text drawn right after a filled rect that holds it with a small padding;
+    // the rect is part of the label for the stroke test (box), the text alone for text on text (b)
+    const backing = (t, b) => {
+      const r = t.previousElementSibling;
+      if (!r || r.tagName !== 'rect') return null;
+      const f = r.getAttribute('fill');
+      if (!f || f === 'none' || f === 'transparent') return null;
+      const rb = r.getBoundingClientRect();
+      const holds = rb.left <= b.left + 1 && rb.right >= b.right - 1 && rb.top <= b.top + 1 && rb.bottom >= b.bottom - 1;
+      return holds && rb.height - b.height <= 10 && rb.width - b.width <= 0.5 * b.width + 30 ? rb : null;
+    };
+    const texts = [...svg.querySelectorAll('text')].filter((t) => t.textContent.trim()).map((t) => { const b = t.getBoundingClientRect(); return { t, b, box: backing(t, b) || b, halo: t.getAttribute('paint-order') === 'stroke' }; });
     for (let i = 0; i < texts.length; i++) for (let k = i + 1; k < texts.length; k++) {
       const a = texts[i].b, b = texts[k].b; const ix = Math.min(a.right, b.right) - Math.max(a.left, b.left), iy = Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top);
       if (ix > 2 && iy > 2) clash.push('text on text: "' + texts[i].t.textContent.slice(0, 18) + '" / "' + texts[k].t.textContent.slice(0, 18) + '"');
     }
-    const strokes = [...svg.querySelectorAll('line, polyline, ellipse')].filter((n) => !n.closest('defs, marker, mask') && (parseFloat(n.getAttribute('stroke-width')) || 1) >= 1.2 && n.getAttribute('stroke') && n.getAttribute('stroke') !== 'none');
+    const dashed = (n) => { const d = n.getAttribute('stroke-dasharray'); return !!d && d.trim() !== '' && d !== 'none'; };
+    const strokes = [...svg.querySelectorAll('line, polyline, ellipse')].filter((n) => !n.closest('defs, marker, mask') && ((parseFloat(n.getAttribute('stroke-width')) || 1) >= 1.2 || dashed(n)) && n.getAttribute('stroke') && n.getAttribute('stroke') !== 'none');
     const pts = (n) => {
       const m = n.getScreenCTM(); if (!m) return [];
       const P = (x, y) => ({ x: m.a * x + m.c * y + m.e, y: m.b * x + m.d * y + m.f });
@@ -106,7 +123,7 @@ function measure(PANEL_MAX_) {
     };
     const fills = [...svg.querySelectorAll('circle, rect, polygon')].filter((n) => { const f = n.getAttribute('fill'); return f && f !== 'none' && f !== 'transparent' && !/rgba\([^)]*,\s*0?\.\d+\)/.test(f) && !n.closest('defs, mask'); });
     const occluded = (stroke, b) => fills.some((f) => { if (!(stroke.compareDocumentPosition(f) & Node.DOCUMENT_POSITION_FOLLOWING)) return false; const r = f.getBoundingClientRect(); return r.left <= b.left + 1 && r.right >= b.right - 1 && r.top <= b.top + 1 && r.bottom >= b.bottom - 1; });
-    strokes.forEach((n) => { const ps = pts(n); texts.forEach(({ t, b, halo }) => { if (halo) return; if (occluded(n, b)) return; const hit = ps.some((q) => q.x > b.left + 1.5 && q.x < b.right - 1.5 && q.y > b.top + 2 && q.y < b.bottom - 2); if (hit) clash.push('stroke through "' + t.textContent.slice(0, 22) + '" (' + n.tagName + ')'); }); });
+    strokes.forEach((n) => { const ps = pts(n); texts.forEach(({ t, box: b, halo }) => { if (halo) return; if (occluded(n, b)) return; const hit = ps.some((q) => q.x > b.left + 1.5 && q.x < b.right - 1.5 && q.y > b.top + 2 && q.y < b.bottom - 2); if (hit) clash.push('stroke through "' + t.textContent.slice(0, 22) + '" (' + n.tagName + (dashed(n) ? ', dashed' : '') + ')'); }); });
   });
   const vis = document.querySelector('.vis');
   const panels = [...document.querySelectorAll('.vis-panel')].map((n) => Math.round(n.getBoundingClientRect().height));

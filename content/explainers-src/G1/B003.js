@@ -1519,7 +1519,8 @@ const CHANGES = {
     'Picture: the HCl link reads "dipole-dipole and London" (was "dipole-dipole only", which contradicted the note under it); the alt says the same, no hydrogen bond',
     'Lock it in is scoped: hydrogen bonding outweighs the extra London force of a similar small molecule (I2, CCl4 and SbH3 out-boil hydrogen-bonded liquids)',
     '"HCl is ionic" note opens with the fact: pure HCl is a polar covalent molecule; it splits into ions only in water'
-  ]
+  ],
+  'fm:generated:gc-first-order-half-life#1xyppx6': ['Picture (found by the wider render gate from the B005 review, which now tests dotted leaders of any width): the 1/k dotted leader ran over the "half-life: 10 min" tag text; it is now drawn under the tag, whose filled backing covers it (chem-gc.js decay). Words unchanged']
 };
 
 module.exports = { group: 'G1', batch: 'B003', title: 'Full-Length Test 1, General Chemistry (30 items)', entries: ENTRIES, changes: CHANGES };

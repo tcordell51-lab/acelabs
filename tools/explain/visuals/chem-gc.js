@@ -680,13 +680,17 @@ CURVE_KINDS.decay = (s, box) => {
   }
   g += `<polyline points="${poly(pts)}" fill="none" stroke="${C.blue}" stroke-width="2.6"/>`;
   for (let n = 1; n * th <= tMax + 1e-9; n++) g += `<circle cx="${r1(F.X(n * th))}" cy="${r1(F.Y(Math.pow(0.5, n)))}" r="${n === 1 ? 6 : 4}" fill="${n === 1 ? C.key : '#fff'}" stroke="${n === 1 ? C.key : C.ink2}" stroke-width="1.6"/>`;
-  g += tag(F.X(th) + 10, F.Y(0.5) - 8, s.keyLabel, 'key', { size: 13 }).svg;
+  // the ghost's dotted leader runs up to its tag at the top; it is drawn before the key tag, so
+  // where it passes the key tag the tag's filled backing covers it (it never crosses the text)
+  let ghostTag = '';
   if (s.ghost) {
     const xg = F.X(s.ghost.t), yg = F.Y(G.firstOrder(1, s.k, s.ghost.t));
     g += `<circle cx="${r1(xg)}" cy="${r1(yg)}" r="4.5" fill="${C.trapBg}" stroke="${C.trap}" stroke-width="1.6"/>`;
     const tg = tag(W - 12, 34, s.ghost.label, 'trap', { anchor: 'end', size: 12.5 });
-    g += `<line x1="${r1(xg)}" y1="${r1(yg - 5)}" x2="${r1(Math.max(tg.x0 + 16, xg))}" y2="40" stroke="${C.trap}" stroke-width="1" stroke-dasharray="3 3"/>` + tg.svg;
+    g += `<line x1="${r1(xg)}" y1="${r1(yg - 5)}" x2="${r1(Math.max(tg.x0 + 16, xg))}" y2="40" stroke="${C.trap}" stroke-width="1" stroke-dasharray="3 3"/>`;
+    ghostTag = tg.svg;
   }
+  g += tag(F.X(th) + 10, F.Y(0.5) - 8, s.keyLabel, 'key', { size: 13 }).svg + ghostTag;
   if (s.stepLabel) g += rt(F.X(th * 2) + 6, F.Y(0.25) - 8, s.stepLabel, { size: 12.5, fill: C.ink2, halo: true });
   box.innerHTML = svgOpen(W, H) + g + '</svg>';
 };

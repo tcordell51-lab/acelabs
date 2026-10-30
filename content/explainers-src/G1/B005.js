@@ -27,6 +27,12 @@
 // parts of every clinic's delivery. So: qr.partwhole 7 (groups, bars,
 // fractions), qr.work 11, qr.geometry 1. Renderers:
 // tools/explain/visuals/qr-work.js.
+//
+// Expert review (needs-work, 19 of 19 keys agree, no key disputes): the five
+// blocked items and the four optional notes are fixed here, item by item in
+// CHANGES (each coach record lists its own). The abs1739 label collision was a
+// renderer fix (levels() in qr-work.js), and the render gate now tests dashed
+// leader lines of any width against tags, backing rect included.
 'use strict';
 
 const FM = 'tools/mock/data/full-mocks.js';
@@ -60,7 +66,7 @@ const ENTRIES = [
       { text: '3', role: 'trap', family: 'one-step-short', trap: 'One clinic only', note: '3 is what one clinic keeps. The stem asks for all four clinics together, so multiply by 4.' },
       { text: '8', role: 'trap', family: 'other-question', trap: 'The returned pile', note: '8 is every crate sent back, 4 x 2. A true count, but of the other pile. The question asks what the clinics kept.' },
       { text: '12', role: 'key', note: 'Three kept at each of four clinics.' },
-      { text: '16', role: 'trap', family: 'other-unit', trap: 'Took off 4, not 8', note: '20 - 4 = 16 takes off one crate per clinic. Each clinic sent back 2, so 4 x 2 = 8 crates come off the 20.' },
+      { text: '16', role: 'trap', family: 'other-unit', trap: 'Clinics taken as crates', note: '20 - 4 = 16 subtracts the 4 clinics as if they were crates. Each clinic sent back 2, so 4 x 2 = 8 crates come off the 20.' },
       { text: '18', role: 'trap', family: 'half-right', trap: 'Returned only once', note: '4 x 5 - 2 multiplies the deliveries but takes the 2 back only once. Every clinic returned 2, so the 2 gets multiplied by 4 as well.' }
     ],
     lockIt: 'A give-back in every group gets multiplied too: 4(5 - 2) = 4 x 5 - 4 x 2.',
@@ -227,13 +233,13 @@ const ENTRIES = [
           { expr: 'x = -3', move: 'divide both sides by -4', key: true, choice: '-3', tag: 'the answer' }
         ],
         exits: [
-          { at: 1, label: 'Add x instead of subtracting it and you get -2x - 2 = 10, which leads to -6.', choice: '-6', value: '12/(-3 + 1)' },
+          { at: 1, label: 'Move x across without changing its sign, -3x + x, and you get -2x - 2 = 10, which leads to -6.', choice: '-6', value: '12/(-3 + 1)' },
           { at: 2, label: 'Divide by 4 instead of -4 and the minus drops: you land on 3.', choice: '3', value: '12/4' }
         ]
       },
       check: { vars: { a: -3, b: -2, c: 10 }, v: 'x', key: '(c - b)/(a - 1)', keySolves: '-3x - 2 = x + 10', routes: [{ choice: '-6', expr: '(c - b)/(a + 1)' }, { choice: '-4', expr: 'a - 1' }, { choice: '-2', expr: '(c + b)/(a - 1)' }, { choice: '3', expr: '(c - b)/(1 - a)' }] },
       reuse: 'new: qr.work block lines (tools/explain/visuals/qr-work.js); the build checks every line is true at x = -3 and recomputes every trap route',
-      alt: 'Four worked lines: -3x - 2 = x + 10, then -4x - 2 = 10 after subtracting x, then -4x = 12 after adding 2, then x = -3 after dividing by -4, outlined as the answer. Two dashed side notes show adding x leading to -6 and dropping the minus leading to 3.',
+      alt: 'Four worked lines: -3x - 2 = x + 10, then -4x - 2 = 10 after subtracting x, then -4x = 12 after adding 2, then x = -3 after dividing by -4, outlined as the answer. Two dashed side notes show x moved across without a sign change leading to -6, and the dropped minus leading to 3.',
       caption: 'Each arrow is one move made on both sides. The dashed notes mark the two places this setup most often slips.'
     },
     demoPick: '3',
@@ -280,7 +286,7 @@ const ENTRIES = [
       },
       check: { vars: { a: '2/3', b: '5/6', c: '1/2' }, key: 'a + b - c', routes: [{ choice: '7/6', expr: '4/6 + 5/6 - 2/6' }, { choice: '2', expr: 'a + b + c' }, { choice: '5/6', expr: '4/6 + 5/6 - 4/6' }, { choice: '3/4', expr: '(a + b)*c' }] },
       reuse: 'new: qr.work block numberline (tools/explain/visuals/qr-work.js); the build checks every arc lands where it is drawn and recomputes every trap route in sixths',
-      alt: 'A number line in sixths from the start to 2 miles. Arcs go forward 4/6 and then 5/6 to 3/2, and a third arc comes back 3/6 to land on 1, outlined as the answer. A dashed marker at 2 shows the total miles driven.',
+      alt: 'A number line in sixths from the start to 2 miles. Arcs go forward 4/6 and then 5/6 to 3/2, and a third arc comes back 3/6 to land on 1, outlined as the answer. An orange marker at 2 shows the total miles driven.',
       caption: 'Follow the arcs, not the odometer. Out to 3/2 and back to 1: the last arc decides where the driver stands.'
     },
     demoPick: '2',
@@ -391,12 +397,12 @@ const ENTRIES = [
     steps: [
       'Split the job. Multiply the front numbers: 5 x 7 = 35.',
       'Add the exponents: -6 + 5 = -1. So far, 35 x 10^-1.',
-      'Fix the front. 35 = 3.5 x 10^1, so the front shrinks by 10 and the exponent grows by 1: 3.5 x 10^0.',
+      'Fix the front. 35 = 3.5 x 10^1, so the front gets ten times smaller and the exponent grows by 1: 3.5 x 10^0.',
       'Sense check: 5 millionths of 700000 is 3.5.'
     ],
     choices: [
       { text: '1.2 × 10⁰', role: 'trap', family: 'operation-flip', trap: 'Added the fronts', note: '5 + 7 = 12 adds the front numbers. In a product the fronts multiply: 5 x 7 = 35.' },
-      { text: '3.5 × 10⁻¹', role: 'trap', family: 'one-step-short', trap: 'Moved the point only', note: 'Turning 35 into 3.5 shrinks the front by 10, so the exponent must rise by 1. Stopping at 10^-1 makes the number 10 times too small.' },
+      { text: '3.5 × 10⁻¹', role: 'trap', family: 'one-step-short', trap: 'Moved the point only', note: 'Turning 35 into 3.5 makes the front ten times smaller, so the exponent must rise by 1. Stopping at 10^-1 makes the number 10 times too small.' },
       { text: '3.5 × 10⁻²', role: 'trap', family: 'reversed', trap: 'Moved the exponent down', note: 'A smaller front number needs a larger power of ten. Moving the exponent from -1 down to -2 shrinks the number a second time.' },
       { text: '3.5 × 10⁻³⁰', role: 'trap', family: 'operation-flip', trap: 'Multiplied the exponents', note: '-6 x 5 = -30 multiplies the exponents. When powers of ten multiply, their exponents add: -6 + 5 = -1.' },
       { text: '3.5 × 10⁰', role: 'key', note: '35 x 10^-1, with the front put between 1 and 10.' }
@@ -414,7 +420,7 @@ const ENTRIES = [
           { expr: '5 x 7 = 35', move: 'multiply the fronts' },
           { expr: '10^-6 x 10^5 = 10^-1', move: 'add the exponents: -6 + 5' },
           { expr: '35 x 10^-1', move: 'put them together' },
-          { expr: '3.5 x 10^0', move: 'front down by 10, exponent up by 1', key: true, choice: '3.5 × 10⁰', tag: 'the answer' }
+          { expr: '3.5 x 10^0', move: 'front divided by 10, exponent up by 1', key: true, choice: '3.5 × 10⁰', tag: 'the answer' }
         ],
         exits: [
           { at: 2, label: 'Multiply the exponents instead and you get 10^-30.', choice: '3.5 × 10⁻³⁰', value: '3.5*10^(-6*5)' },
@@ -424,7 +430,7 @@ const ENTRIES = [
       check: { vars: { a: 5, m: -6, b: 7, n: 5 }, key: 'a*b*10^(m + n)', routes: [{ choice: '1.2 × 10⁰', expr: '(a + b)*10^(m + n)' }, { choice: '3.5 × 10⁻¹', expr: 'a*b/10*10^(m + n)' }, { choice: '3.5 × 10⁻²', expr: 'a*b/10*10^(m + n - 1)' }, { choice: '3.5 × 10⁻³⁰', expr: 'a*b/10*10^(m*n)' }] },
       reuse: 'new: qr.work block lines (tools/explain/visuals/qr-work.js); the build checks each line, that the key is in proper form, and every trap route',
       alt: 'Worked lines: the fronts 5 x 7 = 35, the exponents -6 + 5 = -1, together 35 times ten to the -1, then 3.5 times ten to the 0, outlined as the answer. Two dashed side notes show multiplying the exponents and stopping at ten to the -1.',
-      caption: 'Look at the last arrow: the front drops by 10 while the exponent climbs by 1, so the value never changes.'
+      caption: 'Look at the last arrow: the front is divided by 10 while the exponent climbs by 1, so the value never changes.'
     },
     demoPick: '3.5 × 10⁻¹',
     flags: [
@@ -450,7 +456,7 @@ const ENTRIES = [
       { text: '23.8', role: 'key', note: 'The 1 and the 0.1 both come off.' },
       { text: '23.9', role: 'trap', family: 'half-right', trap: 'Took off only the 1', note: '24.9 - 1 = 23.9 takes off the 1 but leaves the 0.1 behind. All 1.1 kg came out.' },
       { text: '26.0', role: 'trap', family: 'operation-flip', trap: 'Added the packing', note: '24.9 + 1.1 = 26.0 adds the packing back in. It was taken out, so subtract.' },
-      { text: '238', role: 'trap', family: 'unit-slip', trap: 'Dropped the point', note: 'Right digits with the point dropped: 238 kg is ten times the whole crate.' }
+      { text: '238', role: 'trap', family: 'unit-slip', trap: 'Dropped the point', note: 'Right digits with the point dropped: 238 kg is ten times 23.8, far more than the whole 24.9 kg crate.' }
     ],
     lockIt: 'Subtract decimals place by place: each digit taken out comes off its own column.',
     hook: null,
@@ -652,7 +658,7 @@ const ENTRIES = [
       check: { vars: { bill: 125, up: 10, down: 25 }, key: 'bill*(1 + up/100)*(1 - down/100)', routes: [{ choice: '93.75', expr: 'bill*(1 - down/100)' }, { choice: '106.25', expr: 'bill*(1 + up/100 - down/100)' }, { choice: '137.5', expr: 'bill*(1 + up/100)' }, { choice: '171.88', expr: 'bill*(1 + up/100)*(1 + down/100)' }] },
       reuse: 'new: qr.partwhole style bars (tools/explain/visuals/qr-work.js); the build checks the rise as 10 percent of 125, the cut as 25 percent of 137.50, the ghost mark and every trap route',
       alt: 'Two bars on one scale. The first is the 125 bill plus a 12.50 rise, 137.50 in all. The second is 137.50 split into 103.13, outlined as the answer, and a hatched 25 percent cut of 34.38, with a dashed mark at 106.25 where netting the percents would land.',
-      caption: 'The cut comes off the longer second bar, so it takes more than the rise added. That is why the bill ends below 106.25.'
+      caption: 'The hatched cut is 25 percent of 137.50, not of 125, so it is bigger. That pulls the bill below the dashed 106.25.'
     },
     demoPick: '106.25',
     flags: [
@@ -699,7 +705,7 @@ const ENTRIES = [
       check: { vars: { p: 35, n: 476 }, key: 'p/100*n', routes: [{ choice: '16.66', expr: 'p/1000*n' }, { choice: '309.4', expr: '(100 - p)/100*n' }, { choice: '511', expr: 'n + p' }, { choice: '16660', expr: 'p*n' }] },
       reuse: 'new: qr.partwhole style bars with cells (tools/explain/visuals/qr-work.js); the build checks both pieces against their percents of 476 and every trap route',
       alt: 'One bar for 476 cut into ten cells of 47.6, each 10 percent. The first three and a half cells, 166.6, are outlined as 35 percent; the other six and a half cells are the remaining 65 percent, 309.4.',
-      caption: 'Count the outlined cells: three tenths and a half. The rest of the bar answers a different question.'
+      caption: 'Count the outlined cells: three and a half of the ten, 35 percent. The rest of the bar answers a different question.'
     },
     demoPick: '309.4',
     flags: [
@@ -865,7 +871,7 @@ const ENTRIES = [
       'Check: the roots are 2 plus or minus root 3, two real numbers.'
     ],
     choices: [
-      { text: 'no real roots', role: 'trap', family: 'sign-slip', trap: 'Squared the minus away', note: 'Reading (-4)^2 as -16 makes the discriminant -16 - 4 = -20. A negative number squared is positive, so it is 16 - 4 = 12.' },
+      { text: 'no real roots', role: 'trap', family: 'sign-slip', trap: 'Kept the minus', note: 'Reading (-4)^2 as -16 makes the discriminant -16 - 4 = -20. A negative number squared is positive, so it is 16 - 4 = 12.' },
       { text: 'two imaginary roots', role: 'trap', family: 'other-conditions', trap: 'The negative case', note: 'Imaginary roots come from a negative discriminant. This one is +12, so both roots are real.' },
       { text: 'one real and one imaginary root', role: 'trap', family: 'half-right', trap: 'A mixed pair', note: 'This mix never happens for a quadratic with real coefficients. Imaginary roots always come as a matched pair, so the roots are both real or both imaginary.' },
       { text: 'one real root', role: 'trap', family: 'other-conditions', trap: 'The zero case', note: 'One repeated root needs a discriminant of exactly 0, where the parabola just touches the axis. Here it is 12.' },
@@ -949,4 +955,18 @@ const ENTRIES = [
   }
 ];
 
-module.exports = { group: 'G1', batch: 'B005', title: 'Full-Length Test 1, Quantitative Reasoning, first half (19 items)', entries: ENTRIES };
+// What the expert review changed, per item (shown in each coach record)
+const CHANGES = {
+  'fm:qr-a:dec1108': ['The 238 note says 238 kg is ten times 23.8, far more than the whole 24.9 kg crate (it said ten times the whole crate; ten times 24.9 is 249)'],
+  'fm:qr-a:lin1255': ['The first dashed exit names the slip behind -6: x moved across without changing its sign, -3x + x, giving -2x - 2 = 10 (it said adding x, which done to both sides gives -2x - 2 = 2x + 10); the alt says the same'],
+  'fm:qr-a:pct1184': ['Caption: the hatched cut is 25 percent of 137.50, not of 125, so it is bigger, and that pulls the bill below the dashed 106.25 (it called the second bar longer, though both bars are 137.50, and its reason only explained ending below 125)', 'Desktop layout: the "25 percent off: 34.38" label hangs below the bar, as on the phone, instead of inside the hatched piece 2 px from the dashed 106.25 line (bars renderer in qr-work.js: a label inside its piece keeps clear of a ghost line)'],
+  'fm:qr-a:dis1600': ['The "no real roots" label reads "Kept the minus" (it read "Squared the minus away", which is the right move, not the slip); family and note unchanged'],
+  'fm:qr-a:abs1739': ['Phone layout: the "setting: 10" tag drops a level and sits centered under 10, so the dotted leader from x = 14 no longer runs through it. Renderer fix in levels() (tools/explain/visuals/qr-work.js): a label first keeps off every other mark in its row; the render gate now tests dashed leaders of any width, a tag\'s backing rect included'],
+  'fm:qr-a:neg1332': ['Phone layout only (the same levels() fix): both test-point tags now sit on one level, each beside its own point'],
+  'fm:qr-a:dis1285': ['Optional note taken: the 16 note says it subtracts the 4 clinics as if they were crates, and its label reads "Clinics taken as crates" (the family is other-unit)'],
+  'fm:qr-a:fam5': ['Optional note taken: the alt calls the mark at 2 an orange marker, as drawn (it said dashed)'],
+  'fm:generated:qr-sci-notation-product#b96vmp': ['Optional note taken: step 3, the 3.5 x 10^-1 note, the last move tag and the caption say "ten times smaller" or "divided by 10" (not "shrinks by 10" or "down by 10", which read as minus 10)'],
+  'fm:qr-a:pct1127': ['Optional note taken: caption "three and a half of the ten, 35 percent" (not "three tenths and a half", which can read as 3/10 + 1/2)']
+};
+
+module.exports = { group: 'G1', batch: 'B005', title: 'Full-Length Test 1, Quantitative Reasoning, first half (19 items)', entries: ENTRIES, changes: CHANGES };
