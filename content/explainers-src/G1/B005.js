@@ -42,6 +42,11 @@
 // blocked item (exp1720, the 0 label, which round 1 made an untrue rule) and
 // the one optional note (abs1739, the -6 or 6 note now leads with its pull)
 // are fixed here, each listed in CHANGES.
+//
+// Re-review round 3 (needs-work, 18 of 19 pass, no key disputes): the one
+// blocked item (neg1332, the x < 0 note called dividing by a negative the one
+// move that flips an inequality) and the two optional notes (lin1255, the -6
+// note; pct1127, the 511 note) are fixed here, each listed in CHANGES.
 'use strict';
 
 const FM = 'tools/mock/data/full-mocks.js';
@@ -120,7 +125,7 @@ const ENTRIES = [
       { text: 'x = 0', role: 'trap', family: 'other-question', trap: 'The boundary only', note: '0 is where -3x equals 0, the edge of the answer. It does not satisfy -3x < 0, since 0 < 0 is false.' },
       { text: 'x ≤ 0', role: 'trap', family: 'reversed', trap: 'The opposite side', note: 'This is exactly where -3x is 0 or more. Test x = -1: -3(-1) = 3, and 3 is not less than 0.' },
       { text: 'x > 0', role: 'key', note: 'Divide by -3, flip the sign.' },
-      { text: 'x < 0', role: 'trap', family: 'missed-exception', trap: 'Forgot the flip', note: 'This divides by -3 as if it were positive and keeps the sign. Dividing by a negative is the one move that flips an inequality.' },
+      { text: 'x < 0', role: 'trap', family: 'missed-exception', trap: 'Forgot the flip', note: 'This divides by -3 as if it were positive and keeps the sign. Multiplying or dividing both sides by a negative flips the inequality.' },
       { text: 'x ≥ 0', role: 'trap', family: 'half-right', trap: 'Let 0 in', note: 'The direction is right, but 0 sneaks in. -3(0) = 0, and 0 is not less than 0, so the sign stays strict.' }
     ],
     lockIt: 'Multiply or divide an inequality by a negative and the sign flips. Then test a point.',
@@ -220,7 +225,7 @@ const ENTRIES = [
       'Check it in the original: -3(-3) - 2 = 7 and -3 + 10 = 7. Both sides match.'
     ],
     choices: [
-      { text: '-6', role: 'trap', family: 'operation-flip', trap: 'Added the x instead', note: 'Adding x to -3x gives -2x = 12, so x = -6. To clear x off the right side, subtract it from both sides: -3x - x = -4x.' },
+      { text: '-6', role: 'trap', family: 'operation-flip', trap: 'Added the x instead', note: 'Adding x to -3x gives -2x - 2 = 10, then -2x = 12, so x = -6. To clear x off the right side, subtract it from both sides: -3x - x = -4x.' },
       { text: '-4', role: 'trap', family: 'one-step-short', trap: 'Stopped at the -4', note: '-4 is the number in front of x after collecting, -4x = 12. One move is left: divide 12 by -4.' },
       { text: '-3', role: 'key', note: 'Twelve divided by -4.' },
       { text: '-2', role: 'trap', family: 'sign-slip', trap: 'Moved the 2 unchanged', note: 'Carrying the -2 across without changing its sign gives -4x = 10 - 2 = 8, so x = -2. Add 2 to both sides instead: 10 + 2 = 12.' },
@@ -692,7 +697,7 @@ const ENTRIES = [
       { text: '16.66', role: 'trap', family: 'unit-slip', trap: 'Point one place off', note: '16.66 is 3.5 percent of 476. The decimal slid one place: 35 percent is 0.35, not 0.035.' },
       { text: '166.6', role: 'key', note: 'Three and a half tenths of 476.' },
       { text: '309.4', role: 'trap', family: 'other-question', trap: 'The other 65 percent', note: '309.4 is what is left after taking 35 percent away, 0.65 x 476. True, but the stem asks for the 35 percent itself.' },
-      { text: '511', role: 'trap', family: 'operation-flip', trap: 'Added 35', note: '476 + 35 = 511 adds the 35 on. Percent of means a part of 476, so the answer is smaller than 476.' },
+      { text: '511', role: 'trap', family: 'operation-flip', trap: 'Added 35', note: '476 + 35 = 511 adds the 35 on. 35 percent of 476 is a part of 476, so the answer is smaller than 476.' },
       { text: '16660', role: 'trap', family: 'unit-slip', trap: 'Never divided by 100', note: '35 x 476 = 16660 skips the divide by 100. A part of 476 cannot be bigger than 476.' }
     ],
     lockIt: 'Percent of a number: multiply by the percent over 100. Ten percent pieces make it head math.',
@@ -967,11 +972,11 @@ const ENTRIES = [
 // What the expert review changed, per item (shown in each coach record)
 const CHANGES = {
   'fm:qr-a:dec1108': ['The 238 note says 238 kg is ten times 23.8, far more than the whole 24.9 kg crate (it said ten times the whole crate; ten times 24.9 is 249)'],
-  'fm:qr-a:lin1255': ['The first dashed exit names the slip behind -6: x moved across without changing its sign, -3x + x, giving -2x - 2 = 10 (it said adding x, which done to both sides gives -2x - 2 = 2x + 10); the alt says the same'],
+  'fm:qr-a:lin1255': ['The first dashed exit names the slip behind -6: x moved across without changing its sign, -3x + x, giving -2x - 2 = 10 (it said adding x, which done to both sides gives -2x - 2 = 2x + 10); the alt says the same', 'Re-review round 3, optional note taken: the -6 note runs one move at a time, "Adding x to -3x gives -2x - 2 = 10, then -2x = 12, so x = -6." (it went straight to -2x = 12, folding the x move and the 2 move into one); label and family unchanged'],
   'fm:qr-a:pct1184': ['Caption: the hatched cut is 25 percent of 137.50, not of 125, so it is bigger, and that pulls the bill below the dashed 106.25 (it called the second bar longer, though both bars are 137.50, and its reason only explained ending below 125)', 'Desktop layout: the "25 percent off: 34.38" label hangs below the bar, as on the phone, instead of inside the hatched piece 2 px from the dashed 106.25 line (bars renderer in qr-work.js: a label inside its piece keeps clear of a ghost line)'],
   'fm:qr-a:dis1600': ['The "no real roots" label reads "Kept the minus" (it read "Squared the minus away", which is the right move, not the slip); family and note unchanged'],
   'fm:qr-a:abs1739': ['Phone layout: the "setting: 10" tag drops a level and sits centered under 10, so the dotted leader from x = 14 no longer runs through it. Renderer fix in levels() (tools/explain/visuals/qr-work.js): a label first keeps off every other mark in its row; the render gate now tests dashed leaders of any width, a tag\'s backing rect included', 'Re-review, optional note taken: the 6 or -14 label reads "Swapped numbers, lost a sign", naming both slips, so it matches the sign-slip family (it read "Setting and gap swapped"); note unchanged', 'Re-review round 2, optional note taken: the -6 or 6 note opens with the pull, "-6 comes from putting the plus-or-minus on x itself, as if the distance ran from 0.", and ends "so only 6 holds" (it opened "6 is real.", which names no pull and is all a phone card shows, and real can read as real number)'],
-  'fm:qr-a:neg1332': ['Phone layout only (the same levels() fix): both test-point tags now sit on one level, each beside its own point'],
+  'fm:qr-a:neg1332': ['Phone layout only (the same levels() fix): both test-point tags now sit on one level, each beside its own point', 'Re-review round 3, blocked item: the x < 0 note\'s second sentence reads "Multiplying or dividing both sides by a negative flips the inequality." (it said dividing by a negative is the one move that flips an inequality, which is untrue as a rule, since multiplying by a negative flips it too, and it contradicted this item\'s Lock it in; x < 0 is the most common pick, and its note shows in full under Your pick on the phone). Worded without "the move", since swapping the two sides, or taking reciprocals when both sides share a sign, also turns the symbol around. Label "Forgot the flip", family missed-exception and key unchanged'],
   'fm:qr-a:dis1285': ['Optional note taken: the 16 note says it subtracts the 4 clinics as if they were crates, and its label reads "Clinics taken as crates" (the family is other-unit)'],
   'fm:qr-a:fam5': [
     'Optional note taken: the alt calls the mark at 2 an orange marker, as drawn (it said dashed)',
@@ -981,7 +986,7 @@ const CHANGES = {
   'fm:qr-a:pem1303': ['Re-review, optional note taken: the 90 note says it takes two slips at once, the plus read as a times and the square dropped (it named that route and then said no single rule leads there); the concept-first flag says the same'],
   'fm:qr-a:exp1720': ['Re-review, optional note taken: the 0 label read "A product cannot be 0" (it read "No route here", which names no pull); family and note unchanged', 'Re-review round 2, blocked item: the 0 label reads "Fives never multiply to 0" (round 1 made it "A product cannot be 0", which is untrue as a rule: a product is 0 whenever a factor is 0, the idea the roots item in this batch uses). The note now opens with the reason, "A product of 5s is never 0, so no rule lands here.", and its second sentence states the zero-product rule: 0 needs a factor of 0, and every factor here is 5. Family miscount unchanged'],
   'fm:generated:qr-sci-notation-product#b96vmp': ['Optional note taken: step 3, the 3.5 x 10^-1 note, the last move tag and the caption say "ten times smaller" or "divided by 10" (not "shrinks by 10" or "down by 10", which read as minus 10)'],
-  'fm:qr-a:pct1127': ['Optional note taken: caption "three and a half of the ten, 35 percent" (not "three tenths and a half", which can read as 3/10 + 1/2)']
+  'fm:qr-a:pct1127': ['Optional note taken: caption "three and a half of the ten, 35 percent" (not "three tenths and a half", which can read as 3/10 + 1/2)', 'Re-review round 3, optional note taken: the 511 note says "35 percent of 476 is a part of 476, so the answer is smaller than 476." (it said "Percent of means a part of 476", which reads as a general rule, and a percent over 100 is more than the whole); label and family unchanged']
 };
 
 module.exports = { group: 'G1', batch: 'B005', title: 'Full-Length Test 1, Quantitative Reasoning, first half (19 items)', entries: ENTRIES, changes: CHANGES };
