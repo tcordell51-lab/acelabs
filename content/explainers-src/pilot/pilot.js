@@ -703,11 +703,11 @@ const ENTRIES = [
     answer: { line: 'Paragraph 2 says Levene pictured the four bases repeating in a fixed order, and a molecule that monotonous seemed too dull to carry instructions.' },
     steps: [
       'Find the term. The tetranucleotide hypothesis is named in paragraph 2, sentence 3.',
-      'Read the whole sentence, not just the name. The reason comes after the name, highlighted in the picture: a fixed repeating order that seemed too dull to carry instructions.',
+      'Read the whole sentence, not just the name. The reason sits on both sides of it, highlighted in the picture: a fixed repeating order that seemed too dull to carry instructions.',
       'Match the reason. One choice says the fixed, repeating order almost word for word.'
     ],
     choices: [
-      { text: 'it suggested that DNA occurred only in the nuclei of blood cells', role: 'trap', family: 'rc-misplaced', note: 'White blood cells are where Miescher isolated DNA, paragraph 2, sentence 1. A real detail about another person, and the choice adds only.' },
+      { text: 'it suggested that DNA occurred only in the nuclei of blood cells', role: 'trap', family: 'rc-misplaced', note: 'White blood cells are where Miescher isolated DNA, paragraph 2, sentence 1. A real detail about another person; the choice also adds "only", which the passage never says.' },
       { text: 'it held that DNA contained far fewer parts than the proteins it was compared with', role: 'trap', family: 'rc-half-supported', note: 'Proteins did have more kinds of building blocks. But the hypothesis was about the order of the bases, not a count of parts.' },
       { text: 'it pictured the four bases repeating in a fixed order along the chain', role: 'key', note: 'Paragraph 2, sentence 3, nearly word for word.' },
       { text: 'it showed that the proportions of the bases differed from species to species', role: 'trap', family: 'read-backward', note: 'That is Chargaff\'s finding in paragraph 3, and it is what brought the hypothesis down.' },
@@ -793,7 +793,7 @@ const ENTRIES = [
     steps: [
       'Find the notice. Paragraph 7, sentence 3: a mock death notice "for the crystalline DNA helix," a joke often read, unfairly, as denying DNA was helical at all.',
       'Chase the key word back. Crystalline was defined in paragraph 6, sentence 1: the ordered, crystalline arrangement "she called the A form."',
-      'Join the two. The notice was about the A form, not DNA in general. That is why the author calls the broad reading unfair.'
+      'Join the two: the notice was about the A form, not DNA in general. That is why the author calls the broad reading unfair.'
     ],
     choices: [
       { text: 'the A form of the molecule rather than DNA in general', role: 'key', note: 'Crystalline in paragraph 7 is the A form from paragraph 6.' },
@@ -842,9 +842,9 @@ const CHANGES = {
   'PAT-1': ['Steps rewritten: read the choices first; the hard calls are the ends (2 vs 4, 1 vs 3); the middle is the easy 6 degree gap', 'lockIt no longer tells students to lock the ends', 'All three traps in the engine family "Swapped a close pair", labels say why each pulls; 2-1-4-3 now has its pull', 'Fan arms numbered on phones (not color alone); truth panels four across; timer flag for angles.html; hook dropped'],
   'PAT-2': ['Notes say "the answer\'s pattern" (no "right" in two senses); turned note: a quarter turn, columns became rows', 'Families equal the engine tags (flipped, wrong-line, shifted); the wrong-line note names both readings', 'Alt rewritten: 42 words, 3 sentences', 'Timer flag names holepunch.html only; hook dropped'],
   'PAT-3': ['Visual: x-ray outline replaced by floor 1 on its own with the answer cube outlined and its painted side marked; maps cue which edge is which; labels driven by k', 'Face words by screen direction: the hidden sides face upper left and upper right', 'Slip counts recomputed by the build (2, 3, 4; none gives 5); missType concept via family pat:cubes:hidden-faces', 'Routing note corrected: cubes.html opens in teach mode, clock idle, pill visible'],
-  'RC-1': ['P0 build: trap label "Reversed" dropped (one word; labels run 2 to 5 words); the family name Read backward shows instead', 'Blood-cells note: no outside "first", names the extreme "only"; short-chain note names the "tetra" pull', 'Key span extended through "too dull to carry hereditary instructions"', 'Step 2 points to the picture instead of re-quoting; hook dropped', 'Play-target flag: the RC player shows a clock, a pace bar and a correct-count headline'],
+  'RC-1': ['P0 build: trap label "Reversed" dropped (one word; labels run 2 to 5 words); the family name Read backward shows instead', 'Blood-cells note: no outside "first", names the extreme "only"; short-chain note names the "tetra" pull', 'Key span extended through "too dull to carry hereditary instructions"', 'Step 2 points to the picture instead of re-quoting; hook dropped', 'Play-target flag: the RC player shows a clock, a pace bar and a correct-count headline', 'B007 re-review (blocked): the blood-cells note had lost the quotes around "only" and did not parse; it now says the choice also adds "only", which the passage never says', 'B007 re-review (optional): step 2 said the reason comes after the name, but the fixed-order clause comes before it in 2.3; it now says the reason sits on both sides of the name'],
   'RC-2': ['Step 1 opens with a move; step 3 notes that paragraph 12, sentence 2 settles all five', 'Stated choices use family rc-stated (missType n/a); the player adds the EXCEPT cross-off line when the pick is a stated choice', 'Hook dropped; play-target flag'],
-  'RC-3': ['Span tags are 1 and 2, not A and B; caption "Line 1 plus line 2"', 'lockIt no longer claims every inference joins two sentences', 'Hook: "Join the lines; add no facts."; Gosling note cites paragraph 10', 'Play-target flag']
+  'RC-3': ['Span tags are 1 and 2, not A and B; caption "Line 1 plus line 2"', 'lockIt no longer claims every inference joins two sentences', 'Hook: "Join the lines; add no facts."; Gosling note cites paragraph 10', 'Play-target flag', 'B007 re-review (blocked): step 3 was three sentences (the decisions doc sets one or two a step); it now opens "Join the two: the notice was about the A form"']
 };
 
 module.exports = {

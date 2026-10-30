@@ -86,7 +86,7 @@ const ENTRIES = [
     keyText: 'the amount of adenine in a sample closely matched the amount of thymine',
     answer: { line: 'Paragraph 3 gives two findings. The second: in every sample, adenine closely matched thymine and guanine matched cytosine.' },
     steps: [
-      'Find Chargaff in paragraph 3. He has two findings, marked First and Second. Hold both.',
+      'Find Chargaff in paragraph 3: two findings, marked First and Second. Hold both.',
       'The second finding is the answer: inside each sample, adenine matched thymine.',
       'Use the first finding as a filter. The proportions differed from species to species, so any choice that makes every species alike is out.'
     ],
@@ -164,10 +164,10 @@ const ENTRIES = [
     difficulty: band(1, 'detail'),
     source: O15('q04', 4),
     keyText: 'each of them understood a different person to be in charge of the DNA work',
-    answer: { line: 'Wilkins expected an assistant. Franklin read Randall\'s letter as making the problem hers. Two readings of one job.' },
+    answer: { line: 'Wilkins seems to have expected an assistant. Franklin read Randall\'s letter as making the problem hers. Two readings of one job.' },
     steps: [
       'Find Franklin\'s arrival: paragraph 5. The friction sits in sentence 5.',
-      'Read both halves of that sentence. Wilkins expected an assistant; she understood the problem was now hers.',
+      'Read both halves of that sentence. Wilkins seems to have expected an assistant; she understood the problem was now hers.',
       'Sentence 6 closes it: the misunderstanding was never repaired. Two people, two readings.'
     ],
     choices: [
@@ -190,7 +190,7 @@ const ENTRIES = [
         { p: 5, s: 4, quote: 'Trained as a physical chemist at Cambridge, she had spent three years in Paris learning to apply X-ray methods', role: 'trap', choice: 'Wilkins had been trained in Paris and distrusted her Cambridge methods', note: 'Franklin\'s training, which one choice hands to Wilkins' }
       ],
       reuse: REUSE,
-      alt: 'Paragraph 5, sentence 5 is highlighted as the answer: Wilkins expected an assistant, while Franklin understood from Randall\'s letter that the problem was hers. Sentence 4 is marked lighter as the source of a trap: Franklin\'s own training at Cambridge and in Paris.',
+      alt: 'Paragraph 5, sentence 5 is highlighted as the answer: Wilkins seems to have expected an assistant, while Franklin understood from Randall\'s letter that the problem was hers. Sentence 4 is marked lighter as the source of a trap: Franklin\'s own training at Cambridge and in Paris.',
       caption: 'One sentence, two readings of who was in charge. The lighter mark is Franklin\'s training, borrowed by a trap.'
     },
     demoPick: 'Wilkins had been trained in Paris and distrusted her Cambridge methods',
@@ -208,7 +208,7 @@ const ENTRIES = [
     steps: [
       'Read the word\'s own sentence: to a trained eye, "the picture was eloquent."',
       'Read the next sentence. It lists a helix, the climb per turn, the spacing between bases and the diameter.',
-      'Put each choice in the slot. A photo does not talk. A photo that tells you four things is full of meaning.'
+      'Put each choice in the slot. A photo does not talk, but one that tells you four things is full of meaning.'
     ],
     choices: [
       { text: 'fluently spoken', role: 'trap', family: 'rc-misplaced', trap: 'The everyday sense', note: 'That is the usual meaning, about speech. A photograph does not speak, so the sense has to fit a picture.' },
@@ -289,7 +289,7 @@ const ENTRIES = [
     steps: [
       'Read the sentence the name sits in. It opens with "Following the example of Linus Pauling".',
       'Pauling found the alpha helix by building models. Watson and Crick guessed first and tested after: the same method.',
-      'Why name Pauling? For his method. The helix is not being compared with anything.'
+      'Why name Pauling? For his method, not to compare his helix with anything.'
     ],
     choices: [
       { text: 'show that proteins had already been proven to be the true carriers of heredity', role: 'trap', family: 'rc-contradicted', note: 'Proteins only looked like the better candidate, paragraph 2, and Avery\'s 1944 work pointed to DNA. Nothing proves proteins carry heredity.' },
@@ -453,14 +453,14 @@ const ENTRIES = [
     steps: [
       'Find the 1962 prize: paragraph 10, sentence 6 states two rules.',
       'One rule settles it. A prize "is not given to anyone who died before being nominated," and sentence 5 says she died in April 1958.',
-      'Join the two. Rule plus date. Whatever the committee wished, the prize\'s own rules stood in the way, so the question "was never put."'
+      'Join the two: rule plus date. Whatever the committee wished, the prize\'s own rules stood in the way, so the question "was never put."'
     ],
     choices: [
       { text: 'would have had to remove Wilkins from the list to make room for her', role: 'trap', family: 'rc-half-supported', trap: 'Saw one rule only', note: 'The three-person cap is real, but she had died before nomination, so making room on the list would not have helped.' },
       { text: 'would have been blocked by the standing rules of the prize itself', role: 'key', note: 'Sentence 6 gives the rules; sentence 5 gives the date that trips them.' },
       { text: 'would have needed the consent of Watson and Crick to do so', role: 'trap', family: 'rc-outside', note: 'No one\'s consent appears anywhere. The passage names only the prize\'s own rules.' },
       { text: 'would have waited until her notebooks had been examined by Klug', role: 'trap', family: 'rc-other-paragraph', note: 'Klug\'s reading of her notebooks is in paragraph 11, part of the later debate over credit. It is not a prize rule.' },
-      { text: 'would have awarded the prize in chemistry instead of in medicine', role: 'trap', family: 'rc-outside', note: 'The field of the prize never comes up. The rules in sentence 6 apply whatever the field.' }
+      { text: 'would have awarded the prize in chemistry instead of in medicine', role: 'trap', family: 'rc-outside', note: 'A chemistry prize sounds like a way in for a trained chemist, but sentence 6 names the field only to report the award. The rules it states hold for any prize.' }
     ],
     lockIt: 'Inference: join a stated rule to a stated fact, and add nothing the passage does not give you.',
     hook: null,
@@ -716,7 +716,7 @@ const ENTRIES = [
     answer: { line: 'Paragraph 4 names it: the fungus pushes a lattice of flattened hyphae between the outer root cells, and that lattice is the Hartig net.' },
     steps: [
       'Find the name: "That lattice is the Hartig net." Paragraph 4, sentence 3.',
-      'Trace the word lattice back one sentence. Name, then trace back. Sentence 2 says it is flattened hyphae pushed between the outer root cells.',
+      'Trace the word lattice back one sentence. Sentence 2 says it is flattened hyphae pushed between the outer root cells.',
       'Keep the neighbors apart. The mantle is the sheath outside, the arbuscule grows inside a cell, vesicles store lipid.'
     ],
     choices: [
@@ -882,7 +882,7 @@ const ENTRIES = [
     answer: { line: 'The hypha finds purchase in pores too narrow for a root hair to enter. In a pore, purchase means a grip.' },
     steps: [
       'Read the word\'s own sentence: the hypha "finds purchase in pores far too narrow for a root hair to enter."',
-      'Put each choice in the slot. In a pore, think grip. Only a hold makes sense there.',
+      'Put each choice in the slot: in a pore, think grip. Only a hold makes sense there.',
       'Do not let the trade story pull you. The passage talks money elsewhere; this sentence is about size and reach.'
     ],
     choices: [
@@ -962,7 +962,7 @@ const ENTRIES = [
     answer: { line: 'Much of the tag found in a receiving root sits in hyphae wrapped around and through it: fungal tissue, not plant tissue.' },
     steps: [
       'Find the caution: paragraph 11, sentence 1, "a tag in a neighbour is not automatically carbon in a neighbour."',
-      'Read the reason in sentence 2. Whose tissue holds the tag? Much of it sits in hyphae wrapped around and through the root.',
+      'Read the reason in sentence 2: whose tissue holds the tag? Much of it sits in hyphae wrapped around and through the root.',
       'Join it to sentence 3. A stem or leaf has no such wrapping, so a tag there is the stricter test.'
     ],
     choices: [
@@ -1027,7 +1027,7 @@ const ENTRIES = [
         { p: 15, s: 6, quote: 'The route says nothing about generosity at either end', role: 'key', note: 'the half that cuts the other way' }
       ],
       reuse: REUSE,
-      alt: 'Paragraph 15, sentences 5 and 6 are highlighted as the answer: these plants return nothing, and the route says nothing about generosity at either end. Sentence 2 is marked lighter as a trap\'s source: only ghost pipe and some orchids lack usable chlorophyll.',
+      alt: 'Paragraph 15, sentences 5 and 6 are highlighted as the answer: these plants return nothing, and the route says nothing about generosity at either end. Sentence 2 is marked lighter as a trap\'s source: ghost pipe and a number of orchids, one named group, lack usable chlorophyll.',
       caption: 'The highlighted lines are the half of the example that cuts the other way: taking with no return.'
     },
     demoPick: 'Most plants in a forest obtain their carbon from other plants',
@@ -1087,7 +1087,7 @@ const ENTRIES = [
     steps: [
       'Read the paragraph\'s first line. It names the job: the network is not the only road.',
       'List the other roads in sentence 2: soil water, carbon dioxide breathed out and fixed again, fallen litter, root grafts.',
-      'Sentence 3 lands it: "none requires a fungal conduit." So a tag in a neighbour may not be network traffic. The list is support, not the topic.'
+      'Sentence 3 lands it: "none requires a fungal conduit," so a tag in a neighbour may not be network traffic. The list is support, not the topic.'
     ],
     choices: [
       { text: 'argue that soil water supplies most of the nutrients in a forest', role: 'trap', family: 'rc-too-strong', note: 'Soil water is one road a tag can take, not the forest\'s main nutrient supply.' },
@@ -1132,5 +1132,21 @@ const CHANGES = {
   'rc:rc-o15-q09': ['Expert review (optional): the Bragg choice\'s label is "Pauling and Bragg, mixed up" (was "Borrowed the next cause"), and its note names the real pull: Pauling\'s three-chain model is what got the pair let back in (8.6), not what sent them away'],
   'rc:rc-o15-q03': ['Expert review (optional): step 2 and Lock it in no longer say the paragraph "builds to" sentence 2, since sentence 3 comes after it; the Astbury choice\'s note gives its pull (Astbury is named in paragraph 4 itself) and the refutation in one sentence, so the phone shows both']
 };
+// re-review of B007, round 1 (verdict needs-work): 2 items blocked for a false sentence,
+// 9 for a step of three sentences (the decisions doc and voice codex rule 3 set one or two)
+const RR1 = 'Re-review round 1 (blocked): ';
+[
+  ['rc:rc-o15-q13', RR1 + 'the chemistry-prize note said "The field of the prize never comes up", but sentence 10.6 names the Physiology or Medicine prize. The note now names the real pull (she trained as a physical chemist, 5.4) and says sentence 6 names the field only to report the award, while the rules it states hold for any prize'],
+  ['rc:rc-o15-q13', RR1 + 'step 3 was three sentences; now two ("Join the two: rule plus date.")'],
+  ['rc:rc-p10-q09', RR1 + 'the alt said "only ghost pipe and some orchids lack usable chlorophyll", a claim neither the passage nor biology supports. It now says sentence 2 names one group (ghost pipe and a number of orchids) that lacks usable chlorophyll'],
+  ['rc:rc-o15-q02', RR1 + 'step 1 was three sentences; now two'],
+  ['rc:rc-o15-q06', RR1 + 'step 3 was three sentences; now two'],
+  ['rc:rc-o15-q09', RR1 + 'step 3 was three sentences; now two'],
+  ['rc:rc-p10-q02', RR1 + 'step 2 was three sentences; the middle one repeated step 1 and is gone. Step 1\'s "Paragraph 4, sentence 3." stays the short line'],
+  ['rc:rc-p10-q06', RR1 + 'step 2 was three sentences; now two, ending on the short line "Only a hold makes sense there."'],
+  ['rc:rc-p10-q08', RR1 + 'step 2 was three sentences; now two'],
+  ['rc:rc-p10-q11', RR1 + 'step 3 was three sentences; now two'],
+  ['rc:rc-o15-q04', 'Re-review round 1 (optional): the answer line, step 2 and the alt keep the passage\'s hedge, "Wilkins seems to have expected" an assistant']
+].forEach(([qid, line]) => { (CHANGES[qid] = CHANGES[qid] || []).push(line); });
 
 module.exports = { group: 'G1', batch: 'B007', title: 'Full-Length Test 1, Reading Comprehension, passages 1 and 2 (25 items; 3 more in the pilot)', entries: ENTRIES, changes: CHANGES };
