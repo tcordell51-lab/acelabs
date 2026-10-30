@@ -1,0 +1,180 @@
+/* =====================================================================
+   Ace Labs tokens v2 (proposed shared/al-tokens.css?v=3).
+
+   Rule 1: every name that exists in al-tokens.css v2 today keeps its exact
+   value, and no --al-* name is ever themed. Pages that read --al-* today do
+   not move, in light or dark mode.
+   Rule 2: everything new is additive. Components read the semantic layer
+   (--s-* on paper, --b-* on the bench), never a primitive.
+   Rule 3: one dark mode. Only --s-* is redefined, under
+   prefers-color-scheme (unless html[data-theme="light"]) and again under
+   html[data-theme="dark"]. The bench, specimens, Ace Cards and the exam
+   screen never invert.
+   ===================================================================== */
+
+/* Self-hosted latin subsets. In production these live in shared/fonts/ with
+   a version in the file name (immutable cache): playfair-v1.woff2 ... */
+@font-face{font-family:"Playfair Display";src:url("fonts/PlayfairDisplay.woff2") format("woff2");font-weight:400 900;font-style:normal;font-display:swap}
+@font-face{font-family:"Playfair Display";src:url("fonts/PlayfairDisplay-italic.woff2") format("woff2");font-weight:400 900;font-style:italic;font-display:swap}
+@font-face{font-family:"DM Sans";src:url("fonts/DMSans.woff2") format("woff2");font-weight:400 800;font-style:normal;font-display:swap}
+@font-face{font-family:"DM Sans";src:url("fonts/DMSans-italic.woff2") format("woff2");font-weight:400 800;font-style:italic;font-display:swap}
+@font-face{font-family:"JetBrains Mono";src:url("fonts/JetBrainsMono.woff2") format("woff2");font-weight:400 700;font-style:normal;font-display:swap}
+
+:root{
+  /* ---------- 0. existing al-tokens.css names: exact values, never themed ---------- */
+  --al-bg:#f5f0e8; --al-paper:#fffdf7; --al-paper-2:#f9f3e6; --al-paper-3:#f3ecdb;
+  --al-ink:#0d2018; --al-ink-2:#3a4a42; --al-ink-mute:#5c6a63; --al-ink-soft:#9aa39e;
+  --al-gold:#C9A84C; --al-gold-m:#E2C97A; --al-gold-d:#8C7235;
+  --al-gold-bg:rgba(201,168,76,.10); --al-gold-glow:rgba(201,168,76,.35);
+  --al-teal:#1B3A2D; --al-teal-2:#2A5240; --al-teal-3:#3A6B54;
+  --al-good:#009E73; --al-good-d:#007a59; --al-trap:#D55E00; --al-trap-d:#9b4500;
+  --al-line:rgba(13,32,24,.12); --al-line-2:rgba(13,32,24,.20);
+  --al-qr-color:#C9A84C; --al-bio-color:#5FA874; --al-gc-color:#3A6B54; --al-ochem-color:#8C7235;
+  --al-font-serif:'Playfair Display',Georgia,serif;
+  --al-font-sans:'DM Sans',system-ui,-apple-system,sans-serif;
+  --al-font-mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;
+  --al-shadow:0 1px 3px rgba(13,32,24,.06), 0 8px 24px rgba(13,32,24,.04);
+  --al-shadow-md:0 2px 6px rgba(13,32,24,.08), 0 16px 40px rgba(13,32,24,.06);
+  --al-shadow-lg:0 4px 14px rgba(13,32,24,.10), 0 24px 56px rgba(13,32,24,.08);
+  --al-confirmed:#009E73; --al-confirmed-pale:rgba(0,158,115,.10);
+  --al-needs-review:#D55E00; --al-needs-review-pale:rgba(213,94,0,.10);
+  --al-almost:#E69F00; --al-almost-pale:rgba(230,159,0,.10);
+  --al-new:#0072B2; --al-new-pale:rgba(0,114,178,.10);
+  --motion-fast:150ms; --motion-base:250ms; --motion-slow:400ms; --motion-explainer:800ms;
+
+  /* ---------- 1. new primitives (additive, never themed) ---------- */
+  --al-gold-ink:#7a6128;                       /* small gold text on paper: 5.79:1 */
+  --al-bench-0:#07130d; --al-bench-1:#0c1d15; --al-bench-2:#122a1f; --al-bench-3:#1a3829;
+  /* section identity: swatch, rail, icon. Always paired with the section name.
+     Base passes 4.9:1 on paper; -lite passes 7.9:1 on the bench and dark paper. */
+  --al-sec-bio:#2F7D4F;   --al-sec-bio-lite:#6fcf97;
+  --al-sec-gchem:#2F64A8; --al-sec-gchem-lite:#7fb2f0;
+  --al-sec-ochem:#7A4BAE; --al-sec-ochem-lite:#c4a3f0;
+  --al-sec-pat:#8A5D00;   --al-sec-pat-lite:#f0c060;
+  --al-sec-rc:#1C7268;    --al-sec-rc-lite:#5fd3c4;
+  --al-sec-qr:#B03A57;    --al-sec-qr-lite:#f39ab0;
+  /* test day: mirrors tools/mock/full.css. Never themed, never Ace-styled. */
+  --al-exam:#086894; --al-exam-d:#054766; --al-exam-bg:#f0f3f5; --al-exam-ink:#1a1d20; --al-exam-line:#c5ccd1; --al-exam-tool:#f7f9fa;
+  /* specimens: a microscope field or a PAT figure looks the same in both themes */
+  --al-spec-surround:#141714; --al-spec-paper:#ffffff; --al-spec-table:#e9e5db; --al-spec-ink:#111111;
+
+  /* ---------- 2. semantic: paper (themed) ---------- */
+  --s-page:var(--al-bg);
+  --s-surface:var(--al-paper);
+  --s-surface-2:var(--al-paper-2);
+  --s-sunk:#ece4d3;
+  --s-ink:var(--al-ink);
+  --s-ink-2:var(--al-ink-2);
+  --s-ink-3:var(--al-ink-mute);
+  --s-line:rgba(13,32,24,.12);
+  --s-line-2:rgba(13,32,24,.22);
+  --s-accent:var(--al-gold);           /* fills, rules, the bead, the next step */
+  --s-accent-ink:var(--al-gold-ink);   /* gold text on paper */
+  --s-primary:var(--al-teal);
+  --s-primary-ink:#fffdf7;
+  --s-good:var(--al-good);  --s-good-ink:var(--al-good-d);  --s-good-wash:rgba(0,158,115,.10);
+  --s-trap:var(--al-trap);  --s-trap-ink:var(--al-trap-d);  --s-trap-wash:rgba(213,94,0,.09);
+  --s-focus:#0072B2;
+  --s-shadow:0 1px 2px rgba(13,32,24,.06),0 8px 24px rgba(13,32,24,.06);
+  --s-shadow-lift:0 2px 6px rgba(13,32,24,.10),0 18px 40px rgba(13,32,24,.12);
+  --s-sec-bio:var(--al-sec-bio); --s-sec-gchem:var(--al-sec-gchem); --s-sec-ochem:var(--al-sec-ochem);
+  --s-sec-pat:var(--al-sec-pat); --s-sec-rc:var(--al-sec-rc); --s-sec-qr:var(--al-sec-qr);
+  --sec:var(--s-ink-2);                /* set by [data-sec] */
+  --sec-lite:var(--s-ink-2);
+
+  /* ---------- 2b. semantic: the bench (same in both themes) ---------- */
+  --b-bg:var(--al-bench-1);
+  --b-raised:var(--al-bench-2);
+  --b-raised-2:var(--al-bench-3);
+  --b-ink:#f4ede0;
+  --b-ink-2:#c9c3b4;
+  --b-ink-3:#9fa89f;
+  --b-line:rgba(244,237,224,.12);
+  --b-line-2:rgba(201,168,76,.34);
+  --b-gold:var(--al-gold);
+  --b-gold-hi:var(--al-gold-m);
+  --b-good:#3fd2a0;
+  --b-trap:#ff8a3d;
+
+  /* ---------- 3a. type ---------- */
+  --f-display:"Playfair Display",Georgia,"Times New Roman",serif;
+  --f-body:"DM Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,monospace;
+  --f-exam:Arial,Helvetica,sans-serif;
+  --t-hero:clamp(2.125rem,1.4rem + 3.6vw,3.5rem);    /* 34 to 56 */
+  --t-h1:clamp(1.75rem,1.3rem + 2.2vw,2.5rem);       /* 28 to 40 */
+  --t-h2:clamp(1.375rem,1.2rem + .9vw,1.75rem);      /* 22 to 28 */
+  --t-coach:clamp(1.1875rem,1.05rem + .7vw,1.5rem);  /* 19 to 24, Playfair italic: the coach */
+  --t-h3:1.125rem;    /* 18 */
+  --t-read:1.0625rem; /* 17 */
+  --t-body:1rem;      /* 16 */
+  --t-small:.875rem;  /* 14 */
+  --t-label:.75rem;   /* 12, mono caps */
+
+  /* ---------- 3b. space and shape ---------- */
+  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:24px; --sp-6:32px; --sp-7:48px; --sp-8:64px;
+  --gutter:16px;
+  --r-control:10px; --r-card:16px; --r-bench:22px; --r-pill:999px;
+  --target:44px;
+  --tabbar-h:64px;
+  --maxw:1180px;
+
+  /* ---------- 3c. motion ---------- */
+  --m-tap:100ms;      /* a press answers your finger */
+  --m-state:180ms;    /* a control changes state */
+  --m-panel:320ms;    /* a panel slides in, the plan reorders, a toast */
+  --m-travel:420ms;   /* the bead moves between doors */
+  --m-reveal:600ms;   /* a verdict or next step arrives */
+  --m-card:620ms;     /* an Ace Card flies to Review */
+  --m-frame:900ms;    /* one frame of a process (bio-stick FRAME_MS) */
+  --e-out:cubic-bezier(.2,.8,.2,1);          /* arrivals settle in */
+  --e-std:cubic-bezier(.4,0,.2,1);           /* state changes */
+  --e-process:cubic-bezier(.45,0,.25,1);     /* a fold, a pour, a contraction */
+  --e-drop:cubic-bezier(.34,1.32,.64,1);     /* only when a drag is released */
+  color-scheme:light;
+}
+
+/* ---------- dark: only the paper roles change ---------- */
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --s-page:#08150f; --s-surface:#0f1f17; --s-surface-2:#13261c; --s-sunk:#0a1811;
+    --s-ink:#ece6d7; --s-ink-2:#c9c3b4; --s-ink-3:#a7b0a8;
+    --s-line:rgba(236,230,215,.12); --s-line-2:rgba(236,230,215,.22);
+    --s-accent-ink:#E2C97A; --s-primary:#C9A84C; --s-primary-ink:#16120A;
+    --s-good-ink:#3fd2a0; --s-trap-ink:#ff8a3d; --s-good-wash:rgba(63,210,160,.12); --s-trap-wash:rgba(255,138,61,.12);
+    --s-focus:#7fb2f0;
+    --s-shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.3);
+    --s-shadow-lift:0 2px 6px rgba(0,0,0,.5),0 18px 40px rgba(0,0,0,.45);
+    --s-sec-bio:var(--al-sec-bio-lite); --s-sec-gchem:var(--al-sec-gchem-lite); --s-sec-ochem:var(--al-sec-ochem-lite);
+    --s-sec-pat:var(--al-sec-pat-lite); --s-sec-rc:var(--al-sec-rc-lite); --s-sec-qr:var(--al-sec-qr-lite);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --s-page:#08150f; --s-surface:#0f1f17; --s-surface-2:#13261c; --s-sunk:#0a1811;
+  --s-ink:#ece6d7; --s-ink-2:#c9c3b4; --s-ink-3:#a7b0a8;
+  --s-line:rgba(236,230,215,.12); --s-line-2:rgba(236,230,215,.22);
+  --s-accent-ink:#E2C97A; --s-primary:#C9A84C; --s-primary-ink:#16120A;
+  --s-good-ink:#3fd2a0; --s-trap-ink:#ff8a3d; --s-good-wash:rgba(63,210,160,.12); --s-trap-wash:rgba(255,138,61,.12);
+  --s-focus:#7fb2f0;
+  --s-shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.3);
+  --s-shadow-lift:0 2px 6px rgba(0,0,0,.5),0 18px 40px rgba(0,0,0,.45);
+  --s-sec-bio:var(--al-sec-bio-lite); --s-sec-gchem:var(--al-sec-gchem-lite); --s-sec-ochem:var(--al-sec-ochem-lite);
+  --s-sec-pat:var(--al-sec-pat-lite); --s-sec-rc:var(--al-sec-rc-lite); --s-sec-qr:var(--al-sec-qr-lite);
+  color-scheme:dark;
+}
+
+[data-sec="bio"]{--sec:var(--s-sec-bio);--sec-lite:var(--al-sec-bio-lite)}
+[data-sec="gchem"]{--sec:var(--s-sec-gchem);--sec-lite:var(--al-sec-gchem-lite)}
+[data-sec="ochem"]{--sec:var(--s-sec-ochem);--sec-lite:var(--al-sec-ochem-lite)}
+[data-sec="pat"]{--sec:var(--s-sec-pat);--sec-lite:var(--al-sec-pat-lite)}
+[data-sec="rc"]{--sec:var(--s-sec-rc);--sec-lite:var(--al-sec-rc-lite)}
+[data-sec="qr"]{--sec:var(--s-sec-qr);--sec-lite:var(--al-sec-qr-lite)}
+
+/* reduced motion: every transition becomes a cut. Scripts read the same query
+   and swap auto-play for a Next frame button; dragging keeps working. */
+@media (prefers-reduced-motion: reduce){
+  :root{--m-tap:1ms;--m-state:1ms;--m-panel:1ms;--m-travel:1ms;--m-reveal:1ms;--m-card:1ms;--m-frame:1ms;
+        --motion-fast:.01ms;--motion-base:.01ms;--motion-slow:.01ms;--motion-explainer:.01ms}
+  *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;scroll-behavior:auto !important}
+}

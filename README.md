@@ -49,7 +49,8 @@ AceDAT-AceLabs/
 │   ├── al-tokens.css          # Canonical design tokens (Bio + OChem adopt; QR + GC pending)
 │   ├── al-motion.css          # Reduced-motion stylesheet
 │   ├── ace-labs-shell.css     # Home brand vars + dashboard styles
-│   ├── ace-labs-shell.js      # Cross-tool localStorage aggregator (read-only)
+│   ├── ace-shell.js           # The one Ace Labs navigation (six doors), on every student page
+│   ├── ace-progress.js        # Cross-tool progress: miss adapters, Review ladder, today()
 │   ├── scope.js               # Canonical ACE_SCOPE data registry
 │   ├── dat-mock-tests.js      # Prometric runner bank
 │   ├── ochem-bank.js          # OChem bank for legacy unified-mock
@@ -79,7 +80,7 @@ AceDAT-AceLabs/
 
 ## Cross-tool localStorage aggregation
 
-`shared/ace-labs-shell.js` reads each engine's namespace and rolls up to the home dashboard. Pure read-only — never writes back into engine state.
+`shared/ace-progress.js` reads each engine's namespace through one miss adapter per tool and rolls it up to the home (today()), Review and Performance pages. It never writes back into engine state; its only own keys are `ace.v1.*`.
 
 | Engine | localStorage prefix | What's read |
 |---|---|---|
@@ -97,6 +98,19 @@ If an engine hasn't been opened yet, the dashboard shows fallback module counts 
 - **No payment language in student-visible content** ($, paid, balance, package, installment, etc.).
 - **No localStorage-only student input.** Any student-written content that's not already a Thomas-visible note must persist to Airtable.
 - **OChem v1 is canonical.** Augment in place; no parallel v2/v3.
+
+## Ship gates
+
+```
+npm test        # under 30 s: house rules, bank integrity, shell unit tests, the Bio init smoke
+npm run test:all   # the above plus the PAT engine suite (about 6 min) and the Bio browser smoke (needs `npm run serve` on :4000)
+```
+
+`npm test` runs in tiers so one failure does not hide the rest of its tier's output:
+
+- `test:gates`: no competitor names; no unreplaced placeholder tokens; every local link and path literal resolves (honouring the redirects); every `/shared/` include carries a `?v=` that is newer than the file's last change (the cache is immutable for a year); every literal localStorage read has a writer; no new em dashes or glyphs beyond `scripts/glyph-baseline.json` (re-baseline with `npm run glyphs:baseline` only after removing some).
+- `test:banks`: answer-position bias, the Climb bank matches its source, the Bio registry, the scope registry, count claims on the home and hubs against the banks, the RC bank, the full-length composition.
+- `test:unit`: the QR formats and shell unit tests.
 
 ## Validate the scope
 

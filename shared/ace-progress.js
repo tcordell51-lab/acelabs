@@ -202,7 +202,7 @@
     if (!d || !d.topWeakTopics) return [];
     return d.topWeakTopics.filter(function (t) { return t && t.correct < t.total; }).map(function (t) {
       var s = sec(t.section);
-      return { id: 'diag:' + s + '|' + t.topic, section: s, concept: t.topic, topic: t.topic, source: 'diagnostic', sourceLabel: 'Diagnostic',
+      return { id: 'diag:' + s + '|' + t.topic, section: s, concept: t.label || t.topic, topic: t.topic, source: 'diagnostic', sourceLabel: 'Diagnostic',
         when: ts(d.ts), detail: (t.total - t.correct) + ' of ' + t.total + ' missed', rank: 1.5 };
     });
   });
@@ -248,7 +248,9 @@
   registerMissAdapter('qr-engine', function () { return engineAttempts('qr-rem-v2', 'qr', 'QR engine'); });
   registerMissAdapter('gc-engine', function () {
     var active = read('gc-rem-v1-meta:active', null);
-    var ns = typeof active === 'string' && /^gc-rem-v1/.test(active) ? active : 'gc-rem-v1';
+    // The engine stores the bare student slug and keeps that student's attempts under
+    // gc-rem-v1:student:<slug>; a full namespace is accepted too.
+    var ns = typeof active === 'string' && active ? (/^gc-rem-v1/.test(active) ? active : 'gc-rem-v1:student:' + active) : 'gc-rem-v1';
     return engineAttempts(ns, 'gchem', 'Gen Chem engine');
   });
 
@@ -353,7 +355,8 @@
     return (st.attempts || []).filter(function (a) { return a && a.mode === 'test'; }).map(function (a, i) {
       var sections = Object.keys(a.sect || {}).map(function (k) { return { section: sec(k), label: R.SECTION_SHORT ? R.SECTION_SHORT[sec(k)] : k, correct: a.sect[k].c, total: a.sect[k].t, timeSec: null }; });
       return { id: 'climb:' + i + ':' + a.dateISO, kind: 'climb', label: 'The Climb, rung ' + a.n + (names[a.n - 1] ? ': ' + names[a.n - 1] : ''), when: ts(a.dateISO),
-        correct: a.correct, total: a.total, timeSec: a.timeSec || null, sections: sections, topics: [] };
+        correct: a.correct, total: a.total, timeSec: a.timeSec || null, sections: sections,
+        topics: (a.byTopic || []).map(function (t) { return { section: sec(t.section), topic: t.topic, correct: t.c, total: t.t }; }) };
     });
   });
 
@@ -437,7 +440,7 @@
       detail: 'Practice-test misses first. Sheet, learn or drill each one.', minutes: Math.min(30, 4 * Math.min(due.length, 8)), href: '/review/?due=1' });
     var cq = climbQueue();
     if (cq.started) tasks.push({ kind: 'climb', title: cq.due ? 'The Climb: today\'s queue' : 'The Climb: rung ' + cq.nextRung,
-      detail: cq.due ? cq.due + ' concept' + (cq.due === 1 ? '' : 's') + ' due, each as a fresh question.' : 'Forty questions, then the misses come back on schedule.', minutes: cq.due ? 15 : 40, href: '/tools/minitests/' });
+      detail: cq.due ? cq.due + ' concept' + (cq.due === 1 ? '' : 's') + ' due, each as a fresh question.' : 'Forty questions, then the misses come back on schedule.', minutes: cq.due ? 15 : 50, href: '/tools/minitests/' });
     var ws = weakestSection(ms);
     if (ws && window.AceIndex && window.AceIndex.courses[ws]) {
       var top = ms.filter(function (m) { return m.section === ws; })[0];
@@ -448,7 +451,12 @@
         detail: (window.AceRoute ? window.AceRoute.nightTitle(ws, n) : '') || 'Pick up the course where it helps most.', minutes: 30, href: window.AceIndex.courses[ws].url + '?night=' + n });
     }
     var nt = nextTest();
-    if (tasks.length < 3 || !profile().diagnosed) tasks.push({ kind: 'test', title: nt.title, detail: nt.detail, minutes: nt.minutes, href: nt.href });
+    // The first timed test waits a day: a 45-minute diagnostic and a 150-minute practice
+    // test on the same afternoon is not a first day anyone keeps.
+    var dg = read('acelabs_diagnostic_v1', null), diagToday = false;
+    try { diagToday = !!(dg && dg.ts && new Date(dg.ts).toDateString() === new Date().toDateString()); } catch (e) {}
+    var holdTest = diagToday && nt.minutes >= 120;
+    if ((tasks.length < 3 || !profile().diagnosed) && !holdTest) tasks.push({ kind: 'test', title: nt.title, detail: nt.detail, minutes: nt.minutes, href: nt.href });
     return tasks.slice(0, 4);
   }
 
@@ -456,8 +464,15 @@
      cookie, HttpOnly, Path=/api/tutor, from the ai-tutor branch). The page can
      never read the cookie; it asks the tutor function, which reads Weekly Plans
      server-side. Resolves null whenever that is not available. */
+  function portalHandoffSeen() {
+    // Nothing to ask until a portal handoff has happened on this browser (the
+    // readable ace_who cookie or the session record); otherwise every home load
+    // would POST to an endpoint that is not there.
+    try { if (/(?:^|;\s*)ace_who=/.test(document.cookie || '')) return true; } catch (e) {}
+    return !!read('ace.v1.session', null);
+  }
   function plan(timeoutMs) {
-    if (!window.fetch) return Promise.resolve(null);
+    if (!window.fetch || !portalHandoffSeen()) return Promise.resolve(null);
     var done = false;
     return new Promise(function (resolve) {
       var t = setTimeout(function () { if (!done) { done = true; resolve(null); } }, timeoutMs || 2500);

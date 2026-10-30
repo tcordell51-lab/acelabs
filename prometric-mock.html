@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Ace The DAT · Practice Tests</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=DM+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&family=Arial&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="shared/al-tokens.css">
-<link rel="stylesheet" href="shared/ace-labs-shell.css">
+<link rel="stylesheet" href="shared/al-tokens.css?v=2">
+<link rel="stylesheet" href="shared/ace-labs-shell.css?v=1">
 <style>
 /* ============================================================
    SPLASH (Ace The DAT branded — test selection screen)
@@ -106,6 +106,8 @@
 .pm-runfoot{display:flex; justify-content:space-around; align-items:center; gap:14px; padding:18px 36px; background:#086894; border-top:1px solid #054766}
 .pm-btn{padding:11px 28px; font-size:14px; font-weight:500; letter-spacing:.10em; border:1px solid rgba(0,0,0,.06); background:linear-gradient(180deg, #ffffff 0%, #eaf6ff 100%); color:#1a1d20; border-radius:8px; cursor:pointer; font-family:'DM Sans',Arial,sans-serif; font-style:italic; text-transform:uppercase; min-width:124px; transition:all .12s; box-shadow:0 1px 2px rgba(0,0,0,.18)}
 .pm-btn:hover{background:linear-gradient(180deg, #ffffff 0%, #d0ebff 100%)}
+/* Phones: six buttons wrap to two rows instead of running off the right edge (EXHIBIT, REVIEW and END were unreachable at 390px). */
+@media (max-width:720px){.pm-runfoot{flex-wrap:wrap;gap:8px;padding:10px 12px;justify-content:center}.pm-runfoot .pm-btn{flex:1 1 30%;min-width:0;padding:10px 8px;font-size:12px;letter-spacing:.06em}}
 .pm-btn:disabled{opacity:.5; cursor:not-allowed}
 .pm-btn .underline{text-decoration:underline}
 /* Primary (Next) is the same white pill — keeps the row visually consistent */
@@ -282,7 +284,7 @@
 .pm-break button{padding:12px 22px; font-size:13px; font-weight:700; letter-spacing:.06em; border:1.5px solid #4a525a; background:linear-gradient(#fff, #e0e5e9); color:#1c2026; border-radius:4px; cursor:pointer; font-family:Arial,sans-serif}
 .pm-break button.primary{background:linear-gradient(#3a78c4, #2a5a96); color:#fff; border-color:#054766}
 </style>
-<link rel="stylesheet" href="shared/al-motion.css">
+<link rel="stylesheet" href="shared/al-motion.css?v=1">
 </head>
 <body data-page="prometric-mock">
 <div class="al-app">
@@ -295,7 +297,7 @@
   </div>
   <nav class="al-nav">
     <a href="ace-labs.html" class="al-nav-link">Home</a>
-    <a href="mocks-catalog.html" class="al-nav-link">Mock catalog</a>
+    <a href="/tests/" class="al-nav-link">Tests</a>
   </nav>
 </header>
 
@@ -304,7 +306,7 @@
   <h1 class="pm-h">3 practice tests, <em>pacing simulation.</em></h1>
   <p class="pm-sub">Survey of Natural Sciences (100Q in 90min) followed by a 30-minute break, then Quantitative Reasoning (40Q in 45min). The interface follows the Prometric mechanics described in the ADA 2026 Candidate Guide: section timers, question navigation panel, mark-for-review, end-of-section review screen, classic Windows calculator (memory + sqrt + 1/x) for QR, periodic table reference for Gen Chem questions. PAT and Reading Comprehension are not included — those require image and passage banks Ace Labs has not built yet.</p>
 
-  <div class="pm-warn"><b>About this mock.</b> This mock is to confirm your pacing under DAT timing. The real DAT is 5h 15m over 4 sections. This mock covers the 2 sections Ace The DAT has banks for (Sciences + QR) — about 2h 15m of seat time. <b>Ace Labs does not predict DAT scores or percentile ranks.</b> Your post-mock report shows raw counts, per-section accuracy, time-on-task, and a missed-question walkthrough — no scaled-score forecast. OChem section follows the official April 2026 ADA outline: Mechanisms, Chemical Synthesis, Acid-Base, Chemical &amp; Physical Properties, Structural Evaluation. OChem questions render skeletal molecular structures from SMILES, and 8 questions use the new ADA-spec curved-arrow format ("predict product from arrows" / "predict arrows from product").</div>
+  <div class="pm-warn"><b>About this mock.</b> This mock is to confirm your pacing under DAT timing. The real DAT is 5h 15m over 4 sections. This mock covers Sciences and QR, about 2h 15m of seat time. PAT and Reading are in the full-length DAT under Tests. <b>Ace Labs does not predict DAT scores or percentile ranks.</b> Your post-mock report shows raw counts, per-section accuracy, time-on-task, and a missed-question walkthrough — no scaled-score forecast. OChem section follows the official April 2026 ADA outline: Mechanisms, Chemical Synthesis, Acid-Base, Chemical &amp; Physical Properties, Structural Evaluation. OChem questions render skeletal molecular structures from SMILES, and 8 questions use the new ADA-spec curved-arrow format ("predict product from arrows" / "predict arrows from product").</div>
 
   <!-- Auto-hydrated by shared/scope.js -->
   <div id="alScopeStrip"></div>
@@ -327,8 +329,8 @@
   <button class="pm-start" id="pmStartBtn" disabled>Pick a test to begin</button>
 </div>
 
-<script src="shared/smiles-drawer.min.js"></script>
-<script src="shared/dat-mock-tests.js"></script>
+<script src="shared/smiles-drawer.min.js?v=1"></script>
+<script src="shared/dat-mock-tests.js?v=2"></script>
 <script>
 'use strict';
 
@@ -579,7 +581,7 @@ function showInstructionsScreen(t){
         <li><b style="color:#1a1d20">Closing the tab or refreshing</b> during a section ends that section with whatever you have answered.</li>
       </ol>
       <div style="background:#f0f6fa; border:1px solid #d0e1ec; border-left:4px solid #086894; border-radius:4px; padding:14px 18px; font-size:13.5px; color:#3a4148; margin-bottom:24px; line-height:1.55">
-        <b style="color:#1a1d20">Honest scope:</b> This simulation covers Sciences and QR — the two sections Ace The DAT has banks for. PAT and Reading Comprehension are not included. <b style="color:#1a1d20">Ace Labs does not predict DAT scaled scores or percentiles.</b> Your post-mock report shows raw counts, per-section accuracy, time-on-task, and missed-question review only.
+        <b style="color:#1a1d20">Honest scope:</b> This simulation covers Sciences and QR. PAT and Reading Comprehension are not in these three tests; both are in the full-length DAT under Tests. <b style="color:#1a1d20">Ace Labs does not predict DAT scaled scores or percentiles.</b> Your post-mock report shows raw counts, per-section accuracy, time-on-task, and missed-question review only.
       </div>
       <div style="display:flex; gap:10px; padding-top:20px; border-top:1px solid #d0d6db">
         <button id="pmCancelStart" style="padding:11px 22px; font-size:13px; font-weight:600; letter-spacing:.06em; border:1px solid #b5bcc1; background:#fff; color:#1a1d20; border-radius:6px; cursor:pointer">Back to test selection</button>
@@ -599,7 +601,11 @@ function showInstructionsScreen(t){
   });
 }
 
+/* The six-door shell hides itself while a timed section runs (shared/ace-shell.js reads acelabs.timed). */
+function pmSetTimed(sec){ try{ localStorage.setItem('acelabs.timed', JSON.stringify({ until: Date.now() + sec * 1000 })); window.dispatchEvent(new Event('acelabs:timed')); }catch(e){} }
+function pmClearTimed(){ try{ localStorage.setItem('acelabs.timed', JSON.stringify({ until: 0 })); window.dispatchEvent(new Event('acelabs:timed')); }catch(e){} }
 function actuallyStartTest(t){
+  pmSetTimed(140 * 60);
   // Build sections.items in DAT order: Bio (40) → GC (30) → OChem (30) for SoNS, then QR (40)
   SECTIONS[0].items = [
     ...t.sections.bio.map(p => ({ ...p, _sub: 'Biology' })),
@@ -803,7 +809,7 @@ function renderRun(){
   const xBtn = document.getElementById('pmRunClose');
   if (xBtn){
     xBtn.addEventListener('click', () => {
-      if (confirm('Exit the test now? Your progress will be lost.')){
+      if (confirm('Exit the test now? Your progress will be lost.')){ pmClearTimed();
         if (STATE.timerId) clearInterval(STATE.timerId);
         STATE.finished = true;
         clearPmProgress();
@@ -912,7 +918,7 @@ function getSmiDrawer(){
     _smiDrawer = new window.SmiDrawer({
       width: 280, height: 120, padding: 4, bondThickness: 1.2,
       shortBondLength: 0.85, bondLength: 18, atomVisualization: 'default',
-      compactDrawing: true, fontSizeLarge: 11, fontSizeSmall: 8,
+      compactDrawing: true, explicitHydrogens: false, fontSizeLarge: 11, fontSizeSmall: 8,
       themes: { light: { C: '#1a1d20', O: '#cf3b3b', N: '#3a78c4', Cl: '#2e8a3e', Br: '#8a4a2a', F: '#3aa83a', I: '#7a3a8a', H: '#1a1d20', BACKGROUND: '#fff' } }
     });
   } catch(e){ console.warn('SmilesDrawer init failed', e); _smiDrawer = false; }
@@ -1356,6 +1362,7 @@ function sanitizeMockRecord(rec){
 
 function finishTest(){
   STATE.finished = true;
+  pmClearTimed();
   clearPmProgress();
   if (STATE.timerId){ clearInterval(STATE.timerId); STATE.timerId = null; }
 
@@ -1560,7 +1567,7 @@ function renderFinal(subjResults, wrong, testInfo){
         <button class="btn secondary" id="pmShowWrong">Review ${wrong.length} missed questions</button>
         <button class="btn secondary" onclick="location.reload()">Take another test</button>
         <a class="btn secondary" href="ace-labs.html">Back to hub</a>
-        <a class="btn secondary" href="mocks-catalog.html">Mock catalog</a>
+        <a class="btn secondary" href="/tests/">All tests</a>
       </div>
     </div>
   `;
@@ -1604,7 +1611,7 @@ function showWrongAnswerReview(wrong){
   modal.querySelector('#pmWrongClose').addEventListener('click', () => modal.remove());
 }
 </script>
-<script src="shared/scope.js"></script>
+<script src="shared/scope.js?v=2"></script>
   <script src="/shared/ace-shell.js?v=1" defer></script>
 </body>
 </html>

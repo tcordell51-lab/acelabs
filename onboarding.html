@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400;1,700&family=DM+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="shared/ace-labs-shell.css">
+<link rel="stylesheet" href="shared/ace-labs-shell.css?v=1">
 <style>
 /* ===== ONBOARDING-SPECIFIC ===== */
 body[data-page="onboarding"]{
@@ -463,8 +463,9 @@ body[data-page="onboarding"]{
 
   // ---- step 3 ----
   window.toggleSection = function(el, section){
-    var cb = document.getElementById('cb' + section.charAt(0).toUpperCase() + section.slice(1));
-    // The click on the label will toggle the checkbox — read after tick
+    var cb = el.querySelector('input[type="checkbox"]') || document.querySelector('.ob-check-option input[type="checkbox"][value="'+section+'"]');
+    if(!cb) return;
+    // The click on the label will toggle the checkbox; read after tick
     setTimeout(function(){
       if(cb.checked){ weakSections[section] = true; el.classList.add('selected'); }
       else { delete weakSections[section]; el.classList.remove('selected'); }
@@ -487,6 +488,7 @@ body[data-page="onboarding"]{
       }));
       // Dual-write so test-week.html and calendar.html can read a consistent key
       if(testDate) localStorage.setItem('acelabs_test_date', testDate);
+      else localStorage.removeItem('acelabs_test_date');
     } catch(e){}
 
     // Route decision
@@ -516,7 +518,7 @@ body[data-page="onboarding"]{
       if(Array.isArray(saved.weakAreas)){
         saved.weakAreas.forEach(function(s){
           weakSections[s] = true;
-          var cb = document.getElementById('cb' + s.charAt(0).toUpperCase() + s.slice(1));
+          var cb = document.querySelector('.ob-check-option input[type="checkbox"][value="'+s+'"]');
           if(cb){ cb.checked = true; }
           var el = document.querySelector('.ob-check-option[data-section="'+s+'"]');
           if(el) el.classList.add('selected');

@@ -31,7 +31,7 @@
   .top .sp{flex:1}
   .streak{font-family:var(--mono);font-size:12px;letter-spacing:.06em;color:var(--ink2);border:1px solid var(--line);border-radius:99px;padding:6px 13px}
   .streak b{color:var(--gold);font-weight:700}
-  .navlink{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink2);text-decoration:none;padding:7px 12px;border-radius:8px;cursor:pointer;position:relative}
+  .navlink{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink2);text-decoration:none;padding:7px 12px;border-radius:8px;cursor:pointer;position:relative}
   .navlink:hover{background:var(--gold-bg);color:var(--ink)}
   .navlink.on{background:var(--ink);color:var(--bg)}
   .navlink .ct{font-size:10px;color:var(--bad);font-weight:700;margin-left:5px}
@@ -214,6 +214,7 @@
   .cd-stats{display:flex;gap:26px;justify-content:center;flex-wrap:wrap;margin:24px 0 0}
   .cd-stats .s{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3)}
   .cd-stats .s b{display:block;font-family:var(--serif);font-size:30px;color:var(--ink);margin-bottom:3px}
+  @media (pointer:coarse){.navlink{min-height:44px;display:inline-flex;align-items:center}}
 </style>
 </head>
 <body>
@@ -222,13 +223,15 @@
     <div><span class="brand">Ace<em>The</em>DAT</span> <span class="kick">The Climb</span></div>
     <div class="sp"></div>
     <span class="streak" id="streak">STREAK <b>0</b></span>
-    <a class="navlink on" id="nav-today" onclick="go('today')">Today<span class="ct" id="navDueCt"></span></a>
-    <a class="navlink" id="nav-ladder" onclick="go('ladder')">The Ladder</a>
-    <a class="navlink" id="nav-mistakes" onclick="go('mistakes')">Mistake List<span class="ct" id="navMistCt"></span></a>
+    <a role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click()}" class="navlink on" id="nav-today" onclick="go('today')">Today<span class="ct" id="navDueCt"></span></a>
+    <a role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click()}" class="navlink" id="nav-ladder" onclick="go('ladder')">The Ladder</a>
+    <a role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click()}" class="navlink" id="nav-mistakes" onclick="go('mistakes')">Mistake List<span class="ct" id="navMistCt"></span></a>
   </div>
   <div id="app"></div>
 </div>
 
+<script src="/shared/ace-index.js?v=2"></script>
+<script src="/shared/ace-route.js?v=1"></script>
 <script src="remediation-map.js"></script>
 <script type="module">import { rootsUrl } from "../ochem/roots/route.js"; window.ROOTS_URL = rootsUrl;</script>
 <script src="bank.js"></script>
@@ -265,7 +268,7 @@ function trickUrl(section, topic){
   return k ? (TK.seriesBase + k) : null;
 }
 function openMistakes(){ return Object.keys(store.mistakes).filter(function(k){return !store.mistakes[k].resolved;}); }
-var DAY=86400000, INTERVAL=[0, DAY, 3*DAY, 7*DAY];   // spaced-review intervals by box level
+var DAY=86400000;
 function dueMistakes(){ var now=Date.now(); return Object.keys(store.mistakes).filter(function(k){var m=store.mistakes[k];return !m.resolved && (m.due||0)<=now;}); }
 function scheduledMistakes(){ var now=Date.now(); return Object.keys(store.mistakes).filter(function(k){var m=store.mistakes[k];return !m.resolved && (m.due||0)>now;}); }
 
@@ -367,8 +370,11 @@ function dailyDrop(){
         secsLeft:qs.length*60, ticker:null, submitted:false, title:'Daily Drop' };
   runPlayer();
 }
+function setTimedFlag(sec){ try{ localStorage.setItem('acelabs.timed', JSON.stringify({until: Date.now()+sec*1000})); window.dispatchEvent(new Event('acelabs:timed')); }catch(e){} }
+function clearTimedFlag(){ try{ localStorage.setItem('acelabs.timed', JSON.stringify({until: 0})); window.dispatchEvent(new Event('acelabs:timed')); }catch(e){} }
 function runPlayer(){
   T.startedAt=Date.now();                                                  // seat time, read by /performance/
+  setTimedFlag(T.secsLeft);                                                // the six-door shell hides while the clock runs
   renderTest();
   T.ticker = setInterval(function(){ T.secsLeft--; paintTimer(); if(T.secsLeft<=0){ clearInterval(T.ticker); submitTest(); } }, 1000);
 }
@@ -400,14 +406,14 @@ function pick(i){ T.ans[T.cur]=i; renderTest(); }
 function jump(i){ T.cur=i; renderTest(); }
 function nav(d){ T.cur=Math.min(T.qs.length-1,Math.max(0,T.cur+d)); renderTest(); }
 function toggleMark(){ T.mark[T.cur]=!T.mark[T.cur]; renderTest(); }
-function quitTest(){ if(confirm('Leave? Progress on this attempt is not saved.')){ clearInterval(T.ticker); go(T.mode==='test'?'ladder':'mistakes'); } }
+function quitTest(){ if(confirm('Leave? Progress on this attempt is not saved.')){ clearInterval(T.ticker); clearTimedFlag(); go(T.mode==='test'?'ladder':'mistakes'); } }
 function confirmSubmit(){
   var un=T.ans.filter(function(a){return a<0}).length;
-  if(un>0 && !confirm(un+' still blank. Submit anyway? (No penalty for wrong answers - a guess beats a blank.)')) return;
+  if(un>0 && !confirm(un+' still blank. Submit anyway? (No penalty for a miss - a guess beats a blank.)')) return;
   submitTest();
 }
 function submitTest(){
-  if(T.submitted) return; T.submitted=true; clearInterval(T.ticker);
+  if(T.submitted) return; T.submitted=true; clearInterval(T.ticker); clearTimedFlag();
   var correct=0, misses=[], sect={}, nowISO=new Date().toISOString();
   T.qs.forEach(function(q,i){
     sect[q.section]=sect[q.section]||{c:0,t:0}; sect[q.section].t++;
@@ -431,7 +437,8 @@ function submitTest(){
   var pct=Math.round(100*correct/T.qs.length);
   if(T.mode==='test'){ store.best[T.n]=Math.max(store.best[T.n]||0, pct); }
   store.attempts.push({mode:T.mode, n:T.n, tier:T.tier, pct:pct, correct:correct, total:T.qs.length, dateISO:nowISO,
-    sect:sect, timeSec:T.startedAt?Math.round((Date.now()-T.startedAt)/1000):null});   // sect + timeSec: raw facts for /performance/
+    sect:sect, timeSec:T.startedAt?Math.round((Date.now()-T.startedAt)/1000):null,
+    byTopic:Object.keys(tbk).map(function(k){ return tbk[k]; })});   // sect + timeSec + byTopic: raw facts for /performance/
   bumpStreak(nowISO); save(); renderStreak();
   T.result = {correct:correct, total:T.qs.length, pct:pct, sect:sect, misses:misses};
   go('results');
@@ -468,11 +475,21 @@ function renderResults(){
 
 /* ============================================================ per-miss card (shared by review + mistake list) ============================================================ */
 var _tid=0;
+/* Where a miss is fixed: the exact Retold night and the engine module from the shared router
+   (shared/ace-route.js), with the section-level map as the fallback. Same answer as /review/. */
+function fixLinks(section, topic){
+  var rem=(REM[section]||{}), out={ learn: rem.learn||'/retold/', drill: rem.review||'/practice/', night: null, nightTitle: '' };
+  try{
+    var r = window.AceRoute ? window.AceRoute.links({ section: section, concept: topic, topic: topic }) : null;
+    if(r){ if(r.night){ out.learn=r.learn; out.night=r.night; out.nightTitle=r.nightTitle||''; } if(r.drill) out.drill=r.drill; }
+  }catch(e){}
+  return out;
+}
 function missCard(q, pickedIdx, opts){
   opts=opts||{};
   var right = pickedIdx===q.correct;
-  var rem=(REM[q.section]||{}), learn=rem.learn||'/retold/', review=rem.review||'/practice/';
-  var hint=(rem.topics&&rem.topics[q.topic])||q.topic;
+  var rem=(REM[q.section]||{}), fx=fixLinks(q.section,q.topic), learn=fx.learn, review=fx.drill;
+  var hint=fx.night?('night '+fx.night+(fx.nightTitle?', '+fx.nightTitle:'')):((rem.topics&&rem.topics[q.topic])||q.topic);
   var trick=trickUrl(q.section, q.topic);
   var id='tk'+(_tid++);
   var wrongN = opts.wrongN;
@@ -485,9 +502,9 @@ function missCard(q, pickedIdx, opts){
     '<div class="exp">'+q.explanation+'</div>'+
     '<div class="fixrow">'+
       (trick?'<a class="fx trick" onclick="toggleTrick(\''+id+'\',\''+trick+'\')">Watch the trick</a>':'')+
-      '<a class="fx learn" href="'+learn+'" target="_blank" rel="noopener">Learn it · Retold ('+hint+')</a>'+
-      '<a class="fx drill" href="'+review+'" target="_blank" rel="noopener">Drill it · engine</a>'+
-      (q.section==='ochem' && window.ROOTS_URL ? '<a class="fx root" href="'+window.ROOTS_URL({topic:q.topic, text:q.stem}, '/tools/ochem/roots/')+'" target="_blank" rel="noopener">Fix the root</a>' : '')+
+      '<a class="fx learn" href="'+learn+'">Learn it · Retold ('+hint+')</a>'+
+      '<a class="fx drill" href="'+review+'">Drill it · engine</a>'+
+      (q.section==='ochem' && window.ROOTS_URL ? '<a class="fx root" href="'+window.ROOTS_URL({topic:q.topic, text:q.stem}, '/tools/ochem/roots/')+'">Fix the root</a>' : '')+
     '</div><div class="trick-embed" id="'+id+'"></div>'+
   '</div>';
   return h;
@@ -529,15 +546,15 @@ function renderMistakes(){
     if(!agg[ky]){ agg[ky]={section:m.section,topic:m.topic,n:0}; order.push(ky);} agg[ky].n++; });
   order.sort(function(a,b){return agg[b].n-agg[a].n;});
   var rankRows=order.slice(0,6).map(function(ky,idx){
-    var a=agg[ky], rem=(REM[a.section]||{}), hint=(rem.topics&&rem.topics[a.topic])||'';
+    var a=agg[ky], rem=(REM[a.section]||{}), fx=fixLinks(a.section,a.topic), hint=fx.night?('night '+fx.night+(fx.nightTitle?', '+fx.nightTitle:'')):((rem.topics&&rem.topics[a.topic])||'');
     var trick=trickUrl(a.section,a.topic), tid='wt'+(_tid++);
     return '<div class="wk"><div class="rk">'+(idx+1)+'</div>'+
       '<div class="tp">'+a.topic+'<small>'+SECT[a.section]+(hint?' · '+hint:'')+'</small></div>'+
       '<div class="rate" style="color:var(--'+a.section+')">'+a.n+'<small> open</small></div>'+
       '<div class="wkfix fixrow">'+
         (trick?'<a class="fx trick" onclick="toggleTrick(\''+tid+'\',\''+trick+'\')">Watch the trick</a>':'')+
-        '<a class="fx learn" href="'+(rem.learn||'/retold/')+'" target="_blank" rel="noopener">Learn</a>'+
-        '<a class="fx drill" href="'+(rem.review||'/practice/')+'" target="_blank" rel="noopener">Drill</a>'+
+        '<a class="fx learn" href="'+fx.learn+'">Learn</a>'+
+        '<a class="fx drill" href="'+fx.drill+'">Drill</a>'+
       '</div><div class="trick-embed" id="'+tid+'" style="grid-column:1/-1"></div></div>';
   }).join('');
   var now=Date.now();
@@ -818,7 +835,7 @@ function checkSubmit(){
   renderCheck();
 }
 function diagPanel(){
-  var D=[['gap','Concept gap',"I didn't know the idea"],['slip','Procedure slip','Knew it, executed wrong'],
+  var D=[['gap','Concept gap',"I didn't know the idea"],['slip','Procedure slip','Knew it, slipped on a step'],
          ['misread','Misread / trap','Fell for a distractor or misread'],['guess','Guessed','No real basis']];
   var dg=D.map(function(d){ return '<button class="dbtn'+(C.diag===d[0]?' sel':'')+'" onclick="setDiag(\''+d[0]+'\')">'+d[1]+'<small>'+d[2]+'</small></button>'; }).join('');
   var cf=[['sure','Sure'],['unsure','Unsure']].map(function(c){ return '<button class="dbtn'+(C.conf===c[0]?' sel':'')+'" onclick="setConf(\''+c[0]+'\')">'+c[1]+'</button>'; }).join('');
@@ -835,8 +852,8 @@ function checkToFix(){
   save(); C.stage='fix'; renderCheck();
 }
 function fixPanel(it,q){
-  var rem=(REM[q.section]||{}), learn=rem.learn||'/retold/', review=rem.review||'/practice/';
-  var hint=(rem.topics&&rem.topics[q.topic])||q.topic;
+  var rem=(REM[q.section]||{}), fx=fixLinks(q.section,q.topic), learn=fx.learn, review=fx.drill;
+  var hint=fx.night?('night '+fx.night+(fx.nightTitle?', '+fx.nightTitle:'')):((rem.topics&&rem.topics[q.topic])||q.topic);
   var trick=trickUrl(q.section,q.topic), id='ck'+(_tid++), order, lead;
   if(C.diag==='gap'){ lead='Re-teach the idea, then drill it.'; order=['trick','learn','drill']; }
   else if(C.diag==='slip'){ lead='You know it - put reps on the mechanics.'; order=['drill','trick','learn']; }
@@ -844,8 +861,8 @@ function fixPanel(it,q){
   else { lead='Treat it as new - learn it from the ground up.'; order=['learn','trick','drill']; }
   var link={
     trick: trick?'<a class="fx trick" onclick="toggleTrick(\''+id+'\',\''+trick+'\')">Watch the trick</a>':'',
-    learn: '<a class="fx learn" href="'+learn+'" target="_blank" rel="noopener">Learn it · Retold ('+hint+')</a>',
-    drill: '<a class="fx drill" href="'+review+'" target="_blank" rel="noopener">Drill it · engine</a>'
+    learn: '<a class="fx learn" href="'+learn+'">Learn it · Retold ('+hint+')</a>',
+    drill: '<a class="fx drill" href="'+review+'">Drill it · engine</a>'
   };
   var fixes=order.map(function(o){return link[o];}).filter(Boolean).join('');
   return '<div class="fixpanel"><p class="fx-lead">'+lead+'</p>'+

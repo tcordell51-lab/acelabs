@@ -16,7 +16,7 @@
   --al-paper-3:#f3ecdb;
   --al-ink:#0d2018;
   --al-ink-2:#3a4a42;
-  --al-ink-mute:#6e7c74;
+  --al-ink-mute:#5c6a63;
   --al-ink-soft:#9aa39e;
   --al-gold:#C9A84C;
   --al-gold-m:#E2C97A;
@@ -190,7 +190,7 @@ body{
 .diag-section-pill.gc{background:rgba(58,107,84,.08);border-color:rgba(58,107,84,.25);color:#1f4a32}
 .diag-section-pill.ochem{background:rgba(140,114,53,.08);border-color:rgba(140,114,53,.25);color:#5c4520}
 .diag-section-pill.qr{background:var(--al-gold-bg);border-color:rgba(201,168,76,.30);color:#6b4e10}
-.diag-section-pill .pill-label{display:block;opacity:.65;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.15rem}
+.diag-section-pill .pill-label{display:block;opacity:1;font-size:.8rem;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.15rem}
 .diag-note{
   font-size:.82rem;
   color:var(--al-ink-mute);
@@ -711,7 +711,7 @@ body{
       </div>
 
       <p class="diag-note">
-        You can change your answer to any question before submitting. Skipped questions count as incorrect.
+        You can change your answer to any question before submitting. Skipped questions count as misses.
         Results are saved locally so you can review them from the home dashboard.
       </p>
     </div>
@@ -742,6 +742,7 @@ body{
     <div class="diag-nav">
       <div class="diag-nav-left">
         <button class="btn-secondary" id="btnPrev" onclick="navigateQ(-1)" disabled>Previous</button>
+        <button class="btn-secondary" id="btnLeave" onclick="leaveDiagnostic()" title="Your answers and the clock are saved on this device">Leave, keep my place</button>
       </div>
       <div class="diag-nav-right">
         <button class="btn-secondary" id="btnNext" onclick="navigateQ(1)">Next</button>
@@ -759,7 +760,7 @@ body{
     <div class="diag-submit-zone" id="submitZone" style="display:none">
       <p>
         <span class="diag-answered-count" id="answeredCount">0</span> of <span id="answeredTotal">53</span> answered.
-        Unanswered questions count as incorrect.
+        Unanswered questions count as misses.
       </p>
       <button class="btn-primary" onclick="confirmSubmit()">Submit and see results</button>
     </div>
@@ -814,6 +815,32 @@ let answers = {};        // { idx: choiceIndex }
 let timerInterval = null;
 let secondsLeft = 45 * 60;
 let submitted = false;
+let leaving = false;
+
+/* ── In-progress persistence (a reload used to lose every answer) ──────── */
+const INPROG_KEY = 'acelabs_diagnostic_inprogress';
+function saveProgress(){
+  if(submitted || !pool.length) return;
+  try{
+    localStorage.setItem(INPROG_KEY, JSON.stringify({ ids: pool.map(q => q.id), answers, currentIdx, secondsLeft, startedAt: Date.now() }));
+  }catch(e){}
+}
+function clearProgress(){ try{ localStorage.removeItem(INPROG_KEY); }catch(e){} }
+function readProgress(){
+  try{ const p = JSON.parse(localStorage.getItem(INPROG_KEY) || 'null'); return p && Array.isArray(p.ids) && p.ids.length ? p : null; }catch(e){ return null; }
+}
+/* The six-door shell hides itself while a timed section runs (shared/ace-shell.js reads acelabs.timed). */
+function setTimed(sec){ try{ localStorage.setItem('acelabs.timed', JSON.stringify({ until: Date.now() + sec * 1000 })); window.dispatchEvent(new Event('acelabs:timed')); }catch(e){} }
+function clearTimed(){ try{ localStorage.setItem('acelabs.timed', JSON.stringify({ until: 0 })); window.dispatchEvent(new Event('acelabs:timed')); }catch(e){} }
+function leaveDiagnostic(){
+  saveProgress(); clearTimed(); clearInterval(timerInterval); leaving = true;
+  location.href = '/';
+}
+window.addEventListener('beforeunload', function(e){
+  if(leaving || submitted || !pool.length) return;
+  saveProgress();
+  e.preventDefault(); e.returnValue = '';
+});
 
 /* ── Module URL map (only links that exist) ─────────────── */
 const MODULE_URLS = {
@@ -1022,6 +1049,28 @@ window.addEventListener('DOMContentLoaded', async () => {
     const gcCount    = Math.min(15, pools.gcPool.length);
     const ochemCount = Math.min(15, pools.ochemPool.length);
     const qrCount    = Math.min(15, pools.qrPool.length);
+    const totalCount = bioCount + gcCount + ochemCount + qrCount;
+    try{
+      const lede = document.querySelector('#screenIntro .lede, .diag-intro .lede, .lede');
+      if(lede) lede.textContent = `${totalCount} questions across the four sections Ace Labs covers: ${bioCount} Biology, ${gcCount} General Chemistry, ${ochemCount} Organic Chemistry, and ${qrCount} Quantitative Reasoning. 45 minutes. At the end you will see per-section accuracy and your three weakest topic areas, so you know exactly where to focus this week.`;
+      const metas = document.querySelectorAll('.diag-meta-item strong');
+      if(metas[0]) metas[0].textContent = String(totalCount);
+      if(metas[2]) metas[2].textContent = '~' + Math.round(45 * 60 / Math.max(1, totalCount)) + ' s';
+    }catch(e){}
+
+    // An unfinished attempt on this device: offer to pick it up where it stopped
+    const inprog = readProgress();
+    if(inprog){
+      const answered = Object.keys(inprog.answers || {}).length;
+      const resume = document.createElement('div');
+      resume.className = 'diag-note';
+      resume.style.marginBottom = '12px';
+      resume.innerHTML = `You left a diagnostic unfinished: ${answered} of ${inprog.ids.length} answered, ${fmtTime(Math.max(0, inprog.secondsLeft|0))} on the clock.
+        &nbsp;<button class="btn-primary" style="font-size:.82rem;padding:.35rem .8rem" onclick="resumeDiagnostic()">Pick up where I left off</button>
+        &nbsp;<button class="btn-secondary" style="font-size:.78rem;padding:.3rem .7rem" onclick="clearProgress();this.parentNode.remove()">Start over</button>`;
+      const sb = document.getElementById('startButtons');
+      if(sb && sb.parentNode) sb.parentNode.insertBefore(resume, sb);
+    }
 
     // Show QR pool warning if fewer than 15
     if(qrCount < 15){
@@ -1059,6 +1108,34 @@ function startDiagnostic(){
   renderQuestion(0);
   buildJumpGrid();
   startTimer();
+  setTimed(secondsLeft);
+  saveProgress();
+}
+
+function resumeDiagnostic(){
+  const p = readProgress();
+  const pools = window._diagPools;
+  if(!p || !pools) return startDiagnostic();
+  const byId = {};
+  [].concat(pools.bioPool, pools.gcPool, pools.ochemPool, pools.qrPool).forEach(q => { if(q && q.id) byId[q.id] = q; });
+  const restored = p.ids.map(id => byId[id]).filter(Boolean);
+  if(restored.length !== p.ids.length){ clearProgress(); return startDiagnostic(); }
+  pool = restored;
+  const totalEl = document.getElementById('answeredTotal');
+  if (totalEl) totalEl.textContent = pool.length;
+  answers = Object.assign({}, p.answers || {});
+  currentIdx = Math.min(Math.max(0, p.currentIdx|0), pool.length - 1);
+  submitted = false;
+  secondsLeft = Math.max(30, Math.min(45 * 60, p.secondsLeft|0));
+
+  showScreen('screenQuestion');
+  document.getElementById('topProgress').style.display = '';
+  document.getElementById('topTimer').style.display = '';
+
+  renderQuestion(currentIdx);
+  buildJumpGrid();
+  startTimer();
+  setTimed(secondsLeft);
 }
 
 /* ── Timer ──────────────────────────────────────────────── */
@@ -1069,6 +1146,7 @@ function startTimer(){
     if(submitted) return clearInterval(timerInterval);
     secondsLeft--;
     updateTimerDisplay();
+    if(secondsLeft % 15 === 0) saveProgress();
     if(secondsLeft <= 0){
       clearInterval(timerInterval);
       autoSubmit();
@@ -1172,6 +1250,7 @@ function selectAnswer(idx, choice){
   answers[idx] = choice;
   renderQuestion(idx);   // re-render to reflect selection
   updateJumpGrid();
+  saveProgress();
 }
 
 /* ── Navigation ─────────────────────────────────────────── */
@@ -1180,6 +1259,7 @@ function navigateQ(delta){
   if(next < 0 || next >= pool.length) return;
   currentIdx = next;
   renderQuestion(currentIdx);
+  saveProgress();
 }
 
 /* ── Jump grid ──────────────────────────────────────────── */
@@ -1208,6 +1288,7 @@ function buildJumpGrid(){
       btn.addEventListener('click', () => {
         currentIdx = i;
         renderQuestion(i);
+        saveProgress();
       });
       grid.appendChild(btn);
     }
@@ -1230,7 +1311,7 @@ function confirmSubmit(){
   if(remaining > 0){
     const ok = window.confirm(
       `You have ${remaining} unanswered question${remaining>1?'s':''}.` +
-      ` Unanswered questions count as incorrect. Submit anyway?`
+      ` Unanswered questions count as misses. Submit anyway?`
     );
     if(!ok) return;
   }
@@ -1241,6 +1322,8 @@ function submitDiagnostic(){
   if(submitted) return;
   submitted = true;
   clearInterval(timerInterval);
+  clearProgress();
+  clearTimed();
 
   const result = scoreQuestions();
   saveResult(result);
@@ -1320,6 +1403,7 @@ function saveResult(result){
     perSection:    result.perSection,
     topWeakTopics: result.topWeakTopics.map(t => ({
       topic:    t.topic,
+      label:    topicLabel(t.topic),
       section:  t.section,
       correct:  t.correct,
       total:    t.total,
@@ -1382,9 +1466,20 @@ function renderResults(result){
       const pct = t.total > 0 ? Math.round((t.correct / t.total) * 100) : 0;
       const label = topicLabel(t.topic);
       const url = MODULE_URLS[t.topic];
-      const recHtml = url
-        ? `${label} &rarr; <a href="${escapeHtml(url)}">Open module</a>.`
-        : `${label} &mdash; review your notes and practice problems for this topic.`;
+      const secKey = ({BIO:'bio', GC:'gchem', OCHEM:'ochem', QR:'qr'})[String(t.section || '').toUpperCase()] || t.section;
+      const route = window.AceRoute ? window.AceRoute.links({ section: secKey, concept: label, topic: t.topic }) : null;
+      let recHtml;
+      if(route){
+        const parts = [];
+        if(route.night) parts.push(`<a href="${escapeHtml(route.learn)}">Learn it: night ${route.night}${route.nightTitle ? ', ' + escapeHtml(route.nightTitle) : ''}</a>`);
+        parts.push(`<a href="${escapeHtml(route.drill)}">Drill it</a>`);
+        if(route.sheetTitle) parts.push(`<a href="${escapeHtml(route.sheet)}" target="_blank" rel="noopener">Sheet: ${escapeHtml(route.sheetTitle)}</a>`);
+        recHtml = `${label}: ` + parts.join(' &middot; ') + '.';
+      } else if(url){
+        recHtml = `${label} &rarr; <a href="${escapeHtml(url)}">Open module</a>.`;
+      } else {
+        recHtml = `${label}: review your notes and practice problems for this topic.`;
+      }
 
       const feedbackVerb = pct === 0 ? 'No questions answered correctly in this area.' :
                            pct < 40  ? 'Not quite there yet.' :
@@ -1474,6 +1569,8 @@ function retakeDiagnostic(){
   // Don't auto-start; let user click Begin again
 }
 </script>
+  <script src="/shared/ace-index.js?v=2"></script>
+  <script src="/shared/ace-route.js?v=1"></script>
   <script src="/shared/ace-shell.js?v=1" defer></script>
 </body>
 </html>

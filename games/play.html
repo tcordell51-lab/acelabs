@@ -59,7 +59,6 @@ button.opt canvas{display:block;margin:4px auto 0;max-width:100%;height:auto;bor
   <div class="tbar"><div class="tfill" id="tfill"></div></div>
   <div id="stage" role="region" aria-label="Question"><div class="card"><p class="stem">Loading the bank...</p></div></div>
 </div>
-<script src="../shared/smiles-drawer.min.js"></script>
 <script>
 (function(){
 /* Ace Game Central round engine - a faithful standalone port of the portal's
@@ -84,6 +83,7 @@ document.title='Ace Game Central - '+SUBJECTS[SUB].name;
 
 var LS='atDAT_games_'+SUB;
 var state={}; try{ state=JSON.parse(localStorage.getItem(LS)||'{}'); }catch(e){ state={}; }
+if(!state||typeof state!=='object'||Array.isArray(state)) state={};   // a stored literal null or primitive must not strand the page on "Loading"
 state.misses=state.misses||{}; state.topicStats=state.topicStats||{}; state.best=state.best||0;
 function save(){ try{ localStorage.setItem(LS,JSON.stringify(state)); }catch(e){} }
 
@@ -131,7 +131,7 @@ function drawMols(){
     var key=cv.width+'x'+cv.height;
     if(!sdInst[key]){
       try{ sdInst[key]=new window.SmiDrawer({width:+cv.width,height:+cv.height,bondLength:26,bondThickness:1.1,
-        bondSpacing:4.7,fontSizeLarge:18,fontSizeSmall:5,compactDrawing:false,
+        bondSpacing:4.7,fontSizeLarge:18,fontSizeSmall:5,compactDrawing:false,explicitHydrogens:false,
         themes:{light:{C:'#1a1d20',O:'#cf3b3b',N:'#3a78c4',Cl:'#2e8a3e',Br:'#8a4a2a',F:'#3aa83a',S:'#b8860b',BACKGROUND:'#ffffff'}}}); }
       catch(e){ sdInst[key]=false; }
     }
@@ -144,6 +144,8 @@ function drawMols(){
 function shuffle(a){ for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i];a[i]=a[j];a[j]=t; } return a; }
 function buildRound(bank){
   var byId={}; bank.forEach(function(it){ byId[it.id]=it; });
+  // Misses whose question left the bank can never come back around; drop them so they stop counting.
+  Object.keys(state.misses).forEach(function(id){ if(!byId[id]) delete state.misses[id]; });
   var now=Date.now(), round=[];
   // 1. due misses come back first, oldest due first, capped
   var due=Object.keys(state.misses).map(function(id){ return {id:id,m:state.misses[id]}; })
@@ -178,7 +180,7 @@ function updateMeta(){
 function startTimer(){
   clearInterval(timer); timeLeft=QUESTION_SECONDS;
   var fill=document.getElementById('tfill'); fill.style.transition='none'; fill.style.width='100%';
-  void fill.offsetWidth; fill.style.transition='width 1s linear';
+  void fill.offsetWidth; fill.style.transition=(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)?'none':'width 1s linear';
   document.getElementById('timerTxt').textContent=timeLeft+'s';
   timer=setInterval(function(){
     timeLeft--;
@@ -198,9 +200,16 @@ function esc(t){ return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
 // recomputed so grading stays exact. We skip items whose explanation names a
 // fixed option letter/number/position - shuffling those would make the why
 // point at the wrong choice.
+function whyNamesAChoice(why){
+  return /(?:option|choice|answer|letter)s?\s+\(?[a-f]\b|\bopts?\s*\[?\s*\d\]?|\((?:option\s*)?[a-f]\)|\[\d\]/i.test(why)
+    || /\b[A-E](?:\/[A-E])+\b|\b[A-E]\s+(?:is|are|was|were|has|have|drops|adds|puts|gives|lists|shows|names|keeps|lacks|uses|reports|would|miscounts?)\b/.test(why);
+}
 function shuffleOptions(it){
   if(it._optShuffled) return; it._optShuffled=true;
-  if(it.why && /(?:option|choice)\s+[a-f]\b|\bopt\s?\d|\((?:option\s*)?[a-f]\)/i.test(it.why)) return;
+  // Keep the authored order when the explanation names a choice by letter or index in any
+  // form ("option B", "opt[1]", "[3] is", "B/C miscount", "D is the acid"); shuffling would
+  // point those references at the wrong choices.
+  if(it.why && whyNamesAChoice(it.why)) return;
   var oldOpts=it.opts, oldCorrect=it.correct;
   var order=oldOpts.map(function(_,i){ return i; });
   shuffle(order);
@@ -315,10 +324,17 @@ function begin(items){
   renderQ();
 }
 if(SUB==='ochem'){
-  var s=document.createElement('script'); s.src='ochem-bank-1000.js';
-  s.onload=function(){ begin(normalizeOchem(window.OCHEM_DB)); };
-  s.onerror=function(){ document.getElementById('stage').innerHTML='<div class="card"><p class="stem">Could not load the Organic bank - refresh to retry.</p></div>'; };
-  document.head.appendChild(s);
+  // The SMILES renderer (246 KB) is only needed for drawn structures, so it loads here, not on every subject.
+  var bankFail=function(){ document.getElementById('stage').innerHTML='<div class="card"><p class="stem">Could not load the Organic bank - refresh to retry.</p></div>'; };
+  var sd=document.createElement('script'); sd.src='../shared/smiles-drawer.min.js';
+  sd.onload=function(){
+    var s=document.createElement('script'); s.src='ochem-bank-1000.js';
+    s.onload=function(){ begin(normalizeOchem(window.OCHEM_DB)); };
+    s.onerror=bankFail;
+    document.head.appendChild(s);
+  };
+  sd.onerror=bankFail;
+  document.head.appendChild(sd);
 } else {
   fetch(SUBJECTS[SUB].bank).then(function(r){ if(!r.ok) throw 0; return r.json(); })
     .then(function(b){ begin(normalizeJson(b)); })

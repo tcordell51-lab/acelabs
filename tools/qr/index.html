@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AceTheDAT QR · Remediation System v2</title>
+<title>QR engine · Ace Labs</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js"></script>
+<script src="/shared/anime.min.js?v=1"></script>
 <style>
 :root{
   --bg:#f5f0e8; --paper:#fffdf7; --paper-2:#f9f3e6; --paper-3:#f3ecdb;
   --sb:#0d2018; --sb-2:#15301f; --sb-3:#1d4030;
-  --ink:#0f1814; --ink-2:#3a4a42; --ink-mute:#6e7c74; --ink-soft:#9aa39e;
+  --ink:#0f1814; --ink-2:#3a4a42; --ink-mute:#5c6a63; --ink-soft:#9aa39e;
   --gold:#C9A84C; --gold-m:#E2C97A; --gold-d:#8C7235; --gold-glow:rgba(201,168,76,0.35);
   --teal:#1B3A2D; --teal-2:#2A5240; --teal-3:#3A6B54;
   --line:rgba(13,32,24,0.12); --line-2:rgba(13,32,24,0.06); --line-strong:rgba(13,32,24,0.22);
@@ -62,7 +62,7 @@ em.gold{font-style:italic; color:var(--gold-d); font-family:'Playfair Display',s
 body[data-theme="dark"] em.gold{color:var(--gold-m)}
 
 /* ======= LAYOUT ======= */
-.app{display:grid; grid-template-columns:288px 1fr; min-height:100vh}
+.app{display:grid; grid-template-columns:288px minmax(0,1fr); min-height:100vh}
 .sb{
   background:linear-gradient(180deg,var(--sb) 0%, var(--sb-2) 100%);
   color:#ece4d4; padding:18px 0; position:sticky; top:0; height:100vh;
@@ -165,7 +165,7 @@ body[data-theme="dark"] .hero .badge{color:var(--gold-m)}
 }
 .hero-cta{display:flex; gap:12px; margin-top:22px; flex-wrap:wrap}
 
-.hero .stats{display:grid; grid-template-columns:repeat(4, 1fr); gap:14px; margin-top:32px; max-width:920px}
+.hero .stats{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:14px; margin-top:32px; max-width:920px}
 .stat{background:var(--paper); border:1px solid var(--line); border-radius:14px; padding:16px 18px; box-shadow:var(--shadow)}
 .stat .n{font-family:'Playfair Display',serif; font-size:32px; font-weight:700; line-height:1; color:var(--teal)}
 body[data-theme="dark"] .stat .n{color:var(--gold-m)}
@@ -206,10 +206,10 @@ body[data-theme="dark"] .card-h h3 em{color:var(--gold-m)}
 .card-h .sub{font-size:13px; color:var(--ink-mute); letter-spacing:0.02em}
 
 .row{display:grid; gap:16px; margin-top:14px}
-.row.r2{grid-template-columns:1fr 1fr}
-.row.r3{grid-template-columns:repeat(3,1fr)}
-.row.r4{grid-template-columns:repeat(4,1fr)}
-@media (max-width:980px){.row.r2,.row.r3,.row.r4{grid-template-columns:1fr}}
+.row.r2{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+.row.r3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.row.r4{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media (max-width:980px){.row.r2,.row.r3,.row.r4{grid-template-columns:minmax(0,1fr)}}
 
 .subcard{
   background:var(--paper-2); border:1px solid var(--line); border-radius:12px; padding:18px 20px;
@@ -444,7 +444,7 @@ body[data-theme="dark"] .weak3-head em{color:var(--gold-m)}
 .weak3-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:12px}
 /* QR-A: variable-size weak set — 1 skill renders as a single big card,
    4-6 skills render denser with smaller cards. */
-.weak3-grid[data-size="1"]{grid-template-columns:1fr}
+.weak3-grid[data-size="1"]{grid-template-columns:minmax(0,1fr)}
 .weak3-grid[data-size="1"] .weak3{padding:22px 26px 24px; gap:10px}
 .weak3-grid[data-size="1"] .weak3 .nm{font-size:22px}
 .weak3-grid[data-size="1"] .weak3 .evidence{font-size:14px}
@@ -511,8 +511,8 @@ body[data-theme="dark"] .due-review-row .go{color:var(--gold-m)}
 .node-tier{font-family:'JetBrains Mono',monospace; font-size:9px; letter-spacing:0.1em; pointer-events:none; fill:var(--ink-mute)}
 
 /* ======= DASHBOARDS ======= */
-.dash-grid{display:grid; grid-template-columns:1.2fr 1fr; gap:18px; margin-top:14px}
-@media (max-width:980px){.dash-grid{grid-template-columns:1fr}}
+.dash-grid{display:grid; grid-template-columns:1.2fr minmax(0,1fr); gap:18px; margin-top:14px}
+@media (max-width:980px){.dash-grid{grid-template-columns:minmax(0,1fr)}}
 .dash-card{background:var(--paper); border:1px solid var(--line); border-radius:14px; padding:20px 22px}
 .dash-card h4{font-family:'Playfair Display',serif; font-size:18px; margin:0 0 10px; font-weight:700}
 .dash-card .big{font-family:'Playfair Display',serif; font-size:40px; line-height:1; font-weight:700; color:var(--teal)}
@@ -522,7 +522,7 @@ body[data-theme="dark"] .dash-card .big em{color:var(--gold-m)}
 .dash-card .label{font-size:11px; letter-spacing:0.16em; text-transform:uppercase; color:var(--ink-mute); margin-top:6px}
 
 .chart{width:100%; height:200px}
-.calib-grid{display:grid; grid-template-columns:repeat(5, 1fr); gap:8px; margin-top:10px}
+.calib-grid{display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:8px; margin-top:10px}
 .calib-cell{padding:10px; border:1px solid var(--line); border-radius:9px; background:var(--paper-2); text-align:center}
 .calib-cell .conf{font-size:10px; letter-spacing:0.1em; color:var(--ink-mute); text-transform:uppercase; font-weight:600}
 .calib-cell .acc{font-family:'Playfair Display',serif; font-size:24px; font-weight:700; line-height:1; color:var(--teal); margin:6px 0 4px}
@@ -634,8 +634,8 @@ body.isolate .iso-exit-pill{display:inline-flex}
 body.sarah-on .sarah-only{display:block}
 
 /* Summary digest table */
-.sarah-summary-grid{display:grid; grid-template-columns:1fr; gap:10px; margin-top:6px}
-@media(min-width:760px){.sarah-summary-grid{grid-template-columns:1fr 1fr}}
+.sarah-summary-grid{display:grid; grid-template-columns:minmax(0,1fr); gap:10px; margin-top:6px}
+@media(min-width:760px){.sarah-summary-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
 .sarah-summary-row{
   background:var(--paper-2); border:1px solid var(--line); border-left:3px solid var(--gold);
   border-radius:8px; padding:10px 12px;
@@ -899,7 +899,7 @@ strong, b{font-weight:600}
 .kbd{font-family:'JetBrains Mono',monospace; font-size:11px; padding:1px 6px; border:1px solid var(--line); border-radius:4px; background:var(--paper-2); color:var(--ink-2)}
 
 @media (max-width:780px){
-  .app{grid-template-columns:1fr}
+  .app{grid-template-columns:minmax(0,1fr)}
   .sb{position:relative; height:auto; max-height:none}
   .sarah-bar{left:0}
   .hero{padding:40px 22px}
@@ -1130,8 +1130,8 @@ body[data-theme="dark"] .trick-card .lock-q{color:var(--gold-m)}
 .diamond-svg .label{font-family:'JetBrains Mono',monospace; font-size:11px; fill:var(--ink-mute); font-weight:600; letter-spacing:1}
 
 /* Pacing ladder */
-.pace-ladder{display:grid; grid-template-columns:repeat(4, 1fr); gap:10px; margin:14px 0}
-@media (max-width:780px){.pace-ladder{grid-template-columns:repeat(2, 1fr)}}
+.pace-ladder{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; margin:14px 0}
+@media (max-width:780px){.pace-ladder{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .pace-tier{
   background:var(--paper-2); border:1px solid var(--line); border-radius:12px; padding:14px 16px;
   position:relative; overflow:hidden; cursor:pointer; transition:all 0.2s;
@@ -1161,8 +1161,8 @@ body[data-theme="dark"] .pace-tier .ptime{color:var(--gold-m)}
 .sim-card h3{color:#ece4d4; font-family:'Playfair Display',serif; font-size:28px; margin:0 0 8px; line-height:1.15}
 .sim-card h3 em{color:var(--gold-m); font-style:italic}
 .sim-card .sub{color:rgba(236,228,212,0.72); font-size:14px; line-height:1.5; max-width:520px}
-.sim-stats{display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin:18px 0}
-@media (max-width:780px){.sim-stats{grid-template-columns:repeat(2,1fr)}}
+.sim-stats{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; margin:18px 0}
+@media (max-width:780px){.sim-stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .sim-stat{background:rgba(236,228,212,0.06); border:1px solid rgba(236,228,212,0.10); border-radius:10px; padding:10px 12px}
 .sim-stat .n{font-family:'Playfair Display',serif; font-size:24px; font-weight:700; color:var(--gold-m); line-height:1}
 .sim-stat .l{font-size:10px; letter-spacing:0.14em; text-transform:uppercase; color:rgba(236,228,212,0.55); margin-top:4px}
@@ -1261,8 +1261,8 @@ body[data-theme="dark"] .predict-prompt .lbl{color:var(--gold-m)}
 }
 
 /* Log law mini-visuals */
-.law-grid{display:grid; grid-template-columns:repeat(3, 1fr); gap:14px; margin-top:12px}
-@media (max-width:780px){.law-grid{grid-template-columns:1fr}}
+.law-grid{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; margin-top:12px}
+@media (max-width:780px){.law-grid{grid-template-columns:minmax(0,1fr)}}
 
 /* ============================================================
    RESPONSIVE — comprehensive · 4 breakpoints
@@ -1277,7 +1277,7 @@ body[data-theme="dark"] .predict-prompt .lbl{color:var(--gold-m)}
 
 /* Compact sidebar at intermediate widths (901-1180): keep sidebar visible but slim */
 @media (max-width: 1180px) and (min-width: 901px) {
-  .app { grid-template-columns: 220px 1fr }
+  .app { grid-template-columns: 220px minmax(0,1fr) }
   .sb-brand { padding: 24px 16px 14px }
   .sb-brand .mark { font-size: 19px }
   .sb-brand .sub { font-size: 9px }
@@ -1287,23 +1287,23 @@ body[data-theme="dark"] .predict-prompt .lbl{color:var(--gold-m)}
   .sb-link .meta { display: none }
   .sb-foot { padding: 12px 16px }
   .sarah-bar { left: 220px }
-  .row.r3, .row.r4 { grid-template-columns: 1fr 1fr }
+  .row.r3, .row.r4 { grid-template-columns: minmax(0,1fr) minmax(0,1fr) }
   .hero h1 { font-size: 48px }
-  .hero .stats { grid-template-columns: repeat(2, 1fr) }
+  .hero .stats { grid-template-columns: repeat(2,minmax(0,1fr)) }
   .sec { padding: 30px 32px }
   .hero { padding: 44px 32px 24px }
   .topbar { padding: 11px 24px }
-  .pace-ladder { grid-template-columns: repeat(2, 1fr) }
+  .pace-ladder { grid-template-columns: repeat(2,minmax(0,1fr)) }
 }
 
 /* Below 1180 also collapse 3-col rows */
 @media (max-width: 1100px) {
-  .row.r3 { grid-template-columns: 1fr 1fr }
+  .row.r3 { grid-template-columns: minmax(0,1fr) minmax(0,1fr) }
 }
 
 /* Tablet / narrow desktop — 700-900: hide sidebar, hamburger active */
 @media (max-width: 900px) {
-  .app { grid-template-columns: 1fr }
+  .app { grid-template-columns: minmax(0,1fr) }
   .sb {
     position: fixed; left: -320px; top: 0; width: 300px; height: 100vh; z-index: 120;
     transition: left 0.3s ease; box-shadow: 0 0 30px rgba(0,0,0,0.4);
@@ -1326,7 +1326,7 @@ body[data-theme="dark"] .predict-prompt .lbl{color:var(--gold-m)}
   .hero { padding: 36px 18px 24px }
   .hero h1 { font-size: 36px; line-height: 1.08 }
   .hero .lede { font-size: 16px }
-  .hero .stats { grid-template-columns: repeat(2, 1fr) }
+  .hero .stats { grid-template-columns: repeat(2,minmax(0,1fr)) }
   .hero-cta .btn { font-size: 13px; padding: 8px 14px }
   .sec { padding: 24px 18px }
   .sec-head { flex-wrap: wrap; gap: 8px }
@@ -1335,7 +1335,7 @@ body[data-theme="dark"] .predict-prompt .lbl{color:var(--gold-m)}
   .card-h { gap: 10px }
   .card-h .mark { width: 38px; height: 38px; font-size: 17px }
   .card-h h3 { font-size: 20px }
-  .row.r2, .row.r3, .row.r4 { grid-template-columns: 1fr }
+  .row.r2, .row.r3, .row.r4 { grid-template-columns: minmax(0,1fr) }
   .stages { flex-wrap: wrap }
   .stage-pill { min-width: 0; flex: 1 1 calc(50% - 6px); font-size: 11px }
   .sarah-bar { left: 0; padding: 10px 14px; flex-wrap: wrap; gap: 10px }
@@ -1352,12 +1352,12 @@ body[data-theme="dark"] .predict-prompt .lbl{color:var(--gold-m)}
   .celeb-card { padding: 24px 22px }
   .celeb-h { font-size: 30px }
   .lockmod { padding: 22px }
-  .dash-grid { grid-template-columns: 1fr }
-  .pace-ladder { grid-template-columns: 1fr 1fr }
-  .sim-stats { grid-template-columns: repeat(2, 1fr) }
-  .law-grid { grid-template-columns: 1fr }
-  .roster { grid-template-columns: 1fr }
-  .calib-grid { grid-template-columns: 1fr 1fr }
+  .dash-grid { grid-template-columns: minmax(0,1fr) }
+  .pace-ladder { grid-template-columns: minmax(0,1fr) minmax(0,1fr) }
+  .sim-stats { grid-template-columns: repeat(2,minmax(0,1fr)) }
+  .law-grid { grid-template-columns: minmax(0,1fr) }
+  .roster { grid-template-columns: minmax(0,1fr) }
+  .calib-grid { grid-template-columns: minmax(0,1fr) minmax(0,1fr) }
   .scatter-svg { height: 240px }
   /* prevent topbar buttons exploding */
   .btn.lg { padding: 8px 14px; font-size: 14px }
@@ -1368,14 +1368,14 @@ body[data-theme="dark"] .predict-prompt .lbl{color:var(--gold-m)}
 /* Phone — 520 and below */
 @media (max-width: 520px) {
   .hero h1 { font-size: 30px }
-  .hero .stats { grid-template-columns: 1fr 1fr; gap: 10px }
+  .hero .stats { grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 10px }
   .stat { padding: 12px 14px }
   .stat .n { font-size: 22px }
   .stat .l { font-size: 9px }
-  .pace-ladder { grid-template-columns: 1fr }
+  .pace-ladder { grid-template-columns: minmax(0,1fr) }
   .pace-tier { padding: 12px 14px }
-  .sim-stats { grid-template-columns: 1fr 1fr }
-  .calib-grid { grid-template-columns: 1fr }
+  .sim-stats { grid-template-columns: minmax(0,1fr) minmax(0,1fr) }
+  .calib-grid { grid-template-columns: minmax(0,1fr) }
   .stages { flex-direction: column }
   .stage-pill { flex: 1 1 100% }
   .card-h .mark { width: 34px; height: 34px; font-size: 15px }
@@ -1465,8 +1465,8 @@ body[data-theme="dark"] .qr-prob .qr-query b{color:var(--gold-m)}
 .qr-z svg .ax-lbl{font-family:'JetBrains Mono',monospace; font-size:10px; fill:var(--ink-mute)}
 
 /* solid-net */
-.qr-solid{display:grid; grid-template-columns:1fr 1fr; gap:10px}
-@media (max-width:640px){ .qr-solid{grid-template-columns:1fr} }
+.qr-solid{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:10px}
+@media (max-width:640px){ .qr-solid{grid-template-columns:minmax(0,1fr)} }
 .qr-solid-pane{background:var(--paper-2); border:1px solid var(--line); border-radius:8px; padding:10px}
 .qr-solid-pane .ph{font-size:10px; letter-spacing:0.14em; text-transform:uppercase; color:var(--ink-mute); margin-bottom:6px; text-align:center}
 .qr-solid svg .face{fill:var(--gold); fill-opacity:0.6; stroke:var(--gold-d); stroke-width:1.5; transition:transform 0.6s}
@@ -1522,7 +1522,7 @@ body[data-theme="dark"] .qr-bal .qr-eq b{color:var(--gold-m)}
 
 /* estim-ladder, unit-ladder */
 .qr-ladder{display:flex; flex-direction:column; gap:4px; max-width:480px; margin:0 auto}
-.qr-rung{display:grid; grid-template-columns:90px 1fr 90px; gap:8px; align-items:center; padding:8px 12px; background:var(--paper-2); border:1px solid var(--line); border-radius:7px; font-family:'JetBrains Mono',monospace; font-size:13px; transition:all 0.25s}
+.qr-rung{display:grid; grid-template-columns:90px minmax(0,1fr) 90px; gap:8px; align-items:center; padding:8px 12px; background:var(--paper-2); border:1px solid var(--line); border-radius:7px; font-family:'JetBrains Mono',monospace; font-size:13px; transition:all 0.25s}
 .qr-rung.active{background:var(--gold); border-color:var(--gold-d); color:var(--ink); font-weight:700}
 .qr-rung-step{font-size:10px; letter-spacing:0.12em; text-transform:uppercase; color:var(--ink-mute); text-align:center}
 .qr-rung.shake{animation:qr-shake 0.4s}
@@ -1569,7 +1569,7 @@ body[data-theme="dark"] .qr-bal .qr-eq b{color:var(--gold-m)}
 .qr-mg-gate.open .qr-mg-unlock{opacity:1}
 
 /* triage-board */
-.qr-triage{display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px}
+.qr-triage{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1fr); gap:8px}
 .qr-triage-col{background:var(--paper-2); border:1px solid var(--line); border-radius:8px; padding:8px; min-height:200px; display:flex; flex-direction:column; gap:4px}
 .qr-triage-col h4{font-size:10px; letter-spacing:0.14em; text-transform:uppercase; color:var(--ink-mute); margin:0 0 6px; text-align:center; font-weight:700}
 .qr-triage-cells{display:flex; flex-wrap:wrap; gap:3px; flex:1; align-content:flex-start}
@@ -1629,7 +1629,7 @@ body[data-theme="dark"] .qr-vis svg text:not([fill]){fill:var(--ink-2)}
 .qr-ineq-symbol{display:inline-block; font-size:28px; font-weight:700; color:var(--gold-d); transition:transform 0.5s cubic-bezier(0.68,-0.55,0.27,1.55), color 0.35s; margin:0 8px}
 .qr-ineq-symbol.flip{transform:rotateY(180deg); color:var(--trap-d)}
 .qr-ineq-stages{display:flex; flex-direction:column; gap:4px}
-.qr-ineq-step{display:grid; grid-template-columns:30px 1fr; gap:8px; padding:8px 12px; background:var(--paper-2); border:1px solid var(--line); border-radius:6px; font-family:'JetBrains Mono',monospace; font-size:13px; transition:all 0.3s}
+.qr-ineq-step{display:grid; grid-template-columns:30px minmax(0,1fr); gap:8px; padding:8px 12px; background:var(--paper-2); border:1px solid var(--line); border-radius:6px; font-family:'JetBrains Mono',monospace; font-size:13px; transition:all 0.3s}
 .qr-ineq-step.cur{background:var(--gold-glow); border-color:var(--gold-d); font-weight:700}
 .qr-ineq-step.done{opacity:0.55}
 .qr-ineq-step .num{color:var(--gold-d); font-weight:700}
@@ -1664,7 +1664,7 @@ body[data-theme="dark"] .qr-vis svg text:not([fill]){fill:var(--ink-2)}
   .qr-mg-grid{grid-template-columns:repeat(6, 30px); gap:4px}
   .qr-mg-cell{width:30px; height:30px; font-size:10px}
   .qr-mg-gate{width:240px; height:42px}
-  .qr-triage{grid-template-columns:1fr}
+  .qr-triage{grid-template-columns:minmax(0,1fr)}
   .qr-elim-funnel{width:280px; height:180px}
   .qr-elim-tile{font-size:11px; padding:5px 10px}
   .qr-decomp-row{font-size:13px; padding:7px 10px; gap:6px}
@@ -1676,7 +1676,7 @@ body[data-theme="dark"] .qr-vis svg text:not([fill]){fill:var(--ink-2)}
   .qr-vis .qr-row > .qr-slider{width:100%}
   .qr-vis .qr-readout{min-width:0; width:100%}
   .qr-mg-grid{grid-template-columns:repeat(5, 32px)}
-  .qr-rung{grid-template-columns:60px 1fr 60px; gap:4px; padding:6px 8px}
+  .qr-rung{grid-template-columns:60px minmax(0,1fr) 60px; gap:4px; padding:6px 8px}
   .qr-rung-step{font-size:9px}
 }
 
@@ -1986,7 +1986,7 @@ body[data-theme="dark"] .dash-card .pat-due-row .go{color:var(--gold-m)}
 .pf-entry .pf-timer.warn{color:var(--trap-d); border-color:var(--trap)}
 .pf-entry .pf-options{
   display:grid;
-  grid-template-columns:1fr 1fr;
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr);
   gap:8px;
   margin-bottom:12px;
 }
@@ -2030,7 +2030,7 @@ body[data-theme="dark"] .dash-card .pat-due-row .go{color:var(--gold-m)}
 /* Reveal step */
 .pf-reveal{
   display:grid;
-  grid-template-columns:1fr 1fr;
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr);
   gap:14px;
   margin-top:14px;
 }
@@ -2066,10 +2066,10 @@ body[data-theme="dark"] .dash-card .pat-due-row .go{color:var(--gold-m)}
 .pf-reveal-frame.celebrate{border-color:var(--good); background:var(--good-bg); color:var(--good-d)}
 .pf-reveal-frame.compassionate{border-color:var(--gold); background:rgba(201,168,76,0.08); color:var(--ink)}
 @media (max-width:640px){
-  .pf-reveal{grid-template-columns:1fr}
+  .pf-reveal{grid-template-columns:minmax(0,1fr)}
   .pf-entry{padding:14px 16px}
   .pf-entry h3{font-size:17px}
-  .pf-entry .pf-options{grid-template-columns:1fr}
+  .pf-entry .pf-options{grid-template-columns:minmax(0,1fr)}
 }
 
 /* User-preference panel (sidebar) */
@@ -2102,6 +2102,17 @@ body[data-theme="dark"] .dash-card .pat-due-row .go{color:var(--gold-m)}
   color:var(--ink-mute);
   line-height:1.4;
 }
+
+/* ---- Phone layout (audit 2026-10-29): the layout viewport widened to 830px and the
+   onboarding card sat half off-screen; 1fr tracks above are now minmax(0,1fr). ---- */
+.mn,.sb,.tree-wrap,.row>*,.hero .stats>*{min-width:0}
+.tree-wrap{max-width:100%}
+.ob-card{max-width:min(560px,calc(100vw - 24px))}
+@media (max-width:780px){
+  .hero .stats,#diagIntro .row.r3{grid-template-columns:1fr}
+  .sec-head a.btn.ghost{white-space:normal}
+}
+@media (prefers-reduced-motion:reduce){.hero .badge .pulse,.pulse{animation:none}}
 </style>
 </head>
 
@@ -2112,7 +2123,7 @@ body[data-theme="dark"] .dash-card .pat-due-row .go{color:var(--gold-m)}
 <aside class="sb" id="sb">
   <div class="sb-brand">
     <div class="mark">Ace<em>The</em>DAT</div>
-    <div class="sub">QR · Remediation · v2</div>
+    <div class="sub">QR engine</div>
   </div>
 
   <div class="sb-progress">
@@ -2280,7 +2291,7 @@ body[data-theme="dark"] .dash-card .pat-due-row .go{color:var(--gold-m)}
 
 <!-- TOPBAR -->
 <div class="topbar">
-  <div class="tb-crumbs"><b id="crumbWhere">Welcome</b> · QR Remediation</div>
+  <div class="tb-crumbs"><b id="crumbWhere">Welcome</b> · QR engine</div>
   <div class="tb-spacer"></div>
   <!-- Coach-only surfaces are hidden by default; revealed when ?coach=1 in URL OR localStorage 'qr-rem-v2:coach-mode'='on'. Students never see them. -->
   <button class="sarah-edit-toggle" id="btnEdit" title="Edit any trick or text in place" style="display:none">Edit Mode</button>
@@ -2837,9 +2848,9 @@ body[data-theme="dark"] .dash-card .pat-due-row .go{color:var(--gold-m)}
 </div>
 
 <!-- DAT formats pool: figure renderer, generated item data, runtime (docs/QR-FORMATS-POOL.md) -->
-<script src="/shared/qr-figures.js"></script>
-<script src="/shared/qr-formats-bank.js"></script>
-<script src="/shared/qr-formats.js"></script>
+<script src="/shared/qr-figures.js?v=2"></script>
+<script src="/shared/qr-formats-bank.js?v=2"></script>
+<script src="/shared/qr-formats.js?v=1"></script>
 <script>
 /* ============================================================
    AceTheDAT QR · Remediation System v2

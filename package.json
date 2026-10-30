@@ -4,9 +4,10 @@
     "test:init": "node scripts/test-bio-init.js",
     "test:browser": "node scripts/test-bio-browser.js",
     "validate:bio": "node scripts/validate-bio-registry.js",
+    "validate:bio-stick": "node scripts/validate-bio-stick.mjs",
     "validate:scope": "node scripts/validate-scope.js",
     "audit:bio": "node scripts/audit-bio.js",
-    "test": "npm run check:names && npm run test:bias && npm run validate:bio && npm run validate:scope && npm run validate:rc && npm run test:pat && npm run test:qr-formats && npm run test:shell && npm run test:init && npm run test:browser",
+    "test": "npm run test:gates && npm run test:banks && npm run test:unit && npm run test:init",
     "test:bias": "node scripts/gate-answer-bias.mjs --strict && node tools/minitests/assemble-minitests.mjs --check",
     "validate:rc": "node scripts/validate-rc.mjs",
     "build:rc": "node scripts/build-rc-bank.mjs",
@@ -21,8 +22,14 @@
     "validate:mocks": "node scripts/compose-full-mocks.mjs --check",
     "test:fullmock": "perl -e 'alarm 300; exec @ARGV' node scripts/test-full-mock.mjs",
     "test:shell": "node --test tests/shell/ace-progress.test.js",
+    "test:bio": "node --test tests/bio/*.test.js",
     "build:index": "node scripts/build-ace-index.mjs",
-    "check:names": "node scripts/check-no-competitor-names.mjs"
+    "check:names": "node scripts/check-no-competitor-names.mjs",
+    "test:gates": "npm run check:names && node scripts/gate-placeholders.mjs && node scripts/gate-dead-links.mjs && node scripts/gate-shared-versions.mjs && node scripts/gate-localstorage-keys.mjs && node scripts/gate-house-glyphs.mjs --baseline scripts/glyph-baseline.json",
+    "test:banks": "npm run test:bias && npm run validate:bio && npm run validate:bio-stick && npm run validate:scope && node scripts/gate-count-claims.mjs && npm run validate:rc && npm run validate:mocks",
+    "test:unit": "npm run test:qr-formats && npm run test:shell && npm run test:bio",
+    "test:all": "npm test && npm run test:pat && npm run test:browser",
+    "glyphs:baseline": "node scripts/gate-house-glyphs.mjs --write-baseline scripts/glyph-baseline.json"
   },
   "devDependencies": {
     "jsdom": "^29.1.1",
