@@ -1,0 +1,113 @@
+/* =====================================================================
+   Bio Recognize: styles ("Which one is this?" panel, bio-recognize.js)
+   Same paper / forest / gold look as the "Call it first" panels
+   (bio-stick.css, bio-shared.css tokens). Phone first: 44 px targets,
+   three answer buttons in a row (Hypo / Iso / Hyper, left to right like
+   the sandbox slider), the questions in words stacked under 520 px.
+   Every motion rule sits behind prefers-reduced-motion. The Ace Card
+   picture carries its own inline styles, since cards show on every hub.
+   ===================================================================== */
+
+.rq-mount{margin:18px 0 0;scroll-margin-top:96px}
+.rq{
+  --rq-ok:var(--good-d,#007a59);
+  --rq-ok-bg:var(--good-bg,rgba(0,158,115,.10));
+  --rq-review:var(--trap-d,#9b4500);
+  --rq-review-bg:var(--trap-bg,rgba(213,94,0,.10));
+  position:relative;max-width:100%;min-width:0;box-sizing:border-box;
+  margin:0 0 16px;padding:16px 18px 14px;
+  background:var(--paper,#fffdf7);
+  border:1px solid var(--line,rgba(13,32,24,.12));
+  border-left:4px solid var(--gold,#C9A84C);
+  border-radius:14px;
+  box-shadow:var(--shadow,0 1px 3px rgba(13,32,24,.06));
+  color:var(--ink,#0f1814);
+  font-family:'DM Sans',system-ui,-apple-system,sans-serif;
+  scroll-margin-top:96px;
+  container-type:inline-size;
+}
+.rq *,.rq *::before,.rq *::after{box-sizing:border-box}
+.rq [hidden]{display:none!important}
+
+.rq-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;margin-bottom:6px}
+.rq-kicker{font-size:10px;letter-spacing:.18em;text-transform:uppercase;font-weight:700;color:var(--gold-d,#8C7235)}
+.rq-title{font-size:12px;font-weight:600;color:var(--ink-mute,#5c6a63)}
+.rq-sub{margin:0 0 10px;font-size:13px;line-height:1.5;color:var(--ink-2,#3a4a42)}
+
+/* where the set is: plain position dots, never colored by result */
+.rq-dots{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:4px 0 8px}
+.rq-dot{width:8px;height:8px;border-radius:50%;background:var(--line-strong,rgba(13,32,24,.22))}
+.rq-dot.is-past{background:var(--teal-3,#3A6B54)}
+.rq-dot.is-now{background:var(--gold,#C9A84C);box-shadow:0 0 0 3px var(--gold-glow,rgba(201,168,76,.35))}
+.rq-dot.is-gap{margin-left:8px}
+.rq-pos{margin:0 0 8px;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-mute,#5c6a63)}
+.rq-pos:focus{outline:none}
+.rq-pos:focus-visible,.rq-end:focus-visible{outline:3px solid var(--gold,#C9A84C);outline-offset:2px}
+.rq-end:focus{outline:none}
+
+.rq-fig{margin:0 0 12px;border-radius:10px;overflow:hidden;background:#141714}
+/* A wide panel (desktop) puts the question, the answers and the feedback
+   beside the field, so the ring and its cue are seen together. */
+@container (min-width:720px){
+  .rq-body{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(250px,1fr);gap:0 20px;align-items:start}
+  .rq-body .rq-fig{margin:0}
+}
+.rq-svg{display:block;width:100%;height:auto}
+.rq-cap{margin:0;padding:2px 12px 10px;font-size:12.5px;line-height:1.45;color:#e3dccb}
+
+.rq-q{margin:0 0 10px;font-family:'Playfair Display',serif;font-size:18px;font-weight:600;line-height:1.35;color:var(--ink,#0f1814)}
+.rq-q.rq-stem{font-family:'DM Sans',system-ui,-apple-system,sans-serif;font-size:16px;font-weight:500;line-height:1.55}
+
+.rq-opts{display:grid;gap:8px;grid-template-columns:repeat(3,minmax(0,1fr))}
+.rq-opt{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+  width:100%;min-width:0;min-height:56px;padding:9px 6px;cursor:pointer;text-align:center;
+  font:inherit;color:var(--ink,#0f1814);
+  background:var(--paper-2,#f9f3e6);border:1.5px solid var(--line,rgba(13,32,24,.12));border-radius:10px;
+}
+.rq-opt-t{font-size:15px;font-weight:700;line-height:1.25;overflow-wrap:anywhere}
+.rq-opt-s{font-size:11.5px;line-height:1.3;color:var(--ink-mute,#5c6a63)}
+.rq-opt:hover:not([aria-disabled="true"]){border-color:var(--gold,#C9A84C)}
+.rq-opt:focus-visible{outline:3px solid var(--gold,#C9A84C);outline-offset:2px}
+.rq-opt[aria-disabled="true"]{cursor:default}
+.rq-opt.is-picked:not(.is-key){border-color:var(--rq-review);background:var(--rq-review-bg)}
+.rq-opt.is-key{border-color:var(--rq-ok);background:var(--rq-ok-bg)}
+.rq-opt.is-key .rq-opt-t{color:var(--rq-ok)}
+@media (max-width:520px){
+  .rq.is-words .rq-opts{grid-template-columns:minmax(0,1fr)}
+  .rq.is-words .rq-opt{flex-direction:row;justify-content:space-between;gap:10px;min-height:48px;padding:10px 12px;text-align:left}
+  .rq.is-words .rq-opt-s{text-align:right}
+}
+
+.rq-fb:empty{display:none}
+.rq-fb{margin-top:12px}
+.rq-verdict{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;margin-bottom:6px}
+.rq-lbl{font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;padding:4px 9px;border-radius:999px}
+.is-ok .rq-lbl{color:var(--rq-ok);background:var(--rq-ok-bg)}
+.is-review .rq-lbl{color:var(--rq-review);background:var(--rq-review-bg)}
+.rq-key{font-size:14px;font-weight:700;color:var(--ink,#0f1814)}
+.rq-why,.rq-trap,.rq-saved{margin:6px 0 0;font-size:14px;line-height:1.55;color:var(--ink-2,#3a4a42)}
+.rq-trap{color:var(--rq-review)}
+.rq-saved{font-size:13px;color:var(--teal,#1B3A2D);font-weight:600}
+
+.rq-actions:empty{display:none}
+.rq-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.rq-btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:10px 16px;font:inherit;font-size:14px;font-weight:700;cursor:pointer;border-radius:10px;border:1.5px solid var(--teal,#1B3A2D);background:var(--teal,#1B3A2D);color:#fff;text-decoration:none}
+.rq-btn:focus-visible{outline:3px solid var(--gold,#C9A84C);outline-offset:2px}
+.rq-btn-quiet{background:transparent;color:var(--teal,#1B3A2D)}
+
+.rq-end-t{margin:0 0 8px;font-size:15px;line-height:1.5;color:var(--ink,#0f1814)}
+.rq-review{margin:0;padding:0;list-style:none}
+.rq-review li{margin:0 0 8px;padding:10px 12px;font-size:14px;line-height:1.5;color:var(--ink-2,#3a4a42);background:var(--paper-2,#f9f3e6);border:1px solid var(--line,rgba(13,32,24,.12));border-left:3px solid var(--rq-review);border-radius:8px}
+.rq-review b{display:block;color:var(--ink,#0f1814)}
+
+@media (max-width:420px){
+  .rq{padding:14px 12px 12px}
+  .rq-q{font-size:17px}
+  .rq-opt-t{font-size:14px}
+}
+@media (prefers-reduced-motion: no-preference){
+  .rq-opt{transition:border-color .15s ease, background-color .15s ease}
+  .rq-ring{animation:rq-ring-in .35s ease-out both}
+  @keyframes rq-ring-in{from{opacity:0}to{opacity:1}}
+}
