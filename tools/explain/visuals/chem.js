@@ -1,0 +1,351 @@
+// chem.js: chem.molecule, chem.reaction (SmilesDrawer through a light copy of
+// tools/ochem/tree/draw.js), chem.mechanism and chem.energy (mechdraw.js,
+// reused), chem.lewis (copied Lewis sandbox layout), chem.trend and
+// chem.curve (new small plots on repo data / computed curves).
+// Ported from the pilot preview (question-system/preview/renderers/chem.js).
+// tools/explain/vendor/ochem/ holds build-made copies of tools/ochem/tree/draw.js
+// (light theme, bond wedges and stereocenters reported) and mechdraw.js;
+// scripts/explainers/build.mjs refreshes them, never edit them by hand.
+import { register, C, t, r1, svgOpen, width, badge, arrowDefs, uid, h, esc, DRAWN } from './core.js';
+import { drawSmilesGeom, drawSmiles } from '../vendor/ochem/draw.js';
+import { drawFigure, drawRcd, injectMdCss } from '../vendor/ochem/mechdraw.js';
+
+const SVGNS = 'http://www.w3.org/2000/svg';
+function sv(tag, attrs) { const n = document.createElementNS(SVGNS, tag); for (const [k, v] of Object.entries(attrs)) n.setAttribute(k, v); return n; }
+
+// Draw a SMILES with atom positions; returns {node, atoms, vb}. Scale is set so
+// 1 viewBox unit is about 1.6 px, which keeps 8-unit labels near 13 px.
+export function structure(target, smi, o = {}) {
+  const g = drawSmilesGeom(target, smi, { bondLength: o.bondLength || 24, label: o.label || 'structure' });
+  // fit the box to the atoms the drawer actually placed (its own viewBox can be
+  // the whole 400 x 300 canvas, which shrinks some molecules to a speck)
+  let vb = g.vb;
+  if (g.atoms.length) {
+    const xs = g.atoms.map((a) => a.x), ys = g.atoms.map((a) => a.y), pad = o.pad || 16;
+    vb = [Math.min(...xs) - pad, Math.min(...ys) - pad, Math.max(...xs) - Math.min(...xs) + 2 * pad, Math.max(...ys) - Math.min(...ys) + 2 * pad];
+  }
+  g.node.setAttribute('viewBox', vb.map((v) => v.toFixed(1)).join(' '));
+  g.vb = vb;
+  const scale = o.scale || 1.6;
+  g.node.style.width = Math.round(vb[2] * scale) + 'px';
+  g.node.style.maxWidth = '100%'; g.node.style.height = 'auto'; g.node.style.display = 'block';
+  g.node.setAttribute('aria-hidden', 'true');
+  // the drawer recorded this drawing in DRAWN; name what it is for the render gate
+  const rec = DRAWN[DRAWN.length - 1];
+  if (rec && rec.smi === smi && !rec.role) { rec.role = o.role || 'explainer'; g.record = rec; }
+  return g;
+}
+// Atom i is the i-th heavy atom written in the SMILES (RDKit numbering when the
+// SMILES has no explicit [H]). The drawer adds H vertices of its own, so marks
+// index the heavy atoms only. Labels go into the widest gap between bonds.
+function markAtom(g, i, text, key, dirDeg) {
+  const heavy = g.atoms.filter((a) => a.el !== 'H');
+  const a = heavy[i]; if (!a) return;
+  const byId = new Map(g.atoms.map((x) => [x.i, x]));
+  const ang = (a.nb || []).map((id) => byId.get(id)).filter(Boolean).map((n) => Math.atan2(n.y - a.y, n.x - a.x)).sort((p, q) => p - q);
+  let dir = -Math.PI / 2;
+  if (ang.length === 1) dir = ang[0] + Math.PI;
+  else if (ang.length > 1) { let best = -1; for (let k = 0; k < ang.length; k++) { const p = ang[k], q = k + 1 < ang.length ? ang[k + 1] : ang[0] + 2 * Math.PI; if (q - p > best) { best = q - p; dir = p + (q - p) / 2; } } }
+  if (dirDeg != null) dir = dirDeg * Math.PI / 180;
+  g.node.append(sv('circle', { cx: a.x, cy: a.y, r: 7.5, fill: 'none', stroke: key ? C.key : C.mute, 'stroke-width': key ? 2.2 : 1.2, 'stroke-dasharray': key ? '' : '2.5 2' }));
+  const d = 21, lx = a.x + Math.cos(dir) * d, ly = a.y + Math.sin(dir) * d + 3.5;
+  const anchor = Math.cos(dir) > 0.35 ? 'start' : Math.cos(dir) < -0.35 ? 'end' : 'middle';
+  const tx = sv('text', { x: lx, y: ly, 'text-anchor': anchor, 'font-size': key ? 9.6 : 9.4, 'font-family': 'Arial, Helvetica, sans-serif', 'font-weight': key ? 700 : 400, fill: key ? C.key : C.ink2, 'paint-order': 'stroke', stroke: '#fff', 'stroke-width': 3 });
+  tx.textContent = text; g.node.append(tx);
+}
+
+// After marks are added, fit the box to everything drawn (labels included).
+function refit(g, scale) {
+  try {
+    const b = g.node.getBBox(), p = 6;
+    g.node.setAttribute('viewBox', [b.x - p, b.y - p, b.width + 2 * p, b.height + 2 * p].map((v) => v.toFixed(1)).join(' '));
+    g.node.style.width = Math.round((b.width + 2 * p) * scale) + 'px';
+  } catch (e) { /* not in the DOM yet: keep the atom box */ }
+}
+
+/* -------- question helper: structures in stems and choices -------- */
+// The question card draws a structure the way the served page does: the
+// SmilesDrawer settings of tools/mock/full.js (explicit hydrogens off since
+// commit 5c5ec38), so the preview shows the picture a student sees on the test.
+const SERVED_DRAWER = { width: 300, height: 140, padding: 6, bondThickness: 1.2, bondLength: 18, shortBondLength: 0.85, compactDrawing: true, explicitHydrogens: false, fontSizeLarge: 11, fontSizeSmall: 8,
+  themes: { light: { C: '#1a1d20', O: '#cf3b3b', N: '#3a78c4', CL: '#2e8a3e', BR: '#8a4a2a', F: '#3aa83a', I: '#7a3a8a', S: '#a08a1a', P: '#c06a1a', H: '#1a1d20', BACKGROUND: '#fff' } } };
+let _served = null;
+export function drawChoiceStructure(target, smi, role = 'question') {
+  const SD = window.SmilesDrawer;
+  if (!SD) throw new Error('SmilesDrawer not loaded');
+  if (!_served) _served = new SD.SvgDrawer(SERVED_DRAWER);
+  const node = document.createElementNS(SVGNS, 'svg');
+  node.setAttribute('aria-label', 'structure');
+  node.classList.add('mol', 'mol-served');
+  target.append(node);
+  let rec = null;
+  SD.parse(smi, (tree) => {
+    _served.draw(tree, node, 'light');
+    const g = _served.preprocessor.graph;
+    rec = { smi, role, from: 'served drawer',
+      atoms: g.vertices.map((v) => ({ i: v.id, x: v.position.x, y: v.position.y, el: v.value.element, stereo: !!v.value.isStereoCenter, drawn: v.value.isDrawn !== false })),
+      bonds: g.edges.map((e) => ({ a: e.sourceId, b: e.targetId, wedge: e.wedge || '', order: e.bondType === '=' ? 2 : e.bondType === '#' ? 3 : e.bondType === '.' ? 0 : 1 })).filter((e) => e.order > 0) };
+    DRAWN.push(rec);
+  }, (err) => { throw new Error('SMILES did not parse: ' + smi + ' ' + err); });
+  // fit the box to what was drawn, at a fixed scale so all choices match
+  try { const b = node.getBBox(), p = 6; node.setAttribute('viewBox', [b.x - p, b.y - p, b.width + 2 * p, b.height + 2 * p].map((v) => v.toFixed(1)).join(' ')); node.style.width = Math.round((b.width + 2 * p) * 1.3) + 'px'; } catch (e) { /* not laid out */ }
+  node.removeAttribute('width'); node.removeAttribute('height');
+  node.style.maxWidth = '100%'; node.style.height = 'auto'; node.style.display = 'block'; node.style.margin = '0 auto';
+  return { node, record: rec };
+}
+
+/* ---------------- chem.reaction ---------------- */
+register('chem.reaction', (s, box) => {
+  const row = h('div', { class: 'rxn' + (width(box) < 520 ? ' rxn-col' : '') });
+  box.append(row);
+  const molCell = (m) => { const c = h('div', { class: 'rxn-mol' }); row.append(c); const g = structure(c, m.smi, { label: m.label, bondLength: 26, scale: 1.3, pad: 34 }); (m.marks || []).forEach((k) => markAtom(g, k.atom, k.text, k.key, k.labelDir)); refit(g, 1.3); c.append(h('div', { class: 'rxn-label', text: m.label })); };
+  s.reactants.forEach(molCell);
+  row.append(h('div', { class: 'rxn-arrow' }, h('span', { text: s.reagent }), h('i')));
+  s.products.forEach(molCell);
+  if (s.ladder) {
+    const lad = h('div', { class: 'ladder' }, h('div', { class: 'ladder-t', text: s.ladder.title + ', most to least stable' }));
+    s.ladder.order.forEach((x, i) => lad.append(h('div', { class: 'ladder-r' + (i === s.ladder.key ? ' is-key' : '') }, h('b', { text: String(i + 1) }), h('span', { text: x }), i === s.ladder.key ? h('em', { text: 'here' }) : null)));
+    box.append(lad);
+  }
+});
+
+/* ---------------- stereo, derived from the drawing ---------------- */
+// For one stereocenter of a drawn molecule, read the picture the way a student
+// does: where each ranked group sits on the page, which bonds are wedges or
+// dashes, how H is drawn, which way 1 -> 2 -> 3 turns, and whether to flip.
+// Two independent answers: the student rule (trace, then flip when the lowest
+// group leans toward you) and the signed volume of the drawn tetrahedron. The
+// card text is built only from these, so it can never claim what the picture
+// does not show; a mismatch with the spec, or between the two, is an error.
+export function deriveStereo(g, center) {
+  const heavy = g.atoms.filter((a) => a.el !== 'H');
+  const c = heavy[center.atom]; if (!c) throw new Error('stereocenter atom ' + center.atom + ' not drawn');
+  const byId = new Map(g.atoms.map((a) => [a.i, a]));
+  const nbs = (c.nb || []).map((id) => byId.get(id)).filter(Boolean);
+  const bondTo = (n) => g.bonds.find((b) => (b.a === c.i && b.b === n.i) || (b.b === c.i && b.a === n.i));
+  const depthOf = (n) => { const b = bondTo(n); const w = b && b.wedge; return w === 'up' ? 1 : w === 'down' ? -1 : 0; };
+  const used = new Set();
+  const R = center.rank.map((r) => { const n = r.h ? nbs.find((x) => x.el === 'H' && !used.has(x.i)) : nbs.find((x) => x.i === (heavy[r.atom] || {}).i); if (!n) throw new Error('ranked group not bonded to ' + center.name + ': ' + r.name); used.add(n.i); return { n, name: r.name, d: depthOf(n) }; });
+  // 1. signed volume (y up, z toward the viewer)
+  const L = 24, v = R.map((x) => [x.n.x - c.x, -(x.n.y - c.y), x.d * L]);
+  const sub = (p, q) => [p[0] - q[0], p[1] - q[1], p[2] - q[2]];
+  const a1 = sub(v[0], v[3]), a2 = sub(v[1], v[3]), a3 = sub(v[2], v[3]);
+  const det = a1[0] * (a2[1] * a3[2] - a2[2] * a3[1]) - a1[1] * (a2[0] * a3[2] - a2[2] * a3[0]) + a1[2] * (a2[0] * a3[1] - a2[1] * a3[0]);
+  const byVolume = Math.abs(det) < 1e-6 ? null : det < 0 ? 'R' : 'S';
+  // 2. the student method, read off the picture: get H onto the wedge or dash
+  // (swap it with the group there if it lies flat), trace 1 -> 2 -> 3, flip if
+  // H points at you, and flip once more for each swap. Valid for any drawing.
+  const m2 = (t) => ((t % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
+  const turn = (pts) => { const ang = pts.map((p) => Math.atan2(p.y - c.y, p.x - c.x)); return m2(ang[1] - ang[0]) < m2(ang[2] - ang[0]) ? 'cw' : 'ccw'; };   // screen angles grow clockwise
+  const low = R[3], h = low.d > 0 ? 'front' : low.d < 0 ? 'back' : 'plane';
+  const traceAsDrawn = turn(R.slice(0, 3).map((x) => x.n));
+  let swapWith = null, hAfter = h, pos = R.slice(0, 3).map((x) => ({ x: x.n.x, y: x.n.y }));
+  if (h === 'plane') {
+    const k = R.slice(0, 3).findIndex((x) => x.d < 0) >= 0 ? R.slice(0, 3).findIndex((x) => x.d < 0) : R.slice(0, 3).findIndex((x) => x.d > 0);
+    if (k >= 0) { swapWith = { name: R[k].name, bond: R[k].d < 0 ? 'dash' : 'wedge' }; hAfter = R[k].d < 0 ? 'back' : 'front'; pos[k] = { x: low.n.x, y: low.n.y }; }
+    else hAfter = 'unclear';
+  }
+  const trace = turn(pos);
+  const asTraced = trace === 'cw' ? 'R' : 'S';
+  const flips = (hAfter === 'front' ? 1 : 0) + (swapWith ? 1 : 0);
+  const byRule = hAfter === 'unclear' ? null : flips % 2 ? (asTraced === 'R' ? 'S' : 'R') : asTraced;
+  return { name: center.name, ranks: R.map((x) => ({ name: x.name, drawn: x.d > 0 ? 'wedge' : x.d < 0 ? 'dash' : 'flat' })), h, swapWith, hAfter, traceAsDrawn, trace, asTraced, flips, byRule, byVolume };
+}
+
+function stereoCard(d) {
+  const card = h('div', { class: 'cip-card' }, h('div', { class: 'cip-h' }, h('b', { text: d.name }), h('span', { class: 'cip-r', text: d.byRule || '?' })));
+  const ol = h('ol');
+  d.ranks.forEach((r, i) => ol.append(h('li', {}, h('span', { text: r.name }), r.drawn !== 'flat' ? h('em', { text: 'on the ' + r.drawn }) : i === 3 ? h('em', { text: 'flat' }) : null)));
+  const lowName = d.ranks[3].name, turnWord = d.trace === 'cw' ? 'clockwise' : 'counterclockwise';
+  const lines = [];
+  if (d.h === 'back') lines.push(lowName + ' is on the dash, pointing away. Read the turn as it is.');
+  else if (d.h === 'front') lines.push(lowName + ' is on the wedge, pointing at you. Read the turn, then flip it.');
+  else if (d.swapWith) lines.push(lowName + ' lies flat. Swap it with ' + d.swapWith.name + ' on the ' + d.swapWith.bond + ': ' + lowName + ' now points ' + (d.hAfter === 'back' ? 'away' : 'at you') + '.');
+  else lines.push('No wedge or dash at this center. Redraw it before reading.');
+  let tail = '1 to 2 to 3 turns ' + turnWord + ': ' + d.asTraced + '.';
+  if (d.hAfter === 'front') tail += ' ' + lowName + ' toward you: flip.';
+  if (d.swapWith) tail += ' One swap: flip.';
+  if (d.flips) tail += ' Result: ' + d.byRule + '.';
+  lines.push(tail);
+  card.append(ol, ...lines.map((x, i) => h('p', { class: i ? 'cip-trace' : '', text: x })));
+  return card;
+}
+
+/* ---------------- chem.molecule (with stereocenter cards) ---------------- */
+register('chem.molecule', (s, box) => {
+  const wrapEl = h('div', { class: 'molrow' });
+  box.append(wrapEl);
+  const cell = h('div', { class: 'rxn-mol' });
+  wrapEl.append(cell);
+  const g = structure(cell, s.smi, { label: s.label, bondLength: 28, scale: 1.6, pad: 38 });
+  (s.centers || []).forEach((c) => markAtom(g, c.atom, c.name, true, c.labelDir));
+  refit(g, 1.6);
+  cell.append(h('div', { class: 'rxn-label', text: s.label }));
+  const cards = h('div', { class: 'cip-cards' });
+  const derived = [];
+  (s.centers || []).forEach((c) => {
+    const d = deriveStereo(g, c); derived.push(d);
+    const bad = [];
+    if (d.byRule !== c.config) bad.push('the drawing reads ' + d.byRule + ' by the rule, the spec says ' + c.config);
+    if (d.byVolume !== c.config) bad.push('the drawn geometry gives ' + d.byVolume + ', the spec says ' + c.config);
+    if (c.expectDrawn) { const got = { h: d.h, swapWith: d.swapWith ? d.swapWith.name + ' on the ' + d.swapWith.bond : null, trace: d.trace }; for (const k of Object.keys(c.expectDrawn)) if (c.expectDrawn[k] !== got[k]) bad.push(k + ' is ' + got[k] + ' in the drawing, ' + c.expectDrawn[k] + ' in the spec'); }
+    if (bad.length) throw new Error(c.name + ': ' + bad.join('; '));
+    cards.append(stereoCard(d));
+  });
+  box.dataset.stereo = JSON.stringify(derived);
+  if (g.record) g.record.stereo = derived.map((d, k) => ({ atom: s.centers[k].atom, name: d.name, byRule: d.byRule, byVolume: d.byVolume, spec: s.centers[k].config }));
+  wrapEl.append(cards);
+  if (s.note) box.append(h('p', { class: 'vis-note', text: s.note }));
+});
+
+/* ---------------- chem.mechanism / chem.energy (mechdraw.js) ---------------- */
+register('chem.mechanism', (s, box, ctx) => {
+  injectMdCss();
+  if (!s.fig) throw new Error('mechanism figure not resolved by the build');
+  const W = width(box);
+  drawFigure(box, s.fig, { width: Math.min(520, W - 24), showProduct: s.showProduct !== false });
+  box.querySelectorAll('svg').forEach((n) => n.setAttribute('aria-hidden', 'true'));
+  // phone: one step at a time, so the picture stays near one screen (coach view shows every step)
+  const steps = [...box.querySelectorAll('.md-step')];
+  if (s.stepper === 'phone' && W < 560 && steps.length > 1 && !(ctx && ctx.coach)) {
+    let i = 0;
+    const lab = h('span', { class: 'mstep-n' });
+    const prev = h('button', { type: 'button', class: 'mstep-btn', text: 'Previous step' });
+    const next = h('button', { type: 'button', class: 'mstep-btn', text: 'Next step' });
+    const show = () => { steps.forEach((st, k) => { st.hidden = k !== i; }); lab.textContent = 'Step ' + (i + 1) + ' of ' + steps.length; prev.disabled = i === 0; next.disabled = i === steps.length - 1; };
+    prev.addEventListener('click', () => { i = Math.max(0, i - 1); show(); });
+    next.addEventListener('click', () => { i = Math.min(steps.length - 1, i + 1); show(); });
+    box.append(h('div', { class: 'mstep' }, prev, lab, next));
+    show();
+  }
+});
+register('chem.energy', (s, box) => {
+  injectMdCss();
+  const W = width(box);
+  const svg = drawRcd(box, s, { width: W });
+  svg.setAttribute('aria-hidden', 'true');
+  // mechdraw sizes its labels for a 640-unit canvas; lift any label that would
+  // land under 12 px at this width (phone first)
+  const vbw = +svg.getAttribute('viewBox').split(' ')[2], scale = Math.min(W, 720) / vbw;
+  svg.querySelectorAll('text').forEach((tx) => { const f = +tx.getAttribute('font-size'); if (f * scale < 12) tx.setAttribute('font-size', (12 / scale).toFixed(1)); tx.setAttribute('font-family', 'Arial, Helvetica, sans-serif'); tx.style.fontFamily = 'Arial, Helvetica, sans-serif'; });
+  // keep any label that starts left of the plot clear of the y axis
+  try {
+    const axis = [...svg.querySelectorAll('line')].find((l) => +l.getAttribute('x1') === +l.getAttribute('x2'));
+    if (axis) { const ax = +axis.getAttribute('x1'); svg.querySelectorAll('text').forEach((tx) => { const b = tx.getBBox(); if (b.x < ax + 4 && b.x + b.width > ax + 4 && tx.getAttribute('transform') == null) { const shift = ax + 6 - b.x; tx.setAttribute('x', (+tx.getAttribute('x') + shift).toFixed(1)); } }); }
+  } catch (e) { /* not laid out yet */ }
+  if (s.qualitative) box.append(h('p', { class: 'vis-note', text: 'Energies are drawn to show order, not measured values.' }));
+});
+
+/* ---------------- chem.lewis ---------------- */
+register('chem.lewis', (s, box) => {
+  const L = window.LewisLayout; if (!L) throw new Error('lewis-layout.js not loaded');
+  const m = s.molecule, W = width(box), wide = W >= 560;
+  const MW = 320, MH = 250, cx = MW / 2, cy = 104;
+  let pos;
+  if (s.layoutAngles) {            // a spec can set the drawing angles (pyramid: lone pair up, three legs down)
+    pos = {}; pos[m.centralAtom] = { x: cx, y: cy };
+    m.bondPattern.forEach((b, i) => { const a = s.layoutAngles[i] * Math.PI / 180, nm = b.atomA === m.centralAtom ? b.atomB : b.atomA; pos[nm] = { x: cx + Math.cos(a) * 92, y: cy + Math.sin(a) * 92 }; });
+  } else pos = L.layoutPositions(m, cx, cy, 86);
+  let g = '';
+  for (const b of m.bondPattern) g += L.renderBond(pos[b.atomA], pos[b.atomB], b.order);
+  // terminal atoms: spread the pairs evenly on the side away from the bond
+  const terminalPairs = (atom, n) => {
+    const b = m.bondPattern.find((x) => x.atomA === atom || x.atomB === atom); const other = b.atomA === atom ? b.atomB : b.atomA;
+    const away = Math.atan2(pos[atom].y - pos[other].y, pos[atom].x - pos[other].x), out = [];
+    const spread = n === 3 ? [-Math.PI / 2, 0, Math.PI / 2] : n === 2 ? [-Math.PI / 3, Math.PI / 3] : [0];
+    spread.forEach((da) => { const a = away + da, r = 31, cx2 = pos[atom].x + Math.cos(a) * r, cy2 = pos[atom].y + Math.sin(a) * r, px = -Math.sin(a) * 4.2, py = Math.cos(a) * 4.2; out.push({ x: cx2 + px, y: cy2 + py }, { x: cx2 - px, y: cy2 - py }); });
+    return out;
+  };
+  for (const [atom, n] of Object.entries(m.lonePairCounts)) {
+    if (!n) continue;
+    const dots = (s.spreadTerminalPairs && atom !== m.centralAtom) ? terminalPairs(atom, n) : L.lonePairOffsets(atom, m, pos, pos[atom], n, 24);
+    const central = atom === m.centralAtom;
+    dots.forEach((d) => { g += `<circle class="lp-dot${central ? ' is-key' : ''}" cx="${r1(d.x)}" cy="${r1(d.y)}" r="${central ? 4.4 : 2.6}"/>`; });
+    if (central) {
+      const xs = dots.map((d) => d.x), ys = dots.map((d) => d.y);
+      const x0 = Math.min(...xs) - 9, y0 = Math.min(...ys) - 9, x1 = Math.max(...xs) + 9, y1 = Math.max(...ys) + 9;
+      g += `<rect x="${r1(x0)}" y="${r1(y0)}" width="${r1(x1 - x0)}" height="${r1(y1 - y0)}" rx="8" fill="none" stroke="${C.key}" stroke-width="2" stroke-dasharray="4 3"/>`;
+      g += badge(x1 + 8, (y0 + y1) / 2 + 5, '1 lone pair', { size: 13.5 });
+    }
+  }
+  for (const [name, p] of Object.entries(pos)) {
+    const el = L.atomElement(name);
+    g += `<g><circle class="atom-circle${name === m.centralAtom ? ' is-central' : ''}" cx="${r1(p.x)}" cy="${r1(p.y)}" r="24"/><text class="atom-label" x="${r1(p.x)}" y="${r1(p.y)}">${esc(el)}</text></g>`;
+  }
+  const mol = `<svg class="ls-canvas" viewBox="0 0 ${MW} ${MH}" width="100%" style="max-width:${MW}px;display:block;margin:0 auto" aria-hidden="true">${g}</svg>`;
+  const lg = s.ledger;
+  const ledger = h('div', { class: 'ledger' },
+    h('div', { class: 'ledger-h', text: 'Ledger for ' + lg.atom }),
+    h('div', { class: 'ledger-r' }, h('span', { text: 'Valence electrons (group 15)' }), h('b', { text: String(lg.valence) })),
+    h('div', { class: 'ledger-r' }, h('span', { text: 'Used in 3 single bonds' }), h('b', { text: '- ' + lg.inBonds })),
+    h('div', { class: 'ledger-r is-sum' }, h('span', { text: 'Left over' }), h('b', { text: (lg.valence - lg.inBonds) + ' electrons' })),
+    h('div', { class: 'ledger-r is-key' }, h('span', { text: 'Lone pairs on ' + lg.atom }), h('b', { text: String((lg.valence - lg.inBonds) / 2) })),
+    h('div', { class: 'ledger-f', text: 'Shape: ' + m.molecularGeometry.replace(/-/g, ' ') }));
+  const row = h('div', { class: wide ? 'lewis-row wide' : 'lewis-row' });
+  const mcell = h('div', { class: 'lewis-mol', html: mol });
+  row.append(mcell, ledger);
+  box.append(row);
+});
+
+/* ---------------- chem.trend ---------------- */
+register('chem.trend', (s, box) => {
+  const W = width(box), H = W < 520 ? 318 : 326;
+  const L = 52, R = 16, T = 34, B = 78, pw = W - L - R, ph = H - T - B;
+  const vals = s.values, n = vals.length, ymax = 1600;
+  const X = (i) => L + (pw * (i + 0.5)) / n, Y = (v) => T + ph - (v / ymax) * ph;
+  let g = '';
+  for (let v = 0; v <= ymax; v += 400) { g += `<line x1="${L}" x2="${W - R}" y1="${r1(Y(v))}" y2="${r1(Y(v))}" stroke="#e3e8e5"/>` + t(L - 8, Y(v) + 4, String(v), { size: 12, anchor: 'end', fill: C.mute }); }
+  g += t(12, T + ph / 2, 'kJ/mol', { size: 12, fill: C.ink2, anchor: 'middle' }).replace('<text ', `<text transform="rotate(-90 12 ${r1(T + ph / 2)})" `);
+  const pts = vals.map((v, i) => [X(i), Y(v.v)]);
+  g += `<polyline points="${pts.map((p) => r1(p[0]) + ',' + r1(p[1])).join(' ')}" fill="none" stroke="${C.ink2}" stroke-width="2"/>`;
+  // dips: circled, numbered, with the lower value written under its point
+  const below = new Set();
+  s.dips.forEach(([a, b], n) => {
+    const i = vals.findIndex((v) => v.sym === a), j = vals.findIndex((v) => v.sym === b);
+    below.add(j);
+    const mx = (pts[i][0] + pts[j][0]) / 2, my = (pts[i][1] + pts[j][1]) / 2;
+    const rx = (pts[j][0] - pts[i][0]) / 2 + 14, ry = Math.abs(pts[j][1] - pts[i][1]) / 2 + 14;
+    g += `<ellipse cx="${r1(mx)}" cy="${r1(my)}" rx="${r1(rx)}" ry="${r1(ry)}" fill="rgba(155,69,0,.05)" stroke="${C.trap}" stroke-width="1.6" stroke-dasharray="5 3"/>`;
+    g += t(mx, Math.min(my + ry + 34, T + ph - 4), 'dip ' + (n + 1), { size: 12.5, anchor: 'middle', weight: 700, fill: C.trap }).replace('<text ', '<text paint-order="stroke" stroke="#fff" stroke-width="4" stroke-linejoin="round" ');
+  });
+  vals.forEach((v, i) => {
+    const hl = s.highlight.includes(v.sym);
+    g += `<circle cx="${r1(pts[i][0])}" cy="${r1(pts[i][1])}" r="${hl ? 6.5 : 4}" fill="${hl ? C.key : '#9aa59f'}" stroke="#fff" stroke-width="1.5"/>`;
+    g += t(pts[i][0], below.has(i) ? pts[i][1] + 22 : pts[i][1] - 12, String(v.v), { size: 12, anchor: 'middle', fill: hl ? C.ink : C.mute, weight: hl ? 700 : 400 }).replace('<text ', '<text paint-order="stroke" stroke="#fff" stroke-width="4" stroke-linejoin="round" ');
+    g += t(pts[i][0], T + ph + 20, v.sym, { size: 14, anchor: 'middle', weight: hl ? 700 : 400, fill: hl ? C.key : C.mute });
+    const rk = (s.rank || []).indexOf(v.sym);
+    if (rk >= 0) g += `<circle cx="${r1(pts[i][0])}" cy="${T + ph + 38}" r="10" fill="${C.keyBg}" stroke="${C.key}" stroke-width="1.6"/>` + t(pts[i][0], T + ph + 42.5, String(rk + 1), { size: 12.5, anchor: 'middle', weight: 700, fill: C.key });
+  });
+  g += t(L, 18, 'First ionization energy across period 3', { size: 13, weight: 700, fill: C.ink2 });
+  if (s.rank) g += t(W - R, H - 6, 'circled: rank in the answer, 1 = lowest', { size: 12, anchor: 'end', fill: C.key });
+  box.innerHTML = svgOpen(W, H) + g + '</svg>';
+});
+
+/* ---------------- chem.curve (titration) ---------------- */
+register('chem.curve', (s, box) => {
+  const W = width(box), H = W < 520 ? 300 : 320;
+  const L = 44, R = 18, T = 20, B = 46, pw = W - L - R, ph = H - T - B;
+  const X = (v) => L + (v / s.xMaxMl) * pw, Y = (p) => T + ph - (p / 14) * ph;
+  let g = '';
+  const veq = s.analyte.molarity * s.analyte.volumeMl / s.titrant.molarity;
+  g += `<rect x="${r1(X(veq * 0.2))}" y="${T}" width="${r1(X(veq * 0.8) - X(veq * 0.2))}" height="${ph}" fill="#eef7f2"/>`;
+  g += t(X(veq * 0.5), T + 16, 'buffer region', { size: 12, anchor: 'middle', fill: C.key });
+  for (let p = 0; p <= 14; p += 2) { g += `<line x1="${L}" x2="${W - R}" y1="${r1(Y(p))}" y2="${r1(Y(p))}" stroke="#e6ebe8"/>` + t(L - 7, Y(p) + 4, String(p), { size: 12, anchor: 'end', fill: C.mute }); }
+  for (let v = 0; v <= s.xMaxMl; v += 10) g += t(X(v), T + ph + 18, String(v), { size: 12, anchor: 'middle', fill: C.mute });
+  g += t(L + pw / 2, H - 6, 'mL of NaOH added', { size: 12.5, anchor: 'middle', fill: C.ink2 });
+  g += t(14, T + ph / 2, 'pH', { size: 12.5, anchor: 'middle', fill: C.ink2 });
+  g += `<polyline points="${s.curve.map((c) => r1(X(c[0])) + ',' + r1(Y(c[1]))).join(' ')}" fill="none" stroke="${C.blue}" stroke-width="2.4"/>`;
+  s.marks.forEach((m) => {
+    const x = X(m.vb), y = Y(m.pH);
+    g += `<line x1="${r1(x)}" x2="${r1(x)}" y1="${r1(y)}" y2="${T + ph}" stroke="${m.key ? C.key : '#9aa59f'}" stroke-dasharray="3 3"/>`;
+    g += `<circle cx="${r1(x)}" cy="${r1(y)}" r="${m.key ? 6.5 : 5}" fill="${m.key ? C.key : '#fff'}" stroke="${m.key ? C.key : C.ink2}" stroke-width="2"/>`;
+    const label = m.at === 'start' ? 'start: ' + m.choice : m.at === 'equivalence' ? 'equivalence: ' + m.choice : 'halfway: ' + m.choice;
+    // labels sit below the curve, where the plot is empty, and never across another mark's line
+    if (m.key) { const veqX = X(veq), lw = label.length * 12.5 * 0.53 + 14; const bx = x + 8 + lw > veqX - 4 ? Math.max(L + 4, veqX - 8 - lw) : x + 8; g += badge(bx, y + 36, label, { size: 12.5 }); }
+    else if (m.at === 'start') g += t(x + 8, y + 22, label, { size: 12.5, fill: C.ink2, weight: 700 });
+    else g += t(x - 10, y + 22, label, { size: 12.5, anchor: 'end', fill: C.ink2, weight: 700 });
+  });
+  box.innerHTML = svgOpen(W, H) + g + '</svg>';
+});
+
+export { drawSmiles };
