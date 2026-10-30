@@ -47,7 +47,7 @@ const doors = (doc) => [...sr(doc).querySelectorAll('a.door')];
 
 test('five doors, plain words, an icon each; the Canon is no longer a door', () => {
   const { doc, S } = boot();
-  assert.equal(S.version, '3');
+  assert.equal(S.version, '4');
   assert.deepEqual(doors(doc).map((a) => a.querySelector('.dl').textContent), ['Today', 'Learn', 'Practice', 'Tests', 'Review']);
   assert.deepEqual(doors(doc).map((a) => a.getAttribute('href')), ['/', '/learn/', '/practice/', '/tests/', '/review/']);
   assert.ok(doors(doc).every((a) => a.querySelector('svg.ico[aria-hidden="true"]')), 'an icon beside every word');
@@ -55,7 +55,7 @@ test('five doors, plain words, an icon each; the Canon is no longer a door', () 
   const today = doors(doc)[0].querySelector('svg').innerHTML;
   assert.match(today, /M3 17\.5h18/, 'Today is a sunrise over a horizon line');
   assert.doesNotMatch(today, /<circle/, 'never a clock face');
-  assert.equal(sr(doc).querySelector('link[rel="stylesheet"]').getAttribute('href'), '/shared/ace-shell.css?v=3');
+  assert.equal(sr(doc).querySelector('link[rel="stylesheet"]').getAttribute('href'), '/shared/ace-shell.css?v=4');
   assert.equal(sr(doc).querySelector('nav').getAttribute('aria-label'), 'Ace Labs');
 });
 
@@ -68,6 +68,24 @@ test('the brand is the ACE DAT lockup, then Labs, linking to Today', () => {
   assert.equal(b.querySelector('img.lockup').getAttribute('alt'), '', 'the link carries the name');
   assert.equal(b.querySelector('.labs').textContent, 'Labs');
   assert.ok(fs.existsSync(path.join(ROOT, 'shared/brand/ace-dat-lockup-reversed-v1.svg')));
+});
+
+test('phones show the ACE DAT mark in the bar (one product: the new logo on every page, one way)', () => {
+  const { doc } = boot();
+  const b = sr(doc).querySelector('a.brand');
+  const mark = b.querySelector('img.mark');
+  assert.ok(mark, 'the brand link carries the mark');
+  assert.equal(mark.getAttribute('src'), '/shared/brand/ace-dat-mark-reversed-v1.svg');
+  assert.equal(mark.getAttribute('alt'), '', 'the link carries the name');
+  assert.ok(fs.existsSync(path.join(ROOT, 'shared/brand/ace-dat-mark-reversed-v1.svg')));
+  /* desktop: lockup and Labs, no mark */
+  assert.match(CSS, /\.mark \{ display: none;/);
+  /* phone: the brand is a 44 px target at the left, the mark shows, the lockup and Labs do not */
+  const phone = CSS.slice(CSS.indexOf('@media (max-width: 759px)'));
+  assert.match(phone, /\.brand \{ flex: 0 0 44px; width: 44px; min-width: 44px;/);
+  assert.match(phone, /\.lockup, \.labs \{ display: none; \}/);
+  assert.match(phone, /\.mark \{ display: block; \}/);
+  assert.doesNotMatch(phone.slice(0, phone.indexOf('}') + 1), /\.brand \{ display: none/);
 });
 
 test('the current door is marked three ways: aria-current, a mint 800 label, the bead or the tick', async () => {
@@ -566,7 +584,7 @@ test('ace-shell.css only changes with a new VERSION (no page names its URL, so n
   /* the CSS loads as /shared/ace-shell.css?v=<VERSION> under an immutable cache. When this fails because
      ace-shell.css changed: bump VERSION in ace-shell.js, bump ace-shell.js ?v= on every includer, and
      record the new hash here. */
-  const PINNED = { '3': '81543f99e4999b63' };
+  const PINNED = { '3': '81543f99e4999b63', '4': 'd9cdbc41e6ec1e3d' };
   const v = /var VERSION = '(\d+)'/.exec(SHELL)[1];
   const sha = require('node:crypto').createHash('sha256').update(CSS).digest('hex').slice(0, 16);
   assert.equal(PINNED[v], sha, 'ace-shell.css changed under VERSION ' + v);

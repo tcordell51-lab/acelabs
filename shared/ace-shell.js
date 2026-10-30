@@ -1,14 +1,16 @@
 /* ace-shell.js : the ONE Ace Labs navigation, on every student page (shell v2).
 
    Add it with one tag (anywhere; defer is fine):
-     <script src="/shared/ace-shell.js?v=6" defer></script>
+     <script src="/shared/ace-shell.js?v=7" defer></script>
 
    Five doors: Today, Learn, Practice, Tests, Review. The Canon is no longer a
    door; it lives inside Learn as Sheets (/learn/#sheets).
    - Renders in a shadow root (styles from /shared/ace-shell.css), so no tool
      page's CSS can break it and it cannot break a tool page.
-   - Desktop (760 px and up): a 60 px top bar, the ACE DAT lockup on the left,
-     the doors on the right. The four stage doors (Learn to Review) sit in a
+   - Desktop (760 px and up): a 60 px top bar, the ACE DAT lockup and LABS on
+     the left, the doors on the right. Phones show the ACE DAT mark instead, a
+     44 px brand target at the left of the bar (the one-product rule: the new
+     logo on every student page, in the same place, one way). The four stage doors (Learn to Review) sit in a
      thin gold ring; a mint bead under the current door travels from the last
      door (420 ms; a cut under reduced motion).
    - Phone (under 760 px): five equal doors, a 20 to 22 px icon over a 12 px
@@ -51,7 +53,7 @@
 (function () {
   'use strict';
   if (window.AceShell) return;
-  var VERSION = '3';
+  var VERSION = '4';
   var DUE_KEY = 'acelabs.v1.dueToday';
   var LAST_KEY = 'al.lastDoor';
   var DOORS = [
@@ -202,6 +204,7 @@
       '<div class="bar"><div class="in">' +
       '<a class="brand" href="' + esc(withStudent('/')) + '" aria-label="ACE DAT Labs, Today">' +
         '<img class="lockup" src="/shared/brand/ace-dat-lockup-reversed-v1.svg" alt="" width="113" height="24" decoding="async">' +
+        '<img class="mark" src="/shared/brand/ace-dat-mark-reversed-v1.svg" alt="" width="26" height="26" decoding="async">' +
         '<span class="labs">Labs</span></a>' +
       '<nav aria-label="Ace Labs"><div class="track"><ul class="doors">' + links + '</ul>' +
         '<span class="ring" aria-hidden="true"></span><span class="bead" aria-hidden="true"></span></div></nav>' +
