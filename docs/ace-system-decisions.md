@@ -50,7 +50,7 @@ Comprehension.
 - Every question gets a detailed explainer and a visual, stored as sidecar
   files keyed by question id. Answer keys are never changed silently: suspected
   bad keys go to a key-disputes list for Thomas.
-- Explainers are written in Thomas's coaching voice (docs/thomas-voice-codex.md).
+- Explainers are written in Thomas's coaching voice. The voice reference is built from his own words (Retold coach lines, trick scripts, acethedat.com copy, his emails to students: voice patterns only, no student details) and lives at docs/thomas-voice-codex.md once written.
 
 ## Sign-off
 
