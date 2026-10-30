@@ -19,10 +19,13 @@
 //   word      wrong, wrongly, incorrect, incorrectly, fail, fails, failed, failing
 //             (say Confirmed / Needs review, or name the trap)
 //   streak    streaks
-//   points    points, XP or levels as a reward ("+10 points", "earn points", "You got 3 points", "You got three
-//             points on Bio", "Get 10 points for every card", "5 points!", "XP", "Level up"); geometry, science
-//             and QR word problems keep theirs ("data points", "have 2 points in common", "If you have 3 points,
-//             how many triangles", "Team A has 12 points", "A player gets 3 points for each win")
+//   points    points, XP or levels as a reward, anchored to the student (the second person or an imperative
+//             aimed at them) and a reward context ("You got 3 points", "You won 5 points", "You got 2 points
+//             on Bio", "Get 10 points for every card", "5 points!", "+10 points", "bonus points", "XP", "Level
+//             up"); geometry, science and QR word problems keep theirs, whoever has the points ("data points",
+//             "If you have 3 points, how many triangles", "5 points, no three collinear", "A set has 4 points
+//             in a plane", "The scatter plot has 8 points", "Team A has 12 points and Team B has 9 points",
+//             "A player gets 3 points for each win")
 //   score     leaderboards, best / high / top scores, personal bests, records, a percentage as your grade
 //             ("You scored 80%"; "40% of the bank" and "you got 20% off" are not grades)
 //   badge     badges
@@ -65,20 +68,28 @@ const DIGIT_WORD = '(?:zero|oh|one|two|three|four|five|six|seven|eight|nine)';
 export const WORD_RULES = [
   ['word', /\b(?:wrong(?:ly)?|incorrect(?:ly)?|fail(?:s|ed|ing)?)\b/gi],
   ['streak', /\b(?<!primitive\s)streaks?\b/gi],
+  // points as a reward: anchored to the student (the second person, or an imperative aimed at them) and a
+  // reward context. A count of points in a QR, geometry or science sentence is not a reward, whoever has
+  // them: "If you have 3 points, how many triangles", "5 points, no three collinear", "A set has 4 points in
+  // a plane", "The scatter plot has 8 points", "Team A has 12 points and Team B has 9 points", "A player gets
+  // 3 points for each win", "She won 2 points".
   ['points', new RegExp([
-    // second person, a reward: "You got 3 points", "you have 120 points", "You got 2 points on Bio", "You got three points";
-    // a hypothetical or a figure is not ("If you have 3 points, how many triangles", "you have 5 points, no three
-    // collinear", "you have two point three grams")
-    String.raw`(?<!\b(?:if|suppose|when|once|assume|given|say)\s+)\byou(?:'ve|\s+have)?\s+(?:got|get|getting|have|had|now\s+have|won|earned|scored)\s+(?:${NUM}|a\s+few|some)\s+(?:more\s+|bonus\s+|extra\s+)?points?\b` +
+    // second person, a reward: "You got 3 points", "you have 120 points", "You got 2 points on Bio", "You won 5
+    // points", "you've earned ten points"; a hypothetical or a figure is not ("If you have 3 points, how many
+    // triangles", "you have 5 points, no three collinear", "you have two point three grams")
+    String.raw`(?<!\b(?:if|suppose|when|once|assume|given|say)\s+)\byou(?:'ve|'ll|\s+have|\s+will)?\s+(?:got|get|getting|have|had|now\s+have|won|win|earned|earn|scored|score|collected|collect|gained|gain|picked\s+up)\s+(?:${NUM}|a\s+few|some)\s+(?:more\s+|bonus\s+|extra\s+)?points?\b` +
       String.raw`(?!\s*,)(?!\s+(?:${DIGIT_WORD}\b|in\s+(?:common|a\s+plane|the\s+plane|space)|of\s+\w|on\s+(?:the|a|an|each|this|that|it|its)\s+(?:line|circle|graph|plane|grid|curve|axis|x-axis|y-axis|number\s+line|map|chart)|no\s+three|where|that|which|such|so\s+that))`,
-    // an imperative reward at the start of a clause: "Get 10 points for every card you keep", "Keep a card, get 5
-    // points"; "A player gets 3 points for each win" (a subject first) is a QR count and is left to review
-    // (the verb comes first so the look back only runs where one of the four verbs starts)
-    String.raw`\b(?:get|earn|win|score)(?<=(?:^|[.!?,;:(])\s*["']?[a-z]+)\s+${NUM}\s+(?:more\s+|bonus\s+|extra\s+)?points?\b`,
+    // second person, no number: "you earn points for every card", "you'll get bonus points"
+    String.raw`\byou(?:'ll|\s+will|\s+can)?\s+(?:earn|get|win|score|collect|gain)\s+(?:more\s+|bonus\s+|extra\s+)?points?\b`,
+    // an imperative aimed at the student, at the start of a clause: "Get 10 points for every card you keep",
+    // "Keep a card, get 5 points", "Earn points by keeping cards"; "A player gets 3 points" (a subject first)
+    // is a count (the verb comes first so the look back only runs where one of the verbs starts)
+    String.raw`\b(?:get|earn|win|score|collect|gain)(?<=(?:^|[.!?,;:(])\s*["']?[a-z]+)\s+(?:${NUM}\s+)?(?:more\s+|bonus\s+|extra\s+)?points?\b`,
+    // the reward said out loud: "5 points!", "+10 points", "10 pts", "bonus points", "points you earned", "points to spend"
     String.raw`\b${NUM}\s+points?\s*!`,
     String.raw`\+\s?\d+\s*(?:pts?|points?)\b|\b\d+\s*pts\b`,
-    String.raw`\b(?:earn(?:ed|s|ing)?|scored?|scoring|win|wins|bonus|gain(?:ed|s)?|collect(?:ed|s)?)\s+(?:\d+\s+|some\s+|more\s+|extra\s+|bonus\s+)?points?\b|\bpoints?\s+(?:earned|scored|to\s+spend)\b`,
-    String.raw`(?<!-)\bwon\s+${NUM}\s+points?\b`,
+    String.raw`\bbonus\s+points?\b|\bpoints?\s+(?:you(?:'ve)?\s+)?(?:earned|scored|won|to\s+spend)\b`,
+    // XP is always a game
     String.raw`\b\d+\s*XP\b|\bXP\s+(?:points?|bar|level|earned|total|boost)\b|\b(?:earn|gain|get)(?:ed|s)?\s+XP\b`,
     // levels as a reward ("Level up to unlock the next night"); "one level up to n = 3" and "energy levels" are science
     String.raw`\blevel(?:ed|led|ing)?[\s-]up\b(?!\s+to\s+n\b)`,
