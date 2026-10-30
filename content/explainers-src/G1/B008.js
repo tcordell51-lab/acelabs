@@ -45,6 +45,13 @@
 // numbered lines with a connector, like the pilot's RC-3. EXCEPT items show the
 // key line and the shortest sentence that checks off each other choice, so a
 // phone panel stays under 600 px.
+//
+// Expert review (needs-work, 22 of 22 keys agree, no key disputes): the three
+// blocked items and the four optional notes are fixed here, item by item in
+// CHANGES (each coach record lists its own). Two pictures had marked a line
+// that rules a choice out as "Where a trap comes from" (rc-p10-q14 17.2,
+// rc-p19-q13 15.5); a trap span marks only where a choice's pull was borrowed
+// from, so both are context lines now ("Read with it").
 'use strict';
 
 const BANK = 'tools/rc/data/bank.js';
@@ -99,7 +106,7 @@ const ENTRIES = [
     choices: [
       { text: 'a problem raised in the opening and fully solved by the closing paragraph', role: 'trap', family: 'rc-contradicted', trap: 'Nothing is fully solved', note: 'Paragraph 17 says what stays open: how much the carbon movement matters, and whether provisioning happens at all. The close leaves the question open.' },
       { text: 'a comparison of two fungal groups, followed by a defence of one of them', role: 'trap', family: 'rc-half-supported', trap: 'Two paragraphs, stretched', note: 'Paragraphs 3 and 4 do compare the two kinds of partner. But that is two paragraphs, and the author never defends one over the other.' },
-      { text: 'a series of experiments presented in the order they were carried out', role: 'trap', family: 'rc-outside', trap: 'No run of experiments', note: 'Girdling and labelled carbon do appear, but most of the passage is not experiments, and none is placed in the order it was run.' },
+      { text: 'a series of experiments presented in the order they were carried out', role: 'trap', family: 'rc-outside', trap: 'No run of experiments', note: 'Girdling and labelled carbon do appear, but most of the passage is not experiments, and nothing is arranged by when it was run.' },
       { text: 'a chronological history of research into the fungi of forest soils', role: 'trap', family: 'rc-too-weak', trap: 'One paragraph of history', note: 'Only paragraph 2 is history: the 1880s and the ancient fossils. The rest is ordered by argument, not by date.' },
       { text: 'an account of a partnership, then a limit on what it shows', role: 'key', note: 'The trade first, then the limits on the sharing claim: both blocks, in order.' }
     ],
@@ -112,12 +119,12 @@ const ENTRIES = [
       passage: 'rc-p10',
       focus: '11.1',
       spans: [
-        { p: 1, s: 5, quote: 'It is a partnership.', role: 'key', note: 'block 1 opens: the trade' },
+        { p: 1, s: 5, quote: 'It is a partnership.', role: 'key', note: 'block 1: the trade' },
         { p: 11, s: 1, quote: 'This is the point where care is required', role: 'key', note: 'block 2 opens: the limits' },
         { p: 17, s: 5, quote: 'What stays open is how much of that movement matters to a growing forest', role: 'key', note: 'the close leaves it open' }
       ],
       reuse: REUSE,
-      alt: 'Three highlighted lines mark where each block starts or ends: paragraph 1, sentence 5, it is a partnership; paragraph 11, sentence 1, the point where care is required; and paragraph 17, sentence 5, what stays open.',
+      alt: 'Three highlighted lines mark the blocks: paragraph 1, sentence 5, it is a partnership; paragraph 11, sentence 1, the point where care is required; and paragraph 17, sentence 5, what stays open.',
       caption: 'The partnership opens the passage, the limits start at paragraph 11, and the close leaves the question open.'
     },
     demoPick: 'a problem raised in the opening and fully solved by the closing paragraph',
@@ -195,11 +202,11 @@ const ENTRIES = [
       focus: '17.6',
       spans: [
         { p: 17, s: 1, quote: 'None of this diminishes the science.', role: 'key', note: 'not a flaw' },
-        { p: 17, s: 2, quote: 'the symbiosis is ancient, nearly universal, and structurally elegant', role: 'trap', choice: 'evidence that the symbiosis itself has been misdescribed', note: 'settled, which one choice turns around' },
+        { p: 17, s: 2, quote: 'the symbiosis is ancient, nearly universal, and structurally elegant', role: 'context', note: 'the settled part: the partnership itself' },
         { p: 17, s: 6, quote: 'The gap is where the interesting work sits', role: 'key', note: 'an opening' }
       ],
       reuse: REUSE,
-      alt: 'Paragraph 17 in three cards. Sentences 1 and 6 are highlighted: none of this diminishes the science, and the gap is where the interesting work sits. Sentence 2 is marked as the source of a trap: the symbiosis is ancient, nearly universal and structurally elegant.',
+      alt: 'Paragraph 17 in three cards. Sentences 1 and 6 are highlighted: none of this diminishes the science, and the gap is where the interesting work sits. Sentence 2 is marked to read with them: the symbiosis is ancient, nearly universal and structurally elegant.',
       caption: 'The first and last lines carry the verdict. The middle card is what is settled, so the partnership is not in doubt.'
     },
     demoPick: 'a reason to set the subject aside for the time being',
@@ -239,11 +246,11 @@ const ENTRIES = [
         { p: 5, s: 2, quote: 'Phosphate barely moves in soil.', role: 'stated', choice: 'Phosphate moves through soil slowly enough to leave a root short of it' },
         { p: 8, s: 3, quote: 'the fungi live on sugar made that week', role: 'stated', choice: 'A share of what a tree makes in a given week ends up in fungal tissue' },
         { p: 15, s: 2, quote: 'make no sugar at all', role: 'stated', choice: 'There are plants that live without making any sugar of their own' },
-        { p: 13, s: 4, quote: 'Flow may be set by the fungus, or simply by which end of the connection is hungrier.', role: 'key', choice: 'Fungi steer carbon toward the seedlings most closely related to the donor', note: 'the fungus or hunger sets the flow, not kinship' }
+        { p: 13, s: 4, quote: 'Flow may be set by the fungus, or simply by which end of the connection is hungrier.', role: 'key', choice: 'Fungi steer carbon toward the seedlings most closely related to the donor', note: 'the fungus or hunger may set the flow; kinship is not named' }
       ],
       reuse: REUSE,
       alt: 'Three lines check off, each tagged with the served letter of its choice: phosphate barely moving in paragraph 5, sugar made that week in paragraph 8, and no sugar at all in paragraph 15. Paragraph 13, sentence 4 is highlighted: flow may be set by the fungus or by which end is hungrier.',
-      caption: 'Three lines check off here; the mushrooms are in paragraph 4. The highlight says what sets the flow, and kinship is not on it.'
+      caption: 'Three lines check off here; the mushrooms are in paragraph 4. The highlight says what may set the flow, and kinship is not on it.'
     },
     demoPick: 'There are plants that live without making any sugar of their own',
     flags: [PLAY_FLAG]
@@ -466,7 +473,7 @@ const ENTRIES = [
     steps: [
       'Find the three names together: paragraph 7, sentence 4.',
       'Read what they share: they leave GABA largely alone and block the NMDA glutamate receptor, "cutting excitation rather than boosting inhibition".',
-      'Sort the rest by group. Each other choice describes a different group of drugs in paragraph 7.'
+      'Sort the rest by group. Three other choices belong to the other drugs in paragraph 7; no line makes the relaxant claim.'
     ],
     choices: [
       { text: 'block a glutamate receptor instead of strengthening inhibition', role: 'key', note: 'Glutamate blocked, GABA left alone: excitation cut, not inhibition boosted.' },
@@ -764,7 +771,7 @@ const ENTRIES = [
       { text: 'show that molecules with nothing structurally in common produce the same state', role: 'key', note: 'Unlike shapes, one state: the list makes the chemical variety impossible to miss.' },
       { text: 'explain why the volatile agents became the most widely used members of the group', role: 'trap', family: 'rc-outside', trap: 'Popularity never discussed', note: 'No line says which agents are used most, or why.' },
       { text: 'argue that only one drug on the list is a true anaesthetic', role: 'trap', family: 'rc-contradicted', trap: 'They all count', note: 'Sentence 2 calls xenon a complete anaesthetic, and nothing in paragraph 8 rules a drug out. The list shows variety, not a disqualification.' },
-      { text: 'demonstrate that every agent named acts at the GABA type A receptor', role: 'trap', family: 'rc-contradicted', trap: 'Not all at GABA', note: 'Paragraph 7 says ketamine, nitrous oxide and xenon leave GABA largely alone. The list mixes targets on purpose.' }
+      { text: 'demonstrate that every agent named acts at the GABA type A receptor', role: 'trap', family: 'rc-contradicted', trap: 'Not all at GABA', note: 'Paragraph 7 says ketamine, nitrous oxide and xenon leave GABA largely alone. The list crosses the target groups of paragraph 7.' }
     ],
     lockIt: 'Function of a list: read the line right after it. The author says there why the list is there.',
     hook: null,
@@ -862,10 +869,10 @@ const ENTRIES = [
       spans: [
         { p: 15, s: 1, quote: 'None of this unsettles the practice, and it should not.', role: 'key', note: 'untroubled' },
         { p: 15, s: 3, quote: 'The incompleteness is a research program rather than a warning.', role: 'key', note: 'curious, not alarmed' },
-        { p: 15, s: 5, quote: 'a condition it cannot yet define', role: 'trap', choice: 'triumphant about how much has been settled', note: 'still open, so no victory lap' }
+        { p: 15, s: 5, quote: 'a condition it cannot yet define', role: 'context', note: 'still open, so no victory lap' }
       ],
       reuse: REUSE,
-      alt: 'Paragraph 15 in three cards. Sentences 1 and 3 are highlighted: none of this unsettles the practice, and the incompleteness is a research program rather than a warning. Sentence 5 is marked as a trap source: a condition the field cannot yet define.',
+      alt: 'Paragraph 15 in three cards. Sentences 1 and 3 are highlighted: none of this unsettles the practice, and the incompleteness is a research program rather than a warning. Sentence 5 is marked to read with them: a condition the field cannot yet define.',
       caption: 'Two highlights, two halves: calm about practice, curious about the gap. The last card rules out triumph.'
     },
     demoPick: 'alarmed at what the gap means for patients',
@@ -883,7 +890,7 @@ const ENTRIES = [
     steps: [
       'Find the two figures: paragraph 13, sentence 4. One in twenty thousand when patients volunteer it, twenty or thirty times higher when every patient is asked.',
       'Read what the author does with them: "The distance between those two figures is itself a finding."',
-      'No side is picked. Sentence 3 calls it "honest disagreement".'
+      'Sentence 3 calls the debate over whether a patient who squeezes on command is conscious an "honest disagreement". No side is picked.'
     ],
     choices: [
       { text: 'confident that the lower figure is the accurate one', role: 'trap', family: 'rc-too-strong', trap: 'No side picked', note: 'The author endorses neither number. The gap between them is the point.' },
@@ -998,12 +1005,19 @@ const ENTRIES = [
   }
 ];
 
-// Where this batch departs from the expert's suggested family (coach record only).
+// Where this batch departs from the expert's suggested family, and what the
+// expert review changed, per item (coach record only).
 const CHANGES = {
+  'rc:rc-p10-q14': ['Expert review: the 17.2 card (the symbiosis is ancient, nearly universal and structurally elegant) is a context line, "Read with it", not a trap source. It is the line that rules the misdescribed choice out; that choice\'s pull comes from the skepticism of paragraphs 11 to 16. The card\'s note reads "the settled part: the partnership itself" and the alt says sentence 2 is marked to read with them; the caption is unchanged'],
+  'rc:rc-p19-q13': ['Expert review: the 15.5 card (a condition it cannot yet define) is a context line, "Read with it", not a trap source. It rules triumph out, as the caption says; the pull of the triumphant choice is the praise in 15.2. The alt says sentence 5 is marked to read with them; note and caption unchanged'],
+  'rc:rc-p19-q04': ['Expert review: step 3 says three other choices belong to the other drugs in paragraph 7 and no line makes the relaxant claim (it said each other choice describes a group in paragraph 7, which the relaxant choice does not)'],
+  'rc:rc-p10-q12': ['Optional note taken: the experiments trap note ends "nothing is arranged by when it was run" (the passage gives no run order to check against), and the 1.5 note reads "block 1: the trade" (1.5 is the last sentence of paragraph 1, not where the block opens); the alt says the lines mark the blocks'],
+  'rc:rc-p19-q11': ['Optional note taken: the GABA trap note ends "The list crosses the target groups of paragraph 7." (it said the list mixes targets on purpose, an intent the passage never states)'],
+  'rc:rc-p19-q14': ['Optional note taken: step 3 says sentence 3 calls the debate over whether a patient who squeezes on command is conscious an "honest disagreement", then "No side is picked." (it said "it", which read as the two figures)'],
   'rc:rc-p19-q03': ['Xenon choice: family close-second (the expert suggested rc-misplaced): xenon has the largest MAC under an atmosphere, a real runner-up that loses to nitrous oxide, not a value pinned to the wrong agent'],
   'rc:rc-p19-q10': ['Lipid-replaced choice: family rc-half-supported (the expert stamped rc-contradicted, then recommended rc-half-supported in its notes after reading the bank label "Half right"): the lipid theory did fall; no settled single target replaced it'],
   'rc:rc-p19-q09': ['Picture: line 2 (paragraph 9, sentence 2, the definition of MAC) is a context line, since the bank proof is 11.2 only; the connector joins "standard measure" to its definition, as the expert asked'],
-  'rc:rc-p10-q15': ['Picture: four cards, not five. All four check-offs plus the key line run 704 px on a 390 px phone (the gate allows 600), so the mushrooms line (4.4), the least tempting stated choice, is left to its trap card and the caption; the phosphate choice checks off on 5.2 ("Phosphate barely moves in soil.") instead of the bank\'s 5.3, the same claim in a shorter line; stated spans are not proof lines'],
+  'rc:rc-p10-q15': ['Picture: four cards, not five. All four check-offs plus the key line run 704 px on a 390 px phone (the gate allows 600), so the mushrooms line (4.4), the least tempting stated choice, is left to its trap card and the caption; the phosphate choice checks off on 5.2 ("Phosphate barely moves in soil.") instead of the bank\'s 5.3, the same claim in a shorter line; stated spans are not proof lines', 'Optional note taken: the key span note reads "the fungus or hunger may set the flow; kinship is not named" and the caption says what may set the flow, keeping the passage\'s hedge in 13.4 (both had dropped the "may")'],
   'rc:rc-p19-q12': ['Picture: four numbered cards, one per clause of the key (puzzle 1.3, rise and collapse 4.1, replacement 7.1, verdict 15.3). Bank proof 3.5 (the rise) is folded into the note on 4.1 so the phone panel stays under 600 px; 15.3 is a context line, since the bank proof has no line from paragraphs 14 and 15'],
   'rc:rc-p19-q05': ['Picture: the top rung (full MAC) is sentence 9.6, "the only thing it measures is whether a body moves", the shorter of the two lines that tie MAC to movement, so the ladder fits a phone panel'],
   'rc:rc-p19-q15': ['Picture: the non-immobilizer choice checks off on sentence 5.2 (an animal still withdraws) instead of the bank\'s 5.1, the shorter line that says what the choice says, so five cards fit a phone panel']
