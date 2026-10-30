@@ -295,6 +295,113 @@ test('with the tab bar down, UI the page shows later is lifted by the watch', as
   assert.match(bar.style.bottom, /^calc\(/, 'lifted (jsdom folds the calc; the browser run checks the pixels)');
 });
 
+/* on a busy page the watch's rescan can come while a coach bar's slide-in has only just begun (still below
+   the screen, so it is skipped); it is looked at again once the slide ends (GC Coach-Mode, QR Sarah bar) */
+test('with the tab bar down, a bar still sliding in when the watch looks is lifted once it lands', async () => {
+  let bar = null, land = null;
+  const box = { top: 0, bottom: 0, height: 120, left: 0, right: 390, width: 390 };
+  const { w, doc } = boot({ narrow: true, htmlAttrs: ' data-ace-shell-pos="bottom"', before(w) {
+    box.top = w.innerHeight; box.bottom = w.innerHeight + 120;  /* translated 120 px down: parked */
+    bar = fixedAt(w, 'coachBar', box, 'position:fixed;left:0;right:0;bottom:0');
+  } });
+  await styled(w, doc);
+  await new Promise((r) => setTimeout(r, 650));
+  assert.ok(!bar.hasAttribute('data-ace-lifted'), 'parked below the screen: left alone');
+  /* shown: the slide-in starts, but it has not moved yet when the watch looks */
+  const finished = new Promise((r) => { land = r; });
+  bar.getAnimations = () => [{ finished, effect: { getComputedTiming: () => ({ endTime: 300 }) } }, { finished: new Promise(() => {}), effect: { getComputedTiming: () => ({ endTime: Infinity }) } }];
+  bar.className = 'on';
+  await new Promise((r) => setTimeout(r, 400));
+  assert.ok(!bar.hasAttribute('data-ace-lifted'), 'still parked when the watch looks');
+  /* the slide ends in view, under the bar: no page mutation follows, so only the end of the slide can catch it */
+  box.top = w.innerHeight - 120; box.bottom = w.innerHeight;
+  land();
+  await new Promise((r) => setTimeout(r, 0));
+  assert.ok(bar.hasAttribute('data-ace-lifted'), 'lifted once the slide ends (an endless animation is not waited for)');
+  assert.match(bar.style.bottom, /^calc\(/);
+});
+
+/* the kit's own flying Ace Card: a source card whose box ends under the bar. The watch rescans 300 ms
+   into the 620 ms flight; lifting the clone then would move its landing 64 px up, off the Review door. */
+test('with the tab bar down, AL.fly is never lifted mid-flight and lands on the Review door', async () => {
+  const FLY = /\.al\.flying\{[^}]*\}/.exec(read('shared/al-kit.css'))[0];
+  let src = null;
+  const { w, doc, S } = boot({ narrow: true, htmlAttrs: ' data-ace-shell-pos="bottom"', before(w) {
+    const st = w.document.createElement('style'); st.textContent = FLY; w.document.head.appendChild(st);
+    src = w.document.createElement('div'); src.className = 'acecard'; src.id = 'src'; src.textContent = 'Ace Card';
+    w.document.body.appendChild(src);
+  } });
+  await styled(w, doc);
+  await new Promise((r) => setTimeout(r, 650));
+  w.eval(KIT);
+  /* 768 px tall: the bar starts at 704; the card spans 592 to 744, so its own box reaches under the bar */
+  const vh = w.innerHeight;
+  const card = { left: 16, right: 374, width: 358, top: vh - 176, bottom: vh - 24, height: 152 };
+  const icon = S.doorEl('review');
+  const dot = { left: 337, right: 359, width: 22, top: vh - 51, bottom: vh - 29, height: 22 };
+  const rect = w.Element.prototype.getBoundingClientRect;
+  w.Element.prototype.getBoundingClientRect = function () {
+    if (this === icon) return dot;
+    if (this === src || (this.classList && this.classList.contains('flying'))) return card;
+    return rect.call(this);
+  };
+  /* jsdom has no Web Animations: record the flight and finish it by hand */
+  let flight = null;
+  w.Element.prototype.animate = function (frames, opts) { flight = { el: this, frames, opts, onfinish: null }; return flight; };
+  let landed = false;
+  w.AL.fly(src, () => { landed = true; });
+  const clone = doc.querySelector('.al.flying');
+  assert.ok(clone && flight && flight.el === clone, 'the clone flies');
+  assert.equal(w.getComputedStyle(clone).position, 'fixed');
+  assert.ok(clone.hasAttribute('data-ace-no-lift'), 'the kit marks its flight for the shell');
+  await new Promise((r) => setTimeout(r, 400));
+  S.relift();
+  assert.ok(!clone.hasAttribute('data-ace-lifted'), 'never lifted by the watch or a relift');
+  assert.equal(clone.style.top, card.top + 'px');
+  assert.equal(clone.style.bottom, '');
+  /* the last frame carries the card's centre onto the Review icon's centre */
+  const end = /translate\((-?[\d.]+)px,\s*(-?[\d.]+)px\)/.exec(flight.frames[flight.frames.length - 1].transform);
+  assert.ok(end, 'the last frame is a translate');
+  assert.ok(Math.abs(card.left + card.width / 2 + Number(end[1]) - (dot.left + dot.width / 2)) < 0.5, 'lands on the door (x)');
+  assert.ok(Math.abs(card.top + card.height / 2 + Number(end[2]) - (dot.top + dot.height / 2)) < 0.5, 'lands on the door (y)');
+  flight.onfinish();
+  assert.ok(landed && !clone.parentNode, 'the clone is gone once it lands');
+});
+
+test('a decorative layer is never lifted; a toast that ignores the pointer still is; UI that leaves is put back', async () => {
+  let deco = null, note = null, fab = null;
+  const { w, doc, S, state } = boot({ narrow: true, htmlAttrs: ' data-ace-shell-pos="bottom"', before(w) {
+    const vh = w.innerHeight;
+    /* aria-hidden and pointer-events:none: nothing to read or press, so nothing to lift */
+    deco = fixedAt(w, 'deco', { top: vh - 90, bottom: vh - 10, height: 80, left: 0, right: 390, width: 390 }, 'position:fixed;left:0;right:0;bottom:10px;pointer-events:none');
+    deco.setAttribute('aria-hidden', 'true');
+    /* review/index.html: a role=status toast at bottom:22px with pointer-events:none must still clear the bar */
+    note = fixedAt(w, 'note', { top: vh - 62, bottom: vh - 22, height: 40, left: 100, right: 290, width: 190 }, 'position:fixed;left:50%;bottom:22px;pointer-events:none');
+    note.setAttribute('role', 'status');
+    fab = fixedAt(w, 'fab', { top: vh - 80, bottom: vh - 24, height: 56, left: 310, right: 366, width: 56 }, 'position:fixed;bottom:24px;right:24px');
+  } });
+  await styled(w, doc);
+  await new Promise((r) => setTimeout(r, 650));
+  assert.ok(!deco.hasAttribute('data-ace-lifted'), 'the decorative layer is left alone');
+  assert.equal(deco.style.bottom, '10px');
+  assert.ok(note.hasAttribute('data-ace-lifted'), 'the status toast is lifted');
+  assert.ok(fab.hasAttribute('data-ace-lifted'));
+  const once = fab.style.bottom;
+  /* the button leaves the page: put back as it was and forgotten */
+  fab.remove();
+  S.relift();
+  assert.equal(fab.style.bottom, '24px');
+  assert.equal(fab.style.top, '');
+  assert.ok(!fab.hasAttribute('data-ace-lifted'));
+  /* it comes back: lifted once, and still put back when the bar goes to the top */
+  doc.body.appendChild(fab);
+  S.relift(); S.relift();
+  assert.equal(fab.style.bottom, once);
+  state.narrow = false; w.dispatchEvent(new w.Event('resize'));
+  assert.equal(fab.style.bottom, '24px');
+  assert.ok(!fab.hasAttribute('data-ace-lifted') && !note.hasAttribute('data-ace-lifted'));
+});
+
 test('pages that keep the top bar are never touched', async () => {
   let fab = null;
   const { w, doc } = boot({ narrow: true, before(w) {

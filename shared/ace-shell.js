@@ -1,7 +1,7 @@
 /* ace-shell.js : the ONE Ace Labs navigation, on every student page (shell v2).
 
    Add it with one tag (anywhere; defer is fine):
-     <script src="/shared/ace-shell.js?v=4" defer></script>
+     <script src="/shared/ace-shell.js?v=5" defer></script>
 
    Five doors: Today, Learn, Practice, Tests, Review. The Canon is no longer a
    door; it lives inside Learn as Sheets (/learn/#sheets).
@@ -30,7 +30,9 @@
      short watch while the bar is down. New work reads --ace-shell-bottom on
      <html> (the bar's height while it shows at the bottom, unset otherwise):
      bottom:calc(16px + var(--ace-shell-bottom,0px)); UI whose own bottom
-     already clears the bar, or that carries data-ace-no-lift, is left alone.
+     already clears the bar, UI that carries data-ace-no-lift, and a
+     decorative layer (aria-hidden and pointer-events:none, such as the kit's
+     flying Ace Card) are left alone.
    - Replaces the old navs: hides a legacy <header class="al-top"> that only
      carried the old .al-nav links, and the old floating "Ace Labs" chip.
    - Hidden: inside an iframe (engine modals, the portal embed), on ?embed=...
@@ -299,13 +301,19 @@
      it, not getBoundingClientRect, so a toast waiting 16 px low (opacity 0,
      translated) is never mistaken for UI under the bar. Left alone: UI whose
      own bottom already clears the bar (it reads --ace-shell-bottom or the
-     kit's --tabbar-h), anything marked data-ace-no-lift, anything parked
-     below the screen until it is shown, and anything already lifted, so a
-     rescan (rotation, a timed section ending, relift(), the watch below)
-     never lifts twice. Found at load, on a position change and
-     when a timed section ends; while the bar is down, a throttled watch on
-     the page (class, style and hidden changes, added nodes) catches UI shown
-     later, such as a coach bar that slides in. */
+     kit's --tabbar-h), anything marked data-ace-no-lift, a decorative layer
+     (aria-hidden="true" and pointer-events:none: nothing to read or press,
+     such as the kit's flying Ace Card, which must land on the Review door),
+     anything parked below the screen until it is shown, and anything already
+     lifted, so a rescan (rotation, a timed section ending, relift(), the
+     watch below) never lifts twice. A visible toast that ignores the pointer
+     (role=status, not aria-hidden) is still lifted, so it is never under the
+     bar. An element that leaves the page is put back and forgotten. Found at
+     load, on a position change and when a timed section ends; while the bar
+     is down, a throttled watch on the page (class, style and hidden changes,
+     added nodes) catches UI shown later, such as a coach bar that slides in,
+     and a bar still sliding in when the watch looks is looked at again once
+     its slide ends. */
   var BAR_H = 64;
   var lifted = [];
   function barTop() {
@@ -315,6 +323,7 @@
   function liftable() { return !!host && wantsBottom() && position() === 'bottom' && !host.hidden; }
   function scanBottomUI() {
     if (!liftable()) { watch(false); return; }
+    forget();
     var vh = window.innerHeight, top = barTop();
     var cands = document.querySelectorAll('body > *, body > * > *, body > * > * > *');
     for (var i = 0; i < cands.length && i < 1500; i++) {
@@ -322,12 +331,16 @@
       if (el.hasAttribute('data-ace-lifted') || el.hasAttribute('data-ace-no-lift')) continue;
       var cs = getComputedStyle(el);
       if (cs.position !== 'fixed' || cs.display === 'none' || cs.visibility === 'hidden') continue;
+      if (cs.pointerEvents === 'none' && el.getAttribute('aria-hidden') === 'true') continue;
       var r = el.getBoundingClientRect();
       if (!r.width || !r.height || r.height > vh * 0.5) continue;
-      /* r.top >= vh: parked below the screen until shown (a coach bar that slides
-         in); the watch lifts it once it is in view */
       var off = parseFloat(cs.bottom), lower = isNaN(off) ? r.bottom : vh - off;
-      if (lower <= top + 1 || r.top >= vh) continue;
+      if (lower <= top + 1) continue;
+      /* r.top >= vh: parked below the screen until shown (a coach bar that slides
+         in); the watch lifts it once it is in view, and when it is sliding in
+         right now (the rescan can come first on a busy page) it is looked at
+         again once it lands */
+      if (r.top >= vh) { afterSlide(el); continue; }
       if (isNaN(off)) off = Math.max(0, vh - r.bottom);
       lifted.push({ el: el, top: el.style.top, bottom: el.style.bottom });
       el.style.top = 'auto';
@@ -336,19 +349,41 @@
     }
     watch(true);
   }
+  /* UI parked under the screen whose slide-in is running: one more scan when it
+     ends (finite animations only; a cancelled one counts as ended) */
+  var sliding = [];
+  function afterSlide(el) {
+    if (!el.getAnimations || !window.Promise || sliding.indexOf(el) >= 0) return;
+    var a = el.getAnimations().filter(function (x) {
+      var t = x.effect && x.effect.getComputedTiming ? x.effect.getComputedTiming() : null;
+      return !t || t.endTime !== Infinity;
+    });
+    if (!a.length) return;
+    sliding.push(el);
+    function again() { sliding.splice(sliding.indexOf(el), 1); scanBottomUI(); }
+    Promise.all(a.map(function (x) { return x.finished; })).then(again, again);
+  }
   /* a fresh start: put everything back, then lift what sits under the bar now */
   function findBottomUI() {
     drop();
     scanBottomUI();
   }
+  function putBack(x) {
+    x.el.style.top = x.top;
+    x.el.style.bottom = x.bottom;
+    x.el.removeAttribute('data-ace-lifted');
+  }
   function drop() {
-    for (var i = 0; i < lifted.length; i++) {
-      var x = lifted[i];
-      x.el.style.top = x.top;
-      x.el.style.bottom = x.bottom;
-      x.el.removeAttribute('data-ace-lifted');
-    }
+    for (var i = 0; i < lifted.length; i++) putBack(lifted[i]);
     lifted = [];
+  }
+  /* UI that left the page: put back (so it comes back as it was) and forgotten */
+  function forget() {
+    lifted = lifted.filter(function (x) {
+      if (x.el.isConnected !== false) return true;
+      putBack(x);
+      return false;
+    });
   }
   /* the watch: only while the bar is down (no cost on top-bar pages), at most
      one rescan every 300 ms, and drawings (SVG) that animate are ignored */

@@ -60,14 +60,15 @@ test('copy gate: game, countdown, confidence and payment words, with the science
   const { scan } = await imp('scripts/gate-copy.mjs');
   const flagged = (text) => scan('x.html', '<p>' + text + '</p>').map((h) => h.rule);
   for (const [t, rule] of [['Day streak: 4', 'streak'], ['+10 points', 'points'], ['Earn 50 XP', 'points'], ['You got 3 points', 'points'], ['Nice, 5 points!', 'points'], ['You have 12 points', 'points'], ['She won 2 points', 'points'], ['A new personal best', 'score'],
-    ['You got 2 points on Bio', 'points'], ['You got 4 points at the checkpoint', 'points'], ['You got three points', 'points'], ['Level up to unlock the next night', 'points'], ['You scored 80%', 'score'], ['Once you hit 80% untimed, move on', 'score'],
+    ['You got 2 points on Bio', 'points'], ['You got 4 points at the checkpoint', 'points'], ['You got three points', 'points'], ['Level up to unlock the next night', 'points'],
+    ['Get 10 points for every card you keep.', 'points'], ['Keep a card, get 5 points.', 'points'], ['Nice work. Earn two more points.', 'points'], ['"Get 3 bonus points"', 'points'], ['You scored 80%', 'score'], ['Once you hit 80% untimed, move on', 'score'],
     ['Top the leaderboard', 'score'], ['You earned a badge', 'badge'], ['12 days left', 'countdown'], ['30 days to go', 'countdown'],
     ['How sure are you?', 'confidence'], ['Pick a confidence level', 'confidence'], ['Upgrade now', 'payment'], ['Enter your credit card', 'payment'], ['$29/mo', 'payment']]) assert.deepStrictEqual(flagged(t), [rule], t);
   for (const t of ['The primitive streak forms in amniotes.', 'Plot the data points on the line.', 'Boiling points rise with mass.', 'The two circles have 2 points in common.', 'A line has 2 points of intersection with the circle.', 'The graph has 3 points on the x-axis.', 'Each vertex gets 2 points from the grid.',
     'A store offers a 20 percent discount and a coupon for 10 dollars.', 'Click a colored badge on the molecule.', 'Xeroderma pigmentosum (XP) is a repair defect.',
     /* QR word problems and geometry: a count of points is not a reward */
     'If you have 3 points, how many triangles can you draw?', 'Suppose you have 5 points, no three collinear.', 'A set has 4 points in a plane.', 'The scatter plot has 8 points.',
-    'Team A has 12 points and Team B has 9 points. What is the ratio?', 'A player gets 3 points for each win.', 'A kitchen scale might know you have two point three grams.',
+    'Team A has 12 points and Team B has 9 points. What is the ratio?', 'A player gets 3 points for each win.', 'To forget 3 points of the plan is easy.', 'A kitchen scale might know you have two point three grams.',
     'One hard-won point traded away.', 'The electron moves one level up to n = 3.', '40% of the bank is Biology.', 'You got 20% off the price.'])
     assert.deepStrictEqual(flagged(t), [], t);
 });

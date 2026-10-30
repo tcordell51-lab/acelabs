@@ -20,9 +20,9 @@
 //             (say Confirmed / Needs review, or name the trap)
 //   streak    streaks
 //   points    points, XP or levels as a reward ("+10 points", "earn points", "You got 3 points", "You got three
-//             points on Bio", "5 points!", "XP", "Level up"); geometry, science and QR word problems keep
-//             theirs ("data points", "have 2 points in common", "If you have 3 points, how many triangles",
-//             "Team A has 12 points", "A player gets 3 points for each win")
+//             points on Bio", "Get 10 points for every card", "5 points!", "XP", "Level up"); geometry, science
+//             and QR word problems keep theirs ("data points", "have 2 points in common", "If you have 3 points,
+//             how many triangles", "Team A has 12 points", "A player gets 3 points for each win")
 //   score     leaderboards, best / high / top scores, personal bests, records, a percentage as your grade
 //             ("You scored 80%"; "40% of the bank" and "you got 20% off" are not grades)
 //   badge     badges
@@ -71,6 +71,10 @@ export const WORD_RULES = [
     // collinear", "you have two point three grams")
     String.raw`(?<!\b(?:if|suppose|when|once|assume|given|say)\s+)\byou(?:'ve|\s+have)?\s+(?:got|get|getting|have|had|now\s+have|won|earned|scored)\s+(?:${NUM}|a\s+few|some)\s+(?:more\s+|bonus\s+|extra\s+)?points?\b` +
       String.raw`(?!\s*,)(?!\s+(?:${DIGIT_WORD}\b|in\s+(?:common|a\s+plane|the\s+plane|space)|of\s+\w|on\s+(?:the|a|an|each|this|that|it|its)\s+(?:line|circle|graph|plane|grid|curve|axis|x-axis|y-axis|number\s+line|map|chart)|no\s+three|where|that|which|such|so\s+that))`,
+    // an imperative reward at the start of a clause: "Get 10 points for every card you keep", "Keep a card, get 5
+    // points"; "A player gets 3 points for each win" (a subject first) is a QR count and is left to review
+    // (the verb comes first so the look back only runs where one of the four verbs starts)
+    String.raw`\b(?:get|earn|win|score)(?<=(?:^|[.!?,;:(])\s*["']?[a-z]+)\s+${NUM}\s+(?:more\s+|bonus\s+|extra\s+)?points?\b`,
     String.raw`\b${NUM}\s+points?\s*!`,
     String.raw`\+\s?\d+\s*(?:pts?|points?)\b|\b\d+\s*pts\b`,
     String.raw`\b(?:earn(?:ed|s|ing)?|scored?|scoring|win|wins|bonus|gain(?:ed|s)?|collect(?:ed|s)?)\s+(?:\d+\s+|some\s+|more\s+|extra\s+|bonus\s+)?points?\b|\bpoints?\s+(?:earned|scored|to\s+spend)\b`,

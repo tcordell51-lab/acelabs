@@ -214,7 +214,7 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
   });
 })();
 </script>
-  <script src="/shared/ace-shell.js?v=4" defer></script>
+  <script src="/shared/ace-shell.js?v=5" defer></script>
 </body>
 </html>`;
 

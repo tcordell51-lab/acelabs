@@ -245,6 +245,8 @@
     copy.style.margin = '0';
     c.className = 'al flying';
     c.setAttribute('aria-hidden', 'true');
+    /* the shell's tab bar lift must never move the flight: it lands on the door */
+    c.setAttribute('data-ace-no-lift', '');
     c.style.left = a.left + 'px'; c.style.top = a.top + 'px'; c.style.width = a.width + 'px';
     c.appendChild(copy);
     document.body.appendChild(c);
