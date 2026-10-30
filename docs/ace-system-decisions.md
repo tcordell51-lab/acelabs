@@ -50,6 +50,17 @@ Comprehension.
 - Every question gets a detailed explainer and a visual, stored as sidecar
   files keyed by question id. Answer keys are never changed silently: suspected
   bad keys go to a key-disputes list for Thomas.
+- Concepts over math (Thomas, 2026-10-30): questions and explainers exist to
+  instill concepts, not to test arithmetic. In the science sections, any math
+  is light: one or two clean steps with friendly numbers a student can do in
+  their head (the real DAT science sections allow no calculator). Prefer
+  "what happens / why / which is true" items; every distractor comes from a
+  real misconception, never from an arithmetic slip. Explainers teach the idea
+  first and the math second. QR keeps its math but explains the concept behind
+  each setup before the computation. New items, warm-ups, reviews and anything
+  Ace generates follow this; existing bank items with heavy arithmetic are
+  flagged for a concept-first rewrite or a lighter variant, keys unchanged
+  unless Thomas approves.
 - Explainers are written in Thomas's coaching voice. The voice reference is built from his own words (Retold coach lines, trick scripts, acethedat.com copy, his emails to students: voice patterns only, no student details) and lives at docs/thomas-voice-codex.md once written.
 
 ## Sign-off
