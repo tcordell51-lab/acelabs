@@ -479,7 +479,7 @@ async function main() {
   const cols = STATIC_ONLY ? STATIC_CHECKS : BROWSER_CHECKS;
   const cell = (url, c) => {
     if (STATIC_ONLY) return failS[url].includes(c) ? 'FAIL' : 'ok';
-    const runs = failB[url].filter((k) => k.startsWith(c + '@')).map((k) => k.slice(c.length + 1));
+    const runs = Object.keys(brow.get(url)).filter((k) => k.startsWith(c + '@')).map((k) => k.slice(c.length + 1));
     const s = failS[url].includes(c) ? 'S' : '';
     if (!runs.length) return s ? 'S' : 'ok';
     return (runs.length === sizes.length * themes.length ? 'FAIL' : runs.map((r) => r.replace('light', 'l').replace('dark', 'd')).join(',')) + (s ? '+S' : '');
