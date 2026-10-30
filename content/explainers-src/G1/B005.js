@@ -37,6 +37,11 @@
 // Re-review (needs-work, 18 of 19 pass, no key disputes): the one blocked item
 // (fra1028, the 8/12 note) and the four optional notes (fam5, pem1303,
 // exp1720, abs1739) are fixed here, each listed in CHANGES.
+//
+// Re-review round 2 (needs-work, 18 of 19 pass, no key disputes): the one
+// blocked item (exp1720, the 0 label, which round 1 made an untrue rule) and
+// the one optional note (abs1739, the -6 or 6 note now leads with its pull)
+// are fixed here, each listed in CHANGES.
 'use strict';
 
 const FM = 'tools/mock/data/full-mocks.js';
@@ -165,7 +170,7 @@ const ENTRIES = [
     ],
     choices: [
       { text: '14 or 6', role: 'key', note: 'One step of 4 on each side of 10.' },
-      { text: '-6 or 6', role: 'trap', family: 'half-right', trap: 'Measured from 0', note: '6 is real. -6 comes from putting the plus-or-minus on x itself, as if the distance ran from 0. It runs from the setting, 10.' },
+      { text: '-6 or 6', role: 'trap', family: 'half-right', trap: 'Measured from 0', note: '-6 comes from putting the plus-or-minus on x itself, as if the distance ran from 0. It runs from the setting, 10, so only 6 holds.' },
       { text: '14', role: 'trap', family: 'one-step-short', trap: 'Only the warm side', note: '14 is 4 degrees above the setting. The room could just as well be 4 degrees below it, at 6.' },
       { text: '4 or -4', role: 'trap', family: 'other-question', trap: 'The gaps, not temperatures', note: '4 and -4 are the gaps x - 10, how far the room sits above or below 10. The stem asks for the temperatures, x itself.' },
       { text: '6 or -14', role: 'trap', family: 'sign-slip', trap: 'Swapped numbers, lost a sign', note: 'This solves |x + 4| = 10: the 10 and the 4 swapped, and the sign on the center lost. 6 survives by luck; -14 is 24 degrees from the setting.' }
@@ -830,7 +835,7 @@ const ENTRIES = [
       'Evaluate: 5^6 = 15625, and one more 5 gives 5 x 15625 = 78125.'
     ],
     choices: [
-      { text: '0', role: 'trap', family: 'miscount', trap: 'A product cannot be 0', note: 'No rule gives 0. Multiplying positive numbers can never make 0.' },
+      { text: '0', role: 'trap', family: 'miscount', trap: 'Fives never multiply to 0', note: 'A product of 5s is never 0, so no rule lands here. A product is 0 only when one factor is 0, and every factor here is 5.' },
       { text: '15625', role: 'trap', family: 'operation-flip', trap: 'Multiplied the exponents', note: '1 x 6 = 6 multiplies the exponents and lands on 5^6. Multiplying powers of one base adds the exponents: 1 + 6 = 7.' },
       { text: '15630', role: 'trap', family: 'operation-flip', trap: 'Added the values', note: '5 + 15625 = 15630 adds the two powers. The stem multiplies them: 5 x 15625 = 78125.' },
       { text: '78125', role: 'key', note: 'Seven 5s multiplied.' },
@@ -965,7 +970,7 @@ const CHANGES = {
   'fm:qr-a:lin1255': ['The first dashed exit names the slip behind -6: x moved across without changing its sign, -3x + x, giving -2x - 2 = 10 (it said adding x, which done to both sides gives -2x - 2 = 2x + 10); the alt says the same'],
   'fm:qr-a:pct1184': ['Caption: the hatched cut is 25 percent of 137.50, not of 125, so it is bigger, and that pulls the bill below the dashed 106.25 (it called the second bar longer, though both bars are 137.50, and its reason only explained ending below 125)', 'Desktop layout: the "25 percent off: 34.38" label hangs below the bar, as on the phone, instead of inside the hatched piece 2 px from the dashed 106.25 line (bars renderer in qr-work.js: a label inside its piece keeps clear of a ghost line)'],
   'fm:qr-a:dis1600': ['The "no real roots" label reads "Kept the minus" (it read "Squared the minus away", which is the right move, not the slip); family and note unchanged'],
-  'fm:qr-a:abs1739': ['Phone layout: the "setting: 10" tag drops a level and sits centered under 10, so the dotted leader from x = 14 no longer runs through it. Renderer fix in levels() (tools/explain/visuals/qr-work.js): a label first keeps off every other mark in its row; the render gate now tests dashed leaders of any width, a tag\'s backing rect included', 'Re-review, optional note taken: the 6 or -14 label reads "Swapped numbers, lost a sign", naming both slips, so it matches the sign-slip family (it read "Setting and gap swapped"); note unchanged'],
+  'fm:qr-a:abs1739': ['Phone layout: the "setting: 10" tag drops a level and sits centered under 10, so the dotted leader from x = 14 no longer runs through it. Renderer fix in levels() (tools/explain/visuals/qr-work.js): a label first keeps off every other mark in its row; the render gate now tests dashed leaders of any width, a tag\'s backing rect included', 'Re-review, optional note taken: the 6 or -14 label reads "Swapped numbers, lost a sign", naming both slips, so it matches the sign-slip family (it read "Setting and gap swapped"); note unchanged', 'Re-review round 2, optional note taken: the -6 or 6 note opens with the pull, "-6 comes from putting the plus-or-minus on x itself, as if the distance ran from 0.", and ends "so only 6 holds" (it opened "6 is real.", which names no pull and is all a phone card shows, and real can read as real number)'],
   'fm:qr-a:neg1332': ['Phone layout only (the same levels() fix): both test-point tags now sit on one level, each beside its own point'],
   'fm:qr-a:dis1285': ['Optional note taken: the 16 note says it subtracts the 4 clinics as if they were crates, and its label reads "Clinics taken as crates" (the family is other-unit)'],
   'fm:qr-a:fam5': [
@@ -974,7 +979,7 @@ const CHANGES = {
   ],
   'fm:qr-a:fra1028': ['Re-review, blocked item: the 8/12 note opens "Tops add only once the bottoms match, and the bottom then stays put." (it said adding the tops is fine, which is untrue over unlike bottoms and contradicted the 8/35 note; 8/12 is the preview pick, so this is the first line a phone reader sees). Family half-right and label unchanged'],
   'fm:qr-a:pem1303': ['Re-review, optional note taken: the 90 note says it takes two slips at once, the plus read as a times and the square dropped (it named that route and then said no single rule leads there); the concept-first flag says the same'],
-  'fm:qr-a:exp1720': ['Re-review, optional note taken: the 0 label reads "A product cannot be 0" (it read "No route here", which names no pull); family and note unchanged'],
+  'fm:qr-a:exp1720': ['Re-review, optional note taken: the 0 label read "A product cannot be 0" (it read "No route here", which names no pull); family and note unchanged', 'Re-review round 2, blocked item: the 0 label reads "Fives never multiply to 0" (round 1 made it "A product cannot be 0", which is untrue as a rule: a product is 0 whenever a factor is 0, the idea the roots item in this batch uses). The note now opens with the reason, "A product of 5s is never 0, so no rule lands here.", and its second sentence states the zero-product rule: 0 needs a factor of 0, and every factor here is 5. Family miscount unchanged'],
   'fm:generated:qr-sci-notation-product#b96vmp': ['Optional note taken: step 3, the 3.5 x 10^-1 note, the last move tag and the caption say "ten times smaller" or "divided by 10" (not "shrinks by 10" or "down by 10", which read as minus 10)'],
   'fm:qr-a:pct1127': ['Optional note taken: caption "three and a half of the ten, 35 percent" (not "three tenths and a half", which can read as 3/10 + 1/2)']
 };
