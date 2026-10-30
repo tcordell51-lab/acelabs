@@ -514,6 +514,10 @@ function recompute(R, p, facts) {
       const sent = P.paragraphs[s.p - 1] && P.paragraphs[s.p - 1][s.s - 1];
       if (!sent || !sent.includes(s.quote)) issues.push('rc quote not found in ' + s.p + '.' + s.s + ': ' + s.quote);
       if (s.choice && !served.choices.includes(s.choice)) issues.push('rc span choice not served: ' + s.choice);
+      // roles the renderer draws (tools/explain/visuals/rc.js); a context line is read with the proof, never a choice's source
+      if (!['key', 'trap', 'stated', 'context'].includes(s.role)) issues.push('rc span role ' + s.role + ' (key, trap, stated or context)');
+      if (s.role === 'context' && s.choice) issues.push('rc context span carries a choice: ' + s.choice);
+      if (s.role === 'stated' && s.choice && !e.choices.some((c) => c.text === s.choice && c.role === 'stated')) issues.push('rc stated span tags a choice that is not stated: ' + s.choice);
     });
     const all = P.paragraphs.flat().join(' ');
     e.steps.forEach((st) => (st.match(/"([^"]+)"/g) || []).forEach((q) => { const t = q.slice(1, -1).replace(/[,.]$/, ''); if (!all.includes(t)) issues.push('step quote not in passage: ' + t); }));

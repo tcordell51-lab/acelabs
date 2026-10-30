@@ -2,6 +2,11 @@
 // (tools/rc/data/bank.js), filled in by core.js resolvePanel(); each span is marked in place, styled like the
 // highlighter in tools/rc/rc.js. Letters come from the served order (ctx).
 // Ported from the pilot preview (question-system/preview/renderers/rc.js).
+// Span roles: key (a bank proof line; the build checks), trap (where a tempting
+// choice was borrowed from), stated (EXCEPT items: a choice the passage
+// supports, "Checked off") and context (batch B007 on: a line to read with the
+// proof line, such as the sentence that defines a vocabulary word or the date a
+// stated rule meets; "Read with it", never a proof line).
 import { register, h } from './core.js';
 
 function markSentence(sent, spans, ctx) {
@@ -33,9 +38,9 @@ register('rc.evidence', (s, box, ctx) => {
   const list = h('div', { class: 'ev-list' + (s.link ? ' linked' : '') });
   groups.forEach((g, gi) => {
     const roles = g.spans.map((x) => x.role);
-    const kind = roles.includes('key') ? 'key' : roles.includes('trap') ? 'trap' : 'stated';
+    const kind = roles.includes('key') ? 'key' : roles.includes('trap') ? 'trap' : roles.includes('context') ? 'context' : 'stated';
     const head = h('div', { class: 'ev-head' }, h('span', { text: 'Paragraph ' + g.p + ', sentence ' + g.s }));
-    const lab = kind === 'key' ? 'Proof line' : kind === 'trap' ? 'Where a trap comes from' : 'Checked off';
+    const lab = { key: 'Proof line', trap: 'Where a trap comes from', context: 'Read with it', stated: 'Checked off' }[kind];
     head.append(h('em', { class: 'ev-k ev-k-' + kind, text: lab }));
     const card = h('div', { class: 'ev-card ev-card-' + kind }, head, markSentence(s.text[g.key], g.spans, ctx));
     g.spans.filter((x) => x.note).forEach((x) => card.append(h('p', { class: 'ev-note', text: x.note })));
