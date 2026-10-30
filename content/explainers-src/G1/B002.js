@@ -40,7 +40,7 @@ const TAB = (hub, tab) => 'The anchor opens the ' + hub + '; the ' + tab + ' tab
 function fungiTree(key, keyChoice) {
   const row = (label, sub) => Object.assign({ label, sub }, keyChoice ? (key === label ? { key: true, choice: keyChoice } : {}) : { choice: label }, !keyChoice && key === label ? { key: true } : {});
   return {
-    label: 'Fungi', sub: 'all: chitin walls, food absorbed from outside, sexual and asexual cycles',
+    label: 'Fungi', sub: 'all: chitin walls, food absorbed from outside, reproduce by spores',
     children: [
       row('Chytridiomycota', 'spores swim with one flagellum; water and wet soil'),
       { label: 'All other fungi', trait: 'lost the flagellum',
@@ -72,7 +72,7 @@ const ENTRIES = [
     keyText: 'Ascomycota',
     answer: { line: 'Baker\'s yeast makes its spores in a sac, the ascus. The sac fungi are Ascomycota.' },
     steps: [
-      'Name the spore structure, not the body shape. Each fungal phylum is defined by where it makes its sexual spores.',
+      'Name the spore structure, not the body shape. The big fungal phyla are named for where they make their sexual spores.',
       'Baker\'s yeast makes its spores inside a sac, the ascus. Ascus means sac, so yeast sits with the sac fungi.',
       'One cell does not change the phylum. Yeast buds as single cells and still forms asci; its relatives include Penicillium and morels.'
     ],
@@ -110,7 +110,7 @@ const ENTRIES = [
     keyText: 'Flagellated spores',
     answer: { line: 'Chytrids are the only fungi that kept a swimming stage: spores that each carry one flagellum.' },
     steps: [
-      'List what every fungus shares first: chitin walls, food absorbed from outside, sexual and asexual cycles.',
+      'List what every fungus shares first: chitin walls, food absorbed from outside, reproduction by spores.',
       'Cross off anything true of fungi in general. A shared trait cannot set one group apart.',
       'What is left is the swimming spore. Chytrids make zoospores with one tail; every other fungus lost the flagellum.'
     ],
@@ -152,7 +152,7 @@ const ENTRIES = [
     steps: [
       'Start in the air. N2 is most of the atmosphere, but its triple bond keeps almost every organism from using it.',
       'Fixation is the one step that breaks that bond: bacteria with nitrogenase turn N2 into NH3.',
-      'Every other choice starts from nitrogen that is already fixed, so it comes later. Each one is an arrow in the picture.'
+      'Every other choice starts from nitrogen that is already fixed, so it comes later. Each one is a numbered step in the picture.'
     ],
     choices: [
       { text: 'NH₃ to NO₃⁻', role: 'trap', family: 'neighbor-fact', trap: 'The next step', note: 'That is nitrification: soil bacteria oxidize ammonia to nitrite, then nitrate. It starts from nitrogen fixation already delivered.' },
@@ -174,7 +174,7 @@ const ENTRIES = [
       nodes: [
         { id: 'n2', label: 'N2 gas', sub: 'in the air', col: 1, row: 0, kind: 'start', w: 0.86 },
         { id: 'no3', label: 'NO3-', sub: 'nitrate', col: 0, row: 1, w: 0.7 },
-        { id: 'org', label: 'Organic N', sub: 'in living things', col: 1, row: 1, kind: 'end', w: 0.72 },
+        { id: 'org', label: 'Organic N', sub: 'in living things', col: 1, row: 1, w: 0.72 },
         { id: 'nh', label: 'NH3, NH4+', sub: 'in the soil', col: 2, row: 1, w: 0.7 },
         { id: 'no2', label: 'NO2-', sub: 'nitrite', col: 1, row: 2, w: 0.7 }
       ],
@@ -194,8 +194,8 @@ const ENTRIES = [
         { n: 5, label: 'Denitrification: NO3- back to N2 gas' }
       ],
       reuse: 'new: the bio.diagram pathway layout (boxes and numbered arrows on a grid)',
-      alt: 'The nitrogen cycle as five boxes joined by numbered arrows: N2 gas in the air, ammonia in the soil, nitrite, nitrate, and organic nitrogen in living things. Arrow 1, fixation from N2 to ammonia, is outlined as the answer. The other arrows are nitrification, assimilation, ammonification and denitrification, one for each trap.',
-      caption: 'Every choice is one arrow here. Only arrow 1 starts in the air.'
+      alt: 'The nitrogen cycle as five boxes joined by numbered arrows: N2 gas in the air, ammonia in the soil, nitrite, nitrate, and organic nitrogen in living things. Arrow 1, fixation from N2 to ammonia, is drawn in green and named the answer in the legend. The other arrows are nitrification, assimilation, ammonification and denitrification, one for each trap.',
+      caption: 'Every choice is a numbered step here. Only arrow 1 starts in the air.'
     },
     demoPick: 'NH₃ to NO₃⁻',
     flags: [
@@ -423,7 +423,7 @@ const ENTRIES = [
       labels: ['electron-chain', 'proton-pump', 'atp-synthase', 'leak'],
       focus: 'leak',
       reuse: 'new: bio.diagram thylakoid (membrane slice, numbered parts)',
-      alt: 'A slice of thylakoid membrane, stroma above and lumen below. Photosystem II, cytochrome b6f and photosystem I still pass electrons to NADPH and pump H+ into the lumen, but H+ now leaks straight back through a hole in the membrane, outlined as the answer. ATP synthase sits idle and no ATP is made.',
+      alt: 'A slice of thylakoid membrane, stroma above and lumen below. Electrons still run through photosystem II, cytochrome b6f and photosystem I to NADPH, and water splitting and b6f still load H+ into the lumen, but H+ leaks straight back through a hole in the membrane, outlined as the answer. ATP synthase sits idle; no ATP is made.',
       caption: 'Follow the H+ arrows. With the leak open, they skip ATP synthase entirely.'
     },
     demoPick: 'Electron transport halts while ATP synthesis continues',
@@ -558,7 +558,7 @@ const ENTRIES = [
       { text: 'Carbon dioxide and G3P', role: 'trap', family: 'neighbor-fact', trap: 'The cycle\'s input and output', note: 'CO2 comes in from the air and G3P leaves to become sugar. Neither one goes back to the thylakoid.' },
       { text: 'Oxygen and water', role: 'trap', family: 'neighbor-fact', trap: 'The thylakoid\'s own traffic', note: 'Water is split at the thylakoid and oxygen leaves the leaf. The Calvin cycle sends neither one back.' },
       { text: 'ATP and NADPH', role: 'trap', family: 'reversed', trap: 'The trip out', note: 'These are the charged carriers that arrive at the Calvin cycle. The stem asks what goes back.' },
-      { text: 'Glucose and phosphate', role: 'trap', family: 'neighbor-fact', trap: 'The end product', note: 'Glucose is built from G3P after it leaves the cycle. It never returns to the light reactions.' }
+      { text: 'Glucose and phosphate', role: 'trap', family: 'half-right', trap: 'Phosphate yes, glucose no', note: 'Phosphate does go back, riding with ADP. Glucose is built from G3P after it leaves the cycle and never returns.' }
     ],
     lockIt: 'Charged carriers, ATP and NADPH, go to the stroma; the empties, ADP and NADP+, come back.',
     hook: 'Full trucks out, empty trucks back.',
@@ -572,7 +572,7 @@ const ENTRIES = [
       cols: 3, gap: 14,
       nodes: [
         { id: 'light', label: 'Light reactions', sub: 'thylakoid', col: 0, row: 0, kind: 'start', w: 0.9, minH: 176 },
-        { id: 'calvin', label: 'Calvin cycle', sub: 'stroma', col: 2, row: 0, kind: 'end', w: 0.9, minH: 176 },
+        { id: 'calvin', label: 'Calvin cycle', sub: 'stroma', col: 2, row: 0, w: 0.9, minH: 176 },
         { id: 'lio', label: 'H2O in, O2 out', col: 0, row: 1, kind: 'note' },
         { id: 'cio', label: 'CO2 in, G3P out', col: 2, row: 1, kind: 'note' }
       ],
@@ -622,7 +622,7 @@ const ENTRIES = [
       labels: ['electron-chain', 'proton-pump', 'atp-synthase'],
       focus: 'atp-synthase',
       reuse: 'new: bio.diagram thylakoid (membrane slice, numbered parts)',
-      alt: 'A slice of thylakoid membrane with the stroma above and the lumen below. Photosystem II, cytochrome b6f and photosystem I pump H+ into the lumen, where it piles up; ATP synthase, outlined as the answer, lets H+ flow back up into the stroma, where its head makes ATP.',
+      alt: 'A slice of thylakoid membrane with the stroma above and the lumen below. Electrons run from water through photosystem II, cytochrome b6f and photosystem I to NADPH, while water splitting and b6f load H+ into the lumen; ATP synthase, outlined as the answer, lets H+ flow back up into the stroma, where its head makes ATP.',
       caption: 'Follow the H+ arrow through ATP synthase, lumen to stroma. The ATP comes off the head in the stroma.'
     },
     demoPick: 'From the lumen into the stroma, with the ATP appearing in the lumen',
@@ -749,7 +749,7 @@ const ENTRIES = [
     answer: { line: 'Caspases are proteases. They wait as inactive precursors, and each active one cuts the next one on: initiators first, then executioners.' },
     steps: [
       'Name the enzyme family: caspases are proteases that cut proteins after aspartate.',
-      'They sit ready as inactive procaspases. A cut switches each one on, so the cell can commit in seconds without making anything new.',
+      'They sit ready as inactive procaspases. A cut switches each one on, so the cell can commit fast without making anything new.',
       'Initiators, caspase-8 or 9, cut the executioners, caspase-3, 6 and 7, on. The executioners then cut hundreds of cell proteins.'
     ],
     choices: [
@@ -962,7 +962,7 @@ const ENTRIES = [
     ],
     choices: [
       { text: 'Adds phosphate groups to tyrosines on its own cytoplasmic tails', role: 'key', note: 'A kinase working on itself: autophosphorylation of its own tyrosines.' },
-      { text: 'Cleaves PIP2 into IP3 and DAG', role: 'trap', family: 'neighbor-fact', trap: 'Phospholipase C\'s move', note: 'Splitting PIP2 is phospholipase C\'s job, downstream of a different receptor family. It is not the insulin receptor\'s first act.' },
+      { text: 'Cleaves PIP2 into IP3 and DAG', role: 'trap', family: 'neighbor-fact', trap: 'Phospholipase C\'s move', note: 'Splitting PIP2 is the job of phospholipase C, a separate enzyme most often switched on by Gq receptors. It is not the insulin receptor\'s own first act.' },
       { text: 'Carries insulin with it into the nucleus', role: 'trap', family: 'other-conditions', trap: 'The steroid route', note: 'Riding the hormone to the nucleus is how steroid hormones work. Insulin is a peptide and signals from the surface.' },
       { text: 'Opens as an ion channel and lets sodium in', role: 'trap', family: 'neighbor-fact', trap: 'Ion channel receptors', note: 'Receptors that open for ions, like the acetylcholine receptor at muscle, are a different class. Insulin\'s receptor is an enzyme.' },
       { text: 'Exchanges GDP for GTP on an attached G protein at the inner surface', role: 'trap', family: 'neighbor-fact', trap: 'The G protein receptor', note: 'Swapping GDP for GTP on a G protein is what a G protein-coupled receptor does, the other big surface class.' }
@@ -1003,7 +1003,7 @@ const ENTRIES = [
         { from: 'ster', to: 'nuc', label: 'crosses', labelDy: -11 }
       ],
       reuse: 'new: the bio.diagram pathway layout with a membrane column',
-      alt: 'Five receptor classes in rows: signal outside, receptor in the membrane, next step inside. Insulin\'s receptor tyrosine kinase adds phosphate to its own tyrosines, outlined as the answer. The other rows: a G protein receptor swapping GDP for GTP, an ion channel letting Na+ in, phospholipase C splitting PIP2, a steroid riding to the nucleus.',
+      alt: 'Five signals in rows: signal outside, receptor in the membrane, next step inside. Insulin\'s receptor tyrosine kinase adds phosphate to its own tyrosines, outlined as the answer. The other rows: a G protein receptor swapping GDP for GTP, an ion channel letting Na+ in, phospholipase C splitting PIP2, a steroid riding to the nucleus.',
       caption: 'Find insulin\'s row and read across. The receptor is itself the kinase.'
     },
     demoPick: 'Exchanges GDP for GTP on an attached G protein at the inner surface',
@@ -1044,7 +1044,7 @@ const ENTRIES = [
       legendText: { 'Tight junction': 'seals the gap; nothing leaks between cells', Desmosome: 'a rivet; holds cells together, no channel', 'Gap junction': 'channels join the two cytoplasms; ions pass straight through', Hemidesmosome: 'anchors a cell to the basement membrane' },
       swatches: [{ sw: '#1f57b5', label: 'blue arrows: ions crossing from cell 1 into cell 2' }],
       reuse: 'new: bio.diagram junctions (numbered parts, legend under it)',
-      alt: 'Two animal cells side by side, joined along their shared border by four numbered junctions: a tight junction sealing the gap, a desmosome riveting the cells, a gap junction with channels through both membranes and ions crossing, and a hemidesmosome anchoring a cell to the basement membrane. The gap junction is outlined as the answer.',
+      alt: 'Two animal cells side by side with four numbered junctions: along their shared border, a tight junction sealing the gap, a desmosome riveting the cells and a gap junction with channels through both membranes and ions crossing; at the base, a hemidesmosome anchoring cell 1 to the basement membrane. The gap junction is outlined as the answer.',
       caption: 'Find the junction with arrows running straight through it. Only that one joins the two cytoplasms.'
     },
     demoPick: 'A desmosome',
@@ -1216,11 +1216,38 @@ const ENTRIES = [
   }
 ];
 
-// What changed from the expert's suggested families (coach record only).
+// What changed from the expert's suggested families, and the fixes from the
+// expert review of B002 (coach record only).
 const CHANGES = {
-  'fm:bio:BIO_d039': ['Expert family reversed kept for "Multicellularity"; label says it points the other way'],
+  'fm:bio:BIO_d036': [
+    'Review fix: the tree root reads "reproduce by spores" (was "sexual and asexual cycles"; Glomeromycota and the imperfect fungi have no known sexual stage)',
+    'Review suggestion taken: step 1 says the big phyla are named for where they make their sexual spores'
+  ],
+  'fm:bio:BIO_d039': [
+    'Expert family reversed kept for "Multicellularity"; label says it points the other way',
+    'Review fix: step 1 and the tree root list reproduction by spores as the shared trait (was "sexual and asexual cycles", which the "Asexual only" note contradicts)'
+  ],
+  'fm:bio:BIO_e009': [
+    'Review fix: alt says arrow 1 is drawn in green and named the answer in the legend (was "outlined")',
+    'Review fix: the Organic N box draws neutral (was the mint end style, which read as the key\'s place)',
+    'Review fix: caption and step 3 say each choice is a numbered step (the ammonium choice is legend step 3; no arrow runs from ammonium to organic N)'
+  ],
   'fm:written:bio-3-194ncsd': ['Family for "The drug binds the glucose carrier directly" set to other-conditions (expert left it to the writer: read-backward or neighbor-fact)'],
-  'fm:written:bio-5-nd28q3': ['Expert families kept: half-right twice, reversed twice']
+  'fm:written:bio-5-nd28q3': [
+    'Expert families kept: half-right twice, reversed twice',
+    'Review fix: alt says water splitting and b6f load H+ (was all three complexes pumping H+; photosystem I does not)'
+  ],
+  'fm:written:bio-5-1hzdpw4': [
+    'Review fix: "Glucose and phosphate" is half-right, label "Phosphate yes, glucose no"; the note says phosphate does go back with ADP (was neighbor-fact, glucose only)',
+    'Review suggestion taken: the Calvin cycle box draws neutral (was the mint end style)'
+  ],
+  'fm:written:bio-5-104j1lu': ['Review fix: alt says water splitting and b6f load H+ (was all three complexes pumping H+; photosystem I does not)'],
+  'fm:written:bio-7-1v7ag0l': ['Review suggestion taken: step 2 says the cell can commit fast (was "in seconds"; the caspase cascade runs over minutes)'],
+  'fm:written:bio-3-2c5o89': [
+    'Review fix: the PIP2 note says phospholipase C is most often switched on by Gq receptors (receptor tyrosine kinases can switch it on too)',
+    'Review fix: alt opens "Five signals in rows" (was "Five receptor classes"; two rows are G protein receptors)'
+  ],
+  'fm:written:bio-3-x1d1j6': ['Review fix: alt puts the hemidesmosome at the base, anchoring cell 1 to the basement membrane, not joining the two cells']
 };
 
 module.exports = {
