@@ -401,7 +401,7 @@ test('true-to-life views: microscope red cells and plant cells, and the TEM band
 
 test('tonicity camera views: true scale, red cell shapes, Elodea, solute strip, and small frames', () => {
   const t = boot('bio-cell.html');
-  const ton = (cellType, ext) => t.w.BioReal.tonicity({ cellType, externalSolute: ext, lysed: cellType === 'rbc' && ext < 12, plasmolyzed: cellType === 'plant' && ext > 80 });
+  const ton = (cellType, ext) => t.w.BioReal.tonicity({ cellType, externalSolute: ext, lysed: cellType === 'rbc' && ext < 12, plasmolyzed: cellType === 'plant' && ext > 60 });
   const exts = [0, 4, 10, 18, 25, 32, 45, 50, 55, 60, 75, 81, 92, 100];
   for (const c of ['rbc', 'plant']) {
     for (const e of exts) {
@@ -470,7 +470,7 @@ test('tonicity camera views: true scale, red cell shapes, Elodea, solute strip, 
 
 test('tonicity: chloroplasts stay inside the membrane, strands only in named plasmolysis, boundary steps, blunt bumps', () => {
   const t = boot('bio-cell.html');
-  const ton = (cellType, ext) => t.w.BioReal.tonicity({ cellType, externalSolute: ext, lysed: cellType === 'rbc' && ext < 12, plasmolyzed: cellType === 'plant' && ext > 80 });
+  const ton = (cellType, ext) => t.w.BioReal.tonicity({ cellType, externalSolute: ext, lysed: cellType === 'rbc' && ext < 12, plasmolyzed: cellType === 'plant' && ext > 60 });
   const caption = (s) => (s.match(/<text [^>]*font-size="12"[^>]*>[^<]*</g) || []).map((x) => x.replace(/<[^>]*>|</g, '')).join(' ');
   // protoplast outlines (M, L and Q commands), flattened to polygons
   const protoplasts = (s) => {
@@ -536,8 +536,8 @@ test('tonicity: chloroplasts stay inside the membrane, strands only in named pla
   }
   for (let e = 0; e <= 100; e++) {
     const s = ton('plant', e);
-    // Hechtian strands exist only once the membrane has pulled off the wall, so only where the caption names plasmolysis
-    assert.equal(/stroke="#9db07a"/.test(s), /^Plasmolysis/.test(caption(s)), 'strands vs caption at ' + e);
+    // Hechtian strands exist only once the membrane has pulled off the wall, so only where the caption names plasmolysis (early or full)
+    assert.equal(/stroke="#9db07a"/.test(s), /plasmolysis/i.test(caption(s)), 'strands vs caption at ' + e);
     // the picture and the words agree at every step: turgid means no gaps at the wall
     if (/turgid/.test(caption(s))) assert.doesNotMatch(s, /stroke="#8f9c72"/, 'turgid cells show no gap at ' + e);
     // strip and scale labels are 11 or larger, the caption 12
@@ -549,8 +549,8 @@ test('tonicity: chloroplasts stay inside the membrane, strands only in named pla
   assert.equal(flats(ton('plant', 55)), 0);
   assert.ok(gaps(ton('plant', 50)) > 0 && flats(ton('plant', 50)) > 0, 'isotonic: corner gaps in some cells, not all');
   assert.match(caption(ton('plant', 45)), /turgid/);
-  assert.match(caption(ton('plant', 80)), /starts to leave the corners/);
-  assert.doesNotMatch(caption(ton('plant', 80)), /plasmoly/i);
+  assert.match(caption(ton('plant', 60)), /starts to leave the corners/);
+  assert.doesNotMatch(caption(ton('plant', 60)), /plasmoly/i);
   // red cells: the slit and the cup caption go together; the first crenated step says the cells start to shrink
   for (let e = 12; e <= 45; e++) {
     const s = ton('rbc', e);

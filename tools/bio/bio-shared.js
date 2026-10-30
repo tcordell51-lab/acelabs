@@ -13206,7 +13206,7 @@ const TONICITY_HTML = `
 
   <!-- DAT take -->
   <div style="background:#fff;border:1.5px solid #1B3A2D;border-radius:10px;padding:12px;margin-top:14px;font-size:12px;line-height:1.5;color:#1B3A2D">
-    <span style="font-weight:700">DAT trap:</span> "hypertonic" describes the SOLUTION, not the cell. A cell in a hypertonic solution loses water (has LESS water inside than the surroundings). Plant cells with rigid walls become <b>plasmolyzed</b> (membrane pulls away from the wall). Animal cells <b>crenate</b> (shrivel). In hypotonic surroundings, animal cells <b>lyse</b> (burst); plants become <b>turgid</b> (wall holds shape).
+    <span style="font-weight:700">DAT trap:</span> "hypertonic" describes the SOLUTION, not the cell. A cell in a hypertonic solution loses water (the outside has more solute, so less free water; water moves out of the cell toward it). Plant cells with rigid walls become <b>plasmolyzed</b> (membrane pulls away from the wall). Animal cells <b>crenate</b> (shrivel). In hypotonic surroundings, animal cells <b>lyse</b> (burst); plants become <b>turgid</b> (wall holds shape).
   </div>
 </div>
 `;
@@ -13287,7 +13287,9 @@ function initTonicity() {
         outcome = '<span style="font-weight:700;color:#C25B3F">CRENATED.</span> Cell shrivels as water leaves. RBC in hypertonic plasma does this.';
         outcomeBorder = '#C25B3F';
       } else {
-        outcome = '<span style="font-weight:700;color:#c19a3e">SHRINKING.</span> Plant cell losing water; will plasmolyze if external solute continues to rise.';
+        // ext 55 to 60: every membrane starts to leave the corners (the
+        // picture's incipient stage); only the protoplast shrinks, not the wall
+        outcome = '<span style="font-weight:700;color:#c19a3e">SHRINKING.</span> The protoplast loses water; the membrane starts to leave the corners. A little more solute pulls it off the wall.';
         outcomeBorder = '#c19a3e';
       }
     }

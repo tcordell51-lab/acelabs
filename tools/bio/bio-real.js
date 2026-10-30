@@ -10,9 +10,10 @@
        touching, one overlapping pair, two seen edge-on. Hypotonic: the
        discs cup (stomatocytes: face on, the pallor narrows to a slit;
        side on, a D-shaped bowl with thick rounded rims and a shallow
-       cup, holding a little more than the disc), then round up into
-       evenly dense spheres. The membrane barely stretches, so a sphere holds
-       more water yet is a little narrower (about 6.7 um). Hemolysis:
+       cup, holding a little more than the disc, that rounds into a bean
+       with a dented mouth), then round up into evenly dense spheres.
+       The membrane barely stretches, so a sphere holds more water yet
+       is a little narrower (about 6.7 um). Hemolysis:
        faint, smooth, empty ghosts about 6.7 um across in an evenly
        tinted, nearly empty field. Hypertonic: shrunken cells with many
        short blunt projections (echinocytes); the first ones keep some
@@ -192,16 +193,19 @@
   // the middle and about 2.5 um at the rounded rims. As a solid of
   // revolution the bowl holds a little more than the disc (about 1.06
   // times at full cup), as a swelling cell should. sph (0 to 1) blends
-  // it toward a sphere of radius A, and amp with n adds crenation bumps
-  // (16 samples per bump keep them round).
-  function edgePath(A, cup, sph, amp, n) {
+  // it toward a sphere of radius A; notch (px) dents the top of that
+  // sphere, so a late stomatocyte still shows its mouth in profile while
+  // it rounds up. amp with n adds crenation bumps (16 samples per bump
+  // keep them round).
+  function edgePath(A, cup, sph, amp, n, notch) {
     var pts = [], N = amp ? n * 16 : 48;
     for (var i = 0; i < N; i++) {
       var th = i / N * 2 * Math.PI, c = Math.cos(th), s = Math.sin(th), q = Math.sqrt(Math.abs(s));
       var disc = -s * 0.5 * RBC_PX * (1 + 7.83 * c * c - 4.39 * c * c * c * c);
       var bowl = s < 0 ? 13 * q : 11 * s * s - 10.5 * q;    // outer base below, the cup above
       var yd = lerp(disc, bowl, cup);
-      var x = A * c, y = lerp(yd, -A * s, sph);
+      var ball = -A * s + (notch && s > 0 ? notch * Math.pow(s, 10) : 0);
+      var x = A * c, y = lerp(yd, ball, sph);
       if (amp) { var b = Math.pow(Math.max(0, Math.cos(n * th)), 2) * amp * A; x += b * c; y -= b * s; }
       pts.push(f1(x) + ',' + f1(y));
     }
@@ -245,8 +249,11 @@
         '<g id="rl-d"><circle r="' + f1(A) + '" fill="url(#rl-rbc)"' + RBC_STROKE + '/>' +
         (slit > 0 ? '<ellipse rx="' + f1(0.45 * A * mouth) + '" ry="' + f1(0.12 * A) + '" fill="#f0d0c9" opacity="' + f2(slit) + '"/>' : '') + '</g>';
       // the side view starts to round up while it is still cupping (from t
-      // 0.15), so the full bowl never shows unblended, and is round by t 0.75
-      edge = edgePath(A, cup, clamp((t - 0.15) / 0.6, 0, 1), 0, 0);
+      // 0.15), so the full bowl never shows unblended, and is round by t 0.75.
+      // While it rounds up it keeps a dent at the mouth (a bean shape in
+      // profile) that closes from t 0.6 to 0.7, as the slit fades, so the
+      // edge-on cells match the cup caption.
+      edge = edgePath(A, cup, clamp((t - 0.15) / 0.6, 0, 1), 0, 0, 0.42 * A * clamp((0.7 - t) / 0.1, 0, 1));
       edgeFill = mix('#d3807f', '#c86468', den);
       vol = 1 + 0.4 * t;
       // the cup caption holds exactly while the slit is drawn (0.2 < t < 0.7)
