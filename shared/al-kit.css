@@ -1,0 +1,420 @@
+/* =====================================================================
+   Ace Labs kit (served as shared/al-kit.css?v=1). The components every
+   page draws from. Needs shared/al-fonts.css and shared/al-tokens.css
+   first. Phone first: 390 wide, 16 px gutter; widens at 760 and 1080.
+
+   Scope. Every rule lives under .al, so an engine page can load the kit
+   for one bench without its own .btn, .opt or p rules changing:
+     <html class="al">     a page built on the kit: the page base below,
+                           and every component anywhere on the page
+     AceLoop.mount(host)   adds .al to its host
+     toast, Stuck sheet    appended to <body>, carry .al themselves
+
+   Brand (ACEDAT logo): deep green and gold as anchors, mint as the
+   signature. Gold is the coach speaking or your next move (the primary
+   bench button, the knob, the current plan step); mint is where you are
+   and what is live (the current loop stage, a held call, the frame bar,
+   a highlight). Neither marks an outcome: Confirmed and Needs review are
+   the Wong pair, always with a word and an icon. The logo's slanted gold
+   bar is the one ornament (.mark, the plan ticks, the card ticks).
+   Sora for display (never italic), DM Sans for reading and, in italic,
+   the coach's voice; JetBrains Mono for labels.
+
+   Components read context colors (--c-*): paper roles by default, bench
+   roles inside .bench, .coach and the toast. Ace Cards are paper in both
+   themes; specimens never invert.
+   ===================================================================== */
+
+/* ---------- context ---------- */
+.al{
+  --c-ink:var(--s-ink); --c-ink-2:var(--s-ink-2); --c-ink-3:var(--s-ink-3);
+  --c-line:var(--s-line); --c-line-2:var(--s-line-2);
+  --c-raise:var(--s-surface); --c-raise-2:var(--s-surface-2);
+  --c-gold:var(--s-accent); --c-gold-ink:var(--s-accent-ink);
+  --c-mint:var(--s-mint); --c-mint-ink:var(--s-mint-ink); --c-mint-wash:var(--s-mint-wash); --c-on-mint:var(--s-on-mint);
+  --c-good:var(--s-good); --c-good-ink:var(--s-good-ink); --c-good-wash:var(--s-good-wash);
+  --c-trap:var(--s-trap); --c-trap-ink:var(--s-trap-ink); --c-trap-wash:var(--s-trap-wash);
+  --c-focus:var(--s-focus);
+  --c-tag:var(--s-surface);
+  --c-plate:var(--s-surface);
+}
+.al .bench,.al .coach,.al.toast{
+  --c-ink:var(--b-ink); --c-ink-2:var(--b-ink-2); --c-ink-3:var(--b-ink-3);
+  --c-line:var(--b-line); --c-line-2:rgba(244,237,224,.24);
+  --c-raise:rgba(244,237,224,.04); --c-raise-2:rgba(244,237,224,.08);
+  --c-plate:rgba(4,12,8,.42);
+  --c-gold:var(--b-gold); --c-gold-ink:var(--b-gold-hi);
+  --c-mint:var(--b-mint); --c-mint-ink:var(--b-mint-ink); --c-mint-wash:var(--b-mint-wash); --c-on-mint:var(--b-on-mint);
+  --c-good:var(--b-good); --c-good-ink:var(--b-good); --c-good-wash:rgba(63,210,160,.12);
+  --c-trap:var(--b-trap); --c-trap-ink:var(--b-trap); --c-trap-wash:rgba(255,138,61,.12);
+  --c-focus:var(--b-mint-ink);
+  --c-tag:rgba(5,14,10,.62);
+}
+
+/* ---------- the page base (only on <html class="al">) ---------- */
+html.al{color-scheme:var(--s-scheme);-webkit-text-size-adjust:100%;text-size-adjust:100%}
+html.al body{margin:0;background:var(--s-page);color:var(--s-ink);font:var(--font-body);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;min-height:100vh;overflow-x:hidden}
+.al,.al *,.al *::before,.al *::after{box-sizing:border-box}
+.al img,.al svg{display:block;max-width:100%}
+.al a{color:inherit}
+.al p{margin:0}
+.al button{font:inherit;color:inherit;cursor:pointer;background:none;border:0;padding:0;margin:0}
+.al :focus-visible{outline:3px solid var(--c-focus);outline-offset:2px;border-radius:6px}
+.al [hidden]{display:none !important}
+.al span[data-icon]{display:inline-flex;align-items:center;gap:8px}
+.al .sr{position:absolute !important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.al .wrap{max-width:var(--maxw);margin:0 auto;padding:0 var(--gutter)}
+
+/* ---------- type ---------- */
+.al h1,.al h2,.al h3{margin:0;font-family:var(--f-display);font-weight:var(--fw-display);letter-spacing:var(--ls-display);font-variant-numeric:lining-nums;text-wrap:balance}
+.al .h-hero{font:var(--font-hero);letter-spacing:var(--ls-hero)}
+.al .h1{font:var(--font-h1);letter-spacing:var(--ls-display)}
+.al .h2{font:var(--font-h2);letter-spacing:var(--ls-display)}
+.al .h3{font:var(--font-h3);letter-spacing:0}
+/* one highlighted phrase per title: mint ink on a mint wash, never italic (Sora has no italic) */
+.al :is(h1,h2,.h-hero,.h1,.h2) em{font-style:normal;color:var(--c-mint-ink);background:linear-gradient(transparent 62%,var(--c-mint-wash) 62%);padding:0 .06em;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+.al .k{display:inline-flex;align-items:center;gap:7px;font:var(--font-label);letter-spacing:var(--ls-label);text-transform:uppercase;color:var(--c-ink-3)}
+.al .k.gold{color:var(--c-gold-ink)}
+.al .k.mint{color:var(--c-mint-ink)}
+.al .k.nocase{text-transform:none;letter-spacing:.02em}
+.al .lede{font:var(--font-read);color:var(--c-ink-2);max-width:62ch}
+.al .voice{font:var(--font-coach);color:var(--c-ink)}
+.al .muted{color:var(--c-ink-3)}
+.al .small{font-size:var(--t-small);line-height:var(--lh-small)}
+
+/* the logo's gold bar, slanted like the bar in the A: the one ornament */
+.al .mark,.al .k.bar::before{content:"";display:inline-block;flex:0 0 auto;width:9px;height:11px;background:var(--c-gold);clip-path:polygon(0 0,44% 0,100% 100%,56% 100%)}
+
+/* ---------- icons ---------- */
+.al .ico{width:20px;height:20px;flex:0 0 auto;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.al .ico.sm{width:16px;height:16px}
+.al .ico.xs{width:13px;height:13px;stroke-width:2.2}
+.al .ico.lg{width:28px;height:28px}
+
+/* ---------- buttons, links and chips: every control is 44 px ---------- */
+.al .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:var(--target);padding:10px 18px;border-radius:var(--r-pill);font:700 15px/1.2 var(--f-body);text-decoration:none;border:1.5px solid var(--c-line-2);background:var(--c-raise);color:var(--c-ink);transition:transform var(--m-tap) var(--e-std),background-color var(--m-state) var(--e-std),border-color var(--m-state) var(--e-std),color var(--m-state) var(--e-std)}
+.al .btn:hover{border-color:var(--c-mint-ink)}
+.al .btn:active{transform:scale(.97)}
+.al .btn.primary{background:var(--s-primary);color:var(--s-primary-ink);border-color:transparent}
+.al .btn.primary:hover{border-color:var(--c-mint-ink)}
+/* gold: your next move. Ink on gold is 8.2:1 in every theme and on the bench. */
+.al .btn.gold{background:var(--al-gold);color:#16120A;border-color:transparent}
+.al .btn.gold:hover{background:var(--al-gold-m)}
+.al .btn.quiet{background:transparent;border-color:transparent;color:var(--c-ink-2);padding-inline:10px;text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px}
+.al .btn.quiet:hover{color:var(--c-ink)}
+.al .btn.wide{width:100%}
+.al .btn[disabled],.al .btn[aria-disabled="true"]{opacity:.55;cursor:not-allowed;transform:none}
+.al .row-btns{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.al .chip{display:inline-flex;align-items:center;gap:7px;min-height:32px;padding:4px 12px;border-radius:var(--r-pill);border:1px solid var(--c-line-2);font:600 13px/1.2 var(--f-body);color:var(--c-ink-2);background:var(--c-raise);white-space:nowrap;text-decoration:none}
+.al a.chip,.al button.chip{min-height:var(--target)}
+.al a.chip:hover,.al button.chip:hover{border-color:var(--c-mint-ink);color:var(--c-ink)}
+.al .chip.here{background:var(--c-mint);color:var(--c-on-mint);border-color:transparent}
+.al .chip.wash{background:var(--c-mint-wash);color:var(--c-mint-ink);border-color:transparent}
+/* section identity: --sec on paper, --sec-lite on the bench (set by [data-sec]) */
+.al .dot{width:9px;height:9px;border-radius:50%;background:var(--sec);flex:0 0 auto}
+.al :is(.bench,.coach) .dot{background:var(--sec-lite)}
+.al .date-chip{display:inline-flex;align-items:center;gap:6px;font:600 12px/1 var(--f-mono);letter-spacing:.04em;color:inherit;white-space:nowrap}
+.al .date-chip b{font-weight:700}
+.al .iconbtn{display:inline-grid;place-items:center;width:44px;height:44px;border-radius:50%;border:1px solid var(--c-line-2);color:var(--c-ink-2);flex:0 0 auto;transition:border-color var(--m-state) var(--e-std),color var(--m-state) var(--e-std)}
+.al .iconbtn:hover{border-color:var(--c-mint-ink);color:var(--c-mint-ink)}
+.al .iconbtn.text{width:auto;padding:0 14px;border-radius:var(--r-pill);font:700 13.5px/1 var(--f-body);gap:6px;display:inline-flex;align-items:center}
+.al .skip,.al .stuck-link{display:inline-flex;align-items:center;gap:6px;min-height:var(--target);padding:0 4px;font:600 13.5px/1 var(--f-body);color:var(--c-ink-3);text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px}
+.al .skip:hover,.al .stuck-link:hover{color:var(--c-ink)}
+
+/* =====================================================================
+   COACH BAND: the coach's voice. One line in Thomas's voice, an honest
+   source line, the plan line. Forest, DM Sans italic, gold.
+   ===================================================================== */
+.al .coach{position:relative;overflow:hidden;border-radius:var(--r-bench);padding:14px 16px;font-family:var(--f-body);color:var(--c-ink);border:1px solid var(--b-line-2);
+  background:radial-gradient(80% 120% at 100% 0%,rgba(51,201,147,.08) 0%,transparent 55%),linear-gradient(165deg,#132c22 0%,var(--al-bench-2) 38%,var(--al-bench-1) 100%)}
+.al .coach>*{position:relative}
+.al .coach .top{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;font:600 11.5px/1.2 var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--c-ink-3)}
+.al .coach .top .who{display:inline-flex;align-items:center;gap:8px}
+.al .coach .top .date-chip{color:var(--c-gold-ink);letter-spacing:.06em;text-transform:none;font-size:12.5px}
+.al .coach-line{margin-top:8px;font:var(--font-coach);color:var(--c-ink);max-width:40ch}
+.al .coach-line em{font-style:italic;font-weight:600;color:var(--c-gold-ink)}
+.al .coach-src{margin-top:6px;font-size:13px;line-height:1.4;color:var(--c-ink-3)}
+.al .coach-src b{font-weight:600;color:var(--c-ink-2)}
+.al .plan-line{display:flex;align-items:center;gap:12px;margin-top:10px;font:600 13px/1.2 var(--f-body);color:var(--c-ink-2)}
+.al .plan-line .ticks{display:flex;gap:5px;padding-left:3px}
+.al .plan-line .ticks i{width:18px;height:6px;border-radius:1px;transform:skewX(-38deg);background:rgba(244,237,224,.18);transition:background-color var(--m-state) var(--e-std)}
+.al .plan-line .ticks i.done{background:var(--c-gold)}
+.al .plan-line .ticks i.now{background:var(--c-gold-ink)}
+.al .coach-note{margin:12px 0 0;padding:10px 12px;border-left:3px solid var(--c-gold);background:rgba(244,237,224,.05);border-radius:0 10px 10px 0;font:italic 500 15px/1.45 var(--f-voice);color:var(--c-ink)}
+.al .coach-note .sign{display:block;margin-top:6px;font:600 11px/1 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;font-style:normal;color:var(--c-gold-ink)}
+.al .coach .said{margin-top:10px;padding:10px 12px;border-radius:12px;background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.32);font-size:14.5px;line-height:1.45;color:var(--c-ink)}
+
+/* =====================================================================
+   DOOR HEADER (plain door names, no stage jargon)
+   ===================================================================== */
+.al .door-head{padding:26px 0 16px}
+.al .door-head .crumbs{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:14px;color:var(--c-ink-3);margin-bottom:6px}
+.al .door-head .crumbs a{color:var(--c-ink-2);min-height:var(--target);min-width:var(--target);display:inline-flex;align-items:center;justify-content:center;text-underline-offset:3px}
+.al .door-head .k{margin-bottom:8px}
+.al .door-head h1{margin-bottom:10px}
+
+/* mini loop: four slanted pips, which loop stages a tool runs */
+.al .miniloop{display:inline-flex;align-items:center;gap:4px;padding-left:2px}
+.al .miniloop i{display:block;width:13px;height:5px;border-radius:1px;transform:skewX(-38deg);background:var(--c-line-2)}
+.al .miniloop i.on{background:var(--c-mint-ink)}
+
+/* =====================================================================
+   SECTION SWITCHER: one row, DAT order; sticky on Practice; scrolls
+   sideways on phones
+   ===================================================================== */
+.al .switcher{position:sticky;top:0;z-index:40;background:color-mix(in srgb,var(--s-page) 92%,transparent);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-bottom:1px solid var(--c-line)}
+.al .switcher.inline{position:static;background:none;-webkit-backdrop-filter:none;backdrop-filter:none;border:0}
+.al .switcher .row{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:8px var(--gutter);max-width:var(--maxw);margin:0 auto}
+.al .switcher.inline .row{padding-inline:0}
+.al .switcher .row::-webkit-scrollbar{display:none}
+.al .seg{display:inline-flex;align-items:center;gap:8px;min-height:var(--target);padding:6px 14px;border-radius:var(--r-pill);border:1px solid var(--c-line-2);background:var(--c-raise);font:600 14px/1 var(--f-body);color:var(--c-ink-2);white-space:nowrap;text-decoration:none;transition:background-color var(--m-state) var(--e-std),color var(--m-state) var(--e-std),border-color var(--m-state) var(--e-std)}
+.al .seg:hover{border-color:var(--c-mint-ink)}
+.al .seg[aria-pressed="true"],.al .seg[aria-current="page"]{background:var(--al-bench-1);color:var(--b-ink);border-color:var(--b-mint)}
+.al .seg[aria-pressed="true"] .dot,.al .seg[aria-current="page"] .dot{background:var(--sec-lite);box-shadow:0 0 0 2px rgba(244,237,224,.3)}
+
+/* =====================================================================
+   TOOL CARD: section, plain name, what you do, which loop stages it runs
+   ===================================================================== */
+.al .tools{display:grid;gap:12px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:760px){.al .tools{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (min-width:1080px){.al .tools.three{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.al .tool{position:relative;display:flex;gap:14px;align-items:stretch;padding:14px;border-radius:var(--r-card);background:var(--s-surface);border:1px solid var(--c-line);box-shadow:var(--s-shadow);text-decoration:none;color:inherit;transition:transform var(--m-state) var(--e-out),box-shadow var(--m-state) var(--e-std),border-color var(--m-state) var(--e-std)}
+.al .tool:hover{transform:translateY(-2px);box-shadow:var(--s-shadow-lift);border-color:var(--c-mint-ink)}
+.al .tool .thumb{flex:0 0 88px;height:88px;border-radius:12px;overflow:hidden;background:var(--al-bench-1);display:grid;place-items:center;position:relative}
+.al .tool .thumb svg{width:100%;height:100%}
+.al .tool .body{flex:1;min-width:0;display:flex;flex-direction:column;gap:5px}
+.al .tool .sec{display:flex;align-items:center;gap:7px;font:600 11.5px/1.2 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--sec)}
+.al .tool .name{font:var(--fw-title) 18px/1.22 var(--f-display);letter-spacing:-.01em;color:var(--c-ink)}
+.al .tool .what{font-size:14.5px;line-height:1.45;color:var(--c-ink-2)}
+.al .tool .meta{margin-top:auto;padding-top:6px;display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:12.5px;color:var(--c-ink-3)}
+
+/* =====================================================================
+   BENCH: the dark surface where things move. A lamp of mint at the top.
+   ===================================================================== */
+.al .bench{position:relative;overflow:hidden;font-family:var(--f-body);color:var(--c-ink);border-radius:var(--r-bench);border:1px solid var(--b-line-2);
+  background:radial-gradient(70% 55% at 88% 0%,rgba(51,201,147,.08) 0%,transparent 62%),radial-gradient(120% 80% at 35% 0%,#132c22 0%,var(--b-bg) 56%,var(--al-bench-0) 100%);
+  box-shadow:0 30px 60px -30px rgba(7,19,13,.65)}
+.al .bench .chip{background:rgba(244,237,224,.06);border-color:rgba(244,237,224,.18);color:var(--c-ink-2);max-width:100%;overflow:hidden;text-overflow:ellipsis}
+.al .bench-top{display:flex;align-items:center;justify-content:space-between;gap:8px 12px;flex-wrap:wrap;padding:12px 16px 0;min-height:var(--target)}
+.al .bench-top .k{color:var(--c-gold-ink)}
+.al .bench-body{padding:12px 16px 16px}
+.al .bench-grid{display:grid;gap:14px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:760px){.al .bench-grid{grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:22px;align-items:start}}
+@media (min-width:1080px){.al .bench-top{padding:14px 22px 0}.al .bench-body{padding:14px 22px 22px}}
+
+/* the loop band: Predict, Play, Prove, Keep. Mint is where you are. */
+.al .band{position:relative;display:grid;grid-template-columns:repeat(4,1fr);margin:10px 16px 0;padding:0;--band-at:0}
+@media (min-width:1080px){.al .band{margin:12px 22px 0}}
+.al .band::before,.al .band .fill{content:"";position:absolute;left:12.5%;top:12px;height:2px;border-radius:2px}
+.al .band::before{right:12.5%;background:rgba(244,237,224,.14)}
+.al .band .fill{width:calc(var(--band-at) * 75%);background:var(--b-mint);transition:width var(--m-travel) var(--e-out)}
+.al .band .st{position:relative;display:flex;flex-direction:column;align-items:center;gap:6px;font:600 10.5px/1 var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--b-ink-3)}
+.al .band .st .n{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--al-bench-1);border:1.5px solid rgba(244,237,224,.24);color:var(--b-ink-3);transition:background-color var(--m-state) var(--e-std),border-color var(--m-state) var(--e-std),color var(--m-state) var(--e-std)}
+.al .band .st .n .ico{width:14px;height:14px}
+.al .band .st.done .n{border-color:var(--b-mint-ink);color:var(--b-mint-ink)}
+.al .band .st.done{color:var(--b-ink-2)}
+.al .band .st.on{color:var(--b-mint-ink)}
+.al .band .st.on .n{background:var(--b-mint);border-color:var(--b-mint);color:var(--b-on-mint);box-shadow:0 0 0 4px rgba(51,201,147,.18)}
+
+/* the specimen: framed like a slide; never inverts */
+.al .field{position:relative;border-radius:12px;overflow:hidden;background:var(--al-spec-surround);box-shadow:0 0 0 1px rgba(244,237,224,.08),0 18px 40px -18px rgba(0,0,0,.8)}
+.al .field.paper{background:var(--al-spec-table)}
+.al .field svg.fs{width:100%;height:auto;display:block}
+.al .field .tag{position:absolute;z-index:3;top:8px;left:8px;font:700 10.5px/1 var(--f-mono);letter-spacing:.1em;text-transform:uppercase;padding:5px 8px;border-radius:6px;background:rgba(8,20,14,.8);color:var(--b-ink)}
+.al .field .tag.r{left:auto;right:8px;font-weight:600;letter-spacing:.04em;text-transform:none}
+.al .field.wiping .tag{display:none}
+.al .field .veil{position:absolute;inset:0;z-index:4;display:grid;place-items:center;text-align:center;padding:20px;background:rgba(8,20,14,.66);-webkit-backdrop-filter:blur(9px) saturate(.6);backdrop-filter:blur(9px) saturate(.6);transition:opacity var(--m-reveal) var(--e-std)}
+.al .field .veil p{font:600 15px/1.45 var(--f-body);color:var(--b-ink);max-width:26ch}
+.al .field .veil .ico{margin:0 auto 8px;width:28px;height:28px;color:var(--b-mint-ink)}
+.al .field .veil.off{opacity:0;pointer-events:none}
+.al .caption{min-height:var(--target);margin-top:8px;font-size:14px;line-height:1.45;color:var(--c-ink-2)}
+.al .caption b{color:var(--c-ink);font-weight:700}
+
+/* the frame bar: one pip per frame; it fills while a frame plays */
+.al .framebar{display:flex;align-items:center;gap:10px;margin-top:8px}
+.al .framebar .pips{display:flex;gap:6px;flex:1}
+.al .framebar .pips i{flex:1;height:4px;border-radius:2px;background:rgba(244,237,224,.16);overflow:hidden;position:relative}
+.al .framebar .pips i b{position:absolute;inset:0;width:0;background:var(--c-mint)}
+.al .framebar .pips i.run b{width:100%;transition:width var(--m-frame) linear}
+.al .framebar .pips i.done b{width:100%;transition:none}
+
+/* the prompt and the calls */
+.al .prompt{margin:0;font:var(--fw-title) clamp(1.1875rem,1.05rem + .7vw,1.4375rem)/1.28 var(--f-display);letter-spacing:-.012em;color:var(--c-ink);text-wrap:balance}
+.al .opts{display:grid;gap:8px}
+.al .opt{position:relative;display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;width:100%;min-height:52px;padding:9px 14px;border-radius:12px;background:var(--c-raise);border:1.5px solid var(--c-line-2);color:var(--c-ink);text-align:left;font:600 15.5px/1.35 var(--f-body);transition:background-color var(--m-state) var(--e-std),border-color var(--m-state) var(--e-std),transform var(--m-tap) var(--e-std),opacity var(--m-state) var(--e-std)}
+.al .opt:not([disabled]):hover{border-color:var(--c-mint-ink);background:var(--c-raise-2)}
+.al .opt:active{transform:scale(.985)}
+.al .opt .let{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;border:1.5px solid var(--c-line-2);font:700 13px/1 var(--f-mono);flex:0 0 auto;color:var(--c-ink-2)}
+.al .opt .txt{flex:1 1 9em;min-width:0}
+.al .opt .tag{flex:0 0 auto;margin-left:auto;display:inline-flex;align-items:center;gap:5px;font:700 10.5px/1 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;padding:5px 7px;border-radius:6px}
+/* while it plays: your call is held in mint (where you are) */
+.al .opt[aria-pressed="true"]{border-color:var(--c-mint);background:var(--c-mint-wash)}
+.al .opt[aria-pressed="true"] .let{background:var(--c-mint);border-color:var(--c-mint);color:var(--c-on-mint)}
+/* after the reveal: a word and an icon first, then the Wong color */
+.al .opt.key{border-color:var(--c-good);background:var(--c-good-wash);opacity:1}
+.al .opt.key .let{background:var(--c-good);border-color:var(--c-good);color:#06231a}
+.al .opt.key .tag{background:var(--c-tag);color:var(--c-good-ink)}
+.al .opt.mine{border-color:var(--c-trap);background:var(--c-trap-wash);opacity:1}
+.al .opt.mine .let{background:var(--c-tag);border-color:var(--c-trap);color:var(--c-trap-ink)}
+.al .opt.mine .tag{background:var(--c-tag);color:var(--c-trap-ink)}
+.al .opt[disabled]{cursor:default}
+.al .opt.dim{opacity:.55}
+.al .opts.collapsed{gap:6px}
+.al .opts.collapsed .opt{min-height:var(--target);padding:7px 12px;font-size:14.5px}
+.al .opts.collapsed .opt .let{width:24px;height:24px;font-size:12px}
+
+/* verdict: never shakes, never flashes, never celebrates */
+.al .verdict{border-radius:12px;padding:12px 14px;background:var(--c-plate);border:1px solid var(--c-line);border-left:4px solid var(--vc,var(--c-gold))}
+.al .verdict.good{--vc:var(--c-good);--vi:var(--c-good-ink)}
+.al .verdict.trap{--vc:var(--c-trap);--vi:var(--c-trap-ink)}
+.al .verdict.plain{--vc:var(--c-ink-3);--vi:var(--c-ink-2)}
+.al .verdict .vh{display:flex;align-items:center;gap:8px;font:700 16px/1.2 var(--f-body);color:var(--vi,var(--c-ink))}
+.al .verdict p{margin-top:7px;font-size:15px;line-height:1.5;color:var(--c-ink-2)}
+.al .verdict p b{color:var(--c-ink)}
+.al .verdict .trapname{display:inline-flex;align-items:center;gap:7px;margin-top:9px;font:600 11px/1.2 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--c-trap-ink)}
+.al .verdict .trapname::before{content:"";width:8px;height:10px;background:var(--c-trap);clip-path:polygon(0 0,44% 0,100% 100%,56% 100%)}
+.al .hook{font:italic 600 16px/1.4 var(--f-voice);color:var(--c-gold-ink)}
+.al .verdict .hook{margin-top:8px}
+.al .reveal-in{animation:al-rin var(--m-reveal) var(--e-out) both}
+@keyframes al-rin{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* drive: the student takes the process. Live, so mint; the knob is gold (your move). */
+.al .drive{display:grid;gap:6px;padding:12px 14px;border-radius:12px;background:var(--c-mint-wash);border:1px solid rgba(51,201,147,.36)}
+.al .drive .dh{display:flex;align-items:center;gap:8px;font:700 14.5px/1.3 var(--f-body);color:var(--c-ink)}
+.al .drive .dh .ico{color:var(--c-mint-ink)}
+.al .drive p{font-size:14px;line-height:1.45;color:var(--c-ink-2)}
+.al .knob{display:grid;gap:4px;margin-top:4px}
+.al .knob label{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:4px 10px;font:600 14px/1.25 var(--f-body);color:var(--c-ink-2)}
+.al .knob label output{font:600 13px/1.2 var(--f-mono);color:var(--c-mint-ink);white-space:nowrap}
+.al input[type=range].al,.al input[type=range].knob-in{-webkit-appearance:none;appearance:none;width:100%;height:var(--target);background:transparent;margin:0;touch-action:pan-y;cursor:pointer}
+.al input[type=range].al::-webkit-slider-runnable-track{height:6px;border-radius:3px;background:var(--track,linear-gradient(90deg,#7fb4e0 0%,#3a4f44 50%,#d9b45c 100%))}
+.al input[type=range].al::-moz-range-track{height:6px;border-radius:3px;background:var(--track,linear-gradient(90deg,#7fb4e0 0%,#3a4f44 50%,#d9b45c 100%))}
+.al input[type=range].al::-webkit-slider-thumb{-webkit-appearance:none;width:28px;height:28px;margin-top:-11px;border-radius:50%;background:#f4ede0;border:4px solid var(--al-gold);box-shadow:0 2px 10px rgba(0,0,0,.5)}
+.al input[type=range].al::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:#f4ede0;border:4px solid var(--al-gold)}
+.al input[type=range].al:focus-visible{outline-offset:-2px}
+.al input[type=range].al[disabled]{opacity:.45}
+.al .ticks{display:flex;justify-content:space-between;gap:6px;font:500 11.5px/1.25 var(--f-mono);color:var(--c-ink-3)}
+.al .ticks span:last-child{text-align:right}
+.al .honest{display:flex;gap:8px;align-items:flex-start;font-size:13px;line-height:1.4;color:var(--c-ink-3)}
+.al .honest .ico{width:15px;height:15px;margin-top:2px;flex:0 0 auto}
+
+/* the Drawing / Real wipe: a gold line with a 44 px handle, drag or arrow keys */
+.al .wipe-handle{position:absolute;top:0;bottom:0;width:44px;margin-left:-22px;cursor:ew-resize;touch-action:none;display:flex;justify-content:center;z-index:3}
+.al .wipe-handle::before{content:"";width:2px;height:100%;background:var(--al-gold-m);box-shadow:0 0 10px rgba(226,201,122,.7)}
+.al .wipe-handle span{position:absolute;top:50%;transform:translateY(-50%);display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:var(--al-gold);color:#16120A;box-shadow:0 4px 14px rgba(0,0,0,.5);transition:transform var(--m-tap) var(--e-drop)}
+.al .wipe-handle.held span{transform:translateY(-50%) scale(1.08)}
+.al .wipe-handle:focus-visible{outline:none}
+.al .wipe-handle:focus-visible span{outline:3px solid var(--b-mint-ink);outline-offset:2px}
+.al .wipe-tag{position:absolute;top:8px;z-index:3;font:700 10.5px/1 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;padding:5px 8px;border-radius:6px;background:rgba(8,20,14,.8);color:var(--b-ink)}
+.al .wipe-tag.l{left:8px}
+.al .wipe-tag.r{right:8px}
+.al .stage-actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+
+/* still panels for reduced motion, drawn the way the DAT draws them */
+.al .stills{display:grid;grid-template-columns:repeat(auto-fit,minmax(84px,1fr));gap:8px;margin-top:10px}
+.al .stills .fig{margin:0;display:grid;gap:4px;justify-items:center;padding:8px 6px 6px;border-radius:10px;background:var(--al-spec-paper);color:var(--al-spec-ink);font:600 11.5px/1.25 var(--f-mono);text-align:center}
+.al .stills .fig svg{width:100%;max-width:96px;height:auto}
+
+/* =====================================================================
+   ACE CARD: the picture the student saw, the idea, the hook, when it is
+   back. Paper in both themes; the section stripe is identity only.
+   ===================================================================== */
+.al .acecard{--c-ink:var(--al-ink);--c-ink-2:var(--al-ink-2);--c-ink-3:var(--al-ink-mute);--c-gold:var(--al-gold);--c-gold-ink:var(--al-gold-ink);
+  position:relative;display:grid;grid-template-columns:96px minmax(0,1fr);gap:4px 12px;border-radius:12px;padding:10px 12px 10px 15px;background:linear-gradient(180deg,#fffdf7,#f6efdf);color:var(--al-ink);border:1px solid rgba(140,114,53,.35);box-shadow:0 10px 24px -12px rgba(13,32,24,.45);overflow:hidden;font-family:var(--f-body)}
+.al .acecard::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--sec,var(--al-gold))}
+.al .acecard[data-sec="bio"]{--sec:var(--al-sec-bio)}.al .acecard[data-sec="gchem"]{--sec:var(--al-sec-gchem)}.al .acecard[data-sec="ochem"]{--sec:var(--al-sec-ochem)}
+.al .acecard[data-sec="pat"]{--sec:var(--al-sec-pat)}.al .acecard[data-sec="rc"]{--sec:var(--al-sec-rc)}.al .acecard[data-sec="qr"]{--sec:var(--al-sec-qr)}
+.al .acecard .pic{grid-row:span 4;align-self:start;border-radius:8px;overflow:hidden;background:var(--al-spec-surround);aspect-ratio:96/120;display:grid;grid-template-rows:1fr 1fr;gap:2px}
+.al .acecard .pic:has(>:only-child){grid-template-rows:1fr}
+.al .acecard .pic>div{position:relative;overflow:hidden;min-height:0}
+.al .acecard .pic svg{width:100%;height:100%;object-fit:cover}
+.al .acecard .pic .pl{position:absolute;left:4px;bottom:4px;font:700 9px/1 var(--f-mono);letter-spacing:.06em;text-transform:uppercase;padding:3px 4px;border-radius:4px;background:rgba(5,10,7,.82);color:#f3ecdc}
+.al .acecard .ac-k{display:flex;align-items:center;justify-content:space-between;gap:8px;font:600 10.5px/1.2 var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--al-ink-mute)}
+.al .acecard .ac-k span:first-child{display:inline-flex;align-items:center;gap:6px;min-width:0}
+.al .acecard .ac-k .mark{width:8px;height:10px;background:var(--al-gold)}
+.al .acecard .ac-t{font:600 15px/1.35 var(--f-display);letter-spacing:-.005em;color:var(--al-ink)}
+.al .acecard .ac-h{font:italic 600 14px/1.35 var(--f-voice);color:var(--al-gold-ink)}
+.al .acecard .ac-when{grid-column:2;display:flex;align-items:center;gap:5px;font:600 11px/1.2 var(--f-mono);letter-spacing:.04em;color:var(--al-ink-mute)}
+.al .acecard .ac-when i{width:13px;height:5px;border-radius:1px;transform:skewX(-38deg);background:rgba(13,32,24,.16)}
+.al .acecard .ac-when i.on{background:var(--al-gold)}
+.al .acecard .ac-when span{margin-left:4px}
+.al.flying{position:fixed;z-index:200;pointer-events:none;will-change:transform,opacity}
+
+/* the ladder: where each card is on its 1, 3, 7 day way back. Quiet: no
+   totals to grow, no green, no celebration. */
+.al .ladder{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;align-items:end}
+.al .rung{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;min-width:0}
+.al .rung .stack{position:relative;width:100%;max-width:84px;height:60px}
+.al .rung .stack i{position:absolute;left:8%;right:8%;height:38px;border-radius:8px;background:var(--s-surface);border:1px solid var(--c-line-2);bottom:0}
+.al .rung .stack i:nth-child(2){bottom:7px;left:12%;right:4%;transform:rotate(-3deg)}
+.al .rung .stack i:nth-child(3){bottom:14px;left:4%;right:12%;transform:rotate(2.5deg)}
+.al .rung .stack.empty i{border-style:dashed;background:transparent}
+.al .rung .lbl{font:600 10.5px/1.25 var(--f-mono);letter-spacing:.05em;text-transform:uppercase;color:var(--c-ink-3)}
+.al .rung .num{font:600 12px/1.2 var(--f-mono);color:var(--c-ink-2)}
+.al .rung.now .lbl{color:var(--c-gold-ink)}
+.al .rung.now .stack i:last-child{border-color:var(--al-gold)}
+.al .rung.landed .stack i:last-child{border-color:var(--al-gold);border-width:1.5px}
+
+/* =====================================================================
+   PLAN: today's steps on a rail; the step you are on is gold (your next move)
+   ===================================================================== */
+.al .plan{position:relative;list-style:none;margin:0;padding:0 0 0 38px;display:grid;gap:10px}
+.al .plan::before{content:"";position:absolute;left:18px;top:24px;bottom:24px;width:2px;background:var(--c-line-2)}
+.al .plan li{position:relative}
+.al .step{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:var(--r-card);background:var(--s-surface);border:1px solid var(--c-line);box-shadow:var(--s-shadow);text-decoration:none;color:inherit;min-height:64px;transition:border-color var(--m-state) var(--e-std)}
+.al a.step:hover{border-color:var(--c-mint-ink)}
+.al .step .node{position:absolute;left:-34px;top:50%;transform:translateY(-50%);display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--al-bench-1);color:var(--b-gold-hi);box-shadow:0 0 0 4px var(--s-page)}
+.al .step .node .ico{width:15px;height:15px}
+.al .step.now{border-color:var(--al-gold);box-shadow:0 0 0 3px rgba(201,168,76,.2),var(--s-shadow)}
+.al .step.now .node{background:var(--al-gold);color:#16120A}
+.al .step.done .node{background:var(--s-surface);color:var(--c-gold-ink);box-shadow:0 0 0 4px var(--s-page),inset 0 0 0 2px var(--al-gold)}
+.al .step.done .t{text-decoration:line-through;text-decoration-color:var(--c-ink-3);text-decoration-thickness:1px}
+.al .step .tx{flex:1;min-width:0}
+.al .step .st{display:flex;gap:8px;align-items:center;font:600 11px/1.2 var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--c-ink-3)}
+.al .step .st .dot{width:7px;height:7px}
+.al .step .t{display:block;margin-top:5px;font:var(--fw-title) 16px/1.3 var(--f-display);letter-spacing:-.005em}
+.al .step .d{display:block;margin-top:2px;font-size:14px;line-height:1.4;color:var(--c-ink-2)}
+.al .step .min{flex:0 0 auto;font:600 12.5px/1 var(--f-mono);color:var(--c-ink-3)}
+.al .step.added{border-style:dashed;border-color:var(--al-gold)}
+.al .tomorrow{margin-top:12px;padding:10px 12px;border-radius:12px;border:1px dashed var(--c-line-2);font-size:14px;line-height:1.45;color:var(--c-ink-2)}
+.al .tomorrow b{color:var(--c-ink)}
+
+/* ---------- panels, sections, shelves, lanes, footer ---------- */
+.al .panel{background:var(--s-surface);border:1px solid var(--c-line);border-radius:var(--r-card);box-shadow:var(--s-shadow);padding:16px}
+.al .sect{padding:26px 0 8px}
+.al .sect-head{display:flex;align-items:end;justify-content:space-between;gap:12px;margin-bottom:14px}
+.al .sect-head .h2{font-size:clamp(1.25rem,1.1rem + .6vw,1.5rem)}
+@media (max-width:759px){.al .sect-head{flex-wrap:wrap;align-items:flex-start}.al .sect-head>.small{flex-basis:100%;margin-top:-6px}}
+.al .shelf{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding:4px var(--gutter) 14px;margin:0 calc(-1 * var(--gutter));scrollbar-width:thin}
+.al .shelf>*{scroll-snap-align:start;flex:0 0 min(300px,82vw)}
+@media (min-width:1080px){.al .shelf{overflow:visible;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));margin:0;padding:4px 0 14px}.al .shelf>*{flex:auto}}
+.al .lane{padding:26px 0 6px;border-top:1px solid var(--c-line);margin-top:20px}
+.al .lane-head{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 12px;margin-bottom:12px}
+.al .lane-head .no{display:inline-flex;align-items:center;gap:7px;font:600 12px/1 var(--f-mono);letter-spacing:.1em;color:var(--c-gold-ink)}
+.al .lane-head .no::before{content:"";width:8px;height:10px;background:var(--c-gold);clip-path:polygon(0 0,44% 0,100% 100%,56% 100%)}
+.al .lane-head h2{font:var(--font-h2);letter-spacing:var(--ls-display);font-size:clamp(1.25rem,1.1rem + .6vw,1.5rem)}
+.al .lane-head p{font-size:14px;color:var(--c-ink-3)}
+.al .foot{margin-top:40px;padding:22px 0 30px;border-top:1px solid var(--c-line);font-size:13px;color:var(--c-ink-3)}
+.al .foot a{color:var(--c-ink-2)}
+
+/* ---------- toast: one line, above the tab bar, 4.2 s ---------- */
+.al.toast,.al .toast{position:fixed;left:50%;bottom:24px;z-index:300;display:flex;align-items:center;gap:10px;width:max-content;max-width:min(92vw,440px);padding:12px 16px 12px 14px;border-radius:12px;background:var(--al-bench-1);color:var(--b-ink);border:1px solid var(--b-line-2);box-shadow:0 18px 40px -12px rgba(0,0,0,.55);font:600 14.5px/1.35 var(--f-body);transform:translate(-50%,16px);opacity:0;pointer-events:none;transition:opacity var(--m-panel) var(--e-out),transform var(--m-panel) var(--e-out)}
+.al.toast .ico{color:var(--b-gold-hi)}
+.al.toast .mark{display:none}
+.al.toast.show,.al .toast.show{opacity:1;transform:translate(-50%,0)}
+@media (min-width:1080px){.al.toast,.al .toast{left:auto;right:28px;transform:translate(0,16px)}.al.toast.show,.al .toast.show{transform:none}}
+@media (max-width:759px){html[data-ace-shell-pos="bottom"] .al.toast{bottom:calc(var(--tabbar-h) + 12px + env(safe-area-inset-bottom))}}
+
+/* ---------- Stuck? The three-option triage, opened only by the student ---------- */
+.al.sheet-back{position:fixed;inset:0;z-index:400;display:grid;place-items:end center;background:rgba(5,12,8,.52);padding:16px;font-family:var(--f-body)}
+@media (min-width:760px){.al.sheet-back{place-items:center}}
+.al .sheet{width:min(460px,100%);border-radius:18px;background:var(--s-surface);color:var(--s-ink);padding:20px 18px 12px;box-shadow:0 30px 60px -20px rgba(0,0,0,.5);display:grid;gap:10px;border:1px solid var(--c-line)}
+.al .sheet-body{display:grid;gap:10px}
+.al .sheet h2{font:var(--fw-display) 21px/1.2 var(--f-display);letter-spacing:-.01em}
+.al .sheet p{font-size:14.5px;line-height:1.45;color:var(--c-ink-2)}
+.al .sheet .so{display:grid;gap:2px;text-align:left;padding:12px 14px;border-radius:12px;border:1.5px solid var(--c-line-2);background:var(--s-surface-2);min-height:56px;color:var(--c-ink);text-decoration:none;transition:border-color var(--m-state) var(--e-std)}
+.al .sheet .so b{font:700 15.5px/1.3 var(--f-body)}
+.al .sheet .so span{font:400 13.5px/1.4 var(--f-body);color:var(--c-ink-2)}
+.al .sheet .so:hover{border-color:var(--c-mint-ink)}
+.al .sheet .close{justify-self:center;min-height:var(--target);padding:0 14px;font:600 14px/1 var(--f-body);color:var(--c-ink-2);text-decoration:underline;text-underline-offset:3px}
+.al .sheet .breath{width:100%;max-width:240px;margin:2px auto;color:var(--c-ink-2)}
