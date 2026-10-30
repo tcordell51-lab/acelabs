@@ -498,88 +498,158 @@
       soluteStrip(ext, diff, v.vol, lysed);
   }
 
-  /* ---------- sarcomere: the band pattern of a TEM ----------
+  /* ---------- sarcomere: a longitudinal TEM of two myofibrils ----------
      Drawn on the same x axis as the sliding filament model (viewBox
-     width 720), so every band sits under the filaments that make it.
-     Electron density: Z disc darkest, overlap (actin + myosin) dark,
-     H zone (myosin only) lighter, I band (actin only) light, M line a
-     thin dark stripe. Neighboring sarcomeres repeat with the same period. */
+     width 720, 200 px per um), so every band sits under the filaments
+     that make it. Electron density: Z disc darkest, then the overlap
+     (actin + myosin), the M line, the H zone (myosin only), the paler
+     bare zone beside the M line (thick filament without heads), and the
+     I band (actin only) lightest. Once the thin filaments reach the M
+     line (full contraction) it is as dark as the overlap, never paler.
+     Fine lines are the filaments: thick ones 45 nm apart, thin ones
+     running into the zigzag Z disc. Each
+     myofibril row is drawn once and placed twice; the lower one is
+     shifted 3 px, since neighbors line up closely but not perfectly.
+     In the sarcoplasm gap between the rows: triads (a pale T tubule
+     between two SR terminal cisternae) at each A-I junction, linked by
+     SR, with glycogen granules beside the I band. In the gap below the
+     lower row: mitochondria in pairs, one on each side of every Z disc
+     (they would crowd the triads at short sarcomere lengths if both
+     shared a gap). Each one is sized to stay inside its half I band,
+     so none reaches the A-I junction where the triads sit. Neighboring
+     sarcomeres repeat with the same period. */
 
   function temStrip(g) {
-    var zL = g.zL, zR = g.zR, period = zR - zL, L = period / 2;
-    var mh = g.myosinW / 2, aLen = g.actinTipL - zL;
-    function density(x) {
-      var u = ((x - zL) % period + period) % period;
-      var s = Math.min(u, period - u);                 // distance from the nearest Z disc
-      if (s < 2.6) return 0.95;                         // Z disc
-      var actin = s <= aLen, myosin = s >= L - mh;
-      if (myosin && Math.abs(s - L) < 2.2) return 0.88; // M line
-      if (actin && myosin) return 0.80;                 // overlap
-      if (myosin) return 0.58;                          // H zone
-      if (actin) return 0.24;                           // I band
-      return 0.18;
+    var zL = g.zL, zR = g.zR, period = zR - zL, L = period / 2, M = zL + L;
+    var mh = g.myosinW / 2, aLen = g.actinTipL - zL, iH = L - mh;
+    var RH = 72, Y1 = 26, Y2 = 114, TY = 106, MY = 195;   // row height and tops; centers of the two gaps
+    // mitochondrion half length: fits between Z + 4 and the A-I junction minus 4
+    var mrx = Math.min(30, (iH - 8) / 2), mo = 4 + mrx;
+    function base(s) {                       // s: distance from the nearest Z disc (0 to L)
+      var actin = s <= aLen, myosin = s >= iH, d = L - s;
+      if (myosin && d < 6) return actin ? 0.92 : 0.82;   // M line; never paler than the overlap once thin filaments reach it
+      if (actin && myosin) return 0.92;      // overlap
+      if (myosin && d < 16) return 0.48;     // bare zone
+      if (myosin) return 0.58;               // H zone
+      return 0.30;                           // I band; the Z disc is drawn over it
     }
-    function gray(v) { var c = Math.round(232 - v * 175); var h = c.toString(16); if (h.length < 2) h = '0' + h; return '#' + h + h + h; }
+    function density(x) {
+      var u = ((x - zL) % period + period) % period, s = Math.min(u, period - u), v = base(s);
+      // thin filament ends are staggered, so each H zone edge fades over 6 px
+      if (s > aLen && s < aLen + 6 && s >= iH) v = lerp(0.92, v, (s - aLen) / 6);
+      return v;
+    }
+    function gray(v) { var h = Math.round(225 - 200 * v).toString(16); if (h.length < 2) h = '0' + h; return '#' + h + h + h; }
+    // deterministic jitter in [-1, 1): a 32-bit integer hash (murmur3 finalizer),
+    // exact in every engine
+    function jit(i) {
+      var h = Math.imul(i ^ 0x9e3779b9, 0x85ebca6b);
+      h ^= h >>> 13; h = Math.imul(h, 0xc2b2ae35); h ^= h >>> 16;
+      return (h >>> 0) / 2147483648 - 1;
+    }
+
+    var zs = [], ms = [], k, j, x;
+    for (k = -2; k <= 2; k++) {
+      if (zL + k * period - aLen < 724 && zL + k * period + aLen > -4) zs.push(zL + k * period);
+      if (M + k * period - mh < 735 && M + k * period + mh > -15) ms.push(M + k * period);
+    }
+    // one myofibril row (local y 0 to RH): bands as run-length boxes, one path per gray
+    var runs = {}, order = [], start = -4, prev = density(-4), v;
+    for (x = -2; x <= 724; x += 2) {
+      v = x < 724 ? density(x) : -1;
+      if (v !== prev) {
+        var c = gray(prev);
+        if (!runs[c]) { runs[c] = ''; order.push(c); }
+        runs[c] += 'M' + start + ',0h' + (x - start) + 'v' + RH + 'h' + (start - x) + 'z';
+        start = x; prev = v;
+      }
+    }
+    var thin = '', thick = '', zig = '';
+    zs.forEach(function (z) {
+      for (j = 0; j < 16; j++) thin += 'M' + (z - aLen) + ',' + f1(2.25 + 4.5 * j) + 'H' + (z + aLen);
+      zig += 'M' + z + ',0v72M' + (z - 2) + ',0';   // a straight dense core, then the fine zigzag (amplitude 2)
+      for (j = 0; j < 9; j++) zig += 'l4,4l-4,4';
+    });
+    ms.forEach(function (m) { for (j = 0; j < 8; j++) thick += 'M' + (m - mh) + ',' + f1(4.5 + 9 * j) + 'H' + (m + mh); });
+
     var out = '<defs>' +
       '<filter id="rl-tem" x="0" y="0" width="100%" height="100%">' +
-        '<feTurbulence type="fractalNoise" baseFrequency="0.85 0.22" numOctaves="2" seed="3" result="n"/>' +
+        '<feTurbulence type="fractalNoise" baseFrequency="0.22 0.85" numOctaves="2" seed="3" result="n"/>' +
         '<feColorMatrix in="n" type="matrix" values="0 0 0 0 0.5  0 0 0 0 0.5  0 0 0 0 0.5  0 0 0 0.32 0" result="g"/>' +
         '<feBlend in="SourceGraphic" in2="g" mode="multiply" result="b"/>' +
         '<feGaussianBlur in="b" stdDeviation="0.7"/>' +
-      '</filter></defs>';
-    out += '<rect x="0" y="0" width="720" height="190" fill="#cfcfcb"/>';
-    var rows = [30, 78, 126], RH = 40, x, run, v, prev, start;
+      '</filter>' +
+      '<g id="rl-tmf">' + order.map(function (c) { return '<path fill="' + c + '" d="' + runs[c] + '"/>'; }).join('') +
+        '<path d="' + thin + '" stroke="#303030" stroke-opacity="0.25" stroke-width="1.2"/>' +
+        '<path d="' + thick + '" stroke="#101010" stroke-opacity="0.45" stroke-width="2.6"/>' +
+        '<path d="' + zig + '" fill="none" stroke="#191919" stroke-width="5" stroke-linejoin="round"/></g>' +
+      '<g id="rl-tmito"><ellipse rx="' + f1(mrx) + '" ry="7" fill="#4a4a4a" stroke="#1e1e1e" stroke-width="1.2"/>' +
+        '<path d="' + [-0.6, -0.3, 0, 0.3, 0.6].map(function (c) { return 'M' + f1(c * mrx) + ',-4v8'; }).join('') + '" stroke="#bdbdbd" stroke-width="0.8"/></g>' +
+      '<g id="rl-ttri" stroke="#1e1e1e"><ellipse cx="-8" rx="4.5" ry="6" fill="#5e5e5e"/><ellipse cx="8" rx="4.5" ry="6" fill="#5e5e5e"/>' +
+        '<ellipse rx="2.5" ry="5" fill="#e6e6e6" stroke-width="1.2"/></g>' +
+      '</defs>';
+    out += '<rect width="720" height="204" fill="#cfcfcb"/>';
     out += '<g filter="url(#rl-tem)">';
-    var granules = '', fil = '';
-    rows.forEach(function (y0, r) {
-      // interfibrillar space: glycogen granules (dots), gathered into one path
-      for (var k = 0; k < 26; k++) granules += 'M' + ((k * 53 + r * 29) % 720) + ',' + (y0 - 4 + (k % 3)) + 'h0';
-      // run-length bands
-      start = 0; prev = density(0);
-      for (x = 2; x <= 720; x += 2) {
-        v = x < 720 ? density(x) : -1;
-        if (v !== prev) {
-          out += '<rect x="' + start + '" y="' + y0 + '" width="' + (x - start) + '" height="' + RH + '" fill="' + gray(prev) + '"/>';
-          start = x; prev = v;
-        }
+    out += '<use href="#rl-tmf" y="' + Y1 + '"/><use href="#rl-tmf" x="3" y="' + Y2 + '"/>';
+    // gap between the rows: triads at every A-I junction, SR running between them
+    var tri = [];
+    ms.forEach(function (m) { tri.push(m - mh, m + mh); });
+    tri.sort(function (a, b) { return a - b; });
+    var sr = 'M-4,' + TY;
+    tri.forEach(function (t) { sr += 'H' + (t - 12.5) + 'M' + (t + 12.5) + ',' + TY; });
+    out += '<path d="' + sr + 'H724" stroke="#3a3a3a" stroke-width="0.8"/>';
+    tri.forEach(function (t) { out += '<use href="#rl-ttri" x="' + t + '" y="' + TY + '"/>'; });
+    // glycogen: granules only beside the I band, about 2.2 per 10 px
+    var gly = '', n = 0;
+    function granules(a, b, cy, dy) {
+      var cnt = Math.round((b - a) / 4.5);
+      for (var i = 0; i < cnt; i++, n++) {
+        gly += 'M' + f1(a + (i + 0.5) * (b - a) / cnt + 1.5 * jit(n)) + ',' + f1(cy + dy * jit(n + 7919)) + 'h0';
       }
-      // thick filaments read as faint lengthwise lines in the A band
-      for (var ln = 0; ln < 6; ln++) {
-        var yy = y0 + 5 + ln * 6.2;
-        for (var c = -1; c <= 1; c++) {
-          var m = zL + L + c * period;
-          fil += 'M' + f1(m - mh) + ',' + f1(yy) + 'H' + f1(m + mh);
-        }
-      }
-    });
-    out += '<path d="' + granules + '" stroke="#7c7c78" stroke-width="2.6" stroke-linecap="round"/>';
-    out += '<path d="' + fil + '" stroke="#202020" stroke-opacity="0.18" stroke-width="0.8"/>';
-    out += '<ellipse cx="' + (zL + L) + '" cy="176" rx="50" ry="6" fill="#8d8d88"/><ellipse cx="' + (zL + L) + '" cy="176" rx="44" ry="3.4" fill="none" stroke="#5d5d59" stroke-width="0.9" stroke-dasharray="4 3"/>';
-    out += '</g>';
-    // labels under the strip, aligned to the bands of the middle sarcomere
-    var iEnd = zL + (L - mh), aStart = zL + L - mh, aEnd = zL + L + mh, hL = zL + aLen, hR = zR - aLen;
-    out += '<rect x="0" y="190" width="720" height="84" fill="#fbf6e9"/>';
-    function bracket(x1, x2, y, label, col) {
-      if (x2 - x1 < 6) return '';
-      return '<path d="M' + f1(x1) + ',' + (y - 8) + ' V' + y + ' H' + f1(x2) + ' V' + (y - 8) + '" fill="none" stroke="' + col + '" stroke-width="2.4"/>' +
-        '<text x="' + f1((x1 + x2) / 2) + '" y="' + (y + 24) + '" text-anchor="middle" font-size="22" font-weight="700" fill="' + col + '">' + label + '</text>';
     }
-    out += bracket(zL, iEnd, 204, 'I band', '#5b6b62');
-    out += bracket(aStart, aEnd, 204, 'A band', '#1B3A2D');
-    if (hR - hL > 6) out += bracket(hL, hR, 240, 'H zone', '#8C7235');
-    out += '<text x="' + zL + '" y="22" text-anchor="middle" font-size="20" font-weight="700" fill="#1B3A2D">Z</text>';
-    out += '<text x="' + zR + '" y="22" text-anchor="middle" font-size="20" font-weight="700" fill="#1B3A2D">Z</text>';
-    out += '<text x="' + (zL + L) + '" y="22" text-anchor="middle" font-size="18" fill="#1B3A2D">M line</text>';
-    out += '<text x="8" y="22" font-size="17" font-weight="700" fill="#3a4a42">TEM VIEW</text>';
+    zs.forEach(function (z) {
+      if (iH > 14) granules(z - iH + 14, z + iH - 14, TY, 5.5);      // between the triads
+      var mOut = 4 + 2 * mrx + 2;
+      if (iH - 2 > mOut + 4) { granules(z - iH + 2, z - mOut, MY, 5.5); granules(z + mOut, z + iH - 2, MY, 5.5); }   // past the mitochondria
+    });
+    out += '<path d="' + gly + '" stroke="#2c2c2c" stroke-width="5" stroke-linecap="round"/>';
+    // gap below the lower row: a mitochondrion on each side of every Z disc
+    zs.forEach(function (z) { out += '<use href="#rl-tmito" x="' + f1(z - mo) + '" y="' + MY + '"/><use href="#rl-tmito" x="' + f1(z + mo) + '" y="' + MY + '"/>'; });
+    out += '</g>';
+
+    // labels under the strip, aligned to the bands of the middle sarcomere
+    var aS = M - mh, aE = M + mh, hL = zL + aLen, hR = zR - aLen, mx = zR + mo;
+    function bracket(x1, x2, y, col) {
+      return '<path d="M' + f1(x1) + ',' + (y - 8) + 'V' + y + 'H' + f1(x2) + 'V' + (y - 8) + '" stroke="' + col + '"/>';
+    }
+    out += '<rect y="204" width="720" height="92" fill="#fbf6e9"/>';
+    // the I band runs from one A band to the next, with the Z disc in its middle
+    out += '<g fill="none" stroke-width="2.4">' + bracket(zL - iH + 2, aS - 2, 216, '#5b6b62') + bracket(aS + 2, aE - 2, 216, '#1B3A2D') +
+      (hR - hL > 6 ? bracket(hL, hR, 258, '#8C7235') : '') +
+      '<path d="M' + zL + ',206V224" stroke="#191919" stroke-width="3"/>' +
+      '<path d="M' + mx + ',204V222" stroke="#1B3A2D" stroke-width="1.5"/></g>';
+    out += '<g text-anchor="middle" font-weight="700" font-size="22">' +
+      '<text x="' + zL + '" y="242" fill="#5b6b62">I band</text>' +
+      '<text x="' + M + '" y="242" fill="#1B3A2D">A band</text>' +
+      (hR - hL > 6 ? '<text x="' + M + '" y="284" fill="#8C7235">H zone</text>' : '') +
+      '<text x="' + zL + '" y="268" font-size="20" font-weight="400" fill="#5b6b62">Z disc in middle</text>' +
+      '<text x="' + mx + '" y="242" font-size="20" fill="#3a4a42">mitochondria</text></g>';
+    // labels over the strip
+    out += '<path d="M500,18L514,99" stroke="#fbf6e9" stroke-width="1.6"/>';
+    out += '<g text-anchor="middle" font-weight="700" fill="#1B3A2D">' +
+      '<text x="' + zL + '" y="22" font-size="20">Z</text><text x="' + zR + '" y="22" font-size="20">Z</text>' +
+      '<text x="' + M + '" y="22" font-size="20">M line</text>' +
+      '<text x="496" y="20" font-size="20" text-anchor="end">triad</text></g>';
+    out += '<text x="8" y="17" font-size="17" font-weight="700" fill="#3a4a42">TEM VIEW</text>';
     return out;
   }
 
   function readSarcomere() {
     function num(id, attr, d) { var el = document.getElementById(id); var v = el ? parseFloat(el.getAttribute(attr)) : NaN; return isNaN(v) ? d : v; }
     return {
-      zL: num('sf-zL', 'x1', 100), zR: num('sf-zR', 'x1', 620),
+      zL: num('sf-zL', 'x1', 120), zR: num('sf-zR', 'x1', 600),
       actinTipL: num('sf-actin-L', 'x2', 320),
-      myosinW: num('sf-myosin', 'width', 200)
+      myosinW: num('sf-myosin', 'width', 320)
     };
   }
 
@@ -588,11 +658,12 @@
     if (!model || document.getElementById('sfTem')) return;
     var wrap = document.createElement('div');
     wrap.className = 'rl-tem-wrap';
-    wrap.innerHTML = '<svg id="sfTem" viewBox="0 0 720 274" preserveAspectRatio="xMidYMid meet" role="img" ' +
-      'aria-label="Electron micrograph view of the same sarcomere: Z discs, I band, A band, H zone and M line" ' +
+    wrap.innerHTML = '<svg id="sfTem" viewBox="0 0 720 296" preserveAspectRatio="xMidYMid meet" role="img" ' +
+      'aria-label="Electron micrograph view of the same sarcomere in two myofibrils: Z discs, I band, A band, H zone, M line, triads and mitochondria" ' +
       'style="display:block;width:100%;height:auto;margin-top:8px;border:1.5px solid #1B3A2D;border-radius:8px;background:#cfcfcb"></svg>' +
-      '<p style="margin:6px 2px 0;font-size:12px;line-height:1.45;color:#3a4a42">Same sarcomere, as it looks in an electron micrograph. ' +
-      'Dark where myosin overlaps actin, lighter where only one is present. Watch the I band and H zone narrow while the A band holds.</p>';
+      '<p style="margin:6px 2px 0;font-size:12px;line-height:1.45;color:#3a4a42">Same sarcomere, as it looks in an electron micrograph of two myofibrils. ' +
+      'Dark where myosin overlaps actin, lighter where only one is present. Watch the I band and H zone narrow while the A band holds. ' +
+      'Between the myofibrils: a triad (T tubule between two SR sacs) at each A-I junction, and mitochondria beside each Z disc.</p>';
     model.insertAdjacentElement('afterend', wrap);
     function render() { document.getElementById('sfTem').innerHTML = temStrip(readSarcomere()); }
     Array.prototype.forEach.call(document.querySelectorAll('[data-sf]'), function (b) { b.addEventListener('click', render); });

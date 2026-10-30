@@ -4253,27 +4253,61 @@ function initNephron() {
 
 /* ---- SLIDING FILAMENT ---- */
 function initSlidingFilament() {
-  const states = {
-    relaxed: { zL:100, zR:620, actinL:[100,320], actinR:[620,400], myosinX:260, myosinW:200, hZone:[330,390], readout:"<b>Relaxed.</b> Sarcomere full length (Z to Z = 520). Actin and myosin overlap in A-band only. I-bands (actin alone) wide. H-zone (myosin alone) wide." },
-    contracting: { zL:120, zR:600, actinL:[120,340], actinR:[600,380], myosinX:260, myosinW:200, hZone:[340,380], readout:"<b>Contracting.</b> Z-lines moving closer (Z to Z = 480). Actin slides over myosin via cross-bridges. <b>I-bands shrink</b>, <b>H-zone shrinks</b>. <b>A-band UNCHANGED</b> (myosin length is constant)." },
-    contracted: { zL:140, zR:580, actinL:[140,360], actinR:[580,360], myosinX:260, myosinW:200, hZone:[360,360], readout:"<b>Fully contracted.</b> Z-lines maximally close (Z to Z = 440). H-zone disappears (actin completely overlaps myosin). I-bands shortest. A-band still constant. <b>Rigor mortis = no ATP, myosin can't detach from actin.</b>" },
+  if (!document.getElementById("sfSvg")) return;
+  // Geometry in #sfSvg units, to scale at 200 px per um. The thick filament
+  // is fixed at x 200 to 520 (1.6 um, M line at 360) and each thin filament
+  // is 200 px (1.0 um), so neither ever changes length: only the Z discs,
+  // the thin filaments and the neighbor sarcomeres' thick filaments move.
+  // Sarcomere 2.4 / 2.2 / 2.0 um.
+  const PX = 200, MX = 200, MW = 320, M = MX + MW / 2, THIN = 200;
+  const um = (px) => (px / PX).toFixed(1) + " um";
+  const lead = {
+    relaxed: (s) => `<b>Relaxed.</b> Z to Z ${um(s.zR - s.zL)}. A band ${um(MW)} (one thick filament). I band ${um(s.iBand)}, with the Z disc in its middle. H zone ${um(s.h)}. In a contraction the <b>A band holds</b> its length while the <b>I band and H zone shrink</b>.`,
+    contracting: (s) => `<b>Contracting.</b> Z to Z ${um(s.zR - s.zL)}. Cross-bridges pull the thin filaments toward the M line. <b>A band holds at ${um(MW)}.</b> <b>I band shrinks</b> to ${um(s.iBand)} and the <b>H zone shrinks</b> to ${um(s.h)}. Neither filament shortens (thick ${um(MW)}, thin ${um(THIN)}); they slide.`,
+    contracted: (s) => `<b>Fully contracted.</b> Z to Z ${um(s.zR - s.zL)}. <b>A band still ${um(MW)}.</b> <b>I band down to ${um(s.iBand)}.</b> The thin filaments meet at the M line, so the <b>H zone is gone</b>. Rigor mortis = no ATP, so myosin cannot let go of actin.`,
   };
+  const states = {};
+  [["relaxed", 120], ["contracting", 140], ["contracted", 160]].forEach(([name, zL]) => {
+    const zR = 2 * M - zL;
+    const s = { zL, zR, actinL: [zL, zL + THIN], actinR: [zR, zR - THIN], myosinX: MX, myosinW: MW, hZone: [zL + THIN, zR - THIN] };
+    s.iBand = 2 * (MX - zL);           // A band edge to the next A band edge, across the Z disc
+    s.h = s.hZone[1] - s.hZone[0];
+    s.readout = lead[name](s);
+    states[name] = s;
+  });
 
   const apply = (s) => {
-    const set = (id, attrs) => { const el = document.getElementById(id); Object.entries(attrs).forEach(([k,v]) => el.setAttribute(k, v)); };
+    const set = (id, attrs) => { const el = document.getElementById(id); if (el) Object.entries(attrs).forEach(([k,v]) => el.setAttribute(k, v)); };
+    const period = s.zR - s.zL, half = s.myosinX - s.zL;
     set("sf-zL", { x1: s.zL, x2: s.zL });
     set("sf-zR", { x1: s.zR, x2: s.zR });
     set("sf-actin-L", { x1: s.actinL[0], x2: s.actinL[1] });
+    set("sf-actin-Lb", { x1: s.actinL[0], x2: s.actinL[1] });
     set("sf-actin-R", { x1: s.actinR[0], x2: s.actinR[1] });
-    // labels follow the filaments: Z letters ride on the Z lines, each
-    // I-band label sits between its Z line and the myosin, and the H-zone
-    // label is hidden once actin fully overlaps myosin
-    const zlt = document.getElementById("sf-zL-t"), zrt = document.getElementById("sf-zR-t");
-    if (zlt) zlt.setAttribute("x", s.zL);
-    if (zrt) zrt.setAttribute("x", s.zR);
-    set("sf-Iband-L", { x: (s.zL + s.myosinX) / 2 });
-    set("sf-Iband-R", { x: (s.myosinX + s.myosinW + s.zR) / 2 });
-    set("sf-Hzone", { opacity: s.hZone[1] - s.hZone[0] > 0 ? 1 : 0 });
+    set("sf-actin-Rb", { x1: s.actinR[0], x2: s.actinR[1] });
+    // a dark cap on the free (pointed) end of each thin filament; at full
+    // contraction the caps meet at the M line
+    set("sf-tips", { d: `M${s.actinL[1]},90v12M${s.actinL[1]},138v12M${s.actinR[1]},90v12M${s.actinR[1]},138v12` });
+    // the far side of each Z disc anchors the neighbor sarcomere's thin
+    // filaments; the neighbors' thick filaments sit one sarcomere away
+    set("sf-actin-nL", { d: `M${s.zL - THIN},96H${s.zL}M${s.zL - THIN},144H${s.zL}` });
+    set("sf-actin-nR", { d: `M${s.zR},96H${s.zR + THIN}M${s.zR},144H${s.zR + THIN}` });
+    set("sf-thk-nL", { transform: `translate(${-period},0)` });
+    set("sf-thk-nR", { transform: `translate(${period},0)` });
+    // labels follow the filaments: the Z letters ride on the Z discs, each
+    // I band bracket and label is centered on its Z disc (it runs from one
+    // A band to the next), and the H zone bracket and label hide once the
+    // thin filaments meet at the M line; then a dashed leader joins the
+    // M line label to the M line
+    set("sf-zL-t", { x: s.zL });
+    set("sf-zR-t", { x: s.zR });
+    set("sf-Iband-L", { x: s.zL });
+    set("sf-Iband-R", { x: s.zR });
+    set("sf-Ibr-L", { d: `M${s.zL - half + 3},168V176H${s.zL + half - 3}V168` });
+    set("sf-Ibr-R", { d: `M${s.zR - half + 3},168V176H${s.zR + half - 3}V168` });
+    set("sf-Hbr", { d: `M${s.hZone[0]},80V68H${s.hZone[1]}V80` });
+    set("sf-Hzone", { opacity: s.h > 0 ? 1 : 0 });
+    set("sf-Mlead", { opacity: s.h > 0 ? 0 : 1 });
     document.getElementById("sfReadout").innerHTML = `<p style="margin:0;font-size:13px;line-height:1.6">${s.readout}</p>`;
   };
 
@@ -13691,7 +13725,8 @@ function initCrossBridgeCycle() {
   function render(stagePct) {
     const svg = document.getElementById('cbSvg');
     if (!svg) return;
-    // Z-line positions: at rest, Z left = 80, Z right = 720. After full cycle, narrowed by ~30 each side.
+    // Z-line positions: at rest, Z left = 160, Z right = 640 (2.4 um at 200 px per um, the
+    // scale of the sliding filament model). After full cycle, narrowed by 30 each side.
     // Cycle: stages 0-3 contribute to shrinkage; stage 5 holds the new resting position
     // For 0-60 (release → bind), no sarcomere shrinkage yet.
     // For 60-80 (power stroke), sarcomere shrinks linearly.
@@ -13700,19 +13735,20 @@ function initCrossBridgeCycle() {
     if (stagePct < 60) shrink = 0;
     else if (stagePct < 80) shrink = ((stagePct - 60) / 20) * 30;
     else shrink = 30;
-    const zL = 80 + shrink;
-    const zR = 720 - shrink;
+    const zL = 160 + shrink;
+    const zR = 640 - shrink;
     const sarcLen = zR - zL;
-    // Myosin (constant width = 240, centered on M = 400)
-    const mLeft = 280, mRight = 520;
+    // Myosin (constant width = 320 = 1.6 um, centered on M = 400)
+    const mLeft = 240, mRight = 560;
     const aBand = mRight - mLeft;
-    // Actin filaments extend from each Z to past M-line (anchored at Z, length actinLen)
-    const actinLen = 280;  // constant: filaments slide, they never shorten
+    // Actin filaments extend from each Z toward the M-line (anchored at Z, length actinLen)
+    const actinLen = 200;  // 1.0 um, shorter than the thick filament; constant: filaments slide, they never shorten
     const actinLEnd = zL + actinLen;
     const actinREnd = zR - actinLen;
-    // I-band: from Z to start of myosin overlap (Z-line to mLeft on left side)
-    const iBandWidth = mLeft - zL;
-    const iBandTotalEachSide = iBandWidth;
+    // I band: actin only. It runs from the A band of one sarcomere to the A band
+    // of the next, with the Z disc in its middle, so it is twice Z to mLeft.
+    const iHalf = mLeft - zL;
+    const iBandWidth = 2 * iHalf;
     // H-zone: myosin region with no actin overlap. As actin slides in, H shrinks.
     // Actin slides in by `shrink` pixels per side (because Z-lines move toward M)
     const hZoneStart = zL + actinLen;
@@ -13724,17 +13760,24 @@ function initCrossBridgeCycle() {
     let inner = '';
     // Background: M-line marker
     inner += `<line x1="400" y1="40" x2="400" y2="240" stroke="#1B3A2D" stroke-width="1.2" stroke-dasharray="3,3" opacity="0.4"/>`;
-    inner += `<text x="400" y="262" text-anchor="middle" font-size="10" font-weight="700" fill="#1B3A2D">M-line</text>`;
+    inner += `<text x="400" y="266" text-anchor="middle" font-size="20" font-weight="700" fill="#1B3A2D">M line</text>`;
 
-    // Z-lines
-    inner += `<line x1="${zL}" y1="40" x2="${zL}" y2="240" stroke="#C25B3F" stroke-width="4"/>`;
-    inner += `<line x1="${zR}" y1="40" x2="${zR}" y2="240" stroke="#C25B3F" stroke-width="4"/>`;
-    inner += `<text x="${zL}" y="32" text-anchor="middle" font-size="10" font-weight="700" fill="#C25B3F">Z</text>`;
-    inner += `<text x="${zR}" y="32" text-anchor="middle" font-size="10" font-weight="700" fill="#C25B3F">Z</text>`;
+    // Z-lines (they stop above the I band labels, which are centered on them)
+    inner += `<line x1="${zL}" y1="40" x2="${zL}" y2="204" stroke="#C25B3F" stroke-width="4"/>`;
+    inner += `<line x1="${zR}" y1="40" x2="${zR}" y2="204" stroke="#C25B3F" stroke-width="4"/>`;
+    inner += `<text x="${zL}" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#C25B3F">Z</text>`;
+    inner += `<text x="${zR}" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#C25B3F">Z</text>`;
 
     // Sarcomere length bracket (top)
     inner += `<line x1="${zL}" y1="48" x2="${zR}" y2="48" stroke="#1B3A2D" stroke-width="0.8"/>`;
-    inner += `<text x="${(zL + zR) / 2}" y="60" text-anchor="middle" font-size="9" font-style="italic" fill="#1B3A2D">sarcomere</text>`;
+    inner += `<text x="${(zL + zR) / 2}" y="72" text-anchor="middle" font-size="20" font-style="italic" fill="#1B3A2D">sarcomere</text>`;
+
+    // Neighbor sarcomeres, faded: their thin filaments start on the far side of
+    // each Z disc and their thick filaments sit one sarcomere away, so each
+    // I band runs from one A band to the next across its Z disc
+    inner += `<g opacity="0.45" stroke="#1B3A2D" stroke-width="0.8">` +
+      `<path fill="#5cabe6" d="M${zL - actinLen},120h${actinLen}v6h${-actinLen}zM${zL - actinLen},160h${actinLen}v6h${-actinLen}zM${zR},120h${actinLen}v6h${-actinLen}zM${zR},160h${actinLen}v6h${-actinLen}z"/>` +
+      `<path fill="#c19a3e" d="M${mLeft - sarcLen},135h${aBand}v16h${-aBand}zM${mLeft + sarcLen},135h${aBand}v16h${-aBand}z"/></g>`;
 
     // Actin filaments (thin, blue)
     // Left actin
@@ -13799,23 +13842,24 @@ function initCrossBridgeCycle() {
     drawHead(mRight - 80, 1);
     drawHead(mRight - 30, 1);
 
-    // Band labels at bottom
-    inner += `<line x1="${zL}" y1="200" x2="${mLeft}" y2="200" stroke="#C25B3F" stroke-width="1.5"/>`;
-    inner += `<text x="${(zL + mLeft) / 2}" y="215" text-anchor="middle" font-size="10" font-weight="700" fill="#C25B3F">I-band</text>`;
-    inner += `<line x1="${mRight}" y1="200" x2="${zR}" y2="200" stroke="#C25B3F" stroke-width="1.5"/>`;
-    inner += `<text x="${(mRight + zR) / 2}" y="215" text-anchor="middle" font-size="10" font-weight="700" fill="#C25B3F">I-band</text>`;
+    // Band labels at bottom: one I band bracket per Z disc, centered on it
+    // (A band to A band), never half of it from the Z disc to the A band
+    inner += `<line x1="${zL - iHalf}" y1="200" x2="${zL + iHalf}" y2="200" stroke="#C25B3F" stroke-width="1.5"/>`;
+    inner += `<text x="${zL}" y="226" text-anchor="middle" font-size="20" font-weight="700" fill="#C25B3F">I band</text>`;
+    inner += `<line x1="${zR - iHalf}" y1="200" x2="${zR + iHalf}" y2="200" stroke="#C25B3F" stroke-width="1.5"/>`;
+    inner += `<text x="${zR}" y="226" text-anchor="middle" font-size="20" font-weight="700" fill="#C25B3F">I band</text>`;
     inner += `<line x1="${mLeft}" y1="105" x2="${mRight}" y2="105" stroke="#5cabe6" stroke-width="1.5"/>`;
-    inner += `<text x="400" y="100" text-anchor="middle" font-size="10" font-weight="700" fill="#5cabe6">A-band</text>`;
+    inner += `<text x="400" y="100" text-anchor="middle" font-size="20" font-weight="700" fill="#5cabe6">A band</text>`;
     if (hZone > 6) {
       inner += `<line x1="${hZoneStart}" y1="190" x2="${hZoneEnd}" y2="190" stroke="#c19a3e" stroke-width="1.5"/>`;
-      inner += `<text x="${(hZoneStart + hZoneEnd) / 2}" y="184" text-anchor="middle" font-size="9" font-weight="700" fill="#c19a3e">H-zone</text>`;
+      inner += `<text x="${(hZoneStart + hZoneEnd) / 2}" y="183" text-anchor="middle" font-size="20" font-weight="700" fill="#c19a3e">H zone</text>`;
     }
 
     svg.innerHTML = inner;
 
     // Update measurements
     document.getElementById('cbSarcLen').textContent = `${sarcLen} px`;
-    document.getElementById('cbSarcDelta').textContent = sarcLen < 640 ? 'shrunk by ' + (640 - sarcLen) + ' px' : 'rest length';
+    document.getElementById('cbSarcDelta').textContent = sarcLen < 480 ? 'shrunk by ' + (480 - sarcLen) + ' px' : 'rest length';
     document.getElementById('cbIBand').textContent = `${iBandWidth} px`;
     document.getElementById('cbABand').textContent = `${aBand} px`;
     document.getElementById('cbHZone').textContent = `${hZone} px`;
