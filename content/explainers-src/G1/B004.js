@@ -157,7 +157,7 @@ const ENTRIES = [
     ],
     choices: [
       { text: 'CC[C@@H]1O[C@@H]1CC', display: 'cis-2,3-diethyloxirane (both ethyls on one face)', role: 'trap', family: 'reversed', relation: 'diastereomer', trap: 'Trans turned to cis', note: 'Both ethyls on one face is the cis epoxide, a meso compound and a diastereomer of the key. It comes from cis-3-hexene.' },
-      { text: 'CCC1OC1CC', display: '2,3-diethyloxirane, stereochemistry not shown', role: 'trap', family: 'half-right', trap: 'Right ring, faces not shown', note: 'Right ring, right atoms. But the reaction fixes the ethyls trans, and only one choice shows that. Pick the drawing that carries the stereochemistry.' },
+      { text: 'CCC1OC1CC', display: '2,3-diethyloxirane, stereochemistry not shown', role: 'trap', family: 'half-right', trap: 'Right ring, faces not shown', note: 'Right ring, right atoms, but the reaction fixes the ethyls trans, and only one choice shows that. Pick the drawing that carries the stereochemistry.' },
       { text: 'CCC(O)C(O)CC', display: 'hexane-3,4-diol, stereochemistry not shown', role: 'trap', family: 'other-conditions', trap: 'Diol reagents', note: 'A diol comes from OsO4 or KMnO4, or from opening the epoxide with aqueous acid. One equivalent of mCPBA stops at the epoxide.' },
       { text: 'CC[C@H](O)[C@H](O)CC', display: 'meso-hexane-3,4-diol', role: 'trap', family: 'one-step-too-far', trap: 'Opened the ring', note: 'This meso diol is what you get after aqueous acid opens the trans epoxide, anti across the ring. mCPBA alone does not open it.' },
       { text: 'CC[C@H]1O[C@@H]1CC', display: 'trans-2,3-diethyloxirane (ethyls on opposite faces)', role: 'key', relation: 'same', note: 'Trans in, trans out: one ethyl on each face of the ring.' }
@@ -519,7 +519,7 @@ const ENTRIES = [
     ],
     choices: [
       { text: 'CCC(O)O', display: 'propane-1,1-diol (the hydrate)', role: 'trap', family: 'neighbor-fact', trap: 'Water added, not methanol', note: 'Two OH groups on one carbon is the hydrate, what water adds to an aldehyde. The nucleophile in this flask is methanol.' },
-      { text: 'CCC(=O)OC', display: 'methyl propanoate (an ester)', role: 'trap', family: 'other-conditions', trap: 'One oxidation level up', note: 'An ester sits one oxidation level above an aldehyde. You get it from the carboxylic acid and methanol, or with an oxidant. Methanol and acid here only add.' },
+      { text: 'CCC(=O)OC', display: 'methyl propanoate (an ester)', role: 'trap', family: 'other-conditions', trap: 'One oxidation level up', note: 'An ester sits one oxidation level above an aldehyde: you get it from the carboxylic acid and methanol, or with an oxidant. Methanol and acid here only add.' },
       { text: 'CCC(OC)OC', display: '1,1-dimethoxypropane (an acetal)', role: 'key', note: 'Two OCH3 on one carbon, made with water leaving in the middle.' },
       { text: 'CCC(O)OC', display: '1-methoxypropan-1-ol (the hemiacetal)', role: 'trap', family: 'one-step-short', trap: 'Stopped at the hemiacetal', note: 'The hemiacetal is real: it is the first adduct. With excess methanol and acid it keeps going, loses water and becomes the acetal.' },
       { text: 'CCCO', display: 'propan-1-ol', role: 'trap', family: 'other-conditions', trap: 'Needs a hydride', note: 'Propanol is the reduction product, from NaBH4 or LiAlH4. Methanol and acid bring no hydride.' }
@@ -556,7 +556,7 @@ const ENTRIES = [
     steps: [
       'Find the two alpha carbons: C2, a CH carrying the methyl, and C5, a CH2. Each can attack the ester at the other end.',
       'Count both rings: each closes five atoms. The C5 enolate leaves a CH between ketone and ester; the C2 enolate leaves a carbon with no H at all.',
-      'Dieckmann is reversible until ethoxide pulls that doubly activated H, so a ring without one reopens and drains to the ring that has one. That is the first product.'
+      'Dieckmann is reversible until ethoxide pulls that doubly activated H, so a ring without one reopens and drains to the ring that has one. That is the favored ring.'
     ],
     choices: [
       { text: 'CCOC(=O)C1CCCCC1=O', display: 'ethyl 2-oxocyclohexane-1-carboxylate (six-membered ring, no methyl)', role: 'trap', family: 'miscount', trap: 'Methyl folded into the ring', note: 'Same formula as the key, but the methyl carbon was counted into the ring. The chain closes five atoms, and the methyl stays outside.' },
@@ -688,7 +688,7 @@ const ENTRIES = [
       { text: 'CC1=CC(=O)CC1', display: '3-methylcyclopent-2-en-1-one (five-membered ring)', role: 'trap', family: 'miscount', trap: 'One carbon short', note: 'This five-membered enone comes from hexane-2,5-dione. Heptane-2,6-dione is one carbon longer, so its ring closes six.' },
       { text: 'CC1=CC(=O)CCC1', display: '3-methylcyclohex-2-en-1-one', role: 'key', note: 'Six-membered ring, C=C conjugated with the C=O.' },
       { text: 'O=C1CCCCC1', display: 'cyclohexanone', role: 'trap', family: 'half-right', trap: 'Right ring, pieces missing', note: 'The ring size is right. But the methyl from the second ketone is gone, and so is the C=C that dehydration makes.' },
-      { text: 'CC1=CCCC(=O)C1', display: '3-methylcyclohex-3-en-1-one (C=C not conjugated)', role: 'trap', family: 'close-second', trap: 'C=C one spot over', note: 'Right ring, right atoms. But the C=C sits out of line with the C=O. Dehydration gives the conjugated enone, which is more stable.' },
+      { text: 'CC1=CCCC(=O)C1', display: '3-methylcyclohex-3-en-1-one (C=C not conjugated)', role: 'trap', family: 'close-second', trap: 'C=C one spot over', note: 'Right ring, right atoms, but the C=C sits out of line with the C=O. Dehydration gives the conjugated enone, which is more stable.' },
       { text: 'CC1CCCC(=O)C1=O', display: '3-methylcyclohexane-1,2-dione (both C=O kept)', role: 'trap', family: 'other-conditions', trap: 'Kept both carbonyls', note: 'Keeping both C=O groups is what an acylation does, and even then they end up 1,3, not side by side. In an aldol, one C=O is the target and becomes the new C=C.' }
     ],
     lockIt: 'Intramolecular aldol: close the five or six ring, then lose water to the conjugated enone.',
@@ -1243,8 +1243,8 @@ const ENTRIES = [
       smi: 'C1C[C@H](Cl)C[C@H](Cl)C1',
       label: 'cis-1,3-dichlorocyclohexane',
       centers: [
-        { atom: 2, name: 'C1', rank: [{ atom: 3, name: 'Cl' }, { atom: 4, name: 'C2 (to the other Cl)' }, { atom: 1, name: 'C6' }, { h: true, name: 'H' }], config: 'S', labelDir: -70 },
-        { atom: 5, name: 'C3', rank: [{ atom: 6, name: 'Cl' }, { atom: 4, name: 'C2 (to the other Cl)' }, { atom: 7, name: 'C4' }, { h: true, name: 'H' }], config: 'R', labelDir: -110 }
+        { atom: 2, name: 'C1', rank: [{ atom: 3, name: 'Cl' }, { atom: 4, name: 'C2 (to the other Cl)' }, { atom: 1, name: 'C6' }, { h: true, name: 'H' }], config: 'S', labelDir: -55 },
+        { atom: 5, name: 'C3', rank: [{ atom: 6, name: 'Cl' }, { atom: 4, name: 'C2 (to the other Cl)' }, { atom: 7, name: 'C4' }, { h: true, name: 'H' }], config: 'R', labelDir: -125 }
       ],
       mirror: [4, 0],
       meso: true,
@@ -1264,7 +1264,10 @@ const ENTRIES = [
 // What changed from the expert's suggested families and from the batch row, and the fixes from the
 // expert review of B004 (coach record only).
 const CHANGES = {
-  'fm:organic:oc-1mc2sbd': ['Visual is chem.reaction (propanal to hemiacetal to acetal); the batch row counted the "Reading the machines" items as chem.spectrum, but this item is a reaction'],
+  'fm:organic:oc-1mc2sbd': [
+    'Visual is chem.reaction (propanal to hemiacetal to acetal); the batch row counted the "Reading the machines" items as chem.spectrum, but this item is a reaction',
+    'Re-review round 2 fix: the "One oxidation level up" note keeps two sentences, the ester level and its two routes joined by a colon (was three; trap notes are one or two)'
+  ],
   'fm:organic:oc-1olhj21': [
     'Visual is chem.reaction (aniline to anilinium chloride); the batch row counted it as chem.spectrum, and chem.lab has no renderer yet',
     'Review suggestion taken: the "lone pair takes H+" label sits below and right of the N (labelDir 65; was -90, whose halo clipped the ring corner; 90 clipped the lower corner)'
@@ -1293,11 +1296,13 @@ const CHANGES = {
     'Review suggestion taken: the "Lost the methyl" note says the methyl shows up on the ring (was "in the ring", which echoed the folded-in-methyl trap)',
     'Re-review fix: the favored product\'s mark is a green "H" drawn under the circled CH (labelDir 90; was "acidic H here", whose halo erased the C-O single bond from the ester carbon to the ethoxy O, so OEt looked detached from the C=O at 390 and 1280); the alt says a marked acidic H sits on that carbon',
     'Re-review suggestion taken: the "Methyl one carbon over" note says "This is one ring a 3-methyl diester could give." (was "what a 3-methyl diester would give"; that diester gives the 4-methyl and the 5-methyl rings)',
-    'Re-review suggestion taken: step 3 keeps two sentences, ending on "That is the first product." (was three)'
+    'Re-review suggestion taken: step 3 keeps two sentences, ending on "That is the first product." (was three)',
+    'Re-review round 2 suggestion taken: step 3 ends "That is the favored ring." (was "That is the first product.", which could read as the product that forms first); still 5 words, so the short line stays'
   ],
   'fm:organic:oc-zlk3b3': [
     'Review suggestion taken: the 1,2-dione note says keeping both C=O groups is what an acylation does, and even then they end up 1,3 (was "a Claisen-type pattern")',
-    'Re-review suggestion taken: step 2 keeps two sentences, the two ring counts joined by a semicolon (was three)'
+    'Re-review suggestion taken: step 2 keeps two sentences, the two ring counts joined by a semicolon (was three)',
+    'Re-review round 2 fix: the "C=C one spot over" note keeps two sentences, "Right ring, right atoms, but the C=C sits out of line with the C=O." (was three, so the phone showed only "Right ring, right atoms.")'
   ],
   'fm:organic:oc-1v0wmr4': ['Review suggestion taken: the two cation notes say E1 with no strong base (was "hot acid", the alcohol dehydration setting; this substrate is a bromide)'],
   'fm:organic:oc-1rhxjv': [
@@ -1309,7 +1314,10 @@ const CHANGES = {
     'Review suggestion taken: Lock it in says "to a nucleophile" (was "to every nucleophile")',
     'Review note: benzaldehyde is drawn with its aldehyde H shown, so the caption\'s "an H on top" points at a drawn H'
   ],
-  'fm:organic:oc-p5414p': ['Re-review suggestion taken: step 2 keeps two sentences, ending on "The ethyls stay put." (was three)'],
+  'fm:organic:oc-p5414p': [
+    'Re-review suggestion taken: step 2 keeps two sentences, ending on "The ethyls stay put." (was three)',
+    'Re-review round 2 fix: the "Right ring, faces not shown" note keeps two sentences, its first two joined with "but" (was three; trap notes are one or two)'
+  ],
   'fm:organic:oc-8neusk': [
     'Re-review suggestion taken: step 2 keeps two sentences (was three)',
     'Re-review note: the miscount family on 1-bromo-2,2-dimethylbutane is a loose fit; both reviews left it to Thomas, so it is unchanged and a note flag says so'
@@ -1319,8 +1327,10 @@ const CHANGES = {
   'fm:organic:oc-qn8vo7': ['Re-review suggestion taken: step 1 keeps two sentences, "By induction ...; by resonance ..." (was three)'],
   'fm:organic:oc-vqku6': [
     'Re-review suggestion taken: the "Turned around" note says its mirror image "lies" right on top of it (was "lays")',
-    'Re-review suggestion taken: steps 1 and 2 keep two sentences each (were three)'
-  ]
+    'Re-review suggestion taken: steps 1 and 2 keep two sentences each (were three)',
+    'Re-review round 2 suggestion taken: the C1 and C3 card labels sit at labelDir -55 and -125 (were -70 and -110, whose halos thinned the outer edge of the two vertical ring bonds); with and without the labels, 0 ink pixels differ at 390 and 1280'
+  ],
+  'fm:organic:oc-anc6po': ['Re-review round 2 note: the "C=O: MeLi lands here" halo nicks 1 to 2 px off the inner C=C tip at 1280 (0 px at 390). Kept: the only clear spot, lower right (labelDir 30, tried), makes the drawing 81 percent wider at 390, so the molecule shrinks to 56 percent of its height on phones']
 };
 
 module.exports = {
