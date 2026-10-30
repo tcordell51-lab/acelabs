@@ -127,17 +127,17 @@ const ENTRIES = [
     answer: { line: 'Paragraph 4 says the pattern is not an image of the molecule. Turning it into a structure takes mathematics and judgment.' },
     steps: [
       'Ask why the paragraph is there, not what it says. Function questions want the job.',
-      'Find the line the paragraph builds to: sentence 2. The pattern is a map of repeating distances, not a picture.',
+      'Find the claim the paragraph exists to make: sentence 2. The pattern is a map of repeating distances, not a picture.',
       'See where that pays off. In paragraph 6, Photo 51 speaks only "To anyone trained in the new diffraction theory of helices".'
     ],
     choices: [
-      { text: 'argue that Astbury\'s photographs were more accurate than those taken later at King\'s', role: 'trap', family: 'rc-contradicted', note: 'Paragraph 5 says Wilkins and Gosling got sharper patterns than Astbury\'s. The passage ranks his pictures below the later ones.' },
+      { text: 'argue that Astbury\'s photographs were more accurate than those taken later at King\'s', role: 'trap', family: 'rc-contradicted', note: 'Astbury is named in this very paragraph, which makes him feel like the point, but paragraph 5 says King\'s got sharper patterns than his.' },
       { text: 'show that the technique was invented specifically to study the shape of DNA', role: 'trap', family: 'rc-outside', note: 'Sentence 1 describes the method for any fiber of long molecules. Nothing says it was invented for DNA.' },
       { text: 'explain why Franklin preferred to study the A form rather than the B form', role: 'trap', family: 'rc-other-paragraph', note: 'Her reason for the A form, more exact numbers, is in paragraph 7. Paragraph 4 never mentions either form.' },
       { text: 'establish that a diffraction pattern must be interpreted rather than simply viewed', role: 'key', note: 'Sentence 2: a map of distances that takes mathematics and judgment to turn back into a structure.' },
       { text: 'demonstrate that Astbury\'s fibers were too poorly ordered to reveal the structure', role: 'trap', family: 'rc-off-question', trap: 'A detail, not the job', note: 'Sentence 3 does say it, but one detail inside the paragraph is not the reason the author stops to explain how diffraction works.' }
     ],
-    lockIt: 'Function questions: ask what the paragraph is for, then find the line it builds to.',
+    lockIt: 'Function questions: ask what the paragraph is for, then find the line that does the job.',
     hook: null,
     playWith: play('rc-o15'),
     video: VID.function,
@@ -293,7 +293,7 @@ const ENTRIES = [
     ],
     choices: [
       { text: 'show that proteins had already been proven to be the true carriers of heredity', role: 'trap', family: 'rc-contradicted', note: 'Proteins only looked like the better candidate, paragraph 2, and Avery\'s 1944 work pointed to DNA. Nothing proves proteins carry heredity.' },
-      { text: 'explain why Bragg ordered Watson and Crick to stop working on DNA', role: 'trap', family: 'rc-swapped-cause', trap: 'Borrowed the next cause', note: 'Bragg\'s order came after the water-short model was dropped, sentences 4 and 5. Pauling\'s helix is not the cause.' },
+      { text: 'explain why Bragg ordered Watson and Crick to stop working on DNA', role: 'trap', family: 'rc-swapped-cause', trap: 'Pauling and Bragg, mixed up', note: 'Pauling does come into Bragg\'s story, but at the other end: his three-chain model got the pair let back in, sentence 6. The order itself followed their dropped model.' },
       { text: 'identify the method of model building that Watson and Crick were imitating', role: 'key', note: 'Following the example of: build the model first, test it against the data after.' },
       { text: 'suggest that Pauling had already solved the structure of DNA by 1951', role: 'trap', family: 'rc-contradicted', note: 'Pauling\'s DNA model of early 1953 had the same flaw as their first one. He had not solved it.' },
       { text: 'contrast the alpha helix of proteins with the double helix of DNA', role: 'trap', family: 'rc-off-question', trap: 'Two helices, no comparison', note: 'Both are helices, but the sentence cites Pauling for how he worked, not to compare the two shapes.' }
@@ -509,18 +509,32 @@ const ENTRIES = [
     playWith: play('rc-o15'),
     video: VID.except,
     visual: {
-      type: 'rc.evidence',
-      passage: 'rc-o15',
+      type: 'stack',
       focus: '10.6',
-      spans: [
-        { p: 5, s: 4, quote: 'Trained as a physical chemist at Cambridge', role: 'stated', choice: 'She trained as a physical chemist at Cambridge.' },
-        { p: 5, s: 4, quote: 'she had spent three years in Paris learning to apply X-ray methods', role: 'stated', choice: 'She spent three years in Paris learning X-ray methods.' },
-        { p: 10, s: 5, quote: 'She died of ovarian cancer in April 1958, at the age of thirty-seven.', role: 'stated', choice: 'She died in 1958 at the age of thirty-seven.' },
-        { p: 10, s: 6, quote: 'the Nobel Prize in Physiology or Medicine went to Watson, Crick, and Wilkins', role: 'key', choice: 'She shared the 1962 Nobel Prize with Wilkins.' }
+      panels: [
+        {
+          type: 'rc.evidence',
+          passage: 'rc-o15',
+          spans: [
+            { p: 5, s: 4, quote: 'Trained as a physical chemist at Cambridge', role: 'stated', choice: 'She trained as a physical chemist at Cambridge.' },
+            { p: 5, s: 4, quote: 'she had spent three years in Paris learning to apply X-ray methods', role: 'stated', choice: 'She spent three years in Paris learning X-ray methods.' }
+          ],
+          reuse: REUSE
+        },
+        {
+          type: 'rc.evidence',
+          passage: 'rc-o15',
+          focus: '10.6',
+          spans: [
+            { p: 10, s: 4, quote: 'left for Birkbeck College in London, where she turned to the structure of viruses', role: 'stated', choice: 'She moved to Birkbeck College and worked on viruses.' },
+            { p: 10, s: 5, quote: 'She died of ovarian cancer in April 1958, at the age of thirty-seven.', role: 'stated', choice: 'She died in 1958 at the age of thirty-seven.' },
+            { p: 10, s: 6, quote: 'the Nobel Prize in Physiology or Medicine went to Watson, Crick, and Wilkins', role: 'key', choice: 'She shared the 1962 Nobel Prize with Wilkins.' }
+          ],
+          reuse: REUSE
+        }
       ],
-      reuse: REUSE,
-      alt: 'Four marks in paragraphs 5 and 10, each tagged with the served letter of its choice. Three check off: Cambridge and Paris in paragraph 5, and her death in 1958 in paragraph 10. Paragraph 10, sentence 6 is highlighted as the answer: the 1962 prize went to Watson, Crick and Wilkins.',
-      caption: 'Choices check off in paragraphs 5 and 10. She died in 1958, and the prize sentence names three winners without her.'
+      alt: 'Five marks, paragraph 5 above and paragraph 10 below, each tagged with the served letter of its choice. Four check off: Cambridge and Paris, then Birkbeck and viruses, and her death in 1958. Paragraph 10, sentence 6 is highlighted as the answer: the 1962 prize went to Watson, Crick and Wilkins.',
+      caption: 'Four choices check off in paragraphs 5 and 10. She died in 1958; the prize sentence names three winners without her.'
     },
     demoPick: 'She died in 1958 at the age of thirty-seven.',
     flags: [PLAY_FLAG]
@@ -807,11 +821,11 @@ const ENTRIES = [
       spans: [
         { p: 6, s: 3, quote: 'secrete enzymes that break down protein in leaf litter, which lets their trees tap nitrogen locked inside dead tissue', role: 'key', note: 'the means: enzymes on dead protein' },
         { p: 6, s: 1, quote: 'strung into chains called polyphosphate', role: 'trap', choice: 'move nitrogen along the hypha as chains of polyphosphate', note: 'how phosphate travels' },
-        { p: 6, s: 2, quote: 'as ammonium and as amino acids', role: 'trap', choice: 'take up ammonium faster than a root hair can take it up' }
+        { p: 6, s: 2, quote: 'as ammonium and as amino acids', role: 'trap', choice: 'take up ammonium faster than a root hair can take it up', note: 'the form nitrogen travels in, not how it is freed' }
       ],
       reuse: REUSE,
-      alt: 'Paragraph 6, sentence 3 is highlighted as the answer: many ectomycorrhizal fungi secrete enzymes that break down protein in leaf litter. Lighter marks show where two traps come from: polyphosphate chains in sentence 1 and ammonium in sentence 2.',
-      caption: 'The highlighted means is enzymes on dead protein. The lighter marks are true details about other cargo.'
+      alt: 'Paragraph 6, sentence 3 is highlighted as the answer: many ectomycorrhizal fungi secrete enzymes that break down protein in leaf litter. Lighter marks show where two traps come from: polyphosphate chains in sentence 1, how phosphate travels, and ammonium in sentence 2, the form nitrogen travels in.',
+      caption: 'The highlighted line is the means: enzymes on dead protein. The lighter marks say how cargo travels, not how nitrogen is unlocked.'
     },
     demoPick: 'move nitrogen along the hypha as chains of polyphosphate',
     flags: [PLAY_FLAG]
@@ -1111,7 +1125,12 @@ const CHANGES = {
   'rc:rc-o15-q10': ['Photo 51 choice: family rc-contradicted (the expert suggested rc-misplaced), because paragraph 12, sentence 2 says the photo did not say which way the chains ran; that line is the picture\'s second card'],
   'rc:rc-o15-q13': ['Klug choice: family rc-other-paragraph (the expert suggested rc-outside; the bank says Wrong timing): a real detail from paragraph 11 placed where it does not belong'],
   'rc:rc-p10-q05': ['Carbon dioxide choice: family rc-other-paragraph (the expert suggested rc-outside): respired carbon dioxide is a real line in paragraph 12, as a route for a label'],
-  'rc:rc-o15-q06': ['New span role context ("Read with it") for sentence 6.4, the sentence that shows what eloquent means; renderer tools/explain/visuals/rc.js and the build accept it, never as a proof line']
+  'rc:rc-o15-q06': ['New span role context ("Read with it") for sentence 6.4, the sentence that shows what eloquent means; renderer tools/explain/visuals/rc.js and the build accept it, never as a proof line'],
+  // expert review of B007 (verdict needs-work): one blocked item, three optional notes taken
+  'rc:rc-p10-q04': ['Expert review (blocked): the caption called the ammonium mark (6.2) "other cargo", but that mark is the nitrogen itself. Caption now: the lighter marks say how cargo travels, not how nitrogen is unlocked. The 6.2 span gets the note "the form nitrogen travels in, not how it is freed", and the alt names what each lighter mark shows'],
+  'rc:rc-o15-q14': ['Expert review (optional): the picture checked off three of the four stated choices and left out Birkbeck and viruses (10.4). It is now a two-panel stack so each panel stays under the phone height cap (one panel with all five marks drew 610 px): paragraph 5 with Cambridge and Paris, then paragraph 10 with Birkbeck and viruses, her death and the prize line. Alt and caption say four check off. The build now asks a stack of passage cards for one key span across its panels, not one per panel'],
+  'rc:rc-o15-q09': ['Expert review (optional): the Bragg choice\'s label is "Pauling and Bragg, mixed up" (was "Borrowed the next cause"), and its note names the real pull: Pauling\'s three-chain model is what got the pair let back in (8.6), not what sent them away'],
+  'rc:rc-o15-q03': ['Expert review (optional): step 2 and Lock it in no longer say the paragraph "builds to" sentence 2, since sentence 3 comes after it; the Astbury choice\'s note gives its pull (Astbury is named in paragraph 4 itself) and the refutation in one sentence, so the phone shows both']
 };
 
 module.exports = { group: 'G1', batch: 'B007', title: 'Full-Length Test 1, Reading Comprehension, passages 1 and 2 (25 items; 3 more in the pilot)', entries: ENTRIES, changes: CHANGES };

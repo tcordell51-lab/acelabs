@@ -519,12 +519,19 @@ function recompute(R, p, facts) {
       if (s.role === 'context' && s.choice) issues.push('rc context span carries a choice: ' + s.choice);
       if (s.role === 'stated' && s.choice && !e.choices.some((c) => c.text === s.choice && c.role === 'stated')) issues.push('rc stated span tags a choice that is not stated: ' + s.choice);
     });
+    // a two-panel stack of passage cards (batch B007 fixes on) needs its key span in one
+    // panel, not in each: an EXCEPT item can check off lines in one panel and show the
+    // proof line in the other, so each panel stays under the phone height cap
+    const rcPanels = (e.visual.type === 'stack' ? e.visual.panels : [e.visual]).filter((x) => x.type === 'rc.evidence');
+    const firstRc = rcPanels[0] === p;
     const all = P.paragraphs.flat().join(' ');
-    e.steps.forEach((st) => (st.match(/"([^"]+)"/g) || []).forEach((q) => { const t = q.slice(1, -1).replace(/[,.]$/, ''); if (!all.includes(t)) issues.push('step quote not in passage: ' + t); }));
+    if (firstRc) e.steps.forEach((st) => (st.match(/"([^"]+)"/g) || []).forEach((q) => { const t = q.slice(1, -1).replace(/[,.]$/, ''); if (!all.includes(t)) issues.push('step quote not in passage: ' + t); }));
     const keySpans = p.spans.filter((s) => s.role === 'key').map((s) => s.p + '.' + s.s);
     const proof = (served.extra.proof || []).map((x) => x.paragraph + '.' + x.sentence);
-    if (!keySpans.length) issues.push('rc.evidence has no key span');
+    const anyKey = rcPanels.some((x) => (x.spans || []).some((s) => s.role === 'key'));
+    if (!anyKey) { if (firstRc) issues.push('rc.evidence has no key span'); }
     else if (!keySpans.every((k) => proof.includes(k))) issues.push('key span not among the bank proof lines ' + proof);
+    else if (!keySpans.length) checks.push('RC spans: every quote found verbatim; this panel holds no key span (the other panel of the stack does)');
     else checks.push('RC spans: every quote found verbatim; key spans match the bank proof lines (' + keySpans.join(', ') + ')');
   }
   if (p.type === 'chem.mechanism' && p.fig && !p.ref) {
