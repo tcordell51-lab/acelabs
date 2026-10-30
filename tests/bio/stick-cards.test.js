@@ -93,22 +93,25 @@ function pass(t, id, route) {
    (frame: checkFrame) and its own parts (still: checkStill), what a card
    about the CHECK must show (has, also), what it must not show (not:
    usually the prediction's state or the check's trap), and what the
-   check view's caption says (cap). */
+   check view's caption says (cap), or that it has none because the
+   caption element is part of the copied picture (capOff). The texts are
+   kept loose enough to survive a visualizer rewording that keeps the
+   fact (the cross-bridge explainer is one). */
 const AUDIT = {
   tonicity: { hub: 'cell', frame: true, still: false, has: /Plasmolysis \(Elodea leaf cells\)/, not: /Hemolysis|ghosts|Red blood cells/, cap: /HYPERTONIC/ },
   respiration: { hub: 'cell', frame: true, still: true, has: /Krebs cycle \S matrix/, also: /acetyl-CoA/, not: /INNER MITOCHONDRIAL MEMBRANE|ATP synthase/, cap: /Stage 3 \S Krebs cycle \(matrix/ },
   endocrine: { hub: 'physiology', frame: true, still: false, has: /Thyroid/, also: /TSH/, not: /Posterior Pituitary/ },
   nephron: { hub: 'physiology', frame: true, still: false, has: /Collecting Duct/, also: /aquaporin-2/, not: /Ascending Loop/ },
   'action-potential': { hub: 'physiology', frame: true, still: false, has: /HYPERPOL/, cap: /Hyperpolarization/ },
-  'cross-bridge': { hub: 'physiology', frame: true, still: true, has: /bound to troponin C/, also: /pulling tropomyosin off the actin/, cap: /Cross-bridge forms/ },
+  'cross-bridge': { hub: 'physiology', frame: true, still: true, has: /troponin C/, also: /tropomyosin off the/, cap: /Cross-bridge forms/ },
   sarcomere: { hub: 'physiology', frame: false, still: false, has: /TEM VIEW/, also: /A band/ },
-  bohr: { hub: 'physiology', frame: true, still: true, has: /DISSOCIATION CURVE/, also: /LEFT shift.*fetal Hb/, cap: /LEFT shift/ },
+  bohr: { hub: 'physiology', frame: true, still: true, has: /DISSOCIATION CURVE/, also: /LEFT shift.*fetal Hb/, capOff: true },
   'blood-types': { hub: 'physiology', frame: false, still: false, has: /Type A/, also: /Anti-B antibody/ },
-  'ovarian-cycle': { hub: 'physiology', frame: true, still: false, has: /Progesterone/, cap: /LUTEAL \| Day 21/ },
+  'ovarian-cycle': { hub: 'physiology', frame: true, still: true, has: /Corpus luteum/, also: /Progesterone/, cap: /LUTEAL \| Day 21/ },
   'bone-layers': { hub: 'physiology', frame: true, still: false, has: /cross-section of compact bone \(ground section\)/, also: /Haversian canal/, cap: /Osteon/ },
-  'lac-operon': { hub: 'genetics', frame: true, still: true, has: /TRP OPERON/, also: /Trp acts as corepressor/, not: /LAC OPERON|Lactose/, cap: /OFF/ },
+  'lac-operon': { hub: 'genetics', frame: true, still: true, has: /TRP OPERON/, also: /Trp acts as corepressor/, not: /LAC OPERON|Lactose/, capOff: true },
   'hardy-weinberg': { hub: 'genetics', frame: false, still: true, has: /random mating/, also: /no selection/ },
-  'embryo-stages': { hub: 'devo', frame: true, still: false, has: /Neurula/, also: /neural tube/, not: /Gastrula/ },
+  'embryo-stages': { hub: 'devo', frame: true, still: true, has: /Neurula/, also: /ectoderm.*neural tube/, not: /Gastrula/ },
   homology: { hub: 'evolution', frame: false, still: false, has: /Analogous structures/ }
 };
 const hasView = (a) => a.frame || a.still;
@@ -150,6 +153,7 @@ test('every card about the check shows the check, within the card limit', () => 
         assert.equal(pic, p.cardSnap.html, id + ': the card holds the check view');
         assert.notEqual(pic, p.frames[p.frames.length - 1].html, id + ': the check view differs from the last watched frame');
         if (a.cap) assert.match(p.cardSnap.caption, a.cap, id + ': check view caption');
+        if (a.capOff) assert.equal(p.cardSnap.caption, '', id + ': the caption is in the picture, not repeated under it');
       } else {
         assert.equal(p.cardSnap, null, id + ': no check view');
         assert.equal(pic, p.frames[p.frames.length - 1].html, id + ': the card reuses the last watched frame');
@@ -195,13 +199,23 @@ test('bone layers: the osteon question saves the ground section at full strength
   const { p, pic } = pass(t, 'bone-layers', 'check');
   assert.match(p.cardSnap.caption, /Osteon \(zoom\)/);
   assert.doesNotMatch(p.cardSnap.caption, /Endosteum/);
-  // the zoom inset group: full strength on the card, dimmed (0.55) on the
-  // endosteum stop the student last watched
   const last = p.frames[p.frames.length - 1];
   assert.match(last.caption, /Endosteum/);
-  assert.match(last.html, /<g opacity="0\.55">/);
-  assert.match(pic, /<g opacity="1">/);
-  assert.doesNotMatch(pic, /<g opacity="0\.55">/);
+  // the zoom inset is the group holding the ZOOM title: full strength on
+  // the card, dimmed on the endosteum stop the student last watched (by
+  // however much the bone view dims it)
+  const insetOpacity = (html) => {
+    const box = t.w.document.createElement('div');
+    box.innerHTML = html;
+    const title = [...box.querySelectorAll('text')].find((x) => /^ZOOM: cross-section of compact bone/.test(x.textContent));
+    assert.ok(title, 'the inset title is in the picture');
+    const g = title.parentNode;
+    const style = /(?:^|;)\s*opacity:\s*([\d.]+)/.exec(g.getAttribute('style') || '');
+    return style ? +style[1] : (g.hasAttribute('opacity') ? +g.getAttribute('opacity') : 1);
+  };
+  assert.equal(insetOpacity(pic), 1, 'inset at full strength on the card');
+  assert.ok(insetOpacity(last.html) < 1, 'inset dimmed on the endosteum stop');
+  assert.notEqual(pic, last.html);
   const stage = t.w.document.getElementById('boneStage');
   assert.equal(stage.value, '2', 'the visualizer sits on the osteon stop');
   assert.ok(pic.length < 32000, 'osteon card picture is ' + pic.length + ' characters');
@@ -323,6 +337,73 @@ test('snapshots copy only paint the clone would not get on its own', () => {
   assert.doesNotMatch(pic, /url\(#rl-clip\)/, 'references follow the renamed ids');
 });
 
+test('no frame caption shows an em dash, on any entry, in the watched frames or the check view', () => {
+  for (const file of Object.values(HUB_FILE)) {
+    const t = boot(file);
+    for (const id of Object.keys(t.w.BioStick.panels)) {
+      const { p } = pass(t, id, 'check');
+      p.frames.forEach((f, i) => assert.doesNotMatch(f.caption, /—/, id + ': frame ' + (i + 1) + ' caption "' + f.caption + '"'));
+      if (p.cardSnap) assert.doesNotMatch(p.cardSnap.caption, /—/, id + ': check view caption');
+    }
+  }
+  // the rule itself, on a caption that is known to carry an em dash
+  const t = boot('bio-physiology.html', { beforeBoot: (w) => {
+    const ap = w.BIO_STICK_ENTRIES.find((e) => e.id === 'action-potential');
+    ap.caption = '#stickTestCap';
+    const cap = w.document.createElement('p');
+    cap.id = 'stickTestCap';
+    cap.textContent = 'Peak (+30 mV) —  Na+ inactivates — K+ opens';
+    w.document.body.appendChild(cap);
+  } });
+  const { p } = pass(t, 'action-potential', 'predict');
+  assert.equal(p.frames[0].caption, 'Peak (+30 mV): Na+ inactivates: K+ opens');
+});
+
+test('a caption already inside the check picture is not repeated under it (bohr, trp)', () => {
+  const first = boot('bio-physiology.html');
+  const { p } = pass(first, 'bohr', 'check');
+  // the prediction frames copy only the curve, so they keep the h5 as their caption
+  assert.ok(p.frames.every((f) => f.caption.length > 0), 'prediction frames keep their caption');
+  assert.equal(p.cardSnap.caption, '', 'the side panel h5 is in the picture');
+  assert.match(p.cardSnap.html, /LEFT shift/);
+  // the card link's replay ends on that view, with no caption line under it
+  const via = boot('bio-physiology.html', { hash: '#stick-bohr-check', seed: { acethedat_bio_engine_v1: first.store.get('acethedat_bio_engine_v1') } });
+  const q = via.panel('bohr');
+  assert.equal(q.frames.length, q.entry.frames.length + 1);
+  const cap = q.node.querySelector('.stick-stage .stick-cap');
+  assert.equal(cap.textContent, '');
+  assert.ok(cap.hidden, 'caption line hidden on the check view');
+  const shown = q.node.querySelector('.stick-stage .stick-frame').textContent;
+  assert.equal((shown.match(/LEFT shift/g) || []).length, 1, 'the h5 shows once');
+  assert.deepEqual(via.errs, []);
+});
+
+test('cross-bridge: every line about tropomyosin says it leaves the binding sites, never that it leaves actin', () => {
+  const t = boot('bio-physiology.html');
+  const e = t.w.BIO_STICK_ENTRIES.find((x) => x.id === 'cross-bridge');
+  const lines = [e.hook, e.checkHook];
+  for (const b of [e.predict, e.check]) lines.push(b.q, b.why, b.answer, ...b.options, ...b.traps.filter(Boolean));
+  const about = lines.filter((x) => /tropomyosin/i.test(x));
+  assert.ok(about.length >= 3, 'the check hook, why and answer name tropomyosin');
+  about.forEach((x) => {
+    assert.match(x, /binding sites/, x);
+    assert.doesNotMatch(x, /off (the )?actin\b(?!\s+myosin-binding)/, x);
+  });
+  // and the card about the check, picture text and all
+  const { card } = pass(t, 'cross-bridge', 'check');
+  const box = t.w.document.createElement('div');
+  box.innerHTML = card.explanation;
+  assert.doesNotMatch(box.textContent, /tropomyosin[^.]*\boff (the )?actin\b(?!\s+myosin-binding)/);
+});
+
+test('bone layers: the prediction hook leaves the canal rule to the check card', () => {
+  const t = boot('bio-physiology.html');
+  const e = t.w.BIO_STICK_ENTRIES.find((x) => x.id === 'bone-layers');
+  // the check asks what runs through every osteon (Volkmann / Haversian / trabecula)
+  assert.doesNotMatch(e.hook, /Haversian|Volkmann|osteon/i);
+  assert.match(e.checkHook, /Haversian/);
+});
+
 /* ---------- validator ---------- */
 
 function validate(dataSrc) {
@@ -340,7 +421,7 @@ test('validator: the real data passes and counts its check frames', () => {
   const r = validate(DATA);
   assert.equal(r.code, 0, r.out);
   assert.match(r.out, /15 entries, 30 questions OK/);
-  assert.match(r.out, /11 check frames, 5 check stills/);
+  assert.match(r.out, /11 check frames, 7 check stills/);
 });
 
 test('validator: checkStill selectors are checked like still, and an empty checkStill is caught', () => {
@@ -419,7 +500,14 @@ test('provenance: the TEM M line rule reads the way the histology review states 
   REFS.views.filter((v) => /^sarcomere-tem-/.test(v.id)).forEach((v) => {
     const f = v.facts.find((x) => /^Density order/.test(x.fact));
     assert.match(f.real, /M line is darker than the H zone but never darker than the overlap/, v.id);
-    assert.match(f.fact, v.id === 'sarcomere-tem-contracted' ? /overlap = M line/ : /overlap > M line > H zone/, v.id + ': the order follows the state');
+    // a record may only call the density order a match when it follows
+    // the rule for its state; a drawing that departs from it is marked so
+    // and says why
+    if (f.status === 'matches') {
+      assert.match(f.fact, v.id === 'sarcomere-tem-contracted' ? /overlap = M line/ : /overlap > M line > H zone/, v.id + ': the order follows the state');
+    } else {
+      assert.match(f.reason, /M line/, v.id + ': the reason names the M line');
+    }
   });
 });
 
@@ -475,25 +563,34 @@ test('provenance: every flagged fact is named in the docs list', () => {
   const flagged = new Set(REFS.views.filter((v) => v.facts.some((f) => f.status !== 'matches')).map((v) => v.id));
   assert.deepEqual([...listed].sort(), [...flagged].sort());
   const n = REFS.views.reduce((k, v) => k + v.facts.filter((f) => f.status !== 'matches').length, 0);
-  const words = ['zero', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten'];
+  const words = ['zero', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten',
+    'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen', 'Twenty'];
   assert.match(m[1].trimStart(), new RegExp('^' + words[n] + ' facts? (is|are) marked'), 'the count in the docs');
 });
 
-test('provenance: every code location still holds the line it cites', () => {
+/* The cited line is a hint for the reader. Code moves when other work
+   merges, so the test asks for the match text to occur exactly once in
+   the file (so the hint can always be found again); when it is no longer
+   on the cited line, the test passes and names the line it moved to, so
+   the record can be refreshed. A match that is gone, or that occurs more
+   than once, fails: the fact needs a look. */
+test('provenance: every code location still holds its match, once, and stale lines are named', (t) => {
   const seen = new Map();
+  const moved = [];
   REFS.views.forEach((v) => v.facts.forEach((f) => {
     const c = f.code;
     if (!seen.has(c.file)) seen.set(c.file, fs.readFileSync(path.join(ROOT, c.file), 'utf8').split('\n'));
     const lines = seen.get(c.file);
     const re = new RegExp(c.match);
-    assert.ok(Number.isInteger(c.line) && c.line >= 1 && c.line <= lines.length, v.id + ': line in range');
-    if (!re.test(lines[c.line - 1])) {
-      const now = lines.map((l, i) => (re.test(l) ? i + 1 : 0)).filter(Boolean);
-      assert.fail(v.id + ': ' + c.file + ' line ' + c.line + ' no longer holds "' + c.match + '"; ' +
-        (now.length ? 'it is now on line ' + now.join(', ') : 'it is gone') + ' (update bio-visual-references.json)');
-    }
+    assert.ok(Number.isInteger(c.line) && c.line >= 1, v.id + ': line is a positive number');
+    const hits = lines.map((l, i) => (re.test(l) ? i + 1 : 0)).filter(Boolean);
+    assert.ok(hits.length > 0, v.id + ': ' + c.file + ' no longer holds "' + c.match + '" (cited at line ' + c.line +
+      '); check the fact "' + f.fact + '" and update bio-visual-references.json');
+    assert.equal(hits.length, 1, v.id + ': "' + c.match + '" occurs on lines ' + hits.join(', ') + ' of ' + c.file + '; make the match unique');
+    if (hits[0] !== c.line) moved.push(v.id + ': ' + c.file + ' "' + c.match + '" moved from line ' + c.line + ' to ' + hits[0]);
     assert.ok(c.sets && c.sets.length > 5, v.id + ': says what the line sets');
   }));
+  [...new Set(moved)].forEach((m) => t.diagnostic(m + ' (refresh bio-visual-references.json)'));
 });
 
 test('provenance: references say how far they were checked; plain ASCII, no personal data', () => {

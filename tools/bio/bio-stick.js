@@ -73,10 +73,6 @@
     if (closest) list = list.map(function (n) { return n.closest(closest); }).filter(Boolean);
     return list;
   }
-  function textOf(sel) {
-    var n = resolve(sel);
-    return n ? n.textContent.replace(/\s+/g, ' ').trim() : '';
-  }
   function today() {
     var d = new Date();
     return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
@@ -239,9 +235,14 @@
         // a stylesheet rule may override a presentation attribute on an
         // element it can target by id or class; keep those values
         var keep = targeted && a[i].hasAttribute(k);
-        // an element no id or class rule can reach, whose own attribute
-        // already gives this value, needs no copy (it keeps a detailed
-        // picture under the card limit)
+        // an element with no id or class whose own attribute already
+        // gives the computed value needs no copy: the clone keeps that
+        // attribute (this keeps a detailed picture under the card limit).
+        // A descendant rule may still reach such an element, but where it
+        // changes the value, attribute and computed value differ and the
+        // value is copied. What this relies on: the page that shows the
+        // card adds no rule of its own that reaches the copy (no hub
+        // stylesheet has a bare svg element rule that hits .stick-card-pic)
         if (!targeted && a[i].hasAttribute(k) && asComputed(k, a[i].getAttribute(k)) === v) return '';
         var base = Object.prototype.hasOwnProperty.call(NOT_INHERITED, k) ? NOT_INHERITED[k]
           : (pcs ? pcs.getPropertyValue(k) : null);
@@ -253,22 +254,37 @@
     }
   }
   /* sels: the parts to copy (the check's checkStill); the entry's still
-     when left out. */
+     when left out. The caption is read from the page like the picture:
+     a caption element that sits inside a copied part is already in the
+     picture, so it is not repeated under it (bohr's check view copies
+     the whole side panel, h5 and all). */
   function snapshot(entry, sels) {
-    var parts = [];
+    var parts = [], srcs = [];
     (sels && sels.length ? sels : (entry.still || [])).forEach(function (sel) {
       var src = resolve(sel);
       if (!src) return;
+      srcs.push(src);
       var clone = src.cloneNode(true);
       try { inlinePaint(src, clone); } catch (e) { /* keep the plain clone */ }
       parts.push(sanitize(clone).outerHTML);
     });
+    function capText(sel) {
+      var n = resolve(sel);
+      if (!n) return '';
+      for (var i = 0; i < srcs.length; i++) if (srcs[i] === n || srcs[i].contains(n)) return '';
+      return n.textContent.replace(/\s+/g, ' ').trim();
+    }
     var cap = '';
-    if (entry.caption) cap = (entry.captionLabel || '') + textOf(entry.caption);
+    if (entry.caption) {
+      var main = capText(entry.caption);
+      if (main) cap = (entry.captionLabel || '') + main;
+    }
     if (entry.captionExtra) {
-      var extra = textOf(entry.captionExtra);
+      var extra = capText(entry.captionExtra);
       if (extra) cap = cap ? cap + ' | ' + extra : extra;
     }
+    // a visualizer em dash reads as a colon here too, as in the picture
+    cap = cap.replace(/\s*\u2014\s*/g, ': ');
     return { html: parts.join(''), caption: cap };
   }
   function captureFrames(entry) {
@@ -294,7 +310,7 @@
     return snapshot(entry, entry.checkStill);
   }
 
-  /* ---------- lab tabs (Body Lab, Genetics Lab) ---------- */
+  /* ---------- lab tabs (Body Systems Lab, Genetics Studio) ---------- */
 
   function openTab(entry) {
     if (!entry.tab) return;

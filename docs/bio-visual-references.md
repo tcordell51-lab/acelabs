@@ -112,7 +112,7 @@ states) takes about fifteen minutes, not forty.
 
 ## Facts already flagged
 
-Six facts are marked `close`. None is a reason to hold a view back on
+Seven facts are marked `close`. None is a reason to hold a view back on
 its own, but each is where a sharp eye will look first:
 
 - `tonicity-rbc-isotonic`: the edge-on cell is 2.7 um at the thickest
@@ -124,8 +124,12 @@ its own, but each is where a sharp eye will look first:
   states is right; the picture is not affected.
 - `tonicity-rbc-lysed`: ghosts are drawn a little easier to see than in
   true brightfield, on purpose.
-- `tonicity-elodea-isotonic`: the wall line is drawn about 2 um so it
-  shows on a phone; a real one usually looks thinner.
+- `tonicity-elodea-isotonic`: two facts. The wall line is drawn about
+  2 um so it shows on a phone; a real one usually looks thinner. And the
+  cells are 30 um wide and 77 to 125 um long: inside the range one class
+  exercise gives (20 to 30 by 60 to 130 um), but longer than the typical
+  cell another guide gives (about 50 by 25 um), and both sources are
+  classroom pages. Measure a real cell against the 50 um bar.
 - `bone-long-gross`: the end shell is 21 percent of the shaft wall (a
   rough range of 15 to 20), and the shaft is 57 percent of the length
   (60 to 75 in a real long bone).
@@ -150,7 +154,10 @@ were built to get them right; check that they still do.
   the H zone but never darker than the overlap; when fully contracted
   the thin filaments reach it and it takes the overlap gray. Triads at
   the A-I junctions; mitochondria in pairs by the Z disc. The strip is
-  squashed top to bottom on purpose (see the record).
+  squashed top to bottom on purpose (see the record). Check the triads
+  against `cil-10815`, `columbia-muscle-em` or `skm-2011-triad`, not
+  `cil-10817`: that one is an osmium-ferrocyanide prep, so its T tubules
+  are dark and its SR does not show.
 - **Long bone**: spongy bone fills the ends and opens into the cavity;
   the shell over the ends is thin; the epiphyseal line runs across the
   spongy bone; red marrow only at the upper end in an adult.
@@ -185,8 +192,12 @@ Cell Image Library and Histology Guide entries are for viewing only.
 - every sign-off block has its four fields, empty or filled by the
   rules in step 6;
 - the file is plain ASCII with no personal data;
-- every code `match` still sits on the line it cites.
+- every code `match` still occurs in its file, exactly once.
 
-If someone changes a drawing, that last check fails and names the line
-the text moved to (or says it is gone), so the record gets updated in
-the same change.
+The `line` in each code location is a hint. Other work moves code
+around, so when a match is no longer on its cited line the test still
+passes and prints the line it moved to (a `# ... moved from line ...`
+note in the test output); refresh the record when convenient. If the
+match is gone, or now occurs more than once, the test fails: someone
+changed the drawing, and the fact needs a fresh look in the same
+change.

@@ -317,11 +317,12 @@
       // the check is what calcium starts: heads binding the uncovered
       // actin sites (the cross-bridge stage), not the rigor end state,
       // with the stage explainer that says Ca2+ on troponin C pulls
-      // tropomyosin off actin
+      // tropomyosin off the myosin-binding sites (tropomyosin stays on
+      // the thin filament; it only rolls off the sites)
       checkFrame: [{ set: '#cbStage', value: 50 }],
       checkStill: ['#cbSvg', '#cbExplain'],
       hook: 'ATP binding lets go; ATP splitting cocks. No ATP, no letting go.',
-      checkHook: 'Calcium grabs troponin, tropomyosin rolls off actin, and the heads can bind.',
+      checkHook: 'Calcium grabs troponin, tropomyosin rolls off the binding sites, and the heads can bind.',
       predict: {
         q: 'A muscle runs out of ATP. Where does the myosin head end up?',
         options: [
@@ -351,8 +352,8 @@
           'The stroke runs on ATP hydrolysis and Pi release. Calcium only uncovers the binding sites.',
           'Pumping calcium back into the SR is how the muscle relaxes.'
         ],
-        why: 'Calcium from the SR binds troponin C. Troponin drags tropomyosin off actin, exposing the sites myosin binds.',
-        answer: 'Calcium binds troponin, which moves tropomyosin off actin binding sites.'
+        why: 'Calcium from the SR binds troponin C. Troponin drags tropomyosin off the myosin-binding sites on actin, exposing them.',
+        answer: 'Calcium binds troponin, which moves tropomyosin off the myosin-binding sites on actin.'
       }
     },
 
@@ -502,8 +503,11 @@
         [{ set: '#reproSlider', value: 14 }]
       ],
       still: ['#reproSvg'], caption: '#reproPhaseTag', captionExtra: '#reproDayTag',
-      // the check is the corpus luteum: day 21, luteal phase, progesterone high
+      // the check is the corpus luteum: day 21, luteal phase, progesterone
+      // high. The chart shows progesterone up but names no structure; the
+      // side panel names the corpus luteum as its source
       checkFrame: [{ set: '#reproSlider', value: 21 }],
+      checkStill: ['#reproSvg', '#reproSide'],
       hook: 'Estrogen flips the switch, LH pulls the trigger.',
       checkHook: 'The empty follicle becomes the corpus luteum, the progesterone source.',
       predict: {
@@ -550,7 +554,7 @@
       still: ['#boneSvg'], caption: '#boneStageName',
       // the check is the center of an osteon: the ground-section stop
       checkFrame: [{ set: '#boneStage', value: 2 }],
-      hook: 'Peri is the perimeter. Endo is inside. Haversian runs the length; Volkmann goes across.',
+      hook: 'Peri is the perimeter. Endo is inside.',
       checkHook: 'Haversian runs the length through each osteon; Volkmann goes across.',
       predict: {
         q: 'Peel a long bone from the outside in. Which membrane lines its hollow center?',
@@ -695,8 +699,11 @@
       ],
       still: ['#embryoTL .embryo-stage.active .em-svg', '#timelineSide'],
       // the check is the nervous system: the neurula, where ectoderm
-      // folds into the neural tube
+      // folds into the neural tube. Only the side panel goes on the card:
+      // the neurula icon is a small unlabeled oval that names no germ
+      // layer, and blown up to card width it teaches nothing
       checkFrame: [{ click: '[data-emb="neurula"]' }],
+      checkStill: ['#timelineSide'],
       hook: 'Ball, then hollow ball, then the fold that makes three layers.',
       checkHook: 'Ectoderm makes the outside and the nerves; the neural tube folds in from it.',
       predict: {
