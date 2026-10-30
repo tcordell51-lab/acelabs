@@ -9,8 +9,9 @@
        biconcave discs 7.5 um across with a flat central pallor, a few
        touching, one overlapping pair, two seen edge-on. Hypotonic: the
        discs cup (stomatocytes: face on, the pallor narrows to a slit;
-       side on, a bowl thick at the base), then round up into evenly
-       dense spheres. The membrane barely stretches, so a sphere holds
+       side on, a D-shaped bowl with thick rounded rims and a shallow
+       cup, holding a little more than the disc), then round up into
+       evenly dense spheres. The membrane barely stretches, so a sphere holds
        more water yet is a little narrower (about 6.7 um). Hemolysis:
        faint, smooth, empty ghosts about 6.7 um across in an evenly
        tinted, nearly empty field. Hypertonic: shrunken cells with many
@@ -185,18 +186,20 @@
   // Edge-on profile around the origin, half width A px. The biconcave
   // shape follows Evans and Fung, with the middle set to 1 um thick:
   // about 2.7 um at the thickest. cup (0 to 1) turns it into a
-  // stomatocyte seen side on: a bowl. The lower dimple fills in to a
-  // convex base about 2 um deep while the upper one stays as a shallow
-  // cup (about 0.7 um), so the cell is about 1.8 um thick at the middle
-  // with thick, rounded rims. sph (0 to 1) blends it toward a sphere of
-  // radius A, and amp with n adds crenation bumps (16 samples per bump
-  // keep them round).
+  // stomatocyte seen side on: a D-shaped bowl. The lower dimple fills in
+  // to a convex base about 2.3 um below the center while the upper one
+  // stays as a cup about 1 um deep, so the cell is about 2.2 um thick at
+  // the middle and about 2.5 um at the rounded rims. As a solid of
+  // revolution the bowl holds a little more than the disc (about 1.06
+  // times at full cup), as a swelling cell should. sph (0 to 1) blends
+  // it toward a sphere of radius A, and amp with n adds crenation bumps
+  // (16 samples per bump keep them round).
   function edgePath(A, cup, sph, amp, n) {
     var pts = [], N = amp ? n * 16 : 48;
     for (var i = 0; i < N; i++) {
       var th = i / N * 2 * Math.PI, c = Math.cos(th), s = Math.sin(th), q = Math.sqrt(Math.abs(s));
       var disc = -s * 0.5 * RBC_PX * (1 + 7.83 * c * c - 4.39 * c * c * c * c);
-      var bowl = s < 0 ? 11 * q : 7 * s * s - 6 * q;    // outer base below, the cup above
+      var bowl = s < 0 ? 13 * q : 11 * s * s - 10.5 * q;    // outer base below, the cup above
       var yd = lerp(disc, bowl, cup);
       var x = A * c, y = lerp(yd, -A * s, sph);
       if (amp) { var b = Math.pow(Math.max(0, Math.cos(n * th)), 2) * amp * A; x += b * c; y -= b * s; }
@@ -241,7 +244,9 @@
       defs = radial('rl-rbc', DISC.map(function (c, i) { return mix(mix(c, CUP[i], cup), SPHERE[i], den); })) +
         '<g id="rl-d"><circle r="' + f1(A) + '" fill="url(#rl-rbc)"' + RBC_STROKE + '/>' +
         (slit > 0 ? '<ellipse rx="' + f1(0.45 * A * mouth) + '" ry="' + f1(0.12 * A) + '" fill="#f0d0c9" opacity="' + f2(slit) + '"/>' : '') + '</g>';
-      edge = edgePath(A, cup, clamp((t - 0.3) / 0.45, 0, 1), 0, 0);   // side view reaches round first
+      // the side view starts to round up while it is still cupping (from t
+      // 0.15), so the full bowl never shows unblended, and is round by t 0.75
+      edge = edgePath(A, cup, clamp((t - 0.15) / 0.6, 0, 1), 0, 0);
       edgeFill = mix('#d3807f', '#c86468', den);
       vol = 1 + 0.4 * t;
       // the cup caption holds exactly while the slit is drawn (0.2 < t < 0.7)
@@ -279,7 +284,7 @@
           '<path d="' + face + '" stroke="#e07f84" stroke-opacity="' + f2(0.45 * clamp((t - 0.3) / 0.2, 0, 1)) + '" stroke-width="2.6" stroke-linecap="round"/></g>';
       });
       edge = edgePath(A, 0, 0.3 * t, amp, 14);
-      edgeFill = '#c4686c';
+      edgeFill = mix('#d3807f', '#c4686c', ct);           // darkens with the face-on cells
       vol = 1 - 0.25 * t;
       title = t < 0.25 ? 'Hypertonic: water out, the cells start to shrink and crenate (short blunt projections)'
         : 'Hypertonic: water out, cells shrunken and crenated, with many short blunt projections';
@@ -392,14 +397,16 @@
     plasmolyzed = plasmolyzed && diff >= 5;              // only a hypertonic solution plasmolyzes
     // How far the protoplasts pull in (p), tied to the page's plasmolyzed
     // flag (ext above 60). Hypertonic but not plasmolyzed (ext 55 to 60):
-    // p rises from about 0 to 0.15, so in every cell the membrane only
-    // leaves the corners (incipient plasmolysis); the ends stay near the
-    // walls and no strands form. Plasmolyzed: p runs on from 0.17 at ext
-    // 61 to 1 at ext 100 in even steps, so the protoplasts pull steadily
-    // further off the walls and only the strands appear at once. Up to
-    // ext 70 (diff 20) it is named early plasmolysis, as on the page's
-    // outcome card; past that the ends have rounded up.
-    var p = plasmolyzed ? lerp(0.15, 1, clamp((diff - 10) / 40, 0, 1)) : (diff >= 5 ? 0.15 * clamp((diff - 4) / 6, 0, 1) : 0);
+    // p rises from about 0 to 0.06, so in every cell the membrane only
+    // leaves the corners (incipient plasmolysis); the ends stay within
+    // about 3.5 px (3 um) of the end walls and no strands form.
+    // Plasmolyzed: p steps to 0.13 at ext 61, where the strands appear
+    // and the membrane visibly pulls off the end walls, then runs on to 1
+    // at ext 100 in even steps, so the protoplasts pull steadily further
+    // off the walls. Up to ext 70 (diff 20) it is named early
+    // plasmolysis, as on the page's outcome card; past that the ends have
+    // rounded up.
+    var p = plasmolyzed ? lerp(0.11, 1, clamp((diff - 10) / 40, 0, 1)) : (diff >= 5 ? 0.06 * clamp((diff - 4) / 6, 0, 1) : 0);
     var early = plasmolyzed && diff <= 20;
     var turgid = diff <= -5;
     var gap = '', flat = '', strands = '', nuc = '', walls = '';

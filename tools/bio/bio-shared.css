@@ -1744,22 +1744,36 @@ foreignObject table td, foreignObject table th{padding:6px 8px !important;line-h
   .lab [style*="grid-template-columns: 160px 1fr 1fr 1fr"]{grid-template-columns:1fr 1fr!important}
 }
 
-/* Tonicity sandbox on a phone: two nested 18 px paddings left the
-   microscope picture 284 px wide at 390, so its labels read near 8 CSS px.
-   With them trimmed it takes the full card width (labels about 9 to 10
-   px), and the cell toggle, slider and scenario buttons are 44 px tap
-   targets. */
+/* Tonicity sandbox: the microscope picture and its readouts sit side by
+   side (the inline grid, 1fr 280px) only while the picture keeps at
+   least 340 px. In a narrower card (from 781 to about 1100 px the hub
+   puts the lab in a narrow column, and the grid squeezed the picture to
+   2 to 244 px) the readouts wrap below it instead. */
+#tonicityBody [style*="grid-template-columns:1fr 280px"]{display:flex!important;flex-wrap:wrap}
+#tonicityBody #tonCellSvg{flex:1000 1 340px;min-width:0}
+#tonicityBody [style*="grid-template-columns:1fr 280px"] > div{flex:1 1 280px;min-width:0}
+/* the three slider labels wrap in a narrow card; keep a gap between them
+   and align each to its end of the slider */
+#tonicityBody div[style*="justify-content:space-between"]{gap:12px}
+#tonicityBody div[style*="justify-content:space-between"] > span:nth-child(2){text-align:center}
+#tonicityBody div[style*="justify-content:space-between"] > span:last-child{text-align:right}
+/* On a phone two nested 18 px paddings left the picture 284 px wide at
+   390, so its labels read near 8 CSS px. With them trimmed it takes the
+   full card width (labels about 9 to 10 px). The 44 px tap targets for
+   the cell toggle, slider and scenario buttons are in the next rule,
+   which also covers touch tablets. */
 @media (max-width:480px){
   #tonicityBody{padding:0!important}
   #tonicityBody > div{padding:10px!important}
-  #tonicityBody .ton-cell-btn{min-height:44px;padding:6px 10px!important}
+  #tonicityBody .ton-cell-btn{padding:6px 10px!important}
+  #tonicityBody #tonSolute{margin:0}
+}
+/* 44 px tap targets on a phone, and on any touch screen (a tablet at 768
+   to 1024 px would otherwise get 26 px scenario buttons) */
+@media (max-width:480px), (pointer:coarse){
+  #tonicityBody .ton-cell-btn{min-height:44px}
   #tonicityBody .ton-preset{min-height:44px}
-  #tonicityBody #tonSolute{height:44px;margin:0}
-  /* the three slider labels wrap; keep a gap between them and align
-     each to its end of the slider */
-  #tonicityBody div[style*="justify-content:space-between"]{gap:12px}
-  #tonicityBody div[style*="justify-content:space-between"] > span:nth-child(2){text-align:center}
-  #tonicityBody div[style*="justify-content:space-between"] > span:last-child{text-align:right}
+  #tonicityBody #tonSolute{height:44px}
 }
 
 /* Ace Cards: a flipped card takes the height of its back. The back is

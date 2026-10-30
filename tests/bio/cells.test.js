@@ -141,7 +141,7 @@ test('plant cells plasmolyze above 60: early plasmolysis to 70, then plasmolyzed
   assert.deepEqual(sb.t.errs, []);
 });
 
-test('plasmolysis deepens in even steps: no jump in protoplast area anywhere past the isotonic step', () => {
+test('plasmolysis deepens in even steps; only the onset (60 to 61, where the strands appear) is a bigger step', () => {
   const sb = sandbox();
   sb.cell('plant');
   const frac = {};
@@ -149,12 +149,59 @@ test('plasmolysis deepens in even steps: no jump in protoplast area anywhere pas
   for (let e = 55; e <= 100; e++) frac[e] = protoplasts(sb.set(e).svg).reduce((n, q) => n + area(q.poly), 0) / iso;
   for (let e = 56; e <= 100; e++) {
     const step = frac[e - 1] - frac[e];
-    assert.ok(step >= 0 && step < 0.03, 'area step at ' + e + ': ' + step.toFixed(3));
+    assert.ok(step >= 0, 'area grows back at ' + e + ': ' + step.toFixed(3));
+    if (e !== 61) assert.ok(step < 0.03, 'area step at ' + e + ': ' + step.toFixed(3));
   }
-  // the onset of plasmolysis (60 to 61) is no bigger a step than its neighbors
-  assert.ok(frac[60] - frac[61] <= 1.2 * (frac[59] - frac[60]), 'onset step');
+  // the onset is a visible step (the picture changes with its name) but no more than about 3 normal steps
+  const normal = (frac[61] - frac[71]) / 10, onset = frac[60] - frac[61];
+  assert.ok(onset >= 2 * normal && onset <= 3.5 * normal, 'onset step ' + onset.toFixed(4) + ' vs normal ' + normal.toFixed(4));
   // and it goes a long way: at 100 the protoplasts hold about a third of their isotonic area
   assert.ok(frac[60] > 0.75 && frac[100] < 0.4, frac[60].toFixed(3) + ' ' + frac[100].toFixed(3));
+});
+
+// End gaps: at mid-height of each protoplast wholly in the crop, the distance from each end
+// to the end wall's centerline, less half the wall (so 0 means pressed on the wall)
+function endGaps(s) {
+  const segs = [];
+  for (const m of s.match(/id="rl-w" d="([^"]*)"/)[1].matchAll(/M([\d.-]+),([\d.-]+)L([\d.-]+),([\d.-]+)/g)) segs.push(m.slice(1).map(Number));
+  const gaps = [];
+  for (const { poly, box } of protoplasts(s)) {
+    const y = (box[1] + box[3]) / 2, xs = [];
+    for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+      const a = poly[i], b = poly[j];
+      if ((a[1] > y) !== (b[1] > y)) xs.push(a[0] + (y - a[1]) * (b[0] - a[0]) / (b[1] - a[1]));
+    }
+    if (xs.length < 2) continue;
+    const L = Math.min(...xs), R = Math.max(...xs);
+    if (L < FX + 5 || R > FX + FW - 5 || y < FY || y > FY + FH) continue;
+    let wl = -Infinity, wr = Infinity;
+    for (const [x1, y1, x2, y2] of segs) {
+      if ((y1 - y) * (y2 - y) > 0) continue;
+      const x = x1 + (y - y1) * (x2 - x1) / (y2 - y1);
+      if (x <= L + 0.5 && x > wl) wl = x;
+      if (x >= R - 0.5 && x < wr) wr = x;
+    }
+    if (wl === -Infinity || wr === Infinity) continue;
+    gaps.push(L - wl - 1.25, wr - R - 1.25);
+  }
+  gaps.sort((a, b) => a - b);
+  return { median: gaps[Math.floor(gaps.length / 2)], max: gaps[gaps.length - 1], n: gaps.length };
+}
+
+test('before plasmolysis the membrane leaves only the corners; at 61 it pulls off the end walls', () => {
+  const sb = sandbox();
+  sb.cell('plant');
+  let prev = 0;
+  for (let e = 55; e <= 60; e++) {
+    const g = endGaps(sb.set(e).svg);
+    assert.ok(g.n >= 20, 'ends measured at ' + e + ': ' + g.n);
+    // the ends stay within about 3.5 px (3 um) of the end walls, so the picture matches 'starts to leave the corners'
+    assert.ok(g.median <= 3.55 && g.max < 4.5, 'end gap at ' + e + ': median ' + g.median + ', max ' + g.max);
+    assert.ok(g.median >= prev, 'end gap shrinks back at ' + e);
+    prev = g.median;
+  }
+  const at61 = endGaps(sb.set(61).svg);
+  assert.ok(at61.median >= 1.3 * prev && at61.max >= 7, 'end gap at 61: median ' + at61.median + ', max ' + at61.max);
 });
 
 test('every picture fits on an Ace Card: under 30000 characters, chloroplasts the crop hides left out, 56 in every cell inside it', () => {
@@ -226,6 +273,12 @@ test('red cells: crenation starts from the disc (pallor fades, face bumps come a
   }
   assert.equal(prev.center, '#d27a7c');
   assert.equal(prev.face, 0.45);
+  // the two edge-on cells darken with the face-on ones, from the disc's color, never in one step
+  const edgeFill = (e) => sb.set(e).svg.match(/<path id="rl-e" d="[^"]*" fill="(#[0-9a-f]{6})"/)[1];
+  assert.equal(edgeFill(54), '#d3807f');
+  assert.ok(Math.abs(hexLuma(edgeFill(55)) - hexLuma('#d3807f')) < 3, 'edge-on at 55: ' + edgeFill(55));
+  for (let e = 56; e <= 100; e++) assert.ok(hexLuma(edgeFill(e)) <= hexLuma(edgeFill(e - 1)) + 0.5, 'edge-on darkens steadily at ' + e);
+  assert.equal(edgeFill(100), '#c4686c');
   // hypotonic, burst or not: the flow label is the short 'water in', so it never runs into 'contents released'
   for (let e = 0; e <= 44; e++) {
     const s = sb.set(e).svg;
@@ -235,7 +288,7 @@ test('red cells: crenation starts from the disc (pallor fades, face bumps come a
   assert.match(sb.set(4).svg, />contents released</);
 });
 
-test('red cells edge-on: biconcave at isotonic, a bowl (convex base, shallow cup, thick middle) as they cup', () => {
+test('red cells edge-on: biconcave at isotonic, a bowl (convex base, cup, thick rims) as they cup, never losing volume', () => {
   const sb = sandbox();
   sb.cell('animal');
   // the edge-on profile is drawn once around the origin: 48 points, the upper surface first
@@ -243,32 +296,62 @@ test('red cells edge-on: biconcave at isotonic, a bowl (convex base, shallow cup
   const iso = prof(sb.set(50).svg);
   assert.equal(iso.length, 48);
   const thick = (P, i) => P[48 - i][1] - P[i][1];      // lower minus upper at the same x
+  // the volume of the solid of revolution (Pappus: the right half of the profile, closed along the axis)
+  const volume = (P) => {
+    const half = P.slice(36).concat(P.slice(0, 13));
+    let m = 0;
+    for (let i = 0; i < half.length; i++) {
+      const a = half[i], b = half[(i + 1) % half.length];
+      m += (a[0] + b[0]) * (a[0] * b[1] - b[0] * a[1]);
+    }
+    return 2 * Math.PI * Math.abs(m) / 6;
+  };
   // isotonic: thin middle (about 1 um, 5.6 px), thick ring
   assert.ok(thick(iso, 12) < 6 && thick(iso, 6) > 2 * thick(iso, 12), 'biconcave ' + thick(iso, 12) + ' ' + thick(iso, 6));
+  // a swelling cell takes on water: at every hypotonic step before lysis the edge-on cell holds at least the disc's volume
+  for (let e = 12; e <= 45; e++) {
+    const P = prof(sb.set(e).svg);
+    assert.ok(volume(P) >= volume(iso), 'volume at ' + e + ': ' + volume(P).toFixed(0) + ' vs ' + volume(iso).toFixed(0));
+    // wherever the cup caption shows, the rims are at least as thick as the disc's ring: a bowl, never a thin crescent
+    if (/swell into cups/.test(caption(sb.set(e).svg))) {
+      assert.ok(thick(P, 3) >= thick(iso, 3) && thick(P, 6) >= thick(iso, 6), 'rims at ' + e + ': ' + thick(P, 3) + ' ' + thick(P, 6));
+    }
+  }
   const cup = prof(sb.set(36).svg);
   assert.match(caption(sb.set(36).svg), /swell into cups/);
   // the lower surface is convex: its middle is its lowest point (largest y) and it rises toward the rims
   assert.ok(cup[36][1] > cup[42][1] && cup[42][1] > cup[45][1], 'convex base ' + [cup[36][1], cup[42][1], cup[45][1]].join(' '));
-  // the upper surface dips in the middle: a cup, not a dome
-  assert.ok(cup[12][1] > cup[6][1] + 1.5, 'cup ' + cup[12][1] + ' vs ' + cup[6][1]);
-  // thick through the middle (no thin biconcave center left), with rounded rims no thicker than the base
+  // the upper surface dips in the middle: a cup, not a dome, plainly at the first cup steps
+  assert.ok(cup[12][1] > cup[6][1], 'cup at 36: ' + cup[12][1] + ' vs ' + cup[6][1]);
+  const early = prof(sb.set(39).svg);
+  assert.ok(early[12][1] > early[6][1] + 2, 'cup at 39: ' + early[12][1] + ' vs ' + early[6][1]);
+  // thick through the middle (no thin biconcave center left)
   assert.ok(thick(cup, 12) > 1.5 * thick(iso, 12), 'middle ' + thick(cup, 12));
-  assert.ok(thick(cup, 3) <= thick(cup, 12), 'rim ' + thick(cup, 3) + ' base ' + thick(cup, 12));
 });
 
-test('phone layout: the tonicity picture gets the full card width and every control is a 44 px tap target', () => {
+test('layout: the picture is never squeezed beside its readouts; full card width on a phone; 44 px tap targets on any touch screen', () => {
   const css = fs.readFileSync(path.join(BIO, 'bio-shared.css'), 'utf8');
+  // in a narrow card (tablets from 781 px, where the hub puts the lab in a narrow column) the readouts wrap
+  // below the picture instead of shrinking it: side by side only while the picture keeps 340 px
+  assert.match(css, /\n#tonicityBody \[style\*="grid-template-columns:1fr 280px"\]\{display:flex!important;flex-wrap:wrap\}/);
+  assert.match(css, /\n#tonicityBody #tonCellSvg\{flex:1000 1 340px;min-width:0\}/);
+  assert.match(css, /\n#tonicityBody \[style\*="grid-template-columns:1fr 280px"\] > div\{flex:1 1 280px;min-width:0\}/);
   const block = css.match(/@media \(max-width:480px\)\{\s*#tonicityBody\{[\s\S]*?\n\}/);
   assert.ok(block, 'a phone rule for the tonicity sandbox');
   assert.match(block[0], /#tonicityBody\{padding:0!important\}/);
   assert.match(block[0], /#tonicityBody > div\{padding:10px!important\}/);
-  assert.match(block[0], /\.ton-cell-btn\{min-height:44px/);
-  assert.match(block[0], /\.ton-preset\{min-height:44px/);
-  assert.match(block[0], /#tonSolute\{height:44px/);
+  // the tap targets apply on a phone and on touch tablets too (pointer:coarse), not only at 480 px and below
+  const tap = css.match(/@media \(max-width:480px\), \(pointer:coarse\)\{\s*#tonicityBody[\s\S]*?\n\}/);
+  assert.ok(tap, 'a phone-or-touch rule for the tap targets');
+  assert.match(tap[0], /#tonicityBody \.ton-cell-btn\{min-height:44px\}/);
+  assert.match(tap[0], /#tonicityBody \.ton-preset\{min-height:44px\}/);
+  assert.match(tap[0], /#tonicityBody #tonSolute\{height:44px\}/);
   // the rules match the sandbox the page builds
   const t = boot('bio-cell.html');
   const d = t.w.document;
   assert.equal(d.querySelector('#tonicityBody > div').contains(d.getElementById('tonCellSvg')), true);
+  const row = d.querySelector('#tonicityBody [style*="grid-template-columns:1fr 280px"]');
+  assert.ok(row && row.children[0] === d.getElementById('tonCellSvg') && row.children.length === 2, 'the picture and readout row');
   assert.equal(d.querySelectorAll('#tonicityBody .ton-cell-btn').length, 2);
   assert.equal(d.querySelectorAll('#tonicityBody .ton-preset').length, 3);
   assert.ok(d.querySelector('#tonicityBody div[style*="justify-content:space-between"]'), 'the slider label row');
