@@ -271,6 +271,59 @@ test('Bone Layers: a true-to-life bone and ground section, small enough for a ca
   assert.equal(strutUses(all[0]), 2);
 });
 
+test('Bone Layers: trabeculae fill the metaphysis core, and the cavity opens near the shaft', () => {
+  const t = boot('bio-physiology.html');
+  const d = t.w.document;
+  const stage = d.getElementById('boneStage');
+  const svgAt = (v) => {
+    stage.value = String(v);
+    stage.dispatchEvent(new t.w.Event('input', { bubbles: true }));
+    return d.getElementById('boneSvg').innerHTML;
+  };
+  const h = svgAt(0);
+  // every strut and tie of the upper-end lattice, as quadratics (a straight piece gets a midpoint control)
+  const pieces = [];
+  for (const m of h.matchAll(/id="bl-t\d" d="([^"]+)"/g)) {
+    for (const seg of m[1].split('M').filter(Boolean)) {
+      const n = seg.match(/-?[\d.]+/g).map(Number);
+      pieces.push(/Q/.test(seg) ? n : [n[0], n[1], (n[0] + n[2]) / 2, (n[1] + n[3]) / 2, n[2], n[3]]);
+    }
+  }
+  assert.ok(pieces.length > 150, 'lattice parsed');
+  const crossings = (x) => {
+    const out = [];
+    pieces.forEach((q) => {
+      let prev = null;
+      for (let i = 0; i <= 24; i++) {
+        const s = i / 24, u = 1 - s;
+        const p = [u * u * q[0] + 2 * u * s * q[2] + s * s * q[4], u * u * q[1] + 2 * u * s * q[3] + s * s * q[5]];
+        if (prev && (prev[0] - x) * (p[0] - x) <= 0 && prev[0] !== p[0]) out.push(prev[1] + (p[1] - prev[1]) * (x - prev[0]) / (p[0] - prev[0]));
+        prev = p;
+      }
+    });
+    return out;
+  };
+  // across the metaphysis (x 52-80), no strut-free run along the axis band (y 85-105) is wider than 7
+  for (let x = 52; x <= 80; x += 1) {
+    const ys = [85, 105, ...crossings(x).filter((y) => y > 85 && y < 105)].sort((a, b) => a - b);
+    for (let i = 1; i < ys.length; i++) assert.ok(ys[i] - ys[i - 1] < 7, 'gap of ' + (ys[i] - ys[i - 1]).toFixed(1) + ' at x ' + x);
+  }
+  // the open cavity starts near x 100: no strut crosses the middle there
+  [100, 105, 110].forEach((x) => assert.equal(crossings(x).filter((y) => y > 86 && y < 104).length, 0, 'open marrow at x ' + x));
+  // the epiphyseal plates read as plates (dark edge, pale core); each leader ends on a plate with a dot
+  // (the DOM serializes an empty element as <x ...></x>; E matches either form of its end)
+  const E = '(?:/>|></\\w+>)';
+  assert.match(h, new RegExp('stroke="#cbb88c" stroke-width="4"' + E + '<path d="M49\\.5,45\\.5[^"]*" fill="none" stroke="#fbf6e6"'));
+  assert.match(h, /M105,161L49\.7,134\.7M255,161L309\.8,132\.2/);
+  assert.match(h, new RegExp('<circle cx="49\\.7" cy="134\\.7" r="1\\.6"' + E + '<circle cx="309\\.8" cy="132\\.2" r="1\\.6"'));
+  assert.match(h, /upper end \(adult femur\): red marrow/);
+  assert.match(d.getElementById('boneSvg').getAttribute('aria-label'), /^Adult femur cut lengthwise/);
+  // the cavity and spongy outlines leave their open edge dashed, not walled off
+  const med = svgAt(5), spongy = svgAt(4);
+  assert.match(med, new RegExp('<path d="M111,80L249,80M111,110L249,110" stroke-width="3"' + E + '<path d="M249,80[^"]*" stroke-width="2" stroke-dasharray="2 2"'));
+  assert.match(spongy, /stroke-width="2" stroke-dasharray="2 2"/);
+});
+
 test('true-to-life views: microscope red cells and plant cells, and the TEM band strip', () => {
   const cell = boot('bio-cell.html');
   const d = cell.w.document;
