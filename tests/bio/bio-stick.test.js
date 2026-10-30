@@ -233,6 +233,149 @@ test('Bone Layers: six stops from periosteum to medullary cavity, and its panel 
   assert.match(p.node.querySelector('.stick-verdict').textContent, /Confirmed/);
 });
 
+test('Bone Layers: a true-to-life bone and ground section, small enough for a card', () => {
+  const t = boot('bio-physiology.html');
+  const d = t.w.document;
+  const stage = d.getElementById('boneStage');
+  const svgAt = (v) => {
+    stage.value = String(v);
+    stage.dispatchEvent(new t.w.Event('input', { bubbles: true }));
+    return d.getElementById('boneSvg').innerHTML;
+  };
+  const all = [0, 1, 2, 3, 4, 5].map(svgAt);
+  all.forEach((h, v) => {
+    assert.ok(/^[\x00-\x7f]*$/.test(h), 'plain ASCII at stop ' + v);
+    assert.doesNotMatch(h, /\b(wrong|incorrect|fail|failed)\b/i);
+    const ids = [...h.matchAll(/ id="([^"]+)"/g)].map((m) => m[1]);
+    assert.equal(new Set(ids).size, ids.length, 'ids unique at stop ' + v);
+    assert.ok(ids.every((id) => /^bl-/.test(id)), 'every id carries the bl- prefix');
+  });
+  // the stick frames (slider values 0, 1 and 3) stay well under the Ace Card limit
+  [0, 1, 3].forEach((v) => assert.ok(all[v].length < 32000, 'stop ' + v + ' is ' + all[v].length + ' chars'));
+  // the zoom is a ground section cut across the shaft: dark empty canals, no vessels drawn in them
+  const z = all[2];
+  assert.match(z, /cross-section of compact bone \(ground section\)/);
+  assert.match(z, /cross-section here/);
+  assert.match(z, /holds vessels/);
+  assert.match(z, /and nerves in life/);
+  assert.match(t.panel('bone-layers').entry.check.answer, /vessels and nerves/, 'label and check answer agree');
+  assert.match(z, /outer circumferential lamellae/);
+  assert.match(z, /periosteum removed/);
+  assert.doesNotMatch(z, /fill="#b5463f"/, 'no red vessel inside a canal');
+  // spongy bone fills the ends: its highlight traces the region (the only ellipse left is the cut plane)
+  assert.equal((all[4].match(/<ellipse/g) || []).length, 1);
+  assert.match(all[4], /mostly yellow marrow/);
+  // the endosteum stage lines every strut: the strut paths are painted twice, at both ends
+  const strutUses = (h) => (h.match(/<use href="#bl-t0"/g) || []).length;
+  assert.equal(strutUses(all[3]), 4);
+  assert.equal(strutUses(all[0]), 2);
+});
+
+test('Bone Layers: trabeculae fill the metaphysis core, and the cavity opens near the shaft', () => {
+  const t = boot('bio-physiology.html');
+  const d = t.w.document;
+  const stage = d.getElementById('boneStage');
+  const svgAt = (v) => {
+    stage.value = String(v);
+    stage.dispatchEvent(new t.w.Event('input', { bubbles: true }));
+    return d.getElementById('boneSvg').innerHTML;
+  };
+  const h = svgAt(0);
+  // every strut and tie of the upper-end lattice, as quadratics (a straight piece gets a midpoint control)
+  const pieces = [];
+  for (const m of h.matchAll(/id="bl-t\d" d="([^"]+)"/g)) {
+    for (const seg of m[1].split('M').filter(Boolean)) {
+      const n = seg.match(/-?[\d.]+/g).map(Number);
+      pieces.push(/Q/.test(seg) ? n : [n[0], n[1], (n[0] + n[2]) / 2, (n[1] + n[3]) / 2, n[2], n[3]]);
+    }
+  }
+  assert.ok(pieces.length > 150, 'lattice parsed');
+  const crossings = (x) => {
+    const out = [];
+    pieces.forEach((q) => {
+      let prev = null;
+      for (let i = 0; i <= 24; i++) {
+        const s = i / 24, u = 1 - s;
+        const p = [u * u * q[0] + 2 * u * s * q[2] + s * s * q[4], u * u * q[1] + 2 * u * s * q[3] + s * s * q[5]];
+        if (prev && (prev[0] - x) * (p[0] - x) <= 0 && prev[0] !== p[0]) out.push(prev[1] + (p[1] - prev[1]) * (x - prev[0]) / (p[0] - prev[0]));
+        prev = p;
+      }
+    });
+    return out;
+  };
+  // across the metaphysis (x 52-80), no strut-free run along the axis band (y 85-105) is wider than 7
+  for (let x = 52; x <= 80; x += 1) {
+    const ys = [85, 105, ...crossings(x).filter((y) => y > 85 && y < 105)].sort((a, b) => a - b);
+    for (let i = 1; i < ys.length; i++) assert.ok(ys[i] - ys[i - 1] < 7, 'gap of ' + (ys[i] - ys[i - 1]).toFixed(1) + ' at x ' + x);
+  }
+  // the open cavity starts near x 100: no strut crosses the middle there
+  [100, 105, 110].forEach((x) => assert.equal(crossings(x).filter((y) => y > 86 && y < 104).length, 0, 'open marrow at x ' + x));
+  // the epiphyseal plates read as plates (dark edge, pale core); each leader ends on a plate with a dot
+  // (the DOM serializes an empty element as <x ...></x>; E matches either form of its end)
+  const E = '(?:/>|></\\w+>)';
+  assert.match(h, new RegExp('stroke="#cbb88c" stroke-width="4"' + E + '<path d="M49\\.5,45\\.5[^"]*" fill="none" stroke="#fbf6e6"'));
+  assert.match(h, /M105,161L49\.7,134\.7M255,161L309\.8,132\.2/);
+  assert.match(h, new RegExp('<circle cx="49\\.7" cy="134\\.7" r="1\\.6"' + E + '<circle cx="309\\.8" cy="132\\.2" r="1\\.6"'));
+  // the ends are simplified caps (no femoral head), so the femur is a comparison, not a claim
+  assert.match(h, /upper end \(like adult femur\): red marrow/);
+  assert.match(h, /lower end: mostly yellow marrow/);
+  assert.match(d.getElementById('boneSvg').getAttribute('aria-label'), /^Long bone like an adult femur, cut lengthwise/);
+  // the cavity and spongy outlines leave their open edge dashed, not walled off
+  const med = svgAt(5), spongy = svgAt(4);
+  assert.match(med, new RegExp('<path d="M111,80L249,80M111,110L249,110" stroke-width="3"' + E + '<path d="M249,80[^"]*" stroke-width="2" stroke-dasharray="2 2"'));
+  assert.match(spongy, /stroke-width="2" stroke-dasharray="2 2"/);
+});
+
+test('Bone Layers: the lacunae leader ends on a lacuna, clear of any canal; lacunae look like spiders', () => {
+  const t = boot('bio-physiology.html');
+  const d = t.w.document;
+  const stage = d.getElementById('boneStage');
+  stage.value = '2';
+  stage.dispatchEvent(new t.w.Event('input', { bubbles: true }));
+  const svg = d.getElementById('boneSvg');
+  const segs = (dd) => [...dd.matchAll(/M(-?[\d.]+),(-?[\d.]+)l(-?[\d.]+),(-?[\d.]+)/g)].map((m) => m.slice(1).map(Number));
+  // lacunae of the osteon placed at (299, 343), in page units
+  const use = [...svg.querySelectorAll('use')].find((u) => /translate\(299 343\)/.test(u.getAttribute('transform') || ''));
+  assert.ok(use, 'osteon at 299,343 placed');
+  const tf = use.getAttribute('transform');
+  const rot = +/rotate\(([-\d.]+)\)/.exec(tf)[1] * Math.PI / 180;
+  const sc = /scale\(([-\d.]+)(?: ([-\d.]+))?\)/.exec(tf);
+  const sx = +sc[1], sy = +(sc[2] || sc[1]);
+  const tpl = svg.querySelector(use.getAttribute('href')).querySelectorAll('path');
+  const lacunae = segs(tpl[2].getAttribute('d')).map(([x, y, dx, dy]) => {
+    const u = (x + dx / 2) * sx, v = (y + dy / 2) * sy;
+    return [299 + u * Math.cos(rot) - v * Math.sin(rot), 343 + u * Math.sin(rot) + v * Math.cos(rot)];
+  });
+  // the "lacunae + canaliculi" leader is the last piece of the leader path
+  const lead = [...svg.querySelectorAll('path')].find((p) => /^M70,224L/.test(p.getAttribute('d'))).getAttribute('d');
+  const [ax, ay, bx, by] = lead.split('M').filter(Boolean).pop().split(/[L,]/).map(Number);
+  const offLine = Math.abs((299 - ax) * (by - ay) - (343 - ay) * (bx - ax)) / Math.hypot(bx - ax, by - ay);
+  assert.ok(offLine >= 10, 'leader line passes ' + offLine.toFixed(1) + ' from the canal center');
+  const onLac = Math.min(...lacunae.map(([x, y]) => Math.hypot(x - bx, y - by)));
+  assert.ok(onLac < 2.2, 'leader ends ' + onLac.toFixed(2) + ' from a lacuna center');
+  assert.match(svg.innerHTML, /\(held osteocytes in life\)/);
+  // each lacuna's five fan canaliculi cross at its center (six lines per lacuna, fan first)
+  ['#bl-oA', '#bl-oB'].forEach((id) => {
+    const ps = svg.querySelector(id).querySelectorAll('path');
+    const lac = segs(ps[2].getAttribute('d')), can = segs(ps[1].getAttribute('d'));
+    assert.equal(can.length, lac.length * 6);
+    lac.forEach(([x, y, dx, dy], i) => {
+      const c = [x + dx / 2, y + dy / 2];
+      for (let k = 0; k < 5; k++) {
+        const [px, py, qx, qy] = can[i * 6 + k];
+        const off = Math.abs((c[0] - px) * qy - (c[1] - py) * qx) / Math.hypot(qx, qy);
+        assert.ok(off < 0.5, id + ' lacuna ' + i + ' line ' + k + ' misses its center by ' + off.toFixed(2));
+      }
+    });
+  });
+  // the medullary cavity label sits clear of the cavity edge (y 110), under the stop-6 dot
+  stage.value = '5';
+  stage.dispatchEvent(new t.w.Event('input', { bubbles: true }));
+  const med = svg.innerHTML;
+  assert.match(med, /<text x="180" y="105\.5"[^>]*>medullary cavity<\/text>/);
+  assert.match(med, /<circle cx="180" cy="90" r="3\.5"/);
+});
+
 test('true-to-life views: microscope red cells and plant cells, and the TEM band strip', () => {
   const cell = boot('bio-cell.html');
   const d = cell.w.document;
