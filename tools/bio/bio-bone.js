@@ -69,8 +69,10 @@
   ];
 
   var H = 410;   // viewBox height
+  // The side padding shrinks to 4px on a 390 px phone (16px from about 700 px
+  // wide), so the picture gets the width and its small labels read larger.
   var TEMPLATE =
-    '<div style="background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px;padding:16px">' +
+    '<div style="background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px;padding:16px clamp(4px,4vw - 12px,16px)">' +
       '<div style="text-align:center;margin-bottom:10px">' +
         '<div style="font-family:\'Playfair Display\',serif;font-size:18px;font-weight:700;color:#1B3A2D">Bone Layers: peel it from the outside in</div>' +
         '<div style="font-size:12px;color:#1B3A2D;margin-top:4px;font-style:italic">Peri is outside. Endo is inside. Drag to peel.</div>' +
@@ -512,7 +514,8 @@
     out.push('<g fill="none" stroke="' + C.goldD + '" stroke-width="1.2" opacity="' + (zoomOn ? 1 : 0.45) + '">' +
       '<path d="M236,62V128" stroke-dasharray="3 2"/><ellipse cx="236" cy="95" rx="6" ry="31" fill="' + C.gold + '" fill-opacity="0.15"/></g>');
 
-    // Labels around the bone
+    // Labels around the bone ("cross-section here" stays at full strength on
+    // every stop; the dimmed cut-plane marker shows when the zoom is not active)
     out.push('<g font-size="9.5" fill="' + C.mute + '">' +
       '<text x="6" y="31">articular cartilage</text><text x="354" y="31" text-anchor="end">articular cartilage</text>' +
       '<text x="148" y="141" text-anchor="middle">diaphysis (shaft)</text>' +
@@ -520,7 +523,7 @@
       '<text x="6" y="182">upper end (like adult femur): red marrow</text>' +
       '<text x="354" y="182" text-anchor="end">lower end: mostly yellow marrow</text>' +
       '<text x="180" y="166" text-anchor="middle" fill="' + C.goldD + '">epiphyseal line (old growth plate)</text>' +
-      '<text x="236" y="139" text-anchor="middle" fill="' + C.goldD + '" opacity="' + (zoomOn ? 1 : 0.85) + '">cross-section here</text>' +
+      '<text x="236" y="139" text-anchor="middle" fill="' + C.goldD + '">cross-section here</text>' +
       '</g>');
     // leaders from the label to a point on each plate
     out.push('<path d="M105,161L49.7,134.7M255,161L309.8,132.2" stroke="' + C.goldD + '" stroke-width="0.7" fill="none"/>' +
@@ -552,7 +555,7 @@
     out.push('<path d="' + LEAD + '" stroke="#fbf6e9" stroke-width="2.4" fill="none"/><path d="' + LEAD + '" stroke="' + C.ink + '" stroke-width="0.9" fill="none"/>');
     out.push('<g font-size="9.5" fill="' + C.ink + '">' +
       '<text x="22" y="222" font-weight="700">outer circumferential lamellae</text>' +
-      '<text x="338" y="222" text-anchor="end" fill="' + C.mute + '">surface (periosteum removed)</text>' +
+      '<text x="338" y="222" text-anchor="end" fill="#435049">surface (periosteum removed)</text>' +
       '<text x="22" y="375" font-weight="700">Haversian canal</text>' +
       '<text x="22" y="387">(empty here; holds vessels</text><text x="22" y="399">and nerves in life)</text>' +
       '<text x="175" y="375" text-anchor="middle" font-weight="700">Volkmann canal</text>' +

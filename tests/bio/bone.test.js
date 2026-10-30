@@ -1,7 +1,9 @@
 /* Unit tests for the Bone Layers picture (tools/bio/bio-bone.js): the
  * ground-section zoom stays legible on every stop (the endosteum stop is
- * the saved Ace Card picture), and the outer circumferential lamellae
- * carry lacunae about as densely as the rest of the section.
+ * the saved Ace Card picture), the surface label reaches 4.5:1 and the
+ * cut-plane label is never dimmed, the outer circumferential lamellae carry
+ * lacunae about as densely as the rest of the section, and the frame gives
+ * the picture the width on a phone.
  *
  * The jsdom boot helper is the one in bio-stick.test.js: the Bio scripts
  * are evaluated as ONE script, the way classic <script> tags share the
@@ -88,12 +90,19 @@ test('Bone Layers zoom: the ground section stays legible on every stop, the card
     assert.ok(contrast(over(dark, op), over(matrix, op)) >= 4.5, 'canal on matrix at stop ' + v);
     const ink = svg.querySelector('rect[x="14"][y="194"] ~ text').getAttribute('fill');
     assert.ok(contrast(over(ink, op), over(box.getAttribute('fill'), op)) >= 4.5, 'ink label at stop ' + v);
-    // the surface label is secondary, yet never as faint as the old 2.2:1
+    // the surface label is secondary (lighter than the bold ink label beside it), yet reaches 4.5:1
     const surf = [...svg.querySelectorAll('text')].find((e) => e.textContent === 'surface (periosteum removed)');
-    assert.ok(contrast(over(surf.getAttribute('fill'), op), over(box.getAttribute('fill'), op)) >= 3.4, 'surface label at stop ' + v);
-    // the cut-plane label dims a little off the zoom stops, and no further
+    const surfC = contrast(over(surf.getAttribute('fill'), op), over(box.getAttribute('fill'), op));
+    assert.ok(surfC >= 4.5, 'surface label at stop ' + v + ' is ' + surfC.toFixed(2) + ':1');
+    assert.ok(surfC < contrast(over(ink, op), over(box.getAttribute('fill'), op)), 'surface label stays lighter than the ink label');
+    // the cut-plane label is drawn at full strength on every stop, like the other gold labels;
+    // only the cut-plane marker dims when the zoom is not active
     const cut = [...svg.querySelectorAll('text')].find((e) => e.textContent === 'cross-section here');
-    assert.equal(+cut.getAttribute('opacity'), v === 1 || v === 2 ? 1 : 0.85, 'cut label opacity at stop ' + v);
+    assert.ok(!cut.hasAttribute('opacity'), 'cut label not dimmed at stop ' + v);
+    assert.ok(!cut.parentNode.hasAttribute('opacity'), 'cut label group not dimmed at stop ' + v);
+    assert.ok(contrast(rgb(cut.getAttribute('fill')), rgb(PAGE)) >= 4.2, 'cut label on the page at stop ' + v);
+    const plane = svg.querySelector('path[d="M236,62V128"]').parentNode;
+    assert.equal(+plane.getAttribute('opacity'), v === 1 || v === 2 ? 1 : 0.45, 'cut-plane marker opacity at stop ' + v);
   }
   assert.deepEqual(t.errs, []);
 });
@@ -142,6 +151,14 @@ test('Bone Layers zoom: outer circumferential lamellae carry lacunae as densely 
   assert.ok(lead, 'lamellae leader drawn');
   const near = Math.min(...lac.map(([x, y]) => Math.hypot(x - 76, y - 240)));
   assert.ok(near >= 5, 'leader end is ' + near.toFixed(1) + ' from a lacuna');
+});
+
+test('Bone Layers: the frame keeps only 4px of side padding on a phone, 16px on wide screens', () => {
+  const { d } = bone();
+  const wrap = d.getElementById('boneSvg').parentNode;
+  assert.equal(wrap.parentNode.id, 'boneLayersBody');
+  // 4vw - 12px is at most 4px up to a 400 px viewport, and reaches 16px at 700 px
+  assert.match(wrap.getAttribute('style'), /padding:16px clamp\(4px,4vw - 12px,16px\)/);
 });
 
 test('Bone Layers: every stop fits the card budget, and the drawing is deterministic', () => {
