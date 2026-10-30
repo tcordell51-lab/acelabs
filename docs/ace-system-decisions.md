@@ -138,3 +138,69 @@ spec's open decisions (Thomas can override any):
    for his approval before students see them.
 7. Push the piston (new GChem tool) is not in this release; GChem's proof of
    the loop is Titration curves.
+8. The Review dot and the due counts tell one story (B1.1): Today, Review and
+   the dot all read `AceProgress.dueState`. A scheduled card (a review date or
+   the engine's own date) is due once its date comes. A legacy miss with no
+   date of its own counts as due only on its next day, the day after it was
+   made, and otherwise as Open: it waits in Review, never holds the dot on by
+   itself, and is scheduled once it is reviewed.
+9. Coach line drafts never reach students (B1.1): unapproved lines render only
+   with `?drafts=1` on a preview host (localhost, 127.0.0.1 or a Netlify deploy
+   preview), never on the production host. Students see the plain fallback
+   until Thomas approves a line.
+10. The dark-mode primary button stays gold (`--s-primary` #C9A84C with ink
+    #16120A, 8.17:1), as the spec has it; deep green stays the light-mode
+    primary.
+
+## One product (Thomas, 2026-10-30)
+
+Thomas: "Make sure everything has the new logo. Same logo everywhere, same
+thing, same format everywhere. It should feel like one product. Make sure it's
+interactive. Above and beyond perfect." These rules extend the build plan and
+win over any "tokens only" or "no layout surgery" line in it. Engine internals
+(banks, keys, generators, scene logic, bio-real.js, bio-bone.js) stay as the
+plan says; the frame around them does not.
+
+1. **One logo.** Every student page shows the new ACE DAT logo exactly one
+   way: through shell v2 (the lockup and LABS in the bar on desktop, the mark
+   on phones). Pages that hide the shell (timed test screens) show the mark in
+   their own top bar from `/shared/brand/`. No other logo file, no old
+   wordmark, no "AceTheDAT" text set as a heading or brand line, no old icon.
+   The old copies `shared/ace-dat-lockup-reversed.svg` and
+   `shared/ace-dat-mark-reversed.svg` go once nothing includes them.
+2. **One frame.** Every student page loads `al-tokens.css`, `al-fonts.css`,
+   `al-kit.css` and shell v2, and opens with the kit's door header (eyebrow,
+   Sora title, DM Sans lede) or, for an engine, the kit's tool header (section
+   eyebrow, tool title, one-line method, the same controls in the same place).
+   Buttons, chips, cards, tabs, toggles, fields, toasts and sheets come from the
+   kit. Engines may keep their own canvases and diagrams, drawn in token colors.
+   Light and dark both work on every page through `html[data-theme]` and
+   `prefers-color-scheme`; no page forces its own dark mode.
+3. **One type and color system.** Text is Sora (display), DM Sans (body) or
+   JetBrains Mono (labels); the DAT-style exam screen keeps its test-day face.
+   Colors come from tokens v2. Mint marks where you are; gold marks your next
+   move; Confirmed and Needs review keep their colors and words.
+4. **One question screen.** Every question a student answers (practice sets,
+   warm-ups, checks, the diagnostic, section tests, full-length tests, the
+   Climb, Retold checks, Which one is this? word questions) runs on the
+   DAT-style player with the same explainer layout after each answer.
+5. **One play pattern.** Each section has at least one Call it first loop on
+   `AceLoop` and one Which one is this? set, and every Retold night opens with
+   a call and closes with Play this, Sheet and Prove it. A miss anywhere makes
+   the same Ace Card and lands in the same Review.
+6. **One set of names.** Spec 1.4 names everywhere: page titles, headers, nav,
+   cards, links.
+7. **Proven by a gate.** `scripts/gate-one-product.mjs` loads every served
+   student page at 390 and 1280 in light and dark and fails when a page: lacks
+   the shell or the logo; shows another logo or the old wordmark; renders text
+   in a family outside the three (exam screen and drawn figures excepted by
+   list); paints a page or card background, heading or button outside the
+   token palette; has a button or link target under 44 px; lacks the door or
+   tool header; scrolls sideways; or logs a console error. It ratchets per
+   page in waves 1 and 2 and runs strict in the release sweep, where every
+   student page must pass.
+
+Default taken for an open explainer call (Thomas can override): when a
+question draws a molecule without hydrogens, its explainer picture matches the
+question's drawing and adds the implied hydrogens as labeled marks, so the
+student sees the same molecule in both places (pilot item OC-3).
