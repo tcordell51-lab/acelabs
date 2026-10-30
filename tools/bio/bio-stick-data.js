@@ -659,6 +659,7 @@
     /* ---------------- Evolution hub ---------------- */
     {
       id: 'homology', hub: 'evolution', title: 'Homology', subtopic: 'Evidence of evolution',
+      tab: 'evid',
       mount: '#evidBody', closest: '.cardiac-stage', where: 'beforebegin',
       veil: '#evidBody', veilClosest: '.cardiac-stage',
       frames: [
