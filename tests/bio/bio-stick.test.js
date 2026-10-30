@@ -255,3 +255,71 @@ test('true-to-life views: microscope red cells and plant cells, and the TEM band
   assert.doesNotMatch(pd.getElementById('sfTem').innerHTML, /H zone/, 'H zone closes at full contraction');
   assert.match(pd.getElementById('sfTem').innerHTML, /A band/);
 });
+
+test('tonicity camera views: true scale, red cell shapes, Elodea, solute strip, and small frames', () => {
+  const t = boot('bio-cell.html');
+  const ton = (cellType, ext) => t.w.BioReal.tonicity({ cellType, externalSolute: ext, lysed: cellType === 'rbc' && ext < 12, plasmolyzed: cellType === 'plant' && ext > 80 });
+  const exts = [0, 4, 10, 18, 25, 32, 45, 50, 55, 60, 75, 81, 92, 100];
+  for (const c of ['rbc', 'plant']) {
+    for (const e of exts) {
+      const s = ton(c, e);
+      assert.equal(s, ton(c, e), 'deterministic: ' + c + ' ' + e);
+      assert.ok(s.length < 60000, c + ' ' + e + ' is ' + s.length + ' characters');
+      assert.match(s, /^[\x20-\x7e]*$/, 'plain ASCII');
+      assert.doesNotMatch(s, /NaN|undefined|\b(wrong|incorrect|fail|failed|spiky)\b/i);
+      // a rectangular camera crop with the magnification in the caption, no round eyepiece field
+      assert.match(s, /<clipPath id="rl-clip"><rect /);
+      assert.match(s, c === 'rbc' ? />1000x oil, cropped</ : />400x, cropped</);
+      // the caption wraps to at most two lines that fit the crop
+      const lines = s.match(/<text [^>]*font-size="12"[^>]*>[^<]*</g) || [];
+      assert.ok(lines.length >= 1 && lines.length <= 2, 'caption lines: ' + lines.length);
+      // scale bars match the drawing: red cells 5.6 px per um (10 um = 56 px), Elodea 1.2 px per um (50 um = 60 px)
+      const bar = s.match(/d="M([\d.]+),310H([\d.]+)"/);
+      assert.equal(+bar[2] - +bar[1], c === 'rbc' ? 56 : 60);
+      assert.match(s, c === 'rbc' ? />10 um</ : />50 um</);
+    }
+  }
+  // the four stick frames stay well under the Ace Card limit
+  for (const e of [50, 32, 18, 4]) assert.ok(ton('rbc', e).length < 32000, 'stick frame ' + e);
+  const caption = (s) => (s.match(/<text [^>]*font-size="12"[^>]*>[^<]*</g) || []).map((x) => x.replace(/<[^>]*>|</g, '')).join(' ');
+  const radius = (s) => +s.match(/id="rl-d"[^>]*?r="([\d.]+)"|<g id="rl-d"><circle r="([\d.]+)"/).slice(1).find(Boolean);
+  const iso = ton('rbc', 50), cup = ton('rbc', 32), sphere = ton('rbc', 18), lysed = ton('rbc', 4), cren = ton('rbc', 92);
+  // isotonic: round discs (7.5 um), two seen edge-on, one overlapping pair
+  assert.equal(radius(iso), 21);
+  assert.equal((iso.match(/href="#rl-e"/g) || []).length, 2);
+  assert.equal((iso.match(/mix-blend-mode:multiply/g) || []).length, 1);
+  // hypotonic: a slit-shaped pallor first, then spheres a little narrower than the disc
+  assert.match(cup, /<ellipse rx="[\d.]+" ry="[\d.]+" fill="#f0d0c9"/);
+  assert.match(caption(cup), /swell into cups/);
+  assert.doesNotMatch(sphere, /fill="#f0d0c9"/);
+  assert.ok(radius(sphere) < 21 && radius(sphere) > 18, 'sphere radius ' + radius(sphere));
+  assert.match(caption(sphere), /more volume, a bit narrower/);
+  // hemolysis: smooth ghosts about 6.7 um (0.9 of the disc), no torn outlines, an emptied inside box
+  assert.equal(radius(lysed), 18.9);
+  assert.doesNotMatch(lysed, /stroke-dasharray/);
+  assert.match(caption(lysed), /\(ghosts\)/);
+  assert.match(lysed, />contents released</);
+  // hypertonic: 14 to 18 short projections per cell, no spikes in the words
+  assert.match(cren, /id="rl-d14"/);
+  assert.match(cren, /id="rl-d18"/);
+  assert.match(caption(cren), /short blunt projections/);
+  // solute inside the cell: more dots as the cell loses water, fewer as it gains water
+  const inside = (s) => {
+    const m = s.match(/<rect x="14" y="301"[^>]*\/><path d="([^"]*)"/);
+    return m ? (m[1].match(/h0/g) || []).length : 0;
+  };
+  assert.ok(inside(cren) > inside(iso) && inside(iso) > inside(sphere), [inside(cren), inside(iso), inside(sphere)].join(' '));
+  assert.equal(inside(lysed), 0);
+  // Elodea: named in every caption, 44 chloroplasts per cell in every state, strands only in plasmolysis
+  const count = (s) => ((s.match(/id="rl-cw" d="([^"]*)"/)[1] + s.match(/id="rl-cf" d="([^"]*)"/)[1]).match(/l/g) || []).length;
+  const cells = (s) => (s.match(/<path d="([^"]*)" fill="#eef1e4"/)[1].match(/M/g) || []).length;   // one protoplast per cell
+  for (const e of [20, 50, 75, 92]) {
+    const s = ton('plant', e);
+    assert.match(caption(s), /Elodea leaf cells/);
+    assert.equal(count(s), 44 * cells(s), 'chloroplasts at ' + e);
+    if (e < 70) assert.doesNotMatch(s, /stroke="#9db07a"/, 'no strands at ' + e);
+  }
+  assert.match(ton('plant', 92), /stroke="#9db07a"/);
+  assert.match(caption(ton('plant', 92)), /^Plasmolysis/);
+  assert.doesNotMatch(ton('plant', 50), /nucleus|onion/i);
+});
