@@ -397,20 +397,23 @@
       '<path d="' + lac + '" stroke="' + C.dark + '" stroke-width="1.9" stroke-linecap="round"/>';
   }
   /* Outer circumferential lamellae: 6 wavy bands parallel to the surface,
-     with flattened lacunae between them, each crossed by four canaliculi
-     that fan out from its center toward and away from the surface. */
+     with up to 22 flattened lacunae between them (about as dense as in
+     the interstitial lamellae), each crossed by four canaliculi that fan out
+     from its center toward and away from the surface. */
   function circumferential() {
     var r = rng(41), lines = '', lac = '', can = '';
     for (var j = 0; j < 6; j++) {
       var y = 232 + j * 3.5, amp = 0.6 + r() * 0.7;
       lines += 'M15,' + f1(y) + 'Q57,' + f1(y - amp) + ' 99,' + f1(y) + 'T183,' + f1(y) + 'T267,' + f1(y) + 'T351,' + f1(y);
     }
-    for (var i = 0; i < 10; i++) {
-      var lx = 30 + i * 32 + (r() - 0.5) * 14, ly = 233.8 + Math.floor(r() * 5) * 3.5;
+    for (var i = 0; i < 22; i++) {
+      var lx = 24 + i * 14.8 + (r() - 0.5) * 8, ly = 233.8 + Math.floor(r() * 5) * 3.5;
+      // none inside the Volkmann canal, which crosses the band near x = 130
+      if (Math.abs(lx - 130) < 5) continue;
       lac += 'M' + f1(lx - 1.6) + ',' + f1(ly) + 'h3.2';
       for (var c = 0; c < 4; c++) {
         var ca = Math.PI / 2 + (c - 1.5) * 0.25, l1 = 3 + r() * 2, l2 = 3 + r() * 2;
-        can += 'M' + f1(lx - Math.cos(ca) * l1) + ',' + f1(ly - Math.sin(ca) * l1) + 'l' + f1(Math.cos(ca) * (l1 + l2)) + ',' + f1(Math.sin(ca) * (l1 + l2));
+        can += 'M' + f1(lx - Math.cos(ca) * l1) + ',' + f1(ly - Math.sin(ca) * l1) + 'l' + f0(Math.cos(ca) * (l1 + l2)) + ',' + f0(Math.sin(ca) * (l1 + l2));
       }
     }
     return '<path d="' + lines + '" fill="none" stroke="#b49c6c" stroke-width="0.7"/>' +
@@ -517,7 +520,7 @@
       '<text x="6" y="182">upper end (like adult femur): red marrow</text>' +
       '<text x="354" y="182" text-anchor="end">lower end: mostly yellow marrow</text>' +
       '<text x="180" y="166" text-anchor="middle" fill="' + C.goldD + '">epiphyseal line (old growth plate)</text>' +
-      '<text x="236" y="139" text-anchor="middle" fill="' + C.goldD + '" opacity="' + (zoomOn ? 1 : 0.6) + '">cross-section here</text>' +
+      '<text x="236" y="139" text-anchor="middle" fill="' + C.goldD + '" opacity="' + (zoomOn ? 1 : 0.85) + '">cross-section here</text>' +
       '</g>');
     // leaders from the label to a point on each plate
     out.push('<path d="M105,161L49.7,134.7M255,161L309.8,132.2" stroke="' + C.goldD + '" stroke-width="0.7" fill="none"/>' +
@@ -530,7 +533,7 @@
     out.push('<text x="180" y="13" text-anchor="middle" font-size="11.5" font-weight="700" fill="' + C.goldD + '">' + s.callout + '</text>');
 
     // The zoom: a ground section of the shaft wall, cut across
-    out.push('<g opacity="' + (k === 'osteon' ? 1 : (k === 'compact' ? 0.9 : 0.55)) + '">');
+    out.push('<g opacity="' + (k === 'osteon' ? 1 : (k === 'compact' ? 0.9 : 0.8)) + '">');
     out.push('<rect x="14" y="194" width="332" height="210" rx="10" fill="#fbf6e9" stroke="' + (k === 'osteon' ? C.gold : C.ink) + '" stroke-width="' + (k === 'osteon' ? 2.5 : 1.2) + '"/>');
     out.push('<text x="24" y="210" font-size="10" font-weight="700" fill="' + C.ink + '">ZOOM: cross-section of compact bone (ground section)</text>');
     out.push('<g clip-path="url(#bl-inset)">');
