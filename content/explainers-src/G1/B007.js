@@ -846,7 +846,7 @@ const ENTRIES = [
     ],
     choices: [
       { text: 'can store lipid only while it is attached to a living root', role: 'trap', family: 'rc-misplaced', trap: 'Storing, not making', note: 'Vesicles store lipid, paragraph 3, but storage is not the problem. The gap is making fatty acids at all.' },
-      { text: 'loses the ability to take up phosphate when no root is present', role: 'trap', family: 'rc-outside', note: 'Nothing ties phosphate uptake to a root being present.' },
+      { text: 'loses the ability to take up phosphate when no root is present', role: 'trap', family: 'rc-outside', note: 'Phosphate is what travels back above all, so a phosphate reason sounds right, but nothing ties its uptake to a root being present.' },
       { text: 'needs a mantle of root tissue in order to produce its spores', role: 'trap', family: 'rc-misplaced', note: 'A mantle belongs to the other partnership, paragraph 4, and it is fungal tissue, not root tissue. Spores appear only in paragraph 13.' },
       { text: 'cannot make fatty acids and must be handed them', role: 'key', note: 'Sentence 4: cannot manufacture their own fatty acids and must be handed them by a host.' },
       { text: 'depends on carbon dioxide that living roots release into soil', role: 'trap', family: 'rc-other-paragraph', note: 'Respired carbon dioxide is in paragraph 12, as a route a label can take. It is never something a fungus must be fed.' }
@@ -865,7 +865,7 @@ const ENTRIES = [
         { p: 3, s: 6, quote: 'Other hyphae swell into vesicles that store lipid', role: 'trap', choice: 'can store lipid only while it is attached to a living root', note: 'storing lipid, a different job' }
       ],
       reuse: REUSE,
-      alt: 'Paragraph 7, sentence 4 carries two highlights: arbuscular fungi cannot manufacture their own fatty acids and must be handed them, which is largely why none grew on a plate until a fatty acid was supplied. Paragraph 3, sentence 6, lipid-storing vesicles, is marked lighter as a trap\'s source.',
+      alt: 'Paragraph 7, sentence 4 carries two highlights: arbuscular fungi cannot manufacture their own fatty acids and must be handed them, which is largely why none could be grown to completion on a plate without a plant until a fatty acid was supplied. Paragraph 3, sentence 6, lipid-storing vesicles, is marked lighter as a trap\'s source.',
       caption: 'The cause and the plate result sit in one sentence, joined by which. Storing lipid is a different job.'
     },
     demoPick: 'can store lipid only while it is attached to a living root',
@@ -1147,6 +1147,12 @@ const RR1 = 'Re-review round 1 (blocked): ';
   ['rc:rc-p10-q08', RR1 + 'step 2 was three sentences; now two'],
   ['rc:rc-p10-q11', RR1 + 'step 3 was three sentences; now two'],
   ['rc:rc-o15-q04', 'Re-review round 1 (optional): the answer line, step 2 and the alt keep the passage\'s hedge, "Wilkins seems to have expected" an assistant']
+].forEach(([qid, line]) => { (CHANGES[qid] = CHANGES[qid] || []).push(line); });
+// re-review of B007, round 2 (verdict needs-work): 1 item blocked for an alt that
+// dropped the qualifier the stem tests; 1 optional note taken
+[
+  ['rc:rc-p10-q05', 'Re-review round 2 (blocked): the alt said "none grew on a plate until a fatty acid was supplied", dropping "to completion" and "without a plant" from 7.4, the qualifier the stem tests. The alt now reads "none could be grown to completion on a plate without a plant until a fatty acid was supplied"'],
+  ['rc:rc-p10-q05', 'Re-review round 2 (optional): the phosphate choice\'s note now names its pull (phosphate is what travels back above all, 6.1) and the refutation in one sentence, so the phone shows both']
 ].forEach(([qid, line]) => { (CHANGES[qid] = CHANGES[qid] || []).push(line); });
 
 module.exports = { group: 'G1', batch: 'B007', title: 'Full-Length Test 1, Reading Comprehension, passages 1 and 2 (25 items; 3 more in the pilot)', entries: ENTRIES, changes: CHANGES };
