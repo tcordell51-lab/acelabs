@@ -1,7 +1,7 @@
 /* ace-shell.js : the ONE Ace Labs navigation, on every student page (shell v2).
 
    Add it with one tag (anywhere; defer is fine):
-     <script src="/shared/ace-shell.js?v=5" defer></script>
+     <script src="/shared/ace-shell.js?v=6" defer></script>
 
    Five doors: Today, Learn, Practice, Tests, Review. The Canon is no longer a
    door; it lives inside Learn as Sheets (/learn/#sheets).
@@ -334,6 +334,7 @@
       if (cs.pointerEvents === 'none' && el.getAttribute('aria-hidden') === 'true') continue;
       var r = el.getBoundingClientRect();
       if (!r.width || !r.height || r.height > vh * 0.5) continue;
+      if (slides && r.top < vh) slides['delete'](el);
       var off = parseFloat(cs.bottom), lower = isNaN(off) ? r.bottom : vh - off;
       if (lower <= top + 1) continue;
       /* r.top >= vh: parked below the screen until shown (a coach bar that slides
@@ -350,17 +351,33 @@
     watch(true);
   }
   /* UI parked under the screen whose slide-in is running: one more scan when it
-     ends (finite animations only; a cancelled one counts as ended) */
-  var sliding = [];
+     ends (finite animations only; a cancelled one counts as ended). Only an
+     animation still running (or about to start) is waited for: a finished one
+     that holds its last frame (fill forwards, such as a bar dismissed below
+     the screen) stays in getAnimations() with its promise already settled, and
+     waiting on it would rescan without end. The rescan runs from a timer, so
+     it always yields to the page, and at most 3 slides in a row that end with
+     the element still parked are followed (a scan that finds it in view
+     resets the count). */
+  var sliding = [], slides = window.WeakMap ? new WeakMap() : null;
   function afterSlide(el) {
     if (!el.getAnimations || !window.Promise || sliding.indexOf(el) >= 0) return;
     var a = el.getAnimations().filter(function (x) {
+      if (x.playState !== 'running' && !x.pending) return false;
       var t = x.effect && x.effect.getComputedTiming ? x.effect.getComputedTiming() : null;
       return !t || t.endTime !== Infinity;
     });
     if (!a.length) return;
+    var n = slides ? slides.get(el) || 0 : 0;
+    if (n >= 3) return;
+    if (slides) slides.set(el, n + 1);
     sliding.push(el);
-    function again() { sliding.splice(sliding.indexOf(el), 1); scanBottomUI(); }
+    function again() {
+      setTimeout(function () {
+        sliding.splice(sliding.indexOf(el), 1);
+        scanBottomUI();
+      }, 0);
+    }
     Promise.all(a.map(function (x) { return x.finished; })).then(again, again);
   }
   /* a fresh start: put everything back, then lift what sits under the bar now */

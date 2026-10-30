@@ -309,16 +309,89 @@ test('with the tab bar down, a bar still sliding in when the watch looks is lift
   assert.ok(!bar.hasAttribute('data-ace-lifted'), 'parked below the screen: left alone');
   /* shown: the slide-in starts, but it has not moved yet when the watch looks */
   const finished = new Promise((r) => { land = r; });
-  bar.getAnimations = () => [{ finished, effect: { getComputedTiming: () => ({ endTime: 300 }) } }, { finished: new Promise(() => {}), effect: { getComputedTiming: () => ({ endTime: Infinity }) } }];
+  bar.getAnimations = () => [{ playState: 'running', pending: false, finished, effect: { getComputedTiming: () => ({ endTime: 300 }) } }, { playState: 'running', pending: false, finished: new Promise(() => {}), effect: { getComputedTiming: () => ({ endTime: Infinity }) } }];
   bar.className = 'on';
   await new Promise((r) => setTimeout(r, 400));
   assert.ok(!bar.hasAttribute('data-ace-lifted'), 'still parked when the watch looks');
   /* the slide ends in view, under the bar: no page mutation follows, so only the end of the slide can catch it */
   box.top = w.innerHeight - 120; box.bottom = w.innerHeight;
   land();
+  /* the rescan runs from a timer once the slide's promise settles: two ticks */
+  await new Promise((r) => setTimeout(r, 0));
   await new Promise((r) => setTimeout(r, 0));
   assert.ok(bar.hasAttribute('data-ace-lifted'), 'lifted once the slide ends (an endless animation is not waited for)');
   assert.match(bar.style.bottom, /^calc\(/);
+});
+
+/* a bar the page dismissed below the screen with a fill-forwards animation: the finished animation stays in
+   getAnimations() with its promise already settled. Waiting on it would rescan without end in microtasks
+   (the tab froze in Chromium at load, on a rotation and when a timed section ended); it is not a slide, so
+   it is not waited for. Each scan asks the parked bar for its animations once, so that count is the scan
+   count; past 50 the mock answers [] so a regression fails here instead of hanging the run. */
+function parkedBar(w, anim) {
+  const box = { top: w.innerHeight + 7, bottom: w.innerHeight + 79, height: 72, left: 0, right: 390, width: 390 };
+  const bar = fixedAt(w, 'coachBar', box, 'position:fixed;left:0;right:0;bottom:0');
+  bar.box = box; bar.looks = 0;
+  bar.getAnimations = () => (++bar.looks > 50 ? [] : [anim()]);
+  return bar;
+}
+const ticks = async (n) => { for (let i = 0; i < n; i++) await new Promise((r) => setTimeout(r, 0)); };
+test('with the tab bar down, a bar parked by a finished fill-forwards animation never starts an endless rescan', async () => {
+  let bar = null;
+  const { w, doc, S, state } = boot({ narrow: true, htmlAttrs: ' data-ace-shell-pos="bottom"', before(w) {
+    bar = parkedBar(w, () => ({ playState: 'finished', pending: false, finished: Promise.resolve(), effect: { getComputedTiming: () => ({ endTime: 200 }) } }));
+  } });
+  await styled(w, doc);
+  await new Promise((r) => setTimeout(r, 650));
+  const settled = bar.looks;
+  assert.ok(settled >= 1 && settled <= 4, 'looked at on the scans at load only (' + settled + ')');
+  /* relift(), a rotation (drop, then a fresh scan) and a timed section ending: one look each, nothing queued */
+  S.relift();
+  state.narrow = false; w.dispatchEvent(new w.Event('resize'));
+  state.narrow = true; w.dispatchEvent(new w.Event('resize'));
+  w.localStorage.setItem('acelabs.timed', JSON.stringify({ until: Date.now() + 60000 }));
+  w.dispatchEvent(new w.Event('acelabs:timed'));
+  w.localStorage.setItem('acelabs.timed', JSON.stringify({ until: 0 }));
+  w.dispatchEvent(new w.Event('acelabs:timed'));
+  const after = bar.looks;
+  assert.equal(after - settled, 3, 'relift, portrait again, the timed section ending: one scan each');
+  await ticks(5);
+  await new Promise((r) => setTimeout(r, 50));
+  assert.equal(bar.looks, after, 'no rescan follows on its own');
+  assert.ok(!bar.hasAttribute('data-ace-lifted'), 'parked: left alone');
+});
+
+/* belt and braces: a slide that keeps ending with the element still parked is followed 3 times in a row at
+   most, and each follow-up scan runs from a timer, so the page always gets the event loop back */
+test('with the tab bar down, slides that keep ending parked are followed at most 3 times in a row', async () => {
+  let bar = null;
+  const { w, doc, S, state } = boot({ narrow: true, htmlAttrs: ' data-ace-shell-pos="bottom"', before(w) {
+    /* a mis-reported animation: says running, but its promise has already settled */
+    bar = parkedBar(w, () => ({ playState: 'running', pending: false, finished: Promise.resolve(), effect: { getComputedTiming: () => ({ endTime: 200 }) } }));
+  } });
+  await styled(w, doc);
+  await new Promise((r) => setTimeout(r, 650));
+  await ticks(10);
+  const settled = bar.looks;
+  assert.ok(settled <= 8, 'a few looks at most (' + settled + ')');
+  await ticks(10);
+  assert.equal(bar.looks, settled, 'the follow-ups stop');
+  S.relift();
+  await ticks(10);
+  assert.equal(bar.looks, settled + 1, 'past the cap a relift is one scan and nothing more');
+  assert.ok(!bar.hasAttribute('data-ace-lifted'));
+  /* shown at last: a scan that finds it in view lifts it and resets the count, so a later slide is followed again */
+  const vh = w.innerHeight;
+  bar.box.top = vh - 72; bar.box.bottom = vh;
+  S.relift();
+  assert.ok(bar.hasAttribute('data-ace-lifted'), 'in view under the bar: lifted');
+  bar.box.top = vh + 7; bar.box.bottom = vh + 79;
+  const before = bar.looks;
+  state.narrow = false; w.dispatchEvent(new w.Event('resize'));
+  state.narrow = true; w.dispatchEvent(new w.Event('resize'));
+  await ticks(10);
+  assert.ok(bar.looks - before >= 2 && bar.looks - before <= 4, 'parked again after a rotation: followed again, within the cap (' + (bar.looks - before) + ')');
+  assert.ok(!bar.hasAttribute('data-ace-lifted'), 'put back by the rotation and parked: left alone');
 });
 
 /* the kit's own flying Ace Card: a source card whose box ends under the bar. The watch rescans 300 ms
