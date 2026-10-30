@@ -29,7 +29,7 @@ add('missed-exception', 'Smooth trend, missed exception', 'content', 'The genera
 add('other-unit', 'Counted the other unit', 'concept', 'Formula units for particles, electrons for pairs', 'shared');
 add('unit-slip', 'Unit or decimal slip', 'misread', 'Power of ten, unit or decimal place', 'shared');
 add('sign-slip', 'Sign slip', 'misread', 'A minus sign lost or added', 'shared');
-add('operation-flip', 'Added instead of subtracted', 'concept', 'The operation flipped', 'shared');
+add('operation-flip', 'Flipped the operation', 'concept', 'The operation flipped', 'shared');
 add('assumed-equal', 'Assumed equal', 'concept', 'Treated outcomes or groups as equal in size or weight when they are not', 'shared');
 add('looks-bigger', 'Looks bigger, is not', 'misread', 'A visual size cue misread: arm length, bar height, scale', 'shared');
 add('miscount', 'Miscount', 'misread', 'A count or tally slipped, with no single rule behind it', 'shared');

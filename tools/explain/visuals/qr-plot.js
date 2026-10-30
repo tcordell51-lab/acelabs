@@ -5,7 +5,9 @@
 //                         the same count split as groups times orders
 //   qr.tree kind mix      two pours split into how much of each is solute, the
 //                         join, and a lever: the mix lands between the two
-//                         strengths, closer to the bigger pour
+//                         strengths, closer to the bigger pour (soluteUnit,
+//                         optional: the solute's own unit, g for a sugar
+//                         percent; default the pours' unit)
 //   qr.dataset kind dots  dot plots on one axis, the mean marked, each dot's
 //                         distance from it
 //   qr.dataset kind normal  a bell over the mean plus or minus three standard
@@ -134,7 +136,7 @@ TREE_KINDS.slots = (s, box) => {
 
 /* ============================================================== qr.tree: mix */
 TREE_KINDS.mix = (s, box) => {
-  const W = width(box), M = P.mix(s.pours), u = s.unit, dp = s.dp != null ? s.dp : 2;
+  const W = width(box), M = P.mix(s.pours), u = s.unit, su = s.soluteUnit || u, dp = s.dp != null ? s.dp : 2;
   const colW = Math.min(200, Math.floor((W - 24) / 2)), cxs = [W / 4, 3 * W / 4].map((c, i) => (W < 420 ? (i ? W - 6 - colW / 2 : 6 + colW / 2) : c));
   const bh = 44, gap = 20;
   let g = '', y = 6;
@@ -154,14 +156,14 @@ TREE_KINDS.mix = (s, box) => {
   s.pours.forEach((pr, i) => {
     g += link(cxs[i], y1 + bh, cxs[i], y2);
     g += rt(cxs[i] + 6, (y1 + bh + y2) / 2 + 4, 'x ' + pr.pct + '%', { size: 12, fill: C.ink2, italic: true, halo: true });
-    g += boxAt(cxs[i], y2, n2(M.solute[i]) + ' ' + u, s.soluteLabel, 'plain');
+    g += boxAt(cxs[i], y2, n2(M.solute[i]) + ' ' + su, s.soluteLabel, 'plain');
   });
   // the join
   const y3 = y2 + bh + gap, jw = Math.min(W - 12, 360);
   cxs.forEach((cx) => { g += link(cx, y2 + bh, W / 2, y3); });
   const pct = +M.pct.toFixed(dp), about = Math.abs(pct - M.pct) > 1e-9 ? 'about ' : '';
   const jr = s.result && s.result.key ? 'key' : 'info';
-  g += boxAt(W / 2, y3, n2(M.s) + ' ' + u + ' of ' + M.v + ' ' + u, '= ' + about + pct + '%' + (s.result && s.result.tag ? ': ' + s.result.tag : ''), jr, jw);
+  g += boxAt(W / 2, y3, n2(M.s) + ' ' + su + (su === u ? ' of ' : ' in ') + M.v + ' ' + u, '= ' + about + pct + '%' + (s.result && s.result.tag ? ': ' + s.result.tag : ''), jr, jw);
   y = y3 + bh + 16;
   // the lever: both strengths, the mix between them, closer to the bigger pour
   const L = s.lever;

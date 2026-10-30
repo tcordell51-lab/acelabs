@@ -230,8 +230,8 @@ const ENTRIES = [
       },
       check: { vars: { v: 108 }, key: 'v*1000/3600', routes: [{ choice: '0.03 m/s', expr: 'v/3600' }, { choice: '1.08 × 10⁵ m/s', expr: 'v*1000' }, { choice: '1800 m/s', expr: 'v*1000/60' }, { choice: '389 m/s', expr: 'v*3.6' }] },
       reuse: 'qr.work lines block (tools/explain/visuals/qr-work.js, batch B005): a unit ladder with exits',
-      alt: 'A ladder from 108 km per hour: times 1000 gives 108,000 m per hour, divide by 60 gives 1800 m per minute, divide by 60 again gives 30 m per second, outlined. Side notes show where 0.03, 389, 1.08 x 10^5 and 1800 stop or turn.',
-      caption: 'Climb one unit at a time. Each trap is a rung where someone stopped or turned the factor over.'
+      alt: 'A ladder from 108 km per hour: times 1000 gives 108,000 m per hour, divide by 60 gives 1800 m per minute, divide by 60 again gives 30 m per second, outlined. Side notes show where 0.03 skips a rung, 389 turns the factor over, and 1.08 x 10^5 and 1800 stop.',
+      caption: 'Climb one unit at a time. Each trap is a rung someone stopped at, skipped or turned over.'
     },
     demoPick: '1800 m/s',
     flags: [
@@ -299,7 +299,7 @@ const ENTRIES = [
     choices: [
       { text: '0.06', role: 'trap', family: 'operation-flip', trap: 'Divided by 60', note: '3.4 / 60 turns minutes into hours. Going to a smaller unit means more of them, so multiply.' },
       { text: '20.4', role: 'trap', family: 'unit-slip', trap: 'Dropped a zero', note: '3.4 x 6 = 20.4 uses 6 in place of 60. A minute holds 60 seconds.' },
-      { text: '63.4', role: 'trap', family: 'operation-flip', trap: 'Added the 60', note: '3.4 + 60 adds the factor. Changing units multiplies or divides. It never adds.' },
+      { text: '63.4', role: 'trap', family: 'operation-flip', trap: 'Added the 60', note: '3.4 + 60 adds the factor. A conversion factor multiplies or divides. It never adds.' },
       { text: '184', role: 'trap', family: 'unit-slip', trap: 'Read .4 as 4 seconds', note: '184 reads 3.4 minutes as 3 minutes 4 seconds. The .4 is four tenths of a minute: 24 seconds.' },
       { text: '204', role: 'key', note: '3 full minutes plus four tenths of one.' }
     ],
@@ -359,12 +359,12 @@ const ENTRIES = [
       min: 0, max: 6, step: 1,
       rows: [
         { label: 'The four samples: 3, 3, 3, 3', values: [3, 3, 3, 3], key: true, choice: '0', tag: 'every distance 0: variance 0', zeroLabel: 'All four dots sit on the mean.' },
-        { label: 'For contrast: 1, 3, 3, 5', values: [1, 3, 3, 5], ghost: true, variance: 2, tag: 'spread out: variance 2' }
+        { label: 'For contrast: 1, 3, 3, 5', values: [1, 3, 3, 5], ghost: true, variance: 2, tag: 'variance 2 (average squared gap)' }
       ],
       unitLabel: 'weights in grams',
       check: { vars: { w: 3, n: 4 }, derived: ['n'], key: '0', routes: [{ choice: '3', expr: 'w' }, { choice: '9', expr: 'w^2' }, { choice: '12', expr: 'n*w' }], noRoute: [{ choice: '1' }] },
       reuse: 'new: qr.dataset kind dots (tools/explain/visuals/qr-plot.js); the build recomputes each row\'s mean and variance',
-      alt: 'Two dot plots on a 0 to 6 gram line. The outlined top plot stacks all four samples at 3, right on the mean line, so every distance is 0 and the variance is 0. A dashed contrast plot of 1, 3, 3, 5 has dots 2 away on each side and a variance of 2.',
+      alt: 'Two dot plots on a 0 to 6 gram line. The outlined top plot stacks all four samples at 3, right on the mean line, so every distance is 0 and the variance is 0. A dashed contrast plot of 1, 3, 3, 5 has dots 2 away on each side and a variance of 2, the average squared gap.',
       caption: 'Look at the top plot: every dot sits on the mean, so there is nothing to spread.'
     },
     demoPick: '9',
@@ -569,7 +569,7 @@ const ENTRIES = [
     choices: [
       { text: '-0.96', role: 'key', note: 'Size from the identity, sign from quadrant III.' },
       { text: '-0.9216', role: 'trap', family: 'one-step-short', trap: 'Forgot the root', note: '-0.9216 is sin^2 with a minus sign. Take the square root: 0.96.' },
-      { text: '-0.72', role: 'trap', family: 'half-right', trap: 'Skipped the squares', note: 'The sign is right, but 1 - 0.28 = 0.72 subtracts cos, not cos^2. The identity squares both.' },
+      { text: '-0.72', role: 'trap', family: 'half-right', trap: 'Skipped the squares', note: 'The sign is right, but 1 - 0.28 = 0.72 subtracts the size of cos, not its square. The identity squares both.' },
       { text: '0.72', role: 'trap', family: 'miscount', trap: 'Two slips', note: '0.72 stacks two slips: no squares and no minus sign. Square first, then read the quadrant.' },
       { text: '0.96', role: 'trap', family: 'other-conditions', trap: 'Quadrant II sign', note: 'Right size, but a positive sine with a negative cosine is quadrant II. In quadrant III the y value is negative.' }
     ],
@@ -784,9 +784,9 @@ const ENTRIES = [
     difficulty: band(3),
     source: src('qr-a:mix1419', 26),
     keyText: '17.5',
-    answer: { line: '25 + 10 = 35 mL of sugar in 200 mL: 17.5 percent. Equal pours land halfway between 25 and 10.' },
+    answer: { line: '25 + 10 = 35 g of sugar in 200 mL: 17.5 percent. Equal pours land halfway between 25 and 10.' },
     steps: [
-      'Count the sugar. 25 percent of 100 mL is 25 mL, and 10 percent of 100 mL is 10 mL: 35 mL of sugar.',
+      'Count the sugar. A 25 percent solution holds 25 g in every 100 mL, and a 10 percent one holds 10 g: 35 g of sugar.',
       'Divide by the whole: 35 / 200 = 0.175, so 17.5 percent.',
       'Check it with the seesaw. Equal pours balance in the middle, so here the plain average works: (25 + 10) / 2 = 17.5.'
     ],
@@ -794,8 +794,8 @@ const ENTRIES = [
       { text: '8.75', role: 'trap', family: 'one-step-too-far', trap: 'Halved twice', note: '8.75 halves 17.5 again. Two 100 mL portions make 200 mL, so divide 35 by 200 once.' },
       { text: '12.5', role: 'trap', family: 'half-right', trap: 'Ignored the 10%', note: '12.5 treats the 10 percent solution as plain water and halves 25. The second solution brings sugar too.' },
       { text: '15', role: 'trap', family: 'operation-flip', trap: 'Subtracted the strengths', note: '25 - 10 = 15 takes the gap between the strengths. A mix averages them.' },
-      { text: '17.5', role: 'key', note: '35 mL of sugar in 200 mL.' },
-      { text: '35', role: 'trap', family: 'one-step-short', trap: 'Never divided', note: '35 is the milliliters of sugar. Divide by the 200 mL total to get the percent.' }
+      { text: '17.5', role: 'key', note: '35 g of sugar in 200 mL.' },
+      { text: '35', role: 'trap', family: 'one-step-short', trap: 'Never divided', note: '35 is the grams of sugar. Divide by the 200 mL total to get the percent.' }
     ],
     lockIt: 'Equal amounts mix to the plain average. Unequal amounts lean toward the bigger pour.',
     hook: null,
@@ -804,13 +804,13 @@ const ENTRIES = [
     visual: {
       type: 'qr.tree', kind: 'mix',
       focus: 'midpoint',
-      unit: 'mL', wholeLabel: 'of solution', soluteLabel: 'sugar', dp: 1,
+      unit: 'mL', soluteUnit: 'g', wholeLabel: 'of solution', soluteLabel: 'sugar', dp: 1,
       pours: [{ v: 100, pct: 25 }, { v: 100, pct: 10 }],
       result: { choice: '17.5', key: true },
       lever: { min: 6, max: 29, title: 'Equal pours balance in the middle', mixLabel: 'mix', balance: true },
       check: { vars: { v: 100, a: 25, b: 10 }, key: '(v*a+v*b)/(2*v)', routes: [{ choice: '8.75', expr: '(a+b)/4' }, { choice: '12.5', expr: 'a/2' }, { choice: '15', expr: 'a-b' }, { choice: '35', expr: 'a+b' }] },
       reuse: 'new: qr.tree kind mix (tools/explain/visuals/qr-plot.js)',
-      alt: '200 mL splits into 100 mL at 25%, holding 25 mL of sugar, and 100 mL at 10%, holding 10 mL; together 35 mL of 200, 17.5%, outlined. On a seesaw from 10% to 25%, the two equal pours balance at the midpoint, 17.5, each 7.5 away.',
+      alt: '200 mL splits into 100 mL at 25%, holding 25 g of sugar, and 100 mL at 10%, holding 10 g; together 35 g in 200 mL, 17.5%, outlined. On a seesaw from 10% to 25%, the two equal pours balance at the midpoint, 17.5, each 7.5 away.',
       caption: 'Equal pours, equal weights: the seesaw balances halfway, at 17.5.'
     },
     demoPick: '15',
@@ -849,7 +849,7 @@ const ENTRIES = [
       type: 'qr.partwhole', style: 'bars',
       focus: 'meet-time',
       rows: [
-        { title: 'Hours: the gap shrinks 80 miles each hour', pieces: [{ n: 1, kind: 'part', label: '80 mi' }, { n: 1, kind: 'part', label: '80 mi' }, { n: 0.5, kind: 'add', label: '40' }], total: 2.5 },
+        { title: 'Hours: the gap shrinks 80 miles each hour', pieces: [{ n: 1, kind: 'part', label: '80 mi' }, { n: 1, kind: 'part', label: '80 mi' }, { n: 0.5, kind: 'add', label: '40 mi' }], total: 2.5 },
         { title: 'Hours until they meet', pieces: [{ n: 2.5, kind: 'key', key: true, label: 'meet at 2.5 hours', choice: '2.5 hr' }] }
       ],
       ghosts: [{ at: 2, row: 1, label: '2: needs 100 mph', choice: '2 hr' }, { at: 4, row: 1, label: '4: fast car alone', choice: '4 hr' }, { at: 5, row: 1, label: '5: speeds averaged', choice: '5 hr' }, { at: 6.67, row: 1, label: '6.67: slow car alone', choice: '6.67 hr' }],
@@ -942,7 +942,7 @@ const ENTRIES = [
       { text: '2.22', role: 'key', note: '20 forms at 9 an hour.' },
       { text: '4', role: 'trap', family: 'other-conditions', trap: 'One worker alone', note: '4 hours is the faster student working alone. A helper has to shorten the job.' },
       { text: '4.5', role: 'trap', family: 'assumed-equal', trap: 'Averaged the times', note: '4.5 averages the two times. Two people working together finish faster than either one alone.' },
-      { text: '9', role: 'trap', family: 'operation-flip', trap: 'Added the times', note: '5 + 4 = 9 adds the times, as if one waited for the other. Rates add; times do not.' }
+      { text: '9', role: 'trap', family: 'operation-flip', trap: 'Added the times', note: '5 + 4 = 9 adds the times, as if each entered a whole stack in turn. Rates add; times do not.' }
     ],
     lockIt: 'Working together: add the rates, then flip. Together always beats the faster worker alone.',
     hook: null,
@@ -968,4 +968,38 @@ const ENTRIES = [
   }
 ];
 
-module.exports = { group: 'G1', batch: 'B006', title: 'Full-Length Test 1, Quantitative Reasoning, second half (20 items)', entries: ENTRIES };
+// Fixes from the expert review of B006 (coach record only). The family
+// operation-flip keeps its id, missType and definition; its display name, the
+// tag printed beside every operation-flip trap card, is now "Flipped the
+// operation" (scripts/explainers/families.js and explainer-standard.md 3.1).
+// "Added instead of subtracted" was untrue beside the labels below.
+const RENAME = (label) => 'Review fix: the operation-flip tag beside "' + label + '" now reads "Flipped the operation" (families.js and standard 3.1; was "Added instead of subtracted", untrue for this route). Card text unchanged';
+const CHANGES = {
+  'fm:qr-a:cou1579': [RENAME('Added the counts')],
+  'fm:qr-a:pc3c': [RENAME('Subtracted the rates')],
+  'fm:generated:qr-unit-rate-conversion#ejj15': [
+    RENAME('Multiplied by 3.6'),
+    'Review suggestion taken: the caption says each trap is a rung someone stopped at, skipped or turned over (0.03 skips the x 1000 rung); the alt names what each side note does'
+  ],
+  'fm:qr-a:uni1479': [
+    RENAME('Divided by 60') + '; the same for "Added the 60"',
+    'Review fix: the 63.4 note says a conversion factor multiplies or divides and never adds (was "Changing units ... never adds", untrue for Celsius to kelvin or Fahrenheit)'
+  ],
+  'fm:qr-a:ds1700': [RENAME('Added rise and run')],
+  'fm:written:qr-11-rn4znq': ['Review fix: the -0.72 note says 1 - 0.28 subtracts the size of cos, not its square (was "subtracts cos", but cos is -0.28 here, and 1 - (-0.28) = 1.28)'],
+  'fm:qr-a:dsm5': ['Review suggestion taken: the contrast row tag reads "variance 2 (average squared gap)" (was "spread out: variance 2"; the longer "spread out: variance 2 (average squared gap)" ran past the left edge of the panel at 390 px), and the alt says the same, so a student taught the n - 1 formula (2.67) sees which variance is meant'],
+  'fm:qr-a:mix1419': [
+    RENAME('Subtracted the strengths'),
+    'Review suggestion taken: the sugar is counted in grams (a sugar percent is grams per 100 mL): answer line, step 1, the key and 35 notes, the alt, and the picture (new optional soluteUnit on qr.tree kind mix: "25 g", "35 g in 200 mL"). The bank why says mL; it is not edited'
+  ],
+  'fm:qr-a:rt3': [
+    RENAME('Averaged the speeds'),
+    'Review suggestion taken: the half-hour piece in the top bar reads "40 mi" like the two "80 mi" pieces (was "40")'
+  ],
+  'fm:qr-a:wor1397': [
+    RENAME('Added the times'),
+    'Review fix: the 9 note says adding the times is as if each entered a whole stack in turn (was "as if one waited for the other", which on one shared stack does not give 9 hours)'
+  ]
+};
+
+module.exports = { group: 'G1', batch: 'B006', title: 'Full-Length Test 1, Quantitative Reasoning, second half (20 items)', entries: ENTRIES, changes: CHANGES };
