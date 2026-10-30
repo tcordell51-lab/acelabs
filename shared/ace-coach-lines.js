@@ -7,12 +7,17 @@
    move, misses as information, "in the bank", "same idea in different
    clothes") and is marked approved: false. Students see a slot's plain
    fallback until Thomas approves a line in that slot (flip approved to
-   true, or rewrite the text in his own words). Coaches preview the
-   drafts in place with ?coach=1.
+   true, or rewrite the text in his own words). Drafts never render on the
+   production host: a coach previews them in place with ?drafts=1 on
+   localhost, 127.0.0.1 or a Netlify deploy preview
+   (deploy-preview-N--site.netlify.app), and nowhere else.
 
      AceCoachLines.pick(slot, vars, opts) -> { id, slot, text, html, approved, draft, fallback }
        opts.seed   picks the same line all day (todayPlan passes the date)
-       opts.drafts true shows unapproved lines (default: only with ?coach=1)
+       opts.drafts true shows unapproved lines on a preview host (localhost,
+                   127.0.0.1, a deploy preview); false never does; by default
+                   they show only with ?drafts=1 on a preview host
+     AceCoachLines.draftsAllowed() -> whether this host may show drafts at all
      AceCoachLines.fill(text, vars) / html(text, vars)
      AceCoachLines.check(line) -> [problems]; checkAll() -> [problems]
      AceCoachLines.checkSource(source) -> [problems]
@@ -200,8 +205,15 @@
     return out.replace(/^((?:<em>)?\s*)([a-z])/, function (m, a, b) { return a + b.toUpperCase(); });
   }
   function hash(s) { var h = 2166136261; for (var i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = (h * 16777619) >>> 0; } return h; }
+  /* Drafts are for Thomas and the coaches to read before he signs off, never
+     for students: they show only on a preview host, and there only when asked
+     for (?drafts=1, or opts.drafts / previewDrafts from a coach tool). */
+  var PREVIEW_HOST = /^(localhost|127\.0\.0\.1|\[::1\]|deploy-preview-\d+--[a-z0-9-]+\.netlify\.app)$/i;
+  function draftsAllowed() {
+    try { return PREVIEW_HOST.test(String(window.location.hostname || '')); } catch (e) { return false; }
+  }
   function draftsOn() {
-    try { return /[?&](coach|drafts)=1(&|$)/.test(window.location.search || ''); } catch (e) { return false; }
+    try { return /[?&]drafts=1(&|$)/.test(window.location.search || ''); } catch (e) { return false; }
   }
   function usable(line, vars) {
     return varsOf(line.text).every(function (k) { return vars[k] != null && String(vars[k]) !== ''; });
@@ -210,10 +222,10 @@
     vars = vars || {}; opts = opts || {};
     var def = SLOTS[slot];
     if (!def) return null;
-    var drafts = opts.drafts === true || (opts.drafts !== false && (api.previewDrafts === true || draftsOn()));
+    var drafts = opts.drafts !== false && draftsAllowed() && (opts.drafts === true || api.previewDrafts === true || draftsOn());
     var pool = LINES.filter(function (l) { return l.slot === slot && (l.approved === true || drafts) && usable(l, vars); });
     var approved = pool.filter(function (l) { return l.approved === true; });
-    if (approved.length && opts.drafts !== true) pool = approved;
+    if (approved.length && !(opts.drafts === true && drafts)) pool = approved;
     if (!pool.length) {
       return { id: 'fallback:' + slot, slot: slot, text: fill(def.fallback, vars), html: html(def.fallback.replace(/[[\]]/g, ''), vars), approved: false, draft: false, fallback: true };
     }
@@ -225,6 +237,7 @@
     version: 1, SLOTS: SLOTS, LINES: LINES, SOURCE_RULES: SOURCE_RULES, SAMPLE: SAMPLE,
     pick: pick, say: pick, fill: fill, html: html, check: check, checkAll: checkAll, checkSource: checkSource,
     lines: function (slot) { return LINES.filter(function (l) { return !slot || l.slot === slot; }); },
+    draftsAllowed: draftsAllowed,
     previewDrafts: false
   };
 })();

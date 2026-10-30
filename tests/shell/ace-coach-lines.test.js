@@ -10,8 +10,8 @@ const vm = require('node:vm');
 
 const ROOT = path.resolve(__dirname, '../..');
 const SRC = fs.readFileSync(path.join(ROOT, 'shared/ace-coach-lines.js'), 'utf8');
-function load(search = '') {
-  const window = { location: { search } };
+function load(search = '', hostname = 'localhost') {
+  const window = { location: { search, hostname } };
   vm.runInContext(SRC, vm.createContext({ window }));
   return window.AceCoachLines;
 }
@@ -74,8 +74,8 @@ test('students see the plain fallback until a line in the slot is approved', () 
   assert.equal(C.pick('nope', vars), null);
 });
 
-test('coaches preview the drafts in place with ?coach=1; the pick holds all day', () => {
-  const C = load('?coach=1');
+test('coaches preview the drafts in place with ?drafts=1 on a preview host; the pick holds all day', () => {
+  const C = load('?drafts=1');
   const vars = { topic: 'osmosis', cards: 'your three cards' };
   const a = C.pick('play-then-cards', vars, { seed: '2026-10-30' });
   assert.equal(a.draft, true);
@@ -87,8 +87,27 @@ test('coaches preview the drafts in place with ?coach=1; the pick holds all day'
   assert.equal(C.pick('play-then-cards', vars, { drafts: false }).fallback, true, 'and off on request');
 });
 
+test('drafts never render on the production host: only ?drafts=1 on localhost, 127.0.0.1 or a deploy preview', () => {
+  const vars = { topic: 'osmosis', cards: 'your three cards' };
+  const shown = (search, host, opts) => load(search, host).pick('play-then-cards', vars, Object.assign({ seed: '2026-10-30' }, opts)).draft;
+  for (const host of ['localhost', '127.0.0.1', 'deploy-preview-12--acelabs.netlify.app', 'deploy-preview-7--ace-labs-2.netlify.app'])
+    assert.equal(shown('?drafts=1', host), true, host + ' with ?drafts=1');
+  for (const host of ['acelabs.netlify.app', 'labs.acethedat.com', 'acethedat.com', 'main--acelabs.netlify.app', 'deploy-preview-12--acelabs.netlify.app.evil.com', 'localhost.evil.com', '']) {
+    assert.equal(shown('?drafts=1', host), false, host + ': never on production, whatever the URL says');
+    assert.equal(shown('', host, { drafts: true }), false, host + ': not even on request');
+    const C = load('?drafts=1', host); C.previewDrafts = true;
+    assert.equal(C.pick('play-then-cards', vars, { seed: 's' }).draft, false, host + ': not even with previewDrafts');
+    assert.equal(C.draftsAllowed(), false);
+  }
+  assert.equal(shown('', 'localhost'), false, 'a preview host shows them only when asked');
+  assert.equal(shown('?coach=1', 'localhost'), false, '?coach=1 is for coach controls, not drafts');
+  assert.equal(shown('?x=1&drafts=1', '127.0.0.1'), true);
+  assert.equal(shown('?drafts=10', '127.0.0.1'), false);
+  assert.equal(load('', 'localhost').draftsAllowed(), true);
+});
+
 test('a line is only used when every variable it needs is there', () => {
-  const C = load('?coach=1');
+  const C = load('?drafts=1');
   const r = C.pick('replan', { night: 'night 3', why: '' }, { seed: 's' });
   assert.ok(!/\{|\}/.test(r.text));
   assert.ok(r.fallback || !/moved/.test(C.LINES.find((l) => l.id === r.id).text), 'no line that needs {moved}');
