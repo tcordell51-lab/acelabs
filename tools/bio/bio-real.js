@@ -297,8 +297,11 @@
         : 'Hypotonic: water in, discs round up into spheres: more volume, a bit narrower, pale center gone';
     } else if (mode === 'lysed') {
       // ghosts reseal at about the sphere's size, smooth and nearly
-      // invisible; the released hemoglobin tints the whole field faintly
-      defs = '<circle id="rl-d" r="' + f1(RBC_R * 0.9) + '" fill="#f5ebe8" fill-opacity="0.12" stroke="#b8a6a2" stroke-width="0.6" stroke-opacity="0.45"/>';
+      // invisible; the released hemoglobin tints the whole field faintly.
+      // A seeded field draws the membranes a little firmer, so a field of
+      // nothing but ghosts still reads as cells on a phone screen.
+      defs = '<circle id="rl-d" r="' + f1(RBC_R * 0.9) + '" fill="#f5ebe8" fill-opacity="0.12" stroke="' + (lay ? '#a8948f' : '#b8a6a2') +
+        '" stroke-width="' + (lay ? '0.7' : '0.6') + '" stroke-opacity="' + (lay ? '0.62' : '0.45') + '"/>';
       under = '<rect ' + CROP + ' fill="#f3e0dc" opacity="0.15"/>';
       // cells differ in how easily they burst: just past the threshold,
       // two tougher cells still hold as small dense spheres
@@ -797,6 +800,12 @@
     var ext = +o.externalSolute, diff = ext - 50, plant = o.cellType === 'plant';
     var lysed = !plant && !!o.lysed, bare = !!o.bare;
     var vary = o.seed != null && isFinite(+o.seed) ? variation(plant, Math.floor(+o.seed)) : null;
+    // A burst field is faint by nature (empty ghosts), so a seeded one
+    // keeps its focus sharp (blur at most 0.45) and never gets the dim wash.
+    if (vary && lysed) {
+      vary.blur = Math.min(vary.blur, 0.45);
+      if (vary.wash === '#2b261e') vary.washO = 0;
+    }
     var lay = vary ? vary.lay : null;
     var v = plant ? plantField(ext, diff, !!o.plasmolyzed, lay) : rbcField(ext, diff, lysed, lay);
     // A seeded Elodea field that comes out too big for an Ace Card (a turn
@@ -813,7 +822,7 @@
     var mag = plant ? '400x, cropped' : '1000x oil, cropped', bar = plant ? 60 * (lay ? lay.k : 1) : 56;
     var svg = '<defs>' + fieldDefs(vary ? vary.blur : null) + '</defs>' +
       fieldOpen(vary ? vary.bg : (plant ? '#f4f2e6' : '#f6f1e6')) + v.svg +
-      (vary ? '<rect ' + CROP + ' fill="' + vary.wash + '" opacity="' + f2(vary.washO) + '"/>' : '') +
+      (vary && vary.washO > 0 ? '<rect ' + CROP + ' fill="' + vary.wash + '" opacity="' + f2(vary.washO) + '"/>' : '') +
       (bare ? fieldCloseBare(mag, plant ? '50 um' : '10 um', bar)
         : fieldClose(v.title, mag, plant ? '50 um' : '10 um', bar) + soluteStrip(ext, diff, v.vol, lysed));
     if (o.ns && /^[a-z][a-z0-9-]*$/i.test(o.ns)) svg = svg.replace(/(id="|url\(#|href="#)rl-/g, '$1' + o.ns + '-');

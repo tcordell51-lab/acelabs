@@ -169,10 +169,39 @@ test('seeded fields: the same seed draws the same field, every seed a different 
   assert.match(plain, /id="rl-clip"/);
   assert.doesNotMatch(plain, /matrix\(/);
   assert.equal(R.field({ cellType: 'animal', externalSolute: 50 }).look, null);
-  // the drawing code has no clock and no unseeded randomness (the panel reads the clock only to date a card or a set)
+  // the drawing code has no clock and no unseeded randomness (the panel reads the clock only to date a card or a
+  // set, through the engine's _now, with Date.now as the fallback when the engine is missing)
   for (const f of ['bio-real.js', 'bio-recognize.js']) assert.doesNotMatch(code(f), /Math\.random/, f);
   assert.doesNotMatch(code('bio-real.js'), /\bDate\b/);
-  assert.equal((code('bio-recognize.js').match(/\bDate\b/g) || []).length, 2);
+  assert.equal((code('bio-recognize.js').match(/\bDate\b/g) || []).length, 1);
+  assert.match(code('bio-recognize.js'), /typeof _now === 'function' \? _now\(\) : Date\.now\(\)/);
+});
+
+test('a burst field stays readable: sharp focus, no dim wash, firmer ghost membranes; the default burst field is untouched', () => {
+  const R = real();
+  for (let k = 0; k < 40; k++) {
+    const seed = (k * 2654435761 + 17) >>> 0;
+    for (const ext of [0, 5, 10]) {
+      const f = field('animal', ext, seed);
+      const blur = +f.svg.match(/<filter id="tq-soft"[^>]*><feGaussianBlur stdDeviation="([\d.]+)"/)[1];
+      assert.ok(blur <= 0.45, 'seed ' + seed + ' blur ' + blur);
+      assert.doesNotMatch(f.svg, /fill="#2b261e"/, 'seed ' + seed + ' has no dim wash');
+      assert.match(f.svg, /id="tq-d" r="[\d.]+" fill="#f5ebe8" fill-opacity="0.12" stroke="#a8948f" stroke-width="0.7" stroke-opacity="0.62"/);
+    }
+  }
+  // other seeded red fields still vary their focus and light as before
+  const blurs = new Set(), washes = new Set();
+  for (let k = 0; k < 40; k++) {
+    const f = field('animal', 50, (k * 2654435761 + 17) >>> 0);
+    blurs.add(f.svg.match(/stdDeviation="([\d.]+)"/)[1]);
+    const w = f.svg.match(/<rect x="14" y="54" width="372" height="228" fill="(#[0-9a-f]{6})" opacity/);
+    if (w) washes.add(w[1]);
+  }
+  assert.ok([...blurs].some((b) => +b > 0.45), 'focus still varies past 0.45 on unburst fields');
+  assert.ok(washes.has('#2b261e'), 'the dim wash still shows on unburst fields');
+  const plain = R.tonicity({ cellType: 'animal', externalSolute: 4, lysed: true });
+  assert.match(plain, /id="rl-d" r="[\d.]+" fill="#f5ebe8" fill-opacity="0.12" stroke="#b8a6a2" stroke-width="0.6" stroke-opacity="0.45"/);
+  assert.match(plain, /stdDeviation="0.45"/);
 });
 
 test('a bare field never names its state: no caption, no solute strip, no tonicity word', () => {
@@ -301,13 +330,34 @@ test('a set interleaves red cells and Elodea and all three states, eight fields 
   assert.equal(seeds.size, 60, 'a new seed every set');
 });
 
-test('the words: two DAT-style stems per set, the kinds just missed first', () => {
+test('the words: two DAT-style stems per set, the kinds just missed first, four or more stems per kind, none from the last three sets', () => {
   const t = boot('bio-cell.html');
   const B = t.w.BioRecognize;
+  const KINDS = ['animal-hypo', 'animal-iso', 'animal-hyper', 'plant-hypo', 'plant-iso', 'plant-hyper'];
+  assert.equal(new Set(B.words.map((w) => w.id)).size, B.words.length, 'stem ids unique');
+  assert.equal(new Set(B.words.map((w) => w.q)).size, B.words.length, 'no stem twice');
   for (const w of B.words) {
     assert.match(w.q, /^[\x20-\x7e]+$/);
     assert.ok(w.q.length > 60 && w.why.length > 40, w.id);
     assert.match(w.kind, /^(animal|plant)-(hypo|iso|hyper)$/);
+    // the options say "... to the cells", so a stem asks about the solution, never the cells relative to it
+    assert.doesNotMatch(w.q, /the cells? (is|are) (best described as|hypo|hyper|iso)/i, w.id);
+  }
+  for (const k of KINDS) assert.ok(B.words.filter((w) => w.kind === k).length >= 4, k + ' has four or more stems');
+  // more than one organism and more than one solution across the pool
+  const all = B.words.map((w) => w.q).join(' ');
+  for (const re of [/cheek/i, /onion/i, /Elodea/, /0\.9% NaCl/, /3% NaCl/, /sucrose/i, /distilled water/i]) assert.match(all, re);
+  // a kind missed set after set: the stem changes, and none repeats within three sets
+  for (const k of KINDS) {
+    const hist = [];
+    for (let n = 0; n < 9; n++) {
+      const recent = hist.slice(-3).flat();
+      const ids = Array.from(B.chooseWords(B.setSeed(n), [k], recent));
+      const mine = ids.find((id) => B.words.find((w) => w.id === id).kind === k);
+      assert.ok(mine, k + ' asked in set ' + n);
+      for (const id of ids) assert.ok(!recent.includes(id), k + ' set ' + n + ': ' + id + ' came back within three sets');
+      hist.push(ids);
+    }
   }
   const ids = B.chooseWords(12345, ['plant-iso', 'animal-hyper']);
   assert.equal(ids.length, 2);
@@ -395,8 +445,16 @@ test('set flow: field, pick, Confirmed or Needs review with the cue and the capt
   const rec = t2.state().recog;
   const look = rec.history[rec.history.length - 1].look;
   assert.ok(look.length >= 2);
-  for (const k of look) assert.ok(end.includes(t2.w.BioRecognize.kindName[k] + ': look again.'), k);
+  // a kind missed in a field is named for its cells; one missed only in words, in general terms
+  const B2 = t2.w.BioRecognize, inPics = t2.panel().items.filter((it, i) => !rec.cur.answers[i].ok).map((it) => it.kind);
+  for (const k of look) assert.ok(end.includes((inPics.includes(k) ? B2.kindName : B2.wordsName)[k] + ': look again.'), k);
   assert.doesNotMatch(end, /\d+\s*(of|\/)\s*\d+|%|score|streak|points/i);
+  // three fields and one question in words went to the Ace Cards, and the end says so (and only that)
+  const saved = [...r2.querySelectorAll('.rq-end .rq-saved')].map((n) => n.textContent);
+  assert.deepEqual(saved, ['Each field marked Needs review is in your Ace Cards, with that picture on it.',
+    'The question in words marked Needs review is in your Ace Cards too.']);
+  assert.equal(t2.state().aceCards.filter((c) => c.origin === 'Which one is this: Tonicity').length, 4);
+  assert.deepEqual(Array.from(rec.history[rec.history.length - 1].words), Array.from(rec.cur.words), 'the set keeps its stems');
   // another set: new seed, new fields
   t2.click(r2.querySelector('.rq-again'));
   assert.notEqual(t2.state().recog.cur.seed, seed);
@@ -405,7 +463,7 @@ test('set flow: field, pick, Confirmed or Needs review with the cue and the capt
   assert.deepEqual(t.errs.concat(t2.errs), []);
 });
 
-test('a miss saves an Ace Card with that exact field on its front, under 20000 characters; one card per kind', () => {
+test('each miss saves its own Ace Card with that exact field, under 20000 characters; at the cap of 12 the oldest older card is refreshed, never one from the same set', () => {
   const t = boot('bio-cell.html');
   const B = t.w.BioRecognize;
   // every field of 30 sets fits on a card
@@ -424,45 +482,150 @@ test('a miss saves an Ace Card with that exact field on its front, under 20000 c
     }
   }
   assert.ok(most > 10000, 'the plant fields are real pictures: ' + most);
-  // play a set, missing the first two fields
-  const p = t.panel(), first = p.items[0], second = p.items[1];
-  answer(t, true);
+  // the engine's clock and pill, watched
+  const T0 = 1700000000000;
+  let flashes = 0;
+  t.w._now = () => T0;
+  const flash = t.w.flashAcePill;
+  t.w.flashAcePill = () => { flashes++; flash(); };
   const st = t.state();
-  const mine = () => st.aceCards.filter((c) => c.origin === 'Which one is this: Tonicity');
-  assert.equal(mine().length, 1);
+  const mine = () => st.aceCards.filter((c) => c.origin === 'Which one is this: Tonicity' && !c.closed);
+  const next = () => t.click(t.d.querySelector('#recognize-tonicity .rq-next'));
+  // set 1, every field and both questions in words missed: ten cards, each its own
+  const p = t.panel(), items1 = p.items.slice();
+  answer(t, true);
   const card = mine()[0];
-  assert.equal(st.recog.cards[first.kind], card.id);
   assert.equal(card.subject, 'cell');
   assert.equal(card.nodeId, 'mtr');
-  assert.ok(card.nextDue <= Date.now(), 'due now');
-  assert.equal(card.q, B.card(first).q, 'the card shows that exact field');
+  assert.equal(card.nextDue, T0, 'due now, on the engine clock');
+  assert.equal(card.q, B.card(items1[0]).q, 'the card shows that exact field');
+  assert.match(t.d.querySelector('#recognize-tonicity .rq-fb').textContent, /Saved to your Ace Cards with this field on it\./);
   // the card renders in the deck with its picture, every reference inside the card
   const el = t.d.querySelector('.ace-card[data-id="' + card.id + '"]');
   assert.ok(el && el.querySelector('.ace-front-q svg'), 'card picture in the stack');
   const refs = [...el.innerHTML.matchAll(/(?:url\(#|href="#)([^)"]+)/g)].map((m) => m[1]);
   for (const r of refs) { const n = t.d.getElementById(r); assert.ok(n && el.contains(n), 'reference ' + r); }
-  t.click(t.d.querySelector('#recognize-tonicity .rq-next'));
+  next();
+  for (let i = 1; i < 8; i++) { answer(t, true); assert.equal(mine().length, i + 1, 'field ' + (i + 1) + ' has its own card'); next(); }
+  // a kind seen twice in the set (two red hypotonic fields, say) keeps both fields
+  for (const it of items1) assert.equal(mine().filter((c) => c.q === B.card(it).q).length, 1, it.kind + ' ext ' + it.ext);
+  const wordIds = Array.from(st.recog.cur.words);
   answer(t, true);
-  assert.equal(mine().length, first.kind === second.kind ? 1 : 2);
-  // a later miss of a kind that has a card puts the new field on that card: no new card, one more lapse
-  const kind = second.kind, before = mine().length, c2 = st.aceCards.find((c) => c.id === st.recog.cards[kind]);
-  const lapses = c2.lapses;
-  const later = B.makeSet(B.setSeed(7)).find((i) => i.kind === kind);
-  t.click(t.d.querySelector('#recognize-tonicity .rq-next'));
-  t.panel().items[2] = later;
-  t.panel().renderPicture(2);
-  t.click(t.d.querySelector('#recognize-tonicity .rq-opt[data-s="' + (later.state === 'hyper' ? 'hypo' : 'hyper') + '"]'));
-  assert.equal(mine().length, before);
-  assert.equal(c2.lapses, lapses + 1);
-  assert.equal(c2.q, B.card(later).q);
-  // a card closed or cleared away is not refreshed: the next miss makes a new one
-  c2.closed = true;
-  const fresh = B.makeSet(B.setSeed(9)).find((i) => i.kind === kind);
-  t.click(t.d.querySelector('#recognize-tonicity .rq-next'));
-  t.panel().items[3] = fresh;
-  t.panel().renderPicture(3);
-  t.click(t.d.querySelector('#recognize-tonicity .rq-opt[data-s="' + (fresh.state === 'hyper' ? 'hypo' : 'hyper') + '"]'));
-  assert.notEqual(st.recog.cards[kind], c2.id);
+  assert.equal(mine().length, 9);
+  const wc = mine()[8], w1 = B.words.find((w) => w.id === wordIds[0]);
+  assert.ok(wc.q.includes(w1.q.replace(/'/g, '&#39;')), 'the stem is on the text card');
+  assert.match(wc.quickHit, /^<b>(Hypotonic|Isotonic|Hypertonic) to the cells\.<\/b> /);
+  assert.match(t.d.querySelector('#recognize-tonicity .rq-fb').textContent, /Saved to your Ace Cards\./);
+  next();
+  answer(t, true);
+  next();
+  assert.equal(mine().length, 10);
+  assert.deepEqual([...t.d.querySelectorAll('#recognize-tonicity .rq-end .rq-saved')].map((n) => n.textContent),
+    ['Each field marked Needs review is in your Ace Cards, with that picture on it.', 'Both questions in words are in your Ace Cards too.']);
+  const set1 = st.recog.cur.seed;
+  assert.equal(st.recog.cards.length, 10);
+  for (const e of st.recog.cards) {
+    assert.equal(e.set, set1);
+    assert.match(e.src, /^(pic|words)$/);
+    assert.match(e.kind, /^(animal|plant)-(hypo|iso|hyper)$/);
+  }
+  // set 2, every field missed: two more new cards reach the cap of 12, then each miss takes over the
+  // oldest card from set 1 (the same look first, then the same kind); no card from set 2 is written over
+  t.click(t.d.querySelector('#recognize-tonicity .rq-again'));
+  const items2 = t.panel().items.slice(), set2 = st.recog.cur.seed;
+  assert.equal(B.cardCap, 12);
+  for (let i = 0; i < 8; i++) {
+    const before = st.recog.cards.map((e) => Object.assign({}, e)), f0 = flashes;
+    answer(t, true);
+    assert.equal(mine().length, Math.min(12, 11 + i), 'cards open after field ' + (i + 1));
+    const now = st.recog.cards[st.recog.cards.length - 1], c = mine().find((x) => x.id === now.id);
+    assert.equal(c.q, B.card(items2[i]).q, 'field ' + (i + 1) + ' is on a card');
+    assert.equal(now.set, set2);
+    if (i >= 2) {
+      const was = before.find((e) => e.id === now.id);
+      assert.ok(was, 'an older card took field ' + (i + 1));
+      assert.equal(was.set, set1, 'never a card from this set');
+      const look = items2[i].cell + '-' + B.stage(items2[i]);
+      const older = before.filter((e) => e.set === set1);
+      const want = older.find((e) => e.src === 'pic' && e.look === look) || older.find((e) => e.kind === items2[i].kind) ||
+        older.find((e) => e.src === 'pic') || older[0];
+      assert.equal(was.id, want.id, 'the oldest of the same look, then of the same kind');
+      assert.equal(c.nextDue, T0);
+      assert.ok(c.lapses >= 1);
+      assert.equal(flashes, f0 + 1, 'the pill flashes on a refresh too');
+    }
+    next();
+  }
+  for (const it of items2) assert.equal(mine().filter((c) => c.q === B.card(it).q).length, 1, 'set 2 ' + it.kind + ' kept');
+  // a card closed or cleared away drops out: the next miss makes a new one, under the cap again
+  mine()[0].closed = true;
+  const fresh = B.makeSet(B.setSeed(9))[0];
+  t.panel().items[0] = fresh;
+  st.recog.cur.answers.length = 0;
+  t.panel().renderPicture(0);
+  const n0 = st.aceCards.length;
+  answer(t, true);
+  assert.equal(st.aceCards.length, n0 + 1);
+  assert.equal(mine().length, 12);
+  // an earlier build kept one card id per kind; it carries over as an old picture card
+  st.recog.cards = { 'plant-iso': mine()[0].id };
+  t.panel().render();
+  assert.ok(Array.isArray(st.recog.cards));
+  assert.deepEqual(JSON.parse(JSON.stringify(st.recog.cards)), [{ id: mine()[0].id, kind: 'plant-iso', look: 'plant-iso', src: 'pic', set: -1 }]);
+  assert.deepEqual(t.errs, []);
+});
+
+test('the end says what went to the Ace Cards only when it did: a miss in words alone makes no claim about fields', () => {
+  const t = boot('bio-cell.html');
+  const next = () => t.click(t.d.querySelector('#recognize-tonicity .rq-next'));
+  const mine = () => t.state().aceCards.filter((c) => c.origin === 'Which one is this: Tonicity');
+  for (let i = 0; i < 8; i++) { answer(t, false); next(); }
+  assert.equal(mine().length, 0);
+  answer(t, true); next();
+  answer(t, false); next();
+  assert.equal(mine().length, 1);
+  const end = t.d.querySelector('#recognize-tonicity .rq-end');
+  assert.deepEqual([...end.querySelectorAll('.rq-saved')].map((n) => n.textContent), ['The question in words marked Needs review is in your Ace Cards.']);
+  assert.doesNotMatch(end.textContent, /field/i);
+  // missed only in words: named in general terms (the stems cover cheek cells, onion and more), not as red cells
+  const k = t.state().recog.history[0].look[0];
+  assert.ok(end.textContent.includes(t.w.BioRecognize.wordsName[k] + ': look again.'), k);
+  assert.doesNotMatch(end.textContent, /Red cells|Elodea/);
+  // all named: no line about the Ace Cards at all
+  t.click(t.d.querySelector('#recognize-tonicity .rq-again'));
+  for (let i = 0; i < 10; i++) { answer(t, false); next(); }
+  const end2 = t.d.querySelector('#recognize-tonicity .rq-end');
+  assert.doesNotMatch(end2.textContent, /Ace Cards/);
+  assert.equal(mine().length, 1);
+  assert.deepEqual(t.errs, []);
+});
+
+test('the cues teach what the picture shows: ghosts with no tint, deep plasmolysis only past ext 85, flaccid at the balance point', () => {
+  const t = boot('bio-cell.html');
+  const B = t.w.BioRecognize;
+  const item = (cell, state, ext) => ({ kind: cell + '-' + state, cell, state, ext, lysed: cell === 'animal' && ext < 12, seed: 4242 + ext });
+  assert.equal(B.stage(item('plant', 'hyper', 85)), 'early');
+  assert.equal(B.stage(item('plant', 'hyper', 86)), 'deep');
+  assert.equal(B.stage(item('animal', 'hypo', 4)), 'burst');
+  const burst = B.card(item('animal', 'hypo', 4));
+  assert.doesNotMatch(burst.why + burst.quickHit, /tint|background|color/i, 'no cue the field cannot show');
+  assert.match(burst.why, /ghosts/);
+  assert.match(B.card(item('plant', 'iso', 50)).why, /flaccid/);
+  assert.match(B.card(item('plant', 'iso', 50)).quickHit, /Flaccid/);
+  const deep = B.card(item('plant', 'hyper', 92));
+  assert.match(deep.why, /in from the side walls/);
+  assert.doesNotMatch(deep.why + deep.quickHit, /well clear/);
+  assert.doesNotMatch(B.card(item('plant', 'hyper', 75)).why, /side walls/);
+  // the answer button says equal solute, not the same solute
+  const root = t.d.querySelector('#recognize-tonicity .rq');
+  assert.match(root.querySelector('.rq-opt[data-s="iso"]').textContent, /equal solute in and out/);
+  // a burst field named isotonic: the contrast line describes normal discs as they look
+  const p = t.panel();
+  p.items[0] = item('animal', 'hypo', 3);
+  p.renderPicture(0);
+  t.click(root.querySelector('.rq-opt[data-s="iso"]'));
+  assert.equal(root.querySelector('.rq-trap').textContent, 'Normal cells are full pink discs with pale centers. Here only empty outlines are left.');
+  assert.doesNotMatch(root.querySelector('.rq-why').textContent, /tint|background/i);
   assert.deepEqual(t.errs, []);
 });
 
@@ -492,10 +655,12 @@ test('student-facing text: plain ASCII, nothing judgmental, no timer, score or p
   const B = t.w.BioRecognize;
   for (let n = 0; n < 6; n++) for (const it of B.makeSet(B.setSeed(n))) { const c = B.card(it); seen.push(c.quickHit, c.explanation.replace(/<[^>]*>/g, ' '), c.why); }
   B.words.forEach((w) => seen.push(w.q, w.why));
+  B.words.forEach((w) => { const c = B.wordsCard(w); seen.push(c.q.replace(/<[^>]*>/g, ' '), c.quickHit, c.explanation.replace(/<[^>]*>/g, ' ')); });
   for (const s of seen) {
     assert.match(s, /^[\x20-\x7e\s]*$/, 'plain ASCII: ' + s.slice(0, 80));
     assert.doesNotMatch(s, /\b(wrong|incorrect|fail|failed|fails)\b/i);
-    assert.doesNotMatch(s, /%|\bscore|\bstreak|\bpoints\b|\bXP\b|\btimer\b|seconds/i);
+    // a percent sign only in a saline strength (0.9% NaCl), never a score
+    assert.doesNotMatch(s.replace(/\b\d+(\.\d+)?% NaCl\b/g, 'NaCl'), /%|\bscore|\bstreak|\bpoints\b|\bXP\b|\btimer\b|seconds/i);
   }
   for (const f of ['bio-recognize.js', 'bio-recognize.css', 'bio-real.js']) assert.match(fs.readFileSync(path.join(BIO, f), 'utf8'), /^[\x00-\x7e]*$/, f + ' is ASCII');
   const css = fs.readFileSync(path.join(BIO, 'bio-recognize.css'), 'utf8');
