@@ -4,6 +4,9 @@
 //
 //   perl -e 'alarm 300; exec @ARGV' node scripts/test-full-mock.mjs [--out DIR]
 //
+// The browser: env PW_CHROMIUM, else env CHROME, else /opt/pw-browsers/chromium when present,
+// else Google Chrome on macOS; --no-sandbox when running as root.
+//
 // Drives the real page through the whole day: landing, Natural Sciences (periodic table
 // exhibit, mark, review screen), PAT (figures render), the optional break, RC (passage beside
 // the question), QR (calculator arithmetic), then the report: raw scores and time per
@@ -18,7 +21,9 @@ import { fileURLToPath } from 'node:url';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const PAGE = 'file://' + path.join(ROOT, 'tools/mock/full.html');
-const CHROME = process.env.CHROME || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+const CHROME = [process.env.PW_CHROMIUM, process.env.CHROME, '/opt/pw-browsers/chromium'].filter(Boolean).find((f) => { try { return fs.statSync(f).isFile(); } catch { return false; } })
+  || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+const AS_ROOT = typeof process.getuid === 'function' && process.getuid() === 0;
 const ai = process.argv.indexOf('--out');
 const OUT = ai > 0 ? path.resolve(process.argv[ai + 1]) : path.join(os.tmpdir(), 'acelabs-fullmock-shots');
 fs.mkdirSync(OUT, { recursive: true });
@@ -29,7 +34,7 @@ const ok = (cond, msg) => { console.log((cond ? '  ok   ' : '  FAIL ') + msg); i
 
 async function withChrome(fn) {
   const profile = fs.mkdtempSync(path.join(os.tmpdir(), 'fm-cdp-'));
-  const chrome = spawn(CHROME, ['--headless=new', '--disable-gpu', '--hide-scrollbars', '--allow-file-access-from-files', '--remote-debugging-port=0', '--user-data-dir=' + profile, 'about:blank'], { stdio: 'ignore' });
+  const chrome = spawn(CHROME, ['--headless=new', '--disable-gpu', '--hide-scrollbars', '--allow-file-access-from-files', '--remote-debugging-port=0', '--user-data-dir=' + profile, ...(AS_ROOT ? ['--no-sandbox'] : []), 'about:blank'], { stdio: 'ignore' });
   try {
     let port = 0, wsUrl;
     for (let i = 0; i < 300 && !wsUrl; i++) {
