@@ -373,7 +373,7 @@ const ENTRIES = [
       ],
       reuse: REUSE,
       alt: 'Paragraph 2, sentence 1 is highlighted: ranking agents by how readily each dissolves in olive oil predicts how little of each is needed. Sentence 2 is marked as the source of a trap: the relationship held across more than four orders of magnitude.',
-      caption: 'Oil solubility in, dose out. The marked line shows one ranking held, so no choice can say there was no order.'
+      caption: 'Oil solubility in, dose out. The marked line shows one ranking held, so a choice that says there was no order is out.'
     },
     demoPick: 'Agents that dissolved most readily in water were the ones that could be given to an animal in the smallest doses',
     flags: [PLAY_FLAG]
@@ -728,7 +728,7 @@ const ENTRIES = [
       { text: 'The lipid membrane theory has been replaced by a settled account built on one protein target', role: 'trap', family: 'rc-half-supported', trap: 'Fell, but nothing settled', note: 'Half of it holds: the lipid theory did fall. But the field found too many protein targets, and the one clean result holds for one drug, not the state.' },
       { text: 'Anaesthesia carries hidden dangers that patients are never told about, and the profession has been slow to admit it', role: 'trap', family: 'rc-tone', trap: 'Too alarmed', note: 'The passage calls anaesthesia remarkably safe and the gap a research program rather than a warning. Alarm is not its register.' },
       { text: 'Anaesthesia works safely at scale yet is not fully understood, with many targets and effects that come apart', role: 'key', note: 'Safe at scale, not understood, many targets, effects that come apart: the opening, middle and close in one line.' },
-      { text: 'The main obstacle to understanding anaesthesia is that operating room monitors are not accurate enough', role: 'trap', family: 'rc-too-weak', trap: 'One paragraph as the point', note: 'Monitors fill one paragraph. Paragraph 14 blames the slow progress partly on redundant targets, not on instruments, and the main idea covers far more.' },
+      { text: 'The main obstacle to understanding anaesthesia is that operating room monitors are not accurate enough', role: 'trap', family: 'rc-too-weak', trap: 'One paragraph as the point', note: 'Monitors are the subject of one paragraph. Paragraph 14 blames the slow progress partly on redundant targets, not on instruments, and the main idea covers far more.' },
       { text: 'Because different drugs act at different sites, anaesthetists ought to give only one agent at a time', role: 'trap', family: 'rc-outside', trap: 'No advice given', note: 'The passage never recommends one agent at a time. It describes practice as several drugs together and says the practice should not be unsettled.' }
     ],
     lockIt: 'Main idea: the answer covers the opening puzzle and the closing verdict, at the author\'s strength.',
@@ -767,7 +767,7 @@ const ENTRIES = [
       'Sentence 7 lands it: "These share almost nothing beyond a mild reluctance to stay dissolved in water". Unlike molecules, one state.'
     ],
     choices: [
-      { text: 'rank the agents by how safe each one is in practice', role: 'trap', family: 'rc-outside', trap: 'No safety ranking', note: 'Paragraph 8 describes shapes only. Safety comes up in paragraph 1, and no agent is ranked against another.' },
+      { text: 'rank the agents by how safe each one is in practice', role: 'trap', family: 'rc-outside', trap: 'No safety ranking', note: 'Paragraph 8 describes structure, not safety. Safety comes up in paragraph 1, and no agent is ranked against another.' },
       { text: 'show that molecules with nothing structurally in common produce the same state', role: 'key', note: 'Unlike shapes, one state: the list makes the chemical variety impossible to miss.' },
       { text: 'explain why the volatile agents became the most widely used members of the group', role: 'trap', family: 'rc-outside', trap: 'Popularity never discussed', note: 'No line says which agents are used most, or why.' },
       { text: 'argue that only one drug on the list is a true anaesthetic', role: 'trap', family: 'rc-contradicted', trap: 'They all count', note: 'Sentence 2 calls xenon a complete anaesthetic, and nothing in paragraph 8 rules a drug out. The list shows variety, not a disqualification.' },
@@ -856,7 +856,7 @@ const ENTRIES = [
       { text: 'dismissive of the research that seeks to close it', role: 'trap', family: 'rc-contradicted', trap: 'Research is the point', note: 'Calling the gap a research program values the work. Nothing in paragraph 15 waves the research off.' },
       { text: 'indifferent to whether patients are safe', role: 'trap', family: 'rc-tone', trap: 'Calm is not cold', note: 'The author is calm because the practice works, refined by watching patients. That is care about safety, not indifference.' },
       { text: 'untroubled by it and curious about what remains', role: 'key', note: 'Practice not unsettled, the gap a research program: calm, and interested in what remains.' },
-      { text: 'triumphant about how much has been settled', role: 'trap', family: 'rc-half-supported', trap: 'Proud of the practice only', note: 'The author does praise the practice. But the paragraph ends on a condition the field cannot yet define, so little is settled.' }
+      { text: 'triumphant about how much has been settled', role: 'trap', family: 'rc-half-supported', trap: 'Proud of the practice only', note: 'The author does praise the practice. But the paragraph ends on a condition the field cannot yet define, so the explanation is far from settled.' }
     ],
     lockIt: 'Tone: collect the author\'s judging words in the paragraph, and keep the choice that fits all of them.',
     hook: null,
@@ -927,7 +927,7 @@ const ENTRIES = [
     difficulty: band(3, 'EXCEPT about the role of evidence'),
     source: P19('q15', 49),
     keyText: 'pressure restores movement in an animal that has been anaesthetized',
-    answer: { line: 'Pressure reversal is the one piece the passage offers as support for the lipid theory: the observation that seemed to seal the case.' },
+    answer: { line: 'Of the five, only pressure reversal is offered as support for the lipid theory: the observation that seemed to seal the case.' },
     steps: [
       'Flip the job. All five are in the passage; you are hunting the one that is not trouble for the lipid theory.',
       'Check off the trouble in paragraphs 4 to 6: warming, the mirror-image forms, the compounds that leave animals moving, luciferase.',
@@ -1009,18 +1009,19 @@ const ENTRIES = [
 // expert review changed, per item (coach record only).
 const CHANGES = {
   'rc:rc-p10-q14': ['Expert review: the 17.2 card (the symbiosis is ancient, nearly universal and structurally elegant) is a context line, "Read with it", not a trap source. It is the line that rules the misdescribed choice out; that choice\'s pull comes from the skepticism of paragraphs 11 to 16. The card\'s note reads "the settled part: the partnership itself" and the alt says sentence 2 is marked to read with them; the caption is unchanged'],
-  'rc:rc-p19-q13': ['Expert review: the 15.5 card (a condition it cannot yet define) is a context line, "Read with it", not a trap source. It rules triumph out, as the caption says; the pull of the triumphant choice is the praise in 15.2. The alt says sentence 5 is marked to read with them; note and caption unchanged'],
+  'rc:rc-p19-q01': ['Optional note taken (re-review 2): the caption ends "so a choice that says there was no order is out" (it said "no choice can say there was no order", which one choice does say)'],
+  'rc:rc-p19-q13': ['Expert review: the 15.5 card (a condition it cannot yet define) is a context line, "Read with it", not a trap source. It rules triumph out, as the caption says; the pull of the triumphant choice is the praise in 15.2. The alt says sentence 5 is marked to read with them; note and caption unchanged', 'Optional note taken (re-review 2): the triumphant trap note ends "so the explanation is far from settled" (it said "so little is settled", but the practice is settled; only the explanation is not)'],
   'rc:rc-p19-q04': ['Expert review: step 3 says three other choices belong to the other drugs in paragraph 7 and no line makes the relaxant claim (it said each other choice describes a group in paragraph 7, which the relaxant choice does not)'],
   'rc:rc-p10-q12': ['Optional note taken: the experiments trap note ends "nothing is arranged by when it was run" (the passage gives no run order to check against), and the 1.5 note reads "block 1: the trade" (1.5 is the last sentence of paragraph 1, not where the block opens); the alt says the lines mark the blocks'],
-  'rc:rc-p19-q11': ['Optional note taken: the GABA trap note ends "The list crosses the target groups of paragraph 7." (it said the list mixes targets on purpose, an intent the passage never states)'],
+  'rc:rc-p19-q11': ['Optional note taken: the GABA trap note ends "The list crosses the target groups of paragraph 7." (it said the list mixes targets on purpose, an intent the passage never states)', 'Optional note taken (re-review 2): the safety trap note opens "Paragraph 8 describes structure, not safety." (it said "describes shapes only", but 8.2 also calls xenon a complete anaesthetic and 8.4 says propofol is given as an emulsion)'],
   'rc:rc-p19-q14': ['Optional note taken: step 3 says sentence 3 calls the debate over whether a patient who squeezes on command is conscious an "honest disagreement", then "No side is picked." (it said "it", which read as the two figures)'],
   'rc:rc-p19-q03': ['Xenon choice: family close-second (the expert suggested rc-misplaced): xenon has the largest MAC under an atmosphere, a real runner-up that loses to nitrous oxide, not a value pinned to the wrong agent'],
-  'rc:rc-p19-q10': ['Lipid-replaced choice: family rc-half-supported (the expert stamped rc-contradicted, then recommended rc-half-supported in its notes after reading the bank label "Half right"): the lipid theory did fall; no settled single target replaced it'],
+  'rc:rc-p19-q10': ['Lipid-replaced choice: family rc-half-supported (the expert stamped rc-contradicted, then recommended rc-half-supported in its notes after reading the bank label "Half right"): the lipid theory did fall; no settled single target replaced it', 'Optional note taken (re-review 2): the monitors trap note opens "Monitors are the subject of one paragraph." (it said "Monitors fill one paragraph", but 13.3 also names a monitor)'],
   'rc:rc-p19-q09': ['Picture: line 2 (paragraph 9, sentence 2, the definition of MAC) is a context line, since the bank proof is 11.2 only; the connector joins "standard measure" to its definition, as the expert asked'],
   'rc:rc-p10-q15': ['Picture: four cards, not five. All four check-offs plus the key line run 704 px on a 390 px phone (the gate allows 600), so the mushrooms line (4.4), the least tempting stated choice, is left to its trap card and the caption; the phosphate choice checks off on 5.2 ("Phosphate barely moves in soil.") instead of the bank\'s 5.3, the same claim in a shorter line; stated spans are not proof lines', 'Optional note taken: the key span note reads "the fungus or hunger may set the flow; kinship is not named" and the caption says what may set the flow, keeping the passage\'s hedge in 13.4 (both had dropped the "may")'],
   'rc:rc-p19-q12': ['Picture: four numbered cards, one per clause of the key (puzzle 1.3, rise and collapse 4.1, replacement 7.1, verdict 15.3). Bank proof 3.5 (the rise) is folded into the note on 4.1 so the phone panel stays under 600 px; 15.3 is a context line, since the bank proof has no line from paragraphs 14 and 15'],
   'rc:rc-p19-q05': ['Picture: the top rung (full MAC) is sentence 9.6, "the only thing it measures is whether a body moves", the shorter of the two lines that tie MAC to movement, so the ladder fits a phone panel'],
-  'rc:rc-p19-q15': ['Picture: the non-immobilizer choice checks off on sentence 5.2 (an animal still withdraws) instead of the bank\'s 5.1, the shorter line that says what the choice says, so five cards fit a phone panel']
+  'rc:rc-p19-q15': ['Picture: the non-immobilizer choice checks off on sentence 5.2 (an animal still withdraws) instead of the bank\'s 5.1, the shorter line that says what the choice says, so five cards fit a phone panel', 'Re-review 2: the answer line reads "Of the five, only pressure reversal is offered as support for the lipid theory: the observation that seemed to seal the case." It said "the one piece the passage offers as support", which dropped the bank\'s "on this list": the founding support is the oil-solubility correlation (paragraph 2, 3.1), and pressure reversal is the further observation that appeared to seal the case (3.3)']
 };
 
 module.exports = { group: 'G1', batch: 'B008', title: 'Full-Length Test 1, Reading Comprehension, passage 2 (last six) and passage 3 (22 items)', entries: ENTRIES, changes: CHANGES };
