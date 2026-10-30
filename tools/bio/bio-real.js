@@ -2,19 +2,36 @@
    Bio Real: true-to-life renderers for the Bio visualizers
    ---------------------------------------------------------------------
    The schematic drawings teach the mechanism; these show what the
-   student would actually see (a light-microscope field, a TEM band
-   pattern), so the picture in their head matches the real thing.
+   student would actually see (a light-microscope camera image, a TEM
+   band pattern), so the picture in their head matches the real thing.
    Shapes and proportions follow real morphology:
-     - red blood cells: biconcave discs with central pallor (isotonic),
-       swollen spheres (hypotonic), pale ghosts after hemolysis,
-       crenated echinocytes (hypertonic). No nucleus: mature RBCs have
-       none.
-     - plant cells (onion / Elodea style): rigid walls, a big central
-       vacuole, chloroplasts in a thin rim of cytoplasm; plasmolysis
-       pulls the protoplast off the wall.
+     - red blood cells, a wet mount at 1000x oil (5.6 px per um): round
+       biconcave discs 7.5 um across with a flat central pallor, a few
+       touching, one overlapping pair, two seen edge-on. Hypotonic: the
+       discs cup (stomatocytes, the pallor narrows to a slit), then
+       round up into evenly dense spheres. The membrane barely
+       stretches, so a sphere holds more water yet is a little narrower
+       (about 6.7 um). Hemolysis: faint, smooth, empty ghosts about
+       6.7 um across in an evenly tinted, nearly empty field.
+       Hypertonic: shrunken cells with many short blunt projections
+       (echinocytes). No nucleus: mature RBCs have none.
+     - Elodea leaf cells at 400x (1.2 px per um): narrow cells in
+       parallel files with slanted, staggered end walls, thin colorless
+       walls, colorless cytoplasm, chloroplasts packed along the walls
+       and over the face, the nucleus faint and mostly hidden.
+       Isotonic: small corner gaps in about half the cells (incipient
+       plasmolysis). Hypotonic: protoplasts pressed flat on the walls
+       (turgid). Hypertonic: first the membrane leaves the corners in
+       every cell; once the page calls it plasmolysis (ext above 80),
+       uneven plasmolysis: rounded protoplasts, crowded chloroplasts,
+       held to the wall by thin (Hechtian) strands.
+   Each view is a rectangular camera crop, evenly lit, with its
+   magnification in the caption and a scale bar true to the drawing.
    Everything is deterministic (no Math.random) so frames never flicker
-   and snapshots match the live view. Plain SVG gradients and filters;
-   no images, no network.
+   and snapshots match the live view. Repeated shapes are drawn once in
+   <defs> and placed with <use>, and small marks that share paint are
+   merged into one path, so a frame stays small enough to ride along on
+   an Ace Card. Plain SVG gradients and filters; no images, no network.
 
    Hooks: initTonicity (bio-shared.js) calls BioReal.tonicity(params)
    when this file is loaded and falls back to its schematic otherwise.
@@ -23,6 +40,7 @@
   'use strict';
 
   function f1(n) { return (Math.round(n * 10) / 10).toString(); }
+  function f2(n) { return (Math.round(n * 100) / 100).toString(); }
   function clamp(x, a, b) { return Math.max(a, Math.min(b, x)); }
   function lerp(a, b, t) { return a + (b - a) * t; }
   function mix(c1, c2, t) {
@@ -33,25 +51,33 @@
       return x.length < 2 ? '0' + x : x;
     }).join('');
   }
+  // a fixed pseudo-random number in [0, 1) for a pair of integers
+  function hash(i, k) { var v = Math.sin(i * 12.9898 + k * 78.233) * 43758.5453; return v - Math.floor(v); }
+  function pt(p) { return f1(p[0]) + ',' + f1(p[1]); }
+  // split a caption into lines of at most max characters
+  function wrap(s, max) {
+    var lines = [''];
+    s.split(' ').forEach(function (w) {
+      var cur = lines[lines.length - 1];
+      if (cur && (cur + ' ' + w).length > max) lines.push(w);
+      else lines[lines.length - 1] = cur ? cur + ' ' + w : w;
+    });
+    return lines;
+  }
 
-  /* ---------- the microscope field ---------- */
+  /* ---------- the camera image ---------- */
 
-  var W = 400, H = 320, CX = 200, CY = 163, FR = 124;   // field sits below the caption
+  // A rectangular crop of the camera image: flat, even illumination (a
+  // properly set up brightfield), a thin dark border, no round eyepiece
+  // stop. Caption above it; solute strip and scale bar below it.
+  var W = 400, H = 320;
+  var FX = 14, FY = 54, FW = 372, FH = 228;
+  var CROP = 'x="' + FX + '" y="' + FY + '" width="' + FW + '" height="' + FH + '"';
 
-  function fieldDefs(tint) {
+  function fieldDefs() {
     return '' +
-      '<radialGradient id="rl-field" cx="50%" cy="46%" r="55%">' +
-        '<stop offset="0%" stop-color="' + mix('#fbf6ee', tint, 0.0) + '"/>' +
-        '<stop offset="70%" stop-color="' + mix('#f1e7d8', tint, 0.15) + '"/>' +
-        '<stop offset="100%" stop-color="#cdbfa9"/>' +
-      '</radialGradient>' +
-      '<radialGradient id="rl-vignette" cx="50%" cy="50%" r="50%">' +
-        '<stop offset="80%" stop-color="#000" stop-opacity="0"/>' +
-        '<stop offset="100%" stop-color="#000" stop-opacity="0.35"/>' +
-      '</radialGradient>' +
-      '<clipPath id="rl-clip"><circle cx="' + CX + '" cy="' + CY + '" r="' + FR + '"/></clipPath>' +
-      '<filter id="rl-soft" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="0.45"/></filter>' +
-      '<filter id="rl-haze" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="9"/></filter>' +
+      '<clipPath id="rl-clip"><rect ' + CROP + ' rx="6"/></clipPath>' +
+      '<filter id="rl-soft" x="-5%" y="-5%" width="110%" height="110%"><feGaussianBlur stdDeviation="0.45"/></filter>' +
       '<filter id="rl-grain" x="0" y="0" width="100%" height="100%">' +
         '<feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="7" result="n"/>' +
         '<feColorMatrix in="n" type="matrix" values="0 0 0 0 0.45  0 0 0 0 0.40  0 0 0 0 0.35  0 0 0 0.09 0"/>' +
@@ -59,41 +85,45 @@
       '</filter>';
   }
 
-  function fieldOpen() {
+  function fieldOpen(bg) {
     // the dark surround runs past the viewBox so a letterboxed copy (an
     // Ace Card picture) has no light bars at its sides
     return '<rect x="-400" y="-400" width="' + (W + 800) + '" height="' + (H + 800) + '" fill="#141714"/>' +
-      '<circle cx="' + CX + '" cy="' + CY + '" r="' + FR + '" fill="url(#rl-field)"/>' +
-      '<g clip-path="url(#rl-clip)">';
+      '<g clip-path="url(#rl-clip)"><rect ' + CROP + ' fill="' + bg + '"/>';
   }
-  function fieldClose(caption, scaleLabel, scalePx) {
-    return '<circle cx="' + CX + '" cy="' + CY + '" r="' + FR + '" fill="#cbb" filter="url(#rl-grain)" opacity="0.9"/>' +
-      '</g>' +
-      '<circle cx="' + CX + '" cy="' + CY + '" r="' + FR + '" fill="url(#rl-vignette)"/>' +
-      '<circle cx="' + CX + '" cy="' + CY + '" r="' + FR + '" fill="none" stroke="#2a2d2a" stroke-width="2"/>' +
-      '<text x="10" y="18" font-size="10.5" font-weight="700" fill="#e9e2d2">LIGHT MICROSCOPE</text>' +
-      '<text x="10" y="31" font-size="10" fill="#e3dccb">' + caption.title + '</text>' +
-      '<line x1="' + (W - 14 - scalePx) + '" y1="' + (H - 40) + '" x2="' + (W - 14) + '" y2="' + (H - 40) + '" stroke="#e9e2d2" stroke-width="2.5"/>' +
-      '<text x="' + (W - 14 - scalePx / 2) + '" y="' + (H - 46) + '" text-anchor="middle" font-size="9" fill="#e9e2d2">' + scaleLabel + '</text>';
+  function fieldClose(title, mag, scaleLabel, scalePx) {
+    var out = '<rect ' + CROP + ' fill="#cbb" filter="url(#rl-grain)" opacity="0.9"/></g>' +
+      '<rect ' + CROP + ' rx="6" fill="none" stroke="#2a2d2a" stroke-width="1.5"/>' +
+      '<text x="' + FX + '" y="17" font-size="11.5" font-weight="700" fill="#e9e2d2">LIGHT MICROSCOPE</text>' +
+      '<text x="' + (FX + FW) + '" y="17" text-anchor="end" font-size="11" fill="#bfb6a3">' + mag + '</text>';
+    wrap(title, 58).slice(0, 2).forEach(function (s, i) {
+      out += '<text x="' + FX + '" y="' + (33 + i * 14) + '" font-size="12" fill="#e3dccb">' + s + '</text>';
+    });
+    // scale bar, right of the solute strip, at the same scale as the image
+    var x2 = FX + FW - 2, x1 = x2 - scalePx;
+    return out + '<path d="M' + x1 + ',310H' + x2 + '" stroke="#e9e2d2" stroke-width="2.5"/>' +
+      '<text x="' + ((x1 + x2) / 2) + '" y="300" text-anchor="middle" font-size="11" fill="#e9e2d2">' + scaleLabel + '</text>';
   }
 
-  /* Bottom strip: the mechanism, kept beside the real picture.
-     Dot density inside vs outside the cell, and which way water moves. */
-  function soluteStrip(ext, diff, lysed) {
-    var y = H - 26, out = '';
-    out += '<rect x="-400" y="' + (y - 6) + '" width="' + (W + 800) + '" height="32" fill="#141714"/>';
-    function box(x, label, n, col) {
-      var s = '<rect x="' + x + '" y="' + y + '" width="96" height="20" rx="4" fill="#20251f" stroke="#59604f" stroke-width="1"/>';
-      for (var i = 0; i < n; i++) {
-        var px = x + 5 + ((i * 37) % 86), py = y + 4 + ((i * 13) % 12);
-        s += '<circle cx="' + px + '" cy="' + py + '" r="1.6" fill="' + col + '"/>';
-      }
-      s += '<text x="' + (x + 48) + '" y="' + (y - 3) + '" text-anchor="middle" font-size="8.5" fill="#bfb6a3">' + label + '</text>';
-      return s;
+  /* Bottom strip: the mechanism, kept beside the real picture. Dots of
+     solute inside vs outside the cell, and which way water moves. The
+     inside count goes up as the cell loses water and down as it gains
+     water (vol is the cell volume, 1 when isotonic). After lysis there
+     is no inside left, so that box fades and says so. */
+  function soluteStrip(ext, diff, vol, lysed) {
+    var y = 301, out = '';
+    function box(x, label, n, col, faded) {
+      var d = '';
+      for (var i = 0; i < n; i++) d += 'M' + (x + 6 + ((i * 37) % 77)) + ',' + (y + 4.5 + ((i * 13) % 10)) + 'h0';
+      return '<g' + (faded ? ' opacity="0.3"' : '') + '>' +
+        '<rect x="' + x + '" y="' + y + '" width="88" height="18" rx="4" fill="#20251f" stroke="#59604f" stroke-width="1"/>' +
+        (d ? '<path d="' + d + '" stroke="' + col + '" stroke-width="3.2" stroke-linecap="round"/>' : '') + '</g>' +
+        '<text x="' + (x + 44) + '" y="296" text-anchor="middle" font-size="11" fill="#bfb6a3">' + label + '</text>';
     }
-    out += box(70, 'solute inside cell', 15, '#7fb4e0');
-    out += box(234, 'solute outside', Math.round(clamp(ext, 0, 100) * 0.3), '#d9b45c');
-    var mid = 200, ay = y + 10, txt, path;
+    out += lysed ? box(14, 'contents released', 0, '', true)
+      : box(14, 'solute inside', Math.round(15 / vol), '#7fb4e0', false);
+    out += box(202, 'solute outside', Math.round(clamp(ext, 0, 100) * 0.3), '#d9b45c', false);
+    var mid = 152, ay = 310, txt, path;
     if (Math.abs(diff) < 5) { txt = 'no net flow'; path = ''; }
     else if (diff < 0) { txt = lysed ? 'water rushed in' : 'water in'; path = 'M' + (mid + 26) + ',' + ay + ' L' + (mid - 22) + ',' + ay; }
     else { txt = 'water out'; path = 'M' + (mid - 26) + ',' + ay + ' L' + (mid + 22) + ',' + ay; }
@@ -101,167 +131,358 @@
       out += '<defs><marker id="rl-arrow" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="#8cc7f2"/></marker></defs>';
       out += '<path d="' + path + '" stroke="#8cc7f2" stroke-width="2.4" marker-end="url(#rl-arrow)"/>';
     }
-    out += '<text x="' + mid + '" y="' + (y - 3) + '" text-anchor="middle" font-size="8.5" font-weight="700" fill="#8cc7f2">' + txt + '</text>';
+    out += '<text x="' + mid + '" y="296" text-anchor="middle" font-size="11" font-weight="700" fill="#8cc7f2">' + txt + '</text>';
     return out;
   }
 
   /* ---------- red blood cells ---------- */
 
-  // A fixed smear: positions, sizes and tilts are hand-placed so the
-  // field looks natural and never moves between renders.
+  // Wet mount at 1000x oil, cropped: 5.6 px per um. A cell is 7.5 um
+  // across (RBC_R 21 px), so the 10 um scale bar is 56 px.
+  var RBC_R = 21, RBC_PX = 5.6;
+  // [x, y, size, roundness (1 is round), tilt, flag]. The first 27 come
+  // from a seeded random placement; the last 7 were added by hand to
+  // fill gaps, so several cells touch, one pair overlaps (flag 1 marks
+  // the upper cell, drawn with a multiply blend: light passes through
+  // both, so the overlap is darker) and two lie edge-on (flag 2).
   var RBCS = [
-    { x: 150, y: 124, s: 1.00, k: 0.94, a: 12 }, { x: 236, y: 110, s: 0.96, k: 0.90, a: -20 },
-    { x: 290, y: 172, s: 1.04, k: 0.95, a: 35 }, { x: 196, y: 184, s: 1.02, k: 0.97, a: 0 },
-    { x: 118, y: 200, s: 0.95, k: 0.88, a: 60 }, { x: 246, y: 238, s: 0.98, k: 0.93, a: -40 },
-    { x: 160, y: 256, s: 0.93, k: 0.92, a: 20 }, { x: 98, y: 132, s: 0.90, k: 0.90, a: -15 },
-    { x: 318, y: 240, s: 0.92, k: 0.95, a: 50 }, { x: 330, y: 116, s: 0.88, k: 0.90, a: 10 }
+    [91, 240, 0.99, 0.98, 12], [149, 110, 1.02, 1, 0], [271, 168, 0.98, 0.97, 35], [224, 278, 0.97, 1, 0],
+    [101, 151, 1.01, 0.96, -30], [161, 214, 0.96, 1, 0], [236, 103, 1, 0.97, 60], [14, 286, 1.03, 1, 0],
+    [262, 50, 0.99, 0.98, -15], [124, 273, 0.98, 1, 0], [330, 145, 0.95, 0.96, 20], [54, 135, 0.96, 1, 0],
+    [183, 137, 1.02, 0.98, -45], [149, 65, 0.97, 1, 0], [30, 53, 1, 0.97, 75], [232, 211, 1.01, 1, 0],
+    [363, 195, 0.94, 0.97, -60], [121, 198, 0.95, 1, 0], [184, 250, 0.95, 0.98, 30], [359, 82, 1.02, 1, 0],
+    [68, 75, 0.99, 0.96, 50], [293, 208, 1.03, 1, 0], [105, 51, 1.02, 0.98, -20], [26, 194, 0.98, 1, 0],
+    [364, 285, 0.98, 0.97, 10], [375, 236, 0.96, 1, 0], [384, 158, 0.94, 0.98, -35], [205, 178, 0.97, 0.98, 40],
+    [70, 190, 1, 1, 0], [328, 254, 0.99, 0.97, -25], [200, 48, 0.96, 1, 0], [250, 240, 1, 0.98, 15, 1],
+    [296, 100, 1, 1, 70, 2], [58, 262, 0.98, 1, 20, 2]
   ];
-  var RBC_R = 21;   // about 7.5 um at the scale bar below
+  var OFFS = [0, 30, 42, 55, 85, 100];
+  // isotonic disc: a flat pallor about a third of the diameter, a near-even rim
+  var DISC = ['#f3d9d3', '#f0d0c9', '#e4a7a3', '#d98f8d', '#d3807f', '#c87476'];
+  // cup (stomatocyte): the round pallor is gone; a slit is drawn on top
+  var CUP = ['#d98f8d', '#d98f8d', '#d98f8d', '#d98f8d', '#d3807f', '#c87476'];
+  // sphere: evenly dense, slightly darker edge. Brightfield light passes
+  // through the cell, so there is no highlight.
+  var SPHERE = [0, 0.4, 0.56, 0.73].map(function (t) { return mix('#cf6f72', '#c86468', t); })
+    .concat([mix('#c86468', '#b5565b', 0.4), '#b5565b']);
+  var RBC_STROKE = ' stroke="#a9575b" stroke-width="0.6" stroke-opacity="0.6"';
 
-  function rbcDefs() {
-    return '' +
-      // isotonic: biconcave disc, pale center (central pallor), darker rim
-      '<radialGradient id="rl-rbc-disc" cx="50%" cy="50%" r="50%">' +
-        '<stop offset="0%" stop-color="#f6ddd8"/><stop offset="30%" stop-color="#f1c9c3"/>' +
-        '<stop offset="46%" stop-color="#dc7f84"/><stop offset="68%" stop-color="#cb535c"/>' +
-        '<stop offset="90%" stop-color="#bb3c47"/><stop offset="100%" stop-color="#a3303b"/></radialGradient>' +
-      // hypotonic: sphere, pallor gone, lit from the upper left
-      '<radialGradient id="rl-rbc-sphere" cx="38%" cy="34%" r="70%">' +
-        '<stop offset="0%" stop-color="#f0a7a6"/><stop offset="35%" stop-color="#d4545d"/>' +
-        '<stop offset="80%" stop-color="#b8343f"/><stop offset="100%" stop-color="#8f2430"/></radialGradient>' +
-      // hypertonic: crenated, denser hemoglobin
-      '<radialGradient id="rl-rbc-cren" cx="44%" cy="40%" r="62%">' +
-        '<stop offset="0%" stop-color="#d9636a"/><stop offset="60%" stop-color="#ad2f3b"/>' +
-        '<stop offset="100%" stop-color="#7f1f2a"/></radialGradient>' +
-      // lysed: ghost membrane only
-      '<radialGradient id="rl-rbc-ghost" cx="50%" cy="50%" r="50%">' +
-        '<stop offset="0%" stop-color="#f7e3df" stop-opacity="0.15"/>' +
-        '<stop offset="85%" stop-color="#e9c2bd" stop-opacity="0.35"/>' +
-        '<stop offset="100%" stop-color="#d7a29c" stop-opacity="0.7"/></radialGradient>';
+  function radial(id, cols) {
+    return '<radialGradient id="' + id + '">' + cols.map(function (c, i) {
+      return '<stop offset="' + OFFS[i] + '%" stop-color="' + c + '"/>';
+    }).join('') + '</radialGradient>';
   }
 
-  // Crenated outline: a disc with N rounded spikes; amp grows with tonicity.
-  // Drawn once around the origin and placed per cell with <use>, so a
-  // field of ten cells stays small enough to ride along on an Ace Card.
+  // Edge-on profile around the origin, half width A px. The biconcave
+  // shape follows Evans and Fung, with the middle set to 1 um thick:
+  // about 2.7 um at the thickest. cup bends it into a stomatocyte (px at the
+  // middle), sph (0 to 1) blends it toward a sphere of radius A, and
+  // amp with n adds crenation bumps (16 samples per bump keep them round).
+  function edgePath(A, cup, sph, amp, n) {
+    var pts = [], N = amp ? n * 16 : 48;
+    for (var i = 0; i < N; i++) {
+      var th = i / N * 2 * Math.PI, c = Math.cos(th), s = Math.sin(th);
+      var yd = -s * 0.5 * RBC_PX * (1 + 7.83 * c * c - 4.39 * c * c * c * c) + cup * s * s;
+      var x = A * c, y = lerp(yd, -A * s, sph);
+      if (amp) { var b = Math.pow(Math.max(0, Math.cos(n * th)), 2) * amp * A; x += b * c; y -= b * s; }
+      pts.push(f1(x) + ',' + f1(y));
+    }
+    return 'M' + pts.join(' ') + 'Z';
+  }
+
+  // Crenated outline: a disc with n short blunt bumps (cos^2 bumps of
+  // height amp * r), drawn once around the origin. 20 samples per bump
+  // period (10 across the bump itself) give each one a rounded tip.
   function crenatedPath(r, amp, n) {
-    var pts = [], steps = 120;
+    var pts = [], steps = n * 20;
     for (var i = 0; i < steps; i++) {
       var th = (i / steps) * Math.PI * 2;
-      var bump = Math.pow(Math.max(0, Math.cos(n * th)), 4);
+      var bump = Math.pow(Math.max(0, Math.cos(n * th)), 2);
       var rr = r * (1 + amp * bump) * (1 + 0.025 * Math.sin(3 * th));
       pts.push(f1(Math.cos(th) * rr) + ',' + f1(Math.sin(th) * rr));
     }
-    return 'M' + pts.join(' L') + ' Z';
-  }
-  function place(c, deg) {
-    return 'translate(' + c.x + ' ' + c.y + ') rotate(' + deg + ') scale(' + c.s + ')';
+    return 'M' + pts.join(' ') + 'Z';
   }
 
   function rbcField(ext, diff, lysed) {
-    var out = '', t;
     var mode = Math.abs(diff) < 5 ? 'iso' : (diff < 0 ? (lysed ? 'lysed' : 'swell') : 'cren');
-    if (mode === 'lysed') {
-      // hemoglobin leaked out: a faint pink haze through the field
-      out += '<g filter="url(#rl-haze)" opacity="0.55">';
-      RBCS.forEach(function (c) {
-        out += '<circle cx="' + c.x + '" cy="' + c.y + '" r="' + (RBC_R * 1.9) + '" fill="#e7a7a3"/>';
+    var t = 0, A = RBC_R, defs, edge = '', edgeFill = '#d3807f', vol = 1, title, under = '', keep = 0;
+    if (mode === 'iso') {
+      defs = radial('rl-rbc', DISC) + '<circle id="rl-d" r="' + A + '" fill="url(#rl-rbc)"' + RBC_STROKE + '/>';
+      edge = edgePath(A, 0, 0, 0, 0);
+      title = 'Red blood cells, isotonic: biconcave discs with pale centers; two are seen edge-on';
+    } else if (mode === 'swell') {
+      // t: about 0.06 at the edge of isotonic, 1 just before lysis. The cell
+      // first cups (the pallor narrows to a slit), then becomes a sphere
+      // of the same membrane area: more volume, a little narrower.
+      t = clamp((-diff - 3) / 35, 0, 1);
+      A = RBC_R * (1 - 0.11 * t);
+      var cup = clamp(t / 0.3, 0, 1), den = clamp((t - 0.3) / 0.7, 0, 1);
+      var slit = t > 0.2 && t < 0.7 ? 1 - Math.abs(t - 0.45) / 0.25 : 0;
+      defs = radial('rl-rbc', DISC.map(function (c, i) { return mix(mix(c, CUP[i], cup), SPHERE[i], den); })) +
+        '<g id="rl-d"><circle r="' + f1(A) + '" fill="url(#rl-rbc)"' + RBC_STROKE + '/>' +
+        (slit > 0 ? '<ellipse rx="' + f1(0.45 * A) + '" ry="' + f1(0.12 * A) + '" fill="#f0d0c9" opacity="' + f2(slit) + '"/>' : '') + '</g>';
+      edge = edgePath(A, 6 * cup, clamp((t - 0.3) / 0.45, 0, 1), 0, 0);   // side view reaches round first
+      edgeFill = mix('#d3807f', '#c86468', den);
+      vol = 1 + 0.4 * t;
+      // the cup caption holds exactly while the slit is drawn (0.2 < t < 0.7)
+      title = t <= 0.2 ? 'Hypotonic: water in, the discs start to swell and the pale centers fade'
+        : t < 0.7 ? 'Hypotonic: water in, the discs swell into cups; each pale center narrows to a slit'
+        : 'Hypotonic: water in, discs round up into spheres: more volume, a bit narrower, pale center gone';
+    } else if (mode === 'lysed') {
+      // ghosts reseal at about the sphere's size, smooth and nearly
+      // invisible; the released hemoglobin tints the whole field faintly
+      defs = '<circle id="rl-d" r="' + f1(RBC_R * 0.9) + '" fill="#f5ebe8" fill-opacity="0.12" stroke="#b8a6a2" stroke-width="0.6" stroke-opacity="0.45"/>';
+      under = '<rect ' + CROP + ' fill="#f3e0dc" opacity="0.15"/>';
+      // cells differ in how easily they burst: just past the threshold,
+      // two tougher cells still hold as small dense spheres
+      keep = ext >= 8 ? 2 : 0;
+      if (keep) defs += radial('rl-rbc', SPHERE) + '<circle id="rl-sp" r="' + f1(RBC_R * 0.89) + '" fill="url(#rl-rbc)"' + RBC_STROKE + '/>';
+      title = keep ? 'Hemolysis: most cells burst, leaving faint empty membranes (ghosts); two tougher cells hold as spheres'
+        : 'Hemolysis: cells burst; only faint empty membranes (ghosts) remain';
+    } else {
+      // hypertonic: shrunken echinocytes, many short blunt projections over
+      // the rim and the face, only slightly darker than normal cells. t
+      // starts above 0 on the first hypertonic step (ext 55).
+      t = clamp((diff - 4) / 46, 0, 1);
+      A = RBC_R * (1 - 0.24 * t);
+      var amp = 0.04 + 0.06 * t, face = 'M0,0h0';
+      for (var k = 0; k < 7; k++) face += 'M' + f1(Math.cos(k * 2 * Math.PI / 7) * 0.45 * A) + ',' + f1(Math.sin(k * 2 * Math.PI / 7) * 0.45 * A) + 'h0';
+      defs = '<radialGradient id="rl-rbc"><stop offset="0%" stop-color="#d27a7c"/><stop offset="70%" stop-color="#c4686c"/><stop offset="100%" stop-color="#b0585d"/></radialGradient>';
+      [14, 16, 18].forEach(function (n) {
+        defs += '<g id="rl-d' + n + '"><path d="' + crenatedPath(A, amp, n) + '" fill="url(#rl-rbc)" stroke="#9a4c51" stroke-width="0.6" stroke-opacity="0.6"/>' +
+          '<path d="' + face + '" stroke="#e07f84" stroke-opacity="0.45" stroke-width="2.6" stroke-linecap="round"/></g>';
       });
-      out += '</g>';
-      // ghosts: pale, slightly irregular membranes, every third one torn open
-      out += '<defs><path id="rl-ghost" d="' + crenatedPath(RBC_R * 1.22, 0.04, 5) + '"/></defs>';
-    } else if (mode === 'cren') {
-      t = clamp((diff - 5) / 45, 0, 1);
-      var defs = '';
-      [7, 8, 9].forEach(function (n) {                  // 7 to 9 rounded spikes around the rim
-        defs += '<path id="rl-cren-' + n + '" d="' + crenatedPath(RBC_R * (1 - 0.24 * t), 0.06 + 0.15 * t, n) + '"/>';
-      });
-      out += '<defs>' + defs + '</defs>';
+      edge = edgePath(A, 0, 0.3 * t, amp, 14);
+      edgeFill = '#c4686c';
+      vol = 1 - 0.25 * t;
+      title = t < 0.25 ? 'Hypertonic: water out, the cells start to shrink and crenate (short blunt projections)'
+        : 'Hypertonic: water out, cells shrunken and crenated, with many short blunt projections';
     }
+    if (edge) defs += '<path id="rl-e" d="' + edge + '" fill="' + edgeFill + '"' + RBC_STROKE + '/>';
+    var body = '';
     RBCS.forEach(function (c, i) {
-      var r = RBC_R * c.s, body;
-      if (mode === 'iso') {
-        body = '<ellipse cx="' + c.x + '" cy="' + c.y + '" rx="' + f1(r) + '" ry="' + f1(r * c.k) + '" transform="rotate(' + c.a + ' ' + c.x + ' ' + c.y + ')" fill="url(#rl-rbc-disc)" stroke="#8c2731" stroke-width="0.7" stroke-opacity="0.5"/>';
-      } else if (mode === 'swell') {
-        t = clamp((-diff - 5) / 33, 0, 1);              // 0 at the edge of isotonic, 1 just before lysis
-        var rs = r * (1 + 0.22 * t), ks = lerp(c.k, 1, t);
-        body = '<ellipse cx="' + c.x + '" cy="' + c.y + '" rx="' + f1(rs) + '" ry="' + f1(rs * ks) + '" transform="rotate(' + c.a + ' ' + c.x + ' ' + c.y + ')" fill="url(#rl-rbc-disc)" stroke="#8c2731" stroke-width="0.7" stroke-opacity="0.5"/>' +
-          '<ellipse cx="' + c.x + '" cy="' + c.y + '" rx="' + f1(rs) + '" ry="' + f1(rs * ks) + '" transform="rotate(' + c.a + ' ' + c.x + ' ' + c.y + ')" fill="url(#rl-rbc-sphere)" opacity="' + f1(clamp(t * 1.15, 0, 1)) + '"/>';
-      } else if (mode === 'lysed') {
-        body = '<use href="#rl-ghost" transform="' + place(c, c.a + i * 23) + '" fill="url(#rl-rbc-ghost)" stroke="#c98d88" stroke-width="0.9" stroke-opacity="0.75"' + (i % 3 === 0 ? ' stroke-dasharray="40 6"' : '') + '/>';
-      } else {
-        body = '<use href="#rl-cren-' + (7 + (i % 3)) + '" transform="' + place(c, c.a + i * 21) + '" fill="url(#rl-rbc-cren)" stroke="#6e1b25" stroke-width="0.6" stroke-opacity="0.6"/>';
-      }
-      out += '<g filter="url(#rl-soft)">' + body + '</g>';
+      var s = c[2], sy = s * (mode === 'iso' ? c[3] : mode === 'swell' ? lerp(c[3], 1, t) : 1);
+      var href = mode === 'cren' ? '#rl-d' + (14 + 2 * (i % 3)) : '#rl-d', rot = mode === 'cren' ? c[4] + i * 21 : c[4];
+      if (c[5] === 2 && mode !== 'lysed') { href = '#rl-e'; rot = c[4]; sy = s; }
+      if (keep && (i === 5 || i === 21)) href = '#rl-sp';
+      body += '<use href="' + href + '" transform="translate(' + c[0] + ' ' + c[1] + ')' +
+        (mode === 'lysed' ? '' : ' rotate(' + rot + ')') + ' scale(' + f2(s) + (f2(sy) !== f2(s) ? ' ' + f2(sy) : '') + ')"' +
+        (c[5] === 1 ? ' style="mix-blend-mode:multiply"' : '') + '/>';
     });
+    return {
+      svg: '<defs>' + defs + '</defs>' + under + '<g filter="url(#rl-soft)">' + body + '</g>',
+      title: title, vol: vol
+    };
+  }
+
+  /* ---------- Elodea leaf cells ---------- */
+
+  // 400x, cropped: 1.2 px per um, so the 50 um scale bar is 60 px. Cells
+  // sit in parallel files (rows) 36 px (30 um) tall and run 92 to 150 px
+  // (77 to 125 um) long. Each end wall slants by up to 5 px over the row
+  // (about 8 deg), and the end walls fall at different places in each
+  // row. Laid out once: [top y, left wall, right wall], a wall being
+  // {m: x at mid height, d: x shift from top to bottom}.
+  var ROW_H = 36, WALL = 2.5;
+  var CELLS = (function () {
+    var offs = [18, 56, 30, 62, 24, 46, 38];
+    var lens = [118, 96, 142, 124, 104, 150, 92, 132, 110, 138, 100, 126, 146, 108, 120, 94, 136, 114];
+    var tilts = [-5, 3, 5, -2, -4, 4, 1, -5, 2, -3, 5, -1, 4, -4, 0];
+    var out = [], li = 0, ti = 0;
+    for (var r = 0; r < 7; r++) {
+      var y = FY - 12 + r * ROW_H, x = FX - offs[r], left = { m: x, d: tilts[ti++ % tilts.length] };
+      while (x < FX + FW) {
+        x += lens[li++ % lens.length];
+        var right = { m: x, d: tilts[ti++ % tilts.length] };
+        out.push([y, left, right]);
+        left = right;
+      }
+    }
+    return out;
+  })();
+  // how far each cell plasmolyzes, relative to the others
+  var PLAS = [0.8, 1.1, 0.95, 1.2, 0.7, 1.0, 1.15, 0.9];
+
+  function sub(a, b) { return [a[0] - b[0], a[1] - b[1]]; }
+  function len(v) { return Math.sqrt(v[0] * v[0] + v[1] * v[1]); }
+  function toward(a, b, d) { var v = sub(b, a), l = len(v) || 1; return [a[0] + v[0] * d / l, a[1] + v[1] * d / l]; }
+  // unit normal pointing into a quad listed clockwise on screen (y down)
+  function inward(a, b) { var v = sub(b, a), l = len(v) || 1; return [-v[1] / l, v[0] / l]; }
+  // quad (TL, TR, BR, BL) with every side moved inward by d
+  function insetQuad(q, d) {
+    var L = [], out = [], i;
+    for (i = 0; i < 4; i++) {
+      var a = q[i], b = q[(i + 1) % 4], n = inward(a, b);
+      L.push([[a[0] + n[0] * d, a[1] + n[1] * d], sub(b, a)]);
+    }
+    for (i = 0; i < 4; i++) {
+      var p = L[(i + 3) % 4], s = L[i], w = sub(s[0], p[0]);
+      var u = (w[0] * s[1][1] - w[1] * s[1][0]) / (p[1][0] * s[1][1] - p[1][1] * s[1][0]);
+      out.push([p[0][0] + p[1][0] * u, p[0][1] + p[1][1] * u]);
+    }
     return out;
   }
-
-  /* ---------- plant cells (onion / Elodea style) ---------- */
-
-  var CELLS = [
-    { x: 64, y: 68, w: 132, h: 74 }, { x: 196, y: 68, w: 132, h: 74 }, { x: 328, y: 68, w: 132, h: 74 },
-    { x: -2, y: 142, w: 132, h: 74 }, { x: 130, y: 142, w: 132, h: 74 }, { x: 262, y: 142, w: 132, h: 74 },
-    { x: 64, y: 216, w: 132, h: 74 }, { x: 196, y: 216, w: 132, h: 74 }
-  ];
-
-  function plantDefs() {
-    return '' +
-      '<linearGradient id="rl-wall" x1="0" y1="0" x2="0" y2="1">' +
-        '<stop offset="0%" stop-color="#cfdcae"/><stop offset="100%" stop-color="#b9c98f"/></linearGradient>' +
-      '<radialGradient id="rl-vac" cx="50%" cy="45%" r="65%">' +
-        '<stop offset="0%" stop-color="#f6f4e6" stop-opacity="0.95"/>' +
-        '<stop offset="100%" stop-color="#e6ebcf" stop-opacity="0.9"/></radialGradient>' +
-      '<radialGradient id="rl-chl" cx="40%" cy="35%" r="70%">' +
-        '<stop offset="0%" stop-color="#8fc46a"/><stop offset="60%" stop-color="#4f8f3a"/>' +
-        '<stop offset="100%" stop-color="#2f6526"/></radialGradient>' +
-      '<ellipse id="rl-c" rx="3.4" ry="2.3" fill="url(#rl-chl)"/>' +
-      '<radialGradient id="rl-nuc" cx="40%" cy="35%" r="70%">' +
-        '<stop offset="0%" stop-color="#d9d3c3"/><stop offset="100%" stop-color="#9c937f"/></radialGradient>';
+  // Closed outline of quad q with each corner rounded (radius r, a
+  // quadratic through the corner); bowT / bowB bend the top / bottom side
+  // inward by that many px. Returns the path (d) and a polyline of it
+  // (pts) for placing chloroplasts along it.
+  function roundQuad(q, r, bowT, bowB) {
+    var A = [], B = [], pts = [], i;
+    for (i = 0; i < 4; i++) {
+      var P = q[i], pv = q[(i + 3) % 4], nx = q[(i + 1) % 4];
+      var rr = Math.min(r, len(sub(P, pv)) / 2, len(sub(P, nx)) / 2);
+      A.push(toward(P, pv, rr)); B.push(toward(P, nx, rr));
+    }
+    function curve(p0, c, p1) {
+      for (var s = 1; s <= 6; s++) { var t = s / 6, u = 1 - t; pts.push([u * u * p0[0] + 2 * u * t * c[0] + t * t * p1[0], u * u * p0[1] + 2 * u * t * c[1] + t * t * p1[1]]); }
+    }
+    var d = 'M' + pt(B[0]);
+    pts.push(B[0]);
+    for (var k = 1; k <= 4; k++) {
+      var j = k % 4, h = k - 1, bow = h === 0 ? bowT : (h === 2 ? bowB : 0);
+      if (bow) {
+        var n = inward(q[h], q[j]), m = [(B[h][0] + A[j][0]) / 2 + n[0] * 2 * bow, (B[h][1] + A[j][1]) / 2 + n[1] * 2 * bow];
+        d += 'Q' + pt(m) + ' ' + pt(A[j]);
+        curve(B[h], m, A[j]);
+      } else { d += 'L' + pt(A[j]); pts.push(A[j]); }
+      d += 'Q' + pt(q[j]) + ' ' + pt(B[j]);
+      curve(A[j], q[j], B[j]);
+    }
+    pts.pop();                                            // the last point is the first again
+    return { d: d + 'Z', pts: pts };
+  }
+  // a point and the unit tangent at fraction u (0 to 1) of the way round a closed polyline
+  function along(pts, u) {
+    var cum = [0], i, n = pts.length;
+    for (i = 1; i <= n; i++) cum.push(cum[i - 1] + len(sub(pts[i % n], pts[i - 1])));
+    var d = (u - Math.floor(u)) * cum[n];
+    for (i = 1; i < n && cum[i] < d; i++);
+    var a = pts[i - 1], b = pts[i % n], t = (d - cum[i - 1]) / ((cum[i] - cum[i - 1]) || 1);
+    return { p: [lerp(a[0], b[0], t), lerp(a[1], b[1], t)], t: toward([0, 0], sub(b, a), 1) };
   }
 
-  function roundedRect(x, y, w, h, r) {
-    r = Math.min(r, w / 2, h / 2);
-    return 'M' + f1(x + r) + ',' + f1(y) + ' H' + f1(x + w - r) + ' Q' + f1(x + w) + ',' + f1(y) + ' ' + f1(x + w) + ',' + f1(y + r) +
-      ' V' + f1(y + h - r) + ' Q' + f1(x + w) + ',' + f1(y + h) + ' ' + f1(x + w - r) + ',' + f1(y + h) +
-      ' H' + f1(x + r) + ' Q' + f1(x) + ',' + f1(y + h) + ' ' + f1(x) + ',' + f1(y + h - r) +
-      ' V' + f1(y + r) + ' Q' + f1(x) + ',' + f1(y) + ' ' + f1(x + r) + ',' + f1(y) + ' Z';
-  }
-
-  function plantField(ext, diff) {
-    var out = '', WALL = 5;
-    // plasmolysis amount: 0 until clearly hypertonic, 1 at the top of the slider
-    var p = diff > 5 ? clamp((diff - 5) / 45, 0, 1) : 0;
-    var turgid = diff < -5 ? clamp((-diff - 5) / 45, 0, 1) : 0;
+  function plantField(ext, diff, plasmolyzed) {
+    var iso = Math.abs(diff) < 5;
+    plasmolyzed = plasmolyzed && diff >= 5;              // only a hypertonic solution plasmolyzes
+    // How far the protoplasts pull in (p), tied to the page's plasmolyzed
+    // flag (ext above 80). Hypertonic but not plasmolyzed (ext 55 to 80):
+    // p rises from about 0 to 0.1, so in every cell the membrane only
+    // leaves the corners (incipient plasmolysis); the ends stay near the
+    // walls and no strands form. Plasmolyzed: p runs from 0.46 at ext 81
+    // to 1 at ext 100, and the protoplasts pull clear of the end walls.
+    var p = plasmolyzed ? lerp(0.43, 1, clamp((diff - 30) / 20, 0, 1)) : (diff >= 5 ? 0.1 * clamp((diff - 4) / 26, 0, 1) : 0);
+    var turgid = diff <= -5;
+    var gap = '', flat = '', strands = '', nuc = '', walls = '';
+    // Chloroplasts: short round-capped strokes, one path for those along
+    // the walls and one for those over the face. Each starts with a move
+    // relative to the end of the one before, to keep the markup short.
+    var paths = { w: '', f: '' }, cur = { w: null, f: null };
+    function chloro(key, c, dir, L) {
+      var a = [Math.round((c[0] - dir[0] * L / 2) * 10) / 10, Math.round((c[1] - dir[1] * L / 2) * 10) / 10];
+      var b = [Math.round((c[0] + dir[0] * L / 2) * 10) / 10, Math.round((c[1] + dir[1] * L / 2) * 10) / 10];
+      paths[key] += (cur[key] ? 'm' + f1(a[0] - cur[key][0]) + ',' + f1(a[1] - cur[key][1]) : 'M' + pt(a)) + 'l' + f1(b[0] - a[0]) + ',' + f1(b[1] - a[1]);
+      cur[key] = b;
+    }
+    function rot(v, deg) { var r = deg * Math.PI / 180, c = Math.cos(r), s = Math.sin(r); return [v[0] * c - v[1] * s, v[0] * s + v[1] * c]; }
+    for (var r = 0; r <= 7; r++) walls += 'M' + (FX - 4) + ',' + (FY - 12 + r * ROW_H) + 'H' + (FX + FW + 4);
     CELLS.forEach(function (c, i) {
-      // the wall: rigid, never changes size
-      out += '<rect x="' + c.x + '" y="' + c.y + '" width="' + c.w + '" height="' + c.h + '" fill="#e9eed6" stroke="url(#rl-wall)" stroke-width="' + WALL + '"/>';
-      var ix = c.x + WALL / 2 + 1, iy = c.y + WALL / 2 + 1, iw = c.w - WALL - 2, ih = c.h - WALL - 2;
-      // the protoplast: pressed on the wall when turgid, pulled off it in plasmolysis
-      var shrinkX = iw * 0.34 * p, shrinkY = ih * 0.30 * p;
-      var px = ix + shrinkX / 2 + (i % 2 ? 2 : -2) * p, py = iy + shrinkY / 2, pw = iw - shrinkX, ph = ih - shrinkY;
-      var rad = lerp(2 + turgid * 1, Math.min(pw, ph) * 0.5, p);
-      out += '<path d="' + roundedRect(px, py, pw, ph, rad) + '" fill="#cfe0a8" fill-opacity="' + f1(0.85 + 0.1 * p) + '" stroke="#7d9a52" stroke-width="' + f1(0.9 + 0.6 * p) + '"/>';
-      // central vacuole fills most of the cell; it shrinks the most in plasmolysis
-      var vm = lerp(5, 7, p), vw = Math.max(6, pw - vm * 2 - 6 * p), vh = Math.max(6, ph - vm * 2 - 4 * p);
-      out += '<path d="' + roundedRect(px + (pw - vw) / 2, py + (ph - vh) / 2, vw, vh, Math.min(vw, vh) * lerp(0.25, 0.5, p)) + '" fill="url(#rl-vac)"/>';
-      // chloroplasts ride in the thin cytoplasm rim, crowding together as it shrinks
-      var nC = 12;
-      for (var k = 0; k < nC; k++) {
-        var u = (k + (i % 3) * 0.3) / nC, cxp, cyp;
-        var per = 2 * (pw + ph), d = u * per;
-        if (d < pw) { cxp = px + d; cyp = py + 3.2; }
-        else if (d < pw + ph) { cxp = px + pw - 3.2; cyp = py + (d - pw); }
-        else if (d < 2 * pw + ph) { cxp = px + pw - (d - pw - ph); cyp = py + ph - 3.2; }
-        else { cxp = px + 3.2; cyp = py + ph - (d - 2 * pw - ph); }
-        cxp = clamp(cxp, px + 4, px + pw - 4); cyp = clamp(cyp, py + 3.4, py + ph - 3.4);
-        out += '<use href="#rl-c" transform="translate(' + f1(cxp) + ' ' + f1(cyp) + ') rotate(' + ((k * 47) % 180) + ')"/>';
+      var y = c[0], l = c[1], rt = c[2];
+      var q = [[l.m - l.d / 2, y], [rt.m - rt.d / 2, y], [rt.m + rt.d / 2, y + ROW_H], [l.m + l.d / 2, y + ROW_H]];
+      walls += 'M' + pt(q[0]) + 'L' + pt(q[3]);           // left end wall; the right one is the next cell's
+      var inner = insetQuad(q, WALL / 2);                 // the protoplast's place when pressed on the wall
+      // incipient plasmolysis: about half the cells at isotonic, every cell once hypertonic
+      var inc = diff >= 5 || hash(i, 1) < 0.5;
+      var f = PLAS[i % 8] * p, pq, rad, bowT = 0, bowB = 0;
+      var top = inner[0][1], ih = inner[3][1] - top;
+      var iw = Math.min(inner[1][0], inner[2][0]) - Math.max(inner[0][0], inner[3][0]);
+      if (turgid) { pq = inner; rad = 0.6; }
+      else {
+        var base = inc ? 2 : 0, sx = iw * 0.42 * f, sy = ih * 0.3 * f, lim = Math.max(0, sx / 2 - 2);
+        // pulled off the end walls first, and off center along the cell
+        var shift = clamp((hash(i, 2) < 0.5 ? -1 : 1) * 0.15 * (iw - sx) * f, -lim, lim);
+        var gy = base + sy / 2, fT = gy / ih, xl = base + sx / 2 + shift, xr = base + sx / 2 - shift;
+        pq = [
+          [lerp(inner[0][0], inner[3][0], fT) + xl, top + gy], [lerp(inner[1][0], inner[2][0], fT) - xr, top + gy],
+          [lerp(inner[1][0], inner[2][0], 1 - fT) - xr, top + ih - gy], [lerp(inner[0][0], inner[3][0], 1 - fT) + xl, top + ih - gy]
+        ];
+        var ph = ih - 2 * gy;
+        rad = lerp(inc ? 8 : 1.5, ph / 2, clamp(f * 2, 0, 1));   // the ends round up as it shrinks
+        // two cells in eight stay pinned at a side wall and go concave
+        if (f > 0.3 && (i % 8 === 3 || i % 8 === 6)) {
+          var bw = 0.12 * ph * clamp((f - 0.3) / 0.5, 0, 1);
+          if (i % 8 === 3) bowT = bw; else bowB = bw;
+        }
       }
-      // nucleus pressed to one side by the vacuole
-      var nx = px + pw * (i % 2 ? 0.78 : 0.22), ny = py + ph * 0.5;
-      out += '<ellipse cx="' + f1(nx) + '" cy="' + f1(ny) + '" rx="5.4" ry="4.6" fill="url(#rl-nuc)" stroke="#7a705d" stroke-width="0.6"/>';
-      out += '<circle cx="' + f1(nx + 1) + '" cy="' + f1(ny - 0.5) + '" r="1.4" fill="#6f6553"/>';
+      // cells whose membrane has left the wall somewhere get a clearer outline
+      if (inc && !turgid) gap += roundQuad(pq, rad, bowT, bowB).d;
+      else flat += roundQuad(pq, rad, bowT, bowB).d;
+      // 56 chloroplasts in every state, so they crowd as the protoplast
+      // shrinks: an outer row of 24 along the walls, nearly touching (the
+      // cyclosis track), an inner row of 12 (each stroke parallel to the
+      // wall, within 15 deg), then 20 over the face
+      var phh = pq[3][1] - pq[0][1];
+      var rows = [[turgid ? 3 : 3.2, 0, 24], [Math.min(7.5, phh / 2 - 1.5), 0.5, 12]];
+      rows.forEach(function (rw, ri) {
+        var ring = roundQuad(insetQuad(pq, rw[0]), Math.max(3, rad - rw[0]), bowT, bowB).pts, nRow = rw[2];
+        for (var k = 0; k < nRow; k++) {
+          var at = along(ring, (k + rw[1] + (hash(i * 3 + ri, k) - 0.5) * 0.5) / nRow + hash(i, 9));
+          var dir = rot(at.t, (hash(i * 5 + ri, k + 20) - 0.5) * 30);
+          chloro('w', at.p, dir, ri ? 1.4 : (turgid ? 3.4 : 2.8));
+        }
+      });
+      // The face band keeps its share of the protoplast as it shrinks. Its
+      // ends sit far enough in from the rounded ends that a face
+      // chloroplast (radius 2.8) never crosses the membrane.
+      var fy0 = pq[0][1] + Math.min(12, phh * 0.34), fy1 = pq[3][1] - Math.min(12, phh * 0.34);
+      var fx0 = Math.max(pq[0][0], pq[3][0]) + Math.min(9.5, phh * 0.3), fx1 = Math.min(pq[1][0], pq[2][0]) - Math.min(9.5, phh * 0.3);
+      // the nucleus shows faintly in 3 cells of 8; a face chloroplast that
+      // would sit on it moves toward the middle of the cell, inside the band
+      var showNuc = hash(i, 3) < 0.375, nx = lerp(fx0, fx1, hash(i, 4) < 0.5 ? 0.1 : 0.9), ny = (fy0 + fy1) / 2;
+      for (var k = 0; k < 20; k++) {
+        var u = (Math.floor(k / 2) + 0.25 + 0.5 * (k % 2) + (hash(i, k + 10) - 0.5) * 0.9) / 10;
+        var fp = [lerp(fx0, fx1, clamp(u, 0, 1)), lerp(fy0, fy1, clamp((k % 2) + (hash(i, k + 40) - 0.5) * 0.9, 0, 1))];
+        if (showNuc && Math.abs(fp[0] - nx) < 8 && Math.abs(fp[1] - ny) < 6) fp[0] = clamp(nx < (fx0 + fx1) / 2 ? nx + 8 : nx - 8, fx0, fx1);
+        chloro('f', fp, rot([1, 0], hash(i, k + 70) * 180), 0.8);
+      }
+      if (showNuc) nuc += 'M' + f1(nx - 5.4) + ',' + f1(ny) + 'a5.4,4.6 0 1,0 10.8,0a5.4,4.6 0 1,0 -10.8,0';
+      // Hechtian strands: thin threads from the plasmolyzed protoplast to
+      // the points where its membrane still holds the wall (only once the
+      // membrane has pulled clear of the wall, never before plasmolysis)
+      if (plasmolyzed) {
+        var ly = lerp(top, top + ih, 0.3 + 0.4 * hash(i, 5)), ry = lerp(top, top + ih, 0.3 + 0.4 * hash(i, 6));
+        strands += 'M' + pt([(pq[0][0] + pq[3][0]) / 2, (pq[0][1] + pq[3][1]) / 2]) + 'L' + f1(lerp(inner[0][0], inner[3][0], (ly - top) / ih)) + ',' + f1(ly) +
+          'M' + pt([(pq[1][0] + pq[2][0]) / 2, (pq[1][1] + pq[2][1]) / 2]) + 'L' + f1(lerp(inner[1][0], inner[2][0], (ry - top) / ih)) + ',' + f1(ry);
+        var onTop = bowT > 0 || (!bowB && hash(i, 7) < 0.5), xm = (pq[0][0] + pq[1][0]) / 2 + (bowT || bowB ? 0 : (hash(i, 8) - 0.5) * 30);
+        strands += onTop ? 'M' + f1(xm) + ',' + f1(pq[0][1] + bowT) + 'L' + f1(xm + 2) + ',' + f1(top)
+          : 'M' + f1(xm) + ',' + f1(pq[3][1] - bowB) + 'L' + f1(xm - 2) + ',' + f1(top + ih);
+      }
     });
-    return '<g filter="url(#rl-soft)">' + out + '</g>';
+    var title = iso ? 'Elodea leaf cells, isotonic: flaccid; in some cells the membrane just starts to leave the corners'
+      : diff < 0 ? 'Elodea leaf cells, hypotonic: turgid, protoplasts pressed flat on the walls'
+      : plasmolyzed ? 'Plasmolysis (Elodea leaf cells): protoplasts round up and pull off the walls, held by thin strands'
+      : 'Elodea leaf cells, hypertonic: water leaves; in every cell the membrane starts to leave the corners';
+    // cytoplasm is colorless: only the chloroplasts are green. Each is a
+    // dark rim with a lighter middle; the face ones, a little out of
+    // focus, are paler.
+    var svg = '<defs><path id="rl-cw" d="' + paths.w + '"/><path id="rl-cf" d="' + paths.f + '"/><path id="rl-w" d="' + walls + '"/></defs>' +
+      '<g filter="url(#rl-soft)">' +
+      // protoplasts a shade denser than the clear solution, so the
+      // gaps at the corners and ends read as gaps
+      (flat ? '<path d="' + flat + '" fill="#e8eddb" fill-opacity="0.75" stroke="#aab48e" stroke-width="0.6" stroke-opacity="0.2"/>' : '') +
+      (gap ? '<path d="' + gap + '" fill="#e8eddb" fill-opacity="0.75" stroke="#8f9c72" stroke-width="0.6" stroke-opacity="' + f2(0.75 + 0.25 * clamp(p * 3, 0, 1)) + '"/>' : '') +
+      (nuc ? '<path d="' + nuc + '" fill="#d6d1bf" stroke="#8a826e" stroke-width="0.6" opacity="0.35"/>' : '') +
+      '<g fill="none" stroke-linecap="round">' +
+      '<use href="#rl-cf" stroke="#4f8a3d" stroke-width="5.6"/><use href="#rl-cf" stroke="#7cb05c" stroke-width="3.8"/>' +
+      '<use href="#rl-cw" stroke="#346c2b" stroke-width="' + (turgid ? 4.2 : 4.6) + '"/><use href="#rl-cw" stroke="#62a044" stroke-width="' + (turgid ? 2.6 : 3) + '"/>' +
+      (strands ? '<path d="' + strands + '" stroke="#9db07a" stroke-width="0.6" stroke-opacity="0.8"/>' : '') +
+      '<use href="#rl-w" stroke="#d7dfc4" stroke-width="' + WALL + '"/><use href="#rl-w" stroke="#9aa781" stroke-width="0.6"/>' +
+      '</g></g>';
+    // cell volume for the solute strip: the protoplast loses water all
+    // through the hypertonic range, a little before plasmolysis and more
+    // after it; turgid cells gain only a little (the wall holds them)
+    var vol = diff >= 5 ? 1 - 0.25 * Math.max(p, 0.45 * clamp((diff - 4) / 26, 0, 1)) : (turgid ? 1 + 0.06 * clamp((-diff - 5) / 45, 0, 1) : 1);
+    return { svg: svg, title: title, vol: vol };
   }
 
   /* ---------- public: the tonicity picture ---------- */
@@ -269,25 +490,12 @@
   function tonicity(o) {
     var ext = +o.externalSolute, diff = ext - 50, plant = o.cellType === 'plant';
     var lysed = !plant && !!o.lysed;
-    var title;
-    if (plant) {
-      title = Math.abs(diff) < 5 ? 'Plant cells, isotonic: flaccid, membrane resting on the wall'
-        : diff < 0 ? 'Plant cells, hypotonic: turgid, pressed against the wall'
-        : (o.plasmolyzed ? 'Plasmolysis: protoplasts pulled off the walls' : 'Hypertonic: protoplasts starting to pull away');
-    } else {
-      title = Math.abs(diff) < 5 ? 'Red blood cells, isotonic: biconcave discs, pale centers'
-        : diff < 0 ? (lysed ? 'Hemolysis: only pale ghosts left, hemoglobin leaked out' : 'Hypotonic: discs swell and round up into spheres')
-        : 'Hypertonic: crenated, shrunken and spiky';
-    }
-    var tint = plant ? '#eef3dd' : '#fbf1ee';
-    var out = '<defs>' + fieldDefs(tint) + (plant ? plantDefs() : rbcDefs()) + '</defs>';
-    out += fieldOpen();
-    out += plant ? plantField(ext, diff) : rbcField(ext, diff, lysed);
-    // scale bars: an RBC is about 7.5 um across (drawn 42 px), so 10 um is 56 px;
-    // the plant cells are drawn about 60 um wide (74 px), so 50 um is about 60 px
-    out += fieldClose({ title: title }, plant ? '50 um' : '10 um', plant ? 60 : 56);
-    out += soluteStrip(ext, diff, lysed);
-    return out;
+    var v = plant ? plantField(ext, diff, !!o.plasmolyzed) : rbcField(ext, diff, lysed);
+    // scale bars: red cells 5.6 px per um, so 10 um is 56 px; Elodea
+    // 1.2 px per um, so 50 um is 60 px
+    return '<defs>' + fieldDefs() + '</defs>' + fieldOpen(plant ? '#f4f2e6' : '#f6f1e6') + v.svg +
+      fieldClose(v.title, plant ? '400x, cropped' : '1000x oil, cropped', plant ? '50 um' : '10 um', plant ? 60 : 56) +
+      soluteStrip(ext, diff, v.vol, lysed);
   }
 
   /* ---------- sarcomere: the band pattern of a TEM ----------
