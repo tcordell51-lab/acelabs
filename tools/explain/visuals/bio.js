@@ -1,7 +1,8 @@
 // bio.js: bio.hardy-weinberg (pure port of the Genetics hub visualizer state),
 // bio.osmolarity (new tally), bio.real (BioReal true-to-life views, reused),
 // bio.diagram (new schematic library; mitochondrion for the pilot, more
-// drawings added by bio-schematics.js through the exported DIAGRAMS map).
+// drawings added by bio-diagrams.js and bio-schematics.js through the
+// exported DIAGRAMS map).
 // Ported from the pilot preview (question-system/preview/renderers/bio.js).
 import { register, C, t, r1, svgOpen, width, badge, arrowDefs, uid, h, wrap } from './core.js';
 

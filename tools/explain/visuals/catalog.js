@@ -11,7 +11,9 @@ export const CATALOG = {
   'bio.hardy-weinberg': { module: 'bio', built: true, required: ['q2'] },
   'bio.osmolarity': { module: 'bio', built: true, required: ['solute', 'inside', 'units'] },
   'bio.real': { module: 'bio', built: true, required: ['view', 'params'], trueToLife: true },
-  'bio.diagram': { module: 'bio', built: true, required: ['diagram', 'labels', 'focus'], variants: { diagram: ['mitochondrion', 'codon', 'step-ladder', 'compare-table', 'acid-base', 'gland-density', 'gastric-gland', 'nephron-budget', 'glomerulus', 'etc-chain', 'ap-trace', 'collecting-duct'] } },
+  'bio.diagram': { module: 'bio', built: true, required: ['diagram', 'labels', 'focus'], variants: { diagram: ['mitochondrion', 'pathway', 'chromosomes', 'amniote-egg', 'junctions', 'thylakoid', 'codon', 'step-ladder', 'compare-table', 'acid-base', 'gland-density', 'gastric-gland', 'nephron-budget', 'glomerulus', 'etc-chain', 'ap-trace', 'collecting-duct'] } },
+  'bio.tree': { module: 'bio', built: true, required: ['root'] },
+  'bio.chart': { module: 'bio', built: true, required: ['kind'], variants: { kind: ['selection', 'levels', 'saturation'] } },
   'chem.molecule': { module: 'chem', built: true, required: ['smi'] },
   'chem.reaction': { module: 'chem', built: true, required: ['reactants', 'reagent', 'products'] },
   'chem.mechanism': { module: 'chem', built: true, required: ['ref'] },
@@ -32,8 +34,6 @@ export const CATALOG = {
 
   // planned (production-plan.md, section 4): no renderer yet
   'bio.pedigree': { module: 'bio', built: false },
-  'bio.tree': { module: 'bio', built: false },
-  'bio.chart': { module: 'bio', built: false },
   'chem.ledger': { module: 'chem', built: false },
   'chem.gas': { module: 'chem', built: false },
   'chem.orbital': { module: 'chem', built: false },

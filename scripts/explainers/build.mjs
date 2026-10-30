@@ -585,6 +585,29 @@ function recompute(R, p, facts) {
     if (counts.length > 1 && !(p.traces.filter((tr) => tr.kind === 'train').every((tr, i, a) => i === 0 || (tr.strength > a[i - 1].strength) === (tr.count > a[i - 1].count)))) issues.push('spike trains: a stronger stimulus must fire more often');
     if ((p.traces || []).filter((tr) => tr.key).length !== 1) issues.push('ap-trace: exactly one trace is the key');
   }
+  // bio.tree, bio.chart and the bio.diagram drawings of batch B002: every choice a picture names
+  // is a served choice, the outlined place is the key, and counts drawn from data are recomputed
+  if (p.type === 'bio.tree' || p.type === 'bio.chart' || (p.type === 'bio.diagram' && ['pathway', 'chromosomes', 'amniote-egg', 'junctions', 'thylakoid'].includes(p.diagram))) {
+    const named = [];
+    (function walk(o) { if (Array.isArray(o)) o.forEach(walk); else if (o && typeof o === 'object') { if (typeof o.choice === 'string') named.push(o); Object.values(o).forEach(walk); } })(p);
+    named.forEach((o) => { if (!served.choices.includes(o.choice)) issues.push(p.type + ' names "' + o.choice + '", which is not a served choice'); });
+    named.filter((o) => o.key).forEach((o) => { if (o.choice !== keyText) issues.push(p.type + ' outlines "' + o.choice + '" as the answer, but the key is "' + keyText + '"'); });
+    if (named.length && !named.some((o) => o.choice === keyText)) issues.push(p.type + ' names ' + named.length + ' choices but not the key');
+    else if (named.length) checks.push('picture names ' + new Set(named.map((o) => o.choice)).size + ' of ' + served.choices.length + ' choices, each a served choice; the outlined place is the key');
+    if (p.diagram === 'chromosomes' && p.view === 'meiosis-counts') {
+      const mi = 2 * p.n2, mii = p.n2, m = /^(\d+) at metaphase I and (\d+) at metaphase II$/.exec(keyText);
+      if (!m || +m[1] !== mi || +m[2] !== mii) issues.push('meiosis counts from 2n = ' + p.n2 + ': ' + mi + ' chromatids at metaphase I and ' + mii + ' at metaphase II; the key reads "' + keyText + '"');
+      else checks.push('meiosis recomputed from 2n = ' + p.n2 + ': copied once, ' + p.n2 + ' x 2 = ' + mi + ' chromatids at metaphase I; halved, ' + p.n2 / 2 + ' x 2 = ' + mii + ' at metaphase II; matches the key');
+    }
+    if (p.diagram === 'amniote-egg' || p.diagram === 'junctions') {
+      const parts = p.diagram === 'amniote-egg' ? ['chorion', 'amnion', 'allantois', 'yolk-sac', 'albumen'] : ['tight-junction', 'desmosome', 'gap-junction', 'hemidesmosome'];
+      if (!parts.includes(p.focus)) issues.push(p.diagram + ' focus ' + p.focus + ' is not one of its parts: ' + parts.join(', '));
+      else if (!keyText.toLowerCase().includes(p.focus.replace(/-/g, ' '))) issues.push(p.diagram + ' outlines ' + p.focus + ', but the key is "' + keyText + '"');
+      else checks.push(p.diagram + ' outlines ' + p.focus + ', the key');
+    }
+    if (p.diagram === 'thylakoid' && !['atp-synthase', 'leak'].includes(p.focus)) issues.push('thylakoid focus is atp-synthase or leak');
+    if (p.diagram === 'thylakoid' && p.focus === 'leak' && !p.leak) issues.push('thylakoid focus leak needs leak: true');
+  }
   if (p.type === 'bio.osmolarity') {
     const osm = Math.round(p.solute.molarity * p.solute.ions.length * 1000);
     checks.push('osmolarity recomputed: ' + p.solute.molarity + ' M x ' + p.solute.ions.length + ' particles = ' + osm + ' ' + p.units + ' outside, ' + p.inside + ' inside');
