@@ -356,7 +356,7 @@ BLOCKS.formulas = (f, box, W) => {
     if (r.key) g += `<rect x="${L - 2}" y="${r1(y - 2)}" width="${r1(W - L - 2)}" height="${rowH - 4}" rx="6" fill="${C.keyBg}" stroke="${C.key}" stroke-width="2.2"/>`;
     g += rt(L + 6, y + 20, r.formula, { size: 14, weight: 700, fill: r.key ? C.key : C.ink });
     for (let k = 0; k < r.n; k++) g += `<rect x="${r1(xs + k * cw + 1)}" y="${r1(y + 5)}" width="${r1(cw - 3)}" height="${rowH - 14}" rx="3" fill="${r.key ? '#fff' : '#eef2ef'}" stroke="${r.key ? C.key : '#9aa59f'}" stroke-width="1.2"/>`;
-    g += rt(W - 6, y + 20, r.mass + ' g', { size: 13.5, weight: 700, anchor: 'end', fill: R.ink });
+    g += rt(W - 12, y + 20, r.mass + ' g', { size: 13.5, weight: 700, anchor: 'end', fill: R.ink });
     y += rowH;
   });
   g += `<line x1="${r1(targetX)}" y1="${f.title ? 22 : 2}" x2="${r1(targetX)}" y2="${r1(y + 2)}" stroke="${C.key}" stroke-width="1.6" stroke-dasharray="5 3"/>`;
@@ -657,7 +657,7 @@ CURVE_KINDS.gibbs = (s, box) => {
   g += `<line x1="${F.X(0)}" x2="${F.X(Tmax)}" y1="${r1(y0)}" y2="${r1(y0)}" stroke="${C.ink2}" stroke-width="1.6"/>`;
   g += `<line x1="${r1(F.X(0))}" y1="${r1(F.Y(dG(0)))}" x2="${r1(F.X(Tmax))}" y2="${r1(F.Y(dG(Tmax)))}" stroke="${C.blue}" stroke-width="2.6"/>`;
   g += rt(F.X(Tc * 0.32), y0 + (F.Y(dG(0)) - y0) * 0.35 + 4, s.belowLabel, { size: 12.5, weight: 700, anchor: 'middle', fill: C.key, halo: C.keyBg });
-  g += rt(F.X(Tmax) - 4, y0 + 18, s.aboveLabel, { size: 12.5, weight: 700, anchor: 'end', fill: C.trap, halo: true });
+  g += rt(F.X(Tmax) - 6, y0 - 7, s.aboveLabel, { size: 12.5, weight: 700, anchor: 'end', fill: C.trap, halo: C.trapBg });
   g += `<circle cx="${r1(F.X(Tc))}" cy="${r1(y0)}" r="6.5" fill="${C.key}" stroke="#fff" stroke-width="1.5"/>`;
   g += rt(F.X(Tc) - 9, y0 - 12, s.crossLabel, { size: 13, weight: 700, anchor: 'end', fill: C.key, halo: true });
   // the answer as a range on the T axis
@@ -775,7 +775,7 @@ CURVE_KINDS.phase = (s, box) => {
   const curve = (kind, t0, t1) => { const pts = []; for (let i = 0; i <= 60; i++) { const T = t0 + (t1 - t0) * i / 60, P = G.co2Boundary(kind, T); if (P >= Pmin && P <= Pmax) pts.push([F.X(T), F.Y(P)]); } return pts; };
   // shade the region that holds the point
   const sub = curve('sublimation', Tmin, tp.T), vap = curve('vaporization', tp.T, cp.T);
-  const gasPoly = [[F.X(Tmin), F.Y(Pmin)], ...sub, ...vap, [F.X(cp.T), F.Y(cp.P)], [F.X(Tmax), F.Y(cp.P)], [F.X(Tmax), F.Y(Pmin)]];
+  const gasPoly = [[sub.length ? sub[0][0] : F.X(Tmin), F.Y(Pmin)], ...sub, ...vap, [F.X(cp.T), F.Y(cp.P)], [F.X(Tmax), F.Y(cp.P)], [F.X(Tmax), F.Y(Pmin)]];
   g += `<polygon points="${poly(gasPoly)}" fill="${C.keyBg}" fill-opacity=".7"/>`;
   g += `<line x1="${r1(F.X(cp.T))}" y1="${r1(F.Y(cp.P))}" x2="${r1(F.X(Tmax))}" y2="${r1(F.Y(cp.P))}" stroke="#9aa59f" stroke-width="1.2" stroke-dasharray="3 3"/><line x1="${r1(F.X(cp.T))}" y1="${r1(F.Y(cp.P))}" x2="${r1(F.X(cp.T))}" y2="${r1(F.Y(Pmax))}" stroke="#9aa59f" stroke-width="1.2" stroke-dasharray="3 3"/>`;
   const mt = []; for (let i = 0; i <= 30; i++) { const P = tp.P + (Pmax - tp.P) * i / 30, T = tp.T + (P - tp.P) / 60; mt.push([F.X(T), F.Y(P)]); }

@@ -60,9 +60,9 @@ const ENTRIES = [
       'Estimate RT: 0.0821 x 298 is about 24.5. Then 4.7 / 24.5 is a little under 0.2: 0.19.'
     ],
     choices: [
-      { text: '0.0085', role: 'trap', family: 'miscount', trap: 'Divided too far', note: 'Dividing by RT twice gives about 0.008, near this choice, but no single rule lands on 0.0085. dn = -1 means one division, not two.' },
+      { text: '0.0085', role: 'trap', family: 'one-step-too-far', trap: 'Divided too far', note: 'Dividing by RT twice gives about 0.008, the nearest route to this choice. dn = -1 means one division, not two.' },
       { text: '0.19', role: 'key', note: 'One division by RT for one mole of gas lost.' },
-      { text: '4.7', role: 'trap', family: 'assumed-equal', trap: 'K_p taken as K_c', note: 'K_p equals K_c only when dn = 0. Here the gas moles drop by one, so the RT factor is real.' },
+      { text: '4.7', role: 'trap', family: 'assumed-equal', trap: 'Kp taken as Kc', note: 'K_p equals K_c only when dn = 0. Here the gas moles drop by one, so the RT factor is real.' },
       { text: '41', role: 'trap', family: 'miscount', trap: 'No single rule', note: 'No one slip turns 4.7 into 41. It sits above K_c, and losing gas moles means K_p has to land below K_c.' },
       { text: '115', role: 'trap', family: 'sign-slip', trap: 'Multiplied by RT', note: '4.7 x 24.5 = 115 is what dn = +1 would give. The minus sign on dn means divide by RT.' }
     ],
@@ -135,7 +135,7 @@ const ENTRIES = [
       rules: { title: 'Three rewrites and what each does to K', rows: [
         { when: 'Reverse it: B to A', then: '1/K', tag: '1/K_1 = 0.20 answers this move, not this item', trap: true, choice: '1/K_1 = 0.20' },
         { when: 'Multiply every coefficient by n', then: 'K^n', tag: 'Here n = 2: K_2 = (5.0)^2 = 25', key: true, choice: 'K_1^2 = 25' },
-        { when: 'Add two reactions', then: 'K_1 x K_2', tag: 'Not used here' }
+        { when: 'Add two reactions', then: 'multiply the K values', tag: 'Not used here' }
       ] },
       verify: { vars: { K1: 5.0 }, key: 'K1^2', routes: [{ choice: '1/K_1 = 0.20', expr: '1/K1' }, { choice: 'K_1/2 = 2.5', expr: 'K1/2' }, { choice: 'K_1 = 5.0', expr: 'K1' }, { choice: '2K_1 = 10', expr: '2*K1' }] },
       reuse: 'new: chem.ledger rows and rules blocks (tools/explain/visuals/chem-gc.js)',
@@ -206,7 +206,7 @@ const ENTRIES = [
     answer: { line: 'Both dH and dS are negative: the enthalpy helps, the entropy fights harder as T rises. dG crosses zero at 800 K.' },
     steps: [
       'Read the signs first. dH < 0 helps the reaction; dS < 0 fights it, and the -T dS penalty grows with temperature.',
-      'So it runs cold and stops hot. Find the switch: set dG = 0, so T = dH / dS.',
+      'So it is spontaneous when cold, not when hot. Find the switch: set dG = 0, so T = dH / dS.',
       'Match the units, then divide: -120,000 J over -150 J/K is 800 K. Below 800 K, dG is negative.'
     ],
     choices: [
@@ -214,7 +214,7 @@ const ENTRIES = [
       { text: 'Below 80 K', role: 'trap', family: 'unit-slip', trap: 'Power of ten off', note: 'The direction is right, but the crossover is off by a factor of ten. 120,000 J over 150 J/K is 800 K.' },
       { text: 'Spontaneous at all T', role: 'trap', family: 'one-step-short', trap: 'Read only dH', note: 'All temperatures needs dH < 0 and dS > 0. Here dS is negative, so at high T the -T dS term wins.' },
       { text: 'Below 120 K', role: 'trap', family: 'other-question', trap: 'Used the dH number', note: '120 is the size of dH in kJ, not a temperature. The crossover is dH divided by dS.' },
-      { text: 'Above 800 K only', role: 'trap', family: 'reversed', trap: 'Flipped the side', note: 'With dS < 0, heating makes dG more positive. High T is where the reaction stops, so the range is below 800 K.' }
+      { text: 'Above 800 K only', role: 'trap', family: 'reversed', trap: 'Flipped the side', note: 'With dS < 0, heating makes dG more positive. Above 800 K the reaction is not spontaneous, so the range is below 800 K.' }
     ],
     lockIt: 'dH and dS both negative: spontaneous below T = dH / dS. Both positive: spontaneous above it.',
     hook: null,
@@ -226,13 +226,13 @@ const ENTRIES = [
       focus: 'below-crossover',
       dH: -120, dS: -150, Tmax: 1200,
       xTicks: [0, 400, 800, 1200], yTicks: [-120, -80, -40, 0, 40],
-      belowLabel: 'dG < 0: runs', aboveLabel: 'dG > 0: stops', crossLabel: 'dG = 0 at 800 K',
+      belowLabel: 'dG < 0', aboveLabel: 'dG > 0', crossLabel: 'dG = 0 at 800 K',
       rangeLabel: 'Below 800 K', otherRangeLabel: 'Above 800 K',
       range: { choice: 'Below 800 K', key: true }, other: { choice: 'Above 800 K only' },
       verify: { vars: { dH: -120000, dS: -150 }, key: 'dH / dS', routes: [{ choice: 'Below 120 K', expr: 'abs(dH)/1000' }, { choice: 'Below 80 K', expr: 'dH/dS/10' }] },
       reuse: 'new: chem.curve kind gibbs (tools/explain/visuals/chem-gc.js); the line is dG = dH - T dS from the stem values, and the build recomputes the crossover',
-      alt: 'A line plot of dG against temperature for dH = -120 kJ and dS = -150 J/K. The line starts at -120 kJ, rises, and crosses zero at 800 K, marked; the shaded part below zero is the spontaneous range, outlined under the axis as Below 800 K.',
-      caption: 'Follow the line up: it crosses zero at 800 K. Everything left of the crossing is the spontaneous side.'
+      alt: 'A line plot of dG against temperature for dH = -120 kJ and dS = -150 J/K. The line starts at -120 kJ, rises, and crosses zero at 800 K, marked; the shaded part below zero is the spontaneous range, outlined under the axis as Below 800 K. Past 800 K a small shaded wedge sits above zero.',
+      caption: 'Follow the line up: it crosses zero at 800 K. Left of the crossing dG is negative, the spontaneous side.'
     },
     demoPick: 'Above 800 K only',
     flags: [
@@ -359,7 +359,7 @@ const ENTRIES = [
       verify: { vars: { pN: 0.5, pO: 1.5 }, key: 'pN/(pN+pO)', routes: [{ choice: '0.20', expr: 'pN/(pN+pN+pO)' }, { choice: '0.33', expr: 'pN/pO' }, { choice: '0.50', expr: 'pN' }, { choice: '0.75', expr: 'pO/(pN+pO)' }] },
       reuse: 'new: chem.gas mixture box and pressure bar (tools/explain/visuals/chem-gc.js); particles drawn in the mole ratio',
       alt: 'A gas box with 4 nitrogen particles and 12 oxygen particles. Below, a pressure bar splits the 2.0 atm total into nitrogen 0.5 and oxygen 1.5, and the nitrogen piece is outlined: 0.5 / 2.0 = 0.25.',
-      caption: 'Look at the bar: nitrogen is one of four equal pieces of the total. That piece is its mole fraction.'
+      caption: 'Look at the bar: nitrogen fills one quarter of it. That share is its mole fraction.'
     },
     demoPick: '0.33',
     flags: [
@@ -721,7 +721,7 @@ const ENTRIES = [
       { text: 'dsp²', role: 'trap', family: 'neighbor-fact', trap: 'Square planar metals', note: 'dsp^{2} labels square planar transition-metal complexes such as Pt(NH3)2Cl2. It matches the shape, not the six domains on Xe.' },
       { text: 'sp³d³', role: 'trap', family: 'miscount', trap: 'One domain too many', note: 'sp^{3}d^{3} is seven domains, as in IF7. Xe has 4 bonds and 2 pairs, so six.' }
     ],
-    lockIt: 'Hybridization counts domains, bonds plus lone pairs: 4 is sp^{3}, 5 is sp^{3}d, 6 is sp^{3}d^{2}.',
+    lockIt: 'Hybridization counts domains, bonded atoms plus lone pairs: 4 is sp^{3}, 5 is sp^{3}d, 6 is sp^{3}d^{2}.',
     hook: null,
     playWith: hub('vsepr-predictor', 'VSEPR Predictor: set 4 bonded atoms and 2 lone pairs and read the shape and steric number', ['id="vsprBonded"', 'id="vsprLP"']),
     video: { slot: 'gc.bonding.hybridization', title: 'Hybridization from domain counts', id: null, start: null },
@@ -762,7 +762,7 @@ const ENTRIES = [
     difficulty: band(3),
     source: src('gchem-b:GC_pd5', 48),
     keyText: 'Gas',
-    answer: { line: '1 atm is below CO2\'s triple-point pressure, 5.11 atm, where liquid cannot exist. At 298 K the sample sits in the gas region.' },
+    answer: { line: '1 atm is under CO2\'s triple-point pressure, 5.11 atm, and below that pressure liquid cannot exist. At 298 K it is gas.' },
     steps: [
       'Locate the point: 1 atm and 298 K. Compare the pressure with the triple point first: 1 atm is well under 5.11 atm.',
       'Know what that means. Below the triple-point pressure only solid and gas exist; liquid CO2 needs more than 5.11 atm.',
@@ -789,9 +789,9 @@ const ENTRIES = [
       labels: [
         { T: 172, P: 40, text: 'Solid', region: true, choice: 'Solid' },
         { T: 262, P: 140, text: 'Liquid', region: true, choice: 'Liquid' },
-        { T: 262, P: 4, text: 'Gas', region: true, choice: 'Gas', key: true },
+        { T: 345, P: 2.2, text: 'Gas', region: true, choice: 'Gas', key: true },
         { T: 376, P: 160, lines: ['supercritical', 'fluid'], region: true, anchor: 'end', choice: 'Supercritical fluid' },
-        { T: 223, P: 2.4, text: 'triple point, 5.11 atm', anchor: 'start' },
+        { T: 224, P: 4.2, text: 'triple point, 5.11 atm', anchor: 'start' },
         { T: 308, P: 45, text: 'critical point', anchor: 'start' }
       ],
       pointLabel: { text: '298 K, 1 atm', dx: -10, dy: 24, anchor: 'end' },
@@ -1172,7 +1172,7 @@ const ENTRIES = [
     ],
     choices: [
       { text: '10 mol', role: 'trap', family: 'operation-flip', trap: 'Added the reactants', note: '4 + 6 adds the reactant moles. Moles are not conserved through a reaction; the mole ratio decides.' },
-      { text: '2 mol', role: 'trap', family: 'one-step-short', trap: 'Stopped at 6 / 3', note: '6 / 3 = 2 is the H2 moles per coefficient, one step from the answer. Multiply by NH3\'s coefficient, 2.' },
+      { text: '2 mol', role: 'trap', family: 'one-step-short', trap: 'Stopped at 6 / 3', note: '6 / 3 = 2 is the N2 that reacts, one step short. Times 2 NH3 per N2 gives 4.' },
       { text: '8 mol', role: 'trap', family: 'reversed', trap: 'N2 as the limit', note: '8 mol is what the N2 could make. H2 runs out long before that, so N2 is the reactant in excess.' },
       { text: '4 mol', role: 'key', note: 'H2 runs out first: 6 x 2/3 = 4 mol.' },
       { text: '5 mol', role: 'trap', family: 'miscount', trap: 'No single rule', note: 'No ratio from this equation gives 5. Compare what each reactant can make: 8 and 4.' }
@@ -1258,7 +1258,7 @@ const ENTRIES = [
     steps: [
       'Find the empirical unit\'s mass first: CH2O is 12 + 2 + 16 = 30 g/mol.',
       'Divide the molar mass by it: 60 / 30 = 2 units per molecule.',
-      'Multiply every subscript by 2: C2H4O2. That is acetic acid.'
+      'Multiply every subscript by 2. You get C2H4O2, the formula of acetic acid.'
     ],
     choices: [
       { text: 'C₅H₁₀O₅', role: 'trap', family: 'miscount', trap: 'Five units', note: 'C5H10O5 weighs 150, five CH2O units, a sugar like ribose. 60 g/mol holds only two.' },
@@ -1417,8 +1417,8 @@ const ENTRIES = [
       { text: '3', role: 'trap', family: 'neighbor-fact', trap: 'Read a fluorine', note: 'Three lone pairs sit on each F, or on Xe in linear XeF2. The stem asks about the central Cl.' },
       { text: '4', role: 'trap', family: 'other-unit', trap: 'Electrons, not pairs', note: '4 is the leftover electron count. Two electrons make one pair, so 4 electrons are 2 pairs.' }
     ],
-    lockIt: 'Lone pairs on the center = (its valence electrons - one per bond) / 2.',
-    hook: 'Three bonds plus two pairs: T-shaped.',
+    lockIt: 'Center\'s lone pairs: total valence electrons, charge included, minus 8 per outer atom (2 per H), then halve.',
+    hook: 'BrF3 and IF3 make the same T.',
     playWith: hub('vsepr-predictor', 'VSEPR Predictor: set 3 bonded atoms and 2 lone pairs and read the T shape', ['id="vsprBonded"', 'id="vsprLP"']),
     video: { slot: 'gc.bonding.lewis.lone-pairs', title: 'Counting lone pairs on the central atom', id: null, start: null },
     visual: {
@@ -1463,10 +1463,10 @@ const ENTRIES = [
       { text: 'Metallic bonding', role: 'trap', family: 'neighbor-fact', trap: 'Bonding in metals', note: 'Metallic bonding holds metals together with a shared sea of electrons. HF and HCl are small molecules.' },
       { text: 'HF has stronger London forces', role: 'trap', family: 'reversed', trap: 'London forces swapped', note: 'London forces grow with electron count, so HCl has the stronger ones. HF wins on hydrogen bonding instead.' },
       { text: 'Stronger H-bonding in HF', role: 'key', note: 'Hydrogen bonds outweigh HCl\'s extra London force.' },
-      { text: 'HCl is ionic', role: 'trap', family: 'other-conditions', trap: 'Ionizes only in water', note: 'HCl splits into ions when dissolved in water. Pure HCl is a polar covalent molecule.' },
+      { text: 'HCl is ionic', role: 'trap', family: 'other-conditions', trap: 'Ionizes only in water', note: 'Pure HCl is a polar covalent molecule. It splits into ions only when dissolved in water.' },
       { text: 'HF is denser', role: 'trap', family: 'neighbor-fact', trap: 'Density is not a cause', note: 'Density does not set a boiling point. How hard the molecules pull on each other does.' }
     ],
-    lockIt: 'H on N, O or F means hydrogen bonding, which beats a heavier molecule\'s extra London forces.',
+    lockIt: 'H on N, O or F adds hydrogen bonding, which outweighs the extra London force of a similar small molecule.',
     hook: null,
     playWith: hub('imf-rank', 'Intermolecular Forces module: rank molecules by boiling point, then check to see the forces behind the order', ["visualType:'imf-rank'", 'imfCheck']),
     video: { slot: 'gc.bonding.imf', title: 'Intermolecular forces and boiling points', id: null, start: null },
@@ -1475,11 +1475,11 @@ const ENTRIES = [
       focus: 'hydrogen-bond',
       imf: { pairs: [
         { title: 'HF', x: 'F', hbond: true, force: 'hydrogen bond', bp: 'boils near 20 degrees C', key: true, choice: 'Stronger H-bonding in HF' },
-        { title: 'HCl', x: 'Cl', big: true, hbond: false, force: 'dipole-dipole only', bp: 'boils near -85 degrees C' }
+        { title: 'HCl', x: 'Cl', big: true, hbond: false, force: 'dipole-dipole and London', bp: 'boils near -85 degrees C' }
       ] },
       note: 'HCl has more electrons, so more London force. The hydrogen bond in HF still wins.',
       reuse: 'new: chem.ledger imf block (tools/explain/visuals/chem-gc.js): two molecule pairs and the force between them',
-      alt: 'Two rows of molecule pairs. HF, outlined: H-F next to H-F with a bold dashed hydrogen bond between the F of one and the H of the next; it boils near 20 degrees C. HCl: H-Cl next to H-Cl with only a faint dipole-dipole link; it boils near -85 degrees C.',
+      alt: 'Two rows of molecule pairs. HF, outlined: H-F next to H-F with a bold dashed hydrogen bond between the F of one and the H of the next; it boils near 20 degrees C. HCl: H-Cl next to H-Cl with a faint dipole-dipole and London link, no hydrogen bond; it boils near -85 degrees C.',
       caption: 'Compare the links between molecules. The bold hydrogen bond in HF takes more heat to break than the faint pull in HCl.'
     },
     demoPick: 'HF has stronger London forces',
@@ -1489,4 +1489,37 @@ const ENTRIES = [
   }
 ];
 
-module.exports = { group: 'G1', batch: 'B003', title: 'Full-Length Test 1, General Chemistry (30 items)', entries: ENTRIES };
+// Fixes from the expert review of B003 (coach record only).
+const CHANGES = {
+  'fm:gchem-b:GC_ek-h1': [
+    'The 4.7 trap label is plain text, "Kp taken as Kc" (the player does not typeset trap labels, so "K_p taken as K_c" showed raw underscores)',
+    '0.0085 moves to family one-step-too-far, matching its label "Divided too far"; the note calls dividing twice the nearest route (the build keeps it as no exact route)'
+  ],
+  'fm:gchem-b:GC_ek-e7': ['Rules card: the add-two-reactions row reads "multiply the K values" (was "K_1 x K_2", which could read as 5 x 25 next to this item\'s K_2)'],
+  'fm:gchem-b:GC_gb-q1': [
+    'Step 2 says it is spontaneous when cold, not when hot, and the "Above 800 K only" note says "not spontaneous" (both said "stops")',
+    'Picture: sign labels "dG < 0" and "dG > 0"; the dG > 0 label now sits inside the shaded wedge above the axis (it sat below the axis, outside the wedge); the caption names the spontaneous side and the alt names the wedge'
+  ],
+  'fm:gchem-a:gl-e12': ['Caption: nitrogen fills one quarter of the bar (was "one of four equal pieces", but the bar is drawn in two pieces)'],
+  'fm:gchem-b:GC_hb5': ['Lock it in counts bonded atoms plus lone pairs (was "bonds", which a student could count twice on a double bond)'],
+  'fm:gchem-b:GC_pd5': [
+    'Answer line: below the triple-point pressure liquid cannot exist (it could read as no liquid at 5.11 atm itself)',
+    'Picture: the triple-point label sits beside its dot and the Gas tag moves right to make room; the gas fill starts where the drawn sublimation curve meets the axis (no sliver from 150 to 182 K)'
+  ],
+  'fm:generated:gc-limiting#6s11gt': ['2 mol note: 6 / 3 = 2 is the N2 that reacts, then times 2 NH3 per N2 gives 4'],
+  'fm:generated:gc-molecular-formula#13jl0t8': [
+    'Step 3: "You get C2H4O2, the formula of acetic acid" (was "That is acetic acid"; methyl formate and glycolaldehyde share the formula)',
+    'Picture: the masses sit 12 px in from the right edge, clear of the outlined row\'s border'
+  ],
+  'fm:gchem-b:GC_lw-e10': [
+    'Lock it in: total valence electrons, charge included, minus 8 per outer atom (2 per H), then halve. The old "(valence - one per bond) / 2" fails on double bonds and ions (I3-, ICl4-, XeO3, CO2). The review\'s wording ("minus those it puts into bonds, minus the charge") still fails where the charge sits on an outer O (NO3- gives 1 pair, true 0), so the outer-atom count is used',
+    'Hook: "BrF3 and IF3 make the same T." (the old hook repeated step 3 and the caption)'
+  ],
+  'fm:gchem-a:b-e7': [
+    'Picture: the HCl link reads "dipole-dipole and London" (was "dipole-dipole only", which contradicted the note under it); the alt says the same, no hydrogen bond',
+    'Lock it in is scoped: hydrogen bonding outweighs the extra London force of a similar small molecule (I2, CCl4 and SbH3 out-boil hydrogen-bonded liquids)',
+    '"HCl is ionic" note opens with the fact: pure HCl is a polar covalent molecule; it splits into ions only in water'
+  ]
+};
+
+module.exports = { group: 'G1', batch: 'B003', title: 'Full-Length Test 1, General Chemistry (30 items)', entries: ENTRIES, changes: CHANGES };
