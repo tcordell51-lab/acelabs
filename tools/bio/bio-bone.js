@@ -69,8 +69,10 @@
   ];
 
   var H = 410;   // viewBox height
+  // The side padding shrinks to 4px on a 390 px phone (16px from about 700 px
+  // wide), so the picture gets the width and its small labels read larger.
   var TEMPLATE =
-    '<div style="background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px;padding:16px">' +
+    '<div style="background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px;padding:16px clamp(4px,4vw - 12px,16px)">' +
       '<div style="text-align:center;margin-bottom:10px">' +
         '<div style="font-family:\'Playfair Display\',serif;font-size:18px;font-weight:700;color:#1B3A2D">Bone Layers: peel it from the outside in</div>' +
         '<div style="font-size:12px;color:#1B3A2D;margin-top:4px;font-style:italic">Peri is outside. Endo is inside. Drag to peel.</div>' +
@@ -397,20 +399,23 @@
       '<path d="' + lac + '" stroke="' + C.dark + '" stroke-width="1.9" stroke-linecap="round"/>';
   }
   /* Outer circumferential lamellae: 6 wavy bands parallel to the surface,
-     with flattened lacunae between them, each crossed by four canaliculi
-     that fan out from its center toward and away from the surface. */
+     with up to 22 flattened lacunae between them (about as dense as in
+     the interstitial lamellae), each crossed by four canaliculi that fan out
+     from its center toward and away from the surface. */
   function circumferential() {
     var r = rng(41), lines = '', lac = '', can = '';
     for (var j = 0; j < 6; j++) {
       var y = 232 + j * 3.5, amp = 0.6 + r() * 0.7;
       lines += 'M15,' + f1(y) + 'Q57,' + f1(y - amp) + ' 99,' + f1(y) + 'T183,' + f1(y) + 'T267,' + f1(y) + 'T351,' + f1(y);
     }
-    for (var i = 0; i < 10; i++) {
-      var lx = 30 + i * 32 + (r() - 0.5) * 14, ly = 233.8 + Math.floor(r() * 5) * 3.5;
+    for (var i = 0; i < 22; i++) {
+      var lx = 24 + i * 14.8 + (r() - 0.5) * 8, ly = 233.8 + Math.floor(r() * 5) * 3.5;
+      // none inside the Volkmann canal, which crosses the band near x = 130
+      if (Math.abs(lx - 130) < 5) continue;
       lac += 'M' + f1(lx - 1.6) + ',' + f1(ly) + 'h3.2';
       for (var c = 0; c < 4; c++) {
         var ca = Math.PI / 2 + (c - 1.5) * 0.25, l1 = 3 + r() * 2, l2 = 3 + r() * 2;
-        can += 'M' + f1(lx - Math.cos(ca) * l1) + ',' + f1(ly - Math.sin(ca) * l1) + 'l' + f1(Math.cos(ca) * (l1 + l2)) + ',' + f1(Math.sin(ca) * (l1 + l2));
+        can += 'M' + f1(lx - Math.cos(ca) * l1) + ',' + f1(ly - Math.sin(ca) * l1) + 'l' + f0(Math.cos(ca) * (l1 + l2)) + ',' + f0(Math.sin(ca) * (l1 + l2));
       }
     }
     return '<path d="' + lines + '" fill="none" stroke="#b49c6c" stroke-width="0.7"/>' +
@@ -509,7 +514,8 @@
     out.push('<g fill="none" stroke="' + C.goldD + '" stroke-width="1.2" opacity="' + (zoomOn ? 1 : 0.45) + '">' +
       '<path d="M236,62V128" stroke-dasharray="3 2"/><ellipse cx="236" cy="95" rx="6" ry="31" fill="' + C.gold + '" fill-opacity="0.15"/></g>');
 
-    // Labels around the bone
+    // Labels around the bone ("cross-section here" stays at full strength on
+    // every stop; the dimmed cut-plane marker shows when the zoom is not active)
     out.push('<g font-size="9.5" fill="' + C.mute + '">' +
       '<text x="6" y="31">articular cartilage</text><text x="354" y="31" text-anchor="end">articular cartilage</text>' +
       '<text x="148" y="141" text-anchor="middle">diaphysis (shaft)</text>' +
@@ -517,7 +523,7 @@
       '<text x="6" y="182">upper end (like adult femur): red marrow</text>' +
       '<text x="354" y="182" text-anchor="end">lower end: mostly yellow marrow</text>' +
       '<text x="180" y="166" text-anchor="middle" fill="' + C.goldD + '">epiphyseal line (old growth plate)</text>' +
-      '<text x="236" y="139" text-anchor="middle" fill="' + C.goldD + '" opacity="' + (zoomOn ? 1 : 0.6) + '">cross-section here</text>' +
+      '<text x="236" y="139" text-anchor="middle" fill="' + C.goldD + '">cross-section here</text>' +
       '</g>');
     // leaders from the label to a point on each plate
     out.push('<path d="M105,161L49.7,134.7M255,161L309.8,132.2" stroke="' + C.goldD + '" stroke-width="0.7" fill="none"/>' +
@@ -530,7 +536,7 @@
     out.push('<text x="180" y="13" text-anchor="middle" font-size="11.5" font-weight="700" fill="' + C.goldD + '">' + s.callout + '</text>');
 
     // The zoom: a ground section of the shaft wall, cut across
-    out.push('<g opacity="' + (k === 'osteon' ? 1 : (k === 'compact' ? 0.9 : 0.55)) + '">');
+    out.push('<g opacity="' + (k === 'osteon' ? 1 : (k === 'compact' ? 0.9 : 0.8)) + '">');
     out.push('<rect x="14" y="194" width="332" height="210" rx="10" fill="#fbf6e9" stroke="' + (k === 'osteon' ? C.gold : C.ink) + '" stroke-width="' + (k === 'osteon' ? 2.5 : 1.2) + '"/>');
     out.push('<text x="24" y="210" font-size="10" font-weight="700" fill="' + C.ink + '">ZOOM: cross-section of compact bone (ground section)</text>');
     out.push('<g clip-path="url(#bl-inset)">');
@@ -549,7 +555,7 @@
     out.push('<path d="' + LEAD + '" stroke="#fbf6e9" stroke-width="2.4" fill="none"/><path d="' + LEAD + '" stroke="' + C.ink + '" stroke-width="0.9" fill="none"/>');
     out.push('<g font-size="9.5" fill="' + C.ink + '">' +
       '<text x="22" y="222" font-weight="700">outer circumferential lamellae</text>' +
-      '<text x="338" y="222" text-anchor="end" fill="' + C.mute + '">surface (periosteum removed)</text>' +
+      '<text x="338" y="222" text-anchor="end" fill="#435049">surface (periosteum removed)</text>' +
       '<text x="22" y="375" font-weight="700">Haversian canal</text>' +
       '<text x="22" y="387">(empty here; holds vessels</text><text x="22" y="399">and nerves in life)</text>' +
       '<text x="175" y="375" text-anchor="middle" font-weight="700">Volkmann canal</text>' +
