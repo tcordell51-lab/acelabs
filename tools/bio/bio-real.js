@@ -21,7 +21,9 @@
        and over the face, the nucleus faint and mostly hidden.
        Isotonic: small corner gaps in about half the cells (incipient
        plasmolysis). Hypotonic: protoplasts pressed flat on the walls
-       (turgid). Hypertonic: uneven plasmolysis, rounded protoplasts
+       (turgid). Hypertonic: first the membrane leaves the corners in
+       every cell; once the page calls it plasmolysis (ext above 80),
+       uneven plasmolysis: rounded protoplasts, crowded chloroplasts,
        held to the wall by thin (Hechtian) strands.
    Each view is a rectangular camera crop, evenly lit, with its
    magnification in the caption and a scale bar true to the drawing.
@@ -100,7 +102,7 @@
     // scale bar, right of the solute strip, at the same scale as the image
     var x2 = FX + FW - 2, x1 = x2 - scalePx;
     return out + '<path d="M' + x1 + ',310H' + x2 + '" stroke="#e9e2d2" stroke-width="2.5"/>' +
-      '<text x="' + ((x1 + x2) / 2) + '" y="300" text-anchor="middle" font-size="10" fill="#e9e2d2">' + scaleLabel + '</text>';
+      '<text x="' + ((x1 + x2) / 2) + '" y="300" text-anchor="middle" font-size="11" fill="#e9e2d2">' + scaleLabel + '</text>';
   }
 
   /* Bottom strip: the mechanism, kept beside the real picture. Dots of
@@ -116,10 +118,10 @@
       return '<g' + (faded ? ' opacity="0.3"' : '') + '>' +
         '<rect x="' + x + '" y="' + y + '" width="88" height="18" rx="4" fill="#20251f" stroke="#59604f" stroke-width="1"/>' +
         (d ? '<path d="' + d + '" stroke="' + col + '" stroke-width="3.2" stroke-linecap="round"/>' : '') + '</g>' +
-        '<text x="' + (x + 44) + '" y="296" text-anchor="middle" font-size="10" fill="#bfb6a3">' + label + '</text>';
+        '<text x="' + (x + 44) + '" y="296" text-anchor="middle" font-size="11" fill="#bfb6a3">' + label + '</text>';
     }
     out += lysed ? box(14, 'contents released', 0, '', true)
-      : box(14, 'solute inside cell', Math.round(15 / vol), '#7fb4e0', false);
+      : box(14, 'solute inside', Math.round(15 / vol), '#7fb4e0', false);
     out += box(202, 'solute outside', Math.round(clamp(ext, 0, 100) * 0.3), '#d9b45c', false);
     var mid = 152, ay = 310, txt, path;
     if (Math.abs(diff) < 5) { txt = 'no net flow'; path = ''; }
@@ -129,7 +131,7 @@
       out += '<defs><marker id="rl-arrow" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="#8cc7f2"/></marker></defs>';
       out += '<path d="' + path + '" stroke="#8cc7f2" stroke-width="2.4" marker-end="url(#rl-arrow)"/>';
     }
-    out += '<text x="' + mid + '" y="296" text-anchor="middle" font-size="10" font-weight="700" fill="#8cc7f2">' + txt + '</text>';
+    out += '<text x="' + mid + '" y="296" text-anchor="middle" font-size="11" font-weight="700" fill="#8cc7f2">' + txt + '</text>';
     return out;
   }
 
@@ -175,11 +177,11 @@
   // shape follows Evans and Fung, with the middle set to 1 um thick:
   // about 2.7 um at the thickest. cup bends it into a stomatocyte (px at the
   // middle), sph (0 to 1) blends it toward a sphere of radius A, and
-  // amp with n adds crenation bumps.
+  // amp with n adds crenation bumps (16 samples per bump keep them round).
   function edgePath(A, cup, sph, amp, n) {
-    var pts = [];
-    for (var i = 0; i < 48; i++) {
-      var th = i / 48 * 2 * Math.PI, c = Math.cos(th), s = Math.sin(th);
+    var pts = [], N = amp ? n * 16 : 48;
+    for (var i = 0; i < N; i++) {
+      var th = i / N * 2 * Math.PI, c = Math.cos(th), s = Math.sin(th);
       var yd = -s * 0.5 * RBC_PX * (1 + 7.83 * c * c - 4.39 * c * c * c * c) + cup * s * s;
       var x = A * c, y = lerp(yd, -A * s, sph);
       if (amp) { var b = Math.pow(Math.max(0, Math.cos(n * th)), 2) * amp * A; x += b * c; y -= b * s; }
@@ -189,9 +191,10 @@
   }
 
   // Crenated outline: a disc with n short blunt bumps (cos^2 bumps of
-  // height amp * r), drawn once around the origin.
+  // height amp * r), drawn once around the origin. 20 samples per bump
+  // period (10 across the bump itself) give each one a rounded tip.
   function crenatedPath(r, amp, n) {
-    var pts = [], steps = n * 8;
+    var pts = [], steps = n * 20;
     for (var i = 0; i < steps; i++) {
       var th = (i / steps) * Math.PI * 2;
       var bump = Math.pow(Math.max(0, Math.cos(n * th)), 2);
@@ -222,8 +225,9 @@
       edge = edgePath(A, 6 * cup, clamp((t - 0.3) / 0.45, 0, 1), 0, 0);   // side view reaches round first
       edgeFill = mix('#d3807f', '#c86468', den);
       vol = 1 + 0.4 * t;
-      title = t < 0.2 ? 'Hypotonic: water in, the discs start to swell and the pale centers fade'
-        : t < 0.6 ? 'Hypotonic: water in, the discs swell into cups; each pale center narrows to a slit'
+      // the cup caption holds exactly while the slit is drawn (0.2 < t < 0.7)
+      title = t <= 0.2 ? 'Hypotonic: water in, the discs start to swell and the pale centers fade'
+        : t < 0.7 ? 'Hypotonic: water in, the discs swell into cups; each pale center narrows to a slit'
         : 'Hypotonic: water in, discs round up into spheres: more volume, a bit narrower, pale center gone';
     } else if (mode === 'lysed') {
       // ghosts reseal at about the sphere's size, smooth and nearly
@@ -238,8 +242,9 @@
         : 'Hemolysis: cells burst; only faint empty membranes (ghosts) remain';
     } else {
       // hypertonic: shrunken echinocytes, many short blunt projections over
-      // the rim and the face, only slightly darker than normal cells
-      t = clamp((diff - 5) / 45, 0, 1);
+      // the rim and the face, only slightly darker than normal cells. t
+      // starts above 0 on the first hypertonic step (ext 55).
+      t = clamp((diff - 4) / 46, 0, 1);
       A = RBC_R * (1 - 0.24 * t);
       var amp = 0.04 + 0.06 * t, face = 'M0,0h0';
       for (var k = 0; k < 7; k++) face += 'M' + f1(Math.cos(k * 2 * Math.PI / 7) * 0.45 * A) + ',' + f1(Math.sin(k * 2 * Math.PI / 7) * 0.45 * A) + 'h0';
@@ -251,7 +256,8 @@
       edge = edgePath(A, 0, 0.3 * t, amp, 14);
       edgeFill = '#c4686c';
       vol = 1 - 0.25 * t;
-      title = 'Hypertonic: water out, cells shrunken and crenated, with many short blunt projections';
+      title = t < 0.25 ? 'Hypertonic: water out, the cells start to shrink and crenate (short blunt projections)'
+        : 'Hypertonic: water out, cells shrunken and crenated, with many short blunt projections';
     }
     if (edge) defs += '<path id="rl-e" d="' + edge + '" fill="' + edgeFill + '"' + RBC_STROKE + '/>';
     var body = '';
@@ -358,12 +364,16 @@
 
   function plantField(ext, diff, plasmolyzed) {
     var iso = Math.abs(diff) < 5;
-    // plasmolysis amount: 0 until clearly hypertonic, 1 at the top of the
-    // slider; slow at first, so below the plasmolysis mark (ext 80) the
-    // protoplasts only start to pull away
-    var p = diff > 5 ? Math.pow(clamp((diff - 5) / 45, 0, 1), 1.5) : 0;
-    var turgid = diff < -5;
-    var proto = '', strands = '', nuc = '', walls = '';
+    plasmolyzed = plasmolyzed && diff >= 5;              // only a hypertonic solution plasmolyzes
+    // How far the protoplasts pull in (p), tied to the page's plasmolyzed
+    // flag (ext above 80). Hypertonic but not plasmolyzed (ext 55 to 80):
+    // p rises from about 0 to 0.1, so in every cell the membrane only
+    // leaves the corners (incipient plasmolysis); the ends stay near the
+    // walls and no strands form. Plasmolyzed: p runs from 0.46 at ext 81
+    // to 1 at ext 100, and the protoplasts pull clear of the end walls.
+    var p = plasmolyzed ? lerp(0.43, 1, clamp((diff - 30) / 20, 0, 1)) : (diff >= 5 ? 0.1 * clamp((diff - 4) / 26, 0, 1) : 0);
+    var turgid = diff <= -5;
+    var gap = '', flat = '', strands = '', nuc = '', walls = '';
     // Chloroplasts: short round-capped strokes, one path for those along
     // the walls and one for those over the face. Each starts with a move
     // relative to the end of the one before, to keep the markup short.
@@ -381,7 +391,8 @@
       var q = [[l.m - l.d / 2, y], [rt.m - rt.d / 2, y], [rt.m + rt.d / 2, y + ROW_H], [l.m + l.d / 2, y + ROW_H]];
       walls += 'M' + pt(q[0]) + 'L' + pt(q[3]);           // left end wall; the right one is the next cell's
       var inner = insetQuad(q, WALL / 2);                 // the protoplast's place when pressed on the wall
-      var inc = hash(i, 1) < 0.5;                         // incipient plasmolysis at isotonic, about half the cells
+      // incipient plasmolysis: about half the cells at isotonic, every cell once hypertonic
+      var inc = diff >= 5 || hash(i, 1) < 0.5;
       var f = PLAS[i % 8] * p, pq, rad, bowT = 0, bowB = 0;
       var top = inner[0][1], ih = inner[3][1] - top;
       var iw = Math.min(inner[1][0], inner[2][0]) - Math.max(inner[0][0], inner[3][0]);
@@ -403,35 +414,42 @@
           if (i % 8 === 3) bowT = bw; else bowB = bw;
         }
       }
-      proto += roundQuad(pq, rad, bowT, bowB).d;
-      // 44 chloroplasts in every state, so they crowd as the protoplast
-      // shrinks: two staggered rows along the walls (each stroke parallel
-      // to the wall, within 15 deg), then 16 over the face
-      var phh = pq[3][1] - pq[0][1], nRow = 14;
-      var rows = [[turgid ? 2.6 : 3.2, 0], [Math.min(7.5, phh / 2 - 1.5), 0.5]];
+      // cells whose membrane has left the wall somewhere get a clearer outline
+      if (inc && !turgid) gap += roundQuad(pq, rad, bowT, bowB).d;
+      else flat += roundQuad(pq, rad, bowT, bowB).d;
+      // 56 chloroplasts in every state, so they crowd as the protoplast
+      // shrinks: an outer row of 24 along the walls, nearly touching (the
+      // cyclosis track), an inner row of 12 (each stroke parallel to the
+      // wall, within 15 deg), then 20 over the face
+      var phh = pq[3][1] - pq[0][1];
+      var rows = [[turgid ? 3 : 3.2, 0, 24], [Math.min(7.5, phh / 2 - 1.5), 0.5, 12]];
       rows.forEach(function (rw, ri) {
-        var ring = roundQuad(insetQuad(pq, rw[0]), Math.max(0.6, rad - rw[0]), bowT, bowB).pts;
+        var ring = roundQuad(insetQuad(pq, rw[0]), Math.max(3, rad - rw[0]), bowT, bowB).pts, nRow = rw[2];
         for (var k = 0; k < nRow; k++) {
           var at = along(ring, (k + rw[1] + (hash(i * 3 + ri, k) - 0.5) * 0.5) / nRow + hash(i, 9));
           var dir = rot(at.t, (hash(i * 5 + ri, k + 20) - 0.5) * 30);
           chloro('w', at.p, dir, ri ? 1.4 : (turgid ? 3.4 : 2.8));
         }
       });
-      // the face band keeps its share of the protoplast as it shrinks
+      // The face band keeps its share of the protoplast as it shrinks. Its
+      // ends sit far enough in from the rounded ends that a face
+      // chloroplast (radius 2.8) never crosses the membrane.
       var fy0 = pq[0][1] + Math.min(12, phh * 0.34), fy1 = pq[3][1] - Math.min(12, phh * 0.34);
       var fx0 = Math.max(pq[0][0], pq[3][0]) + Math.min(9.5, phh * 0.3), fx1 = Math.min(pq[1][0], pq[2][0]) - Math.min(9.5, phh * 0.3);
-      // the nucleus shows faintly in 3 cells of 8; face chloroplasts keep clear of it
+      // the nucleus shows faintly in 3 cells of 8; a face chloroplast that
+      // would sit on it moves toward the middle of the cell, inside the band
       var showNuc = hash(i, 3) < 0.375, nx = lerp(fx0, fx1, hash(i, 4) < 0.5 ? 0.1 : 0.9), ny = (fy0 + fy1) / 2;
-      for (var k = 0; k < 16; k++) {
-        var u = (Math.floor(k / 2) + 0.25 + 0.5 * (k % 2) + (hash(i, k + 10) - 0.5) * 0.9) / 8;
+      for (var k = 0; k < 20; k++) {
+        var u = (Math.floor(k / 2) + 0.25 + 0.5 * (k % 2) + (hash(i, k + 10) - 0.5) * 0.9) / 10;
         var fp = [lerp(fx0, fx1, clamp(u, 0, 1)), lerp(fy0, fy1, clamp((k % 2) + (hash(i, k + 40) - 0.5) * 0.9, 0, 1))];
-        if (showNuc && Math.abs(fp[0] - nx) < 8 && Math.abs(fp[1] - ny) < 6) fp[0] += fp[0] < nx ? -6 : 6;
+        if (showNuc && Math.abs(fp[0] - nx) < 8 && Math.abs(fp[1] - ny) < 6) fp[0] = clamp(nx < (fx0 + fx1) / 2 ? nx + 8 : nx - 8, fx0, fx1);
         chloro('f', fp, rot([1, 0], hash(i, k + 70) * 180), 0.8);
       }
       if (showNuc) nuc += 'M' + f1(nx - 5.4) + ',' + f1(ny) + 'a5.4,4.6 0 1,0 10.8,0a5.4,4.6 0 1,0 -10.8,0';
-      // Hechtian strands: thin threads from the shrunken protoplast to
-      // the points where its membrane still holds the wall
-      if (f > 0.12) {
+      // Hechtian strands: thin threads from the plasmolyzed protoplast to
+      // the points where its membrane still holds the wall (only once the
+      // membrane has pulled clear of the wall, never before plasmolysis)
+      if (plasmolyzed) {
         var ly = lerp(top, top + ih, 0.3 + 0.4 * hash(i, 5)), ry = lerp(top, top + ih, 0.3 + 0.4 * hash(i, 6));
         strands += 'M' + pt([(pq[0][0] + pq[3][0]) / 2, (pq[0][1] + pq[3][1]) / 2]) + 'L' + f1(lerp(inner[0][0], inner[3][0], (ly - top) / ih)) + ',' + f1(ly) +
           'M' + pt([(pq[1][0] + pq[2][0]) / 2, (pq[1][1] + pq[2][1]) / 2]) + 'L' + f1(lerp(inner[1][0], inner[2][0], (ry - top) / ih)) + ',' + f1(ry);
@@ -443,13 +461,16 @@
     var title = iso ? 'Elodea leaf cells, isotonic: flaccid; in some cells the membrane just starts to leave the corners'
       : diff < 0 ? 'Elodea leaf cells, hypotonic: turgid, protoplasts pressed flat on the walls'
       : plasmolyzed ? 'Plasmolysis (Elodea leaf cells): protoplasts round up and pull off the walls, held by thin strands'
-      : 'Elodea leaf cells, hypertonic: protoplasts starting to pull off the walls';
+      : 'Elodea leaf cells, hypertonic: water leaves; in every cell the membrane starts to leave the corners';
     // cytoplasm is colorless: only the chloroplasts are green. Each is a
     // dark rim with a lighter middle; the face ones, a little out of
     // focus, are paler.
     var svg = '<defs><path id="rl-cw" d="' + paths.w + '"/><path id="rl-cf" d="' + paths.f + '"/><path id="rl-w" d="' + walls + '"/></defs>' +
       '<g filter="url(#rl-soft)">' +
-      '<path d="' + proto + '" fill="#eef1e4" fill-opacity="0.6" stroke="#aab48e" stroke-width="0.6" stroke-opacity="' + f2(turgid ? 0.2 : 0.45 + 0.55 * clamp(p * 3, 0, 1)) + '"/>' +
+      // protoplasts a shade denser than the clear solution, so the
+      // gaps at the corners and ends read as gaps
+      (flat ? '<path d="' + flat + '" fill="#e8eddb" fill-opacity="0.75" stroke="#aab48e" stroke-width="0.6" stroke-opacity="0.2"/>' : '') +
+      (gap ? '<path d="' + gap + '" fill="#e8eddb" fill-opacity="0.75" stroke="#8f9c72" stroke-width="0.6" stroke-opacity="' + f2(0.75 + 0.25 * clamp(p * 3, 0, 1)) + '"/>' : '') +
       (nuc ? '<path d="' + nuc + '" fill="#d6d1bf" stroke="#8a826e" stroke-width="0.6" opacity="0.35"/>' : '') +
       '<g fill="none" stroke-linecap="round">' +
       '<use href="#rl-cf" stroke="#4f8a3d" stroke-width="5.6"/><use href="#rl-cf" stroke="#7cb05c" stroke-width="3.8"/>' +
@@ -457,7 +478,11 @@
       (strands ? '<path d="' + strands + '" stroke="#9db07a" stroke-width="0.6" stroke-opacity="0.8"/>' : '') +
       '<use href="#rl-w" stroke="#d7dfc4" stroke-width="' + WALL + '"/><use href="#rl-w" stroke="#9aa781" stroke-width="0.6"/>' +
       '</g></g>';
-    return { svg: svg, title: title, vol: p > 0 ? 1 - 0.25 * p : (turgid ? 1 + 0.06 * clamp((-diff - 5) / 45, 0, 1) : 1) };
+    // cell volume for the solute strip: the protoplast loses water all
+    // through the hypertonic range, a little before plasmolysis and more
+    // after it; turgid cells gain only a little (the wall holds them)
+    var vol = diff >= 5 ? 1 - 0.25 * Math.max(p, 0.45 * clamp((diff - 4) / 26, 0, 1)) : (turgid ? 1 + 0.06 * clamp((-diff - 5) / 45, 0, 1) : 1);
+    return { svg: svg, title: title, vol: vol };
   }
 
   /* ---------- public: the tonicity picture ---------- */
