@@ -14,9 +14,12 @@
    Controls: #boneStage range 0-5. Readouts: #boneStageName,
    #boneExplain, #boneTrap. Picture: #boneSvg (rebuilt per stage).
 
-   The picture is an adult femur (a long bone) cut lengthwise (upper end
-   on the left, lower end on the right), with a zoom of a ground section
-   of the shaft wall cut across. Everything is drawn in code, deterministically.
+   The picture is a long bone cut lengthwise, with the marrow of an adult
+   femur (upper end on the left, lower end on the right). Its ends are
+   simplified caps: no femoral head, neck or trochanter is drawn, so the
+   upper-end label says "like adult femur". Below it is a zoom of a
+   ground section of the shaft wall cut across. Everything is drawn in
+   code, deterministically.
    ===================================================================== */
 (function () {
   'use strict';
@@ -59,7 +62,7 @@
     },
     {
       key: 'medulla', name: 'Layer 6 of 6: Medullary cavity',
-      callout: 'medullary cavity (yellow marrow)', target: [180, 94],
+      callout: 'medullary cavity (yellow marrow)', target: [180, 90],
       explain: 'The medullary cavity is the hollow center of the shaft. In adults it holds yellow marrow, which is mostly fat. A hollow tube is light but stiff.',
       trap: 'Yellow marrow stores fat; it does not make blood cells. After severe blood loss it can turn back into red marrow.'
     }
@@ -78,7 +81,7 @@
         '<input id="boneStage" type="range" min="0" max="5" step="1" value="0" aria-label="Bone layer, from the outside (1) to the center (6)" style="width:100%;min-height:44px;accent-color:#C25B3F">' +
         '<div id="boneStageName" style="text-align:center;font-weight:700;color:#C25B3F;font-size:14px"></div>' +
       '</div>' +
-      '<svg id="boneSvg" viewBox="0 0 360 ' + H + '" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Adult femur cut lengthwise, with a zoom of a cross-section of its compact wall" style="display:block;width:100%;height:auto;background:#fff;border:1.5px solid #1B3A2D;border-radius:8px"></svg>' +
+      '<svg id="boneSvg" viewBox="0 0 360 ' + H + '" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Long bone like an adult femur, cut lengthwise, with a zoom of a cross-section of its compact wall" style="display:block;width:100%;height:auto;background:#fff;border:1.5px solid #1B3A2D;border-radius:8px"></svg>' +
       '<div style="background:#fff;border:1.5px solid #1B3A2D;border-radius:10px;padding:12px 14px;margin-top:12px">' +
         '<p id="boneExplain" style="margin:0;font-size:14px;line-height:1.55;color:#1B3A2D"></p>' +
         '<p id="boneTrap" style="margin:8px 0 0;font-size:13px;line-height:1.5;color:#9b4500"></p>' +
@@ -286,12 +289,11 @@
      four lamella boundaries (5, 7, 10 and 13 of them, inner to outer),
      long axis along the ring. Each lacuna has six lines drawn through it,
      so twelve canaliculi, each 4-9 px long. Five lines near the radius
-     fan out like a starburst: they start at points spread along the
-     lacuna, turned 0.16 rad apart, so they cross about 2 px from its
-     center on the canal side and spread outward and inward. One more
-     runs along the ring past both ends. The innermost ring's inward
-     canaliculi reach the canal; the outermost ring's stop at the cement
-     line. */
+     fan out like a starburst: turned 0.16 rad apart, they cross at the
+     lacuna's center and spread outward and inward, so each lacuna looks
+     like a small spider. One more runs along the ring past both ends.
+     The innermost ring's inward canaliculi reach the canal; the
+     outermost ring's stop at the cement line. */
   var OR = 32, CANAL = 0.2 * OR;
   function osteon(id, seed) {
     var r = rng(seed), lam = '', lac = '', can = '';
@@ -303,14 +305,13 @@
         var cx = Math.cos(a) * rad, cy = Math.sin(a) * rad, tx = -Math.sin(a), ty = Math.cos(a);
         lac += 'M' + f1(cx - tx * 1.2) + ',' + f1(cy - ty * 1.2) + 'l' + f1(tx * 2.4) + ',' + f1(ty * 2.4);
         for (var c = 0; c < 6; c++) {
-          // c 0-4: a fan about the radius, from points spread along the lacuna; c 5: along the ring
+          // c 0-4: a fan about the radius, through the lacuna's center; c 5: along the ring
           var along = c === 5, ca = along ? a + Math.PI / 2 + (r() - 0.5) * 0.3 : a + (c - 2) * 0.16 + (r() - 0.5) * 0.12;
           var out = 4 + r() * 5, inn = 4 + r() * 5;
           if (along) { out = 1.2 + 4 + r() * 3; inn = 1.2 + 4 + r() * 3; } // measured past the lacuna's ends
           if (ring === 0 && !along) inn = rad - CANAL + 1;              // reaches the canal
           if (ring === 3 && !along) out = Math.min(out, OR - 1.5 - rad); // stops at the cement line
-          var sh = along ? 0 : (c - 2) * 0.35, sx = cx + tx * sh, sy = cy + ty * sh;
-          can += 'M' + f1(sx - Math.cos(ca) * inn) + ',' + f1(sy - Math.sin(ca) * inn) +
+          can += 'M' + f1(cx - Math.cos(ca) * inn) + ',' + f1(cy - Math.sin(ca) * inn) +
             'l' + f0(Math.cos(ca) * (inn + out)) + ',' + f0(Math.sin(ca) * (inn + out));
         }
       }
@@ -351,16 +352,19 @@
   /* Interstitial lamellae: pieces of older osteons left in the angular
      gaps. Each gap point gets 3 to 5 parallel arcs (part of an old ring
      around a center 20-40 px away) and lacunae at about 1 per 250 px^2,
-     each crossed by five canaliculi that fan out from its center. Drawn
-     under the osteons, so only the gaps show. */
+     each crossed by five canaliculi that fan out from its center. Each
+     lacuna lies along the nearest drawn arc (tangent to a circle about
+     that arc's center), as lacunae follow their lamellae.
+     Drawn under the osteons, so only the gaps show. */
   function interstitial() {
-    var r = rng(29), arcs = '', lac = '', can = '', x, y;
+    var r = rng(29), arcs = '', lac = '', can = '', rings = [], x, y;
     for (y = 262; y < 362; y += 19) {
       for (x = 20; x < 345; x += 19) {
         var px = x + (r() - 0.5) * 8, py = y + (r() - 0.5) * 8;
         if (inOsteon(px, py, -1)) continue;
         var ang = r() * 6.28, d = 20 + r() * 20, cx = px + Math.cos(ang) * d, cy = py + Math.sin(ang) * d;
         var nArc = 3 + Math.floor(r() * 3), back = ang + Math.PI;
+        rings.push([cx, cy, d - 5 + (nArc - 1) * 1.7, back]); // the middle arc
         for (var k = 0; k < nArc; k++) {
           var rr = d - 5 + k * 3.4, span = 11 / rr;
           var a1 = back - span, a2 = back + span;
@@ -372,7 +376,15 @@
       for (x = 18; x < 345; x += 15.8) {
         var lx = x + (r() - 0.5) * 9, ly = y + (r() - 0.5) * 9;
         if (inOsteon(lx, ly, 2)) continue;
-        var o = r() * 3.14, ux = Math.cos(o), uy = Math.sin(o);
+        var near = rings[0], best = 1e9;
+        rings.forEach(function (g) {
+          // distance to the nearest point of this arc (its angle clamped to the arc's span)
+          var t = Math.atan2(ly - g[1], lx - g[0]) - g[3], span = 11 / g[2];
+          t = Math.max(-span, Math.min(span, Math.atan2(Math.sin(t), Math.cos(t)))) + g[3];
+          var dd = Math.hypot(g[0] + Math.cos(t) * g[2] - lx, g[1] + Math.sin(t) * g[2] - ly);
+          if (dd < best) { best = dd; near = g; }
+        });
+        var o = Math.atan2(ly - near[1], lx - near[0]) + Math.PI / 2 + (r() - 0.5) * 0.3, ux = Math.cos(o), uy = Math.sin(o);
         lac += 'M' + f1(lx - ux * 1.3) + ',' + f1(ly - uy * 1.3) + 'l' + f1(ux * 2.6) + ',' + f1(uy * 2.6);
         for (var c = 0; c < 5; c++) {
           var ca = o + Math.PI / 2 + (c - 2) * 0.3, l1 = 3 + r() * 3, l2 = 3 + r() * 3;
@@ -502,15 +514,15 @@
       '<text x="6" y="31">articular cartilage</text><text x="354" y="31" text-anchor="end">articular cartilage</text>' +
       '<text x="148" y="141" text-anchor="middle">diaphysis (shaft)</text>' +
       '<text x="30" y="166" text-anchor="middle">epiphysis</text><text x="330" y="166" text-anchor="middle">epiphysis</text>' +
-      '<text x="6" y="182">upper end (adult femur): red marrow</text>' +
-      '<text x="354" y="182" text-anchor="end">lower end (adult): mostly yellow marrow</text>' +
+      '<text x="6" y="182">upper end (like adult femur): red marrow</text>' +
+      '<text x="354" y="182" text-anchor="end">lower end: mostly yellow marrow</text>' +
       '<text x="180" y="166" text-anchor="middle" fill="' + C.goldD + '">epiphyseal line (old growth plate)</text>' +
       '<text x="236" y="139" text-anchor="middle" fill="' + C.goldD + '" opacity="' + (zoomOn ? 1 : 0.6) + '">cross-section here</text>' +
       '</g>');
     // leaders from the label to a point on each plate
     out.push('<path d="M105,161L49.7,134.7M255,161L309.8,132.2" stroke="' + C.goldD + '" stroke-width="0.7" fill="none"/>' +
       '<g fill="' + C.goldD + '"><circle cx="49.7" cy="134.7" r="1.6"/><circle cx="309.8" cy="132.2" r="1.6"/></g>');
-    out.push('<text x="180" y="107" text-anchor="middle" font-size="9.5" font-weight="700" fill="#6b4f12">medullary cavity</text>');
+    out.push('<text x="180" y="105.5" text-anchor="middle" font-size="9.5" font-weight="700" fill="#6b4f12">medullary cavity</text>');
 
     // Callout for the active layer
     out.push('<path d="M180,18L' + s.target[0] + ',' + s.target[1] + '" stroke="' + C.goldD + '" stroke-width="1.4"/>');
@@ -532,7 +544,8 @@
     out.push('</g>');
     out.push('<path d="M15,228.5H345" stroke="#7d6a4c" stroke-width="1" stroke-dasharray="4 3"/>');
     // leaders: a pale halo under each dark line keeps it visible on the section
-    var LEAD = 'M70,224L76,240M58,366L64,350M175,366L171,289M296,366L302,330';
+    // (the last one ends on a lacuna of the osteon at 299,343 and passes well clear of its canal)
+    var LEAD = 'M70,224L76,240M58,366L64,350M175,366L171,289M318,366L321.6,351.4';
     out.push('<path d="' + LEAD + '" stroke="#fbf6e9" stroke-width="2.4" fill="none"/><path d="' + LEAD + '" stroke="' + C.ink + '" stroke-width="0.9" fill="none"/>');
     out.push('<g font-size="9.5" fill="' + C.ink + '">' +
       '<text x="22" y="222" font-weight="700">outer circumferential lamellae</text>' +
@@ -542,7 +555,7 @@
       '<text x="175" y="375" text-anchor="middle" font-weight="700">Volkmann canal</text>' +
       '<text x="175" y="387" text-anchor="middle">(runs across)</text>' +
       '<text x="338" y="375" text-anchor="end" font-weight="700">lacunae + canaliculi</text>' +
-      '<text x="338" y="387" text-anchor="end">(osteocytes live here)</text>' +
+      '<text x="338" y="387" text-anchor="end">(held osteocytes in life)</text>' +
       '</g>');
     out.push('</g>');
     return out.join('');
