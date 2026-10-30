@@ -40,6 +40,8 @@
    call". A miss writes its Ace Card at the verdict (through opts.onCard,
    else AceProgress.addPlayCard, the play-cards adapter); the flight to
    the Review door only shows where it went. A clean loop offers Keep it.
+   When the loop ends, AceProgress.notePlay(result) records the call, so
+   Today's plan knows what was played and re-plans after a miss.
    Reduced motion: auto-play becomes a Next frame button that keeps every
    frame and its caption; tweens jump stop to stop; custom drivers show
    their still panels; the card skips its flight and keeps its toast.
@@ -804,6 +806,7 @@
         q: plain(block.q), answer: plain(block.options[block.key]),
         yourCall: pick != null && pick >= 0 && pick !== block.key ? plain(block.options[pick]) : '',
         trapName: pick != null && pick >= 0 && pick !== block.key && block.trapNames ? plain(block.trapNames[pick]) : '',
+        missWhy: self.result.missWhy || '',
         idea: (from === 'recall' && cd.recallIdea) || cd.idea || plain(block.options[block.key]), hook: cd.hook || hook,
         pic: picFor(from), picAria: '',
         made: AL.isoDate(0), due: AL.isoDate(1), madeAt: Date.now(), links: entry.links || null
@@ -877,6 +880,9 @@
       parts.done.hidden = false;
       parts.done.querySelector('[data-act="again"]').addEventListener('click', function () { reset(); });
       if (typeof opts.onResult === 'function') { try { opts.onResult(self.result); } catch (e) { if (window.console) console.warn('[AceLoop] onResult', e); } }
+      /* Today's planner learns which calls were played (and re-plans on a miss) */
+      var PG = window.AceProgress;
+      if (PG && typeof PG.notePlay === 'function') { try { PG.notePlay(self.result); } catch (e) { if (window.console) console.warn('[AceLoop] notePlay', e); } }
       emit(host, 'done', self.result);
     }
 

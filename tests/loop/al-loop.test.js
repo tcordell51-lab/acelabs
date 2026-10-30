@@ -476,3 +476,45 @@ test('Play it again resets the bench to a fresh call', () => {
   assert.equal(loop.result.predict, null);
   assert.equal($$(host, '[data-part="opts"] .opt:not([disabled])').length, 3);
 });
+
+test('the planner hears every loop: the card carries the re-plan line, AceProgress.notePlay gets the result', async () => {
+  const { host, AceLoop, w } = boot();
+  const noted = [];
+  w.AceProgress.notePlay = (r) => noted.push(r);
+  const cards = [];
+  w.AceProgress.addPlayCard = (c) => cards.push(c);
+  const loop = AceLoop.mount(host, entry(), steps());
+  loop.pick(1); through(loop);
+  assert.equal(cards[0].missWhy, 'you called the salty-water picture for pure water');
+  loop.prove(); loop.check(1);
+  await tick(20);
+  assert.equal(loop.beat(), 'done');
+  assert.equal(noted.length, 1);
+  assert.equal(noted[0].entryId, 'tonicity');
+  assert.equal(noted[0].predict.outcome, 'needs-review');
+  assert.equal(noted[0].missWhy, 'you called the salty-water picture for pure water');
+});
+
+test('end to end with the real store: a miss lands in Review, lights the dot, and Today re-plans', async () => {
+  const { host, AceLoop, w } = boot({ progress: false });
+  const read = (f) => fs.readFileSync(path.join(ROOT, f), 'utf8');
+  w.eval(read('shared/ace-index.js') + read('shared/ace-route.js') + read('shared/ace-progress.js'));
+  const P = w.AceProgress;
+  /* a returning student, so the plan is past its first run */
+  w.localStorage.setItem('aceLabs:onboarding', JSON.stringify({ testDate: '2027-01-30', weakAreas: ['bio'], setAt: Date.now() - 5 * 864e5 }));
+  w.localStorage.setItem('acelabs_diagnostic_v1', JSON.stringify({ ts: Date.now() - 4 * 864e5, perSection: { bio: { correct: 10, total: 20 } }, topWeakTopics: [] }));
+  const loop = AceLoop.mount(host, entry(), steps());
+  loop.pick(1); through(loop);
+  assert.equal(loop.result.cardSavedTo, 'play-cards');
+  const m = P.misses().find((x) => x.id === 'play:tonicity');
+  assert.ok(m && m.source === 'play' && m.section === 'bio', 'listed for Review');
+  const due = JSON.parse(w.localStorage.getItem('acelabs.v1.dueToday'));
+  assert.equal(due.n + due.later.length, 1, 'the dot cache knows when it is back');
+  loop.prove(); loop.check(1);
+  await tick(20);
+  const plan = P.todayPlan();
+  assert.equal(plan.steps[0].entryId, 'tonicity');
+  assert.equal(plan.steps[0].done, true);
+  assert.equal(plan.steps[1].key, 'scene');
+  assert.match(plan.said, /^Added one scene from night 3: you called the salty-water picture for pure water\./);
+});

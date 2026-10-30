@@ -1,9 +1,18 @@
-/* ace-shell.css : the ONE Ace Labs top bar.
+/* ace-shell.css : the ONE Ace Labs bar, shell v2 (loaded as ace-shell.css?v=2).
    Loaded by shared/ace-shell.js INSIDE a shadow root, so nothing here leaks
-   into a tool page and no tool page's CSS leaks in. Dark forest + gold, Georgia
-   display, Hanken Grotesk body (self-hosted; the @font-face is declared on the
-   document by ace-shell.js because fonts cannot be declared in a shadow root).
-   Token values match the Visual Canon (ace-system/visuals/canon.css). */
+   into a tool page and no tool page's CSS leaks in. Values are copied from
+   shared/al-tokens.css (tokens v2) and set on :host, because the 132 pages that
+   carry the bar do not all load the tokens:
+     the bench      #0c1d15 family, cream ink #f4ede0
+     gold #C9A84C   the coach and your next move: the ring, the Review dot
+     mint           where you are: the current door (#6FF0C3), the bead and the
+                    tick (#33C993, 8.5:1 as a mark), the focus ring
+   Type: DM Sans for the doors, Sora for "Labs" next to the ACE DAT lockup; both
+   self-hosted, declared on the document by ace-shell.js under private names.
+   Contrast on the bar (#0b1a12 to #07110b, worst end): door label #c9c3b4
+   10.2:1, hover #f4ede0 15.4:1, current door and Labs #6FF0C3 12.8:1, the
+   Review dot #E2C97A 11.0:1 (a mark). The gold ring only groups the four stage
+   doors; it carries no meaning. Every door is at least 44 px. */
 
 :host {
   all: initial;
@@ -11,127 +20,229 @@
   position: relative;
   z-index: 2147482000;
   contain: layout style;
-  --bg: #09160e;
-  --bg-deep: #050c07;
-  --gold: #c9a84c;
-  --gold-light: #e2c97a;
-  --gold-border: rgba(201, 168, 76, 0.28);
-  --text-hi: rgba(244, 237, 224, 0.92);
-  --text-mid: rgba(244, 237, 224, 0.68);
-  --focus: #e2c97a;
+  --bg: #0b1a12;
+  --bg-deep: #07110b;
+  --ink: #f4ede0;
+  --ink-2: #c9c3b4;
+  --gold: #C9A84C;
+  --gold-hi: #E2C97A;
+  --ring: rgba(201, 168, 76, 0.30);
+  --line: rgba(201, 168, 76, 0.26);
+  --mint: #33C993;
+  --mint-ink: #6FF0C3;
+  --f-body: "Ace Shell Sans", "DM Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --f-display: "Ace Shell Sora", "Sora", "Ace Shell Sans", system-ui, sans-serif;
+  --e-out: cubic-bezier(.2, .8, .2, 1);
+  --e-std: cubic-bezier(.4, 0, .2, 1);
 }
+/* The phone tab bar sits under the kit's overlays (toast 300, Stuck 400) and
+   under a flying Ace Card, so a sheet that rises from the bottom is never
+   covered. The position itself is set on the document (ace-shell.js). */
+:host([data-pos="bottom"]) { z-index: 160; }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 .bar {
   background: linear-gradient(180deg, var(--bg) 0%, var(--bg-deep) 100%);
-  border-bottom: 1px solid var(--gold-border);
-  font-family: "Hanken Grotesk", "Helvetica Neue", Arial, sans-serif;
-  color: var(--text-hi);
+  border-bottom: 1px solid var(--line);
+  font-family: var(--f-body);
+  color: var(--ink);
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-.inner {
+.in {
   max-width: 1180px;
   margin: 0 auto;
-  height: 52px;
-  padding: 0 20px;
+  height: 60px;
+  padding: 0 28px;
   display: flex;
   align-items: center;
-  gap: 28px;
+  gap: 24px;
 }
 
+/* ---------- brand: the ACE DAT lockup, then Labs ---------- */
 .brand {
   display: inline-flex;
-  align-items: baseline;
-  gap: 7px;
+  align-items: center;
+  gap: 11px;
   flex: 0 0 auto;
+  min-height: 44px;
+  padding: 0 4px 0 0;
+  border-radius: 8px;
   text-decoration: none;
-  color: var(--text-hi);
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: 20px;
-  font-weight: 700;
-  letter-spacing: 0.005em;
-  line-height: 1;
+  color: var(--ink);
   white-space: nowrap;
 }
-.brand b { color: var(--gold); font-weight: 700; }
-.brand small {
-  font-family: "Hanken Grotesk", "Helvetica Neue", Arial, sans-serif;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.18em;
+.lockup { display: block; width: auto; height: 24px; }
+.labs {
+  position: relative;
+  padding-left: 12px;
+  font: 600 15px/1 var(--f-display);
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--text-mid);
-  margin-left: 2px;
+  color: var(--mint-ink);
+}
+.labs::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 1.5px;
+  height: 18px;
+  margin-top: -9px;
+  background: rgba(244, 237, 224, 0.28);
 }
 
-nav { flex: 1 1 auto; height: 100%; min-width: 0; }
-.doors {
-  display: flex;
-  align-items: stretch;
-  justify-content: flex-end;
-  gap: 2px;
-  height: 100%;
-  list-style: none;
-}
+/* ---------- the doors ---------- */
+nav { flex: 1 1 auto; display: flex; justify-content: flex-end; height: 100%; min-width: 0; }
+.track { position: relative; height: 100%; }
+.doors { display: flex; align-items: stretch; list-style: none; height: 100%; }
 .doors li { display: flex; }
 
 .door {
   position: relative;
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  justify-content: center;
-  padding: 0 14px;
-  height: 100%;
-  font-size: 14px;
-  font-weight: 600;
-  letter-spacing: 0.01em;
-  color: var(--text-mid);
+  gap: 8px;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0 15px;
+  color: var(--ink-2);
   text-decoration: none;
+  font: 600 14.5px/1 var(--f-body);
+  letter-spacing: 0.005em;
   white-space: nowrap;
-  transition: color 0.15s ease;
+  border-radius: 10px;
+  transition: color 180ms var(--e-std);
 }
-.door:hover { color: var(--text-hi); }
-.door::after {
+.door .di { position: relative; display: grid; place-items: center; flex: 0 0 auto; }
+.ico {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.door:hover { color: var(--ink); }
+.door[aria-current="page"] { color: var(--mint-ink); font-weight: 800; }
+/* the phone tick (desktop uses the bead) */
+.door[aria-current="page"]::after {
   content: "";
   position: absolute;
-  left: 12px;
-  right: 12px;
-  bottom: 0;
-  height: 2px;
-  border-radius: 2px 2px 0 0;
-  background: transparent;
-  transition: background 0.15s ease;
+  display: none;
+  left: calc(50% - 14px);
+  width: 28px;
+  height: 3px;
+  background: var(--mint);
 }
-.door:hover::after { background: rgba(201, 168, 76, 0.35); }
-.door[aria-current="page"] { color: var(--gold-light); }
-.door[aria-current="page"]::after { background: var(--gold); }
+
+/* the Review dot: gold, never a number */
+.door .due {
+  position: absolute;
+  top: -3px;
+  right: -5px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--gold-hi);
+  box-shadow: 0 0 0 2px var(--bg);
+}
+.door .due[hidden] { display: none; }
+
+.sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* the four stage doors sit in a thin gold ring; the bead marks where you are */
+.ring {
+  position: absolute;
+  top: 10px;
+  bottom: 10px;
+  border: 1px solid var(--ring);
+  border-radius: 999px;
+  pointer-events: none;
+}
+.bead {
+  position: absolute;
+  bottom: 6px;
+  left: 0;
+  width: 6px;
+  height: 6px;
+  margin-left: -3px;
+  border-radius: 50%;
+  background: var(--mint);
+  opacity: 0;
+  pointer-events: none;
+  transition: left 420ms var(--e-out);
+}
+.bead.on { opacity: 1; }
 
 a:focus-visible {
-  outline: 2px solid var(--focus);
-  outline-offset: -4px;
-  border-radius: 4px;
+  outline: 3px solid var(--mint-ink);
+  outline-offset: -3px;
 }
 
-/* Phone: one compact row of six doors, no brand, no wrap. */
-@media (max-width: 720px) {
-  .inner { height: 46px; padding: 0 4px; gap: 0; }
+/* narrow desktop: the doors close up so brand and doors share one row */
+@media (min-width: 760px) and (max-width: 979px) {
+  .in { gap: 12px; padding: 0 16px; }
+  .door { padding: 0 10px; gap: 7px; }
+  .labs { display: none; }
+}
+
+/* ---------- phone: five equal doors, icon over label ---------- */
+@media (max-width: 759px) {
+  .in { height: 56px; padding: 0 4px; gap: 0; }
   .brand { display: none; }
-  .doors { width: 100%; gap: 0; justify-content: stretch; }
+  nav { justify-content: stretch; }
+  .track { width: 100%; }
+  .doors { width: 100%; }
   .doors li { flex: 1 1 0; min-width: 0; }
   .door {
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
     width: 100%;
     padding: 0 2px;
-    font-size: 12.5px;
-    letter-spacing: 0;
+    font-size: 12px;
+    letter-spacing: 0.01em;
   }
-  .door::after { left: 18%; right: 18%; }
+  .ico { width: 20px; height: 20px; }
+  .door .dl { max-width: 100%; overflow: hidden; text-overflow: clip; }
+  /* top bar: the tick sits on the edge that faces the page */
+  .door[aria-current="page"]::after { display: block; bottom: 0; border-radius: 3px 3px 0 0; }
+  .ring { top: 6px; bottom: 6px; }
+  .bead { display: none; }
+  .door .due { top: -2px; right: -6px; }
+}
+
+/* the bottom tab bar (pages that opt in): 64 px plus the safe area, in thumb reach */
+@media (max-width: 759px) {
+  :host([data-pos="bottom"]) .bar {
+    border-bottom: 0;
+    border-top: 1px solid rgba(201, 168, 76, 0.32);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    background: linear-gradient(180deg, var(--bg) 0%, var(--bg-deep) 100%);
+    box-shadow: 0 -10px 30px rgba(7, 19, 13, 0.35);
+  }
+  :host([data-pos="bottom"]) .in { height: 64px; }
+  :host([data-pos="bottom"]) .door { gap: 5px; }
+  :host([data-pos="bottom"]) .ico { width: 22px; height: 22px; }
+  :host([data-pos="bottom"]) .ring { top: 7px; bottom: 7px; }
+  :host([data-pos="bottom"]) .door[aria-current="page"]::after { top: 0; bottom: auto; border-radius: 0 0 3px 3px; }
 }
 @media (max-width: 340px) {
   .door { font-size: 11.5px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .door, .door::after { transition: none; }
+  .door, .bead { transition: none !important; }
 }
