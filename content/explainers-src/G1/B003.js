@@ -429,7 +429,7 @@ const ENTRIES = [
       'Picture it: every 10 minutes, half of what is left is gone. 1, then 1/2, then 1/4.'
     ],
     choices: [
-      { text: '28.9 min', role: 'trap', family: 'miscount', trap: 'Used 2 for ln 2', note: '2 / 0.0693 is about 28.9. Half-life carries ln 2, which is 0.693, not 2.' },
+      { text: '28.9 min', role: 'trap', family: 'neighbor-fact', trap: 'Used 2 for ln 2', note: '2 / 0.0693 is about 28.9. Halving is a factor of 2, but the formula carries its natural log, ln 2 = 0.693.' },
       { text: '0.1 min', role: 'trap', family: 'operation-flip', trap: 'Division upside down', note: '0.0693 / 0.693 = 0.1 flips the fraction. A bigger k means a faster reaction and a shorter half-life, so k goes underneath.' },
       { text: '10 min', role: 'key', note: '0.693 / 0.0693 = 10 min.' },
       { text: '14.4 min', role: 'trap', family: 'other-question', trap: 'That is 1/k', note: '1 / k = 14.4 min is a real time, where about 37 percent is left. Half is gone sooner, at 0.693 / k.' },
@@ -577,7 +577,7 @@ const ENTRIES = [
       { text: '5.00', role: 'trap', family: 'one-step-short', trap: 'pH before the HCl', note: '5.00 is the pH at the 1:1 start. After the HCl the base is outnumbered, so the pH drops below the pKa.' },
       { text: '5.48', role: 'trap', family: 'reversed', trap: 'Ratio flipped', note: 'This uses [HA]/[A^-] = 3, which raises the pH. Acid went in, so the pH has to fall.' }
     ],
-    lockIt: 'Buffer pH = pKa + log([A^-]/[HA]). Added acid lowers the ratio, so the pH dips below the pKa.',
+    lockIt: 'Buffer pH = pKa + log([A^-]/[HA]). Added acid lowers that ratio, so the pH drops, but only a little.',
     hook: null,
     playWith: hub('buffers', 'Buffers module: press + HCl and watch the ratio and the pH move', ["visualType:'hh-slider'", 'bufAddAcid']),
     video: { slot: 'gc.acid-base.buffers', title: 'Buffers: the ratio sets the pH', id: null, start: null },
@@ -1146,8 +1146,8 @@ const ENTRIES = [
       ],
       verify: { vars: { g: 16, M: 16, NA: 6.02e23 }, key: 'g/M*4*NA', routes: [{ choice: '4', expr: 'g/M*4' }, { choice: '9.63 × 10²⁴', expr: 'g*NA' }, { choice: '1.51 × 10²³', expr: 'g/M*6.022e23/4' }, { choice: '6.02 × 10²³', expr: 'g/M*NA' }] },
       reuse: 'new: chem.ledger chain block (tools/explain/visuals/chem-gc.js); the build recomputes every link',
-      alt: 'A conversion chain: 16 g of CH4, divided by 16 g per mol, gives 1 mol of molecules; times 4 H per molecule gives 4 mol of H atoms; times Avogadro\'s number gives 2.41 x 10 to the 24 H atoms, outlined. Side notes mark where stopping early gives 4, or one mole of molecules.',
-      caption: 'Walk the chain top to bottom. The dashed notes show where two of the traps stop short.'
+      alt: 'A conversion chain: 16 g of CH4, divided by 16 g per mol, gives 1 mol of molecules; times 4 H per molecule gives 4 mol of H atoms; times Avogadro\'s number gives 2.41 x 10 to the 24 H atoms, outlined. Dashed notes mark where two traps leave it: stopping at 4, or counting molecules, not H atoms.',
+      caption: 'Walk the chain top to bottom. The dashed notes mark where two of the traps leave it.'
     },
     demoPick: '6.02 × 10²³',
     flags: [
@@ -1408,7 +1408,8 @@ const ENTRIES = [
     steps: [
       'Count the central atom first. Cl is in group 17, so it brings 7 valence electrons.',
       'Spend them on bonds: three Cl-F single bonds use 3 of the 7, leaving 4.',
-      'Pair them up: 4 electrons make 2 lone pairs. Three bonds plus two pairs is five domains, with the pairs equatorial: a T.'
+      'Pair them up: 4 electrons make 2 lone pairs. Three bonds plus two pairs is five domains, with the pairs equatorial: a T.',
+      'Check it from the whole molecule: 7 + 3 x 7 = 28 valence electrons. Take 8 for each F and 4 are left: two pairs.'
     ],
     choices: [
       { text: '0', role: 'trap', family: 'one-step-short', trap: 'Counted only bonds', note: 'With no lone pairs ClF3 would be a flat triangle, like BF3. Cl has 4 electrons left after bonding.' },
@@ -1489,11 +1490,12 @@ const ENTRIES = [
   }
 ];
 
-// Fixes from the expert review of B003 (coach record only).
+// Fixes from the expert review and the re-review of B003 (coach record only).
 const CHANGES = {
   'fm:gchem-b:GC_ek-h1': [
     'The 4.7 trap label is plain text, "Kp taken as Kc" (the player does not typeset trap labels, so "K_p taken as K_c" showed raw underscores)',
-    '0.0085 moves to family one-step-too-far, matching its label "Divided too far"; the note calls dividing twice the nearest route (the build keeps it as no exact route)'
+    '0.0085 moves to family one-step-too-far, matching its label "Divided too far"; the note calls dividing twice the nearest route (the build keeps it as no exact route)',
+    'Re-review: a tag with a subscript gets 2 px more room under its text, and the log-line tags sit 5 px higher, so the subscripts in "Kp = 0.19" and "Kc = 4.7" clear the tag border and the dots (chem-gc.js tagBox and scale; stacked tag levels are now 28 px apart in every chem-gc ruler)'
   ],
   'fm:gchem-b:GC_ek-e7': ['Rules card: the add-two-reactions row reads "multiply the K values" (was "K_1 x K_2", which could read as 5 x 25 next to this item\'s K_2)'],
   'fm:gchem-b:GC_gb-q1': [
@@ -1511,16 +1513,24 @@ const CHANGES = {
     'Step 3: "You get C2H4O2, the formula of acetic acid" (was "That is acetic acid"; methyl formate and glycolaldehyde share the formula)',
     'Picture: the masses sit 12 px in from the right edge, clear of the outlined row\'s border'
   ],
+  'fm:gchem-b:GC_bf-q3': ['Re-review: Lock it in reads "Added acid lowers that ratio, so the pH drops, but only a little." (it said the pH dips below the pKa, which fails for a buffer that starts base-rich: 0.30 M A- and 0.10 M HA with pKa 5.00 sits at pH 5.48, and 0.05 mol HCl leaves it at 5.22, still above the pKa)'],
+  'fm:generated:gc-dilution#1tmuuzr': ['Re-review: the particles keep clear of the "+ 50 mL water" tag (chem-gc.js beakers places the tag first); still 10 particles in each beaker'],
+  'fm:generated:gc-atoms-count#xz6wsz': ['Re-review: caption "The dashed notes mark where two of the traps leave it." (it said both stop short, but the molecule-count note skips the x 4 step); the alt says the same'],
   'fm:gchem-b:GC_lw-e10': [
     'Lock it in: total valence electrons, charge included, minus 8 per outer atom (2 per H), then halve. The old "(valence - one per bond) / 2" fails on double bonds and ions (I3-, ICl4-, XeO3, CO2). The review\'s wording ("minus those it puts into bonds, minus the charge") still fails where the charge sits on an outer O (NO3- gives 1 pair, true 0), so the outer-atom count is used',
-    'Hook: "BrF3 and IF3 make the same T." (the old hook repeated step 3 and the caption)'
+    'Hook: "BrF3 and IF3 make the same T." (the old hook repeated step 3 and the caption)',
+    'Re-review: step 4 runs the Lock it in count on ClF3: 7 + 3 x 7 = 28 valence electrons, take 8 for each F, 4 are left: two pairs (the steps never showed the whole-molecule count the lock teaches)'
   ],
   'fm:gchem-a:b-e7': [
     'Picture: the HCl link reads "dipole-dipole and London" (was "dipole-dipole only", which contradicted the note under it); the alt says the same, no hydrogen bond',
     'Lock it in is scoped: hydrogen bonding outweighs the extra London force of a similar small molecule (I2, CCl4 and SbH3 out-boil hydrogen-bonded liquids)',
     '"HCl is ionic" note opens with the fact: pure HCl is a polar covalent molecule; it splits into ions only in water'
   ],
-  'fm:generated:gc-first-order-half-life#1xyppx6': ['Picture (found by the wider render gate from the B005 review, which now tests dotted leaders of any width): the 1/k dotted leader ran over the "half-life: 10 min" tag text; it is now drawn under the tag, whose filled backing covers it (chem-gc.js decay). Words unchanged']
+  'fm:generated:gc-first-order-half-life#1xyppx6': [
+    'Picture (found by the wider render gate from the B005 review, which now tests dotted leaders of any width): the 1/k dotted leader ran over the "half-life: 10 min" tag text; it is now drawn under the tag, whose filled backing covers it (chem-gc.js decay). Words unchanged',
+    'Re-review: the 1/k leader runs right from its point, then up past the right end of the "half-life: 10 min" tag to its own tag, so it no longer passes behind the key tag (chem-gc.js decay)',
+    'Re-review: 28.9 min moves to family neighbor-fact (was miscount, "no single rule", while its label names one): 2 is the halving factor, and the formula carries its natural log, ln 2 = 0.693; the note says so'
+  ]
 };
 
 module.exports = { group: 'G1', batch: 'B003', title: 'Full-Length Test 1, General Chemistry (30 items)', entries: ENTRIES, changes: CHANGES };

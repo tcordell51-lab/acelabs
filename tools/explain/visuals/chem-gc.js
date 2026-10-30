@@ -72,9 +72,10 @@ const ROLE = {
   plain: { fill: '#f7f9f8', stroke: '#c9d3cd', ink: C.ink, w: 1.1 },
   info: { fill: C.blueBg, stroke: C.blue, ink: C.blue, w: 1.2 }
 };
+// a subscript gets 6 px more room below the baseline, so its descender clears the border
 function tagBox(y, label, size) {
   const sup = parts(label).some((p) => p.sup), sub = parts(label).some((p) => p.sub);
-  return { top: y - size - 2 - (sup ? 5 : 0), bottom: y + 7 + (sub ? 4 : 0) };
+  return { top: y - size - 2 - (sup ? 5 : 0), bottom: y + 7 + (sub ? 6 : 0) };
 }
 function tag(x, y, label, role = 'plain', o = {}) {
   const size = o.size || 12.5, R = ROLE[role] || ROLE.plain, w = measure(label, size, true) + 14, bx = tagBox(y, label, size);
@@ -316,11 +317,14 @@ BLOCKS.beakers = (b, box, W) => {
       const ha = innerH * it.added / maxMl;
       g += `<rect x="${r1(x + 3)}" y="${r1(yTop)}" width="${r1(bw - 6)}" height="${r1(ha)}" fill="url(#${id}h)" stroke="${it.key ? C.key : C.ink2}" stroke-width="${it.key ? 2.2 : 1.2}" stroke-dasharray="${it.key ? '' : '4 3'}"/>`;
     }
-    scatter(b.dots, x + 3, yTop, bw - 6, hv - 3, 11 + i * 5, 12).forEach((p) => { g += `<circle cx="${r1(p.x)}" cy="${r1(p.y)}" r="3.6" fill="${C.blue}"/>`; });
+    // the added-water tag is placed first, and the particles keep clear of its box
+    const at = it.added && it.addedLabel ? tag(x + bw / 2, yTop + innerH * it.added / maxMl / 2 + 6, it.addedLabel, it.key ? 'key' : 'plain', { anchor: 'middle', size: 12.5 }) : null;
+    const clear = at ? (p) => p.y > at.top - 6 && p.y < at.bottom + 6 && p.x > at.x0 - 6 && p.x < at.x0 + at.w + 6 : null;
+    scatter(b.dots, x + 3, yTop, bw - 6, hv - 3, 11 + i * 5, 12, clear).forEach((p) => { g += `<circle cx="${r1(p.x)}" cy="${r1(p.y)}" r="3.6" fill="${C.blue}"/>`; });
     g += `<path d="M${r1(x)} ${top - 6} V${base} H${r1(x + bw)} V${top - 6}" fill="none" stroke="${C.ink}" stroke-width="2"/>`;
     g += rt(x + bw / 2, base + 20, it.label, { size: 13.5, weight: 700, anchor: 'middle' });
     g += rt(x + bw / 2, base + 38, it.sub, { size: 13, anchor: 'middle', fill: C.ink2 });
-    if (it.added && it.addedLabel) g += tag(x + bw / 2, yTop + innerH * it.added / maxMl / 2 + 6, it.addedLabel, it.key ? 'key' : 'plain', { anchor: 'middle', size: 12.5 }).svg;
+    if (at) g += at.svg;
     if (i < n - 1) { const ay = top + innerH * 0.45; g += `<line x1="${r1(x + bw + 6)}" y1="${r1(ay)}" x2="${r1(x + bw + 44)}" y2="${r1(ay)}" stroke="${C.ink2}" stroke-width="2" marker-end="url(#${id})"/>`; }
   });
   if (b.dotsLabel) g += rt(W / 2, base + 60, b.dotsLabel, { size: 13, anchor: 'middle', fill: C.blue, weight: 700 });
@@ -365,7 +369,8 @@ BLOCKS.formulas = (f, box, W) => {
   const el = h('div', { class: 'gc-block' }); el.innerHTML = svgOpen(W, y + (f.unitLabel ? 44 : 26)) + g + '</svg>'; box.append(el);
 };
 
-// labels on a line without collisions: greedy levels above the axis
+// labels on a line without collisions: greedy levels; stacked levels sit LV_H apart
+const LV_H = 28;
 function levels(items, size, minGap = 8) {
   const placed = [];
   items.slice().sort((a, b) => a.x - b.x).forEach((it) => {
@@ -383,18 +388,18 @@ function scaleSvg(b, W) {
   const X = (v) => L + pw * (f(v) - f(b.min)) / (f(b.max) - f(b.min));
   const marks = (b.marks || []).map((m) => ({ m, x: X(m.v), text: m.label }));
   const lv = levels(marks, size);
-  const nLv = Math.max(1, ...lv.map((p) => p.lv + 1)), lvH = 26, top = 8 + (b.title ? 18 : 0), axisY = top + nLv * lvH + 14;
+  const nLv = Math.max(1, ...lv.map((p) => p.lv + 1)), lvH = LV_H, top = 8 + (b.title ? 18 : 0), axisY = top + nLv * lvH + 19;
   let g = '';
   if (b.title) g += rt(L - 18, 14, b.title, { size: 13, weight: 700, fill: C.ink2 });
   if (b.band) { const x0 = X(b.band.from), x1 = X(b.band.to); g += `<rect x="${r1(Math.min(x0, x1))}" y="${axisY - 6}" width="${r1(Math.abs(x1 - x0))}" height="12" fill="${b.band.key ? C.keyBg : C.trapBg}" stroke="${b.band.key ? C.key : C.trap}" stroke-width="1"/>`; }
   g += `<line x1="${L}" y1="${axisY}" x2="${W - R}" y2="${axisY}" stroke="${C.ink2}" stroke-width="1.6"/>`;
   (b.ticks || []).forEach((tk) => { const x = X(tk.v); g += `<line x1="${r1(x)}" y1="${axisY - 5}" x2="${r1(x)}" y2="${axisY + 5}" stroke="${C.ink2}" stroke-width="1.4"/>` + rt(x, axisY + 21, tk.label, { size: 12.5, anchor: 'middle', fill: C.mute }); });
   lv.forEach((p) => {
-    const m = p.it.m, y = axisY - 14 - p.lv * lvH;
+    const m = p.it.m, y = axisY - 19 - p.lv * lvH;
     g += `<line x1="${r1(p.it.x)}" y1="${r1(tagBox(y, p.it.text, size).bottom)}" x2="${r1(p.it.x)}" y2="${axisY - 5}" stroke="${m.key ? C.key : '#9aa59f'}" stroke-width="1.2"/>`;
     g += `<circle cx="${r1(p.it.x)}" cy="${axisY}" r="${m.key ? 6 : 4.5}" fill="${m.key ? C.key : m.ref ? C.blue : '#fff'}" stroke="${m.key ? C.key : m.ref ? C.blue : C.ink2}" stroke-width="1.6"/>`;
   });
-  lv.forEach((p) => { const m = p.it.m, y = axisY - 14 - p.lv * lvH; g += tag(Math.max(L - 18, Math.min(W - 4 - p.w, p.x0)), y, p.it.text, m.key ? 'key' : m.ref ? 'info' : 'plain', { size }).svg; });
+  lv.forEach((p) => { const m = p.it.m, y = axisY - 19 - p.lv * lvH; g += tag(Math.max(L - 18, Math.min(W - 4 - p.w, p.x0)), y, p.it.text, m.key ? 'key' : m.ref ? 'info' : 'plain', { size }).svg; });
   let H = axisY + ((b.ticks || []).length ? 28 : 12);
   if (b.axisLabel) { g += rt(W / 2, H + 8, b.axisLabel, { size: 12.5, anchor: 'middle', fill: C.ink2 }); H += 16; }
   return { svg: g, H };
@@ -577,12 +582,12 @@ register('chem.cell', (s, box) => {
     g += `<circle cx="${r1(xg)}" cy="${yE}" r="6" fill="${C.blue}"/>` + `<line x1="${r1(xg)}" y1="${yE + 6}" x2="${r1(xg)}" y2="${yK - 6}" stroke="${C.blue}" stroke-width="1.6" stroke-dasharray="4 3"/>`;
     g += rt(xg, yE + 24, s.givenLabel, { size: 12.5, weight: 700, anchor: s.E > 0 ? 'end' : 'start', fill: C.blue, halo: true });
     lv.forEach((p) => {
-      const m = p.it.m, y = yK + 30 + p.lv * 26;
+      const m = p.it.m, y = yK + 30 + p.lv * LV_H;
       g += `<line x1="${r1(p.it.x)}" y1="${yK + 5}" x2="${r1(p.it.x)}" y2="${r1(tagBox(y, p.it.text, 12.5).top)}" stroke="${m.key ? C.key : '#9aa59f'}" stroke-width="1.2"/>`;
       g += `<circle cx="${r1(p.it.x)}" cy="${yK}" r="${m.key ? 6 : 4.5}" fill="${m.key ? C.key : '#fff'}" stroke="${m.key ? C.key : C.ink2}" stroke-width="1.6"/>`;
     });
-    lv.forEach((p) => { const m = p.it.m, y = yK + 30 + p.lv * 26; g += tag(Math.max(2, Math.min(W - 2 - p.w, p.x0)), y, p.it.text, m.key ? 'key' : 'plain', { size: 12.5 }).svg; });
-    H = yK + 30 + nLv * 26;
+    lv.forEach((p) => { const m = p.it.m, y = yK + 30 + p.lv * LV_H; g += tag(Math.max(2, Math.min(W - 2 - p.w, p.x0)), y, p.it.text, m.key ? 'key' : 'plain', { size: 12.5 }).svg; });
+    H = yK + 30 + nLv * LV_H;
     if (s.bottomLabel) { g += rt(W / 2, H + 6, s.bottomLabel, { size: 13, anchor: 'middle', fill: C.ink2, weight: 700 }); H += 16; }
   }
   box.innerHTML = svgOpen(W, H) + g + '</svg>';
@@ -680,17 +685,23 @@ CURVE_KINDS.decay = (s, box) => {
   }
   g += `<polyline points="${poly(pts)}" fill="none" stroke="${C.blue}" stroke-width="2.6"/>`;
   for (let n = 1; n * th <= tMax + 1e-9; n++) g += `<circle cx="${r1(F.X(n * th))}" cy="${r1(F.Y(Math.pow(0.5, n)))}" r="${n === 1 ? 6 : 4}" fill="${n === 1 ? C.key : '#fff'}" stroke="${n === 1 ? C.key : C.ink2}" stroke-width="1.6"/>`;
-  // the ghost's dotted leader runs up to its tag at the top; it is drawn before the key tag, so
-  // where it passes the key tag the tag's filled backing covers it (it never crosses the text)
+  // the ghost's dotted leader runs up to its tag at the top. When the key tag sits above the ghost
+  // point, the leader first runs right along the ghost's height (the curve falls away below it), then
+  // up past the key tag's right end, so it never passes behind the key tag. It is still drawn before
+  // the key tag, whose filled backing would cover it.
+  const kt = tag(F.X(th) + 10, F.Y(0.5) - 8, s.keyLabel, 'key', { size: 13 });
   let ghostTag = '';
   if (s.ghost) {
     const xg = F.X(s.ghost.t), yg = F.Y(G.firstOrder(1, s.k, s.ghost.t));
     g += `<circle cx="${r1(xg)}" cy="${r1(yg)}" r="4.5" fill="${C.trapBg}" stroke="${C.trap}" stroke-width="1.6"/>`;
     const tg = tag(W - 12, 34, s.ghost.label, 'trap', { anchor: 'end', size: 12.5 });
-    g += `<line x1="${r1(xg)}" y1="${r1(yg - 5)}" x2="${r1(Math.max(tg.x0 + 16, xg))}" y2="40" stroke="${C.trap}" stroke-width="1" stroke-dasharray="3 3"/>`;
+    const lead = `stroke="${C.trap}" stroke-width="1" stroke-dasharray="3 3"`;
+    const under = xg > kt.x0 - 6 && xg < kt.x0 + kt.w + 6, xe = kt.x0 + kt.w + 12;
+    if (under && xe < tg.x0 + tg.w - 12 && xe < W - 14) g += `<line x1="${r1(xg + 5)}" y1="${r1(yg)}" x2="${r1(xe)}" y2="${r1(yg)}" ${lead}/><line x1="${r1(xe)}" y1="${r1(yg)}" x2="${r1(xe)}" y2="${r1(tg.bottom)}" ${lead}/>`;
+    else g += `<line x1="${r1(xg)}" y1="${r1(yg - 5)}" x2="${r1(Math.max(tg.x0 + 16, xg))}" y2="${r1(tg.bottom)}" ${lead}/>`;
     ghostTag = tg.svg;
   }
-  g += tag(F.X(th) + 10, F.Y(0.5) - 8, s.keyLabel, 'key', { size: 13 }).svg + ghostTag;
+  g += kt.svg + ghostTag;
   if (s.stepLabel) g += rt(F.X(th * 2) + 6, F.Y(0.25) - 8, s.stepLabel, { size: 12.5, fill: C.ink2, halo: true });
   box.innerHTML = svgOpen(W, H) + g + '</svg>';
 };
@@ -745,12 +756,12 @@ CURVE_KINDS['ph-scale'] = (s, box) => {
   const lv = levels(items, 12.5);
   let maxY = yB;
   lv.forEach((p) => {
-    const m = p.it.m, y = yB + 30 + p.lv * 26;
+    const m = p.it.m, y = yB + 30 + p.lv * LV_H;
     g += `<line x1="${r1(p.it.x)}" y1="${yB + 5}" x2="${r1(p.it.x)}" y2="${r1(tagBox(y, p.it.text, 12.5).top)}" stroke="${m.key ? C.key : '#9aa59f'}" stroke-width="1.2"/>`;
     g += `<circle cx="${r1(p.it.x)}" cy="${yB}" r="${m.key ? 6 : 4.5}" fill="${m.key ? C.key : '#fff'}" stroke="${m.key ? C.key : C.ink2}" stroke-width="1.6"/>`;
-    maxY = Math.max(maxY, y + 8);
+    maxY = Math.max(maxY, tagBox(y, p.it.text, 12.5).bottom + 2);
   });
-  lv.forEach((p) => { const m = p.it.m, y = yB + 30 + p.lv * 26; g += tag(Math.max(2, Math.min(W - 2 - p.w, p.x0)), y, p.it.text, m.key ? 'key' : 'plain', { size: 12.5 }).svg; });
+  lv.forEach((p) => { const m = p.it.m, y = yB + 30 + p.lv * LV_H; g += tag(Math.max(2, Math.min(W - 2 - p.w, p.x0)), y, p.it.text, m.key ? 'key' : 'plain', { size: 12.5 }).svg; });
   box.innerHTML = svgOpen(W, maxY + 6) + g + '</svg>';
 };
 
