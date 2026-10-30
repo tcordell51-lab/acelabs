@@ -124,11 +124,14 @@ const decodeCssEscapes = (s) => s.replace(/\\([0-9a-f]{1,6})\s?/gi, (m, h) => pa
 /* ---------- the script lexer ---------- */
 const RX_WORDS = new Set(['return', 'typeof', 'case', 'do', 'else', 'in', 'of', 'new', 'delete', 'void', 'throw', 'yield', 'await', 'instanceof']);
 const DEV_CALL = /^(log|warn|error|info|debug|trace|assert|group|groupCollapsed|table|time|timeEnd|count)$/;
-// first argument is code (a selector, class, attribute, event, storage key, module or URL)
+// first argument is code (a selector, class, attribute, event, storage key, module or URL), or a
+// needle a script searches for, never shows: s.indexOf('\u2014'), s.split('\u00b7'), s.replace('\u2014', ': ')
+// (join is not here: its separator is what the student reads)
 const CODE_FIRST = new Set(['querySelector', 'querySelectorAll', 'getElementById', 'getElementsByClassName', 'getElementsByTagName', 'closest', 'matches',
   'add', 'remove', 'toggle', 'contains', 'replace', 'getItem', 'setItem', 'removeItem', 'addEventListener', 'removeEventListener', 'dispatchEvent',
   'CustomEvent', 'Event', 'getAttribute', 'setAttribute', 'removeAttribute', 'hasAttribute', 'toggleAttribute', 'createElement', 'createElementNS',
-  'require', 'import', 'fetch', 'getPropertyValue', 'setProperty', 'removeProperty', 'matchMedia', 'registerMissAdapter', 'insertAdjacentHTML', 'Worker']);
+  'require', 'import', 'fetch', 'getPropertyValue', 'setProperty', 'removeProperty', 'matchMedia', 'registerMissAdapter', 'insertAdjacentHTML', 'Worker',
+  'indexOf', 'lastIndexOf', 'includes', 'split', 'replaceAll', 'startsWith', 'endsWith', 'search', 'match', 'matchAll']);
 
 export function jsStrings(src, base = 0) {
   const out = []; const n = src.length; let i = 0; let last = ''; const hist = [];

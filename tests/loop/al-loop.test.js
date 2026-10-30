@@ -96,7 +96,8 @@ test('one tap locks the call; a second tap changes nothing', () => {
   const opts = $$(host, '[data-part="opts"] .opt');
   opts[1].click(); opts[2].click(); opts[0].click();
   assert.deepEqual(opts.map((o) => o.getAttribute('aria-pressed')), ['false', 'true', 'false']);
-  assert.ok(opts.every((o) => o.disabled));
+  assert.ok(opts.every((o) => o.getAttribute('aria-disabled') === 'true'), 'locked');
+  assert.ok(opts.every((o) => !o.disabled), 'never the disabled property, which would drop focus');
   assert.equal(loop.beat(), 'watch');
   assert.equal($(host, '.band [aria-current="step"]').textContent, 'Play');
   through(loop);
@@ -128,7 +129,8 @@ test('motion on: the frames play by themselves, one per frame token, then the ve
   const loop = AceLoop.mount(host, entry(), steps({ frameMs: 5 }));
   loop.pick(0);
   assert.doesNotMatch($(host, '[data-part="replay"]').textContent, /Next frame/);
-  await tick(80);
+  /* poll, not a fixed wait: a busy machine runs the 5 ms frames late */
+  for (let i = 0; i < 200 && loop.beat() !== 'verdict'; i++) await tick(10);
   assert.equal(loop.beat(), 'verdict');
   assert.equal($(host, '.caption').textContent, 'Frame 4 of 4. State 4');
   assert.equal($$(host, '.pips i.done').length, 4);
@@ -158,7 +160,10 @@ test('verdict words: Confirmed or Needs review, the trap named, never shaking', 
   loop.pick(1); through(loop);
   const v = $(host, '[data-part="verdict"] .verdict');
   assert.ok(v.classList.contains('trap'));
-  assert.equal(v.getAttribute('role'), 'status');
+  assert.equal(v.getAttribute('role'), null, 'the bench speaks through its own live region');
+  const live = $(host, '[data-part="say"]');
+  assert.equal(live.getAttribute('role'), 'status');
+  assert.equal(live.textContent, 'Needs review. Your call: It shrivels up (crenates). Shriveling is the salty-water picture. The slide says: It swells and bursts (lyses). Trap: Reversed. Water chases solute.');
   assert.equal(v.querySelector('.vh').textContent, 'Needs review');
   assert.match(v.textContent, /Your call: It shrivels up \(crenates\)\. Shriveling is the salty-water picture\./);
   assert.match(v.textContent, /The slide says: It swells and bursts \(lyses\)\./);
@@ -178,7 +183,7 @@ test('Skip is recorded as Shown without a call, never as a miss, and writes no c
   const { host, AceLoop, cards } = boot();
   const loop = AceLoop.mount(host, entry(), steps());
   $(host, '.skip').click();
-  assert.ok($$(host, '[data-part="opts"] .opt').every((o) => o.disabled && o.getAttribute('aria-pressed') === 'false'));
+  assert.ok($$(host, '[data-part="opts"] .opt').every((o) => o.getAttribute('aria-disabled') === 'true' && o.getAttribute('aria-pressed') === 'false'));
   through(loop);
   assert.deepEqual({ ...loop.result.predict }, { pick: -1, outcome: 'shown', label: 'Shown without a call' });
   assert.equal($(host, '.verdict .vh').textContent, 'Shown without a call');
@@ -394,6 +399,88 @@ test('custom: setup, its own call, play, and still panels for reduced motion', a
   assert.ok($(host, '#sheet'), 'and the engine does not repaint over it after the recall');
 });
 
+test('focus is never lost: the pressed call keeps it; reduced motion hands it to Next frame', () => {
+  for (const reduced of [true, false]) {
+    const { host, AceLoop, doc } = boot({ reduced });
+    const loop = AceLoop.mount(host, entry(), steps({ frameMs: 5 }));
+    const b = $$(host, '[data-part="opts"] .opt')[1];
+    b.focus(); b.click(); // Enter or Space on a button is a click
+    assert.ok(doc.activeElement !== doc.body, 'not dropped to <body> (' + (reduced ? 'reduced' : 'motion') + ')');
+    assert.ok(host.contains(doc.activeElement), 'still in the bench');
+    if (reduced) {
+      assert.equal(doc.activeElement, $(host, '[data-part="replay"]'), 'Next frame, the only way forward, has focus');
+      assert.match(doc.activeElement.textContent, /Next frame/);
+      through(loop);
+      assert.equal(loop.beat(), 'verdict');
+      assert.equal(doc.activeElement, $(host, '[data-part="replay"]'), 'the same button, now Play the slide again');
+    } else {
+      assert.equal(doc.activeElement, b, 'the pressed option keeps focus while the frames play');
+    }
+    loop.destroy();
+  }
+});
+
+test('focus is never lost: Skip, Keep it, Skip I have this one, Move on and Play it again each hand it on', async () => {
+  let r = boot({ reduced: false });
+  let loop = r.AceLoop.mount(r.host, entry(), steps({ frameMs: 5 }));
+  const skip = $(r.host, '.skip');
+  skip.focus(); skip.click();
+  assert.equal(r.doc.activeElement, $(r.host, '[data-part="call"] .prompt'), 'Skip leaves: focus goes to the question');
+  for (let i = 0; i < 200 && loop.beat() !== 'verdict'; i++) await tick(10);
+  assert.equal(r.doc.activeElement, $(r.host, '[data-part="call"] .prompt'), 'and stays there at the verdict');
+  loop.destroy();
+
+  r = boot();
+  loop = r.AceLoop.mount(r.host, entry(), steps());
+  loop.pick(0); through(loop); loop.prove(); loop.check(1);
+  const keepBtn = $(r.host, '[data-act="keep"]');
+  keepBtn.focus(); keepBtn.click();
+  await tick(20);
+  assert.equal(loop.beat(), 'done');
+  assert.equal(r.doc.activeElement, $(r.host, '.loop-done'), 'Keep it leaves with the row: focus goes to Loop done');
+  assert.equal($(r.host, '[data-part="saydone"]').textContent, 'Loop done. Card back tomorrow, Saturday. Predict, play, prove, keep: every tool here runs this same loop.');
+  assert.match($(r.host, '[data-part="say"]').textContent, /^Confirmed\./, 'the recall verdict is still there to be read');
+  const again = $(r.host, '[data-act="again"]');
+  again.focus(); again.click();
+  assert.equal(loop.beat(), 'call');
+  assert.equal(r.doc.activeElement, $(r.host, '[data-part="call"] .prompt'), 'Play it again: focus goes to the fresh question');
+  loop.destroy();
+
+  r = boot();
+  loop = r.AceLoop.mount(r.host, entry(), steps());
+  loop.pick(0); through(loop); loop.prove(); loop.check(1);
+  const no = $(r.host, '[data-act="nokeep"]');
+  no.focus(); no.click();
+  assert.equal(r.doc.activeElement, $(r.host, '.loop-done'));
+  loop.destroy();
+
+  /* Stuck, Move on for now: the sheet gives focus back to Stuck?, which then leaves */
+  r = boot();
+  loop = r.AceLoop.mount(r.host, entry(), steps());
+  const stuck = $(r.host, '.stuck-link');
+  stuck.focus(); stuck.click();
+  [...r.doc.querySelectorAll('.sheet .so')].find((x) => /Move on for now/.test(x.textContent)).click();
+  assert.equal(loop.beat(), 'done');
+  assert.equal(r.doc.activeElement, $(r.host, '.loop-done'));
+  loop.destroy();
+});
+
+test('focus that was never in the bench is left alone, and a kept card cannot be un-kept', async () => {
+  const { host, AceLoop, doc, cards } = boot();
+  const outside = doc.createElement('button'); outside.textContent = 'elsewhere'; doc.body.appendChild(outside);
+  const loop = AceLoop.mount(host, entry(), steps());
+  outside.focus();
+  loop.pick(0); through(loop); loop.prove(); loop.check(1);
+  assert.equal(doc.activeElement, outside, 'the recall prompt took focus at Prove, but only inside the bench');
+  outside.focus();
+  $(host, '[data-act="keep"]').click();
+  $(host, '[data-act="nokeep"]') && $(host, '[data-act="nokeep"]').click();
+  await tick(20);
+  assert.equal(doc.activeElement, outside);
+  assert.equal(cards.length, 1);
+  assert.equal(loop.result.kept, true, 'Skip, I have this one is locked once Keep it is pressed');
+});
+
 test('Stuck: three moves tuned per section, focus in and back, Escape closes', () => {
   const { host, AceLoop, doc, w } = boot();
   AceLoop.mount(host, entry(), steps());
@@ -474,7 +561,7 @@ test('Play it again resets the bench to a fresh call', () => {
   $(host, '[data-act="again"]').click();
   assert.equal(loop.beat(), 'call');
   assert.equal(loop.result.predict, null);
-  assert.equal($$(host, '[data-part="opts"] .opt:not([disabled])').length, 3);
+  assert.equal($$(host, '[data-part="opts"] .opt:not([aria-disabled])').length, 3);
 });
 
 test('the planner hears every loop: the card carries the re-plan line, AceProgress.notePlay gets the result', async () => {

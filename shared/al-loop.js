@@ -45,6 +45,14 @@
    Reduced motion: auto-play becomes a Next frame button that keeps every
    frame and its caption; tweens jump stop to stop; custom drivers show
    their still panels; the card skips its flight and keeps its toast.
+   Focus is never lost: a locked call says aria-disabled (never the
+   disabled property), so the pressed option keeps focus; under reduced
+   motion focus goes to Next frame, the only way forward; when the control
+   that had focus leaves (Skip, Keep it, a Stuck move, Play it again) focus
+   goes to the nearest thing that stays (the question, the verdict, Loop
+   done). Focus that was never in the bench is left alone. Verdicts and
+   Loop done are read out by live regions that are in the bench from mount
+   (a role=status node created with its text is often not heard).
    Content strings are authored data: plain text plus <sub> <sup> <b>
    <i> <em> <strong> <br>; anything else is escaped.
    ===================================================================== */
@@ -136,7 +144,9 @@
      The pieces (usable on their own, as in the mock)
      ===================================================================== */
 
-  /* options: one tap locks the call */
+  /* options: one tap locks the call. A locked option says aria-disabled and
+     ignores taps, but keeps focus (the disabled property would drop it). */
+  function lockBtn(b) { b.setAttribute('aria-disabled', 'true'); }
   function options(host, opts, onPick) {
     delete host.dataset.locked;
     host.innerHTML = opts.map(function (o, i) {
@@ -155,13 +165,14 @@
   /* hold: the call is made, the picture plays (pick -1: shown without a call) */
   function hold(host, pick) {
     host.dataset.locked = '1';
-    Array.prototype.forEach.call(host.querySelectorAll('.opt'), function (b, i) { b.disabled = true; b.setAttribute('aria-pressed', String(i === pick)); });
+    Array.prototype.forEach.call(host.querySelectorAll('.opt'), function (b, i) { lockBtn(b); b.setAttribute('aria-pressed', String(i === pick)); });
   }
   /* reveal: the key says Answer, a different pick says Your call */
   function reveal(host, pick, key) {
+    host.dataset.locked = '1';
     Array.prototype.forEach.call(host.querySelectorAll('.opt'), function (b, i) {
       var tag = b.querySelector('.tag');
-      b.disabled = true;
+      lockBtn(b);
       b.setAttribute('aria-pressed', 'false');
       b.classList.remove('key', 'mine', 'dim');
       if (i === key) { b.classList.add('key'); tag.hidden = false; tag.innerHTML = AL.icon('good', 'xs') + (i === pick ? 'Answer, your call' : 'Answer'); }
@@ -175,15 +186,16 @@
     Array.prototype.forEach.call(host.querySelectorAll('.opt'), function (b, i) { b.hidden = !(i === key || i === pick); });
   }
 
-  /* verdict: Confirmed, Needs review or Shown without a call. Never shakes. */
+  /* verdict: Confirmed, Needs review or Shown without a call. Never shakes.
+     o.live === false leaves out role=status (the bench has its own live region). */
   function verdict(o) {
-    var lead = o.keyLead || 'The slide says';
+    var lead = o.keyLead || 'The slide says', live = o.live === false ? '' : ' role="status"';
     if (o.skipped) {
-      return '<div class="verdict plain reveal-in" role="status"><div class="vh">' + AL.icon('skipcall', 'sm') + LABELS.shown + '</div>' +
+      return '<div class="verdict plain reveal-in"' + live + '><div class="vh">' + AL.icon('skipcall', 'sm') + LABELS.shown + '</div>' +
         (o.keyText ? '<p><b>' + esc(lead) + ': ' + rich(o.keyText) + '.</b></p>' : '') +
         (o.why ? '<p>' + rich(o.why) + '</p>' : '') + (o.hook ? '<p class="hook">' + rich(o.hook) + '</p>' : '') + '</div>';
     }
-    return '<div class="verdict ' + (o.ok ? 'good' : 'trap') + ' reveal-in" role="status">' +
+    return '<div class="verdict ' + (o.ok ? 'good' : 'trap') + ' reveal-in"' + live + '>' +
       '<div class="vh">' + AL.icon(o.ok ? 'good' : 'review', 'sm') + (o.ok ? LABELS.confirmed : LABELS['needs-review']) + '</div>' +
       '<p>' + (o.callLine ? '<b>' + rich(o.callLine) + '</b>' : '<b>Your call: ' + rich(o.callText) + '.</b>') + (o.ok || !o.trap ? '' : ' ' + rich(o.trap)) + '</p>' +
       (o.ok || !o.keyText ? '' : '<p><b>' + esc(lead) + ': ' + rich(o.keyText) + '.</b></p>') +
@@ -351,6 +363,44 @@
     function last() { return kind === 'tween' ? 1 : (driver.frames || [])[(driver.frames || []).length - 1]; }
     function lead(b) { return (b && b.keyLead) || st.keyLead || LEAD[sec] || 'The answer'; }
 
+    /* ---------- focus is never lost (see the header) ----------
+       focusIn: the element in this bench that last had focus, or null once
+       focus (or a tap) has gone elsewhere on the page. */
+    var focusIn = null;
+    function onFocusIn(e) { focusIn = host.contains(e.target) ? e.target : null; }
+    function onPointer(e) { if (!host.contains(e.target)) focusIn = null; }
+    document.addEventListener('focusin', onFocusIn);
+    document.addEventListener('pointerdown', onPointer, true);
+    function gone(n) {
+      if (!n || n === document.body || n === document.documentElement || !document.documentElement.contains(n)) return true;
+      for (var x = n; x && x !== host; x = x.parentElement) if (x.hidden) return true;
+      return false;
+    }
+    function focusOn(el) {
+      if (!el) return;
+      if (!/^(A|BUTTON|INPUT|SELECT|TEXTAREA)$/.test(el.tagName) && !el.hasAttribute('tabindex')) el.setAttribute('tabindex', '-1');
+      try { el.focus({ preventScroll: true }); } catch (e) { el.focus(); }
+    }
+    /* move focus to `to` only when focus was in this bench and its control has
+       left (force: also when it is still there, for Next frame) */
+    function rescue(to, force) {
+      if (!focusIn || !to) return;
+      var a = document.activeElement;
+      if (a && a !== document.body && a !== document.documentElement && !host.contains(a)) { focusIn = null; return; }
+      if (!force && !gone(a)) return;
+      focusOn(to);
+    }
+    /* the bench's live regions, in the tree from mount: the verdicts in one,
+       Loop done in the other (under reduced motion the recall verdict and
+       Loop done land in the same moment, and both are read) */
+    function sentences(el) {
+      return Array.prototype.map.call(el ? el.querySelectorAll('.vh, p, .trapname') : [], function (n) {
+        var t = plain(n.textContent);
+        return t && !/[.!?:]$/.test(t) ? t + '.' : t;
+      }).filter(Boolean).join(' ');
+    }
+    function say(text, part) { var n = parts && parts[part || 'say']; if (n) n.textContent = plain(text); }
+
     function template() {
       var tags = st.tags || [], lvl = Math.min(6, Math.max(2, opts.level || 2));
       var hx = function (id, cls, text) { return '<h' + lvl + ' class="' + cls + '" id="' + id + '">' + text + '</h' + lvl + '>'; };
@@ -394,7 +444,8 @@
         '<div class="beat-done" data-part="done" hidden></div>' +
         '</div>' +
         '<div class="drive-slot" data-part="drive" hidden></div>' +
-        '</div></div></article>';
+        '</div></div>' +
+        '<p class="sr" data-part="say" role="status" aria-live="polite"></p><p class="sr" data-part="saydone" role="status" aria-live="polite"></p></article>';
     }
 
     function init() {
@@ -479,7 +530,8 @@
       parts.opts.hidden = true;
       parts.callhost.innerHTML = '<button class="btn gold" type="button">' + AL.icon('play', 'sm') + esc(driver.setupLabel || 'Show me the setup') + '</button>';
       parts.callhost.querySelector('button').addEventListener('click', function () {
-        this.disabled = true;
+        if (this.getAttribute('aria-disabled') === 'true') return;
+        lockBtn(this);
         if (AL.reduced() && driver.stills) showStills(driver.stills('setup'));
         AL.follow(parts.field);
         Promise.resolve(driver.setup(ctxFor())).then(function () {
@@ -487,6 +539,7 @@
           parts.callhost.innerHTML = '';
           parts.opts.hidden = false;
           startCall();
+          rescue(parts.call.querySelector('.prompt'));
         });
       });
     }
@@ -526,9 +579,12 @@
       parts.callrow.hidden = true;
       self.band.set(1);
       AL.follow(parts.field);
-      if (kind === 'steps') return watchSteps(afterWatch);
-      if (kind === 'tween') return watchTween(afterWatch);
-      return watchCustom(afterWatch);
+      if (kind === 'steps') watchSteps(afterWatch);
+      else if (kind === 'tween') watchTween(afterWatch);
+      else watchCustom(afterWatch);
+      /* reduced motion: Next frame (in the stage, before the calls) is the way forward */
+      if (S.nextFn) rescue(parts.replay, true);
+      else rescue(parts.call.querySelector('.prompt'));
     }
     function watchSteps(then) {
       var frames = driver.frames, n = frames.length, i = 0, pips = pipsFor(n), dur = driver.frameMs || AL.ms('frame') || 900;
@@ -646,9 +702,11 @@
         trap: custom ? c.trap : (!skipped && !ok ? P.traps[S.pick] : ''),
         trapName: custom ? c.trapName : (!skipped && !ok ? P.trapNames[S.pick] : ''),
         keyText: custom ? c.keyText : P.options[P.key], keyLead: lead(P),
-        why: ok || skipped ? P.why : (custom ? P.why : ''), hook: hook
+        why: ok || skipped ? P.why : (custom ? P.why : ''), hook: hook, live: false
       });
       parts.verdict.hidden = false;
+      say(sentences(parts.verdict));
+      rescue(parts.verdict);
       /* a miss writes its card now, at the verdict */
       if (outcome === 'needs-review') writeCard('call');
       S.beat = 'verdict';
@@ -750,8 +808,9 @@
       parts.prove.classList.add('reveal-in');
       options(parts.copts, C.options, function (i) { check(i); });
       AL.follow(parts.field, { to: parts.prove, prefer: 'end' });
-      var q = parts.prove.querySelector('.prompt');
-      if (q && opts.focusRecall !== false) { q.setAttribute('tabindex', '-1'); try { q.focus({ preventScroll: true }); } catch (e) { q.focus(); } }
+      /* the recall question takes focus (One more, from memory just left), never from elsewhere on the page */
+      var q = parts.prove.querySelector('.prompt'), a = document.activeElement;
+      if (q && opts.focusRecall !== false && (focusIn || !a || a === document.body || host.contains(a))) focusOn(q);
     }
     function veil(on) {
       parts.veil.classList.toggle('off', !on);
@@ -768,8 +827,9 @@
       parts.prove.querySelector('.prompt').classList.add('asked');
       parts.closed.hidden = true; parts.crow.hidden = true;
       parts.cverdict.innerHTML = verdict({ ok: ok, callText: C.options[i], trap: ok ? '' : C.traps[i], trapName: ok ? '' : C.trapNames[i],
-        keyText: C.options[C.key], keyLead: (C.keyLead || 'The answer'), why: C.why });
+        keyText: C.options[C.key], keyLead: (C.keyLead || 'The answer'), why: C.why, live: false });
       parts.cverdict.hidden = false;
+      say(sentences(parts.cverdict));
       if (!ok && !S.card) writeCard('recall');
       emit(host, 'verdict', { stage: 'recall', outcome: outcome, label: LABELS[outcome], pick: i, entryId: entry.id });
       veil(false);
@@ -845,13 +905,13 @@
         parts.keepbtns.innerHTML = '<button class="btn gold" type="button" data-act="keep">' + AL.icon('keep', 'sm') + 'Keep it</button>' +
           '<button class="btn quiet" type="button" data-act="nokeep">Skip, I have this one</button>';
         parts.keepbtns.querySelector('[data-act="keep"]').addEventListener('click', function () { keepIt(); });
-        parts.keepbtns.querySelector('[data-act="nokeep"]').addEventListener('click', function () { finish(false); });
+        parts.keepbtns.querySelector('[data-act="nokeep"]').addEventListener('click', function () { if (!S.card) finish(false); });
         AL.follow(parts.field, { to: parts.keep, prefer: 'end' });
       }
     }
     function keepIt() {
       if (S.beat !== 'keep' || S.card) return;
-      Array.prototype.forEach.call(parts.keepbtns.querySelectorAll('button'), function (b) { b.disabled = true; });
+      Array.prototype.forEach.call(parts.keepbtns.querySelectorAll('button'), lockBtn);
       var c = writeCard('keep');
       parts.cardhost.innerHTML = cardHtml(c, false);
       keep(host.querySelector('.acecard'), { due: opts.due, done: function () { finish(true); } });
@@ -873,12 +933,16 @@
       var line = self.result.movedOn ? 'Moved on. This one waits in Review, marked, back ' + esc(AL.backOn(1)) + '.'
         : kept ? 'Card back ' + esc(AL.backOn(1)) + '. Predict, play, prove, keep: every tool here runs this same loop.'
           : 'No card this time. Play it again any time.';
-      parts.done.innerHTML = '<div class="loop-done reveal-in" role="status"><div class="vh">' + AL.icon('keep', 'sm') + 'Loop done</div><p>' + line + '</p></div>' +
+      parts.done.innerHTML = '<div class="loop-done reveal-in"><div class="vh">' + AL.icon('keep', 'sm') + 'Loop done</div><p>' + line + '</p></div>' +
         (links ? '<div class="loop-links">' + links + '</div>' : '') +
         '<div class="row-btns">' + (opts.next && opts.next.href ? '<a class="btn gold" href="' + esc(opts.next.href) + '">' + rich(opts.next.label || 'Next') + AL.icon('arrow', 'sm') + '</a>' : '') +
         '<button class="btn quiet" type="button" data-act="again">Play it again</button></div>';
       parts.done.hidden = false;
       parts.done.querySelector('[data-act="again"]').addEventListener('click', function () { reset(); });
+      say(sentences(parts.done.querySelector('.loop-done')), 'saydone');
+      rescue(parts.done.querySelector('.loop-done'));
+      /* the last row in view, clear of a toast that is up */
+      AL.follow(parts.done, { align: 'end' });
       if (typeof opts.onResult === 'function') { try { opts.onResult(self.result); } catch (e) { if (window.console) console.warn('[AceLoop] onResult', e); } }
       /* Today's planner learns which calls were played (and re-plans on a miss) */
       var PG = window.AceProgress;
@@ -911,8 +975,12 @@
       if (S.raf) cancelAnimationFrame(S.raf);
       S.timer = null; S.raf = null; S.nextFn = null;
     }
-    function reset() { S.alive = false; stop(); init(); AL.follow(parts.field); }
-    function destroy() { S.alive = false; stop(); host.innerHTML = ''; host.classList.remove('al'); }
+    function reset() { S.alive = false; stop(); init(); AL.follow(parts.field); rescue(parts.call.querySelector('.prompt')); }
+    function destroy() {
+      S.alive = false; stop(); host.innerHTML = ''; host.classList.remove('al');
+      document.removeEventListener('focusin', onFocusIn);
+      document.removeEventListener('pointerdown', onPointer, true);
+    }
 
     self = {
       entry: entry, driver: driver, result: null, el: null, band: null,

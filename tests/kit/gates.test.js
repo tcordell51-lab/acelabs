@@ -37,14 +37,38 @@ test('copy gate: banned words in copy, not in code', async () => {
   assert.deepStrictEqual(flagged('var s = "copy-gate-ok marks code"; var t = "wrong"; // copy-gate-ok', 'x.js'), []);
 });
 
+test('copy gate: a needle a script searches for is code, not copy (every rule, the glyph rules too)', async () => {
+  const { scan } = await imp('scripts/gate-copy.mjs');
+  /* exactly the line tools/bio/bio-stick.js:165 carries on the release branch (escapes as written there): it finds
+     em dashes to remove them; and the same line with the glyph typed in */
+  const line = String.raw`      if (t.nodeValue.indexOf('\u2014') !== -1) t.nodeValue = t.nodeValue.replace(/\s*\u2014\s*/g, ': ');`;
+  assert.ok(line.includes("indexOf('\\u2014')"), 'the escape is in the source text, as in the file');
+  assert.deepStrictEqual(rules(scan('tools/bio/bio-stick.js', line)), [], line);
+  const typed = "if (t.nodeValue.indexOf('\u2014') !== -1) t.nodeValue = t.nodeValue.replace(/\\s*\u2014\\s*/g, ': ');";
+  assert.deepStrictEqual(rules(scan('x.js', typed)), [], typed);
+  for (const src of ["if (s.includes('\u00b7')) go();", "var parts = s.split(' \u2014 ');", "s = s.replace('\u2014', ': ');", "if (name.startsWith('\u2014')) skip();",
+    "s.replaceAll('\u2013', '-');", "if (s.lastIndexOf('\u2022') > 0) x();", "if (cap.endsWith('\u2713')) y();", "if (s.indexOf('wrong') >= 0) z();"])
+    assert.deepStrictEqual(rules(scan('x.js', src)), [], src);
+  /* what the student reads is still copy: the replacement, a joined separator, a shown string */
+  assert.deepStrictEqual(rules(scan('x.js', "s = s.replace(/-/g, ' \u2014 ');")), ['dash:U+2014']);
+  assert.deepStrictEqual(rules(scan('x.js', "el.textContent = parts.join(' \u2014 ');")), ['dash:U+2014']);
+  assert.deepStrictEqual(rules(scan('x.js', "el.textContent = '\u2014';")), ['dash:U+2014'], 'a lone glyph shown as a placeholder is copy');
+  assert.deepStrictEqual(rules(scan('x.js', "el.setAttribute('aria-label', 'Two \u2014 three');")), ['dash:U+2014'], 'only the first argument is code');
+});
+
 test('copy gate: game, countdown, confidence and payment words, with the science words left alone', async () => {
   const { scan } = await imp('scripts/gate-copy.mjs');
   const flagged = (text) => scan('x.html', '<p>' + text + '</p>').map((h) => h.rule);
   for (const [t, rule] of [['Day streak: 4', 'streak'], ['+10 points', 'points'], ['Earn 50 XP', 'points'], ['You got 3 points', 'points'], ['Nice, 5 points!', 'points'], ['You have 12 points', 'points'], ['She won 2 points', 'points'], ['A new personal best', 'score'],
+    ['You got 2 points on Bio', 'points'], ['You got 4 points at the checkpoint', 'points'], ['You got three points', 'points'], ['Level up to unlock the next night', 'points'], ['You scored 80%', 'score'], ['Once you hit 80% untimed, move on', 'score'],
     ['Top the leaderboard', 'score'], ['You earned a badge', 'badge'], ['12 days left', 'countdown'], ['30 days to go', 'countdown'],
     ['How sure are you?', 'confidence'], ['Pick a confidence level', 'confidence'], ['Upgrade now', 'payment'], ['Enter your credit card', 'payment'], ['$29/mo', 'payment']]) assert.deepStrictEqual(flagged(t), [rule], t);
   for (const t of ['The primitive streak forms in amniotes.', 'Plot the data points on the line.', 'Boiling points rise with mass.', 'The two circles have 2 points in common.', 'A line has 2 points of intersection with the circle.', 'The graph has 3 points on the x-axis.', 'Each vertex gets 2 points from the grid.',
-    'A store offers a 20 percent discount and a coupon for 10 dollars.', 'Click a colored badge on the molecule.', 'Xeroderma pigmentosum (XP) is a repair defect.'])
+    'A store offers a 20 percent discount and a coupon for 10 dollars.', 'Click a colored badge on the molecule.', 'Xeroderma pigmentosum (XP) is a repair defect.',
+    /* QR word problems and geometry: a count of points is not a reward */
+    'If you have 3 points, how many triangles can you draw?', 'Suppose you have 5 points, no three collinear.', 'A set has 4 points in a plane.', 'The scatter plot has 8 points.',
+    'Team A has 12 points and Team B has 9 points. What is the ratio?', 'A player gets 3 points for each win.', 'A kitchen scale might know you have two point three grams.',
+    'One hard-won point traded away.', 'The electron moves one level up to n = 3.', '40% of the bank is Biology.', 'You got 20% off the price.'])
     assert.deepStrictEqual(flagged(t), [], t);
 });
 

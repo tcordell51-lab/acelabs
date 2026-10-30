@@ -47,7 +47,7 @@ const doors = (doc) => [...sr(doc).querySelectorAll('a.door')];
 
 test('five doors, plain words, an icon each; the Canon is no longer a door', () => {
   const { doc, S } = boot();
-  assert.equal(S.version, '2');
+  assert.equal(S.version, '3');
   assert.deepEqual(doors(doc).map((a) => a.querySelector('.dl').textContent), ['Today', 'Learn', 'Practice', 'Tests', 'Review']);
   assert.deepEqual(doors(doc).map((a) => a.getAttribute('href')), ['/', '/learn/', '/practice/', '/tests/', '/review/']);
   assert.ok(doors(doc).every((a) => a.querySelector('svg.ico[aria-hidden="true"]')), 'an icon beside every word');
@@ -55,7 +55,7 @@ test('five doors, plain words, an icon each; the Canon is no longer a door', () 
   const today = doors(doc)[0].querySelector('svg').innerHTML;
   assert.match(today, /M3 17\.5h18/, 'Today is a sunrise over a horizon line');
   assert.doesNotMatch(today, /<circle/, 'never a clock face');
-  assert.equal(sr(doc).querySelector('link[rel="stylesheet"]').getAttribute('href'), '/shared/ace-shell.css?v=2');
+  assert.equal(sr(doc).querySelector('link[rel="stylesheet"]').getAttribute('href'), '/shared/ace-shell.css?v=3');
   assert.equal(sr(doc).querySelector('nav').getAttribute('aria-label'), 'Ace Labs');
 });
 
@@ -63,11 +63,11 @@ test('the brand is the ACE DAT lockup, then Labs, linking to Today', () => {
   const { doc } = boot();
   const b = sr(doc).querySelector('a.brand');
   assert.equal(b.getAttribute('href'), '/');
-  assert.equal(b.getAttribute('aria-label'), 'Ace Labs, Today');
-  assert.equal(b.querySelector('img.lockup').getAttribute('src'), '/shared/brand/ace-dat-lockup-reversed.svg');
+  assert.equal(b.getAttribute('aria-label'), 'ACE DAT Labs, Today', 'the spoken name holds the visible words (label in name)');
+  assert.equal(b.querySelector('img.lockup').getAttribute('src'), '/shared/brand/ace-dat-lockup-reversed-v1.svg');
   assert.equal(b.querySelector('img.lockup').getAttribute('alt'), '', 'the link carries the name');
   assert.equal(b.querySelector('.labs').textContent, 'Labs');
-  assert.ok(fs.existsSync(path.join(ROOT, 'shared/brand/ace-dat-lockup-reversed.svg')));
+  assert.ok(fs.existsSync(path.join(ROOT, 'shared/brand/ace-dat-lockup-reversed-v1.svg')));
 });
 
 test('the current door is marked three ways: aria-current, a mint 800 label, the bead or the tick', async () => {
@@ -126,12 +126,16 @@ test('the Review dot reads acelabs.v1.dueToday: a dot, never a number, and a spo
   assert.equal(dot.hidden, false);
   assert.equal(dot.textContent, '', 'never a number');
   assert.equal(say.textContent, ', 3 cards back today');
+  assert.equal(say.parentElement.className, 'dl', 'inside the label, so the name reads "Review, 3 cards back today"');
+  assert.equal(sr(doc).querySelector('.door[data-id="review"] .dl').textContent, 'Review, 3 cards back today');
+  assert.equal(sr(doc).querySelector('.door[data-id="review"]').getAttribute('aria-label'), 'Review, 3 cards back today', 'the spoken name, with no stray space');
   assert.equal(S.due(), 3);
   S.setDue(1);
   assert.equal(say.textContent, ', 1 card back today');
   S.setDue(0);
   assert.equal(dot.hidden, true);
   assert.equal(say.textContent, '');
+  assert.equal(sr(doc).querySelector('.door[data-id="review"]').getAttribute('aria-label'), null, 'no count, the visible word is the name');
   /* a later due time that has passed counts without any page listing misses */
   w.localStorage.setItem('acelabs.v1.dueToday', JSON.stringify({ v: 1, n: 0, later: [now - 1000, now + 864e5], at: now - 864e5 }));
   assert.equal(S.refreshDue(), 1);
@@ -173,6 +177,10 @@ test('the bottom tab bar only where a page opts in, and only on phones', () => {
   assert.match(doc, /@media \(max-width:759px\)\{[^]*html\[data-ace-shell-pos="bottom"\] #ace-shell\{position:fixed;left:0;right:0;bottom:0;z-index:160;min-height:calc\(64px \+ env\(safe-area-inset-bottom,0px\)\)\}/);
   assert.match(doc, /html\.ace-shell-on\.ace-shell-shown\[data-ace-shell-pos="bottom"\] body\{padding-bottom:calc\(64px/, 'room for the bar, only while it shows');
   assert.match(CSS, /:host\(\[data-pos="bottom"\]\) \.in \{ height: 64px; \}/);
+  /* the gold top line is drawn inside the 64 px, so the bar, the body padding, --ace-shell-bottom and the lift agree */
+  const bottomBar = /:host\(\[data-pos="bottom"\]\) \.bar \{([^}]*)\}/.exec(CSS)[1];
+  assert.doesNotMatch(bottomBar, /border-top/, 'no border adds a 65th pixel');
+  assert.match(bottomBar, /box-shadow: inset 0 1px 0 /);
   assert.match(CSS, /:host\(\[data-pos="bottom"\]\) \.door\[aria-current="page"\]::after \{ top: 0;/, 'the tick sits on the top edge of a bottom bar');
 });
 
@@ -230,6 +238,63 @@ test('with the tab bar down, a fixed bottom button is lifted above it, and put b
   assert.match(docCss, /html\.ace-shell-on\.ace-shell-shown\[data-ace-shell-pos="bottom"\]\{--ace-shell-bottom:calc\(64px \+ env\(safe-area-inset-bottom,0px\)\)\}/, 'new work reads --ace-shell-bottom');
 });
 
+test('a rescan never lifts twice: the kit toast waiting below, UI on --ace-shell-bottom, rotation, relift()', async () => {
+  let fab = null, toast = null, own = null, out = null;
+  const { w, doc, S, state } = boot({ narrow: true, htmlAttrs: ' data-ace-shell-pos="bottom"', before(w) {
+    const vh = w.innerHeight;
+    fab = fixedAt(w, 'fab', { top: vh - 80, bottom: vh - 24, height: 56, left: 310, right: 366, width: 56 }, 'position:fixed;bottom:24px;right:24px');
+    /* the kit toast while hidden: bottom = --tabbar-h + 12px (76 px), opacity 0, translated 16 px down, so its
+       transformed box reaches into the bar although its own box sits 12 px above it */
+    toast = fixedAt(w, 'al-toast', { top: vh - 76 - 49 + 16, bottom: vh - 76 + 16, height: 49, left: 40, right: 350, width: 310 }, 'position:fixed;left:50%;bottom:76px;opacity:0;transform:translate(-50%,16px)');
+    /* new work: bottom:calc(16px + var(--ace-shell-bottom,0px)), resolved by the browser to 80px */
+    own = fixedAt(w, 'own', { top: vh - 80 - 48, bottom: vh - 80, height: 48, left: 0, right: 390, width: 390 }, 'position:fixed;left:0;right:0;bottom:80px');
+    /* a page that asks to be left alone */
+    out = fixedAt(w, 'out', { top: vh - 50, bottom: vh, height: 50, left: 0, right: 100, width: 100 }, 'position:fixed;bottom:0;left:0');
+    out.setAttribute('data-ace-no-lift', '');
+  } });
+  await styled(w, doc);
+  await new Promise((r) => setTimeout(r, 650));
+  const once = fab.style.bottom;
+  assert.match(once, /^calc\(/, 'the coach button is lifted');
+  for (const [el, why] of [[toast, 'the hidden kit toast (its own bottom already clears the bar)'], [own, 'UI that reads --ace-shell-bottom'], [out, 'data-ace-no-lift']]) {
+    assert.ok(!el.hasAttribute('data-ace-lifted'), why + ' is left alone');
+    assert.notEqual(el.style.top, 'auto', why);
+  }
+  assert.equal(toast.style.bottom, '76px');
+  assert.equal(own.style.bottom, '80px');
+  /* relift() (UI shown later) and a phone rotation rescan: still lifted once */
+  S.relift(); S.relift();
+  assert.equal(fab.style.bottom, once, 'relift never adds a second 64 px');
+  state.narrow = false; w.dispatchEvent(new w.Event('resize'));
+  assert.equal(fab.style.bottom, '24px', 'landscape: the bar is at the top, the button is back');
+  state.narrow = true; w.dispatchEvent(new w.Event('resize'));
+  assert.equal(fab.style.bottom, once, 'portrait again: lifted once, from its own 24px');
+  assert.ok(!toast.hasAttribute('data-ace-lifted'), 'the toast is still left alone after the rotation');
+  assert.equal(toast.style.bottom, '76px');
+  /* a timed section starts and ends */
+  w.localStorage.setItem('acelabs.timed', JSON.stringify({ until: Date.now() + 60000 }));
+  w.dispatchEvent(new w.Event('acelabs:timed'));
+  w.localStorage.setItem('acelabs.timed', JSON.stringify({ until: 0 }));
+  w.dispatchEvent(new w.Event('acelabs:timed'));
+  assert.equal(fab.style.bottom, once);
+  assert.ok(!toast.hasAttribute('data-ace-lifted'));
+});
+
+test('with the tab bar down, UI the page shows later is lifted by the watch', async () => {
+  let bar = null;
+  const { w, doc } = boot({ narrow: true, htmlAttrs: ' data-ace-shell-pos="bottom"', before(w) {
+    const vh = w.innerHeight;
+    bar = fixedAt(w, 'coachBar', { top: vh - 120, bottom: vh, height: 120, left: 0, right: 390, width: 390 }, 'position:fixed;left:0;right:0;bottom:0;display:none');
+  } });
+  await styled(w, doc);
+  await new Promise((r) => setTimeout(r, 650));
+  assert.ok(!bar.hasAttribute('data-ace-lifted'), 'not shown yet');
+  bar.style.display = 'block';
+  await new Promise((r) => setTimeout(r, 400));
+  assert.ok(bar.hasAttribute('data-ace-lifted'), 'caught within a throttled rescan');
+  assert.match(bar.style.bottom, /^calc\(/, 'lifted (jsdom folds the calc; the browser run checks the pixels)');
+});
+
 test('pages that keep the top bar are never touched', async () => {
   let fab = null;
   const { w, doc } = boot({ narrow: true, before(w) {
@@ -238,6 +303,10 @@ test('pages that keep the top bar are never touched', async () => {
   await styled(w, doc);
   await new Promise((r) => setTimeout(r, 650));
   assert.equal(fab.style.bottom, '24px');
+  assert.ok(!fab.hasAttribute('data-ace-lifted'));
+  /* no watch either: a later class change lifts nothing */
+  fab.className = 'on';
+  await new Promise((r) => setTimeout(r, 400));
   assert.ok(!fab.hasAttribute('data-ace-lifted'));
 });
 
@@ -311,6 +380,16 @@ test('the kit finds the shell: AL.door targets the Review icon in the shadow roo
   assert.equal(S.doorEl('review'), target);
   w.AL.setDue(4);
   assert.equal(sr(doc).querySelector('[data-due-sr]').textContent, ', 4 cards back today');
+});
+
+test('ace-shell.css only changes with a new VERSION (no page names its URL, so no gate sees it)', () => {
+  /* the CSS loads as /shared/ace-shell.css?v=<VERSION> under an immutable cache. When this fails because
+     ace-shell.css changed: bump VERSION in ace-shell.js, bump ace-shell.js ?v= on every includer, and
+     record the new hash here. */
+  const PINNED = { '3': '81543f99e4999b63' };
+  const v = /var VERSION = '(\d+)'/.exec(SHELL)[1];
+  const sha = require('node:crypto').createHash('sha256').update(CSS).digest('hex').slice(0, 16);
+  assert.equal(PINNED[v], sha, 'ace-shell.css changed under VERSION ' + v);
 });
 
 test('targets: every door is at least 44 px; copy is plain ASCII', () => {

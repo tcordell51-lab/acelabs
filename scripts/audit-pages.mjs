@@ -21,8 +21,10 @@
 //   offsite     any request to another host (Google Fonts included): every file ships from the site
 //   fonts       a font file served from anywhere but /shared/fonts/
 //   tabbar      with the phone tab bar down (pages that set data-ace-shell-pos="bottom", or --tabbar),
-//               a fixed element of the page's own sits on the doors (the shell lifts what it finds at
-//               load; anything left is named here, and the page reads --ace-shell-bottom or keeps the top bar)
+//               a fixed element of the page's own sits on the doors at load (the shell lifts what it
+//               finds at load, and a watch lifts UI the page shows later; this check sees the load state
+//               only, so UI shown on a tap is checked by the batch's own shots; anything left is named
+//               here, and the page reads --ace-shell-bottom or keeps the top bar)
 //   motion      (warning) animations still running with prefers-reduced-motion: reduce; a reduced-motion
 //               snapshot of the first screen is saved as <page>-390-reduced-motion.png
 //   no-main     (warning) the page has no <main> landmark

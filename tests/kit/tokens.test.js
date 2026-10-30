@@ -77,16 +77,18 @@ test('tokens: brand primitives, mint roles and the logo colors', async () => {
   assert.strictEqual(D('--b-mint-ink'), L('--b-mint-ink'), 'the bench does not invert');
   // the logo files carry exactly these fills
   const svg = (f) => read('shared/brand/' + f);
-  assert.match(svg('ace-dat-lockup.svg'), /fill="#1B3A2D"/);
-  assert.match(svg('ace-dat-lockup-reversed.svg'), /fill="#F5F0E8"/);
-  for (const f of ['ace-dat-lockup.svg', 'ace-dat-lockup-reversed.svg', 'ace-dat-mark.svg', 'ace-dat-mark-reversed.svg', 'icon.svg']) assert.match(svg(f), /fill="#C9A84C"/, f + ' gold bar');
+  assert.match(svg('ace-dat-lockup-v1.svg'), /fill="#1B3A2D"/);
+  assert.match(svg('ace-dat-lockup-reversed-v1.svg'), /fill="#F5F0E8"/);
+  for (const f of ['ace-dat-lockup-v1.svg', 'ace-dat-lockup-reversed-v1.svg', 'ace-dat-mark-v1.svg', 'ace-dat-mark-reversed-v1.svg', 'icon-v1.svg']) assert.match(svg(f), /fill="#C9A84C"/, f + ' gold bar');
+  /* /shared is cached for a year and no ?v= gate reads a url() or an img src: every logo file carries its version in its name */
+  for (const f of fs.readdirSync(path.join(ROOT, 'shared/brand'))) assert.match(f, /-v\d+\.svg$/, 'shared/brand/' + f + ' names its version');
   for (const k of ['--s-logo', '--s-logo-mark', '--b-logo', '--b-logo-mark']) {
     for (const map of [T.light, T.dark]) {
       const u = resolve(map, `var(${k})`).match(/url\("([^"]+)"\)/)[1];
       assert.ok(u.startsWith('/shared/brand/') && fs.existsSync(path.join(ROOT, u)), k + ' -> ' + u);
     }
   }
-  assert.strictEqual(resolve(T.dark, 'var(--s-logo)'), 'url("/shared/brand/ace-dat-lockup-reversed.svg")');
+  assert.strictEqual(resolve(T.dark, 'var(--s-logo)'), 'url("/shared/brand/ace-dat-lockup-reversed-v1.svg")');
 });
 
 test('tokens: type is Sora / DM Sans / JetBrains Mono, never Playfair in new names', async () => {
@@ -149,16 +151,16 @@ test('brand: favicon is the AD mark in four sizes; Today links the icon', () => 
   assert.deepStrictEqual(sizes, [16, 32, 48, 64]);
   const png = fs.readFileSync(path.join(ROOT, 'apple-touch-icon.png'));
   assert.strictEqual(png.readUInt32BE(16), 180);
-  assert.match(read('shared/brand/icon.svg'), /fill="#1B3A2D"/);
+  assert.match(read('shared/brand/icon-v1.svg'), /fill="#1B3A2D"/);
   const home = read('ace-labs.html');
-  assert.match(home, /<link rel="icon" type="image\/svg\+xml" href="\/shared\/brand\/icon\.svg">/);
+  assert.match(home, /<link rel="icon" type="image\/svg\+xml" href="\/shared\/brand\/icon-v1\.svg">/);
 });
 
 test('includers: every page loads al-tokens.css at the same new ?v=', () => {
   const pages = ['404.html', 'mocks-catalog.html', 'prometric-mock.html', 'test-day-readiness.html', 'test-week.html', 'scope.html',
     'retold/index.html', 'tools/bio/bio-immune-cells.html', 'tools/ochem/index.html', 'tools/gc/trends.html', 'tools/gc/traps.html',
     'tools/gc/lewis-sandbox.html', 'tools/gc/recognition-lab.html', 'unified-mock.html', 'onboarding.html', 'for-retakers.html'];
-  for (const p of pages) assert.match(read(p), /al-tokens\.css\?v=4["']/, p);
+  for (const p of pages) assert.match(read(p), /al-tokens\.css\?v=5["']/, p);
 });
 
 /* shared/al-motion.css backs up the tokens on pages that load it alone, so its values must be the tokens' own */

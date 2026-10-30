@@ -224,14 +224,16 @@ a:focus-visible {
   .door .due { top: -2px; right: -6px; }
 }
 
-/* the bottom tab bar (pages that opt in): 64 px plus the safe area, in thumb reach */
+/* the bottom tab bar (pages that opt in): 64 px plus the safe area, in thumb
+   reach. Its gold top line is drawn inside the 64 px (an inset shadow, not a
+   border), so the bar, the body's padding, --ace-shell-bottom and the lift
+   in ace-shell.js all measure the same 64 px. */
 @media (max-width: 759px) {
   :host([data-pos="bottom"]) .bar {
     border-bottom: 0;
-    border-top: 1px solid rgba(201, 168, 76, 0.32);
     padding-bottom: env(safe-area-inset-bottom, 0px);
     background: linear-gradient(180deg, var(--bg) 0%, var(--bg-deep) 100%);
-    box-shadow: 0 -10px 30px rgba(7, 19, 13, 0.35);
+    box-shadow: inset 0 1px 0 rgba(201, 168, 76, 0.32), 0 -10px 30px rgba(7, 19, 13, 0.35);
   }
   :host([data-pos="bottom"]) .in { height: 64px; }
   :host([data-pos="bottom"]) .door { gap: 5px; }

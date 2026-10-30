@@ -14,7 +14,7 @@ const SHELL = `<!DOCTYPE html>
 <link rel="preload" href="/shared/fonts/sora-v1.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/shared/al-fonts.css?v=1">
 <link rel="stylesheet" href="/shared/al-fonts-legacy.css?v=1">
-<script src="https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js"></script>
+<script src="/shared/anime.min.js?v=1"></script>
 <style>
 :root{
   --bg:#f5f0e8; --paper:#fffdf7; --paper-2:#f9f3e6; --paper-3:#f3ecdb;
@@ -214,6 +214,7 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
   });
 })();
 </script>
+  <script src="/shared/ace-shell.js?v=4" defer></script>
 </body>
 </html>`;
 

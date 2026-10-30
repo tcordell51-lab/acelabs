@@ -1,7 +1,7 @@
 /* ace-shell.js : the ONE Ace Labs navigation, on every student page (shell v2).
 
    Add it with one tag (anywhere; defer is fine):
-     <script src="/shared/ace-shell.js?v=3" defer></script>
+     <script src="/shared/ace-shell.js?v=4" defer></script>
 
    Five doors: Today, Learn, Practice, Tests, Review. The Canon is no longer a
    door; it lives inside Learn as Sheets (/learn/#sheets).
@@ -25,10 +25,12 @@
      A tool's own position:fixed top bar is held just under the shell until
      the shell scrolls off, so nothing is ever covered.
    - With the phone tab bar down, a tool's own fixed bottom UI (a coach
-     button, an action bar) is lifted above it, and put back when the bar
-     moves to the top or hides; new work reads --ace-shell-bottom on <html>
-     (the bar's height while it shows at the bottom, unset otherwise):
-     bottom:calc(16px + var(--ace-shell-bottom,0px)).
+     button, an action bar) is lifted above it once, and put back when the
+     bar moves to the top or hides; UI the page shows later is caught by a
+     short watch while the bar is down. New work reads --ace-shell-bottom on
+     <html> (the bar's height while it shows at the bottom, unset otherwise):
+     bottom:calc(16px + var(--ace-shell-bottom,0px)); UI whose own bottom
+     already clears the bar, or that carries data-ace-no-lift, is left alone.
    - Replaces the old navs: hides a legacy <header class="al-top"> that only
      carried the old .al-nav links, and the old floating "Ace Labs" chip.
    - Hidden: inside an iframe (engine modals, the portal embed), on ?embed=...
@@ -39,13 +41,15 @@
    window.AceShell: { version, doors, door (the current door id, a string),
      current, doorFor(path), doorEl(id) (the element a card flies to),
      position(), due(), setDue(n), refreshDue(), relift() }.
-   VERSION is the shell generation and the ?v= of its stylesheet; the script's
-   own ?v= on the pages moves with every change to this file.
+   VERSION is the shell generation and the ?v= of its stylesheet: every change
+   to ace-shell.css moves it (tests/shell/ace-shell.test.js pins the CSS to its
+   VERSION, since no page names that URL). The script's own ?v= on the pages
+   moves with every change to this file.
    Plain ES5, no network beyond its own stylesheet and the two shell fonts. */
 (function () {
   'use strict';
   if (window.AceShell) return;
-  var VERSION = '2';
+  var VERSION = '3';
   var DUE_KEY = 'acelabs.v1.dueToday';
   var LAST_KEY = 'al.lastDoor';
   var DOORS = [
@@ -188,14 +192,14 @@
       var review = d.id === 'review';
       return '<li><a class="door" data-id="' + d.id + '" data-door="' + d.id + '" href="' + esc(withStudent(d.href)) + '"' + cur + '>' +
         '<span class="di">' + icon(d.icon) + (review ? '<i class="due" hidden aria-hidden="true"></i>' : '') + '</span>' +
-        '<span class="dl">' + d.label + '</span>' +
-        (review ? '<span class="sr" data-due-sr></span>' : '') + '</a></li>';
+        /* the spoken count sits inside the label, so the name reads "Review, 3 cards back today" */
+        '<span class="dl">' + d.label + (review ? '<span class="sr" data-due-sr></span>' : '') + '</span></a></li>';
     }).join('');
     var html =
       '<link rel="stylesheet" href="/shared/ace-shell.css?v=' + VERSION + '">' +
       '<div class="bar"><div class="in">' +
-      '<a class="brand" href="' + esc(withStudent('/')) + '" aria-label="Ace Labs, Today">' +
-        '<img class="lockup" src="/shared/brand/ace-dat-lockup-reversed.svg" alt="" width="113" height="24" decoding="async">' +
+      '<a class="brand" href="' + esc(withStudent('/')) + '" aria-label="ACE DAT Labs, Today">' +
+        '<img class="lockup" src="/shared/brand/ace-dat-lockup-reversed-v1.svg" alt="" width="113" height="24" decoding="async">' +
         '<span class="labs">Labs</span></a>' +
       '<nav aria-label="Ace Labs"><div class="track"><ul class="doors">' + links + '</ul>' +
         '<span class="ring" aria-hidden="true"></span><span class="bead" aria-hidden="true"></span></div></nav>' +
@@ -208,9 +212,12 @@
   var dueN = 0;
   function setDue(n) {
     dueN = Math.max(0, Math.floor(+n || 0));
-    var dot = q('.door[data-id="review"] .due'), say = q('[data-due-sr]');
+    var dot = q('.door[data-id="review"] .due'), say = q('[data-due-sr]'), link = q('.door[data-id="review"]');
+    var words = dueN ? ', ' + dueN + (dueN === 1 ? ' card' : ' cards') + ' back today' : '';
     if (dot) dot.hidden = !dueN;
-    if (say) say.textContent = dueN ? ', ' + dueN + (dueN === 1 ? ' card' : ' cards') + ' back today' : '';
+    if (say) say.textContent = words;
+    /* the spoken name, exactly "Review, 3 cards back today" (an absolutely placed span would add a space) */
+    if (link) { if (dueN) link.setAttribute('aria-label', 'Review' + words); else link.removeAttribute('aria-label'); }
     if (host) host.setAttribute('data-due', String(dueN));
     return dueN;
   }
@@ -286,33 +293,53 @@
 
   /* A tool's own fixed bottom UI under the phone tab bar: lift it by the bar's
      height (its own offset kept) while the bar shows at the bottom, and put it
-     back otherwise. Found at load and on resize, like the top bars: a small
-     fixed element (under half the screen tall, so never a full-screen
-     overlay) whose lower edge reaches into the bar. UI a page shows later
-     reads --ace-shell-bottom instead (the page audit flags any it misses). */
+     back otherwise. A small fixed element (under half the screen tall, so
+     never a full-screen overlay) whose own box reaches into the bar. Its own
+     box is the untransformed one: the bottom offset the browser resolves for
+     it, not getBoundingClientRect, so a toast waiting 16 px low (opacity 0,
+     translated) is never mistaken for UI under the bar. Left alone: UI whose
+     own bottom already clears the bar (it reads --ace-shell-bottom or the
+     kit's --tabbar-h), anything marked data-ace-no-lift, anything parked
+     below the screen until it is shown, and anything already lifted, so a
+     rescan (rotation, a timed section ending, relift(), the watch below)
+     never lifts twice. Found at load, on a position change and
+     when a timed section ends; while the bar is down, a throttled watch on
+     the page (class, style and hidden changes, added nodes) catches UI shown
+     later, such as a coach bar that slides in. */
+  var BAR_H = 64;
   var lifted = [];
   function barTop() {
     var t = host && host.getBoundingClientRect ? host.getBoundingClientRect().top : 0;
-    return t > 0 ? t : window.innerHeight - 64;
+    return t > 0 ? t : window.innerHeight - BAR_H;
   }
-  function findBottomUI() {
-    drop();
-    if (!host || !wantsBottom() || position() !== 'bottom' || host.hidden) return;
+  function liftable() { return !!host && wantsBottom() && position() === 'bottom' && !host.hidden; }
+  function scanBottomUI() {
+    if (!liftable()) { watch(false); return; }
     var vh = window.innerHeight, top = barTop();
     var cands = document.querySelectorAll('body > *, body > * > *, body > * > * > *');
     for (var i = 0; i < cands.length && i < 1500; i++) {
       var el = cands[i];
+      if (el.hasAttribute('data-ace-lifted') || el.hasAttribute('data-ace-no-lift')) continue;
       var cs = getComputedStyle(el);
       if (cs.position !== 'fixed' || cs.display === 'none' || cs.visibility === 'hidden') continue;
       var r = el.getBoundingClientRect();
-      if (!r.width || !r.height || r.height > vh * 0.5 || r.bottom <= top + 1 || r.top >= vh) continue;
-      var off = parseFloat(cs.bottom);
+      if (!r.width || !r.height || r.height > vh * 0.5) continue;
+      /* r.top >= vh: parked below the screen until shown (a coach bar that slides
+         in); the watch lifts it once it is in view */
+      var off = parseFloat(cs.bottom), lower = isNaN(off) ? r.bottom : vh - off;
+      if (lower <= top + 1 || r.top >= vh) continue;
       if (isNaN(off)) off = Math.max(0, vh - r.bottom);
       lifted.push({ el: el, top: el.style.top, bottom: el.style.bottom });
       el.style.top = 'auto';
       el.style.bottom = 'calc(' + off + 'px + 64px + env(safe-area-inset-bottom, 0px))';
       el.setAttribute('data-ace-lifted', '');
     }
+    watch(true);
+  }
+  /* a fresh start: put everything back, then lift what sits under the bar now */
+  function findBottomUI() {
+    drop();
+    scanBottomUI();
   }
   function drop() {
     for (var i = 0; i < lifted.length; i++) {
@@ -322,6 +349,29 @@
       x.el.removeAttribute('data-ace-lifted');
     }
     lifted = [];
+  }
+  /* the watch: only while the bar is down (no cost on top-bar pages), at most
+     one rescan every 300 ms, and drawings (SVG) that animate are ignored */
+  var watcher = null, watchT = null;
+  function watch(on) {
+    if (!on) {
+      if (watcher) { watcher.disconnect(); watcher = null; }
+      if (watchT) { clearTimeout(watchT); watchT = null; }
+      return;
+    }
+    if (watcher || !window.MutationObserver || !document.body) return;
+    watcher = new MutationObserver(function (recs) {
+      if (watchT) return;
+      for (var i = 0; i < recs.length; i++) {
+        var t = recs[i].target;
+        if (!t || t.namespaceURI === 'http://www.w3.org/2000/svg') continue;
+        /* the shell's own writes: a held top bar, a lifted element */
+        if (recs[i].attributeName === 'style' && (held.indexOf(t) >= 0 || (t.hasAttribute && t.hasAttribute('data-ace-lifted')))) continue;
+        watchT = setTimeout(function () { watchT = null; scanBottomUI(); }, 300);
+        return;
+      }
+    });
+    watcher.observe(document.body, { subtree: true, childList: true, attributes: true, attributeFilter: ['class', 'style', 'hidden'] });
   }
 
   function syncPos() {
@@ -343,7 +393,7 @@
 
     function syncTimed() {
       var t = timedActive();
-      if (host.hidden !== t) { host.hidden = t; hold(); if (t) drop(); else findBottomUI(); }
+      if (host.hidden !== t) { host.hidden = t; hold(); if (t) { drop(); watch(false); } else findBottomUI(); }
       root.classList.toggle('ace-shell-shown', !t);
     }
     syncTimed();
@@ -368,7 +418,8 @@
     if (css && !css.sheet) { css.addEventListener('load', soon); css.addEventListener('error', soon); setTimeout(place, 1500); }
     else soon();
     api.relayout = function () { layout(null); };
-    api.relift = findBottomUI;
+    /* UI shown later: lift what is new under the bar (never twice) */
+    api.relift = scanBottomUI;
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { if (placed) layout(null); });
     if (window.MutationObserver) {
       new MutationObserver(function () { syncPos(); hold(); requestAnimationFrame(function () { layout(null); }); })

@@ -19,9 +19,12 @@
 //   word      wrong, wrongly, incorrect, incorrectly, fail, fails, failed, failing
 //             (say Confirmed / Needs review, or name the trap)
 //   streak    streaks
-//   points    points or XP as a reward ("+10 points", "earn points", "You got 3 points", "5 points!", "XP");
-//             geometry and science keep theirs ("data points", "have 2 points in common")
-//   score     leaderboards, best / high / top scores, personal bests, records
+//   points    points, XP or levels as a reward ("+10 points", "earn points", "You got 3 points", "You got three
+//             points on Bio", "5 points!", "XP", "Level up"); geometry, science and QR word problems keep
+//             theirs ("data points", "have 2 points in common", "If you have 3 points, how many triangles",
+//             "Team A has 12 points", "A player gets 3 points for each win")
+//   score     leaderboards, best / high / top scores, personal bests, records, a percentage as your grade
+//             ("You scored 80%"; "40% of the bank" and "you got 20% off" are not grades)
 //   badge     badges
 //   countdown "N days left", "days to go", "days until your test", "N min left"
 //   confidence a confidence rating ("How sure are you?", "confidence level"): calls are one tap, and
@@ -34,7 +37,10 @@
 // sees or hears, script string literals (console and Error messages, selector and storage-key
 // arguments skipped), CSS content strings and JSON values. Entities (&mdash;) and escapes
 // (—) count as the glyph they draw. For the word rules a script string that is one
-// lower-case token ('wrong', 'is-failed') or a CSS declaration is code, not copy.
+// lower-case token ('wrong', 'is-failed') or a CSS declaration is code, not copy. A string the
+// lexer places as code (a selector, a storage key, or a search needle: the first argument of
+// indexOf, includes, split, replace and the like) is skipped by every rule: a script that looks
+// for a dash in order to remove it shows the student none.
 // A line that carries the marker copy-gate-ok is skipped (for code the lexer cannot tell
 // from copy; never for words a student reads).
 // Dependency-free, about 3 s.
@@ -54,11 +60,26 @@ export function charRule(c) {
   if ((c >= 0x1f000 && c <= 0x1faff) || (c >= 0x2600 && c <= 0x27bf) || (c >= 0x2b00 && c <= 0x2bff) || (c >= 0x231a && c <= 0x23ff) || c === 0xfe0f || c === 0x200d || c === 0x2b50) return 'emoji';
   return 'non-ascii';
 }
+const NUM = String.raw`(?:\d+|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|fifteen|twenty|thirty|forty|fifty|a\s+hundred)`;
+const DIGIT_WORD = '(?:zero|oh|one|two|three|four|five|six|seven|eight|nine)';
 export const WORD_RULES = [
   ['word', /\b(?:wrong(?:ly)?|incorrect(?:ly)?|fail(?:s|ed|ing)?)\b/gi],
   ['streak', /\b(?<!primitive\s)streaks?\b/gi],
-  ['points', /\b(?:you\s+)?(?:got|get|gets|getting|have|has|had|won)\s+\d+\s+points?\b(?!\s+(?:in\s+common|of|on|at|from|where|that|which|in\s+the\s+plane))|\b\d+\s+points?\s*!|\+\s?\d+\s*(?:pts?|points?)\b|\b\d+\s*pts\b|\b(?:earn(?:ed|s|ing)?|scored?|scoring|win|wins|bonus|gain(?:ed|s)?|collect(?:ed|s)?)\s+(?:\d+\s+|some\s+|more\s+|extra\s+|bonus\s+)?points?\b|\bpoints?\s+(?:earned|scored|to\s+spend)\b|\b\d+\s*XP\b|\bXP\s+(?:points?|bar|level|earned|total|boost)\b|\b(?:earn|gain|get)(?:ed|s)?\s+XP\b/gi],
-  ['score', /\bleader\s?boards?\b|\b(?:best|high|top)[\s-]scores?\b|\bpersonal\s+(?:best|record)s?\b/gi],
+  ['points', new RegExp([
+    // second person, a reward: "You got 3 points", "you have 120 points", "You got 2 points on Bio", "You got three points";
+    // a hypothetical or a figure is not ("If you have 3 points, how many triangles", "you have 5 points, no three
+    // collinear", "you have two point three grams")
+    String.raw`(?<!\b(?:if|suppose|when|once|assume|given|say)\s+)\byou(?:'ve|\s+have)?\s+(?:got|get|getting|have|had|now\s+have|won|earned|scored)\s+(?:${NUM}|a\s+few|some)\s+(?:more\s+|bonus\s+|extra\s+)?points?\b` +
+      String.raw`(?!\s*,)(?!\s+(?:${DIGIT_WORD}\b|in\s+(?:common|a\s+plane|the\s+plane|space)|of\s+\w|on\s+(?:the|a|an|each|this|that|it|its)\s+(?:line|circle|graph|plane|grid|curve|axis|x-axis|y-axis|number\s+line|map|chart)|no\s+three|where|that|which|such|so\s+that))`,
+    String.raw`\b${NUM}\s+points?\s*!`,
+    String.raw`\+\s?\d+\s*(?:pts?|points?)\b|\b\d+\s*pts\b`,
+    String.raw`\b(?:earn(?:ed|s|ing)?|scored?|scoring|win|wins|bonus|gain(?:ed|s)?|collect(?:ed|s)?)\s+(?:\d+\s+|some\s+|more\s+|extra\s+|bonus\s+)?points?\b|\bpoints?\s+(?:earned|scored|to\s+spend)\b`,
+    String.raw`(?<!-)\bwon\s+${NUM}\s+points?\b`,
+    String.raw`\b\d+\s*XP\b|\bXP\s+(?:points?|bar|level|earned|total|boost)\b|\b(?:earn|gain|get)(?:ed|s)?\s+XP\b`,
+    // levels as a reward ("Level up to unlock the next night"); "one level up to n = 3" and "energy levels" are science
+    String.raw`\blevel(?:ed|led|ing)?[\s-]up\b(?!\s+to\s+n\b)`,
+  ].join('|'), 'gi')],
+  ['score', /\bleader\s?boards?\b|\b(?:best|high|top)[\s-]scores?\b|\bpersonal\s+(?:best|record)s?\b|\byou(?:'ve)?\s+(?:got|get|scored?|earned|hit|reached)\s+(?:a\s+|an\s+)?\d+(?:\.\d+)?\s?(?:%|percent\b)(?!\s*(?:of|off|discount|more|less|interest|raise|increase|decrease)\b)/gi],
   ['badge', /\b(?:earn|earned|earns|earning|unlock|unlocked|unlocks|collect|collected|win|won|new)\s+(?:a\s+|the\s+|your\s+|\d+\s+|new\s+)?badges?\b|\bbadges?\s+(?:earned|unlocked|collected|won)\b|\bbadge\s+(?:count|wall|collection)\b/gi],
   ['countdown', /\b(?:days?|weeks?)\s+(?:left|to\s+go|remaining)\b|\bdays?\s+until\s+(?:your|the)\s+(?:test|exam|dat)\b|\b\d+\s*(?:min|mins)\s+left\b/gi],
   ['confidence', /\bconfiden(?:ce|t)\s+(?:rating|level|scale|check|slider)s?\b|\bhow\s+(?:confident|sure)\s+(?:are|were)\s+you\b|\brate\s+(?:your|how)\s+(?:confiden|sure)\w*/gi],
@@ -80,6 +101,9 @@ export function scan(rel, src, { rules = RULES } = {}) {
   const add = (rule, seg, i, len, what) => { const at = seg.offset + i; const ln = line(at); if (okLines.has(ln)) return; hits.push({ rule, line: ln, what, context: ctx(seg.text, i, len) }); };
   for (const seg of readingSegments(rel, src)) {
     const t = seg.text;
+    // a string the lexer places as code (a selector, a key, a needle such as indexOf('\u2014')) is never
+    // shown, so neither the character rules nor the word rules apply to it
+    if (seg.code) continue;
     for (let i = 0; i < t.length; i++) {
       const c = t.codePointAt(i); if (c > 0xffff) i++;
       if (isPlain(c)) continue;

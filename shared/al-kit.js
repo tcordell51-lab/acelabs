@@ -197,12 +197,20 @@
      Before a process runs, bring its stage into view; after, keep the stage
      and what answered it (opts.to) in one view when they fit, else show
      the end (opts.prefer = 'end') or the start. Scrolls only when
-     something is not already visible above the tab bar. Never moves focus. */
+     something is not already visible above the tab bar, and above a toast
+     that is up (so a toast never sits on the row the camera just showed).
+     Never moves focus. */
+  function toastTop(vh) {
+    var t = document.getElementById('al-toast');
+    if (!t || !t.classList.contains('show') || !t.offsetHeight) return vh;
+    var b = parseFloat(getComputedStyle(t).bottom);  /* its own box, not the one sliding in */
+    return isNaN(b) ? vh : vh - b - t.offsetHeight;
+  }
   function follow(el, opts) {
     opts = opts || {};
     if (!el || !el.getBoundingClientRect) return Promise.resolve();
     var r = el.getBoundingClientRect(), vh = window.innerHeight || document.documentElement.clientHeight;
-    var bar = barHeight(), gap = opts.top != null ? opts.top : 12, floor = vh - bar - 8, y;
+    var bar = barHeight(), gap = opts.top != null ? opts.top : 12, floor = Math.min(vh - bar, toastTop(vh)) - 8, y;
     if (opts.to && opts.to.getBoundingClientRect) {
       var rb = opts.to.getBoundingClientRect();
       if (r.top >= gap && rb.bottom <= floor) return Promise.resolve();
