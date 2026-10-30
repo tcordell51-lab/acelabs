@@ -46,11 +46,17 @@ AceDAT-AceLabs/
 ├── scope.html                 # Scope & evidence
 ├── unified-mock.html          # Legacy OChem-only prototype (301-redirected to Prometric runner)
 ├── shared/
-│   ├── al-tokens.css          # Canonical design tokens (Bio + OChem adopt; QR + GC pending)
-│   ├── al-motion.css          # Reduced-motion stylesheet
-│   ├── ace-labs-shell.css     # Home brand vars + dashboard styles
-│   ├── ace-shell.js           # The one Ace Labs navigation (six doors), on every student page
-│   ├── ace-progress.js        # Cross-tool progress: miss adapters, Review ladder, today()
+│   ├── al-tokens.css          # Design tokens v2: --al-* (never themed), --s-* paper roles (light/dark), --b-* bench, mint brand accent, type, motion
+│   ├── al-fonts.css           # Self-hosted @font-face: Sora (display), DM Sans (body), JetBrains Mono (labels); every page loads it (no font host, the CSP allows none)
+│   ├── al-fonts-legacy.css    # Old family names answered from the same files: Playfair Display and Newsreader to Sora (italic to DM Sans italic), Hanken Grotesk to its own file
+│   ├── fonts/                 # Versioned latin woff2 files (name-vN.woff2) + OFL license texts
+│   ├── brand/                 # ACEDAT logo: lockup, reversed lockup, AD mark, reversed mark, app icon
+│   ├── al-motion.css          # Motion tokens + reduced motion (mirrors al-tokens.css)
+│   ├── ace-labs-shell.css     # Legacy page look on tokens v2 (load after al-tokens.css)
+│   ├── ace-shell.js/.css      # Shell v2: the one Ace Labs nav (five doors, ACE DAT lockup, Review dot), on every student page
+│   ├── ace-progress.js        # Cross-tool progress: miss adapters, Review ladder, today(), todayPlan(), play cards
+│   ├── ace-coach-lines.js     # The coach line library: ~40 drafts in Thomas's voice, approved:false until he signs off
+│   ├── ace-index.js, ace-route.js  # Generated name index (build-ace-index.mjs) and the concept router
 │   ├── scope.js               # Canonical ACE_SCOPE data registry
 │   ├── dat-mock-tests.js      # Prometric runner bank
 │   ├── ochem-bank.js          # OChem bank for legacy unified-mock
@@ -80,7 +86,7 @@ AceDAT-AceLabs/
 
 ## Cross-tool localStorage aggregation
 
-`shared/ace-progress.js` reads each engine's namespace through one miss adapter per tool and rolls it up to the home (today()), Review and Performance pages. It never writes back into engine state; its only own keys are `ace.v1.*`.
+`shared/ace-progress.js` reads each engine's namespace through one miss adapter per tool and rolls it up to the home (today(), todayPlan()), Review and Performance pages. It never writes back into engine state; its own keys are `ace.v1.*`, `acelabs.v1.playCards` (Call it first cards from every section but Bio), `acelabs.v1.settings` (daily minutes, shakiest sections) and `acelabs.v1.dueToday` (the cache the shell's Review dot reads; written whenever misses() runs).
 
 | Engine | localStorage prefix | What's read |
 |---|---|---|

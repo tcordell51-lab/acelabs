@@ -1,5 +1,8 @@
 /* ace-route.js : one place that answers "where do I fix this concept?"
    Needs shared/ace-index.js loaded first (window.AceIndex).
+   v2 adds the spec 1.4 names: COURSE_NAMES ("Bio, Retold"), courseName(sec),
+   SHEETS (the Canon as Sheets inside Learn) and sourceName(miss) ("Sciences + QR
+   test 1", "Repair a miss", "Quick rounds"). links() is unchanged.
 
      AceRoute.links({ section: 'qr', concept: 'Percent change', skill: 'pct-chg', topic: '...' })
        -> { sheet: url|null, learn: url, drill: url, night: n|null, sheetTitle, nightTitle }
@@ -21,6 +24,12 @@
   var PAT_TRAINER = { keyholes: 'keyholes', aperture: 'keyholes', tfe: 'tfe', 'top-front-end': 'tfe', views: 'tfe', angles: 'angles', angle: 'angles', holepunch: 'holepunch', 'hole punching': 'holepunch', hole: 'holepunch', cubes: 'cubes', cube: 'cubes', patternfold: 'patternfold', 'pattern folding': 'patternfold', folding: 'patternfold' };
   var SECTION_NAMES = { bio: 'Biology', gchem: 'General Chemistry', ochem: 'Organic Chemistry', qr: 'Quantitative Reasoning', pat: 'Perceptual Ability', rc: 'Reading Comprehension' };
   var SECTION_SHORT = { bio: 'Bio', gchem: 'GChem', ochem: 'OChem', qr: 'QR', pat: 'PAT', rc: 'RC' };
+  /* v2, one name per thing (spec 1.4): the courses, Sheets inside Learn, and
+     where a miss came from, as students read it. */
+  var COURSE_NAMES = { bio: 'Bio, Retold', gchem: 'GChem, Retold', ochem: 'OChem, Retold', qr: 'QR, Retold', pat: 'PAT, Retold', rc: 'RC, Retold' };
+  var SHEETS = '/learn/#sheets';
+  var SOURCE_NAMES = { 'practice-test': 'Sciences + QR test', 'full-length': 'Full-length DAT', 'pat-test': 'PAT test', diagnostic: 'The diagnostic', climb: 'The Climb',
+    summit: 'The Summit', 'qr-engine': 'QR skill tree', 'gchem-engine': 'GChem skill tree', 'bio-engine': 'Repair a miss', games: 'Quick rounds', play: 'Call it first' };
 
   /* Any section spelling the tools use -> one code. */
   function section(s) {
@@ -106,8 +115,20 @@
     };
   }
 
+  function courseName(sec) { var k = section(sec); return k ? COURSE_NAMES[k] : ''; }
+  /* "Sciences + QR test 1", "Full-length DAT 2", "Reading section", "Call it first" ... */
+  function sourceName(m) {
+    if (!m) return '';
+    var n = /(\d+)\s*$/.exec(String(m.sourceLabel || ''));
+    if (m.source === 'bio-engine' && (m.entryId || /^Visualizer: /.test(m.origin || ''))) return SOURCE_NAMES.play;
+    if (m.source === 'reading') return /section/i.test(m.sourceLabel || '') ? 'Reading section' : 'RC passages';
+    if ((m.source === 'practice-test' || m.source === 'full-length' || m.source === 'pat-test') && n) return SOURCE_NAMES[m.source] + ' ' + n[1];
+    return SOURCE_NAMES[m.source] || m.sourceLabel || '';
+  }
+
   window.AceRoute = {
     CANON: CANON, SECTION_NAMES: SECTION_NAMES, SECTION_SHORT: SECTION_SHORT,
+    COURSE_NAMES: COURSE_NAMES, SHEETS: SHEETS, SOURCE_NAMES: SOURCE_NAMES, courseName: courseName, sourceName: sourceName,
     section: section, links: links, nightFor: nightFor, nightTitle: nightTitle,
     sheetFor: sheetFor, skillName: skillName, learnUrl: learnUrl, drillUrl: drillUrl, words: words
   };

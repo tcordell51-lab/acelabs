@@ -21,15 +21,25 @@
     "compose:mocks": "node scripts/compose-full-mocks.mjs --verified-only",
     "validate:mocks": "node scripts/compose-full-mocks.mjs --check",
     "test:fullmock": "perl -e 'alarm 300; exec @ARGV' node scripts/test-full-mock.mjs",
-    "test:shell": "node --test tests/shell/ace-progress.test.js",
+    "test:shell": "node --test tests/shell/*.test.js",
+    "test:kit": "node --test tests/kit/*.test.js tests/loop/*.test.js tests/doors/*.test.js tests/player/*.test.js tests/areas/*/*.test.js",
     "test:bio": "node --test tests/bio/*.test.js",
     "build:index": "node scripts/build-ace-index.mjs",
     "check:names": "node scripts/check-no-competitor-names.mjs",
-    "test:gates": "npm run check:names && node scripts/gate-placeholders.mjs && node scripts/gate-dead-links.mjs && node scripts/gate-shared-versions.mjs && node scripts/gate-localstorage-keys.mjs && node scripts/gate-house-glyphs.mjs --baseline scripts/glyph-baseline.json",
+    "gate:contrast": "node scripts/gate-contrast.mjs",
+    "gate:copy": "node scripts/gate-copy.mjs",
+    "copy:baseline": "node scripts/gate-copy.mjs --write-baseline scripts/copy-baseline.json",
+    "gate:clock": "node scripts/gate-clock.mjs",
+    "audit:pages": "node scripts/audit-pages.mjs",
+    "shots": "node scripts/shoot-pages.mjs",
+    "test:gates": "npm run check:names && node scripts/gate-placeholders.mjs && node scripts/gate-dead-links.mjs && node scripts/gate-shared-versions.mjs && node scripts/gate-localstorage-keys.mjs && node scripts/gate-house-glyphs.mjs --baseline scripts/glyph-baseline.json && node scripts/gate-contrast.mjs && node scripts/gate-copy.mjs --baseline scripts/copy-baseline.json && node scripts/gate-clock.mjs",
     "test:banks": "npm run test:bias && npm run validate:bio && npm run validate:bio-stick && npm run validate:scope && node scripts/gate-count-claims.mjs && npm run validate:rc && npm run validate:mocks",
-    "test:unit": "npm run test:qr-formats && npm run test:shell && npm run test:bio",
+    "test:unit": "npm run test:qr-formats && npm run test:shell && npm run test:bio && npm run test:kit",
     "test:all": "npm test && npm run test:pat && npm run test:browser",
     "glyphs:baseline": "node scripts/gate-house-glyphs.mjs --write-baseline scripts/glyph-baseline.json"
+  },
+  "engines": {
+    "node": ">=22"
   },
   "devDependencies": {
     "jsdom": "^29.1.1",
