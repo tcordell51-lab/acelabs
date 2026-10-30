@@ -276,8 +276,12 @@ function normal(s, box) {
   // the asked value
   g += `<line x1="${r1(vx)}" y1="${r1(top - 6)}" x2="${r1(vx)}" y2="${base}" stroke="${C.key}" stroke-width="2.6"/>`;
   g += `<line x1="${r1(mx)}" y1="${r1(top - 6)}" x2="${r1(mx)}" y2="${base}" stroke="${C.blue}" stroke-width="1.4" stroke-dasharray="5 3"/>`;
-  const bx0 = Math.min(vx, mx), bx1 = Math.max(vx, mx), by = top + 26;
-  g += `<path d="M${r1(bx0)},${by + 5} V${by} H${r1(bx1)} V${by + 5}" fill="none" stroke="${C.key}" stroke-width="1.8"/>`;
+  // the gap from the value to the mean: a span low in the shading, under the bell at every
+  // point (a span drawn near the top crossed the curve; B006 re-review), with its size when it fits
+  const bx0 = Math.min(vx, mx), bx1 = Math.max(vx, mx), by = base - 12;
+  g += `<path d="M${r1(bx0)},${by - 5} V${by + 5} M${r1(bx0)},${by} H${r1(bx1)} M${r1(bx1)},${by - 5} V${by + 5}" fill="none" stroke="${C.key}" stroke-width="1.8"/>`;
+  const gap = n2(Math.abs(s.value - s.mean));
+  if (measure(gap, 13, true) + 8 < bx1 - bx0) g += rt((bx0 + bx1) / 2, by - 7, gap, { size: 13, weight: 700, anchor: 'middle', fill: C.key });
   const vlab = tag(vx, top - 10, s.valueLabel || (s.value + ' ' + s.unit), 'key', { size: 12.5, anchor: z < 0 ? 'end' : 'start' });
   const mlab = tag(mx, top - 10, 'mean ' + s.mean, 'info', { size: 12.5, anchor: z < 0 ? 'start' : 'end' });
   g += vlab.svg + mlab.svg;

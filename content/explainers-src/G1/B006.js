@@ -66,7 +66,7 @@ const ENTRIES = [
     ],
     choices: [
       { text: '13', role: 'trap', family: 'operation-flip', trap: 'Added the counts', note: '10 + 3 adds the runners to the places. Each slot multiplies the choices, so the count grows fast.' },
-      { text: '30', role: 'trap', family: 'miscount', trap: 'Runners times places', note: '10 x 3 multiplies the runners by the number of places. Each place draws from its own pool, and the pool shrinks: 10, then 9, then 8.' },
+      { text: '30', role: 'trap', family: 'other-question', trap: 'Runners times places', note: '30 counts the ways to put one runner in one place: 10 x 3. A finish fills all three places from a shrinking pool: 10, then 9, then 8.' },
       { text: '120', role: 'trap', family: 'other-question', trap: 'Ignored the order', note: '120 counts the groups of three with order ignored. Each group lines up 3 x 2 x 1 = 6 ways, and 120 x 6 = 720.' },
       { text: '720', role: 'key', note: 'Three shrinking slots: 10 x 9 x 8.' },
       { text: '1000', role: 'trap', family: 'other-conditions', trap: 'Let runners repeat', note: '10 x 10 x 10 lets one runner take two places. Once a runner places, they leave the pool.' }
@@ -109,7 +109,7 @@ const ENTRIES = [
     ],
     choices: [
       { text: '6', role: 'trap', family: 'other-question', trap: 'Only the shuffles', note: '6 is 3 x 2 x 1, the ways to line up three runners you already picked. It skips choosing which three of the seven.' },
-      { text: '21', role: 'trap', family: 'miscount', trap: 'Runners times places', note: '7 x 3 multiplies the runners by the places. Each place draws from its own shrinking pool: 7, then 6, then 5.' },
+      { text: '21', role: 'trap', family: 'other-question', trap: 'Runners times places', note: '21 counts the ways to give one runner one award: 7 x 3. A finish gives out all three awards from a shrinking pool: 7, then 6, then 5.' },
       { text: '35', role: 'trap', family: 'other-question', trap: 'Ignored the order', note: '35 counts the groups of three when order does not matter. The awards differ, so each group lines up 6 ways.' },
       { text: '210', role: 'key', note: 'Three shrinking slots: 7 x 6 x 5.' },
       { text: '343', role: 'trap', family: 'other-conditions', trap: 'Let runners repeat', note: '7 x 7 x 7 lets one runner win two places. A runner who places leaves the pool.' }
@@ -654,13 +654,14 @@ const ENTRIES = [
     answer: { line: 'A round trip is there and back: 23 + 23 = 46 km.' },
     steps: [
       'Read the words before the numbers. Round trip means there and back: two legs of 23 km.',
-      'Double it in pieces: 20 x 2 = 40 and 3 x 2 = 6, so 40 + 6 = 46 km.'
+      'Double it in pieces: 20 x 2 = 40 and 3 x 2 = 6, so 40 + 6 = 46 km.',
+      'Check the size: each leg is a little over 20 km, so the round trip is a little over 40 and under 50. 46 fits.'
     ],
     choices: [
       { text: '36', role: 'trap', family: 'miscount', trap: 'Ten light', note: '36 is ten short of 46, a slip in the adding with no rule behind it. 40 + 6 = 46.' },
       { text: '40', role: 'trap', family: 'one-step-short', trap: 'Doubled the tens only', note: '40 doubles the 20 and leaves out 3 x 2. Add the 6: 46.' },
       { text: '46', role: 'key', note: 'Two legs of 23.' },
-      { text: '56', role: 'trap', family: 'miscount', trap: 'Ten over', note: '56 is ten past 46, a carrying slip. 23 + 23 needs no carry at all.' },
+      { text: '56', role: 'trap', family: 'miscount', trap: 'Ten over', note: '56 is ten past 46, a phantom carry. 23 + 23 needs no carry at all.' },
       { text: '146', role: 'trap', family: 'miscount', trap: 'Extra digit', note: '146 adds a hundred that is not there. Two legs of 23 km stay under 50.' }
     ],
     lockIt: 'Round trip means there and back: double the one-way distance.',
@@ -852,10 +853,10 @@ const ENTRIES = [
         { title: 'Hours: the gap shrinks 80 miles each hour', pieces: [{ n: 1, kind: 'part', label: '80 mi' }, { n: 1, kind: 'part', label: '80 mi' }, { n: 0.5, kind: 'add', label: '40 mi' }], total: 2.5 },
         { title: 'Hours until they meet', pieces: [{ n: 2.5, kind: 'key', key: true, label: 'meet at 2.5 hours', choice: '2.5 hr' }] }
       ],
-      ghosts: [{ at: 2, row: 1, label: '2: needs 100 mph', choice: '2 hr' }, { at: 4, row: 1, label: '4: fast car alone', choice: '4 hr' }, { at: 5, row: 1, label: '5: speeds averaged', choice: '5 hr' }, { at: 6.67, row: 1, label: '6.67: slow car alone', choice: '6.67 hr' }],
+      ghosts: [{ at: 2, row: 0, label: '2: needs 100 mph', choice: '2 hr' }, { at: 4, row: 1, label: '4: fast car alone', choice: '4 hr' }, { at: 5, row: 1, label: '5: speeds averaged', choice: '5 hr' }, { at: 6.67, row: 1, label: '6.67: slow car alone', choice: '6.67 hr' }],
       check: { vars: { d: 200, a: 50, b: 30 }, key: 'd/(a+b)', routes: [{ choice: '5 hr', expr: 'd/((a+b)/2)' }, { choice: '6.67 hr', expr: 'd/b' }, { choice: '4 hr', expr: 'd/a' }], noRoute: [{ choice: '2 hr' }] },
       reuse: 'qr.partwhole style bars (tools/explain/visuals/qr-work.js, batch B005), drawn in hours',
-      alt: 'A bar in hours: the gap closes 80 miles in hour 1, 80 in hour 2 and the last 40 in half an hour. The outlined bar below ends at 2.5 hours, where the cars meet; dashed marks at 2, 4, 5 and 6.67 hours show where each trap would put the meeting.',
+      alt: 'A bar in hours: the gap closes 80 miles in hour 1, 80 in hour 2 and the last 40 in half an hour; a dashed mark at 2 hours leaves 40 miles open. The outlined bar below ends at 2.5 hours, where the cars meet; dashed marks at 4, 5 and 6.67 hours show the other traps.',
       caption: 'Each hour both cars close the gap together. Two full hours and a half use up all 200 miles.'
     },
     demoPick: '5 hr',
@@ -941,7 +942,7 @@ const ENTRIES = [
       { text: '0.45', role: 'trap', family: 'one-step-short', trap: 'Stopped at the rate', note: '0.45 is the combined rate, 9/20 of the stack per hour. Flip it to get the hours: 20/9.' },
       { text: '2.22', role: 'key', note: '20 forms at 9 an hour.' },
       { text: '4', role: 'trap', family: 'other-conditions', trap: 'One worker alone', note: '4 hours is the faster student working alone. A helper has to shorten the job.' },
-      { text: '4.5', role: 'trap', family: 'assumed-equal', trap: 'Averaged the times', note: '4.5 averages the two times. Two people working together finish faster than either one alone.' },
+      { text: '4.5', role: 'trap', family: 'operation-flip', trap: 'Averaged the times', note: '4.5 averages the two times. Two people working together finish faster than either one alone.' },
       { text: '9', role: 'trap', family: 'operation-flip', trap: 'Added the times', note: '5 + 4 = 9 adds the times, as if each entered a whole stack in turn. Rates add; times do not.' }
     ],
     lockIt: 'Working together: add the rates, then flip. Together always beats the faster worker alone.',
@@ -952,7 +953,7 @@ const ENTRIES = [
       type: 'qr.partwhole', style: 'bars',
       focus: 'together',
       rows: [
-        { title: 'Hours: 20 forms, 9 entered each hour', pieces: [{ n: 1, kind: 'part', label: '9 forms' }, { n: 1, kind: 'part', label: '9 forms' }, { n: 0.2222222, kind: 'add', label: '2' }] },
+        { title: 'Hours: 20 forms, 9 entered each hour', pieces: [{ n: 1, kind: 'part', label: '9 forms' }, { n: 1, kind: 'part', label: '9 forms' }, { n: 0.2222222, kind: 'add', label: '2 forms' }] },
         { title: 'Hours to clear the stack together', pieces: [{ n: 2.2222222, kind: 'key', key: true, label: '2.22 hours', choice: '2.22' }] }
       ],
       ghosts: [{ at: 4, row: 1, label: 'faster alone: 4', choice: '4' }, { at: 4.5, row: 1, label: 'averaged: 4.5', choice: '4.5' }],
@@ -974,8 +975,17 @@ const ENTRIES = [
 // operation" (scripts/explainers/families.js and explainer-standard.md 3.1).
 // "Added instead of subtracted" was untrue beside the labels below.
 const RENAME = (label) => 'Review fix: the operation-flip tag beside "' + label + '" now reads "Flipped the operation" (families.js and standard 3.1; was "Added instead of subtracted", untrue for this route). Card text unchanged';
+// Round 2 (the re-review): one block, men1234's step count, and six optional
+// notes; each entry below that starts "Re-review" is from that round.
+const RUNNERS = (n, r, ways) => 'Re-review suggestion taken: the ' + (n * r) + ' card ("Runners times places") is family other-question (was miscount, which is defined as a count with no single rule, while the note names one: ' + n + ' x ' + r + '). The note now says what ' + (n * r) + ' does count, ' + ways + ', ' + n + ' x ' + r + ', which is true; label and check route unchanged';
 const CHANGES = {
-  'fm:qr-a:cou1579': [RENAME('Added the counts')],
+  'fm:qr-a:cou1579': [RENAME('Added the counts'), RUNNERS(10, 3, 'the ways to put one runner in one place')],
+  'fm:generated:qr-perm-vs-comb#y9j3s6': [RUNNERS(7, 3, 'the ways to give one runner one award')],
+  'fm:qr-a:zsc1638': ['Re-review suggestion taken: the gap bracket on the bell (tools/explain/visuals/qr-plot.js, normal()) sits low in the shading, under the curve at every point, and is labeled with the gap, 23 (it was unlabeled and drawn near the top, where it crossed the bell like a stray line)'],
+  'fm:qr-a:men1234': [
+    'Re-review fix: a third step checks the size (each leg a little over 20 km, so the round trip is a little over 40 and under 50; 46 fits). It was the only G1 sidecar with fewer than 3 steps',
+    'Re-review suggestion taken: the 56 note says "a phantom carry" (was "a carrying slip", which the next sentence contradicted: 23 + 23 needs no carry)'
+  ],
   'fm:qr-a:pc3c': [RENAME('Subtracted the rates')],
   'fm:generated:qr-unit-rate-conversion#ejj15': [
     RENAME('Multiplied by 3.6'),
@@ -994,11 +1004,14 @@ const CHANGES = {
   ],
   'fm:qr-a:rt3': [
     RENAME('Averaged the speeds'),
-    'Review suggestion taken: the half-hour piece in the top bar reads "40 mi" like the two "80 mi" pieces (was "40")'
+    'Review suggestion taken: the half-hour piece in the top bar reads "40 mi" like the two "80 mi" pieces (was "40")',
+    'Re-review suggestion taken: the 2 hr ghost sits on the top bar, at the end of hour 2 where 40 miles are still open (was on the bottom bar, where the tag layout put the 4 hr tag across the 5 hr leader, so two dashed lines hung from one tag); the 4, 5 and 6.67 ghosts stay on the bottom bar, each leader under its own tag. The alt says so'
   ],
   'fm:qr-a:wor1397': [
     RENAME('Added the times'),
-    'Review fix: the 9 note says adding the times is as if each entered a whole stack in turn (was "as if one waited for the other", which on one shared stack does not give 9 hours)'
+    'Review fix: the 9 note says adding the times is as if each entered a whole stack in turn (was "as if one waited for the other", which on one shared stack does not give 9 hours)',
+    'Re-review suggestion taken: the 4.5 card ("Averaged the times") is family operation-flip (was assumed-equal), like rt3\'s 5 hr card ("Averaged the speeds"): an average used where the rates must add. assumed-equal stays on the weighting traps, mix1417 7.5 and y5q2s1 62.5, which treat unequal amounts as equal',
+    'Re-review suggestion taken: the last piece of the top bar reads "2 forms" (was "2"), like rt3\'s "40 mi"'
   ]
 };
 
