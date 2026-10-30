@@ -905,6 +905,12 @@ emit(DOCS + '/index.json', coachIndex);
   d = patch(d, 'out.bonds = g.edges.map(e => ({ a: e.sourceId, b: e.targetId, order:', 'out.bonds = g.edges.map(e => ({ a: e.sourceId, b: e.targetId, wedge: e.wedge || \'\', order:', 'bond wedges');
   d = patch(d, 'out.atoms = g.vertices.map(v => ({ i: v.id,', 'out.atoms = g.vertices.map(v => ({ i: v.id, stereo: !!v.value.isStereoCenter, drawn: v.value.isDrawn !== false,', 'stereocenters');
   d = patch(d, '  const vb = (node.getAttribute(\'viewBox\') || \'0 0 1 1\').split(/\\s+/).map(Number);\n  out.vb = vb;', '  if (typeof window !== \'undefined\' && window.AceExplainDrawn && out.atoms.length) window.AceExplainDrawn.push({ smi: smiles, from: \'drawSmilesGeom\', atoms: out.atoms, bonds: out.bonds });\n  const vb = (node.getAttribute(\'viewBox\') || \'0 0 1 1\').split(/\\s+/).map(Number);\n  out.vb = vb;', 'drawing record');
+  // an explainer structure can be drawn with explicit hydrogens off (o.explicitH === false), the way the
+  // served page draws stems and choices, so a stereocenter shows the same wedge as the question card;
+  // the default stays on, so the arrow figures and every other drawing are unchanged
+  d = patch(d, '  if (!_gdrawer || _gdrawer._bl !== bl){', '  const eh = o.explicitH !== false;\n  if (!_gdrawer || _gdrawer._bl !== bl || _gdrawer._eh !== eh){', 'explicit H option: cache key');
+  d = patch(d, 'terminalCarbons: false, explicitHydrogens: true,', 'terminalCarbons: false, explicitHydrogens: eh,', 'explicit H option: drawer setting');
+  d = patch(d, '    _gdrawer._bl = bl;\n', '    _gdrawer._bl = bl; _gdrawer._eh = eh;\n', 'explicit H option: cache stamp');
   emit(VENDOR + '/ochem/draw.js', head('tools/ochem/tree/draw.js', 'with a light theme, bond wedges, stereocenters and a drawing record') + d);
   emit(VENDOR + '/ochem/mechdraw.js', head('tools/ochem/tree/mechdraw.js') + rd('tools/ochem/tree/mechdraw.js')); note('tools/ochem/tree/mechdraw.js');
   const ls = rd('tools/gc/lewis-sandbox.html'); note('tools/gc/lewis-sandbox.html');

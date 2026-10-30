@@ -356,9 +356,9 @@ const ENTRIES = [
       'Only C1 has hydrogens, so only one alkene is possible: 3,3-dimethylbut-1-ene. Zaitsev has nothing to choose between.'
     ],
     choices: [
-      { text: 'C=C(C)C(C)C', display: '2,3-dimethylbut-1-ene', role: 'trap', family: 'other-conditions', trap: 'Needs a cation', note: 'This skeleton needs a methyl shift, and a shift needs a carbocation, as in E1 with hot acid. E2 never makes one.' },
+      { text: 'C=C(C)C(C)C', display: '2,3-dimethylbut-1-ene', role: 'trap', family: 'other-conditions', trap: 'Needs a cation', note: 'This skeleton needs a methyl shift, and a shift needs a carbocation, as in E1 with no strong base. E2 never makes one.' },
       { text: 'CC(C)(C)C=C', display: '3,3-dimethylbut-1-ene', role: 'key', note: 'The only beta H is on the methyl, so the C=C forms at the end.' },
-      { text: 'CC(C)=C(C)C', display: '2,3-dimethylbut-2-ene', role: 'trap', family: 'other-conditions', trap: 'Zaitsev through a shift', note: 'The most substituted alkene pulls you because of Zaitsev. Reaching it takes a methyl shift through a cation, which is the E1 product in hot acid.' },
+      { text: 'CC(C)=C(C)C', display: '2,3-dimethylbut-2-ene', role: 'trap', family: 'other-conditions', trap: 'Zaitsev through a shift', note: 'The most substituted alkene pulls you because of Zaitsev. Reaching it takes a methyl shift through a cation, which is the E1 product when no strong base is present.' },
       { text: 'CCOC(C)C(C)(C)C', display: '2-ethoxy-3,3-dimethylbutane (an ether)', role: 'trap', family: 'close-second', trap: 'Ethoxide as nucleophile', note: 'Ethoxide can substitute, but this carbon is secondary and sits next to a tert-butyl group. Crowding plus heat hands it to E2.' },
       { text: 'CC(O)C(C)(C)C', display: '3,3-dimethylbutan-2-ol', role: 'trap', family: 'other-conditions', trap: 'Needs water or hydroxide', note: 'An alcohol needs water or hydroxide as the nucleophile. This flask holds ethoxide in ethanol.' }
     ],
@@ -398,7 +398,7 @@ const ENTRIES = [
       'Water leaves as a methyl shifts over with its bond pair, so no primary cation ever forms. The charge lands on a tertiary carbon, and bromide adds there.'
     ],
     choices: [
-      { text: 'CCC(C)CBr', display: '1-bromo-2-methylbutane', role: 'trap', family: 'half-right', trap: 'Br in the old spot', note: 'The skeleton did rearrange, so half of it holds. But after the shift the charge sits on the tertiary carbon, so that is where Br goes.' },
+      { text: 'CCC(C)CBr', display: '1-bromo-2-methylbutane', role: 'trap', family: 'half-right', trap: 'Shifted, Br on the end', note: 'The skeleton did rearrange, so half of it holds. But after the shift the charge sits on the tertiary carbon, so that is where Br goes.' },
       { text: 'CC(C)=CC', display: '2-methylbut-2-ene', role: 'trap', family: 'close-second', trap: 'E1 from the same cation', note: 'Losing a proton from the same tertiary cation gives this alkene, and some forms. With concentrated HBr, bromide capture wins.' },
       { text: 'CC(C)(C)CCl', display: 'neopentyl chloride', role: 'trap', family: 'other-conditions', trap: 'A chloride from HBr', note: 'A chloride needs HCl, often with ZnCl2. This flask has only HBr, and the skeleton here has not rearranged either.' },
       { text: 'CCC(C)(C)Br', display: '2-bromo-2-methylbutane', role: 'key', note: 'Methyl shift as water leaves, then bromide on the tertiary carbon.' },
@@ -444,7 +444,7 @@ const ENTRIES = [
       { text: 'Neither reacts because NaBH4 cannot reduce conjugated aryl carbonyls', role: 'trap', family: 'neighbor-fact', trap: 'True of the ring only', note: 'NaBH4 does leave the benzene ring and isolated C=C bonds alone. The C=O next to the ring is still a target, and it gets reduced.' },
       { text: 'Acetophenone is reduced faster because the extra methyl group donates electron density that makes the carbonyl a better hydride acceptor', role: 'trap', family: 'half-right', trap: 'Donation, read as help', note: 'The methyl does donate electron density. But donation makes the carbonyl carbon less positive, a worse hydride acceptor, not a better one.' }
     ],
-    lockIt: 'Aldehydes beat ketones to every nucleophile: one carbon group means more room and more plus charge.',
+    lockIt: 'Aldehydes beat ketones to a nucleophile: one carbon group means more room and more plus charge.',
     hook: null,
     playWith: { label: 'Tree, aldehydes and ketones: switch the substrate between propanal and 2-butanone and run NaBH4 on each', href: TREE, state: { module: 't4-carbonyl', substrate: 'aldehyde', reagent: 'ald_nabh4' }, expect: [], routing: TREE_ROUTE('Aldehydes and ketones', 'the substrate switch and the NaBH4 chip are taps inside it; it shows the product, not the rate') },
     video: VID('oc.carbonyl.hydride-reduction', 'Hydride reductions: who goes first'),
@@ -453,7 +453,7 @@ const ENTRIES = [
       alt: 'Benzaldehyde and acetophenone, one above the other. The aldehyde carbonyl carbon, outlined as the answer, carries an H and is open and more positive; the ketone carbonyl carbon carries a methyl that crowds it and pushes electrons in.',
       caption: 'Look at what sits beside each C=O carbon: an H on top, a methyl below.',
       panels: [
-        { type: 'chem.molecule', smi: 'O=Cc1ccccc1', label: 'benzaldehyde: reduced faster', marks: [{ atom: 1, text: 'H beside it: open, more positive', key: true }], reuse: 'SmilesDrawer through the light copy of tools/ochem/tree/draw.js' },
+        { type: 'chem.molecule', smi: 'O=C([H])c1ccccc1', label: 'benzaldehyde: reduced faster', marks: [{ atom: 1, text: 'H beside it: open, more positive', key: true }], reuse: 'SmilesDrawer through the light copy of tools/ochem/tree/draw.js' },
         { type: 'chem.molecule', smi: 'CC(=O)c1ccccc1', label: 'acetophenone: reduced slower', marks: [{ atom: 1, text: 'CH3 beside it: crowded, less positive' }], reuse: 'SmilesDrawer through the light copy of tools/ochem/tree/draw.js' }
       ]
     },
@@ -497,7 +497,7 @@ const ENTRIES = [
       products: [{ smi: 'CC(=O)CCCO', label: '5-hydroxypentan-2-one', marks: [{ atom: 5, text: 'now CH2OH', key: true }] }],
       reuse: 'SmilesDrawer through the light copy of tools/ochem/tree/draw.js',
       alt: '4-Oxopentanal with two carbonyls marked: the aldehyde carbon, outlined, reacts first; the ketone carbon is slower. With one equivalent of NaBH4 at 0 C it gives 5-hydroxypentan-2-one, the aldehyde now CH2OH and the ketone untouched.',
-      caption: 'Two targets, one hydride each. The open, more positive aldehyde carbon gets there first.'
+      caption: 'Two carbonyls, one cold equivalent of NaBH4. The open, more positive aldehyde carbon takes the hydride first.'
     },
     demoPick: 'Both are reduced equally; NaBH4 shows no selectivity',
     flags: []
@@ -560,7 +560,7 @@ const ENTRIES = [
     choices: [
       { text: 'CCOC(=O)C1CCCCC1=O', display: 'ethyl 2-oxocyclohexane-1-carboxylate (six-membered ring, no methyl)', role: 'trap', family: 'miscount', trap: 'Methyl folded into the ring', note: 'Same formula as the key, but the methyl carbon was counted into the ring. The chain closes five atoms, and the methyl stays outside.' },
       { text: 'CCOC(=O)C1CCC(C)C1=O', display: 'ethyl 3-methyl-2-oxocyclopentane-1-carboxylate', role: 'key', note: 'The CH2 end attacks, the methyl rides beside the ketone, and an acidic H sits between the two carbonyls.' },
-      { text: 'CCOC(=O)C1CCCC1=O', display: 'ethyl 2-oxocyclopentane-1-carboxylate (no methyl)', role: 'trap', family: 'neighbor-fact', trap: 'Lost the methyl', note: 'This is the product from plain diethyl adipate. Here the 2-methyl group has nowhere to go, so it has to show up in the ring.' },
+      { text: 'CCOC(=O)C1CCCC1=O', display: 'ethyl 2-oxocyclopentane-1-carboxylate (no methyl)', role: 'trap', family: 'neighbor-fact', trap: 'Lost the methyl', note: 'This is the product from plain diethyl adipate. Here the 2-methyl group has nowhere to go, so it has to show up on the ring.' },
       { text: 'CCOC(=O)C1CC(C)CC1=O', display: 'ethyl 4-methyl-2-oxocyclopentane-1-carboxylate', role: 'trap', family: 'neighbor-fact', trap: 'Methyl one carbon over', note: 'This is what a 3-methyl diester would give. Here the methyl sits on an alpha carbon, so it ends up next to a carbonyl, not across the ring.' },
       { text: 'CCOC(=O)C1(C)CCCC1=O', display: 'ethyl 1-methyl-2-oxocyclopentane-1-carboxylate (no H between the carbonyls)', role: 'trap', family: 'close-second', trap: 'Closes, then reopens', note: 'This ring does form. But its carbon between the carbonyls carries the methyl and no H, so ethoxide cannot lock it in, and it reverts.' }
     ],
@@ -688,7 +688,7 @@ const ENTRIES = [
       { text: 'CC1=CC(=O)CCC1', display: '3-methylcyclohex-2-en-1-one', role: 'key', note: 'Six-membered ring, C=C conjugated with the C=O.' },
       { text: 'O=C1CCCCC1', display: 'cyclohexanone', role: 'trap', family: 'half-right', trap: 'Right ring, pieces missing', note: 'The ring size is right. But the methyl from the second ketone is gone, and so is the C=C that dehydration makes.' },
       { text: 'CC1=CCCC(=O)C1', display: '3-methylcyclohex-3-en-1-one (C=C not conjugated)', role: 'trap', family: 'close-second', trap: 'C=C one spot over', note: 'Right ring, right atoms. But the C=C sits out of line with the C=O. Dehydration gives the conjugated enone, which is more stable.' },
-      { text: 'CC1CCCC(=O)C1=O', display: '3-methylcyclohexane-1,2-dione (both C=O kept)', role: 'trap', family: 'other-conditions', trap: 'Kept both carbonyls', note: 'Keeping both C=O groups is a Claisen-type pattern. In an aldol, one C=O is the target and ends up as the new C=C.' }
+      { text: 'CC1CCCC(=O)C1=O', display: '3-methylcyclohexane-1,2-dione (both C=O kept)', role: 'trap', family: 'other-conditions', trap: 'Kept both carbonyls', note: 'Keeping both C=O groups is what an acylation does, and even then they end up 1,3, not side by side. In an aldol, one C=O is the target and becomes the new C=C.' }
     ],
     lockIt: 'Intramolecular aldol: close the five or six ring, then lose water to the conjugated enone.',
     hook: null,
@@ -808,7 +808,7 @@ const ENTRIES = [
       'Lindlar\'s poisoned catalyst adds both H to one face and quits at the alkene. One face means cis.'
     ],
     choices: [
-      { text: 'C/C=C\\CCCCC', display: 'cis-oct-2-ene', role: 'trap', family: 'miscount', trap: 'Ethyl counted as one carbon', note: 'Cis is right, but the C=C sits at C2. That happens if the two carbons from ethyl bromide are counted as one.' },
+      { text: 'C/C=C\\CCCCC', display: 'cis-oct-2-ene', role: 'trap', family: 'miscount', trap: 'C=C one spot over', note: 'Cis and eight carbons are right, but the C=C sits at C2, with one carbon on the short side. Ethyl bromide puts two carbons there, so the C=C sits at C3.' },
       { text: 'CCCCCCCC', display: 'octane', role: 'trap', family: 'one-step-too-far', trap: 'Did not stop', note: 'Octane is what plain H2 with Pd or Pt gives: two additions. Lindlar is poisoned so it stops after one.' },
       { text: 'CCC#CCCCC', display: 'oct-3-yne', role: 'trap', family: 'one-step-short', trap: 'Stopped after step 2', note: 'This is the product of steps 1 and 2. Step 3 has not touched it yet.' },
       { text: 'CC/C=C\\CCCC', display: 'cis-oct-3-ene', role: 'key', note: 'Two carbons added, then one H2 to one face: cis at C3.' },
@@ -903,7 +903,7 @@ const ENTRIES = [
       type: 'chem.molecule',
       smi: 'Nc1ccccc1',
       label: 'aniline, the base anilinium leaves',
-      marks: [{ atom: 0, text: 'lone pair spread into the ring', key: true, labelDir: -90 }],
+      marks: [{ atom: 0, text: 'lone pair spread into the ring', key: true, labelDir: 65 }],
       ladder: { heading: 'Acid strength, strongest first', order: ['anilinium, about 4.6: aniline is the weakest base', 'pyridinium, about 5.2: pair held close in an sp2 orbital', 'methylammonium, about 10.6: pair free, pushed by CH3'], key: 0, mark: 'strongest' },
       reuse: 'SmilesDrawer through the light copy of tools/ochem/tree/draw.js; textbook pKa values',
       alt: 'Aniline with its nitrogen lone pair marked as spread into the benzene ring. Below, a ladder ranks the three acids from strongest: anilinium at about 4.6, outlined, then pyridinium at about 5.2, then methylammonium at about 10.6.',
@@ -990,7 +990,7 @@ const ENTRIES = [
     video: VID('oc.lab.extraction', 'Extraction: charge it to move it'),
     visual: {
       type: 'chem.reaction',
-      reactants: [{ smi: 'Nc1ccccc1', label: 'aniline, in ether', marks: [{ atom: 0, text: 'lone pair takes H+', key: true, labelDir: -90 }] }],
+      reactants: [{ smi: 'Nc1ccccc1', label: 'aniline, in ether', marks: [{ atom: 0, text: 'lone pair takes H+', key: true, labelDir: 65 }] }],
       reagent: 'aqueous HCl',
       products: [{ smi: '[NH3+]c1ccccc1.[Cl-]', label: 'anilinium chloride, now in the water', marks: [{ atom: 0, text: 'charged: water layer', key: true }] }],
       note: 'Ether sits on top of water. The charged salt drops into the water layer; the neutral hydrocarbon stays in the ether.',
@@ -1076,7 +1076,7 @@ const ENTRIES = [
       ladder: { title: 'Carbocation stability', order: ['tertiary', 'secondary: isopropyl, what attacks the ring', 'primary: propyl, shifts first'], key: 1 },
       reuse: 'SmilesDrawer through the light copy of tools/ochem/tree/draw.js',
       alt: '1-Chloropropane with C1 marked where Cl leaves and C2 marked where an H moves from reacts with benzene and AlCl3 to give isopropylbenzene, the ring on the middle carbon. A ladder ranks carbocations: tertiary, then secondary, outlined, then primary, which shifts first.',
-      caption: 'Follow the H from C2 to C1. The charge moves to the middle carbon, and that is where the ring attaches.'
+      caption: 'Read the two marks: an H moves from C2 to C1, so the charge, and the ring, land on the middle carbon.'
     },
     demoPick: 'CCCc1ccccc1',
     flags: [
@@ -1181,7 +1181,7 @@ const ENTRIES = [
     steps: [
       'Name what LiAlH4 does to a primary amide: C(=O)NH2 becomes CH2NH2. The oxygen leaves; the nitrogen stays.',
       'Check the stereocenter. None of its four bonds breaks, so every group keeps its place, wedges and dashes included.',
-      'Check the label. CH2NH2 still outranks phenyl, since N beats C at the first atom, so the priorities hold and the product is S.'
+      'Check the label. CH2NH2 and phenyl tie at the first atom, a C each, so look one atom out: N, H, H against C, C, C. N beats C, so the order holds and it is still S.'
     ],
     choices: [
       { text: 'NC[C@@H](C)c1ccccc1', display: '(S)-2-phenylpropan-1-amine (methyl kept on the wedge)', role: 'key', relation: 'same', note: 'C=O out, nitrogen kept, stereocenter untouched: still S.' },
@@ -1196,9 +1196,9 @@ const ENTRIES = [
     video: VID('oc.acid-derivatives.reduction', 'Hydrides on acid derivatives: who stops where'),
     visual: {
       type: 'chem.reaction',
-      reactants: [{ smi: 'O=C(N)[C@@H](C)c1ccccc1', label: '(S)-2-phenylpropanamide', cip: [{ atom: 3, config: 'S' }], marks: [{ atom: 1, text: 'C=O: becomes CH2', key: true }] }],
+      reactants: [{ smi: 'O=C(N)[C@@H](C)c1ccccc1', label: '(S)-2-phenylpropanamide', explicitH: false, cip: [{ atom: 3, config: 'S' }], marks: [{ atom: 1, text: 'C=O: becomes CH2', key: true }] }],
       reagent: '1. LiAlH4; 2. H2O',
-      products: [{ smi: 'NC[C@@H](C)c1ccccc1', label: '(S)-2-phenylpropan-1-amine: the center is still S', cip: [{ atom: 2, config: 'S' }], marks: [{ atom: 1, text: 'now CH2', key: true }] }],
+      products: [{ smi: 'NC[C@@H](C)c1ccccc1', label: '(S)-2-phenylpropan-1-amine: the center is still S', explicitH: false, cip: [{ atom: 2, config: 'S' }], marks: [{ atom: 1, text: 'now CH2', key: true }] }],
       note: 'No bond to the stereocenter breaks, and CH2NH2 still outranks phenyl, so S stays S.',
       reuse: 'SmilesDrawer through the light copy of tools/ochem/tree/draw.js; the drawn configuration is checked by the render gate and the S labels by RDKit (build)',
       alt: '(S)-2-Phenylpropanamide, its C=O carbon marked to become CH2, reacts with LiAlH4, then water, to give (S)-2-phenylpropan-1-amine, with the new CH2 outlined and the stereocenter drawn the same way, still S.',
@@ -1260,13 +1260,33 @@ const ENTRIES = [
   }
 ];
 
-// What changed from the expert's suggested families and from the batch row (coach record only).
+// What changed from the expert's suggested families and from the batch row, and the fixes from the
+// expert review of B004 (coach record only).
 const CHANGES = {
   'fm:organic:oc-1mc2sbd': ['Visual is chem.reaction (propanal to hemiacetal to acetal); the batch row counted the "Reading the machines" items as chem.spectrum, but this item is a reaction'],
-  'fm:organic:oc-1olhj21': ['Visual is chem.reaction (aniline to anilinium chloride); the batch row counted it as chem.spectrum, and chem.lab has no renderer yet'],
+  'fm:organic:oc-1olhj21': [
+    'Visual is chem.reaction (aniline to anilinium chloride); the batch row counted it as chem.spectrum, and chem.lab has no renderer yet',
+    'Review suggestion taken: the "lone pair takes H+" label sits below and right of the N (labelDir 65; was -90, whose halo clipped the ring corner; 90 clipped the lower corner)'
+  ],
   'fm:originals:ab-13b7fabf1b': ['Visual is chem.reaction with a pKa ladder; the stem shows no structure, so 1-hexyne is drawn as the example terminal alkyne'],
   'fm:organic:oc-1op9odj': ['Visual is chem.molecule with an SN2 ladder instead of the full Gabriel reaction, to keep the phone picture under one screen'],
-  'fm:organic:oc-1o9d4eq': ['Trap labels in the coach\'s words for four other-conditions choices; expert families kept']
+  'fm:organic:oc-1o9d4eq': ['Trap labels in the coach\'s words for four other-conditions choices; expert families kept'],
+  'fm:organic:oc-y8rsnv': [
+    'Review fix: step 3 says CH2NH2 and phenyl tie at the first atom (a C each), and N wins one atom out, N, H, H against C, C, C (was "N beats C at the first atom")',
+    'Review suggestion taken: reactant and product are drawn with explicit hydrogens off, as the served page draws them, so the methyl sits on the wedge as in the stem and the key (was phenyl on a dash with H drawn)'
+  ],
+  'fm:organic:oc-yraq7h': ['Review fix: the "lone pair spread into the ring" label sits below and right of the N (labelDir 65; was -90, whose halo erased the top of the ring; 90 clipped the lower corner), so the ring draws complete'],
+  'fm:organic:oc-163l4so': ['Review fix: the caption reads "Two carbonyls, one cold equivalent of NaBH4" (was "Two targets, one hydride each", which read as both carbonyls reduced)'],
+  'fm:organic:oc-11r58ig': ['Review suggestion taken: the 1-bromo-2-methylbutane label is "Shifted, Br on the end" (was "Br in the old spot"; that Br is not on the old carbinol carbon)'],
+  'fm:organic:oc-1eq5a2f': ['Review suggestion taken: the "Lost the methyl" note says the methyl shows up on the ring (was "in the ring", which echoed the folded-in-methyl trap)'],
+  'fm:organic:oc-zlk3b3': ['Review suggestion taken: the 1,2-dione note says keeping both C=O groups is what an acylation does, and even then they end up 1,3 (was "a Claisen-type pattern")'],
+  'fm:organic:oc-1v0wmr4': ['Review suggestion taken: the two cation notes say E1 with no strong base (was "hot acid", the alcohol dehydration setting; this substrate is a bromide)'],
+  'fm:organic:oc-1rhxjv': ['Review suggestion taken: the oct-2-ene note says ethyl bromide puts two carbons on the short side, so the C=C sits at C3; label "C=C one spot over" (was "Ethyl counted as one carbon", which would give seven carbons)'],
+  'fm:organic:oc-8gdlsf': ['Review suggestion taken: the caption says to read the two marks (was "Follow the H", but no H or arrow is drawn)'],
+  'fm:organic:oc-1vndb83': [
+    'Review suggestion taken: Lock it in says "to a nucleophile" (was "to every nucleophile")',
+    'Review note: benzaldehyde is drawn with its aldehyde H shown, so the caption\'s "an H on top" points at a drawn H'
+  ]
 };
 
 module.exports = {

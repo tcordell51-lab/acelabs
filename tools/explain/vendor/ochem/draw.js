@@ -141,10 +141,11 @@ export function drawSmilesGeom(target, smiles, o = {}){
   if (target) target.append(node);
   const out = { node, atoms: [], bonds: [], vb: [0, 0, 1, 1] };
   if (!window.SmilesDrawer) return out;
-  if (!_gdrawer || _gdrawer._bl !== bl){
-    _gdrawer = new window.SmilesDrawer.SvgDrawer({ width: 400, height: 300, bondThickness: 1.6, bondLength: bl, shortBondLength: 0.8, fontSizeLarge: 10.5, fontSizeSmall: 8.5, padding: 4, compactDrawing: false, terminalCarbons: false, explicitHydrogens: true,
+  const eh = o.explicitH !== false;
+  if (!_gdrawer || _gdrawer._bl !== bl || _gdrawer._eh !== eh){
+    _gdrawer = new window.SmilesDrawer.SvgDrawer({ width: 400, height: 300, bondThickness: 1.6, bondLength: bl, shortBondLength: 0.8, fontSizeLarge: 10.5, fontSizeSmall: 8.5, padding: 4, compactDrawing: false, terminalCarbons: false, explicitHydrogens: eh,
       themes: { dark: { C: '#1d1d1b', O: '#b8321f', N: '#1f57b5', F: '#2b7a4b', CL: '#1d7a36', BR: '#8f4316', I: '#6b3aa8', P: '#a55a12', S: '#8a6d00', B: '#9a5a5a', SI: '#6b6b6b', H: '#1d1d1b', MG: '#6b6b6b', LI: '#6b6b6b', NA: '#6b6b6b', BACKGROUND: 'transparent' } } });
-    _gdrawer._bl = bl;
+    _gdrawer._bl = bl; _gdrawer._eh = eh;
   }
   const d = _gdrawer;
   try {

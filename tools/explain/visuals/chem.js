@@ -16,7 +16,7 @@ function sv(tag, attrs) { const n = document.createElementNS(SVGNS, tag); for (c
 // Draw a SMILES with atom positions; returns {node, atoms, vb}. Scale is set so
 // 1 viewBox unit is about 1.6 px, which keeps 8-unit labels near 13 px.
 export function structure(target, smi, o = {}) {
-  const g = drawSmilesGeom(target, smi, { bondLength: o.bondLength || 24, label: o.label || 'structure' });
+  const g = drawSmilesGeom(target, smi, { bondLength: o.bondLength || 24, label: o.label || 'structure', explicitH: o.explicitH });
   // fit the box to the atoms the drawer actually placed (its own viewBox can be
   // the whole 400 x 300 canvas, which shrinks some molecules to a speck)
   let vb = g.vb;
@@ -180,7 +180,8 @@ register('chem.reaction', (s, box) => {
   const row = h('div', { class: 'rxn' + (width(box) < 520 ? ' rxn-col' : '') });
   box.append(row);
   const avail = box.clientWidth || width(box);
-  const molCell = (m) => { const c = h('div', { class: 'rxn-mol' }); row.append(c); const g = structure(c, m.smi, { label: m.label, bondLength: 26, scale: 1.3, pad: 34 }); g.markFont = markFontFor(g, 1.3, avail); (m.marks || []).forEach((k) => markAtom(g, k.atom, k.text, k.key, k.labelDir)); refit(g, 1.3); liftMarks(g, 1.3, avail); c.append(h('div', { class: 'rxn-label', text: m.label })); };
+  // explicitH: false draws a structure the way the question card does (no H at a stereocenter)
+  const molCell = (m) => { const c = h('div', { class: 'rxn-mol' }); row.append(c); const g = structure(c, m.smi, { label: m.label, bondLength: 26, scale: 1.3, pad: 34, explicitH: m.explicitH }); g.markFont = markFontFor(g, 1.3, avail); (m.marks || []).forEach((k) => markAtom(g, k.atom, k.text, k.key, k.labelDir)); refit(g, 1.3); liftMarks(g, 1.3, avail); c.append(h('div', { class: 'rxn-label', text: m.label })); };
   s.reactants.forEach(molCell);
   row.append(h('div', { class: 'rxn-arrow' }, h('span', { text: s.reagent }), h('i')));
   s.products.forEach(molCell);
