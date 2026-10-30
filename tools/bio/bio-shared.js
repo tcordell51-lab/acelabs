@@ -4265,6 +4265,15 @@ function initSlidingFilament() {
     set("sf-zR", { x1: s.zR, x2: s.zR });
     set("sf-actin-L", { x1: s.actinL[0], x2: s.actinL[1] });
     set("sf-actin-R", { x1: s.actinR[0], x2: s.actinR[1] });
+    // labels follow the filaments: Z letters ride on the Z lines, each
+    // I-band label sits between its Z line and the myosin, and the H-zone
+    // label is hidden once actin fully overlaps myosin
+    const zlt = document.getElementById("sf-zL-t"), zrt = document.getElementById("sf-zR-t");
+    if (zlt) zlt.setAttribute("x", s.zL);
+    if (zrt) zrt.setAttribute("x", s.zR);
+    set("sf-Iband-L", { x: (s.zL + s.myosinX) / 2 });
+    set("sf-Iband-R", { x: (s.myosinX + s.myosinW + s.zR) / 2 });
+    set("sf-Hzone", { opacity: s.hZone[1] - s.hZone[0] > 0 ? 1 : 0 });
     document.getElementById("sfReadout").innerHTML = `<p style="margin:0;font-size:13px;line-height:1.6">${s.readout}</p>`;
   };
 
@@ -13318,7 +13327,11 @@ function initTonicity() {
     // Marker def
     svgInner += `<defs><marker id="ton-arr" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M 0 0 L 6 3 L 0 6 z" fill="#5cabe6"/></marker></defs>`;
 
-    svg.innerHTML = svgInner;
+    // True-to-life view (bio-real.js): what the cells look like under a light
+    // microscope. The schematic above stays as the fallback.
+    svg.innerHTML = (window.BioReal && typeof window.BioReal.tonicity === 'function')
+      ? window.BioReal.tonicity({ cellType: cellType, externalSolute: externalSolute, lysed: lysed, plasmolyzed: plasmolyzed })
+      : svgInner;
 
     // Update text readouts
     document.getElementById('tonSoluteVal').textContent = String(externalSolute);

@@ -32,7 +32,7 @@
     evolution: '/tools/bio/bio-evolution.html'
   };
   var FRAME_MS = 900;
-  var MAX_STILL_CHARS = 16000;
+  var MAX_STILL_CHARS = 40000;
   var LETTERS = ['A', 'B', 'C', 'D'];
 
   /* ---------- small helpers ---------- */
@@ -127,13 +127,31 @@
      at that moment. ids, inline handlers, data attributes and SMIL
      animation are stripped so the clone can never be mistaken for the
      live visualizer by bio-shared.js or by a second getElementById. */
+  /* ids inside a snapshot are renamed with a unique suffix, and every
+     url(#id) / href="#id" inside it is rewritten to match. The clone keeps
+     its own gradients and filters (so a card shows its picture on any
+     page) and can never shadow the live visualizer's ids. */
+  var snapSeq = 0;
   function sanitize(node) {
     var all = [node].concat(Array.prototype.slice.call(node.querySelectorAll('*')));
+    var suffix = '--s' + Date.now().toString(36) + (snapSeq++).toString(36);
+    var map = {};
+    all.forEach(function (n) { if (n.getAttribute && n.getAttribute('id')) map[n.getAttribute('id')] = n.getAttribute('id') + suffix; });
+    function rewrite(v) {
+      return v.replace(/url\(\s*(["']?)#([^"')\s]+)\1\s*\)/g, function (m, q, id) {
+        return map[id] ? 'url(#' + map[id] + ')' : m;
+      });
+    }
     all.forEach(function (n) {
       if (!n.attributes) return;
       Array.prototype.slice.call(n.attributes).forEach(function (a) {
         var name = a.name.toLowerCase();
-        if (name === 'id' || name.indexOf('on') === 0 || name.indexOf('data-') === 0) n.removeAttribute(a.name);
+        if (name === 'id') { n.setAttribute('id', map[a.value] || ''); return; }
+        if (name.indexOf('on') === 0 || name.indexOf('data-') === 0) { n.removeAttribute(a.name); return; }
+        if ((name === 'href' || name === 'xlink:href') && a.value.charAt(0) === '#' && map[a.value.slice(1)]) {
+          n.setAttribute(a.name, '#' + map[a.value.slice(1)]); return;
+        }
+        if (a.value.indexOf('url(') !== -1) n.setAttribute(a.name, rewrite(a.value));
       });
     });
     Array.prototype.slice.call(node.querySelectorAll('animate, animateTransform, animateMotion, script, input, button, select, textarea'))
@@ -143,22 +161,52 @@
   /* Some visualizers paint SVG parts through id or scoped CSS rules
      (the sarcomere's actin lines, for one). Copy each SVG element's
      computed paint onto the clone first, so stripping ids cannot strip
-     the picture. */
+     the picture. Only values the clone would not get on its own are
+     written: an inherited value that matches the parent, or an opacity /
+     display at its initial value, is left out. That keeps a detailed
+     picture small enough to ride along on an Ace Card, and keeps <use>
+     shapes inheriting the fill set on the <use>. */
   var PAINT = ['fill', 'fill-opacity', 'stroke', 'stroke-width', 'stroke-opacity', 'stroke-dasharray',
     'stroke-linecap', 'stroke-linejoin', 'opacity', 'font-size', 'font-weight', 'font-family', 'display', 'visibility'];
+  var NOT_INHERITED = { opacity: '1', display: 'inline' };
+  // what an svg root passes down when no rule touches it
+  var ROOT_INITIAL = { fill: 'rgb(0, 0, 0)', 'fill-opacity': '1', stroke: 'none', 'stroke-width': '1px',
+    'stroke-opacity': '1', 'stroke-dasharray': 'none', 'stroke-linecap': 'butt', 'stroke-linejoin': 'miter' };
   function inlinePaint(src, clone) {
     if (typeof window.getComputedStyle !== 'function') return;
     var a = [src].concat(Array.prototype.slice.call(src.querySelectorAll('*')));
     var b = [clone].concat(Array.prototype.slice.call(clone.querySelectorAll('*')));
     if (a.length !== b.length) return;
     for (var i = 0; i < a.length; i++) {
-      if (!(a[i] instanceof window.SVGElement) || a[i].tagName.toLowerCase() === 'svg') continue;
+      if (a[i].tagName && a[i].tagName.toLowerCase() === 'svg') {
+        // paint a page rule hands the svg root (children inherit it)
+        var rcs = window.getComputedStyle(a[i]);
+        var rootCss = rcs ? Object.keys(ROOT_INITIAL).map(function (k) {
+          var v = rcs.getPropertyValue(k);
+          return v && v !== ROOT_INITIAL[k] ? k + ':' + v : '';
+        }).filter(Boolean).join(';') : '';
+        if (rootCss) {
+          var rown = b[i].getAttribute('style');
+          b[i].setAttribute('style', rootCss + (rown ? ';' + rown : ''));
+        }
+        continue;
+      }
+      if (!(a[i] instanceof window.SVGElement)) continue;
       var cs = window.getComputedStyle(a[i]);
       if (!cs) continue;
+      var pcs = a[i].parentElement ? window.getComputedStyle(a[i].parentElement) : null;
+      var targeted = a[i].hasAttribute('id') || a[i].hasAttribute('class');
       var css = PAINT.map(function (k) {
         var v = cs.getPropertyValue(k);
-        return v ? k + ':' + v : '';
+        if (!v) return '';
+        // a stylesheet rule may override a presentation attribute on an
+        // element it can target by id or class; keep those values
+        var keep = targeted && a[i].hasAttribute(k);
+        var base = Object.prototype.hasOwnProperty.call(NOT_INHERITED, k) ? NOT_INHERITED[k]
+          : (pcs ? pcs.getPropertyValue(k) : null);
+        return keep || v !== base ? k + ':' + v : '';
       }).filter(Boolean).join(';');
+      if (!css) continue;
       var own = b[i].getAttribute('style');
       b[i].setAttribute('style', css + (own ? ';' + own : ''));
     }

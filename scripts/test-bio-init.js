@@ -17,7 +17,7 @@ const DIR = path.join(__dirname, '..', 'tools', 'bio');
 
 // bio-shared.js plus the "Call it first" layer, as one script: three classic
 // <script> tags share the page's global lexical scope in a browser.
-const js = [SHARED, 'bio-bone.js', 'bio-stick-data.js', 'bio-stick.js']
+const js = [SHARED, 'bio-real.js', 'bio-bone.js', 'bio-stick-data.js', 'bio-stick.js']
   .map((f) => fs.readFileSync(path.join(DIR, f), 'utf8')).join('\n;\n');
 
 let totalErrors = 0;

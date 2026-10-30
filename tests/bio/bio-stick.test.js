@@ -13,7 +13,7 @@ const path = require('node:path');
 const { JSDOM } = require('jsdom');
 
 const BIO = path.join(__dirname, '..', '..', 'tools', 'bio');
-const SRC = ['bio-shared.js', 'bio-bone.js', 'bio-stick-data.js', 'bio-stick.js']
+const SRC = ['bio-shared.js', 'bio-real.js', 'bio-bone.js', 'bio-stick-data.js', 'bio-stick.js']
   .map((f) => fs.readFileSync(path.join(BIO, f), 'utf8')).join('\n;\n');
 
 const OPEN = [];
@@ -79,7 +79,7 @@ test('a trap pick: frames captured clean, Needs review with the named trap, card
   assert.equal(p.frames.length, 2);
   p.frames.forEach((f) => {
     assert.ok(f.html.length > 100, 'frame has a picture');
-    assert.ok(!/\sid="/.test(f.html), 'no ids in a frame clone');
+    assert.ok(!/\sid="(?![^"]*--s)/.test(f.html), 'every id in a frame clone is renamed');
     assert.ok(!/\sdata-/.test(f.html), 'no data attributes in a frame clone');
   });
   const v = p.node.querySelector('.stick-verdict').textContent;
@@ -231,4 +231,27 @@ test('Bone Layers: six stops from periosteum to medullary cavity, and its panel 
   const p = predict(t, 'bone-layers', e.predict.key);
   assert.match(p.frames[p.frames.length - 1].caption, /Endosteum/);
   assert.match(p.node.querySelector('.stick-verdict').textContent, /Confirmed/);
+});
+
+test('true-to-life views: microscope red cells and plant cells, and the TEM band strip', () => {
+  const cell = boot('bio-cell.html');
+  const d = cell.w.document;
+  const set = (v) => { const s = d.getElementById('tonSolute'); s.value = String(v); s.dispatchEvent(new cell.w.Event('input', { bubbles: true })); };
+  set(50);
+  assert.match(d.getElementById('tonCellSvg').innerHTML, /LIGHT MICROSCOPE/);
+  assert.match(d.getElementById('tonCellSvg').innerHTML, /biconcave/);
+  set(4);
+  assert.match(d.getElementById('tonCellSvg').innerHTML, /ghosts/);
+  set(95);
+  assert.match(d.getElementById('tonCellSvg').innerHTML, /crenated/);
+  d.querySelector('.ton-cell-btn[data-cell="plant"]').click();
+  assert.match(d.getElementById('tonCellSvg').innerHTML, /Plasmolysis/);
+  const phys = boot('bio-physiology.html');
+  const pd = phys.w.document;
+  assert.ok(pd.getElementById('sfTem'), 'TEM strip mounted under the sarcomere model');
+  pd.querySelector('[data-sf="relaxed"]').click();
+  assert.match(pd.getElementById('sfTem').innerHTML, /H zone/);
+  pd.querySelector('[data-sf="contracted"]').click();
+  assert.doesNotMatch(pd.getElementById('sfTem').innerHTML, /H zone/, 'H zone closes at full contraction');
+  assert.match(pd.getElementById('sfTem').innerHTML, /A band/);
 });

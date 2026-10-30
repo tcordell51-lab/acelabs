@@ -318,7 +318,7 @@
         [{ click: '[data-sf="contracting"]' }],
         [{ click: '[data-sf="contracted"]' }]
       ],
-      still: ['#sfSvg'], pairId: 'muscle',
+      still: ['#sfSvg', '#sfTem'], pairId: 'muscle',
       hook: 'A band stays (it is myosin). I and H shrink.',
       predict: {
         q: 'A sarcomere contracts fully. Which band keeps its length?',
