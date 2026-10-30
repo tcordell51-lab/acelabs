@@ -843,29 +843,38 @@
      (actin + myosin), the M line, the H zone (myosin only), the paler
      bare zone beside the M line (thick filament without heads), and the
      I band (actin only) lightest. Once the thin filaments reach the M
-     line (full contraction) it is as dark as the overlap, never paler.
+     line (full contraction) the H zone is gone, but the M line stays a
+     thin line darker than the overlap around it.
      Fine lines are the filaments: thick ones 45 nm apart, thin ones
      running into the zigzag Z disc. Each
      myofibril row is drawn once and placed twice; the lower one is
      shifted 3 px, since neighbors line up closely but not perfectly.
+     Each 2 px column takes the density at its center, so every band
+     edge falls on the same x as the filament end in the model.
      In the sarcoplasm gap between the rows: triads (a pale T tubule
      between two SR terminal cisternae) at each A-I junction, linked by
      SR, with glycogen granules beside the I band. In the gap below the
      lower row: mitochondria in pairs, one on each side of every Z disc
      (they would crowd the triads at short sarcomere lengths if both
-     shared a gap). Each one is sized to stay inside its half I band,
-     so none reaches the A-I junction where the triads sit. Neighboring
-     sarcomeres repeat with the same period. */
+     shared a gap), with glycogen past them out to the A-I junction.
+     A mitochondrion keeps one size (0.16 um long, Z + 4 to Z + 36) in
+     every state: organelles do not shrink when the sarcomere does, and
+     that size still fits inside the 40 px half I band at full
+     contraction. Neighboring sarcomeres repeat with the same period. */
 
   function temStrip(g) {
     var zL = g.zL, zR = g.zR, period = zR - zL, L = period / 2, M = zL + L;
     var mh = g.myosinW / 2, aLen = g.actinTipL - zL, iH = L - mh;
     var RH = 72, Y1 = 26, Y2 = 114, TY = 106, MY = 195;   // row height and tops; centers of the two gaps
-    // mitochondrion half length: fits between Z + 4 and the A-I junction minus 4
-    var mrx = Math.min(30, (iH - 8) / 2), mo = 4 + mrx;
+    // mitochondrion: half length 16, centered 20 from the Z disc, the same in
+    // every state (it spans Z + 4 to Z + 36, inside the shortest half I band)
+    var mrx = 16, mo = 4 + mrx;
     function base(s) {                       // s: distance from the nearest Z disc (0 to L)
       var actin = s <= aLen, myosin = s >= iH, d = L - s;
-      if (myosin && d < 6) return actin ? 0.92 : 0.82;   // M line; never paler than the overlap once thin filaments reach it
+      // M line: dark in the pale H zone; once the thin filaments reach it, a
+      // thin line (8 px) darker than the overlap, never paler (#0f0f0f in
+      // the #292929 overlap)
+      if (myosin && d < 6) return actin ? (d < 4 ? 1.05 : 0.92) : 0.82;
       if (actin && myosin) return 0.92;      // overlap
       if (myosin && d < 16) return 0.48;     // bare zone
       if (myosin) return 0.58;               // H zone
@@ -891,10 +900,11 @@
       if (zL + k * period - aLen < 724 && zL + k * period + aLen > -4) zs.push(zL + k * period);
       if (M + k * period - mh < 735 && M + k * period + mh > -15) ms.push(M + k * period);
     }
-    // one myofibril row (local y 0 to RH): bands as run-length boxes, one path per gray
-    var runs = {}, order = [], start = -4, prev = density(-4), v;
+    // one myofibril row (local y 0 to RH): bands as run-length boxes, one path per
+    // gray; each 2 px cell takes the density at its center (x + 1)
+    var runs = {}, order = [], start = -4, prev = density(-3), v;
     for (x = -2; x <= 724; x += 2) {
-      v = x < 724 ? density(x) : -1;
+      v = x < 724 ? density(x + 1) : -1;
       if (v !== prev) {
         var c = gray(prev);
         if (!runs[c]) { runs[c] = ''; order.push(c); }
@@ -948,7 +958,7 @@
     zs.forEach(function (z) {
       if (iH > 14) granules(z - iH + 14, z + iH - 14, TY, 5.5);      // between the triads
       var mOut = 4 + 2 * mrx + 2;
-      if (iH - 2 > mOut + 4) { granules(z - iH + 2, z - mOut, MY, 5.5); granules(z + mOut, z + iH - 2, MY, 5.5); }   // past the mitochondria
+      if (iH - 2 > mOut + 4) { granules(z - iH + 2, z - mOut, MY, 5.5); granules(z + mOut, z + iH - 2, MY, 5.5); }   // past the mitochondria, Z + 38 out to the A-I junction
     });
     out += '<path d="' + gly + '" stroke="#2c2c2c" stroke-width="5" stroke-linecap="round"/>';
     // gap below the lower row: a mitochondrion on each side of every Z disc
@@ -974,6 +984,10 @@
       '<text x="' + mx + '" y="242" font-size="20" fill="#3a4a42">mitochondria</text></g>';
     // labels over the strip
     out += '<path d="M500,18L514,99" stroke="#fbf6e9" stroke-width="1.6"/>';
+    // with the H zone gone the M line is a thin line, not much darker than the overlap
+    // around it, so a short dashed leader points it out, as #sf-Mlead does in
+    // the model
+    if (hR - hL <= 6) out += '<path id="rl-tMlead" d="M' + M + ',24V44" stroke="#fbf6e9" stroke-width="1.6" stroke-dasharray="3 3"/>';
     out += '<g text-anchor="middle" font-weight="700" fill="#1B3A2D">' +
       '<text x="' + zL + '" y="22" font-size="20">Z</text><text x="' + zR + '" y="22" font-size="20">Z</text>' +
       '<text x="' + M + '" y="22" font-size="20">M line</text>' +
@@ -1000,7 +1014,7 @@
       'aria-label="Electron micrograph view of the same sarcomere in two myofibrils: Z discs, I band, A band, H zone, M line, triads and mitochondria" ' +
       'style="display:block;width:100%;height:auto;margin-top:8px;border:1.5px solid #1B3A2D;border-radius:8px;background:#cfcfcb"></svg>' +
       '<p style="margin:6px 2px 0;font-size:12px;line-height:1.45;color:#3a4a42">Same sarcomere, as it looks in an electron micrograph of two myofibrils. ' +
-      'Dark where myosin overlaps actin, lighter where only one is present. Watch the I band and H zone narrow while the A band holds. ' +
+      'Dark where myosin overlaps actin, lighter where only one is present. Switch states and measure each band against the model above: which ones narrow, and which one holds? ' +
       'Between the myofibrils: a triad (T tubule between two SR sacs) at each A-I junction, and mitochondria beside each Z disc.</p>';
     model.insertAdjacentElement('afterend', wrap);
     function render() { document.getElementById('sfTem').innerHTML = temStrip(readSarcomere()); }

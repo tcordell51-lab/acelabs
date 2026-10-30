@@ -4262,9 +4262,14 @@ function initSlidingFilament() {
   const PX = 200, MX = 200, MW = 320, M = MX + MW / 2, THIN = 200;
   const um = (px) => (px / PX).toFixed(1) + " um";
   const lead = {
-    relaxed: (s) => `<b>Relaxed.</b> Z to Z ${um(s.zR - s.zL)}. A band ${um(MW)} (one thick filament). I band ${um(s.iBand)}, with the Z disc in its middle. H zone ${um(s.h)}. In a contraction the <b>A band holds</b> its length while the <b>I band and H zone shrink</b>.`,
+    // the relaxed text sits under the "Call it first" veil before the student
+    // answers, so it gives the lengths without saying which band holds
+    relaxed: (s) => `<b>Relaxed.</b> Z to Z ${um(s.zR - s.zL)}. A band ${um(MW)}, the length of one thick filament. I band ${um(s.iBand)}, with the Z disc in its middle. H zone ${um(s.h)}. Tap Contracting, then Fully contracted, and see which of these lengths change.`,
     contracting: (s) => `<b>Contracting.</b> Z to Z ${um(s.zR - s.zL)}. Cross-bridges pull the thin filaments toward the M line. <b>A band holds at ${um(MW)}.</b> <b>I band shrinks</b> to ${um(s.iBand)} and the <b>H zone shrinks</b> to ${um(s.h)}. Neither filament shortens (thick ${um(MW)}, thin ${um(THIN)}); they slide.`,
-    contracted: (s) => `<b>Fully contracted.</b> Z to Z ${um(s.zR - s.zL)}. <b>A band still ${um(MW)}.</b> <b>I band down to ${um(s.iBand)}.</b> The thin filaments meet at the M line, so the <b>H zone is gone</b>. Rigor mortis = no ATP, so myosin cannot let go of actin.`,
+    // the last stick frame: this text stays under the veil during the closed
+    // book check (which filament gets shorter?), so it leads with what
+    // changed and does not restate that the thick filament keeps its length
+    contracted: (s) => `<b>Fully contracted.</b> Z to Z ${um(s.zR - s.zL)}. <b>I band down to ${um(s.iBand)}.</b> The thin filaments meet at the M line, so the <b>H zone is gone</b>. <b>A band still ${um(MW)}.</b>`,
   };
   const states = {};
   [["relaxed", 120], ["contracting", 140], ["contracted", 160]].forEach(([name, zL]) => {
@@ -13640,89 +13645,103 @@ function initBrainExplorer() {
 }
 
 /* ---- CROSS-BRIDGE CYCLE SCRUBBER ---- */
+// Colors match the sliding filament model (#sfSvg) that this view is paired
+// with: thin filaments (actin) gold #c19a3e, thick filament (myosin) red-brown
+// #c25b3f, Z discs dark green. The A band label, bracket and readout take the
+// myosin color, since the A band is the length of the thick filament.
 const CROSS_BRIDGE_HTML = `
 <div style="background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px;padding:18px">
   <div style="text-align:center;margin-bottom:10px">
     <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#1B3A2D">One Cross-Bridge Cycle</div>
-    <div style="font-size:12px;color:#1B3A2D;margin-top:4px;font-style:italic">Drag through the 5 stages. Sarcomere shrinks; A-band does not. Live band widths update at the bottom.</div>
+    <div style="font-size:12px;color:#1B3A2D;margin-top:4px;font-style:italic">Drag through the 5 stages. The sarcomere shrinks; the A band does not. One real stroke slides actin only about 5 to 10 nm, so one pass of this slider stands for many cycles.</div>
   </div>
 
   <!-- Slider -->
   <div style="background:#fff;border:1.5px solid #1B3A2D;border-radius:10px;padding:14px;margin-bottom:14px">
-    <div style="display:flex;justify-content:space-between;font-size:10px;font-weight:700;color:#1B3A2D;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.06em;text-align:center">
+    <div style="display:flex;justify-content:space-between;font-size:10px;font-weight:700;color:#1B3A2D;margin-bottom:4px;text-transform:uppercase;letter-spacing:0.06em;text-align:center">
       <span style="flex:1">1. ATP binds</span>
       <span style="flex:1">2. Cock</span>
       <span style="flex:1">3. Bind actin</span>
       <span style="flex:1">4. Power stroke</span>
       <span style="flex:1">5. Reset</span>
     </div>
-    <input id="cbStage" type="range" min="0" max="100" step="1" value="0" style="width:100%;accent-color:#C25B3F">
-    <div style="text-align:center;margin-top:6px;font-family:'JetBrains Mono',monospace;font-size:13px;color:#1B3A2D">
-      <span id="cbStageName" style="font-weight:700;color:#C25B3F">Stage 1 · ATP binds, myosin releases actin</span>
+    <input id="cbStage" type="range" min="0" max="100" step="1" value="50" aria-label="Cross-bridge cycle stage" style="display:block;width:100%;height:44px;margin:0;accent-color:#C25B3F">
+    <div style="text-align:center;margin-top:2px;font-family:'JetBrains Mono',monospace;font-size:13px;color:#1B3A2D">
+      <span id="cbStageName" style="font-weight:700;color:#C25B3F"></span>
     </div>
   </div>
 
-  <!-- Sarcomere visualization -->
-  <svg id="cbSvg" viewBox="0 0 800 280" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:#fff;border:1.5px solid #1B3A2D;border-radius:8px"></svg>
+  <!-- Sarcomere, drawn to the scale of the sliding filament model; labels are
+       sized for a phone, so a wide screen caps the width at 600px -->
+  <svg id="cbSvg" viewBox="40 0 720 280" preserveAspectRatio="xMidYMid meet" role="img" aria-label="One sarcomere to scale: gold thin filaments slide past the red-brown thick filament as its myosin heads cycle" style="display:block;width:100%;max-width:600px;height:auto;margin:0 auto;background:#fff;border:1.5px solid #1B3A2D;border-radius:8px"></svg>
 
-  <!-- Live measurements -->
-  <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;margin-top:14px">
+  <!-- Live measurements: two columns on a phone, four on a wide screen -->
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(128px,1fr));gap:8px;margin-top:14px">
     <div style="background:#fff;border:1.5px solid #1B3A2D;border-radius:8px;padding:10px;text-align:center">
       <div style="font-size:10px;color:#1B3A2D;font-weight:700;text-transform:uppercase">Sarcomere (Z to Z)</div>
-      <div id="cbSarcLen" style="font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:#C25B3F;margin-top:4px">560 px</div>
-      <div id="cbSarcDelta" style="font-size:9px;color:#1B3A2D;margin-top:2px">shrinking ↓</div>
+      <div id="cbSarcLen" style="font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:#1B3A2D;margin-top:4px"></div>
+      <div id="cbSarcDelta" style="font-size:11px;color:#1B3A2D;margin-top:2px"></div>
     </div>
-    <div style="background:#fff;border:1.5px solid #C25B3F;border-radius:8px;padding:10px;text-align:center">
-      <div style="font-size:10px;color:#C25B3F;font-weight:700;text-transform:uppercase">I-band</div>
-      <div id="cbIBand" style="font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:#C25B3F;margin-top:4px">160 px</div>
-      <div style="font-size:9px;color:#1B3A2D;margin-top:2px">shrinks ↓</div>
+    <div style="background:#fff;border:1.5px solid #5b6b62;border-radius:8px;padding:10px;text-align:center">
+      <div style="font-size:10px;color:#5b6b62;font-weight:700;text-transform:uppercase">I band</div>
+      <div id="cbIBand" style="font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:#5b6b62;margin-top:4px"></div>
+      <div style="font-size:11px;color:#1B3A2D;margin-top:2px">shrinks</div>
     </div>
-    <div style="background:#fff;border:2px solid #5cabe6;border-radius:8px;padding:10px;text-align:center">
-      <div style="font-size:10px;color:#5cabe6;font-weight:700;text-transform:uppercase">A-band</div>
-      <div id="cbABand" style="font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:#5cabe6;margin-top:4px">240 px</div>
-      <div style="font-size:9px;color:#5cabe6;margin-top:2px;font-weight:700">CONSTANT ←</div>
+    <div style="background:#fff;border:2px solid #c25b3f;border-radius:8px;padding:10px;text-align:center">
+      <div style="font-size:10px;color:#a8462e;font-weight:700;text-transform:uppercase">A band (thick filament)</div>
+      <div id="cbABand" style="font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:#a8462e;margin-top:4px"></div>
+      <div style="font-size:11px;color:#a8462e;margin-top:2px;font-weight:700">constant</div>
     </div>
-    <div style="background:#fff;border:1.5px solid #c19a3e;border-radius:8px;padding:10px;text-align:center">
-      <div style="font-size:10px;color:#c19a3e;font-weight:700;text-transform:uppercase">H-zone</div>
-      <div id="cbHZone" style="font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:#c19a3e;margin-top:4px">80 px</div>
-      <div style="font-size:9px;color:#1B3A2D;margin-top:2px">shrinks ↓</div>
+    <div style="background:#fff;border:1.5px solid #009E73;border-radius:8px;padding:10px;text-align:center">
+      <div style="font-size:10px;color:#007a59;font-weight:700;text-transform:uppercase">H zone</div>
+      <div id="cbHZone" style="font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:#007a59;margin-top:4px"></div>
+      <div style="font-size:11px;color:#1B3A2D;margin-top:2px">shrinks</div>
     </div>
   </div>
 
   <!-- Stage explainer -->
-  <div id="cbExplain" style="background:#fff;border:1.5px solid #1B3A2D;border-radius:10px;padding:12px;margin-top:14px;font-size:13px;line-height:1.5;color:#1B3A2D">
-    <span style="font-weight:700;color:#C25B3F">Stage 1 · ATP binds.</span> A new ATP molecule binds the myosin head. The head conformation changes and <b>releases</b> from the actin filament. ATP is required for this DETACHMENT step (this is why rigor mortis happens — no ATP, head is stuck attached).
-  </div>
+  <div id="cbExplain" style="background:#fff;border:1.5px solid #1B3A2D;border-radius:10px;padding:12px;margin-top:14px;font-size:13px;line-height:1.5;color:#1B3A2D"></div>
 
-  <!-- Conditions panel: Ca²⁺ and ATP indicators -->
+  <!-- Conditions panel: ATP, Ca2+ and the cross-bridge -->
   <div style="display:flex;gap:10px;margin-top:10px">
     <div style="flex:1;background:#fff;border:1.5px solid #1B3A2D;border-radius:8px;padding:10px;text-align:center">
       <div style="font-size:10px;color:#1B3A2D;font-weight:700;text-transform:uppercase">ATP state</div>
-      <div id="cbATP" style="font-size:14px;margin-top:4px;font-weight:700;color:#5FA874">ATP bound</div>
+      <div id="cbATP" style="font-size:14px;margin-top:4px;font-weight:700;color:#2f7a47"></div>
     </div>
     <div style="flex:1;background:#fff;border:1.5px solid #1B3A2D;border-radius:8px;padding:10px;text-align:center">
-      <div style="font-size:10px;color:#1B3A2D;font-weight:700;text-transform:uppercase">Ca²⁺ state</div>
-      <div id="cbCa" style="font-size:14px;margin-top:4px;font-weight:700;color:#5FA874">bound to troponin</div>
+      <div style="font-size:10px;color:#1B3A2D;font-weight:700;text-transform:uppercase">Ca2+ state</div>
+      <div id="cbCa" style="font-size:14px;margin-top:4px;font-weight:700;color:#2f7a47"></div>
     </div>
     <div style="flex:1;background:#fff;border:1.5px solid #1B3A2D;border-radius:8px;padding:10px;text-align:center">
       <div style="font-size:10px;color:#1B3A2D;font-weight:700;text-transform:uppercase">Cross-bridge</div>
-      <div id="cbBridge" style="font-size:14px;margin-top:4px;font-weight:700;color:#C25B3F">detached</div>
+      <div id="cbBridge" style="font-size:14px;margin-top:4px;font-weight:700"></div>
     </div>
   </div>
 </div>
 `;
 
+// One entry per fifth of the slider (0-19, 20-39, 40-59, 60-79, 80-100).
+// color: the stage title and the myosin heads in that stage. The scrubber
+// opens on Stage 3 (slider value 50), and that is the text under the "Call it
+// first" veil before the student answers: Stage 3 says nothing about what
+// releases the head from actin, which is what the prediction asks. The stick
+// frames start at Stage 1, right after the prediction.
 const CB_STAGES = [
-  { range: [0, 20],   name: 'Stage 1 · ATP binds, myosin releases actin', atp: 'ATP bound', ca: 'bound to troponin', bridge: 'detached',
-    explain: '<span style="font-weight:700;color:#C25B3F">Stage 1 · ATP binds.</span> A new ATP molecule binds the myosin head. The head conformation changes and <b>releases</b> from the actin filament. ATP is required for this DETACHMENT step (this is why rigor mortis happens — no ATP, head is stuck attached).' },
-  { range: [20, 40],  name: 'Stage 2 · ATP hydrolyzed, head cocks', atp: 'ATP → ADP + Pi', ca: 'bound to troponin', bridge: 'cocked, primed',
-    explain: '<span style="font-weight:700;color:#c19a3e">Stage 2 · Cock.</span> ATP is hydrolyzed to ADP + Pi (still bound to the head). The energy released "cocks" the myosin head into a high-energy primed position, ready to bind actin again at a new site.' },
-  { range: [40, 60],  name: 'Stage 3 · Cross-bridge forms (Ca²⁺ exposed binding sites)', atp: 'ADP + Pi bound', ca: 'bound to troponin', bridge: 'attached',
-    explain: '<span style="font-weight:700;color:#5cabe6">Stage 3 · Bind.</span> Ca²⁺ (released from the SR) is bound to troponin C, pulling tropomyosin off the actin myosin-binding sites. The cocked myosin head <b>binds</b> actin — a cross-bridge forms.' },
-  { range: [60, 80],  name: 'Stage 4 · Power stroke (Pi released, ADP released)', atp: 'release Pi → ADP', ca: 'bound to troponin', bridge: 'pulling actin',
-    explain: '<span style="font-weight:700;color:#5FA874">Stage 4 · Power stroke.</span> Pi releases. The myosin head pivots roughly 45°, pulling actin toward the M-line. ADP is released. The sarcomere has shortened by one stroke. <b>Z-lines moved closer; I-band and H-zone shrunk; A-band did NOT change.</b>' },
-  { range: [80, 100], name: 'Stage 5 · Cycle resets — ready for next ATP', atp: 'no nucleotide', ca: 'still bound', bridge: 'attached (rigor-like)',
-    explain: '<span style="font-weight:700;color:#1B3A2D">Stage 5 · Reset.</span> The head is now in a low-energy attached state. Without a new ATP, it stays here (this is the rigor state). With ATP, the cycle returns to Stage 1 — release, cock, bind, stroke. Repeats as long as Ca²⁺ and ATP are present.' },
+  { name: 'Stage 1: ATP binds, myosin lets go of actin', title: 'Stage 1: ATP binds.', color: '#6b6459', head: '#b3aca0',
+    atp: 'ATP bound', ca: 'bound to troponin', bridge: 'detached',
+    explain: 'A fresh ATP binds the myosin head. The head changes shape and lets go of actin.' },
+  { name: 'Stage 2: ATP split, the head cocks', title: 'Stage 2: Cock.', color: '#8a5a8c', head: '#8a5a8c',
+    atp: 'ADP + Pi bound', ca: 'bound to troponin', bridge: 'cocked, not bound',
+    explain: 'The head splits ATP into ADP + Pi and keeps both. That energy swings the head back to about 90 degrees, a high-energy position lined up with a new site on actin.' },
+  { name: 'Stage 3: Cross-bridge forms', title: 'Stage 3: Bind.', color: '#2f7a47', head: '#3f8a55',
+    atp: 'ADP + Pi bound', ca: 'bound to troponin', bridge: 'bound to actin',
+    explain: 'Ca2+ from the SR is bound to troponin C, which pulls tropomyosin off the myosin-binding sites on actin. The cocked head binds an open site: a cross-bridge.' },
+  { name: 'Stage 4: Power stroke', title: 'Stage 4: Power stroke.', color: '#2f7a47', head: '#3f8a55',
+    atp: 'Pi leaves, then ADP', ca: 'bound to troponin', bridge: 'pulling actin',
+    explain: 'Pi leaves and the head pivots from about 90 to about 45 degrees, pulling the thin filament toward the M line. ADP leaves at the end of the stroke. The Z discs move closer; the I band and H zone shrink; the A band keeps its length.' },
+  { name: 'Stage 5: Reset, bound until the next ATP', title: 'Stage 5: Reset.', color: '#1B3A2D', head: '#1B3A2D',
+    atp: 'nothing bound', ca: 'still bound', bridge: 'bound (rigor state)',
+    explain: 'The head stays bound to actin with an empty pocket. Only a new ATP can release it, so with no ATP it stays locked on: that is rigor. With Ca2+ and ATP present, the cycle repeats from Stage 1.' },
 ];
 
 function initCrossBridgeCycle() {
@@ -13730,159 +13749,144 @@ function initCrossBridgeCycle() {
   if (!body) return;
   body.innerHTML = CROSS_BRIDGE_HTML;
 
+  // #cbSvg units are those of the sliding filament model, 200 per um. At rest
+  // Z to Z is 2.4 um (Z discs at 160 and 640); the thick filament is 1.6 um
+  // (240 to 560, M line at 400) and never moves; each thin filament is 1.0 um.
+  const PX = 200, MID = 400, mLeft = 240, mRight = 560, aBand = mRight - mLeft, THIN = 200;
+  const ROD = 154, ACT = 54;   // thick filament center line; thin filaments 54 above and below it
+  const f = (n) => String(Math.round(n * 10) / 10);
+  // every length here is an even number of units, so two decimals are exact
+  const um = (px) => (px % 20 === 0 ? (px / PX).toFixed(1) : (px / PX).toFixed(2)) + ' um';
+  const stageOf = (pct) => CB_STAGES[Math.min(4, Math.floor(pct / 20))];
+
+  // A myosin head, built as in the muscle: a thin S2 tether runs from the
+  // thick filament surface (base x bx) to the lever, and the lever and the
+  // motor domain are one rigid unit, UNIT long, that tilts as a whole. The
+  // motor domain is the ellipse at the far end, 2 * HR long; the thick
+  // stroke from the tether to its center is the lever. Only the tether
+  // changes length. vs: -1 reaches up to the upper thin filament, +1 down to
+  // the lower one. tM: +1 when the M line is to the right (left half), -1 in
+  // the right half. (nx, ny): where the lever starts, nx toward the M line
+  // and ny out from the surface. deg: the unit's angle from the filament
+  // axis, measured toward the M line (90 is straight out).
+  const UNIT = 30, HR = 11;
+  // the thin filament's near edge is ACT - 8 - 3.5 = 42.5 out from the thick
+  // filament surface, so a head end at REACH sits on it
+  const REACH = ACT - 8 - 3;
+  function head(bx, vs, tM, nx, ny, deg, fill) {
+    const y0 = ROD + vs * 8, a = deg * Math.PI / 180;
+    const ux = tM * Math.cos(a), uy = vs * Math.sin(a);   // along the unit, lever to head end
+    const lx = bx + tM * nx, ly = y0 + vs * ny;           // lever start, the end of the tether
+    const cx = lx + (UNIT - HR) * ux, cy = ly + (UNIT - HR) * uy;
+    const rot = Math.atan2(uy, ux) * 180 / Math.PI;
+    return `<path d="M${bx},${y0}L${f(lx)},${f(ly)}" stroke="#8a3520" stroke-width="1.5"/>` +
+      `<path d="M${f(lx)},${f(ly)}L${f(cx)},${f(cy)}" stroke="#8a3520" stroke-width="3.5" stroke-linecap="round"/>` +
+      `<ellipse cx="${f(cx)}" cy="${f(cy)}" rx="${HR}" ry="7" transform="rotate(${f(rot)} ${f(cx)} ${f(cy)})" fill="${fill}" stroke="#1B3A2D" stroke-width="1.2"/>`;
+  }
+
   function render(stagePct) {
     const svg = document.getElementById('cbSvg');
     if (!svg) return;
-    // Z-line positions: at rest, Z left = 160, Z right = 640 (2.4 um at 200 px per um, the
-    // scale of the sliding filament model). After full cycle, narrowed by 30 each side.
-    // Cycle: stages 0-3 contribute to shrinkage; stage 5 holds the new resting position
-    // For 0-60 (release → bind), no sarcomere shrinkage yet.
-    // For 60-80 (power stroke), sarcomere shrinks linearly.
-    // For 80-100, holds.
-    let shrink = 0;
-    if (stagePct < 60) shrink = 0;
-    else if (stagePct < 80) shrink = ((stagePct - 60) / 20) * 30;
-    else shrink = 30;
-    const zL = 160 + shrink;
-    const zR = 640 - shrink;
-    const sarcLen = zR - zL;
-    // Myosin (constant width = 320 = 1.6 um, centered on M = 400)
-    const mLeft = 240, mRight = 560;
-    const aBand = mRight - mLeft;
-    // Actin filaments extend from each Z toward the M-line (anchored at Z, length actinLen)
-    const actinLen = 200;  // 1.0 um, shorter than the thick filament; constant: filaments slide, they never shorten
-    const actinLEnd = zL + actinLen;
-    const actinREnd = zR - actinLen;
-    // I band: actin only. It runs from the A band of one sarcomere to the A band
-    // of the next, with the Z disc in its middle, so it is twice Z to mLeft.
-    const iHalf = mLeft - zL;
-    const iBandWidth = 2 * iHalf;
-    // H-zone: myosin region with no actin overlap. As actin slides in, H shrinks.
-    // Actin slides in by `shrink` pixels per side (because Z-lines move toward M)
-    const hZoneStart = zL + actinLen;
-    const hZoneEnd = zR - actinLen;
-    let hZone = Math.max(0, hZoneEnd - hZoneStart);
+    const k = Math.min(4, Math.floor(stagePct / 20)), stage = stageOf(stagePct);
+    // The Z discs move in only during the power stroke (60 to 79), 30 units a
+    // side in all, and stay there for Stage 5.
+    const shrink = k < 3 ? 0 : k === 3 ? Math.round((stagePct - 60) * 1.5) : 30;
+    const zL = 160 + shrink, zR = 640 - shrink, sarcLen = zR - zL;
+    // the I band runs from one A band to the next, with the Z disc in its middle
+    const iHalf = mLeft - zL, iBandWidth = 2 * iHalf;
+    // the H zone is the part of the thick filament with no thin filament over it
+    const hS = zL + THIN, hE = zR - THIN, hZone = Math.max(0, hE - hS);
+    const yU = ROD - ACT, yD = ROD + ACT;
 
-    // Myosin head positions and rotations based on cycle stage
-    // Show 4 myosin heads (2 on each half), one prominent head highlighted by stage state
-    let inner = '';
-    // Background: M-line marker
-    inner += `<line x1="400" y1="40" x2="400" y2="240" stroke="#1B3A2D" stroke-width="1.2" stroke-dasharray="3,3" opacity="0.4"/>`;
-    inner += `<text x="400" y="266" text-anchor="middle" font-size="20" font-weight="700" fill="#1B3A2D">M line</text>`;
+    let s = '';
+    // neighbor sarcomeres, faded: their thin filaments start on the far side of
+    // each Z disc and their thick filaments sit one sarcomere away
+    s += `<g opacity="0.45"><path stroke="#c19a3e" stroke-width="7" d="M${zL - THIN},${yU}H${zL}M${zL - THIN},${yD}H${zL}M${zR},${yU}H${zR + THIN}M${zR},${yD}H${zR + THIN}"/>` +
+      `<rect x="${mLeft - sarcLen}" y="${ROD - 8}" width="${aBand}" height="16" rx="6" fill="#c25b3f" stroke="#1B3A2D" stroke-width="1.5"/>` +
+      `<rect x="${mLeft + sarcLen}" y="${ROD - 8}" width="${aBand}" height="16" rx="6" fill="#c25b3f" stroke="#1B3A2D" stroke-width="1.5"/></g>`;
 
-    // Z-lines (they stop above the I band labels, which are centered on them)
-    inner += `<line x1="${zL}" y1="40" x2="${zL}" y2="204" stroke="#C25B3F" stroke-width="4"/>`;
-    inner += `<line x1="${zR}" y1="40" x2="${zR}" y2="204" stroke="#C25B3F" stroke-width="4"/>`;
-    inner += `<text x="${zL}" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#C25B3F">Z</text>`;
-    inner += `<text x="${zR}" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#C25B3F">Z</text>`;
-
-    // Sarcomere length bracket (top)
-    inner += `<line x1="${zL}" y1="48" x2="${zR}" y2="48" stroke="#1B3A2D" stroke-width="0.8"/>`;
-    inner += `<text x="${(zL + zR) / 2}" y="72" text-anchor="middle" font-size="20" font-style="italic" fill="#1B3A2D">sarcomere</text>`;
-
-    // Neighbor sarcomeres, faded: their thin filaments start on the far side of
-    // each Z disc and their thick filaments sit one sarcomere away, so each
-    // I band runs from one A band to the next across its Z disc
-    inner += `<g opacity="0.45" stroke="#1B3A2D" stroke-width="0.8">` +
-      `<path fill="#5cabe6" d="M${zL - actinLen},120h${actinLen}v6h${-actinLen}zM${zL - actinLen},160h${actinLen}v6h${-actinLen}zM${zR},120h${actinLen}v6h${-actinLen}zM${zR},160h${actinLen}v6h${-actinLen}z"/>` +
-      `<path fill="#c19a3e" d="M${mLeft - sarcLen},135h${aBand}v16h${-aBand}zM${mLeft + sarcLen},135h${aBand}v16h${-aBand}z"/></g>`;
-
-    // Actin filaments (thin, blue)
-    // Left actin
-    inner += `<rect x="${zL}" y="120" width="${actinLen}" height="6" fill="#5cabe6" stroke="#1B3A2D" stroke-width="0.8"/>`;
-    inner += `<rect x="${zL}" y="160" width="${actinLen}" height="6" fill="#5cabe6" stroke="#1B3A2D" stroke-width="0.8"/>`;
-    // Tropomyosin / dots on actin (decorative)
-    for (let i = 0; i < 6; i++) {
-      const dotX = zL + 30 + i * ((actinLen - 60) / 5);
-      inner += `<circle cx="${dotX}" cy="123" r="2" fill="#1B3A2D" opacity="0.6"/>`;
-      inner += `<circle cx="${dotX}" cy="163" r="2" fill="#1B3A2D" opacity="0.6"/>`;
+    // this sarcomere's thin filaments (actin), anchored at the Z discs; the dots
+    // are binding sites, every 20 units from the Z disc, and ride along as the
+    // filaments slide (a bound head sits on the site 120 or 180 out); a dark
+    // cap marks each free end
+    s += `<path stroke="#c19a3e" stroke-width="7" d="M${zL},${yU}H${zL + THIN}M${zL},${yD}H${zL + THIN}M${zR},${yU}H${zR - THIN}M${zR},${yD}H${zR - THIN}"/>`;
+    let dots = '';
+    for (let i = 1; i < 10; i++) {
+      const a = zL + i * 20, b = zR - i * 20;
+      dots += `M${a},${yU}h0M${a},${yD}h0M${b},${yU}h0M${b},${yD}h0`;
     }
-    // Right actin
-    inner += `<rect x="${zR - actinLen}" y="120" width="${actinLen}" height="6" fill="#5cabe6" stroke="#1B3A2D" stroke-width="0.8"/>`;
-    inner += `<rect x="${zR - actinLen}" y="160" width="${actinLen}" height="6" fill="#5cabe6" stroke="#1B3A2D" stroke-width="0.8"/>`;
-    for (let i = 0; i < 6; i++) {
-      const dotX = zR - actinLen + 30 + i * ((actinLen - 60) / 5);
-      inner += `<circle cx="${dotX}" cy="123" r="2" fill="#1B3A2D" opacity="0.6"/>`;
-      inner += `<circle cx="${dotX}" cy="163" r="2" fill="#1B3A2D" opacity="0.6"/>`;
+    s += `<path d="${dots}" stroke="#5b4a1c" stroke-width="4" stroke-linecap="round" opacity="0.7"/>`;
+    s += `<path d="M${hS},${yU - 6}v12M${hS},${yD - 6}v12M${hE},${yU - 6}v12M${hE},${yD - 6}v12" stroke="#5b4a1c" stroke-width="3"/>`;
+
+    // the thick filament (myosin) with the M line across its middle
+    s += `<rect x="${mLeft}" y="${ROD - 8}" width="${aBand}" height="16" rx="6" fill="#c25b3f" stroke="#1B3A2D" stroke-width="1.5"/>`;
+    s += `<path d="M${MID},${ROD - 28}V${ROD + 28}" stroke="#1B3A2D" stroke-width="2"/>`;
+
+    // Myosin heads, two per row in each half (bases 40 and 100 in from each
+    // end of the thick filament), none in the bare zone at the M line.
+    // Stages 1 and 2: detached, the S2 tether only 2 long, so the head end
+    // stays more than 8 clear of actin; Stage 1 still at the post-stroke
+    // 45 degrees, Stage 2 cocked back to 90. Stages 3 to 5: the head end sits
+    // on a binding site (REACH out, shrink toward the M line, so it rides
+    // with its thin filament) while the unit swings from 90 degrees in
+    // Stage 3 to 45 at the end of the power stroke, and holds there in
+    // Stage 5; the tether grows from 13 to about 24 to take up the change.
+    let nx, ny, deg;
+    if (k < 2) { nx = 0; ny = 2; deg = k === 0 ? 45 : 90; }
+    else {
+      deg = 90 - 45 * shrink / 30;
+      const a = deg * Math.PI / 180;
+      nx = shrink - UNIT * Math.cos(a); ny = REACH - UNIT * Math.sin(a);
     }
+    [[mLeft + 40, 1], [mLeft + 100, 1], [mRight - 40, -1], [mRight - 100, -1]].forEach(([bx, tM]) => {
+      s += head(bx, -1, tM, nx, ny, deg, stage.head) + head(bx, 1, tM, nx, ny, deg, stage.head);
+    });
 
-    // Myosin thick filament (with head bulges) — A-band, gold
-    inner += `<rect x="${mLeft}" y="135" width="${aBand}" height="16" fill="#c19a3e" stroke="#1B3A2D" stroke-width="1.2"/>`;
-    // Myosin tail texture
-    for (let i = 0; i < 12; i++) {
-      const tx = mLeft + 12 + i * (aBand - 24) / 11;
-      inner += `<line x1="${tx}" y1="135" x2="${tx}" y2="151" stroke="#1B3A2D" stroke-width="0.4" opacity="0.5"/>`;
-    }
+    // Z discs (the two stroke-width 4 lines)
+    s += `<line x1="${zL}" y1="40" x2="${zL}" y2="222" stroke="#1B3A2D" stroke-width="4"/>`;
+    s += `<line x1="${zR}" y1="40" x2="${zR}" y2="222" stroke="#1B3A2D" stroke-width="4"/>`;
 
-    // Myosin heads — show 4 heads with state-based positions
-    // Stage determines head position (detached, cocked up, bound, pulled)
-    function drawHead(headX, side) {
-      // side: -1 (left, points left toward Z) or +1 (right, points right toward Z)
-      let headDx, headDy, color;
-      if (stagePct < 20) {
-        // Stage 1: detached, slightly out
-        headDx = side * 8; headDy = side > 0 ? 18 : -18; color = '#888';
-      } else if (stagePct < 40) {
-        // Stage 2: cocked high-energy (further out, higher angle)
-        headDx = side * 10; headDy = side > 0 ? 28 : -28; color = '#c19a3e';
-      } else if (stagePct < 60) {
-        // Stage 3: just bound (90° to filament)
-        headDx = side * 14; headDy = side > 0 ? 22 : -22; color = '#5FA874';
-      } else if (stagePct < 80) {
-        // Stage 4: power stroke in progress (head pivots 45° toward Z)
-        const t = (stagePct - 60) / 20;
-        headDx = side * (14 - t * 6); headDy = side > 0 ? (22 - t * 8) : (-22 + t * 8); color = '#5FA874';
-      } else {
-        // Stage 5: stroke complete (head pivoted, attached, pre-rigor)
-        headDx = side * 8; headDy = side > 0 ? 14 : -14; color = '#1B3A2D';
-      }
-      const hx = headX + headDx;
-      const hy = 143 + headDy;
-      // Lever arm
-      inner += `<line x1="${headX}" y1="143" x2="${hx}" y2="${hy}" stroke="#1B3A2D" stroke-width="2"/>`;
-      // Head
-      inner += `<ellipse cx="${hx}" cy="${hy}" rx="9" ry="6" fill="${color}" stroke="#1B3A2D" stroke-width="1.2"/>`;
-    }
-    // 2 heads on left half (point toward left Z)
-    drawHead(mLeft + 30, -1);
-    drawHead(mLeft + 80, -1);
-    // 2 heads on right half (point toward right Z)
-    drawHead(mRight - 80, 1);
-    drawHead(mRight - 30, 1);
+    // labels, laid out as in the sliding filament model: Z and M line on top,
+    // the H zone bracket over the thin filament ends, then under the
+    // filaments one I band bracket per Z disc (A band to A band) and the
+    // A band bracket, the length of the thick filament
+    s += `<g text-anchor="middle" font-size="28" font-weight="700">` +
+      `<text x="${zL}" y="30" fill="#1B3A2D">Z</text><text x="${zR}" y="30" fill="#1B3A2D">Z</text>` +
+      `<text x="${MID}" y="30" fill="#1B3A2D">M line</text>` +
+      (hZone > 6 ? `<text x="${MID}" y="70" fill="#007a59">H zone</text>` : '') +
+      `<text x="${zL}" y="268" fill="#5b6b62">I band</text><text x="${zR}" y="268" fill="#5b6b62">I band</text>` +
+      `<text x="${MID}" y="268" fill="#a8462e">A band</text></g>`;
+    if (hZone > 6) s += `<path d="M${hS},90V80H${hE}V90" fill="none" stroke="#009E73" stroke-width="2.4"/>`;
+    s += `<line x1="${zL - iHalf + 3}" y1="236" x2="${zL + iHalf - 3}" y2="236" stroke="#5b6b62" stroke-width="2.4"/>`;
+    s += `<line x1="${zR - iHalf + 3}" y1="236" x2="${zR + iHalf - 3}" y2="236" stroke="#5b6b62" stroke-width="2.4"/>`;
+    s += `<line x1="${mLeft + 3}" y1="236" x2="${mRight - 3}" y2="236" stroke="#c25b3f" stroke-width="2.4"/>`;
+    s += `<path d="M${zL - iHalf + 3},228V236M${zL + iHalf - 3},228V236M${zR - iHalf + 3},228V236M${zR + iHalf - 3},228V236" stroke="#5b6b62" stroke-width="2.4"/>`;
+    s += `<path d="M${mLeft + 3},228V236M${mRight - 3},228V236" stroke="#c25b3f" stroke-width="2.4"/>`;
 
-    // Band labels at bottom: one I band bracket per Z disc, centered on it
-    // (A band to A band), never half of it from the Z disc to the A band
-    inner += `<line x1="${zL - iHalf}" y1="200" x2="${zL + iHalf}" y2="200" stroke="#C25B3F" stroke-width="1.5"/>`;
-    inner += `<text x="${zL}" y="226" text-anchor="middle" font-size="20" font-weight="700" fill="#C25B3F">I band</text>`;
-    inner += `<line x1="${zR - iHalf}" y1="200" x2="${zR + iHalf}" y2="200" stroke="#C25B3F" stroke-width="1.5"/>`;
-    inner += `<text x="${zR}" y="226" text-anchor="middle" font-size="20" font-weight="700" fill="#C25B3F">I band</text>`;
-    inner += `<line x1="${mLeft}" y1="105" x2="${mRight}" y2="105" stroke="#5cabe6" stroke-width="1.5"/>`;
-    inner += `<text x="400" y="100" text-anchor="middle" font-size="20" font-weight="700" fill="#5cabe6">A band</text>`;
-    if (hZone > 6) {
-      inner += `<line x1="${hZoneStart}" y1="190" x2="${hZoneEnd}" y2="190" stroke="#c19a3e" stroke-width="1.5"/>`;
-      inner += `<text x="${(hZoneStart + hZoneEnd) / 2}" y="183" text-anchor="middle" font-size="20" font-weight="700" fill="#c19a3e">H zone</text>`;
-    }
+    svg.innerHTML = s;
 
-    svg.innerHTML = inner;
+    // live measurements
+    document.getElementById('cbSarcLen').textContent = um(sarcLen);
+    // one real stroke is 5 to 10 nm, so the slide drawn here stands for many
+    // cycles; the qualifier wraps as a whole onto its own line on a phone
+    document.getElementById('cbSarcDelta').innerHTML = sarcLen < 480 ? 'shorter by ' + um(480 - sarcLen) + ' <span style="white-space:nowrap">(many cycles)</span>' : 'rest length';
+    document.getElementById('cbIBand').textContent = um(iBandWidth);
+    document.getElementById('cbABand').textContent = um(aBand);
+    document.getElementById('cbHZone').textContent = um(hZone);
 
-    // Update measurements
-    document.getElementById('cbSarcLen').textContent = `${sarcLen} px`;
-    document.getElementById('cbSarcDelta').textContent = sarcLen < 480 ? 'shrunk by ' + (480 - sarcLen) + ' px' : 'rest length';
-    document.getElementById('cbIBand').textContent = `${iBandWidth} px`;
-    document.getElementById('cbABand').textContent = `${aBand} px`;
-    document.getElementById('cbHZone').textContent = `${hZone} px`;
-
-    // Update stage info
-    const stage = CB_STAGES.find(s => stagePct >= s.range[0] && stagePct <= s.range[1]) || CB_STAGES[0];
+    // stage text
     document.getElementById('cbStageName').textContent = stage.name;
-    document.getElementById('cbExplain').innerHTML = stage.explain;
+    document.getElementById('cbExplain').innerHTML = `<span style="font-weight:700;color:${stage.color}">${stage.title}</span> ${stage.explain}`;
     document.getElementById('cbATP').textContent = stage.atp;
     document.getElementById('cbCa').textContent = stage.ca;
-    document.getElementById('cbBridge').textContent = stage.bridge;
+    const br = document.getElementById('cbBridge');
+    br.textContent = stage.bridge;
+    br.style.color = stage.color;
   }
 
-  document.getElementById('cbStage').addEventListener('input', e => render(+e.target.value));
-  render(0);
+  const slider = document.getElementById('cbStage');
+  slider.addEventListener('input', e => render(+e.target.value));
+  render(+slider.value);   // opens on Stage 3 (value 50, set in CROSS_BRIDGE_HTML)
 }
 
 /* ---- PROBABILITY TREE CALCULATOR (AND/OR rules) ---- */
