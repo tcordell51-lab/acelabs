@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en" data-door="today" data-due="3">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Today | Ace Labs</title>
+<link rel="icon" href="assets/ace-dat-mark-reversed.svg">
+<link rel="preload" href="assets/fonts/DMSans.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/PlayfairDisplay-italic.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/tokens.css">
+<link rel="stylesheet" href="assets/kit.css">
+<style>
+  .today{padding-top:12px}
+  .hero{display:grid;gap:12px;grid-template-columns:minmax(0,1fr);grid-template-areas:"coach" "bench" "plan";align-items:start}
+  #coach{grid-area:coach}
+  #bench{grid-area:bench}
+  .side{grid-area:plan;padding-top:14px}
+  @media (min-width:1080px){
+    .hero{grid-template-columns:minmax(0,8fr) minmax(0,4.1fr);grid-template-areas:"coach coach" "bench plan";gap:18px 28px}
+    .side{padding-top:0}
+    #coach{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.62fr);gap:6px 28px;padding:18px 22px}
+    #coach .top,#coach .coach-line,#coach .coach-src,#coach .plan-line,#coach .said{grid-column:1}
+    #coach .coach-note{grid-column:2;grid-row:1 / span 4;align-self:center;margin-top:0}
+  }
+  @media (max-width:1079px){#coach .coach-note{display:none}}
+  .top .short{display:none}
+  @media (max-width:759px){
+    .today{padding-top:8px}
+    .hero{gap:10px}
+    #coach{padding:11px 14px 12px}
+    #coach .top .long{display:none}
+    #coach .top .short{display:inline}
+    #coach .top{flex-wrap:nowrap}
+    #coach .coach-line{margin-top:6px;font-size:18.5px}
+    #coach .coach-src{margin-top:4px;font-size:12.5px}
+    #coach .plan-line{margin-top:8px}
+    #bench .bench-top{padding-top:10px}
+    #bench .band{margin-top:6px}
+    #bench .caption{min-height:0;margin-top:6px;font-size:13.5px}
+    #bench .prompt{margin-bottom:10px}
+  }
+  #bench .bench-body{padding-top:10px}
+  @media (min-width:1080px){#bench .bench-body{padding:14px 22px 22px}#bench .band{margin:12px 22px 0}#bench .bench-top{padding:14px 22px 0}}
+  .stage .field{aspect-ratio:372/228}
+  .stage .field .layer{position:absolute;inset:0}
+  .stage .field .layer svg{width:100%;height:100%}
+  .stage .field .layer.draw{z-index:2}
+  .flow{display:grid;gap:12px;align-content:start}
+  @media (min-width:760px){
+    #bench .bench-grid{grid-template-areas:"stage flow" "drive flow";grid-template-rows:auto 1fr}
+    #bench .stage{grid-area:stage}
+    #bench .flow{grid-area:flow}
+    #bench .drive-slot{grid-area:drive}
+  }
+  .knob label{flex-wrap:wrap}
+  .flow .row{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+  .closed-book{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--b-ink-3)}
+  .keep-note{font-size:14px;line-height:1.5;color:var(--b-ink-2)}
+  .keep-note b{color:var(--b-gold-hi)}
+  .side h2{margin:2px 0 4px}
+  .side .lede{font-size:15px;margin-bottom:14px}
+  .side .coach-note-light{margin-top:14px;padding:12px 14px;border-left:3px solid var(--al-gold);background:var(--s-surface);border-radius:0 12px 12px 0;font:italic 500 15px/1.45 var(--f-display);color:var(--s-ink)}
+  .side .coach-note-light .sign{display:block;margin-top:6px;font:600 11px/1 var(--f-mono);font-style:normal;letter-spacing:.12em;text-transform:uppercase;color:var(--s-accent-ink)}
+  @media (min-width:1080px){.side .coach-note-light{display:none}}
+  .secs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  @media (min-width:760px){.secs{grid-template-columns:repeat(3,minmax(0,1fr))}}
+  @media (min-width:1080px){.secs{grid-template-columns:repeat(6,minmax(0,1fr))}}
+  .sec-tile{display:flex;flex-direction:column;gap:6px;padding:14px;border-radius:var(--r-card);background:var(--s-surface);border:1px solid var(--s-line);text-decoration:none;color:inherit;min-height:124px;border-top:3px solid var(--sec);transition:transform var(--m-state) var(--e-out),box-shadow var(--m-state)}
+  .sec-tile:hover{transform:translateY(-2px);box-shadow:var(--s-shadow-lift)}
+  .sec-tile .ico{color:var(--sec);width:22px;height:22px}
+  .sec-tile .n{font:700 16px/1.2 var(--f-display)}
+  .sec-tile .nx{font-size:13px;line-height:1.4;color:var(--s-ink-2)}
+  .sec-tile .c{margin-top:auto;font:600 11.5px/1 var(--f-mono);letter-spacing:.04em;color:var(--s-ink-3)}
+  .due-list{display:grid;gap:8px;margin-top:14px}
+  .due-row{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:12px;background:var(--s-surface-2);border:1px solid var(--s-line);font-size:14.5px;line-height:1.4;text-decoration:none;color:inherit;min-height:48px}
+  .due-row>span:not(.dot){flex:1;min-width:0}
+  .due-row small{font:600 11px/1 var(--f-mono);color:var(--s-ink-3);letter-spacing:.06em;text-transform:uppercase}
+  .due-row.landed{border-color:var(--al-gold);background:var(--al-gold-bg)}
+  .test-card{display:grid;gap:10px;padding:18px;border-radius:var(--r-card);background:var(--s-surface);border:1px solid var(--s-line);box-shadow:var(--s-shadow)}
+  .test-card .d{font-size:15px;line-height:1.55;color:var(--s-ink-2)}
+  .test-card .when{display:flex;gap:16px;flex-wrap:wrap;font-size:13.5px;color:var(--s-ink-3)}
+  .test-card .when b{color:var(--s-ink);font-weight:700}
+  .row-btns{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  /* first visit: the three setup questions live in the coach band */
+  .setup{display:grid;gap:12px;margin-top:12px}
+  .setup .q{display:grid;gap:6px}
+  .setup label,.setup .ql{font:600 13.5px/1.3 var(--f-body);color:var(--b-ink-2)}
+  .setup input[type=date]{min-height:44px;border-radius:10px;border:1.5px solid rgba(244,237,224,.25);background:rgba(244,237,224,.06);color:var(--b-ink);padding:0 12px;font:600 15px/1 var(--f-body);color-scheme:dark}
+  .pills{display:flex;flex-wrap:wrap;gap:6px}
+  .pill-b{min-height:44px;padding:0 14px;border-radius:999px;border:1.5px solid rgba(244,237,224,.22);background:rgba(244,237,224,.05);color:var(--b-ink);font:600 14px/1 var(--f-body)}
+  .pill-b[aria-pressed="true"]{border-color:var(--b-gold-hi);background:rgba(201,168,76,.18)}
+</style>
+</head>
+<body>
+<div id="ace-shell"></div>
+<main class="wrap today">
+  <section class="hero" aria-label="Today">
+    <!-- ============ the coach band ============ -->
+    <header class="coach" id="coach" aria-labelledby="coachLine">
+      <div class="top"><span id="todayDate"><span class="long">Friday, October 30</span><span class="short">Fri, Oct 30</span></span><span class="date-chip" data-icon="calendar" data-icon-cls="sm">Test day <b>Sat, Dec 12</b></span></div>
+      <p class="coach-line" id="coachLine">One call on osmosis first, <em>then your three cards.</em></p>
+      <p class="coach-src" id="coachSrc">From <b>your diagnostic</b> and <b>your Dec 12 test date</b>.</p>
+      <div class="plan-line" id="planLine"><span class="ticks" aria-hidden="true"><i class="now"></i><i></i><i></i><i></i></span><span id="planLbl">Step 1 of 4: Call it first</span></div>
+      <div class="said" id="said" hidden aria-live="polite"></div>
+      <blockquote class="coach-note" id="coachNote">This week is membranes and equilibrium. Two PAT sets before Friday, untimed.<span class="sign">Thomas, Sunday's weekly plan</span></blockquote>
+    </header>
+
+    <!-- ============ step 1, live: play before you read ============ -->
+    <article class="bench" id="bench" data-sec="bio" aria-labelledby="callQ">
+      <div class="bench-top">
+        <span class="k gold" data-icon="predict" data-icon-cls="sm">Call it first</span>
+        <span class="chip" data-sec="bio"><span class="dot"></span>Bio / Tonicity</span>
+      </div>
+      <div id="band"></div>
+      <div class="bench-body">
+        <div class="bench-grid">
+          <div class="stage">
+            <div class="field" id="field">
+              <div class="layer real" id="realLayer"></div>
+              <div class="layer draw" id="drawLayer" hidden></div>
+              <span class="tag">Light microscope</span><span class="tag r" id="magTag">1000x oil</span>
+              <span class="wipe-tag" id="tagDraw" hidden style="left:8px">Drawing</span>
+              <span class="wipe-tag" id="tagReal" hidden style="right:8px">Real</span>
+              <div class="wipe-handle" id="wipe" hidden role="slider" tabindex="0" aria-label="Drawing or real view" aria-valuemin="0" aria-valuemax="100"><span data-icon="drag" data-icon-cls="sm"></span></div>
+              <div class="veil off" id="veil"><div><span data-icon="eye"></span><p>Closed book. Answer from memory, then the slide comes back.</p></div></div>
+            </div>
+            <p class="caption" id="cap" aria-live="polite"></p>
+            <div class="framebar" id="framebar" hidden>
+              <div class="pips" id="pips" aria-hidden="true"><i><b></b></i><i><b></b></i><i><b></b></i><i><b></b></i></div>
+              <button class="iconbtn" id="replay" type="button" aria-label="Play the slide again"></button>
+            </div>
+          </div>
+
+          <div class="flow" id="flow">
+            <!-- Call -->
+            <div id="stCall">
+              <h2 class="prompt" id="callQ">An animal cell drops into pure water. What happens to it?</h2>
+              <div class="opts" role="group" aria-labelledby="callQ" id="callOpts"></div>
+              <div class="row"><button class="skip" id="skipBtn" type="button">Skip the call, just show me</button><button class="stuck-link" id="stuckBtn" type="button" style="color:var(--b-ink-3)">Stuck?</button></div>
+            </div>
+            <!-- verdict, right under the slide -->
+            <div id="stVerdict" hidden></div>
+            <!-- Recall -->
+            <div id="stProve" hidden>
+              <p class="closed-book" id="closedNote" hidden></p>
+              <h2 class="prompt" id="checkQ" style="margin-top:8px">A plant cell sits in water much saltier than the cell. What do you see?</h2>
+              <div class="opts" role="group" aria-labelledby="checkQ" id="checkOpts"></div>
+              <div id="checkVerdict" style="margin-top:12px" hidden></div>
+            </div>
+            <!-- Card -->
+            <div id="stKeep" hidden>
+              <div id="cardHost"></div>
+              <p class="keep-note" id="keepNote" style="margin:12px 0"></p>
+              <div class="row-btns" id="keepBtns"></div>
+            </div>
+            <div id="stDone" hidden>
+              <div class="verdict reveal-in" role="status"><div class="vh"><span data-icon="keep" data-icon-cls="sm"></span>Step 1 done</div><p id="doneP">Predict, play, prove, keep. Every tool in Ace Labs runs this same loop.</p></div>
+              <div class="row-btns" style="margin-top:12px"><a class="btn gold" href="review.html" id="nextStep">Next: 3 Ace Cards <span data-icon="arrow" data-icon-cls="sm"></span></a><button class="btn quiet" id="again" type="button">Play it again</button></div>
+            </div>
+          </div>
+            <!-- Drive -->
+          <div id="stDrive" class="drive-slot" hidden>
+              <div class="drive">
+                <div class="dh"><span data-icon="drag"></span>Now you drive</div>
+                <p>Slide the solute and the real cells answer. Pull the gold line on the slide to see the textbook drawing of the same moment.</p>
+                <div class="knob">
+                  <label for="solute">Solute outside the cell <output id="soluteOut">pure water</output></label>
+                  <input class="al" type="range" id="solute" min="0" max="100" step="1" value="4" aria-describedby="soluteTicks">
+                  <div class="ticks" id="soluteTicks"><span>pure water</span><span>matches the cell</span><span>very salty</span></div>
+                </div>
+                <p class="honest"><span data-icon="eye"></span>Each position is a fresh slide. Burst cells never re-form.</p>
+              </div>
+              <div class="row-btns" style="margin-top:12px"><button class="btn gold" id="toProve" type="button">One more, from memory <span data-icon="arrow" data-icon-cls="sm"></span></button></div>
+            </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- ============ today's plan ============ -->
+    <aside class="side" aria-labelledby="planH">
+      <p class="k">Today's plan</p>
+      <h2 class="h2" id="planH">Four steps, <em>one loop.</em></h2>
+      <p class="lede" id="planLede">About 53 minutes. Misses come back to Review as cards.</p>
+      <ol class="plan" id="plan">
+        <li data-k="call"><a class="step now" href="#bench"><span class="node" data-icon="predict"></span><span class="tx"><span class="st"><span class="dot" style="--sec:var(--s-sec-bio)"></span>Practice</span><span class="t">Call it first: Tonicity</span><span class="d">Real red cells. Call it, watch it, drive it.</span></span><span class="min">2 min</span></a></li>
+        <li data-k="cards"><a class="step" href="review.html"><span class="node" data-icon="keep"></span><span class="tx"><span class="st">Review</span><span class="t">3 Ace Cards back today</span><span class="d">Each one returns as a fresh question.</span></span><span class="min">6 min</span></a></li>
+        <li data-k="learn"><a class="step" href="learn.html"><span class="node" data-icon="learn"></span><span class="tx"><span class="st"><span class="dot" style="--sec:var(--s-sec-gchem)"></span>Learn</span><span class="t">GChem, Retold: night 12</span><span class="d">Balance and the Push-Back. It opens with a call.</span></span><span class="min">30 min</span></a></li>
+        <li data-k="climb"><a class="step" href="tests.html"><span class="node" data-icon="prove"></span><span class="tx"><span class="st">Tests</span><span class="t">The Climb: today's queue</span><span class="d">5 ideas due, each as a fresh question. Untimed.</span></span><span class="min">15 min</span></a></li>
+      </ol>
+      <div class="tomorrow" id="tomorrow" hidden></div>
+      <blockquote class="coach-note-light">This week is membranes and equilibrium. Two PAT sets before Friday, untimed.<span class="sign">Thomas, Sunday's weekly plan</span></blockquote>
+    </aside>
+  </section>
+
+  <!-- ============ the way back ============ -->
+  <section class="sect" aria-labelledby="ladderH">
+    <div class="sect-head"><div><p class="k">Your Ace Cards</p><h2 class="h2" id="ladderH">The way back</h2></div><a class="chip" href="review.html">Open Review</a></div>
+    <div class="panel">
+      <div class="ladder" id="ladder">
+        <div class="rung now" data-rung="today"><div class="stack"><i></i><i></i><i></i></div><span class="lbl">Back today</span><span class="num">3 cards</span></div>
+        <div class="rung" data-rung="d1"><div class="stack"><i></i><i></i></div><span class="lbl">Tomorrow</span><span class="num" id="d1n">2 cards</span></div>
+        <div class="rung" data-rung="d3"><div class="stack"><i></i><i></i><i></i></div><span class="lbl">In 3 days</span><span class="num">4 cards</span></div>
+        <div class="rung" data-rung="d7"><div class="stack"><i></i><i></i></div><span class="lbl">In 7 days</span><span class="num">2 cards</span></div>
+        <div class="rung" data-rung="kept"><div class="stack"><i></i><i></i><i></i></div><span class="lbl">Kept</span><span class="num">5 cards</span></div>
+      </div>
+      <div class="due-list" id="dueList">
+        <a class="due-row" href="review.html" data-sec="bio"><span class="dot"></span><span>Most ATP comes from the ETC and ATP synthase, about 28 of 32.</span><small>Bio</small></a>
+        <a class="due-row" href="review.html" data-sec="bio"><span class="dot"></span><span>Affected people are q squared; carriers are 2pq.</span><small>Bio</small></a>
+        <a class="due-row" href="review.html" data-sec="gchem"><span class="dot"></span><span>Q tells the direction, K tells the destination.</span><small>GChem</small></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ the six sections ============ -->
+  <section class="sect" aria-labelledby="secH">
+    <div class="sect-head"><div><p class="k">The six sections, in test-day order</p><h2 class="h2" id="secH">Where every loop lives</h2></div></div>
+    <div class="secs">
+      <a class="sec-tile" data-sec="bio" href="biology.html"><span data-icon="bio"></span><span class="n">Biology</span><span class="nx">Next: Bio, Retold night 4</span><span class="c">12 cards</span></a>
+      <a class="sec-tile" data-sec="gchem" href="titration.html"><span data-icon="gchem"></span><span class="n">General Chemistry</span><span class="nx">Next: Titration curves</span><span class="c">6 cards</span></a>
+      <a class="sec-tile" data-sec="ochem" href="practice.html?sec=ochem"><span data-icon="ochem"></span><span class="n">Organic Chemistry</span><span class="nx">Next: The Tree, trunk 3</span><span class="c">4 cards</span></a>
+      <a class="sec-tile" data-sec="pat" href="pat-holepunch.html"><span data-icon="pat"></span><span class="n">Perceptual Ability</span><span class="nx">Next: Hole punching</span><span class="c">2 cards</span></a>
+      <a class="sec-tile" data-sec="rc" href="practice.html?sec=rc"><span data-icon="rc"></span><span class="n">Reading Comprehension</span><span class="nx">Next: Passage 7</span><span class="c">1 card</span></a>
+      <a class="sec-tile" data-sec="qr" href="practice.html?sec=qr"><span data-icon="qr"></span><span class="n">Quantitative Reasoning</span><span class="nx">Next: Successive percents</span><span class="c">3 cards</span></a>
+    </div>
+  </section>
+
+  <!-- ============ the next test ============ -->
+  <section class="sect" aria-labelledby="testH">
+    <div class="sect-head"><div><p class="k">Your next test</p><h2 class="h2" id="testH">Full-length DAT 1</h2></div></div>
+    <div class="test-card">
+      <p class="d">All four sections in test-day order: Natural Sciences, PAT, the optional break, Reading, then QR, on the same screen you will see in the testing center. Take 1 now, 2 at mid-prep, 3 and 4 in the last two weeks.</p>
+      <div class="when"><span>Suggested for <b>Sunday, November 1</b></span><span>About <b>4 h 15 min</b> of testing</span></div>
+      <div class="row-btns"><a class="btn primary" href="question.html?mode=timed">Open Full-length DAT 1 <span data-icon="arrow" data-icon-cls="sm"></span></a><a class="btn quiet" href="tests.html">All tests</a></div>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <p>Ace Labs. Built for how the DAT actually tests. Ace Labs is not affiliated with the ADA or Prometric. <a href="index.html">About Ace Labs</a></p>
+  </footer>
+</main>
+
+<script src="assets/kit.js"></script>
+<script src="assets/bio-real.js"></script>
+<script src="assets/tonicity.js"></script>
+<script src="assets/loop.js"></script>
+<script src="assets/today.js"></script>
+</body>
+</html>

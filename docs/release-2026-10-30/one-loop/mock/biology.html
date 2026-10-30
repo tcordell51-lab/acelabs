@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="en" data-door="practice" data-due="3">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Biology | Ace Labs</title>
+<link rel="icon" href="assets/ace-dat-mark-reversed.svg">
+<link rel="stylesheet" href="assets/tokens.css">
+<link rel="stylesheet" href="assets/kit.css">
+<style>
+  .sec-hero{padding:18px 0 6px;display:grid;gap:18px;grid-template-columns:minmax(0,1fr)}
+  .sec-hero>*{min-width:0}
+  @media (min-width:1080px){.sec-hero{grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:36px;align-items:start;padding-top:26px}}
+  .ttl{display:flex;align-items:center;gap:12px;margin:8px 0 10px}
+  .ttl .ico{width:40px;height:40px;color:var(--sec)}
+  .reframe{font:italic 600 clamp(1.1rem,1rem + .5vw,1.3rem)/1.45 var(--f-display);color:var(--s-ink-2);max-width:40ch;border-left:3px solid var(--sec);padding-left:14px;margin:14px 0 0}
+  .switch-wrap{margin-top:14px}
+  .switch-wrap .row{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:2px 0 6px}
+  .switch-wrap .row::-webkit-scrollbar{display:none}
+  .secloop{display:grid;gap:10px;grid-template-columns:1fr 1fr}
+  @media (min-width:1080px){.secloop{grid-template-columns:repeat(4,1fr)}}
+  .sl{display:flex;flex-direction:column;gap:6px;padding:14px;border-radius:var(--r-card);background:var(--s-surface);border:1px solid var(--s-line);box-shadow:var(--s-shadow);text-decoration:none;color:inherit;min-height:124px}
+  .sl .top{display:flex;align-items:center;justify-content:space-between}
+  .sl .pip{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--al-bench-1);color:var(--b-gold-hi)}
+  .sl .pip .ico{width:15px;height:15px}
+  .sl .st{font:600 11px/1 var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--s-ink-3)}
+  .sl .t{font:700 16px/1.25 var(--f-body)}
+  .sl .d{font-size:13.5px;line-height:1.4;color:var(--s-ink-2)}
+  .sl.next{border-color:var(--al-gold);box-shadow:0 0 0 3px rgba(201,168,76,.18),var(--s-shadow)}
+  #rec .bench-body{display:grid;gap:12px}
+  @media (min-width:760px){#rec .bench-body{grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:22px;align-items:start}}
+  #recField{aspect-ratio:372/228}
+  .rec-meta{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:8px;font:600 12px/1 var(--f-mono);color:var(--b-ink-3)}
+  .rec-meta .pips{display:flex;gap:5px}
+  .rec-meta .pips i{width:18px;height:4px;border-radius:2px;background:rgba(244,237,224,.16)}
+  .rec-meta .pips i.seen{background:var(--b-gold)}
+  .rec-meta .pips i.card{background:var(--b-trap)}
+  /* the lens bench */
+  #lens .bench-body{display:grid;gap:14px}
+  @media (min-width:1000px){#lens .bench-body{grid-template-columns:minmax(0,1.55fr) minmax(280px,1fr);gap:22px;align-items:start}}
+  .lens-field{border-radius:14px;overflow:hidden;background:#fbf6e9;box-shadow:0 0 0 1px rgba(244,237,224,.1)}
+  .lens-svg{display:block;width:100%;height:auto;touch-action:pan-y;user-select:none;-webkit-user-select:none}
+  .lens-handle{cursor:grab;touch-action:none}
+  .lens-handle:focus{outline:none}
+  .lens-handle:focus-visible .lens-ring{stroke:#7fb2f0;stroke-width:5}
+  .lens-ctl{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin-top:10px}
+  .vseg{display:inline-flex;border:1px solid rgba(244,237,224,.22);border-radius:999px;overflow:hidden}
+  .vseg button{min-height:44px;padding:0 14px;font:700 13.5px/1 var(--f-body);color:var(--b-ink-2)}
+  .vseg button[aria-pressed="true"]{background:var(--b-gold);color:#0c1d15}
+  .ro-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:10px}
+  .ro{border-radius:10px;border:1px solid var(--b-line);padding:8px 9px;background:#0b1510}
+  .ro span{display:block;font:600 10px/1.2 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--b-ink-3)}
+  .ro b{display:block;margin-top:3px;font:600 14.5px/1 var(--f-mono);color:var(--b-ink)}
+  .ro .chg{margin-top:3px;text-transform:none;letter-spacing:0;font-size:11px}
+  .ro.hold{border-color:rgba(201,168,76,.55)}
+  .ro.hold b{color:var(--b-gold-hi)}
+  @media (max-width:520px){.ro{padding:7px 6px}.ro b{font-size:12.5px}.ro span{font-size:9px}}
+  .hubs{display:grid;gap:12px;grid-template-columns:1fr}
+  @media (min-width:760px){.hubs{grid-template-columns:repeat(2,1fr)}}
+  @media (min-width:1080px){.hubs{grid-template-columns:repeat(3,1fr)}}
+  .hub{display:flex;flex-direction:column;gap:10px;padding:16px;border-radius:var(--r-card);background:var(--s-surface);border:1px solid var(--s-line);box-shadow:var(--s-shadow);text-decoration:none;color:inherit}
+  .hub .n{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+  .hub .n b{font:700 19px/1.2 var(--f-display)}
+  .hub .n span{font:600 11px/1 var(--f-mono);letter-spacing:.06em;color:var(--s-ink-3)}
+  .hub .list{display:flex;flex-wrap:wrap;gap:6px}
+  .hub .list span{font-size:12.5px;padding:4px 9px;border-radius:999px;background:var(--s-surface-2);border:1px solid var(--s-line);color:var(--s-ink-2)}
+  .hub .list span.call{border-color:rgba(201,168,76,.6);background:var(--al-gold-bg);color:var(--s-ink)}
+  .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;color:var(--s-ink-3);margin-bottom:10px}
+  .legend i{display:inline-block;width:12px;height:12px;border-radius:999px;border:1px solid rgba(201,168,76,.6);background:var(--al-gold-bg);vertical-align:-1px;margin-right:6px}
+  .cards2{display:grid;gap:12px;grid-template-columns:1fr}
+  @media (min-width:760px){.cards2{grid-template-columns:repeat(2,1fr)}}
+  .sheets{display:grid;gap:10px;grid-template-columns:1fr}
+  @media (min-width:760px){.sheets{grid-template-columns:repeat(3,1fr)}}
+  .sheet-l{display:flex;gap:12px;align-items:flex-start;padding:14px;border-radius:var(--r-card);background:var(--s-surface);border:1px solid var(--s-line);text-decoration:none;color:inherit;min-height:44px}
+  .sheet-l .ico{color:var(--s-accent-ink);margin-top:2px}
+  .sheet-l b{display:block;font-size:15.5px}
+  .sheet-l span{font-size:13.5px;color:var(--s-ink-2);line-height:1.4}
+</style>
+</head>
+<body>
+<div id="ace-shell"></div>
+<main class="wrap" data-sec="bio">
+  <section class="sec-hero">
+    <div>
+      <p class="k">Section 1 of 6 / questions 1 to 40 of the sciences</p>
+      <div class="ttl"><span data-icon="bio"></span><h1 class="h-hero">Biology</h1></div>
+      <p class="lede">Real slides, pictures that move, and one loop for every idea in the 40 Biology questions.</p>
+      <p class="reframe">Memorizing volume is a skill, not a talent. Spaced retrieval does the work.</p>
+      <nav class="switch-wrap" aria-label="Sections"><div class="row">
+        <a class="seg" href="practice.html">All</a>
+        <a class="seg" data-sec="bio" href="biology.html" aria-current="page"><span class="dot"></span>Bio</a>
+        <a class="seg" data-sec="gchem" href="titration.html"><span class="dot"></span>GChem</a>
+        <a class="seg" data-sec="ochem" href="practice.html?sec=ochem"><span class="dot"></span>OChem</a>
+        <a class="seg" data-sec="pat" href="pat-holepunch.html"><span class="dot"></span>PAT</a>
+        <a class="seg" data-sec="rc" href="practice.html?sec=rc"><span class="dot"></span>RC</a>
+        <a class="seg" data-sec="qr" href="practice.html?sec=qr"><span class="dot"></span>QR</a>
+      </div></nav>
+    </div>
+
+    <!-- ============ Which one is this? on true-to-life slides ============ -->
+    <article class="bench" id="rec" aria-labelledby="recQ">
+      <div class="bench-top"><span class="k gold" data-icon="eye" data-icon-cls="sm">Which one is this?</span><span class="chip">Real slides</span></div>
+      <div class="bench-body">
+        <div>
+          <div class="field" id="recField"></div>
+          <div class="rec-meta"><span id="recCount">Slide 1 of 6</span><span class="tag-mag" id="recMag"></span><span class="pips" id="recPips" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span></div>
+          <p class="caption" id="recCap" aria-live="polite"></p>
+        </div>
+        <div>
+          <h2 class="prompt" id="recQ">Name what this slide shows.</h2>
+          <div class="opts" role="group" aria-labelledby="recQ" id="recOpts"></div>
+          <div id="recOut" style="margin-top:12px" hidden></div>
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <!-- ============ Biology in each door ============ -->
+  <section class="sect" aria-labelledby="doorsH">
+    <div class="sect-head"><div><p class="k">Your next step in each door</p><h2 class="h2" id="doorsH">Biology, around the loop</h2></div></div>
+    <div class="secloop">
+      <a class="sl" href="learn.html"><span class="top"><span class="st">Learn</span><span class="pip" data-icon="learn"></span></span><span class="t">Bio, Retold: night 4</span><span class="d">Cellular Respiration: The Glucose Story. 14 nights in all.</span></a>
+      <a class="sl next" href="#lens"><span class="top"><span class="st">Practice</span><span class="pip" data-icon="play"></span></span><span class="t">Sarcomere bands</span><span class="d">Call it first, with the electron micrograph under a lens.</span></a>
+      <a class="sl" href="tests.html"><span class="top"><span class="st">Tests</span><span class="pip" data-icon="prove"></span></span><span class="t">Bio check</span><span class="d">Short (25) or Full (40), untimed. Ends with what to repair first.</span></a>
+      <a class="sl" href="review.html"><span class="top"><span class="st">Review</span><span class="pip" data-icon="keep"></span></span><span class="t">12 Biology cards</span><span class="d">2 come back today.</span></a>
+    </div>
+  </section>
+
+  <!-- ============ 01 Play it ============ -->
+  <section class="lane" aria-labelledby="l1">
+    <div class="lane-head"><span class="no">01</span><div><h2 id="l1">Play it</h2><p>Call it first, real views, and sets you name on sight</p></div></div>
+    <article class="bench" id="lens" data-sec="bio" aria-labelledby="lensQ" style="scroll-margin-top:12px">
+      <div class="bench-top"><span class="k gold" data-icon="predict" data-icon-cls="sm">Call it first / Real view</span><span class="chip"><span class="dot"></span>Bio / Body Systems</span></div>
+      <div id="lensBand"></div>
+      <div class="bench-body">
+        <div id="lensStage">
+          <div class="lens-field">
+            <svg class="lens-svg" id="lensSvg" viewBox="60 0 600 300" role="img" aria-labelledby="lensDesc">
+              <desc id="lensDesc">A sarcomere drawn as filaments, with a round lens that shows the electron micrograph of the same spot. Drag the lens or use the arrow keys.</desc>
+              <defs>
+                <clipPath id="stripClip"><rect x="0" y="0" width="720" height="204"/></clipPath>
+                <clipPath id="lensClip"><circle id="lensCircle" cx="196" cy="102" r="82"/></clipPath>
+                <radialGradient id="lensGlass" cx="40%" cy="35%" r="70%"><stop offset="0" stop-color="#fff" stop-opacity=".22"/><stop offset=".55" stop-color="#fff" stop-opacity="0"/></radialGradient>
+              </defs>
+              <g id="drawing" clip-path="url(#stripClip)"></g>
+              <g clip-path="url(#stripClip)"><g id="temLayer" clip-path="url(#lensClip)"></g></g>
+              <g id="brackets"></g>
+              <g id="lensHandle" class="lens-handle" tabindex="0" role="slider" aria-label="Lens position" aria-valuemin="60" aria-valuemax="660" aria-valuenow="196">
+                <circle id="lensHit" cx="196" cy="102" r="82" fill="url(#lensGlass)"/>
+                <circle class="lens-ring" id="lensRing" cx="196" cy="102" r="82" fill="none" stroke="#C9A84C" stroke-width="4"/>
+                <circle id="lensRing2" cx="196" cy="102" r="88" fill="none" stroke="#050a07" stroke-opacity=".35" stroke-width="3"/>
+                <g id="lensTag" transform="translate(196 14)"><rect x="-30" y="-10" width="60" height="20" rx="10" fill="#050a07"/><text y="5" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="12" font-weight="600" fill="#E2C97A">TEM</text></g>
+              </g>
+            </svg>
+          </div>
+          <p class="caption" id="lensCap" aria-live="polite">Drag the glass along the fiber: under it is the electron micrograph of the same spot.</p>
+          <div class="lens-ctl">
+            <div class="vseg" role="group" aria-label="View"><button type="button" data-view="drawing" aria-pressed="false">Drawing</button><button type="button" data-view="lens" aria-pressed="true">Lens</button><button type="button" data-view="tem" aria-pressed="false">Micrograph</button></div>
+            <button class="iconbtn text" id="lensNext" type="button" hidden>Next frame</button>
+          </div>
+          <div class="knob">
+            <label for="contract">Contract the muscle <output id="stateTxt">Relaxed</output></label>
+            <input class="al" id="contract" type="range" min="0" max="100" value="0" disabled style="--track:linear-gradient(90deg,#3a4f44,#d9b45c)">
+            <div class="ticks" aria-hidden="true"><span>relaxed</span><span>fully contracted</span></div>
+          </div>
+          <div class="ro-grid" aria-live="polite">
+            <div class="ro"><span>Sarcomere</span><b id="rS">2.45 um</b></div>
+            <div class="ro" id="roA"><span>A band</span><b id="rA">1.60 um</b><span class="chg" hidden>holds</span></div>
+            <div class="ro" id="roI"><span>I band</span><b id="rI">0.85 um</b><span class="chg" hidden>shrinks</span></div>
+            <div class="ro" id="roH"><span>H zone</span><b id="rH">0.45 um</b><span class="chg" hidden>shrinks</span></div>
+          </div>
+        </div>
+        <div class="flow" style="display:grid;gap:12px;align-content:start">
+          <h2 class="prompt" id="lensQ">A sarcomere contracts fully. Which band keeps its length?</h2>
+          <div class="opts" role="group" aria-labelledby="lensQ" id="lensOpts"></div>
+          <div id="lensOut" hidden></div>
+        </div>
+      </div>
+    </article>
+
+    <div class="sect-head" style="margin-top:22px"><div><p class="k">Fifteen today, one per hub tab next</p><h3 class="h3">More Call it first</h3></div></div>
+    <div class="tools three">
+      <a class="tool" href="today.html"><span class="thumb" data-thumb="tonicity"></span><span class="body"><span class="sec"><span class="dot"></span>Cell and Molecular</span><span class="name">Tonicity</span><span class="what">Pure water on real red cells. Drive the solute, wipe drawing to real.</span><span class="meta"><span class="miniloop"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span><span>2 min</span></span></span></a>
+      <a class="tool" href="practice.html"><span class="thumb" data-thumb="crossbridge"></span><span class="body"><span class="sec"><span class="dot"></span>Body Systems</span><span class="name">Cross-bridge cycle</span><span class="what">Call what happens with no ATP, then step myosin through the cycle.</span><span class="meta"><span class="miniloop"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span><span>2 min</span></span></span></a>
+      <a class="tool" href="practice.html"><span class="thumb" data-thumb="operon"></span><span class="body"><span class="sec"><span class="dot"></span>Genetics</span><span class="name">Lac operon</span><span class="what">Lactose lifts the brake, low glucose presses the gas. Call it, then flip the switches.</span><span class="meta"><span class="miniloop"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span><span>2 min</span></span></span></a>
+    </div>
+  </section>
+
+  <!-- ============ 02 Learn it ============ -->
+  <section class="lane" aria-labelledby="l2">
+    <div class="lane-head"><span class="no">02</span><div><h2 id="l2">Learn it</h2><p>The course, night by night</p></div></div>
+    <div class="cards2">
+      <a class="tool" href="learn.html"><span class="thumb" data-thumb="hubs"></span><span class="body"><span class="sec"><span class="dot"></span>Bio, Retold / 14 nights</span><span class="name">Night 4: Cellular Respiration</span><span class="what">The Glucose Story. It opens with a call and ends with Play this, Sheet and Prove it.</span><span class="meta"><span>Continue</span><span>30 min</span></span></span></a>
+      <a class="tool" href="learn.html"><span class="thumb" data-thumb="bone"></span><span class="body"><span class="sec"><span class="dot"></span>Test week</span><span class="name">A and P review</span><span class="what">A self-paced three-hour pass through anatomy and physiology.</span><span class="meta"><span>Self-paced</span><span>3 h</span></span></span></a>
+    </div>
+  </section>
+
+  <!-- ============ 03 Practice it ============ -->
+  <section class="lane" aria-labelledby="l3">
+    <div class="lane-head"><span class="no">03</span><div><h2 id="l3">Practice it</h2><p>The six hubs, in DAT order, and question sets</p></div></div>
+    <p class="legend"><span><i></i>Has Call it first</span></p>
+    <div class="hubs">
+      <a class="hub" href="practice.html"><span class="n"><b>Cell and Molecular</b><span>2 calls</span></span><span class="list"><span class="call">Tonicity</span><span class="call">Cellular respiration</span><span>Enzyme kinetics</span><span>DNA fork</span><span>Transcription and translation</span><span>Cell signaling</span></span></a>
+      <a class="hub" href="practice.html"><span class="n"><b>Genetics</b><span>2 calls</span></span><span class="list"><span class="call">Lac operon</span><span class="call">Hardy-Weinberg</span><span>Punnett solver</span><span>Pedigree analyzer</span><span>Linkage</span><span>Chi-square</span></span></a>
+      <a class="hub" href="practice.html"><span class="n"><b>Body Systems</b><span>9 calls</span></span><span class="list"><span class="call">Sarcomere bands</span><span class="call">Cross-bridge cycle</span><span class="call">Action potential</span><span class="call">Nephron</span><span class="call">Hemoglobin curve</span><span class="call">Bone layers</span><span>Cardiac cycle</span><span>Immune cells</span></span></a>
+      <a class="hub" href="practice.html"><span class="n"><b>Diversity of Life</b><span>none yet</span></span><span class="list"><span>Tree of life</span><span>Cladogram builder</span><span>Animal phyla</span><span>Plant evolution</span><span>Viruses and bacteria</span></span></a>
+      <a class="hub" href="practice.html"><span class="n"><b>Development</b><span>1 call</span></span><span class="list"><span class="call">Embryo stages</span><span>Germ layers</span><span>Fertilization</span><span>Cleavage types</span><span>Hox genes</span></span></a>
+      <a class="hub" href="practice.html"><span class="n"><b>Evolution and Ecology</b><span>1 call</span></span><span class="list"><span class="call">Homology</span><span>Drift simulator</span><span>Selection modes</span><span>Speciation</span><span>Predator and prey</span></span></a>
+    </div>
+    <div style="margin-top:12px"><a class="btn" href="question.html">Bio question sets, on the test-day screen <span data-icon="arrow" data-icon-cls="sm"></span></a></div>
+  </section>
+
+  <!-- ============ 04 Prove it ============ -->
+  <section class="lane" aria-labelledby="l4">
+    <div class="lane-head"><span class="no">04</span><div><h2 id="l4">Prove it</h2><p>Untimed, on the test-day screen. Every miss becomes an Ace Card.</p></div></div>
+    <div class="cards2">
+      <a class="tool" href="tests.html"><span class="thumb" data-thumb="rounds" data-c="#6fcf97"></span><span class="body"><span class="sec"><span class="dot"></span>Bio check</span><span class="name">Short</span><span class="what">25 questions across the six hubs. Ends with the topics to repair first.</span><span class="meta"><span>Untimed</span><span>about 25 min</span></span></span></a>
+      <a class="tool" href="tests.html"><span class="thumb" data-thumb="rounds" data-c="#6fcf97"></span><span class="body"><span class="sec"><span class="dot"></span>Bio check</span><span class="name">Full</span><span class="what">40 questions, the size of the Biology part of the real test.</span><span class="meta"><span>Untimed</span><span>about 40 min</span></span></span></a>
+    </div>
+  </section>
+
+  <!-- ============ 05 Refreshers ============ -->
+  <section class="lane" aria-labelledby="l5">
+    <div class="lane-head"><span class="no">05</span><div><h2 id="l5">Refreshers</h2><p>One page each</p></div></div>
+    <div class="sheets">
+      <a class="sheet-l" href="learn.html#sheets"><span data-icon="sheet"></span><span><b>Bio Repair Sheet</b><span>Twelve "if the stem says X, think Y" trap cards.</span></span></a>
+      <a class="sheet-l" href="learn.html#sheets"><span data-icon="sheet"></span><span><b>Bonus Topics</b><span>Nine rare but tested topics, for test week.</span></span></a>
+      <a class="sheet-l" href="learn.html#sheets"><span data-icon="sheet"></span><span><b>Canon sheets: Biology</b><span>17 one-page sheets, from the action potential to transcription.</span></span></a>
+    </div>
+  </section>
+
+  <footer class="foot"><p>Ace Labs. Ace Labs is not affiliated with the ADA or Prometric.</p></footer>
+</main>
+<script src="assets/kit.js"></script>
+<script src="assets/bio-real.js"></script>
+<script src="assets/tonicity.js"></script>
+<script src="assets/loop.js"></script>
+<script src="assets/thumbs.js"></script>
+<script src="assets/recognition.js"></script>
+<script src="assets/lens.js"></script>
+</body>
+</html>

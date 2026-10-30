@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en" data-door="review" data-due="3">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Review | Ace Labs</title>
+<link rel="icon" href="assets/ace-dat-mark-reversed.svg">
+<link rel="stylesheet" href="assets/tokens.css">
+<link rel="stylesheet" href="assets/kit.css">
+<style>
+  .rv-grid{display:grid;gap:18px}
+  @media (min-width:1080px){.rv-grid{grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:28px;align-items:start}}
+  #back .bench-body{display:grid;gap:12px}
+  .cardface{display:grid;grid-template-columns:110px 1fr;gap:14px;align-items:start;padding:12px;border-radius:14px;background:linear-gradient(180deg,#fffdf7,#f6efdf);color:var(--al-ink);border:1px solid rgba(140,114,53,.35)}
+  .cardface .pic{border-radius:9px;overflow:hidden;background:#141714;aspect-ratio:1}
+  .cardface .pic svg{width:100%;height:100%}
+  .cardface .ac-k{font:600 10.5px/1.25 var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:#5c6a63}
+  .cardface .ac-q{margin-top:6px;font:700 17px/1.35 var(--f-body)}
+  .cardface .ac-w{margin-top:6px;font-size:13.5px;color:#3a4a42}
+  .thumbs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  .thumb-opt{display:flex;flex-direction:column;gap:6px;padding:6px;border-radius:12px;background:rgba(244,237,224,.05);border:1.5px solid rgba(244,237,224,.16);color:var(--b-ink);font:600 13.5px/1.25 var(--f-body);text-align:left;min-height:44px}
+  .thumb-opt .im{border-radius:8px;overflow:hidden;aspect-ratio:1;background:#141714}
+  .thumb-opt .im svg{width:100%;height:100%}
+  .thumb-opt .lt{display:flex;gap:6px;align-items:flex-start;font-size:13px}
+  .thumb-opt .lt b{display:grid;place-items:center;width:22px;height:22px;border-radius:50%;border:1.5px solid rgba(244,237,224,.35);font:700 11px/1 var(--f-mono);flex:0 0 auto}
+  .thumb-opt.key{border-color:var(--b-good);background:rgba(63,210,160,.10)}
+  .thumb-opt.mine{border-color:var(--b-trap);background:rgba(255,138,61,.09)}
+  .thumb-opt .tg{font:700 10px/1 var(--f-mono);letter-spacing:.06em;text-transform:uppercase}
+  .thumb-opt.key .tg{color:var(--b-good)}
+  .thumb-opt.mine .tg{color:var(--b-trap)}
+  .thumb-opt.dim{opacity:.5}
+  .queue{display:flex;gap:6px;align-items:center;font:600 12px/1 var(--f-mono);color:var(--b-ink-3)}
+  .queue i{width:22px;height:5px;border-radius:3px;background:rgba(244,237,224,.18)}
+  .queue i.now{background:var(--b-gold-hi)}
+  .queue i.done{background:var(--b-gold)}
+  .moved{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;background:rgba(201,168,76,.10);border:1px solid rgba(201,168,76,.3);font-size:14px;color:var(--b-ink)}
+  .rung-list{display:grid;gap:8px;margin-top:14px}
+  .crow{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;padding:12px;border-radius:12px;background:var(--s-surface);border:1px solid var(--s-line);font-size:14.5px;line-height:1.4}
+  .crow .dot{margin-top:6px}
+  .crow .links{grid-column:2;display:flex;gap:4px 12px;flex-wrap:wrap}
+  .crow .links a{display:inline-flex;align-items:center;gap:5px;min-height:44px;font:600 13.5px/1 var(--f-body);color:var(--s-ink-2)}
+  .crow .when{grid-column:2;font:600 11px/1 var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--s-ink-3)}
+  .self{display:flex;gap:8px;flex-wrap:wrap}
+  .shelf2{display:grid;gap:10px;grid-template-columns:1fr}
+  @media (min-width:760px){.shelf2{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div id="ace-shell"></div>
+<main class="wrap">
+  <header class="door-head">
+    <p class="k gold">Review</p>
+    <h1 class="h-hero">The way <em>back.</em></h1>
+    <p class="lede">Every card comes back on a 1, 3, 7 day ladder, as a fresh question on the same idea. Answer it cold. Confirmed moves it up a rung; Needs review brings it back tomorrow.</p>
+  </header>
+
+  <div class="rv-grid">
+    <!-- ============ cards back today ============ -->
+    <article class="bench" id="back" aria-labelledby="fq">
+      <div class="bench-top"><span class="k gold" data-icon="keep" data-icon-cls="sm">Back today</span><span class="queue" aria-label="Card 1 of 3"><i class="now"></i><i></i><i></i><span style="margin-left:6px">1 of 3</span></span></div>
+      <div class="bench-body" id="backBody">
+        <div class="cardface" data-sec="bio">
+          <div class="pic" id="cardPic"></div>
+          <div><div class="ac-k">Ace Card / Bio / Membrane transport / made yesterday</div>
+            <p class="ac-q" id="fq">Fresh question: red cells sit in a solution saltier than their cytoplasm. Which slide do you expect?</p>
+            <p class="ac-w">Same idea as your card, new setup. The picture on the card stays veiled until you answer.</p></div>
+        </div>
+        <div class="thumbs" role="group" aria-labelledby="fq" id="thumbs"></div>
+        <div id="fqOut" hidden></div>
+      </div>
+    </article>
+
+    <!-- ============ the ladder ============ -->
+    <section aria-labelledby="ladH">
+      <div class="sect-head" style="margin-top:0"><div><p class="k">Where every card is</p><h2 class="h2" id="ladH">The ladder</h2></div></div>
+      <div class="panel">
+        <div class="ladder" id="ladder">
+          <div class="rung now" data-rung="today"><div class="stack"><i></i><i></i><i></i></div><span class="lbl">Back today</span><span class="num" id="n0">3 cards</span></div>
+          <div class="rung" data-rung="d1"><div class="stack"><i></i><i></i></div><span class="lbl">Tomorrow</span><span class="num" id="n1">2 cards</span></div>
+          <div class="rung" data-rung="d3"><div class="stack" id="s3"><i></i><i></i><i></i></div><span class="lbl">In 3 days</span><span class="num" id="n3">4 cards</span></div>
+          <div class="rung" data-rung="d7"><div class="stack"><i></i><i></i></div><span class="lbl">In 7 days</span><span class="num">2 cards</span></div>
+          <div class="rung" data-rung="kept"><div class="stack"><i></i><i></i><i></i></div><span class="lbl">Kept</span><span class="num">5 cards</span></div>
+        </div>
+        <p class="small muted" style="margin-top:12px">Kept means you answered it cold after 7 days. It still comes back once a month, quietly.</p>
+      </div>
+    </section>
+  </div>
+
+  <!-- ============ every card, by when it comes back ============ -->
+  <section class="sect" aria-labelledby="allH">
+    <div class="sect-head"><div><p class="k">Every card links around the loop</p><h2 class="h2" id="allH">Your cards</h2></div><a class="chip" href="tests.html#results">Your results, in Tests</a></div>
+    <div class="switcher" style="position:static;background:none;border:0"><div class="row" style="padding-left:0;padding-right:0">
+      <button class="seg" type="button" aria-pressed="true">All</button>
+      <button class="seg" type="button" aria-pressed="false" data-sec="bio"><span class="dot"></span>Bio</button>
+      <button class="seg" type="button" aria-pressed="false" data-sec="gchem"><span class="dot"></span>GChem</button>
+      <button class="seg" type="button" aria-pressed="false" data-sec="ochem"><span class="dot"></span>OChem</button>
+      <button class="seg" type="button" aria-pressed="false" data-sec="pat"><span class="dot"></span>PAT</button>
+      <button class="seg" type="button" aria-pressed="false" data-sec="rc"><span class="dot"></span>RC</button>
+      <button class="seg" type="button" aria-pressed="false" data-sec="qr"><span class="dot"></span>QR</button>
+    </div></div>
+    <div class="rung-list">
+      <div class="crow" data-sec="bio"><span class="dot"></span><span><b>Affected people are q squared; carriers are 2pq.</b></span><span class="when">Back today / from a question set</span><span class="links"><a href="biology.html"><span data-icon="play" data-icon-cls="sm"></span>Play it</a><a href="learn.html"><span data-icon="learn" data-icon-cls="sm"></span>Night 11</a><a href="learn.html#sheets"><span data-icon="sheet" data-icon-cls="sm"></span>Sheet</a></span></div>
+      <div class="crow" data-sec="gchem"><span class="dot"></span><span><b>Q tells the direction, K tells the destination.</b></span><span class="when">Back today / from the Climb</span><span class="links"><a href="titration.html"><span data-icon="play" data-icon-cls="sm"></span>Play it</a><a href="learn.html"><span data-icon="learn" data-icon-cls="sm"></span>Night 12</a><a href="learn.html#sheets"><span data-icon="sheet" data-icon-cls="sm"></span>Sheet</a></span></div>
+      <div class="crow" data-sec="pat"><span class="dot"></span><span><b>Last fold opens first. Each crease mirrors every hole.</b></span><span class="when">Tomorrow / from Call it first</span><span class="links"><a href="pat-holepunch.html"><span data-icon="play" data-icon-cls="sm"></span>Play it</a><a href="learn.html"><span data-icon="learn" data-icon-cls="sm"></span>Night 5</a><a href="learn.html#sheets"><span data-icon="sheet" data-icon-cls="sm"></span>Sheet</a></span></div>
+      <div class="crow" data-sec="rc"><span class="dot"></span><span><b>"Too strong" traps use always, never, only. Find the proof line first.</b></span><span class="when">In 3 days / from an RC passage</span><span class="links"><a href="practice.html?sec=rc"><span data-icon="play" data-icon-cls="sm"></span>Play it</a><a href="learn.html"><span data-icon="learn" data-icon-cls="sm"></span>Night 8</a></span></div>
+      <div class="crow" data-sec="qr"><span class="dot"></span><span><b>Your own note: "check units before the last step."</b></span><span class="when">Tomorrow / a note you wrote, no fresh question yet</span><span class="self"><button class="btn" type="button">Got it</button><button class="btn" type="button">Not yet</button></span></div>
+    </div>
+  </section>
+
+  <section class="sect" aria-labelledby="refH">
+    <div class="sect-head"><div><p class="k">Reference</p><h2 class="h2" id="refH">Common Traps</h2></div></div>
+    <div class="shelf2">
+      <a class="tool" href="practice.html?sec=gchem"><span class="body"><span class="sec" data-sec="gchem"><span class="dot"></span>GChem</span><span class="name">Common Traps</span><span class="what">The misconceptions behind the usual GChem misses, one page each.</span></span></a>
+      <a class="tool" href="learn.html#sheets"><span class="body"><span class="sec" data-sec="bio"><span class="dot"></span>Bio</span><span class="name">Bio Repair Sheet</span><span class="what">Twelve "if the stem says X, think Y" trap cards.</span></span></a>
+    </div>
+  </section>
+  <footer class="foot"><p>Ace Labs. Ace Labs is not affiliated with the ADA or Prometric.</p></footer>
+</main>
+<script src="assets/kit.js"></script>
+<script src="assets/bio-real.js"></script>
+<script src="assets/tonicity.js"></script>
+<script src="assets/loop.js"></script>
+<script>
+(function () {
+  'use strict';
+  var $ = function (id) { return document.getElementById(id); };
+  /* The card's own picture is veiled until the answer: it would give it away */
+  $('cardPic').innerHTML = '<div style="width:100%;height:100%;display:grid;place-items:center;background:radial-gradient(80% 80% at 50% 40%,#16301f,#0a1710);color:#E2C97A">' + AL.icon('eye', 'lg') + '</div>';
+  var OPTS = [[84, 'Shrunken, spiky cells'], [5, 'Faint empty ghosts'], [30, 'Swollen, rounding cells']], KEY = 0;
+  $('thumbs').innerHTML = OPTS.map(function (o, i) {
+    return '<button class="thumb-opt" type="button" data-i="' + i + '"><span class="im"><svg viewBox="110 100 170 170" preserveAspectRatio="xMidYMid slice" aria-hidden="true">' + Tonicity.real(o[0], 'animal') + '</svg></span><span class="lt"><b>' + 'ABC'[i] + '</b>' + o[1] + '</span><span class="tg"></span></button>';
+  }).join('');
+  Array.prototype.forEach.call($('thumbs').children, function (b) {
+    b.addEventListener('click', function () {
+      if ($('thumbs').dataset.done) return; $('thumbs').dataset.done = '1';
+      var i = +b.dataset.i, ok = i === KEY;
+      Array.prototype.forEach.call($('thumbs').children, function (x, k) {
+        if (k === KEY) { x.classList.add('key'); x.querySelector('.tg').textContent = k === i ? 'Answer, your call' : 'Answer'; }
+        else if (k === i) { x.classList.add('mine'); x.querySelector('.tg').textContent = 'Your call'; }
+        else x.classList.add('dim');
+      });
+      $('cardPic').innerHTML = '<svg viewBox="110 92 180 180" preserveAspectRatio="xMidYMid slice" aria-hidden="true">' + Tonicity.real(4, 'animal') + '</svg>';
+      $('fqOut').innerHTML = AceLoop.verdict({ ok: ok, callText: OPTS[i][1].toLowerCase(), trap: ok ? '' : (i === 1 ? 'Ghosts are the pure-water picture: water went in until the cells burst.' : 'Swelling is water moving in. Saltier outside pulls water out.'), keyText: 'shrunken, spiky cells (crenated)', keyLead: 'The slide says', why: ok ? 'Saltier outside is hypertonic. Water chases solute, so it leaves the cells, and they shrink and crenate.' : '', hook: 'Water chases solute.' }) +
+        '<div class="moved" id="moved">' + AL.icon('keep', 'sm') + '<span>' + (ok ? 'Confirmed cold. This card moves up to <b>In 3 days</b>.' : 'It comes back <b>tomorrow, ' + AL.dayName(1) + '</b>, as another fresh question.') + '</span></div>' +
+        '<div class="stage-actions"><button class="btn gold" type="button" id="nextCard">Next card ' + AL.icon('arrow', 'sm') + '</button><a class="btn quiet" href="today.html" style="color:var(--b-ink-3)">Open the slide again</a></div>';
+      $('fqOut').hidden = false;
+      document.querySelector('.queue i').className = 'done'; document.querySelectorAll('.queue i')[1].className = 'now'; document.querySelector('.queue span').textContent = '2 of 3';
+      AL.setDue(2);
+      $('n0').textContent = '2 cards';
+      var to = ok ? $('s3') : document.querySelector('[data-rung="d1"] .stack');
+      AL.fly(document.querySelector('.cardface'), function () {
+        AL.settle(to);
+        if (ok) $('n3').textContent = '5 cards'; else $('n1').textContent = '3 cards';
+        to.parentNode.classList.add('landed');
+      }, to);
+      AL.follow($('back'), { to: $('fqOut'), prefer: 'end' });
+    });
+  });
+  window.RevDemo = { pick: function (i) { $('thumbs').children[i].click(); } };
+})();
+</script>
+</body>
+</html>

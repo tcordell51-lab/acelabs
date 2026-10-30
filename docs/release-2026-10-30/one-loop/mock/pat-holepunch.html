@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en" data-door="practice" data-due="3">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Hole Punching | Ace Labs</title>
+<link rel="icon" href="assets/ace-dat-mark-reversed.svg">
+<link rel="stylesheet" href="assets/tokens.css">
+<link rel="stylesheet" href="assets/kit.css">
+<style>
+  .door-head{padding-bottom:12px}
+  .plan-chip{display:inline-flex;align-items:center;gap:8px;margin-top:10px;padding:6px 12px;border-radius:999px;background:var(--al-gold-bg);border:1px solid rgba(201,168,76,.4);font-size:13.5px;color:var(--s-ink-2)}
+  .plan-chip b{color:var(--s-ink)}
+  #pat .bench-body{display:grid;gap:14px}
+  @media (min-width:1000px){#pat .bench-body{grid-template-columns:minmax(0,1.2fr) minmax(300px,1fr);grid-template-areas:"stage flow" "drive flow";grid-template-rows:auto 1fr;gap:14px 24px;align-items:start}#pat .stage{grid-area:stage}#pat .flow{grid-area:flow}#pat .drive-slot{grid-area:drive}}
+  /* the table and the sheet: the specimen palette, black on white like test day */
+  .table{position:relative;display:grid;place-items:center;padding:24px 12px 18px;border-radius:14px;background:var(--al-spec-table)}
+  .sheet-area{position:relative;width:var(--S);height:var(--S);--S:236px}
+  @media (min-width:720px){.sheet-area{--S:300px}.table{padding:32px 20px 24px}}
+  .ghost{position:absolute;inset:0;border:2px dashed #8a8f8a;border-radius:2px}
+  .ghost::after{content:"";position:absolute;inset:0;background-image:linear-gradient(#cfd0cb 1px,transparent 1px),linear-gradient(90deg,#cfd0cb 1px,transparent 1px);background-size:calc(var(--S) / 4) calc(var(--S) / 4);opacity:.55}
+  .half{position:absolute;top:0;height:100%;width:50%}
+  .half.left{left:0}
+  .half.right{left:50%;transform-origin:0 50%}
+  .q{position:absolute;left:0;width:100%;height:50%;background:#fff;border:1.5px solid #111;overflow:hidden}
+  .q.top{top:0;transform-origin:50% 100%}
+  .q.bot{top:50%}
+  #TL{border-right-color:#9aa39e;border-bottom-color:#9aa39e}#BL{border-right-color:#9aa39e;border-top-color:#9aa39e}
+  #TR{border-left-color:#9aa39e;border-bottom-color:#9aa39e}#BR{border-left-color:#9aa39e;border-top-color:#9aa39e}
+  .q .grid4{position:absolute;inset:0;background-image:linear-gradient(#e3e5e2 1px,transparent 1px),linear-gradient(90deg,#e3e5e2 1px,transparent 1px);background-size:50% 50%}
+  .q .shade{position:absolute;inset:0;background:#1b2a22;opacity:0;pointer-events:none}
+  .hole{position:absolute;width:28%;height:28%;margin:-14% 0 0 -14%;border-radius:50%;background:#111;opacity:0;transform:scale(.4);transition:opacity 160ms,transform 260ms var(--e-out)}
+  .punched .hole{opacity:1;transform:none}
+  .crease{position:absolute;background:var(--al-gold);opacity:0;pointer-events:none;transition:opacity 240ms;z-index:4}
+  .crease.h{left:-6px;right:-6px;top:50%;height:3px;margin-top:-1.5px}
+  .crease.v{top:-6px;bottom:-6px;left:50%;width:3px;margin-left:-1.5px}
+  .crease.on{opacity:1}
+  /* the call grid: toggle buttons with row and column names */
+  .callgrid{position:absolute;inset:0;display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(4,1fr);z-index:5}
+  .cell{position:relative;border:0;background:transparent;cursor:pointer;padding:0}
+  .cell:hover{background:rgba(201,168,76,.12)}
+  .cell::after{content:"";position:absolute;left:50%;top:50%;width:58%;height:58%;transform:translate(-50%,-50%) scale(.5);border-radius:50%;border:3.5px solid transparent;transition:transform var(--m-state) var(--e-out),border-color var(--m-state)}
+  .cell[aria-pressed="true"]::after{border-color:var(--al-gold);transform:translate(-50%,-50%) scale(1)}
+  /* after the unfold: shape and word, then color */
+  .cell.match::after{border-color:var(--al-good);border-width:4px;transform:translate(-50%,-50%) scale(1)}
+  .cell.extra::after{border-color:var(--al-trap);border-style:dashed;transform:translate(-50%,-50%) scale(1)}
+  .cell.extra::before{content:"";position:absolute;left:30%;right:30%;top:50%;height:3px;margin-top:-1.5px;background:var(--al-trap);transform:rotate(45deg)}
+  .cell.missed::after{border-color:var(--al-trap);border-width:4px;border-style:dotted;transform:translate(-50%,-50%) scale(1.08)}
+  .callgrid.locked .cell{cursor:default}
+  .callgrid.locked .cell:hover{background:transparent}
+  .legend{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:8px;font-size:13px;color:var(--b-ink-2)}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .legend i{position:relative;width:18px;height:18px;border-radius:50%;border:3px solid}
+  .legend .m{border-color:var(--al-good)}
+  .legend .x{border-color:var(--al-trap);border-style:dashed}
+  .legend .x::before{content:"";position:absolute;left:2px;right:2px;top:50%;height:2px;margin-top:-1px;background:var(--al-trap);transform:rotate(45deg)}
+  .legend .s{border-color:var(--al-trap);border-style:dotted}
+  .legend .h{background:#111;border-color:#f4ede0;border-width:2px;width:16px;height:16px}
+  .stills{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+  .fig{background:#fff;border:1px solid var(--al-exam-line);border-radius:6px;padding:6px;text-align:center;font:12px/1.2 var(--f-exam);color:#3a4148}
+  .fig svg{display:block;width:100%;height:auto}
+  .ans{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:10px}
+  .ans button{display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 4px 8px;min-height:44px;background:#fff;border:1.5px solid var(--al-exam-line);border-radius:8px;font:700 13px/1 var(--f-exam);color:var(--al-exam-ink)}
+  .ans button svg{width:100%;height:auto}
+  .ans button[aria-pressed="true"]{border-color:var(--al-exam);box-shadow:inset 0 0 0 1px var(--al-exam)}
+  .ans button.is-key{border-color:var(--al-good);box-shadow:inset 0 0 0 1.5px var(--al-good);background:#effaf5}
+  .ans button.is-trap{border-color:var(--al-trap);box-shadow:inset 0 0 0 1.5px var(--al-trap);background:#fff4ec}
+  .ans button .tg{font:700 9.5px/1 var(--f-mono);letter-spacing:.04em;text-transform:uppercase;color:#005c43}
+  .ans button.is-trap .tg{color:#8a3d00}
+  .acecard .pic.single{grid-template-rows:1fr;background:#fff}
+</style>
+</head>
+<body>
+<div id="ace-shell"></div>
+<main class="wrap" data-sec="pat">
+  <header class="door-head">
+    <div class="crumbs"><a href="practice.html">Practice</a><span aria-hidden="true">/</span><a href="practice.html?sec=pat">Perceptual Ability</a></div>
+    <p class="k">PAT / type 4 of 6</p>
+    <h1 class="h1">Hole <em>Punching</em></h1>
+    <p class="lede">Unfold backwards: the last fold opens first, and every crease mirrors every hole.</p>
+    <span class="plan-chip">Today, step 3 of 4 / <b>from Thomas's weekly plan</b></span>
+  </header>
+
+  <article class="bench" id="pat" aria-labelledby="q">
+    <div class="bench-top"><span class="k gold" data-icon="predict" data-icon-cls="sm">Call it first</span><span class="chip"><span class="dot"></span>PAT / Hole Punching</span></div>
+    <div id="band"></div>
+    <div class="bench-body">
+      <div class="stage">
+        <div class="table">
+          <div class="sheet-area" id="sheet" role="img" aria-label="A square sheet of paper on a 4 by 4 grid">
+            <div class="ghost"></div>
+            <div class="half left" id="hl">
+              <div class="q bot" id="BL"><div class="grid4"></div><span class="hole" style="left:25%;top:25%"></span><div class="shade"></div></div>
+              <div class="q top" id="TL"><div class="grid4"></div><span class="hole" style="left:25%;top:75%"></span><div class="shade"></div></div>
+            </div>
+            <div class="half right" id="hr">
+              <div class="q bot" id="BR"><div class="grid4"></div><span class="hole" style="left:75%;top:25%"></span><div class="shade"></div></div>
+              <div class="q top" id="TR"><div class="grid4"></div><span class="hole" style="left:75%;top:75%"></span><div class="shade"></div></div>
+              <div class="shade" id="rshade" style="position:absolute;inset:0;background:#1b2a22;opacity:0;pointer-events:none"></div>
+            </div>
+            <span class="crease h" id="ch"></span><span class="crease v" id="cv"></span>
+            <div class="callgrid" id="grid" hidden role="group" aria-label="Tap the squares that will have holes"></div>
+          </div>
+        </div>
+        <p class="caption" id="cap" aria-live="polite" style="text-align:center">A flat sheet on a 4 by 4 grid. Watch it fold twice and get punched once.</p>
+        <div id="stillsBox"></div>
+        <div class="legend" id="legend" hidden><span><i class="h"></i>Hole</span><span><i class="m"></i>Called it</span><span><i class="s"></i>Not called</span><span><i class="x"></i>No hole there</span></div>
+      </div>
+      <div class="flow" style="display:grid;gap:12px;align-content:start">
+        <h2 class="prompt" id="q">Watch it fold twice and get punched once. Then call where the holes land.</h2>
+        <div class="stage-actions" id="actions"><button class="btn gold" id="foldBtn" type="button">Fold and punch</button><button class="stuck-link" id="stuckBtn" type="button" style="color:var(--b-ink-3)">Stuck?</button></div>
+        <div id="after" aria-live="polite"></div>
+      </div>
+      <div id="scrubBox" class="drive-slot"></div>
+    </div>
+  </article>
+  <footer class="foot"><p>Every PAT type gets this loop: Keyholes, Top-Front-End, Angle Ranking, Hole Punching, Cube Counting and Pattern Folding. Misses become Ace Cards in Review. Ace Labs is not affiliated with the ADA or Prometric.</p></footer>
+</main>
+<script src="assets/kit.js"></script>
+<script src="assets/loop.js"></script>
+<script src="assets/pat.js"></script>
+</body>
+</html>

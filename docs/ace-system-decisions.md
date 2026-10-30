@@ -109,3 +109,25 @@ confidence gating before feedback. Plain ASCII copy, no emojis, no em dashes.
 Never wrong / incorrect / failed (Confirmed / Needs review). No competitor
 names. Original content only. Motion explains and respects reduced motion.
 Phone first.
+
+## Design (One Loop, chosen 2026-10-30)
+
+The design round picked One Loop (Predict, Play, Prove, Keep), ranked first
+by all three judges, with grafts from the other two designs. Spec, build plan
+and working mockups: docs/release-2026-10-30/one-loop/. Defaults taken for the
+spec's open decisions (Thomas can override any):
+
+1. Canon becomes "Sheets" inside Learn; the nav has five doors (Today, Learn,
+   Practice, Tests, Review), a bottom tab bar on phones.
+2. Look: the new ACEDAT logo, fresh and sharp with mint green. Fonts are Sora
+   (display, matches the geometric wordmark), DM Sans (body) and JetBrains
+   Mono (labels), all self-hosted. This replaces the spec's Playfair Display.
+3. The Climb, Recognition Lab and quick rounds are untimed with no best
+   scores; the Climb's internal threshold is never shown.
+4. The 1 to 5 confidence rating before feedback is removed everywhere.
+5. QR geometry and trigonometry follow the official ADA outline as confirmed
+   by the coverage audit (docs/release-2026-10-30/coverage/ when it lands).
+6. Coach lines: about 40 lines drafted from Thomas's voice reference, marked
+   for his approval before students see them.
+7. Push the piston (new GChem tool) is not in this release; GChem's proof of
+   the loop is Titration curves.

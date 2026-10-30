@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en" data-door="practice" data-due="3">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Titration Curves | Ace Labs</title>
+<link rel="icon" href="assets/ace-dat-mark-reversed.svg">
+<link rel="stylesheet" href="assets/tokens.css">
+<link rel="stylesheet" href="assets/kit.css">
+<style>
+  .door-head{padding-bottom:12px}
+  .reframe{font:italic 600 clamp(1.05rem,1rem + .4vw,1.2rem)/1.45 var(--f-display);color:var(--s-ink-2);max-width:52ch;border-left:3px solid var(--sec);padding-left:14px;margin:12px 0 0}
+  #tit .bench-body{display:grid;gap:14px}
+  @media (min-width:1000px){#tit .bench-body{grid-template-columns:minmax(0,1.5fr) minmax(300px,1fr);grid-template-areas:"stage flow" "drive flow";grid-template-rows:auto 1fr;gap:14px 24px;align-items:start}#tit .stage{grid-area:stage}#tit .flow{grid-area:flow}#tit .drive-slot{grid-area:drive}}
+  .rig{display:grid;grid-template-columns:30% 1fr;gap:8px;align-items:stretch;background:#f7f3ea;border-radius:14px;padding:8px}
+  @media (max-width:520px){.rig{grid-template-columns:31% 1fr;gap:4px;padding:6px}}
+  .rig svg{display:block;width:100%;height:auto}
+  .rig-top{display:flex;justify-content:space-between;gap:10px;margin-bottom:8px;font:600 12px/1.3 var(--f-mono);color:var(--b-ink-3)}
+  .rig-top b{color:var(--b-ink);font-weight:600}
+  .ro-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px}
+  .ro{border-radius:10px;border:1px solid var(--b-line);padding:8px 10px;background:#0b1510}
+  .ro>span{display:block;font:600 11px/1.2 var(--f-mono);letter-spacing:.04em;color:var(--b-ink-3)}
+  .ro b{display:flex;align-items:center;gap:6px;margin-top:3px;font:600 15px/1 var(--f-mono);color:var(--b-ink)}
+  .ro .sw{display:inline-block;width:11px;height:11px;border-radius:50%;border:1px solid rgba(255,255,255,.35)}
+  .acid-seg{display:inline-flex;border:1px solid rgba(244,237,224,.22);border-radius:999px;overflow:hidden}
+  .acid-seg button{min-height:44px;padding:0 13px;font:700 13.5px/1 var(--f-body);color:var(--b-ink-2)}
+  .acid-seg button[aria-pressed="true"]{background:var(--b-gold);color:#0c1d15}
+  .acid-seg button[disabled]{opacity:.45;cursor:not-allowed}
+  .more{display:grid;gap:10px;grid-template-columns:1fr}
+  @media (min-width:760px){.more{grid-template-columns:repeat(3,1fr)}}
+</style>
+</head>
+<body>
+<div id="ace-shell"></div>
+<main class="wrap" data-sec="gchem">
+  <header class="door-head">
+    <div class="crumbs"><a href="practice.html">Practice</a><span aria-hidden="true">/</span><a href="practice.html?sec=gchem">General Chemistry</a></div>
+    <p class="k">GChem / acids and bases</p>
+    <h1 class="h1">Titration <em>curves</em></h1>
+    <p class="reframe">Gen chem is patterns. The math underneath is short: recognize the pattern and the math falls out.</p>
+  </header>
+
+  <article class="bench" id="tit" aria-labelledby="pq">
+    <div class="bench-top"><span class="k gold" data-icon="predict" data-icon-cls="sm">Call it first</span><span class="chip"><span class="dot"></span>GChem / Acid-Base</span></div>
+    <div id="band"></div>
+    <div class="bench-body">
+      <div class="stage" id="stage">
+        <p class="rig-top"><b id="rigH">25.0 mL of 0.100 M acetic acid</b><span>0.100 M NaOH</span></p>
+        <div class="rig">
+          <svg id="app" viewBox="0 0 180 320" role="img" aria-label="A burette of NaOH over a flask of acetic acid with phenolphthalein"></svg>
+          <svg id="curve" viewBox="0 0 340 300" role="img" aria-label="Titration curve: pH against volume of NaOH added"></svg>
+        </div>
+        <p class="caption" id="cap" aria-live="polite">Nothing added yet. The flask holds acetic acid, a weak acid, at pH 2.87.</p>
+        <div class="ro-grid" aria-live="polite">
+          <div class="ro"><span>pH</span><b id="phTxt">2.87</b></div>
+          <div class="ro"><span>[A-] / [HA]</span><b id="ratioTxt">0.00</b></div>
+          <div class="ro"><span>Indicator</span><b id="indTxt"><i class="sw" id="sw" style="background:#f1f4f2"></i><span>clear</span></b></div>
+        </div>
+      </div>
+      <div class="flow" style="display:grid;gap:12px;align-content:start">
+        <h2 class="prompt" id="pq">Half of the acetic acid has been turned into acetate. What is the pH?</h2>
+        <div class="opts" role="group" aria-labelledby="pq" id="opts"></div>
+        <div class="stage-actions" id="callRow"><button class="skip" id="skipBtn" type="button">Skip the call, just show me</button><button class="stuck-link" id="stuckBtn" type="button" style="color:var(--b-ink-3)">Stuck?</button></div>
+        <div id="after" aria-live="polite"></div>
+      </div>
+      <div class="drive-slot" id="driveBox" hidden>
+        <div class="drive">
+          <div class="dh"><span data-icon="drop"></span>Now you drive: pour it yourself</div>
+          <div class="stage-actions" style="justify-content:space-between">
+            <div class="acid-seg" role="group" aria-label="Acid in the flask"><button type="button" data-acid="weak" aria-pressed="true">Acetic acid</button><button type="button" data-acid="strong" aria-pressed="false">HCl</button><button type="button" data-acid="both" aria-pressed="false">Compare</button></div>
+            <button class="btn" id="drip" type="button"><span data-icon="drop" data-icon-cls="sm"></span><span id="dripTxt">Open the stopcock</span></button>
+          </div>
+          <div class="knob">
+            <label for="vol">NaOH added <output id="volTxt">0.00 mL</output></label>
+            <input class="al" id="vol" type="range" min="0" max="50" step="0.25" value="0" style="--track:linear-gradient(90deg,#3a4f44,#e05aa0)">
+            <div class="ticks" aria-hidden="true"><span>0 mL</span><span>25</span><span>50 mL</span></div>
+          </div>
+          <p class="honest"><span data-icon="eye"></span>The curve is computed from the acid's Ka. In the buffer region it shows the Henderson-Hasselbalch value, the one the DAT expects (4.74).</p>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <section class="sect" aria-labelledby="moreH">
+    <div class="sect-head"><div><p class="k">Acid-Base in the GChem skill tree</p><h2 class="h2" id="moreH">More on this idea</h2></div></div>
+    <div class="more">
+      <a class="tool" href="practice.html?sec=gchem"><span class="body"><span class="sec"><span class="dot"></span>Play</span><span class="name">Buffers</span><span class="what">Henderson-Hasselbalch as a ratio you can slide.</span></span></a>
+      <a class="tool" href="practice.html?sec=gchem"><span class="body"><span class="sec"><span class="dot"></span>Which one is this?</span><span class="name">Titration profiles</span><span class="what">Strong or weak, and where the jump is. Untimed.</span></span></a>
+      <a class="tool" href="learn.html"><span class="body"><span class="sec"><span class="dot"></span>Learn</span><span class="name">GChem, Retold: night 13</span><span class="what">Proton Traffic. It opens with a call.</span></span></a>
+    </div>
+  </section>
+  <footer class="foot"><p>Ace Labs. Ace Labs is not affiliated with the ADA or Prometric.</p></footer>
+</main>
+<script src="assets/kit.js"></script>
+<script src="assets/loop.js"></script>
+<script src="assets/titration.js"></script>
+</body>
+</html>
