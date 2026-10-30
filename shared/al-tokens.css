@@ -1,73 +1,93 @@
-/* Ace Labs canonical design tokens — single source of truth for the Ace Labs
-   shell + each tool engine. Tools may keep their own local token names (Bio's
-   `--paper`, OChem's `--white`, etc.) but those should resolve to the values
-   defined here so all four engines render in the same palette and typography.
+/* =====================================================================
+   Ace Labs design tokens v2 (served as shared/al-tokens.css?v=3).
 
-   Loaded by:
-   - ace-labs.html (home shell)
-   - mocks-catalog.html
-   - prometric-mock.html
-   - tools/<engine>/index.html  (Bio, OChem already; QR + GC pending)
-*/
+   Rule 1: every --al-* name from tokens v1 keeps its exact value, and no
+   --al-* name is ever themed. Pages that read --al-* today do not move, in
+   light or dark mode (this protects prometric-mock.html, which pairs
+   --al-ink with hard-coded white backgrounds).
+   Rule 2: everything new is additive. Components read the semantic layer
+   (--s-* on paper, --b-* on the bench), never a primitive.
+   Rule 3: one dark mode. Only --s-* is redefined, under
+   prefers-color-scheme (unless html[data-theme="light"]) and again under
+   html[data-theme="dark"]. The bench, specimens, Ace Cards and the exam
+   screen never invert. This file sets no color-scheme of its own: a page
+   that adopts the paper roles applies color-scheme:var(--s-scheme) on
+   html (al-kit.css does), so pages that only read --al-* keep light form
+   controls and a light canvas.
+   Rule 4: fonts are self-hosted. @font-face lives in shared/al-fonts.css
+   (Sora display, DM Sans body, JetBrains Mono labels). No Playfair Display
+   in new work; --al-font-serif keeps its v1 value only for the legacy
+   pages that still read it.
+
+   Brand (ACEDAT logo, shared/brand/): deep green #1B3A2D, gold #C9A84C,
+   cream #F5F0E8, plus MINT as the signature accent.
+   Color jobs, one each:
+     deep green  the brand ground: primary buttons on paper, the nav, the bench family
+     gold        the coach speaking or your next move (never an outcome)
+     mint        the signature: where you are (current door, selected item),
+                 highlights, live and interactive moments, the brand flourish.
+                 Mint never marks an outcome; Confirmed stays Wong #009E73
+                 and always carries a word and an icon.
+     Wong pair   only after an answer, always with a word and an icon
+     sections    identity only, always next to the section name
+
+   Measured contrast (WCAG 2.x, text needs 4.5:1; checked by the contrast
+   gate). Light: mint ink #096E4F on paper 6.15, page 5.52, paper-2 5.66,
+   sunk 4.95, mint wash 5.57; ink on mint wash 15.11; ink-3 on mint wash
+   5.05; ink on a mint fill 8.02 (white on a mint fill is 2.12: never).
+   Dark: mint ink #6FF0C3 on page 13.28, surface 12.15, surface-2 11.29,
+   mint wash 9.53; ink on mint wash 10.77; ink-3 on mint wash 6.01.
+   Bench: mint ink on bench-1 12.42, bench-2 10.84, bench-3 9.09; a mint
+   fill on bench-1 8.25. A mint fill is only 2.08:1 against paper (1.87
+   against the page), so a mint rule or ring that must be seen on its own
+   uses --s-mint-ink, and text on a mint fill is --s-on-mint (ink).
+   ===================================================================== */
+
 :root{
+  /* ---------- 0. tokens v1 names: exact values, never themed ---------- */
   /* surfaces */
   --al-bg:#f5f0e8;
   --al-paper:#fffdf7;
   --al-paper-2:#f9f3e6;
   --al-paper-3:#f3ecdb;
-
   /* ink */
   --al-ink:#0d2018;
   --al-ink-2:#3a4a42;
   --al-ink-mute:#5c6a63;
   --al-ink-soft:#9aa39e;
-
   /* gold (italic accent + section kickers) */
   --al-gold:#C9A84C;
   --al-gold-m:#E2C97A;
   --al-gold-d:#8C7235;
   --al-gold-bg:rgba(201,168,76,.10);
   --al-gold-glow:rgba(201,168,76,.35);
-
-  /* deep teal (hero CTA, primary buttons) */
+  /* deep teal (hero CTA, primary buttons); --al-teal is the logo's deep green */
   --al-teal:#1B3A2D;
   --al-teal-2:#2A5240;
   --al-teal-3:#3A6B54;
-
-  /* outcome — Wong / Okabe-Ito correctness tokens (answer-feedback only) */
+  /* outcome: Wong / Okabe-Ito (answer feedback only) */
   --al-good:#009E73;
   --al-good-d:#007a59;
   --al-trap:#D55E00;
   --al-trap-d:#9b4500;
-
   /* lines */
   --al-line:rgba(13,32,24,.12);
   --al-line-2:rgba(13,32,24,.20);
-
   /* per-engine accents (border-left + name italic) */
   --al-qr-color:#C9A84C;
   --al-bio-color:#5FA874;
   --al-gc-color:#3A6B54;
   --al-ochem-color:#8C7235;
-
-  /* type stack */
+  /* type stack (v1; legacy pages only, new work uses --f-*) */
   --al-font-serif:'Playfair Display',Georgia,serif;
   --al-font-sans:'DM Sans',system-ui,-apple-system,sans-serif;
   --al-font-mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;
-
   /* shadows */
   --al-shadow:0 1px 3px rgba(13,32,24,.06), 0 8px 24px rgba(13,32,24,.04);
   --al-shadow-md:0 2px 6px rgba(13,32,24,.08), 0 16px 40px rgba(13,32,24,.06);
   --al-shadow-lg:0 4px 14px rgba(13,32,24,.10), 0 24px 56px rgba(13,32,24,.08);
-
-  /* ── Wong / Okabe-Ito correctness palette ──────────────────────────────
-     These replace the old green/red pair for all answer-feedback UI.
-     DO NOT use for chemistry-specific role colours (radical arrows, etc.).
-     --al-confirmed  : correct answer
-     --al-needs-review : wrong / needs more work
-     --al-almost     : partial credit / close
-     --al-new        : unseen / new concept callout
-  */
+  /* Wong / Okabe-Ito status palette (answer feedback only; never for
+     chemistry role colours such as radical arrows) */
   --al-confirmed:#009E73;
   --al-confirmed-pale:rgba(0,158,115,.10);
   --al-needs-review:#D55E00;
@@ -76,16 +96,202 @@
   --al-almost-pale:rgba(230,159,0,.10);
   --al-new:#0072B2;
   --al-new-pale:rgba(0,114,178,.10);
-
-  /* ── Motion tokens ─────────────────────────────────────────────────────
-     Use these everywhere instead of magic numbers.
-     --motion-fast     : micro-interactions (hover, toggle)
-     --motion-base     : standard state changes
-     --motion-slow     : panel open / close
-     --motion-explainer: full animated explainer sequences
-  */
+  /* motion v1 (kept; new work uses --m-*) */
   --motion-fast:150ms;
   --motion-base:250ms;
   --motion-slow:400ms;
   --motion-explainer:800ms;
+
+  /* ---------- 1. new primitives (additive, never themed) ---------- */
+  /* the logo, exactly as drawn in shared/brand/*.svg */
+  --al-logo-green:#1B3A2D;               /* = --al-teal */
+  --al-logo-gold:#C9A84C;                /* = --al-gold, the bar in the A */
+  --al-logo-cream:#F5F0E8;               /* = --al-bg, the reversed fill */
+  /* mint: the signature accent */
+  --al-mint:#33C993;                     /* fills and highlights, both themes and the bench */
+  --al-mint-ink:#096E4F;                 /* mint text on paper: 6.15:1 */
+  --al-mint-lite:#6FF0C3;                /* mint text on dark paper and the bench: 12.15:1 */
+  --al-mint-tint:#E0F7EC;                /* mint wash on paper */
+  --al-mint-deep:#11352A;                /* mint wash on dark paper and the bench */
+  --al-mint-glow:rgba(51,201,147,.24);   /* halos and lamp glow, never behind text */
+  /* gold text on paper (small gold text on the bench is --b-gold-hi) */
+  --al-gold-ink:#7a6128;                 /* 5.79:1 on paper */
+  /* the bench: deep forest, a lamp glow, gold controls */
+  --al-bench-0:#07130d; --al-bench-1:#0c1d15; --al-bench-2:#122a1f; --al-bench-3:#1a3829;
+  /* section identity: swatch, rail, icon. Always paired with the section name.
+     Base passes 5.0:1 on the page; -lite passes 7.7:1 on the bench and dark paper.
+     Bio is a leaf green (not the spec's #2F7D4F, which read 4.44:1 on the page
+     and sat too close to the mint signature). */
+  --al-sec-bio:#38742A;   --al-sec-bio-lite:#9ad46f;
+  --al-sec-gchem:#2F64A8; --al-sec-gchem-lite:#7fb2f0;
+  --al-sec-ochem:#7A4BAE; --al-sec-ochem-lite:#c4a3f0;
+  --al-sec-pat:#8A5D00;   --al-sec-pat-lite:#f0c060;
+  --al-sec-rc:#1C7268;    --al-sec-rc-lite:#5fd3c4;
+  --al-sec-qr:#B03A57;    --al-sec-qr-lite:#f39ab0;
+  /* test day: mirrors tools/mock/full.css. Never themed, never Ace-styled. */
+  --al-exam:#086894; --al-exam-d:#054766; --al-exam-bg:#f0f3f5; --al-exam-ink:#1a1d20; --al-exam-line:#c5ccd1; --al-exam-tool:#f7f9fa;
+  /* specimens: a microscope field or a PAT figure looks the same in both themes */
+  --al-spec-surround:#141714; --al-spec-paper:#ffffff; --al-spec-table:#e9e5db; --al-spec-ink:#111111;
+
+  /* ---------- 2. semantic: paper (themed) ---------- */
+  --s-scheme:light;                    /* pages on the paper roles: html{color-scheme:var(--s-scheme)} */
+  --s-page:var(--al-bg);
+  --s-surface:var(--al-paper);
+  --s-surface-2:var(--al-paper-2);
+  --s-sunk:#ece4d3;
+  --s-ink:var(--al-ink);
+  --s-ink-2:var(--al-ink-2);
+  --s-ink-3:var(--al-ink-mute);
+  --s-line:rgba(13,32,24,.12);
+  --s-line-2:rgba(13,32,24,.22);
+  --s-accent:var(--al-gold);           /* fills, rules, the bead, the next step */
+  --s-accent-ink:var(--al-gold-ink);   /* gold text on paper */
+  --s-primary:var(--al-teal);          /* the primary button */
+  --s-primary-ink:#fffdf7;             /* 12.2:1 on the deep green */
+  --s-mint:var(--al-mint);             /* mint fill: highlight, current place, selected */
+  --s-mint-ink:var(--al-mint-ink);     /* mint text, and mint rules that stand alone */
+  --s-mint-wash:var(--al-mint-tint);   /* mint background behind text */
+  --s-on-mint:var(--al-ink);           /* text on a mint fill (never white) */
+  --s-good:var(--al-good);  --s-good-ink:var(--al-good-d);  --s-good-wash:rgba(0,158,115,.10);
+  --s-trap:var(--al-trap);  --s-trap-ink:var(--al-trap-d);  --s-trap-wash:rgba(213,94,0,.09);
+  --s-focus:#0072B2;
+  --s-shadow:0 1px 2px rgba(13,32,24,.06),0 8px 24px rgba(13,32,24,.06);
+  --s-shadow-lift:0 2px 6px rgba(13,32,24,.10),0 18px 40px rgba(13,32,24,.12);
+  --s-sec-bio:var(--al-sec-bio); --s-sec-gchem:var(--al-sec-gchem); --s-sec-ochem:var(--al-sec-ochem);
+  --s-sec-pat:var(--al-sec-pat); --s-sec-rc:var(--al-sec-rc); --s-sec-qr:var(--al-sec-qr);
+  --s-logo:url("/shared/brand/ace-dat-lockup.svg");  /* the lockup that reads on this paper (root paths: a url in a custom property resolves where it is used) */
+  --s-logo-mark:url("/shared/brand/ace-dat-mark.svg");
+  --sec:var(--s-ink-2);                /* set by [data-sec] */
+  --sec-lite:var(--s-ink-2);
+
+  /* ---------- 2b. semantic: the bench (same in both themes) ---------- */
+  --b-bg:var(--al-bench-1);
+  --b-raised:var(--al-bench-2);
+  --b-raised-2:var(--al-bench-3);
+  --b-ink:#f4ede0;
+  --b-ink-2:#c9c3b4;
+  --b-ink-3:#9fa89f;
+  --b-line:rgba(244,237,224,.12);
+  --b-line-2:rgba(201,168,76,.34);
+  --b-gold:var(--al-gold);
+  --b-gold-hi:var(--al-gold-m);
+  --b-mint:var(--al-mint);
+  --b-mint-ink:var(--al-mint-lite);
+  --b-mint-wash:var(--al-mint-deep);
+  --b-on-mint:var(--al-ink);
+  --b-glow:var(--al-mint-glow);
+  --b-good:#3fd2a0;
+  --b-trap:#ff8a3d;
+  --b-logo:url("/shared/brand/ace-dat-lockup-reversed.svg");
+  --b-logo-mark:url("/shared/brand/ace-dat-mark-reversed.svg");
+
+  /* ---------- 3a. type ---------- */
+  /* Sora is the display face (it matches the geometric ACE DAT wordmark);
+     it has no italic, so nothing in Sora is ever set italic. The coach's
+     voice (coach line, hooks, "lock it in") is DM Sans italic. */
+  --f-display:"Sora","DM Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --f-body:"DM Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --f-voice:"DM Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,monospace;
+  --f-exam:Arial,Helvetica,sans-serif;
+  /* sizes: a step below the spec's Playfair scale, because Sora sets wider */
+  --t-hero:clamp(1.875rem,1.2rem + 2.9vw,3.125rem);   /* 30 to 50 */
+  --t-h1:clamp(1.625rem,1.25rem + 1.8vw,2.375rem);    /* 26 to 38 */
+  --t-h2:clamp(1.3125rem,1.15rem + .8vw,1.6875rem);   /* 21 to 27 */
+  --t-coach:clamp(1.1875rem,1.05rem + .7vw,1.5rem);   /* 19 to 24, DM Sans italic: the coach */
+  --t-h3:1.125rem;    /* 18 */
+  --t-read:1.0625rem; /* 17 */
+  --t-body:1rem;      /* 16 */
+  --t-small:.875rem;  /* 14 */
+  --t-label:.75rem;   /* 12, mono caps */
+  /* weights */
+  --fw-hero:700; --fw-display:700; --fw-title:600; --fw-voice:500; --fw-strong:700; --fw-body:400; --fw-label:600;
+  /* line heights */
+  --lh-hero:1.06; --lh-h1:1.12; --lh-h2:1.2; --lh-voice:1.35; --lh-h3:1.3;
+  --lh-read:1.6; --lh-body:1.55; --lh-small:1.45; --lh-label:1.2; --lh-exam:1.65;
+  /* tracking: Sora is wide, so display sizes close up a little */
+  --ls-hero:-.025em; --ls-display:-.015em; --ls-body:0; --ls-label:.1em;
+  /* whole font shorthands: font:var(--font-h1) */
+  --font-hero:var(--fw-hero) var(--t-hero)/var(--lh-hero) var(--f-display);
+  --font-h1:var(--fw-display) var(--t-h1)/var(--lh-h1) var(--f-display);
+  --font-h2:var(--fw-display) var(--t-h2)/var(--lh-h2) var(--f-display);
+  --font-h3:var(--fw-title) var(--t-h3)/var(--lh-h3) var(--f-display);
+  --font-coach:italic var(--fw-voice) var(--t-coach)/var(--lh-voice) var(--f-voice);
+  --font-read:var(--fw-body) var(--t-read)/var(--lh-read) var(--f-body);
+  --font-body:var(--fw-body) var(--t-body)/var(--lh-body) var(--f-body);
+  --font-small:var(--fw-body) var(--t-small)/var(--lh-small) var(--f-body);
+  --font-label:var(--fw-label) var(--t-label)/var(--lh-label) var(--f-mono);
+  --font-exam:400 1rem/var(--lh-exam) var(--f-exam);
+
+  /* ---------- 3b. space and shape ---------- */
+  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:24px; --sp-6:32px; --sp-7:48px; --sp-8:64px;
+  --gutter:16px;
+  --r-control:10px; --r-card:14px; --r-bench:20px; --r-pill:999px;  /* a touch tighter than the spec's 16 / 22: sharper, like the mark */
+  --target:44px;
+  --tabbar-h:64px;
+  --maxw:1180px;
+
+  /* ---------- 3c. motion ---------- */
+  --m-tap:100ms;      /* a press answers your finger */
+  --m-state:180ms;    /* a control changes state */
+  --m-panel:320ms;    /* a panel slides in, the plan reorders, a toast */
+  --m-travel:420ms;   /* the bead moves between doors */
+  --m-reveal:600ms;   /* a verdict or next step arrives */
+  --m-card:620ms;     /* an Ace Card flies to Review */
+  --m-frame:900ms;    /* one frame of a process (bio-stick FRAME_MS) */
+  --e-out:cubic-bezier(.2,.8,.2,1);          /* arrivals settle in */
+  --e-std:cubic-bezier(.4,0,.2,1);           /* state changes */
+  --e-process:cubic-bezier(.45,0,.25,1);     /* a fold, a pour, a contraction */
+  --e-drop:cubic-bezier(.34,1.32,.64,1);     /* only when a drag is released */
+}
+@media (min-width:760px){:root{--gutter:28px}}
+
+/* ---------- dark: only the paper roles change ---------- */
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --s-scheme:dark;
+    --s-page:#08150f; --s-surface:#0f1f17; --s-surface-2:#13261c; --s-sunk:#0a1811;
+    --s-ink:#ece6d7; --s-ink-2:#c9c3b4; --s-ink-3:#a7b0a8;
+    --s-line:rgba(236,230,215,.12); --s-line-2:rgba(236,230,215,.22);
+    --s-accent-ink:#E2C97A; --s-primary:#C9A84C; --s-primary-ink:#16120A;
+    --s-mint-ink:var(--al-mint-lite); --s-mint-wash:var(--al-mint-deep);
+    --s-good-ink:#3fd2a0; --s-trap-ink:#ff8a3d; --s-good-wash:rgba(63,210,160,.12); --s-trap-wash:rgba(255,138,61,.12);
+    --s-focus:#7fb2f0;
+    --s-shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.3);
+    --s-shadow-lift:0 2px 6px rgba(0,0,0,.5),0 18px 40px rgba(0,0,0,.45);
+    --s-sec-bio:var(--al-sec-bio-lite); --s-sec-gchem:var(--al-sec-gchem-lite); --s-sec-ochem:var(--al-sec-ochem-lite);
+    --s-sec-pat:var(--al-sec-pat-lite); --s-sec-rc:var(--al-sec-rc-lite); --s-sec-qr:var(--al-sec-qr-lite);
+    --s-logo:url("/shared/brand/ace-dat-lockup-reversed.svg"); --s-logo-mark:url("/shared/brand/ace-dat-mark-reversed.svg");
+  }
+}
+/* the same block, for the Settings choice (html[data-theme="dark"]) */
+:root[data-theme="dark"]{
+  --s-scheme:dark;
+  --s-page:#08150f; --s-surface:#0f1f17; --s-surface-2:#13261c; --s-sunk:#0a1811;
+  --s-ink:#ece6d7; --s-ink-2:#c9c3b4; --s-ink-3:#a7b0a8;
+  --s-line:rgba(236,230,215,.12); --s-line-2:rgba(236,230,215,.22);
+  --s-accent-ink:#E2C97A; --s-primary:#C9A84C; --s-primary-ink:#16120A;
+  --s-mint-ink:var(--al-mint-lite); --s-mint-wash:var(--al-mint-deep);
+  --s-good-ink:#3fd2a0; --s-trap-ink:#ff8a3d; --s-good-wash:rgba(63,210,160,.12); --s-trap-wash:rgba(255,138,61,.12);
+  --s-focus:#7fb2f0;
+  --s-shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.3);
+  --s-shadow-lift:0 2px 6px rgba(0,0,0,.5),0 18px 40px rgba(0,0,0,.45);
+  --s-sec-bio:var(--al-sec-bio-lite); --s-sec-gchem:var(--al-sec-gchem-lite); --s-sec-ochem:var(--al-sec-ochem-lite);
+  --s-sec-pat:var(--al-sec-pat-lite); --s-sec-rc:var(--al-sec-rc-lite); --s-sec-qr:var(--al-sec-qr-lite);
+  --s-logo:url("/shared/brand/ace-dat-lockup-reversed.svg"); --s-logo-mark:url("/shared/brand/ace-dat-mark-reversed.svg");
+}
+
+[data-sec="bio"]{--sec:var(--s-sec-bio);--sec-lite:var(--al-sec-bio-lite)}
+[data-sec="gchem"]{--sec:var(--s-sec-gchem);--sec-lite:var(--al-sec-gchem-lite)}
+[data-sec="ochem"]{--sec:var(--s-sec-ochem);--sec-lite:var(--al-sec-ochem-lite)}
+[data-sec="pat"]{--sec:var(--s-sec-pat);--sec-lite:var(--al-sec-pat-lite)}
+[data-sec="rc"]{--sec:var(--s-sec-rc);--sec-lite:var(--al-sec-rc-lite)}
+[data-sec="qr"]{--sec:var(--s-sec-qr);--sec-lite:var(--al-sec-qr-lite)}
+
+/* reduced motion: every transition becomes a cut. Scripts read the same query
+   and swap auto-play for a Next frame button; dragging keeps working. */
+@media (prefers-reduced-motion: reduce){
+  :root{--m-tap:1ms;--m-state:1ms;--m-panel:1ms;--m-travel:1ms;--m-reveal:1ms;--m-card:1ms;--m-frame:1ms;
+        --motion-fast:.01ms;--motion-base:.01ms;--motion-slow:.01ms;--motion-explainer:.01ms}
+  *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;scroll-behavior:auto !important}
 }

@@ -46,7 +46,10 @@ AceDAT-AceLabs/
 ├── scope.html                 # Scope & evidence
 ├── unified-mock.html          # Legacy OChem-only prototype (301-redirected to Prometric runner)
 ├── shared/
-│   ├── al-tokens.css          # Canonical design tokens (Bio + OChem adopt; QR + GC pending)
+│   ├── al-tokens.css          # Design tokens v2: --al-* (never themed), --s-* paper roles (light/dark), --b-* bench, mint brand accent, type, motion
+│   ├── al-fonts.css           # Self-hosted @font-face: Sora (display), DM Sans (body), JetBrains Mono (labels)
+│   ├── fonts/                 # Versioned latin woff2 files (name-vN.woff2) + OFL license texts
+│   ├── brand/                 # ACEDAT logo: lockup, reversed lockup, AD mark, reversed mark, app icon
 │   ├── al-motion.css          # Reduced-motion stylesheet
 │   ├── ace-labs-shell.css     # Home brand vars + dashboard styles
 │   ├── ace-shell.js           # The one Ace Labs navigation (six doors), on every student page
