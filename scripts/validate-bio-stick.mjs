@@ -2,20 +2,25 @@
 /* Validate tools/bio/bio-stick-data.js (the "Call it first" layer content).
  *
  * Fails the build on:
- *   - duplicate or malformed ids, unknown hub, missing title / subtopic
+ *   - duplicate or malformed ids, an id ending in -check (that suffix is
+ *     the check card's replay link, #stick-<id>-check), unknown hub,
+ *     missing title / subtopic
  *   - a subtopic outside the canonical DAT Biology list
  *   - predict / check blocks without exactly 3 options, a key out of range,
  *     traps not aligned to options (null on the key, a sentence elsewhere),
  *     an empty why or answer
  *   - option text over 70 characters, why over 320, answer over 140
  *   - any non-ASCII character, or the words wrong / incorrect / failed
- *   - a selector (mount, veil, still, caption, step targets) whose #id or
- *     [data-x="y"] does not exist in the entry's hub page or in bio-shared.js
+ *   - a selector (mount, veil, still, checkStill, caption, step targets)
+ *     whose #id or [data-x="y"] does not exist in the entry's hub page or
+ *     in the visualizer scripts
  *   - a step (setup, frames, checkFrame) that is not one of the three
  *     shapes bio-stick.js runs: { set, value }, { click }, { operon }
- *   - a checkFrame that is present but not a non-empty list of steps
- *     (it sets the picture on a card about the check; leave it out to
+ *   - a checkFrame that is present but not a non-empty list of steps, or a
+ *     checkStill that is present but not a non-empty list of selectors
+ *     (they set the picture on a card about the check; leave both out to
  *     reuse the last prediction frame)
+ *   - a hook or checkHook that is present but empty or over 140 characters
  *   - keys bunched on one letter (more than 60% of blocks on the same index)
  *   - the key being the strictly longest option in more than 35% of blocks
  *
@@ -141,10 +146,12 @@ const keyCount = [0, 0, 0];
 let blocks = 0;
 let longestKey = 0;
 let checkFrames = 0;
+let checkStills = 0;
 
 for (const e of entries) {
   const id = e && e.id ? e.id : '(no id)';
   if (!/^[a-z0-9-]+$/.test(id)) err(id, 'id must be lowercase letters, digits and hyphens');
+  if (/-check$/.test(id)) err(id, 'id must not end in -check (#stick-<id>-check is the check replay link)');
   if (seen.has(id)) err(id, 'duplicate id');
   seen.add(id);
   if (!HUB_FILE[e.hub]) err(id, `unknown hub "${e.hub}"`);
@@ -159,11 +166,20 @@ for (const e of entries) {
     if (!Array.isArray(e.checkFrame) || !e.checkFrame.length) err(id, 'checkFrame must be a non-empty list of steps (leave it out to reuse the last frame)');
     else { checkFrames += 1; checkSteps(id, e.hub, e.checkFrame, 'checkFrame'); }
   }
+  if (e.checkStill !== undefined) {
+    if (!Array.isArray(e.checkStill) || !e.checkStill.length || !e.checkStill.every((x) => typeof x === 'string' && x)) {
+      err(id, 'checkStill must be a non-empty list of selectors (leave it out to use still)');
+    } else checkStills += 1;
+  }
+  for (const k of ['hook', 'checkHook']) {
+    if (e[k] !== undefined && (typeof e[k] !== 'string' || !e[k] || e[k].length > 140)) err(id, `${k} must be a non-empty string of 140 characters or fewer`);
+  }
 
   if (HUB_FILE[e.hub]) {
     checkSelector(id, e.hub, e.mount, 'mount');
     if (e.veil) checkSelector(id, e.hub, e.veil, 'veil');
     (e.still || []).forEach((s) => checkSelector(id, e.hub, s, 'still'));
+    if (Array.isArray(e.checkStill)) e.checkStill.forEach((s) => checkSelector(id, e.hub, s, 'checkStill'));
     if (e.caption) checkSelector(id, e.hub, e.caption, 'caption');
     if (e.captionExtra) checkSelector(id, e.hub, e.captionExtra, 'captionExtra');
     stepTargets(e.setup).forEach((s) => checkSelector(id, e.hub, s, 'setup step'));
@@ -206,4 +222,4 @@ if (errors.length) {
   errors.forEach((m) => console.error('  ' + m));
   process.exit(1);
 }
-console.log(`validate-bio-stick: ${entries.length} entries, ${blocks} questions OK (keys A/B/C ${keyCount.join('/')}, key longest in ${longestKey}, ${checkFrames} check frames)`);
+console.log(`validate-bio-stick: ${entries.length} entries, ${blocks} questions OK (keys A/B/C ${keyCount.join('/')}, key longest in ${longestKey}, ${checkFrames} check frames, ${checkStills} check stills)`);

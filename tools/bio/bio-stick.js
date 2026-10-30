@@ -10,10 +10,12 @@
      4. One more, from memory: a closed-book check on the same idea.
      5. The card: an Ace Card in the existing deck (bio-shared.js
         addAceCard / rateAceCard), so it comes back on Today and in
-        the hub's Ace Cards stack. No second scheduler. Its picture
-        shows the question on the card: the last watched frame for the
-        prediction, or the check's own frame (an entry's checkFrame
-        steps, run when the card is saved) for the from-memory question.
+        the hub's Ace Cards stack. No second scheduler. Its picture,
+        hook and replay link match the question on the card: the last
+        watched frame, the hook and the prediction replay for the
+        prediction; the check's own view (an entry's checkFrame steps
+        and checkStill parts, taken when the card is saved), checkHook
+        and a replay that ends on that view for the from-memory question.
 
    Loaded after bio-shared.js and bio-stick-data.js. Runs after the Bio
    engine's own DOMContentLoaded init (listener order). Everything lives
@@ -159,6 +161,13 @@
     });
     Array.prototype.slice.call(node.querySelectorAll('animate, animateTransform, animateMotion, script, input, button, select, textarea'))
       .forEach(function (n) { n.parentNode && n.parentNode.removeChild(n); });
+    // some visualizer text uses em dashes; a frame or card the stick
+    // layer shows reads them as a colon instead (house style)
+    var walker = node.ownerDocument && node.ownerDocument.createTreeWalker
+      ? node.ownerDocument.createTreeWalker(node, 4 /* NodeFilter.SHOW_TEXT */, null) : null;
+    for (var t = walker ? walker.nextNode() : null; t; t = walker.nextNode()) {
+      if (t.nodeValue.indexOf('\u2014') !== -1) t.nodeValue = t.nodeValue.replace(/\s*\u2014\s*/g, ': ');
+    }
     // a check frame is taken while the visualizer still waits under the
     // closed-book veil; the copy on the card must not carry the veil
     all.forEach(function (n) {
@@ -243,9 +252,11 @@
       b[i].setAttribute('style', css + (own ? ';' + own : ''));
     }
   }
-  function snapshot(entry) {
+  /* sels: the parts to copy (the check's checkStill); the entry's still
+     when left out. */
+  function snapshot(entry, sels) {
     var parts = [];
-    (entry.still || []).forEach(function (sel) {
+    (sels && sels.length ? sels : (entry.still || [])).forEach(function (sel) {
       var src = resolve(sel);
       if (!src) return;
       var clone = src.cloneNode(true);
@@ -269,6 +280,18 @@
       frames.push(snapshot(entry));
     });
     return frames;
+  }
+  /* The from-memory check's own view: an entry with checkFrame steps
+     and/or checkStill parts has one; without either, the check reuses
+     the last prediction frame. checkView runs the steps (they set the
+     whole state, whatever the student did since) and takes the parts. */
+  function hasCheckView(entry) {
+    return (Array.isArray(entry.checkFrame) && entry.checkFrame.length > 0) ||
+      (Array.isArray(entry.checkStill) && entry.checkStill.length > 0);
+  }
+  function checkView(entry) {
+    runSteps(entry.checkFrame);
+    return snapshot(entry, entry.checkStill);
   }
 
   /* ---------- lab tabs (Body Lab, Genetics Lab) ---------- */
@@ -531,39 +554,46 @@
 
   /* The picture for a card. A card about the prediction keeps the last
      frame the student watched. A card about the from-memory check gets
-     the check's own frame when the entry names one (checkFrame: steps
-     run now, while the closed-book veil is still on, then snapshotted),
-     because the check often asks about a different state of the same
+     the check's own view when the entry has one (checkView: checkFrame
+     steps run now, while the closed-book veil is still on, then the
+     checkStill parts, or the still, are copied), because the check
+     often asks about a different state or a different part of the same
      visualizer (tonicity: a plant cell in salt water, not a red cell in
-     pure water). The visualizer is left on that state, so Done shows the
-     student the picture their card holds; Watch it again replays the
-     prediction frames from their own setup. */
+     pure water; respiration: the Krebs stage text, not the ETC). The
+     visualizer is left on that state, so Done shows the student the
+     picture their card holds; Watch it again replays the prediction
+     frames from their own setup. */
   Panel.prototype.cardFrame = function (block) {
     var e = this.entry;
     this.cardSnap = null;
-    if (block === e.check && Array.isArray(e.checkFrame) && e.checkFrame.length) {
-      // if the frame cannot be taken, the card goes without a picture
+    if (block === e.check && hasCheckView(e)) {
+      // if the view cannot be taken, the card goes without a picture
       // (never with the prediction's picture, which shows another question)
       try {
-        runSteps(e.checkFrame);
-        this.cardSnap = snapshot(e);
+        this.cardSnap = checkView(e);
       } catch (err) { if (window.console) console.warn('[bio-stick] check frame skipped', err.message); }
       return this.cardSnap;
     }
     return this.frames && this.frames.length ? this.frames[this.frames.length - 1] : null;
   };
 
+  /* The card back. Hook and replay link follow the card's question too:
+     a check card carries the entry's checkHook (no hook line when there
+     is none, since the prediction hook can point at a trap of the check)
+     and, when the check has its own view, links to #stick-<id>-check,
+     a replay that ends on that view. */
   Panel.prototype.cardBody = function (block, frame) {
-    var e = this.entry;
+    var e = this.entry, isCheck = block === e.check;
     // a picture over the card limit is left off rather than swapped for
     // one that shows a different question
     var pic = frame && frame.html && frame.html.length <= MAX_STILL_CHARS
       ? '<div class="stick-card-pic">' + frame.html + '</div>' : '';
-    var href = (HUB_PAGE[e.hub] || '') + '#stick-' + e.id;
+    var hook = isCheck ? e.checkHook : e.hook;
+    var href = (HUB_PAGE[e.hub] || '') + '#stick-' + e.id + (isCheck && hasCheckView(e) ? '-check' : '');
     // Words first, picture after: the card back can clip on a phone, and
     // the why is what has to be read.
     return '<p>' + esc(block.why) + '</p>' +
-      (e.hook ? '<p><b>Hook:</b> ' + esc(e.hook) + '</p>' : '') +
+      (hook ? '<p><b>Hook:</b> ' + esc(hook) + '</p>' : '') +
       pic +
       (HUB_PAGE[e.hub] ? '<p class="stick-card-link"><a href="' + href + '">See it move again</a></p>' : '');
   };
@@ -592,10 +622,16 @@
     this.node.querySelector('.stick-retake').addEventListener('click', function () { self.renderFresh(true); });
   };
 
-  Panel.prototype.replay = function () {
+  /* withCheck (a check card's #stick-<id>-check link): after the
+     prediction frames, end on the check's own view, so the motion ends
+     on the picture the card holds. */
+  Panel.prototype.replay = function (withCheck) {
     var stage = this.node.querySelector('.stick-stage');
     if (!stage) return;
     this.frames = captureFrames(this.entry);
+    if (withCheck && hasCheckView(this.entry)) {
+      try { this.frames.push(checkView(this.entry)); } catch (err) { if (window.console) console.warn('[bio-stick] check frame skipped', err.message); }
+    }
     stage.hidden = false;
     this.play(stage.querySelector('.stick-frame'), stage.querySelector('.stick-cap'), null);
   };
@@ -630,13 +666,19 @@
     openFromHash();
   }
 
+  /* #stick-<id> opens a panel (and replays it once done); a check
+     card's #stick-<id>-check also ends the replay on the check's view.
+     No entry id ends in -check (the validator enforces it). */
   function openFromHash() {
     var m = /^#stick-([a-z0-9-]+)$/.exec(window.location.hash || '');
-    if (!m || !panels[m[1]]) return;
-    var p = panels[m[1]];
+    if (!m) return;
+    var id = m[1], withCheck = false;
+    if (!panels[id] && /-check$/.test(id)) { id = id.slice(0, -'-check'.length); withCheck = true; }
+    var p = panels[id];
+    if (!p) return;
     openTab(p.entry);
     try { p.node.scrollIntoView({ block: 'start' }); } catch (e) { /* old browsers */ }
-    if (p.node.classList.contains('is-done')) p.replay();
+    if (p.node.classList.contains('is-done')) p.replay(withCheck);
   }
 
   window.BioStick = { boot: boot, panels: panels, version: 1 };

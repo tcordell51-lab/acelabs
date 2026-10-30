@@ -25,8 +25,14 @@ One record per view and state (15 in all). Each one has:
   "unstained wet mount of human red blood cells, brightfield, 1000x oil".
 - `facts`: the measurable things the drawing encodes (sizes in um, band
   widths, counts, ratios). Each fact has `real` (what textbooks and
-  micrographs show) and `code` (the file, the line, and a `match` text
-  you can search for if the line has moved).
+  micrographs show), `status` (how the two compare, below) and `code`
+  (the file, the line, and a `match` text you can search for).
+- `status` on each fact:
+  - `matches`: inside the real range, or the same in kind.
+  - `close`: a little outside the range, or right in kind but not in
+    number. It carries a `reason`. Judge these first.
+  - `deviates`: outside the range by enough to see side by side. It
+    carries a `reason`. (No fact is marked this way today.)
 - `simplified`: what was simplified on purpose. Do not mark a view down
   for these unless you think the simplification teaches something false.
 - `references`: ids from the reference list at the top of the file.
@@ -51,8 +57,9 @@ A laptop is easiest; a phone works.
    at color, texture, what is visible and what should not be (for
    example: no nucleus in red cells, no vessels in a ground section,
    ghosts nearly invisible in brightfield).
-4. **Check three facts (4 minutes).** Pick three lines from `facts` and
-   check them against the reference. Useful tricks:
+4. **Check three facts (4 minutes).** Start with any fact marked `close`
+   or `deviates` (the list below has them all), then pick two more from
+   `facts` and check them against the reference. Useful tricks:
    - Tonicity has a scale bar (10 um for red cells, 50 um for Elodea).
      Hold a card edge to the screen and compare a cell with the bar.
    - The sarcomere readout under the model gives Z to Z, the I band and
@@ -65,12 +72,16 @@ A laptop is easiest; a phone works.
 6. **Write it down (1 minute).** In `tools/bio/bio-visual-references.json`,
    fill the view's `signoff`:
    - `reviewer`: your initials or a role such as "coach". This file is
-     published with the site, so do not put a full name or an email.
-   - `date`: the date as YYYY-MM-DD.
-   - `verdict`: one of `approved`, `approved after the listed changes`,
-     `not ready`.
+     published with the site, so do not put a full name or an email
+     (the test refuses an `@`).
+   - `date`: the date as YYYY-MM-DD, for example 2026-11-02.
+   - `verdict`: exactly one of `approved`, `approved after the listed
+     changes`, `not ready`.
    - `notes`: what to change, pointing at the fact by its text, for
      example "TEM: mitochondria look too pale against the I band".
+   Then run `npm test` (or ask whoever maintains the code to). A filled
+   sign-off passes as long as those four rules hold; a verdict also
+   needs a reviewer and a date.
 
 If editing JSON is a hassle, write the same four lines in a message and
 whoever maintains the code fills them in.
@@ -99,6 +110,26 @@ states) takes about fifteen minutes, not forty.
 | bone-long-gross | /tools/bio/bio-physiology.html#stick-bone-layers | Bone Layers tab, stops 1 to 6 | Gross lengthwise section of an adult femur |
 | bone-ground-section | same | Stop 3, Osteon (zoom) | Ground section of compact bone, cross section, 40 to 100x |
 
+## Facts already flagged
+
+Six facts are marked `close`. None is a reason to hold a view back on
+its own, but each is where a sharp eye will look first:
+
+- `tonicity-rbc-isotonic`: the edge-on cell is 2.7 um at the thickest
+  and 1.0 um at the center, against a measured mean of 2.58 and 0.81 um.
+  Inside the cell-to-cell spread.
+- `tonicity-rbc-hypotonic`: the solute values where cells cup, round up
+  and burst sit lower than in real cells (lysis below a quarter of the
+  cell value, where real cells start near a half). The order of the
+  states is right; the picture is not affected.
+- `tonicity-rbc-lysed`: ghosts are drawn a little easier to see than in
+  true brightfield, on purpose.
+- `tonicity-elodea-isotonic`: the wall line is drawn about 2 um so it
+  shows on a phone; a real one usually looks thinner.
+- `bone-long-gross`: the end shell is 21 percent of the shaft wall (a
+  rough range of 15 to 20), and the shaft is 57 percent of the length
+  (60 to 75 in a real long bone).
+
 ## What a reviewer usually catches
 
 These are the giveaways a histology eye spots first. The current views
@@ -115,9 +146,11 @@ were built to get them right; check that they still do.
   not inside it; no heads at the center (bare zone); the I band runs from
   one A band to the next with the Z disc in its middle; the A band never
   changes length.
-- **TEM strip**: Z darkest, I band lightest, M line never paler than the
-  overlap; triads at the A-I junctions; mitochondria in pairs by the Z
-  disc. The strip is squashed top to bottom on purpose (see the record).
+- **TEM strip**: Z darkest, I band lightest; the M line is darker than
+  the H zone but never darker than the overlap; when fully contracted
+  the thin filaments reach it and it takes the overlap gray. Triads at
+  the A-I junctions; mitochondria in pairs by the Z disc. The strip is
+  squashed top to bottom on purpose (see the record).
 - **Long bone**: spongy bone fills the ends and opens into the cavity;
   the shell over the ends is thin; the epiphyseal line runs across the
   spongy bone; red marrow only at the upper end in an adult.
@@ -145,8 +178,15 @@ Cell Image Library and Histology Guide entries are for viewing only.
 ## Keeping the record true
 
 `tests/bio/stick-cards.test.js` checks the record on every `npm test`:
-the 15 records are there, every reference id resolves, every sign-off
-block exists, the file is plain ASCII with no personal data, and every
-code `match` is still found in its file. If someone changes a drawing,
-that test points at the record to update. Line numbers were right when
-the file was written; the `match` text is what to search for after that.
+
+- the 15 records are there and every reference id resolves;
+- every fact has a status, and every `close` or `deviates` fact has a
+  reason and is named in the list above;
+- every sign-off block has its four fields, empty or filled by the
+  rules in step 6;
+- the file is plain ASCII with no personal data;
+- every code `match` still sits on the line it cites.
+
+If someone changes a drawing, that last check fails and names the line
+the text moved to (or says it is gone), so the record gets updated in
+the same change.

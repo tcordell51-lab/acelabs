@@ -1,7 +1,12 @@
 {
   "about": "Where each true-to-life Bio view comes from: what it shows, the real preparation it must match, the measurable facts the drawing encodes with the code that sets them, public references to compare against, and a sign-off block for a reviewer. How to sign off: docs/bio-visual-references.md.",
-  "version": 1,
-  "lines": "Line numbers were true when this file was written (on top of commit 3a8ed98). Each code location also carries match, a regular expression for the line, so a reviewer can search for it if lines move. tests/bio/stick-cards.test.js checks that every match is still in its file.",
+  "version": 2,
+  "lines": "Each code location gives the file, the line and match, a regular expression for that line. tests/bio/stick-cards.test.js checks on every npm test that match still sits on the cited line; if a drawing file changes, the test names the line it moved to.",
+  "statuses": {
+    "matches": "Inside the real range given, or the same in kind for a fact without a number.",
+    "close": "A little outside the real range, or right in kind but not in number. Listed so the reviewer judges it first; the reason says why.",
+    "deviates": "Outside the real range by enough to notice in a side-by-side look. The reason says why it was left."
+  },
   "verification": {
     "seen-in-search": "The URL appeared in a web search result on 2026-10-30. The page itself was not opened from the build sandbox, so check that it loads and check the license on the page.",
     "not-verified": "The citation is from memory or the URL follows the publisher pattern; it was not seen. Check it before relying on it."
@@ -29,6 +34,15 @@
       "license": "Public domain (as listed by CDC PHIL)",
       "verification": "seen-in-search",
       "use": "Cell shape, size against the field and the central pallor. A stained smear is pinker than an unstained wet mount."
+    },
+    {
+      "id": "evans-fung-1972",
+      "title": "Evans and Fung (1972), Improved measurements of the erythrocyte geometry, Microvascular Research 4, pages 335 to 347",
+      "url": "",
+      "kind": "journal article (measured red cell shape)",
+      "license": "Journal article; read it through a library",
+      "verification": "not-verified",
+      "use": "The shape equation the edge-on profile uses, and the measured mean cell: about 7.8 um across, 0.8 um at the center, 2.6 um at the thickest."
     },
     {
       "id": "commons-plasmolysis",
@@ -181,6 +195,7 @@
         {
           "fact": "Disc diameter 7.5 um",
           "real": "Normal red cells are about 7 to 8 um across",
+          "status": "matches",
           "code": {
             "file": "tools/bio/bio-real.js",
             "line": 142,
@@ -189,18 +204,21 @@
           }
         },
         {
-          "fact": "Edge-on profile 1 um thick at the center, about 2.7 um at the thickest (Evans and Fung shape)",
-          "real": "About 1 um at the center, 2 to 2.5 um at the rim",
+          "fact": "Edge-on profile 1.0 um thick at the center and 2.7 um at the thickest (the Evans and Fung shape with a 1.0 um center term)",
+          "real": "Evans and Fung mean cell: 7.8 um across, 0.81 um at the center, 2.58 um at the thickest (plus or minus about 0.3 um from cell to cell)",
+          "status": "close",
+          "reason": "The center term is 1.0 um instead of the measured 0.81 um, so the drawn cell is 0.2 um thicker at the center and 0.12 um thicker at the thickest (2.70 against 2.58 um). Both are inside the cell-to-cell spread.",
           "code": {
             "file": "tools/bio/bio-real.js",
             "line": 185,
             "match": "1 \\+ 7\\.83 \\* c \\* c - 4\\.39",
-            "sets": "edge-on thickness profile"
+            "sets": "edge-on thickness profile: (1 + 7.83 c^2 - 4.39 c^4) um, times the sine of the angle"
           }
         },
         {
           "fact": "Central pallor about one third of the diameter, near-even rim",
           "real": "Pallor about one third of the diameter",
+          "status": "matches",
           "code": {
             "file": "tools/bio/bio-real.js",
             "line": 161,
@@ -211,6 +229,7 @@
         {
           "fact": "34 cells in a 66 x 41 um field; 2 edge-on, 1 overlapping pair",
           "real": "A wet mount shows cells at random: some touch or overlap, a few edge-on",
+          "status": "matches",
           "code": {
             "file": "tools/bio/bio-real.js",
             "line": 148,
@@ -221,6 +240,7 @@
         {
           "fact": "Scale bar 10 um = 56 px",
           "real": "Scale bar must match the drawing",
+          "status": "matches",
           "code": {
             "file": "tools/bio/bio-real.js",
             "line": 497,
@@ -231,6 +251,7 @@
         {
           "fact": "Isotonic for external solute 46 to 54 (cell = 50)",
           "real": "No net water flow",
+          "status": "matches",
           "code": {
             "file": "tools/bio/bio-shared.js",
             "line": 13245,
@@ -245,6 +266,7 @@
       ],
       "references": [
         "cdc-phil-17516",
+        "evans-fung-1972",
         "openstax-bio-5-2"
       ],
       "signoff": {
@@ -268,6 +290,7 @@
         {
           "fact": "Sphere diameter shrinks to about 6.7 um (radius x (1 - 0.11 t))",
           "real": "The membrane barely stretches, so the swollen sphere is narrower than the disc (about 6.5 to 7 um)",
+          "status": "matches",
           "code": {
             "file": "tools/bio/bio-real.js",
             "line": 219,
@@ -278,6 +301,7 @@
         {
           "fact": "Cup stage: slit-shaped pallor 0.45 x 0.12 of the radius, shown while 0.2 < t < 0.7",
           "real": "Stomatocytes show a slit-like central pallor",
+          "status": "matches",
           "code": {
             "file": "tools/bio/bio-real.js",
             "line": 224,
@@ -286,8 +310,10 @@
           }
         },
         {
-          "fact": "Lysis starts below external solute 12",
-          "real": "Hemolysis in strongly hypotonic solution",
+          "fact": "Lysis starts below external solute 12 (a quarter of the cell, 50)",
+          "real": "Red cells start to lyse near half the isotonic concentration (about 0.45 percent NaCl against 0.9) and are all lysed near a third (about 0.3 percent)",
+          "status": "close",
+          "reason": "The sandbox scale is relative, and its lysis waits for a quarter of the cell value where real cells begin near a half; the cups (32) and spheres (18) also sit lower than in real cells. The order of the states is right. A picture-level review will not see this; it matters only if the numbers are taught.",
           "code": {
             "file": "tools/bio/bio-shared.js",
             "line": 13242,
@@ -324,6 +350,8 @@
         {
           "fact": "Ghost diameter 6.75 um (0.9 of the disc), smooth outline, fill opacity 0.12",
           "real": "Ghosts reseal at about 6 to 7 um and are nearly invisible in brightfield",
+          "status": "close",
+          "reason": "The size matches. The ghosts are drawn a little easier to see than in true brightfield, on purpose (see simplified).",
           "code": {
             "file": "tools/bio/bio-real.js",
             "line": 235,
@@ -334,6 +362,7 @@
         {
           "fact": "Released hemoglobin tints the whole field faintly (opacity 0.15)",
           "real": "The tube looks clear red; the thin layer under the microscope is only faintly tinted",
+          "status": "matches",
           "code": {
             "file": "tools/bio/bio-real.js",
             "line": 236,
@@ -344,6 +373,7 @@
         {
           "fact": "Two cells hold as spheres at external solute 8 to 11",
           "real": "Cells differ in osmotic fragility",
+          "status": "matches",
           "code": {
             "file": "tools/bio/bio-real.js",
             "line": 239,
@@ -379,6 +409,7 @@
         {
           "fact": "Radius shrinks to 0.76 of normal at external solute 100 (about 5.7 um across)",
           "real": "Crenated cells are smaller than normal discs",
+          "status": "matches",
           "code": {
             "file": "tools/bio/bio-real.js",
             "line": 248,
@@ -389,6 +420,7 @@
         {
           "fact": "14, 16 or 18 projections per cell, each 4 to 10 percent of the radius high",
           "real": "Echinocytes have about 10 to 30 short, blunt, evenly spaced projections",
+          "status": "matches",
           "code": {
             "file": "tools/bio/bio-real.js",
             "line": 252,
@@ -399,6 +431,7 @@
         {
           "fact": "Projection height 0.04 to 0.10 of the radius, cos squared bumps (blunt tips)",
           "real": "Short and blunt, not long thorns",
+          "status": "matches",
           "code": {
             "file": "tools/bio/bio-real.js",
             "line": 249,
@@ -434,6 +467,7 @@
         {
           "fact": "Scale 1.2 px per um; scale bar 50 um = 60 px",
           "real": "Scale bar must match the drawing",
+          "status": "matches",
           "code": {
             "file": "tools/bio/bio-real.js",
             "line": 497,
@@ -444,6 +478,7 @@
         {
           "fact": "Cells 30 um wide and 77 to 125 um long, in files",
           "real": "Elodea leaf cells are about 20 to 40 um wide and 50 to 150 um long",
+          "status": "matches",
           "code": {
             "file": "tools/bio/bio-real.js",
             "line": 290,
@@ -453,7 +488,9 @@
         },
         {
           "fact": "Cell files 36 px = 30 um; walls about 2 um as one bright line",
-          "real": "Two primary walls and the middle lamella read as one thin bright line",
+          "real": "Two primary walls and the middle lamella read as one thin bright line, often about 1 um or less at 400x",
+          "status": "close",
+          "reason": "The wall line is drawn 2.5 px (about 2 um) so it stays visible at phone width; a real wall line usually looks thinner.",
           "code": {
             "file": "tools/bio/bio-real.js",
             "line": 287,
@@ -464,6 +501,7 @@
         {
           "fact": "56 chloroplasts per cell",
           "real": "Elodea cells are packed with chloroplasts (about 40 to 60 visible per cell)",
+          "status": "matches",
           "code": {
             "file": "tools/bio/bio-real.js",
             "line": 425,
@@ -474,6 +512,7 @@
         {
           "fact": "Chloroplasts along the walls about 6.2 x 3.8 um",
           "real": "Chloroplasts are about 4 to 8 um long",
+          "status": "matches",
           "code": {
             "file": "tools/bio/bio-real.js",
             "line": 477,
@@ -484,6 +523,7 @@
         {
           "fact": "Corner gaps in about half the cells",
           "real": "At isotonic a cell sits at incipient plasmolysis",
+          "status": "matches",
           "code": {
             "file": "tools/bio/bio-real.js",
             "line": 395,
@@ -494,6 +534,7 @@
         {
           "fact": "Field 310 x 190 um",
           "real": "A 400x camera crop",
+          "status": "matches",
           "code": {
             "file": "tools/bio/bio-real.js",
             "line": 74,
@@ -532,6 +573,7 @@
         {
           "fact": "Protoplast fills the cell to the wall (no corner gaps)",
           "real": "Turgid cells show no gap at the wall",
+          "status": "matches",
           "code": {
             "file": "tools/bio/bio-real.js",
             "line": 399,
@@ -542,6 +584,7 @@
         {
           "fact": "Cell outline unchanged from isotonic",
           "real": "The wall stops the cell from swelling",
+          "status": "matches",
           "code": {
             "file": "tools/bio/bio-real.js",
             "line": 287,
@@ -578,6 +621,7 @@
         {
           "fact": "Named plasmolysis only above external solute 80",
           "real": "Plasmolysis in a clearly hypertonic solution",
+          "status": "matches",
           "code": {
             "file": "tools/bio/bio-shared.js",
             "line": 13243,
@@ -586,8 +630,9 @@
           }
         },
         {
-          "fact": "Pull-in grows from 0.43 at external solute 81 to 1 at 100",
+          "fact": "Pull-in p = 0.43 + 0.57 x (external solute - 80) / 20: 0.46 at 81, 1 at 100",
           "real": "Stronger solutions plasmolyze further",
+          "status": "matches",
           "code": {
             "file": "tools/bio/bio-real.js",
             "line": 374,
@@ -598,6 +643,7 @@
         {
           "fact": "Per-cell factors 0.7 to 1.2, so plasmolysis is uneven",
           "real": "Plasmolysis varies from cell to cell",
+          "status": "matches",
           "code": {
             "file": "tools/bio/bio-real.js",
             "line": 305,
@@ -608,6 +654,7 @@
         {
           "fact": "Hechtian strands drawn only once plasmolyzed, three per cell",
           "real": "Fine threads hold the pulled-away membrane to the wall",
+          "status": "matches",
           "code": {
             "file": "tools/bio/bio-real.js",
             "line": 452,
@@ -618,6 +665,7 @@
         {
           "fact": "Still 56 chloroplasts per cell, so they crowd",
           "real": "Chloroplasts pack together as the protoplast shrinks",
+          "status": "matches",
           "code": {
             "file": "tools/bio/bio-real.js",
             "line": 425,
@@ -655,6 +703,7 @@
         {
           "fact": "Thick filament 1.6 um, thin filament 1.0 um, neither changes length",
           "real": "Thick about 1.6 um; thin about 1.0 to 1.3 um",
+          "status": "matches",
           "code": {
             "file": "tools/bio/bio-shared.js",
             "line": 4262,
@@ -664,7 +713,8 @@
         },
         {
           "fact": "Z to Z 2.4 um; I band 0.8 um; H zone 0.4 um; A band 1.6 um (67 percent of the sarcomere)",
-          "real": "Resting sarcomere about 2.0 to 2.5 um; A band about two thirds of a resting sarcomere",
+          "real": "Resting sarcomere about 2.0 to 2.5 um; the A band is about two thirds of it",
+          "status": "matches",
           "code": {
             "file": "tools/bio/bio-shared.js",
             "line": 4270,
@@ -675,6 +725,7 @@
         {
           "fact": "I band spans A band to A band with the Z disc in its middle",
           "real": "The Z disc bisects the I band",
+          "status": "matches",
           "code": {
             "file": "tools/bio/bio-shared.js",
             "line": 4273,
@@ -685,6 +736,7 @@
         {
           "fact": "Thick filament x 200 to 520, M line at 360",
           "real": "A band = thick filament length",
+          "status": "matches",
           "code": {
             "file": "tools/bio/bio-physiology.html",
             "line": 599,
@@ -695,6 +747,7 @@
         {
           "fact": "No myosin heads within 0.075 um of the M line",
           "real": "Bare zone about 0.15 to 0.2 um",
+          "status": "matches",
           "code": {
             "file": "tools/bio/bio-physiology.html",
             "line": 597,
@@ -705,6 +758,7 @@
         {
           "fact": "Thin filaments run beside the thick filament",
           "real": "Six thin filaments surround each thick filament",
+          "status": "matches",
           "code": {
             "file": "tools/bio/bio-physiology.html",
             "line": 618,
@@ -742,6 +796,7 @@
         {
           "fact": "Thick filament 1.6 um, thin filament 1.0 um, neither changes length",
           "real": "Thick about 1.6 um; thin about 1.0 to 1.3 um",
+          "status": "matches",
           "code": {
             "file": "tools/bio/bio-shared.js",
             "line": 4262,
@@ -751,7 +806,8 @@
         },
         {
           "fact": "Z to Z 2.2 um; I band 0.6 um; H zone 0.2 um; A band 1.6 um (73 percent of the sarcomere)",
-          "real": "Resting sarcomere about 2.0 to 2.5 um; A band about two thirds of a resting sarcomere",
+          "real": "The A band holds at 1.6 um while Z to Z shortens; the I band and H zone take up the change",
+          "status": "matches",
           "code": {
             "file": "tools/bio/bio-shared.js",
             "line": 4270,
@@ -762,6 +818,7 @@
         {
           "fact": "I band spans A band to A band with the Z disc in its middle",
           "real": "The Z disc bisects the I band",
+          "status": "matches",
           "code": {
             "file": "tools/bio/bio-shared.js",
             "line": 4273,
@@ -772,6 +829,7 @@
         {
           "fact": "Thick filament x 200 to 520, M line at 360",
           "real": "A band = thick filament length",
+          "status": "matches",
           "code": {
             "file": "tools/bio/bio-physiology.html",
             "line": 599,
@@ -782,6 +840,7 @@
         {
           "fact": "No myosin heads within 0.075 um of the M line",
           "real": "Bare zone about 0.15 to 0.2 um",
+          "status": "matches",
           "code": {
             "file": "tools/bio/bio-physiology.html",
             "line": 597,
@@ -792,6 +851,7 @@
         {
           "fact": "Thin filaments run beside the thick filament",
           "real": "Six thin filaments surround each thick filament",
+          "status": "matches",
           "code": {
             "file": "tools/bio/bio-physiology.html",
             "line": 618,
@@ -829,6 +889,7 @@
         {
           "fact": "Thick filament 1.6 um, thin filament 1.0 um, neither changes length",
           "real": "Thick about 1.6 um; thin about 1.0 to 1.3 um",
+          "status": "matches",
           "code": {
             "file": "tools/bio/bio-shared.js",
             "line": 4262,
@@ -838,7 +899,8 @@
         },
         {
           "fact": "Z to Z 2.0 um; I band 0.4 um; H zone 0 um; A band 1.6 um (80 percent of the sarcomere)",
-          "real": "Resting sarcomere about 2.0 to 2.5 um; A band about two thirds of a resting sarcomere",
+          "real": "When Z to Z equals twice the thin filament length (2.0 um here), the thin filaments meet at the M line and the H zone is gone; the A band still holds at 1.6 um",
+          "status": "matches",
           "code": {
             "file": "tools/bio/bio-shared.js",
             "line": 4270,
@@ -849,6 +911,7 @@
         {
           "fact": "I band spans A band to A band with the Z disc in its middle",
           "real": "The Z disc bisects the I band",
+          "status": "matches",
           "code": {
             "file": "tools/bio/bio-shared.js",
             "line": 4273,
@@ -859,6 +922,7 @@
         {
           "fact": "Thick filament x 200 to 520, M line at 360",
           "real": "A band = thick filament length",
+          "status": "matches",
           "code": {
             "file": "tools/bio/bio-physiology.html",
             "line": 599,
@@ -869,6 +933,7 @@
         {
           "fact": "No myosin heads within 0.075 um of the M line",
           "real": "Bare zone about 0.15 to 0.2 um",
+          "status": "matches",
           "code": {
             "file": "tools/bio/bio-physiology.html",
             "line": 597,
@@ -879,6 +944,7 @@
         {
           "fact": "Thin filaments run beside the thick filament",
           "real": "Six thin filaments surround each thick filament",
+          "status": "matches",
           "code": {
             "file": "tools/bio/bio-physiology.html",
             "line": 618,
@@ -910,12 +976,13 @@
         "page": "/tools/bio/bio-physiology.html#stick-sarcomere",
         "steps": "Body Lab, Sliding Filament tab: tap \"Relaxed\". The model is on top; the TEM strip is right under it."
       },
-      "depicts": "The same sarcomere as it looks in a longitudinal electron micrograph of two myofibrils: dark Z discs, dark A band overlap, paler H zone and bare zone, a dark M line, pale I band; triads at each A-I junction and mitochondria beside each Z disc. Z to Z 2.4 um.",
+      "depicts": "The same sarcomere as it looks in a longitudinal electron micrograph of two myofibrils: dark Z discs, dark A band overlap, a paler H zone with a still paler bare zone on each side of a darker M line, a pale I band; triads at each A-I junction and mitochondria beside each Z disc. Z to Z 2.4 um.",
       "mustMatch": "Longitudinal TEM of mammalian skeletal muscle (uranyl acetate and lead citrate), about 10,000 to 20,000x.",
       "facts": [
         {
           "fact": "Same x scale as the model (200 px per um)",
           "real": "Bands line up with the filaments that make them",
+          "status": "matches",
           "code": {
             "file": "tools/bio/bio-real.js",
             "line": 650,
@@ -925,17 +992,19 @@
         },
         {
           "fact": "Density order Z > overlap > M line > H zone > bare zone > I band",
-          "real": "Z darkest, I band lightest; the M line is never paler than the overlap",
+          "real": "Z darkest, I band lightest; the M line is darker than the H zone but never darker than the overlap; when fully contracted the thin filaments reach it and it takes the overlap gray",
+          "status": "matches",
           "code": {
             "file": "tools/bio/bio-real.js",
             "line": 530,
             "match": "if \\(myosin && d < 6\\) return actin \\? 0\\.92 : 0\\.82",
-            "sets": "electron density: Z 1.0, overlap 0.92, M line 0.82, H zone 0.58, bare zone 0.48, I band 0.30"
+            "sets": "electron density: Z 1.0, overlap 0.92, M line 0.82 (0.92 once thin filaments reach it), H zone 0.58, bare zone 0.48, I band 0.30"
           }
         },
         {
           "fact": "Gray levels from 225 - 200 x density",
           "real": "Z disc near black, I band light gray",
+          "status": "matches",
           "code": {
             "file": "tools/bio/bio-real.js",
             "line": 542,
@@ -946,6 +1015,7 @@
         {
           "fact": "Thick filament lines 45 nm apart",
           "real": "Thick filaments about 40 to 45 nm apart in a longitudinal section",
+          "status": "matches",
           "code": {
             "file": "tools/bio/bio-real.js",
             "line": 573,
@@ -956,6 +1026,7 @@
         {
           "fact": "Thin filament lines through the I band into the Z disc",
           "real": "Fine thin filaments run into the Z disc",
+          "status": "matches",
           "code": {
             "file": "tools/bio/bio-real.js",
             "line": 569,
@@ -966,6 +1037,7 @@
         {
           "fact": "Triads (T tubule between two SR cisternae) at every A-I junction",
           "real": "Mammalian skeletal muscle: two triads per sarcomere, at the A-I junctions",
+          "status": "matches",
           "code": {
             "file": "tools/bio/bio-real.js",
             "line": 596,
@@ -976,6 +1048,7 @@
         {
           "fact": "Mitochondria in pairs beside each Z disc, inside the I band",
           "real": "Paired mitochondria at the I band, one on each side of the Z disc",
+          "status": "matches",
           "code": {
             "file": "tools/bio/bio-real.js",
             "line": 527,
@@ -985,7 +1058,8 @@
         },
         {
           "fact": "A band 67 percent of the sarcomere",
-          "real": "About 65 to 75 percent at rest",
+          "real": "About two thirds of a resting sarcomere (1.6 um of about 2.4 um)",
+          "status": "matches",
           "code": {
             "file": "tools/bio/bio-shared.js",
             "line": 4270,
@@ -1019,12 +1093,13 @@
         "page": "/tools/bio/bio-physiology.html#stick-sarcomere",
         "steps": "Body Lab, Sliding Filament tab: tap \"Contracting\". The model is on top; the TEM strip is right under it."
       },
-      "depicts": "The same sarcomere as it looks in a longitudinal electron micrograph of two myofibrils: dark Z discs, dark A band overlap, paler H zone and bare zone, a dark M line, pale I band; triads at each A-I junction and mitochondria beside each Z disc. Z to Z 2.2 um.",
+      "depicts": "The same sarcomere as it looks in a longitudinal electron micrograph of two myofibrils: dark Z discs, dark A band overlap, a paler H zone with a still paler bare zone on each side of a darker M line, a pale I band; triads at each A-I junction and mitochondria beside each Z disc. Z to Z 2.2 um.",
       "mustMatch": "Longitudinal TEM of mammalian skeletal muscle (uranyl acetate and lead citrate), about 10,000 to 20,000x.",
       "facts": [
         {
           "fact": "Same x scale as the model (200 px per um)",
           "real": "Bands line up with the filaments that make them",
+          "status": "matches",
           "code": {
             "file": "tools/bio/bio-real.js",
             "line": 650,
@@ -1034,17 +1109,19 @@
         },
         {
           "fact": "Density order Z > overlap > M line > H zone > bare zone > I band",
-          "real": "Z darkest, I band lightest; the M line is never paler than the overlap",
+          "real": "Z darkest, I band lightest; the M line is darker than the H zone but never darker than the overlap; when fully contracted the thin filaments reach it and it takes the overlap gray",
+          "status": "matches",
           "code": {
             "file": "tools/bio/bio-real.js",
             "line": 530,
             "match": "if \\(myosin && d < 6\\) return actin \\? 0\\.92 : 0\\.82",
-            "sets": "electron density: Z 1.0, overlap 0.92, M line 0.82, H zone 0.58, bare zone 0.48, I band 0.30"
+            "sets": "electron density: Z 1.0, overlap 0.92, M line 0.82 (0.92 once thin filaments reach it), H zone 0.58, bare zone 0.48, I band 0.30"
           }
         },
         {
           "fact": "Gray levels from 225 - 200 x density",
           "real": "Z disc near black, I band light gray",
+          "status": "matches",
           "code": {
             "file": "tools/bio/bio-real.js",
             "line": 542,
@@ -1055,6 +1132,7 @@
         {
           "fact": "Thick filament lines 45 nm apart",
           "real": "Thick filaments about 40 to 45 nm apart in a longitudinal section",
+          "status": "matches",
           "code": {
             "file": "tools/bio/bio-real.js",
             "line": 573,
@@ -1065,6 +1143,7 @@
         {
           "fact": "Thin filament lines through the I band into the Z disc",
           "real": "Fine thin filaments run into the Z disc",
+          "status": "matches",
           "code": {
             "file": "tools/bio/bio-real.js",
             "line": 569,
@@ -1075,6 +1154,7 @@
         {
           "fact": "Triads (T tubule between two SR cisternae) at every A-I junction",
           "real": "Mammalian skeletal muscle: two triads per sarcomere, at the A-I junctions",
+          "status": "matches",
           "code": {
             "file": "tools/bio/bio-real.js",
             "line": 596,
@@ -1085,6 +1165,7 @@
         {
           "fact": "Mitochondria in pairs beside each Z disc, inside the I band",
           "real": "Paired mitochondria at the I band, one on each side of the Z disc",
+          "status": "matches",
           "code": {
             "file": "tools/bio/bio-real.js",
             "line": 527,
@@ -1094,7 +1175,8 @@
         },
         {
           "fact": "A band 73 percent of the sarcomere",
-          "real": "About 65 to 75 percent at rest",
+          "real": "The A band holds its 1.6 um, so its share grows as the sarcomere shortens",
+          "status": "matches",
           "code": {
             "file": "tools/bio/bio-shared.js",
             "line": 4270,
@@ -1128,12 +1210,13 @@
         "page": "/tools/bio/bio-physiology.html#stick-sarcomere",
         "steps": "Body Lab, Sliding Filament tab: tap \"Fully contracted\". The model is on top; the TEM strip is right under it."
       },
-      "depicts": "The same sarcomere as it looks in a longitudinal electron micrograph of two myofibrils: dark Z discs, dark A band overlap, paler H zone and bare zone, a dark M line, pale I band; triads at each A-I junction and mitochondria beside each Z disc. Z to Z 2.0 um; the H zone is gone and the M line takes the overlap gray.",
+      "depicts": "The same sarcomere as it looks in a longitudinal electron micrograph of two myofibrils: dark Z discs, an A band dark from edge to edge (the thin filaments reach the M line, so the H zone is gone and the M line takes the overlap gray), a pale I band; triads at each A-I junction and mitochondria beside each Z disc. Z to Z 2.0 um.",
       "mustMatch": "Longitudinal TEM of mammalian skeletal muscle (uranyl acetate and lead citrate), about 10,000 to 20,000x.",
       "facts": [
         {
           "fact": "Same x scale as the model (200 px per um)",
           "real": "Bands line up with the filaments that make them",
+          "status": "matches",
           "code": {
             "file": "tools/bio/bio-real.js",
             "line": 650,
@@ -1142,18 +1225,20 @@
           }
         },
         {
-          "fact": "Density order Z > overlap > M line > H zone > bare zone > I band",
-          "real": "Z darkest, I band lightest; the M line is never paler than the overlap",
+          "fact": "Density order Z > overlap = M line > I band; no H zone or bare zone is left, since the thin filaments reach the M line",
+          "real": "Z darkest, I band lightest; the M line is darker than the H zone but never darker than the overlap; when fully contracted the thin filaments reach it and it takes the overlap gray",
+          "status": "matches",
           "code": {
             "file": "tools/bio/bio-real.js",
             "line": 530,
             "match": "if \\(myosin && d < 6\\) return actin \\? 0\\.92 : 0\\.82",
-            "sets": "electron density: Z 1.0, overlap 0.92, M line 0.82, H zone 0.58, bare zone 0.48, I band 0.30"
+            "sets": "electron density: Z 1.0, overlap 0.92, M line 0.82 (0.92 once thin filaments reach it), H zone 0.58, bare zone 0.48, I band 0.30"
           }
         },
         {
           "fact": "Gray levels from 225 - 200 x density",
           "real": "Z disc near black, I band light gray",
+          "status": "matches",
           "code": {
             "file": "tools/bio/bio-real.js",
             "line": 542,
@@ -1164,6 +1249,7 @@
         {
           "fact": "Thick filament lines 45 nm apart",
           "real": "Thick filaments about 40 to 45 nm apart in a longitudinal section",
+          "status": "matches",
           "code": {
             "file": "tools/bio/bio-real.js",
             "line": 573,
@@ -1174,6 +1260,7 @@
         {
           "fact": "Thin filament lines through the I band into the Z disc",
           "real": "Fine thin filaments run into the Z disc",
+          "status": "matches",
           "code": {
             "file": "tools/bio/bio-real.js",
             "line": 569,
@@ -1184,6 +1271,7 @@
         {
           "fact": "Triads (T tubule between two SR cisternae) at every A-I junction",
           "real": "Mammalian skeletal muscle: two triads per sarcomere, at the A-I junctions",
+          "status": "matches",
           "code": {
             "file": "tools/bio/bio-real.js",
             "line": 596,
@@ -1194,6 +1282,7 @@
         {
           "fact": "Mitochondria in pairs beside each Z disc, inside the I band",
           "real": "Paired mitochondria at the I band, one on each side of the Z disc",
+          "status": "matches",
           "code": {
             "file": "tools/bio/bio-real.js",
             "line": 527,
@@ -1203,7 +1292,8 @@
         },
         {
           "fact": "A band 80 percent of the sarcomere",
-          "real": "About 65 to 75 percent at rest",
+          "real": "1.6 um of a 2.0 um sarcomere; the A band holds its length while the sarcomere shortens",
+          "status": "matches",
           "code": {
             "file": "tools/bio/bio-shared.js",
             "line": 4270,
@@ -1243,6 +1333,7 @@
         {
           "fact": "Shaft wall 12 px thick on each side of a 54 px shaft (each wall about 22 percent of the shaft width); cavity 30 px",
           "real": "Mid-shaft cortex about 5 to 7 mm in a femur about 25 to 30 mm across",
+          "status": "matches",
           "code": {
             "file": "tools/bio/bio-bone.js",
             "line": 130,
@@ -1251,8 +1342,10 @@
           }
         },
         {
-          "fact": "End shell 2.5 px (about one fifth of the shaft wall)",
-          "real": "Thin subchondral shell, about 15 to 20 percent of the mid-shaft cortex",
+          "fact": "End shell 2.5 px (21 percent of the shaft wall)",
+          "real": "The cortex over the ends is a thin shell, roughly 15 to 20 percent of the mid-shaft cortex (it varies along the end)",
+          "status": "close",
+          "reason": "Just over the rough range given; if anything the real shell over the joint end is thinner.",
           "code": {
             "file": "tools/bio/bio-bone.js",
             "line": 476,
@@ -1263,6 +1356,8 @@
         {
           "fact": "Diaphysis x 84 to 276 of a bone x 10 to 349 (57 percent of the length)",
           "real": "Shaft about 60 to 75 percent of a long bone",
+          "status": "close",
+          "reason": "A little short (57 against at least 60 percent): the simplified caps stand in for the epiphysis and the flared metaphysis and are drawn long. The bone is also stubbier than a femur overall (see simplified).",
           "code": {
             "file": "tools/bio/bio-bone.js",
             "line": 133,
@@ -1273,6 +1368,7 @@
         {
           "fact": "22 main trabeculae per end along stress lines, with cross-ties",
           "real": "Trabeculae run in arches along stress lines, thicker near the joint",
+          "status": "matches",
           "code": {
             "file": "tools/bio/bio-bone.js",
             "line": 208,
@@ -1283,6 +1379,7 @@
         {
           "fact": "Epiphyseal lines cross the spongy bone from shell to shell",
           "real": "A dense plate across the end, trabeculae on both sides",
+          "status": "matches",
           "code": {
             "file": "tools/bio/bio-bone.js",
             "line": 487,
@@ -1293,6 +1390,7 @@
         {
           "fact": "Red marrow at the upper end, yellow in the shaft, mostly yellow at the lower end",
           "real": "In adults red marrow stays mainly in the upper ends of the femur and humerus",
+          "status": "matches",
           "code": {
             "file": "tools/bio/bio-bone.js",
             "line": 427,
@@ -1331,6 +1429,7 @@
         {
           "fact": "Canal radius 0.2 of the osteon radius",
           "real": "Haversian canal about 50 um in an osteon about 200 to 300 um across (0.17 to 0.25)",
+          "status": "matches",
           "code": {
             "file": "tools/bio/bio-bone.js",
             "line": 297,
@@ -1341,6 +1440,7 @@
         {
           "fact": "13 osteons, radius 26 to 36 px, most touching, four squashed about 10 percent",
           "real": "Osteons pack tightly and many are oval",
+          "status": "matches",
           "code": {
             "file": "tools/bio/bio-bone.js",
             "line": 334,
@@ -1351,6 +1451,7 @@
         {
           "fact": "8 lamellae per osteon",
           "real": "Usually 4 to 20 concentric lamellae",
+          "status": "matches",
           "code": {
             "file": "tools/bio/bio-bone.js",
             "line": 300,
@@ -1361,6 +1462,7 @@
         {
           "fact": "35 lacunae per osteon on four rings (5, 7, 10, 13)",
           "real": "Lacunae sit between lamellae in several rings, more in the outer rings",
+          "status": "matches",
           "code": {
             "file": "tools/bio/bio-bone.js",
             "line": 301,
@@ -1371,6 +1473,7 @@
         {
           "fact": "Twelve canaliculi per lacuna, 4 to 9 px each; the inner ring reaches the canal",
           "real": "A dense dark halo of canaliculi running mostly out from the canal",
+          "status": "matches",
           "code": {
             "file": "tools/bio/bio-bone.js",
             "line": 310,
@@ -1381,6 +1484,7 @@
         {
           "fact": "Six outer circumferential lamellae, 3.5 px apart",
           "real": "A band of lamellae parallel to the surface under the periosteum",
+          "status": "matches",
           "code": {
             "file": "tools/bio/bio-bone.js",
             "line": 405,
@@ -1391,6 +1495,7 @@
         {
           "fact": "Canals and lacunae dark (#1e1612), no vessels drawn",
           "real": "A ground section has no soft tissue: canals and lacunae look dark",
+          "status": "matches",
           "code": {
             "file": "tools/bio/bio-bone.js",
             "line": 324,
@@ -1401,6 +1506,7 @@
         {
           "fact": "Volkmann canals from the surface and from one Haversian canal to the next",
           "real": "Volkmann canals link Haversian canals to each other and to the surfaces",
+          "status": "matches",
           "code": {
             "file": "tools/bio/bio-bone.js",
             "line": 543,
