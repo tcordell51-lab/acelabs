@@ -11,8 +11,17 @@
  *   - any non-ASCII character, or the words wrong / incorrect / failed
  *   - a selector (mount, veil, still, caption, step targets) whose #id or
  *     [data-x="y"] does not exist in the entry's hub page or in bio-shared.js
+ *   - a step (setup, frames, checkFrame) that is not one of the three
+ *     shapes bio-stick.js runs: { set, value }, { click }, { operon }
+ *   - a checkFrame that is present but not a non-empty list of steps
+ *     (it sets the picture on a card about the check; leave it out to
+ *     reuse the last prediction frame)
  *   - keys bunched on one letter (more than 60% of blocks on the same index)
  *   - the key being the strictly longest option in more than 35% of blocks
+ *
+ * Usage: node scripts/validate-bio-stick.mjs [path/to/bio-stick-data.js]
+ * (the path defaults to tools/bio/bio-stick-data.js; the tests pass a
+ * scratch copy to check that a bad entry is caught)
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -51,7 +60,8 @@ const BANNED = /\b(wrong|incorrect|fail|failed|fails)\b/i;
 const errors = [];
 const err = (id, msg) => errors.push(`[${id}] ${msg}`);
 
-const dataSrc = fs.readFileSync(path.join(BIO, 'bio-stick-data.js'), 'utf8');
+const DATA_FILE = process.argv[2] ? path.resolve(process.argv[2]) : path.join(BIO, 'bio-stick-data.js');
+const dataSrc = fs.readFileSync(DATA_FILE, 'utf8');
 const sandbox = { window: {} };
 sandbox.globalThis = sandbox;
 vm.createContext(sandbox);
@@ -63,7 +73,7 @@ if (!Array.isArray(entries) || !entries.length) {
 }
 
 // Non-ASCII anywhere in the data file (comments included).
-fs.readFileSync(path.join(BIO, 'bio-stick-data.js'), 'utf8').split('\n').forEach((line, i) => {
+dataSrc.split('\n').forEach((line, i) => {
   if (/[^\x00-\x7F]/.test(line)) err('file', `non-ASCII on line ${i + 1}`);
 });
 
@@ -97,6 +107,28 @@ function stepTargets(steps) {
   (steps || []).forEach((s) => { if (s && s.set) out.push(s.set); if (s && s.click) out.push(s.click); });
   return out;
 }
+// The step shapes runStep() in bio-stick.js knows; anything else would be skipped silently.
+const OPERON_KEYS = ['mode', 'lactose', 'glucose', 'trp'];
+function checkSteps(id, hub, steps, label) {
+  if (!Array.isArray(steps)) { err(id, `${label} must be a list of steps`); return; }
+  steps.forEach((s, i) => {
+    const where = `${label} step ${i + 1}`;
+    if (!s || typeof s !== 'object') { err(id, `${where} is not an object`); return; }
+    const kinds = ['set', 'click', 'operon'].filter((k) => Object.prototype.hasOwnProperty.call(s, k));
+    if (kinds.length !== 1) { err(id, `${where} needs exactly one of set / click / operon`); return; }
+    if (kinds[0] === 'set') {
+      if (typeof s.set !== 'string' || !s.set) err(id, `${where}: set needs a selector`);
+      if (typeof s.value !== 'number' && typeof s.value !== 'string') err(id, `${where}: set needs a value`);
+    } else if (kinds[0] === 'click') {
+      if (typeof s.click !== 'string' || !s.click) err(id, `${where}: click needs a selector`);
+    } else {
+      const o = s.operon;
+      if (!o || typeof o !== 'object' || !Object.keys(o).length) err(id, `${where}: operon needs a state`);
+      else Object.keys(o).forEach((k) => { if (!OPERON_KEYS.includes(k)) err(id, `${where}: unknown operon key "${k}"`); });
+      if (hub !== 'genetics') err(id, `${where}: operon steps only work on the genetics hub`);
+    }
+  });
+}
 function strings(obj, out = []) {
   if (typeof obj === 'string') out.push(obj);
   else if (Array.isArray(obj)) obj.forEach((x) => strings(x, out));
@@ -108,6 +140,7 @@ const seen = new Set();
 const keyCount = [0, 0, 0];
 let blocks = 0;
 let longestKey = 0;
+let checkFrames = 0;
 
 for (const e of entries) {
   const id = e && e.id ? e.id : '(no id)';
@@ -120,6 +153,12 @@ for (const e of entries) {
   if (!e.mount) err(id, 'missing mount');
   if (!Array.isArray(e.still) || !e.still.length) err(id, 'still must list at least one selector');
   if (!Array.isArray(e.frames) || !e.frames.length) err(id, 'frames must hold at least one frame');
+  if (e.setup !== undefined) checkSteps(id, e.hub, e.setup, 'setup');
+  (Array.isArray(e.frames) ? e.frames : []).forEach((f, i) => checkSteps(id, e.hub, f, `frame ${i + 1}`));
+  if (e.checkFrame !== undefined) {
+    if (!Array.isArray(e.checkFrame) || !e.checkFrame.length) err(id, 'checkFrame must be a non-empty list of steps (leave it out to reuse the last frame)');
+    else { checkFrames += 1; checkSteps(id, e.hub, e.checkFrame, 'checkFrame'); }
+  }
 
   if (HUB_FILE[e.hub]) {
     checkSelector(id, e.hub, e.mount, 'mount');
@@ -129,6 +168,7 @@ for (const e of entries) {
     if (e.captionExtra) checkSelector(id, e.hub, e.captionExtra, 'captionExtra');
     stepTargets(e.setup).forEach((s) => checkSelector(id, e.hub, s, 'setup step'));
     (e.frames || []).forEach((f, i) => stepTargets(f).forEach((s) => checkSelector(id, e.hub, s, `frame ${i + 1} step`)));
+    if (Array.isArray(e.checkFrame)) stepTargets(e.checkFrame).forEach((s) => checkSelector(id, e.hub, s, 'checkFrame step'));
   }
 
   for (const name of ['predict', 'check']) {
@@ -166,4 +206,4 @@ if (errors.length) {
   errors.forEach((m) => console.error('  ' + m));
   process.exit(1);
 }
-console.log(`validate-bio-stick: ${entries.length} entries, ${blocks} questions OK (keys A/B/C ${keyCount.join('/')}, key longest in ${longestKey})`);
+console.log(`validate-bio-stick: ${entries.length} entries, ${blocks} questions OK (keys A/B/C ${keyCount.join('/')}, key longest in ${longestKey}, ${checkFrames} check frames)`);

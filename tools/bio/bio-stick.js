@@ -10,7 +10,10 @@
      4. One more, from memory: a closed-book check on the same idea.
      5. The card: an Ace Card in the existing deck (bio-shared.js
         addAceCard / rateAceCard), so it comes back on Today and in
-        the hub's Ace Cards stack. No second scheduler.
+        the hub's Ace Cards stack. No second scheduler. Its picture
+        shows the question on the card: the last watched frame for the
+        prediction, or the check's own frame (an entry's checkFrame
+        steps, run when the card is saved) for the from-memory question.
 
    Loaded after bio-shared.js and bio-stick-data.js. Runs after the Bio
    engine's own DOMContentLoaded init (listener order). Everything lives
@@ -156,6 +159,14 @@
     });
     Array.prototype.slice.call(node.querySelectorAll('animate, animateTransform, animateMotion, script, input, button, select, textarea'))
       .forEach(function (n) { n.parentNode && n.parentNode.removeChild(n); });
+    // a check frame is taken while the visualizer still waits under the
+    // closed-book veil; the copy on the card must not carry the veil
+    all.forEach(function (n) {
+      if (!n.classList || !n.classList.contains('stick-veiled')) return;
+      n.classList.remove('stick-veiled');
+      if (!n.getAttribute('class')) n.removeAttribute('class');
+      n.removeAttribute('aria-hidden');
+    });
     return node;
   }
   /* Some visualizers paint SVG parts through id or scoped CSS rules
@@ -172,6 +183,23 @@
   // what an svg root passes down when no rule touches it
   var ROOT_INITIAL = { fill: 'rgb(0, 0, 0)', 'fill-opacity': '1', stroke: 'none', 'stroke-width': '1px',
     'stroke-opacity': '1', 'stroke-dasharray': 'none', 'stroke-linecap': 'butt', 'stroke-linejoin': 'miter' };
+  // A presentation attribute written the way the browser reports its
+  // computed value: #rgb / #rrggbb as rgb(r, g, b), a bare stroke width
+  // or font size in px, url(#x) with quotes. Anything else is returned
+  // as written, so an unusual form simply fails to match and the
+  // computed value is kept.
+  function asComputed(k, v) {
+    v = String(v).trim();
+    var m = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.exec(v);
+    if (m) {
+      var h = m[1].length === 3 ? m[1].replace(/./g, '$&$&') : m[1];
+      return 'rgb(' + [0, 2, 4].map(function (j) { return parseInt(h.substr(j, 2), 16); }).join(', ') + ')';
+    }
+    if ((k === 'stroke-width' || k === 'font-size') && /^\d+(\.\d+)?$/.test(v)) return v + 'px';
+    m = /^url\(\s*#([^)\s"']+)\s*\)$/.exec(v);
+    if (m) return 'url("#' + m[1] + '")';
+    return v;
+  }
   function inlinePaint(src, clone) {
     if (typeof window.getComputedStyle !== 'function') return;
     var a = [src].concat(Array.prototype.slice.call(src.querySelectorAll('*')));
@@ -202,6 +230,10 @@
         // a stylesheet rule may override a presentation attribute on an
         // element it can target by id or class; keep those values
         var keep = targeted && a[i].hasAttribute(k);
+        // an element no id or class rule can reach, whose own attribute
+        // already gives this value, needs no copy (it keeps a detailed
+        // picture under the card limit)
+        if (!targeted && a[i].hasAttribute(k) && asComputed(k, a[i].getAttribute(k)) === v) return '';
         var base = Object.prototype.hasOwnProperty.call(NOT_INHERITED, k) ? NOT_INHERITED[k]
           : (pcs ? pcs.getPropertyValue(k) : null);
         return keep || v !== base ? k + ':' + v : '';
@@ -474,7 +506,7 @@
         card = addAceCard({
           q: esc(block.q),
           quickHit: block.answer,
-          explanation: this.cardBody(block),
+          explanation: this.cardBody(block, this.cardFrame(block)),
           origin: 'Visualizer: ' + e.title,
           subject: e.hub,
           nodeId: this.nodeId(),
@@ -497,11 +529,36 @@
     return msg;
   };
 
-  Panel.prototype.cardBody = function (block) {
+  /* The picture for a card. A card about the prediction keeps the last
+     frame the student watched. A card about the from-memory check gets
+     the check's own frame when the entry names one (checkFrame: steps
+     run now, while the closed-book veil is still on, then snapshotted),
+     because the check often asks about a different state of the same
+     visualizer (tonicity: a plant cell in salt water, not a red cell in
+     pure water). The visualizer is left on that state, so Done shows the
+     student the picture their card holds; Watch it again replays the
+     prediction frames from their own setup. */
+  Panel.prototype.cardFrame = function (block) {
     var e = this.entry;
-    var last = this.frames && this.frames.length ? this.frames[this.frames.length - 1] : null;
-    var pic = last && last.html && last.html.length <= MAX_STILL_CHARS
-      ? '<div class="stick-card-pic">' + last.html + '</div>' : '';
+    this.cardSnap = null;
+    if (block === e.check && Array.isArray(e.checkFrame) && e.checkFrame.length) {
+      // if the frame cannot be taken, the card goes without a picture
+      // (never with the prediction's picture, which shows another question)
+      try {
+        runSteps(e.checkFrame);
+        this.cardSnap = snapshot(e);
+      } catch (err) { if (window.console) console.warn('[bio-stick] check frame skipped', err.message); }
+      return this.cardSnap;
+    }
+    return this.frames && this.frames.length ? this.frames[this.frames.length - 1] : null;
+  };
+
+  Panel.prototype.cardBody = function (block, frame) {
+    var e = this.entry;
+    // a picture over the card limit is left off rather than swapped for
+    // one that shows a different question
+    var pic = frame && frame.html && frame.html.length <= MAX_STILL_CHARS
+      ? '<div class="stick-card-pic">' + frame.html + '</div>' : '';
     var href = (HUB_PAGE[e.hub] || '') + '#stick-' + e.id;
     // Words first, picture after: the card back can clip on a phone, and
     // the why is what has to be read.
