@@ -336,7 +336,8 @@ DIAGRAMS['nephron-budget'] = (s, W) => {
   out += t(X(278) + 8, Y(280), s.urineLabel, { size: 12.5, fill: C.ink2 });
   const spots = { pct: [104, 82], tal: [216, 170], dct: [236, 108], cd: [304, 170] };
   for (const [id, [x, y]] of Object.entries(spots)) if (seg[id]) out += numDot(X(x), Y(y), seg[id].n, seg[id].key);
-  if (seg.pct && seg.pct.key) out += badge(X(104) + 16, Y(82) + 5, 'answer', { size: 12 });
+  // left of marker 1, clear of the descending limb at x = 160
+  if (seg.pct && seg.pct.key) out += badge(X(104) - 18, Y(82) + 5, 'answer', { size: 12, anchor: 'end' });
   // the budget strip
   let y = Y(296);
   const b = budget(s.segments);

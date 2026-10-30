@@ -46,7 +46,7 @@ const ENTRIES = [
     keyText: 'All sons affected, all daughters carriers',
     answer: { line: 'Both of the mother\'s X chromosomes carry the allele, so every child gets one. Sons have no second X to mask it.' },
     steps: [
-      'Write the parents first. She is X^n X^n: the allele sits on both X chromosomes. He is X^N Y.',
+      'Write the parents first: he is X^N Y, and she is X^n X^n, with the allele on both X chromosomes.',
       'Every child gets one X from her, and both of hers carry n. So every child gets an n.',
       'Sons get the Y from him. X^n Y has nothing to mask the n, so every son is colorblind.',
       'Daughters get his X^N, which covers the n. X^N X^n sees color normally and carries the allele.'
@@ -140,7 +140,7 @@ const ENTRIES = [
     ],
     choices: [
       { text: '5%', role: 'trap', family: 'other-conditions', trap: 'Genes linked more tightly', note: 'No rule turns 25 map units into 5%. That value fits genes about 5 centimorgans apart, linked far more tightly.' },
-      { text: '12.5%', role: 'trap', family: 'one-step-too-far', trap: 'Halved the distance', note: 'Halving is a step the definition already took care of. Each recombinant class is 12.5%, but there are two, and together they make 25%.' },
+      { text: '12.5%', role: 'trap', family: 'one-step-too-far', trap: 'Halved the distance', note: '12.5% is one recombinant class. There are two, and together they make 25%.' },
       { text: '25%', role: 'key', note: 'Map units are percent recombinants, by definition.' },
       { text: '50%', role: 'trap', family: 'other-conditions', trap: 'Unlinked genes', note: '50% is what genes show when they assort independently, unlinked or very far apart. These two are linked at 25 map units.' },
       { text: '75%', role: 'trap', family: 'other-question', trap: 'The parental share', note: '75% is the parental offspring, 100 minus 25. It also sits above the 50% ceiling, so it can never be a recombination frequency.' }
@@ -187,7 +187,7 @@ const ENTRIES = [
       { text: 'Metabolic acidosis', role: 'trap', family: 'reversed', trap: 'Cause and effect swapped', note: 'Metabolic acidosis, from ketones or lactic acid, drives fast breathing as the fix. Here the breathing came first and caused the change.' },
       { text: 'Respiratory acidosis', role: 'trap', family: 'other-conditions', trap: 'Breathing too slowly', note: 'That is hypoventilation: CO2 builds up, H+ rises and pH falls. Blowing CO2 off runs the other way.' },
       { text: 'Metabolic alkalosis from a loss of hydrogen ions', role: 'trap', family: 'half-right', trap: 'Right direction, other cause', note: 'Alkalosis holds. But H+ lost from the gut, as in vomiting, is metabolic, and here CO2 left through the lungs.' },
-      { text: 'No pH change', role: 'trap', family: 'one-step-short', trap: 'Stopped at the breathing', note: 'CO2 is the fastest pH lever the body has. Change how much you exhale and blood pH moves within minutes.' },
+      { text: 'No pH change', role: 'trap', family: 'one-step-short', trap: 'Stopped at the breathing', note: 'Breathing is a fast pH lever: change how much CO2 you exhale and blood pH moves within minutes.' },
       { text: 'Respiratory alkalosis', role: 'key', note: 'Ventilation moved pH up: respiratory alkalosis.' }
     ],
     lockIt: 'Ask which way pH moved and what moved it. Lungs moving CO2 means respiratory.',
@@ -282,7 +282,7 @@ const ENTRIES = [
     keyText: 'Parietal cells',
     answer: { line: 'Parietal cells pump H+ into the stomach with their H+/K+ ATPase, and Cl- follows. They also make intrinsic factor.' },
     steps: [
-      'Sort the lining by what each cell makes.',
+      'Sort the cells by their products.',
       'Parietal cells make the acid with a proton pump, plus intrinsic factor for vitamin B12.',
       'Chief cells make pepsinogen, which the acid switches on. Mucous cells make mucus, and G cells make gastrin.'
     ],
@@ -378,7 +378,7 @@ const ENTRIES = [
     keyText: 'Hydrostatic pressure',
     answer: { line: 'Blood pressure in the glomerular capillaries pushes water and small solutes into the capsule. It is bulk flow, and it costs no ATP.' },
     steps: [
-      'Name the forces at the glomerulus. Capillary blood pressure pushes fluid out. Plasma proteins pull it back, and capsule fluid pushes back.',
+      'Name the forces at the glomerulus. Blood pressure pushes fluid out, while plasma proteins pull it back and capsule fluid pushes back.',
       'Look at the plumbing. A wide afferent arteriole in and a narrow efferent one out hold that blood pressure high.',
       'So the push wins. Net filtration is hydrostatic pressure minus the two opposing forces.'
     ],
@@ -544,10 +544,10 @@ const ENTRIES = [
       { text: '15', role: 'trap', family: 'one-step-short', trap: 'Left out FADH2', note: '15 is the NADH line alone. The 2 FADH2 still add 3.' },
       { text: '18', role: 'key', note: '15 from NADH plus 3 from FADH2.' },
       { text: '20', role: 'trap', family: 'one-step-too-far', trap: 'Added the GTP', note: 'Adding the 2 GTP the cycle makes directly lands here, but the stem counts the carriers alone. Giving FADH2 the NADH rate lands here too.' },
-      { text: '24', role: 'trap', family: 'assumed-equal', trap: 'Old whole numbers', note: 'This counts all eight carriers at the old whole-number 3. The stem sets the modern 2.5 and 1.5.' }
+      { text: '24', role: 'trap', family: 'assumed-equal', trap: 'Old whole numbers', note: 'This counts all eight carriers at 3, the old whole number for NADH. The stem sets the modern 2.5 and 1.5.' }
     ],
     lockIt: 'Keep NADH and FADH2 on separate lines: about 2.5 and 1.5 ATP each.',
-    hook: 'FADH2 skips the first pump.',
+    hook: null,
     playWith: { label: 'Krebs and ETC node: follow NADH and FADH2 to the complexes in the inner membrane', href: 'tools/bio/bio-cell.html#node-krebs', state: { node: 'krebs' }, expect: ['node-krebs', 'FADH'], routing: 'Works today.' },
     video: { slot: 'bio.cell.respiration.etc', title: 'Where each step of respiration happens', id: null, start: null },
     visual: {
@@ -826,31 +826,42 @@ const ENTRIES = [
   }
 ];
 
-// Fixes from the expert review of B001 (coach record only).
+// Fixes from the expert review and the re-review of B001 (coach record only).
 const CHANGES = {
-  'fm:bio:BIO_g064': ['Step 1 says the allele sits on both X chromosomes (was "colorblind on both X chromosomes")'],
-  'fm:bio:BIO_g061': ['5% family set to other-conditions (was unit-slip), label "Genes linked more tightly", to match its note (genes about 5 cM apart)'],
+  'fm:bio:BIO_g064': [
+    'Step 1 says the allele sits on both X chromosomes (was "colorblind on both X chromosomes")',
+    'Re-review: step 1 is one sentence, "Write the parents first: he is X^N Y, and she is X^n X^n, with the allele on both X chromosomes." (father first, so no genotype splits across a phone line)'
+  ],
+  'fm:bio:BIO_g061': [
+    '5% family set to other-conditions (was unit-slip), label "Genes linked more tightly", to match its note (genes about 5 cM apart)',
+    'Re-review: the 12.5% note opens "12.5% is one recombinant class.", so the first sentence a phone shows stands on its own'
+  ],
+  'fm:bio:BIO_p044': ['Re-review: the No pH change note opens "Breathing is a fast pH lever" (was "CO2 is the fastest pH lever the body has"; chemical buffers act faster, in seconds, then breathing, then the kidneys)'],
   'fm:bio:BIO_p090': ['Step 3 glosses the axillae as the armpits'],
   'fm:bio:BIO_p019': [
     'Step 1 is "Sort the lining by what each cell makes." ("One cell, one job" contradicted step 2: parietal cells make HCl and intrinsic factor)',
     'Alt text: the parietal cells are numbered 2 and marked as the answer (they were never outlined)',
-    'Picture: the HCl label moved off the top mucous cell into the stomach lumen band, the arrow now runs up into the lumen, and the lumen label sits at the band\'s right end'
+    'Picture: the HCl label moved off the top mucous cell into the stomach lumen band, the arrow now runs up into the lumen, and the lumen label sits at the band\'s right end',
+    'Re-review: step 1 is "Sort the cells by their products." (6 words, so the explainer keeps a short line; plural, because parietal cells make two)'
   ],
   'fm:bio:BIO_p057': [
     'Lock it in names both bulk sites: proximal tubule about two thirds, thick ascending limb about a quarter, the distal end fine-tunes the rest (it had put the thick ascending limb under fine-tuning)',
-    'Alt text: the proximal tubule is numbered 1 and marked as the answer'
+    'Alt text: the proximal tubule is numbered 1 and marked as the answer',
+    'Re-review: nephron-budget draws the answer badge left of marker 1, clear of the descending limb (it sat over the grey tube)'
   ],
   'fm:bio:BIO_p056': [
     'Aquaporin gradient note: the aquaporins ADH controls sit in the collecting duct (it had implied aquaporins exist only there)',
     'Step 1: plasma proteins pull fluid back, capsule fluid pushes back; step 3 and the picture\'s net line say "opposing forces" (was "pull-backs", but capsule pressure pushes)',
     'Diffusion only label is "One gradient per solute" (was "One solute at a time"; the review\'s "Each solute on its own gradient" is 6 words, over the 5-word label budget)',
-    'Alt text: the hydrostatic arrows are numbered 3 and marked as the answer'
+    'Alt text: the hydrostatic arrows are numbered 3 and marked as the answer',
+    'Re-review: step 1 is two sentences, "Blood pressure pushes fluid out, while plasma proteins pull it back and capsule fluid pushes back."'
   ],
   'fm:written:bio-4-dmpc6': ['Caption: every other enzyme in the choices carries a different tag (was "sits elsewhere", but three of them are first-half enzymes)'],
   'fm:written:bio-4-158brxy': [
     'etc-chain picture: complex II is a short box on the matrix half; the electron path from I runs through the upper membrane over II to Q, II\'s own arrow feeds Q, and Q passes on to III and IV (the old curve ran from I into II, showing the linear I-II-III misconception)',
     'The working ATP synthase\'s H+ arrow runs down through the stalk to the head, with its own H+ label',
-    'Alt text and the electron swatch name Q'
+    'Alt text and the electron swatch name Q',
+    'Re-review: the 24 note says "at 3, the old whole number for NADH" (the old FADH2 value was 2), and the hook is dropped because the caption already says FADH2 skips complex I\'s pump'
   ],
   'fm:written:bio-4-1hr4sgo': [
     'Same etc-chain fix: no electron line from complex I into complex II; both feed Q',
