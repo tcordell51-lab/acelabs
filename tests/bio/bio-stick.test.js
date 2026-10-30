@@ -283,6 +283,9 @@ test('sarcomere to scale: thin shorter than thick, actin beside myosin, I band a
     const br = d.getElementById('sf-Ibr-L').getAttribute('d').match(/M(-?[\d.]+),\d+V\d+H(-?[\d.]+)/);
     assert.equal((+br[1] + +br[2]) / 2, zL, st + ': I band bracket spans the Z disc');
     assert.equal(d.getElementById('sf-Hzone').getAttribute('opacity'), h > 0 ? '1' : '0');
+    assert.equal(d.getElementById('sf-Mlead').getAttribute('opacity'), h > 0 ? '0' : '1', st + ': M line leader once the H zone bracket hides');
+    const tips = [...d.getElementById('sf-tips').getAttribute('d').matchAll(/M(-?[\d.]+),/g)].map((m) => +m[1]);
+    assert.deepEqual(tips, [zL + 200, zL + 200, zR - 200, zR - 200], st + ': caps on the free ends of the thin filaments');
     const ro = d.getElementById('sfReadout').textContent;
     assert.match(ro, new RegExp('Z to Z ' + (zz / 200).toFixed(1) + ' um'));
     assert.match(ro, /A band (holds|still) /);
@@ -293,7 +296,14 @@ test('sarcomere to scale: thin shorter than thick, actin beside myosin, I band a
     const at = (href) => [...tem.querySelectorAll('use')].filter((u) => u.getAttribute('href') === href).map((u) => +u.getAttribute('x'));
     assert.equal(at('#rl-tmf').length, 2, st + ': two myofibrils');
     assert.ok(at('#rl-ttri').includes(200) && at('#rl-ttri').includes(520), st + ': triads at the A-I junctions');
-    assert.ok(at('#rl-tmito').includes(zL - 36) && at('#rl-tmito').includes(zL + 36), st + ': mitochondria in pairs at the Z disc');
+    // mitochondria in pairs at the Z disc, each one inside its half I band
+    const iH = 200 - zL, mrx = Math.min(30, (iH - 8) / 2), mo = 4 + mrx;
+    assert.ok(at('#rl-tmito').includes(zL - mo) && at('#rl-tmito').includes(zL + mo), st + ': mitochondria in pairs at the Z disc');
+    assert.equal(+tem.querySelector('#rl-tmito ellipse').getAttribute('rx'), mrx, st + ': mitochondrion sized to its half I band');
+    assert.ok(mo + mrx <= iH - 4, st + ': mitochondrion stays clear of the A-I junction');
+    // the M line is never paler than the overlap: once the thin filaments
+    // reach it (full contraction) it takes the overlap gray, not #3d3d3d
+    assert.equal(/fill="#3d3d3d"/.test(tem.innerHTML), h > 0, st + ': M line gray');
     const iText = [...tem.querySelectorAll('text')].find((x) => x.textContent === 'I band');
     assert.equal(+iText.getAttribute('x'), zL, st + ': TEM I band label centered on the Z disc');
     assert.match(tem.innerHTML, /Z disc in middle/);
@@ -305,4 +315,26 @@ test('sarcomere to scale: thin shorter than thick, actin beside myosin, I band a
   const last = p.frames[p.frames.length - 1].html;
   assert.ok(last.length <= 32000, 'last frame ' + last.length + ' chars');
   assert.match(last, /TEM VIEW/);
+});
+
+test('cross-bridge cycle: each I band is centered on its Z disc, and the readout counts the whole I band', () => {
+  const t = boot('bio-physiology.html');
+  const d = t.w.document;
+  const slide = (v) => { const s = d.getElementById('cbStage'); s.value = String(v); s.dispatchEvent(new t.w.Event('input', { bubbles: true })); };
+  for (const [v, zL] of [[0, 160], [90, 190]]) {
+    slide(v);
+    const svg = d.getElementById('cbSvg');
+    const zs = [...svg.querySelectorAll('line')].filter((l) => l.getAttribute('stroke-width') === '4').map((l) => +l.getAttribute('x1'));
+    assert.deepEqual(zs, [zL, 800 - zL], v + ': Z discs');
+    const labels = [...svg.querySelectorAll('text')].filter((x) => x.textContent === 'I band').map((x) => +x.getAttribute('x'));
+    assert.deepEqual(labels, zs, v + ': one I band label on each Z disc');
+    assert.doesNotMatch(svg.innerHTML, /I-band/, v + ': no half I band labels');
+    const br = [...svg.querySelectorAll('line')].filter((l) => l.getAttribute('y1') === '200' && l.getAttribute('stroke') === '#C25B3F');
+    assert.equal(br.length, 2, v + ': two I band brackets');
+    br.forEach((l, i) => {
+      assert.equal((+l.getAttribute('x1') + +l.getAttribute('x2')) / 2, zs[i], v + ': bracket centered on its Z disc');
+      assert.equal(+l.getAttribute('x2') - +l.getAttribute('x1'), 2 * (240 - zL), v + ': bracket runs A band to A band');
+    });
+    assert.equal(d.getElementById('cbIBand').textContent, 2 * (240 - zL) + ' px', v + ': whole I band in the readout');
+  }
 });

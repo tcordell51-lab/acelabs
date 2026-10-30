@@ -586,7 +586,7 @@
         <!-- ====== SLIDING FILAMENT ====== -->
         <div class="lab-module" data-module="filament">
           <div class="sf-stage">
-            <svg viewBox="0 0 720 210" class="sf-svg" id="sfSvg" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Sliding filament model of one sarcomere and the edges of its neighbors, drawn to scale">
+            <svg viewBox="0 0 720 220" class="sf-svg" id="sfSvg" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Sliding filament model of one sarcomere and the edges of its neighbors, drawn to scale">
               <!-- To scale at 200 px per um. The thick filament (1.6 um, x 200 to 520,
                    M line at 360) never moves or changes length; each thin filament is
                    1.0 um. initSlidingFilament (bio-shared.js) moves the Z discs, the
@@ -601,7 +601,7 @@
                     <path stroke-width="2" d="M215,112l-4,-6M215,128l-4,6M245,112l-4,-6M245,128l-4,6M275,112l-4,-6M275,128l-4,6M305,112l-4,-6M305,128l-4,6M335,112l-4,-6M335,128l-4,6M385,112l4,-6M385,128l4,6M415,112l4,-6M415,128l4,6M445,112l4,-6M445,128l4,6M475,112l4,-6M475,128l4,6M505,112l4,-6M505,128l4,6"/>
                     <path stroke-width="6" d="M211,106l-4,-5M211,134l-4,5M241,106l-4,-5M241,134l-4,5M271,106l-4,-5M271,134l-4,5M301,106l-4,-5M301,134l-4,5M331,106l-4,-5M331,134l-4,5M389,106l4,-5M389,134l4,5M419,106l4,-5M419,134l4,5M449,106l4,-5M449,134l4,5M479,106l4,-5M479,134l4,5M509,106l4,-5M509,134l4,5"/>
                   </g>
-                  <line x1="360" y1="100" x2="360" y2="140" stroke="#1B3A2D" stroke-width="2"/>
+                  <line x1="360" y1="92" x2="360" y2="148" stroke="#1B3A2D" stroke-width="2"/>
                 </g>
               </defs>
               <!-- scale bar: 100 px = 0.5 um -->
@@ -609,7 +609,9 @@
               <text x="60" y="26" text-anchor="middle" font-size="20" fill="#5b6b62">0.5 um</text>
               <!-- thin filaments (actin), one above and one below the thick filament
                    in each half sarcomere; the far side of each Z disc anchors the
-                   neighbor sarcomere's thin filaments -->
+                   neighbor sarcomere's thin filaments. sf-tips caps the free
+                   (pointed) end of each thin filament, so at full contraction the
+                   caps meet at the M line and show where two filaments end. -->
               <g stroke="#c19a3e" stroke-width="4">
                 <path id="sf-actin-nL" d="M-80,96H120M-80,144H120"/>
                 <path id="sf-actin-nR" d="M600,96H800M600,144H800"/>
@@ -617,6 +619,7 @@
                 <line id="sf-actin-Lb" x1="120" y1="144" x2="320" y2="144"/>
                 <line id="sf-actin-R" x1="600" y1="96" x2="400" y2="96"/>
                 <line id="sf-actin-Rb" x1="600" y1="144" x2="400" y2="144"/>
+                <path id="sf-tips" d="M320,90v12M320,138v12M400,90v12M400,138v12" stroke="#5b4a1c" stroke-width="3"/>
               </g>
               <!-- thick filaments (myosin): this sarcomere's, and the ends of its neighbors' -->
               <use id="sf-thk-nL" href="#sf-thk" transform="translate(-480,0)"/>
@@ -638,11 +641,14 @@
                 <text id="sf-Aband" x="360" y="204">A band</text>
                 <text id="sf-Iband-R" x="600" y="204" fill="#5b6b62">I band</text>
                 <text id="sf-Mline" x="360" y="26">M line</text>
+                <!-- leader from the M line label down to the M line; shown once the
+                     H zone bracket hides (full contraction) -->
+                <path id="sf-Mlead" d="M360,34V98" fill="none" stroke="#1B3A2D" stroke-width="1.5" stroke-dasharray="3 3" opacity="0"/>
                 <text id="sf-zL-t" x="120" y="72">Z</text>
                 <text id="sf-zR-t" x="600" y="72">Z</text>
                 <g id="sf-Hzone" fill="var(--good)">
-                  <text x="360" y="54">H zone</text>
-                  <path id="sf-Hbr" d="M320,76V64H400V76" fill="none" stroke="var(--good)" stroke-width="2.4"/>
+                  <text x="360" y="60">H zone</text>
+                  <path id="sf-Hbr" d="M320,80V68H400V80" fill="none" stroke="var(--good)" stroke-width="2.4"/>
                 </g>
               </g>
             </svg>

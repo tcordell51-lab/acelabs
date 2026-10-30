@@ -296,8 +296,10 @@
      that make it. Electron density: Z disc darkest, then the overlap
      (actin + myosin), the M line, the H zone (myosin only), the paler
      bare zone beside the M line (thick filament without heads), and the
-     I band (actin only) lightest. Fine lines are the filaments: thick
-     ones 45 nm apart, thin ones running into the zigzag Z disc. Each
+     I band (actin only) lightest. Once the thin filaments reach the M
+     line (full contraction) it is as dark as the overlap, never paler.
+     Fine lines are the filaments: thick ones 45 nm apart, thin ones
+     running into the zigzag Z disc. Each
      myofibril row is drawn once and placed twice; the lower one is
      shifted 3 px, since neighbors line up closely but not perfectly.
      In the sarcoplasm gap between the rows: triads (a pale T tubule
@@ -305,15 +307,19 @@
      SR, with glycogen granules beside the I band. In the gap below the
      lower row: mitochondria in pairs, one on each side of every Z disc
      (they would crowd the triads at short sarcomere lengths if both
-     shared a gap). Neighboring sarcomeres repeat with the same period. */
+     shared a gap). Each one is sized to stay inside its half I band,
+     so none reaches the A-I junction where the triads sit. Neighboring
+     sarcomeres repeat with the same period. */
 
   function temStrip(g) {
     var zL = g.zL, zR = g.zR, period = zR - zL, L = period / 2, M = zL + L;
     var mh = g.myosinW / 2, aLen = g.actinTipL - zL, iH = L - mh;
     var RH = 72, Y1 = 26, Y2 = 114, TY = 106, MY = 195;   // row height and tops; centers of the two gaps
+    // mitochondrion half length: fits between Z + 4 and the A-I junction minus 4
+    var mrx = Math.min(30, (iH - 8) / 2), mo = 4 + mrx;
     function base(s) {                       // s: distance from the nearest Z disc (0 to L)
       var actin = s <= aLen, myosin = s >= iH, d = L - s;
-      if (myosin && d < 6) return 0.82;      // M line
+      if (myosin && d < 6) return actin ? 0.92 : 0.82;   // M line; never paler than the overlap once thin filaments reach it
       if (actin && myosin) return 0.92;      // overlap
       if (myosin && d < 16) return 0.48;     // bare zone
       if (myosin) return 0.58;               // H zone
@@ -353,8 +359,8 @@
     var thin = '', thick = '', zig = '';
     zs.forEach(function (z) {
       for (j = 0; j < 16; j++) thin += 'M' + (z - aLen) + ',' + f1(2.25 + 4.5 * j) + 'H' + (z + aLen);
-      zig += 'M' + (z - 2.5) + ',0';
-      for (j = 0; j < 9; j++) zig += 'l5,4l-5,4';
+      zig += 'M' + z + ',0v72M' + (z - 2) + ',0';   // a straight dense core, then the fine zigzag (amplitude 2)
+      for (j = 0; j < 9; j++) zig += 'l4,4l-4,4';
     });
     ms.forEach(function (m) { for (j = 0; j < 8; j++) thick += 'M' + (m - mh) + ',' + f1(4.5 + 9 * j) + 'H' + (m + mh); });
 
@@ -368,9 +374,9 @@
       '<g id="rl-tmf">' + order.map(function (c) { return '<path fill="' + c + '" d="' + runs[c] + '"/>'; }).join('') +
         '<path d="' + thin + '" stroke="#303030" stroke-opacity="0.25" stroke-width="1.2"/>' +
         '<path d="' + thick + '" stroke="#101010" stroke-opacity="0.45" stroke-width="2.6"/>' +
-        '<path d="' + zig + '" fill="none" stroke="#191919" stroke-width="6"/></g>' +
-      '<g id="rl-tmito"><ellipse rx="30" ry="7" fill="#4a4a4a" stroke="#1e1e1e" stroke-width="1.2"/>' +
-        '<path d="M-18,-4v8M-9,-4v8M0,-4v8M9,-4v8M18,-4v8" stroke="#bdbdbd" stroke-width="0.8"/></g>' +
+        '<path d="' + zig + '" fill="none" stroke="#191919" stroke-width="5" stroke-linejoin="round"/></g>' +
+      '<g id="rl-tmito"><ellipse rx="' + f1(mrx) + '" ry="7" fill="#4a4a4a" stroke="#1e1e1e" stroke-width="1.2"/>' +
+        '<path d="' + [-0.6, -0.3, 0, 0.3, 0.6].map(function (c) { return 'M' + f1(c * mrx) + ',-4v8'; }).join('') + '" stroke="#bdbdbd" stroke-width="0.8"/></g>' +
       '<g id="rl-ttri" stroke="#1e1e1e"><ellipse cx="-8" rx="4.5" ry="6" fill="#5e5e5e"/><ellipse cx="8" rx="4.5" ry="6" fill="#5e5e5e"/>' +
         '<ellipse rx="2.5" ry="5" fill="#e6e6e6" stroke-width="1.2"/></g>' +
       '</defs>';
@@ -395,15 +401,16 @@
     }
     zs.forEach(function (z) {
       if (iH > 14) granules(z - iH + 14, z + iH - 14, TY, 5.5);      // between the triads
-      if (iH > 70) { granules(z - iH + 2, z - 68, MY, 5.5); granules(z + 68, z + iH - 2, MY, 5.5); }   // past the mitochondria
+      var mOut = 4 + 2 * mrx + 2;
+      if (iH - 2 > mOut + 4) { granules(z - iH + 2, z - mOut, MY, 5.5); granules(z + mOut, z + iH - 2, MY, 5.5); }   // past the mitochondria
     });
     out += '<path d="' + gly + '" stroke="#2c2c2c" stroke-width="5" stroke-linecap="round"/>';
     // gap below the lower row: a mitochondrion on each side of every Z disc
-    zs.forEach(function (z) { out += '<use href="#rl-tmito" x="' + (z - 36) + '" y="' + MY + '"/><use href="#rl-tmito" x="' + (z + 36) + '" y="' + MY + '"/>'; });
+    zs.forEach(function (z) { out += '<use href="#rl-tmito" x="' + f1(z - mo) + '" y="' + MY + '"/><use href="#rl-tmito" x="' + f1(z + mo) + '" y="' + MY + '"/>'; });
     out += '</g>';
 
     // labels under the strip, aligned to the bands of the middle sarcomere
-    var aS = M - mh, aE = M + mh, hL = zL + aLen, hR = zR - aLen, mx = zR + 36;
+    var aS = M - mh, aE = M + mh, hL = zL + aLen, hR = zR - aLen, mx = zR + mo;
     function bracket(x1, x2, y, col) {
       return '<path d="M' + f1(x1) + ',' + (y - 8) + 'V' + y + 'H' + f1(x2) + 'V' + (y - 8) + '" stroke="' + col + '"/>';
     }
@@ -417,7 +424,7 @@
       '<text x="' + zL + '" y="242" fill="#5b6b62">I band</text>' +
       '<text x="' + M + '" y="242" fill="#1B3A2D">A band</text>' +
       (hR - hL > 6 ? '<text x="' + M + '" y="284" fill="#8C7235">H zone</text>' : '') +
-      '<text x="' + zL + '" y="266" font-size="20" font-weight="400" fill="#5b6b62">Z disc in middle</text>' +
+      '<text x="' + zL + '" y="268" font-size="20" font-weight="400" fill="#5b6b62">Z disc in middle</text>' +
       '<text x="' + mx + '" y="242" font-size="20" fill="#3a4a42">mitochondria</text></g>';
     // labels over the strip
     out += '<path d="M500,18L514,99" stroke="#fbf6e9" stroke-width="1.6"/>';
