@@ -261,8 +261,8 @@
           "status": "matches",
           "code": {
             "file": "tools/bio/bio-real.js",
-            "line": 497,
-            "match": "plant \\? '50 um' : '10 um', plant \\? 60 : 56",
+            "line": 822,
+            "match": "bar = plant \\? 60 \\* \\(lay \\? lay\\.k : 1\\) : 56",
             "sets": "scale bars: 10 um = 56 px for red cells, 50 um = 60 px for Elodea"
           }
         },
@@ -394,8 +394,8 @@
           "status": "matches",
           "code": {
             "file": "tools/bio/bio-real.js",
-            "line": 239,
-            "match": "keep = ext >= 8 \\? 2 : 0",
+            "line": 308,
+            "match": "keep = ext >= 8 \\? \\(lay \\? lay\\.keep\\.length : 2\\) : 0",
             "sets": "tougher cells"
           }
         }
@@ -488,8 +488,8 @@
           "status": "matches",
           "code": {
             "file": "tools/bio/bio-real.js",
-            "line": 497,
-            "match": "plant \\? '50 um' : '10 um', plant \\? 60 : 56",
+            "line": 822,
+            "match": "bar = plant \\? 60 \\* \\(lay \\? lay\\.k : 1\\) : 56",
             "sets": "scale bars: 10 um = 56 px for red cells, 50 um = 60 px for Elodea"
           }
         },
@@ -545,8 +545,8 @@
           "status": "matches",
           "code": {
             "file": "tools/bio/bio-real.js",
-            "line": 395,
-            "match": "var inc = diff >= 5 \\|\\| hash\\(i, 1\\) < 0\\.5",
+            "line": 557,
+            "match": "var inc = diff >= 5 \\|\\| \\(incSet \\? !!incSet\\[i\\] : hash\\(i, 1\\) < 0\\.5\\)",
             "sets": "which cells show corner gaps"
           }
         },
@@ -639,24 +639,24 @@
       "mustMatch": "Wet mount of an Elodea leaf in strong salt solution (for example 5 to 10 percent NaCl), brightfield, 400x.",
       "facts": [
         {
-          "fact": "Named plasmolysis only above external solute 80",
+          "fact": "Named plasmolysis above external solute 60",
           "real": "Plasmolysis in a clearly hypertonic solution",
           "status": "matches",
           "code": {
             "file": "tools/bio/bio-shared.js",
-            "line": 13243,
-            "match": "externalSolute > 80\\)",
+            "line": 13251,
+            "match": "externalSolute > 60\\)",
             "sets": "plasmolysis threshold"
           }
         },
         {
-          "fact": "Pull-in p = 0.43 + 0.57 x (external solute - 80) / 20: 0.46 at 81, 1 at 100",
+          "fact": "Pull-in p = 0.11 + 0.89 x (external solute - 60) / 40: 0.11 just above 60, 1 at 100",
           "real": "Stronger solutions plasmolyze further",
           "status": "matches",
           "code": {
             "file": "tools/bio/bio-real.js",
-            "line": 374,
-            "match": "var p = plasmolyzed \\? lerp\\(0\\.43, 1",
+            "line": 461,
+            "match": "var p = plasmolyzed \\? lerp\\(0\\.11, 1",
             "sets": "how far protoplasts pull in"
           }
         },
@@ -1016,8 +1016,8 @@
           "status": "matches",
           "code": {
             "file": "tools/bio/bio-real.js",
-            "line": 530,
-            "match": "if \\(myosin && d < 6\\) return actin \\? 0\\.92 : 0\\.82",
+            "line": 877,
+            "match": "if \\(myosin && d < 6\\) return actin \\? \\(d < 4 \\? 1\\.05 : 0\\.92\\) : 0\\.82",
             "sets": "electron density: Z 1.0, overlap 0.92, M line 0.82 (0.92 once thin filaments reach it), H zone 0.58, bare zone 0.48, I band 0.30"
           }
         },
@@ -1071,8 +1071,8 @@
           "status": "matches",
           "code": {
             "file": "tools/bio/bio-real.js",
-            "line": 527,
-            "match": "var mrx = Math\\.min\\(30, \\(iH - 8\\) / 2\\)",
+            "line": 871,
+            "match": "var mrx = 16, mo = 4 \\+ mrx",
             "sets": "mitochondria in pairs beside each Z disc, at most 60 px = 0.3 um long, kept inside the half I band"
           }
         },
@@ -1134,8 +1134,8 @@
           "status": "matches",
           "code": {
             "file": "tools/bio/bio-real.js",
-            "line": 530,
-            "match": "if \\(myosin && d < 6\\) return actin \\? 0\\.92 : 0\\.82",
+            "line": 877,
+            "match": "if \\(myosin && d < 6\\) return actin \\? \\(d < 4 \\? 1\\.05 : 0\\.92\\) : 0\\.82",
             "sets": "electron density: Z 1.0, overlap 0.92, M line 0.82 (0.92 once thin filaments reach it), H zone 0.58, bare zone 0.48, I band 0.30"
           }
         },
@@ -1189,8 +1189,8 @@
           "status": "matches",
           "code": {
             "file": "tools/bio/bio-real.js",
-            "line": 527,
-            "match": "var mrx = Math\\.min\\(30, \\(iH - 8\\) / 2\\)",
+            "line": 871,
+            "match": "var mrx = 16, mo = 4 \\+ mrx",
             "sets": "mitochondria in pairs beside each Z disc, at most 60 px = 0.3 um long, kept inside the half I band"
           }
         },
@@ -1247,15 +1247,16 @@
           }
         },
         {
-          "fact": "Density order Z > overlap = M line > I band; no H zone or bare zone is left, since the thin filaments reach the M line",
+          "fact": "Density order at full contraction: Z > M line > overlap > I band; no H zone or bare zone is left, since the thin filaments reach the M line",
           "real": "Z darkest, I band lightest; the M line is darker than the H zone but never darker than the overlap; when fully contracted the thin filaments reach it and it takes the overlap gray",
-          "status": "matches",
+          "status": "close",
           "code": {
             "file": "tools/bio/bio-real.js",
-            "line": 530,
-            "match": "if \\(myosin && d < 6\\) return actin \\? 0\\.92 : 0\\.82",
+            "line": 877,
+            "match": "if \\(myosin && d < 6\\) return actin \\? \\(d < 4 \\? 1\\.05 : 0\\.92\\) : 0\\.82",
             "sets": "electron density: Z 1.0, overlap 0.92, M line 0.82 (0.92 once thin filaments reach it), H zone 0.58, bare zone 0.48, I band 0.30"
-          }
+          },
+          "reason": "The drawing keeps the M line as a thin stripe slightly darker than the overlap (density 1.05 against 0.92) so its label still points at a visible line once actin reaches it; in real micrographs the M line is at most as dark as the overlap."
         },
         {
           "fact": "Gray levels from 225 - 200 x density",
@@ -1307,8 +1308,8 @@
           "status": "matches",
           "code": {
             "file": "tools/bio/bio-real.js",
-            "line": 527,
-            "match": "var mrx = Math\\.min\\(30, \\(iH - 8\\) / 2\\)",
+            "line": 871,
+            "match": "var mrx = 16, mo = 4 \\+ mrx",
             "sets": "mitochondria in pairs beside each Z disc, at most 60 px = 0.3 um long, kept inside the half I band"
           }
         },

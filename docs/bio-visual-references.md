@@ -112,7 +112,7 @@ states) takes about fifteen minutes, not forty.
 
 ## Facts already flagged
 
-Seven facts are marked `close`. None is a reason to hold a view back on
+Eight facts are marked `close`. None is a reason to hold a view back on
 its own, but each is where a sharp eye will look first:
 
 - `tonicity-rbc-isotonic`: the edge-on cell is 2.7 um at the thickest
@@ -133,6 +133,10 @@ its own, but each is where a sharp eye will look first:
 - `bone-long-gross`: the end shell is 21 percent of the shaft wall (a
   rough range of 15 to 20), and the shaft is 57 percent of the length
   (60 to 75 in a real long bone).
+- `sarcomere-tem-contracted`: at full contraction the M line is drawn as a
+  thin stripe slightly darker than the overlap (density 1.05 against 0.92)
+  so its label still points at a visible line; in real micrographs the M
+  line is at most as dark as the overlap.
 
 ## What a reviewer usually catches
 

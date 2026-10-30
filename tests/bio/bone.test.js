@@ -178,5 +178,6 @@ test('Bone Layers: every stop fits the card budget, and the drawing is determini
   const card = t.state().aceCards.find((c) => c.id === rec.cardId);
   assert.ok(card, 'Ace Card saved');
   assert.match(card.explanation, /outer circumferential lamellae/, 'card keeps the picture');
-  assert.match(card.explanation, /<g opacity="0\.8"><rect x="14" y="194"/, 'card picture shows the zoom at 0.8');
+  // the check is about osteons, so its card shows the osteon stop with the zoom at full strength
+  assert.match(card.explanation, /<g opacity="1"><rect x="14" y="194"/, 'card picture shows the zoom at full strength');
 });
