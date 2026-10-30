@@ -233,6 +233,44 @@ test('Bone Layers: six stops from periosteum to medullary cavity, and its panel 
   assert.match(p.node.querySelector('.stick-verdict').textContent, /Confirmed/);
 });
 
+test('Bone Layers: a true-to-life bone and ground section, small enough for a card', () => {
+  const t = boot('bio-physiology.html');
+  const d = t.w.document;
+  const stage = d.getElementById('boneStage');
+  const svgAt = (v) => {
+    stage.value = String(v);
+    stage.dispatchEvent(new t.w.Event('input', { bubbles: true }));
+    return d.getElementById('boneSvg').innerHTML;
+  };
+  const all = [0, 1, 2, 3, 4, 5].map(svgAt);
+  all.forEach((h, v) => {
+    assert.ok(/^[\x00-\x7f]*$/.test(h), 'plain ASCII at stop ' + v);
+    assert.doesNotMatch(h, /\b(wrong|incorrect|fail|failed)\b/i);
+    const ids = [...h.matchAll(/ id="([^"]+)"/g)].map((m) => m[1]);
+    assert.equal(new Set(ids).size, ids.length, 'ids unique at stop ' + v);
+    assert.ok(ids.every((id) => /^bl-/.test(id)), 'every id carries the bl- prefix');
+  });
+  // the stick frames (slider values 0, 1 and 3) stay well under the Ace Card limit
+  [0, 1, 3].forEach((v) => assert.ok(all[v].length < 32000, 'stop ' + v + ' is ' + all[v].length + ' chars'));
+  // the zoom is a ground section cut across the shaft: dark empty canals, no vessels drawn in them
+  const z = all[2];
+  assert.match(z, /cross-section of compact bone \(ground section\)/);
+  assert.match(z, /cross-section here/);
+  assert.match(z, /holds vessels/);
+  assert.match(z, /and nerves in life/);
+  assert.match(t.panel('bone-layers').entry.check.answer, /vessels and nerves/, 'label and check answer agree');
+  assert.match(z, /outer circumferential lamellae/);
+  assert.match(z, /periosteum removed/);
+  assert.doesNotMatch(z, /fill="#b5463f"/, 'no red vessel inside a canal');
+  // spongy bone fills the ends: its highlight traces the region (the only ellipse left is the cut plane)
+  assert.equal((all[4].match(/<ellipse/g) || []).length, 1);
+  assert.match(all[4], /mostly yellow marrow/);
+  // the endosteum stage lines every strut: the strut paths are painted twice, at both ends
+  const strutUses = (h) => (h.match(/<use href="#bl-t0"/g) || []).length;
+  assert.equal(strutUses(all[3]), 4);
+  assert.equal(strutUses(all[0]), 2);
+});
+
 test('true-to-life views: microscope red cells and plant cells, and the TEM band strip', () => {
   const cell = boot('bio-cell.html');
   const d = cell.w.document;
