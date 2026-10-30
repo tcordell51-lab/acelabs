@@ -136,7 +136,11 @@ register('qr.triangle', (s, box) => {
 // Counts in the boxes, rates on the branches. The numerator leaf is outlined
 // solid, every leaf in the denominator dashed, and both carry a word label,
 // so the key is never marked by color alone.
+// Kinds beyond the pilot's Bayes tree register here (qr-plot.js adds slots
+// and mix), the way PARTWHOLE_STYLES takes partwhole styles.
+export const TREE_KINDS = {};
 register('qr.tree', (s, box) => {
+  if (s.kind && TREE_KINDS[s.kind]) return TREE_KINDS[s.kind](s, box);
   const W = width(box), wide = W >= 560;
   const fmt = (n) => Number(n).toLocaleString('en-US');
   const role = (c) => c.role === 'numerator' ? 'num' : c.role === 'denominator' ? 'den' : null;
@@ -151,10 +155,10 @@ register('qr.tree', (s, box) => {
   const line = (xa, ya, xb, yb) => `<line x1="${r1(xa)}" y1="${r1(ya)}" x2="${r1(xb)}" y2="${r1(yb)}" stroke="#9aa59f" stroke-width="1.6"/>`;
   const rate = (x, y, str, anchor) => t(x, y, str, { size: 12, fill: C.ink2, anchor: anchor || 'middle', italic: true }).replace('<text ', '<text paint-order="stroke" stroke="#fff" stroke-width="4" stroke-linejoin="round" ');
   let g = '', H;
-  // put the two positive leaves next to each other: the first branch lists its negatives first
-  const B0 = s.branches[0], B1 = s.branches[1];
-  const k0 = B0.children.slice().sort((p, q) => (p.label.includes('+') ? 1 : 0) - (q.label.includes('+') ? 1 : 0));
-  const k1 = B1.children.slice().sort((p, q) => (q.label.includes('+') ? 1 : 0) - (p.label.includes('+') ? 1 : 0));
+  // put the two leaves the ratio uses (they carry a role) next to each other: the first branch lists its others first
+  const B0 = s.branches[0], B1 = s.branches[1], used = (c) => (c.role ? 1 : 0);
+  const k0 = B0.children.slice().sort((p, q) => used(p) - used(q));
+  const k1 = B1.children.slice().sort((p, q) => used(q) - used(p));
   if (wide) {
     const gap = 56, avail = W - 32 - 2 * gap - 22, bw = Math.min(170, Math.round(avail * 0.29)), lw = Math.min(260, avail - 2 * bw), hh = 44;
     const x0 = 16, x1 = x0 + bw + gap, x2 = x1 + bw + gap;

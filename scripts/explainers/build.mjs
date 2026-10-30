@@ -81,6 +81,7 @@ const COMPUTE = await import(pathToFileURL(path.join(ROOT, 'tools/explain/visual
 const BIOC = await import(pathToFileURL(path.join(ROOT, 'tools/explain/visuals/compute-bio.js')).href);
 const GCC = await import(pathToFileURL(path.join(ROOT, 'tools/explain/visuals/compute-gc.js')).href);
 const QRC = await import(pathToFileURL(path.join(ROOT, 'tools/explain/visuals/compute-qr.js')).href);
+const QRP = await import(pathToFileURL(path.join(ROOT, 'tools/explain/visuals/compute-qr-plot.js')).href);
 
 /* ------------------------------------------------------------------ helpers */
 const rd = (rel) => fs.readFileSync(path.join(ROOT, rel), 'utf8');
@@ -425,6 +426,12 @@ function recompute(R, p, facts) {
     const r = QRC.checkPanel(p, keyText, served.choices, { stem: served.stem, texts: [e.answer.line, ...e.steps, ...e.choices.map((c) => c.note), e.lockIt, e.hook] });
     issues.push(...r.issues); checks.push(...r.checks);
   }
+  // the QR plots and tree kinds (batch B006 on): the check block as above (choices written in pi read as
+  // numbers), then what the picture draws: slots, mixtures, variance, z, slope, distance, the unit circle
+  if (QRP.isPlot(p) || (p.type === 'qr.tree' && p.check)) {
+    const r = QRP.checkPlot(p, keyText, served.choices, { stem: served.stem, texts: [e.answer.line, ...e.steps, ...e.choices.map((c) => c.note), e.lockIt, e.hook] });
+    issues.push(...r.issues); checks.push(...r.checks);
+  }
   if (p.type === 'chem.trend') {
     const vals = p.series.map((sym) => { const el = TRENDS.elements.find((x) => x.symbol === sym); if (!el || el[p.property] == null) { issues.push('trend: no ' + p.property + ' for ' + sym + ' in trends-data.json'); return { sym, v: null, z: null }; } return { sym, v: el[p.property], z: el.z }; });
     facts.values = vals;
@@ -480,7 +487,8 @@ function recompute(R, p, facts) {
     else if (Math.abs(c - parseFloat(keyText)) > 0.05) issues.push('Law of Cosines gives ' + c.toFixed(3) + ', the key is ' + keyText);
     (p.compare || []).forEach((cmp) => { const cc = COMPUTE.lawOfCosines(p.a, p.b, cmp.angleDeg), r = root(cmp.label); if (r != null && Math.abs(cc * cc - r) > 1e-9) issues.push('compare at ' + cmp.angleDeg + ' degrees gives c squared = ' + (cc * cc).toFixed(3) + ', its label says root ' + r); });
   }
-  if (p.type === 'qr.tree') {
+  if (p.type === 'qr.tree' && !p.kind) {
+    if (!p.root || !p.branches) { issues.push('qr.tree (Bayes) needs root and branches'); return; }
     const N = p.root.n, pct = (s) => parseFloat(s) / 100;
     let ok = true;
     p.branches.forEach((b) => { if (Math.abs(N * pct(b.rate) - b.n) > 1e-9) ok = false; b.children.forEach((c) => { if (Math.abs(b.n * pct(c.rate) - c.n) > 1e-9) ok = false; if (!Number.isInteger(c.n)) ok = false; }); });
@@ -488,10 +496,12 @@ function recompute(R, p, facts) {
     const leaves = p.branches.flatMap((b) => b.children);
     const num = leaves.filter((c) => c.role === 'numerator'), den = leaves.filter((c) => c.role === 'numerator' || c.role === 'denominator');
     const nsum = num.reduce((a, c) => a + c.n, 0), dsum = den.reduce((a, c) => a + c.n, 0), val = nsum / dsum;
-    const dec = (keyText.split('.')[1] || '').length;
-    if (!/^\d*\.?\d+$/.test(keyText) || val.toFixed(dec) !== keyText) issues.push('tree result ' + val + ' vs key ' + keyText);
+    // a key written as a percent ("~88%") is read as hundredths, to the places it states
+    const pk = /^~?(\d*\.?\d+)%$/.exec(keyText), kt = pk ? pk[1] : keyText, kv = pk ? 100 * val : val;
+    const dec = (kt.split('.')[1] || '').length;
+    if (!/^\d*\.?\d+$/.test(kt) || kv.toFixed(dec) !== kt) issues.push('tree result ' + val + ' vs key ' + keyText);
     else checks.push('Bayes recomputed from the branch rates on ' + N + ' people: ' + nsum + ' / ' + dsum + ' = ' + val.toFixed(4) + ', rounds to ' + keyText + '; every count a whole person');
-    if (p.result && p.result.value != null && Math.abs(p.result.value - +keyText) > 1e-9) issues.push('tree result.value ' + p.result.value + ' differs from the key');
+    if (p.result && p.result.value != null && Math.abs(p.result.value - +kt) > 1e-9) issues.push('tree result.value ' + p.result.value + ' differs from the key');
   }
   if (p.type === 'qr.numberline') {
     if (!(p.max > p.min) || !(p.step > 0)) issues.push('number line needs min < max and a positive step');

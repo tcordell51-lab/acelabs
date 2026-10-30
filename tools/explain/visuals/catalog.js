@@ -29,10 +29,12 @@ export const CATALOG = {
   'qr.figure': { module: 'qr', built: true, required: ['highlight'] },
   'qr.partwhole': { module: 'qr', built: true, required: [], variants: { style: ['grid', 'strip', 'groups', 'bars', 'fractions'] } },   // grid and strip need total, parts, rest (the build checks); groups, bars, fractions in qr-work.js
   'qr.triangle': { module: 'qr', built: true, required: ['a', 'b', 'angleDeg'] },
-  'qr.tree': { module: 'qr', built: true, required: ['root', 'branches', 'result'] },
+  'qr.tree': { module: 'qr', built: true, required: ['result'], variants: { kind: ['slots', 'mix'] } },   // no kind: the Bayes tree (root, branches; the build checks); slots and mix in qr-plot.js
   'qr.numberline': { module: 'qr', built: true, required: ['min', 'max', 'step'] },
   'qr.work': { module: 'qr-work', built: true, required: ['check'] },   // blocks: lines, numberline, parabolas, columns, tree, chips, rows
   'qr.geometry': { module: 'qr-work', built: true, required: ['shape', 'check'], variants: { shape: ['sphere'] } },
+  'qr.dataset': { module: 'qr-plot', built: true, required: ['kind', 'check'], variants: { kind: ['dots', 'normal'] } },
+  'qr.plane': { module: 'qr-plot', built: true, required: ['kind', 'check'], variants: { kind: ['distance', 'slope', 'unit-circle', 'inscribed'] } },
   'pat.angles': { module: 'pat', built: true, required: ['item'] },
   'pat.unfold': { module: 'pat', built: true, required: ['item'] },
   'pat.cubes': { module: 'pat', built: true, required: ['item'] },
@@ -42,8 +44,6 @@ export const CATALOG = {
   // planned (production-plan.md, section 4): no renderer yet
   'bio.pedigree': { module: 'bio', built: false },
   'chem.lab': { module: 'chem', built: false },
-  'qr.dataset': { module: 'qr', built: false },
-  'qr.plane': { module: 'qr', built: false },
   'qr.venn': { module: 'qr', built: false },
   'pat.keyhole': { module: 'pat', built: false },
   'pat.tfe': { module: 'pat', built: false },
