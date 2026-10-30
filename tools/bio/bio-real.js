@@ -10,9 +10,10 @@
        touching, one overlapping pair, two seen edge-on. Hypotonic: the
        discs cup (stomatocytes: face on, the pallor narrows to a slit;
        side on, a D-shaped bowl with thick rounded rims and a shallow
-       cup, holding a little more than the disc), then round up into
-       evenly dense spheres. The membrane barely stretches, so a sphere holds
-       more water yet is a little narrower (about 6.7 um). Hemolysis:
+       cup, holding a little more than the disc, that rounds into a bean
+       with a dented mouth), then round up into evenly dense spheres.
+       The membrane barely stretches, so a sphere holds more water yet
+       is a little narrower (about 6.7 um). Hemolysis:
        faint, smooth, empty ghosts about 6.7 um across in an evenly
        tinted, nearly empty field. Hypertonic: shrunken cells with many
        short blunt projections (echinocytes); the first ones keep some
@@ -40,6 +41,21 @@
 
    Hooks: initTonicity (bio-shared.js) calls BioReal.tonicity(params)
    when this file is loaded and falls back to its schematic otherwise.
+
+   Recognition fields (bio-recognize.js): BioReal.tonicity and
+   BioReal.field take three more options. seed (an integer) draws a new
+   field of the same state: red cells placed afresh (how many and how
+   crowded, sizes 7 to 8 um, tilts, how many seen edge-on, an
+   overlapping pair or not), Elodea files laid out afresh (row heights
+   27 to 33 um, cell lengths, slanted end walls, the files turned across
+   the field and the 400x image cropped tighter), and a slightly
+   different focus, background and light. A seeded generator
+   (mulberry32) makes the same seed give the same field every time, and
+   every seeded field fits on an Ace Card (under 20000 characters).
+   bare drops the caption and the solute strip, the two things that
+   would name the state. ns renames every id (rl-x becomes ns-x) so
+   several fields can share one page. Without these options the output
+   is exactly what it was.
    ===================================================================== */
 (function () {
   'use strict';
@@ -79,10 +95,11 @@
   var FX = 14, FY = 54, FW = 372, FH = 228;
   var CROP = 'x="' + FX + '" y="' + FY + '" width="' + FW + '" height="' + FH + '"';
 
-  function fieldDefs() {
+  // blur: the focus (stdDeviation of the soft filter), 0.45 unless a seeded field sets it
+  function fieldDefs(blur) {
     return '' +
       '<clipPath id="rl-clip"><rect ' + CROP + ' rx="6"/></clipPath>' +
-      '<filter id="rl-soft" x="-5%" y="-5%" width="110%" height="110%"><feGaussianBlur stdDeviation="0.45"/></filter>' +
+      '<filter id="rl-soft" x="-5%" y="-5%" width="110%" height="110%"><feGaussianBlur stdDeviation="' + (blur == null ? '0.45' : f2(blur)) + '"/></filter>' +
       '<filter id="rl-grain" x="0" y="0" width="100%" height="100%">' +
         '<feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="7" result="n"/>' +
         '<feColorMatrix in="n" type="matrix" values="0 0 0 0 0.45  0 0 0 0 0.40  0 0 0 0 0.35  0 0 0 0.09 0"/>' +
@@ -108,6 +125,19 @@
     var x2 = FX + FW - 2, x1 = x2 - scalePx;
     return out + '<path d="M' + x1 + ',310H' + x2 + '" stroke="#e9e2d2" stroke-width="2.5"/>' +
       '<text x="' + ((x1 + x2) / 2) + '" y="300" text-anchor="middle" font-size="11" fill="#e9e2d2">' + scaleLabel + '</text>';
+  }
+  // The bare frame: no caption (it would name the state), the header just
+  // above the crop and the scale bar under it. Shown through BARE_VIEWBOX,
+  // which leaves out the empty caption rows.
+  var BARE_VIEWBOX = '0 32 400 288';
+  function fieldCloseBare(mag, scaleLabel, scalePx) {
+    var x2 = FX + FW - 2, x1 = f1(x2 - scalePx);
+    return '<rect ' + CROP + ' fill="#cbb" filter="url(#rl-grain)" opacity="0.9"/></g>' +
+      '<rect ' + CROP + ' rx="6" fill="none" stroke="#2a2d2a" stroke-width="1.5"/>' +
+      '<text x="' + FX + '" y="46" font-size="11.5" font-weight="700" fill="#e9e2d2">LIGHT MICROSCOPE</text>' +
+      '<text x="' + (FX + FW) + '" y="46" text-anchor="end" font-size="11" fill="#bfb6a3">' + mag + '</text>' +
+      '<path d="M' + x1 + ',310H' + x2 + '" stroke="#e9e2d2" stroke-width="2.5"/>' +
+      '<text x="' + f1((+x1 + x2) / 2) + '" y="300" text-anchor="middle" font-size="11" fill="#e9e2d2">' + scaleLabel + '</text>';
   }
 
   /* Bottom strip: the mechanism, kept beside the real picture. Dots of
@@ -192,16 +222,19 @@
   // the middle and about 2.5 um at the rounded rims. As a solid of
   // revolution the bowl holds a little more than the disc (about 1.06
   // times at full cup), as a swelling cell should. sph (0 to 1) blends
-  // it toward a sphere of radius A, and amp with n adds crenation bumps
-  // (16 samples per bump keep them round).
-  function edgePath(A, cup, sph, amp, n) {
+  // it toward a sphere of radius A; notch (px) dents the top of that
+  // sphere, so a late stomatocyte still shows its mouth in profile while
+  // it rounds up. amp with n adds crenation bumps (16 samples per bump
+  // keep them round).
+  function edgePath(A, cup, sph, amp, n, notch) {
     var pts = [], N = amp ? n * 16 : 48;
     for (var i = 0; i < N; i++) {
       var th = i / N * 2 * Math.PI, c = Math.cos(th), s = Math.sin(th), q = Math.sqrt(Math.abs(s));
       var disc = -s * 0.5 * RBC_PX * (1 + 7.83 * c * c - 4.39 * c * c * c * c);
       var bowl = s < 0 ? 13 * q : 11 * s * s - 10.5 * q;    // outer base below, the cup above
       var yd = lerp(disc, bowl, cup);
-      var x = A * c, y = lerp(yd, -A * s, sph);
+      var ball = -A * s + (notch && s > 0 ? notch * Math.pow(s, 10) : 0);
+      var x = A * c, y = lerp(yd, ball, sph);
       if (amp) { var b = Math.pow(Math.max(0, Math.cos(n * th)), 2) * amp * A; x += b * c; y -= b * s; }
       pts.push(f1(x) + ',' + f1(y));
     }
@@ -222,13 +255,19 @@
     return 'M' + pts.join(' ') + 'Z';
   }
 
-  function rbcField(ext, diff, lysed) {
+  // lay (a seeded field, from rbcLayout) swaps in its own cells and its own
+  // tougher cells; without it the fixed RBCS field is drawn.
+  function rbcField(ext, diff, lysed, lay) {
+    var cells = lay ? lay.cells : RBCS;
     var mode = Math.abs(diff) < 5 ? 'iso' : (diff < 0 ? (lysed ? 'lysed' : 'swell') : 'cren');
     var t = 0, A = RBC_R, defs, edge = '', edgeFill = '#d3807f', vol = 1, title, under = '', keep = 0;
     if (mode === 'iso') {
       defs = radial('rl-rbc', DISC) + '<circle id="rl-d" r="' + A + '" fill="url(#rl-rbc)"' + RBC_STROKE + '/>';
       edge = edgePath(A, 0, 0, 0, 0);
-      title = 'Red blood cells, isotonic: biconcave discs with pale centers; two are seen edge-on';
+      // the fixed field has two cells edge-on; a seeded one says how many it has
+      var nEdge = lay ? cells.filter(function (c) { return c[5] === 2; }).length : 2;
+      title = 'Red blood cells, isotonic: biconcave discs with pale centers' +
+        (nEdge ? '; ' + ['', 'one is', 'two are', 'three are'][nEdge] + ' seen edge-on' : '');
     } else if (mode === 'swell') {
       // t: about 0.06 at the edge of isotonic, 1 just before lysis. The cell
       // first cups (the pallor narrows to a slit), then becomes a sphere
@@ -245,8 +284,11 @@
         '<g id="rl-d"><circle r="' + f1(A) + '" fill="url(#rl-rbc)"' + RBC_STROKE + '/>' +
         (slit > 0 ? '<ellipse rx="' + f1(0.45 * A * mouth) + '" ry="' + f1(0.12 * A) + '" fill="#f0d0c9" opacity="' + f2(slit) + '"/>' : '') + '</g>';
       // the side view starts to round up while it is still cupping (from t
-      // 0.15), so the full bowl never shows unblended, and is round by t 0.75
-      edge = edgePath(A, cup, clamp((t - 0.15) / 0.6, 0, 1), 0, 0);
+      // 0.15), so the full bowl never shows unblended, and is round by t 0.75.
+      // While it rounds up it keeps a dent at the mouth (a bean shape in
+      // profile) that closes from t 0.6 to 0.7, as the slit fades, so the
+      // edge-on cells match the cup caption.
+      edge = edgePath(A, cup, clamp((t - 0.15) / 0.6, 0, 1), 0, 0, 0.42 * A * clamp((0.7 - t) / 0.1, 0, 1));
       edgeFill = mix('#d3807f', '#c86468', den);
       vol = 1 + 0.4 * t;
       // the cup caption holds exactly while the slit is drawn (0.2 < t < 0.7)
@@ -255,14 +297,18 @@
         : 'Hypotonic: water in, discs round up into spheres: more volume, a bit narrower, pale center gone';
     } else if (mode === 'lysed') {
       // ghosts reseal at about the sphere's size, smooth and nearly
-      // invisible; the released hemoglobin tints the whole field faintly
-      defs = '<circle id="rl-d" r="' + f1(RBC_R * 0.9) + '" fill="#f5ebe8" fill-opacity="0.12" stroke="#b8a6a2" stroke-width="0.6" stroke-opacity="0.45"/>';
+      // invisible; the released hemoglobin tints the whole field faintly.
+      // A seeded field draws the membranes a little firmer, so a field of
+      // nothing but ghosts still reads as cells on a phone screen.
+      defs = '<circle id="rl-d" r="' + f1(RBC_R * 0.9) + '" fill="#f5ebe8" fill-opacity="0.12" stroke="' + (lay ? '#a8948f' : '#b8a6a2') +
+        '" stroke-width="' + (lay ? '0.7' : '0.6') + '" stroke-opacity="' + (lay ? '0.62' : '0.45') + '"/>';
       under = '<rect ' + CROP + ' fill="#f3e0dc" opacity="0.15"/>';
       // cells differ in how easily they burst: just past the threshold,
       // two tougher cells still hold as small dense spheres
-      keep = ext >= 8 ? 2 : 0;
+      keep = ext >= 8 ? (lay ? lay.keep.length : 2) : 0;
       if (keep) defs += radial('rl-rbc', SPHERE) + '<circle id="rl-sp" r="' + f1(RBC_R * 0.89) + '" fill="url(#rl-rbc)"' + RBC_STROKE + '/>';
-      title = keep ? 'Hemolysis: most cells burst, leaving faint empty membranes (ghosts); two tougher cells hold as spheres'
+      title = keep ? 'Hemolysis: most cells burst, leaving faint empty membranes (ghosts); ' +
+          (keep === 1 ? 'one tougher cell holds as a sphere' : 'two tougher cells hold as spheres')
         : 'Hemolysis: cells burst; only faint empty membranes (ghosts) remain';
     } else {
       // hypertonic: shrunken echinocytes, many short blunt projections over
@@ -289,20 +335,21 @@
       title = t < 0.25 ? 'Hypertonic: water out, the cells start to shrink and crenate (short blunt projections)'
         : 'Hypertonic: water out, cells shrunken and crenated, with many short blunt projections';
     }
-    if (edge) defs += '<path id="rl-e" d="' + edge + '" fill="' + edgeFill + '"' + RBC_STROKE + '/>';
+    // a seeded field may have no cell edge-on; then the profile is left out
+    if (edge && (!lay || cells.some(function (c) { return c[5] === 2; }))) defs += '<path id="rl-e" d="' + edge + '" fill="' + edgeFill + '"' + RBC_STROKE + '/>';
     var body = '';
-    RBCS.forEach(function (c, i) {
+    cells.forEach(function (c, i) {
       var s = c[2], sy = s * (mode === 'iso' ? c[3] : mode === 'swell' ? lerp(c[3], 1, t) : 1);
       var href = mode === 'cren' ? '#rl-d' + (14 + 2 * (i % 3)) : '#rl-d', rot = mode === 'cren' ? c[4] + i * 21 : c[4];
       if (c[5] === 2 && mode !== 'lysed') { href = '#rl-e'; rot = c[4]; sy = s; }
-      if (keep && (i === 5 || i === 21)) href = '#rl-sp';
+      if (keep && (lay ? lay.keep.indexOf(i) >= 0 : (i === 5 || i === 21))) href = '#rl-sp';
       body += '<use href="' + href + '" transform="translate(' + c[0] + ' ' + c[1] + ')' +
         (mode === 'lysed' ? '' : ' rotate(' + rot + ')') + ' scale(' + f2(s) + (f2(sy) !== f2(s) ? ' ' + f2(sy) : '') + ')"' +
         (c[5] === 1 ? ' style="mix-blend-mode:multiply"' : '') + '/>';
     });
     return {
       svg: '<defs>' + defs + '</defs>' + under + '<g filter="url(#rl-soft)">' + body + '</g>',
-      title: title, vol: vol
+      title: title, vol: vol, r: A
     };
   }
 
@@ -392,7 +439,12 @@
     return { p: [lerp(a[0], b[0], t), lerp(a[1], b[1], t)], t: toward([0, 0], sub(b, a), 1) };
   }
 
-  function plantField(ext, diff, plasmolyzed) {
+  // lay (a seeded field, from plantLayout) brings its own cells (with a
+  // row height each), row walls, an index offset io for the per-cell
+  // pseudo-random choices, and the matrix (map) that turns and zooms the
+  // drawing into the crop. Without it the fixed CELLS field is drawn as is.
+  function plantField(ext, diff, plasmolyzed, lay) {
+    var cells = lay ? lay.cells : CELLS, io = lay ? lay.io : 0, map = lay ? lay.map : null;
     var iso = Math.abs(diff) < 5;
     plasmolyzed = plasmolyzed && diff >= 5;              // only a hypertonic solution plasmolyzes
     // How far the protoplasts pull in (p), tied to the page's plasmolyzed
@@ -419,11 +471,21 @@
     // hide it anyway.
     var paths = { w: '', f: '' }, cur = { w: null, f: null };
     function rel(n) { return f1(n).replace(/^(-?)0\./, '$1.'); }
-    // true when points a and b both lie more than m px past the same edge of the crop
+    // true when points a and b both lie more than m px past the same edge of
+    // the crop (in a seeded field, once turned and zoomed into place)
     function outside(a, b, m) {
+      if (map) { a = map(a); b = map(b); m *= lay.k; }
       return (a[0] < FX - m && b[0] < FX - m) || (a[0] > FX + FW + m && b[0] > FX + FW + m) ||
         (a[1] < FY - m && b[1] < FY - m) || (a[1] > FY + FH + m && b[1] > FY + FH + m);
     }
+    // the same test for a whole cell (seeded fields only): all four corners past one edge
+    function quadOutside(q, m) {
+      var s = q.map(map);
+      function all(f) { return s.every(f); }
+      return all(function (a) { return a[0] < FX - m; }) || all(function (a) { return a[0] > FX + FW + m; }) ||
+        all(function (a) { return a[1] < FY - m; }) || all(function (a) { return a[1] > FY + FH + m; });
+    }
+    var look = null, lookD = Infinity;
     function chloro(key, c, dir, L) {
       var a = [Math.round((c[0] - dir[0] * L / 2) * 10) / 10, Math.round((c[1] - dir[1] * L / 2) * 10) / 10];
       var b = [Math.round((c[0] + dir[0] * L / 2) * 10) / 10, Math.round((c[1] + dir[1] * L / 2) * 10) / 10];
@@ -437,14 +499,62 @@
       if (!outside(a, b, 1)) strands += 'M' + pt(a) + 'l' + rel(b[0] - a[0]) + ',' + rel(b[1] - a[1]);
     }
     function rot(v, deg) { var r = deg * Math.PI / 180, c = Math.cos(r), s = Math.sin(r); return [v[0] * c - v[1] * s, v[0] * s + v[1] * c]; }
-    for (var r = 0; r <= 7; r++) walls += 'M' + (FX - 4) + ',' + (FY - 12 + r * ROW_H) + 'H' + (FX + FW + 4);
-    CELLS.forEach(function (c, i) {
-      var y = c[0], l = c[1], rt = c[2];
-      var q = [[l.m - l.d / 2, y], [rt.m - rt.d / 2, y], [rt.m + rt.d / 2, y + ROW_H], [l.m + l.d / 2, y + ROW_H]];
-      walls += 'M' + pt(q[0]) + 'L' + pt(q[3]);           // left end wall; the right one is the next cell's
+    if (lay) {
+      lay.rows.forEach(function (y) {
+        if (!outside([lay.x0, y], [lay.x1, y], 2)) walls += 'M' + f1(lay.x0) + ',' + f1(y) + 'H' + f1(lay.x1);
+      });
+    } else for (var r = 0; r <= 7; r++) walls += 'M' + (FX - 4) + ',' + (FY - 12 + r * ROW_H) + 'H' + (FX + FW + 4);
+    function quadOf(c) {
+      var y = c[0], l = c[1], rt = c[2], rh = c[3] || ROW_H;
+      return [[l.m - l.d / 2, y], [rt.m - rt.d / 2, y], [rt.m + rt.d / 2, y + rh], [l.m + l.d / 2, y + rh]];
+    }
+    // how far the corners of quad q (8 px in from the crop's edges) lie outside the crop, once in place
+    function cutOff(q) {
+      var cut = 0;
+      q.map(map).forEach(function (s) {
+        cut += Math.max(0, FX + 8 - s[0]) + Math.max(0, s[0] - (FX + FW - 8)) + Math.max(0, FY + 8 - s[1]) + Math.max(0, s[1] - (FY + FH - 8));
+      });
+      return cut;
+    }
+    function aimDist(q) {
+      var sq = q.map(map), cx = (sq[0][0] + sq[1][0] + sq[2][0] + sq[3][0]) / 4, cy = (sq[0][1] + sq[1][1] + sq[2][1] + sq[3][1]) / 4;
+      return Math.sqrt((cx - lay.aim[0]) * (cx - lay.aim[0]) + (cy - lay.aim[1]) * (cy - lay.aim[1]));
+    }
+    // At isotonic about half the cells show the membrane leaving the
+    // corners. A seeded field shows few enough cells that chance could
+    // make that most or hardly any of them, so it picks exactly half of
+    // the cells in view (by the same per-cell hash), always including the
+    // cell wholly in view nearest the seeded point, which the look mark
+    // will frame.
+    var incSet = null;
+    if (lay) {
+      var vis = [], lead = -1, leadD = Infinity;
+      cells.forEach(function (c, ci) {
+        var q = quadOf(c);
+        if (quadOutside(q, 3)) return;
+        vis.push(ci + io);
+        var dd = cutOff(q) > 0 ? Infinity : aimDist(q);
+        if (dd < leadD) { leadD = dd; lead = ci + io; }
+      });
+      vis = vis.filter(function (i) { return i !== lead; }).sort(function (a, b) { return hash(a, 1) - hash(b, 1); });
+      incSet = {};
+      if (lead >= 0) incSet[lead] = true;
+      vis.slice(0, Math.round((vis.length + 1) / 2) - (lead >= 0 ? 1 : 0)).forEach(function (i) { incSet[i] = true; });
+    }
+    var prev = null;                                      // the cell before, in a seeded field: [row top, drawn]
+    cells.forEach(function (c, ci) {
+      var y = c[0], rh = c[3] || ROW_H, i = ci + io;
+      var q = quadOf(c);
+      // A seeded field leaves out the cells the crop hides, and keeps the
+      // end walls of every cell it draws: a cell's left wall, and the right
+      // one (the next cell's left wall) after a drawn cell.
+      var drawn = !lay || !quadOutside(q, 3), after = lay && prev && prev[0] === y && prev[1];
+      if (lay) prev = [y, drawn];
+      if (drawn || after) walls += 'M' + pt(q[0]) + 'L' + pt(q[3]);   // left end wall; the right one is the next cell's
+      if (!drawn) return;
       var inner = insetQuad(q, WALL / 2);                 // the protoplast's place when pressed on the wall
       // incipient plasmolysis: about half the cells at isotonic, every cell once hypertonic
-      var inc = diff >= 5 || hash(i, 1) < 0.5;
+      var inc = diff >= 5 || (incSet ? !!incSet[i] : hash(i, 1) < 0.5);
       var f = PLAS[i % 8] * p, pq, rad, bowT = 0, bowB = 0;
       var top = inner[0][1], ih = inner[3][1] - top;
       var iw = Math.min(inner[1][0], inner[2][0]) - Math.max(inner[0][0], inner[3][0]);
@@ -464,6 +574,19 @@
         if (f > 0.3 && (i % 8 === 3 || i % 8 === 6)) {
           var bw = 0.12 * ph * clamp((f - 0.3) / 0.5, 0, 1);
           if (i % 8 === 3) bowT = bw; else bowB = bw;
+        }
+      }
+      if (lay && lay.aim) {
+        // The look target: a cell near the seeded point, wholly in view if
+        // any is (a long cell turned up a tightly zoomed field may not
+        // fit; then the one least cut off), and at isotonic one whose
+        // membrane has left the corners. Its frame runs 4 px outside the
+        // walls, so it never covers the corners.
+        var cut = cutOff(q), sq = q.map(map);
+        var dd = aimDist(q) + (cut > 0 ? 500 + 4 * cut : 0) + (iso && !inc ? 5000 : 0);
+        if (dd < lookD) {
+          lookD = dd;
+          look = { x: (sq[0][0] + sq[1][0] + sq[2][0] + sq[3][0]) / 4, y: (sq[0][1] + sq[1][1] + sq[2][1] + sq[3][1]) / 4, pts: insetQuad(q, -4).map(map) };
         }
       }
       // cells whose membrane has left the wall somewhere get a clearer outline
@@ -522,6 +645,7 @@
     // focus, are paler.
     var svg = '<defs><path id="rl-cw" d="' + paths.w + '"/><path id="rl-cf" d="' + paths.f + '"/><path id="rl-w" d="' + walls + '"/>' +
       '<ellipse id="rl-n" rx="5.4" ry="4.6"/></defs>' +
+      (lay ? '<g transform="matrix(' + lay.m.join(' ') + ')">' : '') +
       '<g filter="url(#rl-soft)">' +
       // protoplasts a shade denser than the clear solution, so the
       // gaps at the corners and ends read as gaps
@@ -533,26 +657,184 @@
       '<use href="#rl-cw" stroke="#346c2b" stroke-width="' + (turgid ? 4.2 : 4.6) + '"/><use href="#rl-cw" stroke="#62a044" stroke-width="' + (turgid ? 2.6 : 3) + '"/>' +
       (strands ? '<path d="' + strands + '" stroke="#9db07a" stroke-width="0.6" stroke-opacity="0.8"/>' : '') +
       '<use href="#rl-w" stroke="#d7dfc4" stroke-width="' + WALL + '"/><use href="#rl-w" stroke="#9aa781" stroke-width="0.6"/>' +
-      '</g></g>';
+      '</g></g>' + (lay ? '</g>' : '');
     // cell volume for the solute strip: the protoplast loses water all
     // through the hypertonic range, a little before plasmolysis and more
     // after it; turgid cells gain only a little (the wall holds them)
     var vol = diff >= 5 ? 1 - 0.25 * Math.max(p, 0.45 * clamp((diff - 4) / 26, 0, 1)) : (turgid ? 1 + 0.06 * clamp((-diff - 5) / 45, 0, 1) : 1);
-    return { svg: svg, title: title, vol: vol };
+    return { svg: svg, title: title, vol: vol, look: look };
+  }
+
+  /* ---------- seeded fields (recognition practice) ---------- */
+
+  // mulberry32: a small seeded generator, the same numbers for the same seed in every engine
+  function seeded(seed) {
+    var a = seed >>> 0;
+    return function () {
+      a = (a + 0x6D2B79F5) >>> 0;
+      var t = Math.imul(a ^ (a >>> 15), a | 1);
+      t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+  // the most markup a seeded Elodea drawing may take (the frame, the ids
+  // and a card's wrapper add about 2000 characters, under the 20000 a
+  // card picture may use)
+  var SEEDED_CAP = 16500;
+  // a point inside the middle of the crop, where the look ring will sit
+  function aimPoint(R) { return [FX + FW * (0.25 + 0.5 * R()), FY + FH * (0.28 + 0.44 * R())]; }
+
+  // Red cells placed afresh: 14 to 38 cells (sparse to crowded; the more
+  // crowded, the more of them touch), each 7 to 8 um across (scale 0.93 to
+  // 1.05 of 7.5 um), tilted any way, slightly oval. Up to three lie
+  // edge-on (flag 2); in about half the fields one cell overlaps another
+  // (flag 1, drawn last). keep: up to two cells that hold as spheres if
+  // the field hemolyzes (used from ext 8, as in the fixed field). look:
+  // a face-on cell clear of its neighbors, near a seeded point.
+  function rbcLayout(R) {
+    var crowd = R(), n = Math.round(14 + 24 * crowd), close = 1 - 0.08 * crowd;
+    var cells = [], tries = 0, i, j;
+    while (cells.length < n && tries++ < 1200) {
+      var s = 0.93 + 0.12 * R(), x = Math.round(FX - 12 + R() * (FW + 24)), y = Math.round(FY - 12 + R() * (FH + 24)), ok = true;
+      for (j = 0; j < cells.length && ok; j++) {
+        if (Math.sqrt((x - cells[j][0]) * (x - cells[j][0]) + (y - cells[j][1]) * (y - cells[j][1])) < close * RBC_R * (s + cells[j][2])) ok = false;
+      }
+      if (ok) cells.push([x, y, Math.round(s * 100) / 100, Math.round((0.95 + 0.05 * R()) * 100) / 100, Math.round(R() * 180 - 90)]);
+    }
+    function inCrop(c, m) { return c[0] > FX + m && c[0] < FX + FW - m && c[1] > FY + m && c[1] < FY + FH - m; }
+    var edges = Math.floor(R() * 3.4);
+    for (i = 0; i < cells.length && edges > 0; i++) {
+      if (inCrop(cells[i], 24) && R() < 0.35) { cells[i][3] = 1; cells[i].push(2); edges--; }
+    }
+    if (R() < 0.5) {
+      for (i = 0; i < cells.length; i++) {
+        var b = cells[i];
+        if (!b[5] && inCrop(b, 40)) {
+          var a = R() * 2 * Math.PI, d = RBC_R * b[2] * (1.1 + 0.4 * R());
+          cells.push([Math.round(b[0] + d * Math.cos(a)), Math.round(b[1] + d * Math.sin(a)), b[2], 0.98, Math.round(R() * 180 - 90), 1]);
+          break;
+        }
+      }
+    }
+    // a cell is clear when nothing sits within 2.1 radii of its center
+    function clear(i) {
+      for (var j = 0; j < cells.length; j++) {
+        if (j !== i && Math.sqrt((cells[i][0] - cells[j][0]) * (cells[i][0] - cells[j][0]) + (cells[i][1] - cells[j][1]) * (cells[i][1] - cells[j][1])) < 2.1 * RBC_R) return false;
+      }
+      return true;
+    }
+    var keep = [], wantKeep = 1 + (R() < 0.5 ? 1 : 0), aim = aimPoint(R), look = -1, best = Infinity;
+    for (i = 0; i < cells.length; i++) {
+      if (cells[i][5] || !inCrop(cells[i], 26)) continue;
+      var dd = Math.sqrt((cells[i][0] - aim[0]) * (cells[i][0] - aim[0]) + (cells[i][1] - aim[1]) * (cells[i][1] - aim[1])) + (clear(i) ? 0 : 400);
+      if (dd < best) { best = dd; look = i; }
+    }
+    for (i = cells.length - 1; i >= 0 && keep.length < wantKeep; i--) {
+      if (i !== look && !cells[i][5] && inCrop(cells[i], 10) && R() < 0.4) keep.push(i);
+    }
+    return { cells: cells, keep: keep, look: look };
+  }
+
+  // Elodea files laid out afresh over the part of the drawing the crop
+  // shows once it is turned (rot, up to 30 deg either way, or the files
+  // running up the field) and zoomed (k, 1.35 to 1.65: the same 400x
+  // image cropped tighter, so the scale bar grows with it, and fewer
+  // cells in view keep a field small enough for an Ace Card). Rows 32 to 40
+  // px (27 to 33 um) tall; cells 92 to 150 px (77 to 125 um) long with end
+  // walls slanted up to 5 px, as in the fixed field.
+  function plantLayout(R, bump) {
+    var k = Math.round((1.35 + 0.3 * R() + 0.12 * bump) * 100) / 100;
+    var rot = Math.round((R() - 0.5) * 60 + (R() < 0.25 ? 90 : 0));
+    var cx = FX + FW / 2, cy = FY + FH / 2, cs = Math.cos(rot * Math.PI / 180), sn = Math.sin(rot * Math.PI / 180);
+    // drawing to screen: zoom k and turn rot about the middle of the crop
+    var m = [k * cs, k * sn, -k * sn, k * cs].map(function (v) { return Math.round(v * 10000) / 10000; });
+    m.push(Math.round((cx - m[0] * cx - m[2] * cy) * 100) / 100, Math.round((cy - m[1] * cx - m[3] * cy) * 100) / 100);
+    function map(p) { return [m[0] * p[0] + m[2] * p[1] + m[4], m[1] * p[0] + m[3] * p[1] + m[5]]; }
+    // the crop's corners back in drawing space, for the area to fill
+    var xs = [], ys = [];
+    [[FX, FY], [FX + FW, FY], [FX + FW, FY + FH], [FX, FY + FH]].forEach(function (p) {
+      var dx = (p[0] - cx) / k, dy = (p[1] - cy) / k;
+      xs.push(cx + cs * dx + sn * dy); ys.push(cy - sn * dx + cs * dy);
+    });
+    var x0 = Math.min.apply(null, xs) - 10, x1 = Math.max.apply(null, xs) + 10, y1 = Math.max.apply(null, ys) + 10;
+    var y = Math.round(Math.min.apply(null, ys) - 10 - 30 * R()), rows = [y], cells = [];
+    while (y < y1) {
+      var h = Math.round(32 + 8 * R()), x = Math.round(x0 - 20 - 120 * R());
+      var left = { m: x, d: Math.round(R() * 10 - 5) };
+      while (x < x1) {
+        x += Math.round(92 + 58 * R());
+        var right = { m: x, d: Math.round(R() * 10 - 5) };
+        cells.push([y, left, right, h]);
+        left = right;
+      }
+      y += h;
+      rows.push(y);
+    }
+    return { cells: cells, rows: rows, x0: Math.round(x0), x1: Math.round(x1), k: k, m: m, map: map,
+      io: Math.floor(R() * 4096), aim: aimPoint(R) };
+  }
+
+  // Everything that varies with the seed, besides the layout: the focus
+  // (blur 0.3 to 0.7 in the crop), the background, and the light (a faint
+  // warm, cool or dim wash over the crop).
+  function variation(plant, seed, bump) {
+    var R = seeded(Math.imul(seed, 0x9E3779B1) + (plant ? 97 : 31));
+    var lay = plant ? plantLayout(R, bump || 0) : rbcLayout(R);
+    var bg = mix(plant ? '#f4f2e6' : '#f6f1e6', ['#f7efe0', '#eef0ea', '#f3eee6'][Math.floor(R() * 3)], R() * 0.8);
+    var wash = ['#fff3dc', '#e4ecf6', '#2b261e'][Math.floor(R() * 3)];
+    // the plant drawing is zoomed by k, and its blur with it, so the blur
+    // is set in the crop's own units
+    var blur = (0.3 + 0.4 * R()) / (plant ? lay.k : 1);
+    return { lay: lay, blur: blur, bg: bg, wash: wash, washO: wash === '#2b261e' ? 0.02 + 0.04 * R() : 0.04 + 0.08 * R() };
   }
 
   /* ---------- public: the tonicity picture ---------- */
 
-  function tonicity(o) {
+  // The whole picture. Returns the markup (svg), the caption that names
+  // the state (caption), the viewBox to show it through (viewBox), and for
+  // a seeded field a cell in view to point at, wholly in view whenever one
+  // fits (look, in the viewBox's units: a red cell as a circle x, y, rx,
+  // ry; an Elodea cell as the four corners pts of a frame just outside
+  // its walls).
+  function build(o) {
     var ext = +o.externalSolute, diff = ext - 50, plant = o.cellType === 'plant';
-    var lysed = !plant && !!o.lysed;
-    var v = plant ? plantField(ext, diff, !!o.plasmolyzed) : rbcField(ext, diff, lysed);
+    var lysed = !plant && !!o.lysed, bare = !!o.bare;
+    var vary = o.seed != null && isFinite(+o.seed) ? variation(plant, Math.floor(+o.seed)) : null;
+    // A burst field is faint by nature (empty ghosts), so a seeded one
+    // keeps its focus sharp (blur at most 0.45) and never gets the dim wash.
+    if (vary && lysed) {
+      vary.blur = Math.min(vary.blur, 0.45);
+      if (vary.wash === '#2b261e') vary.washO = 0;
+    }
+    var lay = vary ? vary.lay : null;
+    var v = plant ? plantField(ext, diff, !!o.plasmolyzed, lay) : rbcField(ext, diff, lysed, lay);
+    // A seeded Elodea field that comes out too big for an Ace Card (a turn
+    // that cuts many cells at the edges) is drawn again a little more
+    // zoomed in, from the same seed, so the same seed still always gives
+    // the same field and every field fits on a card.
+    for (var bump = 1; vary && plant && bump <= 4 && v.svg.length > SEEDED_CAP; bump++) {
+      vary = variation(plant, Math.floor(+o.seed), bump);
+      lay = vary.lay;
+      v = plantField(ext, diff, !!o.plasmolyzed, lay);
+    }
     // scale bars: red cells 5.6 px per um, so 10 um is 56 px; Elodea
-    // 1.2 px per um, so 50 um is 60 px
-    return '<defs>' + fieldDefs() + '</defs>' + fieldOpen(plant ? '#f4f2e6' : '#f6f1e6') + v.svg +
-      fieldClose(v.title, plant ? '400x, cropped' : '1000x oil, cropped', plant ? '50 um' : '10 um', plant ? 60 : 56) +
-      soluteStrip(ext, diff, v.vol, lysed);
+    // 1.2 px per um, so 50 um is 60 px (times the zoom of a seeded field)
+    var mag = plant ? '400x, cropped' : '1000x oil, cropped', bar = plant ? 60 * (lay ? lay.k : 1) : 56;
+    var svg = '<defs>' + fieldDefs(vary ? vary.blur : null) + '</defs>' +
+      fieldOpen(vary ? vary.bg : (plant ? '#f4f2e6' : '#f6f1e6')) + v.svg +
+      (vary && vary.washO > 0 ? '<rect ' + CROP + ' fill="' + vary.wash + '" opacity="' + f2(vary.washO) + '"/>' : '') +
+      (bare ? fieldCloseBare(mag, plant ? '50 um' : '10 um', bar)
+        : fieldClose(v.title, mag, plant ? '50 um' : '10 um', bar) + soluteStrip(ext, diff, v.vol, lysed));
+    if (o.ns && /^[a-z][a-z0-9-]*$/i.test(o.ns)) svg = svg.replace(/(id="|url\(#|href="#)rl-/g, '$1' + o.ns + '-');
+    var look = null;
+    if (lay && plant) look = v.look;
+    else if (lay && lay.look >= 0) {
+      var c = lay.cells[lay.look], r = (v.r || RBC_R) * c[2] * 1.45 + 4;
+      look = { x: c[0], y: c[1], rx: r, ry: r };
+    }
+    return { svg: svg, caption: v.title, viewBox: bare ? BARE_VIEWBOX : '0 0 ' + W + ' ' + H, look: look };
   }
+  function tonicity(o) { return build(o).svg; }
 
   /* ---------- sarcomere: a longitudinal TEM of two myofibrils ----------
      Drawn on the same x axis as the sliding filament model (viewBox
@@ -728,6 +1010,8 @@
 
   window.BioReal = window.BioReal || {};
   window.BioReal.tonicity = tonicity;
+  window.BioReal.field = build;
+  window.BioReal.BARE_VIEWBOX = BARE_VIEWBOX;
   window.BioReal.temStrip = temStrip;
   window.BioReal.mountSarcomereTem = mountSarcomereTem;
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', mountSarcomereTem);

@@ -125,7 +125,8 @@ test('plant cells plasmolyze above 60: early plasmolysis to 70, then plasmolyzed
     const cap = caption(r.svg);
     if (e > 70) assert.match(r.outcome, /^PLASMOLYZED\. /, 'card at ' + e);
     else if (e > 60) assert.equal(r.outcome, 'EARLY PLASMOLYSIS. Water leaves; the membrane starts to pull off the wall. More solute pulls it further.', 'card at ' + e);
-    else if (e >= 55) assert.match(r.outcome, /^SHRINKING\. /, 'card at ' + e);
+    // before plasmolysis the card describes what the picture shows: only the protoplast shrinks, the membrane leaves the corners
+    else if (e >= 55) assert.equal(r.outcome, 'SHRINKING. The protoplast loses water; the membrane starts to leave the corners. A little more solute pulls it off the wall.', 'card at ' + e);
     else assert.doesNotMatch(r.outcome, /plasmoly/i, 'card at ' + e);
     // the picture names the same stage, and the strands appear exactly when the membrane has pulled off the wall
     assert.equal(/plasmolysis/i.test(cap), e > 60, 'caption at ' + e + ': ' + cap);
@@ -327,6 +328,40 @@ test('red cells edge-on: biconcave at isotonic, a bowl (convex base, cup, thick 
   assert.ok(early[12][1] > early[6][1] + 2, 'cup at 39: ' + early[12][1] + ' vs ' + early[6][1]);
   // thick through the middle (no thin biconcave center left)
   assert.ok(thick(cup, 12) > 1.5 * thick(iso, 12), 'middle ' + thick(cup, 12));
+});
+
+test('red cells edge-on: the cup keeps a dented mouth in profile while it rounds up, then closes into a smooth sphere', () => {
+  const sb = sandbox();
+  sb.cell('animal');
+  const prof = (s) => s.match(/id="rl-e" d="M([^"Z]*)Z"/)[1].split(' ').map((p) => p.split(',').map(Number));
+  // how far the middle of the upper surface (point 12) sits below its highest point: 0 for a dome
+  const dip = (P) => P[12][1] - Math.min(...P.slice(1, 24).map((p) => p[1]));
+  let dented = 0, cups = 0;
+  for (let e = 12; e <= 45; e++) {
+    const s = sb.set(e).svg, cap = caption(s), d = dip(prof(s));
+    if (/swell into cups/.test(cap)) {
+      cups++;
+      if (d >= 1) dented++;
+      // past the first two cup steps (where the slit is fading in from the sphere side) the mouth is plain
+      if (e >= 25) assert.ok(d >= 1, 'mouth in profile at ' + e + ': ' + d.toFixed(1));
+    } else if (/round up into spheres/.test(cap)) {
+      assert.ok(d < 0.5, 'sphere is smooth at ' + e + ': ' + d.toFixed(1));
+    }
+  }
+  assert.ok(cups >= 15 && dented >= cups - 2, 'dented cup steps: ' + dented + ' of ' + cups);
+  // the isotonic disc still shows its biconcave dimple, and the swelling cells end as smooth spheres
+  assert.ok(dip(prof(sb.set(50).svg)) > 1, 'isotonic biconcave dip');
+  assert.ok(dip(prof(sb.set(14).svg)) < 0.5, 'sphere just before lysis');
+});
+
+test('the DAT trap line gets the water gradient the right way round', () => {
+  const sb = sandbox();
+  const d = sb.t.w.document;
+  const text = d.getElementById('tonicityBody').textContent.replace(/\s+/g, ' ');
+  assert.match(text, /A cell in a hypertonic solution loses water \(the outside has more solute, so less free water; water moves out of the cell toward it\)\./);
+  assert.doesNotMatch(text, /LESS water inside/i);
+  assert.match(text, /^[\x20-\x7e]*$/, 'plain ASCII');
+  assert.doesNotMatch(text, /\b(wrong|incorrect|fail|failed)\b/i);
 });
 
 test('layout: the picture is never squeezed beside its readouts; full card width on a phone; 44 px tap targets on any touch screen', () => {
