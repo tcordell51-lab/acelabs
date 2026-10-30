@@ -33,11 +33,40 @@ export function structure(target, smi, o = {}) {
   // the drawer recorded this drawing in DRAWN; name what it is for the render gate
   const rec = DRAWN[DRAWN.length - 1];
   if (rec && rec.smi === smi && !rec.role) { rec.role = o.role || 'explainer'; g.record = rec; }
+  asciiLabels(g.node);
   return g;
+}
+// SmilesDrawer writes hydrogen counts and charges with Unicode sub- and
+// superscripts (NH2, NH3+). Explainer text stays plain ASCII (house rule, and
+// the render gate checks every string), so each such glyph becomes its ASCII
+// character in a shifted, smaller tspan: the same look, ASCII underneath.
+const SUBS = { '₀': '0', '₁': '1', '₂': '2', '₃': '3', '₄': '4', '₅': '5', '₆': '6', '₇': '7', '₈': '8', '₉': '9' };
+const SUPS = { '⁺': '+', '⁻': '-', '⁰': '0', '¹': '1', '²': '2', '³': '3' };
+function asciiLabels(node) {
+  const walker = document.createTreeWalker(node, NodeFilter.SHOW_TEXT);
+  const hits = [];
+  while (walker.nextNode()) if (/[⁰-₟²³¹]/.test(walker.currentNode.nodeValue)) hits.push(walker.currentNode);
+  hits.forEach((tn) => {
+    const frag = document.createDocumentFragment();
+    let buf = '';
+    const flush = () => { if (buf) { frag.append(document.createTextNode(buf)); buf = ''; } };
+    for (const ch of tn.nodeValue) {
+      const sub = SUBS[ch], sup = SUPS[ch];
+      if (sub == null && sup == null) { buf += ch; continue; }
+      flush();
+      const ts = document.createElementNS(SVGNS, 'tspan');
+      ts.setAttribute('baseline-shift', sub != null ? 'sub' : 'super'); ts.setAttribute('font-size', '75%');
+      ts.textContent = sub != null ? sub : sup; frag.append(ts);
+    }
+    flush();
+    tn.parentNode.replaceChild(frag, tn);
+  });
 }
 // Atom i is the i-th heavy atom written in the SMILES (RDKit numbering when the
 // SMILES has no explicit [H]). The drawer adds H vertices of its own, so marks
-// index the heavy atoms only. Labels go into the widest gap between bonds.
+// index the heavy atoms only. A label goes into the widest gap between bonds;
+// when that spot would cover an atom label or an earlier mark, or cross bonds,
+// the nearest clear direction is used instead (a spec's labelDir always wins).
 function markAtom(g, i, text, key, dirDeg) {
   const heavy = g.atoms.filter((a) => a.el !== 'H');
   const a = heavy[i]; if (!a) return;
@@ -46,12 +75,61 @@ function markAtom(g, i, text, key, dirDeg) {
   let dir = -Math.PI / 2;
   if (ang.length === 1) dir = ang[0] + Math.PI;
   else if (ang.length > 1) { let best = -1; for (let k = 0; k < ang.length; k++) { const p = ang[k], q = k + 1 < ang.length ? ang[k + 1] : ang[0] + 2 * Math.PI; if (q - p > best) { best = q - p; dir = p + (q - p) / 2; } } }
-  if (dirDeg != null) dir = dirDeg * Math.PI / 180;
+  const size = g.markFont ? g.markFont * (key ? 1.02 : 1) : (key ? 9.6 : 9.4);
+  const place = (th) => {
+    const d = 13 + size * 0.85, lx = a.x + Math.cos(th) * d, ly = a.y + Math.sin(th) * d + size * 0.37;
+    const anchor = Math.cos(th) > 0.35 ? 'start' : Math.cos(th) < -0.35 ? 'end' : 'middle';
+    const w = String(text).length * size * (key ? 0.6 : 0.56), x0 = anchor === 'start' ? lx : anchor === 'end' ? lx - w : lx - w / 2;
+    return { th, lx, ly, anchor, box: { x0, x1: x0 + w, y0: ly - size * 0.8, y1: ly + size * 0.22 } };
+  };
+  let pick = place(dirDeg != null ? dirDeg * Math.PI / 180 : dir);
+  if (dirDeg == null) {
+    const obstacles = textBoxes(g.node);
+    const segs = (g.bonds || []).map((b) => [byId.get(b.a), byId.get(b.b)]).filter(([p, q]) => p && q && p.el !== 'H' && q.el !== 'H');
+    const cost = (c) => {
+      let s = 0;
+      obstacles.forEach((o) => { const ix = Math.min(c.box.x1, o.x1) - Math.max(c.box.x0, o.x0), iy = Math.min(c.box.y1, o.y1) - Math.max(c.box.y0, o.y0); if (ix > 0 && iy > 0) s += 40 + ix * iy; });
+      segs.forEach(([p, q]) => { for (let t2 = 0.08; t2 < 0.93; t2 += 0.07) { const x = p.x + (q.x - p.x) * t2, y = p.y + (q.y - p.y) * t2; if (x > c.box.x0 + 1 && x < c.box.x1 - 1 && y > c.box.y0 + 1 && y < c.box.y1 - 1) { s += 6; break; } } });
+      const da = Math.abs(((c.th - dir) % (2 * Math.PI) + 3 * Math.PI) % (2 * Math.PI) - Math.PI);
+      return s + da * 3;
+    };
+    if (cost(pick) > 0.01) for (let k = 0; k < 24; k++) { const c = place(k * Math.PI / 12); if (cost(c) < cost(pick)) pick = c; }
+  }
   g.node.append(sv('circle', { cx: a.x, cy: a.y, r: 7.5, fill: 'none', stroke: key ? C.key : C.mute, 'stroke-width': key ? 2.2 : 1.2, 'stroke-dasharray': key ? '' : '2.5 2' }));
-  const d = 21, lx = a.x + Math.cos(dir) * d, ly = a.y + Math.sin(dir) * d + 3.5;
-  const anchor = Math.cos(dir) > 0.35 ? 'start' : Math.cos(dir) < -0.35 ? 'end' : 'middle';
-  const tx = sv('text', { x: lx, y: ly, 'text-anchor': anchor, 'font-size': key ? 9.6 : 9.4, 'font-family': 'Arial, Helvetica, sans-serif', 'font-weight': key ? 700 : 400, fill: key ? C.key : C.ink2, 'paint-order': 'stroke', stroke: '#fff', 'stroke-width': 3 });
+  const tx = sv('text', { class: 'mk', x: pick.lx, y: pick.ly, 'text-anchor': pick.anchor, 'font-size': size, 'font-family': 'Arial, Helvetica, sans-serif', 'font-weight': key ? 700 : 400, fill: key ? C.key : C.ink2, 'paint-order': 'stroke', stroke: '#fff', 'stroke-width': 3 });
   tx.textContent = text; g.node.append(tx);
+}
+// Every text box already in a drawing (atom labels, earlier marks), in the
+// drawing's own units.
+function textBoxes(node) {
+  const out = [];
+  let inv; try { inv = node.getScreenCTM().inverse(); } catch (e) { return out; }
+  node.querySelectorAll('text').forEach((t) => {
+    try {
+      const b = t.getBBox(); if (!b.width) return;
+      const m = inv.multiply(t.getScreenCTM());
+      const pts = [[b.x, b.y], [b.x + b.width, b.y], [b.x, b.y + b.height], [b.x + b.width, b.y + b.height]].map(([x, y]) => ({ x: m.a * x + m.c * y + m.e, y: m.b * x + m.d * y + m.f }));
+      out.push({ x0: Math.min(...pts.map((p) => p.x)), x1: Math.max(...pts.map((p) => p.x)), y0: Math.min(...pts.map((p) => p.y)), y1: Math.max(...pts.map((p) => p.y)) });
+    } catch (e) { /* not laid out */ }
+  });
+  return out;
+}
+// Mark labels must show at 12 px or more. A wide molecule is shrunk to fit its
+// box, so the label size is chosen from the width it will be shown at, and
+// checked again after the box is fitted to the labels.
+function markFontFor(g, scale, avail) {
+  const vbW = g.vb[2] + 70, px = Math.min(scale, (avail || 1e9) / vbW);
+  return Math.max(9.4, 12.6 / px);
+}
+function liftMarks(g, scale, avail) {
+  for (let k = 0; k < 3; k++) {
+    const vbW = +(g.node.getAttribute('viewBox') || '0 0 1 1').split(/\s+/)[2] || 1;
+    const px = Math.min(vbW * scale, avail || 1e9) / vbW;
+    let changed = false;
+    g.node.querySelectorAll('text.mk').forEach((tx) => { const f = +tx.getAttribute('font-size'); if (f * px < 12.3) { tx.setAttribute('font-size', (12.6 / px).toFixed(2)); changed = true; } });
+    if (!changed) return;
+    refit(g, scale);
+  }
 }
 
 // After marks are added, fit the box to everything drawn (labels included).
@@ -87,8 +165,11 @@ export function drawChoiceStructure(target, smi, role = 'question') {
       bonds: g.edges.map((e) => ({ a: e.sourceId, b: e.targetId, wedge: e.wedge || '', order: e.bondType === '=' ? 2 : e.bondType === '#' ? 3 : e.bondType === '.' ? 0 : 1 })).filter((e) => e.order > 0) };
     DRAWN.push(rec);
   }, (err) => { throw new Error('SMILES did not parse: ' + smi + ' ' + err); });
-  // fit the box to what was drawn, at a fixed scale so all choices match
-  try { const b = node.getBBox(), p = 6; node.setAttribute('viewBox', [b.x - p, b.y - p, b.width + 2 * p, b.height + 2 * p].map((v) => v.toFixed(1)).join(' ')); node.style.width = Math.round((b.width + 2 * p) * 1.3) + 'px'; } catch (e) { /* not laid out */ }
+  // fit the box to what was drawn, at a fixed scale so all choices match. A
+  // choice is often drawn before its button joins the page, and a detached SVG
+  // measures as empty, so the fit waits for the drawing to be laid out.
+  const fit = () => { try { const b = node.getBBox(), p = 6; if (!b.width) return false; node.setAttribute('viewBox', [b.x - p, b.y - p, b.width + 2 * p, b.height + 2 * p].map((v) => v.toFixed(1)).join(' ')); node.style.width = Math.round((b.width + 2 * p) * 1.3) + 'px'; return true; } catch (e) { return false; } };
+  if (!fit() && typeof requestAnimationFrame === 'function') { let tries = 0; const again = () => { if (!fit() && ++tries < 120) requestAnimationFrame(again); }; requestAnimationFrame(again); }
   node.removeAttribute('width'); node.removeAttribute('height');
   node.style.maxWidth = '100%'; node.style.height = 'auto'; node.style.display = 'block'; node.style.margin = '0 auto';
   return { node, record: rec };
@@ -98,16 +179,34 @@ export function drawChoiceStructure(target, smi, role = 'question') {
 register('chem.reaction', (s, box) => {
   const row = h('div', { class: 'rxn' + (width(box) < 520 ? ' rxn-col' : '') });
   box.append(row);
-  const molCell = (m) => { const c = h('div', { class: 'rxn-mol' }); row.append(c); const g = structure(c, m.smi, { label: m.label, bondLength: 26, scale: 1.3, pad: 34 }); (m.marks || []).forEach((k) => markAtom(g, k.atom, k.text, k.key, k.labelDir)); refit(g, 1.3); c.append(h('div', { class: 'rxn-label', text: m.label })); };
+  const avail = box.clientWidth || width(box);
+  const molCell = (m) => { const c = h('div', { class: 'rxn-mol' }); row.append(c); const g = structure(c, m.smi, { label: m.label, bondLength: 26, scale: 1.3, pad: 34 }); g.markFont = markFontFor(g, 1.3, avail); (m.marks || []).forEach((k) => markAtom(g, k.atom, k.text, k.key, k.labelDir)); refit(g, 1.3); liftMarks(g, 1.3, avail); c.append(h('div', { class: 'rxn-label', text: m.label })); };
   s.reactants.forEach(molCell);
   row.append(h('div', { class: 'rxn-arrow' }, h('span', { text: s.reagent }), h('i')));
   s.products.forEach(molCell);
-  if (s.ladder) {
-    const lad = h('div', { class: 'ladder' }, h('div', { class: 'ladder-t', text: s.ladder.title + ', most to least stable' }));
-    s.ladder.order.forEach((x, i) => lad.append(h('div', { class: 'ladder-r' + (i === s.ladder.key ? ' is-key' : '') }, h('b', { text: String(i + 1) }), h('span', { text: x }), i === s.ladder.key ? h('em', { text: 'here' }) : null)));
-    box.append(lad);
-  }
+  if (s.ladder) box.append(ladderEl(s.ladder));
+  if (s.note) box.append(h('p', { class: 'vis-note', text: s.note }));
 });
+// A ranked list under a structure: the key's row outlined and worded. heading is
+// the spec's own words (a pKa ladder, an SN2 ladder); without it, title plus
+// "most to least stable", as the pilot's radical ladder reads.
+function ladderEl(l) {
+  const lad = h('div', { class: 'ladder' }, h('div', { class: 'ladder-t', text: l.heading || (l.title + ', most to least stable') }));
+  l.order.forEach((x, i) => lad.append(h('div', { class: 'ladder-r' + (i === l.key ? ' is-key' : '') }, h('b', { text: String(i + 1) }), h('span', { text: x }), i === l.key ? h('em', { text: l.mark || 'here' }) : null)));
+  return lad;
+}
+// A dashed mirror-plane line through two atoms of a drawn molecule (the build
+// draws it only on a molecule RDKit calls meso), run past the atoms on both
+// ends, with its name in a haloed label.
+function mirrorLine(g, pair, label) {
+  const heavy = g.atoms.filter((a) => a.el !== 'H');
+  const p = heavy[pair[0]], q = heavy[pair[1]]; if (!p || !q) return;
+  const dx = q.x - p.x, dy = q.y - p.y, L = Math.hypot(dx, dy) || 1, ux = dx / L, uy = dy / L, ext = 20;
+  const x1 = p.x - ux * ext, y1 = p.y - uy * ext, x2 = q.x + ux * ext, y2 = q.y + uy * ext;
+  g.node.append(sv('line', { x1, y1, x2, y2, stroke: C.key, 'stroke-width': 1.5, 'stroke-dasharray': '5 4' }));
+  const tx = sv('text', { class: 'mk', x: x2 + ux * 4, y: y2 + uy * 4 + 3.5, 'text-anchor': ux > 0.35 ? 'start' : ux < -0.35 ? 'end' : 'middle', 'font-size': g.markFont || 9.6, 'font-family': 'Arial, Helvetica, sans-serif', 'font-weight': 700, fill: C.key, 'paint-order': 'stroke', stroke: '#fff', 'stroke-width': 3 });
+  tx.textContent = label || 'mirror plane'; g.node.append(tx);
+}
 
 /* ---------------- stereo, derived from the drawing ---------------- */
 // For one stereocenter of a drawn molecule, read the picture the way a student
@@ -178,8 +277,13 @@ register('chem.molecule', (s, box) => {
   const cell = h('div', { class: 'rxn-mol' });
   wrapEl.append(cell);
   const g = structure(cell, s.smi, { label: s.label, bondLength: 28, scale: 1.6, pad: 38 });
+  const avail = box.clientWidth || width(box);
+  g.markFont = markFontFor(g, 1.6, avail);
+  if (s.mirror) mirrorLine(g, s.mirror, s.mirrorLabel);
   (s.centers || []).forEach((c) => markAtom(g, c.atom, c.name, true, c.labelDir));
+  (s.marks || []).forEach((k) => markAtom(g, k.atom, k.text, k.key, k.labelDir));
   refit(g, 1.6);
+  liftMarks(g, 1.6, avail);
   cell.append(h('div', { class: 'rxn-label', text: s.label }));
   const cards = h('div', { class: 'cip-cards' });
   const derived = [];
@@ -194,7 +298,8 @@ register('chem.molecule', (s, box) => {
   });
   box.dataset.stereo = JSON.stringify(derived);
   if (g.record) g.record.stereo = derived.map((d, k) => ({ atom: s.centers[k].atom, name: d.name, byRule: d.byRule, byVolume: d.byVolume, spec: s.centers[k].config }));
-  wrapEl.append(cards);
+  if ((s.centers || []).length) wrapEl.append(cards);
+  if (s.ladder) box.append(ladderEl(s.ladder));
   if (s.note) box.append(h('p', { class: 'vis-note', text: s.note }));
 });
 

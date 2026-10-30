@@ -24,11 +24,31 @@ Job shapes:
       cleared, the drawn coordinates (screen y flipped to y up) and the drawn
       wedges (narrow end at "narrow") are put on it, and RDKit assigns the
       configuration from the drawing. Drawn H atoms are matched to their
-      heavy atom. Heavy atom k of the drawing is atom k of the SMILES (the
+      heavy atom; an atom that is not a stereocenter and shows only some of
+      its H (a mechanism figure writes out just the H that moves) keeps them
+      all implicit. Heavy atom k of the drawing is atom k of the SMILES (the
       drawer keeps SMILES order). Returns whether the picture is the SMILES,
       and the CIP label of every stereocenter in the SMILES and in the picture.
+  {"smi": "...", "meso": true|false}
+      parse plus a meso check: the molecule has stereocenters and is its own
+      mirror image. Returns meso and mesoOk.
+  {"chain": {"fig": {kind: "chain", steps: [...], product: [...]},
+             "key": "SMILES" | null, "start": "SMILES" | null}}
+      an explainer's own mechanism figure, pushed for real by the 2026 set's
+      arrow verifier (scripts/ochem2026/verify.py): every step's arrows must
+      be legal and give the next step's species (after drops and adds), and
+      the last step must give the product. With key, the key's fragments must
+      be among the product's; with start, the starting species must hold the
+      stem molecule.
+  {"rel": ["key SMILES", "choice SMILES"]}
+      the stereo relation of a choice to the key: same, enantiomer,
+      diastereomer (same constitution, other configuration), unspecified (same
+      constitution, configuration not shown) or constitutional (other
+      connectivity).
 """
+import importlib.util
 import json
+import os
 import sys
 
 from rdkit import Chem, RDLogger
@@ -121,6 +141,16 @@ def drawn_job(j):
         for x, y in ((b['a'], b['b']), (b['b'], b['a'])):
             if by_id.get(x, {}).get('el') == 'H' and y in to_idx:
                 h_parent[x] = to_idx[y]
+    # an atom that shows only some of its H (a mechanism figure writes out just the H
+    # that moves, as in CH2 drawn with one [H]) keeps the rest implicit, and its drawn H
+    # carry no stereo: leave them out. A stereocenter still needs its drawn H placed.
+    shown = {}
+    for hid, p in h_parent.items():
+        shown[p] = shown.get(p, 0) + 1
+    for hid in list(h_parent):
+        at = ref.GetAtomWithIdx(h_parent[hid])
+        if at.GetChiralTag() == Chem.ChiralType.CHI_UNSPECIFIED and shown[h_parent[hid]] < at.GetTotalNumHs():
+            del h_parent[hid]
     only_on = sorted(set(h_parent.values()))
     m = Chem.Mol(ref)
     for a in m.GetAtoms():
@@ -187,10 +217,96 @@ def drawn_job(j):
     return out
 
 
+_V2026 = None
+
+
+def verifier_2026():
+    """The 2026 set's arrow verifier, loaded from its file (python -I does not put the script folder on the path)."""
+    global _V2026
+    if _V2026 is None:
+        p = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'ochem2026', 'verify.py')
+        spec = importlib.util.spec_from_file_location('ace_ochem2026_verify', p)
+        mod = importlib.util.module_from_spec(spec)
+        sys.dont_write_bytecode = True   # no __pycache__ left in the repo
+        spec.loader.exec_module(mod)
+        _V2026 = mod
+    return _V2026
+
+
+def chain_job(j):
+    V = verifier_2026()
+    fig = j['fig']
+    P = []
+    states = []
+    try:
+        steps = fig.get('steps') or []
+        if fig.get('kind') != 'chain' or not steps:
+            return {'ok': False, 'problems': ['the figure must be kind chain with at least one step']}
+        states.append(V.frag_set(V.spec_smiles(steps[0]['species'])))
+        for si, st in enumerate(steps):
+            got, err = V.try_apply(V.spec_smiles(st['species']), st['arrows'])
+            if err:
+                P.append('step %d arrows: %s' % (si + 1, err))
+                break
+            last = si + 1 == len(steps)
+            nxt = fig['product'] if last else steps[si + 1]['species']
+            adds = [] if last else V.frag_set(steps[si + 1].get('adds', []))
+            expect = list(got)
+            for d in V.frag_set(st.get('drops', [])):
+                if d in expect:
+                    expect.remove(d)
+                else:
+                    P.append('step %d drops %s but it was never made' % (si + 1, d))
+            expect = sorted(expect + adds)
+            if expect != V.frag_set(V.spec_smiles(nxt)):
+                P.append('step %d gives %s (after drops and adds %s), the figure shows %s' % (si + 1, got, expect, V.frag_set(V.spec_smiles(nxt))))
+            states.append(got)
+    except Exception as ex:  # noqa: BLE001
+        P.append('verifier error: %s' % ex)
+    out = {'ok': not P, 'problems': P, 'states': states}
+    try:
+        out['product'] = V.frag_set(V.spec_smiles(fig.get('product') or []))
+    except Exception as ex:  # noqa: BLE001
+        out['ok'] = False
+        out['problems'].append('product: %s' % ex)
+        return out
+    if j.get('key'):
+        key = V.frag_set([j['key']])
+        out['keyInProduct'] = all(out['product'].count(k) >= key.count(k) for k in key)
+    if j.get('start') and states:
+        start = V.frag_set([j['start']])
+        out['startOk'] = all(states[0].count(k) >= start.count(k) for k in start)
+    return out
+
+
+def rel_job(pair):
+    a, b = (Chem.MolFromSmiles(s) for s in pair)
+    if a is None or b is None:
+        return {'ok': False}
+    flat = lambda m: Chem.MolToSmiles(m, isomericSmiles=False)
+    if can(a) == can(b):
+        rel = 'same'
+    elif flat(a) != flat(b):
+        rel = 'constitutional'
+    elif can(mirror(b)) == can(a):
+        rel = 'enantiomer'
+    elif can(b) == flat(b) or can(a) == flat(a):
+        rel = 'unspecified'
+    else:
+        rel = 'diastereomer'
+    return {'ok': True, 'relation': rel}
+
+
 def main():
     jobs = json.load(open(sys.argv[1]))
     out = []
     for j in jobs:
+        if 'chain' in j:
+            out.append({'chain': chain_job(j['chain'])})
+            continue
+        if 'rel' in j:
+            out.append(rel_job(j['rel']))
+            continue
         if 'stereo' in j:
             out.append({'stereo': stereo_job(j['stereo'])})
             continue
@@ -210,6 +326,10 @@ def main():
             got = cip_map(m)
             r['cip'] = {str(k): v for k, v in got.items()}
             r['cipOk'] = all(got.get(c['atom']) == c['config'] for c in j['cip'])
+        if m is not None and j.get('meso') is not None:
+            centers = Chem.FindMolChiralCenters(m, includeUnassigned=False, useLegacyImplementation=False)
+            r['meso'] = len(centers) >= 2 and can(mirror(m)) == can(m)
+            r['mesoOk'] = r['meso'] == bool(j['meso'])
         out.append(r)
     json.dump(out, open(sys.argv[2], 'w'))
 

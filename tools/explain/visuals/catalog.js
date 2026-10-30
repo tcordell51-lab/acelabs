@@ -16,7 +16,8 @@ export const CATALOG = {
   'bio.chart': { module: 'bio', built: true, required: ['kind'], variants: { kind: ['selection', 'levels', 'saturation'] } },
   'chem.molecule': { module: 'chem', built: true, required: ['smi'] },
   'chem.reaction': { module: 'chem', built: true, required: ['reactants', 'reagent', 'products'] },
-  'chem.mechanism': { module: 'chem', built: true, required: ['ref'] },
+  'chem.mechanism': { module: 'chem', built: true, required: [] },   // a 2026 ref, or an inline fig the build pushes in RDKit
+  'chem.spectrum': { module: 'chem-oc', built: true, required: ['kind', 'traces'], variants: { kind: ['ir'] } },
   'chem.energy': { module: 'chem', built: true, required: ['points', 'names'] },
   'chem.lewis': { module: 'chem', built: true, required: ['molecule', 'ledger'] },
   'chem.trend': { module: 'chem', built: true, required: ['property', 'series', 'highlight'] },
@@ -38,7 +39,6 @@ export const CATALOG = {
 
   // planned (production-plan.md, section 4): no renderer yet
   'bio.pedigree': { module: 'bio', built: false },
-  'chem.spectrum': { module: 'chem', built: false },
   'chem.lab': { module: 'chem', built: false },
   'qr.work': { module: 'qr', built: false },
   'qr.dataset': { module: 'qr', built: false },

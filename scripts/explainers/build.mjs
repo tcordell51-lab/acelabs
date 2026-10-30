@@ -69,6 +69,10 @@ const SECTIONS = ['bio', 'gc', 'ochem', 'qr', 'pat', 'rc'];
 const SUBTOPIC_PREFIX = { bio: 'bio', gc: 'gc', ochem: 'oc', qr: 'qr', pat: 'pat', rc: 'rc' };
 const COACH_KEYS = new Set(['flags', 'review', 'routing', 'gate', 'changes', 'served', 'preview', 'demoPick', 'heldBecause', 'reviewed', 'relationNote']);
 const BUDGET = { spec: 4096, sidecar: 6144 };
+// IR landmark windows (cm-1) a chem.spectrum band must sit in, by group: the ranges DAT texts
+// teach (free O-H sharp near 3600; O-H held by an intramolecular H-bond, as in salicylaldehyde,
+// broad and low; triple bonds near 2100 to 2260)
+const IR_WINDOWS = { 'O-H free': [3580, 3650], 'O-H H-bonded': [3200, 3550], 'O-H chelated': [2800, 3250], 'O-H acid': [2500, 3300], 'N-H': [3300, 3500], 'C-H sp3': [2850, 3000], 'C-H sp2': [3000, 3100], 'C-H sp': [3260, 3330], 'C triple N': [2210, 2260], 'C triple C': [2100, 2260], 'triple bonds': [2100, 2260], 'C=O': [1650, 1780], 'C=C': [1600, 1680] };
 
 const { FAMILIES } = require('./families.js');
 const { copyIssues, words } = await import('./copy-rules.mjs');
@@ -393,6 +397,16 @@ function buildEntry(S, e) {
   });
   if (served.extra && served.extra.qs) rdkit(R, { smi: served.extra.qs }, (r) => { if (!r.ok) issues.push('RDKit cannot parse the stem SMILES ' + served.extra.qs); });
   if (served.extra && served.extra.os) served.choices.forEach((s) => rdkit(R, { smi: s }, (r) => { if (!r.ok) issues.push('RDKit cannot parse the choice SMILES ' + s); }));
+  // structure choices: a relation field is checked by RDKit against the key, and a relation
+  // word in a note must match the field (label-style stereo choices are checked under chem.molecule)
+  if (served.extra && served.extra.os) e.choices.forEach((c) => {
+    ['enantiomer', 'diastereomer'].filter((w) => new RegExp('\\b' + w).test(c.note) && !new RegExp('not (the |an? )?' + w).test(c.note)).forEach((w) => { if (w !== c.relation) issues.push('note for ' + c.text + ' says ' + w + ' but the relation field is ' + (c.relation || 'missing')); });
+    if (c.relation) rdkit(R, { rel: [e.keyText, c.text] }, (r) => {
+      if (!r.ok) issues.push('RDKit cannot compare ' + c.text + ' with the key');
+      else if (r.relation !== c.relation) issues.push('RDKit: ' + c.text + ' is ' + r.relation + ' to the key, the relation field says ' + c.relation);
+      else checks.push('RDKit stereo relation: ' + c.text + ' = ' + r.relation + ' of the key');
+    });
+  });
   return R;
 }
 
@@ -490,6 +504,24 @@ function recompute(R, p, facts) {
     else if (!keySpans.every((k) => proof.includes(k))) issues.push('key span not among the bank proof lines ' + proof);
     else checks.push('RC spans: every quote found verbatim; key spans match the bank proof lines (' + keySpans.join(', ') + ')');
   }
+  if (p.type === 'chem.mechanism' && p.fig && !p.ref) {
+    // an explainer's own mechanism (batch B004 on): the arrows are pushed for real by the
+    // 2026 set's verifier; a structure key must be among the products, and the chain starts
+    // from the stem molecule unless the spec says fromStem: false (a comparison molecule)
+    if (p.fig.kind !== 'chain' || !Array.isArray(p.fig.steps) || !p.fig.steps.length) { issues.push('chem.mechanism: an inline fig is a chain with at least one step'); return; }
+    facts.fig = clone(p.fig);
+    const keySmi = served.extra && served.extra.os ? keyText : null;
+    const start = p.fromStem === false ? null : (served.extra && served.extra.qs) || null;
+    if (p.fromStem !== false && !start) issues.push('chem.mechanism: the stem has no structure; set fromStem: false and say in the caption what the chain shows');
+    rdkit(R, { chain: { fig: p.fig, key: keySmi, start } }, (r) => {
+      const c = r.chain;
+      if (!c.ok) { issues.push('mechanism arrows (RDKit, scripts/ochem2026/verify.py): ' + c.problems.join('; ')); return; }
+      if (keySmi && !c.keyInProduct) issues.push('mechanism product ' + c.product.join(' + ') + ' does not hold the key ' + keySmi);
+      if (start && !c.startOk) issues.push('mechanism does not start from the stem molecule ' + start);
+      if ((!keySmi || c.keyInProduct) && (!start || c.startOk)) checks.push('mechanism arrows pushed in RDKit (scripts/ochem2026/verify.py): ' + p.fig.steps.length + ' step' + (p.fig.steps.length > 1 ? 's' : '') + ', each gives the next' + (start ? ', from the stem molecule' : '') + '; product ' + c.product.join(' + ') + (keySmi ? ', which holds the key' : ''));
+    });
+    return;
+  }
   if (p.type === 'chem.mechanism') {
     const it = SET2026.find((x) => x.id === (p.ref && p.ref.id));
     if (!it) { issues.push('2026 item missing ' + (p.ref && p.ref.id)); return; }
@@ -503,14 +535,19 @@ function recompute(R, p, facts) {
     if (!Array.isArray(p.points) || p.points.length < 3) issues.push('energy diagram needs at least 3 points');
   }
   if (p.type === 'chem.reaction') {
-    p.reactants.concat(p.products).forEach((m) => rdkit(R, { smi: m.smi }, (r) => {
+    p.reactants.concat(p.products).forEach((m) => rdkit(R, { smi: m.smi, cip: m.cip || [] }, (r) => {
       if (!r.ok) { issues.push('RDKit cannot parse ' + m.smi); return; }
+      if ((m.cip || []).length) { if (!r.cipOk) issues.push('CIP labels claimed on ' + m.smi + ' differ from RDKit: ' + JSON.stringify(r.cip)); else checks.push('RDKit CIP on ' + m.smi + ': ' + m.cip.map((c) => 'atom ' + c.atom + ' ' + c.config).join(', ')); }
       (m.marks || []).forEach((k) => { if (!(k.atom >= 0 && k.atom < r.heavy)) issues.push('mark on atom ' + k.atom + ' of ' + m.smi + ', which has ' + r.heavy + ' heavy atoms'); });
     }));
   }
   if (p.type === 'chem.molecule') {
-    rdkit(R, { smi: p.smi, cip: (p.centers || []).map((c) => ({ atom: c.atom, config: c.config })) }, (r) => {
+    rdkit(R, { smi: p.smi, cip: (p.centers || []).map((c) => ({ atom: c.atom, config: c.config })), meso: p.meso == null ? null : p.meso }, (r) => {
       if (!r.ok) { issues.push('RDKit cannot parse ' + p.smi); return; }
+      (p.marks || []).forEach((k) => { if (!(k.atom >= 0 && k.atom < r.heavy)) issues.push('mark on atom ' + k.atom + ' of ' + p.smi + ', which has ' + r.heavy + ' heavy atoms'); });
+      if (p.mirror && !(p.mirror.length === 2 && p.mirror.every((a) => a >= 0 && a < r.heavy))) issues.push('mirror needs two heavy atoms of ' + p.smi);
+      if (p.mirror && p.meso !== true) issues.push('a mirror-plane line is drawn only on a molecule the spec calls meso (RDKit checks it)');
+      if (p.meso != null) { if (!r.mesoOk) issues.push('RDKit: ' + p.smi + (r.meso ? ' is meso' : ' is not meso') + ', the spec says meso ' + p.meso); else checks.push('RDKit: ' + p.smi + (r.meso ? ' is meso (stereocenters, and it is its own mirror image)' : ' is not meso')); }
       if ((p.centers || []).length) { if (!r.cipOk) issues.push('CIP labels in the spec differ from RDKit: ' + JSON.stringify(r.cip)); else checks.push('RDKit CIP on ' + p.smi + ': ' + JSON.stringify(r.cip)); }
     });
     if (e.choices.some((c) => c.relation)) {
@@ -529,6 +566,23 @@ function recompute(R, p, facts) {
         else checks.push('RDKit stereo relations to the key: ' + st.choices.map((c) => c.text + ' = ' + c.relation + (c.isomerMeso ? ' (meso)' : '')).join('; ') + '; any meso isomer: ' + st.anyMeso);
       });
     }
+  }
+  if (p.type === 'chem.spectrum' && p.kind === 'ir') {
+    // every band sits inside the textbook window for its group, and one trace is the key
+    const [hi, lo] = p.range || [];
+    if (!(hi > lo)) issues.push('IR range is [high, low] wavenumber, as the axis reads left to right');
+    const traces = p.traces || [];
+    if (traces.filter((tr) => tr.key).length !== 1) issues.push('chem.spectrum: exactly one trace is the key');
+    const seen = [];
+    traces.forEach((tr) => (tr.bands || []).forEach((b) => {
+      const w = IR_WINDOWS[b.group];
+      if (!w) { issues.push('IR band group "' + b.group + '" is not in the landmark table (' + Object.keys(IR_WINDOWS).join(', ') + ')'); return; }
+      if (!(b.at >= w[0] && b.at <= w[1])) issues.push('IR band ' + b.group + ' drawn at ' + b.at + ', the landmark window is ' + w[0] + ' to ' + w[1]);
+      if (!(b.at <= hi && b.at >= lo)) issues.push('IR band at ' + b.at + ' is off the axis');
+      seen.push(b.group + ' ' + b.at);
+    }));
+    (p.zones || []).forEach((z) => { const w = IR_WINDOWS[z.group]; if (!w) issues.push('IR zone group "' + z.group + '" is not in the landmark table'); else if (z.from < w[0] - 60 || z.to > w[1] + 60) issues.push('IR zone ' + z.group + ' ' + z.from + ' to ' + z.to + ' strays from its window ' + w[0] + ' to ' + w[1]); });
+    if (seen.length) checks.push('IR bands inside their landmark windows: ' + seen.join(', ') + (p.zones && p.zones.length ? '; zones ' + p.zones.map((z) => z.group).join(', ') : ''));
   }
   if (p.type === 'chem.lewis') {
     const m = p.molecule, lg = p.ledger;
