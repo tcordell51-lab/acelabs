@@ -111,7 +111,7 @@ const ENTRIES = [
     keyText: '1. BH3-THF; 2. H2O2, NaOH',
     answer: { line: 'Hydroboration is the one hydration that is both anti-Markovnikov and syn. Those two words are the whole stem.' },
     steps: [
-      'Ask the two questions. Which carbon gets the OH? The less substituted one, so anti-Markovnikov. Which face? H and OH on the same face, so syn.',
+      'Ask the two questions: which carbon, and which face? The OH goes to the less substituted carbon, so anti-Markovnikov, and H and OH add to one face, so syn.',
       'Boron goes to the less crowded carbon, and B and H add together in one step from one face. No cation forms, so nothing shifts.',
       'H2O2 and NaOH swap boron for OH right where it sat. The new H and the OH are cis, which leaves the OH trans to the methyl.'
     ],
@@ -152,7 +152,7 @@ const ENTRIES = [
     answer: { line: 'mCPBA hands one oxygen to one face in a single step, so nothing rotates: the trans alkene becomes the trans epoxide.' },
     steps: [
       'Read the alkene: trans-3-hexene, its two ethyl groups on opposite sides of the C=C.',
-      'mCPBA delivers one O to one face in one step. No cation, no rotation. The ethyls stay where they were.',
+      'mCPBA delivers one O to one face in one step, with no cation and no rotation. The ethyls stay put.',
       'Pick the epoxide that shows them trans, one ethyl toward you and one away. mCPBA makes both mirror images; one is drawn.'
     ],
     choices: [
@@ -267,7 +267,7 @@ const ENTRIES = [
     answer: { line: 'H+ makes a secondary cation next to a carbon holding three methyls. One methyl slides over, the cation turns tertiary, and bromide adds there.' },
     steps: [
       'Protonate the alkene the Markovnikov way: H+ goes to the CH2 end and the plus sits on C2, a secondary carbon.',
-      'Look next door. C3 holds three methyls and no H, so a methyl slides over with its bond pair. The plus moves to C3, now tertiary.',
+      'Look next door. C3 holds three methyls and no H, so a methyl slides over with its bond pair, and the plus moves to C3, now tertiary.',
       'Bromide adds to the tertiary carbon: 2-bromo-2,3-dimethylbutane. Some unshifted bromide forms too, but the shifted one is the major product.'
     ],
     choices: [
@@ -295,7 +295,8 @@ const ENTRIES = [
       { kind: 'letter-cite', text: 'The bank explanation says "keyed option A" (the key is served fourth, index 3) and calls the unrearranged bromide "option B" (served fifth). Students see it on the full-test review screen. Key unchanged.' },
       { kind: 'bank-copy', text: 'The bank explanation carries an authoring note, "canonical CC(C)C(C)(C)Br". Key unchanged.' },
       { kind: 'stem-style', text: 'The stem ends with a hint, "(Consider carbocation stability carefully.)". Suggested, not applied: drop it. Key unchanged.' },
-      { kind: 'note', text: 'Expert note: measured HBr additions to 3,3-dimethyl-1-butene give a lot of unrearranged bromide too, so the explainer says major, never only.' }
+      { kind: 'note', text: 'Expert note: measured HBr additions to 3,3-dimethyl-1-butene give a lot of unrearranged bromide too, so the explainer says major, never only.' },
+      { kind: 'note', text: 'Review note, left for Thomas: the miscount family on 1-bromo-2,2-dimethylbutane is a loose fit, since the slip is Br on a carbon that never held a cation, not a count. Both reviews left the family to you; it is unchanged.' }
     ]
   },
   {
@@ -309,7 +310,7 @@ const ENTRIES = [
     answer: { line: 'The cation grows the ring from four to five, shifts once more to tertiary, then drops a proton: 1-methylcyclopentene.' },
     steps: [
       'Protonate the OH and let water leave. That leaves a secondary cation on the carbon right next to the four-membered ring.',
-      'Shift a ring bond onto the cation. Four becomes five. Most of the ring strain is gone, and the charge moves onto a ring carbon.',
+      'Shift a ring bond onto the cation, which relieves most of the ring strain and puts the charge on a ring carbon. Four becomes five.',
       'Look next door: that carbon holds the methyl and one H. A hydride shift makes the tertiary cation, and losing a ring H gives the most substituted alkene.'
     ],
     choices: [
@@ -555,13 +556,13 @@ const ENTRIES = [
     steps: [
       'Find the two alpha carbons: C2, a CH carrying the methyl, and C5, a CH2. Each can attack the ester at the other end.',
       'Count both rings: each closes five atoms. The C5 enolate leaves a CH between ketone and ester; the C2 enolate leaves a carbon with no H at all.',
-      'Dieckmann is reversible until ethoxide pulls that doubly activated H. Only the first product has one. The other ring reopens and everything drains to it.'
+      'Dieckmann is reversible until ethoxide pulls that doubly activated H, so a ring without one reopens and drains to the ring that has one. That is the first product.'
     ],
     choices: [
       { text: 'CCOC(=O)C1CCCCC1=O', display: 'ethyl 2-oxocyclohexane-1-carboxylate (six-membered ring, no methyl)', role: 'trap', family: 'miscount', trap: 'Methyl folded into the ring', note: 'Same formula as the key, but the methyl carbon was counted into the ring. The chain closes five atoms, and the methyl stays outside.' },
       { text: 'CCOC(=O)C1CCC(C)C1=O', display: 'ethyl 3-methyl-2-oxocyclopentane-1-carboxylate', role: 'key', note: 'The CH2 end attacks, the methyl rides beside the ketone, and an acidic H sits between the two carbonyls.' },
       { text: 'CCOC(=O)C1CCCC1=O', display: 'ethyl 2-oxocyclopentane-1-carboxylate (no methyl)', role: 'trap', family: 'neighbor-fact', trap: 'Lost the methyl', note: 'This is the product from plain diethyl adipate. Here the 2-methyl group has nowhere to go, so it has to show up on the ring.' },
-      { text: 'CCOC(=O)C1CC(C)CC1=O', display: 'ethyl 4-methyl-2-oxocyclopentane-1-carboxylate', role: 'trap', family: 'neighbor-fact', trap: 'Methyl one carbon over', note: 'This is what a 3-methyl diester would give. Here the methyl sits on an alpha carbon, so it ends up next to a carbonyl, not across the ring.' },
+      { text: 'CCOC(=O)C1CC(C)CC1=O', display: 'ethyl 4-methyl-2-oxocyclopentane-1-carboxylate', role: 'trap', family: 'neighbor-fact', trap: 'Methyl one carbon over', note: 'This is one ring a 3-methyl diester could give. Here the methyl sits on an alpha carbon, so it ends up next to a carbonyl, not across the ring.' },
       { text: 'CCOC(=O)C1(C)CCCC1=O', display: 'ethyl 1-methyl-2-oxocyclopentane-1-carboxylate (no H between the carbonyls)', role: 'trap', family: 'close-second', trap: 'Closes, then reopens', note: 'This ring does form. But its carbon between the carbonyls carries the methyl and no H, so ethoxide cannot lock it in, and it reverts.' }
     ],
     lockIt: 'A Dieckmann ends where ethoxide can pull an H from between the two carbonyls.',
@@ -573,12 +574,12 @@ const ENTRIES = [
       reactants: [{ smi: 'CCOC(=O)C(C)CCCC(=O)OCC', label: 'diethyl 2-methyladipate: C5 or C2 can attack', marks: [{ atom: 9, text: 'C5: attacks', key: true }, { atom: 3, text: 'C=O it hits' }, { atom: 5, text: 'C2' }] }],
       reagent: 'NaOEt, then H3O+',
       products: [
-        { smi: 'CCOC(=O)C1CCC(C)C1=O', label: 'favored: an H left between the C=O groups', marks: [{ atom: 5, text: 'acidic H here', key: true }] },
+        { smi: 'CCOC(=O)C1CCC(C)C1=O', label: 'favored: an H left between the C=O groups', marks: [{ atom: 5, text: 'H', key: true, labelDir: 90 }] },
         { smi: 'CCOC(=O)C1(C)CCCC1=O', label: 'other closure: no H there, it reopens', marks: [{ atom: 5, text: 'no H here' }] }
       ],
       note: 'Both closures make five-membered rings. Ethoxide pulling the H between the carbonyls is the step that keeps one.',
       reuse: 'SmilesDrawer through the light copy of tools/ochem/tree/draw.js',
-      alt: 'Diethyl 2-methyladipate, with its CH2 alpha carbon marked as the attacker, gives two possible five-membered rings with NaOEt. The favored ring keeps an acidic H between the ketone and the ester; the other closure puts the methyl there, leaves no H, and reopens.',
+      alt: 'Diethyl 2-methyladipate, with its CH2 alpha carbon marked as the attacker, gives two possible five-membered rings with NaOEt. In the favored ring a marked acidic H sits on the carbon between the ketone and the ester; the other closure puts the methyl there, leaves no H, and reopens.',
       caption: 'Look at the carbon between the two C=O groups in each ring. Only one still has an H.'
     },
     demoPick: 'CCOC(=O)C1(C)CCCC1=O',
@@ -599,7 +600,7 @@ const ENTRIES = [
     answer: { line: 'The alpha carbon attacks the far ester, closing C2 through C7: a six-membered ring, with the other ester left beside the new ketone.' },
     steps: [
       'Find the attacker and the target: the alpha carbon C2, next to one ester, and the C=O carbon C7 of the other ester.',
-      'Count the ring they close: C2, C3, C4, C5, C6, C7. Six atoms. C1 stays outside as the ester group.',
+      'Count the ring they close: C2, C3, C4, C5, C6 and C7, six atoms. C1 stays outside as the ester group.',
       'Ethoxide leaves from C7, which becomes the ring ketone, and the ester on C2 stays: ethyl 2-oxocyclohexane-1-carboxylate.'
     ],
     choices: [
@@ -680,7 +681,7 @@ const ENTRIES = [
     answer: { line: 'The end methyl\'s enolate reaches the other C=O and closes a six-membered ring; warming then loses water to the conjugated enone.' },
     steps: [
       'List the carbons that can become enolates: the two end methyls, C1 and C7, and the CH2 groups beside the carbonyls, C3 and C5.',
-      'Count each ring. The C1 enolate attacking the C6 carbonyl closes six atoms. The C3 enolate attacking C6 closes only four, far too strained.',
+      'Count each ring. The C1 enolate attacking the C6 carbonyl closes six atoms; the C3 enolate attacking C6 closes only four, far too strained.',
       'Warming dehydrates the beta-hydroxy ketone and puts the C=C in line with the C=O: 3-methylcyclohex-2-en-1-one.'
     ],
     choices: [
@@ -804,7 +805,7 @@ const ENTRIES = [
     answer: { line: 'NaNH2 makes the acetylide, ethyl bromide adds two carbons, and Lindlar adds H2 to one face and stops: cis-oct-3-ene.' },
     steps: [
       'Start with the acidic H. The terminal C-H of 1-hexyne, pKa about 25, goes to NaNH2 and leaves an acetylide anion.',
-      'The acetylide does SN2 on CH3CH2Br and adds two carbons: oct-3-yne, with the triple bond three carbons from the ethyl end.',
+      'The acetylide does SN2 on CH3CH2Br and adds two carbons: oct-3-yne, with the triple bond starting at C3, counted from the ethyl end.',
       'Lindlar\'s poisoned catalyst adds both H to one face and quits at the alkene. One face means cis.'
     ],
     choices: [
@@ -885,7 +886,7 @@ const ENTRIES = [
     answer: { line: 'Judge each acid by its base. Aniline\'s lone pair spreads into the ring, so aniline is the weakest base and anilinium the strongest acid.' },
     steps: [
       'Turn each acid into its base by taking off the N-H proton: aniline, pyridine and methylamine.',
-      'Rank the bases. Aniline\'s lone pair spreads into the ring, so it is the weakest. Pyridine\'s sp2 pair is held close to N. Methylamine\'s pair sits free, pushed by a methyl.',
+      'Rank the bases: aniline\'s lone pair spreads into the ring, so it is the weakest. Pyridine\'s sp2 pair is held close to N, and methylamine\'s sits free, pushed by a methyl.',
       'Weakest base, strongest acid. Anilinium, about 4.6, edges out pyridinium, about 5.2; methylammonium, about 10.6, is the weakest acid of the three.'
     ],
     choices: [
@@ -1013,7 +1014,7 @@ const ENTRIES = [
     keyText: 'Deactivating but ortho/para directing; the acyl group enters mainly para',
     answer: { line: 'Bromine pulls electrons through the sigma bond and slows the ring, but its lone pair steers the newcomer ortho and para. Bulk picks para.' },
     steps: [
-      'Split the two effects. Induction: bromine pulls electron density out and slows every attack. Resonance: a bromine lone pair helps only the ortho and para attacks.',
+      'Split the two effects. By induction, bromine pulls electron density out and slows every attack; by resonance, a bromine lone pair helps only the ortho and para attacks.',
       'Induction decides the speed, so bromobenzene is deactivated. Resonance decides the place, so the group goes ortho or para.',
       'The acylium ion is bulky, and ortho sits right beside the bromine. Para is open, so para is the main product.'
     ],
@@ -1142,7 +1143,7 @@ const ENTRIES = [
     answer: { line: 'The phthalimide nitrogen alkylates by SN2, and SN2 wants an open back side on an sp3 carbon. A primary halide is the best fit.' },
     steps: [
       'Name the step that decides it: the phthalimide anion attacks the halide\'s carbon by SN2.',
-      'SN2 needs a back side to come in from. Primary is open. Tertiary is walled off, and an sp2 carbon on a ring or a C=C has no usable back side.',
+      'SN2 needs a back side to come in from: tertiary is walled off, and an sp2 carbon on a ring or a C=C has none it can use. Primary is open.',
       'Hydrazine then frees the amine, so 1-bromobutane gives butan-1-amine. Phthalimide attacks once and is boxed in, so it never alkylates twice.'
     ],
     choices: [
@@ -1181,7 +1182,7 @@ const ENTRIES = [
     steps: [
       'Name what LiAlH4 does to a primary amide: C(=O)NH2 becomes CH2NH2. The oxygen leaves; the nitrogen stays.',
       'Check the stereocenter. None of its four bonds breaks, so every group keeps its place, wedges and dashes included.',
-      'Check the label. CH2NH2 and phenyl tie at the first atom, a C each, so look one atom out: N, H, H against C, C, C. N beats C, so the order holds and it is still S.'
+      'Check the label. CH2NH2 and phenyl tie at the first atom, a C each, so look one atom out: N, H, H beats C, C, C, and the order holds: still S.'
     ],
     choices: [
       { text: 'NC[C@@H](C)c1ccccc1', display: '(S)-2-phenylpropan-1-amine (methyl kept on the wedge)', role: 'key', relation: 'same', note: 'C=O out, nitrogen kept, stereocenter untouched: still S.' },
@@ -1222,15 +1223,15 @@ const ENTRIES = [
     keyText: 'It is a meso compound: it has stereocenters but an internal mirror plane, so it is achiral and optically inactive',
     answer: { line: 'Both Cl carbons are stereocenters, one R and one S, and a mirror plane runs between them. Stereocenters plus a mirror plane: meso.' },
     steps: [
-      'Check each Cl carbon. It holds H, Cl and two ring paths that differ, because one path reaches the other Cl sooner. So both are stereocenters.',
-      'Look for symmetry. In the cis isomer a mirror plane runs through C2 and C5 and swaps the two Cl carbons. One reads R, the other S.',
+      'Check each Cl carbon: it holds H, Cl and two ring paths that differ, because one path reaches the other Cl sooner. So both are stereocenters.',
+      'Look for symmetry: in the cis isomer a mirror plane runs through C2 and C5 and swaps the two Cl carbons. One reads R, the other S.',
       'Stereocenters plus an internal mirror plane is meso: the molecule is its own mirror image, so it is achiral and does not rotate light.'
     ],
     choices: [
       { text: 'It is a meso compound: it has stereocenters but an internal mirror plane, so it is achiral and optically inactive', role: 'key', note: 'Two stereocenters, one mirror plane: meso, achiral, optically inactive.' },
       { text: 'It is chiral and optically active, existing as a pair of non-superimposable enantiomers that each rotate plane-polarized light in opposite directions', role: 'trap', family: 'neighbor-fact', trap: 'True of the trans isomer', note: 'That describes trans-1,3-dichlorocyclohexane, which has no mirror plane. The cis isomer drawn here has one.' },
       { text: 'It is a constitutional isomer of 1,4-dichlorocyclohexane and is optically active', role: 'trap', family: 'half-right', trap: 'True start, false finish', note: 'It is a constitutional isomer of the 1,4 compound. But its mirror plane makes it optically inactive.' },
-      { text: 'It exists only as a single non-superimposable mirror image, so it has no achiral stereoisomer at all', role: 'trap', family: 'reversed', trap: 'Turned around', note: 'This molecule is itself the achiral stereoisomer. Its mirror image lays right on top of it.' },
+      { text: 'It exists only as a single non-superimposable mirror image, so it has no achiral stereoisomer at all', role: 'trap', family: 'reversed', trap: 'Turned around', note: 'This molecule is itself the achiral stereoisomer. Its mirror image lies right on top of it.' },
       { text: 'It has no stereocenters at all, so chirality is not possible', role: 'trap', family: 'neighbor-fact', trap: 'True of the 1,4 isomer', note: 'In 1,4-dichlorocyclohexane the two ring paths from each C-Cl are the same, so no stereocenters. In the 1,3 isomer they differ.' }
     ],
     lockIt: 'Meso means stereocenters plus an internal mirror plane. Find the plane, and the molecule is achiral.',
@@ -1269,23 +1270,56 @@ const CHANGES = {
     'Review suggestion taken: the "lone pair takes H+" label sits below and right of the N (labelDir 65; was -90, whose halo clipped the ring corner; 90 clipped the lower corner)'
   ],
   'fm:originals:ab-13b7fabf1b': ['Visual is chem.reaction with a pKa ladder; the stem shows no structure, so 1-hexyne is drawn as the example terminal alkyne'],
-  'fm:organic:oc-1op9odj': ['Visual is chem.molecule with an SN2 ladder instead of the full Gabriel reaction, to keep the phone picture under one screen'],
-  'fm:organic:oc-1o9d4eq': ['Trap labels in the coach\'s words for four other-conditions choices; expert families kept'],
+  'fm:organic:oc-1op9odj': [
+    'Visual is chem.molecule with an SN2 ladder instead of the full Gabriel reaction, to keep the phone picture under one screen',
+    'Re-review suggestion taken: step 2 keeps two sentences, ending on "Primary is open." (was three)'
+  ],
+  'fm:organic:oc-1o9d4eq': [
+    'Trap labels in the coach\'s words for four other-conditions choices; expert families kept',
+    'Re-review suggestion taken: step 1 asks both questions at once and answers them in one sentence (was five sentences)'
+  ],
   'fm:organic:oc-y8rsnv': [
     'Review fix: step 3 says CH2NH2 and phenyl tie at the first atom (a C each), and N wins one atom out, N, H, H against C, C, C (was "N beats C at the first atom")',
-    'Review suggestion taken: reactant and product are drawn with explicit hydrogens off, as the served page draws them, so the methyl sits on the wedge as in the stem and the key (was phenyl on a dash with H drawn)'
+    'Review suggestion taken: reactant and product are drawn with explicit hydrogens off, as the served page draws them, so the methyl sits on the wedge as in the stem and the key (was phenyl on a dash with H drawn)',
+    'Re-review suggestion taken: step 3 keeps two sentences and 32 words, "N, H, H beats C, C, C, and the order holds: still S." (was three sentences, 38 words)'
   ],
-  'fm:organic:oc-yraq7h': ['Review fix: the "lone pair spread into the ring" label sits below and right of the N (labelDir 65; was -90, whose halo erased the top of the ring; 90 clipped the lower corner), so the ring draws complete'],
+  'fm:organic:oc-yraq7h': [
+    'Review fix: the "lone pair spread into the ring" label sits below and right of the N (labelDir 65; was -90, whose halo erased the top of the ring; 90 clipped the lower corner), so the ring draws complete',
+    'Re-review suggestion taken: step 2 keeps two sentences, aniline first, then pyridine and methylamine together (was four)'
+  ],
   'fm:organic:oc-163l4so': ['Review fix: the caption reads "Two carbonyls, one cold equivalent of NaBH4" (was "Two targets, one hydride each", which read as both carbonyls reduced)'],
   'fm:organic:oc-11r58ig': ['Review suggestion taken: the 1-bromo-2-methylbutane label is "Shifted, Br on the end" (was "Br in the old spot"; that Br is not on the old carbinol carbon)'],
-  'fm:organic:oc-1eq5a2f': ['Review suggestion taken: the "Lost the methyl" note says the methyl shows up on the ring (was "in the ring", which echoed the folded-in-methyl trap)'],
-  'fm:organic:oc-zlk3b3': ['Review suggestion taken: the 1,2-dione note says keeping both C=O groups is what an acylation does, and even then they end up 1,3 (was "a Claisen-type pattern")'],
+  'fm:organic:oc-1eq5a2f': [
+    'Review suggestion taken: the "Lost the methyl" note says the methyl shows up on the ring (was "in the ring", which echoed the folded-in-methyl trap)',
+    'Re-review fix: the favored product\'s mark is a green "H" drawn under the circled CH (labelDir 90; was "acidic H here", whose halo erased the C-O single bond from the ester carbon to the ethoxy O, so OEt looked detached from the C=O at 390 and 1280); the alt says a marked acidic H sits on that carbon',
+    'Re-review suggestion taken: the "Methyl one carbon over" note says "This is one ring a 3-methyl diester could give." (was "what a 3-methyl diester would give"; that diester gives the 4-methyl and the 5-methyl rings)',
+    'Re-review suggestion taken: step 3 keeps two sentences, ending on "That is the first product." (was three)'
+  ],
+  'fm:organic:oc-zlk3b3': [
+    'Review suggestion taken: the 1,2-dione note says keeping both C=O groups is what an acylation does, and even then they end up 1,3 (was "a Claisen-type pattern")',
+    'Re-review suggestion taken: step 2 keeps two sentences, the two ring counts joined by a semicolon (was three)'
+  ],
   'fm:organic:oc-1v0wmr4': ['Review suggestion taken: the two cation notes say E1 with no strong base (was "hot acid", the alcohol dehydration setting; this substrate is a bromide)'],
-  'fm:organic:oc-1rhxjv': ['Review suggestion taken: the oct-2-ene note says ethyl bromide puts two carbons on the short side, so the C=C sits at C3; label "C=C one spot over" (was "Ethyl counted as one carbon", which would give seven carbons)'],
+  'fm:organic:oc-1rhxjv': [
+    'Review suggestion taken: the oct-2-ene note says ethyl bromide puts two carbons on the short side, so the C=C sits at C3; label "C=C one spot over" (was "Ethyl counted as one carbon", which would give seven carbons)',
+    'Re-review suggestion taken: step 2 says the triple bond starts at C3, counted from the ethyl end (was "three carbons from the ethyl end", which could read as three carbons in between)'
+  ],
   'fm:organic:oc-8gdlsf': ['Review suggestion taken: the caption says to read the two marks (was "Follow the H", but no H or arrow is drawn)'],
   'fm:organic:oc-1vndb83': [
     'Review suggestion taken: Lock it in says "to a nucleophile" (was "to every nucleophile")',
     'Review note: benzaldehyde is drawn with its aldehyde H shown, so the caption\'s "an H on top" points at a drawn H'
+  ],
+  'fm:organic:oc-p5414p': ['Re-review suggestion taken: step 2 keeps two sentences, ending on "The ethyls stay put." (was three)'],
+  'fm:organic:oc-8neusk': [
+    'Re-review suggestion taken: step 2 keeps two sentences (was three)',
+    'Re-review note: the miscount family on 1-bromo-2,2-dimethylbutane is a loose fit; both reviews left it to Thomas, so it is unchanged and a note flag says so'
+  ],
+  'fm:organic:oc-18i1svf': ['Re-review suggestion taken: step 2 keeps two sentences, ending on "Four becomes five." (was three)'],
+  'fm:organic:oc-csbizj': ['Re-review suggestion taken: step 2 keeps two sentences, the ring count and "six atoms" in one (was three)'],
+  'fm:organic:oc-qn8vo7': ['Re-review suggestion taken: step 1 keeps two sentences, "By induction ...; by resonance ..." (was three)'],
+  'fm:organic:oc-vqku6': [
+    'Re-review suggestion taken: the "Turned around" note says its mirror image "lies" right on top of it (was "lays")',
+    'Re-review suggestion taken: steps 1 and 2 keep two sentences each (were three)'
   ]
 };
 
