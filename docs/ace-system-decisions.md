@@ -61,6 +61,14 @@ Comprehension.
   Ace generates follow this; existing bank items with heavy arithmetic are
   flagged for a concept-first rewrite or a lighter variant, keys unchanged
   unless Thomas approves.
+- Never a block of text (Thomas, 2026-10-30): every explanation leads with a
+  visual or a simpler format, then words. The visual comes right under the
+  answer, before the steps ("see it first"). Words are short steps (one or
+  two sentences each), traps are small labeled cards, and the explainer ends
+  on one "lock it in" line. Every Ace reply is a short line, then a visual
+  (a flow of steps, a side-by-side compare, numbered step cards, an analogy
+  map, a number line, or a drawn diagram), then a one-line takeaway; never a
+  paragraph. Questions Ace writes carry a visual in their explanation too.
 - Explainers are written in Thomas's coaching voice. The voice reference is built from his own words (Retold coach lines, trick scripts, acethedat.com copy, his emails to students: voice patterns only, no student details) and lives at docs/thomas-voice-codex.md once written.
 
 ## Sign-off
