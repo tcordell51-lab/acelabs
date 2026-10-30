@@ -51,8 +51,8 @@ AceDAT-AceLabs/
 │   ├── al-fonts-legacy.css    # Old family names answered from the same files: Playfair Display and Newsreader to Sora (italic to DM Sans italic), Hanken Grotesk to its own file
 │   ├── fonts/                 # Versioned latin woff2 files (name-vN.woff2) + OFL license texts
 │   ├── brand/                 # ACEDAT logo: lockup, reversed lockup, AD mark, reversed mark, app icon
-│   ├── al-motion.css          # Reduced-motion stylesheet
-│   ├── ace-labs-shell.css     # Home brand vars + dashboard styles
+│   ├── al-motion.css          # Motion tokens + reduced motion (mirrors al-tokens.css)
+│   ├── ace-labs-shell.css     # Legacy page look on tokens v2 (load after al-tokens.css)
 │   ├── ace-shell.js/.css      # Shell v2: the one Ace Labs nav (five doors, ACE DAT lockup, Review dot), on every student page
 │   ├── ace-progress.js        # Cross-tool progress: miss adapters, Review ladder, today(), todayPlan(), play cards
 │   ├── ace-coach-lines.js     # The coach line library: ~40 drafts in Thomas's voice, approved:false until he signs off

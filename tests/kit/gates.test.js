@@ -40,10 +40,10 @@ test('copy gate: banned words in copy, not in code', async () => {
 test('copy gate: game, countdown, confidence and payment words, with the science words left alone', async () => {
   const { scan } = await imp('scripts/gate-copy.mjs');
   const flagged = (text) => scan('x.html', '<p>' + text + '</p>').map((h) => h.rule);
-  for (const [t, rule] of [['Day streak: 4', 'streak'], ['+10 points', 'points'], ['Earn 50 XP', 'points'], ['A new personal best', 'score'],
+  for (const [t, rule] of [['Day streak: 4', 'streak'], ['+10 points', 'points'], ['Earn 50 XP', 'points'], ['You got 3 points', 'points'], ['Nice, 5 points!', 'points'], ['You have 12 points', 'points'], ['She won 2 points', 'points'], ['A new personal best', 'score'],
     ['Top the leaderboard', 'score'], ['You earned a badge', 'badge'], ['12 days left', 'countdown'], ['30 days to go', 'countdown'],
     ['How sure are you?', 'confidence'], ['Pick a confidence level', 'confidence'], ['Upgrade now', 'payment'], ['Enter your credit card', 'payment'], ['$29/mo', 'payment']]) assert.deepStrictEqual(flagged(t), [rule], t);
-  for (const t of ['The primitive streak forms in amniotes.', 'Plot the data points on the line.', 'Boiling points rise with mass.',
+  for (const t of ['The primitive streak forms in amniotes.', 'Plot the data points on the line.', 'Boiling points rise with mass.', 'The two circles have 2 points in common.', 'A line has 2 points of intersection with the circle.', 'The graph has 3 points on the x-axis.', 'Each vertex gets 2 points from the grid.',
     'A store offers a 20 percent discount and a coupon for 10 dollars.', 'Click a colored badge on the molecule.', 'Xeroderma pigmentosum (XP) is a repair defect.'])
     assert.deepStrictEqual(flagged(t), [], t);
 });

@@ -11,6 +11,7 @@
 //            --full           the whole page (capped at 12000 px) instead of the first screen
 //            --dpr N          device pixel ratio (default 1; 2 for a crisp phone shot)
 //            --data-theme     set html[data-theme] as well as the media query (the Settings path)
+//            --tabbar         shoot each page as if it set <html data-ace-shell-pos="bottom"> (the phone tab bar)
 //            --live           leave CSS animations running (by default they are finished before the shot)
 //            --wait MS        extra settle time after load (default 400)
 //            --base URL       shoot a running server instead of the built-in one
@@ -50,6 +51,7 @@ async function shoot(browser, base, s) {
   const origin = new URL(base).origin; const errors = [];
   const ctx = await browser.newContext({ viewport: s.vp, deviceScaleFactor: DPR, colorScheme: s.theme === 'dark' ? 'dark' : 'light', reducedMotion: s.reduced ? 'reduce' : 'no-preference', hasTouch: s.vp.width < 700, isMobile: false });
   if (args.includes('--data-theme')) await ctx.addInitScript((t) => { document.documentElement.setAttribute('data-theme', t); }, s.theme);
+  if (args.includes('--tabbar')) await ctx.addInitScript(() => { const on = () => document.documentElement && document.documentElement.setAttribute('data-ace-shell-pos', 'bottom'); on(); document.addEventListener('readystatechange', on); });
   if (!args.includes('--allow-offsite')) await ctx.route('**/*', (route) => { const u = new URL(route.request().url()); return u.origin === origin || u.protocol === 'data:' || u.protocol === 'blob:' ? route.continue() : route.abort('blockedbyclient'); });
   const page = await ctx.newPage();
   page.on('pageerror', (e) => errors.push(String(e.message || e).split('\n')[0]));

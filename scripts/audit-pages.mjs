@@ -10,6 +10,7 @@
 //            --report-only       always exit 0     --jobs N   pages at a time (default 3)
 //            --allow-offsite     let requests to other hosts through (they are blocked and reported by default)
 //            --no-csp            serve without the site CSP
+//            --tabbar            audit each page as if it set <html data-ace-shell-pos="bottom"> (can it opt in?)
 //
 // Checked on each page (Playwright Chromium; phone first, 390 x 844):
 //   overflow    the page scrolls sideways at 390 px (the widest offenders are named)
@@ -19,6 +20,9 @@
 //   requests    same-origin requests that fail or answer 400 and up
 //   offsite     any request to another host (Google Fonts included): every file ships from the site
 //   fonts       a font file served from anywhere but /shared/fonts/
+//   tabbar      with the phone tab bar down (pages that set data-ace-shell-pos="bottom", or --tabbar),
+//               a fixed element of the page's own sits on the doors (the shell lifts what it finds at
+//               load; anything left is named here, and the page reads --ace-shell-bottom or keeps the top bar)
 //   motion      (warning) animations still running with prefers-reduced-motion: reduce; a reduced-motion
 //               snapshot of the first screen is saved as <page>-390-reduced-motion.png
 //   no-main     (warning) the page has no <main> landmark
@@ -41,6 +45,7 @@ const BATCH = batchName(ROOT, val('--batch'));
 const OUT = path.join(ROOT, 'test-screenshots', BATCH, 'audit');
 const JOBS = Math.max(1, Number(val('--jobs')) || 3);
 const WARN_ONLY = new Set(['motion', 'no-main']);
+const TABBAR = args.includes('--tabbar');
 fs.mkdirSync(OUT, { recursive: true });
 
 /* runs in the page: overflow, small targets, landmarks */
@@ -73,8 +78,26 @@ function inspect() {
     checked++;
     if (Math.min(r.width, r.height) < 43.5) small.push({ sel: (root === document.body || root === main ? '' : '#ace-shell::shadow ') + sel(el), w: Math.round(r.width), h: Math.round(r.height), text: (el.getAttribute('aria-label') || el.textContent || el.value || '').trim().replace(/\s+/g, ' ').slice(0, 40) });
   }
+  // tabbar: nothing of the page's own may sit on the doors while the phone tab bar is down
+  const covered = [];
+  const bar = document.getElementById('ace-shell');
+  if (bar && !bar.hidden && getComputedStyle(bar).position === 'fixed') {
+    const b = bar.getBoundingClientRect(), vh = window.innerHeight;
+    if (b.top > 0 && b.height > 0) {
+      for (const el of document.body.querySelectorAll('*')) {
+        if (getComputedStyle(el).position !== 'fixed' || !visible(el)) continue;
+        const r = el.getBoundingClientRect();
+        if (r.height > vh * 0.6) continue;   // a full-screen layer is a modal over everything, not bottom UI
+        if (r.bottom <= b.top + 1 || r.top >= b.bottom || r.right <= b.left || r.left >= b.right) continue;
+        if (covered.some((c) => c.el.contains(el))) continue;
+        covered.push({ el, top: Math.round(r.top), bottom: Math.round(r.bottom), barTop: Math.round(b.top) });
+        if (covered.length >= 6) break;
+      }
+    }
+  }
   const fonts = document.fonts ? [...new Set([...document.fonts].filter((f) => f.status === 'loaded').map((f) => `${f.family.replace(/"/g, '')} ${f.weight} ${f.style}`))] : [];
-  return { vw, sw, wide: wide.map((w) => ({ sel: sel(w.el), right: w.right })), small, checked, hasMain: !!main, fonts, title: document.title };
+  return { vw, sw, wide: wide.map((w) => ({ sel: sel(w.el), right: w.right })), small, checked, hasMain: !!main, fonts, title: document.title,
+    covered: covered.map((c) => ({ sel: sel(c.el), top: c.top, bottom: c.bottom, barTop: c.barTop })) };
 }
 function motionCheck() {
   if (!document.getAnimations) return [];
@@ -86,6 +109,7 @@ async function auditPage(browser, base, pagePath) {
   const origin = new URL(base).origin; const f = { page: pagePath, findings: [] };
   const add = (kind, detail) => f.findings.push({ kind, detail });
   const wire = async (ctx, page, record) => {
+    if (TABBAR) await page.addInitScript(() => { const on = () => document.documentElement && document.documentElement.setAttribute('data-ace-shell-pos', 'bottom'); on(); document.addEventListener('readystatechange', on); });
     if (!args.includes('--allow-offsite')) await ctx.route('**/*', (route) => { const u = new URL(route.request().url()); if (u.origin === origin || u.protocol === 'data:' || u.protocol === 'blob:') return route.continue(); if (record) add('offsite', `${route.request().resourceType()} ${u.host}${u.pathname}`); return route.abort('blockedbyclient'); });
     if (!record) return;
     page.on('pageerror', (e) => add('console', 'uncaught: ' + String(e.message || e).split('\n')[0].slice(0, 200)));
@@ -104,6 +128,7 @@ async function auditPage(browser, base, pagePath) {
     const r = await page.evaluate(inspect);
     f.title = r.title; f.fonts = r.fonts; f.targetsChecked = r.checked;
     if (r.sw > r.vw + 1) add('overflow', `scrollWidth ${r.sw} at ${r.vw}: ` + (r.wide.map((w) => `${w.sel} (to ${w.right})`).join(', ') || 'no single offender'));
+    for (const c of r.covered) add('tabbar', `${c.sel} (${c.top} to ${c.bottom}) sits on the tab bar (from ${c.barTop})`);
     for (const s of r.small) add('targets', `${s.sel} ${s.w}x${s.h}${s.text ? ' "' + s.text + '"' : ''}`);
     if (!r.hasMain) add('no-main', 'no <main> landmark (targets read from the whole body)');
   } catch (e) { add('console', 'audit could not load the page: ' + String(e.message).split('\n')[0]); }

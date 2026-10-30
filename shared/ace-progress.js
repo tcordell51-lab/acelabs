@@ -35,8 +35,10 @@
      full-length results al:mockHistory records with kind 'full-length' reach
                          results() and misses() (the Prometric mirror is skipped)
      dueToday            every misses() run writes acelabs.v1.dueToday
-                         { v, n, later[], at, day }, the cache the shell's Review
-                         dot reads, and fires window 'acelabs:due'
+                         { v, n, later[], once[], at, day }, the cache the shell's
+                         Review dot reads, and fires window 'acelabs:due'. A miss
+                         with no date of its own lights the dot on its next day
+                         only (once[]); see writeDue
      settings(), saveSettings(patch)   daily minutes, test date, shakiest sections
      todayPlan(opts)     the plan behind Today (spec 1.7): a coach line, an
                          honest source line, at most 4 steps (step 1 playable
@@ -485,37 +487,59 @@
         out.push(m);
       });
     });
-    writeDue(out);
+    writeDue(out, rs);
     if (!opts.includeMastered) out = out.filter(function (m) { return m.status !== 'mastered'; });
     out.sort(function (a, b) { return (a.rank - b.rank) || ((b.isDue ? 1 : 0) - (a.isDue ? 1 : 0)) || (b.when - a.when); });
     return out;
   }
 
   /* acelabs.v1.dueToday: the cache the shell's Review dot reads on every page
-     (most pages never load this file). n = cards due now; later = the next due
-     times, so a card made yesterday lights the dot today before any page has
-     listed misses again. A derived cache: written raw, never synced, and only
-     when it changes. */
+     (most pages never load this file). A derived cache: written raw, never
+     synced, and only when it changes.
+       n      scheduled cards due now: a review date (the Leitner ladder) or the
+              engine's own due date has come
+       later  the next scheduled due times, so a card made yesterday lights the
+              dot today before any page has listed misses again
+       once   the next-day return of an unscheduled miss (a test, reading, game or
+              engine miss with no date of its own): the start of the day after it
+              was made. It lights the dot for that one day only. An older
+              unscheduled miss still waits in Review and Today, but it never holds
+              the dot on by itself, so a backlog from before the schedule existed
+              does not leave a dot on every page for good. Reviewing it once gives
+              it a review date, and from then on it counts in n and later. */
   var DUE_KEY = 'acelabs.v1.dueToday';
-  function writeDue(rows) {
-    var now = Date.now(), n = 0, later = [];
+  function writeDue(rows, rs) {
+    var now = Date.now(), n = 0, later = [], once = [], back = 0;
+    rs = rs || {};
     rows.forEach(function (m) {
       if (!m || m.status === 'mastered') return;
+      var scheduled = !!rs[m.id] || !!(m.native && m.native.due);
+      if (!scheduled) {
+        if (!m.when) return;
+        var t = tomorrowAt(m.when);
+        if (t + DAY <= now) return;            /* its next day has passed: Review keeps it, the dot lets it rest */
+        once.push(t);
+        if (t <= now) back++;
+        return;
+      }
       if (m.isDue) n++;
       else if (m.due > now) later.push(m.due);
     });
     later.sort(function (a, b) { return a - b; });
     later = later.slice(0, 60);
+    once.sort(function (a, b) { return a - b; });
+    once = once.slice(0, 60);
     var prev = read(DUE_KEY, null);
-    if (!prev || prev.n !== n || JSON.stringify(prev.later || []) !== JSON.stringify(later) || prev.day !== dayKey(now)) {
-      writeRaw(DUE_KEY, { v: 1, n: n, later: later, at: now, day: dayKey(now) });
+    if (!prev || prev.n !== n || JSON.stringify(prev.later || []) !== JSON.stringify(later) ||
+        JSON.stringify(prev.once || []) !== JSON.stringify(once) || prev.day !== dayKey(now)) {
+      writeRaw(DUE_KEY, { v: 1, n: n, later: later, once: once, at: now, day: dayKey(now) });
     }
     try {
       if (typeof window.dispatchEvent === 'function' && typeof window.CustomEvent === 'function') {
-        window.dispatchEvent(new window.CustomEvent('acelabs:due', { detail: { n: n } }));
+        window.dispatchEvent(new window.CustomEvent('acelabs:due', { detail: { n: n + back } }));
       }
     } catch (e) { /* no events here */ }
-    return n;
+    return n + back;
   }
   function dayKey(t) {
     var d = t == null ? new Date() : new Date(t);

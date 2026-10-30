@@ -19,7 +19,8 @@
 //   word      wrong, wrongly, incorrect, incorrectly, fail, fails, failed, failing
 //             (say Confirmed / Needs review, or name the trap)
 //   streak    streaks
-//   points    points or XP as a reward ("+10 points", "earn points", "XP")
+//   points    points or XP as a reward ("+10 points", "earn points", "You got 3 points", "5 points!", "XP");
+//             geometry and science keep theirs ("data points", "have 2 points in common")
 //   score     leaderboards, best / high / top scores, personal bests, records
 //   badge     badges
 //   countdown "N days left", "days to go", "days until your test", "N min left"
@@ -56,7 +57,7 @@ export function charRule(c) {
 export const WORD_RULES = [
   ['word', /\b(?:wrong(?:ly)?|incorrect(?:ly)?|fail(?:s|ed|ing)?)\b/gi],
   ['streak', /\b(?<!primitive\s)streaks?\b/gi],
-  ['points', /\+\s?\d+\s*(?:pts?|points?)\b|\b\d+\s*pts\b|\b(?:earn(?:ed|s|ing)?|scored?|scoring|win|wins|bonus|gain(?:ed|s)?|collect(?:ed|s)?)\s+(?:\d+\s+|some\s+|more\s+|extra\s+|bonus\s+)?points?\b|\bpoints?\s+(?:earned|scored|to\s+spend)\b|\b\d+\s*XP\b|\bXP\s+(?:points?|bar|level|earned|total|boost)\b|\b(?:earn|gain|get)(?:ed|s)?\s+XP\b/gi],
+  ['points', /\b(?:you\s+)?(?:got|get|gets|getting|have|has|had|won)\s+\d+\s+points?\b(?!\s+(?:in\s+common|of|on|at|from|where|that|which|in\s+the\s+plane))|\b\d+\s+points?\s*!|\+\s?\d+\s*(?:pts?|points?)\b|\b\d+\s*pts\b|\b(?:earn(?:ed|s|ing)?|scored?|scoring|win|wins|bonus|gain(?:ed|s)?|collect(?:ed|s)?)\s+(?:\d+\s+|some\s+|more\s+|extra\s+|bonus\s+)?points?\b|\bpoints?\s+(?:earned|scored|to\s+spend)\b|\b\d+\s*XP\b|\bXP\s+(?:points?|bar|level|earned|total|boost)\b|\b(?:earn|gain|get)(?:ed|s)?\s+XP\b/gi],
   ['score', /\bleader\s?boards?\b|\b(?:best|high|top)[\s-]scores?\b|\bpersonal\s+(?:best|record)s?\b/gi],
   ['badge', /\b(?:earn|earned|earns|earning|unlock|unlocked|unlocks|collect|collected|win|won|new)\s+(?:a\s+|the\s+|your\s+|\d+\s+|new\s+)?badges?\b|\bbadges?\s+(?:earned|unlocked|collected|won)\b|\bbadge\s+(?:count|wall|collection)\b/gi],
   ['countdown', /\b(?:days?|weeks?)\s+(?:left|to\s+go|remaining)\b|\bdays?\s+until\s+(?:your|the)\s+(?:test|exam|dat)\b|\b\d+\s*(?:min|mins)\s+left\b/gi],

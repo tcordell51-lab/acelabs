@@ -1,7 +1,7 @@
 /* ace-shell.js : the ONE Ace Labs navigation, on every student page (shell v2).
 
    Add it with one tag (anywhere; defer is fine):
-     <script src="/shared/ace-shell.js?v=2" defer></script>
+     <script src="/shared/ace-shell.js?v=3" defer></script>
 
    Five doors: Today, Learn, Practice, Tests, Review. The Canon is no longer a
    door; it lives inside Learn as Sheets (/learn/#sheets).
@@ -24,6 +24,11 @@
    - The bar sits in normal flow above <body> and scrolls away with the page.
      A tool's own position:fixed top bar is held just under the shell until
      the shell scrolls off, so nothing is ever covered.
+   - With the phone tab bar down, a tool's own fixed bottom UI (a coach
+     button, an action bar) is lifted above it, and put back when the bar
+     moves to the top or hides; new work reads --ace-shell-bottom on <html>
+     (the bar's height while it shows at the bottom, unset otherwise):
+     bottom:calc(16px + var(--ace-shell-bottom,0px)).
    - Replaces the old navs: hides a legacy <header class="al-top"> that only
      carried the old .al-nav links, and the old floating "Ace Labs" chip.
    - Hidden: inside an iframe (engine modals, the portal embed), on ?embed=...
@@ -31,8 +36,11 @@
      <html data-ace-shell="off">, and in print.
    - Keeps ?student=<id> on every door so a coach link stays personal.
 
-   window.AceShell: { version, doors, door (the current door id), current,
-     doorFor(path), doorEl(id), position(), due(), setDue(n), refreshDue() }.
+   window.AceShell: { version, doors, door (the current door id, a string),
+     current, doorFor(path), doorEl(id) (the element a card flies to),
+     position(), due(), setDue(n), refreshDue(), relift() }.
+   VERSION is the shell generation and the ?v= of its stylesheet; the script's
+   own ?v= on the pages moves with every change to this file.
    Plain ES5, no network beyond its own stylesheet and the two shell fonts. */
 (function () {
   'use strict';
@@ -94,13 +102,15 @@
   }
   /* Cards due now: the count ace-progress wrote, plus any later due time that
      has passed since (a card made yesterday is back today without a page
-     having listed misses yet). */
+     having listed misses yet), plus a miss with no date of its own on its next
+     day only (once: that day's start; it rests after one day). */
   function readDue() {
     try {
       var v = JSON.parse(localStorage.getItem(DUE_KEY) || 'null');
       if (!v || typeof v !== 'object') return 0;
       var n = Math.max(0, +v.n || 0), now = Date.now();
       (v.later || []).forEach(function (t) { if (typeof t === 'number' && t <= now) n++; });
+      (v.once || []).forEach(function (t) { if (typeof t === 'number' && t <= now && now < t + 864e5) n++; });
       return n;
     } catch (e) { return 0; }
   }
@@ -154,6 +164,7 @@
         '#ace-shell{min-height:56px}' +
         'html[data-ace-shell-pos="bottom"] #ace-shell{position:fixed;left:0;right:0;bottom:0;z-index:160;min-height:calc(64px + env(safe-area-inset-bottom,0px))}' +
         'html.ace-shell-on.ace-shell-shown[data-ace-shell-pos="bottom"] body{padding-bottom:calc(64px + env(safe-area-inset-bottom,0px))}' +
+        'html.ace-shell-on.ace-shell-shown[data-ace-shell-pos="bottom"]{--ace-shell-bottom:calc(64px + env(safe-area-inset-bottom,0px))}' +
       '}' +
       '@media print{#ace-shell{display:none!important}html.ace-shell-on body{padding-bottom:0!important}}' +
       'html.ace-shell-on #al-home{display:none!important}' +
@@ -273,10 +284,50 @@
     for (var i = 0; i < held.length; i++) held[i].style.top = off + 'px';
   }
 
+  /* A tool's own fixed bottom UI under the phone tab bar: lift it by the bar's
+     height (its own offset kept) while the bar shows at the bottom, and put it
+     back otherwise. Found at load and on resize, like the top bars: a small
+     fixed element (under half the screen tall, so never a full-screen
+     overlay) whose lower edge reaches into the bar. UI a page shows later
+     reads --ace-shell-bottom instead (the page audit flags any it misses). */
+  var lifted = [];
+  function barTop() {
+    var t = host && host.getBoundingClientRect ? host.getBoundingClientRect().top : 0;
+    return t > 0 ? t : window.innerHeight - 64;
+  }
+  function findBottomUI() {
+    drop();
+    if (!host || !wantsBottom() || position() !== 'bottom' || host.hidden) return;
+    var vh = window.innerHeight, top = barTop();
+    var cands = document.querySelectorAll('body > *, body > * > *, body > * > * > *');
+    for (var i = 0; i < cands.length && i < 1500; i++) {
+      var el = cands[i];
+      var cs = getComputedStyle(el);
+      if (cs.position !== 'fixed' || cs.display === 'none' || cs.visibility === 'hidden') continue;
+      var r = el.getBoundingClientRect();
+      if (!r.width || !r.height || r.height > vh * 0.5 || r.bottom <= top + 1 || r.top >= vh) continue;
+      var off = parseFloat(cs.bottom);
+      if (isNaN(off)) off = Math.max(0, vh - r.bottom);
+      lifted.push({ el: el, top: el.style.top, bottom: el.style.bottom });
+      el.style.top = 'auto';
+      el.style.bottom = 'calc(' + off + 'px + 64px + env(safe-area-inset-bottom, 0px))';
+      el.setAttribute('data-ace-lifted', '');
+    }
+  }
+  function drop() {
+    for (var i = 0; i < lifted.length; i++) {
+      var x = lifted[i];
+      x.el.style.top = x.top;
+      x.el.style.bottom = x.bottom;
+      x.el.removeAttribute('data-ace-lifted');
+    }
+    lifted = [];
+  }
+
   function syncPos() {
     if (!host) return;
     var p = position();
-    if (host.getAttribute('data-pos') !== p) host.setAttribute('data-pos', p);
+    if (host.getAttribute('data-pos') !== p) { host.setAttribute('data-pos', p); findBottomUI(); }
   }
 
   function mount() {
@@ -292,7 +343,7 @@
 
     function syncTimed() {
       var t = timedActive();
-      if (host.hidden !== t) { host.hidden = t; hold(); }
+      if (host.hidden !== t) { host.hidden = t; hold(); if (t) drop(); else findBottomUI(); }
       root.classList.toggle('ace-shell-shown', !t);
     }
     syncTimed();
@@ -317,13 +368,14 @@
     if (css && !css.sheet) { css.addEventListener('load', soon); css.addEventListener('error', soon); setTimeout(place, 1500); }
     else soon();
     api.relayout = function () { layout(null); };
+    api.relift = findBottomUI;
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { if (placed) layout(null); });
     if (window.MutationObserver) {
       new MutationObserver(function () { syncPos(); hold(); requestAnimationFrame(function () { layout(null); }); })
         .observe(root, { attributes: true, attributeFilter: ['data-ace-shell-pos'] });
     }
 
-    var scan = function () { findFixedBars(); };
+    var scan = function () { findFixedBars(); findBottomUI(); };
     requestAnimationFrame(function () { requestAnimationFrame(scan); });
     setTimeout(scan, 600);
     window.addEventListener('load', scan);

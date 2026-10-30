@@ -170,9 +170,13 @@ test('shell bridge: the Review door and its dot, in the light DOM or the shell s
   sr.innerHTML = '<a class="door" data-id="review"><span class="di" id="in-shadow"></span></a>';
   assert.equal(AL.door('review').id, 'in-shadow');
   let got = null;
-  w.AceShell = { setDue: (n) => { got = n; }, door: () => null };
+  w.AceShell = { setDue: (n) => { got = n; }, door: 'review', doorEl: () => null };
   AL.setDue(2);
   assert.equal(got, 2, 'the shell owns the dot when it is there');
+  assert.equal(AL.door('review').id, 'in-shadow', 'doorEl found nothing, so the shadow root is searched');
+  const mine = doc.createElement('span');
+  w.AceShell.doorEl = (id) => (id === 'review' ? mine : null);
+  assert.equal(AL.door('review'), mine, 'the shell answers first, through doorEl (AceShell.door is the current door id, a string)');
 });
 
 /* ---------- the stylesheet ---------- */
@@ -220,6 +224,8 @@ test('al-kit.css: components read context colors and tokens, never a raw Playfai
   // gold never marks an outcome: the key and your call use the Wong pair
   assert.match(css, /\.al \.opt\.key\{border-color:var\(--c-good\)/);
   assert.match(css, /\.al \.opt\.mine\{border-color:var\(--c-trap\)/);
+  // mint never marks an outcome: the held call (mint) is a dashed ring, so only the key is a solid green ring
+  assert.match(css, /\.al \.opt\[aria-pressed="true"\]\{border-color:var\(--c-mint\);border-style:dashed;/);
   // the reveal rises and fades, it never shakes
   assert.doesNotMatch(css, /@keyframes[^{]*(shake|pulse|bounce|glow)/i);
 });

@@ -272,6 +272,46 @@ test('play cards: stored, listed as misses, due tomorrow, and the dot cache foll
   assert.equal(P.playCards().length, 2);
 });
 
+test('the dot: a miss with no date of its own lights it on its next day only; an old backlog never holds it on', () => {
+  /* a practice test this morning with an osmosis miss, and a GChem engine backlog from six weeks ago */
+  const seed = {
+    'al:prometricHistory': [{ testId: 'MOCK_2', testName: 'Practice Test 2', ts: at(0, 8), subjects: { Biology: { correct: 38, total: 40 } }, byTopic: { Biology: { Osmosis: { c: 1, n: 3 } } } }],
+    'gc-rem-v1:attempts': [{ probId: 'a', skill: 'titration', correct: false, t: at(-42) }, { probId: 'b', skill: 'gas-laws', correct: false, t: at(-40) }],
+  };
+  const { P, store, events, tick } = load(seed);
+  const lastN = () => events.filter((e) => e.type === 'acelabs:due').pop().detail.n;
+  let ms = P.misses();
+  assert.ok(ms.find((m) => m.id === 'pt:bio|Osmosis').isDue, 'Review and Today still list it now');
+  assert.equal(ms.filter((m) => m.source === 'gchem-engine').length, 2, 'the backlog is still listed');
+  let due = json(store, 'acelabs.v1.dueToday');
+  eq([due.n, due.later, due.once], [0, [], [new Date(2026, 9, 31).getTime()]], 'made today: back tomorrow, no dot today');
+  assert.equal(lastN(), 0);
+  /* tomorrow: the dot is on, from the next-day return */
+  tick(DAY);
+  P.misses();
+  due = json(store, 'acelabs.v1.dueToday');
+  assert.equal(due.n, 0);
+  eq(due.once, [new Date(2026, 9, 31).getTime()]);
+  assert.equal(lastN(), 1, 'one card back today');
+  /* the day after: it rests in Review; the dot does not stay on for good */
+  tick(DAY);
+  ms = P.misses();
+  assert.ok(ms.find((m) => m.id === 'pt:bio|Osmosis').isDue, 'still waiting in Review');
+  due = json(store, 'acelabs.v1.dueToday');
+  eq([due.n, due.later, due.once], [0, [], []]);
+  assert.equal(lastN(), 0);
+  /* reviewed once, it is on the ladder: from then on its review date drives the dot */
+  P.mark('pt:bio|Osmosis', false);
+  P.misses();
+  due = json(store, 'acelabs.v1.dueToday');
+  assert.equal(due.n, 0);
+  eq(due.later, [NOW + 2 * DAY + DAY]);
+  tick(DAY);
+  P.misses();
+  assert.equal(json(store, 'acelabs.v1.dueToday').n, 1, 'a scheduled card due today lights the dot');
+  assert.equal(lastN(), 1);
+});
+
 test('play cards keep the store small: the newest cards keep their pictures', () => {
   const { P, store } = load({});
   const pic = '<svg>' + 'x'.repeat(60000) + '</svg>';

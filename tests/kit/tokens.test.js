@@ -157,6 +157,40 @@ test('brand: favicon is the AD mark in four sizes; Today links the icon', () => 
 test('includers: every page loads al-tokens.css at the same new ?v=', () => {
   const pages = ['404.html', 'mocks-catalog.html', 'prometric-mock.html', 'test-day-readiness.html', 'test-week.html', 'scope.html',
     'retold/index.html', 'tools/bio/bio-immune-cells.html', 'tools/ochem/index.html', 'tools/gc/trends.html', 'tools/gc/traps.html',
-    'tools/gc/lewis-sandbox.html', 'tools/gc/recognition-lab.html'];
-  for (const p of pages) assert.match(read(p), /al-tokens\.css\?v=3["']/, p);
+    'tools/gc/lewis-sandbox.html', 'tools/gc/recognition-lab.html', 'unified-mock.html', 'onboarding.html', 'for-retakers.html'];
+  for (const p of pages) assert.match(read(p), /al-tokens\.css\?v=4["']/, p);
+});
+
+/* shared/al-motion.css backs up the tokens on pages that load it alone, so its values must be the tokens' own */
+test('al-motion.css: the same motion tokens and reduced-motion reset as tokens v2, value for value', async () => {
+  const { parseTokens } = await gate();
+  const MOTION = read('shared/al-motion.css');
+  const tok = parseTokens(TOKENS).root, mot = parseTokens(MOTION).root;
+  const names = [...tok.keys()].filter((k) => /^--(m|e|motion)-/.test(k));
+  assert.ok(names.length >= 15, 'motion names in the tokens: ' + names.length);
+  for (const k of names) assert.strictEqual(mot.get(k), tok.get(k), k);
+  for (const k of mot.keys()) assert.ok(tok.has(k), k + ' is not a tokens v2 name');
+  const reset = (css) => css.replace(/\/\*[\s\S]*?\*\//g, '').match(/@media \(prefers-reduced-motion: reduce\)\{([\s\S]*?)\n\}/)[1].replace(/\s+/g, '');
+  assert.strictEqual(reset(MOTION), reset(TOKENS), 'the reduced-motion block is the tokens one');
+  assert.doesNotMatch(MOTION, /[^\x00-\x7e]/, 'plain ASCII');
+});
+
+/* shared/ace-labs-shell.css reads tokens v2: only two legacy surfaces stay local, no retired face is named */
+test('ace-labs-shell.css: on tokens v2, loaded after the tokens on every page', async () => {
+  const { parseTokens } = await gate();
+  const SHELL = read('shared/ace-labs-shell.css');
+  const p = parseTokens(SHELL);
+  assert.deepStrictEqual([...p.root.keys()].sort(), ['--al-paper-2', '--al-paper-3'], 'only the legacy surfaces are local');
+  const css = SHELL.replace(/\/\*[\s\S]*?\*\//g, '');
+  assert.doesNotMatch(css, /Playfair|'DM Sans'|'JetBrains Mono'|Georgia/, 'faces come from --f-*');
+  for (const m of css.matchAll(/[^{}]*\bem\{[^}]*\}/g)) if (/font-style:italic/.test(m[0])) assert.match(m[0], /font-family:var\(--f-voice\)/, 'an italic accent is DM Sans italic: ' + m[0].trim());
+  const used = new Set([...css.matchAll(/var\((--[\w-]+)/g)].map((m) => m[1]));
+  const tok = parseTokens(TOKENS).root;
+  for (const k of used) assert.ok(tok.has(k) || p.root.has(k), k + ' is defined by the tokens');
+  const includers = ['unified-mock.html', 'onboarding.html', 'mocks-catalog.html', '404.html', 'test-day-readiness.html', 'prometric-mock.html', 'test-week.html',
+    'tools/gc/trends.html', 'tools/gc/traps.html', 'tools/gc/lewis-sandbox.html', 'tools/gc/recognition-lab.html', 'retold/index.html', 'scope.html', 'for-retakers.html'];
+  for (const page of includers) {
+    const html = read(page), t = html.indexOf('al-tokens.css?v='), s = html.indexOf('ace-labs-shell.css?v=');
+    assert.ok(s > 0 && t > 0 && t < s, page + ' loads the tokens before the shell stylesheet');
+  }
 });

@@ -127,9 +127,12 @@
     out.push(document);
     return out;
   }
+  /* The element a card flies to: the shell's own answer first (AceShell.doorEl;
+     AceShell.door is the current door's id, a string, not a function), then a
+     search of the shell's shadow root and the page. */
   function door(id) {
-    if (window.AceShell && typeof window.AceShell.door === 'function') {
-      var d = window.AceShell.door(id);
+    if (window.AceShell && typeof window.AceShell.doorEl === 'function') {
+      var d = window.AceShell.doorEl(id);
       if (d) return d;
     }
     var roots = shellRoots();

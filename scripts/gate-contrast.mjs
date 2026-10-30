@@ -93,8 +93,8 @@ export function ratio(fg, bg, under) {
 const P = (fg, bg, under = null, min = TEXT) => ({ fg, bg, under, min });
 export const PAPER_PAIRS = [
   ...['--s-surface', '--s-page', '--s-surface-2', '--s-sunk'].flatMap((bg) => [P('--s-ink', bg), P('--s-ink-2', bg), P('--s-mint-ink', bg)]),
-  P('--s-ink-3', '--s-surface'), P('--s-ink-3', '--s-page'), P('--s-ink-3', '--s-surface-2'),
-  P('--s-accent-ink', '--s-surface'), P('--s-accent-ink', '--s-page'), P('--s-accent-ink', '--s-surface-2'),
+  P('--s-ink-3', '--s-surface'), P('--s-ink-3', '--s-page'), P('--s-ink-3', '--s-surface-2'), P('--s-ink-3', '--s-sunk'),
+  P('--s-accent-ink', '--s-surface'), P('--s-accent-ink', '--s-page'), P('--s-accent-ink', '--s-surface-2'), P('--s-accent-ink', '--s-sunk'),
   P('--s-good-ink', '--s-surface'), P('--s-good-ink', '--s-good-wash', '--s-surface'),
   P('--s-trap-ink', '--s-surface'), P('--s-trap-ink', '--s-trap-wash', '--s-surface'),
   P('--s-mint-ink', '--s-mint-wash'), P('--s-ink', '--s-mint-wash'), P('--s-ink-2', '--s-mint-wash'), P('--s-ink-3', '--s-mint-wash'),

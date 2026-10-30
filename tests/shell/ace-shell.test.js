@@ -143,6 +143,9 @@ test('the Review dot reads acelabs.v1.dueToday: a dot, never a number, and a spo
   w.localStorage.setItem('acelabs.v1.dueToday', JSON.stringify({ v: 1, n: 2, later: [] }));
   w.dispatchEvent(new w.StorageEvent('storage', { key: 'acelabs.v1.dueToday' }));
   assert.equal(S.due(), 2);
+  /* a miss with no date of its own: counted on its next day only, then it rests */
+  w.localStorage.setItem('acelabs.v1.dueToday', JSON.stringify({ v: 1, n: 0, later: [], once: [now - 1000, now - 864e5 - 1000, now + 3600e3] }));
+  assert.equal(S.refreshDue(), 1, 'today\'s next-day return only; yesterday\'s has rested, tomorrow\'s is not back yet');
   /* a broken cache never breaks the bar */
   w.localStorage.setItem('acelabs.v1.dueToday', '{nope');
   assert.equal(S.refreshDue(), 0);
@@ -179,6 +182,63 @@ test('a page that switches to the bottom bar later is followed', async () => {
   await new Promise((r) => setTimeout(r, 0));
   assert.equal(S.position(), 'bottom');
   assert.equal(doc.getElementById('ace-shell').getAttribute('data-pos'), 'bottom');
+});
+
+/* the phone tab bar never sits on a page's own fixed bottom UI (bio-cell's coach button, say) */
+function fixedAt(w, id, box, style) {
+  const el = w.document.createElement('button');
+  el.id = id; el.textContent = 'C'; el.setAttribute('style', style);
+  w.document.body.appendChild(el);
+  const rect = w.Element.prototype.getBoundingClientRect;
+  w.Element.prototype.getBoundingClientRect = function () { return this.id === id ? box : rect.call(this); };
+  return el;
+}
+test('with the tab bar down, a fixed bottom button is lifted above it, and put back when the bar goes', async () => {
+  let fab = null, overlay = null, high = null;
+  const { w, doc, S, state } = boot({ narrow: true, htmlAttrs: ' data-ace-shell-pos="bottom"', before(w) {
+    const vh = w.innerHeight;
+    fab = fixedAt(w, 'fab', { top: vh - 80, bottom: vh - 24, height: 56, left: 310, right: 366, width: 56 }, 'position:fixed;bottom:24px;right:24px');
+    overlay = fixedAt(w, 'veil', { top: 0, bottom: vh, height: vh, left: 0, right: 390, width: 390 }, 'position:fixed;inset:0');
+    high = fixedAt(w, 'high', { top: vh - 200, bottom: vh - 150, height: 50, left: 0, right: 100, width: 100 }, 'position:fixed;bottom:150px;left:0');
+  } });
+  await styled(w, doc);
+  await new Promise((r) => setTimeout(r, 650));
+  assert.equal(S.position(), 'bottom');
+  /* jsdom cannot parse env() inside calc(), so read what the shell asks for from its source; the browser run checks the result */
+  assert.match(fab.style.bottom, /^calc\(/, 'lifted');
+  assert.match(SHELL, /el\.style\.bottom = 'calc\(' \+ off \+ 'px \+ 64px \+ env\(safe-area-inset-bottom, 0px\)\)'/, 'its own offset kept, plus the bar and the safe area');
+  assert.equal(fab.style.top, 'auto');
+  assert.ok(fab.hasAttribute('data-ace-lifted'));
+  assert.ok(!overlay.hasAttribute('data-ace-lifted') && overlay.style.top !== 'auto', 'a full-screen layer is left alone');
+  assert.equal(high.style.bottom, '150px', 'UI already above the bar is left alone');
+  /* desktop width: the bar is at the top, the button goes back */
+  state.narrow = false;
+  w.dispatchEvent(new w.Event('resize'));
+  assert.equal(S.position(), 'top');
+  assert.equal(fab.style.bottom, '24px');
+  assert.equal(fab.style.top, '');
+  assert.ok(!fab.hasAttribute('data-ace-lifted'));
+  /* phone again, then a timed section hides the bar: back where it was */
+  state.narrow = true;
+  w.dispatchEvent(new w.Event('resize'));
+  assert.ok(fab.hasAttribute('data-ace-lifted'));
+  w.localStorage.setItem('acelabs.timed', JSON.stringify({ until: Date.now() + 60000 }));
+  w.dispatchEvent(new w.Event('acelabs:timed'));
+  assert.equal(fab.style.bottom, '24px');
+  assert.equal(typeof S.relift, 'function');
+  const docCss = doc.getElementById('ace-shell-doc').textContent;
+  assert.match(docCss, /html\.ace-shell-on\.ace-shell-shown\[data-ace-shell-pos="bottom"\]\{--ace-shell-bottom:calc\(64px \+ env\(safe-area-inset-bottom,0px\)\)\}/, 'new work reads --ace-shell-bottom');
+});
+
+test('pages that keep the top bar are never touched', async () => {
+  let fab = null;
+  const { w, doc } = boot({ narrow: true, before(w) {
+    fab = fixedAt(w, 'fab', { top: w.innerHeight - 80, bottom: w.innerHeight - 24, height: 56, left: 310, right: 366, width: 56 }, 'position:fixed;bottom:24px;right:24px');
+  } });
+  await styled(w, doc);
+  await new Promise((r) => setTimeout(r, 650));
+  assert.equal(fab.style.bottom, '24px');
+  assert.ok(!fab.hasAttribute('data-ace-lifted'));
 });
 
 test('hidden while a timed section runs, and back when it ends', () => {
