@@ -381,7 +381,7 @@ const ENTRIES = [
       labels: ['normal', 'trisomy', 'triploidy', 'translocation', 'inversion', 'point-mutation'],
       focus: 'trisomy',
       reuse: 'new: bio.diagram chromosomes (side-by-side compare)',
-      alt: 'Six small chromosome pictures side by side: a normal pair, a trisomy with one whole extra copy, triploidy with a full extra set, a translocation, an inversion and a point mutation. Trisomy is outlined as the answer and noted as the largest group of early losses.',
+      alt: 'Six small chromosome pictures in a grid: a normal pair, a trisomy with one whole extra copy, triploidy with a full extra set, a translocation, an inversion and a point mutation. Trisomy is outlined as the answer and noted as the largest group of early losses.',
       caption: 'Compare how much each change throws off. A trisomy adds a whole chromosome\'s worth of genes.'
     },
     demoPick: 'Triploidy, from two sperm fertilizing one egg',
@@ -467,7 +467,7 @@ const ENTRIES = [
         { id: 'rubp', label: 'RuBP', sub: '5 carbons', col: 0, row: 1, w: 0.8 },
         { id: 'six', label: '6-carbon piece', sub: 'splits at once', col: 1, row: 1, w: 0.8 },
         { id: 'pga', label: '2 x 3-PGA', sub: '3 carbons each', col: 2, row: 1, key: true, w: 0.86, choice: 'Two molecules of the three carbon acid 3-PGA' },
-        { id: 'g3p', label: 'G3P', sub: 'some leave as sugar', col: 1, row: 2, kind: 'end', w: 0.8 }
+        { id: 'g3p', label: 'G3P', sub: 'some leave as sugar', col: 1, row: 2, w: 0.8 }
       ],
       edges: [
         { from: 'rubp', to: 'six', key: true },
@@ -533,7 +533,7 @@ const ENTRIES = [
       legend: [{ n: 1, label: 'Fixation by RuBisCO: needs no ATP, so it keeps running for a few seconds' }].concat(CALVIN_LEGEND.map((x) => Object.assign({}, x, { label: x.label + '; stopped in the dark' }))),
       swatches: [{ sw: '#9b4500', label: 'crossed, dashed arrows: steps that stop without ATP' }],
       reuse: 'new: the bio.diagram pathway layout',
-      alt: 'The Calvin cycle in the dark. RuBisCO still joins RuBP and CO2 into 3-PGA, which needs no ATP, but the arrows that need ATP and NADPH, 3-PGA to G3P and G3P back to RuBP, are crossed out. RuBP, marked falls, and 3-PGA, marked piles up, are outlined as the answer.',
+      alt: 'The Calvin cycle in the dark. RuBisCO still joins RuBP and CO2 into 3-PGA, which needs no ATP, but the two arrows that need ATP, 3-PGA to G3P (which also needs NADPH) and G3P back to RuBP, are crossed out. RuBP, marked falls, and 3-PGA, marked piles up, are outlined as the answer.',
       caption: 'Find the crossed-out arrows. The box before them piles up; the box they used to refill drains.'
     },
     demoPick: 'RuBP rises and 3-PGA falls',
@@ -670,7 +670,7 @@ const ENTRIES = [
         { id: 'dmg', label: 'DNA damage', sub: 'or other stress', col: 1, row: 2, kind: 'start', w: 0.86 },
         { id: 'mito', label: 'Mitochondrion', sub: 'releases cytochrome c', col: 1, row: 3, w: 0.86 },
         { id: 'c9', label: 'Caspase-9', sub: 'first caspase on', col: 1, row: 4, w: 0.86 },
-        { id: 'c3', label: 'Caspase-3, 6, 7', sub: 'executioners take the cell apart', col: 0, row: 5, span: 2, kind: 'end', w: 0.8 }
+        { id: 'c3', label: 'Caspase-3, 6, 7', sub: 'executioners take the cell apart', col: 0, row: 5, span: 2, w: 0.8 }
       ],
       edges: [
         { from: 'fasl', to: 'fas', key: true },
@@ -701,7 +701,7 @@ const ENTRIES = [
     keyText: 'Metaphase, held by balanced pull from microtubules reaching to each pole',
     answer: { line: 'One tight line in the middle, gripped from both sides, is metaphase. Equal pull from the two poles holds it there.' },
     steps: [
-      'Read the picture in the stem. One tight line across the middle is the metaphase plate.',
+      'Read the scene the stem describes. One tight line across the middle is the metaphase plate.',
       'Gripped from both sides means each chromosome\'s two kinetochores are hooked to microtubules from opposite poles.',
       'The two pulls come out even, so the line holds. The spindle checkpoint waits for exactly this before anaphase starts.'
     ],
@@ -865,10 +865,10 @@ const ENTRIES = [
       root: {
         label: 'Three germ layers', sub: 'laid down at gastrulation',
         children: [
-          { label: 'Ectoderm', sub: 'the outer layer', choice: 'Ectoderm',
+          { label: 'Ectoderm', sub: 'the outer layer', key: true, choice: 'Ectoderm',
             children: [
               { label: 'Surface ectoderm', sub: 'skin epidermis, cornea surface',
-                children: [{ label: 'Lens', sub: 'induced when the optic vesicle touches it', key: true }] },
+                children: [{ label: 'Lens', sub: 'induced when the optic vesicle touches it', key: true, tag: 'start here' }] },
               { label: 'Neural tube', sub: 'brain and retina; the optic vesicle grows from here' },
               { label: 'Neural crest', sub: 'cornea stroma, iris stroma, face cartilage', choice: 'Neural crest' }
             ] },
@@ -878,7 +878,7 @@ const ENTRIES = [
       },
       focus: 'lens',
       reuse: 'new: a pure bracket-tree renderer, here as a fate map',
-      alt: 'A fate map from the three germ layers. Ectoderm splits into surface ectoderm, neural tube and neural crest; the lens sits under surface ectoderm and is outlined as the answer, with the green path running back up to ectoderm. Mesoderm builds the eye muscles and vessels, and endoderm the gut lining.',
+      alt: 'A fate map from the three germ layers. Ectoderm, outlined as the answer, splits into surface ectoderm, neural tube and neural crest; the lens sits under surface ectoderm, and a green path runs from it back up to ectoderm. Mesoderm builds the eye muscles and vessels, and endoderm the gut lining.',
       caption: 'Follow the green path up from the lens. It never passes through the crest, mesoderm or endoderm.'
     },
     demoPick: 'Neural crest',
@@ -896,7 +896,7 @@ const ENTRIES = [
     difficulty: D(1),
     source: FM('written:bio-3-dh8m7c', 8),
     keyText: 'ATP',
-    answer: { line: 'cAMP is AMP closed into a ring, cut straight out of ATP. Adenylyl means adenine, so the enzyme starts from ATP.' },
+    answer: { line: 'cAMP is AMP closed into a ring, cut straight out of ATP. Adenylyl points to adenine, so the enzyme starts from ATP.' },
     steps: [
       'Read the name. Adenylyl points to adenine, and cAMP is cyclic adenosine monophosphate.',
       'The enzyme takes ATP, pops off two phosphates as pyrophosphate, and closes the ring: cAMP.',
@@ -922,7 +922,7 @@ const ENTRIES = [
       heads: [{ col: 0, label: 'Starting material' }, { col: 1, label: 'What it becomes, and how' }],
       nodes: [
         { id: 'atp', label: 'ATP', col: 0, row: 0, key: true, w: 0.8, choice: 'ATP' },
-        { id: 'camp', label: 'cAMP', sub: 'by adenylyl cyclase', col: 1, row: 0, kind: 'end', w: 0.8 },
+        { id: 'camp', label: 'cAMP', sub: 'by adenylyl cyclase', col: 1, row: 0, w: 0.8 },
         { id: 'gtp', label: 'GTP', col: 0, row: 1, w: 0.8, choice: 'GTP' },
         { id: 'cgmp', label: 'cGMP', sub: 'by guanylyl cyclase', col: 1, row: 1, w: 0.8 },
         { id: 'pip2', label: 'PIP2', sub: 'a membrane lipid', col: 0, row: 2, w: 0.8, choice: 'PIP2' },
@@ -1122,7 +1122,7 @@ const ENTRIES = [
       'Once every carrier is busy, more glucose outside cannot speed anything up. Simple diffusion would keep climbing in a straight line.'
     ],
     choices: [
-      { text: 'Glucose is entering by simple diffusion straight through the lipid bilayer', role: 'trap', family: 'reversed', trap: 'The no-ceiling route', note: 'Simple diffusion climbs in a straight line with concentration and never levels off. The plateau points the other way: to proteins.' },
+      { text: 'Glucose is entering by simple diffusion straight through the lipid bilayer', role: 'trap', family: 'read-backward', trap: 'The no-ceiling route', note: 'Simple diffusion climbs in a straight line with concentration and never levels off. The plateau points the other way: to proteins.' },
       { text: 'The cell has begun pumping glucose back out at an equal rate', role: 'trap', family: 'neighbor-fact', trap: 'Invented an outflow', note: 'Nothing in the data shows glucose leaving. An outflow equal to the inflow would bring net uptake to zero, not hold it at a maximum.' },
       { text: 'Glucose crossing has switched over to active transport', role: 'trap', family: 'neighbor-fact', trap: 'Saw a mode change', note: 'Active carriers saturate too, so a plateau does not show a change of mode. Glucose entering down its gradient needs no energy.' },
       { text: 'The membrane became impermeable to glucose at high concentration', role: 'trap', family: 'neighbor-fact', trap: 'Shut the door', note: 'Membranes do not switch off at high concentration. Uptake holds at its maximum; it does not drop to zero.' },

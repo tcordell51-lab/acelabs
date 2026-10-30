@@ -76,7 +76,7 @@ function selection(s, W) {
     } else out += t(px + pw / 2, base + 15, s.x, { size: 12, anchor: 'middle', fill: C.mute });
   });
   const H = Math.max(...boxes.map((b) => b.y + b.h)) + 4;
-  return { svg: out, H, swatches: [{ sw: '#6b7a73', dash: true, label: s.beforeLabel || 'dashed: before selection' }, { sw: C.key, label: s.afterLabel || 'solid: after selection' }] };
+  return { svg: out, H, swatches: [{ sw: '#6b7a73', dash: true, label: s.beforeLabel || 'dashed: before selection' }, { sw: C.ink2, label: s.afterLabel || 'solid: after selection' }] };
 }
 
 /* --------------------------------------------------------------- levels */

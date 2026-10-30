@@ -62,7 +62,7 @@ const ENTRIES = [
       gridTitle: '100 alleles from the gene pool',
       focus: 'q',
       reuse: 'Pure port of the Hardy-Weinberg visualizer state (initHardyWeinberg / updateHW in tools/bio/bio-shared.js, inputs hwP and hwQ2)',
-      alt: 'Left: a 10 by 10 grid of 100 alleles with one recessive allele shaded, so q is 1 in 100. Right: a ladder from q squared = 0.0001, 1 person in 10,000, through a square root to q = 0.01, the answer, then on to p = 0.99.',
+      alt: 'First: a 10 by 10 grid of 100 alleles with one recessive allele shaded, so q is 1 in 100. Then: a ladder from q squared = 0.0001, 1 person in 10,000, through a square root to q = 0.01, the answer, then on to p = 0.99.',
       caption: 'Find the one shaded allele. Two of them have to meet to make one affected person.'
     },
     demoPick: '0.0001',
