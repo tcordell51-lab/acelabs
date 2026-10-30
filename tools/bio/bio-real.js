@@ -506,7 +506,7 @@
      bare zone beside the M line (thick filament without heads), and the
      I band (actin only) lightest. Once the thin filaments reach the M
      line (full contraction) the H zone is gone, but the M line stays a
-     thin line a little darker than the overlap around it.
+     thin line darker than the overlap around it.
      Fine lines are the filaments: thick ones 45 nm apart, thin ones
      running into the zigzag Z disc. Each
      myofibril row is drawn once and placed twice; the lower one is
@@ -534,8 +534,9 @@
     function base(s) {                       // s: distance from the nearest Z disc (0 to L)
       var actin = s <= aLen, myosin = s >= iH, d = L - s;
       // M line: dark in the pale H zone; once the thin filaments reach it, a
-      // thin line (8 px) a little darker than the overlap, never paler
-      if (myosin && d < 6) return actin ? (d < 4 ? 0.97 : 0.92) : 0.82;
+      // thin line (8 px) darker than the overlap, never paler (#0f0f0f in
+      // the #292929 overlap)
+      if (myosin && d < 6) return actin ? (d < 4 ? 1.05 : 0.92) : 0.82;
       if (actin && myosin) return 0.92;      // overlap
       if (myosin && d < 16) return 0.48;     // bare zone
       if (myosin) return 0.58;               // H zone
@@ -645,7 +646,7 @@
       '<text x="' + mx + '" y="242" font-size="20" fill="#3a4a42">mitochondria</text></g>';
     // labels over the strip
     out += '<path d="M500,18L514,99" stroke="#fbf6e9" stroke-width="1.6"/>';
-    // with the H zone gone the M line is only a little darker than the overlap
+    // with the H zone gone the M line is a thin line, not much darker than the overlap
     // around it, so a short dashed leader points it out, as #sf-Mlead does in
     // the model
     if (hR - hL <= 6) out += '<path id="rl-tMlead" d="M' + M + ',24V44" stroke="#fbf6e9" stroke-width="1.6" stroke-dasharray="3 3"/>';

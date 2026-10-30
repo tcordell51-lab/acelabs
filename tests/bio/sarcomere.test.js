@@ -102,6 +102,7 @@ test('TEM band edges sit under the filaments to the unit (each cell sampled at i
 });
 
 test('TEM M line: dark in the H zone, and still a thin darker line at full contraction with a leader', () => {
+  // #0f0f0f in the #292929 overlap: a contrast ratio of about 1.3
   const t = boot('bio-physiology.html');
   const d = t.w.document;
   for (const st of Object.keys(STATES)) {
@@ -109,7 +110,7 @@ test('TEM M line: dark in the H zone, and still a thin darker line at full contr
     const tem = d.getElementById('sfTem');
     const runs = temRuns(tem);
     if (st === 'contracted') {
-      const dark = runs.filter((r) => r.c === '#1f1f1f');
+      const dark = runs.filter((r) => r.c === '#0f0f0f');
       assert.deepEqual(dark.map((r) => [r.x0, r.x1]), [[356, 364]], 'an 8 px M line centered on 360');
       assert.equal(grayAt(runs, 354), '#292929', 'overlap gray beside it');
       assert.equal(grayAt(runs, 364), '#292929', 'overlap gray beside it');
@@ -117,7 +118,7 @@ test('TEM M line: dark in the H zone, and still a thin darker line at full contr
       assert.equal(tem.querySelector('#rl-tMlead').getAttribute('d'), 'M360,24V44');
     } else {
       assert.equal(grayAt(runs, 359), '#3d3d3d', st + ': M line darker than the H zone');
-      assert.ok(!runs.some((r) => r.c === '#1f1f1f'), st + ': no overlap M line yet');
+      assert.ok(!runs.some((r) => r.c === '#0f0f0f'), st + ': no overlap M line yet');
       assert.equal(tem.querySelector('#rl-tMlead'), null, st + ': no leader while the H zone shows');
     }
   }
@@ -161,16 +162,28 @@ test('sarcomere stick: nothing under the veil names the band that holds', () => 
   assert.equal(start, d.getElementById('sfReadout').innerHTML.trim(), 'starting #sfReadout = relaxed readout');
   // after the answer, the frames do say it
   const p = predict(t, 'sarcomere', t.panel('sarcomere').entry.predict.key);
-  assert.match(d.getElementById('sfReadout').textContent, /A band still 1\.6 um/);
+  const ro = d.getElementById('sfReadout').textContent;
+  assert.match(ro, /A band still 1\.6 um/);
   assert.ok(p.frames.every((f) => f.html.length <= 32000), 'every frame fits on a card');
+  // the last frame's readout stays under the veil in the check (which
+  // filament gets shorter?): it leads with what changed, and the rigor aside
+  // (a different state from full contraction) is gone
+  assert.match(ro, /^Fully contracted\. Z to Z 2\.0 um\. I band down to 0\.4 um\..*H zone is gone\. A band still 1\.6 um\.$/);
+  assert.doesNotMatch(ro, /rigor|ATP|let go/i);
 });
 
 test('cross-bridge stick: the veiled scrubber does not say what happens without ATP', () => {
   const t = boot('bio-physiology.html');
+  const d = t.w.document;
   assert.ok(t.panel('cross-bridge').node.classList.contains('is-fresh'));
-  const body = t.w.document.getElementById('crossBridgeBody');
+  const body = d.getElementById('crossBridgeBody');
   assert.ok(body.classList.contains('stick-veiled'));
+  // it opens on Stage 3, which says nothing about what releases the head
+  assert.equal(d.getElementById('cbStage').value, '50');
+  assert.match(d.getElementById('cbStageName').textContent, /^Stage 3: Cross-bridge forms$/);
+  assert.match(d.getElementById('cbExplain').textContent, /^Stage 3: /);
   assert.doesNotMatch(body.textContent, /rigor|stuck|locked|no ATP|without (a new )?ATP|runs out/i);
+  assert.doesNotMatch(body.textContent, /lets? go|let go|releases?|detach/i);
   const p = predict(t, 'cross-bridge', 0);
   assert.equal(p.frames.length, 5);
   assert.equal(Array.from(p.frames, (f) => f.caption.slice(0, 7)).join('|'), 'Stage 1|Stage 2|Stage 3|Stage 4|Stage 5');
@@ -209,40 +222,92 @@ test('cross-bridge heads: clear of actin until they bind, 90 to 45 degrees in th
   const t = boot('bio-physiology.html');
   const d = t.w.document;
   const slide = (v) => { const s = d.getElementById('cbStage'); s.value = String(v); s.dispatchEvent(new t.w.Event('input', { bubbles: true })); };
-  const ACTIN_EDGE = 110 + 3.5;   // lower edge of the upper thin filament
+  const svg = () => d.getElementById('cbSvg');
+  // the near edge of the upper thin filament, read from the drawing
+  function actinEdge() {
+    const thin = [...svg().querySelectorAll('path')].find((p) => p.getAttribute('stroke') === '#c19a3e' && !p.closest('g[opacity]'));
+    const ys = [...thin.getAttribute('d').matchAll(/M-?[\d.]+,(-?[\d.]+)/g)].map((m) => +m[1]);
+    return Math.min(...ys) + 3.5;
+  }
+  // each head: an S2 tether (stroke 1.5) from the thick filament surface to
+  // the lever start, a lever (stroke 3.5) to the center of the motor domain,
+  // and the motor domain ellipse, drawn along the lever
   function heads() {
-    const svg = d.getElementById('cbSvg');
-    return [...svg.querySelectorAll('path')].filter((p) => p.getAttribute('stroke') === '#8a3520').map((p, i) => {
-      const m = p.getAttribute('d').match(/M(-?[\d.]+),(-?[\d.]+)L(-?[\d.]+),(-?[\d.]+)/).slice(1).map(Number);
-      const [bx, by, cx, cy] = m, len = Math.hypot(cx - bx, cy - by);
-      const tip = [cx + 12 * (cx - bx) / len, cy + 12 * (cy - by) / len];
+    const el = svg();
+    const line = (p) => p.getAttribute('d').match(/M(-?[\d.]+),(-?[\d.]+)L(-?[\d.]+),(-?[\d.]+)/).slice(1).map(Number);
+    const tethers = [...el.querySelectorAll('path')].filter((p) => p.getAttribute('stroke') === '#8a3520' && p.getAttribute('stroke-width') === '1.5').map(line);
+    const levers = [...el.querySelectorAll('path')].filter((p) => p.getAttribute('stroke') === '#8a3520' && p.getAttribute('stroke-width') === '3.5').map(line);
+    const ells = [...el.querySelectorAll('ellipse')];
+    assert.equal(tethers.length, 8, 'eight heads: two per row in each half');
+    assert.equal(levers.length, 8);
+    assert.equal(ells.length, 8);
+    return tethers.map(([bx, by, lx, ly], i) => {
+      const e = ells[i], rx = +e.getAttribute('rx'), cx = +e.getAttribute('cx'), cy = +e.getAttribute('cy');
+      const rot = +e.getAttribute('transform').match(/rotate\((-?[\d.]+)/)[1] * Math.PI / 180;
+      const tip = [cx + rx * Math.cos(rot), cy + rx * Math.sin(rot)];
+      const [l0x, l0y, l1x, l1y] = levers[i];
       const tM = bx < 400 ? 1 : -1;
-      const ang = Math.atan2(Math.abs(cy - by), (cx - bx) * tM) * 180 / Math.PI;   // from the filament axis, toward the M line
-      const fill = svg.querySelectorAll('ellipse')[i].getAttribute('fill');
-      return { bx, by, cx, cy, tip, ang, up: cy < by, fill };
+      const ang = Math.atan2(Math.abs(tip[1] - ly), (tip[0] - lx) * tM) * 180 / Math.PI;   // from the filament axis, toward the M line
+      return {
+        bx, by, lx, ly, tip, ang, up: cy < by, fill: e.getAttribute('fill'),
+        tether: Math.hypot(lx - bx, ly - by), unit: Math.hypot(tip[0] - lx, tip[1] - ly),
+        leverJoins: Math.hypot(l0x - lx, l0y - ly) < 0.11 && Math.hypot(l1x - cx, l1y - cy) < 0.11,
+        leverAlong: Math.abs(Math.atan2(l1y - l0y, l1x - l0x) - rot) < 0.01
+      };
     });
   }
-  const zLeft = () => +d.getElementById('cbSvg').querySelector('line[stroke-width="4"]').getAttribute('x1');
+  const zLeft = () => +svg().querySelector('line[stroke-width="4"]').getAttribute('x1');
   for (const v of [0, 19, 20, 39]) {
     slide(v);
-    heads().filter((h) => h.up).forEach((h) => assert.ok(h.tip[1] - ACTIN_EDGE >= 8, v + ': detached head clear of actin, gap ' + (h.tip[1] - ACTIN_EDGE)));
+    const edge = actinEdge();
+    heads().filter((h) => h.up).forEach((h) => assert.ok(h.tip[1] - edge >= 8, v + ': detached head clear of actin, gap ' + (h.tip[1] - edge)));
   }
   for (const v of [40, 59, 60, 79, 80, 100]) {
     slide(v);
-    heads().filter((h) => h.up).forEach((h) => assert.ok(h.tip[1] - ACTIN_EDGE <= 1, v + ': head on actin'));
+    const edge = actinEdge();
+    heads().filter((h) => h.up).forEach((h) => assert.ok(h.tip[1] - edge <= 1 && h.tip[1] - edge >= -1, v + ': head on actin'));
   }
+  // one rigid unit 30 long in every state: only the S2 tether changes length,
+  // and the tether never starts inside the thick filament or runs back into it
+  const tethers = {};
+  for (let v = 0; v <= 100; v++) {
+    slide(v);
+    heads().forEach((h) => {
+      assert.ok(Math.abs(h.unit - 30) < 0.15, v + ': lever and head 30 long, ' + h.unit);
+      assert.ok(h.leverJoins && h.leverAlong, v + ': lever runs from the tether to the head, along the head');
+      assert.ok(Math.abs(Math.abs(h.by - 154) - 8) < 1e-9, v + ': tether starts on the thick filament surface');
+      assert.ok(Math.abs(h.ly - 154) >= 8 + 1.9, v + ': lever starts outside the thick filament');
+    });
+    tethers[v] = heads()[0].tether;
+  }
+  assert.ok(tethers[50] > 12 && tethers[50] < 14, 'Stage 3 tether about 13, ' + tethers[50]);
+  assert.ok(tethers[90] > 22 && tethers[90] < 25, 'after the stroke tether about 24, ' + tethers[90]);
   slide(50);
   heads().forEach((h) => assert.ok(h.ang > 85 && h.ang < 100, 'bound and cocked: about 90 degrees, ' + h.ang));
+  slide(30);
+  heads().forEach((h) => assert.ok(h.ang > 85 && h.ang < 100, 'cocked, not bound: about 90 degrees, ' + h.ang));
+  slide(10);
+  heads().forEach((h) => assert.ok(h.ang > 42 && h.ang < 52, 'just let go: still at the post-stroke angle, ' + h.ang));
   slide(90);
   heads().forEach((h) => assert.ok(h.ang > 42 && h.ang < 52, 'after the stroke: about 45 degrees, ' + h.ang));
+  // through the stroke the unit tilts steadily from 90 toward 45
+  let last = 91;
+  for (let v = 60; v <= 80; v++) {
+    slide(v);
+    const a = heads()[0].ang;
+    assert.ok(a <= last + 1e-6, v + ': angle never swings back, ' + a);
+    last = a;
+  }
   // in the stroke the end of each bound head moves with its thin filament
-  // (same offset from the Z disc, to drawing precision)
+  // (same offset from the Z disc, to drawing precision), and it sits on a
+  // binding site (the sites are every 20 units from the Z disc)
   const off = [];
-  for (const v of [60, 66, 72, 79, 80, 95]) {
+  for (const v of [50, 60, 66, 72, 79, 80, 95]) {
     slide(v);
     off.push(heads().filter((h) => h.bx < 400).map((h) => Math.round(h.tip[0] - zLeft())).join(','));
   }
   assert.equal(new Set(off).size, 1, 'head to Z disc offsets ' + off.join(' | '));
+  off[0].split(',').map(Number).forEach((o) => assert.equal(o % 20, 0, 'head on a binding site, ' + o + ' from the Z disc'));
   // stage text, head color and drawing agree at every boundary
   const want = [[0, 1], [19, 1], [20, 2], [39, 2], [40, 3], [59, 3], [60, 4], [79, 4], [80, 5], [100, 5]];
   const colors = { 1: '#b3aca0', 2: '#8a5a8c', 3: '#3f8a55', 4: '#3f8a55', 5: '#1B3A2D' };
@@ -266,7 +331,10 @@ test('cross-bridge readouts in um, consistent with the drawing', () => {
   assert.deepEqual(read(), ['2.25 um', '0.65 um', '1.6 um', '0.25 um']);
   slide(90);
   assert.deepEqual(read(), ['2.1 um', '0.5 um', '1.6 um', '0.1 um']);
-  assert.equal(d.getElementById('cbSarcDelta').textContent, 'shorter by 0.3 um');
+  // one real stroke is 5 to 10 nm, so one pass of the slider stands for many
+  // cycles, and the readout and the subtitle say so
+  assert.equal(d.getElementById('cbSarcDelta').textContent, 'shorter by 0.3 um (many cycles)');
+  assert.match(d.getElementById('crossBridgeBody').textContent, /5 to 10 nm, so one pass of this slider stands for many cycles/);
   for (let v = 0; v <= 100; v++) {
     slide(v);
     const [s, i, a, h] = read().map(parseFloat);

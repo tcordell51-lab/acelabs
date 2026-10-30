@@ -4266,7 +4266,10 @@ function initSlidingFilament() {
     // answers, so it gives the lengths without saying which band holds
     relaxed: (s) => `<b>Relaxed.</b> Z to Z ${um(s.zR - s.zL)}. A band ${um(MW)}, the length of one thick filament. I band ${um(s.iBand)}, with the Z disc in its middle. H zone ${um(s.h)}. Tap Contracting, then Fully contracted, and see which of these lengths change.`,
     contracting: (s) => `<b>Contracting.</b> Z to Z ${um(s.zR - s.zL)}. Cross-bridges pull the thin filaments toward the M line. <b>A band holds at ${um(MW)}.</b> <b>I band shrinks</b> to ${um(s.iBand)} and the <b>H zone shrinks</b> to ${um(s.h)}. Neither filament shortens (thick ${um(MW)}, thin ${um(THIN)}); they slide.`,
-    contracted: (s) => `<b>Fully contracted.</b> Z to Z ${um(s.zR - s.zL)}. <b>A band still ${um(MW)}.</b> <b>I band down to ${um(s.iBand)}.</b> The thin filaments meet at the M line, so the <b>H zone is gone</b>. Rigor mortis = no ATP, so myosin cannot let go of actin.`,
+    // the last stick frame: this text stays under the veil during the closed
+    // book check (which filament gets shorter?), so it leads with what
+    // changed and does not restate that the thick filament keeps its length
+    contracted: (s) => `<b>Fully contracted.</b> Z to Z ${um(s.zR - s.zL)}. <b>I band down to ${um(s.iBand)}.</b> The thin filaments meet at the M line, so the <b>H zone is gone</b>. <b>A band still ${um(MW)}.</b>`,
   };
   const states = {};
   [["relaxed", 120], ["contracting", 140], ["contracted", 160]].forEach(([name, zL]) => {
@@ -13642,7 +13645,7 @@ const CROSS_BRIDGE_HTML = `
 <div style="background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px;padding:18px">
   <div style="text-align:center;margin-bottom:10px">
     <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#1B3A2D">One Cross-Bridge Cycle</div>
-    <div style="font-size:12px;color:#1B3A2D;margin-top:4px;font-style:italic">Drag through the 5 stages. The sarcomere shrinks; the A band does not. One real stroke slides actin only about 5 to 10 nm, so the slide here is drawn larger to be seen.</div>
+    <div style="font-size:12px;color:#1B3A2D;margin-top:4px;font-style:italic">Drag through the 5 stages. The sarcomere shrinks; the A band does not. One real stroke slides actin only about 5 to 10 nm, so one pass of this slider stands for many cycles.</div>
   </div>
 
   <!-- Slider -->
@@ -13654,7 +13657,7 @@ const CROSS_BRIDGE_HTML = `
       <span style="flex:1">4. Power stroke</span>
       <span style="flex:1">5. Reset</span>
     </div>
-    <input id="cbStage" type="range" min="0" max="100" step="1" value="0" aria-label="Cross-bridge cycle stage" style="display:block;width:100%;height:44px;margin:0;accent-color:#C25B3F">
+    <input id="cbStage" type="range" min="0" max="100" step="1" value="50" aria-label="Cross-bridge cycle stage" style="display:block;width:100%;height:44px;margin:0;accent-color:#C25B3F">
     <div style="text-align:center;margin-top:2px;font-family:'JetBrains Mono',monospace;font-size:13px;color:#1B3A2D">
       <span id="cbStageName" style="font-weight:700;color:#C25B3F"></span>
     </div>
@@ -13710,9 +13713,11 @@ const CROSS_BRIDGE_HTML = `
 `;
 
 // One entry per fifth of the slider (0-19, 20-39, 40-59, 60-79, 80-100).
-// color: the stage title and the myosin heads in that stage. The Stage 1 text
-// stays under the "Call it first" veil before the student answers, so it says
-// what ATP binding does without saying what happens when ATP runs out.
+// color: the stage title and the myosin heads in that stage. The scrubber
+// opens on Stage 3 (slider value 50), and that is the text under the "Call it
+// first" veil before the student answers: Stage 3 says nothing about what
+// releases the head from actin, which is what the prediction asks. The stick
+// frames start at Stage 1, right after the prediction.
 const CB_STAGES = [
   { name: 'Stage 1: ATP binds, myosin lets go of actin', title: 'Stage 1: ATP binds.', color: '#6b6459', head: '#b3aca0',
     atp: 'ATP bound', ca: 'bound to troponin', bridge: 'detached',
@@ -13740,25 +13745,35 @@ function initCrossBridgeCycle() {
   // Z to Z is 2.4 um (Z discs at 160 and 640); the thick filament is 1.6 um
   // (240 to 560, M line at 400) and never moves; each thin filament is 1.0 um.
   const PX = 200, MID = 400, mLeft = 240, mRight = 560, aBand = mRight - mLeft, THIN = 200;
-  const ROD = 154, ACT = 44;   // thick filament center line; thin filaments 44 above and below it
+  const ROD = 154, ACT = 54;   // thick filament center line; thin filaments 54 above and below it
   const f = (n) => String(Math.round(n * 10) / 10);
   // every length here is an even number of units, so two decimals are exact
   const um = (px) => (px % 20 === 0 ? (px / PX).toFixed(1) : (px / PX).toFixed(2)) + ' um';
   const stageOf = (pct) => CB_STAGES[Math.min(4, Math.floor(pct / 20))];
 
-  // A myosin head: a lever from the thick filament surface (base x bx) to the
-  // head, an ellipse 24 long drawn along the lever. vs: -1 reaches up to the
-  // upper thin filament, +1 down to the lower one. tM: +1 when the M line is
-  // to the right (left half), -1 in the right half. (tx, ty): where the far
-  // end of the head sits, tx toward the M line and ty out from the surface.
-  // The thin filament's near edge is ACT - 8 - 3.5 = 32.5 out, so a head
-  // with ty 33 touches it and one with ty 24 is clear of it.
-  function head(bx, vs, tM, tx, ty, fill) {
-    const y0 = ROD + vs * 8, k = 1 - 12 / Math.hypot(tx, ty);
-    const cx = bx + tM * tx * k, cy = y0 + vs * ty * k;
-    const ang = Math.atan2(cy - y0, cx - bx) * 180 / Math.PI;
-    return `<path d="M${bx},${y0}L${f(cx)},${f(cy)}" stroke="#8a3520" stroke-width="3" stroke-linecap="round"/>` +
-      `<ellipse cx="${f(cx)}" cy="${f(cy)}" rx="12" ry="7" transform="rotate(${f(ang)} ${f(cx)} ${f(cy)})" fill="${fill}" stroke="#1B3A2D" stroke-width="1.2"/>`;
+  // A myosin head, built as in the muscle: a thin S2 tether runs from the
+  // thick filament surface (base x bx) to the lever, and the lever and the
+  // motor domain are one rigid unit, UNIT long, that tilts as a whole. The
+  // motor domain is the ellipse at the far end, 2 * HR long; the thick
+  // stroke from the tether to its center is the lever. Only the tether
+  // changes length. vs: -1 reaches up to the upper thin filament, +1 down to
+  // the lower one. tM: +1 when the M line is to the right (left half), -1 in
+  // the right half. (nx, ny): where the lever starts, nx toward the M line
+  // and ny out from the surface. deg: the unit's angle from the filament
+  // axis, measured toward the M line (90 is straight out).
+  const UNIT = 30, HR = 11;
+  // the thin filament's near edge is ACT - 8 - 3.5 = 42.5 out from the thick
+  // filament surface, so a head end at REACH sits on it
+  const REACH = ACT - 8 - 3;
+  function head(bx, vs, tM, nx, ny, deg, fill) {
+    const y0 = ROD + vs * 8, a = deg * Math.PI / 180;
+    const ux = tM * Math.cos(a), uy = vs * Math.sin(a);   // along the unit, lever to head end
+    const lx = bx + tM * nx, ly = y0 + vs * ny;           // lever start, the end of the tether
+    const cx = lx + (UNIT - HR) * ux, cy = ly + (UNIT - HR) * uy;
+    const rot = Math.atan2(uy, ux) * 180 / Math.PI;
+    return `<path d="M${bx},${y0}L${f(lx)},${f(ly)}" stroke="#8a3520" stroke-width="1.5"/>` +
+      `<path d="M${f(lx)},${f(ly)}L${f(cx)},${f(cy)}" stroke="#8a3520" stroke-width="3.5" stroke-linecap="round"/>` +
+      `<ellipse cx="${f(cx)}" cy="${f(cy)}" rx="${HR}" ry="7" transform="rotate(${f(rot)} ${f(cx)} ${f(cy)})" fill="${fill}" stroke="#1B3A2D" stroke-width="1.2"/>`;
   }
 
   function render(stagePct) {
@@ -13783,12 +13798,13 @@ function initCrossBridgeCycle() {
       `<rect x="${mLeft + sarcLen}" y="${ROD - 8}" width="${aBand}" height="16" rx="6" fill="#c25b3f" stroke="#1B3A2D" stroke-width="1.5"/></g>`;
 
     // this sarcomere's thin filaments (actin), anchored at the Z discs; the dots
-    // are binding sites and ride along as the filaments slide; a dark cap marks
-    // each free end
+    // are binding sites, every 20 units from the Z disc, and ride along as the
+    // filaments slide (a bound head sits on the site 120 or 180 out); a dark
+    // cap marks each free end
     s += `<path stroke="#c19a3e" stroke-width="7" d="M${zL},${yU}H${zL + THIN}M${zL},${yD}H${zL + THIN}M${zR},${yU}H${zR - THIN}M${zR},${yD}H${zR - THIN}"/>`;
     let dots = '';
-    for (let i = 0; i < 8; i++) {
-      const a = zL + 12 + i * 25, b = zR - 12 - i * 25;
+    for (let i = 1; i < 10; i++) {
+      const a = zL + i * 20, b = zR - i * 20;
       dots += `M${a},${yU}h0M${a},${yD}h0M${b},${yU}h0M${b},${yD}h0`;
     }
     s += `<path d="${dots}" stroke="#5b4a1c" stroke-width="4" stroke-linecap="round" opacity="0.7"/>`;
@@ -13798,18 +13814,24 @@ function initCrossBridgeCycle() {
     s += `<rect x="${mLeft}" y="${ROD - 8}" width="${aBand}" height="16" rx="6" fill="#c25b3f" stroke="#1B3A2D" stroke-width="1.5"/>`;
     s += `<path d="M${MID},${ROD - 28}V${ROD + 28}" stroke="#1B3A2D" stroke-width="2"/>`;
 
-    // Myosin heads, two per row in each half, none in the bare zone at the
-    // M line. Stage 1: just let go, still at the post-stroke angle, clear of
-    // actin. Stage 2: cocked back to 90 degrees, still clear. Stage 3: bound
-    // at 90 degrees. Stage 4: bound, the head end rides with its thin
-    // filament toward the M line (tx = shrink), so the lever swings from 90
-    // to about 48 degrees (atan of 33 / 30). Stage 5: holds there, bound.
-    let tx, ty;
-    if (k === 0) { tx = 22; ty = 24; }
-    else if (k === 1) { tx = 0; ty = 24; }
-    else { tx = shrink; ty = 33; }
+    // Myosin heads, two per row in each half (bases 40 and 100 in from each
+    // end of the thick filament), none in the bare zone at the M line.
+    // Stages 1 and 2: detached, the S2 tether only 2 long, so the head end
+    // stays more than 8 clear of actin; Stage 1 still at the post-stroke
+    // 45 degrees, Stage 2 cocked back to 90. Stages 3 to 5: the head end sits
+    // on a binding site (REACH out, shrink toward the M line, so it rides
+    // with its thin filament) while the unit swings from 90 degrees in
+    // Stage 3 to 45 at the end of the power stroke, and holds there in
+    // Stage 5; the tether grows from 13 to about 24 to take up the change.
+    let nx, ny, deg;
+    if (k < 2) { nx = 0; ny = 2; deg = k === 0 ? 45 : 90; }
+    else {
+      deg = 90 - 45 * shrink / 30;
+      const a = deg * Math.PI / 180;
+      nx = shrink - UNIT * Math.cos(a); ny = REACH - UNIT * Math.sin(a);
+    }
     [[mLeft + 40, 1], [mLeft + 100, 1], [mRight - 40, -1], [mRight - 100, -1]].forEach(([bx, tM]) => {
-      s += head(bx, -1, tM, tx, ty, stage.head) + head(bx, 1, tM, tx, ty, stage.head);
+      s += head(bx, -1, tM, nx, ny, deg, stage.head) + head(bx, 1, tM, nx, ny, deg, stage.head);
     });
 
     // Z discs (the two stroke-width 4 lines)
@@ -13837,7 +13859,9 @@ function initCrossBridgeCycle() {
 
     // live measurements
     document.getElementById('cbSarcLen').textContent = um(sarcLen);
-    document.getElementById('cbSarcDelta').textContent = sarcLen < 480 ? 'shorter by ' + um(480 - sarcLen) : 'rest length';
+    // one real stroke is 5 to 10 nm, so the slide drawn here stands for many
+    // cycles; the qualifier wraps as a whole onto its own line on a phone
+    document.getElementById('cbSarcDelta').innerHTML = sarcLen < 480 ? 'shorter by ' + um(480 - sarcLen) + ' <span style="white-space:nowrap">(many cycles)</span>' : 'rest length';
     document.getElementById('cbIBand').textContent = um(iBandWidth);
     document.getElementById('cbABand').textContent = um(aBand);
     document.getElementById('cbHZone').textContent = um(hZone);
@@ -13852,8 +13876,9 @@ function initCrossBridgeCycle() {
     br.style.color = stage.color;
   }
 
-  document.getElementById('cbStage').addEventListener('input', e => render(+e.target.value));
-  render(0);
+  const slider = document.getElementById('cbStage');
+  slider.addEventListener('input', e => render(+e.target.value));
+  render(+slider.value);   // opens on Stage 3 (value 50, set in CROSS_BRIDGE_HTML)
 }
 
 /* ---- PROBABILITY TREE CALCULATOR (AND/OR rules) ---- */
