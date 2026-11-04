@@ -9,7 +9,9 @@
      - smallest rendered text is at least 11px at 390px
    Also smoke-tests the QR engine's four DAT-format modules at 390px.
    Screenshots go to test-screenshots/qr-figures/ (gitignored).
-   Run: npm run test:qr-figures */
+   Run: npm run test:qr-figures
+   Chromium: env PW_CHROMIUM, else /opt/pw-browsers/chromium when present, else Playwright's own;
+   --no-sandbox when running as root. */
 import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -33,7 +35,9 @@ await new Promise((r) => server.listen(0, r));
 const base = 'http://localhost:' + server.address().port;
 
 const problems = [];
-const browser = await chromium.launch();
+const exe = [process.env.PW_CHROMIUM, '/opt/pw-browsers/chromium'].filter(Boolean).find((f) => { try { return fs.statSync(f).isFile(); } catch { return false; } });
+const asRoot = typeof process.getuid === 'function' && process.getuid() === 0;
+const browser = await chromium.launch({ ...(exe ? { executablePath: exe } : {}), args: asRoot ? ['--no-sandbox'] : [] });
 try {
   for (const width of [1280, 390]) {
     for (const theme of ['light', 'dark']) {

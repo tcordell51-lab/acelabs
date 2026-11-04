@@ -828,8 +828,8 @@
 
 <script src="/shared/ace-index.js?v=3"></script>
 <script src="/shared/ace-route.js?v=2"></script>
-<script src="/shared/ace-progress.js?v=5"></script>
-<script src="/shared/scope.js?v=2"></script>
+<script src="/shared/ace-progress.js?v=6"></script>
+<script src="/shared/scope.js?v=3"></script>
 <script>
 (function () {
   'use strict';
@@ -973,7 +973,8 @@
   $('nextGo').textContent = 'Open ' + lowerFirst(nt.title);
 
   /* ---------- Repair queue: counts and the top three open misses ---------- */
-  var ms = P.misses(), due = ms.filter(function (m) { return m.isDue; });
+  /* one due rule with Review and the dot (AceProgress.dueState): an undated miss is due on its next day, Open after */
+  var ms = P.misses(), due = ms.filter(function (m) { return P.dueState ? P.dueState(m) === 'due' : m.isDue; });
   $('h-fix').textContent = ms.length ? (due.length ? due.length + ' due today, ' : '') + ms.length + ' open' : 'Nothing open';
   $('revTag').textContent = ms.length ? ms.length + ' open' + (due.length ? ', ' + due.length + ' due' : '') : 'Nothing open';
   var cards = ms.filter(function (m) { return m.source === 'bio-engine'; }).length;
@@ -987,6 +988,6 @@
   }
 })();
 </script>
-<script src="/shared/ace-shell.js?v=6" defer></script>
+<script src="/shared/ace-shell.js?v=7" defer></script>
 </body>
 </html>

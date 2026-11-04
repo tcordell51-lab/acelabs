@@ -6,7 +6,7 @@
 //                                     (/dir -> /dir/, /page -> /page.html), 404.html, and the site CSP
 //                                     from netlify.toml (so a font host the CSP drops shows up as an error)
 //   pagesFrom(root, tokens)           page paths from arguments: paths, @preset (doors, b1, all) or @list.txt
-//   launchChromium()                  Playwright Chromium (ACE_CHROMIUM or CHROME, else /opt/pw-browsers/chromium
+//   launchChromium()                  Playwright Chromium (ACE_CHROMIUM, PW_CHROMIUM or CHROME, else /opt/pw-browsers/chromium
 //                                     when present, else Playwright's own); --no-sandbox when running as root
 //   batchName(root, flag)             --batch, else "b1" from a build/b1-... branch, else "local"
 //   slugOf(page)                      a file-name-safe name for a page ("/" is "today")
@@ -109,7 +109,7 @@ export async function launchChromium() {
   let pw;
   try { pw = await import('playwright'); } catch { throw new Error('playwright is not installed (npm install; it is a devDependency)'); }
   const chromium = pw.chromium || (pw.default && pw.default.chromium);
-  const cand = [process.env.ACE_CHROMIUM, process.env.CHROME, '/opt/pw-browsers/chromium'].filter(Boolean).find((f) => { try { return fs.statSync(f).isFile(); } catch { return false; } });
+  const cand = [process.env.ACE_CHROMIUM, process.env.PW_CHROMIUM, process.env.CHROME, '/opt/pw-browsers/chromium'].filter(Boolean).find((f) => { try { return fs.statSync(f).isFile(); } catch { return false; } });
   const args = typeof process.getuid === 'function' && process.getuid() === 0 ? ['--no-sandbox'] : [];
   return chromium.launch({ ...(cand ? { executablePath: cand } : {}), args });
 }

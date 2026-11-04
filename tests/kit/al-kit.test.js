@@ -230,6 +230,17 @@ test('al-kit.css: components read context colors and tokens, never a raw Playfai
   assert.doesNotMatch(css, /@keyframes[^{]*(shake|pulse|bounce|glow)/i);
 });
 
+test('al-kit.css: the door header and the tool header (one product: every page opens with one of them)', () => {
+  const css = read('shared/al-kit.css');
+  assert.match(css, /\.al \.door-head\{/, 'door header');
+  assert.match(css, /\.al \.tool-head\{display:grid;/, 'tool header');
+  assert.match(css, /\.al \.tool-head h1\{font:var\(--font-h1\)/, 'the tool title is the Sora h1 token');
+  assert.match(css, /\.al \.tool-head \.method\{font:var\(--font-read\)/, 'the one-line method is DM Sans');
+  assert.match(css, /\.al \.tool-head \.th-controls\{display:flex;/, 'the controls row');
+  // the controls sit right of the title block from 760 px, under it on phones
+  assert.match(css, /@media \(min-width:760px\)\{\s*\.al \.tool-head\{grid-template-columns:minmax\(0,1fr\) auto;/);
+});
+
 test('house copy: the kit and the loop are plain ASCII with no banned words', () => {
   for (const f of ['shared/al-kit.js', 'shared/al-kit.css', 'shared/al-loop.js', 'shared/al-loop.css']) {
     // the copy-rule table names the banned words in order to ban them

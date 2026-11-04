@@ -59,7 +59,7 @@ test('copy gate: a needle a script searches for is code, not copy (every rule, t
 test('copy gate: game, countdown, confidence and payment words, with the science words left alone', async () => {
   const { scan } = await imp('scripts/gate-copy.mjs');
   const flagged = (text) => scan('x.html', '<p>' + text + '</p>').map((h) => h.rule);
-  for (const [t, rule] of [['Day streak: 4', 'streak'], ['+10 points', 'points'], ['Earn 50 XP', 'points'], ['You got 3 points', 'points'], ['Nice, 5 points!', 'points'], ['You have 12 points', 'points'], ['She won 2 points', 'points'], ['A new personal best', 'score'],
+  for (const [t, rule] of [['Day streak: 4', 'streak'], ['+10 points', 'points'], ['Earn 50 XP', 'points'], ['You got 3 points', 'points'], ['Nice, 5 points!', 'points'], ['You have 12 points', 'points'], ['A new personal best', 'score'],
     ['You got 2 points on Bio', 'points'], ['You got 4 points at the checkpoint', 'points'], ['You got three points', 'points'], ['Level up to unlock the next night', 'points'],
     ['Get 10 points for every card you keep.', 'points'], ['Keep a card, get 5 points.', 'points'], ['Nice work. Earn two more points.', 'points'], ['"Get 3 bonus points"', 'points'], ['You scored 80%', 'score'], ['Once you hit 80% untimed, move on', 'score'],
     ['Top the leaderboard', 'score'], ['You earned a badge', 'badge'], ['12 days left', 'countdown'], ['30 days to go', 'countdown'],
@@ -69,8 +69,26 @@ test('copy gate: game, countdown, confidence and payment words, with the science
     /* QR word problems and geometry: a count of points is not a reward */
     'If you have 3 points, how many triangles can you draw?', 'Suppose you have 5 points, no three collinear.', 'A set has 4 points in a plane.', 'The scatter plot has 8 points.',
     'Team A has 12 points and Team B has 9 points. What is the ratio?', 'A player gets 3 points for each win.', 'To forget 3 points of the plan is easy.', 'A kitchen scale might know you have two point three grams.',
-    'One hard-won point traded away.', 'The electron moves one level up to n = 3.', '40% of the bank is Biology.', 'You got 20% off the price.'])
+    'One hard-won point traded away.', 'The electron moves one level up to n = 3.', '40% of the bank is Biology.', 'You got 20% off the price.',
+    /* third person is a count, not a reward to the student */
+    'She won 2 points', 'The team scored 12 points in the first half.', 'A player earns 3 points for each win.'])
     assert.deepStrictEqual(flagged(t), [], t);
+});
+
+test('copy gate: points as a reward is anchored to the student and a reward context (the B1 review cases)', async () => {
+  const { scan } = await imp('scripts/gate-copy.mjs');
+  const flagged = (text) => scan('x.html', '<p>' + text + '</p>').map((h) => h.rule);
+  /* QR and geometry sentences from the review: never caught */
+  for (const t of ['If you have 3 points, how many triangles', '5 points, no three collinear', 'A set has 4 points in a plane', 'The scatter plot has 8 points',
+    'Team A has 12 points and Team B has 9 points', 'A player gets 3 points for each win'])
+    assert.deepStrictEqual(flagged(t), [], t);
+  /* rewards from the review: always caught */
+  for (const t of ['You got 3 points', '5 points!', 'You got 2 points on Bio', 'You won 5 points']) assert.deepStrictEqual(flagged(t), ['points'], t);
+  /* more rewards aimed at the student, with and without a number */
+  for (const t of ["You've earned ten points", 'You will get 4 bonus points', 'You earn points for every card you keep', 'Earn points by keeping cards.', 'Keep it, get 2 points.', 'Points you earned today: 12', '+5 pts'])
+    assert.deepStrictEqual(flagged(t), ['points'], t);
+  /* and the same words in a script string are copy too */
+  assert.deepStrictEqual(scan('x.js', "el.textContent = 'You won 5 points';").map((h) => h.rule), ['points']);
 });
 
 test('copy gate: the baseline ratchets per file and per rule', async () => {

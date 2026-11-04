@@ -6,6 +6,27 @@ files it owns (it is the only batch that edits them), what changes, how it is
 accepted, and what it must not touch. Mockups to copy from:
 `mock/assets/*` and `mock/*.html` in this folder.
 
+## One product (read first)
+
+Thomas's "one product" directive (2026-10-30) is in `docs/ace-system-decisions.md`
+under **One product**. It wins over every "tokens only" or "no layout surgery"
+line below: one logo (the ACE DAT lockup and LABS in shell v2 on desktop, the
+mark on phones, the mark from `/shared/brand/` on exam screens that hide the
+shell), one frame (tokens, fonts, kit, shell v2, the kit's door header or tool
+header `.tool-head`), Sora / DM Sans / JetBrains Mono and the tokens v2 colors,
+one question screen, one play pattern, one set of names. Engine internals stay
+as this plan says.
+
+**The gate.** `scripts/gate-one-product.mjs` (B1.1) checks every served student
+page at 390 and 1280, light and dark: shell, logo, other logo, old wordmark,
+the old logo copies, fonts, colors, 44 px targets, header, sideways scroll,
+console. `npm run gate:one-product` runs it in a browser (about 4.5 minutes)
+and ratchets against `scripts/one-product-baseline.json`: a page may not gain
+a failing check, and a new page must pass every check. `test:gates` runs its
+static subset on every `npm test`. Waves 1 and 2 run the browser gate before
+merge and rewrite the baseline (`npm run one-product:baseline`) when their
+fixes land; B6 runs it with `--strict`, where every student page must pass.
+
 ## How the waves work
 
 | Wave | Batches (parallel inside a wave) | Starts when |

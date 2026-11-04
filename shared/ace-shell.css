@@ -1,4 +1,4 @@
-/* ace-shell.css : the ONE Ace Labs bar, shell v2 (loaded as ace-shell.css?v=2).
+/* ace-shell.css : the ONE Ace Labs bar, shell v2 (loaded as ace-shell.css?v=4).
    Loaded by shared/ace-shell.js INSIDE a shadow root, so nothing here leaks
    into a tool page and no tool page's CSS leaks in. Values are copied from
    shared/al-tokens.css (tokens v2) and set on :host, because the 132 pages that
@@ -75,6 +75,8 @@
   white-space: nowrap;
 }
 .lockup { display: block; width: auto; height: 24px; }
+/* the ACE DAT mark: phones only (the lockup and LABS do not fit beside five doors) */
+.mark { display: none; width: 26px; height: 26px; }
 .labs {
   position: relative;
   padding-left: 12px;
@@ -201,7 +203,10 @@ a:focus-visible {
 /* ---------- phone: five equal doors, icon over label ---------- */
 @media (max-width: 759px) {
   .in { height: 56px; padding: 0 4px; gap: 0; }
-  .brand { display: none; }
+  /* the mark, a 44 px target at the left; the five doors share the rest */
+  .brand { flex: 0 0 44px; width: 44px; min-width: 44px; justify-content: center; gap: 0; padding: 0; }
+  .lockup, .labs { display: none; }
+  .mark { display: block; }
   nav { justify-content: stretch; }
   .track { width: 100%; }
   .doors { width: 100%; }

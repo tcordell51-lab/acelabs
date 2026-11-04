@@ -27,7 +27,7 @@ function load(seed, opts = {}) {
   };
   const events = [];
   class CustomEvent { constructor(type, init) { this.type = type; this.detail = init && init.detail; } }
-  const window = { localStorage, CustomEvent, dispatchEvent: (e) => { events.push(e); return true; }, location: { search: opts.search || '' } };
+  const window = { localStorage, CustomEvent, dispatchEvent: (e) => { events.push(e); return true; }, location: { search: opts.search || '', hostname: opts.hostname || 'acelabs.netlify.app' } };
   const ctx = vm.createContext({ window, localStorage, location: window.location, URLSearchParams, Date: FakeDate, JSON, Math, Promise, setTimeout, clearTimeout });
   const files = ['shared/ace-index.js', 'shared/ace-route.js', 'shared/ace-progress.js'];
   if (opts.lines !== false) files.push('shared/ace-coach-lines.js');
@@ -74,7 +74,9 @@ test('first visit: step 1 is a call (Tonicity), then three questions; the diagno
 });
 
 test('at most four steps, step 1 always playable; a card due today with a call leads', () => {
-  const { P } = load(busy());
+  /* the practice test was yesterday, so its osmosis miss (no date of its own) is back today; a miss from
+     three days ago is Open, not due (AceProgress.dueState, tests/shell/ace-due.test.js) */
+  const { P } = load(busy({ 'al:prometricHistory': [{ testId: 'MOCK_1', testName: 'Practice Test 1', ts: at(-1), subjects: { Biology: { correct: 30, total: 40 } }, byTopic: { Biology: { Osmosis: { c: 1, n: 3 } } } }] }));
   const plan = P.todayPlan();
   assert.ok(plan.steps.length <= 4, 'at most 4 steps');
   assert.equal(plan.steps[0].kind, 'play');
@@ -187,12 +189,14 @@ test('source lines: auto for every built line; a portal note is quoted verbatim 
   assert.equal(P.todayPlan({ coach: { tasks: [{ title: 'x', href: '/' }] } }).note, null, 'no note, nothing quoted');
 });
 
-test('the coach line comes from the library: the plain fallback until Thomas approves, drafts for coaches', () => {
+test('the coach line comes from the library: the plain fallback until Thomas approves, drafts for coaches on a preview host', () => {
   let r = load({});
   let plan = r.P.todayPlan();
   assert.equal(plan.line.fallback, true);
   assert.equal(plan.say, r.CL.SLOTS['first-visit'].fallback);
-  r = load({}, { search: '?coach=1' });
+  r = load({}, { search: '?drafts=1' });
+  assert.equal(r.P.todayPlan().line.fallback, true, 'never a draft on the production host');
+  r = load({}, { search: '?drafts=1', hostname: 'localhost' });
   plan = r.P.todayPlan();
   assert.equal(plan.line.draft, true);
   assert.match(plan.line.id, /^fv-\d$/);

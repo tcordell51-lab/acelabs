@@ -179,7 +179,7 @@
 .pm-pt .constants b{color:#1c2026}
 /* SmilesDrawer canvas — used for OChem questions with q_smiles / opts_smiles */
 .pm-mol{display:inline-block; vertical-align:middle; margin:4px 0; background:#fff; border:1px solid #d0d6db; border-radius:3px; padding:4px}
-.pm-mol-canvas{display:block; width:100%; max-width:280px; height:120px}
+.pm-mol-canvas{display:block; width:100%; max-width:280px; height:auto} /* height follows the drawn 280 x 120, so a narrow phone column scales the structure instead of squashing it */
 .pm-opts .pm-mol{display:block; max-width:240px; margin-top:4px}
 .pm-q .pm-mol{display:block; max-width:380px; margin:8px 0}
 /* SVG question rendering (for arrow-prediction questions) */
@@ -927,24 +927,34 @@ function getSmiDrawer(){
   } catch(e){ console.warn('SmilesDrawer init failed', e); _smiDrawer = false; }
   return _smiDrawer;
 }
+// Fallback: write the SMILES string on the canvas when the structure cannot be drawn
+function drawMoleculeFallback(canvas, smi){
+  const ctx = canvas.getContext && canvas.getContext('2d');
+  if (!ctx) return;
+  canvas.width = canvas.offsetWidth || 280;
+  canvas.height = 120;
+  ctx.fillStyle = '#fff'; ctx.fillRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle = '#1a1d20'; ctx.font = '14px monospace';
+  ctx.fillText(smi, 10, 65);
+  canvas.setAttribute('data-mol', 'fallback');
+}
+// SmiDrawer 2.x finds its target with document.querySelectorAll(target), so it
+// needs a selector string: given the element itself it throws inside draw(),
+// reports the error to errorCallback (or only logs it) and never throws to us.
+// Each canvas gets an id and is drawn through '#' + id, as tools/mock/full.js
+// and games/play.html do; a drawing error reaches the fallback through
+// errorCallback.
+let _pmMolSeq = 0;
 function renderMoleculeCanvases(wrap){
   const sd = getSmiDrawer();
-  if (!sd) return;
   wrap.querySelectorAll('canvas.pm-mol-canvas[data-smiles]').forEach(canvas => {
     const smi = canvas.getAttribute('data-smiles');
     if (!smi) return;
-    try { sd.draw(smi, canvas, 'light'); }
-    catch(e){
-      // Fallback: render the SMILES string verbatim if drawing fails
-      const ctx = canvas.getContext && canvas.getContext('2d');
-      if (ctx){
-        canvas.width = canvas.offsetWidth || 280;
-        canvas.height = 120;
-        ctx.fillStyle = '#fff'; ctx.fillRect(0,0,canvas.width,canvas.height);
-        ctx.fillStyle = '#1a1d20'; ctx.font = '14px monospace';
-        ctx.fillText(smi, 10, 65);
-      }
-    }
+    if (!canvas.id) canvas.id = 'pmMol' + (++_pmMolSeq);
+    const fail = (err) => { if (err) console.warn('SmilesDrawer could not draw', smi, err); drawMoleculeFallback(canvas, smi); };
+    if (!sd){ fail(); return; }
+    try { sd.draw(smi, '#' + canvas.id, 'light', () => canvas.setAttribute('data-mol', 'drawn'), fail); }
+    catch(e){ fail(e); }
   });
 }
 function escapeAttr(s){
@@ -1614,7 +1624,7 @@ function showWrongAnswerReview(wrong){
   modal.querySelector('#pmWrongClose').addEventListener('click', () => modal.remove());
 }
 </script>
-<script src="shared/scope.js?v=2"></script>
-  <script src="/shared/ace-shell.js?v=6" defer></script>
+<script src="shared/scope.js?v=3"></script>
+  <script src="/shared/ace-shell.js?v=7" defer></script>
 </body>
 </html>
