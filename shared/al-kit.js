@@ -1,5 +1,5 @@
 /* =====================================================================
-   Ace Labs kit, script half (served as shared/al-kit.js?v=1).
+   Ace Labs kit, script half (served as shared/al-kit.js?v=2).
    window.AL: the small helpers every page and the play loop share.
 
      icons     AL.icon(name, cls, label), AL.fillIcons(root)
@@ -102,7 +102,9 @@
   var DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
   var MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
   function setClock(fn) {
-    if (fn instanceof Date) { var t = fn.getTime(); clock = function () { return t; }; }
+    /* A Date from any realm (a test harness or another frame builds its own
+       Date, so instanceof alone misses it and the pin was silently dropped). */
+    if (fn instanceof Date || Object.prototype.toString.call(fn) === '[object Date]') { var t = fn.getTime(); clock = function () { return t; }; }
     else clock = typeof fn === 'function' ? fn : null;
   }
   function now() { return new Date(clock ? clock() : Date.now()); }
