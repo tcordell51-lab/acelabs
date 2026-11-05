@@ -761,7 +761,8 @@ RD_JOBS.forEach((j, i) => j.then(rdOut[i]));
 RECORDS.forEach((R) => { const n = RD_JOBS.filter((j) => j.R === R && j.job.smi).length; if (n) R.checks.push('RDKit parsed all ' + n + ' SMILES'); });
 
 /* --------------------------------------------------------- assemble outputs */
-const safeName = (qid) => qid.replace(/:/g, '__');
+// '#' cannot appear in a deployed file path (Netlify refuses the upload), so it maps to '~'.
+const safeName = (qid) => qid.replace(/:/g, '__').replace(/#/g, '~');
 const subDir = (subtopic) => String(subtopic).split('.').slice(1, 2)[0] || 'misc';
 const FACT_KEYS = { 'chem.trend': ['values'], 'chem.curve': ['marks'], 'qr.triangle': ['c'], 'chem.mechanism': ['fig'], 'pat.unfold': ['chain'], 'pat.cubes': ['painted', 'kCubes'] };
 function studentVisual(R) {
