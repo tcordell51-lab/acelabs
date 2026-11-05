@@ -26,7 +26,7 @@ export const meta = {
   ],
   trap: 'Careful: the arrow lands on the hydrogen, not on the oxygen holding it, and it never starts at a plus sign; H3O+ is the acid, and its plus is not where electrons come from.',
   holdsUp: ['SN1 on an alcohol', 'Acid-catalyzed hydration', 'Acetylide formation', 'Enolate chemistry', 'Fischer esterification'],
-  drill: 'The Fundamentals, in your OChem question bank'
+  drill: 'Practice questions on this topic, in the OChem engine or your own question bank'
 };
 
 // Every SMILES this module draws (states, partners, the pKa table).

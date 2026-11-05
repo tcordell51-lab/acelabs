@@ -650,7 +650,7 @@
       h += '<div class="q">' + esc(it.q) + '</div>';
       if (it.qs) h += '<span class="pm-mol" style="display:block;max-width:300px"><canvas data-smiles="' + esc(it.qs) + '" width="300" height="140"></canvas></span>';
       h += '<div class="a">Your answer: <b>' + (ms.ans == null ? 'left open' : L[ms.ans] + '. ' + show(ms.ans)) + '</b><br>Correct: <b>' + L[it.correct] + '. ' + show(it.correct) + '</b></div>';
-      h += '<div class="why">' + esc(it.why) + (ms.ans != null && it.traps && it.traps[ms.ans] ? '<br><br><b>About your pick:</b> ' + esc(it.traps[ms.ans]) : '') + '</div>';
+      h += '<div class="why">' + esc(window.ACE_WHY_OVERRIDES ? window.ACE_WHY_OVERRIDES.why(it.id, it.why) : it.why) + (ms.ans != null && it.traps && it.traps[ms.ans] ? '<br><br><b>About your pick:</b> ' + esc(it.traps[ms.ans]) : '') + '</div>';
       var night = it.nights && it.nights[0];
       h += '<div class="links"><a href="' + st.learn + (night ? '?night=' + night : '') + '">' + (night ? 'Retold night ' + night + ': ' : 'Retold: ') + esc(it.topic) + '</a><a href="' + st.review + '">' + st.engine + '</a></div>';
     } else if (x.kind === 'pat') {

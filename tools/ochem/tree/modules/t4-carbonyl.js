@@ -19,7 +19,7 @@ export const meta = {
   ],
   trap: 'Careful: A primary amine gives an imine, a secondary amine gives an enamine, a tertiary amine gives nothing, and an acetal comes off with aqueous acid only, never with base.',
   holdsUp: ['Every carbonyl product', 'Alcohol class after Grignard', 'Protecting groups', 'Reductive amination', 'Wittig placement'],
-  drill: 'Ketones & Aldehydes, in your OChem question bank'
+  drill: 'Practice questions on this topic, in the OChem engine or your own question bank'
 };
 
 // Every SMILES this module draws that is not in shared/reactions.js.

@@ -183,8 +183,8 @@ const ENTRIES = [
         { from: 'nh', to: 'no2', n: 2, choice: 'NH₃ to NO₃⁻' },
         { from: 'no2', to: 'no3', n: 2 },
         { from: 'no3', to: 'org', n: 3 },
-        { from: 'nh', to: 'org', n: 3, at: 0.8, toAt: 0.8, labelDy: 0, choice: 'NH₄⁺ to amino acids in plant tissue' },
-        { from: 'org', to: 'nh', n: 4, at: 0.22, toAt: 0.22, labelDy: 0, choice: 'Organic to inorganic' },
+        { from: 'nh', to: 'org', n: 3, at: 0.9, toAt: 0.9, choice: 'NH₄⁺ to amino acids in plant tissue' },
+        { from: 'org', to: 'nh', n: 4, at: 0.36, toAt: 0.36, choice: 'Organic to inorganic' },
         { from: 'no3', to: 'n2', n: 5, choice: 'NO₃⁻ to N₂' }
       ],
       legend: [
