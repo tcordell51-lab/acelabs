@@ -157,8 +157,8 @@ const browser = await chromium.launch({ executablePath: exe, args: ['--no-sandbo
 
 const jobs = [];
 for (const qid of qids) {
-  for (const s of SIZES) jobs.push({ qid, kind: 'student', s, url: PREVIEW + '?qid=' + encodeURIComponent(qid), file: IX.items[qid].batch.replace(/\//g, '-') + '/' + qid.replace(/:/g, '__') + '-' + s.n });
-  jobs.push({ qid, kind: 'coach', s: SIZES[1], url: PREVIEW + '?qid=' + encodeURIComponent(qid) + '&coach=1', file: IX.items[qid].batch.replace(/\//g, '-') + '/' + qid.replace(/:/g, '__') + '-signoff' });
+  for (const s of SIZES) jobs.push({ qid, kind: 'student', s, url: PREVIEW + '?qid=' + encodeURIComponent(qid), file: IX.items[qid].batch.replace(/\//g, '-') + '/' + qid.replace(/:/g, '__').replace(/#/g, '~') + '-' + s.n });
+  jobs.push({ qid, kind: 'coach', s: SIZES[1], url: PREVIEW + '?qid=' + encodeURIComponent(qid) + '&coach=1', file: IX.items[qid].batch.replace(/\//g, '-') + '/' + qid.replace(/:/g, '__').replace(/#/g, '~') + '-signoff' });
 }
 if (!FILTER.length) for (const s of SIZES) jobs.push({ qid: null, kind: 'index', s, url: PREVIEW, file: 'index-' + s.n });
 
