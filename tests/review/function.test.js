@@ -138,12 +138,46 @@ test('ids are validated: bad shape 400, unknown 404, prefix pulls refused', asyn
   assert.equal((await call('DELETE', { key: T_KEY })).status, 405);
 });
 
-test('a stored pull for an id outside the index never reaches the public list', async () => {
+test('a pull outlives its item: when the id leaves the index the public list still serves it (never silently undone)', async () => {
   const { call, store } = await setup();
-  await store.setJSON('pull/' + Buffer.from('fm').toString('base64url'), { id: 'fm' });
+  assert.equal((await call('POST', { key: T_KEY, body: { action: 'pull', id: BIO.id } })).status, 200);
+  // the next release drops the item from the index (stamp replaced or removed, qid renamed)
+  const idx = JSON.parse(JSON.stringify(INDEX));
+  idx.items = idx.items.filter((x) => x.id !== BIO.id);
+  mod = mod || await import(FN);
+  const h2 = mod.createHandler({ index: idx, keys: KEYS, store: () => store });
+  let n = 0;
+  const call2 = (method, o = {}) => h2(new Request('https://study.example/.netlify/functions/approvals' + (o.query || ''), { method, headers: { ...(o.key ? { 'x-review-key': o.key } : {}), ...(o.body ? { 'content-type': 'application/json' } : {}) }, body: o.body ? JSON.stringify(o.body) : undefined }), { ip: '10.9.0.' + (++n) });
+  assert.deepEqual((await (await call2('GET', { query: '?pulls=1' })).json()).pulls, [BIO.id]);
+  // the full key sees it as an orphan; the PAT key does not
+  const t = await (await call2('GET', { key: T_KEY })).json();
+  assert.deepEqual(t.orphans.map((o) => [o.id, o.by]), [[BIO.id, 'thomas']]);
+  assert.equal(t.pulls[BIO.id], undefined);
+  assert.deepEqual((await (await call2('GET', { key: S_KEY })).json()).orphans, []);
+  // pull and comment need a listed item; only the full key may unpull an orphan, and only one that is stored
+  assert.equal((await call2('POST', { key: T_KEY, body: { action: 'pull', id: BIO.id } })).status, 404);
+  assert.equal((await call2('POST', { key: T_KEY, body: { action: 'comment', id: BIO.id, text: 'x' } })).status, 404);
+  assert.equal((await call2('POST', { key: S_KEY, body: { action: 'unpull', id: BIO.id } })).status, 404);
+  assert.equal((await call2('POST', { key: T_KEY, body: { action: 'unpull', id: 'explainer:never-pulled' } })).status, 404);
+  assert.deepEqual((await (await call2('GET', { query: '?pulls=1' })).json()).pulls, [BIO.id], 'still pulled');
+  assert.equal((await call2('POST', { key: T_KEY, body: { action: 'unpull', id: BIO.id } })).status, 200);
+  assert.deepEqual((await (await call2('GET', { query: '?pulls=1' })).json()).pulls, []);
+});
+
+test('the public list serves every stored pull with a well-formed id, and drops malformed ones', async () => {
+  const { call, store } = await setup();
+  await store.setJSON('pull/' + Buffer.from('explainer:fm:bio:renamed').toString('base64url'), { id: 'explainer:fm:bio:renamed' });
   await store.setJSON('pull/' + Buffer.from('a b').toString('base64url'), { id: 'a b' });
   await store.setJSON('pull/%%%', {});
-  assert.deepEqual((await (await call('GET', { query: '?pulls=1' })).json()).pulls, []);
+  assert.deepEqual((await (await call('GET', { query: '?pulls=1' })).json()).pulls, ['explainer:fm:bio:renamed']);
+});
+
+test('cache headers: the public list may sit 30 s in the CDN, never in the browser; keyed answers are no-store', async () => {
+  const { call } = await setup();
+  assert.equal((await call('GET', { query: '?pulls=1' })).headers.get('cache-control'), 'public, s-maxage=30, max-age=0');
+  assert.equal((await call('GET', { key: T_KEY })).headers.get('cache-control'), 'no-store');
+  assert.equal((await call('GET')).headers.get('cache-control'), 'no-store');
+  assert.equal((await call('POST', { key: T_KEY, body: { action: 'pull', id: BIO.id } })).headers.get('cache-control'), 'no-store');
 });
 
 test('a correction takes comments but no pull', async () => {

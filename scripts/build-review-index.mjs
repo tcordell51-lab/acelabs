@@ -2,7 +2,11 @@
 // build-review-index.mjs : the list the review page (/approvals/) shows, and the pulls snapshot.
 //
 //   node scripts/build-review-index.mjs              write content/approvals/review-index.json
-//   node scripts/build-review-index.mjs --check      exit 1 when the committed index is stale
+//   node scripts/build-review-index.mjs --check      exit 1 when the committed index is stale, or when
+//                                                    a pull in the committed snapshot names an id that
+//                                                    is missing from the index (an orphan pull)
+//   node scripts/build-review-index.mjs --check --from URL|FILE
+//                                                    also check the stored (live) pulls for orphans
 //   node scripts/build-review-index.mjs --snapshot --tag study-r1 --from URL|FILE
 //                                                    write content/approvals/pulls-snapshot.json from
 //                                                    the live pull list (the public
@@ -27,6 +31,10 @@
 // stamped scene also gets a night item retold:<course>:<night>, which takes the night out of the
 // course list and Today when pulled. A correction of a known factual error is listed with a comment
 // box and no Pull (a pull would bring the error back).
+//
+// Orphan pulls: a pull is kept, and served, even when its id leaves the index (a stamp replaced or
+// removed, a qid renamed); dropping it would bring the pulled content back silently. --check names
+// every such id so the release owner can re-list the item or unpull it on purpose.
 //
 // Sections (who may act on an item): bio, gchem, ochem, qr, pat, rc, or "all". The PAT key acts on
 // pat items only. No student data goes in: tests/review/no-student-data.test.js scans the output.
@@ -252,12 +260,19 @@ export function buildIndex(root = ROOT) {
 export const serialize = (index) => JSON.stringify(index, null, 1) + '\n';
 
 /* ---------- the snapshot ---------- */
-export function snapshotFrom(list, index, tag, now = new Date()) {
+export function pullIdsOf(list) {
   const raw = Array.isArray(list) ? list : list && Array.isArray(list.pulls) ? list.pulls : list && Array.isArray(list.ids) ? list.ids : null;
   if (!raw) throw new Error('the live list is not a list of pulls');
-  const known = new Set(index.items.filter((x) => x.pullable).map((x) => x.id));
-  const ids = [...new Set(raw.map((x) => (x && typeof x === 'object' ? x.id : x)).filter((x) => typeof x === 'string' && ID_RE.test(x) && known.has(x)))].sort();
-  return { v: 1, tag: tag || null, written: now.toISOString(), pulls: ids };
+  return [...new Set(raw.map((x) => (x && typeof x === 'object' ? x.id : x)).filter((x) => typeof x === 'string' && ID_RE.test(x)))].sort();
+}
+// Every well-formed pulled id is kept, in the index or not: a pull never fails open.
+export function snapshotFrom(list, index, tag, now = new Date()) {
+  return { v: 1, tag: tag || null, written: now.toISOString(), pulls: pullIdsOf(list) };
+}
+// Pulled ids with no item in the index (the item left it while pulled).
+export function orphanPulls(ids, index) {
+  const known = new Set(index.items.map((x) => x.id));
+  return ids.filter((id) => !known.has(id));
 }
 async function readList(from) {
   if (/^https:\/\//.test(from)) {
@@ -280,12 +295,22 @@ async function main() {
     const snap = snapshotFrom(await readList(from), index, opt('--tag'));
     fs.writeFileSync(path.join(ROOT, SNAPSHOT), JSON.stringify(snap, null, 2) + '\n');
     console.log('build-review-index: ' + SNAPSHOT + ' written (' + snap.pulls.length + ' pulled, tag ' + snap.tag + ')');
+    const orphans = orphanPulls(snap.pulls, index);
+    if (orphans.length) console.error('build-review-index: ' + orphans.length + ' pull(s) kept for ids missing from the index (they stay pulled; --check fails until each is re-listed or unpulled):\n  ' + orphans.join('\n  '));
     return 0;
   }
   const out = path.join(ROOT, OUT);
   if (args.includes('--check')) {
     const cur = fs.existsSync(out) ? fs.readFileSync(out, 'utf8') : '';
     if (cur !== text) { console.error('build-review-index: ' + OUT + ' is stale; run node scripts/build-review-index.mjs'); return 1; }
+    const lists = [['the snapshot ' + SNAPSHOT, JSON.parse(fs.readFileSync(path.join(ROOT, SNAPSHOT), 'utf8'))]];
+    if (opt('--from')) lists.push(['the stored pulls at ' + opt('--from'), await readList(opt('--from'))]);
+    let bad = 0;
+    for (const [name, list] of lists) {
+      const orphans = orphanPulls(pullIdsOf(list), index);
+      if (orphans.length) { bad += orphans.length; console.error('build-review-index: ' + name + ' pulls ' + orphans.length + ' id(s) missing from the index (re-list the item or unpull it on the review page):\n  ' + orphans.join('\n  ')); }
+    }
+    if (bad) return 1;
     console.log('build-review-index: ' + OUT + ' is current (' + index.counts.total + ' items)');
     return 0;
   }

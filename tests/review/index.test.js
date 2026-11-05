@@ -82,15 +82,39 @@ test('a new stamps file is picked up with no code change; corrections take no pu
   } finally { fs.rmSync(tmp, { recursive: true, force: true }); }
 });
 
-test('the snapshot: committed file is a list shared/ace-pulls.js reads; snapshotFrom keeps known pullable ids only', async () => {
+test('the snapshot: committed file is a list shared/ace-pulls.js reads; snapshotFrom keeps every well-formed id, orphans too', async () => {
   const b = await import(BUILD);
   const snap = read('content/approvals/pulls-snapshot.json');
   assert.ok(Array.isArray(snap.pulls));
-  const known = new Set(INDEX.items.filter((x) => x.pullable).map((x) => x.id));
-  for (const id of snap.pulls) assert.ok(known.has(id), id);
-  const s = b.snapshotFrom({ v: 1, pulls: ['retold:bio:1', 'fm', 'nope', 'retold:bio:1', 42] }, INDEX, 'study-r1', new Date('2026-11-11T17:00:00Z'));
-  assert.deepEqual(s, { v: 1, tag: 'study-r1', written: '2026-11-11T17:00:00.000Z', pulls: ['retold:bio:1'] });
+  assert.deepEqual(b.orphanPulls(snap.pulls, INDEX), [], 'the committed snapshot pulls only listed ids');
+  const s = b.snapshotFrom({ v: 1, pulls: ['retold:bio:1', 'explainer:fm:bio:renamed', 'a b', 'retold:bio:1', 42] }, INDEX, 'study-r1', new Date('2026-11-11T17:00:00Z'));
+  // a pull whose item left the index is kept: dropping it would bring the content back
+  assert.deepEqual(s, { v: 1, tag: 'study-r1', written: '2026-11-11T17:00:00.000Z', pulls: ['explainer:fm:bio:renamed', 'retold:bio:1'] });
+  assert.deepEqual(b.orphanPulls(s.pulls, INDEX), ['explainer:fm:bio:renamed']);
   assert.throws(() => b.snapshotFrom({ error: 'x' }, INDEX, 't'), /not a list/);
+});
+
+test('--check fails on an orphan pull in the snapshot or in the stored pulls (--from), and passes when clean', () => {
+  const { spawnSync } = require('node:child_process');
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'review-check-'));
+  try {
+    for (const rel of ['scripts/build-review-index.mjs', 'content/approvals/review-index.json', 'content/approvals/pulls-snapshot.json', 'docs/explainers/approvals.json', 'docs/explainers/index.json', 'content/explainers']) {
+      fs.cpSync(path.join(ROOT, rel), path.join(tmp, rel), { recursive: true });
+    }
+    fs.cpSync(path.join(ROOT, 'content/approvals/stamps'), path.join(tmp, 'content/approvals/stamps'), { recursive: true });
+    const run = (...a) => spawnSync(process.execPath, [path.join(tmp, 'scripts/build-review-index.mjs'), '--check', ...a], { encoding: 'utf8' });
+    let r = run();
+    assert.equal(r.status, 0, r.stderr);
+    const live = path.join(tmp, 'live.json');
+    fs.writeFileSync(live, JSON.stringify({ v: 1, pulls: ['retold:bio:1', 'explainer:fm:bio:renamed'] }));
+    r = run('--from', live);
+    assert.equal(r.status, 1);
+    assert.match(r.stderr, /stored pulls.*1 id\(s\) missing from the index[\s\S]*explainer:fm:bio:renamed/);
+    fs.writeFileSync(path.join(tmp, 'content/approvals/pulls-snapshot.json'), JSON.stringify({ v: 1, tag: 't', pulls: ['explainer:fm:gone'] }));
+    r = run();
+    assert.equal(r.status, 1);
+    assert.match(r.stderr, /snapshot[\s\S]*explainer:fm:gone/);
+  } finally { fs.rmSync(tmp, { recursive: true, force: true }); }
 });
 
 test('every pull id in the index is honoured by shared/ace-pulls.js (none dropped, so none fails open)', async () => {

@@ -224,10 +224,63 @@ test('an open key dispute: Key under review instead of the answer mark, out of t
   assert.match(card.querySelector('.a').textContent, /Key under review/);
   assert.doesNotMatch(card.querySelector('.a').textContent, /Correct:/, 'no answer mark');
   assert.equal(card.getAttribute('data-lite-fallback'), 'dispute', 'its explainer is held');
-  assert.equal(whyShown(card), bankWhy(BIO));
+  // the bank explanation names the disputed answer: hidden too, one line in its place
+  assert.equal(whyShown(card), null, 'no bank explanation while the key is disputed');
+  assert.ok(!card.textContent.includes(bankWhy(BIO)), 'the bank explanation text is nowhere on the card');
+  assert.equal(card.querySelectorAll('.key-held').length, 1);
+  assert.equal(card.querySelector('.key-held').textContent, 'The explanation returns once the answer key is confirmed.');
+  assert.doesNotMatch(card.textContent, /About your pick/);
   // the saved record is untouched
   assert.equal(JSON.parse(page.window.localStorage.getItem('acelabs.fullmock.v1.attempts'))[0].record.totalQs, 280);
   page.close();
+});
+
+test('a disputed RC item hides its proof line and explanation too, and lite never brings them back', async () => {
+  const page = await openPage({ attempts: [attempt('fm-t')], configure: { fetchTimeoutMs: 300 } });
+  // the first listed RC item of the form
+  await page.openSaved('fm-t');
+  await page.openSection('rc');
+  const first = (await page.decided('rc'))[0];
+  const qid0 = first && first.getAttribute('data-lite-qid');
+  assert.ok(qid0 && /^rc:/.test(qid0), 'an RC item is listed: ' + qid0);
+  page.close();
+  const p2 = await openPage({ attempts: [attempt('fm-t')], configure: { fetchTimeoutMs: 300, disputes: [qid0] } });
+  await p2.openSaved('fm-t');
+  await p2.openSection('rc');
+  const card = (await p2.decided('rc')).find((c) => c.getAttribute('data-lite-qid') === qid0);
+  assert.ok(card);
+  assert.match(card.querySelector('.a').textContent, /Key under review/);
+  assert.equal(card.querySelector('.why'), null);
+  assert.doesNotMatch(card.textContent, /Proof line/);
+  assert.equal(card.querySelectorAll('.key-held').length, 1);
+  assert.equal(card.getAttribute('data-lite-fallback'), 'dispute');
+  p2.close();
+});
+
+test('the review draws every structure: a report opened straight from a saved attempt (no timed screen first)', async () => {
+  // Before the fix the report borrowed the timed screen's drawer, which is only made while a timed
+  // question shows a structure, so a report opened after a reload drew 0 of its structures.
+  const page = await openPage({ attempts: [attempt('fm-t')], configure: { fetchTimeoutMs: 300 } });
+  const w = page.window, drawn = [];
+  let made = 0;
+  w.SmiDrawer = function () { made++; this.draw = (smi, sel, theme) => { const c = w.document.querySelector(sel); drawn.push({ smi, ok: !!c && c.getAttribute('data-smiles') === smi, theme }); }; };
+  await page.openSaved('fm-t');
+  await page.openSection('sons');
+  await page.decided('sons');
+  const cs = [...page.doc.querySelectorAll('#report canvas[data-smiles]')];
+  assert.ok(cs.length > 20, 'the Natural Sciences review lists structures (' + cs.length + ')');
+  assert.equal(drawn.length, cs.length, 'every structure is drawn');
+  assert.ok(drawn.every((d) => d.ok && d.theme === 'light'));
+  assert.equal(made, 1, 'one drawer for the report');
+  assert.equal(new Set(cs.map((c) => c.id)).size, cs.length, 'each canvas has its own id');
+  page.close();
+});
+
+test('the review structure fix stays in the review code: drawMolecules and the timed screen are unchanged', () => {
+  const src = read('tools/mock/full.js');
+  const body = (name) => { const i = src.indexOf('  function ' + name + '('); assert.ok(i >= 0, name); return src.slice(i, src.indexOf('\n  }\n', i) + 4); };
+  assert.equal(sha(body('drawMolecules')), '8a53e6b9617744e21a0e18caa62c7ab3674587c89d29c00ff63393a8fc532b8a', 'drawMolecules (timed screen) unchanged');
+  assert.doesNotMatch(body('drawReportMolecules'), /drawMolecules\(|R\.smi\b/, 'the report no longer leans on the timed drawer');
 });
 
 test('the embedded dispute list equals the open entries of docs/explainers/key-disputes.json', async () => {

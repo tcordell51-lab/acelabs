@@ -5,6 +5,20 @@
 // /.netlify/functions/approvals, which answers the items this key may act on, the pulls and the
 // comments. Every text from the server is set as text, never as markup.
 //
+// Where the key lives: read once from the fragment, which is then wiped from the address bar and
+// from history (replaceState), and kept only in sessionStorage (this tab; gone when it closes).
+// Every request reads it from there; it sits in memory only when sessionStorage is blocked. The
+// page runs under a strict CSP (netlify.toml, /approvals/*: no inline script, no eval, no
+// framing) and the Retold preview frame is sandboxed without allow-same-origin, so the framed
+// course page cannot reach this tab's storage.
+//
+// Rotating the keys after the review window (or at once if a link leaks): generate two new
+// 32-byte keys (node -e "console.log(require('crypto').randomBytes(32).toString('base64url'))"),
+// put their SHA-256 hex in content/approvals/key-hash.json (same roles and scopes), deploy, and
+// send the new links privately. The old links stop working on that deploy; stored pulls and
+// comments are kept (they are not tied to a key). When review closes for good, an empty "keys"
+// list turns every keyed request into a 401 while the public pull list keeps working.
+//
 // Previews: explainers draw with the explainer renderers (tools/explain/visuals/index.js) and
 // only when the served sidecar still matches its stamp checksum; Retold items open their course
 // page in a frame; other items show their before and after text.
@@ -47,7 +61,12 @@ const day = (iso) => { const d = new Date(iso); return isNaN(d) ? '' : d.toISOSt
 
 /* ---------- the key ---------- */
 const store = { get() { try { return sessionStorage.getItem(SKEY); } catch (e) { return null; } }, set(v) { try { sessionStorage.setItem(SKEY, v); } catch (e) { /* this tab only, memory */ } }, drop() { try { sessionStorage.removeItem(SKEY); } catch (e) { /* gone */ } } };
-let KEY = null;
+let MEM = null;   // only when sessionStorage is blocked
+const KEYS = {
+  get() { return store.get() || MEM; },
+  set(v) { store.set(v); MEM = store.get() === v ? null : v; },
+  drop() { store.drop(); MEM = null; },
+};
 function keyFromFragment() {
   const m = /(?:^#|&)k=([A-Za-z0-9_-]{16,256})(?:&|$)/.exec(location.hash || '');
   if (location.hash) history.replaceState(null, '', location.pathname + location.search);
@@ -55,7 +74,7 @@ function keyFromFragment() {
 }
 
 /* ---------- state ---------- */
-const S = { role: null, scope: null, items: [], pulls: {}, comments: {}, sec: 'all', show: 'all', q: '', limit: PAGE };
+const S = { role: null, scope: null, items: [], pulls: {}, comments: {}, orphans: [], sec: 'all', show: 'all', q: '', limit: PAGE };
 
 function status(text, bad) { const s = $('status'); s.textContent = text; s.classList.toggle('is-bad', !!bad); s.hidden = !text; }
 async function api(method, body) {
@@ -63,7 +82,7 @@ async function api(method, body) {
     method,
     cache: 'no-store',
     credentials: 'same-origin',
-    headers: Object.assign({ 'x-review-key': KEY, accept: 'application/json' }, body ? { 'content-type': 'application/json' } : {}),
+    headers: Object.assign({ 'x-review-key': KEYS.get() || '', accept: 'application/json' }, body ? { 'content-type': 'application/json' } : {}),
     body: body ? JSON.stringify(body) : undefined,
   });
   let j = null;
@@ -71,8 +90,8 @@ async function api(method, body) {
   return { status: r.status, ok: r.ok, body: j || {} };
 }
 function askForKey(msg) {
-  KEY = null; store.drop();
-  $('listBox').hidden = true; $('who').hidden = true;
+  KEYS.drop();
+  $('listBox').hidden = true; $('who').hidden = true; $('orphanBox').hidden = true;
   $('keyBox').hidden = false;
   if (msg) $('keyMsg').textContent = msg;
   status('');
@@ -87,12 +106,14 @@ async function load() {
   S.role = r.body.role; S.scope = r.body.scope;
   S.items = Array.isArray(r.body.items) ? r.body.items : [];
   S.pulls = r.body.pulls || {}; S.comments = r.body.comments || {};
+  S.orphans = Array.isArray(r.body.orphans) ? r.body.orphans : [];
   $('keyBox').hidden = true;
   const who = $('who'); who.hidden = false; who.textContent = '';
   who.append(h('p', { class: 'rv-who', text: (WHO[S.role] || 'Key') + ': ' + (SCOPE[S.scope] || S.scope) + '.' }),
     h('button', { class: 'btn quiet', type: 'button', text: 'Close this key', onclick: () => askForKey('Closed. Open the link again to come back.') }));
   filters();
   draw();
+  drawOrphans();
   status('');
   $('listBox').hidden = false;
 }
@@ -169,6 +190,26 @@ function card(it) {
   return li;
 }
 
+/* pulls whose item left the index: they still hold (the function serves every stored pull) */
+function drawOrphans() {
+  const box = $('orphanBox'), ul = $('orphans');
+  ul.textContent = '';
+  box.hidden = !S.orphans.length;
+  for (const o of S.orphans) {
+    const btn = h('button', { class: 'btn', type: 'button', text: 'Unpull' });
+    btn.addEventListener('click', async () => {
+      btn.disabled = true;
+      const r = await api('POST', { action: 'unpull', id: o.id }).catch(() => ({ ok: false, status: 0, body: {} }));
+      btn.disabled = false;
+      if (r.status === 401) return askForKey('That key no longer opens the list.');
+      if (!r.ok) { status(r.body.error || 'That did not save. Try again.', true); return; }
+      S.orphans = S.orphans.filter((x) => x.id !== o.id);
+      status('Unpulled ' + o.id + '. Student pages pick it up within a minute.');
+      drawOrphans();
+    });
+    ul.append(h('li', {}, h('code', { text: o.id }), h('span', { text: ' Pulled' + (o.by ? ' with the ' + (WHO[o.by] || o.by).toLowerCase() : '') + (o.at ? ', ' + day(o.at) : '') + '. ' }), btn));
+  }
+}
 async function act(it, action, btn) {
   btn.disabled = true;
   const r = await api('POST', { action, id: it.id }).catch(() => ({ ok: false, status: 0, body: {} }));
@@ -248,7 +289,9 @@ async function preview(it, box) {
     if (pv.type === 'explainer') await explainer(it, pv, box);
     else if (pv.type === 'page') {
       box.append(h('p', { class: 'x-label', text: pv.scene ? 'The night, scene ' + pv.scene + ' (coach view: shows pulled parts too)' : 'The night (coach view: shows pulled parts too)' }));
-      box.append(h('iframe', { src: pv.src, title: 'Preview of ' + it.title, loading: 'lazy', referrerpolicy: 'no-referrer' }));
+      // sandboxed: scripts run (the night draws), but as an opaque origin, so the framed page
+      // cannot read this tab's sessionStorage (the key) or script this page
+      box.append(h('iframe', { src: pv.src, title: 'Preview of ' + it.title, loading: 'lazy', referrerpolicy: 'no-referrer', sandbox: 'allow-scripts' }));
     } else if (pv.type === 'override') await override(it, pv, box);
     else {
       if (pv.before != null) box.append(h('p', { class: 'x-label', text: 'Before' }), h('p', { class: 'x-before', text: pv.before }));
@@ -316,10 +359,10 @@ $('keyForm').addEventListener('submit', (e) => {
   const v = $('keyIn').value.trim();
   $('keyIn').value = '';
   if (!/^[A-Za-z0-9_-]{16,256}$/.test(v)) { $('keyMsg').textContent = 'That does not look like a review key.'; return; }
-  KEY = v; store.set(v); load();
+  KEYS.set(v); load();
 });
 $('q').addEventListener('input', (e) => { S.q = e.target.value; S.limit = PAGE; draw(); });
 $('more').addEventListener('click', () => { S.limit += PAGE; draw(); });
-KEY = keyFromFragment();
-if (KEY) store.set(KEY); else KEY = store.get();
-if (KEY) load(); else askForKey();
+const fromLink = keyFromFragment();
+if (fromLink) KEYS.set(fromLink);
+if (KEYS.get()) load(); else askForKey();
