@@ -1,14 +1,18 @@
-/* ace-shell.js : the ONE Ace Labs navigation, on every student page (shell v2).
+/* ace-shell.js : the ONE AceTheDAT study navigation, on every student page (shell v2).
 
    Add it with one tag (anywhere; defer is fine):
-     <script src="/shared/ace-shell.js?v=7" defer></script>
+     <script src="/shared/ace-shell.js?v=8" defer></script>
 
    Five doors: Today, Learn, Practice, Tests, Review. The Canon is no longer a
    door; it lives inside Learn as Sheets (/learn/#sheets).
    - Renders in a shadow root (styles from /shared/ace-shell.css), so no tool
      page's CSS can break it and it cannot break a tool page.
-   - Desktop (760 px and up): a 60 px top bar, the ACE DAT lockup and LABS on
-     the left, the doors on the right. Phones show the ACE DAT mark instead, a
+   - Desktop (760 px and up): a 60 px top bar, the ACE DAT lockup on the left
+     (no second name beside it: AceTheDAT is the only name, B1.2t), the doors on
+     the right. From 980 px a places slot follows the doors: Coaching (the
+     portal) and Apply (the application workbench), each a 44 px link to its
+     login; narrower desktops and phones keep the bar as it was (phones until
+     Dec 4). Phones show the ACE DAT mark instead, a
      44 px brand target at the left of the bar (the one-product rule: the new
      logo on every student page, in the same place, one way). The four stage doors (Learn to Review) sit in a
      thin gold ring; a mint bead under the current door travels from the last
@@ -42,7 +46,7 @@
      <html data-ace-shell="off">, and in print.
    - Keeps ?student=<id> on every door so a coach link stays personal.
 
-   window.AceShell: { version, doors, door (the current door id, a string),
+   window.AceShell: { version, doors, places, door (the current door id, a string),
      current, doorFor(path), doorEl(id) (the element a card flies to),
      position(), due(), setDue(n), refreshDue(), relift() }.
    VERSION is the shell generation and the ?v= of its stylesheet: every change
@@ -53,9 +57,14 @@
 (function () {
   'use strict';
   if (window.AceShell) return;
-  var VERSION = '4';
+  var VERSION = '5';
   var DUE_KEY = 'acelabs.v1.dueToday';
   var LAST_KEY = 'al.lastDoor';
+  /* the other AceTheDAT places (desktop only); full URLs, so ?student= never leaves this host */
+  var PLACES = [
+    { id: 'coaching', label: 'Coaching', href: 'https://acethedat-portal.netlify.app/login' },
+    { id: 'apply', label: 'Apply', href: 'https://acethedat-aadsas-workbench.netlify.app/login.html' }
+  ];
   var DOORS = [
     { id: 'today', label: 'Today', href: '/', icon: 'today' },
     { id: 'learn', label: 'Learn', href: '/learn/', icon: 'learn' },
@@ -85,7 +94,7 @@
     ['today', /^\/(ace-labs|ace-labs-classic|onboarding|for-retakers|settings)?$/]
   ];
 
-  var api = window.AceShell = { version: VERSION, doors: DOORS, door: null, current: null, mounted: false };
+  var api = window.AceShell = { version: VERSION, doors: DOORS, places: PLACES, door: null, current: null, mounted: false };
 
   function framed() { try { return window.top !== window.self; } catch (e) { return true; } }
   function qs() { try { return new URLSearchParams(location.search); } catch (e) { return null; } }
@@ -199,15 +208,18 @@
         /* the spoken count sits inside the label, so the name reads "Review, 3 cards back today" */
         '<span class="dl">' + d.label + (review ? '<span class="sr" data-due-sr></span>' : '') + '</span></a></li>';
     }).join('');
+    var places = PLACES.map(function (p) {
+      return '<li><a class="place" data-place="' + p.id + '" href="' + esc(p.href) + '">' + p.label + '</a></li>';
+    }).join('');
     var html =
       '<link rel="stylesheet" href="/shared/ace-shell.css?v=' + VERSION + '">' +
       '<div class="bar"><div class="in">' +
-      '<a class="brand" href="' + esc(withStudent('/')) + '" aria-label="ACE DAT Labs, Today">' +
+      '<a class="brand" href="' + esc(withStudent('/')) + '" aria-label="AceTheDAT, Today">' +
         '<img class="lockup" src="/shared/brand/ace-dat-lockup-reversed-v1.svg" alt="" width="113" height="24" decoding="async">' +
-        '<img class="mark" src="/shared/brand/ace-dat-mark-reversed-v1.svg" alt="" width="26" height="26" decoding="async">' +
-        '<span class="labs">Labs</span></a>' +
-      '<nav aria-label="Ace Labs"><div class="track"><ul class="doors">' + links + '</ul>' +
+        '<img class="mark" src="/shared/brand/ace-dat-mark-reversed-v1.svg" alt="" width="26" height="26" decoding="async"></a>' +
+      '<nav aria-label="AceTheDAT"><div class="track"><ul class="doors">' + links + '</ul>' +
         '<span class="ring" aria-hidden="true"></span><span class="bead" aria-hidden="true"></span></div></nav>' +
+      '<nav class="places" aria-label="More of AceTheDAT"><ul>' + places + '</ul></nav>' +
       '</div></div>';
     if (sr) sr.innerHTML = html; else host.innerHTML = html;
     return host;

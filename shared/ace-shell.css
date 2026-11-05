@@ -1,4 +1,4 @@
-/* ace-shell.css : the ONE Ace Labs bar, shell v2 (loaded as ace-shell.css?v=4).
+/* ace-shell.css : the ONE AceTheDAT study bar, shell v2 (loaded as ace-shell.css?v=5).
    Loaded by shared/ace-shell.js INSIDE a shadow root, so nothing here leaks
    into a tool page and no tool page's CSS leaks in. Values are copied from
    shared/al-tokens.css (tokens v2) and set on :host, because the 132 pages that
@@ -7,10 +7,11 @@
      gold #C9A84C   the coach and your next move: the ring, the Review dot
      mint           where you are: the current door (#6FF0C3), the bead and the
                     tick (#33C993, 8.5:1 as a mark), the focus ring
-   Type: DM Sans for the doors, Sora for "Labs" next to the ACE DAT lockup; both
-   self-hosted, declared on the document by ace-shell.js under private names.
-   Contrast on the bar (#0b1a12 to #07110b, worst end): door label #c9c3b4
-   10.2:1, hover #f4ede0 15.4:1, current door and Labs #6FF0C3 12.8:1, the
+   Type: DM Sans for the doors and the places; self-hosted, declared on the
+   document by ace-shell.js under a private name. The ACE DAT lockup stands
+   alone: AceTheDAT is the only name (B1.2t removed the old second word).
+   Contrast on the bar (#0b1a12 to #07110b, worst end): door label and places
+   #c9c3b4 10.2:1, hover #f4ede0 15.4:1, current door #6FF0C3 12.8:1, the
    Review dot #E2C97A 11.0:1 (a mark). The gold ring only groups the four stage
    doors; it carries no meaning. Every door is at least 44 px. */
 
@@ -61,11 +62,10 @@
   gap: 24px;
 }
 
-/* ---------- brand: the ACE DAT lockup, then Labs ---------- */
+/* ---------- brand: the ACE DAT lockup ---------- */
 .brand {
   display: inline-flex;
   align-items: center;
-  gap: 11px;
   flex: 0 0 auto;
   min-height: 44px;
   padding: 0 4px 0 0;
@@ -75,26 +75,8 @@
   white-space: nowrap;
 }
 .lockup { display: block; width: auto; height: 24px; }
-/* the ACE DAT mark: phones only (the lockup and LABS do not fit beside five doors) */
+/* the ACE DAT mark: phones only (the lockup does not fit beside five doors) */
 .mark { display: none; width: 26px; height: 26px; }
-.labs {
-  position: relative;
-  padding-left: 12px;
-  font: 600 15px/1 var(--f-display);
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--mint-ink);
-}
-.labs::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 50%;
-  width: 1.5px;
-  height: 18px;
-  margin-top: -9px;
-  background: rgba(244, 237, 224, 0.28);
-}
 
 /* ---------- the doors ---------- */
 nav { flex: 1 1 auto; display: flex; justify-content: flex-end; height: 100%; min-width: 0; }
@@ -188,6 +170,36 @@ nav { flex: 1 1 auto; display: flex; justify-content: flex-end; height: 100%; mi
 }
 .bead.on { opacity: 1; }
 
+/* ---------- the places: Coaching and Apply (desktop, 980 px and up) ---------- */
+.places { flex: 0 0 auto; display: flex; align-items: center; height: 100%; justify-content: flex-start; position: relative; padding-left: 12px; }
+.places::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 1px;
+  height: 22px;
+  margin-top: -11px;
+  background: rgba(244, 237, 224, 0.22);
+}
+.places ul { display: flex; align-items: center; list-style: none; gap: 2px; }
+.places li { display: flex; }
+.place {
+  display: flex;
+  align-items: center;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0 12px;
+  color: var(--ink-2);
+  text-decoration: none;
+  font: 600 13.5px/1 var(--f-body);
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  border-radius: 10px;
+  transition: color 180ms var(--e-std);
+}
+.place:hover { color: var(--ink); }
+
 a:focus-visible {
   outline: 3px solid var(--mint-ink);
   outline-offset: -3px;
@@ -197,7 +209,7 @@ a:focus-visible {
 @media (min-width: 760px) and (max-width: 979px) {
   .in { gap: 12px; padding: 0 16px; }
   .door { padding: 0 10px; gap: 7px; }
-  .labs { display: none; }
+  .places { display: none; }
 }
 
 /* ---------- phone: five equal doors, icon over label ---------- */
@@ -205,7 +217,7 @@ a:focus-visible {
   .in { height: 56px; padding: 0 4px; gap: 0; }
   /* the mark, a 44 px target at the left; the five doors share the rest */
   .brand { flex: 0 0 44px; width: 44px; min-width: 44px; justify-content: center; gap: 0; padding: 0; }
-  .lockup, .labs { display: none; }
+  .lockup, .places { display: none; }
   .mark { display: block; }
   nav { justify-content: stretch; }
   .track { width: 100%; }
@@ -252,4 +264,5 @@ a:focus-visible {
 
 @media (prefers-reduced-motion: reduce) {
   .door, .bead { transition: none !important; }
+  .place { transition: none !important; }
 }

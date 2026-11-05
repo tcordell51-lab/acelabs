@@ -47,7 +47,7 @@ const doors = (doc) => [...sr(doc).querySelectorAll('a.door')];
 
 test('five doors, plain words, an icon each; the Canon is no longer a door', () => {
   const { doc, S } = boot();
-  assert.equal(S.version, '4');
+  assert.equal(S.version, '5');
   assert.deepEqual(doors(doc).map((a) => a.querySelector('.dl').textContent), ['Today', 'Learn', 'Practice', 'Tests', 'Review']);
   assert.deepEqual(doors(doc).map((a) => a.getAttribute('href')), ['/', '/learn/', '/practice/', '/tests/', '/review/']);
   assert.ok(doors(doc).every((a) => a.querySelector('svg.ico[aria-hidden="true"]')), 'an icon beside every word');
@@ -55,19 +55,43 @@ test('five doors, plain words, an icon each; the Canon is no longer a door', () 
   const today = doors(doc)[0].querySelector('svg').innerHTML;
   assert.match(today, /M3 17\.5h18/, 'Today is a sunrise over a horizon line');
   assert.doesNotMatch(today, /<circle/, 'never a clock face');
-  assert.equal(sr(doc).querySelector('link[rel="stylesheet"]').getAttribute('href'), '/shared/ace-shell.css?v=4');
-  assert.equal(sr(doc).querySelector('nav').getAttribute('aria-label'), 'Ace Labs');
+  assert.equal(sr(doc).querySelector('link[rel="stylesheet"]').getAttribute('href'), '/shared/ace-shell.css?v=5');
+  assert.equal(sr(doc).querySelector('nav').getAttribute('aria-label'), 'AceTheDAT');
 });
 
-test('the brand is the ACE DAT lockup, then Labs, linking to Today', () => {
+test('the brand is the ACE DAT lockup alone, named AceTheDAT, linking to Today (no "Labs" anywhere)', () => {
   const { doc } = boot();
   const b = sr(doc).querySelector('a.brand');
   assert.equal(b.getAttribute('href'), '/');
-  assert.equal(b.getAttribute('aria-label'), 'ACE DAT Labs, Today', 'the spoken name holds the visible words (label in name)');
+  assert.equal(b.getAttribute('aria-label'), 'AceTheDAT, Today', 'one product name (B-01)');
   assert.equal(b.querySelector('img.lockup').getAttribute('src'), '/shared/brand/ace-dat-lockup-reversed-v1.svg');
   assert.equal(b.querySelector('img.lockup').getAttribute('alt'), '', 'the link carries the name');
-  assert.equal(b.querySelector('.labs').textContent, 'Labs');
+  assert.equal(b.querySelector('.labs'), null, 'the Labs span is gone');
+  assert.equal(b.textContent.trim(), '', 'nothing written beside the lockup');
+  assert.doesNotMatch(sr(doc).textContent, /\bLabs\b/, 'no Labs text in the bar');
+  for (const el of sr(doc).querySelectorAll('[aria-label]')) assert.doesNotMatch(el.getAttribute('aria-label'), /\bLabs\b/i, 'no Labs in a spoken name');
+  assert.doesNotMatch(CSS, /\.labs\b/, 'no .labs style left');
   assert.ok(fs.existsSync(path.join(ROOT, 'shared/brand/ace-dat-lockup-reversed-v1.svg')));
+});
+
+test('the places slot: Coaching and Apply after the doors, desktop from 980 px only, 44 px targets', () => {
+  const { doc, S } = boot({ path: '/review/?student=rec1' });
+  const places = sr(doc).querySelector('nav.places');
+  assert.ok(places, 'the slot is in the bar');
+  assert.equal(places.getAttribute('aria-label'), 'More of AceTheDAT');
+  const nav = sr(doc).querySelector('nav:not(.places)');
+  assert.ok(nav.compareDocumentPosition(places) & 4, 'the places follow the doors');
+  const links = [...places.querySelectorAll('a.place')];
+  assert.deepEqual(links.map((a) => a.textContent), ['Coaching', 'Apply']);
+  assert.deepEqual(links.map((a) => a.getAttribute('href')), ['https://acethedat-portal.netlify.app/login', 'https://acethedat-aadsas-workbench.netlify.app/login.html'], 'the logins, never ?student= on another host');
+  assert.ok(links.every((a) => !a.hasAttribute('aria-current')), 'neither is the current place on Study');
+  assert.deepEqual([...S.places].map((p) => p.id), ['coaching', 'apply']);
+  assert.equal(doors(doc).length, 5, 'still five doors');
+  assert.match(CSS, /\.place \{[^}]*min-width: 44px;[^}]*min-height: 44px;/);
+  const narrow = CSS.slice(CSS.indexOf('@media (min-width: 760px) and (max-width: 979px)'));
+  assert.match(narrow.slice(0, narrow.indexOf('}\n}') + 3), /\.places \{ display: none; \}/, 'narrow desktops keep the bar as it was');
+  const phone = CSS.slice(CSS.indexOf('@media (max-width: 759px)'));
+  assert.match(phone, /\.lockup, \.places \{ display: none; \}/, 'phones unchanged until Dec 4');
 });
 
 test('phones show the ACE DAT mark in the bar (one product: the new logo on every page, one way)', () => {
@@ -78,12 +102,12 @@ test('phones show the ACE DAT mark in the bar (one product: the new logo on ever
   assert.equal(mark.getAttribute('src'), '/shared/brand/ace-dat-mark-reversed-v1.svg');
   assert.equal(mark.getAttribute('alt'), '', 'the link carries the name');
   assert.ok(fs.existsSync(path.join(ROOT, 'shared/brand/ace-dat-mark-reversed-v1.svg')));
-  /* desktop: lockup and Labs, no mark */
+  /* desktop: the lockup, no mark */
   assert.match(CSS, /\.mark \{ display: none;/);
-  /* phone: the brand is a 44 px target at the left, the mark shows, the lockup and Labs do not */
+  /* phone: the brand is a 44 px target at the left, the mark shows, the lockup and the places do not */
   const phone = CSS.slice(CSS.indexOf('@media (max-width: 759px)'));
   assert.match(phone, /\.brand \{ flex: 0 0 44px; width: 44px; min-width: 44px;/);
-  assert.match(phone, /\.lockup, \.labs \{ display: none; \}/);
+  assert.match(phone, /\.lockup, \.places \{ display: none; \}/);
   assert.match(phone, /\.mark \{ display: block; \}/);
   assert.doesNotMatch(phone.slice(0, phone.indexOf('}') + 1), /\.brand \{ display: none/);
 });
@@ -584,7 +608,7 @@ test('ace-shell.css only changes with a new VERSION (no page names its URL, so n
   /* the CSS loads as /shared/ace-shell.css?v=<VERSION> under an immutable cache. When this fails because
      ace-shell.css changed: bump VERSION in ace-shell.js, bump ace-shell.js ?v= on every includer, and
      record the new hash here. */
-  const PINNED = { '3': '81543f99e4999b63', '4': 'd9cdbc41e6ec1e3d' };
+  const PINNED = { '3': '81543f99e4999b63', '4': 'd9cdbc41e6ec1e3d', '5': '4453b16f0c4fafba' };
   const v = /var VERSION = '(\d+)'/.exec(SHELL)[1];
   const sha = require('node:crypto').createHash('sha256').update(CSS).digest('hex').slice(0, 16);
   assert.equal(PINNED[v], sha, 'ace-shell.css changed under VERSION ' + v);
@@ -594,7 +618,8 @@ test('targets: every door is at least 44 px; copy is plain ASCII', () => {
   assert.match(CSS, /\.door \{[^}]*min-width: 44px;[^}]*min-height: 44px;/);
   assert.match(CSS, /\.brand \{[^}]*min-height: 44px;/);
   for (const [f, s] of [['ace-shell.js', SHELL], ['ace-shell.css', CSS]]) assert.doesNotMatch(s, /[^\x00-\x7e]/, f + ' is ASCII');
-  assert.doesNotMatch(SHELL, /acethedat-portal|canon\//, 'no Canon door or portal link left in the shell');
+  assert.doesNotMatch(SHELL, /canon\//, 'no Canon door left in the shell');
+  assert.equal((SHELL.match(/acethedat-portal/g) || []).length, 1, 'the portal appears once: the Coaching place');
 });
 
 test('contrast on the bar: every text color passes 4.5:1 on both ends of the gradient', () => {
