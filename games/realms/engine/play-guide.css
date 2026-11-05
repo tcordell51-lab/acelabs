@@ -1,0 +1,46 @@
+/* Original Mnemon play-guide layout retained; see docs/PLAY-GUIDE-PROVENANCE.md. */
+:root{--pg-ink:#1f3b36;--pg-soft:#4b6460;--pg-paper:#fffaf0;--pg-line:#d9cfb6;--pg-gold:#e5a743;--pg-green:#24584d;--pg-done:#2f7a52}
+.pg-tour{position:fixed;inset:0;z-index:2147483000;pointer-events:auto}
+.pg-tour[hidden]{display:none}
+.pg-shade{position:absolute;inset:0;background:transparent}
+.pg-ring{position:absolute;border:3px solid var(--pg-gold);border-radius:14px;box-shadow:0 0 0 9999px rgba(12,24,22,.58),0 0 0 6px rgba(229,167,67,.35);transition:left .2s,top .2s,width .2s,height .2s;pointer-events:none}
+.pg-ring[hidden]{display:none}
+.pg-tour.pg-no-ring .pg-shade{background:rgba(12,24,22,.58)}
+.pg-card{position:absolute;left:50%;transform:translateX(-50%);width:min(440px,calc(100vw - 32px));max-height:calc(100vh - 32px);overflow:auto;background:var(--pg-paper);color:var(--pg-ink);border:2px solid var(--pg-ink);border-radius:16px;padding:16px 16px 12px;box-shadow:0 10px 30px rgba(0,0,0,.35);font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+.pg-card.pg-bottom{bottom:max(16px,env(safe-area-inset-bottom))}
+.pg-card.pg-top{top:max(16px,env(safe-area-inset-top))}
+.pg-eyebrow{margin:0 0 4px;font-size:11px;letter-spacing:.14em;font-weight:700;color:#8a5a1c}
+.pg-card h2{margin:0 0 6px;font-size:19px;line-height:1.25;color:var(--pg-ink)}
+.pg-body{margin:0;color:var(--pg-ink)}
+.pg-body b{color:var(--pg-green)}
+.pg-dots{display:flex;gap:6px;justify-content:center;margin:12px 0 10px}
+.pg-dots i{width:8px;height:8px;border-radius:50%;background:var(--pg-line)}
+.pg-dots i.on{background:var(--pg-green);width:18px;border-radius:5px}
+.pg-actions{display:flex;align-items:center;gap:8px}
+.pg-grow{flex:1}
+.pg-actions button{min-height:44px;padding:8px 14px;border-radius:12px;font:600 15px/1 system-ui,-apple-system,"Segoe UI",sans-serif;cursor:pointer;border:2px solid var(--pg-ink);background:#fff;color:var(--pg-ink)}
+.pg-actions .pg-next{background:var(--pg-green);border-color:var(--pg-green);color:#fff}
+.pg-actions .pg-skip{border-color:transparent;background:transparent;color:var(--pg-soft);text-decoration:underline;padding-left:4px}
+.pg-actions button:disabled{opacity:.4;cursor:default}
+.pg-actions button:focus-visible{outline:3px solid var(--pg-gold);outline-offset:2px}
+@media (max-width:380px){.pg-actions button{padding:8px 10px;font-size:14px}.pg-card{padding:14px 12px 10px}}
+
+/* Route checklist chip: a child of the map HUD column, under the place card. */
+.pg-chip{pointer-events:auto;max-width:min(360px,calc(100vw - 150px));background:var(--pg-paper);color:var(--pg-ink);border:2px solid var(--pg-ink);border-radius:14px;box-shadow:0 2px 0 rgba(0,0,0,.18);font:13px/1.35 system-ui,-apple-system,"Segoe UI",sans-serif}
+.pg-chip[hidden]{display:none}
+.pg-chip.is-done{border-color:var(--pg-done)}
+.pg-chip-head{display:block;width:100%;text-align:left;background:none;border:0;padding:7px 12px;font:700 12.5px/1.35 system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--pg-ink);cursor:pointer;min-height:44px}
+.pg-chip.is-done .pg-chip-head{color:var(--pg-done)}
+.pg-chip-head:focus-visible{outline:3px solid var(--pg-gold);outline-offset:1px;border-radius:12px}
+.pg-chip-body{padding:0 12px 10px;border-top:1px solid var(--pg-line)}
+.pg-chip-body p{margin:8px 0 4px}
+.pg-chip-body ul{margin:0;padding:0;list-style:none}
+.pg-chip-body li{padding:3px 0}
+.pg-chip-body li b{display:inline-block;min-width:44px;color:#9a4a2a}
+.pg-chip-body li.on b{color:var(--pg-done)}
+.pg-chip-note{color:var(--pg-soft);font-size:12px}
+@media (max-width:760px){.pg-chip{max-width:calc(100vw - 140px)}}
+@media (prefers-reduced-motion:reduce){.pg-ring{transition:none}}
+/* While the tour shows, a waiting one-line question (story scenes, Film Room) steps aside; it is back when the tour ends. */
+body.pg-touring .cs-toast,body.pg-touring #frPrompt{visibility:hidden}
+.pg-chip-head:only-child{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}

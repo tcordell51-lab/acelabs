@@ -1,0 +1,38 @@
+import {esc} from './visuals.mjs';
+import {createExpeditionReview} from './expedition-review.mjs';
+const names={BIO:'Living Wilds',GCHEM:'Ember Forges',OCHEM:'Alchemist’s Tower',PAT:'Shifting Labyrinth',RC:'Sunken Library',QR:'Clockwork City'};
+const reasons={uncertainCorrect:'You got this practice case right but marked it uncertain. Revisit the reasoning.',uncertainRelated:'An earlier correct answer felt uncertain. This is a separate ordinary practice case on that idea.',duePractice:'This familiar practice is due for another visit.',freshLater:'Use an earlier idea in a fresh later case. Help is available.'};
+const reasonText={tooSoon:'A later check needs more time since this idea was last used.',needsFirstCheck:'Explore the idea, then try a fresh chapter checkpoint.',alreadySeen:'These reserved cases are familiar. Ordinary practice remains open.',unverifiedVersion:'Earlier item versions cannot establish current evidence.',unknownHistory:'Earlier records do not establish a fresh case.',unavailable:'No reviewed later case is available.'};
+const title=id=>window.AceDATContent?.objectives?.find(o=>o.id===id)?.name||'Earlier field skill';
+const button=(label,action,value='',disabled=false)=>`<button type="button" style="min-height:44px" data-return-action="${action}" data-value="${esc(value)}"${disabled?' disabled':''}>${esc(label)}</button>`;
+const scene=()=>`<svg viewBox="0 0 600 170" role="img" aria-label="A path connects three return landmarks beneath the Remembering Tree." style="display:block;width:100%;max-height:190px"><rect width="600" height="170" rx="18" fill="#e2ecd5"/><path d="M55 125 Q170 35 300 120 T545 100" fill="none" stroke="#a18b58" stroke-width="12"/><path d="M300 105V45" stroke="#6c573d" stroke-width="15"/><circle cx="300" cy="43" r="38" fill="#59876b"/>${[85,300,520].map((x,i)=>`<circle cx="${x}" cy="120" r="22" fill="#f7eed5" stroke="#35554c" stroke-width="3"/><text x="${x}" y="127" text-anchor="middle" font-family="system-ui" font-size="20" fill="#243d35">${i+1}</text>`).join('')}</svg>`;
+export function renderReturnPlan(report,{course=null,titleOf=title}={}){
+  if(!report.ok)return `<section class="dat-learning"><p role="alert">The return fieldbook could not read your saved evidence. Your previous work is kept. Use Settings to export a backup; no check is launched.</p></section>`;
+  return `<section class="dat-learning">${scene()}<p class="panel-intro">Keeper Rowan has a short return journey for you${course?' in '+esc(names[course]):' across the realms'}. Every stop names why it is here. You can leave whenever you like.</p>${report.stops.length?`<ol class="topic-list">${report.stops.map((stop,i)=>`<li class="lesson-block"><p class="eyebrow">${esc(names[stop.course])} · ${stop.kind==='later'?'Fresh later check':'Practice'}</p><h3>${esc(titleOf(stop.objectiveId))}</h3><p>${esc(reasons[stop.reason])}</p>${button(i===0?'Next: '+(stop.kind==='later'?'try this later case':'revisit this idea'):'Choose this stop','launch',stop.itemId)}</li>`).join('')}</ol>`:`<h3>A quiet moment in the grove</h3><p>Nothing is due for this selection. Explore an expedition, rest, or choose a realm below for ordinary practice. Waiting here does not earn evidence.</p>`}<p>${esc(report.note)}</p><p class="evidence-note">Practice never becomes a fresh check by replaying it. Leaving a shown check keeps it familiar. Your collection and earlier story rewards stay yours.</p><h3>Choose a realm</h3><div class="learning-actions">${button('Mix the realms','all')}${Object.entries(names).map(([key,name])=>button(name,'course',key)).join('')}</div>${course?`<div class="learning-actions">${button('Explore this realm’s ideas','learn-course',course)}${button('Ordinary practice','practice-course',course)}${button('See later-check timing','details',course)}</div>`:''}<p>Closing a stop brings you back here. The next suggestion uses the responses actually saved; an abandoned stop is never called completed.</p></section>`;
+}
+export function open(api,options={}){
+  const course=Object.hasOwn(names,options.course)?options.course:null,scope=course?{course}:{},review=createExpeditionReview(window),report=review.plan({...scope,limit:3});
+  api.panel('Return Expedition · the Remembering Tree',renderReturnPlan(report,{course}),true);
+  const host=document.querySelector('#panelBody');if(!host)return;
+  host.querySelectorAll('[data-return-action]').forEach(b=>b.onclick=()=>{
+    const {returnAction:action,value}=b.dataset;
+    if(action==='all')return open(api);
+    if(action==='course')return open(api,{course:value});
+    if(action==='details')return details(api,value);
+    if(action==='learn-course'){const objective=window.AceDATRealms?.find(r=>r.course===value)?.routes?.[0]?.objectiveIds?.[0];if(objective)return window.AceDATLearning?.open?.(objective,api);return;}
+    if(action==='practice-course'){const practice=window.AceDATReturnReview?.practiceFallback?.({course:value,limit:1})?.[0];if(!practice){api.notice?.('No reviewed ordinary practice is available for this realm yet.');return;}return api.openQuest({course:value,special:{id:'return-practice:'+practice.itemId,kind:'return-practice',assessment:'practice',items:[practice.itemId],name:'Field Practice',sub:'Ordinary practice',xp:4},onReturn:()=>open(api,{course:value})});}
+    if(action!=='launch')return;
+    const next=review.plan({...scope,limit:5}),stop=next.stops.find(s=>s.itemId===value);
+    if(!stop){api.notice?.('That stop changed while you were here. Rowan has refreshed the fieldbook.');return open(api,{course});}
+    const onReturn=()=>open(api,{course});
+    if(stop.kind==='later')return api.openQuest({course:stop.course,special:{id:'return-expedition:'+stop.itemId,kind:'return-review',assessment:'later',items:[stop.itemId],name:'Keeper Rowan',sub:'Return Expedition'},onReturn});
+    return api.openQuest({course:stop.course,special:{id:'return-practice:'+stop.itemId,kind:'return-practice',assessment:'practice',items:[stop.itemId],name:'Field Practice',sub:'Return Expedition · practice',xp:4},onReturn});
+  });
+}
+function details(api,course){
+  const report=window.AceDATReturnReview?.summary?.({course});if(!report){api.notice?.('The later-check fieldbook is unavailable.');return;}
+  const grouped=new Map();for(const row of report.items){const old=grouped.get(row.objectiveId);if(!old||row.eligible||(!old.eligible&&row.status==='tooSoon'))grouped.set(row.objectiveId,row);}
+  api.panel(names[course]+' · later return plan',`<section class="dat-learning"><p>A later check needs an earlier independent correct check, an unseen task family, and at least 20 hours since relevant instruction or response. This is the current scheduling rule, not a validated mastery threshold. Keep learning whenever it helps; another idea may be ready sooner.</p>${[...grouped.values()].map(row=>`<section class="lesson-block"><h3>${esc(title(row.objectiveId))}</h3><p>${row.eligible?'A fresh later case is available.':esc(window.AceDATReturnReview.reasonLabels[row.reason]||reasonText[row.status]||'Continue exploring this idea.')}</p>${row.status==='tooSoon'&&Number.isFinite(row.eligibleAt)?`<p>Earliest return: <time datetime="${new Date(row.eligibleAt).toISOString()}">${esc(new Date(row.eligibleAt).toLocaleString())}</time>, if there is no further relevant exposure.</p>`:''}${button('Explore the idea','learn',row.objectiveId)}</section>`).join('')}${button('Back to the return path','back')}</section>`,true);
+  document.querySelectorAll('[data-return-action]').forEach(b=>b.onclick=()=>b.dataset.returnAction==='back'?open(api,{course}):window.AceDATLearning?.open?.(b.dataset.value,api));
+}
+if(typeof window!=='undefined')window.AceDATReturnUI={open};

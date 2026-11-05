@@ -1,0 +1,70 @@
+/* Mnemon device finish (2026-10-08). Loaded last, after every other Mnemon stylesheet.
+ * Pure additions for computer (1280), iPad (820 portrait, 1180 landscape) and iPhone (390):
+ * tap targets of at least 44px, readable small print, no squeezed header, and a Continue
+ * button that stays in reach on a long miss card. Nothing here changes game logic.
+ */
+
+/* ---------- Touch targets at every width (desktop gains a few px; iPad needs them) ---------- */
+@media (min-height: 541px) {
+  .world-app .gamebar button,
+  .world-app .world-navigation button { min-height: 44px; }
+  .world-app .world-brand { min-height: 44px; }
+}
+.world-panel-header > #closeWorldPanel { min-width: 44px; height: 44px; }
+.world-app .aw-dpad button, .world-app [class*="dpad"] button { min-width: 44px; min-height: 44px; }
+.world-panel .text-button { min-height: 44px; }
+#drillsDialog button[aria-label="Close"] { min-width: 44px; min-height: 44px; }
+dialog.exam-quest .eq-chip { min-height: 44px; }
+dialog .bfx-wager button { min-height: 44px; }
+.rli-btn { min-height: 44px; }
+.rl-steps button, .rl-dots button { min-height: 44px; }
+.rl-dots button { min-width: 44px; }
+.world-panel summary { min-height: 44px; display: list-item; padding-top: 10px; padding-bottom: 10px; }
+
+/* Guided relearn: its header button says "Close" in words, so it must not be the 40px round icon. */
+.rl-dialog .world-panel-header > button {
+  width: auto; min-width: 72px; height: auto; min-height: 44px;
+  padding: 0 16px; font-size: 14px; border-radius: 999px; flex-shrink: 0; white-space: nowrap;
+}
+
+/* Settings: the trainer name field had collapsed to 20px wide on iPhone. */
+.trainer-name-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; }
+.trainer-name-row input#worldTrainerName { flex: 1 1 150px; min-width: 140px; min-height: 44px; font-size: 16px; }
+.trainer-name-row button { min-height: 44px; }
+
+/* Text inputs at 16px on touch devices so iOS never zooms the page when a field gets focus. */
+@media (pointer: coarse), (max-width: 1180px) {
+  .world-app input[type="text"], .world-app input:not([type]), .world-app textarea, .world-app select,
+  dialog input[type="text"], dialog textarea, dialog select { font-size: 16px; }
+}
+
+/* A long miss card (explanation plus relearn) pushed Continue far below the fold on iPhone. */
+/* 10/14: it floated over the source line and the Relearn link. Now a full-width solid bar at the bottom edge of the
+   feedback box (its own padding cancelled by the negative margins), so text scrolls cleanly behind it and the last
+   lines are fully visible once you reach the end. */
+/* 10/23 (owner, iPhone): the bar was tall (13px padding plus the full 34px home-indicator inset under the label, a focus
+   ring drawn 4px outside it) and the dialog's own 18px bottom padding let text show under it. Now: a 56px bar flush
+   with the dialog's bottom edge (the dialog drops its bottom padding while a sheet is open), only the part of the inset
+   that the dialog's own bottom margin (about 25px) does not already clear, the focus ring drawn inside, and the
+   scroller's scroll-padding keeps anything scrolled into view (focus, "One more like this") above the bar. */
+dialog.exam-quest .eq-fb > button.primary { position: sticky; bottom: 0; z-index: 3; display: flex; align-items: center; justify-content: center; gap: 8px; width: calc(100% + 28px); max-width: none; min-height: 56px; margin: 14px -14px -12px; padding: 10px 18px calc(10px + max(0px, env(safe-area-inset-bottom, 0px) - 22px)); border-radius: 0 0 12px 12px; box-shadow: 0 -8px 14px -10px rgba(20, 40, 36, .4); outline-offset: -5px; }
+dialog.exam-quest:has(.eq-fb > button.primary) { padding-bottom: 0; scroll-padding-bottom: 76px; }
+
+/* ---------- iPhone and small tablets ---------- */
+@media (max-width: 600px) {
+  /* The status line (focus, badges, saved) was squeezed to one letter per line beside the buttons. */
+  .world-app .gamebar { flex-wrap: wrap; row-gap: 4px; }
+  .world-app .gamebar-status { order: 3; flex: 1 0 100%; flex-direction: row; flex-wrap: wrap; justify-content: flex-start; gap: 2px 12px; min-width: 0; }
+  .world-app .gamebar-status span { overflow-wrap: normal; white-space: nowrap; }
+  .world-app .gamebar-status, #focusLabel, #badgeCount, #saveLabel { font-size: 11px; }
+  /* Small print that was 6 to 10px. */
+  .world-brand small { font-size: 9px; letter-spacing: 1px; }
+  .aw-eyebrow { font-size: 10px !important; }
+  .aw-place-detail, .aw-controls-help, #trainerTag, #partnerLevel { font-size: 11px !important; }
+  .world-panel p.eyebrow, .world-panel .eyebrow { font-size: 10px; }
+  .world-panel small, .world-panel .panel-note, .world-panel li, .world-panel time { font-size: max(11px, 1em); }
+}
+
+/* Back-button hint (nav-history.js): shown once when Back is pressed at the bare world. */
+.mnemon-nav-hint { position: fixed; left: 50%; bottom: max(24px, env(safe-area-inset-bottom, 0px)); transform: translate(-50%, 20px); z-index: 2147483000; max-width: calc(100vw - 32px); padding: 12px 18px; border-radius: 12px; background: #1f3f3a; color: #fcf8e9; font: 600 14px/1.35 system-ui, sans-serif; box-shadow: 0 8px 24px rgba(0,0,0,.3); opacity: 0; pointer-events: none; transition: opacity .2s ease, transform .2s ease; }
+.mnemon-nav-hint.show { opacity: 1; transform: translate(-50%, 0); }

@@ -1,0 +1,10 @@
+import * as bio from './bio.mjs';
+import * as science from './science.mjs';
+import * as skills from './skills.mjs';
+import * as cells from './cell-quarter.mjs';
+import {teachingByObjective as openingTeaching} from './teaching.mjs';
+export const modules=[bio,science,skills,cells];
+export const ITEMS=modules.flatMap(module=>module.items);
+export const OBJECTIVES=modules.flatMap(module=>module.objectives);
+export const MISSIONS=modules.flatMap(module=>module.missions);
+export const teachingByObjective={...openingTeaching,...cells.teachingByObjective};

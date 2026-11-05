@@ -1,0 +1,112 @@
+/* Battle FX (battle-fx.js): juice, confidence wager, Lumen variants, evolution cutscene.
+ * Every animation here is switched off under prefers-reduced-motion. */
+.bfx-on .pk-me-box .eq-combo{display:none}
+.bfx-cv{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:6}
+
+/* Floating damage numbers: size scales with damage (set inline), color by effectiveness. */
+.pk-dmg.bfx-num{z-index:7;animation:bfx-dmg 1.1s cubic-bezier(.2,.9,.3,1) forwards;-webkit-text-stroke:1px #fff;paint-order:stroke}
+.pk-dmg.bfx-num.sup{color:#c8461d}
+.pk-dmg.bfx-num.weak{color:#6e7a72}
+.pk-dmg.bfx-num.crit{color:#a3122a}
+@keyframes bfx-dmg{0%{opacity:0;transform:translate(-50%,8px) scale(.5)}18%{opacity:1;transform:translate(-50%,-6px) scale(1.25)}35%{transform:translate(-50%,-10px) scale(1)}100%{opacity:0;transform:translate(-50%,-34px) scale(1)}}
+
+/* Crit flash over the whole arena. */
+.bfx-critflash{position:absolute;inset:0;z-index:5;pointer-events:none;background:radial-gradient(circle at 70% 35%,#fff 0,rgba(255,255,255,.85) 30%,rgba(255,240,200,0) 75%);animation:bfx-critflash .5s ease-out forwards}
+@keyframes bfx-critflash{0%{opacity:0}15%{opacity:1}100%{opacity:0}}
+
+/* Short text pops (crit, streak tier). */
+.bfx-pop{position:absolute;left:50%;top:44%;z-index:8;pointer-events:none;white-space:nowrap;font-weight:900;font-size:15px;letter-spacing:.04em;padding:4px 12px;border-radius:999px;border:2px solid #2b4a44;background:#fffdf4;color:#2b4a44;box-shadow:0 3px 0 rgba(0,0,0,.15);animation:bfx-pop 1.2s ease forwards}
+.bfx-pop-crit{background:#a3122a;color:#fff;border-color:#5e0a17;top:30%}
+.bfx-pop-combo{background:#fff0c8;color:#7a4f00;border-color:#b98a23;top:58%}
+@keyframes bfx-pop{0%{opacity:0;transform:translate(-50%,10px) scale(.6)}15%{opacity:1;transform:translate(-50%,0) scale(1.1)}30%{transform:translate(-50%,0) scale(1)}80%{opacity:1}100%{opacity:0;transform:translate(-50%,-12px)}}
+
+/* Move-name banner. */
+.bfx-banner{position:absolute;left:0;top:50%;z-index:8;pointer-events:none;display:flex;align-items:baseline;gap:10px;padding:6px 18px 6px 14px;max-width:86%;
+  background:#fffdf4;border:2px solid #2b4a44;border-left:8px solid var(--tc,#2b4a44);border-radius:0 999px 999px 0;box-shadow:0 3px 0 rgba(0,0,0,.15);animation:bfx-banner 1.45s cubic-bezier(.2,.9,.3,1) forwards}
+.bfx-banner b{font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bfx-banner small{font-size:11px;font-weight:700;color:#4d5d55;white-space:nowrap;text-transform:uppercase;letter-spacing:.06em}
+@keyframes bfx-banner{0%{opacity:0;transform:translate(-100%,-50%)}18%{opacity:1;transform:translate(0,-50%)}78%{opacity:1;transform:translate(0,-50%)}100%{opacity:0;transform:translate(12%,-50%)}}
+
+/* Faint and worn out. */
+.pk-arena .pk-me canvas.bfx-faint,.pk-arena .pk-foe canvas.bfx-faint{animation:bfx-faint .9s ease-in .25s forwards!important}
+@keyframes bfx-faint{0%{transform:translateY(0);opacity:1;filter:none}30%{transform:translateY(-6px)}100%{transform:translateY(46px) scaleY(.7);opacity:0;filter:grayscale(1)}}
+.pk-arena .pk-foe canvas.bfx-worn{animation:bfx-worn .8s ease .25s forwards!important}
+@keyframes bfx-worn{100%{transform:translateY(10px) rotate(-8deg);filter:grayscale(.6) brightness(.9)}}
+.pk-arena .pk-me canvas.bfx-down{opacity:.25;filter:grayscale(1);transform:translateY(20px)}
+
+/* Streak meter (XP multiplier only). */
+.bfx-combo{display:grid;grid-template-columns:auto auto;justify-content:space-between;align-items:center;gap:0 8px;margin-top:5px;font-size:11px;line-height:1.3}
+.bfx-combo b{color:#2b4a44}.bfx-combo em{font-style:normal;font-weight:800;color:#8a5a00;background:#fff0c8;border-radius:999px;padding:0 7px}
+.bfx-combo-bar{grid-column:1/-1;height:4px;border-radius:3px;background:#e6e1cc;overflow:hidden;margin-top:2px}
+.bfx-combo-bar i{display:block;height:100%;background:linear-gradient(90deg,#e0b12e,#e2733b);transition:width .5s ease}
+.bfx-combo.t2 em,.bfx-combo.t3 em{background:#ffe1b0;color:#7a3c00}
+.bfx-combo.t4 em{background:#7a3c00;color:#fff3d6}
+@media (max-width:760px){.pk-arena.compact .bfx-combo{display:none}}
+
+/* Confidence wager. */
+.bfx-wager{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;margin:4px 0 10px;padding:8px 10px;border:1px dashed #b5bdb2;border-radius:12px;background:#fbfaf3}
+.bfx-wager-q{font-size:13px;font-weight:800;color:#2b4a44;margin-right:4px}
+.bfx-wager-q small{font-weight:600;color:#6b766f;font-size:11px;margin-left:4px}
+.bfx-wager button{min-height:36px;padding:4px 12px;border:2px solid #2b4a44;border-radius:999px;background:#fff;font-weight:700;font-size:13px;color:#2b4a44;cursor:pointer}
+.bfx-wager button kbd{font-size:10px;border:1px solid #b5bdb2;border-radius:4px;padding:0 4px;margin-right:5px;color:#6b766f}
+.bfx-wager button.on[data-wager=sure]{background:#2b4a44;color:#fff}
+.bfx-wager button.on[data-wager=think]{background:#d8ead9}
+.bfx-wager button.on[data-wager=guess]{background:#f3e3b9}
+.bfx-wager button.on kbd{color:inherit;border-color:currentColor}
+.bfx-wager-help{flex-basis:100%;font-size:11px;color:#6b766f;line-height:1.35}
+@media (max-width:420px){.bfx-wager{gap:6px}.bfx-wager-q{flex-basis:100%}.bfx-wager button{flex:1 1 0;padding:4px 6px;font-size:12px}}
+
+/* Calibration on the trainer card; Recall Center priority. */
+.bfx-calib{font-size:12px;color:#4d5d55;margin:4px 0 0}
+.bfx-pri{display:inline-block;font-size:10px;font-weight:800;letter-spacing:.04em;color:#fff;background:#a3122a;border-radius:999px;padding:1px 8px;text-transform:none}
+
+/* XP bar on the result screen. */
+.bfx-xp{display:flex;align-items:center;gap:8px;max-width:360px;margin:6px auto 2px;font-size:13px}
+.bfx-xp-lv{font-weight:800;color:#2b4a44;min-width:44px;text-align:right}
+.bfx-xp-lv.up{color:#b06d00}
+.bfx-xp-bar{flex:1;height:10px;border-radius:6px;background:#dfe4da;border:1px solid #9fb0a3;overflow:hidden}
+.bfx-xp-bar i{display:block;height:100%;background:linear-gradient(90deg,#4f8fd8,#6fc2e8);transition:width .8s ease}
+.bfx-xp b{white-space:nowrap;color:#2b4a44}.bfx-xp b small{font-weight:600;color:#8a5a00}
+
+/* Lumen: earned palette shift with a moving shimmer (distinct from the random shiny hue). */
+canvas.bfx-lumen{filter:hue-rotate(-62deg) saturate(1.35) brightness(1.12) drop-shadow(0 0 3px #9ff3ff);animation:bfx-lumen 2.4s ease-in-out infinite}
+@keyframes bfx-lumen{0%,100%{filter:hue-rotate(-62deg) saturate(1.35) brightness(1.12) drop-shadow(0 0 2px #9ff3ff)}50%{filter:hue-rotate(-40deg) saturate(1.5) brightness(1.28) drop-shadow(0 0 6px #ffe7a3)}}
+.bfx-lumen-tag{font-style:normal;font-size:10px;font-weight:800;color:#0c4a5a;background:linear-gradient(90deg,#d6f7ff,#fff3cf,#d6f7ff);background-size:200% 100%;border:1px solid #7fcfe0;border-radius:999px;padding:1px 7px;margin-top:3px;animation:bfx-sheen 2.4s linear infinite}
+@keyframes bfx-sheen{to{background-position:-200% 0}}
+.bfx-lumen-note{font-size:12px;color:#4d5d55;margin:4px 0}
+.bfx-lumen-new{display:flex;align-items:center;gap:12px;justify-content:center;max-width:460px;margin:8px auto;padding:8px 12px;border-radius:12px;background:linear-gradient(135deg,#e6fbff,#fff6dc);border:1px solid #7fcfe0;text-align:left}
+.bfx-lumen-new canvas{width:96px;height:86px;image-rendering:pixelated;flex:none}
+.bfx-lumen-new p{margin:0;font-size:13px}
+
+/* Evolution cutscene: colored, then flashing silhouettes that speed up, a white flash, the new form. */
+.eq-evolve.bfx-evo{width:140px;height:124px}
+.bfx-evo .bfx-sil{filter:brightness(0) invert(1) drop-shadow(0 0 1px #2b4a44) drop-shadow(0 0 1px #2b4a44) drop-shadow(0 0 8px #e0b12e)}
+.eq-evolve.bfx-evo::before{content:'';position:absolute;inset:8px 14px;border-radius:50%;background:radial-gradient(circle,rgba(43,74,68,.22),rgba(43,74,68,0) 70%)}
+.bfx-evo canvas{opacity:0}
+.bfx-evo .bfx-e0:not(.bfx-sil){animation:bfx-ea 3.2s linear forwards}
+.bfx-evo .bfx-e0.bfx-sil{animation:bfx-sa 3.2s linear forwards}
+.bfx-evo .bfx-e1.bfx-sil{animation:bfx-sb 3.2s linear forwards}
+.bfx-evo .bfx-e1:not(.bfx-sil){animation:bfx-eb 3.2s ease-out forwards}
+.bfx-evo-flash{position:absolute;inset:-30px;border-radius:50%;pointer-events:none;background:radial-gradient(circle,#fff 0,rgba(255,255,255,.9) 35%,rgba(255,244,194,0) 70%);opacity:0;animation:bfx-ef 3.2s linear forwards}
+@keyframes bfx-ea{0%,12%{opacity:1}14%,100%{opacity:0}}
+@keyframes bfx-sa{0%,12%{opacity:0}14%,30%{opacity:1}31%,38%{opacity:0}39%,46%{opacity:1}47%,52%{opacity:0}53%,58%{opacity:1}59%,62%{opacity:0}63%,66%{opacity:1}67%,69%{opacity:0}70%,72%{opacity:1}73%,100%{opacity:0}}
+@keyframes bfx-sb{0%,30%{opacity:0}31%,38%{opacity:1}39%,46%{opacity:0}47%,52%{opacity:1}53%,58%{opacity:0}59%,62%{opacity:1}63%,66%{opacity:0}67%,69%{opacity:1}70%,72%{opacity:0}73%,80%{opacity:1}81%,100%{opacity:0}}
+@keyframes bfx-eb{0%,79%{opacity:0;transform:scale(1)}80%{opacity:1;transform:scale(1.12)}90%{transform:scale(.97)}100%{opacity:1;transform:scale(1)}}
+@keyframes bfx-ef{0%,74%{opacity:0}80%{opacity:1}100%{opacity:0}}
+.bfx-evo.still canvas{animation:none!important;opacity:0}
+.bfx-evo.still .bfx-e1:not(.bfx-sil){opacity:1}
+.bfx-evo.still .bfx-evo-flash{display:none}
+
+@media (prefers-reduced-motion:reduce){
+  .bfx-cv,.bfx-critflash,.bfx-pop,.bfx-banner{display:none!important}
+  .pk-dmg.bfx-num{animation:none!important;opacity:1}
+  .pk-arena .pk-me canvas.bfx-faint,.pk-arena .pk-foe canvas.bfx-faint{animation:none!important;opacity:.25;filter:grayscale(1)}
+  .pk-arena .pk-foe canvas.bfx-worn{animation:none!important;filter:grayscale(.6)}
+  .bfx-combo-bar i,.bfx-xp-bar i{transition:none}
+  canvas.bfx-lumen{animation:none;filter:hue-rotate(-62deg) saturate(1.35) brightness(1.12) drop-shadow(0 0 3px #9ff3ff)}
+  .bfx-lumen-tag{animation:none}
+  .bfx-evo canvas{animation:none!important;opacity:0}
+  .bfx-evo .bfx-e1:not(.bfx-sil){opacity:1}
+  .bfx-evo-flash{display:none}
+}
+.pk-move small.bfx-mvnote{color:#8a4b12;font-weight:600}

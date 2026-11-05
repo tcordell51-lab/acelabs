@@ -1,0 +1,180 @@
+/* Calm HUD (10/22): the map is the hero. Pairs with hud-calm.js; loaded after every other stylesheet. Plain ASCII.
+   Palette and type are the game's own: cream #fff5d7 / #fcf8e9, deep green #203f3d / #24463f / #2f5f4f,
+   ink #264844, gold #edc775 / #f3c74a, rule #d6d8bf, Fraunces for place names. */
+
+body.world-app.hc-calm{--hc-bar:56px;--hc-gap:10px;--hc-safe-b:env(safe-area-inset-bottom,0px);--hc-safe-t:env(safe-area-inset-top,0px)}
+
+/* ---------- top bar: one slim row ---------- */
+body.world-app.hc-calm .gamebar{height:auto;min-height:var(--hc-bar);flex-wrap:nowrap;row-gap:0;gap:12px;padding:8px 16px;padding-top:calc(8px + var(--hc-safe-t))}
+body.world-app.hc-calm .world-brand{min-height:0;flex-shrink:0}
+body.world-app.hc-calm .gamebar-actions{display:flex;align-items:center;gap:8px;margin-left:auto;flex-shrink:0}
+body.world-app.hc-calm .gamebar .gamebar-status{order:0;flex:0 1 auto;flex-wrap:nowrap;font-size:11px;gap:12px;min-width:0;overflow:hidden}
+body.world-app.hc-calm .gamebar .gamebar-status span{white-space:nowrap}
+body.world-app.hc-calm .gamebar-actions button{min-height:40px;height:40px;width:auto;min-width:0;padding:0 14px;border-radius:10px;font-size:13px;font-weight:750;white-space:nowrap}
+body.world-app.hc-calm .gamebar-actions #nextStepButton.hc-primary{background:#2f5f4f;color:#fff6dc;border:2px solid #2f5f4f;padding:0 18px;box-shadow:0 2px 0 #1d3d34}
+body.world-app.hc-calm .gamebar-actions #nextStepButton.hc-primary:hover{background:#3d7461}
+body.world-app.hc-calm .gamebar-actions #nextStepButton.hc-primary:focus-visible,body.world-app.hc-calm .hc-menu-btn:focus-visible{outline:3px solid #e5a743;outline-offset:2px}
+body.world-app.hc-calm .gamebar-actions #reviewButton{padding:0 11px;background:#fff5d7;border:2px solid #d6d8bf;color:#264844}
+body.world-app.hc-calm .gamebar-actions #reviewButton.review-due{border-color:#c9b8f0}
+body.world-app.hc-calm .gamebar-actions #nextStepButton{order:1}
+body.world-app.hc-calm .gamebar-actions #reviewButton{order:2}
+body.world-app.hc-calm .gamebar-actions .hc-menu-btn{order:3}
+body.world-app.hc-calm .gamebar-actions > :not(#nextStepButton):not(#reviewButton):not(.hc-menu-btn){order:4}
+body.world-app.hc-calm .hc-menu-btn{background:#fcf8e9;border:2px solid #264844;color:#264844;cursor:pointer;font-family:inherit}
+body.world-app.hc-calm .hc-menu-btn[aria-expanded="true"]{background:#264844;color:#fff6dc}
+
+/* The world menu lives in the sheet, never as a bar. Safety: if the script never ran, it reappears after 8s. */
+body.world-app > nav.world-navigation{animation:hcNavBack 0s 8s both}
+@keyframes hcNavBack{from{visibility:hidden}to{visibility:visible}}
+body.world-app.hc-calm > nav.world-navigation{display:none}
+
+/* ---------- the menu sheet ---------- */
+.hc-sheet{position:fixed;inset:0;z-index:60;display:block}
+.hc-sheet[hidden]{display:none}
+.hc-scrim{position:absolute;inset:0;background:#10282580;opacity:0;transition:opacity .16s ease-out}
+.hc-sheet.is-open .hc-scrim{opacity:1}
+.hc-panel{position:absolute;right:0;top:0;bottom:0;width:min(400px,100vw);display:flex;flex-direction:column;background:#fcf8e9;color:#264844;box-shadow:-8px 0 30px #10282540;transform:translateX(24px);opacity:0;transition:transform .16s ease-out,opacity .16s ease-out;overflow:hidden}
+.hc-sheet.is-open .hc-panel{transform:none;opacity:1}
+.hc-grab{display:none}
+.hc-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 16px 10px;padding-top:calc(14px + env(safe-area-inset-top,0px));border-bottom:1px solid #d6d8bf;flex-shrink:0}
+.hc-head h2{margin:0;font-family:'Fraunces',Georgia,serif;font-size:20px;color:#203f3d}
+.hc-x{min-height:40px;padding:0 14px;border-radius:10px;border:2px solid #d6d8bf;background:#fff5d7;color:#264844;font:inherit;font-weight:750;cursor:pointer}
+.hc-status-slot:empty{display:none}
+.hc-status-slot{padding:10px 16px 0;flex-shrink:0}
+.hc-status-slot .gamebar-status{display:flex!important;flex-wrap:wrap!important;align-items:center;gap:8px 14px!important;font-size:12px!important;color:#5d7569;order:0!important;flex:none!important;justify-content:flex-start!important}
+.hc-status-slot .gamebar-status span{white-space:nowrap}
+.hc-status-slot #saveLabel{display:inline!important}
+body.world-app .hc-panel nav.world-navigation.hc-nav{display:grid!important;grid-template-columns:1fr 1fr;align-content:start;gap:6px;padding:4px 16px calc(20px + env(safe-area-inset-bottom,0px));margin:0;background:transparent;box-shadow:none;overflow-y:auto;overscroll-behavior:contain;flex:1;animation:none;visibility:visible;height:auto;max-height:none}
+body.world-app .hc-nav > button{display:flex;align-items:center;justify-content:flex-start;text-align:left;min-height:44px;height:auto;width:auto;margin:0;padding:8px 12px;border-radius:10px;border:1px solid #d6d8bf;background:#fff8e4;color:#264844;font:inherit;font-size:13px;font-weight:700;line-height:1.25;white-space:normal;box-shadow:none;cursor:pointer}
+body.world-app .hc-nav > button[hidden]{display:none}
+body.world-app .hc-nav > button:hover{background:#f2ecd2}
+body.world-app .hc-nav > button:focus-visible{outline:3px solid #e5a743;outline-offset:1px}
+body.world-app .hc-nav > button span{font-size:13px;margin-right:4px}
+body.world-app .hc-nav .hc-sec{grid-column:1/-1;margin:12px 0 0;font-size:11px;font-weight:800;letter-spacing:.9px;text-transform:uppercase;color:#7a8a6a}
+body.world-app .hc-nav .hc-sec[hidden]{display:none}
+body.world-app .hc-nav .hc-sec[data-g="play"]{margin-top:6px}
+body.world-app .hc-nav > button.hc-split-a{grid-column:1;border-radius:10px 0 0 10px;border-right-width:0;background:#e7eedc}
+body.world-app .hc-nav > button.hc-split-b{grid-column:2;border-radius:0 10px 10px 0;margin-left:-6px;font-weight:650;color:#476c4d;background:#e7eedc}
+body.world-app .hc-nav > button[aria-pressed="true"]{background:#f6e7b6;border-color:#d9bd6a}
+body.world-app .hc-nav #spineButton.has-fade{background:#f5e8c8;color:#7a4a1c}
+body.world-app .hc-nav .aw-run{pointer-events:auto}
+
+/* ---------- map overlays ---------- */
+/* Zone card: full card first, then a one-line chip. */
+body.world-app.hc-calm .hc-host .aw-hud{inset:var(--hc-gap) calc(var(--hc-gap) + 112px) auto var(--hc-gap);flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:6px}
+body.world-app.hc-calm .hc-host .aw-compass{display:none}
+body.world-app.hc-calm .hc-host .aw-place{pointer-events:auto;cursor:pointer;max-width:min(520px,100%);padding:9px 13px 10px;border-radius:4px 14px 14px 14px;transition:padding .15s}
+body.world-app.hc-calm .hc-host .aw-place:focus-visible{outline:3px solid #e5a743;outline-offset:2px}
+body.world-app.hc-calm .hc-host .aw-place .hc-chip{display:none}
+body.world-app.hc-calm .hc-host .aw-place-name{font-size:18px}
+body.world-app.hc-calm .hc-host .aw-hud.hc-collapsed .aw-place{flex-direction:row;padding:6px 12px;border-radius:999px;min-height:34px;align-items:center;max-width:100%}
+body.world-app.hc-calm .hc-host .aw-hud.hc-collapsed .aw-place > :not(.hc-chip){display:none!important}
+body.world-app.hc-calm .hc-host .aw-hud.hc-collapsed .aw-place .hc-chip{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:12.5px;font-weight:750;color:#264844;line-height:20px;min-width:0}
+body.world-app.hc-calm .hc-host .aw-hud .quest-dock{position:static;pointer-events:auto;width:auto;max-width:100%;min-height:0;padding:6px 12px;border-radius:999px;display:block;text-align:left;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+body.world-app.hc-calm .hc-host .aw-hud .quest-dock[hidden]{display:none}
+body.world-app.hc-calm .hc-host .aw-hud .quest-dock > *{display:inline;margin-right:6px;font-size:12px}
+body.world-app.hc-calm .hc-host .aw-hud .quest-dock small{display:none}
+
+/* Top-right cluster: partner avatar chip, then the one corner widget. */
+.hc-cluster{position:absolute;z-index:6;top:var(--hc-gap,10px);right:var(--hc-gap,10px);display:flex;gap:8px;align-items:flex-start}
+body.world-app.hc-calm .hc-cluster #companionButton.hc-avatar{position:relative;inset:auto;top:auto;right:auto;bottom:auto;left:auto;width:46px;height:46px;min-height:0;max-width:none;padding:0;margin:0;border-radius:50%;display:grid;place-items:center;overflow:visible;background:#fff5d7f2;border:2px solid #fef7dc;box-shadow:0 3px 10px #23443633}
+body.world-app.hc-calm .hc-cluster #companionButton.hc-avatar > span:not(.companion-chat-icon){display:none}
+body.world-app.hc-calm .hc-cluster #companionButton.hc-avatar canvas{position:static!important;inset:auto!important;width:40px!important;height:30px!important;min-height:0!important;max-width:none!important;image-rendering:pixelated}
+body.world-app.hc-calm .hc-cluster #companionButton.hc-avatar .companion-chat-icon{position:absolute;right:-3px;bottom:-3px;width:18px;height:18px;min-width:0;border-radius:50%;font-size:11px;line-height:18px;text-align:center;background:#264844;color:#fff6dc;display:block}
+.hc-corner{position:relative}
+.hc-corner-btn{width:46px;height:46px;border-radius:50%;padding:0;margin:0;border:2px solid #fef7dc;background:#fff5d7f2;box-shadow:0 3px 10px #23443633;color:#326f70;display:grid;place-items:center;cursor:pointer;position:relative;font-family:inherit}
+.hc-corner-btn:focus-visible{outline:3px solid #e5a743;outline-offset:2px}
+.hc-corner .hc-n{position:absolute;top:5px;left:0;right:0;text-align:center;font-size:9px;font-weight:900;color:#806a47;line-height:1}
+.hc-corner .hc-arrow{position:absolute;left:50%;top:16px;margin-left:-6px;width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-bottom:16px solid #326f70}
+.hc-corner .hc-dot{display:none;position:absolute;right:1px;top:1px;width:11px;height:11px;border-radius:50%;background:#b52f43;border:2px solid #fff5d7}
+.hc-corner.has-raid .hc-dot{display:block}
+.hc-corner.is-open .hc-corner-btn{background:#264844;color:#fff6dc}
+.hc-corner.is-open .hc-arrow{border-bottom-color:#edc775}
+.hc-corner.is-open .hc-n{color:#fff6dc}
+.hc-corner-pop{position:absolute;right:0;top:54px;width:min(300px,calc(100vw - 20px));max-height:calc(100dvh - 160px);overflow:auto;padding:10px;border-radius:14px;background:#fcf8e9;border:2px solid #fef7dc;box-shadow:0 8px 24px #10282540;color:#264844;display:flex;flex-direction:column;gap:8px}
+.hc-corner-pop[hidden]{display:none}
+.hc-pop-head{display:flex;flex-direction:column;gap:2px;font-size:12px}
+.hc-pop-head span{color:#5d7569;font-size:11px}
+.hc-pop-slot{display:flex;flex-direction:column;gap:8px}
+.hc-pop-slot .rc-compass{position:static!important;inset:auto!important;pointer-events:auto}
+.hc-pop-slot .mr-banner{position:static!important;inset:auto!important;width:auto!important;max-width:none!important;transform:none!important;margin:0!important}
+.hc-pop-mini{min-height:40px;border-radius:10px;border:1px solid #d6d8bf;background:#fff8e4;color:#264844;font:inherit;font-size:12px;font-weight:700;cursor:pointer}
+
+/* Controls: smaller, in the two thumb zones, room between them. */
+body.world-app.hc-calm .hc-host .aw-controls{left:16px;right:16px;bottom:calc(16px + var(--hc-safe-b));align-items:flex-end;gap:24px}
+body.world-app.hc-calm .hc-host .aw-dpad{grid-template-columns:40px 40px 40px;grid-template-rows:40px 40px 40px;opacity:.94}
+body.world-app.hc-calm .hc-host .aw-dpad button{width:40px;height:40px;min-width:40px;min-height:40px;font-size:16px}
+body.world-app.hc-calm .hc-host .aw-pad-center{pointer-events:auto;display:flex;align-items:center;justify-content:center;background:#fff4d5cc;color:#9a8a68;font-size:12px;touch-action:none;user-select:none;-webkit-user-select:none;cursor:pointer;border-radius:0}
+body.world-app.hc-calm .hc-host .aw-pad-center.hc-pulse{background:#edc775;color:#244e54}
+body.world-app.hc-calm .hc-host .aw-actions{gap:8px;margin-bottom:14px}
+body.world-app.hc-calm .hc-host .aw-interact{min-height:0;height:64px;width:64px;max-width:64px;padding:0;border-radius:50%;flex-direction:column;justify-content:center;align-items:center;gap:0;overflow:hidden}
+body.world-app.hc-calm .hc-host .aw-interact .aw-a{width:auto;height:auto;min-width:0;background:none;border:0;box-shadow:none;font-size:22px;line-height:1;font-weight:900;color:#295359;padding:0;margin:0}
+body.world-app.hc-calm .hc-host .aw-interact .aw-action-text{font-size:9.5px;line-height:1.1;max-width:58px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:800}
+body.world-app.hc-calm .hc-host .aw-controls .aw-run{display:none}
+body.world-app.hc-calm .hc-host .aw-controls-help{max-width:170px;font-size:10px!important;padding:4px 8px}
+body.world-app.hc-calm.hc-hint-off .hc-host .aw-controls-help{display:none}
+
+/* ---------- toasts: one lane under the zone chip ---------- */
+.hc-lane{position:fixed;z-index:45;left:50%;transform:translateX(-50%);top:var(--hc-lane-top,calc(var(--hc-bar,56px) + var(--hc-safe-t,0px) + 58px));width:min(460px,calc(100vw - 24px));display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none}
+.hc-lane > *{pointer-events:auto}
+body.world-app.hc-calm .cs-toast{top:var(--hc-toast-top,64px);left:0;right:0;margin:0 auto;transform:none;width:fit-content;max-width:min(460px,calc(100vw - 24px));font-size:12.5px}
+body.hc-modal .cs-toast.cs-asking{visibility:hidden}
+.hc-lane > .world-notice:not([hidden]) ~ .fr-prompt{display:none}
+.hc-lane > .world-notice,.hc-lane > .fr-prompt{position:static!important;inset:auto!important;transform:none!important;margin:0!important;max-width:100%!important;width:auto}
+.hc-lane > .world-notice{font-size:12px;padding:10px 14px;border-radius:12px}
+.hc-lane > .world-notice[hidden]{display:none}
+.hc-lane > .fr-prompt{font-size:12.5px;padding:10px 12px}
+.hc-lane > .fr-prompt p{margin:0 0 6px}
+.hc-lane.has-ask > .fr-prompt{display:none}
+body.hc-modal .hc-lane{visibility:hidden}
+body.hc-menu-open .cs-toast,body.hc-menu-open .hc-lane{visibility:hidden}
+/* Small status toasts (Saved, raid hits, Back hints) sit low and centered, between the d-pad and the A button. */
+body.world-app.hc-calm .e2fun-toast{top:auto;bottom:calc(28px + var(--hc-safe-b));right:auto;left:50%;transform:translate(-50%,6px);max-width:min(240px,calc(100vw - 280px));min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+body.world-app.hc-calm .mr-toast{top:var(--hc-toast-top,80px)}
+body.world-app.hc-calm .e2fun-toast.on{transform:translate(-50%,0)}
+
+/* First-run order: the trainer maker first; anything opened under it waits its turn. */
+dialog.hc-deferred{visibility:hidden}
+dialog.hc-deferred::backdrop{background:transparent}
+
+/* Light loading state with no jump. */
+body.world-app.hc-calm #bootStatus:not([hidden]){position:absolute;left:50%;top:42%;transform:translate(-50%,-50%);z-index:5;padding:12px 18px;border-radius:12px;background:#fcf8e9;color:#264844;font-weight:700;font-size:13px;box-shadow:0 6px 20px #10282530;animation:hcPulse 1.4s ease-in-out infinite}
+@keyframes hcPulse{50%{opacity:.7}}
+
+/* Battle and study panels fit the screen: no sideways scroll. */
+body.world-app.hc-calm dialog.battle-panel,body.world-app.hc-calm dialog.study-panel,body.world-app.hc-calm dialog.world-panel{max-width:calc(100vw - 16px);box-sizing:border-box;overflow-x:hidden}
+body.world-app.hc-calm dialog.battle-panel :is(img,svg,video,table,pre),body.world-app.hc-calm dialog.study-panel :is(img,svg,video,table,pre){max-width:100%}
+
+/* ---------- phone ---------- */
+@media (max-width:760px){
+  body.world-app.hc-calm{--hc-bar:52px}
+  body.world-app.hc-calm .gamebar{gap:8px;padding:6px 10px;padding-top:calc(6px + var(--hc-safe-t));min-height:var(--hc-bar)}
+  body.world-app.hc-calm .world-brand small{display:none}
+  body.world-app.hc-calm .world-brand div{font-size:11px;letter-spacing:1.6px}
+  body.world-app.hc-calm .gamebar-actions{gap:6px;flex:1;justify-content:flex-end;min-width:0}
+  body.world-app.hc-calm .gamebar-actions button{height:40px;min-height:40px;padding:0 11px;font-size:13px}
+  body.world-app.hc-calm .gamebar-actions #nextStepButton.hc-primary{flex:1 1 auto;min-width:0;max-width:170px;padding:0 12px}
+  body.world-app.hc-calm .gamebar-actions #reviewButton{padding:0 9px}
+  /* the sheet rises from the bottom */
+  .hc-panel{left:0;right:0;top:auto;bottom:0;width:auto;max-height:86dvh;border-radius:18px 18px 0 0;box-shadow:0 -8px 30px #10282540;transform:translateY(28px)}
+  .hc-grab{display:block;width:40px;height:4px;border-radius:2px;background:#d6d8bf;margin:8px auto 0;flex-shrink:0}
+  .hc-head{padding-top:8px}
+  body.world-app.hc-calm .hc-host .aw-hud{inset:var(--hc-gap) calc(var(--hc-gap) + 108px) auto var(--hc-gap)}
+  body.world-app.hc-calm .hc-host .aw-place-name{font-size:16px}
+  body.world-app.hc-calm .hc-host .aw-place-detail{font-size:10.5px!important}
+  body.world-app.hc-calm .hc-host .aw-controls-help{max-width:140px}
+}
+@media (max-width:760px) and (max-height:540px){
+  body.world-app.hc-calm .hc-host .aw-dpad{grid-template-columns:34px 34px 34px;grid-template-rows:34px 34px 34px}
+  body.world-app.hc-calm .hc-host .aw-dpad button{width:34px;height:34px;min-width:34px;min-height:34px}
+}
+/* ---------- wide screens: the same calm, a little more shown ---------- */
+@media (min-width:761px){
+  body.world-app.hc-calm .hc-host .aw-dpad{grid-template-columns:44px 44px 44px;grid-template-rows:44px 44px 44px}
+  body.world-app.hc-calm .hc-host .aw-dpad button{width:44px;height:44px;min-width:44px;min-height:44px}
+  body.world-app.hc-calm .hc-host .aw-interact{height:70px;width:70px;max-width:70px}
+  body.world-app.hc-calm .hc-host .aw-controls{left:24px;right:24px;bottom:calc(20px + var(--hc-safe-b))}
+}
+@media (prefers-reduced-motion:reduce){.hc-scrim,.hc-panel{transition:none}body.world-app.hc-calm #bootStatus:not([hidden]){animation:none}}
+
+body.world-app #reviewButton{display:none!important} /* Reviews stay within the world and study menu. */

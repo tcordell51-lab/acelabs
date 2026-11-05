@@ -16,6 +16,7 @@ import path from 'node:path';
 const ROOT = path.resolve(process.argv[2] || '.');
 const ALLOW = [
   { re: /^tt-face-/, why: 'face-video hook set by hand from the console (documented in the tiktok pages)' },
+  { re: /^ace_dat_realms_mnemon_v1_sound_prefs_v1$/, why: 'Ace of Realms volume, set by hand from the console; with no value the game plays at full volume' },
 ];
 const SKIP_REL = /^(node_modules|\.git|docs|research|specs|scripts|test-screenshots|\.netlify|netlify|\.claude|dist-astro|astro-proto)(\/|$)|^tests\/[^/]+\//;
 const SKIP_SEG = /(^|\/)(research|verification)(\/|$)/;

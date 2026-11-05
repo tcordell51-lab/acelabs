@@ -1,0 +1,649 @@
+/* Phone and compact-landscape finish. Load after the Atlas stylesheets.
+ * Source text, provenance, and study actions remain available at every width.
+ * The host may supply --atlas-visual-height from visualViewport for keyboards;
+ * dynamic viewport units are the no-script fallback. */
+@media (max-width: 760px), (max-width: 1024px) and (max-height: 540px) {
+  .world-app {
+    --atlas-edge-top: max(8px, env(safe-area-inset-top, 0px));
+    --atlas-edge-right: max(8px, env(safe-area-inset-right, 0px));
+    --atlas-edge-bottom: max(8px, env(safe-area-inset-bottom, 0px));
+    --atlas-edge-left: max(8px, env(safe-area-inset-left, 0px));
+  }
+
+  .world-app .gamebar {
+    height: auto;
+    min-height: 60px;
+    gap: 10px;
+    padding: 8px max(12px, env(safe-area-inset-right, 0px)) 8px
+      max(12px, env(safe-area-inset-left, 0px));
+    padding-top: calc(8px + env(safe-area-inset-top, 0px));
+  }
+  .world-app .world-brand {
+    min-height: 44px;
+    flex-shrink: 0;
+  }
+  .world-app .gamebar-status {
+    min-width: 0;
+    gap: 3px 8px;
+    font-size: 10px;
+  }
+  .world-app .gamebar-status span {
+    overflow-wrap: anywhere;
+  }
+  .world-app .world-settings {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    min-height: 44px;
+  }
+  .world-app .world-navigation {
+    padding: 3px max(8px, env(safe-area-inset-right, 0px)) 3px
+      max(8px, env(safe-area-inset-left, 0px));
+  }
+  .world-app .world-navigation button {
+    min-height: 44px;
+    min-width: 0;
+    padding: 7px 5px;
+    font-size: 12px;
+    line-height: 1.3;
+    color: #25483e;
+  }
+  .world-app .world-navigation button span {
+    font-size: 14px;
+    margin-right: 3px;
+    color: #476c4d;
+  }
+  .world-app .companion-dock {
+    min-height: 48px;
+  }
+  .world-app .companion-dock strong {
+    font-size: 12px;
+  }
+  .world-app .companion-dock small {
+    font-size: 10px;
+    line-height: 1.35;
+    color: #50664f;
+  }
+  .world-app .quest-dock {
+    min-height: 48px;
+  }
+  .world-app .quest-dock strong {
+    font-size: 12px;
+  }
+  .world-app .quest-dock span {
+    font-size: 10px;
+    line-height: 1.4;
+  }
+  .world-app .quest-dock small {
+    font-size: 8px;
+  }
+
+  /* Keep dialogs inside the usable viewport and contain scroll at their edges. */
+  .world-app :is(#worldPanel, #workshopPanel, #studyPanel, #battlePanel) {
+    inset: var(--atlas-edge-top) var(--atlas-edge-right)
+      var(--atlas-edge-bottom) var(--atlas-edge-left);
+    width: calc(100vw - var(--atlas-edge-left) - var(--atlas-edge-right));
+    max-width: calc(100vw - var(--atlas-edge-left) - var(--atlas-edge-right));
+    max-height: calc(
+      var(--atlas-visual-height, 100dvh) - var(--atlas-edge-top) -
+        var(--atlas-edge-bottom)
+    );
+    margin: auto;
+    padding: 0;
+    border-radius: 16px;
+    overflow: auto;
+    overscroll-behavior: contain;
+    scroll-padding-block: 100px 24px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .world-app :is(#worldPanel, #workshopPanel) > .world-panel-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    align-items: center;
+    gap: 12px;
+    margin: 0;
+    padding: 12px 16px;
+    background: var(--paper, #fcf8e9);
+    border-bottom: 1px solid #cad5c1;
+    box-shadow: 0 3px 9px #2344360d;
+  }
+  .world-app .world-panel-header h2 {
+    min-width: 0;
+    font-size: 23px;
+    line-height: 1.25;
+    overflow-wrap: anywhere;
+  }
+  .world-app .world-panel-header > button {
+    flex: 0 0 44px;
+    width: 44px;
+    height: 44px;
+    min-height: 44px;
+  }
+  .world-app :is(#panelBody, #workshopBody) {
+    min-width: 0;
+    padding: 16px;
+  }
+  .world-app #workshopLibrary {
+    margin: 0 16px 20px;
+    max-width: calc(100% - 32px);
+  }
+  .world-app :is(#studyBody, #battleBody) {
+    min-width: 0;
+    padding: 0 14px 22px;
+  }
+
+  /* A close/return action stays visible while the source or encounter scrolls. */
+  .world-app #studyBody .study-header,
+  .world-app #battleBody .wb-head {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+    gap: 12px;
+    margin: 0 -14px 18px;
+    padding: 12px 14px;
+    background: var(--paper, #fcf8e9);
+    border-bottom: 1px solid #cad5c1;
+    box-shadow: 0 3px 9px #2344360d;
+  }
+  .world-app #studyBody .study-header h1 {
+    font-size: 22px;
+    letter-spacing: -0.35px;
+    line-height: 1.25;
+  }
+  .world-app #studyBody .study-header .eyebrow {
+    font-size: 9px;
+    letter-spacing: 1px;
+    margin-bottom: 7px;
+  }
+  .world-app #studyBody .study-header .study-meta {
+    font-size: 11px;
+    line-height: 1.45;
+  }
+  .world-app #studyBody .study-header > button,
+  .world-app #battleBody .wb-head > button {
+    align-self: start;
+    min-width: 88px;
+    max-width: 106px;
+    min-height: 44px;
+    padding: 10px;
+    font-size: 12px;
+    line-height: 1.3;
+    white-space: normal;
+  }
+  .world-app #battleBody .wb-head h2 {
+    font-size: 22px;
+    line-height: 1.25;
+    overflow-wrap: anywhere;
+  }
+
+  /* Form controls retain the 16px size that avoids focus zoom on phones. */
+  .world-app
+    :is(#worldPanel, #workshopPanel, #studyPanel, #battlePanel)
+    :is(
+      input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+      select,
+      textarea
+    ) {
+    min-width: 0;
+    max-width: 100%;
+    min-height: 44px;
+    font-size: 16px;
+    line-height: 1.5;
+  }
+  .world-app
+    :is(#worldPanel, #workshopPanel, #studyPanel, #battlePanel)
+    textarea {
+    resize: vertical;
+  }
+  .world-app
+    :is(#worldPanel, #workshopPanel, #studyPanel, #battlePanel)
+    button {
+    min-height: 44px;
+    touch-action: manipulation;
+  }
+  .world-app :is(#worldPanel, #workshopPanel, #battlePanel) summary {
+    min-height: 44px;
+    padding-block: 11px;
+    line-height: 1.5;
+    cursor: pointer;
+  }
+  .world-app :is(.setting-row, .schedule-row) {
+    min-height: 48px;
+    cursor: pointer;
+  }
+  .world-app .setting-row input {
+    flex-shrink: 0;
+  }
+  .world-app
+    :is(.atlas-filters, .companion-styles, .embedded-tools, .iframe-actions) {
+    flex-wrap: wrap;
+  }
+  .world-app :is(.atlas-filters input, .atlas-filters select) {
+    max-width: 100%;
+  }
+  .world-app .companion-styles button {
+    flex: 1 1 84px;
+  }
+  .world-app :is(.embedded-tools button, .iframe-actions a) {
+    min-height: 44px;
+  }
+  .world-app .iframe-actions {
+    align-items: center;
+    gap: 4px 12px;
+  }
+  .world-app .iframe-actions a {
+    display: inline-flex;
+    align-items: center;
+    padding-block: 9px;
+  }
+  .world-app :is(.backup-actions, .study-action-row) {
+    gap: 10px;
+  }
+  .world-app .backup-actions > :is(button, a) {
+    flex: 1 1 160px;
+    white-space: normal;
+    line-height: 1.45;
+  }
+  .world-app .chat-sources button {
+    font-size: 12px;
+    padding-block: 10px;
+  }
+  .world-app
+    :is(.companion-chat, .study-search-results > div, .wb-source-text) {
+    overscroll-behavior: contain;
+  }
+  .world-app #companionQuestion {
+    scroll-margin-block: 110px 100px;
+  }
+
+  /* Give source navigation its own predictable row, including long filenames. */
+  .world-app .study-tabs {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+  }
+  .world-app .study-tabs button {
+    min-width: 0;
+    font-size: 12px;
+    line-height: 1.35;
+    padding: 10px 6px;
+  }
+  .world-app .study-slide-nav {
+    display: grid;
+    grid-template-columns: 44px minmax(0, 1fr) 44px;
+    gap: 8px;
+  }
+  .world-app .study-slide-nav > button {
+    width: 44px;
+    min-height: 44px;
+    padding: 8px;
+  }
+  .world-app .study-slide-nav > label {
+    min-width: 0;
+    font-size: 12px;
+  }
+  .world-app .study-slide-nav select {
+    min-width: 0;
+    width: 100%;
+    font-size: 16px;
+    padding: 8px;
+  }
+  .world-app .study-source-ribbon {
+    gap: 6px 10px;
+    font-size: 10px;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+  }
+  .world-app
+    :is(
+      .study-provenance-title,
+      .study-citation,
+      .study-source-caution,
+      .study-original figcaption
+    ) {
+    font-size: 12px;
+    line-height: 1.65;
+  }
+  .world-app .study-resource-tier {
+    font-size: 10px;
+    line-height: 1.5;
+  }
+  .world-app .study-resource-links a {
+    display: block;
+    min-height: 44px;
+    padding-block: 8px;
+    line-height: 1.6;
+  }
+  .world-app .study-source-citation-link a {
+    min-height: 44px;
+    line-height: 1.6;
+    padding-block: 10px;
+  }
+  .world-app .study-visualizer-links > a > span:nth-child(2) {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+  .world-app .study-search-results button {
+    flex-wrap: wrap;
+    gap: 3px 8px;
+  }
+  .world-app .study-question-options > button {
+    min-height: 52px;
+    font-size: 15px;
+    line-height: 1.5;
+  }
+  .world-app .study-question-options > button b {
+    flex-shrink: 0;
+  }
+  .world-app .study-question-options > button span {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+  .world-app .study-stages {
+    flex-wrap: wrap;
+  }
+  .world-app .study-stages li {
+    flex: 1 1 88px;
+    min-width: 0;
+  }
+
+  .world-app .wb-moves {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+  .world-app .wb-moves button {
+    min-width: 0;
+    min-height: 68px;
+    padding: 13px;
+  }
+  .world-app .wb-moves strong {
+    font-size: 14px;
+    line-height: 1.4;
+  }
+  .world-app .wb-moves small {
+    font-size: 11px;
+    line-height: 1.5;
+  }
+  .world-app .wb-options {
+    gap: 10px;
+  }
+  .world-app .wb-options button {
+    min-width: 0;
+    min-height: 52px;
+    padding: 14px;
+    font-size: 15px;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+  }
+  .world-app .wb-message {
+    font-size: 14px;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+  }
+  .world-app .wb-note {
+    font-size: 12px;
+    line-height: 1.65;
+    overflow-wrap: anywhere;
+  }
+  .world-app .wb-trait span {
+    font-size: 12px;
+    line-height: 1.5;
+  }
+  .world-app .wb-source-text {
+    font-size: 14px;
+    line-height: 1.75;
+    overflow-wrap: anywhere;
+  }
+  .world-app .wb-source h3 {
+    overflow-wrap: anywhere;
+  }
+  .world-app .wb-challenge > :is(.primary, .ghost) {
+    margin: 4px 4px 4px 0;
+    max-width: 100%;
+    white-space: normal;
+  }
+
+  .world-app .atlas-workshops .aw-tool-link a {
+    min-height: 44px;
+    padding-block: 10px;
+  }
+  .world-app .atlas-workshops .aw-slider-label input {
+    height: 44px;
+  }
+  .world-app .atlas-workshops .aw-support-actions {
+    flex-wrap: wrap;
+  }
+  .world-app .atlas-workshops .aw-data-table {
+    overflow-wrap: anywhere;
+  }
+  .world-app .world-notice {
+    bottom: max(12px, env(safe-area-inset-bottom, 0px));
+  }
+  .world-app .aw-controls {
+    left: max(12px, env(safe-area-inset-left, 0px));
+    right: max(12px, env(safe-area-inset-right, 0px));
+    bottom: max(16px, env(safe-area-inset-bottom, 0px));
+  }
+  .world-app .aw-dpad {
+    grid-template-columns: repeat(3, 44px);
+    grid-template-rows: repeat(3, 44px);
+  }
+  .world-app .atlas-adventure .aw-dpad button {
+    width: 44px;
+    height: 44px;
+    min-height: 44px;
+  }
+}
+
+@media (max-width: 600px) {
+  .world-app .companion-dock {
+    right: max(12px, env(safe-area-inset-right, 0px));
+    bottom: calc(170px + env(safe-area-inset-bottom, 0px));
+    max-width: calc(50vw - 18px);
+  }
+  .world-app .companion-dock canvas {
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+  }
+  .world-app .companion-dock > span:nth-child(2) {
+    min-width: 0;
+  }
+  .world-app .companion-chat-icon {
+    flex-shrink: 0;
+  }
+  .world-app .quest-dock {
+    left: max(12px, env(safe-area-inset-left, 0px));
+    bottom: calc(170px + env(safe-area-inset-bottom, 0px));
+    max-width: calc(50vw - 18px);
+  }
+  .world-app .aw-nearby {
+    bottom: calc(248px + env(safe-area-inset-bottom, 0px));
+  }
+  .world-app .aw-actions {
+    max-width: calc(100% - 146px);
+    min-width: 0;
+  }
+  .world-app .atlas-adventure .aw-interact {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+  }
+  .world-app .aw-controls-help {
+    max-width: 100%;
+    font-size: 10px;
+  }
+  .world-app .region-grid {
+    grid-template-columns: 1fr;
+  }
+  .world-app .region-card p {
+    font-size: 12px;
+  }
+  .world-app .region-card small {
+    font-size: 11px;
+    line-height: 1.5;
+  }
+  .world-app .play-modes {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 7px;
+    margin: 14px 0;
+  }
+  .world-app .play-modes button {
+    min-width: 0;
+    min-height: 44px;
+    padding: 10px 8px;
+  }
+  .world-app .play-modes strong {
+    font-size: 12px;
+    line-height: 1.4;
+    margin-bottom: 5px;
+  }
+  .world-app .play-modes small {
+    font-size: 11px;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+  }
+  .world-app .starter-choices {
+    grid-template-columns: 1fr;
+  }
+  .world-app .starter-choices button {
+    display: grid;
+    grid-template-columns: 84px minmax(0, 1fr);
+    gap: 3px 12px;
+    align-items: center;
+    text-align: left;
+    padding: 12px;
+  }
+  .world-app .starter-choices canvas {
+    grid-row: 1 / span 3;
+    width: 84px;
+    height: 84px;
+  }
+  .world-app .starter-choices h3 {
+    font-size: 22px;
+  }
+  .world-app .starter-choices p {
+    margin: 0;
+    font-size: 12px;
+  }
+  .world-app .starter-choices .trait-note {
+    margin: 4px 0;
+    font-size: 11px;
+  }
+  .world-app .team-card p {
+    font-size: 12px;
+  }
+  .world-app .team-card :is(.text-button, .trait-note) {
+    font-size: 11px;
+    line-height: 1.5;
+  }
+  .world-app .team-card canvas {
+    max-width: 100%;
+  }
+}
+
+/* Wide, short screens retain a useful walking area and full-size direction keys. */
+@media (min-width: 601px) and (max-width: 1024px) and (max-height: 540px) {
+  .world-app .gamebar {
+    min-height: 52px;
+    padding-top: calc(4px + env(safe-area-inset-top, 0px));
+    padding-bottom: 4px;
+  }
+  .world-app .world-navigation {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 2px;
+    padding-block: 2px;
+  }
+  .world-app .world-navigation button {
+    font-size: 11px;
+  }
+  .world-app .aw-hud {
+    right: 195px;
+  }
+  .world-app .aw-place {
+    padding: 7px 10px;
+  }
+  .world-app .aw-place-name {
+    font-size: 16px;
+  }
+  .world-app .companion-dock {
+    top: calc(110px + env(safe-area-inset-top, 0px));
+    right: max(12px, env(safe-area-inset-right, 0px));
+    bottom: auto;
+    max-width: 175px;
+  }
+  .world-app .quest-dock {
+    left: 160px;
+    bottom: max(16px, env(safe-area-inset-bottom, 0px));
+    max-width: calc(100vw - 390px);
+    padding: 9px 12px;
+  }
+  .world-app .aw-nearby {
+    bottom: 165px;
+    max-width: calc(100% - 340px);
+    font-size: 11px;
+  }
+  .world-app .aw-notice {
+    top: 90px;
+    font-size: 11px;
+  }
+  .world-app #studyBody .study-header h1,
+  .world-app #battleBody .wb-head h2,
+  .world-app .world-panel-header h2 {
+    font-size: 20px;
+  }
+  .world-app #studyBody .study-header,
+  .world-app #battleBody .wb-head,
+  .world-app :is(#worldPanel, #workshopPanel) > .world-panel-header {
+    padding-block: 9px;
+  }
+  .world-app .wb-arena {
+    height: 220px;
+  }
+  .world-app .atlas-workshops :is(.aw-map-card, .aw-plot-card) {
+    position: static;
+  }
+}
+
+@media (max-width: 760px), (max-width: 1024px) and (max-height: 540px) {
+  .world-app.atlas-keyboard-open :is(#worldPanel, #workshopPanel, #studyPanel, #battlePanel) {
+    top: calc(var(--atlas-visual-top, 0px) + var(--atlas-edge-top));
+    bottom: auto;
+    margin-block: 0;
+  }
+  .world-app .priority-reasons { margin: 10px 0; font-size: 12px; line-height: 1.6; }
+  .world-app .daily-quest > button { margin-top: 6px; }
+  .world-app .story-note > summary { font-size: 13px; font-weight: 700; }
+}
+
+/* Long names scroll normally; only the short return strip is sticky. */
+@media (max-width: 760px), (max-width: 1024px) and (max-height: 540px) {
+  .world-app #studyBody .study-mobile-return {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    position: sticky; top: 0; z-index: 12; margin: 0 -14px; padding: 8px 14px;
+    background: var(--paper, #fcf8e9); border-bottom: 1px solid #cad5c1;
+    font-size: 12px; font-weight: 700;
+  }
+  .world-app #studyBody .study-mobile-return button { font-size: 12px; padding: 10px 13px; }
+  .world-app #studyBody .study-header { position: static; display: block; padding-top: 18px; }
+  .world-app #studyBody .study-header > button { display: none; }
+}
+.mentor-teaching,.mentor-feedback{background:#f4efdf;border:1px solid #d7ceba;border-radius:16px;padding:18px;margin:16px 0;color:#243d39;line-height:1.65}
+.mentor-options{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:18px 0}
+.mentor-options button{text-align:left;min-height:52px;white-space:normal;line-height:1.4;padding:14px;border:2px solid #d7ceba;border-radius:12px;background:#fffaf0;color:#243d39;font:inherit}
+.mentor-options button.chosen{border-color:#296b5c;background:#e4f2e8}
+.mentor-options button:disabled{opacity:1}
+.mentor-options button:focus-visible{outline:3px solid #db9c34;outline-offset:2px}
+.mentor-source{margin:20px 0;padding-top:14px;border-top:1px solid #d7ceba}
+.mentor-source span{display:block;font-size:11px;font-weight:800;letter-spacing:.08em}
+.mentor-source button{display:block;text-align:left;white-space:normal;overflow-wrap:anywhere;line-height:1.45}
+.mentor-question{line-height:1.45}.mentor-feedback h4{margin:0;font-size:18px}
+@media(max-width:540px){.mentor-options{grid-template-columns:1fr}.mentor-teaching,.mentor-feedback{padding:14px}}
+.class-briefing-points{display:grid;gap:12px;margin:16px 0}.class-briefing-points article{padding:16px;border:1px solid #d8dfd2;border-radius:14px;background:#fffaf0}.class-briefing-points h3{font-size:18px;margin:0 0 8px}.class-briefing-points p{line-height:1.65;margin:0 0 10px}.class-briefing-points small{display:block;overflow-wrap:anywhere;color:#55695d;line-height:1.5}
+.class-learning-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:20px 0}.class-learning-actions button{text-align:left;min-height:90px;padding:16px}.class-learning-actions strong,.class-learning-actions span{display:block}.class-learning-actions span{font-size:13px;line-height:1.45;margin-top:7px}
+.study-visualizer-links button{display:block;text-align:left;width:100%;white-space:normal;margin:8px 0;padding:14px}.study-visualizer-links small{display:block;font-weight:400;line-height:1.5;margin-top:6px}
+@media(max-width:540px){.class-learning-actions{grid-template-columns:1fr}.class-learning-actions button{min-height:74px}.study-tabs{flex-wrap:wrap}}

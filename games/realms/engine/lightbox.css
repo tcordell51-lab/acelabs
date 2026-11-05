@@ -1,0 +1,26 @@
+/* Slide viewer (lightbox), standalone. Copied from exam-quest.css and slide-fit.css so pages
+ * outside the game (Histo ID Deck, exam-prep pages) can load the viewer styled. Keep in sync. */
+dialog.lb{position:fixed;inset:0;width:100vw;height:100dvh;max-width:none;max-height:none;margin:0;padding:0;border:0;background:rgba(12,22,20,.94);color:#fff;display:none}
+dialog.lb[open]{display:flex;flex-direction:column}
+dialog.lb::backdrop{background:rgba(12,22,20,.6)}
+.lb-bar{display:flex;align-items:center;gap:10px;padding:calc(10px + env(safe-area-inset-top)) 14px 10px;background:rgba(0,0,0,.35)}
+.lb-cap{flex:1;min-width:0;font-size:13px;opacity:.85;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lb-count{font-size:12px;opacity:.7;font-variant-numeric:tabular-nums}
+.lb-close,.lb-zoom{border:0;border-radius:12px;padding:12px 18px;font-weight:800;font-size:15px;min-height:46px}
+.lb-close{background:#fff;color:#12332e}.lb-zoom{background:rgba(255,255,255,.18);color:#fff}
+.lb-stage{flex:1;min-height:0;display:flex;align-items:center;gap:6px;padding:8px 8px calc(8px + env(safe-area-inset-bottom))}
+.lb-scroll{flex:1;min-width:0;height:100%;display:grid;place-items:center;overflow:auto;touch-action:pinch-zoom pan-x pan-y;-webkit-overflow-scrolling:touch}
+.lb-scroll img{max-width:100%;max-height:100%;object-fit:contain;background:#fff;border-radius:6px;box-shadow:0 10px 40px rgba(0,0,0,.4)}
+dialog.lb.zoomed .lb-scroll{display:block}dialog.lb.zoomed .lb-scroll img{max-width:none;max-height:none;width:min(1800px,220vw)}
+.lb-prev,.lb-next{border:0;border-radius:12px;background:rgba(255,255,255,.14);color:#fff;font-weight:700;padding:14px 10px;min-height:56px;font-size:13px}
+@media (max-width:760px){.lb-prev,.lb-next{display:none}.lb-zoom{padding:12px 12px}}
+.lb-scroll img{max-height:calc(100dvh - 96px - env(safe-area-inset-top) - env(safe-area-inset-bottom))}
+.lb-scroll{overflow:hidden;touch-action:none;cursor:grab;display:grid;place-items:center}
+dialog.lb.zoomed .lb-scroll{display:grid;cursor:grabbing}
+dialog.lb.zoomed .lb-scroll img,.lb-scroll img{max-width:100%;max-height:calc(100dvh - 130px - env(safe-area-inset-top) - env(safe-area-inset-bottom));width:auto;height:auto;transform-origin:50% 50%;will-change:transform;user-select:none;-webkit-user-drag:none}
+.lb-tools{display:flex;align-items:center;gap:4px}
+.lb-tools button{border:0;border-radius:10px;min-width:42px;min-height:42px;padding:8px 10px;font-weight:800;font-size:15px;background:rgba(255,255,255,.18);color:#fff}
+.lb-level{min-width:46px;text-align:center;font-size:12px;opacity:.85;font-variant-numeric:tabular-nums}
+.lb-hint{margin:0;padding:0 14px calc(8px + env(safe-area-inset-bottom));font-size:11px;opacity:.6;text-align:center}
+.lb-zoom{display:none}
+@media (max-width:760px){.lb-tools .lb-level{display:none}.lb-tools button{min-width:38px;padding:8px}.lb-cap{display:none}.lb-hint{display:none}}
