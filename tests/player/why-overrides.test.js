@@ -34,13 +34,13 @@ test('the bank file is unchanged: its sha256 matches the one the overrides were 
   assert.equal(doc.bank.file, 'tools/mock/data/full-mocks.js');
 });
 
-test('33 overrides (31 OChem and 1 Bio with stale letters, plus OC-3), each matching its bank text', () => {
+test('47 overrides (31 OChem and 1 Bio with stale letters, OC-3, and 14 found after the SA-C review), each matching its bank text', () => {
   const items = bankItems();
   const ids = Object.keys(doc.overrides);
-  assert.equal(ids.length, 33);
-  assert.equal(doc.count, 33);
+  assert.equal(ids.length, 47);
+  assert.equal(doc.count, 47);
   assert.equal(doc.stamp, 'auto-approved 2026-10-30, pending Thomas review');
-  assert.equal(ids.filter((k) => k.startsWith('fm:organic:')).length, 32);
+  assert.equal(ids.filter((k) => k.startsWith('fm:organic:')).length, 46);
   for (const k of ids) {
     const o = doc.overrides[k];
     const hit = items[k.slice(3)];
@@ -52,6 +52,7 @@ test('33 overrides (31 OChem and 1 Bio with stale letters, plus OC-3), each matc
     assert.ok(!LETTER.test(o.why), k + ' cites no option letter: ' + (o.why.match(LETTER) || [''])[0]);
     assert.ok(/^[\x20-\x7e]*$/.test(o.why), k + ' is plain ASCII');
     assert.ok(!/\b(?:wrong|incorrect|failed)\b/i.test(o.why), k + ' has no verdict words');
+    assert.ok(!/\bkeyed\b|\bsingle correct answer\b|\ball valid, unique\b/i.test(o.why), k + ' carries no internal review note');
   }
   assert.ok(!/Keyed correct=0 is right/.test(doc.overrides['fm:organic:oc-1juifa8'].why));
 });
@@ -66,6 +67,32 @@ test('the override applies only while the bank text matches; anything else falls
   assert.equal(api.why('organic:not-there', 'bank text'), 'bank text');
   api.load(null);
   assert.equal(api.why(id, bankWhy), bankWhy);
+});
+
+test('an override held by an open key dispute is not shown; the dispute is recorded with both answers', () => {
+  const kd = JSON.parse(fs.readFileSync(path.join(ROOT, 'docs/explainers/key-disputes.json'), 'utf8'));
+  const items = bankItems();
+  const open = (kd.open || []).filter((e) => e.status === 'open');
+  for (const e of open) {
+    assert.ok(e.qid.startsWith('fm:'), e.qid + ' uses the fm: qid');
+    const hit = items[e.qid.slice(3)];
+    assert.ok(hit, e.qid + ' is in the bank');
+    assert.equal(hit[0].it.correct, e.servedKey, e.qid + ' servedKey is the bank key');
+    assert.notEqual(e.suspectedKey, e.servedKey);
+    assert.equal(hit[0].it.opts[e.servedKey], e.servedKeyText);
+    assert.equal(hit[0].it.opts[e.suspectedKey], e.suspectedKeyText);
+    assert.ok(e.reasoning && e.reasoning.length > 40);
+    const o = doc.overrides[e.qid];
+    if (o) assert.ok(o.held, e.qid + ' override is held while the dispute is open');
+  }
+  assert.ok(open.some((e) => e.qid === 'fm:organic:oc-1jzd8nw'));
+  api.load(doc);
+  for (const [k, o] of Object.entries(doc.overrides)) {
+    if (!o.held) continue;
+    const bankWhy = items[k.slice(3)][0].it.why;
+    assert.equal(api.why(k.slice(3), bankWhy), bankWhy, k + ' held: the bank text shows');
+    assert.ok(open.some((e) => e.qid === k), k + ' is held only for an open dispute');
+  }
 });
 
 test('the full-length review screen renders the override, not the bank text', async () => {
