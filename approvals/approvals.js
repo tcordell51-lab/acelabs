@@ -55,7 +55,7 @@ function keyFromFragment() {
 }
 
 /* ---------- state ---------- */
-const S = { role: null, scope: null, items: [], pulls: {}, comments: {}, sec: 'all', show: 'all', q: '', limit: PAGE };
+const S = { role: null, scope: null, items: [], pulls: {}, comments: {}, orphans: [], sec: 'all', show: 'all', q: '', limit: PAGE };
 
 function status(text, bad) { const s = $('status'); s.textContent = text; s.classList.toggle('is-bad', !!bad); s.hidden = !text; }
 async function api(method, body) {
@@ -72,7 +72,7 @@ async function api(method, body) {
 }
 function askForKey(msg) {
   KEY = null; store.drop();
-  $('listBox').hidden = true; $('who').hidden = true;
+  $('listBox').hidden = true; $('who').hidden = true; $('orphanBox').hidden = true;
   $('keyBox').hidden = false;
   if (msg) $('keyMsg').textContent = msg;
   status('');
@@ -87,12 +87,14 @@ async function load() {
   S.role = r.body.role; S.scope = r.body.scope;
   S.items = Array.isArray(r.body.items) ? r.body.items : [];
   S.pulls = r.body.pulls || {}; S.comments = r.body.comments || {};
+  S.orphans = Array.isArray(r.body.orphans) ? r.body.orphans : [];
   $('keyBox').hidden = true;
   const who = $('who'); who.hidden = false; who.textContent = '';
   who.append(h('p', { class: 'rv-who', text: (WHO[S.role] || 'Key') + ': ' + (SCOPE[S.scope] || S.scope) + '.' }),
     h('button', { class: 'btn quiet', type: 'button', text: 'Close this key', onclick: () => askForKey('Closed. Open the link again to come back.') }));
   filters();
   draw();
+  drawOrphans();
   status('');
   $('listBox').hidden = false;
 }
@@ -169,6 +171,26 @@ function card(it) {
   return li;
 }
 
+/* pulls whose item left the index: they still hold (the function serves every stored pull) */
+function drawOrphans() {
+  const box = $('orphanBox'), ul = $('orphans');
+  ul.textContent = '';
+  box.hidden = !S.orphans.length;
+  for (const o of S.orphans) {
+    const btn = h('button', { class: 'btn', type: 'button', text: 'Unpull' });
+    btn.addEventListener('click', async () => {
+      btn.disabled = true;
+      const r = await api('POST', { action: 'unpull', id: o.id }).catch(() => ({ ok: false, status: 0, body: {} }));
+      btn.disabled = false;
+      if (r.status === 401) return askForKey('That key no longer opens the list.');
+      if (!r.ok) { status(r.body.error || 'That did not save. Try again.', true); return; }
+      S.orphans = S.orphans.filter((x) => x.id !== o.id);
+      status('Unpulled ' + o.id + '. Student pages pick it up within a minute.');
+      drawOrphans();
+    });
+    ul.append(h('li', {}, h('code', { text: o.id }), h('span', { text: ' Pulled' + (o.by ? ' with the ' + (WHO[o.by] || o.by).toLowerCase() : '') + (o.at ? ', ' + day(o.at) : '') + '. ' }), btn));
+  }
+}
 async function act(it, action, btn) {
   btn.disabled = true;
   const r = await api('POST', { action, id: it.id }).catch(() => ({ ok: false, status: 0, body: {} }));

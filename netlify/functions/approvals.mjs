@@ -5,8 +5,9 @@
    shared/ace-pulls.js (a pull in any of its three lists wins, so pulls never
    fail open).
 
-     GET  ?pulls=1                       public: { v: 1, pulls: [id, ...] } (ids only)
-     GET                                 key: { role, scope, items, pulls, comments }
+     GET  ?pulls=1                       public: { v: 1, pulls: [id, ...] } (ids only; CDN-cached
+                                         30 s, never by the browser)
+     GET                                 key: { role, scope, items, pulls, comments, orphans }
      POST { action: "pull", id }         key: pull one item
      POST { action: "unpull", id }       key: unpull it
      POST { action: "comment", id, text } key: add a comment (1 to 2000 characters)
@@ -18,7 +19,12 @@
 
    Ids: only the ids in content/approvals/review-index.json (built by
    scripts/build-review-index.mjs) can be pulled or commented on; a correction
-   of a known factual error takes comments but no pull. Limits: a 4 KB body,
+   of a known factual error takes comments but no pull. A stored pull is served
+   whether or not its id is still in the index: when an item leaves the index
+   (its stamp is replaced or removed, its qid renamed) the pull stays in force,
+   never silently undone. Such orphan pulls are listed to the full key (orphans)
+   and only the full key can unpull one; build-review-index.mjs --check fails on
+   a snapshot pull that is missing from the index. Limits: a 4 KB body,
    2000-character comments, 50 comments per item, writes per key per minute and
    per day, requests and failed keys per address per minute.
 
@@ -46,6 +52,9 @@ const b64 = (s) => Buffer.from(s, 'utf8').toString('base64url');
 const unb64 = (s) => { try { return Buffer.from(s, 'base64url').toString('utf8'); } catch { return null; } };
 const rand = () => crypto.randomBytes(6).toString('hex');
 
+// The public list may sit in the CDN for 30 seconds (the client also caches it 60 seconds in
+// sessionStorage); browsers never keep it. Everything else is no-store.
+export const PUBLIC_CACHE = 'public, s-maxage=30, max-age=0';
 function json(obj, status, extra) {
   return new Response(JSON.stringify(obj), {
     status,
@@ -105,12 +114,13 @@ export function createHandler(opts) {
     await Promise.all(keys.map((k, i) => store.set(k, String(counts[i] + 1))));
     return true;
   }
+  // every stored pull with a well-formed id, in the index or not (pulls never fail open)
   async function pulledIds(store) {
     const { blobs } = await store.list({ prefix: 'pull/' });
     const out = [];
     for (const b of blobs || []) {
       const id = unb64(String(b.key).slice(5));
-      if (id && ID_RE.test(id) && items.has(id) && items.get(id).pullable) out.push(id);
+      if (id && ID_RE.test(id)) out.push(id);
     }
     return [...new Set(out)].sort();
   }
@@ -128,7 +138,7 @@ export function createHandler(opts) {
     /* the public list: ids only, no key */
     if (req.method === 'GET' && url.searchParams.get('pulls') === '1') {
       if (!(await open())) return json({ error: 'Storage is not available.' }, 503);
-      try { return json({ v: 1, pulls: await pulledIds(store) }, 200); } catch { return json({ error: 'Storage is not available.' }, 503); }
+      try { return json({ v: 1, pulls: await pulledIds(store) }, 200, { 'cache-control': PUBLIC_CACHE }); } catch { return json({ error: 'Storage is not available.' }, 503); }
     }
 
     /* everything else needs a key */
@@ -143,14 +153,18 @@ export function createHandler(opts) {
       try {
         const mine = index.items.filter((it) => inScope(who, it));
         const ids = new Set(mine.map((x) => x.id));
-        const pulls = {};
+        const pulls = {}, orphans = [];
         const { blobs: pb } = await store.list({ prefix: 'pull/' });
         for (const b of pb || []) {
           const id = unb64(String(b.key).slice(5));
-          if (!id || !ids.has(id)) continue;
+          if (!id || !ID_RE.test(id)) continue;
+          const orphan = !items.has(id);
+          if (!ids.has(id) && !(orphan && who.scope === 'all')) continue;
           const rec = await store.get(b.key, { type: 'json' });
-          pulls[id] = { by: rec && rec.by || null, at: rec && rec.at || null };
+          const p = { by: rec && rec.by || null, at: rec && rec.at || null };
+          if (orphan) orphans.push({ id, ...p }); else pulls[id] = p;
         }
+        orphans.sort((a, b) => a.id.localeCompare(b.id));
         const comments = {};
         const { blobs: cb } = await store.list({ prefix: 'comment/' });
         for (const b of cb || []) {
@@ -161,7 +175,7 @@ export function createHandler(opts) {
           (comments[id] = comments[id] || []).push({ by: rec.by, at: rec.at, text: rec.text });
         }
         Object.values(comments).forEach((l) => l.sort((a, b) => String(a.at).localeCompare(String(b.at))));
-        return json({ role: who.role, scope: who.scope, stamp: index.stamp, items: mine, pulls, comments }, 200);
+        return json({ role: who.role, scope: who.scope, stamp: index.stamp, items: mine, pulls, comments, orphans }, 200);
       } catch { return json({ error: 'Storage is not available.' }, 503); }
     }
 
@@ -180,7 +194,19 @@ export function createHandler(opts) {
     if (!['pull', 'unpull', 'comment'].includes(action)) return json({ error: 'Unknown action.' }, 400);
     if (typeof id !== 'string' || !ID_RE.test(id)) return json({ error: 'Bad id.' }, 400);
     const it = items.get(id);
-    if (!it) return json({ error: 'No such item.' }, 404);
+    if (!it) {
+      // an orphan pull (its item left the index) can still be unpulled, with the full key only
+      if (action !== 'unpull' || who.scope !== 'all') return json({ error: 'No such item.' }, 404);
+      try {
+        const pk = 'pull/' + b64(id);
+        if ((await store.get(pk)) == null) return json({ error: 'No such item.' }, 404);
+        if (!(await writeAllowed(store, who.role, t))) return json({ error: 'Too many changes. Try again later.' }, 429, { 'retry-after': '60' });
+        const at = new Date(t).toISOString();
+        await store.delete(pk);
+        await store.setJSON('log/' + at + '-' + rand(), { action, id, by: who.role, at, orphan: true });
+        return json({ ok: true, action, id, at, pulled: false }, 200);
+      } catch { return json({ error: 'Storage is not available.' }, 503); }
+    }
     if (!inScope(who, it)) return json({ error: 'Not in your list.' }, 403);
     let text = null;
     if (action === 'comment') {
