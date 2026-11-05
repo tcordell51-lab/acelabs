@@ -268,7 +268,7 @@ const ENTRIES = [
     steps: [
       'Protonate the alkene the Markovnikov way: H+ goes to the CH2 end and the plus sits on C2, a secondary carbon.',
       'Look next door. C3 holds three methyls and no H, so a methyl slides over with its bond pair, and the plus moves to C3, now tertiary.',
-      'Bromide adds to the tertiary carbon: 2-bromo-2,3-dimethylbutane. Some unshifted bromide forms too, but the shifted one is the major product.'
+      'Bromide adds to the tertiary carbon: 2-bromo-2,3-dimethylbutane. Some unshifted bromide forms too, often a lot; the shifted one is the product the item counts as major.'
     ],
     choices: [
       { text: 'BrCC(C)C(C)C', display: '1-bromo-2,3-dimethylbutane', role: 'trap', family: 'half-right', trap: 'Shifted, Br on the end', note: 'The skeleton did rearrange. But Br sits on a primary end carbon, not on the tertiary carbon that holds the charge.' },
@@ -519,7 +519,7 @@ const ENTRIES = [
     ],
     choices: [
       { text: 'CCC(O)O', display: 'propane-1,1-diol (the hydrate)', role: 'trap', family: 'neighbor-fact', trap: 'Water added, not methanol', note: 'Two OH groups on one carbon is the hydrate, what water adds to an aldehyde. The nucleophile in this flask is methanol.' },
-      { text: 'CCC(=O)OC', display: 'methyl propanoate (an ester)', role: 'trap', family: 'other-conditions', trap: 'One oxidation level up', note: 'An ester sits one oxidation level above an aldehyde: you get it from the carboxylic acid and methanol, or with an oxidant. Methanol and acid here only add.' },
+      { text: 'CCC(=O)OC', display: 'methyl propanoate (an ester)', role: 'trap', family: 'other-conditions', trap: 'Oxidized to an ester', note: 'An ester sits one oxidation level above an aldehyde: you get it from the carboxylic acid and methanol, or with an oxidant. Methanol and acid here only add.' },
       { text: 'CCC(OC)OC', display: '1,1-dimethoxypropane (an acetal)', role: 'key', note: 'Two OCH3 on one carbon, made with water leaving in the middle.' },
       { text: 'CCC(O)OC', display: '1-methoxypropan-1-ol (the hemiacetal)', role: 'trap', family: 'one-step-short', trap: 'Stopped at the hemiacetal', note: 'The hemiacetal is real: it is the first adduct. With excess methanol and acid it keeps going, loses water and becomes the acetal.' },
       { text: 'CCCO', display: 'propan-1-ol', role: 'trap', family: 'other-conditions', trap: 'Needs a hydride', note: 'Propanol is the reduction product, from NaBH4 or LiAlH4. Methanol and acid bring no hydride.' }
@@ -1060,7 +1060,7 @@ const ENTRIES = [
     ],
     choices: [
       { text: 'CCc1ccccc1', display: 'ethylbenzene', role: 'trap', family: 'miscount', trap: 'Lost a carbon', note: 'Ethylbenzene has two carbons on the ring. The reagent brings three, and no step here removes one.' },
-      { text: 'CCCc1ccccc1', display: 'propylbenzene (no shift)', role: 'trap', family: 'close-second', trap: 'Skipped the shift', note: 'A little propylbenzene forms, which is why it pulls. Most of the primary carbon shifts to the secondary cation first, the classic limit of alkylation.' },
+      { text: 'CCCc1ccccc1', display: 'propylbenzene (no shift)', role: 'trap', family: 'close-second', trap: 'Skipped the shift', note: 'Some propylbenzene forms, which is why it pulls, and how much depends on temperature. The shift to the secondary cation is the classic limit of alkylation and gives the major product.' },
       { text: 'CC(C)c1ccccc1', display: 'isopropylbenzene (cumene)', role: 'key', note: 'Ring on the middle carbon, after the hydride shift.' },
       { text: 'CC(C)(C)c1ccccc1', display: 'tert-butylbenzene', role: 'trap', family: 'one-step-too-far', trap: 'Chased tertiary', note: 'Tertiary is the most stable cation, so it pulls. But a tert-butyl group needs four carbons, and the propyl chain has three.' },
       { text: 'CC(C)Cc1ccccc1', display: 'isobutylbenzene', role: 'trap', family: 'miscount', trap: 'A fourth carbon', note: 'Isobutylbenzene has four carbons in its side chain. The reagent brings three.' }

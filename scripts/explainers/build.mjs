@@ -75,6 +75,7 @@ const BUDGET = { spec: 4096, sidecar: 6144 };
 const IR_WINDOWS = { 'O-H free': [3580, 3650], 'O-H H-bonded': [3200, 3550], 'O-H chelated': [2800, 3250], 'O-H acid': [2500, 3300], 'N-H': [3300, 3500], 'C-H sp3': [2850, 3000], 'C-H sp2': [3000, 3100], 'C-H sp': [3260, 3330], 'C triple N': [2210, 2260], 'C triple C': [2100, 2260], 'triple bonds': [2100, 2260], 'C=O': [1650, 1780], 'C=C': [1600, 1680] };
 
 const { FAMILIES } = require('./families.js');
+const STAMPS = await import('./stamps.mjs');
 const { copyIssues, words } = await import('./copy-rules.mjs');
 const { CATALOG } = await import(pathToFileURL(path.join(ROOT, 'tools/explain/visuals/catalog.js')).href);
 const COMPUTE = await import(pathToFileURL(path.join(ROOT, 'tools/explain/visuals/compute.js')).href);
@@ -251,6 +252,10 @@ const SOURCES = listSources().map((rel) => {
 const KEY_DISPUTES = readJson(DOCS + '/key-disputes.json', { schema: 'ace.key-disputes/1', open: [], resolved: [] });
 const PICTURE_DISPUTES = readJson(DOCS + '/picture-disputes.json', { fullMocks: [] });
 const APPROVALS = readJson(DOCS + '/approvals.json', { schema: 'ace.explainer-approvals/1', approvals: {} });
+// holds (G1-FIN): items kept unserved for a reason outside the content rail (pending scope,
+// a display override another batch owns); the sidecar is not published and gap-list.json names the reason
+const HOLDS = readJson(DOCS + '/holds.json', { holds: [] });
+const holdOf = (qid) => (HOLDS.holds || []).find((x) => x.qid === qid);
 const openKeyDispute = (qid) => (KEY_DISPUTES.open || []).find((d) => d.qid === qid && d.status !== 'resolved');
 const openPictureDispute = (qid) => [...(PICTURE_DISPUTES.fullMocks || []), ...(PICTURE_DISPUTES.other || [])].find((d) => d.qid === qid && d.status === 'open');
 
@@ -367,6 +372,8 @@ function buildEntry(S, e) {
   const kd = openKeyDispute(e.qid), pd = openPictureDispute(e.qid);
   if (flags.some((f) => f.kind === 'key-dispute') && !kd) issues.push('key-dispute flag with no open entry in ' + DOCS + '/key-disputes.json');
   if (kd) { R.held = 'key dispute open (' + DOCS + '/key-disputes.json): the explainer is held until Thomas rules'; if (!flags.some((f) => f.kind === 'key-dispute')) issues.push('open key dispute needs a key-dispute flag in the source'); }
+  const hd = holdOf(e.qid);
+  if (hd) R.held = (R.held ? R.held + '; ' : '') + 'held (' + DOCS + '/holds.json): ' + hd.reason;
   if (pd) { R.held = (R.held ? R.held + '; ' : '') + 'picture dispute open (' + DOCS + '/picture-disputes.json)'; if (!flags.some((f) => f.kind === 'picture-dispute')) issues.push('open picture dispute needs a picture-dispute flag in the source'); }
 
   // 5. play-with target
@@ -829,10 +836,17 @@ for (const R of RECORDS) {
   let status = 'draft';
   if (R.held) status = 'held';
   else if (!ok) status = 'draft';
+  else if (ap && ap.stamp) {
+    // an auto-approve stamp (rule 1.9): sidecar, renderer sources and the stamp's renderer set must all match
+    const sp = STAMPS.stampProblems(ROOT, ap, studentText).concat(STAMPS.stampFileSetProblems(ROOT, ap, student));
+    if (!sp.length) status = 'approved';
+    else { R.warns.push('stamp void: ' + sp.join('; ')); R.stampVoid = sp; }
+  }
   else if (ap && ap.checksum === checksum) status = 'approved';
   else if (ap && ap.guard && (ap.guard.keyText !== e.keyText || ap.guard.stemHash !== student.bank.stemHash)) status = 'stale';
   const review = { status, by: status === 'approved' ? ap.by : null, at: status === 'approved' ? ap.at : null, batch: R.S.id, checksum, approvedChecksum: ap ? ap.checksum : null };
-  if (ap && status === 'draft' && ok) review.note = 'edited after approval on ' + ap.at + '; needs a new approval';
+  if (ap && status === 'draft' && ok) review.note = (ap.stamp ? 'stamp void (' + (R.stampVoid || []).join('; ') + ')' : 'edited after approval on ' + ap.at) + '; needs a new approval';
+  if (status === 'approved' && ap.stamp) review.stamp = ap.stamp;
   const publish = ok && !R.held;
   if (publish) {
     emit(OUT + '/' + file, studentText);
@@ -935,6 +949,16 @@ for (const [rel, text] of outputs) {
   const leak = coachLeaks(JSON.parse(text), rel);
   if (leak.length) publishIssues.push(...leak.map((l) => 'coach data in a published file: ' + l));
 }
+// stamp gate (rule 1.9): an index entry the player serves (status approved) must carry a matching
+// stamp, and every stamp must name a built item
+for (const [sec, ix] of Object.entries(sectionIndex)) for (const [q, en] of Object.entries(ix)) {
+  if (en.aliasOf || en.status !== 'approved') continue;
+  const ap = (APPROVALS.approvals || {})[q];
+  const text = outputs.get(OUT + '/' + en.file);
+  const sp = ap && ap.stamp ? STAMPS.stampProblems(ROOT, ap, text) : (ap && ap.checksum === en.checksum ? [] : ['no stamp']);
+  if (sp.length) publishIssues.push('served sidecar ' + sec + '/' + en.file + ' without a matching stamp: ' + sp.join('; '));
+}
+for (const q of Object.keys(APPROVALS.approvals || {})) if (!RECORDS.some((R) => R.qid === q)) publishIssues.push('stamp for ' + q + ', which no source builds');
 (function redirects() {
   const toml = rd('netlify.toml'), red = rd('_redirects');
   for (const from of ['/docs/*', '/content/explainers-src/*']) {

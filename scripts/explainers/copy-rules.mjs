@@ -19,7 +19,8 @@ export const NAME_TERMS = (() => {
 export const words = (s) => String(s).trim().split(/\s+/).filter(Boolean).length;
 export const LETTER_CITE = /\b(?:[Oo]ption|[Cc]hoice|[Aa]nswer|[Ff]act|[Ll]ine|[Ll]etter)\s+[A-E]\b|\(\s*[A-E]\s*\)/;
 export const BANNED = /\b(wrong|incorrect|failed)\b/i;
-export const TIMER_SCORE = /\btimer\b|seconds left|time left|\bstreak\b|\b\d+\s+points\b|\bXP\b|percent correct|% correct/i;
+// "level up" is gate-copy's points rule (a level as a reward); explainer copy never uses it
+export const TIMER_SCORE = /\btimer\b|seconds left|time left|\bstreak\b|\b\d+\s+points\b|\bXP\b|percent correct|% correct|\blevel(?:ed|s)? up\b/i;
 
 // One authored string. max is a word budget (optional).
 export function copyIssues(label, s, max) {

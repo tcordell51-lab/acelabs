@@ -30,6 +30,11 @@
 //     is rebuilt in RDKit from its drawn positions and wedges and must depict
 //     its SMILES; every stereocenter card's two readings (the swap rule and the
 //     signed volume) must equal RDKit's label for the SMILES and for the drawing
+//   - stamps (rule 1.9): the picture of a stamped item (the .vis figure, alt
+//     included) must hash to the stamp's SVG sums at 390 and 1280; a held item
+//     (docs/explainers/holds.json, disputes) is checked in sign-off view only,
+//     since the player shows the bank explanation for it
+//     --svg-out FILE writes { qid: { '390': sha256, '1280': sha256 } } for stamp.mjs
 // Writes docs/explainers/render-report.json (with each sidecar's checksum)
 // when it runs on every explainer.
 import fs from 'node:fs';
@@ -40,6 +45,7 @@ import { createRequire } from 'node:module';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { renderedTextIssues } from './copy-rules.mjs';
+import { visSum, SVG_WIDTHS } from './stamps.mjs';
 
 const require = createRequire(import.meta.url);
 const HERE = path.dirname(fileURLToPath(import.meta.url));
@@ -48,13 +54,14 @@ const args = process.argv.slice(2);
 const opt = (k) => { const i = args.indexOf(k); return i >= 0 ? args[i + 1] : null; };
 const NO_SHOTS = args.includes('--no-shots');
 const OUTDIR = path.resolve(ROOT, opt('--out') || 'test-screenshots/explainers');
-const FILTER = args.filter((a, i) => !a.startsWith('--') && !['--base', '--out'].includes(args[i - 1]));
+const FILTER = args.filter((a, i) => !a.startsWith('--') && !['--base', '--out', '--svg-out'].includes(args[i - 1]));
 const SIZES = [{ n: 'phone', w: 390, h: 844, mobile: true }, { n: 'desk', w: 1280, h: 800 }];
 const PANEL_MAX = 600;
 
 const readJson = (rel) => JSON.parse(fs.readFileSync(path.join(ROOT, rel), 'utf8'));
 const IX = readJson('docs/explainers/index.json');
 const GATES = readJson('docs/explainers/gate-report.json');
+const APPROVALS = (readJson('docs/explainers/approvals.json').approvals) || {};
 const qids = Object.keys(IX.items).filter((q) => !FILTER.length || FILTER.includes(q) || FILTER.includes(IX.items[q].batch) || FILTER.includes(IX.items[q].pid));
 if (!qids.length) { console.log('render-check: no explainers match ' + FILTER.join(' ')); process.exit(1); }
 
@@ -157,7 +164,7 @@ const browser = await chromium.launch({ executablePath: exe, args: ['--no-sandbo
 
 const jobs = [];
 for (const qid of qids) {
-  for (const s of SIZES) jobs.push({ qid, kind: 'student', s, url: PREVIEW + '?qid=' + encodeURIComponent(qid), file: IX.items[qid].batch.replace(/\//g, '-') + '/' + qid.replace(/:/g, '__').replace(/#/g, '~') + '-' + s.n });
+  if (IX.items[qid].status !== 'held') for (const s of SIZES) jobs.push({ qid, kind: 'student', s, url: PREVIEW + '?qid=' + encodeURIComponent(qid), file: IX.items[qid].batch.replace(/\//g, '-') + '/' + qid.replace(/:/g, '__').replace(/#/g, '~') + '-' + s.n });
   jobs.push({ qid, kind: 'coach', s: SIZES[1], url: PREVIEW + '?qid=' + encodeURIComponent(qid) + '&coach=1', file: IX.items[qid].batch.replace(/\//g, '-') + '/' + qid.replace(/:/g, '__').replace(/#/g, '~') + '-signoff' });
 }
 if (!FILTER.length) for (const s of SIZES) jobs.push({ qid: null, kind: 'index', s, url: PREVIEW, file: 'index-' + s.n });
@@ -174,6 +181,7 @@ async function runJob(j) {
   await p.waitForFunction(() => document.body.dataset.ready === '1', null, { timeout: 20000 }).catch(() => errs.push('never ready'));
   await p.waitForTimeout(300);
   const lay = await p.evaluate(measure, PANEL_MAX);
+  const visHtml = j.kind === 'student' ? await p.$eval('.vis', (n) => n.outerHTML).catch(() => null) : null;
   if (!NO_SHOTS) {
     const base = path.join(OUTDIR, j.file);
     fs.mkdirSync(path.dirname(base), { recursive: true });
@@ -183,7 +191,7 @@ async function runJob(j) {
     await p.screenshot({ path: base + '.png', fullPage: true });
   }
   await ctx.close();
-  return Object.assign(j, { errs, lay });
+  return Object.assign(j, { errs, lay, svg: visHtml == null ? null : visSum(visHtml) });
 }
 const results = [];
 const POOL = 4;
@@ -231,6 +239,8 @@ for (const r of results) {
     renderedTextIssues(L.text).forEach((c) => issues.push('copy: ' + c));
     L.clash.forEach((c) => issues.push('clash: ' + c));
     if (r.s.mobile) L.tallPanels.forEach((x) => issues.push('panel ' + x + ' px tall on the phone (max ' + PANEL_MAX + ')'));
+    const ap = APPROVALS[r.qid], w = String(r.s.w);
+    if (ap && ap.stamp && IX.items[r.qid].status === 'approved' && (!ap.svg || ap.svg[w] !== r.svg)) issues.push('stamp: the picture at ' + w + ' px differs from the stamped render (the stamp is void; re-review and re-stamp)');
   }
   const drawn = [];
   (L.drawn || []).forEach((d) => { const { out, r: rr } = stereoIssues(d); issues.push(...out.map((x) => 'stereo: ' + x)); drawn.push({ role: d.role, smi: d.smi, same: rr ? !!rr.same : false, cip: rr && rr.cipSmiles, cards: (d.stereo || []).map((c) => c.name + ' ' + c.byRule) }); });
@@ -243,6 +253,12 @@ for (const r of results) {
 }
 const items = Object.values(report.items);
 report.summary = { explainers: items.length, pass: items.filter((x) => x.ok).length, pages: results.length, pagesFailing: bad, structuresChecked: drawnList.length, stereoCards: drawnList.reduce((a, d) => a + (d.stereo || []).length, 0) };
+if (opt('--svg-out')) {
+  const svgs = {};
+  results.filter((r) => r.kind === 'student' && r.svg).forEach((r) => { (svgs[r.qid] || (svgs[r.qid] = {}))[String(r.s.w)] = r.svg; });
+  for (const q of Object.keys(svgs)) if (!SVG_WIDTHS.every((w) => svgs[q][w])) delete svgs[q];
+  fs.writeFileSync(path.resolve(opt('--svg-out')), JSON.stringify(svgs, null, 1) + '\n');
+}
 if (!FILTER.length) fs.writeFileSync(path.join(ROOT, 'docs/explainers/render-report.json'), JSON.stringify(report, null, 1) + '\n');
 console.log('render gates: ' + report.summary.pass + ' of ' + report.summary.explainers + ' explainers pass on ' + results.length + ' page loads; ' + report.summary.structuresChecked + ' drawn structures checked in RDKit, ' + report.summary.stereoCards + ' stereo cards' + (NO_SHOTS ? '' : '; screenshots in ' + path.relative(ROOT, OUTDIR)));
 if (bad) process.exitCode = 1;

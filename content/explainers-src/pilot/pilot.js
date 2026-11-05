@@ -356,7 +356,7 @@ const ENTRIES = [
       { text: 'BrCCC(C)C', display: '1-bromo-3-methylbutane (Br on the end carbon)', role: 'trap', family: 'other-conditions', trap: 'Peroxide path', note: 'Br on the end carbon comes from HBr with peroxides, a radical path. There is no peroxide here.' },
       { text: 'CCC(C)(C)O', display: '2-methylbutan-2-ol (an alcohol)', role: 'trap', family: 'other-conditions', trap: 'Water as the nucleophile', note: 'An alcohol needs water to trap the cation. The only nucleophile in this flask is bromide.' },
       { text: 'CCC(C)(C)Br', display: '2-bromo-2-methylbutane', role: 'key', note: 'Hydride shift first, then bromide on the tertiary carbon.' },
-      { text: 'CC(Br)C(C)C', display: '2-bromo-3-methylbutane', role: 'trap', family: 'one-step-short', trap: 'No shift', note: 'This is Markovnikov without the rearrangement, and it pulls because it comes from the first cation you draw. Some of this forms, but most cations shift before bromide arrives.' },
+      { text: 'CC(Br)C(C)C', display: '2-bromo-3-methylbutane', role: 'trap', family: 'one-step-short', trap: 'No shift', note: 'This is Markovnikov without the rearrangement, and it pulls because it comes from the first cation you draw. Some of this forms, but the item counts the shifted product as major.' },
       { text: 'CC=C(C)C', display: '2-methylbut-2-ene (an alkene)', role: 'trap', family: 'other-conditions', trap: 'Elimination, not addition', note: 'Losing H+ from the cation gives this alkene. With bromide right there and no heat, addition wins.' }
     ],
     lockIt: 'A cation shifts a hydride or methyl when the move makes it more stable, then the nucleophile adds.',
@@ -492,7 +492,7 @@ const ENTRIES = [
     ],
     choices: [
       { text: '2', role: 'trap', family: 'other-conditions', trap: 'Dropped the cosine', note: '74 - 70 = 4, and root 4 is 2: that treats cos 60 as 1, the angle closed to 0. Cos 60 is 1/2, so subtract 35.' },
-      { text: '√109, about 10.4', role: 'trap', family: 'operation-flip', note: '74 + 35 is what a 120 degree angle gives, since cos 120 = -1/2. A narrow angle makes the side shorter.' },
+      { text: '√109, about 10.4', role: 'trap', family: 'operation-flip', trap: 'Added the correction', note: '74 + 35 is what a 120 degree angle gives, since cos 120 = -1/2. A narrow angle makes the side shorter.' },
       { text: '√39, about 6.2', role: 'key', note: '74 - 35 = 39.' },
       { text: '12', role: 'trap', family: 'other-conditions', trap: 'Added the sides', note: '5 + 7 = 12 is the side when the angle opens all the way to 180 degrees. A triangle never gets there.' },
       { text: '√74, about 8.6', role: 'trap', family: 'other-conditions', trap: 'Treated as a right triangle', note: 'Pythagoras is the Law of Cosines at exactly 90 degrees. This angle is 60.' }
@@ -680,7 +680,7 @@ const ENTRIES = [
       item: { test: PAT_TEST, n: 62 },
       view: ['floor1', 'layers'],
       reuse: 'PAT engine (tools/pat/engine/pat-cubes.js): figureSVG() on floor 1 alone, and painted(); the floor maps are new',
-      alt: 'Left: floor 1 of Figure A on its own, with the floors above lifted off; the middle cube of the back row is outlined and marked 1, its painted side facing upper right. Right: four floor maps, bottom to top, each cube showing its number of painted sides.',
+      alt: 'Top: floor 1 of Figure A on its own, with the floors above lifted off; the middle cube of the back row is outlined and marked 1, its painted side facing upper right. Below: four floor maps, bottom to top, each cube showing its number of painted sides.',
       caption: 'Lift off the upper floors and the one-side cube shows: back row, middle, its open side facing upper right.'
     },
     demoPick: '4 cubes',
