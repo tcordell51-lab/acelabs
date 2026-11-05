@@ -413,10 +413,16 @@
     });
   }
 
+  var HELD_TEXT = 'The explanation returns once the answer key is confirmed.';
   function fallback(el, why, reason) {
     var x = el.querySelector('section.lite');
     if (x) x.parentNode.removeChild(x);
-    if (why) why.hidden = false;
+    /* an open key dispute: the bank explanation names the disputed answer, so it stays hidden too
+       (full.js leaves it out of a disputed card; this covers an item disputed through its alias) */
+    if (reason === 'dispute') {
+      if (why) why.hidden = true;
+      if (!el.querySelector('.key-held')) { var p = h('p', 'note key-held', [HELD_TEXT]); el.insertBefore(p, el.querySelector('.links') || null); }
+    } else if (why) why.hidden = false;
     el.setAttribute('data-lite-fallback', reason);
     el.removeAttribute('data-lite');
   }

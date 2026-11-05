@@ -70,6 +70,12 @@ try {
       // the live pull list: one explainer pulled
       let pulledQid = null;
       await page.route('**/.netlify/functions/approvals*', (route) => route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ pulls: pulledQid ? ['explainer:' + pulledQid.replace(/#/g, '.')] : [] }) }));
+      // a structure that falls back to its SMILES text is not drawn: count those
+      await page.addInitScript(() => {
+        const f = CanvasRenderingContext2D.prototype.fillText;
+        window.__smilesText = 0;
+        CanvasRenderingContext2D.prototype.fillText = function () { if (this.font === '14px monospace' && this.canvas && this.canvas.hasAttribute('data-smiles')) window.__smilesText++; return f.apply(this, arguments); };
+      });
       await page.goto(BASE + 'tools/mock/full.html');
       await page.waitForFunction(() => window.AceExplainerLite && window.__fullMock);
       const ids = await page.evaluate(([P, D]) => {
@@ -116,6 +122,20 @@ try {
         await loc.screenshot({ path: f });
         shots.push(f);
       }
+      // every structure in the review draws (blank before the fix: 0 of 61)
+      const mol = await page.evaluate(() => {
+        const cs = [...document.querySelectorAll('#report canvas[data-smiles]')];
+        const inked = cs.filter((c) => { const d = c.getContext('2d').getImageData(0, 0, c.width, c.height).data; let n = 0; for (let i = 0; i < d.length; i += 4) if (d[i + 3] && (d[i] < 200 || d[i + 1] < 200 || d[i + 2] < 200)) n++; return n > 40; }).length;
+        return { n: cs.length, inked, text: window.__smilesText };
+      });
+      ok(mol.n > 0 && mol.inked === mol.n && mol.text === 0, `${tag} every review structure draws (${mol.inked} of ${mol.n}, ${mol.text} as text)`);
+      for (const [name, sel] of [['stem', 'canvas[data-smiles]'], ['choices', '.a .pm-mol canvas']]) {
+        const k = await page.evaluate((q) => [...document.querySelectorAll('details[data-sec="sons"] .miss')].findIndex((c) => c.querySelector(q)), sel);
+        if (k < 0) continue;
+        const loc = page.locator('details[data-sec="sons"] .miss').nth(k);
+        await loc.scrollIntoViewIfNeeded();
+        await loc.screenshot({ path: path.join(OUT, `structures-${name}-${tag}.png`) });
+      }
       const pp = pos[ids.pulled];
       ok(pp && pp.state === 'pulled', `${tag} pulled item falls back to the bank explanation (${pp && pp.state})`);
       if (pp) await page.locator(`details[data-sec="${pp.sec}"] .miss`).nth(pp.k).screenshot({ path: path.join(OUT, `pulled-${tag}.png`) });
@@ -124,6 +144,8 @@ try {
       if (dp) {
         const t = await page.locator(`details[data-sec="${dp.sec}"] .miss`).nth(dp.k).locator('.a').textContent();
         ok(/Key under review/.test(t) && !/Correct:/.test(t), `${tag} dispute line replaces the answer mark`);
+        const held = await page.locator(`details[data-sec="${dp.sec}"] .miss`).nth(dp.k).evaluate((c) => ({ why: [...c.querySelectorAll('.why')].some((w) => !w.hidden), note: (c.querySelector('.key-held') || {}).textContent || '' }));
+        ok(!held.why && /returns once the answer key is confirmed/.test(held.note), `${tag} dispute hides the bank explanation`);
         await page.locator(`details[data-sec="${dp.sec}"] .miss`).nth(dp.k).screenshot({ path: path.join(OUT, `dispute-${tag}.png`) });
       }
       const counts = await page.evaluate(() => ({ card: document.querySelector('#report .sec-card').textContent, note: /left out of these counts/.test(document.getElementById('report').textContent) }));

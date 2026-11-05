@@ -657,7 +657,7 @@
       h += '<div class="q">' + esc(it.q) + '</div>';
       if (it.qs) h += '<span class="pm-mol" style="display:block;max-width:300px"><canvas data-smiles="' + esc(it.qs) + '" width="300" height="140"></canvas></span>';
       h += '<div class="a">Your answer: <b>' + (ms.ans == null ? 'left open' : L[ms.ans] + '. ' + show(ms.ans)) + '</b><br>' + (ms.disputed ? KEY_REVIEW : 'Correct: <b>' + L[it.correct] + '. ' + show(it.correct) + '</b>') + '</div>';
-      h += '<div class="why">' + esc(window.ACE_WHY_OVERRIDES ? window.ACE_WHY_OVERRIDES.why(it.id, it.why) : it.why) + (ms.ans != null && it.traps && it.traps[ms.ans] ? '<br><br><b>About your pick:</b> ' + esc(it.traps[ms.ans]) : '') + '</div>';
+      h += ms.disputed ? KEY_HELD : '<div class="why">' + esc(window.ACE_WHY_OVERRIDES ? window.ACE_WHY_OVERRIDES.why(it.id, it.why) : it.why) + (ms.ans != null && it.traps && it.traps[ms.ans] ? '<br><br><b>About your pick:</b> ' + esc(it.traps[ms.ans]) : '') + '</div>';
       var night = it.nights && it.nights[0];
       h += '<div class="links"><a href="' + st.learn + (night ? '?night=' + night : '') + '">' + (night ? 'Retold night ' + night + ': ' : 'Retold: ') + esc(it.topic) + '</a><a href="' + st.review + '">' + st.engine + '</a></div>';
     } else if (x.kind === 'pat') {
@@ -669,15 +669,32 @@
     } else {
       var q = x.q, pr = (q.proof || [])[0];
       h += '<div class="q">' + esc(q.stem) + '</div><div class="a">Your answer: <b>' + (ms.ans == null ? 'left open' : L[ms.ans] + '. ' + esc(q.choices[ms.ans])) + '</b><br>' + (ms.disputed ? KEY_REVIEW : 'Correct: <b>' + L[q.key] + '. ' + esc(q.choices[q.key]) + '</b>') + '</div>' +
-        '<div class="why">' + (pr ? '<b>Proof line, paragraph ' + pr.paragraph + ':</b> "' + esc(pr.quote) + '"<br><br>' : '') + esc(q.why) + '</div>' +
+        (ms.disputed ? KEY_HELD : '<div class="why">' + (pr ? '<b>Proof line, paragraph ' + pr.paragraph + ':</b> "' + esc(pr.quote) + '"<br><br>' : '') + esc(q.why) + '</div>') +
         '<div class="links"><a href="/tools/rc/">Practice this passage in the RC player</a><a href="' + st.learn + '">Reading, Retold</a></div>';
     }
     return h + '</div>';
   }
+  /* The report draws its structures with its own drawer. It used to borrow the timed screen's
+     (R.smi, made by drawMolecules), but drawMolecules only makes it when #pm holds a structure,
+     and #pm is emptied before the report renders, so after a reload or a resumed attempt R.smi
+     stayed null and every report canvas stayed blank. The timed screen is not touched. */
+  function reportDrawer() {
+    if (R.smiReport == null) {
+      try {
+        R.smiReport = typeof window.SmiDrawer === 'function' ? new window.SmiDrawer({ width: 300, height: 140, padding: 6, bondThickness: 1.2, bondLength: 18, shortBondLength: 0.85, compactDrawing: true, explicitHydrogens: false, fontSizeLarge: 11, fontSizeSmall: 8, themes: { light: { C: '#1a1d20', O: '#cf3b3b', N: '#3a78c4', Cl: '#2e8a3e', Br: '#8a4a2a', F: '#3aa83a', I: '#7a3a8a', S: '#a08a1a', P: '#c06a1a', H: '#1a1d20', BACKGROUND: '#fff' } } }) : false;
+      } catch (e) { R.smiReport = false; }
+    }
+    return R.smiReport;
+  }
   function drawReportMolecules(box) {
     var cs = box.querySelectorAll('canvas[data-smiles]'); if (!cs.length) return;
-    if (R.smi === null) drawMolecules();
-    Array.prototype.forEach.call(cs, function (c) { if (!c.id) c.id = 'mol' + (++R.molN); try { if (R.smi) R.smi.draw(c.getAttribute('data-smiles'), '#' + c.id, 'light'); } catch (e) { /* the answer text is shown beside it */ } });
+    var D = reportDrawer();
+    Array.prototype.forEach.call(cs, function (c) {
+      var smi = c.getAttribute('data-smiles');
+      if (!c.id) c.id = 'mol' + (++R.molN);
+      try { if (!D) throw new Error('no drawer'); D.draw(smi, '#' + c.id, 'light'); }
+      catch (e) { var ctx = c.getContext && c.getContext('2d'); if (ctx) { ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, c.width, c.height); ctx.fillStyle = '#1a1d20'; ctx.font = '14px monospace'; ctx.fillText(smi, 8, c.height / 2); } }
+    });
   }
 
   /* ---------------- explainers in the review (G1-LITE, tools/mock/explainer-lite.js) ----------------
@@ -686,6 +703,8 @@
      left out of the counts shown here. A listed item of a form in AceExplainerLite.MOCKS opens its
      stamped explainer; anything else keeps the bank explanation (or its override). */
   var KEY_REVIEW = '<b class="key-review">Key under review</b>';
+  /* the bank explanation names the disputed answer, so a disputed item shows this line instead */
+  var KEY_HELD = '<p class="note key-held">The explanation returns once the answer key is confirmed.</p>';
   function liteApi() { var A = window.AceExplainerLite; return A && typeof A.isDisputed === 'function' ? A : null; }
   function topicOf(x) { return x.kind === 'mc' ? x.it.topic : x.kind === 'pat' ? (PAT.SECTIONS.filter(function (s) { return s.type === x.it.type; })[0] || {}).name : (RC.types[x.q.type] || x.q.type); }
   function reviewView(st, res, m) {
