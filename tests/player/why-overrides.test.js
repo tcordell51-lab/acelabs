@@ -34,13 +34,13 @@ test('the bank file is unchanged: its sha256 matches the one the overrides were 
   assert.equal(doc.bank.file, 'tools/mock/data/full-mocks.js');
 });
 
-test('47 overrides (31 OChem and 1 Bio with stale letters, OC-3, and 14 found after the SA-C review), each matching its bank text', () => {
+test('72 overrides (31 OChem and 1 Bio with stale letters, OC-3, 14 found after the SA-C review, and 25 found by the residue scan), each matching its bank text', () => {
   const items = bankItems();
   const ids = Object.keys(doc.overrides);
-  assert.equal(ids.length, 47);
-  assert.equal(doc.count, 47);
+  assert.equal(ids.length, 72);
+  assert.equal(doc.count, 72);
   assert.equal(doc.stamp, 'auto-approved 2026-10-30, pending Thomas review');
-  assert.equal(ids.filter((k) => k.startsWith('fm:organic:')).length, 46);
+  assert.equal(ids.filter((k) => k.startsWith('fm:organic:')).length, 71);
   for (const k of ids) {
     const o = doc.overrides[k];
     const hit = items[k.slice(3)];

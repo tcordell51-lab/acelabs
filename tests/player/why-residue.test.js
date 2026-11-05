@@ -26,6 +26,15 @@ test('the scanner catches each kind of residue', async () => {
 test('no override carries residue', async () => {
   const { scanAll } = await import(SCAN);
   const r = scanAll();
-  assert.equal(r.overrideCount, 47);
+  assert.equal(r.overrideCount, 72);
   assert.deepEqual(r.overrides.map((e) => e.id + ': ' + e.hits.map((h) => h.rule + ' ' + h.match).join(', ')), []);
+});
+
+// CONTENT-FIX 4: the 25 served OChem bank explanations the scanner still flagged now carry
+// overrides, so no OChem item in the full-length forms shows residue to a student.
+test('every served OChem full-length explanation is clean: overridden or clean in the bank', async () => {
+  const { scanAll } = await import(SCAN);
+  const r = scanAll();
+  assert.ok(r.bankOchemScanned > 0);
+  assert.deepEqual(r.bank.map((e) => e.id + ': ' + e.hits.map((h) => h.rule + ' ' + h.match).join(', ')), []);
 });
