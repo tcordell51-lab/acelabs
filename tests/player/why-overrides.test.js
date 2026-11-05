@@ -29,9 +29,25 @@ function bankItems() {
 // an option letter or index pointer inside an explanation (stereo descriptors such as (E)- are fine)
 const LETTER = /\b(?:options?|choices?|keyed option|opt)\s*\(?[A-E0-9]\b|\bcorrect\s*=\s*\d|\bindex \d\b|(?:^|\s)\([A-E]\)(?![-\w])|(?:^|[.;,] )[A-E] (?:is|n-|tert|ethyl|iso)\b|\bpath-[A-E]\b/i;
 
-test('the bank file is unchanged: its sha256 matches the one the overrides were written against', () => {
+test('the bank file is unchanged except by approved, recorded edits: its sha256 matches the pin, and undoing each edit restores the hash before it', () => {
   assert.equal(sha(bankSrc), doc.bank.sha256);
   assert.equal(doc.bank.file, 'tools/mock/data/full-mocks.js');
+  const kd = JSON.parse(fs.readFileSync(path.join(ROOT, 'docs/explainers/key-disputes.json'), 'utf8'));
+  const edits = doc.bank.approvedEdits || [];
+  let src = bankSrc;
+  for (const e of edits.slice().reverse()) {
+    assert.equal(sha(src), e.sha256After, e.qid + ' hash after the edit');
+    assert.ok(/^Thomas, \d{4}-\d{2}-\d{2}/.test(e.approvedBy) && e.reason.length > 40, e.qid + ' is approved by Thomas, with the reason');
+    assert.deepEqual(Object.keys(e).sort(), ['approvedBy', 'commit', 'field', 'from', 'qid', 'reason', 'sha256After', 'sha256Before', 'to']);
+    const after = JSON.stringify(e.field) + ':' + JSON.stringify(e.to);
+    assert.equal(src.split(after).length, 2, e.qid + ' the edited value appears once');
+    src = src.replace(after, JSON.stringify(e.field) + ':' + JSON.stringify(e.from));
+    assert.equal(sha(src), e.sha256Before, e.qid + ': undoing the one recorded field restores the earlier bank exactly');
+    const r = (kd.resolved || []).find((x) => x.qid === e.qid);
+    assert.ok(r && r.status === 'resolved' && /^Thomas/.test(r.resolution), e.qid + ' has a resolved key dispute ruled by Thomas');
+  }
+  // the hash every CONTENT-FIX override was first written against (content-fix to content-fix-3)
+  assert.equal(sha(src), '5eceeb82674e52cb8ca2621381a2477a5e4be539673acb5625942d5cd03d669e');
 });
 
 test('72 overrides (31 OChem and 1 Bio with stale letters, OC-3, 14 found after the SA-C review, and 25 found by the residue scan), each matching its bank text', () => {
@@ -85,8 +101,17 @@ test('an override held by an open key dispute is not shown; the dispute is recor
     const o = doc.overrides[e.qid];
     if (o) assert.ok(o.held, e.qid + ' override is held while the dispute is open');
   }
-  assert.ok(open.some((e) => e.qid === 'fm:organic:oc-1jzd8nw'));
+  // oc-1jzd8nw: Thomas fixed the drawing (Nov 5); the dispute is resolved, the bank figure matches
+  // the corrected structure, and its override shows again
+  assert.ok(!open.some((e) => e.qid === 'fm:organic:oc-1jzd8nw'));
+  const fixed = (kd.resolved || []).find((e) => e.qid === 'fm:organic:oc-1jzd8nw');
+  assert.ok(fixed && fixed.status === 'resolved');
+  assert.equal(items['organic:oc-1jzd8nw'][0].it.qs, fixed.correctedSmiles);
+  assert.equal(items['organic:oc-1jzd8nw'][0].it.correct, fixed.servedKey);
+  assert.ok(!doc.overrides['fm:organic:oc-1jzd8nw'].held);
   api.load(doc);
+  const b1 = items['organic:oc-1jzd8nw'][0].it.why;
+  assert.equal(api.why('organic:oc-1jzd8nw', b1), doc.overrides['fm:organic:oc-1jzd8nw'].why);
   for (const [k, o] of Object.entries(doc.overrides)) {
     if (!o.held) continue;
     const bankWhy = items[k.slice(3)][0].it.why;
