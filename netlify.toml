@@ -596,6 +596,24 @@
   status = 404
   force = true
 
+# 404, never served: the review system's internal files. The approvals function bundles
+# key-hash.json and review-index.json at build (esbuild inlines its JSON imports), so it does
+# not read them over HTTP. Still public: content/approvals/review-index.json (the full-length
+# review reads stamps from it, since /docs/* redirects) and content/approvals/pulls-snapshot.json
+# (shared/ace-pulls.js).
+
+[[redirects]]
+  from = "/content/approvals/stamps/*"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/content/approvals/key-hash.json"
+  to = "/404.html"
+  status = 404
+  force = true
+
 # Not redirected (OS-65): kept, but out of search.
 [[headers]]
   for = "/booster-map.html"
@@ -606,3 +624,11 @@
   for = "/approvals/*"
   [headers.values]
     X-Robots-Tag = "noindex"
+    # The review page holds the review key (sessionStorage, this tab only), so it runs no inline
+    # script at all: every script is a same-origin file, nothing is eval'd, nothing frames it, and
+    # its Retold preview frame is sandboxed without allow-same-origin (approvals/approvals.js).
+    # Whether Netlify sends it in place of the site-wide CSP above (netlify dev does) or beside it,
+    # this one holds: a browser enforces every policy it is sent.
+    # style-src keeps 'unsafe-inline' for the explainer renderers' style attributes (no script).
+    Content-Security-Policy = "default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; media-src 'self'; connect-src 'self'; frame-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'; object-src 'none'"
+

@@ -68,6 +68,8 @@ export function startServer(root, { port = 0, csp = true } = {}) {
     if (r) {
       if (r.status >= 300 && r.status < 400) { res.writeHead(r.status, { Location: r.target + q }); res.end(); return; }
       if (r.status === 200) found = resolveFile(r.target);
+      // a forced 404 rule (the internal files Netlify never serves) answers its target with a 404
+      if (r.status === 404) { const t = resolveFile(r.target); if (t && t.file) return send(t.file, 404); res.writeHead(404); res.end('not found'); return; }
     }
     if (found && found.redirect) { res.writeHead(301, { Location: found.redirect + q }); res.end(); return; }
     if (found && found.file) return send(found.file);
