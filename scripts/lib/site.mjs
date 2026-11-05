@@ -56,6 +56,13 @@ export function startServer(root, { port = 0, csp = true } = {}) {
       if (hit) return { file: hit };
       const html = fileAt(pp + '.html'); return html && html !== 'dir' ? { file: html } : null;
     };
+    // Netlify functions do not run on this static test server. The live pulls
+    // list answers with the bundled snapshot so page gates see what a student
+    // sees when the function is up; every other function path stays a 404.
+    if (p === '/.netlify/functions/approvals' && new URLSearchParams(q).get('pulls') === '1') {
+      const snap = fileAt('/content/approvals/pulls-snapshot.json');
+      if (snap && snap !== 'dir') return send(snap);
+    }
     let found = resolveFile(p);
     const r = ruleFor(p, !!(found && found.file));
     if (r) {
