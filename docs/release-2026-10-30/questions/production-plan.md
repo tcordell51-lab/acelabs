@@ -523,6 +523,14 @@ before it solves), and Thomas.
 9. Thomas signs off in two sittings of about 12 items (about 10 minutes each),
    with the five checks (key, first move, traps, picture with alt, voice) and
    Approve, Hold or Dispute on each card. Approve stamps the checksum.
+   Note (auto-approve, Thomas 2026-10-30; see `docs/ace-system-decisions.md`,
+   "Auto-approve"): for the one-shot build this sitting moves after release.
+   Items that pass steps 5 to 8 and the independent review are stamped
+   "auto-approved 2026-10-30, pending Thomas review" with a checksum over the
+   sidecar, its rendered SVG at 390 and 1280 px and its renderers' source;
+   only a matching stamp renders, and Thomas reviews them afterward on the
+   review page with a one-tap Pull. Disputed keys and anything a reviewer marks
+   uncertain stay held.
 10. Merge. One pull request per batch with the source file, generated sidecars,
     coach records, gate report and screenshots. Published only when every item
     in it is approved; held items stay on the bank's own explanation.

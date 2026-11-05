@@ -1,0 +1,27 @@
+{
+  "schema": "ace.key-disputes/1",
+  "note": "Suspected bad answer keys, for Thomas. One entry per item: qid, servedAs, servedKey, suspectedKey, reasoning, raisedBy, status (open or resolved). An open entry holds that item's explainer; only Thomas edits a bank key, in its own commit.",
+  "open": [],
+  "resolved": [
+    {
+      "qid": "fm:organic:oc-1jzd8nw",
+      "servedAs": "Full-Length Test 3 (FULL_3), OChem question 5",
+      "bank": "tools/mock/data/full-mocks.js",
+      "status": "resolved",
+      "servedKey": 4,
+      "servedKeyText": "CC1C=CC(C(C)C)CC1",
+      "servedKeyName": "2-menthene (Hofmann-type, less substituted; the only anti-periplanar H in menthyl chloride)",
+      "suspectedKey": 0,
+      "suspectedKeyText": "CC1CC=C(C(C)C)CC1",
+      "suspectedKeyName": "3-menthene (Zaitsev, more substituted; major product from neomenthyl chloride)",
+      "kind": "drawing vs stem",
+      "reasoning": "The stem names menthyl chloride and says the Cl is equatorial in the stable chair; for menthyl chloride only the C6 H is anti-periplanar to an axial Cl, so E2 gives 2-menthene (index 4, the key). The drawn structure (qs 'CC1CC[C@@H](C(C)C)[C@@H](Cl)C1') has the Cl cis to the isopropyl: that is neomenthyl chloride (RDKit, checked against menthol (1R,2S,5R) with O replaced by Cl). In neomenthyl chloride the Cl is axial in the stable chair with anti-periplanar H on both neighbors, so E2 gives mainly the Zaitsev 3-menthene (index 0). The stem and key are right only for menthyl chloride; a student who reads the drawing gets index 0.",
+      "fix": "Bank, Thomas only, in its own commit: set qs to menthyl chloride so drawing, stem and key agree. The key (4) and the stem then stand as written.",
+      "correctedSmiles": "CC(C)[C@@H]1CC[C@@H](C)C[C@H]1Cl",
+      "whileOpen": "Review shows Key under review instead of the answer mark and leaves the item out of the raw count (OS-74); its why-override (content/explainers/why-overrides.json) is held, so the bank explanation shows; it has no explainer sidecar to hold.",
+      "raisedBy": "SA-C independent content review (content-fix-review.json); recorded by CONTENT-FIX follow-up",
+      "raised": "2026-11-05",
+      "resolution": "Thomas, 2026-11-05: fix the drawing, keep the key. The stem figure (qs) is now menthyl chloride, CC(C)[C@@H]1CC[C@@H](C)C[C@H]1Cl (Cl trans to isopropyl, cis to methyl; RDKit matches (-)-menthol with O replaced by Cl). The stem, choices and key (index 4, 2-menthene) are unchanged."
+    }
+  ]
+}

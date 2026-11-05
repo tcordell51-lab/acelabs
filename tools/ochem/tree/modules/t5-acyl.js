@@ -26,7 +26,7 @@ export const meta = {
   ],
   trap: 'Careful: the tetrahedral intermediate is never the final answer, and it does not spit back out whatever just attacked. It releases the BETTER leaving group, which is why an amide will not become an ester no matter how much alcohol you pour on it.',
   holdsUp: ['Acid chloride to anything below it', 'Fischer esterification', 'Saponification versus acid hydrolysis', 'Why a Grignard hits an ester twice', 'Why the ladder only goes down'],
-  drill: 'Carboxylic Acid Derivatives, in your OChem question bank'
+  drill: 'Practice questions on this topic, in the OChem engine or your own question bank'
 };
 
 // Every SMILES this module draws, tetrahedral intermediates included.

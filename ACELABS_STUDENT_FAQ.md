@@ -6,7 +6,7 @@ Honest answers to the questions students ask before signing up. If a question ma
 
 Ace Labs is the unified DAT prep system from AceTheDAT. It covers the four science sections of the DAT (Quantitative Reasoning, Biology, Gen Chem, Organic Chem) with four standalone tools under one shell. Each tool has its own coach (Sarah for QR, Riya for Bio, Tommy for GC and OChem) and its own pedagogy designed around pattern recognition + anxiety scaffolding + tutor-driven coaching.
 
-Ace Labs **does not** cover PAT or Reading Comprehension. For those you'll need a separate resource (typically a commercial subscription like DATBooster or Bootcamp.com).
+AceTheDAT also covers PAT and Reading Comprehension: a PAT studio with six drills and 15 full PAT tests, 45 Reading passages with 15 timed sections, and 4 full-length DATs that run every section.
 
 ## "How is this different from DATBooster or Bootcamp?"
 
@@ -94,9 +94,9 @@ For severe test anxiety, Ace Labs alone isn't a substitute for actual care — p
 
 ## "Will Ace Labs tell me when I'm ready?"
 
-Each tool has a mock simulator that predicts a DAT subscore for that section. The mock predictions are reasonably accurate — but they're estimates, not guarantees.
+AceTheDAT does not predict DAT scores or subscores. Its practice tests show raw counts, per-section accuracy, time on task and a review of every miss, so you can see where you stand without a forecast.
 
-For real DAT-readiness signal, you want **both** the tool's mock score AND a recent ADA official practice test score landing in your target range. If both agree, you're probably ready. If they disagree, trust the ADA test.
+For real DAT-readiness signal, you want **both** steady accuracy on the AceTheDAT practice tests AND a recent ADA official practice test score landing in your target range. If they disagree, trust the ADA test.
 
 ## "How much will all this cost?"
 
@@ -105,7 +105,7 @@ Ace Labs coaching pricing depends on the plan you choose and your coach. Ask you
 Realistic full-stack budget for a student aiming 21+ across all sections:
 
 - Ace Labs coaching for 2–3 priority subjects: depends on plan length
-- One commercial subscription (DATBooster or Bootcamp): ~$300–$500 per cycle
+- One commercial question bank, if you use one: check its current price
 - ADA official practice tests: ~$100 per test × 3–4 tests
 - Optional: foundation supplement subscriptions: $0–$50
 

@@ -1,9 +1,18 @@
-/* ace-pages.css : the look of the shell pages (home, the door hubs, Review,
-   Performance). Dark forest + gold, Georgia display, Hanken Grotesk body:
-   the Visual Canon's web-dark skin (ace-system/visuals/canon.css), token
-   names matched so blocks can move between the two.
+/* ace-pages.css (served as shared/ace-pages.css?v=4): the look of the shell
+   pages (home, the door hubs, Review, Performance) until B2 rebuilds them on
+   al-kit.css. Dark forest + gold, the Visual Canon's web-dark skin
+   (ace-system/visuals/canon.css), token names matched so blocks can move
+   between the two.
+   Faces (v4, the ACEDAT brand): Sora display, DM Sans body; an italic accent
+   is DM Sans italic (--voice), never a slanted Sora. The @font-face rules use
+   the same versioned files and family names as shared/al-fonts.css, so a page
+   that loads both downloads each file once. Hanken stays declared for the
+   blocks that still name it.
    No emojis, no decorative glyphs, no em dashes in any copy these pages carry. */
 
+@font-face { font-family: "Sora"; src: url("/shared/fonts/sora-v1.woff2") format("woff2"); font-weight: 500 800; font-style: normal; font-display: swap; unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+@font-face { font-family: "DM Sans"; src: url("/shared/fonts/dmsans-v1.woff2") format("woff2"); font-weight: 100 1000; font-style: normal; font-display: swap; unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+@font-face { font-family: "DM Sans"; src: url("/shared/fonts/dmsans-italic-v1.woff2") format("woff2"); font-weight: 100 1000; font-style: italic; font-display: swap; unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
 @font-face {
   font-family: "Hanken Grotesk";
   src: url("/shared/fonts/hanken-wght-normal.woff2") format("woff2");
@@ -39,8 +48,9 @@
   --sec-qr: #fb7185;
   --sec-strategy: #c9a84c;
   --sec-fl: #ef4444;
-  --display: Georgia, "Times New Roman", serif;
-  --body: "Hanken Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --display: "Sora", "DM Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --body: "DM Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --voice: "DM Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --radius: 14px;
   color-scheme: dark;
 }
@@ -75,9 +85,9 @@ button { font: inherit; }
   color: var(--gold-text);
   margin: 0 0 10px;
 }
-h1, h2, h3 { font-family: var(--display); font-weight: 700; color: var(--text-hi); margin: 0; line-height: 1.12; letter-spacing: -0.005em; }
-h1 { font-size: clamp(32px, 5.2vw, 50px); }
-h1 em, h2 em { font-style: italic; color: var(--gold-light); font-weight: 700; }
+h1, h2, h3 { font-family: var(--display); font-weight: 700; color: var(--text-hi); margin: 0; line-height: 1.12; letter-spacing: -0.015em; }
+h1 { font-size: clamp(30px, 4.6vw, 46px); }
+h1 em, h2 em { font-family: var(--voice); font-style: italic; color: var(--gold-light); font-weight: 700; }
 h2 { font-size: clamp(22px, 3vw, 28px); }
 h3 { font-size: 20px; }
 .lede { color: var(--text-mid); font-size: 17px; max-width: 62ch; margin: 14px 0 0; }

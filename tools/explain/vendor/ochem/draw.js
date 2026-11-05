@@ -1,0 +1,165 @@
+// COPY of tools/ochem/tree/draw.js with a light theme, bond wedges, stereocenters and a drawing record, made by scripts/explainers/build.mjs. Never edit; re-run the build.
+// draw.js - SMILES to inline SVG through the vendored SmilesDrawer (window.SmilesDrawer).
+// Used by the tree shell and the summit. Dark theme matched to the pages.
+// SMILES -> inline SVG through the vendored SmilesDrawer (loaded by index.html
+// as a classic script). Dark theme matched to the page. Returns the <svg>.
+let _drawer = null;
+// A molecule with only two or three heavy atoms draws both ends as text
+// labels, and at the normal bond length the labels sit on top of the bond and
+// hide it (methylamine looked like two loose fragments). Stretch the bond for
+// those so the line is visible between the labels.
+function heavyAtoms(smiles){
+  let n = 0;
+  for (let i = 0; i < smiles.length; i++){
+    const c = smiles[i];
+    if (c === '[') { const j = smiles.indexOf(']', i); n++; i = j < 0 ? i : j; continue; }
+    if (/[A-Z]/.test(c)){ if (c === 'C' && smiles[i + 1] === 'l'){ n++; i++; continue; } if (c === 'B' && smiles[i + 1] === 'r'){ n++; i++; continue; } n++; }
+    else if (/[a-z]/.test(c) && 'cnops'.indexOf(c) >= 0 && !/[A-Z]/.test(smiles[i - 1] || '')) n++;
+  }
+  return n;
+}
+// A carbanion or carbocation on a terminal carbon is invisible when terminal
+// carbons are drawn as bare line ends: the enolate looked exactly like the
+// aldehyde it came from. Label the terminal carbons whenever the molecule
+// carries a charged carbon, so the charge is on the atom where it belongs.
+function hasChargedCarbon(smiles){ return /\[C[H0-9]*[+-]\]/.test(smiles); }
+function drawer(w, h, bondLength, terminal){
+  if (!window.SmilesDrawer) return null;
+  if (!_drawer || _drawer._w !== w || _drawer._h !== h || _drawer._bl !== bondLength || _drawer._tc !== terminal){
+    _drawer = new window.SmilesDrawer.SvgDrawer({ width: w, height: h, bondThickness: 1.5, bondLength: bondLength, shortBondLength: 0.8, fontSizeLarge: 9.5, fontSizeSmall: 8, padding: 6, compactDrawing: false, terminalCarbons: terminal, explicitHydrogens: false,
+      themes: { dark: { C: '#1d1d1b', O: '#b8321f', N: '#1f57b5', F: '#2b7a4b', CL: '#1d7a36', BR: '#8f4316', I: '#6b3aa8', P: '#a55a12', S: '#8a6d00', B: '#9a5a5a', SI: '#6b6b6b', H: '#1d1d1b', BACKGROUND: 'transparent' } } });
+    _drawer._w = w; _drawer._h = h; _drawer._bl = bondLength; _drawer._tc = terminal;
+  }
+  return _drawer;
+}
+// A two-atom molecule keeps its bond, but the drawer masks the label areas and
+// on a molecule this small the two masks cover the whole line, so methylamine
+// looked like two loose fragments. The drawer leaves the bond's endpoints on a
+// linearGradient, so read those and lay an unmasked line between the labels.
+function bondTwoLabels(node){
+  const g = node.querySelector('linearGradient[id*="-line-"]');
+  if (!g) return;
+  const x1 = parseFloat(g.getAttribute('x1')), y1 = parseFloat(g.getAttribute('y1'));
+  const x2 = parseFloat(g.getAttribute('x2')), y2 = parseFloat(g.getAttribute('y2'));
+  if (![x1, y1, x2, y2].every(v => isFinite(v))) return;
+  const t = 0.32;                                  // clear the label at each end
+  const ax = x1 + (x2 - x1) * t, ay = y1 + (y2 - y1) * t;
+  const bx = x2 - (x2 - x1) * t, by = y2 - (y2 - y1) * t;
+  const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+  line.setAttribute('x1', ax); line.setAttribute('y1', ay); line.setAttribute('x2', bx); line.setAttribute('y2', by);
+  line.setAttribute('stroke', '#1d1d1b'); line.setAttribute('stroke-width', '1.5'); line.setAttribute('stroke-linecap', 'round');
+  node.append(line);                               // outside the mask group
+}
+
+// A charged carbon in the middle of a chain gets no label at all: the drawer
+// only writes text for heteroatoms and chain ends, so the tert-butyl cation
+// drew as plain neopentane and the whole question turned on nothing. Chemists
+// draw that charge as a sign sitting at the vertex, so put one there, on the
+// side of the atom with the most room. Terminal charged carbons already come
+// out as H2C+ and are left alone.
+const SVGNS = 'http://www.w3.org/2000/svg';
+function stampCharges(node, d){
+  const g = d.preprocessor && d.preprocessor.graph;
+  if (!g || !g.vertices) return;
+  const labeled = [...node.querySelectorAll('mask circle')]
+    .map(c => [parseFloat(c.getAttribute('cx')), parseFloat(c.getAttribute('cy'))]);
+  for (const v of g.vertices){
+    const q = (v.value.bracket && v.value.bracket.charge) || v.value.charge || 0;
+    if (!q) continue;
+    const x = v.position.x, y = v.position.y;
+    if (!isFinite(x) || !isFinite(y)) continue;
+    if (labeled.some(([cx, cy]) => Math.hypot(cx - x, cy - y) < 1.5)) continue;
+    // Put the sign in the widest gap between this atom's bonds. Averaging the
+    // bond directions and going opposite works for a chain but collapses on a
+    // symmetric junction like the tert-butyl cation, where it landed the plus
+    // on top of a bond.
+    const ang = [];
+    for (const id of (v.neighbours || [])){
+      const n = g.vertices[id]; if (!n || !n.position) continue;
+      ang.push(Math.atan2(n.position.y - y, n.position.x - x));
+    }
+    let dir = -Math.PI / 3;                       // up and to the right by default
+    if (ang.length === 1) dir = ang[0] + Math.PI;
+    else if (ang.length > 1){
+      ang.sort((a, b) => a - b);
+      let best = -1;
+      for (let i = 0; i < ang.length; i++){
+        const a = ang[i], b = i + 1 < ang.length ? ang[i + 1] : ang[0] + 2 * Math.PI;
+        if (b - a > best){ best = b - a; dir = a + (b - a) / 2; }
+      }
+    }
+    const ox = Math.cos(dir), oy = Math.sin(dir);
+    const t = document.createElementNS(SVGNS, 'text');
+    t.setAttribute('x', x + ox * 7.5); t.setAttribute('y', y + oy * 7.5 + 3);
+    t.setAttribute('text-anchor', 'middle');
+    t.setAttribute('fill', '#1d1d1b');
+    t.setAttribute('style', 'font: 9pt Arial, Helvetica, sans-serif');
+    t.textContent = q > 0 ? '+' : '-';
+    node.append(t);
+  }
+}
+
+// The fitted viewBox stops at the letters, so a subscript's tail and a stamped
+// charge sit right on the edge and the first thing a small render loses is the
+// 3 in CH3. Give the box a little air.
+function breathe(node){
+  const vb = (node.getAttribute('viewBox') || '').split(/\s+/).map(Number);
+  if (vb.length !== 4 || !vb.every(v => isFinite(v)) || !vb[2] || !vb[3]) return;
+  const p = Math.max(vb[2], vb[3]) * 0.07;
+  node.setAttribute('viewBox', `${vb[0] - p} ${vb[1] - p} ${vb[2] + 2 * p} ${vb[3] + 2 * p}`);
+}
+
+export function drawSmiles(target, smiles, o = {}){
+  const w = o.width || 240, h = o.height || 160;
+  const node = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  node.setAttribute('viewBox', `0 0 ${w} ${h}`); node.setAttribute('width', w); node.setAttribute('height', h); node.setAttribute('role', 'img'); node.setAttribute('aria-label', o.label || 'a molecule');
+  node.classList.add('mol');
+  if (target) target.append(node);
+  const bl = o.bondLength || (heavyAtoms(smiles) <= 3 ? 42 : 22);
+  node.dataset.bond = String(bl);            // so a caller can size several drawings to one scale
+  const d = drawer(w, h, bl, o.terminalCarbons != null ? o.terminalCarbons : hasChargedCarbon(smiles));
+  if (!d){ const t = document.createElementNS('http://www.w3.org/2000/svg', 'title'); t.textContent = 'structure'; node.append(t); return node; }
+  try { window.SmilesDrawer.parse(smiles, tree => { d.draw(tree, node, 'dark'); stampCharges(node, d); if (heavyAtoms(smiles) === 2) bondTwoLabels(node); breathe(node); }, err => { console.error('smiles', smiles, err); }); }
+  catch (e){ console.error('smiles', smiles, e); }
+  node.removeAttribute('width'); node.removeAttribute('height');
+  return node;
+}
+
+
+// drawSmilesGeom: the same drawing, plus where every atom landed. Used by the
+// arrow figures (mechdraw.js), which need to start an arrow at a lone pair and
+// land it on an atom. Atom i is the i-th atom written in the SMILES, explicit
+// [H] included, which is the order RDKit numbers them too, so the picture and
+// the RDKit proof point at the same atoms. Coordinates are in the svg's own
+// viewBox units.
+let _gdrawer = null;
+export function drawSmilesGeom(target, smiles, o = {}){
+  const bl = o.bondLength || 26;
+  const node = document.createElementNS(SVGNS, 'svg');
+  node.setAttribute('role', 'img'); node.setAttribute('aria-label', o.label || 'a molecule');
+  node.classList.add('mol');
+  if (target) target.append(node);
+  const out = { node, atoms: [], bonds: [], vb: [0, 0, 1, 1] };
+  if (!window.SmilesDrawer) return out;
+  const eh = o.explicitH !== false;
+  if (!_gdrawer || _gdrawer._bl !== bl || _gdrawer._eh !== eh){
+    _gdrawer = new window.SmilesDrawer.SvgDrawer({ width: 400, height: 300, bondThickness: 1.6, bondLength: bl, shortBondLength: 0.8, fontSizeLarge: 10.5, fontSizeSmall: 8.5, padding: 4, compactDrawing: false, terminalCarbons: false, explicitHydrogens: eh,
+      themes: { dark: { C: '#1d1d1b', O: '#b8321f', N: '#1f57b5', F: '#2b7a4b', CL: '#1d7a36', BR: '#8f4316', I: '#6b3aa8', P: '#a55a12', S: '#8a6d00', B: '#9a5a5a', SI: '#6b6b6b', H: '#1d1d1b', MG: '#6b6b6b', LI: '#6b6b6b', NA: '#6b6b6b', BACKGROUND: 'transparent' } } });
+    _gdrawer._bl = bl; _gdrawer._eh = eh;
+  }
+  const d = _gdrawer;
+  try {
+    window.SmilesDrawer.parse(smiles, tree => {
+      d.draw(tree, node, 'dark');
+      stampCharges(node, d);
+      const g = d.preprocessor.graph;
+      out.atoms = g.vertices.map(v => ({ i: v.id, stereo: !!v.value.isStereoCenter, drawn: v.value.isDrawn !== false, x: v.position.x, y: v.position.y, el: v.value.element, nb: v.neighbours.slice(), q: (v.value.bracket && v.value.bracket.charge) || 0, hc: v.value.bracket ? (v.value.bracket.hcount || 0) : null, labeled: v.value.element !== 'C' || (v.value.bracket && !!v.value.bracket.charge) }));
+      out.bonds = g.edges.map(e => ({ a: e.sourceId, b: e.targetId, wedge: e.wedge || '', order: e.bondType === '=' ? 2 : e.bondType === '#' ? 3 : e.bondType === '.' ? 0 : 1 })).filter(e => e.order > 0);
+    }, err => { console.error('smiles', smiles, err); });
+  } catch (e){ console.error('smiles', smiles, e); }
+  if (typeof window !== 'undefined' && window.AceExplainDrawn && out.atoms.length) window.AceExplainDrawn.push({ smi: smiles, from: 'drawSmilesGeom', atoms: out.atoms, bonds: out.bonds });
+  const vb = (node.getAttribute('viewBox') || '0 0 1 1').split(/\s+/).map(Number);
+  out.vb = vb;
+  node.removeAttribute('width'); node.removeAttribute('height'); node.removeAttribute('style');
+  return out;
+}

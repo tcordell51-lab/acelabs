@@ -4,9 +4,12 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Ace The DAT · Practice Tests</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=DM+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&family=Arial&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="shared/al-tokens.css?v=2">
-<link rel="stylesheet" href="shared/ace-labs-shell.css?v=1">
+<link rel="preload" href="/shared/fonts/dmsans-v1.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/shared/fonts/sora-v1.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/shared/al-fonts.css?v=1">
+<link rel="stylesheet" href="/shared/al-fonts-legacy.css?v=1">
+<link rel="stylesheet" href="shared/al-tokens.css?v=5">
+<link rel="stylesheet" href="shared/ace-labs-shell.css?v=2">
 <style>
 /* ============================================================
    SPLASH (Ace The DAT branded — test selection screen)
@@ -176,7 +179,7 @@
 .pm-pt .constants b{color:#1c2026}
 /* SmilesDrawer canvas — used for OChem questions with q_smiles / opts_smiles */
 .pm-mol{display:inline-block; vertical-align:middle; margin:4px 0; background:#fff; border:1px solid #d0d6db; border-radius:3px; padding:4px}
-.pm-mol-canvas{display:block; width:100%; max-width:280px; height:120px}
+.pm-mol-canvas{display:block; width:100%; max-width:280px; height:auto} /* height follows the drawn 280 x 120, so a narrow phone column scales the structure instead of squashing it */
 .pm-opts .pm-mol{display:block; max-width:240px; margin-top:4px}
 .pm-q .pm-mol{display:block; max-width:380px; margin:8px 0}
 /* SVG question rendering (for arrow-prediction questions) */
@@ -284,7 +287,7 @@
 .pm-break button{padding:12px 22px; font-size:13px; font-weight:700; letter-spacing:.06em; border:1.5px solid #4a525a; background:linear-gradient(#fff, #e0e5e9); color:#1c2026; border-radius:4px; cursor:pointer; font-family:Arial,sans-serif}
 .pm-break button.primary{background:linear-gradient(#3a78c4, #2a5a96); color:#fff; border-color:#054766}
 </style>
-<link rel="stylesheet" href="shared/al-motion.css?v=1">
+<link rel="stylesheet" href="shared/al-motion.css?v=2">
 </head>
 <body data-page="prometric-mock">
 <div class="al-app">
@@ -304,7 +307,7 @@
 <div class="pm-stage" id="pmStage">
   <div class="pm-pill"><span style="width:8px;height:8px;border-radius:50%;background:var(--al-gold);display:inline-block"></span>Ace The DAT · Practice Tests</div>
   <h1 class="pm-h">3 practice tests, <em>pacing simulation.</em></h1>
-  <p class="pm-sub">Survey of Natural Sciences (100Q in 90min) followed by a 30-minute break, then Quantitative Reasoning (40Q in 45min). The interface follows the Prometric mechanics described in the ADA 2026 Candidate Guide: section timers, question navigation panel, mark-for-review, end-of-section review screen, classic Windows calculator (memory + sqrt + 1/x) for QR, periodic table reference for Gen Chem questions. PAT and Reading Comprehension are not included — those require image and passage banks Ace Labs has not built yet.</p>
+  <p class="pm-sub">Survey of Natural Sciences (100Q in 90min) followed by a 30-minute break, then Quantitative Reasoning (40Q in 45min). The interface follows the Prometric mechanics described in the ADA 2026 Candidate Guide: section timers, question navigation panel, mark-for-review, end-of-section review screen, classic Windows calculator (memory + sqrt + 1/x) for QR, periodic table reference for Gen Chem questions. PAT and Reading Comprehension are not in these three tests; both are in the full-length DAT and their own timed sections under Tests.</p>
 
   <div class="pm-warn"><b>About this mock.</b> This mock is to confirm your pacing under DAT timing. The real DAT is 5h 15m over 4 sections. This mock covers Sciences and QR, about 2h 15m of seat time. PAT and Reading are in the full-length DAT under Tests. <b>Ace Labs does not predict DAT scores or percentile ranks.</b> Your post-mock report shows raw counts, per-section accuracy, time-on-task, and a missed-question walkthrough — no scaled-score forecast. OChem section follows the official April 2026 ADA outline: Mechanisms, Chemical Synthesis, Acid-Base, Chemical &amp; Physical Properties, Structural Evaluation. OChem questions render skeletal molecular structures from SMILES, and 8 questions use the new ADA-spec curved-arrow format ("predict product from arrows" / "predict arrows from product").</div>
 
@@ -317,12 +320,12 @@
   <div class="pm-card">
     <h3>Test rules (mirrors Prometric center)</h3>
     <ul>
-      <li>Timer starts when you click <b>Begin section</b>. It does not pause.</li>
+      <li>Timer starts when you click <b>Begin section</b>. If you close the tab, your place is saved and the clock pauses until you come back.</li>
       <li>Within a section you can navigate freely between questions, mark for review, and skip.</li>
       <li>Once you submit a section you cannot return to it.</li>
       <li>The 30-minute break between Sciences and QR is optional — you can skip it.</li>
       <li>QR section gets a basic 4-function calculator. Sciences sections do not.</li>
-      <li>Closing the tab or refreshing during a section ends the section with whatever you have answered.</li>
+      <li>Closing the tab or refreshing during a section saves your place; the clock pauses and you pick up where you stopped.</li>
     </ul>
   </div>
 
@@ -570,7 +573,7 @@ function showInstructionsScreen(t){
     </div>
     <div style="flex:1; overflow-y:auto; padding:36px 40px; max-width:920px; margin:0 auto; width:100%; color:#1a1d20">
       <h2 style="font-size:26px; font-weight:700; margin-bottom:14px">Before you begin</h2>
-      <p style="font-size:14.5px; line-height:1.65; margin-bottom:18px; color:#3a4148">A two-section rehearsal of the Prometric testing mechanics (Sciences and QR only — PAT and RC are out of scope here). Once you click <b style="color:#1a1d20">Start Section</b>, the timer begins and will not pause. Read the rules below carefully.</p>
+      <p style="font-size:14.5px; line-height:1.65; margin-bottom:18px; color:#3a4148">A two-section rehearsal of the Prometric testing mechanics (Sciences and QR only; PAT and RC are out of scope here). Once you click <b style="color:#1a1d20">Start Section</b>, the timer begins. Read the rules below carefully.</p>
       <ol style="font-size:14px; line-height:1.7; color:#3a4148; padding-left:22px; margin-bottom:22px">
         <li><b style="color:#1a1d20">Survey of Natural Sciences:</b> 100 questions in 90 minutes (40 Biology + 30 General Chemistry + 30 Organic Chemistry). Manage your time across the three subjects yourself — they share the same timer.</li>
         <li><b style="color:#1a1d20">Optional 30-minute break</b> between Sciences and QR. Skip the break or take it in full.</li>
@@ -578,7 +581,7 @@ function showInstructionsScreen(t){
         <li><b style="color:#1a1d20">Within a section</b> you can navigate freely between questions, mark items for review, and skip. Click any question number from the Review screen to jump back to it.</li>
         <li><b style="color:#1a1d20">Once you submit a section</b> you cannot return to it.</li>
         <li><b style="color:#1a1d20">Exhibit button</b> opens the periodic table for Gen Chem questions and a reagent quick-reference for Organic Chemistry. No exhibit is available for Biology or QR items.</li>
-        <li><b style="color:#1a1d20">Closing the tab or refreshing</b> during a section ends that section with whatever you have answered.</li>
+        <li><b style="color:#1a1d20">Closing the tab or refreshing</b> during a section saves your place; the clock pauses and you pick up where you stopped.</li>
       </ol>
       <div style="background:#f0f6fa; border:1px solid #d0e1ec; border-left:4px solid #086894; border-radius:4px; padding:14px 18px; font-size:13.5px; color:#3a4148; margin-bottom:24px; line-height:1.55">
         <b style="color:#1a1d20">Honest scope:</b> This simulation covers Sciences and QR. PAT and Reading Comprehension are not in these three tests; both are in the full-length DAT under Tests. <b style="color:#1a1d20">Ace Labs does not predict DAT scaled scores or percentiles.</b> Your post-mock report shows raw counts, per-section accuracy, time-on-task, and missed-question review only.
@@ -742,7 +745,7 @@ function renderRun(){
         <div class="pm-qcard">
           <div class="pm-qsubject">${subjectTitle}</div>
           ${subChips}
-          <div class="pm-qmeta">Item ${STATE.itemIdx + 1}${item.topic ? ' · ' + item.topic : ''}${item.difficulty ? ' · diff ' + item.difficulty : ''}${item._ada_category ? ' · ' + item._ada_category : ''}</div>
+          <div class="pm-qmeta">Item ${STATE.itemIdx + 1}</div>
           <div class="pm-q">
             <div class="pm-qtxt">${item.q || ''}</div>
             ${item.q_svg ? `<div class="pm-svg">${item.q_svg}</div>` : ''}
@@ -924,24 +927,34 @@ function getSmiDrawer(){
   } catch(e){ console.warn('SmilesDrawer init failed', e); _smiDrawer = false; }
   return _smiDrawer;
 }
+// Fallback: write the SMILES string on the canvas when the structure cannot be drawn
+function drawMoleculeFallback(canvas, smi){
+  const ctx = canvas.getContext && canvas.getContext('2d');
+  if (!ctx) return;
+  canvas.width = canvas.offsetWidth || 280;
+  canvas.height = 120;
+  ctx.fillStyle = '#fff'; ctx.fillRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle = '#1a1d20'; ctx.font = '14px monospace';
+  ctx.fillText(smi, 10, 65);
+  canvas.setAttribute('data-mol', 'fallback');
+}
+// SmiDrawer 2.x finds its target with document.querySelectorAll(target), so it
+// needs a selector string: given the element itself it throws inside draw(),
+// reports the error to errorCallback (or only logs it) and never throws to us.
+// Each canvas gets an id and is drawn through '#' + id, as tools/mock/full.js
+// and games/play.html do; a drawing error reaches the fallback through
+// errorCallback.
+let _pmMolSeq = 0;
 function renderMoleculeCanvases(wrap){
   const sd = getSmiDrawer();
-  if (!sd) return;
   wrap.querySelectorAll('canvas.pm-mol-canvas[data-smiles]').forEach(canvas => {
     const smi = canvas.getAttribute('data-smiles');
     if (!smi) return;
-    try { sd.draw(smi, canvas, 'light'); }
-    catch(e){
-      // Fallback: render the SMILES string verbatim if drawing fails
-      const ctx = canvas.getContext && canvas.getContext('2d');
-      if (ctx){
-        canvas.width = canvas.offsetWidth || 280;
-        canvas.height = 120;
-        ctx.fillStyle = '#fff'; ctx.fillRect(0,0,canvas.width,canvas.height);
-        ctx.fillStyle = '#1a1d20'; ctx.font = '14px monospace';
-        ctx.fillText(smi, 10, 65);
-      }
-    }
+    if (!canvas.id) canvas.id = 'pmMol' + (++_pmMolSeq);
+    const fail = (err) => { if (err) console.warn('SmilesDrawer could not draw', smi, err); drawMoleculeFallback(canvas, smi); };
+    if (!sd){ fail(); return; }
+    try { sd.draw(smi, '#' + canvas.id, 'light', () => canvas.setAttribute('data-mol', 'drawn'), fail); }
+    catch(e){ fail(e); }
   });
 }
 function escapeAttr(s){
@@ -1611,7 +1624,7 @@ function showWrongAnswerReview(wrong){
   modal.querySelector('#pmWrongClose').addEventListener('click', () => modal.remove());
 }
 </script>
-<script src="shared/scope.js?v=2"></script>
-  <script src="/shared/ace-shell.js?v=1" defer></script>
+<script src="shared/scope.js?v=3"></script>
+  <script src="/shared/ace-shell.js?v=8" defer></script>
 </body>
 </html>

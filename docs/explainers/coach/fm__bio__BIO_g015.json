@@ -1,0 +1,196 @@
+{
+ "schema": "ace.explainer-coach/1",
+ "qid": "fm:bio:BIO_g015",
+ "pid": "fm:bio:BIO_g015",
+ "batch": "G1/B001",
+ "source": "content/explainers-src/G1/B001.js",
+ "servedAs": "Full-Length Test 1, Natural Sciences, question 29",
+ "sidecar": "content/explainers/bio/molecular/fm__bio__BIO_g015.json",
+ "checksum": "6def9bb3e0ab6fe1",
+ "servesAlso": [],
+ "flags": [],
+ "review": {
+  "status": "approved",
+  "by": "auto-approve rail (SA-C review, G1-FIN)",
+  "at": "2026-11-05",
+  "batch": "G1/B001",
+  "checksum": "6def9bb3e0ab6fe1",
+  "approvedChecksum": "6def9bb3e0ab6fe1a823d63deb8d78a10a2a6bae342da27c2cd3fcaa2f9636ba",
+  "stamp": "auto-approved 2026-10-30, pending Thomas review"
+ },
+ "held": null,
+ "routing": "The page and the mutations node work today. The Mutation Sim is a Genetics lab tab with no deep link yet; the anchor opens the mutations node.",
+ "playWithExpect": [
+  "initMutationSim",
+  "data-mut=\"silent\"",
+  "data-mut=\"missense\""
+ ],
+ "gate": {
+  "pass": true,
+  "issues": [],
+  "warnings": [],
+  "checks": [
+   "key text matches the bank (\"Silent\", index 1)",
+   "trap families from the closed list: neighbor-fact, other-conditions, other-conditions, other-question",
+   "every served choice (5) has a note; one key",
+   "copy rules: ASCII, no dashes, no banned words, no letters, no competitor names, no timer or score words, budgets (explainer and visual text)",
+   "step 1 opens with a move: \"Read what\"",
+   "voice: 11 sentences, mean 7.4 words, shortest 3",
+   "playWith target tools/bio/bio-genetics.html found with initMutationSim, data-mut=\"silent\", data-mut=\"missense\"; no timer or score markers",
+   "genetic code: GCU (Ala) to GCC (Ala) is silent; synonyms GCU GCC GCA GCG"
+  ]
+ },
+ "changes": [],
+ "preview": {
+  "pick": "Missense"
+ },
+ "served": {
+  "stem": "A single base pair in the coding region of a gene is changed, yet the resulting polypeptide has exactly the same amino acid sequence as before. This type of mutation is called:",
+  "choices": [
+   "Missense",
+   "Silent",
+   "Frameshift",
+   "Nonsense",
+   "Transversion"
+  ],
+  "keyIndex": 1,
+  "bankWhy": "This tests whether you can carry a DNA change through the genetic code and out to the protein. The code is redundant, so several different codons spell the same amino acid, and a base swap that lands on one of those synonyms leaves the protein untouched. Sort the names by what the protein ends up doing: same protein is silent, one amino acid swapped is missense, an early stop is nonsense, and a shifted reading frame is a frameshift.",
+  "extra": {
+   "mock": "FULL_1",
+   "section": "bio",
+   "n": 29
+  }
+ },
+ "student": {
+  "schema": "ace.explainer/1",
+  "qid": "fm:bio:BIO_g015",
+  "servesAlso": [],
+  "bank": {
+   "file": "tools/mock/data/full-mocks.js",
+   "locator": {
+    "mock": "FULL_1",
+    "section": "bio",
+    "id": "bio:BIO_g015"
+   },
+   "keyText": "Silent",
+   "stemHash": "3dc8602f374143e2ca8ce4e49cc32b71563ae0a0",
+   "choiceTexts": [
+    "Missense",
+    "Silent",
+    "Frameshift",
+    "Nonsense",
+    "Transversion"
+   ]
+  },
+  "section": "bio",
+  "subtopic": "bio.molecular.mutations",
+  "difficulty": {
+   "band": 2,
+   "from": "bank field d (1-3)"
+  },
+  "premises": [],
+  "answer": {
+   "text": "Silent",
+   "line": "The code has synonyms. A base swap that lands on another codon for the same amino acid leaves the protein untouched."
+  },
+  "steps": [
+   "Read what changed: one base pair, and the protein came out identical.",
+   "Know the code is redundant. Most amino acids have several codons, often differing only in the third base.",
+   "Name it by the protein. Same protein: silent. One amino acid swapped: missense. Early stop: nonsense."
+  ],
+  "choices": [
+   {
+    "text": "Missense",
+    "role": "trap",
+    "family": "neighbor-fact",
+    "missType": "content",
+    "trap": "One amino acid swapped",
+    "note": "Missense is the next box over: the new codon spells a different amino acid, so the sequence changes. Here it did not."
+   },
+   {
+    "text": "Silent",
+    "role": "key",
+    "note": "The new codon is a synonym, so the same amino acid goes in."
+   },
+   {
+    "text": "Frameshift",
+    "role": "trap",
+    "family": "other-conditions",
+    "missType": "content",
+    "trap": "Needs bases added or lost",
+    "note": "A frameshift comes from inserting or deleting bases in a number not divisible by three. A single swap keeps the reading frame."
+   },
+   {
+    "text": "Nonsense",
+    "role": "trap",
+    "family": "other-conditions",
+    "missType": "content",
+    "trap": "Needs a stop codon",
+    "note": "Nonsense is the case where the new codon is a stop, which cuts the protein short. This protein came out whole."
+   },
+   {
+    "text": "Transversion",
+    "role": "trap",
+    "family": "other-question",
+    "missType": "misread",
+    "trap": "Names the chemistry",
+    "note": "Transversion describes the swap itself, a purine for a pyrimidine. It says nothing about the protein, and the protein is what the stem asks about."
+   }
+  ],
+  "lockIt": "Name point mutations by the protein: same, swapped or stopped. Same protein is silent.",
+  "hook": null,
+  "playWith": {
+   "label": "Mutation sim: press Silent, then Missense, and compare the protein each one makes",
+   "href": "tools/bio/bio-genetics.html#node-mutations",
+   "state": {
+    "visualizer": "initMutationSim",
+    "mutation": "silent"
+   }
+  },
+  "video": {
+   "slot": "bio.molecular.mutations",
+   "title": "Point mutations: name them by the protein",
+   "id": null,
+   "start": null
+  },
+  "visual": {
+   "type": "bio.diagram",
+   "diagram": "codon",
+   "labels": [
+    "before",
+    "after",
+    "synonyms",
+    "outcomes"
+   ],
+   "focus": "silent",
+   "title": "One base pair changes (mRNA shown)",
+   "codon": {
+    "from": "GCU",
+    "to": "GCC"
+   },
+   "outcomes": [
+    {
+     "when": "Same protein",
+     "name": "Silent",
+     "key": true
+    },
+    {
+     "when": "One amino acid swapped",
+     "name": "Missense"
+    },
+    {
+     "when": "Early stop codon",
+     "name": "Nonsense"
+    },
+    {
+     "when": "Reading frame shifted",
+     "name": "Frameshift"
+    }
+   ],
+   "aside": "Transversion names the base swap itself, a purine for a pyrimidine, not what the protein does.",
+   "reuse": "new; amino acids computed from the standard genetic code (tools/explain/visuals/compute-bio.js), the same code the Mutation Sim translates with",
+   "alt": "Two codon cards, before GCU and after GCC, with the changed third base outlined; both code for Ala. A row lists all four Ala codons with both marked. Below, outcomes are sorted by what the protein does, and Same protein, Silent is outlined as the answer.",
+   "caption": "Find the changed base, then read what the protein did. Both codons spell the same amino acid."
+  }
+ }
+}

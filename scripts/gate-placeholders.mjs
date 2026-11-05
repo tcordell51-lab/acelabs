@@ -39,6 +39,7 @@ const TOKENS = [
   /\bLorem ipsum\b/gi,
   /\(question\)|\(answer\)|Review the explanation\./g,  // Bio card placeholders
 ];
+const QID = /^[a-z][a-z0-9]*(?::[^\s:]+)+$/;   // a question id: bank prefix, then colon-separated parts
 const hits = [];
 function scan(rel, text, src) {
   for (const re of TOKENS) {
@@ -59,7 +60,9 @@ for (const rel of walk(ROOT)) {
   if (ext === '.json') {
     let v; try { v = JSON.parse(src); } catch { continue; }
     const strings = [];
-    (function visit(x) { if (typeof x === 'string') strings.push(x); else if (Array.isArray(x)) x.forEach(visit); else if (x && typeof x === 'object') Object.values(x).forEach(visit); })(v);
+    // Bank identifiers are not visible text: a whole qid such as pm:MOCK_2:qr:20 (bank prefix, colons,
+    // no spaces) and a bank locator such as { mock: 'FULL_4' } in the explainer sidecars.
+    (function visit(x, k) { if (k === 'locator') return; if (typeof x === 'string') { if (!QID.test(x)) strings.push(x); } else if (Array.isArray(x)) x.forEach((y) => visit(y, k)); else if (x && typeof x === 'object') Object.entries(x).forEach(([kk, y]) => visit(y, kk)); })(v);
     for (const s of strings) for (const re of TOKENS) { re.lastIndex = 0; const m = re.exec(s); if (m && !(m[0].length < 6 && /^[A-Z_0-9]+$/.test(m[0]))) { const i = src.indexOf(s.slice(0, 40)); hits.push(`${rel}:${i >= 0 ? lineOf(src, i) : 1}  ${m[0]}  ...${s.slice(0, 80)}...`); } }
   } else scan(rel, htmlText(src), src);
 }

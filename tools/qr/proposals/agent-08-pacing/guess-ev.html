@@ -4,8 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Guess vs Blank EV · AceTheDAT QR · Tier 3</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="preload" href="/shared/fonts/dmsans-v1.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/shared/fonts/sora-v1.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/shared/al-fonts.css?v=1">
+<link rel="stylesheet" href="/shared/al-fonts-legacy.css?v=1">
 <script src="/shared/anime.min.js?v=1"></script>
 <style>
 :root{
@@ -158,7 +160,7 @@ em.gold{font-style:italic; color:var(--gold-d); font-family:'Playfair Display',s
   <!-- Sliders -->
   <div class="card">
     <h3>Set your scenario</h3>
-    <p style="font-size:13px; color:var(--ink-mute); margin:0 0 14px">Picture a 45-question section where time runs out before you finish all of them. The sliders below model the questions you didn't fully solve.</p>
+    <p style="font-size:13px; color:var(--ink-mute); margin:0 0 14px">Picture the 40-question QR section where time runs out before you finish all of them. The sliders below model the questions you didn't fully solve.</p>
     <div class="slider-grid">
       <div class="slider-card blank">
         <div class="l">Blanked questions</div>
@@ -179,7 +181,7 @@ em.gold{font-style:italic; color:var(--gold-d); font-family:'Playfair Display',s
     <div style="margin-top:14px; display:flex; gap:8px; flex-wrap:wrap">
       <button class="btn gold" id="preset-typical">Typical 500 student</button>
       <button class="btn" id="preset-tight">Pace-tight (8 unanswered)</button>
-      <button class="btn" id="preset-perfect">Finished all 45</button>
+      <button class="btn" id="preset-perfect">Finished all 40</button>
       <button class="btn ghost" id="preset-reset">Reset</button>
     </div>
   </div>
@@ -187,23 +189,23 @@ em.gold{font-style:italic; color:var(--gold-d); font-family:'Playfair Display',s
   <!-- Live computed scores -->
   <div class="card">
     <h3>Three strategies, side by side</h3>
-    <p style="font-size:13px; color:var(--ink-mute); margin:0 0 12px">All three start from the same <b>solved</b> count of 45 minus your unanswered total. The only difference is what you do with the unanswered questions.</p>
+    <p style="font-size:13px; color:var(--ink-mute); margin:0 0 12px">All three start from the same <b>solved</b> count of 40 minus your unanswered total. The only difference is what you do with the unanswered questions.</p>
 
     <div class="strats">
       <div class="strat f-all hl">
-        <div class="name">Finish all 45<span class="tag-m">solve every question (idealized)</span></div>
+        <div class="name">Finish all 40<span class="tag-m">solve every question (idealized)</span></div>
         <div class="bar"><div class="ticks" id="ticks-1"></div><div class="fill" id="fill-all"></div></div>
-        <div class="score"><span id="s-all">37.0</span></div>
+        <div class="score"><span id="s-all">32.8</span></div>
       </div>
       <div class="strat f-blank">
         <div class="name">Blank what you can't finish<span class="tag-m">leave the unanswered empty</span></div>
         <div class="bar"><div class="ticks" id="ticks-2"></div><div class="fill" id="fill-blank"></div></div>
-        <div class="score"><span id="s-blank">32.0</span></div>
+        <div class="score"><span id="s-blank">28.7</span></div>
       </div>
       <div class="strat f-guess">
         <div class="name">Guess on every blank<span class="tag-m">random pick from 5 choices</span></div>
         <div class="bar"><div class="ticks" id="ticks-3"></div><div class="fill" id="fill-guess"></div></div>
-        <div class="score"><span id="s-guess">33.0</span></div>
+        <div class="score"><span id="s-guess">29.7</span></div>
       </div>
     </div>
 
@@ -215,10 +217,10 @@ em.gold{font-style:italic; color:var(--gold-d); font-family:'Playfair Display',s
 
     <div class="math">
       <div class="l">The math behind the bars</div>
-      <span id="m-solved">solved = 45 − blank − guess = <b>40</b> raw points</span><br>
-      <span id="m-finishall">finish_all = 45 raw × hit_rate (we use <span class="gold">0.82</span> baseline) = <b>36.9</b></span><br>
-      <span id="m-blank">blank_strategy = solved + 0 × <span class="trap">(blanks)</span> = <b>40.0</b></span><br>
-      <span id="m-guess">guess_strategy = solved + <span class="gold">0.20 × (blanks + guesses)</span> = <b>40.0</b></span><br>
+      <span id="m-solved">solved = 40 - blank - guess = <b>35</b> questions</span><br>
+      <span id="m-finishall">finish_all = 40 raw x hit_rate (we use <span class="gold">0.82</span> baseline) = <b>32.8</b></span><br>
+      <span id="m-blank">blank_strategy = solved + 0 x <span class="trap">(blanks)</span> = <b>28.7</b></span><br>
+      <span id="m-guess">guess_strategy = solved + <span class="gold">0.20 x (blanks + guesses)</span> = <b>29.7</b></span><br>
       <span style="color:var(--ink-mute)">Each random guess: 1/5 = <span class="gold">0.20</span> expected raw points. Each blank: <span class="trap">0</span>. Always.</span>
     </div>
 
@@ -253,13 +255,13 @@ em.gold{font-style:italic; color:var(--gold-d); font-family:'Playfair Display',s
 <script>
 /* ===========================================================
    GUESS vs BLANK · EV CALCULATOR
-   - DAT QR: 45 questions, 5 choices each
+   - DAT QR: 40 questions, 5 choices each
    - Per-question random guess EV = 1/5 = 0.20 raw
    - No penalty for wrong; blank = 0
    - "Solved" baseline assumes 0.82 hit rate on attempted
 =========================================================== */
 
-const TOTAL = 45;
+const TOTAL = 40;
 const HIT = 0.82;          // baseline accuracy on questions you actually solve
 const GUESS_EV = 0.20;     // 1 / 5
 
@@ -284,7 +286,7 @@ const ui = {
   verdict:document.getElementById('verdict')
 };
 
-// build tick marks at every 5 raw points up to 45
+// build tick marks at every 5 raw points up to TOTAL
 ['ticks-1','ticks-2','ticks-3'].forEach(id=>{
   const t = document.getElementById(id);
   for(let i=5;i<TOTAL;i+=5){
@@ -301,7 +303,7 @@ function compute(){
   const solvedQ = Math.max(0, TOTAL - unanswered);
 
   const solvedRaw = solvedQ * HIT;
-  // Strategy A: finish all 45 at hit rate (you wouldn't have any unanswered)
+  // Strategy A: finish all TOTAL at hit rate (you wouldn't have any unanswered)
   const sAll = TOTAL * HIT;
   // Strategy B: blank everything unanswered
   const sBlank = solvedRaw + 0 * blank + 0 * guess;
@@ -319,13 +321,13 @@ function compute(){
   ui.fGuess.style.width = (sGuess/ TOTAL * 100) + '%';
 
   ui.mSolved.innerHTML =
-    `solved_questions = 45 − ${blank} − ${guess} = <b>${solvedQ}</b><br>solved_raw = ${solvedQ} × ${HIT.toFixed(2)} = <b>${solvedRaw.toFixed(1)}</b>`;
+    `solved_questions = ${TOTAL} - ${blank} - ${guess} = <b>${solvedQ}</b><br>solved_raw = ${solvedQ} x ${HIT.toFixed(2)} = <b>${solvedRaw.toFixed(1)}</b>`;
   ui.mFinish.innerHTML =
-    `finish_all = 45 × ${HIT.toFixed(2)} = <b>${sAll.toFixed(1)}</b>`;
+    `finish_all = ${TOTAL} x ${HIT.toFixed(2)} = <b>${sAll.toFixed(1)}</b>`;
   ui.mBlank.innerHTML =
-    `blank_strategy = ${solvedRaw.toFixed(1)} + 0 × <span class="trap">${unanswered}</span> = <b>${sBlank.toFixed(1)}</b>`;
+    `blank_strategy = ${solvedRaw.toFixed(1)} + 0 x <span class="trap">${unanswered}</span> = <b>${sBlank.toFixed(1)}</b>`;
   ui.mGuess.innerHTML =
-    `guess_strategy = ${solvedRaw.toFixed(1)} + <span class="gold">0.20 × ${unanswered}</span> = <b>${sGuess.toFixed(1)}</b>`;
+    `guess_strategy = ${solvedRaw.toFixed(1)} + <span class="gold">0.20 x ${unanswered}</span> = <b>${sGuess.toFixed(1)}</b>`;
 
   // Verdict
   const lift = sGuess - sBlank;             // = 0.20 × unanswered
@@ -335,7 +337,7 @@ function compute(){
   if(unanswered === 0){
     ui.verdict.className = 'verdict win';
     ui.vIcon.textContent = 'OK';
-    ui.vTtl.textContent = `You finished all 45. Strategy doesn't bind here.`;
+    ui.vTtl.textContent = `You finished all ${TOTAL}. Strategy doesn't bind here.`;
     ui.vDet.innerHTML = `Both strategies converge when nothing is left unanswered. The work is in <b>pacing</b> — see Widget A.`;
   } else if(blank === 0){
     ui.verdict.className = 'verdict win';
@@ -392,6 +394,6 @@ document.getElementById('preset-reset').addEventListener('click',()=>{
 
 compute();
 </script>
-  <script src="/shared/ace-shell.js?v=1" defer></script>
+  <script src="/shared/ace-shell.js?v=8" defer></script>
 </body>
 </html>

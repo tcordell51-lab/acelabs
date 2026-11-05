@@ -1,0 +1,249 @@
+{
+ "schema": "ace.explainer-coach/1",
+ "qid": "fm:organic:oc-1juifa8",
+ "pid": "OC-3",
+ "batch": "pilot/pilot",
+ "source": "content/explainers-src/pilot/pilot.js",
+ "servedAs": "Full-Length Test 2, Natural Sciences, question 78",
+ "sidecar": null,
+ "checksum": "3756d583ad498780",
+ "servesAlso": [],
+ "flags": [
+  {
+   "kind": "internal-note-shown",
+   "text": "Bank explanation shows students a reviewer note: \"Keyed correct=0 is right; the meso distractors are good traps.\" Index 0 is the order before shuffling; the served key is index 3, \"(2R, 3R)\", which RDKit confirms. Key unchanged; that sentence should come out of the explanation."
+  },
+  {
+   "kind": "stem-drawing",
+   "text": "Since commit 5c5ec38 the served stem (tools/mock/full.js, explicit hydrogens off) is the DAT-style zigzag with implicit H: Br on a dash at C2, Cl on a wedge at C3. The render gate confirms it depicts the SMILES, (2R, 3R). The explainer picture still draws H explicitly, flat at both centers, and the steps teach the swap on that picture, so the student sees H in the explainer but not in the stem. Thomas to choose: keep the explicit-H explainer picture (it shows where each H is), or redraw it with implicit H to match the stem and rewrite steps 2 and 3. Key unchanged."
+  },
+  {
+   "kind": "play-target",
+   "text": "tools/ochem/roots/roots/l3-wedge.js teaches H on a wedge or a dash only, not H in the plane, and its copy (line 123, and the story at line 18) says \"judged it from the wrong side\", which breaks the house rule. Suggested replacement: \"H is on a wedge, pointing at you, so you read it from the front. Flip the letter.\""
+  }
+ ],
+ "review": {
+  "status": "held",
+  "by": null,
+  "at": null,
+  "batch": "pilot/pilot",
+  "checksum": "3756d583ad498780",
+  "approvedChecksum": null
+ },
+ "held": "held (docs/explainers/holds.json): awaiting why-override from CONTENT-FIX (OS-31: the bank why ends with a stale internal note; stem picture already equals RDKit)",
+ "routing": "Needs a route to open one root from the URL. The root teaches H on a wedge or a dash only, not the swap for a flat H; see flags.",
+ "playWithExpect": [],
+ "gate": {
+  "pass": true,
+  "issues": [],
+  "warnings": [],
+  "checks": [
+   "key text matches the bank (\"(2R, 3R)\", index 3)",
+   "trap families from the closed list: reversed, reversed, reversed, half-right",
+   "every served choice (5) has a note; one key",
+   "copy rules: ASCII, no dashes, no banned words, no letters, no competitor names, no timer or score words, budgets (explainer and visual text)",
+   "step 1 opens with a move: \"Start with\"",
+   "voice: 17 sentences, mean 8.6 words, shortest 2",
+   "playWith target tools/ochem/roots/index.html found; no timer or score markers",
+   "RDKit CIP on C[C@@H](Br)[C@H](Cl)C: {\"1\":\"R\",\"3\":\"R\"}",
+   "RDKit stereo relations to the key: (2R, 3S) = diastereomer; (2S, 3S) - and the molecule is meso = enantiomer; (2S, 3R) = diastereomer; (2R, 3R) = same; (2R, 3R) - and the molecule is meso = same; any meso isomer: false",
+   "RDKit parsed all 2 SMILES"
+  ]
+ },
+ "changes": [
+  "P0 build: stem-drawing flag updated for 5c5ec38 (the served stem now draws implicit H); the explainer picture and steps are unchanged pending Thomas",
+  "BLOCKING item fixed. Method switched to the swap: get H onto the dash or wedge, trace, count flips; matches the picture as drawn",
+  "Note on (2S, 3R) corrected: a diastereomer, from tracing C2 as drawn; (2S, 3S) note: the enantiomer, and this molecule cannot be meso",
+  "False general claim about two halogens and meso removed",
+  "Stereo cards now built from the drawing (wedges, positions) and checked against RDKit and a signed-volume reading; no fixed \"in back\" or \"clockwise\" text",
+  "Step 1 opens with a move; relations checked by RDKit; play-target flag for the l3-wedge root (\"wrong side\" copy, no flat-H case); stem-drawing flag"
+ ],
+ "preview": {
+  "pick": "(2R, 3R) - and the molecule is meso"
+ },
+ "served": {
+  "stem": "The molecule below is 2-bromo-3-chlorobutane drawn with both stereocenters defined. Assign the (C2, C3) configuration. (Number from the bromine-bearing carbon as C2.)",
+  "choices": [
+   "(2R, 3S)",
+   "(2S, 3S) - and the molecule is meso",
+   "(2S, 3R)",
+   "(2R, 3R)",
+   "(2R, 3R) - and the molecule is meso"
+  ],
+  "keyIndex": 3,
+  "bankWhy": "(2R,3R). It is not meso because the two ends carry different halogens (Br vs Cl), so no internal mirror plane. Keyed correct=0 is right; the meso distractors are good traps.",
+  "extra": {
+   "mock": "FULL_2",
+   "section": "ochem",
+   "n": 8,
+   "qs": "C[C@@H](Br)[C@H](Cl)C"
+  }
+ },
+ "student": {
+  "schema": "ace.explainer/1",
+  "qid": "fm:organic:oc-1juifa8",
+  "servesAlso": [],
+  "bank": {
+   "file": "tools/mock/data/full-mocks.js",
+   "locator": {
+    "mock": "FULL_2",
+    "section": "ochem",
+    "id": "organic:oc-1juifa8"
+   },
+   "keyText": "(2R, 3R)",
+   "stemHash": "c921fa02236f9c93cf1b4f5c26a20ccc43cbb286",
+   "choiceTexts": [
+    "(2R, 3S)",
+    "(2S, 3S) - and the molecule is meso",
+    "(2S, 3R)",
+    "(2R, 3R)",
+    "(2R, 3R) - and the molecule is meso"
+   ]
+  },
+  "section": "ochem",
+  "subtopic": "oc.stereo.r-s",
+  "difficulty": {
+   "band": 2,
+   "from": "bank field d (1-3)"
+  },
+  "premises": [],
+  "answer": {
+   "text": "(2R, 3R)",
+   "line": "Swap H onto the dash or wedge at each center and both read R. The ends differ, so it is (2R, 3R), chiral."
+  },
+  "steps": [
+   "Start with C2. Rank by atomic number: Br (1), then C3, which carries Cl (2), then CH3 (3), then H (4).",
+   "At C2, H lies flat and Br sits on the dash. Swap them so H points away. Trace 1 to 2 to 3: counterclockwise, S. Flip once for the swap: R.",
+   "C3: Cl (1), C2 with its Br (2), CH3 (3), H (4). Swap H with Cl on the wedge. Trace: clockwise, R. Flip for H toward you, flip for the swap: R.",
+   "Meso check. Meso needs matching halves, and one end has Br while the other has Cl. No mirror plane: chiral, not meso."
+  ],
+  "choices": [
+   {
+    "text": "(2R, 3S)",
+    "role": "trap",
+    "family": "reversed",
+    "missType": "concept",
+    "trap": "Flipped for the Cl wedge",
+    "relation": "diastereomer",
+    "note": "The wedge at C3 holds Cl, not H. Swap them and the two flips cancel, so C3 reads as traced: R."
+   },
+   {
+    "text": "(2S, 3S) - and the molecule is meso",
+    "role": "trap",
+    "family": "reversed",
+    "missType": "concept",
+    "trap": "Mirror image, plus meso",
+    "relation": "enantiomer",
+    "note": "Both letters reversed is the enantiomer. With Br on one center and Cl on the other, this molecule cannot be meso."
+   },
+   {
+    "text": "(2S, 3R)",
+    "role": "trap",
+    "family": "reversed",
+    "missType": "concept",
+    "trap": "Traced C2 as drawn",
+    "relation": "diastereomer",
+    "note": "C3 is right, C2 is not. This is C2 traced as drawn, with H still flat. Swap H onto the dash first, then flip once for the swap."
+   },
+   {
+    "text": "(2R, 3R)",
+    "role": "key",
+    "relation": "same",
+    "note": "Both centers R, and no mirror plane."
+   },
+   {
+    "text": "(2R, 3R) - and the molecule is meso",
+    "role": "trap",
+    "family": "half-right",
+    "missType": "concept",
+    "trap": "Right letters, extra claim",
+    "relation": "same",
+    "note": "The letters match, but meso needs matching ends. Br and Cl differ, so the molecule is chiral."
+   }
+  ],
+  "lockIt": "Assign each stereocenter on its own. Meso needs matching groups on both centers and a mirror plane.",
+  "hook": "Every swap flips the letter. Count your flips.",
+  "playWith": {
+   "label": "Roots, wedges and dashes: turn a stereocenter in 3D and read R or S",
+   "href": "tools/ochem/roots/",
+   "state": {
+    "root": "l3-wedge"
+   }
+  },
+  "video": {
+   "slot": "oc.stereo.r-s",
+   "title": "R and S in three moves",
+   "id": null,
+   "start": null
+  },
+  "visual": {
+   "type": "chem.molecule",
+   "smi": "C[C@@H](Br)[C@H](Cl)C",
+   "label": "2-bromo-3-chlorobutane",
+   "centers": [
+    {
+     "atom": 1,
+     "name": "C2",
+     "rank": [
+      {
+       "atom": 2,
+       "name": "Br"
+      },
+      {
+       "atom": 3,
+       "name": "C3 (has Cl)"
+      },
+      {
+       "atom": 0,
+       "name": "CH3"
+      },
+      {
+       "h": true,
+       "name": "H"
+      }
+     ],
+     "config": "R",
+     "expectDrawn": {
+      "h": "plane",
+      "swapWith": "Br on the dash",
+      "trace": "ccw"
+     },
+     "labelDir": 0
+    },
+    {
+     "atom": 3,
+     "name": "C3",
+     "rank": [
+      {
+       "atom": 4,
+       "name": "Cl"
+      },
+      {
+       "atom": 1,
+       "name": "C2 (has Br)"
+      },
+      {
+       "atom": 5,
+       "name": "CH3"
+      },
+      {
+       "h": true,
+       "name": "H"
+      }
+     ],
+     "config": "R",
+     "expectDrawn": {
+      "h": "plane",
+      "swapWith": "Cl on the wedge",
+      "trace": "cw"
+     }
+    }
+   ],
+   "note": "Not meso: one end has Br, the other Cl.",
+   "verify": "RDKit CIP labeler on the stem SMILES and stereo relations of every choice (run by the build); card text derived in the browser from the drawn wedges and positions, and checked against the spec",
+   "reuse": "SmilesDrawer through a light-theme copy of tools/ochem/tree/draw.js; small new card for each stereocenter, built from the drawing",
+   "alt": "The molecule 2-bromo-3-chlorobutane as drawn: Br on a dash at C2, Cl on a wedge at C3, and H flat at both centers. One card per center ranks the four groups, swaps H onto the dash or wedge, counts the flips, and marks each center R.",
+   "caption": "H lies flat at both centers. Swap it onto the dash at C2 and the wedge at C3, then count the flips."
+  }
+ }
+}

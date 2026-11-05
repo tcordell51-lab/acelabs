@@ -4,8 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Pacing Simulator · AceTheDAT QR · Tier 3</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="preload" href="/shared/fonts/dmsans-v1.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/shared/fonts/sora-v1.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/shared/al-fonts.css?v=1">
+<link rel="stylesheet" href="/shared/al-fonts-legacy.css?v=1">
 <script src="/shared/anime.min.js?v=1"></script>
 <style>
 :root{
@@ -359,7 +361,7 @@ em.gold{font-style:italic; color:var(--gold-d); font-family:'Playfair Display',s
     <span class="tag teal">Module 35 · 36</span>
     <div class="num">PACING SIMULATOR</div>
     <h1>Finish the <em>section</em>. Beat the clock.</h1>
-    <p class="sub">A 45-question, 45-minute QR section in miniature. Practice the <b>skip-and-return</b> mechanic and the <b>guess-vs-blank</b> decision under real time pressure. Most students score 18 because they leave 8 questions blank — not because they got 8 wrong.</p>
+    <p class="sub">A 40-question, 45-minute QR section in miniature. Practice the <b>skip-and-return</b> mechanic and the <b>guess-vs-blank</b> decision under real time pressure.</p>
   </div>
 
   <!-- Setup -->
@@ -368,7 +370,7 @@ em.gold{font-style:italic; color:var(--gold-d); font-family:'Playfair Display',s
     <div class="setup-row" id="setup-len">
       <div class="opt-card" data-len="10" data-mode="standard"><div class="ttl">Sprint</div><div class="det">10 questions · 10 min · warm-up</div></div>
       <div class="opt-card sel" data-len="15" data-mode="standard"><div class="ttl">Standard</div><div class="det">15 questions · 15 min · recommended</div></div>
-      <div class="opt-card" data-len="22" data-mode="standard"><div class="ttl">Half</div><div class="det">22 questions · 22 min · half-section</div></div>
+      <div class="opt-card" data-len="20" data-mode="standard"><div class="ttl">Half</div><div class="det">20 questions, 20 min, half-section</div></div>
       <div class="opt-card" data-len="10" data-mode="two-pass"><div class="ttl">Two-Pass Drill</div><div class="det">10 q · skip exactly 5 in pass 1 · return in pass 2</div></div>
     </div>
     <p style="font-size:13px; color:var(--ink-mute); margin:0 0 14px">The real DAT QR section is 40 questions in 45 minutes — about <b>1.125 min/q for a passing pace</b> and ~1.0 min/q for a 22+ scorer. We compress it so a sim fits a single tutoring session. The pacing math (target line, behind/ahead deltas, guess EV) is identical. The <b>Two-Pass Drill</b> forces you to skip the 5 hardest-tagged questions in pass 1, then return in pass 2 with leftover time.</p>
@@ -571,7 +573,7 @@ em.gold{font-style:italic; color:var(--gold-d); font-family:'Playfair Display',s
 /* ===========================================================
    PACING SIMULATOR
    - 45q/45min real DAT QR pace = 1 q/min
-   - We compress to 10/15/22 q for tutoring sessions
+   - We compress to 10/15/20 q for tutoring sessions
    - Per-question time budget = sectionMinutes / sectionLen
    - Halfway warning fires if student is > 1 question behind expected
    - Scoring: 1 pt per correct; guesses = 1/5 chance; blank = 0
@@ -772,7 +774,7 @@ function tick(){
   }
   // halfway warning at 50% elapsed (e.g. 22.5min on real DAT)
   if(!state.warned && elapsed >= state.totalSec/2){
-    const expectedAtHalf = Math.floor(state.len/2); // ~22 of 45, ~8 of 15
+    const expectedAtHalf = Math.floor(state.len/2); // ~20 of 40, ~7 of 15
     if(answeredOrCommitted < expectedAtHalf){
       fireWarning(expectedAtHalf, answeredOrCommitted);
     }
@@ -1519,6 +1521,6 @@ document.getElementById('b-show-set').addEventListener('click',()=>{
   document.getElementById('setup').style.display='block';
 });
 </script>
-  <script src="/shared/ace-shell.js?v=1" defer></script>
+  <script src="/shared/ace-shell.js?v=8" defer></script>
 </body>
 </html>

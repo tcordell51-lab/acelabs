@@ -19,7 +19,7 @@ export const meta = {
   ],
   trap: 'Careful: gauche is staggered but still strained. Staggered does not mean most stable, anti does.',
   holdsUp: ['Chair conformations', 'E2 needs anti-periplanar', 'Ring strain', 'Why rotation matters in NMR'],
-  drill: 'Conformations and Stereochemistry, in your OChem question bank'
+  drill: 'Practice questions on this topic, in the OChem engine or your own question bank'
 };
 
 /* ------------------------------------------------------------------ */

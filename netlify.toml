@@ -20,11 +20,12 @@
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
     Permissions-Policy = "camera=(self), microphone=(self), geolocation=(), payment=()"
-    # CSP: allow only same-origin + Google Fonts (used everywhere). No inline-script blocks
+    # CSP: same-origin only. Fonts are self-hosted under /shared/fonts/ (shared/al-fonts.css),
+    # so no font host is allowed: a page that still links one fails loudly. No inline-script blocks
     # are eval'd — but Refused-Inline-Script is set to 'unsafe-inline' because the engine
     # HTMLs use inline <script> blocks for visualizations and event wiring. If we ever
     # extract those to external .js files, tighten this.
-    Content-Security-Policy = "default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self' 'unsafe-inline'; img-src 'self' data:; media-src 'self' blob:; connect-src 'self'; frame-src 'self'; frame-ancestors 'self' https://acethedat-portal.netlify.app; base-uri 'self'; form-action 'self'; object-src 'none'"
+    Content-Security-Policy = "default-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; script-src 'self' 'unsafe-inline'; img-src 'self' data:; media-src 'self' blob:; connect-src 'self'; frame-src 'self'; frame-ancestors 'self' https://acethedat-portal.netlify.app; base-uri 'self'; form-action 'self'; object-src 'none'"
 
 [[headers]]
   for = "/shared/*"
@@ -109,6 +110,13 @@
   force = true
 
 [[redirects]]
+  # Explainer authoring sources hold coach-only flags; students get content/explainers/.
+  from = "/content/explainers-src/*"
+  to = "/ace-labs.html"
+  status = 301
+  force = true
+
+[[redirects]]
   from = "/plans/*"
   to = "/ace-labs.html"
   status = 301
@@ -173,3 +181,454 @@
   from = "/scripts/ochem-bank-1000.js"
   to = "/games/ochem-bank-1000.js"
   status = 200
+
+# ---- R0 (2026-11-04): build plan B5.1, the internal rows of one-loop spec 1.5 ----
+# Forced 301s. Section doors that do not exist yet (/gchem/, /ochem/, /qr/) point
+# at /practice/?sec=<x> for now. Held, because a student page still links them and
+# R0 owns only this file (spec 1.5 says repoint first): /tools/qr/tiktoks/topic-tiktok.html
+# (QR Watch), /tools/bio/sliding-filament-tiktok.html (Body Systems hub),
+# /tricks/series/topic-tiktok.html (minitest remediation). GChem embed canvases stay.
+
+[[redirects]]
+  from = "/tools/qr/MASTER_GAMEPLAN.md"
+  to = "/practice/?sec=qr"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/tools/qr/proposals/agent-02-foundation/INTEGRATION.md"
+  to = "/practice/?sec=qr"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/tools/qr/proposals/agent-03-patterns/INTEGRATION.md"
+  to = "/practice/?sec=qr"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/tools/qr/proposals/agent-04-prob-tree/INTEGRATION.md"
+  to = "/practice/?sec=qr"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/tools/qr/proposals/agent-05-stats/INTEGRATION.md"
+  to = "/practice/?sec=qr"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/tools/qr/proposals/agent-06-geometry/INTEGRATION.md"
+  to = "/practice/?sec=qr"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/tools/qr/proposals/agent-07-decoder/INTEGRATION.md"
+  to = "/practice/?sec=qr"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/tools/qr/proposals/agent-08-pacing/INTEGRATION.md"
+  to = "/practice/?sec=qr"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/tools/qr/proposals/agent-01-audit/*"
+  to = "/practice/?sec=qr"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/tools/qr/proposals/agent-09-diagnostic/*"
+  to = "/practice/?sec=qr"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/tools/qr/proposals/sprint-c-beta-audit/*"
+  to = "/practice/?sec=qr"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/tools/qr/proposals/agent-10-sarah/*"
+  to = "/practice/?sec=qr"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/tools/qr/research/*"
+  to = "/practice/?sec=qr"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/tools/rc/SCHEMA.md"
+  to = "/practice/?sec=rc"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/tools/rc/VERIFICATION.md"
+  to = "/practice/?sec=rc"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/tools/rc/verification/*"
+  to = "/practice/?sec=rc"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/tools/rc/scripts/*"
+  to = "/practice/?sec=rc"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/tools/gc/FSRS_PORT_SPEC.md"
+  to = "/practice/?sec=gchem"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/tools/gc/MISCONCEPTION_TAXONOMY_SPEC.md"
+  to = "/practice/?sec=gchem"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/tools/gc/MOCK_CALIBRATION_PLAN.defunct.md"
+  to = "/practice/?sec=gchem"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/tools/gc/QBANK_AUDIT.md"
+  to = "/practice/?sec=gchem"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/tools/gc/RECOGNITION_LAB_V2_SPEC.md"
+  to = "/practice/?sec=gchem"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/tools/gc/UX_BETA_LAUNCH_SPEC.md"
+  to = "/practice/?sec=gchem"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/tools/gc/research/*"
+  to = "/practice/?sec=gchem"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/tools/gc/tiktoks/"
+  to = "/practice/?sec=gchem"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/tools/gc/tiktoks/index.html"
+  to = "/practice/?sec=gchem"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/tools/gc/tiktoks/scripts.html"
+  to = "/practice/?sec=gchem"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/tools/gc/tiktoks/voiceover-studio.html"
+  to = "/practice/?sec=gchem"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/tools/ochem/COACH_GUIDE_README.md"
+  to = "/practice/?sec=ochem"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/tools/ochem/roots/CONTRACT.md"
+  to = "/practice/?sec=ochem"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/tools/ochem/tree/CONTRACT.md"
+  to = "/practice/?sec=ochem"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/tools/ochem/roots/dev.html"
+  to = "/practice/?sec=ochem"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/tools/ochem/tree/dev.html"
+  to = "/practice/?sec=ochem"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/tools/ochem/tree/smiles.html"
+  to = "/practice/?sec=ochem"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/tools/qr/tiktoks/"
+  to = "/practice/?sec=qr"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/tools/qr/tiktoks/count-pc-collapse-tiktok.html"
+  to = "/practice/?sec=qr"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/tools/qr/tiktoks/harm-distance-tiktok.html"
+  to = "/practice/?sec=qr"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/tools/qr/tiktoks/index.html"
+  to = "/practice/?sec=qr"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/tools/qr/tiktoks/p-cond-bayes-tiktok.html"
+  to = "/practice/?sec=qr"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/tools/qr/tiktoks/sarah-baseball-tiktok.html"
+  to = "/practice/?sec=qr"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/tools/qr/tiktoks/sarah-c-method-tiktok.html"
+  to = "/practice/?sec=qr"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/tools/qr/tiktoks/sarah-dice-pyramid-tiktok.html"
+  to = "/practice/?sec=qr"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/tools/qr/tiktoks/sarah-pretend-100-tiktok.html"
+  to = "/practice/?sec=qr"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/tools/qr/tiktoks/sarah-shield-tornado-tiktok.html"
+  to = "/practice/?sec=qr"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/tools/qr/tiktoks/sarah-work-rate-trap-tiktok.html"
+  to = "/practice/?sec=qr"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/tools/qr/tiktoks/voiceover-studio.html"
+  to = "/practice/?sec=qr"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/tools/qr/tiktoks/zscore-bell-tiktok.html"
+  to = "/practice/?sec=qr"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/tricks/series/voiceover-studio.html"
+  to = "/learn/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/tricks/videos/voiceover-studio.html"
+  to = "/learn/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/tests/areas/*"
+  to = "/tests/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/tests/bio/*"
+  to = "/tests/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/tests/doors/*"
+  to = "/tests/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/tests/kit/*"
+  to = "/tests/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/tests/loop/*"
+  to = "/tests/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/tests/ochem2026/*"
+  to = "/tests/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/tests/pat/*"
+  to = "/tests/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/tests/player/*"
+  to = "/tests/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/tests/qr-formats/*"
+  to = "/tests/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/tests/shell/*"
+  to = "/tests/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/tools/mock/verification/*"
+  to = "/tests/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/tools/minitests/source/*"
+  to = "/tests/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/tools/minitests/assemble-minitests.mjs"
+  to = "/tests/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/test-screenshots/*"
+  to = "/"
+  status = 301
+  force = true
+
+# /scripts/*: the ochem-bank rewrite above stays first; diagnostic.html fetches
+# scripts/dat-mock-bank.json, so it is kept with a forced rewrite before the 301.
+
+[[redirects]]
+  from = "/scripts/dat-mock-bank.json"
+  to = "/scripts/dat-mock-bank.json"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/scripts/*"
+  to = "/"
+  status = 301
+  force = true
+
+# 404, never served: function sources and the internal explainer preview.
+
+[[redirects]]
+  from = "/netlify/*"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/tools/explain/preview.html"
+  to = "/404.html"
+  status = 404
+  force = true
+
+# 404, never served: the review system's internal files. The approvals function bundles
+# key-hash.json and review-index.json at build (esbuild inlines its JSON imports), so it does
+# not read them over HTTP. Still public: content/approvals/review-index.json (the full-length
+# review reads stamps from it, since /docs/* redirects) and content/approvals/pulls-snapshot.json
+# (shared/ace-pulls.js).
+
+[[redirects]]
+  from = "/content/approvals/stamps/*"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/content/approvals/key-hash.json"
+  to = "/404.html"
+  status = 404
+  force = true
+
+# Not redirected (OS-65): kept, but out of search.
+[[headers]]
+  for = "/booster-map.html"
+  [headers.values]
+    X-Robots-Tag = "noindex"
+
+[[headers]]
+  for = "/approvals/*"
+  [headers.values]
+    X-Robots-Tag = "noindex"
+    # The review page holds the review key (sessionStorage, this tab only), so it runs no inline
+    # script at all: every script is a same-origin file, nothing is eval'd, nothing frames it, and
+    # its Retold preview frame is sandboxed without allow-same-origin (approvals/approvals.js).
+    # Whether Netlify sends it in place of the site-wide CSP above (netlify dev does) or beside it,
+    # this one holds: a browser enforces every policy it is sent.
+    # style-src keeps 'unsafe-inline' for the explainer renderers' style attributes (no script).
+    Content-Security-Policy = "default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; media-src 'self'; connect-src 'self'; frame-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'; object-src 'none'"
+
