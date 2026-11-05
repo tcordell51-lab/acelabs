@@ -10,6 +10,7 @@
 <link rel="stylesheet" href="/shared/al-fonts.css?v=1"/>
 <link rel="stylesheet" href="/shared/al-fonts-legacy.css?v=1"/>
 <script src="../../shared/ochem-ledger.js?v=1"></script>
+<script src="/shared/ace-pulls.js?v=1"></script>
 <script>window.AceOChemLedger&&AceOChemLedger.setPrefix('rcret');</script>
 <style>
 :root{--cream:#fdf8ee;--ink:#2a2118;--ink2:#5c5348;--ink3:#8a8168;--gold:#C9A84C;--goldhi:#b45309;
@@ -35,7 +36,8 @@ button{font:inherit}
 h1{font-family:var(--serif);font-size:clamp(28px,5vw,40px);line-height:1.15;margin:8px 0 10px}
 .lede{font-size:1.05rem;color:var(--ink2);max-width:60ch}
 .scene{margin:44px 0;border:1.5px solid rgba(140,114,53,.3);border-radius:18px;overflow:hidden;background:#fff;box-shadow:0 1px 2px rgba(42,33,24,.05),0 18px 44px -30px rgba(42,33,24,.3);transition:opacity .4s,filter .4s}
-.scene.locked{opacity:.35;pointer-events:none;filter:grayscale(.4)}
+.redraw{margin:4px auto 0;max-width:66ch;padding:16px 18px;border:1.5px dashed rgba(140,114,53,.4);border-radius:12px;background:rgba(201,168,76,.06);color:var(--ink2);font-size:.95rem;text-align:center}
+li[data-night][hidden]{display:none!important}
 .scene-audio{margin-left:auto;align-items:center}
 .aud-btn{font-family:var(--mono);font-size:.58rem;letter-spacing:.1em;border:1.5px solid var(--gold);background:var(--cream);color:#6b5620;border-radius:99px;padding:5px 12px;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
 .aud-btn::before{content:"";width:0;height:0;border-left:7px solid #8a6d24;border-top:5px solid transparent;border-bottom:5px solid transparent}
@@ -315,6 +317,37 @@ function fromize(url,n){
 var SYLLABUS=[{"t":"The RC Mindset: Search, Don't Study","b":"The search mindset","teach":null,"reps":[],"wheels":[]},{"t":"Mapping the Passage","b":"Passage mapping","teach":null,"reps":[],"wheels":[]},{"t":"Search-and-Destroy: The Core Strategy","b":"The core method","teach":null,"reps":[],"wheels":[]},{"t":"Detail & Locating Questions","b":"Detail questions","teach":null,"reps":[],"wheels":[]},{"t":"Main Idea and Structure Questions","b":"Main idea & structure","teach":null,"reps":[],"wheels":[]},{"t":"Inference Questions: One Step, No Leaps","b":"Inference questions","teach":null,"reps":[],"wheels":[]},{"t":"Tone & Attitude","b":"Tone & attitude","teach":null,"reps":[],"wheels":[]},{"t":"Trap Answers: How the Traps Are Built","b":"Trap answers","teach":null,"reps":[],"wheels":[]},{"t":"Timing & Triage","b":"Timing & triage","teach":null,"reps":[],"wheels":[]},{"t":"Test-Day RC: The Rhythm","b":"Test-day rhythm","teach":null,"reps":[],"wheels":[]}];
 
 var qsp=new URLSearchParams(location.search);
+// Pulls (RET-G): a night or scene pulled on the review page stops showing here.
+// A pulled night (retold:rc:<night>) leaves both night lists; a pulled scene
+// (retold:rc:<night>:<scene>) keeps its words and question and loses its
+// figure. ?coach=1 shows everything. Never fails open: without
+// shared/ace-pulls.js, the list it last stored on this browser still applies.
+var PULL_SEC='rc', COACH_VIEW=qsp.get('coach')==='1';
+function isPulledId(id){
+  if(COACH_VIEW) return false;
+  var A=window.AcePulls;
+  if(A&&typeof A.isPulled==='function'){ try{ if(A.isPulled(id)) return true; }catch(e){} }
+  var v=null, ids=[];
+  try{ v=JSON.parse(localStorage.getItem('acelabs.v1.pulls')||'null'); }catch(e){}
+  if(v&&typeof v==='object') [v.ids,v.snap].forEach(function(l){ if(Array.isArray(l)) ids=ids.concat(l); });
+  var p=String(id).split(':');
+  for(var k=p.length;k>=1;k--) if(ids.indexOf(p.slice(0,k).join(':'))>=0) return true;
+  return false;
+}
+function nightPulled(n){ return isPulledId('retold:'+PULL_SEC+':'+n); }
+function scenePulled(n,i){ return isPulledId('retold:'+PULL_SEC+':'+n+':'+(i+1)); }
+function openNightFrom(n,step){ while(NIGHTS[n]&&nightPulled(n)) n+=step; return NIGHTS[n]?n:0; }
+function figOff(i){ var sc=SCENES[i]; return !!(sc&&(sc.redraw||scenePulled(CUR,i))); }
+function sceneFig(i){ var sc=SCENES[i]; return figOff(i)?'<p class="redraw">Pictures for this part are being redrawn.</p>':(sc.anim?animShell(i):(sc.tap?tapShell(i):sc.svg)); }
+function markNight(li,n){ li.setAttribute('data-night',n); li.hidden=nightPulled(n); }
+function applyListPulls(){ [].forEach.call(document.querySelectorAll('li[data-night]'),function(li){ li.hidden=nightPulled(+li.getAttribute('data-night')); }); }
+function pullSig(){ var s=''; for(var n in NIGHTS) if(NIGHTS[n]) s+=nightPulled(n)?'1':'0'; if(!HOME) SCENES.forEach(function(_,i){ s+=scenePulled(CUR,i)?'1':'0'; }); return s; }
+// the coach view stays on as you move around the course
+if(COACH_VIEW) document.addEventListener('click',function(e){
+  var a=e.target.closest&&e.target.closest('a'); if(!a) return;
+  var href=a.getAttribute('href'); if(!href||/^(https?:|mailto:|#|\/\/)/.test(href)||/[?&]coach=/.test(href)) return;
+  a.setAttribute('href', href+(href.indexOf('?')>-1?'&':'?')+'coach=1');
+}, true);
 // Portal scope: when embedded in the AceTheDAT portal the iframe carries
 // ?student=<id>, which student-scope.js uses to namespace localStorage. That
 // namespacing only holds if EVERY internal navigation keeps the param, so we
@@ -334,6 +367,12 @@ var HOME=!qsp.get('night');
 var CUR=parseInt(qsp.get('night')||'1',10); if(!NIGHTS[CUR]) CUR=1;
 var SCENES=NIGHTS[CUR].scenes;
 
+var lastPullSig=pullSig();
+window.addEventListener('acelabs:pulls',function(){
+  var s=pullSig(); if(s===lastPullSig) return; lastPullSig=s;
+  applyListPulls();
+  if(!HOME){ render(); drawMols(); }
+});
 if(HOME){
   // THE FRONT DOOR - one board for the whole RC system. Walk the story
   // here; every night hands you its reps in the engine. No second entry point.
@@ -349,9 +388,9 @@ if(HOME){
     var tot=NIGHTS[n].scenes.length;
     var led=window.AceOChemLedger?window.AceOChemLedger.night(n,tot):{walked:false,started:false,done:0};
     if(led.walked) walked++;
-    else if(!firstOpen) firstOpen=n;
+    else if(!firstOpen && !nightPulled(n)) firstOpen=n;
   }
-  if(!firstOpen) firstOpen=NIGHT_COUNT;
+  if(!firstOpen) firstOpen=openNightFrom(NIGHT_COUNT,-1)||NIGHT_COUNT;
   var contLed=window.AceOChemLedger?window.AceOChemLedger.night(firstOpen,NIGHTS[firstOpen].scenes.length):{done:0};
   var h='<div class="cont"><div><span class="ck">'+(walked===0?'Begin':(walked>=10?'You have walked all ten - run it again':'Continue'))+'</span>'
     +'<div class="ct">Night '+firstOpen+': '+NIGHTS[firstOpen].t+'</div>'
@@ -373,7 +412,7 @@ if(HOME){
   renderMap();
   var ol=document.getElementById('homeList');
   SYLLABUS.forEach(function(nx,i){
-    var li=document.createElement('li');
+    var li=document.createElement('li'); markNight(li,i+1);
     var links=[['Walk it','?night='+(i+1)],['Teach it','?night='+(i+1)+'&mode=teach']];
     if(nx.teach) links.push(['Deep hub',fromize(nx.teach,i+1)]);
     (nx.reps||[]).forEach(function(r){ links.push([r[0],fromize(r[1],i+1)]); });
@@ -401,8 +440,9 @@ document.getElementById('nightLine').textContent='Night '+CUR+' of '+NIGHT_COUNT
   var qs=new URLSearchParams(location.search);
   function href(n){ qs.set('night',n); return '?'+qs.toString(); }
   h+='<a href="./">ALL NIGHTS</a>';
-  if(NIGHTS[CUR-1]) h+='<a href="'+href(CUR-1)+'">BACK: NIGHT '+(CUR-1)+'</a>';
-  if(NIGHTS[CUR+1]) h+='<a href="'+href(CUR+1)+'">NEXT: NIGHT '+(CUR+1)+'</a>';
+  var pv=openNightFrom(CUR-1,-1), nv=openNightFrom(CUR+1,1);
+  if(pv) h+='<a href="'+href(pv)+'">BACK: NIGHT '+pv+'</a>';
+  if(nv) h+='<a href="'+href(nv)+'">NEXT: NIGHT '+nv+'</a>';
   nav.innerHTML=h;
 })();
 document.getElementById('nightTitle').textContent=NIGHTS[CUR].t;
@@ -454,6 +494,12 @@ function render(){
     } else { cr.className=''; cr.innerHTML=''; }
   }
   var host=document.getElementById('scenes'); host.innerHTML='';
+  if(nightPulled(CUR)){
+    host.innerHTML='<div class="scene"><div class="scene-body"><p class="say" style="margin-top:0">This night is being redrawn. It comes back to the list when it is ready.</p></div></div>';
+    document.getElementById('nightLede').innerHTML='';
+    document.getElementById('gate').style.display='none';
+    updateBar(); return;
+  }
   if(mode==='walk'&&RECALL.length){
     var rdSt={}; try{ rdSt=JSON.parse(localStorage.getItem(LSR)||'{}'); }catch(e){}
     var rEl=document.createElement('div'); rEl.className='scene recall';
@@ -482,12 +528,12 @@ function render(){
       +'<span class="scene-audio" id="aud'+i+'" data-s="'+i+'" style="display:none"></span></div><div class="scene-body">';
     var interactive = sc.anim || sc.tap;
     if(mode==='teach'){
-      var masked = i>0 && !interactive && new URLSearchParams(location.search).get('reveal')!=='all';
-      inner+='<div id="mask'+i+'" class="'+(masked?'reveal-mask':'')+'">'+(sc.anim?animShell(i):(sc.tap?tapShell(i):sc.svg))+'</div>';
+      var masked = i>0 && !interactive && !figOff(i) && new URLSearchParams(location.search).get('reveal')!=='all';
+      inner+='<div id="mask'+i+'" class="'+(masked?'reveal-mask':'')+'">'+sceneFig(i)+'</div>';
       if(masked) inner+='<button class="reveal-btn" data-r="'+i+'">REVEAL</button>';
       inner+='<div class="teachline"><span class="lb">Coach line</span>'+sc.teach+'</div>';
     } else {
-      inner+=(sc.anim?animShell(i):(sc.tap?tapShell(i):sc.svg))+'<p class="say">'+sc.walk+'</p>';
+      inner+=sceneFig(i)+'<p class="say">'+sc.walk+'</p>';
       if(open && !done['s'+i]){
         inner+='<div class="commit"><div class="q">'+sc.q.stem+'</div>';
         sc.q.opts.forEach(function(o,k){ inner+='<button class="opt" data-s="'+i+'" data-k="'+k+'">'+o+'</button>'; });
@@ -500,7 +546,7 @@ function render(){
     d.innerHTML=inner;
     host.appendChild(d);
   });
-  SCENES.forEach(function(sc,i){ if(sc.anim) animInit(i); if(sc.tap) tapInit(i); });
+  SCENES.forEach(function(sc,i){ if(figOff(i)) return; if(sc.anim) animInit(i); if(sc.tap) tapInit(i); });
   // ---- moving-scene engine: diagram builds + narration lights in your voice ----
   if(!window.__cues){ window.__cues={}; fetch('audio/cues.json').then(function(r){return r.ok?r.json():{};}).then(function(j){window.__cues=j||{};}).catch(function(){}); }
   if(!window.__moveScene){ window.__moveScene=(function(){
@@ -836,7 +882,7 @@ document.getElementById('mTeach').addEventListener('click',function(){setMode('t
 (function renderSyll(){
   var ol=document.getElementById('syllList');
   SYLLABUS.forEach(function(nx,i){
-    var li=document.createElement('li');
+    var li=document.createElement('li'); markNight(li,i+1);
     var links=[['Walk Night '+(i+1),'?night='+(i+1)],['Teach it','?night='+(i+1)+'&mode=teach']];
     if(nx.teach) links.push(['Deep hub',fromize(nx.teach,i+1)]);
     (nx.reps||[]).forEach(function(r){ links.push([r[0],fromize(r[1],i+1)]); });
