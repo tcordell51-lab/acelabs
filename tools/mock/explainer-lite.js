@@ -39,7 +39,7 @@
   'use strict';
   if (window.AceExplainerLite) return;
 
-  var OPEN_KEY_DISPUTES = [];
+  var OPEN_KEY_DISPUTES = ['fm:organic:oc-1jzd8nw'];
   var PULLS_SCRIPT = 'shared/ace-pulls.js?v=1';
   var STAMP_TEXT_RE = /\S/;
   var cfg = {

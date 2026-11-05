@@ -50,7 +50,9 @@ function withIndex(sec, qid, patch) {
 function withApprovals(fn) {
   const ap = JSON.parse(JSON.stringify(APPROVALS));
   fn(ap.approvals);
-  return { 'docs/explainers/approvals.json': JSON.stringify(ap) };
+  // The public review index wins over approvals.json when it is served, so these
+  // cases hide it to exercise the approvals.json path (the index path has its own test).
+  return { 'docs/explainers/approvals.json': JSON.stringify(ap), 'content/approvals/review-index.json': null };
 }
 const BIO = 'bio:BIO_d036';               // Full-Length Test 1, Biology question 7, stamped
 const BIO_Q = 'fm:' + BIO;
@@ -118,7 +120,7 @@ const FALLBACKS = [
   ['stamp with a short checksum', 'unstamped', () => withApprovals((a) => { a[BIO_Q].checksum = a[BIO_Q].checksum.slice(0, 16); })],
   ['renderer source changed', 'renderer-changed', () => withApprovals((a) => { a[BIO_Q].files['tools/explain/visuals/core.js'] = '0'.repeat(64); })],
   ['not in the index', 'unpublished', () => { const ix = json(indexFile('bio')); delete ix.items[BIO_Q]; return { [indexFile('bio')]: JSON.stringify(ix) }; }],
-  ['no stamps reachable', 'unstamped', () => ({ 'docs/explainers/approvals.json': null })],
+  ['no stamps reachable', 'unstamped', () => ({ 'docs/explainers/approvals.json': null, 'content/approvals/review-index.json': null })],
   ['guard: the sidecar is for another question', 'guard', () => ({})]
 ];
 for (const [name, reason, files] of FALLBACKS) {
