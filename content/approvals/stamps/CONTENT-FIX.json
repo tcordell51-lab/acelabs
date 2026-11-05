@@ -1,0 +1,787 @@
+{
+ "schema": "ace.stamps/1",
+ "batch": "CONTENT-FIX",
+ "stamp": "auto-approved 2026-10-30, pending Thomas review",
+ "written": "2026-11-05",
+ "bank": {
+  "file": "tools/mock/data/full-mocks.js",
+  "sha256": "5eceeb82674e52cb8ca2621381a2477a5e4be539673acb5625942d5cd03d669e"
+ },
+ "loader": {
+  "tools/mock/why-overrides.js": "557685f76a857ba9c5b16f45f93b21e8b17422e70d347b4c9a888558706afbf1",
+  "tools/mock/full.js": "3cdc4c867e3d7851a048c8aa010ef05f04f514aa4162438dc4fc9de784d0438d"
+ },
+ "review": "RDKit checked every stereo and formula claim in the overrides; an independent blind-solve agent (SA-C 2 and 5) was not available to this batch and is open for the integrator.",
+ "corrections": [
+  {
+   "id": "cf-genotype-label-case",
+   "kind": "correction",
+   "stamp": "auto-approved 2026-10-30, pending Thomas review",
+   "pullable": false,
+   "note": "Correction of a known error: listed with a comment box, no Pull (a pull would restore the error).",
+   "files": {
+    "tools/bio/bio-genetics.html": "afc1c42ff52820b7e94e3dabb738c64fce8a3ddd94641ccde4961f91c0ba834e"
+   },
+   "what": "Punnett solver ratio panel: genotype labels keep their case.",
+   "before": "The panel uppercased every label, so Aa showed as AA.",
+   "after": "A page style keeps .gen-ratio-row .lbl in its own case: AA 1/4, Aa 2/4, aa 1/4.",
+   "reason": "Release audit: the Punnett ratio panel showed every genotype as AA."
+  },
+  {
+   "id": "cf-ap-antibodies",
+   "kind": "correction",
+   "stamp": "auto-approved 2026-10-30, pending Thomas review",
+   "pullable": false,
+   "note": "Correction of a known error: listed with a comment box, no Pull (a pull would restore the error).",
+   "files": {
+    "tools/bio/bio-ap-bootcamp.html": "eb390fe187b4f65028038ad6d62d477a393f68675fb64481604b1fce022bf300"
+   },
+   "what": "A and P review, Rh factor paragraph.",
+   "before": "anti-A and anti-B antibodies (which are present from birth)",
+   "after": "anti-A and anti-B antibodies (which appear on their own in the first months of life, with no exposure to foreign blood)",
+   "reason": "ABO antibodies are not present at birth; they develop in early infancy without transfusion."
+  },
+  {
+   "id": "cf-ap-pth",
+   "kind": "correction",
+   "stamp": "auto-approved 2026-10-30, pending Thomas review",
+   "pullable": false,
+   "note": "Correction of a known error: listed with a comment box, no Pull (a pull would restore the error).",
+   "files": {
+    "tools/bio/bio-ap-bootcamp.html": "eb390fe187b4f65028038ad6d62d477a393f68675fb64481604b1fce022bf300"
+   },
+   "what": "A and P review, Calcium Hormones box and PTH pathway step 2.",
+   "before": "PTH activates osteoclasts",
+   "after": "PTH raises blood calcium: it acts on osteoblasts, which signal osteoclasts to resorb bone; it also has the kidneys reabsorb more calcium and activate vitamin D.",
+   "reason": "Osteoclasts carry no PTH receptor; PTH works through osteoblasts (RANKL), plus the kidney and vitamin D arms."
+  },
+  {
+   "id": "cf-qr-guess-ev-40",
+   "kind": "correction",
+   "stamp": "auto-approved 2026-10-30, pending Thomas review",
+   "pullable": false,
+   "note": "Correction of a known error: listed with a comment box, no Pull (a pull would restore the error).",
+   "files": {
+    "tools/qr/proposals/agent-08-pacing/guess-ev.html": "4b311b3ef71e909ad7cc921589f1531b1399c667721c7f280b07cfcd75fa028b"
+   },
+   "what": "Guess vs Blank calculator: section size.",
+   "before": "A 45-question section (copy, preset, math lines and TOTAL = 45).",
+   "after": "The 40-question QR section; TOTAL = 40, so the bars and math lines use 40.",
+   "reason": "DAT QR is 40 questions in 45 minutes."
+  },
+  {
+   "id": "cf-qr-pacing-sim-40",
+   "kind": "correction",
+   "stamp": "auto-approved 2026-10-30, pending Thomas review",
+   "pullable": false,
+   "note": "Correction of a known error: listed with a comment box, no Pull (a pull would restore the error).",
+   "files": {
+    "tools/qr/proposals/agent-08-pacing/pacing-sim.html": "49ee4bb1b58e0a3caa6914810fa309cfbd537a6b2d55eee449762013a1cdedaf"
+   },
+   "what": "Pacing Simulator intro line.",
+   "before": "A 45-question, 45-minute QR section in miniature.",
+   "after": "A 40-question, 45-minute QR section in miniature.",
+   "reason": "DAT QR is 40 questions in 45 minutes."
+  },
+  {
+   "id": "cf-scope-claims",
+   "kind": "correction",
+   "stamp": "auto-approved 2026-10-30, pending Thomas review",
+   "pullable": false,
+   "note": "Correction of a known error: listed with a comment box, no Pull (a pull would restore the error).",
+   "files": {
+    "scope.html": "b90a2a95d5f18ef2ac2d3e6dc3c4ea259bf56049c8f8702c11ecfe8fabe20c80"
+   },
+   "what": "Scope page: bank counts, unverifiable counts, in-design bullets, diagnostic line.",
+   "before": "605-problem bank; 388-question bank; 11 hand-crafted hubs; 27 animated mechanisms; 1,815 trap entries clustered into 74 patterns; two in-design bullets for features that ship; a 53-question diagnostic with 8 QR.",
+   "after": "600+ (GC bank 627), 1,200+ (OChem bank 1,230); hub and mechanism counts and the trap-pattern sentence dropped; the two shipped features no longer listed as gaps; the diagnostic is 60 questions with 15 QR.",
+   "reason": "Release audit: false or stale product claims on student pages. shared/scope.js still holds the old counts (shared/ is not this batch)."
+  },
+  {
+   "id": "cf-diagnostic-copy",
+   "kind": "correction",
+   "stamp": "auto-approved 2026-10-30, pending Thomas review",
+   "pullable": false,
+   "note": "Correction of a known error: listed with a comment box, no Pull (a pull would restore the error).",
+   "files": {
+    "diagnostic.html": "473fcce436810075cafddc1c51c49670b9f5b40f15905b861b5300aa4bad8f79"
+   },
+   "what": "Diagnostic intro: counts and section claim.",
+   "before": "53 questions across the four sections Ace Labs covers ... 8 Quantitative Reasoning; pill 8 questions; ~50 s per question.",
+   "after": "60 questions: 15 each of Biology, General Chemistry, Organic Chemistry and QR; PAT and Reading have their own timed sections under Tests; pills follow the drawn counts; ~45 s.",
+   "reason": "The diagnostic draws 60 questions, 15 QR; the old pill said 8."
+  },
+  {
+   "id": "cf-53-elsewhere",
+   "kind": "correction",
+   "stamp": "auto-approved 2026-10-30, pending Thomas review",
+   "pullable": false,
+   "note": "Correction of a known error: listed with a comment box, no Pull (a pull would restore the error).",
+   "files": {
+    "404.html": "03f65b71ac07dbfee7d5d787eeb4d96fae089b3cdc59a46bf27ad30c6c1648b0",
+    "test-week.html": "7de372f3680436594376d7f83623a68b40d5391c50f5cbd2cb07c73fdfe531fe"
+   },
+   "what": "Diagnostic tile copy.",
+   "before": "53 questions, 45 minutes",
+   "after": "60 questions, 45 minutes",
+   "reason": "The diagnostic serves 60 questions."
+  },
+  {
+   "id": "cf-cheat-sheets",
+   "kind": "correction",
+   "stamp": "auto-approved 2026-10-30, pending Thomas review",
+   "pullable": false,
+   "note": "Correction of a known error: listed with a comment box, no Pull (a pull would restore the error).",
+   "files": {
+    "cheat-sheets.html": "36444a9673b300a22ff08a086569fce32c3bc9778226af6dc9340ee82e1d3ce4"
+   },
+   "what": "Cheat sheet hub subtitle.",
+   "before": "from all four engines",
+   "after": "from the Bio, Gen Chem, OChem and QR engines",
+   "reason": "There are six sections; the sheets cover four engines by name."
+  },
+  {
+   "id": "cf-practice-claims",
+   "kind": "correction",
+   "stamp": "auto-approved 2026-10-30, pending Thomas review",
+   "pullable": false,
+   "note": "Correction of a known error: listed with a comment box, no Pull (a pull would restore the error).",
+   "files": {
+    "practice/index.html": "96d257173f2c288c949f0517e181b46f3900c3ee5c3b1dda13fbc07698cf694f"
+   },
+   "what": "Practice door: Gen Chem and Six Views cards.",
+   "before": "a diagnosis for every miss; against the clock you choose",
+   "after": "a diagnosis for most misses; Match the object to its top, front and end views.",
+   "reason": "Not every GC distractor has an authored diagnosis yet; Six Views has no clock (its test-pace switch does nothing; not changed here, behavior frozen)."
+  },
+  {
+   "id": "cf-gc-traps",
+   "kind": "correction",
+   "stamp": "auto-approved 2026-10-30, pending Thomas review",
+   "pullable": false,
+   "note": "Correction of a known error: listed with a comment box, no Pull (a pull would restore the error).",
+   "files": {
+    "tools/gc/traps.html": "4f3f69e60231fb2c32d1dba2123e65d42266b5e1d3d196760d0720caa51173bf"
+   },
+   "what": "Common Traps lede.",
+   "before": "Every distractor ... carries a hand-written explanation",
+   "after": "Most distractors ... carry a hand-written explanation",
+   "reason": "Not every distractor has one."
+  },
+  {
+   "id": "cf-ochem-hubs",
+   "kind": "correction",
+   "stamp": "auto-approved 2026-10-30, pending Thomas review",
+   "pullable": false,
+   "note": "Correction of a known error: listed with a comment box, no Pull (a pull would restore the error).",
+   "files": {
+    "tools/ochem/index.html": "fabfe66f4a7dfc2c47e8681257ff58722813505a1a592696c3825b767d31d032"
+   },
+   "what": "OChem timed draw intro.",
+   "before": "Random draw from all 10 hubs.",
+   "after": "Random draw from all the hubs.",
+   "reason": "Hub counts disagree across pages."
+  },
+  {
+   "id": "cf-practice-forms",
+   "kind": "correction",
+   "stamp": "auto-approved 2026-10-30, pending Thomas review",
+   "pullable": false,
+   "note": "Correction of a known error: listed with a comment box, no Pull (a pull would restore the error).",
+   "files": {
+    "prometric-mock.html": "fd89dbe8dc0d4a29057bbeb3d50d40227fc3a88226cb62c93655bc423d29154e"
+   },
+   "what": "Practice tests 1 to 3: intro, rules, instructions, item header.",
+   "before": "PAT and Reading not included because the banks are not built yet; the timer does not pause; closing the tab ends the section; item header shows topic, difficulty and ADA category.",
+   "after": "PAT and Reading are in the full-length DAT and their own timed sections under Tests; your place is saved and the clock pauses; the item header shows only Item N.",
+   "reason": "PAT and Reading ship; the form saves and resumes with the clock paused; topic and difficulty labels give away the concept (the real screen shows none)."
+  },
+  {
+   "id": "cf-ochem-drill-lines",
+   "kind": "correction",
+   "stamp": "auto-approved 2026-10-30, pending Thomas review",
+   "pullable": false,
+   "note": "Correction of a known error: listed with a comment box, no Pull (a pull would restore the error).",
+   "files": {
+    "tools/ochem/roots/roots/l1-charge.js": "5dc7d17d6a41619eb2a6f7cfe0c9d9eb9bf4f2850714b181837847ca63663f53",
+    "tools/ochem/roots/roots/l1-geometry.js": "e6f70dd887474135ebdcc33c37cca7b5e071452a19282b56a876303ab8e7af47",
+    "tools/ochem/roots/roots/l1-groups.js": "b282567b542c7fa8e9dcc4e287d9ebd9e6598d0e95f2f7d95028045a597db9ac",
+    "tools/ochem/roots/roots/l1-naming.js": "9a5285c55cf0ca8f4a31c384e75a6f1070bf5acbeecc229f2eb8a69107873730",
+    "tools/ochem/roots/roots/l1-skeletal.js": "e5422182fb6cd7176c3d79ec14bcaf41dde83ebd68541193e1cf4813f65c7460",
+    "tools/ochem/roots/roots/l1-unsat.js": "dc5908586efa71a3b1081e23f2b50b367969cc05de8c9567d0e0674779ce2d37",
+    "tools/ochem/roots/roots/l2-acidity.js": "28cb07da644ceb58ff2d58758acad516a56e17acd0c14094cbb4822d4e19829d",
+    "tools/ochem/roots/roots/l2-arrows.js": "6bc73cebae137088c4b841a9195438810833b8938373f58e62ef286135e3eea0",
+    "tools/ochem/roots/roots/l2-bully.js": "ccf236a908aac75869783343f9245f261c1c901175d03b9c5c3bd1a018f2778c",
+    "tools/ochem/roots/roots/l2-carbocation.js": "5c2449c1d40b19da43dbaeb257da73acaea6f84d328aedf0e2bd247e63d5eebe",
+    "tools/ochem/roots/roots/l2-induction.js": "506a8bca400c8026aed37ac246bc6ee30d203e412ac5d6f6c1549080ef507d9c",
+    "tools/ochem/roots/roots/l2-resonance.js": "be018cd4c8002b3b025b8dff33ca9424e7bf1e9ae20e70740be8dacdadddbc0d",
+    "tools/ochem/roots/roots/l3-chair.js": "5252e7dcc2a7716b217008ff0d48d6184976779d83c6c48ac793e4df5494fa6f",
+    "tools/ochem/roots/roots/l3-ez.js": "c0fcbd7e3d1a5ac76eb06fe934e03194b74cc05d963f204f016a1e7336dd8ee9",
+    "tools/ochem/roots/roots/l3-fischer.js": "47615ec46d7a88aaf79640711d40999967236e55e994d11118039773465c16cc",
+    "tools/ochem/roots/roots/l3-isomers.js": "78bde35838680ec11522543e2289096536d8cad664d5e8c6134dc3222660aa7d",
+    "tools/ochem/roots/roots/l3-newman.js": "2fd707ddbf5d51ef99cc29bad051272cbb895976f93dcce04b9df08f93f83f3d",
+    "tools/ochem/roots/roots/l3-wedge.js": "bddbc63409bf8447ca9f45d4c33ce538ad78360fb4ca161bdb4948d61ad88cb7",
+    "tools/ochem/tree/modules/t4-acid-deriv.js": "992d32025b30eb6e4f5b7c767063258b7582f544a2aa5fcc62c1b89f01e90083",
+    "tools/ochem/tree/modules/t4-alcohol.js": "4e3c5bac87ea2eefcefa803e3718b7b9b7c9fc334227dca1525d44a177ec69b4",
+    "tools/ochem/tree/modules/t4-alkene.js": "d0cf477431612b91493353b84e9b00916000866bd9f8002abeffc1f43c434b97",
+    "tools/ochem/tree/modules/t4-alkyne.js": "e816cbfbfca3dff9cd568bdee3fcb9af03bb9a5891ea25458efae1492eb6ef7a",
+    "tools/ochem/tree/modules/t4-alpha.js": "4184c78c9e94be5c16744732adfa6b199036757723b7461130cf4e529e18664d",
+    "tools/ochem/tree/modules/t4-aromatic.js": "2ef03933625f196153e9a4406885075ecea8ebe8216278c5e86b5c040240f689",
+    "tools/ochem/tree/modules/t4-carbonyl.js": "bd0ffda4883d86f024155518d8d753854ca381baddd03c907184eef77dc8efc9",
+    "tools/ochem/tree/modules/t4-radical-pericyclic.js": "30a10563699fb6dce034eacee9264a84685f3fdc844fe8d661addcadf046dfa1",
+    "tools/ochem/tree/modules/t4-subelim.js": "31796c58a8e91eda7caad0a4ffb2ff9b554e8a02eea1766d63b7d7c17d3a349a",
+    "tools/ochem/tree/modules/t5-acyl.js": "017ef29c2b76fb51259c90d3e3de5343a634ed7028420ec7f822f2e2bea8a388",
+    "tools/ochem/tree/modules/t5-addition.js": "8e6325a3a2b48d0feaf6ccadcfda17ebc292b169800d60d45c7d587ec2998cb5",
+    "tools/ochem/tree/modules/t5-arrows-forward.js": "216d05ab069947f517452fc1661454321af597d409fd788ae00da3eb5715dfda",
+    "tools/ochem/tree/modules/t5-arrows-reverse.js": "1102a6562bf948dcf2c237230b3824054532f4f21e4f61b59004aad1011d1a0c",
+    "tools/ochem/tree/modules/t5-combined.js": "e9ec32e16adbbd1603fa8ab4d855728d72fd153bdad2b2736bf78b47a413e3b4",
+    "tools/ochem/tree/modules/t5-conform.js": "cc9e535c70e46a25651f1d0e11a60618a97a7e1eeea7f104b0c5f7d83e2867a3",
+    "tools/ochem/tree/modules/t5-coordinate.js": "2f6c4f3b80119a97424d15e652c859215201131101a1b63e18a03a6fed4804f6",
+    "tools/ochem/tree/modules/t5-eas.js": "214f277d01c35dfc61adfbc71007830dcc24773e7da714a6ce64f1044ccb8ba3",
+    "tools/ochem/tree/modules/t5-fishhook.js": "dc4d426451ec2624bea3c02870ddae360fead21d0b07df6d96fe9103ed41781a",
+    "tools/ochem/tree/modules/t5-mech-chain.js": "ba117777523da5527461ebaf53342f220479b25969a6e84d403925f88c4ebb0b",
+    "tools/ochem/tree/modules/t5-proton.js": "69e264155fba1c362b2fbd1a36fe36edfbf24a86baafd0a365312135f833494e",
+    "tools/ochem/tree/modules/t5-rcd.js": "2d87903db27873cba1e485d395f37f1adf9f15878191e780fd160d73c7786fdd",
+    "tools/ochem/tree/modules/t5-sn-e.js": "620025f35a11f4a51ede32e7587824418ea309f5d0a3d67c39caa27773dc404a",
+    "tools/ochem/tree/modules/t6-retro.js": "0da503e29aa1365b79210b36951518778a637bcd3f5713934e11566506970f26",
+    "tools/ochem/tree/modules/t6-selectivity.js": "50bd3c248e62746566beee1ef6f92afbd39254d4049b897a293c0307b75cae3d",
+    "tools/ochem/tree/modules/t6-two-step.js": "326cb2e6aec7faa332203ea1c13067acb0896a96092df46120871910a3241530",
+    "tools/ochem/tree/modules/t7-cnmr.js": "8bd20f3d6e926159aa5163ad9fecea197512362d2ef20087b30a29e55d5fa651",
+    "tools/ochem/tree/modules/t7-hnmr.js": "960daa311f2b86de8c781a2c2cb6f860bef7d5b61c839305cd3c2981e8af2683",
+    "tools/ochem/tree/modules/t7-ir.js": "a085ee2723ff30a70d8548befff4b4557b2301aa1bc9afc1d26e619d08d3e84b",
+    "tools/ochem/tree/modules/t7-lab.js": "fbea783b3199c25cc3404308bed39f5cfc58855b68c7b2d9a33c3814b7b8b9c3",
+    "tools/ochem/tree/modules/t7-multi.js": "db050cd42eb9eac8e5e0b31cfa385f0290a14743819a84439b88c223080ce66b",
+    "tools/ochem/tree/modules/t7-properties.js": "472a26ccdfb8625ec9204081660d435ae6d0ac17623e353ffa646c013555ec55"
+   },
+   "what": "OChem Tree and Roots modules: the After you own it line (49 strings).",
+   "before": "An outside bank chapter name, in your OChem question bank",
+   "after": "Practice questions on this topic, in the OChem engine or your own question bank",
+   "reason": "Release audit: outside chapter names and the sync claim outside Retold."
+  },
+  {
+   "id": "cf-faq",
+   "kind": "correction",
+   "stamp": "auto-approved 2026-10-30, pending Thomas review",
+   "pullable": false,
+   "note": "Correction of a known error: listed with a comment box, no Pull (a pull would restore the error).",
+   "files": {
+    "ACELABS_STUDENT_FAQ.md": "69046b54fbaaaeb4e5ffe15a019d8e16b6b153f2987e9fbbc49317d0e408bad7"
+   },
+   "what": "Student FAQ (redirected, not served): three lines.",
+   "before": "Ace Labs does not cover PAT or Reading (pointing to outside products); a mock simulator predicts a DAT subscore; an outside product cost line.",
+   "after": "Ace Labs covers PAT and Reading (15 PAT tests, 45 passages, 15 timed sections, 4 full-lengths); Ace Labs does not predict scores or subscores; a neutral line about an outside bank with no names or costs.",
+   "reason": "Each line was false or out of date."
+  },
+  {
+   "id": "cf-pat-fold-notes",
+   "kind": "correction",
+   "stamp": "auto-approved 2026-10-30, pending Thomas review",
+   "pullable": false,
+   "note": "Correction of a known error: listed with a comment box, no Pull (a pull would restore the error).",
+   "files": {
+    "tools/pat/test.html": "24025e4df02627f7e1506e114838daf15bf0a4f4396a2b7d8ce861a24354fd29"
+   },
+   "what": "PAT pattern-folding review notes (note strings only).",
+   "before": "mirror image of the folded cube; they are on the cube; opposite each other on the cube",
+   "after": "the folded solid in all three notes",
+   "reason": "98 non-cube pattern-folding items (pyramids, prisms, tetrahedra) showed notes calling the solid a cube."
+  }
+ ],
+ "overrides": [
+  {
+   "id": "fm:bio:BIO_xp008",
+   "kind": "override",
+   "stamp": "auto-approved 2026-10-30, pending Thomas review",
+   "pullable": false,
+   "note": "Correction of a known error (stale option letters): listed with a comment box, no Pull.",
+   "served": [
+    "Full-Length Test 1, Biology question 22"
+   ],
+   "file": "content/explainers/why-overrides.json",
+   "fileSha256": "638b323637ffcd5cb16ef28b05f138e448b84215a28cf4bcbf995e708b544869",
+   "whySha256": "1285912ce52db49d8c1bbcef8b578a1850421d873603919aff40897b65a42730",
+   "bankWhySha256": "99a2ed9f9c747ce114b294afa5b8ab70c41ee85b4c5311a87f7735a4ab2a780e",
+   "change": "option letters and index pointers removed; each choice named by its content where a letter stood; copy-rule words replaced"
+  },
+  {
+   "id": "fm:organic:oc-1eq5a2f",
+   "kind": "override",
+   "stamp": "auto-approved 2026-10-30, pending Thomas review",
+   "pullable": false,
+   "note": "Correction of a known error (stale option letters): listed with a comment box, no Pull.",
+   "served": [
+    "Full-Length Test 1, OChem question 4"
+   ],
+   "file": "content/explainers/why-overrides.json",
+   "fileSha256": "638b323637ffcd5cb16ef28b05f138e448b84215a28cf4bcbf995e708b544869",
+   "whySha256": "f181aff1b027ce2936d4cced020bbdcc6b70fe2b3db89bfb69ccf8f93f0c06d3",
+   "bankWhySha256": "3e8271dd77f6a114ef49eda06ff1d18be48ee966e7b641f541e4683dbb7de6d4",
+   "change": "option letters and index pointers removed; each choice named by its content where a letter stood; copy-rule words replaced"
+  },
+  {
+   "id": "fm:organic:oc-18i1svf",
+   "kind": "override",
+   "stamp": "auto-approved 2026-10-30, pending Thomas review",
+   "pullable": false,
+   "note": "Correction of a known error (stale option letters): listed with a comment box, no Pull.",
+   "served": [
+    "Full-Length Test 1, OChem question 6"
+   ],
+   "file": "content/explainers/why-overrides.json",
+   "fileSha256": "638b323637ffcd5cb16ef28b05f138e448b84215a28cf4bcbf995e708b544869",
+   "whySha256": "bde1834b9847f77be7722f44e7e555592a4b31235c58edb9c89c2adb8c3d3bb5",
+   "bankWhySha256": "eaaf3dd5e8331b6c3fe2325f91e59bf23a45f169e1be01e6135dbdfca74adfff",
+   "change": "option letters and index pointers removed; each choice named by its content where a letter stood; copy-rule words replaced"
+  },
+  {
+   "id": "fm:organic:oc-dbrfsk",
+   "kind": "override",
+   "stamp": "auto-approved 2026-10-30, pending Thomas review",
+   "pullable": false,
+   "note": "Correction of a known error (stale option letters): listed with a comment box, no Pull.",
+   "served": [
+    "Full-Length Test 1, OChem question 8"
+   ],
+   "file": "content/explainers/why-overrides.json",
+   "fileSha256": "638b323637ffcd5cb16ef28b05f138e448b84215a28cf4bcbf995e708b544869",
+   "whySha256": "b97bb977db3feb91f89bb7f0502a7df309edda9a0ae12c2ca26c4354ce230ffe",
+   "bankWhySha256": "d9e252c0c4962f096d46386b8c12e593f186992e4b7e12f1e48c51f52f1cfd65",
+   "change": "option letters and index pointers removed; each choice named by its content where a letter stood; copy-rule words replaced"
+  },
+  {
+   "id": "fm:organic:oc-11r58ig",
+   "kind": "override",
+   "stamp": "auto-approved 2026-10-30, pending Thomas review",
+   "pullable": false,
+   "note": "Correction of a known error (stale option letters): listed with a comment box, no Pull.",
+   "served": [
+    "Full-Length Test 1, OChem question 9"
+   ],
+   "file": "content/explainers/why-overrides.json",
+   "fileSha256": "638b323637ffcd5cb16ef28b05f138e448b84215a28cf4bcbf995e708b544869",
+   "whySha256": "39587cee8334081296235294280ea0972c751975488bde6db63422b6096b7d9e",
+   "bankWhySha256": "331cfcc0a1e04c7c9db30a9bc118d4f492392fec683727456ee379bd615b89ce",
+   "change": "option letters and index pointers removed; each choice named by its content where a letter stood; copy-rule words replaced"
+  },
+  {
+   "id": "fm:organic:oc-anc6po",
+   "kind": "override",
+   "stamp": "auto-approved 2026-10-30, pending Thomas review",
+   "pullable": false,
+   "note": "Correction of a known error (stale option letters): listed with a comment box, no Pull.",
+   "served": [
+    "Full-Length Test 1, OChem question 11"
+   ],
+   "file": "content/explainers/why-overrides.json",
+   "fileSha256": "638b323637ffcd5cb16ef28b05f138e448b84215a28cf4bcbf995e708b544869",
+   "whySha256": "c71989fe58b7fa40219c32655268fcf0bc74d07cf54cee14a2ebdf3f64ffbc98",
+   "bankWhySha256": "edb117136ed2e13929b6a2bbee40375331ff3d35cac8663bdeb0cfe4c5c69bb3",
+   "change": "option letters and index pointers removed; each choice named by its content where a letter stood; copy-rule words replaced"
+  },
+  {
+   "id": "fm:organic:oc-zlk3b3",
+   "kind": "override",
+   "stamp": "auto-approved 2026-10-30, pending Thomas review",
+   "pullable": false,
+   "note": "Correction of a known error (stale option letters): listed with a comment box, no Pull.",
+   "served": [
+    "Full-Length Test 1, OChem question 13"
+   ],
+   "file": "content/explainers/why-overrides.json",
+   "fileSha256": "638b323637ffcd5cb16ef28b05f138e448b84215a28cf4bcbf995e708b544869",
+   "whySha256": "7b1ebf291bde5c823736a7171341d7722aaf8955d13f1bf2c67163f9d352b92d",
+   "bankWhySha256": "a5421eceacb8555846c045e9fb08c23c9a1e7909208a23c4f8607500ffab5e57",
+   "change": "option letters and index pointers removed; each choice named by its content where a letter stood; copy-rule words replaced"
+  },
+  {
+   "id": "fm:organic:oc-vqku6",
+   "kind": "override",
+   "stamp": "auto-approved 2026-10-30, pending Thomas review",
+   "pullable": false,
+   "note": "Correction of a known error (stale option letters): listed with a comment box, no Pull.",
+   "served": [
+    "Full-Length Test 1, OChem question 16"
+   ],
+   "file": "content/explainers/why-overrides.json",
+   "fileSha256": "638b323637ffcd5cb16ef28b05f138e448b84215a28cf4bcbf995e708b544869",
+   "whySha256": "5cd64ff9124a25d821648da829fa9347b84329173e1c234cc18e0372d9e62472",
+   "bankWhySha256": "33b05d1b927af7b4220f89e1ea297a5627677c1a9e1c9f0b60898b5342a53cb4",
+   "change": "option letters and index pointers removed; each choice named by its content where a letter stood; copy-rule words replaced"
+  },
+  {
+   "id": "fm:organic:oc-8gdlsf",
+   "kind": "override",
+   "stamp": "auto-approved 2026-10-30, pending Thomas review",
+   "pullable": false,
+   "note": "Correction of a known error (stale option letters): listed with a comment box, no Pull.",
+   "served": [
+    "Full-Length Test 1, OChem question 17"
+   ],
+   "file": "content/explainers/why-overrides.json",
+   "fileSha256": "638b323637ffcd5cb16ef28b05f138e448b84215a28cf4bcbf995e708b544869",
+   "whySha256": "2b5533970673dccd453f0bdcfc1fe399a2e4375966afd90a5822ef75a8c71ff2",
+   "bankWhySha256": "4232778977801f4851f4edb7a69bb84181ba9890899df66ecb7731aeee69fd87",
+   "change": "option letters and index pointers removed; each choice named by its content where a letter stood; copy-rule words replaced"
+  },
+  {
+   "id": "fm:organic:oc-1v0wmr4",
+   "kind": "override",
+   "stamp": "auto-approved 2026-10-30, pending Thomas review",
+   "pullable": false,
+   "note": "Correction of a known error (stale option letters): listed with a comment box, no Pull.",
+   "served": [
+    "Full-Length Test 1, OChem question 18"
+   ],
+   "file": "content/explainers/why-overrides.json",
+   "fileSha256": "638b323637ffcd5cb16ef28b05f138e448b84215a28cf4bcbf995e708b544869",
+   "whySha256": "6863508072517e072684f3fa8c63ecf990f1f989e0327684feaa3d58733cce40",
+   "bankWhySha256": "87f8682d98b1809c04b14d4a5e87c4a7c442f5b7f71a8518dd38afd5aad9a8bb",
+   "change": "option letters and index pointers removed; each choice named by its content where a letter stood; copy-rule words replaced"
+  },
+  {
+   "id": "fm:organic:oc-8neusk",
+   "kind": "override",
+   "stamp": "auto-approved 2026-10-30, pending Thomas review",
+   "pullable": false,
+   "note": "Correction of a known error (stale option letters): listed with a comment box, no Pull.",
+   "served": [
+    "Full-Length Test 1, OChem question 21"
+   ],
+   "file": "content/explainers/why-overrides.json",
+   "fileSha256": "638b323637ffcd5cb16ef28b05f138e448b84215a28cf4bcbf995e708b544869",
+   "whySha256": "63f2a6b6cd98c4def8f369876b430014a977ca7c8a5b7a30c1d20c1deb7be622",
+   "bankWhySha256": "eb0241683d2625991a2d10a7a2989c3fdd28410ef5d769e8c165db4df7ed4eb9",
+   "change": "option letters and index pointers removed; each choice named by its content where a letter stood; copy-rule words replaced"
+  },
+  {
+   "id": "fm:organic:oc-1fquwbw",
+   "kind": "override",
+   "stamp": "auto-approved 2026-10-30, pending Thomas review",
+   "pullable": false,
+   "note": "Correction of a known error (stale option letters): listed with a comment box, no Pull.",
+   "served": [
+    "Full-Length Test 2, OChem question 1"
+   ],
+   "file": "content/explainers/why-overrides.json",
+   "fileSha256": "638b323637ffcd5cb16ef28b05f138e448b84215a28cf4bcbf995e708b544869",
+   "whySha256": "34a5b228056a00bfbb1426babc47748d280c5d6d6bfdc0e589c44c49ad087d3e",
+   "bankWhySha256": "a02047282b7a5872f8295cbcf293664ccc1a2d8a0eb40c70b9556cd8753029a7",
+   "change": "option letters and index pointers removed; each choice named by its content where a letter stood; copy-rule words replaced"
+  },
+  {
+   "id": "fm:organic:oc-1raxpuc",
+   "kind": "override",
+   "stamp": "auto-approved 2026-10-30, pending Thomas review",
+   "pullable": false,
+   "note": "Correction of a known error (stale option letters): listed with a comment box, no Pull.",
+   "served": [
+    "Full-Length Test 2, OChem question 6"
+   ],
+   "file": "content/explainers/why-overrides.json",
+   "fileSha256": "638b323637ffcd5cb16ef28b05f138e448b84215a28cf4bcbf995e708b544869",
+   "whySha256": "03fce2781ffbc8ea185a6788128d4cd65b2f3f016f8e525454afa46b828c3fa9",
+   "bankWhySha256": "207e5ba0241777d07d1e870d90cf0782f93d1787536da8730730401a2abc66f4",
+   "change": "option letters and index pointers removed; each choice named by its content where a letter stood; copy-rule words replaced"
+  },
+  {
+   "id": "fm:organic:oc-1k54mp1",
+   "kind": "override",
+   "stamp": "auto-approved 2026-10-30, pending Thomas review",
+   "pullable": false,
+   "note": "Correction of a known error (stale option letters): listed with a comment box, no Pull.",
+   "served": [
+    "Full-Length Test 2, OChem question 7"
+   ],
+   "file": "content/explainers/why-overrides.json",
+   "fileSha256": "638b323637ffcd5cb16ef28b05f138e448b84215a28cf4bcbf995e708b544869",
+   "whySha256": "f7bc5a302266fe4d6310d541c73b6867e91ea520515a2ebb4089de72b1514e17",
+   "bankWhySha256": "c6851931670f8e3cd829dc36f8f01ebecc17a331ec59b31e37af62477acea1ce",
+   "change": "option letters and index pointers removed; each choice named by its content where a letter stood; copy-rule words replaced"
+  },
+  {
+   "id": "fm:organic:oc-1juifa8",
+   "kind": "override",
+   "stamp": "auto-approved 2026-10-30, pending Thomas review",
+   "pullable": false,
+   "note": "Correction of a known error (stale option letters): listed with a comment box, no Pull.",
+   "served": [
+    "Full-Length Test 2, OChem question 8"
+   ],
+   "file": "content/explainers/why-overrides.json",
+   "fileSha256": "638b323637ffcd5cb16ef28b05f138e448b84215a28cf4bcbf995e708b544869",
+   "whySha256": "a717f2709062066689d520701f059a8eaca1b8a34555ac0fc66b44c0d768df2a",
+   "bankWhySha256": "b98444862c3ee82cf9be497eaf9eb7f685cb366beabca65b3c92d9ca9bc5ef6b",
+   "change": "removed the internal sentence \"Keyed correct=0 is right; the meso distractors are good traps.\""
+  },
+  {
+   "id": "fm:organic:oc-qoccz7",
+   "kind": "override",
+   "stamp": "auto-approved 2026-10-30, pending Thomas review",
+   "pullable": false,
+   "note": "Correction of a known error (stale option letters): listed with a comment box, no Pull.",
+   "served": [
+    "Full-Length Test 2, OChem question 10"
+   ],
+   "file": "content/explainers/why-overrides.json",
+   "fileSha256": "638b323637ffcd5cb16ef28b05f138e448b84215a28cf4bcbf995e708b544869",
+   "whySha256": "483b82313f354a128cd27eeeae2df9b8f49bc7a01ea9ff777c414a81716d8200",
+   "bankWhySha256": "4141a26b155dcece8e4c9078d0f28504f6546814f6670b9d3d9fc19a29c2bc98",
+   "change": "option letters and index pointers removed; each choice named by its content where a letter stood; copy-rule words replaced"
+  },
+  {
+   "id": "fm:organic:oc-14m1cd6",
+   "kind": "override",
+   "stamp": "auto-approved 2026-10-30, pending Thomas review",
+   "pullable": false,
+   "note": "Correction of a known error (stale option letters): listed with a comment box, no Pull.",
+   "served": [
+    "Full-Length Test 2, OChem question 13"
+   ],
+   "file": "content/explainers/why-overrides.json",
+   "fileSha256": "638b323637ffcd5cb16ef28b05f138e448b84215a28cf4bcbf995e708b544869",
+   "whySha256": "cd2d95648d785fa8ea9c542a4923dafb29d0ffb94e3ba68083c23d6cbbc24161",
+   "bankWhySha256": "853fdd3a79ae29568de9548293f86f1d9d18b4406db20839604fe12dd445888a",
+   "change": "option letters and index pointers removed; each choice named by its content where a letter stood; copy-rule words replaced"
+  },
+  {
+   "id": "fm:organic:oc-1boltky",
+   "kind": "override",
+   "stamp": "auto-approved 2026-10-30, pending Thomas review",
+   "pullable": false,
+   "note": "Correction of a known error (stale option letters): listed with a comment box, no Pull.",
+   "served": [
+    "Full-Length Test 2, OChem question 21"
+   ],
+   "file": "content/explainers/why-overrides.json",
+   "fileSha256": "638b323637ffcd5cb16ef28b05f138e448b84215a28cf4bcbf995e708b544869",
+   "whySha256": "1b6043d45377efe8f4754989e3b97cd3bcb2ff82ea0b23bb89a5065d02fb190a",
+   "bankWhySha256": "a1a4f7dc478083ed81310aa39419315932bb63bdf27bccacce78cf6e4ee4262f",
+   "change": "option letters and index pointers removed; each choice named by its content where a letter stood; copy-rule words replaced"
+  },
+  {
+   "id": "fm:organic:oc-nymgh3",
+   "kind": "override",
+   "stamp": "auto-approved 2026-10-30, pending Thomas review",
+   "pullable": false,
+   "note": "Correction of a known error (stale option letters): listed with a comment box, no Pull.",
+   "served": [
+    "Full-Length Test 2, OChem question 22"
+   ],
+   "file": "content/explainers/why-overrides.json",
+   "fileSha256": "638b323637ffcd5cb16ef28b05f138e448b84215a28cf4bcbf995e708b544869",
+   "whySha256": "05791aecefaa4f0918942d94b5f3824ea482467061ded96951ba337a20d17b0a",
+   "bankWhySha256": "b147520ca1b277dc0e7659153afa1e7770ca4316d0de4fb955e88500ce1e453f",
+   "change": "option letters and index pointers removed; each choice named by its content where a letter stood; copy-rule words replaced"
+  },
+  {
+   "id": "fm:organic:oc-185lgi6",
+   "kind": "override",
+   "stamp": "auto-approved 2026-10-30, pending Thomas review",
+   "pullable": false,
+   "note": "Correction of a known error (stale option letters): listed with a comment box, no Pull.",
+   "served": [
+    "Full-Length Test 2, OChem question 24"
+   ],
+   "file": "content/explainers/why-overrides.json",
+   "fileSha256": "638b323637ffcd5cb16ef28b05f138e448b84215a28cf4bcbf995e708b544869",
+   "whySha256": "c36a4d0bef9f919f4c6831a34dceddcd6bd6c00b81bdeba49e0337bf56c21c03",
+   "bankWhySha256": "f1c240e22157ddca3af8b15e478d857ca7d76e3c748be2129314abdd0d8afab2",
+   "change": "option letters and index pointers removed; each choice named by its content where a letter stood; copy-rule words replaced"
+  },
+  {
+   "id": "fm:organic:oc-pm2a7",
+   "kind": "override",
+   "stamp": "auto-approved 2026-10-30, pending Thomas review",
+   "pullable": false,
+   "note": "Correction of a known error (stale option letters): listed with a comment box, no Pull.",
+   "served": [
+    "Full-Length Test 2, OChem question 30"
+   ],
+   "file": "content/explainers/why-overrides.json",
+   "fileSha256": "638b323637ffcd5cb16ef28b05f138e448b84215a28cf4bcbf995e708b544869",
+   "whySha256": "b7d1ec84699010dd122c14dd774b06d83fa66d6eb973f209fc03d675977a2417",
+   "bankWhySha256": "23eb103f4cd3008d92b696fe6096c81974e97a579981e081c11bf54f749c548e",
+   "change": "option letters and index pointers removed; each choice named by its content where a letter stood; copy-rule words replaced"
+  },
+  {
+   "id": "fm:organic:oc-1jzd8nw",
+   "kind": "override",
+   "stamp": "auto-approved 2026-10-30, pending Thomas review",
+   "pullable": false,
+   "note": "Correction of a known error (stale option letters): listed with a comment box, no Pull.",
+   "served": [
+    "Full-Length Test 3, OChem question 5"
+   ],
+   "file": "content/explainers/why-overrides.json",
+   "fileSha256": "638b323637ffcd5cb16ef28b05f138e448b84215a28cf4bcbf995e708b544869",
+   "whySha256": "e634443ee553e234794837a5d7c796ceb57731ec3b3aa5fdc30885b30db168bb",
+   "bankWhySha256": "f017c60c5b7e6d743762809b7b3a5a027eecf01fb06d5f63fac05b75841ab53a",
+   "change": "option letters and index pointers removed; each choice named by its content where a letter stood; copy-rule words replaced"
+  },
+  {
+   "id": "fm:organic:oc-1ix28dz",
+   "kind": "override",
+   "stamp": "auto-approved 2026-10-30, pending Thomas review",
+   "pullable": false,
+   "note": "Correction of a known error (stale option letters): listed with a comment box, no Pull.",
+   "served": [
+    "Full-Length Test 3, OChem question 12"
+   ],
+   "file": "content/explainers/why-overrides.json",
+   "fileSha256": "638b323637ffcd5cb16ef28b05f138e448b84215a28cf4bcbf995e708b544869",
+   "whySha256": "4ebed0ef33db6793924ac9183d1fd1498af6187945fd2e80c14eea0f76883abe",
+   "bankWhySha256": "074f20191764e44b29164ce5dc629718198d48caca31fb2672199cabf356dc10",
+   "change": "option letters and index pointers removed; each choice named by its content where a letter stood; copy-rule words replaced"
+  },
+  {
+   "id": "fm:organic:oc-jr6ldy",
+   "kind": "override",
+   "stamp": "auto-approved 2026-10-30, pending Thomas review",
+   "pullable": false,
+   "note": "Correction of a known error (stale option letters): listed with a comment box, no Pull.",
+   "served": [
+    "Full-Length Test 3, OChem question 13"
+   ],
+   "file": "content/explainers/why-overrides.json",
+   "fileSha256": "638b323637ffcd5cb16ef28b05f138e448b84215a28cf4bcbf995e708b544869",
+   "whySha256": "c8e953864e1e9d17eebd849a6470a65bba7944480a533a3cf7c8fd31f2ae74e6",
+   "bankWhySha256": "06f703b44dc089da885f428141eac02b43c4d70a06cfc00f07d988e9f13bfc70",
+   "change": "option letters and index pointers removed; each choice named by its content where a letter stood; copy-rule words replaced"
+  },
+  {
+   "id": "fm:organic:oc-1k5glo1",
+   "kind": "override",
+   "stamp": "auto-approved 2026-10-30, pending Thomas review",
+   "pullable": false,
+   "note": "Correction of a known error (stale option letters): listed with a comment box, no Pull.",
+   "served": [
+    "Full-Length Test 3, OChem question 16"
+   ],
+   "file": "content/explainers/why-overrides.json",
+   "fileSha256": "638b323637ffcd5cb16ef28b05f138e448b84215a28cf4bcbf995e708b544869",
+   "whySha256": "a4c99ac57798abf80b7438f2739ba844bc20e80bb937dc1c7a399459f427e5c3",
+   "bankWhySha256": "7e256034ecce046fcb9a787a4a78153bcbea918cabfb3efd2eaa56078f30553b",
+   "change": "option letters and index pointers removed; each choice named by its content where a letter stood; copy-rule words replaced"
+  },
+  {
+   "id": "fm:organic:oc-mnw0d4",
+   "kind": "override",
+   "stamp": "auto-approved 2026-10-30, pending Thomas review",
+   "pullable": false,
+   "note": "Correction of a known error (stale option letters): listed with a comment box, no Pull.",
+   "served": [
+    "Full-Length Test 3, OChem question 23"
+   ],
+   "file": "content/explainers/why-overrides.json",
+   "fileSha256": "638b323637ffcd5cb16ef28b05f138e448b84215a28cf4bcbf995e708b544869",
+   "whySha256": "9e030422ad66df7517a8e9908204c42a4c18ec970dfea0af773bae6a188960ca",
+   "bankWhySha256": "c1cfe1214e11b8acc7fefe4f7779738fd7e87676cce8118a38f055c454265e40",
+   "change": "option letters and index pointers removed; each choice named by its content where a letter stood; copy-rule words replaced"
+  },
+  {
+   "id": "fm:organic:oc-qjs2wp",
+   "kind": "override",
+   "stamp": "auto-approved 2026-10-30, pending Thomas review",
+   "pullable": false,
+   "note": "Correction of a known error (stale option letters): listed with a comment box, no Pull.",
+   "served": [
+    "Full-Length Test 3, OChem question 24"
+   ],
+   "file": "content/explainers/why-overrides.json",
+   "fileSha256": "638b323637ffcd5cb16ef28b05f138e448b84215a28cf4bcbf995e708b544869",
+   "whySha256": "67e44b5dab89f96f5ec8b02be7107d4cb7142f637afac5a1a41f1eb1788ed8f2",
+   "bankWhySha256": "542af4fe3afb07bb7613f317bad1d34b51e1c1991158b116fd4881b07411b02a",
+   "change": "option letters and index pointers removed; each choice named by its content where a letter stood; copy-rule words replaced"
+  },
+  {
+   "id": "fm:organic:oc-17mk9ys",
+   "kind": "override",
+   "stamp": "auto-approved 2026-10-30, pending Thomas review",
+   "pullable": false,
+   "note": "Correction of a known error (stale option letters): listed with a comment box, no Pull.",
+   "served": [
+    "Full-Length Test 3, OChem question 25"
+   ],
+   "file": "content/explainers/why-overrides.json",
+   "fileSha256": "638b323637ffcd5cb16ef28b05f138e448b84215a28cf4bcbf995e708b544869",
+   "whySha256": "d05dca6fb609e16dda03295cfcbcc1ff63c8fd22b38a3427fb8d8ceed8e8a462",
+   "bankWhySha256": "754d148b1a9069e8def1430be51d0527da3e56f93545eb05d06c555b11edeec1",
+   "change": "option letters and index pointers removed; each choice named by its content where a letter stood; copy-rule words replaced"
+  },
+  {
+   "id": "fm:organic:oc-1jgftmx",
+   "kind": "override",
+   "stamp": "auto-approved 2026-10-30, pending Thomas review",
+   "pullable": false,
+   "note": "Correction of a known error (stale option letters): listed with a comment box, no Pull.",
+   "served": [
+    "Full-Length Test 3, OChem question 28"
+   ],
+   "file": "content/explainers/why-overrides.json",
+   "fileSha256": "638b323637ffcd5cb16ef28b05f138e448b84215a28cf4bcbf995e708b544869",
+   "whySha256": "4970a405b3e310d36acff07d5d15a248d05f766141f8c10dbd7e3c5270144a07",
+   "bankWhySha256": "2254cbe42704bdb86e24e23b5e86e52057306065670d3e330c67fe4922a9c067",
+   "change": "option letters and index pointers removed; each choice named by its content where a letter stood; copy-rule words replaced"
+  },
+  {
+   "id": "fm:organic:oc-1iyt40m",
+   "kind": "override",
+   "stamp": "auto-approved 2026-10-30, pending Thomas review",
+   "pullable": false,
+   "note": "Correction of a known error (stale option letters): listed with a comment box, no Pull.",
+   "served": [
+    "Full-Length Test 4, OChem question 1"
+   ],
+   "file": "content/explainers/why-overrides.json",
+   "fileSha256": "638b323637ffcd5cb16ef28b05f138e448b84215a28cf4bcbf995e708b544869",
+   "whySha256": "afbd28189bed87cc0c9c0420d46f528cb732d518c4d32b55144c21f95c8599af",
+   "bankWhySha256": "eb0cc010ca599e7562423d0080b9e894ca5dfbcbaebd036dd7d356183febec9d",
+   "change": "option letters and index pointers removed; each choice named by its content where a letter stood; copy-rule words replaced"
+  },
+  {
+   "id": "fm:organic:oc-1khayk8",
+   "kind": "override",
+   "stamp": "auto-approved 2026-10-30, pending Thomas review",
+   "pullable": false,
+   "note": "Correction of a known error (stale option letters): listed with a comment box, no Pull.",
+   "served": [
+    "Full-Length Test 4, OChem question 9"
+   ],
+   "file": "content/explainers/why-overrides.json",
+   "fileSha256": "638b323637ffcd5cb16ef28b05f138e448b84215a28cf4bcbf995e708b544869",
+   "whySha256": "ab92b65eb0fc12727aa0bc7d5c5bcc67f071979d44c18918f9912cc17d67a3b1",
+   "bankWhySha256": "cf51db4c4203b1211544549ab7603565daa5e0ed860c3515fad8a2261fbd461a",
+   "change": "option letters and index pointers removed; each choice named by its content where a letter stood; copy-rule words replaced"
+  },
+  {
+   "id": "fm:organic:oc-vw99iv",
+   "kind": "override",
+   "stamp": "auto-approved 2026-10-30, pending Thomas review",
+   "pullable": false,
+   "note": "Correction of a known error (stale option letters): listed with a comment box, no Pull.",
+   "served": [
+    "Full-Length Test 4, OChem question 21"
+   ],
+   "file": "content/explainers/why-overrides.json",
+   "fileSha256": "638b323637ffcd5cb16ef28b05f138e448b84215a28cf4bcbf995e708b544869",
+   "whySha256": "2c1dc03269585f055896ac34afcadcb478daaa4a3b44a589957d0dbe27765895",
+   "bankWhySha256": "e61e0f482e24fb4b7ba9081bdbb7918db3212db85ad000ba435b3b5ce5028861",
+   "change": "option letters and index pointers removed; each choice named by its content where a letter stood; copy-rule words replaced"
+  },
+  {
+   "id": "fm:organic:oc-1fqqcym",
+   "kind": "override",
+   "stamp": "auto-approved 2026-10-30, pending Thomas review",
+   "pullable": false,
+   "note": "Correction of a known error (stale option letters): listed with a comment box, no Pull.",
+   "served": [
+    "Full-Length Test 4, OChem question 30"
+   ],
+   "file": "content/explainers/why-overrides.json",
+   "fileSha256": "638b323637ffcd5cb16ef28b05f138e448b84215a28cf4bcbf995e708b544869",
+   "whySha256": "20ec795814eb8c51d877f07bca0877493a4648a9c6e2923bb4734e7064baf312",
+   "bankWhySha256": "61e75785734241e7fa167f8c9352c29602cf1c6f656f9371260d3c401eb272b7",
+   "change": "option letters and index pointers removed; each choice named by its content where a letter stood; copy-rule words replaced"
+  }
+ ]
+}

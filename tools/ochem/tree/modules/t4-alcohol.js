@@ -21,7 +21,7 @@ export const meta = {
   ],
   trap: 'Careful: PCC stops at the aldehyde but CrO3 with H2SO4 (Jones) takes a primary alcohol all the way to the carboxylic acid, and the hidden H2SO4 is the tell.',
   holdsUp: ['Carbonyl chemistry', 'Grignard planning', 'Multi-step synthesis', 'Protecting groups', 'IR: the O-H and C=O stretches'],
-  drill: 'Alcohols, Ethers, & Epoxides, in your OChem question bank'
+  drill: 'Practice questions on this topic, in the OChem engine or your own question bank'
 };
 
 // Every structure here is already in shared/reactions.js (the ladder molecules are all table substrates or products).
