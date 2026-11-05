@@ -34,13 +34,13 @@ test('the bank file is unchanged: its sha256 matches the one the overrides were 
   assert.equal(doc.bank.file, 'tools/mock/data/full-mocks.js');
 });
 
-test('33 overrides (31 OChem and 1 Bio with stale letters, plus OC-3), each matching its bank text', () => {
+test('47 overrides (31 OChem and 1 Bio with stale letters, OC-3, and 14 found after the SA-C review), each matching its bank text', () => {
   const items = bankItems();
   const ids = Object.keys(doc.overrides);
-  assert.equal(ids.length, 33);
-  assert.equal(doc.count, 33);
+  assert.equal(ids.length, 47);
+  assert.equal(doc.count, 47);
   assert.equal(doc.stamp, 'auto-approved 2026-10-30, pending Thomas review');
-  assert.equal(ids.filter((k) => k.startsWith('fm:organic:')).length, 32);
+  assert.equal(ids.filter((k) => k.startsWith('fm:organic:')).length, 46);
   for (const k of ids) {
     const o = doc.overrides[k];
     const hit = items[k.slice(3)];
@@ -52,6 +52,7 @@ test('33 overrides (31 OChem and 1 Bio with stale letters, plus OC-3), each matc
     assert.ok(!LETTER.test(o.why), k + ' cites no option letter: ' + (o.why.match(LETTER) || [''])[0]);
     assert.ok(/^[\x20-\x7e]*$/.test(o.why), k + ' is plain ASCII');
     assert.ok(!/\b(?:wrong|incorrect|failed)\b/i.test(o.why), k + ' has no verdict words');
+    assert.ok(!/\bkeyed\b|\bsingle correct answer\b|\ball valid, unique\b/i.test(o.why), k + ' carries no internal review note');
   }
   assert.ok(!/Keyed correct=0 is right/.test(doc.overrides['fm:organic:oc-1juifa8'].why));
 });
