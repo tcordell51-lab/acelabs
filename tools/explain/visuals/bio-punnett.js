@@ -104,7 +104,8 @@ function linked(s, W) {
     });
     y += gh + 8;
   };
-  out += t(x0, y + 4, (narrow ? 'Testcross offspring' : 'Testcross offspring, by the gamete from the ' + g1 + g2 + '/' + g1.toLowerCase() + g2.toLowerCase() + ' parent'), { size: 12.5, weight: 700, fill: C.mute });
+  // s.offspringTitle (optional): the heading over the classes, for a spec that names the rows as shares of all offspring
+  out += t(x0, y + 4, s.offspringTitle || (narrow ? 'Testcross offspring' : 'Testcross offspring, by the gamete from the ' + g1 + g2 + '/' + g1.toLowerCase() + g2.toLowerCase() + ' parent'), { size: 12.5, weight: 700, fill: C.mute });
   y += 12;
   group('parental', s.parentalLabel || 'Parental', false);
   group('recombinant', s.recombinantLabel || 'Recombinant', true);

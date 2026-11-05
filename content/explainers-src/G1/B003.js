@@ -919,7 +919,7 @@ const ENTRIES = [
       'Use Nernst: E = (0.0592 / n) log(1.0 / 0.01) = (0.0592 / 2) x 2 = 0.059 V.'
     ],
     choices: [
-      { text: '0.118 V', role: 'trap', family: 'miscount', trap: 'Used n = 1', note: '0.0592 x 2 = 0.118 leaves out n. Cu^2+ takes two electrons, so the 0.0592 is halved first.' },
+      { text: '0.118 V', role: 'trap', family: 'one-step-short', trap: 'Used n = 1', note: '0.0592 x 2 = 0.118 leaves out n. Cu^2+ takes two electrons, so the 0.0592 is halved first.' },
       { text: '−0.059 V', role: 'trap', family: 'sign-slip', trap: 'Ran it backward', note: 'Flipping the ratio to 0.01 / 1.0 makes the dilute side the cathode. Copper plates out where Cu^2+ is concentrated, so the cell reads positive.' },
       { text: '0', role: 'trap', family: 'neighbor-fact', trap: 'Standard potential only', note: '0 is the standard potential of a concentration cell. The concentrations differ 100 times, so the cell still makes a voltage.' },
       { text: '0.059 V', role: 'key', note: '(0.0592 / 2) x 2 = 0.059 V.' },

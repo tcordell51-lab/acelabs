@@ -174,7 +174,7 @@ const ENTRIES = [
       check: { vars: { s: 70, a: 90, b: 30 }, key: '100*s*a/(s*a+(100-s)*b)', routes: [{ choice: '90%', expr: 'a' }, { choice: '60%', expr: 'a-b' }, { choice: '~72%', expr: '(s*a+(100-s)*b)/100' }, { choice: '70%', expr: 's' }] },
       reuse: 'the pilot qr.tree (QR-3), on 100 students so every count is whole',
       alt: 'A tree from 100 students: 70 study, of whom 63 pass and 7 do not; 30 do not study, of whom 9 pass and 21 do not. The 63 studiers who pass are outlined as the numerator and the 9 other passers dashed as the rest of the denominator: 63 of 72, about 88 percent.',
-      caption: 'Once you know the student passed, only the two pass boxes in the middle matter: 63 of 72.'
+      caption: 'Once you know the student passed, only the two pass boxes, 63 and 9, matter: 63 of 72.'
     },
     demoPick: '90%',
     flags: [
@@ -614,8 +614,8 @@ const ENTRIES = [
       'Check it: 20 L of 25% holds 5 L of acid and 15 L of 60% holds 9 L. 14 L in 35 L is 40%.'
     ],
     choices: [
-      { text: '12 L', role: 'trap', family: 'miscount', trap: 'No clean route', note: 'No single slip lands on 12. With 12 L of the 25% solution the mix comes out at 48%, above the target.' },
-      { text: '10 L', role: 'trap', family: 'miscount', trap: 'No clean route', note: 'No single slip lands on 10 either. 10 L of the 25% solution makes a 50% mix: too much of the strong one.' },
+      { text: '12 L', role: 'trap', family: 'miscount', trap: 'Too much strong acid', note: 'No single slip lands on 12. With 12 L of the 25% solution the mix comes out at 48%, above the target.' },
+      { text: '10 L', role: 'trap', family: 'miscount', trap: 'Too much strong acid', note: 'No single slip lands on 10 either. 10 L of the 25% solution makes a 50% mix: too much of the strong one.' },
       { text: '25 L', role: 'trap', family: 'miscount', trap: 'Reused the 25', note: '25 L likely reuses the 25 from 25%. It would make a 35% mix, below the target.' },
       { text: '15 L', role: 'trap', family: 'other-question', trap: 'The other solution', note: '15 L is how much of the 60% solution goes in. The stem asks for the 25% solution, the bigger pour.' },
       { text: '20 L', role: 'key', note: 'The bigger pour, because 40% sits closer to 25%.' }
