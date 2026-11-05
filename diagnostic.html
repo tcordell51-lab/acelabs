@@ -649,7 +649,7 @@ body{
     <span class="al-product">Ace Labs</span>
   </a>
   <div class="al-top-right">
-    <span class="diag-progress-pill" id="topProgress" style="display:none">1 / 53</span>
+    <span class="diag-progress-pill" id="topProgress" style="display:none">1 / 60</span>
     <span class="diag-timer" id="topTimer" style="display:none">45:00</span>
   </div>
 </header>
@@ -662,11 +662,11 @@ body{
     <div class="diag-prev-banner" id="prevBanner"></div>
     <div class="diag-intro-card">
       <h1>Cross-Section <em>Diagnostic</em></h1>
-      <p class="lede">53 questions across the four sections Ace Labs covers: 15 Biology, 15 General Chemistry, 15 Organic Chemistry, and 8 Quantitative Reasoning. 45 minutes. At the end you will see per-section accuracy and your three weakest topic areas, so you know exactly where to focus this week.</p>
+      <p class="lede">60 questions: 15 Biology, 15 General Chemistry, 15 Organic Chemistry, and 15 Quantitative Reasoning. PAT and Reading have their own timed sections under Tests. 45 minutes. At the end you will see per-section accuracy and your three weakest topic areas, so you know exactly where to focus this week.</p>
 
       <div class="diag-meta-row">
         <div class="diag-meta-item">
-          <strong>53</strong>
+          <strong>60</strong>
           <span>questions total</span>
         </div>
         <div class="diag-meta-item">
@@ -674,7 +674,7 @@ body{
           <span>time limit</span>
         </div>
         <div class="diag-meta-item">
-          <strong>~50 s</strong>
+          <strong>~45 s</strong>
           <span>per question</span>
         </div>
         <div class="diag-meta-item">
@@ -698,7 +698,7 @@ body{
         </div>
         <div class="diag-section-pill qr">
           <span class="pill-label">Quant Reasoning</span>
-          8 questions
+          15 questions
         </div>
       </div>
 
@@ -729,7 +729,7 @@ body{
     <!-- Section strip -->
     <div class="diag-section-strip">
       <span class="diag-section-badge" id="qSectionBadge">Bio</span>
-      <span class="diag-q-counter" id="qCounter">Q1 of 53</span>
+      <span class="diag-q-counter" id="qCounter">Q1 of 60</span>
       <span class="diag-q-topic" id="qTopic"></span>
     </div>
 
@@ -760,7 +760,7 @@ body{
     <!-- Submit zone (appears near end) -->
     <div class="diag-submit-zone" id="submitZone" style="display:none">
       <p>
-        <span class="diag-answered-count" id="answeredCount">0</span> of <span id="answeredTotal">53</span> answered.
+        <span class="diag-answered-count" id="answeredCount">0</span> of <span id="answeredTotal">60</span> answered.
         Unanswered questions count as misses.
       </p>
       <button class="btn-primary" onclick="confirmSubmit()">Submit and see results</button>
@@ -810,7 +810,7 @@ body{
 'use strict';
 
 /* ── State ─────────────────────────────────────────────── */
-let pool = [];           // 53 drawn questions (15 Bio + 15 GC + 15 OChem + 8 QR)
+let pool = [];           // 60 drawn questions (15 Bio + 15 GC + 15 OChem + 15 QR)
 let currentIdx = 0;
 let answers = {};        // { idx: choiceIndex }
 let timerInterval = null;
@@ -1053,10 +1053,16 @@ window.addEventListener('DOMContentLoaded', async () => {
     const totalCount = bioCount + gcCount + ochemCount + qrCount;
     try{
       const lede = document.querySelector('#screenIntro .lede, .diag-intro .lede, .lede');
-      if(lede) lede.textContent = `${totalCount} questions across the four sections Ace Labs covers: ${bioCount} Biology, ${gcCount} General Chemistry, ${ochemCount} Organic Chemistry, and ${qrCount} Quantitative Reasoning. 45 minutes. At the end you will see per-section accuracy and your three weakest topic areas, so you know exactly where to focus this week.`;
+      if(lede) lede.textContent = `${totalCount} questions: ${bioCount} Biology, ${gcCount} General Chemistry, ${ochemCount} Organic Chemistry, and ${qrCount} Quantitative Reasoning. PAT and Reading have their own timed sections under Tests. 45 minutes. At the end you will see per-section accuracy and your three weakest topic areas, so you know exactly where to focus this week.`;
       const metas = document.querySelectorAll('.diag-meta-item strong');
       if(metas[0]) metas[0].textContent = String(totalCount);
       if(metas[2]) metas[2].textContent = '~' + Math.round(45 * 60 / Math.max(1, totalCount)) + ' s';
+      const pillCounts = {bio: bioCount, gc: gcCount, ochem: ochemCount, qr: qrCount};
+      document.querySelectorAll('#screenIntro .diag-section-pill').forEach(function(pill){
+        const key = ['bio','gc','ochem','qr'].find(function(k){ return pill.classList.contains(k); });
+        const label = pill.querySelector('.pill-label');
+        if(key && label && label.nextSibling) label.nextSibling.textContent = '\n          ' + pillCounts[key] + ' questions\n        ';
+      });
     }catch(e){}
 
     // An unfinished attempt on this device: offer to pick it up where it stopped

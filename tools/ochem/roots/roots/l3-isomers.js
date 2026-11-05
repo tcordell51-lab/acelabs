@@ -25,7 +25,7 @@ export const meta = {
   ],
   trap: 'Careful: Optically inactive does not mean no stereocenters; a meso compound has them, they just cancel across the internal mirror plane.',
   holdsUp: ['Every isomer-relationship question', 'Meso identification', 'Counting stereoisomers, two to the n', 'Tartaric acid and the sugars'],
-  drill: 'Conformations and Stereochemistry, in your OChem question bank'
+  drill: 'Practice questions on this topic, in the OChem engine or your own question bank'
 };
 
 /* ------------------------------------------------------------------ */

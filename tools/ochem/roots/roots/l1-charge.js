@@ -19,7 +19,7 @@ export const meta = {
   ],
   trap: 'Careful: a lone pair counts as two electrons toward the atom, but a bond counts as only one, because the atom is sharing it.',
   holdsUp: ['Resonance', 'Acidity', 'Nucleophile versus electrophile', 'Carbocations'],
-  drill: 'The Fundamentals, in your OChem question bank'
+  drill: 'Practice questions on this topic, in the OChem engine or your own question bank'
 };
 
 // ---------------------------------------------------------------- chemistry
