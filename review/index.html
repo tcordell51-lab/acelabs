@@ -46,7 +46,7 @@
     </div>
     <div class="tabs" id="sections" role="group" aria-label="Section"></div>
     <ul class="rows" id="list"></ul>
-    <p class="ladder">How the ladder works: say Got it and the miss comes back in 1 day, then 3, then 7. Got it on the 7-day retry and it moves to Mastered. Missed again sends it back to tomorrow. Due just means ready.</p>
+    <p class="ladder">How the ladder works: say Got it and the miss comes back in 1 day, then 3, then 7. Got it only counts once the retry is due. Mastered takes more than Got it: a scored question on it has to come back right after the 7-day retry. Missed again, or a new miss on it anywhere, sends it back to tomorrow. Due just means ready.</p>
     <p class="note">Want the trend over time? <a href="/performance/">Performance</a> has every timed result.</p>
   </section>
 </main>
@@ -68,7 +68,7 @@
 
 <script src="/shared/ace-index.js?v=2"></script>
 <script src="/shared/ace-route.js?v=1"></script>
-<script src="/shared/ace-progress.js?v=3"></script>
+<script src="/shared/ace-progress.js?v=4"></script>
 <script>
 (function () {
   var P = window.AceProgress, R = window.AceRoute, S = P.withStudent;
@@ -117,7 +117,7 @@
       var ask = askAce() ? '<a href="' + esc(S('/tutor/?miss=' + encodeURIComponent(m.id))) + '">Ask Ace</a>' : '';
       var retry = m.status === 'mastered'
         ? '<div class="retry"><button type="button" class="no" data-undo="' + esc(m.id) + '">Back to review</button></div>'
-        : '<div class="retry"><button type="button" class="ok" data-ok="' + esc(m.id) + '">Got it</button><button type="button" class="no" data-no="' + esc(m.id) + '">Missed again</button></div>';
+        : '<div class="retry">' + (m.isDue ? '<button type="button" class="ok" data-ok="' + esc(m.id) + '">Got it</button>' : '') + '<button type="button" class="no" data-no="' + esc(m.id) + '">Missed again</button></div>';
       return '<li><div class="what"><b>' + esc(m.concept) + '</b>' +
         '<div class="meta"><span class="sec-label" data-section="' + esc(m.section) + '">' + esc(R.SECTION_SHORT[m.section] || '') + '</span>' +
         '<span class="tag ' + m.status + '">' + TAG[m.status] + '</span>' +
@@ -134,7 +134,12 @@
     var b = e.target.closest('button'); if (!b) return;
     if (b.hasAttribute('data-f')) { state.f = b.getAttribute('data-f'); render(); return; }
     if (b.hasAttribute('data-s')) { state.s = b.getAttribute('data-s'); render(); return; }
-    if (b.hasAttribute('data-ok')) { var r = P.mark(b.getAttribute('data-ok'), true); toast(r.mastered ? 'Mastered. It leaves the open list.' : 'Nice. Back in ' + P.LEITNER_DAYS[r.box - 1] + ' day' + (P.LEITNER_DAYS[r.box - 1] === 1 ? '' : 's') + '.'); render(); return; }
+    if (b.hasAttribute('data-ok')) {
+      var r = P.mark(b.getAttribute('data-ok'), true), d = P.LEITNER_DAYS[r.box - 1];
+      toast(r.needsGraded ? 'Logged. It stays in review until a scored question on it comes back right.'
+        : r.advanced ? 'Nice. Back in ' + d + ' day' + (d === 1 ? '' : 's') + '.' : 'Not due yet. It comes back on its day.');
+      render(); return;
+    }
     if (b.hasAttribute('data-no')) { P.mark(b.getAttribute('data-no'), false); toast('Back tomorrow. Try the sheet first.'); render(); return; }
     if (b.hasAttribute('data-undo')) { P.mark(b.getAttribute('data-undo'), false); toast('Back on the ladder.'); render(); }
   });
