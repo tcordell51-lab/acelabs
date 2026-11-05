@@ -24,13 +24,15 @@
   function places(){try{return typeof def().places==='function'?def().places():[];}catch(e){return [];}}
   function html(){const cur=here(),rows=places(),groups=[...new Set(rows.map(r=>r.group))];
     const nx=nextStep();
-    return `<div class="ft-root"><p class="panel-intro">All six realms are open. Travel between their towns and opening routes. Press T for Travel and N for the next step.</p>
+    return `<div class="ft-root"><p class="panel-intro">All six realms are open. This list covers the realm you are in. To change realms, open the Realms map. Press T for Travel and N for the next step.</p>
+      <button type="button" class="ft-row ft-next-row" id="ftRealmsMap"><strong>Open the Realms map</strong><small>Choose any of the six DAT realms</small></button>
       ${nx&&nx.zone?`<button type="button" class="ft-row ft-next-row" id="ftNextRow"><strong>Next step, in order</strong><small>${esc(nx.label)}</small><small>${esc(nx.progress)}</small></button>`:''}
       ${groups.map(g=>`<div class="ft-chapter"><h4>${esc(g)}</h4><div class="ft-grid">${rows.filter(r=>r.group===g).map(r=>{const off=!r.charted||!r.reached||(r.needs&&!known(r.needs)),isHere=r.zone===cur;
         return `<button type="button" class="ft-row ${off?'is-off':''} ${isHere?'is-here':''}" data-ftgo="${esc(r.zone)}" ${off||isHere?'disabled':''}><strong>${esc(r.name)}</strong>${r.sub?`<small>${esc(r.sub)}</small>`:''}<em>${esc(isHere?'You are here':!r.charted?'Not yet charted':!r.reached?'Not reached yet':r.needs&&!known(r.needs)?'Needs '+(r.needsName||r.needs):r.status||'')}</em></button>`;}).join('')}</div></div>`).join('')}</div>`;}
   function open(){const a=A();if(!R()||!a||typeof a.panel!=='function')return false;a.panel('Travel',html(),true);const body=DOC&&DOC.getElementById('panelBody');if(!body)return true;
     body.querySelectorAll('[data-ftgo]').forEach(b=>b.addEventListener('click',()=>{if(!b.disabled)go(b.dataset.ftgo);}));
-    const nx=DOC.getElementById('ftNextRow');if(nx)nx.onclick=()=>goNext();return true;}
+    const nx=DOC.getElementById('ftNextRow');if(nx)nx.onclick=()=>goNext();
+    const rm=DOC.getElementById('ftRealmsMap');if(rm)rm.onclick=()=>{close();const b=DOC.getElementById('atlasMapButton');if(b)setTimeout(()=>b.click(),0);};return true;}
   function close(){try{A()&&A().closePanel&&A().closePanel();}catch(e){}}
   function go(z,pos){const Rg=R(),a=A();if(!Rg||!a||!Rg.ZONES.includes(z))return false;
     const p=places().find(x=>x.zone===z);if(p&&p.needs&&!known(p.needs)){a.notice&&a.notice(p.name+' needs '+(p.needsName||p.needs)+'.');return false;}
@@ -61,7 +63,8 @@
     // Native dialog close dispatches after close() returns. Start walking after
     // the app's close listener has resumed the world and cleared held input.
     const panel=DOC&&DOC.getElementById('worldPanel'),waiting=!!panel?.open;
-    const proceed=()=>{const left=pointAt(step);if(a&&a.notice)a.notice('Next step: '+step.label+(left?' '+left[0].toUpperCase()+left.slice(1):'')+' '+step.progress+'.');if(typeof step.open==='function'){try{step.open();}catch(e){}}};
+    // The closed dialog hands focus back to the Next step button, where Enter would reopen it; give it to the world.
+    const proceed=()=>{try{DOC.getElementById('adventureCanvas')?.focus({preventScroll:true});}catch(e){}const left=pointAt(step);if(a&&a.notice)a.notice('Next step: '+step.label+(left?' '+left[0].toUpperCase()+left.slice(1):'')+' '+step.progress+'.');if(typeof step.open==='function'){try{step.open();}catch(e){}}};
     if(waiting)panel.addEventListener('close',proceed,{once:true});
     const ok=here()===step.zone?(close(),true):go(step.zone);
     if(!ok){if(waiting)panel.removeEventListener('close',proceed);return false;}

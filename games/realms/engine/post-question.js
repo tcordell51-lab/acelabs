@@ -96,7 +96,7 @@
   // ---------- the card ----------
   function pickLine(item,idx){const n=normalize(item);if(!n.options||idx==null||idx<0||idx===n.answerIdx)return '';const la=lookalike(n,idx);
     const y=ascii(n.options[idx]),trap=ascii(n.trap||''),why=ascii(n.why[idx]||'');
-    const named=trap?`<span class="mq-trap"><b>Trap:</b> ${esc(clip(trap,170))}</span>`:why?`<span class="mq-trap">${esc(clip(why,170))}</span>`:'';
+    const named=why?`<span class="mq-trap">${esc(clip(why,170))}</span>`:trap?`<span class="mq-trap"><b>Trap:</b> ${esc(clip(trap,170))}</span>`:'';
     return `Your pick: <b>${esc(y)}</b>.${la?` It looks like the answer (both ${esc(la.group.toLowerCase())}: ${esc(la.pick.k)} vs ${esc(la.key.k)}).`:''} ${named}`;}
   function verdictOf(o){if(o.correct)return o.confidence==='guess'?'Correct and marked uncertain. Compare the reasoning before moving on.':'Right.';
     if(o.pickedIndex==null||o.pickedIndex<0)return 'Not recalled yet. Follow the model, then try another case.';

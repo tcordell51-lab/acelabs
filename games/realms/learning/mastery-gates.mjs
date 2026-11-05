@@ -62,7 +62,7 @@ export function createMasteryGates(root=globalThis){
     const missingObjectiveIds=records.filter(x=>!x.met).map(x=>x.objectiveId),exhaustedObjectiveIds=records.filter(x=>x.status==='checksExhausted').map(x=>x.objectiveId);
     const status=eligible?'ready':records.some(x=>x.status==='unavailable')?'unavailable':exhaustedObjectiveIds.length?'checksExhausted':'needsChecks';
     return {routeId,course:route.course,label:'Route checkpoint evidence',eligible,restoreAllowed:eligible,status,objectiveCount:records.length,metCount,objectives:records,missingObjectiveIds,exhaustedObjectiveIds,reasons:eligible?[]:[status],
-      note:eligible?'Every listed route objective has a saved independent correct check. This is not full-subject mastery or a DAT readiness prediction.':status==='checksExhausted'?'Some objectives have no unused reviewed check left. Replaying a known case remains practice; additional fresh reviewed cases are needed.':'Each route objective needs a saved correct check without help while that question was open. Earlier lessons remain recorded.'};
+      note:eligible?'Every listed route objective has a saved independent correct check. This is not full-subject mastery or a DAT readiness prediction.':status==='checksExhausted'?'Some objectives have no new check question left. Replaying a known case remains practice; new check questions are still to come.':'Each route objective needs a saved correct check without help while that question was open. Earlier lessons remain recorded.'};
   }
   function routeStatus(route){
     const routeId=typeof route==='string'?route:route?.id;

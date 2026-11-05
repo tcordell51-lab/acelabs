@@ -3,7 +3,7 @@
 self.ACE_DAT_OFFLINE_MANIFEST = {
   "schema": 1,
   "prefix": "ace-dat-realms-mnemon-v1",
-  "version": "b5251cc68ecb3d2f6d0d65ba7d8f9fd238d3c0bad127a1be7f4e100dcd9e209a",
+  "version": "35be8abab0f9a272783b5072327db3d3f2ce7dd79df2a52b7b24b62e4ddd1ade",
   "assets": [
     {
       "path": "boot.mjs",
@@ -811,7 +811,7 @@ self.ACE_DAT_OFFLINE_MANIFEST = {
     },
     {
       "path": "engine/adventure-world.js",
-      "sha256": "bb2bf2b55afd709b11ba79195b10fafc3dfb74f172fc0e038f3f08ced4b229b1"
+      "sha256": "fe02a21c6527225b49c825639b658775a21a9da17c07bc677551018bf630ace3"
     },
     {
       "path": "engine/atlas-region.css",
@@ -839,7 +839,7 @@ self.ACE_DAT_OFFLINE_MANIFEST = {
     },
     {
       "path": "engine/course-packs.js",
-      "sha256": "3bea0d2f5784d80709ea007a1b2643c889cdccb0c538d57ecf6f8aa0d01c9969"
+      "sha256": "c747c6fde14f9e9a9de4743edfa62b117a9d7993e49bb41ca5ee3357b24fdf59"
     },
     {
       "path": "engine/creature-lines.js",
@@ -855,7 +855,7 @@ self.ACE_DAT_OFFLINE_MANIFEST = {
     },
     {
       "path": "engine/exam-quest.js",
-      "sha256": "3aa18b4b0953604e4a2af4b550326806f7b91395aace9587dcb2771f99d933e0"
+      "sha256": "2287268d84d9e71cf7271c5da43a9c3a04132d1a25f6a0810e25b091643f3d81"
     },
     {
       "path": "engine/free-travel.css",
@@ -863,7 +863,7 @@ self.ACE_DAT_OFFLINE_MANIFEST = {
     },
     {
       "path": "engine/free-travel.js",
-      "sha256": "f1199eb3176e39e0506664885fd143cf83a480ba2bbf7a275570defae98d5dda"
+      "sha256": "a2f7980e06a279de2ab6d13495285dd32e8fd02b5575022760450d31e898542b"
     },
     {
       "path": "engine/gym-exam.css",
@@ -871,7 +871,7 @@ self.ACE_DAT_OFFLINE_MANIFEST = {
     },
     {
       "path": "engine/hud-calm.css",
-      "sha256": "de3f2e55cd7ddd94f757f322198764cd953472e8e9a014388d8d6c5b4c8bde4e"
+      "sha256": "286b95855cebcb9ac6693d0964bc0df7bd4de12dec64e91bcf1eee785f1d4842"
     },
     {
       "path": "engine/hud-calm.js",
@@ -915,7 +915,7 @@ self.ACE_DAT_OFFLINE_MANIFEST = {
     },
     {
       "path": "engine/post-question.js",
-      "sha256": "ff3ccdd36bce1b45ab9598320d4c268da338830caa02fc942a13942c2ea927f8"
+      "sha256": "35e892905034cf6a44926d696dd3ad5d4f11f5a9f89e807aa61ae2bb8f1da553"
     },
     {
       "path": "engine/save-contract.js",
@@ -939,7 +939,7 @@ self.ACE_DAT_OFFLINE_MANIFEST = {
     },
     {
       "path": "engine/team-collection.js",
-      "sha256": "119fc288537fb489816421b9014f76c3f6c1d3857842f243a58edefbd58e5387"
+      "sha256": "9382d78a7732f6e4b4d1a94f83cff8f464856fbe20082d338a22746d0ad32449"
     },
     {
       "path": "engine/world.js",
@@ -951,11 +951,11 @@ self.ACE_DAT_OFFLINE_MANIFEST = {
     },
     {
       "path": "learning/campaign-progress.mjs",
-      "sha256": "f3215be1671f6627e6708a50689e3e046e3a47c6aa17f61482e23865d7a046db"
+      "sha256": "afec12dd6cb8ad76c65dee6c3e6e5b0ddd38c8cce50ea32615c0e43f5d6d8cfc"
     },
     {
       "path": "learning/campaign-ui.mjs",
-      "sha256": "96e6366cce7234c2ba9bd4517757034b8ff20f0d103cf20db0c51e2a50b40f38"
+      "sha256": "8b49915b2083fd6fb473738e4bd5f457b7b0ae0476ca8543c786b96fdc18d3c2"
     },
     {
       "path": "learning/canon-discovery-notes.mjs",
@@ -1107,7 +1107,7 @@ self.ACE_DAT_OFFLINE_MANIFEST = {
     },
     {
       "path": "learning/guide.mjs",
-      "sha256": "e2b1fa6bbe4da73c38dd71362918a9dd68897eae32acf21d159eb88804608fbf"
+      "sha256": "f3e2981cc2eaa24e3c8f2661214d790ca1f2c5c9192c3d13c99167fed5ca156a"
     },
     {
       "path": "learning/labs.mjs",
@@ -1119,7 +1119,7 @@ self.ACE_DAT_OFFLINE_MANIFEST = {
     },
     {
       "path": "learning/mastery-gates.mjs",
-      "sha256": "edba42db8cb816a5a63851a5a2702efde808125e9ef673f6646f318275e1ff13"
+      "sha256": "4c2230931a4d2a290fef9cdee02708a5797e704f718cc85fb5ea799aad79d872"
     },
     {
       "path": "learning/pat-lab.mjs",
@@ -1191,7 +1191,7 @@ self.ACE_DAT_OFFLINE_MANIFEST = {
     },
     {
       "path": "worlds/realms.js",
-      "sha256": "e18680808ac6d3b67ae2415e2d0a281646e4c9ccbe1668dce6c2b7e95aa5edd7"
+      "sha256": "44351efcb3c199983e7ece4a08e6db72b3cef53687aef04bfcb138d3eebd3662"
     },
     {
       "path": "worlds/rendered-companions.mjs",
