@@ -68,6 +68,32 @@ test('the override applies only while the bank text matches; anything else falls
   assert.equal(api.why(id, bankWhy), bankWhy);
 });
 
+test('an override held by an open key dispute is not shown; the dispute is recorded with both answers', () => {
+  const kd = JSON.parse(fs.readFileSync(path.join(ROOT, 'docs/explainers/key-disputes.json'), 'utf8'));
+  const items = bankItems();
+  const open = (kd.open || []).filter((e) => e.status === 'open');
+  for (const e of open) {
+    assert.ok(e.qid.startsWith('fm:'), e.qid + ' uses the fm: qid');
+    const hit = items[e.qid.slice(3)];
+    assert.ok(hit, e.qid + ' is in the bank');
+    assert.equal(hit[0].it.correct, e.servedKey, e.qid + ' servedKey is the bank key');
+    assert.notEqual(e.suspectedKey, e.servedKey);
+    assert.equal(hit[0].it.opts[e.servedKey], e.servedKeyText);
+    assert.equal(hit[0].it.opts[e.suspectedKey], e.suspectedKeyText);
+    assert.ok(e.reasoning && e.reasoning.length > 40);
+    const o = doc.overrides[e.qid];
+    if (o) assert.ok(o.held, e.qid + ' override is held while the dispute is open');
+  }
+  assert.ok(open.some((e) => e.qid === 'fm:organic:oc-1jzd8nw'));
+  api.load(doc);
+  for (const [k, o] of Object.entries(doc.overrides)) {
+    if (!o.held) continue;
+    const bankWhy = items[k.slice(3)][0].it.why;
+    assert.equal(api.why(k.slice(3), bankWhy), bankWhy, k + ' held: the bank text shows');
+    assert.ok(open.some((e) => e.qid === k), k + ' is held only for an open dispute');
+  }
+});
+
 test('the full-length review screen renders the override, not the bank text', async () => {
   const html = fs.readFileSync(path.join(ROOT, 'tools/mock/full.html'), 'utf8').replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '');
   const dom = new JSDOM(html, { url: 'http://localhost/tools/mock/full.html', runScripts: 'outside-only', pretendToBeVisual: true });

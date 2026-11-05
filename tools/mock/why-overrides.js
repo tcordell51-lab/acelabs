@@ -2,7 +2,10 @@
    Reads content/explainers/why-overrides.json and gives the review screen
    ACE_WHY_OVERRIDES.why(itemId, bankWhy). An override shows only while the
    bank explanation still hashes to the override's bankWhyFnv1a, so a later
-   bank edit falls back to the bank's own text. The bank file is never edited. */
+   bank edit falls back to the bank's own text. The bank file is never edited.
+   An override with a "held" reason (an open key dispute, docs/explainers/
+   key-disputes.json) is not shown: the bank's own explanation stays until
+   Thomas rules (build spec 1.5, 1.9). */
 (function (root) {
   'use strict';
   var URL = '/content/explainers/why-overrides.json';
@@ -15,7 +18,7 @@
   function load(doc) { map = (doc && doc.overrides && typeof doc.overrides === 'object') ? doc.overrides : {}; return map; }
   function why(id, bankWhy) {
     var o = map && map['fm:' + id];
-    if (!o || typeof o.why !== 'string' || typeof bankWhy !== 'string') return bankWhy;
+    if (!o || o.held || typeof o.why !== 'string' || typeof bankWhy !== 'string') return bankWhy;
     return fnv(bankWhy) === o.bankWhyFnv1a ? o.why : bankWhy;
   }
   var api = { why: why, load: load, fnv: fnv, url: URL, ready: null };
