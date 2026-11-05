@@ -127,7 +127,7 @@ test('ids are validated: bad shape 400, unknown 404, prefix pulls refused', asyn
     assert.equal((await call('POST', { key: T_KEY, body: { action: 'pull', id } })).status, 400, String(id));
   }
   // a bare prefix would pull a whole section through the client's colon rule: never accepted
-  for (const id of ['retold', 'retold:bio', 'fm', 'fm:bio', 'pat', 'retold:bio:1:99']) {
+  for (const id of ['retold', 'retold:bio', 'explainer', 'explainer:fm', 'explainer:fm:bio', 'fm', 'pat', 'retold:bio:1:99']) {
     assert.equal((await call('POST', { key: T_KEY, body: { action: 'pull', id } })).status, 404, id);
   }
   assert.equal((await call('POST', { key: T_KEY, body: { action: 'delete', id: BIO.id } })).status, 400);

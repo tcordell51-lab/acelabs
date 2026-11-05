@@ -27,8 +27,17 @@ test('every auto-approved explainer and every stamped item is listed, with the s
   const dir = path.join(ROOT, 'content/approvals/stamps');
   const ids = new Set(INDEX.items.map((x) => x.id));
   for (const f of fs.readdirSync(dir).filter((n) => n.endsWith('.json'))) {
-    for (const it of read('content/approvals/stamps/' + f).items) assert.ok(ids.has(it.id.replace(/#/g, '.')), f + ': ' + it.id);
+    const doc = read('content/approvals/stamps/' + f);
+    const list = ['items', 'corrections', 'overrides'].flatMap((k) => doc[k] || []);
+    assert.ok(list.length > 0, f + ' lists items');
+    for (const it of list) {
+      const got = INDEX.items.find((x) => x.id === it.id.replace(/#/g, '.') && x.source.endsWith(f));
+      assert.ok(got, f + ': ' + it.id);
+      if (it.pullable === false || /correction/.test(it.kind)) assert.equal(got.pullable, false, 'a correction takes no pull: ' + it.id);
+    }
   }
+  assert.ok(INDEX.items.some((x) => x.kind === 'correction'), 'CONTENT-FIX corrections listed');
+  assert.ok(INDEX.items.some((x) => x.kind === 'override'), 'CONTENT-FIX overrides listed');
   for (const it of INDEX.items) {
     assert.equal(it.stamp, 'auto-approved 2026-10-30, pending Thomas review', it.id);
     assert.ok(['bio', 'gchem', 'ochem', 'qr', 'pat', 'rc', 'all'].includes(it.section), it.id);
@@ -38,11 +47,11 @@ test('every auto-approved explainer and every stamped item is listed, with the s
   assert.ok(INDEX.items.some((x) => x.id === 'retold:bio:1' && x.kind === 'retold-night' && x.pullable), 'the Bio night 1 night item');
 });
 
-test('explainer pull ids: the qid, with "#" as "." so shared/ace-pulls.js keeps it', () => {
+test('explainer pull ids: explainer:<qid>, with "#" as "." so shared/ace-pulls.js keeps it', () => {
   const hashed = INDEX.items.filter((x) => x.qid && x.qid.includes('#'));
   assert.ok(hashed.length > 0);
-  for (const it of hashed) assert.equal(it.id, it.qid.replace(/#/g, '.'));
-  for (const it of INDEX.items.filter((x) => x.kind === 'explainer' && !x.qid.includes('#'))) assert.equal(it.id, it.qid);
+  for (const it of hashed) assert.equal(it.id, 'explainer:' + it.qid.replace(/#/g, '.'));
+  for (const it of INDEX.items.filter((x) => x.kind === 'explainer' && !x.qid.includes('#'))) assert.equal(it.id, 'explainer:' + it.qid);
   // the stamp checksum matches the served sidecar on every explainer
   for (const it of INDEX.items.filter((x) => x.kind === 'explainer')) assert.equal(it.checksum.matches, true, it.id);
 });

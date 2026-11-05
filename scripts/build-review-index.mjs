@@ -20,8 +20,9 @@
 // locator in the sidecar) when a preview opens, the way the player does.
 //
 // Pull ids are what shared/ace-pulls.js matches (1 to 200 of A-Z a-z 0-9 : . _ / -, first one a
-// letter or digit). Explainers pull by their qid; the 14 generated qids that carry "#" pull with "."
-// in its place (pullIdOf below; the explainer player must ask AcePulls.isPulled(pullIdOf(qid))).
+// letter or digit). Explainers pull as explainer:<qid>, with "#" as "." (the generated qids that carry
+// "#" would otherwise be dropped by the client, a fail-open); the explainer player asks
+// AcePulls.isPulled('explainer:' + qid.replace(/#/g, '.')).
 // Retold items keep their stamp ids (retold:<course>:<night>:<scene>); every night that holds a
 // stamped scene also gets a night item retold:<course>:<night>, which takes the night out of the
 // course list and Today when pulled. A correction of a known factual error is listed with a comment
@@ -52,6 +53,9 @@ export const RETOLD = {
 };
 
 export const pullIdOf = (qid) => String(qid).replace(/#/g, '.');
+// An explainer pulls as explainer:<qid> ("#" as "."): the explainer player asks
+// AcePulls.isPulled(explainerPullId(qid)).
+export const explainerPullId = (qid) => 'explainer:' + pullIdOf(qid);
 const readJson = (root, rel) => JSON.parse(fs.readFileSync(path.join(root, rel), 'utf8'));
 const sha256 = (buf) => crypto.createHash('sha256').update(buf).digest('hex');
 // Titles stay plain ASCII (the copy rules allow the OS-61 notation only inside explainer files):
@@ -99,7 +103,7 @@ function explainerItems(root, problems) {
     const section = EXPLAINER_SECTION[entry.sec] || EXPLAINER_SECTION[coach && coach.section] || 'all';
     const pid = coach && coach.pid ? coach.pid : qid;
     items.push({
-      id: pullIdOf(qid),
+      id: explainerPullId(qid),
       qid,
       kind: 'explainer',
       section,
@@ -122,7 +126,15 @@ function sectionOf(item, qidSections) {
   if (item.section && (SECTIONS.includes(item.section) || item.section === 'all')) return item.section;
   const m = /^retold:([a-z]+):/.exec(item.id || '');
   if (m && RETOLD[m[1]]) return m[1];
-  if (item.qid && qidSections[item.qid]) return qidSections[item.qid];
+  // a correction: the area of the first file it changed
+  const files = Object.keys(item.files || {});
+  const AREA = [[/^tools\/(bio|bio-retold)\//, 'bio'], [/^tools\/(gc|gchem)\//, 'gchem'], [/^tools\/(ochem|organic)\//, 'ochem'], [/^tools\/(qr|qr-retold)\//, 'qr'], [/^tools\/(pat|pat-retold)\//, 'pat'], [/^tools\/(rc|rc-retold)\//, 'rc']];
+  if (files.length) { const areas = new Set(files.map((f) => (AREA.find(([re]) => re.test(f)) || [, 'all'])[1])); return areas.size === 1 ? [...areas][0] : 'all'; }
+  const qid = item.qid || item.id;
+  if (qid && qidSections[qid]) return qidSections[qid];
+  // a bank qid (fm:<bank>:<id>): the bank names the section
+  const b = /^fm:([a-z]+)(?:-[a-z])?:/.exec(qid || '');
+  if (b) return { bio: 'bio', organic: 'ochem', ochem: 'ochem', gchem: 'gchem', qr: 'qr', pat: 'pat', rc: 'rc' }[b[1]] || 'all';
   return 'all';
 }
 const isCorrection = (it) => it.pullable === false || /correction/i.test(String(it.kind || ''));
@@ -135,7 +147,11 @@ function stampItems(root, problems, qidSections) {
     let doc;
     try { doc = readJson(root, rel); } catch (e) { problems.push(rel + ': not JSON'); continue; }
     const batch = doc.batch || f.replace(/\.json$/, '');
-    for (const it of Array.isArray(doc.items) ? doc.items : []) {
+    // a stamps file lists its items under "items", or split as "corrections" and "overrides";
+    // an item without its own stamp takes the file's
+    const list = ['items', 'corrections', 'overrides'].flatMap((k) => (Array.isArray(doc[k]) ? doc[k] : []))
+      .map((it) => (it && typeof it === 'object' && it.stamp == null && typeof doc.stamp === 'string' ? { ...it, stamp: doc.stamp } : it));
+    for (const it of list) {
       if (!it || typeof it.id !== 'string' || typeof it.stamp !== 'string') { problems.push(rel + ': an item without id or stamp'); continue; }
       const id = pullIdOf(it.id);
       if (!ID_RE.test(id)) { problems.push(rel + ': id ' + JSON.stringify(it.id) + ' cannot be pulled (shared/ace-pulls.js would drop it)'); continue; }
@@ -145,14 +161,15 @@ function stampItems(root, problems, qidSections) {
         ...(it.qid ? { qid: it.qid } : {}),
         kind: String(it.kind || 'item'),
         section,
-        title: asciiNotation(clip(it.title || id, 160)),
-        place: typeof it.place === 'string' ? it.place : null,
+        title: asciiNotation(clip(it.title || it.what || (Array.isArray(it.served) && it.served.length ? it.served.join('; ') + ': explanation override' : '') || id, 160)),
+        place: placeOf(it),
         stamp: it.stamp,
         at: it.at || null,
         source: rel,
         batch,
         pullable: !isCorrection(it),
-        ...(it.change ? { change: String(it.change) } : {}),
+        ...(it.change || it.reason ? { change: String(it.change || it.reason) } : {}),
+        ...(it.note ? { pullNote: String(it.note) } : {}),
         ...(it.pull ? { pullNote: String(it.pull) } : {}),
         ...(it.decision ? { decision: String(it.decision) } : {}),
         ...(it.checksum ? { checksum: it.checksum } : {}),
@@ -162,13 +179,25 @@ function stampItems(root, problems, qidSections) {
   }
   return out;
 }
+// where the item shows: its place, or the first served page among the files it changed
+function placeOf(it) {
+  if (typeof it.place === 'string') return it.place;
+  const f = Object.keys(it.files || {}).find((x) => /\.html$/.test(x));
+  if (f) return '/' + f.replace(/(^|\/)index\.html$/, '$1');
+  if (it.kind === 'override') return '/tools/mock/full.html';
+  return null;
+}
 function previewFor(it, id) {
   const m = /^retold:([a-z]+):(\d+)(?::(\d+))?$/.exec(id);
   if (m && RETOLD[m[1]]) return { type: 'page', src: RETOLD[m[1]].place + '?night=' + m[2] + '&coach=1', scene: m[3] ? Number(m[3]) : null };
+  // an explanation override: the page reads the override (content/explainers/why-overrides.json)
+  // and the bank's own explanation it replaces
+  if (it.kind === 'override') return { type: 'override', file: '/' + String(it.file || 'content/explainers/why-overrides.json'), qid: it.id };
   const p = { type: 'text' };
   if (it.before != null) p.before = String(it.before);
   if (it.after != null) p.after = String(it.after);
-  if (typeof it.place === 'string' && it.place.startsWith('/')) p.src = it.place;
+  const place = placeOf(it);
+  if (place && place.startsWith('/')) p.src = place;
   return p;
 }
 // A night that holds a stamped scene gets its own item, so the whole night can be pulled.

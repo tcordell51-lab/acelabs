@@ -129,7 +129,9 @@ function card(it) {
   const p = S.pulls[it.id];
   const li = h('li', { class: 'rv-item' + (p ? ' is-pulled' : ''), 'data-sec': it.section, id: 'it-' + it.id.replace(/[^A-Za-z0-9_-]/g, '_') });
   li.append(h('p', { class: 'rv-meta' }, h('span', { text: SECTION[it.section] || it.section }), h('span', { text: KIND[it.kind] || it.kind }), h('code', { text: it.id })));
-  li.append(h('h3', {}, rich(it.title)));
+  // ids stay as typed (BIO_d036 is not a subscript); only the text after the first ": " is typeset
+  const cut = it.title.indexOf(': ');
+  li.append(h('h3', {}, cut > 0 ? [it.title.slice(0, cut + 2), rich(it.title.slice(cut + 2))] : it.title));
   const ck = it.checksum && typeof it.checksum.matches === 'boolean' ? (it.checksum.matches ? ' Checksum matches the served file.' : ' Checksum does not match: the stamp is void.') : '';
   li.append(h('p', { class: 'rv-stamp' }, h('b', { text: 'Stamp: ' }), it.stamp + (it.at ? ' (stamped ' + it.at + ')' : '') + '.' + ck));
   if (it.change) li.append(h('p', { class: 'rv-change', text: it.change }));
@@ -247,7 +249,8 @@ async function preview(it, box) {
     else if (pv.type === 'page') {
       box.append(h('p', { class: 'x-label', text: pv.scene ? 'The night, scene ' + pv.scene + ' (coach view: shows pulled parts too)' : 'The night (coach view: shows pulled parts too)' }));
       box.append(h('iframe', { src: pv.src, title: 'Preview of ' + it.title, loading: 'lazy', referrerpolicy: 'no-referrer' }));
-    } else {
+    } else if (pv.type === 'override') await override(it, pv, box);
+    else {
       if (pv.before != null) box.append(h('p', { class: 'x-label', text: 'Before' }), h('p', { class: 'x-before', text: pv.before }));
       if (pv.after != null) box.append(h('p', { class: 'x-label', text: 'After' }), h('p', { class: 'x-after', text: pv.after }));
       if (pv.src) box.append(h('p', {}, h('a', { href: pv.src, target: '_blank', rel: 'noopener', text: 'Open the page where it shows' })));
@@ -256,6 +259,20 @@ async function preview(it, box) {
   } catch (e) {
     box.append(h('p', { class: 'x-void', text: 'The preview did not load (' + (e && e.message ? e.message : 'error') + ').' }));
   }
+}
+// an explanation override: the bank's own explanation, then the text that replaces it
+async function override(it, pv, box) {
+  const r = await fetch(pv.file, { cache: 'no-store' });
+  if (!r.ok) throw new Error('overrides ' + r.status);
+  const doc = await r.json();
+  const o = (doc.overrides || {})[pv.qid];
+  if (!o) { box.append(h('p', { class: 'x-void', text: 'This override is no longer in the overrides file, so the bank explanation shows.' })); return; }
+  await classic('/tools/mock/data/full-mocks.js');
+  const id = pv.qid.split(':').slice(1).join(':');   // fm:organic:oc-x is bank item organic:oc-x
+  let bank = null;
+  for (const m of window.ACE_FULL_MOCKS.mocks || []) for (const arr of Object.values(m.sections)) { const x = arr.find((y) => y.id === id); if (x && !bank) bank = x; }
+  if (bank) box.append(h('div', {}, h('p', { class: 'x-label', text: 'Before: the bank explanation' }), h('p', { class: 'x-before' }, rich(bank.why))));
+  box.append(h('div', {}, h('p', { class: 'x-label', text: 'After: what students see' }), h('p', { class: 'x-after' }, rich(o.why))));
 }
 async function explainer(it, pv, box) {
   box.append(h('p', { class: 'x-label', text: 'Loading the explainer.' }));
@@ -267,7 +284,10 @@ async function explainer(it, pv, box) {
     box.append(h('p', { class: 'x-void', text: 'The served sidecar no longer matches its stamp, so it does not render here or for students. It needs a new review and stamp.' }));
     return;
   }
+  const wait = h('p', { class: 'x-label', text: 'Loading the question from its bank (a PAT test takes a few seconds to build).' });
+  box.append(wait);
   const x = JSON.parse(text), q = await question(x);
+  wait.remove();
   const choices = q.choices;
   if (q.missing) box.append(h('p', { class: 'x-void', text: 'The question did not load from its bank; the picture may not draw.' }));
   else if (x.bank && x.bank.keyText != null && choices[q.key] !== x.bank.keyText) box.append(h('p', { class: 'x-void', text: 'The bank key no longer matches this explainer (the player falls back to the bank explanation).' }));

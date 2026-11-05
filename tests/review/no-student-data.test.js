@@ -73,6 +73,16 @@ function sources() {
     assert.ok(q, it.id + ': its question resolves from ' + (sc.bank && sc.bank.file));
     add(sc.bank.file + ' ' + it.id + ' (question)', JSON.stringify(q), { qrQuestion: it.section === 'qr' });
   }
+  // each override preview: the override text and the bank explanation it replaces
+  const ov = JSON.parse(fs.readFileSync(path.join(ROOT, 'content/explainers/why-overrides.json'), 'utf8')).overrides || {};
+  for (const it of items.filter((x) => x.preview && x.preview.type === 'override')) {
+    const o = ov[it.preview.qid];
+    assert.ok(o, it.id + ': its override exists');
+    const id = it.preview.qid.split(':').slice(1).join(':');
+    let bank = null;
+    for (const m of banks.fm.mocks) for (const arr of Object.values(m.sections)) bank = bank || arr.find((y) => y.id === id) || null;
+    add('content/explainers/why-overrides.json ' + it.id, JSON.stringify(o.why) + JSON.stringify(bank ? bank.why : null));
+  }
   const seen = new Set();
   for (const it of items) {
     const p = it.preview || {};
