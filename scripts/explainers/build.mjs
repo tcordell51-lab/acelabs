@@ -973,10 +973,13 @@ emit(DOCS + '/gate-report.json', gateReport);
 
 /* ----------------------------------------------------------- write or check */
 const GENERATED_DIRS = [OUT, DOCS + '/coach', DOCS + '/passages', VENDOR];
+// Hand-written files that live in a generated folder: the build never writes,
+// checks or deletes them. why-overrides.json is CONTENT-FIX's display overrides.
+const HAND_WRITTEN = new Set([OUT + '/why-overrides.json']);
 function listGenerated() {
   const out = [];
   for (const d of GENERATED_DIRS) { const full = path.join(ROOT, d); if (!fs.existsSync(full)) continue; (function walk(dir) { for (const f of fs.readdirSync(dir)) { const p = path.join(dir, f); if (fs.statSync(p).isDirectory()) walk(p); else out.push(path.relative(ROOT, p).split(path.sep).join('/')); } })(full); }
-  return out;
+  return out.filter((rel) => !HAND_WRITTEN.has(rel));
 }
 const stale = [];
 if (CHECK) {
