@@ -3,7 +3,7 @@
 self.ACE_DAT_OFFLINE_MANIFEST = {
   "schema": 1,
   "prefix": "ace-dat-realms-mnemon-v1",
-  "version": "35be8abab0f9a272783b5072327db3d3f2ce7dd79df2a52b7b24b62e4ddd1ade",
+  "version": "2e8afd80c9141763d6ce70711a0f3c7b0a2252091c5afb4274dd727fbc5bc54b",
   "assets": [
     {
       "path": "boot.mjs",
@@ -871,7 +871,7 @@ self.ACE_DAT_OFFLINE_MANIFEST = {
     },
     {
       "path": "engine/hud-calm.css",
-      "sha256": "286b95855cebcb9ac6693d0964bc0df7bd4de12dec64e91bcf1eee785f1d4842"
+      "sha256": "054b88ee48296121b844e277bef56a3d7efb1cefb8eaf3d1fe17a169b42beb44"
     },
     {
       "path": "engine/hud-calm.js",
