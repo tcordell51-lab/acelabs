@@ -602,7 +602,12 @@
     $('landing').classList.add('hidden');
     document.body.style.overflow = '';
     var m = mockById(st.mockId);
+    var view = reviewView(st, res, m);
+    res = view.res;
+    R.report = { st: st, res0: view.res0, rec: rec, m: m, n: view.n };
     var sec = res.sections;
+    var shownCorrect = rec.totalCorrect, shownQs = rec.totalQs;
+    if (view.n) { shownCorrect = 0; shownQs = 0; SECTION_KEYS.forEach(function (k) { shownCorrect += sec[k].correct; shownQs += sec[k].total; }); }
     var card = function (k, label, c) { var s = sec[k]; return '<div class="sec-card" style="--c:' + c + '"><div class="k">' + label + '</div><div class="v">' + s.correct + ' / ' + s.total + '</div><div class="s">' + pct(s.correct, s.total) + '% correct, ' + minsec(s.timeSec) + ' of ' + (s.timeAllowedSec / 60) + ' min</div></div>'; };
     var subjRows = ['Biology', 'Gen Chem', 'OChem', 'PAT', 'RC', 'QR'].map(function (k) {
       var r = res.subjects[k] || { correct: 0, total: 0 }, p = pct(r.correct, r.total);
@@ -622,7 +627,8 @@
     $('report').classList.remove('hidden');
     $('report').innerHTML = '<header class="topbar"><a class="brand" href="/ace-labs.html">Ace <em>Labs</em></a><span class="spacer"></span><a class="back" href="#" id="toList">Full-length tests</a></header>' +
       '<div class="wrap report"><div class="rail"><div class="kicker">Practice report</div><h1>' + esc(m ? m.name : '') + ', <em>done.</em></h1>' +
-      '<p class="big-line">You answered <b>' + rec.totalCorrect + ' of ' + rec.totalQs + '</b> across all four sections. Finishing a full day of testing is its own skill, and you just practiced it. Below is where the points went and the exact place to win the next ones.</p></div>' +
+      '<p class="big-line">You answered <b>' + shownCorrect + ' of ' + shownQs + '</b> across all four sections. Finishing a full day of testing is its own skill, and you just practiced it. Below is where the points went and the exact place to win the next ones.</p>' +
+      (view.n ? '<p class="note">' + view.n + (view.n === 1 ? ' question has its' : ' questions have their') + ' answer key under review, so ' + (view.n === 1 ? 'it is' : 'they are') + ' left out of these counts and marked Key under review below.</p>' : '') + '</div>' +
       '<div class="sec-grid">' + card('sons', 'Natural Sciences', 'var(--bio)') + card('pat', 'Perceptual Ability', 'var(--pat)') + card('rc', 'Reading', 'var(--rc)') + card('qr', 'Quantitative', 'var(--qr)') + '</div>' +
       '<p class="note" style="margin-top:10px">Optional break used: ' + minsec(rec.breakSec || 0) + '. Raw scores only; Ace Labs does not convert practice scores to the scaled score.</p>' +
       '<h2>By subject</h2><div class="card" style="padding:8px 14px"><table class="tbl"><thead><tr><th>Subject</th><th class="r">Correct</th><th class="r">Accuracy</th><th class="r hide-sm"></th></tr></thead><tbody>' + subjRows + '</tbody></table></div>' +
@@ -637,6 +643,7 @@
         if (!d.open || box.childElementCount) return;
         box.innerHTML = (bySec[d.dataset.sec] || []).map(missHTML1).join('');
         drawReportMolecules(box);
+        liteEnhance(box, bySec[d.dataset.sec] || [], m);
       });
     });
     window.scrollTo(0, 0);
@@ -649,19 +656,19 @@
       var it = x.it, show = function (i) { return it.os ? '<span class="pm-mol" style="display:inline-block;vertical-align:middle;max-width:220px"><canvas data-smiles="' + esc(it.opts[i]) + '" width="220" height="110"></canvas></span>' : esc(it.opts[i]); };
       h += '<div class="q">' + esc(it.q) + '</div>';
       if (it.qs) h += '<span class="pm-mol" style="display:block;max-width:300px"><canvas data-smiles="' + esc(it.qs) + '" width="300" height="140"></canvas></span>';
-      h += '<div class="a">Your answer: <b>' + (ms.ans == null ? 'left open' : L[ms.ans] + '. ' + show(ms.ans)) + '</b><br>Correct: <b>' + L[it.correct] + '. ' + show(it.correct) + '</b></div>';
+      h += '<div class="a">Your answer: <b>' + (ms.ans == null ? 'left open' : L[ms.ans] + '. ' + show(ms.ans)) + '</b><br>' + (ms.disputed ? KEY_REVIEW : 'Correct: <b>' + L[it.correct] + '. ' + show(it.correct) + '</b>') + '</div>';
       h += '<div class="why">' + esc(window.ACE_WHY_OVERRIDES ? window.ACE_WHY_OVERRIDES.why(it.id, it.why) : it.why) + (ms.ans != null && it.traps && it.traps[ms.ans] ? '<br><br><b>About your pick:</b> ' + esc(it.traps[ms.ans]) : '') + '</div>';
       var night = it.nights && it.nights[0];
       h += '<div class="links"><a href="' + st.learn + (night ? '?night=' + night : '') + '">' + (night ? 'Retold night ' + night + ': ' : 'Retold: ') + esc(it.topic) + '</a><a href="' + st.review + '">' + st.engine + '</a></div>';
     } else if (x.kind === 'pat') {
       var p = x.it, P = PAT[p.type];
       h += '<div class="q">' + esc(p.prompt) + '</div><div class="pat-area" style="margin-top:8px"><div class="pat-paper" style="max-width:520px">' + P.renderFigure(p) + '</div></div>';
-      h += '<div class="a">Your answer: <b>' + you + '</b>. Correct: <b>' + L[p.answer] + '</b>.</div><div class="pat-area" style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px">' +
-        (ms.ans != null ? '<div style="max-width:160px"><div class="note">Your pick</div>' + P.renderOption(p, ms.ans) + '</div>' : '') + '<div style="max-width:160px"><div class="note">Correct</div>' + P.renderOption(p, p.answer) + '</div></div>';
+      h += '<div class="a">Your answer: <b>' + you + '</b>. ' + (ms.disputed ? KEY_REVIEW : 'Correct: <b>' + L[p.answer] + '</b>.') + '</div><div class="pat-area" style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px">' +
+        (ms.ans != null ? '<div style="max-width:160px"><div class="note">Your pick</div>' + P.renderOption(p, ms.ans) + '</div>' : '') + (ms.disputed ? '' : '<div style="max-width:160px"><div class="note">Correct</div>' + P.renderOption(p, p.answer) + '</div>') + '</div>';
       h += '<div class="links"><a href="/tools/pat/' + PAT_PAGE[p.type] + '">Practice ' + esc((PAT.SECTIONS.filter(function (s) { return s.type === p.type; })[0] || {}).name || 'this subtest') + '</a><a href="' + st.learn + '">PAT, Retold</a></div>';
     } else {
       var q = x.q, pr = (q.proof || [])[0];
-      h += '<div class="q">' + esc(q.stem) + '</div><div class="a">Your answer: <b>' + (ms.ans == null ? 'left open' : L[ms.ans] + '. ' + esc(q.choices[ms.ans])) + '</b><br>Correct: <b>' + L[q.key] + '. ' + esc(q.choices[q.key]) + '</b></div>' +
+      h += '<div class="q">' + esc(q.stem) + '</div><div class="a">Your answer: <b>' + (ms.ans == null ? 'left open' : L[ms.ans] + '. ' + esc(q.choices[ms.ans])) + '</b><br>' + (ms.disputed ? KEY_REVIEW : 'Correct: <b>' + L[q.key] + '. ' + esc(q.choices[q.key]) + '</b>') + '</div>' +
         '<div class="why">' + (pr ? '<b>Proof line, paragraph ' + pr.paragraph + ':</b> "' + esc(pr.quote) + '"<br><br>' : '') + esc(q.why) + '</div>' +
         '<div class="links"><a href="/tools/rc/">Practice this passage in the RC player</a><a href="' + st.learn + '">Reading, Retold</a></div>';
     }
@@ -671,6 +678,65 @@
     var cs = box.querySelectorAll('canvas[data-smiles]'); if (!cs.length) return;
     if (R.smi === null) drawMolecules();
     Array.prototype.forEach.call(cs, function (c) { if (!c.id) c.id = 'mol' + (++R.molN); try { if (R.smi) R.smi.draw(c.getAttribute('data-smiles'), '#' + c.id, 'light'); } catch (e) { /* the answer text is shown beside it */ } });
+  }
+
+  /* ---------------- explainers in the review (G1-LITE, tools/mock/explainer-lite.js) ----------------
+     The review lists the same items, scored the same way; the saved record is never touched.
+     An item with an open key dispute shows Key under review instead of the answer mark and is
+     left out of the counts shown here. A listed item of a form in AceExplainerLite.MOCKS opens its
+     stamped explainer; anything else keeps the bank explanation (or its override). */
+  var KEY_REVIEW = '<b class="key-review">Key under review</b>';
+  function liteApi() { var A = window.AceExplainerLite; return A && typeof A.isDisputed === 'function' ? A : null; }
+  function topicOf(x) { return x.kind === 'mc' ? x.it.topic : x.kind === 'pat' ? (PAT.SECTIONS.filter(function (s) { return s.type === x.it.type; })[0] || {}).name : (RC.types[x.q.type] || x.q.type); }
+  function reviewView(st, res, m) {
+    var A = liteApi(), n = 0;
+    if (!A || !m) return { res: res, res0: res, n: 0 };
+    var copy = function (o) { var c = {}; Object.keys(o).forEach(function (k) { c[k] = { correct: o[k].correct, total: o[k].total }; }); return c; };
+    var out = { sections: {}, subjects: copy(res.subjects), topics: copy(res.topics), misses: [] };
+    var missed = {};
+    res.misses.forEach(function (ms) { missed[ms.sec + ':' + ms.i] = ms; });
+    SECTION_KEYS.forEach(function (sk) {
+      var s0 = res.sections[sk], s = out.sections[sk] = {};
+      Object.keys(s0).forEach(function (k) { s[k] = s0[k]; });
+      items(sk).forEach(function (x, i) {
+        var ms = missed[sk + ':' + i];
+        if (!A.isDisputed(A.qidFor(m, sk, i, x))) { if (ms) out.misses.push(ms); return; }
+        n++;
+        var ok = !ms, drop = function (r) { if (r) { r.total--; if (ok) r.correct--; } };
+        drop(s); drop(out.subjects[x.sub]); drop(out.topics[x.sub + '|' + topicOf(x)]);
+        out.misses.push({ sec: sk, i: i, x: x, ans: st.answers[sk][i], disputed: true });
+      });
+    });
+    return n ? { res: out, res0: res, n: n } : { res: res, res0: res, n: 0 };
+  }
+  function liteEnhance(box, list, m) {
+    var A = liteApi();
+    if (!A || !m || !A.MOCKS || A.MOCKS.indexOf(m.id) < 0 || typeof A.attach !== 'function') return;
+    var cards = box.querySelectorAll('.miss');
+    list.forEach(function (ms, k) {
+      var el = cards[k];
+      if (!el || el.hasAttribute('data-lite-qid')) return;
+      try { A.attach(el, { qid: A.qidFor(m, ms.sec, ms.i, ms.x), served: A.served(ms.x), picked: ms.ans }).catch(function () {}); } catch (e) { /* the bank explanation stays */ }
+    });
+  }
+  /* explainer-lite.js and its styles load beside the page; a report already on screen picks them up */
+  function loadLite() {
+    if (!document.querySelector('link[data-lite]')) {
+      var l = document.createElement('link'); l.rel = 'stylesheet'; l.href = 'explainer-lite.css'; l.setAttribute('data-lite', '');
+      document.head.appendChild(l);
+    }
+    if (window.AceExplainerLite || document.querySelector('script[data-lite]')) return;
+    var s = document.createElement('script'); s.src = 'explainer-lite.js'; s.setAttribute('data-lite', '');
+    s.onload = function () {
+      var r = R.report;
+      if (!r || $('report').classList.contains('hidden') || !$('report').querySelector('.report')) return;
+      if (reviewView(r.st, r.res0, r.m).n) { renderReport(r.st, r.res0, r.rec); return; }
+      Array.prototype.forEach.call($('report').querySelectorAll('details[data-sec]'), function (d) {
+        var box = d.querySelector('.miss-list');
+        if (d.open && box && box.childElementCount) liteEnhance(box, r.res0.misses.filter(function (ms) { return ms.sec === d.dataset.sec; }), r.m);
+      });
+    };
+    document.head.appendChild(s);
   }
 
   /* ---------------- test hook (headless checks) ---------------- */
@@ -687,5 +753,6 @@
     elapse: function (sec) { if (S && S.at === 'run') S.elapsed[S.sec] += sec; }
   };
 
+  loadLite();
   renderLanding();
 })();

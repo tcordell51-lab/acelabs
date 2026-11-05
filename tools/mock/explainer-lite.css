@@ -1,0 +1,161 @@
+/* explainer-lite.css : explainers inside the full-length review (G1-LITE).
+   The report around them is the page's dark theme (full.css); the text of an
+   explainer uses it too. The picture sits on paper, as it was drawn and
+   reviewed (tools/explain/preview.css), with that page's light palette scoped
+   to the picture card. Visual rules below are the preview's, scoped. */
+.lite { margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--line-2); font-size: 14.5px; line-height: 1.6; color: var(--ink-2); }
+.lite.is-loading { visibility: hidden; height: 0; overflow: hidden; margin: 0; padding: 0; border: 0; }
+.lite-line { margin: 10px 0 0; color: var(--ink); }
+.lite-label { margin: 14px 0 6px; font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--gold); }
+.lite-steps { margin: 0; padding: 0; list-style: none; counter-reset: st; display: grid; gap: 8px; }
+.lite-steps li { counter-increment: st; position: relative; padding-left: 34px; }
+.lite-steps li::before { content: counter(st); position: absolute; left: 0; top: 1px; width: 24px; height: 24px; border-radius: 50%; border: 1px solid var(--gold-d); color: var(--gold-hi); font-size: 13px; font-weight: 700; display: grid; place-items: center; }
+.lite-traps { margin: 0; padding: 0; list-style: none; display: grid; gap: 8px; }
+.lite-trap { background: var(--panel-2); border: 1px solid var(--line); border-left: 3px solid var(--faint); border-radius: 8px; padding: 9px 12px; }
+.lite-trap.is-pick { border-left-color: var(--miss); }
+.lite-trap.is-stated { border-left-color: var(--gc); }
+.lite-trap-h { display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline; }
+.lite-trap-choice { font-weight: 700; color: var(--ink); overflow-wrap: anywhere; }
+.lite-you { font-style: normal; font-size: 12px; font-weight: 700; color: var(--miss); }
+.lite-trap-name { margin-top: 2px; font-size: 13px; font-weight: 700; color: var(--gold-hi); }
+.lite-trap-fam { margin-left: 8px; padding: 1px 6px; border: 1px solid var(--line-2); border-radius: 10px; font-size: 12px; font-weight: 400; color: var(--muted); white-space: nowrap; }
+.lite-trap-note { margin: 4px 0 0; }
+.lite-lock { margin-top: 14px; background: var(--panel-3); border: 1px solid var(--line-2); border-radius: 10px; padding: 10px 14px; }
+.lite-lock span { display: block; font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--gold); }
+.lite-lock p { margin: 4px 0 0; font-size: 15.5px; color: var(--ink); }
+.lite-hook { margin: 10px 0 0; font-style: italic; }
+.lite-hook span { font-style: normal; font-weight: 700; color: var(--gold-hi); }
+.lite sup, .lite sub { font-size: .72em; line-height: 0; }
+.miss .key-review { display: inline-block; padding: 2px 10px; border: 1px solid var(--gold); border-radius: 999px; color: var(--gold-hi); font-size: 13px; }
+
+/* the picture: paper, the explainer preview's light palette */
+.lite-vis {
+  --ok: #00704f; --ok-bg: #e2f4ec; --nr: #9b4500; --nr-bg: #fbece0; --line: #d6dfda; --mute: #5c6a63; --ink: #16211c;
+  --goldhi: #7a5c12; --blue: #1f57b5; --coral: #b8321f; --green: #00704f; --amber: #9a6a00; --grey: #6b6b6b;
+  --ink2: #3b4a43; --ink3: #5c6a63; --panel: #ffffff; --bg: #ffffff; --gold: #C9A84C; --gold-d: #8C7235; --ace: #1B3A2D;
+  color: var(--ink); font-family: Arial, Helvetica, sans-serif; font-size: 15px; line-height: 1.5;
+}
+.lite-vis button { color: var(--ink); }
+.lite-vis svg { max-width: 100%; }
+.lite-vis .vis { margin: 0; background: #fff; border: 1px solid #e1e7e3; border-radius: 10px; padding: 12px 10px 10px; }
+.lite-vis .vis-body { display: grid; gap: 14px; }
+.lite-vis .vis figcaption { margin-top: 10px; padding-top: 8px; border-top: 1px solid #edf1ee; font-size: 14px; color: var(--ink2); }
+.lite-vis .vis-note { margin: 6px 4px 0; font-size: 13px; color: var(--mute); }
+.lite-vis .vis-err { color: var(--nr); }
+.lite-vis .vis-legend { margin: 8px 6px 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 4px 12px; font-size: 14px; }
+.lite-vis .vis-legend li { display: flex; gap: 8px; align-items: center; }
+.lite-vis .vis-legend .n { flex: none; width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid var(--ink2); display: grid; place-items: center; font-size: 12px; font-weight: 700; }
+.lite-vis .vis-legend li.is-key { font-weight: 700; color: var(--ok); }
+.lite-vis .vis-legend li.is-key .n { background: var(--ok); border-color: var(--ok); color: #fff; }
+.lite-vis .vis-swatches { display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 8px 6px 0; font-size: 13px; color: var(--ink2); }
+.lite-vis .vis-swatches i { display: inline-block; width: 12px; height: 12px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; }
+.lite-vis .rxn { display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; }
+.lite-vis .rxn-mol { display: flex; flex-direction: column; align-items: center; min-width: 0; }
+.lite-vis .rxn-label { font-size: 13px; color: var(--ink2); margin-top: 2px; text-align: center; }
+.lite-vis .rxn-arrow { display: flex; flex-direction: column; align-items: center; min-width: 90px; font-size: 14px; font-weight: 700; color: var(--ink2); }
+.lite-vis .rxn-arrow i { display: block; width: 90px; height: 2px; background: var(--ink2); position: relative; margin-top: 4px; }
+.lite-vis .rxn-arrow i::after { content: ''; position: absolute; right: -1px; top: -5px; border: 6px solid transparent; border-left: 9px solid var(--ink2); border-right: 0; }
+.lite-vis .rxn.rxn-col { flex-direction: column; flex-wrap: nowrap; }
+.lite-vis .rxn-col .rxn-arrow { flex-direction: row; gap: 10px; min-width: 0; }
+.lite-vis .rxn-col .rxn-arrow i { width: 2px; height: 40px; margin: 0; order: -1; }
+.lite-vis .rxn-col .rxn-arrow i::after { right: -5px; top: auto; bottom: -1px; border: 6px solid transparent; border-top: 9px solid var(--ink2); border-bottom: 0; }
+.lite-vis .ladder { margin: 4px auto 0; max-width: 360px; width: 100%; font-size: 14px; }
+.lite-vis .ladder-t { font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--mute); margin-bottom: 4px; }
+.lite-vis .ladder-r { display: flex; gap: 10px; align-items: center; padding: 5px 8px; border: 1px solid #e3e8e5; border-radius: 6px; margin-bottom: 4px; }
+.lite-vis .ladder-r b { width: 18px; color: var(--mute); }
+.lite-vis .ladder-r em { margin-left: auto; font-style: normal; font-size: 12px; font-weight: 700; color: var(--ok); }
+.lite-vis .ladder-r.is-key { border: 2px solid var(--ok); background: var(--ok-bg); font-weight: 700; }
+.lite-vis .molrow { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: center; }
+.lite-vis .cip-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; flex: 1 1 260px; }
+.lite-vis .cip-card { border: 1.5px solid var(--ok); border-radius: 8px; padding: 8px 10px; background: #f7fcf9; font-size: 14px; }
+.lite-vis .cip-h { display: flex; justify-content: space-between; align-items: center; }
+.lite-vis .cip-r { display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--ok); color: #fff; font-weight: 700; }
+.lite-vis .cip-card ol { margin: 6px 0 4px 18px; padding: 0; }
+.lite-vis .cip-card li em { font-style: normal; font-size: 12px; color: var(--mute); margin-left: 6px; }
+.lite-vis .cip-card p { margin: 0; font-size: 13px; color: var(--ink2); }
+.lite-vis .ls-canvas .atom-circle { fill: #fff; stroke: var(--ink); stroke-width: 1.6; }
+.lite-vis .ls-canvas .atom-circle.is-central { stroke: var(--ok); stroke-width: 2.4; }
+.lite-vis .ls-canvas .atom-label { font-family: Georgia, serif; font-weight: 700; font-size: 17px; fill: var(--ink); text-anchor: middle; dominant-baseline: central; }
+.lite-vis .ls-canvas .bond-stroke { stroke: var(--ink); stroke-width: 2; stroke-linecap: round; }
+.lite-vis .ls-canvas .lp-dot { fill: var(--ink); }
+.lite-vis .ls-canvas .lp-dot.is-key { fill: var(--ok); }
+.lite-vis .lewis-row { display: grid; gap: 10px; }
+.lite-vis .lewis-row.wide { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center; }
+.lite-vis .ledger { border: 1px solid #dbe3de; border-radius: 8px; padding: 8px 12px; font-size: 14.5px; background: #fbfcfb; }
+.lite-vis .ledger-h { font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--mute); margin-bottom: 4px; }
+.lite-vis .ledger-r { display: flex; justify-content: space-between; gap: 10px; padding: 4px 0; border-bottom: 1px dashed #e3e8e5; }
+.lite-vis .ledger-r.is-sum { font-weight: 700; }
+.lite-vis .ledger-r.is-key { color: var(--ok); font-weight: 700; border: 2px solid var(--ok); border-radius: 6px; padding: 4px 8px; margin-top: 6px; background: var(--ok-bg); }
+.lite-vis .ledger-f { margin-top: 6px; font-size: 13.5px; color: var(--ink2); }
+.lite-vis .md-chain { gap: 8px !important; }
+.lite-vis .md-step { border-color: #e1e7e3 !important; }
+.lite-vis .md-mech { max-width: 100%; height: auto; }
+/* PAT explainer views */
+.lite-vis .pat-truth { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.lite-vis .pat-tpanel { margin: 0; }
+.lite-vis .pat-tpanel figcaption { text-align: center; font-size: 13px; margin-top: 4px; }
+.lite-vis .pat-tpanel .rk { color: var(--ok); font-weight: 700; }
+.lite-vis .pat-fan { margin-top: 6px; }
+.lite-vis .pat-fan-key { margin: 6px 0 0 4px; padding-left: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 2px 14px; font-size: 14px; font-weight: 700; }
+.lite-vis .pat-fan-key i { display: inline-block; width: 14px; height: 4px; margin-right: 6px; vertical-align: 3px; }
+.lite-vis .pat-unfold { display: flex; align-items: center; justify-content: center; gap: 6px; flex-wrap: wrap; }
+.lite-vis .pat-ustep { margin: 0; flex: 1 1 140px; max-width: 200px; }
+.lite-vis .pat-ustep figcaption { font-size: 13px; text-align: center; margin-top: 4px; }
+.lite-vis .pat-ustep.is-key .pat-paper { border: 2px solid var(--ok); }
+.lite-vis .pat-uarrow { flex: none; width: 10px; height: 10px; border-top: 2.5px solid var(--mute); border-right: 2.5px solid var(--mute); transform: rotate(45deg); margin: 0 4px; }
+.lite-vis .pat-cubes-row { display: grid; gap: 12px; }
+.lite-vis .pat-cfig { margin: 0; }
+.lite-vis .pat-cfig .pat-paper { max-width: 360px; margin: 0 auto; }
+.lite-vis .pat-cfig figcaption { text-align: center; font-size: 13px; margin-top: 4px; }
+.lite-vis .pat-maps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.lite-vis .pat-mapfig { margin: 0; text-align: center; }
+.lite-vis .pat-map { display: grid; gap: 3px; max-width: 120px; margin: 0 auto; }
+.lite-vis .pat-map span { aspect-ratio: 1; display: grid; place-items: center; font-size: 14px; font-weight: 700; border-radius: 4px; }
+.lite-vis .pat-map .c { background: #f1f4f2; border: 1px solid #c9d2cd; }
+.lite-vis .pat-map .e { background: transparent; }
+.lite-vis .pat-map .is-key { background: var(--ok); border-color: var(--ok); color: #fff; outline: 2px solid var(--ok); outline-offset: 1px; }
+.lite-vis .pat-map-dir { font-size: 11px; color: var(--mute); letter-spacing: .06em; text-transform: uppercase; }
+.lite-vis .pat-mapfig figcaption { font-size: 12.5px; margin-top: 2px; }
+/* RC evidence */
+.lite-vis .ev-list { display: grid; gap: 8px; }
+.lite-vis .ev-card { border: 1px solid #e1e7e3; border-left: 4px solid #b9c4be; border-radius: 8px; padding: 8px 12px; background: #fff; }
+.lite-vis .ev-card-key { border-left-color: var(--ok); }
+.lite-vis .ev-card-trap { border-left-color: #c26a1b; }
+.lite-vis .ev-card-stated { border-left-color: #6d8fc9; }
+.lite-vis .ev-card-context { border-left-color: #b08a2e; }
+.lite-vis .ev-head { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; font-size: 12.5px; color: var(--mute); }
+.lite-vis .ev-k { font-style: normal; font-weight: 700; }
+.lite-vis .ev-k-key { color: var(--ok); }
+.lite-vis .ev-k-trap { color: var(--nr); }
+.lite-vis .ev-k-stated { color: #3b5f9e; }
+.lite-vis .ev-k-context { color: #7a5c12; }
+.lite-vis .ev-text { margin: 4px 0 0; font-size: 15px; line-height: 1.65; }
+.lite-vis .ev-text mark { padding: 1px 2px; border-radius: 3px; }
+.lite-vis mark.ev-key { background: #c9efdc; box-shadow: inset 0 -2px 0 var(--ok); }
+.lite-vis mark.ev-trap { background: #fde3cc; }
+.lite-vis mark.ev-stated { background: #dbe6f8; }
+.lite-vis mark.ev-context { background: #f6ecd2; box-shadow: inset 0 -1px 0 #b08a2e; }
+.lite-vis .ev-tag { font-size: 12px; font-weight: 700; margin-right: 2px; color: var(--ink2); }
+.lite-vis .ev-note { margin: 4px 0 0; font-size: 13px; color: var(--mute); }
+.lite-vis .ev-link { justify-self: center; font-size: 13.5px; font-weight: 700; color: var(--ok); border: 1.5px dashed var(--ok); border-radius: 999px; padding: 3px 12px; background: var(--ok-bg); }
+
+.lite-vis .pat-map-dir { font-size: 11px; color: var(--mute); letter-spacing: .06em; text-transform: uppercase; }
+.lite-vis .pat-map-dir { font-size: 12px; }
+.lite-vis .pat-map-key { grid-column: 1 / -1; margin: 0 0 4px; font-size: 12.5px; color: var(--mute); text-align: left; }
+.lite-vis .cip-card p.cip-trace { margin-top: 4px; font-weight: 700; color: var(--ink); }
+.lite-vis .mstep { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 6px 0 2px; }
+.lite-vis .mstep-n { font-size: 13.5px; font-weight: 700; color: var(--ink2); }
+.lite-vis .mstep-btn { min-height: 40px; padding: 6px 10px; border: 1px solid var(--line, #cfd8d3); border-radius: 8px; background: #fff; font: inherit; font-size: 13.5px; cursor: pointer; }
+.lite-vis .mstep-btn:disabled { opacity: .45; cursor: default; }
+.lite-vis .vis .md-step-n, .lite-vis .vis .md-meta { font-size: 12px; }
+@media (max-width: 640px) {
+  .lite-vis .vis { padding: 10px 6px 8px; }
+  .lite-vis .pat-truth { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .lite-vis .pat-maps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 559px) {
+  .lite-vis .pat-maps { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+  .lite-vis .pat-map span { font-size: 12.5px; border-radius: 3px; }
+  .lite-vis .pat-truth { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; }
+  .lite-vis .pat-tpanel figcaption { font-size: 12px; line-height: 1.3; }
+}
