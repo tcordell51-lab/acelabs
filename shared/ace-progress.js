@@ -48,7 +48,14 @@
      settings(), saveSettings(patch)   daily minutes, test date, shakiest sections
      todayPlan(opts)     the plan behind Today (spec 1.7): a coach line, an
                          honest source line, at most 4 steps (step 1 playable
-                         in under 3 minutes), what moved to tomorrow, the mode */
+                         in under 3 minutes), what moved to tomorrow, the mode
+   B1.2t, the pull check only: today() and todayPlan() never plan a Retold night
+   that is pulled (retold:<section>:<night>, shared/ace-pulls.js). A pulled night
+   gives way to the course's next open night; a course with none left, a pulled
+   one-scene re-plan and a coach step on a pulled night are left out.
+     isPulled(id)        AcePulls.isPulled when the page loads it, and always the
+                         list it last stored on this browser (acelabs.v1.pulls)
+     nightPulled(s, n), openNight(s, n)   the night checks the plan uses */
 (function () {
   'use strict';
   var NS = 'ace.v1.';
@@ -720,6 +727,45 @@
     var best = null; Object.keys(c).forEach(function (k) { if (!best || c[k] > c[best]) best = k; });
     return best || (profile().weakAreas[0] || null);
   }
+  /* ---------------- pulls (B1.2t): a pulled Retold night is never planned ----------------
+     AcePulls (shared/ace-pulls.js) when the page loads it, and always the list it
+     last stored here: { ids: the last good live list, snap: the release snapshot }.
+     A pull in either counts, and a pulled id pulls every id that extends it at a
+     colon (a pulled course pulls its nights). Nothing here fetches. */
+  var PULLS_KEY = 'acelabs.v1.pulls';
+  function isPulled(id) {
+    if (typeof id !== 'string' || !id) return false;
+    var A = window.AcePulls;
+    if (A && typeof A.isPulled === 'function') { try { if (A.isPulled(id)) return true; } catch (e) { /* fall through to the stored list */ } }
+    var v = read(PULLS_KEY, null), ids = [];
+    if (v && typeof v === 'object') [v.ids, v.snap].forEach(function (l) { if (Array.isArray(l)) ids = ids.concat(l); });
+    var parts = id.split(':');
+    for (var n = parts.length; n >= 1; n--) if (ids.indexOf(parts.slice(0, n).join(':')) >= 0) return true;
+    return false;
+  }
+  function nightPulled(s, n) { return !!s && isPulled('retold:' + s + ':' + n); }
+  /* night n, or the course's next night that is not pulled; null when none is left */
+  function openNight(s, n) {
+    n = Math.max(1, Math.floor(+n || 1));
+    if (!nightPulled(s, n)) return n;
+    var I = window.AceIndex, L = I && I.nights && I.nights[s], later = [];
+    if (L && L.length) L.forEach(function (x) { if (x && +x.n > n) later.push(+x.n); });
+    else for (var m = n + 1; m <= n + 40; m++) later.push(m);
+    later.sort(function (a, b) { return a - b; });
+    for (var i = 0; i < later.length; i++) if (!nightPulled(s, later[i])) return later[i];
+    return null;
+  }
+  /* the Retold night a link opens ({ s, n }), or null */
+  function nightOfHref(href) {
+    var I = window.AceIndex, cs = I && I.courses;
+    if (!cs || !href) return null;
+    var h = String(href), q = h.indexOf('?'), p = (q >= 0 ? h.slice(0, q) : h.split('#')[0]).replace(/^https?:\/\/[^\/]+/, '');
+    var m = /[?&]night=(\d+)/.exec(q >= 0 ? h.slice(q) : '');
+    if (!m) return null;
+    for (var s in cs) if (Object.prototype.hasOwnProperty.call(cs, s) && cs[s] && cs[s].url && p.replace(/index\.html$/, '') === cs[s].url) return { s: s, n: +m[1] };
+    return null;
+  }
+
   /* A finite local queue, built from what the student actually did: due misses,
      the Climb's queue, one Learn night where the misses cluster, the next test. */
   function today() {
@@ -734,8 +780,8 @@
       var top = ms.filter(function (m) { return m.section === ws; })[0];
       var l = top && window.AceRoute ? window.AceRoute.links(top) : null;
       var lp = learnProgress(ws, 20);
-      var n = (l && l.night) || (lp && lp.next) || 1;
-      tasks.push({ kind: 'learn', title: (R.SECTION_SHORT ? R.SECTION_SHORT[ws] : ws) + ', Retold: night ' + n,
+      var n = openNight(ws, (l && l.night) || (lp && lp.next) || 1);
+      if (n) tasks.push({ kind: 'learn', title: (R.SECTION_SHORT ? R.SECTION_SHORT[ws] : ws) + ', Retold: night ' + n,
         detail: (window.AceRoute ? window.AceRoute.nightTitle(ws, n) : '') || 'Pick up the course where it helps most.', minutes: 30, href: window.AceIndex.courses[ws].url + '?night=' + n });
     }
     var nt = nextTest();
@@ -1064,15 +1110,16 @@
     if (mode === 'normal' && !coach) {
       if (onboardedToday) {
         var sk = st.shaky.length ? st.shaky : ['bio'];
-        cands.push({ key: 'learn', kind: 'learn', door: 'learn', section: sk[0], title: courseName(sk[0]) + ': night 1', detail: nightTitleOf(sk[0], 1), minutes: 30, href: withStudent(nightHref(sk[0], 1)) });
+        var n0 = openNight(sk[0], 1), n1 = sk[1] ? openNight(sk[1], 1) : null;
+        if (n0) cands.push({ key: 'learn', kind: 'learn', door: 'learn', section: sk[0], title: courseName(sk[0]) + ': night ' + n0, detail: nightTitleOf(sk[0], n0), minutes: 30, href: withStudent(nightHref(sk[0], n0)) });
         /* a taste of another shaky section's first call, where one is live */
         var taste = null;
         sk.forEach(function (s) { if (!taste && s !== play.section) PLAYS.forEach(function (q) { if (!taste && q.section === s && !seen[q.id]) taste = q; }); });
         if (taste) cands.push({ key: 'play-2', kind: 'play', door: 'practice', section: taste.section, title: 'Call it first: ' + taste.title, detail: taste.subtopic + '. Call it, watch it, drive it.', minutes: taste.minutes || 3, href: withStudent(taste.href), makesCard: true, entryId: taste.id });
-        if (sk[1]) cands.push({ key: 'learn-2', kind: 'learn', door: 'learn', section: sk[1], title: courseName(sk[1]) + ': night 1', detail: nightTitleOf(sk[1], 1), minutes: 30, href: withStudent(nightHref(sk[1], 1)) });
+        if (n1) cands.push({ key: 'learn-2', kind: 'learn', door: 'learn', section: sk[1], title: courseName(sk[1]) + ': night ' + n1, detail: nightTitleOf(sk[1], n1), minutes: 30, href: withStudent(nightHref(sk[1], n1)) });
       } else if (ws && window.AceIndex && window.AceIndex.courses && window.AceIndex.courses[ws]) {
-        var n = nextNight(ws, ms);
-        cands.push({ key: 'learn', kind: 'learn', door: 'learn', section: ws, title: courseName(ws) + ': night ' + n, detail: nightTitleOf(ws, n), minutes: 30, href: withStudent(nightHref(ws, n)) });
+        var n = openNight(ws, nextNight(ws, ms));
+        if (n) cands.push({ key: 'learn', kind: 'learn', door: 'learn', section: ws, title: courseName(ws) + ': night ' + n, detail: nightTitleOf(ws, n), minutes: 30, href: withStudent(nightHref(ws, n)) });
       }
       var cq = climbQueue();
       if (cq.started) cands.push(cq.due
@@ -1094,6 +1141,7 @@
     }
 
     var steps = [step1], total = step1.done ? 0 : step1.minutes, more = [];
+    cands = cands.filter(function (c) { var nh = nightOfHref(c.href); return !(nh && nightPulled(nh.s, nh.n)); });
     cands.forEach(function (c) {
       if (steps.length >= 4) {
         if (c.coach) more.push(c); else tomorrow.push({ key: c.key, title: c.title, why: 'Today already has four steps.' });
@@ -1109,6 +1157,10 @@
     var sceneNight = null;
     if (missRec) {
       sceneNight = nightFor(play.section, play.subtopic + ' ' + play.title + ' ' + play.words) || 1;
+      /* a scene from a pulled night is not added: the plan stays as it was */
+      if (nightPulled(play.section, sceneNight)) { missRec = null; sceneNight = null; }
+    }
+    if (missRec) {
       var scene = { key: 'scene', kind: 'learn', door: 'learn', section: play.section, title: courseName(play.section) + ': night ' + sceneNight + ', one scene',
         detail: nightTitleOf(play.section, sceneNight), minutes: 6, href: withStudent(nightHref(play.section, sceneNight)), added: true, essential: true, why: missRec.missWhy || '' };
       steps.splice(1, 0, scene);
@@ -1195,6 +1247,7 @@
     api: 4, addPlayCard: addPlayCard, notePlay: notePlay, playCards: function () { var s = playStore(); return Object.keys(s.cards).map(function (k) { return s.cards[k]; }); },
     plays: plays, registerPlays: registerPlays, playFor: playFor, playsSeen: playsSeen,
     settings: settings, saveSettings: saveSettings, todayPlan: todayPlan, phaseOf: phaseOf,
+    isPulled: isPulled, nightPulled: nightPulled, openNight: openNight, PULLS_KEY: PULLS_KEY,
     dueToday: function () { return read(DUE_KEY, null); }, PLAY_KEY: PLAY_KEY, DUE_KEY: DUE_KEY, SETTINGS_KEY: SETTINGS_KEY,
     /* B1.1, additive: one due rule for Today, Review and the dot */
     dueState: dueState, dueCount: dueCount
