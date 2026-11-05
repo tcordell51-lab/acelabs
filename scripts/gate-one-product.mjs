@@ -114,6 +114,7 @@ export function hiddenPaths(root) {
   }
   add('/tools/qr/proposals/agent-06-geometry/*', 'spec 1.5 (QR geometry canvases stay unlinked)');
   add('/tools/gc/tiktoks/*', 'spec 1.5 (GChem embed canvases are embed-only)');
+  add('/tools/explain/preview.html', 'internal: the explainer preview (R0 answers 404 in production)');
   const inv = path.join(root, 'docs/release-2026-10-30/inventory.md');
   if (fs.existsSync(inv)) for (const line of fs.readFileSync(inv, 'utf8').split('\n')) {
     const c = line.split('|').map((x) => x.trim()); if (c.length > 6 && c[1].startsWith('/') && c[4] === 'internal') add(c[1], 'inventory: internal');

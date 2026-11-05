@@ -1,0 +1,2271 @@
+{
+ "schema": "ace.expert-solve/1",
+ "batch": "B007",
+ "group": "G1",
+ "bank": "rc",
+ "section": "rc",
+ "role": "Independent expert, production-plan.md section 5 steps 2 and 3 (blind solve, key check). Coach only; never published.",
+ "at": "2026-10-30",
+ "frozen": {
+  "bankFile": "tools/rc/data/bank.js",
+  "sha256_16": "282883abb7cc52eb",
+  "qids": 28,
+  "served": "FULL_1 Reading Comprehension = section rc-s15: passage 1 rc-o15 (questions 1 to 17), passage 2 rc-p10 (18 to 28 here; its 12 to 16 and passage 3 rc-p19 are B008)"
+ },
+ "method": [
+  "Each item was loaded from tools/rc/data/bank.js with the pipeline loader (the vm window context scripts/explainers/build.mjs uses, rooted at this worktree) and shown as served: the passage with paragraph and sentence numbers, the stem and the five choices in bank order (tools/mock/full.js escapes them as text and does not shuffle). The extractor withheld key, proof, why, distractorNotes and type; only the field names were seen.",
+  "Every answer, proof line, concept, reasoning, a family and a pull for every other choice, and confidence were written to a draft and stamped (sha256 1bbf248f5fe8b1b1, 2026-10-30T09:19:20Z) before any key was read. Each draft proof quote was checked verbatim against its sentence before stamping. The key comparison then ran by exact choice text.",
+  "The served page was rendered in Chromium at http://127.0.0.1:4107/tools/mock/full.html (FULL_1, resumed into Reading Comprehension): all 28 stems and choice sets match the loader text exactly, passage titles and \"Passage n of 3\" match, and the page raised no errors.",
+  "RC answers were tied to proof lines: every expert proof line is among the bank's proof lines, and every bank quote is an exact substring of its sentence. No item serves a structure or a number to recompute; the one number lookup (rc-p10-q03) was matched to its noun in 5.4 to 5.5.",
+  "Families come from the closed list in scripts/explainers/families.js; missType follows the family. They are suggestions for the writer, who decides.",
+  "Bank why, distractor notes and the three pilot sidecars (rc-o15-q01, q05, q07) were read only after the key check, to flag copy the writer should not lift (bankCopy) and to compare distractor routes and families (notes); nothing in the bank was edited."
+ ],
+ "process": {
+  "blindness": "full",
+  "note": "The blind view never printed key, proof, why, distractorNotes or type. The draft hash and time are recorded above; the key check and the bank read came after.",
+  "postStampEdits": [
+   "Wording only, after the house-rule scan of this file: one pull note on rc:rc-o15-q09 said \"the failed water-short model\"; it now says \"the water-short model being dropped\". No answer, proof, family or confidence changed after the stamp; family disagreements found after the key check are recorded in notes, not edited into the expert block."
+  ]
+ },
+ "summary": {
+  "items": 28,
+  "keyAgrees": 28,
+  "keyDisputes": 0,
+  "confidence": {
+   "high": 28,
+   "medium": 0,
+   "low": 0
+  },
+  "proofLinesAgree": 28,
+  "conceptsOverMathHeavy": [],
+  "stemStyleItems": 1,
+  "bankCopyFlags": 12,
+  "itemsWithWeakDistractors": 2,
+  "pilotItems": [
+   "rc:rc-o15-q01",
+   "rc:rc-o15-q05",
+   "rc:rc-o15-q07"
+  ],
+  "line": "All 28 keys agree with the blind solve and every expert proof line is among the bank proof lines; no key dispute raised, so key-disputes.json is unchanged. Writer cautions: 11 rc-o15 items carry bank notes labelled \"Wrong ...\", and the bank's \"Reversed\" label covers person and number swaps (map by meaning, not by label); passage sentences 11.5 and 12.3 hold the word \"wrong\", so evidence spans must stop before it; rc-p10-q03 should write 200 to 500 for \"two to five hundred\"; two items carry thin distractors."
+ },
+ "items": [
+  {
+   "qid": "rc:rc-o15-q01",
+   "servedAs": {
+    "bank": "rc",
+    "mock": "FULL_1",
+    "section": "rc",
+    "rcSection": "rc-s15",
+    "passage": "rc-o15",
+    "passageNo": 1,
+    "n": 1,
+    "servedNo": 1,
+    "page": "tools/mock/full.html (Reading Comprehension, questions 1 to 50, passage beside the question, no tool button)"
+   },
+   "bankType": "detail",
+   "stemHash": "ee30fb195b18ba9b4a7ead484304fcddf2130dad",
+   "expert": {
+    "answer": "it pictured the four bases repeating in a fixed order along the chain",
+    "servedIndex": 2,
+    "confidence": "high",
+    "typeRead": "detail",
+    "concept": "A detail question: the answer is the reason the passage itself gives, in the same sentence that names the hypothesis.",
+    "reasoning": [
+     "Find the hypothesis by name: paragraph 2, sentence 3.",
+     "The same sentence gives the reason: bases repeating in a fixed order made the molecule \"too dull\" to carry instructions.",
+     "Match that reason to the choice that restates it."
+    ],
+    "proof": {
+     "p": 2,
+     "s": 3,
+     "quote": "the four bases simply repeated in a fixed order along the chain"
+    },
+    "misconceptions": [
+     {
+      "choice": "it suggested that DNA occurred only in the nuclei of blood cells",
+      "family": "rc-misplaced",
+      "familyName": "Misplaced detail",
+      "missType": "misread",
+      "pull": "Lifts \"white blood cells\" from Miescher's sentence (2.1) and pins it on the hypothesis; the passage never says DNA was limited to blood cells."
+     },
+     {
+      "choice": "it held that DNA contained far fewer parts than the proteins it was compared with",
+      "family": "rc-off-question",
+      "familyName": "True but off-question",
+      "missType": "misread",
+      "pull": "Leans on 2.4 (proteins had about twenty building blocks); that sentence says why proteins looked better, not what the hypothesis claimed."
+     },
+     {
+      "choice": "it showed that the proportions of the bases differed from species to species",
+      "family": "read-backward",
+      "familyName": "Read backward",
+      "missType": "misread",
+      "pull": "Varying proportions is Chargaff's finding (3.3), the evidence that sank the hypothesis; the choice gives the hypothesis the role of its own refutation."
+     },
+     {
+      "choice": "it proposed that the molecule was a single short chain rather than a long one",
+      "family": "rc-outside",
+      "familyName": "Outside the passage",
+      "missType": "misread",
+      "pull": "Chain length is never discussed; a reasonable-sounding guess with no line behind it."
+     }
+    ]
+   },
+   "key": {
+    "index": 2,
+    "text": "it pictured the four bases repeating in a fixed order along the chain"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "proof": "Expert proof 2.3 is among the bank proof lines (2.3); every bank quote is verbatim in its sentence.",
+    "rdkit": "not applicable: RC item, no structure served",
+    "served": "Rendered on http://127.0.0.1:4107/tools/mock/full.html as Reading Comprehension question 1 (passage 1 of 3): stem and the five choices match the loader text exactly, in bank order."
+   },
+   "conceptsOverMath": "RC: no math.",
+   "pilot": "RC-1",
+   "bankCopy": [
+    {
+     "kind": "bank-copy",
+     "text": "Bank distractor notes open with the label \"Wrong ...\" (note0), a house-banned word; map the label to a family and do not lift the wording."
+    }
+   ],
+   "notes": [
+    "After the key check: the bank labels the \"fewer parts\" choice Half right and the pilot uses rc-half-supported; this solve put it under rc-off-question (2.4 says why proteins looked better, not what the hypothesis held). Either fits; the pull is the 2.4 contrast of twenty amino acids with four bases."
+   ]
+  },
+  {
+   "qid": "rc:rc-o15-q02",
+   "servedAs": {
+    "bank": "rc",
+    "mock": "FULL_1",
+    "section": "rc",
+    "rcSection": "rc-s15",
+    "passage": "rc-o15",
+    "passageNo": 1,
+    "n": 2,
+    "servedNo": 2,
+    "page": "tools/mock/full.html (Reading Comprehension, questions 1 to 50, passage beside the question, no tool button)"
+   },
+   "bankType": "detail",
+   "stemHash": "2e98b9feea4396519b604a5350c99775147b60b6",
+   "expert": {
+    "answer": "the amount of adenine in a sample closely matched the amount of thymine",
+    "servedIndex": 0,
+    "confidence": "high",
+    "typeRead": "detail",
+    "concept": "Chargaff's ratios: A matches T and G matches C within a sample, while the overall mix varies between species.",
+    "reasoning": [
+     "Find Chargaff: paragraph 3 gives two findings, first and second.",
+     "Second finding (3.4): adenine matched thymine, guanine matched cytosine.",
+     "Keep the first finding in mind too: proportions differed between species, which rules out anything \"the same in every species\"."
+    ],
+    "proof": {
+     "p": 3,
+     "s": 4,
+     "quote": "the amount of adenine closely matched the amount of thymine"
+    },
+    "misconceptions": [
+     {
+      "choice": "the four bases were present in equal amounts in the DNA of every species",
+      "family": "rc-too-strong",
+      "familyName": "Too strong",
+      "missType": "misread",
+      "pull": "Stretches \"A matches T\" into \"all four equal\", which is the old fixed-repeat picture; 3.3 says the proportions differed."
+     },
+     {
+      "choice": "the DNA of all species contained the same proportions of the four bases",
+      "family": "rc-contradicted",
+      "familyName": "Contradicted",
+      "missType": "misread",
+      "pull": "Sentence 3.3 says the opposite: proportions differed from one species to another."
+     },
+     {
+      "choice": "adenine and thymine together made up a fixed fraction of every sample",
+      "family": "rc-half-supported",
+      "familyName": "Half supported",
+      "missType": "misread",
+      "pull": "A and T are paired (true), but a fixed share in every sample would make every species alike, which 3.3 denies."
+     },
+     {
+      "choice": "the bases could be separated only after the sugar had been removed",
+      "family": "rc-outside",
+      "familyName": "Outside the passage",
+      "missType": "misread",
+      "pull": "Paper chromatography is named, but nothing about removing the sugar first."
+     }
+    ]
+   },
+   "key": {
+    "index": 0,
+    "text": "the amount of adenine in a sample closely matched the amount of thymine"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "proof": "Expert proof 3.4 is among the bank proof lines (3.4); every bank quote is verbatim in its sentence.",
+    "rdkit": "not applicable: RC item, no structure served",
+    "served": "Rendered on http://127.0.0.1:4107/tools/mock/full.html as Reading Comprehension question 2 (passage 1 of 3): stem and the five choices match the loader text exactly, in bank order."
+   },
+   "conceptsOverMath": "RC: no math.",
+   "notes": [
+    "After the key check: the bank calls the \"fixed fraction\" choice Outside the passage. It is also contradicted by inference: with A = T and G = C, a fixed A + T share in every sample would make every species alike, which 3.3 denies. The bank labels the \"same proportions\" choice Reversed; it maps better to rc-contradicted than to read-backward."
+   ]
+  },
+  {
+   "qid": "rc:rc-o15-q03",
+   "servedAs": {
+    "bank": "rc",
+    "mock": "FULL_1",
+    "section": "rc",
+    "rcSection": "rc-s15",
+    "passage": "rc-o15",
+    "passageNo": 1,
+    "n": 3,
+    "servedNo": 3,
+    "page": "tools/mock/full.html (Reading Comprehension, questions 1 to 50, passage beside the question, no tool button)"
+   },
+   "bankType": "function",
+   "stemHash": "377fbe15f3b88232b31a382efcc6923496e7b24b",
+   "expert": {
+    "answer": "establish that a diffraction pattern must be interpreted rather than simply viewed",
+    "servedIndex": 3,
+    "confidence": "high",
+    "typeRead": "function",
+    "concept": "Function of a paragraph: why the author pauses to explain diffraction; it sets up the later claim that one picture settles little without interpretation.",
+    "reasoning": [
+     "Ask why the paragraph is there, not what it says.",
+     "Its key line (4.2): the pattern is a map of repeating distances, and turning it into a structure takes mathematics and judgment.",
+     "That prepares the reader for Photo 51 needing a trained eye (6.3) and for the closing point in paragraph 12."
+    ],
+    "proof": {
+     "p": 4,
+     "s": 2,
+     "quote": "The pattern is not an image of the molecule"
+    },
+    "misconceptions": [
+     {
+      "choice": "argue that Astbury's photographs were more accurate than those taken later at King's",
+      "family": "rc-contradicted",
+      "familyName": "Contradicted",
+      "missType": "misread",
+      "pull": "Sentence 5.2 says Wilkins and Gosling got sharper patterns than Astbury's, the reverse of this claim."
+     },
+     {
+      "choice": "show that the technique was invented specifically to study the shape of DNA",
+      "family": "rc-outside",
+      "familyName": "Outside the passage",
+      "missType": "misread",
+      "pull": "The passage never says the method was invented for DNA; 4.1 describes it for any fiber of long molecules."
+     },
+     {
+      "choice": "explain why Franklin preferred to study the A form rather than the B form",
+      "family": "rc-other-paragraph",
+      "familyName": "Different paragraph",
+      "missType": "misread",
+      "pull": "Franklin's A form choice is paragraph 7 (7.2), not the job of paragraph 4."
+     },
+     {
+      "choice": "demonstrate that Astbury's fibers were too poorly ordered to reveal the structure",
+      "family": "rc-off-question",
+      "familyName": "True but off-question",
+      "missType": "misread",
+      "pull": "True detail from 4.3, but a detail inside the paragraph is not the reason the author explains how diffraction works."
+     }
+    ]
+   },
+   "key": {
+    "index": 3,
+    "text": "establish that a diffraction pattern must be interpreted rather than simply viewed"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "proof": "Expert proof 4.2 is among the bank proof lines (4.2); every bank quote is verbatim in its sentence.",
+    "rdkit": "not applicable: RC item, no structure served",
+    "served": "Rendered on http://127.0.0.1:4107/tools/mock/full.html as Reading Comprehension question 3 (passage 1 of 3): stem and the five choices match the loader text exactly, in bank order."
+   },
+   "conceptsOverMath": "RC: no math.",
+   "bankCopy": [
+    {
+     "kind": "bank-copy",
+     "text": "Bank distractor notes open with the label \"Wrong ...\" (note2, note4), a house-banned word; map the label to a family and do not lift the wording."
+    }
+   ]
+  },
+  {
+   "qid": "rc:rc-o15-q04",
+   "servedAs": {
+    "bank": "rc",
+    "mock": "FULL_1",
+    "section": "rc",
+    "rcSection": "rc-s15",
+    "passage": "rc-o15",
+    "passageNo": 1,
+    "n": 4,
+    "servedNo": 4,
+    "page": "tools/mock/full.html (Reading Comprehension, questions 1 to 50, passage beside the question, no tool button)"
+   },
+   "bankType": "detail",
+   "stemHash": "ddde30159b1f35f4c882a300b7f19bb7b23d631a",
+   "expert": {
+    "answer": "each of them understood a different person to be in charge of the DNA work",
+    "servedIndex": 1,
+    "confidence": "high",
+    "typeRead": "detail",
+    "concept": "Cause of a conflict, stated directly: two people with two different understandings of who owned the DNA problem.",
+    "reasoning": [
+     "Find Franklin's arrival: paragraph 5.",
+     "Sentence 5.5 sets the two views side by side: Wilkins expected an assistant; Franklin read Randall's letter as making the problem hers.",
+     "Sentence 5.6 confirms it never got repaired."
+    ],
+    "proof": {
+     "p": 5,
+     "s": 5,
+     "quote": "Wilkins seems to have expected her to work as his assistant"
+    },
+    "misconceptions": [
+     {
+      "choice": "Randall had removed Wilkins from the biophysics unit before Franklin arrived",
+      "family": "rc-outside",
+      "familyName": "Outside the passage",
+      "missType": "misread",
+      "pull": "No removal happens; 5.2 has Wilkins as Randall's deputy, still in the unit."
+     },
+     {
+      "choice": "Franklin refused to share Gosling's earlier photographs with Wilkins",
+      "family": "rc-outside",
+      "familyName": "Outside the passage",
+      "missType": "misread",
+      "pull": "No refusal to share photographs is mentioned anywhere."
+     },
+     {
+      "choice": "Wilkins had been trained in Paris and distrusted her Cambridge methods",
+      "family": "rc-misplaced",
+      "familyName": "Misplaced detail",
+      "missType": "misread",
+      "pull": "Paris and Cambridge belong to Franklin's training (5.4), here pinned on Wilkins."
+     },
+     {
+      "choice": "Franklin had publicly criticized the quality of Wilkins's diffraction patterns",
+      "family": "rc-outside",
+      "familyName": "Outside the passage",
+      "missType": "misread",
+      "pull": "Franklin criticizes the Cambridge model later (8.4), never Wilkins's patterns."
+     }
+    ]
+   },
+   "key": {
+    "index": 1,
+    "text": "each of them understood a different person to be in charge of the DNA work"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "proof": "Expert proof 5.5 is among the bank proof lines (5.5); every bank quote is verbatim in its sentence.",
+    "rdkit": "not applicable: RC item, no structure served",
+    "served": "Rendered on http://127.0.0.1:4107/tools/mock/full.html as Reading Comprehension question 4 (passage 1 of 3): stem and the five choices match the loader text exactly, in bank order."
+   },
+   "conceptsOverMath": "RC: no math.",
+   "notes": [
+    "After the key check: the bank labels the Paris and Cambridge choice Reversed, but it is a person swap (Franklin's training pinned on Wilkins), so rc-misplaced, not read-backward. Do not map the bank label mechanically."
+   ]
+  },
+  {
+   "qid": "rc:rc-o15-q05",
+   "servedAs": {
+    "bank": "rc",
+    "mock": "FULL_1",
+    "section": "rc",
+    "rcSection": "rc-s15",
+    "passage": "rc-o15",
+    "passageNo": 1,
+    "n": 5,
+    "servedNo": 5,
+    "page": "tools/mock/full.html (Reading Comprehension, questions 1 to 50, passage beside the question, no tool button)"
+   },
+   "bankType": "except",
+   "stemHash": "654e081a05fe4573362cf4c4feced53e392c74fb",
+   "expert": {
+    "answer": "the number of chains in the molecule",
+    "servedIndex": 4,
+    "confidence": "high",
+    "typeRead": "except",
+    "concept": "EXCEPT: confirm four readings of Photo 51 in paragraph 6, then find the one the passage says the photo could not give.",
+    "reasoning": [
+     "List what 6.4 reads off the photo: helix, 34 angstroms per turn, 3.4 angstrom base spacing, about 20 angstroms across.",
+     "Cross off the four choices that match.",
+     "The one left, the number of chains, is named in 12.2 as something the photo did not say."
+    ],
+    "proof": {
+     "p": 12,
+     "s": 2,
+     "quote": "it did not say how many chains there were"
+    },
+    "misconceptions": [
+     {
+      "choice": "the distance the helix climbs in one full turn",
+      "family": "rc-stated",
+      "familyName": "True in the passage",
+      "missType": "n/a",
+      "pull": "6.4: the spacing between the dashes gave the distance the helix climbs in one full turn."
+     },
+     {
+      "choice": "the spacing between stacked bases",
+      "family": "rc-stated",
+      "familyName": "True in the passage",
+      "missType": "n/a",
+      "pull": "6.4: the heavy smudges gave the 3.4 angstrom spacing between stacked bases."
+     },
+     {
+      "choice": "the diameter of the molecule",
+      "family": "rc-stated",
+      "familyName": "True in the passage",
+      "missType": "n/a",
+      "pull": "6.4: the width of the pattern gave the diameter, about 20 angstroms."
+     },
+     {
+      "choice": "the fact that the molecule is a helix",
+      "family": "rc-stated",
+      "familyName": "True in the passage",
+      "missType": "n/a",
+      "pull": "6.4: the X of dashes meant a helix."
+     }
+    ]
+   },
+   "key": {
+    "index": 4,
+    "text": "the number of chains in the molecule"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "proof": "Expert proof 12.2 is among the bank proof lines (6.4 for a stated choice, 6.4 for a stated choice, 6.4 for a stated choice, 6.4 for a stated choice, 12.2); every bank quote is verbatim in its sentence.",
+    "rdkit": "not applicable: RC item, no structure served",
+    "served": "Rendered on http://127.0.0.1:4107/tools/mock/full.html as Reading Comprehension question 5 (passage 1 of 3): stem and the five choices match the loader text exactly, in bank order."
+   },
+   "conceptsOverMath": "RC: no math.",
+   "pilot": "RC-2",
+   "notes": [
+    "Pilot item RC-2. Bank proof is complete: one 6.4 span for each of the four stated choices plus 12.2 for the key. Pilot families agree with this solve (four rc-stated)."
+   ]
+  },
+  {
+   "qid": "rc:rc-o15-q06",
+   "servedAs": {
+    "bank": "rc",
+    "mock": "FULL_1",
+    "section": "rc",
+    "rcSection": "rc-s15",
+    "passage": "rc-o15",
+    "passageNo": 1,
+    "n": 6,
+    "servedNo": 6,
+    "page": "tools/mock/full.html (Reading Comprehension, questions 1 to 50, passage beside the question, no tool button)"
+   },
+   "bankType": "vocab",
+   "stemHash": "c6a810acb86d90b29c0fe9c3136e1b609fbbde83",
+   "expert": {
+    "answer": "full of meaning",
+    "servedIndex": 1,
+    "confidence": "high",
+    "typeRead": "vocab",
+    "concept": "Vocabulary in context: the word describes a picture, so the speech senses drop out; the next sentence lists everything the picture told a trained reader.",
+    "reasoning": [
+     "Read the word's own sentence (6.3): to a trained eye, the picture was eloquent.",
+     "Read the next sentence (6.4): it spells out four things the picture meant.",
+     "A picture that says that much is full of meaning."
+    ],
+    "proof": {
+     "p": 6,
+     "s": 3,
+     "quote": "the picture was eloquent"
+    },
+    "misconceptions": [
+     {
+      "choice": "fluently spoken",
+      "family": "rc-misplaced",
+      "familyName": "Misplaced detail",
+      "missType": "misread",
+      "pull": "The everyday sense of eloquent is about speech; a photograph does not speak fluently."
+     },
+     {
+      "choice": "forcefully argued",
+      "family": "rc-misplaced",
+      "familyName": "Misplaced detail",
+      "missType": "misread",
+      "pull": "Another speech sense (persuasion); nothing in 6.3 to 6.4 is an argument."
+     },
+     {
+      "choice": "pleasing to look at",
+      "family": "rc-outside",
+      "familyName": "Outside the passage",
+      "missType": "misread",
+      "pull": "Beauty is never the point; 1.1 even says it could pass for a flaw in the film."
+     },
+     {
+      "choice": "hard to interpret",
+      "family": "read-backward",
+      "familyName": "Read backward",
+      "missType": "misread",
+      "pull": "The opposite of the sentence: to the trained eye it was clear. \"Hard to read\" is the untrained view from 1.1."
+     }
+    ]
+   },
+   "key": {
+    "index": 1,
+    "text": "full of meaning"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "proof": "Expert proof 6.3 is among the bank proof lines (6.3); every bank quote is verbatim in its sentence.",
+    "rdkit": "not applicable: RC item, no structure served",
+    "served": "Rendered on http://127.0.0.1:4107/tools/mock/full.html as Reading Comprehension question 6 (passage 1 of 3): stem and the five choices match the loader text exactly, in bank order."
+   },
+   "conceptsOverMath": "RC: no math.",
+   "stemStyle": [
+    "The word is set in single quotes ('eloquent'); the rc-p10 vocabulary stems use double quotes (\"purchase\", \"sink\"). Harmless; consistent double quotes would match the rest of the section."
+   ],
+   "notes": [
+    "Vocabulary items have no family of their own; this solve files the speech senses under rc-misplaced (the bank migration rule folds \"Wrong (noun)\" labels there). A display label such as \"Everyday sense\" would name the pull better."
+   ]
+  },
+  {
+   "qid": "rc:rc-o15-q07",
+   "servedAs": {
+    "bank": "rc",
+    "mock": "FULL_1",
+    "section": "rc",
+    "rcSection": "rc-s15",
+    "passage": "rc-o15",
+    "passageNo": 1,
+    "n": 7,
+    "servedNo": 7,
+    "page": "tools/mock/full.html (Reading Comprehension, questions 1 to 50, passage beside the question, no tool button)"
+   },
+   "bankType": "inference",
+   "stemHash": "53a18e841fe03af794423f525c7634a5eae9da50",
+   "expert": {
+    "answer": "the A form of the molecule rather than DNA in general",
+    "servedIndex": 0,
+    "confidence": "high",
+    "typeRead": "inference",
+    "concept": "One step past a line: the notice was for the crystalline helix, and paragraph 6 defines the crystalline form as the A form.",
+    "reasoning": [
+     "Find the notice: 7.3 says it was for the \"crystalline DNA helix\".",
+     "Link the word: 6.1 calls the ordered, crystalline arrangement the A form.",
+     "So the joke targeted the A form, which is why reading it as \"DNA is not helical\" is called unfair."
+    ],
+    "proof": {
+     "p": 7,
+     "s": 3,
+     "quote": "a mock death notice for the crystalline DNA helix"
+    },
+    "misconceptions": [
+     {
+      "choice": "the three-chain model built in Cambridge the previous year",
+      "family": "rc-misplaced",
+      "familyName": "Misplaced detail",
+      "missType": "misread",
+      "pull": "The three-chain model (8.3) is a real Cambridge detail, but the notice names the crystalline helix, not a model."
+     },
+     {
+      "choice": "the B form, which Franklin had not yet photographed",
+      "family": "rc-timeline",
+      "familyName": "Timeline mix-up",
+      "missType": "misread",
+      "pull": "Photo 51, the B form image, was taken in May 1952 (6.2), before the July notice; and the B form was plainly helical (7.2)."
+     },
+     {
+      "choice": "Astbury's early patterns from poorly ordered fibers",
+      "family": "rc-other-paragraph",
+      "familyName": "Different paragraph",
+      "missType": "misread",
+      "pull": "Astbury's patterns sit in paragraph 4 (1938), far from the notice."
+     },
+     {
+      "choice": "the end of Franklin's collaboration with Gosling",
+      "family": "rc-outside",
+      "familyName": "Outside the passage",
+      "missType": "misread",
+      "pull": "Gosling co-signed the notice (7.3); nothing says their work together ended."
+     }
+    ]
+   },
+   "key": {
+    "index": 0,
+    "text": "the A form of the molecule rather than DNA in general"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "proof": "Expert proof 7.3 is among the bank proof lines (7.3, 6.1); every bank quote is verbatim in its sentence.",
+    "rdkit": "not applicable: RC item, no structure served",
+    "served": "Rendered on http://127.0.0.1:4107/tools/mock/full.html as Reading Comprehension question 7 (passage 1 of 3): stem and the five choices match the loader text exactly, in bank order."
+   },
+   "conceptsOverMath": "RC: no math.",
+   "pilot": "RC-3",
+   "bankCopy": [
+    {
+     "kind": "bank-copy",
+     "text": "Bank distractor notes open with the label \"Wrong ...\" (note1, note3), a house-banned word; map the label to a family and do not lift the wording."
+    }
+   ],
+   "notes": [
+    "Pilot item RC-3. Families agree except the Gosling choice: the pilot uses rc-contradicted (he co-signed the notice, so the work together continued), which fits better than this solve's rc-outside."
+   ]
+  },
+  {
+   "qid": "rc:rc-o15-q08",
+   "servedAs": {
+    "bank": "rc",
+    "mock": "FULL_1",
+    "section": "rc",
+    "rcSection": "rc-s15",
+    "passage": "rc-o15",
+    "passageNo": 1,
+    "n": 8,
+    "servedNo": 8,
+    "page": "tools/mock/full.html (Reading Comprehension, questions 1 to 50, passage beside the question, no tool button)"
+   },
+   "bankType": "detail",
+   "stemHash": "b5dc4785fc3f6ca0b849b002edead4672f822622",
+   "expert": {
+    "answer": "allowed for far less water than her measurements showed",
+    "servedIndex": 3,
+    "confidence": "high",
+    "typeRead": "detail",
+    "concept": "A stated objection: the model did not fit Franklin's water measurements.",
+    "reasoning": [
+     "Find the first Cambridge model: 8.3, November 1951.",
+     "The next sentence (8.4) gives Franklin's point: the model allowed only a fraction of the water her fibers held."
+    ],
+    "proof": {
+     "p": 8,
+     "s": 4,
+     "quote": "allowed for only a fraction of the water"
+    },
+    "misconceptions": [
+     {
+      "choice": "put the phosphate groups on the outside of the helix",
+      "family": "read-backward",
+      "familyName": "Read backward",
+      "missType": "misread",
+      "pull": "Sentence 8.3 puts the phosphates on the inside; the choice flips the side."
+     },
+     {
+      "choice": "contained two chains when her data pointed to three",
+      "family": "rc-contradicted",
+      "familyName": "Contradicted",
+      "missType": "misread",
+      "pull": "The model had three chains (8.3), not two; the choice reverses the counts."
+     },
+     {
+      "choice": "copied the three-chain structure that Pauling had already published",
+      "family": "rc-timeline",
+      "familyName": "Timeline mix-up",
+      "missType": "misread",
+      "pull": "Pauling's three-chain model came later, early 1953 (8.6), so the 1951 model could not copy it."
+     },
+     {
+      "choice": "placed the bases ten to a turn instead of eleven",
+      "family": "rc-outside",
+      "familyName": "Outside the passage",
+      "missType": "misread",
+      "pull": "Bases per turn are never part of the objection; this needs outside knowledge."
+     }
+    ]
+   },
+   "key": {
+    "index": 3,
+    "text": "allowed for far less water than her measurements showed"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "proof": "Expert proof 8.4 is among the bank proof lines (8.4); every bank quote is verbatim in its sentence.",
+    "rdkit": "not applicable: RC item, no structure served",
+    "served": "Rendered on http://127.0.0.1:4107/tools/mock/full.html as Reading Comprehension question 8 (passage 1 of 3): stem and the five choices match the loader text exactly, in bank order."
+   },
+   "conceptsOverMath": "RC: no math.",
+   "bankCopy": [
+    {
+     "kind": "bank-copy",
+     "text": "Bank distractor notes open with the label \"Wrong ...\" (note2), a house-banned word; map the label to a family and do not lift the wording."
+    }
+   ],
+   "notes": [
+    "After the key check: the bank labels the two-chain choice Reversed; rc-contradicted (this solve) or read-backward both fit, since the model had three chains."
+   ]
+  },
+  {
+   "qid": "rc:rc-o15-q09",
+   "servedAs": {
+    "bank": "rc",
+    "mock": "FULL_1",
+    "section": "rc",
+    "rcSection": "rc-s15",
+    "passage": "rc-o15",
+    "passageNo": 1,
+    "n": 9,
+    "servedNo": 9,
+    "page": "tools/mock/full.html (Reading Comprehension, questions 1 to 50, passage beside the question, no tool button)"
+   },
+   "bankType": "function",
+   "stemHash": "deb0bd5c032a0999b461b75aec8407721b56484e",
+   "expert": {
+    "answer": "identify the method of model building that Watson and Crick were imitating",
+    "servedIndex": 2,
+    "confidence": "high",
+    "typeRead": "function",
+    "concept": "Function of a detail: Pauling is named as the model for Watson and Crick's guess-first method.",
+    "reasoning": [
+     "Read the sentence the name sits in (8.2).",
+     "It opens \"Following the example of\": Pauling found the alpha helix by building models, and Watson and Crick did the same.",
+     "So the mention identifies the method they imitated."
+    ],
+    "proof": {
+     "p": 8,
+     "s": 2,
+     "quote": "Following the example of Linus Pauling"
+    },
+    "misconceptions": [
+     {
+      "choice": "show that proteins had already been proven to be the true carriers of heredity",
+      "family": "rc-contradicted",
+      "familyName": "Contradicted",
+      "missType": "misread",
+      "pull": "Proteins only \"looked\" better (2.4), and Avery's 1944 work pointed to DNA (2.5); nothing proves proteins carry heredity."
+     },
+     {
+      "choice": "explain why Bragg ordered Watson and Crick to stop working on DNA",
+      "family": "rc-swapped-cause",
+      "familyName": "Swapped cause",
+      "missType": "concept",
+      "pull": "Bragg's order (8.5) followed the water-short model being dropped (8.4), not anything about Pauling's alpha helix."
+     },
+     {
+      "choice": "suggest that Pauling had already solved the structure of DNA by 1951",
+      "family": "rc-contradicted",
+      "familyName": "Contradicted",
+      "missType": "misread",
+      "pull": "Pauling's DNA model had the same flaw as theirs (8.6); he had not solved it."
+     },
+     {
+      "choice": "contrast the alpha helix of proteins with the double helix of DNA",
+      "family": "rc-off-question",
+      "familyName": "True but off-question",
+      "missType": "misread",
+      "pull": "Both are helices, but the sentence uses Pauling for his method, not to compare the two structures."
+     }
+    ]
+   },
+   "key": {
+    "index": 2,
+    "text": "identify the method of model building that Watson and Crick were imitating"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "proof": "Expert proof 8.2 is among the bank proof lines (8.2); every bank quote is verbatim in its sentence.",
+    "rdkit": "not applicable: RC item, no structure served",
+    "served": "Rendered on http://127.0.0.1:4107/tools/mock/full.html as Reading Comprehension question 9 (passage 1 of 3): stem and the five choices match the loader text exactly, in bank order."
+   },
+   "conceptsOverMath": "RC: no math.",
+   "bankCopy": [
+    {
+     "kind": "bank-copy",
+     "text": "Bank distractor notes open with the label \"Wrong ...\" (note1), a house-banned word; map the label to a family and do not lift the wording."
+    }
+   ],
+   "notes": [
+    "After the key check: the bank calls the helix-comparison choice Outside the passage; this solve used rc-off-question (both are helices, but 8.2 cites Pauling for his method). The bank's Wrong cause on the Bragg choice matches rc-swapped-cause."
+   ]
+  },
+  {
+   "qid": "rc:rc-o15-q10",
+   "servedAs": {
+    "bank": "rc",
+    "mock": "FULL_1",
+    "section": "rc",
+    "rcSection": "rc-s15",
+    "passage": "rc-o15",
+    "passageNo": 1,
+    "n": 10,
+    "servedNo": 10,
+    "page": "tools/mock/full.html (Reading Comprehension, questions 1 to 50, passage beside the question, no tool button)"
+   },
+   "bankType": "detail",
+   "stemHash": "45e1111e9bd3e2328185b17c8f849a4ffe016ab6",
+   "expert": {
+    "answer": "the crystal symmetry recorded in Franklin's report",
+    "servedIndex": 4,
+    "confidence": "high",
+    "typeRead": "detail",
+    "concept": "Source matching: paragraph 9 lists three pieces of evidence, each feeding a different conclusion.",
+    "reasoning": [
+     "Find \"opposite directions\": sentence 9.3.",
+     "Trace \"from which\" back: the symmetry of the A form crystals in Franklin's report (passed on by Perutz)."
+    ],
+    "proof": {
+     "p": 9,
+     "s": 3,
+     "quote": "from which Crick deduced that the two chains ran in opposite directions"
+    },
+    "misconceptions": [
+     {
+      "choice": "the X-shaped pattern of dashes in Photo 51",
+      "family": "rc-misplaced",
+      "familyName": "Misplaced detail",
+      "missType": "misread",
+      "pull": "Photo 51's X told Watson the molecule was a helix (9.2, 6.4), not the chain direction."
+     },
+     {
+      "choice": "the equal widths of the two kinds of base pair",
+      "family": "rc-misplaced",
+      "familyName": "Misplaced detail",
+      "missType": "misread",
+      "pull": "Equal pair widths (9.5) explained why any sequence fits between the backbones."
+     },
+     {
+      "choice": "Chargaff's finding that adenine always matched thymine",
+      "family": "rc-misplaced",
+      "familyName": "Misplaced detail",
+      "missType": "misread",
+      "pull": "Chargaff's ratios came out of the pairing geometry (9.6); they were explained, not used for direction."
+     },
+     {
+      "choice": "Donohue's correction of the forms of the bases",
+      "family": "rc-misplaced",
+      "familyName": "Misplaced detail",
+      "missType": "misread",
+      "pull": "Donohue's correction (9.4) fixed the base forms, which led to the pairing, not to the direction."
+     }
+    ]
+   },
+   "key": {
+    "index": 4,
+    "text": "the crystal symmetry recorded in Franklin's report"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "proof": "Expert proof 9.3 is among the bank proof lines (9.3); every bank quote is verbatim in its sentence.",
+    "rdkit": "not applicable: RC item, no structure served",
+    "served": "Rendered on http://127.0.0.1:4107/tools/mock/full.html as Reading Comprehension question 10 (passage 1 of 3): stem and the five choices match the loader text exactly, in bank order."
+   },
+   "conceptsOverMath": "RC: no math.",
+   "bankCopy": [
+    {
+     "kind": "bank-copy",
+     "text": "Bank distractor notes open with the label \"Wrong ...\" (note0, note1, note2, note3), a house-banned word; map the label to a family and do not lift the wording."
+    }
+   ],
+   "notes": [
+    "Bank note on the Photo 51 choice adds a second proof: 12.2 says the photo did not say which way the chains ran. Worth a second span in the evidence picture."
+   ]
+  },
+  {
+   "qid": "rc:rc-o15-q11",
+   "servedAs": {
+    "bank": "rc",
+    "mock": "FULL_1",
+    "section": "rc",
+    "rcSection": "rc-s15",
+    "passage": "rc-o15",
+    "passageNo": 1,
+    "n": 11,
+    "servedNo": 11,
+    "page": "tools/mock/full.html (Reading Comprehension, questions 1 to 50, passage beside the question, no tool button)"
+   },
+   "bankType": "inference",
+   "stemHash": "d75d940f4b58fbb0653abc2a61a38b345c7abc7d",
+   "expert": {
+    "answer": "conflict with the base pairing in the Watson and Crick model",
+    "servedIndex": 2,
+    "confidence": "high",
+    "typeRead": "application",
+    "concept": "Apply the passage's rule to a new case: A always pairs with T, so A and T must be equal; a sample with extra A breaks the model's pairing.",
+    "reasoning": [
+     "Find the rule: 9.6, if adenine always faces thymine, the two must be equally abundant.",
+     "Run the new case: noticeably more A than T means some A has no T partner.",
+     "That conflicts with the pairing in the Watson and Crick model."
+    ],
+    "proof": {
+     "p": 9,
+     "s": 6,
+     "quote": "if adenine always faces thymine, the two must be equally abundant"
+    },
+    "misconceptions": [
+     {
+      "choice": "have a correspondingly lower proportion of guanine than of cytosine",
+      "family": "rc-outside",
+      "familyName": "Outside the passage",
+      "missType": "misread",
+      "pull": "Invents a compensating G to C shift; nothing in the passage links an A and T imbalance to G and C."
+     },
+     {
+      "choice": "confirm the tetranucleotide hypothesis proposed by Levene",
+      "family": "rc-contradicted",
+      "familyName": "Contradicted",
+      "missType": "misread",
+      "pull": "A fixed repeating unit of four bases means equal bases; an A and T imbalance cuts against Levene too."
+     },
+     {
+      "choice": "have a double helix whose diameter is wider than 20 angstroms",
+      "family": "rc-outside",
+      "familyName": "Outside the passage",
+      "missType": "misread",
+      "pull": "Diameter is never tied to base counts; the even pair widths (9.5) point the other way."
+     },
+     {
+      "choice": "support Pauling's three-chain structure for the molecule",
+      "family": "rc-outside",
+      "familyName": "Outside the passage",
+      "missType": "misread",
+      "pull": "Nothing links base ratios to Pauling's three-chain model, which the passage says was flawed."
+     }
+    ]
+   },
+   "key": {
+    "index": 2,
+    "text": "conflict with the base pairing in the Watson and Crick model"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "proof": "Expert proof 9.6 is among the bank proof lines (9.6); every bank quote is verbatim in its sentence.",
+    "rdkit": "not applicable: RC item, no structure served",
+    "served": "Rendered on http://127.0.0.1:4107/tools/mock/full.html as Reading Comprehension question 11 (passage 1 of 3): stem and the five choices match the loader text exactly, in bank order."
+   },
+   "conceptsOverMath": "RC: no math.",
+   "bankCopy": [
+    {
+     "kind": "bank-copy",
+     "text": "Bank distractor notes open with the label \"Wrong ...\" (note1), a house-banned word; map the label to a family and do not lift the wording."
+    }
+   ],
+   "notes": [
+    "Bank type is inference; this solve read it as application (a new species run through the 9.6 rule). Same proof line. The bank files the Levene choice as Wrong paragraph; it is also contradicted, since a fixed repeat of four bases implies equal amounts."
+   ]
+  },
+  {
+   "qid": "rc:rc-o15-q12",
+   "servedAs": {
+    "bank": "rc",
+    "mock": "FULL_1",
+    "section": "rc",
+    "rcSection": "rc-s15",
+    "passage": "rc-o15",
+    "passageNo": 1,
+    "n": 12,
+    "servedNo": 12,
+    "page": "tools/mock/full.html (Reading Comprehension, questions 1 to 50, passage beside the question, no tool button)"
+   },
+   "bankType": "detail",
+   "stemHash": "21dfb9c0c2eb90c40263da1b156434b491f21889",
+   "expert": {
+    "answer": "acknowledged unpublished King's results without saying how much had been seen",
+    "servedIndex": 0,
+    "confidence": "high",
+    "typeRead": "detail",
+    "concept": "Detail check against one paragraph: each choice makes a claim about the 1953 paper that paragraph 10 either states or contradicts.",
+    "reasoning": [
+     "Go to the paper: paragraph 10.",
+     "Sentence 10.3: they acknowledged a general knowledge of unpublished King's results and did not say how much they had seen.",
+     "Check the rest against 10.1 and 10.2: alongside, about nine hundred words, bonds between the bases, a copying mechanism suggested."
+    ],
+    "proof": {
+     "p": 10,
+     "s": 3,
+     "quote": "they did not say how much they had seen"
+    },
+    "misconceptions": [
+     {
+      "choice": "was published several months before the papers from King's College London",
+      "family": "rc-timeline",
+      "familyName": "Timeline mix-up",
+      "missType": "misread",
+      "pull": "Sentence 10.1 puts the King's papers alongside theirs in the same issue, not months later."
+     },
+     {
+      "choice": "described two chains held together by bonds between the sugar and phosphate backbones",
+      "family": "rc-misplaced",
+      "familyName": "Misplaced detail",
+      "missType": "misread",
+      "pull": "The hydrogen bonds are between the bases (10.2); the backbones are on the outside."
+     },
+     {
+      "choice": "ran to several thousand words and included Franklin's measurements in full",
+      "family": "rc-misplaced",
+      "familyName": "Misplaced detail",
+      "missType": "misread",
+      "pull": "About nine hundred words (10.1), and they did not say how much they had seen (10.3)."
+     },
+     {
+      "choice": "made no mention of any possible mechanism for copying the genetic material",
+      "family": "rc-contradicted",
+      "familyName": "Contradicted",
+      "missType": "misread",
+      "pull": "Sentence 10.2 quotes their line that the pairing suggested a copying mechanism."
+     }
+    ]
+   },
+   "key": {
+    "index": 0,
+    "text": "acknowledged unpublished King's results without saying how much had been seen"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "proof": "Expert proof 10.3 is among the bank proof lines (10.3); every bank quote is verbatim in its sentence.",
+    "rdkit": "not applicable: RC item, no structure served",
+    "served": "Rendered on http://127.0.0.1:4107/tools/mock/full.html as Reading Comprehension question 12 (passage 1 of 3): stem and the five choices match the loader text exactly, in bank order."
+   },
+   "conceptsOverMath": "RC: no math.",
+   "bankCopy": [
+    {
+     "kind": "bank-copy",
+     "text": "Bank distractor notes open with the label \"Wrong ...\" (note2), a house-banned word; map the label to a family and do not lift the wording."
+    }
+   ],
+   "notes": [
+    "After the key check: the bank labels the \"several thousand words\" choice Reversed; it is a number swap (about nine hundred words, 10.1), so rc-misplaced."
+   ]
+  },
+  {
+   "qid": "rc:rc-o15-q13",
+   "servedAs": {
+    "bank": "rc",
+    "mock": "FULL_1",
+    "section": "rc",
+    "rcSection": "rc-s15",
+    "passage": "rc-o15",
+    "passageNo": 1,
+    "n": 13,
+    "servedNo": 13,
+    "page": "tools/mock/full.html (Reading Comprehension, questions 1 to 50, passage beside the question, no tool button)"
+   },
+   "bankType": "inference",
+   "stemHash": "9a3b8ceb25b03db382b335d530e14bd350c13f8f",
+   "expert": {
+    "answer": "would have been blocked by the standing rules of the prize itself",
+    "servedIndex": 1,
+    "confidence": "high",
+    "typeRead": "inference",
+    "concept": "Inference from two stated rules plus a date: she died in 1958, so the prize rules alone kept the question from being asked.",
+    "reasoning": [
+     "Find the 1962 prize: 10.6 gives two rules, at most three people and none to anyone who died before nomination.",
+     "Add the date from 10.5: she died in April 1958.",
+     "So even a willing committee was bound by the prize's own rules."
+    ],
+    "proof": {
+     "p": 10,
+     "s": 6,
+     "quote": "is not given to anyone who died before being nominated"
+    },
+    "misconceptions": [
+     {
+      "choice": "would have had to remove Wilkins from the list to make room for her",
+      "family": "rc-half-supported",
+      "familyName": "Half supported",
+      "missType": "misread",
+      "pull": "Uses the three-person cap but misses the rule that settles it: she had died before nomination, so making room would not help."
+     },
+     {
+      "choice": "would have needed the consent of Watson and Crick to do so",
+      "family": "rc-outside",
+      "familyName": "Outside the passage",
+      "missType": "misread",
+      "pull": "No consent from other winners appears anywhere."
+     },
+     {
+      "choice": "would have waited until her notebooks had been examined by Klug",
+      "family": "rc-outside",
+      "familyName": "Outside the passage",
+      "missType": "misread",
+      "pull": "Klug's reading of her notebooks (11.4) is a later scholarly point, not a prize rule."
+     },
+     {
+      "choice": "would have awarded the prize in chemistry instead of in medicine",
+      "family": "rc-outside",
+      "familyName": "Outside the passage",
+      "missType": "misread",
+      "pull": "The rules in 10.6 apply to the prize itself; switching fields is never raised."
+     }
+    ]
+   },
+   "key": {
+    "index": 1,
+    "text": "would have been blocked by the standing rules of the prize itself"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "proof": "Expert proof 10.6 is among the bank proof lines (10.6); every bank quote is verbatim in its sentence.",
+    "rdkit": "not applicable: RC item, no structure served",
+    "served": "Rendered on http://127.0.0.1:4107/tools/mock/full.html as Reading Comprehension question 13 (passage 1 of 3): stem and the five choices match the loader text exactly, in bank order."
+   },
+   "conceptsOverMath": "RC: no math.",
+   "bankCopy": [
+    {
+     "kind": "bank-copy",
+     "text": "Bank distractor notes open with the label \"Wrong ...\" (note3), a house-banned word; map the label to a family and do not lift the wording."
+    }
+   ],
+   "notes": [
+    "After the key check: the bank files the Klug choice as Wrong timing; rc-timeline is a fair alternative to this solve's rc-outside."
+   ]
+  },
+  {
+   "qid": "rc:rc-o15-q14",
+   "servedAs": {
+    "bank": "rc",
+    "mock": "FULL_1",
+    "section": "rc",
+    "rcSection": "rc-s15",
+    "passage": "rc-o15",
+    "passageNo": 1,
+    "n": 14,
+    "servedNo": 14,
+    "page": "tools/mock/full.html (Reading Comprehension, questions 1 to 50, passage beside the question, no tool button)"
+   },
+   "bankType": "except",
+   "stemHash": "9d9a00e02675cb47e7667ff653b6f9d728bbfb1c",
+   "expert": {
+    "answer": "She shared the 1962 Nobel Prize with Wilkins.",
+    "servedIndex": 4,
+    "confidence": "high",
+    "typeRead": "except",
+    "concept": "EXCEPT: confirm four facts about Franklin, find the one the passage contradicts.",
+    "reasoning": [
+     "Confirm the training facts in 5.4: physical chemist at Cambridge, three years in Paris.",
+     "Confirm the later facts in 10.4 and 10.5: Birkbeck and viruses, died 1958 at thirty-seven.",
+     "The leftover choice is contradicted by 10.6: the 1962 prize went to Watson, Crick and Wilkins."
+    ],
+    "proof": {
+     "p": 10,
+     "s": 6,
+     "quote": "went to Watson, Crick, and Wilkins"
+    },
+    "misconceptions": [
+     {
+      "choice": "She trained as a physical chemist at Cambridge.",
+      "family": "rc-stated",
+      "familyName": "True in the passage",
+      "missType": "n/a",
+      "pull": "5.4: trained as a physical chemist at Cambridge."
+     },
+     {
+      "choice": "She spent three years in Paris learning X-ray methods.",
+      "family": "rc-stated",
+      "familyName": "True in the passage",
+      "missType": "n/a",
+      "pull": "5.4: three years in Paris learning to apply X-ray methods."
+     },
+     {
+      "choice": "She moved to Birkbeck College and worked on viruses.",
+      "family": "rc-stated",
+      "familyName": "True in the passage",
+      "missType": "n/a",
+      "pull": "10.4: left for Birkbeck, turned to the structure of viruses."
+     },
+     {
+      "choice": "She died in 1958 at the age of thirty-seven.",
+      "family": "rc-stated",
+      "familyName": "True in the passage",
+      "missType": "n/a",
+      "pull": "10.5: died in April 1958, at thirty-seven."
+     }
+    ]
+   },
+   "key": {
+    "index": 4,
+    "text": "She shared the 1962 Nobel Prize with Wilkins."
+   },
+   "keyAgrees": true,
+   "checks": {
+    "proof": "Expert proof 10.6 is among the bank proof lines (5.4 for a stated choice, 5.4 for a stated choice, 10.4 for a stated choice, 10.5 for a stated choice, 10.6); every bank quote is verbatim in its sentence.",
+    "rdkit": "not applicable: RC item, no structure served",
+    "served": "Rendered on http://127.0.0.1:4107/tools/mock/full.html as Reading Comprehension question 14 (passage 1 of 3): stem and the five choices match the loader text exactly, in bank order."
+   },
+   "conceptsOverMath": "RC: no math.",
+   "notes": [
+    "Bank proof is complete: 5.4 (two spans), 10.4 and 10.5 for the stated choices, 10.6 for the key."
+   ]
+  },
+  {
+   "qid": "rc:rc-o15-q15",
+   "servedAs": {
+    "bank": "rc",
+    "mock": "FULL_1",
+    "section": "rc",
+    "rcSection": "rc-s15",
+    "passage": "rc-o15",
+    "passageNo": 1,
+    "n": 15,
+    "servedNo": 15,
+    "page": "tools/mock/full.html (Reading Comprehension, questions 1 to 50, passage beside the question, no tool button)"
+   },
+   "bankType": "tone",
+   "stemHash": "57037558f9d395cdbddb397a624f2d4f70a80fbf",
+   "expert": {
+    "answer": "unconvinced",
+    "servedIndex": 1,
+    "confidence": "high",
+    "typeRead": "tone",
+    "concept": "Tone: read the author's own judging words about the theft story.",
+    "reasoning": [
+     "Find the theft story: 11.2.",
+     "The author's verdict follows (11.3): too simple, and a disservice to her.",
+     "Someone who rejects a story as too simple is unconvinced by it."
+    ],
+    "proof": {
+     "p": 11,
+     "s": 3,
+     "quote": "That story is too simple"
+    },
+    "misconceptions": [
+     {
+      "choice": "amused",
+      "family": "rc-tone",
+      "familyName": "Tone mismatch",
+      "missType": "misread",
+      "pull": "Nothing in 11.3 to 11.5 is light or joking; the author argues the point seriously."
+     },
+     {
+      "choice": "outraged",
+      "family": "rc-tone",
+      "familyName": "Tone mismatch",
+      "missType": "misread",
+      "pull": "Outrage is the theft story's own feeling; the author steps back from it and calls it too simple."
+     },
+     {
+      "choice": "uninterested",
+      "family": "rc-tone",
+      "familyName": "Tone mismatch",
+      "missType": "misread",
+      "pull": "The author spends a paragraph engaging with the story, then corrects it; that is not indifference."
+     },
+     {
+      "choice": "approving",
+      "family": "read-backward",
+      "familyName": "Read backward",
+      "missType": "misread",
+      "pull": "The author rejects the story (11.3); approval runs the opposite way."
+     }
+    ]
+   },
+   "key": {
+    "index": 1,
+    "text": "unconvinced"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "proof": "Expert proof 11.3 is among the bank proof lines (11.3, 12.5); every bank quote is verbatim in its sentence.",
+    "rdkit": "not applicable: RC item, no structure served",
+    "served": "Rendered on http://127.0.0.1:4107/tools/mock/full.html as Reading Comprehension question 15 (passage 1 of 3): stem and the five choices match the loader text exactly, in bank order."
+   },
+   "conceptsOverMath": "RC: no math.",
+   "bankCopy": [
+    {
+     "kind": "bank-copy",
+     "text": "Bank distractor notes open with the label \"Wrong ...\" (note0), a house-banned word; map the label to a family and do not lift the wording."
+    },
+    {
+     "kind": "bank-copy",
+     "text": "Passage sentences 11.5 (\"a harder wrong to put right\") and 12.3 (\"kept building wrong models\") hold a house-banned word. An rc.evidence span quoting either must stop before it; only answer.text and choices[].text are exempt from the copy gate."
+    }
+   ],
+   "notes": [
+    "Bank proof adds 12.5 (the author prefers the less satisfying story). The bank labels the \"uninterested\" choice Reversed; rc-tone (this solve) fits the family list better."
+   ]
+  },
+  {
+   "qid": "rc:rc-o15-q16",
+   "servedAs": {
+    "bank": "rc",
+    "mock": "FULL_1",
+    "section": "rc",
+    "rcSection": "rc-s15",
+    "passage": "rc-o15",
+    "passageNo": 1,
+    "n": 16,
+    "servedNo": 16,
+    "page": "tools/mock/full.html (Reading Comprehension, questions 1 to 50, passage beside the question, no tool button)"
+   },
+   "bankType": "application",
+   "stemHash": "514285efedb512208086e0e72ca4e077b3121929",
+   "expert": {
+    "answer": "A search team finds a wreck where a careful sonar survey and a historian's bold guess overlap",
+    "servedIndex": 3,
+    "confidence": "high",
+    "typeRead": "application",
+    "concept": "Application: carry paragraph 12's principle (two methods, neither enough alone, one image settles little) into a new case.",
+    "reasoning": [
+     "Name the principle first: 12.4, the answer came where patient measurement met bold guessing, and neither would have finished alone.",
+     "Look for a case that needs both methods together.",
+     "The wreck found where a careful survey and a bold guess overlap is that case."
+    ],
+    "proof": {
+     "p": 12,
+     "s": 4,
+     "quote": "the meeting point of two methods"
+    },
+    "misconceptions": [
+     {
+      "choice": "A detective solves a case from a single photograph that happens to show the culprit's face clearly",
+      "family": "read-backward",
+      "familyName": "Read backward",
+      "missType": "misread",
+      "pull": "One image settling everything is the opposite of 12.1 and 12.2: a single image settled little."
+     },
+     {
+      "choice": "Two rival laboratories race toward the same result, and only the faster one is remembered",
+      "family": "rc-other-paragraph",
+      "familyName": "Different paragraph",
+      "missType": "misread",
+      "pull": "A race and remembered credit echo paragraphs 10 and 11, not the principle of paragraph 12."
+     },
+     {
+      "choice": "A surveyor refuses to publish a map until every hill has been measured twice",
+      "family": "rc-half-supported",
+      "familyName": "Half supported",
+      "missType": "misread",
+      "pull": "Only the patient-measurement half; paragraph 12 says that method alone would not finish the job."
+     },
+     {
+      "choice": "A theorist's guess about a planet's orbit is accepted without any measurement",
+      "family": "rc-half-supported",
+      "familyName": "Half supported",
+      "missType": "misread",
+      "pull": "Only the bold-guess half, with no measurement at all; 12.4 says guessing alone would not finish either."
+     }
+    ]
+   },
+   "key": {
+    "index": 3,
+    "text": "A search team finds a wreck where a careful sonar survey and a historian's bold guess overlap"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "proof": "Expert proof 12.4 is among the bank proof lines (12.4, 12.1); every bank quote is verbatim in its sentence.",
+    "rdkit": "not applicable: RC item, no structure served",
+    "served": "Rendered on http://127.0.0.1:4107/tools/mock/full.html as Reading Comprehension question 16 (passage 1 of 3): stem and the five choices match the loader text exactly, in bank order."
+   },
+   "conceptsOverMath": "RC: no math.",
+   "bankCopy": [
+    {
+     "kind": "bank-copy",
+     "text": "Bank distractor notes open with the label \"Wrong ...\" (note1), a house-banned word; map the label to a family and do not lift the wording."
+    },
+    {
+     "kind": "bank-copy",
+     "text": "Passage sentences 11.5 (\"a harder wrong to put right\") and 12.3 (\"kept building wrong models\") hold a house-banned word. An rc.evidence span quoting either must stop before it; only answer.text and choices[].text are exempt from the copy gate."
+    }
+   ],
+   "notes": [
+    "After the key check: the bank labels the race choice Wrong principle; rc-off-question or rc-other-paragraph both fit."
+   ]
+  },
+  {
+   "qid": "rc:rc-o15-q17",
+   "servedAs": {
+    "bank": "rc",
+    "mock": "FULL_1",
+    "section": "rc",
+    "rcSection": "rc-s15",
+    "passage": "rc-o15",
+    "passageNo": 1,
+    "n": 17,
+    "servedNo": 17,
+    "page": "tools/mock/full.html (Reading Comprehension, questions 1 to 50, passage beside the question, no tool button)"
+   },
+   "bankType": "mainidea",
+   "stemHash": "6f4f2aa36ed0d65e1c3a188a97ed05469cd9adde",
+   "expert": {
+    "answer": "The structure of DNA emerged from several people's evidence and from two methods that each needed the other",
+    "servedIndex": 2,
+    "confidence": "high",
+    "typeRead": "mainidea",
+    "concept": "Main idea: the thesis sits in the closing paragraphs; the structure came from many people's evidence and two methods that needed each other.",
+    "reasoning": [
+     "Read the opening frame (1.4): the model rested on other people's measurements.",
+     "Read the close (12.3 to 12.4): the answers came from several sources and two methods, neither enough alone.",
+     "Pick the choice that holds both parts."
+    ],
+    "proof": {
+     "p": 12,
+     "s": 4,
+     "quote": "neither would have finished the job alone"
+    },
+    "misconceptions": [
+     {
+      "choice": "Watson and Crick deserve sole credit for the double helix because they alone were willing to build and test models",
+      "family": "rc-too-strong",
+      "familyName": "Too strong",
+      "missType": "misread",
+      "pull": "\"Sole credit\" and \"they alone\" overreach; 1.4 says the model rested on other people's measurements."
+     },
+     {
+      "choice": "Rosalind Franklin solved the structure of DNA on her own, and her photograph was simply stolen by her Cambridge rivals",
+      "family": "rc-contradicted",
+      "familyName": "Contradicted",
+      "missType": "misread",
+      "pull": "This is the theft story the author calls too simple (11.3)."
+     },
+     {
+      "choice": "X-ray diffraction alone settled the shape of DNA once the technique had been perfected at King's",
+      "family": "rc-contradicted",
+      "familyName": "Contradicted",
+      "missType": "misread",
+      "pull": "Paragraph 12 says a single image settled little (12.1 to 12.2); other evidence was needed."
+     },
+     {
+      "choice": "The Nobel committee of 1962 wronged Franklin by applying its rules too strictly to a case that deserved an exception",
+      "family": "rc-outside",
+      "familyName": "Outside the passage",
+      "missType": "misread",
+      "pull": "The author never says the committee was too strict; 10.6 only says the question was never put. It is also one detail, not the whole passage."
+     }
+    ]
+   },
+   "key": {
+    "index": 2,
+    "text": "The structure of DNA emerged from several people's evidence and from two methods that each needed the other"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "proof": "Expert proof 12.4 is among the bank proof lines (1.4, 12.3, 12.4); every bank quote is verbatim in its sentence.",
+    "rdkit": "not applicable: RC item, no structure served",
+    "served": "Rendered on http://127.0.0.1:4107/tools/mock/full.html as Reading Comprehension question 17 (passage 1 of 3): stem and the five choices match the loader text exactly, in bank order."
+   },
+   "conceptsOverMath": "RC: no math.",
+   "bankCopy": [
+    {
+     "kind": "bank-copy",
+     "text": "Passage sentences 11.5 (\"a harder wrong to put right\") and 12.3 (\"kept building wrong models\") hold a house-banned word. An rc.evidence span quoting either must stop before it; only answer.text and choices[].text are exempt from the copy gate."
+    }
+   ],
+   "notes": [
+    "Bank proof uses 1.4, 12.3 and 12.4. The 12.3 span must stop before \"kept building wrong models\" (see bankCopy)."
+   ]
+  },
+  {
+   "qid": "rc:rc-p10-q01",
+   "servedAs": {
+    "bank": "rc",
+    "mock": "FULL_1",
+    "section": "rc",
+    "rcSection": "rc-s15",
+    "passage": "rc-p10",
+    "passageNo": 2,
+    "n": 1,
+    "servedNo": 18,
+    "page": "tools/mock/full.html (Reading Comprehension, questions 1 to 50, passage beside the question, no tool button)"
+   },
+   "bankType": "detail",
+   "stemHash": "6891cd13d0912e0dc16d3f92e2f4693f71314b1d",
+   "expert": {
+    "answer": "folds its membrane inward around every fungal branch",
+    "servedIndex": 2,
+    "confidence": "high",
+    "typeRead": "detail",
+    "concept": "Arbuscule anatomy: the fungus breaches the wall, but the plant membrane folds around each branch, so two membranes always separate them.",
+    "reasoning": [
+     "Find the arbuscule: paragraph 3.",
+     "Sentence 3.4 says the plant cell does not simply give way; 3.5 says its membrane stretches inward around every branch."
+    ],
+    "proof": {
+     "p": 3,
+     "s": 5,
+     "quote": "Its own membrane stretches inward around every branch"
+    },
+    "misconceptions": [
+     {
+      "choice": "dissolves its own wall so the two organisms can mix freely",
+      "family": "rc-contradicted",
+      "familyName": "Contradicted",
+      "missType": "misread",
+      "pull": "The fungus breaches the wall, and the two never share cytoplasm (3.5); they do not mix freely."
+     },
+     {
+      "choice": "wraps the fungus in a dense sheath of its own tissue",
+      "family": "rc-other-paragraph",
+      "familyName": "Different paragraph",
+      "missType": "misread",
+      "pull": "A dense sheath is the ectomycorrhizal mantle (4.2), and it is fungal tissue around the root, not plant tissue around the fungus."
+     },
+     {
+      "choice": "fills with stored lipid that the fungus later draws on",
+      "family": "rc-misplaced",
+      "familyName": "Misplaced detail",
+      "missType": "misread",
+      "pull": "Lipid-storing vesicles are swollen fungal hyphae (3.6), not the plant cell filling up."
+     },
+     {
+      "choice": "dies off, leaving a cavity that the fungus then occupies",
+      "family": "rc-contradicted",
+      "familyName": "Contradicted",
+      "missType": "misread",
+      "pull": "Sentence 3.4: the plant cell does not simply give way."
+     }
+    ]
+   },
+   "key": {
+    "index": 2,
+    "text": "folds its membrane inward around every fungal branch"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "proof": "Expert proof 3.5 is among the bank proof lines (3.5, 3.4); every bank quote is verbatim in its sentence.",
+    "rdkit": "not applicable: RC item, no structure served",
+    "served": "Rendered on http://127.0.0.1:4107/tools/mock/full.html as Reading Comprehension question 18 (passage 2 of 3): stem and the five choices match the loader text exactly, in bank order."
+   },
+   "conceptsOverMath": "RC: no math.",
+   "notes": [
+    "Bank notes for rc-p10 carry no labels and no house-banned words; families are this solve's own."
+   ]
+  },
+  {
+   "qid": "rc:rc-p10-q02",
+   "servedAs": {
+    "bank": "rc",
+    "mock": "FULL_1",
+    "section": "rc",
+    "rcSection": "rc-s15",
+    "passage": "rc-p10",
+    "passageNo": 2,
+    "n": 2,
+    "servedNo": 19,
+    "page": "tools/mock/full.html (Reading Comprehension, questions 1 to 50, passage beside the question, no tool button)"
+   },
+   "bankType": "detail",
+   "stemHash": "88ad4291154a3b16e370cbb5326c9ac0b2c64f6a",
+   "expert": {
+    "answer": "a lattice of flattened hyphae between the outer root cells",
+    "servedIndex": 0,
+    "confidence": "high",
+    "typeRead": "detail",
+    "concept": "Name to structure: each fungal structure in paragraphs 3 to 5 has its own name; the Hartig net is the lattice between outer root cells.",
+    "reasoning": [
+     "Find the name: 4.3, \"That lattice is the Hartig net.\"",
+     "Trace \"that lattice\" back one sentence (4.2): a lattice of flattened hyphae between the outer root cells."
+    ],
+    "proof": {
+     "p": 4,
+     "s": 3,
+     "quote": "That lattice is the Hartig net"
+    },
+    "misconceptions": [
+     {
+      "choice": "a strand of hyphae running from a root tip out into open soil",
+      "family": "rc-other-paragraph",
+      "familyName": "Different paragraph",
+      "missType": "misread",
+      "pull": "Hyphae reaching past the depleted shell into soil are paragraph 5 (5.5), not the Hartig net."
+     },
+     {
+      "choice": "a dense fungal sheath covering the outside of a short root tip",
+      "family": "rc-misplaced",
+      "familyName": "Misplaced detail",
+      "missType": "misread",
+      "pull": "The dense sheath is the mantle, named in the same sentence (4.2) just before the lattice."
+     },
+     {
+      "choice": "a swollen hypha that stores lipid on behalf of the fungus",
+      "family": "rc-other-paragraph",
+      "familyName": "Different paragraph",
+      "missType": "misread",
+      "pull": "Swollen lipid-storing hyphae are the vesicles of arbuscular fungi (3.6)."
+     },
+     {
+      "choice": "a branched fungal organ that grows inside a cortex cell",
+      "family": "rc-other-paragraph",
+      "familyName": "Different paragraph",
+      "missType": "misread",
+      "pull": "A branched organ inside a cortex cell is the arbuscule (3.2 to 3.3); the Hartig net does that job without entering cells (4.3)."
+     }
+    ]
+   },
+   "key": {
+    "index": 0,
+    "text": "a lattice of flattened hyphae between the outer root cells"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "proof": "Expert proof 4.3 is among the bank proof lines (4.3, 4.2); every bank quote is verbatim in its sentence.",
+    "rdkit": "not applicable: RC item, no structure served",
+    "served": "Rendered on http://127.0.0.1:4107/tools/mock/full.html as Reading Comprehension question 19 (passage 2 of 3): stem and the five choices match the loader text exactly, in bank order."
+   },
+   "conceptsOverMath": "RC: no math."
+  },
+  {
+   "qid": "rc:rc-p10-q03",
+   "servedAs": {
+    "bank": "rc",
+    "mock": "FULL_1",
+    "section": "rc",
+    "rcSection": "rc-s15",
+    "passage": "rc-p10",
+    "passageNo": 2,
+    "n": 3,
+    "servedNo": 20,
+    "page": "tools/mock/full.html (Reading Comprehension, questions 1 to 50, passage beside the question, no tool button)"
+   },
+   "bankType": "detail",
+   "stemHash": "226bd3899fe81690fa5f0c061fae044961bd8f05",
+   "expert": {
+    "answer": "2 to 10 micrometres",
+    "servedIndex": 2,
+    "confidence": "high",
+    "typeRead": "detail",
+    "concept": "A number lookup among several close numbers: match the number to its own noun.",
+    "reasoning": [
+     "Find \"hypha\" with a size: 5.5, two to ten micrometres.",
+     "Keep the neighbors apart: fine root 200 to 500 micrometres, root hair 10 to 20 (5.4), depletion zone a millimetre or two (5.3)."
+    ],
+    "proof": {
+     "p": 5,
+     "s": 5,
+     "quote": "A fungal hypha is two to ten micrometres across"
+    },
+    "misconceptions": [
+     {
+      "choice": "20 to 100 micrometres",
+      "family": "rc-outside",
+      "familyName": "Outside the passage",
+      "missType": "misread",
+      "pull": "No structure in the passage is given this range."
+     },
+     {
+      "choice": "10 to 20 micrometres",
+      "family": "rc-misplaced",
+      "familyName": "Misplaced detail",
+      "missType": "misread",
+      "pull": "This is the root hair (5.4), one sentence earlier."
+     },
+     {
+      "choice": "1 to 2 millimetres",
+      "family": "rc-misplaced",
+      "familyName": "Misplaced detail",
+      "missType": "misread",
+      "pull": "The millimetre or two is the depletion zone around a root (5.3), not a width of anything fungal."
+     },
+     {
+      "choice": "200 to 500 micrometres",
+      "family": "rc-misplaced",
+      "familyName": "Misplaced detail",
+      "missType": "misread",
+      "pull": "Two to five hundred micrometres is the fine root (5.4)."
+     }
+    ]
+   },
+   "key": {
+    "index": 2,
+    "text": "2 to 10 micrometres"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "proof": "Expert proof 5.5 is among the bank proof lines (5.5); every bank quote is verbatim in its sentence.",
+    "rdkit": "not applicable: RC item, no structure served",
+    "served": "Rendered on http://127.0.0.1:4107/tools/mock/full.html as Reading Comprehension question 20 (passage 2 of 3): stem and the five choices match the loader text exactly, in bank order."
+   },
+   "conceptsOverMath": "RC: no math.",
+   "weakDistractors": [
+    "\"20 to 100 micrometres\" matches no structure in the passage, so it has no real pull (the bank says the same)."
+   ],
+   "notes": [
+    "Sentence 5.4 says \"two to five hundred micrometres\", meaning 200 to 500 (the choice uses digits). The explainer should write 200 to 500 so no one reads it as 2 to 500."
+   ]
+  },
+  {
+   "qid": "rc:rc-p10-q04",
+   "servedAs": {
+    "bank": "rc",
+    "mock": "FULL_1",
+    "section": "rc",
+    "rcSection": "rc-s15",
+    "passage": "rc-p10",
+    "passageNo": 2,
+    "n": 4,
+    "servedNo": 21,
+    "page": "tools/mock/full.html (Reading Comprehension, questions 1 to 50, passage beside the question, no tool button)"
+   },
+   "bankType": "detail",
+   "stemHash": "2646b7561b21310666384c55614f03205f0c46cc",
+   "expert": {
+    "answer": "release enzymes that break down protein in leaf litter",
+    "servedIndex": 0,
+    "confidence": "high",
+    "typeRead": "detail",
+    "concept": "A stated mechanism: enzymes digest protein in dead leaves, freeing nitrogen the tree could not reach alone.",
+    "reasoning": [
+     "Find \"ectomycorrhizal\" plus \"nitrogen\": 6.3.",
+     "The sentence gives the means: they secrete enzymes that break down protein in leaf litter."
+    ],
+    "proof": {
+     "p": 6,
+     "s": 3,
+     "quote": "secrete enzymes that break down protein in leaf litter"
+    },
+    "misconceptions": [
+     {
+      "choice": "capture nitrogen from air trapped inside the root mantle",
+      "family": "rc-outside",
+      "familyName": "Outside the passage",
+      "missType": "misread",
+      "pull": "Taking nitrogen from air is never mentioned; outside knowledge about other symbioses."
+     },
+     {
+      "choice": "take up ammonium faster than a root hair can take it up",
+      "family": "rc-outside",
+      "familyName": "Outside the passage",
+      "missType": "misread",
+      "pull": "Ammonium appears (6.2) but with no speed comparison to root hairs."
+     },
+     {
+      "choice": "move nitrogen along the hypha as chains of polyphosphate",
+      "family": "rc-misplaced",
+      "familyName": "Misplaced detail",
+      "missType": "misread",
+      "pull": "Polyphosphate chains carry phosphate (6.1), not nitrogen."
+     },
+     {
+      "choice": "trade nitrogen with arbuscular fungi on neighbouring roots",
+      "family": "rc-outside",
+      "familyName": "Outside the passage",
+      "missType": "misread",
+      "pull": "No trade between the two fungal types; 6.3 only contrasts them."
+     }
+    ]
+   },
+   "key": {
+    "index": 0,
+    "text": "release enzymes that break down protein in leaf litter"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "proof": "Expert proof 6.3 is among the bank proof lines (6.3); every bank quote is verbatim in its sentence.",
+    "rdkit": "not applicable: RC item, no structure served",
+    "served": "Rendered on http://127.0.0.1:4107/tools/mock/full.html as Reading Comprehension question 21 (passage 2 of 3): stem and the five choices match the loader text exactly, in bank order."
+   },
+   "conceptsOverMath": "RC: no math."
+  },
+  {
+   "qid": "rc:rc-p10-q05",
+   "servedAs": {
+    "bank": "rc",
+    "mock": "FULL_1",
+    "section": "rc",
+    "rcSection": "rc-s15",
+    "passage": "rc-p10",
+    "passageNo": 2,
+    "n": 5,
+    "servedNo": 22,
+    "page": "tools/mock/full.html (Reading Comprehension, questions 1 to 50, passage beside the question, no tool button)"
+   },
+   "bankType": "detail",
+   "stemHash": "9ecb6dd74a5142fa1583766b275bd1c59f47c610",
+   "expert": {
+    "answer": "cannot make fatty acids and must be handed them",
+    "servedIndex": 3,
+    "confidence": "high",
+    "typeRead": "detail",
+    "concept": "A stated cause: arbuscular fungi cannot make fatty acids, so without a host (or a supplied fatty acid) they cannot complete growth.",
+    "reasoning": [
+     "Find \"plate\": 7.4.",
+     "The sentence gives the reason: they cannot make their own fatty acids and must be handed them; the word \"which\" ties that to the plate result."
+    ],
+    "proof": {
+     "p": 7,
+     "s": 4,
+     "quote": "cannot manufacture their own fatty acids"
+    },
+    "misconceptions": [
+     {
+      "choice": "can store lipid only while it is attached to a living root",
+      "family": "rc-misplaced",
+      "familyName": "Misplaced detail",
+      "missType": "misread",
+      "pull": "Lipid storage (3.6) is real but is not the reason; the gap is making fatty acids, not storing lipid."
+     },
+     {
+      "choice": "loses the ability to take up phosphate when no root is present",
+      "family": "rc-outside",
+      "familyName": "Outside the passage",
+      "missType": "misread",
+      "pull": "Losing phosphate uptake without a root is never said."
+     },
+     {
+      "choice": "needs a mantle of root tissue in order to produce its spores",
+      "family": "rc-misplaced",
+      "familyName": "Misplaced detail",
+      "missType": "misread",
+      "pull": "A mantle belongs to ectomycorrhizas (4.2) and is fungal, not root tissue; spores appear only in 13.3."
+     },
+     {
+      "choice": "depends on carbon dioxide that living roots release into soil",
+      "family": "rc-outside",
+      "familyName": "Outside the passage",
+      "missType": "misread",
+      "pull": "Respired carbon dioxide (12.2) is a route for labelled carbon, not a fungal need."
+     }
+    ]
+   },
+   "key": {
+    "index": 3,
+    "text": "cannot make fatty acids and must be handed them"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "proof": "Expert proof 7.4 is among the bank proof lines (7.4); every bank quote is verbatim in its sentence.",
+    "rdkit": "not applicable: RC item, no structure served",
+    "served": "Rendered on http://127.0.0.1:4107/tools/mock/full.html as Reading Comprehension question 22 (passage 2 of 3): stem and the five choices match the loader text exactly, in bank order."
+   },
+   "conceptsOverMath": "RC: no math.",
+   "notes": [
+    "The passage says \"largely why\"; keep the explainer's causal claim that strong, not stronger."
+   ]
+  },
+  {
+   "qid": "rc:rc-p10-q06",
+   "servedAs": {
+    "bank": "rc",
+    "mock": "FULL_1",
+    "section": "rc",
+    "rcSection": "rc-s15",
+    "passage": "rc-p10",
+    "passageNo": 2,
+    "n": 6,
+    "servedNo": 23,
+    "page": "tools/mock/full.html (Reading Comprehension, questions 1 to 50, passage beside the question, no tool button)"
+   },
+   "bankType": "vocab",
+   "stemHash": "f7bc35c72f3aef5fd81f80fe2a5e21360f50c564",
+   "expert": {
+    "answer": "a secure physical hold",
+    "servedIndex": 4,
+    "confidence": "high",
+    "typeRead": "vocab",
+    "concept": "Vocabulary in context: \"finds purchase in pores\" is about grip, the hypha getting a hold where a root hair cannot fit.",
+    "reasoning": [
+     "Read the word's own sentence (5.5): the hypha finds purchase in pores too narrow for a root hair to enter.",
+     "Put each choice in the slot: only a physical hold makes sense inside a pore."
+    ],
+    "proof": {
+     "p": 5,
+     "s": 5,
+     "quote": "finds purchase in pores"
+    },
+    "misconceptions": [
+     {
+      "choice": "a payment made for a service",
+      "family": "rc-misplaced",
+      "familyName": "Misplaced detail",
+      "missType": "misread",
+      "pull": "The money sense, pulled in by the passage's pay and buy metaphor (5.1, 5.6); a hypha does not pay a pore."
+     },
+     {
+      "choice": "a claim on a shared resource",
+      "family": "rc-misplaced",
+      "familyName": "Misplaced detail",
+      "missType": "misread",
+      "pull": "A claim on a resource fits the trade theme, not a hypha wedged into a pore."
+     },
+     {
+      "choice": "an advantage won by bargaining",
+      "family": "rc-misplaced",
+      "familyName": "Misplaced detail",
+      "missType": "misread",
+      "pull": "Bargaining fits the trade story elsewhere, not this sentence about pore size."
+     },
+     {
+      "choice": "something acquired by buying",
+      "family": "rc-misplaced",
+      "familyName": "Misplaced detail",
+      "missType": "misread",
+      "pull": "The dictionary sense (something bought); the sentence is about grip, not buying."
+     }
+    ]
+   },
+   "key": {
+    "index": 4,
+    "text": "a secure physical hold"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "proof": "Expert proof 5.5 is among the bank proof lines (5.5); every bank quote is verbatim in its sentence.",
+    "rdkit": "not applicable: RC item, no structure served",
+    "served": "Rendered on http://127.0.0.1:4107/tools/mock/full.html as Reading Comprehension question 23 (passage 2 of 3): stem and the five choices match the loader text exactly, in bank order."
+   },
+   "conceptsOverMath": "RC: no math.",
+   "weakDistractors": [
+    "\"a claim on a shared resource\" and \"an advantage won by bargaining\" pull only through the passage's trade theme, not through any sense of \"purchase\"; thin traps."
+   ]
+  },
+  {
+   "qid": "rc:rc-p10-q07",
+   "servedAs": {
+    "bank": "rc",
+    "mock": "FULL_1",
+    "section": "rc",
+    "rcSection": "rc-s15",
+    "passage": "rc-p10",
+    "passageNo": 2,
+    "n": 7,
+    "servedNo": 24,
+    "page": "tools/mock/full.html (Reading Comprehension, questions 1 to 50, passage beside the question, no tool button)"
+   },
+   "bankType": "vocab",
+   "stemHash": "2b2b11be5fec3ab7d4b5905624168da82cd22808",
+   "expert": {
+    "answer": "a destination that draws supply in",
+    "servedIndex": 2,
+    "confidence": "high",
+    "typeRead": "vocab",
+    "concept": "Vocabulary in context: a sink is where supply flows to; the same sentence says sugar is drawn down to it.",
+    "reasoning": [
+     "Read the sentence (8.4): sugar made in the leaves is drawn down to the root system.",
+     "So the sink is the place that pulls supply toward it."
+    ],
+    "proof": {
+     "p": 8,
+     "s": 4,
+     "quote": "A colonised root system is a powerful sink"
+    },
+    "misconceptions": [
+     {
+      "choice": "a basin into which a liquid drains away and is lost",
+      "family": "rc-half-supported",
+      "familyName": "Half supported",
+      "missType": "misread",
+      "pull": "\"Drains\" fits the flow, but \"lost\" does not; the sugar feeds the fungal partners that trade nutrients back."
+     },
+     {
+      "choice": "a steady decline in value over a long period",
+      "family": "rc-misplaced",
+      "familyName": "Misplaced detail",
+      "missType": "misread",
+      "pull": "The \"sinking value\" sense; the sentence is about where sugar goes, not a decline."
+     },
+     {
+      "choice": "a slow settling downward through soil",
+      "family": "rc-misplaced",
+      "familyName": "Misplaced detail",
+      "missType": "misread",
+      "pull": "Takes \"drawn down\" literally as settling through soil; the flow runs inside the plant to the roots."
+     },
+     {
+      "choice": "a place where unwanted material collects",
+      "family": "rc-tone",
+      "familyName": "Tone mismatch",
+      "missType": "misread",
+      "pull": "Adds \"unwanted\"; the passage treats the flow as payment in a trade, not waste."
+     }
+    ]
+   },
+   "key": {
+    "index": 2,
+    "text": "a destination that draws supply in"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "proof": "Expert proof 8.4 is among the bank proof lines (8.4); every bank quote is verbatim in its sentence.",
+    "rdkit": "not applicable: RC item, no structure served",
+    "served": "Rendered on http://127.0.0.1:4107/tools/mock/full.html as Reading Comprehension question 24 (passage 2 of 3): stem and the five choices match the loader text exactly, in bank order."
+   },
+   "conceptsOverMath": "RC: no math."
+  },
+  {
+   "qid": "rc:rc-p10-q08",
+   "servedAs": {
+    "bank": "rc",
+    "mock": "FULL_1",
+    "section": "rc",
+    "rcSection": "rc-s15",
+    "passage": "rc-p10",
+    "passageNo": 2,
+    "n": 8,
+    "servedNo": 25,
+    "page": "tools/mock/full.html (Reading Comprehension, questions 1 to 50, passage beside the question, no tool button)"
+   },
+   "bankType": "inference",
+   "stemHash": "290909035046074ad1f7f3d6aeed468568e30a96",
+   "expert": {
+    "answer": "a root carries fungal tissue that may hold the tag itself",
+    "servedIndex": 0,
+    "confidence": "high",
+    "typeRead": "inference",
+    "concept": "Inference about evidence: a tag in a root may sit in the fungus wrapped around that root, so only a tag in the shoot clearly shows carbon in the plant.",
+    "reasoning": [
+     "Find the caution: 11.1, a tag in a neighbor is not automatically carbon in a neighbor.",
+     "Sentence 11.2 gives the reason: much of the tag sits in hyphae wrapped around and through the root.",
+     "Leaves carry no such fungal wrapping, so 11.3 calls them the stricter test."
+    ],
+    "proof": {
+     "p": 11,
+     "s": 2,
+     "quote": "which is fungal tissue, not plant tissue"
+    },
+    "misconceptions": [
+     {
+      "choice": "the tag breaks down before it can travel up into a shoot",
+      "family": "rc-outside",
+      "familyName": "Outside the passage",
+      "missType": "misread",
+      "pull": "Nothing says the tag breaks down; 9.2 says instruments detect it at very low levels."
+     },
+     {
+      "choice": "the fungus strips the tag out of a root before it is harvested",
+      "family": "read-backward",
+      "familyName": "Read backward",
+      "missType": "misread",
+      "pull": "The fungus holds the tag in the root and inflates the reading; stripping it out runs the other way."
+     },
+     {
+      "choice": "leaves are the only tissue instruments can measure accurately",
+      "family": "rc-too-strong",
+      "familyName": "Too strong",
+      "missType": "misread",
+      "pull": "\"Only tissue\" overreaches; nothing limits what instruments can measure, and 9.2 says they are sensitive."
+     },
+     {
+      "choice": "a root holds far less carbon overall than a leaf holds",
+      "family": "rc-outside",
+      "familyName": "Outside the passage",
+      "missType": "misread",
+      "pull": "Carbon totals of roots and leaves are never compared."
+     }
+    ]
+   },
+   "key": {
+    "index": 0,
+    "text": "a root carries fungal tissue that may hold the tag itself"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "proof": "Expert proof 11.2 is among the bank proof lines (11.2, 11.3); every bank quote is verbatim in its sentence.",
+    "rdkit": "not applicable: RC item, no structure served",
+    "served": "Rendered on http://127.0.0.1:4107/tools/mock/full.html as Reading Comprehension question 25 (passage 2 of 3): stem and the five choices match the loader text exactly, in bank order."
+   },
+   "conceptsOverMath": "RC: no math.",
+   "notes": [
+    "After the key check: the bank reads the \"fungus strips the tag\" choice as an invented mechanism (rc-outside); this solve used read-backward, since the passage has the fungus holding the tag in the root and inflating the reading. Either fits."
+   ]
+  },
+  {
+   "qid": "rc:rc-p10-q09",
+   "servedAs": {
+    "bank": "rc",
+    "mock": "FULL_1",
+    "section": "rc",
+    "rcSection": "rc-s15",
+    "passage": "rc-p10",
+    "passageNo": 2,
+    "n": 9,
+    "servedNo": 26,
+    "page": "tools/mock/full.html (Reading Comprehension, questions 1 to 50, passage beside the question, no tool button)"
+   },
+   "bankType": "inference",
+   "stemHash": "fa80295258989e6c3d79a87a87e978f2f69d5d3c",
+   "expert": {
+    "answer": "A plant can take from a network without giving back",
+    "servedIndex": 3,
+    "confidence": "high",
+    "typeRead": "inference",
+    "concept": "Inference from an example: the ghost pipe shows carbon can cross a fungus into a plant, and also that a plant can take with no return.",
+    "reasoning": [
+     "Find the example: paragraph 15.",
+     "It proves two things: carbon can cross a fungus into another plant (15.3), and the taker gives nothing back (15.5).",
+     "Pick the choice that matches the \"cuts the other way\" half."
+    ],
+    "proof": {
+     "p": 15,
+     "s": 5,
+     "quote": "These plants return nothing"
+    },
+    "misconceptions": [
+     {
+      "choice": "Chlorophyll turns out to be unnecessary for the majority of land plants",
+      "family": "rc-too-strong",
+      "familyName": "Too strong",
+      "missType": "misread",
+      "pull": "Ghost pipe and some orchids are a small group; nothing extends that to most land plants."
+     },
+     {
+      "choice": "Fungi favour hosts that have given up photosynthesis",
+      "family": "rc-outside",
+      "familyName": "Outside the passage",
+      "missType": "misread",
+      "pull": "No fungal preference is described; the fungi are attached to photosynthetic trees at the same time (15.3)."
+     },
+     {
+      "choice": "Trees raise their sugar output when a network drains carbon from them",
+      "family": "rc-outside",
+      "familyName": "Outside the passage",
+      "missType": "misread",
+      "pull": "Trees raising sugar output is never mentioned."
+     },
+     {
+      "choice": "Most plants in a forest obtain their carbon from other plants",
+      "family": "rc-too-strong",
+      "familyName": "Too strong",
+      "missType": "misread",
+      "pull": "One group of plants (15.1) cannot carry a claim about most plants in a forest."
+     }
+    ]
+   },
+   "key": {
+    "index": 3,
+    "text": "A plant can take from a network without giving back"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "proof": "Expert proof 15.5 is among the bank proof lines (15.5, 15.6); every bank quote is verbatim in its sentence.",
+    "rdkit": "not applicable: RC item, no structure served",
+    "served": "Rendered on http://127.0.0.1:4107/tools/mock/full.html as Reading Comprehension question 26 (passage 2 of 3): stem and the five choices match the loader text exactly, in bank order."
+   },
+   "conceptsOverMath": "RC: no math."
+  },
+  {
+   "qid": "rc:rc-p10-q10",
+   "servedAs": {
+    "bank": "rc",
+    "mock": "FULL_1",
+    "section": "rc",
+    "rcSection": "rc-s15",
+    "passage": "rc-p10",
+    "passageNo": 2,
+    "n": 10,
+    "servedNo": 27,
+    "page": "tools/mock/full.html (Reading Comprehension, questions 1 to 50, passage beside the question, no tool button)"
+   },
+   "bankType": "mainidea",
+   "stemHash": "224a3c94f1d9f528ae0138289e79f733c834dec1",
+   "expert": {
+    "answer": "The trade is well documented, the sharing between trees far less so",
+    "servedIndex": 1,
+    "confidence": "high",
+    "typeRead": "mainidea",
+    "concept": "Main idea: the passage splits what is settled (the nutrient for carbon trade) from what is not (whether trees share or provision).",
+    "reasoning": [
+     "Read the close: 17.3 says the trade is measured and quantified.",
+     "Then 17.5: what stays open is how much transfer matters and whether provisioning happens at all.",
+     "The main idea holds both halves: documented trade, uncertain sharing."
+    ],
+    "proof": {
+     "p": 17,
+     "s": 3,
+     "quote": "The trade of mineral nutrients for sugar and fat is measured and quantified"
+    },
+    "misconceptions": [
+     {
+      "choice": "Ectomycorrhizal and arbuscular partners differ mainly in their fungal lineages",
+      "family": "rc-too-weak",
+      "familyName": "Too weak",
+      "missType": "misread",
+      "pull": "A narrow detail from paragraphs 3 and 4, and the passage contrasts their structures, not their lineages."
+     },
+     {
+      "choice": "Isotope labelling has settled the question of how carbon moves between trees",
+      "family": "rc-contradicted",
+      "familyName": "Contradicted",
+      "missType": "misread",
+      "pull": "Paragraphs 11 to 13 list what labelling cannot settle; 17.5 says the question stays open."
+     },
+     {
+      "choice": "Fungal networks join the trees of a forest into a single system of mutual care",
+      "family": "rc-contradicted",
+      "familyName": "Contradicted",
+      "missType": "misread",
+      "pull": "This is the web of nurture image the author says has run ahead of the measurements (16.2 to 16.4)."
+     },
+     {
+      "choice": "Phosphate scarcity is the one force that has shaped the evolution of land plants",
+      "family": "rc-too-strong",
+      "familyName": "Too strong",
+      "missType": "misread",
+      "pull": "\"The one force\" overreaches; phosphate explains why a tree pays (5.1), not all of plant evolution."
+     }
+    ]
+   },
+   "key": {
+    "index": 1,
+    "text": "The trade is well documented, the sharing between trees far less so"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "proof": "Expert proof 17.3 is among the bank proof lines (17.3, 17.5, 16.4, 1.5); every bank quote is verbatim in its sentence.",
+    "rdkit": "not applicable: RC item, no structure served",
+    "served": "Rendered on http://127.0.0.1:4107/tools/mock/full.html as Reading Comprehension question 27 (passage 2 of 3): stem and the five choices match the loader text exactly, in bank order."
+   },
+   "conceptsOverMath": "RC: no math.",
+   "notes": [
+    "Bank proof uses 17.3, 17.5, 16.4 and 1.5."
+   ]
+  },
+  {
+   "qid": "rc:rc-p10-q11",
+   "servedAs": {
+    "bank": "rc",
+    "mock": "FULL_1",
+    "section": "rc",
+    "rcSection": "rc-s15",
+    "passage": "rc-p10",
+    "passageNo": 2,
+    "n": 11,
+    "servedNo": 28,
+    "page": "tools/mock/full.html (Reading Comprehension, questions 1 to 50, passage beside the question, no tool button)"
+   },
+   "bankType": "function",
+   "stemHash": "89abdceb829289dbf7eba05150c8c6f96ecc8159",
+   "expert": {
+    "answer": "point out other ways a tag could reach a neighbouring plant",
+    "servedIndex": 1,
+    "confidence": "high",
+    "typeRead": "function",
+    "concept": "Function of a paragraph: paragraph 12 lists rival routes for labelled carbon, a second reason to be careful before crediting the fungal network.",
+    "reasoning": [
+     "Read the paragraph's first line (12.1): the network is not the only road.",
+     "Sentence 12.2 lists the other roads: soil water, respired and refixed carbon dioxide, litter, root grafts.",
+     "So the paragraph is there to name other ways a tag can reach a neighbor."
+    ],
+    "proof": {
+     "p": 12,
+     "s": 1,
+     "quote": "The network is also not the only road"
+    },
+    "misconceptions": [
+     {
+      "choice": "argue that soil water supplies most of the nutrients in a forest",
+      "family": "rc-too-strong",
+      "familyName": "Too strong",
+      "missType": "misread",
+      "pull": "Soil water is one listed route for a tag, not a claim about most forest nutrients."
+     },
+     {
+      "choice": "explain why root grafts form between trees of the same species",
+      "family": "rc-outside",
+      "familyName": "Outside the passage",
+      "missType": "misread",
+      "pull": "Grafts are named as one route (12.2); why they form, and between which species, is never explained."
+     },
+     {
+      "choice": "describe the way fallen leaves decompose on a forest floor",
+      "family": "rc-too-weak",
+      "familyName": "Too weak",
+      "missType": "misread",
+      "pull": "Litter is one item in the list; the paragraph does not describe decomposition."
+     },
+     {
+      "choice": "show that the fungal route carries more carbon than the soil route does",
+      "family": "rc-outside",
+      "familyName": "Outside the passage",
+      "missType": "misread",
+      "pull": "No comparison of amounts is made; 12.3 says pulling the routes apart is hard."
+     }
+    ]
+   },
+   "key": {
+    "index": 1,
+    "text": "point out other ways a tag could reach a neighbouring plant"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "proof": "Expert proof 12.1 is among the bank proof lines (12.1, 12.3); every bank quote is verbatim in its sentence.",
+    "rdkit": "not applicable: RC item, no structure served",
+    "served": "Rendered on http://127.0.0.1:4107/tools/mock/full.html as Reading Comprehension question 28 (passage 2 of 3): stem and the five choices match the loader text exactly, in bank order."
+   },
+   "conceptsOverMath": "RC: no math."
+  }
+ ]
+}

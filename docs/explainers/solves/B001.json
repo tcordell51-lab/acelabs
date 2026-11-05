@@ -1,0 +1,999 @@
+{
+ "schema": "ace.expert-solve/1",
+ "batch": "B001",
+ "group": "G1",
+ "bank": "full",
+ "section": "BIO",
+ "role": "Independent expert, blind solve (production-plan.md section 5, steps 2 and 3). Coach only; never published.",
+ "solvedBlindAt": "2026-10-30T08:37:40Z",
+ "method": [
+  "Each item read from the served question alone: tools/mock/data/full-mocks.js loaded in a node vm exactly as scripts/explainers/build.mjs does, printing stem, stem figure (qs), structure-choice flag (os) and choices in served order, with the key, why and traps fields withheld.",
+  "The full-mock player (tools/mock/full.js) serves choices in bank order with no shuffle; the copy served at http://127.0.0.1:4107/ hashes the same as the file on disk.",
+  "Blind picks were saved before any key was loaded; keys were compared after; the bank why and trap notes were read only after that, for the writer notes.",
+  "Every number recomputed (the X-linked cross enumerated, the map-distance conversion, the ATP tally and each distractor route). RDKit not applicable: no item in this batch has a structure in its stem or choices. No RC items, so no proof lines."
+ ],
+ "freeze": {
+  "bankFile": "tools/mock/data/full-mocks.js",
+  "bankSha256_16": "5eceeb82674e52cb",
+  "servedCopySameAsDisk": true
+ },
+ "summary": {
+  "items": 16,
+  "keyAgrees": 16,
+  "keyDisputes": 0,
+  "pictureDisputes": 0,
+  "familiesUsed": [
+   "assumed-equal",
+   "half-right",
+   "looks-bigger",
+   "missed-exception",
+   "neighbor-fact",
+   "one-step-short",
+   "one-step-too-far",
+   "other-conditions",
+   "other-question",
+   "read-backward",
+   "reversed",
+   "unit-slip"
+  ],
+  "forThomas": [
+   "No key disputes: all 16 keys match the blind solve.",
+   "fm:bio:BIO_p090: the key text pairs palms and soles (eccrine) with axillae (apocrine). The key stands; the explainer must split the gland types.",
+   "fm:written:bio-4-158brxy: the bank trap note for 20 names 3 and 1 as the older values (they were 3 and 2). Bank text untouched; the explainer must not repeat it.",
+   "Weak distractors with no real misconception behind them (concept-first rule): BIO_g061 5%, BIO_p057 ~45%, BIO_p056 Aquaporin gradient. Rewrite candidates; keys unchanged."
+  ]
+ },
+ "items": [
+  {
+   "qid": "fm:bio:BIO_g064",
+   "servedAs": {
+    "mock": "FULL_1",
+    "section": "bio",
+    "n": 3
+   },
+   "bankTopic": "Beyond Mendel and molecular tools",
+   "stemHash": "29ac9ed32a3e2b8aeb4bcc650c774f6111c08df4",
+   "expertAnswer": "All sons affected, all daughters carriers",
+   "servedKey": "All sons affected, all daughters carriers",
+   "keyAgrees": true,
+   "confidence": "high",
+   "concept": "X-linked recessive inheritance: a son gets his only X from his mother, so an affected mother has all affected sons and carrier daughters (criss-cross).",
+   "reasoning": [
+    "Write the parents: an affected mother is Xc Xc (both X chromosomes carry it); the father is XC Y.",
+    "Every child gets an Xc from the mother. Sons get the Y from the father, so every son is Xc Y and affected.",
+    "Daughters get the father's XC, so every daughter is XC Xc: normal vision, carrier."
+   ],
+   "recompute": {
+    "cross": "Xc Xc x XC Y",
+    "offspring": {
+     "XC Xc daughter, carrier": "1/2",
+     "Xc Y son, affected": "1/2"
+    }
+   },
+   "choices": [
+    {
+     "text": "All daughters affected and all sons unaffected",
+     "role": "trap",
+     "family": "reversed",
+     "missType": "concept",
+     "misconception": "Swaps which sex gets which X. The father gives daughters his normal X and gives sons only a Y."
+    },
+    {
+     "text": "25% affected each",
+     "role": "trap",
+     "family": "other-conditions",
+     "missType": "content",
+     "misconception": "The 1 in 4 of an autosomal carrier by carrier cross. Here the mother's allele goes to every child, so nothing is left to chance."
+    },
+    {
+     "text": "All sons normal",
+     "role": "trap",
+     "family": "neighbor-fact",
+     "missType": "content",
+     "misconception": "True of the daughters' vision, not the sons. Thinks sons take an X from the father."
+    },
+    {
+     "text": "No effect",
+     "role": "trap",
+     "family": "missed-exception",
+     "missType": "content",
+     "misconception": "Applies the rule that one normal dominant allele masks a recessive trait. Sons have one X and nothing to mask it."
+    },
+    {
+     "text": "All sons affected, all daughters carriers",
+     "role": "key",
+     "why": "Sons: Xc from mother plus Y. Daughters: Xc from mother plus XC from father."
+    }
+   ],
+   "writerNotes": [
+    "Choice texts are shorthand and not parallel (25% affected each; No effect). A stem-style flag candidate for Thomas; rewording suggested, never applied."
+   ]
+  },
+  {
+   "qid": "fm:bio:BIO_g015",
+   "servedAs": {
+    "mock": "FULL_1",
+    "section": "bio",
+    "n": 29
+   },
+   "bankTopic": "Beyond Mendel and molecular tools",
+   "stemHash": "3dc8602f374143e2ca8ce4e49cc32b71563ae0a0",
+   "expertAnswer": "Silent",
+   "servedKey": "Silent",
+   "keyAgrees": true,
+   "confidence": "high",
+   "concept": "The genetic code is redundant; point mutations are named by what happens to the protein (silent, missense, nonsense), frameshifts by an insertion or deletion.",
+   "reasoning": [
+    "Read what changed: one base pair swapped, protein sequence identical.",
+    "Know the code is redundant: several codons spell the same amino acid, often differing only at the third base.",
+    "Name it by the protein outcome: same protein means silent."
+   ],
+   "choices": [
+    {
+     "text": "Missense",
+     "role": "trap",
+     "family": "neighbor-fact",
+     "missType": "content",
+     "misconception": "The substitution class next door, where the new codon spells a different amino acid, so the sequence would change."
+    },
+    {
+     "text": "Silent",
+     "role": "key",
+     "why": "The new codon is a synonym for the same amino acid."
+    },
+    {
+     "text": "Frameshift",
+     "role": "trap",
+     "family": "other-conditions",
+     "missType": "content",
+     "misconception": "Comes from inserting or deleting bases in a number not divisible by three. A single substitution keeps the reading frame."
+    },
+    {
+     "text": "Nonsense",
+     "role": "trap",
+     "family": "other-conditions",
+     "missType": "content",
+     "misconception": "The case where the new codon is a stop, which cuts the protein short."
+    },
+    {
+     "text": "Transversion",
+     "role": "trap",
+     "family": "other-question",
+     "missType": "misread",
+     "misconception": "Names the base chemistry (purine for pyrimidine), not the protein outcome the stem asks about."
+    }
+   ],
+   "writerNotes": [
+    "A silent change can itself be a transition or a transversion, so the Transversion note should say it answers a different question (the chemistry), not that it cannot be true."
+   ]
+  },
+  {
+   "qid": "fm:bio:BIO_g061",
+   "servedAs": {
+    "mock": "FULL_1",
+    "section": "bio",
+    "n": 37
+   },
+   "bankTopic": "Beyond Mendel and molecular tools",
+   "stemHash": "93c82763164efdde08db4602e0d93f608a1afbea",
+   "expertAnswer": "25%",
+   "servedKey": "25%",
+   "keyAgrees": true,
+   "confidence": "high",
+   "concept": "Map units: 1 centimorgan is defined as 1 percent recombinant offspring, and observed recombination tops out at 50 percent.",
+   "reasoning": [
+    "Know the definition: 1 map unit (centimorgan) equals 1 percent recombinant offspring.",
+    "So 25 centimorgans reads straight across as 25 percent recombinants, under the 50 percent ceiling.",
+    "The three-point setup does not change the conversion."
+   ],
+   "recompute": {
+    "distance_cM": 25,
+    "recombinantPercent": 25,
+    "parentalPercent": 75,
+    "halved": 12.5,
+    "ceilingPercent": 50
+   },
+   "choices": [
+    {
+     "text": "5%",
+     "role": "trap",
+     "family": "unit-slip",
+     "missType": "misread",
+     "misconception": "Shrinks the distance as if centimorgans needed a conversion first. No clean misconception sits behind this value.",
+     "familyConfidence": "low"
+    },
+    {
+     "text": "12.5%",
+     "role": "trap",
+     "family": "one-step-too-far",
+     "missType": "misread",
+     "misconception": "Halves the distance, as if the half-the-chromatids correction were still owed. The centimorgan already is percent recombinants."
+    },
+    {
+     "text": "25%",
+     "role": "key",
+     "why": "Centimorgans are defined as percent recombinants."
+    },
+    {
+     "text": "50%",
+     "role": "trap",
+     "family": "other-conditions",
+     "missType": "content",
+     "misconception": "The value for genes that assort independently (unlinked, or very far apart)."
+    },
+    {
+     "text": "75%",
+     "role": "trap",
+     "family": "other-question",
+     "missType": "misread",
+     "misconception": "The parental (nonrecombinant) share, 100 minus 25. Also above the 50 percent ceiling."
+    }
+   ],
+   "writerNotes": [
+    "The bank why points to \"the word approximate\", which this stem does not contain (bank-copy note; the bank is not edited).",
+    "Nuance to keep out of the explainer: for outer markers in a real three-point cross, undetected double crossovers make the observed frequency read a little under the map distance. At DAT level 25 cM is 25 percent; do not claim more precision.",
+    "The 5% choice has no real misconception behind it (decisions doc: every distractor from a real misconception). Flag for a later rewrite; key unchanged."
+   ]
+  },
+  {
+   "qid": "fm:bio:BIO_p044",
+   "servedAs": {
+    "mock": "FULL_1",
+    "section": "bio",
+    "n": 2
+   },
+   "bankTopic": "Body systems at work",
+   "stemHash": "e89f68bd565b56a4bad165e90d2f9baf10538ea7",
+   "expertAnswer": "Respiratory alkalosis",
+   "servedKey": "Respiratory alkalosis",
+   "keyAgrees": true,
+   "confidence": "high",
+   "concept": "CO2 + H2O <-> H2CO3 <-> H+ + HCO3-: ventilation sets CO2, so breathing changes pH, and a lung-caused shift is labeled respiratory.",
+   "reasoning": [
+    "Follow the CO2: rapid deep breathing at rest blows off CO2.",
+    "Less CO2 pulls the carbonic acid equilibrium to the left, using up H+, so pH rises: alkalosis.",
+    "The lungs caused it, so the label is respiratory."
+   ],
+   "choices": [
+    {
+     "text": "Metabolic acidosis",
+     "role": "trap",
+     "family": "reversed",
+     "missType": "concept",
+     "misconception": "Cause and effect swapped: metabolic acidosis drives fast breathing as compensation; it is not caused by it."
+    },
+    {
+     "text": "Respiratory acidosis",
+     "role": "trap",
+     "family": "other-conditions",
+     "missType": "content",
+     "misconception": "The outcome of hypoventilation, where CO2 is retained and pH falls."
+    },
+    {
+     "text": "Metabolic alkalosis from a loss of hydrogen ions",
+     "role": "trap",
+     "family": "half-right",
+     "missType": "concept",
+     "misconception": "Alkalosis holds, but the cause is CO2 lost through the lungs, not H+ lost from the gut (as in vomiting)."
+    },
+    {
+     "text": "No pH change",
+     "role": "trap",
+     "family": "one-step-short",
+     "missType": "concept",
+     "misconception": "Sees the breathing change but stops before following CO2 through carbonic acid to H+. Ventilation moves pH within minutes."
+    },
+    {
+     "text": "Respiratory alkalosis",
+     "role": "key",
+     "why": "Blowing off CO2 lowers H+; the lungs caused it."
+    }
+   ],
+   "writerNotes": []
+  },
+  {
+   "qid": "fm:bio:BIO_p090",
+   "servedAs": {
+    "mock": "FULL_1",
+    "section": "bio",
+    "n": 4
+   },
+   "bankTopic": "Body systems at work",
+   "stemHash": "cd042d0182097239d8bb52cab39996d7373c1de0",
+   "expertAnswer": "Palms, soles, axillae",
+   "servedKey": "Palms, soles, axillae",
+   "keyAgrees": true,
+   "confidence": "high",
+   "confidenceNote": "High on the answer: it is the only defensible choice. The key text mixes two gland types (see writer notes).",
+   "concept": "Sweat glands are not evenly spread: eccrine glands are densest on the palms and soles (forehead next), and the axillae hold the apocrine glands.",
+   "reasoning": [
+    "Know the map: eccrine sweat glands are densest on the palms and soles, several hundred per square centimeter.",
+    "The axillae are where the apocrine sweat glands concentrate, so the choice naming palms, soles and axillae is the concentrated set.",
+    "Cross off the even-spread claim and the low-density sites (back, eyelids, lips)."
+   ],
+   "choices": [
+    {
+     "text": "Back",
+     "role": "trap",
+     "family": "looks-bigger",
+     "missType": "misread",
+     "misconception": "A large surface that can shed a lot of sweat in total, but its gland density is low. Total output is not density."
+    },
+    {
+     "text": "Palms, soles, axillae",
+     "role": "key",
+     "why": "Palms and soles lead for eccrine glands; the axillae hold the apocrine glands."
+    },
+    {
+     "text": "Spread at the same density over the entire body surface",
+     "role": "trap",
+     "family": "assumed-equal",
+     "missType": "concept",
+     "misconception": "Treats every region as equal when density differs several-fold from palm to trunk."
+    },
+    {
+     "text": "Eyelids",
+     "role": "trap",
+     "family": "neighbor-fact",
+     "missType": "content",
+     "misconception": "The lid margin's glands are mostly oil-making; eyelid skin carries few sweat glands."
+    },
+    {
+     "text": "Lips",
+     "role": "trap",
+     "family": "reversed",
+     "missType": "concept",
+     "misconception": "The lip margin has essentially no sweat glands, so lips sit at the bottom of the ranking, not the top."
+    }
+   ],
+   "writerNotes": [
+    "Do not write that the axillae are among the densest sites for eccrine glands. Eccrine density leads on the palms, soles and forehead; the axillae are listed because of their apocrine glands. The bank why says densest on palms, soles and axillae without that split.",
+    "Not a key dispute: no other choice is defensible. For Thomas, optional: the key text could later name the gland types; any change is his, in the bank."
+   ]
+  },
+  {
+   "qid": "fm:bio:BIO_p019",
+   "servedAs": {
+    "mock": "FULL_1",
+    "section": "bio",
+    "n": 21
+   },
+   "bankTopic": "Body systems at work",
+   "stemHash": "9e2ab237dcd24d2220b561ec83b90144cb50bc90",
+   "expertAnswer": "Parietal cells",
+   "servedKey": "Parietal cells",
+   "keyAgrees": true,
+   "confidence": "high",
+   "concept": "Gastric gland cells by product: parietal cells make HCl (via the H+/K+ ATPase) and intrinsic factor; chief cells pepsinogen; mucous cells mucus; G cells gastrin.",
+   "reasoning": [
+    "Sort the stomach lining by product: parietal for acid, chief for pepsinogen, mucous neck and surface cells for mucus, G cells for gastrin.",
+    "The acid maker is the parietal cell, with its H+/K+ ATPase proton pump."
+   ],
+   "choices": [
+    {
+     "text": "Chief cells",
+     "role": "trap",
+     "family": "neighbor-fact",
+     "missType": "content",
+     "misconception": "Chief cells release pepsinogen, the enzyme precursor the acid then activates."
+    },
+    {
+     "text": "Goblet cells",
+     "role": "trap",
+     "family": "neighbor-fact",
+     "missType": "content",
+     "misconception": "Mucus-secreting cells of the intestine and airways."
+    },
+    {
+     "text": "Parietal cells",
+     "role": "key",
+     "why": "The proton pump of the parietal cell secretes H+ with Cl- following."
+    },
+    {
+     "text": "Mucous neck cells",
+     "role": "trap",
+     "family": "neighbor-fact",
+     "missType": "content",
+     "misconception": "They make the mucus that shields the lining from the acid."
+    },
+    {
+     "text": "G cells",
+     "role": "trap",
+     "family": "one-step-short",
+     "missType": "concept",
+     "misconception": "G cells release gastrin, the signal that tells parietal cells to make acid. Picking them stops one step before the acid source."
+    }
+   ],
+   "writerNotes": []
+  },
+  {
+   "qid": "fm:bio:BIO_p057",
+   "servedAs": {
+    "mock": "FULL_1",
+    "section": "bio",
+    "n": 23
+   },
+   "bankTopic": "Body systems at work",
+   "stemHash": "7595acffb2338881b7e897e8f7471a8b418ace0e",
+   "expertAnswer": "~65%",
+   "servedKey": "~65%",
+   "keyAgrees": true,
+   "confidence": "high",
+   "concept": "Sodium handling along the nephron: the proximal tubule reclaims the bulk (about two thirds, water following), the thick ascending limb about a quarter, and the distal end fine-tunes the last few percent.",
+   "reasoning": [
+    "Picture the filtered sodium as a budget the nephron spends down.",
+    "The proximal convoluted tubule does the bulk: about two thirds, with water following.",
+    "Then the thick ascending limb takes about a quarter, and the distal tubule and collecting duct fine-tune the last few percent."
+   ],
+   "recompute": {
+    "segmentSharesPercent": {
+     "proximalTubule": 65,
+     "thickAscendingLimb": 25,
+     "distalTubule": 5,
+     "collectingDuct": 3
+    },
+    "wholeNephronPercent": "about 99"
+   },
+   "choices": [
+    {
+     "text": "~25%",
+     "role": "trap",
+     "family": "neighbor-fact",
+     "missType": "content",
+     "misconception": "The thick ascending limb's share, the second-largest site."
+    },
+    {
+     "text": "~45%",
+     "role": "trap",
+     "family": "assumed-equal",
+     "missType": "concept",
+     "misconception": "Splits the work roughly evenly across the tubule instead of giving the proximal tubule the bulk.",
+     "familyConfidence": "medium"
+    },
+    {
+     "text": "~5%",
+     "role": "trap",
+     "family": "neighbor-fact",
+     "missType": "content",
+     "misconception": "The distal tubule's fine-tuning share."
+    },
+    {
+     "text": "~65%",
+     "role": "key",
+     "why": "The proximal tubule reclaims about two thirds of filtered sodium."
+    },
+    {
+     "text": "~95%",
+     "role": "trap",
+     "family": "other-question",
+     "missType": "misread",
+     "misconception": "Close to the whole-nephron total, not the proximal tubule alone."
+    }
+   ],
+   "writerNotes": [
+    "A recall number. Teach the shape first (bulk early, fine-tuning late), then the number.",
+    "The ~45% choice has a weak misconception behind it; flag for a later rewrite, key unchanged."
+   ]
+  },
+  {
+   "qid": "fm:bio:BIO_p056",
+   "servedAs": {
+    "mock": "FULL_1",
+    "section": "bio",
+    "n": 35
+   },
+   "bankTopic": "Body systems at work",
+   "stemHash": "1ffe759255f2bfaef16860e75bdbbc3cb7d59618",
+   "expertAnswer": "Hydrostatic pressure",
+   "servedKey": "Hydrostatic pressure",
+   "keyAgrees": true,
+   "confidence": "high",
+   "concept": "Glomerular filtration is pressure-driven bulk flow: glomerular capillary hydrostatic pressure pushes out, opposed by plasma colloid osmotic pressure and capsule pressure.",
+   "reasoning": [
+    "Name the forces at the glomerulus: capillary blood (hydrostatic) pressure pushes fluid out; plasma protein (colloid osmotic) pressure and capsule pressure push back.",
+    "A wide afferent and a narrower efferent arteriole hold glomerular hydrostatic pressure high, so it wins.",
+    "That is bulk flow with no ATP spent: hydrostatic pressure."
+   ],
+   "choices": [
+    {
+     "text": "Colloid osmotic pressure of the plasma proteins",
+     "role": "trap",
+     "family": "reversed",
+     "missType": "concept",
+     "misconception": "It opposes filtration, pulling fluid back into the capillary."
+    },
+    {
+     "text": "Active transport",
+     "role": "trap",
+     "family": "neighbor-fact",
+     "missType": "content",
+     "misconception": "Active transport works later, in tubular reabsorption, not in filtration."
+    },
+    {
+     "text": "Aquaporin gradient",
+     "role": "trap",
+     "family": "neighbor-fact",
+     "missType": "content",
+     "misconception": "Aquaporins are water channels in the collecting duct under ADH control. There is no aquaporin gradient driving filtration."
+    },
+    {
+     "text": "Hydrostatic pressure",
+     "role": "key",
+     "why": "Glomerular capillary blood pressure drives bulk flow into the capsule."
+    },
+    {
+     "text": "Diffusion only",
+     "role": "trap",
+     "family": "other-conditions",
+     "missType": "content",
+     "misconception": "Diffusion moves solutes down their own gradients, as in gas exchange; filtration pushes water and small solutes together."
+    }
+   ],
+   "writerNotes": [
+    "\"Aquaporin gradient\" is not a real term, so this choice reads as filler rather than a misconception; flag for a later rewrite, key unchanged."
+   ]
+  },
+  {
+   "qid": "fm:written:bio-4-jwpv4p",
+   "servedAs": {
+    "mock": "FULL_1",
+    "section": "bio",
+    "n": 28
+   },
+   "bankTopic": "Cellular respiration",
+   "stemHash": "35d7bb7378ec512ee12581ed1aff236fcf6c8de0",
+   "expertAnswer": "Ethanol and carbon dioxide",
+   "servedKey": "Ethanol and carbon dioxide",
+   "keyAgrees": true,
+   "confidence": "high",
+   "concept": "Alcoholic fermentation in yeast: pyruvate loses CO2 to become acetaldehyde, which takes NADH's electrons to become ethanol, regenerating NAD+.",
+   "reasoning": [
+    "Name the pathway: yeast without oxygen run alcoholic fermentation.",
+    "Pyruvate loses CO2, the gas that lifts the dough, and becomes acetaldehyde.",
+    "Acetaldehyde takes NADH's electrons and becomes ethanol, the alcohol that bakes off; NAD+ is regenerated."
+   ],
+   "choices": [
+    {
+     "text": "Lactate and water",
+     "role": "trap",
+     "family": "other-conditions",
+     "missType": "content",
+     "misconception": "Lactate fermentation (muscle, some bacteria) releases no gas, so nothing would lift the dough."
+    },
+    {
+     "text": "Ethanol and carbon dioxide",
+     "role": "key",
+     "why": "CO2 lifts the dough; ethanol bakes off."
+    },
+    {
+     "text": "Acetyl-CoA and carbon dioxide",
+     "role": "trap",
+     "family": "neighbor-fact",
+     "missType": "content",
+     "misconception": "The aerobic link reaction also releases CO2 from pyruvate, but makes acetyl-CoA, not ethanol."
+    },
+    {
+     "text": "Pyruvate and hydrogen gas",
+     "role": "trap",
+     "family": "one-step-short",
+     "missType": "concept",
+     "misconception": "Pyruvate is where glycolysis ends and fermentation starts; yeast release no hydrogen gas."
+    },
+    {
+     "text": "Ethanol and oxygen",
+     "role": "trap",
+     "family": "half-right",
+     "missType": "concept",
+     "misconception": "Ethanol holds, but fermentation neither uses nor makes oxygen."
+    }
+   ],
+   "writerNotes": []
+  },
+  {
+   "qid": "fm:written:bio-4-dmpc6",
+   "servedAs": {
+    "mock": "FULL_1",
+    "section": "bio",
+    "n": 31
+   },
+   "bankTopic": "Cellular respiration",
+   "stemHash": "0043e79b4015b97d9f0655c541eda35fdc8e1bdf",
+   "expertAnswer": "Hexokinase and phosphofructokinase",
+   "servedKey": "Hexokinase and phosphofructokinase",
+   "keyAgrees": true,
+   "confidence": "high",
+   "concept": "The glycolysis investment phase: hexokinase and phosphofructokinase-1 each move a phosphate from ATP onto the sugar; the payoff kinases make ATP.",
+   "reasoning": [
+    "Find the first-half steps where a kinase moves a phosphate from ATP onto the sugar: there are two.",
+    "Glucose to glucose-6-phosphate (hexokinase), and fructose-6-phosphate to fructose-1,6-bisphosphate (phosphofructokinase-1).",
+    "The payoff kinases, phosphoglycerate kinase and pyruvate kinase, make ATP instead."
+   ],
+   "choices": [
+    {
+     "text": "Glyceraldehyde-3-phosphate dehydrogenase and phosphoglycerate kinase",
+     "role": "trap",
+     "family": "reversed",
+     "missType": "concept",
+     "misconception": "The payoff pair: one makes NADH and the other makes ATP, so they earn rather than spend."
+    },
+    {
+     "text": "Hexokinase and pyruvate kinase",
+     "role": "trap",
+     "family": "half-right",
+     "missType": "concept",
+     "misconception": "Hexokinase spends ATP, but pyruvate kinase is a payoff enzyme that makes ATP."
+    },
+    {
+     "text": "Aldolase and triose phosphate isomerase",
+     "role": "trap",
+     "family": "neighbor-fact",
+     "missType": "content",
+     "misconception": "First-half steps right after the spending: they split and reshuffle the sugar with no ATP."
+    },
+    {
+     "text": "Phosphoglucose isomerase and enolase",
+     "role": "trap",
+     "family": "neighbor-fact",
+     "missType": "content",
+     "misconception": "A rearrangement and a dehydration; neither touches ATP."
+    },
+    {
+     "text": "Hexokinase and phosphofructokinase",
+     "role": "key",
+     "why": "The two first-half kinases each spend one ATP."
+    }
+   ],
+   "writerNotes": [
+    "The bank why gives \"a phosphate goes onto the sugar\" as the tell. Glyceraldehyde-3-phosphate dehydrogenase also adds a phosphate (inorganic phosphate, no ATP), so phrase the tell as a first-half kinase moving a phosphate from ATP, or it points at the payoff pair."
+   ]
+  },
+  {
+   "qid": "fm:written:bio-4-158brxy",
+   "servedAs": {
+    "mock": "FULL_1",
+    "section": "bio",
+    "n": 34
+   },
+   "bankTopic": "Cellular respiration",
+   "stemHash": "8ab1fc696dd33f47589c44a7a00815f99fb687a3",
+   "expertAnswer": "18",
+   "servedKey": "18",
+   "keyAgrees": true,
+   "confidence": "high",
+   "concept": "Carriers enter the chain at different points: NADH at complex I (about 2.5 ATP), FADH2 at complex II, which skips complex I's pumping (about 1.5 ATP).",
+   "reasoning": [
+    "Keep the two carriers on separate lines: FADH2 enters past complex I, so it earns less.",
+    "6 NADH x 2.5 = 15.",
+    "2 FADH2 x 1.5 = 3, and 15 + 3 = 18."
+   ],
+   "recompute": {
+    "key": "6 x 2.5 + 2 x 1.5 = 15 + 3 = 18",
+    "routes": {
+     "12": "all eight carriers at 1.5 (8 x 1.5)",
+     "15": "NADH only, FADH2 left out (6 x 2.5)",
+     "20": "adds the 2 GTP made in the cycle (18 + 2), or FADH2 at the NADH rate (8 x 2.5)",
+     "24": "all eight carriers at the old whole-number 3 (8 x 3)"
+    },
+    "oldValues": "3 per NADH and 2 per FADH2 give 22, which is not a choice"
+   },
+   "choices": [
+    {
+     "text": "12",
+     "role": "trap",
+     "family": "assumed-equal",
+     "missType": "concept",
+     "misconception": "Gives every carrier the FADH2 rate: 8 x 1.5."
+    },
+    {
+     "text": "15",
+     "role": "trap",
+     "family": "one-step-short",
+     "missType": "concept",
+     "misconception": "Counts the 6 NADH and leaves the 2 FADH2 out."
+    },
+    {
+     "text": "18",
+     "role": "key",
+     "why": "15 from NADH plus 3 from FADH2."
+    },
+    {
+     "text": "20",
+     "role": "trap",
+     "family": "one-step-too-far",
+     "missType": "misread",
+     "misconception": "Adds the 2 GTP the cycle makes directly, which the stem excludes (from those carriers alone). Counting FADH2 at 2.5 lands here too."
+    },
+    {
+     "text": "24",
+     "role": "trap",
+     "family": "assumed-equal",
+     "missType": "concept",
+     "misconception": "Counts all eight carriers at the old whole-number value of 3."
+    }
+   ],
+   "writerNotes": [
+    "The bank trap note for 20 calls 3 per NADH and 1 per FADH2 the older textbook values. The older values were 3 and 2 (giving 22). Do not carry that note into the explainer; use one of the routes in recompute.",
+    "Two clean steps with friendly numbers: meets the light-math rule as is."
+   ]
+  },
+  {
+   "qid": "fm:written:bio-4-1hr4sgo",
+   "servedAs": {
+    "mock": "FULL_1",
+    "section": "bio",
+    "n": 38
+   },
+   "bankTopic": "Cellular respiration",
+   "stemHash": "1e45c934784deaeaa0e38a9fadd10764dbcfcaab",
+   "expertAnswer": "It slows, because the gradient builds and pumping against it gets harder",
+   "servedKey": "It slows, because the gradient builds and pumping against it gets harder",
+   "keyAgrees": true,
+   "confidence": "high",
+   "concept": "Respiratory control (chemiosmotic coupling): the chain and ATP synthase are linked through the proton gradient, so blocking the synthase backs up the chain.",
+   "reasoning": [
+    "Trace the protons: the chain pumps them out of the matrix, and ATP synthase is their way back in.",
+    "Plug the synthase and protons pile up in the intermembrane space; the gradient steepens.",
+    "Pumping against a steeper gradient gets harder, so electron flow and oxygen use slow."
+   ],
+   "choices": [
+    {
+     "text": "It increases, because protons are no longer being used up",
+     "role": "trap",
+     "family": "other-conditions",
+     "missType": "content",
+     "misconception": "Speeding up is what an uncoupler does by draining the gradient. A plug keeps the gradient full, which slows the pumps."
+    },
+    {
+     "text": "It slows, because the gradient builds and pumping against it gets harder",
+     "role": "key",
+     "why": "The gradient couples the two halves."
+    },
+    {
+     "text": "It is unchanged, because the chain and ATP synthase work independently of each other",
+     "role": "trap",
+     "family": "one-step-short",
+     "missType": "concept",
+     "misconception": "Reads \"complexes untouched\" and stops there, missing the coupling through the gradient."
+    },
+    {
+     "text": "It slows, because oxygen can no longer accept electrons",
+     "role": "trap",
+     "family": "half-right",
+     "missType": "concept",
+     "misconception": "It does slow, but that reason belongs to a complex IV poison such as cyanide, not to oligomycin."
+    },
+    {
+     "text": "It increases briefly and then stops as the matrix becomes acidic",
+     "role": "trap",
+     "family": "reversed",
+     "missType": "concept",
+     "misconception": "Protons are pumped out of the matrix, so the matrix grows less acidic, not more."
+    }
+   ],
+   "writerNotes": []
+  },
+  {
+   "qid": "fm:written:bio-4-ih7vz8",
+   "servedAs": {
+    "mock": "FULL_1",
+    "section": "bio",
+    "n": 39
+   },
+   "bankTopic": "Cellular respiration",
+   "stemHash": "9522bc70b946c5ddad4644b1e9cd8679a67eae94",
+   "expertAnswer": "Fermentation uses no electron transport chain and builds no proton gradient",
+   "servedKey": "Fermentation uses no electron transport chain and builds no proton gradient",
+   "keyAgrees": true,
+   "confidence": "high",
+   "concept": "Anaerobic respiration keeps the chain and gradient with a non-oxygen final acceptor; fermentation has no chain or gradient and hands NADH's electrons to an organic molecule.",
+   "reasoning": [
+    "Ask where NADH's electrons go.",
+    "Anaerobic respiration: into a membrane chain ending at sulfate or nitrate, building a gradient that drives ATP synthase.",
+    "Fermentation: straight to an organic molecule (pyruvate or acetaldehyde), no chain and no gradient, only the 2 ATP from glycolysis."
+   ],
+   "choices": [
+    {
+     "text": "Fermentation uses a chain too, but with oxygen as the final acceptor",
+     "role": "trap",
+     "family": "other-conditions",
+     "missType": "content",
+     "misconception": "A chain ending at oxygen is aerobic respiration."
+    },
+    {
+     "text": "Fermentation uses no electron transport chain and builds no proton gradient",
+     "role": "key",
+     "why": "The chain and gradient are what set anaerobic respiration apart."
+    },
+    {
+     "text": "It produces less ATP per glucose than fermentation does",
+     "role": "trap",
+     "family": "reversed",
+     "missType": "concept",
+     "misconception": "A chain plus a gradient out-earns fermentation, which keeps only glycolysis's 2 ATP."
+    },
+    {
+     "text": "Fermentation passes electrons to nitrate, while anaerobic respiration passes them to pyruvate",
+     "role": "trap",
+     "family": "read-backward",
+     "missType": "misread",
+     "misconception": "Swaps the two acceptors; the stem itself gives nitrate and sulfate to the chain-using bacteria."
+    },
+    {
+     "text": "It is the same process under a different name",
+     "role": "trap",
+     "family": "assumed-equal",
+     "missType": "concept",
+     "misconception": "Treats the two oxygen-free pathways as one because both run without oxygen."
+    }
+   ],
+   "writerNotes": []
+  },
+  {
+   "qid": "fm:originals:ab-5547ba43c3",
+   "servedAs": {
+    "mock": "FULL_1",
+    "section": "bio",
+    "n": 19
+   },
+   "bankTopic": "Control systems: nerves and hormones",
+   "stemHash": "c1fd354107cb7c83082dd0860f424784fa81de07",
+   "expertAnswer": "Fewer aquaporins in the collecting duct, so more dilute urine is produced",
+   "servedKey": "Fewer aquaporins in the collecting duct, so more dilute urine is produced",
+   "keyAgrees": true,
+   "confidence": "high",
+   "concept": "ADH inserts aquaporin water channels in the collecting duct; less ADH means less water reabsorbed and more, dilute urine.",
+   "reasoning": [
+    "Name the hormone's job: ADH puts aquaporin water channels into the collecting duct.",
+    "Inhibit ADH release and fewer channels are inserted, so water stays in the tubule.",
+    "Result: more urine, and more dilute."
+   ],
+   "choices": [
+    {
+     "text": "Less glucose reabsorption in the proximal tubule",
+     "role": "trap",
+     "family": "other-conditions",
+     "missType": "content",
+     "misconception": "Glucose spills when blood glucose overwhelms the proximal transporters, as in diabetes mellitus. ADH does not handle glucose."
+    },
+    {
+     "text": "A higher filtration rate at the glomerulus with no change in urine concentration",
+     "role": "trap",
+     "family": "neighbor-fact",
+     "missType": "content",
+     "misconception": "Filtration is a nearby step ADH does not set, and urine concentration is exactly what changes."
+    },
+    {
+     "text": "More aquaporins in the collecting duct, so less urine is produced",
+     "role": "trap",
+     "family": "reversed",
+     "missType": "concept",
+     "misconception": "That is ADH present. Inhibiting its release runs the other way."
+    },
+    {
+     "text": "Fewer aquaporins in the collecting duct, so more dilute urine is produced",
+     "role": "key",
+     "why": "No ADH, fewer water channels, water stays in the urine."
+    },
+    {
+     "text": "More Na+ reabsorption in the distal tubule, so blood pressure rises",
+     "role": "trap",
+     "family": "neighbor-fact",
+     "missType": "content",
+     "misconception": "That is aldosterone's effect, the neighboring hormone."
+    }
+   ],
+   "writerNotes": []
+  },
+  {
+   "qid": "fm:originals:ab-8da5ad8639",
+   "servedAs": {
+    "mock": "FULL_1",
+    "section": "bio",
+    "n": 33
+   },
+   "bankTopic": "Control systems: nerves and hormones",
+   "stemHash": "13c2f5235760097b705fa079b06ff677beed43dc",
+   "expertAnswer": "The neuron can no longer fire action potentials",
+   "servedKey": "The neuron can no longer fire action potentials",
+   "keyAgrees": true,
+   "confidence": "high",
+   "concept": "The action potential upstroke is carried by voltage-gated Na+ channels; the resting potential is set by K+ leak channels and the Na+/K+ pump.",
+   "reasoning": [
+    "Name the channel's job: voltage-gated Na+ channels carry the rising phase of the action potential.",
+    "Block them and no Na+ rushes in, so no spike can start.",
+    "The resting potential stays near normal, because the K+ leak and the pump are untouched."
+   ],
+   "choices": [
+    {
+     "text": "Neurotransmitter release increases at the terminal",
+     "role": "trap",
+     "family": "reversed",
+     "missType": "concept",
+     "misconception": "No action potential reaches the terminal, so release falls."
+    },
+    {
+     "text": "The resting potential immediately rises to 0 mV",
+     "role": "trap",
+     "family": "neighbor-fact",
+     "missType": "content",
+     "misconception": "The resting potential belongs to the K+ leak channels and the pump, which the toxin leaves alone."
+    },
+    {
+     "text": "The neuron fires action potentials continuously",
+     "role": "trap",
+     "family": "other-conditions",
+     "missType": "content",
+     "misconception": "Continuous firing is what a toxin that holds Na+ channels open does; this one blocks them."
+    },
+    {
+     "text": "Repolarization fails, so the membrane stays positive",
+     "role": "trap",
+     "family": "neighbor-fact",
+     "missType": "content",
+     "misconception": "Repolarization is the K+ channels' job, and here the spike never starts."
+    },
+    {
+     "text": "The neuron can no longer fire action potentials",
+     "role": "key",
+     "why": "No Na+ entry means no upstroke."
+    }
+   ],
+   "writerNotes": []
+  },
+  {
+   "qid": "fm:originals:ab-0de0fec7bd",
+   "servedAs": {
+    "mock": "FULL_1",
+    "section": "bio",
+    "n": 36
+   },
+   "bankTopic": "Control systems: nerves and hormones",
+   "stemHash": "75a1cb26b2a6a30647a5ad579c085a76c6f229b3",
+   "expertAnswer": "It fires action potentials more frequently",
+   "servedKey": "It fires action potentials more frequently",
+   "keyAgrees": true,
+   "confidence": "high",
+   "concept": "Action potentials are all or none, so one neuron codes stimulus strength by firing frequency (and more neurons are recruited).",
+   "reasoning": [
+    "Know the rule: every action potential is all or none, the same height and shape.",
+    "So a single neuron signals a stronger stimulus by firing more often."
+   ],
+   "choices": [
+    {
+     "text": "The resting potential becomes more negative",
+     "role": "trap",
+     "family": "reversed",
+     "missType": "concept",
+     "misconception": "A stronger stimulus depolarizes; a more negative rest would make firing harder."
+    },
+    {
+     "text": "It fires action potentials more frequently",
+     "role": "key",
+     "why": "Strength is coded as firing frequency."
+    },
+    {
+     "text": "Each action potential becomes taller",
+     "role": "trap",
+     "family": "missed-exception",
+     "missType": "content",
+     "misconception": "Bigger input, bigger output holds for graded potentials; the action potential is the all-or-none exception."
+    },
+    {
+     "text": "The action potential travels faster down the same axon",
+     "role": "trap",
+     "family": "other-conditions",
+     "missType": "content",
+     "misconception": "Speed is set by axon diameter and myelin: a different axon, not a stronger stimulus."
+    },
+    {
+     "text": "Each action potential lasts longer",
+     "role": "trap",
+     "family": "neighbor-fact",
+     "missType": "content",
+     "misconception": "A receptor (graded) potential lasts as long as the stimulus; the action potential's duration is fixed by channel kinetics."
+    }
+   ],
+   "writerNotes": []
+  }
+ ]
+}

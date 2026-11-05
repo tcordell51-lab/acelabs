@@ -1,0 +1,2204 @@
+{
+ "schema": "ace.expert-solve/1",
+ "batch": "B003",
+ "group": "G1",
+ "bank": "full",
+ "section": "gc",
+ "role": "Independent expert, production-plan.md section 5 steps 2 and 3 (blind solve, key check). Coach only; never published.",
+ "at": "2026-10-30",
+ "frozen": {
+  "bankFile": "tools/mock/data/full-mocks.js",
+  "sha256_16": "5eceeb82674e52cb",
+  "qids": 30
+ },
+ "method": [
+  "Each item was loaded from tools/mock/data/full-mocks.js with the pipeline loader (the vm window context scripts/explainers/build.mjs uses) and shown as served: stem and the five choices in bank order (tools/mock/full.js escapes the stem as text and does not shuffle). The extractor withheld correct, why, traps, src, stop and nights; only the field names were seen.",
+  "The served page was then rendered in Chromium at http://127.0.0.1:4107/tools/mock/full.html (FULL_1, Natural Sciences questions 41 to 70): all 30 stems and choice sets match the loader text exactly, no item serves a stem drawing or structure choices, and the page raised no errors.",
+  "Answers, reasoning, concept, a family and a misconception for every other choice, and confidence were written to a draft and stamped (sha256 c2dadc2482aa0b24, 2026-10-30T08:55:53Z) before any key was read; the key comparison then ran by exact choice text.",
+  "Every number and every distractor route was recomputed in python (K_p, Ksp root, crossover T, gas laws, Dalton, half-life, pH and buffer logs, van t Hoff factor, Nernst and log K, formation-enthalpy sums, Hess, mole counts). RDKit 2026.09.1 checked the formula masses and atom counts behind the mole items and the valence-electron and lone-pair counts for XeF4 and ClF3; no item serves a SMILES, so there was no structure or stereo to check.",
+  "Families come from the closed list in scripts/explainers/families.js; missType follows the family. They are suggestions for the writer, who decides.",
+  "Bank why and trap notes were read only after the key check, to flag copy the writer should not lift (bankCopy) and to compare distractor routes (notes); nothing in the bank was edited."
+ ],
+ "process": {
+  "blindness": "full",
+  "note": "The blind view never printed key, why or trap values. The draft hash and time are recorded above; the key check and the bank read came after."
+ },
+ "summary": {
+  "items": 30,
+  "keyAgrees": 30,
+  "keyDisputes": 0,
+  "confidence": {
+   "high": 30,
+   "medium": 0,
+   "low": 0
+  },
+  "conceptsOverMathHeavy": [
+   "fm:gchem-b:GC_ek-h1",
+   "fm:gchem-a:col-q11",
+   "fm:gchem-b:GC_en-q2"
+  ],
+  "stemStyleItems": 21,
+  "bankCopyFlags": 14,
+  "itemsWithWeakDistractors": 7,
+  "line": "All 30 keys agree with the blind solve; no key dispute raised, so key-disputes.json is unchanged. Writer cautions: the GC_pd5 bank why reverses the phase-diagram regions, three bank notes use house-banned words, 7 items carry a distractor with no single-slip route, and 3 items are arithmetic heavy for a no-calculator section."
+ },
+ "items": [
+  {
+   "qid": "fm:gchem-b:GC_ek-h1",
+   "servedAs": {
+    "bank": "full",
+    "mock": "FULL_1",
+    "section": "gc",
+    "n": 13,
+    "servedNo": 53,
+    "page": "tools/mock/full.html (Survey of the Natural Sciences, General Chemistry block 41 to 70)"
+   },
+   "bankTopic": "Balance and the push-back",
+   "difficulty": 3,
+   "stemHash": "884eb05eb57be7be13fe68c4450e1e5934def6df",
+   "expert": {
+    "answer": "0.19",
+    "servedIndex": 1,
+    "confidence": "high",
+    "concept": "K_p and K_c differ by (RT)^dn; when gas moles drop (dn = -1), K_p comes out smaller than K_c.",
+    "reasoning": [
+     "Count gas moles: 2 on the left, 1 on the right, so dn = -1 and K_p = K_c / RT.",
+     "RT = 0.0821 x 298 = about 24.5, so K_p = 4.7 / 24.5 = about 0.19.",
+     "Sanity check: fewer gas moles on the product side means K_p must land below K_c, which only 0.19 and the two tiny choices do."
+    ],
+    "misconceptions": [
+     {
+      "choice": "0.0085",
+      "family": "one-step-too-far",
+      "familyName": "One step too far",
+      "missType": "misread",
+      "pull": "Divides by RT one time too many or inverts the K_c x RT product: 4.7 / 24.5^2 = 0.0079 and 1 / (4.7 x 24.5) = 0.0087; neither lands on 0.0085 exactly."
+     },
+     {
+      "choice": "4.7",
+      "family": "assumed-equal",
+      "familyName": "Assumed equal",
+      "missType": "concept",
+      "pull": "Treats K_p and K_c as the same number, which holds only when dn = 0."
+     },
+     {
+      "choice": "41",
+      "family": "unit-slip",
+      "familyName": "Unit or decimal slip",
+      "missType": "misread",
+      "pull": "No clean one-slip route reproduces 41 (1000 / RT = 40.9; 0.0821 x 500 = 41.05); reads as a unit or scale slip at best."
+     },
+     {
+      "choice": "115",
+      "family": "sign-slip",
+      "familyName": "Sign slip",
+      "missType": "misread",
+      "pull": "Uses dn = +1, multiplying by RT: 4.7 x 24.5 = 115. The minus sign on dn is lost."
+     }
+    ]
+   },
+   "key": {
+    "index": 1,
+    "text": "0.19"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "numbers": "RT = 24.47; K_p = 4.7 / 24.47 = 0.1921 (0.19). K_c x RT = 115.0; K_c / RT^2 = 0.00785; 1 / (K_c RT) = 0.0087; 1000 / RT = 40.9.",
+    "rdkit": "not applicable: no structure served (qs null, os false); nothing to parse",
+    "served": "Rendered on http://127.0.0.1:4107/tools/mock/full.html as Natural Sciences question 53: stem and choices match the loader text exactly, no stem drawing, no structure choices."
+   },
+   "conceptsOverMath": "heavy: dividing by 0.0821 x 298 is calculator work. A concept-first variant asks only whether K_p is above or below K_c, or uses RT of about 25.",
+   "stemStyle": [
+    "raw underscores (typeset by the player, but check)",
+    "principle or hint stated in the stem: The stem states the formula and computes dn; the student only does arithmetic."
+   ],
+   "weakDistractors": [
+    "0.0085 and 41 have no single-slip route; the writer should name them cautiously or Thomas may want them replaced."
+   ],
+   "bankCopy": [
+    {
+     "kind": "bank-copy",
+     "text": "The stem value K_c = 4.7 M^-1 is not the measured constant: for N2O4 <=> 2 NO2 at 298 K, K_c is about 4.6 x 10^-3 M, so the dimerization K_c is about 200 M^-1. Fine as a made-up number; the explainer should not call it the real value."
+    }
+   ]
+  },
+  {
+   "qid": "fm:gchem-b:GC_ek-e7",
+   "servedAs": {
+    "bank": "full",
+    "mock": "FULL_1",
+    "section": "gc",
+    "n": 24,
+    "servedNo": 64,
+    "page": "tools/mock/full.html (Survey of the Natural Sciences, General Chemistry block 41 to 70)"
+   },
+   "bankTopic": "Balance and the push-back",
+   "difficulty": 3,
+   "stemHash": "5549083ab448d0b367868702df4580e3b1e5a3bc",
+   "expert": {
+    "answer": "K_1^2 = 25",
+    "servedIndex": 0,
+    "confidence": "high",
+    "concept": "Scaling a balanced equation by n raises K to the n-th power, because K is a product of concentrations raised to their coefficients.",
+    "reasoning": [
+     "Write K_1 = [B]/[A]. Doubling every coefficient makes K_2 = [B]^2/[A]^2 = (K_1)^2.",
+     "So K_2 = 5.0^2 = 25.",
+     "Keep the three moves apart: reverse means 1/K, multiply by n means K^n, add reactions means multiply the K values."
+    ],
+    "misconceptions": [
+     {
+      "choice": "1/K_1 = 0.20",
+      "family": "other-conditions",
+      "familyName": "Other conditions",
+      "missType": "content",
+      "pull": "That is the K for the reversed reaction (B to A), a different change to the equation."
+     },
+     {
+      "choice": "K_1/2 = 2.5",
+      "family": "operation-flip",
+      "familyName": "Added instead of subtracted",
+      "missType": "concept",
+      "pull": "Divides K by 2 as if the coefficients scaled K down linearly; coefficients become exponents, not divisors."
+     },
+     {
+      "choice": "K_1 = 5.0",
+      "family": "assumed-equal",
+      "familyName": "Assumed equal",
+      "missType": "concept",
+      "pull": "Treats K as fixed for the chemistry no matter how the equation is written; K depends on the written stoichiometry."
+     },
+     {
+      "choice": "2K_1 = 10",
+      "family": "operation-flip",
+      "familyName": "Added instead of subtracted",
+      "missType": "concept",
+      "pull": "Multiplies K by 2 instead of raising it to the power 2."
+     }
+    ]
+   },
+   "key": {
+    "index": 0,
+    "text": "K_1^2 = 25"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "numbers": "5.0^2 = 25; 1/5 = 0.20; 5/2 = 2.5; 2 x 5 = 10.",
+    "rdkit": "not applicable: no structure served (qs null, os false); nothing to parse",
+    "served": "Rendered on http://127.0.0.1:4107/tools/mock/full.html as Natural Sciences question 64: stem and choices match the loader text exactly, no stem drawing, no structure choices."
+   },
+   "conceptsOverMath": "light: one square of a friendly number.",
+   "stemStyle": [
+    "raw underscores (typeset by the player, but check)"
+   ],
+   "bankCopy": [
+    {
+     "kind": "bank-copy",
+     "text": "Bank why says doubling K \"is the most common error\"; there is no data behind it. Do not lift the claim."
+    }
+   ]
+  },
+  {
+   "qid": "fm:gchem-b:GC_ks-e2",
+   "servedAs": {
+    "bank": "full",
+    "mock": "FULL_1",
+    "section": "gc",
+    "n": 29,
+    "servedNo": 69,
+    "page": "tools/mock/full.html (Survey of the Natural Sciences, General Chemistry block 41 to 70)"
+   },
+   "bankTopic": "Balance and the push-back",
+   "difficulty": 2,
+   "stemHash": "5f6417e9f95db7ba14794b6379e94af52cad7e8c",
+   "expert": {
+    "answer": "7.0x10^(-3) M",
+    "servedIndex": 4,
+    "confidence": "high",
+    "concept": "For a 1:1 salt, Ksp = s^2, so molar solubility is the square root of Ksp.",
+    "reasoning": [
+     "Each formula unit that dissolves gives one Ca2+ and one SO4^2-, so Ksp = s x s = s^2.",
+     "Rewrite 4.9 x 10^-5 as 49 x 10^-6 so the root is clean: s = 7 x 10^-3 M.",
+     "Check: (7.0 x 10^-3)^2 = 4.9 x 10^-5."
+    ],
+    "misconceptions": [
+     {
+      "choice": "2.4x10^(-5) M",
+      "family": "operation-flip",
+      "familyName": "Added instead of subtracted",
+      "missType": "concept",
+      "pull": "Halves Ksp (4.9 / 2 = 2.45) instead of taking the square root."
+     },
+     {
+      "choice": "4.9x10^(-5) M",
+      "family": "one-step-short",
+      "familyName": "One step short",
+      "missType": "concept",
+      "pull": "Stops at Ksp itself and reports it as s; Ksp is s^2, so one root is still owed."
+     },
+     {
+      "choice": "1.4x10^(-2) M",
+      "family": "other-unit",
+      "familyName": "Counted the other unit",
+      "missType": "concept",
+      "pull": "Doubles s (2 x 7 x 10^-3) as if counting both ions; s counts formula units dissolved, not total ions."
+     },
+     {
+      "choice": "2.4x10^(-3) M",
+      "family": "unit-slip",
+      "familyName": "Unit or decimal slip",
+      "missType": "misread",
+      "pull": "No clean route: it looks like the halved Ksp with its power of ten shifted; a weak distractor."
+     }
+    ]
+   },
+   "key": {
+    "index": 4,
+    "text": "7.0x10^(-3) M"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "numbers": "sqrt(4.9e-5) = 7.0e-3; Ksp/2 = 2.45e-5; 2s = 1.4e-2; cube root of Ksp/4 = 2.3e-2 (not a choice).",
+    "rdkit": "not applicable: no structure served (qs null, os false); nothing to parse",
+    "served": "Rendered on http://127.0.0.1:4107/tools/mock/full.html as Natural Sciences question 69: stem and choices match the loader text exactly, no stem drawing, no structure choices."
+   },
+   "conceptsOverMath": "light: rewriting as 49 x 10^-6 makes the root a head step.",
+   "stemStyle": [
+    "principle or hint stated in the stem: The stem states Ksp = s^2, the step the item should test."
+   ],
+   "weakDistractors": [
+    "2.4x10^(-3) M has no single-slip route."
+   ]
+  },
+  {
+   "qid": "fm:gchem-b:GC_gb-q1",
+   "servedAs": {
+    "bank": "full",
+    "mock": "FULL_1",
+    "section": "gc",
+    "n": 30,
+    "servedNo": 70,
+    "page": "tools/mock/full.html (Survey of the Natural Sciences, General Chemistry block 41 to 70)"
+   },
+   "bankTopic": "Downhill: entropy and free energy",
+   "difficulty": 3,
+   "stemHash": "e64c17a050c1323c93365a7068b9b59583012b89",
+   "expert": {
+    "answer": "Below 800 K",
+    "servedIndex": 0,
+    "confidence": "high",
+    "concept": "When dH and dS are both negative, the reaction is enthalpy driven and spontaneous only below T = dH/dS.",
+    "reasoning": [
+     "Both signs negative: dH favors the reaction, dS fights it, and the -T dS penalty grows with T.",
+     "Crossover: T = dH / dS = (-120,000 J) / (-150 J/K) = 800 K, after converting kJ to J.",
+     "Below 800 K the dH term wins and dG < 0, so the reaction is spontaneous below 800 K."
+    ],
+    "misconceptions": [
+     {
+      "choice": "Below 80 K",
+      "family": "unit-slip",
+      "familyName": "Unit or decimal slip",
+      "missType": "misread",
+      "pull": "Right direction, but the crossover is off by a power of ten."
+     },
+     {
+      "choice": "Spontaneous at all T",
+      "family": "one-step-short",
+      "familyName": "One step short",
+      "missType": "concept",
+      "pull": "Looks only at the negative dH; a negative dS makes high temperature work against it."
+     },
+     {
+      "choice": "Below 120 K",
+      "family": "other-question",
+      "familyName": "Right number, other question",
+      "missType": "misread",
+      "pull": "Uses the magnitude of dH (120) as the temperature; 120 is a value from the stem, not the crossover."
+     },
+     {
+      "choice": "Above 800 K only",
+      "family": "reversed",
+      "familyName": "Reversed",
+      "missType": "concept",
+      "pull": "Flips the direction: with dS < 0, raising T makes dG more positive, so high T is the nonspontaneous side."
+     }
+    ]
+   },
+   "key": {
+    "index": 0,
+    "text": "Below 800 K"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "numbers": "120000 / 150 = 800 K; without the kJ to J conversion, 120/150 = 0.8 K.",
+    "rdkit": "not applicable: no structure served (qs null, os false); nothing to parse",
+    "served": "Rendered on http://127.0.0.1:4107/tools/mock/full.html as Natural Sciences question 70: stem and choices match the loader text exactly, no stem drawing, no structure choices."
+   },
+   "conceptsOverMath": "light: 120,000 / 150 is a clean head step.",
+   "stemStyle": [
+    "principle or hint stated in the stem: The stem states the spontaneity rule and tells the student to set dG = 0."
+   ]
+  },
+  {
+   "qid": "fm:generated:gc-combined-gas#1gsc28u",
+   "servedAs": {
+    "bank": "full",
+    "mock": "FULL_1",
+    "section": "gc",
+    "n": 14,
+    "servedNo": 54,
+    "page": "tools/mock/full.html (Survey of the Natural Sciences, General Chemistry block 41 to 70)"
+   },
+   "bankTopic": "Gases",
+   "difficulty": 2,
+   "stemHash": "e0b22f3018b52cf1fcbe8228e3a49f6604f936f0",
+   "expert": {
+    "answer": "1.13 L",
+    "servedIndex": 0,
+    "confidence": "high",
+    "concept": "Combined gas law: volume goes down with pressure and up with kelvin temperature; temperatures must be in kelvin.",
+    "reasoning": [
+     "Convert to kelvin: 127 C = 400 K and 27 C = 300 K.",
+     "Pressure rises 4 times, so volume shrinks to 1/4; temperature falls to 3/4, so volume shrinks again.",
+     "V2 = 6 L x (1/4) x (300/400) = 6 x 3/16 = 1.125 L, about 1.13 L."
+    ],
+    "misconceptions": [
+     {
+      "choice": "2 L",
+      "family": "reversed",
+      "familyName": "Reversed",
+      "missType": "concept",
+      "pull": "Flips the temperature ratio (400/300): cooling the gas is made to expand it."
+     },
+     {
+      "choice": "18 L",
+      "family": "reversed",
+      "familyName": "Reversed",
+      "missType": "concept",
+      "pull": "Flips the pressure ratio (4/1): squeezing the gas is made to expand it."
+     },
+     {
+      "choice": "0.319 L",
+      "family": "unit-slip",
+      "familyName": "Unit or decimal slip",
+      "missType": "misread",
+      "pull": "Uses Celsius (27/127) instead of kelvin."
+     },
+     {
+      "choice": "1.5 L",
+      "family": "one-step-short",
+      "familyName": "One step short",
+      "missType": "concept",
+      "pull": "Applies only the pressure change (6/4) and drops the temperature step."
+     }
+    ]
+   },
+   "key": {
+    "index": 0,
+    "text": "1.13 L"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "numbers": "6 x 1 x 300 / (4 x 400) = 1.125; flip P = 18; flip T = 2.0; Celsius = 0.319; P only = 1.5.",
+    "rdkit": "not applicable: no structure served (qs null, os false); nothing to parse",
+    "served": "Rendered on http://127.0.0.1:4107/tools/mock/full.html as Natural Sciences question 54: stem and choices match the loader text exactly, no stem drawing, no structure choices."
+   },
+   "conceptsOverMath": "light: ratios 1/4 and 3/4."
+  },
+  {
+   "qid": "fm:generated:gc-ideal-gas#1nvtbkr",
+   "servedAs": {
+    "bank": "full",
+    "mock": "FULL_1",
+    "section": "gc",
+    "n": 20,
+    "servedNo": 60,
+    "page": "tools/mock/full.html (Survey of the Natural Sciences, General Chemistry block 41 to 70)"
+   },
+   "bankTopic": "Gases",
+   "difficulty": 2,
+   "stemHash": "04a56bbd48014ede8971e9344a81207bc40673cd",
+   "expert": {
+    "answer": "246 L",
+    "servedIndex": 0,
+    "confidence": "high",
+    "concept": "Ideal gas law V = nRT/P, with T in kelvin.",
+    "reasoning": [
+     "Convert: 227 C = 500 K.",
+     "V = nRT / P = 3 x 0.0821 x 500 / 0.5 = 0.0821 x 3000 = 246 L.",
+     "Low pressure (0.5 atm) and high temperature both make the volume large, so a big answer is expected."
+    ],
+    "misconceptions": [
+     {
+      "choice": "82.1 L",
+      "family": "other-question",
+      "familyName": "Right number, other question",
+      "missType": "misread",
+      "pull": "RT/P with n left out: 82.1 L is the volume of one mole at these conditions, not of three."
+     },
+     {
+      "choice": "112 L",
+      "family": "unit-slip",
+      "familyName": "Unit or decimal slip",
+      "missType": "misread",
+      "pull": "Uses 227 instead of 500 K (Celsius): 3 x 0.0821 x 227 / 0.5 = 112."
+     },
+     {
+      "choice": "24900 L",
+      "family": "unit-slip",
+      "familyName": "Unit or decimal slip",
+      "missType": "misread",
+      "pull": "Uses R = 8.314 J/(mol K) with atm and liters; the units of R must match."
+     },
+     {
+      "choice": "61.6 L",
+      "family": "operation-flip",
+      "familyName": "Added instead of subtracted",
+      "missType": "concept",
+      "pull": "Multiplies by P instead of dividing: 3 x 0.0821 x 500 x 0.5."
+     }
+    ]
+   },
+   "key": {
+    "index": 0,
+    "text": "246 L"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "numbers": "3 x 0.0821 x 500 / 0.5 = 246.3; Celsius = 111.8; R 8.314 = 24942; times P = 61.6; no n = 82.1.",
+    "rdkit": "not applicable: no structure served (qs null, os false); nothing to parse",
+    "served": "Rendered on http://127.0.0.1:4107/tools/mock/full.html as Natural Sciences question 60: stem and choices match the loader text exactly, no stem drawing, no structure choices."
+   },
+   "conceptsOverMath": "light to moderate: 0.0821 x 3000 is one step."
+  },
+  {
+   "qid": "fm:gchem-a:gl-e12",
+   "servedAs": {
+    "bank": "full",
+    "mock": "FULL_1",
+    "section": "gc",
+    "n": 25,
+    "servedNo": 65,
+    "page": "tools/mock/full.html (Survey of the Natural Sciences, General Chemistry block 41 to 70)"
+   },
+   "bankTopic": "Gases",
+   "difficulty": 2,
+   "stemHash": "f59eec888836403876666ced036991b469637b9d",
+   "expert": {
+    "answer": "0.25",
+    "servedIndex": 1,
+    "confidence": "high",
+    "concept": "Mole fraction equals partial pressure over total pressure (Dalton).",
+    "reasoning": [
+     "Total pressure = 0.5 + 1.5 = 2.0 atm.",
+     "x(N2) = P(N2) / P(total) = 0.5 / 2.0 = 0.25."
+    ],
+    "misconceptions": [
+     {
+      "choice": "0.20",
+      "family": "miscount",
+      "familyName": "Miscount",
+      "missType": "misread",
+      "pull": "No clean route (0.5 / 2.5); the total is miscounted."
+     },
+     {
+      "choice": "0.33",
+      "family": "other-question",
+      "familyName": "Right number, other question",
+      "missType": "misread",
+      "pull": "Divides by the O2 pressure (0.5 / 1.5): that is the N2 to O2 ratio, not a fraction of the total."
+     },
+     {
+      "choice": "0.50",
+      "family": "one-step-short",
+      "familyName": "One step short",
+      "missType": "concept",
+      "pull": "Reads the N2 partial pressure as the fraction without dividing by the total."
+     },
+     {
+      "choice": "0.75",
+      "family": "neighbor-fact",
+      "familyName": "Neighbor fact",
+      "missType": "content",
+      "pull": "That is the mole fraction of O2, the other gas."
+     }
+    ]
+   },
+   "key": {
+    "index": 1,
+    "text": "0.25"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "numbers": "0.5 / 2.0 = 0.25; 0.5/1.5 = 0.333; 1.5/2.0 = 0.75; 0.5/2.5 = 0.20.",
+    "rdkit": "not applicable: no structure served (qs null, os false); nothing to parse",
+    "served": "Rendered on http://127.0.0.1:4107/tools/mock/full.html as Natural Sciences question 65: stem and choices match the loader text exactly, no stem drawing, no structure choices."
+   },
+   "conceptsOverMath": "light.",
+   "stemStyle": [
+    "Telegraphic stem with no verb (\"Mole fraction of N2 in mixture: ... ?\"); suggest \"A mixture holds N2 at 0.5 atm and O2 at 1.5 atm. What is the mole fraction of N2?\""
+   ],
+   "notes": [
+    "After the key check: the bank trap reads 0.20 as N2 counted twice in the total (0.5 / 2.5); that is a real route, so the miscount family holds."
+   ]
+  },
+  {
+   "qid": "fm:gchem-b:GC_lf005",
+   "servedAs": {
+    "bank": "full",
+    "mock": "FULL_1",
+    "section": "gc",
+    "n": 26,
+    "servedNo": 66,
+    "page": "tools/mock/full.html (Survey of the Natural Sciences, General Chemistry block 41 to 70)"
+   },
+   "bankTopic": "Gases",
+   "difficulty": 3,
+   "stemHash": "822d6d106519a6560f4b82f94a59ab4fb4adb00e",
+   "expert": {
+    "answer": "2.46 atm",
+    "servedIndex": 3,
+    "confidence": "high",
+    "concept": "Each gas in a mixture exerts its own pressure: P_i = n_i RT / V, using only that gas moles.",
+    "reasoning": [
+     "Use O2 alone: n = 0.500 mol, T = 300 K, V = 5.00 L.",
+     "P(O2) = 0.500 x 0.0821 x 300 / 5.00 = 0.0821 x 30 = 2.46 atm.",
+     "Check with Dalton: total = 3.69 atm, and O2 is 2/3 of the moles, so 2/3 x 3.69 = 2.46 atm."
+    ],
+    "misconceptions": [
+     {
+      "choice": "3.69 atm",
+      "family": "other-question",
+      "familyName": "Right number, other question",
+      "missType": "misread",
+      "pull": "The total pressure of both gases (0.750 mol), not the O2 share."
+     },
+     {
+      "choice": "12.3 atm",
+      "family": "one-step-short",
+      "familyName": "One step short",
+      "missType": "concept",
+      "pull": "nRT without dividing by the 5.00 L volume."
+     },
+     {
+      "choice": "1.23 atm",
+      "family": "neighbor-fact",
+      "familyName": "Neighbor fact",
+      "missType": "content",
+      "pull": "The partial pressure of N2, the other gas."
+     },
+     {
+      "choice": "4.92 atm",
+      "family": "other-unit",
+      "familyName": "Counted the other unit",
+      "missType": "concept",
+      "pull": "Counts 1.00 mol of O atoms instead of 0.500 mol of O2 molecules."
+     }
+    ]
+   },
+   "key": {
+    "index": 3,
+    "text": "2.46 atm"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "numbers": "0.5 x 0.0821 x 300 / 5 = 2.463; total 3.69; N2 1.23; no V 12.3; O atoms 4.93.",
+    "rdkit": "not applicable: no structure served (qs null, os false); nothing to parse",
+    "served": "Rendered on http://127.0.0.1:4107/tools/mock/full.html as Natural Sciences question 66: stem and choices match the loader text exactly, no stem drawing, no structure choices."
+   },
+   "conceptsOverMath": "light to moderate: 0.0821 x 30."
+  },
+  {
+   "qid": "fm:generated:gc-first-order-half-life#1xyppx6",
+   "servedAs": {
+    "bank": "full",
+    "mock": "FULL_1",
+    "section": "gc",
+    "n": 2,
+    "servedNo": 42,
+    "page": "tools/mock/full.html (Survey of the Natural Sciences, General Chemistry block 41 to 70)"
+   },
+   "bankTopic": "How fast, not how far",
+   "difficulty": 2,
+   "stemHash": "1268fdb96f25e0894a177a1296e847eff3d58f85",
+   "expert": {
+    "answer": "10 min",
+    "servedIndex": 2,
+    "confidence": "high",
+    "concept": "First-order half-life is t1/2 = ln 2 / k = 0.693 / k, independent of concentration.",
+    "reasoning": [
+     "For first order, t1/2 = 0.693 / k.",
+     "0.693 / 0.0693 = 10 min (the numbers are built to divide cleanly)."
+    ],
+    "misconceptions": [
+     {
+      "choice": "28.9 min",
+      "family": "miscount",
+      "familyName": "Miscount",
+      "missType": "misread",
+      "pull": "2 / k: uses 2 in place of ln 2 = 0.693."
+     },
+     {
+      "choice": "0.1 min",
+      "family": "operation-flip",
+      "familyName": "Added instead of subtracted",
+      "missType": "concept",
+      "pull": "k / 0.693: the division is turned upside down."
+     },
+     {
+      "choice": "14.4 min",
+      "family": "other-question",
+      "familyName": "Right number, other question",
+      "missType": "misread",
+      "pull": "1 / k is the mean lifetime of a first-order process, a real quantity, not the half-life."
+     },
+     {
+      "choice": "0.048 min",
+      "family": "operation-flip",
+      "familyName": "Added instead of subtracted",
+      "missType": "concept",
+      "pull": "0.693 x k: multiplies where it should divide."
+     }
+    ]
+   },
+   "key": {
+    "index": 2,
+    "text": "10 min"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "numbers": "0.693/0.0693 = 10.0; 1/k = 14.43; 2/k = 28.86; k/0.693 = 0.1; 0.693k = 0.048.",
+    "rdkit": "not applicable: no structure served (qs null, os false); nothing to parse",
+    "served": "Rendered on http://127.0.0.1:4107/tools/mock/full.html as Natural Sciences question 42: stem and choices match the loader text exactly, no stem drawing, no structure choices."
+   },
+   "conceptsOverMath": "light.",
+   "bankCopy": [
+    {
+     "kind": "bank-copy",
+     "text": "Bank trap notes use capitalized emphasis (FASTER, SHORTER); rewrite in plain case."
+    }
+   ]
+  },
+  {
+   "qid": "fm:gchem-b:GC_rl-e6",
+   "servedAs": {
+    "bank": "full",
+    "mock": "FULL_1",
+    "section": "gc",
+    "n": 12,
+    "servedNo": 52,
+    "page": "tools/mock/full.html (Survey of the Natural Sciences, General Chemistry block 41 to 70)"
+   },
+   "bankTopic": "How fast, not how far",
+   "difficulty": 3,
+   "stemHash": "c66fd9a16a7f17feaba960d9c9ef269334cb201f",
+   "expert": {
+    "answer": "First order",
+    "servedIndex": 4,
+    "confidence": "high",
+    "concept": "Only a first-order reaction has a half-life that does not depend on the starting concentration.",
+    "reasoning": [
+     "Recall how t1/2 scales with [A]0: zero order t1/2 = [A]0/2k, first order t1/2 = 0.693/k, second order t1/2 = 1/(k[A]0).",
+     "Only the first-order expression has no [A]0 in it, so a constant half-life means first order.",
+     "General rule for order n: t1/2 is proportional to [A]0^(1-n), constant only when n = 1."
+    ],
+    "misconceptions": [
+     {
+      "choice": "Second order",
+      "family": "neighbor-fact",
+      "familyName": "Neighbor fact",
+      "missType": "content",
+      "pull": "Second-order half-life shrinks as [A]0 grows, t1/2 = 1/(k[A]0)."
+     },
+     {
+      "choice": "Third order",
+      "family": "neighbor-fact",
+      "familyName": "Neighbor fact",
+      "missType": "content",
+      "pull": "Third-order half-life shrinks even faster with [A]0 (proportional to 1/[A]0^2)."
+     },
+     {
+      "choice": "Half order",
+      "family": "neighbor-fact",
+      "familyName": "Neighbor fact",
+      "missType": "content",
+      "pull": "Half-order half-life grows with [A]0 (proportional to [A]0^(1/2))."
+     },
+     {
+      "choice": "Zero order",
+      "family": "neighbor-fact",
+      "familyName": "Neighbor fact",
+      "missType": "content",
+      "pull": "Zero-order half-life grows in direct proportion to [A]0, t1/2 = [A]0/2k; constant rate is not constant half-life."
+     }
+    ]
+   },
+   "key": {
+    "index": 4,
+    "text": "First order"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "numbers": "none: no arithmetic.",
+    "rdkit": "not applicable: no structure served (qs null, os false); nothing to parse",
+    "served": "Rendered on http://127.0.0.1:4107/tools/mock/full.html as Natural Sciences question 52: stem and choices match the loader text exactly, no stem drawing, no structure choices."
+   },
+   "conceptsOverMath": "concept item.",
+   "stemStyle": [
+    "raw underscores (typeset by the player, but check)",
+    "capitalized emphasis: CONSTANT",
+    "principle or hint stated in the stem: The stem names the method (integrated rate-law dependence of t1/2)."
+   ]
+  },
+  {
+   "qid": "fm:gchem-b:GC_ph-e10",
+   "servedAs": {
+    "bank": "full",
+    "mock": "FULL_1",
+    "section": "gc",
+    "n": 4,
+    "servedNo": 44,
+    "page": "tools/mock/full.html (Survey of the Natural Sciences, General Chemistry block 41 to 70)"
+   },
+   "bankTopic": "Proton traffic",
+   "difficulty": 3,
+   "stemHash": "05bd8ed187e730a9ede8edebec7d6e37e1e23b39",
+   "expert": {
+    "answer": "12.3",
+    "servedIndex": 2,
+    "confidence": "high",
+    "concept": "For a strong base, count every OH- each formula unit releases, then pH = 14 - pOH.",
+    "reasoning": [
+     "[OH-] = 2 x 0.010 = 0.020 M (the stem gives it).",
+     "pOH = -log(2 x 10^-2) = 2 - log 2 = 2 - 0.30 = 1.70.",
+     "pH = 14 - 1.70 = 12.3."
+    ],
+    "misconceptions": [
+     {
+      "choice": "11.0",
+      "family": "miscount",
+      "familyName": "Miscount",
+      "missType": "misread",
+      "pull": "No clean route; it does not follow from 0.010 or 0.020 M."
+     },
+     {
+      "choice": "12.0",
+      "family": "other-unit",
+      "familyName": "Counted the other unit",
+      "missType": "concept",
+      "pull": "Uses the 0.010 M formula-unit concentration, not the 0.020 M of OH- ions."
+     },
+     {
+      "choice": "12.7",
+      "family": "sign-slip",
+      "familyName": "Sign slip",
+      "missType": "misread",
+      "pull": "Adds log 2 instead of subtracting it: pOH taken as 1.3 instead of 1.7."
+     },
+     {
+      "choice": "13.0",
+      "family": "unit-slip",
+      "familyName": "Unit or decimal slip",
+      "missType": "misread",
+      "pull": "Rounds [OH-] to 0.1 M (pOH = 1), a power-of-ten slip."
+     }
+    ]
+   },
+   "key": {
+    "index": 2,
+    "text": "12.3"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "numbers": "-log(0.02) = 1.699; pH 12.30; with 0.010 M pH 12.00; with sign slip 12.70.",
+    "rdkit": "not applicable: no structure served (qs null, os false); nothing to parse",
+    "served": "Rendered on http://127.0.0.1:4107/tools/mock/full.html as Natural Sciences question 44: stem and choices match the loader text exactly, no stem drawing, no structure choices."
+   },
+   "conceptsOverMath": "moderate: needs log 2 = 0.30, a standard DAT fact.",
+   "stemStyle": [
+    "principle or hint stated in the stem: The stem gives [OH-] = 0.020 M and both formulas, so the 2 OH- per formula unit step is done for the student."
+   ],
+   "weakDistractors": [
+    "11.0 has no single-slip route."
+   ]
+  },
+  {
+   "qid": "fm:gchem-b:GC_bf-q3",
+   "servedAs": {
+    "bank": "full",
+    "mock": "FULL_1",
+    "section": "gc",
+    "n": 9,
+    "servedNo": 49,
+    "page": "tools/mock/full.html (Survey of the Natural Sciences, General Chemistry block 41 to 70)"
+   },
+   "bankTopic": "Proton traffic",
+   "difficulty": 3,
+   "stemHash": "ed95e02bea117d64ccf7a3bfbe680d04c36ba6a6",
+   "expert": {
+    "answer": "4.52",
+    "servedIndex": 1,
+    "confidence": "high",
+    "concept": "Henderson-Hasselbalch: pH = pKa + log([A-]/[HA]); adding strong acid lowers the base to acid ratio, so pH drops below pKa.",
+    "reasoning": [
+     "Use the new amounts: [A-] = 0.05 M, [HA] = 0.15 M, ratio = 1/3.",
+     "pH = 5.00 + log(1/3) = 5.00 - 0.48 = 4.52.",
+     "Direction check: acid was added, so pH must fall below 5.00 but stay near it, since the buffer absorbed the hit."
+    ],
+    "misconceptions": [
+     {
+      "choice": "4.00",
+      "family": "unit-slip",
+      "familyName": "Unit or decimal slip",
+      "missType": "misread",
+      "pull": "Drops a full pH unit as if the ratio were 1:10 instead of 1:3."
+     },
+     {
+      "choice": "4.74",
+      "family": "neighbor-fact",
+      "familyName": "Neighbor fact",
+      "missType": "content",
+      "pull": "The pKa of acetic acid, a memorized number from a different buffer."
+     },
+     {
+      "choice": "5.00",
+      "family": "one-step-short",
+      "familyName": "One step short",
+      "missType": "concept",
+      "pull": "Stops at the pKa; that is the pH before the HCl, when the ratio was 1:1."
+     },
+     {
+      "choice": "5.48",
+      "family": "reversed",
+      "familyName": "Reversed",
+      "missType": "concept",
+      "pull": "Flips the ratio (acid over base), so the pH rises after acid is added."
+     }
+    ]
+   },
+   "key": {
+    "index": 1,
+    "text": "4.52"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "numbers": "5 + log(1/3) = 4.523; flipped 5.477.",
+    "rdkit": "not applicable: no structure served (qs null, os false); nothing to parse",
+    "served": "Rendered on http://127.0.0.1:4107/tools/mock/full.html as Natural Sciences question 49: stem and choices match the loader text exactly, no stem drawing, no structure choices."
+   },
+   "conceptsOverMath": "moderate: needs log 3 = 0.48.",
+   "stemStyle": [
+    "principle or hint stated in the stem: The stem gives the new [HA] and [A-], so the buffer bookkeeping is done for the student."
+   ],
+   "bankCopy": [
+    {
+     "kind": "bank-copy",
+     "text": "Bank why says the pH would crash \"to ~1\" without the buffer; 0.05 mol HCl in 1.00 L of water gives pH 1.3. Write \"about 1.3\" if the contrast is used."
+    }
+   ]
+  },
+  {
+   "qid": "fm:generated:gc-ph#14hbxw7",
+   "servedAs": {
+    "bank": "full",
+    "mock": "FULL_1",
+    "section": "gc",
+    "n": 15,
+    "servedNo": 55,
+    "page": "tools/mock/full.html (Survey of the Natural Sciences, General Chemistry block 41 to 70)"
+   },
+   "bankTopic": "Proton traffic",
+   "difficulty": 2,
+   "stemHash": "7e98174f93032352773bc90b04e8d525c85a81d8",
+   "expert": {
+    "answer": "13",
+    "servedIndex": 3,
+    "confidence": "high",
+    "concept": "For a strong base, pOH = -log[OH-] and pH = 14 - pOH at 25 C.",
+    "reasoning": [
+     "NaOH dissociates fully: [OH-] = 1.0 x 10^-1 M, so pOH = 1.",
+     "pH = 14 - 1 = 13."
+    ],
+    "misconceptions": [
+     {
+      "choice": "1",
+      "family": "other-question",
+      "familyName": "Right number, other question",
+      "missType": "misread",
+      "pull": "That is the pOH (or the pH of 0.1 M strong acid), not the pH of this base."
+     },
+     {
+      "choice": "7",
+      "family": "neighbor-fact",
+      "familyName": "Neighbor fact",
+      "missType": "content",
+      "pull": "Neutral pH, true of a salt like NaCl, not of a strong base."
+     },
+     {
+      "choice": "12",
+      "family": "unit-slip",
+      "familyName": "Unit or decimal slip",
+      "missType": "misread",
+      "pull": "Reads 10^-1 as 10^-2, a power-of-ten slip."
+     },
+     {
+      "choice": "15",
+      "family": "sign-slip",
+      "familyName": "Sign slip",
+      "missType": "misread",
+      "pull": "Adds the pOH to 14 instead of subtracting it."
+     }
+    ]
+   },
+   "key": {
+    "index": 3,
+    "text": "13"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "numbers": "pOH = 1; pH = 13.",
+    "rdkit": "not applicable: no structure served (qs null, os false); nothing to parse",
+    "served": "Rendered on http://127.0.0.1:4107/tools/mock/full.html as Natural Sciences question 55: stem and choices match the loader text exactly, no stem drawing, no structure choices."
+   },
+   "conceptsOverMath": "light."
+  },
+  {
+   "qid": "fm:originals:ab-ec59a41c94",
+   "servedAs": {
+    "bank": "full",
+    "mock": "FULL_1",
+    "section": "gc",
+    "n": 21,
+    "servedNo": 61,
+    "page": "tools/mock/full.html (Survey of the Natural Sciences, General Chemistry block 41 to 70)"
+   },
+   "bankTopic": "Proton traffic",
+   "difficulty": 3,
+   "stemHash": "85c27d04278fafaa6bdfd91f780071d02d00f38f",
+   "expert": {
+    "answer": "It rises, because removing CO2 lowers carbonic acid",
+    "servedIndex": 4,
+    "confidence": "high",
+    "concept": "Le Chatelier on the blood buffer: CO2 + H2O <=> H2CO3 <=> H+ + HCO3-. Removing CO2 pulls everything left, so H+ falls and pH rises (respiratory alkalosis).",
+    "reasoning": [
+     "Write the chain: CO2 + H2O <=> H2CO3 <=> H+ + HCO3-.",
+     "Hyperventilating removes CO2, so the equilibrium shifts left: less H2CO3 and less H+.",
+     "Less H+ means a higher pH: respiratory alkalosis."
+    ],
+    "misconceptions": [
+     {
+      "choice": "It falls, because less bicarbonate is made",
+      "family": "half-right",
+      "familyName": "Half right",
+      "missType": "concept",
+      "pull": "Bicarbonate does drop a little as the chain shifts left, but the H+ drops too, so pH rises, not falls."
+     },
+     {
+      "choice": "It does not change, because blood is buffered",
+      "family": "missed-exception",
+      "familyName": "Smooth trend, missed exception",
+      "missType": "content",
+      "pull": "Buffers resist change from added acid or base; here the buffer acid itself is being removed, so pH moves."
+     },
+     {
+      "choice": "It rises, because hyperventilating adds extra bicarbonate to the blood",
+      "family": "half-right",
+      "familyName": "Half right",
+      "missType": "concept",
+      "pull": "The direction is right, but the reason is not: removing CO2 lowers bicarbonate slightly; it does not add any."
+     },
+     {
+      "choice": "It falls, because CO2 is a base",
+      "family": "reversed",
+      "familyName": "Reversed",
+      "missType": "concept",
+      "pull": "CO2 is an acid (it makes carbonic acid in water), so losing it makes the blood less acidic."
+     }
+    ]
+   },
+   "key": {
+    "index": 4,
+    "text": "It rises, because removing CO2 lowers carbonic acid"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "numbers": "none: no arithmetic.",
+    "rdkit": "not applicable: no structure served (qs null, os false); nothing to parse",
+    "served": "Rendered on http://127.0.0.1:4107/tools/mock/full.html as Natural Sciences question 61: stem and choices match the loader text exactly, no stem drawing, no structure choices."
+   },
+   "conceptsOverMath": "concept item.",
+   "bankCopy": [
+    {
+     "kind": "bank-copy",
+     "text": "Bank trap note on \"CO2 is a base\" uses capitalized ACID; plain case in the explainer."
+    }
+   ]
+  },
+  {
+   "qid": "fm:gchem-b:GC_hb5",
+   "servedAs": {
+    "bank": "full",
+    "mock": "FULL_1",
+    "section": "gc",
+    "n": 10,
+    "servedNo": 50,
+    "page": "tools/mock/full.html (Survey of the Natural Sciences, General Chemistry block 41 to 70)"
+   },
+   "bankTopic": "Shape and the sticky forces",
+   "difficulty": 3,
+   "stemHash": "100dc8beeeb1c38a136ad3659b02d18fa945e2d4",
+   "expert": {
+    "answer": "sp³d²",
+    "servedIndex": 0,
+    "confidence": "high",
+    "concept": "Hybridization follows the electron-domain count: 6 domains (bonds plus lone pairs) means sp3d2, octahedral electron geometry.",
+    "reasoning": [
+     "Count domains on Xe: 4 Xe-F bonds + 2 lone pairs = 6.",
+     "Six domains is octahedral electron geometry, sp3d2.",
+     "The two lone pairs sit opposite each other, which leaves the four F atoms square planar."
+    ],
+    "misconceptions": [
+     {
+      "choice": "sp³",
+      "family": "one-step-short",
+      "familyName": "One step short",
+      "missType": "concept",
+      "pull": "Counts only the four bonds and leaves out the two lone pairs."
+     },
+     {
+      "choice": "sp³d",
+      "family": "neighbor-fact",
+      "familyName": "Neighbor fact",
+      "missType": "content",
+      "pull": "Five domains: true of XeF2, ClF3 or SF4, not of a six-domain center."
+     },
+     {
+      "choice": "dsp²",
+      "family": "neighbor-fact",
+      "familyName": "Neighbor fact",
+      "missType": "content",
+      "pull": "The label for square-planar transition-metal complexes (like Pt(NH3)2Cl2); it matches the shape, not the domain count of Xe."
+     },
+     {
+      "choice": "sp³d³",
+      "family": "miscount",
+      "familyName": "Miscount",
+      "missType": "misread",
+      "pull": "Seven domains (IF7); one domain too many."
+     }
+    ]
+   },
+   "key": {
+    "index": 0,
+    "text": "sp³d²"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "numbers": "RDKit: Xe 8 valence electrons, 4 bonds, 2 lone pairs, 6 domains.",
+    "rdkit": "RDKit 2026.09.1 periodic table: Xe 8 valence electrons, 4 sigma bonds, 2 lone pairs, 6 domains (sp3d2).",
+    "served": "Rendered on http://127.0.0.1:4107/tools/mock/full.html as Natural Sciences question 50: stem and choices match the loader text exactly, no stem drawing, no structure choices."
+   },
+   "conceptsOverMath": "concept item.",
+   "stemStyle": [
+    "principle or hint stated in the stem: The stem gives four bonds and two lone pairs, which is the whole domain count."
+   ]
+  },
+  {
+   "qid": "fm:gchem-b:GC_pd5",
+   "servedAs": {
+    "bank": "full",
+    "mock": "FULL_1",
+    "section": "gc",
+    "n": 8,
+    "servedNo": 48,
+    "page": "tools/mock/full.html (Survey of the Natural Sciences, General Chemistry block 41 to 70)"
+   },
+   "bankTopic": "States and solutions",
+   "difficulty": 3,
+   "stemHash": "4676aafcbe8d2512ad99ceacff48d612db89cd3c",
+   "expert": {
+    "answer": "Gas",
+    "servedIndex": 3,
+    "confidence": "high",
+    "concept": "On a phase diagram, below the triple-point pressure there is no liquid region; at 1 atm and 298 K CO2 sits in the gas region (dry ice sublimes at 1 atm).",
+    "reasoning": [
+     "Locate the point: 1.00 atm is far below the triple point pressure of 5.11 atm.",
+     "Below the triple-point pressure, only solid and gas exist; liquid CO2 needs more than 5.11 atm.",
+     "At 298 K, far above the sublimation temperature at 1 atm (about 195 K), the sample is a gas."
+    ],
+    "misconceptions": [
+     {
+      "choice": "Supercritical fluid",
+      "family": "neighbor-fact",
+      "familyName": "Neighbor fact",
+      "missType": "content",
+      "pull": "Needs both T above 304 K and P above 73 atm; 1 atm is nowhere near."
+     },
+     {
+      "choice": "Mixture of solid and liquid",
+      "family": "neighbor-fact",
+      "familyName": "Neighbor fact",
+      "missType": "content",
+      "pull": "Solid and liquid coexist only on the melting line, which starts above 5.11 atm."
+     },
+     {
+      "choice": "Solid",
+      "family": "other-conditions",
+      "familyName": "Other conditions",
+      "missType": "content",
+      "pull": "True at 1 atm only below about 195 K (dry ice); at 298 K it has sublimed."
+     },
+     {
+      "choice": "Liquid",
+      "family": "missed-exception",
+      "familyName": "Smooth trend, missed exception",
+      "missType": "content",
+      "pull": "Water is liquid at 1 atm and room temperature, but CO2 is the exception: its liquid needs more than 5.11 atm."
+     }
+    ]
+   },
+   "key": {
+    "index": 3,
+    "text": "Gas"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "numbers": "none: read off the diagram values in the stem.",
+    "rdkit": "not applicable: no structure served (qs null, os false); nothing to parse",
+    "served": "Rendered on http://127.0.0.1:4107/tools/mock/full.html as Natural Sciences question 48: stem and choices match the loader text exactly, no stem drawing, no structure choices."
+   },
+   "conceptsOverMath": "concept item.",
+   "stemStyle": [
+    "principle or hint stated in the stem: The stem says the point is below the triple-point pressure and above its temperature, which nearly reads the diagram for the student."
+   ],
+   "bankCopy": [
+    {
+     "kind": "bank-copy",
+     "text": "Bank why says the diagram shows \"solid below the sublimation curve and gas above\" and that 298 K and 1 atm is \"above the sublimation curve\". On the standard pressure (up) versus temperature (right) diagram that is reversed: the gas region lies below and to the right of the boundary lines. At 298 K (above the 216.6 K triple point) the boundary that matters is the liquid-gas line, about 64 atm at 298 K; 1 atm is far below it. The explainer and the picture must put the point in the gas region, under the curves."
+    }
+   ]
+  },
+  {
+   "qid": "fm:generated:gc-dilution#1tmuuzr",
+   "servedAs": {
+    "bank": "full",
+    "mock": "FULL_1",
+    "section": "gc",
+    "n": 17,
+    "servedNo": 57,
+    "page": "tools/mock/full.html (Survey of the Natural Sciences, General Chemistry block 41 to 70)"
+   },
+   "bankTopic": "States and solutions",
+   "difficulty": 2,
+   "stemHash": "31d379a07a5b3bcc3677222f959376743424edc6",
+   "expert": {
+    "answer": "50 mL",
+    "servedIndex": 2,
+    "confidence": "high",
+    "concept": "Dilution keeps moles of solute fixed: M1V1 = M2V2; water added = final volume - starting volume.",
+    "reasoning": [
+     "Halving the concentration means doubling the volume: 50 mL to 100 mL.",
+     "Water added = 100 - 50 = 50 mL."
+    ],
+    "misconceptions": [
+     {
+      "choice": "25 mL",
+      "family": "reversed",
+      "familyName": "Reversed",
+      "missType": "concept",
+      "pull": "Halves the volume, as if diluting shrinks the solution."
+     },
+     {
+      "choice": "150 mL",
+      "family": "operation-flip",
+      "familyName": "Added instead of subtracted",
+      "missType": "concept",
+      "pull": "Adds the starting 50 mL to the 100 mL final volume instead of subtracting it."
+     },
+     {
+      "choice": "51 mL",
+      "family": "miscount",
+      "familyName": "Miscount",
+      "missType": "misread",
+      "pull": "No clean route; a weak distractor."
+     },
+     {
+      "choice": "100 mL",
+      "family": "other-question",
+      "familyName": "Right number, other question",
+      "missType": "misread",
+      "pull": "That is the final volume, not the water ADDED."
+     }
+    ]
+   },
+   "key": {
+    "index": 2,
+    "text": "50 mL"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "numbers": "V2 = 50 x 1 / 0.5 = 100 mL; added 50 mL.",
+    "rdkit": "not applicable: no structure served (qs null, os false); nothing to parse",
+    "served": "Rendered on http://127.0.0.1:4107/tools/mock/full.html as Natural Sciences question 57: stem and choices match the loader text exactly, no stem drawing, no structure choices."
+   },
+   "conceptsOverMath": "light.",
+   "stemStyle": [
+    "capitalized emphasis: ADDED"
+   ],
+   "weakDistractors": [
+    "51 mL has no route."
+   ],
+   "bankCopy": [
+    {
+     "kind": "bank-copy",
+     "text": "Bank trap note on 51 mL is the generic \"Arithmetic slip. Redo the last step slowly\"; it confirms the choice has no route. Bank note on 100 mL uses capitalized FINAL."
+    }
+   ]
+  },
+  {
+   "qid": "fm:gchem-a:col-q11",
+   "servedAs": {
+    "bank": "full",
+    "mock": "FULL_1",
+    "section": "gc",
+    "n": 19,
+    "servedNo": 59,
+    "page": "tools/mock/full.html (Survey of the Natural Sciences, General Chemistry block 41 to 70)"
+   },
+   "bankTopic": "States and solutions",
+   "difficulty": 3,
+   "stemHash": "dd4c28f4b75f87c8214170bf0075d72cbf0a200c",
+   "expert": {
+    "answer": "1.29",
+    "servedIndex": 1,
+    "confidence": "high",
+    "concept": "The van t Hoff factor measured from a colligative property is i = dTf / (Kf m); ion pairing makes it smaller than the ideal ion count.",
+    "reasoning": [
+     "Rearrange dTf = i Kf m: i = 0.24 / (1.86 x 0.10) = 0.24 / 0.186.",
+     "That is about 1.29, between 1 (no dissociation) and 2 (full dissociation), as expected for ion pairing in MgSO4.",
+     "Shortcut: i_eff = 2 x (0.24 / 0.372) = 1.29."
+    ],
+    "misconceptions": [
+     {
+      "choice": "1.00",
+      "family": "neighbor-fact",
+      "familyName": "Neighbor fact",
+      "missType": "content",
+      "pull": "The i of a nonelectrolyte like sucrose; MgSO4 does make ions."
+     },
+     {
+      "choice": "1.55",
+      "family": "reversed",
+      "familyName": "Reversed",
+      "missType": "concept",
+      "pull": "Inverts the ratio: 0.372 / 0.24 = 1.55, ideal over observed."
+     },
+     {
+      "choice": "1.86",
+      "family": "other-question",
+      "familyName": "Right number, other question",
+      "missType": "misread",
+      "pull": "That is Kf for water, a number from the stem."
+     },
+     {
+      "choice": "2.00",
+      "family": "missed-exception",
+      "familyName": "Smooth trend, missed exception",
+      "missType": "content",
+      "pull": "The ideal i for full dissociation; the measured dTf is smaller, so the real i is smaller."
+     }
+    ]
+   },
+   "key": {
+    "index": 1,
+    "text": "1.29"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "numbers": "0.24 / 0.186 = 1.290; 0.372/0.24 = 1.55.",
+    "rdkit": "not applicable: no structure served (qs null, os false); nothing to parse",
+    "served": "Rendered on http://127.0.0.1:4107/tools/mock/full.html as Natural Sciences question 59: stem and choices match the loader text exactly, no stem drawing, no structure choices."
+   },
+   "conceptsOverMath": "heavy: 0.24 / 0.186 is not a head step; the 2 x 0.24/0.372 shortcut helps but still needs division. Flag for a lighter variant (for example dTf = 0.279, i = 1.5).",
+   "stemStyle": [
+    "raw underscores (typeset by the player, but check)",
+    "principle or hint stated in the stem: The stem gives the ideal dTf; fine, but it also invites the inverted ratio."
+   ],
+   "bankCopy": [
+    {
+     "kind": "bank-copy",
+     "text": "Bank trap note on 1.00 says \"that is wrong\"; house rule. Do not lift. Bank notes also use capitalized emphasis (\"IDEAL\")."
+    }
+   ]
+  },
+  {
+   "qid": "fm:gchem-a:nr3",
+   "servedAs": {
+    "bank": "full",
+    "mock": "FULL_1",
+    "section": "gc",
+    "n": 5,
+    "servedNo": 45,
+    "page": "tools/mock/full.html (Survey of the Natural Sciences, General Chemistry block 41 to 70)"
+   },
+   "bankTopic": "The charge ledger",
+   "difficulty": 2,
+   "stemHash": "c440bcd679bfd4a9536ec109c27ac2daaad36d23",
+   "expert": {
+    "answer": "0.059 V",
+    "servedIndex": 3,
+    "confidence": "high",
+    "concept": "A concentration cell has E = 0 at standard state; its voltage comes only from the concentration ratio via Nernst: E = (0.0592/n) log(concentrated/dilute).",
+    "reasoning": [
+     "E-standard is 0 (same electrode both sides), so E = (0.0592 / n) log(1.0 / 0.01).",
+     "n = 2 for Cu2+, log 100 = 2, so E = 0.0296 x 2 = 0.059 V.",
+     "The dilute side (left) is the anode and the cell runs positive, so the voltage is +0.059 V."
+    ],
+    "misconceptions": [
+     {
+      "choice": "0.118 V",
+      "family": "miscount",
+      "familyName": "Miscount",
+      "missType": "misread",
+      "pull": "Uses n = 1; Cu2+ takes two electrons."
+     },
+     {
+      "choice": "−0.059 V",
+      "family": "sign-slip",
+      "familyName": "Sign slip",
+      "missType": "misread",
+      "pull": "Inverts Q (1.0/0.01); a working galvanic concentration cell runs at a positive voltage."
+     },
+     {
+      "choice": "0",
+      "family": "neighbor-fact",
+      "familyName": "Neighbor fact",
+      "missType": "content",
+      "pull": "E-standard of a concentration cell is 0, but these concentrations differ, so E is not."
+     },
+     {
+      "choice": "0.030 V",
+      "family": "one-step-short",
+      "familyName": "One step short",
+      "missType": "concept",
+      "pull": "Takes 0.0592 / 2 and drops the log 100 = 2 factor."
+     }
+    ]
+   },
+   "key": {
+    "index": 3,
+    "text": "0.059 V"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "numbers": "0.0592/2 x log(100) = 0.0592 V; n=1: 0.118.",
+    "rdkit": "not applicable: no structure served (qs null, os false); nothing to parse",
+    "served": "Rendered on http://127.0.0.1:4107/tools/mock/full.html as Natural Sciences question 45: stem and choices match the loader text exactly, no stem drawing, no structure choices."
+   },
+   "conceptsOverMath": "light.",
+   "stemStyle": [
+    "raw underscores (typeset by the player, but check)",
+    "Ends on the fragment \"E_cell?\"; suggest \"What is the cell potential?\" and name which side is the anode or ask for the magnitude."
+   ],
+   "notes": [
+    "After the key check: the bank route for 0.118 V is \"leaves out the division by n\", the same move as n = 1, and 0.030 V is \"log 10 instead of log 100\"; both match the pulls here."
+   ]
+  },
+  {
+   "qid": "fm:gchem-b:GC_nr-e5",
+   "servedAs": {
+    "bank": "full",
+    "mock": "FULL_1",
+    "section": "gc",
+    "n": 6,
+    "servedNo": 46,
+    "page": "tools/mock/full.html (Survey of the Natural Sciences, General Chemistry block 41 to 70)"
+   },
+   "bankTopic": "The charge ledger",
+   "difficulty": 3,
+   "stemHash": "4fa4d01dc08701f71af85e94c9d6b1728d6ecb04",
+   "expert": {
+    "answer": "10^17",
+    "servedIndex": 3,
+    "confidence": "high",
+    "concept": "A positive E-standard means K > 1; log K = nE / 0.0592, so even half a volt gives a huge K.",
+    "reasoning": [
+     "log K = nE / 0.0592 = 2 x 0.50 / 0.0592 = 1.0 / 0.0592, about 17.",
+     "So K = 10^17: positive E, K far greater than 1, products favored."
+    ],
+    "misconceptions": [
+     {
+      "choice": "10^10",
+      "family": "unit-slip",
+      "familyName": "Unit or decimal slip",
+      "missType": "misread",
+      "pull": "Rounds 0.0592 to 0.1, so log K comes out 10."
+     },
+     {
+      "choice": "10",
+      "family": "miscount",
+      "familyName": "Miscount",
+      "missType": "misread",
+      "pull": "No clean route; K = 10 would need E of about 0.03 V."
+     },
+     {
+      "choice": "10^5",
+      "family": "miscount",
+      "familyName": "Miscount",
+      "missType": "misread",
+      "pull": "No clean route; it does not follow from n = 1 (10^8.4) either."
+     },
+     {
+      "choice": "10^(-17)",
+      "family": "sign-slip",
+      "familyName": "Sign slip",
+      "missType": "misread",
+      "pull": "Right size, but negative: a positive E-standard gives K > 1, not K < 1."
+     }
+    ]
+   },
+   "key": {
+    "index": 3,
+    "text": "10^17"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "numbers": "2 x 0.5 / 0.0592 = 16.89; n = 1: 8.45.",
+    "rdkit": "not applicable: no structure served (qs null, os false); nothing to parse",
+    "served": "Rendered on http://127.0.0.1:4107/tools/mock/full.html as Natural Sciences question 46: stem and choices match the loader text exactly, no stem drawing, no structure choices."
+   },
+   "conceptsOverMath": "moderate: 1 / 0.06 is about 17.",
+   "stemStyle": [
+    "principle or hint stated in the stem: The stem states log K = nE/0.0592."
+   ],
+   "weakDistractors": [
+    "10 and 10^5 have no single-slip route."
+   ],
+   "bankCopy": [
+    {
+     "kind": "bank-copy",
+     "text": "Bank why cites 10^8.5 for forgetting n; that is not a choice. None of 10^10, 10 or 10^5 has a route in the bank either; see notes."
+    }
+   ]
+  },
+  {
+   "qid": "fm:gchem-b:GC_en-q2",
+   "servedAs": {
+    "bank": "full",
+    "mock": "FULL_1",
+    "section": "gc",
+    "n": 16,
+    "servedNo": 56,
+    "page": "tools/mock/full.html (Survey of the Natural Sciences, General Chemistry block 41 to 70)"
+   },
+   "bankTopic": "The energy ledger",
+   "difficulty": 3,
+   "stemHash": "17eefc6f888f09787049325af1d2194382b877b7",
+   "expert": {
+    "answer": "-908 kJ",
+    "servedIndex": 4,
+    "confidence": "high",
+    "concept": "Hess via formation enthalpies: products minus reactants, each times its coefficient; elements in their standard state count 0.",
+    "reasoning": [
+     "Products: 4(+90) + 6(-242) = 360 - 1452 = -1092 kJ.",
+     "Reactants: 4(-46) + 5(0) = -184 kJ.",
+     "dH = -1092 - (-184) = -908 kJ."
+    ],
+    "misconceptions": [
+     {
+      "choice": "-184 kJ",
+      "family": "other-question",
+      "familyName": "Right number, other question",
+      "missType": "misread",
+      "pull": "The reactant sum alone, a step value, not dH_rxn."
+     },
+     {
+      "choice": "-724 kJ",
+      "family": "miscount",
+      "familyName": "Miscount",
+      "missType": "misread",
+      "pull": "Counts the NH3 term twice (-1092 + 368)."
+     },
+     {
+      "choice": "+908 kJ",
+      "family": "reversed",
+      "familyName": "Reversed",
+      "missType": "concept",
+      "pull": "Reactants minus products: the order of the subtraction is turned around."
+     },
+     {
+      "choice": "-1092 kJ",
+      "family": "one-step-short",
+      "familyName": "One step short",
+      "missType": "concept",
+      "pull": "The products sum without subtracting the reactants."
+     }
+    ]
+   },
+   "key": {
+    "index": 4,
+    "text": "-908 kJ"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "numbers": "products -1092; reactants -184; dH -908; p - 2r = -724.",
+    "rdkit": "not applicable: no structure served (qs null, os false); nothing to parse",
+    "served": "Rendered on http://127.0.0.1:4107/tools/mock/full.html as Natural Sciences question 56: stem and choices match the loader text exactly, no stem drawing, no structure choices."
+   },
+   "conceptsOverMath": "moderate to heavy: 6 x 242 and the sums are several steps; flag for a lighter variant.",
+   "stemStyle": [
+    "raw underscores (typeset by the player, but check)",
+    "principle or hint stated in the stem: The stem states the products-minus-reactants formula."
+   ]
+  },
+  {
+   "qid": "fm:gchem-b:GC_en-q3",
+   "servedAs": {
+    "bank": "full",
+    "mock": "FULL_1",
+    "section": "gc",
+    "n": 28,
+    "servedNo": 68,
+    "page": "tools/mock/full.html (Survey of the Natural Sciences, General Chemistry block 41 to 70)"
+   },
+   "bankTopic": "The energy ledger",
+   "difficulty": 2,
+   "stemHash": "58abc3b5126d3dfbec310709b8c0c2111584534f",
+   "expert": {
+    "answer": "-70 kJ",
+    "servedIndex": 4,
+    "confidence": "high",
+    "concept": "Hess law: scale a step by the factor you multiply it by, then add the steps.",
+    "reasoning": [
+     "Double step 1: 2A -> 2B, dH = 2 x (-50) = -100 kJ.",
+     "Add step 2: -100 + 30 = -70 kJ for 2A -> C."
+    ],
+    "misconceptions": [
+     {
+      "choice": "+70 kJ",
+      "family": "sign-slip",
+      "familyName": "Sign slip",
+      "missType": "misread",
+      "pull": "Right size, sign lost."
+     },
+     {
+      "choice": "-130 kJ",
+      "family": "reversed",
+      "familyName": "Reversed",
+      "missType": "concept",
+      "pull": "Treats step 2 as run in reverse (-30), though it is used as written."
+     },
+     {
+      "choice": "-20 kJ",
+      "family": "one-step-short",
+      "familyName": "One step short",
+      "missType": "concept",
+      "pull": "Adds -50 + 30 without doubling step 1."
+     },
+     {
+      "choice": "+30 kJ",
+      "family": "other-question",
+      "familyName": "Right number, other question",
+      "missType": "misread",
+      "pull": "The dH of step 2 alone."
+     }
+    ]
+   },
+   "key": {
+    "index": 4,
+    "text": "-70 kJ"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "numbers": "2(-50) + 30 = -70; -50 + 30 = -20; -100 - 30 = -130.",
+    "rdkit": "not applicable: no structure served (qs null, os false); nothing to parse",
+    "served": "Rendered on http://127.0.0.1:4107/tools/mock/full.html as Natural Sciences question 68: stem and choices match the loader text exactly, no stem drawing, no structure choices."
+   },
+   "conceptsOverMath": "light.",
+   "stemStyle": [
+    "principle or hint stated in the stem: The stem tells the student to multiply step 1 by 2 and add, the whole Hess move."
+   ]
+  },
+  {
+   "qid": "fm:generated:gc-atoms-count#xz6wsz",
+   "servedAs": {
+    "bank": "full",
+    "mock": "FULL_1",
+    "section": "gc",
+    "n": 3,
+    "servedNo": 43,
+    "page": "tools/mock/full.html (Survey of the Natural Sciences, General Chemistry block 41 to 70)"
+   },
+   "bankTopic": "The mole bridge",
+   "difficulty": 2,
+   "stemHash": "2b0d288f7cab425af2205d9ec4c92955d88f0904",
+   "expert": {
+    "answer": "2.41 × 10²⁴",
+    "servedIndex": 4,
+    "confidence": "high",
+    "concept": "Grams to moles to molecules to atoms: multiply by atoms per molecule at the end.",
+    "reasoning": [
+     "16 g / 16 g/mol = 1 mol CH4.",
+     "Each CH4 has 4 H, so 4 mol H atoms.",
+     "4 x 6.02 x 10^23 = 2.41 x 10^24 H atoms."
+    ],
+    "misconceptions": [
+     {
+      "choice": "4",
+      "family": "other-question",
+      "familyName": "Right number, other question",
+      "missType": "misread",
+      "pull": "The number of H atoms in one molecule, not in 16 g."
+     },
+     {
+      "choice": "9.63 × 10²⁴",
+      "family": "unit-slip",
+      "familyName": "Unit or decimal slip",
+      "missType": "misread",
+      "pull": "Treats 16 g as 16 mol (16 x 6.02 x 10^23)."
+     },
+     {
+      "choice": "1.51 × 10²³",
+      "family": "operation-flip",
+      "familyName": "Added instead of subtracted",
+      "missType": "concept",
+      "pull": "Divides by 4 instead of multiplying."
+     },
+     {
+      "choice": "6.02 × 10²³",
+      "family": "other-unit",
+      "familyName": "Counted the other unit",
+      "missType": "concept",
+      "pull": "Counts CH4 molecules, not H atoms."
+     }
+    ]
+   },
+   "key": {
+    "index": 4,
+    "text": "2.41 × 10²⁴"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "numbers": "4 x 6.022e23 = 2.409e24; 16 NA = 9.635e24; NA/4 = 1.506e23. RDKit CH4 16.04 g/mol, 4 H.",
+    "rdkit": "RDKit 2026.09.1: CH4 16.04 g/mol, 4 H per molecule.",
+    "served": "Rendered on http://127.0.0.1:4107/tools/mock/full.html as Natural Sciences question 43: stem and choices match the loader text exactly, no stem drawing, no structure choices."
+   },
+   "conceptsOverMath": "light.",
+   "stemStyle": [
+    "capitalized emphasis: ATOMS"
+   ],
+   "bankCopy": [
+    {
+     "kind": "bank-copy",
+     "text": "Bank trap notes use capitalized emphasis (MORE, MOLECULES)."
+    }
+   ],
+   "notes": [
+    "After the key check: the bank reads \"4\" as 4 mol of H atoms, one step short of multiplying by Avogadro. Both readings pull; if the writer follows the bank, one-step-short fits better than other-question."
+   ]
+  },
+  {
+   "qid": "fm:generated:gc-limiting#6s11gt",
+   "servedAs": {
+    "bank": "full",
+    "mock": "FULL_1",
+    "section": "gc",
+    "n": 11,
+    "servedNo": 51,
+    "page": "tools/mock/full.html (Survey of the Natural Sciences, General Chemistry block 41 to 70)"
+   },
+   "bankTopic": "The mole bridge",
+   "difficulty": 2,
+   "stemHash": "0b3ff5c701023a8804a7772fc8fc31baa609fef6",
+   "expert": {
+    "answer": "4 mol",
+    "servedIndex": 3,
+    "confidence": "high",
+    "concept": "The limiting reagent sets the yield: compare what each reactant can make and take the smaller.",
+    "reasoning": [
+     "Check need: 4 mol N2 would need 12 mol H2, and only 6 are there, so H2 limits.",
+     "6 mol H2 x (2 NH3 / 3 H2) = 4 mol NH3."
+    ],
+    "misconceptions": [
+     {
+      "choice": "10 mol",
+      "family": "operation-flip",
+      "familyName": "Added instead of subtracted",
+      "missType": "concept",
+      "pull": "Adds the reactant moles (4 + 6); moles are not conserved through a reaction."
+     },
+     {
+      "choice": "2 mol",
+      "family": "other-question",
+      "familyName": "Right number, other question",
+      "missType": "misread",
+      "pull": "The moles of N2 that react (6/3), not the NH3 formed."
+     },
+     {
+      "choice": "8 mol",
+      "family": "reversed",
+      "familyName": "Reversed",
+      "missType": "concept",
+      "pull": "Treats N2 as limiting (4 x 2); N2 is in excess."
+     },
+     {
+      "choice": "5 mol",
+      "family": "miscount",
+      "familyName": "Miscount",
+      "missType": "misread",
+      "pull": "No clean route; a weak distractor."
+     }
+    ]
+   },
+   "key": {
+    "index": 3,
+    "text": "4 mol"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "numbers": "from H2: 6 x 2/3 = 4; from N2: 8; N2 used 2.",
+    "rdkit": "not applicable: no structure served (qs null, os false); nothing to parse",
+    "served": "Rendered on http://127.0.0.1:4107/tools/mock/full.html as Natural Sciences question 51: stem and choices match the loader text exactly, no stem drawing, no structure choices."
+   },
+   "conceptsOverMath": "light.",
+   "stemStyle": [
+    "Equation on its own line before the question; fine for the DAT look."
+   ],
+   "weakDistractors": [
+    "5 mol has no route."
+   ],
+   "bankCopy": [
+    {
+     "kind": "bank-copy",
+     "text": "Bank trap note on 5 mol is the generic \"Arithmetic slip\"; no route. Bank note on 8 mol uses capitalized EXCESS."
+    }
+   ],
+   "notes": [
+    "After the key check: the bank reads \"2 mol\" as the moles-per-coefficient of H2 (6/3) not yet multiplied by the product coefficient, so one-step-short also fits; other-question (2 mol of N2 consumed) is the same number. Writer decides."
+   ]
+  },
+  {
+   "qid": "fm:gchem-b:GC_mc-h1",
+   "servedAs": {
+    "bank": "full",
+    "mock": "FULL_1",
+    "section": "gc",
+    "n": 18,
+    "servedNo": 58,
+    "page": "tools/mock/full.html (Survey of the Natural Sciences, General Chemistry block 41 to 70)"
+   },
+   "bankTopic": "The mole bridge",
+   "difficulty": 3,
+   "stemHash": "8ea445161f5f21331946e48c08db92027ff11974",
+   "expert": {
+    "answer": "3.0 × 10²³",
+    "servedIndex": 2,
+    "confidence": "high",
+    "concept": "Grams to moles to molecules, then times atoms per molecule: H2O carries 2 H.",
+    "reasoning": [
+     "4.50 g / 18.0 g/mol = 0.250 mol H2O.",
+     "Each H2O has 2 H, so 0.500 mol H atoms.",
+     "0.500 x 6.022 x 10^23 = 3.0 x 10^23 H atoms."
+    ],
+    "misconceptions": [
+     {
+      "choice": "6.0 × 10²³",
+      "family": "miscount",
+      "familyName": "Miscount",
+      "missType": "misread",
+      "pull": "One full mole of atoms; does not follow from 4.50 g of water."
+     },
+     {
+      "choice": "1.5 × 10²⁴",
+      "family": "unit-slip",
+      "familyName": "Unit or decimal slip",
+      "missType": "misread",
+      "pull": "The molecule count with its power of ten off by one (1.5 x 10^23 to 10^24)."
+     },
+     {
+      "choice": "9.0 × 10²³",
+      "family": "miscount",
+      "familyName": "Miscount",
+      "missType": "misread",
+      "pull": "No clean route (1.5 mol of H); a weak distractor."
+     },
+     {
+      "choice": "1.5 × 10²³",
+      "family": "other-unit",
+      "familyName": "Counted the other unit",
+      "missType": "concept",
+      "pull": "Counts H2O molecules (0.250 mol), not H atoms."
+     }
+    ]
+   },
+   "key": {
+    "index": 2,
+    "text": "3.0 × 10²³"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "numbers": "4.5/18 = 0.25; H = 3.011e23; molecules 1.506e23. RDKit H2O 18.02 g/mol, 2 H.",
+    "rdkit": "RDKit 2026.09.1: H2O 18.02 g/mol, 2 H per molecule.",
+    "served": "Rendered on http://127.0.0.1:4107/tools/mock/full.html as Natural Sciences question 58: stem and choices match the loader text exactly, no stem drawing, no structure choices."
+   },
+   "conceptsOverMath": "light.",
+   "weakDistractors": [
+    "9.0 x 10^23 has no single route."
+   ],
+   "bankCopy": [
+    {
+     "kind": "bank-copy",
+     "text": "Bank why calls the factor of 2 \"the most common error point\"; no data behind it. Do not lift."
+    }
+   ]
+  },
+  {
+   "qid": "fm:generated:gc-molecular-formula#13jl0t8",
+   "servedAs": {
+    "bank": "full",
+    "mock": "FULL_1",
+    "section": "gc",
+    "n": 22,
+    "servedNo": 62,
+    "page": "tools/mock/full.html (Survey of the Natural Sciences, General Chemistry block 41 to 70)"
+   },
+   "bankTopic": "The mole bridge",
+   "difficulty": 2,
+   "stemHash": "8affd5a3289fa783916a24fe288959c4804d5c43",
+   "expert": {
+    "answer": "C₂H₄O₂",
+    "servedIndex": 1,
+    "confidence": "high",
+    "concept": "Molecular formula = empirical formula x (molar mass / empirical mass).",
+    "reasoning": [
+     "Empirical mass of CH2O = 12 + 2 + 16 = 30 g/mol.",
+     "60 / 30 = 2, so double every subscript: C2H4O2."
+    ],
+    "misconceptions": [
+     {
+      "choice": "C₅H₁₀O₅",
+      "family": "miscount",
+      "familyName": "Miscount",
+      "missType": "misread",
+      "pull": "150 g/mol, five units of CH2O (a sugar like ribose), not 60."
+     },
+     {
+      "choice": "CH₂O",
+      "family": "one-step-short",
+      "familyName": "One step short",
+      "missType": "concept",
+      "pull": "Stops at the empirical formula and skips the multiplier."
+     },
+     {
+      "choice": "C₄H₈O₄",
+      "family": "one-step-too-far",
+      "familyName": "One step too far",
+      "missType": "misread",
+      "pull": "120 g/mol, doubled once too often."
+     },
+     {
+      "choice": "C₃H₆O₃",
+      "family": "miscount",
+      "familyName": "Miscount",
+      "missType": "misread",
+      "pull": "90 g/mol, three units (lactic acid), not 60."
+     }
+    ]
+   },
+   "key": {
+    "index": 1,
+    "text": "C₂H₄O₂"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "numbers": "60/30 = 2. RDKit: CH2O 30.03, C2H4O2 60.05, C3H6O3 90.08, C4H8O4 120.10, C5H10O5 150.13.",
+    "rdkit": "RDKit 2026.09.1: CH2O 30.03; C2H4O2 60.05; C3H6O3 90.08; C4H8O4 120.10; C5H10O5 150.13 g/mol (formula masses behind each choice).",
+    "served": "Rendered on http://127.0.0.1:4107/tools/mock/full.html as Natural Sciences question 62: stem and choices match the loader text exactly, no stem drawing, no structure choices."
+   },
+   "conceptsOverMath": "light.",
+   "bankCopy": [
+    {
+     "kind": "bank-copy",
+     "text": "Bank trap note on C5H10O5 opens \"Wrong multiplier.\"; house rule. Do not lift."
+    }
+   ]
+  },
+  {
+   "qid": "fm:gchem-b:GC_at-h1",
+   "servedAs": {
+    "bank": "full",
+    "mock": "FULL_1",
+    "section": "gc",
+    "n": 7,
+    "servedNo": 47,
+    "page": "tools/mock/full.html (Survey of the Natural Sciences, General Chemistry block 41 to 70)"
+   },
+   "bankTopic": "The quantum address, plus nuclear",
+   "difficulty": 3,
+   "stemHash": "a823d5f944a0d487063b977f4be895d377c04c92",
+   "expert": {
+    "answer": "Ca²⁺ (Z = 20)",
+    "servedIndex": 0,
+    "confidence": "high",
+    "concept": "Isoelectronic means the same electron count: electrons = Z - charge. Here every choice has 18; only the charge sorts them.",
+    "reasoning": [
+     "Count electrons as Z minus charge: Ca2+ 18, Sc3+ 18, Cl- 18, S2- 18, K+ 18.",
+     "All five match argon, so the +2 condition decides.",
+     "Only Ca2+ is both 18 electrons and +2."
+    ],
+    "misconceptions": [
+     {
+      "choice": "Sc³⁺ (Z = 21)",
+      "family": "half-right",
+      "familyName": "Half right",
+      "missType": "concept",
+      "pull": "Isoelectronic with Ar, but the charge is +3."
+     },
+     {
+      "choice": "Cl⁻ (Z = 17)",
+      "family": "half-right",
+      "familyName": "Half right",
+      "missType": "concept",
+      "pull": "Isoelectronic with Ar, but the charge is -1."
+     },
+     {
+      "choice": "S²⁻ (Z = 16)",
+      "family": "sign-slip",
+      "familyName": "Sign slip",
+      "missType": "misread",
+      "pull": "Isoelectronic and a 2 charge, but negative, not +2."
+     },
+     {
+      "choice": "K⁺ (Z = 19)",
+      "family": "half-right",
+      "familyName": "Half right",
+      "missType": "concept",
+      "pull": "Isoelectronic with Ar, but the charge is +1."
+     }
+    ]
+   },
+   "key": {
+    "index": 0,
+    "text": "Ca²⁺ (Z = 20)"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "numbers": "electrons: 20-2 = 21-3 = 17+1 = 16+2 = 19-1 = 18.",
+    "rdkit": "not applicable: no structure served (qs null, os false); nothing to parse",
+    "served": "Rendered on http://127.0.0.1:4107/tools/mock/full.html as Natural Sciences question 47: stem and choices match the loader text exactly, no stem drawing, no structure choices."
+   },
+   "conceptsOverMath": "concept item.",
+   "stemStyle": [
+    "capitalized emphasis: BOTH, AND"
+   ],
+   "bankCopy": [
+    {
+     "kind": "bank-copy",
+     "text": "Bank why says K+ and S2- are \"failing the +2 requirement\" (house rule) and names only those two; Sc3+ and Cl- are also 18-electron species. The explainer should show all five at 18 electrons so the charge is what decides."
+    }
+   ]
+  },
+  {
+   "qid": "fm:gchem-b:GC_sf-e2",
+   "servedAs": {
+    "bank": "full",
+    "mock": "FULL_1",
+    "section": "gc",
+    "n": 27,
+    "servedNo": 67,
+    "page": "tools/mock/full.html (Survey of the Natural Sciences, General Chemistry block 41 to 70)"
+   },
+   "bankTopic": "The two questions: measurement and the lab",
+   "difficulty": 2,
+   "stemHash": "b446515be6a10a087cb0edc1ab83e36ae8b13caf",
+   "expert": {
+    "answer": "6.0",
+    "servedIndex": 1,
+    "confidence": "high",
+    "concept": "For multiplication and division, the answer keeps the fewest significant figures of the inputs.",
+    "reasoning": [
+     "1.50 x 4.0 = 6 exactly on the calculator.",
+     "The fewest sig figs is 2 (from 4.0), so write 6.0."
+    ],
+    "misconceptions": [
+     {
+      "choice": "6",
+      "family": "unit-slip",
+      "familyName": "Unit or decimal slip",
+      "missType": "misread",
+      "pull": "One sig fig: the trailing zero after the decimal point is dropped."
+     },
+     {
+      "choice": "6.00",
+      "family": "reversed",
+      "familyName": "Reversed",
+      "missType": "concept",
+      "pull": "Keeps the most sig figs (3) instead of the fewest."
+     },
+     {
+      "choice": "6.000",
+      "family": "miscount",
+      "familyName": "Miscount",
+      "missType": "misread",
+      "pull": "Four sig figs; no rule gives that."
+     },
+     {
+      "choice": "6.0000",
+      "family": "operation-flip",
+      "familyName": "Added instead of subtracted",
+      "missType": "concept",
+      "pull": "Adds the sig fig counts (3 + 2 = 5) instead of taking the smaller."
+     }
+    ]
+   },
+   "key": {
+    "index": 1,
+    "text": "6.0"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "numbers": "1.50 x 4.0 = 6.0 (2 sf).",
+    "rdkit": "not applicable: no structure served (qs null, os false); nothing to parse",
+    "served": "Rendered on http://127.0.0.1:4107/tools/mock/full.html as Natural Sciences question 67: stem and choices match the loader text exactly, no stem drawing, no structure choices."
+   },
+   "conceptsOverMath": "light.",
+   "stemStyle": [
+    "capitalized emphasis: FEWEST",
+    "principle or hint stated in the stem: The stem states the rule and the sig fig count of each input, which gives the answer away."
+   ]
+  },
+  {
+   "qid": "fm:gchem-b:GC_lw-e10",
+   "servedAs": {
+    "bank": "full",
+    "mock": "FULL_1",
+    "section": "gc",
+    "n": 1,
+    "servedNo": 41,
+    "page": "tools/mock/full.html (Survey of the Natural Sciences, General Chemistry block 41 to 70)"
+   },
+   "bankTopic": "Why atoms bond",
+   "difficulty": 3,
+   "stemHash": "0848f64db637d826a491e85e18321070b41887d3",
+   "expert": {
+    "answer": "2",
+    "servedIndex": 2,
+    "confidence": "high",
+    "concept": "Lone pairs on the center = (valence electrons - electrons used in bonds) / 2; T-shape is 3 bonds + 2 lone pairs in a trigonal bipyramid.",
+    "reasoning": [
+     "Cl has 7 valence electrons; 3 Cl-F bonds use 3 of them.",
+     "7 - 3 = 4 electrons left = 2 lone pairs.",
+     "Five domains (3 bonds + 2 pairs) with the pairs equatorial gives the T shape."
+    ],
+    "misconceptions": [
+     {
+      "choice": "0",
+      "family": "one-step-short",
+      "familyName": "One step short",
+      "missType": "concept",
+      "pull": "Counts only the bonds; with no lone pairs ClF3 would be trigonal planar like BF3."
+     },
+     {
+      "choice": "1",
+      "family": "neighbor-fact",
+      "familyName": "Neighbor fact",
+      "missType": "content",
+      "pull": "One lone pair with four bonds is the seesaw of SF4; with three bonds it is trigonal pyramidal like NH3."
+     },
+     {
+      "choice": "3",
+      "family": "neighbor-fact",
+      "familyName": "Neighbor fact",
+      "missType": "content",
+      "pull": "Three lone pairs sit on each F atom (or on Xe in linear XeF2), not on this Cl."
+     },
+     {
+      "choice": "4",
+      "family": "other-unit",
+      "familyName": "Counted the other unit",
+      "missType": "concept",
+      "pull": "Counts the 4 leftover electrons as 4 pairs; 4 electrons make 2 pairs."
+     }
+    ]
+   },
+   "key": {
+    "index": 2,
+    "text": "2"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "numbers": "RDKit: Cl 7 valence electrons, 3 bonds, 2 lone pairs, 5 domains.",
+    "rdkit": "RDKit 2026.09.1 periodic table: Cl 7 valence electrons, 3 sigma bonds, 2 lone pairs, 5 domains (sp3d, T-shaped).",
+    "served": "Rendered on http://127.0.0.1:4107/tools/mock/full.html as Natural Sciences question 41: stem and choices match the loader text exactly, no stem drawing, no structure choices."
+   },
+   "conceptsOverMath": "concept item.",
+   "stemStyle": [
+    "principle or hint stated in the stem: The stem gives 7 valence electrons, 3 bonds and a trigonal bipyramid, which hands over the lone-pair count."
+   ]
+  },
+  {
+   "qid": "fm:gchem-a:b-e7",
+   "servedAs": {
+    "bank": "full",
+    "mock": "FULL_1",
+    "section": "gc",
+    "n": 23,
+    "servedNo": 63,
+    "page": "tools/mock/full.html (Survey of the Natural Sciences, General Chemistry block 41 to 70)"
+   },
+   "bankTopic": "Why atoms bond",
+   "difficulty": 2,
+   "stemHash": "6b3cae458a183e72cb3c3f7458545e4cd55cd4db",
+   "expert": {
+    "answer": "Stronger H-bonding in HF",
+    "servedIndex": 2,
+    "confidence": "high",
+    "concept": "Hydrogen bonding (H on F, O or N) outweighs the extra London forces of a heavier molecule.",
+    "reasoning": [
+     "Name the strongest force in each: HF has H bonded to F, so it hydrogen bonds; HCl only has dipole-dipole and London forces.",
+     "H-bonds are much stronger than the extra dispersion HCl gains from its extra electrons, so HF boils higher (about 20 C vs -85 C)."
+    ],
+    "misconceptions": [
+     {
+      "choice": "Metallic bonding",
+      "family": "neighbor-fact",
+      "familyName": "Neighbor fact",
+      "missType": "content",
+      "pull": "Metallic bonding belongs to metals; HF and HCl are molecular."
+     },
+     {
+      "choice": "HF has stronger London forces",
+      "family": "reversed",
+      "familyName": "Reversed",
+      "missType": "concept",
+      "pull": "HCl has more electrons, so its London forces are the stronger ones."
+     },
+     {
+      "choice": "HCl is ionic",
+      "family": "other-conditions",
+      "familyName": "Other conditions",
+      "missType": "content",
+      "pull": "HCl ionizes in water, but pure HCl is a molecular, polar covalent gas."
+     },
+     {
+      "choice": "HF is denser",
+      "family": "neighbor-fact",
+      "familyName": "Neighbor fact",
+      "missType": "content",
+      "pull": "Density is not a cause of boiling point; intermolecular force strength is."
+     }
+    ]
+   },
+   "key": {
+    "index": 2,
+    "text": "Stronger H-bonding in HF"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "numbers": "none.",
+    "rdkit": "RDKit 2026.09.1: HF 20.01, HCl 36.46 g/mol (HCl heavier, so its London forces are larger).",
+    "served": "Rendered on http://127.0.0.1:4107/tools/mock/full.html as Natural Sciences question 63: stem and choices match the loader text exactly, no stem drawing, no structure choices."
+   },
+   "conceptsOverMath": "concept item."
+  }
+ ]
+}

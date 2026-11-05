@@ -44,6 +44,12 @@
 // lexer places as code (a selector, a storage key, or a search needle: the first argument of
 // indexOf, includes, split, replace and the like) is skipped by every rule: a script that looks
 // for a dash in order to remove it shows the student none.
+// Notation (OS-61, Thomas 2026-10-30): inside explainer text and figure labels only (the sidecars
+// under content/explainers/ and the renderers under tools/explain/visuals/), the multiply sign,
+// superscript and subscript digits and signs, pi, the minus sign, <= and >= and the degree sign
+// are allowed; everywhere else student copy stays plain ASCII. In the sidecars "fail" and "fails"
+// are allowed in body text (quoted passage text, process descriptions: "repolarization fails")
+// and stay banned in verdicts, headings and trap-card names (the keys in VERDICT_KEYS).
 // A line that carries the marker copy-gate-ok is skipped (for code the lexer cannot tell
 // from copy; never for words a student reads).
 // Dependency-free, about 3 s.
@@ -62,6 +68,19 @@ export function charRule(c) {
   if (c === 0xb7 || c === 0x2022 || c === 0x2027 || c === 0x22c5 || c === 0x2219 || c === 0x30fb) return 'middot';
   if ((c >= 0x1f000 && c <= 0x1faff) || (c >= 0x2600 && c <= 0x27bf) || (c >= 0x2b00 && c <= 0x2bff) || (c >= 0x231a && c <= 0x23ff) || c === 0xfe0f || c === 0x200d || c === 0x2b50) return 'emoji';
   return 'non-ascii';
+}
+export const NOTATION = new Set([0xd7, 0xb9, 0xb2, 0xb3, 0x3c0, 0x2212, 0x2264, 0x2265, 0xb0, 0x207a, 0x207b,
+  ...Array.from({ length: 10 }, (_, i) => 0x2070 + i), ...Array.from({ length: 10 }, (_, i) => 0x2080 + i)]);
+export const isExplainerFile = (rel) => /^content\/explainers\//.test(rel) || /^tools\/explain\/visuals\//.test(rel);
+const isSidecar = (rel) => /^content\/explainers\/.+\.json$/.test(rel);
+export const VERDICT_KEYS = new Set(['trap', 'trapName', 'title', 'heading', 'verdict', 'name', 'eyebrow']);
+const BODY_FAIL = /^fails?$/i;
+// the JSON key a value sits under (an array element takes its array's key)
+function jsonKeyAt(src, offset) {
+  const before = src.slice(Math.max(0, offset - 4000), offset);
+  let m, last = null; const re = /"([^"\\]+)"\s*:\s*(?=["\[{])/g;
+  while ((m = re.exec(before))) last = m[1];
+  return last;
 }
 const NUM = String.raw`(?:\d+|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|fifteen|twenty|thirty|forty|fifty|a\s+hundred)`;
 const DIGIT_WORD = '(?:zero|oh|one|two|three|four|five|six|seven|eight|nine)';
@@ -114,6 +133,7 @@ export function scan(rel, src, { rules = RULES } = {}) {
   const line = lineIndex(src);
   const ctx = (text, i, len) => text.slice(Math.max(0, i - 36), i + len + 36).replace(/\s+/g, ' ').trim();
   const add = (rule, seg, i, len, what) => { const at = seg.offset + i; const ln = line(at); if (okLines.has(ln)) return; hits.push({ rule, line: ln, what, context: ctx(seg.text, i, len) }); };
+  const notation = isExplainerFile(rel), sidecar = isSidecar(rel);
   for (const seg of readingSegments(rel, src)) {
     const t = seg.text;
     // a string the lexer places as code (a selector, a key, a needle such as indexOf('\u2014')) is never
@@ -122,13 +142,17 @@ export function scan(rel, src, { rules = RULES } = {}) {
     for (let i = 0; i < t.length; i++) {
       const c = t.codePointAt(i); if (c > 0xffff) i++;
       if (isPlain(c)) continue;
+      if (notation && NOTATION.has(c)) continue;
       const r = charRule(c); if (want.has(r)) add(r, seg, i, 1, 'U+' + c.toString(16).toUpperCase().padStart(4, '0'));
     }
     if (isCodeString(seg)) continue;
     for (const [rule, re] of WORD_RULES) {
       if (!want.has(rule)) continue;
       re.lastIndex = 0; let m;
-      while ((m = re.exec(t))) add(rule, seg, m.index, m[0].length, m[0].replace(/\s+/g, ' '));
+      while ((m = re.exec(t))) {
+        if (rule === 'word' && sidecar && BODY_FAIL.test(m[0]) && !VERDICT_KEYS.has(jsonKeyAt(src, seg.offset))) continue;
+        add(rule, seg, m.index, m[0].length, m[0].replace(/\s+/g, ' '));
+      }
     }
   }
   return hits;

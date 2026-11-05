@@ -1,0 +1,194 @@
+{
+ "schema": "ace.explainer-coach/1",
+ "qid": "fm:bio:BIO_g011",
+ "pid": "BIO-1",
+ "batch": "pilot/pilot",
+ "source": "content/explainers-src/pilot/pilot.js",
+ "servedAs": "Full-Length Test 1, Natural Sciences, question 1",
+ "sidecar": "content/explainers/bio/genetics/fm__bio__BIO_g011.json",
+ "checksum": "9b53c35b0c43b9fc",
+ "servesAlso": [
+  {
+   "qid": "pool:BIO_g011",
+   "relation": "same problem, shorthand stem, 4 of these 5 choices (also games/bio.json)",
+   "reviewed": false,
+   "status": "held",
+   "heldBecause": "alias stem omits recessive, Hardy-Weinberg",
+   "guard": {
+    "keyText": "0.01",
+    "stemHash": "facd82e75372d01b75a2a48d407983b04c92df07"
+   }
+  }
+ ],
+ "flags": [
+  {
+   "kind": "bank-copy",
+   "text": "Alias pool:BIO_g011 (scripts/dat-mock-bank.json, also games/bio.json) reads \"1 in 10,000 affected. Allele frequency q = ?\". It never says recessive or Hardy-Weinberg, and under a dominant reading 0.01 is not the answer. The alias is held: this explainer serves only the full-mock copy until the pool stem is reworded. Key unchanged."
+  }
+ ],
+ "review": {
+  "status": "draft",
+  "by": null,
+  "at": null,
+  "batch": "pilot/pilot",
+  "checksum": "9b53c35b0c43b9fc",
+  "approvedChecksum": null
+ },
+ "held": null,
+ "routing": "The anchor works today. Setting q squared to 0.0001 needs a small state reader on the hub page.",
+ "playWithExpect": [
+  "initHardyWeinberg"
+ ],
+ "gate": {
+  "pass": true,
+  "issues": [],
+  "warnings": [],
+  "checks": [
+   "key text matches the bank (\"0.01\", index 2)",
+   "trap families from the closed list: other-question, unit-slip, one-step-too-far, one-step-too-far",
+   "every served choice (5) has a note; one key",
+   "premises in the served stem: recessive, Hardy-Weinberg",
+   "alias pool:BIO_g011 held: its stem omits recessive, Hardy-Weinberg",
+   "alias pool:BIO_g011: key matches, all 4 choices covered (stem differs; needs Thomas to approve the alias)",
+   "copy rules: ASCII, no dashes, no banned words, no letters, no competitor names, no timer or score words, budgets (explainer and visual text)",
+   "step 1 opens with a move: \"Read the\"",
+   "voice: 13 sentences, mean 7.7 words, shortest 2",
+   "playWith target tools/bio/bio-genetics.html found with initHardyWeinberg; no timer or score markers",
+   "Hardy-Weinberg recomputed: q = root 0.0001 = 0.01"
+  ]
+ },
+ "changes": [
+  "Alias pool:BIO_g011 held: its stem omits \"recessive\" and \"Hardy-Weinberg\" (premises gate); bank-copy flag added",
+  "Grid header now \"100 alleles from the gene pool\"",
+  "0.1 note now names the likeliest source, rooting twice",
+  "Families: unit-slip and one-step-too-far, labels kept",
+  "Caption says where to look instead of repeating the answer line"
+ ],
+ "preview": {
+  "pick": "0.0001"
+ },
+ "served": {
+  "stem": "An autosomal recessive disorder affects 1 in 10,000 individuals in a population that is in Hardy-Weinberg equilibrium. What is the frequency of the recessive allele (q)?",
+  "choices": [
+   "0.0001",
+   "0.001",
+   "0.01",
+   "0.1",
+   "0.99"
+  ],
+  "keyIndex": 2,
+  "bankWhy": "This is a Hardy-Weinberg question wearing a sentence as a disguise. For a recessive condition, the word affected describes homozygous recessive individuals, so the number you are handed is q squared, not q. One in 10,000 is 0.0001, and the square root of that is 0.01. Any time a stem gives you the frequency of affected recessive individuals, take the square root first, then build p and the carrier frequency off that value.",
+  "extra": {
+   "mock": "FULL_1",
+   "section": "bio",
+   "n": 1
+  }
+ },
+ "student": {
+  "schema": "ace.explainer/1",
+  "qid": "fm:bio:BIO_g011",
+  "servesAlso": [],
+  "bank": {
+   "file": "tools/mock/data/full-mocks.js",
+   "locator": {
+    "mock": "FULL_1",
+    "section": "bio",
+    "id": "bio:BIO_g011"
+   },
+   "keyText": "0.01",
+   "stemHash": "7c2d1a5cf4bafe2af082827f7209eae0d6ae519e",
+   "choiceTexts": [
+    "0.0001",
+    "0.001",
+    "0.01",
+    "0.1",
+    "0.99"
+   ]
+  },
+  "section": "bio",
+  "subtopic": "bio.genetics.hardy-weinberg",
+  "difficulty": {
+   "band": 2,
+   "from": "bank field d (1-3)"
+  },
+  "premises": [
+   "recessive",
+   "Hardy-Weinberg"
+  ],
+  "answer": {
+   "text": "0.01",
+   "line": "One allele in 100 is recessive. Affected people are q squared, so the allele is the square root."
+  },
+  "steps": [
+   "Read the word affected first. A recessive disorder only shows in aa people, so 1 in 10,000 is q squared. Not q.",
+   "Write it as a decimal: q squared = 0.0001. Undo the square: q = 0.01. Check it: 0.01 x 0.01 = 0.0001.",
+   "Stop where the stem stops. It asks for q, so you are done. Carriers would be the next step: 2pq, about 1 in 50."
+  ],
+  "choices": [
+   {
+    "text": "0.0001",
+    "role": "trap",
+    "family": "other-question",
+    "missType": "misread",
+    "note": "This is q squared, the share of people who are affected. It pulls because it is the number the stem hands you. The stem asks for the allele."
+   },
+   {
+    "text": "0.001",
+    "role": "trap",
+    "family": "unit-slip",
+    "missType": "misread",
+    "trap": "Decimal shift, not a root",
+    "note": "Sliding the decimal point is not a square root. The root of 1 in 10,000 is 1 in 100."
+   },
+   {
+    "text": "0.01",
+    "role": "key",
+    "note": "The square root of 0.0001: one allele in 100."
+   },
+   {
+    "text": "0.1",
+    "role": "trap",
+    "family": "one-step-too-far",
+    "missType": "misread",
+    "trap": "Rooted twice",
+    "note": "Rooting twice lands here: the root of 0.0001 is 0.01, and the root of that is 0.1. One root undoes one square."
+   },
+   {
+    "text": "0.99",
+    "role": "trap",
+    "family": "one-step-too-far",
+    "missType": "misread",
+    "note": "This is p, which is 1 - q. Good math, but the stem stopped at q."
+   }
+  ],
+  "lockIt": "Affected recessives give you q squared. Take the square root to get the allele.",
+  "hook": "People are squares. Alleles are roots.",
+  "playWith": {
+   "label": "Hardy-Weinberg calculator: type 0.0001 into q squared and watch p, q and 2pq update",
+   "href": "tools/bio/bio-genetics.html#node-hardy-weinberg",
+   "state": {
+    "visualizer": "initHardyWeinberg",
+    "hwQ2": 0.0001
+   }
+  },
+  "video": {
+   "slot": "bio.genetics.hardy-weinberg",
+   "title": "Hardy-Weinberg: from affected people to the allele",
+   "id": null,
+   "start": null
+  },
+  "visual": {
+   "type": "bio.hardy-weinberg",
+   "q2": 0.0001,
+   "show": [
+    "allele-grid",
+    "ladder"
+   ],
+   "gridTitle": "100 alleles from the gene pool",
+   "focus": "q",
+   "reuse": "Pure port of the Hardy-Weinberg visualizer state (initHardyWeinberg / updateHW in tools/bio/bio-shared.js, inputs hwP and hwQ2)",
+   "alt": "First: a 10 by 10 grid of 100 alleles with one recessive allele shaded, so q is 1 in 100. Then: a ladder from q squared = 0.0001, 1 person in 10,000, through a square root to q = 0.01, the answer, then on to p = 0.99.",
+   "caption": "Find the one shaded allele. Two of them have to meet to make one affected person."
+  }
+ }
+}

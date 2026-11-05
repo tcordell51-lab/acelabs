@@ -1,0 +1,209 @@
+{
+ "schema": "ace.explainer-coach/1",
+ "qid": "rc:rc-o15-q07",
+ "pid": "RC-3",
+ "batch": "pilot/pilot",
+ "source": "content/explainers-src/pilot/pilot.js",
+ "servedAs": "Full-Length Test 1, Reading Comprehension, passage 1, question 7",
+ "sidecar": "content/explainers/rc/inference/rc__rc-o15-q07.json",
+ "checksum": "b88a941888ae699d",
+ "servesAlso": [],
+ "flags": [
+  {
+   "kind": "play-target",
+   "text": "The RC player (tools/rc/rc.js) shows an elapsed clock, a per-passage pace bar, 10 and 12 minute cues, and an \"N of M correct\" results headline, even for a single passage. House rule: no timers or scores outside full timed tests."
+  }
+ ],
+ "review": {
+  "status": "draft",
+  "by": null,
+  "at": null,
+  "batch": "pilot/pilot",
+  "checksum": "b88a941888ae699d",
+  "approvedChecksum": null
+ },
+ "held": null,
+ "routing": "Works today, but the player shows an elapsed clock, a pace bar and a correct-count headline; see flags.",
+ "playWithExpect": [
+  "rc.js"
+ ],
+ "gate": {
+  "pass": true,
+  "issues": [],
+  "warnings": [],
+  "checks": [
+   "key text matches the bank (\"the A form of the molecule rather than DNA in general\", index 0)",
+   "trap families from the closed list: rc-misplaced, rc-timeline, rc-other-paragraph, rc-contradicted",
+   "every served choice (5) has a note; one key",
+   "copy rules: ASCII, no dashes, no banned words, no letters, no competitor names, no timer or score words, budgets (explainer and visual text)",
+   "step 1 opens with a move: \"Find the\"",
+   "voice: 7 sentences, mean 15.7 words, shortest 3",
+   "playWith target tools/rc/index.html found with rc.js; markers acknowledged: clock, pace bar",
+   "RC spans: every quote found verbatim; key spans match the bank proof lines (7.3, 6.1)"
+  ]
+ },
+ "changes": [
+  "Span tags are 1 and 2, not A and B; caption \"Line 1 plus line 2\"",
+  "lockIt no longer claims every inference joins two sentences",
+  "Hook: \"Join the lines; add no facts.\"; Gosling note cites paragraph 10",
+  "Play-target flag",
+  "B007 re-review (blocked): step 3 was three sentences (the decisions doc sets one or two a step); it now opens \"Join the two: the notice was about the A form\""
+ ],
+ "preview": {
+  "pick": "the B form, which Franklin had not yet photographed"
+ },
+ "served": {
+  "stem": "The passage suggests that the mock death notice circulated in July 1952 referred to",
+  "choices": [
+   "the A form of the molecule rather than DNA in general",
+   "the three-chain model built in Cambridge the previous year",
+   "the B form, which Franklin had not yet photographed",
+   "Astbury's early patterns from poorly ordered fibers",
+   "the end of Franklin's collaboration with Gosling"
+  ],
+  "keyIndex": 0,
+  "bankWhy": "Paragraph 7 says the notice was for the crystalline DNA helix, and paragraph 6 identifies the crystalline arrangement as the A form. Put the two together and the joke was about the A form, which is why the author calls the broader reading unfair.",
+  "extra": {
+   "type": "inference",
+   "proof": [
+    {
+     "paragraph": 7,
+     "sentence": 3,
+     "quote": "a mock death notice for the crystalline DNA helix"
+    },
+    {
+     "paragraph": 6,
+     "sentence": 1,
+     "quote": "ordered, crystalline arrangement she called the A form"
+    }
+   ],
+   "passage": {
+    "id": "rc-o15",
+    "title": "What Photo 51 Could Say",
+    "file": "passages/rc-o15.json"
+   },
+   "distractorNotes": [
+    null,
+    "Wrong target: the Cambridge model is in paragraph 8, and the notice concerns a form of DNA, not a model.",
+    "Contradicted: Photo 51, the image of the B form, was taken in May 1952, two months earlier.",
+    "Wrong paragraph: Astbury's patterns are in paragraph 4 and have nothing to do with the notice.",
+    "Contradicted: Gosling circulated the notice with her, so the collaboration continued."
+   ]
+  }
+ },
+ "student": {
+  "schema": "ace.explainer/1",
+  "qid": "rc:rc-o15-q07",
+  "servesAlso": [],
+  "bank": {
+   "file": "tools/rc/data/bank.js",
+   "locator": {
+    "passage": "rc-o15",
+    "id": "rc-o15-q07"
+   },
+   "keyText": "the A form of the molecule rather than DNA in general",
+   "stemHash": "53a18e841fe03af794423f525c7634a5eae9da50",
+   "choiceTexts": [
+    "the A form of the molecule rather than DNA in general",
+    "the three-chain model built in Cambridge the previous year",
+    "the B form, which Franklin had not yet photographed",
+    "Astbury's early patterns from poorly ordered fibers",
+    "the end of Franklin's collaboration with Gosling"
+   ]
+  },
+  "section": "rc",
+  "subtopic": "rc.inference",
+  "difficulty": {
+   "band": 3,
+   "from": "question type (inference across two paragraphs); the RC bank has no difficulty field"
+  },
+  "premises": [],
+  "answer": {
+   "text": "the A form of the molecule rather than DNA in general",
+   "line": "Paragraph 7 says the notice was for the crystalline helix, and paragraph 6 says the crystalline form is the A form."
+  },
+  "steps": [
+   "Find the notice. Paragraph 7, sentence 3: a mock death notice \"for the crystalline DNA helix,\" a joke often read, unfairly, as denying DNA was helical at all.",
+   "Chase the key word back. Crystalline was defined in paragraph 6, sentence 1: the ordered, crystalline arrangement \"she called the A form.\"",
+   "Join the two: the notice was about the A form, not DNA in general. That is why the author calls the broad reading unfair."
+  ],
+  "choices": [
+   {
+    "text": "the A form of the molecule rather than DNA in general",
+    "role": "key",
+    "note": "Crystalline in paragraph 7 is the A form from paragraph 6."
+   },
+   {
+    "text": "the three-chain model built in Cambridge the previous year",
+    "role": "trap",
+    "family": "rc-misplaced",
+    "missType": "misread",
+    "note": "The Cambridge model is in paragraph 8, and the notice was about a form of DNA, not a model."
+   },
+   {
+    "text": "the B form, which Franklin had not yet photographed",
+    "role": "trap",
+    "family": "rc-timeline",
+    "missType": "misread",
+    "note": "Photo 51, the B form image, was taken in May 1952, two months before the notice."
+   },
+   {
+    "text": "Astbury's early patterns from poorly ordered fibers",
+    "role": "trap",
+    "family": "rc-other-paragraph",
+    "missType": "misread",
+    "note": "Astbury's patterns are in paragraph 4 and have no link to the notice."
+   },
+   {
+    "text": "the end of Franklin's collaboration with Gosling",
+    "role": "trap",
+    "family": "rc-contradicted",
+    "missType": "misread",
+    "note": "She and Gosling sent the notice together, and in paragraph 10 they publish together, so the collaboration went on."
+   }
+  ],
+  "lockIt": "Inference: the answer is not stated, but every piece of it is in the text.",
+  "hook": "Join the lines; add no facts.",
+  "playWith": {
+   "label": "Reading player: this passage on its own, with highlighting and cross-out",
+   "href": "tools/rc/index.html#start/passage/rc-o15",
+   "state": {
+    "passage": "rc-o15"
+   }
+  },
+  "video": {
+   "slot": "rc.inference",
+   "title": "Inference questions: join two lines",
+   "id": null,
+   "start": null
+  },
+  "visual": {
+   "type": "rc.evidence",
+   "passage": "rc-o15",
+   "spans": [
+    {
+     "p": 7,
+     "s": 3,
+     "quote": "a mock death notice for the crystalline DNA helix",
+     "role": "key",
+     "tag": "1"
+    },
+    {
+     "p": 6,
+     "s": 1,
+     "quote": "ordered, crystalline arrangement she called the A form",
+     "role": "key",
+     "tag": "2"
+    }
+   ],
+   "link": {
+    "from": "1",
+    "to": "2",
+    "label": "crystalline = the A form"
+   },
+   "reuse": "Passage text and both proof lines from tools/rc/data/bank.js",
+   "alt": "Two highlighted lines joined by a connector labeled crystalline equals the A form: line 1, paragraph 7, sentence 3, the mock death notice for the crystalline DNA helix, and line 2, paragraph 6, sentence 1, the crystalline arrangement she called the A form.",
+   "caption": "Line 1 plus line 2: the notice was about the A form."
+  }
+ }
+}

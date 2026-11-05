@@ -1,0 +1,2215 @@
+{
+ "schema": "ace.expert-solve/1",
+ "batch": "B004",
+ "group": "G1",
+ "bank": "full",
+ "section": "ochem",
+ "role": "Independent expert, production-plan.md section 5 steps 2 and 3 (blind solve, key check). Coach only; never published.",
+ "at": "2026-10-30",
+ "frozen": {
+  "bankFile": "tools/mock/data/full-mocks.js",
+  "sha256_16": "5eceeb82674e52cb",
+  "qids": 30
+ },
+ "method": [
+  "Each item was loaded from tools/mock/data/full-mocks.js with the pipeline loader (the vm window context build.mjs uses) and shown as served: stem, stem SMILES and the five choices in bank order (tools/mock/full.js does not shuffle). The extractor withheld correct, why, traps, src, topic and d from the first run.",
+  "Every served structure (29 stem drawings, 16 sets of five structure choices) was drawn with shared/smiles-drawer.min.js and the exact SmiDrawer settings of tools/mock/full.js (explicit hydrogens off), from the page served on 127.0.0.1:4107, and read from the screenshots, so stereo items were solved from the pictures a student sees.",
+  "RDKit 2026.09.1 parsed every SMILES (formula, canonical form, CIP and E/Z labels) and gave the stereo relations (meso, enantiomer, diastereomer), ring sizes and a SMARTS check for the Dieckmann driving H. Numbers recomputed in python.",
+  "Answer, reasoning, concept, a family and misconception for every other choice, and confidence were written to solves_draft.json and stamped (sha256 fd0804970e9457bc, 2026-10-30T08:57:09Z) before any key was read; the key comparison ran after, by exact choice text.",
+  "Families come from the closed list in scripts/explainers/families.js; missType follows the family. They are suggestions for the writer, who decides.",
+  "Bank why and trap notes were read only after the key check, to flag copy the writer should not lift; letter citations were mapped to the served positions in code. Nothing in the bank was edited."
+ ],
+ "process": {
+  "blindness": "full",
+  "note": "Keys, explanations, trap notes, sources, lesson topics and difficulty were hidden from the first extraction; the pilot entries for the two pilot items (OC-1, OC-2) and the picture-dispute lists were opened only after the draft was stamped. The batch row's subtopic list (not mapped to items) was visible, as for any batch.",
+  "copyEdits": "After the stamp, one reasoning phrase in oc-1boz2p7 was reworded for the house word list (\"with the wrong geometry\" to \"and the geometry does not fit\"); no answer, family or confidence changed."
+ },
+ "summary": {
+  "items": 30,
+  "keyAgrees": 30,
+  "keyDisputes": 0,
+  "confidence": {
+   "high": 29,
+   "medium": 1,
+   "low": 0
+  },
+  "bankCopyFlags": 22,
+  "letterCiteFlags": 13,
+  "stemStyleNotes": 16,
+  "pilotItems": [
+   "fm:organic:oc-dbrfsk (OC-1)",
+   "fm:own-organic:ace-0002 (OC-2)"
+  ],
+  "line": "All 30 keys agree with the blind solve; no key dispute raised. 13 bank explanations cite letters that point at other served choices (shown on the full-test review screen), and seven carry authoring notes or thin reasoning; passed to the writer and Thomas as flags."
+ },
+ "items": [
+  {
+   "qid": "fm:organic:oc-1o9d4eq",
+   "servedAs": {
+    "bank": "full",
+    "mock": "FULL_1",
+    "section": "ochem",
+    "n": 1
+   },
+   "bankTopic": "The center of the universe: alkenes",
+   "difficulty": 1,
+   "stemHash": "1bfa1708e9f4e686b0bf1417cb076841a2101add",
+   "expert": {
+    "answer": "1. BH3-THF; 2. H2O2, NaOH",
+    "servedIndex": 4,
+    "confidence": "high",
+    "concept": "Hydroboration-oxidation is the one hydration that is both anti-Markovnikov and syn: B and H add to one face in one step, then OH replaces B with retention.",
+    "reasoning": [
+     "Name the target: OH on the less substituted alkene carbon (anti-Markovnikov) with the new H and OH on the same face (syn).",
+     "Only hydroboration does both: boron goes to the less hindered, less substituted carbon, and B and H add together in one four-center step.",
+     "H2O2 and NaOH swap B for OH with retention, so the new H on the methyl carbon and the OH end up cis, which puts OH and CH3 trans: trans-2-methylcyclopentan-1-ol."
+    ],
+    "misconceptions": [
+     {
+      "choice": "1. Hg(OAc)2, H2O; 2. NaBH4",
+      "family": "other-conditions",
+      "familyName": "Other conditions",
+      "missType": "content",
+      "pull": "Oxymercuration is the hydration students remember for \"no rearrangement\", but it is Markovnikov: OH lands on the methyl carbon, giving 1-methylcyclopentan-1-ol."
+     },
+     {
+      "choice": "Dilute H3PO4, H2O",
+      "family": "other-conditions",
+      "familyName": "Other conditions",
+      "missType": "content",
+      "pull": "Acid-catalyzed hydration goes through the tertiary cation, so it is Markovnikov and gives the tertiary alcohol with no face control."
+     },
+     {
+      "choice": "HBr, then NaOH",
+      "family": "other-conditions",
+      "familyName": "Other conditions",
+      "missType": "content",
+      "pull": "HBr without peroxides is Markovnikov (tertiary bromide), and a tertiary bromide with NaOH eliminates or gives the tertiary alcohol, never the secondary one."
+     },
+     {
+      "choice": "H2O, cat. H2SO4, heat",
+      "family": "other-conditions",
+      "familyName": "Other conditions",
+      "missType": "content",
+      "pull": "Acid hydration again: Markovnikov tertiary alcohol, and heat pushes the equilibrium back to the alkene (E1)."
+     }
+    ]
+   },
+   "key": {
+    "index": 4,
+    "text": "1. BH3-THF; 2. H2O2, NaOH"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "numbers": "none: no arithmetic in this item",
+    "rdkit": "RDKit 2026.09.1: stem parses (C6H10)",
+    "picture": "Served drawings (SmilesDrawer, full.js settings) checked by eye: each depicts its SMILES; no stereocenter drawn."
+   },
+   "stemStyle": [
+    "The stem states the principle it tests (\"anti-Markovnikov, syn-addition outcome\", \"OH placed on the LESS substituted alkene carbon\") and uses capitalized emphasis (LESS, four letters, below the build's five-letter check). Suggested: \"Which reagent sequence converts 1-methylcyclopentene to trans-2-methylcyclopentan-1-ol?\""
+   ]
+  },
+  {
+   "qid": "fm:originals:ab-13b7fabf1b",
+   "servedAs": {
+    "bank": "full",
+    "mock": "FULL_1",
+    "section": "ochem",
+    "n": 2
+   },
+   "bankTopic": "The only reaction in organic chemistry",
+   "difficulty": 3,
+   "stemHash": "03d58f215c82d9610464c083c0b8b23ef0db5489",
+   "expert": {
+    "answer": "Sodium amide, NaNH2 (the pKa of ammonia is about 38)",
+    "servedIndex": 3,
+    "confidence": "high",
+    "concept": "An acid-base reaction runs toward the weaker acid: a base deprotonates an acid only if its own conjugate acid has the higher pKa.",
+    "reasoning": [
+     "Compare each base's conjugate acid with the alkyne's pKa of 25: the deprotonation goes only if that conjugate acid is weaker (higher pKa).",
+     "Ammonia (38) is far weaker than the alkyne, so amide pulls the proton and the equilibrium lies about 10^13 toward the acetylide.",
+     "Water and ethanol (16) are stronger acids than the alkyne, so hydroxide and ethoxide leave it almost untouched (K about 10^-9)."
+    ],
+    "misconceptions": [
+     {
+      "choice": "Sodium bicarbonate, NaHCO3 (the pKa of carbonic acid is about 6)",
+      "family": "reversed",
+      "familyName": "Reversed",
+      "missType": "concept",
+      "pull": "Reads the pKa scale upside down (low pKa as strong base); carbonic acid is far stronger than the alkyne, so bicarbonate cannot take its proton."
+     },
+     {
+      "choice": "Sodium acetate (the pKa of acetic acid is about 5)",
+      "family": "reversed",
+      "familyName": "Reversed",
+      "missType": "concept",
+      "pull": "Same upside-down reading of the scale; acetate is a weak base whose conjugate acid is 20 pKa units stronger than the alkyne."
+     },
+     {
+      "choice": "Sodium hydroxide, NaOH (the pKa of water is about 16)",
+      "family": "close-second",
+      "familyName": "Close second",
+      "missType": "concept",
+      "pull": "\"Strong base\" from general chemistry pulls here, but water (16) is a stronger acid than the alkyne (25), so the equilibrium sits on the side of the alkyne."
+     },
+     {
+      "choice": "Sodium ethoxide, NaOEt (the pKa of ethanol is about 16)",
+      "family": "close-second",
+      "familyName": "Close second",
+      "missType": "concept",
+      "pull": "Ethoxide is the strong base used for E2 and enolates, so it feels strong enough; ethanol (16) is still the stronger acid, so the alkyne stays mostly protonated."
+     }
+    ]
+   },
+   "key": {
+    "index": 3,
+    "text": "Sodium amide, NaNH2 (the pKa of ammonia is about 38)"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "numbers": "K = 10^(pKa of the base's conjugate acid - 25): ammonia 38 gives 10^13 (complete); water and ethanol 16 give 10^-9; carbonic acid 6 and acetic acid 5 give 10^-19 and 10^-20. One subtraction each, no calculator.",
+    "rdkit": "not applicable: no structure served"
+   }
+  },
+  {
+   "qid": "fm:organic:oc-1lfvsj4",
+   "servedAs": {
+    "bank": "full",
+    "mock": "FULL_1",
+    "section": "ochem",
+    "n": 3
+   },
+   "bankTopic": "Reading the machines: spectroscopy, lab and synthesis",
+   "difficulty": 2,
+   "stemHash": "55f4ba5ba26188e551ec1488d7bc7ba5601eef6a",
+   "expert": {
+    "answer": "The O-H stretch is broadened and shifted to LOWER wavenumber (below ~3200 cm-1)",
+    "servedIndex": 4,
+    "confidence": "high",
+    "concept": "A hydrogen bond weakens the O-H bond, so its stretch moves to lower wavenumber, and the range of bond strengths broadens the band; a chelating intramolecular H-bond does this strongly.",
+    "reasoning": [
+     "Picture the six-membered ring the phenol O-H closes onto the aldehyde O=C.",
+     "The H-bond pulls on the hydrogen and weakens the O-H bond; a weaker bond vibrates at lower frequency, so the band moves down.",
+     "A spread of H-bond strengths smears the band, so it is broad; chelated phenols like salicylaldehyde sit near or below 3200 cm-1, even in dilute solution."
+    ],
+    "misconceptions": [
+     {
+      "choice": "The O-H stretch becomes a sharp doublet, much like the two N-H bands of a primary aromatic amine",
+      "family": "neighbor-fact",
+      "familyName": "Neighbor fact",
+      "missType": "content",
+      "pull": "Two bands belong to an NH2 group (symmetric and asymmetric stretches); one O-H has only one H, so there is no doublet."
+     },
+     {
+      "choice": "The O-H band moves to ~2250 cm-1, overlapping the nitrile region",
+      "family": "neighbor-fact",
+      "familyName": "Neighbor fact",
+      "missType": "content",
+      "pull": "Around 2250 cm-1 is the triple-bond region (C-N and C-C triple bonds); an H-bond lowers the O-H stretch, but nowhere near that far."
+     },
+     {
+      "choice": "The O-H stretch sharpens and shifts to HIGHER wavenumber (above 3600 cm-1)",
+      "family": "reversed",
+      "familyName": "Reversed",
+      "missType": "concept",
+      "pull": "Sharp and above 3600 cm-1 is a free, non-bonded O-H (dilute or gas phase); H-bonding moves the band the other way."
+     },
+     {
+      "choice": "The O-H stretch disappears entirely from the spectrum once the internal hydrogen bond forms",
+      "family": "one-step-too-far",
+      "familyName": "One step too far",
+      "missType": "misread",
+      "pull": "The band shifts and broadens, sometimes into the C-H region, but the O-H bond is still there and still absorbs."
+     }
+    ]
+   },
+   "key": {
+    "index": 4,
+    "text": "The O-H stretch is broadened and shifted to LOWER wavenumber (below ~3200 cm-1)"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "numbers": "Band positions (textbook): free O-H about 3600 cm-1 and sharp; H-bonded O-H broad and lower; chelated phenols like salicylaldehyde near or below 3200 cm-1; nitrile region about 2250 cm-1.",
+    "rdkit": "RDKit 2026.09.1: stem parses (C7H6O2)",
+    "picture": "Served drawings (SmilesDrawer, full.js settings) checked by eye: each depicts its SMILES; no stereocenter drawn."
+   },
+   "stemStyle": [
+    "Build heuristic: capitalized emphasis in two choices (HIGHER, LOWER). Bank text, flag only."
+   ]
+  },
+  {
+   "qid": "fm:organic:oc-1eq5a2f",
+   "servedAs": {
+    "bank": "full",
+    "mock": "FULL_1",
+    "section": "ochem",
+    "n": 4
+   },
+   "bankTopic": "The alpha carbon wakes up",
+   "difficulty": 2,
+   "stemHash": "6ffbcc4fa1002fbb9b938569e46eaebe3aa3ff92",
+   "expert": {
+    "answer": "CCOC(=O)C1CCC(C)C1=O",
+    "display": "ethyl 3-methyl-2-oxocyclopentane-1-carboxylate (ketone between CH(CH3) and CH(CO2Et))",
+    "servedIndex": 1,
+    "confidence": "high",
+    "concept": "A Dieckmann closure is reversible; the ring that keeps an acidic H between the ketone and the ester gets deprotonated by ethoxide, and that last step pulls the equilibrium to it.",
+    "reasoning": [
+     "Find the two alpha carbons: C2 (a CH carrying the methyl) and C5 (a CH2).",
+     "Both closures make a five-membered ring: the C5 enolate attacking the C1 ester puts the ketone between CH(CH3) and CH(CO2Et); the C2 enolate attacking the C6 ester makes a quaternary C(CH3)(CO2Et).",
+     "Ethoxide removes the doubly activated H between ketone and ester to drive the reaction; only the first product has one, so the quaternary product reopens and everything funnels to ethyl 3-methyl-2-oxocyclopentane-1-carboxylate."
+    ],
+    "misconceptions": [
+     {
+      "choice": "CCOC(=O)C1CCCCC1=O",
+      "family": "miscount",
+      "familyName": "Miscount",
+      "missType": "misread",
+      "pull": "Same formula as the key, but the methyl carbon has been counted into the ring, giving a six-membered ring the chain cannot make.",
+      "display": "ethyl 2-oxocyclohexane-1-carboxylate (six-membered ring, no methyl)"
+     },
+     {
+      "choice": "CCOC(=O)C1CCCC1=O",
+      "family": "neighbor-fact",
+      "familyName": "Neighbor fact",
+      "missType": "content",
+      "pull": "The Dieckmann product of plain diethyl adipate; the methyl from the 2-position has gone missing.",
+      "display": "ethyl 2-oxocyclopentane-1-carboxylate (no methyl)"
+     },
+     {
+      "choice": "CCOC(=O)C1CC(C)CC1=O",
+      "family": "neighbor-fact",
+      "familyName": "Neighbor fact",
+      "missType": "content",
+      "pull": "The product of the 3-methyl isomer; here the methyl has slid to a ring carbon that touches neither carbonyl.",
+      "display": "ethyl 4-methyl-2-oxocyclopentane-1-carboxylate"
+     },
+     {
+      "choice": "CCOC(=O)C1(C)CCCC1=O",
+      "family": "close-second",
+      "familyName": "Close second",
+      "missType": "concept",
+      "pull": "The other real five-membered closure; it forms, but with no H left between the carbonyls ethoxide cannot lock it in, so it reverts.",
+      "display": "ethyl 1-methyl-2-oxocyclopentane-1-carboxylate (quaternary alpha carbon)"
+     }
+    ]
+   },
+   "key": {
+    "index": 1,
+    "text": "CCOC(=O)C1CCC(C)C1=O"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "numbers": "RDKit ring sizes: key 5, choice with the methyl folded in 6, the three others 5. SMARTS check for an H on the carbon between ketone and ester: key yes, quaternary choice no (the Dieckmann driving step).",
+    "rdkit": "RDKit 2026.09.1: stem parses (C11H20O4); all 5 choice SMILES parse (C9H14O3, C9H14O3, C8H12O3, C9H14O3, C9H14O3)",
+    "picture": "Served drawings (SmilesDrawer, full.js settings) checked by eye: each depicts its SMILES; no stereocenter drawn."
+   },
+   "bankCopy": [
+    {
+     "kind": "letter-cite",
+     "text": "the bank why cites \"option B\" for the quaternary closure (served E) and \"option A\" for the favored product (served B, the key); students see this why on the full-test review screen."
+    },
+    {
+     "kind": "bank-copy",
+     "text": "\"verified to equal the path-B closure\" is an authoring note left in the student-visible why."
+    }
+   ]
+  },
+  {
+   "qid": "fm:organic:oc-1vndb83",
+   "servedAs": {
+    "bank": "full",
+    "mock": "FULL_1",
+    "section": "ochem",
+    "n": 5
+   },
+   "bankTopic": "The switchboard: alcohols, ethers, epoxides",
+   "difficulty": 2,
+   "stemHash": "9cee313baf92e70e8387634bd74a96824ae1bfbd",
+   "expert": {
+    "answer": "Benzaldehyde is reduced faster than acetophenone because the aldehyde carbonyl is less hindered and more electrophilic",
+    "servedIndex": 1,
+    "confidence": "high",
+    "concept": "Aldehydes beat ketones toward nucleophiles: one fewer electron-donating carbon group leaves the carbonyl carbon more positive, and the H leaves room for the incoming hydride.",
+    "reasoning": [
+     "Compare what sits on each carbonyl carbon: benzaldehyde has phenyl and H; acetophenone has phenyl and methyl.",
+     "The methyl donates electron density (less partial positive) and crowds the carbon (and the tetrahedral intermediate), so hydride adds more slowly.",
+     "Both are reduced by NaBH4; the aldehyde simply goes first."
+    ],
+    "misconceptions": [
+     {
+      "choice": "Acetophenone is reduced faster because ketones are inherently more electrophilic than aldehydes at the carbonyl carbon in every solvent",
+      "family": "reversed",
+      "familyName": "Reversed",
+      "missType": "concept",
+      "pull": "Turns the reactivity order around; ketones are the less electrophilic of the two."
+     },
+     {
+      "choice": "Both are reduced at identical rates because NaBH4 reacts only with esters",
+      "family": "reversed",
+      "familyName": "Reversed",
+      "missType": "concept",
+      "pull": "Turns NaBH4's selectivity around: it reduces aldehydes and ketones and is too mild for most esters (LiAlH4 is the ester reducer)."
+     },
+     {
+      "choice": "Neither reacts because NaBH4 cannot reduce conjugated aryl carbonyls",
+      "family": "neighbor-fact",
+      "familyName": "Neighbor fact",
+      "missType": "content",
+      "pull": "NaBH4 does leave the aromatic ring and isolated C=C alone; that is true of those groups, not of the conjugated C=O, which it reduces."
+     },
+     {
+      "choice": "Acetophenone is reduced faster because the extra methyl group donates electron density that makes the carbonyl a better hydride acceptor",
+      "family": "half-right",
+      "familyName": "Half right",
+      "missType": "concept",
+      "pull": "The methyl does donate electron density, but donation makes the carbonyl carbon less positive, a worse hydride acceptor."
+     }
+    ]
+   },
+   "key": {
+    "index": 1,
+    "text": "Benzaldehyde is reduced faster than acetophenone because the aldehyde carbonyl is less hindered and more electrophilic"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "numbers": "none: no arithmetic in this item",
+    "rdkit": "RDKit 2026.09.1: stem parses (C8H8O)",
+    "picture": "Served drawings (SmilesDrawer, full.js settings) checked by eye: each depicts its SMILES; no stereocenter drawn."
+   },
+   "stemStyle": [
+    "The stem hands over the method (\"Considering electronic and steric effects on hydride addition\"); a hint, flag only."
+   ],
+   "notes": [
+    "Two choices (the \"NaBH4 reacts only with esters\" one here and in oc-163l4so) reverse NaBH4's selectivity; one shared trap label would keep the Ace Log counting them the same way."
+   ]
+  },
+  {
+   "qid": "fm:organic:oc-18i1svf",
+   "servedAs": {
+    "bank": "full",
+    "mock": "FULL_1",
+    "section": "ochem",
+    "n": 6
+   },
+   "bankTopic": "The four questions: substitution and elimination",
+   "difficulty": 1,
+   "stemHash": "04aad7084b5ee52b96a1512dfd1d410d5711ca7a",
+   "expert": {
+    "answer": "CC1=CCCC1",
+    "display": "1-methylcyclopentene",
+    "servedIndex": 4,
+    "confidence": "high",
+    "concept": "A carbocation next to a strained ring expands it (cyclobutylcarbinyl to cyclopentyl), and E1 loss of a proton then gives the most substituted alkene (Zaitsev).",
+    "reasoning": [
+     "Protonate the OH and lose water: a secondary cation on the carbon next to the four-membered ring.",
+     "Shift a ring C-C bond onto that carbon: the ring grows from four to five atoms (strain falls from about 26 to about 6 kcal/mol) and the charge moves onto a ring carbon.",
+     "A 1,2-hydride shift makes the tertiary 1-methylcyclopentyl cation; losing a proton gives the trisubstituted alkene, 1-methylcyclopentene."
+    ],
+    "misconceptions": [
+     {
+      "choice": "CC1(O)CCCC1",
+      "family": "other-question",
+      "familyName": "Right number, other question",
+      "missType": "misread",
+      "pull": "Water can trap the rearranged tertiary cation as 1-methylcyclopentan-1-ol, but the stem asks for the alkene.",
+      "display": "1-methylcyclopentan-1-ol"
+     },
+     {
+      "choice": "CC=C1CCC1",
+      "family": "one-step-short",
+      "familyName": "One step short",
+      "missType": "concept",
+      "pull": "Eliminates before the ring expands; the stem says the shift happens first, and the four-membered ring keeps its strain.",
+      "display": "ethylidenecyclobutane"
+     },
+     {
+      "choice": "C=CC1CCC1",
+      "family": "other-conditions",
+      "familyName": "Other conditions",
+      "missType": "content",
+      "pull": "The least substituted alkene with no shift, the kind of product a bulky base gives in E2; acid-driven E1 rearranges and goes Zaitsev.",
+      "display": "vinylcyclobutane"
+     },
+     {
+      "choice": "C1=CCCCC1",
+      "family": "miscount",
+      "familyName": "Miscount",
+      "missType": "misread",
+      "pull": "Counts the methyl into the ring; one ring bond migrates, so the ring grows by one carbon (four to five), and the methyl stays outside.",
+      "display": "cyclohexene"
+     }
+    ]
+   },
+   "key": {
+    "index": 4,
+    "text": "CC1=CCCC1"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "numbers": "Ring strain (textbook): cyclobutane about 26 kcal/mol, cyclopentane about 6. RDKit ring sizes: key 5, cyclohexene choice 6.",
+    "rdkit": "RDKit 2026.09.1: stem parses (C6H12O); all 5 choice SMILES parse (C6H12O, C6H10, C6H10, C6H10, C6H10)",
+    "picture": "Served drawings (SmilesDrawer, full.js settings) checked by eye: each depicts its SMILES; no stereocenter drawn."
+   },
+   "bankCopy": [
+    {
+     "kind": "letter-cite",
+     "text": "the why names the key \"option A\" (served E) and maps D and E to the cyclopentanol and cyclohexene (served A and D)."
+    },
+    {
+     "kind": "bank-copy",
+     "text": "the why says ring expansion gives the tertiary 1-methylcyclopentyl cation directly; expansion gives the secondary 2-methylcyclopentyl cation, and a hydride shift (or E1 straight from it) is the second step. The explainer should show both steps."
+    },
+    {
+     "kind": "bank-copy",
+     "text": "\"Single correct answer\" is an authoring note; \"wrong ring size\" uses a word the house rules exclude."
+    }
+   ],
+   "stemStyle": [
+    "The stem states the mechanism it tests (\"A ring-expansion (alkyl) shift relieves ring strain before elimination\"). Suggested: drop that sentence and ask for the major alkene."
+   ],
+   "notes": [
+    "Teach two moves: ring expansion to the secondary cyclopentyl cation, then a hydride shift to the tertiary one (or E1 straight from the secondary cation, which gives the same alkene)."
+   ]
+  },
+  {
+   "qid": "fm:organic:oc-1mc2sbd",
+   "servedAs": {
+    "bank": "full",
+    "mock": "FULL_1",
+    "section": "ochem",
+    "n": 7
+   },
+   "bankTopic": "Reading the machines: spectroscopy, lab and synthesis",
+   "difficulty": 2,
+   "stemHash": "df73ccdb5522504acffaf342f78dd9fde28a6784",
+   "expert": {
+    "answer": "CCC(OC)OC",
+    "display": "1,1-dimethoxypropane (acetal)",
+    "servedIndex": 2,
+    "confidence": "high",
+    "concept": "An aldehyde plus two equivalents of alcohol under acid goes hemiacetal, then oxocarbenium ion, then acetal; excess alcohol (and loss of water) drives it to the acetal.",
+    "reasoning": [
+     "Protonate the C=O and add one methanol: the hemiacetal.",
+     "Protonate its OH, lose water to the oxocarbenium ion, and add the second methanol.",
+     "Two OCH3 groups on the old carbonyl carbon: 1,1-dimethoxypropane, an acetal."
+    ],
+    "misconceptions": [
+     {
+      "choice": "CCC(O)O",
+      "family": "neighbor-fact",
+      "familyName": "Neighbor fact",
+      "missType": "content",
+      "pull": "The hydrate (gem-diol) is what water adds; here the nucleophile is methanol.",
+      "display": "propane-1,1-diol (hydrate)"
+     },
+     {
+      "choice": "CCC(=O)OC",
+      "family": "other-conditions",
+      "familyName": "Other conditions",
+      "missType": "content",
+      "pull": "A methyl ester sits one oxidation level above the aldehyde; it needs the acid (Fischer esterification) or an oxidant, not just methanol.",
+      "display": "methyl propanoate (ester)"
+     },
+     {
+      "choice": "CCC(O)OC",
+      "family": "one-step-short",
+      "familyName": "One step short",
+      "missType": "concept",
+      "pull": "The hemiacetal is the first adduct; with excess methanol and acid it goes on to the acetal.",
+      "display": "1-methoxypropan-1-ol (hemiacetal)"
+     },
+     {
+      "choice": "CCCO",
+      "family": "other-conditions",
+      "familyName": "Other conditions",
+      "missType": "content",
+      "pull": "Propanol needs a hydride source such as NaBH4; methanol and acid do not reduce the aldehyde.",
+      "display": "propan-1-ol"
+     }
+    ]
+   },
+   "key": {
+    "index": 2,
+    "text": "CCC(OC)OC"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "numbers": "none: no arithmetic in this item",
+    "rdkit": "RDKit 2026.09.1: stem parses (C3H6O); all 5 choice SMILES parse (C3H8O2, C4H8O2, C5H12O2, C4H10O2, C3H8O)",
+    "picture": "Served drawings (SmilesDrawer, full.js settings) checked by eye: each depicts its SMILES; no stereocenter drawn."
+   },
+   "bankCopy": [
+    {
+     "kind": "bank-copy",
+     "text": "the why says \"wrong connectivity\"; do not lift."
+    }
+   ]
+  },
+  {
+   "qid": "fm:organic:oc-dbrfsk",
+   "servedAs": {
+    "bank": "full",
+    "mock": "FULL_1",
+    "section": "ochem",
+    "n": 8
+   },
+   "bankTopic": "Different arrows: radicals and Diels-Alder",
+   "difficulty": 1,
+   "stemHash": "367bf6a126beb77d1934b98992842ffc3f07b46d",
+   "expert": {
+    "answer": "CCC(Br)c1ccccc1",
+    "display": "1-bromo-1-phenylpropane (Br on the benzylic carbon)",
+    "servedIndex": 3,
+    "confidence": "high",
+    "concept": "Br2 with light is a radical chain that picks the weakest C-H; the benzylic C-H gives a resonance-stabilized radical, so Br lands on the benzylic carbon.",
+    "reasoning": [
+     "Read the conditions: Br2 with light (no FeBr3) means radical substitution, not ring bromination.",
+     "Rank the C-H bonds: benzylic is weakest because its radical spreads into the ring.",
+     "Bromine selects strongly, so Br goes on the carbon attached to the ring: 1-bromo-1-phenylpropane."
+    ],
+    "misconceptions": [
+     {
+      "choice": "CCCc1ccccc1Br",
+      "family": "other-conditions",
+      "familyName": "Other conditions",
+      "missType": "content",
+      "pull": "Ring bromination is EAS, which needs a Lewis acid (Br2, FeBr3); light starts a radical reaction on the side chain.",
+      "display": "ortho ring bromide"
+     },
+     {
+      "choice": "BrCCCc1ccccc1",
+      "family": "reversed",
+      "familyName": "Reversed",
+      "missType": "concept",
+      "pull": "Puts Br at the end carbon, whose primary C-H is the strongest and gives the least stable radical: the ranking turned around.",
+      "display": "1-bromo-3-phenylpropane"
+     },
+     {
+      "choice": "CCCc1ccc(Br)cc1",
+      "family": "other-conditions",
+      "familyName": "Other conditions",
+      "missType": "content",
+      "pull": "Para bromination is the EAS answer for an alkyl benzene with Br2 and FeBr3; light changes the mechanism.",
+      "display": "para ring bromide"
+     },
+     {
+      "choice": "CC(Br)Cc1ccccc1",
+      "family": "close-second",
+      "familyName": "Close second",
+      "missType": "concept",
+      "pull": "A secondary radical is decent, but it is not benzylic, so it loses to the radical next to the ring.",
+      "display": "2-bromo-1-phenylpropane"
+     }
+    ]
+   },
+   "key": {
+    "index": 3,
+    "text": "CCC(Br)c1ccccc1"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "numbers": "none: no arithmetic in this item",
+    "rdkit": "RDKit 2026.09.1: stem parses (C9H12); all 5 choice SMILES parse (C9H11Br, C9H11Br, C9H11Br, C9H11Br, C9H11Br)",
+    "picture": "Served drawings (SmilesDrawer, full.js settings) checked by eye: each depicts its SMILES; no stereocenter drawn."
+   },
+   "bankCopy": [
+    {
+     "kind": "letter-cite",
+     "text": "the why names the key \"option A\" (served D, the benzylic bromide; served A is the ortho ring bromide)."
+    }
+   ],
+   "notes": [
+    "Done in the pilot (OC-1); the pilot key and this solve agree."
+   ]
+  },
+  {
+   "qid": "fm:organic:oc-11r58ig",
+   "servedAs": {
+    "bank": "full",
+    "mock": "FULL_1",
+    "section": "ochem",
+    "n": 9
+   },
+   "bankTopic": "The switchboard: alcohols, ethers, epoxides",
+   "difficulty": 2,
+   "stemHash": "7897e9312039cf398e56d8566178adf6d4cf9da4",
+   "expert": {
+    "answer": "CCC(C)(C)Br",
+    "display": "2-bromo-2-methylbutane",
+    "servedIndex": 3,
+    "confidence": "high",
+    "concept": "A neopentyl carbon is blocked for SN2 by the tert-butyl group next to it; in strong acid, water leaves with a 1,2-methyl shift, giving a tertiary cation that bromide traps.",
+    "reasoning": [
+     "Protonate the OH so water can leave.",
+     "Check SN2: the back side of the CH2 is shielded by the tert-butyl group, so bromide cannot get in.",
+     "Water leaves as a methyl shifts over (no free primary cation), giving the tertiary 2-methyl-2-butyl cation; Br- adds there: 2-bromo-2-methylbutane."
+    ],
+    "misconceptions": [
+     {
+      "choice": "CCC(C)CBr",
+      "family": "half-right",
+      "familyName": "Half right",
+      "missType": "concept",
+      "pull": "The skeleton has rearranged, but Br sits on a primary carbon; after the shift the positive charge, and so the Br, is on the tertiary carbon.",
+      "display": "1-bromo-2-methylbutane"
+     },
+     {
+      "choice": "CC(C)=CC",
+      "family": "close-second",
+      "familyName": "Close second",
+      "missType": "concept",
+      "pull": "The E1 alkene from the same tertiary cation is real, but with concentrated HBr, bromide capture wins.",
+      "display": "2-methylbut-2-ene"
+     },
+     {
+      "choice": "CC(C)(C)CCl",
+      "family": "other-conditions",
+      "familyName": "Other conditions",
+      "missType": "content",
+      "pull": "A chloride needs HCl (with ZnCl2); this flask has only HBr, and the skeleton is unrearranged as well.",
+      "display": "neopentyl chloride"
+     },
+     {
+      "choice": "CC(C)(C)CBr",
+      "family": "missed-exception",
+      "familyName": "Smooth trend, missed exception",
+      "missType": "content",
+      "pull": "Primary alcohol plus HBr usually means SN2 with no rearrangement; neopentyl is the exception, because the tert-butyl blocks the back side.",
+      "display": "neopentyl bromide (no rearrangement)"
+     }
+    ]
+   },
+   "key": {
+    "index": 3,
+    "text": "CCC(C)(C)Br"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "numbers": "none: no arithmetic in this item",
+    "rdkit": "RDKit 2026.09.1: stem parses (C5H12O); all 5 choice SMILES parse (C5H11Br, C5H10, C5H11Cl, C5H11Br, C5H11Br)",
+    "picture": "Served drawings (SmilesDrawer, full.js settings) checked by eye: each depicts its SMILES; no stereocenter drawn."
+   },
+   "bankCopy": [
+    {
+     "kind": "letter-cite",
+     "text": "every letter in the why is off: key called \"option A\" (served D), neopentyl bromide \"option B\" (served E), the other skeleton \"option C\" (served A), the alkene \"option D\" (served B), the chloride \"option E\" (served C)."
+    }
+   ]
+  },
+  {
+   "qid": "fm:organic:oc-qn8vo7",
+   "servedAs": {
+    "bank": "full",
+    "mock": "FULL_1",
+    "section": "ochem",
+    "n": 10
+   },
+   "bankTopic": "The ring that refuses: aromatics",
+   "difficulty": 1,
+   "stemHash": "62cb0742ba9e60227fa102db38a97b90e3712100",
+   "expert": {
+    "answer": "Deactivating but ortho/para directing; the acyl group enters mainly para",
+    "servedIndex": 2,
+    "confidence": "high",
+    "concept": "Halogens are the exception in EAS: inductive pull deactivates the ring, but a lone pair donated by resonance stabilizes the ortho and para sigma complexes; the bulky acylium prefers para.",
+    "reasoning": [
+     "Split the two effects: induction (Br pulls electron density, slows EAS) and resonance (a Br lone pair stabilizes attack ortho and para).",
+     "Induction wins on rate (deactivating), resonance wins on position (ortho/para).",
+     "The acylium ion is bulky, so the crowded ortho position loses and the para product dominates."
+    ],
+    "misconceptions": [
+     {
+      "choice": "Activating and meta directing; the acyl group enters mainly meta",
+      "family": "reversed",
+      "familyName": "Reversed",
+      "missType": "concept",
+      "pull": "Both halves turned around: bromine slows EAS and directs ortho/para."
+     },
+     {
+      "choice": "Deactivating and ortho/para directing; the acyl group enters mainly ortho only",
+      "family": "half-right",
+      "familyName": "Half right",
+      "missType": "concept",
+      "pull": "The classification holds, but ortho is crowded next to Br and the acylium is bulky, so para is the main product."
+     },
+     {
+      "choice": "Deactivating and meta directing; the acyl group enters mainly meta",
+      "family": "missed-exception",
+      "familyName": "Smooth trend, missed exception",
+      "missType": "content",
+      "pull": "The usual rule (deactivators direct meta) applied to the one class that breaks it."
+     },
+     {
+      "choice": "Activating and ortho/para directing; the acyl group enters mainly para",
+      "family": "half-right",
+      "familyName": "Half right",
+      "missType": "concept",
+      "pull": "Direction and position hold, but the ortho/para label does not make bromine activating; it still slows the ring down."
+     }
+    ]
+   },
+   "key": {
+    "index": 2,
+    "text": "Deactivating but ortho/para directing; the acyl group enters mainly para"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "numbers": "none: no arithmetic in this item",
+    "rdkit": "RDKit 2026.09.1: stem parses (C6H5Br)",
+    "picture": "Served drawings (SmilesDrawer, full.js settings) checked by eye: each depicts its SMILES; no stereocenter drawn."
+   },
+   "stemStyle": [
+    "The stem hints the exception (\"Halogens are an unusual class of substituent in EAS\"). Flag only."
+   ]
+  },
+  {
+   "qid": "fm:organic:oc-anc6po",
+   "servedAs": {
+    "bank": "full",
+    "mock": "FULL_1",
+    "section": "ochem",
+    "n": 11
+   },
+   "bankTopic": "The alpha carbon wakes up",
+   "difficulty": 2,
+   "stemHash": "e192b66191c27535c1f4d517e79296355b5f6328",
+   "expert": {
+    "answer": "CC(=O)CC(C)c1ccccc1",
+    "display": "4-phenylpentan-2-one (methyl on the beta carbon)",
+    "servedIndex": 0,
+    "confidence": "high",
+    "concept": "Gilman cuprates are soft nucleophiles: they add 1,4 (conjugate addition) to an enone, putting the R group on the beta carbon; workup protonates the enolate and the ketone returns.",
+    "reasoning": [
+     "Mark the enone: C=O, alpha carbon, beta carbon (the one carrying phenyl).",
+     "Me2CuLi adds methyl to the beta carbon (1,4), making an enolate.",
+     "Water protonates the alpha carbon; the C=O is back: 4-phenylpentan-2-one."
+    ],
+    "misconceptions": [
+     {
+      "choice": "CC(O)(C)/C=C/c1ccccc1",
+      "family": "other-conditions",
+      "familyName": "Other conditions",
+      "missType": "content",
+      "pull": "1,2-addition to the C=O is what MeLi or MeMgBr do; the cuprate goes 1,4.",
+      "display": "tertiary allylic alcohol (1,2-addition)"
+     },
+     {
+      "choice": "CC(=O)/C=C(C)/c1ccccc1",
+      "family": "half-right",
+      "familyName": "Half right",
+      "missType": "concept",
+      "pull": "Methyl is on the right carbon, but conjugate addition uses up the C=C; nothing puts it back.",
+      "display": "4-phenylpent-3-en-2-one (alkene kept)"
+     },
+     {
+      "choice": "CC(=O)C(C)Cc1ccccc1",
+      "family": "neighbor-fact",
+      "familyName": "Neighbor fact",
+      "missType": "content",
+      "pull": "Methyl on the alpha carbon is what an enolate plus CH3I gives; the cuprate attacks the beta carbon.",
+      "display": "3-methyl-4-phenylbutan-2-one (alpha methyl)"
+     },
+     {
+      "choice": "CC(O)CC(C)c1ccccc1",
+      "family": "one-step-too-far",
+      "familyName": "One step too far",
+      "missType": "misread",
+      "pull": "The cuprate leaves the ketone alone and the workup is only water; reducing the C=O needs a hydride.",
+      "display": "4-phenylpentan-2-ol"
+     }
+    ]
+   },
+   "key": {
+    "index": 0,
+    "text": "CC(=O)CC(C)c1ccccc1"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "numbers": "none: no arithmetic in this item",
+    "rdkit": "RDKit 2026.09.1: stem parses (C10H10O); all 5 choice SMILES parse (C11H14O, C11H14O, C11H12O, C11H14O, C11H16O); stereo labels: CC(=O)/C=C/c1ccccc1 E; CC(O)(C)/C=C/c1ccccc1 E; CC(=O)/C=C(C)/c1ccccc1 E",
+    "picture": "Served drawings: stem drawn E (RDKit E); the alkene-kept choice drawn E (RDKit E). No stereocenters in the key."
+   },
+   "bankCopy": [
+    {
+     "kind": "letter-cite",
+     "text": "the why maps B, C, D, E to the alpha-methyl, 1,2-alcohol, reduced and alkene-kept choices; served they are D, B, E and C."
+    },
+    {
+     "kind": "bank-copy",
+     "text": "the why gives no positive reasoning (no 1,4-addition explained) and ends \"Index 0 is correct\", an authoring note; \"(incorrect)\" uses a word the house rules exclude."
+    }
+   ],
+   "stemStyle": [
+    "Build heuristic: capitalized emphasis word (MAJOR)."
+   ]
+  },
+  {
+   "qid": "fm:own-organic:ace-0002",
+   "servedAs": {
+    "bank": "full",
+    "mock": "FULL_1",
+    "section": "ochem",
+    "n": 12
+   },
+   "bankTopic": "The four questions: substitution and elimination",
+   "difficulty": 2,
+   "stemHash": "75a6c7011f9597ef373b5ffa278fd7c2ef9d9a3f",
+   "expert": {
+    "answer": "CCC(C)(C)Br",
+    "display": "2-bromo-2-methylbutane",
+    "servedIndex": 2,
+    "confidence": "medium",
+    "confidenceNote": "The rearranged tertiary bromide is the textbook answer. Measured HX additions to 3-methyl-1-butene give a lot of the unrearranged product too (some texts quote about equal amounts for HCl), so \"largest amount\" leans on an empirical ratio; the concept (hydride shift to the tertiary cation) is sound.",
+    "concept": "HBr adds H+ first to make the more stable cation; the secondary cation here sits next to a tertiary C-H, so a 1,2-hydride shift makes it tertiary before bromide adds.",
+    "reasoning": [
+     "Add H+ to the CH2 end (Markovnikov): a secondary cation on C2.",
+     "C3 next door carries an H on a tertiary carbon: a 1,2-hydride shift moves the charge to C3, now tertiary.",
+     "Bromide traps the tertiary cation: 2-bromo-2-methylbutane."
+    ],
+    "misconceptions": [
+     {
+      "choice": "BrCCC(C)C",
+      "family": "other-conditions",
+      "familyName": "Other conditions",
+      "missType": "content",
+      "pull": "Anti-Markovnikov bromide is the radical result of HBr with peroxides; plain HBr goes through the cation.",
+      "display": "1-bromo-3-methylbutane"
+     },
+     {
+      "choice": "CCC(C)(C)O",
+      "family": "other-conditions",
+      "familyName": "Other conditions",
+      "missType": "content",
+      "pull": "The same tertiary cation trapped by water is acid-catalyzed hydration (H2O, H2SO4); this flask has bromide.",
+      "display": "2-methylbutan-2-ol"
+     },
+     {
+      "choice": "CC(Br)C(C)C",
+      "family": "close-second",
+      "familyName": "Close second",
+      "missType": "concept",
+      "pull": "The unrearranged Markovnikov bromide does form, because bromide can catch the secondary cation before the shift; the shifted tertiary product is the one the item wants.",
+      "display": "2-bromo-3-methylbutane (no shift)"
+     },
+     {
+      "choice": "CC=C(C)C",
+      "family": "other-conditions",
+      "familyName": "Other conditions",
+      "missType": "content",
+      "pull": "Losing a proton from the tertiary cation gives this alkene in hot acid with no good nucleophile; with HBr, bromide adds.",
+      "display": "2-methylbut-2-ene"
+     }
+    ]
+   },
+   "key": {
+    "index": 2,
+    "text": "CCC(C)(C)Br"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "numbers": "none: no arithmetic in this item",
+    "rdkit": "RDKit 2026.09.1: stem parses (C5H10); all 5 choice SMILES parse (C5H11Br, C5H12O, C5H11Br, C5H11Br, C5H10)",
+    "picture": "Served drawings (SmilesDrawer, full.js settings) checked by eye: each depicts its SMILES; no stereocenter drawn."
+   },
+   "notes": [
+    "Medium confidence on the item, not the key: measured HX additions to 3-methyl-1-butene give a lot of unrearranged 2-bromo-3-methylbutane, and some texts quote about equal amounts for HCl. The stem's \"largest amount\" leans on that ratio. The explainer should say most of the cation shifts first (as the pilot OC-2 note already does), never \"only\".",
+    "Done in the pilot (OC-2); the pilot key and this solve agree."
+   ]
+  },
+  {
+   "qid": "fm:organic:oc-zlk3b3",
+   "servedAs": {
+    "bank": "full",
+    "mock": "FULL_1",
+    "section": "ochem",
+    "n": 13
+   },
+   "bankTopic": "The alpha carbon wakes up",
+   "difficulty": 2,
+   "stemHash": "481d9a638ff14bbee238358909827344a75e71ed",
+   "expert": {
+    "answer": "CC1=CC(=O)CCC1",
+    "display": "3-methylcyclohex-2-en-1-one",
+    "servedIndex": 1,
+    "confidence": "high",
+    "concept": "An intramolecular aldol closes the ring that is strain-free (five or six); heating dehydrates the beta-hydroxy ketone to the conjugated enone.",
+    "reasoning": [
+     "List the enolizable carbons: the end methyls (C1, C7) and the CH2 groups next to the carbonyls (C3, C5).",
+     "Count each ring: the C1 enolate onto the C6 carbonyl closes six atoms; the C3 enolate onto C6 would close only four, too strained.",
+     "Warming loses water to put the C=C in conjugation with the C=O: 3-methylcyclohex-2-en-1-one."
+    ],
+    "misconceptions": [
+     {
+      "choice": "CC1=CC(=O)CC1",
+      "family": "miscount",
+      "familyName": "Miscount",
+      "missType": "misread",
+      "pull": "A five-membered enone, the product of hexane-2,5-dione; this chain is one carbon longer and closes six.",
+      "display": "3-methylcyclopent-2-en-1-one"
+     },
+     {
+      "choice": "O=C1CCCCC1",
+      "family": "half-right",
+      "familyName": "Half right",
+      "missType": "concept",
+      "pull": "Right ring size, but the methyl from the second ketone and the new C=C from dehydration are both gone.",
+      "display": "cyclohexanone"
+     },
+     {
+      "choice": "CC1=CCCC(=O)C1",
+      "family": "close-second",
+      "familyName": "Close second",
+      "missType": "concept",
+      "pull": "Right ring, but the C=C sits out of conjugation with the C=O; dehydration gives the more stable conjugated enone.",
+      "display": "3-methylcyclohex-3-en-1-one"
+     },
+     {
+      "choice": "CC1CCCC(=O)C1=O",
+      "family": "other-conditions",
+      "familyName": "Other conditions",
+      "missType": "content",
+      "pull": "Keeps both carbonyls, the way a Claisen-type acylation would; in an aldol one C=O is the electrophile and ends up as the C=C.",
+      "display": "3-methylcyclohexane-1,2-dione"
+     }
+    ]
+   },
+   "key": {
+    "index": 1,
+    "text": "CC1=CC(=O)CCC1"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "numbers": "Ring count: the C1 enolate onto the C6 carbonyl closes 6 atoms; the C3 enolate onto C6 would close 4. RDKit ring sizes: key 6, five-membered choice 5, beta,gamma isomer 6.",
+    "rdkit": "RDKit 2026.09.1: stem parses (C7H12O2); all 5 choice SMILES parse (C6H8O, C7H10O, C6H10O, C7H10O, C7H10O2)",
+    "picture": "Served drawings (SmilesDrawer, full.js settings) checked by eye: each depicts its SMILES; no stereocenter drawn."
+   },
+   "bankCopy": [
+    {
+     "kind": "letter-cite",
+     "text": "the why says \"Keyed option A\" (the key is served B; served A is the five-membered enone)."
+    },
+    {
+     "kind": "bank-copy",
+     "text": "\"verified identical to O=C1CCCC(C)=C1\" and \"All valid, unique\" are authoring notes."
+    }
+   ],
+   "stemStyle": [
+    "The stem names the reaction \"(intramolecular aldol condensation)\"; a hint, flag only."
+   ]
+  },
+  {
+   "qid": "fm:organic:oc-1sm5f0m",
+   "servedAs": {
+    "bank": "full",
+    "mock": "FULL_1",
+    "section": "ochem",
+    "n": 14
+   },
+   "bankTopic": "Different arrows: radicals and Diels-Alder",
+   "difficulty": 2,
+   "stemHash": "3398ed236f9e50b32146c28b99da612fd65bf054",
+   "expert": {
+    "answer": "C=CCCC=Cc1ccccc1",
+    "display": "1-phenylhexa-1,5-diene (C=C conjugated with the ring)",
+    "servedIndex": 2,
+    "confidence": "high",
+    "concept": "A Cope rearrangement breaks the C3-C4 sigma bond, makes a new C1-C6 bond and shifts both pi bonds; it is reversible, so it settles on the isomer with the alkene conjugated to the ring.",
+    "reasoning": [
+     "Number the diene 1 to 6: C1=C2, C3 (carries phenyl), C4, C5=C6.",
+     "Break C3-C4, join C1-C6, move the pi bonds to C2=C3 and C4=C5.",
+     "The new C2=C3 sits on the phenyl carbon, conjugated with the ring, so this side wins: 1-phenylhexa-1,5-diene."
+    ],
+    "misconceptions": [
+     {
+      "choice": "C=CCC(C=C)c1ccccc1",
+      "family": "one-step-short",
+      "familyName": "One step short",
+      "missType": "concept",
+      "pull": "This is the starting diene drawn turned around (RDKit gives the same molecule); no bond has moved.",
+      "display": "3-phenylhexa-1,5-diene (the starting material)"
+     },
+     {
+      "choice": "C=Cc1ccccc1CCC=C",
+      "family": "neighbor-fact",
+      "familyName": "Neighbor fact",
+      "missType": "content",
+      "pull": "Moving a group onto the ortho ring carbon is the aromatic Claisen pattern (allyl aryl ethers); a Cope never touches the ring.",
+      "display": "1-butenyl-2-vinylbenzene"
+     },
+     {
+      "choice": "C=CC(c1ccccc1)C=CC",
+      "family": "half-right",
+      "familyName": "Half right",
+      "missType": "concept",
+      "pull": "One pi bond moved, but the sigma bond did not break and the other pi bond stayed put; a [3,3] shift moves all three.",
+      "display": "3-phenylhexa-1,4-diene"
+     },
+     {
+      "choice": "C1=CC=CC(c2ccccc2)C1",
+      "family": "neighbor-fact",
+      "familyName": "Neighbor fact",
+      "missType": "content",
+      "pull": "The six-membered ring belongs to the chair-like transition state (and to Diels-Alder products); the Cope product is still open chain, and this choice has lost two H.",
+      "display": "5-phenylcyclohexa-1,3-diene"
+     }
+    ]
+   },
+   "key": {
+    "index": 2,
+    "text": "C=CCCC=Cc1ccccc1"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "numbers": "none: no arithmetic in this item",
+    "rdkit": "RDKit 2026.09.1: stem parses (C12H14); all 5 choice SMILES parse (C12H14, C12H14, C12H14, C12H14, C12H12)",
+    "picture": "One choice is the starting diene drawn turned around (RDKit canonical SMILES identical to the stem). Drawn as a different-looking picture, so it is a fair \"nothing happened\" distractor."
+   },
+   "bankCopy": [
+    {
+     "kind": "letter-cite",
+     "text": "the why gives the key as \"opt 0\" (served index 2) and the starting material as \"Option 1\" (served index 0); \"incorrect connectivity\" uses a word the house rules exclude."
+    }
+   ],
+   "stemStyle": [
+    "The stem names the reaction \"Cope ([3,3]-sigmatropic)\" and the outcome rule \"to reach the more stable isomer\"; flag only."
+   ],
+   "notes": [
+    "One distractor is the starting material redrawn; the explainer can say \"the same molecule, turned around\" (RDKit confirms)."
+   ]
+  },
+  {
+   "qid": "fm:organic:oc-1op9odj",
+   "servedAs": {
+    "bank": "full",
+    "mock": "FULL_1",
+    "section": "ochem",
+    "n": 15
+   },
+   "bankTopic": "The reactivity ladder: acid derivatives",
+   "difficulty": 2,
+   "stemHash": "1fd825675c24b0436a6025119c89c17f07a02a4b",
+   "expert": {
+    "answer": "1-bromobutane (a primary alkyl halide)",
+    "servedIndex": 0,
+    "confidence": "high",
+    "concept": "The Gabriel synthesis alkylates the phthalimide anion by SN2, so it needs an unhindered primary (or methyl) halide on an sp3 carbon.",
+    "reasoning": [
+     "Name the step: the phthalimide anion is the nucleophile in an SN2 reaction.",
+     "SN2 needs a back side to attack: primary is best, tertiary is blocked, and sp2 carbons (aryl, vinyl) do not do SN2.",
+     "Hydrazine then frees the primary amine: butan-1-amine from 1-bromobutane."
+    ],
+    "misconceptions": [
+     {
+      "choice": "bromobenzene (an aryl halide)",
+      "family": "missed-exception",
+      "familyName": "Smooth trend, missed exception",
+      "missType": "content",
+      "pull": "Bromide is a good leaving group, but an aryl C-Br sits on an sp2 carbon whose back side is inside the ring; no SN2."
+     },
+     {
+      "choice": "2-chloro-2-methylbutane (a tertiary halide)",
+      "family": "reversed",
+      "familyName": "Reversed",
+      "missType": "concept",
+      "pull": "Tertiary is the best SN1 substrate and the worst SN2 one; with the basic phthalimide anion it eliminates."
+     },
+     {
+      "choice": "2-bromo-2-methylpropane (tert-butyl bromide)",
+      "family": "reversed",
+      "familyName": "Reversed",
+      "missType": "concept",
+      "pull": "The SN1 favorite again; for SN2 the three methyls block the back side, so E2 to isobutylene wins."
+     },
+     {
+      "choice": "vinyl bromide (a vinyl halide)",
+      "family": "missed-exception",
+      "familyName": "Smooth trend, missed exception",
+      "missType": "content",
+      "pull": "Another sp2 C-Br: the C-Br bond is strong and the back side is blocked by the pi system, so no SN2."
+     }
+    ]
+   },
+   "key": {
+    "index": 0,
+    "text": "1-bromobutane (a primary alkyl halide)"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "numbers": "none: no arithmetic in this item",
+    "rdkit": "RDKit 2026.09.1: stem parses (C8H4KNO2)",
+    "picture": "Served drawings (SmilesDrawer, full.js settings) checked by eye: each depicts its SMILES; no stereocenter drawn."
+   }
+  },
+  {
+   "qid": "fm:organic:oc-vqku6",
+   "servedAs": {
+    "bank": "full",
+    "mock": "FULL_1",
+    "section": "ochem",
+    "n": 16
+   },
+   "bankTopic": "Molecules in 3D",
+   "difficulty": 2,
+   "stemHash": "aa24cdaab799607c60ec725fe87a2fbb96d31b8b",
+   "expert": {
+    "answer": "It is a meso compound: it has stereocenters but an internal mirror plane, so it is achiral and optically inactive",
+    "servedIndex": 0,
+    "confidence": "high",
+    "concept": "cis-1,3-Dichlorocyclohexane has two stereocenters (R and S) and a mirror plane through C2 and C5, so it is meso: achiral and optically inactive.",
+    "reasoning": [
+     "Check each Cl carbon: H, Cl and two different ring paths, so both are stereocenters.",
+     "Look for symmetry: in the cis isomer a mirror plane runs through C2 and C5 and swaps the two C-Cl carbons.",
+     "Stereocenters plus an internal mirror plane means meso: it is its own mirror image and does not rotate light."
+    ],
+    "misconceptions": [
+     {
+      "choice": "It is chiral and optically active, existing as a pair of non-superimposable enantiomers that each rotate plane-polarized light in opposite directions",
+      "family": "neighbor-fact",
+      "familyName": "Neighbor fact",
+      "missType": "content",
+      "pull": "True of trans-1,3-dichlorocyclohexane, which has no mirror plane; the cis isomer drawn here has one."
+     },
+     {
+      "choice": "It is a constitutional isomer of 1,4-dichlorocyclohexane and is optically active",
+      "family": "half-right",
+      "familyName": "Half right",
+      "missType": "concept",
+      "pull": "It is a constitutional isomer of the 1,4 compound, but its mirror plane makes it optically inactive."
+     },
+     {
+      "choice": "It exists only as a single non-superimposable mirror image, so it has no achiral stereoisomer at all",
+      "family": "reversed",
+      "familyName": "Reversed",
+      "missType": "concept",
+      "pull": "Turns it around: this molecule is itself the achiral stereoisomer; its mirror image superimposes on it."
+     },
+     {
+      "choice": "It has no stereocenters at all, so chirality is not possible",
+      "family": "neighbor-fact",
+      "familyName": "Neighbor fact",
+      "missType": "content",
+      "pull": "True of 1,4-dichlorocyclohexane, where the two ring paths from each C-Cl are identical; in the 1,3 isomer they differ, so C1 and C3 are stereocenters."
+     }
+    ]
+   },
+   "key": {
+    "index": 0,
+    "text": "It is a meso compound: it has stereocenters but an internal mirror plane, so it is achiral and optically inactive"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "numbers": "none: no arithmetic in this item",
+    "rdkit": "RDKit 2026.09.1: stem parses (C6H10Cl2); stereo labels: C1C[C@H](Cl)C[C@H](Cl)C1 S,R",
+    "picture": "Served drawing (SmilesDrawer, full.js settings, explicit hydrogens off): both C-Cl bonds hashed, so cis, as the stem says. RDKit: (1S,3R), meso (equals its mirror image); the trans isomer is chiral."
+   },
+   "bankCopy": [
+    {
+     "kind": "letter-cite",
+     "text": "\"option C wrongly denies stereocenters\" (that is served E) and \"option D confuses constitutional vs stereoisomerism\" (served C); the why also opens mid-thought with \"So\"."
+    }
+   ],
+   "stemStyle": [
+    "Capitalized emphasis (BEST, four letters, below the build check)."
+   ]
+  },
+  {
+   "qid": "fm:organic:oc-8gdlsf",
+   "servedAs": {
+    "bank": "full",
+    "mock": "FULL_1",
+    "section": "ochem",
+    "n": 17
+   },
+   "bankTopic": "The ring that refuses: aromatics",
+   "difficulty": 2,
+   "stemHash": "63d035c910fd0cf5539a5cd71ecd66dd5def2739",
+   "expert": {
+    "answer": "CC(C)c1ccccc1",
+    "display": "isopropylbenzene (cumene)",
+    "servedIndex": 2,
+    "confidence": "high",
+    "concept": "Friedel-Crafts alkylation runs through a carbocation (or a cation-like AlCl3 complex); a primary propyl cation rearranges by a hydride shift to the secondary isopropyl cation before it attacks the ring.",
+    "reasoning": [
+     "AlCl3 pulls Cl off 1-chloropropane: a primary, cation-like carbon.",
+     "A 1,2-hydride shift from C2 makes the more stable secondary isopropyl cation.",
+     "Benzene attacks that cation: isopropylbenzene (cumene) is the major product."
+    ],
+    "misconceptions": [
+     {
+      "choice": "CCc1ccccc1",
+      "family": "miscount",
+      "familyName": "Miscount",
+      "missType": "misread",
+      "pull": "Ethylbenzene has lost a carbon; no step here removes one.",
+      "display": "ethylbenzene"
+     },
+     {
+      "choice": "CCCc1ccccc1",
+      "family": "close-second",
+      "familyName": "Close second",
+      "missType": "concept",
+      "pull": "Propylbenzene does form a little, but the hydride shift to the secondary cation wins; this is the classic limit of FC alkylation.",
+      "display": "propylbenzene (no shift)"
+     },
+     {
+      "choice": "CC(C)(C)c1ccccc1",
+      "family": "one-step-too-far",
+      "familyName": "One step too far",
+      "missType": "misread",
+      "pull": "Chases the most stable (tertiary) cation, but a tertiary butyl group needs a fourth carbon the propyl chain does not have.",
+      "display": "tert-butylbenzene"
+     },
+     {
+      "choice": "CC(C)Cc1ccccc1",
+      "family": "miscount",
+      "familyName": "Miscount",
+      "missType": "misread",
+      "pull": "Isobutylbenzene also has four carbons in the side chain; the reagent brings three.",
+      "display": "isobutylbenzene"
+     }
+    ]
+   },
+   "key": {
+    "index": 2,
+    "text": "CC(C)c1ccccc1"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "numbers": "none: no arithmetic in this item",
+    "rdkit": "RDKit 2026.09.1: stem parses (C3H7Cl); all 5 choice SMILES parse (C8H10, C9H12, C9H12, C10H14, C10H14)",
+    "picture": "Served drawings (SmilesDrawer, full.js settings) checked by eye: each depicts its SMILES; no stereocenter drawn."
+   },
+   "bankCopy": [
+    {
+     "kind": "letter-cite",
+     "text": "the why calls cumene \"choice A\" (served C) and maps tert-butyl and ethyl to C and D (served D and A); \"wrong carbon count\", \"wrong skeleton\" use excluded words."
+    }
+   ],
+   "stemStyle": [
+    "Build heuristic: capitalized emphasis word (MAJOR)."
+   ],
+   "notes": [
+    "Real Friedel-Crafts propylation gives a mixture whose ratio depends on temperature; the DAT-level answer is cumene. Explainer: \"major\", not \"only\"."
+   ]
+  },
+  {
+   "qid": "fm:organic:oc-1v0wmr4",
+   "servedAs": {
+    "bank": "full",
+    "mock": "FULL_1",
+    "section": "ochem",
+    "n": 18
+   },
+   "bankTopic": "The four questions: substitution and elimination",
+   "difficulty": 2,
+   "stemHash": "7c25c0c6e5accedec8c2d998daf562bb90291d60",
+   "expert": {
+    "answer": "CC(C)(C)C=C",
+    "display": "3,3-dimethylbut-1-ene",
+    "servedIndex": 1,
+    "confidence": "high",
+    "concept": "E2 is concerted: no carbocation, so no rearrangement, and it needs a beta H; the carbon next door is quaternary, so only the methyl hydrogens can leave.",
+    "reasoning": [
+     "List the beta carbons: C1 (a CH3) and C3 (a quaternary carbon with no H).",
+     "E2 removes a beta H in the same step Br leaves; no cation forms, so no methyl shift.",
+     "Only C1 has hydrogens, so the only E2 alkene is 3,3-dimethylbut-1-ene (Zaitsev has nothing to choose from)."
+    ],
+    "misconceptions": [
+     {
+      "choice": "C=C(C)C(C)C",
+      "family": "other-conditions",
+      "familyName": "Other conditions",
+      "missType": "content",
+      "pull": "This skeleton needs a methyl shift, which needs a carbocation (E1 in hot acid); E2 never makes one.",
+      "display": "2,3-dimethylbut-1-ene"
+     },
+     {
+      "choice": "CC(C)=C(C)C",
+      "family": "other-conditions",
+      "familyName": "Other conditions",
+      "missType": "content",
+      "pull": "The most substituted alkene pulls (Zaitsev), but reaching it needs a methyl shift through a cation; it is the E1 product in hot acid.",
+      "display": "2,3-dimethylbut-2-ene"
+     },
+     {
+      "choice": "CCOC(C)C(C)(C)C",
+      "family": "close-second",
+      "familyName": "Close second",
+      "missType": "concept",
+      "pull": "Ethoxide can act as a nucleophile (SN2 ether), but the secondary carbon next to a tert-butyl is crowded and heat favors E2.",
+      "display": "2-ethoxy-3,3-dimethylbutane"
+     },
+     {
+      "choice": "CC(O)C(C)(C)C",
+      "family": "other-conditions",
+      "familyName": "Other conditions",
+      "missType": "content",
+      "pull": "An alcohol needs water or hydroxide as the nucleophile; the flask holds ethoxide in ethanol.",
+      "display": "3,3-dimethylbutan-2-ol"
+     }
+    ]
+   },
+   "key": {
+    "index": 1,
+    "text": "CC(C)(C)C=C"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "numbers": "none: no arithmetic in this item",
+    "rdkit": "RDKit 2026.09.1: stem parses (C6H13Br); all 5 choice SMILES parse (C6H12, C6H12, C6H12, C8H18O, C6H14O)",
+    "picture": "Served drawings (SmilesDrawer, full.js settings) checked by eye: each depicts its SMILES; no stereocenter drawn."
+   },
+   "bankCopy": [
+    {
+     "kind": "letter-cite",
+     "text": "the why calls the key \"option A\" (served B) and the rearranged Zaitsev alkene \"option B\" (served C); it also says \"hydride/methyl shift\" where only a methyl shift reaches that skeleton."
+    }
+   ],
+   "stemStyle": [
+    "Build heuristic: capitalized emphasis word (MAJOR). The stem also names the mechanism (\"this E2 reaction\"), which is the item's main clue; flag only."
+   ]
+  },
+  {
+   "qid": "fm:organic:oc-1mnmhwn",
+   "servedAs": {
+    "bank": "full",
+    "mock": "FULL_1",
+    "section": "ochem",
+    "n": 19
+   },
+   "bankTopic": "Pay twice, plus the acidic H: alkynes",
+   "difficulty": 2,
+   "stemHash": "442e5578308a63db4e6d5181042f3cc0877e34ed",
+   "expert": {
+    "answer": "A roughly equal mixture of two regioisomeric ketones (2-pentanone and 3-pentanone) forms, because neither alkyne carbon is strongly favored",
+    "servedIndex": 2,
+    "confidence": "high",
+    "concept": "Hg(II)-catalyzed hydration adds water Markovnikov to give an enol that tautomerizes to a ketone; an internal alkyne with two similar alkyl groups gives both regioisomers.",
+    "reasoning": [
+     "Name the reaction: H2O with HgSO4 and H2SO4 hydrates the triple bond to an enol, which tautomerizes to a ketone.",
+     "Compare the two alkyne carbons: one carries methyl, the other ethyl; both are equally substituted, so neither is clearly favored.",
+     "Oxygen ends up on C2 or C3 in about equal amounts: 2-pentanone plus 3-pentanone."
+    ],
+    "misconceptions": [
+     {
+      "choice": "A carboxylic acid forms by oxidative cleavage of the triple bond",
+      "family": "other-conditions",
+      "familyName": "Other conditions",
+      "missType": "content",
+      "pull": "Cleavage to acids is what ozone or hot KMnO4 does to an alkyne; Hg(II) and acid only add water."
+     },
+     {
+      "choice": "A single aldehyde forms, because Markovnikov addition of water to an internal alkyne always delivers the oxygen to a chain-end carbon of the molecule",
+      "family": "neighbor-fact",
+      "familyName": "Neighbor fact",
+      "missType": "content",
+      "pull": "An aldehyde comes from a terminal alkyne by hydroboration-oxidation; an internal alkyne has no chain-end alkyne carbon to put O on."
+     },
+     {
+      "choice": "No reaction occurs, because internal alkynes are unreactive toward Hg(II)/acid",
+      "family": "neighbor-fact",
+      "familyName": "Neighbor fact",
+      "missType": "content",
+      "pull": "The textbook example is a terminal alkyne, which pulls the idea that only terminal ones react; internal alkynes hydrate too."
+     },
+     {
+      "choice": "Only 2-pentanone forms, because Markovnikov addition always places the carbonyl oxygen on C2, the alkyne carbon carrying the shorter alkyl chain",
+      "family": "half-right",
+      "familyName": "Half right",
+      "missType": "concept",
+      "pull": "2-Pentanone does form, but Markovnikov has nothing to choose between two equally substituted carbons, so 3-pentanone forms too."
+     }
+    ]
+   },
+   "key": {
+    "index": 2,
+    "text": "A roughly equal mixture of two regioisomeric ketones (2-pentanone and 3-pentanone) forms, because neither alkyne carbon is strongly favored"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "numbers": "none: no arithmetic in this item",
+    "rdkit": "RDKit 2026.09.1: stem parses (C5H8)",
+    "picture": "Served drawings (SmilesDrawer, full.js settings) checked by eye: each depicts its SMILES; no stereocenter drawn."
+   },
+   "stemStyle": [
+    "Capitalized emphasis inside a word (\"UNsymmetrical\"); suggested \"unsymmetrical\"."
+   ]
+  },
+  {
+   "qid": "fm:organic:oc-1boz2p7",
+   "servedAs": {
+    "bank": "full",
+    "mock": "FULL_1",
+    "section": "ochem",
+    "n": 20
+   },
+   "bankTopic": "The reactivity ladder: acid derivatives",
+   "difficulty": 2,
+   "stemHash": "21a22a046b48b2a0d0f4ab9344d4f8b87f5bb5ec",
+   "expert": {
+    "answer": "Only the beta-keto acid decarboxylates readily on heating; the gamma-keto acid does not, because its carbonyl is too far for a six-membered cyclic transition state",
+    "servedIndex": 4,
+    "confidence": "high",
+    "concept": "Easy thermal decarboxylation needs a carbonyl beta to the COOH: the acid H goes to the ketone O through a six-membered cyclic transition state, giving an enol and CO2.",
+    "reasoning": [
+     "Draw the cyclic transition state: COOH hydrogen, the carboxyl carbon, the alpha carbon and the ketone C=O close a six-membered ring.",
+     "Count for each acid: the beta-keto acid closes six; the gamma-keto acid would need seven, and the geometry does not fit.",
+     "So only the beta-keto acid loses CO2 on warming (to acetophenone); levulinic acid keeps its carboxyl."
+    ],
+    "misconceptions": [
+     {
+      "choice": "The gamma-keto acid decarboxylates faster, because the extra distance between its carbonyl and its carboxyl relieves strain in the cyclic transition state that delivers the proton",
+      "family": "reversed",
+      "familyName": "Reversed",
+      "missType": "concept",
+      "pull": "Turns the ring logic around: the six-membered transition state is already strain-free, and the extra carbon breaks it."
+     },
+     {
+      "choice": "Both decarboxylate equally well because both contain a ketone",
+      "family": "assumed-equal",
+      "familyName": "Assumed equal",
+      "missType": "concept",
+      "pull": "Having a ketone is not enough; its position (beta) is what makes the cyclic proton transfer possible."
+     },
+     {
+      "choice": "Neither decarboxylates; a ketone cannot assist loss of CO2",
+      "family": "neighbor-fact",
+      "familyName": "Neighbor fact",
+      "missType": "content",
+      "pull": "True of an ordinary carboxylic acid with no beta carbonyl; a beta ketone is exactly what assists."
+     },
+     {
+      "choice": "Only the gamma-keto acid decarboxylates, because only its carbonyl and carboxyl are spaced to close a ring, and the product is a cyclic lactone rather than a simple ketone",
+      "family": "half-right",
+      "familyName": "Half right",
+      "missType": "concept",
+      "pull": "Gamma-keto acids can cyclize toward lactone-type products, but that is not loss of CO2, and the beta-keto acid is the one that decarboxylates."
+     }
+    ]
+   },
+   "key": {
+    "index": 4,
+    "text": "Only the beta-keto acid decarboxylates readily on heating; the gamma-keto acid does not, because its carbonyl is too far for a six-membered cyclic transition state"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "numbers": "none: no arithmetic in this item",
+    "rdkit": "RDKit 2026.09.1: stem parses (C5H8O3)",
+    "picture": "Served drawings (SmilesDrawer, full.js settings) checked by eye: each depicts its SMILES; no stereocenter drawn."
+   }
+  },
+  {
+   "qid": "fm:organic:oc-8neusk",
+   "servedAs": {
+    "bank": "full",
+    "mock": "FULL_1",
+    "section": "ochem",
+    "n": 21
+   },
+   "bankTopic": "The center of the universe: alkenes",
+   "difficulty": 2,
+   "stemHash": "8d0da494b67e95f584f3c08aef335084b4cb6396",
+   "expert": {
+    "answer": "CC(C)(Br)C(C)C",
+    "display": "2-bromo-2,3-dimethylbutane",
+    "servedIndex": 3,
+    "confidence": "high",
+    "confidenceNote": "The rearranged bromide is the textbook answer and the stem steers to it; measured HX additions to 3,3-dimethyl-1-butene also give much unrearranged product, so the explainer should not say \"only\".",
+    "concept": "A secondary cation next to a quaternary carbon picks up a 1,2-methyl shift to become tertiary, and bromide adds to the rearranged cation.",
+    "reasoning": [
+     "Add H+ to the CH2 end: a secondary cation on C2, next to the C(CH3)3 carbon.",
+     "Shift a methyl from C3 to C2: the charge moves to C3, now tertiary.",
+     "Bromide adds there: 2-bromo-2,3-dimethylbutane."
+    ],
+    "misconceptions": [
+     {
+      "choice": "BrCC(C)C(C)C",
+      "family": "half-right",
+      "familyName": "Half right",
+      "missType": "concept",
+      "pull": "The skeleton has rearranged, but Br sits on a primary end carbon instead of the tertiary carbon that carries the charge.",
+      "display": "1-bromo-2,3-dimethylbutane"
+     },
+     {
+      "choice": "BrCCC(C)(C)C",
+      "family": "other-conditions",
+      "familyName": "Other conditions",
+      "missType": "content",
+      "pull": "Br on the end carbon is anti-Markovnikov, the radical result of HBr with peroxides.",
+      "display": "1-bromo-3,3-dimethylbutane"
+     },
+     {
+      "choice": "CCC(C)(C)CBr",
+      "family": "miscount",
+      "familyName": "Miscount",
+      "missType": "misread",
+      "pull": "Puts Br on one of the tert-butyl methyls, a carbon the H+ and Br- never reach; no cation forms there.",
+      "display": "1-bromo-2,2-dimethylbutane"
+     },
+     {
+      "choice": "CC(Br)C(C)(C)C",
+      "family": "close-second",
+      "familyName": "Close second",
+      "missType": "concept",
+      "pull": "The unrearranged Markovnikov bromide forms too, but the methyl shift to the tertiary cation is what the item asks you to see.",
+      "display": "3-bromo-2,2-dimethylbutane (no shift)"
+     }
+    ]
+   },
+   "key": {
+    "index": 3,
+    "text": "CC(C)(Br)C(C)C"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "numbers": "none: no arithmetic in this item",
+    "rdkit": "RDKit 2026.09.1: stem parses (C6H12); all 5 choice SMILES parse (C6H13Br, C6H13Br, C6H13Br, C6H13Br, C6H13Br)",
+    "picture": "Served drawings (SmilesDrawer, full.js settings) checked by eye: each depicts its SMILES; no stereocenter drawn."
+   },
+   "bankCopy": [
+    {
+     "kind": "letter-cite",
+     "text": "the why says \"keyed option A\" (served D) and calls the unrearranged bromide \"option B\" (served E)."
+    },
+    {
+     "kind": "bank-copy",
+     "text": "\"canonical CC(C)C(C)(C)Br\" is an authoring note."
+    }
+   ],
+   "stemStyle": [
+    "The stem carries a hint \"(Consider carbocation stability carefully.)\"; flag only."
+   ],
+   "notes": [
+    "Same caution as ace-0002: real HX additions to 3,3-dimethyl-1-butene give substantial unrearranged bromide; teach \"major\", not \"only\"."
+   ]
+  },
+  {
+   "qid": "fm:organic:oc-yraq7h",
+   "servedAs": {
+    "bank": "full",
+    "mock": "FULL_1",
+    "section": "ochem",
+    "n": 22
+   },
+   "bankTopic": "The only reaction in organic chemistry",
+   "difficulty": 2,
+   "stemHash": "791f842b61892b0554b0306848441402ae87fc3b",
+   "expert": {
+    "answer": "Anilinium; its conjugate base aniline has the N lone pair delocalized into the benzene ring, making aniline a weak base and anilinium the strongest acid",
+    "servedIndex": 1,
+    "confidence": "high",
+    "concept": "The stronger acid has the more stable (weaker) conjugate base; aniline's lone pair is spread into the ring, so aniline is the weakest base and anilinium the strongest acid (pKa about 4.6, pyridinium 5.2, methylammonium 10.6).",
+    "reasoning": [
+     "Judge each acid by its conjugate base: aniline, pyridine, methylamine.",
+     "Aniline's lone pair is delocalized into the ring (weakest base); pyridine's sp2 lone pair is held close to N (weak base); methylamine's sp3 lone pair is localized and pushed by the methyl (strongest base).",
+     "Weakest base, strongest acid: anilinium (about 4.6) edges pyridinium (about 5.2); methylammonium (about 10.6) is the weakest acid."
+    ],
+    "misconceptions": [
+     {
+      "choice": "All three have identical pKa because each loses an N-H proton",
+      "family": "assumed-equal",
+      "familyName": "Assumed equal",
+      "missType": "concept",
+      "pull": "The proton is the same, but what is left behind is not; the conjugate bases differ in how well they hold the lone pair."
+     },
+     {
+      "choice": "Methylammonium; a primary amine cation is always the most acidic",
+      "family": "reversed",
+      "familyName": "Reversed",
+      "missType": "concept",
+      "pull": "Methylammonium is the weakest acid here, because methylamine is the strongest base."
+     },
+     {
+      "choice": "Pyridinium; the aromatic ring feeds electron density to nitrogen and makes pyridine a stronger base than methylamine",
+      "family": "close-second",
+      "familyName": "Close second",
+      "missType": "concept",
+      "pull": "Pyridinium is a close second (about 5.2), but the reason is turned around: pyridine is a much weaker base than methylamine."
+     },
+     {
+      "choice": "Methylammonium; the alkyl group's electron donation makes methylamine the weakest base of the three, which leaves its cation as the strongest acid of the set by a wide margin",
+      "family": "half-right",
+      "familyName": "Half right",
+      "missType": "concept",
+      "pull": "Alkyl groups do donate electron density, but that makes methylamine the strongest base, so its cation is the weakest acid."
+     }
+    ]
+   },
+   "key": {
+    "index": 1,
+    "text": "Anilinium; its conjugate base aniline has the N lone pair delocalized into the benzene ring, making aniline a weak base and anilinium the strongest acid"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "numbers": "Textbook pKa of the cations: anilinium about 4.6, pyridinium about 5.2, methylammonium about 10.6; anilinium is the lowest, so the strongest acid. The anilinium/pyridinium gap is small (0.6), so the explainer should teach the lone-pair reasoning, not lean on the numbers.",
+    "rdkit": "RDKit 2026.09.1: stem parses (CH6N+)",
+    "picture": "Served drawings (SmilesDrawer, full.js settings) checked by eye: each depicts its SMILES; no stereocenter drawn."
+   },
+   "stemStyle": [
+    "Build heuristic: capitalized emphasis word (WEAKEST); the stem also states the principle (\"reflecting the WEAKEST/most-stabilized conjugate base\") and uses slash shorthand. Suggested: \"Which is the strongest acid (lowest pKa)?\""
+   ],
+   "notes": [
+    "The decisive comparison is anilinium (4.6) versus pyridinium (5.2), a narrow gap; the pyridinium choice also carries a false reason, so it is still clearly out."
+   ]
+  },
+  {
+   "qid": "fm:organic:oc-p5414p",
+   "servedAs": {
+    "bank": "full",
+    "mock": "FULL_1",
+    "section": "ochem",
+    "n": 23
+   },
+   "bankTopic": "The center of the universe: alkenes",
+   "difficulty": 1,
+   "stemHash": "08f14def5b93ce4fda4b5c40f5ec9b2a54c3f17d",
+   "expert": {
+    "answer": "CC[C@H]1O[C@@H]1CC",
+    "display": "trans-2,3-diethyloxirane (one ethyl on a wedge, one on a dash)",
+    "servedIndex": 4,
+    "confidence": "high",
+    "concept": "Peroxyacid epoxidation is concerted and syn, so it is stereospecific: a trans alkene gives a trans epoxide (a racemic pair; one enantiomer is drawn).",
+    "reasoning": [
+     "Read the alkene: (E)-3-hexene, the two ethyl groups on opposite sides.",
+     "mCPBA delivers one O to one face in a single step, so nothing rotates: the ethyls stay trans on the three-membered ring.",
+     "Pick the epoxide with one ethyl on a wedge and one on a dash: trans-2,3-diethyloxirane (RDKit: R,R, chiral)."
+    ],
+    "misconceptions": [
+     {
+      "choice": "CC[C@@H]1O[C@@H]1CC",
+      "family": "reversed",
+      "familyName": "Reversed",
+      "missType": "concept",
+      "pull": "Both ethyls on wedges is the cis (meso) epoxide, the product of (Z)-3-hexene; the configuration is turned around.",
+      "display": "cis-2,3-diethyloxirane (meso)"
+     },
+     {
+      "choice": "CCC1OC1CC",
+      "family": "half-right",
+      "familyName": "Half right",
+      "missType": "concept",
+      "pull": "Right ring and right atoms, but the stereochemistry the reaction fixes is not shown; another choice shows it.",
+      "display": "2,3-diethyloxirane, no stereochemistry shown"
+     },
+     {
+      "choice": "CCC(O)C(O)CC",
+      "family": "other-conditions",
+      "familyName": "Other conditions",
+      "missType": "content",
+      "pull": "A diol comes from OsO4 or KMnO4 (syn), or from opening the epoxide with water and acid; one equivalent of mCPBA stops at the epoxide.",
+      "display": "hexane-3,4-diol, no stereochemistry shown"
+     },
+     {
+      "choice": "CC[C@H](O)[C@H](O)CC",
+      "family": "one-step-too-far",
+      "familyName": "One step too far",
+      "missType": "misread",
+      "pull": "This meso diol is what you get after the epoxide is opened by aqueous acid (anti dihydroxylation of the trans alkene); mCPBA alone does not open it.",
+      "display": "meso-hexane-3,4-diol"
+     }
+    ]
+   },
+   "key": {
+    "index": 4,
+    "text": "CC[C@H]1O[C@@H]1CC"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "numbers": "none: no arithmetic in this item",
+    "rdkit": "RDKit 2026.09.1: stem parses (C6H12); all 5 choice SMILES parse (C6H12O, C6H12O, C6H14O2, C6H14O2, C6H12O); stereo labels: CC/C=C/CC E; CC[C@@H]1O[C@@H]1CC S,R; CC[C@H](O)[C@H](O)CC S,R; CC[C@H]1O[C@@H]1CC R,R",
+    "picture": "Served drawings: stem trans alkene; the epoxide choice with both ethyls on wedges is cis (RDKit R,S, meso); the key, one wedge and one hash, is trans (RDKit R,R, chiral); cis and trans epoxides are diastereomers. The stereo diol choice (one OH wedge, one hash in the zigzag) is meso (RDKit R,S), the anti-dihydroxylation product of the trans alkene."
+   },
+   "bankCopy": [
+    {
+     "kind": "bank-copy",
+     "text": "the why ends \"Two-concept (stereospecific syn + trans recognition)\", an authoring note shown to students."
+    }
+   ],
+   "stemStyle": [
+    "Build heuristic: capitalized emphasis word (MAJOR). The stem asks the question twice (\"Predict the MAJOR product...\" then \"Which structure is the major product?\"); suggested: keep one."
+   ],
+   "notes": [
+    "The flat epoxide choice has the right ring and atoms with the stereochemistry left unshown; the explainer should say why the drawn-trans choice is the better answer (the reaction fixes trans, and only that choice shows it) rather than calling the flat one a different compound.",
+    "Only one enantiomer of the trans epoxide is drawn; mCPBA gives the racemic pair. Say so once."
+   ]
+  },
+  {
+   "qid": "fm:organic:oc-csbizj",
+   "servedAs": {
+    "bank": "full",
+    "mock": "FULL_1",
+    "section": "ochem",
+    "n": 24
+   },
+   "bankTopic": "The alpha carbon wakes up",
+   "difficulty": 1,
+   "stemHash": "2ded84c55a00e93aaa5d2b9f53679c758b788436",
+   "expert": {
+    "answer": "O=C1CCCCC1C(=O)OCC",
+    "display": "ethyl 2-oxocyclohexane-1-carboxylate",
+    "servedIndex": 0,
+    "confidence": "high",
+    "concept": "Dieckmann ring size follows the chain: a 1,7-diester (pimelate) closes a six-membered ring, a 1,6-diester (adipate) a five-membered one.",
+    "reasoning": [
+     "Find the alpha carbon (C2) and the other ester carbonyl (C7).",
+     "Count the ring: C2, C3, C4, C5, C6, C7 is six atoms.",
+     "Lose ethoxide from C7 and keep the ester on C2: ethyl 2-oxocyclohexane-1-carboxylate."
+    ],
+    "misconceptions": [
+     {
+      "choice": "CCOC(=O)CCCCC(=O)CC(=O)OCC",
+      "family": "other-conditions",
+      "familyName": "Other conditions",
+      "missType": "content",
+      "pull": "An open-chain beta-keto diester is the kind of product an intermolecular Claisen gives; with both esters on one chain, the ring closes.",
+      "display": "open-chain beta-keto diester (no ring)"
+     },
+     {
+      "choice": "O=C1CCCC1C(=O)OCC",
+      "family": "neighbor-fact",
+      "familyName": "Neighbor fact",
+      "missType": "content",
+      "pull": "The five-membered product belongs to diethyl adipate, one carbon shorter.",
+      "display": "ethyl 2-oxocyclopentane-1-carboxylate"
+     },
+     {
+      "choice": "O=C1CCCCCC1C(=O)OCC",
+      "family": "miscount",
+      "familyName": "Miscount",
+      "missType": "misread",
+      "pull": "Counts all seven chain carbons into the ring; the alpha carbon (C2) and C7 bound a six-membered ring, and C1 leaves as the ester group.",
+      "display": "ethyl 2-oxocycloheptane-1-carboxylate"
+     },
+     {
+      "choice": "OC1CCCCC1C(=O)OCC",
+      "family": "one-step-too-far",
+      "familyName": "One step too far",
+      "missType": "misread",
+      "pull": "Reducing the ketone to an alcohol needs a hydride such as NaBH4; acid workup only protonates the enolate.",
+      "display": "ethyl 2-hydroxycyclohexane-1-carboxylate"
+     }
+    ]
+   },
+   "key": {
+    "index": 0,
+    "text": "O=C1CCCCC1C(=O)OCC"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "numbers": "Ring count: C2 to C7 of the pimelate is 6 atoms. RDKit ring sizes: key 6, the other cyclic keto esters 5 and 7.",
+    "rdkit": "RDKit 2026.09.1: stem parses (C11H20O4); all 5 choice SMILES parse (C9H14O3, C12H20O5, C8H12O3, C10H16O3, C9H16O3)",
+    "picture": "Served drawings (SmilesDrawer, full.js settings) checked by eye: each depicts its SMILES; no stereocenter drawn."
+   },
+   "bankCopy": [
+    {
+     "kind": "bank-copy",
+     "text": "the why is only a distractor list (\"Distractors: 5-ring, 7-ring, acyclic, beta-hydroxy ester.\"); no reasoning for the key."
+    }
+   ]
+  },
+  {
+   "qid": "fm:organic:oc-1olhj21",
+   "servedAs": {
+    "bank": "full",
+    "mock": "FULL_1",
+    "section": "ochem",
+    "n": 25
+   },
+   "bankTopic": "Reading the machines: spectroscopy, lab and synthesis",
+   "difficulty": 1,
+   "stemHash": "a8578d690553d64e09beb1a9a1f0af0b7d173312",
+   "expert": {
+    "answer": "Aqueous HCl",
+    "servedIndex": 1,
+    "confidence": "high",
+    "concept": "Acid-base extraction moves a compound into water by charging it: protonating aniline (a base) gives the anilinium chloride salt, which is water soluble, while the neutral hydrocarbon stays in ether.",
+    "reasoning": [
+     "Name aniline's acid-base character: a weak base (conjugate acid pKa about 4.6).",
+     "To charge a base, add an acid: HCl turns aniline into anilinium chloride.",
+     "The salt moves to the water layer; the neutral impurity stays in the ether."
+    ],
+    "misconceptions": [
+     {
+      "choice": "Aqueous NaHCO3",
+      "family": "neighbor-fact",
+      "familyName": "Neighbor fact",
+      "missType": "content",
+      "pull": "Bicarbonate is the reagent for pulling a carboxylic acid out of ether; aniline stays neutral with a base."
+     },
+     {
+      "choice": "Brine",
+      "family": "neighbor-fact",
+      "familyName": "Neighbor fact",
+      "missType": "content",
+      "pull": "Brine pulls water out of the organic layer and breaks emulsions; it does not change aniline's charge."
+     },
+     {
+      "choice": "Anhydrous MgSO4",
+      "family": "neighbor-fact",
+      "familyName": "Neighbor fact",
+      "missType": "content",
+      "pull": "MgSO4 dries the organic layer at the end of a workup; it does not extract anything into water."
+     },
+     {
+      "choice": "Aqueous NaOH",
+      "family": "reversed",
+      "familyName": "Reversed",
+      "missType": "concept",
+      "pull": "A strong base deprotonates acids (phenols, carboxylic acids); a base needs the opposite, an acid, to become a salt."
+     }
+    ]
+   },
+   "key": {
+    "index": 1,
+    "text": "Aqueous HCl"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "numbers": "none: no arithmetic in this item",
+    "rdkit": "RDKit 2026.09.1: stem parses (C6H7N)",
+    "picture": "Served drawings (SmilesDrawer, full.js settings) checked by eye: each depicts its SMILES; no stereocenter drawn."
+   }
+  },
+  {
+   "qid": "fm:organic:oc-163l4so",
+   "servedAs": {
+    "bank": "full",
+    "mock": "FULL_1",
+    "section": "ochem",
+    "n": 26
+   },
+   "bankTopic": "The hungry carbon: aldehydes and ketones",
+   "difficulty": 2,
+   "stemHash": "3462fd0adadccea4d334436145bdbe82d3cea0bd",
+   "expert": {
+    "answer": "The aldehyde is reduced first because aldehydes are more electrophilic and less sterically hindered than ketones",
+    "servedIndex": 0,
+    "confidence": "high",
+    "concept": "With one equivalent of NaBH4 in the cold, the more reactive carbonyl reacts first: the aldehyde is more electrophilic and less crowded than the ketone.",
+    "reasoning": [
+     "Find both carbonyls: a ketone at C4 and an aldehyde at C1.",
+     "Rank them: the aldehyde has one carbon group (less donation, less crowding), the ketone two.",
+     "One equivalent at 0 C goes to the faster one: the aldehyde becomes the primary alcohol, 5-hydroxypentan-2-one."
+    ],
+    "misconceptions": [
+     {
+      "choice": "The ketone is reduced first, because the two alkyl groups on a ketone make its carbonyl carbon more electrophilic than an aldehyde carbon",
+      "family": "reversed",
+      "familyName": "Reversed",
+      "missType": "concept",
+      "pull": "Alkyl groups donate electron density, so a ketone carbonyl is less electrophilic; the order runs the other way."
+     },
+     {
+      "choice": "The aldehyde is reduced first because its carbonyl carbon is the more sterically hindered of the two and binds borohydride more tightly",
+      "family": "half-right",
+      "familyName": "Half right",
+      "missType": "concept",
+      "pull": "Right carbonyl, but the reason is turned around: the aldehyde is the less hindered one."
+     },
+     {
+      "choice": "Neither is reduced; NaBH4 only reduces esters",
+      "family": "reversed",
+      "familyName": "Reversed",
+      "missType": "concept",
+      "pull": "NaBH4 reduces aldehydes and ketones and is too mild for most esters; the selectivity is turned around."
+     },
+     {
+      "choice": "Both are reduced equally; NaBH4 shows no selectivity",
+      "family": "assumed-equal",
+      "familyName": "Assumed equal",
+      "missType": "concept",
+      "pull": "NaBH4 does tell them apart: the aldehyde reacts faster, which is why one equivalent in the cold is used."
+     }
+    ]
+   },
+   "key": {
+    "index": 0,
+    "text": "The aldehyde is reduced first because aldehydes are more electrophilic and less sterically hindered than ketones"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "numbers": "none: no arithmetic in this item",
+    "rdkit": "RDKit 2026.09.1: stem parses (C5H8O2)",
+    "picture": "Served drawings (SmilesDrawer, full.js settings) checked by eye: each depicts its SMILES; no stereocenter drawn."
+   }
+  },
+  {
+   "qid": "fm:organic:oc-9wwa4n",
+   "servedAs": {
+    "bank": "full",
+    "mock": "FULL_1",
+    "section": "ochem",
+    "n": 27
+   },
+   "bankTopic": "The center of the universe: alkenes",
+   "difficulty": 2,
+   "stemHash": "ed11af1304e640e9c495ccf5dcc6a52059753c1e",
+   "expert": {
+    "answer": "Two ketones (a diketone)",
+    "servedIndex": 4,
+    "confidence": "high",
+    "concept": "Ozonolysis with a reductive workup turns each alkene carbon into a C=O: a carbon carrying two carbon groups becomes a ketone, a carbon carrying an H becomes an aldehyde.",
+    "reasoning": [
+     "Look at the alkene carbons of 1,2-dimethylcyclopentene: each carries a methyl and a ring carbon, and no H.",
+     "Cut the C=C and put =O on each carbon; the ring opens into one chain.",
+     "Both carbons have two carbon groups, so both become ketones: heptane-2,6-dione."
+    ],
+    "misconceptions": [
+     {
+      "choice": "Two aldehydes (a dialdehyde)",
+      "family": "neighbor-fact",
+      "familyName": "Neighbor fact",
+      "missType": "content",
+      "pull": "True of plain cyclopentene, whose alkene carbons each carry an H; here the methyls take those places."
+     },
+     {
+      "choice": "Two carboxylic acids (a diacid)",
+      "family": "other-conditions",
+      "familyName": "Other conditions",
+      "missType": "content",
+      "pull": "Acids come from carbons with an H under an oxidative workup (H2O2); Zn/AcOH is reductive, and these carbons have no H anyway."
+     },
+     {
+      "choice": "One ketone and one carboxylic acid",
+      "family": "other-conditions",
+      "familyName": "Other conditions",
+      "missType": "content",
+      "pull": "The product of 1-methylcyclopentene with an oxidative workup; this alkene has two methyls and the workup is reductive."
+     },
+     {
+      "choice": "One ketone and one aldehyde",
+      "family": "neighbor-fact",
+      "familyName": "Neighbor fact",
+      "missType": "content",
+      "pull": "True of 1-methylcyclopentene, where one alkene carbon carries an H; here both carry a methyl."
+     }
+    ]
+   },
+   "key": {
+    "index": 4,
+    "text": "Two ketones (a diketone)"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "numbers": "Carbon count: C7H12 alkene to C7H12O2 diketone (heptane-2,6-dione); each alkene carbon carries two carbon groups and no H.",
+    "rdkit": "RDKit 2026.09.1: stem parses (C7H12)",
+    "picture": "Served drawings (SmilesDrawer, full.js settings) checked by eye: each depicts its SMILES; no stereocenter drawn."
+   }
+  },
+  {
+   "qid": "fm:organic:oc-1oitbuh",
+   "servedAs": {
+    "bank": "full",
+    "mock": "FULL_1",
+    "section": "ochem",
+    "n": 28
+   },
+   "bankTopic": "The center of the universe: alkenes",
+   "difficulty": 1,
+   "stemHash": "eec0345aaf840c93a913dc16c6994070f5dc719c",
+   "expert": {
+    "answer": "Cyclohexane",
+    "servedIndex": 3,
+    "confidence": "high",
+    "concept": "H2 with Pd adds two H atoms across the C=C (syn); an isolated alkene becomes the alkane and nothing else is added.",
+    "reasoning": [
+     "Read the reagent: H2 and a metal catalyst add hydrogen, nothing else.",
+     "Add one H to each alkene carbon.",
+     "The C=C is gone and no O or Br has entered: cyclohexane."
+    ],
+    "misconceptions": [
+     {
+      "choice": "Cyclohexanol",
+      "family": "other-conditions",
+      "familyName": "Other conditions",
+      "missType": "content",
+      "pull": "Adding H and OH is hydration (H2O with acid, or hydroboration); this flask has only H2."
+     },
+     {
+      "choice": "Benzene",
+      "family": "reversed",
+      "familyName": "Reversed",
+      "missType": "concept",
+      "pull": "Benzene would mean removing hydrogen (dehydrogenation); hydrogenation adds it."
+     },
+     {
+      "choice": "1,2-dibromocyclohexane",
+      "family": "other-conditions",
+      "familyName": "Other conditions",
+      "missType": "content",
+      "pull": "Two Br atoms across the C=C is Br2 addition, a different reagent."
+     },
+     {
+      "choice": "Cyclohexanone",
+      "family": "other-conditions",
+      "familyName": "Other conditions",
+      "missType": "content",
+      "pull": "A ketone needs oxygen in (hydration, then oxidation); H2/Pd brings none."
+     }
+    ]
+   },
+   "key": {
+    "index": 3,
+    "text": "Cyclohexane"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "numbers": "none: no arithmetic in this item",
+    "rdkit": "RDKit 2026.09.1: stem parses (C6H10)",
+    "picture": "Served drawings (SmilesDrawer, full.js settings) checked by eye: each depicts its SMILES; no stereocenter drawn."
+   }
+  },
+  {
+   "qid": "fm:organic:oc-1rhxjv",
+   "servedAs": {
+    "bank": "full",
+    "mock": "FULL_1",
+    "section": "ochem",
+    "n": 29
+   },
+   "bankTopic": "Pay twice, plus the acidic H: alkynes",
+   "difficulty": 2,
+   "stemHash": "379bdd9c7bb3d424e9e8c2849122a5831aeb43e8",
+   "expert": {
+    "answer": "CC/C=C\\CCCC",
+    "display": "(Z)-oct-3-ene (cis)",
+    "servedIndex": 3,
+    "confidence": "high",
+    "concept": "A terminal alkyne C-H is acidic (pKa about 25): NaNH2 makes the acetylide, which does SN2 on ethyl bromide to add two carbons; Lindlar then adds H2 syn and stops at the cis alkene.",
+    "reasoning": [
+     "Deprotonate the terminal C-H with NaNH2: the acetylide anion.",
+     "SN2 on CH3CH2Br adds two carbons: CH3CH2-C-triple-C-CH2CH2CH2CH3, oct-3-yne.",
+     "Lindlar's poisoned catalyst adds both H to one face and stops at the alkene: (Z)-oct-3-ene, the cis isomer."
+    ],
+    "misconceptions": [
+     {
+      "choice": "C/C=C\\CCCCC",
+      "family": "miscount",
+      "familyName": "Miscount",
+      "missType": "misread",
+      "pull": "A cis alkene, but at C2-C3: the two carbons from ethyl bromide were counted as one, moving the double bond down the chain.",
+      "display": "(Z)-oct-2-ene"
+     },
+     {
+      "choice": "CCCCCCCC",
+      "family": "one-step-too-far",
+      "familyName": "One step too far",
+      "missType": "misread",
+      "pull": "Octane is what plain H2 with Pd/C gives; Lindlar's catalyst is poisoned so it stops at the alkene.",
+      "display": "octane"
+     },
+     {
+      "choice": "CCC#CCCCC",
+      "family": "one-step-short",
+      "familyName": "One step short",
+      "missType": "concept",
+      "pull": "Oct-3-yne is the product after step 2; step 3 has not been applied.",
+      "display": "oct-3-yne"
+     },
+     {
+      "choice": "CC/C=C/CCCC",
+      "family": "other-conditions",
+      "familyName": "Other conditions",
+      "missType": "content",
+      "pull": "The trans alkene comes from Na in liquid NH3 (dissolving metal reduction); Lindlar gives cis.",
+      "display": "(E)-oct-3-ene (trans)"
+     }
+    ]
+   },
+   "key": {
+    "index": 3,
+    "text": "CC/C=C\\CCCC"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "numbers": "Carbon count: 6 (hexyne) + 2 (ethyl) = 8; the triple bond, then the C=C, sits between C3 and C4 counted from the ethyl end.",
+    "rdkit": "RDKit 2026.09.1: stem parses (C6H10); all 5 choice SMILES parse (C8H16, C8H18, C8H14, C8H16, C8H16); stereo labels: C/C=C\\CCCCC Z; CC/C=C\\CCCC Z; CC/C=C/CCCC E",
+    "picture": "Served drawings: the key is drawn cis and the trans choice trans, matching RDKit (Z and E for oct-3-ene); the 2-ene choice is drawn cis (RDKit Z)."
+   },
+   "bankCopy": [
+    {
+     "kind": "letter-cite",
+     "text": "the why uses served indexes that point elsewhere: \"[3] is the alkyne\" (index 3 is the key; the alkyne is index 2), \"[4] is cis-2-octene\" (index 4 is the trans 3-ene; cis-2-octene is index 0); \"wrong position\" uses an excluded word."
+    }
+   ]
+  },
+  {
+   "qid": "fm:organic:oc-y8rsnv",
+   "servedAs": {
+    "bank": "full",
+    "mock": "FULL_1",
+    "section": "ochem",
+    "n": 30
+   },
+   "bankTopic": "The reactivity ladder: acid derivatives",
+   "difficulty": 2,
+   "stemHash": "ca7a37dc5bc33fd98c7521ddd2180ced333d6d2b",
+   "expert": {
+    "answer": "NC[C@@H](C)c1ccccc1",
+    "display": "(S)-2-phenylpropan-1-amine (methyl kept on the wedge)",
+    "servedIndex": 0,
+    "confidence": "high",
+    "concept": "LiAlH4 reduces an amide all the way to an amine (C=O becomes CH2, the N stays); no bond to the stereocenter breaks, so its arrangement is kept, and the label stays S because CH2NH2 still outranks phenyl.",
+    "reasoning": [
+     "Name what LiAlH4 does to a primary amide: C(=O)NH2 becomes CH2NH2.",
+     "The stereocenter's four bonds are untouched, so the drawing keeps the methyl on the same wedge.",
+     "Check the label: CH2NH2 (N,H,H) beats phenyl (C,C,C) at N, so the priority order is unchanged and the product is (S)-2-phenylpropan-1-amine (RDKit: S)."
+    ],
+    "misconceptions": [
+     {
+      "choice": "NC[C@H](C)c1ccccc1",
+      "family": "reversed",
+      "familyName": "Reversed",
+      "missType": "concept",
+      "pull": "The mirror image (R): nothing in the reaction touches the stereocenter, so nothing inverts.",
+      "display": "(R)-2-phenylpropan-1-amine (methyl on a dash)"
+     },
+     {
+      "choice": "NC[C@@H](C)c1ccccc1C",
+      "family": "miscount",
+      "familyName": "Miscount",
+      "missType": "misread",
+      "pull": "Adds a methyl to the ring; no reagent here brings a carbon.",
+      "display": "amine with an extra ring methyl"
+     },
+     {
+      "choice": "O=C[C@@H](C)c1ccccc1",
+      "family": "one-step-short",
+      "familyName": "One step short",
+      "missType": "concept",
+      "pull": "An aldehyde is a partial reduction (DIBAL-H on an ester or nitrile); LiAlH4 on an amide goes all the way to the amine.",
+      "display": "(S)-2-phenylpropanal"
+     },
+     {
+      "choice": "OC[C@@H](C)c1ccccc1",
+      "family": "neighbor-fact",
+      "familyName": "Neighbor fact",
+      "missType": "content",
+      "pull": "LiAlH4 on an ester or acid gives a primary alcohol; an amide keeps its nitrogen and gives an amine.",
+      "display": "(S)-2-phenylpropan-1-ol"
+     }
+    ]
+   },
+   "key": {
+    "index": 0,
+    "text": "NC[C@@H](C)c1ccccc1"
+   },
+   "keyAgrees": true,
+   "checks": {
+    "numbers": "none: no arithmetic in this item",
+    "rdkit": "RDKit 2026.09.1: stem parses (C9H11NO); all 5 choice SMILES parse (C9H13N, C9H13N, C10H15N, C9H10O, C9H12O); stereo labels: O=C(N)[C@@H](C)c1ccccc1 S; NC[C@@H](C)c1ccccc1 S; NC[C@H](C)c1ccccc1 R; NC[C@@H](C)c1ccccc1C S; O=C[C@@H](C)c1ccccc1 S; OC[C@@H](C)c1ccccc1 S",
+    "picture": "Served drawings read with the swap method: stem has CONH2 up right, phenyl left, methyl on a wedge, H implied back; 1 to 2 to 3 runs counterclockwise, so S, matching RDKit. The key keeps the methyl wedge (S, RDKit S); the R choice puts methyl on a hash (RDKit: enantiomer of the key). The planning audit had listed this item as mirrored with explicit hydrogens on; after 5c5ec38 the recheck (docs/explainers/picture-disputes.json) and this reading agree: every picture depicts its SMILES."
+   },
+   "bankCopy": [
+    {
+     "kind": "letter-cite",
+     "text": "\"the last option adds a ring methyl\" (the last served choice is the alcohol; the ring-methyl amine is index 2); \"wrongly\" and \"incorrect\" use excluded words."
+    }
+   ],
+   "stemStyle": [
+    "The stem points at the stereocenter (\"The stereocenter is at the carbon alpha to the carbonyl\"); a hint, flag only."
+   ]
+  }
+ ]
+}

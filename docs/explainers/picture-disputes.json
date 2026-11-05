@@ -1,0 +1,475 @@
+{
+ "schema": "ace.picture-disputes/1",
+ "generated": "2026-10-30T07:23:00.029Z",
+ "copiedFrom": "docs/release-2026-10-30/questions/picture-disputes.json (the planning audit). Coach only: never published.",
+ "method": "Every stereo SMILES a student page draws (full mocks, Prometric forms, pool, OChem 1000, Ace bank, 2026 set) was drawn with SmilesDrawer 2.4.2 (shared/smiles-drawer.min.js). The configuration each picture shows was read from its 2D positions and wedges (signed volume; the reader agrees with RDKit reading the same drawing on all 25 true R/S centers of a 20-molecule calibration set) and compared with RDKit CIP on the SMILES. Keys were not touched.",
+ "summary": {
+  "centers": 275,
+  "mirroredDefault": 50,
+  "moleculesDefault": 45,
+  "mirroredExplicitHydrogensOff": 5,
+  "moleculesExplicitHydrogensOff": 3,
+  "note": "Default (explicit hydrogens on) is what tools/mock/full.js, prometric-mock.html and games/play.html use; tools/ochem/tree/draw.js drawSmiles turns explicit hydrogens off."
+ },
+ "status": "The full-mock pictures are fixed by commit 5c5ec38 (tools/mock/full.js, prometric-mock.html and games/play.html draw with explicitHydrogens: false). Keys were never changed.",
+ "recheck": {
+  "date": "2026-10-30",
+  "by": "explainer build P0 (scripts/explainers/render-check.mjs method)",
+  "method": "Each picture was drawn with SmilesDrawer 2.4.2 using the exact settings of the page that serves it, then rebuilt in RDKit from the drawn 2D positions and wedges (narrow end as SmilesDrawer draws it; undrawn H vertices left out) with bond orders from the SMILES. RDKit assigned the configuration from the drawing, and the canonical isomeric SMILES of the drawing was compared with the source SMILES (scripts/explainers/rdkit-check.py, job \"drawn\"). No CIP ranking is needed for the comparison.",
+  "fullMocks": "tools/mock/full.js settings. After 5c5ec38 (explicit hydrogens off): all 18 listed pictures depict their SMILES. Before it (explicit hydrogens on): 3 of the 18 depict the mirror image (organic:oc-1fquwbw choices 0 and 1, the FULL_2 OChem 1 products; organic:oc-1jzd8nw stem); the other 15 depict their SMILES.",
+  "ochem1000": "games/play.html settings after 5c5ec38: all 62 listed pictures depict their SMILES. tools/ochem/tree/draw.js drawSmiles settings (the Tree and the Summit): all 62 depict their SMILES. Before the fix (play.html, explicit hydrogens on): 32 of the 62 depict the mirror image.",
+  "explicitHydrogensOff": "The 5 centers in 3 molecules listed below depict their SMILES with the play.html and the Tree settings. The planning audit read them as mirrored because SmilesDrawer keeps an undrawn H vertex at each stereocenter when explicit hydrogens are off, parked at an arbitrary point with its own wedge; the audit reader used that vertex. Hand checks agree with the RDKit re-read: methyl 2-methoxypropanoate (COC(=O)[C@@H](C)OC) is drawn R, as its SMILES says.",
+  "readerNote": "Two pictures the audit listed for the full mocks were also checked by hand with the swap method: NC[C@@H](C)c1ccccc1 (organic:oc-y8rsnv choice 0) is drawn S and COC(=O)[C@H](C)c1ccccc1 (organic:oc-1khayk8 choice 0) is drawn R, as their SMILES say. Explainer-standard.md 8.2 and production-plan.md section 7 repeat the audit counts (50 centers; FULL_4 OChem 9 drawn mirrored); by this re-read only FULL_2 OChem 1 and FULL_3 OChem 5 were mirrored before the fix. Thomas to note; nothing student-facing depends on it after 5c5ec38."
+ },
+ "fullMocks": [
+  {
+   "qid": "fm:organic:oc-y8rsnv",
+   "servedAs": "FULL_1, ochem question 30 (Natural Sciences 100)",
+   "stem": "(S)-2-phenylpropanamide is treated with LiAlH4, then aqueous workup. The stereocenter is at the carbon alpha to the carbonyl. What is the major organic product,",
+   "keyIndex": 0,
+   "pictures": [
+    {
+     "part": "stem",
+     "smiles": "O=C(N)[C@@H](C)c1ccccc1",
+     "center": "C3",
+     "smilesSays": "S",
+     "pictureShows": "R"
+    },
+    {
+     "part": "choice 0",
+     "smiles": "NC[C@@H](C)c1ccccc1",
+     "center": "C2",
+     "smilesSays": "S",
+     "pictureShows": "R"
+    },
+    {
+     "part": "choice 1",
+     "smiles": "NC[C@H](C)c1ccccc1",
+     "center": "C2",
+     "smilesSays": "R",
+     "pictureShows": "S"
+    },
+    {
+     "part": "choice 2",
+     "smiles": "NC[C@@H](C)c1ccccc1C",
+     "center": "C2",
+     "smilesSays": "S",
+     "pictureShows": "R"
+    },
+    {
+     "part": "choice 3",
+     "smiles": "O=C[C@@H](C)c1ccccc1",
+     "center": "C2",
+     "smilesSays": "S",
+     "pictureShows": "R"
+    },
+    {
+     "part": "choice 4",
+     "smiles": "OC[C@@H](C)c1ccccc1",
+     "center": "C2",
+     "smilesSays": "S",
+     "pictureShows": "R"
+    }
+   ],
+   "note": "The stem text names (S) but the stem and every choice are drawn mirrored; the relation between them survives, the stated configuration does not.",
+   "status": "fixed",
+   "keyChanged": false,
+   "fixedBy": "5c5ec38",
+   "fixedNote": "tools/mock/full.js draws with explicitHydrogens: false since 5c5ec38. Re-read 2026-10-30 with its settings: every listed picture depicts its SMILES.",
+   "recheck": {
+    "afterFix": "stem:ok, choice 0:ok, choice 1:ok, choice 2:ok, choice 3:ok, choice 4:ok",
+    "beforeFix": "stem:ok, choice 0:ok, choice 1:ok, choice 2:ok, choice 3:ok, choice 4:ok"
+   }
+  },
+  {
+   "qid": "fm:organic:oc-1fquwbw",
+   "servedAs": "FULL_2, ochem question 1 (Natural Sciences 71)",
+   "stem": "(R)-2-bromobutane (shown) is treated with sodium cyanide (NaCN) in DMSO. Which structure is the major product?",
+   "keyIndex": 0,
+   "pictures": [
+    {
+     "part": "choice 0",
+     "smiles": "C[C@H](C#N)CC",
+     "center": "C1",
+     "smilesSays": "S",
+     "pictureShows": "R"
+    },
+    {
+     "part": "choice 1",
+     "smiles": "C[C@@H](C#N)CC",
+     "center": "C1",
+     "smilesSays": "R",
+     "pictureShows": "S"
+    }
+   ],
+   "note": "The stem is drawn right, but both product pictures are mirrored: the keyed SN2 product (S) is drawn as R, and the R choice is drawn as S. A student who applies inversion to the pictures picks the R choice.",
+   "status": "fixed",
+   "keyChanged": false,
+   "fixedBy": "5c5ec38",
+   "fixedNote": "tools/mock/full.js draws with explicitHydrogens: false since 5c5ec38. Re-read 2026-10-30 with its settings: every listed picture depicts its SMILES.",
+   "recheck": {
+    "afterFix": "choice 0:ok, choice 1:ok",
+    "beforeFix": "choice 0:MIRRORED, choice 1:MIRRORED"
+   }
+  },
+  {
+   "qid": "fm:organic:oc-1jzd8nw",
+   "servedAs": "FULL_3, ochem question 5 (Natural Sciences 75)",
+   "stem": "Menthyl chloride (shown) undergoes E2 with sodium ethoxide. The leaving Cl is equatorial in the stable chair, so the ring must flip to an all-axial chair before",
+   "keyIndex": 4,
+   "pictures": [
+    {
+     "part": "stem",
+     "smiles": "CC1CC[C@@H](C(C)C)[C@@H](Cl)C1",
+     "center": "C4",
+     "smilesSays": "S",
+     "pictureShows": "R"
+    }
+   ],
+   "note": "One of the three stereocenters of menthyl chloride is drawn mirrored, so the stem picture shows a diastereomer; the E2 outcome the item tests depends on that geometry.",
+   "status": "fixed",
+   "keyChanged": false,
+   "fixedBy": "5c5ec38",
+   "fixedNote": "tools/mock/full.js draws with explicitHydrogens: false since 5c5ec38. Re-read 2026-10-30 with its settings: every listed picture depicts its SMILES.",
+   "recheck": {
+    "afterFix": "stem:ok",
+    "beforeFix": "stem:MIRRORED"
+   }
+  },
+  {
+   "qid": "fm:organic:oc-75v5a0",
+   "servedAs": "FULL_3, ochem question 18 (Natural Sciences 88)",
+   "stem": "(S)-2-phenylpropanoyl chloride (drawn) is treated with methanol. The bond to the stereocenter is never broken. What is the major product?",
+   "keyIndex": 0,
+   "pictures": [
+    {
+     "part": "stem",
+     "smiles": "O=C(Cl)[C@@H](C)c1ccccc1",
+     "center": "C3",
+     "smilesSays": "S",
+     "pictureShows": "R"
+    },
+    {
+     "part": "choice 0",
+     "smiles": "COC(=O)[C@@H](C)c1ccccc1",
+     "center": "C4",
+     "smilesSays": "S",
+     "pictureShows": "R"
+    },
+    {
+     "part": "choice 2",
+     "smiles": "COC(=O)[C@H](C)c1ccccc1",
+     "center": "C4",
+     "smilesSays": "R",
+     "pictureShows": "S"
+    },
+    {
+     "part": "choice 3",
+     "smiles": "CCOC(=O)[C@@H](C)c1ccccc1",
+     "center": "C5",
+     "smilesSays": "S",
+     "pictureShows": "R"
+    },
+    {
+     "part": "choice 4",
+     "smiles": "OC(=O)[C@@H](C)c1ccccc1",
+     "center": "C3",
+     "smilesSays": "S",
+     "pictureShows": "R"
+    }
+   ],
+   "note": "The stem text names (S) but the stem and the choices are drawn mirrored; the relation survives, the stated configuration does not.",
+   "status": "fixed",
+   "keyChanged": false,
+   "fixedBy": "5c5ec38",
+   "fixedNote": "tools/mock/full.js draws with explicitHydrogens: false since 5c5ec38. Re-read 2026-10-30 with its settings: every listed picture depicts its SMILES.",
+   "recheck": {
+    "afterFix": "stem:ok, choice 0:ok, choice 2:ok, choice 3:ok, choice 4:ok",
+    "beforeFix": "stem:ok, choice 0:ok, choice 2:ok, choice 3:ok, choice 4:ok"
+   }
+  },
+  {
+   "qid": "fm:organic:oc-1khayk8",
+   "servedAs": "FULL_4, ochem question 9 (Natural Sciences 79)",
+   "stem": "A single enantiomer of 2-phenylpropanoic acid (stereocenter shown) is heated with methanol and catalytic H2SO4. Which structure is the major product, accounting",
+   "keyIndex": 2,
+   "pictures": [
+    {
+     "part": "choice 2",
+     "smiles": "COC(=O)[C@@H](C)c1ccccc1",
+     "center": "C4",
+     "smilesSays": "S",
+     "pictureShows": "R"
+    },
+    {
+     "part": "choice 0",
+     "smiles": "COC(=O)[C@H](C)c1ccccc1",
+     "center": "C4",
+     "smilesSays": "R",
+     "pictureShows": "S"
+    },
+    {
+     "part": "choice 4",
+     "smiles": "CCOC(=O)[C@@H](C)c1ccccc1",
+     "center": "C5",
+     "smilesSays": "S",
+     "pictureShows": "R"
+    }
+   ],
+   "note": "The stem acid is drawn right, but the keyed retention product is drawn as its mirror image and the inverted choice is drawn as the retention product. A student who reasons from the pictures picks the inverted choice.",
+   "status": "fixed",
+   "keyChanged": false,
+   "fixedBy": "5c5ec38",
+   "fixedNote": "tools/mock/full.js draws with explicitHydrogens: false since 5c5ec38. Re-read 2026-10-30 with its settings: every listed picture depicts its SMILES.",
+   "recheck": {
+    "afterFix": "choice 2:ok, choice 0:ok, choice 4:ok",
+    "beforeFix": "choice 2:ok, choice 0:ok, choice 4:ok"
+   }
+  },
+  {
+   "qid": "fm:organic:oc-1iyt40m",
+   "servedAs": "FULL_4, ochem question 1 (Natural Sciences 71)",
+   "stem": "Optically pure (R)-3-phenylbutan-2-one (shown) is stirred in aqueous NaOH and then re-isolated. The alpha carbon bearing the phenyl group is the stereocenter. W",
+   "keyIndex": 2,
+   "pictures": [
+    {
+     "part": "stem",
+     "smiles": "O=C(C)[C@@H](C)c1ccccc1",
+     "center": "C3",
+     "smilesSays": "S",
+     "pictureShows": "R"
+    }
+   ],
+   "note": "The stem text names (R) but the stem is drawn as S. The key (racemization) does not depend on it.",
+   "status": "fixed",
+   "keyChanged": false,
+   "fixedBy": "5c5ec38",
+   "fixedNote": "tools/mock/full.js draws with explicitHydrogens: false since 5c5ec38. Re-read 2026-10-30 with its settings: every listed picture depicts its SMILES.",
+   "recheck": {
+    "afterFix": "stem:ok",
+    "beforeFix": "stem:ok"
+   }
+  }
+ ],
+ "ochem1000": [
+  {
+   "qid": "odb:592",
+   "pictures": [
+    "stem: O=C(N)[C@@H](C)c1ccccc1 C3 SMILES S, picture R",
+    "choice 0: NC[C@@H](C)c1ccccc1 C2 SMILES S, picture R",
+    "choice 3: NC[C@H](C)c1ccccc1 C2 SMILES R, picture S",
+    "choice 4: NC[C@@H](C)c1ccccc1C C2 SMILES S, picture R",
+    "choice 2: O=C[C@@H](C)c1ccccc1 C2 SMILES S, picture R",
+    "choice 1: OC[C@@H](C)c1ccccc1 C2 SMILES S, picture R"
+   ]
+  },
+  {
+   "qid": "odb:10",
+   "pictures": [
+    "choice 0: C[C@H](C#N)CC C1 SMILES S, picture R",
+    "choice 1: C[C@@H](C#N)CC C1 SMILES R, picture S"
+   ]
+  },
+  {
+   "qid": "odb:568",
+   "pictures": [
+    "stem: O=C(Cl)[C@@H](C)c1ccccc1 C3 SMILES S, picture R",
+    "choice 0: COC(=O)[C@@H](C)c1ccccc1 C4 SMILES S, picture R",
+    "choice 3: COC(=O)[C@H](C)c1ccccc1 C4 SMILES R, picture S",
+    "choice 4: CCOC(=O)[C@@H](C)c1ccccc1 C5 SMILES S, picture R",
+    "choice 1: OC(=O)[C@@H](C)c1ccccc1 C3 SMILES S, picture R"
+   ]
+  },
+  {
+   "qid": "odb:543",
+   "pictures": [
+    "choice 2: COC(=O)[C@@H](C)c1ccccc1 C4 SMILES S, picture R",
+    "choice 0: COC(=O)[C@H](C)c1ccccc1 C4 SMILES R, picture S",
+    "choice 4: CCOC(=O)[C@@H](C)c1ccccc1 C5 SMILES S, picture R"
+   ]
+  },
+  {
+   "qid": "odb:555",
+   "pictures": [
+    "stem: COC(=O)[C@@H](C)c1ccccc1 C4 SMILES S, picture R",
+    "choice 4: COC(=O)[C@@H](C)c1ccccc1 C4 SMILES S, picture R",
+    "choice 2: CCOC(=O)[C@@H](C)c1ccccc1 C5 SMILES S, picture R",
+    "choice 0: CCOC(=O)[C@@H](CC)c1ccccc1 C5 SMILES S, picture R",
+    "choice 1: CCOC(=O)[C@H](C)c1ccccc1 C5 SMILES R, picture S"
+   ]
+  },
+  {
+   "qid": "odb:581",
+   "pictures": [
+    "choice 0: COC(=O)[C@H](C)c1ccccc1 C4 SMILES R, picture S",
+    "choice 1: CNC(=O)[C@@H](C)c1ccccc1 C4 SMILES S, picture R",
+    "choice 2: CNC(=O)[C@H](C)c1ccccc1 C4 SMILES R, picture S",
+    "choice 3: CNC[C@H](C)c1ccccc1 C3 SMILES R, picture S"
+   ]
+  },
+  {
+   "qid": "odb:491",
+   "pictures": [
+    "stem: O=C(C)[C@@H](C)c1ccccc1 C3 SMILES S, picture R"
+   ]
+  },
+  {
+   "qid": "odb:2",
+   "pictures": [
+    "choice 0: C=N[C@H](C)CCCCCC C2 SMILES R, picture S"
+   ]
+  },
+  {
+   "qid": "odb:4",
+   "pictures": [
+    "stem: C[C@H](Br)c1ccccc1 C1 SMILES S, picture R",
+    "choice 1: C[C@H](O)c1ccccc1 C1 SMILES S, picture R",
+    "choice 4: C[C@@H](O)c1ccccc1 C1 SMILES R, picture S"
+   ]
+  },
+  {
+   "qid": "odb:20",
+   "pictures": [
+    "choice 2: C[C@H](O)c1ccccc1 C1 SMILES S, picture R",
+    "choice 0: C[C@@H](O)c1ccccc1 C1 SMILES R, picture S",
+    "stem: C[C@@H](Cl)c1ccccc1 C1 SMILES R, picture S"
+   ]
+  },
+  {
+   "qid": "odb:316",
+   "pictures": [
+    "stem: C[C@H](O)c1ccccc1 C1 SMILES S, picture R",
+    "choice 3: C[C@H](O)c1ccccc1 C1 SMILES S, picture R"
+   ]
+  },
+  {
+   "qid": "odb:355",
+   "pictures": [
+    "stem: C[C@H](O)c1ccccc1 C1 SMILES S, picture R",
+    "choice 3: C[C@@H](Cl)c1ccccc1 C1 SMILES R, picture S",
+    "choice 0: C[C@@H](Br)c1ccccc1 C1 SMILES R, picture S",
+    "choice 1: C[C@H](Cl)c1ccccc1 C1 SMILES S, picture R"
+   ]
+  },
+  {
+   "qid": "odb:192",
+   "pictures": [
+    "choice 2: O[C@@H](c1ccccc1)[C@H](O)c1ccccc1 C1 SMILES S, picture R",
+    "choice 2: O[C@@H](c1ccccc1)[C@H](O)c1ccccc1 C8 SMILES R, picture S",
+    "choice 4: O[C@@H](c1ccccc1)[C@@H](O)c1ccccc1 C1 SMILES S, picture R",
+    "choice 4: O[C@@H](c1ccccc1)[C@@H](O)c1ccccc1 C8 SMILES S, picture R"
+   ]
+  },
+  {
+   "qid": "odb:352",
+   "pictures": [
+    "choice 1: CCC[C@H](C)OS(=O)(=O)c1ccc(C)cc1 C3 SMILES S, picture R",
+    "choice 4: CCC[C@@H](C)OS(=O)(=O)c1ccc(C)cc1 C3 SMILES R, picture S"
+   ]
+  },
+  {
+   "qid": "odb:553",
+   "pictures": [
+    "choice 2: CO[C@H](C)C(=O)O C2 SMILES R, picture S"
+   ]
+  },
+  {
+   "qid": "odb:559",
+   "pictures": [
+    "stem: O[C@@H](c1ccccc1)C(=O)O C1 SMILES S, picture R",
+    "choice 0: COC(=O)[C@H](O)c1ccccc1 C4 SMILES R, picture S",
+    "choice 1: CCOC(=O)[C@@H](O)c1ccccc1 C5 SMILES S, picture R",
+    "choice 2: COC(=O)[C@@H](O)c1ccccc1 C4 SMILES S, picture R",
+    "choice 4: CC(=O)OC(=O)[C@@H](O)c1ccccc1 C6 SMILES S, picture R"
+   ]
+  },
+  {
+   "qid": "odb:794",
+   "pictures": [
+    "stem: N[C@@H](C)C(=O)O C1 SMILES S, picture R"
+   ]
+  },
+  {
+   "qid": "odb:814",
+   "pictures": [
+    "stem: CCC[C@@H](C)CC C3 SMILES S, picture R"
+   ]
+  },
+  {
+   "qid": "odb:820",
+   "pictures": [
+    "choice 4: O[C@@H](c1ccccc1)CC C1 SMILES R, picture S"
+   ]
+  },
+  {
+   "qid": "odb:1086",
+   "pictures": [
+    "choice 1: O=C1CC[C@@H](c2ccccc2)[C@H](SCC)C1 C4 SMILES S, picture R",
+    "choice 4: O=C1CC[C@@H](c2ccccc2)[C@@H](SCC)C1 C4 SMILES S, picture R"
+   ]
+  },
+  {
+   "qid": "odb:1134",
+   "pictures": [
+    "stem: C[C@@H](Br)[C@H](C)c1ccccc1 C1 SMILES R, picture S",
+    "stem: C[C@@H](Br)[C@H](C)c1ccccc1 C3 SMILES R, picture S"
+   ]
+  },
+  {
+   "qid": "odb:1160",
+   "pictures": [
+    "choice 0: C[C@H]1[C@@H](C)C=C1 C1 SMILES R, picture S",
+    "choice 0: C[C@H]1[C@@H](C)C=C1 C2 SMILES S, picture R",
+    "choice 3: C[C@H]1[C@H](C)C=C1 C1 SMILES R, picture S",
+    "choice 3: C[C@H]1[C@H](C)C=C1 C2 SMILES R, picture S"
+   ]
+  }
+ ],
+ "explicitHydrogensOff": [
+  {
+   "smiles": "COC(=O)[C@@H](C)OC",
+   "center": "C4",
+   "smilesSays": "R",
+   "pictureShows": "S",
+   "banks": [
+    "ochem-1000"
+   ]
+  },
+  {
+   "smiles": "C[C@H]1[C@@H](C)C=C1",
+   "center": "C1",
+   "smilesSays": "R",
+   "pictureShows": "S",
+   "banks": [
+    "ochem-1000"
+   ]
+  },
+  {
+   "smiles": "C[C@H]1[C@@H](C)C=C1",
+   "center": "C2",
+   "smilesSays": "S",
+   "pictureShows": "R",
+   "banks": [
+    "ochem-1000"
+   ]
+  },
+  {
+   "smiles": "C[C@H]1[C@H](C)C=C1",
+   "center": "C1",
+   "smilesSays": "R",
+   "pictureShows": "S",
+   "banks": [
+    "ochem-1000"
+   ]
+  },
+  {
+   "smiles": "C[C@H]1[C@H](C)C=C1",
+   "center": "C2",
+   "smilesSays": "R",
+   "pictureShows": "S",
+   "banks": [
+    "ochem-1000"
+   ]
+  }
+ ]
+}

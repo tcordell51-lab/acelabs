@@ -91,6 +91,22 @@ test('copy gate: points as a reward is anchored to the student and a reward cont
   assert.deepStrictEqual(scan('x.js', "el.textContent = 'You won 5 points';").map((h) => h.rule), ['points']);
 });
 
+test('copy gate: OS-61 notation and "fail" in explainer body text only (sidecars and figure renderers)', async () => {
+  const { scan } = await imp('scripts/gate-copy.mjs');
+  const rules = (rel, src) => scan(rel, src).map((h) => h.rule);
+  const SC = 'content/explainers/gc/x/fm__a.json';
+  const notation = '2 × 10⁻³ mol of H₂O at 25 °C, πr², −1, x ≤ 3, y ≥ 4';
+  assert.deepStrictEqual(rules(SC, JSON.stringify({ steps: [notation] })), [], 'allowed in a sidecar');
+  assert.deepStrictEqual(rules('tools/explain/visuals/chem.js', "label('" + notation + "');"), [], 'allowed in a figure renderer');
+  assert.ok(rules('tools/bio/x.js', "el.textContent = '" + notation + "';").every((r) => r === 'non-ascii') && rules('x.html', '<p>' + notation + '</p>').length > 0, 'elsewhere still plain ASCII');
+  assert.deepStrictEqual(rules(SC, JSON.stringify({ steps: ['√39, about 6.2'] })), ['non-ascii'], 'a glyph outside the list is still caught');
+  assert.deepStrictEqual(rules(SC, JSON.stringify({ steps: ['Repolarization fails, so the membrane stays positive.'], choices: [{ note: 'A pair fails to separate.' }] })), [], 'process words in body text');
+  assert.deepStrictEqual(rules(SC, JSON.stringify({ choices: [{ trap: 'It fails' }] })), ['word'], 'never in a trap-card name');
+  assert.deepStrictEqual(rules(SC, JSON.stringify({ title: 'Where it fails' })), ['word'], 'never in a heading');
+  assert.deepStrictEqual(rules(SC, JSON.stringify({ steps: ['That answer is wrong.', 'You failed it.'] })), ['word', 'word'], 'wrong and failed stay banned');
+  assert.deepStrictEqual(rules('x.html', '<p>The pump fails.</p>'), ['word'], 'outside the sidecars nothing changes');
+});
+
 test('copy gate: the baseline ratchets per file and per rule', async () => {
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'copy-gate-'));
   try {

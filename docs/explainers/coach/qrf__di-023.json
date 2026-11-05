@@ -1,0 +1,222 @@
+{
+ "schema": "ace.explainer-coach/1",
+ "qid": "qrf:di-023",
+ "pid": "QR-1",
+ "batch": "pilot/pilot",
+ "source": "content/explainers-src/pilot/pilot.js",
+ "servedAs": "QR engine, Data Interpretation set (tools/qr/index.html via qr-formats-module.js)",
+ "sidecar": "content/explainers/qr/data/qrf__di-023.json",
+ "checksum": "57111a627509a0c1",
+ "servesAlso": [],
+ "flags": [
+  {
+   "kind": "inferred-traps",
+   "text": "The bank stores a reason only for 47% (the weekday share). The pilot notes for 43% (Friday plus Saturday) and 56% (Saturday twice) come from the arithmetic, not from a stored note; 50% is read as an eyeball estimate."
+  },
+  {
+   "kind": "stem-style",
+   "text": "The stem asks about \"the week's visitors\" but the chart runs Tuesday to Sunday, with no Monday. Suggested wording for Thomas to review (not applied): \"What percent of the visitors shown came on Saturday or Sunday?\", or a chart title saying the museum is closed Mondays. Key unchanged."
+  }
+ ],
+ "review": {
+  "status": "draft",
+  "by": null,
+  "at": null,
+  "batch": "pilot/pilot",
+  "checksum": "57111a627509a0c1",
+  "approvedChecksum": null
+ },
+ "held": null,
+ "routing": "Needs a route to open the formats module from the URL. The page also holds a timed simulator elsewhere; the formats module itself is untimed.",
+ "playWithExpect": [
+  "qr-formats-module.js"
+ ],
+ "gate": {
+  "pass": true,
+  "issues": [],
+  "warnings": [],
+  "checks": [
+   "key text matches the bank (\"53%\", index 3)",
+   "trap families from the closed list: neighbor-fact, other-question, looks-bigger, miscount",
+   "every served choice (5) has a note; one key",
+   "copy rules: ASCII, no dashes, no banned words, no letters, no competitor names, no timer or score words, budgets (explainer and visual text)",
+   "step 1 opens with a move: \"Set it\"",
+   "voice: 7 sentences, mean 12.3 words, shortest 6",
+   "playWith target tools/qr/index.html found with qr-formats-module.js; markers acknowledged: clock, streak",
+   "chart sums: Sat + Sun = 53 of 100 = 53%"
+  ]
+ },
+ "changes": [
+  "Visual: the 10 x 10 grid and the copied chart replaced by a 100-unit strip with text labels and a bracket, plus the question chart outlined after Check",
+  "Key note: \"5,300 weekend visitors out of 10,000 in all.\"",
+  "Step 1 opens with a move; the \"chart starts on Tuesday\" patch removed from step 3 and raised as a stem-style flag",
+  "Families: neighbor-fact, other-question, looks-bigger, miscount; hook dropped"
+ ],
+ "preview": {
+  "pick": "47%"
+ },
+ "served": {
+  "stem": "What percent of the week's visitors came on Saturday or Sunday?",
+  "choices": [
+   "43%",
+   "47%",
+   "50%",
+   "53%",
+   "56%"
+  ],
+  "keyIndex": 3,
+  "bankWhy": "Weekend: 28 + 25 = 53 hundred. Whole week: 12 + 9 + 11 + 15 + 28 + 25 = 100 hundred. 53 / 100 = 53%.",
+  "extra": {
+   "figure": {
+    "type": "bar",
+    "title": "Science museum visitors (hundreds)",
+    "categories": [
+     "Tue",
+     "Wed",
+     "Thu",
+     "Fri",
+     "Sat",
+     "Sun"
+    ],
+    "series": [
+     {
+      "name": "Visitors",
+      "values": [
+       12,
+       9,
+       11,
+       15,
+       28,
+       25
+      ]
+     }
+    ],
+    "yLabel": "Hundreds of visitors"
+   },
+   "format": "di",
+   "move": "Part over whole: add the bars you want, then divide by all the bars."
+  }
+ },
+ "student": {
+  "schema": "ace.explainer/1",
+  "qid": "qrf:di-023",
+  "servesAlso": [],
+  "bank": {
+   "file": "shared/qr-formats-bank.js",
+   "locator": {
+    "id": "di-023"
+   },
+   "keyText": "53%",
+   "stemHash": "fcf9a511fecdafc5f43c95abe60b05554b82497c",
+   "choiceTexts": [
+    "43%",
+    "47%",
+    "50%",
+    "53%",
+    "56%"
+   ]
+  },
+  "section": "qr",
+  "subtopic": "qr.data.part-over-whole",
+  "difficulty": {
+   "band": 1,
+   "from": "bank field diff (1-4)"
+  },
+  "premises": [],
+  "answer": {
+   "text": "53%",
+   "line": "The weekend bars add to 53 and the whole chart adds to 100, so the weekend is 53 out of 100."
+  },
+  "steps": [
+   "Set it up as part over whole. Add the part first: Saturday 28 + Sunday 25 = 53.",
+   "Then add every bar for the whole: 12 + 9 + 11 + 15 + 28 + 25 = 100. The chart counts hundreds of visitors, but the units cancel.",
+   "53 out of 100 is 53%."
+  ],
+  "choices": [
+   {
+    "text": "43%",
+    "role": "trap",
+    "family": "neighbor-fact",
+    "missType": "content",
+    "trap": "Shifted the weekend",
+    "note": "Friday plus Saturday is 15 + 28 = 43. The stem asks for Saturday and Sunday."
+   },
+   {
+    "text": "47%",
+    "role": "trap",
+    "family": "other-question",
+    "missType": "misread",
+    "note": "47 is the other part, Tuesday through Friday. It is what is left after the weekend, not the weekend."
+   },
+   {
+    "text": "50%",
+    "role": "trap",
+    "family": "looks-bigger",
+    "missType": "misread",
+    "trap": "Eyeballed it",
+    "note": "The two tall bars look like about half the chart. A fine first check, but the exact share is 53."
+   },
+   {
+    "text": "53%",
+    "role": "key",
+    "note": "5,300 weekend visitors out of 10,000 in all."
+   },
+   {
+    "text": "56%",
+    "role": "trap",
+    "family": "miscount",
+    "missType": "misread",
+    "trap": "Counted Saturday twice",
+    "note": "28 + 28 is 56. Sunday's bar is 25, not 28."
+   }
+  ],
+  "lockIt": "Percent of a total: add the part, add the whole, divide.",
+  "hook": null,
+  "playWith": {
+   "label": "QR engine, Data Interpretation set: more chart questions in the same format",
+   "href": "tools/qr/index.html",
+   "state": {
+    "module": "formats",
+    "format": "di"
+   }
+  },
+  "video": {
+   "slot": "qr.data.part-over-whole",
+   "title": "Reading a chart: part over whole",
+   "id": null,
+   "start": null
+  },
+  "visual": {
+   "type": "qr.partwhole",
+   "style": "strip",
+   "total": 100,
+   "parts": [
+    {
+     "label": "Sat",
+     "n": 28,
+     "key": true
+    },
+    {
+     "label": "Sun",
+     "n": 25,
+     "key": true
+    }
+   ],
+   "rest": {
+    "label": "Tue to Fri",
+    "n": 47
+   },
+   "bracket": "weekend: 53 of 100",
+   "unit": "hundred visitors",
+   "annotateQuestion": {
+    "highlight": [
+     "Sat",
+     "Sun"
+    ]
+   },
+   "reuse": "new strip; the question chart itself (shared/qr-figures.js) gets the Sat and Sun bars outlined after Check, through the same highlight wrapper",
+   "alt": "A bar 100 units long split by day: Tuesday to Friday 47, Saturday 28, Sunday 25. A bracket over Saturday and Sunday reads weekend, 53 of 100. On the question chart above, the Saturday and Sunday bars are outlined.",
+   "caption": "The two outlined bars on the chart are the bracket here: 53 of the 100 units the chart holds."
+  }
+ }
+}

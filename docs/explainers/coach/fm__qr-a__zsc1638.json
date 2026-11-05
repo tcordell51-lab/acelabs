@@ -1,0 +1,217 @@
+{
+ "schema": "ace.explainer-coach/1",
+ "qid": "fm:qr-a:zsc1638",
+ "pid": "fm:qr-a:zsc1638",
+ "batch": "G1/B006",
+ "source": "content/explainers-src/G1/B006.js",
+ "servedAs": "Full-Length Test 1, Quantitative Reasoning, question 30",
+ "sidecar": "content/explainers/qr/data/fm__qr-a__zsc1638.json",
+ "checksum": "ca9b073cfc4dd992",
+ "servesAlso": [],
+ "flags": [
+  {
+   "kind": "bank-copy",
+   "text": "The bank trap note on 1.15 says \"Right size, wrong side\" (a house-banned word), and the note on -23 calls it \"the raw gap in points\" when the unit is visitors. Neither is lifted."
+  }
+ ],
+ "review": {
+  "status": "draft",
+  "by": null,
+  "at": null,
+  "batch": "G1/B006",
+  "checksum": "ca9b073cfc4dd992",
+  "approvedChecksum": null
+ },
+ "held": null,
+ "routing": "Needs a route: the view opens from data-go=\"zscore\". The skill page opens with a Try first question on a 5-minute clock that can be skipped, and the page also holds a timed simulator elsewhere; the visual itself is untimed.",
+ "playWithExpect": [
+  "qrz-handles-",
+  "qrZPreset"
+ ],
+ "gate": {
+  "pass": true,
+  "issues": [],
+  "warnings": [],
+  "checks": [
+   "key text matches the bank (\"-1.15\", index 1)",
+   "trap families from the closed list: one-step-short, other-unit, sign-slip, half-right",
+   "every served choice (5) has a note; one key",
+   "copy rules: ASCII, no dashes, no banned words, no letters, no competitor names, no timer or score words, budgets (explainer and visual text)",
+   "step 1 opens with a move: \"Find the\"",
+   "voice: 8 sentences, mean 9.6 words, shortest 3",
+   "playWith target tools/qr/index.html found with qrz-handles-, qrZPreset; markers acknowledged: clock, streak",
+   "picture names 1 of 5 choices, each served; the outlined place is the key",
+   "inputs found in the stem: mu 100, sd 20, x 77",
+   "key recomputed: (x-mu)/sd = -1.15, the key \"-1.15\"",
+   "trap route recomputed: \"-23\" = x-mu",
+   "trap route recomputed: \"-0.23\" = (x-mu)/mu",
+   "trap route recomputed: \"1.15\" = (mu-x)/sd",
+   "trap route recomputed: \"3.85\" = x/sd",
+   "arithmetic in the text holds: 3 claims (77 - 100 = -23; -23 / 20 = -1.15; 77 / 20 = 3.85)",
+   "z score recomputed: (77 - 100) / 20 = -1.15, the key"
+  ]
+ },
+ "changes": [
+  "Re-review suggestion taken: the gap bracket on the bell (tools/explain/visuals/qr-plot.js, normal()) sits low in the shading, under the curve at every point, and is labeled with the gap, 23 (it was unlabeled and drawn near the top, where it crossed the bell like a stray line)"
+ ],
+ "preview": {
+  "pick": "1.15"
+ },
+ "served": {
+  "stem": "Daily visitors to a library average 100 with a standard deviation of 20. What is the z score of a day with 77 visitors?",
+  "choices": [
+   "-23",
+   "-1.15",
+   "-0.23",
+   "1.15",
+   "3.85"
+  ],
+  "keyIndex": 1,
+  "bankWhy": "z = (x − μ)/σ = (77 − 100)/20 = -1.15.",
+  "extra": {
+   "mock": "FULL_1",
+   "section": "qr",
+   "n": 30
+  }
+ },
+ "student": {
+  "schema": "ace.explainer/1",
+  "qid": "fm:qr-a:zsc1638",
+  "servesAlso": [],
+  "bank": {
+   "file": "tools/mock/data/full-mocks.js",
+   "locator": {
+    "mock": "FULL_1",
+    "section": "qr",
+    "id": "qr-a:zsc1638"
+   },
+   "keyText": "-1.15",
+   "stemHash": "b0228d10f23146339608426c17bc8a71e2c889c9",
+   "choiceTexts": [
+    "-23",
+    "-1.15",
+    "-0.23",
+    "1.15",
+    "3.85"
+   ]
+  },
+  "section": "qr",
+  "subtopic": "qr.data.z-score",
+  "difficulty": {
+   "band": 3,
+   "from": "bank field d (1-3)"
+  },
+  "premises": [],
+  "answer": {
+   "text": "-1.15",
+   "line": "77 sits 23 visitors below the mean, and 23 is 1.15 standard deviations of 20. Below means negative: -1.15."
+  },
+  "steps": [
+   "Find the distance from the mean first: 77 - 100 = -23 visitors.",
+   "Measure that distance in standard deviations: -23 / 20 = -1.15.",
+   "Check the sign. 77 is below the average day, so z has to be negative."
+  ],
+  "choices": [
+   {
+    "text": "-23",
+    "role": "trap",
+    "family": "one-step-short",
+    "missType": "concept",
+    "trap": "Raw distance only",
+    "note": "-23 is the distance in visitors. A z score counts standard deviations, so divide by 20."
+   },
+   {
+    "text": "-1.15",
+    "role": "key",
+    "note": "23 visitors below, in steps of 20."
+   },
+   {
+    "text": "-0.23",
+    "role": "trap",
+    "family": "other-unit",
+    "missType": "concept",
+    "trap": "Divided by the mean",
+    "note": "-23 / 100 measures the gap against the mean. A z score uses the standard deviation, 20, as its ruler."
+   },
+   {
+    "text": "1.15",
+    "role": "trap",
+    "family": "sign-slip",
+    "missType": "misread",
+    "trap": "Lost the minus",
+    "note": "Right size, but 77 is below the mean, so the z score is negative."
+   },
+   {
+    "text": "3.85",
+    "role": "trap",
+    "family": "half-right",
+    "missType": "concept",
+    "trap": "Skipped the mean",
+    "note": "77 / 20 = 3.85 divides by the SD but never subtracts the mean. A z score measures from the mean, not from zero."
+   }
+  ],
+  "lockIt": "z = (value - mean) / SD: the distance from the mean, counted in standard deviations. Below is negative.",
+  "hook": null,
+  "playWith": {
+   "label": "Z-Scores: drag the handles on the bell curve and read the z of each value",
+   "href": "tools/qr/index.html",
+   "state": {
+    "view": "zscore"
+   }
+  },
+  "video": {
+   "slot": "qr.data.z-score",
+   "title": "z scores: steps of one standard deviation",
+   "id": null,
+   "start": null
+  },
+  "visual": {
+   "type": "qr.dataset",
+   "kind": "normal",
+   "focus": "value",
+   "mean": 100,
+   "sd": 20,
+   "value": 77,
+   "unit": "visitors",
+   "span": 3,
+   "valueLabel": "77 visitors",
+   "gapLabel": "77 is 23 visitors below the mean: 23 / 20 = 1.15 standard deviations.",
+   "zLabel": "z = -1.15",
+   "marks": [
+    {
+     "choice": "-1.15",
+     "key": true
+    }
+   ],
+   "check": {
+    "vars": {
+     "mu": 100,
+     "sd": 20,
+     "x": 77
+    },
+    "key": "(x-mu)/sd",
+    "routes": [
+     {
+      "choice": "-23",
+      "expr": "x-mu"
+     },
+     {
+      "choice": "-0.23",
+      "expr": "(x-mu)/mu"
+     },
+     {
+      "choice": "1.15",
+      "expr": "(mu-x)/sd"
+     },
+     {
+      "choice": "3.85",
+      "expr": "x/sd"
+     }
+    ]
+   },
+   "reuse": "new: qr.dataset kind normal (tools/explain/visuals/qr-plot.js); the build recomputes z",
+   "alt": "A bell curve over 40 to 160 visitors with one tick per standard deviation of 20, each labeled with its z. An outlined line at 77 sits between 60 and 80; the shaded stretch to the mean at 100 is 23 visitors, 1.15 standard deviations: z = -1.15.",
+   "caption": "Count the steps of 20 from the mean: 77 is a little more than one step left, so z is about -1.15."
+  }
+ }
+}
