@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ace Labs: Osmosis</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{--forest:#1B3A2D;--deep:#0d2018;--ink:#0f0d0a;--paper:#F5F0E8;--card:#FCFAF6;--gold:#C9A84C;--gold2:#E2C97A;--goldink:#7c6113;--muted:#55645b;--line:rgba(27,58,45,.15);--good:#2f6b50;--bad:#a8463c;
+--display:"Playfair Display",ui-serif,Georgia,serif;--body:"DM Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+--out:cubic-bezier(.16,1,.3,1);--io:cubic-bezier(.65,0,.35,1);--spring:cubic-bezier(.34,1.56,.64,1);--r:22px;color-scheme:light}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 16px/1.5 var(--body);-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;-webkit-tap-highlight-color:transparent}
+:focus-visible{outline:2px solid var(--gold);outline-offset:3px;border-radius:10px}
+.wrap{max-width:1120px;margin:0 auto;padding:0 18px}
+.top{position:sticky;top:0;z-index:30;background:rgba(245,240,232,.84);backdrop-filter:saturate(1.4) blur(14px);-webkit-backdrop-filter:saturate(1.4) blur(14px);border-bottom:1px solid var(--line)}
+.top .wrap{display:grid;grid-template-columns:1fr auto;gap:10px 12px;align-items:center;padding-top:10px;padding-bottom:10px}
+.brand{display:inline-flex;color:var(--forest);width:fit-content}
+.lockup{height:30px;aspect-ratio:936/201;display:block}
+.seg{grid-column:1/-1;position:relative;display:grid;grid-template-columns:repeat(2,1fr);background:rgba(27,58,45,.08);border-radius:999px;padding:4px;--i:0}
+.seg button{position:relative;z-index:1;padding:9px 6px;border-radius:999px;font-weight:500;font-size:14px;color:var(--muted);text-align:center;transition:color .3s}
+.seg button[aria-selected="true"]{color:var(--paper)}
+.thumb{position:absolute;top:4px;bottom:4px;left:4px;width:calc((100% - 8px)/2);border-radius:999px;background:var(--forest);transform:translateX(calc(var(--i)*100%));transition:transform .6s var(--out);box-shadow:0 6px 16px -8px rgba(13,32,24,.6)}
+.crumb{font-size:13px;font-weight:500;color:var(--forest);padding:8px 13px;border:1px solid var(--line);border-radius:999px;white-space:nowrap}
+@media(max-width:919px){.crumb{display:none}}
+@media(min-width:920px){.top .wrap{grid-template-columns:auto 1fr auto}.seg{grid-column:2;grid-row:1;width:340px;justify-self:center}.crumb{grid-column:3;grid-row:1}.lockup{height:34px}}
+main{padding:16px 0 90px}
+.hero{position:relative;overflow:hidden;isolation:isolate;border-radius:28px;background:var(--deep);color:var(--paper);padding:26px 22px;margin-bottom:18px}
+.hero::before,.hero::after{content:"";position:absolute;z-index:-1;border-radius:50%;filter:blur(50px)}
+.hero::before{width:70%;aspect-ratio:1;left:-18%;top:-60%;background:radial-gradient(circle,#2f6b50 0,transparent 68%);animation:drift 16s var(--io) infinite alternate}
+.hero::after{width:60%;aspect-ratio:1;right:-20%;bottom:-70%;background:radial-gradient(circle,rgba(201,168,76,.5) 0,transparent 66%);animation:drift 21s var(--io) infinite alternate-reverse}
+@keyframes drift{to{transform:translate(18%,22%) scale(1.25)}}
+.gridlines{position:absolute;inset:0;z-index:-1;background-image:linear-gradient(rgba(245,240,232,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(245,240,232,.06) 1px,transparent 1px);background-size:44px 44px;-webkit-mask-image:radial-gradient(ellipse at 30% 0,#000 20%,transparent 75%);mask-image:radial-gradient(ellipse at 30% 0,#000 20%,transparent 75%)}
+.hero-copy{display:grid;gap:10px}
+.hero-copy.rise>*{animation:rise .9s var(--out) both}
+.hero-copy.rise>*:nth-child(2){animation-delay:.06s}.hero-copy.rise>*:nth-child(3){animation-delay:.12s}.hero-copy.rise>*:nth-child(4){animation-delay:.18s}
+@keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.eyebrow{font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--gold2)}
+h1{font-family:var(--display);font-weight:700;letter-spacing:-.012em;font-size:clamp(34px,6.4vw,54px);line-height:1.04;margin:0;text-wrap:balance}
+h1 em{color:var(--gold2)}
+.lead{margin:0;color:rgba(245,240,232,.78);max-width:56ch;font-size:16.5px}
+.dots{display:flex;gap:6px;align-items:center;font-size:12px;color:rgba(245,240,232,.6)}
+.dots i{width:6px;height:6px;border-radius:99px;background:rgba(245,240,232,.25);transition:width .45s var(--out),background .3s}
+.dots i.on{width:22px;background:var(--gold)}.dots i.done{background:var(--gold2)}
+.grid{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);gap:16px;align-items:start}
+@media(max-width:920px){.grid{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px}
+.stage{position:relative;padding:10px;transition:box-shadow .4s}
+canvas{width:100%;display:block;border-radius:16px}
+.badge{position:absolute;top:22px;right:22px;background:var(--forest);color:var(--paper);font-weight:700;font-size:13px;padding:7px 13px;border-radius:999px;opacity:0;transform:translateY(-8px) scale(.9);transition:transform .5s var(--spring),opacity .3s}
+.badge.show{opacity:1;transform:none}
+.panel{display:grid;gap:0}
+.panel h3{margin:0 0 4px;font-size:16px;line-height:1.25}
+.k{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--goldink)}
+.sub{color:var(--muted);font-size:14px;margin:0 0 12px;line-height:1.45}
+.row{display:flex;justify-content:space-between;align-items:center;font-weight:500;font-size:15px;margin:8px 0}
+.val{font-variant-numeric:tabular-nums;font-weight:700;color:var(--forest);background:rgba(27,58,45,.07);border-radius:999px;padding:5px 12px}
+input[type=range]{width:100%;accent-color:var(--forest);height:28px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 16px}
+.chip{font-size:14px;font-weight:500;padding:9px 14px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--forest);transition:transform .4s var(--spring),background .25s,color .25s}
+.chip:active{transform:scale(.95)}
+.chip.on{background:var(--forest);color:var(--paper);transform:translateY(-3px)}
+.chip.right{background:var(--forest);color:var(--paper);border-color:var(--forest)}
+.chip.wrong{border-color:var(--bad);color:var(--bad);background:#f8e5e2}
+.hr{height:1px;background:var(--line);margin:16px 0}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:13px 18px;border-radius:999px;font-weight:700;font-size:15px;background:var(--forest);color:var(--paper);transition:transform .45s var(--spring),box-shadow .3s}
+.btn:active{transform:scale(.95)}
+@media(hover:hover){.btn:hover{transform:translateY(-2px);box-shadow:0 14px 24px -16px rgba(13,32,24,.7)}}
+.go{width:100%;background:var(--gold);color:var(--deep)}
+.go:disabled{opacity:.5;cursor:default;transform:none;box-shadow:none}
+.ghost{background:transparent;color:var(--forest);border:1px solid var(--line)}
+.ghost:disabled{opacity:.4}
+.nav{display:flex;gap:10px;margin-top:12px}
+.nav .btn{flex:1}
+.take{display:none;margin-top:14px;font-size:15.5px;line-height:1.5;padding:4px 0 4px 12px;border-left:2px solid var(--gold)}
+.take.show{display:block;animation:rise .6s var(--out)}
+.take b{color:var(--forest)}
+.opt{display:block;width:100%;text-align:left;border:1px solid var(--line);background:var(--card);border-radius:16px;padding:12px 14px;margin:8px 0;font-size:15px;transition:transform .4s var(--spring),background .25s,border-color .25s}
+.opt.yours{border-color:var(--bad);background:#f8e5e2}
+.opt.key{border-color:var(--forest);background:rgba(27,58,45,.07)}
+.tag{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-left:8px}
+.steps{list-style:none;padding:0;margin:0 0 14px;display:flex;gap:6px;flex-wrap:wrap}
+.step{display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:500;color:var(--muted)}
+.step i{font-style:normal;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:700;border:1.5px solid rgba(27,58,45,.3)}
+.step.on{color:var(--forest);font-weight:700}.step.on i{background:var(--gold);border-color:var(--gold);color:var(--deep)}
+.step.done i{background:var(--forest);border-color:var(--forest);color:var(--paper)}
+.step+.step:before{content:"";width:10px;height:1px;background:var(--line)}
+.big{font-family:var(--display);font-weight:700;font-size:25px;line-height:1.15;margin:2px 0 10px}
+.big em{color:var(--goldink)}
+.math{font-weight:700;font-size:19px;font-variant-numeric:tabular-nums;color:var(--forest);background:rgba(201,168,76,.16);border-radius:14px;padding:10px 14px;display:inline-block;margin:4px 0 8px}
+.qtext{font-weight:500;line-height:1.5;margin:6px 0}
+.list p{margin:0;padding:12px 0;border-top:1px solid var(--line);display:flex;gap:12px;align-items:flex-start;line-height:1.45}
+.list p:first-child{border-top:0}
+.list b{flex:none;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--forest);color:var(--paper);font-size:12px}
+.meter{display:grid;gap:8px;padding:14px 10px 6px}
+.meter.off{visibility:hidden}
+.mrow{display:grid;grid-template-columns:62px 1fr 44px;align-items:center;gap:10px;font-size:13px;font-weight:500;color:var(--muted)}
+.mrow b{font-variant-numeric:tabular-nums;color:var(--forest);text-align:right}
+.bar{height:10px;border-radius:99px;background:rgba(27,58,45,.08);overflow:hidden}
+.bar i{display:block;height:100%;width:40%;border-radius:99px;background:var(--gold);transition:width .3s var(--out)}
+.mrow.in .bar i{background:#c9504a}
+.flow{display:flex;align-items:center;gap:9px;font-size:13.5px;font-weight:700;color:var(--forest);margin-top:2px}
+.flow:before{content:"";width:8px;height:8px;border-radius:50%;background:rgba(27,58,45,.35)}
+.flow.in:before,.flow.out:before{background:#3d8fd1;box-shadow:0 0 0 4px rgba(61,143,209,.18);animation:pulse 1s var(--io) infinite}
+.flow.hot{color:var(--bad)}.flow.hot:before{background:var(--bad)}
+@keyframes pulse{50%{box-shadow:0 0 0 7px rgba(61,143,209,.05)}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+<path id="mA" fill="currentColor" d="M228.5 86.5 184 151 87 286 125.5 286.5 127.5 284.5 223.5 148.5 224.5 151 258 185 258 86.5Z"/>
+<path id="mB" fill="currentColor" d="M177.5 231 157.5 259 214.5 258.5 214.5 231Z"/>
+<path id="mD" fill="currentColor" d="M268 86.5 268 118 314 118 325 120 335.5 123.5 343 127.5 357 139 365.5 151 372.5 170 374 190.5 372 205 367 219 359 232 346 244.5 333 252 310.5 257.5 259 257.5 258 256.5 258 233.5 224.5 198.5 224.5 286.5 314.5 286 334 283 353.5 276.5 368.5 268 385 253 396 237.5 403.5 221 408.5 199.5 409 178.5 406.5 162 399.5 142 391 127.5 376 110.5 363 101 349 94 334.5 89.5 317.5 87Z"/>
+<path id="au" fill="#C9A84C" d="M218 157.5 204 176.5 258 233 258 198Z"/>
+<path id="l0" fill="currentColor" fill-rule="evenodd" d="M464.5 144 414 247.5 436.5 247.5 446.5 228 495.5 228 505.5 247.5 528 247.5 478.5 144.5ZM470.5 177.5 473 180 484.5 204 485 207.5 458 208 456.5 207Z"/>
+<path id="l1" fill="currentColor" d="M564.5 140.5 555 142.5 545 146.5 534.5 154 527.5 162 522.5 171 519 182 518 189 518.5 205.5 521 215.5 525 224.5 531 233 538.5 240 549 246 556 248.5 564.5 250 582.5 249.5 592 247 602 242 607.5 238 616.5 228 600.5 214 591.5 222.5 579 228.5 567 229 555.5 225 548.5 219.5 541.5 208 539.5 194 542 181 546.5 173 551 168.5 562 162.5 577 161.5 584 163.5 591 167.5 600.5 175.5 615.5 160.5 608.5 153 594.5 144.5 579 140.5Z"/>
+<path id="l2" fill="currentColor" d="M624.5 144 624.5 247 698.5 247.5 699 227 646 226.5 646.5 206 692.5 205.5 692.5 185.5 646.5 185 646 165 650 164 697.5 164.5 698 144Z"/>
+<path id="l3" fill="currentColor" fill-rule="evenodd" d="M737.5 142.5 737 247 795 247 811 242.5 819 238.5 826.5 232.5 832.5 225.5 837.5 217 840.5 208 842 198 840.5 181 835.5 168.5 830.5 161.5 819.5 152 802.5 144.5 789.5 142.5ZM760.5 164.5 793 164.5 804.5 169 811 174.5 817 185 818 200.5 815 209.5 809.5 217 799.5 223.5 791.5 225.5 760 225Z"/>
+<path id="l4" fill="currentColor" fill-rule="evenodd" d="M885 142.5 831.5 247.5 856.5 247.5 866.5 228 918 228 928 247.5 953 247.5 900.5 143ZM892 176.5 893 176.5 907.5 206.5 905 207.5 877.5 207.5 877 206Z"/>
+<path id="l5" fill="currentColor" d="M932 142.5 931.5 164 964.5 164 965.5 165 965.5 247.5 988.5 247.5 988.5 164.5 1022.5 164 1022.5 143Z"/>
+<symbol id="lk" viewBox="87 86 936 201"><use href="#mA"/><use href="#mB"/><use href="#mD"/><use href="#au"/><use href="#l0"/><use href="#l1"/><use href="#l2"/><use href="#l3"/><use href="#l4"/><use href="#l5"/></symbol>
+</defs></svg>
+<header class="top"><div class="wrap">
+  <a class="brand" href="/tools/bio/" aria-label="ACE DAT"><svg class="lockup"><use href="#lk"/></svg></a>
+  <div class="seg" id="seg" role="tablist"><span class="thumb"></span><button id="mLearn" role="tab" aria-selected="true">Learn</button><button id="mReview" role="tab" aria-selected="false">Review + Repair</button></div>
+  <span class="crumb">Ace Labs &middot; Bio &middot; Osmosis</span>
+</div></header>
+<main class="wrap">
+  <section class="hero"><div class="gridlines"></div>
+    <div class="hero-copy" id="hc">
+      <div class="dots" id="dots"></div>
+      <div class="eyebrow" id="eyebrow"></div>
+      <h1 id="title"></h1>
+      <p class="lead" id="lead"></p>
+    </div>
+  </section>
+  <div class="grid">
+    <div class="card stage"><canvas id="cv" width="1200" height="840"></canvas><div class="badge" id="badge"></div><div class="meter" id="meter"><div class="mrow"><span>Outside</span><div class="bar"><i id="bo"></i></div><b id="vo">0.30</b></div><div class="mrow in"><span>Inside</span><div class="bar"><i id="bi"></i></div><b id="vi">0.30</b></div><div class="flow" id="flow">Ready</div></div></div>
+    <div class="card panel" id="panel"></div>
+  </div>
+</main>
+<script>
+const INSIDE = 0.30, K = 30;
+const C = {dark:'#0d2018',forest:'#1B3A2D',gold:'#C9A84C',lgold:'#E2C97A',cream:'#F5F0E8'};
+const cv = document.getElementById('cv'), g = cv.getContext('2d');
+const SX = cv.width/600, SY = cv.height/420;
+const rnd = (a,b)=>a+Math.random()*(b-a), clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const store = { get(k,d){try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}}, set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}} };
+
+/* ---------- simulation ---------- */
+const sim = {cell:'rbc', nonpen:0.6, pen:0, ion:1, running:false, t:0, u:0, scale:1, lysed:false, lyseT:0, flow:0, done:false, onDone:null, parts:[], inner:[], water:[], haze:[]};
+function setup(cfg){
+  Object.assign(sim,{cell:cfg.cell||'rbc', nonpen:cfg.nonpen??0.3, pen:cfg.pen||0, ion:cfg.ion||1, running:false,t:0,u:0,scale:1,lysed:false,lyseT:0,flow:0,done:false,onDone:null,water:[],haze:[]});if(sim.cell==='plant')sim.scale=.92;
+  const free=(x,y)=> sim.cell==='rbc' ? Math.hypot(x-300,y-225)>150 : !(Math.abs(x-300)<165&&Math.abs(y-225)<138);
+  const pos=()=>{let x,y,n=0;do{x=rnd(62,538);y=rnd(70,385);n++}while(!free(x,y)&&n<200);return[x,y]};
+  sim.parts=[];
+  const nNon=Math.round(sim.nonpen*K), ionCols=[C.gold,'#b9832f','#E2C97A'];
+  for(let i=0;i<nNon;i++){const[x,y]=pos();sim.parts.push({x,y,ph:rnd(0,6.28),col:ionCols[sim.ion>1?i%sim.ion:0],r:sim.ion>1&&i%sim.ion?3.6:5,k:'n'})}
+  for(let i=0;i<Math.round(sim.pen*K);i++){const[x,y]=pos();const a=rnd(0,6.28),d=rnd(0,.55);sim.parts.push({x,y,ph:rnd(0,6.28),col:'#2f9c92',r:4.4,k:'u',e:rnd(0,.9),ia:a,id:d})}
+  sim.inner=[];for(let i=0;i<Math.round(INSIDE*K);i++)sim.inner.push({a:rnd(0,6.28),d:rnd(.15,.6),ph:rnd(0,6.28)});
+}
+function ratio(){const eff=sim.nonpen+sim.pen*(1-sim.u);return INSIDE/Math.max(eff,0.03)}
+function tgt(){const r=ratio();return sim.cell==='rbc'?Math.pow(clamp(r,.45,2.4),.5):(r>=1?Math.min(1,.92+(r-1)*.12):Math.max(.55,.92*Math.pow(r,.62)))}
+function run(onDone){sim.running=true;sim.t=0;sim.onDone=onDone}
+function outcome(){
+  if(sim.cell==='rbc'){if(sim.lysed)return'burst';if(sim.scale>1.04)return'swell';if(sim.scale<.96)return'shrink';return'stay'}
+  const r=INSIDE/Math.max(sim.nonpen,0.03);if(r>1.04)return'turgid';if(r<.96)return'plasmolysis';return'stay';
+}
+function tonicity(){const o=sim.nonpen;return o>INSIDE+0.005?'hypertonic':o<INSIDE-0.005?'hypotonic':'isotonic'}
+function drift(dt){const Rc=cellR()*sim.scale+12;
+  sim.parts.forEach(p=>{if(p.k==='u'&&sim.u>p.e)return;p.vx=(p.vx||0)*.95+rnd(-1,1)*22*dt;p.vy=(p.vy||0)*.95+rnd(-1,1)*22*dt;p.x+=p.vx*dt*7;p.y+=p.vy*dt*7;
+    if(p.x<64){p.x=64;p.vx=Math.abs(p.vx)}if(p.x>536){p.x=536;p.vx=-Math.abs(p.vx)}if(p.y<72){p.y=72;p.vy=Math.abs(p.vy)}if(p.y>384){p.y=384;p.vy=-Math.abs(p.vy)}
+    if(sim.lysed)return;const dx=p.x-300,dy=p.y-225;
+    if(sim.cell==='rbc'){const d=Math.hypot(dx,dy)||1;if(d<Rc){p.x=300+dx/d*Rc;p.y=225+dy/d*Rc}}
+    else if(Math.abs(dx)<150&&Math.abs(dy)<128){if(150-Math.abs(dx)<128-Math.abs(dy))p.x=300+Math.sign(dx||1)*150;else p.y=225+Math.sign(dy||1)*128}})}
+function step(dt){drift(dt);
+  if(sim.running&&!sim.done){
+    sim.t+=dt;
+    if(sim.pen>0&&sim.t>.6)sim.u=Math.min(1,sim.u+dt/3.2);
+    const T=tgt(), prev=sim.scale;
+    if(!sim.lysed){sim.scale+=(T-sim.scale)*Math.min(1,dt*1.5);sim.flow=T-sim.scale}
+    if(sim.cell==='rbc'&&!sim.lysed&&sim.scale>1.27){sim.lysed=true;try{document.querySelector('.stage').animate([{transform:'scale(1)'},{transform:'scale(1.018)'},{transform:'scale(1)'}],{duration:320,easing:'cubic-bezier(.34,1.56,.64,1)'})}catch(e){}for(let i=0;i<46;i++){const a=rnd(0,6.28);sim.haze.push({a,d:rnd(20,110),v:rnd(40,110),r:rnd(3,8)})}}
+    if(sim.lysed){sim.lyseT+=dt;sim.flow=0}
+    // water dots
+    if(!sim.lysed){
+      const iso=Math.abs(sim.flow)<.004, rate=iso?3:clamp(Math.abs(sim.flow)*260,6,26);
+      if(Math.random()<rate*dt){sim.water.push({a:rnd(0,6.28),p:0,dir:iso?(Math.random()<.5?1:-1):(sim.flow>0?1:-1)})}
+    }
+    const settled=Math.abs(tgt()-sim.scale)<.006&&(sim.pen===0||sim.u>=1)&&sim.t>2.2;
+    if((settled&&!sim.lysed)||(sim.lysed&&sim.lyseT>1.4)){sim.done=true;sim.running=false;sim.water=[];sim.onDone&&sim.onDone(outcome())}
+  }
+  sim.water.forEach(w=>w.p+=dt*1.25);sim.water=sim.water.filter(w=>w.p<1);
+  sim.haze.forEach(h=>{h.d=Math.min(h.d+h.v*dt*.5,150)});
+}
+/* ---------- drawing ---------- */
+let clock=0;
+function cellR(){return sim.cell==='rbc'?96:118}
+function draw(){
+  g.setTransform(SX,0,0,SY,0,0);g.clearRect(0,0,600,420);
+  // beaker
+  const wg=g.createLinearGradient(0,50,0,400);wg.addColorStop(0,'#eaf5f7');wg.addColorStop(1,'#cbe7ed');
+  rr(40,48,520,350,26);g.fillStyle=wg;g.fill();g.lineWidth=3;g.strokeStyle='#b7d3d8';g.stroke();
+  g.fillStyle='rgba(255,255,255,.55)';rr(52,58,14,300,7);g.fill();
+  g.font='700 12px DM Sans';g.fillStyle='#5f8a90';g.fillText('OUTSIDE',70,82);
+  // outside particles
+  sim.parts.forEach(p=>{let x=p.x+Math.sin(clock*1.3+p.ph)*2.2,y=p.y+Math.cos(clock*1.1+p.ph)*2.2;
+    if(p.k==='u'){const f=clamp((sim.u-p.e)*4,0,1);if(f>0){const R=cellR()*sim.scale*p.id;const ix=300+Math.cos(p.ia)*R,iy=225+Math.sin(p.ia)*R*(sim.cell==='rbc'?1:.85);x+=(ix-x)*f;y+=(iy-y)*f}}
+    dotc(x,y,p.r,p.col)});
+  if(sim.cell==='rbc')drawRBC();else drawPlant();
+  // water flow
+  sim.water.forEach(w=>{const R=sim.cell==='rbc'?cellR()*sim.scale:118*sim.scale;const a=R+46,b=R-22;const d=w.dir>0?a+(b-a)*w.p:b+(a-b)*w.p;
+    const x=300+Math.cos(w.a)*d,y=225+Math.sin(w.a)*d*(sim.cell==='rbc'?1:.85);g.globalAlpha=Math.sin(w.p*Math.PI);h2o(x,y);g.globalAlpha=1});
+  // flow arrows
+  if(sim.running&&!sim.lysed&&Math.abs(sim.flow)>.006){const R=(sim.cell==='rbc'?cellR():118)*sim.scale;for(let i=0;i<6;i++){const a=i*Math.PI/3+.5;arrow(a,R,sim.flow>0)}}
+}
+function rr(x,y,w,h,r){g.beginPath();g.moveTo(x+r,y);g.arcTo(x+w,y,x+w,y+h,r);g.arcTo(x+w,y+h,x,y+h,r);g.arcTo(x,y+h,x,y,r);g.arcTo(x,y,x+w,y,r);g.closePath()}
+function h2o(x,y){dotc(x,y,3.8,'#3d8fd1');dotc(x-2.6,y-2.4,1.5,'#e8f4fb');dotc(x+2.6,y-2.4,1.5,'#e8f4fb')}
+function dotc(x,y,r,c){g.beginPath();g.arc(x,y,r,0,6.283);g.fillStyle=c;g.fill()}
+function arrow(a,R,inward){const r1=inward?R+58:R+18,r2=inward?R+24:R+56;const x1=300+Math.cos(a)*r1,y1=225+Math.sin(a)*r1*.95,x2=300+Math.cos(a)*r2,y2=225+Math.sin(a)*r2*.95;
+  g.strokeStyle='rgba(61,143,209,.85)';g.lineWidth=5;g.lineCap='round';g.beginPath();g.moveTo(x1,y1);g.lineTo(x2,y2);g.stroke();
+  const ang=Math.atan2(y2-y1,x2-x1);g.beginPath();g.moveTo(x2,y2);g.lineTo(x2-12*Math.cos(ang-.5),y2-12*Math.sin(ang-.5));g.lineTo(x2-12*Math.cos(ang+.5),y2-12*Math.sin(ang+.5));g.closePath();g.fillStyle='rgba(61,143,209,.9)';g.fill()}
+function drawRBC(){
+  const s=sim.scale,R=cellR();
+  if(sim.lysed){const f=clamp(1-sim.lyseT/1.4,0,1);
+    sim.haze.forEach(h=>{g.globalAlpha=.5*f+.1;dotc(300+Math.cos(h.a)*h.d,225+Math.sin(h.a)*h.d,h.r,'#d9665b')});g.globalAlpha=1;
+    g.setLineDash([8,8]);g.lineWidth=3;g.strokeStyle='rgba(201,80,74,.45)';g.beginPath();g.arc(300,225,R*1.3,0,6.283);g.stroke();g.setLineDash([]);
+    g.font='700 15px DM Sans';g.fillStyle='#a8463c';g.textAlign='center';g.fillText('LYSED',300,229);g.textAlign='left';return}
+  const cren=s<.97?clamp((.97-s)*1.9,0,.55):0;
+  g.beginPath();for(let i=0;i<=160;i++){const t=i/160*6.283;const r=R*s*(1+cren*.11*Math.sin(13*t)+.012*Math.sin(3*t+clock));const x=300+Math.cos(t)*r,y=225+Math.sin(t)*r;i?g.lineTo(x,y):g.moveTo(x,y)}g.closePath();
+  const gr=g.createRadialGradient(300,225,R*s*.15,300,225,R*s);gr.addColorStop(0,'#f6b3a8');gr.addColorStop(.45,'#e88577');gr.addColorStop(1,'#c9504a');
+  g.shadowColor='rgba(120,30,25,.28)';g.shadowBlur=18;g.shadowOffsetY=6;g.fillStyle=gr;g.fill();g.shadowColor='transparent';g.shadowBlur=0;g.shadowOffsetY=0;g.lineWidth=2.5;g.strokeStyle='#a83f3a';g.stroke();g.setLineDash([2,8]);g.lineWidth=1.6;g.strokeStyle='rgba(255,235,230,.85)';g.stroke();g.setLineDash([]);
+  g.beginPath();g.ellipse(300,225,R*s*.42,R*s*.42*(1-cren*.3),0,0,6.283);g.fillStyle='rgba(255,220,212,.45)';g.fill();
+  sim.inner.forEach(p=>{const r=R*s*p.d;dotc(300+Math.cos(p.a+Math.sin(clock*.5+p.ph)*.05)*r,225+Math.sin(p.a)*r,4.2,'#8a2f2a')});
+  g.font='700 12px DM Sans';g.fillStyle='#7d2c27';g.textAlign='center';g.fillText('INSIDE 0.30 osM',300,225+R*s+22>395?225+R*s-12:225+R*s+22);g.textAlign='left';
+}
+function drawPlant(){
+  const W=260,H=220,x=170,y=115,ms=sim.scale;
+  rr(x,y,W,H,28);g.fillStyle='#eef6e8';g.fill();g.lineWidth=11;g.strokeStyle='#1B3A2D';g.stroke();
+  const mw=(W-22)*ms,mh=(H-22)*ms,mx=300-mw/2,my=225-mh/2;
+  rr(mx,my,mw,mh,24*ms);g.fillStyle='#d6ebc6';g.fill();g.lineWidth=2.5;g.strokeStyle='#5a9a63';g.stroke();
+  const vw=mw*.62,vh=mh*.58;rr(300-vw/2,225-vh/2,vw,vh,18*ms);g.fillStyle='#cfe8f2';g.fill();g.strokeStyle='#8cc0d3';g.lineWidth=2;g.stroke();
+  for(let i=0;i<10;i++){const t=i/10*6.283;const cx=300+Math.cos(t)*mw*.41,cy=225+Math.sin(t)*mh*.4;g.beginPath();g.ellipse(cx,cy,9*ms+3,5*ms+2,t,0,6.283);g.fillStyle='#3f8f4f';g.fill()}
+  sim.inner.forEach(p=>dotc(300+Math.cos(p.a)*vw*.4*p.d*1.4,225+Math.sin(p.a)*vh*.4*p.d*1.4,3.6,'#2b6a7d'));
+  g.font='700 12px DM Sans';g.fillStyle='#1B3A2D';g.textAlign='center';g.fillText('CELL WALL',300,y-10);g.textAlign='left';
+}
+let last=performance.now();let meterOn=true;function meter(){const m=document.getElementById('meter');if(!m)return;m.classList.toggle('off',!meterOn);
+  const o=sim.nonpen+sim.pen*(1-sim.u),i=INSIDE+sim.pen*sim.u;
+  document.getElementById('bo').style.width=Math.min(100,o/.7*100)+'%';document.getElementById('bi').style.width=Math.min(100,i/.7*100)+'%';
+  document.getElementById('vo').textContent=o.toFixed(2);document.getElementById('vi').textContent=i.toFixed(2);
+  const f=document.getElementById('flow');let t='Ready',c='';
+  if(sim.lysed){t='The cell burst';c='hot'}else if(sim.running&&Math.abs(sim.flow)>.004){t=sim.flow>0?'Water rushing in':'Water leaving';c=sim.flow>0?'in':'out'}else if(sim.running||sim.done){t=sim.cell==='plant'&&sim.done&&INSIDE/Math.max(sim.nonpen,.03)>1.04?'Wall holding the pressure':'Balanced: no net flow'}
+  if(f.textContent!==t){f.textContent=t;f.className='flow '+c}}
+function loop(n){meter();const dt=Math.min(.05,(n-last)/1000);last=n;clock+=dt;step(dt);draw();requestAnimationFrame(loop)}requestAnimationFrame(loop);
+
+/* ---------- helpers for copy ---------- */
+const fmt=v=>v.toFixed(2);
+function verdictRBC(o,osm){
+  if(o==='burst')return`Outside ${fmt(osm)} osM is far below the inside (0.30), so it was <b>hypotonic</b>. Water rushed in until the cell burst (lysis).`;
+  if(o==='swell')return`Outside ${fmt(osm)} osM is below 0.30: <b>hypotonic</b>. Water moved in and the cell swelled.`;
+  if(o==='shrink')return`Outside ${fmt(osm)} osM is above 0.30: <b>hypertonic</b>. Water left for the saltier side and the cell shrank (crenation).`;
+  return`Outside matches inside at 0.30 osM: <b>isotonic</b>. Water still crosses, just equally both ways, so no net change.`;
+}
+const LBL={swell:'Swell',stay:'Stay',shrink:'Shrink',burst:'Burst',turgid:'Firm up',plasmolysis:'Pull away'};
+const SOL={glucose:{n:'Glucose',i:1},nacl:{n:'NaCl',i:2},cacl2:{n:'CaCl\u2082',i:3}};
+function badge(t){const b=document.getElementById('badge');b.textContent=t;b.classList.add('show')}
+function hideBadge(){document.getElementById('badge').classList.remove('show')}
+
+/* ---------- LEARN ---------- */
+const SCENES=[
+ {eb:'1 of 4',title:'Water <em>chases</em> solute.',lead:'Drag the slider and watch the cell react. Want to test yourself first? Tap a quick call, then run it.',cell:'rbc'},
+ {eb:'2 of 4',title:'Count <em>particles</em>, not molarity.',lead:'Salts split apart in water, and every piece counts. Pick a solute and a molarity, then watch what the cell does.',cell:'rbc'},
+ {eb:'3 of 4',title:'The urea <em>sneak</em>.',lead:'Same number of particles outside as inside. One of these solutes can cross the membrane. Does that change anything?',cell:'rbc'},
+ {eb:'4 of 4',title:'Plant cells have a <em>wall</em>.',lead:'Same experiment, different cell. Watch what the wall does when water rushes in.',cell:'plant'}
+];
+let sc=0, st={osm:.6,sol:'nacl',m:.2,pen:'urea',posm:.1,call:null};
+function dots(n,on){document.getElementById('dots').innerHTML=Array.from({length:n},(_,i)=>`<i class="${i<on?'done':i===on?'on':''}"></i>`).join('')+`<span style="margin-left:8px">about 4 min</span>`}
+function head(eb,t,l){document.getElementById('eyebrow').textContent=eb;document.getElementById('title').innerHTML=t;document.getElementById('lead').textContent=l;const hc=document.getElementById('hc');hc.classList.remove('rise');void hc.offsetWidth;hc.classList.add('rise')}
+function cfgFor(i){
+  if(i===0)return{cell:'rbc',nonpen:st.osm};
+  if(i===1){const s=SOL[st.sol];return{cell:'rbc',nonpen:+(st.m*s.i).toFixed(2),ion:s.i}}
+  if(i===2)return st.pen==='urea'?{cell:'rbc',nonpen:0,pen:.3}:{cell:'rbc',nonpen:.3};
+  return{cell:'plant',nonpen:st.posm};
+}
+function learn(){
+  if(sc>=SCENES.length)return learnDone();
+  const S=SCENES[sc];dots(4,sc);head('Learn \u00b7 '+S.eb,S.title,S.lead);hideBadge();st.call=null;
+  setup(cfgFor(sc));
+  const calls=S.cell==='plant'?['turgid','stay','plasmolysis']:['swell','stay','shrink','burst'];
+  let ctl='';
+  if(sc===0)ctl=`<h3>Solute outside the cell</h3><p class="sub">The inside stays at 0.30 osM.</p><div class="row"><span>Outside</span><span class="val" id="v">${fmt(st.osm)} osM</span></div><input type="range" id="r" min="0.05" max="0.6" step="0.05" value="${st.osm}">`;
+  if(sc===1)ctl=`<h3>Solute</h3><div class="chips" id="sol">${Object.entries(SOL).map(([k,s])=>`<button class="chip ${k===st.sol?'on':''}" data-k="${k}">${s.n}</button>`).join('')}</div><div class="row"><span>Molarity outside</span><span class="val" id="v">${fmt(st.m)} M</span></div><input type="range" id="r" min="0.05" max="0.3" step="0.05" value="${st.m}">`;
+  if(sc===2)ctl=`<h3>0.30 osM outside, made of</h3><div class="chips" id="pen"><button class="chip ${st.pen==='urea'?'on':''}" data-k="urea">Urea</button><button class="chip ${st.pen==='sucrose'?'on':''}" data-k="sucrose">Sucrose</button></div>`;
+  if(sc===3)ctl=`<h3>Solute outside the plant cell</h3><p class="sub">The inside stays at 0.30 osM.</p><div class="row"><span>Outside</span><span class="val" id="v">${fmt(st.posm)} osM</span></div><input type="range" id="r" min="0.05" max="0.6" step="0.05" value="${st.posm}">`;
+  document.getElementById('panel').innerHTML=ctl+`<div class="hr"></div><h3>Quick call <span style="color:var(--muted);font-weight:500">(optional, no score)</span></h3><div class="chips" id="calls">${calls.map(c=>`<button class="chip" data-k="${c}">${LBL[c]}</button>`).join('')}</div>
+  <button class="btn go" id="go">Run it</button><div class="take" id="take"></div>
+  <div class="nav"><button class="btn ghost" id="back" ${sc?'':'disabled'}>Back</button><button class="btn ghost" id="next">${sc===3?'Finish':'Next'}</button></div>`;
+  const reset=()=>{setup(cfgFor(sc));hideBadge();document.getElementById('take').className='take';document.querySelectorAll('#calls .chip').forEach(b=>b.classList.remove('right','wrong'));document.getElementById('go').disabled=false};
+  const r=document.getElementById('r');
+  if(r)r.oninput=()=>{const v=+r.value;if(sc===0){st.osm=v;document.getElementById('v').textContent=fmt(v)+' osM'}if(sc===1){st.m=v;document.getElementById('v').textContent=fmt(v)+' M'}if(sc===3){st.posm=v;document.getElementById('v').textContent=fmt(v)+' osM'}reset();auto()};
+  const auto=()=>{if(st.call)return;clearTimeout(window._ar);window._ar=setTimeout(()=>{const g=document.getElementById('go');g&&!g.disabled&&g.click()},320)};const pick=(id,key)=>{const el=document.getElementById(id);if(el)el.onclick=e=>{const b=e.target.closest('.chip');if(!b)return;st[key]=b.dataset.k;el.querySelectorAll('.chip').forEach(x=>x.classList.toggle('on',x===b));reset();auto()}};
+  pick('sol','sol');pick('pen','pen');
+  document.getElementById('calls').onclick=e=>{const b=e.target.closest('.chip');if(!b||sim.running)return;st.call=b.dataset.k;document.querySelectorAll('#calls .chip').forEach(x=>x.classList.toggle('on',x===b))};
+  document.getElementById('go').onclick=()=>{reset();if(st.call)document.querySelector(`#calls [data-k=${st.call}]`).classList.add('on');document.getElementById('go').disabled=true;run(o=>finishScene(o))};
+  document.getElementById('next').onclick=()=>{sc++;learn()};
+  document.getElementById('back').onclick=()=>{if(sc){sc--;learn()}};
+}
+function finishScene(o){
+  const t=document.getElementById('take'),go=document.getElementById('go');go.disabled=false;go.textContent='Run it again';
+  let msg='';
+  if(sc===0)msg=verdictRBC(o,st.osm);
+  if(sc===1){const s=SOL[st.sol],osm=+(st.m*s.i).toFixed(2);msg=`<div class="math">${fmt(st.m)} M \u00d7 ${s.i} particle${s.i>1?'s':''} = ${fmt(osm)} osM</div><br>`+verdictRBC(o,osm)}
+  if(sc===2)msg=st.pen==='urea'?`Urea slips through the membrane. Once inside, it adds to the inside and pulls water in, so the cell swells until it bursts. <b>Only solutes that stay outside set tonicity.</b>`:`Sucrose can't cross. 0.30 osM outside matches the inside: <b>isotonic</b>, no net change. Now try urea.`;
+  if(sc===3)msg=o==='turgid'?`Water rushed in, but the wall held. The cell went firm (<b>turgid</b>). That's how plants stand up. Animal cells have no wall, so they burst.`:o==='plasmolysis'?`<b>Hypertonic</b>. Water left and the membrane pulled away from the wall (<b>plasmolysis</b>). The wall itself keeps its shape.`:`<b>Isotonic</b>. No net change, though a plant cell here is actually a little limp (flaccid). Plants like it slightly hypotonic.`;
+  const lab=sim.cell==='plant'?(o==='turgid'?'Turgid':o==='plasmolysis'?'Plasmolysis':'Isotonic'):(sc===2?(st.pen==='urea'?'Urea crossed in':'Isotonic'):tonicity().replace(/^./,c=>c.toUpperCase()));
+  badge(lab);
+  if(st.call){const b=document.querySelector(`#calls [data-k=${st.call}]`);const hit=st.call===o;b.classList.remove('on');b.classList.add(hit?'right':'wrong');if(!hit){const a=document.querySelector(`#calls [data-k=${o}]`);a&&a.classList.add('right')}
+    msg=(hit?'<b>Good call.</b> ':`<b>You called ${LBL[st.call]}. It was ${LBL[o]}.</b> `)+msg}
+  t.innerHTML=msg;t.className='take show';
+}
+function learnDone(){
+  dots(4,4);head('Learn \u00b7 done','That\u2019s the <em>content</em>.','Four ideas, a few minutes, no quiz. The real learning happens when you hit these in a practice test and review your misses.');hideBadge();setup({cell:'rbc',nonpen:.3});
+  document.getElementById('panel').innerHTML=`<h3>You now know</h3><div class="list"><p><b>1</b>Water moves toward more solute.</p><p><b>2</b>Count particles: NaCl gives 2, CaCl\u2082 gives 3.</p><p><b>3</b>Solutes that cross (urea) don\u2019t hold water out.</p><p><b>4</b>A wall stops plant cells from bursting.</p></div><div class="hr"></div><button class="btn go" id="toRev">Go to Review + Repair</button><div class="nav"><button class="btn ghost" id="again">Start over</button></div>`;
+  document.getElementById('toRev').onclick=()=>mode('review');document.getElementById('again').onclick=()=>{sc=0;learn()};
+}
+
+/* ---------- REVIEW + REPAIR ---------- */
+const MISS={src:'Practice test 2 \u00b7 Q14',q:'A red blood cell (inside about 0.30 osM) is placed in 0.20 M CaCl\u2082. Assume full dissociation. What happens to the cell?',opts:['It swells and may lyse','No net change','It shrinks','It swells, then returns to normal'],yours:0,key:2,cfg:{cell:'rbc',nonpen:.6,ion:3}};
+const WHY=[['content','I didn\u2019t know this'],['setup','Forgot to count particles'],['misread','Misread the question'],['rushed','Rushed it'],['trap','Fell for the trap']];
+const REPS=[
+ {q:'0.15 M NaCl outside. The red blood cell will\u2026',cfg:{cell:'rbc',nonpen:.3,ion:2},a:'stay',why:'0.15 \u00d7 2 = 0.30 osM. Matches the inside: isotonic.'},
+ {q:'0.10 M CaCl\u2082 outside. The red blood cell will\u2026',cfg:{cell:'rbc',nonpen:.3,ion:3},a:'stay',why:'0.10 \u00d7 3 = 0.30 osM. Looks small, but it\u2019s isotonic.'},
+ {q:'0.30 M urea outside. The red blood cell will\u2026',cfg:{cell:'rbc',nonpen:0,pen:.3},a:'burst',why:'Urea crosses, so it doesn\u2019t hold water out. Water follows it in and the cell lyses.'}
+];
+let rv={step:0,why:null,rep:0,hits:0};
+function rsteps(){return`<ul class="steps">${['Miss','Rewind','Why','Repair','Lock'].map((s,i)=>`<li class="step ${i<rv.step?'done':i===rv.step?'on':''}"><i>${i+1}</i>${s}</li>`).join('')}</ul>`}
+function review(){meterOn=true;
+  document.getElementById('dots').innerHTML='';const P=document.getElementById('panel');hideBadge();
+  if(rv.step===0){head('Review + Repair','Your miss, <em>fixed</em>.','This is where the learning happens. One miss from your practice test, rewound and repaired.');setup({cell:'rbc',nonpen:.3});
+    P.innerHTML=rsteps()+`<div class="eyebrow">${MISS.src}</div><p class="qtext">${MISS.q}</p>${MISS.opts.map((o,i)=>`<div class="opt ${i===MISS.yours?'yours':''}">${'ABCD'[i]}. ${o}${i===MISS.yours?'<span class="tag" style="color:var(--bad)">your answer</span>':''}</div>`).join('')}<button class="btn go" id="n">Rewind it</button>`}
+  if(rv.step===1){setup(MISS.cfg);
+    P.innerHTML=rsteps()+`<div class="big">Count the <em>particles</em> first.</div><div class="math">0.20 M \u00d7 3 = 0.60 osM</div><p class="sub">CaCl\u2082 splits into Ca\u00b2\u207a + 2 Cl\u207b. Outside is 0.60, inside is 0.30. Watch.</p><button class="btn go" id="play">Play it</button><div class="take" id="take"></div><button class="btn go" id="n" style="display:none;margin-top:10px">Next</button>`;
+    document.getElementById('play').onclick=()=>{setup(MISS.cfg);document.getElementById('play').disabled=true;run(()=>{badge('Hypertonic');const t=document.getElementById('take');t.innerHTML=`It shrinks. Answer <b>C</b>. Reading 0.20 as smaller than 0.30 makes it look like the cell should swell. That\u2019s the trap.`;t.className='take show';document.getElementById('play').disabled=false;document.getElementById('play').textContent='Play again';document.getElementById('n').style.display='block'})}}
+  if(rv.step===2){P.innerHTML=rsteps()+`<div class="big">Why did you <em>miss</em> it?</div><p class="sub">Be honest. This decides what you get drilled on next.</p>${WHY.map(([k,l])=>`<button class="opt" data-k="${k}" style="cursor:pointer">${l}</button>`).join('')}<button class="btn go" id="n" disabled>Start the repair</button>`;
+    P.querySelectorAll('[data-k]').forEach(b=>b.onclick=()=>{rv.why=b.dataset.k;P.querySelectorAll('[data-k]').forEach(x=>x.classList.toggle('key',x===b));document.getElementById('n').disabled=false})}
+  if(rv.step===3){const R=REPS[rv.rep];setup(R.cfg);meterOn=false;
+    P.innerHTML=rsteps()+`<div class="eyebrow">Repair rep ${rv.rep+1} of ${REPS.length}</div><p class="qtext" style="font-size:17px">${R.q}</p><div class="chips" id="calls">${['swell','stay','shrink','burst'].map(c=>`<button class="chip" data-k="${c}">${LBL[c]}</button>`).join('')}</div><div class="take" id="take"></div><button class="btn go" id="n" style="display:none;margin-top:10px">${rv.rep<REPS.length-1?'Next rep':'Finish'}</button>`;
+    document.getElementById('calls').onclick=e=>{const b=e.target.closest('.chip');if(!b||sim.running||sim.done)return;const k=b.dataset.k;b.classList.add('on');
+      run(o=>{meterOn=true;const hit=k===R.a;if(hit)rv.hits++;b.classList.remove('on');b.classList.add(hit?'right':'wrong');if(!hit)document.querySelector(`#calls [data-k=${R.a}]`).classList.add('right');
+        const t=document.getElementById('take');t.innerHTML=(hit?'<b>Yes.</b> ':'<b>Not quite.</b> ')+R.why;t.className='take show';document.getElementById('n').style.display='block'})}}
+  if(rv.step===4){setup({cell:'rbc',nonpen:.3});const why=WHY.find(w=>w[0]===rv.why)[1];
+    const cards=store.get('acelabs-cards',[]);if(!cards.some(c=>c.id==='osm-cacl2')){cards.push({id:'osm-cacl2',front:'0.20 M CaCl\u2082 vs a 0.30 osM cell?',back:'0.60 osM, hypertonic, shrinks',due:Date.now()+864e5,ladder:[1,3,7,14,30],why:rv.why});store.set('acelabs-cards',cards)}
+    head('Review + Repair','Locked <em>in</em>.','The miss is logged, the fix is drilled, and it comes back before you forget it.');
+    P.innerHTML=rsteps()+`<div class="row"><span>Why you missed it</span><span class="val">${why}</span></div><div class="row"><span>Repair reps</span><span class="val">${rv.hits} / ${REPS.length}</span></div><div class="row"><span>Ace Card due</span><span class="val">Tomorrow</span></div><p class="sub" style="margin-top:10px">Then 3, 7, 14 and 30 days. Get it right each time and it graduates.</p><button class="btn go" id="again">Do it again</button><div class="nav"><button class="btn ghost" id="toLearn">Back to Learn</button></div>`;
+    document.getElementById('again').onclick=()=>{rv={step:0,why:null,rep:0,hits:0};review()};document.getElementById('toLearn').onclick=()=>mode('learn');return}
+  const n=document.getElementById('n');if(n)n.onclick=()=>{if(rv.step===3&&rv.rep<REPS.length-1){rv.rep++}else{rv.step++}review()};
+}
+
+/* ---------- swipe + keys ---------- */
+(()=>{let x0=null;cv.addEventListener('touchstart',e=>{x0=e.touches[0].clientX},{passive:true});
+cv.addEventListener('touchend',e=>{if(x0===null)return;const dx=e.changedTouches[0].clientX-x0;x0=null;if(location.hash==='#review'||sim.running)return;
+  if(dx<-60&&sc<SCENES.length){sc++;learn()}else if(dx>60&&sc>0){sc--;learn()}},{passive:true});
+document.addEventListener('keydown',e=>{if(location.hash==='#review'||e.target.tagName==='INPUT'||sim.running)return;if(e.key==='ArrowRight'&&sc<SCENES.length){sc++;learn()}if(e.key==='ArrowLeft'&&sc>0){sc--;learn()}})})();
+/* ---------- modes ---------- */
+function mode(m){document.getElementById('mLearn').setAttribute('aria-selected',m==='learn');document.getElementById('mReview').setAttribute('aria-selected',m==='review');document.getElementById('seg').style.setProperty('--i',m==='review'?1:0);
+  if(location.hash!=='#'+m)history.replaceState(null,'','#'+m);m==='learn'?learn():review();window.scrollTo(0,0)}
+document.getElementById('mLearn').onclick=()=>mode('learn');document.getElementById('mReview').onclick=()=>mode('review');
+window.addEventListener('hashchange',()=>mode(location.hash==='#review'?'review':'learn'));
+mode(location.hash==='#review'?'review':'learn');
+</script>
+</body>
+</html>
