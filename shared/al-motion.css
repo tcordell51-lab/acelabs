@@ -1,45 +1,46 @@
-/* Ace Labs global motion stylesheet — al-motion.css
-   Load this after al-tokens.css in every engine entry point.
+/* =====================================================================
+   Ace Labs motion (served as shared/al-motion.css?v=2).
 
-   Responsibilities:
-   1. Expose standard motion-duration custom properties (mirrors al-tokens.css
-      so engines that inline their own :root still get the cascade).
-   2. Respect prefers-reduced-motion: reduce by collapsing all
-      animation/transition durations to near-zero.  0.01ms is used rather
-      than 0 so that event callbacks (animationend, transitionend) still fire.
-*/
+   Tokens v2 (shared/al-tokens.css) owns the motion tokens and the
+   reduced-motion reset. This file carries the same tokens and the same
+   reset for the engine pages that load it without the tokens
+   (tools/bio/bio-diagnostic.html, tools/bio/bio-mock.html,
+   tools/gc/index.html), so every page gets v2 motion one way. Where a page
+   loads both, nothing changes: every value below is the tokens' own
+   (tests/kit/tokens.test.js holds the two files equal), so the cascade
+   order does not matter.
 
-/* ── 1. Motion token fallbacks ──────────────────────────────────────────────
-   If al-tokens.css is loaded first these are no-ops.  Kept here so pages
-   that load only al-motion.css still have the tokens available.
-*/
-:root {
-  --motion-fast:     150ms;
-  --motion-base:     250ms;
-  --motion-slow:     400ms;
+   Load it after al-tokens.css on pages that have both.
+
+   Reduced motion: every duration collapses to a cut. 0.01ms rather than 0
+   so animationend and transitionend still fire; !important on purpose, so
+   it beats any inline or engine-level transition without per-component
+   changes. Scripts read the same query and swap auto-play for a Next frame
+   button; dragging keeps working.
+   ===================================================================== */
+
+/* the motion tokens (tokens v2, section 3c, plus the v1 names it keeps) */
+:root{
+  --motion-fast:150ms;
+  --motion-base:250ms;
+  --motion-slow:400ms;
   --motion-explainer:800ms;
+  --m-tap:100ms;
+  --m-state:180ms;
+  --m-panel:320ms;
+  --m-travel:420ms;
+  --m-reveal:600ms;
+  --m-card:620ms;
+  --m-frame:900ms;
+  --e-out:cubic-bezier(.2,.8,.2,1);
+  --e-std:cubic-bezier(.4,0,.2,1);
+  --e-process:cubic-bezier(.45,0,.25,1);
+  --e-drop:cubic-bezier(.34,1.32,.64,1);
 }
 
-/* ── 2. Reduced-motion reset ────────────────────────────────────────────────
-   Targets the OS/browser "reduce motion" preference.
-   !important is intentional — this must override any inline or engine-level
-   transition/animation shorthand without requiring per-component changes.
-*/
-@media (prefers-reduced-motion: reduce) {
-  /* Collapse token durations so any `var(--motion-*)` usage also falls to 0 */
-  :root {
-    --motion-fast:     0.01ms;
-    --motion-base:     0.01ms;
-    --motion-slow:     0.01ms;
-    --motion-explainer:0.01ms;
-  }
-
-  *,
-  *::before,
-  *::after {
-    animation-duration:        0.01ms !important;
-    animation-iteration-count: 1      !important;
-    transition-duration:       0.01ms !important;
-    scroll-behavior:           auto   !important;
-  }
+/* reduced motion: the tokens' reset, exactly */
+@media (prefers-reduced-motion: reduce){
+  :root{--m-tap:1ms;--m-state:1ms;--m-panel:1ms;--m-travel:1ms;--m-reveal:1ms;--m-card:1ms;--m-frame:1ms;
+        --motion-fast:.01ms;--motion-base:.01ms;--motion-slow:.01ms;--motion-explainer:.01ms}
+  *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;scroll-behavior:auto !important}
 }

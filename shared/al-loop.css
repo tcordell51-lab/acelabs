@@ -1,0 +1,56 @@
+/* =====================================================================
+   AceLoop bench layout (served as shared/al-loop.css?v=1). The pieces
+   (band, field, options, verdict, drive, card) are in al-kit.css; this
+   file only places them, for benches that AceLoop.mount renders
+   (article.bench.al-loop inside a host that carries .al).
+
+   Phone: stage, then flow (the verdict lands directly under the slide),
+   then drive. From 760 px: stage left, flow right, drive under the stage.
+   data-beat on the bench says where the loop is: setup, call, watch,
+   verdict, prove, keep, done.
+   ===================================================================== */
+.al .al-loop .bench-grid{grid-template-columns:minmax(0,1fr)}
+@media (min-width:760px){
+  .al .al-loop .bench-grid{grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);grid-template-areas:"stage flow" "drive flow";grid-template-rows:auto 1fr;align-items:start}
+  .al .al-loop .stage{grid-area:stage}
+  .al .al-loop .flow{grid-area:flow}
+  .al .al-loop .drive-slot{grid-area:drive}
+}
+
+/* the stage */
+.al .al-loop .field{aspect-ratio:var(--field-ratio,372/228)}
+.al .al-loop .field .layer{position:absolute;inset:0}
+.al .al-loop .field .layer>svg{width:100%;height:100%}
+.al .al-loop .field .layer.draw{z-index:2}
+.al .al-loop[data-beat="watch"] .caption{color:var(--c-ink)}
+
+/* the flow */
+.al .al-loop .flow{display:grid;gap:12px;align-content:start;min-width:0}
+.al .al-loop .beat-call,.al .al-loop .beat-prove{display:grid;gap:12px}
+.al .al-loop .call-host:empty{display:none}
+.al .al-loop .call-row{display:flex;justify-content:space-between;align-items:center;gap:4px 8px;flex-wrap:wrap;margin-top:-4px}
+/* the question takes focus when a beat replaces the button that was pressed; no ring on a heading */
+.al .al-loop .prompt[tabindex="-1"]:focus{outline:none}
+/* after the verdict the question steps back and the calls fold to the two that matter */
+.al .al-loop .prompt.asked{font:600 var(--t-small)/1.4 var(--f-body);letter-spacing:0;color:var(--c-ink-2)}
+.al .al-loop .closed-book{display:flex;align-items:center;gap:8px;font-size:14px;line-height:1.4;color:var(--c-ink-3)}
+.al .al-loop .closed-book .ico{color:var(--c-mint-ink)}
+.al .al-loop .beat-keep{display:grid;gap:12px}
+.al .al-loop .keep-note{font-size:14px;line-height:1.5;color:var(--c-ink-2)}
+.al .al-loop .keep-note b{color:var(--c-gold-ink);font-weight:700}
+.al .al-loop .drive-slot{display:grid;gap:12px;align-content:start}
+
+/* done: one calm line, the ways on, and Play it again */
+.al .al-loop .beat-done{display:grid;gap:12px}
+.al .al-loop .loop-done{border-radius:12px;padding:12px 14px;background:var(--c-plate);border:1px solid var(--c-line);border-left:4px solid var(--c-mint)}
+.al .al-loop .loop-done .vh{display:flex;align-items:center;gap:8px;font:700 16px/1.2 var(--f-body);color:var(--c-mint-ink)}
+.al .al-loop .loop-done p{margin-top:6px;font-size:15px;line-height:1.5;color:var(--c-ink-2)}
+.al .al-loop .loop-links{display:flex;flex-wrap:wrap;gap:8px}
+
+/* phones: tighter, so the question and every call fit above the tab bar */
+@media (max-width:759px){
+  .al .al-loop .bench-top{padding-top:10px}
+  .al .al-loop .band{margin-top:6px}
+  .al .al-loop .bench-body{padding-top:10px}
+  .al .al-loop .caption{min-height:0;margin-top:6px;font-size:13.5px}
+}

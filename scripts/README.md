@@ -49,3 +49,21 @@ Bank entries that opt into rendering have one or more of:
 - `q_svg` — inline SVG markup (used for the 8 hand-built arrow-prediction items)
 - `opts_svg` — inline SVG markup per answer choice (rare)
 - `_ada_category` — one of the 5 official OChem category labels
+
+# Release gates and page tools (One Loop build, B1)
+
+Every batch runs these before merge (build plan, "How the waves work", rule 6).
+`npm test` runs the gates; the page tools need Playwright's Chromium.
+
+| Command | What it checks |
+|---|---|
+| `npm run gate:copy` | Every word a student reads: plain ASCII (dashes, the middle dot, emoji and other glyphs named separately), never wrong / incorrect / failed, no streaks, points, XP, leaderboards, best scores, badges, countdowns, confidence ratings or payment words. Strict over the whole site. |
+| `npm run gate:copy -- --strict FILE...` | The same, on a batch's touched files only, with no allowance. `--since main` picks the touched files from git. |
+| `node scripts/gate-copy.mjs --baseline` | The ratchet `npm test` runs: no file may gain a hit of any rule over `scripts/copy-baseline.json`. `npm run copy:baseline` rewrites the baseline after a cleanup (B6 tightens it). |
+| `npm run gate:clock` | No clock outside a timed test: interval and frame-loop clocks, timer / countdown / clock elements, and countdown labels. Timed tests and the timers batches still have to remove are listed, with their owner, in the script. `--strict` fails on the pending ones too. |
+| `npm run gate:contrast` | Every text pair in `shared/al-tokens.css` at 4.5:1 or better in light, dark and on the bench, the exam layer included. |
+| `npm run audit:pages -- PAGE...` | Playwright at 390 x 844: sideways scroll, targets under 44 px in `<main>` and the shell, console errors, failed requests, any request to another host (fonts included), fonts from anywhere but `/shared/fonts/`, and a reduced-motion snapshot. Presets: `@doors`, `@b1` (30 pages), `@all`, or `@list.txt`. `--baseline old/audit.json` fails only where a page got worse. |
+| `npm run shots -- PAGE...` | 390 x 844 and 1280 x 800, light and dark (`--reduced` adds reduced motion), into `test-screenshots/<batch>/` with an `index.html` contact sheet. `--site DIR` shoots another checkout for a before and after. |
+
+A line of code the copy gate cannot tell from copy (a rule list, say) can carry the
+marker `copy-gate-ok`; never use it on words a student reads.

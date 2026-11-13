@@ -10,9 +10,11 @@ const SHELL = `<!DOCTYPE html>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>{TITLE} &middot; Pattern Comparator &middot; AceTheDAT QR</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js"></script>
+<link rel="preload" href="/shared/fonts/dmsans-v1.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/shared/fonts/sora-v1.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/shared/al-fonts.css?v=1">
+<link rel="stylesheet" href="/shared/al-fonts-legacy.css?v=1">
+<script src="/shared/anime.min.js?v=1"></script>
 <style>
 :root{
   --bg:#f5f0e8; --paper:#fffdf7; --paper-2:#f9f3e6; --paper-3:#f3ecdb;
@@ -212,6 +214,7 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
   });
 })();
 </script>
+  <script src="/shared/ace-shell.js?v=6" defer></script>
 </body>
 </html>`;
 
