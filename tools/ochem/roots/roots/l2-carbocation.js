@@ -19,7 +19,7 @@ export const meta = {
   ],
   trap: 'Careful: a secondary allylic or benzylic cation beats a plain tertiary, because resonance is the blanket and the blanket beats the neighbor count.',
   holdsUp: ['SN1 speed', 'Where Markovnikov puts the charge', 'Rearrangements', 'Radical halogenation site', 'EAS'],
-  drill: 'The Fundamentals, in your OChem question bank'
+  drill: 'Practice questions on this topic, in the OChem engine or your own question bank'
 };
 
 

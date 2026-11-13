@@ -29,7 +29,7 @@ export const meta = {
   ],
   trap: 'Careful: an oxygen is not automatically a hydrogen bond. An ether and a ketone both have an oxygen, but neither has a hydrogen on it, so neither can hold hands with its own kind; that is why diethyl ether boils at 35 and 1-butanol, the same number of carbons, boils at 118.',
   holdsUp: ['Boiling point ranking', 'Water solubility', 'Extraction and washing steps', 'Which solvent to use'],
-  drill: 'Spectroscopy & Lab Techniques, in your OChem question bank'
+  drill: 'Practice questions on this topic, in the OChem engine or your own question bank'
 };
 
 const SERIF = 'Georgia, "Times New Roman", serif';

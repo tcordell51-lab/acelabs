@@ -3,12 +3,23 @@
  * Browser-level smoke test for the bio engine.
  * Loads each hub via headless Chromium, captures console errors + page errors,
  * verifies key interactives exist and respond, and saves screenshots.
+ *
+ *   node scripts/test-bio-browser.js [BASE_URL]      (npm run test:browser)
+ *
+ * The site: BASE_URL as an argument, else env ACE_BASE_URL, else this checkout served by
+ * scripts/lib/site.mjs on a free port (no server needed). Chromium: env PW_CHROMIUM, else
+ * /opt/pw-browsers/chromium when present, else Playwright's own; --no-sandbox when running as root.
  */
 const { chromium } = require('playwright');
 const fs = require('fs');
 const path = require('path');
 
-const BASE = 'http://localhost:4000';
+let BASE = (process.argv.slice(2).find((a) => /^https?:\/\//.test(a)) || process.env.ACE_BASE_URL || '').replace(/\/$/, '');
+function chromiumOptions() {
+  const exe = [process.env.PW_CHROMIUM, '/opt/pw-browsers/chromium'].filter(Boolean).find((f) => { try { return fs.statSync(f).isFile(); } catch (e) { return false; } });
+  const root = typeof process.getuid === 'function' && process.getuid() === 0;
+  return { ...(exe ? { executablePath: exe } : {}), args: root ? ['--no-sandbox'] : [] };
+}
 const SHOTS_DIR = path.join(__dirname, '..', 'test-screenshots');
 fs.mkdirSync(SHOTS_DIR, { recursive: true });
 
@@ -62,7 +73,14 @@ const HUBS = [
 ];
 
 (async () => {
-  const browser = await chromium.launch();
+  let server = null;
+  if (!BASE) {
+    const { startServer } = await import(require('url').pathToFileURL(path.join(__dirname, 'lib', 'site.mjs')).href);
+    server = await startServer(path.join(__dirname, '..'));
+    BASE = server.url;
+  }
+  console.log('test-bio-browser: ' + BASE);
+  const browser = await chromium.launch(chromiumOptions());
   const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
 
   let totalErrors = 0;
@@ -375,6 +393,7 @@ const HUBS = [
   }
 
   await browser.close();
+  if (server) await server.close();
 
   console.log(report.join('\n'));
   console.log(`\nTotal issues: ${totalErrors}`);

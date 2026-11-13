@@ -1,5 +1,5 @@
 /* =====================================================================
-   Ace Labs · canonical scope + counts registry
+   Ace Labs: canonical scope + counts registry
    ---------------------------------------------------------------------
    Single source of truth for cross-engine product claims:
 
@@ -35,7 +35,7 @@
     { key:'bio',   name:'Biology',           shortName:'Bio',
       bankCount: 158, bankLabel:'expert + rewritten pool',
       route:'tools/bio/index.html' },
-    { key:'gc',    name:'General Chemistry', shortName:'Gen Chem',
+    { key:'gc',    name:'General Chemistry', shortName:'GChem',
       bankCount: 605, bankLabel:'engine bank',
       route:'tools/gc/index.html' },
     { key:'ochem', name:'Organic Chemistry', shortName:'OChem',
@@ -47,7 +47,7 @@
     { key:'pat',   name:'Perceptual Ability',   shortName:'PAT',
       bankCount: 15, bankLabel:'full 90-question tests plus six drills',
       route:'tools/pat/index.html' },
-    { key:'rc',    name:'Reading Comprehension', shortName:'Reading',
+    { key:'rc',    name:'Reading Comprehension', shortName:'RC',
       bankCount: 750, bankLabel:'questions across 45 passages, 15 timed sections',
       route:'tools/rc/index.html' }
   ];
@@ -61,7 +61,7 @@
   /* ---- Mocks ------------------------------------------------------- */
   // 3 fixed Prometric-style practice tests. Each test draws 140 unique
   // problems with zero overlap → 420 unique problems across all 3.
-  // Sciences (40 Bio + 30 GC + 30 OChem · 90 min) + QR (40 Q · 45 min).
+  // Sciences (40 Bio + 30 GC + 30 OChem, 90 min) + QR (40 Q, 45 min).
   // Total seat time per test: 135 min, not counting the optional
   // 30-min break the runner offers between Sciences and QR. The real
   // DAT break sits between PAT and RC; the mock has neither section,
@@ -71,7 +71,7 @@
     questionsPerTest: 140,
     minutesPerTest: 135,
     uniqueQuestionsTotal: 420,
-    sectionMix: 'Sciences (40 Bio + 30 GC + 30 OChem · 90 min) followed by QR (40 Q · 45 min)',
+    sectionMix: 'Sciences (40 Bio, 30 GChem, 30 OChem; 90 min) followed by QR (40 questions; 45 min)',
     breakNote: 'The practice tests offer an optional 30-minute break between Sciences and QR. On the real DAT, the one scheduled break (optional, 30 minutes) sits between PAT and RC.'
   };
 
@@ -224,21 +224,26 @@
   function ensureStyles() {
     if (typeof document === 'undefined') return;
     if (document.getElementById('alScopeStyles')) return;
+    // Every color, face and radius comes from tokens v2 (shared/al-tokens.css), and the strip
+    // paints its own ground from the same themed family as its text (--s-surface-2 under
+    // --s-ink-*), so the pair flips together and reads at 4.5:1 or better in light and dark,
+    // whatever page it sits on. The fallbacks are the light values, for a page without the tokens.
     var css = [
-      '.al-scope-strip{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;padding:.55rem .9rem;margin:.6rem 0;background:rgba(201,168,76,.07);border:1px solid rgba(201,168,76,.28);border-radius:8px;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;font-size:12.5px;color:#3a4148;line-height:1.5}',
-      '.al-scope-strip .al-scope-label{font-weight:700;letter-spacing:.06em;text-transform:uppercase;font-size:10.5px;color:#8C7235}',
-      '.al-scope-strip .al-scope-label-warn{color:#a8431a}',
-      '.al-scope-strip .al-scope-value{color:#1a1d20;font-weight:600}',
-      '.al-scope-strip .al-scope-value-warn{color:#a8431a}',
-      '.al-scope-strip .al-scope-sep{color:#cbb98a;font-weight:700}',
-      '.al-scope-strip .al-scope-meta{color:#5c5348;font-style:italic;margin-left:auto}',
-      '.al-scope-strip .al-scope-link{margin-left:.4rem;color:#8C7235;text-decoration:none;border-bottom:1px dashed #8C7235;font-weight:700}',
-      '.al-disclaimer{margin:1.2rem 0;padding:1rem 1.2rem;background:rgba(0,0,0,.03);border-left:3px solid #C9A84C;border-radius:0 8px 8px 0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;font-size:13px;color:#3a4148;line-height:1.65}',
+      '.al-scope-strip{display:flex;flex-wrap:wrap;align-items:center;gap:.25rem .5rem;padding:.25rem .9rem;margin:.6rem 0;background:var(--s-surface-2,#f9f3e6);border:1px solid var(--s-line-2,rgba(13,32,24,.22));border-left:3px solid var(--s-accent,#C9A84C);border-radius:var(--r-control,10px);font-family:var(--f-body,"DM Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif);font-size:13px;color:var(--s-ink-2,#3a4a42);line-height:1.5}',
+      '.al-scope-strip .al-scope-label{font-family:var(--f-mono,"JetBrains Mono",ui-monospace,monospace);font-weight:600;letter-spacing:.1em;text-transform:uppercase;font-size:11px;color:var(--s-accent-ink,#7a6128)}',
+      '.al-scope-strip .al-scope-label-warn{color:var(--s-ink,#0d2018)}',
+      '.al-scope-strip .al-scope-value{color:var(--s-ink,#0d2018);font-weight:600}',
+      '.al-scope-strip .al-scope-value-warn{color:var(--s-ink,#0d2018)}',
+      '.al-scope-strip .al-scope-sep{color:var(--s-ink-3,#5c6a63);font-weight:700}',
+      '.al-scope-strip .al-scope-meta{color:var(--s-ink-3,#5c6a63);font-style:italic;margin-left:auto}',
+      '.al-scope-strip .al-scope-link{display:inline-flex;align-items:center;min-height:44px;margin-left:.4rem;color:var(--s-accent-ink,#7a6128);text-decoration:underline;text-decoration-style:dashed;text-underline-offset:4px;font-weight:700}',
+      '.al-scope-strip .al-scope-link:focus-visible{outline:3px solid var(--s-focus,#0072B2);outline-offset:2px;border-radius:4px}',
+      '@media (max-width:600px){.al-scope-strip .al-scope-sep{display:none}.al-scope-strip .al-scope-meta{margin-left:0;flex-basis:100%}}',
+      '.al-disclaimer{margin:1.2rem 0;padding:1rem 1.2rem;background:var(--s-surface-2,#f9f3e6);border-left:3px solid var(--s-accent,#C9A84C);border-radius:0 var(--r-control,10px) var(--r-control,10px) 0;font-family:var(--f-body,"DM Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif);font-size:13px;color:var(--s-ink-2,#3a4a42);line-height:1.65}',
       '.al-disclaimer p{margin:.4rem 0}',
-      '.al-disclaimer b{color:#1a1d20}',
-      '.al-disclaimer .al-disclaimer-meta{font-size:11.5px;color:#5c5348;margin-top:.6rem;letter-spacing:.04em}',
-      '.al-disclaimer a{color:#8C7235;text-decoration:none;border-bottom:1px dashed #8C7235;font-weight:700}',
-      '@media (prefers-color-scheme: dark){.al-scope-strip{background:rgba(201,168,76,.10);color:#ece9e1}.al-scope-strip .al-scope-value{color:#ece9e1}.al-scope-strip .al-scope-meta{color:#b6b3aa}.al-disclaimer{background:rgba(255,255,255,.04);color:#b6b3aa}.al-disclaimer b{color:#ece9e1}}'
+      '.al-disclaimer b{color:var(--s-ink,#0d2018)}',
+      '.al-disclaimer .al-disclaimer-meta{font-size:12px;color:var(--s-ink-3,#5c6a63);margin-top:.6rem;letter-spacing:.04em}',
+      '.al-disclaimer a{color:var(--s-accent-ink,#7a6128);text-decoration:underline;text-decoration-style:dashed;text-underline-offset:3px;font-weight:700}'
     ].join('');
     var s = document.createElement('style');
     s.id = 'alScopeStyles';
@@ -271,18 +276,18 @@
   // Render the standard scope strip as inline HTML. Pages can drop this
   // anywhere a scope reminder belongs (typically directly under hero).
   function scopeStripHTML() {
-    var covered = COVERED.map(function(s){ return s.shortName; }).join(' · ');
+    var covered = COVERED.map(function(s){ return s.shortName; }).join(', ');
     var notCov  = NOT_COVERED.map(function(s){ return s.shortName; }).join(' / ');
     return [
       '<div class="al-scope-strip" role="note" aria-label="Scope">',
       '  <span class="al-scope-label">Covered</span>',
       '  <span class="al-scope-value">' + covered + '</span>',
-      (notCov ? '  <span class="al-scope-sep" aria-hidden="true">·</span>\n' +
+      (notCov ? '  <span class="al-scope-sep" aria-hidden="true">/</span>\n' +
                 '  <span class="al-scope-label al-scope-label-warn">Not covered</span>\n' +
                 '  <span class="al-scope-value al-scope-value-warn">' + notCov + '</span>' : ''),
-      '  <span class="al-scope-sep" aria-hidden="true">·</span>',
-      '  <span class="al-scope-meta">Supplemental repair tool · not affiliated with ADA or Prometric</span>',
-      '  <a class="al-scope-link" href="scope.html">Full scope</a>',
+      '  <span class="al-scope-sep" aria-hidden="true">/</span>',
+      '  <span class="al-scope-meta">Supplemental repair tool, not affiliated with ADA or Prometric</span>',
+      '  <a class="al-scope-link" href="/scope.html">Full scope</a>',
       '</div>'
     ].join('\n');
   }
@@ -293,7 +298,7 @@
       '<div class="al-disclaimer" role="note">',
       '  <p><b>Honest scope.</b> ' + DISCLAIMERS.repairTool + ' ' + DISCLAIMERS.noPatRc + '</p>',
       '  <p>' + DISCLAIMERS.practiceEstimate + ' ' + DISCLAIMERS.notAffiliated + '</p>',
-      '  <p class="al-disclaimer-meta">Last verified ' + LAST_VERIFIED + ' &middot; <a href="scope.html">Scope &amp; evidence</a></p>',
+      '  <p class="al-disclaimer-meta">Last verified ' + LAST_VERIFIED + ' / <a href="/scope.html">Scope and evidence</a></p>',
       '</div>'
     ].join('\n');
   }

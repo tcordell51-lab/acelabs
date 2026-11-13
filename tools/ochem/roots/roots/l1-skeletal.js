@@ -20,7 +20,7 @@ export const meta = {
   ],
   trap: 'Careful: the carbons hiding at the line ends get skipped. A line end is a full carbon with three hydrogens on it, and a short branch is one more carbon, not a decoration.',
   holdsUp: ['Nomenclature', 'Degrees of unsaturation', 'NMR peak counting', 'Every mechanism'],
-  drill: 'The Fundamentals, in your OChem question bank'
+  drill: 'Practice questions on this topic, in the OChem engine or your own question bank'
 };
 
 // ---------------------------------------------------------------- geometry

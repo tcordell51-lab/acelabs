@@ -20,7 +20,7 @@ export const meta = {
   ],
   trap: 'Careful: anti-Markovnikov is about which carbon and anti-addition is about which face, so hydroboration can be anti-Markovnikov AND syn at the same time; the two words answer different questions.',
   holdsUp: ['Alkyne additions', 'Alcohol synthesis', 'Meso versus racemic products', 'Rearrangements', 'Multi-step synthesis'],
-  drill: 'Alkene Addition Reactions, in your OChem question bank'
+  drill: 'Practice questions on this topic, in the OChem engine or your own question bank'
 };
 
 // SMILES used here that are not in shared/reactions.js (render-checked by the sheet test).

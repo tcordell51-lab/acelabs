@@ -192,7 +192,7 @@ to the repo with the build script).
 | other-unit | Counted the other unit | Formula units for particles, electrons for pairs | concept |
 | unit-slip | Unit or decimal slip | Power of ten, unit or decimal place | misread |
 | sign-slip | Sign slip | A minus sign lost or added | misread |
-| operation-flip | Added instead of subtracted | The operation flipped | concept |
+| operation-flip | Flipped the operation | The operation flipped | concept |
 | assumed-equal | Assumed equal | Treated outcomes or groups as equal in size or weight when they are not | concept |
 | looks-bigger | Looks bigger, is not | A visual size cue misread: arm length, bar height, scale | misread |
 | miscount | Miscount | A count or tally slipped, with no single rule behind it | misread |

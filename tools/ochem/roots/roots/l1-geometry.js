@@ -19,7 +19,7 @@ export const meta = {
   ],
   trap: 'Careful: a lone pair is a domain. The oxygen in water makes only two bonds, but it is sp3 and bent, because its two lone pairs are sitting right there taking up room.',
   holdsUp: ['The shape of every molecule', 'Alkene planarity', 'Carbocations are flat (sp2)', 'Why SN1 racemizes', 's-character and acidity'],
-  drill: 'The Fundamentals, in your OChem question bank'
+  drill: 'Practice questions on this topic, in the OChem engine or your own question bank'
 };
 
 /* ------------------------------------------------------------------ */

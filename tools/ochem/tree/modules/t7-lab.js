@@ -20,7 +20,7 @@ export const meta = {
   ],
   trap: 'Careful: bicarbonate is the selective one. It is basic enough to deprotonate a carboxylic acid but not a phenol, so a bicarbonate wash separates an acid from a phenol while hydroxide would pull both into the water.',
   holdsUp: ['Purifying any synthesis product', 'Reading a workup step in a mechanism', 'Separation questions on the real section', 'Choosing a solvent'],
-  drill: 'Spectroscopy & Lab Techniques, in your OChem question bank'
+  drill: 'Practice questions on this topic, in the OChem engine or your own question bank'
 };
 
 // SMILES drawn here (render-checked by the sheet test).
