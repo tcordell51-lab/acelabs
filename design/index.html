@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Design system · Ace Labs</title>
+<link rel="icon" type="image/svg+xml" href="/shared/ace-dat-mark.svg">
+<link rel="stylesheet" href="/shared/ace-ui.css?v=1">
+<style>
+  .ds-sw { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: var(--aui-3); }
+  .ds-sw div { border: 1px solid var(--aui-line); border-radius: var(--aui-r-sm); overflow: hidden; background: var(--aui-paper); font-size: var(--aui-t-xs); }
+  .ds-sw i { display: block; height: 56px; }
+  .ds-sw span { display: block; padding: 6px 8px; font-family: var(--aui-mono); }
+  .ds-sp i { display: inline-block; height: 16px; background: var(--aui-forest); border-radius: 3px; vertical-align: middle; margin-right: 8px; }
+  code { font-family: var(--aui-mono); font-size: .9em; background: var(--aui-paper-2); padding: 1px 5px; border-radius: 4px; }
+</style>
+</head>
+<body class="aui">
+<main class="aui-wrap aui-stack">
+  <header class="aui-stack">
+    <p class="aui-kicker">Ace Labs</p>
+    <h1 class="aui-h1">Design system</h1>
+    <p class="aui-lede">One stylesheet (<code>/shared/ace-ui.css</code>), one bar (<code>ace-ui.js</code>), one question (<code>ace-question.js</code>), one progress record (<code>ace-record.js</code>). Every component a page may use is on this page.</p>
+  </header>
+
+  <section class="aui-stack"><h2 class="aui-h2">Color</h2>
+    <div class="ds-sw" id="swatches"></div>
+    <p class="aui-small">Green and orange are used only for right and wrong. Both also carry a text label, so color is never the only signal.</p>
+  </section>
+
+  <section class="aui-stack"><h2 class="aui-h2">Type</h2>
+    <div class="aui-card aui-card--flat aui-stack">
+      <p class="aui-kicker">Kicker, 12 px</p>
+      <p class="aui-h1">Heading one, 32 to 44 px</p>
+      <p class="aui-h2">Heading two, 24 to 28 px</p>
+      <p class="aui-h3">Heading three, 19 px</p>
+      <p class="aui-lede">Lede, 19 px. One or two sentences that say what the page is for.</p>
+      <p class="aui-p">Body, 16 px, DM Sans. Lines stay under about 68 characters so a paragraph is easy to read on a laptop and wraps cleanly on a phone.</p>
+      <p class="aui-small">Small, 14 px, for captions and counts.</p>
+    </div>
+  </section>
+
+  <section class="aui-stack"><h2 class="aui-h2">Spacing</h2>
+    <div class="aui-card aui-card--flat ds-sp" id="spacing"></div>
+  </section>
+
+  <section class="aui-stack"><h2 class="aui-h2">Buttons</h2>
+    <div class="aui-card aui-card--flat aui-row">
+      <button class="aui-btn" type="button">Primary</button>
+      <button class="aui-btn aui-btn--quiet" type="button">Quiet</button>
+      <button class="aui-btn aui-btn--gold" type="button">Gold</button>
+      <button class="aui-btn aui-btn--sm" type="button">Small</button>
+      <button class="aui-btn" type="button" disabled>Disabled</button>
+      <a class="aui-btn aui-btn--quiet" href="#top">Link as button</a>
+    </div>
+    <p class="aui-small">Every button is at least 44 px tall. One primary button per screen.</p>
+  </section>
+
+  <section class="aui-stack"><h2 class="aui-h2">Inputs</h2>
+    <div class="aui-card aui-card--flat aui-grid">
+      <label class="aui-field"><span class="aui-label">Test date</span><input class="aui-input" type="date"></label>
+      <label class="aui-field"><span class="aui-label">Name</span><input class="aui-input" type="text" placeholder="First name"></label>
+      <label class="aui-field"><span class="aui-label">Section</span><select class="aui-select"><option>Biology</option><option>General Chemistry</option><option>Organic Chemistry</option><option>Perceptual Ability</option><option>Reading Comprehension</option><option>Quantitative Reasoning</option></select></label>
+    </div>
+  </section>
+
+  <section class="aui-stack"><h2 class="aui-h2">Cards, chips, meter, numbers</h2>
+    <div class="aui-grid">
+      <a class="aui-card" href="#top"><img class="aui-card__art" src="/shared/art/gchem.webp" alt="" width="900" height="506"><h3 class="aui-h3">Card with art</h3><p class="aui-small">The picture has no words in it. The title is set in code.</p></a>
+      <div class="aui-card aui-stack"><h3 class="aui-h3">Card</h3><div class="aui-row"><span class="aui-chip">Topic</span><span class="aui-chip aui-chip--good">Right</span><span class="aui-chip aui-chip--miss">Miss</span><span class="aui-chip aui-chip--plain">Not started</span></div><div class="aui-meter"><span style="width:40%"></span></div></div>
+      <div class="aui-card aui-card--flat aui-row"><div class="aui-stat"><b>128</b><span>answers</span></div><div class="aui-stat"><b>97</b><span>right</span></div><div class="aui-stat"><b>6</b><span>due</span></div></div>
+    </div>
+    <ol class="aui-steps"><li><b>Step</b><br><span class="aui-small">Numbered steps for a sequence.</span></li><li><b>Step</b><br><span class="aui-small">The number is drawn in code.</span></li><li><b>Step</b><br><span class="aui-small">Wraps to one column on a phone.</span></li></ol>
+  </section>
+
+  <section class="aui-stack"><h2 class="aui-h2">Navigation</h2>
+    <p class="aui-p">The bar at the top of this page is the only navigation. The AD mark and the words Ace Labs always go to the hub. On a phone the same nine places open from the Menu button.</p>
+  </section>
+
+  <section class="aui-stack"><h2 class="aui-h2">Question</h2>
+    <p class="aui-p">Five lettered choices. Pick, check, then the reveal: the answer, why, the trap in the letter picked, the trick, and a second question on the same skill. Keys: A to E or 1 to 5, Enter to check, N for next, R to retry.</p>
+    <div id="q-demo"></div>
+    <p class="aui-small">This sample is written for this page so that every part of the reveal is visible. Pick a wrong letter to see the trap line.</p>
+  </section>
+</main>
+<script src="/shared/ace-question.js?v=1"></script>
+<script src="/shared/ace-ui.js?v=1" defer></script>
+<script>
+(function () {
+  var colors = ['cream', 'paper', 'paper-2', 'forest', 'forest-2', 'ink', 'ink-2', 'ink-3', 'gold', 'gold-ink', 'good', 'miss'];
+  var css = getComputedStyle(document.documentElement), sw = document.getElementById('swatches');
+  colors.forEach(function (c) { var d = document.createElement('div'), i = document.createElement('i'), s = document.createElement('span'); i.style.background = 'var(--aui-' + c + ')'; s.textContent = '--aui-' + c + ' ' + css.getPropertyValue('--aui-' + c).trim(); d.appendChild(i); d.appendChild(s); sw.appendChild(d); });
+  var sp = document.getElementById('spacing');
+  [1, 2, 3, 4, 5, 6, 7, 8].forEach(function (n) { var p = document.createElement('p'), i = document.createElement('i'); p.className = 'aui-small'; p.style.margin = '4px 0'; i.style.width = 'var(--aui-' + n + ')'; p.appendChild(i); p.appendChild(document.createTextNode('--aui-' + n + ' ' + css.getPropertyValue('--aui-' + n).trim())); sp.appendChild(p); });
+  var sample = { id: 'design:sample', section: 'gchem', topic: 'ph-basics', topicName: 'pH basics',
+    stem: 'What is the pH of a 0.010 M solution of HCl at 25 degrees C?',
+    choices: ['1.0', '2.0', '7.0', '12.0', '0.010'], answer: 1,
+    why: 'HCl is a strong acid, so it ionizes completely and the hydrogen ion concentration equals 0.010 M, which is 10 to the power of minus 2. pH is the negative log of that concentration, so the pH is 2.0.',
+    traps: ['A pH of 1.0 belongs to 0.10 M. Count the places: 0.010 is two powers of ten below 1.', null, '7.0 is pure water. Adding a strong acid must push the pH below 7.', '12.0 is the pOH of this solution, which is 14 minus 2.', '0.010 is the concentration itself. pH is the negative log of the concentration.'],
+    trick: 'For a strong acid at 10 to the minus n molar, the pH is n.' };
+  function show() { AceQuestion.mount(document.getElementById('q-demo'), sample, { number: 1, total: 1, nextLabel: 'Reset', onNext: show, onRetry: show }); }
+  show();
+})();
+</script>
+</body>
+</html>

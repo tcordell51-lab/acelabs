@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>General Chemistry · Ace Labs</title>
+<link rel="icon" type="image/svg+xml" href="/shared/ace-dat-mark.svg">
+<link rel="stylesheet" href="/shared/ace-ui.css?v=1">
+<style>
+  .gc-head { display: grid; gap: var(--aui-5); align-items: center; }
+  .gc-head img { width: 100%; border-radius: var(--aui-r-lg); aspect-ratio: 4 / 3; object-fit: cover; display: none; }
+  @media (min-width: 820px) { .gc-head { grid-template-columns: 1.3fr .7fr; } .gc-head img { display: block; } }
+  .gc-stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--aui-4); }
+  @media (min-width: 560px) { .gc-stats { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+  .gc-topic { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--aui-2) var(--aui-4); align-items: center; }
+  .gc-topic .aui-meter { grid-column: 1 / -1; }
+  .gc-topic__name { font-weight: 700; }
+</style>
+</head>
+<body class="aui">
+<main class="aui-wrap aui-stack" id="main">
+
+  <div id="hub" class="aui-stack">
+    <header class="gc-head">
+      <div class="aui-stack">
+        <p class="aui-kicker">Section</p>
+        <h1 class="aui-h1">General Chemistry</h1>
+        <p class="aui-lede" id="lede">Loading the question bank.</p>
+        <div class="aui-row">
+          <a class="aui-btn" href="?run=daily" data-run="daily">Start today's set</a>
+          <a class="aui-btn aui-btn--quiet" href="?run=misses" data-run="misses" id="btn-miss">Review misses</a>
+          <a class="aui-btn aui-btn--quiet" href="?run=due" data-run="due" id="btn-due">Spaced repeats</a>
+        </div>
+      </div>
+      <img src="/shared/art/gchem.webp" alt="" width="900" height="678">
+    </header>
+
+    <section class="aui-card aui-card--flat" aria-label="Your Gen Chem numbers">
+      <div class="gc-stats">
+        <div class="aui-stat"><b id="s-answers">0</b><span>answers</span></div>
+        <div class="aui-stat"><b id="s-right">0</b><span>right</span></div>
+        <div class="aui-stat"><b id="s-due">0</b><span>due for a repeat</span></div>
+        <div class="aui-stat"><b id="s-miss">0</b><span>misses open</span></div>
+      </div>
+    </section>
+
+    <section class="aui-stack" aria-labelledby="t-title">
+      <h2 class="aui-h2" id="t-title">Topics</h2>
+      <div class="aui-card aui-card--flat"><ul class="aui-list" id="topics"></ul></div>
+    </section>
+
+    <section class="aui-stack" aria-labelledby="m-title">
+      <h2 class="aui-h2" id="m-title">Learn and explore</h2>
+      <div class="aui-grid">
+        <a class="aui-card aui-card--flat" href="/tools/gchem/"><h3 class="aui-h3">Gen Chem, Retold</h3><p class="aui-small">The course: fourteen nights, each with checks.</p></a>
+        <a class="aui-card aui-card--flat" href="/tools/gc/"><h3 class="aui-h3">Skill lessons</h3><p class="aui-small">Worked examples and faded practice for each skill.</p></a>
+        <a class="aui-card aui-card--flat" href="/tools/gc/trends.html"><h3 class="aui-h3">Periodic trends</h3><p class="aui-small">Every trend on one table.</p></a>
+        <a class="aui-card aui-card--flat" href="/tools/gc/lewis-sandbox.html"><h3 class="aui-h3">Lewis sandbox</h3><p class="aui-small">Build the structure, then the shape.</p></a>
+        <a class="aui-card aui-card--flat" href="/tools/gc/recognition-lab.html"><h3 class="aui-h3">Recognition lab</h3><p class="aui-small">Read curves, diagrams and graphs at a glance.</p></a>
+        <a class="aui-card aui-card--flat" href="/tools/gc/traps.html"><h3 class="aui-h3">Trap library</h3><p class="aui-small">The mistake behind each wrong choice.</p></a>
+      </div>
+    </section>
+  </div>
+
+  <div id="run" class="aui-stack" hidden>
+    <div class="aui-row" style="justify-content:space-between">
+      <p class="aui-kicker" id="run-title">Gen Chem set</p>
+      <a class="aui-btn aui-btn--quiet aui-btn--sm" href="/gc/" id="leave">Leave set</a>
+    </div>
+    <div id="stage"></div>
+  </div>
+
+</main>
+<script src="/shared/ace-record.js?v=1"></script>
+<script src="/shared/ace-question.js?v=1"></script>
+<script src="/shared/ace-set.js?v=1"></script>
+<script src="/shared/ace-ui.js?v=1" defer></script>
+<script>
+(function () {
+  'use strict';
+  var SECTION = 'gchem', BANK = '/data/gchem.json', SET = 10, TOPIC_SET = 8;
+  var rec = window.AceRecord, items = [];
+  rec.migrate();
+  function $(id) { return document.getElementById(id); }
+  function el(tag, cls, text) { var n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; }
+  var params = new URLSearchParams(location.search);
+
+  function drawHub() {
+    var st = rec.stats({ section: SECTION });
+    $('s-answers').textContent = st.answers; $('s-right').textContent = st.right; $('s-due').textContent = st.due; $('s-miss').textContent = st.missed;
+    $('btn-miss').textContent = 'Review misses (' + st.missed + ')';
+    $('btn-due').textContent = 'Spaced repeats (' + st.due + ')';
+    var byTopic = {}, order = [];
+    items.forEach(function (it) { if (!byTopic[it.topic]) { byTopic[it.topic] = { name: it.topicName, total: 0 }; order.push(it.topic); } byTopic[it.topic].total += 1; });
+    $('lede').textContent = items.length + ' questions across ' + order.length + ' topics. Every question has five choices and a worked reason.';
+    var mine = rec.topics(SECTION), ul = $('topics'); ul.textContent = '';
+    order.sort(function (a, b) { return byTopic[a].name.localeCompare(byTopic[b].name); }).forEach(function (t) {
+      var m = mine[t] || { items: 0, missed: 0 }, li = el('li'), box = el('div', 'gc-topic'); box.style.width = '100%';
+      var left = el('div');
+      left.appendChild(el('div', 'gc-topic__name', byTopic[t].name));
+      left.appendChild(el('div', 'aui-small', m.items + ' of ' + byTopic[t].total + ' seen' + (m.missed ? ', ' + m.missed + (m.missed === 1 ? ' miss open' : ' misses open') : '')));
+      var go = el('a', 'aui-btn aui-btn--quiet aui-btn--sm', 'Practice'); go.href = '?topic=' + encodeURIComponent(t); go.setAttribute('data-topic', t); go.setAttribute('aria-label', 'Practice ' + byTopic[t].name);
+      var meter = el('div', 'aui-meter'), fill = el('span'); fill.style.width = Math.round(100 * m.items / byTopic[t].total) + '%'; meter.appendChild(fill);
+      box.appendChild(left); box.appendChild(go); box.appendChild(meter); li.appendChild(box); ul.appendChild(li);
+    });
+  }
+
+  function start(o) {
+    $('hub').hidden = true; $('run').hidden = false;
+    var name = o.topic ? (items.filter(function (i) { return i.topic === o.topic; })[0] || {}).topicName : null;
+    $('run-title').textContent = o.mode === 'misses' ? 'Gen Chem: miss review' : o.mode === 'due' ? 'Gen Chem: spaced repeats' : name ? 'Gen Chem: ' + name : 'Gen Chem: today’s set';
+    window.AceSet.run($('stage'), items, { mode: o.mode, section: SECTION, topic: o.topic, size: o.topic ? TOPIC_SET : SET, src: 'gc-hub', homeHref: '/gc/', homeLabel: 'Back to Gen Chem' });
+    window.scrollTo(0, 0);
+  }
+
+  window.AceSet.load(BANK).then(function (bank) {
+    items = bank.items;
+    var run = params.get('run'), topic = params.get('topic');
+    if (topic && items.some(function (i) { return i.topic === topic; })) start({ mode: 'topic', topic: topic });
+    else if (run === 'daily' || run === 'misses' || run === 'due') start({ mode: run });
+    else drawHub();
+  }).catch(function () {
+    $('lede').textContent = 'The question bank did not load. Check your connection and reload the page.';
+  });
+})();
+</script>
+</body>
+</html>

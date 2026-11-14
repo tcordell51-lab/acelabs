@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Home · Ace Labs</title>
+<meta name="description" content="Ace Labs: DAT practice by section, with one question format and progress that carries from set to set.">
+<link rel="icon" type="image/svg+xml" href="/shared/ace-dat-mark.svg">
+<link rel="stylesheet" href="/shared/ace-ui.css?v=1">
+<style>
+  .home-sections .aui-card { padding-bottom: var(--aui-4); }
+  .home-count { margin-top: var(--aui-2); }
+  .home-loop b { display: block; font-size: var(--aui-t-md); }
+  .home-loop .aui-num { font-size: var(--aui-t-xl); display: block; margin-top: var(--aui-2); }
+</style>
+</head>
+<body class="aui">
+<main class="aui-wrap aui-stack" id="main">
+
+  <section class="aui-hero" aria-labelledby="hero-title">
+    <div class="aui-hero__body aui-stack">
+      <p class="aui-kicker">Ace Labs</p>
+      <h1 class="aui-h1" id="hero-title">Practice for the DAT, one set at a time.</h1>
+      <p class="aui-lede" id="hero-lede">Pick a section, answer a set, and every miss comes back until it holds.</p>
+      <div class="aui-row">
+        <a class="aui-btn" id="hero-go" href="/diagnostic.html">Start with the diagnostic</a>
+        <a class="aui-btn aui-btn--quiet" id="hero-alt" href="/gc/?run=daily">Do a Gen Chem set</a>
+      </div>
+      <p class="aui-small" id="hero-note">Your progress is saved in this browser.</p>
+    </div>
+    <img class="aui-hero__art" src="/shared/art/home.webp" alt="" width="900" height="705">
+  </section>
+
+  <section class="aui-stack" aria-labelledby="loop-title">
+    <h2 class="aui-h2" id="loop-title">How it works</h2>
+    <ol class="aui-steps home-loop">
+      <li><b>Diagnostic</b><span class="aui-small">A short check across the sections that shows where to start.</span><span class="aui-num" id="n-diag">Not taken</span></li>
+      <li><b>Daily set</b><span class="aui-small">Ten questions: repeats that are due first, then new ones.</span><span class="aui-num" id="n-today">0 answered today</span></li>
+      <li><b>Miss review</b><span class="aui-small">Each miss shows why, then a second question on the same skill.</span><span class="aui-num" id="n-miss">0 misses open</span></li>
+      <li><b>Spaced repeat</b><span class="aui-small">Right answers come back after 1, 3, 7, 14 and 30 days.</span><span class="aui-num" id="n-due">0 due now</span></li>
+    </ol>
+  </section>
+
+  <section class="aui-stack" aria-labelledby="sec-title">
+    <h2 class="aui-h2" id="sec-title">Sections</h2>
+    <div class="aui-grid home-sections" id="sections"></div>
+  </section>
+
+  <section class="aui-stack" aria-labelledby="test-title">
+    <h2 class="aui-h2" id="test-title">Practice tests</h2>
+    <div class="aui-grid">
+      <a class="aui-card aui-card--flat" href="/tools/mock/full.html"><h3 class="aui-h3">Full-length DAT</h3><p class="aui-small">Four tests, all four sections in test-day order.</p></a>
+      <a class="aui-card aui-card--flat" href="/tools/minitests/"><h3 class="aui-h3">The Climb</h3><p class="aui-small">Ten forty-question tests that get harder each rung.</p></a>
+      <a class="aui-card aui-card--flat" href="/diagnostic.html"><h3 class="aui-h3">Diagnostic</h3><p class="aui-small">Fifty-three questions across Bio, Gen Chem, OChem and QR.</p></a>
+      <a class="aui-card aui-card--flat" href="/review/"><h3 class="aui-h3">Review</h3><p class="aui-small">Every miss from every tool in one list.</p></a>
+    </div>
+  </section>
+
+  <p class="aui-small">Ace Labs is practice, not a score prediction. <a href="/scope.html">What it covers</a></p>
+</main>
+
+<script src="/shared/ace-index.js?v=2"></script>
+<script src="/shared/ace-route.js?v=1"></script>
+<script src="/shared/ace-progress.js?v=3"></script>
+<script src="/shared/ace-record.js?v=1"></script>
+<script src="/shared/ace-ui.js?v=1" defer></script>
+<script>
+(function () {
+  'use strict';
+  var SECTIONS = [
+    { id: 'bio', name: 'Biology', href: '/tools/bio/', art: '/shared/art/bio.webp', line: 'Cells, genetics, body systems, diversity, development, evolution.' },
+    { id: 'gchem', name: 'General Chemistry', href: '/gc/', art: '/shared/art/gchem.webp', line: '517 questions across 42 topics, with spaced repeats.' },
+    { id: 'ochem', name: 'Organic Chemistry', href: '/tools/ochem/', art: '/shared/art/ochem.webp', line: 'Reaction maps, mechanisms and spectroscopy.' },
+    { id: 'pat', name: 'Perceptual Ability', href: '/tools/pat/', art: '/shared/art/pat.svg', line: 'Six trainers and a ninety-question test, built from exact geometry.' },
+    { id: 'rc', name: 'Reading Comprehension', href: '/tools/rc/', art: '', line: 'Timed science passages with search and flag tools.' },
+    { id: 'qr', name: 'Quantitative Reasoning', href: '/qr/drill/', art: '/shared/art/qr.webp', line: 'Ten topics from fractions to probability.' }
+  ];
+  var rec = window.AceRecord;
+  rec.migrate();
+  function el(tag, cls, text) { var n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; }
+  function plural(n, one, many) { return n + ' ' + (n === 1 ? one : many); }
+
+  var host = document.getElementById('sections');
+  SECTIONS.forEach(function (s) {
+    var a = el('a', 'aui-card'); a.href = s.href; a.setAttribute('data-section', s.id);
+    if (s.art) { var img = el('img', 'aui-card__art'); img.src = s.art; img.alt = ''; img.loading = 'lazy'; img.width = 900; img.height = 506; a.appendChild(img); }
+    a.appendChild(el('h3', 'aui-h3', s.name));
+    a.appendChild(el('p', 'aui-small', s.line));
+    var st = rec.stats({ section: s.id }), row = el('div', 'aui-row home-count');
+    row.appendChild(el('span', 'aui-chip aui-chip--plain', st.answers ? plural(st.answers, 'answer', 'answers') + ', ' + st.right + ' right' : 'Not started'));
+    if (st.due) row.appendChild(el('span', 'aui-chip', st.due + ' due'));
+    a.appendChild(row); host.appendChild(a);
+  });
+
+  var all = rec.stats({}), today = rec.today();
+  var diagnosed = false; try { diagnosed = !!(window.AceProgress && window.AceProgress.profile().diagnosed); } catch (e) { diagnosed = false; }
+  document.getElementById('n-diag').textContent = diagnosed ? 'Taken' : 'Not taken';
+  document.getElementById('n-today').textContent = plural(today.seen, 'answered today', 'answered today');
+  document.getElementById('n-miss').textContent = plural(all.missed, 'miss open', 'misses open');
+  document.getElementById('n-due').textContent = all.due + ' due now';
+
+  var go = document.getElementById('hero-go'), alt = document.getElementById('hero-alt'), lede = document.getElementById('hero-lede');
+  if (all.due > 0) {
+    lede.textContent = plural(all.due, 'question is', 'questions are') + ' due for a repeat today. Clear those first.';
+    go.textContent = 'Start today’s set'; go.href = '/gc/?run=daily'; alt.textContent = 'See every miss'; alt.href = '/review/';
+  } else if (all.answers > 0 || diagnosed) {
+    lede.textContent = 'You have answered ' + plural(all.answers, 'question', 'questions') + ' so far, ' + all.right + ' right. Keep the daily set going.';
+    go.textContent = 'Start today’s set'; go.href = '/gc/?run=daily'; alt.textContent = 'Take the diagnostic'; alt.href = '/diagnostic.html';
+    if (diagnosed) { alt.textContent = 'Practice tests'; alt.href = '/tests/'; }
+  }
+})();
+</script>
+</body>
+</html>
