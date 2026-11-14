@@ -54,6 +54,16 @@ for k in ORDER:
             lines.append("")
             lines.append("Suggested fix: %s" % x["fix"])
         lines.append("")
+notes = []
+for f in sorted(glob.glob(os.path.join(lib.DATA, "*-notes.json"))):
+    notes += json.load(open(f, encoding="utf-8"))
+if notes:
+    lines += ["## Explained, but worth a look", "",
+              "These items have a correct key and received an explanation. Each has a wording issue in the stem (stems were not edited) or a judgment call I made in the choices.", ""]
+    for n in notes:
+        lines.append("- **%s**. Stem: %s" % (n["id"], n["q"]))
+        lines.append("  %s" % n["note"])
+    lines.append("")
 os.makedirs(os.path.dirname(out), exist_ok=True)
 open(out, "w", encoding="utf-8").write("\n".join(lines).replace("—", "-").replace("–", "-") + "\n")
 print("wrote", out, "flags:", len(flags), {k: sum(1 for x in flags if x["kind"] == k) for k in ORDER})

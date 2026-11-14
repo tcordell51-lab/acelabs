@@ -1384,6 +1384,12 @@ def build(it):
             traps[i] = line
     else:
         if not same(opts[k], res.val):
+            ko = parse_num(opts[k])
+            d = decimals(opts[k])
+            if ko is not None and d >= 1 and abs(ko - res.val) < F(1, 10 ** d):
+                raise Flag("precision", "Key is cut off instead of rounded",
+                           "The exact value is %.4f, which rounds to %.*f. The keyed option is %s, and the rounded value is not offered. Low severity: change the key text to %.*f." % (
+                               float(res.val), d, float(res.val) + 1e-12, opts[k], d, float(res.val) + 1e-12))
             raise Flag("key", "Recomputed answer disagrees with the key", "computed %s, keyed '%s'" % (frac(res.val), opts[k]))
         for i, o in enumerate(opts):
             if i == k:
