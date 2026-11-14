@@ -74,6 +74,9 @@ const EMBEDDED_CLIPS = {
 
 // Retired student pages that are forced to their replacement on purpose.
 const RETIRED = ['calendar.html', 'mocks-catalog.html', 'unified-mock.html'];
+// Pages the approved cut list redirects on purpose (scripts/cut-map.json, checked by gate-cut-map.mjs).
+const CUT = path.join(ROOT, 'scripts', 'cut-map.json');
+if (fs.existsSync(CUT)) for (const p of JSON.parse(fs.readFileSync(CUT, 'utf8')).pages) if (p.action === 'remove' || (p.action === 'merge' && p.fold === 'done')) RETIRED.push(p.path);
 
 // Folders already covered by older forced rules, or never part of the student site.
 const SKIP = /^(node_modules|\.git|\.netlify|\.claude|netlify|test-screenshots|dist-astro|astro-proto)(\/|$)/;

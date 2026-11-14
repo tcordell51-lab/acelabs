@@ -51,6 +51,35 @@ function qrClimb() {
   return { name: 'qr-climb', source: 'tools/minitests/bank.js (QR items)', items: out, skipped };
 }
 
+// Biology: only items that already have five choices and a worked reason, and that the
+// full-length tests do not use. The 350 short-form items (three or four choices, no
+// explanation) are held back until they are rewritten; nothing is invented to fill them.
+const BIO_TOPICS = {
+  water: ['water', 'Water'], biomolecules: ['biomolecules', 'Biomolecules'], carbs: ['carbohydrates', 'Carbohydrates'], lipids: ['lipids', 'Lipids'],
+  proteins: ['proteins', 'Proteins'], nucleic: ['nucleic-acids', 'Nucleic acids'], enzymes: ['enzymes', 'Enzymes'],
+  'cell-types': ['cell-types', 'Prokaryotes and eukaryotes'], organelles: ['organelles', 'Organelles'], cytoskeleton: ['cytoskeleton', 'Cytoskeleton'],
+  membrane: ['membranes', 'Membranes and transport'], signaling: ['signaling', 'Cell signaling'],
+  glycolysis: ['glycolysis', 'Glycolysis'], biochem: ['glycolysis', 'Glycolysis'], krebs: ['krebs-etc', 'Krebs cycle and electron transport'], photo: ['photosynthesis', 'Photosynthesis'],
+  mitosis: ['cell-cycle', 'Cell cycle and mitosis'], 'cell-cycle': ['cell-cycle', 'Cell cycle and mitosis'],
+  replication: ['replication-repair', 'DNA replication and repair'], repair: ['replication-repair', 'DNA replication and repair'],
+  transcription: ['transcription', 'Transcription'], translation: ['translation', 'Translation'], 'cell-mol': ['translation', 'Translation'],
+  mutation: ['mutations', 'Mutations'], molecular: ['mutations', 'Mutations'],
+  operon: ['gene-regulation', 'Gene regulation'], 'eukaryotic-reg': ['gene-regulation', 'Gene regulation'], lab: ['lab-techniques', 'Lab techniques'],
+  genetics: ['genetics', 'Genetics'], physio: ['body-systems', 'Body systems'], evolution: ['evolution', 'Evolution']
+};
+function bio() {
+  const src = JSON.parse(read('games/bio.json'));
+  const w = {}; vm.runInContext(read('tools/mock/data/full-mocks.js'), vm.createContext({ window: w }));
+  const inTests = new Set(); (function walk(o, d) { if (!o || d > 7) return; if (Array.isArray(o)) o.forEach((x) => walk(x, d + 1)); else if (typeof o === 'object') { if (typeof o.id === 'string' && o.id.startsWith('bio:')) inTests.add(o.id.slice(4)); Object.values(o).forEach((x) => walk(x, d + 1)); } })(w, 0);
+  const out = [], skipped = [];
+  for (const q of src) {
+    if (!Array.isArray(q.opts) || q.opts.length !== 5 || !q.why || inTests.has(q.id) || !BIO_TOPICS[q.topic]) { skipped.push(q.id); continue; }
+    out.push({ id: 'bio:' + q.id, section: 'bio', topic: BIO_TOPICS[q.topic][0], topicName: BIO_TOPICS[q.topic][1], difficulty: q.difficulty || 1,
+      stem: clean(q.q), choices: q.opts.map(clean), answer: q.correct, why: clean(q.why) });
+  }
+  return { name: 'bio', source: 'games/bio.json (five choices with a worked reason, not used by the full-length tests)', items: out, skipped };
+}
+
 const problems = [];
 function validate(bank) {
   const ids = new Set();
@@ -67,7 +96,7 @@ function validate(bank) {
 
 const check = process.argv.includes('--check');
 let stale = 0;
-for (const bank of [gchem(), qrClimb()]) {
+for (const bank of [gchem(), qrClimb(), bio()]) {
   validate(bank);
   const file = path.join(ROOT, 'data', bank.name + '.json');
   const body = JSON.stringify({ format: 1, section: bank.items[0].section, source: bank.source, count: bank.items.length, items: bank.items });

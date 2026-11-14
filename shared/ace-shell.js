@@ -1,44 +1,43 @@
-/* ace-shell.js : the ONE Ace Labs navigation, on every student page.
+/* ace-shell.js : the Ace Labs bar for pages that have not moved to ace-ui.css yet.
 
-   Add it with one tag (anywhere; defer is fine):
-     <script src="/shared/ace-shell.js" defer></script>
-
-   Six doors: Today, Learn, Practice, Tests, Review, Canon.
-   - Renders a dark + gold bar in a shadow root (styles from /shared/ace-shell.css),
-     so no tool page's CSS can break it and it cannot break a tool page.
-   - The bar sits in normal flow above <body> and scrolls away with the page.
-     A tool's own position:fixed top bar is held just under the shell until the
-     shell scrolls off, so nothing is ever covered.
-   - Replaces the old navs: hides a legacy <header class="al-top"> that only
-     carried the old .al-nav links, and the old floating "Ace Labs" chip.
-   - Hidden: inside an iframe (engine modals, the portal embed), on ?embed=...
-     pages, while a timed section is running (acelabs.timed), when the page sets
-     <html data-ace-shell="off">, and in print.
-   - Keeps ?student=<id> on every door so a coach link stays personal.
-
-   Phone (<= 720px): one compact row of six doors, no brand, never wraps. */
+   Same bar as shared/ace-ui.js: cream, AD mark, DM Sans, the same nine places
+   (tests/shell/ace-bar.test.js fails if the two lists differ). The AD mark and
+   "Ace Labs" always link to the hub. On a phone the places open from Menu.
+   - Renders in a shadow root (styles from /shared/ace-shell.css), so no tool
+     page's CSS can break it and it cannot break a tool page.
+   - Sits in normal flow above <body> and scrolls away with the page. A tool's
+     own position:fixed top bar is held just under it until it scrolls off.
+   - Hides a legacy <header class="al-top"> that only carried the old links.
+   - Hidden: inside an iframe, on ?embed pages, while a timed section is running
+     (acelabs.timed), when the page sets <html data-ace-shell="off">, in print.
+   - Keeps ?student=<id> on every link so a coach link stays personal. */
 (function () {
   'use strict';
   if (window.AceShell) return;
-  var VERSION = '1';
-  var CANON = 'https://acethedat-portal.netlify.app/canon/';
+  var VERSION = '2';
+  /* Keep in step with PLACES in shared/ace-ui.js. */
   var DOORS = [
-    { id: 'today', label: 'Today', href: '/' },
-    { id: 'learn', label: 'Learn', href: '/learn/' },
-    { id: 'practice', label: 'Practice', href: '/practice/' },
+    { id: 'home', label: 'Home', href: '/' },
+    { id: 'bio', label: 'Biology', href: '/bio/' },
+    { id: 'gchem', label: 'Gen Chem', href: '/gc/' },
+    { id: 'ochem', label: 'OChem', href: '/tools/ochem/' },
+    { id: 'pat', label: 'PAT', href: '/tools/pat/' },
+    { id: 'rc', label: 'Reading', href: '/tools/rc/' },
+    { id: 'qr', label: 'QR', href: '/qr/drill/' },
     { id: 'tests', label: 'Tests', href: '/tests/' },
-    { id: 'review', label: 'Review', href: '/review/' },
-    { id: 'canon', label: 'Canon', href: CANON, external: true }
+    { id: 'review', label: 'Review', href: '/review/' }
   ];
   /* First match wins. Paths are normalized: no trailing slash, no .html, no /index. */
   var RULES = [
-    ['review', /^\/(review|performance)(\/|$)/],
-    ['tests', /^\/(tests|diagnostic|prometric-mock|unified-mock|mocks-catalog|calendar|test-week|test-day-readiness)(\/|$)/],
-    ['tests', /^\/tools\/(minitests|ochem\/summit|pat\/test|bio\/bio-mock|bio\/bio-diagnostic|qr\/proposals\/agent-08-pacing\/friday-mini-mock)(\/|$)/],
-    ['learn', /^\/(learn|retold|tricks|cheat-sheets)(\/|$)/],
-    ['learn', /^\/tools\/(organic|gchem|bio-retold|qr-retold|pat-retold|rc-retold|ochem\/roots|bio\/bio-ap-bootcamp)(\/|$)/],
-    ['practice', /^\/(practice|tools|games|guides)(\/|$)/],
-    ['today', /^\/(ace-labs|onboarding|for-retakers)?$/]
+    ['home', /^\/(index|ace-labs)?$/],
+    ['bio', /^\/(bio|tools\/(bio|bio-retold))(\/|$)/],
+    ['gchem', /^\/(gc|tools\/(gc|gchem))(\/|$)/],
+    ['ochem', /^\/(oc|tools\/(ochem|organic)|games\/chirality)(\/|$)/],
+    ['pat', /^\/(pat|tools\/(pat|pat-retold)|games\/six-views|guides)(\/|$)/],
+    ['rc', /^\/(rc|tools\/(rc|rc-retold))(\/|$)/],
+    ['qr', /^\/(qr|tools\/(qr|qr-retold))(\/|$)/],
+    ['tests', /^\/(tests|diagnostic|prometric-mock|test-week|test-day-readiness|tools\/(mock|minitests))(\/|$)/],
+    ['review', /^\/(review|performance)(\/|$)/]
   ];
 
   var api = window.AceShell = { version: VERSION, doors: DOORS, door: null, mounted: false };
@@ -86,14 +85,17 @@
     var s = document.createElement('style');
     s.id = 'ace-shell-doc';
     s.textContent =
-      '@font-face{font-family:"Hanken Grotesk";src:url("/shared/fonts/hanken-wght-normal.woff2") format("woff2");font-weight:100 900;font-style:normal;font-display:swap}' +
-      '#ace-shell{display:block;min-height:52px;background:#050c07}' +
+      '#ace-shell{display:block;min-height:57px;background:#F5F0E8}' +
       '#ace-shell[hidden]{display:none!important}' +
-      '@media (max-width:720px){#ace-shell{min-height:46px}}' +
       '@media print{#ace-shell{display:none!important}}' +
       'html.ace-shell-on #al-home{display:none!important}' +
       'html.ace-shell-on header.ace-legacy-nav{display:none!important}';
     (document.head || root).appendChild(s);
+    if (!document.getElementById('aui-font')) {
+      var l = document.createElement('link'); l.id = 'aui-font'; l.rel = 'stylesheet';
+      l.href = 'https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap';
+      (document.head || root).appendChild(l);
+    }
   }
 
   function build() {
@@ -105,16 +107,22 @@
     var sr = host.attachShadow ? host.attachShadow({ mode: 'open' }) : null;
     var links = DOORS.map(function (d) {
       var cur = d.id === current ? ' aria-current="page"' : '';
-      var ext = d.external ? ' target="_blank" rel="noopener"' : '';
-      return '<li><a class="door" data-door="' + d.id + '" href="' + esc(withStudent(d.href)) + '"' + cur + ext + '>' + d.label + '</a></li>';
+      return '<li><a class="door" data-door="' + d.id + '" href="' + esc(withStudent(d.href)) + '"' + cur + '>' + d.label + '</a></li>';
     }).join('');
     var html =
       '<link rel="stylesheet" href="/shared/ace-shell.css?v=' + VERSION + '">' +
-      '<div class="bar"><div class="inner">' +
-      '<a class="brand" href="' + esc(withStudent('/')) + '" aria-label="Ace Labs, Today"><span><b>Ace</b> Labs</span><small>AceTheDAT</small></a>' +
-      '<nav aria-label="Ace Labs"><ul class="doors">' + links + '</ul></nav>' +
-      '</div></div>';
+      '<div class="bar" data-open="false"><div class="inner">' +
+      '<a class="brand" href="' + esc(withStudent('/')) + '" aria-label="Ace Labs home"><img src="/shared/ace-dat-mark.svg" alt="" width="30" height="30"><span>Ace Labs</span></a>' +
+      '<nav class="wide" aria-label="Ace Labs"><ul class="doors">' + links + '</ul></nav>' +
+      '<button class="menu" type="button" aria-expanded="false">Menu</button>' +
+      '</div><nav class="sheet" aria-label="Ace Labs menu"><ul class="doors">' + links + '</ul></nav></div>';
     if (sr) sr.innerHTML = html; else host.innerHTML = html;
+    var scope = sr || host, bar = scope.querySelector('.bar'), btn = scope.querySelector('.menu');
+    btn.addEventListener('click', function () {
+      var open = bar.getAttribute('data-open') !== 'true';
+      bar.setAttribute('data-open', open ? 'true' : 'false'); btn.setAttribute('aria-expanded', open ? 'true' : 'false'); btn.textContent = open ? 'Close' : 'Menu';
+      hold(host);
+    });
     return host;
   }
 

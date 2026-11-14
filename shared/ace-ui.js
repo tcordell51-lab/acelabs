@@ -17,7 +17,7 @@
   if (window.AceUI) return;
   var PLACES = [
     { id: 'home', label: 'Home', href: '/', match: /^\/(index|ace-labs)?$/ },
-    { id: 'bio', label: 'Biology', href: '/tools/bio/', match: /^\/(bio|tools\/bio)/ },
+    { id: 'bio', label: 'Biology', href: '/bio/', match: /^\/(bio|tools\/bio)/ },
     { id: 'gchem', label: 'Gen Chem', href: '/gc/', match: /^\/(gc|tools\/(gc|gchem))(\/|$)/ },
     { id: 'ochem', label: 'OChem', href: '/tools/ochem/', match: /^\/(oc|tools\/(ochem|organic)|games\/chirality)(\/|$)/ },
     { id: 'pat', label: 'PAT', href: '/tools/pat/', match: /^\/(pat|tools\/pat|games\/six-views)/ },
