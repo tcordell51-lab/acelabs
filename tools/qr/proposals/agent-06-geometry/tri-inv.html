@@ -456,21 +456,21 @@ h1 em{font-style:italic; color:var(--gold-d); font-weight:400}
       // snap to ratio if special
       if(mode==='30-60-90'){
         // build a 30-60-90 with hypotenuse on AB
-        V[0]={x:120, y:340, name:'A'}; V[1]={x:480, y:340, name:'B'};
+        Object.assign(V[0], {x:120, y:340}); Object.assign(V[1], {x:480, y:340});
         // C such that angle at A = 60, angle at B = 30, right angle at C
         // place C above the segment AB
         // for AB=360 px, short leg (opp 30 = at B) = AB/2 actually... use 30-60-90 ratios:
         // hyp=AB length=360 -> short=180, long=180*sqrt(3)
         const hyp=360, shortLeg=180, longLeg=180*Math.sqrt(3);
-        // A right angle at C, with C such that AC=longLeg (opp B=30), BC=shortLeg (opp A=60)
-        // place C at (A.x + longLeg*cos(60deg), A.y - longLeg*sin(60deg))
+        // Right angle at C, angle A = 60, angle B = 30: AC is the short leg (opposite 30),
+        // BC is the long leg (opposite 60). Place C at A + shortLeg at 60 degrees above AB.
         const ang = 60*Math.PI/180;
-        V[2]={x:V[0].x+longLeg*Math.cos(ang), y:V[0].y-longLeg*Math.sin(ang), name:'C'};
+        Object.assign(V[2], {x:V[0].x+shortLeg*Math.cos(ang), y:V[0].y-shortLeg*Math.sin(ang)});
       } else if(mode==='45-45-90'){
-        V[0]={x:160, y:340, name:'A'}; V[1]={x:440, y:340, name:'B'};
-        V[2]={x:300, y:200, name:'C'};
+        Object.assign(V[0], {x:160, y:340}); Object.assign(V[1], {x:440, y:340});
+        Object.assign(V[2], {x:300, y:200});
       } else if(mode==='similar' || mode==='free'){
-        V[0]={x:120, y:340, name:'A'}; V[1]={x:480, y:340, name:'B'}; V[2]={x:300, y:120, name:'C'};
+        Object.assign(V[0], {x:120, y:340}); Object.assign(V[1], {x:480, y:340}); Object.assign(V[2], {x:300, y:120});
       }
       render();
     });
