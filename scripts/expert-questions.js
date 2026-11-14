@@ -273,7 +273,7 @@ gc.push({
 
 gc.push({
   id:'GC_xp004', section:'GC', topic:'redox', difficulty:3,
-  q:'A galvanic cell has E°cell = +0.46 V at standard conditions. The cell is operated until [reactants] drop and [products] rise such that Q = 100. At 25 °C, what is the new cell potential?',
+  q:'A galvanic cell that transfers 2 electrons per reaction (n = 2) has E°cell = +0.46 V at standard conditions. The cell is operated until [reactants] drop and [products] rise such that Q = 100. At 25 °C, what is the new cell potential?',
   opts:[
     'Ecell = +0.40 V (slightly less than E°cell)',
     'Ecell = +0.52 V (greater than E°cell)',
@@ -282,7 +282,7 @@ gc.push({
     'Ecell stays at +0.46 V'
   ],
   correct:0,
-  why:'Nernst: E = E° − (0.0592/n) · log(Q). Assume n=2 typical: E = 0.46 − (0.0296)(log 100) = 0.46 − 0.0592 ≈ 0.40 V.'
+  why:'Nernst: E = E° − (0.0592/n) · log(Q). With n = 2: E = 0.46 − (0.0296)(log 100) = 0.46 − 0.0592 ≈ 0.40 V.'
 });
 
 gc.push({

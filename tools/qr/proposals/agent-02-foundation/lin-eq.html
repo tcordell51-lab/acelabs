@@ -231,8 +231,6 @@ function doOp(opName){
   trail.push({label, isTrap});
   // Render trail
   const tEl = document.getElementById('le-trail');
-  tEl.innerHTML = trail.map(t => `<span class="step"><span class="op">${t.label}</span> &nbsp;→&nbsp; ${fmtSide(stateAtStep(t)) || ''}</span>`).join('');
-  // Easier: just show current eq at end
   tEl.innerHTML = trail.map(t => `<span class="step"><span class="op">${t.label}</span></span>`).join('') + `<span class="step" style="color:var(--ink-mute); border-top:1px dashed var(--line); padding-top:6px; margin-top:6px"><b>now:</b> ${fmtSide(state.lhs)} = ${fmtSide(state.rhs)}</span>`;
   if(isTrap){
     const status = document.getElementById('le-status');

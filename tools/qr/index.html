@@ -9769,7 +9769,7 @@ const crumbObs = new IntersectionObserver(entries => {
       const id = e.target.id;
       const map = {diagnostic:'Diagnostic', tree:'Skill Tree', dashboard:'Dashboard', drill:'Daily Drill', 'sarah-dash':'Sarah Dashboard', 'patterns-link':'Pattern System', 'patterns':'Pattern Library'};
       const M = MODULES[id];
-      const t = M ? (M.title.replace(/<[^>]+>/g,'')) : (map[id] || 'Welcome');
+      const t = M ? (M.title.replace(/<[^>]+>/g,'').replace(/&amp;/g,'&')) : (map[id] || 'Welcome');
       document.getElementById('crumbWhere').textContent = t;
     }
   });
