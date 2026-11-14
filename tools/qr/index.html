@@ -9452,27 +9452,44 @@ window.rateConf = function(probId, n){
   renderCalibration();
 };
 
-/* MASTERY CHECK (stage 5) */
-function renderMastery(skillId){
-  const wrap = document.getElementById('stage-'+skillId+'-5');
-  if (!wrap) return;
-  const M = MODULES[skillId];
-  if (!M) return;
-  wrap.innerHTML = `
-    <p class="muted" style="margin-bottom:14px">Three correct in a row marks <b>${M.title.replace(/<[^>]+>/g,'')}</b> as mastered. Then it goes into your daily-drill rotation and unlocks any skills that depend on it.</p>
-    <div class="mastery-track" id="mTrack-${skillId}">
-      <div class="mastery-dot"></div>
-      <div class="mastery-dot"></div>
-      <div class="mastery-dot"></div>
-      <div class="progress-lbl">0 / 3</div>
-    </div>
-    <div id="mProb-${skillId}"></div>
-    <button class="btn primary" onclick="masteryNext('${skillId}')">Next problem →</button>
-    <button class="btn ghost" style="margin-left:6px" onclick="markMastered('${skillId}')">Skip — mark mastered (honor system)</button>
-  `;
+/* MASTERY CHECK (stage 5)
+   Mastered is earned only by graded answers: three correct in a row on three DIFFERENT problems.
+   No self-report path. Each shown problem gets a one-use token, so pressing Record twice on one
+   answer counts once. Problems already shown in this check are not drawn again until the pool
+   runs out, and a streak never repeats a problem. State lives in ST 'mCheck:<skill>'. */
+/* MCHECK-CORE-START (pure; tests/qr-formats/qr-mastery.test.js loads this block) */
+const MCHECK = {
+  NEED: 3,
+  fresh(){ return { n: 0, streak: [], shown: [], pending: null }; },
+  // pool = problem ids. Returns an id or null (fewer distinct problems than a streak needs).
+  pick(pool, st, rand){
+    const inStreak = new Set(st.streak), shown = new Set(st.shown);
+    let cand = pool.filter(id => !shown.has(id) && !inStreak.has(id));
+    if (!cand.length) cand = pool.filter(id => !inStreak.has(id));
+    if (!cand.length) return null;
+    return cand[Math.floor((rand || Math.random)() * cand.length)];
+  },
+  show(st, probId, token){
+    if (st.shown.indexOf(probId) < 0) st.shown.push(probId);
+    st.pending = { token: token, probId: probId };
+    return st;
+  },
+  // Returns {counted, mastered}. Ignores a token that is stale or already used.
+  record(st, token, correct){
+    const p = st.pending;
+    if (!p || p.token !== token) return { counted: false, mastered: false };
+    st.pending = null;
+    if (correct && st.streak.indexOf(p.probId) < 0){ st.streak.push(p.probId); st.n = st.streak.length; }
+    else if (!correct){ st.streak = []; st.n = 0; }
+    return { counted: true, mastered: st.n >= MCHECK.NEED };
+  }
+};
+/* MCHECK-CORE-END */
+function mCheckState(skillId){
+  const s = ST.get('mCheck:'+skillId, null);
+  return s && Array.isArray(s.streak) && Array.isArray(s.shown) ? s : MCHECK.fresh();
 }
-
-window.masteryNext = function(skillId){
+function mCheckPool(skillId){
   const M = MODULES[skillId];
   // Prefer the curated mastery bank when set; otherwise pull skill-matched bank problems
   // the student hasn't seen during practice. Only fall back to practice IDs if neither pool exists.
@@ -9484,13 +9501,46 @@ window.masteryNext = function(skillId){
     probs = BANK.filter(p => p.skills && p.skills.indexOf(skillId) >= 0 && !seen.has(p.id));
     if (probs.length === 0) probs = (M.practice || []).map(pid => BANK_BY_ID[pid]).filter(Boolean);
   }
-  if (probs.length === 0){
-    document.getElementById('mProb-'+skillId).innerHTML = '<p class="muted">No more problems in pool — honor-system mark mastered.</p>';
+  return probs.map(p => p.id);
+}
+function paintMTrack(skillId, n){
+  const t = document.getElementById('mTrack-'+skillId); if (!t) return;
+  t.querySelectorAll('.mastery-dot').forEach((d, i) => { d.classList.remove('fail'); d.classList.toggle('pass', i < n); });
+  t.querySelector('.progress-lbl').textContent = `${n} / ${MCHECK.NEED}`;
+}
+function renderMastery(skillId){
+  const wrap = document.getElementById('stage-'+skillId+'-5');
+  if (!wrap) return;
+  const M = MODULES[skillId];
+  if (!M) return;
+  wrap.innerHTML = `
+    <p class="muted" style="margin-bottom:14px">Three correct in a row, on three different problems, marks <b>${M.title.replace(/<[^>]+>/g,'')}</b> as mastered. Then it goes into your daily-drill rotation and unlocks any skills that depend on it.</p>
+    <div class="mastery-track" id="mTrack-${skillId}">
+      <div class="mastery-dot"></div>
+      <div class="mastery-dot"></div>
+      <div class="mastery-dot"></div>
+      <div class="progress-lbl">0 / 3</div>
+    </div>
+    <div id="mProb-${skillId}"></div>
+    <button class="btn primary" onclick="masteryNext('${skillId}')">Next problem →</button>
+  `;
+  paintMTrack(skillId, mCheckState(skillId).n);
+}
+
+window.masteryNext = function(skillId){
+  const pool = mCheckPool(skillId), st = mCheckState(skillId);
+  const pid = MCHECK.pick(pool, st);
+  if (!pid){
+    document.getElementById('mProb-'+skillId).innerHTML = pool.length
+      ? '<p class="muted">This check needs ' + MCHECK.NEED + ' different problems and this skill has only ' + pool.length + ' so far. Keep practicing it in the stages above; mastery here unlocks when more problems are added.</p>'
+      : '<p class="muted">This room has no mastery check. Use it for practice; it does not unlock other skills.</p>';
     return;
   }
-  const p = probs[Math.floor(Math.random()*probs.length)];
+  const p = BANK_BY_ID[pid];
+  const token = Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+  ST.set('mCheck:'+skillId, MCHECK.show(st, pid, token));
   const wrap = document.getElementById('mProb-'+skillId);
-  const tnum = ST.get('mTrack:'+skillId, 0);
+  const tnum = st.n;
   wrap.innerHTML = `
     <div class="card" style="margin-bottom:12px; padding:18px 20px; box-shadow:none; border:1px solid var(--line)">
       <div class="up muted" style="margin-bottom:6px">Attempt ${tnum + 1}</div>
@@ -9499,29 +9549,24 @@ window.masteryNext = function(skillId){
         ${p.opts.map((o, j) => `<div class="opt" data-c="${j===p.correct?1:0}" data-i="${j}"><span class="let">${'ABCDE'[j]}</span><span>${o}</span></div>`).join('')}
       </div>
       <div class="diag" id="diag-m-${skillId}"></div>
-      <div style="margin-top:10px"><button class="btn primary sm" onclick="masteryRecord('${skillId}', '${p.correct}')">Record &amp; advance</button></div>
+      <div style="margin-top:10px"><button class="btn primary sm" data-mrec="${token}" onclick="masteryRecord('${skillId}', '${token}', this)">Record &amp; advance</button></div>
     </div>
   `;
 };
 
-window.masteryRecord = function(skillId, correctIdx){
+window.masteryRecord = function(skillId, token, btn){
   // check the answer chosen
   const wrap = document.querySelector(`[data-stage="m-${skillId}"]`);
   if (!wrap) return;
   const chosen = wrap.querySelector('.opt.correct, .opt.wrong');
   if (!chosen){ NOTICE.show('Pick an answer first.'); return; }
-  const isCorrect = chosen.classList.contains('correct');
-  const track = document.getElementById('mTrack-'+skillId).querySelectorAll('.mastery-dot');
-  let n = ST.get('mTrack:'+skillId, 0);
-  if (isCorrect){
-    if (n < 3){ track[n].classList.add('pass'); n++; }
-  } else {
-    track.forEach(d => d.classList.remove('pass','fail'));
-    n = 0;
-  }
-  ST.set('mTrack:'+skillId, n);
-  document.querySelector(`#mTrack-${skillId} .progress-lbl`).textContent = `${n} / 3`;
-  if (n >= 3){ markMastered(skillId); }
+  const st = mCheckState(skillId);
+  const res = MCHECK.record(st, token, chosen.classList.contains('correct'));
+  if (!res.counted) return;                        // this problem was already recorded
+  if (btn) btn.disabled = true;
+  ST.set('mCheck:'+skillId, st);
+  paintMTrack(skillId, st.n);
+  if (res.mastered){ ST.set('mCheck:'+skillId, MCHECK.fresh()); markMastered(skillId); }
   else { setTimeout(() => masteryNext(skillId), 800); }
 };
 

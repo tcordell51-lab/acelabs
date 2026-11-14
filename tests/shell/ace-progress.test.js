@@ -7,14 +7,16 @@ const path = require('node:path');
 const vm = require('node:vm');
 
 const ROOT = path.resolve(__dirname, '../..');
-function load(seed) {
+function load(seed, clock) {
   const store = new Map(Object.entries(seed || {}).map(([k, v]) => [k, typeof v === 'string' ? v : JSON.stringify(v)]));
   const localStorage = {
     getItem: (k) => (store.has(k) ? store.get(k) : null), setItem: (k, v) => store.set(k, String(v)),
     removeItem: (k) => store.delete(k), key: (i) => [...store.keys()][i], get length() { return store.size; },
   };
   const window = { localStorage };
-  const ctx = vm.createContext({ window, localStorage, location: { search: '' }, URLSearchParams, Date, JSON, Math, Promise, setTimeout, clearTimeout });
+  // clock: optional { t } whose t is "now" for the module, so tests can move time forward.
+  const D = clock ? class extends Date { constructor(...a) { super(...(a.length ? a : [clock.t])); } static now() { return clock.t; } } : Date;
+  const ctx = vm.createContext({ window, localStorage, location: { search: '' }, URLSearchParams, Date: D, JSON, Math, Promise, setTimeout, clearTimeout });
   for (const f of ['shared/ace-index.js', 'shared/ace-route.js', 'shared/ace-progress.js']) vm.runInContext(fs.readFileSync(path.join(ROOT, f), 'utf8'), ctx);
   return { P: window.AceProgress, R: window.AceRoute, store };
 }
@@ -42,18 +44,81 @@ test('misses: practice-test misses lead, mastered hidden by default, one shape',
   assert.strictEqual(qr[0].concept, 'Percent Increase/Decrease');
 });
 
-test('Leitner ladder: 1, 3, 7 days, then mastered; a miss resets', () => {
-  const { P } = load(SEED);
+test('Leitner ladder: 1, 3, 7 days on due retries; a graded retry masters; a miss resets', () => {
+  const clock = { t: now };
+  const { P } = load(SEED, clock);
   const id = P.misses()[0].id;
   const days = [];
-  for (let i = 0; i < 3; i++) { const r = P.mark(id, true); days.push(Math.round((r.due - Date.now()) / DAY)); }
+  for (let i = 0; i < 3; i++) {
+    const r = P.mark(id, true);
+    assert.ok(r.advanced);
+    days.push(Math.round((r.due - clock.t) / DAY));
+    clock.t = r.due;
+  }
   assert.deepStrictEqual(days, [1, 3, 7]);
   assert.strictEqual(P.misses().find((m) => m.id === id).status, 'reviewing');
-  assert.ok(P.mark(id, true).mastered);
+  assert.ok(P.mark(id, true, { graded: true }).mastered);
   assert.ok(!P.misses().some((m) => m.id === id));
   const r = P.mark(id, false);
   assert.strictEqual(r.box, 0);
   assert.strictEqual(P.misses().find((m) => m.id === id).status, 'learning');
+});
+
+test('mastery needs evidence: immediate repeats do not climb, self-report never masters', () => {
+  const clock = { t: now };
+  const { P } = load(SEED, clock);
+  const id = P.misses()[0].id;
+  for (let i = 0; i < 4; i++) P.mark(id, true);
+  let m = P.misses({ includeMastered: true }).find((x) => x.id === id);
+  assert.strictEqual(m.box, 1, 'four Got it taps in a row climb one box, not four');
+  assert.strictEqual(m.status, 'reviewing');
+  assert.ok(!m.isDue, 'not due again until tomorrow');
+  // Spaced correctly all the way up, self-report still stops at the top box.
+  for (let i = 0; i < 6; i++) { clock.t = P.misses({ includeMastered: true }).find((x) => x.id === id).due; P.mark(id, true); }
+  m = P.misses({ includeMastered: true }).find((x) => x.id === id);
+  assert.strictEqual(m.status, 'reviewing');
+  assert.strictEqual(m.box, P.LEITNER_DAYS.length);
+  clock.t = m.due;
+  const r = P.mark(id, true);
+  assert.ok(r.needsGraded && !r.mastered, 'a top-box Got it asks for a graded retry');
+  // A graded retry before it is due does not master either.
+  assert.ok(!P.mark(id, true, { graded: true }).mastered);
+  clock.t = P.misses().find((x) => x.id === id).due;
+  assert.ok(P.mark(id, true, { graded: true }).mastered);
+});
+
+test('a newer miss demotes mastery back into review; an older one does not', () => {
+  const clock = { t: now };
+  const id = 'pt:bio|The nephron';
+  const graded = { box: 3, due: 0, seen: 4, mastered: true, graded: 1 };
+  // The practice-test miss in SEED is 2 days old. Mastery earned 3 days ago is stale.
+  let { P } = load({ ...SEED, 'ace.v1.review': { [id]: { ...graded, last: now - 3 * DAY } } }, clock);
+  let m = P.misses().find((x) => x.id === id);
+  assert.ok(m, 'the topic is back on the open list');
+  assert.strictEqual(m.status, 'learning');
+  assert.strictEqual(m.box, 0);
+  assert.ok(m.isDue);
+  assert.strictEqual(P.misses().find((x) => x.id === id).status, 'learning', 'reopening is stable across reads');
+  // Climbing again starts from box 1, and the old miss does not reopen it a second time.
+  assert.strictEqual(P.mark(id, true).box, 1);
+  assert.strictEqual(P.misses().find((x) => x.id === id).status, 'reviewing');
+  // Mastery earned after the miss stands.
+  ({ P } = load({ ...SEED, 'ace.v1.review': { [id]: { ...graded, last: now - DAY } } }, clock));
+  assert.ok(!P.misses().some((x) => x.id === id));
+  assert.strictEqual(P.misses({ includeMastered: true }).find((x) => x.id === id).status, 'mastered');
+});
+
+test('saved progress from before the evidence rule still loads, without self-report mastery', () => {
+  const id = 'pt:bio|The nephron';
+  const saved = { box: 3, due: 0, seen: 4, last: now - DAY, mastered: true };
+  const { P, store } = load({ ...SEED, 'ace.v1.review': { [id]: saved, 'climb:k1': { box: 2, due: now + DAY, seen: 2, last: now } } });
+  const m = P.misses().find((x) => x.id === id);
+  assert.strictEqual(m.status, 'reviewing', 'self-report mastery shows as top-box reviewing');
+  assert.strictEqual(m.box, 3);
+  assert.ok(m.isDue);
+  const k1 = P.misses().find((x) => x.id === 'climb:k1');
+  assert.strictEqual(k1.box, 2, 'an ordinary saved box is unchanged');
+  assert.deepStrictEqual(JSON.parse(store.get('ace.v1.review'))[id], saved, 'reading never rewrites a record that needs no reopen');
 });
 
 test('results: raw counts only, never a forecast field', () => {

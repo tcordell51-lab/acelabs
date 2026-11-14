@@ -279,10 +279,24 @@
     return out;
   });
 
-  /* ---------------- unified review (Leitner 1d / 3d / 7d) ---------------- */
+  /* ---------------- unified review (Leitner 1d / 3d / 7d) ----------------
+     Evidence rules that keep "Mastered" honest:
+       1. A retry only climbs the ladder when it is due. Marking again early changes nothing.
+       2. Self-report ("Got it") can reach the top box, never past it. Mastered needs a graded
+          retry: mark(id, true, { graded: true }) from a tool that scored a fresh question right.
+          Saved records mastered by self-report alone (before this rule) load as top-box reviewing.
+       3. A miss newer than the last retry reopens the item at the start of the ladder, so an
+          older Mastered or a high box never hides a current weakness. */
   function reviewState() { return get('review', {}); }
+  function verified(r) { return !!(r && r.mastered && r.graded > 0); }
+  function reopen(rs, m) {
+    var r = rs[m.id];
+    if (!r || !m.when || m.when <= Math.max(r.last || 0, r.reopened || 0)) return false;
+    r.box = 0; r.mastered = false; r.due = m.when; r.reopened = m.when;
+    return true;
+  }
   function statusOf(m, r) {
-    if (r && r.mastered) return 'mastered';
+    if (verified(r)) return 'mastered';
     if (r && r.box > 0) return 'reviewing';
     if (r) return 'learning';
     if (m.native) {
@@ -293,12 +307,13 @@
   }
   function misses(opts) {
     opts = opts || {};
-    var rs = reviewState(), out = [];
+    var rs = reviewState(), out = [], reopened = false;
     missAdapters.forEach(function (a) {
       var rows = [];
       try { rows = a.fn() || []; } catch (e) { rows = []; }
       rows.forEach(function (m) {
         if (!m.section) return;
+        if (reopen(rs, m)) reopened = true;
         var r = rs[m.id];
         m.status = statusOf(m, r);
         m.box = r ? r.box : (m.native && m.native.box) || 0;
@@ -307,21 +322,34 @@
         out.push(m);
       });
     });
+    if (reopened) set('review', rs);
     if (!opts.includeMastered) out = out.filter(function (m) { return m.status !== 'mastered'; });
     out.sort(function (a, b) { return (a.rank - b.rank) || ((b.isDue ? 1 : 0) - (a.isDue ? 1 : 0)) || (b.when - a.when); });
     return out;
   }
-  /* ok = the student got it on retry. Wrong sends it back to the start of the ladder. */
-  function mark(id, ok) {
-    var rs = reviewState(), r = rs[id] || { box: 0, due: 0, seen: 0 };
+  /* ok = the student got it on retry. Wrong sends it back to the start of the ladder.
+     opts.graded = a tool scored a fresh question right; without it, ok is self-report.
+     The record comes back with advanced (the box moved or it mastered) and needsGraded
+     (a clean self-report at the top box, which cannot master on its own). */
+  function mark(id, ok, opts) {
+    var rs = reviewState(), r = rs[id] || { box: 0, due: 0, seen: 0 }, now = Date.now();
+    var graded = !!(opts && opts.graded);
     r.seen = (r.seen || 0) + 1;
-    r.last = Date.now();
+    r.last = now;
+    r.advanced = false; r.needsGraded = false;
     if (ok) {
-      r.box += 1;                                  // box 1 -> back in 1 day, 2 -> 3 days, 3 -> 7 days
-      if (r.box > LEITNER.length) { r.mastered = true; r.due = 0; r.box = LEITNER.length; }
-      else r.due = Date.now() + LEITNER[r.box - 1] * DAY;
+      if (verified(r) || (r.due || 0) > now) { /* not due yet: no climb */ }
+      else if (r.box >= LEITNER.length) {
+        if (graded) { r.mastered = true; r.due = 0; r.advanced = true; }
+        else { r.mastered = false; r.needsGraded = true; r.due = now + LEITNER[LEITNER.length - 1] * DAY; }
+      } else {
+        r.box += 1;                                // box 1 -> back in 1 day, 2 -> 3 days, 3 -> 7 days
+        r.due = now + LEITNER[r.box - 1] * DAY;
+        r.advanced = true;
+      }
+      if (graded) r.graded = (r.graded || 0) + 1;
     } else {
-      r.box = 0; r.mastered = false; r.due = Date.now() + LEITNER[0] * DAY;
+      r.box = 0; r.mastered = false; r.due = now + LEITNER[0] * DAY;
     }
     rs[id] = r; set('review', rs);
     return r;
