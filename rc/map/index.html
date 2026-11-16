@@ -59,8 +59,9 @@
   <p class="aui-small">An original passage written for Ace Labs. The science follows standard accounts of marine bioluminescence (luciferin and luciferase, blue light in seawater, counterillumination, the red light of the stoplight loosejaw).</p>
 </main>
 <script src="/shared/ace-ui.js?v=4"></script>
-<script src="/shared/ace-record.js?v=5"></script>
-<script src="/shared/ace-question.js?v=7"></script>
+<script src="/shared/ace-skills.js?v=2"></script>
+<script src="/shared/ace-record.js?v=6"></script>
+<script src="/shared/ace-question.js?v=8"></script>
 <script>
 (function () {
   'use strict';
@@ -121,7 +122,7 @@
     window.AceQuestion.mount(document.getElementById('q'), item, { label: 'Reading · Find the line', number: i + 1, total: QS.length, confidence: true, nextLabel: i + 1 < QS.length ? 'Next question' : 'Start again',
       onAnswer: function (res) {
         var m = document.querySelector('mark[data-s="' + x.s + '"]'); if (m) { m.classList.add('hit'); m.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
-        if (window.AceRecord) window.AceRecord.record({ item: item, picked: res.picked, answer: res.answer, ok: res.ok, ms: res.ms, src: 'rc-map', first: res.first, changes: res.changes, change: res.change, conf: res.conf, repair: false });
+        if (window.AceRecord) window.AceRecord.record({ item: item, picked: res.picked, answer: res.answer, ok: res.ok, ms: res.ms, src: 'rc-map', first: res.first, changes: res.changes, change: res.change, conf: res.conf, tool: 'lab' });
       },
       onNext: function () { if (i + 1 < QS.length) ask(i + 1); else location.reload(); } });
   }

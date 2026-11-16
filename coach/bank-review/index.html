@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en" data-ace-shell="off" data-ace-tabs="off">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<meta name="robots" content="noindex, nofollow"/>
+<title>Bank review · coach only</title>
+<link rel="icon" href="/favicon.ico"/>
+<link rel="stylesheet" href="/coach/bank-review/review.css?v=1"/>
+</head>
+<body>
+<header class="br-top">
+  <div class="br-wrap">
+    <p class="br-kicker">Coach only · not linked anywhere</p>
+    <h1>Question review</h1>
+    <p class="br-lede">One question at a time, exactly as a student would see it. Approve puts it in the student pool. Fix sends it back with your note. Reject keeps it out. Until you approve, students see nothing new.</p>
+  </div>
+</header>
+
+<main class="br-wrap" id="app">
+  <section id="gate" class="br-card" hidden>
+    <h2>Sign in first</h2>
+    <p id="gateMsg">This page is for Thomas. Open Ace Labs from the portal while signed in as the master coach, then come back to this address.</p>
+    <form id="keyForm" class="br-key" hidden>
+      <label for="keyIn">Or paste the review key (the reviewer key set in Netlify):</label>
+      <div class="br-row"><input id="keyIn" type="password" autocomplete="off" spellcheck="false"/><button class="br-btn" type="submit">Open the queue</button></div>
+    </form>
+  </section>
+
+  <section id="board" hidden>
+    <nav class="br-tabs" id="tabs" aria-label="Section">
+      <button type="button" data-sec="bio">Biology</button>
+      <button type="button" data-sec="gc">Gen Chem</button>
+      <button type="button" data-sec="ochem">OChem</button>
+      <button type="button" data-sec="qr">QR</button>
+      <button type="button" data-sec="rc">Reading</button>
+    </nav>
+    <div class="br-stats" id="stats"></div>
+    <details class="br-forms" id="formsBox"><summary>New full-length forms: what unlocks them</summary><div id="forms"></div></details>
+
+    <article class="br-card br-item" id="item" aria-live="polite"></article>
+
+    <div class="br-actions" id="actions">
+      <button class="br-btn approve" type="button" id="bApprove">Approve</button>
+      <button class="br-btn fix" type="button" id="bFix">Fix</button>
+      <button class="br-btn reject" type="button" id="bReject">Reject</button>
+    </div>
+    <form class="br-note" id="noteForm" hidden>
+      <label for="note">What needs fixing? (saved with the item)</label>
+      <textarea id="note" rows="3" maxlength="2000"></textarea>
+      <div class="br-row"><button class="br-btn fix" type="submit">Save as Fix</button><button class="br-btn ghost" type="button" id="noteCancel">Cancel</button></div>
+    </form>
+    <div class="br-nav">
+      <button class="br-btn ghost" type="button" id="bPrev">Previous</button>
+      <span id="pos"></span>
+      <button class="br-btn ghost" type="button" id="bNext">Next</button>
+      <label class="br-only"><input type="checkbox" id="onlyOpen" checked/> Open items only</label>
+    </div>
+  </section>
+</main>
+<script src="/coach/bank-review/review.js?v=1"></script>
+</body>
+</html>

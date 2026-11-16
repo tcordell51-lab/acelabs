@@ -179,7 +179,7 @@
         skill: sk.skill, skillName: sk.skillName, mode: skillMode ? 'skill' : 'item', tool: a.tool || '',
         trap: a.item.trapTag || sk.skillName || a.item.topicName || a.item.topic || '', src: a.src || '', missedAt: now, reason: null, wins: [],
         due: daysOut(now, 1), resets: 0, cleared: 0, served: [], lessonFirst: false, untimedFirst: false };
-      if (!skillMode && a.item.stem && a.item.choices) e.itemData = { id: String(a.item.id), section: a.item.section, topic: a.item.topic, topicName: a.item.topicName, skill: sk.skill, skillName: sk.skillName, difficulty: a.item.difficulty, stem: a.item.stem, choices: a.item.choices, answer: a.item.answer, why: a.item.why || '' };
+      if (!skillMode && a.item.stem && a.item.choices && a.item.choices.length) e.itemData = { id: String(a.item.id), section: a.item.section, topic: a.item.topic, topicName: a.item.topicName, skill: sk.skill, skillName: sk.skillName, difficulty: a.item.difficulty, stem: a.item.stem, choices: a.item.choices, answer: a.item.answer, why: a.item.why || '' };
     } else {   // missed again while open: reset
       e.wins = []; e.resets += 1; e.due = daysOut(now, 1); e.lastMiss = now;
     }

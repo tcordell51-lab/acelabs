@@ -18,9 +18,14 @@ import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-// One skill tag, the same in the browser (shared/ace-skills.js): repair matches skill first.
+// One canonical skill tag, the same in the browser (shared/ace-skills.js): repair matches skill
+// first. The tag is a portal subtopic (gc_buffers) or, when the item's own topic does not settle
+// it, the parent topic with conf 'low' (listed in scripts/bank/out/skill-low-confidence.json).
 const Skills = createRequire(import.meta.url)(path.join(ROOT, 'shared/ace-skills.js'));
-const withSkill = (it) => Object.assign(it, Skills.tag(it));
+function withSkill(it) {
+  const t = Skills.tag(it);
+  return Object.assign(it, { skill: t.skill, skillName: t.skillName, canon: t.canon, topicId: t.topicId, conf: t.conf });
+}
 const read = (f) => fs.readFileSync(path.join(ROOT, f), 'utf8');
 const clean = (s) => String(s == null ? '' : s).replace(/\s*—\s*/g, ', ').replace(/\s+/g, ' ').trim();
 function hash(s) { let h = 2166136261; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return (h >>> 0).toString(36); }
@@ -151,8 +156,18 @@ for (const bank of BANKS) {
   if (check) { if (!fs.existsSync(file) || fs.readFileSync(file, 'utf8') !== body) { stale++; console.error('stale: data/' + bank.name + '.json (run node scripts/build-ace-banks.mjs)'); } }
   else { fs.mkdirSync(path.dirname(file), { recursive: true }); fs.writeFileSync(file, body); }
   const topics = new Set(bank.items.map((i) => i.topic)).size, skills = new Set(bank.items.map((i) => i.skill)).size;
-  const named = bank.items.filter((i) => !/\/(calc|idea)$/.test(i.skill)).length;
-  console.log(`${bank.name}: ${bank.items.length} items, ${topics} topics, ${skills} skills (${named} by a named concept), ${bank.skipped.length} left out`);
+  const named = bank.items.filter((i) => i.canon).length;
+  console.log(`${bank.name}: ${bank.items.length} items, ${topics} topics, ${skills} skills (${named} on a canonical subtopic), ${bank.skipped.length} left out`);
+}
+// Canonical tag coverage for every served item and the private banks, and the low-confidence list.
+{
+  const { coverage } = await import('./bank/skill-coverage.mjs');
+  const { report, low } = coverage(BANKS);
+  for (const [file, body] of [['scripts/bank/out/skill-coverage.json', JSON.stringify(report, null, 1) + '\n'], ['scripts/bank/out/skill-low-confidence.json', JSON.stringify(low) + '\n']]) {
+    const f = path.join(ROOT, file);
+    if (check) { if (!fs.existsSync(f) || fs.readFileSync(f, 'utf8') !== body) { stale++; console.error('stale: ' + file); } }
+    else { fs.mkdirSync(path.dirname(f), { recursive: true }); fs.writeFileSync(f, body); }
+  }
 }
 {
   const file = path.join(ROOT, 'data', 'topics.json'), body = JSON.stringify(topicsMap());
