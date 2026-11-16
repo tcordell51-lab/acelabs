@@ -1196,7 +1196,7 @@ function SummaryLadder({
         marginBottom: 24,
         letterSpacing: '0.06em'
       }
-    }, "screenshot this — it’s the whole cheat sheet"), rows.map((r, i) => {
+    }, "screenshot this, it’s the whole cheat sheet"), rows.map((r, i) => {
       const rv = clamp((t - start - 0.4 - i * 0.5) / 0.5, 0, 1);
       return /*#__PURE__*/React.createElement("div", {
         key: i,
@@ -1287,7 +1287,7 @@ function QuizBeat({
         color: INK3,
         marginBottom: 26
       }
-    }, "pause it — commit before the reveal"), /*#__PURE__*/React.createElement("div", {
+    }, "pause it, commit before the reveal"), /*#__PURE__*/React.createElement("div", {
       style: {
         fontFamily: SERIF,
         fontWeight: 600,
@@ -1694,14 +1694,14 @@ function SubElimVideo() {
       color: INK3,
       marginTop: 14
     }
-  }, "1-bromobutane — written out the way the test writes it"), /*#__PURE__*/React.createElement("div", {
+  }, "1-bromobutane: written out the way the test writes it"), /*#__PURE__*/React.createElement("div", {
     style: {
       fontFamily: SANS,
       fontSize: 38,
       color: INK2,
       marginTop: 28
     }
-  }, "which mechanism — and what happens to the stereocenter?"), /*#__PURE__*/React.createElement("div", {
+  }, "which mechanism, and what happens to the stereocenter?"), /*#__PURE__*/React.createElement("div", {
     style: {
       fontFamily: MONO,
       fontSize: 24,
@@ -1709,7 +1709,7 @@ function SubElimVideo() {
       marginTop: 22,
       letterSpacing: '0.06em'
     }
-  }, "comment your pick — answer at the end")), /*#__PURE__*/React.createElement(Header, {
+  }, "comment your pick, answer at the end")), /*#__PURE__*/React.createElement(Header, {
     start: 7.2,
     end: 13.0,
     top: 330
@@ -1752,7 +1752,7 @@ function SubElimVideo() {
       color: INK2,
       marginTop: 22
     }
-  }, "ask them in order — the answer falls out")), /*#__PURE__*/React.createElement(Header, {
+  }, "ask them in order, the answer falls out")), /*#__PURE__*/React.createElement(Header, {
     start: 13.2,
     end: 20.0,
     top: 150
@@ -1806,13 +1806,13 @@ function SubElimVideo() {
       color: INK3,
       marginTop: 10
     }
-  }, "one concerted backside attack — the umbrella flips")), /*#__PURE__*/React.createElement(ResultBanner, {
+  }, "one concerted backside attack, the umbrella flips")), /*#__PURE__*/React.createElement(ResultBanner, {
     start: 23.2,
     end: 27.0,
     color: SPARED,
     kicker: "SN2 STEREOCHEMISTRY",
     big: "inversion",
-    sub: "backside attack — every time"
+    sub: "backside attack, every time"
   }), /*#__PURE__*/React.createElement(Header, {
     start: 27.2,
     end: 34.0,
@@ -1846,7 +1846,7 @@ function SubElimVideo() {
     color: RICH,
     kicker: "SN1 STEREOCHEMISTRY",
     big: "racemization",
-    sub: "flat carbocation — attacked from both faces"
+    sub: "flat carbocation, attacked from both faces"
   }), /*#__PURE__*/React.createElement(Header, {
     start: 34.2,
     end: 41.0,
@@ -1912,7 +1912,7 @@ function SubElimVideo() {
     style: {
       color: RICH
     }
-  }, "SN1 / E1 rearrange"), " — concerted never does", /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("b", {
+  }, "SN1 / E1 rearrange"), ", concerted never does", /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("b", {
     style: {
       color: GOLD
     }
@@ -1928,7 +1928,7 @@ function SubElimVideo() {
     title: "AND THE LEAVING GROUP",
     titleColor: POOR,
     base: 48.6,
-    sub: "a weak, stable base leaves happily — tosylate is elite",
+    sub: "a weak, stable base leaves happily, tosylate is elite",
     cards: [{
       formula: 'I⁻',
       annot: 'best',
@@ -1990,7 +1990,7 @@ function SubElimVideo() {
       color: INK2,
       marginTop: 26
     }
-  }, "three tells — they decide most questions on their own")), /*#__PURE__*/React.createElement(SummaryLadder, {
+  }, "three tells, they decide most questions on their own")), /*#__PURE__*/React.createElement(SummaryLadder, {
     start: 71.2,
     end: 83.0,
     kicker: "THE FOUR QUESTIONS",
@@ -2020,20 +2020,20 @@ function SubElimVideo() {
     start: 83.2,
     qs: [{
       q: 'CH₃CH₂CH₂CH₂Br + NaCN, in DMSO →',
-      opts: ['SN2 — with inversion', 'SN1 — racemization', 'E2 — an alkene'],
+      opts: ['SN2: with inversion', 'SN1: racemization', 'E2: an alkene'],
       ans: 0,
-      why: 'Primary substrate, strong small nucleophile, polar aprotic — the SN2 trifecta. Backside attack, umbrella flips.'
+      why: 'Primary substrate, strong small nucleophile, polar aprotic, the SN2 trifecta. Backside attack, umbrella flips.'
     }, {
-      q: '(CH₃)₃C–Br + t-BuOK + heat →',
-      opts: ['SN2 product', 'E2 — the Hofmann alkene', 'SN1 — retention'],
+      q: '(CH₃)₃C-Br + t-BuOK + heat →',
+      opts: ['SN2 product', 'E2: the Hofmann alkene', 'SN1: retention'],
       ans: 1,
-      why: 'Never SN2 on 3°. Strong bulky base plus heat is E2 — and bulky means Hofmann, the less-substituted alkene.'
+      why: 'Never SN2 on 3°. Strong bulky base plus heat is E2, and bulky means Hofmann, the less-substituted alkene.'
     }]
   }), /*#__PURE__*/React.createElement(OutroCard, {
     start: 99.8,
     end: 108,
     lines: ['Four questions,', 'asked in order.'],
-    tease: "R/S in three moves — do the numbers — is next."
+    tease: "R/S in three moves: do the numbers, is next."
   }));
 }
 window.SubElimVideo = SubElimVideo;

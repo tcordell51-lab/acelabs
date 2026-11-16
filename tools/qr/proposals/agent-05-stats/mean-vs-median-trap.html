@@ -143,7 +143,7 @@ body[data-theme="dark"] .trap-pop .lbl{color:#f3c5b3}
 </div>
 
 <h1>The mean-vs-median <em>trap</em></h1>
-<p class="lede">Nine students score in the 70s. One scores <b>5</b>. Drag the outlier — watch <b>mean</b> swing 5 SDs while <b>median</b> barely moves. <span class="tag trap">single highest-density DAT QR trap</span></p>
+<p class="lede">Nine students score in the 70s. One scores <b>5</b>. Drag the outlier: watch <b>mean</b> swing 5 SDs while <b>median</b> barely moves. <span class="tag trap">single highest-density DAT QR trap</span></p>
 
 <section class="card">
   <div class="demo">
@@ -160,12 +160,12 @@ body[data-theme="dark"] .trap-pop .lbl{color:#f3c5b3}
   <div class="readout">
     <div class="read-cell mean">
       <div class="lbl">Mean</div>
-      <div class="row"><span class="val" id="meanVal">—</span><span class="swing" id="meanSwing">—</span></div>
+      <div class="row"><span class="val" id="meanVal">-</span><span class="swing" id="meanSwing">-</span></div>
       <div class="verdict" id="meanVerdict">moves with the outlier</div>
     </div>
     <div class="read-cell median">
       <div class="lbl">Median</div>
-      <div class="row"><span class="val" id="medVal">—</span><span class="swing" id="medSwing">—</span></div>
+      <div class="row"><span class="val" id="medVal">-</span><span class="swing" id="medSwing">-</span></div>
       <div class="verdict" id="medVerdict">stays put</div>
     </div>
   </div>
@@ -192,10 +192,10 @@ body[data-theme="dark"] .trap-pop .lbl{color:#f3c5b3}
   <ul style="margin:6px 0 0; padding-left:18px; color:var(--ink-2); font-size:13.5px; line-height:1.6">
     <li>"<b>Average income</b>" with a billionaire in the sample.</li>
     <li>"<b>Typical lab time</b>" with one student who took 4 hours.</li>
-    <li>"<b>One reading</b> was misrecorded as 0" — they want the median because it ignores that bad point.</li>
+    <li>"<b>One reading</b> was misrecorded as 0", they want the median because it ignores that bad point.</li>
     <li>Anything where the answer choices include both a number near the cluster and a number pulled toward the outlier.</li>
   </ul>
-  <p style="margin-top:10px; font-size:13px; color:var(--ink-mute); line-height:1.55">600-tier students recognize this in under 2 seconds: see "outlier" or "extreme" in the stem, look at the answer choices, pick the one that matches the cluster — that's the median.</p>
+  <p style="margin-top:10px; font-size:13px; color:var(--ink-mute); line-height:1.55">600-tier students recognize this in under 2 seconds: see "outlier" or "extreme" in the stem, look at the answer choices, pick the one that matches the cluster, that's the median.</p>
 </section>
 
 <script>
@@ -283,8 +283,8 @@ function render(){
     document.getElementById('meanVerdict').textContent = 'tracking baseline';
   }
   document.getElementById('medVerdict').textContent = Math.abs(dMd)>0.5 ?
-    `moved ${fmt(Math.abs(dMd),1)} — outlier crossed into the cluster` :
-    'unchanged — outlier ignored';
+    `moved ${fmt(Math.abs(dMd),1)}, outlier crossed into the cluster` :
+    'unchanged, outlier ignored';
 
   // trap pop
   const pop = document.getElementById('trapPop');
@@ -292,7 +292,7 @@ function render(){
     pop.classList.add('show');
     document.getElementById('trapCopy').innerHTML =
       `Mean swung <b>${fmt(sdSwing,1)} SDs</b> while median moved <b>${fmt(Math.abs(dMd),1)}</b>. ` +
-      (sdSwing>3 ? 'This is a <b>flag-the-median</b> question — the writer wants you to pick the value that ignores the outlier.' :
+      (sdSwing>3 ? 'This is a <b>flag-the-median</b> question, the writer wants you to pick the value that ignores the outlier.' :
                    'When the swing exceeds ~1.5 SDs, expect the DAT to ask for the median.');
   } else {
     pop.classList.remove('show');

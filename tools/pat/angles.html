@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Ace PAT Studio — Angle Discrimination Trainer</title>
+<title>Ace PAT Studio · Angle Discrimination Trainer</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -27,7 +27,7 @@
 
 <div class="wrap">
   <h1 class="title">The Calibrated Angle Trainer</h1>
-  <p class="lede">Rank the four angles from <b>smallest to largest</b>. The gap between angles is a real, published number — start at 10 degrees and work down to the <b>2–3 degree zone where hard test forms live</b>. Gut-shot it: the quicker you move, the more accurate you will be.</p>
+  <p class="lede">Rank the four angles from <b>smallest to largest</b>. The gap between angles is a real, published number, start at 10 degrees and work down to the <b>2-3 degree zone where hard test forms live</b>. Gut-shot it: the quicker you move, the more accurate you will be.</p>
 
   <div class="bar">
     <button id="mode" class="on">Mode: Drill</button>
@@ -54,7 +54,7 @@
       <button id="tnext" class="primary">Next step</button>
     </div>
     <div class="meta" id="meta"></div>
-    <div class="coach" id="coach"><b>Read the answers first</b> — they anchor smallest and largest. Then move. When you sit and decipher between the final two is when you trip yourself up.</div>
+    <div class="coach" id="coach"><b>Read the answers first</b>, they anchor smallest and largest. Then move. When you sit and decipher between the final two is when you trip yourself up.</div>
   </div>
 
   <div class="card">
@@ -79,7 +79,7 @@ var LOG=[];             // attempts for CSV export
 var COACH=[
  'The quicker you move through it, the more accurate you will be.',
  'The longer you stare, the worse it gets. Gut shot, next question.',
- 'These are toss-ups by design — 9 or 10 out of 15 here is a strong day.',
+ 'These are toss-ups by design: 9 or 10 out of 15 here is a strong day.',
  'Long arms lie. The angle lives at the vertex.',
  'Find the obvious smallest and largest first; only argue about the pair that is left.'
 ];
@@ -133,7 +133,7 @@ function renderStage(){
   });
   if(revealed){
     o+='<line x1="20" y1="236" x2="1020" y2="236" stroke="rgba(176,141,63,.3)"/>';
-    o+=txt(24,254,'SCISSORS CLOSED — ONE ARM FLAT, EQUAL ARMS, EQUAL ARC',9.5,INK3,'start');
+    o+=txt(24,254,'SCISSORS CLOSED: ONE ARM FLAT, EQUAL ARMS, EQUAL ARC',9.5,INK3,'start');
     Q.degs.forEach(function(d,i){
       o+=glyph(xs[i],296,d,0,42,42,INK,2.5);
       o+=arc(xs[i],296,d,0,15);
@@ -167,36 +167,36 @@ function renderTeach(){
   var coach='';
   if(TSTEP===0){                                 // the lie: as drawn
     Q.degs.forEach(function(d,i){ o+=glyph(xs[i],cy,d,Q.rots[i],Q.arms[i][0],Q.arms[i][1],INK,3); o+=txt(xs[i],cy+96,String(i+1),14,INK2); });
-    coach='<b>Your eye is being played.</b> Long arms look bigger and the rotation scrambles the comparison. Do NOT rank from this picture — that is the whole trap.';
+    coach='<b>Your eye is being played.</b> Long arms look bigger and the rotation scrambles the comparison. Do NOT rank from this picture, that is the whole trap.';
   } else if(TSTEP===1){                           // trim the arms
     Q.degs.forEach(function(d,i){ o+=eglyph(xs[i],cy,d,Q.rots[i],R,INK,3,false); o+=txt(xs[i],cy+96,String(i+1),14,INK2); });
-    coach='<b>Trim every arm to the same length.</b> Leg length is a lie — the angle lives only at the vertex. Same tips now; only the opening differs.';
+    coach='<b>Trim every arm to the same length.</b> Leg length is a lie: the angle lives only at the vertex. Same tips now; only the opening differs.';
   } else if(TSTEP===2){                           // lay one arm flat + metaphor (per angle type)
     Q.degs.forEach(function(d,i){ o+=eglyph(xs[i],cy,d,0,R,INK,3,false); o+=txt(xs[i],cy+96,String(i+1),14,INK2);
       var isAcute=d<90; o+=txt(xs[i],cy+118,(isAcute?'acute · knife':'obtuse · laptop'),9.5,isAcute?GOOD:BRASSD); });
-    coach = MP==='knife' ? '<b>The knife — for acute angles.</b> Picture each as a blade: the <b>sharpest point is the smallest</b> angle.'
-      : MP==='laptop' ? '<b>The laptop — for obtuse angles.</b> One arm is the base, the other the lid: the <b>widest-open lid is the biggest</b> angle.'
-      : MP==='plain' ? '<b>Lay one arm flat.</b> Every angle now starts from the same line — rank by how far the top arm swings up.'
+    coach = MP==='knife' ? '<b>The knife: for acute angles.</b> Picture each as a blade: the <b>sharpest point is the smallest</b> angle.'
+      : MP==='laptop' ? '<b>The laptop: for obtuse angles.</b> One arm is the base, the other the lid: the <b>widest-open lid is the biggest</b> angle.'
+      : MP==='plain' ? '<b>Lay one arm flat.</b> Every angle now starts from the same line, rank by how far the top arm swings up.'
       : '<b>Match the tool to the angle.</b> <b style="color:'+GOOD+'">Acute</b> (under 90°) → the <b>knife</b>: sharpest point is smallest. <b style="color:'+BRASSD+'">Obtuse</b> (over 90°) → the <b>laptop</b>: widest-open lid is biggest.';
   } else if(TSTEP===3){                           // anchor the extremes
     Q.degs.forEach(function(d,i){ var isMin=rank[i]===0,isMax=rank[i]===3,dim=!(isMin||isMax);
       o+=eglyph(xs[i],cy,d,0,R,isMin?GOOD:isMax?BRASS:INK,3,dim); o+=txt(xs[i],cy+96,String(i+1),14,dim?INK3:INK2);
       if(isMin)o+=txt(xs[i],cy+120,'SMALLEST',10,GOOD); if(isMax)o+=txt(xs[i],cy+120,'LARGEST',10,BRASSD); });
-    coach='<b>Anchor the extremes first.</b> The clearly-smallest and clearly-largest are almost always right — lock them, and most answer orderings die on the spot.';
+    coach='<b>Anchor the extremes first.</b> The clearly-smallest and clearly-largest are almost always right, lock them, and most answer orderings die on the spot.';
   } else if(TSTEP===4){                           // the close pair, stacked
     var a=ord[1], b=ord[2], cxo=520, cyo=170, small=Q.degs[a]<Q.degs[b]?a:b;
     o+=eglyph(cxo,cyo,Q.degs[a],0,86,GOOD,4,false); o+=eglyph(cxo,cyo,Q.degs[b],0,86,BRASS,4,false);
-    o+=txt(cxo,cyo+112,'the two closest — stack them on one vertex',12,INK2);
-    coach='<b>Only the close pair is left.</b> Stack them on a shared vertex — the top arm that sits <b>inside</b> the other is the smaller angle. Here that is <b>#'+(small+1)+'</b>.';
+    o+=txt(cxo,cyo+112,'the two closest, stack them on one vertex',12,INK2);
+    coach='<b>Only the close pair is left.</b> Stack them on a shared vertex, the top arm that sits <b>inside</b> the other is the smaller angle. Here that is <b>#'+(small+1)+'</b>.';
   } else {                                        // the truth
     Q.degs.forEach(function(d,i){ o+=eglyph(xs[i],cy,d,0,R,INK,3,false); o+=arc(xs[i],cy,d,0,17); o+=txt(xs[i],cy+96,'#'+(i+1)+' · '+d+'&deg;',12,BRASSD); });
     o+=txt(520,cy+130,'smallest to largest:  '+ord.map(function(idx){return '#'+(idx+1)}).join('  ,  '),14,INK);
-    coach='<b>There it is.</b> Trimmed and aligned, the order is obvious — and you never measured a thing. Five seconds, gut-shot, done.';
+    coach='<b>There it is.</b> Trimmed and aligned, the order is obvious, and you never measured a thing. Five seconds, gut-shot, done.';
   }
   document.getElementById('stage').innerHTML=o;
   document.getElementById('coach').innerHTML=coach;
   document.getElementById('qlab').textContent='Teach · the mechanics · gap '+GAP+' deg';
-  document.getElementById('meta').innerHTML='smaller gap = harder eye — drop the gap dial to make it brutal';
+  document.getElementById('meta').innerHTML='smaller gap = harder eye, drop the gap dial to make it brutal';
   document.getElementById('tstepLabel').textContent='Step '+(TSTEP+1)+' / '+NSTEP;
   document.getElementById('tprev').disabled=TSTEP===0;
   document.getElementById('tnext').textContent=TSTEP===NSTEP-1?'New example':'Next step';
@@ -205,10 +205,10 @@ function setMode(m){
   MODE=m; var teach=m==='teach';
   document.getElementById('choices').style.display=teach?'none':'';
   document.getElementById('teachctl').style.display=teach?'flex':'none';
-  document.getElementById('mode').textContent='Mode: '+(teach?'Teach — the mechanics':'Drill');
+  document.getElementById('mode').textContent='Mode: '+(teach?'Teach: the mechanics':'Drill');
   if(teach){ stopTimer(); revealed=false; TSTEP=0; renderTeach(); }
   else { revealed=false; renderStage(); renderChoices(); startTimer();
-    document.getElementById('coach').innerHTML='<b>Read the answers first</b> — they anchor smallest and largest. Then move.'; }
+    document.getElementById('coach').innerHTML='<b>Read the answers first</b>, they anchor smallest and largest. Then move.'; }
 }
 function fmt(ms){return (ms/1000).toFixed(1)+'s'}
 function startTimer(){ stopTimer(); t0=Date.now(); var el=document.getElementById('timer');
@@ -236,15 +236,15 @@ function answer(op,btn){
   });
   if(!ok)btn.classList.add('wrong');
   renderStage();
-  document.getElementById('meta').innerHTML=(ok?'<b>Got it</b>':'Close one — the closed scissors below show it straight')+' · '+fmt(ms);
-  document.getElementById('coach').innerHTML='<b>'+(ok?'Bank it, move.':'No sweat — toss-ups are the deal here.')+'</b> '+COACH[ri(COACH.length)]
+  document.getElementById('meta').innerHTML=(ok?'<b>Got it</b>':'Close one: the closed scissors below show it straight')+' · '+fmt(ms);
+  document.getElementById('coach').innerHTML='<b>'+(ok?'Bank it, move.':'No sweat: toss-ups are the deal here.')+'</b> '+COACH[ri(COACH.length)]
     +' <button class="ghost" id="nextq" style="margin-left:12px">Next question</button>';
   document.getElementById('nextq').addEventListener('click',next);
   renderStats();
 }
 function renderStats(){
   var tot={n:0,ok:0,ms:0}; Object.keys(stats).forEach(function(g){var s=stats[g];tot.n+=s.n;tot.ok+=s.ok;tot.ms+=s.ms;});
-  var acc=tot.n?Math.round(100*tot.ok/tot.n)+'%':'—', avg=tot.n?(tot.ms/tot.n/1000).toFixed(1)+'s':'—';
+  var acc=tot.n?Math.round(100*tot.ok/tot.n)+'%':'-', avg=tot.n?(tot.ms/tot.n/1000).toFixed(1)+'s':'-';
   document.getElementById('totals').innerHTML=
     '<div><b>'+tot.n+'</b><span>attempted</span></div>'+
     '<div><b>'+tot.ok+'</b><span>correct</span></div>'+
@@ -253,7 +253,7 @@ function renderStats(){
   var el=document.getElementById('stats'), h='';
   [10,7,5,3,2].forEach(function(g){
     var s=stats[g];
-    h+='<span class="chip'+(g===GAP?' now':'')+'">'+g+' deg — '+(s?('<b>'+s.ok+'/'+s.n+'</b> · avg '+(s.ms/s.n/1000).toFixed(1)+'s'):'not yet')+'</span>';
+    h+='<span class="chip'+(g===GAP?' now':'')+'">'+g+' deg: '+(s?('<b>'+s.ok+'/'+s.n+'</b> · avg '+(s.ms/s.n/1000).toFixed(1)+'s'):'not yet')+'</span>';
   });
   el.innerHTML=h;
 }
@@ -261,7 +261,7 @@ function next(){ seed++; revealed=false; Q=gen();
   document.getElementById('seedTag').textContent='seed '+seed+' · gap '+GAP;
   if(MODE==='teach'){ TSTEP=0; renderTeach(); return; }
   renderStage(); renderChoices(); startTimer();
-  document.getElementById('coach').innerHTML='<b>Read the answers first</b> — they anchor smallest and largest. Then move.';
+  document.getElementById('coach').innerHTML='<b>Read the answers first</b>, they anchor smallest and largest. Then move.';
 }
 function exportCSV(){
   if(!LOG.length)return;

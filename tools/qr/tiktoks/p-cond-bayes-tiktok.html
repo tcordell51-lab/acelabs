@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=1080,initial-scale=1"/>
-<title>Ace The DAT — Bayes Inverts (P(D|+))</title>
+<title>Ace The DAT · Bayes Inverts (P(D|+))</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400;1,700&family=DM+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet"/>
 <script src="/shared/anime.min.js?v=1"></script>
 <style>
@@ -176,7 +176,7 @@ html,body{background:#000;overflow:hidden;font-family:'DM Sans',sans-serif;color
       <div class="scrub-thumb" id="scrubThumb" style="left:0%"></div>
     </div>
     <div class="foot-row">
-      <button class="play-btn" id="playBtn">▶ Play</button>
+      <button class="play-btn" id="playBtn">Play</button>
       <div class="foot-cta">acethedat.com</div>
     </div>
   </div>
@@ -296,7 +296,7 @@ const playBtn = document.getElementById('playBtn');
 const TIMELINE = [
   {t:0,    fn: () => { stage.dataset.phase='hook'; hook.style.opacity=1; popGrid.style.opacity=0; popReadout.style.opacity=0; reveal.style.opacity=0; trap.style.opacity=0; lock.style.opacity=0; caption.style.opacity=0; resetGrid(); if(voiceEnabled) speak("One percent prevalence. Ninety nine percent sensitive. You test positive. What's the chance you actually have the disease?"); }},
   {t:6500, fn: () => { stage.dataset.phase='demo'; anime({targets:hook,opacity:0,duration:500,easing:'easeOutQuad'}); setTimeout(() => { popGrid.style.opacity=1; anime({targets:popGrid,opacity:[0,1],duration:600}); }, 400); if(voiceEnabled) speak("Picture seven thousand people."); }},
-  {t:9000, fn: () => { popReadout.style.opacity=1; anime({targets:popReadout,opacity:[0,1],duration:500}); paintCells(sickIdx, 'sick'); if(voiceEnabled) speak("One percent are diseased — about seventy people."); }},
+  {t:9000, fn: () => { popReadout.style.opacity=1; anime({targets:popReadout,opacity:[0,1],duration:500}); paintCells(sickIdx, 'sick'); if(voiceEnabled) speak("One percent are diseased: about seventy people."); }},
   {t:12500, fn: () => { caption.innerHTML = '<span class="sick">red</span> = diseased (1%)'; caption.style.opacity=1; anime({targets:caption,opacity:[0,1],duration:400}); }},
   {t:16000, fn: () => { caption.style.opacity=0; if(voiceEnabled) speak("The test is ninety nine percent sensitive. So sixty nine of the seventy diseased test positive."); }},
   {t:18500, fn: () => { paintCells(tpIdx, 'tp'); }},
@@ -304,7 +304,7 @@ const TIMELINE = [
   {t:26000, fn: () => { caption.style.opacity=0; paintCells(fpIdx.slice(0, 200), 'fp'); }},
   {t:30000, fn: () => { paintCells(fpIdx.slice(200), 'fp'); if(voiceEnabled) speak("That's three hundred and forty seven false positives."); }},
   {t:34000, fn: () => { caption.innerHTML = 'Total positives: <span class="pos">~416</span> · only 69 actually sick'; caption.style.opacity=1; anime({targets:caption,opacity:[0,1],duration:500}); }},
-  {t:38500, fn: () => { caption.style.opacity=0; stage.dataset.phase='reveal'; reveal.style.opacity=1; anime({targets:reveal,opacity:[0,1],scale:[0.92,1],duration:700,easing:'easeOutBack'}); if(voiceEnabled) speak("So given you tested positive, the chance you're actually sick is sixty nine over four sixteen — about seventeen percent. Not ninety nine."); }},
+  {t:38500, fn: () => { caption.style.opacity=0; stage.dataset.phase='reveal'; reveal.style.opacity=1; anime({targets:reveal,opacity:[0,1],scale:[0.92,1],duration:700,easing:'easeOutBack'}); if(voiceEnabled) speak("So given you tested positive, the chance you're actually sick is sixty nine over four sixteen, about seventeen percent. Not ninety nine."); }},
   {t:46500, fn: () => { reveal.style.opacity=0; stage.dataset.phase='trap'; trap.style.opacity=1; anime({targets:trap,opacity:[0,1],duration:600}); if(voiceEnabled) speak("Trap. Test positive does not mean you have the disease. Sensitivity is conditional on having the disease, not on the test result."); }},
   {t:55000, fn: () => { trap.style.opacity=0; stage.dataset.phase='lock'; lock.style.opacity=1; anime({targets:lock,opacity:[0,1],scale:[0.9,1],duration:700,easing:'easeOutBack'}); if(voiceEnabled) speak("Lock it in. Bayes inverts. P of A given B equals P of A and B over P of B."); }},
   {t:64000, fn: () => { /* hold */ }},
@@ -326,10 +326,10 @@ function tick(){
 function play(){
   if(elapsed >= TOTAL_T){ TIMELINE.forEach(e => e._fired = false); elapsed = 0; }
   paused = false; startedAt = Date.now();
-  playBtn.textContent = '⏸ Pause';
+  playBtn.textContent = 'Pause';
   tick();
 }
-function pause(){ paused = true; elapsed += Date.now() - startedAt; playBtn.textContent = '▶ Resume'; }
+function pause(){ paused = true; elapsed += Date.now() - startedAt; playBtn.textContent = 'Resume'; }
 playBtn.addEventListener('click', () => { if(paused) play(); else pause(); });
 document.getElementById('scrubBar').addEventListener('click', e => {
   const r = e.currentTarget.getBoundingClientRect();

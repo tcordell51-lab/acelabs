@@ -1196,7 +1196,7 @@ function SummaryLadder({
         marginBottom: 24,
         letterSpacing: '0.06em'
       }
-    }, "screenshot this — it’s the whole cheat sheet"), rows.map((r, i) => {
+    }, "screenshot this, it’s the whole cheat sheet"), rows.map((r, i) => {
       const rv = clamp((t - start - 0.4 - i * 0.5) / 0.5, 0, 1);
       return /*#__PURE__*/React.createElement("div", {
         key: i,
@@ -1287,7 +1287,7 @@ function QuizBeat({
         color: INK3,
         marginBottom: 26
       }
-    }, "pause it — commit before the reveal"), /*#__PURE__*/React.createElement("div", {
+    }, "pause it, commit before the reveal"), /*#__PURE__*/React.createElement("div", {
       style: {
         fontFamily: SERIF,
         fontWeight: 600,
@@ -1586,7 +1586,7 @@ function RSStage() {
   return /*#__PURE__*/React.createElement(CenterPanel, {
     start: 13.2,
     end: 60.0,
-    label: "DO THE NUMBERS — IGNORE WEDGE AND DASH"
+    label: "DO THE NUMBERS: IGNORE WEDGE AND DASH"
   }, !fischerBeat && /*#__PURE__*/React.createElement("svg", {
     width: CW,
     height: CH,
@@ -1803,7 +1803,7 @@ function RSStage() {
       color: INK2,
       marginTop: 14
     }
-  }, "horizontal bonds point at you — like a wedge")));
+  }, "horizontal bonds point at you, like a wedge")));
 }
 function RSVideo() {
   return /*#__PURE__*/React.createElement(Stage, {
@@ -1839,7 +1839,7 @@ function RSVideo() {
       lineHeight: 1.06,
       letterSpacing: '-0.02em'
     }
-  }, "The trace runs clockwise —", /*#__PURE__*/React.createElement("br", null), "but H is on a wedge."), /*#__PURE__*/React.createElement("div", {
+  }, "The trace runs clockwise", /*#__PURE__*/React.createElement("br", null), "but H is on a wedge."), /*#__PURE__*/React.createElement("div", {
     style: {
       fontFamily: SANS,
       fontSize: 38,
@@ -1854,7 +1854,7 @@ function RSVideo() {
       marginTop: 22,
       letterSpacing: '0.06em'
     }
-  }, "comment your pick — answer at the end")), /*#__PURE__*/React.createElement(Header, {
+  }, "comment your pick, answer at the end")), /*#__PURE__*/React.createElement(Header, {
     start: 7.2,
     end: 13.0,
     top: 330
@@ -1886,7 +1886,7 @@ function RSVideo() {
     style: {
       color: REDX
     }
-  }, "find the 4 — flip, or no flip"))), /*#__PURE__*/React.createElement(Header, {
+  }, "find the 4, flip, or no flip"))), /*#__PURE__*/React.createElement(Header, {
     start: 13.2,
     end: 24.0,
     top: 170
@@ -1905,7 +1905,7 @@ function RSVideo() {
       fontSize: 44,
       color: INK
     }
-  }, "rank by atomic number — ", /*#__PURE__*/React.createElement("b", {
+  }, "rank by atomic number: ", /*#__PURE__*/React.createElement("b", {
     style: {
       color: GOLD
     }
@@ -1969,7 +1969,7 @@ function RSVideo() {
     style: {
       color: REDX
     }
-  }, "wedge"), " — or anything not a dash → ", /*#__PURE__*/React.createElement("b", {
+  }, "wedge"), ", or anything not a dash → ", /*#__PURE__*/React.createElement("b", {
     style: {
       color: REDX
     }
@@ -1980,7 +1980,7 @@ function RSVideo() {
       color: INK3,
       marginTop: 8
     }
-  }, "you read it from the wrong side — so say the opposite")), /*#__PURE__*/React.createElement(Header, {
+  }, "you read it from the wrong side, so say the opposite")), /*#__PURE__*/React.createElement(Header, {
     start: 46.2,
     end: 60.0,
     top: 170
@@ -1999,7 +1999,7 @@ function RSVideo() {
       fontSize: 44,
       color: INK
     }
-  }, "same three moves — one twist")), /*#__PURE__*/React.createElement(RSStage, null), /*#__PURE__*/React.createElement(Header, {
+  }, "same three moves, one twist")), /*#__PURE__*/React.createElement(RSStage, null), /*#__PURE__*/React.createElement(Header, {
     start: 60.2,
     end: 71.0,
     top: 620
@@ -2065,20 +2065,20 @@ function RSVideo() {
     start: 83.2,
     qs: [{
       q: 'Clockwise trace, H on a wedge →',
-      opts: ['R — clockwise is R', 'S — flip it', 'meso — it cancels'],
+      opts: ['R: clockwise is R', 'S: flip it', 'meso, it cancels'],
       ans: 1,
       why: 'H points at you, so you read it from the wrong side. Clockwise becomes S. On a wedge? Flip it.'
     }, {
       q: 'On a Fischer, the 4th priority sits on a horizontal. You trace counter-clockwise →',
-      opts: ['S — read it straight', 'R — flip it', 'cannot tell'],
+      opts: ['S: read it straight', 'R: flip it', 'cannot tell'],
       ans: 1,
-      why: 'Horizontal bonds point at you — same as a wedge. Counter-clockwise flips to R.'
+      why: 'Horizontal bonds point at you: same as a wedge. Counter-clockwise flips to R.'
     }]
   }), /*#__PURE__*/React.createElement(OutroCard, {
     start: 99.8,
     end: 108,
     lines: ['Numbers. Trace.', 'Flip or no flip.'],
-    tease: "NMR in two steps — count the peaks — is next."
+    tease: "NMR in two steps: count the peaks, is next."
   }));
 }
 window.RSVideo = RSVideo;

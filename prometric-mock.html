@@ -304,9 +304,9 @@
 <div class="pm-stage" id="pmStage">
   <div class="pm-pill"><span style="width:8px;height:8px;border-radius:50%;background:var(--al-gold);display:inline-block"></span>Ace The DAT · Practice Tests</div>
   <h1 class="pm-h">3 practice tests, <em>pacing simulation.</em></h1>
-  <p class="pm-sub">Survey of Natural Sciences (100Q in 90min) followed by a 30-minute break, then Quantitative Reasoning (40Q in 45min). The interface follows the Prometric mechanics described in the ADA 2026 Candidate Guide: section timers, question navigation panel, mark-for-review, end-of-section review screen, classic Windows calculator (memory + sqrt + 1/x) for QR, periodic table reference for Gen Chem questions. PAT and Reading Comprehension are not included — those require image and passage banks Ace Labs has not built yet.</p>
+  <p class="pm-sub">Survey of Natural Sciences (100Q in 90min) followed by a 30-minute break, then Quantitative Reasoning (40Q in 45min). The interface follows the Prometric mechanics described in the ADA 2026 Candidate Guide: section timers, question navigation panel, mark-for-review, end-of-section review screen, classic Windows calculator (memory + sqrt + 1/x) for QR, periodic table reference for Gen Chem questions. PAT and Reading Comprehension are not included, those require image and passage banks Ace Labs has not built yet.</p>
 
-  <div class="pm-warn"><b>About this mock.</b> This mock is to confirm your pacing under DAT timing. The real DAT is 5h 15m over 4 sections. This mock covers Sciences and QR, about 2h 15m of seat time. PAT and Reading are in the full-length DAT under Tests. <b>Ace Labs does not predict DAT scores or percentile ranks.</b> Your post-mock report shows raw counts, per-section accuracy, time-on-task, and a missed-question walkthrough — no scaled-score forecast. OChem section follows the official April 2026 ADA outline: Mechanisms, Chemical Synthesis, Acid-Base, Chemical &amp; Physical Properties, Structural Evaluation. OChem questions render skeletal molecular structures from SMILES, and 8 questions use the new ADA-spec curved-arrow format ("predict product from arrows" / "predict arrows from product").</div>
+  <div class="pm-warn"><b>About this mock.</b> This mock is to confirm your pacing under DAT timing. The real DAT is 5h 15m over 4 sections. This mock covers Sciences and QR, about 2h 15m of seat time. PAT and Reading are in the full-length DAT under Tests. <b>Ace Labs does not predict DAT scores or percentile ranks.</b> Your post-mock report shows raw counts, per-section accuracy, time-on-task, and a missed-question walkthrough, no scaled-score forecast. OChem section follows the official April 2026 ADA outline: Mechanisms, Chemical Synthesis, Acid-Base, Chemical &amp; Physical Properties, Structural Evaluation. OChem questions render skeletal molecular structures from SMILES, and 8 questions use the new ADA-spec curved-arrow format ("predict product from arrows" / "predict arrows from product").</div>
 
   <!-- Auto-hydrated by shared/scope.js -->
   <div id="alScopeStrip"></div>
@@ -320,7 +320,7 @@
       <li>Timer starts when you click <b>Begin section</b>. It does not pause.</li>
       <li>Within a section you can navigate freely between questions, mark for review, and skip.</li>
       <li>Once you submit a section you cannot return to it.</li>
-      <li>The 30-minute break between Sciences and QR is optional — you can skip it.</li>
+      <li>The 30-minute break between Sciences and QR is optional, you can skip it.</li>
       <li>QR section gets a basic 4-function calculator. Sciences sections do not.</li>
       <li>Closing the tab or refreshing during a section ends the section with whatever you have answered.</li>
     </ul>
@@ -330,7 +330,7 @@
 </div>
 
 <script src="shared/smiles-drawer.min.js?v=1"></script>
-<script src="shared/dat-mock-tests.js?v=3"></script>
+<script src="shared/dat-mock-tests.js?v=4"></script>
 <script>
 'use strict';
 
@@ -570,9 +570,9 @@ function showInstructionsScreen(t){
     </div>
     <div style="flex:1; overflow-y:auto; padding:36px 40px; max-width:920px; margin:0 auto; width:100%; color:#1a1d20">
       <h2 style="font-size:26px; font-weight:700; margin-bottom:14px">Before you begin</h2>
-      <p style="font-size:14.5px; line-height:1.65; margin-bottom:18px; color:#3a4148">A two-section rehearsal of the Prometric testing mechanics (Sciences and QR only — PAT and RC are out of scope here). Once you click <b style="color:#1a1d20">Start Section</b>, the timer begins and will not pause. Read the rules below carefully.</p>
+      <p style="font-size:14.5px; line-height:1.65; margin-bottom:18px; color:#3a4148">A two-section rehearsal of the Prometric testing mechanics (Sciences and QR only: PAT and RC are out of scope here). Once you click <b style="color:#1a1d20">Start Section</b>, the timer begins and will not pause. Read the rules below carefully.</p>
       <ol style="font-size:14px; line-height:1.7; color:#3a4148; padding-left:22px; margin-bottom:22px">
-        <li><b style="color:#1a1d20">Survey of Natural Sciences:</b> 100 questions in 90 minutes (40 Biology + 30 General Chemistry + 30 Organic Chemistry). Manage your time across the three subjects yourself — they share the same timer.</li>
+        <li><b style="color:#1a1d20">Survey of Natural Sciences:</b> 100 questions in 90 minutes (40 Biology + 30 General Chemistry + 30 Organic Chemistry). Manage your time across the three subjects yourself, they share the same timer.</li>
         <li><b style="color:#1a1d20">Optional 30-minute break</b> between Sciences and QR. Skip the break or take it in full.</li>
         <li><b style="color:#1a1d20">Quantitative Reasoning:</b> 40 questions in 45 minutes. A basic on-screen calculator (memory, square root, 1/x, %) is available for this section only.</li>
         <li><b style="color:#1a1d20">Within a section</b> you can navigate freely between questions, mark items for review, and skip. Click any question number from the Review screen to jump back to it.</li>
@@ -716,7 +716,7 @@ function renderRun(){
 
   // Section subject heading shown at the top of every question card
   const subjectTitle = sec.key === 'sons'
-    ? `Survey of Natural Sciences — ${item._sub || ''}`
+    ? `Survey of Natural Sciences: ${item._sub || ''}`
     : 'Quantitative Reasoning';
   const testName = (window.DAT_MOCK_TESTS && window.DAT_MOCK_TESTS[STATE.testIdx]) ? window.DAT_MOCK_TESTS[STATE.testIdx].name : `Practice Test ${STATE.testIdx + 1}`;
   const lastIdx = sec.items.length - 1;
@@ -865,7 +865,7 @@ function toggleReagentRef(){
     r.id = 'pmRef';
     r.className = 'pm-pt';   // reuse same popup chrome
     r.innerHTML = `
-      <div class="titlebar"><span>Common Reagents — Quick Reference</span><span class="x">&#10005;</span></div>
+      <div class="titlebar"><span>Common Reagents: Quick Reference</span><span class="x">&#10005;</span></div>
       <div class="body" style="font-size:12.5px; line-height:1.55">
         <h4 style="margin-bottom:8px">Oxidations</h4>
         <table style="width:100%; border-collapse:collapse">
@@ -985,7 +985,7 @@ function showReview(){
     </div>
     <div class="body">
       <h2>Review your answers</h2>
-      <div class="helper">Click any item below to jump back to it and change your answer. Items you marked for review have a red corner flag. <b>End Section</b> submits all your answers and moves to the next section — you cannot return after submitting.</div>
+      <div class="helper">Click any item below to jump back to it and change your answer. Items you marked for review have a red corner flag. <b>End Section</b> submits all your answers and moves to the next section, you cannot return after submitting.</div>
       <div class="stats">
         <div class="stat ok"><div class="lbl">Answered</div><div class="num">${answered}/${total}</div></div>
         <div class="stat warn"><div class="lbl">Unanswered</div><div class="num">${unanswered}</div></div>
@@ -1059,7 +1059,7 @@ function showBreak(resuming){
     <p>Take up to 30 minutes. Stretch, hydrate, reset. The QR section starts when you click Begin or when the break timer hits zero. (Same length as the real DAT scheduled break, which comes between PAT and Reading Comprehension.)</p>
     <div class="timer" id="pmBreakTimer">30:00</div>
     <div class="btns">
-      <button id="pmSkipBreak">Skip break — start QR now</button>
+      <button id="pmSkipBreak">Skip break: start QR now</button>
       <button class="primary" id="pmStartQr">Begin QR section</button>
     </div>
   `;
@@ -1113,7 +1113,7 @@ function toggleCalc(){
         <span class="winbtns">
           <button class="winbtn" title="Minimize">_</button>
           <button class="winbtn" title="Maximize">▢</button>
-          <button class="winbtn x" id="pmCalcX" title="Close">✕</button>
+          <button class="winbtn x" id="pmCalcX" title="Close"></button>
         </span>
       </div>
       <div class="menu"><span>View</span><span>Edit</span><span>Help</span></div>
@@ -1563,7 +1563,7 @@ function renderFinal(subjResults, wrong, testInfo){
       </div>
 
       <div class="actions">
-        ${engineLink ? `<a class="btn" href="${engineLink.href}">Study these topics — ${engineLink.label}</a>` : ''}
+        ${engineLink ? `<a class="btn" href="${engineLink.href}">Study these topics: ${engineLink.label}</a>` : ''}
         <button class="btn secondary" id="pmShowWrong">Review ${wrong.length} missed questions</button>
         <button class="btn secondary" onclick="location.reload()">Take another test</button>
         <a class="btn secondary" href="ace-labs.html">Back to hub</a>
@@ -1588,7 +1588,7 @@ function showWrongAnswerReview(wrong){
   modal.id = 'pmWrongReview';
   modal.style.cssText = 'position:fixed; inset:0; background:rgba(0,0,0,.85); z-index:1600; overflow-y:auto; padding:30px';
   const cards = wrong.map(w => {
-    const yourLetter = w.ans !== undefined ? 'ABCDE'[w.ans] : '—';
+    const yourLetter = w.ans !== undefined ? 'ABCDE'[w.ans] : '-';
     const yourText = w.ans !== undefined ? w.p.opts[w.ans] : 'skipped';
     return `<div style="background:#1c2434; border:1px solid #2a3346; border-left:3px solid #D55E00; border-radius:8px; padding:16px 18px; margin-bottom:10px; color:#cdd5e0">
       <div style="font-size:12px; color:#9aa4b4; margin-bottom:4px">${w.sub}${w.p.topic ? ' · ' + w.p.topic : ''}</div>

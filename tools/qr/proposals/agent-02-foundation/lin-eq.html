@@ -80,7 +80,7 @@ h1 em{font-style:italic; color:var(--gold-d); font-weight:400}
 <body>
 <div class="wrap">
   <h1>Linear <em>Equations</em></h1>
-  <p class="lede">Whatever you do to one side, do to the other. Apply inverse operations to isolate x — watch the scale tip if you forget to mirror it.</p>
+  <p class="lede">Whatever you do to one side, do to the other. Apply inverse operations to isolate x, watch the scale tip if you forget to mirror it.</p>
 
   <div class="card">
     <div class="le-hud">
@@ -227,7 +227,7 @@ function doOp(opName){
   else if(opName === 'div2'){ applyOp(state.lhs,'div',2); applyOp(state.rhs,'div',2); label = '÷ 2 (both sides)'; }
   else if(opName === 'mul2'){ applyOp(state.lhs,'mul',2); applyOp(state.rhs,'mul',2); label = '× 2 (both sides)'; }
   else if(opName === 'sub2x'){ applyOp(state.lhs,'subx',2); applyOp(state.rhs,'subx',2); label = '− 2x (both sides)'; }
-  else if(opName === 'bad-sub3-l'){ applyOp(state.lhs,'sub',3); label = '− 3 (left only) — TRAP'; isTrap = true; }
+  else if(opName === 'bad-sub3-l'){ applyOp(state.lhs,'sub',3); label = '− 3 (left only), TRAP'; isTrap = true; }
   trail.push({label, isTrap});
   // Render trail
   const tEl = document.getElementById('le-trail');
@@ -235,7 +235,7 @@ function doOp(opName){
   if(isTrap){
     const status = document.getElementById('le-status');
     status.className='le-status warn';
-    status.textContent = 'Scale tipped — you only changed one side. The equation is broken.';
+    status.textContent = 'Scale tipped: you only changed one side. The equation is broken.';
   }
   render();
 }

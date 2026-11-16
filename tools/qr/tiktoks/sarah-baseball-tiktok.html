@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=1080,initial-scale=1"/>
-<title>Ace The DAT — Sarah's Baseball Trick (Logs)</title>
+<title>Ace The DAT · Sarah's Baseball Trick (Logs)</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400;1,700&family=DM+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet"/>
 <script src="/shared/anime.min.js?v=1"></script>
 <style>
@@ -116,7 +116,7 @@ html,body{background:#000;overflow:hidden;font-family:'DM Sans',sans-serif;color
     <div class="hook-tag">Logarithms · Conversion</div>
     <div class="hook-q">The <em>baseball</em><br/>trick.</div>
     <div class="hook-sub">A log is just a baseball field. Once you see the positions, you never need the formula again.</div>
-    <div class="hook-credit">— from Sarah's actual sessions</div>
+    <div class="hook-credit">from Sarah's actual sessions</div>
   </div>
 
   <div class="demo" id="demo">
@@ -168,7 +168,7 @@ html,body{background:#000;overflow:hidden;font-family:'DM Sans',sans-serif;color
   <div class="caption" id="caption">caption</div>
 
   <div class="trap" id="trap">
-    <div class="trap-ribbon">⚠ DAT Trap</div>
+    <div class="trap-ribbon">DAT Trap</div>
     <div class="trap-h">No log<br/><em>button.</em></div>
     <div class="trap-sub">The DAT calculator has no log key. If you can't convert log form to exponent form on sight, every log question costs you a minute. Sarah's trick is the conversion.</div>
   </div>
@@ -189,7 +189,7 @@ html,body{background:#000;overflow:hidden;font-family:'DM Sans',sans-serif;color
       <div class="scrub-thumb" id="scrubThumb" style="left:0%"></div>
     </div>
     <div class="foot-row">
-      <button class="play-btn" id="playBtn">▶ Play</button>
+      <button class="play-btn" id="playBtn">Play</button>
       <div class="foot-cta">acethedat.com · sarah's tricks</div>
     </div>
   </div>
@@ -282,19 +282,19 @@ const TIMELINE = [
     runnerBaseLbl.textContent = '2';
     setRunner(runnerBase, 0, 0, 1);
     fieldStatus.textContent = 'the base · warming up';
-    if(voiceEnabled) speak("The base — that's the 2 — sits in the practice batter's box. He's warming up. Small.");
+    if(voiceEnabled) speak("The base: that's the 2, sits in the practice batter's box. He's warming up. Small.");
   }},
   {t:13000, fn: () => {
     runnerValueLbl.textContent = '8';
     setRunner(runnerValue, 0, 0, 1);
     fieldStatus.textContent = 'the value · hitting at home';
-    if(voiceEnabled) speak("The value — that's the 8 — is at home plate. He's hitting.");
+    if(voiceEnabled) speak("The value: that's the 8, is at home plate. He's hitting.");
   }},
   {t:16500, fn: () => {
     runnerAnsLbl.textContent = '3';
     setRunner(runnerAns, 0, 0, 1);
     fieldStatus.textContent = 'the answer · ran to first';
-    if(voiceEnabled) speak("The answer — that's the 3 — is at first base. He just ran here.");
+    if(voiceEnabled) speak("The answer: that's the 3, is at first base. He just ran here.");
   }},
   {t:20000, fn: () => {
     fieldStatus.textContent = '';
@@ -315,7 +315,7 @@ const TIMELINE = [
     // Move base from practice box (~-110, 0) to home (~0, 0)
     setRunner(runnerBase, 110, -10, 1);
     fieldStatus.textContent = 'base steps up to home';
-    if(voiceEnabled) speak("The base steps up to home plate. He's hitting now — he\'s the base of the exponent.");
+    if(voiceEnabled) speak("The base steps up to home plate. He's hitting now: he\'s the base of the exponent.");
   }},
   {t:30000, fn: () => {
     // Move value from home (~0, 0) to first (~270, -260)
@@ -329,7 +329,7 @@ const TIMELINE = [
     fieldStatus.textContent = 'answer runs to 2nd · way out, looks small';
     // Shrink the answer runner to look small (the exponent)
     runnerAns.style.transform = 'translate(-270px, -260px) scale(0.7)';
-    if(voiceEnabled) speak("And the answer runs all the way out to second base. Way out — that's why the exponent looks small in the notation.");
+    if(voiceEnabled) speak("And the answer runs all the way out to second base. Way out: that's why the exponent looks small in the notation.");
   }},
   {t:39000, fn: () => {
     eq.innerHTML = '2<sup>3</sup> = <span class="ans">8</span>';
@@ -382,10 +382,10 @@ function tick(){
 function play(){
   if(elapsed >= TOTAL){ TIMELINE.forEach(e => e._fired = false); elapsed = 0; }
   paused = false; startedAt = Date.now();
-  playBtn.textContent = '⏸ Pause';
+  playBtn.textContent = 'Pause';
   tick();
 }
-function pause(){ paused = true; elapsed += Date.now() - startedAt; playBtn.textContent = '▶ Resume'; }
+function pause(){ paused = true; elapsed += Date.now() - startedAt; playBtn.textContent = 'Resume'; }
 playBtn.addEventListener('click', () => { if(paused) play(); else pause(); });
 document.getElementById('scrubBar').addEventListener('click', e => {
   const r = e.currentTarget.getBoundingClientRect();

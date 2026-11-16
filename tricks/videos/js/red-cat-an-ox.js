@@ -1196,7 +1196,7 @@ function SummaryLadder({
         marginBottom: 24,
         letterSpacing: '0.06em'
       }
-    }, "screenshot this — it’s the whole cheat sheet"), rows.map((r, i) => {
+    }, "screenshot this, it’s the whole cheat sheet"), rows.map((r, i) => {
       const rv = clamp((t - start - 0.4 - i * 0.5) / 0.5, 0, 1);
       return /*#__PURE__*/React.createElement("div", {
         key: i,
@@ -1287,7 +1287,7 @@ function QuizBeat({
         color: INK3,
         marginBottom: 26
       }
-    }, "pause it — commit before the reveal"), /*#__PURE__*/React.createElement("div", {
+    }, "pause it, commit before the reveal"), /*#__PURE__*/React.createElement("div", {
       style: {
         fontFamily: SERIF,
         fontWeight: 600,
@@ -1764,7 +1764,7 @@ function RedCatVideo() {
       color: INK2,
       marginTop: 28
     }
-  }, "what is E°cell — and who gets reduced?"), /*#__PURE__*/React.createElement("div", {
+  }, "what is E°cell, and who gets reduced?"), /*#__PURE__*/React.createElement("div", {
     style: {
       fontFamily: MONO,
       fontSize: 24,
@@ -1772,7 +1772,7 @@ function RedCatVideo() {
       marginTop: 22,
       letterSpacing: '0.06em'
     }
-  }, "comment your pick — answer at the end")), /*#__PURE__*/React.createElement(Header, {
+  }, "comment your pick, answer at the end")), /*#__PURE__*/React.createElement(Header, {
     start: 7.2,
     end: 13.0,
     top: 330
@@ -1850,7 +1850,7 @@ function RedCatVideo() {
     style: {
       color: RICH
     }
-  }, "most positive potential"), " gets reduced — write “red” next to it")), /*#__PURE__*/React.createElement(Header, {
+  }, "most positive potential"), " gets reduced, write “red” next to it")), /*#__PURE__*/React.createElement(Header, {
     start: 34.2,
     end: 46.0,
     top: 170
@@ -1900,7 +1900,7 @@ function RedCatVideo() {
     style: {
       color: REDX
     }
-  }, "agent means flip"), " — the strongest oxidizing agent is the one that gets reduced"), /*#__PURE__*/React.createElement("div", {
+  }, "agent means flip"), ", the strongest oxidizing agent is the one that gets reduced"), /*#__PURE__*/React.createElement("div", {
     style: {
       fontFamily: SANS,
       fontSize: 28,
@@ -1970,20 +1970,20 @@ function RedCatVideo() {
     start: 83.2,
     qs: [{
       q: 'Ag +0.80, Ni −0.25. E°cell?',
-      opts: ['+1.05 V — Ag is the cathode', '+0.55 V — subtract them', '−1.05 V — not spontaneous'],
+      opts: ['+1.05 V: Ag is the cathode', '+0.55 V: subtract them', '−1.05 V: not spontaneous'],
       ans: 0,
-      why: 'Most positive gets reduced — silver is the Red Cat. 0.80 minus negative 0.25 is +1.05 volts.'
+      why: 'Most positive gets reduced: silver is the Red Cat. 0.80 minus negative 0.25 is +1.05 volts.'
     }, {
       q: 'The strongest oxidizing agent is the species that…',
       opts: ['gets oxidized', 'gets reduced', 'never reacts'],
       ans: 1,
-      why: 'Agent means flip. The oxidizing agent does the oxidizing — so it takes the electrons and is itself reduced.'
+      why: 'Agent means flip. The oxidizing agent does the oxidizing, so it takes the electrons and is itself reduced.'
     }]
   }), /*#__PURE__*/React.createElement(OutroCard, {
     start: 99.8,
     end: 108,
     lines: ['Red Cat. An Ox.', 'Cathode minus anode.'],
-    tease: "Limiting reagent — smaller wins — next."
+    tease: "Limiting reagent: smaller wins: next."
   }));
 }
 window.RedCatVideo = RedCatVideo;

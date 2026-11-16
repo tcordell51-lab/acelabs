@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Ace The DAT — Voiceover Studio</title>
+<title>Ace The DAT · Voiceover Studio</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,700&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
 <style>
 :root{
@@ -159,20 +159,20 @@ body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);m
       <h1 id="tkTitle">Pick a TikTok →</h1>
     </div>
     <div class="mn-h-r">
-      <button class="btn" id="btnPreview" onclick="previewTikTok()" title="Open the TikTok in a new tab">▶ Preview TikTok</button>
+      <button class="btn" id="btnPreview" onclick="previewTikTok()" title="Open the TikTok in a new tab">Preview TikTok</button>
       <button class="btn gold" id="btnDownloadAll" onclick="downloadAll()" disabled>⤓ Download all recordings</button>
     </div>
   </div>
 
   <div class="intro">
-    <b>How to use:</b> Pick a recording mode (audio or audio+face), click <b>🎤 Record</b> on a scene, read the script aloud, click <b>⏹ Stop</b>. <b>▶</b> to preview, <b>🔄</b> to redo, <b>⤓</b> to download. Recordings live in your browser only — they're never uploaded anywhere. <b>Audio+face</b> mode captures your webcam alongside the mic so you have face-cam clips ready for picture-in-picture in your final TikTok edit (CapCut / DaVinci / Final Cut).
+    <b>How to use:</b> Pick a recording mode (audio or audio+face), click <b>Record</b> on a scene, read the script aloud, click <b>Stop</b>. <b></b> to preview, <b></b> to redo, <b>⤓</b> to download. Recordings live in your browser only, they're never uploaded anywhere. <b>Audio+face</b> mode captures your webcam alongside the mic so you have face-cam clips ready for picture-in-picture in your final TikTok edit (CapCut / DaVinci / Final Cut).
   </div>
 
   <div class="mode-row">
     <span class="mode-label">Recording mode:</span>
     <div class="mode-toggle">
-      <button class="mode-opt active" id="modeAudio" onclick="setMode('audio')">🎤 Audio only</button>
-      <button class="mode-opt" id="modeFace" onclick="setMode('face')">📹 Audio + face cam</button>
+      <button class="mode-opt active" id="modeAudio" onclick="setMode('audio')">Audio only</button>
+      <button class="mode-opt" id="modeFace" onclick="setMode('face')">Audio + face cam</button>
     </div>
     <div class="mode-preview" id="facePreviewWrap" style="display:none">
       <video id="facePreview" autoplay muted playsinline></video>
@@ -181,26 +181,26 @@ body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);m
   </div>
 
   <div class="mic-warn" id="micWarn">
-    <b>⚠ Microphone access blocked.</b> Click the mic icon in your browser's address bar and allow microphone access for this page, then refresh.
+    <b>Microphone access blocked.</b> Click the mic icon in your browser's address bar and allow microphone access for this page, then refresh.
   </div>
 
   <div class="status-row" id="statusRow"></div>
   <div class="scenes" id="scenes"></div>
 
   <div class="assembly">
-    <h3>Assembly workflow — turn your scenes into a real TikTok</h3>
+    <h3>Assembly workflow: turn your scenes into a real TikTok</h3>
     <ol>
       <li><b>Pick a mode.</b> Audio-only if you'll voiceover the existing animated TikTok template. Audio+face if you want picture-in-picture for native TikTok feel.</li>
       <li><b>Record each scene.</b> Read the script aloud at the pace you'd say it during a lesson. Re-record any that don't feel right.</li>
       <li><b>Download all.</b> Files arrive named <code>&lt;tiktok&gt;-&lt;scene&gt;-&lt;phase&gt;-&lt;mode&gt;.webm</code>.</li>
       <li><b>Drop into your editor.</b> CapCut Web (free), DaVinci Resolve, or Final Cut. Import the animated TikTok HTML as a screen recording (or open it and screen-capture full-screen).</li>
-      <li><b>Layer the audio</b> over the screen recording — each audio scene aligns to its <code>t=</code> timestamp in the original timeline.</li>
+      <li><b>Layer the audio</b> over the screen recording, each audio scene aligns to its <code>t=</code> timestamp in the original timeline.</li>
       <li><b>(Face mode)</b> Drop the face videos as a circle picture-in-picture (CapCut: "Mask" → Circle). Position top-right or bottom-left. Standard TikTok face-cam size: ~25% of screen height.</li>
       <li><b>Add music</b> (royalty-free or TikTok library). Trending sounds boost reach but use lower volume so voice cuts through.</li>
       <li><b>Trim aggressively.</b> If your final cut is over 45 sec, the algorithm typically penalizes. Cut intro silence, tighten beats.</li>
       <li><b>Export 1080×1920 MP4</b> and post.</li>
     </ol>
-    <p class="note"><b>Pro tip:</b> Record face scenes against a clean wall in good light. The voice quality matters more than the cinematography — students will forgive a plain background but not a muddy mic.</p>
+    <p class="note"><b>Pro tip:</b> Record face scenes against a clean wall in good light. The voice quality matters more than the cinematography, students will forgive a plain background but not a muddy mic.</p>
   </div>
 </main>
 
@@ -374,10 +374,10 @@ function renderTkList(){
     </div>`;
   };
   let html = '';
-  if (groups.custom.length){ html += '<div class="sb-group-h">★ Hand-crafted</div>' + groups.custom.map(renderItem).join(''); }
-  if (groups.tier0.length){ html += '<div class="sb-group-h">Tier 0 — Foundations</div>' + groups.tier0.map(renderItem).join(''); }
-  if (groups.tier1.length){ html += '<div class="sb-group-h">Tier 1 — Quantitative</div>' + groups.tier1.map(renderItem).join(''); }
-  if (groups.tier2.length){ html += '<div class="sb-group-h">Tier 2 — Patterns</div>' + groups.tier2.map(renderItem).join(''); }
+  if (groups.custom.length){ html += '<div class="sb-group-h">Hand-crafted</div>' + groups.custom.map(renderItem).join(''); }
+  if (groups.tier0.length){ html += '<div class="sb-group-h">Tier 0: Foundations</div>' + groups.tier0.map(renderItem).join(''); }
+  if (groups.tier1.length){ html += '<div class="sb-group-h">Tier 1: Quantitative</div>' + groups.tier1.map(renderItem).join(''); }
+  if (groups.tier2.length){ html += '<div class="sb-group-h">Tier 2: Patterns</div>' + groups.tier2.map(renderItem).join(''); }
   el.innerHTML = html;
 }
 
@@ -409,7 +409,7 @@ function renderScenes(){
   document.getElementById('statusRow').innerHTML = `
     <span class="status-pill ${recordedCount === total ? 'recorded' : 'empty'}">${recordedCount}/${total} scenes</span>
     <span>est. total runtime: <b>${fmtTime(tk.scenes[tk.scenes.length-1].t + 5000)}</b></span>
-    <span style="margin-left:auto;color:var(--ink-mute);font-style:italic">Tip: read with the mood the scene suggests — hook = energetic, lock = grounded</span>
+    <span style="margin-left:auto;color:var(--ink-mute);font-style:italic">Tip: read with the mood the scene suggests, hook = energetic, lock = grounded</span>
   `;
   const el = document.getElementById('scenes');
   el.innerHTML = tk.scenes.map((s, i) => {
@@ -418,20 +418,20 @@ function renderScenes(){
     const isFaceMode = recorded && rec.mode === 'face';
     const isRec = STATE.recordingScene && STATE.recordingScene.tikkey === STATE.active && STATE.recordingScene.sceneIdx === i;
     const ext = isFaceMode ? 'webm' : 'webm';
-    const modeTag = isFaceMode ? '📹 face' : '🎤 audio';
+    const modeTag = isFaceMode ? 'face' : 'audio';
     return `<div class="scene ${recorded?'recorded':''} ${isRec?'recording':''}" id="scene-${i}">
       <div class="scene-h">
         <span class="scene-num">SCENE ${(i+1).toString().padStart(2,'0')}</span>
         <span class="scene-time">${fmtTime(s.t)}</span>
         <span class="scene-tag ${s.phase}">${s.phase}</span>
-        <span class="scene-status ${recorded?'ok':''}">${isRec?'<span class="rec-dot"></span>RECORDING…':recorded?'✓ '+modeTag:'empty'}</span>
+        <span class="scene-status ${recorded?'ok':''}">${isRec?'<span class="rec-dot"></span>RECORDING…':recorded?''+modeTag:'empty'}</span>
       </div>
       <div class="scene-script">${s.text}</div>
       <div class="scene-meta">Filename: <b>${STATE.active}-${(i+1).toString().padStart(2,'0')}-${s.phase}.${ext}</b> · approx ${Math.ceil(s.text.split(' ').length / 2.5)} sec at conversational pace</div>
       <div class="scene-ctl">
         ${isRec
-          ? `<button class="btn" onclick="stopRecording()">⏹ Stop</button>`
-          : `<button class="btn gold" onclick="startRecording(${i})">${recorded?'🔄 Re-record':(STATE.mode==='face'?'📹 Record (face)':'🎤 Record')}</button>`}
+          ? `<button class="btn" onclick="stopRecording()">Stop</button>`
+          : `<button class="btn gold" onclick="startRecording(${i})">${recorded?'Re-record':(STATE.mode==='face'?'Record (face)':'Record')}</button>`}
         ${recorded && !isFaceMode ? `<div class="audio-preview"><audio src="${URL.createObjectURL(rec.blob)}" controls></audio></div>` : ''}
         ${recorded && isFaceMode ? `<div class="scene-video-preview"><video src="${URL.createObjectURL(rec.blob)}" controls muted></video><span class="vp-meta">face + audio · ~${Math.ceil(rec.blob.size/1024)} KB</span></div>` : ''}
         ${recorded ? `<button class="btn" onclick="downloadScene(${i})">⤓ Download</button>` : ''}
@@ -465,7 +465,7 @@ async function setMode(mode){
       document.getElementById('micWarn').classList.remove('show');
     } catch(e){
       document.getElementById('micWarn').classList.add('show');
-      toast('Camera or mic access denied — check browser permissions', 'error');
+      toast('Camera or mic access denied: check browser permissions', 'error');
       previewWrap.style.display = 'none';
       // Roll back to audio mode
       STATE.mode = 'audio';
@@ -495,7 +495,7 @@ async function ensureStream(){
     return s;
   } catch(e){
     document.getElementById('micWarn').classList.add('show');
-    toast('Mic access denied — check browser permissions', 'error');
+    toast('Mic access denied: check browser permissions', 'error');
     throw e;
   }
 }

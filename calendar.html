@@ -326,17 +326,17 @@ function buildDayPlan(daysOut, weakTopics, dayIndex){
   if(daysOut <= 2){
     // cheat-sheet review only — no new questions
     const sheets = [
-      { name:'OChem cheat sheet — functional groups + reactions', dur:'20 min' },
-      { name:'Gen Chem cheat sheet — formulas + periodic trends', dur:'20 min' },
-      { name:'QR cheat sheet — formulas + calculator shortcuts', dur:'15 min' },
-      { name:'Bio cheat sheet — key systems + vocabulary', dur:'20 min' },
+      { name:'OChem cheat sheet: functional groups + reactions', dur:'20 min' },
+      { name:'Gen Chem cheat sheet: formulas + periodic trends', dur:'20 min' },
+      { name:'QR cheat sheet: formulas + calculator shortcuts', dur:'15 min' },
+      { name:'Bio cheat sheet: key systems + vocabulary', dur:'20 min' },
     ];
     const sheet = sheets[dayIndex % sheets.length];
     return {
       type:'review',
       tasks:[
         { name:'Cheat-sheet review: ' + sheet.name, dur:sheet.dur },
-        { name:'Flip through your personal notes — flag anything uncertain', dur:'10 min' }
+        { name:'Flip through your personal notes: flag anything uncertain', dur:'10 min' }
       ]
     };
   }
@@ -360,7 +360,7 @@ function buildDayPlan(daysOut, weakTopics, dayIndex){
       { name:'QR: probability and statistics warm-up', dur:'20 min' }
     ],
     [
-      { name:'OChem: reaction mechanisms — nucleophilic substitution', dur:'30 min' },
+      { name:'OChem: reaction mechanisms, nucleophilic substitution', dur:'30 min' },
       { name:'Bio: physiology and organ systems review', dur:'20 min' }
     ],
   ];
@@ -392,7 +392,7 @@ function renderSetup(message){
   main.innerHTML = `
     <div class="cal-setup">
       <h2>Your <em>test week</em> calendar.</h2>
-      <p>${message || 'Enter your DAT date and get a calm, day-by-day plan for the final stretch. No pressure — just a quiet structure for the days ahead.'}</p>
+      <p>${message || 'Enter your DAT date and get a calm, day-by-day plan for the final stretch. No pressure: just a quiet structure for the days ahead.'}</p>
       <label for="testDateInput">Your DAT date</label>
       <input type="date" id="testDateInput" name="testDateInput"/>
       <button class="cal-setup-btn" id="setDateBtn">Set my test date</button>
@@ -411,7 +411,7 @@ function renderTooEarly(testDate, daysOut){
   main.innerHTML = `
     <div class="cal-state-card">
       <h2>You have <em>time.</em></h2>
-      <p>Your test is ${daysOut} days away. This calendar is designed for the final 7-14 days of prep — the calm-down stretch where targeted review and rest matter more than new material.</p>
+      <p>Your test is ${daysOut} days away. This calendar is designed for the final 7-14 days of prep, the calm-down stretch where targeted review and rest matter more than new material.</p>
       <p>For now, the full Ace Labs system has what your preparation needs.</p>
       <a href="ace-labs.html" class="cal-state-link">Go to Ace Labs home</a>
       <button class="cal-state-link secondary" id="tooEarlyChangeDateBtn">Change test date</button>
@@ -428,7 +428,7 @@ function renderAfterTest(testDate){
   main.innerHTML = `
     <div class="cal-state-card">
       <h2>Recovery <em>day.</em></h2>
-      <p>Your test date has passed. Whatever happened in that room, you did the work to get there. Today is for rest — food, hydration, something that has nothing to do with studying.</p>
+      <p>Your test date has passed. Whatever happened in that room, you did the work to get there. Today is for rest: food, hydration, something that has nothing to do with studying.</p>
       <p>When you are ready, sharing what felt hard and what felt solid helps your tutor plan what comes next.</p>
       <a href="ace-labs.html" class="cal-state-link">Back to Ace Labs</a>
       <button class="cal-state-link secondary" id="afterResetDateBtn">Reset test date</button>
@@ -548,13 +548,13 @@ function renderCalendar(testDateStr, testDate, daysOut){
       } else if(isDone){
         actionsHTML = `
           <div class="cal-actions">
-            <button class="cal-btn cal-btn-done is-marked" data-date="${dateKey}" data-action="undone">Done — undo?</button>
+            <button class="cal-btn cal-btn-done is-marked" data-date="${dateKey}" data-action="undone">Done: undo?</button>
           </div>
         `;
       } else if(isSkipped){
         actionsHTML = `
           <div class="cal-actions">
-            <button class="cal-btn cal-btn-skip is-marked" data-date="${dateKey}" data-action="unskip">Rested — undo?</button>
+            <button class="cal-btn cal-btn-skip is-marked" data-date="${dateKey}" data-action="unskip">Rested: undo?</button>
           </div>
         `;
       }
@@ -586,7 +586,7 @@ function renderCalendar(testDateStr, testDate, daysOut){
     </p>`;
   } else {
     weakNoteHTML = `<p style="font-size:12px;color:var(--al-ink-mute);margin-bottom:14px;">
-      No diagnostic data found — using default drill sequence. Complete a section diagnostic to personalize these tasks.
+      No diagnostic data found: using default drill sequence. Complete a section diagnostic to personalize these tasks.
     </p>`;
   }
 
@@ -603,7 +603,7 @@ function renderCalendar(testDateStr, testDate, daysOut){
   const footProgress = document.getElementById('calFootProgress');
   foot.style.display = 'flex';
   if(totalActive > 0){
-    footProgress.textContent = `${completedCount} of ${totalActive} days marked — ${totalActive - completedCount} remaining.`;
+    footProgress.textContent = `${completedCount} of ${totalActive} days marked: ${totalActive - completedCount} remaining.`;
   } else {
     footProgress.textContent = '';
   }

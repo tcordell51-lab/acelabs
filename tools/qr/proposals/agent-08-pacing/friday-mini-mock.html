@@ -216,7 +216,7 @@ em.gold{font-style:italic; color:var(--gold-d); font-family:'Playfair Display',s
     <span class="tag teal">22 Q · 22 min · interleaved</span>
     <div class="num">FRIDAY MINI-MOCK</div>
     <h1>Real DAT pacing. <em>Interleaved</em>. Calculator off by default.</h1>
-    <p class="sub">A 22-question, 22-minute beta mini-mock built on the same per-checkpoint pacing engine as the full simulator. Skills are interleaved (no two consecutive same-skill questions, the W2 evidence-based design with effect size d = 0.83-1.21). Calculator defaults off, mirroring the W9 calculator-avoidance habit. Question content is placeholder-grade for beta — real DAT-grade content comes later.</p>
+    <p class="sub">A 22-question, 22-minute beta mini-mock built on the same per-checkpoint pacing engine as the full simulator. Skills are interleaved (no two consecutive same-skill questions, the W2 evidence-based design with effect size d = 0.83-1.21). Calculator defaults off, mirroring the W9 calculator-avoidance habit. Question content is placeholder-grade for beta, real DAT-grade content comes later.</p>
   </div>
 
   <!-- Setup -->
@@ -547,7 +547,7 @@ function tick(){
       r.classList.add('show','behind');
       document.getElementById('rec-tag').textContent = 'HALFWAY';
       document.getElementById('rec-body').textContent =
-        `Halfway mark — expected Q${expectedAtHalf}, you're on Q${cur}. Skip the next stuck one.`;
+        `Halfway mark: expected Q${expectedAtHalf}, you're on Q${cur}. Skip the next stuck one.`;
       setTimeout(()=>r.classList.remove('show'), 7000);
     }
     state.warned = true;
@@ -614,10 +614,10 @@ function maybeFireRecommendation(elapsed, curQ){
   let kind=null, body='', tag='';
   if (gapSec > 30){
     kind='behind'; tag='BEHIND';
-    body=`You're ${Math.round(gapSec)}s behind — skip the next hard one.`;
+    body=`You're ${Math.round(gapSec)}s behind, skip the next hard one.`;
   } else if (gapSec < -60){
     kind='ahead'; tag='AHEAD';
-    body=`You're ${Math.round(Math.abs(gapSec))}s ahead — slow down on the next 3.`;
+    body=`You're ${Math.round(Math.abs(gapSec))}s ahead, slow down on the next 3.`;
   } else if (Math.abs(gapSec) <= 30){
     kind='on'; tag='ON PACE';
     body=`On pace · within 30 seconds of the 22+ benchmark.`;
@@ -728,7 +728,7 @@ function setCalcToggle(on){
 }
 function showCalcPanel(){
   if (!state.calcOn){
-    flashStage('Calculator is off — toggle in setup');
+    flashStage('Calculator is off: toggle in setup');
     return;
   }
   state.calcOpens += 1;

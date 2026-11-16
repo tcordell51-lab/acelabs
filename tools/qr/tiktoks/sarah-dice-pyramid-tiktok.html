@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=1080,initial-scale=1"/>
-<title>Ace The DAT — Sarah's Dice Pyramid (Probability)</title>
+<title>Ace The DAT · Sarah's Dice Pyramid (Probability)</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400;1,700&family=DM+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet"/>
 <script src="/shared/anime.min.js?v=1"></script>
 <style>
@@ -104,7 +104,7 @@ html,body{background:#000;overflow:hidden;font-family:'DM Sans',sans-serif;color
     <div class="hook-tag">Probability · 2 Dice Sums</div>
     <div class="hook-q">Sarah's<br/><em>brain break.</em></div>
     <div class="hook-sub">Two dice. Eleven sums. One pyramid. Look up the answer in 5 seconds.</div>
-    <div class="hook-credit">— "I'm not doing literally any single math."</div>
+    <div class="hook-credit">"I'm not doing literally any single math."</div>
   </div>
 
   <div class="demo" id="demo">
@@ -123,7 +123,7 @@ html,body{background:#000;overflow:hidden;font-family:'DM Sans',sans-serif;color
   <div class="caption" id="caption">caption</div>
 
   <div class="trap" id="trap">
-    <div class="trap-ribbon">⚠ DAT Trap</div>
+    <div class="trap-ribbon">DAT Trap</div>
     <div class="trap-h">"6" goes<br/><em>under 7.</em></div>
     <div class="trap-sub">The pyramid peak is at sum 7 (six ways to roll). The five-ways column for "6" goes under the 7. Only mistake students make on this trick.</div>
   </div>
@@ -143,7 +143,7 @@ html,body{background:#000;overflow:hidden;font-family:'DM Sans',sans-serif;color
       <div class="scrub-thumb" id="scrubThumb" style="left:0%"></div>
     </div>
     <div class="foot-row">
-      <button class="play-btn" id="playBtn">▶ Play</button>
+      <button class="play-btn" id="playBtn">Play</button>
       <div class="foot-cta">acethedat.com · sarah's tricks</div>
     </div>
   </div>
@@ -262,7 +262,7 @@ const TIMELINE = [
     stage.dataset.phase='build';
     anime({targets:hook,opacity:0,duration:600,easing:'easeOutQuad'});
     setTimeout(() => { demo.style.opacity=1; fadeInBars(); }, 500);
-    if(voiceEnabled) speak("Write the pyramid. One, two, three, four, five, six, five, four, three, two, one. The peak is at sum seven — six ways to roll a seven.");
+    if(voiceEnabled) speak("Write the pyramid. One, two, three, four, five, six, five, four, three, two, one. The peak is at sum seven, six ways to roll a seven.");
   }},
   {t:13500, fn: () => {
     caption.innerHTML = 'all eleven sums · over <em>36</em>';
@@ -287,7 +287,7 @@ const TIMELINE = [
     clearHighlights();
     highlightSum(5, '#7be08a'); // sum 7 is index 5
     readout.innerHTML = 'P(sum = 7) = <span class="acc">6 / 36 = 1/6</span>';
-    if(voiceEnabled) speak("Sum of seven? Six ways — that's the peak. Six over thirty-six. One sixth. The most likely sum.");
+    if(voiceEnabled) speak("Sum of seven? Six ways: that's the peak. Six over thirty-six. One sixth. The most likely sum.");
   }},
   {t:29000, fn: () => {
     demoTitle.textContent = 'compound · sum = 6 OR 9';
@@ -310,7 +310,7 @@ const TIMELINE = [
     stage.dataset.phase='trap';
     trap.style.opacity = 1;
     anime({targets:trap, opacity:[0,1], duration:600});
-    if(voiceEnabled) speak("Trap. The peak is at sum seven, not six. The column with five ways under it is for sum six AND sum eight — they're symmetric around the seven peak. Only mistake people make.");
+    if(voiceEnabled) speak("Trap. The peak is at sum seven, not six. The column with five ways under it is for sum six AND sum eight, they're symmetric around the seven peak. Only mistake people make.");
   }},
 
   // Lock phase (52-72s)
@@ -347,10 +347,10 @@ function tick(){
 function play(){
   if(elapsed >= TOTAL){ TIMELINE.forEach(e => e._fired = false); elapsed = 0; }
   paused = false; startedAt = Date.now();
-  playBtn.textContent = '⏸ Pause';
+  playBtn.textContent = 'Pause';
   tick();
 }
-function pause(){ paused = true; elapsed += Date.now() - startedAt; playBtn.textContent = '▶ Resume'; }
+function pause(){ paused = true; elapsed += Date.now() - startedAt; playBtn.textContent = 'Resume'; }
 playBtn.addEventListener('click', () => { if(paused) play(); else pause(); });
 document.getElementById('scrubBar').addEventListener('click', e => {
   const r = e.currentTarget.getBoundingClientRect();

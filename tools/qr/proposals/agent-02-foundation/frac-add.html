@@ -89,7 +89,7 @@ h1 em{font-style:italic; color:var(--gold-d); font-weight:400}
 </head>
 <body>
 <div class="wrap">
-  <h1>Fractions — <em>Add &amp; Subtract</em></h1>
+  <h1>Fractions, <em>Add &amp; Subtract</em></h1>
   <p class="lede">Drag the two bars on top of each other. They won't fit unless they share a floor. Pick the right LCD; watch the bars re-slice and snap together.</p>
 
   <div class="card">
@@ -114,7 +114,7 @@ h1 em{font-style:italic; color:var(--gold-d); font-weight:400}
       <div class="fa-status" id="fa-status">Try dragging one bar onto the other.</div>
 
       <div id="fa-lcd-block" style="display:none">
-        <div class="fa-step">Pick the <b>LCD</b> — the smallest common floor for both denominators.</div>
+        <div class="fa-step">Pick the <b>LCD</b>, the smallest common floor for both denominators.</div>
         <div class="fa-pick" id="fa-pick"></div>
       </div>
 
@@ -144,7 +144,7 @@ h1 em{font-style:italic; color:var(--gold-d); font-weight:400}
 
   <div class="trap-card">
     <div class="lbl">The Trap</div>
-    <p>The single most common mistake: adding the denominators (1/4 + 1/2 = 2/6). The DAT will offer this as a choice for <b>every</b> fraction question. The bars on this widget can never line up unless both share a denominator — that visual is the lock.</p>
+    <p>The single most common mistake: adding the denominators (1/4 + 1/2 = 2/6). The DAT will offer this as a choice for <b>every</b> fraction question. The bars on this widget can never line up unless both share a denominator, that visual is the lock.</p>
   </div>
 </div>
 
@@ -194,7 +194,7 @@ function setRound(){
 function attemptCollide(){
   const r = ROUNDS[R];
   if(r.a[1] === r.b[1]){
-    document.getElementById('fa-status').textContent = 'They line up — same floor already.';
+    document.getElementById('fa-status').textContent = 'They line up: same floor already.';
     return;
   }
   // Visually pulse the mismatch
@@ -202,7 +202,7 @@ function attemptCollide(){
   A.style.transform = 'translateX(8px)'; B.style.transform = 'translateX(-8px)';
   setTimeout(()=>{ A.style.transform=''; B.style.transform=''; }, 220);
   document.getElementById('fa-status').className = 'fa-status warn';
-  document.getElementById('fa-status').textContent = 'Different denominators — they don\'t fit. Find a common floor.';
+  document.getElementById('fa-status').textContent = 'Different denominators: they don\'t fit. Find a common floor.';
   document.getElementById('fa-lcd-block').style.display = 'block';
 }
 
@@ -221,7 +221,7 @@ function choose(opt, btn){
   } else if(opt === r.a[1] + r.b[1]){
     btn.classList.add('bad');
     document.getElementById('fa-status').className='fa-status warn';
-    document.getElementById('fa-status').textContent = 'That\'s the trap — adding the denominators. The bars below would not match.';
+    document.getElementById('fa-status').textContent = 'That\'s the trap: adding the denominators. The bars below would not match.';
     setTimeout(()=>{ document.querySelectorAll('#fa-pick button').forEach(b=>{b.disabled=false; if(b!==btn) b.classList.remove('bad','right')}); }, 1100);
   } else {
     btn.classList.add('bad');

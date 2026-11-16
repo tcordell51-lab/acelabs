@@ -1196,7 +1196,7 @@ function SummaryLadder({
         marginBottom: 24,
         letterSpacing: '0.06em'
       }
-    }, "screenshot this — it’s the whole cheat sheet"), rows.map((r, i) => {
+    }, "screenshot this, it’s the whole cheat sheet"), rows.map((r, i) => {
       const rv = clamp((t - start - 0.4 - i * 0.5) / 0.5, 0, 1);
       return /*#__PURE__*/React.createElement("div", {
         key: i,
@@ -1287,7 +1287,7 @@ function QuizBeat({
         color: INK3,
         marginBottom: 26
       }
-    }, "pause it — commit before the reveal"), /*#__PURE__*/React.createElement("div", {
+    }, "pause it, commit before the reveal"), /*#__PURE__*/React.createElement("div", {
       style: {
         fontFamily: SERIF,
         fontWeight: 600,
@@ -1620,7 +1620,7 @@ function LimitStage() {
       marginTop: 12,
       color: verdict ? win ? RICH : INK3 : INK
     }
-  }, result, verdict && win ? '  — smaller. it wins.' : ''));
+  }, result, verdict && win ? ', smaller. it wins.' : ''));
   return /*#__PURE__*/React.createElement(CenterPanel, {
     start: 13.2,
     end: 60.0,
@@ -1681,7 +1681,7 @@ function LimitStage() {
       color: INK3,
       marginTop: 10
     }
-  }, "the leftover H₂ is just excess — spectators in the corner"))), /*#__PURE__*/React.createElement("div", {
+  }, "the leftover H₂ is just excess, spectators in the corner"))), /*#__PURE__*/React.createElement("div", {
     style: {
       position: 'absolute',
       left: 0,
@@ -1697,7 +1697,7 @@ function LimitStage() {
     style: {
       color: GOLD
     }
-  }, "cancel"), " — reactant on the bottom, product on top"));
+  }, "cancel"), ", reactant on the bottom, product on top"));
 }
 function LimitingVideo() {
   return /*#__PURE__*/React.createElement(Stage, {
@@ -1748,7 +1748,7 @@ function LimitingVideo() {
       marginTop: 22,
       letterSpacing: '0.06em'
     }
-  }, "comment your pick — answer at the end")), /*#__PURE__*/React.createElement(Header, {
+  }, "comment your pick, answer at the end")), /*#__PURE__*/React.createElement(Header, {
     start: 7.2,
     end: 13.0,
     top: 330
@@ -1856,7 +1856,7 @@ function LimitingVideo() {
       color: INK2,
       marginTop: 26
     }
-  }, "the loser of the race decides everything — the rest is excess")), /*#__PURE__*/React.createElement(SummaryLadder, {
+  }, "the loser of the race decides everything, the rest is excess")), /*#__PURE__*/React.createElement(SummaryLadder, {
     start: 71.2,
     end: 83.0,
     kicker: "LIMITING REAGENT",
@@ -1886,20 +1886,20 @@ function LimitingVideo() {
     start: 83.2,
     qs: [{
       q: '6 mol H₂ + 2 mol O₂ (2H₂+O₂→2H₂O). Water made?',
-      opts: ['6 mol — hydrogen decides', '4 mol — oxygen limits', '8 mol — add them'],
+      opts: ['6 mol: hydrogen decides', '4 mol: oxygen limits', '8 mol: add them'],
       ans: 1,
-      why: 'H₂ lane promises 6, O₂ lane promises 4. Smaller wins — oxygen is limiting, 4 moles of water.'
+      why: 'H₂ lane promises 6, O₂ lane promises 4. Smaller wins: oxygen is limiting, 4 moles of water.'
     }, {
       q: 'Theoretical 4.0 mol, you isolate 3.2. Percent yield?',
       opts: ['125%', '80%', '32%'],
       ans: 1,
-      why: 'Actual over theoretical: 3.2 over 4.0 — 80 percent.'
+      why: 'Actual over theoretical: 3.2 over 4.0 to 80 percent.'
     }]
   }), /*#__PURE__*/React.createElement(OutroCard, {
     start: 99.8,
     end: 108,
     lines: ['Race the lanes.', 'Smaller wins.'],
-    tease: "Why every atom wants to be a noble gas — next."
+    tease: "Why every atom wants to be a noble gas, next."
   }));
 }
 window.LimitingVideo = LimitingVideo;

@@ -434,7 +434,7 @@ body[data-theme="dark"] .query-bar .ans{color:var(--gold-m)}
 
   const $ = (id) => document.getElementById(id);
   const fmt = (x, d=4) => {
-    if (!isFinite(x)) return '—';
+    if (!isFinite(x)) return '-';
     if (x === 0) return '0';
     if (Math.abs(x) < 0.0001) return x.toExponential(2);
     return (+x).toFixed(d).replace(/\.?0+$/,'');
@@ -897,8 +897,8 @@ body[data-theme="dark"] .query-bar .ans{color:var(--gold-m)}
   function renderReadout(){
     const E = state.events;
     if (!E.length){
-      ['ro-pa','ro-pb','ro-and','ro-or','ro-cab','ro-cba','ro-atl','ro-ev'].forEach(id => $(id).textContent='—');
-      $('query-ans').textContent = '—';
+      ['ro-pa','ro-pb','ro-and','ro-or','ro-cab','ro-cba','ro-atl','ro-ev'].forEach(id => $(id).textContent='-');
+      $('query-ans').textContent = '-';
       $('explain').innerHTML = '<b>How the tree reads.</b> Each path multiplies. Leaves at the right are joint outcomes. Highlighted leaves are the ones the current query sums.';
       return;
     }
@@ -911,11 +911,11 @@ body[data-theme="dark"] .query-bar .ans{color:var(--gold-m)}
     const pAtl = atLeastOne();
     const ev = expectedValue();
     $('ro-pa').textContent = fmt(pa,4);
-    $('ro-pb').textContent = E.length>1 ? fmt(pb,4) : '—';
-    $('ro-and').textContent = E.length>1 ? fmt(pAB,4) : '—';
-    $('ro-or').textContent = E.length>1 ? fmt(pAorB,4) : '—';
-    $('ro-cab').textContent = E.length>1 ? fmt(pCondAB,4) : '—';
-    $('ro-cba').textContent = E.length>1 ? fmt(pCondBA,4) : '—';
+    $('ro-pb').textContent = E.length>1 ? fmt(pb,4) : '-';
+    $('ro-and').textContent = E.length>1 ? fmt(pAB,4) : '-';
+    $('ro-or').textContent = E.length>1 ? fmt(pAorB,4) : '-';
+    $('ro-cab').textContent = E.length>1 ? fmt(pCondAB,4) : '-';
+    $('ro-cba').textContent = E.length>1 ? fmt(pCondBA,4) : '-';
     $('ro-atl').textContent = fmt(pAtl,4);
     $('ro-ev').textContent  = fmt(ev,3);
 
@@ -958,10 +958,10 @@ body[data-theme="dark"] .query-bar .ans{color:var(--gold-m)}
 
   function explainText(q, ctx){
     const {pa,pb,pAB,pAorB,pCondAB,pCondBA,pAtl,ev,n} = ctx;
-    if (q === 'joint')   return `<b>Multiply along the path.</b> P(A∩B) = P(A) × P(B|A) = <span class="formula">${fmt(pa,3)} × ${pa>0?fmt(pAB/pa,3):'—'}</span> = ${fmt(pAB,4)}.`;
-    if (q === 'union')   return `<b>Add — but subtract overlap.</b> P(A∪B) = P(A) + P(B) − P(A∩B) = <span class="formula">${fmt(pa,3)} + ${fmt(pb,3)} − ${fmt(pAB,3)}</span> = ${fmt(pAorB,4)}.`;
+    if (q === 'joint')   return `<b>Multiply along the path.</b> P(A∩B) = P(A) × P(B|A) = <span class="formula">${fmt(pa,3)} × ${pa>0?fmt(pAB/pa,3):'-'}</span> = ${fmt(pAB,4)}.`;
+    if (q === 'union')   return `<b>Add: but subtract overlap.</b> P(A∪B) = P(A) + P(B) − P(A∩B) = <span class="formula">${fmt(pa,3)} + ${fmt(pb,3)} − ${fmt(pAB,3)}</span> = ${fmt(pAorB,4)}.`;
     if (q === 'atleast') return `<b>Flip-to-none.</b> P(≥ 1) = 1 − P(none) = ${fmt(pAtl,4)} across ${n} event${n>1?'s':''}.`;
-    if (q === 'condAB')  return `<b>Condition narrows the universe.</b> P(A|B) = P(A∩B) / P(B) = <span class="formula">${fmt(pAB,3)} / ${fmt(pb,3)}</span> = ${fmt(pCondAB,4)}. Compare to the prior P(A) = ${fmt(pa,3)} — the posterior moved.`;
+    if (q === 'condAB')  return `<b>Condition narrows the universe.</b> P(A|B) = P(A∩B) / P(B) = <span class="formula">${fmt(pAB,3)} / ${fmt(pb,3)}</span> = ${fmt(pCondAB,4)}. Compare to the prior P(A) = ${fmt(pa,3)}, the posterior moved.`;
     if (q === 'condBA')  return `<b>Reversed direction.</b> P(B|A) = P(A∩B) / P(A) = <span class="formula">${fmt(pAB,3)} / ${fmt(pa,3)}</span> = ${fmt(pCondBA,4)}.`;
     if (q === 'exactly') return `<b>Sum exactly-k leaves.</b> Each tree leaf with exactly k "yes" branches contributes its joint product. Independent + identical p: C(n,k)·p^k·(1−p)^(n−k).`;
     if (q === 'ev')      return `<b>Linearity.</b> E[X] = sum of marginals (true) = ${fmt(ev,3)}. Independence is not required for linearity.`;
@@ -1129,7 +1129,7 @@ body[data-theme="dark"] .query-bar .ans{color:var(--gold-m)}
         } else if (k === 'bayes-flip'){
           PRESETS.find(p=>p.id==='bayes').apply();
           state.query = 'condBA';
-          flash('Posterior P(D|+) is NOT 99% — that is P(+|D). Direction matters.');
+          flash('Posterior P(D|+) is NOT 99%: that is P(+|D). Direction matters.');
         } else if (k === 'replace-forget'){
           // simulate the "forgot replacement" by setting cond table equal to prior
           const e1 = mkEvent('Red 1st', 0.4, false);
@@ -1137,7 +1137,7 @@ body[data-theme="dark"] .query-bar .ans{color:var(--gold-m)}
           e2.cond = { 'T':4/10, 'F':4/10 }; // wrong: same as prior
           state.events = [e1,e2];
           state.indep = false; state.query='joint';
-          flash('Sandbox is showing the WRONG conditionals (4/10) — slide them to 3/9 and 4/9 and watch the joint shift.');
+          flash('Sandbox is showing the WRONG conditionals (4/10): slide them to 3/9 and 4/9 and watch the joint shift.');
         }
         renderAll();
       });

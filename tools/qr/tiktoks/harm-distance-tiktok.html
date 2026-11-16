@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=1080,initial-scale=1"/>
-<title>Ace The DAT — Harmonic Mean (Equal Distance)</title>
+<title>Ace The DAT · Harmonic Mean (Equal Distance)</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400;1,700&family=DM+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet"/>
 <script src="/shared/anime.min.js?v=1"></script>
 <style>
@@ -199,7 +199,7 @@ html,body{background:#000;overflow:hidden;font-family:'DM Sans',sans-serif;color
       <div class="scrub-thumb" id="scrubThumb" style="left:0%"></div>
     </div>
     <div class="foot-row">
-      <button class="play-btn" id="playBtn">▶ Play</button>
+      <button class="play-btn" id="playBtn">Play</button>
       <div class="foot-cta">acethedat.com</div>
     </div>
   </div>
@@ -294,7 +294,7 @@ const TIMELINE = [
   {t:13500, fn: () => { caption.innerHTML = '60 mi at 60 mph = <span class="gold">1.0 hr</span>'; caption.style.opacity=1; anime({targets:caption,opacity:[0,1],duration:400}); }},
   {t:17000, fn: () => { caption.style.opacity=0; runTrip2(); if(voiceEnabled) speak("Trip back at forty mph. Same sixty miles takes one and a half hours. Slower trip eats more time."); }},
   {t:23000, fn: () => { caption.innerHTML = '60 mi at 40 mph = <span class="gold">1.5 hr</span>'; caption.style.opacity=1; anime({targets:caption,opacity:[0,1],duration:400}); }},
-  {t:27000, fn: () => { caption.style.opacity=0; tally.style.opacity=1; anime({targets:tally,opacity:[0,1],translateY:[20,0],duration:600,easing:'easeOutCubic'}); if(voiceEnabled) speak("Total distance one twenty miles. Total time two and a half hours. Average is total over total — forty eight mph. Not fifty."); }},
+  {t:27000, fn: () => { caption.style.opacity=0; tally.style.opacity=1; anime({targets:tally,opacity:[0,1],translateY:[20,0],duration:600,easing:'easeOutCubic'}); if(voiceEnabled) speak("Total distance one twenty miles. Total time two and a half hours. Average is total over total: forty eight mph. Not fifty."); }},
   {t:35000, fn: () => { stage.dataset.phase='reveal'; reveal.style.opacity=1; anime({targets:reveal,opacity:[0,1],scale:[0.92,1],duration:700,easing:'easeOutBack'}); if(voiceEnabled) speak("That's the harmonic mean. Two A B over A plus B."); }},
   {t:43000, fn: () => { reveal.style.opacity=0; stage.dataset.phase='trap'; trap.style.opacity=1; anime({targets:trap,opacity:[0,1],duration:600}); if(voiceEnabled) speak("Trap. Just averaging the speeds. The slower trip weighs more because more time is spent at the slower rate."); }},
   {t:54000, fn: () => { trap.style.opacity=0; stage.dataset.phase='lock'; lock.style.opacity=1; anime({targets:lock,opacity:[0,1],scale:[0.9,1],duration:700,easing:'easeOutBack'}); if(voiceEnabled) speak("Lock it in. Equal distance at two rates means harmonic mean. Two A B over A plus B. Always less than arithmetic."); }},
@@ -317,10 +317,10 @@ function tick(){
 function play(){
   if(elapsed >= TOTAL_T){ TIMELINE.forEach(e => e._fired = false); elapsed = 0; }
   paused = false; startedAt = Date.now();
-  playBtn.textContent = '⏸ Pause';
+  playBtn.textContent = 'Pause';
   tick();
 }
-function pause(){ paused = true; elapsed += Date.now() - startedAt; playBtn.textContent = '▶ Resume'; }
+function pause(){ paused = true; elapsed += Date.now() - startedAt; playBtn.textContent = 'Resume'; }
 playBtn.addEventListener('click', () => { if(paused) play(); else pause(); });
 document.getElementById('scrubBar').addEventListener('click', e => {
   const r = e.currentTarget.getBoundingClientRect();

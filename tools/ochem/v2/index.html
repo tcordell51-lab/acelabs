@@ -4,7 +4,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Ace Labs · Organic Chemistry (v2 course engine)</title>
-<meta name="description" content="A guided, module-based organic chemistry course — a prerequisite skill tree, a five-stage self-teaching flow, and earned mastery. DAT-scoped."/>
+<meta name="description" content="A guided, module-based organic chemistry course, a prerequisite skill tree, a five-stage self-teaching flow, and earned mastery. DAT-scoped."/>
 <style>
 :root{
   --bg:#f4efe6; --paper:#fffdf7; --paper-2:#f8f2e5; --raise:#fbf6ec;
@@ -336,7 +336,7 @@ const MODS = [
   // Tier 0 — Foundations
   {id:'bonding', tier:0, name:'Bonding, Resonance & Arrow-Pushing', prereqs:[]},
   {id:'nomen',   tier:0, name:'Functional Groups & Nomenclature', prereqs:['bonding']},
-  {id:'acidbase',tier:0, name:'Acid–Base & pKa', prereqs:['bonding']},
+  {id:'acidbase',tier:0, name:'Acid-Base & pKa', prereqs:['bonding']},
   {id:'stereo',  tier:0, name:'Stereochemistry', prereqs:['bonding']},
   // Tier 1 — Core reactions
   {id:'radical', tier:1, name:'Alkanes & Radical Halogenation', prereqs:['bonding','nomen']},
@@ -351,9 +351,9 @@ const MODS = [
   {id:'acids',   tier:2, name:'Carboxylic Acids & Derivatives', prereqs:['carbonyl']},
   {id:'enolate', tier:2, name:'Enols, Enolates, Aldol & Claisen', prereqs:['carbonyl','acidbase']},
   {id:'amine',   tier:2, name:'Amines', prereqs:['subelim','acidbase']},
-  {id:'diene',   tier:2, name:'Dienes & Diels–Alder', prereqs:['alkene','aromatic']},
+  {id:'diene',   tier:2, name:'Dienes & Diels-Alder', prereqs:['alkene','aromatic']},
   // Tier 3 — Test-day & integration
-  {id:'spec',    tier:3, name:'Spectroscopy — IR / NMR', prereqs:['nomen']},
+  {id:'spec',    tier:3, name:'Spectroscopy: IR / NMR', prereqs:['nomen']},
   {id:'rcd',     tier:3, name:'Reaction-Coordinate Diagrams', prereqs:['subelim']},
   {id:'synth',   tier:3, name:'Multi-step Synthesis & Retrosynthesis', prereqs:['alkene','carbonyl','aromatic','acids']},
   {id:'labtech', tier:3, name:'Lab Techniques & Qual Analysis', prereqs:['spec']},
@@ -370,16 +370,16 @@ const TIERS = [
 const BANK = {
   st1:{skill:'stereo',diff:1,q:'A carbon must have how many different groups to be a stereocenter (chirality center)?',
     opts:['Two','Three','Four different groups','Any four groups'],correct:2,
-    why:'A tetrahedral carbon is a stereocenter when all four attached groups are different — that is what makes the molecule non-superimposable on its mirror image.',
+    why:'A tetrahedral carbon is a stereocenter when all four attached groups are different, that is what makes the molecule non-superimposable on its mirror image.',
     diag:{0:'Two different groups cannot give a non-superimposable mirror image.',1:'Three different groups (plus one repeat) is not a stereocenter.',3:'Four groups is necessary but they must be DIFFERENT from one another.'}},
-  st2:{skill:'stereo',diff:2,q:'Assigning CIP priority: which atom directly attached to a carbon has the HIGHEST priority — Br, O, N, or C?',
+  st2:{skill:'stereo',diff:2,q:'Assigning CIP priority: which atom directly attached to a carbon has the HIGHEST priority, Br, O, N, or C?',
     opts:['C','N','O','Br'],correct:3,
     why:'CIP ranks by atomic number at the first point of difference. Br (35) > O (8) > N (7) > C (6). Bromine wins.',
     diag:{0:'Carbon is the LOWEST of these (Z=6).',1:'Nitrogen (7) beats carbon but loses to O and Br.',2:'Oxygen (8) is high but Br (35) is higher.'}},
   st3:{skill:'stereo',diff:2,q:'When the lowest-priority group points TOWARD you (out of the page), you determine 1→2→3 as drawn and then…',
     opts:['Keep the result','Reverse the result','Re-rank the groups','It cannot be assigned'],correct:1,
     why:'R/S is defined with the lowest priority pointing AWAY. If it points toward you, you see the mirror sense, so you flip the observed direction.',
-    diag:{0:'Keeping it gives the enantiomer of the true configuration.',2:'Priorities do not change with viewing angle.',3:'It is assignable — you just reverse.'}},
+    diag:{0:'Keeping it gives the enantiomer of the true configuration.',2:'Priorities do not change with viewing angle.',3:'It is assignable: you just reverse.'}},
   st4:{skill:'stereo',diff:2,q:'In a Fischer projection, the HORIZONTAL bonds point…',
     opts:['Away from you (dashes)','Toward you (wedges)','In the plane','It depends on the molecule'],correct:1,
     why:'Fischer convention: horizontal lines come toward the viewer (wedges); vertical lines go away (dashes). This is why a horizontal lowest-priority group triggers the flip rule.',
@@ -387,19 +387,19 @@ const BANK = {
   st5:{skill:'stereo',diff:3,q:'Lactic acid is drawn in a Fischer projection with COOH on top, CH₃ on bottom, OH on the LEFT and H on the right. What is it?',
     opts:['D-lactic acid, (R)','L-lactic acid, (S)','D-lactic acid, (S)','L-lactic acid, (R)'],correct:1,
     why:'OH on the left of the Fischer (most-oxidized group on top) makes it L. Working the CIP: priorities OH>COOH>CH₃>H; H is horizontal (toward you) so reverse. The traced 1→2→3 is clockwise as drawn, reversed to counter-clockwise → (S). L-lactic acid is (S). (Master Organic Chemistry: OH-left = L and = S.)',
-    diag:{0:'OH on the LEFT is L, not D; and L-lactic is (S), not (R).',2:'The L/(S) pairing is right for the direction but this is L, not D.',3:'It is L, but L-lactic acid is (S), not (R) — you likely forgot to reverse for the horizontal H.'}},
+    diag:{0:'OH on the LEFT is L, not D; and L-lactic is (S), not (R).',2:'The L/(S) pairing is right for the direction but this is L, not D.',3:'It is L, but L-lactic acid is (S), not (R): you likely forgot to reverse for the horizontal H.'}},
   st6:{skill:'stereo',diff:3,q:'Two molecules are mirror images but NOT superimposable, and have identical physical properties except the sign of optical rotation. They are…',
     opts:['Diastereomers','Enantiomers','Constitutional isomers','Conformers'],correct:1,
     why:'Non-superimposable mirror images are enantiomers; they share all scalar physical properties (mp, bp, density) and rotate plane-polarized light equally but oppositely.',
-    diag:{0:'Diastereomers are stereoisomers that are NOT mirror images and DO differ in physical properties.',2:'Constitutional isomers differ in connectivity, not just spatial arrangement.',3:'Conformers interconvert by bond rotation — same molecule.'}},
+    diag:{0:'Diastereomers are stereoisomers that are NOT mirror images and DO differ in physical properties.',2:'Constitutional isomers differ in connectivity, not just spatial arrangement.',3:'Conformers interconvert by bond rotation: same molecule.'}},
   st7:{skill:'stereo',diff:3,q:'A molecule has two stereocenters but an internal mirror plane making it achiral overall. This is a…',
     opts:['Pair of enantiomers','Meso compound','Racemic mixture','Chiral diastereomer'],correct:1,
-    why:'A meso compound contains stereocenters but an internal plane of symmetry, so it is achiral (optically inactive) despite having stereocenters — a classic DAT trap.',
-    diag:{0:'A single meso compound is one achiral molecule, not a pair.',2:'A racemic mixture is a 50:50 of two enantiomers — that is a mixture, not one molecule with internal symmetry.',3:'The internal mirror plane makes it achiral, not chiral.'}},
-  st8:{skill:'stereo',diff:2,q:'In the most stable conformation of ethane viewed down the C–C bond, the front and back C–H bonds are…',
+    why:'A meso compound contains stereocenters but an internal plane of symmetry, so it is achiral (optically inactive) despite having stereocenters, a classic DAT trap.',
+    diag:{0:'A single meso compound is one achiral molecule, not a pair.',2:'A racemic mixture is a 50:50 of two enantiomers: that is a mixture, not one molecule with internal symmetry.',3:'The internal mirror plane makes it achiral, not chiral.'}},
+  st8:{skill:'stereo',diff:2,q:'In the most stable conformation of ethane viewed down the C-C bond, the front and back C-H bonds are…',
     opts:['Eclipsed (0° torsion)','Staggered (60° torsion)','Perpendicular','Bent'],correct:1,
     why:'Staggered (60° dihedral) minimizes torsional strain and is lowest in energy; eclipsed (0°) is the maximum. The Newman projection makes this visible. (Anti vs gauche only differ once you have larger groups, as in butane.)',
-    diag:{0:'Eclipsed is the HIGHEST-energy arrangement, not the most stable.',2:'Torsional angles for sp³ C–C are 0/60/120°, not 90°.',3:'Bonds are not "bent" here — this is about torsion angle.'}},
+    diag:{0:'Eclipsed is the HIGHEST-energy arrangement, not the most stable.',2:'Torsional angles for sp³ C-C are 0/60/120°, not 90°.',3:'Bonds are not "bent" here, this is about torsion angle.'}},
   ab1:{skill:'acidbase',diff:1,q:'Acidity is best judged by the stability of which species?',
     opts:['The neutral acid molecule','The conjugate base (the anion left after losing H+)','The solvent','The pKa of water'],correct:1,
     why:'A stronger acid gives a more stable conjugate base. Rank acids by comparing the anions they leave behind.',
@@ -418,7 +418,7 @@ const BANK = {
     diag:{0:'HF is the WEAKEST of the four; fluoride is small and holds charge tightly.',1:'HCl is strong, but iodide spreads charge better than chloride.',2:'HBr is close, but iodine is larger still.'}},
   ab5:{skill:'acidbase',diff:3,q:'A terminal alkyne C-H (sp) is much more acidic than an alkane C-H (sp3) because:',
     opts:['Alkynes are smaller molecules','More s-character holds the carbanion lone pair closer to the nucleus, stabilizing it','Alkynes have resonance stabilization','Induction from the triple bond'],correct:1,
-    why:'An sp carbon is 50 percent s-character, holding the lone pair close to the positive nucleus, which stabilizes the carbanion. Terminal alkyne pKa ~25 vs alkane ~50 — this is why NaNH2 makes an acetylide.',
+    why:'An sp carbon is 50 percent s-character, holding the lone pair close to the positive nucleus, which stabilizes the carbanion. Terminal alkyne pKa ~25 vs alkane ~50, this is why NaNH2 makes an acetylide.',
     diag:{0:'Molecular size is not the factor.',2:'A simple terminal acetylide has no resonance; it is hybridization.',3:'Induction is not the main driver; s-character is.'}},
   ab6:{skill:'acidbase',diff:3,q:'Which is the strongest BASE?',
     opts:['Acetate, CH3COO-','Ethoxide, CH3CH2O-','Chloride, Cl-','Water'],correct:1,
@@ -694,28 +694,28 @@ const BANK = {
 const CONTENT = {
   stereo:{
     accent:'var(--t0)',
-    sub:'Chirality, R/S, Fischer, Newman, and optical activity — the language every reaction speaks. MOC calls this the key gate of Org 1.',
+    sub:'Chirality, R/S, Fischer, Newman, and optical activity, the language every reaction speaks. MOC calls this the key gate of Org 1.',
     concept:`<h3>The one idea</h3>
-      <p><b>Stereochemistry is about arrangement in space</b> when connectivity is already the same. Two molecules with identical bonds can still be different objects — like your left and right hands.</p>
+      <p><b>Stereochemistry is about arrangement in space</b> when connectivity is already the same. Two molecules with identical bonds can still be different objects, like your left and right hands.</p>
       <p>A carbon is a <b>stereocenter</b> when it holds <b>four different groups</b>. Swap any two and you get the mirror image. Non-superimposable mirror images are <b>enantiomers</b>; stereoisomers that are <em>not</em> mirror images are <b>diastereomers</b>; a molecule with stereocenters but an internal mirror plane is an achiral <b>meso</b> compound.</p>
       <div class="rule"><div class="rl">The CIP rule for R / S</div>
         <b>1.</b> Rank the four groups by atomic number at the first point of difference (higher Z = higher priority).<br>
         <b>2.</b> Point the <em>lowest</em> priority group away from you.<br>
         <b>3.</b> Trace 1 → 2 → 3. <b>Clockwise = R</b>, <b>counter-clockwise = S</b>.</div>
       <div class="rule"><div class="rl">The Fischer flip rule</div>
-        In a Fischer projection, <b>horizontal bonds point toward you</b> (wedges), vertical go away (dashes). So the lowest-priority H is usually pointing at you — trace 1→2→3 and then <b>reverse</b> the answer.</div>
+        In a Fischer projection, <b>horizontal bonds point toward you</b> (wedges), vertical go away (dashes). So the lowest-priority H is usually pointing at you, trace 1→2→3 and then <b>reverse</b> the answer.</div>
       <div class="trapbox"><div class="rl">The classic trap</div>
         <b>D/L is not R/S.</b> For lactic acid drawn with COOH on top: OH on the <b>left = L = (S)</b>; OH on the <b>right = D = (R)</b>. Memorize the pairing, but always confirm R/S by CIP.</div>
-      <div class="coachbox"><div class="rl">Coach trick · Thomas</div>In a Fischer, <b>left/right doesn't matter — horizontal vs vertical does</b>. Lowest priority (usually H) on a <b>horizontal → flip</b> your answer; on a <b>vertical → keep</b> it (the "bow-tie" rule). And the <b>meso exception</b>: two chiral centers can give <b>3</b> stereoisomers, not 4, when there's an internal mirror plane.</div>
-      <div class="depthnote"><b>DAT depth:</b> R/S, E/Z, Fischer, meso, enantiomer vs diastereomer, optical activity, Newman staggered/eclipsed, and chair axial/equatorial (larger group equatorial) — yes. Quantitative A-values and specific-rotation calculations — not tested.</div>`,
+      <div class="coachbox"><div class="rl">Coach trick · Thomas</div>In a Fischer, <b>left/right doesn't matter, horizontal vs vertical does</b>. Lowest priority (usually H) on a <b>horizontal → flip</b> your answer; on a <b>vertical → keep</b> it (the "bow-tie" rule). And the <b>meso exception</b>: two chiral centers can give <b>3</b> stereoisomers, not 4, when there's an internal mirror plane.</div>
+      <div class="depthnote"><b>DAT depth:</b> R/S, E/Z, Fischer, meso, enantiomer vs diastereomer, optical activity, Newman staggered/eclipsed, and chair axial/equatorial (larger group equatorial), yes. Quantitative A-values and specific-rotation calculations: not tested.</div>`,
     worked:[
       {q:'Assign R/S to 2-bromobutane with H pointing away from you.',
        steps:[
-        {what:'Rank the four groups on C2: Br, CH₂CH₃, CH₃, H.',why:'By atomic number at the first atom: Br(35) > C > C > H. Break the C–C tie one atom out.'},
+        {what:'Rank the four groups on C2: Br, CH₂CH₃, CH₃, H.',why:'By atomic number at the first atom: Br(35) > C > C > H. Break the C-C tie one atom out.'},
         {what:'Priorities: Br (1) > CH₂CH₃ (2) > CH₃ (3) > H (4).',why:'Ethyl beats methyl because its next atom is C, versus H on methyl.'},
-        {what:'H (lowest) already points away — no flip needed.',why:'This is the ideal viewing setup; read the rotation directly.'},
-        {what:'Trace Br → ethyl → methyl. If clockwise, it is (R).',why:'1→2→3 clockwise with #4 in back = R by definition — so counter-clockwise would be (S).',
-         predict:{q:'If that same trace had come out counter-clockwise instead, what would it be?',hint:'You know what clockwise gives — apply that to the opposite direction.'}},
+        {what:'H (lowest) already points away, no flip needed.',why:'This is the ideal viewing setup; read the rotation directly.'},
+        {what:'Trace Br → ethyl → methyl. If clockwise, it is (R).',why:'1→2→3 clockwise with #4 in back = R by definition, so counter-clockwise would be (S).',
+         predict:{q:'If that same trace had come out counter-clockwise instead, what would it be?',hint:'You know what clockwise gives: apply that to the opposite direction.'}},
        ], answer:'Clockwise with the lowest priority in back gives (R)-2-bromobutane; counter-clockwise would be (S).'},
       {q:'Assign the configuration of lactic acid drawn in a Fischer projection: COOH top, CH₃ bottom, OH on the LEFT, H on the right.',
        fischer:'        COOH\n         |\n  HO ───C─── H\n         |\n        CH3',
@@ -733,21 +733,21 @@ const CONTENT = {
         {what:'Not all centers are inverted → not mirror images.',why:'They are stereoisomers that are not enantiomers.',
          predict:{q:'Stereoisomers that are not mirror images are called…?',hint:'The other big category besides enantiomers.'}},
         {what:'Therefore they are diastereomers.',why:'Diastereomers differ in physical properties and can be separated by ordinary means.'},
-       ], answer:'Diastereomers — only one of the two centers is inverted, so they are not mirror images.'},
-      {q:'An alkene has, on the left carbon, a –Br (top) and a –CH₃ (bottom); on the right carbon, a –Cl (top) and an –H (bottom). Is it E or Z?',
+       ], answer:'Diastereomers: only one of the two centers is inverted, so they are not mirror images.'},
+      {q:'An alkene has, on the left carbon, a -Br (top) and a -CH₃ (bottom); on the right carbon, a -Cl (top) and an -H (bottom). Is it E or Z?',
        steps:[
         {what:'On each double-bond carbon, rank the two groups by CIP (atomic number).',why:'E/Z is decided one carbon at a time.'},
         {what:'Left carbon: Br (35) beats CH₃ (C=6). Right carbon: Cl (17) beats H. So the higher-priority group is Br (top-left) and Cl (top-right).',why:'Only the winner on each carbon matters.',
-         predict:{q:'Both higher-priority groups (Br and Cl) sit on top — the same side. Same side is E or Z?',hint:'Recall the German roots: one of E/Z means "together."'}},
+         predict:{q:'Both higher-priority groups (Br and Cl) sit on top, the same side. Same side is E or Z?',hint:'Recall the German roots: one of E/Z means "together."'}},
         {what:'Both higher-priority groups on the same side → Z.',why:'Opposite sides would be E (entgegen).'},
-       ], answer:'Z — the two higher-priority groups (Br and Cl) are on the same side. E/Z is the rigorous version of cis/trans, decided by CIP on each carbon.'},
+       ], answer:'Z: the two higher-priority groups (Br and Cl) are on the same side. E/Z is the rigorous version of cis/trans, decided by CIP on each carbon.'},
       {q:'In the most stable chair of methylcyclohexane, is the methyl axial or equatorial?',
        steps:[
         {what:'Cyclohexane sits in a chair; each carbon has one axial (straight up/down) and one equatorial (out to the side) position. A ring-flip swaps every axial with equatorial.',why:'Both chairs are the same molecule, just flipped.'},
-        {what:'An axial methyl points over the ring and bumps the two axial hydrogens on the same face — 1,3-diaxial strain.',why:'That crowding raises the energy.',
+        {what:'An axial methyl points over the ring and bumps the two axial hydrogens on the same face, 1,3-diaxial strain.',why:'That crowding raises the energy.',
          predict:{q:'To avoid that 1,3-diaxial bumping, does the larger group prefer axial or equatorial?',hint:'Which position keeps the group clear of those axial hydrogens?'}},
         {what:'The methyl prefers equatorial; that chair is the more stable conformation.',why:'The bigger the group, the stronger the preference for equatorial.'},
-       ], answer:'Equatorial — the larger substituent goes equatorial to avoid 1,3-diaxial strain. (Qualitative only; the DAT does not ask for numeric A-values.)'},
+       ], answer:'Equatorial: the larger substituent goes equatorial to avoid 1,3-diaxial strain. (Qualitative only; the DAT does not ask for numeric A-values.)'},
     ],
     faded:[
       {prompt:'A stereocenter has priorities 1→2→3 tracing clockwise, and the lowest priority points AWAY from you. The configuration is ___.',hint:'#4 in back, clockwise.',answer:'R'},
@@ -760,33 +760,33 @@ const CONTENT = {
   },
   // Concept-level seeds for a few neighbors (fuller builds come each iteration)
   bonding:{accent:'var(--t0)',sub:'Hybridization, resonance, and the curved-arrow grammar every mechanism uses.',
-    concept:`<h3>Coming online next iteration</h3><p>This module is scaffolded in the tree and will be authored into the full five-stage flow — concept, worked examples with predict-before-reveal, faded practice, an independent bank, and a mastery check — in the next build pass. Stereochemistry is fully live now; open it to see the pattern every module will follow.</p>`,
+    concept:`<h3>Coming online next iteration</h3><p>This module is scaffolded in the tree and will be authored into the full five-stage flow, concept, worked examples with predict-before-reveal, faded practice, an independent bank, and a mastery check, in the next build pass. Stereochemistry is fully live now; open it to see the pattern every module will follow.</p>`,
     worked:[],faded:[],practice:[],mastery:[]},
   aromatic:{accent:'var(--t2)',
-    sub:'Aromaticity and electrophilic aromatic substitution — activators, deactivators, and the ortho/para/meta directing the DAT loves to test.',
+    sub:'Aromaticity and electrophilic aromatic substitution: activators, deactivators, and the ortho/para/meta directing the DAT loves to test.',
     videoUrl:'tiktoks/eas-directors-tiktok.html', videoTitle:'EAS directors: who aims where (~1 min)',
     concept:`<h3>The pattern the DAT tests</h3>
-      <div class="rule"><div class="rl">First: is it aromatic?</div>Aromatic = <b>cyclic + planar + fully conjugated</b> (an uninterrupted ring of p-orbitals) <b>+ 4n+2 π electrons</b> — the magic numbers <b>2, 6, 10, 14</b>. Cyclic/planar/conjugated but <b>4n</b> (4, 8, 12) = <b>anti-aromatic</b>. Count 2 π electrons per double bond; a lone pair counts only if it sits in the ring's p-system (pyrrole's N lone pair counts; pyridine's does not).</div>
+      <div class="rule"><div class="rl">First: is it aromatic?</div>Aromatic = <b>cyclic + planar + fully conjugated</b> (an uninterrupted ring of p-orbitals) <b>+ 4n+2 π electrons</b>, the magic numbers <b>2, 6, 10, 14</b>. Cyclic/planar/conjugated but <b>4n</b> (4, 8, 12) = <b>anti-aromatic</b>. Count 2 π electrons per double bond; a lone pair counts only if it sits in the ring's p-system (pyrrole's N lone pair counts; pyridine's does not).</div>
       <p>Then, in electrophilic aromatic substitution, <b>the group already on the ring decides two things</b>: how fast the next substitution happens, and <em>where</em> it lands.</p>
-      <div class="rule"><div class="rl">The directing rule</div><b>Electron donors</b> (–OH, –NH₂, –OR, alkyl) make the ring richer → activate (faster) and direct <b>ortho / para</b>.<br><b>Electron withdrawers</b> (–NO₂, C=O, –SO₃H, –CF₃) make it poorer → deactivate (slower) and direct <b>meta</b>.<br><b>Strength:</b> strong activators (–NH₂, –OH, –OR) &gt; weak (alkyl); strong deactivators (–NO₂, –NR₃⁺, C=O, –SO₃H) &gt; weak deactivators (the halogens, which still direct o/p).</div>
-      <div class="trapbox"><div class="rl">The halogen exception</div>Halogens (F, Cl, Br, I) <b>deactivate</b> the ring but still direct <b>ortho / para</b> — poor ring, o/p seats. The classic DAT trap.</div>
-      <div class="coachbox"><div class="rl">Coach trick · Thomas</div><b>LPOP</b> — Lone Pairs → Ortho-Para (plus alkyl R groups). <b>Flip the W</b> — a Withdrawing group, flip the W upside-down, gives M for Meta. Picture it: oxygen's the bully, "give me your electrons," so carbonyls pull density out of the ring and aim meta. Halogens keep their lone pairs (LPOP → o/p) but still crave the octet, so they deactivate.</div>
-      <div class="depthnote"><b>DAT depth:</b> classify activating/deactivating and o/p vs meta, predict the major product and position, and check Hückel aromaticity (magic numbers 2, 6, 10, 14) — yes. Full arrow-by-arrow EAS mechanism and benzyne/NAS — not needed.</div>
+      <div class="rule"><div class="rl">The directing rule</div><b>Electron donors</b> (-OH, -NH₂, -OR, alkyl) make the ring richer → activate (faster) and direct <b>ortho / para</b>.<br><b>Electron withdrawers</b> (-NO₂, C=O, -SO₃H, -CF₃) make it poorer → deactivate (slower) and direct <b>meta</b>.<br><b>Strength:</b> strong activators (-NH₂, -OH, -OR) &gt; weak (alkyl); strong deactivators (-NO₂, -NR₃⁺, C=O, -SO₃H) &gt; weak deactivators (the halogens, which still direct o/p).</div>
+      <div class="trapbox"><div class="rl">The halogen exception</div>Halogens (F, Cl, Br, I) <b>deactivate</b> the ring but still direct <b>ortho / para</b>, poor ring, o/p seats. The classic DAT trap.</div>
+      <div class="coachbox"><div class="rl">Coach trick · Thomas</div><b>LPOP</b>, Lone Pairs → Ortho-Para (plus alkyl R groups). <b>Flip the W</b>, a Withdrawing group, flip the W upside-down, gives M for Meta. Picture it: oxygen's the bully, "give me your electrons," so carbonyls pull density out of the ring and aim meta. Halogens keep their lone pairs (LPOP → o/p) but still crave the octet, so they deactivate.</div>
+      <div class="depthnote"><b>DAT depth:</b> classify activating/deactivating and o/p vs meta, predict the major product and position, and check Hückel aromaticity (magic numbers 2, 6, 10, 14), yes. Full arrow-by-arrow EAS mechanism and benzyne/NAS, not needed.</div>
       <p>Watch the one-minute explainer above for Thomas's LPOP hook, then work the examples and the mastery check.</p>`,
     worked:[
-      {q:'Toluene (a methyl on benzene) is nitrated. Fast or slow versus benzene, and where does the –NO₂ end up?',
+      {q:'Toluene (a methyl on benzene) is nitrated. Fast or slow versus benzene, and where does the -NO₂ end up?',
        steps:[
-        {what:'Identify the group already on the ring: a methyl (–CH₃), an alkyl group.',why:'The existing group sets both the rate and the position.'},
+        {what:'Identify the group already on the ring: a methyl (-CH₃), an alkyl group.',why:'The existing group sets both the rate and the position.'},
         {what:'Alkyl groups weakly donate electron density into the ring.',why:'A donor makes the ring richer.',
-         predict:{q:'A donor is an activator. Which positions does a donor send the next group to — ortho/para, or meta?',hint:'Where does a donor make the ring most electron-rich?'}},
-        {what:'Donor → activator → ortho/para director. So nitration is a bit faster than benzene and the –NO₂ goes ortho and para to the methyl.',why:'Para usually dominates for sterics; some ortho forms too.'},
+         predict:{q:'A donor is an activator. Which positions does a donor send the next group to, ortho/para, or meta?',hint:'Where does a donor make the ring most electron-rich?'}},
+        {what:'Donor → activator → ortho/para director. So nitration is a bit faster than benzene and the -NO₂ goes ortho and para to the methyl.',why:'Para usually dominates for sterics; some ortho forms too.'},
        ], answer:'Faster than benzene (methyl activates) and ortho/para (mostly para). Alkyl is a weak o/p-directing activator.'},
       {q:'Chlorobenzene is nitrated. Fast or slow versus benzene, and where?',
        steps:[
-        {what:'Chlorine has lone pairs (LPOP → ortho/para) but is very electronegative and pulls electron density out of the ring by induction.',why:'Two opposing effects — resonance donation vs inductive withdrawal.'},
+        {what:'Chlorine has lone pairs (LPOP → ortho/para) but is very electronegative and pulls electron density out of the ring by induction.',why:'Two opposing effects: resonance donation vs inductive withdrawal.'},
         {what:'Induction wins on RATE: the ring is electron-poorer, so nitration is slower than benzene.',why:'Halogens are net deactivators.',
          predict:{q:'Halogens deactivate the ring. Does that also make them meta directors, like other deactivators?',hint:'The lone pairs still do their LPOP job.'}},
-        {what:'Resonance donation of the lone pairs wins on POSITION: still ortho/para. This is the halogen exception — LPOP wins the seat.',why:'Deactivate, yet direct o/p.'},
+        {what:'Resonance donation of the lone pairs wins on POSITION: still ortho/para. This is the halogen exception: LPOP wins the seat.',why:'Deactivate, yet direct o/p.'},
        ], answer:'Slower than benzene (Cl deactivates by induction) but ortho/para (Cl donates lone pairs by resonance). The classic halogen exception.'},
       {q:'Is benzene aromatic? Is cyclobutadiene? Is pyrrole?',
        steps:[
@@ -795,57 +795,57 @@ const CONTENT = {
          predict:{q:'Cyclobutadiene is a 4-membered ring with 2 double bonds = 4 π electrons. 4 is 4n, not a magic number. What does that make it?',hint:'It is cyclic, planar, and conjugated, but the count is 4n rather than 4n+2.'}},
         {what:'Cyclobutadiene: 4 π electrons = 4n → anti-aromatic (and very unstable). Pyrrole: 2 double bonds (4 π) plus the nitrogen lone pair in the ring p-system (2 more) = 6 π → aromatic.',why:'Pyrrole donates its N lone pair into the ring; pyridine does not (its lone pair is in-plane).'},
        ], answer:'Benzene aromatic (6 π), cyclobutadiene anti-aromatic (4 π), pyrrole aromatic (6 π, counting the N lone pair).'},
-      {q:'A benzene ring bears a strong activator (–OH) and, para to it, a weak activator (–CH₃). Which group directs the next electrophile?',
+      {q:'A benzene ring bears a strong activator (-OH) and, para to it, a weak activator (-CH₃). Which group directs the next electrophile?',
        steps:[
-        {what:'Both –OH and –CH₃ are activators and ortho/para directors, but they differ in strength.',why:'On a disubstituted ring, the two groups compete to control the position.'},
+        {what:'Both -OH and -CH₃ are activators and ortho/para directors, but they differ in strength.',why:'On a disubstituted ring, the two groups compete to control the position.'},
         {what:'When two directors compete, the STRONGER activator wins.',why:'It donates the most electron density, so it sets where the ring is richest.',
-         predict:{q:'Both are ortho/para directors, but which one controls the position — the stronger or the weaker activator?',hint:'The group that pushes the most electron density into the ring dominates.'}},
-        {what:'–OH is far stronger than –CH₃, so it directs. The electrophile goes ortho to the –OH (para is blocked by the methyl).',why:'And the crowded spot directly between two groups is usually skipped for sterics.'},
-       ], answer:'The stronger activator (–OH) wins the directing contest, so the new group adds ortho/para to it (here ortho, since para is occupied). Rule of thumb: stronger activator directs, an o/p director beats a meta director, and skip the crowded position between two groups.'},
+         predict:{q:'Both are ortho/para directors, but which one controls the position, the stronger or the weaker activator?',hint:'The group that pushes the most electron density into the ring dominates.'}},
+        {what:'-OH is far stronger than -CH₃, so it directs. The electrophile goes ortho to the -OH (para is blocked by the methyl).',why:'And the crowded spot directly between two groups is usually skipped for sterics.'},
+       ], answer:'The stronger activator (-OH) wins the directing contest, so the new group adds ortho/para to it (here ortho, since para is occupied). Rule of thumb: stronger activator directs, an o/p director beats a meta director, and skip the crowded position between two groups.'},
     ],
     faded:[
-      {prompt:'An –OH group on a ring is a strong activator, so an incoming electrophile adds ___ to it.',hint:'The LPOP positions.',answer:'ortho and para'},
-      {prompt:'A nitro group (–NO₂) withdraws electrons, so it is a ___ director.',hint:'Flip the W.',answer:'meta'},
+      {prompt:'An -OH group on a ring is a strong activator, so an incoming electrophile adds ___ to it.',hint:'The LPOP positions.',answer:'ortho and para'},
+      {prompt:'A nitro group (-NO₂) withdraws electrons, so it is a ___ director.',hint:'Flip the W.',answer:'meta'},
       {prompt:'A ring is aromatic if it is cyclic, planar, fully conjugated, and has ___ π electrons (2, 6, 10, or 14).',hint:'The Hückel rule.',answer:'4n+2'},
     ],
     practice:['ar1','ar2','ar3','ar4','ar9','ar5','ar8'],
     mastery:['ar6','ar7','ar2','ar9','ar4','ar10','ar5','ar8','ar1','ar3'],
   },
   acidbase:{accent:'var(--t0)',
-    sub:'Ranking most acidic and most basic — the reasoning-heavy skill the DAT loves, and one the 2026 spec weights up.',
+    sub:'Ranking most acidic and most basic, the reasoning-heavy skill the DAT loves, and one the 2026 spec weights up.',
     concept:`<h3>The one idea</h3>
-      <p>Acidity is about the <b>stability of the conjugate base</b> — the anion left after the acid loses its proton. The more stable that anion, the more willing the acid is to give up H⁺, so the <b>stronger the acid</b>. To rank acids, take the proton off each one and ask: which anion is happiest holding the negative charge?</p>
+      <p>Acidity is about the <b>stability of the conjugate base</b>, the anion left after the acid loses its proton. The more stable that anion, the more willing the acid is to give up H⁺, so the <b>stronger the acid</b>. To rank acids, take the proton off each one and ask: which anion is happiest holding the negative charge?</p>
       <div class="rule"><div class="rl">What stabilizes the conjugate base → stronger acid</div>
-        <b>Atom</b> — a more electronegative atom holds charge better across a row (O &gt; N &gt; C); a larger atom spreads it out down a column, and <b>size wins going down</b> (I⁻ &gt; Br⁻ &gt; Cl⁻ &gt; F⁻, so HI &gt; HBr &gt; HCl &gt; HF).<br>
-        <b>Resonance</b> — spreading the charge over several atoms is a big stabilizer. Carboxylate shares its charge over two oxygens, so RCOOH (pKa ~4–5) beats ROH (pKa ~16).<br>
-        <b>Induction</b> — nearby electron-withdrawing atoms pull charge away and stabilize the anion (Cl₃C–COOH ≫ CH₃COOH).<br>
-        <b>Hybridization</b> — more s-character holds the lone pair closer to the nucleus: sp &gt; sp² &gt; sp³. A terminal alkyne C–H (sp, pKa ~25) is far more acidic than an alkane C–H (sp³, pKa ~50).<br>
-        <b>Sterics</b> — a bulky base is a much poorer nucleophile but is still a strong base (steric bulk cuts nucleophilicity, not basicity), which is why hindered bases like t-BuO⁻ and LDA push reactions toward E2 elimination.</div>
-      <div class="rule"><div class="rl">pKa landmarks — lower pKa = stronger acid</div>carboxylic acid ~4–5 · ammonium (RNH₃⁺) ~10 · phenol ~10 · water ~15.7 · alcohol ~16–18 · α-carbonyl C–H ~20 · terminal alkyne ~25 · alkane ~50.</div>
-      <div class="coachbox"><div class="rl">Coach trick · Thomas</div><b>More resonance = stronger acid</b> — because resonance stabilizes the conjugate base. So always <b>judge acidity by the conjugate base</b>. Flip it for bases: <b>the strongest base has the least resonance</b> (a lone pair tied up in resonance is not available to grab a proton). And do not let the word "weak" fool you: HF (pKa ~3) is still far stronger than water (pKa ~16).</div>
-      <div class="depthnote"><b>DAT depth:</b> rank most acidic/most basic by conjugate-base stability (atom/size, resonance, induction, hybridization, sterics), use approximate pKa landmarks, identify conjugate acid/base pairs, and predict which side an equilibrium favors (toward the weaker acid and weaker base) — yes. Memorizing pKa to decimals or Ka / Henderson–Hasselbalch computation (that is Gen Chem) — no.</div>`,
+        <b>Atom</b>, a more electronegative atom holds charge better across a row (O &gt; N &gt; C); a larger atom spreads it out down a column, and <b>size wins going down</b> (I⁻ &gt; Br⁻ &gt; Cl⁻ &gt; F⁻, so HI &gt; HBr &gt; HCl &gt; HF).<br>
+        <b>Resonance</b>, spreading the charge over several atoms is a big stabilizer. Carboxylate shares its charge over two oxygens, so RCOOH (pKa ~4-5) beats ROH (pKa ~16).<br>
+        <b>Induction</b>, nearby electron-withdrawing atoms pull charge away and stabilize the anion (Cl₃C-COOH ≫ CH₃COOH).<br>
+        <b>Hybridization</b>, more s-character holds the lone pair closer to the nucleus: sp &gt; sp² &gt; sp³. A terminal alkyne C-H (sp, pKa ~25) is far more acidic than an alkane C-H (sp³, pKa ~50).<br>
+        <b>Sterics</b>, a bulky base is a much poorer nucleophile but is still a strong base (steric bulk cuts nucleophilicity, not basicity), which is why hindered bases like t-BuO⁻ and LDA push reactions toward E2 elimination.</div>
+      <div class="rule"><div class="rl">pKa landmarks, lower pKa = stronger acid</div>carboxylic acid ~4-5 · ammonium (RNH₃⁺) ~10 · phenol ~10 · water ~15.7 · alcohol ~16-18 · α-carbonyl C-H ~20 · terminal alkyne ~25 · alkane ~50.</div>
+      <div class="coachbox"><div class="rl">Coach trick · Thomas</div><b>More resonance = stronger acid</b>, because resonance stabilizes the conjugate base. So always <b>judge acidity by the conjugate base</b>. Flip it for bases: <b>the strongest base has the least resonance</b> (a lone pair tied up in resonance is not available to grab a proton). And do not let the word "weak" fool you: HF (pKa ~3) is still far stronger than water (pKa ~16).</div>
+      <div class="depthnote"><b>DAT depth:</b> rank most acidic/most basic by conjugate-base stability (atom/size, resonance, induction, hybridization, sterics), use approximate pKa landmarks, identify conjugate acid/base pairs, and predict which side an equilibrium favors (toward the weaker acid and weaker base), yes. Memorizing pKa to decimals or Ka / Henderson-Hasselbalch computation (that is Gen Chem), no.</div>`,
     worked:[
       {q:'Rank the acidity of ethanol (CH₃CH₂OH), acetic acid (CH₃COOH), and water.',
        steps:[
         {what:'Take the proton off each: ethoxide (CH₃CH₂O⁻), acetate (CH₃COO⁻), hydroxide (OH⁻). Compare which anion is most stable.',why:'Acidity tracks conjugate-base stability.'},
-        {what:'Acetate has resonance — the charge is shared equally over two oxygens.',why:'Delocalization is a strong stabilizer.',
-         predict:{q:'Which conjugate base is the most stabilized — and therefore which is the strongest acid?',hint:'Resonance spreads the charge over two atoms.'}},
+        {what:'Acetate has resonance: the charge is shared equally over two oxygens.',why:'Delocalization is a strong stabilizer.',
+         predict:{q:'Which conjugate base is the most stabilized, and therefore which is the strongest acid?',hint:'Resonance spreads the charge over two atoms.'}},
         {what:'Acetate is most stable, so acetic acid is the strongest (pKa ~4.8).',why:'Resonance outweighs the other small differences here.'},
-        {what:'Ethoxide vs hydroxide are close: alcohols and water sit near each other (pKa ~15–16), both far weaker than acetic acid.',why:'Neither has resonance, so the small difference between them is not what the DAT is testing here.'},
+        {what:'Ethoxide vs hydroxide are close: alcohols and water sit near each other (pKa ~15-16), both far weaker than acetic acid.',why:'Neither has resonance, so the small difference between them is not what the DAT is testing here.'},
        ], answer:'Acetic acid is by far the strongest (resonance stabilizes acetate); water and ethanol are comparable and much weaker.'},
-      {q:'Which is more acidic: a terminal alkyne C–H, or an alkane C–H?',
+      {q:'Which is more acidic: a terminal alkyne C-H, or an alkane C-H?',
        steps:[
-        {what:'Compare the carbanion conjugate bases and the orbital that holds the lone pair.',why:'The more stable the carbanion, the more acidic the C–H.'},
+        {what:'Compare the carbanion conjugate bases and the orbital that holds the lone pair.',why:'The more stable the carbanion, the more acidic the C-H.'},
         {what:'A terminal alkyne carbon is sp (50% s-character); an alkane carbon is sp³ (25% s).',why:'More s-character holds the electrons closer to the positive nucleus.',
          predict:{q:'More s-character holds the lone pair closer to the nucleus. Does that stabilize or destabilize the negative charge?',hint:'Closer to the positive nucleus = lower energy.'}},
-        {what:'More s-character stabilizes the carbanion, so the sp C–H is far more acidic: terminal alkyne pKa ~25 vs alkane ~50.',why:'This is why NaNH₂ can deprotonate a terminal alkyne to make an acetylide nucleophile.'},
-       ], answer:'The terminal alkyne C–H is much more acidic (pKa ~25) than the alkane C–H (~50), because the sp carbanion is stabilized by s-character.'},
+        {what:'More s-character stabilizes the carbanion, so the sp C-H is far more acidic: terminal alkyne pKa ~25 vs alkane ~50.',why:'This is why NaNH₂ can deprotonate a terminal alkyne to make an acetylide nucleophile.'},
+       ], answer:'The terminal alkyne C-H is much more acidic (pKa ~25) than the alkane C-H (~50), because the sp carbanion is stabilized by s-character.'},
       {q:'Rank the basicity of hydroxide (OH⁻), acetate (CH₃COO⁻), and an alkoxide (RO⁻).',
        steps:[
-        {what:'The strongest base is the conjugate base of the weakest acid — the least-stabilized anion.',why:'Basicity is the inverse of the acidity of the parent acid.'},
+        {what:'The strongest base is the conjugate base of the weakest acid, the least-stabilized anion.',why:'Basicity is the inverse of the acidity of the parent acid.'},
         {what:'Acetate has its charge tied up in resonance.',why:'A delocalized lone pair is less available to grab a proton.',
          predict:{q:'Which of these has its lone pair tied up in resonance, making it the weakest base?',hint:'Strongest base = least resonance.'}},
-        {what:'Acetate is the weakest base. Alkoxide (from an alcohol, pKa ~16–18, the weakest acid here) is the strongest base.',why:'The least-stabilized lone pair is the most reactive base.'},
+        {what:'Acetate is the weakest base. Alkoxide (from an alcohol, pKa ~16-18, the weakest acid here) is the strongest base.',why:'The least-stabilized lone pair is the most reactive base.'},
        ], answer:'Alkoxide (RO⁻) > hydroxide (OH⁻) > acetate (strongest to weakest base). Strongest base = least resonance.'},
     ],
     faded:[
@@ -857,7 +857,7 @@ const CONTENT = {
     mastery:['ab5','ab8','ab2','ab4','ab6','ab3','ab1','ab7'],
   },
   subelim:{accent:'var(--t1)',
-    sub:'SN1, SN2, E1, E2 — pick the winner from substrate, nucleophile/base, solvent, and temperature. The single most-tested DAT reaction skill.',
+    sub:'SN1, SN2, E1, E2, pick the winner from substrate, nucleophile/base, solvent, and temperature. The single most-tested DAT reaction skill.',
     concept:`<h3>Four reactions, one decision</h3>
       <p>SN1, SN2, E1, and E2 all compete for the same alkyl halide. Pick the winner by asking four questions.</p>
       <div class="rule"><div class="rl">The four questions</div>
@@ -865,13 +865,13 @@ const CONTENT = {
         <b>2. Nucleophile / base.</b> Strong, small nucleophile → SN2. Strong, <em>bulky</em> base (t-BuOK, LDA) → E2. Weak nucleophile (water, ROH) → SN1/E1.<br>
         <b>3. Solvent.</b> Polar aprotic (DMSO, DMF, acetone) → SN2 (naked nucleophile). Polar protic (water, alcohols) → SN1/E1 (stabilizes the carbocation).<br>
         <b>4. Temperature.</b> Heat → elimination (E1/E2).<br>
-        <b>Plus — the leaving group.</b> A good leaving group (a weak, stable base) is required: I⁻ &gt; Br⁻ &gt; Cl⁻ ≫ F⁻; tosylate and mesylate are excellent; –OH, –OR, and –F are poor.</div>
+        <b>Plus: the leaving group.</b> A good leaving group (a weak, stable base) is required: I⁻ &gt; Br⁻ &gt; Cl⁻ ≫ F⁻; tosylate and mesylate are excellent; -OH, -OR, and -F are poor.</div>
       <div class="rule"><div class="rl">Stereo &amp; regiochemistry</div>
-        <b>SN2</b> — backside attack → <b>inversion</b> (Walden). <b>SN1</b> — planar carbocation, both faces → <b>racemization</b>. <b>E2</b> — the H and leaving group must be <b>anti-periplanar</b>.<br>
+        <b>SN2</b>, backside attack → <b>inversion</b> (Walden). <b>SN1</b>, planar carbocation, both faces → <b>racemization</b>. <b>E2</b>, the H and leaving group must be <b>anti-periplanar</b>.<br>
         <b>Zaitsev</b> (the default) = the more-substituted, more-stable alkene. <b>Hofmann</b> = the less-substituted alkene, from a <em>bulky</em> base.</div>
       <div class="trapbox"><div class="rl">Only carbocation mechanisms rearrange</div>SN1 and E1 pass through a carbocation, which can hydride- or methyl-shift to a <b>more stable</b> carbocation (2° → 3°) before the product forms. The concerted SN2 and E2 <b>never</b> rearrange.</div>
-      <div class="coachbox"><div class="rl">Coach trick · Thomas</div><b>Heat is always elimination.</b> A <b>bulky base</b> (t-BuOK, LDA) means <b>Hofmann / E2</b>. And <b>the more stable the carbocation, the faster the reaction</b> — SN1/E1 rate tracks carbocation stability (3° &gt; 2° &gt; 1°). Tertiary substrate + strong base = E2.</div>
-      <div class="depthnote"><b>DAT depth:</b> given substrate + nucleophile/base + solvent + temperature, pick SN1/SN2/E1/E2 and the major product with the right stereochemistry (inversion / racemization / anti-periplanar) and regiochemistry (Zaitsev vs Hofmann), plus spotting carbocation rearrangements — yes. Rate-law derivation and Winstein ion-pair analysis — not tested.</div>`,
+      <div class="coachbox"><div class="rl">Coach trick · Thomas</div><b>Heat is always elimination.</b> A <b>bulky base</b> (t-BuOK, LDA) means <b>Hofmann / E2</b>. And <b>the more stable the carbocation, the faster the reaction</b>, SN1/E1 rate tracks carbocation stability (3° &gt; 2° &gt; 1°). Tertiary substrate + strong base = E2.</div>
+      <div class="depthnote"><b>DAT depth:</b> given substrate + nucleophile/base + solvent + temperature, pick SN1/SN2/E1/E2 and the major product with the right stereochemistry (inversion / racemization / anti-periplanar) and regiochemistry (Zaitsev vs Hofmann), plus spotting carbocation rearrangements, yes. Rate-law derivation and Winstein ion-pair analysis, not tested.</div>`,
     worked:[
       {q:'2-Bromobutane (a 2° substrate) reacts with cyanide (CN⁻, a strong, small nucleophile) in DMSO (polar aprotic), no heat. Which mechanism, and what happens to the stereochemistry?',
        steps:[
@@ -890,8 +890,8 @@ const CONTENT = {
       {q:'2-Bromo-2-methylbutane (a 3° substrate) is treated with (a) sodium ethoxide (NaOEt) versus (b) bulky potassium tert-butoxide (t-BuOK). What are the major elimination products?',
        steps:[
         {what:'A 3° substrate with a strong base does E2. The only difference is the size of the base.',why:'3° cannot do SN2; a strong base drives E2.'},
-        {what:'The small base (NaOEt) removes the most accessible internal H to give the more-substituted alkene.',why:'That is the Zaitsev (more stable) product — the default.',
-         predict:{q:'A bulky base like t-BuOK cannot reach the crowded internal H. Which alkene does it give — the more-substituted (Zaitsev) or the less-substituted (Hofmann)?',hint:'The bulky base can only grab an accessible terminal H.'}},
+        {what:'The small base (NaOEt) removes the most accessible internal H to give the more-substituted alkene.',why:'That is the Zaitsev (more stable) product, the default.',
+         predict:{q:'A bulky base like t-BuOK cannot reach the crowded internal H. Which alkene does it give: the more-substituted (Zaitsev) or the less-substituted (Hofmann)?',hint:'The bulky base can only grab an accessible terminal H.'}},
         {what:'Bulky t-BuOK removes a terminal H, giving the less-substituted Hofmann alkene.',why:'The size of the base flips the regiochemistry.'},
        ], answer:'NaOEt gives the Zaitsev (more-substituted) alkene; the bulky t-BuOK gives the Hofmann (less-substituted) alkene. Bulky base = Hofmann.'},
     ],
@@ -904,87 +904,87 @@ const CONTENT = {
     mastery:['se4','se6','se9','se2','se5','se3','se8','se1','se7'],
   },
   spec:{accent:'var(--t3)',
-    sub:'IR, ¹H NMR, and ¹³C NMR — read the spectra to name a functional group and deduce a small structure. Reliably high-yield on the DAT.',
+    sub:'IR, ¹H NMR, and ¹³C NMR, read the spectra to name a functional group and deduce a small structure. Reliably high-yield on the DAT.',
     concept:`<h3>Three tools, one structure</h3>
       <p>IR tells you the <b>functional group</b>, ¹H NMR tells you the <b>hydrogen environments</b>, ¹³C NMR tells you the <b>carbon environments</b>. Combine them (plus degrees of unsaturation) to pin a small molecule.</p>
-      <div class="rule"><div class="rl">IR — the key bands</div>
-        <b>C=O</b> (carbonyl) <b>~1700–1750</b> — the strongest, most diagnostic band.<br>
-        Broad <b>O–H</b> (alcohol) ~3200–3550; a carboxylic-acid O–H is even broader, ~2500–3300.<br>
-        <b>N–H</b> ~3300–3500 (sharper than O–H). <b>C≡C / C≡N</b> ~2100–2260 (weak). sp³ C–H ~2850–2960; =C–H just above 3000.</div>
-      <div class="rule"><div class="rl">¹H NMR — three questions</div>
+      <div class="rule"><div class="rl">IR: the key bands</div>
+        <b>C=O</b> (carbonyl) <b>~1700-1750</b>, the strongest, most diagnostic band.<br>
+        Broad <b>O-H</b> (alcohol) ~3200-3550; a carboxylic-acid O-H is even broader, ~2500-3300.<br>
+        <b>N-H</b> ~3300-3500 (sharper than O-H). <b>C≡C / C≡N</b> ~2100-2260 (weak). sp³ C-H ~2850-2960; =C-H just above 3000.</div>
+      <div class="rule"><div class="rl">¹H NMR: three questions</div>
         <b>1. Number of signals</b> = number of chemically <em>different</em> H (use symmetry).<br>
         <b>2. Integration</b> = relative <em>number</em> of H under each signal.<br>
-        <b>3. Splitting (n+1)</b>: n neighboring H on adjacent carbons split a signal into <b>n+1</b> peaks — 0 = singlet, 1 = doublet, 2 = triplet, 3 = quartet.<br>
-        <b>Shift regions (ppm):</b> alkyl ~0.9–1.5 · α-to-carbonyl ~2–2.5 · vinyl ~5–6 · aromatic ~7 · aldehyde ~9–10 · COOH ~11–12.</div>
-      <div class="rule"><div class="rl">¹³C NMR</div>Number of signals = unique carbons (symmetry). Carbonyl <b>~200</b> (ketone ~205, ester/acid ~170–180) · aromatic ~120–150 · aliphatic ~0–50.</div>
+        <b>3. Splitting (n+1)</b>: n neighboring H on adjacent carbons split a signal into <b>n+1</b> peaks, 0 = singlet, 1 = doublet, 2 = triplet, 3 = quartet.<br>
+        <b>Shift regions (ppm):</b> alkyl ~0.9-1.5 · α-to-carbonyl ~2-2.5 · vinyl ~5-6 · aromatic ~7 · aldehyde ~9-10 · COOH ~11-12.</div>
+      <div class="rule"><div class="rl">¹³C NMR</div>Number of signals = unique carbons (symmetry). Carbonyl <b>~200</b> (ketone ~205, ester/acid ~170-180) · aromatic ~120-150 · aliphatic ~0-50.</div>
       <div class="rule"><div class="rl">Degrees of unsaturation</div>DoU = (2C + 2 + N − H − X) / 2. Each <b>ring or π bond</b> = 1; a benzene ring = <b>4</b> (three π bonds + one ring). Use it with the spectra to place rings and double bonds.</div>
-      <div class="coachbox"><div class="rl">Coach trick · Thomas</div><b>OH is always a singlet</b> — the oxygen is a bad neighbor that isolates that H, so an alcohol or acid O–H shows up with no splitting. And <b>count the unique peaks first, then apply n+1</b> — they usually do not give you integration, so count how many different H environments there are, then split each by its neighbors.</div>
-      <div class="depthnote"><b>DAT depth:</b> read IR key bands to name a group; count ¹H signals, apply n+1 splitting, use integration and shift regions; count ¹³C signals and use rough regions; combine spectra to deduce a small structure — yes. Coupling constants (J in Hz), 2D NMR, and second-order multiplets — not tested. (Mass spec is not on the 2026 list.)</div>`,
+      <div class="coachbox"><div class="rl">Coach trick · Thomas</div><b>OH is always a singlet</b>, the oxygen is a bad neighbor that isolates that H, so an alcohol or acid O-H shows up with no splitting. And <b>count the unique peaks first, then apply n+1</b>, they usually do not give you integration, so count how many different H environments there are, then split each by its neighbors.</div>
+      <div class="depthnote"><b>DAT depth:</b> read IR key bands to name a group; count ¹H signals, apply n+1 splitting, use integration and shift regions; count ¹³C signals and use rough regions; combine spectra to deduce a small structure, yes. Coupling constants (J in Hz), 2D NMR, and second-order multiplets, not tested. (Mass spec is not on the 2026 list.)</div>`,
     worked:[
-      {q:'A compound shows a strong, sharp IR band at ~1715 cm⁻¹ and NO broad O–H around 3000–3500. What functional group is present?',
+      {q:'A compound shows a strong, sharp IR band at ~1715 cm⁻¹ and NO broad O-H around 3000-3500. What functional group is present?',
        steps:[
-        {what:'The ~1700–1750 region is the C=O (carbonyl) stretch — the strongest, most diagnostic IR band.',why:'Nothing else absorbs so strongly right there.'},
-        {what:'Check for a broad O–H (3200–3550). There is none.',why:'A broad O–H would signal an alcohol or carboxylic acid.',
-         predict:{q:'Strong band at 1715 but NO broad O–H. Is this an alcohol, or a carbonyl compound?',hint:'Which band lives at 1715 — the O–H stretch or the C=O stretch?'}},
-        {what:'C=O present, O–H absent → a ketone or aldehyde.',why:'The missing O–H rules out a carboxylic acid.'},
-       ], answer:'A carbonyl (C=O) — a ketone or aldehyde (~1715). The absence of a broad O–H rules out a carboxylic acid.'},
+        {what:'The ~1700-1750 region is the C=O (carbonyl) stretch, the strongest, most diagnostic IR band.',why:'Nothing else absorbs so strongly right there.'},
+        {what:'Check for a broad O-H (3200-3550). There is none.',why:'A broad O-H would signal an alcohol or carboxylic acid.',
+         predict:{q:'Strong band at 1715 but NO broad O-H. Is this an alcohol, or a carbonyl compound?',hint:'Which band lives at 1715: the O-H stretch or the C=O stretch?'}},
+        {what:'C=O present, O-H absent → a ketone or aldehyde.',why:'The missing O-H rules out a carboxylic acid.'},
+       ], answer:'A carbonyl (C=O): a ketone or aldehyde (~1715). The absence of a broad O-H rules out a carboxylic acid.'},
       {q:'For ethanol (CH₃CH₂OH): how many ¹H NMR signals, and how are the CH₃ and CH₂ split?',
        steps:[
         {what:'Count the different H environments: CH₃, CH₂, and OH → 3 signals.',why:'Each set of equivalent H gives one signal.'},
         {what:'Apply n+1. The CH₃ has the 2 H of the CH₂ next to it → 2+1 = triplet.',why:'n neighbors give n+1 peaks.',
          predict:{q:'The CH₂ has the 3 H of the neighboring CH₃ next to it. By n+1, how many peaks does the CH₂ signal show?',hint:'Count the neighbors, then add one.'}},
-        {what:'The CH₂ sees 3 neighbors → 3+1 = quartet. The OH is a singlet.',why:'Thomas: OH is always a singlet — the oxygen isolates that H.'},
+        {what:'The CH₂ sees 3 neighbors → 3+1 = quartet. The OH is a singlet.',why:'Thomas: OH is always a singlet: the oxygen isolates that H.'},
        ], answer:'3 signals: CH₃ = triplet (2 neighbors), CH₂ = quartet (3 neighbors), OH = singlet.'},
-      {q:'IR shows a strong band at ~1715 and NO broad O–H; ¹H NMR shows a 1 H peak near 9.7 ppm plus a peak near 2.2 ppm. What is the compound?',
+      {q:'IR shows a strong band at ~1715 and NO broad O-H; ¹H NMR shows a 1 H peak near 9.7 ppm plus a peak near 2.2 ppm. What is the compound?',
        steps:[
-        {what:'IR: C=O present (~1715), no O–H → aldehyde or ketone.',why:'Narrows it to a carbonyl without an acid or alcohol.'},
-        {what:'A 1 H peak near 9.7 ppm is the diagnostic aldehyde hydrogen (–CHO).',why:'The 9–10 ppm region belongs to the aldehyde H.',
-         predict:{q:'A 1 H peak near 9.7 ppm points to which group — an aldehyde H, an aromatic H, or a COOH?',hint:'Recall the shift regions: aldehyde ~9–10, aromatic ~7, COOH ~11–12.'}},
+        {what:'IR: C=O present (~1715), no O-H → aldehyde or ketone.',why:'Narrows it to a carbonyl without an acid or alcohol.'},
+        {what:'A 1 H peak near 9.7 ppm is the diagnostic aldehyde hydrogen (-CHO).',why:'The 9-10 ppm region belongs to the aldehyde H.',
+         predict:{q:'A 1 H peak near 9.7 ppm points to which group, an aldehyde H, an aromatic H, or a COOH?',hint:'Recall the shift regions: aldehyde ~9-10, aromatic ~7, COOH ~11-12.'}},
         {what:'So it is an aldehyde; the ~2.2 peak is the α-CH₃ (this is acetaldehyde).',why:'C=O plus the CHO hydrogen pin it down.'},
-       ], answer:'An aldehyde — the C=O (IR) plus the ~9.7 ppm ¹H peak (the CHO hydrogen) identify it; the ~2.2 peak is the α-methyl. No O–H rules out an acid.'},
+       ], answer:'An aldehyde: the C=O (IR) plus the ~9.7 ppm ¹H peak (the CHO hydrogen) identify it; the ~2.2 peak is the α-methyl. No O-H rules out an acid.'},
     ],
     faded:[
-      {prompt:'A strong IR band near 1700–1750 cm⁻¹ signals a ___ group.',hint:'The most diagnostic IR band.',answer:'carbonyl'},
+      {prompt:'A strong IR band near 1700-1750 cm⁻¹ signals a ___ group.',hint:'The most diagnostic IR band.',answer:'carbonyl'},
       {prompt:'In ¹H NMR, a signal split by n neighboring hydrogens shows ___ peaks.',hint:'The splitting rule.',answer:'n+1'},
-      {prompt:'An alcohol or acid O–H proton appears as a ___ in ¹H NMR (Thomas rule).',hint:'The oxygen isolates it.',answer:'singlet'},
+      {prompt:'An alcohol or acid O-H proton appears as a ___ in ¹H NMR (Thomas rule).',hint:'The oxygen isolates it.',answer:'singlet'},
     ],
     practice:['sp1','sp2','sp3','sp4','sp6','sp7'],
     mastery:['sp5','sp8','sp2','sp4','sp6','sp7','sp1','sp3'],
   },
   labtech:{accent:'var(--t3)',
-    sub:'Separation and purification — TLC, extraction, distillation, recrystallization. A DAT signature the exam tests far more than a college course does.',
+    sub:'Separation and purification: TLC, extraction, distillation, recrystallization. A DAT signature the exam tests far more than a college course does.',
     concept:`<h3>Separate and purify</h3>
       <p>The DAT loves "how would you separate/purify this" questions. Master four techniques and their logic.</p>
       <div class="rule"><div class="rl">TLC / chromatography</div>
-        <b>Rf = distance the spot traveled ÷ distance the solvent front traveled</b> (a number 0–1). On <em>polar silica</em>, more polar compounds <b>stick and travel less</b> → smaller Rf; less polar compounds travel farther → larger Rf. So <b>smallest Rf = most polar</b>.</div>
+        <b>Rf = distance the spot traveled ÷ distance the solvent front traveled</b> (a number 0-1). On <em>polar silica</em>, more polar compounds <b>stick and travel less</b> → smaller Rf; less polar compounds travel farther → larger Rf. So <b>smallest Rf = most polar</b>.</div>
       <div class="rule"><div class="rl">Acid-base extraction</div>
         Two layers (aqueous + organic). Move a compound between them by changing its <b>charge</b>. Deprotonate a carboxylic acid with a strong base (NaOH / NaHCO₃) → the charged carboxylate salt goes into the <b>aqueous</b> layer; neutral nonpolar compounds (bromobenzene, hydrocarbons) stay in the <b>organic</b> layer. Reverse with acid. Which layer is on top is set by <b>density</b> (dichloromethane sinks; ether floats).</div>
       <div class="rule"><div class="rl">Distillation &amp; recrystallization</div>
         <b>Simple</b> distillation for bp gaps &gt; ~25 °C; <b>fractional</b> for close bps; <b>vacuum</b> (reduced-pressure) for high-boiling or heat-sensitive compounds. <b>Recrystallization</b>: hot-dissolve then cool slowly so pure product crystallizes and impurities stay in solution. An impurity <b>lowers and broadens</b> a melting point (a sharp mp = pure).</div>
-      <div class="coachbox"><div class="rl">Coach trick · Thomas</div><b>TLC: "stuck in the mud."</b> Silica is polar mud — polar compounds stick and barely move, so the <b>smallest Rf is the most polar</b>. For <b>extraction</b>, ask two questions: is it acidic or basic, and how do I charge it up to pull it into the water layer? And remember: carboxylic acids are more polar than alcohols.</div>
-      <div class="depthnote"><b>DAT depth:</b> compute Rf and rank polarity/elution, design an acid-base extraction (which layer, how to switch), pick simple vs fractional vs vacuum distillation, and reason about recrystallization and mp/bp for purity — yes. Apparatus assembly and theoretical-plate math — not tested.</div>`,
+      <div class="coachbox"><div class="rl">Coach trick · Thomas</div><b>TLC: "stuck in the mud."</b> Silica is polar mud: polar compounds stick and barely move, so the <b>smallest Rf is the most polar</b>. For <b>extraction</b>, ask two questions: is it acidic or basic, and how do I charge it up to pull it into the water layer? And remember: carboxylic acids are more polar than alcohols.</div>
+      <div class="depthnote"><b>DAT depth:</b> compute Rf and rank polarity/elution, design an acid-base extraction (which layer, how to switch), pick simple vs fractional vs vacuum distillation, and reason about recrystallization and mp/bp for purity, yes. Apparatus assembly and theoretical-plate math: not tested.</div>`,
     worked:[
       {q:'On a silica TLC plate, compound A has Rf 0.8 and compound B has Rf 0.2. Which is more polar?',
        steps:[
         {what:'Rf = distance the spot moved ÷ distance the solvent front moved; the silica plate is polar.',why:'The stationary phase polarity drives the separation.'},
         {what:'On polar silica, more polar compounds stick and travel less (smaller Rf).',why:'Polar-sticks-to-polar.',
-         predict:{q:'Silica is polar mud that grabs polar compounds. Which one — the high-Rf 0.8 or the low-Rf 0.2 — is more polar?',hint:'Which one barely moved off the baseline?'}},
+         predict:{q:'Silica is polar mud that grabs polar compounds. Which one: the high-Rf 0.8 or the low-Rf 0.2: is more polar?',hint:'Which one barely moved off the baseline?'}},
         {what:'B (Rf 0.2) barely moved → it stuck to the silica → it is more polar. "Stuck in the mud."',why:'Smallest Rf = most polar.'},
-       ], answer:'B (Rf 0.2) is more polar — it stuck to the polar silica and traveled least. Smallest Rf = most polar.'},
+       ], answer:'B (Rf 0.2) is more polar: it stuck to the polar silica and traveled least. Smallest Rf = most polar.'},
       {q:'A mixture of benzoic acid (a carboxylic acid) and bromobenzene (neutral, nonpolar) is dissolved in ether. How do you separate them?',
        steps:[
         {what:'Add aqueous strong base (NaOH or NaHCO₃) and shake the two layers.',why:'Base will react only with the acidic component.'},
         {what:'The base deprotonates benzoic acid to a charged carboxylate salt.',why:'Charging it up changes where it dissolves.',
-         predict:{q:'The carboxylate is now a charged, ionic salt. Which layer does it move into — aqueous or organic?',hint:'Charged, ionic species prefer the water.'}},
+         predict:{q:'The carboxylate is now a charged, ionic salt. Which layer does it move into, aqueous or organic?',hint:'Charged, ionic species prefer the water.'}},
         {what:'The carboxylate salt moves into the AQUEOUS layer; bromobenzene (neutral, nonpolar) stays in the ORGANIC (ether) layer. Separate, then acidify the aqueous layer to recover the benzoic acid.',why:'Reprotonating returns it to a neutral, organic-soluble form.'},
        ], answer:'Wash with aqueous base: benzoic acid becomes a water-soluble carboxylate (aqueous layer) while bromobenzene stays in the ether (organic). Separate, then acidify to recover the benzoic acid.'},
       {q:'You need to separate two liquids whose boiling points differ by only 8 °C. Which distillation?',
        steps:[
         {what:'Simple distillation works only when the boiling points are far apart (more than ~25 °C).',why:'One vaporization cycle is not enough to resolve close bps.',
-         predict:{q:'The boiling points differ by only 8 °C — very close. Is simple distillation enough, or do you need fractional?',hint:'Simple distillation needs a big bp gap.'}},
+         predict:{q:'The boiling points differ by only 8 °C, very close. Is simple distillation enough, or do you need fractional?',hint:'Simple distillation needs a big bp gap.'}},
         {what:'Close boiling points (8 °C) require fractional distillation.',why:'The fractionating column provides many re-vaporization cycles.'},
         {what:'Use vacuum (reduced-pressure) distillation instead if a compound is high-boiling or heat-sensitive.',why:'Lower pressure lowers the boiling point.'},
-       ], answer:'Fractional distillation — an 8 °C gap is too close for simple distillation; the column separates them. (Vacuum distillation if a compound is high-boiling or heat-sensitive.)'},
+       ], answer:'Fractional distillation: an 8 °C gap is too close for simple distillation; the column separates them. (Vacuum distillation if a compound is high-boiling or heat-sensitive.)'},
     ],
     faded:[
       {prompt:'On polar silica TLC, the compound with the SMALLEST Rf is the ___ one.',hint:'Stuck in the mud.',answer:'most polar'},
@@ -995,41 +995,41 @@ const CONTENT = {
     mastery:['lt5','lt7','lt2','lt3','lt6','lt8','lt1','lt4'],
   },
   rcd:{accent:'var(--t3)',
-    sub:'Reading energy diagrams — transition states, intermediates, the rate-determining step, and Hammond. A new named subtopic on the 2026 DAT.',
+    sub:'Reading energy diagrams: transition states, intermediates, the rate-determining step, and Hammond. A new named subtopic on the 2026 DAT.',
     concept:`<h3>Read the energy landscape</h3>
-      <p>A reaction-coordinate diagram plots energy (up) against reaction progress (across). Learn to read it — no math required.</p>
+      <p>A reaction-coordinate diagram plots energy (up) against reaction progress (across). Learn to read it: no math required.</p>
       <div class="rule"><div class="rl">Peaks, valleys, steps</div>
-        <b>Peaks</b> = transition states (TS) — the highest points; fleeting, never isolated.<br>
-        <b>Valleys between peaks</b> = intermediates — real dips that briefly exist (a carbocation lives here).<br>
+        <b>Peaks</b> = transition states (TS): the highest points; fleeting, never isolated.<br>
+        <b>Valleys between peaks</b> = intermediates: real dips that briefly exist (a carbocation lives here).<br>
         <b>Number of peaks (humps) = number of steps.</b> <b>Activation energy Ea</b> = the height from a starting valley up to the next peak.</div>
       <div class="rule"><div class="rl">Which step, which direction</div>
-        <b>Rate-determining step</b> = the one with the <b>highest-energy transition state</b> (biggest barrier) — the slowest step sets the overall rate.<br>
+        <b>Rate-determining step</b> = the one with the <b>highest-energy transition state</b> (biggest barrier), the slowest step sets the overall rate.<br>
         <b>Exothermic</b> = products lower than reactants (downhill, negative ΔG/ΔH). <b>Endothermic</b> = products higher (uphill).<br>
-        <b>Hammond postulate:</b> a TS resembles whatever it is closer to in energy — an <em>early</em> TS (exothermic step) resembles the <b>reactants</b>; a <em>late</em> TS (endothermic step) resembles the <b>products</b>.</div>
+        <b>Hammond postulate:</b> a TS resembles whatever it is closer to in energy, an <em>early</em> TS (exothermic step) resembles the <b>reactants</b>; a <em>late</em> TS (endothermic step) resembles the <b>products</b>.</div>
       <div class="trapbox"><div class="rl">Mechanism shapes</div>SN1 / E1 = <b>two humps</b> (a carbocation intermediate sits in the valley between them). SN2 / E2 = <b>one hump</b> (concerted, no intermediate).</div>
       <div class="coachbox"><div class="rl">Coach trick · Thomas</div><b>The highest peak is the slowest step.</b> Count the humps to count the steps; the tallest one is rate-determining. A dip between peaks is an intermediate (something real); a peak is a transition state you can never bottle.</div>
-      <div class="depthnote"><b>DAT depth:</b> read a diagram for TS vs intermediate, count steps, find the rate-determining step (highest peak), read Ea, call exo- vs endothermic, and apply Hammond qualitatively — yes. The Arrhenius equation and rate-constant / kinetics math — not tested.</div>`,
+      <div class="depthnote"><b>DAT depth:</b> read a diagram for TS vs intermediate, count steps, find the rate-determining step (highest peak), read Ea, call exo- vs endothermic, and apply Hammond qualitatively, yes. The Arrhenius equation and rate-constant / kinetics math, not tested.</div>`,
     worked:[
       {q:'A reaction-coordinate diagram has two humps with a dip between them. How many steps, and what is the species in the dip?',
        steps:[
         {what:'Count the humps: two peaks means two steps.',why:'Each peak is one transition state, so one step.'},
         {what:'Each peak is a transition state; the dip (valley) between them is a small energy minimum.',why:'A minimum can briefly exist as a real species.',
          predict:{q:'The dip between the two peaks is a small energy minimum that briefly exists. Is it a transition state or an intermediate?',hint:'Transition states are the peaks; the valley is something else.'}},
-        {what:'The dip is an intermediate — for example, a carbocation.',why:'This two-hump shape is the SN1/E1 pattern.'},
+        {what:'The dip is an intermediate: for example, a carbocation.',why:'This two-hump shape is the SN1/E1 pattern.'},
        ], answer:'Two steps (two peaks). The dip is an intermediate (a briefly-existing species like a carbocation); each peak is a transition state. Two humps = SN1/E1.'},
       {q:'In a two-step diagram, the first peak is higher than the second. Which step is rate-determining?',
        steps:[
         {what:'The rate-determining step is the one with the highest-energy transition state (the biggest barrier).',why:'The slowest step is the bottleneck for the whole reaction.',
          predict:{q:'The first peak is higher than the second. Which step controls the overall rate?',hint:'Highest peak = slowest step.'}},
         {what:'The first peak is higher, so the first step is rate-determining.',why:'It is the largest barrier to climb.'},
-       ], answer:'The first step — it has the highest-energy transition state (the highest peak), so it is the slowest step and sets the overall rate.'},
+       ], answer:'The first step: it has the highest-energy transition state (the highest peak), so it is the slowest step and sets the overall rate.'},
       {q:'A one-step reaction is strongly exothermic (products far below reactants). By the Hammond postulate, does the transition state resemble the reactants or the products?',
        steps:[
         {what:'Exothermic means the products sit lower than the reactants (downhill overall).',why:'Energy is released.'},
-        {what:'An exothermic step has an early transition state — low, and close in energy to the reactants.',why:'The TS is reached quickly, near the start.',
+        {what:'An exothermic step has an early transition state, low, and close in energy to the reactants.',why:'The TS is reached quickly, near the start.',
          predict:{q:'The TS is early and low, close in energy to the starting materials. By Hammond, which species does it resemble?',hint:'A TS resembles whatever it is nearer to in energy.'}},
         {what:'So the TS resembles the reactants.',why:'A late TS (endothermic step) would instead resemble the products.'},
-       ], answer:'The reactants — an exothermic step has an early transition state close in energy to the starting materials, so by Hammond the TS resembles the reactants. (Endothermic → late TS resembling products.)'},
+       ], answer:'The reactants: an exothermic step has an early transition state close in energy to the starting materials, so by Hammond the TS resembles the reactants. (Endothermic → late TS resembling products.)'},
     ],
     faded:[
       {prompt:'On a reaction-coordinate diagram, the peaks are ___ and the valleys between them are intermediates.',hint:'The highest points.',answer:'transition states'},
@@ -1040,17 +1040,17 @@ const CONTENT = {
     mastery:['rc4','rc7','rc2','rc3','rc6','rc8','rc1','rc5'],
   },
   alkene:{accent:'var(--t1)',
-    sub:'Alkene addition — match the reagent to its product with the right regiochemistry (Markovnikov?) and stereochemistry (syn/anti). High-yield recognition.',
+    sub:'Alkene addition: match the reagent to its product with the right regiochemistry (Markovnikov?) and stereochemistry (syn/anti). High-yield recognition.',
     concept:`<h3>The reagent map</h3>
-      <p>Alkenes are electron-rich C=C that undergo <b>addition</b>. The DAT gives you a reagent and asks for the product — with the right <b>regiochemistry</b> and <b>stereochemistry</b>. Learn the map.</p>
+      <p>Alkenes are electron-rich C=C that undergo <b>addition</b>. The DAT gives you a reagent and asks for the product, with the right <b>regiochemistry</b> and <b>stereochemistry</b>. Learn the map.</p>
       <div class="rule"><div class="rl">Regiochemistry (where things add)</div>
         <b>Markovnikov:</b> H goes to the carbon with more H's; the OH/X goes to the <b>more-substituted</b> carbon (via the more stable carbocation). <b>Anti-Markovnikov</b> is the reverse (OH/X on the less-substituted carbon).</div>
       <div class="rule"><div class="rl">Reagent → product</div>
         <b>HX</b> (HBr/HCl) → Markovnikov, may rearrange. <b>HBr + peroxide (ROOR)</b> → <b>anti-Markovnikov</b> (radical).<br>
-        <b>H₂O / H⁺</b> → Markovnikov OH (may rearrange). <b>Oxymercuration</b> → Markovnikov OH, <b>no rearrangement</b>. <b>Hydroboration–oxidation</b> (BH₃, then H₂O₂/OH⁻) → <b>anti-Markovnikov OH + syn</b>.<br>
+        <b>H₂O / H⁺</b> → Markovnikov OH (may rearrange). <b>Oxymercuration</b> → Markovnikov OH, <b>no rearrangement</b>. <b>Hydroboration-oxidation</b> (BH₃, then H₂O₂/OH⁻) → <b>anti-Markovnikov OH + syn</b>.<br>
         <b>Br₂ / Cl₂</b> → <b>anti</b> addition of two halogens (trans, via halonium). <b>Halohydrin</b> (X₂/H₂O) → Markovnikov OH + anti. <b>mCPBA</b> → epoxide. <b>OsO₄ or cold KMnO₄</b> → <b>cis (syn) diol</b>. <b>O₃ then workup</b> → <b>cleaves</b> C=C to two carbonyls. <b>H₂ / Pd</b> → <b>syn</b> addition of two H (alkane).</div>
       <div class="coachbox"><div class="rl">Coach trick · Thomas</div><b>"Look for the peroxide."</b> HBr with peroxide (ROOR) flips to anti-Markovnikov; without it, Markovnikov. And for ozonolysis, <b>"H₂O₂ has a lot of O's"</b> → an oxidative workup gives the more-oxidized product (acids), while DMS (Zn) is "just an H" → reductive workup gives aldehydes/ketones.</div>
-      <div class="depthnote"><b>DAT depth:</b> match a reagent to its product with the correct regiochemistry (Markovnikov vs anti) and stereochemistry (syn vs anti), and recognize cleavage (ozonolysis) — yes. Full arrow-pushing mechanisms and transition-state energetics — not tested.</div>`,
+      <div class="depthnote"><b>DAT depth:</b> match a reagent to its product with the correct regiochemistry (Markovnikov vs anti) and stereochemistry (syn vs anti), and recognize cleavage (ozonolysis), yes. Full arrow-pushing mechanisms and transition-state energetics, not tested.</div>`,
     worked:[
       {q:'2-methylpropene reacts with HBr. Where does the Br go? What changes if peroxide (ROOR) is added?',
        steps:[
@@ -1059,39 +1059,39 @@ const CONTENT = {
         {what:'Br → the more-substituted (3°) carbon → 2-bromo-2-methylpropane (tert-butyl bromide).',why:'Markovnikov puts the halide on the more-substituted carbon.'},
         {what:'Add PEROXIDE (ROOR): HBr now adds anti-Markovnikov (radical) → Br on the LESS-substituted carbon.',why:'The radical chain reverses the regiochemistry.'},
        ], answer:'HBr alone = Markovnikov (Br on the more-substituted carbon, tert-butyl bromide). Add peroxide and it flips to anti-Markovnikov (Br on the less-substituted carbon). Look for the peroxide.'},
-      {q:'You want the anti-Markovnikov alcohol from an alkene. Which reagent — acid-catalyzed hydration, or hydroboration–oxidation?',
+      {q:'You want the anti-Markovnikov alcohol from an alkene. Which reagent: acid-catalyzed hydration, or hydroboration-oxidation?',
        steps:[
         {what:'Acid-catalyzed hydration (H₂O/H⁺) gives the Markovnikov alcohol and can rearrange.',why:'It goes through a carbocation.',
-         predict:{q:'You need the OH on the LESS-substituted carbon (anti-Markovnikov). Which reagent puts it there — H₂O/H⁺, or BH₃ then H₂O₂/OH⁻?',hint:'One of them is the anti-Markovnikov, syn-addition alcohol reagent.'}},
-        {what:'Hydroboration–oxidation (BH₃, then H₂O₂/OH⁻) gives the anti-Markovnikov alcohol with syn addition and no rearrangement.',why:'Boron adds to the less-hindered carbon; oxidation replaces it with OH.'},
-       ], answer:'Hydroboration–oxidation (BH₃, then H₂O₂/OH⁻) — anti-Markovnikov OH with syn stereochemistry. Acid hydration and oxymercuration both give the Markovnikov alcohol instead.'},
+         predict:{q:'You need the OH on the LESS-substituted carbon (anti-Markovnikov). Which reagent puts it there: H₂O/H⁺, or BH₃ then H₂O₂/OH⁻?',hint:'One of them is the anti-Markovnikov, syn-addition alcohol reagent.'}},
+        {what:'Hydroboration-oxidation (BH₃, then H₂O₂/OH⁻) gives the anti-Markovnikov alcohol with syn addition and no rearrangement.',why:'Boron adds to the less-hindered carbon; oxidation replaces it with OH.'},
+       ], answer:'Hydroboration-oxidation (BH₃, then H₂O₂/OH⁻), anti-Markovnikov OH with syn stereochemistry. Acid hydration and oxymercuration both give the Markovnikov alcohol instead.'},
       {q:'An alkene reacts with Br₂. Is the addition syn or anti? And what about H₂/Pd?',
        steps:[
         {what:'Br₂ goes through a cyclic bromonium ion; the second bromide attacks from the opposite face.',why:'The bromonium blocks one face.',
-         predict:{q:'The second bromide attacks from the opposite face of the bromonium ion. Is that syn or anti addition?',hint:'Opposite faces — which label is that?'}},
+         predict:{q:'The second bromide attacks from the opposite face of the bromonium ion. Is that syn or anti addition?',hint:'Opposite faces: which label is that?'}},
         {what:'So Br₂ = anti addition (a trans-dibromide). H₂/Pd delivers both H atoms from the same face of the catalyst → syn addition.',why:'The metal surface adds both hydrogens from the same face.'},
        ], answer:'Br₂ adds ANTI (trans, via the bromonium ion); H₂/Pd adds SYN. Remember the syn set (hydroboration, OsO₄, H₂/Pd, epoxidation) vs the anti set (X₂, halohydrin).'},
     ],
     faded:[
-      {prompt:'HBr adds to an alkene with Markovnikov regiochemistry — unless you add ___, which flips it to anti-Markovnikov.',hint:'The radical trigger.',answer:'peroxide'},
-      {prompt:'Hydroboration–oxidation (BH₃ then H₂O₂/OH⁻) gives the ___ alcohol with syn addition.',hint:'OH on the less-substituted carbon.',answer:'anti-Markovnikov'},
+      {prompt:'HBr adds to an alkene with Markovnikov regiochemistry, unless you add ___, which flips it to anti-Markovnikov.',hint:'The radical trigger.',answer:'peroxide'},
+      {prompt:'Hydroboration-oxidation (BH₃ then H₂O₂/OH⁻) gives the ___ alcohol with syn addition.',hint:'OH on the less-substituted carbon.',answer:'anti-Markovnikov'},
       {prompt:'Ozonolysis (O₃ then workup) ___ the C=C into two carbonyl groups.',hint:'It breaks the double bond.',answer:'cleaves'},
     ],
     practice:['al1','al2','al3','al5','al7','al8'],
     mastery:['al4','al6','al2','al3','al5','al8','al1','al7'],
   },
   carbonyl:{accent:'var(--t2)',
-    sub:'The carbonyl (C=O) — nucleophilic addition. Match the nucleophile to the product: hydride, Grignard, alcohol, amine, ylide. High-yield recognition.',
+    sub:'The carbonyl (C=O): nucleophilic addition. Match the nucleophile to the product: hydride, Grignard, alcohol, amine, ylide. High-yield recognition.',
     concept:`<h3>Attack the carbon</h3>
-      <p>Oxygen pulls electrons, so the carbonyl <b>carbon is electrophilic (δ+)</b>. Nucleophiles attack that carbon — <b>nucleophilic addition</b>. Learn which nucleophile gives which product.</p>
+      <p>Oxygen pulls electrons, so the carbonyl <b>carbon is electrophilic (δ+)</b>. Nucleophiles attack that carbon: <b>nucleophilic addition</b>. Learn which nucleophile gives which product.</p>
       <div class="rule"><div class="rl">Reductions (add H⁻)</div>
-        <b>NaBH₄</b> — mild: reduces aldehydes and ketones → alcohols; leaves esters and acids alone. <b>LiAlH₄</b> — strong: reduces aldehydes, ketones, <b>and</b> carboxylic acids and esters → alcohols.</div>
+        <b>NaBH₄</b>, mild: reduces aldehydes and ketones → alcohols; leaves esters and acids alone. <b>LiAlH₄</b>, strong: reduces aldehydes, ketones, <b>and</b> carboxylic acids and esters → alcohols.</div>
       <div class="rule"><div class="rl">Carbon nucleophiles</div>
-        <b>Grignard (RMgX) / RLi</b> — adds an R to the carbonyl carbon; acid workup → an alcohol. Formaldehyde → 1° · aldehyde → 2° · ketone → 3° (ester adds twice). Water or any protic H <em>destroys</em> a Grignard. <b>HCN</b> → cyanohydrin (CN + OH).</div>
+        <b>Grignard (RMgX) / RLi</b>, adds an R to the carbonyl carbon; acid workup → an alcohol. Formaldehyde → 1° · aldehyde → 2° · ketone → 3° (ester adds twice). Water or any protic H <em>destroys</em> a Grignard. <b>HCN</b> → cyanohydrin (CN + OH).</div>
       <div class="rule"><div class="rl">Oxygen &amp; nitrogen nucleophiles, Wittig</div>
-        <b>2 ROH</b> (acid cat.) → <b>acetal</b> (hemiacetal is the intermediate) — a <b>protecting group</b>, reversible with aqueous acid. <b>Primary amine (RNH₂)</b> → <b>imine</b> (C=N, a Schiff base). <b>Secondary amine (R₂NH)</b> → <b>enamine</b> (C=C–N). <b>Wittig ylide</b> → converts C=O to <b>C=C</b> (an alkene).</div>
-      <div class="coachbox"><div class="rl">Coach trick · Thomas</div>Match the nucleophile to the product: H⁻ (NaBH₄/LiAlH₄) → alcohol; R⁻ (Grignard) → a bigger alcohol; RNH₂ → imine, R₂NH → enamine; 2 ROH → acetal (a protecting group); ylide → alkene. And <b>aldehydes are more reactive than ketones</b> — one less R means less crowding and a more electrophilic carbon.</div>
-      <div class="depthnote"><b>DAT depth:</b> match a carbonyl + reagent to the product; know NaBH₄ vs LiAlH₄ scope, the Grignard alcohol class, acetal-as-protecting-group, imine vs enamine, Wittig, aldehyde &gt; ketone reactivity, and keto-enol tautomerism / α-acidity at recognition — yes. Full arrow-pushing and aldol/Claisen mechanism detail — not tested.</div>`,
+        <b>2 ROH</b> (acid cat.) → <b>acetal</b> (hemiacetal is the intermediate), a <b>protecting group</b>, reversible with aqueous acid. <b>Primary amine (RNH₂)</b> → <b>imine</b> (C=N, a Schiff base). <b>Secondary amine (R₂NH)</b> → <b>enamine</b> (C=C-N). <b>Wittig ylide</b> → converts C=O to <b>C=C</b> (an alkene).</div>
+      <div class="coachbox"><div class="rl">Coach trick · Thomas</div>Match the nucleophile to the product: H⁻ (NaBH₄/LiAlH₄) → alcohol; R⁻ (Grignard) → a bigger alcohol; RNH₂ → imine, R₂NH → enamine; 2 ROH → acetal (a protecting group); ylide → alkene. And <b>aldehydes are more reactive than ketones</b>, one less R means less crowding and a more electrophilic carbon.</div>
+      <div class="depthnote"><b>DAT depth:</b> match a carbonyl + reagent to the product; know NaBH₄ vs LiAlH₄ scope, the Grignard alcohol class, acetal-as-protecting-group, imine vs enamine, Wittig, aldehyde &gt; ketone reactivity, and keto-enol tautomerism / α-acidity at recognition, yes. Full arrow-pushing and aldol/Claisen mechanism detail, not tested.</div>`,
     worked:[
       {q:'A molecule has BOTH a ketone and an ester. Which reagent reduces ONLY the ketone, and which reduces both?',
        steps:[
@@ -1102,18 +1102,18 @@ const CONTENT = {
        ], answer:'NaBH₄ reduces only the ketone (mild, selective); LiAlH₄ reduces both the ketone and the ester. Use NaBH₄ when you want to spare the ester.'},
       {q:'A Grignard reagent (RMgBr) reacts with an aldehyde, then acid workup. What class of alcohol forms? What if you use a ketone instead?',
        steps:[
-        {what:'The Grignard adds its R to the carbonyl carbon; workup protonates the oxygen to give an alcohol.',why:'A new C–C bond forms at the carbonyl carbon.'},
-        {what:'An aldehyde carbon carries one R and one H; adding a second R gives a carbon with two R groups.',why:'Count the carbon groups on the new C–OH.',
+        {what:'The Grignard adds its R to the carbonyl carbon; workup protonates the oxygen to give an alcohol.',why:'A new C-C bond forms at the carbonyl carbon.'},
+        {what:'An aldehyde carbon carries one R and one H; adding a second R gives a carbon with two R groups.',why:'Count the carbon groups on the new C-OH.',
          predict:{q:'After the Grignard adds its R to an aldehyde, the carbinol carbon has two carbon groups. Is that a 1°, 2°, or 3° alcohol?',hint:'Count the carbon groups on the carbon bearing the OH.'}},
         {what:'Aldehyde → 2° alcohol; a ketone (two R groups) → 3° alcohol; formaldehyde → 1° alcohol.',why:'Any water or protic H destroys the Grignard before it can add.'},
        ], answer:'Aldehyde + Grignard → a 2° alcohol; ketone + Grignard → a 3° alcohol (formaldehyde → 1°). Grignards are destroyed by water or any protic hydrogen.'},
       {q:'A ketone reacts with a PRIMARY amine (RNH₂). What forms? What changes with a SECONDARY amine (R₂NH)?',
        steps:[
         {what:'The amine adds to the carbonyl, then water is lost.',why:'This is a condensation.',
-         predict:{q:'A primary amine (RNH₂) adds, then loses water. Does it give a C=N (imine) or a C=C–N (enamine)?',hint:'A primary amine still has an N–H available to form the C=N.'}},
-        {what:'A primary amine still has an N–H, so it forms the C=N → an imine (Schiff base).',why:'Losing water leaves the C=N double bond.'},
-        {what:'A secondary amine (R₂NH) has no N–H left for a C=N, so it forms the C=C–N → an enamine.',why:'The double bond shifts to carbon instead.'},
-       ], answer:'Primary amine (RNH₂) → imine (C=N, a Schiff base); secondary amine (R₂NH) → enamine (C=C–N). Both lose water; the difference is how many N–H bonds remain.'},
+         predict:{q:'A primary amine (RNH₂) adds, then loses water. Does it give a C=N (imine) or a C=C-N (enamine)?',hint:'A primary amine still has an N-H available to form the C=N.'}},
+        {what:'A primary amine still has an N-H, so it forms the C=N → an imine (Schiff base).',why:'Losing water leaves the C=N double bond.'},
+        {what:'A secondary amine (R₂NH) has no N-H left for a C=N, so it forms the C=C-N → an enamine.',why:'The double bond shifts to carbon instead.'},
+       ], answer:'Primary amine (RNH₂) → imine (C=N, a Schiff base); secondary amine (R₂NH) → enamine (C=C-N). Both lose water; the difference is how many N-H bonds remain.'},
     ],
     faded:[
       {prompt:'The mild hydride ___ reduces aldehydes and ketones but not esters or acids.',hint:'The selective reducer.',answer:'NaBH4'},
@@ -1171,7 +1171,7 @@ function renderTree(){
       b.className='node s-'+st+' '+t.cls+(m.id===activeId?' active':'');
       b.style.setProperty('--tc','var(--t'+m.tier+')');
       b.disabled=(st==='locked');
-      b.setAttribute('aria-label',m.name+' — '+st);
+      b.setAttribute('aria-label',m.name+' - '+st);
       const authored=!!(CONTENT[m.id]&&CONTENT[m.id].worked&&CONTENT[m.id].worked.length);
       b.innerHTML='<span class="dot" aria-hidden="true"></span><span class="nm">'+m.name+'</span>'+
         (st==='locked'?'<span class="lk">in development</span>':(st==='mastered'?'<span class="lk" style="color:var(--good)">done</span>':(authored?'':'<span class="lk">soon</span>')));
@@ -1514,8 +1514,8 @@ const FIGX = {
   newm.addEventListener('click',()=>{ ecl=!ecl; setNewman(); });
   /* --- R/S trainer --- */
   const EX=[
-    {g:'tryA', dir:'cw', wedge:false, ans:'R', read:'H is on the dash, pointing back — so what you see is what you get. Clockwise = <b>(R)</b>.'},
-    {g:'tryB', dir:'cw', wedge:true,  ans:'S', read:'H is on the wedge, pointing at you — so flip it. You traced clockwise; flip to counter-clockwise → <b>(S)</b>.'}
+    {g:'tryA', dir:'cw', wedge:false, ans:'R', read:'H is on the dash, pointing back, so what you see is what you get. Clockwise = <b>(R)</b>.'},
+    {g:'tryB', dir:'cw', wedge:true,  ans:'S', read:'H is on the wedge, pointing at you, so flip it. You traced clockwise; flip to counter-clockwise → <b>(S)</b>.'}
   ];
   let ei=0;
   const ans=root.querySelector('#tryAns');
@@ -1571,7 +1571,7 @@ const FIGX = {
       const one_=b.dataset.mode==='one';
       two.setAttribute('opacity',one_?'0':'1');one.setAttribute('opacity',one_?'1':'0');
       rds.setAttribute('cx',one_?'250':'214');rds.setAttribute('cy',one_?'60':'66');
-      rdsl.setAttribute('x',one_?'250':'214');rdsl.setAttribute('y',one_?'44':'50');rdsl.textContent=one_?'TS':'TS — RDS';
+      rdsl.setAttribute('x',one_?'250':'214');rdsl.setAttribute('y',one_?'44':'50');rdsl.textContent=one_?'TS':'TS: RDS';
       intl.setAttribute('opacity',one_?'0':'1');
       d.innerHTML=FIG_TEXT.rcd[b.dataset.mode];
     }));
@@ -1600,12 +1600,12 @@ function renderHome(){
    '<div class="hero">'+
      '<p class="eye">A guided course · not a room full of tools</p>'+
      '<h1>Organic chemistry, <em>one clear step</em> at a time.</h1>'+
-     '<p>Every module teaches the same way — concept, worked examples you predict before they reveal, fading practice, then a mastery check you have to earn. <b>'+liveMods.length+' are fully live now</b> ('+liveMods.map(m=>m.name).join(', ')+'); the rest are being authored.</p>'+
+     '<p>Every module teaches the same way, concept, worked examples you predict before they reveal, fading practice, then a mastery check you have to earn. <b>'+liveMods.length+' are fully live now</b> ('+liveMods.map(m=>m.name).join(', ')+'); the rest are being authored.</p>'+
      '<p>No wall of tools. Just the next rung.</p>'+
      '<button class="cta" id="startBtn">Start: '+next.name+'</button>'+
      '<button class="cta ghost" id="stereoBtn">Jump to Stereochemistry</button>'+
      '<div style="margin-top:14px"><button class="watch-btn" id="easVidBtn">Watch a sample coach explainer: EAS directors</button></div>'+
-     '<div class="pathnote"><b>Built to be seen.</b> Every module now opens with a diagram — a chirality pair, a pKa ladder, EAS director rings, the SN/E decision grid, IR and NMR traces, a TLC plate, the reaction-coordinate curve, and reagent maps — then teaches through the five-stage flow. '+liveMods.length+' modules are fully live.</div>'+
+     '<div class="pathnote"><b>Built to be seen.</b> Every module now opens with a diagram, a chirality pair, a pKa ladder, EAS director rings, the SN/E decision grid, IR and NMR traces, a TLC plate, the reaction-coordinate curve, and reagent maps, then teaches through the five-stage flow. '+liveMods.length+' modules are fully live.</div>'+
      '<div class="homefigs">'+
        '<figure class="fig" data-fig="rcd">'+FIG.rcd+'</figure>'+
        '<figure class="fig" data-fig="aromatic">'+FIG.aromatic+'</figure>'+
@@ -1683,7 +1683,7 @@ function drawStageBody(id){
   const c=CONTENT[id],ss=stageState(id),el=document.getElementById('stageBody');
   const stage=ss.cur;
   if(stage===0){ // Concept
-    el.innerHTML=(FIG[id]?'<figure class="fig" data-fig="'+id+'">'+FIG[id]+'</figure>':'')+(c.videoUrl?'<button class="watch-btn" id="cWatch">Watch: '+(c.videoTitle||'coach explainer')+'</button>':'')+'<div class="card">'+c.concept+'</div><button class="next-btn" id="s0">I’ve got the idea — continue</button>';
+    el.innerHTML=(FIG[id]?'<figure class="fig" data-fig="'+id+'">'+FIG[id]+'</figure>':'')+(c.videoUrl?'<button class="watch-btn" id="cWatch">Watch: '+(c.videoTitle||'coach explainer')+'</button>':'')+'<div class="card">'+c.concept+'</div><button class="next-btn" id="s0">I’ve got the idea: continue</button>';
     const cw=document.getElementById('cWatch');if(cw)cw.addEventListener('click',()=>VID.open(c.videoUrl,c.videoTitle));
     document.getElementById('s0').addEventListener('click',()=>{markStageDone(id,0);renderStage(id);});wireFigs(el);
   } else if(stage===1){ // Worked
@@ -1695,7 +1695,7 @@ function drawStageBody(id){
   } else if(stage===4){ // Mastery
     drawMastery(id);
   } else { // stage>=5 : module already mastered — recap + a way back
-    el.innerHTML='<div class="celebrate"><h3>'+MOD_BY_ID[id].name+' — mastered.</h3><p>You cleared all five stages and the mastery check. Use the stage pills above to revisit any part, or head back to the tree for your next module.</p></div>'+
+    el.innerHTML='<div class="celebrate"><h3>'+MOD_BY_ID[id].name+', mastered.</h3><p>You cleared all five stages and the mastery check. Use the stage pills above to revisit any part, or head back to the tree for your next module.</p></div>'+
       '<button class="next-btn ghost" id="backTree">Back to the tree</button>';
     document.getElementById('backTree').addEventListener('click',renderHome);
   }
@@ -1722,7 +1722,7 @@ function drawWorked(id){
       const reveal=()=>{ stepEl.insertAdjacentHTML('beforeend','<div class="why">'+s.why+'</div>'); toNext(); };
       if(s.predict){
         const pd=document.createElement('div');pd.className='predict';
-        pd.innerHTML='<div class="q">'+s.predict.q+'</div><div class="hint">'+s.predict.hint+'</div><button class="reveal-btn">Commit — reveal</button>';
+        pd.innerHTML='<div class="q">'+s.predict.q+'</div><div class="hint">'+s.predict.hint+'</div><button class="reveal-btn">Commit: reveal</button>';
         sw.appendChild(pd);
         pd.querySelector('button').addEventListener('click',()=>{pd.remove();reveal();});
       } else {
@@ -1769,7 +1769,7 @@ function drawFaded(id){
       const norm=s=>String(s||'').trim().toLowerCase().replace(/\b(and|the)\b/g,'').replace(/[^a-z0-9+]/g,'');
       const typed=norm(document.getElementById('fin').value), ans=norm(f.answer);
       const ok=!!typed&&(typed===ans||(ans.length>=4&&(typed.indexOf(ans)>=0||(ans.startsWith(typed)&&typed.length>=3))));
-      document.getElementById('fans').innerHTML='<div class="fb '+(ok?'good':'bad')+'"><div class="lab">'+(ok?'Nice — that is it':(typed?'Not quite — the answer is':'Answer'))+'</div><b>'+f.answer+'</b></div>';
+      document.getElementById('fans').innerHTML='<div class="fb '+(ok?'good':'bad')+'"><div class="lab">'+(ok?'Nice: that is it':(typed?'Not quite: the answer is':'Answer'))+'</div><b>'+f.answer+'</b></div>';
       const b=document.createElement('button');b.className='next-btn';
       b.textContent=i<c.faded.length-1?'Next':'Continue to independent practice';
       b.addEventListener('click',()=>{if(i<c.faded.length-1){i++;render();}else{markStageDone(id,2);renderStage(id);}});
@@ -1798,7 +1798,7 @@ function drawBankSet(id,ids,mode){
       const fb=document.getElementById('qfb');
       fb.innerHTML='<div class="fb '+(correct?'good':'bad')+'"><div class="lab">'+(correct?'Correct':'Not quite')+'</div>'+
         (correct?'':'<b>'+(q.diag[idx]||'Not the move.')+'</b><br>')+q.why+
-        (correct?'':'<br><span style="color:var(--good);font-weight:600">Correct answer: '+'ABCD'[q.correct]+' — '+q.opts[q.correct]+'</span>')+'</div>';
+        (correct?'':'<br><span style="color:var(--good);font-weight:600">Correct answer: '+'ABCD'[q.correct]+' - '+q.opts[q.correct]+'</span>')+'</div>';
       const b=document.createElement('button');b.className='next-btn';
       b.textContent=i<ids.length-1?'Next question':'Finish this set';
       b.addEventListener('click',()=>{if(i<ids.length-1){i++;render();}else{markStageDone(id,3);renderStage(id);}});
@@ -1829,9 +1829,9 @@ function drawMastery(id){
       streak=correct?streak+1:0;pi++;
       document.querySelectorAll('.streak i').forEach((el,k)=>el.classList.toggle('on',k<streak));
       const fb=document.getElementById('mfb');
-      fb.innerHTML='<div class="fb '+(correct?'good':'bad')+'"><div class="lab">'+(correct?'Correct — streak '+streak:'Streak restarts - rebuild it')+'</div>'+
+      fb.innerHTML='<div class="fb '+(correct?'good':'bad')+'"><div class="lab">'+(correct?'Correct: streak '+streak:'Streak restarts - rebuild it')+'</div>'+
         (correct?'':'<b>'+(q.diag[idx]||'')+'</b><br>')+q.why+
-        (correct?'':'<br><span style="color:var(--good);font-weight:600">Correct answer: '+'ABCD'[q.correct]+' — '+q.opts[q.correct]+'</span>')+'</div>';
+        (correct?'':'<br><span style="color:var(--good);font-weight:600">Correct answer: '+'ABCD'[q.correct]+' - '+q.opts[q.correct]+'</span>')+'</div>';
       const b=document.createElement('button');b.className='next-btn';
       if(streak>=3){b.textContent='See your result';b.addEventListener('click',()=>finishMastery(id));}
       else{b.textContent='Next';b.addEventListener('click',render);}
@@ -1846,8 +1846,8 @@ function finishMastery(id){
   [0,1,2,3,4].forEach(k=>{if(ss.done.indexOf(k)<0)ss.done.push(k);});
   ss.cur=5;ST.mastery[id]='mastered';save(ST);renderTree();
   const opened=MODS.filter(x=>x.prereqs.indexOf(id)>=0&&isUnlocked(x)).map(x=>x.name);
-  mainEl.innerHTML='<div class="celebrate"><div class="seal"><svg viewBox="0 0 34 34" aria-hidden="true"><g fill="none" stroke="#1a1206" stroke-width="2.4" stroke-linecap="round"><path d="M11 7 Q5 17 11 27"/><path d="M23 7 Q29 17 23 27"/></g><circle cx="17" cy="17" r="3.4" fill="#1a1206"/></svg></div><h3>'+m.name+' — mastered.</h3>'+
-    '<p>Three in a row — the module is yours. '+(opened.length?'You just unlocked: <b>'+opened.join(', ')+'</b>.':'Keep going — more unlocks as you clear prerequisites.')+'</p></div>'+
+  mainEl.innerHTML='<div class="celebrate"><div class="seal"><svg viewBox="0 0 34 34" aria-hidden="true"><g fill="none" stroke="#1a1206" stroke-width="2.4" stroke-linecap="round"><path d="M11 7 Q5 17 11 27"/><path d="M23 7 Q29 17 23 27"/></g><circle cx="17" cy="17" r="3.4" fill="#1a1206"/></svg></div><h3>'+m.name+', mastered.</h3>'+
+    '<p>Three in a row: the module is yours. '+(opened.length?'You just unlocked: <b>'+opened.join(', ')+'</b>.':'Keep going: more unlocks as you clear prerequisites.')+'</p></div>'+
     '<button class="next-btn" id="toNext">'+(opened.length?'Open '+opened[0]:'Back to the tree')+'</button> '+
     '<button class="next-btn ghost" id="toHome">See the tree</button>';
   document.getElementById('toHome').addEventListener('click',renderHome);

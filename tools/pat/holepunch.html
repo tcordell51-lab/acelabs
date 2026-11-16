@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Ace PAT Studio — Hole Punching: The Grid Method</title>
+<title>Ace PAT Studio · Hole Punching: The Grid Method</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -38,7 +38,7 @@
 
 <div class="wrap">
   <h1 class="title">The Grid Method</h1>
-  <p class="lede">The 4×4 grid is the sixteen possible holes. Per fold, ask one question — <b>"what piece over what line of symmetry?"</b> — then mirror your marks across each crease, one at a time. You don't have to remember what you did. The grid remembers for you.</p>
+  <p class="lede">The 4×4 grid is the sixteen possible holes. Per fold, ask one question, <b>"what piece over what line of symmetry?"</b>, then mirror your marks across each crease, one at a time. You don't have to remember what you did. The grid remembers for you.</p>
 
   <div class="bar">
     <span class="lab">Level</span>
@@ -61,7 +61,7 @@
       <div class="steps" id="stepline"></div>
     </div>
     <div class="card">
-      <div class="k">The grid — mirror as you unfold</div>
+      <div class="k">The grid: mirror as you unfold</div>
       <h2>Your scratch paper</h2>
       <svg id="grid" viewBox="0 0 560 430"></svg>
       <div class="coach" id="coach"></div>
@@ -76,7 +76,7 @@
 
   <p class="mantra">
     <b>Pre-draw all 15 grids during the science section.</b> Circles by default; X's if you like seeing half-holes.
-    No process of elimination — the grid produces the answer. Target: under 10 minutes, and never leave a question unanswered.
+    No process of elimination: the grid produces the answer. Target: under 10 minutes, and never leave a question unanswered.
   </p>
 </div>
 <script>
@@ -229,7 +229,7 @@ function renderPaper(){
   if(step===0){
     o+=packet(P.rects[0],1);
     title='A flat sheet of paper';
-    line='STEP 0 — the paper, unfolded. <b>'+(F)+' folds coming.</b>';
+    line='STEP 0: the paper, unfolded. <b>'+(F)+' folds coming.</b>';
   } else if(step>=1 && step<=F){
     var f=P.folds[step-1], before=P.rects[step-1], after=P.rects[step];
     o+=packet(before,0.4);
@@ -237,13 +237,13 @@ function renderPaper(){
     o+=crease(f,before);
     o+=foldArrow(f,before);
     title='Fold '+step+': '+foldWords(f,before);
-    line='STEP '+step+' — <b>fold '+step+' of '+F+'</b> — '+creaseLabel(f);
+    line='STEP '+step+' - <b>fold '+step+' of '+F+'</b> - '+creaseLabel(f);
   } else if(step===F+1){
     var rect=P.rects[F];
     o+=packet(rect,1);
     P.punches.forEach(function(p){ o+='<circle cx="'+px(p[0])+'" cy="'+py(p[1])+'" r="11" fill="'+HOLE+'" stroke="'+BRASS+'" stroke-width="3.5"/>'; });
     title='Punch. It goes through every layer.';
-    line='STEP '+(F+1)+' — <b>'+P.punches.length+' punch'+(P.punches.length>1?'es':'')+'</b> through the packet → '+P.answer.length+' holes total';
+    line='STEP '+(F+1)+' - <b>'+P.punches.length+' punch'+(P.punches.length>1?'es':'')+'</b> through the packet → '+P.answer.length+' holes total';
   } else if(step>=F+2 && step<=2*F+1){
     var u=step-(F+1);
     var fi=F-u;
@@ -257,12 +257,12 @@ function renderPaper(){
       o+='<circle cx="'+px(p[0])+'" cy="'+py(p[1])+'" r="11" fill="'+HOLE+'" stroke="'+(isNew?GOOD:BRASS)+'" stroke-width="3.5"/>';
     });
     title='Unfold '+u+': mirror across the crease';
-    line='UNFOLD '+u+' of '+F+' — what piece over <b>'+creaseLabel(f)+'</b>? Green = the new mirrored holes.';
+    line='UNFOLD '+u+' of '+F+', what piece over <b>'+creaseLabel(f)+'</b>? Green = the new mirrored holes.';
   } else {
     o+=packet(P.rects[0],1);
     P.answer.forEach(function(p){ o+='<circle cx="'+px(p[0])+'" cy="'+py(p[1])+'" r="11" fill="'+HOLE+'" stroke="'+BRASS+'" stroke-width="3.5"/>'; });
     title='Fully open: '+P.answer.length+' holes';
-    line='DONE — read your grid against the answers. <b>No process of elimination needed.</b>';
+    line='DONE: read your grid against the answers. <b>No process of elimination needed.</b>';
   }
   document.getElementById('paper').innerHTML=o;
   document.getElementById('stageTitle').textContent=title;
@@ -323,11 +323,11 @@ function renderGrid(){
 }
 function renderCoach(){
   var F=P.folds.length, c=document.getElementById('coach'), m='';
-  if(step===0) m='<span class="who">Coach line</span>Grid first. This one\'s already drawn — on test day you drew all fifteen during the science section.';
-  else if(step<=F) m='<span class="who">Coach line</span>Don\'t mark anything yet. Just watch the creases — each one is a <b>line of symmetry</b> you\'ll mirror across on the way back out.';
-  else if(step===F+1) m='<span class="who">Coach line</span>Mark the punch on your grid — one mark per punch, exactly where it sits in the folded packet. Say the cell out loud: <b>'+P.punches.map(cellName).join(', ')+'</b>.';
+  if(step===0) m='<span class="who">Coach line</span>Grid first. This one\'s already drawn: on test day you drew all fifteen during the science section.';
+  else if(step<=F) m='<span class="who">Coach line</span>Don\'t mark anything yet. Just watch the creases: each one is a <b>line of symmetry</b> you\'ll mirror across on the way back out.';
+  else if(step===F+1) m='<span class="who">Coach line</span>Mark the punch on your grid, one mark per punch, exactly where it sits in the folded packet. Say the cell out loud: <b>'+P.punches.map(cellName).join(', ')+'</b>.';
   else if(step<=2*F+1){var u=step-(F+1);var f=P.folds[F-u];m='<span class="who">Coach line</span>Unfold one crease. Ask it: <b>what piece over what line of symmetry?</b> Mirror every mark across the '+creaseLabel(f)+'. The green ones are the mirrors you just added.';}
-  else m='<span class="who">Coach line</span>Now read your grid against the five answers. The grid already IS the answer — you\'re just finding its twin below.';
+  else m='<span class="who">Coach line</span>Now read your grid against the five answers. The grid already IS the answer, you\'re just finding its twin below.';
   c.innerHTML=m;
 }
 function cellName(p){ return 'ABCD'[Math.floor(p[1])] + (Math.floor(p[0])+1); }
@@ -383,7 +383,7 @@ function recordAttempt(ok){
   renderTotals();
 }
 function renderTotals(){
-  var acc=sess.n?Math.round(100*sess.ok/sess.n)+'%':'—', avg=sess.n?(sess.ms/sess.n/1000).toFixed(1)+'s':'—';
+  var acc=sess.n?Math.round(100*sess.ok/sess.n)+'%':'-', avg=sess.n?(sess.ms/sess.n/1000).toFixed(1)+'s':'-';
   document.getElementById('totals').innerHTML=
     '<div><b>'+sess.n+'</b><span>attempted</span></div>'+
     '<div><b>'+sess.ok+'</b><span>correct</span></div>'+

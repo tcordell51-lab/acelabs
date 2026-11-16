@@ -114,7 +114,7 @@ h1 em{font-style:italic; color:var(--gold-d); font-weight:400}
 <body>
 <div class="wrap">
   <h1>Mental <em>Math</em> Speed Drill</h1>
-  <p class="lede">No calculator. 12 cards. 8 seconds each. Type the answer and hit Enter. The drill ends with your speed and accuracy — both must improve to break 600.</p>
+  <p class="lede">No calculator. 12 cards. 8 seconds each. Type the answer and hit Enter. The drill ends with your speed and accuracy, both must improve to break 600.</p>
 
   <div class="card">
     <div class="mt-mode">
@@ -136,8 +136,8 @@ h1 em{font-style:italic; color:var(--gold-d); font-weight:400}
 
     <div class="mt-stats">
       <div class="mt-stat"><div class="lbl">Hits</div><div class="val" id="mt-hits">0<em>/12</em></div></div>
-      <div class="mt-stat"><div class="lbl">Avg time</div><div class="val" id="mt-avg">—<em>s</em></div></div>
-      <div class="mt-stat"><div class="lbl">Accuracy</div><div class="val" id="mt-acc">—<em>%</em></div></div>
+      <div class="mt-stat"><div class="lbl">Avg time</div><div class="val" id="mt-avg">-<em>s</em></div></div>
+      <div class="mt-stat"><div class="lbl">Accuracy</div><div class="val" id="mt-acc">-<em>%</em></div></div>
     </div>
 
     <div class="mt-track" id="mt-track" style="display:none"></div>
@@ -150,7 +150,7 @@ h1 em{font-style:italic; color:var(--gold-d); font-weight:400}
 
   <div class="trap-card">
     <div class="lbl">The Trap</div>
-    <p>Students "compute" everything from scratch, burning 30+ seconds on what should take 3. Mental math is the difference between finishing QR and running out of time. 12 × 25 isn't multiplication — it's "a quarter of 1200" = 300.</p>
+    <p>Students "compute" everything from scratch, burning 30+ seconds on what should take 3. Mental math is the difference between finishing QR and running out of time. 12 × 25 isn't multiplication: it's "a quarter of 1200" = 300.</p>
   </div>
 </div>
 
@@ -260,7 +260,7 @@ function submit(timeout){
   document.getElementById('mt-acc').innerHTML = Math.round((hits/(cur+1))*100) + '<em>%</em>';
   // Add to log
   const tr = document.getElementById('mt-track');
-  tr.innerHTML += `<div class="row ${correct?'right':'wrong'}"><span>${card.q} = <b>${card.a}</b> · you: ${v||'—'}</span><span class="t">${dt.toFixed(1)}s</span></div>`;
+  tr.innerHTML += `<div class="row ${correct?'right':'wrong'}"><span>${card.q} = <b>${card.a}</b> · you: ${v||'-'}</span><span class="t">${dt.toFixed(1)}s</span></div>`;
   tr.scrollTop = tr.scrollHeight;
   cur++;
   setTimeout(showCard, 600);
@@ -271,7 +271,7 @@ function finish(){
   if(timerId) clearInterval(timerId);
   document.getElementById('mt-q').innerHTML = 'Drill <em>complete</em>';
   document.getElementById('mt-input').value = '';
-  document.getElementById('mt-clock').textContent = '—';
+  document.getElementById('mt-clock').textContent = '-';
 }
 
 document.getElementById('mt-input').addEventListener('keydown', e => {
@@ -285,8 +285,8 @@ document.getElementById('mt-reset').onclick = () => {
   document.getElementById('mt-q').textContent = 'Click Start to begin';
   document.getElementById('mt-clock').textContent = '8.0s';
   document.getElementById('mt-hits').innerHTML = '0<em>/12</em>';
-  document.getElementById('mt-avg').innerHTML = '—<em>s</em>';
-  document.getElementById('mt-acc').innerHTML = '—<em>%</em>';
+  document.getElementById('mt-avg').innerHTML = '-<em>s</em>';
+  document.getElementById('mt-acc').innerHTML = '-<em>%</em>';
   buildProgress();
   document.getElementById('mt-track').style.display = 'none';
 };

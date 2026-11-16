@@ -1196,7 +1196,7 @@ function SummaryLadder({
         marginBottom: 24,
         letterSpacing: '0.06em'
       }
-    }, "screenshot this — it’s the whole cheat sheet"), rows.map((r, i) => {
+    }, "screenshot this, it’s the whole cheat sheet"), rows.map((r, i) => {
       const rv = clamp((t - start - 0.4 - i * 0.5) / 0.5, 0, 1);
       return /*#__PURE__*/React.createElement("div", {
         key: i,
@@ -1287,7 +1287,7 @@ function QuizBeat({
         color: INK3,
         marginBottom: 26
       }
-    }, "pause it — commit before the reveal"), /*#__PURE__*/React.createElement("div", {
+    }, "pause it, commit before the reveal"), /*#__PURE__*/React.createElement("div", {
       style: {
         fontFamily: SERIF,
         fontWeight: 600,
@@ -1590,7 +1590,7 @@ function NMRStage() {
   return /*#__PURE__*/React.createElement(CenterPanel, {
     start: 13.2,
     end: 60.0,
-    label: "ETHANOL · CH₃—CH₂—OH"
+    label: "ETHANOL · CH₃-CH₂-OH"
   }, /*#__PURE__*/React.createElement("div", {
     style: {
       position: 'absolute',
@@ -1641,7 +1641,7 @@ function NMRStage() {
     style: {
       color: GOLD
     }
-  }, "three peaks"), " — cross out every answer that disagrees")), showSpec && /*#__PURE__*/React.createElement("svg", {
+  }, "three peaks"), ", cross out every answer that disagrees")), showSpec && /*#__PURE__*/React.createElement("svg", {
     width: CW,
     height: CH,
     viewBox: `0 0 ${CW} ${CH}`,
@@ -1726,7 +1726,7 @@ function NMRStage() {
     style: {
       color: POOR
     }
-  }, "~9–10"), " aldehyde"), /*#__PURE__*/React.createElement("span", null, /*#__PURE__*/React.createElement("b", {
+  }, "~9-10"), " aldehyde"), /*#__PURE__*/React.createElement("span", null, /*#__PURE__*/React.createElement("b", {
     style: {
       color: GOLD
     }
@@ -1741,7 +1741,7 @@ function NMRStage() {
       color: INK3,
       marginTop: 16
     }
-  }, "the 10 line divides COOH from aldehyde — that's most of the ppm you need")));
+  }, "the 10 line divides COOH from aldehyde, that's most of the ppm you need")));
 }
 function NMRVideo() {
   return /*#__PURE__*/React.createElement(Stage, {
@@ -1784,7 +1784,7 @@ function NMRVideo() {
       color: INK3,
       marginTop: 14
     }
-  }, "ethanol — count the worlds"), /*#__PURE__*/React.createElement("div", {
+  }, "ethanol, count the worlds"), /*#__PURE__*/React.createElement("div", {
     style: {
       fontFamily: SANS,
       fontSize: 38,
@@ -1799,7 +1799,7 @@ function NMRVideo() {
       marginTop: 22,
       letterSpacing: '0.06em'
     }
-  }, "comment your pick — answer at the end")), /*#__PURE__*/React.createElement(Header, {
+  }, "comment your pick, answer at the end")), /*#__PURE__*/React.createElement(Header, {
     start: 7.2,
     end: 13.0,
     top: 330
@@ -1823,11 +1823,11 @@ function NMRVideo() {
     style: {
       color: GOLD
     }
-  }, "count unique peaks"), " — cross out answers", /*#__PURE__*/React.createElement("br", null), "2 · ", /*#__PURE__*/React.createElement("b", {
+  }, "count unique peaks"), ", cross out answers", /*#__PURE__*/React.createElement("br", null), "2 · ", /*#__PURE__*/React.createElement("b", {
     style: {
       color: SPARED
     }
-  }, "the splitting rule"), " — n + 1")), /*#__PURE__*/React.createElement(Header, {
+  }, "the splitting rule"), ", n + 1")), /*#__PURE__*/React.createElement(Header, {
     start: 13.2,
     end: 24.0,
     top: 170
@@ -1857,7 +1857,7 @@ function NMRVideo() {
       color: INK3,
       marginTop: 8
     }
-  }, "symmetry is the trap — mirror-image hydrogens count once")), /*#__PURE__*/React.createElement(Header, {
+  }, "symmetry is the trap, mirror-image hydrogens count once")), /*#__PURE__*/React.createElement(Header, {
     start: 24.2,
     end: 40.0,
     top: 170
@@ -1880,7 +1880,7 @@ function NMRVideo() {
     style: {
       color: SPARED
     }
-  }, "all"), " the neighbors — left and right — then add one"), /*#__PURE__*/React.createElement("div", {
+  }, "all"), " the neighbors, left and right, then add one"), /*#__PURE__*/React.createElement("div", {
     style: {
       fontFamily: SANS,
       fontSize: 28,
@@ -1917,7 +1917,7 @@ function NMRVideo() {
       color: INK3,
       marginTop: 8
     }
-  }, "oxygen is so electronegative it blocks the neighbors — no splitting through it")), /*#__PURE__*/React.createElement(Header, {
+  }, "oxygen is so electronegative it blocks the neighbors, no splitting through it")), /*#__PURE__*/React.createElement(Header, {
     start: 52.2,
     end: 60.0,
     top: 170
@@ -1936,7 +1936,7 @@ function NMRVideo() {
       fontSize: 44,
       color: INK
     }
-  }, "carboxylic acid ~12 · aldehyde ~9–10")), /*#__PURE__*/React.createElement(NMRStage, null), /*#__PURE__*/React.createElement(Header, {
+  }, "carboxylic acid ~12 · aldehyde ~9-10")), /*#__PURE__*/React.createElement(NMRStage, null), /*#__PURE__*/React.createElement(Header, {
     start: 60.2,
     end: 71.0,
     top: 620
@@ -1972,7 +1972,7 @@ function NMRVideo() {
       color: INK2,
       marginTop: 26
     }
-  }, "two steps, one exception — that's 90% of NMR")), /*#__PURE__*/React.createElement(SummaryLadder, {
+  }, "two steps, one exception, that's 90% of NMR")), /*#__PURE__*/React.createElement(SummaryLadder, {
     start: 71.2,
     end: 83.0,
     kicker: "H-NMR · THE SYSTEM",
@@ -1984,7 +1984,7 @@ function NMRVideo() {
       c: GOLD
     }, {
       k: 'STEP 2',
-      ex: 'n + 1 — count ALL neighbors',
+      ex: 'n + 1, count ALL neighbors',
       pill: '2 → triplet · 3 → quartet',
       c: SPARED
     }, {
@@ -1994,28 +1994,28 @@ function NMRVideo() {
       c: RICH
     }, {
       k: 'PPM',
-      ex: 'COOH ~12 · aldehyde ~9–10',
+      ex: 'COOH ~12 · aldehyde ~9-10',
       pill: 'the 10 line divides',
       c: REDX
     }]
   }), /*#__PURE__*/React.createElement(QuizBeat, {
     start: 83.2,
     qs: [{
-      q: 'CH₃CH₂OH: how many peaks — and the singlet is…',
-      opts: ['3 peaks — the OH', '2 peaks — the CH₃', '4 peaks — the CH₂'],
+      q: 'CH₃CH₂OH: how many peaks, and the singlet is…',
+      opts: ['3 peaks: the OH', '2 peaks: the CH₃', '4 peaks: the CH₂'],
       ans: 0,
-      why: 'Three hydrogen worlds: CH₃ triplet, CH₂ quartet, and the OH — always a singlet, O blocks the neighbors.'
+      why: 'Three hydrogen worlds: CH₃ triplet, CH₂ quartet, and the OH, always a singlet, O blocks the neighbors.'
     }, {
-      q: 'Dimethyl ether, CH₃—O—CH₃: how many peaks?',
+      q: 'Dimethyl ether, CH₃-O-CH₃: how many peaks?',
       opts: ['2', '1', '6'],
       ans: 1,
-      why: 'Symmetry. Both CH₃ groups live in the same world — one singlet. The mirror trap.'
+      why: 'Symmetry. Both CH₃ groups live in the same world, one singlet. The mirror trap.'
     }]
   }), /*#__PURE__*/React.createElement(OutroCard, {
     start: 99.8,
     end: 108,
     lines: ['Count the peaks.', 'Then n + 1.'],
-    tease: "Every alkene reagent on one map — next."
+    tease: "Every alkene reagent on one map, next."
   }));
 }
 window.NMRVideo = NMRVideo;

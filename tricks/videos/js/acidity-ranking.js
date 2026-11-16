@@ -1159,7 +1159,7 @@ function TierCharge({
     style: {
       color: GOLD
     }
-  }, "−"), " beats everything — check it first"));
+  }, "−"), " beats everything, check it first"));
 }
 
 // A — bigger atom spreads the charge
@@ -1411,7 +1411,7 @@ function TierResonance({
     style: {
       color: RICH
     }
-  }, "share the load"), " — like two people lifting the couch"));
+  }, "share the load"), ", like two people lifting the couch"));
 }
 
 // D/I — EWGs siphon the charge away through the bonds
@@ -1798,7 +1798,7 @@ function CardioLadder({
         marginBottom: 24,
         letterSpacing: '0.06em'
       }
-    }, "screenshot this — it’s the whole cheat sheet"), ROWS.map((r, i) => {
+    }, "screenshot this, it’s the whole cheat sheet"), ROWS.map((r, i) => {
       const rv = clamp((t - start - 0.4 - i * 0.5) / 0.5, 0, 1);
       return /*#__PURE__*/React.createElement("div", {
         key: i,
@@ -1969,7 +1969,7 @@ function AcidityRankingVideo() {
       color: INK2,
       marginTop: 28
     }
-  }, "which is more acidic — ", /*#__PURE__*/React.createElement("b", {
+  }, "which is more acidic: ", /*#__PURE__*/React.createElement("b", {
     style: {
       color: GOLD
     }
@@ -1981,7 +1981,7 @@ function AcidityRankingVideo() {
       marginTop: 22,
       letterSpacing: '0.06em'
     }
-  }, "comment your pick — answer at the end")), /*#__PURE__*/React.createElement(Header, {
+  }, "comment your pick, answer at the end")), /*#__PURE__*/React.createElement(Header, {
     start: 4.5,
     end: 10.3,
     top: 300
@@ -2006,7 +2006,7 @@ function AcidityRankingVideo() {
       fontSize: 34,
       verticalAlign: 'super'
     }
-  }, "+"), " off —", /*#__PURE__*/React.createElement("br", null), "the ", /*#__PURE__*/React.createElement("b", {
+  }, "+"), " off", /*#__PURE__*/React.createElement("br", null), "the ", /*#__PURE__*/React.createElement("b", {
     style: {
       color: RICH
     }
@@ -2051,13 +2051,13 @@ function AcidityRankingVideo() {
       color: INK3,
       marginTop: 10
     }
-  }, "rare on the test — but it’s check number one")), /*#__PURE__*/React.createElement(ResultBanner, {
+  }, "rare on the test, but it’s check number one")), /*#__PURE__*/React.createElement(ResultBanner, {
     start: 15.0,
     end: 19.0,
     color: GOLD,
     kicker: "CHECK 1",
     big: "charge wins",
-    sub: 'H₃O⁺ beats H₂O — done, stop there'
+    sub: 'H₃O⁺ beats H₂O: done, stop there'
   }), /*#__PURE__*/React.createElement(Header, {
     start: 19.2,
     end: 28.0,
@@ -2080,7 +2080,7 @@ function AcidityRankingVideo() {
       color: INK3,
       marginTop: 10
     }
-  }, "who’s holding the charge — and how big are they?")), /*#__PURE__*/React.createElement(ResultBanner, {
+  }, "who’s holding the charge, and how big are they?")), /*#__PURE__*/React.createElement(ResultBanner, {
     start: 24.4,
     end: 28.0,
     color: RICH,
@@ -2113,13 +2113,13 @@ function AcidityRankingVideo() {
       color: INK3,
       marginTop: 10
     }
-  }, "alone you throw your back out — with help, the couch is easy")), /*#__PURE__*/React.createElement(ResultBanner, {
+  }, "alone you throw your back out, with help, the couch is easy")), /*#__PURE__*/React.createElement(ResultBanner, {
     start: 35.2,
     end: 40.0,
     color: RICH,
     kicker: "CHECK 3",
     big: "RCOOH beats ROH",
-    sub: "acetic pKa 4.8 · ethanol 15.9 — resonance is the gap"
+    sub: "acetic pKa 4.8 · ethanol 15.9: resonance is the gap"
   }), /*#__PURE__*/React.createElement(Header, {
     start: 40.2,
     end: 52.0,
@@ -2152,7 +2152,7 @@ function AcidityRankingVideo() {
     color: POOR,
     kicker: "CHECK 4",
     big: 'CF₃COOH ≫ CH₃COOH',
-    sub: "pKa 0.2 vs 4.8 — three fluorines pulling"
+    sub: "pKa 0.2 vs 4.8: three fluorines pulling"
   }), /*#__PURE__*/React.createElement(Header, {
     start: 52.2,
     end: 60.0,
@@ -2175,13 +2175,13 @@ function AcidityRankingVideo() {
       color: INK3,
       marginTop: 10
     }
-  }, "the tiebreaker — it comes up in very few cases")), /*#__PURE__*/React.createElement(ResultBanner, {
+  }, "the tiebreaker, it comes up in very few cases")), /*#__PURE__*/React.createElement(ResultBanner, {
     start: 56.4,
     end: 60.0,
     color: SPARED,
     kicker: "CHECK 5",
     big: 'sp > sp² > sp³',
-    sub: "a terminal alkyne C–H · pKa 25"
+    sub: "a terminal alkyne C-H · pKa 25"
   }), /*#__PURE__*/React.createElement(CBStage, null), /*#__PURE__*/React.createElement(Header, {
     start: 60.2,
     end: 71.0,
@@ -2215,25 +2215,25 @@ function AcidityRankingVideo() {
       color: INK2,
       marginTop: 26
     }
-  }, "is there a charge? no — next. different atom? no — next.", /*#__PURE__*/React.createElement("br", null), "resonance? ", /*#__PURE__*/React.createElement("b", {
+  }, "is there a charge? no, next. different atom? no, next.", /*#__PURE__*/React.createElement("br", null), "resonance? ", /*#__PURE__*/React.createElement("b", {
     style: {
       color: RICH
     }
-  }, "there it is — stop."))), /*#__PURE__*/React.createElement(CardioLadder, {
+  }, "there it is, stop."))), /*#__PURE__*/React.createElement(CardioLadder, {
     start: 71.2,
     end: 83.0
   }), /*#__PURE__*/React.createElement(QuizBeat, {
     start: 83.2,
     qs: [{
       q: 'Which is more acidic?',
-      opts: ['CH₃CH₂OH — ethanol', 'CH₃COOH — acetic acid', 'CH₄ — methane'],
+      opts: ['CH₃CH₂OH: ethanol', 'CH₃COOH: acetic acid', 'CH₄: methane'],
       ans: 1,
-      why: 'Run CARDIO: charge no, atom same — resonance. Two oxygens share the charge. Stop there.'
+      why: 'Run CARDIO: charge no, atom same, resonance. Two oxygens share the charge. Stop there.'
     }, {
       q: 'The strongest halogen acid?',
       opts: ['HF', 'HCl', 'HI'],
       ans: 2,
-      why: 'Atom check — down the column the atom gets bigger, the charge spreads out, the base gets happier.'
+      why: 'Atom check: down the column the atom gets bigger, the charge spreads out, the base gets happier.'
     }]
   }), /*#__PURE__*/React.createElement(Sprite, {
     start: 99.8,
@@ -2293,7 +2293,7 @@ function AcidityRankingVideo() {
         color: INK2,
         marginTop: 28
       }
-    }, "SN1 vs SN2 — the four questions — is next."), /*#__PURE__*/React.createElement("div", {
+    }, "SN1 vs SN2: the four questions, is next."), /*#__PURE__*/React.createElement("div", {
       style: {
         fontFamily: MONO,
         fontSize: 24,
@@ -2360,7 +2360,7 @@ function QuizBeat({
         color: INK3,
         marginBottom: 26
       }
-    }, "pause it — commit before the reveal"), /*#__PURE__*/React.createElement("div", {
+    }, "pause it, commit before the reveal"), /*#__PURE__*/React.createElement("div", {
       style: {
         fontFamily: SERIF,
         fontWeight: 600,

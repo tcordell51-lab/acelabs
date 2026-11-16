@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Sarah Dashboard — proposal mock</title>
+<title>Sarah Dashboard · proposal mock</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,700;1,400;1,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -104,19 +104,19 @@ h1 em{color:var(--gold-d)}
 </head>
 <body>
 <div class="wrap">
-  <div class="proto-banner"><b>Mock · Agent 10 proposal.</b> Standalone — does not modify the master HTML. Renders against fake data plus whatever <code>qr-rem-v2:attempts</code> is already in your local storage.</div>
+  <div class="proto-banner"><b>Mock · Agent 10 proposal.</b> Standalone: does not modify the master HTML. Renders against fake data plus whatever <code>qr-rem-v2:attempts</code> is already in your local storage.</div>
 
   <h1>Sarah's <em>dashboard</em></h1>
-  <p class="lede">When Sarah toggles Sarah-mode, the dashboard switches from "active student on this device" to a roster picker. After picking a student she sees three weakest skills, last attempt timestamp, and her own note thread for that student. Built additively — student data still keys off the existing <code>attempts</code> + <code>mastery</code> stores.</p>
+  <p class="lede">When Sarah toggles Sarah-mode, the dashboard switches from "active student on this device" to a roster picker. After picking a student she sees three weakest skills, last attempt timestamp, and her own note thread for that student. Built additively: student data still keys off the existing <code>attempts</code> + <code>mastery</code> stores.</p>
 
   <!-- Mode strip -->
   <div class="mode-strip">
     <span class="pill">Sarah-mode</span>
     <span class="who">Viewing: <em id="curName">Marcus L.</em> <span style="opacity:0.5; font-size:12px; font-family:'DM Sans'">(test date Jul 12)</span></span>
     <select id="studentPicker">
-      <option value="m">Marcus L. — test Jul 12</option>
-      <option value="j">Jaya R. — test Aug 3</option>
-      <option value="d">Devin S. — test Sep 14</option>
+      <option value="m">Marcus L., test Jul 12</option>
+      <option value="j">Jaya R., test Aug 3</option>
+      <option value="d">Devin S., test Sep 14</option>
     </select>
     <button class="btn sm">Exit Sarah-mode</button>
   </div>
@@ -129,7 +129,7 @@ h1 em{color:var(--gold-d)}
         <div class="ttl"><h3>Weakest <em>three</em></h3><div class="sub">Lowest accuracy among unlocked skills with at least 4 attempts in the last 14 days.</div></div>
       </div>
       <div class="weak-list" id="weakList"></div>
-      <div class="last-stamp">Last attempt overall: <b id="lastOverall">—</b></div>
+      <div class="last-stamp">Last attempt overall: <b id="lastOverall">-</b></div>
     </div>
 
     <!-- Note thread -->
@@ -140,7 +140,7 @@ h1 em{color:var(--gold-d)}
       </div>
       <div class="thread" id="thread"></div>
       <div class="compose">
-        <textarea id="noteText" placeholder="Note about Marcus — e.g. 'froze on rate-time word problems again, anxiety more than content'"></textarea>
+        <textarea id="noteText" placeholder="Note about Marcus: e.g. 'froze on rate-time word problems again, anxiety more than content'"></textarea>
       </div>
       <div style="display:flex; gap:8px; margin-top:8px; justify-content:flex-end">
         <button class="btn ghost sm" id="exportThread">Export thread</button>
@@ -153,7 +153,7 @@ h1 em{color:var(--gold-d)}
   <div class="card">
     <div class="card-h">
       <div class="mark teal">J</div>
-      <div class="ttl"><h3>Drop into <em>their</em> module</h3><div class="sub">One click — opens the module with Sarah-mode bar already pinned. Use this in a live session to teach the exact thing they're stuck on.</div></div>
+      <div class="ttl"><h3>Drop into <em>their</em> module</h3><div class="sub">One click: opens the module with Sarah-mode bar already pinned. Use this in a live session to teach the exact thing they're stuck on.</div></div>
     </div>
     <div class="grid-3" id="quickJumps"></div>
   </div>
@@ -166,7 +166,7 @@ h1 em{color:var(--gold-d)}
     <ul style="font-size:13.5px; line-height:1.7; padding-left:20px; margin:0">
       <li>New storage key <code>students_v1</code>: <code>{[id]: {name, testDate, attempts, mastery, stuck, threadKey}}</code>. Existing <code>attempts</code> / <code>mastery</code> keys become the "active student" view; multi-student wraps them.</li>
       <li>New storage key <code>tutorThreads_v1</code>: <code>{[studentId]: [{t, who:'sarah'|'tommy', text}]}</code>. Note thread is per-student, never per-skill (that's feature 2).</li>
-      <li><code>SARAH.toggle()</code> already exists — extend it to also call <code>renderSarahDash()</code> with a Sarah-mode view that surfaces the picker. Today's dashboard still works for non-Sarah-mode visitors.</li>
+      <li><code>SARAH.toggle()</code> already exists, extend it to also call <code>renderSarahDash()</code> with a Sarah-mode view that surfaces the picker. Today's dashboard still works for non-Sarah-mode visitors.</li>
       <li>Weakest-3 selector: <code>SKILLS.filter(unlocked).map(s =&gt; ({s, recent: attempts.filter(...)})).filter(r =&gt; r.recent.length &gt;= 4).sort((a,b) =&gt; acc(a) - acc(b)).slice(0,3)</code>.</li>
       <li>"Drop into module" button = existing <code>goSec(skillId)</code>; Sarah-mode bar already follows.</li>
     </ul>
@@ -181,7 +181,7 @@ const STUDENTS = {
     {id:'rate-time', name:'Rate × time', acc:0.50, n:8, last:Date.now()-5*86400000, note:'forgets to convert min↔hr'},
     {id:'word-decode', name:'Word-problem decode', acc:0.55, n:11, last:Date.now()-86400000, note:'panics on long stems'},
   ], thread:[
-    {who:'sarah', t:Date.now()-7*86400000, text:'Anxiety spikes on rate problems — try untimed only this week.'},
+    {who:'sarah', t:Date.now()-7*86400000, text:'Anxiety spikes on rate problems: try untimed only this week.'},
     {who:'tommy', t:Date.now()-5*86400000, text:'Agreed. Push pacing module to next week.'},
     {who:'sarah', t:Date.now()-86400000, text:'Stuck button hit 3x today on rate-time. Plan: open with breath, then walk Q1 together.'},
   ]},
@@ -234,7 +234,7 @@ function renderAll(){
   const all = [...s.thread, ...persisted].sort((a,b) => a.t - b.t);
   const th = document.getElementById('thread');
   if (all.length === 0){
-    th.innerHTML = '<div class="empty">No notes yet. Add the first one — Sarah will see it next time she opens this student.</div>';
+    th.innerHTML = '<div class="empty">No notes yet. Add the first one: Sarah will see it next time she opens this student.</div>';
   } else {
     th.innerHTML = all.map(n => {
       const when = new Date(n.t).toLocaleString('en-US',{month:'short', day:'numeric', hour:'numeric', minute:'2-digit'});
@@ -273,7 +273,7 @@ document.getElementById('exportThread').addEventListener('click', () => {
   const s = STUDENTS[curId];
   const persisted = loadThreads()[curId] || [];
   const all = [...s.thread, ...persisted].sort((a,b) => a.t - b.t);
-  const lines = [`# Notes — ${s.name}`, '', `Exported ${new Date().toLocaleString()}`, ''];
+  const lines = [`# Notes: ${s.name}`, '', `Exported ${new Date().toLocaleString()}`, ''];
   all.forEach(n => {
     lines.push(`## ${n.who === 'sarah' ? 'Sarah' : 'Tommy'} · ${new Date(n.t).toLocaleString()}`);
     lines.push(n.text);

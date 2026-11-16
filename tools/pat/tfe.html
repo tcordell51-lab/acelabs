@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Ace PAT Studio — Top Front End: Solid Means Seen</title>
+<title>Ace PAT Studio · Top Front End: Solid Means Seen</title>
 <style>
 :root{
   --bg:#0d1411;--card:#121b16;--panel:#0f1712;--panel2:#15110b;--line:rgba(201,168,76,.22);
@@ -226,12 +226,12 @@ function makeDrill(tier){
   var mv=endView(mirrorY());
   if(!seen[keyOf(mv)]){seen[keyOf(mv)]=1;opts.push({segs:mv,ok:false,tax:'mirror',why:'Front and back are swapped. On the END view, <b>end-left is the FRONT of the object</b>, not the back.'})}
   var sv=ev.map(function(s){return {a:s.a,b:s.b,dash:s.dash}}),di=sv.map(function(s,i){return s.dash?i:-1}).filter(function(i){return i>=0});
-  if(di.length){var pick=di[ri(di.length)]; sv[pick]={a:sv[pick].a,b:sv[pick].b,dash:false}; if(!seen[keyOf(sv)]){seen[keyOf(sv)]=1;opts.push({segs:sv,ok:false,tax:'dash',why:'A hidden edge is drawn SOLID. You cannot see that edge from the end — it must be dashed.'})}}
+  if(di.length){var pick=di[ri(di.length)]; sv[pick]={a:sv[pick].a,b:sv[pick].b,dash:false}; if(!seen[keyOf(sv)]){seen[keyOf(sv)]=1;opts.push({segs:sv,ok:false,tax:'dash',why:'A hidden edge is drawn SOLID. You cannot see that edge from the end, it must be dashed.'})}}
   var tries=0;
   while(tries++<40&&opts.length<4){
     var g=cloneV(),x=ri(NX),y=ri(NY),z=ri(NZ); g[x][y][z]=!g[x][y][z];
     var v2=endView(g);
-    if(!seen[keyOf(v2)]){seen[keyOf(v2)]=1;opts.push({segs:v2,ok:false,tax:'height',why:'Wrong profile — a step is in the wrong place. <b>Height must match the FRONT, depth must match the TOP.</b>'})}
+    if(!seen[keyOf(v2)]){seen[keyOf(v2)]=1;opts.push({segs:v2,ok:false,tax:'height',why:'Wrong profile: a step is in the wrong place. <b>Height must match the FRONT, depth must match the TOP.</b>'})}
   }
   if(opts.length<4)return makeDrill(tier);
   for(var i=opts.length-1;i>0;i--){var j=ri(i+1),t=opts[i];opts[i]=opts[j];opts[j]=t}
@@ -243,10 +243,10 @@ function makeDrill(tier){
    ======================================================================= */
 var learnStep=0,learnP=null,learnHL=false;
 var LEARN=[
-  {t:'Meet the object',c:'<b>Do not count lines.</b> Orient the solid and name its features — a step, a notch, a tunnel. Then read it the way an inspector walks a building: three stops.',show:['obj']},
-  {t:'Stop 1 — the TOP view',c:'<b>Satellite view.</b> Straight down. You see the footprint and where heights change. A vertical hole shows here as a real opening; a horizontal tunnel is hidden — <b>dashed</b>.',show:['obj','top']},
-  {t:'Stop 2 — the FRONT view',c:'<b>Drop the guy on the street.</b> A <b>solid</b> line is a change in elevation you can SEE. Height is decided here — front and end must agree on height.',show:['obj','top','front']},
-  {t:'Stop 3 — the END view',c:'<b>Walk around the corner.</b> Near steps now hide the far ones: a <b>dashed</b> line is an edge you know is there but cannot see. On the end, <b>end-left = the front</b>.',show:['obj','top','front','end'],hl:true},
+  {t:'Meet the object',c:'<b>Do not count lines.</b> Orient the solid and name its features, a step, a notch, a tunnel. Then read it the way an inspector walks a building: three stops.',show:['obj']},
+  {t:'Stop 1: the TOP view',c:'<b>Satellite view.</b> Straight down. You see the footprint and where heights change. A vertical hole shows here as a real opening; a horizontal tunnel is hidden: <b>dashed</b>.',show:['obj','top']},
+  {t:'Stop 2: the FRONT view',c:'<b>Drop the guy on the street.</b> A <b>solid</b> line is a change in elevation you can SEE. Height is decided here: front and end must agree on height.',show:['obj','top','front']},
+  {t:'Stop 3: the END view',c:'<b>Walk around the corner.</b> Near steps now hide the far ones: a <b>dashed</b> line is an edge you know is there but cannot see. On the end, <b>end-left = the front</b>.',show:['obj','top','front','end'],hl:true},
   {t:'The three pairings',c:'The whole check: <b>WIDTH = top + front. HEIGHT = front + end. DEPTH = top + end</b> (the tough one). Every correct view obeys all three.',show:['obj','top','front','end'],pairs:true}
 ];
 function renderLearn(){
@@ -280,9 +280,9 @@ function mountLearn(){
       '<div class="steps" id="learnDots"></div></div>'+
       '<div class="card"><div class="k">The method</div><h2>Solid = seen · Dashed = hidden</h2>'+
         '<div class="coach" id="learnCoach"></div>'+
-        '<div class="legend"><span><i style="border-top:2.4px solid '+INK+'"></i>solid — you can see it</span><span><i style="border-top:2px dashed '+GOLD+'"></i>dashed — hidden behind the shape</span></div>'+
+        '<div class="legend"><span><i style="border-top:2.4px solid '+INK+'"></i>solid, you can see it</span><span><i style="border-top:2px dashed '+GOLD+'"></i>dashed, hidden behind the shape</span></div>'+
         '<div class="pair" id="learnPairs">WIDTH: <b>top + front</b> · HEIGHT: <b>front + end</b> · DEPTH: <b>top + end</b></div>'+
-        '<div class="coach" style="margin-top:14px"><b>Google Maps.</b> Satellite = top. Drop the guy on the street = front. He walks around the corner = end. On the end, never say left-right — <b>end-left is the front, end-right is the back.</b></div></div></div>';
+        '<div class="coach" style="margin-top:14px"><b>Google Maps.</b> Satellite = top. Drop the guy on the street = front. He walks around the corner = end. On the end, never say left-right: <b>end-left is the front, end-right is the back.</b></div></div></div>';
   document.getElementById('learnPrev').onclick=function(){if(learnStep>0){learnStep--;learnHL=false;renderLearn()}};
   document.getElementById('learnNext').onclick=function(){if(learnStep===LEARN.length-1){mountLearn();return}learnStep++;learnHL=false;renderLearn()};
   document.getElementById('learnHid').onclick=function(){learnHL=!learnHL;this.textContent=learnHL?'Hidden edge: shown':'Highlight hidden edge';renderLearn()};
@@ -305,7 +305,7 @@ function mountItem(mode){
   document.getElementById('stage').innerHTML=head+
     '<div class="cols"><div class="card"><div class="k">'+(timed?'Drill':'Guided')+' · choose the END view</div><h2>Two views given. Find the third.</h2><div id="givenStage"></div>'+scaffold+
       '<div class="opts" id="opts"></div><div class="hint">Height comes from the FRONT · depth from the TOP · end-left is the front.</div></div>'+
-      '<div class="card"><div class="k">Coach</div><h2 id="fbTitle">Read before you pick</h2><div class="coach" id="fb"><b>Can you see it from the end? No — dash.</b> An overhang or a tunnel means a dash somewhere. Match height to the front, depth to the top.</div>'+(timed?'<div class="tax" id="tax"></div>':'')+'</div></div>';
+      '<div class="card"><div class="k">Coach</div><h2 id="fbTitle">Read before you pick</h2><div class="coach" id="fb"><b>Can you see it from the end? No: dash.</b> An overhang or a tunnel means a dash somewhere. Match height to the front, depth to the top.</div>'+(timed?'<div class="tax" id="tax"></div>':'')+'</div></div>';
   Array.prototype.forEach.call(document.querySelectorAll('.tierbtn'),function(b){b.onclick=function(){tier=+b.dataset.tier;mountItem(mode)}});
   if(timed)renderTax();
   nextItem(mode);
@@ -328,7 +328,7 @@ function nextItem(mode){
       var fb=document.getElementById('fb'),ft=document.getElementById('fbTitle');
       if(!op.ok){div.classList.add('wrong'); if(op.tax&&TAX[op.tax]!=null){TAX[op.tax]++;if(timed)renderTax();}
         ft.textContent='The trap';ft.style.color=BAD; fb.innerHTML=op.why+'<br><br>Now check the green one against the front view, edge by edge.';
-      } else {ft.textContent='That is it.';ft.style.color=GOOD; fb.innerHTML='<b>Matched.</b> Height agreed with the front, depth with the top — the two pairings that decide every end view.';}
+      } else {ft.textContent='That is it.';ft.style.color=GOOD; fb.innerHTML='<b>Matched.</b> Height agreed with the front, depth with the top, the two pairings that decide every end view.';}
       if(timed){var su=statsFor(),ab=document.querySelector('.statbar .pill');if(ab)ab.outerHTML='<span class="pill '+(su.acc>=80?'good':'warn')+'">accuracy <b>'+su.acc+'%</b></span>';}
       var host=document.getElementById('fb').parentNode;
       if(!document.getElementById('nextBtn')){var bt=document.createElement('button');bt.id='nextBtn';bt.className='primary';bt.textContent='Next →';bt.style.marginTop='12px';bt.onclick=function(){nextItem(mode)};host.appendChild(bt);}
