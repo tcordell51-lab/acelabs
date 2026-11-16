@@ -32305,6 +32305,9 @@ html[data-theme="dark"] .rw-dot{background:#2a2a20;color:#d8c893}
 .rw-dot.picked{border-style:solid;border-color:#C9A84C;background:#C9A84C;color:#1a1206;box-shadow:0 0 0 4px rgba(201,168,76,.35)}
 .rw-ring-note{text-align:center;font-family:'JetBrains Mono',monospace;font-size:.66rem;letter-spacing:.06em;color:#8C7235;margin:0 0 6px}
 /* spoke card */
+.rw-band{height:84px;margin:-4px 0 10px;border-radius:14px;background-size:cover;background-position:left center;background-color:#f3ead6;border:1px solid rgba(140,114,53,.2)}
+html[data-theme="dark"] .rw-band{opacity:.55}
+@media(max-width:759px){.rw-band{height:64px}}
 .rw-see .rw-see-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap}
 .rw-see-flow{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:10px;margin:12px 0}
 .rw-mol-card{margin:0;background:#fff;border:1.5px solid rgba(140,114,53,.35);border-radius:14px;padding:10px;text-align:center;min-width:0}
@@ -32456,6 +32459,12 @@ html[data-theme="dark"] .rw-see-it{color:#d8c893;border-color:#d8c893}
     return esc(sp.e.formula||'');
   }
   function compact(){ return (window.innerWidth||1200)<1000; }
+  // Decorative header plate per family (unlabeled art, no molecules: every
+  // structure on the card is drawn in code). Loaded only when See it opens.
+  var FAMILY={alkene_terminal:'hydrocarbons',alkene_internal:'hydrocarbons',alkyne_terminal:'hydrocarbons',alkyne_internal:'hydrocarbons',alkane:'hydrocarbons',diene:'hydrocarbons',
+    halide_primary:'halides',halide_secondary:'halides',halide_tertiary:'halides',alcohol_primary:'halides',alcohol_secondary:'halides',alcohol_tertiary:'halides',epoxide:'halides',
+    benzene:'aromatic',aniline:'aromatic',toluene:'aromatic'};
+  function bandUrl(w){ return '/shared/art/wheel/'+(FAMILY[w.key]||'carbonyl')+'.webp'; }
   var HUBNAME={alkenes:'Alkenes',alkynes:'Alkynes',alkanes:'Alkanes',subelim:'Substitution and Elimination',alcohols:'Alcohols',ethers:'Ethers and Epoxides',aromatic:'Aromatic',carbonyl:'Aldehydes and Ketones',acids:'Carboxylic Acids and Derivatives',amines:'Amines'};
   function spokeIndex(w,key){ var a=entriesFor(w.key); for(var i=0;i<a.length;i++) if(a[i].key===key) return i; return 0; }
   // A small drawn flow (start -> reagent -> product) used inside the answer
@@ -32598,6 +32607,7 @@ html[data-theme="dark"] .rw-see-it{color:#d8c893;border-color:#d8c893}
     var panel=document.getElementById('rwPanel');
     var hub=s.e.hub, stu=new URLSearchParams(location.search).get('student');
     var html='<div class="rw-see" id="rwSee">';
+    html+='<div class="rw-band" aria-hidden="true" style="background-image:url('+bandUrl(w)+')"></div>';
     html+='<div class="rw-see-head"><span class="rw-q-kicker">Reaction '+(i+1)+' of '+n+' · '+esc(w.name)+'</span>'
       +(hub&&document.getElementById(hub)?'<a class="rw-hub-link" data-hub="'+hub+'" href="#'+hub+'">Open the '+(HUBNAME[hub]||hub)+' hub</a>':'')+'</div>';
     html+='<p class="rw-see-type">'+esc(s.e.name)+'</p>';
