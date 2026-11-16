@@ -8,7 +8,9 @@
    Every other form is ignored. Always returns 200 so a downstream hiccup can
    never block the visitor's submission or Netlify's own capture. */
 
-import { brandedHtml, LINK_STYLE, FOOTER_TEXT } from "./_lib/email-brand.mjs";
+import { fillShell, LINK_STYLE, FOOTER_TEXT, esc as escBrand } from "./_lib/email-brand.mjs";
+
+const brandedHtml = ({ underCard = "", ...e }) => fillShell({ ...e, fineHtml: escBrand(underCard) });
 
 const BASE  = "appDXSpdJuc3WvtYU";
 const LEADS = "tblUJOZlwLMJdCYU3";
