@@ -1,4 +1,4 @@
-// Author 30+ long-form DAT-realistic questions matching BoosterPrep depth.
+// Author 30+ long-form DAT-realistic questions at full DAT depth.
 // Real DAT prompts are 1-3 sentences with reaction setup, conditions, and
 // often data tables. Topics drawn from a student's actual practice
 // test review (2026-04-30) + ADA spec topics.

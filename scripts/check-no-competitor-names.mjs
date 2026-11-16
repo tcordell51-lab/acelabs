@@ -70,9 +70,7 @@ const ALLOW = [
 ];
 
 // Per-file data keys that hold internal audit notes and are never rendered.
-const INTERNAL_KEYS = {
-  'games/ochem-bank-1000.js': new Set(['issue'])
-};
+const INTERNAL_KEYS = {};
 
 const SKIP_DIRS = new Set(['.git', 'node_modules', '.netlify', '.claude', 'test-screenshots', 'dist-astro', 'astro-proto']);
 const EXTS = new Set(['.html', '.htm', '.svg', '.js', '.mjs', '.cjs', '.json']);

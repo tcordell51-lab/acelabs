@@ -1,7 +1,7 @@
 // route.js - which root is a missed question standing on?
 //
 // Pure, no imports, runs in node and the browser. Given whatever a caller
-// knows about a miss (a Booster bank name, a content-library atom id, a portal
+// knows about a miss (a bank or topic name, a content-library atom id, a portal
 // subtopic, the question or correction text) it returns the roots the miss is
 // most likely standing on, best first, each with a one-line reason in
 // Thomas's framing. The map is deliberately small and readable: a root only
@@ -30,7 +30,7 @@ export const ROOT_INFO = {
 
 // Topic-level routes: a bank, atom, or subtopic name maps to roots in priority
 // order. Keys are matched case-insensitively as substrings of the normalized
-// topic string, so "Booster OChem: Conformations & Stereochemistry" hits
+// topic string, so "OChem: Conformations & Stereochemistry" hits
 // "conformations" and "stereochem".
 const TOPIC_ROUTES = [
   { keys: ['fundamentals', 'bonding', 'structure and bonding', 'oc-fundamentals'], roots: ['l1-skeletal', 'l1-charge', 'l1-geometry', 'l1-unsat', 'l2-bully', 'l2-resonance'], why: 'Fundamentals questions are the roots themselves: reading the drawing, the electron ledger, and shape.' },
