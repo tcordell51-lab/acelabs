@@ -1,0 +1,88 @@
+/* ace-cream.css : the cream skin for the older dark tool pages (2026-11-16).
+
+   Those pages share one family of token names (--bg, --card, --panel, --line,
+   --ink, --ink2, --gold, --good ...). This file maps every one of them onto the
+   Ace Labs cream tokens from ace-ui.css, so a page turns cream by adding one line
+   at the end of its <head>:
+
+     <link rel="stylesheet" href="/shared/ace-cream.css?v=1">
+
+   ":root:root" outranks the page's own ":root" whatever the order. Page-specific
+   fixes for colors a page hard-codes sit at the bottom, scoped by a class the
+   page already carries or by html[data-cream="name"]. */
+
+@font-face { font-family: "DM Sans"; src: url("/shared/fonts/dm-sans.woff2") format("woff2"); font-weight: 100 1000; font-style: normal; font-display: swap; }
+@font-face { font-family: "Playfair Display"; src: url("/shared/fonts/playfair-display.woff2") format("woff2"); font-weight: 400 900; font-style: normal; font-display: swap; }
+
+:root:root {
+  /* surfaces */
+  --bg: #F5F0E8; --bg2: #EFE7D6; --bg-2: #EFE7D6;
+  --card: #FCFAF6; --panel: #FCFAF6; --panel2: #F7F1E4; --panel-2: #F7F1E4; --panel-3: #EFE7D6; --raise: #FFFFFF;
+  --paper: #FFFFFF;
+  /* lines */
+  --line: rgba(27, 58, 45, .16); --line2: rgba(27, 58, 45, .30); --line-2: rgba(27, 58, 45, .30);
+  /* text */
+  --ink: #0d2018; --ink2: #3a4a42; --ink-2: #3a4a42; --ink3: #5c6a63; --muted: #5c6a63; --mute: #5c6a63; --faint: #6b746d;
+  /* accents: gold fills stay gold; gold used as text gets the brass that reads on cream */
+  --gold: #8C7235; --goldhi: #7c6113; --gold-hi: #7c6113; --gold-d: #6e5a22; --gold-ink: #1a1408;
+  --gold-bg: rgba(201, 168, 76, .16); --gold-wash: rgba(201, 168, 76, .18);
+  --hl: rgba(226, 201, 122, .45); --proof: rgba(201, 168, 76, .30); --proof-edge: #8C7235;
+  --good: #007a59; --ok: #007a59; --green: #2f7d4f; --good-bg: rgba(0, 158, 115, .12); --ok-bg: rgba(0, 158, 115, .12); --good-wash: rgba(0, 158, 115, .12);
+  --bad: #9b4500; --miss: #9b4500; --trap: #9b4500; --coral: #a3402c; --hot: #a3402c; --bad-bg: rgba(213, 94, 0, .12); --miss-bg: rgba(213, 94, 0, .12); --trap-wash: rgba(213, 94, 0, .12);
+  --warn: #8a5a0b; --amber: #8a5a0b; --warm: #8a5a0b; --cool: #2f5f9e; --blue: #2f5f9e; --grey: #6b746d;
+  --bio: #2f7d4f; --gchem: #2f5f9e; --gc: #2f5f9e; --ochem: #6b4fa0; --oc: #6b4fa0; --qr: #a3405c; --pat: #8a5a0b; --rc: #1f7a70;
+  /* type */
+  --serif: "Playfair Display", Georgia, "Times New Roman", serif;
+  --sans: "DM Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color-scheme: light;
+}
+html:root { background: #F5F0E8; }
+html:root body { background: #F5F0E8; color: #0d2018; -webkit-font-smoothing: auto; }
+
+/* Buttons that sat on dark panels with a gold fill keep a dark label */
+html:root body .btn-gold, html:root body .btn.gold, html:root body button.primary, html:root body .primary-btn { color: #F5F0E8; }
+
+/* Trick Sheets */
+html[data-cream~="tricks"] .sheet { background: linear-gradient(170deg, #F3E9CF 0%, #FCFAF6 100%); }
+html[data-cream~="tricks"] .row { background: #FFFFFF; }
+html[data-cream~="tricks"] .row .rp { color: #FCFAF6; }
+
+/* Pages with the older left sidebar (OChem Reaction Maps, A&P review): cream rail, ink text.
+   data-cream holds a list, so match with ~= */
+html[data-cream~="sidebar"]:root { --sb: #EFE7D6; --sb2: #F3EDE0; --sb3: #E8DFCB; --sln: rgba(27, 58, 45, .10); --sln2: rgba(27, 58, 45, .18); --muted: #5c6a63; }
+html[data-cream~="sidebar"] body { background: #F5F0E8; }
+html[data-cream~="sidebar"] .sb-logo .logo-word { color: #0d2018; }
+html[data-cream~="sidebar"] .sb-logo .logo-word span { color: #7c6113; }
+html[data-cream~="sidebar"] .sb-logo .logo-tag, html[data-cream~="sidebar"] .sb-logo .logo-tagline,
+html[data-cream~="sidebar"] .sb-nav-title, html[data-cream~="sidebar"] .sb-item-sub, html[data-cream~="sidebar"] .sb-item-time,
+html[data-cream~="sidebar"] .sb-foot { color: #5c6a63; }
+html[data-cream~="sidebar"] .sb-item-name { color: #0d2018; }
+html[data-cream~="sidebar"] .sb-item.active .sb-item-name, html[data-cream~="sidebar"] .sb-item.active .sb-icon,
+html[data-cream~="sidebar"] .sb-item:hover .sb-icon, html[data-cream~="sidebar"] .sb-foot a { color: #1B3A2D; }
+html[data-cream~="sidebar"] .sb-item.active { background: rgba(201, 168, 76, .20); border-color: rgba(140, 114, 53, .40); }
+html[data-cream~="sidebar"] .sb-item:hover { background: rgba(27, 58, 45, .06); }
+html[data-cream~="sidebar"] .sb-icon { color: #3a4a42; }
+html[data-cream~="sidebar"] .sb-mastery-dot, html[data-cream~="sidebar"] .sb-check { border-color: rgba(27, 58, 45, .30); }
+html[data-cream~="sidebar"] .sb-logo .v-badge { color: #7c6113; background: rgba(201, 168, 76, .18); }
+html[data-cream~="sidebar"] .sb-search input { background: #FCFAF6; color: #0d2018; border-color: rgba(27, 58, 45, .25); }
+html[data-cream~="sidebar"] .sb-search input::placeholder { color: #6b746d; }
+html[data-cream~="sidebar"] .nav-fab { background: #1B3A2D; color: #F5F0E8; }
+html[data-cream~="sidebar"] .footer, html[data-cream~="sidebar"] .site-footer { background: #EFE7D6; color: #3a4a42; border-top-color: rgba(27, 58, 45, .16); }
+html[data-cream~="sidebar"] .site-footer a, html[data-cream~="sidebar"] .footer a { color: #1B3A2D; }
+html[data-cream~="sidebar"] .welcome-hero, html[data-cream~="sidebar"] .exam-bar, html[data-cream~="sidebar"] .exam-results-hero { background: #1B3A2D; color: #F5F0E8; }
+/* One look: the dark-mode switch is retired on OChem */
+html[data-cream~="ochem"] #themeToggle, html[data-cream~="ochem"] .theme-toggle { display: none !important; }
+/* A&P review: no countdown clock in a learning session (release audit, 2026-10-30) */
+html[data-cream~="apboot"] .timer-block { display: none !important; }
+/* A&P review intro */
+html[data-cream~="apboot"] .session-intro { background: linear-gradient(160deg, #F3E9CF 0%, #F5F0E8 70%); border-bottom-color: rgba(27, 58, 45, .14); }
+html[data-cream~="apboot"] .intro-h { color: #0d2018; }
+html[data-cream~="apboot"] .intro-h em, html[data-cream~="apboot"] .istat-n, html[data-cream~="apboot"] .intro-kicker { color: #7c6113; }
+html[data-cream~="apboot"] .intro-kicker::before { background: #8C7235; }
+html[data-cream~="apboot"] .intro-sub { color: #3a4a42; }
+html[data-cream~="apboot"] .istat-l, html[data-cream~="apboot"] .ws-stat { color: #5c6a63; }
+html[data-cream~="apboot"] .rule-card { background: #FCFAF6; border-color: rgba(27, 58, 45, .14); }
+html[data-cream~="apboot"] .rule-title { color: #0d2018; }
+html[data-cream~="apboot"] .rule-text { color: #3a4a42; }
+html[data-cream~="apboot"] .rule-icon, html[data-cream~="apboot"] .sb-item-dot { display: none; }
+html[data-cream~="apboot"] .session-rules { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
