@@ -22,6 +22,8 @@
        "predict-only" goes away at the reveal.
      item.steps = ['step one', 'step two', ...]  the worked route, revealed in order.
      opts.confidence = true   three optional chips (Sure, Unsure, Guessed). Never blocks.
+     opts.onReason(reason, item)  shows the one-tap "Why did you miss it?" row after a miss:
+       know | trap | misread | time | changed, with one line of feedback after the tap.
    Every selection is logged: result.picks = [{ i, ms }], first, changes, and
    change = 'none' | 'w2r' (wrong to right) | 'r2w' (right to wrong) | 'w2w'.
 
@@ -38,6 +40,38 @@
 
   function el(tag, cls, text) { var n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; }
   function block(title, text) { var dl = el('dl', 'aui-q__block'); dl.appendChild(el('dt', null, title)); dl.appendChild(el('dd', null, text)); return dl; }
+
+  /* "Why did you miss it?" One tap, stored with the miss; it decides what comes back and when. */
+  var REASONS = [
+    ['know', "Didn't know it"], ['trap', 'Fell for a trap'], ['misread', 'Misread it'], ['time', 'Ran short on time'], ['changed', 'Changed my answer']
+  ];
+  function reasonLine(id, item, change) {
+    var topic = (item.topicName || item.topic || 'this topic').toLowerCase();
+    if (id === 'know') return 'Got it. A short lesson on ' + topic + ' goes into tomorrow, then this comes back as a new version.';
+    if (id === 'trap') return 'Got it. This comes back in 2 days as a new version, with the same trap waiting for you.';
+    if (id === 'misread') return 'Got it. It comes back in 2 days. Say the ask in your own words before you look at the choices.';
+    if (id === 'time') return 'Got it. It comes back untimed first, then timed, so you know which one it was.';
+    return (change === 'r2w' ? 'Your first pick was right. ' : '') + 'Every switch is logged, so you can see whether second-guessing costs you.';
+  }
+  function whyRow(item, change, onReason) {
+    var box = el('div', 'aui-q__why'), picked = null;
+    box.appendChild(el('p', 'aui-q__why-h', 'Why did you miss it?'));
+    box.appendChild(el('p', 'aui-q__hint', 'One tap. It decides what comes back and when.'));
+    var chips = el('div', 'aui-q__why-row'); chips.setAttribute('role', 'group'); chips.setAttribute('aria-label', 'Why did you miss it?');
+    var line = el('p', 'aui-q__why-fb'); line.hidden = true; line.setAttribute('aria-live', 'polite');
+    REASONS.forEach(function (r) {
+      var b = el('button', 'aui-q__why-btn', r[1]); b.type = 'button'; b.setAttribute('aria-pressed', 'false'); b.setAttribute('data-reason', r[0]);
+      b.addEventListener('click', function () {
+        picked = r[0];
+        Array.prototype.forEach.call(chips.children, function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+        line.textContent = reasonLine(r[0], item, change); line.hidden = false;
+        try { onReason(r[0], item); } catch (e) { /* the page decides what to do with it */ }
+      });
+      chips.appendChild(b);
+    });
+    box.appendChild(chips); box.appendChild(line);
+    return box;
+  }
 
   function mount(host, item, opts) {
     opts = opts || {};
@@ -130,6 +164,7 @@
       var trap = !ok && item.traps && item.traps[picked];
       if (trap) fb.appendChild(block('The trap in ' + LETTERS[picked], trap));
       if (item.trick) fb.appendChild(block('Trick', item.trick));
+      if (!ok && opts.onReason) fb.appendChild(whyRow(item, change, opts.onReason));
       var row = el('div', 'aui-q__actions');
       var next = el('button', 'aui-btn', opts.nextLabel || 'Next question'); next.type = 'button'; next.setAttribute('data-act', 'next');
       next.addEventListener('click', function () { if (opts.onNext) opts.onNext(); });
@@ -170,5 +205,5 @@
   }
 
   document.addEventListener('keydown', function (e) { if (active && document.body.contains(active.root)) active.key(e); });
-  window.AceQuestion = { version: 2, LETTERS: LETTERS, mount: mount };
+  window.AceQuestion = { version: 2, REASONS: REASONS, LETTERS: LETTERS, mount: mount };
 })();

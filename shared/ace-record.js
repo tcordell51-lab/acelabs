@@ -156,6 +156,7 @@
     due.sort(function (a, b) { return a.due - b.due; });
     return { open: open, due: due, clearedThisWeek: cleared, weekStart: weekStart };
   }
+  function repairLesson(id, now) { var r = load(); var e = (r.repair || {})[String(id)]; if (!e) return null; e.lessonAt = now || Date.now(); write('record', r); return e; }
   function repairEntry(id) { var r = load(); return (r.repair || {})[String(id)] || null; }
   /* The next version to serve: same section and skill, not the missed stem, not served lately.
      Falls back to the missed item itself only when the bank has no twin (flagged sameItem). */
@@ -265,7 +266,7 @@
     version: 2, LADDER: LADDER, FAMILIES: FAMILIES.map(function (f) { return f[0]; }),
     record: record, item: item, due: due, missed: missed, stats: stats, topics: topics, today: today, attempts: attempts,
     changeStats: changeStats, event: event, events: events,
-    REASONS: REASONS, repairReason: repairReason, repairAnswer: repairAnswer, repairList: repairList, repairEntry: repairEntry, repairVersion: repairVersion,
+    REASONS: REASONS, repairReason: repairReason, repairAnswer: repairAnswer, repairList: repairList, repairEntry: repairEntry, repairVersion: repairVersion, repairLesson: repairLesson,
     setSync: setSync, flush: flush, pending: pending, onChange: function (fn) { listeners.push(fn); },
     migrate: migrate, legacyKeys: legacyKeys, legacyExport: legacyExport, exportAll: exportAll,
     imported: function () { return load().imported; }

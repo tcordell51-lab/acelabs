@@ -25,7 +25,9 @@
     { id: 'rc', label: 'Reading', href: '/tools/rc/' },
     { id: 'qr', label: 'QR', href: '/qr/drill/' },
     { id: 'tests', label: 'Tests', href: '/tests/' },
-    { id: 'review', label: 'Review', href: '/review/' }
+    { id: 'review', label: 'Review', href: '/review/' },
+    { id: 'repair', label: 'Repair', href: '/repair/' },
+    { id: 'progress', label: 'Progress', href: '/progress/' }
   ];
   /* First match wins. Paths are normalized: no trailing slash, no .html, no /index. */
   var RULES = [
@@ -37,7 +39,9 @@
     ['rc', /^\/(rc|tools\/(rc|rc-retold))(\/|$)/],
     ['qr', /^\/(qr|tools\/(qr|qr-retold))(\/|$)/],
     ['tests', /^\/(tests|diagnostic|prometric-mock|test-week|test-day-readiness|tools\/(mock|minitests))(\/|$)/],
-    ['review', /^\/(review|performance)(\/|$)/]
+    ['review', /^\/(review)(\/|$)/],
+    ['repair', /^\/repair(\/|$)/],
+    ['progress', /^\/(progress|performance)(\/|$)/]
   ];
 
   var api = window.AceShell = { version: VERSION, doors: DOORS, door: null, mounted: false };

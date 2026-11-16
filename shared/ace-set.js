@@ -75,6 +75,7 @@
           answered += 1; if (res.ok) right += 1; else wrongTopics[item.topicName || item.topic] = (wrongTopics[item.topicName || item.topic] || 0) + 1;
           if (R()) R().record({ item: item, picked: res.picked, answer: res.answer, ok: res.ok, ms: res.ms, src: o.src || '', set: setId, first: res.first, changes: res.changes, change: res.change, conf: res.conf });
         },
+        onReason: function (reason) { if (R() && R().repairReason) R().repairReason(item.id, reason); },
         onNext: function () { i += 1; show(); },
         onRetry: tw ? function () { inSet[tw.id] = 1; set.splice(i + 1, 0, tw); i += 1; show(); } : null
       });

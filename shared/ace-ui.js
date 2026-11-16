@@ -24,7 +24,9 @@
     { id: 'rc', label: 'Reading', href: '/tools/rc/', match: /^\/(rc|tools\/rc)/ },
     { id: 'qr', label: 'QR', href: '/qr/drill/', match: /^\/(qr|tools\/qr)/ },
     { id: 'tests', label: 'Tests', href: '/tests/', match: /^\/(tests|diagnostic|tools\/(mock|minitests))/ },
-    { id: 'review', label: 'Review', href: '/review/', match: /^\/(review|performance)/ }
+    { id: 'review', label: 'Review', href: '/review/', match: /^\/review/ },
+    { id: 'repair', label: 'Repair', href: '/repair/', match: /^\/repair/ },
+    { id: 'progress', label: 'Progress', href: '/progress/', match: /^\/(progress|performance)/ }
   ];
   var api = window.AceUI = { version: 1, places: PLACES, place: null, mounted: false };
 
@@ -39,7 +41,7 @@
   api.href = withStudent;
 
   function font() {
-    if (document.getElementById('aui-font')) return;
+    if (document.getElementById('aui-font') || document.querySelector('link[href*="ace-ui.css"]')) return;   // ace-ui.css self-hosts DM Sans
     var l = document.createElement('link'); l.id = 'aui-font'; l.rel = 'stylesheet';
     l.href = 'https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap';
     document.head.appendChild(l);
