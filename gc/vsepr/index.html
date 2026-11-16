@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VSEPR in 3D · Gen Chem · Ace Labs</title>
+<meta name="description" content="Count the electron domains, call the shape, then turn the 3D model and see the angles.">
+<link rel="icon" type="image/svg+xml" href="/shared/ace-dat-mark.svg">
+<link rel="stylesheet" href="/shared/ace-ui.css?v=7">
+<style>
+  .vs-grid { display: grid; gap: var(--aui-4); }
+  @media (min-width: 900px) { .vs-grid { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); align-items: start; } }
+  .vs-view { position: relative; background: #FFFDF7; border: 1px solid var(--aui-line); border-radius: var(--aui-r); aspect-ratio: 4 / 3; overflow: hidden; touch-action: none; cursor: grab; }
+  .vs-view canvas { display: block; width: 100%; height: 100%; }
+  .vs-view .tag { position: absolute; transform: translate(-50%, -50%); padding: 3px 9px; border-radius: 10px; background: #1B3A2D; color: #F5F0E8; font: 700 13px var(--aui-font); pointer-events: none; opacity: 0; transition: opacity .35s; white-space: nowrap; }
+  .vs-view.is-revealed .tag { opacity: 1; }
+  .vs-view .nogl { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; padding: 20px; font-size: 14px; color: var(--aui-ink-2); }
+  .vs-picks { display: flex; flex-wrap: wrap; gap: var(--aui-2); }
+  .vs-picks button { min-height: 40px; padding: 0 12px; border-radius: 999px; border: 1.5px solid var(--aui-line-2); background: var(--aui-paper); font: 600 var(--aui-t-sm) var(--aui-font); cursor: pointer; color: var(--aui-ink); }
+  .vs-picks button[aria-current="true"] { background: var(--aui-forest); color: var(--aui-cream); border-color: var(--aui-forest); }
+  .vs-facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--aui-2); }
+  .vs-facts div { background: var(--aui-paper); border: 1px solid var(--aui-line); border-radius: var(--aui-r-sm); padding: 10px; }
+  .vs-facts b { display: block; font-size: var(--aui-t-xl); font-family: var(--aui-display); }
+  .vs-facts span { font-size: var(--aui-t-xs); color: var(--aui-ink-3); }
+  .vs-facts .hide { visibility: hidden; }
+</style>
+</head>
+<body class="aui">
+<main class="aui-wrap aui-stack" id="main">
+  <header class="aui-stack">
+    <p class="aui-kicker">Gen Chem · See it</p>
+    <h1 class="aui-h1">VSEPR in 3D</h1>
+    <p class="aui-lede">Count the electron domains and the lone pairs, call the shape, then turn the model. Lone pairs are the gold clouds: they push, but they do not count in the shape's name.</p>
+  </header>
+  <div class="vs-picks" id="picks" role="group" aria-label="Molecules"></div>
+  <div class="vs-grid">
+    <div class="aui-stack">
+      <div class="vs-view" id="view"></div>
+      <div class="vs-facts" aria-live="polite">
+        <div><b id="f-dom">?</b><span>electron domains</span></div>
+        <div><b id="f-lp">?</b><span>lone pairs on the center</span></div>
+        <div><b id="f-ang" class="hide">?</b><span>bond angle</span></div>
+      </div>
+    </div>
+    <div id="q"></div>
+  </div>
+  <p class="aui-small">Geometry names and ideal angles: OpenStax Chemistry 2e, 7.6 Molecular Structure and Polarity (Figures 7.15 and 7.20). The model uses ideal angles; real lone pairs squeeze them a little (about 107° in NH₃ and 104.5° in H₂O). The angle shown is measured from the model's own coordinates.</p>
+</main>
+<script src="/shared/ace-ui.js?v=3"></script>
+<script src="/shared/ace-record.js?v=4"></script>
+<script src="/shared/ace-question.js?v=3"></script>
+<script type="module">
+import * as THREE from '/shared/three.module.min.js';
+const $ = (id) => document.getElementById(id);
+/* AXmEn table, OpenStax Chemistry 2e 7.6. [formula, center, ligand, bonded atoms m, lone pairs n, molecular geometry, electron geometry] */
+const MOL = [
+  ['CO₂', 'C', 'O', 2, 0], ['BF₃', 'B', 'F', 3, 0], ['SO₂', 'S', 'O', 2, 1], ['CH₄', 'C', 'H', 4, 0], ['NH₃', 'N', 'H', 3, 1], ['H₂O', 'O', 'H', 2, 2],
+  ['PCl₅', 'P', 'Cl', 5, 0], ['SF₄', 'S', 'F', 4, 1], ['ClF₃', 'Cl', 'F', 3, 2], ['XeF₂', 'Xe', 'F', 2, 3], ['SF₆', 'S', 'F', 6, 0], ['BrF₅', 'Br', 'F', 5, 1], ['XeF₄', 'Xe', 'F', 4, 2]
+];
+const SHAPE = { '2,0': 'linear', '3,0': 'trigonal planar', '2,1': 'bent', '4,0': 'tetrahedral', '3,1': 'trigonal pyramidal', '2,2': 'bent',
+  '5,0': 'trigonal bipyramidal', '4,1': 'seesaw', '3,2': 'T-shaped', '2,3': 'linear', '6,0': 'octahedral', '5,1': 'square pyramidal', '4,2': 'square planar' };
+const EGEOM = { 2: 'linear', 3: 'trigonal planar', 4: 'tetrahedral', 5: 'trigonal bipyramidal', 6: 'octahedral' };
+const ALL = ['linear', 'bent', 'trigonal planar', 'trigonal pyramidal', 'tetrahedral', 'seesaw', 'T-shaped', 'trigonal bipyramidal', 'square planar', 'square pyramidal', 'octahedral'];
+const COLOR = { C: '#3d4440', B: '#d9a46a', S: '#d4b52e', N: '#2f5f9e', O: '#c4452f', P: '#c9782e', Cl: '#2f7d4f', Xe: '#5a8fa8', Br: '#8a3b1e', H: '#ece8de', F: '#7fae5a' };
+/* Ideal electron-domain directions; lone pairs take the slots listed first in LP (equatorial in a trigonal bipyramid, trans in an octahedron). */
+const S3 = Math.sqrt(3) / 2, T = 1 / Math.sqrt(3);
+const DIRS = {
+  2: [[0, 0, 1], [0, 0, -1]],
+  3: [[1, 0, 0], [-0.5, S3, 0], [-0.5, -S3, 0]],
+  4: [[T, T, T], [T, -T, -T], [-T, T, -T], [-T, -T, T]],
+  5: [[1, 0, 0], [-0.5, S3, 0], [-0.5, -S3, 0], [0, 0, 1], [0, 0, -1]],
+  6: [[0, 0, 1], [0, 0, -1], [1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0]]
+};
+function slots(m, n) {   // returns { bonds: [dir], lps: [dir] }
+  const d = DIRS[m + n].slice();
+  if (m + n === 5) return { lps: d.slice(0, n), bonds: d.slice(n) };          // lone pairs equatorial first
+  if (m + n === 6) { const lpOrder = [0, 1]; return { lps: lpOrder.slice(0, n).map((i) => d[i]), bonds: d.filter((_, i) => lpOrder.slice(0, n).indexOf(i) < 0) }; }
+  return { lps: d.slice(0, n), bonds: d.slice(n) };
+}
+const angle = (a, b) => Math.round(Math.acos(Math.max(-1, Math.min(1, a[0] * b[0] + a[1] * b[1] + a[2] * b[2]))) * 1800 / Math.PI) / 10;
+function bondAngles(bonds) { const s = new Set(); for (let i = 0; i < bonds.length; i++) for (let j = i + 1; j < bonds.length; j++) s.add(angle(bonds[i], bonds[j])); return [...s].sort((a, b) => a - b); }
+
+const view = $('view'); let renderer = null;
+try { const c = document.createElement('canvas'); if (!(c.getContext('webgl2') || c.getContext('webgl'))) throw 0; renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, canvas: c }); renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2)); view.appendChild(c); }
+catch (e) { const n = document.createElement('div'); n.className = 'nogl'; n.textContent = 'This browser cannot draw 3D (WebGL is off). The counts, the question and the answer all still work.'; view.appendChild(n); }
+const scene = new THREE.Scene(), camera = new THREE.PerspectiveCamera(34, 4 / 3, 0.1, 100); camera.position.set(0, 0, 9);
+scene.add(new THREE.AmbientLight(0xffffff, 1.6)); const sun = new THREE.DirectionalLight(0xffffff, 2.2); sun.position.set(4, 6, 8); scene.add(sun);
+const group = new THREE.Group(); scene.add(group);
+const sph = new THREE.SphereGeometry(1, 24, 16), cyl = new THREE.CylinderGeometry(0.1, 0.1, 1, 12);
+const mats = {}; const mat = (hex, op) => mats[hex + (op || '')] || (mats[hex + (op || '')] = new THREE.MeshStandardMaterial({ color: hex, roughness: 0.5, transparent: !!op, opacity: op || 1, depthWrite: !op }));
+let tags = [];
+function draw() { if (!renderer) return; renderer.render(scene, camera); tags.forEach((t) => { const v = t.p.clone().applyMatrix4(group.matrixWorld).project(camera); const r = view.getBoundingClientRect(); t.el.style.left = ((v.x + 1) / 2 * r.width) + 'px'; t.el.style.top = ((1 - v.y) / 2 * r.height) + 'px'; }); }
+function size() { if (!renderer) return; const r = view.getBoundingClientRect(); renderer.setSize(r.width, r.height, false); camera.aspect = r.width / r.height; camera.updateProjectionMatrix(); draw(); }
+function build(mol) {
+  group.clear(); tags.forEach((t) => t.el.remove()); tags = []; group.rotation.set(0.45, -0.6, 0);
+  const [f, ce, li, m, n] = mol, s = slots(m, n), L = 2.1;
+  const c = new THREE.Mesh(sph, mat(COLOR[ce])); c.scale.setScalar(0.55); group.add(c);
+  s.bonds.forEach((d) => { const p = new THREE.Vector3(...d).multiplyScalar(L); const a = new THREE.Mesh(sph, mat(COLOR[li])); a.scale.setScalar(li === 'H' ? 0.3 : 0.42); a.position.copy(p); group.add(a);
+    const b = new THREE.Mesh(cyl, mat('#9aa39c')); b.position.copy(p.clone().multiplyScalar(0.5)); b.scale.set(1, L, 1); b.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), p.clone().normalize()); group.add(b); });
+  s.lps.forEach((d) => { const lp = new THREE.Mesh(sph, mat('#C9A84C', 0.42)); lp.scale.set(0.42, 0.42, 0.85); lp.position.copy(new THREE.Vector3(...d).multiplyScalar(1.05)); lp.lookAt(new THREE.Vector3(...d).multiplyScalar(5)); group.add(lp); });
+  // angle tag between the first two bonds that show the main angle
+  const angs = bondAngles(s.bonds); const show = angs.filter((a) => a < 180)[0] || 180;
+  let pair = null; for (let i = 0; i < s.bonds.length && !pair; i++) for (let j = i + 1; j < s.bonds.length; j++) if (angle(s.bonds[i], s.bonds[j]) === show) { pair = [s.bonds[i], s.bonds[j]]; break; }
+  if (pair) { const mid = new THREE.Vector3(...pair[0]).add(new THREE.Vector3(...pair[1])); if (mid.length() < 0.01) mid.set(0, 1.2, 0); mid.normalize().multiplyScalar(1.15); const el = document.createElement('span'); el.className = 'tag'; el.textContent = show + '°'; view.appendChild(el); tags.push({ el, p: mid }); }
+  group.updateMatrixWorld(); draw();
+  return { angs, s };
+}
+let drag = null;
+view.addEventListener('pointerdown', (e) => { drag = { x: e.clientX, y: e.clientY }; view.setPointerCapture(e.pointerId); });
+view.addEventListener('pointermove', (e) => { if (!drag) return; group.rotation.y += (e.clientX - drag.x) * 0.01; group.rotation.x += (e.clientY - drag.y) * 0.01; drag = { x: e.clientX, y: e.clientY }; group.updateMatrixWorld(); draw(); });
+view.addEventListener('pointerup', () => { drag = null; }); addEventListener('resize', size);
+
+const picks = $('picks');
+MOL.forEach((mo, k) => { const b = document.createElement('button'); b.type = 'button'; b.textContent = mo[0]; b.addEventListener('click', () => show(k)); picks.appendChild(b); });
+function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+function show(k) {
+  const mo = MOL[k], [f, ce, li, m, n] = mo, shape = SHAPE[m + ',' + n], eg = EGEOM[m + n];
+  [...picks.children].forEach((b, j) => b.setAttribute('aria-current', j === k ? 'true' : 'false'));
+  view.classList.remove('is-revealed'); $('f-dom').textContent = '?'; $('f-lp').textContent = '?'; $('f-ang').classList.add('hide');
+  const geo = build(mo);
+  // distractors: the electron geometry (the classic trap) when it differs, then shapes with the same domain count or atom count
+  const pool = [eg !== shape ? eg : null].concat(shuffle(ALL.filter((x) => x !== shape && x !== eg))).filter(Boolean);
+  const wrong = [...new Set(pool)].slice(0, 4), choices = shuffle([shape].concat(wrong)), answer = choices.indexOf(shape);
+  const item = { id: 'gc:vsepr:' + ce + li + m + n, section: 'gchem', topic: 'vsepr-3d', topicName: 'VSEPR shapes',
+    stem: 'What is the molecular geometry of ' + f + '? Its central ' + ce + ' atom has ' + m + ' bonded atom' + (m > 1 ? 's' : '') + (n ? ' and ' + n + ' lone pair' + (n > 1 ? 's' : '') : ' and no lone pairs') + '.',
+    choices, answer,
+    why: m + n + ' electron domains point toward the corners of a ' + eg + ' arrangement' + (n ? '. The ' + n + ' lone pair' + (n > 1 ? 's take' : ' takes') + (m + n === 5 ? ' equatorial spots, where there is more room' : m + n === 6 && n === 2 ? ' opposite spots, as far apart as possible' : ' one of those spots') + ', and the shape is named from the atoms alone: ' + shape + '.' : ', and with no lone pairs the shape is the same: ' + shape + '.'),
+    steps: ['Count electron domains on the center: ' + m + ' bonds + ' + n + ' lone pairs = ' + (m + n) + '.', (m + n) + ' domains: ' + eg + ' electron geometry.', 'Name the shape from the atoms only: ' + shape + '.'] };
+  window.AceQuestion.mount($('q'), item, { label: 'Gen Chem · VSEPR', confidence: true, nextLabel: 'Next molecule',
+    onAnswer: (res) => { view.classList.add('is-revealed'); $('f-dom').textContent = m + n; $('f-lp').textContent = n; $('f-ang').textContent = geo.angs.filter((a) => a < 180).concat(geo.angs.length === 1 && geo.angs[0] === 180 ? [180] : []).join(', ') + '°'; $('f-ang').classList.remove('hide');
+      if (window.AceRecord) window.AceRecord.record({ item, picked: res.picked, answer: res.answer, ok: res.ok, ms: res.ms, src: 'gc-vsepr', first: res.first, changes: res.changes, change: res.change, conf: res.conf, repair: false }); },
+    onNext: () => show((k + 1) % MOL.length) });
+  size();
+}
+size(); show(4);
+</script>
+</body>
+</html>
