@@ -14,6 +14,17 @@
      nextLabel: 'Next question'
    });
 
+   Optional, added 2026-11-16 (the deck style: predict first, then reveal):
+     item.figure or opts.figure = { html: '<svg>...</svg>', caption: 'No labels yet. ...',
+                                    revealCaption: '...' }
+       The figure shows unlabeled while the student commits. Anything inside it with
+       class "reveal" stays hidden until Check answer, then draws in; class
+       "predict-only" goes away at the reveal.
+     item.steps = ['step one', 'step two', ...]  the worked route, revealed in order.
+     opts.confidence = true   three optional chips (Sure, Unsure, Guessed). Never blocks.
+   Every selection is logged: result.picks = [{ i, ms }], first, changes, and
+   change = 'none' | 'w2r' (wrong to right) | 'r2w' (right to wrong) | 'w2w'.
+
    Always the same sequence: pick a letter, Check answer, then the reveal:
    the answer, why, the trap in the letter picked (when the bank has one), the
    one-line trick (when the bank has one), and a same-skill retry.
@@ -31,15 +42,25 @@
   function mount(host, item, opts) {
     opts = opts || {};
     if (!item || !Array.isArray(item.choices) || item.choices.length !== 5) throw new Error('AceQuestion: an item needs exactly five choices');
-    var picked = -1, revealed = false, t0 = Date.now();
+    var picked = -1, revealed = false, t0 = Date.now(), picks = [], conf = null;
+    var fig = opts.figure || item.figure || null;
     host.textContent = '';
-    var root = el('section', 'aui-q'); root.setAttribute('aria-label', 'Question');
+    var root = el('section', 'aui-q' + (fig ? ' aui-q--fig' : '')); root.setAttribute('aria-label', 'Question');
+    var qcol = root;
+    if (fig) {
+      qcol = el('div', 'aui-q__main');
+      var figBox = el('figure', 'aui-q__fig'); figBox.setAttribute('data-state', 'predict');
+      var figArt = el('div', 'aui-q__art'); figArt.innerHTML = fig.html || '';
+      var figCap = el('figcaption', 'aui-q__cap', fig.caption || 'No labels yet. Commit to an answer first.');
+      figBox.appendChild(figArt); figBox.appendChild(figCap);
+      root.appendChild(qcol); root.appendChild(figBox);
+    }
     var meta = el('div', 'aui-q__meta');
     meta.appendChild(el('span', 'aui-chip', opts.label || item.topicName || item.topic || ''));
     if (opts.number) meta.appendChild(el('span', 'aui-small aui-num', 'Question ' + opts.number + (opts.total ? ' of ' + opts.total : '')));
-    root.appendChild(meta);
+    qcol.appendChild(meta);
     var stemId = 'aui-q-stem-' + Math.random().toString(36).slice(2, 8);
-    var stem = el('p', 'aui-q__stem', item.stem); stem.id = stemId; root.appendChild(stem);
+    var stem = el('p', 'aui-q__stem', item.stem); stem.id = stemId; qcol.appendChild(stem);
 
     var list = el('ul', 'aui-q__choices'); list.setAttribute('role', 'radiogroup'); list.setAttribute('aria-labelledby', stemId);
     var buttons = item.choices.map(function (text, i) {
@@ -50,17 +71,30 @@
       b.addEventListener('click', function () { pick(i); });
       li.appendChild(b); list.appendChild(li); return b;
     });
-    root.appendChild(list);
+    qcol.appendChild(list);
 
     var actions = el('div', 'aui-q__actions');
     var check = el('button', 'aui-btn', 'Check answer'); check.type = 'button'; check.disabled = true;
     var hint = el('span', 'aui-q__hint', 'Pick a letter, then check.');
-    actions.appendChild(check); actions.appendChild(hint); root.appendChild(actions);
-    var fb = el('div', 'aui-q__fb'); fb.hidden = true; fb.setAttribute('aria-live', 'polite'); root.appendChild(fb);
+    actions.appendChild(check); actions.appendChild(hint);
+    var confRow = null;
+    if (opts.confidence) {
+      confRow = el('div', 'aui-q__conf'); confRow.setAttribute('role', 'group'); confRow.setAttribute('aria-label', 'How sure are you? Optional');
+      confRow.appendChild(el('span', 'aui-q__hint', 'How sure? Optional.'));
+      [['sure', 'Sure'], ['unsure', 'Unsure'], ['guess', 'Guessed']].forEach(function (c) {
+        var b = el('button', 'aui-chip aui-q__confbtn', c[1]); b.type = 'button'; b.setAttribute('aria-pressed', 'false');
+        b.addEventListener('click', function () { if (revealed) return; conf = conf === c[0] ? null : c[0]; Array.prototype.forEach.call(confRow.querySelectorAll('button'), function (x) { x.setAttribute('aria-pressed', x === b && conf ? 'true' : 'false'); }); });
+        confRow.appendChild(b);
+      });
+      qcol.appendChild(confRow);
+    }
+    qcol.appendChild(actions);
+    var fb = el('div', 'aui-q__fb'); fb.hidden = true; fb.setAttribute('aria-live', 'polite'); qcol.appendChild(fb);
     host.appendChild(root);
 
     function pick(i, focus) {
       if (revealed) return;
+      if (picked !== i) picks.push({ i: i, ms: Date.now() - t0 });
       picked = i;
       buttons.forEach(function (b, j) { b.setAttribute('aria-checked', j === i ? 'true' : 'false'); b.tabIndex = j === i ? 0 : -1; });
       check.disabled = false; hint.textContent = 'You picked ' + LETTERS[i] + '.';
@@ -70,6 +104,14 @@
       if (revealed || picked < 0) return;
       revealed = true;
       var ok = picked === item.answer, ms = Date.now() - t0;
+      var first = picks.length ? picks[0].i : picked, changes = Math.max(0, picks.length - 1);
+      var change = 'none';
+      if (first !== picked) change = (first === item.answer) ? 'r2w' : (ok ? 'w2r' : 'w2w');
+      if (confRow) Array.prototype.forEach.call(confRow.querySelectorAll('button'), function (x) { x.disabled = true; });
+      if (fig) {
+        figBox.setAttribute('data-state', 'reveal');
+        if (fig.revealCaption) figCap.textContent = fig.revealCaption;
+      }
       buttons.forEach(function (b, j) {
         b.disabled = true;
         if (j === item.answer) { b.setAttribute('data-state', 'right'); b.appendChild(el('span', 'aui-q__tag', 'Correct answer')); }
@@ -79,6 +121,12 @@
       var verdict = el('p', 'aui-q__verdict', (ok ? 'Correct. ' : 'Not this time. ') + 'The answer is ' + LETTERS[item.answer] + '.');
       verdict.setAttribute('data-ok', ok ? 'true' : 'false'); fb.appendChild(verdict);
       if (item.why) fb.appendChild(block('Why', item.why));
+      if (Array.isArray(item.steps) && item.steps.length) {
+        var dl = el('dl', 'aui-q__block'); dl.appendChild(el('dt', null, 'How to get there'));
+        var dd = el('dd'), ol = el('ol', 'aui-q__steps');
+        item.steps.forEach(function (t, k) { var li = el('li', null, t); li.style.setProperty('--k', k); ol.appendChild(li); });
+        dd.appendChild(ol); dl.appendChild(dd); fb.appendChild(dl);
+      }
       var trap = !ok && item.traps && item.traps[picked];
       if (trap) fb.appendChild(block('The trap in ' + LETTERS[picked], trap));
       if (item.trick) fb.appendChild(block('Trick', item.trick));
@@ -92,7 +140,7 @@
         row.appendChild(retry);
       }
       fb.appendChild(row); fb.hidden = false; next.focus();
-      if (opts.onAnswer) opts.onAnswer({ item: item, picked: picked, answer: item.answer, ok: ok, ms: ms });
+      if (opts.onAnswer) opts.onAnswer({ item: item, picked: picked, answer: item.answer, ok: ok, ms: ms, picks: picks.slice(), first: first, changes: changes, change: change, conf: conf });
     }
     check.addEventListener('click', reveal);
 
@@ -122,5 +170,5 @@
   }
 
   document.addEventListener('keydown', function (e) { if (active && document.body.contains(active.root)) active.key(e); });
-  window.AceQuestion = { version: 1, LETTERS: LETTERS, mount: mount };
+  window.AceQuestion = { version: 2, LETTERS: LETTERS, mount: mount };
 })();

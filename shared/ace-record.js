@@ -9,7 +9,12 @@
                         days:  { "YYYY-MM-DD": { seen, right } },
                         imported: { [missId]: { section, concept, status, due, source } } }
      ace.v1.attempts  the last 2,000 answers, newest last:
-                        { id, section, topic, picked, answer, ok, ms, at, src, set }
+                        { id, section, topic, picked, answer, ok, ms, at, src, set,
+                          first, changes, change, conf }
+                        first: the first letter picked; changes: how many times the pick
+                        moved; change: 'none' | 'w2r' | 'r2w' | 'w2w'; conf: 'sure' |
+                        'unsure' | 'guess' | null (all added 2026-11-16)
+     ace.v1.events    the last 1,000 tool events (lab steps, figure reveals): { name, at, ...data }
      ace.v1.outbox    answers not yet accepted by the sync adapter
      ace.v1.migrated  { at, families: { name: keyCount }, keys: [{ k, bytes }] }
 
@@ -73,6 +78,10 @@
     day.seen += 1; if (a.ok) day.right += 1; r.days[d] = day;
     r.updated = now; write('record', r);
     var row = { id: id, section: it.section, topic: it.topic, picked: a.picked, answer: a.answer, ok: !!a.ok, ms: a.ms || 0, at: now, src: a.src || '', set: a.set || '' };
+    if (a.first != null) row.first = a.first;
+    if (a.changes != null) row.changes = a.changes;
+    row.change = a.change || (a.first != null && a.first !== a.picked ? (a.first === a.answer ? 'r2w' : (a.ok ? 'w2r' : 'w2w')) : 'none');
+    if (a.conf) row.conf = a.conf;
     var log = read('attempts', []); log.push(row); if (log.length > MAX_ATTEMPTS) log = log.slice(log.length - MAX_ATTEMPTS); write('attempts', log);
     var out = read('outbox', []); out.push(row); write('outbox', out);
     emit({ type: 'record', attempt: row, item: it });
@@ -110,6 +119,29 @@
     Object.keys(r.items).forEach(function (id) { var it = r.items[id]; if (section && it.section !== section) return; var t = out[it.topic] || (out[it.topic] = { items: 0, answers: 0, right: 0, missed: 0 }); t.items += 1; t.answers += it.seen; t.right += it.right; if (!it.lastOk) t.missed += 1; });
     return out;
   }
+  /* Answer changes, the student's own counts only (learning phase design, section 5). Never a
+     comparison with other students and never a blanket rule; below 20 changes the sample is
+     called too small. q = { section, src } */
+  function changeStats(q) {
+    q = q || {}; var out = { answers: 0, changed: 0, w2r: 0, r2w: 0, w2w: 0, net: 0, enough: false, bySure: { sure: [0, 0], unsure: [0, 0], guess: [0, 0] } };
+    attempts().forEach(function (a) {
+      if (q.section && a.section !== q.section) return; if (q.src && a.src !== q.src) return;
+      out.answers += 1;
+      if (a.change && a.change !== 'none') { out.changed += 1; out[a.change] = (out[a.change] || 0) + 1; }
+      if (a.conf && out.bySure[a.conf]) { out.bySure[a.conf][0] += 1; if (a.ok) out.bySure[a.conf][1] += 1; }
+    });
+    out.net = out.w2r - out.r2w; out.enough = out.changed >= 20;
+    return out;
+  }
+  /* A light event log for tools that are not questions (a lab step, a figure reveal). */
+  function event(name, data) {
+    var row = { name: String(name || ''), at: Date.now() };
+    if (data && typeof data === 'object') Object.keys(data).forEach(function (k) { if (k !== 'name' && k !== 'at') row[k] = data[k]; });
+    var log = read('events', []); log.push(row); if (log.length > 1000) log = log.slice(log.length - 1000); write('events', log);
+    emit({ type: 'event', event: row });
+    return row;
+  }
+  function events() { return read('events', []); }
   function today(now) { var r = load(); return r.days[dayKey(now || Date.now())] || { seen: 0, right: 0 }; }
   function attempts() { return read('attempts', []); }
 
@@ -150,8 +182,9 @@
   function exportAll() { return { schema: 1, exported: Date.now(), record: load(), attempts: attempts(), legacy: legacyExport() }; }
 
   window.AceRecord = {
-    version: 1, LADDER: LADDER, FAMILIES: FAMILIES.map(function (f) { return f[0]; }),
+    version: 2, LADDER: LADDER, FAMILIES: FAMILIES.map(function (f) { return f[0]; }),
     record: record, item: item, due: due, missed: missed, stats: stats, topics: topics, today: today, attempts: attempts,
+    changeStats: changeStats, event: event, events: events,
     setSync: setSync, flush: flush, pending: pending, onChange: function (fn) { listeners.push(fn); },
     migrate: migrate, legacyKeys: legacyKeys, legacyExport: legacyExport, exportAll: exportAll,
     imported: function () { return load().imported; }

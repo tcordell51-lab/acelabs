@@ -1,5 +1,6 @@
 #!/usr/bin/env node
-// gate-cut-map.mjs : the approved cut list, as redirects. No file is deleted.
+// gate-cut-map.mjs : the approved cut list, as redirects. No file is deleted, except a removed
+// page whose row carries deleted: true.
 //
 //   node scripts/gate-cut-map.mjs           check (part of npm test)
 //   node scripts/gate-cut-map.mjs --write   rewrite the generated block in _redirects
@@ -74,7 +75,9 @@ function resolve(addr) {
 const problems = [];
 if (map.pages.length !== 135) problems.push('cut-map.json must list 135 pages, has ' + map.pages.length);
 for (const p of map.pages) {
-  if (!fs.existsSync(path.join(ROOT, p.path))) problems.push('file was deleted: ' + p.path);
+  // Files may be deleted only when the row says remove and the address still redirects
+  // (booster-map.html, deleted 2026-11-16 on Thomas's rule: no competitor material in the repo).
+  if (!fs.existsSync(path.join(ROOT, p.path)) && !(p.action === 'remove' && p.deleted)) problems.push('file was deleted: ' + p.path);
   for (const a of addresses(p.path)) {
     const r = resolve(a);
     if (!r.file) problems.push(`old address ${a} lands nowhere`);
