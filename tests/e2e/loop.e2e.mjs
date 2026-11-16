@@ -234,7 +234,10 @@ try {
   ok('after the wins, Today, Repair and Progress still agree', JSON.stringify(after));
 
   // ---------- 8. adaptive: after a run of wins the set gets harder ----------
-  const topic = practice.topic.split('|')[1], hub = psec === 'ochem' ? '/oc/' : '/gc/';
+  // the section the plan sent the student to; its largest topic, so there are enough unseen items
+  const hub = psec === 'ochem' ? '/oc/' : '/gc/', bankFile = psec === 'ochem' ? 'ochem.json' : 'gchem.json';
+  const sizes = {}; for (const it of JSON.parse(fs.readFileSync(path.join(ROOT, 'data', bankFile), 'utf8')).items) sizes[it.topic] = (sizes[it.topic] || 0) + 1;
+  const topic = Object.keys(sizes).sort((a, b) => sizes[b] - sizes[a])[0];
   async function setDifficulty() {
     await go(hub + '?topic=' + encodeURIComponent(topic));
     await page.waitForSelector('[data-item]');
@@ -248,7 +251,7 @@ try {
   // a run of right answers in that topic, through the set itself
   await page.clock.setFixedTime(T0 + 4 * DAY);
   for (let k = 0; k < 8; k++) {
-    await page.waitForSelector('#stage [data-item]');
+    if (!(await page.$('#stage [role="radio"]'))) break;   // the set ended
     const id = await page.getAttribute('#stage [data-item]', 'data-item');
     await page.locator('#stage [role="radio"]').nth(ANSWER[id]).click();
     await page.click('#stage button[data-act="check"]');
@@ -268,6 +271,24 @@ try {
   assert.ok(tries.length > 0 && tries.every(Boolean), 'every lab card has Try questions on this');
   await shot('labs-try-questions');
   ok('every lab card offers Try questions on this', tries.length + ' cards');
+
+  // ---------- 9b. PAT hole punch: the mirror and diagonal drills, recorded on the shared record ----------
+  await go('/tools/pat/holepunch.html');
+  await page.waitForSelector('.hp-drill[data-drill="diag"]');
+  const kinds = await page.$$eval('.hp-drill', (d) => d.map((x) => x.getAttribute('data-drill')));
+  assert.deepEqual(kinds, ['mirror', 'diag']);
+  const patBefore = await R(() => AceRecord.attempts().filter((a) => a.section === 'pat').length);
+  for (const k of kinds) {
+    const drill = page.locator('.hp-drill[data-drill="' + k + '"]');
+    await drill.locator('rect[data-cell]').first().click();
+    await drill.locator('button:has-text("Check")').click();
+    await drill.locator('.hp-say').filter({ hasText: /\S/ }).waitFor();
+  }
+  await page.locator('.hp-drill[data-drill="diag"]').scrollIntoViewIfNeeded();
+  await shot('pat-holepunch-diagonal-drill');
+  const patAfter = await R(() => AceRecord.attempts().filter((a) => a.section === 'pat').length);
+  assert.equal(patAfter - patBefore, 2, 'both drill answers reached the shared record');
+  ok('hole punch: mirror-effect and diagonal-fold drills run and write PAT answers to the shared record');
 
   // ---------- 10. one navigation, everywhere the tab bar goes ----------
   const TABS = ['/', '/labs/', '/tests/', '/repair/', '/progress/'];
