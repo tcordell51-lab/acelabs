@@ -13,7 +13,11 @@
 // 6. Next day: beat a miss once (win 1). Two days later: beat it again; it clears.
 // 7. Adaptive: the next practice set leans to the missed skills, and after a run of wins in one
 //    topic the set picks harder questions than before.
-// 8. Crawl: every page the tab bar reaches, and every page linked from those, has the shared bar
+// 9. Gaps from the rework (2026-11-16): Keyholes and the OChem Summit write to the shared record and
+//    feed Repair; a lab miss comes back in Repair as a bank question of the same canonical skill; the
+//    phone tab bar hides during the timed PAT test and Reading section; new full-length forms show
+//    only when the forms function says they are ready.
+// 10. Crawl: every page the tab bar reaches, and every page linked from those, has the shared bar
 //    and the tab bar at phone width, and no page scrolls sideways at 390, 768 or 1280 px.
 // Screenshots of each step (phone width) go to --shots DIR when given.
 import assert from 'node:assert/strict';
@@ -297,6 +301,97 @@ try {
   const patAfter = await R(() => AceRecord.attempts().filter((a) => a.section === 'pat').length);
   assert.equal(patAfter - patBefore, 2, 'both drill answers reached the shared record');
   ok('hole punch: mirror-effect and diagonal-fold drills run and write PAT answers to the shared record');
+
+  // ---------- 9c. Keyholes writes to the shared record; a miss opens its Repair entry ----------
+  await go('/tools/pat/keyholes.html');
+  await page.waitForFunction(() => typeof S !== 'undefined' && S && S.shown && S.shown.length > 0, null, { timeout: 20000 });
+  const khBefore = await R(() => AceRecord.attempts().filter((a) => a.src === 'pat-keyholes').length);
+  await R(() => { const i = S.shown.findIndex((o) => !o.correct); choose(i); });
+  const kh = await R(() => ({ n: AceRecord.attempts().filter((a) => a.src === 'pat-keyholes').length, entry: AceRecord.repairEntry('pat:keyholes') }));
+  assert.equal(kh.n - khBefore, 1, 'the Keyholes answer reached the shared record');
+  assert.ok(kh.entry && !kh.entry.cleared && kh.entry.mode === 'skill', 'a Keyholes miss opens the Keyholes Repair entry');
+  await shot('pat-keyholes-recorded');
+  ok('Keyholes: answers reach the shared record and a miss opens its Repair entry');
+
+  // ---------- 9d. the OChem Summit writes every answer and feeds Repair ----------
+  await go('/tools/ochem/summit/');
+  await page.waitForFunction(() => window.OChemSummit && window.OChemSummit.start, null, { timeout: 30000 });
+  const sumBefore = await R(() => ({ n: AceRecord.attempts().filter((a) => a.src === 'ochem-summit').length, open: AceRecord.repairList().open.filter((e) => e.section === 'ochem').length }));
+  await R(() => { OChemSummit.start('untimed'); const run = OChemSummit.run; run.items.forEach((it, i) => { run.answers[i] = i < 5 ? (it.correct + 1) % it.choices.length : it.correct; }); });
+  await page.locator('button:has-text("Submit section")').first().click();
+  const anyway = page.locator('button:has-text("Submit anyway")'); if (await anyway.count()) await anyway.click();
+  await page.waitForSelector('#results a[href^="/review/?run="]', { timeout: 15000 });
+  const sum = await R(() => ({ n: AceRecord.attempts().filter((a) => a.src === 'ochem-summit').length, open: AceRecord.repairList().open.filter((e) => e.section === 'ochem'), run: AceRecord.runs().slice(-1)[0] }));
+  assert.equal(sum.n - sumBefore.n, sum.run.total, 'every Summit answer is on the shared record');
+  assert.equal(sum.run.src, 'ochem-summit');
+  assert.ok(sum.open.length - sumBefore.open >= 5, 'the five Summit misses are in Repair');
+  const canon = sum.open.filter((e) => /^oc:summit-/.test(e.id)).filter((e) => /^oc_/.test(e.skill)).length;
+  await shot('ochem-summit-review-link');
+  ok('OChem Summit: every answer on the shared record, misses in Repair, review link shown', (sum.open.length - sumBefore.open) + ' new OChem entries, ' + canon + ' on a canonical oc_ skill');
+
+  // ---------- 9e. a miss inside a lab comes back in Repair as a bank question of the same skill ----------
+  await go('/gc/vsepr/');
+  await page.waitForSelector('#q [role="radio"]', { timeout: 20000 });
+  let labMiss = null;
+  for (let k = 0; k < 6 && !labMiss; k++) {
+    await page.locator('#q [role="radio"]').nth(k % 5).click();
+    await page.click('#q button[data-act="check"]');
+    await page.waitForSelector('#q button[data-act="next"]');
+    const last = await R(() => AceRecord.attempts().slice(-1)[0]);
+    if (!last.ok) labMiss = last; else await page.click('#q button[data-act="next"]');
+  }
+  assert.ok(labMiss, 'a lab miss was made');
+  const labEntry = await R((id) => AceRecord.repairEntry(id), labMiss.id);
+  assert.ok(labEntry && !labEntry.cleared, 'the lab miss opened a Repair entry');
+  assert.equal(labEntry.skill, 'gc_vsepr_geometry');
+  const twin = await R((id) => fetch('/data/gchem.json').then((r) => r.json()).then((b) => { const v = AceRecord.repairVersion(AceRecord.repairEntry(id), b.items); return { match: v.match, skill: v.item && v.item.skill, id: v.item && v.item.id }; }), labMiss.id);
+  assert.equal(twin.match, 'skill'); assert.equal(twin.skill, 'gc_vsepr_geometry'); assert.notEqual(twin.id, labMiss.id);
+  ok('lab misses feed Repair: a VSEPR lab miss comes back as a Gen Chem bank question of the same canonical skill', twin.id);
+
+  // ---------- 9f. the phone tab bar hides during the timed PAT test and the timed Reading section ----------
+  const tabsHidden = () => R(() => { const t = document.getElementById('ace-tabs'); return t ? t.hidden : null; });
+  await go('/tools/pat/test.html');
+  await page.waitForFunction(() => !!document.getElementById('ace-tabs'));
+  assert.equal(await tabsHidden(), false, 'tab bar shows on the PAT test list');
+  await R(() => window.PATUI.start(3));
+  await page.waitForFunction(() => document.getElementById('ace-tabs').hidden === true, null, { timeout: 120000 });
+  await shot('pat-test-timed-no-tabs');
+  await R(() => { window.PATUI.answerAll(7); window.PATUI.finish(); });
+  await page.waitForFunction(() => document.getElementById('ace-tabs').hidden === false, null, { timeout: 10000 });
+  ok('PAT test: the tab bar hides while the 60-minute clock runs and comes back after');
+  await go('/tools/rc/#start/section/rc-s1');
+  await page.waitForFunction(() => document.getElementById('ace-tabs') && document.getElementById('ace-tabs').hidden === true, null, { timeout: 15000 });
+  await shot('reading-timed-no-tabs');
+  await R(() => window.AceRC.finish('submitted'));
+  await page.waitForFunction(() => document.getElementById('ace-tabs').hidden === false, null, { timeout: 10000 });
+  ok('Reading: the tab bar hides during a timed section and comes back after');
+
+  // ---------- 9g. the new full-length forms: hidden until approved, playable once ready ----------
+  await go('/tools/mock/full.html');
+  await page.waitForSelector('.tcard');
+  const before = await page.$$eval('.tcard', (c) => c.length);
+  assert.equal(before, 4, 'with no approved form (no function answer) the list is the four existing tests');
+  const stub = (sec, n, sub) => Array.from({ length: n }, (_, i) => ({ id: sec + ':stub-' + i, sub, stop: 'x', topic: 'Stub', d: 2, q: 'Stub question ' + (i + 1) + ' for ' + sub + '?', opts: ['one', 'two', 'three', 'four', 'five'], correct: i % 5, why: 'Stub.', traps: null, skill: 'stub', skillName: 'Stub' }));
+  const mock = { id: 'ACE_9', name: 'Full-Length Test 13', sections: { bio: stub('bio', 40, 'Biology'), gc: stub('gc', 30, 'Gen Chem'), ochem: stub('oc', 30, 'OChem'), qr: stub('qr', 40, 'QR') }, pat: { seed: 'F20261109' }, rc: { section: 'rc-s11' } };
+  mock.sections.bio[0].img = 'data:image/svg+xml;base64,' + Buffer.from('<svg xmlns="http://www.w3.org/2000/svg" width="40" height="20"><rect width="40" height="20" fill="#1B3A2D"/></svg>').toString('base64');
+  await page.route('**/.netlify/functions/ace-bank-forms*', (route) => {
+    const u = new URL(route.request().url());
+    if (u.searchParams.get('form')) return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ ok: true, status: 'ready', preview: false, mock }) });
+    return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ ok: true, forms: [{ id: 'ACE_9', name: mock.name, status: 'ready', approved: 140, needed: 140 }] }) });
+  });
+  await go('/tools/mock/full.html');
+  await page.waitForFunction(() => document.querySelectorAll('.tcard').length === 5, null, { timeout: 10000 });
+  await page.click('.tcard[data-id="ACE_9"]');
+  await page.waitForSelector('#patBegin');
+  const sons = await R(() => window.__fullMock.items('sons').length);
+  assert.equal(sons, 100);
+  await page.click('#patBegin');
+  await page.waitForSelector('.pm-fig img');
+  await shot('full-length-new-form');
+  await R(() => { window.__fullMock.endSection(); });
+  await page.unroute('**/.netlify/functions/ace-bank-forms*');
+  await R(() => { localStorage.removeItem('acelabs.fullmock.v1.active'); localStorage.setItem('acelabs.timed', JSON.stringify({ until: 0 })); });
+  ok('full-length: a ready form appears and runs (100 science items, its drawing shown); none appear without approval');
 
   // ---------- 10. one navigation, everywhere the tab bar goes ----------
   const TABS = ['/', '/labs/', '/tests/', '/repair/', '/progress/'];

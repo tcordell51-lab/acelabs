@@ -66,7 +66,8 @@ const ALLOW = [
   { test: (p) => /\.test\.(m?js|cjs)$/.test(p), why: 'node test code' },
   { test: (p) => p === 'scripts/check-no-competitor-names.mjs', why: 'this checker (it has to spell the names)' },
   { test: (p) => p === 'tools/organic/audio/cues.json', why: 'narration word timings, never rendered as text; clips n1-s3 and n5-s6 are muted in tools/organic/index.html until re-recorded' },
-  { test: (p) => p === 'booster-map.html', why: 'legacy unlinked page held for a keep-or-delete decision' }
+  { test: (p) => p === 'booster-map.html', why: 'legacy unlinked page held for a keep-or-delete decision' },
+  { test: (p) => /^bank-private\//.test(p), why: 'local build of the private banks (git-ignored, never served); its one hit is the medical word (a toxoid booster), and an item reaches a student only after Thomas approves it' }
 ];
 
 // Per-file data keys that hold internal audit notes and are never rendered.

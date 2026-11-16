@@ -10,6 +10,11 @@
   node_bundler = "esbuild"
   external_node_modules = ["@netlify/blobs"]
 
+# The private-bank functions read the locally built bank-private/ folder (git-ignored; built by
+# scripts/bank/build-private.mjs before a deploy) and the committed forms and review order.
+[functions."ace-bank-*"]
+  included_files = ["bank-private/**", "scripts/bank/forms.json", "scripts/bank/review-queue.json"]
+
 [[headers]]
   for = "/*"
   [headers.values]

@@ -1075,6 +1075,9 @@ function choose(i) {
     seconds: secs.toFixed(2)
   });
   $('export').disabled = false;
+  // the one record (shared/ace-record.js via pat-ledger.js): Progress counts it, a miss opens the
+  // Keyholes Repair entry, and a right answer on a day it is due counts as a Repair win (2026-11-16)
+  if (window.PatLedger) PatLedger.record('keyholes', !!right);
   showAnswer(secs);
   updateStats();
 }
@@ -1171,6 +1174,9 @@ document.addEventListener('keydown', e => {
 
 newItem();
 </script>
+<script src="/shared/ace-skills.js?v=2"></script>
+<script src="/shared/ace-record.js?v=6"></script>
+<script src="pat-ledger.js"></script>
 <script src="/shared/ace-shell.js?v=4" defer></script>
 <script src="/shared/ace-tabs.js?v=3" defer></script>
 <script src="/shared/ace-wrap.js?v=2" defer></script>

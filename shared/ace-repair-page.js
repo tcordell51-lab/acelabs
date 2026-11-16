@@ -1,7 +1,8 @@
 /* ace-repair-page.js : the Repair page (/repair/). One queue for every miss; each comes back as a
    new version (a twin: same section and skill, another stem) until it is beaten twice on different
    days, answered unassisted. The rules live in shared/ace-record.js (repair*); this file only shows
-   them. Banks: the built banks under /data/. PAT and Reading misses repair by skill: the new
+   them. Banks: the built banks under /data/, plus the private-bank items Thomas has approved
+   (/.netlify/functions/ace-bank-pool, empty until he approves). PAT and Reading misses repair by skill: the new
    version is the next item of that skill in its trainer (any unassisted answer there counts). */
 (function () {
   'use strict';
@@ -151,9 +152,14 @@
       onNext: function () { showNext(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
     });
   }
-  Promise.all(BANKS.map(function (u) { return fetch(u).then(function (r) { return r.ok ? r.json() : { items: [] }; }).catch(function () { return { items: [] }; }); }))
+  /* Approved private-bank items (Thomas's review queue): only what he approved, only for a signed-in
+     student; the function answers an empty list otherwise, so Repair is unchanged until he approves. */
+  function sessionHeaders() { var h = {}; try { var s = JSON.parse(localStorage.getItem('ace.v1.session') || 'null'); if (s && s.token && s.exp * 1000 > Date.now()) h['X-Ace-Session'] = s.token; } catch (x) { /* no session */ } return h; }
+  var POOL = '/.netlify/functions/' + 'ace-bank-pool';
+  function get(u) { return fetch(u, u === POOL ? { credentials: 'same-origin', headers: sessionHeaders() } : undefined).then(function (r) { return r.ok ? r.json() : { items: [] }; }).catch(function () { return { items: [] }; }); }
+  Promise.all(BANKS.concat([POOL]).map(get))
     .then(function (sets) {
-      sets.forEach(function (s) { (s.items || []).forEach(function (it) { bank.push(it); byId[it.id] = it; }); });
+      sets.forEach(function (s) { (s.items || []).forEach(function (it) { if (byId[it.id]) return; bank.push(it); byId[it.id] = it; }); });
       showNext();
     });
 })();

@@ -185,8 +185,8 @@
 <script src="engine/pat-patternfold-poly.js"></script>
 <script src="engine/pat-test.js"></script>
 <script src="engine/pat-store.js"></script>
-<script src="/shared/ace-skills.js?v=1"></script>
-<script src="/shared/ace-record.js?v=5"></script>
+<script src="/shared/ace-skills.js?v=2"></script>
+<script src="/shared/ace-record.js?v=6"></script>
 <script src="/shared/ace-test-review.js?v=3"></script>
 <script>
 (function () {
@@ -198,7 +198,13 @@
 
   function readPref() { try { return JSON.parse(localStorage.getItem(PREF) || '{}'); } catch (e) { return {}; } }
   function writePref(p) { try { localStorage.setItem(PREF, JSON.stringify(p)); } catch (e) { /* convenience only */ } }
+  /* The shared bar and the phone tab bar hide while the test clock runs (acelabs.timed, read by
+     shared/ace-shell.js and shared/ace-tabs.js); any other screen clears it. (2026-11-16) */
+  var timedUntil = 0;
+  function setTimed(sec) { timedUntil = Date.now() + sec * 1000; try { localStorage.setItem('acelabs.timed', JSON.stringify({ until: timedUntil })); window.dispatchEvent(new Event('acelabs:timed')); } catch (e) { /* storage blocked */ } }
+  function clearTimed() { if (!timedUntil) return; timedUntil = 0; try { localStorage.setItem('acelabs.timed', JSON.stringify({ until: 0 })); window.dispatchEvent(new Event('acelabs:timed')); } catch (e) { /* storage blocked */ } }
   function show(id) {
+    if (id !== 'run') clearTimed();
     ['landing', 'scratch', 'loading', 'run', 'results', 'itemRev'].forEach(function (s) { $(s).classList.toggle('hidden', s !== id); });
     window.scrollTo(0, 0);
   }
@@ -314,11 +320,13 @@
     clearInterval(ui.tick);
     ui.tick = setInterval(tickTimer, 250);
     renderTimer();
+    setTimed(ui.attempt.remainingSec + 30);
   }
   function tickTimer() {
     var now = Date.now(), dt = (now - ui.lastTick) / 1000; ui.lastTick = now;
     ui.attempt.remainingSec = Math.max(0, ui.attempt.remainingSec - dt);
     renderTimer();
+    if (!timedUntil || timedUntil - now < 20000) setTimed(ui.attempt.remainingSec + 30);
     ui.sinceSave += dt;
     if (ui.sinceSave > 5) { ui.sinceSave = 0; commitTime(); PAT.store.save(ui.attempt); }
     if (!ui.fiveMin && ui.attempt.remainingSec <= 300) { ui.fiveMin = true; if (ui.view === 'q') renderQ(false); }
@@ -431,7 +439,7 @@
     var f = $('modalRow').querySelector('.gold') || $('modalRow').firstChild; if (f) f.focus();
   }
   function finish(timeUp) {
-    clearInterval(ui.tick); commitTime();
+    clearInterval(ui.tick); commitTime(); clearTimed();
     var a = ui.attempt;
     a.status = 'finished'; a.finishedAt = Date.now(); a.cursor = ui.pos;
     var A = PAT.test.analyze(ui.test, a);

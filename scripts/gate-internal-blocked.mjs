@@ -22,14 +22,17 @@ const END = '# ---- END internal pages ----';
 
 // Whole folders that hold only internal files.
 const INTERNAL_DIRS = [
-  'tests/bio', 'tests/pat', 'tests/shell', 'tests/ochem2026', 'tests/qr-formats', 'tests/signin',
+  'tests/bio', 'tests/pat', 'tests/shell', 'tests/ochem2026', 'tests/qr-formats', 'tests/signin', 'tests/bank',
   'tools/gc/research', 'tools/qr/research',
   'tools/rc/verification', 'tools/rc/scripts',
   'tools/mock/verification', 'tools/minitests/source',
   'tools/qr/proposals/agent-10-sarah',
   'tools/qr/proposals/agent-01-audit',
   'tools/qr/proposals/sprint-c-beta-audit',
-  'tools/content'
+  'tools/content',
+  'bank-private',      // 2026-11-16: the private banks, built locally for the functions' bundle (git-ignored)
+  'content-drafts',    // 2026-11-16: drafted explanations waiting for Thomas (never served)
+  'scripts/bank'       // 2026-11-16: bank tags, forms, review order (ids only; internal)
 ];
 
 // Internal or production pages that no student page loads.

@@ -3,6 +3,7 @@
    Item format (built by scripts/build-ace-banks.mjs):
      { id, section, topic, topicName, stem, choices: [5 strings], answer: 0-4, why,
        traps?: [5] reason each wrong choice is wrong (null at the answer),
+       img?, imgAlt?: a drawing that is part of the question (data: URI only),
        trick?: one line }
 
    var q = AceQuestion.mount(hostElement, item, {
@@ -96,6 +97,8 @@
     qcol.appendChild(meta);
     var stemId = 'aui-q-stem-' + Math.random().toString(36).slice(2, 8);
     var stem = el('p', 'aui-q__stem', item.stem); stem.id = stemId; qcol.appendChild(stem);
+    // a drawing that belongs to the question itself (the private banks' RDKit structures, as data: URIs)
+    if (item.img && /^data:image\//.test(item.img)) { var im = el('img', 'aui-q__img'); im.src = item.img; im.alt = item.imgAlt || ''; im.style.cssText = 'display:block;max-width:100%;height:auto;margin:4px 0 12px;background:#fff;border-radius:8px'; qcol.appendChild(im); }
 
     var list = el('ul', 'aui-q__choices'); list.setAttribute('role', 'radiogroup'); list.setAttribute('aria-labelledby', stemId);
     var buttons = item.choices.map(function (text, i) {

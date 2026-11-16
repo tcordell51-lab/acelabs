@@ -156,6 +156,28 @@ function finish(timeUp){
   if (run.mode === 'timed' && score === items.length && items.length >= 30 && !state.certified) state.certified = Date.now();
   save(state);
   renderResults(attempt, timeUp);
+  toSharedRecord(items, timeUp);
+}
+/* Every answer into the one record (Progress, Today, the learner model) and every miss into
+   Repair, through the shared question-by-question review (shared/ace-test-review.js). A miss comes
+   back in Repair as a new OChem question of the same canonical skill (shared/ace-skills.js reads
+   the module or bank group the item came from). Drawn choices carry no text, so those rows show
+   letters only; the drawings stay in the debrief on this page. (2026-11-16) */
+function itemKey(it){ let h = 2166136261; const t = String(it.stem) + '|' + (it.sub || '') + '|' + (it.source || ''); for (let i = 0; i < t.length; i++){ h ^= t.charCodeAt(i); h = Math.imul(h, 16777619); } return (h >>> 0).toString(36); }
+function toSharedRecord(items, timeUp){
+  if (!window.AceTestReview || !window.AceRecord) return;
+  const LET = 'ABCDE';
+  const rows = items.map((it, i) => {
+    const drawn = it.choices.some(c => !c || !c.text);
+    return { item: { id: 'oc:summit-' + itemKey(it), section: 'ochem', topic: it.group || it.home || 'synth', topicName: it.area, difficulty: it.difficulty || 2,
+      stem: it.stem, choices: drawn ? null : it.choices.map(c => c.text), answer: it.correct, why: it.coach || '',
+      note: drawn ? 'The choices are drawings; your pick and the answer are in the Summit debrief.' : '' }, picked: run.answers[i] == null ? null : run.answers[i] };
+  });
+  window.AceTestReview.finish({ src: 'ochem-summit', title: 'The Summit' + (run.mode === 'timed' ? ', timed' : ''), kind: run.mode === 'timed' ? 'test' : 'practice', rows, back: '/tools/ochem/summit/' }).then((id) => {
+    const r = $('results'); if (!r) return;
+    const a = el('a', { class: 'primary', href: '/review/?run=' + encodeURIComponent(id), text: 'Review question by question, then Repair', style: { display: 'inline-block', marginTop: '12px' } });
+    r.insertBefore(a, r.children[2] || null);
+  }, () => {});
 }
 function renderResults(a, timeUp){
   $('section').hidden = true; $('results').hidden = false;

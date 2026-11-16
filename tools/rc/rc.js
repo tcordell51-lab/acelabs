@@ -119,6 +119,7 @@
     S.done = true;
     S.finishedAt = Date.now();
     S.endReason = reason || 'submitted';
+    clearTimed();
     S.results = score(S);
     Store.saveAttempt(S);
     Store.clearActive();
@@ -138,7 +139,17 @@
   }
 
   /* ---------------- timer ---------------- */
+  /* A timed section hides the shared bar and the phone tab bar (acelabs.timed, read by
+     shared/ace-shell.js and shared/ace-tabs.js). Untimed passages leave them up. (2026-11-16) */
+  var timedUntil = 0;
+  function setTimed(sec) { timedUntil = Date.now() + sec * 1000; try { localStorage.setItem('acelabs.timed', JSON.stringify({ until: timedUntil })); window.dispatchEvent(new Event('acelabs:timed')); } catch (e) { /* storage blocked */ } }
+  function clearTimed() { if (!timedUntil) return; timedUntil = 0; try { localStorage.setItem('acelabs.timed', JSON.stringify({ until: 0 })); window.dispatchEvent(new Event('acelabs:timed')); } catch (e) { /* storage blocked */ } }
+  function syncTimed() {
+    if (view === 'test' && S && !S.done && S.limit) { var left = S.limit - S.elapsed; if (!timedUntil || timedUntil - Date.now() < 20000) setTimed(left + 30); }
+    else clearTimed();
+  }
   setInterval(function () {
+    syncTimed();
     if (view !== 'test' || !S || S.done || document.hidden) return;
     var pid = curPid(), qid = cur().qid;
     S.elapsed++;
@@ -200,7 +211,7 @@
 
   /* ---------------- home ---------------- */
   function renderHome() {
-    view = 'home';
+    view = 'home'; clearTimed();
     go('#home');
     setKick('Reading Comprehension');
     if (!BANK) { app.innerHTML = '<div class="wrap"><p>The passage bank did not load.</p></div>'; return; }
@@ -380,6 +391,7 @@
   /* ---------------- test + review view ---------------- */
   function renderTest() {
     view = S.done ? 'review' : 'test';
+    syncTimed();
     var review = S.done;
     go(review ? '#review/' + S.id : '#test');
     setKick(review ? 'Review' : (S.mode === 'section' ? 'Timed section' : 'Single passage'));
