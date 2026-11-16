@@ -6,7 +6,7 @@
 <title>3D beside the drawing · OChem · Ace Labs</title>
 <meta name="description" content="Each molecule three ways: the 3D model, the skeleton drawing the DAT shows, and written out. Call it first.">
 <link rel="icon" type="image/svg+xml" href="/shared/ace-dat-mark.svg">
-<link rel="stylesheet" href="/shared/ace-ui.css?v=7">
+<link rel="stylesheet" href="/shared/ace-ui.css?v=8">
 <style>
   .oc-three { display: grid; gap: var(--aui-3); }
   @media (min-width: 900px) { .oc-three { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); } }
@@ -48,9 +48,9 @@
   <div id="q"></div>
   <p class="aui-small">Coordinates, drawings and answers are computed by RDKit (scripts/build-oc-3d.py): 3D shapes from MMFF94, R and S from the CIP rules, chair energies from MMFF94. The rules: OpenStax Organic Chemistry, 5.5 Sequence Rules for Specifying Configuration and 4.7 Conformations of Monosubstituted Cyclohexanes.</p>
 </main>
-<script src="/shared/ace-ui.js?v=3"></script>
-<script src="/shared/ace-record.js?v=4"></script>
-<script src="/shared/ace-question.js?v=4"></script>
+<script src="/shared/ace-ui.js?v=4"></script>
+<script src="/shared/ace-record.js?v=5"></script>
+<script src="/shared/ace-question.js?v=7"></script>
 <script type="module">
 const $ = (id) => document.getElementById(id);
 const data = await fetch('/data/oc-3d.json').then((r) => r.json());
@@ -167,6 +167,6 @@ show(0);
 const load = () => import('/shared/three.module.min.js').then((m) => { THREE = m; init3d(); size(); if (pending) { const p = pending; pending = null; p(); } else size(); }).catch(() => { $('hint').hidden = true; });
 if ('requestIdleCallback' in window) requestIdleCallback(load, { timeout: 1500 }); else setTimeout(load, 300);
 </script>
-<script src="/shared/ace-tabs.js?v=2" defer></script>
+<script src="/shared/ace-tabs.js?v=3" defer></script>
 </body>
 </html>

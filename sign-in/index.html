@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Sign in | Ace Labs</title>
+<link rel="icon" href="/favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap">
+<style>
+  html, body { margin: 0; background: #F5F0E8; color: #16261d; font: 400 17px/1.55 "DM Sans", system-ui, sans-serif; }
+  main { max-width: 460px; margin: 0 auto; padding: 12vh 22px 40px; }
+  .mark { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 18px; color: #16261d; text-decoration: none; }
+  h1 { font-size: 28px; line-height: 1.2; margin: 34px 0 10px; }
+  p { margin: 0 0 16px; color: #3d4d43; }
+  .btn { display: inline-block; background: #1f4d3a; color: #fff; font-weight: 700; padding: 13px 20px; border-radius: 10px; text-decoration: none; border: 0; font: inherit; font-weight: 700; cursor: pointer; }
+  .btn:focus-visible, a:focus-visible { outline: 3px solid #C9A84C; outline-offset: 2px; }
+  .quiet { display: inline-block; margin-top: 18px; color: #1f4d3a; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<main>
+  <a class="mark" href="/"><img src="/shared/ace-dat-mark.svg" alt="" width="30" height="30"><span>Ace Labs</span></a>
+
+  <section id="s-wait" aria-live="polite">
+    <h1>One moment</h1>
+    <p>Checking your sign-in.</p>
+  </section>
+
+  <section id="s-in" hidden>
+    <h1>Sign in to keep going</h1>
+    <p>This part of Ace Labs is for AceTheDAT students. Sign in with your portal account. There is no second password.</p>
+    <a class="btn" id="go" href="https://acethedat-portal.netlify.app/labs/go">Sign in with your portal account</a>
+    <br><a class="quiet" href="/labs/">See the free labs</a>
+  </section>
+
+  <section id="s-frame" hidden>
+    <h1>Open Ace Labs in its own tab</h1>
+    <p>Your browser does not keep a sign-in inside a framed page. Open Ace Labs in a new tab and you will be signed in there.</p>
+    <a class="btn" id="tab" target="_blank" rel="noopener" href="https://acethedat-portal.netlify.app/labs/go">Open in a new tab</a>
+  </section>
+
+  <section id="s-out" hidden>
+    <h1>You are signed out</h1>
+    <p>Your work is saved to your account. Sign in again any time from the portal.</p>
+    <a class="btn" href="/">Back to Ace Labs</a>
+  </section>
+
+  <section id="s-err" hidden>
+    <h1>That link has expired</h1>
+    <p>Sign-in links last two minutes and work once. Start again from the portal.</p>
+    <a class="btn" id="retry" href="https://acethedat-portal.netlify.app/labs/go">Sign in with your portal account</a>
+  </section>
+</main>
+<script src="/sign-in/ace-session.js?v=1"></script>
+<script>
+(function () {
+  var S = window.AceSession, q = new URLSearchParams(location.search);
+  var next = S.safeNext(q.get('next') || '/');
+  function show(id) { ['s-wait', 's-in', 's-frame', 's-out', 's-err'].forEach(function (x) { document.getElementById(x).hidden = x !== id; }); }
+  function go() { location.replace(next); }
+  function links(portal) {
+    var url = S.portalSignInUrl(portal, next);
+    ['go', 'tab', 'retry'].forEach(function (id) { document.getElementById(id).href = url; });
+  }
+  var token = S.takeFragmentToken();
+
+  S.status().then(function (st) {
+    if (!st || st.enabled === false) { go(); return; }          // the sign-in is switched off: every page is open
+    links(st.portal);
+    if (q.get('out')) { S.signOut().then(function () { show('s-out'); }); return; }
+    if (token) {
+      S.exchange(token).then(function (r) {
+        if (!r.ok) { show('s-err'); return; }
+        S.status().then(function (after) {
+          if (after && after.cookie) go();
+          else show(S.framed() ? 's-frame' : 's-in');            // the browser refused the cookie
+        });
+      });
+      return;
+    }
+    if (st.signedIn && st.cookie) { go(); return; }
+    show(st.signedIn && S.framed() ? 's-frame' : 's-in');
+  }, function () { show('s-in'); });
+})();
+</script>
+</body>
+</html>

@@ -140,7 +140,10 @@ body.aui { margin: 0; background: var(--aui-cream); color: var(--aui-ink); font-
 .aui-bar__sheet { display: none; padding: var(--aui-2) var(--aui-4) var(--aui-4); border-top: 1px solid var(--aui-line); grid-template-columns: 1fr 1fr; gap: 4px; }
 .aui-bar__sheet a { justify-content: flex-start; min-height: 48px; font-size: var(--aui-t-md); }
 .aui-bar[data-open="true"] .aui-bar__sheet { display: grid; }
-@media (min-width: 960px) { .aui-bar__nav { display: flex; } .aui-bar__menu, .aui-bar[data-open="true"] .aui-bar__sheet { display: none; } }
+/* One navigation (2026-11-16): the same five places as the phone tab bar (shared/ace-tabs.js).
+   760 px and up: in this bar. Under 760 px: the tab bar at the bottom, so no Menu here. */
+@media (min-width: 760px) { .aui-bar__nav { display: flex; } }
+.aui-bar__menu, .aui-bar[data-open="true"] .aui-bar__sheet { display: none; }
 @media print { .aui-bar { display: none; } }
 
 /* question component: one format, one feedback pattern */

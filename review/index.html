@@ -4,160 +4,108 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Review · Ace Labs</title>
-<meta name="description" content="Every miss from every Ace Labs tool in one list, on a 1, 3 and 7 day retry ladder, each with its sheet, lesson and drill.">
-<link rel="stylesheet" href="/shared/ace-pages.css?v=4">
+<meta name="description" content="Every finished test and set, question by question, with the one-tap reason for each miss. Every miss is already in Repair.">
+<link rel="icon" type="image/svg+xml" href="/shared/ace-dat-mark.svg">
+<link rel="stylesheet" href="/shared/ace-ui.css?v=8">
+<link rel="stylesheet" href="/shared/ace-loop.css?v=4">
 <style>
-  .rv-top { display: flex; gap: 12px; align-items: center; justify-content: space-between; flex-wrap: wrap; margin-bottom: 6px; }
-  .counts { display: flex; gap: 18px; flex-wrap: wrap; color: var(--text-mid); font-size: 14px; }
-  .counts b { color: var(--text-hi); font-variant-numeric: lining-nums tabular-nums; }
-  .rows .meta { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 4px; }
-  .rows .meta .src { color: var(--text-mid); font-size: 13.5px; }
-  .rows .detail { display: block; color: var(--text-lo); font-size: 13.5px; margin-top: 3px; }
-  .retry { display: flex; gap: 6px; flex-wrap: wrap; }
-  .retry button { font-size: 13px; font-weight: 700; border-radius: 999px; padding: 6px 12px; cursor: pointer; background: transparent; }
-  .retry .ok { color: var(--good-ink); border: 1px solid rgba(143, 214, 164, 0.35); }
-  .retry .no { color: var(--text-mid); border: 1px solid var(--rule); }
-  .row-r { display: flex; flex-direction: column; gap: 8px; align-items: flex-end; }
-  @media (max-width: 720px) { .row-r { align-items: flex-start; width: 100%; } }
-  .ladder { margin: 18px 0 0; font-size: 14px; color: var(--text-mid); }
-  .toast { position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%); background: var(--bg-panel-elevated); border: 1px solid var(--gold-border); color: var(--text-hi); padding: 10px 16px; border-radius: 999px; font-size: 14px; opacity: 0; transition: opacity .2s; pointer-events: none; }
-  .toast.on { opacity: 1; }
-</style>
-<style>
-  #list li .why { flex-basis: 100%; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-top: 10px; padding-top: 10px; border-top: 1px dashed rgba(27,58,45,.18); }
-  #list li .why-h { font-size: 13px; font-weight: 700; color: #3a4a42; margin-right: 4px; }
-  #list li .why-b { min-height: 36px; padding: 0 12px; border-radius: 999px; border: 1.5px solid rgba(27,58,45,.3); background: #FCFAF6; font: 500 13px var(--body); color: #0d2018; cursor: pointer; }
-  #list li .why-b[aria-pressed="true"] { background: #C9A84C; border-color: #C9A84C; font-weight: 700; }
-  #list li .why-fb { flex-basis: 100%; margin: 4px 0 0; font-size: 13px; color: #3a4a42; }
-  #list li.lesson-first .links a[title^="Night"], #list li.lesson-first .links a:nth-child(2) { background: #1B3A2D; color: #F5F0E8; border-radius: 999px; padding: 2px 10px; }
+  .rv-head { margin-bottom: 4px; }
+  .rv-secs { display: flex; flex-wrap: wrap; gap: 8px; }
+  .rv-sec { display: flex; flex-direction: column; padding: 8px 12px; border-radius: 14px; border: 1px solid #e6dccb; background: #FCFAF6; font-size: 13px; }
+  .rv-sec b { font-size: 14px; }
+  .rv-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin: 6px 0; }
+  .rv-tabs button { min-height: 40px; padding: 0 14px; border-radius: 999px; border: 1.5px solid rgba(27,58,45,.3); background: #FCFAF6; font: 600 14px 'DM Sans', system-ui, sans-serif; color: #0d2018; cursor: pointer; }
+  .rv-tabs button[aria-pressed="true"] { background: #1B3A2D; border-color: #1B3A2D; color: #F5F0E8; }
+  .rv-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+  .rv-q { padding: 16px; border-radius: 18px; border: 1px solid #e6dccb; background: #FCFAF6; display: flex; flex-direction: column; gap: 10px; }
+  .rv-q.miss { border-left: 5px solid #b5482f; }
+  .rv-q.ok { border-left: 5px solid #007a59; }
+  .rv-meta { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .rv-mark { font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+  .rv-mark.ok { color: #007a59; } .rv-mark.miss { color: #b5482f; }
+  .rv-stem { margin: 0; font-size: 16px; line-height: 1.5; color: #0d2018; }
+  .rv-note { color: #3a4a42; font-size: 14px; }
+  .rv-choices { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+  .rv-choices li { display: flex; gap: 10px; align-items: baseline; padding: 8px 10px; border-radius: 12px; border: 1px solid #ece4d5; font-size: 14.5px; }
+  .rv-choices li b { flex-shrink: 0; width: 18px; }
+  .rv-choices li em { margin-left: auto; font-style: normal; font-size: 12px; font-weight: 700; white-space: nowrap; }
+  .rv-choices li.right { background: #e6f1ea; border-color: #9cc9ad; }
+  .rv-choices li.yours { background: #f8e6df; border-color: #e0a894; }
+  .rv-why { margin: 0; } .rv-why dt { font-weight: 700; font-size: 13px; color: #3a4a42; } .rv-why dd { margin: 2px 0 0; font-size: 14.5px; line-height: 1.5; }
+  .rv-reason { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; padding-top: 10px; border-top: 1px dashed rgba(27,58,45,.18); }
+  .rv-reason__h { font-size: 13px; font-weight: 700; color: #3a4a42; margin-right: 4px; flex-basis: 100%; }
+  .rv-reason__b { min-height: 40px; padding: 0 12px; border-radius: 999px; border: 1.5px solid rgba(27,58,45,.3); background: #fffdf7; font: 500 13.5px 'DM Sans', system-ui, sans-serif; color: #0d2018; cursor: pointer; }
+  .rv-reason__b[aria-pressed="true"] { background: #C9A84C; border-color: #C9A84C; font-weight: 700; }
+  .rv-reason__line { flex-basis: 100%; margin: 4px 0 0; font-size: 13.5px; color: #3a4a42; }
+  .see-it { align-self: flex-start; display: inline-flex; gap: 6px; align-items: center; min-height: 38px; padding: 0 14px; border-radius: 999px; background: #C9A84C; color: #0d2018; font-weight: 700; font-size: 14px; text-decoration: none; }
+  .rv-runs { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+  .rv-runs a { display: flex; justify-content: space-between; gap: 12px; align-items: center; padding: 14px 16px; border-radius: 16px; border: 1px solid #e6dccb; background: #FCFAF6; color: #0d2018; text-decoration: none; }
+  .rv-runs a b { font-size: 16px; } .rv-runs a span { font-size: 13px; color: #3a4a42; }
+  .rv-empty { padding: 14px; border-radius: 14px; background: #FCFAF6; border: 1px dashed #d8ccb6; }
+  .rv-legacy { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; font-size: 14px; }
+  .rv-legacy li { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; padding: 8px 0; border-bottom: 1px solid #ece4d5; }
 </style>
 </head>
-<body>
-<main class="wrap" id="main">
-  <header class="page-head">
-    <p class="eyebrow">Review</p>
-    <h1>Every miss, <em>one list</em>.</h1>
-    <p class="lede">Misses from practice tests, Reading, PAT, the Climb, the engines and games land here on their own. Practice-test misses come first. Retry each one on a 1, 3 and 7 day ladder until it is yours.</p>
-  </header>
-
-  <section class="section" aria-labelledby="h-list">
-    <h2 id="h-list" class="sr-only">Your misses</h2>
-    <div class="rv-top">
-      <div class="tabs" id="status" role="group" aria-label="Show">
-        <button type="button" data-f="due">Due now</button>
-        <button type="button" data-f="open" aria-pressed="true">All open</button>
-        <button type="button" data-f="learning">Learning</button>
-        <button type="button" data-f="reviewing">Reviewing</button>
-        <button type="button" data-f="mastered">Mastered</button>
-      </div>
-      <div class="counts" id="counts"></div>
-    </div>
-    <div class="tabs" id="sections" role="group" aria-label="Section"></div>
-    <ul class="rows" id="list"></ul>
-    <p class="ladder">How the ladder works: say Got it and the miss comes back in 1 day, then 3, then 7. Got it on the 7-day retry and it moves to Mastered. Missed again sends it back to tomorrow. Due just means ready.</p>
-    <p class="note">Want the trend over time? <a href="/performance/">Performance</a> has every timed result.</p>
-  </section>
+<body class="aui">
+<main class="aui-wrap loop" id="main">
+  <div id="rv" class="aui-stack"></div>
+  <a class="loop-go" id="rv-next" href="/">Back to today's plan</a>
+  <div id="rv-more" class="aui-stack"></div>
 </main>
-<div class="toast" id="toast" role="status" aria-live="polite"></div>
-
-<footer class="foot">
-  <div class="wrap">
-    <nav aria-label="More">
-      <a href="/onboarding.html">Set up your path</a>
-      <a href="/performance/">Performance</a>
-      <a href="/test-week.html">Test week</a>
-      <a href="/test-day-readiness.html">Test-day briefing</a>
-      <a href="/for-retakers.html">Going again</a>
-      <a href="/scope.html">Scope and evidence</a>
-    </nav>
-    <p>Ace Labs is not affiliated with the American Dental Association or Prometric.</p>
-  </div>
-</footer>
-
-<script src="/shared/ace-index.js?v=3"></script>
-<script src="/shared/ace-route.js?v=3"></script>
+<script src="/shared/ace-skills.js?v=1"></script>
 <script src="/shared/ace-progress.js?v=6"></script>
+<script src="/shared/ace-record.js?v=5"></script>
+<script src="/shared/ace-visuals.js?v=3"></script>
+<script src="/shared/ace-test-review.js?v=3"></script>
+<script src="/shared/ace-ui.js?v=4" defer></script>
 <script>
 (function () {
-  var P = window.AceProgress, R = window.AceRoute, S = P.withStudent;
-  var $ = function (id) { return document.getElementById(id); };
-  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
-  var qp = new URLSearchParams(location.search);
-  var state = { f: qp.get('due') ? 'due' : 'open', s: qp.get('section') || 'all' };
-  var askAce = function () { return !!(window.__aceButton || document.querySelector('script[src*="ace-button.js"]')); };
-  var TAG = { learning: 'Learning', reviewing: 'Reviewing', mastered: 'Mastered' };
-  var WHY = [['know', "Didn't know it"], ['trap', 'Fell for a trap'], ['misread', 'Misread it'], ['time', 'Ran short on time'], ['changed', 'Changed my answer']];
-  var LINE = { know: 'Got it. Open Learn first; this comes back tomorrow.', trap: 'Got it. This comes back in 2 days, with the same trap waiting for you.',
-    misread: 'Got it. It comes back in 2 days. Say the ask in your own words before you look at the choices.', time: 'Got it. Retry it untimed first, then timed, so you know which one it was.',
-    changed: 'Every switch is logged, so you can see whether second-guessing costs you.' };
-  var DAY = 864e5;
-
-  function when(t) {
-    if (!t) return 'Ready now';
-    var d = Math.round((t - Date.now()) / DAY);
-    if (d <= 0) return 'Ready now';
-    return 'Next retry in ' + d + ' day' + (d === 1 ? '' : 's');
-  }
-  function toast(msg) { var t = $('toast'); t.textContent = msg; t.classList.add('on'); clearTimeout(toast.h); toast.h = setTimeout(function () { t.classList.remove('on'); }, 2200); }
-
-  function render() {
-    var all = P.misses({ includeMastered: true });
-    var open = all.filter(function (m) { return m.status !== 'mastered'; });
-    var due = open.filter(function (m) { return m.isDue; });
-    $('counts').innerHTML = '<span><b>' + due.length + '</b> due</span><span><b>' + open.length + '</b> open</span><span><b>' + (all.length - open.length) + '</b> mastered</span>';
-    var secs = {};
-    all.forEach(function (m) { secs[m.section] = (secs[m.section] || 0) + 1; });
-    var order = ['bio', 'gchem', 'ochem', 'qr', 'pat', 'rc'].filter(function (k) { return secs[k]; });
-    $('sections').innerHTML = order.length > 1 ? ['all'].concat(order).map(function (k) {
-      return '<button type="button" data-s="' + k + '" aria-pressed="' + (state.s === k) + '">' + (k === 'all' ? 'All sections' : esc(R.SECTION_SHORT[k])) + '</button>';
-    }).join('') : '';
-    [].forEach.call($('status').querySelectorAll('button'), function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-f') === state.f)); });
-
-    var rows = state.f === 'due' ? due : state.f === 'open' ? open : all.filter(function (m) { return m.status === state.f; });
-    if (state.s !== 'all') rows = rows.filter(function (m) { return m.section === state.s; });
-
-    if (!all.length) {
-      $('list').innerHTML = '<li><div class="empty">Nothing here yet. Take the <a href="' + esc(S('/diagnostic.html')) + '">diagnostic</a> or a <a href="' + esc(S('/tests/')) + '">test</a>; every miss comes here with a sheet, a lesson and a drill attached.</div></li>';
-      return;
+  'use strict';
+  var R = window.AceRecord, host = document.getElementById('rv'), more = document.getElementById('rv-more'), next = document.getElementById('rv-next');
+  function el(tag, cls, text) { var n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; }
+  var MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  function fmt(t) { var d = new Date(t); return MON[d.getMonth()] + ' ' + d.getDate(); }
+  var id = new URLSearchParams(location.search).get('run');
+  var runs = R.runs().slice().reverse();
+  var run = id ? R.run(id) : null;
+  if (run) {
+    window.AceTestReview.render(host, run);
+    var c = R.missCounts();
+    next.textContent = c.open ? 'Done: back to today’s plan' : 'Back to today’s plan';
+  } else {
+    var head = el('header', 'loop-head');
+    head.appendChild(el('p', 'loop-date', 'Review'));
+    head.appendChild(el('h1', 'aui-h1', 'Every test, question by question'));
+    head.appendChild(el('p', 'aui-lede', 'Open a finished test or set to go through it one question at a time and tag why you missed each one. Every miss is already in Repair.'));
+    host.appendChild(head);
+    if (id) host.appendChild(el('p', 'rv-empty', 'That test is no longer saved in this browser (the last eight are kept). Pick one below.'));
+    if (!runs.length) {
+      host.appendChild(el('p', 'rv-empty', 'Nothing to review yet. Take the diagnostic: when you finish, it opens here question by question.'));
+      next.textContent = 'Take the diagnostic'; next.href = '/diagnostic.html';
+    } else {
+      var ul = el('ul', 'rv-runs');
+      runs.forEach(function (x) {
+        var li = el('li'), a = el('a'); a.href = '/review/?run=' + encodeURIComponent(x.id); a.setAttribute('data-run', x.id);
+        var left = el('span'); left.appendChild(el('b', null, x.title)); left.appendChild(document.createElement('br')); left.appendChild(el('span', null, fmt(x.at) + ' · ' + x.right + ' of ' + x.total + ' right'));
+        a.appendChild(left); a.appendChild(el('span', null, (x.total - x.right) + ' to review'));
+        li.appendChild(a); ul.appendChild(li);
+      });
+      host.appendChild(ul);
     }
-    if (!rows.length) {
-      $('list').innerHTML = '<li><div class="empty">' + (state.f === 'due' ? 'Nothing is ready right now. The next retries come back on their day.' : 'Nothing in this view.') + '</div></li>';
-      return;
-    }
-    $('list').innerHTML = rows.map(function (m) {
-      var l = R.links(m);
-      var ask = askAce() ? '<a href="' + esc(S('/tutor/?miss=' + encodeURIComponent(m.id))) + '">Ask Ace</a>' : '';
-      var retry = m.status === 'mastered'
-        ? '<div class="retry"><button type="button" class="no" data-undo="' + esc(m.id) + '">Back to review</button></div>'
-        : '<div class="retry"><button type="button" class="ok" data-ok="' + esc(m.id) + '">Got it</button><button type="button" class="no" data-no="' + esc(m.id) + '">Missed again</button></div>';
-      var why = m.status === 'mastered' ? '' : '<div class="why" role="group" aria-label="Why did you miss it?"><span class="why-h">Why did you miss it?</span>' +
-        WHY.map(function (w) { return '<button type="button" class="why-b" data-why="' + w[0] + '" data-id="' + esc(m.id) + '" aria-pressed="' + (m.reason === w[0]) + '">' + w[1] + '</button>'; }).join('') +
-        (m.reason ? '<p class="why-fb">' + esc(LINE[m.reason]) + '</p>' : '') + '</div>';
-      return '<li' + (m.lessonFirst ? ' class="lesson-first"' : '') + '><div class="what"><b>' + esc(m.concept) + '</b>' +
-        '<div class="meta"><span class="sec-label" data-section="' + esc(m.section) + '">' + esc(R.SECTION_SHORT[m.section] || '') + '</span>' +
-        '<span class="tag ' + m.status + '">' + TAG[m.status] + '</span>' +
-        '<span class="src">' + esc(m.sourceLabel) + (m.detail && m.source !== 'climb' && m.source !== 'bio-engine' ? ', ' + esc(m.detail) : '') + (m.status !== 'mastered' ? ' &middot; ' + esc(when(m.due)) : '') + '</span></div>' +
-        (m.detail && (m.source === 'climb' || m.source === 'bio-engine') ? '<span class="detail">' + esc(m.detail) + '</span>' : '') +
-        '</div><div class="row-r"><div class="links">' +
-        '<a href="' + esc(l.sheet) + '" target="_blank" rel="noopener" title="' + esc(l.sheetTitle || 'The Canon') + '">Sheet</a>' +
-        '<a href="' + esc(S(l.learn)) + '" title="' + esc(l.nightTitle ? 'Night ' + l.night + ': ' + l.nightTitle : 'Retold') + '">Learn</a>' +
-        '<a href="' + esc(S(l.drill)) + '">Drill</a>' + ask + '</div>' + retry + '</div>' + why + '</li>';
-    }).join('');
   }
-
-  document.addEventListener('click', function (e) {
-    var b = e.target.closest('button'); if (!b) return;
-    if (b.hasAttribute('data-f')) { state.f = b.getAttribute('data-f'); render(); return; }
-    if (b.hasAttribute('data-s')) { state.s = b.getAttribute('data-s'); render(); return; }
-    if (b.hasAttribute('data-ok')) { var r = P.mark(b.getAttribute('data-ok'), true); toast(r.mastered ? 'Mastered. It leaves the open list.' : 'Nice. Back in ' + P.LEITNER_DAYS[r.box - 1] + ' day' + (P.LEITNER_DAYS[r.box - 1] === 1 ? '' : 's') + '.'); render(); return; }
-    if (b.hasAttribute('data-no')) { P.mark(b.getAttribute('data-no'), false); toast('Back tomorrow. Try the sheet first.'); render(); return; }
-    if (b.hasAttribute('data-why')) { P.reason(b.getAttribute('data-id'), b.getAttribute('data-why')); render(); return; }
-    if (b.hasAttribute('data-undo')) { P.mark(b.getAttribute('data-undo'), false); toast('Back on the ladder.'); render(); }
-  });
-  render();
+  // Misses saved by older tools before they moved onto the shared record: listed, not scheduled.
+  try {
+    var old = window.AceProgress ? window.AceProgress.misses({}).filter(function (m) { return !/^record:/.test(m.id); }) : [];
+    if (old.length && !run) {
+      more.appendChild(el('h2', 'aui-h2', 'From older tools'));
+      more.appendChild(el('p', 'aui-small', old.length + ' miss' + (old.length === 1 ? '' : 'es') + ' saved by tools before they wrote to Repair. They are listed here so nothing is lost; new misses from every tool go to Repair.'));
+      var lu = el('ul', 'rv-legacy');
+      old.slice(0, 40).forEach(function (m) { var li = el('li'); li.appendChild(el('span', null, m.concept || m.topic || 'Miss')); li.appendChild(el('span', 'aui-small', m.sourceLabel || '')); lu.appendChild(li); });
+      more.appendChild(lu);
+    }
+  } catch (e) { /* an old adapter failed: nothing to list */ }
 })();
 </script>
-<script src="/shared/ace-shell.js?v=3" defer></script>
-<script src="/shared/ace-tabs.js?v=2" defer></script>
+<script src="/shared/ace-tabs.js?v=3" defer></script>
 </body>
 </html>

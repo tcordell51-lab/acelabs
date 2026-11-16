@@ -74,16 +74,16 @@ test('migration finds all twelve older key families and deletes nothing', () => 
   assert.strictEqual(Object.keys(R.exportAll().legacy).length, 12);
 });
 
-test('a daily set puts due repeats first, then misses, then new items spread over topics', () => {
+test('a daily set is new items near the student\'s level, spread over topics; misses go to Repair (2026-11-16)', () => {
   const { R, S } = boot(); const now = Date.now();
   const all = []; for (let i = 0; i < 30; i++) all.push(item('q' + i, 't' + (i % 6)));
-  R.record({ item: all[0], picked: 0, answer: 0, ok: true, at: now - 2 * DAY });   // due
-  R.record({ item: all[1], picked: 1, answer: 0, ok: false, at: now - 3600e3 });   // missed, not yet due
+  R.record({ item: all[0], picked: 0, answer: 0, ok: true, at: now - 2 * DAY });   // seen
+  R.record({ item: all[1], picked: 1, answer: 0, ok: false, at: now - 3600e3 });   // missed: in Repair, not repeated here
   const set = S.build(all, { mode: 'daily', section: 'gchem', size: 10 });
   assert.strictEqual(set.length, 10);
-  assert.strictEqual(set[0].id, 'q0'); assert.strictEqual(set[1].id, 'q1');
+  assert.ok(!set.some((x) => x.id === 'q0' || x.id === 'q1'), 'seen and missed items are not repeated in a new set');
   assert.strictEqual(new Set(set.map((x) => x.id)).size, 10, 'no repeats inside a set');
-  assert.ok(new Set(set.slice(2).map((x) => x.topic)).size >= 5, 'new items are spread across topics');
+  assert.ok(new Set(set.map((x) => x.topic)).size >= 5, 'new items are spread across topics');
   assert.deepStrictEqual(j(S.build(all, { mode: 'misses', section: 'gchem' })).map((x) => x.id), ['q1']);
   const tw = S.twin(all, all[0], { q0: 1 }); assert.ok(tw && tw.topic === 't0' && tw.id !== 'q0');
 });

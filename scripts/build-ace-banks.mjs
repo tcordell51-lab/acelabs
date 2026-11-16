@@ -15,8 +15,12 @@ import fs from 'node:fs';
 import path from 'node:path';
 import vm from 'node:vm';
 import { fileURLToPath } from 'node:url';
+import { createRequire } from 'node:module';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+// One skill tag, the same in the browser (shared/ace-skills.js): repair matches skill first.
+const Skills = createRequire(import.meta.url)(path.join(ROOT, 'shared/ace-skills.js'));
+const withSkill = (it) => Object.assign(it, Skills.tag(it));
 const read = (f) => fs.readFileSync(path.join(ROOT, f), 'utf8');
 const clean = (s) => String(s == null ? '' : s).replace(/\s*—\s*/g, ', ').replace(/\s+/g, ' ').trim();
 function hash(s) { let h = 2166136261; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return (h >>> 0).toString(36); }
@@ -80,6 +84,47 @@ function bio() {
   return { name: 'bio', source: 'games/bio.json (five choices with a worked reason, not used by the full-length tests)', items: out, skipped };
 }
 
+// Organic Chemistry: the 388 five-choice items with a worked reason in the shared test bank
+// (the diagnostic draws its OChem questions from the same pool). Topic names are the
+// diagnostic's own labels.
+const OC_NAMES = { 'mech-sne': 'Substitution and elimination', 'stereo-rs': 'Stereochemistry', 'alkene-add': 'Alkene additions', alkyne: 'Alkynes',
+  'arom-eas': 'Aromaticity and EAS', 'alc-eth': 'Alcohols and ethers', carbonyl: 'Carbonyl chemistry', acids: 'Carboxylic acids and derivatives', amines: 'Amines',
+  'spec-ir-nmr': 'IR and NMR', synth: 'Synthesis', lab: 'Lab techniques', 'mech-arrows': 'Arrow pushing', 'ab-ochem': 'Acids and bases in OChem' };
+const DAT = JSON.parse(read('scripts/dat-mock-bank.json'));
+function ochem() {
+  const out = [], skipped = [];
+  for (const q of DAT.ochem || []) {
+    if (!Array.isArray(q.opts) || q.opts.length !== 5 || !q.why || !OC_NAMES[q.topic]) { skipped.push(q.id); continue; }
+    out.push({ id: 'oc:' + q.id, section: 'ochem', topic: q.topic, topicName: OC_NAMES[q.topic], difficulty: q.difficulty || 1,
+      stem: clean(q.q), choices: q.opts.map(clean), answer: q.correct, why: clean(q.why) });
+  }
+  return { name: 'ochem', source: 'scripts/dat-mock-bank.json (OChem, five choices with a worked reason)', items: out, skipped };
+}
+// QR from the diagnostic pool (five choices with a worked reason), so a diagnostic QR miss has
+// twins by skill. QR skills are named without the topic (a percent question is a percent
+// question in any topic), so they also match the Climb items in qr-climb.json.
+const QR_NAMES = { 'frac-add': 'Fractions', 'lin-eq': 'Linear equations', 'pct-chg': 'Percent change', discr: 'Data sufficiency and discrimination', estim: 'Estimation',
+  ratios: 'Ratios', 'p-andor': 'Probability', algebra: 'Algebra', logarithms: 'Logarithms', probability: 'Probability', rate: 'Rates and work', geometry: 'Geometry',
+  'word-problem': 'Word problems', data: 'Data interpretation', untimed: 'Test strategy', guess: 'Test strategy' };
+function qrDat() {
+  const out = [], skipped = [];
+  for (const q of DAT.qr || []) {
+    if (!Array.isArray(q.opts) || q.opts.length !== 5 || !q.why) { skipped.push(q.id); continue; }
+    out.push({ id: 'qr:' + q.id, section: 'qr', topic: q.topic, topicName: QR_NAMES[q.topic] || q.topic.replace(/-/g, ' '), difficulty: q.difficulty || 1,
+      stem: clean(q.q), choices: q.opts.map(clean), answer: q.correct, why: clean(q.why) });
+  }
+  return { name: 'qr-dat', source: 'scripts/dat-mock-bank.json (QR, five choices with a worked reason)', items: out, skipped };
+}
+// The browser normalizes a test question's raw topic with this map (shared/ace-test-review.js),
+// so a diagnostic or full-length miss lands under the same topic as the practice bank.
+function topicsMap() {
+  const gc = {}; for (const q of DAT.gc || []) gc[q.topic] = [q.topic, clean(GC_NAMES[q.topic] || GC_EXTRA[q.topic] || q.topic).replace(/ & /g, ' and ')];
+  const bio = {}; for (const [k, v] of Object.entries(BIO_TOPICS)) bio[k] = v;
+  const oc = {}; for (const [k, v] of Object.entries(OC_NAMES)) oc[k] = [k, v];
+  const qr = {}; for (const q of DAT.qr || []) qr[q.topic] = [q.topic, QR_NAMES[q.topic] || q.topic.replace(/-/g, ' ')];
+  return { format: 1, gchem: gc, bio, ochem: oc, qr };
+}
+
 const problems = [];
 function validate(bank) {
   const ids = new Set();
@@ -91,18 +136,27 @@ function validate(bank) {
     if (!(Number.isInteger(it.answer) && it.answer >= 0 && it.answer < 5)) problems.push(where + ': answer out of range');
     if (!it.stem || !it.why || !it.topic || !it.topicName) problems.push(where + ': missing stem, why or topic');
     if (/—/.test(JSON.stringify(it))) problems.push(where + ': em dash');
+    if (!it.skill || !it.skillName) problems.push(where + ': no skill tag');
   }
 }
 
 const check = process.argv.includes('--check');
 let stale = 0;
-for (const bank of [gchem(), qrClimb(), bio()]) {
+const BANKS = [gchem(), qrClimb(), bio(), ochem(), qrDat()];
+for (const bank of BANKS) {
+  bank.items.forEach(withSkill);
   validate(bank);
   const file = path.join(ROOT, 'data', bank.name + '.json');
   const body = JSON.stringify({ format: 1, section: bank.items[0].section, source: bank.source, count: bank.items.length, items: bank.items });
   if (check) { if (!fs.existsSync(file) || fs.readFileSync(file, 'utf8') !== body) { stale++; console.error('stale: data/' + bank.name + '.json (run node scripts/build-ace-banks.mjs)'); } }
   else { fs.mkdirSync(path.dirname(file), { recursive: true }); fs.writeFileSync(file, body); }
-  const topics = new Set(bank.items.map((i) => i.topic)).size;
-  console.log(`${bank.name}: ${bank.items.length} items, ${topics} topics, ${bank.skipped.length} left out`);
+  const topics = new Set(bank.items.map((i) => i.topic)).size, skills = new Set(bank.items.map((i) => i.skill)).size;
+  const named = bank.items.filter((i) => !/\/(calc|idea)$/.test(i.skill)).length;
+  console.log(`${bank.name}: ${bank.items.length} items, ${topics} topics, ${skills} skills (${named} by a named concept), ${bank.skipped.length} left out`);
+}
+{
+  const file = path.join(ROOT, 'data', 'topics.json'), body = JSON.stringify(topicsMap());
+  if (check) { if (!fs.existsSync(file) || fs.readFileSync(file, 'utf8') !== body) { stale++; console.error('stale: data/topics.json'); } }
+  else fs.writeFileSync(file, body);
 }
 if (problems.length || stale) { for (const p of problems.slice(0, 30)) console.error('  ' + p); console.error(`build-ace-banks: ${problems.length} format problem(s), ${stale} stale file(s)`); process.exit(1); }

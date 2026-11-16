@@ -4,26 +4,86 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Learn · Ace Labs</title>
-<meta name="description" content="Learn fast: short labs where you call it first, then see it, and the six courses.">
+<meta name="description" content="Every visual lab on Ace Labs by section, with where to start and what to do next, plus the six courses.">
 <link rel="icon" type="image/svg+xml" href="/shared/ace-dat-mark.svg">
-<link rel="stylesheet" href="/shared/ace-ui.css?v=7">
+<link rel="stylesheet" href="/shared/ace-ui.css?v=8">
 <link rel="stylesheet" href="/shared/ace-loop.css?v=4">
+<style>
+  .loop.lab-page { max-width: 980px; }
+  .lab-jump { display: flex; flex-wrap: wrap; gap: 8px; }
+  .lab-jump a { min-height: 36px; display: inline-flex; align-items: center; padding: 0 14px; border-radius: 999px; border: 1px solid #e6dccb; background: #fffdf7; color: #0d2018; font-size: 13px; font-weight: 700; text-decoration: none; }
+  .lab-jump a:hover { border-color: #C9A84C; }
+  .lab-sec { background: #fffdf7; border: 1px solid #e6dccb; border-radius: 22px; margin: 0 0 16px; overflow: hidden; scroll-margin-top: 12px; }
+  .lab-sec > summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 12px; padding: 18px 18px; min-height: 44px; }
+  .lab-sec > summary::-webkit-details-marker, .lab-sub > summary::-webkit-details-marker { display: none; }
+  .lab-sec > summary .dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+  .lab-sec > summary h2 { margin: 0; font: 700 22px/1.2 var(--aui-display); color: #0d2018; flex: 1; }
+  .lab-sec > summary .n { font-size: 13px; color: #5c6a63; white-space: nowrap; }
+  .lab-sec > summary .chev, .lab-sub > summary .chev { width: 18px; height: 18px; flex-shrink: 0; transition: transform .2s; }
+  .lab-sec[open] > summary .chev, .lab-sub[open] > summary .chev { transform: rotate(180deg); }
+  .lab-body { padding: 0 18px 18px; display: flex; flex-direction: column; gap: 14px; }
+  .lab-start { margin: 0; padding: 12px 14px; border-radius: 14px; background: #1B3A2D; color: #F5F0E8; font-size: 15px; line-height: 1.45; }
+  .lab-start b { color: #E2C97A; }
+  .lab-path { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .lab-path a { display: flex; gap: 10px; align-items: center; height: 100%; min-height: 56px; padding: 10px 12px; border-radius: 14px; border: 1.5px solid rgba(27,58,45,.3); background: #FCFAF6; color: #0d2018; text-decoration: none; }
+  .lab-path a:hover { border-color: #C9A84C; }
+  .lab-path .num { width: 28px; height: 28px; border-radius: 50%; background: #C9A84C; color: #0d2018; font-weight: 700; font-size: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .lab-path .st { display: block; font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: #5c6a63; }
+  .lab-path .ti { display: block; font-size: 14px; font-weight: 700; line-height: 1.25; }
+  .lab-sub { border-top: 1px solid #e6dccb; padding-top: 4px; }
+  .lab-sub > summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 10px; min-height: 44px; }
+  .lab-sub > summary h3 { margin: 0; flex: 1; font-size: 13px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: #3a4a42; }
+  .lab-sub > summary .n { font-size: 13px; color: #5c6a63; }
+  .lab-cards { display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 270px), 1fr)); padding: 4px 0 8px; }
+  .lab-card { display: flex; flex-direction: column; gap: 6px; padding: 14px; border-radius: 16px; border: 1px solid #e6dccb; background: #FCFAF6; color: #0d2018 !important; text-decoration: none; }
+  .lab-card:hover { border-color: #C9A84C; }
+  .lab-card > a.lab-main { display: contents; color: inherit; text-decoration: none; }
+  .lab-card .lab-try { align-self: flex-start; display: inline-flex; align-items: center; min-height: 36px; padding: 0 12px; border-radius: 999px; border: 1.5px solid rgba(27,58,45,.3); background: #fffdf7; color: #1B3A2D; font-size: 13px; font-weight: 700; text-decoration: none; margin-top: 4px; }
+  .lab-card.feat .lab-try { background: #C9A84C; border-color: #C9A84C; color: #0d2018; }
+  .lab-for-you { display: flex; flex-direction: column; gap: 4px; padding: 16px; border-radius: 18px; background: #1B3A2D; color: #F5F0E8; text-decoration: none; margin: 4px 0 8px; }
+  .lab-for-you[hidden] { display: none; }
+  .lab-for-you .k { font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: #E2C97A; }
+  .lab-for-you .t1 { font-size: 19px; font-weight: 700; }
+  .lab-for-you .t2 { font-size: 13.5px; line-height: 1.45; }
+  .lab-card .top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .lab-card .step { font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+  .lab-card .t1 { font-size: 17px; font-weight: 700; line-height: 1.25; }
+  .lab-card .t2 { font-size: 13px; line-height: 1.45; color: #3a4a42; }
+  .lab-card .do { font-size: 13px; line-height: 1.45; color: #0d2018; }
+  .lab-card .do b, .lab-card .nx b { font-weight: 700; }
+  .lab-card .nx { font-size: 12.5px; line-height: 1.4; color: #5c6a63; margin-top: auto; padding-top: 6px; border-top: 1px dashed rgba(27,58,45,.18); }
+  .lab-card.feat { background: #1B3A2D; border-color: #1B3A2D; color: #F5F0E8 !important; grid-column: span 1; }
+  .lab-card.feat .t2, .lab-card.feat .do { color: #F5F0E8; }
+  .lab-card.feat .nx { color: #d9d4ca; border-top-color: rgba(245,240,232,.25); }
+  .lab-card.feat .step { color: #E2C97A !important; }
+  .lab-card.feat .wheel { align-self: flex-start; }
+  @media (max-width: 759px) {
+    .lab-path { grid-template-columns: 1fr; }
+    .lab-sec > summary { padding: 16px 14px; } .lab-body { padding: 0 14px 14px; }
+    .lab-sec > summary h2 { font-size: 20px; }
+  }
+</style>
 </head>
 <body class="aui">
-<main class="aui-wrap loop" id="main">
+<main class="aui-wrap loop lab-page" id="main">
   <header class="loop-head">
-    <p class="loop-date">Learn</p>
-    <h1 class="aui-h1">Learn fast</h1>
-    <p class="aui-lede">Short labs. You call it first; then the labels draw in or the model moves. The real learning happens in Test and Repair, so keep this light.</p>
+    <p class="loop-date">Labs</p>
+    <h1 class="aui-h1">Labs: see it, then try it</h1>
+    <p class="aui-lede">Every visual on Ace Labs, by section. Each lab card has questions on the same topic, and every missed question links back to its lab.</p>
   </header>
-  <h2 class="loop-h2">See it <span>7 labs</span></h2>
-  <a class="loop-card" href="/bio/see/"><span class="ic"><img src="/shared/art/plates/brain.jpg" alt="" width="64" height="64"></span><span class="tx"><span class="k" style="color:#2f7d4f">Biology</span><span class="t1">Plates: predict, then label</span><span class="t2">Eight unlabeled plates. Labels drawn in code after you answer.</span></span></a>
+  <a class="lab-for-you" id="lab-for-you" hidden></a>
+  <h2 class="loop-h2">Quick picks <span>7 labs</span></h2>
+  <a class="loop-card" href="/bio/see/"><span class="ic"><img src="/shared/art/plates/brain.jpg" alt="" width="64" height="64"></span><span class="tx"><span class="k" style="color:#2f7d4f">Biology</span><span class="t1">Plates: predict, then label</span><span class="t2">Fifteen unlabeled plates. Labels drawn in code after you answer.</span></span></a>
   <a class="loop-card" href="/gc/galvanic/"><span class="ic"><img src="/shared/art/plates/galvanic.jpg" alt="" width="64" height="64"></span><span class="tx"><span class="k" style="color:#2f5f9e">Gen Chem</span><span class="t1">Galvanic cell</span><span class="t2">Call the electron flow, then watch it run.</span></span></a>
   <a class="loop-card" href="/gc/vsepr/"><span class="ic" style="background:#e8eef7"><svg width="40" height="40" viewBox="0 0 44 44" aria-hidden="true"><line x1="22" y1="22" x2="22" y2="6" stroke="#2f5f9e" stroke-width="3"/><line x1="22" y1="22" x2="8" y2="30" stroke="#2f5f9e" stroke-width="3"/><line x1="22" y1="22" x2="36" y2="30" stroke="#2f5f9e" stroke-width="3"/><circle cx="22" cy="22" r="6" fill="#2f5f9e"/><circle cx="22" cy="6" r="4.5" fill="#ece8de" stroke="#5c6a63"/><circle cx="8" cy="30" r="4.5" fill="#ece8de" stroke="#5c6a63"/><circle cx="36" cy="30" r="4.5" fill="#ece8de" stroke="#5c6a63"/><ellipse cx="22" cy="34" rx="4" ry="6" fill="#C9A84C" opacity=".5"/></svg></span><span class="tx"><span class="k" style="color:#2f5f9e">Gen Chem</span><span class="t1">VSEPR in 3D</span><span class="t2">Count domains, call the shape, then turn it.</span></span></a>
   <a class="loop-card" href="/oc/3d/"><span class="ic" style="background:#efe9f7"><svg width="44" height="44" viewBox="0 0 44 44" aria-hidden="true"><line x1="22" y1="22" x2="22" y2="6" stroke="#6b4fa0" stroke-width="3"/><line x1="22" y1="22" x2="8" y2="30" stroke="#6b4fa0" stroke-width="3"/><line x1="22" y1="22" x2="36" y2="30" stroke="#6b4fa0" stroke-width="3"/><line x1="22" y1="22" x2="26" y2="38" stroke="#b9a8d8" stroke-width="3"/><circle cx="22" cy="22" r="6" fill="#3a2a5c"/><circle cx="22" cy="6" r="5" fill="#c4452f"/><circle cx="8" cy="30" r="4.5" fill="#5c6a63"/><circle cx="36" cy="30" r="4.5" fill="#5c6a63"/><circle cx="26" cy="38" r="3.5" fill="#d9d4ca"/></svg></span><span class="tx"><span class="k" style="color:#6b4fa0">Organic Chem</span><span class="t1">3D beside the drawing</span><span class="t2">The model, the DAT drawing and the written form, side by side.</span></span></a>
-  <a class="loop-card" href="/oc/chirality/"><span class="ic" style="background:#efe9f7"></span><span class="tx"><span class="k" style="color:#6b4fa0">Organic Chem</span><span class="t1">Chirality Bench</span><span class="t2">Call R or S on the model, beside the wedge-and-dash drawing.</span></span></a>
-  <a class="loop-card" href="/qr/worked/"><span class="ic" style="background:#f5e9ee"></span><span class="tx"><span class="k" style="color:#a3405c">QR</span><span class="t1">Worked solutions you can see</span><span class="t2">Six problem families, the method drawn step by step.</span></span></a>
-  <a class="loop-card" href="/rc/map/"><span class="ic" style="background:#e4f1ef"></span><span class="tx"><span class="k" style="color:#1f7a70">Reading</span><span class="t1">Map it, then find the line</span><span class="t2">Name each paragraph's job, then every answer lights up its line.</span></span></a>
+  <a class="loop-card" href="/oc/chirality/"><span class="ic" style="background:#efe9f7"><img src="/shared/art/ochem.webp" alt="" width="64" height="64" loading="lazy"></span><span class="tx"><span class="k" style="color:#6b4fa0">Organic Chem</span><span class="t1">Chirality Bench</span><span class="t2">Call R or S on the model, beside the wedge-and-dash drawing.</span></span></a>
+  <a class="loop-card" href="/qr/worked/"><span class="ic" style="background:#f5e9ee"><img src="/shared/art/qr.webp" alt="" width="64" height="64" loading="lazy"></span><span class="tx"><span class="k" style="color:#a3405c">QR</span><span class="t1">Worked solutions you can see</span><span class="t2">Six problem families, the method drawn step by step.</span></span></a>
+  <a class="loop-card" href="/rc/map/"><span class="ic" style="background:#e4f1ef"><img src="/shared/art/rc.webp" alt="" width="64" height="64" loading="lazy"></span><span class="tx"><span class="k" style="color:#1f7a70">Reading</span><span class="t1">Map it, then find the line</span><span class="t2">Name each paragraph's job, then every answer lights up its line.</span></span></a>
+  <h2 class="loop-h2">See it <span id="lab-count"></span></h2>
+  <nav class="lab-jump" id="lab-jump" aria-label="Sections"></nav>
+  <div id="lab-sections"></div>
+  <noscript><p class="aui-small">The labs list needs JavaScript. Start with <a href="/tools/ochem/">Reaction Maps</a>, <a href="/gc/vsepr/">VSEPR in 3D</a> or <a href="/bio/see/">Biology plates</a>.</p></noscript>
   <h2 class="loop-h2">Courses <span>6</span></h2>
   <div class="aui-grid">
     <a class="aui-card aui-card--flat" href="/tools/bio-retold/"><h3 class="aui-h3">Bio, Retold</h3><p class="aui-small">14 nights</p></a>
@@ -34,7 +94,99 @@
     <a class="aui-card aui-card--flat" href="/tools/qr-retold/"><h3 class="aui-h3">QR, Retold</h3><p class="aui-small">14 nights</p></a>
   </div>
 </main>
-<script src="/shared/ace-ui.js?v=3"></script>
-<script src="/shared/ace-tabs.js?v=2" defer></script>
+<script src="/shared/ace-visuals.js?v=3"></script>
+<script src="/shared/ace-record.js?v=5"></script>
+<script src="/shared/ace-plan.js?v=1"></script>
+<script>
+(function () {
+  'use strict';
+  var V = window.AceVisuals, host = document.getElementById('lab-sections'), jump = document.getElementById('lab-jump');
+  var wide = window.matchMedia('(min-width: 760px)').matches;
+  var STEP = { see: 'See it', 'try': 'Try it', test: 'Test it' };
+  var CHEV = '<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="#3a4a42" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>';
+  var WHEEL = '<svg class="wheel" width="56" height="56" viewBox="0 0 56 56" aria-hidden="true"><g stroke="#E2C97A" stroke-width="2"><line x1="28" y1="28" x2="28" y2="7"/><line x1="28" y1="28" x2="46" y2="17"/><line x1="28" y1="28" x2="46" y2="39"/><line x1="28" y1="28" x2="28" y2="49"/><line x1="28" y1="28" x2="10" y2="39"/><line x1="28" y1="28" x2="10" y2="17"/></g><circle cx="28" cy="28" r="8" fill="#C9A84C"/><g fill="#F5F0E8"><circle cx="28" cy="7" r="4.5"/><circle cx="46" cy="17" r="4.5"/><circle cx="46" cy="39" r="4.5"/><circle cx="28" cy="49" r="4.5"/><circle cx="10" cy="39" r="4.5"/><circle cx="10" cy="17" r="4.5"/></g></svg>';
+  function el(tag, cls, text) { var n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; }
+  function line(cls, lead, text) { var p = el('span', cls); p.appendChild(el('b', null, lead)); p.appendChild(document.createTextNode(' ' + text)); return p; }
+  var want = location.hash.replace('#', '');
+  /* "Try questions on this": the practice-bank topics whose best visual is this lab (the same
+     matcher that puts See it on a miss, run the other way). PAT trainers are questions already;
+     Reading goes to the timed passages. No matching topic: the section's set near your level. */
+  var TRY = {};
+  function tryHref(t) {
+    var hit = TRY[t.id];
+    if (t.section === 'pat') return '/tests/#pat';
+    if (t.section === 'rc') return '/tools/rc/';
+    return window.AcePlan.practiceHref(t.section, hit ? hit.topic : null);
+  }
+  function wireTry(map) {
+    ['gchem', 'bio', 'ochem', 'qr'].forEach(function (sec) {
+      var seen = {};
+      Object.keys(map[sec] || {}).forEach(function (raw) {
+        var v = map[sec][raw]; if (seen[v[0]]) return; seen[v[0]] = 1;
+        var m = V.match({ section: sec, topic: v[0], topicName: v[1] });
+        if (m && !TRY[m.id]) TRY[m.id] = { section: sec, topic: v[0], name: v[1] };
+      });
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('a[data-try]'), function (a) {
+      var t = V.tools.filter(function (x) { return x.id === a.getAttribute('data-try'); })[0]; if (!t) return;
+      a.href = tryHref(t);
+      if (TRY[t.id]) a.textContent = 'Try questions on this: ' + TRY[t.id].name.toLowerCase();
+    });
+    // the lab for the student's weakest topic, first
+    var w = window.AcePlan.weakest(1)[0], box = document.getElementById('lab-for-you');
+    var v = w ? V.match({ section: w.section, topic: w.topic, topicName: w.topicName }) : null;
+    if (v) {
+      box.hidden = false; box.href = v.url;
+      box.innerHTML = '';
+      box.appendChild(el('span', 'k', 'For you · your weakest topic'));
+      box.appendChild(el('span', 't1', v.label));
+      box.appendChild(el('span', 't2', 'Picked from your answers on ' + String(w.topicName).toLowerCase() + '. See it here, then try the questions under its card.'));
+    }
+  }
+  fetch('/data/topics.json').then(function (r) { return r.ok ? r.json() : {}; }).catch(function () { return {}; }).then(wireTry);
+  document.getElementById('lab-count').textContent = V.tools.length + ' labs';
+  V.sections.forEach(function (s, si) {
+    var tools = V.tools.filter(function (t) { return t.section === s.id; });
+    var j = el('a', null, s.name); j.href = '#' + s.id; jump.appendChild(j);
+    var d = el('details', 'lab-sec'); d.id = s.id; d.open = wide || (want ? want === s.id : si === 0);
+    var sum = el('summary'); var dot = el('span', 'dot'); dot.style.background = s.color; sum.appendChild(dot);
+    sum.appendChild(el('h2', null, s.name)); sum.appendChild(el('span', 'n', tools.length + (tools.length === 1 ? ' lab' : ' labs')));
+    sum.insertAdjacentHTML('beforeend', CHEV); d.appendChild(sum);
+    var body = el('div', 'lab-body');
+    var start = el('p', 'lab-start'); var parts = s.start.split(': '); start.appendChild(el('b', null, parts[0] + ':')); start.appendChild(document.createTextNode(' ' + parts.slice(1).join(': '))); body.appendChild(start);
+    var ol = el('ol', 'lab-path');
+    s.path.forEach(function (p, i) {
+      var li = el('li'), a = el('a'); a.href = p.href; a.appendChild(el('span', 'num', String(i + 1)));
+      var tx = el('span'); tx.appendChild(el('span', 'st', p.step)); tx.appendChild(el('span', 'ti', p.title)); a.appendChild(tx); li.appendChild(a); ol.appendChild(li);
+    });
+    body.appendChild(ol);
+    s.groups.forEach(function (g, gi) {
+      var list = tools.filter(function (t) { return t.group === g; });
+      list.sort(function (a, b) { return (b.featured ? 1 : 0) - (a.featured ? 1 : 0); });
+      var sub = el('details', 'lab-sub'); sub.open = wide || gi === 0;
+      var ss = el('summary'); ss.appendChild(el('h3', null, g)); ss.appendChild(el('span', 'n', String(list.length))); ss.insertAdjacentHTML('beforeend', CHEV); sub.appendChild(ss);
+      var cards = el('div', 'lab-cards');
+      list.forEach(function (t) {
+        var card = el('div', 'lab-card' + (t.featured ? ' feat' : '')); card.setAttribute('data-tool', t.id);
+        var a = el('a', 'lab-main'); a.href = t.path; card.appendChild(a);
+        var tq = el('a', 'lab-try', 'Try questions on this'); tq.setAttribute('data-try', t.id); tq.href = tryHref(t); card.appendChild(tq);
+        if (t.id === 'oc-wheels') a.insertAdjacentHTML('beforeend', WHEEL);
+        var top = el('span', 'top'); var st = el('span', 'step', STEP[t.step]); st.style.color = s.color; top.appendChild(st); a.appendChild(top);
+        a.appendChild(el('span', 't1', t.title)); a.appendChild(el('span', 't2', t.blurb));
+        a.appendChild(line('do', 'You:', t.does)); a.appendChild(line('nx', 'Next:', t.next.replace(/^Then /, '').replace(/^./, function (c) { return c.toUpperCase(); })));
+        cards.appendChild(card);
+      });
+      sub.appendChild(cards); body.appendChild(sub);
+    });
+    d.appendChild(body); host.appendChild(d);
+  });
+  jump.addEventListener('click', function (e) {
+    var a = e.target.closest('a'); if (!a) return;
+    var d = document.getElementById(a.getAttribute('href').slice(1)); if (d) d.open = true;
+  });
+})();
+</script>
+<script src="/shared/ace-ui.js?v=4"></script>
+<script src="/shared/ace-tabs.js?v=3" defer></script>
 </body>
 </html>

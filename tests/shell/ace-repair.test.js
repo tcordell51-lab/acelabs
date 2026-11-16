@@ -77,3 +77,57 @@ test('the reason sets the first return', () => {
   assert.strictEqual(new Date(trap.due).getDate(), new Date(T0 + 2 * DAY).getDate(), 'trap, misread and changed return in 2 days');
   assert.throws(() => R.repairReason('r0', 'bored', T0));
 });
+
+// ---- 2026-11-16 rework: skill-first twins, assisted saved, learner model, skill repair ----
+const sk = (id, topic, skill, d) => Object.assign(it(id, topic), { skill, skillName: skill, difficulty: d || 2 });
+
+test('a new version matches the skill first, then the topic, then the same question (marked)', () => {
+  const R = boot();
+  const b2 = [sk('m1', 'lewis', 'lewis/valence-count'), sk('a1', 'lewis', 'lewis/resonance'), sk('a2', 'lewis', 'lewis/valence-count'), sk('z1', 'gas', 'gas/ideal')];
+  R.record({ item: b2[0], picked: 1, answer: 0, ok: false, at: T0 });
+  const e = R.repairEntry('m1');
+  assert.strictEqual(e.skill, 'lewis/valence-count');
+  assert.strictEqual(R.repairVersion(e, b2).item.id, 'a2');
+  assert.strictEqual(R.repairVersion(e, b2).match, 'skill');
+  assert.strictEqual(R.repairVersion(e, [b2[0], b2[1]]).match, 'topic');
+  const self = R.repairVersion(e, []);
+  assert.strictEqual(self.sameItem, true);
+  assert.strictEqual(self.item.id, 'm1', 'a test miss keeps its own text, so it can always come back');
+});
+
+test('assisted is saved on the attempt row and keeps the model still', () => {
+  const R = boot();
+  R.record({ item: sk('q1', 'gas', 'gas/ideal'), picked: 0, answer: 0, ok: true, at: T0, assisted: true });
+  assert.strictEqual(R.attempts()[0].assisted, true);
+  assert.strictEqual(R.ratings('gchem').length, 0);
+  R.record({ item: sk('q2', 'gas', 'gas/ideal'), picked: 0, answer: 0, ok: true, at: T0 });
+  assert.strictEqual(R.attempts()[1].assisted, false);
+  assert.strictEqual(R.ratings('gchem').length, 1);
+});
+
+test('the rating falls after misses and rises after wins; picks follow it', () => {
+  const R = boot();
+  const pool = [sk('e1', 'gas', 'g', 1), sk('e2', 'gas', 'g', 1), sk('h1', 'gas', 'g', 3), sk('h2', 'gas', 'g', 3), sk('h3', 'gas', 'g', 3)];
+  const start = R.expect(pool[2]);
+  for (let i = 0; i < 4; i++) R.record({ item: sk('w' + i, 'gas', 'g', 2), picked: 1, answer: 0, ok: false, at: T0 + i });
+  const low = R.expect(pool[2]);
+  assert.ok(low < start, 'misses lower the chance on a hard item');
+  assert.strictEqual(R.pickNear(pool, { random: () => 0 })[0].difficulty, 1, 'after misses the easiest comes first');
+  for (let i = 0; i < 14; i++) R.record({ item: sk('v' + i, 'gas', 'g', 3), picked: 0, answer: 0, ok: true, at: T0 + 100 + i });
+  assert.ok(R.expect(pool[2]) > low);
+  assert.strictEqual(R.pickNear(pool, { random: () => 0 })[0].difficulty, 3, 'after wins a hard item comes first');
+});
+
+test('PAT misses repair by skill: two practice wins on different days clear it', () => {
+  const R = boot();
+  const pat = (n) => ({ id: 'pat:holepunch:' + n, section: 'pat', topic: 'holepunch', topicName: 'Hole punching', skill: 'holepunch', skillName: 'Hole punching' });
+  R.record({ item: pat(1), picked: 1, answer: 0, ok: false, at: T0 });
+  R.record({ item: pat(2), picked: 1, answer: 0, ok: false, at: T0 + 1000 });
+  assert.strictEqual(j(R.repairList({ now: T0 })).open.length, 1, 'one entry per skill');
+  R.record({ item: pat(3), picked: 0, answer: 0, ok: true, at: T0 + 2000 });
+  assert.strictEqual(R.repairEntry('pat:holepunch').wins.length, 0, 'not due yet, no win');
+  R.record({ item: pat(4), picked: 0, answer: 0, ok: true, at: T0 + DAY });
+  assert.strictEqual(R.repairEntry('pat:holepunch').wins.length, 1);
+  R.record({ item: pat(5), picked: 0, answer: 0, ok: true, at: T0 + 3 * DAY });
+  assert.ok(R.repairEntry('pat:holepunch').cleared);
+});

@@ -584,6 +584,27 @@
     drop(K_ACTIVE);
     var done = S; S = null;
     renderReport(done, res, rec);
+    toSharedRecord(done, rec);
+  }
+  /* Every answer into the one record (Repair, Progress, Today), then the question-by-question
+     review on /review/ (shared/ace-test-review.js). PAT and Reading rows repair by skill. */
+  function toSharedRecord(st, rec) {
+    if (!window.AceTestReview || !window.AceRecord) return;
+    var rows = [], SUBSEC = { 'Biology': 'bio', 'Gen Chem': 'gchem', 'OChem': 'ochem', 'QR': 'qr' };
+    SECTION_KEYS.forEach(function (sk) {
+      items(sk).forEach(function (x, i) {
+        var picked = st.answers[sk][i];
+        if (x.kind === 'mc') rows.push({ item: Object.assign({}, x.it, { section: SUBSEC[x.sub] || x.it.section }), picked: picked == null ? null : picked });
+        else if (x.kind === 'pat') {
+          var name = (PAT.SECTIONS.filter(function (s) { return s.type === x.it.type; })[0] || {}).name || x.it.type;
+          rows.push({ item: { id: 'pat:' + st.mockId + ':' + (i + 1), section: 'pat', topic: x.it.type, topicName: name, answer: x.it.answer, note: 'PAT, ' + name + ', question ' + (i + 1) + '. The figure is in this test\u2019s report.' }, picked: picked == null ? null : picked });
+        } else if (x.kind === 'rc') rows.push({ item: { id: x.q.id, section: 'rc', topic: x.q.type, topicName: (RC.types && RC.types[x.q.type]) || x.q.type, stem: x.q.stem, choices: x.q.choices, answer: x.q.key, why: x.q.why || '' }, picked: picked == null ? null : picked });
+      });
+    });
+    window.AceTestReview.finish({ src: 'full-length', title: rec.testName || 'Full-length test', rows: rows, back: '/tools/mock/full.html' }).then(function (id) {
+      ['rvLink', 'rvTop'].forEach(function (k) { var a = document.getElementById(k); if (a) { a.href = '/review/?run=' + encodeURIComponent(id); a.hidden = false; } });
+      var b = document.getElementById('rvLink'); if (b) b.hidden = true;   // one primary button: the one at the top
+    });
   }
   function openSavedReport(id) {
     var a = attempts().filter(function (x) { return x.id === id; })[0]; if (!a) return;
@@ -620,15 +641,15 @@
     }).join('');
 
     $('report').classList.remove('hidden');
-    $('report').innerHTML = '<header class="topbar"><a class="brand" href="/ace-labs.html">Ace <em>Labs</em></a><span class="spacer"></span><a class="back" href="#" id="toList">Full-length tests</a></header>' +
+    $('report').innerHTML = '<header class="topbar"><a class="brand" href="/">Ace <em>Labs</em></a><span class="spacer"></span><a class="back" href="#" id="toList">Full-length tests</a></header>' +
       '<div class="wrap report"><div class="rail"><div class="kicker">Practice report</div><h1>' + esc(m ? m.name : '') + ', <em>done.</em></h1>' +
-      '<p class="big-line">You answered <b>' + rec.totalCorrect + ' of ' + rec.totalQs + '</b> across all four sections. Finishing a full day of testing is its own skill, and you just practiced it. Below is where the points went and the exact place to win the next ones.</p></div>' +
+      '<p class="big-line">You answered <b>' + rec.totalCorrect + ' of ' + rec.totalQs + '</b> across all four sections. Every miss is in Repair now. Next: go through the test question by question and tag why you missed each one.</p><p><a class="btn gold" href="/review/" id="rvTop" hidden>Review question by question</a></p></div>' +
       '<div class="sec-grid">' + card('sons', 'Natural Sciences', 'var(--bio)') + card('pat', 'Perceptual Ability', 'var(--pat)') + card('rc', 'Reading', 'var(--rc)') + card('qr', 'Quantitative', 'var(--qr)') + '</div>' +
       '<p class="note" style="margin-top:10px">Optional break used: ' + minsec(rec.breakSec || 0) + '. Raw scores only; Ace Labs does not convert practice scores to the scaled score.</p>' +
       '<h2>By subject</h2><div class="card" style="padding:8px 14px"><table class="tbl"><thead><tr><th>Subject</th><th class="r">Correct</th><th class="r">Accuracy</th><th class="r hide-sm"></th></tr></thead><tbody>' + subjRows + '</tbody></table></div>' +
       (topicRows ? '<h2>Where the next points are</h2><div class="card" style="padding:8px 14px"><table class="tbl"><thead><tr><th>Topic</th><th class="r">Correct</th><th class="r hide-sm"></th><th class="r">Drill it</th></tr></thead><tbody>' + topicRows + '</tbody></table></div>' : '') +
       '<h2>Question by question</h2><p class="note" style="margin-top:-4px">Every miss shows the answer, the reasoning, and the lesson that teaches it.</p>' + missHTML +
-      '<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:24px"><a class="btn gold" href="#" id="toList2">Back to full-length tests</a><a class="btn" href="/ace-labs.html">Ace Labs home</a></div></div>';
+      '<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:24px"><a class="btn gold" href="/review/" id="rvLink" hidden>Review question by question, then Repair</a><a class="btn" href="#" id="toList2">Back to full-length tests</a><a class="btn" href="/">Back to Today</a></div></div>';
     var back = function (e) { e.preventDefault(); renderLanding(); window.scrollTo(0, 0); };
     $('toList').addEventListener('click', back); $('toList2').addEventListener('click', back);
     Array.prototype.forEach.call($('report').querySelectorAll('details[data-sec]'), function (d) {

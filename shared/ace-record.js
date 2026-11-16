@@ -29,6 +29,22 @@
      - it clears after 2 wins on different calendar days, answered unassisted
        (nothing opened before answering); a wrong answer resets it to the next day.
 
+   2026-11-16 rework:
+     - every attempt row and item carries skill (shared/ace-skills.js) and assisted (true when
+       a lesson or picture was opened BEFORE answering). Assisted answers never move Progress,
+       the learner model or a repair win. Opening See it AFTER answering is free.
+     - repair twins: same skill first, then same topic, then the missed question itself
+       (sameItem, marked "same question" on screen). A test miss keeps its own text on the
+       entry so it can always come back.
+     - PAT and Reading misses repair by skill (mode 'skill', one entry per subtest or question
+       type): any unassisted practice answer of that skill on a day it is due counts.
+     - learner model (record.model): an Elo rating per section and per topic, and a difficulty per
+       item, updated on every unassisted answer from every section and test. P(right) =
+       0.2 + 0.8 / (1 + e^-(rating - difficulty)) (five choices, so a 20% floor). Item difficulty
+       is seeded from the bank's difficulty or tier and moves with answers. No score prediction
+       is made from it; Progress shows bands with answer counts.
+     - runs (ace.v1.runs): the last test runs, question by question, for /review/?run=<id>.
+
    Spaced repeat: a right answer moves an item up one box and schedules it
    LADDER[box] days out (1, 3, 7, 14, 30). A wrong answer sends it back to box 0,
    due the next day. An item that reaches the top box counts as held.
@@ -68,8 +84,54 @@
     try { var s = ls(); if (s) s.setItem(NS + k, str); } catch (e) { /* storage full or blocked: memory only */ }
   }
   function dayKey(t) { var d = new Date(t); return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); }
-  function blank() { return { schema: 1, updated: 0, items: {}, days: {}, imported: {}, repair: {} }; }
-  function load() { var r = read('record', null); if (!r || r.schema !== 1) r = blank(); r.items = r.items || {}; r.days = r.days || {}; r.imported = r.imported || {}; r.repair = r.repair || {}; return r; }
+  function blank() { return { schema: 1, updated: 0, items: {}, days: {}, imported: {}, repair: {}, model: null }; }
+  function load() { var r = read('record', null); if (!r || r.schema !== 1) r = blank(); r.items = r.items || {}; r.days = r.days || {}; r.imported = r.imported || {}; r.repair = r.repair || {}; r.model = r.model || { sec: {}, top: {}, ib: {} }; return r; }
+
+  /* ---- learner model: Elo per section and per topic, difficulty per item ---- */
+  var GUESS = 0.2, TARGET = 0.75;
+  function sig(x) { return 1 / (1 + Math.exp(-x)); }
+  function pRight(theta, b) { return GUESS + (1 - GUESS) * sig(theta - b); }
+  /* Seed difficulty from the bank: banks use 1 to 4 (easy to hard); Climb rungs above 4 run to 10. */
+  function seedB(d) { d = Number(d); if (!isFinite(d) || d <= 0) return 0; return d <= 4 ? (d - 2.5) * 0.8 : (d - 5.5) * 0.3; }
+  function topKey(section, topic) { return section + '|' + topic; }
+  function skillOf(item) {
+    if (item.skill) return { skill: item.skill, skillName: item.skillName || item.skill };
+    try { if (window.AceSkills) return window.AceSkills.tag(item); } catch (e) { /* untagged */ }
+    return { skill: item.topic || '', skillName: item.topicName || item.topic || '' };
+  }
+  function thetaOf(m, section, topic) {
+    var t = m.top[topKey(section, topic)]; if (t) return t.t;
+    var s = m.sec[section]; return s ? s.t : 0;
+  }
+  function bOf(m, item) { var x = m.ib[String(item.id)]; return x ? x.b : seedB(item.difficulty); }
+  function modelUpdate(r, item, ok, now) {
+    var m = r.model, sec = item.section || '', top = item.topic || '';
+    var th = thetaOf(m, sec, top), b = bOf(m, item), err = (ok ? 1 : 0) - pRight(th, b);
+    var t = m.top[topKey(sec, top)] || { t: th, n: 0 }, s = m.sec[sec] || { t: 0, n: 0 }, ib = m.ib[String(item.id)] || { b: b, n: 0 };
+    t.t += (0.8 / (1 + 0.08 * t.n)) * err; t.n += 1; t.last = now;
+    s.t += (0.4 / (1 + 0.03 * s.n)) * err; s.n += 1; s.last = now;
+    ib.b -= (0.3 / (1 + 0.05 * ib.n)) * err; ib.n += 1;
+    m.top[topKey(sec, top)] = t; m.sec[sec] = s; m.ib[String(item.id)] = ib;
+  }
+  /* Expected chance of a right answer on this item for this student, from the model. */
+  function expect(item) { var m = load().model; return pRight(thetaOf(m, item.section, item.topic), bOf(m, item)); }
+  /* Ratings for a section (or all): [{ section, topic, rating, n, p }] where p is the expected
+     chance on an average item (difficulty 0). */
+  function ratings(section) {
+    var m = load().model, out = [];
+    Object.keys(m.top).forEach(function (k) { var i = k.indexOf('|'), sec = k.slice(0, i), top = k.slice(i + 1); if (section && sec !== section) return; var t = m.top[k]; out.push({ section: sec, topic: top, rating: t.t, n: t.n, last: t.last || 0, p: pRight(t.t, 0) }); });
+    return out;
+  }
+  function sectionRating(section) { var s = load().model.sec[section]; return s ? { rating: s.t, n: s.n, p: pRight(s.t, 0) } : { rating: 0, n: 0, p: null }; }
+  /* Order a pool so the first items sit nearest the target chance (about 75% right): the set
+     steps harder after wins and easier after misses because the rating moves. Unseen first. */
+  function pickNear(pool, o) {
+    o = o || {}; var target = o.target || TARGET, r = load(), m = r.model, rnd = o.random || Math.random;
+    return pool.map(function (it) {
+      var seen = r.items[String(it.id)], p = pRight(thetaOf(m, it.section, it.topic), bOf(m, it));
+      return { it: it, p: p, score: Math.abs(p - target) + (seen ? 0.5 : 0) + rnd() * 0.04 };
+    }).sort(function (a, b) { return a.score - b.score; }).map(function (x) { x.it._p = x.p; return x.it; });
+  }
 
   var listeners = [], sync = null, flushing = false;
   function emit(what) { listeners.forEach(function (fn) { try { fn(what); } catch (e) { /* a listener must not break a save */ } }); }
@@ -77,19 +139,22 @@
   /* Save one answer. a = { item: { id, section, topic }, picked, answer, ok, ms, src, set } */
   function record(a) {
     if (!a || !a.item || !a.item.id) throw new Error('AceRecord.record needs item.id');
-    var now = a.at || Date.now(), r = load(), id = String(a.item.id);
+    var now = a.at || Date.now(), r = load(), id = String(a.item.id), sk = skillOf(a.item);
     var it = r.items[id] || { section: a.item.section || '', topic: a.item.topic || '', seen: 0, right: 0, last: 0, lastOk: false, box: 0, due: 0 };
-    it.section = a.item.section || it.section; it.topic = a.item.topic || it.topic;
+    it.section = a.item.section || it.section; it.topic = a.item.topic || it.topic; it.skill = sk.skill;
     it.seen += 1; if (a.ok) it.right += 1;
     it.last = now; it.lastOk = !!a.ok;
     it.box = a.ok ? Math.min(it.box + 1, LADDER.length) : 0;
     it.due = now + (a.ok ? LADDER[Math.min(it.box, LADDER.length) - 1] : 1) * DAY;
     r.items[id] = it;
-    if (!a.ok && a.repair !== false) repairOpen(r, a, now);
+    if (!a.assisted) modelUpdate(r, a.item, a.ok, now);
+    var skillMode = it.section === 'pat' || it.section === 'rc';
+    if (!a.ok && a.repair !== false) repairOpen(r, a, now, skillMode ? sk : null);
+    else if (skillMode && a.repair !== false && !a.assisted && a.kind !== 'test') repairSkillAnswer(r, it.section, sk.skill, !!a.ok, now);
     var d = dayKey(now), day = r.days[d] || { seen: 0, right: 0 };
     day.seen += 1; if (a.ok) day.right += 1; r.days[d] = day;
     r.updated = now; write('record', r);
-    var row = { id: id, section: it.section, topic: it.topic, picked: a.picked, answer: a.answer, ok: !!a.ok, ms: a.ms || 0, at: now, src: a.src || '', set: a.set || '' };
+    var row = { id: id, section: it.section, topic: it.topic, skill: sk.skill, picked: a.picked, answer: a.answer, ok: !!a.ok, ms: a.ms || 0, at: now, src: a.src || '', set: a.set || '', assisted: !!a.assisted, kind: a.kind || 'practice' };
     if (a.first != null) row.first = a.first;
     if (a.changes != null) row.changes = a.changes;
     row.change = a.change || (a.first != null && a.first !== a.picked ? (a.first === a.answer ? 'r2w' : (a.ok ? 'w2r' : 'w2w')) : 'none');
@@ -105,16 +170,28 @@
   var REASONS = { know: "Didn't know it", trap: 'Fell for a trap', misread: 'Misread it', time: 'Ran short on time', changed: 'Changed my answer' };
   function startOfDay(t) { var d = new Date(t); d.setHours(0, 0, 0, 0); return d.getTime(); }
   function daysOut(now, n) { return startOfDay(now) + n * DAY + 3600e3; }   // 1 am on day +n, so "due today" means any time today
-  function repairOpen(r, a, now) {
+  function repairOpen(r, a, now, skillMode) {
     r.repair = r.repair || {};
-    var id = String(a.item.id), e = r.repair[id];
+    var sk = skillOf(a.item);
+    var id = skillMode ? a.item.section + ':' + sk.skill : String(a.item.id), e = r.repair[id];
     if (!e || e.cleared) {
       e = r.repair[id] = { id: id, section: a.item.section || '', topic: a.item.topic || '', topicName: a.item.topicName || a.item.topic || '',
-        trap: a.item.trapTag || a.item.topicName || a.item.topic || '', src: a.src || '', missedAt: now, reason: null, wins: [],
+        skill: sk.skill, skillName: sk.skillName, mode: skillMode ? 'skill' : 'item', tool: a.tool || '',
+        trap: a.item.trapTag || sk.skillName || a.item.topicName || a.item.topic || '', src: a.src || '', missedAt: now, reason: null, wins: [],
         due: daysOut(now, 1), resets: 0, cleared: 0, served: [], lessonFirst: false, untimedFirst: false };
+      if (!skillMode && a.item.stem && a.item.choices) e.itemData = { id: String(a.item.id), section: a.item.section, topic: a.item.topic, topicName: a.item.topicName, skill: sk.skill, skillName: sk.skillName, difficulty: a.item.difficulty, stem: a.item.stem, choices: a.item.choices, answer: a.item.answer, why: a.item.why || '' };
     } else {   // missed again while open: reset
       e.wins = []; e.resets += 1; e.due = daysOut(now, 1); e.lastMiss = now;
     }
+    return e;
+  }
+  /* PAT and Reading: a practice answer of the same skill on a day the entry is due. */
+  function repairSkillAnswer(r, section, skill, ok, now) {
+    var e = r.repair[section + ':' + skill]; if (!e || e.cleared || e.due > startOfDay(now) + DAY) return null;
+    if (!ok) { e.wins = []; e.resets += 1; e.due = daysOut(now, 1); e.lastMiss = now; return e; }
+    var today = startOfDay(now);
+    if (!e.wins.some(function (w) { return startOfDay(w) === today; })) e.wins.push(now);
+    if (e.wins.length >= 2) e.cleared = now; else e.due = daysOut(now, 2);
     return e;
   }
   /* Tag why a miss happened. Drives the first return. */
@@ -162,13 +239,31 @@
      Falls back to the missed item itself only when the bank has no twin (flagged sameItem). */
   function repairVersion(e, bank) {
     var served = {}; (e.served || []).forEach(function (x) { served[x] = 1; });
-    var pool = (bank || []).filter(function (it) { return it.section === e.section && it.topic === e.topic && String(it.id) !== e.id; });
-    var fresh = pool.filter(function (it) { return !served[String(it.id)]; });
-    var pick = (fresh.length ? fresh : pool);
-    if (pick.length) return { item: pick[Math.floor(Math.random() * pick.length)], sameItem: false };
-    var self = (bank || []).filter(function (it) { return String(it.id) === e.id; })[0];
-    return { item: self || null, sameItem: true };
+    var mine = (bank || []).filter(function (it) { return it.section === e.section && String(it.id) !== e.id; });
+    var skill = e.skill || (e.itemData && e.itemData.skill) || '';
+    function choose(pool, match) {
+      if (!pool.length) return null;
+      var fresh = pool.filter(function (it) { return !served[String(it.id)]; });
+      var near = pickNear(fresh.length ? fresh : pool);   // nearest the student's level for that topic
+      return { item: near[0], sameItem: false, match: match };
+    }
+    var bySkill = skill ? mine.filter(function (it) { return it.skill === skill; }) : [];
+    var hit = choose(bySkill, 'skill') || choose(mine.filter(function (it) { return it.topic === e.topic; }), 'topic');
+    if (hit) return hit;
+    var self = (bank || []).filter(function (it) { return String(it.id) === e.id; })[0] || e.itemData || null;
+    return { item: self, sameItem: true, match: 'same' };
   }
+
+  /* ---- test runs, question by question (Review reads them) ---- */
+  function saveRun(run) {
+    var runs = read('runs', []); runs = runs.filter(function (x) { return x.id !== run.id; }); runs.push(run);
+    if (runs.length > 8) runs = runs.slice(runs.length - 8);
+    write('runs', runs); emit({ type: 'run', run: run }); return run;
+  }
+  function runs() { return read('runs', []); }
+  function run(id) { return runs().filter(function (x) { return x.id === id; })[0] || null; }
+  /* The one miss count every page shows: open = in Repair, due = back today. */
+  function missCounts(now) { var L = repairList({ now: now }), by = {}; L.open.forEach(function (e) { by[e.section] = (by[e.section] || 0) + 1; }); return { open: L.open.length, due: L.due.length, cleared: L.clearedThisWeek.length, bySection: by }; }
 
   function item(id) { return load().items[String(id)] || null; }
   function matches(it, q) { return (!q.section || it.section === q.section) && (!q.topic || it.topic === q.topic); }
@@ -263,7 +358,8 @@
   function exportAll() { return { schema: 1, exported: Date.now(), record: load(), attempts: attempts(), legacy: legacyExport() }; }
 
   window.AceRecord = {
-    version: 2, LADDER: LADDER, FAMILIES: FAMILIES.map(function (f) { return f[0]; }),
+    version: 3, LADDER: LADDER, TARGET: TARGET, pRight: pRight, seedB: seedB, expect: expect, ratings: ratings, sectionRating: sectionRating, pickNear: pickNear, skillOf: skillOf,
+    saveRun: saveRun, runs: runs, run: run, missCounts: missCounts, FAMILIES: FAMILIES.map(function (f) { return f[0]; }),
     record: record, item: item, due: due, missed: missed, stats: stats, topics: topics, today: today, attempts: attempts,
     changeStats: changeStats, event: event, events: events,
     REASONS: REASONS, repairReason: repairReason, repairAnswer: repairAnswer, repairList: repairList, repairEntry: repairEntry, repairVersion: repairVersion, repairLesson: repairLesson,

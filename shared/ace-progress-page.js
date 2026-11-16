@@ -1,7 +1,8 @@
 /* ace-progress-page.js : Progress (/progress/). Per section: Building, Close or Test-ready, with
-   "N answers, X weeks" and the biggest lever. No score prediction anywhere. Only unassisted answers
-   move it, read from the most recent 150 with at most 40 from any one day. Under 100 answers it is
-   labeled an early read. The answer-change card shows the student's own counts only. */
+   "N answers, X weeks, N in Repair" and the biggest lever. No score prediction anywhere. Bands come
+   from AcePlan.band (the learner model's section rating plus answer counts; unassisted answers
+   only; under 100 answers it is labeled an early read). The answer-change card shows the
+   student's own counts only. */
 (function () {
   'use strict';
   var R = window.AceRecord;
@@ -11,49 +12,29 @@
   function dayKey(t) { var d = new Date(t); return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); }
   function el(tag, cls, text) { var n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; }
 
-  function read(section, all, repair) {
-    var rows = all.filter(function (a) { return a.section === section && !a.assisted; });
-    var out = { n: rows.length, days: 0, weeks: 0, band: 0, acc: null, lever: null, early: rows.length < 100 };
-    if (!rows.length) return out;
-    var days = {}; rows.forEach(function (a) { days[dayKey(a.at)] = 1; }); out.days = Object.keys(days).length;
-    out.weeks = Math.max(1, Math.ceil((rows[rows.length - 1].at - rows[0].at + 1) / (7 * DAY)));
-    // most recent 150, at most 40 from any one day
-    var perDay = {}, used = [];
-    for (var i = rows.length - 1; i >= 0 && used.length < 150; i--) { var k = dayKey(rows[i].at); perDay[k] = (perDay[k] || 0) + 1; if (perDay[k] <= 40) used.push(rows[i]); }
-    var right = used.filter(function (a) { return a.ok; }).length; out.acc = right / used.length;
-    if (out.acc >= 0.85 && out.days >= 5 && out.n >= 100) out.band = 3;
-    else if (out.acc >= 0.70 && out.days >= 3) out.band = 2;
-    else out.band = 1;
-    // biggest lever: most open repairs in a topic, then the weakest topic with at least 3 answers
-    var open = {}; repair.open.forEach(function (e) { if (e.section === section) open[e.topicName] = (open[e.topicName] || 0) + 1; });
-    var best = Object.keys(open).sort(function (a, b) { return open[b] - open[a]; })[0];
-    if (!best) {
-      var t = {}; used.forEach(function (a) { var x = t[a.topic] = t[a.topic] || [0, 0]; x[0] += 1; if (a.ok) x[1] += 1; });
-      best = Object.keys(t).filter(function (k) { return t[k][0] >= 3; }).sort(function (a, b) { return t[a][1] / t[a][0] - t[b][1] / t[b][0]; })[0] || null;
-      if (best) best = best.replace(/-/g, ' ');
-    }
-    out.lever = best;
-    return out;
+  /* Bands and counts come from shared/ace-plan.js (the same call Today makes), so the two pages
+     never disagree. The lever: the topic with the most open Repair entries, else the lowest rating. */
+  function lever(section) {
+    var w = window.AcePlan.weakest(1, { section: section })[0];
+    return w ? String(w.topicName || w.topic).replace(/-/g, ' ') : null;
   }
-
-  var all = R.attempts(), repair = R.repairList();
-  var host = document.getElementById('sections');
-  var missing = [];
+  var EMPTY = { bio: 'Take the diagnostic or a Biology set and this fills in.', gchem: 'Take the diagnostic or a Gen Chem set and this fills in.', ochem: 'Take the diagnostic or an OChem set and this fills in.',
+    pat: 'Answer a PAT trainer or a PAT test and this fills in.', rc: 'Finish a timed Reading set and this fills in.', qr: 'Take the diagnostic or a QR set and this fills in.' };
+  var host = document.getElementById('sections'), counts = R.missCounts();
+  var mc = document.getElementById('p-misses');
+  if (mc) { mc.setAttribute('data-miss-open', String(counts.open)); mc.setAttribute('data-miss-due', String(counts.due)); mc.textContent = counts.open ? 'In Repair: ' + counts.open + (counts.open === 1 ? ' miss' : ' misses') + ' open, ' + counts.due + ' due back today.' : 'Repair is empty.'; }
   ORDER.forEach(function (s) {
-    var r = read(s[0], all, repair);
-    var row = el('div', 'sec-row');
+    var r = window.AcePlan.band(s[0]);
+    var row = el('div', 'sec-row'); row.setAttribute('data-section', s[0]); row.setAttribute('data-answers', String(r.n)); row.setAttribute('data-open', String(counts.bySection[s[0]] || 0));
     var top = el('div', 'top'); top.appendChild(el('b', null, s[1]));
     top.appendChild(el('span', null, r.n ? WORD[r.band] + (r.early ? ', early read' : '') : 'No answers yet'));
     var band = el('div', 'band'); band.setAttribute('data-band', String(r.band)); band.setAttribute('aria-hidden', 'true');
     for (var k = 0; k < 3; k++) band.appendChild(el('span'));
     var meta = el('div', 'meta');
     if (r.n) {
-      meta.appendChild(el('span', null, r.n + ' answer' + (r.n === 1 ? '' : 's') + ', ' + r.weeks + ' week' + (r.weeks === 1 ? '' : 's')));
-      var lev = el('span'); lev.appendChild(document.createTextNode('Biggest lever: ')); lev.appendChild(el('strong', null, r.lever || 'keep going')); meta.appendChild(lev);
-    } else {
-      meta.appendChild(el('span', null, (s[0] === 'ochem' || s[0] === 'pat' || s[0] === 'rc') ? 'This tool keeps its own log until it moves onto the shared record.' : 'Answer a set and this fills in.'));
-      missing.push(s[1]);
-    }
+      meta.appendChild(el('span', null, r.n + ' answer' + (r.n === 1 ? '' : 's') + ', ' + r.weeks + ' week' + (r.weeks === 1 ? '' : 's') + ', ' + (counts.bySection[s[0]] || 0) + ' in Repair'));
+      var lev = el('span'); lev.appendChild(document.createTextNode('Biggest lever: ')); lev.appendChild(el('strong', null, lever(s[0]) || 'keep going')); meta.appendChild(lev);
+    } else meta.appendChild(el('span', null, EMPTY[s[0]]));
     row.appendChild(top); row.appendChild(band); row.appendChild(meta); host.appendChild(row);
   });
 

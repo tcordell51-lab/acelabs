@@ -185,6 +185,9 @@
 <script src="engine/pat-patternfold-poly.js"></script>
 <script src="engine/pat-test.js"></script>
 <script src="engine/pat-store.js"></script>
+<script src="/shared/ace-skills.js?v=1"></script>
+<script src="/shared/ace-record.js?v=5"></script>
+<script src="/shared/ace-test-review.js?v=3"></script>
 <script>
 (function () {
   'use strict';
@@ -436,6 +439,16 @@
     PAT.store.save(a);
     ui.analysis = A;
     renderResults(timeUp);
+    // the one record (Repair by skill, Progress, Today) and the shared review
+    if (window.AceTestReview && ui.test && ui.test.items) {
+      var rows = ui.test.items.map(function (it, i) {
+        var sec = secOf(i + 1) || {}, type = it.type || sec.type;
+        return { item: { id: 'pat:' + (a.testId || 'test') + ':' + (i + 1), section: 'pat', topic: type, topicName: sec.name || type, answer: it.answer, note: 'PAT, ' + (sec.name || type) + ', question ' + (i + 1) + '. The figure is in this test\u2019s own review.' }, picked: a.answers[i] == null ? null : a.answers[i] };
+      });
+      window.AceTestReview.finish({ src: 'pat-test', title: ui.test.label || 'PAT test', rows: rows, back: '/tools/pat/test.html' }).then(function (id) {
+        var b = document.getElementById('rvShared'); if (b) { b.href = '/review/?run=' + encodeURIComponent(id); b.hidden = false; }
+      });
+    }
   }
 
   /* ---------------- results ---------------- */
@@ -455,7 +468,8 @@
     var A = ui.analysis, a = ui.attempt, used = A.sections.reduce(function (t, x) { return t + x.timeSec; }, 0);
     var h = '<div class="res-head"><div class="big">' + A.total + '<small> / 90</small></div><div class="rail"><div class="kicker">' + esc(ui.test.label) + (a.mode === 'thomas' ? ' : Thomas order' : '') + '</div>' +
       '<h1 style="font-size:clamp(24px,3.4vw,34px);margin:8px 0 6px">Your section-by-section review</h1>' +
-      '<p class="note" style="margin:0">Questions answered correctly, out of 90. This is a raw count to learn from, not a scaled score. Time used: ' + mmss(used) + (timeUp ? ' (the full hour)' : '') + '.</p></div></div>';
+      '<p class="note" style="margin:0">Questions answered correctly, out of 90. This is a raw count to learn from, not a scaled score. Time used: ' + mmss(used) + (timeUp ? ' (the full hour)' : '') + '. Every miss is in Repair: it comes back as a new item of the same kind in the trainer.</p>' +
+      '<p style="margin:12px 0 0"><a class="btn gold" id="rvShared" href="/review/" hidden>Tag why you missed each one</a></p></div></div>';
     h += '<div class="card"><table class="sec-table"><thead><tr><th>Section</th><th>Correct</th><th class="hide-sm">Questions</th><th>Time used</th><th class="hide-sm">Ace pacing</th></tr></thead><tbody>';
     A.sections.forEach(function (s) {
       h += '<tr><td>' + s.name + '</td><td class="num">' + s.correct + ' / ' + s.of + '<span class="meter"><i style="width:' + Math.round(100 * s.correct / s.of) + '%"></i></span></td><td class="num hide-sm">' + s.from + ' to ' + s.to + '</td><td class="num">' + mmss(s.timeSec) + '</td><td class="num hide-sm">about ' + mmss(TARGET[s.type] * s.of) + '</td></tr>';
@@ -594,6 +608,6 @@
   renderLanding();
 })();
 </script>
-<script src="/shared/ace-shell.js?v=3" defer></script>
+<script src="/shared/ace-shell.js?v=4" defer></script>
 </body>
 </html>

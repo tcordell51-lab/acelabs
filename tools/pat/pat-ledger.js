@@ -10,8 +10,20 @@
   function read(mod) {
     try { return JSON.parse(localStorage.getItem(key(mod)) || '{}'); } catch (e) { return {}; }
   }
+  var NAMES = { keyholes: 'Keyholes', tfe: 'Top, front, end', angles: 'Angle ranking', holepunch: 'Hole punching', cubes: 'Cube counting', patternfold: 'Pattern folding' };
+  /* Every graded drill answer also goes into the one record (shared/ace-record.js, when the page
+     loads it): Progress counts PAT, a miss opens the PAT Repair entry for that subtest, and an
+     unassisted right answer on a day it is due counts as a Repair win (2026-11-16). */
+  function shared(mod, ok) {
+    if (!window.AceRecord) return;
+    try {
+      window.AceRecord.record({ item: { id: 'pat:' + mod + ':' + Date.now().toString(36), section: 'pat', topic: mod, topicName: NAMES[mod] || mod, skill: mod, skillName: NAMES[mod] || mod },
+        picked: ok ? 0 : 1, answer: 0, ok: !!ok, src: 'pat-' + mod, kind: 'practice' });
+    } catch (e) { /* the local ledger still has it */ }
+  }
   window.PatLedger = {
     record: function (mod, ok) {
+      shared(mod, ok);
       var s = read(mod);
       s.attempts = (s.attempts || 0) + 1;
       if (ok) {

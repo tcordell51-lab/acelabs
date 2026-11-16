@@ -20,10 +20,13 @@
     rec.migrate();
 
     function drawHub() {
-      var st = rec.stats({ section: o.section });
-      $('s-answers').textContent = st.answers; $('s-right').textContent = st.right; $('s-due').textContent = st.due; $('s-miss').textContent = st.missed;
-      $('btn-miss').textContent = 'Review misses (' + st.missed + ')';
-      $('btn-due').textContent = 'Spaced repeats (' + st.due + ')';
+      var st = rec.stats({ section: o.section }), mc = rec.missCounts();
+      var inRepair = mc.bySection[o.section] || 0;
+      $('s-answers').textContent = st.answers; $('s-right').textContent = st.right; $('s-due').textContent = inRepair; $('s-miss').textContent = mc.due;
+      // one place for misses: Repair (the old "Review misses" and "Spaced repeats" ladders are retired here)
+      var bm = $('btn-miss'); bm.textContent = 'Repair (' + inRepair + ' open)'; bm.href = '/repair/'; bm.removeAttribute('data-run');
+      var bd = $('btn-due'); if (bd) bd.hidden = true;
+      
       var byTopic = {}, order = [];
       items.forEach(function (it) { if (!byTopic[it.topic]) { byTopic[it.topic] = { name: it.topicName, total: 0 }; order.push(it.topic); } byTopic[it.topic].total += 1; });
       $('lede').textContent = o.lede ? o.lede(items.length, order.length) : items.length + ' questions across ' + order.length + ' topics.';
