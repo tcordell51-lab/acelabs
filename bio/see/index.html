@@ -99,7 +99,29 @@
       stem: 'During oxidative phosphorylation, the electron transport chain pumps protons across a membrane. Where do the protons build up, so they can flow back through ATP synthase?',
       choices: ['In the matrix', 'In the intermembrane space', 'In the cytosol outside the outer membrane', 'Inside the lipid core of the inner membrane', 'Inside the mitochondrial ribosomes'], answer: 1,
       why: 'The electron transport chain sits in the inner membrane, folded into cristae. It pumps protons out of the matrix into the narrow intermembrane space between the two membranes. They flow back into the matrix through ATP synthase, which makes ATP.',
-      steps: ['The chain sits in the inner membrane, the folded cristae.', 'It pumps protons from the matrix outward.', 'They pile up in the intermembrane space, then flow back through ATP synthase.'] }
+      steps: ['The chain sits in the inner membrane, the folded cristae.', 'It pumps protons from the matrix outward.', 'They pile up in the intermembrane space, then flow back through ATP synthase.'] }    ,
+    { id: 'lungs', name: 'The lungs', img: '/shared/art/plates/lungs.jpg', h: 753,
+      src: 'OpenStax A&P 2e, 22.1 Organs and Structures of the Respiratory System and 22.2 The Lungs: larynx, trachea, main bronchi, bronchioles; the right lung has three lobes, the left two, with the cardiac notch.',
+      labels: [['larynx', 500, 55, 'R'], ['trachea', 500, 200, 'R'], ['right main bronchus', 445, 330, 'L'], ['left main bronchus', 560, 335, 'R'], ['bronchioles', 330, 400, 'L'], ['right lung', 170, 520, 'L', 'key'], ['left lung', 800, 520, 'R', 'key']],
+      stem: 'The two lungs differ in size. How many lobes does the right lung have, and why does the left lung have fewer?',
+      choices: ['Three; the left lung has two, leaving room for the heart', 'Two; the right lung is smaller because of the liver', 'Three; the left lung has two because it has fewer bronchi', 'Four; the left lung has three because it is shorter', 'Two; the left lung has one because of the stomach'], answer: 0,
+      why: 'The right lung has three lobes (superior, middle, inferior) and the left lung has two. The heart sits slightly to the left, and the left lung has a cardiac notch where it makes room for it. The liver makes the right lung a little shorter, not smaller in lobes.',
+      steps: ['Count the fissures: two on the right, one on the left.', 'Right lung: three lobes. Left lung: two.', 'The heart takes room on the left: the cardiac notch.'] },
+    { id: 'alveoli', name: 'The alveoli', img: '/shared/art/plates/alveoli.jpg', h: 753,
+      src: 'OpenStax A&P 2e, 22.4 Gas Exchange: oxygen diffuses from the alveoli into the pulmonary capillaries and carbon dioxide diffuses out, each down its partial-pressure gradient.',
+      labels: [['terminal bronchiole', 170, 70, 'L'], ['alveolus, cut open', 860, 420, 'R'], ['capillary network', 640, 300, 'R'], ['from the pulmonary artery', 40, 225, 'L', 'key'], ['to the pulmonary vein', 975, 215, 'R', 'key']],
+      stem: 'Blood leaving these capillaries toward the pulmonary vein has just passed the alveoli. Compared with the blood arriving from the pulmonary artery, it has',
+      choices: ['a higher PO2 and a lower PCO2', 'a lower PO2 and a higher PCO2', 'a higher PO2 and a higher PCO2', 'the same PO2 and a lower pH', 'a lower PO2 and a lower PCO2'], answer: 0,
+      why: 'Alveolar air has a higher partial pressure of oxygen and a lower partial pressure of carbon dioxide than the blood arriving from the pulmonary artery. Each gas diffuses down its gradient: oxygen into the blood, carbon dioxide out. So the blood leaving has more oxygen and less carbon dioxide.',
+      steps: ['The pulmonary artery brings oxygen-poor blood from the right heart.', 'Oxygen diffuses into the blood; carbon dioxide diffuses out.', 'Leaving blood: PO2 up, PCO2 down.'] },
+    { id: 'chloroplast', name: 'The chloroplast', img: '/shared/art/plates/chloroplast.jpg', h: 753,
+      src: 'OpenStax Biology 2e, 8.1 Overview of Photosynthesis and 8.3 Using Light Energy to Make Organic Molecules: thylakoids stacked into grana, the surrounding stroma, and the Calvin cycle in the stroma.',
+      labels: [['double membrane', 520, 612, 'L'], ['granum (thylakoid stack)', 525, 440, 'R'], ['thylakoid', 770, 215, 'R'], ['stroma lamella', 360, 275, 'L'], ['stroma', 375, 470, 'L', 'key'], ['starch granule', 355, 545, 'L']],
+      stem: 'Where in the chloroplast do the reactions of the Calvin cycle take place?',
+      choices: ['In the thylakoid membrane', 'In the thylakoid lumen', 'In the stroma', 'Between the two envelope membranes', 'Inside the starch granules'], answer: 2,
+      why: 'The light-dependent reactions run in the thylakoid membranes, where the photosystems and ATP synthase sit. The ATP and NADPH they make are used in the Calvin cycle, which runs in the fluid stroma around the thylakoids, where rubisco fixes carbon dioxide.',
+      steps: ['Light reactions: the thylakoid membranes.', 'They make ATP and NADPH and release them into the stroma.', 'The Calvin cycle uses them in the stroma.'] }
+
   ];
   var NS = 'http://www.w3.org/2000/svg';
   function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;'); }
@@ -115,7 +137,11 @@
       list.forEach(function (l) { l.ly = Math.max(l.y, last + rowH, 34); last = l.ly; });
       var over = last - (H - 20); if (over > 0) list.forEach(function (l) { l.ly -= over; });
       list.forEach(function (l) {
-        var w = l.t.length * 15 + 30, x0 = s === 'L' ? 14 : W - 14 - w, ex = s === 'L' ? x0 + w : x0;
+        var w = l.t.length * 15 + 30, x0 = s === 'L' ? 14 : W - 14 - w;
+        // a target near the edge would sit under its own pill: put the pill just inside the target instead
+        if (s === 'L' && l.x < x0 + w + 24) { x0 = l.x + 44; l.ly = l.y; }
+        if (s === 'R' && l.x > x0 - 24) { x0 = l.x - 44 - w; l.ly = l.y; }
+        var ex = (x0 > l.x) ? x0 : x0 + w;
         parts.push('<g class="reveal' + (l.key ? ' key' : '') + '" style="--k:' + l.i + '">' +
           '<path class="lead-u" d="M' + ex + ',' + l.ly + ' L' + l.x + ',' + l.y + '"/><path class="lead" d="M' + ex + ',' + l.ly + ' L' + l.x + ',' + l.y + '"/>' +
           '<circle class="dot" cx="' + l.x + '" cy="' + l.y + '" r="7"/>' +
