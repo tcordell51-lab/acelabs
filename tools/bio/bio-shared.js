@@ -2035,7 +2035,7 @@ const ATLAS_DATA = {
   mitochondria: {
     name: "Mitochondria",
     func: "Aerobic ATP production. <b>Krebs cycle (matrix) + ETC + ATP synthase (inner membrane)</b>.",
-    sub: "Double membrane (outer smooth, inner highly folded into cristae). Own circular DNA + 70S ribosomes &mdash; endosymbiotic origin (Margulis 1967).",
+    sub: "Double membrane (outer smooth, inner highly folded into cristae). Own circular DNA + 70S ribosomes, endosymbiotic origin (Margulis 1967).",
     dat: "~28 ATP per glucose come from here. 'Powerhouse'. Endosymbiosis evidence. Krebs location = matrix.",
     deepDive: "node-krebs",
     diveLabel: "Krebs + ETC",
@@ -2058,15 +2058,15 @@ const ATLAS_DATA = {
   },
   ribosome: {
     name: "Ribosomes (free)",
-    func: "Site of <b>translation</b> &mdash; mRNA &rarr; protein. Free ribosomes make cytoplasmic proteins.",
-    sub: "Eukaryotic ribosomes are 80S (60S + 40S). Prokaryotic ribosomes (and mitochondrial) are 70S (50S + 30S). Not membrane-bound &mdash; only organelle present in both pro- and eukaryotes.",
+    func: "Site of <b>translation</b>, mRNA &rarr; protein. Free ribosomes make cytoplasmic proteins.",
+    sub: "Eukaryotic ribosomes are 80S (60S + 40S). Prokaryotic ribosomes (and mitochondrial) are 70S (50S + 30S). Not membrane-bound: only organelle present in both pro- and eukaryotes.",
     dat: "Translation location. 80S vs 70S distinguishes pro/eukaryote. Antibiotic targets exploit the difference.",
     deepDive: "node-translation",
     diveLabel: "Translation",
   },
   cytoskeleton: {
     name: "Cytoskeleton",
-    func: "Network of protein filaments &mdash; microfilaments (actin), intermediate filaments, microtubules (tubulin).",
+    func: "Network of protein filaments: microfilaments (actin), intermediate filaments, microtubules (tubulin).",
     sub: "Provides shape, supports organelle positioning, drives motility (cilia, flagella) + intracellular transport (motor proteins kinesin/dynein on microtubules).",
     dat: "Microtubules + spindle in mitosis. Cytokinesis cleavage furrow uses actin.",
     deepDive: "node-mitosis",
@@ -2074,7 +2074,7 @@ const ATLAS_DATA = {
   },
   centrosome: {
     name: "Centrosome",
-    func: "Pair of centrioles &mdash; microtubule organizing center (MTOC).",
+    func: "Pair of centrioles: microtubule organizing center (MTOC).",
     sub: "Duplicates in S phase. In mitosis, the two centrosomes move to opposite poles + nucleate the spindle. Plants don't have centrioles but still build a spindle.",
     dat: "Spindle formation in mitosis + meiosis.",
     deepDive: "node-mitosis",
@@ -2084,7 +2084,7 @@ const ATLAS_DATA = {
   "cell-wall": {
     name: "Cell Wall (Plant)",
     func: "Rigid <b>cellulose</b> outer layer. Provides structural support, prevents bursting in hypotonic environments.",
-    sub: "β-1,4 glycosidic bonds &mdash; humans can't digest (no cellulase). Distinguishes plant cells. Fungi have a chitin cell wall instead. Bacteria have peptidoglycan.",
+    sub: "β-1,4 glycosidic bonds, humans can't digest (no cellulase). Distinguishes plant cells. Fungi have a chitin cell wall instead. Bacteria have peptidoglycan.",
     dat: "Cellulose = β-1,4 = indigestible. Plant-only feature. Different from fungal/bacterial walls.",
     deepDive: "node-carbs",
     diveLabel: "Carbohydrates",
@@ -2100,7 +2100,7 @@ const ATLAS_DATA = {
   chloroplast: {
     name: "Chloroplast",
     func: "Site of <b>photosynthesis</b>. Light reactions (thylakoid membranes) + Calvin cycle (stroma).",
-    sub: "Double membrane + own circular DNA + 70S ribosomes &mdash; like mitochondria, endosymbiotic origin (engulfed cyanobacterium). Stacked thylakoids = grana.",
+    sub: "Double membrane + own circular DNA + 70S ribosomes, like mitochondria, endosymbiotic origin (engulfed cyanobacterium). Stacked thylakoids = grana.",
     dat: "Photosynthesis location. Light reactions = thylakoid; Calvin = stroma. Endosymbiotic evidence.",
     deepDive: "node-photo",
     diveLabel: "Photosynthesis",
@@ -2124,7 +2124,7 @@ const ATLAS_DATA = {
   },
   "ribosome-70s": {
     name: "70S Ribosomes",
-    func: "Prokaryotic ribosomes &mdash; <b>50S + 30S subunits</b>. Site of bacterial translation.",
+    func: "Prokaryotic ribosomes: <b>50S + 30S subunits</b>. Site of bacterial translation.",
     sub: "Smaller than eukaryotic 80S. Antibiotic specificity exploits this: streptomycin/tetracycline (30S), erythromycin (50S) target bacterial ribosomes selectively. Mitochondrial ribosomes are also 70S: endosymbiotic clue.",
     dat: "70S vs 80S distinction. Antibiotic targets. Mitochondria/chloroplasts share 70S.",
     deepDive: "node-prokaryote",
@@ -2141,7 +2141,7 @@ const ATLAS_DATA = {
   plasmid: {
     name: "Plasmid",
     func: "Small circular DNA carrying accessory genes (antibiotic resistance, virulence factors).",
-    sub: "Replicates independently of chromosome. Can be transferred between bacteria via conjugation &mdash; major route for antibiotic resistance spread. Used widely in molecular biology as cloning vectors.",
+    sub: "Replicates independently of chromosome. Can be transferred between bacteria via conjugation, major route for antibiotic resistance spread. Used widely in molecular biology as cloning vectors.",
     dat: "Bacterial conjugation. Antibiotic resistance transfer. Cloning vector tool.",
     deepDive: "node-prokaryote",
     diveLabel: "Prokaryote vs Eukaryote",
@@ -13039,7 +13039,7 @@ const HW_BUBBLE_HTML = `
       <div style="background:#fbf6e9;border:1.5px solid #c19a3e;border-radius:10px;padding:12px">
         <div style="font-size:11px;color:#c19a3e;font-weight:700;text-transform:uppercase;letter-spacing:0.1em">DAT scenario</div>
         <div style="font-size:12px;line-height:1.5;color:#1B3A2D;margin-top:6px" id="hwScenario">
-          If the disease frequency in the population is <b>q&sup2; = 0.09</b> (1 in 11), then carriers are <b>2pq = 0.42</b> &mdash; about <b>4.7&times;</b> more carriers than affected. Most recessive disease alleles hide in heterozygotes.
+          If the disease frequency in the population is <b>q&sup2; = 0.09</b> (1 in 11), then carriers are <b>2pq = 0.42</b>, about <b>4.7&times;</b> more carriers than affected. Most recessive disease alleles hide in heterozygotes.
         </div>
       </div>
 
@@ -13493,7 +13493,7 @@ const BRAIN_REGIONS = {
 const BRAIN_EXPLORER_HTML = `
 <div style="display:grid;grid-template-columns:1fr 280px;gap:12px;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px;padding:14px;align-items:start">
   <svg id="brainSvg" viewBox="0 0 620 480" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:#fff;border:1.5px solid #1B3A2D;border-radius:8px">
-    <text x="310" y="26" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">BRAIN REGIONS &mdash; SAGITTAL VIEW</text>
+    <text x="310" y="26" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">BRAIN REGIONS: SAGITTAL VIEW</text>
     <text x="310" y="42" text-anchor="middle" font-size="10" font-style="italic" fill="#1B3A2D">click any region</text>
 
     <!-- Cerebrum outline -->
@@ -13600,7 +13600,7 @@ const BRAIN_EXPLORER_HTML = `
     </div>
 
     <div style="background:#fff;border:1.5px solid #1B3A2D;border-radius:10px;padding:10px;margin-top:10px;font-size:11px;line-height:1.5;color:#1B3A2D">
-      <span style="font-weight:700">DAT note:</span> the test asks "function of region X" or "damage to X causes..". Function-and-consequence pairings are the entire scope. No specific cases or syndromes required.
+      <span style="font-weight:700">DAT note:</span> the test asks "function of region X" or "damage to X causes.". Function-and-consequence pairings are the entire scope. No specific cases or syndromes required.
     </div>
   </div>
 </div>
@@ -14123,7 +14123,7 @@ function initProbTree() {
 const KREBS_SCRUBBER_HTML = `
 <div style="background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px;padding:18px">
   <div style="text-align:center;margin-bottom:10px">
-    <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#1B3A2D">Cellular Respiration &mdash; One Glucose</div>
+    <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#1B3A2D">Cellular Respiration: One Glucose</div>
     <div style="font-size:12px;color:#1B3A2D;margin-top:4px;font-style:italic">Drag the slider. Glycolysis &rarr; PDH &rarr; Krebs &rarr; ETC + ATP synthase. Carriers and ATP accumulate live.</div>
   </div>
 
@@ -14557,7 +14557,7 @@ function initRnaScrubber() {
 const Z_SCHEME_HTML = `
 <div style="background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px;padding:18px">
   <div style="text-align:center;margin-bottom:10px">
-    <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#1B3A2D">Photosynthesis &mdash; Z-scheme + Calvin Cycle</div>
+    <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#1B3A2D">Photosynthesis: Z-scheme + Calvin Cycle</div>
     <div style="font-size:12px;color:#1B3A2D;margin-top:4px;font-style:italic">Drag the slider. PSII splits water → electrons jump up → b6f → PSI → NADPH. Calvin uses ATP + NADPH to fix CO&#8322; → G3P.</div>
   </div>
 

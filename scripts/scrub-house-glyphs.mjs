@@ -47,6 +47,8 @@ const isMathTok = (t) => /\d/.test(t) || /^[A-Za-z]$/.test(t) || /[)\]}^]$/.test
 
 function fixText(s, ctx) {
   let n = 0;
+  // entities and escapes that render as dashes count too (2026-11-16 QA found them on 12 pages)
+  s = s.replace(/&mdash;|&#8212;|&#x2014;|\\u2014/gi, '\u2014').replace(/&ndash;|&#8211;|&#x2013;|\\u2013/gi, '\u2013');
   if (!/[–—!\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{23E9}-\u{23FA}▶◀️]/u.test(s)) return { s, n };
   // emoji and icon glyphs
   s = s.replace(new RegExp('[ \\u00a0]?(?:' + EMOJI.source + ')+[ \\u00a0]?', 'gu'), (m, off, all) => {

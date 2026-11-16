@@ -2560,8 +2560,8 @@ body[data-theme="dark"] .dash-card .pat-due-row .go{color:var(--gold-m)}
   <div class="pat-modal" id="patModal">
     <button class="close" onclick="PATLIB.closeModal()" aria-label="Close">&times;</button>
     <div class="stage-tag" id="patStage">Recognition</div>
-    <h3 id="patTitle">&mdash;</h3>
-    <div class="prompt-q" id="patPrompt">&mdash;</div>
+    <h3 id="patTitle">-</h3>
+    <div class="prompt-q" id="patPrompt">-</div>
     <div id="patBody"></div>
     <div class="actions" id="patActions"></div>
   </div>
@@ -13765,7 +13765,7 @@ const PATLIB = {
         dueEl.innerHTML = preview.map(c => {
           const catLabel = (PAT_CATEGORIES.find(x => x.id === c.cat) || {}).label || c.cat;
           return `<div class="pat-due-row"><span class="nm">${c.rule}</span><span class="cat">${catLabel}</span><span class="go" data-id="${c.id}">study now</span></div>`;
-        }).join('') + (due.length > 6 ? `<div class="muted" style="font-size:12px; margin-top:4px">+${due.length - 6} more &mdash; <a href="#patterns" style="color:var(--gold-d)" onclick="goSec('patterns')">open library</a></div>` : '');
+        }).join('') + (due.length > 6 ? `<div class="muted" style="font-size:12px; margin-top:4px">+${due.length - 6} more: <a href="#patterns" style="color:var(--gold-d)" onclick="goSec('patterns')">open library</a></div>` : '');
         dueEl.querySelectorAll('.pat-due-row .go').forEach(el => {
           el.addEventListener('click', () => {
             goSec('patterns');

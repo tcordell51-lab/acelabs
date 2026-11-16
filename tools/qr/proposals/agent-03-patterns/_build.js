@@ -229,7 +229,7 @@ const modules = {
   distrib: {
     TITLE: 'Distribution',
     NUM: 'PATTERN PATH &middot; DISTRIB',
-    H2: 'Distribution &mdash; <em>every term, every time</em>',
+    H2: 'Distribution: <em>every term, every time</em>',
     SUB: 'The trap: distributing the multiplier to only the first term inside the parentheses, or forgetting the sign on the second term when there is a minus out front.',
     CARD_MARK: 'D',
     CARD_H3: 'Pick the <em>setup</em>, not the answer',
@@ -239,15 +239,15 @@ const modules = {
     SETUP_A_BODY: '<b class="trap">3&middot;2x</b> &minus; 5 &minus; <b class="trap">2&middot;x</b> + 4 <br>= 6x &minus; 5 &minus; 2x + 4 = <b class="trap">4x &minus; 1</b>',
     SETUP_A_ANS: '4x &minus; 1',
     SETUP_A_CORRECT: false,
-    SETUP_A_VERDICT: 'Trap setup &mdash; multiplier skipped the second term',
+    SETUP_A_VERDICT: 'Trap setup: multiplier skipped the second term',
     SETUP_B_TITLE: 'Distribute to every term, keep the signs',
     SETUP_B_BODY: '<b class="good">3&middot;2x</b> + <b class="good">3&middot;(&minus;5)</b> + <b class="good">(&minus;2)&middot;x</b> + <b class="good">(&minus;2)&middot;4</b><br>= 6x &minus; 15 &minus; 2x &minus; 8 = <b class="good">4x &minus; 23</b>',
     SETUP_B_ANS: '4x &minus; 23',
     SETUP_B_CORRECT: true,
-    SETUP_B_VERDICT: 'Correct &mdash; full distribution with signs',
+    SETUP_B_VERDICT: 'Correct: full distribution with signs',
     EXPL_HEAD: 'Distribution is plural. The multiplier hits every term.',
     EXPL_BODY: '<p>The trap setup pretends only the first term inside the parentheses gets multiplied. On the DAT, the answer choices will include the partial-distribution result so it feels right.</p>'+
-      '<p>Even worse with a leading minus: <b>&minus;2(x+4)</b> means <b>&minus;2x &minus; 8</b>, not <b>&minus;2x + 4</b>. The minus is part of the multiplier &mdash; it travels with the 2.</p>',
+      '<p>Even worse with a leading minus: <b>&minus;2(x+4)</b> means <b>&minus;2x &minus; 8</b>, not <b>&minus;2x + 4</b>. The minus is part of the multiplier, it travels with the 2.</p>',
     EXPL_KEY: 'Write the multiplier on the outside, draw arrows to <em>every</em> term, then collect.',
     DRILL: [
       {q:'Simplify <b>4(x &minus; 3) &minus; (2x + 1)</b>', opts:[{t:'2x &minus; 13', c:true},{t:'2x &minus; 11', c:false},{t:'4x &minus; 13', c:false},{t:'2x + 11', c:false}], why:'4x &minus; 12 &minus; 2x &minus; 1 = 2x &minus; 13. The lone minus on the second group flips both terms.'},
@@ -259,7 +259,7 @@ const modules = {
   pemdas: {
     TITLE: 'PEMDAS',
     NUM: 'PATTERN PATH &middot; PEMDAS',
-    H2: 'Order of ops &mdash; <em>left-to-right inside the tier</em>',
+    H2: 'Order of ops: <em>left-to-right inside the tier</em>',
     SUB: 'The trap: treating M before D and A before S, instead of left-to-right within each tier. Multiplication and division are equals; addition and subtraction are equals.',
     CARD_MARK: 'O',
     CARD_H3: 'Pick the <em>setup</em>, not the answer',
@@ -269,19 +269,19 @@ const modules = {
     SETUP_A_BODY: '<b class="trap">4 &middot; 2</b> first &rarr; 24 &divide; <b class="trap">8</b> + 3 <br>= 3 + 3 = <b class="trap">6</b>',
     SETUP_A_ANS: '6',
     SETUP_A_CORRECT: false,
-    SETUP_A_VERDICT: 'Trap setup &mdash; M and D are tied, go left-to-right',
+    SETUP_A_VERDICT: 'Trap setup: M and D are tied, go left-to-right',
     SETUP_B_TITLE: 'Left-to-right inside the multiply/divide tier',
     SETUP_B_BODY: '<b class="good">24 &divide; 4</b> first &rarr; <b class="good">6 &middot; 2</b> + 3 <br>= 12 + 3 = <b class="good">15</b>',
     SETUP_B_ANS: '15',
     SETUP_B_CORRECT: true,
-    SETUP_B_VERDICT: 'Correct &mdash; left-to-right within the tier',
+    SETUP_B_VERDICT: 'Correct: left-to-right within the tier',
     EXPL_HEAD: 'PEMDAS is two tiers, not six steps.',
-    EXPL_BODY: '<p>The acronym makes M look like it beats D, and A look like it beats S. It does not. Multiplication and division are the same tier &mdash; whichever appears first as you read left-to-right wins. Same for addition and subtraction.</p>'+
+    EXPL_BODY: '<p>The acronym makes M look like it beats D, and A look like it beats S. It does not. Multiplication and division are the same tier, whichever appears first as you read left-to-right wins. Same for addition and subtraction.</p>'+
       '<p>The DAT loves this trap because the wrong answer (6) sits right next to the right answer (15) in the choices.</p>',
     EXPL_KEY: 'PE &middot; <em>MD</em> &middot; <em>AS</em>. Two letters per tier. Left-to-right inside the tier.',
     DRILL: [
       {q:'Evaluate <b>20 &minus; 6 + 4</b>', opts:[{t:'10 (do addition first)', c:false},{t:'18 (left-to-right)', c:true},{t:'22 (subtract last)', c:false},{t:'14', c:false}], why:'20 &minus; 6 = 14, then 14 + 4 = 18. Subtraction is left-to-right with addition.'},
-      {q:'Evaluate <b>36 &divide; 6 &divide; 2</b>', opts:[{t:'12 (group from right)', c:false},{t:'3 (left-to-right)', c:true},{t:'6', c:false},{t:'1', c:false}], why:'36 &divide; 6 = 6, then 6 &divide; 2 = 3. Going right-to-left would give 12 &mdash; the textbook trap.'},
+      {q:'Evaluate <b>36 &divide; 6 &divide; 2</b>', opts:[{t:'12 (group from right)', c:false},{t:'3 (left-to-right)', c:true},{t:'6', c:false},{t:'1', c:false}], why:'36 &divide; 6 = 6, then 6 &divide; 2 = 3. Going right-to-left would give 12: the textbook trap.'},
       {q:'Evaluate <b>2 + 3 &middot; 4 &minus; 6 &divide; 2</b>', opts:[{t:'14', c:false},{t:'11', c:true},{t:'7', c:false},{t:'17', c:false}], why:'M and D first (still left-to-right): 12 and 3. Then 2 + 12 &minus; 3 = 11.'}
     ]
   },
@@ -289,7 +289,7 @@ const modules = {
   'neg-ineq': {
     TITLE: 'Negative Inequalities',
     NUM: 'PATTERN PATH &middot; NEG-INEQ',
-    H2: 'Negatives &amp; inequalities &mdash; <em>flip the sign</em>',
+    H2: 'Negatives &amp; inequalities: <em>flip the sign</em>',
     SUB: 'The trap: dividing or multiplying both sides of an inequality by a negative number and forgetting to flip the inequality direction.',
     CARD_MARK: 'N',
     CARD_H3: 'Pick the <em>setup</em>, not the answer',
@@ -299,15 +299,15 @@ const modules = {
     SETUP_A_BODY: '&minus;3x &gt; 12<br>x <b class="trap">&gt;</b> 12 / (&minus;3)<br>x <b class="trap">&gt;</b> &minus;4',
     SETUP_A_ANS: 'x &gt; &minus;4',
     SETUP_A_CORRECT: false,
-    SETUP_A_VERDICT: 'Trap setup &mdash; sign was not flipped',
+    SETUP_A_VERDICT: 'Trap setup: sign was not flipped',
     SETUP_B_TITLE: 'Divide by &minus;3 and flip the inequality',
     SETUP_B_BODY: '&minus;3x &gt; 12<br>x <b class="good">&lt;</b> 12 / (&minus;3)<br>x <b class="good">&lt;</b> &minus;4',
     SETUP_B_ANS: 'x &lt; &minus;4',
     SETUP_B_CORRECT: true,
-    SETUP_B_VERDICT: 'Correct &mdash; flipped because we divided by a negative',
+    SETUP_B_VERDICT: 'Correct: flipped because we divided by a negative',
     EXPL_HEAD: 'Multiplying or dividing by a negative reverses the order of the number line.',
     EXPL_BODY: '<p>If 6 &gt; 2, then &minus;6 &lt; &minus;2. Negatives invert the order. Inequalities track <em>order</em>, so the symbol must flip when you scale by a negative.</p>'+
-      '<p>This rule does <b>not</b> apply to addition and subtraction &mdash; only to multiply and divide by a negative number. The DAT mixes these so students apply the flip at the wrong step.</p>',
+      '<p>This rule does <b>not</b> apply to addition and subtraction, only to multiply and divide by a negative number. The DAT mixes these so students apply the flip at the wrong step.</p>',
     EXPL_KEY: 'Divide by negative &rArr; flip. Subtract a negative &rArr; do <em>not</em> flip.',
     DRILL: [
       {q:'Solve <b>&minus;2x &le; 8</b>', opts:[{t:'x &le; &minus;4', c:false},{t:'x &ge; &minus;4', c:true},{t:'x &le; 4', c:false},{t:'x &ge; 4', c:false}], why:'Divide by &minus;2 and flip &le; to &ge;. x &ge; &minus;4.'},
@@ -319,8 +319,8 @@ const modules = {
   'work-rate': {
     TITLE: 'Work-Rate',
     NUM: 'PATTERN PATH &middot; WORK-RATE',
-    H2: 'Work-rate &mdash; <em>add rates, not times</em>',
-    SUB: 'The trap: averaging the two completion times instead of adding the rates. Time is what you get back at the end &mdash; the workers add their work-per-hour, not their hours.',
+    H2: 'Work-rate: <em>add rates, not times</em>',
+    SUB: 'The trap: averaging the two completion times instead of adding the rates. Time is what you get back at the end, the workers add their work-per-hour, not their hours.',
     CARD_MARK: 'W',
     CARD_H3: 'Pick the <em>setup</em>, not the answer',
     CARD_SUB: 'One averages the times. The other adds the rates and inverts at the end.',
@@ -329,14 +329,14 @@ const modules = {
     SETUP_A_BODY: 't = (<b class="trap">4 + 6</b>) / 2<br>t = <b class="trap">5 hours</b>',
     SETUP_A_ANS: '5 hours',
     SETUP_A_CORRECT: false,
-    SETUP_A_VERDICT: 'Trap &mdash; this is slower than Pump A alone',
+    SETUP_A_VERDICT: 'Trap: this is slower than Pump A alone',
     SETUP_B_TITLE: 'Add the rates, then invert',
     SETUP_B_BODY: '1/t = <b class="good">1/4 + 1/6</b><br>1/t = 3/12 + 2/12 = <b class="good">5/12</b><br>t = <b class="good">12/5 = 2.4 h</b>',
     SETUP_B_ANS: '2.4 hours',
     SETUP_B_CORRECT: true,
-    SETUP_B_VERDICT: 'Correct &mdash; rates add, time is the inverse',
+    SETUP_B_VERDICT: 'Correct: rates add, time is the inverse',
     EXPL_HEAD: 'Two pumps together must be <em>faster</em> than either alone.',
-    EXPL_BODY: '<p>Sanity check: Pump A alone is 4 hours. Adding a second pump should take <b>less</b> than 4 hours, never more. The averaged-time setup gives 5 hours &mdash; impossible.</p>'+
+    EXPL_BODY: '<p>Sanity check: Pump A alone is 4 hours. Adding a second pump should take <b>less</b> than 4 hours, never more. The averaged-time setup gives 5 hours, impossible.</p>'+
       '<p>Rates are work-per-hour. They add directly because both pumps are pouring at the same time. Then invert: time = 1 / (sum of rates).</p>',
     EXPL_KEY: 't<sub>together</sub> = 1 &divide; (1/t<sub>A</sub> + 1/t<sub>B</sub>). Or shortcut for two: <em>(t<sub>A</sub>&middot;t<sub>B</sub>) / (t<sub>A</sub> + t<sub>B</sub>)</em>.',
     DRILL: [
@@ -349,7 +349,7 @@ const modules = {
   interest: {
     TITLE: 'Compound Interest',
     NUM: 'PATTERN PATH &middot; INTEREST',
-    H2: 'Compound interest &mdash; <em>multiply, do not add</em>',
+    H2: 'Compound interest: <em>multiply, do not add</em>',
     SUB: 'The trap: computing simple-interest (P&middot;r&middot;t added on) when the problem says <em>compounded</em>. Or compounding the rate but forgetting to subtract the principal at the end if the question asks for interest earned.',
     CARD_MARK: 'I',
     CARD_H3: 'Pick the <em>setup</em>, not the answer',
@@ -359,27 +359,27 @@ const modules = {
     SETUP_A_BODY: 'Final = 1000 + <b class="trap">1000 &middot; 0.10 &middot; 3</b><br>= 1000 + 300 = <b class="trap">$1,300</b>',
     SETUP_A_ANS: '$1,300',
     SETUP_A_CORRECT: false,
-    SETUP_A_VERDICT: 'Trap &mdash; this is simple interest, not compound',
+    SETUP_A_VERDICT: 'Trap: this is simple interest, not compound',
     SETUP_B_TITLE: 'Compound: P &middot; (1 + r)<sup>t</sup>',
     SETUP_B_BODY: 'Final = 1000 &middot; <b class="good">1.10<sup>3</sup></b><br>= 1000 &middot; 1.331 = <b class="good">$1,331</b>',
     SETUP_B_ANS: '$1,331',
     SETUP_B_CORRECT: true,
-    SETUP_B_VERDICT: 'Correct &mdash; growth on growth',
+    SETUP_B_VERDICT: 'Correct: growth on growth',
     EXPL_HEAD: 'Compounding means each year&rsquo;s interest earns interest the next year.',
     EXPL_BODY: '<p>Year 1: 1000 &rarr; 1100. Year 2: 1100 &rarr; 1210 (the extra $10 is interest <em>on</em> the first year&rsquo;s interest). Year 3: 1210 &rarr; 1331.</p>'+
-      '<p>Simple interest skips this and just adds 100 per year. The DAT difference between $1,300 and $1,331 looks small for 3 years &mdash; the gap explodes for longer terms, which is why the formula matters.</p>',
+      '<p>Simple interest skips this and just adds 100 per year. The DAT difference between $1,300 and $1,331 looks small for 3 years, the gap explodes for longer terms, which is why the formula matters.</p>',
     EXPL_KEY: 'Final = P &middot; (1 + r)<sup>t</sup>. Multiply, do not add. Subtract P at the end if asked for <em>interest earned</em>.',
     DRILL: [
-      {q:'$500 at 8% compounded annually for 2 years &mdash; final balance?', opts:[{t:'$580 (simple)', c:false},{t:'$583.20 (compound)', c:true},{t:'$540', c:false},{t:'$640', c:false}], why:'500 &middot; 1.08&sup2; = 500 &middot; 1.1664 = $583.20. Year 2 interest is on $540, not $500.'},
+      {q:'$500 at 8% compounded annually for 2 years, final balance?', opts:[{t:'$580 (simple)', c:false},{t:'$583.20 (compound)', c:true},{t:'$540', c:false},{t:'$640', c:false}], why:'500 &middot; 1.08&sup2; = 500 &middot; 1.1664 = $583.20. Year 2 interest is on $540, not $500.'},
       {q:'$2,000 at 5% compounded annually for 3 years. Interest earned?', opts:[{t:'$300 (simple)', c:false},{t:'$315.25 (compound &minus; P)', c:true},{t:'$2,315.25', c:false},{t:'$330', c:false}], why:'2000 &middot; 1.05&sup3; = $2,315.25. Subtract principal: $315.25.'},
-      {q:'$1,000 at 20% compounded annually for 2 years &mdash; final?', opts:[{t:'$1,400 (simple)', c:false},{t:'$1,440 (compound)', c:true},{t:'$1,200', c:false},{t:'$1,210', c:false}], why:'1000 &middot; 1.20&sup2; = 1000 &middot; 1.44 = $1,440.'}
+      {q:'$1,000 at 20% compounded annually for 2 years, final?', opts:[{t:'$1,400 (simple)', c:false},{t:'$1,440 (compound)', c:true},{t:'$1,200', c:false},{t:'$1,210', c:false}], why:'1000 &middot; 1.20&sup2; = 1000 &middot; 1.44 = $1,440.'}
     ]
   },
 
   coord: {
     TITLE: 'Coordinate Geometry',
     NUM: 'PATTERN PATH &middot; COORD',
-    H2: 'Coordinate geometry &mdash; <em>perpendicular slopes are negative reciprocals</em>',
+    H2: 'Coordinate geometry: <em>perpendicular slopes are negative reciprocals</em>',
     SUB: 'The trap: thinking the negative reciprocal means just adding a minus sign, or computing slope by reversing y and x in the difference (run-over-rise instead of rise-over-run).',
     CARD_MARK: 'C',
     CARD_H3: 'Pick the <em>setup</em>, not the answer',
@@ -389,42 +389,42 @@ const modules = {
     SETUP_A_BODY: 'm<sub>&perp;</sub> = <b class="trap">&minus;2/3</b>',
     SETUP_A_ANS: '&minus;2/3',
     SETUP_A_CORRECT: false,
-    SETUP_A_VERDICT: 'Trap &mdash; that is not a perpendicular line',
+    SETUP_A_VERDICT: 'Trap: that is not a perpendicular line',
     SETUP_B_TITLE: 'Negative reciprocal: flip and negate',
     SETUP_B_BODY: 'm &middot; m<sub>&perp;</sub> = &minus;1<br>m<sub>&perp;</sub> = &minus;1 &divide; (2/3) = <b class="good">&minus;3/2</b>',
     SETUP_B_ANS: '&minus;3/2',
     SETUP_B_CORRECT: true,
-    SETUP_B_VERDICT: 'Correct &mdash; reciprocal then negative',
+    SETUP_B_VERDICT: 'Correct: reciprocal then negative',
     EXPL_HEAD: 'Perpendicular slopes multiply to &minus;1.',
-    EXPL_BODY: '<p>If you only flip the sign of 2/3 to &minus;2/3, the two lines are not perpendicular &mdash; they cross at an angle, but not 90&deg;. Check: (2/3)(&minus;2/3) = &minus;4/9, not &minus;1.</p>'+
+    EXPL_BODY: '<p>If you only flip the sign of 2/3 to &minus;2/3, the two lines are not perpendicular, they cross at an angle, but not 90&deg;. Check: (2/3)(&minus;2/3) = &minus;4/9, not &minus;1.</p>'+
       '<p>The product rule is the safe one: m&middot;m<sub>&perp;</sub> = &minus;1. So m<sub>&perp;</sub> = &minus;1/m. For m = 2/3, that is &minus;3/2. For m = &minus;5, that is 1/5.</p>',
     EXPL_KEY: 'Perpendicular slope = <em>negative reciprocal</em>. Flip the fraction <em>and</em> swap the sign.',
     DRILL: [
       {q:'A line has slope &minus;1/4. Slope of perpendicular line?', opts:[{t:'1/4', c:false},{t:'4', c:true},{t:'&minus;4', c:false},{t:'&minus;1/4', c:false}], why:'Negative reciprocal of &minus;1/4 is +4. Check: (&minus;1/4)(4) = &minus;1.'},
       {q:'A line passes through (1,2) and (5,10). Slope of perpendicular?', opts:[{t:'2', c:false},{t:'&minus;2', c:false},{t:'1/2', c:false},{t:'&minus;1/2', c:true}], why:'Slope = (10&minus;2)/(5&minus;1) = 2. Negative reciprocal: &minus;1/2.'},
-      {q:'A line has slope 0 (horizontal). Perpendicular slope?', opts:[{t:'0', c:false},{t:'1', c:false},{t:'undefined (vertical)', c:true},{t:'&minus;1', c:false}], why:'Horizontal and vertical are perpendicular. Reciprocal of 0 is undefined &mdash; that is the vertical line.'}
+      {q:'A line has slope 0 (horizontal). Perpendicular slope?', opts:[{t:'0', c:false},{t:'1', c:false},{t:'undefined (vertical)', c:true},{t:'&minus;1', c:false}], why:'Horizontal and vertical are perpendicular. Reciprocal of 0 is undefined: that is the vertical line.'}
     ]
   },
 
   units: {
     TITLE: 'Unit Conversion',
     NUM: 'PATTERN PATH &middot; UNITS',
-    H2: 'Units &mdash; <em>cancel them like variables</em>',
+    H2: 'Units: <em>cancel them like variables</em>',
     SUB: 'The trap: dividing when you should multiply (or vice versa) because the conversion factor is upside-down. Always set up so the unit you are leaving is on the bottom of the conversion fraction.',
     CARD_MARK: 'U',
     CARD_H3: 'Pick the <em>setup</em>, not the answer',
     CARD_SUB: 'One sets up so units cancel. The other multiplies the wrong direction.',
     PROBLEM: 'Convert <b>540 inches</b> to feet. (12 inches = 1 foot)',
     SETUP_A_TITLE: 'Multiply by 12',
-    SETUP_A_BODY: '540 in &middot; <b class="trap">(12 in / 1 ft)</b><br>= <b class="trap">6,480</b> in&sup2;/ft &mdash; units do not cancel',
+    SETUP_A_BODY: '540 in &middot; <b class="trap">(12 in / 1 ft)</b><br>= <b class="trap">6,480</b> in&sup2;/ft: units do not cancel',
     SETUP_A_ANS: '6,480 (wrong units)',
     SETUP_A_CORRECT: false,
-    SETUP_A_VERDICT: 'Trap &mdash; units multiply instead of cancel',
+    SETUP_A_VERDICT: 'Trap: units multiply instead of cancel',
     SETUP_B_TITLE: 'Multiply by the fraction that cancels inches',
     SETUP_B_BODY: '540 in &middot; <b class="good">(1 ft / 12 in)</b><br>= 540 / 12 = <b class="good">45 ft</b>',
     SETUP_B_ANS: '45 ft',
     SETUP_B_CORRECT: true,
-    SETUP_B_VERDICT: 'Correct &mdash; inches cancel diagonally',
+    SETUP_B_VERDICT: 'Correct: inches cancel diagonally',
     EXPL_HEAD: 'Treat units as variables. They have to cancel.',
     EXPL_BODY: '<p>Write the starting quantity (540 in) and the conversion as a fraction. The unit you want to <em>get rid of</em> goes on the <em>bottom</em> of the fraction so it cancels diagonally with the unit on top of the starting quantity.</p>'+
       '<p>If your final units do not simplify to what was asked, the conversion fraction is upside-down. Flip it.</p>',
@@ -439,7 +439,7 @@ const modules = {
   'p-flip': {
     TITLE: 'At-Least-One Flip',
     NUM: 'PATTERN PATH &middot; P-FLIP',
-    H2: 'At-least-one &mdash; <em>flip to the complement</em>',
+    H2: 'At-least-one: <em>flip to the complement</em>',
     SUB: 'The trap: computing P(at least one success) by adding individual probabilities. The right move is 1 &minus; P(none).',
     CARD_MARK: 'F',
     CARD_H3: 'Pick the <em>setup</em>, not the answer',
@@ -449,12 +449,12 @@ const modules = {
     SETUP_A_BODY: 'P(at least 1 H) = <b class="trap">1/2 + 1/2 + 1/2</b><br>= <b class="trap">3/2</b>',
     SETUP_A_ANS: '3/2 (impossible)',
     SETUP_A_CORRECT: false,
-    SETUP_A_VERDICT: 'Trap &mdash; probabilities cannot exceed 1',
+    SETUP_A_VERDICT: 'Trap: probabilities cannot exceed 1',
     SETUP_B_TITLE: '1 &minus; P(none)',
     SETUP_B_BODY: 'P(no heads) = <b class="good">(1/2)<sup>3</sup></b> = 1/8<br>P(at least 1 H) = <b class="good">1 &minus; 1/8 = 7/8</b>',
     SETUP_B_ANS: '7/8',
     SETUP_B_CORRECT: true,
-    SETUP_B_VERDICT: 'Correct &mdash; complement is one chunk, not many',
+    SETUP_B_VERDICT: 'Correct: complement is one chunk, not many',
     EXPL_HEAD: 'At-least-one is the complement of zero.',
     EXPL_BODY: '<p>Adding 1/2 three times double-counts every case where two heads happen. The complement-flip avoids that overlap entirely. P(none) is one clean number, and 1 &minus; that is the answer.</p>'+
       '<p>Sanity check: any time the answer to a probability problem is greater than 1, you set up wrong. Stop and flip.</p>',
@@ -469,7 +469,7 @@ const modules = {
   'p-andor': {
     TITLE: 'AND vs OR',
     NUM: 'PATTERN PATH &middot; P-ANDOR',
-    H2: 'AND vs OR &mdash; <em>multiply for AND, add for OR</em>',
+    H2: 'AND vs OR: <em>multiply for AND, add for OR</em>',
     SUB: 'The trap: flipping the operations. Students use + for AND (intersection) and &middot; for OR (union). Independent AND multiplies; mutually-exclusive OR adds.',
     CARD_MARK: 'A',
     CARD_H3: 'Pick the <em>setup</em>, not the answer',
@@ -479,14 +479,14 @@ const modules = {
     SETUP_A_BODY: 'P(even) = 3/6, P(&gt;4) = 2/6<br>P(even AND &gt;4) = <b class="trap">3/6 + 2/6 = 5/6</b>',
     SETUP_A_ANS: '5/6',
     SETUP_A_CORRECT: false,
-    SETUP_A_VERDICT: 'Trap &mdash; AND uses multiplication, not addition',
+    SETUP_A_VERDICT: 'Trap: AND uses multiplication, not addition',
     SETUP_B_TITLE: 'Count the overlap directly',
     SETUP_B_BODY: 'Even AND &gt;4 &rarr; just <b class="good">{6}</b><br>P = <b class="good">1/6</b>',
     SETUP_B_ANS: '1/6',
     SETUP_B_CORRECT: true,
-    SETUP_B_VERDICT: 'Correct &mdash; AND is intersection',
+    SETUP_B_VERDICT: 'Correct: AND is intersection',
     EXPL_HEAD: 'AND narrows. OR widens. The operations match.',
-    EXPL_BODY: '<p>AND means <em>both must happen</em> &mdash; that is a smaller set, so the math is multiplicative (or count the overlap). OR means <em>either one</em> &mdash; that is a bigger set, so we add (subtracting any double-counted overlap).</p>'+
+    EXPL_BODY: '<p>AND means <em>both must happen</em>, that is a smaller set, so the math is multiplicative (or count the overlap). OR means <em>either one</em>, that is a bigger set, so we add (subtracting any double-counted overlap).</p>'+
       '<p>Memory hook: multiplying makes things smaller; adding makes them bigger. AND wants smaller; OR wants bigger.</p>',
     EXPL_KEY: 'AND = multiply (independent) or count overlap. OR = add (subtract overlap if not exclusive).',
     DRILL: [
@@ -499,7 +499,7 @@ const modules = {
   'p-cond': {
     TITLE: 'Conditional Probability',
     NUM: 'PATTERN PATH &middot; P-COND',
-    H2: 'Conditional &mdash; <em>shrink the denominator</em>',
+    H2: 'Conditional: <em>shrink the denominator</em>',
     SUB: 'The trap: using the original total when the problem says <em>given</em>. The condition cuts the sample space; the new denominator is only the conditioning event.',
     CARD_MARK: 'C',
     CARD_H3: 'Pick the <em>setup</em>, not the answer',
@@ -509,14 +509,14 @@ const modules = {
     SETUP_A_BODY: 'P = <b class="trap">8 / 30</b><br>= <b class="trap">4/15 &asymp; 0.267</b>',
     SETUP_A_ANS: '4/15',
     SETUP_A_CORRECT: false,
-    SETUP_A_VERDICT: 'Trap &mdash; that is the unconditional probability',
+    SETUP_A_VERDICT: 'Trap: that is the unconditional probability',
     SETUP_B_TITLE: 'Restrict to girls only',
     SETUP_B_BODY: 'Given girl, denominator = <b class="good">18</b><br>P = <b class="good">8 / 18 = 4/9 &asymp; 0.444</b>',
     SETUP_B_ANS: '4/9',
     SETUP_B_CORRECT: true,
-    SETUP_B_VERDICT: 'Correct &mdash; denominator is the condition',
+    SETUP_B_VERDICT: 'Correct: denominator is the condition',
     EXPL_HEAD: '"Given" is a sample-space cut.',
-    EXPL_BODY: '<p>The word <em>given</em> tells you to throw out everyone who does not satisfy the condition before computing. Now we are only looking at the 18 girls &mdash; the boys are gone.</p>'+
+    EXPL_BODY: '<p>The word <em>given</em> tells you to throw out everyone who does not satisfy the condition before computing. Now we are only looking at the 18 girls, the boys are gone.</p>'+
       '<p>Formal version: P(A | B) = P(A &cap; B) / P(B). The denominator is P(B), not P(everything).</p>',
     EXPL_KEY: 'P(A | B) = P(A and B) / P(B). The given event becomes the new total.',
     DRILL: [
@@ -529,7 +529,7 @@ const modules = {
   'count-pc': {
     TITLE: 'Permutations vs Combinations',
     NUM: 'PATTERN PATH &middot; COUNT-PC',
-    H2: 'Permutations vs combinations &mdash; <em>does order matter?</em>',
+    H2: 'Permutations vs combinations: <em>does order matter?</em>',
     SUB: 'The trap: using P(n,k) when the problem only asks who is selected (order irrelevant), or using C(n,k) when arrangement matters (podium, lineup, password).',
     CARD_MARK: 'P',
     CARD_H3: 'Pick the <em>setup</em>, not the answer',
@@ -539,27 +539,27 @@ const modules = {
     SETUP_A_BODY: 'C(10,3) = 10! / (3! &middot; 7!)<br>= <b class="trap">120</b>',
     SETUP_A_ANS: '120',
     SETUP_A_CORRECT: false,
-    SETUP_A_VERDICT: 'Trap &mdash; the three roles are distinct, so order matters',
+    SETUP_A_VERDICT: 'Trap: the three roles are distinct, so order matters',
     SETUP_B_TITLE: 'Permutation P(10,3) (order matters)',
     SETUP_B_BODY: 'P(10,3) = 10 &middot; 9 &middot; 8<br>= <b class="good">720</b>',
     SETUP_B_ANS: '720',
     SETUP_B_CORRECT: true,
-    SETUP_B_VERDICT: 'Correct &mdash; distinct roles = arrangement',
+    SETUP_B_VERDICT: 'Correct: distinct roles = arrangement',
     EXPL_HEAD: 'Distinct labels mean order matters.',
-    EXPL_BODY: '<p>If the question said "choose a 3-person committee" with no titles, that is a combination &mdash; {Alice, Bob, Carol} is the same group regardless of order. Once the slots have <em>names</em> (president vs treasurer), the same three people fill 6 different officer arrangements.</p>'+
-      '<p>P(n,k) = n!/(n&minus;k)! is C(n,k) multiplied by k! &mdash; exactly the orderings within each group.</p>',
+    EXPL_BODY: '<p>If the question said "choose a 3-person committee" with no titles, that is a combination, {Alice, Bob, Carol} is the same group regardless of order. Once the slots have <em>names</em> (president vs treasurer), the same three people fill 6 different officer arrangements.</p>'+
+      '<p>P(n,k) = n!/(n&minus;k)! is C(n,k) multiplied by k!, exactly the orderings within each group.</p>',
     EXPL_KEY: 'Order matters &rArr; permutation. Group only &rArr; combination. P = C &middot; k!',
     DRILL: [
       {q:'How many 3-person committees from 8 people?', opts:[{t:'P(8,3) = 336', c:false},{t:'C(8,3) = 56', c:true},{t:'8&sup3; = 512', c:false},{t:'8! = 40,320', c:false}], why:'Committee = unordered. C(8,3) = 56.'},
       {q:'How many 4-letter passwords using A-Z (no repeats)?', opts:[{t:'C(26,4) = 14,950', c:false},{t:'P(26,4) = 358,800', c:true},{t:'4! = 24', c:false},{t:'26<sup>4</sup>', c:false}], why:'Password order matters. P(26,4) = 26&middot;25&middot;24&middot;23 = 358,800.'},
-      {q:'A line of 5 distinct books &mdash; arrangements?', opts:[{t:'C(5,5) = 1', c:false},{t:'5&sup2; = 25', c:false},{t:'5! = 120', c:true},{t:'P(5,1) = 5', c:false}], why:'Arranging all 5 in a line: 5! = 120.'}
+      {q:'A line of 5 distinct books, arrangements?', opts:[{t:'C(5,5) = 1', c:false},{t:'5&sup2; = 25', c:false},{t:'5! = 120', c:true},{t:'P(5,1) = 5', c:false}], why:'Arranging all 5 in a line: 5! = 120.'}
     ]
   },
 
   discr: {
     TITLE: 'Discriminant',
     NUM: 'PATTERN PATH &middot; DISCR',
-    H2: 'Discriminant &mdash; <em>sign over count</em>',
+    H2: 'Discriminant: <em>sign over count</em>',
     SUB: 'The trap: solving the whole quadratic when the question only wants the <em>number</em> of real roots. Check b&sup2; &minus; 4ac. The sign tells you the count.',
     CARD_MARK: 'D',
     CARD_H3: 'Pick the <em>setup</em>, not the answer',
@@ -569,14 +569,14 @@ const modules = {
     SETUP_A_BODY: 'x = (4 &plusmn; &radic;(16 &minus; 40)) / 4<br>= (4 &plusmn; &radic;(<b class="trap">&minus;24</b>)) / 4<br>two complex values <b class="trap">computed in full</b>',
     SETUP_A_ANS: '"two solutions" (wasted time)',
     SETUP_A_CORRECT: false,
-    SETUP_A_VERDICT: 'Trap &mdash; you do not need x, just the count',
+    SETUP_A_VERDICT: 'Trap: you do not need x, just the count',
     SETUP_B_TITLE: 'Inspect b&sup2; &minus; 4ac only',
     SETUP_B_BODY: '&Delta; = (&minus;4)&sup2; &minus; 4(2)(5)<br>= 16 &minus; 40 = <b class="good">&minus;24</b><br>&Delta; &lt; 0 &rarr; <b class="good">0 real roots</b>',
     SETUP_B_ANS: '0 real solutions',
     SETUP_B_CORRECT: true,
-    SETUP_B_VERDICT: 'Correct &mdash; sign of &Delta; gives the count',
+    SETUP_B_VERDICT: 'Correct: sign of &Delta; gives the count',
     EXPL_HEAD: 'The discriminant&rsquo;s <em>sign</em> answers count questions.',
-    EXPL_BODY: '<p>&Delta; &gt; 0: two distinct real roots. &Delta; = 0: one (repeated) real root. &Delta; &lt; 0: no real roots (two complex). That is it &mdash; you do not need to compute square roots, fractions, or signs of x.</p>'+
+    EXPL_BODY: '<p>&Delta; &gt; 0: two distinct real roots. &Delta; = 0: one (repeated) real root. &Delta; &lt; 0: no real roots (two complex). That is it: you do not need to compute square roots, fractions, or signs of x.</p>'+
       '<p>If the DAT only asks "how many," "does the parabola cross the x-axis," or "is it tangent," that is a discriminant problem in disguise.</p>',
     EXPL_KEY: '&Delta; = b&sup2; &minus; 4ac. Sign &gt; 0, = 0, &lt; 0 &rarr; 2, 1, 0 real roots.',
     DRILL: [
@@ -589,7 +589,7 @@ const modules = {
   harm: {
     TITLE: 'Harmonic Mean',
     NUM: 'PATTERN PATH &middot; HARM',
-    H2: 'Harmonic mean &mdash; <em>average speed for equal distance</em>',
+    H2: 'Harmonic mean: <em>average speed for equal distance</em>',
     SUB: 'The trap: averaging two speeds arithmetically when the trip covers equal <em>distances</em>. Equal distances &rArr; harmonic mean. Equal times &rArr; arithmetic mean.',
     CARD_MARK: 'H',
     CARD_H3: 'Pick the <em>setup</em>, not the answer',
@@ -599,12 +599,12 @@ const modules = {
     SETUP_A_BODY: 'avg = (<b class="trap">60 + 40</b>) / 2<br>= <b class="trap">50 mph</b>',
     SETUP_A_ANS: '50 mph',
     SETUP_A_CORRECT: false,
-    SETUP_A_VERDICT: 'Trap &mdash; ignores time spent at each speed',
+    SETUP_A_VERDICT: 'Trap: ignores time spent at each speed',
     SETUP_B_TITLE: 'Harmonic mean (equal distance)',
     SETUP_B_BODY: 'avg = <b class="good">2 &middot; 60 &middot; 40 / (60 + 40)</b><br>= 4,800 / 100 = <b class="good">48 mph</b>',
     SETUP_B_ANS: '48 mph',
     SETUP_B_CORRECT: true,
-    SETUP_B_VERDICT: 'Correct &mdash; harmonic mean for equal-distance legs',
+    SETUP_B_VERDICT: 'Correct: harmonic mean for equal-distance legs',
     EXPL_HEAD: 'You spend <em>more time</em> at the slower speed.',
     EXPL_BODY: '<p>If the route is 120 miles each way: 2 hours at 60 there, 3 hours at 40 back. 240 miles total in 5 hours = 48 mph. The slow leg eats more clock-time, so it pulls the average toward the slow speed.</p>'+
       '<p>The arithmetic average is only correct when you spend equal <em>time</em> at each speed. Equal <em>distance</em> requires the harmonic formula.</p>',
