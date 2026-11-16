@@ -1,0 +1,437 @@
+/* ace-visuals.js : every interactive visual on Ace Labs, in one list (inventory 2026-11-16).
+
+     AceVisuals.tools      [{ id, section, group, step, title, path, topics, blurb, does, next, links }]
+     AceVisuals.sections   [{ id, name, start, path: [{ step, title, href }], groups: [name, ...] }]
+     AceVisuals.match(q)   q = a miss or a question: { section, topic, topicName, concept, skill }
+                           -> { id, title, url, label } for the best visual, or null. Null means
+                              "show no button": a wrong visual is worse than none.
+
+   Matching is by the topic phrases below, inside the question's own section only. A deep link
+   (links[]) wins over its parent tool, and a longer phrase wins over a shorter one.
+   Loaded by /labs/, /review/ and /repair/. Also runs in node (tests/shell/ace-visuals.test.js). */
+(function (root) {
+  'use strict';
+
+  var OC = '/tools/ochem/';
+  var CELL = '/tools/bio/bio-cell.html', GEN = '/tools/bio/bio-genetics.html', PHYS = '/tools/bio/bio-physiology.html';
+  var DEVO = '/tools/bio/bio-devo.html', DIV = '/tools/bio/bio-diversity.html', EVO = '/tools/bio/bio-evolution.html';
+  var QRP = '/tools/qr/proposals/';
+  function L(label, path, topics) { return { label: label, path: path, topics: topics }; }
+
+  var TOOLS = [
+    /* ---------- Organic Chemistry ---------- */
+    { id: 'oc-wheels', section: 'ochem', group: 'Reactions and mechanisms', step: 'try', featured: true,
+      title: 'Reaction wheels', path: OC + '?game=wheel',
+      blurb: 'Twenty-three wheels, one starting material in the middle of each.',
+      does: 'Pick the reagent for every spoke until the wheel is full.', next: 'Then run the same family in The Summit.',
+      topics: ['reaction wheel', 'reagent', 'reaction'],
+      links: [
+        L('Terminal alkene wheel', OC + '?game=wheel&wheel=alkene_terminal', ['terminal alkene']),
+        L('Internal alkene wheel', OC + '?game=wheel&wheel=alkene_internal', ['internal alkene']),
+        L('Terminal alkyne wheel', OC + '?game=wheel&wheel=alkyne_terminal', ['terminal alkyne']),
+        L('Internal alkyne wheel', OC + '?game=wheel&wheel=alkyne_internal', ['internal alkyne']),
+        L('Primary alkyl halide wheel', OC + '?game=wheel&wheel=halide_primary', ['primary alkyl halide']),
+        L('Secondary alkyl halide wheel', OC + '?game=wheel&wheel=halide_secondary', ['alkyl halide', 'secondary alkyl halide']),
+        L('Tertiary alkyl halide wheel', OC + '?game=wheel&wheel=halide_tertiary', ['tertiary alkyl halide']),
+        L('Primary alcohol wheel', OC + '?game=wheel&wheel=alcohol_primary', ['primary alcohol']),
+        L('Secondary alcohol wheel', OC + '?game=wheel&wheel=alcohol_secondary', ['secondary alcohol']),
+        L('Tertiary alcohol wheel', OC + '?game=wheel&wheel=alcohol_tertiary', ['tertiary alcohol']),
+        L('Acid chloride wheel', OC + '?game=wheel&wheel=acid_chloride', ['acid chloride', 'acyl chloride']),
+        L('Epoxide wheel', OC + '?game=wheel&wheel=epoxide', ['epoxide']),
+        L('Benzene wheel', OC + '?game=wheel&wheel=benzene', ['benzene', 'electrophilic aromatic substitution', 'eas']),
+        L('Aniline wheel', OC + '?game=wheel&wheel=aniline', ['aniline']),
+        L('Aldehyde wheel', OC + '?game=wheel&wheel=aldehyde', ['aldehyde']),
+        L('Ketone wheel', OC + '?game=wheel&wheel=ketone', ['ketone']),
+        L('Ester wheel', OC + '?game=wheel&wheel=ester', ['ester']),
+        L('Carboxylic acid wheel', OC + '?game=wheel&wheel=acid', ['carboxylic acid']),
+        L('Amide wheel', OC + '?game=wheel&wheel=amide', ['amide']),
+        L('Nitrile wheel', OC + '?game=wheel&wheel=nitrile', ['nitrile']),
+        L('Toluene wheel', OC + '?game=wheel&wheel=toluene', ['toluene', 'benzylic']),
+        L('Alkane wheel', OC + '?game=wheel&wheel=alkane', ['radical halogenation']),
+        L('Conjugated diene wheel', OC + '?game=wheel&wheel=diene', ['conjugated diene', 'diene'])
+      ] },
+    { id: 'oc-maps', section: 'ochem', group: 'Reactions and mechanisms', step: 'see', featured: true,
+      title: 'Reaction Maps', path: OC + '#hubs',
+      blurb: 'Eighteen hubs, each one a map of what a functional group turns into.',
+      does: 'Open a hub and follow each arrow from reagent to product.', next: 'Then spin that hub\'s reaction wheel.',
+      topics: ['reaction map', 'functional group'],
+      links: [
+        L('Alkenes hub', OC + '#alkenes', ['alkene', 'alkene addition', 'addition reaction']),
+        L('Alkynes hub', OC + '#alkynes', ['alkyne']),
+        L('Alkanes hub', OC + '#alkanes', ['alkane', 'conformation', 'newman projection', 'radical']),
+        L('Substitution and elimination hub', OC + '#subelim', ['sn1', 'sn2', 'e1', 'e2', 'substitution', 'elimination']),
+        L('Alcohols hub', OC + '#alcohols', ['alcohol']),
+        L('Ethers and epoxides hub', OC + '#ethers', ['ether']),
+        L('Aromatic hub', OC + '#aromatic', ['aromatic', 'aromaticity']),
+        L('Aldehydes and ketones hub', OC + '#carbonyl', ['carbonyl']),
+        L('Acids and derivatives hub', OC + '#acids', ['acid derivative', 'acyl']),
+        L('Amines hub', OC + '#amines', ['amine']),
+        L('Alpha and condensation hub', OC + '#alpha-condensation', ['aldol', 'enolate', 'claisen', 'condensation']),
+        L('Bonding and resonance hub', OC + '#bonding', ['resonance', 'bonding', 'hybridization', 'stability', 'structural evaluation']),
+        L('Nomenclature hub', OC + '#nomenclature', ['nomenclature', 'iupac', 'naming']),
+        L('Acid-base hub', OC + '#acid-base-cardio', ['acidity', 'pka', 'acid base', 'acid base chemistry']),
+        L('Lab techniques hub', OC + '#lab-techniques', ['lab technique', 'extraction', 'chromatography', 'distillation', 'chemical and physical property'])
+      ] },
+    { id: 'oc-mech', section: 'ochem', group: 'Reactions and mechanisms', step: 'see',
+      title: 'Mechanism library', path: OC + '#mech-library',
+      blurb: 'The core mechanisms, drawn arrow by arrow.',
+      does: 'Step through the arrows of one mechanism at a time.', next: 'Then name the product on its reaction wheel.',
+      topics: ['mechanism', 'arrow pushing', 'curved arrow'] },
+    { id: 'oc-diels', section: 'ochem', group: 'Reactions and mechanisms', step: 'see',
+      title: 'Diels-Alder', path: OC + '#diels-alder',
+      blurb: 'The three-arrow cycloaddition, diene plus dienophile.',
+      does: 'Watch the three arrows close the ring.', next: 'Then try the conjugated diene wheel.',
+      topics: ['diels alder', 'cycloaddition', 'dienophile'] },
+    { id: 'oc-roots', section: 'ochem', group: 'Reactions and mechanisms', step: 'see',
+      title: 'The Roots of Organic', path: '/tools/ochem/roots/',
+      blurb: 'The eighteen ideas every reaction stands on.',
+      does: 'Work through the roots, level by level.', next: 'Then climb The Tree.',
+      topics: ['root of organic', 'nucleophile', 'electrophile'] },
+    { id: 'oc-tree', section: 'ochem', group: 'Reactions and mechanisms', step: 'try',
+      title: 'The Tree of Organic', path: '/tools/ochem/tree/',
+      blurb: 'Trunk, branches and canopy: the roots applied to reagents, mechanisms and synthesis.',
+      does: 'Work one module at a time, from the trunk up.', next: 'Then take The Summit.',
+      topics: ['tree of organic'] },
+    { id: 'oc-decide', section: 'ochem', group: 'Reactions and mechanisms', step: 'try',
+      title: 'The Two Decisions', path: '/tools/ochem/decide/',
+      blurb: 'Two decision trees: stereo relationships, and substitution or elimination.',
+      does: 'Run a question down the tree, one fork at a time.', next: 'Then open the SN and E hub in Reaction Maps.',
+      topics: ['substitution versus elimination', 'decision tree'] },
+    { id: 'oc-eas', section: 'ochem', group: 'Reactions and mechanisms', step: 'see',
+      title: 'EAS directors', path: '/tools/ochem/v2/tiktoks/eas-directors-tiktok.html',
+      blurb: 'Who aims where on a benzene ring.',
+      does: 'Read the group\'s lone pairs and call ortho, para or meta.', next: 'Then spin the benzene wheel.',
+      topics: ['ortho para', 'meta director', 'directing group', 'eas director'] },
+    { id: 'oc-synth', section: 'ochem', group: 'Reactions and mechanisms', step: 'test',
+      title: 'Synthesis lab', path: OC + '#synthesis-lab',
+      blurb: 'Multi-step routes from start to target.',
+      does: 'Chain the reagents that get you from start to target.', next: 'Then take The Summit.',
+      topics: ['synthesis', 'roadmap', 'multi step', 'chemical synthesis'] },
+    { id: 'oc-chirality', section: 'ochem', group: 'Stereochemistry and 3D', step: 'try',
+      title: 'Chirality Bench', path: '/games/chirality/',
+      blurb: 'A 3D model beside the wedge-and-dash drawing.',
+      does: 'Call R or S on the model before you look.', next: 'Then run the Stereochemistry lab.',
+      topics: ['chirality', 'chiral', 'stereochemistry', 'r s', 'stereocenter', 'enantiomer', 'diastereomer', 'optical activity'] },
+    { id: 'oc-3d', section: 'ochem', group: 'Stereochemistry and 3D', step: 'see',
+      title: '3D beside the drawing', path: '/oc/3d/',
+      blurb: 'Seven stereocenters and two chairs, model next to drawing.',
+      does: 'Turn the model and match it to the DAT drawing.', next: 'Then call R or S on the Chirality Bench.',
+      topics: ['chair', 'wedge and dash', 'fischer projection', 'cyclohexane', '3d'] },
+    { id: 'oc-stereo-lab', section: 'ochem', group: 'Stereochemistry and 3D', step: 'test',
+      title: 'Stereochemistry lab', path: OC + '#stereo-lab',
+      blurb: 'The stereo hub inside Reaction Maps.',
+      does: 'Assign and compare stereocenters across drawings.', next: 'Then take The Summit.',
+      topics: ['meso', 'stereoisomer'] },
+    { id: 'oc-spec', section: 'ochem', group: 'Structure and spectroscopy', step: 'try',
+      title: 'Spec trainer', path: OC + '#spec-trainer',
+      blurb: 'IR and NMR spectra you read for the functional group.',
+      does: 'Read the peaks and name the structure.', next: 'Then check the fragment in Mass spec.',
+      topics: ['spectroscopy', 'ir', 'nmr', 'h nmr'],
+      links: [L('Mass spec', OC + '#mass-spec', ['mass spec', 'mass spectrometry'])] },
+    { id: 'oc-summit', section: 'ochem', group: 'Practice', step: 'test',
+      title: 'The Summit', path: '/tools/ochem/summit/',
+      blurb: 'Thirty OChem questions in one sitting.',
+      does: 'Answer thirty, then read which areas you missed.', next: 'Each miss lands in Review with a See it button.',
+      topics: [] },
+
+    /* ---------- General Chemistry ---------- */
+    { id: 'gc-vsepr', section: 'gchem', group: 'Structure and bonding', step: 'see',
+      title: 'VSEPR in 3D', path: '/gc/vsepr/',
+      blurb: 'Thirteen molecules from CO2 to XeF4.',
+      does: 'Count domains, call the shape, then turn the model.', next: 'Then build one in the Lewis sandbox.',
+      topics: ['vsepr', 'geometry', 'molecular shape', 'hybridization', 'bond angle'] },
+    { id: 'gc-lewis', section: 'gchem', group: 'Structure and bonding', step: 'try',
+      title: 'Lewis sandbox', path: '/tools/gc/lewis-sandbox.html',
+      blurb: 'A five-stage build: electrons, skeleton, lone pairs, geometry, polarity.',
+      does: 'Build the structure stage by stage.', next: 'Then drill shapes in the Recognition lab.',
+      topics: ['lewis', 'lewis structure', 'bonding', 'formal charge', 'polarity', 'octet'] },
+    { id: 'gc-trends', section: 'gchem', group: 'Structure and bonding', step: 'see',
+      title: 'Periodic trends', path: '/tools/gc/trends.html',
+      blurb: 'A heatmap of the table, a speed drill and an isoelectronic ranker.',
+      does: 'Switch the trend and watch the table recolor, then rank.', next: 'Then take a Gen Chem set.',
+      topics: ['periodic', 'periodic trend', 'electronegativity', 'ionization energy', 'atomic radius', 'electron affinity'] },
+    { id: 'gc-galvanic', section: 'gchem', group: 'Electrochemistry', step: 'see',
+      title: 'Galvanic cell', path: '/gc/galvanic/',
+      blurb: 'Nine half-cells you can pair up.',
+      does: 'Call the electron flow, then watch it run.', next: 'Then take a Gen Chem set on electrochemistry.',
+      topics: ['galvanic', 'galvanic cell', 'reduction potential', 'std reduction potential', 'voltaic', 'anode', 'cathode'] },
+    { id: 'gc-recognition', section: 'gchem', group: 'Graphs and diagrams', step: 'try',
+      title: 'Recognition lab', path: '/tools/gc/recognition-lab.html',
+      blurb: 'Graphs, structures and diagrams against a short timer.',
+      does: 'Name what the picture shows, fast.', next: 'Then take a Gen Chem set.',
+      topics: ['phase diagram', 'titration curve', 'titration', 'heating curve', 'heating and cooling curve', 'buffer', 'rate law', 'kinetic', 'reaction coordinate', 'nuclear', 'nuclear decay', 'intermolecular force', 'imf'] },
+
+    /* ---------- Biology ---------- */
+    { id: 'bio-plates', section: 'bio', group: 'Cell', step: 'see',
+      title: 'Biology plates', path: '/bio/see/',
+      blurb: 'Unlabeled plates, from the eye to the chloroplast.',
+      does: 'Name the part first; then the labels draw in.', next: 'Then open the matching hub below.',
+      topics: ['plate', 'label the diagram'] },
+    { id: 'bio-cell', section: 'bio', group: 'Cell', step: 'see',
+      title: 'Cell and molecular hub', path: CELL,
+      blurb: 'Nineteen animated nodes, from water to photosynthesis.',
+      does: 'Open a node and play its animation.', next: 'Then take a Biology set.',
+      topics: ['cell', 'molecular biology', 'biomolecule'],
+      links: [
+        L('Water', CELL + '#node-water', ['water']),
+        L('Carbohydrates', CELL + '#node-carbs', ['carbohydrate']),
+        L('Lipids', CELL + '#node-lipids', ['lipid']),
+        L('Proteins', CELL + '#node-proteins', ['protein']),
+        L('Nucleic acids', CELL + '#node-nucleic', ['nucleic acid']),
+        L('Enzymes', CELL + '#node-enzymes', ['enzyme']),
+        L('Prokaryotes and eukaryotes', CELL + '#node-prokaryote', ['prokaryote', 'eukaryote', 'cell type']),
+        L('Organelles', CELL + '#node-organelles', ['organelle', 'cell structure']),
+        L('Cytoskeleton', CELL + '#node-cytoskeleton', ['cytoskeleton']),
+        L('Membranes', CELL + '#node-membrane', ['membrane', 'membrane transport']),
+        L('Cell signaling', CELL + '#node-signaling', ['signaling', 'cell signaling']),
+        L('Glycolysis', CELL + '#node-glycolysis', ['glycolysis']),
+        L('Krebs and electron transport', CELL + '#node-krebs', ['kreb', 'kreb cycle', 'electron transport', 'cellular respiration']),
+        L('Photosynthesis', CELL + '#node-photo', ['photosynthesis']),
+        L('Mitosis', CELL + '#node-mitosis', ['mitosis', 'cell cycle']),
+        L('DNA replication', CELL + '#node-replication', ['replication', 'dna replication']),
+        L('Transcription', CELL + '#node-transcription', ['transcription', 'central dogma']),
+        L('Translation', CELL + '#node-translation', ['translation'])
+      ] },
+    { id: 'bio-osmosis', section: 'bio', group: 'Cell', step: 'try',
+      title: 'Osmosis lab', path: '/tools/bio/bio-osmosis.html',
+      blurb: 'A cell in a solution you control.',
+      does: 'Change the solution and watch the water move.', next: 'Then open Membranes in the Cell hub.',
+      topics: ['osmosis', 'tonicity', 'hypotonic', 'hypertonic', 'isotonic'] },
+    { id: 'bio-micrographs', section: 'bio', group: 'Cell', step: 'test',
+      title: 'Micrograph ID', path: '/tools/bio/bio-micrographs.html',
+      blurb: 'Micrograph-style images to identify.',
+      does: 'Name the structure from the image.', next: 'Then take a Biology set.',
+      topics: ['micrograph', 'histology'] },
+    { id: 'bio-genetics', section: 'bio', group: 'Genetics', step: 'see',
+      title: 'Genetics hub', path: GEN,
+      blurb: 'Nine nodes, from Mendel to gene regulation.',
+      does: 'Open a node and work its cross or pedigree.', next: 'Then take a Biology set.',
+      topics: ['genetic', 'heredity'],
+      links: [
+        L('Mendelian crosses', GEN + '#node-mendelian', ['mendelian', 'mendelian genetic', 'punnett']),
+        L('Meiosis', GEN + '#node-meiosis', ['meiosis']),
+        L('Linkage', GEN + '#node-linkage', ['linkage', 'recombination']),
+        L('Pedigrees', GEN + '#node-pedigrees', ['pedigree']),
+        L('Hardy-Weinberg', GEN + '#node-hardy-weinberg', ['hardy weinberg', 'population genetic']),
+        L('Gene regulation', GEN + '#node-gene-regulation', ['gene regulation', 'operon']),
+        L('Mutations', GEN + '#node-mutations', ['mutation'])
+      ] },
+    { id: 'bio-physiology', section: 'bio', group: 'Body systems', step: 'see',
+      title: 'Body Systems', path: PHYS,
+      blurb: 'Thirteen systems with moving diagrams: heart, nephron, lungs and more.',
+      does: 'Open a system and play it through.', next: 'Then label a plate from that system.',
+      topics: ['body system', 'physiology', 'anatomy', 'structure and function'],
+      links: [
+        L('Cardiovascular', PHYS + '#node-cardiovascular', ['cardiovascular', 'heart', 'circulatory', 'blood']),
+        L('Nephron', PHYS + '#node-nephron', ['nephron', 'kidney', 'renal', 'excretory']),
+        L('Respiratory', PHYS + '#node-respiratory', ['respiratory', 'lung']),
+        L('Endocrine', PHYS + '#node-endocrine', ['endocrine', 'hormone']),
+        L('Digestive', PHYS + '#node-digestive', ['digestive', 'digestion']),
+        L('Reproductive', PHYS + '#node-reproductive', ['reproductive', 'reproduction']),
+        L('Action potential', PHYS + '#node-action-potential', ['action potential', 'neuron', 'nervous']),
+        L('Brain regions', PHYS + '#node-brain-regions', ['brain']),
+        L('Special senses', PHYS + '#node-special-senses', ['special sense', 'eye', 'ear'])
+      ] },
+    { id: 'bio-immune', section: 'bio', group: 'Body systems', step: 'see',
+      title: 'Innate vs adaptive immunity', path: '/tools/bio/bio-immune-cells.html',
+      blurb: 'The immune cells, sorted by which arm they belong to.',
+      does: 'Pick a cell and see which arm it works for.', next: 'Then open Body Systems.',
+      topics: ['immune', 'immunity', 'antibody', 'lymphocyte'] },
+    { id: 'bio-sliding', section: 'bio', group: 'Body systems', step: 'see',
+      title: 'Sliding filament', path: '/tools/bio/sliding-filament-tiktok.html',
+      blurb: 'Actin and myosin, one contraction at a time.',
+      does: 'Watch the sarcomere shorten step by step.', next: 'Then open Body Systems.',
+      topics: ['sliding filament', 'muscle', 'sarcomere', 'muscular'] },
+    { id: 'bio-diversity', section: 'bio', group: 'Diversity', step: 'see',
+      title: 'Diversity of Life hub', path: DIV,
+      blurb: 'Domains, plants, animals and phylogenetic trees.',
+      does: 'Open a node and place the group on the tree.', next: 'Then take a Biology set.',
+      topics: ['diversity', 'taxonomy', 'classification', 'kingdom'],
+      links: [
+        L('Plants', DIV + '#node-plants', ['plant']),
+        L('Animals', DIV + '#node-animals', ['animal', 'phyla']),
+        L('Phylogenetics', DIV + '#node-phylogenetics', ['phylogenetic', 'phylogeny', 'cladogram'])
+      ] },
+    { id: 'bio-devo', section: 'bio', group: 'Development', step: 'see',
+      title: 'Developmental Biology hub', path: DEVO,
+      blurb: 'Fertilization through organogenesis.',
+      does: 'Step the embryo from one stage to the next.', next: 'Then take a Biology set.',
+      topics: ['development', 'developmental', 'embryo', 'embryology'],
+      links: [
+        L('Fertilization', DEVO + '#node-fertilization', ['fertilization', 'cleavage']),
+        L('Gastrulation', DEVO + '#node-gastrulation', ['gastrulation', 'germ layer']),
+        L('Organogenesis', DEVO + '#node-organogenesis', ['organogenesis', 'neurulation'])
+      ] },
+    { id: 'bio-evolution', section: 'bio', group: 'Evolution', step: 'see',
+      title: 'Evolution and Ecology hub', path: EVO,
+      blurb: 'Selection, speciation, ecology and behavior.',
+      does: 'Open a node and run its model.', next: 'Then take a Biology set.',
+      topics: ['evolution', 'ecology'],
+      links: [
+        L('Natural selection', EVO + '#node-natural-selection', ['natural selection', 'selection']),
+        L('Speciation', EVO + '#node-speciation', ['speciation']),
+        L('Ecology', EVO + '#node-ecology', ['ecosystem', 'biome', 'population ecology']),
+        L('Behavior', EVO + '#node-behavior', ['behavior'])
+      ] },
+
+    /* ---------- Perceptual Ability ---------- */
+    { id: 'pat-keyholes', section: 'pat', group: 'Keyholes', step: 'try',
+      title: 'Aperture trainer', path: '/tools/pat/keyholes.html',
+      blurb: 'A solid and five openings.', does: 'Pick the opening the solid passes through.', next: 'Then take the ninety-question PAT.',
+      topics: ['keyhole', 'aperture'] },
+    { id: 'pat-tfe', section: 'pat', group: 'Top, front, end', step: 'try',
+      title: 'Top, front, end', path: '/tools/pat/tfe.html',
+      blurb: 'Solid means seen, dashed means hidden.', does: 'Find the missing view from the other two.', next: 'Then turn the shape in Six Views.',
+      topics: ['tfe', 'top front end', 'view recognition'] },
+    { id: 'pat-six-views', section: 'pat', group: 'Top, front, end', step: 'see',
+      title: 'Six Views', path: '/games/six-views/',
+      blurb: 'The shape in 3D after you answer.', does: 'Answer, then spin the solid to check.', next: 'Then drill Top, front, end.',
+      topics: ['six view', 'orthographic'] },
+    { id: 'pat-angles', section: 'pat', group: 'Angle ranking', step: 'try',
+      title: 'Angle discrimination', path: '/tools/pat/angles.html',
+      blurb: 'Four angles a few degrees apart.', does: 'Rank them smallest to largest.', next: 'Then take the ninety-question PAT.',
+      topics: ['angle', 'angle ranking'] },
+    { id: 'pat-holepunch', section: 'pat', group: 'Hole punching', step: 'try',
+      title: 'Hole punching', path: '/tools/pat/holepunch.html',
+      blurb: 'The grid method, fold by fold.', does: 'Unfold the paper and mark every hole.', next: 'Then take the ninety-question PAT.',
+      topics: ['holepunch', 'hole punching', 'hole punch'] },
+    { id: 'pat-cubes', section: 'pat', group: 'Cube counting', step: 'try',
+      title: 'Cube counting', path: '/tools/pat/cubes.html',
+      blurb: 'The T-chart for painted faces.', does: 'Tally each cube by its painted sides.', next: 'Then take the ninety-question PAT.',
+      topics: ['cube', 'cube counting'] },
+    { id: 'pat-patternfold', section: 'pat', group: 'Pattern folding', step: 'try',
+      title: 'Pattern folding', path: '/tools/pat/patternfold.html',
+      blurb: 'Flat patterns and the solid each one makes.', does: 'Match the flat pattern to its solid.', next: 'Then take the ninety-question PAT.',
+      topics: ['patternfold', 'pattern folding', 'pattern fold'] },
+
+    /* ---------- Quantitative Reasoning ---------- */
+    { id: 'qr-worked', section: 'qr', group: 'Percent, ratio and word problems', step: 'see',
+      title: 'Worked solutions you can see', path: '/qr/worked/',
+      blurb: 'Six problem families with the method drawn step by step.',
+      does: 'Answer first, then watch the method drawn.', next: 'Then drill the same family in QR practice.',
+      topics: ['percent', 'percentage', 'percent change', 'percent increase decrease', 'ratio', 'proportion', 'work rate', 'work', 'mixture', 'word problem', 'altitude'] },
+    { id: 'qr-probability', section: 'qr', group: 'Probability', step: 'try',
+      title: 'Probability Sandbox', path: QRP + 'agent-04-prob-tree/probability-sandbox.html',
+      blurb: 'One tree for every probability question.',
+      does: 'Build the tree branch by branch and read the answer off it.', next: 'Then drill probability in QR practice.',
+      topics: ['probability', 'conditional', 'probability tree', 'permutation', 'combination'] },
+    { id: 'qr-stats', section: 'qr', group: 'Statistics', step: 'try',
+      title: 'Stats Lab', path: QRP + 'agent-05-stats/stats-lab.html',
+      blurb: 'Points you can move, with z-scores and the harmonic mean.',
+      does: 'Move a point and watch mean, median and spread shift.', next: 'Then try the mean versus median trap.',
+      topics: ['statistic', 'median', 'standard deviation', 'descriptive statistic', 'z score', 'harmonic mean'] },
+    { id: 'qr-mean-median', section: 'qr', group: 'Statistics', step: 'see',
+      title: 'Mean versus median trap', path: QRP + 'agent-05-stats/mean-vs-median-trap.html',
+      blurb: 'What one outlier does to each.',
+      does: 'Drag the outlier and see which one moves.', next: 'Then open the Stats Lab.',
+      topics: ['mean v median', 'outlier', 'skew'] },
+    { id: 'qr-geo-2d', section: 'qr', group: 'Geometry', step: 'try',
+      title: '2D Geometry', path: QRP + 'agent-06-geometry/geo-2d.html',
+      blurb: 'Circles and squares with corners you drag.',
+      does: 'Drag a corner and watch area and perimeter change.', next: 'Then open Volume and surface area.',
+      topics: ['geometry', '2d geometry', 'circle', 'area', 'perimeter'] },
+    { id: 'qr-triangle', section: 'qr', group: 'Geometry', step: 'see',
+      title: 'Triangle invariance', path: QRP + 'agent-06-geometry/tri-inv.html',
+      blurb: 'A triangle you can reshape, with the triangle inequality checked live.',
+      does: 'Drag a vertex and watch sides and angles recompute.', next: 'Then open 2D Geometry.',
+      topics: ['triangle', 'triangle invariance'] },
+    { id: 'qr-coord', section: 'qr', group: 'Geometry', step: 'see',
+      title: 'Coordinate plane', path: QRP + 'agent-06-geometry/coord.html',
+      blurb: 'Two points, their slope, distance and midpoint.',
+      does: 'Move the two points and read the slope and distance.', next: 'Then open 2D Geometry.',
+      topics: ['coordinate', 'coordinate plane', 'slope', 'midpoint'] },
+    { id: 'qr-volume', section: 'qr', group: 'Geometry', step: 'see',
+      title: 'Volume and surface area', path: QRP + 'agent-06-geometry/vol-sa.html',
+      blurb: 'Solids in 3D and the cube law.',
+      does: 'Scale the solid and compare volume to surface.', next: 'Then drill geometry in QR practice.',
+      topics: ['volume', 'surface area', 'volume surface', 'cube law'] },
+
+    /* ---------- Reading ---------- */
+    { id: 'rc-map', section: 'rc', group: 'Passage maps', step: 'see',
+      title: 'Map it, then find the line', path: '/rc/map/',
+      blurb: 'A passage you map before you answer.',
+      does: 'Name each paragraph\'s job; then every answer lights up its line.', next: 'Then take a timed passage.',
+      topics: ['detail', 'detail question', 'mainidea', 'main idea', 'function', 'function question', 'passage map', 'except'] }
+  ];
+
+  var SECTIONS = [
+    { id: 'ochem', name: 'Organic Chemistry', color: '#6b4fa0',
+      start: 'Start here: see a reaction family on its map, then fill its wheel from memory.',
+      path: [{ step: 'See it', title: 'Reaction Maps', href: OC + '#hubs' }, { step: 'Try it', title: 'Reaction wheels', href: OC + '?game=wheel' }, { step: 'Test it', title: 'The Summit', href: '/tools/ochem/summit/' }],
+      groups: ['Reactions and mechanisms', 'Stereochemistry and 3D', 'Structure and spectroscopy', 'Practice'] },
+    { id: 'gchem', name: 'General Chemistry', color: '#2f5f9e',
+      start: 'Start here: turn the molecule first, then build it yourself.',
+      path: [{ step: 'See it', title: 'VSEPR in 3D', href: '/gc/vsepr/' }, { step: 'Try it', title: 'Lewis sandbox', href: '/tools/gc/lewis-sandbox.html' }, { step: 'Test it', title: 'Ten-question Gen Chem set', href: '/gc/?run=daily' }],
+      groups: ['Structure and bonding', 'Electrochemistry', 'Graphs and diagrams'] },
+    { id: 'bio', name: 'Biology', color: '#2f7d4f',
+      start: 'Start here: label a plate cold, then open the hub for whatever you could not name.',
+      path: [{ step: 'See it', title: 'Biology plates', href: '/bio/see/' }, { step: 'Try it', title: 'Osmosis lab', href: '/tools/bio/bio-osmosis.html' }, { step: 'Test it', title: 'Biology set', href: '/bio/' }],
+      groups: ['Cell', 'Genetics', 'Body systems', 'Diversity', 'Development', 'Evolution'] },
+    { id: 'pat', name: 'Perceptual Ability', color: '#a8641f',
+      start: 'Start here: pick the subtest you miss most and train only that one today.',
+      path: [{ step: 'See it', title: 'Six Views', href: '/games/six-views/' }, { step: 'Try it', title: 'Top, front, end', href: '/tools/pat/tfe.html' }, { step: 'Test it', title: 'Ninety-question PAT', href: '/tools/pat/test.html' }],
+      groups: ['Keyholes', 'Top, front, end', 'Angle ranking', 'Hole punching', 'Cube counting', 'Pattern folding'] },
+    { id: 'qr', name: 'Quantitative Reasoning', color: '#a3405c',
+      start: 'Start here: watch one method drawn, then rebuild it on a new problem.',
+      path: [{ step: 'See it', title: 'Worked solutions', href: '/qr/worked/' }, { step: 'Try it', title: 'Probability Sandbox', href: QRP + 'agent-04-prob-tree/probability-sandbox.html' }, { step: 'Test it', title: 'QR practice', href: '/qr/drill/' }],
+      groups: ['Percent, ratio and word problems', 'Probability', 'Statistics', 'Geometry'] },
+    { id: 'rc', name: 'Reading Comprehension', color: '#1f7a70',
+      start: 'Start here: map one passage before you read a single question.',
+      path: [{ step: 'See it', title: 'Map it, then find the line', href: '/rc/map/' }, { step: 'Try it', title: 'Map a second passage', href: '/rc/map/' }, { step: 'Test it', title: 'Timed passages', href: '/tools/rc/' }],
+      groups: ['Passage maps'] }
+  ];
+
+  /* Any section spelling the tools use -> one code (same rule as shared/ace-route.js). */
+  function section(s) {
+    var k = String(s || '').toLowerCase().replace(/[^a-z]/g, '');
+    if (/^(bio|biology)/.test(k)) return 'bio';
+    if (/^(gc|gchem|genchem|generalchem)/.test(k)) return 'gchem';
+    if (/^(oc|ochem|orgo|organic)/.test(k)) return 'ochem';
+    if (/^(qr|quant)/.test(k)) return 'qr';
+    if (/^(pat|perceptual)/.test(k)) return 'pat';
+    if (/^(rc|reading)/.test(k)) return 'rc';
+    return null;
+  }
+  function norm(s) {
+    return String(s == null ? '' : s).toLowerCase().replace(/&/g, ' and ').replace(/[^a-z0-9]+/g, ' ').trim().split(/\s+/)
+      .filter(function (w) { return w && w !== 'and' && w !== 'the' && w !== 'of'; })
+      .map(function (w) { return w.length > 3 ? w.replace(/ies$/, 'y').replace(/(sses)$/, 'ss').replace(/([^s])s$/, '$1') : w; })
+      .join(' ');
+  }
+  function score(text, topics) {
+    var best = 0;
+    for (var i = 0; i < topics.length; i++) {
+      var p = norm(topics[i]);
+      if (p && text.indexOf(' ' + p + ' ') >= 0) { var s = p.split(' ').length * 100 + p.length; if (s > best) best = s; }
+    }
+    return best;
+  }
+  function match(q) {
+    if (!q) return null;
+    var sec = section(q.section); if (!sec) return null;
+    var text = ' ' + [q.topic, q.topicName, q.concept, q.skill].map(norm).filter(Boolean).join(' | ') + ' ';
+    if (text.trim() === '') return null;
+    var best = null, top = 0;
+    TOOLS.forEach(function (t) {
+      if (t.section !== sec) return;
+      var s = score(text, t.topics);
+      if (s > top) { top = s; best = { id: t.id, title: t.title, url: t.path, label: t.title }; }
+      (t.links || []).forEach(function (l) {
+        var d = score(text, l.topics); if (d) d += 50;   // a deep link beats a one-word tool topic
+        if (d > top) { top = d; best = { id: t.id, title: t.title, url: l.path, label: l.label }; }
+      });
+    });
+    return best;
+  }
+  /* The "See it" link for a miss, as an element; null when nothing matches. Opens from a miss,
+     so the tool page can offer the way back (?from=review|repair is read by ace-cream-wrap.js). */
+  function withFrom(url, from) {
+    if (!from) return url;
+    var h = url.indexOf('#'), base = h < 0 ? url : url.slice(0, h), hash = h < 0 ? '' : url.slice(h);
+    return base + (base.indexOf('?') < 0 ? '?' : '&') + 'from=' + encodeURIComponent(from) + hash;
+  }
+
+  var api = { tools: TOOLS, sections: SECTIONS, match: match, section: section, norm: norm, withFrom: withFrom };
+  if (typeof module !== 'undefined' && module.exports) module.exports = api;
+  if (root) root.AceVisuals = api;
+})(typeof window !== 'undefined' ? window : null);

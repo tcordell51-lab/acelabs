@@ -17,6 +17,18 @@
   var ICON_X = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fffdf7" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg>';
   var ICON_OK = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0d2018" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"></path></svg>';
 
+  var EYE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"></path><circle cx="12" cy="12" r="3"></circle></svg>';
+  /* The "See it" link for a miss: the best-matching visual (shared/ace-visuals.js), or null.
+     Opening the picture counts like opening the lesson: no win that day (onOpen says so). */
+  function seeIt(e, onOpen) {
+    var v = window.AceVisuals ? window.AceVisuals.match({ section: e.section, topic: e.topic, topicName: e.topicName }) : null;
+    if (!v) return null;
+    var a = el('a', 'see-it'); a.innerHTML = EYE; a.appendChild(document.createTextNode('See it'));
+    a.href = window.AceVisuals.withFrom(v.url, 'repair'); a.title = v.label; a.setAttribute('data-see', v.id);
+    if (onOpen) a.addEventListener('click', onOpen);
+    return a;
+  }
+
   function lessonFor(e) {
     var url = null;
     try { if (window.AceRoute) { var l = window.AceRoute.links({ section: e.section, concept: e.topicName, topic: e.topicName }); url = l.sheet || l.learn || l.drill; } } catch (x) { url = null; }
@@ -48,7 +60,11 @@
       left.appendChild(el('small', null, (e.due <= Date.now() || sameDay(e.due, Date.now()) ? 'Due today' : 'Back ' + fmt(e.due)) + (e.reason ? ' · ' + R.REASONS[e.reason] : '')));
       var wins = el('span', 'wins'); wins.setAttribute('aria-label', (e.wins || []).length + ' of 2 wins');
       for (var k = 0; k < 2; k++) wins.appendChild(el('i', (e.wins || [])[k] ? 'on' : ''));
-      li.appendChild(left); li.appendChild(wins); q.appendChild(li);
+      var right = el('span', 'q-r');
+      var see = seeIt(e, function () { R.event('repair-see', { id: e.id }); R.repairLesson(e.id); });
+      if (see) right.appendChild(see);
+      right.appendChild(wins);
+      li.appendChild(left); li.appendChild(right); q.appendChild(li);
     });
     if (!L.open.length) q.appendChild(el('li', null, 'Nothing in the queue. Misses from any set land here.'));
     // misses from the older tools and the practice tests (no twin bank yet): shown on Review
@@ -100,6 +116,8 @@
 
     host.appendChild(el('p', 'loop-from', 'From the ' + fmt(e.missedAt) + ' ' + SECTION[e.section] + ' set'));
     var slot = el('div'); host.appendChild(slot);
+    var seeRow = el('div', 'see-row'), seeNow = seeIt(e, function () { R.event('repair-see', { id: e.id }); assisted = true; R.repairLesson(e.id); });
+    if (seeNow) { seeRow.appendChild(seeNow); seeRow.appendChild(el('span', null, 'Stuck? Open the picture for ' + e.topicName.toLowerCase() + '. A win counts on a day you answer without it.')); host.appendChild(seeRow); }
     window.AceQuestion.mount(slot, v.item, {
       label: SECTION[e.section] + ' · ' + e.topicName,
       nextLabel: 'Next miss',
@@ -108,6 +126,7 @@
         R.record({ item: v.item, picked: res.picked, answer: res.answer, ok: res.ok, ms: res.ms, src: 'repair', set: 'repair', first: res.first, changes: res.changes, change: res.change, conf: res.conf, repair: false, assisted: assisted });
         var after = R.repairAnswer(e.id, { servedId: v.item.id, ok: res.ok, assisted: assisted });
         track(after); counts();
+        if (seeNow) { seeRow.className = 'see-row' + (res.ok ? '' : ' after'); seeRow.lastChild.textContent = res.ok ? 'Want the picture anyway? It is ' + seeNow.title + '.' : 'Missed it. See it before the next version: ' + seeNow.title + '.'; }
         if (res.ok && !assisted && after && after.cleared) R.event('repair-cleared', { id: e.id });
       },
       onReason: function (reason) { track(R.repairReason(e.id, reason)); counts(); },
