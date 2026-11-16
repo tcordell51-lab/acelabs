@@ -10,8 +10,13 @@
 //     file is no longer a public static file: it only leaves the server after the check
 //   - every page gets the small session script (handoff, progress sync, sign out)
 // The decision itself is netlify/lib/ace-gate-core.mjs (tested in tests/signin/).
-import { decide, injectSessionScript } from '../lib/ace-gate-core.mjs';
-import { signInEnabled } from '../lib/ace-token.mjs';
+//
+// Fail closed (2026-11-16). With the flag on, anything that goes wrong (the gate code will not
+// load, the session check throws, the origin fetch throws) answers 503 with no-store: no locked
+// page and no bank leaves the server unchecked. The gate code is imported only after the flag is
+// read, so with the flag off nothing but the flag check ever runs and the site behaves exactly as
+// before. That is also why onError below is 'fail': this module has no top-level imports, so the
+// only code that can fail to start is the flag check itself.
 
 function readEnv() {
   const get = (k) => {
@@ -29,17 +34,32 @@ function withHeaders(res, set, remove = []) {
   return new Response(res.body, { status: res.status, statusText: res.statusText, headers });
 }
 
-export default async (request, context) => {
-  const env = readEnv();
-  if (!signInEnabled(env)) return;   // flag off: nothing changes
+/* The same rule as signInEnabled() in netlify/lib/ace-token.mjs, inlined so the flag can be read
+   without loading any other module (tests/signin/gate.test.mjs keeps the two in step). */
+export function flagOn(env) { const v = String((env && env.ACE_LABS_SIGN_IN) || '').trim().toLowerCase(); return v === 'on' || v === 'true' || v === '1'; }
 
-  let d;
+function unavailable() {
+  return new Response('Ace Labs is briefly unavailable. Please try again.', { status: 503, headers: { 'Cache-Control': 'no-store', 'Content-Type': 'text/plain; charset=utf-8' } });
+}
+
+export default async (request, context) => {
+  let env;
+  try { env = readEnv(); } catch { env = {}; }
+  return handle(request, context, env);
+};
+
+export async function handle(request, context, env, deps) {
+  if (!flagOn(env)) return;   // flag off: nothing changes
   try {
-    d = await decide(request, env);
+    return await gated(request, context, env, deps);
   } catch {
-    // The gate could not decide. Fail closed: no page and no bank goes out unchecked.
-    return new Response('Ace Labs is briefly unavailable. Please try again.', { status: 503, headers: { 'Cache-Control': 'no-store', 'Content-Type': 'text/plain; charset=utf-8' } });
+    return unavailable();   // fail closed
   }
+}
+
+export async function gated(request, context, env, deps) {
+  const { decide, injectSessionScript } = deps || await import('../lib/ace-gate-core.mjs');
+  const d = await decide(request, env);
 
   if (d.action === 'redirect') {
     return new Response(null, { status: 302, headers: { Location: d.location, 'Cache-Control': 'no-store' } });
@@ -71,7 +91,7 @@ export default async (request, context) => {
   // a locked script or data file, for its signed-in reader only
   const res = await context.next();
   return withHeaders(res, { 'Cache-Control': 'private, max-age=300', Vary: 'Cookie' });
-};
+}
 
 export const config = {
   path: '/*',
@@ -83,7 +103,7 @@ export const config = {
     '/*.woff', '/*.woff2', '/*.ttf', '/*.otf',
     '/*.mp3', '/*.m4a', '/*.wav', '/*.ogg', '/*.mp4', '/*.webm', '/*.vtt',
   ],
-  // If the gate itself cannot start, serve the site as before rather than take it down.
-  // See docs/ace-labs-sign-in.md in the portal repo ("Risks") before changing this to "fail".
-  onError: 'bypass',
+  // Fail closed: if the gate cannot run, nothing is served unchecked. Safe with the flag off
+  // because the module has no top-level imports (see the note at the top).
+  onError: 'fail',
 };
