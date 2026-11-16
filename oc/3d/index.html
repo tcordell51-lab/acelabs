@@ -49,8 +49,9 @@
   <p class="aui-small">Coordinates, drawings and answers are computed by RDKit (scripts/build-oc-3d.py): 3D shapes from MMFF94, R and S from the CIP rules, chair energies from MMFF94. The rules: OpenStax Organic Chemistry, 5.5 Sequence Rules for Specifying Configuration and 4.7 Conformations of Monosubstituted Cyclohexanes.</p>
 </main>
 <script src="/shared/ace-ui.js?v=4"></script>
-<script src="/shared/ace-record.js?v=5"></script>
-<script src="/shared/ace-question.js?v=7"></script>
+<script src="/shared/ace-skills.js?v=2"></script>
+<script src="/shared/ace-record.js?v=6"></script>
+<script src="/shared/ace-question.js?v=8"></script>
 <script type="module">
 const $ = (id) => document.getElementById(id);
 const data = await fetch('/data/oc-3d.json').then((r) => r.json());
@@ -159,7 +160,7 @@ function show(k) {
     item.__onReveal = () => flip('equatorial');
   }
   window.AceQuestion.mount($('q'), item, { label: 'Organic Chemistry · ' + item.topicName, confidence: true, nextLabel: k + 1 < data.items.length ? 'Next molecule' : 'Back to the first',
-    onAnswer: (res) => { item.__onReveal && item.__onReveal(); if (window.AceRecord) window.AceRecord.record({ item, picked: res.picked, answer: res.answer, ok: res.ok, ms: res.ms, src: 'oc-3d', first: res.first, changes: res.changes, change: res.change, conf: res.conf, repair: false }); },
+    onAnswer: (res) => { item.__onReveal && item.__onReveal(); if (window.AceRecord) window.AceRecord.record({ item, picked: res.picked, answer: res.answer, ok: res.ok, ms: res.ms, src: 'oc-3d', first: res.first, changes: res.changes, change: res.change, conf: res.conf, tool: 'lab' }); },
     onNext: () => show((k + 1) % data.items.length) });
   size();
 }

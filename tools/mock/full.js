@@ -11,6 +11,12 @@
    seeded test from tools/pat/engine; RC is a full section from
    tools/rc/data/bank.js.
 
+   New forms (2026-11-16): six more full-length forms built from the private
+   AceTheDAT banks (scripts/bank/forms.json) come from the ace-bank-forms
+   function. A student sees one only when Thomas has approved every question
+   on it ("ready"); until then it is hidden ("awaiting review"), and only the
+   master coach sees it, marked as a preview.
+
    Progress persists in localStorage (acelabs.fullmock.v1.*) with pause
    semantics: a closed tab stops the clock. The report is raw scores and
    time per section only. No scaled scores, no predictions.
@@ -71,7 +77,13 @@
   }
   function save() { if (S) { S.savedAt = Date.now(); write(K_ACTIVE, S); } }
 
-  function rcItems(sectionId) {
+  function rcItems(rcRef) {
+    var sectionId = rcRef && typeof rcRef === 'object' ? rcRef.section : rcRef;
+    if (rcRef && rcRef.passages) {   // a new form carries its own three passages
+      var own = [];
+      rcRef.passages.forEach(function (p, pi) { p.questions.forEach(function (q) { own.push({ kind: 'rc', sub: 'RC', p: p, pi: pi, q: q }); }); });
+      return own;
+    }
     if (!RC) return [];
     var all = RC.sections || [];
     var sec = all.filter(function (s) { return s.id === sectionId; })[0];
@@ -90,7 +102,7 @@
     return {
       sons: [].concat(mock.sections.bio.map(mc('Biology')), mock.sections.gc.map(mc('Gen Chem')), mock.sections.ochem.map(mc('OChem'))),
       pat: null,
-      rc: rcItems(mock.rc.section),
+      rc: rcItems(mock.rc),
       qr: mock.sections.qr.map(mc('QR'))
     };
   }
@@ -104,6 +116,34 @@
   }
   function keyOf(x) { return x.kind === 'mc' ? x.it.correct : x.kind === 'pat' ? x.it.answer : x.q.key; }
   function items(sec) { return R.items[sec] || []; }
+
+  /* ---------------- new forms (private banks, Thomas-approved) ---------------- */
+  var ACE = { listed: false, reviewer: false };
+  function aceHeaders() { var h = {}; try { var s = JSON.parse(localStorage.getItem('ace.v1.session') || 'null'); if (s && s.token && s.exp * 1000 > Date.now()) h['X-Ace-Session'] = s.token; } catch (e) { /* no session */ } return h; }
+  function aceFetch(q) {
+    if (typeof fetch !== 'function') return Promise.resolve(null);
+    return fetch('/.netlify/functions/' + 'ace-bank-forms' + (q || ''), { credentials: 'same-origin', headers: aceHeaders() })
+      .then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; });
+  }
+  function loadAceForms() {
+    return aceFetch('').then(function (j) {
+      ACE.listed = true;
+      if (!j || !j.ok || !j.forms) return;
+      ACE.reviewer = !!j.reviewer;
+      j.forms.forEach(function (f) {
+        if (mockById(f.id)) return;
+        MOCKS.push({ id: f.id, name: f.name, ace: true, loaded: false, status: f.status, approved: f.approved, needed: f.needed, sections: null, pat: null, rc: null });
+      });
+    });
+  }
+  function ensureLoaded(m) {
+    if (!m || !m.ace || m.loaded) return Promise.resolve(m);
+    return aceFetch('?form=' + encodeURIComponent(m.id)).then(function (j) {
+      if (!j || !j.ok || !j.mock) throw new Error('form not available');
+      m.sections = j.mock.sections; m.pat = j.mock.pat; m.rc = j.mock.rc; m.loaded = true; m.preview = !!j.preview;
+      return m;
+    });
+  }
 
   /* ---------------- landing ---------------- */
   function attempts() { return read(K_ATTEMPTS, []); }
@@ -127,7 +167,7 @@
       var where = act.at === 'break' ? 'the optional break' : (SEC[act.sec] ? SEC[act.sec].name + (act.at === 'run' ? ', question ' + (act.idx + 1) : ', section start') : 'the start');
       $('resume').innerHTML = '<div class="resume"><div class="grow"><b>' + esc(mk.name) + ' is waiting for you.</b> You stopped at ' + esc(where) + '. The clock paused when you left.</div>' +
         '<button class="btn gold" id="resumeBtn" type="button">Resume</button><button class="btn" id="discardBtn" type="button">Start over</button></div>';
-      $('resumeBtn').addEventListener('click', function () { resume(act); });
+      $('resumeBtn').addEventListener('click', function () { ensureLoaded(mk).then(function () { resume(act); }, function () { confirmBox('This test is not available', 'It could not be loaded. Check the connection and try again.', [{ t: 'OK', primary: true, fn: function () {} }], true); }); });
       $('discardBtn').addEventListener('click', function () { confirmBox('Start over?', 'This clears the test in progress. Finished reports stay saved.', [{ t: 'Keep it', fn: function () {} }, { t: 'Clear it', primary: true, fn: function () { drop(K_ACTIVE); renderLanding(); } }], true); });
     } else $('resume').innerHTML = '';
 
@@ -136,7 +176,8 @@
     $('tests').innerHTML = MOCKS.map(function (m, i) {
       var last = hist.filter(function (a) { return a.mockId === m.id; })[0];
       var lastLine = last ? '<span class="last">Last: ' + last.record.totalCorrect + ' of ' + last.record.totalQs + ' on ' + new Date(last.ts).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + '</span>' : '<span class="last">Not taken yet</span>';
-      return '<button class="tcard" type="button" data-id="' + m.id + '"><span class="n">' + (i + 1) + '</span><span class="t">' + esc(m.name) + '</span><span class="d">280 questions, 4 hours 15 minutes plus the optional break</span>' + lastLine + '</button>';
+      var aceLine = m.ace && m.status !== 'ready' ? '<span class="last">Coach preview: awaiting review, ' + m.approved + ' of ' + m.needed + ' approved. Hidden from students.</span>' : '';
+      return '<button class="tcard" type="button" data-id="' + m.id + '"' + (m.ace ? ' data-ace="' + esc(m.status) + '"' : '') + '><span class="n">' + (i + 1) + '</span><span class="t">' + esc(m.name) + '</span><span class="d">280 questions, 4 hours 15 minutes plus the optional break</span>' + (aceLine || lastLine) + '</button>';
     }).join('');
     Array.prototype.forEach.call($('tests').querySelectorAll('.tcard'), function (b) {
       b.addEventListener('click', function () { chooseTest(b.dataset.id); });
@@ -151,6 +192,11 @@
     }
   }
   function chooseTest(id) {
+    var m0 = mockById(id);
+    if (m0 && m0.ace && !m0.loaded) {
+      ensureLoaded(m0).then(function () { chooseTest(id); }, function () { confirmBox('This test is not available', 'It could not be loaded. Check the connection and try again.', [{ t: 'OK', primary: true, fn: function () {} }], true); });
+      return;
+    }
     var act = read(K_ACTIVE, null);
     if (act && act.at !== 'done' && mockById(act.mockId)) {
       confirmBox('A test is already in progress', 'Starting a new one clears the test in progress. Finished reports stay saved.', [{ t: 'Keep it', fn: function () {} }, { t: 'Start the new test', primary: true, fn: function () { drop(K_ACTIVE); start(id); } }], true);
@@ -188,6 +234,7 @@
 
   function tick() {
     var now = Date.now(), dt = (now - R.lastTick) / 1000; R.lastTick = now;
+    syncTimed();
     if (!S || dt <= 0 || dt > 5) return;          // a long gap is a sleeping tab: pause, do not charge it
     if (S.at === 'run') {
       S.elapsed[S.sec] += dt;
@@ -252,7 +299,12 @@
     if (patWait) ensurePat(mockById(S.mockId)).catch(function () {});
     window.scrollTo(0, 0);
   }
-  function stopTimer() { if (R.timer) { clearInterval(R.timer); R.timer = null; } closeWins(); }
+  function stopTimer() { if (R.timer) { clearInterval(R.timer); R.timer = null; } closeWins(); clearTimed(); }
+  /* The shared bar and the phone tab bar hide while a section clock runs (acelabs.timed). */
+  var timedUntil = 0;
+  function setTimed(sec) { timedUntil = Date.now() + sec * 1000; try { localStorage.setItem('acelabs.timed', JSON.stringify({ until: timedUntil })); window.dispatchEvent(new Event('acelabs:timed')); } catch (e) { /* storage blocked */ } }
+  function clearTimed() { if (!timedUntil) return; timedUntil = 0; try { localStorage.setItem('acelabs.timed', JSON.stringify({ until: 0 })); window.dispatchEvent(new Event('acelabs:timed')); } catch (e) { /* storage blocked */ } }
+  function syncTimed() { if (S && S.at === 'run') { var rem = SEC[S.sec].min * 60 - S.elapsed[S.sec]; if (!timedUntil || timedUntil - Date.now() < 20000 || timedUntil - Date.now() > rem * 1000 + 60000) setTimed(rem + 30); } else clearTimed(); }
 
   /* ---------------- question screens ---------------- */
   function chipsFor(x) {
@@ -312,6 +364,7 @@
     var subj = S.sec === 'sons' ? 'Survey of the Natural Sciences: ' + (x.sub === 'Biology' ? 'Biology' : x.sub === 'Gen Chem' ? 'General Chemistry' : 'Organic Chemistry') : 'Quantitative Reasoning';
     var h = '<div class="pm-subject">' + subj + '</div><div class="pm-stem">' + esc(it.q) + '</div>';
     if (it.qs) h += '<div class="pm-mol pm-stem-mol"><canvas data-smiles="' + esc(it.qs) + '" width="380" height="170"></canvas></div>';
+    if (it.img) h += '<div class="pm-fig"><img src="' + esc(it.img) + '" alt="' + esc(it.imgAlt || '') + '" style="display:block;max-width:100%;height:auto;margin:6px 0 10px;background:#fff"></div>';
     h += '<div class="pm-opts" role="radiogroup">' + it.opts.map(function (o, i) {
       var inner = it.os ? '<span class="pm-mol"><canvas data-smiles="' + esc(o) + '" width="300" height="140"></canvas></span>' : esc(o);
       return optRow(i, inner, a === i);
@@ -555,7 +608,7 @@
         var ok = ans[i] === keyOf(x);
         if (ok) c++;
         add(res.subjects, x.sub, ok);
-        var topic = x.kind === 'mc' ? x.it.topic : x.kind === 'pat' ? (PAT.SECTIONS.filter(function (s) { return s.type === x.it.type; })[0] || {}).name : (RC.types[x.q.type] || x.q.type);
+        var topic = x.kind === 'mc' ? x.it.topic : x.kind === 'pat' ? (PAT.SECTIONS.filter(function (s) { return s.type === x.it.type; })[0] || {}).name : ((RC && RC.types[x.q.type]) || x.q.type);
         add(res.topics, x.sub + '|' + topic, ok);
         if (!ok) res.misses.push({ sec: sk, i: i, x: x, ans: ans[i] });
       });
@@ -582,7 +635,7 @@
       hist.push(rec); write('al:mockHistory', hist.slice(-50));
     } catch (e) { /* cache only */ }
     drop(K_ACTIVE);
-    var done = S; S = null;
+    var done = S; S = null; clearTimed();
     renderReport(done, res, rec);
     toSharedRecord(done, rec);
   }
@@ -594,7 +647,8 @@
     SECTION_KEYS.forEach(function (sk) {
       items(sk).forEach(function (x, i) {
         var picked = st.answers[sk][i];
-        if (x.kind === 'mc') rows.push({ item: Object.assign({}, x.it, { section: SUBSEC[x.sub] || x.it.section }), picked: picked == null ? null : picked });
+        // topic: the course stop (tests 1 to 4) so shared/ace-skills.js can tag it; the new forms carry their skill
+        if (x.kind === 'mc') rows.push({ item: Object.assign({}, x.it, { section: SUBSEC[x.sub] || x.it.section, topic: x.it.stop || x.it.topic, topicName: x.it.topic }), picked: picked == null ? null : picked });
         else if (x.kind === 'pat') {
           var name = (PAT.SECTIONS.filter(function (s) { return s.type === x.it.type; })[0] || {}).name || x.it.type;
           rows.push({ item: { id: 'pat:' + st.mockId + ':' + (i + 1), section: 'pat', topic: x.it.type, topicName: name, answer: x.it.answer, note: 'PAT, ' + name + ', question ' + (i + 1) + '. The figure is in this test\u2019s report.' }, picked: picked == null ? null : picked });
@@ -609,6 +663,7 @@
   function openSavedReport(id) {
     var a = attempts().filter(function (x) { return x.id === id; })[0]; if (!a) return;
     var m = mockById(a.mockId); if (!m) return;
+    if (m.ace && !m.loaded) { ensureLoaded(m).then(function () { openSavedReport(id); }, function () {}); return; }
     R.items = buildItems(m); R.patTest = null; R.patBuilding = null;
     var st = { mockId: a.mockId, answers: a.answers, spent: a.spent, elapsed: a.elapsed, done: a.done };
     $('landing').classList.add('hidden');
@@ -670,6 +725,7 @@
       var it = x.it, show = function (i) { return it.os ? '<span class="pm-mol" style="display:inline-block;vertical-align:middle;max-width:220px"><canvas data-smiles="' + esc(it.opts[i]) + '" width="220" height="110"></canvas></span>' : esc(it.opts[i]); };
       h += '<div class="q">' + esc(it.q) + '</div>';
       if (it.qs) h += '<span class="pm-mol" style="display:block;max-width:300px"><canvas data-smiles="' + esc(it.qs) + '" width="300" height="140"></canvas></span>';
+      if (it.img) h += '<img src="' + esc(it.img) + '" alt="' + esc(it.imgAlt || '') + '" style="display:block;max-width:100%;height:auto;margin:6px 0;background:#fff">';
       h += '<div class="a">Your answer: <b>' + (ms.ans == null ? 'left open' : L[ms.ans] + '. ' + show(ms.ans)) + '</b><br>Correct: <b>' + L[it.correct] + '. ' + show(it.correct) + '</b></div>';
       h += '<div class="why">' + esc(it.why) + (ms.ans != null && it.traps && it.traps[ms.ans] ? '<br><br><b>About your pick:</b> ' + esc(it.traps[ms.ans]) : '') + '</div>';
       var night = it.nights && it.nights[0];
@@ -709,4 +765,5 @@
   };
 
   renderLanding();
+  loadAceForms().then(function () { if (!S && !$('landing').classList.contains('hidden')) renderLanding(); });
 })();

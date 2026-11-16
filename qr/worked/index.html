@@ -34,8 +34,9 @@
   <div id="q"></div>
 </main>
 <script src="/shared/ace-ui.js?v=4"></script>
-<script src="/shared/ace-record.js?v=5"></script>
-<script src="/shared/ace-question.js?v=7"></script>
+<script src="/shared/ace-skills.js?v=2"></script>
+<script src="/shared/ace-record.js?v=6"></script>
+<script src="/shared/ace-question.js?v=8"></script>
 <script>
 (function () {
   'use strict';
@@ -148,7 +149,7 @@
     var item = { id: 'qr:worked:' + f.id, section: 'qr', topic: 'worked-' + f.id, topicName: f.name, stem: f.stem, choices: f.choices, answer: f.answer, why: f.why, steps: f.steps,
       figure: { html: f.svg, caption: 'Answer first. The worked picture draws in after.', revealCaption: 'The method, drawn step by step.' } };
     window.AceQuestion.mount(document.getElementById('q'), item, { label: 'QR · ' + f.name, number: k + 1, total: F.length, confidence: true, nextLabel: k + 1 < F.length ? 'Next problem' : 'Back to the first',
-      onAnswer: function (res) { if (window.AceRecord) window.AceRecord.record({ item: item, picked: res.picked, answer: res.answer, ok: res.ok, ms: res.ms, src: 'qr-worked', first: res.first, changes: res.changes, change: res.change, conf: res.conf, repair: false }); },
+      onAnswer: function (res) { if (window.AceRecord) window.AceRecord.record({ item: item, picked: res.picked, answer: res.answer, ok: res.ok, ms: res.ms, src: 'qr-worked', first: res.first, changes: res.changes, change: res.change, conf: res.conf, tool: 'lab' }); },
       onNext: function () { show((k + 1) % F.length); } });
   }
   show(0);

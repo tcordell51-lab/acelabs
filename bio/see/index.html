@@ -35,8 +35,9 @@
   <p class="aui-small">The pictures are made by AI without any words in them; every label and leader is drawn by the site. A picture drawn wrong is thrown out, not patched with labels.</p>
 </main>
 <script src="/shared/ace-ui.js?v=4"></script>
-<script src="/shared/ace-record.js?v=5"></script>
-<script src="/shared/ace-question.js?v=7"></script>
+<script src="/shared/ace-skills.js?v=2"></script>
+<script src="/shared/ace-record.js?v=6"></script>
+<script src="/shared/ace-question.js?v=8"></script>
 <script>
 (function () {
   'use strict';
@@ -196,7 +197,7 @@
     window.AceQuestion.mount(document.getElementById('q'), item, {
       label: 'Biology · ' + p.name, number: i + 1, total: PLATES.length, confidence: true,
       nextLabel: i + 1 < PLATES.length ? 'Next plate' : 'Back to the first plate',
-      onAnswer: function (res) { if (window.AceRecord) window.AceRecord.record({ item: item, picked: res.picked, answer: res.answer, ok: res.ok, ms: res.ms, src: 'bio-plates', first: res.first, changes: res.changes, change: res.change, conf: res.conf, repair: false }); },
+      onAnswer: function (res) { if (window.AceRecord) window.AceRecord.record({ item: item, picked: res.picked, answer: res.answer, ok: res.ok, ms: res.ms, src: 'bio-plates', first: res.first, changes: res.changes, change: res.change, conf: res.conf, tool: 'lab' }); },
       onNext: function () { show((cur + 1) % PLATES.length); }
     });
   }

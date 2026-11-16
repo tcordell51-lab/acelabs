@@ -47,8 +47,9 @@
   <p class="aui-small">Geometry names and ideal angles: OpenStax Chemistry 2e, 7.6 Molecular Structure and Polarity (Figures 7.15 and 7.20). The model uses ideal angles; real lone pairs squeeze them a little (about 107° in NH₃ and 104.5° in H₂O). The angle shown is measured from the model's own coordinates.</p>
 </main>
 <script src="/shared/ace-ui.js?v=4"></script>
-<script src="/shared/ace-record.js?v=5"></script>
-<script src="/shared/ace-question.js?v=7"></script>
+<script src="/shared/ace-skills.js?v=2"></script>
+<script src="/shared/ace-record.js?v=6"></script>
+<script src="/shared/ace-question.js?v=8"></script>
 <script type="module">
 import * as THREE from '/shared/three.module.min.js';
 const $ = (id) => document.getElementById(id);
@@ -128,7 +129,7 @@ function show(k) {
     steps: ['Count electron domains on the center: ' + m + ' bonds + ' + n + ' lone pairs = ' + (m + n) + '.', (m + n) + ' domains: ' + eg + ' electron geometry.', 'Name the shape from the atoms only: ' + shape + '.'] };
   window.AceQuestion.mount($('q'), item, { label: 'Gen Chem · VSEPR', confidence: true, nextLabel: 'Next molecule',
     onAnswer: (res) => { view.classList.add('is-revealed'); $('f-dom').textContent = m + n; $('f-lp').textContent = n; $('f-ang').textContent = geo.angs.filter((a) => a < 180).concat(geo.angs.length === 1 && geo.angs[0] === 180 ? [180] : []).join(', ') + '°'; $('f-ang').classList.remove('hide');
-      if (window.AceRecord) window.AceRecord.record({ item, picked: res.picked, answer: res.answer, ok: res.ok, ms: res.ms, src: 'gc-vsepr', first: res.first, changes: res.changes, change: res.change, conf: res.conf, repair: false }); },
+      if (window.AceRecord) window.AceRecord.record({ item, picked: res.picked, answer: res.answer, ok: res.ok, ms: res.ms, src: 'gc-vsepr', first: res.first, changes: res.changes, change: res.change, conf: res.conf, tool: 'lab' }); },
     onNext: () => show((k + 1) % MOL.length) });
   size();
 }
