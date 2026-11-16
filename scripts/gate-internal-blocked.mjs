@@ -43,7 +43,8 @@ const INTERNAL_PAGES = [
   'tricks/videos/voiceover-studio.html',
   'tools/ochem/roots/dev.html',
   'tools/ochem/tree/dev.html',
-  'tools/ochem/tree/smiles.html'
+  'tools/ochem/tree/smiles.html',
+  'scripts/dat-wording-report.json'   // 2026-11-16: the wording rewrite's audit trail (internal)
 ];
 
 // Production clip pages that a student page loads as its "Watch" explainer.
