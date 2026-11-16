@@ -83,3 +83,16 @@ test('withFrom keeps the hash at the end', () => {
   assert.strictEqual(V.withFrom('/tools/ochem/?game=wheel&wheel=ketone', 'review'), '/tools/ochem/?game=wheel&wheel=ketone&from=review');
   assert.strictEqual(V.withFrom('/tools/ochem/#alkenes', 'repair'), '/tools/ochem/?from=repair#alkenes');
 });
+
+// Reaction misses open the exact wheel spoke (2026-11-16, with the wheels rebuild in #16).
+test('every See it spoke points at a reaction the wheel really has', () => {
+  const V = require('../../shared/ace-visuals.js');
+  const products = JSON.parse(require('node:fs').readFileSync(require('node:path').join(__dirname, '../../tools/ochem/wheel/wheel-structures.json'), 'utf8')).products;
+  for (const r of V.SPOKES) assert.ok(products[r[1] + '__' + r[2]], r[1] + '__' + r[2] + ' is not on a wheel');
+});
+test('an OChem reagent miss opens its spoke; other sections are untouched', () => {
+  const V = require('../../shared/ace-visuals.js');
+  const m = V.match({ section: 'ochem', topic: 'alkene-add', topicName: 'Alkene additions', stem: 'Propene is treated with BH3 in THF, then H2O2 and NaOH. What is the major product?' });
+  assert.match(m.url, /\?game=wheel&wheel=alkene_terminal&spoke=bh3_h2o2$/);
+  assert.strictEqual(V.spoke({ section: 'gchem', stem: 'HBr' }), null);
+});

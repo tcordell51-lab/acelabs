@@ -22,7 +22,7 @@
   /* The "See it" link for a miss: the best-matching visual (shared/ace-visuals.js), or null.
      Opening the picture counts like opening the lesson: no win that day (onOpen says so). */
   function seeIt(e, onOpen) {
-    var v = window.AceVisuals ? window.AceVisuals.match({ section: e.section, topic: e.topic, topicName: e.topicName }) : null;
+    var v = window.AceVisuals ? window.AceVisuals.match({ section: e.section, topic: e.topic, topicName: e.topicName, concept: e.skillName, stem: e.itemData && e.itemData.stem }) : null;
     if (!v) return null;
     var a = el('a', 'see-it'); a.innerHTML = EYE; a.appendChild(document.createTextNode('See it'));
     a.href = window.AceVisuals.withFrom(v.url, 'repair'); a.title = v.label; a.setAttribute('data-see', v.id);

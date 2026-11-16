@@ -169,7 +169,7 @@
       // After a miss: See it, the matching visual (shared/ace-visuals.js). Opening it after the
       // answer is free: the answer is already saved as unassisted.
       if (!ok && opts.seeIt !== false && window.AceVisuals) {
-        var v = window.AceVisuals.match({ section: item.section, topic: item.topic, topicName: item.topicName, concept: item.skillName });
+        var v = window.AceVisuals.match({ section: item.section, topic: item.topic, topicName: item.topicName, concept: item.skillName, stem: item.stem });
         if (v) {
           var see = el('a', 'aui-q__see', 'See it: ' + v.label); see.href = window.AceVisuals.withFrom(v.url, opts.seeFrom || 'set'); see.setAttribute('data-see', v.id);
           see.addEventListener('click', function () { if (window.AceRecord) window.AceRecord.event('see-after-miss', { id: item.id, visual: v.id }); });

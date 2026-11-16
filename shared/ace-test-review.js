@@ -145,7 +145,7 @@
         line.hidden = !(entry && entry.reason); if (entry && entry.reason) line.textContent = LINE[entry.reason];
         why.appendChild(line);
         li.appendChild(why);
-        var v = window.AceVisuals ? window.AceVisuals.match({ section: r.section, topic: r.topic, topicName: r.topicName, concept: r.skillName }) : null;
+        var v = window.AceVisuals ? window.AceVisuals.match({ section: r.section, topic: r.topic, topicName: r.topicName, concept: r.skillName, stem: r.stem }) : null;
         if (v) {
           var a = el('a', 'see-it'); a.innerHTML = EYE; a.appendChild(document.createTextNode(' See it: ' + v.label));
           a.href = window.AceVisuals.withFrom(v.url, 'review'); a.setAttribute('data-see', v.id);

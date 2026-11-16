@@ -406,9 +406,52 @@
     }
     return best;
   }
+  /* OChem reaction misses open the exact spoke of the reaction wheel when the question names the
+     reagent: ?game=wheel&wheel=<substrate>&spoke=<reagent key> (the wheel's own deep link). Each row:
+     [regex on the stem, wheel, spoke, label]. Keys are checked against
+     tools/ochem/wheel/wheel-structures.json in tests/shell/ace-visuals.test.js. First match wins. */
+  var SPOKES = [
+    [/peroxide|ROOR/i, 'alkene_terminal', 'hbr_peroxide', 'HBr with peroxide, anti-Markovnikov'],
+    [/BH3|9-BBN|hydroborat/i, 'alkene_terminal', 'bh3_h2o2', 'Hydroboration, then H2O2'],
+    [/Hg\(OAc\)2|oxymercur|HgSO4/i, 'alkene_terminal', 'hg_h2o', 'Oxymercuration'],
+    [/mCPBA|peroxy ?acid/i, 'alkene_terminal', 'mcpba', 'mCPBA epoxidation'],
+    [/OsO4/i, 'alkene_terminal', 'oso4', 'OsO4 dihydroxylation'],
+    [/\bO3\b|ozonoly/i, 'alkene_terminal', 'o3_zn', 'Ozonolysis'],
+    [/lindlar/i, 'alkyne_terminal', 'h2_lindlar', 'Lindlar hydrogenation'],
+    [/Na\s*(\/|in|,)\s*NH3|dissolving metal/i, 'alkyne_terminal', 'na_nh3', 'Na in NH3'],
+    [/Br2.*H2O|halohydrin/i, 'alkene_terminal', 'br2_h2o', 'Halohydrin'],
+    [/HNO3/i, 'benzene', 'hno3_h2so4', 'Nitration of benzene'],
+    [/SO3/i, 'benzene', 'so3_h2so4', 'Sulfonation of benzene'],
+    [/AlCl3.*(acyl|RCOCl|chloride)|acylation/i, 'benzene', 'rcocl_alcl3', 'Friedel-Crafts acylation'],
+    [/AlCl3|alkylation/i, 'benzene', 'rx_alcl3', 'Friedel-Crafts alkylation'],
+    [/FeBr3|FeCl3/i, 'benzene', 'x2_fe', 'Halogenation of benzene'],
+    [/wittig|ylide/i, 'aldehyde', 'wittig_ch2', 'Wittig'],
+    [/DIBAL/i, 'ester', 'dibal_cold', 'DIBAL-H, cold'],
+    [/NaBH4/i, 'aldehyde', 'nabh4', 'NaBH4 reduction'],
+    [/LiAlH4|LAH/i, 'aldehyde', 'lah', 'LiAlH4 reduction'],
+    [/MgBr|MgCl|grignard/i, 'aldehyde', 'rmgbr_h', 'Grignard addition'],
+    [/acetal|TsOH|equivalents? of (m|)ethanol/i, 'aldehyde', '2_roh_h', 'Acetal formation'],
+    [/PCC/i, 'alcohol_primary', 'pcc', 'PCC oxidation'],
+    [/jones|chromic|CrO3|Na2Cr2O7/i, 'alcohol_secondary', 'jones', 'Jones oxidation'],
+    [/SOCl2/i, 'alcohol_primary', 'socl2', 'SOCl2'],
+    [/PBr3/i, 'alcohol_primary', 'pbr3', 'PBr3'],
+    [/t-?BuOK|tert-butoxide/i, 'halide_tertiary', 'tbuok', 'Bulky base, E2'],
+    [/H2\s*(\/|over|with|,)\s*(Pd|Pt|Ni)\b/, 'alkene_terminal', 'h2_pt', 'Hydrogenation'],
+    [/HBr|HCl/, 'alkene_terminal', 'hbr', 'HBr, Markovnikov'],
+    [/Br2|Cl2/, 'alkene_terminal', 'br2', 'Br2 addition']
+  ];
+  function spoke(q) {
+    if (!q || section(q.section) !== 'ochem' || !q.stem) return null;
+    for (var i = 0; i < SPOKES.length; i++) if (SPOKES[i][0].test(q.stem)) {
+      var r = SPOKES[i];
+      return { id: 'oc-wheels', title: 'Reaction wheels', url: OC + '?game=wheel&wheel=' + r[1] + '&spoke=' + r[2], label: r[3] + ' on its wheel', wheel: r[1], spoke: r[2] };
+    }
+    return null;
+  }
   function match(q) {
     if (!q) return null;
     var sec = section(q.section); if (!sec) return null;
+    var sp = spoke(q); if (sp) return sp;
     var text = ' ' + [q.topic, q.topicName, q.concept, q.skill].map(norm).filter(Boolean).join(' | ') + ' ';
     if (text.trim() === '') return null;
     var best = null, top = 0;
@@ -431,7 +474,7 @@
     return base + (base.indexOf('?') < 0 ? '?' : '&') + 'from=' + encodeURIComponent(from) + hash;
   }
 
-  var api = { tools: TOOLS, sections: SECTIONS, match: match, section: section, norm: norm, withFrom: withFrom };
+  var api = { tools: TOOLS, sections: SECTIONS, match: match, spoke: spoke, SPOKES: SPOKES, section: section, norm: norm, withFrom: withFrom };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   if (root) root.AceVisuals = api;
 })(typeof window !== 'undefined' ? window : null);

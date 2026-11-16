@@ -21102,12 +21102,27 @@ html[data-theme="dark"] .dt-case-select{background:var(--white);color:var(--ink)
   // Retold is the canonical front door: if the student arrived from a night,
   // do not pop the engine's own welcome - it would be a competing entry point.
   var fromNight=/[?&]from=night\d/.test(location.search);
-  if(!seen && !fromNight){
+  // A deep link (a hub hash like #alkenes, or a wheel/game link) means the
+  // student was sent to one exact place: never cover it with the welcome.
+  // It stays unseen, so it can still greet them on a plain visit later.
+  function deepLinked(){
+    var h=(location.hash||'').replace('#','');
+    if(h && h!=='top' && h!=='intro') return true;
+    return /[?&](game|wheel|spoke|hub|view|q|card)=/.test(location.search);
+  }
+  if(!seen && !fromNight && !deepLinked()){
     setTimeout(()=>{
+      if(deepLinked()) return;
       document.getElementById('welcomeBackdrop')?.classList.add('open');
       document.getElementById('welcomeCard')?.classList.add('open');
     },600);
   }
+  function hideOnly(){
+    document.getElementById('welcomeBackdrop')?.classList.remove('open');
+    document.getElementById('welcomeCard')?.classList.remove('open');
+  }
+  window.__hideWelcome=hideOnly;
+  window.addEventListener('hashchange',()=>{ if(deepLinked()&&document.getElementById('welcomeCard')?.classList.contains('open')) hideOnly(); });
   function dismiss(){
     document.getElementById('welcomeBackdrop')?.classList.remove('open');
     document.getElementById('welcomeCard')?.classList.remove('open');
@@ -22278,13 +22293,13 @@ const SUBSTRATE_SVG = {
   alkene_terminal: skFrag('<line class="sk-bond" x1="16" y1="48" x2="36" y2="34"/><line class="sk-bond" x1="36" y1="34" x2="70" y2="34"/><line class="sk-bond" x1="38" y1="28" x2="68" y2="28"/>', 110, 70),
   alkene_internal: skFrag('<line class="sk-bond" x1="12" y1="48" x2="32" y2="34"/><line class="sk-bond" x1="32" y1="34" x2="62" y2="34"/><line class="sk-bond" x1="34" y1="28" x2="60" y2="28"/><line class="sk-bond" x1="62" y1="34" x2="82" y2="48"/>', 110, 70),
   alkyne_terminal: skFrag('<line class="sk-bond" x1="14" y1="48" x2="32" y2="34"/><line class="sk-bond" x1="32" y1="34" x2="44" y2="34"/><line class="sk-bond" x1="44" y1="34" x2="80" y2="34"/><line class="sk-bond" x1="46" y1="29" x2="78" y2="29"/><line class="sk-bond" x1="46" y1="39" x2="78" y2="39"/>', 110, 70),
-  alkyne_internal: skFrag('<line class="sk-bond" x1="10" y1="48" x2="26" y2="34"/><line class="sk-bond" x1="26" y1="34" x2="38" y2="34"/><line class="sk-bond" x1="38" y1="34" x2="66" y2="34"/><line class="sk-bond" x1="40" y1="29" x2="64" y2="29"/><line class="sk-bond" x1="40" y1="39" x2="64" y2="39"/><line class="sk-bond" x1="66" y1="34" x2="78" y2="34"/><line class="sk-bond" x1="78" y1="34" x2="94" y2="48"/>', 110, 70),
+  alkyne_internal: skFrag('<line class="sk-bond" x1="16" y1="34" x2="36" y2="34"/><line class="sk-bond" x1="36" y1="34" x2="74" y2="34"/><line class="sk-bond" x1="38" y1="29" x2="72" y2="29"/><line class="sk-bond" x1="38" y1="39" x2="72" y2="39"/><line class="sk-bond" x1="74" y1="34" x2="94" y2="34"/>', 110, 70),
   alcohol_primary: skFrag('<line class="sk-bond" x1="14" y1="48" x2="32" y2="34"/><line class="sk-bond" x1="32" y1="34" x2="52" y2="48"/><line class="sk-bond" x1="52" y1="48" x2="72" y2="34"/><text class="sk-atom O" x="83" y="34" font-size="12">OH</text>', 110, 70),
-  alcohol_secondary: skFrag('<line class="sk-bond" x1="16" y1="48" x2="36" y2="34"/><line class="sk-bond" x1="36" y1="34" x2="56" y2="48"/><line class="sk-bond" x1="56" y1="48" x2="76" y2="34"/><line class="sk-bond" x1="36" y1="34" x2="36" y2="16"/><text class="sk-atom O" x="36" y="12" font-size="12">OH</text>', 110, 70),
-  alcohol_tertiary: skFrag('<line class="sk-bond" x1="14" y1="50" x2="34" y2="38"/><line class="sk-bond" x1="34" y1="38" x2="54" y2="50"/><line class="sk-bond" x1="54" y1="50" x2="74" y2="38"/><line class="sk-bond" x1="54" y1="50" x2="54" y2="62"/><line class="sk-bond" x1="54" y1="50" x2="54" y2="32"/><text class="sk-atom O" x="54" y="28" font-size="12">OH</text>', 110, 80),
+  alcohol_secondary: skFrag('<line class="sk-bond" x1="16" y1="48" x2="36" y2="34"/><line class="sk-bond" x1="36" y1="34" x2="56" y2="48"/><line class="sk-bond" x1="36" y1="34" x2="36" y2="16"/><text class="sk-atom O" x="36" y="12" font-size="12">OH</text>', 110, 70),
+  alcohol_tertiary: skFrag('<line class="sk-bond" x1="34" y1="38" x2="54" y2="50"/><line class="sk-bond" x1="54" y1="50" x2="74" y2="38"/><line class="sk-bond" x1="54" y1="50" x2="54" y2="62"/><line class="sk-bond" x1="54" y1="50" x2="54" y2="32"/><text class="sk-atom O" x="54" y="28" font-size="12">OH</text>', 110, 80),
   halide_primary: skFrag('<line class="sk-bond" x1="14" y1="48" x2="32" y2="34"/><line class="sk-bond" x1="32" y1="34" x2="52" y2="48"/><line class="sk-bond" x1="52" y1="48" x2="72" y2="34"/><text class="sk-atom X" x="83" y="34" font-size="12">Br</text>', 110, 70),
-  halide_secondary: skFrag('<line class="sk-bond" x1="16" y1="48" x2="36" y2="34"/><line class="sk-bond" x1="36" y1="34" x2="56" y2="48"/><line class="sk-bond" x1="56" y1="48" x2="76" y2="34"/><line class="sk-bond" x1="36" y1="34" x2="36" y2="16"/><text class="sk-atom X" x="36" y="12" font-size="12">Br</text>', 110, 70),
-  halide_tertiary: skFrag('<line class="sk-bond" x1="14" y1="50" x2="34" y2="38"/><line class="sk-bond" x1="34" y1="38" x2="54" y2="50"/><line class="sk-bond" x1="54" y1="50" x2="74" y2="38"/><line class="sk-bond" x1="54" y1="50" x2="54" y2="62"/><line class="sk-bond" x1="54" y1="50" x2="54" y2="32"/><text class="sk-atom X" x="54" y="28" font-size="12">Br</text>', 110, 80),
+  halide_secondary: skFrag('<line class="sk-bond" x1="16" y1="48" x2="36" y2="34"/><line class="sk-bond" x1="36" y1="34" x2="56" y2="48"/><line class="sk-bond" x1="36" y1="34" x2="36" y2="16"/><text class="sk-atom X" x="36" y="12" font-size="12">Br</text>', 110, 70),
+  halide_tertiary: skFrag('<line class="sk-bond" x1="34" y1="38" x2="54" y2="50"/><line class="sk-bond" x1="54" y1="50" x2="74" y2="38"/><line class="sk-bond" x1="54" y1="50" x2="54" y2="62"/><line class="sk-bond" x1="54" y1="50" x2="54" y2="32"/><text class="sk-atom X" x="54" y="28" font-size="12">Br</text>', 110, 80),
   aldehyde: skFrag('<line class="sk-bond" x1="14" y1="48" x2="34" y2="34"/><line class="sk-bond" x1="34" y1="34" x2="54" y2="48"/><line class="sk-bond" x1="54" y1="48" x2="54" y2="30"/><line class="sk-bond" x1="58" y1="42" x2="58" y2="30"/><text class="sk-atom O" x="56" y="24" font-size="12">O</text>', 110, 70),
   ketone: skFrag('<line class="sk-bond" x1="14" y1="48" x2="34" y2="34"/><line class="sk-bond" x1="34" y1="34" x2="54" y2="48"/><line class="sk-bond" x1="54" y1="48" x2="74" y2="34"/><line class="sk-bond" x1="54" y1="48" x2="54" y2="30"/><line class="sk-bond" x1="50" y1="42" x2="50" y2="30"/><text class="sk-atom O" x="52" y="24" font-size="12">O</text>', 110, 70),
   acid: skFrag('<line class="sk-bond" x1="14" y1="48" x2="34" y2="34"/><line class="sk-bond" x1="34" y1="34" x2="34" y2="18"/><line class="sk-bond" x1="38" y1="26" x2="38" y2="18"/><text class="sk-atom O" x="36" y="12" font-size="12">O</text><line class="sk-bond" x1="34" y1="34" x2="54" y2="48"/><text class="sk-atom O" x="64" y="48" font-size="12">OH</text>', 110, 70),
@@ -22304,10 +22319,10 @@ const SUBSTRATE_NAME = {
   alkyne_internal: '2-butyne',
   alcohol_primary: '1-propanol',
   alcohol_secondary: '2-propanol',
-  alcohol_tertiary: 'tert-butanol',
+  alcohol_tertiary: 'tert-butanol (2-methyl-2-propanol)',
   halide_primary: '1-bromopropane',
   halide_secondary: '2-bromopropane',
-  halide_tertiary: 'tert-butyl bromide',
+  halide_tertiary: 'tert-butyl bromide (2-bromo-2-methylpropane)',
   aldehyde: 'propanal',
   ketone: '2-butanone',
   acid: 'acetic acid',
@@ -22407,7 +22422,7 @@ const RXN_DB = {
   'alkene_terminal__bh3_h2o2': { name:'1° alcohol (anti-Markov, syn)', formula:'R-CH₂-CH₂-OH', tags:['anti-Markov','syn','no rearr.'], bucket:3, explain:'<b>Hydroboration-oxidation</b>: concerted syn addition with B on the less-hindered C. H₂O₂/NaOH replaces B with OH with <em>retention</em>. Final alcohol is on the <b>less substituted</b> C.', hub:'alkenes', mech:'hydroboration',
     svg: skFrag('<line class="sk-bond" x1="18" y1="48" x2="38" y2="34"/><line class="sk-bond" x1="38" y1="34" x2="58" y2="48"/><line class="sk-bond" x1="58" y1="48" x2="78" y2="34"/><text class="sk-atom-sm O" x="84" y="34" font-size="11">OH</text>') },
   'alkene_terminal__h2_pt': { name:'Alkane (fully saturated)', formula:'R-CH₂-CH₃', tags:['syn','no rearr.'], bucket:3, explain:'H₂ on a metal surface adds both H\'s to the <b>same face</b> → syn. Doesn\'t touch C=O, aromatic rings, etc.', hub:'alkenes',
-    svg: skFrag('<line class="sk-bond" x1="20" y1="48" x2="42" y2="34"/><line class="sk-bond" x1="42" y1="34" x2="64" y2="48"/><line class="sk-bond" x1="64" y1="48" x2="86" y2="34"/>') },
+    svg: skFrag('<line class="sk-bond" x1="20" y1="48" x2="42" y2="34"/><line class="sk-bond" x1="42" y1="34" x2="64" y2="48"/>') },
   'alkene_terminal__br2': { name:'Vicinal anti-dibromide', formula:'R-CHBr-CH₂Br', tags:['anti','no rearr.'], bucket:2, explain:'Goes through a cyclic <b>bromonium</b> ion. Br⁻ attacks from the opposite face → <b>anti</b> addition. Cis alkene + Br₂ → racemic (R,R + S,S); trans alkene + Br₂ → meso.', hub:'alkenes',
     svg: skFrag('<line class="sk-bond" x1="14" y1="50" x2="34" y2="38"/><line class="sk-bond" x1="34" y1="38" x2="54" y2="50"/><line class="sk-bond" x1="34" y1="38" x2="34" y2="20"/><text class="sk-atom-sm X" x="36" y="14" font-size="10">Br</text><line class="sk-bond" x1="54" y1="50" x2="74" y2="38"/><text class="sk-atom-sm X" x="84" y="34" font-size="10">Br</text>') },
   'alkene_terminal__br2_h2o': { name:'Halohydrin (Markov OH, anti)', formula:'R-CH(OH)-CH₂Br', tags:['Markov (OH)','anti'], bucket:2, explain:'Same bromonium intermediate, but water attacks instead of Br⁻. The more-substituted C bears the OH (cation-like character); less-subst C gets Br. Still backside → anti.', hub:'alkenes',
@@ -22419,19 +22434,19 @@ const RXN_DB = {
   'alkene_terminal__o3_zn': { name:'Two carbonyls (cleavage)', formula:'R-CHO + CH₂O', tags:['cleaves','reductive workup'], bucket:0, explain:'Ozonolysis cleaves the C=C. Reductive workup (Zn/H₂O or Me₂S) gives <b>aldehydes</b> (or ketones). The positions of the resulting C=O tell you where the original C=C was, retrosynthesis tool.', hub:'alkenes',
     svg: skFrag('<line class="sk-bond" x1="12" y1="48" x2="30" y2="34"/><line class="sk-bond" x1="30" y1="34" x2="30" y2="16"/><line class="sk-bond" x1="34" y1="28" x2="34" y2="16"/><text class="sk-atom-sm O" x="32" y="10" font-size="10">O</text><text class="sk-atom-sm" x="43" y="40" font-size="9">H</text><text font-size="16" fill="#8C7235" x="60" y="40">+</text><text class="sk-atom-sm" x="80" y="40" font-size="10">H&#8322;C</text><line class="sk-bond" x1="90" y1="33" x2="101" y2="33"/><line class="sk-bond" x1="90" y1="38" x2="101" y2="38"/><text class="sk-atom-sm O" x="107" y="40" font-size="10">O</text>') },
   'alkene_terminal__o3_h2o2': { name:'Acetic acid + CO₂', formula:'CH₃-COOH + CO₂', tags:['cleaves','oxidative workup'], bucket:0, explain:'Oxidative workup converts any aldehyde to a <b>carboxylic acid</b>. A terminal =CH₂ ends up as CO₂.', hub:'alkenes', svg: skFrag('<line class="sk-bond" x1="8" y1="44" x2="22" y2="34"/><line class="sk-bond" x1="22" y1="34" x2="22" y2="20"/><line class="sk-bond" x1="26" y1="28" x2="26" y2="20"/><text class="sk-atom-sm O" x="24" y="14" font-size="11">O</text><line class="sk-bond" x1="22" y1="34" x2="36" y2="44"/><text class="sk-atom-sm O" x="46" y="44" font-size="11">OH</text><text font-size="14" fill="#8C7235" font-weight="700" x="68" y="40" text-anchor="middle">+</text><text class="sk-atom" x="90" y="40" font-size="12" fill="#b91c1c" font-weight="700">CO₂</text>',110,70) },
-  'alkene_terminal__kmno4_hot': { name:'Carboxylic acid + CO₂ (cleavage)', formula:'R-COOH + CO₂', tags:['cleaves','careful.'], bucket:0, explain:'Hot, concentrated KMnO₄ <b>cleaves</b> the alkene. Terminal =CH₂ oxidizes all the way to CO₂; the internal carbon becomes a carboxylic acid. Don\'t confuse with cold dilute KMnO₄ which gives a syn diol.', hub:'alkenes', svg: skFrag('<line class="sk-bond" x1="6" y1="44" x2="22" y2="34"/><line class="sk-bond" x1="22" y1="34" x2="36" y2="44"/><line class="sk-bond" x1="36" y1="44" x2="50" y2="34"/><line class="sk-bond" x1="50" y1="34" x2="50" y2="20"/><line class="sk-bond" x1="54" y1="28" x2="54" y2="20"/><text class="sk-atom-sm" x="52" y="14" font-size="11">O</text><line class="sk-bond" x1="50" y1="34" x2="64" y2="44"/><text class="sk-atom-sm" x="74" y="44" font-size="11">OH</text><text font-size="14" fill="#8C7235" font-weight="700" x="92" y="40" text-anchor="middle">+</text><text class="sk-atom-sm" x="118" y="40" font-size="12" fill="#b91c1c" font-weight="700">CO₂</text>',140,70) },
+  'alkene_terminal__kmno4_hot': { name:'Carboxylic acid + CO₂ (cleavage)', formula:'R-COOH + CO₂', tags:['cleaves','careful.'], bucket:0, explain:'Hot, concentrated KMnO₄ <b>cleaves</b> the alkene. Terminal =CH₂ oxidizes all the way to CO₂; the internal carbon becomes a carboxylic acid. Don\'t confuse with cold dilute KMnO₄ which gives a syn diol.', hub:'alkenes', svg: skFrag('<line class="sk-bond" x1="36" y1="44" x2="50" y2="34"/><line class="sk-bond" x1="50" y1="34" x2="50" y2="20"/><line class="sk-bond" x1="54" y1="28" x2="54" y2="20"/><text class="sk-atom-sm" x="52" y="14" font-size="11">O</text><line class="sk-bond" x1="50" y1="34" x2="64" y2="44"/><text class="sk-atom-sm" x="74" y="44" font-size="11">OH</text><text font-size="14" fill="#8C7235" font-weight="700" x="92" y="40" text-anchor="middle">+</text><text class="sk-atom-sm" x="118" y="40" font-size="12" fill="#b91c1c" font-weight="700">CO₂</text>',140,70) },
 
   // ── Alkene (internal), abbreviate: reuses most of terminal behaviors ──
-  'alkene_internal__h2_pt': { name:'Butane (alkane)', formula:'CH₃-CH₂-CH₂-CH₃', tags:['syn'], bucket:3, explain:'Syn hydrogenation across the double bond.', hub:'alkenes', svg: skFrag('<line class="sk-bond" x1="14" y1="48" x2="34" y2="34"/><line class="sk-bond" x1="34" y1="34" x2="54" y2="48"/><line class="sk-bond" x1="54" y1="48" x2="74" y2="34"/><line class="sk-bond" x1="74" y1="34" x2="94" y2="48"/>',110,70) },
-  'alkene_internal__hbr': { name:'2-bromobutane (Markov on asymmetric)', formula:'CH₃-CHBr-CH₂-CH₃', tags:['Markov','rearr.'], bucket:1, explain:'On a symmetric internal alkene regio doesn\'t matter. On asymmetric, Br goes to the more substituted C.', hub:'alkenes', svg: skFrag('<line class="sk-bond" x1="14" y1="48" x2="34" y2="34"/><line class="sk-bond" x1="34" y1="34" x2="54" y2="48"/><line class="sk-bond" x1="54" y1="48" x2="74" y2="34"/><line class="sk-bond" x1="74" y1="34" x2="94" y2="48"/><line class="sk-bond" x1="34" y1="34" x2="34" y2="16"/><text class="sk-atom-sm X" x="34" y="12" font-size="11">Br</text>',110,70) },
-  'alkene_internal__br2': { name:'2,3-dibromobutane (anti)', formula:'CH₃-CHBr-CHBr-CH₃', tags:['anti'], bucket:2, explain:'Cis internal alkene → racemic (R,R + S,S). Trans → meso.', hub:'alkenes', svg: skFrag('<line class="sk-bond" x1="12" y1="48" x2="32" y2="34"/><line class="sk-bond" x1="32" y1="34" x2="54" y2="48"/><line class="sk-bond" x1="54" y1="48" x2="76" y2="34"/><line class="sk-bond" x1="76" y1="34" x2="96" y2="48"/><line class="sk-bond" x1="32" y1="34" x2="32" y2="18"/><text class="sk-atom-sm X" x="32" y="14" font-size="11">Br</text><line class="sk-bond" x1="54" y1="48" x2="54" y2="64"/><text class="sk-atom-sm X" x="54" y="70" font-size="11">Br</text>',110,80) },
+  'alkene_internal__h2_pt': { name:'Butane (alkane)', formula:'CH₃-CH₂-CH₂-CH₃', tags:['syn'], bucket:3, explain:'Syn hydrogenation across the double bond.', hub:'alkenes', svg: skFrag('<line class="sk-bond" x1="14" y1="48" x2="34" y2="34"/><line class="sk-bond" x1="34" y1="34" x2="54" y2="48"/><line class="sk-bond" x1="54" y1="48" x2="74" y2="34"/>',110,70) },
+  'alkene_internal__hbr': { name:'2-bromobutane (Markov on asymmetric)', formula:'CH₃-CHBr-CH₂-CH₃', tags:['Markov','rearr.'], bucket:1, explain:'On a symmetric internal alkene regio doesn\'t matter. On asymmetric, Br goes to the more substituted C.', hub:'alkenes', svg: skFrag('<line class="sk-bond" x1="14" y1="48" x2="34" y2="34"/><line class="sk-bond" x1="34" y1="34" x2="54" y2="48"/><line class="sk-bond" x1="54" y1="48" x2="74" y2="34"/><line class="sk-bond" x1="34" y1="34" x2="34" y2="16"/><text class="sk-atom-sm X" x="34" y="12" font-size="11">Br</text>',110,70) },
+  'alkene_internal__br2': { name:'2,3-dibromobutane (anti)', formula:'CH₃-CHBr-CHBr-CH₃', tags:['anti'], bucket:2, explain:'Cis internal alkene → racemic (R,R + S,S). Trans → meso.', hub:'alkenes', svg: skFrag('<line class="sk-bond" x1="12" y1="48" x2="32" y2="34"/><line class="sk-bond" x1="32" y1="34" x2="54" y2="48"/><line class="sk-bond" x1="54" y1="48" x2="76" y2="34"/><line class="sk-bond" x1="32" y1="34" x2="32" y2="18"/><text class="sk-atom-sm X" x="32" y="14" font-size="11">Br</text><line class="sk-bond" x1="54" y1="48" x2="54" y2="64"/><text class="sk-atom-sm X" x="54" y="70" font-size="11">Br</text>',110,80) },
   'alkene_internal__o3_zn': { name:'Two aldehydes/ketones', formula:'R-CHO + R\'-CHO', tags:['cleaves'], bucket:0, explain:'Each alkene carbon becomes a carbonyl carbon.', hub:'alkenes', svg: skFrag('<line class="sk-bond" x1="10" y1="44" x2="24" y2="34"/><line class="sk-bond" x1="24" y1="34" x2="24" y2="20"/><line class="sk-bond" x1="28" y1="28" x2="28" y2="20"/><text class="sk-atom-sm O" x="26" y="14" font-size="11">O</text><text font-size="14" fill="#8C7235" font-weight="700" x="52" y="40" text-anchor="middle">+</text><line class="sk-bond" x1="68" y1="34" x2="84" y2="34"/><line class="sk-bond" x1="84" y1="34" x2="84" y2="20"/><line class="sk-bond" x1="88" y1="28" x2="88" y2="20"/><text class="sk-atom-sm O" x="86" y="14" font-size="11">O</text><line class="sk-bond" x1="84" y1="34" x2="100" y2="44"/>',110,70) },
-  'alkene_internal__oso4': { name:'2,3-butanediol (syn diol)', formula:'CH₃-CH(OH)-CH(OH)-CH₃', tags:['syn','cis diol'], bucket:3, explain:'Cis diol from the same face.', hub:'alkenes', svg: skFrag('<line class="sk-bond" x1="12" y1="48" x2="32" y2="34"/><line class="sk-bond" x1="32" y1="34" x2="54" y2="48"/><line class="sk-bond" x1="54" y1="48" x2="76" y2="34"/><line class="sk-bond" x1="76" y1="34" x2="96" y2="48"/><polygon class="sk-wedge" points="32,34 28,20 36,20"/><text class="sk-atom-sm O" x="32" y="14" font-size="11">OH</text><polygon class="sk-wedge" points="54,48 48,62 60,62"/><text class="sk-atom-sm O" x="54" y="68" font-size="11">OH</text>',110,80) },
+  'alkene_internal__oso4': { name:'2,3-butanediol (syn diol)', formula:'CH₃-CH(OH)-CH(OH)-CH₃', tags:['syn','cis diol'], bucket:3, explain:'Cis diol from the same face.', hub:'alkenes', svg: skFrag('<line class="sk-bond" x1="12" y1="48" x2="32" y2="34"/><line class="sk-bond" x1="32" y1="34" x2="54" y2="48"/><line class="sk-bond" x1="54" y1="48" x2="76" y2="34"/><polygon class="sk-wedge" points="32,34 28,20 36,20"/><text class="sk-atom-sm O" x="32" y="14" font-size="11">OH</text><polygon class="sk-wedge" points="54,48 48,62 60,62"/><text class="sk-atom-sm O" x="54" y="68" font-size="11">OH</text>',110,80) },
 
   // ── Alkyne (terminal) ──
   'alkyne_terminal__h2_lindlar': { name:'1-butene', formula:'CH₃-CH₂-CH=CH₂', tags:['syn addition','terminal: no cis/trans'], bucket:3, explain:'Lindlar (Pd/CaCO₃, Pb-poisoned + quinoline) adds one H₂ and stops at the alkene. On a TERMINAL alkyne the product is 1-butene, a terminal alkene with NO cis/trans isomerism, so Lindlar and Na/NH₃ give the SAME alkene here. The cis-vs-trans split only appears with INTERNAL alkynes (e.g. 2-butyne).', hub:'alkynes', svg: skFrag('<line class="sk-bond" x1="14" y1="48" x2="32" y2="34"/><line class="sk-bond" x1="32" y1="34" x2="52" y2="48"/><line class="sk-bond" x1="52" y1="48" x2="74" y2="48"/><line class="sk-bond" x1="54" y1="54" x2="72" y2="54"/>',110,70) },
   'alkyne_terminal__na_nh3': { name:'1-butene', formula:'CH₃-CH₂-CH=CH₂', tags:['dissolving metal','terminal: no cis/trans'], bucket:0, explain:'Na/NH₃ (dissolving-metal reduction) also stops at the alkene. On a TERMINAL alkyne it gives the SAME 1-butene as Lindlar, terminal alkenes have no cis/trans. The trans-selectivity only shows up on INTERNAL alkynes (2-butyne → trans-2-butene).', hub:'alkynes', svg: skFrag('<line class="sk-bond" x1="14" y1="48" x2="32" y2="34"/><line class="sk-bond" x1="32" y1="34" x2="52" y2="48"/><line class="sk-bond" x1="52" y1="48" x2="72" y2="34"/><line class="sk-bond" x1="56" y1="54" x2="68" y2="42"/>',110,70) },
-  'alkyne_terminal__h2_pt': { name:'Butane (alkane, full reduction)', formula:'CH₃-CH₂-CH₂-CH₃', tags:['syn','×2 H₂'], bucket:3, explain:'Both π bonds reduced; can\'t be stopped at the alkene without poisoning.', hub:'alkynes', svg: skFrag('<line class="sk-bond" x1="14" y1="48" x2="34" y2="34"/><line class="sk-bond" x1="34" y1="34" x2="54" y2="48"/><line class="sk-bond" x1="54" y1="48" x2="74" y2="34"/><line class="sk-bond" x1="74" y1="34" x2="94" y2="48"/>',110,70) },
+  'alkyne_terminal__h2_pt': { name:'Butane (alkane, full reduction)', formula:'CH₃-CH₂-CH₂-CH₃', tags:['syn','×2 H₂'], bucket:3, explain:'Both π bonds reduced; can\'t be stopped at the alkene without poisoning.', hub:'alkynes', svg: skFrag('<line class="sk-bond" x1="14" y1="48" x2="34" y2="34"/><line class="sk-bond" x1="34" y1="34" x2="54" y2="48"/><line class="sk-bond" x1="54" y1="48" x2="74" y2="34"/>',110,70) },
   'alkyne_terminal__hg_h2o': { name:'Butan-2-one (methyl ketone)', formula:'CH₃-CH₂-CO-CH₃', tags:['Markov','keto-enol'], bucket:1, explain:'H₂O adds Markov → enol → tautomerizes to the more stable <b>keto</b> form. Terminal alkyne + Hg/H₂O → methyl ketone.', hub:'alkynes', svg: skFrag('<line class="sk-bond" x1="14" y1="48" x2="34" y2="34"/><line class="sk-bond" x1="34" y1="34" x2="54" y2="48"/><line class="sk-bond" x1="54" y1="48" x2="74" y2="34"/><line class="sk-bond" x1="54" y1="48" x2="54" y2="30"/><line class="sk-bond" x1="50" y1="42" x2="50" y2="30"/><text class="sk-atom O" x="52" y="24" font-size="12">O</text>',110,70) },
   'alkyne_terminal__bh3_h2o2': { name:'Butanal (aldehyde, anti-Markov)', formula:'CH₃-CH₂-CH₂-CHO', tags:['anti-Markov','aldehyde'], bucket:3, explain:'Bulky R₂BH adds anti-Markov; oxidation + tautomerization gives the terminal <b>aldehyde</b>. Pair with Hg/H₂O (which gives methyl ketone), DAT loves this contrast.', hub:'alkynes', svg: skFrag('<line class="sk-bond" x1="14" y1="48" x2="32" y2="34"/><line class="sk-bond" x1="32" y1="34" x2="50" y2="48"/><line class="sk-bond" x1="50" y1="48" x2="68" y2="34"/><line class="sk-bond" x1="68" y1="34" x2="68" y2="20"/><line class="sk-bond" x1="72" y1="28" x2="72" y2="20"/><text class="sk-atom-sm O" x="70" y="14" font-size="11">O</text>',110,70) },
   'alkyne_terminal__hx_once': { name:'2-bromo-1-butene (vinyl halide, Markov)', formula:'CH₃-CH₂-C(Br)=CH₂', tags:['Markov'], bucket:1, explain:'One equivalent of HX gives a vinyl halide with Br on the more-substituted C.', hub:'alkynes', svg: skFrag('<line class="sk-bond" x1="14" y1="38" x2="34" y2="50"/><line class="sk-bond" x1="34" y1="50" x2="54" y2="38"/><line class="sk-bond" x1="54" y1="38" x2="74" y2="50"/><line class="sk-bond" x1="59" y1="36" x2="73" y2="45"/><line class="sk-bond" x1="54" y1="38" x2="54" y2="22"/><text class="sk-atom-sm X" x="56" y="16" font-size="11">Br</text>',110,70) },
@@ -22440,8 +22455,8 @@ const RXN_DB = {
 
   // ── Alkyne internal ──
   'alkyne_internal__h2_lindlar': { name:'cis-2-butene', formula:'cis-CH₃-CH=CH-CH₃', tags:['syn','cis'], bucket:3, explain:'Classic syn partial reduction.', hub:'alkynes', svg: skFrag('<line class="sk-bond" x1="14" y1="48" x2="34" y2="34"/><line class="sk-bond" x1="34" y1="34" x2="62" y2="34"/><line class="sk-bond" x1="36" y1="28" x2="60" y2="28"/><line class="sk-bond" x1="62" y1="34" x2="82" y2="48"/>',110,70) },
-  'alkyne_internal__na_nh3': { name:'trans-2-butene', formula:'trans-CH₃-CH=CH-CH₃', tags:['anti','trans'], bucket:0, explain:'Dissolving metal reduction gives trans.', hub:'alkynes', svg: skFrag('<line class="sk-bond" x1="14" y1="48" x2="34" y2="34"/><line class="sk-bond" x1="34" y1="34" x2="54" y2="48"/><line class="sk-bond" x1="38" y1="40" x2="50" y2="28"/><line class="sk-bond" x1="54" y1="48" x2="74" y2="34"/>',110,70) },
-  'alkyne_internal__o3_zn': { name:'Two carboxylic acids', formula:'R-COOH + R\'-COOH', tags:['cleaves'], bucket:0, explain:'Ozonolysis of alkyne cleaves all the way to carboxylic acids (terminal alkyne gives CO₂ from the =CH end).', hub:'alkynes', svg: skFrag('<line class="sk-bond" x1="8" y1="44" x2="22" y2="34"/><line class="sk-bond" x1="22" y1="34" x2="22" y2="20"/><line class="sk-bond" x1="26" y1="28" x2="26" y2="20"/><text class="sk-atom-sm O" x="24" y="14" font-size="11">O</text><line class="sk-bond" x1="22" y1="34" x2="34" y2="44"/><text class="sk-atom-sm O" x="42" y="44" font-size="11">OH</text><text font-size="14" fill="#8C7235" font-weight="700" x="64" y="40" text-anchor="middle">+</text><line class="sk-bond" x1="76" y1="34" x2="76" y2="20"/><line class="sk-bond" x1="80" y1="28" x2="80" y2="20"/><text class="sk-atom-sm O" x="78" y="14" font-size="11">O</text><line class="sk-bond" x1="76" y1="34" x2="88" y2="44"/><text class="sk-atom-sm O" x="96" y="44" font-size="11">OH</text>',110,70) },
+  'alkyne_internal__na_nh3': { name:'trans-2-butene', formula:'trans-CH₃-CH=CH-CH₃', tags:['anti','trans'], bucket:0, explain:'Dissolving metal reduction gives trans.', hub:'alkynes', svg: skFrag('<line class="sk-bond" x1="14" y1="48" x2="34" y2="34"/><line class="sk-bond" x1="34" y1="34" x2="54" y2="48"/><line class="sk-bond" x1="34" y1="40" x2="48" y2="50"/><line class="sk-bond" x1="54" y1="48" x2="74" y2="34"/>',110,70) },
+  'alkyne_internal__o3_zn': { name:'Two carboxylic acids', formula:'R-COOH + R\'-COOH', tags:['cleaves'], bucket:0, explain:'Ozonolysis of alkyne cleaves all the way to carboxylic acids (terminal alkyne gives CO₂ from the =CH end).', hub:'alkynes', svg: skFrag('<line class="sk-bond" x1="8" y1="44" x2="22" y2="34"/><line class="sk-bond" x1="22" y1="34" x2="22" y2="20"/><line class="sk-bond" x1="26" y1="28" x2="26" y2="20"/><text class="sk-atom-sm O" x="24" y="14" font-size="11">O</text><line class="sk-bond" x1="22" y1="34" x2="34" y2="44"/><text class="sk-atom-sm O" x="42" y="44" font-size="11">OH</text><text font-size="14" fill="#8C7235" font-weight="700" x="54" y="40" text-anchor="middle">+</text><line class="sk-bond" x1="62" y1="44" x2="76" y2="34"/><line class="sk-bond" x1="76" y1="34" x2="76" y2="20"/><line class="sk-bond" x1="80" y1="28" x2="80" y2="20"/><text class="sk-atom-sm O" x="78" y="14" font-size="11">O</text><line class="sk-bond" x1="76" y1="34" x2="88" y2="44"/><text class="sk-atom-sm O" x="96" y="44" font-size="11">OH</text>',110,70) },
 
   // ── Alcohols ──
   'alcohol_primary__pcc': { name:'Propanal (aldehyde)', formula:'CH₃-CH₂-CHO', tags:['mild','stops at aldehyde'], bucket:0, explain:'PCC in anhydrous CH₂Cl₂ stops cleanly at the aldehyde, no water present to form the hydrate that would let it over-oxidize.', hub:'alcohols', svg: skFrag('<line class="sk-bond" x1="14" y1="48" x2="34" y2="34"/><line class="sk-bond" x1="34" y1="34" x2="54" y2="48"/><line class="sk-bond" x1="54" y1="48" x2="54" y2="30"/><line class="sk-bond" x1="58" y1="42" x2="58" y2="30"/><text class="sk-atom O" x="56" y="24" font-size="12">O</text>',110,70) },
@@ -22481,8 +22496,8 @@ const RXN_DB = {
   'aldehyde__sec_amine': { name:'Enamine (C=C-NR₂)', formula:'CH₃-CH=CH-NR₂', tags:['C=C-N','uses α-H'], bucket:0, explain:'2° amine forms enamine: no N-H to lose, so an α-H is removed instead.', hub:'carbonyl', svg: skFrag('<line class="sk-bond" x1="14" y1="48" x2="32" y2="34"/><line class="sk-bond" x1="32" y1="34" x2="52" y2="48"/><line class="sk-bond" x1="36" y1="40" x2="48" y2="52"/><line class="sk-bond" x1="52" y1="48" x2="72" y2="34"/><text class="sk-atom-sm N" x="82" y="34" font-size="11">NR₂</text>',110,70) },
   'aldehyde__2_roh_h': { name:'Acetal (CH(OR)₂)', formula:'CH₃-CH₂-CH(OMe)₂', tags:['protecting group','reversible'], bucket:1, explain:'PADPED mechanism. Acetals are stable to base/nucleophiles but hydrolyze under aq. acid, use them to mask a carbonyl.', hub:'carbonyl', mech:'acetal', svg: skFrag('<line class="sk-bond" x1="8" y1="48" x2="28" y2="34"/><line class="sk-bond" x1="28" y1="34" x2="46" y2="48"/><line class="sk-bond" x1="46" y1="48" x2="46" y2="32"/><text class="sk-atom-sm O" x="46" y="28" font-size="11">OMe</text><line class="sk-bond" x1="46" y1="48" x2="64" y2="60"/><text class="sk-atom-sm O" x="72" y="60" font-size="11">OMe</text>',110,80) },
   'aldehyde__wittig_ch2': { name:'1-butene (terminal alkene)', formula:'CH₃-CH₂-CH=CH₂', tags:['C=O → C=C'], bucket:0, explain:'Wittig replaces the C=O with C=CH₂ (or C=CHR if you use a different ylide). Byproduct: Ph₃P=O.', hub:'carbonyl', svg: skFrag('<line class="sk-bond" x1="10" y1="48" x2="28" y2="34"/><line class="sk-bond" x1="28" y1="34" x2="48" y2="48"/><line class="sk-bond" x1="48" y1="48" x2="72" y2="48"/><line class="sk-bond" x1="50" y1="54" x2="70" y2="54"/>',110,70) },
-  'aldehyde__clemmensen': { name:'Propane (C=O → CH₂)', formula:'CH₃-CH₂-CH₃', tags:['C=O → CH₂'], bucket:0, explain:'Zn(Hg)/HCl: acidic conditions. Use when acid-sensitive groups are absent.', hub:'carbonyl', svg: skFrag('<line class="sk-bond" x1="20" y1="48" x2="40" y2="34"/><line class="sk-bond" x1="40" y1="34" x2="60" y2="48"/><line class="sk-bond" x1="60" y1="48" x2="80" y2="34"/>',110,70) },
-  'aldehyde__wolff_kishner': { name:'Propane (C=O → CH₂)', formula:'CH₃-CH₂-CH₃', tags:['C=O → CH₂','basic'], bucket:0, explain:'Basic conditions (NH₂NH₂ then KOH/Δ). Use when base-sensitive groups are absent.', hub:'carbonyl', svg: skFrag('<line class="sk-bond" x1="20" y1="48" x2="40" y2="34"/><line class="sk-bond" x1="40" y1="34" x2="60" y2="48"/><line class="sk-bond" x1="60" y1="48" x2="80" y2="34"/>',110,70) },
+  'aldehyde__clemmensen': { name:'Propane (C=O → CH₂)', formula:'CH₃-CH₂-CH₃', tags:['C=O → CH₂'], bucket:0, explain:'Zn(Hg)/HCl: acidic conditions. Use when acid-sensitive groups are absent.', hub:'carbonyl', svg: skFrag('<line class="sk-bond" x1="20" y1="48" x2="40" y2="34"/><line class="sk-bond" x1="40" y1="34" x2="60" y2="48"/>',110,70) },
+  'aldehyde__wolff_kishner': { name:'Propane (C=O → CH₂)', formula:'CH₃-CH₂-CH₃', tags:['C=O → CH₂','basic'], bucket:0, explain:'Basic conditions (NH₂NH₂ then KOH/Δ). Use when base-sensitive groups are absent.', hub:'carbonyl', svg: skFrag('<line class="sk-bond" x1="20" y1="48" x2="40" y2="34"/><line class="sk-bond" x1="40" y1="34" x2="60" y2="48"/>',110,70) },
   'aldehyde__jones': { name:'Propanoic acid', formula:'CH₃-CH₂-COOH', tags:['oxidation'], bucket:0, explain:'Aldehydes oxidize easily to carboxylic acids (Jones, KMnO₄, Tollens, Fehling all work).', hub:'carbonyl', svg: skFrag('<line class="sk-bond" x1="14" y1="48" x2="34" y2="34"/><line class="sk-bond" x1="34" y1="34" x2="54" y2="48"/><line class="sk-bond" x1="54" y1="48" x2="54" y2="30"/><line class="sk-bond" x1="58" y1="42" x2="58" y2="30"/><text class="sk-atom-sm O" x="56" y="24" font-size="11">O</text><line class="sk-bond" x1="54" y1="48" x2="70" y2="56"/><text class="sk-atom-sm O" x="80" y="56" font-size="11">OH</text>',110,70) },
 
   // ── Ketone ──
@@ -22522,8 +22537,8 @@ const RXN_DB = {
   'aniline__nano2_hcl_h3po2': { name:'Benzene (NH₂ removed)', formula:'C₆H₆', tags:['deamination'], bucket:0, explain:'H₃PO₂ reduces the diazonium group off the ring. Installed amine → removed.', hub:'amines', svg: skFrag('<g transform="translate(55 35)"><polygon class="sk-bond" points="22,0 11,-19 -11,-19 -22,0 -11,19 11,19" fill="none"/><circle class="sk-bond-thin" cx="0" cy="0" r="12" fill="none"/></g>',110,70) },
 
   // ── Epoxide ──
-  'epoxide__h2o_acid': { name:'1,2-propanediol (anti, Markov-like)', formula:'CH₃-CH(OH)-CH₂OH', tags:['anti','Markov-like'], bucket:2, explain:'Under acid, the protonated epoxide has cation-like character on the more-substituted C → Nu attacks there. Anti via backside.', hub:'ethers', svg: skFrag('<line class="sk-bond" x1="10" y1="50" x2="30" y2="38"/><line class="sk-bond" x1="30" y1="38" x2="50" y2="50"/><line class="sk-bond" x1="50" y1="50" x2="70" y2="38"/><polygon class="sk-wedge" points="30,38 24,22 36,22"/><text class="sk-atom-sm O" x="30" y="16" font-size="11">OH</text><line class="sk-bond" x1="50" y1="50" x2="50" y2="64"/><text class="sk-atom-sm O" x="50" y="72" font-size="11">OH</text>',110,80) },
-  'epoxide__nu_base': { name:'β-methoxy propanol (anti, SN2-like)', formula:'CH₃-CH(OH)-CH₂-OMe', tags:['anti','SN2-like'], bucket:2, explain:'Without acid activation, classic SN2 sterics: Nu hits the <em>less</em> hindered carbon.', hub:'ethers', svg: skFrag('<line class="sk-bond" x1="10" y1="50" x2="30" y2="38"/><line class="sk-bond" x1="30" y1="38" x2="50" y2="50"/><line class="sk-bond" x1="50" y1="50" x2="70" y2="38"/><polygon class="sk-wedge" points="30,38 24,22 36,22"/><text class="sk-atom-sm O" x="30" y="16" font-size="11">OH</text><polygon class="sk-wedge" points="50,50 42,66 58,66"/><text class="sk-atom-sm O" x="50" y="74" font-size="11">OMe</text>',110,85) },
+  'epoxide__h2o_acid': { name:'1,2-propanediol (anti, Markov-like)', formula:'CH₃-CH(OH)-CH₂OH', tags:['anti','Markov-like'], bucket:2, explain:'Under acid, the protonated epoxide has cation-like character on the more-substituted C → Nu attacks there. Anti via backside.', hub:'ethers', svg: skFrag('<line class="sk-bond" x1="10" y1="50" x2="30" y2="38"/><line class="sk-bond" x1="30" y1="38" x2="50" y2="50"/><polygon class="sk-wedge" points="30,38 24,22 36,22"/><text class="sk-atom-sm O" x="30" y="16" font-size="11">OH</text><line class="sk-bond" x1="50" y1="50" x2="50" y2="64"/><text class="sk-atom-sm O" x="50" y="72" font-size="11">OH</text>',110,80) },
+  'epoxide__nu_base': { name:'β-methoxy propanol (anti, SN2-like)', formula:'CH₃-CH(OH)-CH₂-OMe', tags:['anti','SN2-like'], bucket:2, explain:'Without acid activation, classic SN2 sterics: Nu hits the <em>less</em> hindered carbon.', hub:'ethers', svg: skFrag('<line class="sk-bond" x1="10" y1="50" x2="30" y2="38"/><line class="sk-bond" x1="30" y1="38" x2="50" y2="50"/><polygon class="sk-wedge" points="30,38 24,22 36,22"/><text class="sk-atom-sm O" x="30" y="16" font-size="11">OH</text><line class="sk-bond" x1="50" y1="50" x2="50" y2="64"/><text class="sk-atom-sm O" x="50" y="74" font-size="11">OMe</text>',110,85) },
   'epoxide__rmgbr_h': { name:'Alcohol chain-extended by 2 C', formula:'R-CH₂-CH(OH)-CH₂-R\'', tags:['C-C bond','anti-Markov'], bucket:2, explain:'Grignards open epoxides at the less hindered C, adds 2 carbons + OH. Classic way to extend a carbon chain.', hub:'ethers', svg: skFrag('<line class="sk-bond" x1="6" y1="50" x2="24" y2="38"/><line class="sk-bond" x1="24" y1="38" x2="42" y2="50"/><line class="sk-bond" x1="42" y1="50" x2="60" y2="38"/><line class="sk-bond" x1="60" y1="38" x2="78" y2="50"/><line class="sk-bond" x1="78" y1="50" x2="96" y2="38"/><line class="sk-bond" x1="42" y1="50" x2="42" y2="30"/><text class="sk-atom-sm O" x="42" y="26" font-size="11">OH</text>',110,80) },
 
   // ── Acid Chloride (top of the reactivity ladder - everything downhill) ──
@@ -32243,17 +32258,141 @@ html[data-theme="dark"] .rw-reveal{background:rgba(255,255,255,.05)}
 .rw-grade .notyet{background:none;border:1.5px solid rgba(140,114,53,.5);color:#8a6d24}
 .rw-test-miss{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:#8a6d24;padding:4px 0;border-bottom:1px solid rgba(140,114,53,.2)}
 @media print{#rwOverlay{display:none!important;}}
+/* ── Reaction Wheel: phone ring, spoke cards, 3D (2026-11-16) ──
+   Phone and tablet (under 1000px) swap the big wheel for a ring of numbered
+   44px spokes you tap to open one reaction as a full-width card. Desktop keeps
+   the full wheel and gets the same card in the side panel. Structures on the
+   card come from wheel/wheel-structures.json (RDKit, see the build script). */
+body.rw-open #retoldHome{display:none!important}
+.wh-multi{display:inline-flex;align-items:center;justify-content:center;gap:4px;flex-wrap:nowrap;max-width:100%}
+.wh-multi .wh-mol{min-width:0;flex:0 1 auto}
+.rw-node .wh-multi .wh-mol{height:38px}
+.rw-arrow .rw-arr-v{display:none}
+#rwOverlay[data-view="see"] #rwRestart{display:none}
+.rw-mol-card .wh-mol{width:auto;max-width:100%;height:auto}
+.rw-glance-grid .wh-multi .wh-mol{height:34px}
+.rw-exit,.rw-wheel-chip{min-height:44px}
+.rw-exit{display:inline-flex;align-items:center;justify-content:center}
+#rwTestBtn{display:none}
+.rw-views{display:inline-flex;border:1.5px solid rgba(140,114,53,.45);border-radius:12px;overflow:hidden;flex:none}
+.rw-views button{min-height:44px;min-width:76px;padding:0 14px;background:none;border:none;border-right:1px solid rgba(140,114,53,.3);font-family:'JetBrains Mono',monospace;font-size:.72rem;letter-spacing:.06em;color:#6b5620;cursor:pointer}
+.rw-views button:last-child{border-right:none}
+.rw-views button[aria-pressed="true"]{background:#1B3A2D;color:#e6d08a}
+html[data-theme="dark"] .rw-views button{color:#d8c893}
+.rw-node.can-see{cursor:pointer}
+.rw-node.can-see:hover{box-shadow:0 0 0 3px rgba(201,168,76,.35)}
+.rw-node.picked{border-color:#C9A84C;box-shadow:0 0 0 3px rgba(201,168,76,.55)}
+.rw-node .wh-mol{height:44px;width:auto;max-width:100%;display:block;margin:0 auto;color:#1a1206}
+html[data-theme="dark"] .rw-node .wh-mol{color:#ece6d7}
+.rw-center .wh-mol{width:auto;height:52px;color:#1a1206;display:block;margin:0 auto}
+.rw-opt .wh-mol{width:96px;height:52px;flex:none;color:#1a1206}
+html[data-theme="dark"] .rw-opt .wh-mol,html[data-theme="dark"] .rw-center .wh-mol{color:#ece6d7}
+.rw-opt{min-height:56px}
+.rw-grade button,.rw-next,.rw-flipbtn{min-height:44px}
+/* ring (phone and tablet) */
+.rw-ring{position:relative;margin:8px auto 4px}
+.rw-ring svg.rw-ring-lines{position:absolute;inset:0;width:100%;height:100%}
+.rw-ring-hub{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);border-radius:50%;background:#fdf8ee;border:3px solid #C9A84C;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:8px}
+html[data-theme="dark"] .rw-ring-hub{background:#2a2a20}
+.rw-ring-hub .wh-mol{width:auto;max-width:100%;height:46px;color:#1a1206}
+html[data-theme="dark"] .rw-ring-hub .wh-mol{color:#ece6d7}
+.rw-ring-hub b{font-family:'Playfair Display',serif;font-size:.86rem;line-height:1.15;color:#2a2118;margin-top:2px}
+html[data-theme="dark"] .rw-ring-hub b{color:#ece6d7}
+.rw-dot{position:absolute;transform:translate(-50%,-50%);width:44px;height:44px;border-radius:50%;border:2px dashed rgba(140,114,53,.6);background:#fdf8ee;font-family:'JetBrains Mono',monospace;font-size:.8rem;font-weight:700;color:#8C7235;cursor:pointer;padding:0;display:flex;align-items:center;justify-content:center}
+html[data-theme="dark"] .rw-dot{background:#2a2a20;color:#d8c893}
+.rw-dot.filled{border-style:solid;border-color:#1B3A2D;background:#1B3A2D;color:#e6d08a}
+.rw-dot.active{border-style:solid;border-color:#C9A84C;box-shadow:0 0 0 4px rgba(201,168,76,.45);animation:rwPulse 1.4s infinite}
+.rw-dot.picked{border-style:solid;border-color:#C9A84C;background:#C9A84C;color:#1a1206;box-shadow:0 0 0 4px rgba(201,168,76,.35)}
+.rw-ring-note{text-align:center;font-family:'JetBrains Mono',monospace;font-size:.66rem;letter-spacing:.06em;color:#8C7235;margin:0 0 6px}
+/* spoke card */
+.rw-band{height:84px;margin:-4px 0 10px;border-radius:14px;background-size:cover;background-position:left center;background-color:#f3ead6;border:1px solid rgba(140,114,53,.2)}
+html[data-theme="dark"] .rw-band{opacity:.55}
+@media(max-width:759px){.rw-band{height:64px}}
+.rw-see .rw-see-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.rw-see-flow{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:10px;margin:12px 0}
+.rw-mol-card{margin:0;background:#fff;border:1.5px solid rgba(140,114,53,.35);border-radius:14px;padding:10px;text-align:center;min-width:0}
+html[data-theme="dark"] .rw-mol-card{background:#2a2a20}
+.rw-mol-card .rw-mol-draw{display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap;min-height:84px;color:#1a1206}
+html[data-theme="dark"] .rw-mol-card .rw-mol-draw{color:#ece6d7}
+.rw-mol-card .wh-mol{height:auto;max-width:100%}
+.rw-mol-card figcaption{margin-top:6px}
+.rw-mol-role{display:block;font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:#8C7235}
+.rw-mol-name{display:block;font-family:'Playfair Display',serif;font-weight:700;font-size:1rem;color:#2a2118;line-height:1.25}
+html[data-theme="dark"] .rw-mol-name{color:#ece6d7}
+.rw-mol-formula{display:block;font-family:'JetBrains Mono',monospace;font-size:.68rem;color:#6b5620;margin-top:2px}
+.wh-plus{font-family:'Playfair Display',serif;font-size:1.3rem;color:#8C7235}
+.rw-arrow{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:70px;max-width:150px}
+.rw-arrow .rw-arrow-reagent{font-family:'JetBrains Mono',monospace;font-size:.78rem;font-weight:700;color:#b45309;text-align:center;line-height:1.35}
+.rw-arrow svg{width:64px;height:16px;color:#8C7235}
+.rw-3d-btn{margin-top:8px;min-height:44px;padding:0 14px;border-radius:999px;border:1.5px solid rgba(27,58,45,.45);background:none;color:#1B3A2D;font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:.06em;cursor:pointer}
+.rw-3d-btn[aria-pressed="true"]{background:#1B3A2D;color:#e6d08a}
+html[data-theme="dark"] .rw-3d-btn{color:#d8c893;border-color:rgba(216,200,147,.5)}
+.rw-3d{position:relative;margin-top:8px;height:200px;border-radius:12px;background:#FFFDF7;border:1px solid rgba(140,114,53,.3);overflow:hidden;touch-action:none;cursor:grab}
+.rw-3d canvas{display:block;width:100%;height:100%}
+.rw-3d .rw-3d-hint{position:absolute;left:8px;bottom:6px;font-family:'JetBrains Mono',monospace;font-size:.6rem;color:#6b5620;background:rgba(255,253,247,.85);padding:2px 6px;border-radius:6px}
+.rw-see-type{font-family:'Playfair Display',serif;font-style:italic;font-size:1rem;color:#3c2e1a;margin:2px 0 0}
+html[data-theme="dark"] .rw-see-type{color:#d8d0bd}
+.rw-see-nav{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.rw-see-nav button,.rw-see-quiz{min-height:48px;border-radius:12px;font-family:'JetBrains Mono',monospace;font-size:.74rem;font-weight:700;letter-spacing:.06em;cursor:pointer}
+.rw-see-nav button{background:none;border:1.5px solid rgba(140,114,53,.5);color:#6b5620}
+html[data-theme="dark"] .rw-see-nav button{color:#d8c893}
+.rw-see-quiz{display:block;width:100%;margin-top:10px;border:none;background:linear-gradient(180deg,#E6D08A,#C9A84C);color:#1a1206}
+.rw-hub-link{display:inline-flex;align-items:center;min-height:44px;font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:.06em;color:#8a6d24;text-decoration:underline;text-underline-offset:3px}
+.rw-swipe-hint{font-family:'JetBrains Mono',monospace;font-size:.62rem;color:#8C7235;text-align:center;margin-top:6px}
+.rw-glance{margin-top:18px;border-top:1px solid rgba(140,114,53,.3);padding-top:12px}
+.rw-glance h3{font-family:'JetBrains Mono',monospace;font-size:.64rem;letter-spacing:.16em;text-transform:uppercase;color:#8C7235;margin:0 0 8px;font-weight:600}
+.rw-glance-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.rw-glance-grid button{display:flex;flex-direction:column;align-items:center;gap:4px;min-height:44px;padding:8px 6px;border-radius:10px;border:1.5px solid rgba(140,114,53,.3);background:#fff;cursor:pointer;color:#1a1206;text-align:center}
+html[data-theme="dark"] .rw-glance-grid button{background:#2a2a20;color:#ece6d7}
+.rw-glance-grid button[aria-current="true"]{border-color:#C9A84C;box-shadow:0 0 0 2px rgba(201,168,76,.5)}
+.rw-glance-grid .wh-mol{height:40px;width:auto;max-width:100%}
+.rw-glance-grid .g-r{font-family:'JetBrains Mono',monospace;font-size:.62rem;font-weight:700;color:#b45309;line-height:1.3}
+.rw-glance-grid .g-n{font-family:'Playfair Display',serif;font-style:italic;font-size:.74rem;color:#3c2e1a;line-height:1.2}
+html[data-theme="dark"] .rw-glance-grid .g-n{color:#d8d0bd}
+.rw-see-it{display:inline-flex;align-items:center;min-height:44px;margin:12px 8px 0 0;padding:0 16px;border-radius:10px;border:1.5px solid #1B3A2D;background:none;color:#1B3A2D;font-family:'JetBrains Mono',monospace;font-size:.74rem;font-weight:700;cursor:pointer}
+html[data-theme="dark"] .rw-see-it{color:#d8c893;border-color:#d8c893}
+@media(max-width:999px){
+  #rwOverlay.open{overflow-y:auto;-webkit-overflow-scrolling:touch}
+  .rw-main{flex:none;overflow:visible}
+  .rw-board{flex:none;overflow:visible}
+  .rw-panel{min-width:0;overflow:visible;padding:14px 16px 90px}
+  .rw-wheel-picker{flex-wrap:nowrap;overflow-x:auto;padding:8px 12px;scrollbar-width:thin}
+  .rw-wheel-chip{flex:none;white-space:nowrap}
+}
+@media(max-width:759px){
+  .rw-top{padding:8px 12px;gap:8px}
+  .rw-kicker{display:none}
+  .rw-title{font-size:1.08rem;flex:1 1 100%}
+  .rw-progress{margin-left:0;flex:1 1 100%;flex-wrap:wrap;gap:8px}
+  .rw-mastery{flex:1 1 auto}
+  .rw-streak{flex:1 1 100%;order:5}
+  .rw-views{flex:1 1 100%;order:-1}
+  .rw-views button{flex:1;min-width:0}
+  .rw-q{font-size:1.1rem}
+  .rw-see-flow{grid-template-columns:1fr;gap:6px}
+  .rw-arrow{flex-direction:row;max-width:none;justify-content:center;min-height:44px}
+  .rw-arrow .rw-arr-h{display:none}
+  .rw-arrow .rw-arr-v{display:block;width:16px;height:40px}
+  .rw-arrow .rw-arrow-reagent{font-size:.84rem}
+  .rw-mol-card .rw-mol-draw{min-height:96px}
+}
+
 </style>
 <div id="rwOverlay" role="dialog" aria-modal="true" aria-label="Reaction Wheel game">
   <div class="rw-top">
     <span class="rw-kicker">Reaction Wheel</span>
     <span class="rw-title" id="rwTitle"></span>
+    <div class="rw-views" id="rwViews" role="group" aria-label="Wheel mode">
+      <button type="button" data-view="see" aria-pressed="false">See it</button>
+      <button type="button" data-view="build" aria-pressed="true">Build</button>
+      <button type="button" data-view="quiz" aria-pressed="false">Quiz me</button>
+    </div>
     <div class="rw-progress">
       <span class="rw-mastery" id="rwMastery"></span>
       <span class="rw-streak" id="rwStreak"></span>
-      <button class="rw-exit" id="rwTestBtn" style="border-color:#C9A84C;color:#8a6d24">Test this wheel</button>
+      <button class="rw-exit" id="rwTestBtn" style="border-color:#C9A84C;color:#8a6d24">Quiz me on this wheel</button>
       <button class="rw-exit" id="rwRestart" title="Clear this wheel's progress and start it over">Restart wheel</button>
-      <button class="rw-exit" id="rwExit">ESC exit</button>
+      <button class="rw-exit" id="rwExit" aria-label="Close the reaction wheel">Close</button>
     </div>
   </div>
   <div class="rw-wheel-picker" id="rwPicker"></div>
@@ -32290,10 +32429,55 @@ html[data-theme="dark"] .rw-reveal{background:rgba(255,255,255,.05)}
     {key:'diene', name:'Conjugated Diene', sub:'the one-step ring builder'}
   ];
   var LSKEY='atDAT_wheel_v1';
-  var state={wheel:0,queue:[],qi:0,answered:false,streak:0,frozen:false};
+  var state={wheel:0,queue:[],qi:0,answered:false,streak:0,frozen:false,view:'build',see:0};
   var save={};
   try{ save=JSON.parse(localStorage.getItem(LSKEY)||'{}'); }catch(e){ save={}; }
   function persist(){ try{ localStorage.setItem(LSKEY,JSON.stringify(save)); }catch(e){} }
+
+  // ── Structures for the cards: wheel/wheel-structures.json (RDKit-built,
+  // see wheel/build-wheel-structures.py). Until it arrives, or if it fails,
+  // the hand drawings in RXN_DB / SUBSTRATE_SVG stand in.
+  var WS=null, wsP=null;
+  function loadWS(){
+    if(wsP) return wsP;
+    wsP=fetch('/tools/ochem/wheel/wheel-structures.json').then(function(r){ return r.ok?r.json():null; })
+      .then(function(j){ WS=j; return j; }).catch(function(){ return null; });
+    return wsP;
+  }
+  function esc(t){ return String(t==null?'':t).replace(/[&<>"]/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+  function plusJoin(a){ return a.length<2?(a[0]||''):'<span class="wh-multi">'+a.join('<span class="wh-plus" aria-hidden="true">+</span>')+'</span>'; }
+  function subData(w){ return WS&&WS.substrates&&WS.substrates[w.key]; }
+  function prodData(sp){ return WS&&WS.products&&WS.products[sp.key]; }
+  function subSvg(w){ var d=subData(w); return d?d.svg[0]:((typeof SUBSTRATE_SVG!=='undefined'&&SUBSTRATE_SVG[w.key])||''); }
+  function subName(w){ var d=subData(w); return d?d.name:((typeof SUBSTRATE_NAME!=='undefined'&&SUBSTRATE_NAME[w.key])||w.name); }
+  function prodSvg(sp){ var d=prodData(sp); return d?plusJoin(d.svg):(sp.e.svg||''); }
+  function prodName(sp){ var d=prodData(sp); return d?d.name:sp.e.name; }
+  function fmtFormula(f){ return esc(f).replace(/(\d+)/g,'<sub>$1</sub>').replace(/([+-])$/,'<sup>$1</sup>'); }
+  function prodFormula(sp){
+    var d=prodData(sp);
+    if(d && d.formula.every(function(f){ return !!f; })) return d.formula.map(fmtFormula).join(' + ');
+    return esc(sp.e.formula||'');
+  }
+  function compact(){ return (window.innerWidth||1200)<1000; }
+  // Decorative header plate per family (unlabeled art, no molecules: every
+  // structure on the card is drawn in code). Loaded only when See it opens.
+  var FAMILY={alkene_terminal:'hydrocarbons',alkene_internal:'hydrocarbons',alkyne_terminal:'hydrocarbons',alkyne_internal:'hydrocarbons',alkane:'hydrocarbons',diene:'hydrocarbons',
+    halide_primary:'halides',halide_secondary:'halides',halide_tertiary:'halides',alcohol_primary:'halides',alcohol_secondary:'halides',alcohol_tertiary:'halides',epoxide:'halides',
+    benzene:'aromatic',aniline:'aromatic',toluene:'aromatic'};
+  function bandUrl(w){ return '/shared/art/wheel/'+(FAMILY[w.key]||'carbonyl')+'.webp'; }
+  var HUBNAME={alkenes:'Alkenes',alkynes:'Alkynes',alkanes:'Alkanes',subelim:'Substitution and Elimination',alcohols:'Alcohols',ethers:'Ethers and Epoxides',aromatic:'Aromatic',carbonyl:'Aldehydes and Ketones',acids:'Carboxylic Acids and Derivatives',amines:'Amines'};
+  function spokeIndex(w,key){ var a=entriesFor(w.key); for(var i=0;i<a.length;i++) if(a[i].key===key) return i; return 0; }
+  // A small drawn flow (start -> reagent -> product) used inside the answer
+  // feedback, so a miss is followed by the picture, not only words.
+  function miniFlow(w,sp){
+    return '<div class="rw-see-flow" style="margin:10px 0 6px">'
+      +'<figure class="rw-mol-card"><div class="rw-mol-draw">'+subSvg(w)+'</div><figcaption><span class="rw-mol-name" style="font-size:.86rem">'+esc(subName(w))+'</span></figcaption></figure>'
+      +'<div class="rw-arrow"><span class="rw-arrow-reagent">'+reagentLabel(sp.rid)+'</span>'+ARROW+ARROWV+'</div>'
+      +'<figure class="rw-mol-card"><div class="rw-mol-draw">'+prodSvg(sp)+'</div><figcaption><span class="rw-mol-name" style="font-size:.86rem">'+esc(prodName(sp))+'</span></figcaption></figure>'
+      +'</div>';
+  }
+  var ARROWV='<svg viewBox="0 0 16 44" aria-hidden="true" class="rw-arr-v"><path d="M8 2 V38 M2 30 L8 40 L14 30" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  var ARROW='<svg viewBox="0 0 64 16" aria-hidden="true" class="rw-arr-h"><path d="M2 8 H58 M50 2 L60 8 L50 14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
   function entriesFor(key){
     var out=[];
@@ -32323,11 +32507,15 @@ html[data-theme="dark"] .rw-reveal{background:rgba(255,255,255,.05)}
 
   // board geometry
   function renderBoard(){
+    if(compact()) return renderRing();
     var w=WHEELS[state.wheel], sp=entriesFor(w.key);
+    var seeing=state.view==='see';
     var ws=state.test?(state.tgot||{}):wheelSave(w);
+    if(seeing){ ws={}; sp.forEach(function(s){ ws[s.key]={f:1,r:1}; }); }
     var board=document.getElementById('rwBoard');
+    board.style.height='';
     var W=board.clientWidth||800, H=board.clientHeight||560;
-    var cx=W/2, cy=H/2, rx=Math.min(W*0.36,420), ry=Math.min(H*0.36,260);
+    var cx=W/2, cy=H/2, rx=Math.min(W*0.38,460), ry=Math.min(H*0.39,330);
     var cur=state.queue[state.qi];
     var svg='<svg class="rw-lines" viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none">';
     svg+='<defs><marker id="rwArr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#8C7235"/></marker></defs>';
@@ -32339,30 +32527,160 @@ html[data-theme="dark"] .rw-reveal{background:rgba(255,255,255,.05)}
       var exp=nx-80*Math.cos(a), eyp=ny-42*Math.sin(a);
       svg+='<line x1="'+sxp+'" y1="'+syp+'" x2="'+exp+'" y2="'+eyp+'" stroke="#8C7235" stroke-width="1.5" marker-end="url(#rwArr)" opacity="'+((ws[s.key]&&ws[s.key].f)||isActive(s)?1:.35)+'"/>';
       var mx=(sxp+exp)/2, my=(syp+eyp)/2;
-      var showLabel=(ws[s.key]&&ws[s.key].f)||(isActive(s)&&cur&&cur.mode==='f');
+      var showLabel=(ws[s.key]&&ws[s.key].f)||(isActive(s)&&cur&&cur.mode==='f'&&!seeing);
       if(showLabel) html+='<span class="rw-reagent" style="left:'+mx+'px;top:'+my+'px">'+reagentLabel(s.rid)+'</span>';
       var filled=ws[s.key]&&ws[s.key].f;
-      html+='<div class="rw-node '+(filled?'filled':'unknown')+(isActive(s)?' active':'')+'" style="left:'+nx+'px;top:'+ny+'px">'
-        +(filled? (s.e.svg||'')+'<div class="rw-node-name">'+s.e.name+'</div>' : '<div class="rw-node-q">?</div>')
+      var canSee=filled&&!state.test;
+      html+='<div class="rw-node '+(filled?'filled':'unknown')+(isActive(s)&&!seeing?' active':'')+(seeing&&i===state.see?' picked':'')+(canSee?' can-see':'')+'" style="left:'+nx+'px;top:'+ny+'px"'
+        +(canSee?' role="button" tabindex="0" data-i="'+i+'" aria-label="See '+esc(reagentLabel(s.rid))+' drawn out"':'')+'>'
+        +(filled? prodSvg(s)+'<div class="rw-node-name">'+esc(prodName(s))+'</div>' : '<div class="rw-node-q">?</div>')
         +'</div>';
     });
     svg+='</svg>';
     html+='<div class="rw-center"><div class="rw-center-name">'+w.name+'</div>'
-      +((typeof SUBSTRATE_SVG!=='undefined'&&SUBSTRATE_SVG[w.key])?'<div class="rw-center-mol" style="margin:4px auto 2px">'+SUBSTRATE_SVG[w.key]+'</div>':'')
+      +(subSvg(w)?'<div class="rw-center-mol" style="margin:4px auto 2px">'+subSvg(w)+'</div>':'')
       +'<div class="rw-center-sub">'+w.sub+'</div></div>';
     board.innerHTML=svg+html;
+    board.querySelectorAll('.rw-node.can-see').forEach(function(n){
+      function go(){ setView('see', +n.dataset.i); }
+      n.addEventListener('click',go);
+      n.addEventListener('keydown',function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); go(); } });
+    });
     function isActive(s){ return cur && cur.sp.key===s.key; }
+  }
+
+  // Phone and tablet: the wheel as a ring of 44px numbered spokes around the
+  // starting material. Every reaction is still on one screen; tap a number to
+  // open that reaction as a full-width card below.
+  function renderRing(){
+    var w=WHEELS[state.wheel], sp=entriesFor(w.key), n=sp.length;
+    var seeing=state.view==='see';
+    var ws=state.test?(state.tgot||{}):wheelSave(w);
+    var cur=state.queue[state.qi];
+    var board=document.getElementById('rwBoard');
+    var W=board.clientWidth||Math.min(window.innerWidth,999);
+    var size=Math.max(260,Math.min(W-16, window.innerWidth<760?340:440));
+    var hubD=Math.round(size*0.4), R=size/2-24, c=size/2;
+    var svg='<svg class="rw-ring-lines" viewBox="0 0 '+size+' '+size+'" aria-hidden="true">';
+    svg+='<circle cx="'+c+'" cy="'+c+'" r="'+R+'" fill="none" stroke="rgba(140,114,53,.25)" stroke-width="1.5" stroke-dasharray="3 5"/>';
+    var dots='';
+    sp.forEach(function(s,i){
+      var a=-Math.PI/2+i*2*Math.PI/n, x=c+R*Math.cos(a), y=c+R*Math.sin(a);
+      var x0=c+(hubD/2+2)*Math.cos(a), y0=c+(hubD/2+2)*Math.sin(a), x1=c+(R-24)*Math.cos(a), y1=c+(R-24)*Math.sin(a);
+      var filled=seeing||(ws[s.key]&&ws[s.key].f), active=!seeing&&!state.test&&cur&&cur.sp.key===s.key, picked=seeing&&i===state.see;
+      if(state.test&&cur&&cur.sp.key===s.key) active=true;
+      svg+='<line x1="'+x0.toFixed(1)+'" y1="'+y0.toFixed(1)+'" x2="'+x1.toFixed(1)+'" y2="'+y1.toFixed(1)+'" stroke="#8C7235" stroke-width="1.5" opacity="'+(filled||active?0.9:0.3)+'"/>';
+      var open=!state.test&&(seeing||filled);
+      dots+='<button type="button" class="rw-dot'+(filled?' filled':'')+(active?' active':'')+(picked?' picked':'')+'" style="left:'+x.toFixed(1)+'px;top:'+y.toFixed(1)+'px"'
+        +(open?' data-i="'+i+'"':' aria-disabled="true"')
+        +' aria-label="Reaction '+(i+1)+': '+esc(reagentLabel(s.rid).replace(/<[^>]+>/g,''))+(filled?'':', not earned yet')+'"'+(picked?' aria-current="true"':'')+'>'+(i+1)+'</button>';
+    });
+    svg+='</svg>';
+    var hub='<div class="rw-ring-hub" style="width:'+hubD+'px;height:'+hubD+'px">'+subSvg(w)+'<b>'+esc(w.name)+'</b></div>';
+    var note=seeing?'Tap a number to open that reaction':(state.test?'Spokes fill in as you get them':'Earned spokes fill in. Tap a filled one to see it drawn out.');
+    board.style.height='';
+    board.innerHTML='<div class="rw-ring" style="width:'+size+'px;height:'+size+'px">'+svg+hub+dots+'</div><p class="rw-ring-note">'+note+'</p>';
+    board.querySelectorAll('.rw-dot[data-i]').forEach(function(b){
+      b.addEventListener('click',function(){ setView('see', +b.dataset.i, true); });
+    });
+  }
+
+  // ── SEE IT: one reaction as a full card. Starting material, reagent and
+  // product, each drawn as a skeleton with its written name, a 3D model
+  // beside the drawing where one exists, swipe or Previous/Next between
+  // spokes, and the whole wheel at a glance underneath.
+  function card(role, svgs, name, formula, d3, id){
+    var has3d=d3&&d3.length===1&&d3[0];
+    return '<figure class="rw-mol-card"><div class="rw-mol-draw">'+svgs+'</div>'
+      +'<figcaption><span class="rw-mol-role">'+role+'</span><span class="rw-mol-name">'+esc(name)+'</span>'
+      +(formula?'<span class="rw-mol-formula">'+formula+'</span>':'')+'</figcaption>'
+      +(has3d?'<button type="button" class="rw-3d-btn" aria-pressed="false" data-3d="'+id+'">Show 3D model</button><div class="rw-3d" id="rw3d-'+id+'" hidden></div>':'')
+      +'</figure>';
+  }
+  var live3d=[];
+  function drop3d(){ live3d.forEach(function(v){ try{ v&&v.dispose&&v.dispose(); }catch(e){} }); live3d=[]; }
+  function renderSee(scrollToCard){
+    state.test=false; state.view='see'; drop3d();
+    var w=WHEELS[state.wheel], sp=entriesFor(w.key), n=sp.length;
+    var i=Math.max(0,Math.min(state.see||0,n-1)); state.see=i;
+    var s=sp[i], S=subData(w), Pd=prodData(s);
+    var panel=document.getElementById('rwPanel');
+    var hub=s.e.hub, stu=new URLSearchParams(location.search).get('student');
+    var html='<div class="rw-see" id="rwSee">';
+    html+='<div class="rw-band" aria-hidden="true" style="background-image:url('+bandUrl(w)+')"></div>';
+    html+='<div class="rw-see-head"><span class="rw-q-kicker">Reaction '+(i+1)+' of '+n+' · '+esc(w.name)+'</span>'
+      +(hub&&document.getElementById(hub)?'<a class="rw-hub-link" data-hub="'+hub+'" href="#'+hub+'">Open the '+(HUBNAME[hub]||hub)+' hub</a>':'')+'</div>';
+    html+='<p class="rw-see-type">'+esc(s.e.name)+'</p>';
+    html+='<div class="rw-see-flow">'
+      +card('Starting material', subSvg(w), subName(w), S&&S.formula[0]?fmtFormula(S.formula[0]):'', S&&S.d3, 's')
+      +'<div class="rw-arrow"><span class="rw-arrow-reagent">'+reagentLabel(s.rid)+'</span>'+ARROW+ARROWV+'</div>'
+      +card('Product', prodSvg(s), prodName(s), prodFormula(s), Pd&&Pd.d3, 'p')
+      +'</div>';
+    html+='<div class="rw-explain" style="margin-top:4px">'+(s.e.explain||'')
+      +'<div class="rw-tags">'+((s.e.tags||[]).map(function(t){return '<span class="rw-tag">'+t+'</span>';}).join(''))+'</div></div>';
+    html+='<div class="rw-see-nav"><button type="button" id="rwPrev">Previous</button><button type="button" id="rwNext2">Next</button></div>';
+    html+='<p class="rw-swipe-hint">'+(('ontouchstart' in window)?'Swipe left or right for the next reaction':'Arrow keys move between reactions')+'</p>';
+    html+='<button type="button" class="rw-see-quiz" id="rwSeeQuiz">Quiz me on this wheel</button>';
+    html+='<div class="rw-glance"><h3>The whole wheel at a glance</h3><div class="rw-glance-grid">';
+    sp.forEach(function(t,j){
+      html+='<button type="button" data-j="'+j+'"'+(j===i?' aria-current="true"':'')+'><span class="g-r">'+(j+1)+'. '+reagentLabel(t.rid)+'</span>'+prodSvg(t)+'<span class="g-n">'+esc(prodName(t))+'</span></button>';
+    });
+    html+='</div></div></div>';
+    panel.innerHTML=html;
+    function go(j){ state.see=(j+n)%n; renderSee(true); }
+    document.getElementById('rwPrev').addEventListener('click',function(){ go(i-1); });
+    document.getElementById('rwNext2').addEventListener('click',function(){ go(i+1); });
+    document.getElementById('rwSeeQuiz').addEventListener('click',function(){ setView('quiz'); });
+    panel.querySelectorAll('.rw-glance-grid button').forEach(function(b){ b.addEventListener('click',function(){ go(+b.dataset.j); }); });
+    var hl=panel.querySelector('.rw-hub-link');
+    if(hl) hl.addEventListener('click',function(){ closeGame(); });
+    panel.querySelectorAll('.rw-3d-btn').forEach(function(b){
+      b.addEventListener('click',function(){
+        var id=b.dataset['3d'], box=document.getElementById('rw3d-'+id), on=b.getAttribute('aria-pressed')!=='true';
+        b.setAttribute('aria-pressed',on?'true':'false'); b.textContent=on?'Hide 3D model':'Show 3D model';
+        box.hidden=!on;
+        if(on){
+          var d=(id==='s'?S:Pd).d3[0];
+          box.innerHTML='<span class="rw-3d-hint">Loading the model</span>';
+          if(window.__rw3d) window.__rw3d(box,d).then(function(v){ live3d.push(v); });
+        } else { box.innerHTML=''; }
+      });
+    });
+    var card0=document.getElementById('rwSee');
+    var tx=null,ty=null;
+    card0.addEventListener('touchstart',function(e){ if(e.target.closest('.rw-3d')) return; tx=e.touches[0].clientX; ty=e.touches[0].clientY; },{passive:true});
+    card0.addEventListener('touchend',function(e){
+      if(tx==null) return;
+      var dx=e.changedTouches[0].clientX-tx, dy=e.changedTouches[0].clientY-ty; tx=null;
+      if(Math.abs(dx)>60&&Math.abs(dy)<50) go(dx<0?i+1:i-1);
+    },{passive:true});
+    renderBoard(); renderTop();
+    if(scrollToCard&&compact()) card0.scrollIntoView({block:'start',behavior:'smooth'});
+  }
+
+  function setView(v, idx, scrollToCard){
+    if(window.__rwDisarmRestart) window.__rwDisarmRestart();
+    if(v==='quiz'){ drop3d(); state.view='quiz'; startTest(); return; }
+    if(v==='see'){ if(typeof idx==='number') state.see=idx; else if(state.see==null) state.see=0; renderSee(scrollToCard||typeof idx==='number'); return; }
+    drop3d(); state.view='build'; state.test=false;
+    if(state.buildLive&&state.buildFor===state.wheel){ renderQuestion(); }
+    else { openWheel(state.wheel); }
   }
 
   function renderTop(){
     var w=WHEELS[state.wheel], sp=entriesFor(w.key), ws=wheelSave(w);
     var filled=sp.filter(function(s){return spokeDone(w,s.key);}).length;
-    document.getElementById('rwTitle').textContent=w.name+' Wheel'+(state.test?' - test yourself':'');
-    document.getElementById('rwMastery').textContent=state.test
-      ? state.qi+' / '+state.queue.length+' flipped'
+    var seeing=state.view==='see'&&!state.test;
+    document.getElementById('rwTitle').textContent=w.name+' Wheel'+(state.test?': quiz':'');
+    document.getElementById('rwMastery').textContent=seeing
+      ? sp.length+' reactions'
+      : state.test ? state.qi+' / '+state.queue.length+' flipped'
       : filled+' / '+sp.length+' spokes mastered';
-    document.getElementById('rwStreak').textContent=state.test?'say it out loud before you flip':(state.frozen?'streak paused - one more right resumes it':(state.streak>1?'streak '+state.streak:''));
-    document.getElementById('rwTestBtn').textContent=state.test?'Back to building':'Test this wheel';
+    document.getElementById('rwStreak').textContent=seeing?'':(state.test?'predict the product before you flip':(state.frozen?'streak paused - one more right resumes it':(state.streak>1?'streak '+state.streak:'')));
+    document.getElementById('rwTestBtn').textContent=state.test?'Back to building':'Quiz me on this wheel';
+    var cv=state.test?'quiz':(seeing?'see':'build');
+    document.querySelectorAll('#rwViews button').forEach(function(b){ b.setAttribute('aria-pressed',b.dataset.view===cv?'true':'false'); });
+    document.getElementById('rwOverlay').setAttribute('data-view',cv);
     var pk=document.getElementById('rwPicker'); pk.innerHTML='';
     WHEELS.forEach(function(wh,i){
       var b=document.createElement('button');
@@ -32405,9 +32723,9 @@ html[data-theme="dark"] .rw-reveal{background:rgba(255,255,255,.05)}
       shuffle(pool);
       html+='<div class="rw-q-kicker">Forward lap · build the wheel</div>';
       html+='<div class="rw-q">'+w.name+' + <span style="color:#b45309">'+reagentLabel(sp.rid)+'</span> gives what?</div>';
-      if(typeof SUBSTRATE_SVG!=='undefined'&&SUBSTRATE_SVG[w.key]) html+='<div style="margin:4px 0 8px;max-width:150px">'+SUBSTRATE_SVG[w.key]+'</div>';
+      if(subSvg(w)) html+='<div style="margin:4px 0 8px;max-width:150px;color:#1a1206">'+subSvg(w)+'</div>';
       pool.forEach(function(s){
-        html+='<button class="rw-opt" data-k="'+s.key+'">'+(s.e.svg||'')+'<span class="rw-opt-name">'+s.e.name+'</span></button>';
+        html+='<button class="rw-opt" data-k="'+s.key+'">'+prodSvg(s)+'<span class="rw-opt-name">'+esc(prodName(s))+'</span></button>';
       });
     } else {
       // A reagent that gives the SAME product from this substrate (same name or
@@ -32433,8 +32751,8 @@ html[data-theme="dark"] .rw-reveal{background:rgba(255,255,255,.05)}
       shuffle(poolR);
       html+='<div class="rw-q-kicker">Reverse lap · run it backwards</div>';
       html+='<div class="rw-q">Which reagent turns '+w.name.toLowerCase()+' into <em>'+sp.e.name+'</em>?</div>';
-      if(typeof SUBSTRATE_SVG!=='undefined'&&SUBSTRATE_SVG[w.key]) html+='<div style="display:flex;align-items:center;gap:8px;margin:6px 0 10px;flex-wrap:wrap"><div style="max-width:130px">'+SUBSTRATE_SVG[w.key]+'</div><span style="font-family:\'JetBrains Mono\',monospace;font-size:12px;color:#8C7235">&#8594; ?</span><div>'+(sp.e.svg||'')+'</div></div>';
-      else html+='<div style="margin:6px 0 10px">'+(sp.e.svg||'')+'</div>';
+      if(subSvg(w)) html+='<div style="display:flex;align-items:center;gap:8px;margin:6px 0 10px;flex-wrap:wrap"><div style="max-width:130px">'+subSvg(w)+'</div><span style="font-family:\'JetBrains Mono\',monospace;font-size:12px;color:#8C7235">&#8594; ?</span><div style="color:#1a1206">'+prodSvg(sp)+'</div></div>';
+      else html+='<div style="margin:6px 0 10px">'+prodSvg(sp)+'</div>';
       poolR.forEach(function(s){
         html+='<button class="rw-opt" data-k="'+s.key+'"><span class="rw-opt-name" style="font-family:\'JetBrains Mono\',monospace;font-style:normal;font-size:.8rem">'+reagentLabel(s.rid)+'</span></button>';
       });
@@ -32478,12 +32796,19 @@ html[data-theme="dark"] .rw-reveal{background:rgba(255,255,255,.05)}
     var ex=document.createElement('div');
     ex.className='rw-explain';
     ex.innerHTML='<div class="rw-verdict'+(ok?'':' miss')+'">'+(ok?(cur.mode==='f'?'Earned - the node fills in.':'Backwards and forwards - that one is yours.'):'Good miss - it circles back around. Read this first.')+'</div>'
+      +miniFlow(w,sp)
       +(sp.e.explain||'')
       +'<div class="rw-tags">'+((sp.e.tags||[]).map(function(t){return '<span class="rw-tag">'+t+'</span>';}).join(''))+'</div>';
     var nx=document.createElement('button');
     nx.className='rw-next'; nx.textContent='Next';
     nx.addEventListener('click',function(){ state.qi++; renderQuestion(); });
-    panel.appendChild(ex); panel.appendChild(nx);
+    // Right after an answer (a miss most of all), one tap opens the full card:
+    // drawings, names, the 3D model and the rest of the wheel around it.
+    var seeBtn=document.createElement('button');
+    seeBtn.className='rw-see-it'; seeBtn.type='button';
+    seeBtn.textContent=ok?'See it on the wheel':'See this reaction drawn out';
+    seeBtn.addEventListener('click',function(){ state.qi++; setView('see', spokeIndex(w,sp.key)); });
+    panel.appendChild(ex); panel.appendChild(seeBtn); panel.appendChild(nx);
     renderBoard(); renderTop();
     nx.focus();
   }
@@ -32519,36 +32844,37 @@ html[data-theme="dark"] .rw-reveal{background:rgba(255,255,255,.05)}
   try{ tsave=JSON.parse(localStorage.getItem(TKEY)||'{}'); }catch(e){ tsave={}; }
   function buildTestQueue(w){
     var q=[];
-    entriesFor(w.key).forEach(function(s){ q.push({sp:s,mode:'f'}); q.push({sp:s,mode:'r'}); });
+    // Quiz me: predict the product of every spoke before the reveal.
+    entriesFor(w.key).forEach(function(s){ q.push({sp:s,mode:'f'}); });
     return shuffle(q);
   }
   function startTest(){
     var w=WHEELS[state.wheel];
-    state.test=true; state.tgot={}; state.tHad=0; state.tMisses=[];
+    state.test=true; state.view='quiz'; state.buildLive=false; state.tgot={}; state.tHad=0; state.tMisses=[];
     state.queue=buildTestQueue(w); state.tTotal=state.queue.length; state.qi=0; state.answered=false;
     renderTest();
   }
-  function exitTest(){ state.test=false; openWheel(state.wheel); }
+  function exitTest(){ state.test=false; state.view='build'; openWheel(state.wheel); }
   function renderTest(){
     var w=WHEELS[state.wheel], panel=document.getElementById('rwPanel');
     var cur=state.queue[state.qi];
     if(!cur){ renderTestDone(); renderBoard(); renderTop(); return; }
     var sp=cur.sp;
-    var html='<div class="rw-q-kicker">Test yourself · '+(cur.mode==='f'?'forward':'reverse')+' · no options, just you</div>';
+    var html='<div class="rw-q-kicker">Quiz me · predict the product · no options, just you</div>';
     if(cur.mode==='f'){
       html+='<div class="rw-q">'+w.name+' + <span style="color:#b45309">'+reagentLabel(sp.rid)+'</span> gives what?</div>';
-      if(typeof SUBSTRATE_SVG!=='undefined'&&SUBSTRATE_SVG[w.key]) html+='<div style="margin:4px 0 6px;max-width:150px">'+SUBSTRATE_SVG[w.key]+'</div>';
+      if(subSvg(w)) html+='<div style="margin:4px 0 6px;max-width:150px;color:#1a1206">'+subSvg(w)+'</div>';
       html+='<div class="rw-blank">?</div>';
     } else {
       html+='<div class="rw-q">Which reagent turns '+w.name.toLowerCase()+' into <em>'+sp.e.name+'</em>?</div>';
-      html+='<div style="margin:6px 0 10px">'+(sp.e.svg||'')+'</div>';
+      html+='<div style="margin:6px 0 10px">'+prodSvg(sp)+'</div>';
       html+='<div class="rw-blank">?</div>';
     }
-    html+='<button class="rw-flipbtn" id="rwFlip">I SAID MY ANSWER - FLIP IT</button>';
+    html+='<button class="rw-flipbtn" id="rwFlip">I DREW MY ANSWER - FLIP IT</button>';
     panel.innerHTML=html;
     document.getElementById('rwFlip').addEventListener('click',function(){
       var reveal = cur.mode==='f'
-        ? '<div class="rw-reveal">'+(sp.e.svg||'')+'<span class="rw-opt-name">'+sp.e.name+'</span></div>'
+        ? '<div class="rw-reveal" style="color:#1a1206">'+prodSvg(sp)+'<span class="rw-opt-name">'+esc(prodName(sp))+'</span><span class="rw-mol-formula">'+prodFormula(sp)+'</span></div>'
         : '<div class="rw-reveal"><span class="rw-opt-name" style="font-family:\'JetBrains Mono\',monospace;font-size:.85rem">'+reagentLabel(sp.rid)+'</span></div>';
       this.outerHTML=reveal
         +'<div class="rw-grade"><button class="had">I HAD IT</button><button class="notyet">NOT YET - COMING BACK AROUND</button></div>';
@@ -32603,13 +32929,31 @@ html[data-theme="dark"] .rw-reveal{background:rgba(255,255,255,.05)}
 
   function openWheel(i){
     if(window.__rwDisarmRestart) window.__rwDisarmRestart();
-    if(state.test){ state.wheel=i; startTest(); return; }
-    state.wheel=i; state.queue=buildQueue(WHEELS[i]); state.qi=0; state.streak=0; state.frozen=false;
+    var changed=i!==state.wheel; state.wheel=i;
+    if(state.test||state.view==='quiz'){ startTest(); return; }
+    if(state.view==='see'){ if(changed) state.see=0; renderSee(); return; }
+    state.view='build';
+    state.queue=buildQueue(WHEELS[i]); state.qi=0; state.streak=0; state.frozen=false;
+    state.buildLive=true; state.buildFor=i;
     renderQuestion();
+  }
+  // Keep the overlay under the Ace Labs bar (it sits in page flow with a very
+  // high z-index), so the wheel's own title and buttons are never hidden.
+  function placeOverlay(){
+    var o=document.getElementById('rwOverlay'), sh=document.getElementById('ace-shell');
+    var top=0;
+    if(sh&&!sh.hidden){ var r=sh.getBoundingClientRect(); top=Math.max(0,Math.round(r.bottom)); }
+    o.style.top=top+'px';
   }
   function openGame(){
     document.getElementById('rwOverlay').classList.add('open');
     document.body.style.overflow='hidden';
+    document.body.classList.add('rw-open');
+    if(window.closeWelcome&&document.getElementById('welcomeCard')&&document.getElementById('welcomeCard').classList.contains('open')) window.__hideWelcome&&window.__hideWelcome();
+    placeOverlay();
+    loadWS().then(startGame);
+  }
+  function startGame(){
     // ?wheel=<family key> deep-links straight to that wheel - the Retold
     // nights send students to their own night's reps without making them
     // grind the unlock chain first. Coach-directed context earns the jump.
@@ -32622,12 +32966,24 @@ html[data-theme="dark"] .rw-reveal{background:rgba(255,255,255,.05)}
     if(!found){
       for(var i=0;i<WHEELS.length;i++){ if(wheelUnlocked(i)&&!wheelDone(WHEELS[i])){ start=i; break; } if(wheelDone(WHEELS[i])) start=Math.min(i+1,WHEELS.length-1); }
     }
-    if(wantTest){ state.wheel=start; startTest(); renderTop(); }
+    // ?spoke=<reagent key> (or ?view=see) opens straight onto the drawn card,
+    // so a "See it" link lands on the exact reaction.
+    var wantSpoke=pp.get('spoke'), wantView=pp.get('view');
+    if(wantTest){ state.wheel=start; state.view='quiz'; startTest(); renderTop(); }
+    else if(wantSpoke||wantView==='see'){
+      state.wheel=start; state.view='see';
+      var es=entriesFor(WHEELS[start].key), si=0;
+      for(var k=0;k<es.length;k++){ if(es[k].rid===wantSpoke){ si=k; break; } }
+      state.see=si; renderSee();
+    }
     else openWheel(start);
   }
-  function closeGame(){ document.getElementById('rwOverlay').classList.remove('open'); document.body.style.overflow=''; }
+  function closeGame(){ drop3d(); document.getElementById('rwOverlay').classList.remove('open'); document.body.style.overflow=''; document.body.classList.remove('rw-open'); }
   document.getElementById('rwExit').addEventListener('click',closeGame);
-  document.getElementById('rwTestBtn').addEventListener('click',function(){ if(state.test) exitTest(); else startTest(); });
+  document.getElementById('rwTestBtn').addEventListener('click',function(){ if(state.test) exitTest(); else setView('quiz'); });
+  document.querySelectorAll('#rwViews button').forEach(function(b){
+    b.addEventListener('click',function(){ setView(b.dataset.view); });
+  });
   // Restart this wheel: two-tap (arms, then clears) so it is easy but not accidental
   (function(){
     var rb=document.getElementById('rwRestart'); if(!rb) return;
@@ -32646,13 +33002,82 @@ html[data-theme="dark"] .rw-reveal{background:rgba(255,255,255,.05)}
   document.addEventListener('keydown',function(e){
     if(!document.getElementById('rwOverlay').classList.contains('open'))return;
     if(e.key==='Escape'){ closeGame(); }
+    if(state.view==='see'&&!state.test&&(e.key==='ArrowRight'||e.key==='ArrowLeft')&&!/INPUT|TEXTAREA|SELECT/.test((e.target&&e.target.tagName)||'')){
+      var n=entriesFor(WHEELS[state.wheel].key).length; state.see=(state.see+(e.key==='ArrowRight'?1:-1)+n)%n; renderSee(); e.preventDefault();
+    }
     if(e.key==='Enter'&&state.answered){ var nx=document.querySelector('#rwPanel .rw-next'); if(nx){e.preventDefault();nx.click();} }
   });
-  window.addEventListener('resize',function(){ if(document.getElementById('rwOverlay').classList.contains('open')) renderBoard(); });
+  var rwLastCompact=compact();
+  window.addEventListener('resize',function(){
+    if(!document.getElementById('rwOverlay').classList.contains('open')) return;
+    placeOverlay(); renderBoard();
+    if(compact()!==rwLastCompact){ rwLastCompact=compact(); }
+  });
   window.__openReactionWheel=openGame;
   var rwParams=new URLSearchParams(location.search);
   if(rwParams.get('game')==='wheel'){ setTimeout(openGame,80); }
 })();
+</script>
+
+<script type="module">
+/* Reaction Wheel 3D model: ball and stick from RDKit coordinates
+   (wheel/wheel-structures.json). It always sits under its skeleton drawing
+   and written name; three.js loads only when a student asks for it. */
+const COLORS = { C: 0x3d4440, H: 0xece8de, O: 0xc4452f, N: 0x2f5f9e, Br: 0x8a3b1e, Cl: 0x2f7d4f, I: 0x6b3a8a, S: 0xc9a227, Na: 0x8a6dd1 };
+const RADII = { H: 0.24, C: 0.4, O: 0.4, N: 0.4, Cl: 0.48, Br: 0.54, I: 0.6, S: 0.5, Na: 0.5 };
+let THREEp = null;
+window.__rw3d = async function (host, mol) {
+  THREEp = THREEp || import('/shared/three.module.min.js');
+  let THREE;
+  try { THREE = await THREEp; } catch (e) { host.innerHTML = '<span class="rw-3d-hint">The 3D model could not load. The drawing above is the one the DAT uses.</span>'; return null; }
+  let renderer;
+  try { renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false }); } catch (e) { renderer = null; }
+  if (!renderer) { host.innerHTML = '<span class="rw-3d-hint">This browser has 3D turned off. The drawing above is the one the DAT uses.</span>'; return null; }
+  host.innerHTML = '';
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  renderer.setClearColor(0xFFFDF7, 1);
+  host.appendChild(renderer.domElement);
+  const hint = document.createElement('span'); hint.className = 'rw-3d-hint'; hint.textContent = 'Drag to turn'; host.appendChild(hint);
+  const scene = new THREE.Scene();
+  const cam = new THREE.PerspectiveCamera(32, 1.6, 0.1, 100);
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x8a7d63, 1.1));
+  const key = new THREE.DirectionalLight(0xffffff, 1.6); key.position.set(3, 5, 6); scene.add(key);
+  const g = new THREE.Group(); scene.add(g);
+  const sph = new THREE.SphereGeometry(1, 28, 20), cyl = new THREE.CylinderGeometry(1, 1, 1, 14);
+  const bondMat = new THREE.MeshStandardMaterial({ color: 0xb9a878, roughness: 0.45, metalness: 0.25 });
+  const P = mol.atoms.map(a => new THREE.Vector3(a[1], a[2], a[3]));
+  let rmax = 1;
+  mol.atoms.forEach((a, i) => {
+    const m = new THREE.Mesh(sph, new THREE.MeshStandardMaterial({ color: COLORS[a[0]] || 0x999999, roughness: 0.35 }));
+    const r = RADII[a[0]] || 0.42; m.scale.setScalar(r); m.position.copy(P[i]); g.add(m);
+    rmax = Math.max(rmax, P[i].length() + r);
+  });
+  const up = new THREE.Vector3(0, 1, 0);
+  mol.bonds.forEach(([i, j, o]) => {
+    const A = P[i], B = P[j], d = B.clone().sub(A), L = d.length(), dir = d.clone().normalize();
+    let side = new THREE.Vector3().crossVectors(dir, new THREE.Vector3(0.3, 0.9, 0.2)).normalize().multiplyScalar(0.12);
+    const offs = o === 2 ? [-1, 1] : o === 3 ? [-1.6, 0, 1.6] : [0];
+    offs.forEach(k => {
+      const m = new THREE.Mesh(cyl, bondMat);
+      m.scale.set(o > 1 ? 0.06 : 0.09, L, o > 1 ? 0.06 : 0.09);
+      m.position.copy(A).add(B).multiplyScalar(0.5).add(side.clone().multiplyScalar(k));
+      m.quaternion.setFromUnitVectors(up, dir); g.add(m);
+    });
+  });
+  cam.position.set(0, 0, rmax * 3.4); cam.lookAt(0, 0, 0);
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let alive = true, drag = null, spin = !reduced, need = true;
+  function size() { const w = host.clientWidth || 300, h = host.clientHeight || 200; renderer.setSize(w, h, false); cam.aspect = w / h; cam.updateProjectionMatrix(); need = true; }
+  size();
+  const ro = new ResizeObserver(size); ro.observe(host);
+  const el = renderer.domElement;
+  el.addEventListener('pointerdown', e => { drag = { x: e.clientX, y: e.clientY }; spin = false; el.setPointerCapture(e.pointerId); hint.style.display = 'none'; });
+  el.addEventListener('pointermove', e => { if (!drag) return; g.rotation.y += (e.clientX - drag.x) * 0.01; g.rotation.x += (e.clientY - drag.y) * 0.01; drag = { x: e.clientX, y: e.clientY }; need = true; });
+  el.addEventListener('pointerup', () => { drag = null; });
+  el.addEventListener('pointercancel', () => { drag = null; });
+  (function loop() { if (!alive) return; if (spin) { g.rotation.y += 0.006; need = true; } if (need) { renderer.render(scene, cam); need = false; } requestAnimationFrame(loop); })();
+  return { dispose() { alive = false; ro.disconnect(); renderer.dispose(); sph.dispose(); cyl.dispose(); host.innerHTML = ''; } };
+};
 </script>
 
   <script>

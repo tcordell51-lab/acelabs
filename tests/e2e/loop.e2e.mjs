@@ -272,6 +272,14 @@ try {
   await shot('labs-try-questions');
   ok('every lab card offers Try questions on this', tries.length + ' cards');
 
+  // ---------- 9a. an OChem reagent miss opens its wheel spoke (#16's deep link) ----------
+  const spokeUrl = await R(() => AceVisuals.match({ section: 'ochem', topic: 'alkene-add', topicName: 'Alkene additions', stem: 'Propene is treated with BH3 in THF, then H2O2 and NaOH.' }).url);
+  assert.match(spokeUrl, /game=wheel&wheel=alkene_terminal&spoke=bh3_h2o2/);
+  await go(spokeUrl + '&from=review');
+  await page.waitForTimeout(1500);
+  await shot('see-it-wheel-spoke');
+  ok('See it on an OChem reagent miss opens the exact wheel spoke', spokeUrl);
+
   // ---------- 9b. PAT hole punch: the mirror and diagonal drills, recorded on the shared record ----------
   await go('/tools/pat/holepunch.html');
   await page.waitForSelector('.hp-drill[data-drill="diag"]');
