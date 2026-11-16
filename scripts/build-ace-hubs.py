@@ -8,7 +8,7 @@ TPL = """<!DOCTYPE html>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{title} · Ace Labs</title>
 <link rel="icon" type="image/svg+xml" href="/shared/ace-dat-mark.svg">
-<link rel="stylesheet" href="/shared/ace-ui.css?v=3">
+<link rel="stylesheet" href="/shared/ace-ui.css?v=7">
 </head>
 <body class="aui">
 <main class="aui-wrap aui-stack" id="main">
@@ -59,15 +59,16 @@ TPL = """<!DOCTYPE html>
   </div>
 
 </main>
-<script src="/shared/ace-record.js?v=1"></script>
-<script src="/shared/ace-question.js?v=1"></script>
-<script src="/shared/ace-set.js?v=1"></script>
+<script src="/shared/ace-record.js?v=4"></script>
+<script src="/shared/ace-question.js?v=4"></script>
+<script src="/shared/ace-set.js?v=3"></script>
 <script src="/shared/ace-hub.js?v=1"></script>
-<script src="/shared/ace-ui.js?v=2" defer></script>
+<script src="/shared/ace-ui.js?v=3" defer></script>
 <script>
 AceHub.init({{ section: '{section}', name: '{short}', bank: '{bank}', home: '{home}', setSize: 10, topicSize: 8, src: '{src}',
   lede: function (count, topics) {{ return count + ' {lede}'.replace('TOPICS', topics); }} }});
 </script>
+<script src="/shared/ace-tabs.js?v=2" defer></script>
 </body>
 </html>
 """
