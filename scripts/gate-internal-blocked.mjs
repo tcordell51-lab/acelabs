@@ -28,7 +28,8 @@ const INTERNAL_DIRS = [
   'tools/mock/verification', 'tools/minitests/source',
   'tools/qr/proposals/agent-10-sarah',
   'tools/qr/proposals/agent-01-audit',
-  'tools/qr/proposals/sprint-c-beta-audit'
+  'tools/qr/proposals/sprint-c-beta-audit',
+  'tools/content'
 ];
 
 // Internal or production pages that no student page loads.
