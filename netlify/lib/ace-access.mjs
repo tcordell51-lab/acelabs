@@ -20,13 +20,16 @@ export const FREE_PAGES = Object.freeze([
   '/qr/worked',          // QR: worked examples
   // the one free diagnostic (signed-out visitors get the fixed free form, see FREE_FORMS)
   '/diagnostic',
+  // where the free diagnostic ends: its question-by-question review (reads this browser's record only)
+  '/review',
 ]);
 
 /** Scripts and data a free page needs. Prefix match. */
 export const FREE_FILE_PREFIXES = Object.freeze(['/shared/', '/sign-in/']);
 
 /** Free single files. */
-export const FREE_FILES = Object.freeze(['/robots.txt', '/favicon.ico', '/data/free/diagnostic-bank.json']);
+// /data/topics.json is topic ids and names only (no questions): Labs and the review read it.
+export const FREE_FILES = Object.freeze(['/robots.txt', '/favicon.ico', '/data/free/diagnostic-bank.json', '/data/topics.json']);
 
 /** Question banks that live under a free prefix but are locked. */
 export const LOCKED_FILES = Object.freeze([
