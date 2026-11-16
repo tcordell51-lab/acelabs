@@ -79,6 +79,8 @@
 
   button{font:inherit;cursor:pointer;border-radius:10px;border:1px solid var(--line2);background:var(--panel);color:var(--ink);padding:11px 18px;transition:background .14s,border-color .14s}
   button:hover{background:var(--raise)}
+  a.gold{display:inline-flex;align-items:center;padding:12px 18px;border-radius:12px;text-decoration:none;background:linear-gradient(180deg,var(--goldhi),var(--gold));color:#1a1206;font-weight:700;font-family:var(--mono);font-size:12.5px;letter-spacing:.06em;text-transform:uppercase}
+  a.gold[hidden]{display:none}
   button.gold{background:linear-gradient(180deg,var(--goldhi),var(--gold));color:#1a1206;border:none;font-weight:700;font-family:var(--mono);font-size:12.5px;letter-spacing:.06em;text-transform:uppercase}
   button.gold:hover{filter:brightness(1.05)}
   button.bad{background:linear-gradient(180deg,#e6b0a6,var(--bad));color:#2a1410;border:none;font-weight:700;font-family:var(--mono);font-size:12.5px;letter-spacing:.06em;text-transform:uppercase}
@@ -223,7 +225,7 @@
   <div class="top">
     <div><span class="brand">Ace<em>The</em>DAT</span> <span class="kick">The Climb</span></div>
     <div class="sp"></div>
-    <span class="streak" id="streak">STREAK <b>0</b></span>
+    <span class="streak" id="streak" hidden></span>
     <a role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click()}" class="navlink on" id="nav-today" onclick="go('today')">Today<span class="ct" id="navDueCt"></span></a>
     <a role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click()}" class="navlink" id="nav-ladder" onclick="go('ladder')">The Ladder</a>
     <a role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click()}" class="navlink" id="nav-mistakes" onclick="go('mistakes')">Mistake List<span class="ct" id="navMistCt"></span></a>
@@ -233,6 +235,9 @@
 
 <script src="/shared/ace-index.js?v=3"></script>
 <script src="/shared/ace-route.js?v=3"></script>
+<script src="/shared/ace-skills.js?v=1"></script>
+<script src="/shared/ace-record.js?v=5"></script>
+<script src="/shared/ace-test-review.js?v=1"></script>
 <script src="remediation-map.js"></script>
 <script type="module">import { rootsUrl } from "../ochem/roots/route.js"; window.ROOTS_URL = rootsUrl;</script>
 <script src="bank.js"></script>
@@ -282,7 +287,7 @@ function bumpStreak(nowISO){
   store.lastDay = t;
 }
 function renderStreak(){
-  document.getElementById('streak').innerHTML = 'STREAK <b>'+(store.streak||0)+'</b>';
+  var sk = document.getElementById('streak'); if (sk) sk.hidden = true;   // no streaks (house rule, 2026-11-16)
   var n = openMistakes().length;
   document.getElementById('navMistCt').textContent = n ? ('· '+n) : '';
   var d = dueMistakes().length + maintenanceDue().length, dc = document.getElementById('navDueCt');
@@ -339,7 +344,7 @@ function renderLadder(){
     '<h1 class="big">The <em>Climb</em>.</h1>'+
     '<p class="lede">Ten mini tests, 40 questions each across Biology, Gen Chem, Orgo and QR. Same topics every rung - the <b>difficulty climbs</b> to the summit. But the climb is not the point: <b>every miss lands on your mistake list</b> and routes to the exact fix. Clear '+(PASS*100)+'% to log a rung.</p>'+
     mbanner+
-    '<div class="daily"><div><div class="t">Cleared '+doneCount+' of 10 rungs</div><p>Come back daily to keep your streak alive.</p></div><div class="sp"></div>'+
+    '<div class="daily"><div><div class="t">Cleared '+doneCount+' of 10 rungs</div><p>Every miss goes into Repair and comes back as a new version.</p></div><div class="sp"></div>'+
       '<button class="gold" onclick="dailyDrop()">Daily Drop · quick 5</button></div>'+
     '<div class="ladder">'+rows+'</div></div>';
 }
@@ -443,6 +448,12 @@ function submitTest(){
   bumpStreak(nowISO); save(); renderStreak();
   T.result = {correct:correct, total:T.qs.length, pct:pct, sect:sect, misses:misses};
   go('results');
+  // the one record (Repair, Progress, Today) and the shared question-by-question review
+  if (window.AceTestReview && T.mode === 'test') {
+    window.AceTestReview.finish({ src: 'climb', title: T.title || 'The Climb', back: '/tools/minitests/',
+      rows: T.qs.map(function (q, i) { return { item: { id: 'climb-' + qkey(q), section: q.section, topic: q.topic, difficulty: T.tier || 1, stem: q.stem, choices: q.choices, answer: q.correct, why: q.explanation || '' }, picked: T.ans[i] == null || T.ans[i] < 0 ? null : T.ans[i] }; }) })
+      .then(function (id) { var b = document.getElementById('rvShared'); if (b) { b.href = '/review/?run=' + encodeURIComponent(id); b.hidden = false; } });
+  }
 }
 function emitMiss(q,i,picked,mode){
   try{ window.parent.postMessage({type:'acedat:tool-miss', tool:'minitest', section:SECT_SHORT[q.section]||SECT[q.section], topic:q.topic,
@@ -468,7 +479,7 @@ function renderResults(){
     '<p class="lede" style="margin:16px auto 0">'+lead+'</p>'+
     (r.misses.length?'<div class="sectbars">'+bars+'</div>':'')+
     '<div class="rbtns">'+
-      (r.misses.length?'<button class="gold" onclick="go(\'review\')">Review your '+r.misses.length+' miss'+(r.misses.length===1?'':'es')+' now</button>':'')+
+      (isTest?'<a class="gold" id="rvShared" href="/review/" hidden>Review question by question, then Repair</a>':(r.misses.length?'<button class="gold" onclick="go(\'review\')">Review your '+r.misses.length+' miss'+(r.misses.length===1?'':'es')+' now</button>':''))+
       (openN?'<button class="bad" onclick="go(\'mistakes\')">Mistake list ('+openN+')</button>':'')+
       (isTest && pass && testByN(T.n+1)?'<button onclick="go(\'test\','+(T.n+1)+')">Next rung</button>':(isTest?'<button onclick="go(\'test\','+T.n+')">Retry rung</button>':''))+
       '<button class="ghost" onclick="go(\'ladder\')">The Ladder</button></div></div>';
@@ -939,6 +950,6 @@ function renderCheckDone(){
 /* boot */
 renderStreak(); renderToday();
 </script>
-<script src="/shared/ace-shell.js?v=3" defer></script>
+<script src="/shared/ace-shell.js?v=4" defer></script>
 </body>
 </html>

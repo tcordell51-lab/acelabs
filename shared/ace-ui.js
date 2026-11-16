@@ -15,19 +15,18 @@
 (function () {
   'use strict';
   if (window.AceUI) return;
+  /* One navigation everywhere (2026-11-16): the same five places as the phone tab bar
+     (shared/ace-tabs.js) and the older pages' bar (shared/ace-shell.js). Review lives under Test.
+     First match wins, so Test is checked before Labs (a test inside /tools/ is a test). */
   var PLACES = [
-    { id: 'home', label: 'Home', href: '/', match: /^\/(index|ace-labs)?$/ },
-    { id: 'bio', label: 'Biology', href: '/bio/', match: /^\/(bio|tools\/bio)/ },
-    { id: 'gchem', label: 'Gen Chem', href: '/gc/', match: /^\/(gc|tools\/(gc|gchem))(\/|$)/ },
-    { id: 'ochem', label: 'OChem', href: '/tools/ochem/', match: /^\/(oc|tools\/(ochem|organic)|games\/chirality)(\/|$)/ },
-    { id: 'pat', label: 'PAT', href: '/tools/pat/', match: /^\/(pat|tools\/pat|games\/six-views)/ },
-    { id: 'rc', label: 'Reading', href: '/tools/rc/', match: /^\/(rc|tools\/rc)/ },
-    { id: 'qr', label: 'QR', href: '/qr/drill/', match: /^\/(qr|tools\/qr)/ },
-    { id: 'tests', label: 'Tests', href: '/tests/', match: /^\/(tests|diagnostic|tools\/(mock|minitests))/ },
-    { id: 'review', label: 'Review', href: '/review/', match: /^\/review/ },
-    { id: 'repair', label: 'Repair', href: '/repair/', match: /^\/repair/ },
-    { id: 'progress', label: 'Progress', href: '/progress/', match: /^\/(progress|performance)/ }
+    { id: 'today', label: 'Today', href: '/', match: /^\/(index|ace-labs)?$/ },
+    { id: 'test', label: 'Test', href: '/tests/', match: /^\/(tests|diagnostic|review|prometric-mock|unified-mock|test-week|test-day-readiness|tools\/(mock|minitests)|tools\/pat\/test)(\/|$)/ },
+    { id: 'repair', label: 'Repair', href: '/repair/', match: /^\/repair(\/|$)/ },
+    { id: 'progress', label: 'Progress', href: '/progress/', match: /^\/(progress|performance)(\/|$)/ },
+    { id: 'labs', label: 'Labs', href: '/labs/', match: /^\/(labs|learn|bio|gc|oc|qr|rc|pat|games|guides|cheat-sheets|tricks|tools)(\/|$)/ }
   ];
+  var ORDER = ['today', 'labs', 'test', 'repair', 'progress'];
+
   var api = window.AceUI = { version: 1, places: PLACES, place: null, mounted: false };
 
   function framed() { try { return window.top !== window.self; } catch (e) { return true; } }
@@ -47,12 +46,19 @@
     document.head.appendChild(l);
   }
 
+
+  /* The phone tab bar: the same five places. Loaded here so every page with a bar has it. */
+  function tabs() {
+    if (window.AceTabs || document.querySelector('script[src*="/shared/ace-tabs.js"]')) return;
+    var t = document.createElement('script'); t.src = '/shared/ace-tabs.js?v=3'; t.defer = true; document.head.appendChild(t);
+  }
+
   function mount() {
     if (api.mounted || !document.body) return;
-    font();
+    font(); tabs();
     if (framed() || (params && params.has('embed')) || document.documentElement.getAttribute('data-ace-bar') === 'off' || timed()) return;
     var here = api.place = placeFor(location.pathname);
-    var links = PLACES.map(function (p) {
+    var links = ORDER.map(function (id) { return PLACES.filter(function (p) { return p.id === id; })[0]; }).map(function (p) {
       return '<a href="' + withStudent(p.href) + '"' + (p.id === here ? ' aria-current="page"' : '') + '>' + p.label + '</a>';
     }).join('');
     var bar = document.createElement('header');

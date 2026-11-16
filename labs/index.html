@@ -6,7 +6,7 @@
 <title>Learn · Ace Labs</title>
 <meta name="description" content="Every visual lab on Ace Labs by section, with where to start and what to do next, plus the six courses.">
 <link rel="icon" type="image/svg+xml" href="/shared/ace-dat-mark.svg">
-<link rel="stylesheet" href="/shared/ace-ui.css?v=7">
+<link rel="stylesheet" href="/shared/ace-ui.css?v=8">
 <link rel="stylesheet" href="/shared/ace-loop.css?v=4">
 <style>
   .loop.lab-page { max-width: 980px; }
@@ -37,6 +37,14 @@
   .lab-cards { display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 270px), 1fr)); padding: 4px 0 8px; }
   .lab-card { display: flex; flex-direction: column; gap: 6px; padding: 14px; border-radius: 16px; border: 1px solid #e6dccb; background: #FCFAF6; color: #0d2018 !important; text-decoration: none; }
   .lab-card:hover { border-color: #C9A84C; }
+  .lab-card > a.lab-main { display: contents; color: inherit; text-decoration: none; }
+  .lab-card .lab-try { align-self: flex-start; display: inline-flex; align-items: center; min-height: 36px; padding: 0 12px; border-radius: 999px; border: 1.5px solid rgba(27,58,45,.3); background: #fffdf7; color: #1B3A2D; font-size: 13px; font-weight: 700; text-decoration: none; margin-top: 4px; }
+  .lab-card.feat .lab-try { background: #C9A84C; border-color: #C9A84C; color: #0d2018; }
+  .lab-for-you { display: flex; flex-direction: column; gap: 4px; padding: 16px; border-radius: 18px; background: #1B3A2D; color: #F5F0E8; text-decoration: none; margin: 4px 0 8px; }
+  .lab-for-you[hidden] { display: none; }
+  .lab-for-you .k { font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: #E2C97A; }
+  .lab-for-you .t1 { font-size: 19px; font-weight: 700; }
+  .lab-for-you .t2 { font-size: 13.5px; line-height: 1.45; }
   .lab-card .top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
   .lab-card .step { font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
   .lab-card .t1 { font-size: 17px; font-weight: 700; line-height: 1.25; }
@@ -59,10 +67,11 @@
 <body class="aui">
 <main class="aui-wrap loop lab-page" id="main">
   <header class="loop-head">
-    <p class="loop-date">Learn</p>
-    <h1 class="aui-h1">Learn fast</h1>
-    <p class="aui-lede">Every visual on Ace Labs, by section. Each section opens with where to start and three steps: see it, try it, test it.</p>
+    <p class="loop-date">Labs</p>
+    <h1 class="aui-h1">Labs: see it, then try it</h1>
+    <p class="aui-lede">Every visual on Ace Labs, by section. Each lab card has questions on the same topic, and every missed question links back to its lab.</p>
   </header>
+  <a class="lab-for-you" id="lab-for-you" hidden></a>
   <h2 class="loop-h2">See it <span id="lab-count"></span></h2>
   <nav class="lab-jump" id="lab-jump" aria-label="Sections"></nav>
   <div id="lab-sections"></div>
@@ -78,6 +87,8 @@
   </div>
 </main>
 <script src="/shared/ace-visuals.js?v=1"></script>
+<script src="/shared/ace-record.js?v=5"></script>
+<script src="/shared/ace-plan.js?v=1"></script>
 <script>
 (function () {
   'use strict';
@@ -89,6 +100,42 @@
   function el(tag, cls, text) { var n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; }
   function line(cls, lead, text) { var p = el('span', cls); p.appendChild(el('b', null, lead)); p.appendChild(document.createTextNode(' ' + text)); return p; }
   var want = location.hash.replace('#', '');
+  /* "Try questions on this": the practice-bank topics whose best visual is this lab (the same
+     matcher that puts See it on a miss, run the other way). PAT trainers are questions already;
+     Reading goes to the timed passages. No matching topic: the section's set near your level. */
+  var TRY = {};
+  function tryHref(t) {
+    var hit = TRY[t.id];
+    if (t.section === 'pat') return '/tests/#pat';
+    if (t.section === 'rc') return '/tools/rc/';
+    return window.AcePlan.practiceHref(t.section, hit ? hit.topic : null);
+  }
+  function wireTry(map) {
+    ['gchem', 'bio', 'ochem', 'qr'].forEach(function (sec) {
+      var seen = {};
+      Object.keys(map[sec] || {}).forEach(function (raw) {
+        var v = map[sec][raw]; if (seen[v[0]]) return; seen[v[0]] = 1;
+        var m = V.match({ section: sec, topic: v[0], topicName: v[1] });
+        if (m && !TRY[m.id]) TRY[m.id] = { section: sec, topic: v[0], name: v[1] };
+      });
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('a[data-try]'), function (a) {
+      var t = V.tools.filter(function (x) { return x.id === a.getAttribute('data-try'); })[0]; if (!t) return;
+      a.href = tryHref(t);
+      if (TRY[t.id]) a.textContent = 'Try questions on this: ' + TRY[t.id].name.toLowerCase();
+    });
+    // the lab for the student's weakest topic, first
+    var w = window.AcePlan.weakest(1)[0], box = document.getElementById('lab-for-you');
+    var v = w ? V.match({ section: w.section, topic: w.topic, topicName: w.topicName }) : null;
+    if (v) {
+      box.hidden = false; box.href = v.url;
+      box.innerHTML = '';
+      box.appendChild(el('span', 'k', 'For you · your weakest topic'));
+      box.appendChild(el('span', 't1', v.label));
+      box.appendChild(el('span', 't2', 'Picked from your answers on ' + String(w.topicName).toLowerCase() + '. See it here, then try the questions under its card.'));
+    }
+  }
+  fetch('/data/topics.json').then(function (r) { return r.ok ? r.json() : {}; }).catch(function () { return {}; }).then(wireTry);
   document.getElementById('lab-count').textContent = V.tools.length + ' labs';
   V.sections.forEach(function (s, si) {
     var tools = V.tools.filter(function (t) { return t.section === s.id; });
@@ -112,12 +159,14 @@
       var ss = el('summary'); ss.appendChild(el('h3', null, g)); ss.appendChild(el('span', 'n', String(list.length))); ss.insertAdjacentHTML('beforeend', CHEV); sub.appendChild(ss);
       var cards = el('div', 'lab-cards');
       list.forEach(function (t) {
-        var a = el('a', 'lab-card' + (t.featured ? ' feat' : '')); a.href = t.path; a.setAttribute('data-tool', t.id);
+        var card = el('div', 'lab-card' + (t.featured ? ' feat' : '')); card.setAttribute('data-tool', t.id);
+        var a = el('a', 'lab-main'); a.href = t.path; card.appendChild(a);
+        var tq = el('a', 'lab-try', 'Try questions on this'); tq.setAttribute('data-try', t.id); tq.href = tryHref(t); card.appendChild(tq);
         if (t.id === 'oc-wheels') a.insertAdjacentHTML('beforeend', WHEEL);
         var top = el('span', 'top'); var st = el('span', 'step', STEP[t.step]); st.style.color = s.color; top.appendChild(st); a.appendChild(top);
         a.appendChild(el('span', 't1', t.title)); a.appendChild(el('span', 't2', t.blurb));
         a.appendChild(line('do', 'You:', t.does)); a.appendChild(line('nx', 'Next:', t.next.replace(/^Then /, '').replace(/^./, function (c) { return c.toUpperCase(); })));
-        cards.appendChild(a);
+        cards.appendChild(card);
       });
       sub.appendChild(cards); body.appendChild(sub);
     });
@@ -129,7 +178,7 @@
   });
 })();
 </script>
-<script src="/shared/ace-ui.js?v=3"></script>
-<script src="/shared/ace-tabs.js?v=2" defer></script>
+<script src="/shared/ace-ui.js?v=4"></script>
+<script src="/shared/ace-tabs.js?v=3" defer></script>
 </body>
 </html>

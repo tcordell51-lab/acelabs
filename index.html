@@ -6,13 +6,23 @@
 <title>Home · Ace Labs</title>
 <meta name="description" content="Ace Labs: DAT practice by section, with one question format and progress that carries from set to set.">
 <link rel="icon" type="image/svg+xml" href="/shared/ace-dat-mark.svg">
-<link rel="stylesheet" href="/shared/ace-ui.css?v=7">
+<link rel="stylesheet" href="/shared/ace-ui.css?v=8">
 <link rel="stylesheet" href="/shared/ace-loop.css?v=4">
 <style>
   .home-sections .aui-card { padding-bottom: var(--aui-4); }
   .home-count { margin-top: var(--aui-2); }
   .home-loop b { display: block; font-size: var(--aui-t-md); }
   .home-loop .aui-num { font-size: var(--aui-t-xl); display: block; margin-top: var(--aui-2); }
+  .plan-steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+  .plan-step { display: flex; gap: 14px; align-items: flex-start; padding: 14px 16px; border-radius: 18px; border: 1px solid #e6dccb; background: #FCFAF6; color: #0d2018; text-decoration: none; }
+  .plan-step.first { background: #1B3A2D; border-color: #1B3A2D; color: #F5F0E8; }
+  .plan-step.quiet { background: transparent; }
+  .plan-step .num { flex-shrink: 0; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; background: #C9A84C; color: #0d2018; }
+  .plan-step .tx { display: flex; flex-direction: column; gap: 3px; }
+  .plan-step .k { font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: #8a6d1f; }
+  .plan-step.first .k { color: #E2C97A; }
+  .plan-step .t1 { font-size: 17px; font-weight: 700; }
+  .plan-step .t2 { font-size: 13.5px; line-height: 1.45; }
 </style>
 </head>
 <body class="aui">
@@ -21,39 +31,20 @@
     <header class="loop-head span2">
       <p class="loop-date" id="t-date">Today</p>
       <h1 class="aui-h1">Today's plan</h1>
-      <p class="aui-lede" id="t-lede">Built from your last set and the misses that are due back.</p>
+      <p class="aui-lede" id="t-lede">Start with the diagnostic. It fills Repair, Progress and this plan.</p>
     </header>
-    <a class="loop-go span2" id="t-go" href="/repair/">Start today's set <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
-    <h2 class="loop-h2 span2">Today, in this order <span>4 steps</span></h2>
-    <a class="loop-forest" id="t-repair" href="/repair/">
-      <span class="k">1 Repair first</span>
-      <h3 id="t-repair-h">Nothing is due back</h3>
-      <p>Each miss returns as a new version of the question. Beat it twice, on different days, and it clears.</p>
-      <span class="chips" id="t-repair-chips"></span>
-      <span class="t" id="t-repair-t"></span>
-    </a>
-    <div class="loop-stack">
-      <a class="loop-card" href="/oc/chirality/">
-        <span class="ic" style="background:#efe9f7"><svg width="44" height="44" viewBox="0 0 44 44" aria-hidden="true"><line x1="22" y1="22" x2="22" y2="6" stroke="#6b4fa0" stroke-width="3"/><line x1="22" y1="22" x2="8" y2="30" stroke="#6b4fa0" stroke-width="3"/><line x1="22" y1="22" x2="36" y2="30" stroke="#6b4fa0" stroke-width="3"/><line x1="22" y1="22" x2="26" y2="38" stroke="#b9a8d8" stroke-width="3"/><circle cx="22" cy="22" r="6" fill="#3a2a5c"/><circle cx="22" cy="6" r="5" fill="#c4452f"/><circle cx="8" cy="30" r="4.5" fill="#5c6a63"/><circle cx="36" cy="30" r="4.5" fill="#5c6a63"/><circle cx="26" cy="38" r="3.5" fill="#d9d4ca"/></svg></span>
-        <span class="tx"><span class="k" style="color:#6b4fa0">2 Learn · Organic Chem</span><span class="t1">Chirality in 5 minutes</span><span class="t2">The 3D model next to the drawing the DAT shows you. Call R or S before you look.</span></span>
-      </a>
-      <a class="loop-card" id="t-set" href="/gc/?run=daily">
-        <span class="ic" style="background:#e8eef7"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#2f5f9e" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3h6v3H9z"/><path d="M7 4.5H5v16h14v-16h-2"/><path d="M9 13l2 2 4-4"/></svg></span>
-        <span class="tx"><span class="k" style="color:#2f5f9e" id="t-set-k">3 Practice · Gen Chem</span><span class="t1">Ten questions, repeats first</span><span class="t2">Every miss gets a one-tap reason and goes straight into Repair.</span></span>
-      </a>
-      <a class="loop-card" href="/gc/galvanic/">
-        <span class="ic" style="background:#e6f1ea"><img src="/shared/art/plates/galvanic.jpg" alt="" width="64" height="64" loading="lazy"></span>
-        <span class="tx"><span class="k" style="color:#2f7d4f">4 See it · Lab</span><span class="t1">Galvanic cell: predict, then watch</span><span class="t2">Guess which way electrons flow, then see it happen.</span></span>
-      </a>
-    </div>
+    <a class="loop-go span2" id="t-go" href="/diagnostic.html"><span id="t-go-label">Take the diagnostic</span> <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
+    <h2 class="loop-h2 span2">Today, in this order <span id="t-nsteps"></span></h2>
+    <ol class="plan-steps span2" id="t-steps"></ol>
+    <p class="aui-small span2" id="t-counts" data-miss-open="0" data-miss-due="0"></p>
     <section class="loop-panel" aria-labelledby="t-stand-h">
-      <h2 id="t-stand-h">Where you stand <a href="/progress/">See why</a></h2>
+      <h2 id="t-stand-h">Where you stand <a href="/progress/">Progress</a></h2>
       <div class="band-grid" id="t-bands"></div>
-      <p class="aui-small">No score predictions. Bands move only on answers you give on your own, over different days.</p>
+      <p class="aui-small">No score predictions. Bands move only on answers you give on your own, over different days. Under 100 answers a band is an early read.</p>
     </section>
     <section class="coach">
       <div class="av">TC</div>
-      <div><div class="who">A tip for today</div><p>Tag every miss with its reason. A trap you name is a trap you stop falling for. <a href="https://acethedat.com/">Talk to a coach</a></p></div>
+      <div><div class="who">A tip for today</div><p>Tag every miss with its reason. A trap you name is a trap you stop falling for.</p></div>
     </section>
   </div>
 
@@ -96,8 +87,8 @@
     <div class="aui-grid">
       <a class="aui-card aui-card--flat" href="/tools/mock/full.html"><h3 class="aui-h3">Full-length DAT</h3><p class="aui-small">Four tests, all four sections in test-day order.</p></a>
       <a class="aui-card aui-card--flat" href="/tools/minitests/"><h3 class="aui-h3">The Climb</h3><p class="aui-small">Ten forty-question tests that get harder each rung.</p></a>
-      <a class="aui-card aui-card--flat" href="/diagnostic.html"><h3 class="aui-h3">Diagnostic</h3><p class="aui-small">Fifty-three questions across Bio, Gen Chem, OChem and QR.</p></a>
-      <a class="aui-card aui-card--flat" href="/review/"><h3 class="aui-h3">Review</h3><p class="aui-small">Every miss from every tool in one list.</p></a>
+      <a class="aui-card aui-card--flat" href="/diagnostic.html"><h3 class="aui-h3">Diagnostic</h3><p class="aui-small">Sixty questions: fifteen each in Biology, Gen Chem, OChem and QR.</p></a>
+      <a class="aui-card aui-card--flat" href="/review/"><h3 class="aui-h3">Review</h3><p class="aui-small">Every finished test, question by question, with the reason for each miss.</p></a>
     </div>
   </section>
 
@@ -107,15 +98,17 @@
 <script src="/shared/ace-index.js?v=3"></script>
 <script src="/shared/ace-route.js?v=3"></script>
 <script src="/shared/ace-progress.js?v=6"></script>
-<script src="/shared/ace-record.js?v=4"></script>
-<script src="/shared/ace-ui.js?v=3" defer></script>
+<script src="/shared/ace-record.js?v=5"></script>
+<script src="/shared/ace-visuals.js?v=1"></script>
+<script src="/shared/ace-plan.js?v=1"></script>
+<script src="/shared/ace-ui.js?v=4" defer></script>
 <script>
 (function () {
   'use strict';
   var SECTIONS = [
     { id: 'bio', name: 'Biology', href: '/bio/', art: '/shared/art/bio.webp', line: '157 cell and molecular questions, plus six labs and the course.' },
     { id: 'gchem', name: 'General Chemistry', href: '/gc/', art: '/shared/art/gchem.webp', line: '517 questions across 42 topics, with spaced repeats.' },
-    { id: 'ochem', name: 'Organic Chemistry', href: '/tools/ochem/', art: '/shared/art/ochem.webp', line: 'Reaction maps, mechanisms and spectroscopy.' },
+    { id: 'ochem', name: 'Organic Chemistry', href: '/oc/', art: '/shared/art/ochem.webp', line: '387 questions across 14 topics, plus Reaction Maps and 3D models.' },
     { id: 'pat', name: 'Perceptual Ability', href: '/tools/pat/', art: '/shared/art/pat.svg', line: 'Six trainers and a ninety-question test, built from exact geometry.' },
     { id: 'rc', name: 'Reading Comprehension', href: '/tools/rc/', art: '', line: 'Timed science passages with search and flag tools.' },
     { id: 'qr', name: 'Quantitative Reasoning', href: '/qr/drill/', art: '/shared/art/qr.webp', line: 'Ten topics from fractions to probability.' }
@@ -137,46 +130,36 @@
     a.appendChild(row); host.appendChild(a);
   });
 
-  // Today: one button, four cards
+  // Today: one plan, read from the record (shared/ace-plan.js). One primary button: the first step.
   var DAYS = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'], MON = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
   var now = new Date(); document.getElementById('t-date').textContent = DAYS[now.getDay()] + ', ' + MON[now.getMonth()] + ' ' + now.getDate();
-  var all = rec.stats({});
-  var diagnosed = false; try { diagnosed = !!(window.AceProgress && window.AceProgress.profile().diagnosed); } catch (e) { diagnosed = false; }
-  var L = rec.repairList ? rec.repairList() : { due: [], open: [] };
-  var NAMES = { bio: 'Biology', gchem: 'Gen Chem', ochem: 'OChem', qr: 'QR', pat: 'PAT', rc: 'Reading' };
-  var go = document.getElementById('t-go'), lede = document.getElementById('t-lede');
-  var minutes = Math.round(L.due.length * 2.5) + 15 + 5 + 5;
-  if (!diagnosed && !all.answers) {
-    go.firstChild.textContent = 'Take the diagnostic '; go.href = '/diagnostic.html';
-    lede.textContent = 'Start with a short check across the sections. It shows where your first sets should go.';
-  } else {
-    go.href = L.due.length ? '/repair/' : '/gc/?run=daily';
-    lede.textContent = 'About ' + minutes + ' minutes, built from your last set and the misses that are due back.';
-  }
-  document.getElementById('t-repair-h').textContent = L.due.length ? plural(L.due.length, 'miss is back', 'misses are back') : (L.open.length ? 'Nothing due back today' : 'No misses yet');
-  var bySec = {}; L.due.forEach(function (e) { bySec[e.section] = (bySec[e.section] || 0) + 1; });
-  var chips = document.getElementById('t-repair-chips');
-  Object.keys(bySec).forEach(function (k) { chips.appendChild(el('span', null, (NAMES[k] || k) + ' ' + bySec[k])); });
-  document.getElementById('t-repair-t').textContent = L.due.length ? 'About ' + Math.max(5, Math.round(L.due.length * 2.5)) + ' min' : (L.open.length ? plural(L.open.length, 'miss', 'misses') + ' waiting for another day' : 'Misses from any set land here');
-  // the practice card goes to the section with the most open misses, Gen Chem by default
-  var open = {}; L.open.forEach(function (e) { open[e.section] = (open[e.section] || 0) + 1; });
-  var pick = Object.keys(open).filter(function (k) { return ['gchem', 'bio', 'qr'].indexOf(k) >= 0; }).sort(function (a, b) { return open[b] - open[a]; })[0] || 'gchem';
-  var HUB = { gchem: '/gc/?run=daily', bio: '/bio/?run=daily', qr: '/qr/drill/?run=daily' };
-  document.getElementById('t-set').href = HUB[pick]; document.getElementById('t-set-k').textContent = '3 Practice · ' + NAMES[pick];
+  var P = window.AcePlan.plan(), go = document.getElementById('t-go'), lede = document.getElementById('t-lede');
+  if (P.primary) { go.href = P.primary.href; document.getElementById('t-go-label').textContent = P.primary.id === 'diagnostic' ? 'Take the diagnostic' : P.primary.id === 'repair' ? 'Start with Repair' : 'Start: ' + P.primary.title; go.setAttribute('data-step', P.primary.id); }
+  var c = P.counts;
+  lede.textContent = !rec.attempts().length ? 'Start with the diagnostic. It fills Repair, Progress and this plan.'
+    : c.due ? 'Misses that are due back come first, then your weakest topic.' : 'Nothing is due back today. Your weakest topic comes first.';
+  var ol = document.getElementById('t-steps');
+  P.steps.forEach(function (st, i) {
+    var li = el('li'), a = el('a', 'plan-step' + (i === 0 ? ' first' : '') + (st.quiet ? ' quiet' : '')); a.href = st.href; a.setAttribute('data-step', st.id);
+    if (st.topic) a.setAttribute('data-topic', st.section + '|' + st.topic);
+    a.appendChild(el('span', 'num', String(i + 1)));
+    var tx = el('span', 'tx'); tx.appendChild(el('span', 'k', st.k)); tx.appendChild(el('span', 't1', st.title)); tx.appendChild(el('span', 't2', st.line));
+    a.appendChild(tx); li.appendChild(a); ol.appendChild(li);
+  });
+  document.getElementById('t-nsteps').textContent = plural(P.steps.length, 'step', 'steps');
+  var cn = document.getElementById('t-counts');
+  cn.setAttribute('data-miss-open', String(c.open)); cn.setAttribute('data-miss-due', String(c.due));
+  cn.textContent = c.open ? 'In Repair: ' + plural(c.open, 'miss', 'misses') + ' open, ' + c.due + ' due back today.' : 'Repair is empty. Misses from any set or test land there.';
   // where you stand: the same bands as Progress
   var bands = document.getElementById('t-bands');
-  var attempts = rec.attempts().filter(function (a) { return !a.assisted; });
   [['bio', 'Biology'], ['gchem', 'Gen Chem'], ['ochem', 'OChem'], ['pat', 'PAT'], ['rc', 'Reading'], ['qr', 'QR']].forEach(function (s) {
-    var rows = attempts.filter(function (a) { return a.section === s[0]; }).slice(-150);
-    var days = {}; rows.forEach(function (a) { var d = new Date(a.at); days[d.toDateString()] = 1; });
-    var nd = Object.keys(days).length, acc = rows.length ? rows.filter(function (a) { return a.ok; }).length / rows.length : 0;
-    var b = !rows.length ? 0 : (acc >= 0.85 && nd >= 5 && attempts.filter(function (a) { return a.section === s[0]; }).length >= 100) ? 3 : (acc >= 0.70 && nd >= 3) ? 2 : 1;
+    var b = window.AcePlan.band(s[0]);
     bands.appendChild(el('span', 'band-name', s[1]));
-    var bar = el('span', 'band'); bar.setAttribute('data-band', String(b)); for (var q = 0; q < 3; q++) bar.appendChild(el('span')); bands.appendChild(bar);
-    bands.appendChild(el('span', 'band-word', ['Not started', 'Building', 'Close', 'Test-ready'][b]));
+    var bar = el('span', 'band'); bar.setAttribute('data-band', String(b.band)); bar.setAttribute('data-section', s[0]); for (var q = 0; q < 3; q++) bar.appendChild(el('span')); bands.appendChild(bar);
+    bands.appendChild(el('span', 'band-word', b.word + (b.n && b.early ? ', early read' : '')));
   });
 })();
 </script>
-<script src="/shared/ace-tabs.js?v=2" defer></script>
+<script src="/shared/ace-tabs.js?v=3" defer></script>
 </body>
 </html>

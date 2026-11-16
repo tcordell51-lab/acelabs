@@ -1,6 +1,6 @@
 /* ace-shell.js : the Ace Labs bar for pages that have not moved to ace-ui.css yet.
 
-   Same bar as shared/ace-ui.js: cream, AD mark, DM Sans, the same nine places
+   Same bar as shared/ace-ui.js: cream, AD mark, DM Sans, the same five places
    (tests/shell/ace-bar.test.js fails if the two lists differ). The AD mark and
    "Ace Labs" always link to the hub. On a phone the places open from Menu.
    - Renders in a shadow root (styles from /shared/ace-shell.css), so no tool
@@ -14,35 +14,25 @@
 (function () {
   'use strict';
   if (window.AceShell) return;
-  var VERSION = '2';
+  var VERSION = '3';
   /* Keep in step with PLACES in shared/ace-ui.js. */
   var DOORS = [
-    { id: 'home', label: 'Home', href: '/' },
-    { id: 'bio', label: 'Biology', href: '/bio/' },
-    { id: 'gchem', label: 'Gen Chem', href: '/gc/' },
-    { id: 'ochem', label: 'OChem', href: '/tools/ochem/' },
-    { id: 'pat', label: 'PAT', href: '/tools/pat/' },
-    { id: 'rc', label: 'Reading', href: '/tools/rc/' },
-    { id: 'qr', label: 'QR', href: '/qr/drill/' },
-    { id: 'tests', label: 'Tests', href: '/tests/' },
-    { id: 'review', label: 'Review', href: '/review/' },
+    { id: 'today', label: 'Today', href: '/' },
+    { id: 'labs', label: 'Labs', href: '/labs/' },
+    { id: 'test', label: 'Test', href: '/tests/' },
     { id: 'repair', label: 'Repair', href: '/repair/' },
     { id: 'progress', label: 'Progress', href: '/progress/' }
   ];
+
   /* First match wins. Paths are normalized: no trailing slash, no .html, no /index. */
   var RULES = [
-    ['home', /^\/(index|ace-labs)?$/],
-    ['bio', /^\/(bio|tools\/(bio|bio-retold))(\/|$)/],
-    ['gchem', /^\/(gc|tools\/(gc|gchem))(\/|$)/],
-    ['ochem', /^\/(oc|tools\/(ochem|organic)|games\/chirality)(\/|$)/],
-    ['pat', /^\/(pat|tools\/(pat|pat-retold)|games\/six-views|guides)(\/|$)/],
-    ['rc', /^\/(rc|tools\/(rc|rc-retold))(\/|$)/],
-    ['qr', /^\/(qr|tools\/(qr|qr-retold))(\/|$)/],
-    ['tests', /^\/(tests|diagnostic|prometric-mock|test-week|test-day-readiness|tools\/(mock|minitests))(\/|$)/],
-    ['review', /^\/(review)(\/|$)/],
+    ['today', /^\/(index|ace-labs)?$/],
+    ['test', /^\/(tests|diagnostic|review|prometric-mock|unified-mock|test-week|test-day-readiness|tools\/(mock|minitests)|tools\/pat\/test)(\/|$)/],
     ['repair', /^\/repair(\/|$)/],
-    ['progress', /^\/(progress|performance)(\/|$)/]
+    ['progress', /^\/(progress|performance)(\/|$)/],
+    ['labs', /^\/(labs|learn|bio|gc|oc|qr|rc|pat|games|guides|cheat-sheets|tricks|tools)(\/|$)/]
   ];
+
 
   var api = window.AceShell = { version: VERSION, doors: DOORS, door: null, mounted: false };
 
@@ -161,9 +151,16 @@
     for (var i = 0; i < held.length; i++) held[i].style.top = off + 'px';
   }
 
+
+  /* The phone tab bar: the same five places. Loaded here so every page with a bar has it. */
+  function tabs() {
+    if (window.AceTabs || document.querySelector('script[src*="/shared/ace-tabs.js"]')) return;
+    var t = document.createElement('script'); t.src = '/shared/ace-tabs.js?v=3'; t.defer = true; document.head.appendChild(t);
+  }
+
   function mount() {
     if (api.mounted || !document.body) return;
-    docStyle();
+    docStyle(); tabs();
     var host = build();
     root.insertBefore(host, document.body);
     root.classList.add('ace-shell-on');

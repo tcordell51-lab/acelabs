@@ -90,6 +90,7 @@
       root.appendChild(qcol); root.appendChild(figBox);
     }
     var meta = el('div', 'aui-q__meta');
+    host.setAttribute('data-item', String(item.id)); if (item.difficulty != null) host.setAttribute('data-difficulty', String(item.difficulty));
     meta.appendChild(el('span', 'aui-chip', opts.label || item.topicName || item.topic || ''));
     if (opts.number) meta.appendChild(el('span', 'aui-small aui-num', 'Question ' + opts.number + (opts.total ? ' of ' + opts.total : '')));
     qcol.appendChild(meta);
@@ -108,7 +109,7 @@
     qcol.appendChild(list);
 
     var actions = el('div', 'aui-q__actions');
-    var check = el('button', 'aui-btn', 'Check answer'); check.type = 'button'; check.disabled = true;
+    var check = el('button', 'aui-btn', 'Check answer'); check.type = 'button'; check.disabled = true; check.setAttribute('data-act', 'check');
     var hint = el('span', 'aui-q__hint', 'Pick a letter, then check.');
     actions.appendChild(check); actions.appendChild(hint);
     var confRow = null;
@@ -165,6 +166,16 @@
       if (trap) fb.appendChild(block('The trap in ' + LETTERS[picked], trap));
       if (item.trick) fb.appendChild(block('Trick', item.trick));
       if (!ok && opts.onReason) fb.appendChild(whyRow(item, change, opts.onReason));
+      // After a miss: See it, the matching visual (shared/ace-visuals.js). Opening it after the
+      // answer is free: the answer is already saved as unassisted.
+      if (!ok && opts.seeIt !== false && window.AceVisuals) {
+        var v = window.AceVisuals.match({ section: item.section, topic: item.topic, topicName: item.topicName, concept: item.skillName });
+        if (v) {
+          var see = el('a', 'aui-q__see', 'See it: ' + v.label); see.href = window.AceVisuals.withFrom(v.url, opts.seeFrom || 'set'); see.setAttribute('data-see', v.id);
+          see.addEventListener('click', function () { if (window.AceRecord) window.AceRecord.event('see-after-miss', { id: item.id, visual: v.id }); });
+          fb.appendChild(see);
+        }
+      }
       var row = el('div', 'aui-q__actions');
       var next = el('button', 'aui-btn', opts.nextLabel || 'Next question'); next.type = 'button'; next.setAttribute('data-act', 'next');
       next.addEventListener('click', function () { if (opts.onNext) opts.onNext(); });

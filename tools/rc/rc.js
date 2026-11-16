@@ -124,6 +124,17 @@
     Store.clearActive();
     hlMode = false; pickMode = false;
     renderResults(S);
+    // the one record (Repair by question type, Progress, Today) and the shared review
+    var done = S;
+    if (window.AceTestReview) {
+      var rows = done.order.map(function (o) {
+        var q = QMAP[o.qid].q, a = done.answers[o.qid];
+        return { item: { id: q.id || o.qid, section: 'rc', topic: q.type, topicName: TYPES[q.type] || q.type, stem: q.stem, choices: q.choices, answer: q.key, why: q.why || '' }, picked: a == null ? null : a };
+      });
+      window.AceTestReview.finish({ src: 'rc', title: 'Reading ' + (done.mode === 'section' ? 'section' : 'passage'), kind: done.mode === 'section' ? 'test' : 'practice', rows: rows, back: '/tools/rc/' }).then(function (id) {
+        var b = document.getElementById('rvShared'); if (b) { b.href = '/review/?run=' + encodeURIComponent(id); b.hidden = false; }
+      });
+    }
   }
 
   /* ---------------- timer ---------------- */
@@ -614,6 +625,7 @@
     var h = '<div class="wrap">';
     h += '<div class="rail" style="margin-top:0"><span class="kick">' + (att.mode === 'section' ? esc(sectionTitle(att.sectionId)) : 'Single passage') + '</span><span class="line"></span></div>';
     h += '<h1 style="font-family:var(--serif);margin:4px 0 0;font-size:clamp(26px,5vw,38px)">' + r.correct + ' of ' + r.total + ' correct</h1>';
+    h += '<p style="margin:10px 0 0">Every miss is in Repair. <a id="rvShared" href="/review/" hidden style="font-weight:700">Tag why you missed each one</a></p>';
     h += '<div class="stats">'
       + stat('Time used', fmt(att.elapsed), att.limit ? 'of ' + fmt(att.limit) : 'single passage')
       + stat('Per question', fmt(att.elapsed / r.total), 'average')

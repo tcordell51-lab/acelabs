@@ -2,9 +2,11 @@
    component and the one progress record. Needs ace-question.js and ace-record.js.
 
    AceSet.build(items, { mode, section, topic, size })  ->  array of items
-     mode 'daily'  : spaced repeats that are due, then recent misses, then new
-                     items spread across topics
-     mode 'topic'  : one topic, unseen items first
+     mode 'daily'  : new items near the student's level (about 75% expected right, from the
+                     learner model in ace-record.js), weakest topics first, spread across topics.
+                     Misses are not repeated here: they come back as new versions in Repair.
+     mode 'topic'  : one topic, unseen items nearest the student's level first, so the set
+                     steps harder after wins and easier after misses
      mode 'misses' : items whose most recent answer was wrong
      mode 'due'    : spaced repeats that are due
    AceSet.run(host, items, { mode, section, topic, size, src, onDone, homeHref, homeLabel })
@@ -26,11 +28,18 @@
     var dueIds = rec ? rec.due(q) : [], missIds = rec ? rec.missed(q) : [];
     if (o.mode === 'due') { dueIds.forEach(function (id) { add(byId[id]); }); return out; }
     if (o.mode === 'misses') { missIds.forEach(function (id) { add(byId[id]); }); return out; }
-    if (o.mode !== 'topic') { dueIds.forEach(function (id) { add(byId[id]); }); missIds.slice(0, Math.ceil(size / 3)).forEach(function (id) { add(byId[id]); }); }
-    // new items: one topic at a time so a set is spread, not clumped
+    // new items, ordered nearest the student's level (rec.pickNear), one topic at a time so a
+    // set is spread, not clumped; in daily mode the weakest topics lead
+    var near = rec && rec.pickNear ? rec.pickNear(pool.filter(function (it) { return !rec.item(it.id); })) : shuffle(pool);
     var unseen = {}, order = [];
-    shuffle(pool).forEach(function (it) { if (used[it.id] || (rec && rec.item(it.id))) return; if (!unseen[it.topic]) { unseen[it.topic] = []; order.push(it.topic); } unseen[it.topic].push(it); });
-    order = shuffle(order);
+    near.forEach(function (it) { if (used[it.id]) return; if (!unseen[it.topic]) { unseen[it.topic] = []; order.push(it.topic); } unseen[it.topic].push(it); });
+    if (o.mode !== 'topic') {
+      var weak = window.AcePlan ? window.AcePlan.weakest(3, { section: o.section }).map(function (w) { return w.topic; }) : [];
+      var lead = order.filter(function (t) { return weak.indexOf(t) >= 0; }).sort(function (a, b) { return weak.indexOf(a) - weak.indexOf(b); });
+      order = lead.concat(shuffle(order.filter(function (t) { return weak.indexOf(t) < 0; })));
+      // the weakest topic gets up to three items before the spread starts
+      if (lead.length) for (var w = 0; w < 2 && unseen[lead[0]].length > 1; w++) add(unseen[lead[0]].shift());
+    }
     for (var guard = 0; out.length < size && order.length && guard < 5000; guard++) {
       var t = order.shift(), next = unseen[t].shift(); add(next); if (unseen[t].length) order.push(t);
     }
@@ -49,7 +58,7 @@
 
   function run(host, all, o) {
     o = o || {};
-    var set = build(all, o), i = 0, right = 0, answered = 0, wrongTopics = {}, setId = (o.src || 'set') + ':' + Date.now().toString(36);
+    var set = build(all, o), i = 0, right = 0, answered = 0, wrongTopics = {}, rows = [], setId = (o.src || 'set') + '-' + Date.now().toString(36);
     var inSet = {}; set.forEach(function (it) { inSet[it.id] = 1; });
     host.textContent = '';
     if (!set.length) {
@@ -72,10 +81,11 @@
         number: i + 1, total: set.length, confidence: o.confidence !== false,
         nextLabel: i + 1 >= set.length ? 'Finish set' : 'Next question',
         onAnswer: function (res) {
-          answered += 1; if (res.ok) right += 1; else wrongTopics[item.topicName || item.topic] = (wrongTopics[item.topicName || item.topic] || 0) + 1;
+          answered += 1; rows.push({ item: item, picked: res.picked, ok: res.ok }); if (res.ok) right += 1; else wrongTopics[item.topicName || item.topic] = (wrongTopics[item.topicName || item.topic] || 0) + 1;
           if (R()) R().record({ item: item, picked: res.picked, answer: res.answer, ok: res.ok, ms: res.ms, src: o.src || '', set: setId, first: res.first, changes: res.changes, change: res.change, conf: res.conf });
         },
         onReason: function (reason) { if (R() && R().repairReason) R().repairReason(item.id, reason); },
+        seeFrom: 'set',
         onNext: function () { i += 1; show(); },
         onRetry: tw ? function () { inSet[tw.id] = 1; set.splice(i + 1, 0, tw); i += 1; show(); } : null
       });
@@ -87,15 +97,18 @@
       card.appendChild(el('p', 'aui-kicker', 'Set finished'));
       card.appendChild(el('h2', 'aui-h2', right + ' of ' + answered + ' right'));
       var names = Object.keys(wrongTopics);
+      if (R() && R().saveRun) R().saveRun({ id: setId, src: o.src || 'set', title: (o.title || 'Practice set'), at: Date.now(), right: right, total: answered, back: o.homeHref || '/',
+        rows: rows.map(function (r, k) { return { n: k + 1, id: r.item.id, section: r.item.section, topic: r.item.topic, topicName: r.item.topicName, skill: r.item.skill, skillName: r.item.skillName, stem: r.item.stem, choices: r.item.choices, answer: r.item.answer, why: r.item.why, picked: r.picked, ok: r.ok, blank: false }; }) });
       if (names.length) {
-        card.appendChild(el('p', 'aui-p', 'Each miss comes back tomorrow, then on a longer gap each time you get it right (1, 3, 7, 14 and 30 days).'));
+        card.appendChild(el('p', 'aui-p', 'Every miss is in Repair now. It comes back as a new version, starting tomorrow, until you beat it twice on different days.'));
         var ul = el('ul', 'aui-list');
         names.sort(function (a, b) { return wrongTopics[b] - wrongTopics[a]; }).forEach(function (n) { var li = el('li'); li.appendChild(el('span', null, n)); li.appendChild(el('span', 'aui-chip aui-chip--miss', wrongTopics[n] + (wrongTopics[n] === 1 ? ' miss' : ' misses'))); ul.appendChild(li); });
         card.appendChild(ul);
-      } else card.appendChild(el('p', 'aui-p', 'No misses in this set. These items come back on a longer gap each time (1, 3, 7, 14 and 30 days).'));
+      } else card.appendChild(el('p', 'aui-p', 'No misses in this set. The next set picks a little harder, because your level went up.'));
       var row = el('div', 'aui-row');
-      if (names.length) { var again = el('button', 'aui-btn', 'Review these misses now'); again.type = 'button'; again.addEventListener('click', function () { run(host, all, { mode: 'misses', section: o.section, topic: o.topic, size: o.size, src: o.src, homeHref: o.homeHref, homeLabel: o.homeLabel, onDone: o.onDone }); }); row.appendChild(again); }
-      var back = el('a', 'aui-btn' + (names.length ? ' aui-btn--quiet' : ''), o.homeLabel || 'Back'); back.href = o.homeHref || '/'; row.appendChild(back);
+      var home = el('a', 'aui-btn', 'Back to Today'); home.href = '/'; home.setAttribute('data-act', 'today'); row.appendChild(home);
+      var rv = el('a', 'aui-btn aui-btn--quiet', 'Review question by question'); rv.href = '/review/?run=' + encodeURIComponent(setId); row.appendChild(rv);
+      var back = el('a', 'aui-btn aui-btn--quiet', o.homeLabel || 'Back'); back.href = o.homeHref || '/'; row.appendChild(back);
       card.appendChild(row); slot.appendChild(card);
       if (o.onDone) o.onDone({ right: right, answered: answered, wrongTopics: wrongTopics });
     }

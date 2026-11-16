@@ -637,18 +637,24 @@ body{
   .diag-meta-row{gap:.75rem}
 }
 </style>
+<style>
+/* One header (2026-11-16): the shared Ace Labs bar outside the test; during the timed test the bar
+   hides itself and this slim strip carries only the clock and the count. */
+header.al-top .al-brand{display:none}
+html:not(.diag-running) header.al-top{display:none}
+</style>
 </head>
 <body>
 
 <!-- ========== TOP BAR ========== -->
 <header class="al-top">
-  <a class="al-brand" href="ace-labs.html">
+  <a class="al-brand" href="/">
     Ace<em>The</em>DAT
     <span class="al-divider"></span>
     <span class="al-product">Ace Labs</span>
   </a>
   <div class="al-top-right">
-    <span class="diag-progress-pill" id="topProgress" style="display:none">1 / 53</span>
+    <span class="diag-progress-pill" id="topProgress" style="display:none">1 / 60</span>
     <span class="diag-timer" id="topTimer" style="display:none">45:00</span>
   </div>
 </header>
@@ -661,11 +667,11 @@ body{
     <div class="diag-prev-banner" id="prevBanner"></div>
     <div class="diag-intro-card">
       <h1>Cross-Section <em>Diagnostic</em></h1>
-      <p class="lede">53 questions across the four sections Ace Labs covers: 15 Biology, 15 General Chemistry, 15 Organic Chemistry, and 8 Quantitative Reasoning. 45 minutes. At the end you will see per-section accuracy and your three weakest topic areas, so you know exactly where to focus this week.</p>
+      <p class="lede">60 questions: 15 Biology, 15 General Chemistry, 15 Organic Chemistry and 15 Quantitative Reasoning. 45 minutes. When you submit, you go through it question by question, tag why you missed each one, and every miss goes into Repair. Your plan on Today is built from it.</p>
 
       <div class="diag-meta-row">
         <div class="diag-meta-item">
-          <strong>53</strong>
+          <strong>60</strong>
           <span>questions total</span>
         </div>
         <div class="diag-meta-item">
@@ -673,7 +679,7 @@ body{
           <span>time limit</span>
         </div>
         <div class="diag-meta-item">
-          <strong>~50 s</strong>
+          <strong>~45 s</strong>
           <span>per question</span>
         </div>
         <div class="diag-meta-item">
@@ -697,7 +703,7 @@ body{
         </div>
         <div class="diag-section-pill qr">
           <span class="pill-label">Quant Reasoning</span>
-          8 questions
+          15 questions
         </div>
       </div>
 
@@ -712,7 +718,7 @@ body{
 
       <p class="diag-note">
         You can change your answer to any question before submitting. Skipped questions count as misses.
-        Results are saved locally so you can review them from the home dashboard.
+        Results are saved in this browser and fill Repair, Progress and Today.
       </p>
     </div>
   </div>
@@ -728,7 +734,7 @@ body{
     <!-- Section strip -->
     <div class="diag-section-strip">
       <span class="diag-section-badge" id="qSectionBadge">Bio</span>
-      <span class="diag-q-counter" id="qCounter">Q1 of 53</span>
+      <span class="diag-q-counter" id="qCounter">Q1 of 60</span>
       <span class="diag-q-topic" id="qTopic"></span>
     </div>
 
@@ -759,7 +765,7 @@ body{
     <!-- Submit zone (appears near end) -->
     <div class="diag-submit-zone" id="submitZone" style="display:none">
       <p>
-        <span class="diag-answered-count" id="answeredCount">0</span> of <span id="answeredTotal">53</span> answered.
+        <span class="diag-answered-count" id="answeredCount">0</span> of <span id="answeredTotal">60</span> answered.
         Unanswered questions count as misses.
       </p>
       <button class="btn-primary" onclick="confirmSubmit()">Submit and see results</button>
@@ -793,7 +799,7 @@ body{
     <!-- Actions -->
     <div class="diag-result-actions">
       <button class="btn-secondary" onclick="retakeDiagnostic()">Retake diagnostic</button>
-      <a class="btn-secondary" href="ace-labs.html">Back to home</a>
+      <a class="btn-secondary" href="/">Back to Today</a>
     </div>
   </div>
 
@@ -809,7 +815,7 @@ body{
 'use strict';
 
 /* ── State ─────────────────────────────────────────────── */
-let pool = [];           // 53 drawn questions (15 Bio + 15 GC + 15 OChem + 8 QR)
+let pool = [];           // 60 drawn questions (15 each: Bio, GC, OChem, QR)
 let currentIdx = 0;
 let answers = {};        // { idx: choiceIndex }
 let timerInterval = null;
@@ -950,6 +956,8 @@ const TOPIC_LABELS = {
   'probability':'QR · Probability','rate':'QR · Rates & Work',
   'geometry':'QR · Geometry','word-problem':'QR · Word Problems',
   'data':'QR · Data Interpretation','pct-chg':'QR · Percent Change',
+  'discr':'QR · Data Sufficiency','estim':'QR · Estimation','lin-eq':'QR · Linear Equations','frac-add':'QR · Fractions',
+  'untimed':'QR · Test Strategy','guess':'QR · Test Strategy','ratios':'QR · Ratios','p-andor':'QR · Probability',
 };
 
 function topicLabel(t){ return TOPIC_LABELS[t] || t; }
@@ -1013,7 +1021,7 @@ function drawQuestions(pools){
   const gc    = sample(gcPool,    Math.min(15, gcPool.length));
   const ochem = sample(ochemPool, Math.min(15, ochemPool.length));
 
-  // QR expert pool is 8 today, so the diagnostic uses all 8 (53 total)
+  // QR: the expert pool holds 41 today, so the diagnostic draws 15 like the other sections (60 total)
   const qr = sample(qrPool, Math.min(15, qrPool.length));
 
   // Order: Bio, GC, OChem, then QR
@@ -1052,7 +1060,9 @@ window.addEventListener('DOMContentLoaded', async () => {
     const totalCount = bioCount + gcCount + ochemCount + qrCount;
     try{
       const lede = document.querySelector('#screenIntro .lede, .diag-intro .lede, .lede');
-      if(lede) lede.textContent = `${totalCount} questions across the four sections Ace Labs covers: ${bioCount} Biology, ${gcCount} General Chemistry, ${ochemCount} Organic Chemistry, and ${qrCount} Quantitative Reasoning. 45 minutes. At the end you will see per-section accuracy and your three weakest topic areas, so you know exactly where to focus this week.`;
+      if(lede) lede.textContent = `${totalCount} questions: ${bioCount} Biology, ${gcCount} General Chemistry, ${ochemCount} Organic Chemistry and ${qrCount} Quantitative Reasoning. 45 minutes. When you submit, you go through it question by question, tag why you missed each one, and every miss goes into Repair. Your plan on Today is built from it.`;
+      const pills = document.querySelectorAll('.diag-section-pill');
+      [bioCount, gcCount, ochemCount, qrCount].forEach((n, i) => { if(pills[i]) pills[i].lastChild.textContent = '\n          ' + n + ' questions'; });
       const metas = document.querySelectorAll('.diag-meta-item strong');
       if(metas[0]) metas[0].textContent = String(totalCount);
       if(metas[2]) metas[2].textContent = '~' + Math.round(45 * 60 / Math.max(1, totalCount)) + ' s';
@@ -1093,6 +1103,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
 /* ── Start ──────────────────────────────────────────────── */
 function startDiagnostic(){
+  document.documentElement.classList.add('diag-running');
   pool = drawQuestions(window._diagPools);
   const totalEl = document.getElementById('answeredTotal');
   if (totalEl) totalEl.textContent = pool.length;
@@ -1113,6 +1124,7 @@ function startDiagnostic(){
 }
 
 function resumeDiagnostic(){
+  document.documentElement.classList.add('diag-running');
   const p = readProgress();
   const pools = window._diagPools;
   if(!p || !pools) return startDiagnostic();
@@ -1328,10 +1340,19 @@ function submitDiagnostic(){
   const result = scoreQuestions();
   saveResult(result);
   renderResults(result);
-
-  showScreen('screenResults');
   document.getElementById('topTimer').style.display = 'none';
   document.getElementById('topProgress').style.display = 'none';
+
+  // Every answer goes into the shared record (Repair, Progress, Today), then the student goes
+  // through the test question by question on /review/ (shared/ace-test-review.js).
+  if(window.AceTestReview && window.AceRecord){
+    const rows = pool.map((q, i) => ({ item: q, picked: answers[i] !== undefined ? answers[i] : null }));
+    window.AceTestReview.finish({ src: 'diagnostic', title: 'Diagnostic', rows, back: '/diagnostic.html' })
+      .then(id => { leaving = true; location.href = '/review/?run=' + encodeURIComponent(id); })
+      .catch(() => showScreen('screenResults'));
+    return;
+  }
+  showScreen('screenResults');
 }
 
 /* ── Scoring ────────────────────────────────────────────── */
@@ -1509,10 +1530,10 @@ function renderResults(result){
   // Next-step handoffs — route to the weakest section's engine plus a full mock,
   // so the results screen leads somewhere instead of dead-ending at the homepage.
   const SECTION_ENGINES = {
-    bio:   { href:'tools/bio/index.html',   label:'Biology' },
-    gc:    { href:'tools/gc/index.html',    label:'Gen Chem' },
-    ochem: { href:'tools/ochem/index.html', label:'Org Chem' },
-    qr:    { href:'tools/qr/index.html',    label:'Quant Reasoning' },
+    bio:   { href:'/bio/?run=daily',      label:'Biology' },
+    gc:    { href:'/gc/?run=daily',       label:'Gen Chem' },
+    ochem: { href:'/oc/?run=daily',       label:'Org Chem' },
+    qr:    { href:'/qr/drill/?run=daily', label:'Quant Reasoning' },
   };
   const ranked = Object.entries(perSection)
     .filter(([, d]) => d && d.total > 0)
@@ -1526,7 +1547,7 @@ function renderResults(result){
     if(eng){
       parts.push(`<a class="btn-primary" href="${eng.href}">Study ${eng.label}, your weakest section</a>`);
     }
-    parts.push(`<a class="btn-primary" href="prometric-mock.html">Take a full mock next</a>`);
+    parts.push(`<a class="btn-secondary" href="/">See today's plan</a>`);
     handoffs.innerHTML = parts.join('');
     nextWrap.style.display = 'block';
   }
@@ -1571,6 +1592,9 @@ function retakeDiagnostic(){
 </script>
   <script src="/shared/ace-index.js?v=3"></script>
   <script src="/shared/ace-route.js?v=3"></script>
-  <script src="/shared/ace-shell.js?v=3" defer></script>
+  <script src="/shared/ace-skills.js?v=1"></script>
+  <script src="/shared/ace-record.js?v=5"></script>
+  <script src="/shared/ace-test-review.js?v=1"></script>
+  <script src="/shared/ace-shell.js?v=4" defer></script>
 </body>
 </html>
