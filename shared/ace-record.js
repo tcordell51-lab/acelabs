@@ -18,6 +18,17 @@
      ace.v1.outbox    answers not yet accepted by the sync adapter
      ace.v1.migrated  { at, families: { name: keyCount }, keys: [{ k, bytes }] }
 
+   Repair (2026-11-16): every miss also opens a repair entry in the same record
+   (record.repair). One scheduler, simple interval logic in localStorage for now
+   (Ace Engine's FSRS is not wired into the browser yet):
+     - the miss comes back the next day, or in 2 days when the student tags it
+       "Fell for a trap", "Misread it" or "Changed my answer";
+     - "Didn't know it" puts a short lesson before the first return;
+     - "Ran short on time" makes the first return untimed;
+     - it returns as a new version (a twin: same section and skill, other stem);
+     - it clears after 2 wins on different calendar days, answered unassisted
+       (nothing opened before answering); a wrong answer resets it to the next day.
+
    Spaced repeat: a right answer moves an item up one box and schedules it
    LADDER[box] days out (1, 3, 7, 14, 30). A wrong answer sends it back to box 0,
    due the next day. An item that reaches the top box counts as held.
@@ -57,8 +68,8 @@
     try { var s = ls(); if (s) s.setItem(NS + k, str); } catch (e) { /* storage full or blocked: memory only */ }
   }
   function dayKey(t) { var d = new Date(t); return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); }
-  function blank() { return { schema: 1, updated: 0, items: {}, days: {}, imported: {} }; }
-  function load() { var r = read('record', null); if (!r || r.schema !== 1) r = blank(); r.items = r.items || {}; r.days = r.days || {}; r.imported = r.imported || {}; return r; }
+  function blank() { return { schema: 1, updated: 0, items: {}, days: {}, imported: {}, repair: {} }; }
+  function load() { var r = read('record', null); if (!r || r.schema !== 1) r = blank(); r.items = r.items || {}; r.days = r.days || {}; r.imported = r.imported || {}; r.repair = r.repair || {}; return r; }
 
   var listeners = [], sync = null, flushing = false;
   function emit(what) { listeners.forEach(function (fn) { try { fn(what); } catch (e) { /* a listener must not break a save */ } }); }
@@ -74,6 +85,7 @@
     it.box = a.ok ? Math.min(it.box + 1, LADDER.length) : 0;
     it.due = now + (a.ok ? LADDER[Math.min(it.box, LADDER.length) - 1] : 1) * DAY;
     r.items[id] = it;
+    if (!a.ok && a.repair !== false) repairOpen(r, a, now);
     var d = dayKey(now), day = r.days[d] || { seen: 0, right: 0 };
     day.seen += 1; if (a.ok) day.right += 1; r.days[d] = day;
     r.updated = now; write('record', r);
@@ -87,6 +99,74 @@
     emit({ type: 'record', attempt: row, item: it });
     flush();
     return it;
+  }
+
+  /* ---- repair: one queue for every miss ---- */
+  var REASONS = { know: "Didn't know it", trap: 'Fell for a trap', misread: 'Misread it', time: 'Ran short on time', changed: 'Changed my answer' };
+  function startOfDay(t) { var d = new Date(t); d.setHours(0, 0, 0, 0); return d.getTime(); }
+  function daysOut(now, n) { return startOfDay(now) + n * DAY + 3600e3; }   // 1 am on day +n, so "due today" means any time today
+  function repairOpen(r, a, now) {
+    r.repair = r.repair || {};
+    var id = String(a.item.id), e = r.repair[id];
+    if (!e || e.cleared) {
+      e = r.repair[id] = { id: id, section: a.item.section || '', topic: a.item.topic || '', topicName: a.item.topicName || a.item.topic || '',
+        trap: a.item.trapTag || a.item.topicName || a.item.topic || '', src: a.src || '', missedAt: now, reason: null, wins: [],
+        due: daysOut(now, 1), resets: 0, cleared: 0, served: [], lessonFirst: false, untimedFirst: false };
+    } else {   // missed again while open: reset
+      e.wins = []; e.resets += 1; e.due = daysOut(now, 1); e.lastMiss = now;
+    }
+    return e;
+  }
+  /* Tag why a miss happened. Drives the first return. */
+  function repairReason(id, reason, now) {
+    now = now || Date.now();
+    if (!REASONS[reason]) throw new Error('unknown reason ' + reason);
+    var r = load(); r.repair = r.repair || {}; var e = r.repair[String(id)]; if (!e) return null;
+    e.reason = reason;
+    e.lessonFirst = reason === 'know'; e.untimedFirst = reason === 'time';
+    e.due = daysOut(e.lastMiss || e.missedAt || now, (reason === 'know' || reason === 'time') ? 1 : 2);
+    r.updated = now; write('record', r); emit({ type: 'repair', entry: e });
+    return e;
+  }
+  /* Answer a repair return. o = { servedId, ok, assisted, at } */
+  function repairAnswer(id, o) {
+    o = o || {}; var now = o.at || Date.now();
+    var r = load(); r.repair = r.repair || {}; var e = r.repair[String(id)]; if (!e || e.cleared) return e || null;
+    if (o.servedId) { e.served = (e.served || []).concat(String(o.servedId)).slice(-12); }
+    if (!o.ok) { e.wins = []; e.resets += 1; e.due = daysOut(now, 1); e.lastMiss = now; e.lessonFirst = false; }
+    else if (o.assisted) { e.due = daysOut(now, 1); }
+    else {
+      var today = startOfDay(now);
+      if (!e.wins.some(function (w) { return startOfDay(w) === today; })) e.wins.push(now);
+      if (e.wins.length >= 2) e.cleared = now;
+      else e.due = daysOut(now, 2);
+      e.untimedFirst = false; e.lessonFirst = false;
+    }
+    r.updated = now; write('record', r); emit({ type: 'repair', entry: e });
+    return e;
+  }
+  function repairList(q) {
+    q = q || {}; var now = q.now || Date.now(), end = startOfDay(now) + DAY, r = load(), all = r.repair || {};
+    var open = [], due = [], cleared = [], weekStart = startOfDay(now) - ((new Date(now).getDay() + 6) % 7) * DAY;
+    Object.keys(all).forEach(function (k) {
+      var e = all[k]; if (q.section && e.section !== q.section) return;
+      if (e.cleared) { if (e.cleared >= weekStart) cleared.push(e); return; }
+      open.push(e); if (e.due < end) due.push(e);
+    });
+    due.sort(function (a, b) { return a.due - b.due; });
+    return { open: open, due: due, clearedThisWeek: cleared, weekStart: weekStart };
+  }
+  function repairEntry(id) { var r = load(); return (r.repair || {})[String(id)] || null; }
+  /* The next version to serve: same section and skill, not the missed stem, not served lately.
+     Falls back to the missed item itself only when the bank has no twin (flagged sameItem). */
+  function repairVersion(e, bank) {
+    var served = {}; (e.served || []).forEach(function (x) { served[x] = 1; });
+    var pool = (bank || []).filter(function (it) { return it.section === e.section && it.topic === e.topic && String(it.id) !== e.id; });
+    var fresh = pool.filter(function (it) { return !served[String(it.id)]; });
+    var pick = (fresh.length ? fresh : pool);
+    if (pick.length) return { item: pick[Math.floor(Math.random() * pick.length)], sameItem: false };
+    var self = (bank || []).filter(function (it) { return String(it.id) === e.id; })[0];
+    return { item: self || null, sameItem: true };
   }
 
   function item(id) { return load().items[String(id)] || null; }
@@ -185,6 +265,7 @@
     version: 2, LADDER: LADDER, FAMILIES: FAMILIES.map(function (f) { return f[0]; }),
     record: record, item: item, due: due, missed: missed, stats: stats, topics: topics, today: today, attempts: attempts,
     changeStats: changeStats, event: event, events: events,
+    REASONS: REASONS, repairReason: repairReason, repairAnswer: repairAnswer, repairList: repairList, repairEntry: repairEntry, repairVersion: repairVersion,
     setSync: setSync, flush: flush, pending: pending, onChange: function (fn) { listeners.push(fn); },
     migrate: migrate, legacyKeys: legacyKeys, legacyExport: legacyExport, exportAll: exportAll,
     imported: function () { return load().imported; }
