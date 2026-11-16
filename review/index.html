@@ -23,6 +23,14 @@
   .toast { position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%); background: var(--bg-panel-elevated); border: 1px solid var(--gold-border); color: var(--text-hi); padding: 10px 16px; border-radius: 999px; font-size: 14px; opacity: 0; transition: opacity .2s; pointer-events: none; }
   .toast.on { opacity: 1; }
 </style>
+<style>
+  #list li .why { flex-basis: 100%; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-top: 10px; padding-top: 10px; border-top: 1px dashed rgba(27,58,45,.18); }
+  #list li .why-h { font-size: 13px; font-weight: 700; color: #3a4a42; margin-right: 4px; }
+  #list li .why-b { min-height: 36px; padding: 0 12px; border-radius: 999px; border: 1.5px solid rgba(27,58,45,.3); background: #FCFAF6; font: 500 13px var(--body); color: #0d2018; cursor: pointer; }
+  #list li .why-b[aria-pressed="true"] { background: #C9A84C; border-color: #C9A84C; font-weight: 700; }
+  #list li .why-fb { flex-basis: 100%; margin: 4px 0 0; font-size: 13px; color: #3a4a42; }
+  #list li.lesson-first .links a[title^="Night"], #list li.lesson-first .links a:nth-child(2) { background: #1B3A2D; color: #F5F0E8; border-radius: 999px; padding: 2px 10px; }
+</style>
 </head>
 <body>
 <main class="wrap" id="main">
@@ -68,7 +76,7 @@
 
 <script src="/shared/ace-index.js?v=3"></script>
 <script src="/shared/ace-route.js?v=3"></script>
-<script src="/shared/ace-progress.js?v=5"></script>
+<script src="/shared/ace-progress.js?v=6"></script>
 <script>
 (function () {
   var P = window.AceProgress, R = window.AceRoute, S = P.withStudent;
@@ -78,6 +86,10 @@
   var state = { f: qp.get('due') ? 'due' : 'open', s: qp.get('section') || 'all' };
   var askAce = function () { return !!(window.__aceButton || document.querySelector('script[src*="ace-button.js"]')); };
   var TAG = { learning: 'Learning', reviewing: 'Reviewing', mastered: 'Mastered' };
+  var WHY = [['know', "Didn't know it"], ['trap', 'Fell for a trap'], ['misread', 'Misread it'], ['time', 'Ran short on time'], ['changed', 'Changed my answer']];
+  var LINE = { know: 'Got it. Open Learn first; this comes back tomorrow.', trap: 'Got it. This comes back in 2 days, with the same trap waiting for you.',
+    misread: 'Got it. It comes back in 2 days. Say the ask in your own words before you look at the choices.', time: 'Got it. Retry it untimed first, then timed, so you know which one it was.',
+    changed: 'Every switch is logged, so you can see whether second-guessing costs you.' };
   var DAY = 864e5;
 
   function when(t) {
@@ -118,7 +130,10 @@
       var retry = m.status === 'mastered'
         ? '<div class="retry"><button type="button" class="no" data-undo="' + esc(m.id) + '">Back to review</button></div>'
         : '<div class="retry"><button type="button" class="ok" data-ok="' + esc(m.id) + '">Got it</button><button type="button" class="no" data-no="' + esc(m.id) + '">Missed again</button></div>';
-      return '<li><div class="what"><b>' + esc(m.concept) + '</b>' +
+      var why = m.status === 'mastered' ? '' : '<div class="why" role="group" aria-label="Why did you miss it?"><span class="why-h">Why did you miss it?</span>' +
+        WHY.map(function (w) { return '<button type="button" class="why-b" data-why="' + w[0] + '" data-id="' + esc(m.id) + '" aria-pressed="' + (m.reason === w[0]) + '">' + w[1] + '</button>'; }).join('') +
+        (m.reason ? '<p class="why-fb">' + esc(LINE[m.reason]) + '</p>' : '') + '</div>';
+      return '<li' + (m.lessonFirst ? ' class="lesson-first"' : '') + '><div class="what"><b>' + esc(m.concept) + '</b>' +
         '<div class="meta"><span class="sec-label" data-section="' + esc(m.section) + '">' + esc(R.SECTION_SHORT[m.section] || '') + '</span>' +
         '<span class="tag ' + m.status + '">' + TAG[m.status] + '</span>' +
         '<span class="src">' + esc(m.sourceLabel) + (m.detail && m.source !== 'climb' && m.source !== 'bio-engine' ? ', ' + esc(m.detail) : '') + (m.status !== 'mastered' ? ' &middot; ' + esc(when(m.due)) : '') + '</span></div>' +
@@ -126,7 +141,7 @@
         '</div><div class="row-r"><div class="links">' +
         '<a href="' + esc(l.sheet) + '" target="_blank" rel="noopener" title="' + esc(l.sheetTitle || 'The Canon') + '">Sheet</a>' +
         '<a href="' + esc(S(l.learn)) + '" title="' + esc(l.nightTitle ? 'Night ' + l.night + ': ' + l.nightTitle : 'Retold') + '">Learn</a>' +
-        '<a href="' + esc(S(l.drill)) + '">Drill</a>' + ask + '</div>' + retry + '</div></li>';
+        '<a href="' + esc(S(l.drill)) + '">Drill</a>' + ask + '</div>' + retry + '</div>' + why + '</li>';
     }).join('');
   }
 
@@ -136,6 +151,7 @@
     if (b.hasAttribute('data-s')) { state.s = b.getAttribute('data-s'); render(); return; }
     if (b.hasAttribute('data-ok')) { var r = P.mark(b.getAttribute('data-ok'), true); toast(r.mastered ? 'Mastered. It leaves the open list.' : 'Nice. Back in ' + P.LEITNER_DAYS[r.box - 1] + ' day' + (P.LEITNER_DAYS[r.box - 1] === 1 ? '' : 's') + '.'); render(); return; }
     if (b.hasAttribute('data-no')) { P.mark(b.getAttribute('data-no'), false); toast('Back tomorrow. Try the sheet first.'); render(); return; }
+    if (b.hasAttribute('data-why')) { P.reason(b.getAttribute('data-id'), b.getAttribute('data-why')); render(); return; }
     if (b.hasAttribute('data-undo')) { P.mark(b.getAttribute('data-undo'), false); toast('Back on the ladder.'); render(); }
   });
   render();

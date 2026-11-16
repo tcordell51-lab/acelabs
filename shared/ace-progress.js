@@ -304,6 +304,7 @@
         m.box = r ? r.box : (m.native && m.native.box) || 0;
         m.due = r ? r.due : (m.native && m.native.due) || m.when || 0;
         m.isDue = m.status !== 'mastered' && m.due <= Date.now();
+        if (r && r.reason) { m.reason = r.reason; m.lessonFirst = !!r.lessonFirst; m.untimedFirst = !!r.untimedFirst; }
         out.push(m);
       });
     });
@@ -323,6 +324,20 @@
     } else {
       r.box = 0; r.mastered = false; r.due = Date.now() + LEITNER[0] * DAY;
     }
+    rs[id] = r; set('review', rs);
+    return r;
+  }
+  /* "Why did you miss it?" (2026-11-16). Stored with the miss; it sets the first return:
+     know -> a short lesson first, back tomorrow; time -> untimed first, back tomorrow;
+     trap, misread, changed -> back in 2 days. */
+  var REASONS = ['know', 'trap', 'misread', 'time', 'changed'];
+  function reason(id, why) {
+    if (REASONS.indexOf(why) < 0) throw new Error('unknown reason ' + why);
+    var rs = reviewState(), r = rs[id] || { box: 0, due: 0, seen: 0 };
+    r.reason = why; r.reasonAt = Date.now();
+    r.lessonFirst = why === 'know'; r.untimedFirst = why === 'time';
+    var d0 = new Date(); d0.setHours(1, 0, 0, 0);
+    r.due = d0.getTime() + ((why === 'know' || why === 'time') ? 1 : 2) * DAY;
     rs[id] = r; set('review', rs);
     return r;
   }
@@ -505,6 +520,6 @@
     version: 1, read: read, get: get, set: set, flush: flush, pull: pull, setSyncAdapter: setSyncAdapter, onChange: onChange,
     withStudent: withStudent, profile: profile, learnProgress: learnProgress,
     misses: misses, mark: mark, unmark: unmark, results: results, today: today, nextTest: nextTest, plan: plan, hasActivity: hasActivity,
-    registerMissAdapter: registerMissAdapter, registerResultAdapter: registerResultAdapter, LEITNER_DAYS: LEITNER.slice()
+    registerMissAdapter: registerMissAdapter, registerResultAdapter: registerResultAdapter, LEITNER_DAYS: LEITNER.slice(), reason: reason, REASONS: REASONS.slice()
   };
 })();
