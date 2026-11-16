@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Drill · Quantitative Reasoning · Ace Labs</title>
+<link rel="icon" type="image/svg+xml" href="/shared/ace-dat-mark.svg">
+<link rel="stylesheet" href="/shared/ace-ui.css?v=7">
+</head>
+<body class="aui">
+<main class="aui-wrap aui-stack" id="main">
+
+  <div id="pick" class="aui-stack">
+    <header class="aui-stack">
+      <p class="aui-kicker">Quantitative Reasoning</p>
+      <h1 class="aui-h1">QR drill</h1>
+      <p class="aui-lede" id="lede">Loading the question bank.</p>
+      <div class="aui-row">
+        <a class="aui-btn" href="?run=daily" data-run="daily">Mixed set of ten</a>
+        <a class="aui-btn aui-btn--quiet" href="?run=misses" id="btn-miss">Review misses</a>
+        <a class="aui-btn aui-btn--quiet" href="/tools/qr/">Skill lessons</a>
+      </div>
+    </header>
+    <section class="aui-stack" aria-labelledby="t-title">
+      <h2 class="aui-h2" id="t-title">Pick a topic</h2>
+      <div class="aui-grid" id="topics"></div>
+    </section>
+  </div>
+
+  <div id="run" class="aui-stack" hidden>
+    <div class="aui-row" style="justify-content:space-between">
+      <p class="aui-kicker" id="run-title">QR drill</p>
+      <a class="aui-btn aui-btn--quiet aui-btn--sm" href="/qr/drill/">Leave set</a>
+    </div>
+    <div id="stage"></div>
+  </div>
+
+</main>
+<script src="/shared/ace-record.js?v=4"></script>
+<script src="/shared/ace-question.js?v=4"></script>
+<script src="/shared/ace-set.js?v=3"></script>
+<script src="/shared/ace-ui.js?v=3" defer></script>
+<script>
+(function () {
+  'use strict';
+  var SECTION = 'qr', BANK = '/data/qr-climb.json';
+  var rec = window.AceRecord, items = [];
+  rec.migrate();
+  function $(id) { return document.getElementById(id); }
+  function el(tag, cls, text) { var n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; }
+  var params = new URLSearchParams(location.search);
+
+  function drawPick() {
+    var byTopic = {}, order = [];
+    items.forEach(function (it) { if (!byTopic[it.topic]) { byTopic[it.topic] = { name: it.topicName, total: 0 }; order.push(it.topic); } byTopic[it.topic].total += 1; });
+    var st = rec.stats({ section: SECTION }), mine = rec.topics(SECTION);
+    $('lede').textContent = items.length + ' questions across ' + order.length + ' topics. So far: ' + st.answers + ' answered, ' + st.right + ' right.';
+    $('btn-miss').textContent = 'Review misses (' + st.missed + ')';
+    var host = $('topics'); host.textContent = '';
+    order.forEach(function (t) {
+      var m = mine[t] || { items: 0, missed: 0 }, a = el('a', 'aui-card aui-card--flat'); a.href = '?topic=' + encodeURIComponent(t); a.setAttribute('data-topic', t);
+      a.appendChild(el('h3', 'aui-h3', byTopic[t].name));
+      a.appendChild(el('p', 'aui-small', m.items + ' of ' + byTopic[t].total + ' seen' + (m.missed ? ', ' + m.missed + (m.missed === 1 ? ' miss open' : ' misses open') : '')));
+      var meter = el('div', 'aui-meter'), fill = el('span'); fill.style.width = Math.round(100 * m.items / byTopic[t].total) + '%'; meter.appendChild(fill); a.appendChild(meter);
+      host.appendChild(a);
+    });
+  }
+  function start(o) {
+    $('pick').hidden = true; $('run').hidden = false;
+    var name = o.topic ? (items.filter(function (i) { return i.topic === o.topic; })[0] || {}).topicName : null;
+    $('run-title').textContent = o.mode === 'misses' ? 'QR: miss review' : name ? 'QR: ' + name : 'QR: mixed set';
+    window.AceSet.run($('stage'), items, { mode: o.mode, section: SECTION, topic: o.topic, size: 10, src: 'qr-drill', homeHref: '/qr/drill/', homeLabel: 'Back to QR drill' });
+    window.scrollTo(0, 0);
+  }
+  window.AceSet.load(BANK).then(function (bank) {
+    items = bank.items;
+    var run = params.get('run'), topic = params.get('topic');
+    if (topic && items.some(function (i) { return i.topic === topic; })) start({ mode: 'topic', topic: topic });
+    else if (run === 'daily' || run === 'misses') start({ mode: run });
+    else drawPick();
+  }).catch(function () { $('lede').textContent = 'The question bank did not load. Check your connection and reload the page.'; });
+})();
+</script>
+<script src="/shared/ace-tabs.js?v=2" defer></script>
+</body>
+</html>

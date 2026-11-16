@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Passage mapping · Reading · Ace Labs</title>
+<meta name="description" content="Map the passage first: name each paragraph's job. Then answer by finding the line.">
+<link rel="icon" type="image/svg+xml" href="/shared/ace-dat-mark.svg">
+<link rel="stylesheet" href="/shared/ace-ui.css?v=7">
+<style>
+  .rm-grid { display: grid; gap: var(--aui-5); }
+  @media (min-width: 960px) { .rm-grid { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); align-items: start; } .rm-passage { position: sticky; top: 76px; max-height: calc(100vh - 96px); overflow: auto; } }
+  .rm-passage { background: #FFFDF7; border: 1px solid var(--aui-line); border-radius: var(--aui-r); padding: var(--aui-4) var(--aui-5); }
+  .rm-passage h2 { font-family: var(--aui-display); font-size: 22px; margin: 0 0 var(--aui-3); }
+  .rm-p { position: relative; margin: 0 0 var(--aui-4); padding-left: 34px; line-height: 1.7; font-size: 16px; }
+  .rm-p .n { position: absolute; left: 0; top: 2px; width: 24px; height: 24px; border-radius: 50%; background: var(--aui-paper-2); font: 700 13px/24px var(--aui-font); text-align: center; color: var(--aui-ink-2); }
+  .rm-p .tagline { display: none; margin-top: 6px; font-size: 13px; font-weight: 700; color: var(--aui-gold-ink); letter-spacing: .02em; }
+  .is-mapped .rm-p .tagline { display: block; }
+  .rm-p mark { background: transparent; color: inherit; transition: background .4s; border-radius: 3px; }
+  .is-mapped .rm-p mark.key { background: rgba(201,168,76,.22); }
+  .rm-p mark.hit { background: rgba(0,158,115,.20) !important; box-shadow: 0 0 0 2px rgba(0,122,89,.35); }
+  .rm-map { display: grid; gap: var(--aui-3); }
+  .rm-row { display: grid; gap: 6px; padding: var(--aui-3); border: 1px solid var(--aui-line); border-radius: var(--aui-r); background: var(--aui-paper); }
+  .rm-row b { font-size: var(--aui-t-sm); }
+  .rm-row .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .rm-row button { min-height: 40px; padding: 0 12px; border-radius: 999px; border: 1.5px solid var(--aui-line-2); background: #FFFDF7; font: 500 var(--aui-t-sm) var(--aui-font); cursor: pointer; color: var(--aui-ink); }
+  .rm-row button[aria-pressed="true"] { background: var(--aui-forest); color: var(--aui-cream); border-color: var(--aui-forest); }
+  .rm-row button[data-state="right"] { background: var(--aui-good-soft); border-color: var(--aui-good); color: var(--aui-ink); }
+  .rm-row button[data-state="wrong"] { background: var(--aui-miss-soft); border-color: var(--aui-miss); color: var(--aui-ink); }
+</style>
+</head>
+<body class="aui">
+<main class="aui-wrap aui-stack" id="main">
+  <header class="aui-stack">
+    <p class="aui-kicker">Reading Comprehension · See it</p>
+    <h1 class="aui-h1">Map it, then find the line</h1>
+    <p class="aui-lede">Read once for the job of each paragraph, not the details. Name the jobs first. Then each question sends you back to one line, and the line lights up after you answer.</p>
+  </header>
+  <div class="rm-grid">
+    <article class="rm-passage" id="passage" aria-label="Passage">
+      <h2>Light in the Deep</h2>
+      <p class="rm-p" data-p="1"><span class="n">1</span><mark data-s="1a">Below about 200 meters, almost no sunlight reaches the ocean, and below 1,000 meters the water is dark to every eye.</mark> <mark data-s="1b" class="key">Yet most animals that live in the deep water column make light of their own, and biologists have spent a century asking how they do it and what the light is for.</mark> The answers turn out to differ from one animal to the next. <span class="tagline" id="t1"></span></p>
+      <p class="rm-p" data-p="2"><span class="n">2</span><mark data-s="2a" class="key">The light itself comes from a chemical reaction: an enzyme called luciferase speeds the oxidation of a small molecule called luciferin, and the energy released leaves as light rather than heat.</mark> Some animals make both molecules; others house luminous bacteria in special organs and borrow theirs. <mark data-s="2b">Most of this light is blue, because blue wavelengths travel farthest through seawater, while red light is absorbed within a few meters.</mark> <span class="tagline" id="t2"></span></p>
+      <p class="rm-p" data-p="3"><span class="n">3</span><mark data-s="3a" class="key">One of the most common uses of this light is camouflage.</mark> <mark data-s="3b">A hatchetfish seen from below would show as a dark shape against the faint light filtering down from above, so it glows from rows of organs along its belly, matching that light and erasing its silhouette.</mark> Biologists call this counterillumination, and certain squid do the same with light produced by bacteria they host. <span class="tagline" id="t3"></span></p>
+      <p class="rm-p" data-p="4"><span class="n">4</span><mark data-s="4a" class="key">A few predators break the blue rule.</mark> <mark data-s="4b">The stoplight loosejaw, a dragonfish, produces red light, and unlike most deep-sea animals it can also see red, so it can light up its prey without being noticed.</mark> How many other animals use such private channels is still unknown, because red light is as hard for human instruments to detect at depth as it is for most of the animals living there. <span class="tagline" id="t4"></span></p>
+    </article>
+    <div class="aui-stack">
+      <section class="aui-stack" aria-labelledby="map-h">
+        <h2 class="aui-h3" id="map-h">Step 1. Name each paragraph's job</h2>
+        <div class="rm-map" id="map"></div>
+        <div class="aui-row"><button class="aui-btn" type="button" id="reveal" disabled>Show the map</button><span class="aui-small" id="mapnote">Pick a job for all four paragraphs.</span></div>
+      </section>
+      <section class="aui-stack" aria-labelledby="q-h" id="qs" hidden>
+        <h2 class="aui-h3" id="q-h">Step 2. Answer by finding the line</h2>
+        <div id="q"></div>
+      </section>
+    </div>
+  </div>
+  <p class="aui-small">An original passage written for Ace Labs. The science follows standard accounts of marine bioluminescence (luciferin and luciferase, blue light in seawater, counterillumination, the red light of the stoplight loosejaw).</p>
+</main>
+<script src="/shared/ace-ui.js?v=3"></script>
+<script src="/shared/ace-record.js?v=4"></script>
+<script src="/shared/ace-question.js?v=4"></script>
+<script>
+(function () {
+  'use strict';
+  var JOBS = ['Sets up the question', 'Explains how it works', 'Gives one use, with examples', 'Describes an exception'];
+  var KEY = { 1: 0, 2: 1, 3: 2, 4: 3 };
+  var picked = {}, map = document.getElementById('map');
+  [1, 2, 3, 4].forEach(function (p) {
+    var row = document.createElement('div'); row.className = 'rm-row';
+    row.innerHTML = '<b>Paragraph ' + p + '</b><div class="chips" role="group" aria-label="Job of paragraph ' + p + '"></div>';
+    var chips = row.querySelector('.chips');
+    JOBS.forEach(function (j, k) {
+      var b = document.createElement('button'); b.type = 'button'; b.textContent = j; b.setAttribute('aria-pressed', 'false');
+      b.addEventListener('click', function () {
+        if (document.getElementById('passage').classList.contains('is-mapped')) return;
+        picked[p] = k;
+        Array.prototype.forEach.call(chips.children, function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+        var done = Object.keys(picked).length === 4; document.getElementById('reveal').disabled = !done;
+        document.getElementById('mapnote').textContent = done ? 'Ready. The map shows the job and the key line of each paragraph.' : 'Pick a job for all four paragraphs.';
+      });
+      chips.appendChild(b);
+    });
+    map.appendChild(row);
+  });
+  document.getElementById('reveal').addEventListener('click', function () {
+    var right = 0;
+    Array.prototype.forEach.call(map.children, function (row, i) {
+      var p = i + 1;
+      Array.prototype.forEach.call(row.querySelectorAll('button'), function (b, k) {
+        b.disabled = true;
+        if (k === KEY[p]) b.setAttribute('data-state', 'right'); else if (k === picked[p]) b.setAttribute('data-state', 'wrong');
+      });
+      if (picked[p] === KEY[p]) right++;
+      document.getElementById('t' + p).textContent = 'Job: ' + JOBS[KEY[p]].toLowerCase() + '. Key line highlighted.';
+    });
+    document.getElementById('passage').classList.add('is-mapped');
+    document.getElementById('mapnote').textContent = right + ' of 4 jobs matched. The highlighted line in each paragraph is the one to return to.';
+    this.disabled = true;
+    if (window.AceRecord) window.AceRecord.event('rc-map', { right: right });
+    document.getElementById('qs').hidden = false; ask(0);
+  });
+
+  /* Each question names the sentence that answers it; the line lights up after the answer. */
+  var QS = [
+    { s: '2b', stem: 'According to the passage, why is most deep-sea bioluminescence blue?',
+      choices: ['Luciferin can only release energy as blue light', 'Blue light travels farthest through seawater', 'Luminous bacteria produce only blue light', 'Most deep-sea predators cannot see blue', 'Blue light is the only color that luciferase makes'], answer: 1,
+      why: 'Paragraph 2 says most of the light is blue "because blue wavelengths travel farthest through seawater, while red light is absorbed within a few meters." Nothing says luciferin or bacteria are limited to blue, and paragraph 4 describes an animal that makes red light.' },
+    { s: '3b', stem: 'The author mentions the hatchetfish mainly to show how an animal can',
+      choices: ['use light to hide its outline from animals below it', 'attract prey toward rows of glowing organs', 'signal to members of its own species', 'see red light that other animals cannot', 'produce light without luciferase'], answer: 0,
+      why: 'Paragraph 3 introduces camouflage, then uses the hatchetfish to show it: glowing from its belly matches the light from above and erases its silhouette. Seeing red light is the loosejaw in paragraph 4.' },
+    { s: '4b', stem: 'Which statement about the stoplight loosejaw is supported by the passage?',
+      choices: ['It cannot detect the light it produces', 'It hosts luminous bacteria to make blue light', 'It produces red light and can also see it', 'It uses counterillumination to hide from prey', 'It lives where sunlight still reaches'], answer: 2,
+      why: 'Paragraph 4: it "produces red light, and unlike most deep-sea animals it can also see red." That is why its light works as a private searchlight. The passage never says it hosts bacteria or uses counterillumination.' }
+  ];
+  function ask(i) {
+    document.querySelectorAll('mark.hit').forEach(function (m) { m.classList.remove('hit'); });
+    var x = QS[i];
+    var item = { id: 'rc:map:light:' + i, section: 'rc', topic: 'rc-map', topicName: 'Find the line', stem: x.stem, choices: x.choices, answer: x.answer, why: x.why };
+    window.AceQuestion.mount(document.getElementById('q'), item, { label: 'Reading · Find the line', number: i + 1, total: QS.length, confidence: true, nextLabel: i + 1 < QS.length ? 'Next question' : 'Start again',
+      onAnswer: function (res) {
+        var m = document.querySelector('mark[data-s="' + x.s + '"]'); if (m) { m.classList.add('hit'); m.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+        if (window.AceRecord) window.AceRecord.record({ item: item, picked: res.picked, answer: res.answer, ok: res.ok, ms: res.ms, src: 'rc-map', first: res.first, changes: res.changes, change: res.change, conf: res.conf, repair: false });
+      },
+      onNext: function () { if (i + 1 < QS.length) ask(i + 1); else location.reload(); } });
+  }
+})();
+</script>
+<script src="/shared/ace-tabs.js?v=2" defer></script>
+</body>
+</html>

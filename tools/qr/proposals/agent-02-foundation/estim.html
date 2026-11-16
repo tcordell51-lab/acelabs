@@ -155,7 +155,7 @@ h1 em{font-style:italic; color:var(--gold-d); font-weight:400}
       <div class="es-options" id="es-options"></div>
     </div>
 
-    <div class="es-status" id="es-status">Step 1 — pick rounded values.</div>
+    <div class="es-status" id="es-status">Step 1: pick rounded values.</div>
 
     <div class="es-controls">
       <button class="es-btn primary" id="es-next">Next round</button>
@@ -165,7 +165,7 @@ h1 em{font-style:italic; color:var(--gold-d); font-weight:400}
 
   <div class="trap-card">
     <div class="lbl">The Trap</div>
-    <p>Without estimation, students fall for "close-but-wrong" decoys — answers that look right because the calculation is mostly correct but off by a factor of 10. Bracket the answer first; then trust your bracket.</p>
+    <p>Without estimation, students fall for "close-but-wrong" decoys, answers that look right because the calculation is mostly correct but off by a factor of 10. Bracket the answer first; then trust your bracket.</p>
   </div>
 </div>
 
@@ -225,7 +225,7 @@ function setRound(){
   });
   setStepLive(1);
   document.getElementById('es-status').className='es-status';
-  document.getElementById('es-status').textContent='Step 1 — pick the cleanest round-off.';
+  document.getElementById('es-status').textContent='Step 1: pick the cleanest round-off.';
 }
 
 function setStepLive(n){
@@ -245,12 +245,12 @@ function pickRound(d, val, r){
     d.classList.add('right');
     step = 2; setStepLive(2);
     document.getElementById('es-s2-info').textContent = 'Roughly: ' + r.correctRound + ' ≈ ?';
-    document.getElementById('es-status').textContent = 'Good. Step 2 — bracket the magnitude.';
+    document.getElementById('es-status').textContent = 'Good. Step 2: bracket the magnitude.';
   } else {
     d.classList.add('wrong');
     document.getElementById('es-status').className='es-status warn';
-    document.getElementById('es-status').textContent = 'Pick the cleanest rounding — ' + r.correctRound + ' is friendliest.';
-    setTimeout(()=>{ d.classList.remove('wrong','picked'); document.getElementById('es-status').className='es-status'; document.getElementById('es-status').textContent='Step 1 — pick rounded values.'; }, 1400);
+    document.getElementById('es-status').textContent = 'Pick the cleanest rounding: ' + r.correctRound + ' is friendliest.';
+    setTimeout(()=>{ d.classList.remove('wrong','picked'); document.getElementById('es-status').className='es-status'; document.getElementById('es-status').textContent='Step 1: pick rounded values.'; }, 1400);
   }
 }
 
@@ -270,8 +270,8 @@ function pickMag(d, m, r){
   } else {
     d.classList.add('wrong');
     document.getElementById('es-status').className='es-status warn';
-    document.getElementById('es-status').textContent = 'Off — try a different magnitude.';
-    setTimeout(()=>{ d.classList.remove('wrong','picked'); document.getElementById('es-status').className='es-status'; document.getElementById('es-status').textContent='Step 2 — bracket the magnitude.'; }, 1300);
+    document.getElementById('es-status').textContent = 'Off: try a different magnitude.';
+    setTimeout(()=>{ d.classList.remove('wrong','picked'); document.getElementById('es-status').className='es-status'; document.getElementById('es-status').textContent='Step 2: bracket the magnitude.'; }, 1300);
   }
 }
 
@@ -297,6 +297,6 @@ document.getElementById('es-reset').onclick = setRound;
 
 setRound();
 </script>
-  <script src="/shared/ace-shell.js?v=1" defer></script>
+  <script src="/shared/ace-shell.js?v=3" defer></script>
 </body>
 </html>

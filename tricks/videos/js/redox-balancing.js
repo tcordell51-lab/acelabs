@@ -1196,7 +1196,7 @@ function SummaryLadder({
         marginBottom: 24,
         letterSpacing: '0.06em'
       }
-    }, "screenshot this — it’s the whole cheat sheet"), rows.map((r, i) => {
+    }, "screenshot this, it’s the whole cheat sheet"), rows.map((r, i) => {
       const rv = clamp((t - start - 0.4 - i * 0.5) / 0.5, 0, 1);
       return /*#__PURE__*/React.createElement("div", {
         key: i,
@@ -1287,7 +1287,7 @@ function QuizBeat({
         color: INK3,
         marginBottom: 26
       }
-    }, "pause it — commit before the reveal"), /*#__PURE__*/React.createElement("div", {
+    }, "pause it, commit before the reveal"), /*#__PURE__*/React.createElement("div", {
       style: {
         fontFamily: SERIF,
         fontWeight: 600,
@@ -1696,7 +1696,7 @@ function RedoxStage() {
       color: INK3,
       opacity: clamp((t - 36.6) / 0.5, 0, 1)
     }
-  }, "the half-reaction builds itself — one step at a time"), /*#__PURE__*/React.createElement("div", {
+  }, "the half-reaction builds itself, one step at a time"), /*#__PURE__*/React.createElement("div", {
     style: {
       position: 'absolute',
       left: 0,
@@ -1779,7 +1779,7 @@ function RedoxVideo() {
       marginTop: 22,
       letterSpacing: '0.06em'
     }
-  }, "comment your pick — answer at the end")), /*#__PURE__*/React.createElement(Header, {
+  }, "comment your pick, answer at the end")), /*#__PURE__*/React.createElement(Header, {
     start: 7.2,
     end: 13.0,
     top: 330
@@ -1810,7 +1810,7 @@ function RedoxVideo() {
       color: INK2,
       marginTop: 22
     }
-  }, "four steps, then match the electrons — it never fails")), /*#__PURE__*/React.createElement(Header, {
+  }, "four steps, then match the electrons, it never fails")), /*#__PURE__*/React.createElement(Header, {
     start: 13.2,
     end: 48.0,
     top: 190
@@ -1833,14 +1833,14 @@ function RedoxVideo() {
       color: POOR,
       marginBottom: 14
     }
-  }, "THE SHORTCUT — AND ITS CATCH"), /*#__PURE__*/React.createElement("div", {
+  }, "THE SHORTCUT: AND ITS CATCH"), /*#__PURE__*/React.createElement("div", {
     style: {
       fontFamily: SERIF,
       fontWeight: 600,
       fontSize: 44,
       color: INK
     }
-  }, "oxidation states can skip the water step —", /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("b", {
+  }, "oxidation states can skip the water step", /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("b", {
     style: {
       color: POOR
     }
@@ -1851,7 +1851,7 @@ function RedoxVideo() {
       color: INK3,
       marginTop: 8
     }
-  }, "when in doubt, run the long way · basic solution? one extra move — neutralize the H⁺ with OH⁻")), /*#__PURE__*/React.createElement(RedoxStage, null), /*#__PURE__*/React.createElement(Header, {
+  }, "when in doubt, run the long way · basic solution? one extra move, neutralize the H⁺ with OH⁻")), /*#__PURE__*/React.createElement(RedoxStage, null), /*#__PURE__*/React.createElement(Header, {
     start: 60.2,
     end: 71.0,
     top: 620
@@ -1879,7 +1879,7 @@ function RedoxVideo() {
       color: INK2,
       marginTop: 26
     }
-  }, "then the least common multiple — that IS the electron count")), /*#__PURE__*/React.createElement(SummaryLadder, {
+  }, "then the least common multiple, that IS the electron count")), /*#__PURE__*/React.createElement(SummaryLadder, {
     start: 71.2,
     end: 83.0,
     kicker: "REDOX · THE LONG WAY",
@@ -1911,18 +1911,18 @@ function RedoxVideo() {
       q: 'Cr₂O₇²⁻ → 2 Cr³⁺. Electrons in that half-reaction?',
       opts: ['3', '6', '12'],
       ans: 1,
-      why: 'Each chromium drops from +6 to +3 — three each, and there are two of them. Six electrons.'
+      why: 'Each chromium drops from +6 to +3, three each, and there are two of them. Six electrons.'
     }, {
       q: 'Cr₂O₇²⁻ takes 6, Fe gives 1. Total transferred?',
-      opts: ['6 — scale iron by six', '7 — add them', '1 — the smaller'],
+      opts: ['6: scale iron by six', '7: add them', '1: the smaller'],
       ans: 0,
-      why: 'Least common multiple of 6 and 1 is 6 — scale the iron half by six. Six electrons transfer.'
+      why: 'Least common multiple of 6 and 1 is 6, scale the iron half by six. Six electrons transfer.'
     }]
   }), /*#__PURE__*/React.createElement(OutroCard, {
     start: 99.8,
     end: 108,
     lines: ['The long way', 'never fails.'],
-    tease: "Red Cat, An Ox — electrochemistry — next."
+    tease: "Red Cat, An Ox, electrochemistry, next."
   }));
 }
 window.RedoxVideo = RedoxVideo;

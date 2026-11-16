@@ -110,9 +110,9 @@
     </div>
     <div class="mk-config-card">
       <h3>Section scope</h3>
-      <label><span><input type="checkbox" disabled/>Biology (40 Q)</span><span style="color:var(--al-ink-mute)">— use Prometric mocks</span></label>
-      <label><span><input type="checkbox" disabled/>Gen Chem (30 Q)</span><span style="color:var(--al-ink-mute)">— use Prometric mocks</span></label>
-      <label><span><input type="checkbox" id="incOchem" checked/>OChem (30 Q)</span><span style="color:var(--al-good-d); font-weight:700">— sampled live</span></label>
+      <label><span><input type="checkbox" disabled/>Biology (40 Q)</span><span style="color:var(--al-ink-mute)">use Prometric mocks</span></label>
+      <label><span><input type="checkbox" disabled/>Gen Chem (30 Q)</span><span style="color:var(--al-ink-mute)">use Prometric mocks</span></label>
+      <label><span><input type="checkbox" id="incOchem" checked/>OChem (30 Q)</span><span style="color:var(--al-good-d); font-weight:700">sampled live</span></label>
     </div>
   </div>
 
@@ -123,7 +123,7 @@
   </div>
 </div>
 
-<script src="shared/ochem-bank.js?v=1"></script>
+<script src="shared/ochem-bank.js?v=2"></script>
 <script>
 let DIFF_MIX = (new URLSearchParams(location.search).get('diff')) || 'standard';
 const _autoStart = (new URLSearchParams(location.search).get('autostart')) === '1';
@@ -329,7 +329,7 @@ function finishMock(){
         <h3>Missed-question walkthrough (${wrong.length})</h3>
         ${wrong.map((p, idx) => {
           const i = STATE.pool.indexOf(p);
-          const yourLetter = STATE.answers[i] !== undefined ? 'ABCD'[STATE.answers[i]] : '—';
+          const yourLetter = STATE.answers[i] !== undefined ? 'ABCD'[STATE.answers[i]] : '-';
           return `<div class="mk-review-card">
             <div class="qtext">Q${i+1}. ${p.q}</div>
             <div class="why">You picked <span class="you">${yourLetter}. ${STATE.answers[i] !== undefined ? p.opts[STATE.answers[i]] : 'skipped'}</span>. Correct: <b>${'ABCD'[p.correct]}. ${p.opts[p.correct]}</b>. <em>${p.why || ''}</em></div>
@@ -345,6 +345,6 @@ function finishMock(){
     </div>`;
 }
 </script>
-  <script src="/shared/ace-shell.js?v=1" defer></script>
+  <script src="/shared/ace-shell.js?v=3" defer></script>
 </body>
 </html>

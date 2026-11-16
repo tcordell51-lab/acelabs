@@ -1196,7 +1196,7 @@ function SummaryLadder({
         marginBottom: 24,
         letterSpacing: '0.06em'
       }
-    }, "screenshot this — it’s the whole cheat sheet"), rows.map((r, i) => {
+    }, "screenshot this, it’s the whole cheat sheet"), rows.map((r, i) => {
       const rv = clamp((t - start - 0.4 - i * 0.5) / 0.5, 0, 1);
       return /*#__PURE__*/React.createElement("div", {
         key: i,
@@ -1287,7 +1287,7 @@ function QuizBeat({
         color: INK3,
         marginBottom: 26
       }
-    }, "pause it — commit before the reveal"), /*#__PURE__*/React.createElement("div", {
+    }, "pause it, commit before the reveal"), /*#__PURE__*/React.createElement("div", {
       style: {
         fontFamily: SERIF,
         fontWeight: 600,
@@ -1603,7 +1603,7 @@ function NewmanStage() {
   return /*#__PURE__*/React.createElement(CenterPanel, {
     start: 13.2,
     end: 60.0,
-    label: seg === 'chair' ? 'SAME IDEA ON A RING' : 'LOOKING DOWN THE C–C BOND'
+    label: seg === 'chair' ? 'SAME IDEA ON A RING' : 'LOOKING DOWN THE C-C BOND'
   }, seg !== 'chair' && seg !== 'rank' && /*#__PURE__*/React.createElement("svg", {
     width: CW,
     height: CH,
@@ -1648,7 +1648,7 @@ function NewmanStage() {
       color: INK2,
       marginTop: 12
     }
-  }, spin ? 'like a solar eclipse — the back bonds hide behind the front' : 'everything has room')), seg === 'ag' && /*#__PURE__*/React.createElement("div", {
+  }, spin ? 'like a solar eclipse, the back bonds hide behind the front' : 'everything has room')), seg === 'ag' && /*#__PURE__*/React.createElement("div", {
     style: {
       position: 'absolute',
       left: 0,
@@ -1670,7 +1670,7 @@ function NewmanStage() {
       color: INK2,
       marginTop: 12
     }
-  }, gauche ? 'the two CH₃ groups want elbow room — they are not happy' : 'the big groups are across the room from each other')), seg === 'rank' && /*#__PURE__*/React.createElement("div", {
+  }, gauche ? 'the two CH₃ groups want elbow room, they are not happy' : 'the big groups are across the room from each other')), seg === 'rank' && /*#__PURE__*/React.createElement("div", {
     style: {
       position: 'absolute',
       left: 120,
@@ -1768,7 +1768,7 @@ function NewmanStage() {
       marginTop: 12,
       opacity: clamp((t - 41.4) / 0.5, 0, 1)
     }
-  }, "energy climbs as elbow room disappears — ", /*#__PURE__*/React.createElement("b", {
+  }, "energy climbs as elbow room disappears: ", /*#__PURE__*/React.createElement("b", {
     style: {
       color: RICH
     }
@@ -1803,7 +1803,7 @@ function NewmanStage() {
       color: INK2,
       marginTop: 24
     }
-  }, "big groups go equatorial — same instinct, new drawing")));
+  }, "big groups go equatorial, same instinct, new drawing")));
 }
 function NewmanVideo() {
   return /*#__PURE__*/React.createElement(Stage, {
@@ -1839,14 +1839,14 @@ function NewmanVideo() {
       lineHeight: 1.06,
       letterSpacing: '-0.02em'
     }
-  }, "Butane, down the C2–C3 bond."), /*#__PURE__*/React.createElement("div", {
+  }, "Butane, down the C2-C3 bond."), /*#__PURE__*/React.createElement("div", {
     style: {
       fontFamily: MONO,
       fontSize: 26,
       color: INK3,
       marginTop: 14
     }
-  }, "CH₃–CH₂–CH₂–CH₃"), /*#__PURE__*/React.createElement("div", {
+  }, "CH₃-CH₂-CH₂-CH₃"), /*#__PURE__*/React.createElement("div", {
     style: {
       fontFamily: SANS,
       fontSize: 38,
@@ -1861,7 +1861,7 @@ function NewmanVideo() {
       marginTop: 22,
       letterSpacing: '0.06em'
     }
-  }, "comment your pick — answer at the end")), /*#__PURE__*/React.createElement(Header, {
+  }, "comment your pick, answer at the end")), /*#__PURE__*/React.createElement(Header, {
     start: 7.2,
     end: 13.0,
     top: 330
@@ -1934,7 +1934,7 @@ function NewmanVideo() {
       fontSize: 44,
       color: INK
     }
-  }, "both staggered — but gauche puts the big groups ", /*#__PURE__*/React.createElement("b", {
+  }, "both staggered, but gauche puts the big groups ", /*#__PURE__*/React.createElement("b", {
     style: {
       color: POOR
     }
@@ -2042,21 +2042,21 @@ function NewmanVideo() {
   }), /*#__PURE__*/React.createElement(QuizBeat, {
     start: 83.2,
     qs: [{
-      q: 'Butane down C2–C3: most stable conformation?',
-      opts: ['anti — CH₃ groups 180° apart', 'gauche — they like company', 'eclipsed — shortest molecule'],
+      q: 'Butane down C2-C3: most stable conformation?',
+      opts: ['anti, CH₃ groups 180° apart', 'gauche, they like company', 'eclipsed, shortest molecule'],
       ans: 0,
-      why: 'Elbow room. Anti puts the two methyls across the room — the energy floor.'
+      why: 'Elbow room. Anti puts the two methyls across the room, the energy floor.'
     }, {
       q: 'Two staggered forms differ by CH₃ at 60° vs 180°. The 60° one is…',
-      opts: ['anti — lower', 'gauche — higher energy', 'identical energy'],
+      opts: ['anti, lower', 'gauche, higher energy', 'identical energy'],
       ans: 1,
-      why: 'Sixty degrees apart is gauche — staggered but battling. It sits above anti every time.'
+      why: 'Sixty degrees apart is gauche: staggered but battling. It sits above anti every time.'
     }]
   }), /*#__PURE__*/React.createElement(OutroCard, {
     start: 99.8,
     end: 108,
     lines: ['Give the big groups', 'elbow room.'],
-    tease: "Ozonolysis — the scissors — next."
+    tease: "Ozonolysis: the scissors: next."
   }));
 }
 window.NewmanVideo = NewmanVideo;

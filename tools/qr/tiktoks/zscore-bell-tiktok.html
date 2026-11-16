@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=1080,initial-scale=1"/>
-<title>Ace The DAT — z & the Empirical Rule</title>
+<title>Ace The DAT · z & the Empirical Rule</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400;1,700&family=DM+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet"/>
 <script src="/shared/anime.min.js?v=1"></script>
 <style>
@@ -157,7 +157,7 @@ html,body{background:#000;overflow:hidden;font-family:'DM Sans',sans-serif;color
   <div class="trap" id="trap">
     <div class="trap-ribbon">DAT Trap</div>
     <div class="trap-h">Sign<br/><em>flipped.</em></div>
-    <div class="trap-sub"><em>z = (x − μ) / σ</em>, not (μ − x) / σ. If <em>x &lt; μ</em>, z is <em>negative</em> — sign matters for the percentile.</div>
+    <div class="trap-sub"><em>z = (x − μ) / σ</em>, not (μ − x) / σ. If <em>x &lt; μ</em>, z is <em>negative</em>, sign matters for the percentile.</div>
   </div>
 
   <div class="lock" id="lock">
@@ -175,7 +175,7 @@ html,body{background:#000;overflow:hidden;font-family:'DM Sans',sans-serif;color
       <div class="scrub-thumb" id="scrubThumb" style="left:0%"></div>
     </div>
     <div class="foot-row">
-      <button class="play-btn" id="playBtn">▶ Play</button>
+      <button class="play-btn" id="playBtn">Play</button>
       <div class="foot-cta">acethedat.com</div>
     </div>
   </div>
@@ -273,15 +273,15 @@ function resetBell(){ [shade1,shade2,shade3].forEach(s => s.classList.remove('sh
 const TIMELINE = [
   {t:0,    fn: () => { stage.dataset.phase='hook'; hook.style.opacity=1; bell.style.opacity=0; reveal.style.opacity=0; trap.style.opacity=0; lock.style.opacity=0; caption.style.opacity=0; resetBell(); if(voiceEnabled) speak("Sixty eight, ninety five, ninety nine point seven. Memorize three numbers and own the bell curve."); }},
   {t:6500, fn: () => { stage.dataset.phase='demo'; anime({targets:hook,opacity:0,duration:500,easing:'easeOutQuad'}); setTimeout(() => { bell.style.opacity=1; anime({targets:bell,opacity:[0,1],duration:600}); }, 400); if(voiceEnabled) speak("Standard normal distribution. Mean at zero. One sigma each direction."); }},
-  {t:11500, fn: () => { shade1.classList.add('show'); pct1.classList.add('show'); if(voiceEnabled) speak("Within plus minus one sigma — sixty eight percent of the data."); }},
+  {t:11500, fn: () => { shade1.classList.add('show'); pct1.classList.add('show'); if(voiceEnabled) speak("Within plus minus one sigma: sixty eight percent of the data."); }},
   {t:15000, fn: () => { caption.innerHTML = '±1σ → <span class="gold">68%</span>'; caption.style.opacity=1; anime({targets:caption,opacity:[0,1],duration:400}); }},
-  {t:19000, fn: () => { caption.style.opacity=0; pct1.classList.remove('show'); shade2.classList.add('show'); pct2.classList.add('show'); if(voiceEnabled) speak("Plus minus two sigma — ninety five percent. Almost everything."); }},
+  {t:19000, fn: () => { caption.style.opacity=0; pct1.classList.remove('show'); shade2.classList.add('show'); pct2.classList.add('show'); if(voiceEnabled) speak("Plus minus two sigma: ninety five percent. Almost everything."); }},
   {t:23000, fn: () => { caption.innerHTML = '±2σ → <span class="gold">95%</span>'; caption.style.opacity=1; anime({targets:caption,opacity:[0,1],duration:400}); }},
-  {t:27000, fn: () => { caption.style.opacity=0; pct2.classList.remove('show'); shade3.classList.add('show'); pct3.classList.add('show'); if(voiceEnabled) speak("Plus minus three sigma — ninety nine point seven percent. Past three sigma is essentially nothing."); }},
+  {t:27000, fn: () => { caption.style.opacity=0; pct2.classList.remove('show'); shade3.classList.add('show'); pct3.classList.add('show'); if(voiceEnabled) speak("Plus minus three sigma: ninety nine point seven percent. Past three sigma is essentially nothing."); }},
   {t:31000, fn: () => { caption.innerHTML = '±3σ → <span class="gold">99.7%</span>'; caption.style.opacity=1; anime({targets:caption,opacity:[0,1],duration:400}); }},
   {t:35000, fn: () => { caption.style.opacity=0; pct3.classList.remove('show'); stage.dataset.phase='reveal'; reveal.style.opacity=1; anime({targets:reveal,opacity:[0,1],scale:[0.92,1],duration:700,easing:'easeOutBack'}); if(voiceEnabled) speak("To use this for any value, standardize. Z equals X minus mu over sigma. That tells you how many sigma you are from the mean. Then look up the percent."); }},
   {t:46000, fn: () => { reveal.style.opacity=0; stage.dataset.phase='trap'; trap.style.opacity=1; anime({targets:trap,opacity:[0,1],duration:600}); if(voiceEnabled) speak("Trap. Sign flipped. Z is X minus mu, not mu minus X. If your value is below the mean, Z is negative."); }},
-  {t:55000, fn: () => { trap.style.opacity=0; stage.dataset.phase='lock'; lock.style.opacity=1; anime({targets:lock,opacity:[0,1],scale:[0.9,1],duration:700,easing:'easeOutBack'}); if(voiceEnabled) speak("Lock it in. Plus minus one — sixty eight. Plus minus two — ninety five. Plus minus three — ninety nine point seven. Z equals X minus mu over sigma."); }},
+  {t:55000, fn: () => { trap.style.opacity=0; stage.dataset.phase='lock'; lock.style.opacity=1; anime({targets:lock,opacity:[0,1],scale:[0.9,1],duration:700,easing:'easeOutBack'}); if(voiceEnabled) speak("Lock it in. Plus minus one: sixty eight. Plus minus two: ninety five. Plus minus three: ninety nine point seven. Z equals X minus mu over sigma."); }},
   {t:65000, fn: () => { /* hold */ }},
   {t:71000, fn: () => { stage.dataset.phase='hook'; lock.style.opacity=0; hook.style.opacity=1; if(voiceEnabled) speak("Sixty eight, ninety five, ninety nine point seven."); }}
 ];
@@ -301,10 +301,10 @@ function tick(){
 function play(){
   if(elapsed >= TOTAL_T){ TIMELINE.forEach(e => e._fired = false); elapsed = 0; }
   paused = false; startedAt = Date.now();
-  playBtn.textContent = '⏸ Pause';
+  playBtn.textContent = 'Pause';
   tick();
 }
-function pause(){ paused = true; elapsed += Date.now() - startedAt; playBtn.textContent = '▶ Resume'; }
+function pause(){ paused = true; elapsed += Date.now() - startedAt; playBtn.textContent = 'Resume'; }
 playBtn.addEventListener('click', () => { if(paused) play(); else pause(); });
 document.getElementById('scrubBar').addEventListener('click', e => {
   const r = e.currentTarget.getBoundingClientRect();

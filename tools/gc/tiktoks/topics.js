@@ -44,7 +44,7 @@ window.TOPICS = {
     bulletsHead: 'The reads',
     bullets: [
       '<em>²³⁸₉₂U</em> → 92 protons, 146 neutrons',
-      'Charge changes <em>electrons only</em> — never protons',
+      'Charge changes <em>electrons only</em>, never protons',
       '<em>Cl⁻</em> → still 17 protons, gained 1 e⁻ → 18 e⁻',
       'Aufbau exception: Cu, Cr promote 4s to fill d'
     ],
@@ -79,7 +79,7 @@ window.TOPICS = {
     trapH: '<em>Mixing</em><br/>units in E=hc/λ.',
     trapSub: 'h is in J·s, c in m/s, so λ MUST be in <em>meters</em>. Convert nm to m (×10⁻⁹) before plugging.',
     lockWord: '4 numbers.<br/><em>1 address.</em>',
-    lockDecode: '(n, ℓ, mₗ, mₛ) — every electron has a unique combo<br/><span class="gold">2n² electrons</span> per shell · <span class="teal">E = hc/λ</span> for photons',
+    lockDecode: '(n, ℓ, mₗ, mₛ), every electron has a unique combo<br/><span class="gold">2n² electrons</span> per shell · <span class="teal">E = hc/λ</span> for photons',
     speak:{
       hook:"Each electron has four. No two share all four. Pauli in one rule.",
       formula:"N is shell. L is subshell. M-L is orientation. M-S is spin.",
@@ -120,7 +120,7 @@ window.TOPICS = {
     hookTag: 'Bonding · ΔEN Decides',
     hookWord: '<em>ΔEN</em><br/>decides.',
     hookSub: 'One number. Three bond types. No memorization.',
-    formula: 'ΔEN > <span class="gold">1.7</span> → ionic<br/>ΔEN <span class="teal">0.4–1.7</span> → polar covalent<br/>ΔEN < <span class="warm">0.4</span> → nonpolar covalent',
+    formula: 'ΔEN > <span class="gold">1.7</span> → ionic<br/>ΔEN <span class="teal">0.4-1.7</span> → polar covalent<br/>ΔEN < <span class="warm">0.4</span> → nonpolar covalent',
     formulaSub: 'NaCl ΔEN ≈ 2.1 (ionic) · HCl ΔEN ≈ 0.9 (polar) · O₂ ΔEN = 0',
     bulletsHead: 'The reads',
     bullets: [
@@ -131,9 +131,9 @@ window.TOPICS = {
     ],
     caption: 'ΔEN > 1.7 → ionic',
     trapH: '<em>Polar bond</em><br/>≠ polar molecule.',
-    trapSub: 'CO₂ has polar bonds but is <em>nonpolar</em> overall — symmetry cancels the dipoles. Always check shape.',
+    trapSub: 'CO₂ has polar bonds but is <em>nonpolar</em> overall, symmetry cancels the dipoles. Always check shape.',
     lockWord: 'bigger ΔEN<br/><em>= more ionic.</em>',
-    lockDecode: '<span class="gold">> 1.7</span> ionic · <span class="teal">0.4–1.7</span> polar · <span class="warm">< 0.4</span> nonpolar<br/>Symmetric polar bonds → nonpolar molecule (CO₂, CCl₄)',
+    lockDecode: '<span class="gold">> 1.7</span> ionic · <span class="teal">0.4-1.7</span> polar · <span class="warm">< 0.4</span> nonpolar<br/>Symmetric polar bonds → nonpolar molecule (CO₂, CCl₄)',
     speak:{
       hook:"Delta E N decides. One number, three bond types.",
       formula:"Bigger than one point seven, ionic. Zero point four to one point seven, polar covalent. Less than zero point four, nonpolar.",
@@ -160,7 +160,7 @@ window.TOPICS = {
     trapH: 'Forget to add<br/><em>e⁻ for charge.</em>',
     trapSub: 'NO₃⁻ has 24 e⁻ (not 23). SO₄²⁻ has 32. Negative charge ADDS electrons. Positive SUBTRACTS.',
     lockWord: 'count.<br/>octet.<br/><em>FC=0.</em>',
-    lockDecode: '<span class="gold">Period 2</span> (C, N, O, F): strict octet — never expand<br/><span class="teal">Period 3+</span> (P, S, Cl): can expand octet (sp³d, sp³d²)',
+    lockDecode: '<span class="gold">Period 2</span> (C, N, O, F): strict octet, never expand<br/><span class="teal">Period 3+</span> (P, S, Cl): can expand octet (sp³d, sp³d²)',
     speak:{
       hook:"Lewis in five steps. Count, central, singles, octets, multiples.",
       formula:"Total electrons equals sum of valence plus or minus charge. Formal charge equals group number minus dots minus half sticks.",
@@ -212,7 +212,7 @@ window.TOPICS = {
     ],
     caption: 'Steric # = hybrid type',
     trapH: 'Counting<br/><em>π in steric #.</em>',
-    trapSub: 'π bonds use <em>unhybridized</em> p orbitals — they don\'t affect steric #. A double bond is 1 σ + 1 π; only the σ uses a hybrid.',
+    trapSub: 'π bonds use <em>unhybridized</em> p orbitals, they don\'t affect steric #. A double bond is 1 σ + 1 π; only the σ uses a hybrid.',
     lockWord: 'count atoms.<br/><em>not bonds.</em>',
     lockDecode: '<span class="gold">2/3/4</span> groups → <span class="teal">sp/sp²/sp³</span><br/>5/6 groups → sp³d/sp³d² (period 3+ only)',
     speak:{
@@ -266,7 +266,7 @@ window.TOPICS = {
     ],
     caption: 'Convert all → smallest wins',
     trapH: 'Compare reactants<br/><em>directly.</em>',
-    trapSub: 'Always go to <em>product</em> first. Stoichiometric ratios matter — 4 mol H₂ vs 1 mol O₂ in 2H₂+O₂ = O₂ limits even though there\'s less.',
+    trapSub: 'Always go to <em>product</em> first. Stoichiometric ratios matter: 4 mol H₂ vs 1 mol O₂ in 2H₂+O₂ = O₂ limits even though there\'s less.',
     lockWord: 'product.<br/><em>smaller wins.</em>',
     lockDecode: 'Convert each reactant to mol of <span class="gold">product</span><br/>Smallest answer = <span class="teal">limiting</span> · used = limiting × ratio',
     speak:{
@@ -314,7 +314,7 @@ window.TOPICS = {
     bulletsHead: 'The hierarchy',
     bullets: [
       'H-bond needs H on <em>N, O, or F</em> (NOF rule)',
-      'London is in <em>everything</em> — heavier = stronger',
+      'London is in <em>everything</em>, heavier = stronger',
       'BP rank = IMF strength rank',
       'Like dissolves like (polar↔polar, nonpolar↔nonpolar)'
     ],
@@ -642,11 +642,11 @@ window.TOPICS = {
       'F₂ + 2e⁻ → 2F⁻ (E° = +2.87, top)',
       'Li⁺ + e⁻ → Li (E° = −3.04, bottom)',
       'Reaction proceeds when <em>E°_cell > 0</em>',
-      'Cu²⁺ oxidizes Zn? Yes — Cu higher E°'
+      'Cu²⁺ oxidizes Zn? Yes: Cu higher E°'
     ],
     caption: 'Higher E°_red = stronger oxidizer',
     trapH: 'Reducer<br/><em>vs reduction.</em>',
-    trapSub: 'A "reducer" is the species that GETS oxidized. It REDUCES the other one. Counterintuitive — read carefully.',
+    trapSub: 'A "reducer" is the species that GETS oxidized. It REDUCES the other one. Counterintuitive: read carefully.',
     lockWord: 'top of table<br/><em>= grabs e⁻.</em>',
     lockDecode: '<span class="gold">High E°_red</span>: F₂, Cl₂, O₂, Ag⁺ (strong oxidizers)<br/><span class="teal">Low E°_red</span>: Li, K, Na, Mg (strong reducers)',
     speak:{
@@ -693,7 +693,7 @@ window.TOPICS = {
     formulaSub: 'n = electrons per ion (Cu²⁺: n=2, Ag⁺: n=1)',
     bulletsHead: 'The chain',
     bullets: [
-      'Compute Q: <em>Q = I × t</em> (seconds!)',
+      'Compute Q: <em>Q = I × t</em> (seconds)',
       'Moles electrons: <em>Q / 96,485</em>',
       'Moles metal: <em>mol e⁻ / n</em>',
       'Mass: <em>mol metal × MW</em>'
@@ -754,7 +754,7 @@ window.TOPICS = {
     ],
     caption: 'Water = backward s/l line',
     trapH: 'Water\'s s/l line<br/><em>tilts right?</em>',
-    trapSub: 'No — water is the famous exception. Ice is <em>less dense</em> than liquid water → s/l line tilts left. Most substances tilt right.',
+    trapSub: 'No: water is the famous exception. Ice is <em>less dense</em> than liquid water → s/l line tilts left. Most substances tilt right.',
     lockWord: 'lines = bordered.<br/><em>triple = 3 ways.</em>',
     lockDecode: '<span class="gold">Lines</span> = phase equilibrium · <span class="teal">Triple</span> = 3 phases<br/><span class="warm">Critical</span> = l/g blur · CO₂ sublimes at 1 atm',
     speak:{
@@ -781,7 +781,7 @@ window.TOPICS = {
     ],
     caption: 'Plateau ≠ T change',
     trapH: 'Use mcΔT<br/><em>during plateau.</em>',
-    trapSub: 'Plateaus are phase changes. T is <em>constant</em>. Use q = n·ΔH instead. Most heat-curve problems have multiple segments — sum them.',
+    trapSub: 'Plateaus are phase changes. T is <em>constant</em>. Use q = n·ΔH instead. Most heat-curve problems have multiple segments, sum them.',
     lockWord: 'slope ≠ flat.<br/><em>different formula.</em>',
     lockDecode: '<span class="gold">Slope</span>: q = m·c·ΔT (one phase, T changes)<br/><span class="teal">Plateau</span>: q = n·ΔH (phase change, no T change)',
     speak:{

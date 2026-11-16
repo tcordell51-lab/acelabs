@@ -1196,7 +1196,7 @@ function SummaryLadder({
         marginBottom: 24,
         letterSpacing: '0.06em'
       }
-    }, "screenshot this — it’s the whole cheat sheet"), rows.map((r, i) => {
+    }, "screenshot this, it’s the whole cheat sheet"), rows.map((r, i) => {
       const rv = clamp((t - start - 0.4 - i * 0.5) / 0.5, 0, 1);
       return /*#__PURE__*/React.createElement("div", {
         key: i,
@@ -1287,7 +1287,7 @@ function QuizBeat({
         color: INK3,
         marginBottom: 26
       }
-    }, "pause it — commit before the reveal"), /*#__PURE__*/React.createElement("div", {
+    }, "pause it, commit before the reveal"), /*#__PURE__*/React.createElement("div", {
       style: {
         fontFamily: SERIF,
         fontWeight: 600,
@@ -1625,7 +1625,7 @@ function TrendStage() {
     style: {
       color: RICH
     }
-  }, "one"), "? — gaining one is the whole personality of the right side"), (seg === 'en' || seg === 'size') && /*#__PURE__*/React.createElement("svg", {
+  }, "one"), "?, gaining one is the whole personality of the right side"), (seg === 'en' || seg === 'size') && /*#__PURE__*/React.createElement("svg", {
     width: CW,
     height: CH,
     viewBox: `0 0 ${CW} ${CH}`,
@@ -1724,7 +1724,7 @@ function TrendStage() {
       color: INK3,
       marginTop: 10
     }
-  }, "the why: more protons, same shell — the nuclear pull climbs")), seg === 'size' && /*#__PURE__*/React.createElement("div", {
+  }, "the why: more protons, same shell, the nuclear pull climbs")), seg === 'size' && /*#__PURE__*/React.createElement("div", {
     style: {
       position: 'absolute',
       left: 0,
@@ -1770,7 +1770,7 @@ function TrendStage() {
       color: INK2,
       marginTop: 26
     }
-  }, "the same two arrows you used in acidity’s A-check — it’s all one idea")));
+  }, "the same two arrows you used in acidity’s A-check, it’s all one idea")));
 }
 function NobleGasVideo() {
   return /*#__PURE__*/React.createElement(Stage, {
@@ -1821,7 +1821,7 @@ function NobleGasVideo() {
       marginTop: 22,
       letterSpacing: '0.06em'
     }
-  }, "comment your answer — reveal at the end")), /*#__PURE__*/React.createElement(Header, {
+  }, "comment your answer, reveal at the end")), /*#__PURE__*/React.createElement(Header, {
     start: 7.2,
     end: 13.0,
     top: 330
@@ -1852,7 +1852,7 @@ function NobleGasVideo() {
       color: INK2,
       marginTop: 22
     }
-  }, "a full octet — everything else is commentary")), /*#__PURE__*/React.createElement(Header, {
+  }, "a full octet, everything else is commentary")), /*#__PURE__*/React.createElement(Header, {
     start: 13.2,
     end: 26.0,
     top: 170
@@ -1871,7 +1871,7 @@ function NobleGasVideo() {
       fontSize: 44,
       color: INK
     }
-  }, "chlorine has 7 — gaining ", /*#__PURE__*/React.createElement("b", {
+  }, "chlorine has 7, gaining ", /*#__PURE__*/React.createElement("b", {
     style: {
       color: RICH
     }
@@ -1898,7 +1898,7 @@ function NobleGasVideo() {
     style: {
       color: POOR
     }
-  }, "hungrier"), " — electronegativity climbs")), /*#__PURE__*/React.createElement(Header, {
+  }, "hungrier"), ", electronegativity climbs")), /*#__PURE__*/React.createElement(Header, {
     start: 40.2,
     end: 52.0,
     top: 170
@@ -1921,7 +1921,7 @@ function NobleGasVideo() {
     style: {
       color: SPARED
     }
-  }, "bigger"), " — more shells, more room"), /*#__PURE__*/React.createElement("div", {
+  }, "bigger"), ", more shells, more room"), /*#__PURE__*/React.createElement("div", {
     style: {
       fontFamily: SANS,
       fontSize: 28,
@@ -2006,20 +2006,20 @@ function NobleGasVideo() {
     start: 83.2,
     qs: [{
       q: 'Why IS fluorine so grabby?',
-      opts: ['it has 7 electrons — one short of noble', 'it is the biggest atom', 'it has the most protons overall'],
+      opts: ['it has 7 electrons, one short of noble', 'it is the biggest atom', 'it has the most protons overall'],
       ans: 0,
-      why: 'Seven valence electrons, one short of neon. Gaining one is easy — that hunger is electronegativity.'
+      why: 'Seven valence electrons, one short of neon. Gaining one is easy: that hunger is electronegativity.'
     }, {
       q: 'Which is bigger: Cl, or Cl⁻?',
-      opts: ['Cl — losing nothing', 'Cl⁻ — an extra electron spreads it out', 'identical'],
+      opts: ['Cl: losing nothing', 'Cl⁻: an extra electron spreads it out', 'identical'],
       ans: 1,
-      why: 'Same protons, one more electron — more repulsion, bigger cloud. Anions are always bigger than their atoms.'
+      why: 'Same protons, one more electron, more repulsion, bigger cloud. Anions are always bigger than their atoms.'
     }]
   }), /*#__PURE__*/React.createElement(OutroCard, {
     start: 99.8,
     end: 108,
     lines: ['Full octet', 'or bust.'],
-    tease: "That is the series — fourteen tricks. More on acethedat.com."
+    tease: "That is the series: fourteen tricks. More on acethedat.com."
   }));
 }
 window.NobleGasVideo = NobleGasVideo;

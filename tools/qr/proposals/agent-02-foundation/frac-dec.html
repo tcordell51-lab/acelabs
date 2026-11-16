@@ -88,7 +88,7 @@ h1 em{font-style:italic; color:var(--gold-d); font-weight:400}
   <div class="card">
     <div class="fd-hud">
       <span>Round <b id="fd-round">1</b> / 12</span>
-      <span class="fd-timer">Avg <b id="fd-avg">—</b>s</span>
+      <span class="fd-timer">Avg <b id="fd-avg">-</b>s</span>
       <span>Hits <b id="fd-hit">0</b></span>
     </div>
 
@@ -210,7 +210,7 @@ function judge(val){
     marker.classList.remove('right');
     marker.classList.add('wrong');
     status.className = 'fd-status warn';
-    status.textContent = 'Off — ' + currentAnchor.f + ' = ' + currentAnchor.d + '. Land within ±0.04.';
+    status.textContent = 'Off: ' + currentAnchor.f + ' = ' + currentAnchor.d + '. Land within ±0.04.';
   }
   // Update avg time
   const avg = times.reduce((a,b)=>a+b,0)/times.length;
@@ -221,7 +221,7 @@ function nextRound(){
   if(round >= totalRounds){
     document.getElementById('fd-status').className='fd-status good';
     document.getElementById('fd-status').textContent = 'Run complete. ' + hits + '/' + totalRounds + ' hits, avg ' + (times.reduce((a,b)=>a+b,0)/times.length).toFixed(1) + 's.';
-    document.getElementById('fd-prompt').textContent = '—';
+    document.getElementById('fd-prompt').textContent = '-';
     return;
   }
   round++;
@@ -250,13 +250,13 @@ document.getElementById('fd-reveal').onclick = () => {
 document.getElementById('fd-restart').onclick = () => {
   round = 0; hits = 0; times = []; queue = [];
   document.getElementById('fd-hit').textContent = 0;
-  document.getElementById('fd-avg').textContent = '—';
+  document.getElementById('fd-avg').textContent = '-';
   nextRound();
 };
 
 buildLine();
 nextRound();
 </script>
-  <script src="/shared/ace-shell.js?v=1" defer></script>
+  <script src="/shared/ace-shell.js?v=3" defer></script>
 </body>
 </html>

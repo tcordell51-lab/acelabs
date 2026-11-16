@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=1080,initial-scale=1"/>
-<title>Ace The DAT — nPr ÷ r! = nCr</title>
+<title>Ace The DAT · nPr ÷ r! = nCr</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400;1,700&family=DM+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet"/>
 <script src="/shared/anime.min.js?v=1"></script>
 <style>
@@ -146,7 +146,7 @@ html,body{background:#000;overflow:hidden;font-family:'DM Sans',sans-serif;color
   <div class="trap" id="trap">
     <div class="trap-ribbon">DAT Trap</div>
     <div class="trap-h">Treating <em>P</em><br/>like <em>C</em>.</div>
-    <div class="trap-sub">"Choose 3 students for a committee" is a <em>combination</em> — not a permutation. Order doesn't make a different committee. Always ask: <em>does swapping change the answer?</em></div>
+    <div class="trap-sub">"Choose 3 students for a committee" is a <em>combination</em>, not a permutation. Order doesn't make a different committee. Always ask: <em>does swapping change the answer?</em></div>
   </div>
 
   <div class="lock" id="lock">
@@ -165,7 +165,7 @@ html,body{background:#000;overflow:hidden;font-family:'DM Sans',sans-serif;color
       <div class="scrub-thumb" id="scrubThumb" style="left:0%"></div>
     </div>
     <div class="foot-row">
-      <button class="play-btn" id="playBtn">▶ Play</button>
+      <button class="play-btn" id="playBtn">Play</button>
       <div class="foot-cta">acethedat.com</div>
     </div>
   </div>
@@ -314,8 +314,8 @@ const TIMELINE = [
   {t:0,    fn: () => { stage.dataset.phase='hook'; hook.style.opacity=1; chipGrid.style.opacity=0; reveal.style.opacity=0; trap.style.opacity=0; lock.style.opacity=0; caption.style.opacity=0; expandToPerms(); if(voiceEnabled) speak("Five letters, pick three. How many ways?"); }},
   {t:5500, fn: () => { stage.dataset.phase='demo'; anime({targets:hook,opacity:0,duration:500,easing:'easeOutQuad'}); setTimeout(() => { chipGrid.style.opacity=1; anime({targets:chipGrid,opacity:[0,1],duration:600}); }, 400); if(voiceEnabled) speak("If order matters, that's a permutation. Five P three. We get sixty arrangements."); }},
   {t:11000, fn: () => { caption.innerHTML = '<span class="gold">5P3 = 60</span> arrangements'; caption.style.opacity=1; anime({targets:caption,opacity:[0,1],duration:400}); }},
-  {t:16000, fn: () => { caption.style.opacity=0; if(voiceEnabled) speak("But wait. ABC, BCA, CAB — these are the same three letters in different order. If order doesn't matter for your problem, they should count as one."); }},
-  {t:23000, fn: () => { stage.dataset.phase='collapse'; collapseToCombos(); if(voiceEnabled) speak("Watch them collapse. Each column is one combination — six orderings of the same three letters."); }},
+  {t:16000, fn: () => { caption.style.opacity=0; if(voiceEnabled) speak("But wait. ABC, BCA, CAB, these are the same three letters in different order. If order doesn't matter for your problem, they should count as one."); }},
+  {t:23000, fn: () => { stage.dataset.phase='collapse'; collapseToCombos(); if(voiceEnabled) speak("Watch them collapse. Each column is one combination: six orderings of the same three letters."); }},
   {t:30000, fn: () => { caption.innerHTML = '60 perms <span class="teal">÷ 6 orderings</span> = 10 combos'; caption.style.opacity=1; anime({targets:caption,opacity:[0,1],duration:500}); }},
   {t:35000, fn: () => { caption.style.opacity=0; stage.dataset.phase='reveal'; reveal.style.opacity=1; anime({targets:reveal,opacity:[0,1],scale:[0.92,1],duration:700,easing:'easeOutBack'}); if(voiceEnabled) speak("Five C three equals five P three divided by three factorial. Sixty divided by six is ten."); }},
   {t:44000, fn: () => { reveal.style.opacity=0; stage.dataset.phase='trap'; trap.style.opacity=1; anime({targets:trap,opacity:[0,1],duration:600}); if(voiceEnabled) speak("Trap. Treating P like C. A committee of three students from five has ten possibilities, not sixty. Always ask: does swapping change the answer?"); }},
@@ -339,10 +339,10 @@ function tick(){
 function play(){
   if(elapsed >= TOTAL_T){ TIMELINE.forEach(e => e._fired = false); elapsed = 0; }
   paused = false; startedAt = Date.now();
-  playBtn.textContent = '⏸ Pause';
+  playBtn.textContent = 'Pause';
   tick();
 }
-function pause(){ paused = true; elapsed += Date.now() - startedAt; playBtn.textContent = '▶ Resume'; }
+function pause(){ paused = true; elapsed += Date.now() - startedAt; playBtn.textContent = 'Resume'; }
 playBtn.addEventListener('click', () => { if(paused) play(); else pause(); });
 document.getElementById('scrubBar').addEventListener('click', e => {
   const r = e.currentTarget.getBoundingClientRect();

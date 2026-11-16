@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>3D beside the drawing · OChem · Ace Labs</title>
+<meta name="description" content="Each molecule three ways: the 3D model, the skeleton drawing the DAT shows, and written out. Call it first.">
+<link rel="icon" type="image/svg+xml" href="/shared/ace-dat-mark.svg">
+<link rel="stylesheet" href="/shared/ace-ui.css?v=7">
+<style>
+  .oc-three { display: grid; gap: var(--aui-3); }
+  @media (min-width: 900px) { .oc-three { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); } }
+  .oc-view { position: relative; background: #FFFDF7; border: 1px solid var(--aui-line); border-radius: var(--aui-r); aspect-ratio: 4 / 3; overflow: hidden; touch-action: none; cursor: grab; }
+  .oc-view canvas { display: block; width: 100%; height: 100%; }
+  .oc-view .tag { position: absolute; transform: translate(-50%, -50%); min-width: 26px; height: 26px; border-radius: 13px; background: #1B3A2D; color: #F5F0E8; font: 700 14px/26px var(--aui-font); text-align: center; pointer-events: none; opacity: 0; transition: opacity .35s; box-shadow: 0 0 0 2px #FFFDF7; }
+  .oc-view.is-revealed .tag { opacity: 1; }
+  .oc-view .hint { position: absolute; left: 10px; bottom: 8px; font-size: 12px; color: var(--aui-ink-3); background: rgba(255,253,247,.85); padding: 2px 8px; border-radius: 8px; }
+  .oc-view .nogl { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; padding: 20px; font-size: 14px; color: var(--aui-ink-2); }
+  .oc-side { display: grid; gap: var(--aui-3); }
+  .oc-draw { background: #FFFDF7; border: 1px solid var(--aui-line); border-radius: var(--aui-r); padding: 8px; }
+  .oc-draw svg { width: 100%; height: auto; display: block; }
+  .oc-lbl { font-size: var(--aui-t-xs); font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--aui-gold-ink); margin: 0 0 4px; }
+  .oc-written { font: 600 var(--aui-t-lg) var(--aui-mono); background: #FFFDF7; border: 1px solid var(--aui-line); border-radius: var(--aui-r); padding: 10px 12px; overflow-x: auto; }
+  .oc-picks { display: flex; flex-wrap: wrap; gap: var(--aui-2); }
+  .oc-picks button { min-height: 40px; padding: 0 12px; border-radius: 999px; border: 1.5px solid var(--aui-line-2); background: var(--aui-paper); font: 600 var(--aui-t-sm) var(--aui-font); cursor: pointer; color: var(--aui-ink); }
+  .oc-picks button[aria-current="true"] { background: var(--aui-forest); color: var(--aui-cream); border-color: var(--aui-forest); }
+</style>
+</head>
+<body class="aui">
+<main class="aui-wrap aui-stack" id="main">
+  <header class="aui-stack">
+    <p class="aui-kicker">Organic Chemistry · See it</p>
+    <h1 class="aui-h1">3D beside the drawing</h1>
+    <p class="aui-lede">Every molecule three ways: the 3D model you can turn, the skeleton drawing the DAT shows you, and written out. Call it before the priorities appear.</p>
+  </header>
+  <div class="oc-picks" id="picks" role="group" aria-label="Molecules"></div>
+  <div class="oc-three">
+    <div class="aui-stack">
+      <p class="oc-lbl">3D model, drag to turn</p>
+      <div class="oc-view" id="view"><span class="hint" id="hint">Drag to turn</span></div>
+      <div class="aui-row" id="tools"></div>
+    </div>
+    <div class="oc-side">
+      <div><p class="oc-lbl">The DAT drawing</p><div class="oc-draw" id="draw"></div></div>
+      <div><p class="oc-lbl">Written out</p><div class="oc-written" id="written"></div></div>
+    </div>
+  </div>
+  <div id="q"></div>
+  <p class="aui-small">Coordinates, drawings and answers are computed by RDKit (scripts/build-oc-3d.py): 3D shapes from MMFF94, R and S from the CIP rules, chair energies from MMFF94. The rules: OpenStax Organic Chemistry, 5.5 Sequence Rules for Specifying Configuration and 4.7 Conformations of Monosubstituted Cyclohexanes.</p>
+</main>
+<script src="/shared/ace-ui.js?v=3"></script>
+<script src="/shared/ace-record.js?v=4"></script>
+<script src="/shared/ace-question.js?v=4"></script>
+<script type="module">
+const $ = (id) => document.getElementById(id);
+const data = await fetch('/data/oc-3d.json').then((r) => r.json());
+/* The drawing and the question paint first; three.js (about 700 KB) loads when the browser is idle,
+   so a mid phone can read and answer while the 3D model arrives. */
+let THREE = null, pending = null;
+const COLORS = data.colors, RADII = { H: 0.26, C: 0.42, O: 0.42, N: 0.42, F: 0.38, Cl: 0.5, Br: 0.56 };
+const view = $('view');
+let renderer = null, scene, camera, group, sphere, cyl, sun;
+const mats = {}; const mat = (hex) => mats[hex] || (mats[hex] = new THREE.MeshStandardMaterial({ color: hex, roughness: 0.55, metalness: 0.05 }));
+let atomsNow = [], tags = [];
+function init3d() {
+try {
+  const c = document.createElement('canvas');
+  if (!(c.getContext('webgl2') || c.getContext('webgl'))) throw new Error('no webgl');
+  renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, canvas: c });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  view.insertBefore(c, view.firstChild);
+} catch (e) {
+  renderer = null;
+  const n = document.createElement('div'); n.className = 'nogl'; n.textContent = 'This browser cannot draw 3D (WebGL is off). The drawing, the written form and the question all still work.'; view.appendChild(n);
+  $('hint').hidden = true;
+}
+scene = new THREE.Scene();
+camera = new THREE.PerspectiveCamera(36, 4 / 3, 0.1, 100); camera.position.set(0, 0, 11);
+scene.add(new THREE.AmbientLight(0xffffff, 1.6));
+sun = new THREE.DirectionalLight(0xffffff, 2.2); sun.position.set(4, 6, 8); scene.add(sun);
+group = new THREE.Group(); scene.add(group);
+sphere = new THREE.SphereGeometry(1, 20, 14); cyl = new THREE.CylinderGeometry(0.11, 0.11, 1, 12);
+}
+
+function size() { if (!renderer || !THREE) return; const r = view.getBoundingClientRect(); renderer.setSize(r.width, r.height, false); camera.aspect = r.width / r.height; camera.updateProjectionMatrix(); draw(); }
+function draw() { if (!renderer || !THREE) return; renderer.render(scene, camera); placeTags(); }
+function build(atoms, bonds) {
+  if (!THREE) { pending = () => build(atoms, bonds); return; }
+  group.clear(); group.rotation.set(-0.35, 0.5, 0); atomsNow = atoms;
+  atoms.forEach((a) => { const m = new THREE.Mesh(sphere, mat(COLORS[a.el] || '#888')); m.scale.setScalar(RADII[a.el] || 0.4); m.position.set(a.x, a.y, a.z); group.add(m); });
+  bonds.forEach(([i, j, order]) => {
+    const A = new THREE.Vector3(atoms[i].x, atoms[i].y, atoms[i].z), B = new THREE.Vector3(atoms[j].x, atoms[j].y, atoms[j].z);
+    const mid = A.clone().add(B).multiplyScalar(0.5), len = A.distanceTo(B), dir = B.clone().sub(A).normalize();
+    const offs = order === 2 ? [-0.09, 0.09] : [0];
+    const side = new THREE.Vector3().crossVectors(dir, Math.abs(dir.y) < 0.9 ? new THREE.Vector3(0, 1, 0) : new THREE.Vector3(1, 0, 0)).normalize();
+    offs.forEach((o) => { const m = new THREE.Mesh(cyl, mat('#9aa39c')); m.position.copy(mid).addScaledVector(side, o); m.scale.set(order === 2 ? 0.7 : 1, len, order === 2 ? 0.7 : 1); m.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir); group.add(m); });
+  });
+  draw();
+}
+function setTags(map) {
+  tags.forEach((t) => t.el.remove()); tags = [];
+  Object.keys(map || {}).forEach((i) => { const el = document.createElement('span'); el.className = 'tag'; el.textContent = map[i]; view.appendChild(el); tags.push({ i: +i, el }); });
+  placeTags();
+}
+function placeTags() {
+  if (!renderer || !THREE) return; const r = view.getBoundingClientRect();
+  tags.forEach((t) => { const a = atomsNow[t.i]; if (!a) return; const v = new THREE.Vector3(a.x, a.y, a.z).applyMatrix4(group.matrixWorld).project(camera); t.el.style.left = ((v.x + 1) / 2 * r.width) + 'px'; t.el.style.top = ((1 - v.y) / 2 * r.height - 22) + 'px'; });
+}
+// drag to turn
+let drag = null;
+view.addEventListener('pointerdown', (e) => { drag = { x: e.clientX, y: e.clientY }; view.setPointerCapture(e.pointerId); $('hint').hidden = true; });
+view.addEventListener('pointermove', (e) => { if (!drag || !group) return; group.rotation.y += (e.clientX - drag.x) * 0.01; group.rotation.x += (e.clientY - drag.y) * 0.01; drag = { x: e.clientX, y: e.clientY }; group.updateMatrixWorld(); draw(); });
+view.addEventListener('pointerup', () => { drag = null; });
+window.addEventListener('resize', size);
+
+/* Turn the model so the lowest priority points straight away from you: the DAT move. */
+function turnAway(center, low) {
+  if (!THREE || !renderer) return;
+  const a = atomsNow[center], b = atomsNow[low];
+  const v = new THREE.Vector3(b.x - a.x, b.y - a.y, b.z - a.z).normalize();
+  const q = new THREE.Quaternion().setFromUnitVectors(v, new THREE.Vector3(0, 0, -1));
+  const from = group.quaternion.clone(), t0 = performance.now();
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  (function step(now) { const k = reduce ? 1 : Math.min(1, (now - t0) / 700); group.quaternion.copy(from).slerp(q, k); group.updateMatrixWorld(); draw(); if (k < 1) requestAnimationFrame(step); })(t0);
+}
+
+const picks = $('picks');
+data.items.forEach((it, k) => { const b = document.createElement('button'); b.type = 'button'; b.textContent = it.name; b.addEventListener('click', () => show(k)); picks.appendChild(b); });
+
+function show(k) {
+  const it = data.items[k];
+  [...picks.children].forEach((b, j) => b.setAttribute('aria-current', j === k ? 'true' : 'false'));
+  view.classList.remove('is-revealed'); $('tools').textContent = ''; setTags(null);
+  $('draw').innerHTML = it.svg; $('written').textContent = it.name + ':  ' + it.condensed;
+  let item;
+  if (it.kind === 'stereo') {
+    build(it.atoms, it.bonds);
+    const CH = ['R', 'S', 'Not a stereocenter: two groups on the carbon are the same', 'R in the 3D model but S in the drawing', 'It cannot be assigned without measuring the optical rotation'];
+    const ans = it.answer === 'R' ? 0 : it.answer === 'S' ? 1 : 2;
+    item = { id: 'oc:3d:' + it.id, section: 'ochem', topic: 'stereo-3d', topicName: 'R and S', stem: 'Look at ' + it.name + ' (' + it.condensed + ') in 3D and in the drawing. What is the configuration of the highlighted carbon?', choices: CH, answer: ans,
+      why: ans === 2 ? 'The carbon carries two identical groups (two methyls), so it is not a stereocenter and has no R or S.' : 'Rank the four groups by atomic number at the first point of difference: that gives 1 to 4. Turn the model so 4 points away from you. 1 to 2 to 3 runs ' + (it.answer === 'R' ? 'clockwise: R.' : 'counterclockwise: S.') + ' The 3D model and the drawing are the same molecule, so they always agree, and the sign of optical rotation is measured, not predicted from R or S.',
+      steps: ans === 2 ? ['List the four groups on the carbon.', 'Two of them are the same.', 'No stereocenter, no R or S.'] : ['Number the groups 1 to 4 by atomic number, then the next atoms out.', 'Turn the lowest priority, 4, away from you.', 'Trace 1 to 2 to 3: clockwise is R, counterclockwise is S.'] };
+    if (it.center != null) {
+      const low = Object.keys(it.priority).find((i) => it.priority[i] === 4);
+      const btn = document.createElement('button'); btn.type = 'button'; btn.className = 'aui-btn aui-btn--quiet'; btn.textContent = 'Turn group 4 away'; btn.disabled = true;
+      btn.addEventListener('click', () => turnAway(it.center, +low)); $('tools').appendChild(btn);
+      item.__onReveal = () => { btn.disabled = false; setTags(it.priority); view.classList.add('is-revealed'); $('draw').innerHTML = it.svgReveal; };
+    } else item.__onReveal = () => { $('draw').innerHTML = it.svgReveal; };
+  } else {
+    let showing = 'axial';
+    const flip = (which) => { showing = which; build(it[which].atoms, it[which].bonds); [...$('tools').children].forEach((b) => b.setAttribute('aria-pressed', b.dataset.w === which ? 'true' : 'false')); };
+    ['axial', 'equatorial'].forEach((w) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'aui-btn aui-btn--quiet aui-btn--sm'; b.dataset.w = w; b.textContent = (it.id === 'methylcyclohexane' ? 'Methyl ' : 'tert-Butyl ') + w; b.addEventListener('click', () => flip(w)); $('tools').appendChild(b); });
+    flip('axial');
+    const g = it.id === 'methylcyclohexane' ? 'methyl' : 'tert-butyl';
+    item = { id: 'oc:3d:' + it.id, section: 'ochem', topic: 'chair-3d', topicName: 'Chair conformations', stem: 'Both chairs of ' + it.name + ' are in the model; flip between them. Which chair is lower in energy, and why?',
+      choices: ['The chair with the ' + g + ' group axial, because it sits closer to the ring', 'The chair with the ' + g + ' group equatorial, because it avoids 1,3-diaxial interactions', 'Neither: a ring flip never changes the energy', 'The chair with the ' + g + ' group axial, because axial bonds are shorter', 'The chair with the ' + g + ' group equatorial, because the ring turns flat'], answer: 1,
+      why: 'An axial group points straight up or down, alongside the axial hydrogens on the same face two carbons away: 1,3-diaxial interactions, which cost energy. Equatorial points out from the ring and avoids them. MMFF94 puts the equatorial chair ' + Math.abs(it.gap).toFixed(1) + ' kcal/mol lower here; the bigger the group, the bigger the gap, which is why a tert-butyl group locks the ring.',
+      steps: ['Flip to the axial chair and find the two axial hydrogens on the same face.', 'They crowd the axial group: 1,3-diaxial strain.', 'Equatorial avoids it, so that chair is lower in energy.'] };
+    item.__onReveal = () => flip('equatorial');
+  }
+  window.AceQuestion.mount($('q'), item, { label: 'Organic Chemistry · ' + item.topicName, confidence: true, nextLabel: k + 1 < data.items.length ? 'Next molecule' : 'Back to the first',
+    onAnswer: (res) => { item.__onReveal && item.__onReveal(); if (window.AceRecord) window.AceRecord.record({ item, picked: res.picked, answer: res.answer, ok: res.ok, ms: res.ms, src: 'oc-3d', first: res.first, changes: res.changes, change: res.change, conf: res.conf, repair: false }); },
+    onNext: () => show((k + 1) % data.items.length) });
+  size();
+}
+show(0);
+const load = () => import('/shared/three.module.min.js').then((m) => { THREE = m; init3d(); size(); if (pending) { const p = pending; pending = null; p(); } else size(); }).catch(() => { $('hint').hidden = true; });
+if ('requestIdleCallback' in window) requestIdleCallback(load, { timeout: 1500 }); else setTimeout(load, 300);
+</script>
+<script src="/shared/ace-tabs.js?v=2" defer></script>
+</body>
+</html>

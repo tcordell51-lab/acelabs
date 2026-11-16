@@ -1196,7 +1196,7 @@ function SummaryLadder({
         marginBottom: 24,
         letterSpacing: '0.06em'
       }
-    }, "screenshot this — it’s the whole cheat sheet"), rows.map((r, i) => {
+    }, "screenshot this, it’s the whole cheat sheet"), rows.map((r, i) => {
       const rv = clamp((t - start - 0.4 - i * 0.5) / 0.5, 0, 1);
       return /*#__PURE__*/React.createElement("div", {
         key: i,
@@ -1287,7 +1287,7 @@ function QuizBeat({
         color: INK3,
         marginBottom: 26
       }
-    }, "pause it — commit before the reveal"), /*#__PURE__*/React.createElement("div", {
+    }, "pause it, commit before the reveal"), /*#__PURE__*/React.createElement("div", {
       style: {
         fontFamily: SERIF,
         fontWeight: 600,
@@ -1626,7 +1626,7 @@ function IRStage() {
     fontFamily: MONO,
     fontSize: "24",
     fill: ohGlow ? RICH : INK3
-  }, "O–H ~3400 · broad"), /*#__PURE__*/React.createElement("text", {
+  }, "O-H ~3400 · broad"), /*#__PURE__*/React.createElement("text", {
     x: 664,
     y: 1002,
     textAnchor: "middle",
@@ -1767,7 +1767,7 @@ function IRStage() {
     style: {
       color: SPARED
     }
-  }, "put a finger over that region"), " — you can too", /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("span", {
+  }, "put a finger over that region"), ", you can too", /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("span", {
     style: {
       fontSize: 28,
       color: INK3
@@ -1823,7 +1823,7 @@ function IRVideo() {
       marginTop: 22,
       letterSpacing: '0.06em'
     }
-  }, "comment your pick — answer at the end")), /*#__PURE__*/React.createElement(Header, {
+  }, "comment your pick, answer at the end")), /*#__PURE__*/React.createElement(Header, {
     start: 7.2,
     end: 13.0,
     top: 330
@@ -1847,11 +1847,11 @@ function IRVideo() {
     style: {
       color: RICH
     }
-  }, "tongue"), " — broad O–H, ~3400", /*#__PURE__*/React.createElement("br", null), "the ", /*#__PURE__*/React.createElement("b", {
+  }, "tongue"), ", broad O-H, ~3400", /*#__PURE__*/React.createElement("br", null), "the ", /*#__PURE__*/React.createElement("b", {
     style: {
       color: POOR
     }
-  }, "dagger"), " — sharp C=O, ~1700"), /*#__PURE__*/React.createElement("div", {
+  }, "dagger"), ", sharp C=O, ~1700"), /*#__PURE__*/React.createElement("div", {
     style: {
       fontFamily: SANS,
       fontSize: 30,
@@ -1870,18 +1870,18 @@ function IRVideo() {
       color: RICH,
       marginBottom: 14
     }
-  }, "THE TONGUE · O–H"), /*#__PURE__*/React.createElement("div", {
+  }, "THE TONGUE · O-H"), /*#__PURE__*/React.createElement("div", {
     style: {
       fontFamily: SERIF,
       fontWeight: 600,
       fontSize: 44,
       color: INK
     }
-  }, "O–H: ", /*#__PURE__*/React.createElement("b", {
+  }, "O-H: ", /*#__PURE__*/React.createElement("b", {
     style: {
       color: RICH
     }
-  }, "one broad, round dip"), " — ~3200–3500"), /*#__PURE__*/React.createElement("div", {
+  }, "one broad, round dip"), ", ~3200-3500"), /*#__PURE__*/React.createElement("div", {
     style: {
       fontFamily: SANS,
       fontSize: 28,
@@ -1892,7 +1892,7 @@ function IRVideo() {
     style: {
       color: GOLD
     }
-  }, "double dip"), " — the roots of a tooth")), /*#__PURE__*/React.createElement(Header, {
+  }, "double dip"), ", the roots of a tooth")), /*#__PURE__*/React.createElement(Header, {
     start: 26.2,
     end: 34.0,
     top: 170
@@ -1911,11 +1911,11 @@ function IRVideo() {
       fontSize: 44,
       color: INK
     }
-  }, "sharp, deep, unmistakable — ", /*#__PURE__*/React.createElement("b", {
+  }, "sharp, deep, unmistakable: ", /*#__PURE__*/React.createElement("b", {
     style: {
       color: POOR
     }
-  }, "~1700–1750")), /*#__PURE__*/React.createElement("div", {
+  }, "~1700-1750")), /*#__PURE__*/React.createElement("div", {
     style: {
       fontFamily: SANS,
       fontSize: 28,
@@ -1945,7 +1945,7 @@ function IRVideo() {
     style: {
       color: GOLD
     }
-  }, "both"), " — that IS the question")), /*#__PURE__*/React.createElement(Header, {
+  }, "both"), ", that IS the question")), /*#__PURE__*/React.createElement(Header, {
     start: 46.2,
     end: 60.0,
     top: 170
@@ -1964,7 +1964,7 @@ function IRVideo() {
       fontSize: 44,
       color: INK
     }
-  }, "below ~1500 — ", /*#__PURE__*/React.createElement("b", {
+  }, "below ~1500: ", /*#__PURE__*/React.createElement("b", {
     style: {
       color: SPARED
     }
@@ -2004,18 +2004,18 @@ function IRVideo() {
       color: INK2,
       marginTop: 26
     }
-  }, "alcohol · carbonyl · both = carboxylic acid — cover the rest with a finger")), /*#__PURE__*/React.createElement(SummaryLadder, {
+  }, "alcohol · carbonyl · both = carboxylic acid, cover the rest with a finger")), /*#__PURE__*/React.createElement(SummaryLadder, {
     start: 71.2,
     end: 83.0,
     kicker: "IR · THE SHORT LIST",
     title: "two peaks plus a finger",
     rows: [{
-      k: 'O–H',
+      k: 'O-H',
       ex: '~3400 · one broad tongue',
       pill: 'alcohol · acid',
       c: RICH
     }, {
-      k: 'N–H · NH₂',
+      k: 'N-H · NH₂',
       ex: 'double dip · same ballpark',
       pill: 'roots of a tooth',
       c: GOLD
@@ -2041,18 +2041,18 @@ function IRVideo() {
       q: 'Broad 3400 + sharp 1700, together →',
       opts: ['an alcohol', 'a ketone', 'a carboxylic acid'],
       ans: 2,
-      why: 'Tongue plus dagger — the O–H and the C=O in one molecule. That pairing is the carboxylic acid signature.'
+      why: 'Tongue plus dagger: the O-H and the C=O in one molecule. That pairing is the carboxylic acid signature.'
     }, {
       q: 'Sharp 1700, and NO broad peak →',
       opts: ['aldehyde or ketone', 'an alcohol', 'an amine'],
       ans: 0,
-      why: 'Dagger with no tongue — a carbonyl with no O–H. Aldehyde or ketone.'
+      why: 'Dagger with no tongue: a carbonyl with no O-H. Aldehyde or ketone.'
     }]
   }), /*#__PURE__*/React.createElement(OutroCard, {
     start: 99.8,
     end: 108,
     lines: ['The tongue.', 'The dagger.'],
-    tease: "Newman projections — elbow room — next."
+    tease: "Newman projections: elbow room: next."
   }));
 }
 window.IRVideo = IRVideo;

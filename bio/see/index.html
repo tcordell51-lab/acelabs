@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Biology plates: predict, then label · Ace Labs</title>
+<meta name="description" content="Unlabeled biology plates. Answer first; the labels draw in after.">
+<link rel="icon" type="image/svg+xml" href="/shared/ace-dat-mark.svg">
+<link rel="stylesheet" href="/shared/ace-ui.css?v=7">
+<style>
+  .pl-grid { display: grid; gap: var(--aui-3); grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+  .pl-card { display: flex; flex-direction: column; gap: 6px; padding: 8px; border-radius: var(--aui-r); background: var(--aui-paper); border: 1.5px solid var(--aui-line); cursor: pointer; font: 600 var(--aui-t-sm) var(--aui-font); color: var(--aui-ink); text-align: left; }
+  .pl-card img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 8px; }
+  .pl-card[aria-current="true"] { border-color: var(--aui-forest); box-shadow: 0 0 0 3px var(--aui-gold-soft); }
+  .pl-card small { color: var(--aui-ink-3); font-weight: 500; }
+  .lab-svg .lbl { font: 700 27px var(--aui-font); fill: #0d2018; }
+  .lab-svg .pill { fill: #FFFDF7; fill-opacity: .95; stroke: rgba(27,58,45,.35); stroke-width: 1.5; }
+  .lab-svg .lead { stroke: #0d2018; stroke-width: 2.4; fill: none; stroke-linecap: round; }
+  .lab-svg .lead-u { stroke: #FFFDF7; stroke-width: 6; fill: none; stroke-linecap: round; }
+  .lab-svg .dot { fill: #0d2018; stroke: #FFFDF7; stroke-width: 2.5; }
+  .lab-svg .key .pill { fill: #F3E9CF; stroke: #8C7235; stroke-width: 2.5; }
+  .pl-src { font-size: var(--aui-t-xs); color: var(--aui-ink-3); }
+</style>
+</head>
+<body class="aui">
+<main class="aui-wrap aui-stack" id="main">
+  <header class="aui-stack">
+    <p class="aui-kicker">Biology · See it</p>
+    <h1 class="aui-h1">Plates: predict, then label</h1>
+    <p class="aui-lede">Each plate starts with no labels. Answer the question from the picture first. Then every label draws in, placed in code and checked against the textbook.</p>
+  </header>
+  <div class="pl-grid" id="plates" role="group" aria-label="Plates"></div>
+  <div id="q"></div>
+  <p class="pl-src" id="src"></p>
+  <p class="aui-small">The pictures are made by AI without any words in them; every label and leader is drawn by the site. A picture drawn wrong is thrown out, not patched with labels.</p>
+</main>
+<script src="/shared/ace-ui.js?v=3"></script>
+<script src="/shared/ace-record.js?v=4"></script>
+<script src="/shared/ace-question.js?v=4"></script>
+<script>
+(function () {
+  'use strict';
+  /* Each label: [text, targetX, targetY, side] in the plate's 1000-wide pixels, read off the art.
+     The key label (the answer) is marked with "key". Sources: OpenStax Anatomy and Physiology 2e
+     (A&P) and OpenStax Biology 2e (Bio), section named per plate. */
+  var PLATES = [
+    { id: 'eye', name: 'The eye', img: '/shared/art/plates/eye.jpg', h: 753,
+      src: 'OpenStax A&P 2e, 14.1 Sensory Perception (vision): cornea, iris, lens and ciliary body, retina, optic nerve.',
+      labels: [['cornea', 85, 360, 'L'], ['iris', 170, 290, 'L'], ['lens', 265, 380, 'L', 'key'], ['ciliary body', 240, 190, 'L'], ['vitreous body', 470, 420, 'R'], ['retina', 688, 540, 'R'], ['optic nerve', 860, 200, 'R']],
+      stem: 'After light passes through the cornea, which structure changes shape to fine-tune the focus of light on the retina when a person looks at a nearby object?',
+      choices: ['The lens', 'The iris', 'The vitreous body', 'The sclera', 'The optic nerve'], answer: 0,
+      why: 'The cornea does most of the bending, but its shape is fixed. The ciliary muscle changes the curvature of the lens, rounding it for near objects (accommodation). The iris only changes the size of the pupil, which sets how much light enters.',
+      steps: ['Find the fixed lens in front: the cornea bends light but cannot change shape.', 'The ciliary body holds the lens and changes its curvature.', 'A rounder lens bends light more, so near objects focus on the retina.'] },
+    { id: 'flower', name: 'The flower', img: '/shared/art/plates/flower.jpg', h: 753,
+      src: 'OpenStax Biology 2e, 32.1 Reproductive Development and Structure and 32.2 Pollination and Fertilization.',
+      labels: [['stigma', 505, 95, 'R'], ['style', 500, 235, 'R'], ['anther', 322, 150, 'L'], ['filament', 338, 262, 'L'], ['ovule', 527, 425, 'R', 'key'], ['ovary', 500, 492, 'L'], ['petal', 120, 250, 'L'], ['sepal', 232, 500, 'L'], ['receptacle', 500, 565, 'R']],
+      stem: 'A pollen grain lands on a compatible flower and grows a pollen tube. Where does a sperm cell fertilize the egg?',
+      choices: ['On the surface of the stigma', 'Inside the style', 'Inside the anther', 'Inside an ovule, within the ovary', 'At the tip of the filament'], answer: 3,
+      why: 'The pollen grain lands on the stigma, and its tube grows down the style into the ovary. The sperm enter an ovule, where one fertilizes the egg and the other joins the central cell (double fertilization). The anther and filament are male parts that make and hold pollen.',
+      steps: ['The pollen lands on the stigma: that is pollination, not fertilization.', 'The pollen tube grows down through the style.', 'It enters an ovule inside the ovary, where the egg sits.'] },
+    { id: 'leaf', name: 'The leaf', img: '/shared/art/plates/leaf.jpg', h: 753,
+      src: 'OpenStax Biology 2e, 30.4 Leaves and 30.5 Transport of Water and Solutes in Plants: cuticle, epidermis, palisade and spongy mesophyll, xylem above phloem, guard cells.',
+      labels: [['cuticle', 500, 40, 'R'], ['upper epidermis', 500, 100, 'R'], ['palisade mesophyll', 300, 200, 'L'], ['spongy mesophyll', 200, 450, 'L'], ['xylem', 655, 330, 'R'], ['phloem', 650, 410, 'R'], ['guard cell', 300, 650, 'L', 'key'], ['stoma', 332, 655, 'R']],
+      stem: 'A plant in hot, dry air begins to lose water faster than its roots can replace it. Which cells change shape to close the openings that let water vapor escape?',
+      choices: ['Palisade mesophyll cells', 'Guard cells', 'Spongy mesophyll cells', 'Phloem sieve-tube cells', 'Xylem vessel elements'], answer: 1,
+      why: 'Each stoma is bordered by two guard cells. When they lose water and turgor, they go limp and the stoma closes, which slows transpiration. Mesophyll cells do photosynthesis, and xylem and phloem carry water and sugars.',
+      steps: ['Water vapor leaves the leaf through stomata.', 'Each stoma sits between two guard cells.', 'Guard cells lose turgor and the opening closes.'] },
+    { id: 'brain', name: 'The brain', img: '/shared/art/plates/brain.jpg', h: 753,
+      src: 'OpenStax A&P 2e, 13.2 The Central Nervous System: cerebrum, corpus callosum, diencephalon (thalamus, hypothalamus), brain stem (midbrain, pons, medulla), cerebellum.',
+      labels: [['cerebrum', 300, 120, 'L'], ['corpus callosum', 420, 205, 'R'], ['thalamus', 450, 300, 'R'], ['hypothalamus', 360, 380, 'L'], ['pituitary gland', 350, 460, 'L'], ['pons', 440, 470, 'L'], ['medulla oblongata', 465, 600, 'L', 'key'], ['cerebellum', 640, 480, 'R']],
+      stem: 'After a small stroke, a patient has trouble with the automatic control of breathing and heart rate. Which region of the brain was most likely damaged?',
+      choices: ['The cerebellum', 'The corpus callosum', 'The medulla oblongata', 'The thalamus', 'The hypothalamus'], answer: 2,
+      why: 'The medulla oblongata, the lowest part of the brain stem, holds the centers that set the rhythm of breathing and adjust heart rate and blood pressure. The hypothalamus runs other homeostasis (temperature, hunger, the pituitary); the cerebellum coordinates movement.',
+      steps: ['Automatic, life-sustaining rhythms live in the brain stem.', 'The brain stem runs midbrain, pons, medulla, top to bottom.', 'The medulla holds the breathing and cardiovascular centers.'] },
+    { id: 'skin', name: 'The skin', img: '/shared/art/plates/skin.jpg', h: 753,
+      src: 'OpenStax A&P 2e, 5.1 Layers of the Skin and 5.2 Accessory Structures of the Skin.',
+      labels: [['epidermis', 820, 150, 'R'], ['dermis', 860, 400, 'R'], ['hypodermis', 800, 660, 'R'], ['hair follicle', 300, 450, 'L'], ['sebaceous gland', 405, 330, 'L', 'key'], ['arrector pili', 440, 390, 'R'], ['sweat gland', 680, 500, 'R']],
+      stem: 'Which structure in the dermis secretes an oily substance that lubricates the hair and the skin surface?',
+      choices: ['The sweat gland', 'The arrector pili muscle', 'The sebaceous gland', 'The hair follicle', 'The hypodermis'], answer: 2,
+      why: 'Sebaceous glands sit beside hair follicles and release sebum, an oily mix, into the follicle. Sweat glands release watery sweat onto the surface for cooling, and the arrector pili muscle pulls the hair upright.',
+      steps: ['Oil means sebum.', 'Sebum comes from sebaceous glands.', 'They empty into the hair follicle beside them.'] },
+    { id: 'digestive', name: 'The digestive tract', img: '/shared/art/plates/digestive.jpg', h: 753,
+      src: 'OpenStax A&P 2e, 23.1 Overview of the Digestive System and 23.6 Accessory Organs in Digestion: the liver makes bile, the gallbladder stores and concentrates it.',
+      labels: [['esophagus', 545, 60, 'R'], ['stomach', 640, 190, 'R'], ['liver', 330, 160, 'L', 'key'], ['gallbladder', 330, 255, 'L', 'key'], ['pancreas', 450, 300, 'R'], ['small intestine', 500, 480, 'R'], ['large intestine', 275, 430, 'L'], ['appendix', 345, 640, 'L'], ['rectum', 505, 712, 'R']],
+      stem: 'Bile is made by one organ and stored and concentrated by another before it reaches the duodenum. Which pair is correct?',
+      choices: ['Made by the gallbladder, stored in the liver', 'Made by the liver, stored in the gallbladder', 'Made by the pancreas, stored in the gallbladder', 'Made by the liver, stored in the pancreas', 'Made by the stomach, stored in the liver'], answer: 1,
+      why: 'Liver cells make bile. Between meals it backs up into the gallbladder, which concentrates it; after a fatty meal the gallbladder contracts and sends it to the duodenum to emulsify fats. The pancreas sends enzymes and bicarbonate, not bile.',
+      steps: ['Bile is made by the liver.', 'It is stored and concentrated in the gallbladder.', 'Both halves must be right: B.'] },
+    { id: 'villus', name: 'A villus', img: '/shared/art/plates/villus.jpg', h: 1327,
+      src: 'OpenStax A&P 2e, 23.5 The Small and Large Intestines and 23.7 Chemical Digestion and Absorption: absorbed fats leave as chylomicrons through the lacteal.',
+      labels: [['lacteal', 283, 600, 'R', 'key'], ['blood capillaries', 205, 700, 'L'], ['venule', 385, 800, 'R'], ['columnar epithelium', 135, 480, 'L'], ['goblet cell', 140, 430, 'L'], ['a second villus', 800, 400, 'R']],
+      stem: 'Most absorbed dietary fat leaves the small intestine through the central lacteal of each villus. In what form does it enter the lacteal?',
+      choices: ['As free glucose', 'As single amino acids', 'As chylomicrons', 'As bile salts', 'As short peptides'], answer: 2,
+      why: 'Inside the absorptive cells, fatty acids and monoglycerides are rebuilt into triglycerides and packed with cholesterol and protein into chylomicrons. They are too large for blood capillaries, so they enter the lacteal and travel in lymph. Sugars and amino acids enter the blood capillaries.',
+      steps: ['Sugars and amino acids go into the blood capillaries.', 'Fats are repackaged into chylomicrons inside the cell.', 'Chylomicrons are too big for capillaries, so they take the lacteal.'] },
+    { id: 'mitochondrion', name: 'The mitochondrion', img: '/shared/art/plates/mitochondrion.jpg', h: 753,
+      src: 'OpenStax Biology 2e, 4.3 Eukaryotic Cells and 7.4 Oxidative Phosphorylation: outer membrane, folded inner membrane (cristae), matrix with its own DNA; protons are pumped into the intermembrane space.',
+      labels: [['outer membrane', 60, 330, 'L'], ['cristae (inner membrane)', 560, 250, 'R', 'key'], ['matrix', 330, 330, 'L'], ['mitochondrial DNA', 640, 440, 'R']],
+      stem: 'During oxidative phosphorylation, the electron transport chain pumps protons across a membrane. Where do the protons build up, so they can flow back through ATP synthase?',
+      choices: ['In the matrix', 'In the intermembrane space', 'In the cytosol outside the outer membrane', 'Inside the lipid core of the inner membrane', 'Inside the mitochondrial ribosomes'], answer: 1,
+      why: 'The electron transport chain sits in the inner membrane, folded into cristae. It pumps protons out of the matrix into the narrow intermembrane space between the two membranes. They flow back into the matrix through ATP synthase, which makes ATP.',
+      steps: ['The chain sits in the inner membrane, the folded cristae.', 'It pumps protons from the matrix outward.', 'They pile up in the intermembrane space, then flow back through ATP synthase.'] }    ,
+    { id: 'lungs', name: 'The lungs', img: '/shared/art/plates/lungs.jpg', h: 753,
+      src: 'OpenStax A&P 2e, 22.1 Organs and Structures of the Respiratory System and 22.2 The Lungs: larynx, trachea, main bronchi, bronchioles; the right lung has three lobes, the left two, with the cardiac notch.',
+      labels: [['larynx', 500, 55, 'R'], ['trachea', 500, 200, 'R'], ['right main bronchus', 445, 330, 'L'], ['left main bronchus', 560, 335, 'R'], ['bronchioles', 330, 400, 'L'], ['right lung', 170, 520, 'L', 'key'], ['left lung', 800, 520, 'R', 'key']],
+      stem: 'The two lungs differ in size. How many lobes does the right lung have, and why does the left lung have fewer?',
+      choices: ['Three; the left lung has two, leaving room for the heart', 'Two; the right lung is smaller because of the liver', 'Three; the left lung has two because it has fewer bronchi', 'Four; the left lung has three because it is shorter', 'Two; the left lung has one because of the stomach'], answer: 0,
+      why: 'The right lung has three lobes (superior, middle, inferior) and the left lung has two. The heart sits slightly to the left, and the left lung has a cardiac notch where it makes room for it. The liver makes the right lung a little shorter, not smaller in lobes.',
+      steps: ['Count the fissures: two on the right, one on the left.', 'Right lung: three lobes. Left lung: two.', 'The heart takes room on the left: the cardiac notch.'] },
+    { id: 'alveoli', name: 'The alveoli', img: '/shared/art/plates/alveoli.jpg', h: 753,
+      src: 'OpenStax A&P 2e, 22.4 Gas Exchange: oxygen diffuses from the alveoli into the pulmonary capillaries and carbon dioxide diffuses out, each down its partial-pressure gradient.',
+      labels: [['terminal bronchiole', 170, 70, 'L'], ['alveolus, cut open', 860, 420, 'R'], ['capillary network', 640, 300, 'R'], ['from the pulmonary artery', 40, 225, 'L', 'key'], ['to the pulmonary vein', 975, 215, 'R', 'key']],
+      stem: 'Blood leaving these capillaries toward the pulmonary vein has just passed the alveoli. Compared with the blood arriving from the pulmonary artery, it has',
+      choices: ['a higher PO2 and a lower PCO2', 'a lower PO2 and a higher PCO2', 'a higher PO2 and a higher PCO2', 'the same PO2 and a lower pH', 'a lower PO2 and a lower PCO2'], answer: 0,
+      why: 'Alveolar air has a higher partial pressure of oxygen and a lower partial pressure of carbon dioxide than the blood arriving from the pulmonary artery. Each gas diffuses down its gradient: oxygen into the blood, carbon dioxide out. So the blood leaving has more oxygen and less carbon dioxide.',
+      steps: ['The pulmonary artery brings oxygen-poor blood from the right heart.', 'Oxygen diffuses into the blood; carbon dioxide diffuses out.', 'Leaving blood: PO2 up, PCO2 down.'] },
+    { id: 'chloroplast', name: 'The chloroplast', img: '/shared/art/plates/chloroplast.jpg', h: 753,
+      src: 'OpenStax Biology 2e, 8.1 Overview of Photosynthesis and 8.3 Using Light Energy to Make Organic Molecules: thylakoids stacked into grana, the surrounding stroma, and the Calvin cycle in the stroma.',
+      labels: [['double membrane', 520, 612, 'L'], ['granum (thylakoid stack)', 525, 440, 'R'], ['thylakoid', 770, 215, 'R'], ['stroma lamella', 360, 275, 'L'], ['stroma', 375, 470, 'L', 'key'], ['starch granule', 355, 545, 'L']],
+      stem: 'Where in the chloroplast do the reactions of the Calvin cycle take place?',
+      choices: ['In the thylakoid membrane', 'In the thylakoid lumen', 'In the stroma', 'Between the two envelope membranes', 'Inside the starch granules'], answer: 2,
+      why: 'The light-dependent reactions run in the thylakoid membranes, where the photosystems and ATP synthase sit. The ATP and NADPH they make are used in the Calvin cycle, which runs in the fluid stroma around the thylakoids, where rubisco fixes carbon dioxide.',
+      steps: ['Light reactions: the thylakoid membranes.', 'They make ATP and NADPH and release them into the stroma.', 'The Calvin cycle uses them in the stroma.'] }
+
+  ];
+  var NS = 'http://www.w3.org/2000/svg';
+  function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;'); }
+  /* Labels go in two columns at the plate's edges, pushed apart so pills never overlap. */
+  function svgFor(p) {
+    var H = p.h, W = 1000, rowH = 50;
+    var sides = { L: [], R: [] };
+    p.labels.forEach(function (l, i) { sides[l[3]].push({ t: l[0], x: l[1], y: l[2], key: l[4] === 'key', i: i }); });
+    var parts = ['<svg class="lab-svg" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="' + esc(p.name) + '"><image href="' + p.img + '" x="0" y="0" width="' + W + '" height="' + H + '"/>'];
+    ['L', 'R'].forEach(function (s) {
+      var list = sides[s].sort(function (a, b) { return a.y - b.y; });
+      var last = -Infinity;
+      list.forEach(function (l) { l.ly = Math.max(l.y, last + rowH, 34); last = l.ly; });
+      var over = last - (H - 20); if (over > 0) list.forEach(function (l) { l.ly -= over; });
+      list.forEach(function (l) {
+        var w = l.t.length * 15 + 30, x0 = s === 'L' ? 14 : W - 14 - w;
+        // a target near the edge would sit under its own pill: put the pill just inside the target instead
+        if (s === 'L' && l.x < x0 + w + 24) { x0 = l.x + 44; l.ly = l.y; }
+        if (s === 'R' && l.x > x0 - 24) { x0 = l.x - 44 - w; l.ly = l.y; }
+        var ex = (x0 > l.x) ? x0 : x0 + w;
+        parts.push('<g class="reveal' + (l.key ? ' key' : '') + '" style="--k:' + l.i + '">' +
+          '<path class="lead-u" d="M' + ex + ',' + l.ly + ' L' + l.x + ',' + l.y + '"/><path class="lead" d="M' + ex + ',' + l.ly + ' L' + l.x + ',' + l.y + '"/>' +
+          '<circle class="dot" cx="' + l.x + '" cy="' + l.y + '" r="7"/>' +
+          '<rect class="pill" x="' + x0 + '" y="' + (l.ly - 22) + '" width="' + w + '" height="42" rx="12"/>' +
+          '<text class="lbl" x="' + (x0 + 15) + '" y="' + (l.ly + 9) + '">' + esc(l.t) + '</text></g>');
+      });
+    });
+    parts.push('</svg>');
+    return parts.join('');
+  }
+  var grid = document.getElementById('plates'), cur = 0;
+  PLATES.forEach(function (p, i) {
+    var b = document.createElement('button'); b.type = 'button'; b.className = 'pl-card';
+    b.innerHTML = '<img src="' + p.img + '" alt="" loading="lazy" width="200" height="150"><span>' + esc(p.name) + '</span><small>No labels yet</small>';
+    b.addEventListener('click', function () { show(i); document.getElementById('q').scrollIntoView({ behavior: 'smooth', block: 'start' }); });
+    grid.appendChild(b);
+  });
+  function show(i) {
+    cur = i; var p = PLATES[i];
+    Array.prototype.forEach.call(grid.children, function (c, k) { c.setAttribute('aria-current', k === i ? 'true' : 'false'); });
+    var item = { id: 'bio:plate:' + p.id, section: 'bio', topic: 'plate-' + p.id, topicName: p.name, stem: p.stem, choices: p.choices, answer: p.answer, why: p.why, steps: p.steps,
+      figure: { html: svgFor(p), caption: 'No labels yet. Answer from the picture.', revealCaption: 'Labels drawn in code. The answer is outlined in gold.' } };
+    document.getElementById('src').textContent = 'Labels checked against ' + p.src;
+    window.AceQuestion.mount(document.getElementById('q'), item, {
+      label: 'Biology · ' + p.name, number: i + 1, total: PLATES.length, confidence: true,
+      nextLabel: i + 1 < PLATES.length ? 'Next plate' : 'Back to the first plate',
+      onAnswer: function (res) { if (window.AceRecord) window.AceRecord.record({ item: item, picked: res.picked, answer: res.answer, ok: res.ok, ms: res.ms, src: 'bio-plates', first: res.first, changes: res.changes, change: res.change, conf: res.conf, repair: false }); },
+      onNext: function () { show((cur + 1) % PLATES.length); }
+    });
+  }
+  show(0);
+})();
+</script>
+<script src="/shared/ace-tabs.js?v=2" defer></script>
+</body>
+</html>

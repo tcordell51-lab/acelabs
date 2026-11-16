@@ -151,7 +151,7 @@
       avoid:'saying glycolysis immediately stops or that ATP goes to zero' },
     { id:'rer-vs-ser',   nodeId:'org', label:'Rough vs smooth ER',
       ifStem:'cell secretes / exports a lot of protein',
-      think:'rough ER (ribosomes) — protein synthesis for secretion + membrane',
+      think:'rough ER (ribosomes), protein synthesis for secretion + membrane',
       avoid:'choosing smooth ER, which is lipid synthesis + detox' },
     { id:'mito-vs-chlo', nodeId:'krb', label:'Mitochondria vs chloroplast',
       ifStem:'matrix vs stroma vs inner membrane vs thylakoid',

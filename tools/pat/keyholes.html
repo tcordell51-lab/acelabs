@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Ace PAT Studio — Aperture Trainer (Keyholes)</title>
+<title>Ace PAT Studio · Aperture Trainer (Keyholes)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -122,7 +122,7 @@
   </div>
 
   <div class="frame" id="frame"></div>
-  <p class="hint">Click a panel to answer &middot; <kbd>A</kbd>–<kbd>E</kbd> to select &middot;
+  <p class="hint">Click a panel to answer &middot; <kbd>A</kbd>-<kbd>E</kbd> to select &middot;
      <kbd>Shift</kbd>+letter to strike a panel out &middot; <kbd>N</kbd> next &middot; <kbd>R</kbd> reveal</p>
 
   <div class="verdict" id="verdict"></div>
@@ -133,8 +133,8 @@
       <div class="stat">
         <div><b id="sAtt">0</b><span>Attempted</span></div>
         <div><b id="sCor">0</b><span>Correct</span></div>
-        <div><b id="sPct">—</b><span>Accuracy</span></div>
-        <div><b id="sAvg">—</b><span>Avg time</span></div>
+        <div><b id="sPct">-</b><span>Accuracy</span></div>
+        <div><b id="sAvg">-</b><span>Avg time</span></div>
         <div><b id="sStr">0</b><span>Streak</span></div>
       </div>
       <table style="margin-top:14px">
@@ -149,21 +149,21 @@
     <div class="card">
       <h2>The four rules</h2>
       <ul>
-        <li><b>Rotation is free.</b> Orientation on the page means nothing — turn it any way.</li>
+        <li><b>Rotation is free.</b> Orientation on the page means nothing, turn it any way.</li>
         <li><b>Mirroring is legal.</b> Flipping the object 180° presents the mirrored outline, so a
             "backwards" match still counts. Two options that are mirrors of each other are therefore
             both wrong.</li>
-        <li><b>Interior features don't exist.</b> Holes, slots, grooves, cylinders — if it doesn't
+        <li><b>Interior features don't exist.</b> Holes, slots, grooves, cylinders, if it doesn't
             touch the perimeter, ignore it. A floating island in an option is an instant kill.</li>
         <li><b>Scale is disqualifying.</b> Right shape, wrong proportions is still wrong.</li>
       </ul>
       <details style="margin-top:12px">
         <summary>How to drill this for speed</summary>
         <ul>
-          <li><b>Feature checklist first.</b> Name the object's 3–4 signature features
+          <li><b>Feature checklist first.</b> Name the object's 3-4 signature features
               <em>before</em> looking at any option. Eliminate on one missing feature.</li>
           <li><b>Diff the twins, don't re-scan the object.</b> When two options survive, compare them
-              to <em>each other</em>, find the 2–3 spots they differ, then ask one targeted question
+              to <em>each other</em>, find the 2-3 spots they differ, then ask one targeted question
               of the object.</li>
           <li><b>Use "Final two" mode.</b> It removes the three easy eliminations so the student only
               practises the step that actually decides the item.</li>
@@ -175,10 +175,10 @@
   </div>
 
   <p class="foot">
-    Objects are machined solids — a union of large blocks with slots and through-holes cut from them, sampled on a fine grid. The correct option is a computed
+    Objects are machined solids: a union of large blocks with slots and through-holes cut from them, sampled on a fine grid. The correct option is a computed
     orthographic silhouette, with keys checked against the generated geometry. Distractors are built by applying one labelled
     error pattern and are machine-verified to differ from all three true views under every rotation
-    and reflection — to check that each generated item has one intended valid aperture.
+    and reflection, to check that each generated item has one intended valid aperture.
     Stats are in-memory and reset on reload - use Export log to keep a session. The CSV carries one row per attempt with seed, trap type chosen, and seconds, so it drops straight into a tracker. Seeds are shown so any item can be reproduced.
   </p>
 </div>
@@ -1096,15 +1096,15 @@ function showAnswer(secs) {
   const chosen = S.chosen >= 0 ? S.shown[S.chosen] : null;
   let h = '';
   if (chosen && chosen.correct) {
-    h += `<h3 style="color:var(--ok)">Correct${secs ? ' — ' + secs.toFixed(1) + 's' : ''}</h3>`;
+    h += `<h3 style="color:var(--ok)">Correct${secs ? ' - ' + secs.toFixed(1) + 's' : ''}</h3>`;
     h += `<p>That outline is the object's <b>${AXIS_NAME[correctOpt.axis].toLowerCase()}</b>.</p>`;
   } else if (chosen) {
-    h += `<h3 style="color:var(--bad)">Missed — you chose ${TRAPS[chosen.trap].label.toLowerCase()}</h3>`;
+    h += `<h3 style="color:var(--bad)">Missed: you chose ${TRAPS[chosen.trap].label.toLowerCase()}</h3>`;
     h += `<p>${TRAPS[chosen.trap].note}</p>`;
     h += `<p>The valid aperture was <b>${LETTERS[S.shown.indexOf(correctOpt)]}</b>, the object's
           ${AXIS_NAME[correctOpt.axis].toLowerCase()}.</p>`;
   } else {
-    h += `<h3>Revealed</h3><p>The valid aperture is <b>${LETTERS[S.shown.indexOf(correctOpt)]}</b> —
+    h += `<h3>Revealed</h3><p>The valid aperture is <b>${LETTERS[S.shown.indexOf(correctOpt)]}</b>-
           the object's ${AXIS_NAME[correctOpt.axis].toLowerCase()}.</p>`;
   }
   h += `<div class="views">`;
@@ -1112,7 +1112,7 @@ function showAnswer(secs) {
     h += `<figure>${renderShape(g, 92)}<figcaption>${AXIS_NAME[ax]}</figcaption></figure>`;
   });
   h += `</div><p style="color:var(--muted);font-size:12.5px">All three views above are valid apertures
-        for this solid — any rotation or mirror of them would also pass. Every option you did not pick
+        for this solid, any rotation or mirror of them would also pass. Every option you did not pick
         was verified to match none of them.</p>`;
   v.innerHTML = h;
   v.classList.add('on');
@@ -1121,8 +1121,8 @@ function showAnswer(secs) {
 function updateStats() {
   $('sAtt').textContent = S.att;
   $('sCor').textContent = S.cor;
-  $('sPct').textContent = S.att ? Math.round(100 * S.cor / S.att) + '%' : '—';
-  $('sAvg').textContent = S.times.length ? (S.times.reduce((a,b)=>a+b,0)/S.times.length).toFixed(1)+'s' : '—';
+  $('sPct').textContent = S.att ? Math.round(100 * S.cor / S.att) + '%' : '-';
+  $('sAvg').textContent = S.times.length ? (S.times.reduce((a,b)=>a+b,0)/S.times.length).toFixed(1)+'s' : '-';
   $('sStr').textContent = S.streak + (S.best > S.streak ? ' (best ' + S.best + ')' : '');
   const rows = Object.entries(S.trapMisses).sort((a,b) => b[1]-a[1]);
   $('trapTable').innerHTML = rows.length
@@ -1171,6 +1171,6 @@ document.addEventListener('keydown', e => {
 
 newItem();
 </script>
-<script src="/shared/ace-shell.js?v=1" defer></script>
+<script src="/shared/ace-shell.js?v=3" defer></script>
 </body>
 </html>

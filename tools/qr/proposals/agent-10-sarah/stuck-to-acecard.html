@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Stuck → Ace Card — proposal mock</title>
+<title>Stuck → Ace Card · proposal mock</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,700;1,400;1,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -102,13 +102,13 @@ textarea.reflect:focus{outline:none; border-color:var(--gold)}
   <div class="proto-banner"><b>Mock · Agent 10 proposal.</b> Audit + redesign of the "I need a sec" stuck button. Today it logs a timestamp and offers wins/breath/skip. Proposal: also capture the current module + last-attempted problem as a flagged Ace Card.</div>
 
   <h1>Stuck → <em>Ace Card</em></h1>
-  <p class="lede">Hit the red button while working a problem — the tool now offers a fourth option: <b>flag this for review</b>. The current module ID and the most recent attempt get stored as an Ace Card with a reflection prompt. Sarah sees it in the dashboard. The student sees it surface again 24h later via spaced repetition.</p>
+  <p class="lede">Hit the red button while working a problem, the tool now offers a fourth option: <b>flag this for review</b>. The current module ID and the most recent attempt get stored as an Ace Card with a reflection prompt. Sarah sees it in the dashboard. The student sees it surface again 24h later via spaced repetition.</p>
 
   <!-- Demo problem context -->
   <div class="card">
     <div class="card-h">
       <div class="mark teal">P</div>
-      <div class="ttl"><h3>Module: <em>Rate × time</em></h3><div class="sub">Demo — pick an answer, then hit "I need a sec".</div></div>
+      <div class="ttl"><h3>Module: <em>Rate × time</em></h3><div class="sub">Demo: pick an answer, then hit "I need a sec".</div></div>
     </div>
     <div class="demo-prob">
       <div class="stem">A train leaves Boston at 60 mph. Two hours later a second train leaves the same station at 80 mph on the same track. How far from Boston do they meet?</div>
@@ -145,7 +145,7 @@ textarea.reflect:focus{outline:none; border-color:var(--gold)}
       <li>Storage key <code>aceCards_v1</code> matches the bio tool's pattern: <code>[{id, t, skill, problemId, stem, picked, correct, reflection, due, box}]</code>. <code>box</code> tracks the Leitner level (0=24h, 1=3d, 2=7d, 3=14d, 4=mastered).</li>
       <li>Sarah's dashboard surfaces all flagged cards with <code>tag === 'stuck'</code> as a high-priority section above the auto-generated plan.</li>
       <li>When the card resurfaces (due ≤ now), it appears as a yellow-bordered subcard at the top of the module page. Get it right cold → bumps to next box. Miss → stays in box 0.</li>
-      <li>Reflection prompt is optional but encouraged. The free-text field doubles as a tutor hand-off — Sarah reads "I forgot to convert minutes to hours" and knows exactly what to coach.</li>
+      <li>Reflection prompt is optional but encouraged. The free-text field doubles as a tutor hand-off, Sarah reads "I forgot to convert minutes to hours" and knows exactly what to coach.</li>
     </ul>
   </div>
 </div>
@@ -166,7 +166,7 @@ textarea.reflect:focus{outline:none; border-color:var(--gold)}
       <p style="font-size:13px; color:var(--ink-2); margin-top:8px">One sentence on what froze you. Optional, but it'll help Sarah and future-you.</p>
       <textarea class="reflect" id="reflectText" placeholder="e.g. 'I forgot to convert hours to minutes' or 'the second train start time threw me'"></textarea>
       <div style="display:flex; gap:8px; margin-top:10px; justify-content:flex-end">
-        <button class="btn ghost sm" onclick="confirmFlag(true)">Skip — just save the card</button>
+        <button class="btn ghost sm" onclick="confirmFlag(true)">Skip: just save the card</button>
         <button class="btn primary sm" onclick="confirmFlag(false)">Save Ace Card</button>
       </div>
     </div>
@@ -243,7 +243,7 @@ function renderAces(){
       ${a.reflection ? `<div class="reflection"><b>Reflection:</b> ${a.reflection.replace(/</g,'&lt;')}</div>` : ''}
       <div class="meta">
         <span><b>module:</b> ${a.skill}</span>
-        <span><b>picked:</b> ${a.picked || '—'} · correct: ${a.correct}</span>
+        <span><b>picked:</b> ${a.picked || '-'} · correct: ${a.correct}</span>
         <span><b>${boxes[a.box]}</b></span>
         <span class="due-pill">${dueLbl}</span>
       </div>
@@ -259,11 +259,11 @@ document.getElementById('clearAces').addEventListener('click', () => {
 document.getElementById('exportAces').addEventListener('click', () => {
   const aces = loadAces();
   if (aces.length === 0){ alert('No cards to export.'); return; }
-  const lines = ['# Ace Cards — flagged from QR tool', '', `Exported ${new Date().toLocaleString()} · ${aces.length} cards`, ''];
+  const lines = ['# Ace Cards: flagged from QR tool', '', `Exported ${new Date().toLocaleString()} · ${aces.length} cards`, ''];
   aces.forEach((a, i) => {
     lines.push(`## ${i+1}. ${a.skill} · ${new Date(a.t).toLocaleString()}`);
     lines.push(`**Problem:** ${a.stem}`);
-    lines.push(`**Picked:** ${a.picked || '—'} (correct: ${a.correct})`);
+    lines.push(`**Picked:** ${a.picked || '-'} (correct: ${a.correct})`);
     if (a.reflection) lines.push(`**Reflection:** ${a.reflection}`);
     lines.push('');
   });

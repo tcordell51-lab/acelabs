@@ -1196,7 +1196,7 @@ function SummaryLadder({
         marginBottom: 24,
         letterSpacing: '0.06em'
       }
-    }, "screenshot this — it’s the whole cheat sheet"), rows.map((r, i) => {
+    }, "screenshot this, it’s the whole cheat sheet"), rows.map((r, i) => {
       const rv = clamp((t - start - 0.4 - i * 0.5) / 0.5, 0, 1);
       return /*#__PURE__*/React.createElement("div", {
         key: i,
@@ -1287,7 +1287,7 @@ function QuizBeat({
         color: INK3,
         marginBottom: 26
       }
-    }, "pause it — commit before the reveal"), /*#__PURE__*/React.createElement("div", {
+    }, "pause it, commit before the reveal"), /*#__PURE__*/React.createElement("div", {
       style: {
         fontFamily: SERIF,
         fontWeight: 600,
@@ -1568,7 +1568,7 @@ function AlkeneStage() {
     t0: 22.0,
     t1: 31.0,
     label: '+ HBr, ROOR',
-    out: 'anti-Markovnikov — radical',
+    out: 'anti-Markovnikov, radical',
     c: REDX,
     ang: -40
   }, {
@@ -1745,7 +1745,7 @@ function AlkeneMapVideo() {
       color: INK2,
       marginTop: 28
     }
-  }, "what changes — and why?"), /*#__PURE__*/React.createElement("div", {
+  }, "what changes, and why?"), /*#__PURE__*/React.createElement("div", {
     style: {
       fontFamily: MONO,
       fontSize: 24,
@@ -1753,7 +1753,7 @@ function AlkeneMapVideo() {
       marginTop: 22,
       letterSpacing: '0.06em'
     }
-  }, "comment your pick — answer at the end")), /*#__PURE__*/React.createElement(Header, {
+  }, "comment your pick, answer at the end")), /*#__PURE__*/React.createElement(Header, {
     start: 7.2,
     end: 13.0,
     top: 330
@@ -1788,7 +1788,7 @@ function AlkeneMapVideo() {
       color: INK2,
       marginTop: 22
     }
-  }, "because that carbocation is the stable one — M for mercury, M for Markovnikov")), /*#__PURE__*/React.createElement(Header, {
+  }, "because that carbocation is the stable one, M for mercury, M for Markovnikov")), /*#__PURE__*/React.createElement(Header, {
     start: 13.2,
     end: 22.0,
     top: 170
@@ -1814,7 +1814,7 @@ function AlkeneMapVideo() {
       color: INK3,
       marginTop: 8
     }
-  }, "see mercury? think Markovnikov — no rearrangement, one clean step")), /*#__PURE__*/React.createElement(Header, {
+  }, "see mercury? think Markovnikov, no rearrangement, one clean step")), /*#__PURE__*/React.createElement(Header, {
     start: 22.2,
     end: 31.0,
     top: 170
@@ -1844,7 +1844,7 @@ function AlkeneMapVideo() {
       color: INK3,
       marginTop: 8
     }
-  }, "ROOR flips HBr to a radical path — Br lands on the LESS substituted carbon")), /*#__PURE__*/React.createElement(Header, {
+  }, "ROOR flips HBr to a radical path, Br lands on the LESS substituted carbon")), /*#__PURE__*/React.createElement(Header, {
     start: 31.2,
     end: 40.0,
     top: 170
@@ -1863,7 +1863,7 @@ function AlkeneMapVideo() {
       fontSize: 44,
       color: INK
     }
-  }, "hydroboration — see the ", /*#__PURE__*/React.createElement("b", {
+  }, "hydroboration, see the ", /*#__PURE__*/React.createElement("b", {
     style: {
       color: SPARED
     }
@@ -1894,7 +1894,7 @@ function AlkeneMapVideo() {
     style: {
       color: POOR
     }
-  }, "anti"), " — the bromonium blocks one face"), /*#__PURE__*/React.createElement("div", {
+  }, "anti"), ", the bromonium blocks one face"), /*#__PURE__*/React.createElement("div", {
     style: {
       fontFamily: SANS,
       fontSize: 28,
@@ -2016,18 +2016,18 @@ function AlkeneMapVideo() {
       q: 'HBr + peroxide adds Br to…',
       opts: ['the more substituted carbon', 'the less substituted carbon', 'both equally'],
       ans: 1,
-      why: 'Peroxide means anti-Markovnikov, every time — the radical path puts Br on the less substituted carbon.'
+      why: 'Peroxide means anti-Markovnikov, every time, the radical path puts Br on the less substituted carbon.'
     }, {
       q: 'You need a cis diol. Reach for…',
       opts: ['Br₂ in water', 'OsO₄ (or cold dilute KMnO₄)', 'O₃ then DMS'],
       ans: 1,
-      why: 'Syn-dihydroxylation delivers both OH to the same face — the cis diol. Br₂ is anti; O₃ cuts.'
+      why: 'Syn-dihydroxylation delivers both OH to the same face, the cis diol. Br₂ is anti; O₃ cuts.'
     }]
   }), /*#__PURE__*/React.createElement(OutroCard, {
     start: 99.8,
     end: 108,
     lines: ['Default Markovnikov.', 'Peroxide flips it.'],
-    tease: "IR in two peaks — the tongue and the dagger — next."
+    tease: "IR in two peaks: the tongue and the dagger, next."
   }));
 }
 window.AlkeneMapVideo = AlkeneMapVideo;

@@ -1196,7 +1196,7 @@ function SummaryLadder({
         marginBottom: 24,
         letterSpacing: '0.06em'
       }
-    }, "screenshot this — it’s the whole cheat sheet"), rows.map((r, i) => {
+    }, "screenshot this, it’s the whole cheat sheet"), rows.map((r, i) => {
       const rv = clamp((t - start - 0.4 - i * 0.5) / 0.5, 0, 1);
       return /*#__PURE__*/React.createElement("div", {
         key: i,
@@ -1287,7 +1287,7 @@ function QuizBeat({
         color: INK3,
         marginBottom: 26
       }
-    }, "pause it — commit before the reveal"), /*#__PURE__*/React.createElement("div", {
+    }, "pause it, commit before the reveal"), /*#__PURE__*/React.createElement("div", {
       style: {
         fontFamily: SERIF,
         fontWeight: 600,
@@ -1692,7 +1692,7 @@ function OzoneStage() {
       color: INK2,
       opacity: clamp((t - 18.6) / 0.5, 0, 1) * (forkBeat ? 0 : 1)
     }
-  }, "the C=C is gone — a ", /*#__PURE__*/React.createElement("b", {
+  }, "the C=C is gone, a ", /*#__PURE__*/React.createElement("b", {
     style: {
       color: POOR
     }
@@ -1712,12 +1712,12 @@ function OzoneStage() {
   }, [{
     r: 'Zn or DMS',
     v: 'aldehyde',
-    note: 'gentle — keeps the H',
+    note: 'gentle, keeps the H',
     c: SPARED
   }, {
     r: 'H₂O₂',
     v: 'carboxylic acid',
-    note: 'a lot of O&rsquo;s — oxidizes up',
+    note: 'a lot of O&rsquo;s, oxidizes up',
     c: REDX
   }].map((x, i) => {
     const a = clamp((t - 26.6 - i * 0.6) / 0.5, 0, 1);
@@ -1791,7 +1791,7 @@ function OzonolysisVideo() {
       lineHeight: 1.08,
       letterSpacing: '-0.02em'
     }
-  }, "Same alkene, same O₃.", /*#__PURE__*/React.createElement("br", null), "DMS — or H₂O₂?"), /*#__PURE__*/React.createElement("div", {
+  }, "Same alkene, same O₃.", /*#__PURE__*/React.createElement("br", null), "DMS: or H₂O₂?"), /*#__PURE__*/React.createElement("div", {
     style: {
       fontFamily: SANS,
       fontSize: 38,
@@ -1806,7 +1806,7 @@ function OzonolysisVideo() {
       marginTop: 22,
       letterSpacing: '0.06em'
     }
-  }, "comment your pick — answer at the end")), /*#__PURE__*/React.createElement(Header, {
+  }, "comment your pick, answer at the end")), /*#__PURE__*/React.createElement(Header, {
     start: 7.2,
     end: 13.0,
     top: 330
@@ -1837,7 +1837,7 @@ function OzonolysisVideo() {
       color: INK2,
       marginTop: 22
     }
-  }, "it cuts right through the double bond — then the workup decides the ending")), /*#__PURE__*/React.createElement(Header, {
+  }, "it cuts right through the double bond, then the workup decides the ending")), /*#__PURE__*/React.createElement(Header, {
     start: 13.2,
     end: 26.0,
     top: 170
@@ -1856,7 +1856,7 @@ function OzonolysisVideo() {
       fontSize: 44,
       color: INK
     }
-  }, "cleave the C=C — cap ", /*#__PURE__*/React.createElement("b", {
+  }, "cleave the C=C, cap ", /*#__PURE__*/React.createElement("b", {
     style: {
       color: POOR
     }
@@ -1894,7 +1894,7 @@ function OzonolysisVideo() {
       color: INK3,
       marginTop: 8
     }
-  }, "peroxide has a lot of O’s — it oxidizes the cut up a level")), /*#__PURE__*/React.createElement(Header, {
+  }, "peroxide has a lot of O’s, it oxidizes the cut up a level")), /*#__PURE__*/React.createElement(Header, {
     start: 40.2,
     end: 52.0,
     top: 170
@@ -1913,7 +1913,7 @@ function OzonolysisVideo() {
       fontSize: 44,
       color: INK
     }
-  }, "a triple bond cuts the same way — straight to ", /*#__PURE__*/React.createElement("b", {
+  }, "a triple bond cuts the same way, straight to ", /*#__PURE__*/React.createElement("b", {
     style: {
       color: REDX
     }
@@ -1924,7 +1924,7 @@ function OzonolysisVideo() {
       color: INK3,
       marginTop: 8
     }
-  }, "count your carbons — the fragments must add back up")), /*#__PURE__*/React.createElement(Header, {
+  }, "count your carbons, the fragments must add back up")), /*#__PURE__*/React.createElement(Header, {
     start: 52.2,
     end: 60.0,
     top: 170
@@ -1944,7 +1944,7 @@ function OzonolysisVideo() {
       tag: 'also acids + esters',
       color: REDX
     }],
-    sub: "the weak twin leaves the ester alone — that's the trap"
+    sub: "the weak twin leaves the ester alone, that's the trap"
   })), /*#__PURE__*/React.createElement(OzoneStage, null), /*#__PURE__*/React.createElement(Header, {
     start: 60.2,
     end: 71.0,
@@ -2000,20 +2000,20 @@ function OzonolysisVideo() {
     start: 83.2,
     qs: [{
       q: 'CH₃CH=CHCH₃ + O₃, then DMS →',
-      opts: ['two CH₃COOH — acetic acid', 'two CH₃CHO — acetaldehyde', 'one CH₃CH₂CH₂CHO — butanal'],
+      opts: ['two CH₃COOH, acetic acid', 'two CH₃CHO, acetaldehyde', 'one CH₃CH₂CH₂CHO, butanal'],
       ans: 1,
-      why: 'Cut the middle — two 2-carbon fragments, each capped with C=O. DMS is gentle: aldehydes. Count your carbons.'
+      why: 'Cut the middle: two 2-carbon fragments, each capped with C=O. DMS is gentle: aldehydes. Count your carbons.'
     }, {
       q: 'A molecule has a ketone AND an ester. NaBH₄ touches…',
       opts: ['both', 'only the ketone', 'only the ester'],
       ans: 1,
-      why: 'NaBH₄ is the weak twin — aldehydes and ketones only. The ester waits for LiAlH₄.'
+      why: 'NaBH₄ is the weak twin: aldehydes and ketones only. The ester waits for LiAlH₄.'
     }]
   }), /*#__PURE__*/React.createElement(OutroCard, {
     start: 99.8,
     end: 108,
     lines: ['See O₃?', 'Scissors.'],
-    tease: "Gen chem: redox balancing, the foolproof way — next."
+    tease: "Gen chem: redox balancing, the foolproof way, next."
   }));
 }
 window.OzonolysisVideo = OzonolysisVideo;

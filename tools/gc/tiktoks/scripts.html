@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Ace The DAT — TikTok Voiceover Scripts (all 34)</title>
+<title>Ace The DAT · TikTok Voiceover Scripts (all 34)</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,700&family=DM+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
 <style>
 :root{
@@ -95,13 +95,13 @@ h1 em{color:var(--gold-d);font-style:italic;}
 
 <aside>
   <div class="brand">Ace<em>The</em>DAT</div>
-  <div class="toc-h">★ Hand-crafted (5)</div>
+  <div class="toc-h">Hand-crafted (5)</div>
   <div id="toc-custom"></div>
-  <div class="toc-h">Tier 0 — Foundations</div>
+  <div class="toc-h">Tier 0: Foundations</div>
   <div id="toc-t0"></div>
-  <div class="toc-h">Tier 1 — Quantitative</div>
+  <div class="toc-h">Tier 1: Quantitative</div>
   <div id="toc-t1"></div>
-  <div class="toc-h">Tier 2 — Patterns</div>
+  <div class="toc-h">Tier 2: Patterns</div>
   <div id="toc-t2"></div>
   <div class="toc-help">
     <b>Pacing:</b> read at conversational speed, ~2.5 words/sec. Add a half-second pause between scenes. Aim for 60-90 sec total per TikTok.
@@ -115,7 +115,7 @@ h1 em{color:var(--gold-d);font-style:italic;}
   <p class="lede">Read aloud per scene in the <a href="voiceover-studio.html">Voiceover Studio</a>. The studio captures audio (and optional face cam) and lets you download per-scene WebM files. This page is the printable script reference.</p>
   <div class="print-row">
     <button class="print-btn" onclick="window.print()">⎙ Print all scripts</button>
-    <a class="print-btn" href="voiceover-studio.html" target="_blank">🎤 Open Voiceover Studio</a>
+    <a class="print-btn" href="voiceover-studio.html" target="_blank">Open Voiceover Studio</a>
     <a class="print-btn" href="index.html">↗ TikTok Library</a>
   </div>
 </header>
@@ -249,7 +249,7 @@ const estReadSec = text => Math.ceil(wordCount(text) / 2.5);
 
 function renderTk(key, tk, num, isCustom){
   const tier = isCustom ? 'custom' : tk.tier;
-  const tierLabel = isCustom ? '★ custom' : 'Tier ' + tier;
+  const tierLabel = isCustom ? 'custom' : 'Tier ' + tier;
   const totalWords = tk.scenes.reduce((sum, s) => sum + wordCount(s.text), 0);
   const totalEstSec = tk.scenes.reduce((sum, s) => sum + estReadSec(s.text), 0);
   return `<div class="tk" data-tier="${tier}" id="tk-${key}">
@@ -297,13 +297,13 @@ document.getElementById('toc-t2').innerHTML = tocHtml(groups.t2, false);
 
 // Render content
 let contentHtml = '';
-contentHtml += `<h2 class="tier-h">★ Hand-crafted <em>(5)</em></h2>`;
+contentHtml += `<h2 class="tier-h">Hand-crafted <em>(5)</em></h2>`;
 groups.custom.forEach(({key, tk, num, isCustom}) => contentHtml += renderTk(key, tk, num, isCustom));
-contentHtml += `<h2 class="tier-h">Tier 0 — <em>Foundations</em> (12)</h2>`;
+contentHtml += `<h2 class="tier-h">Tier 0: <em>Foundations</em> (12)</h2>`;
 groups.t0.forEach(({key, tk, num, isCustom}) => contentHtml += renderTk(key, tk, num, isCustom));
-contentHtml += `<h2 class="tier-h">Tier 1 — <em>Quantitative</em> (10)</h2>`;
+contentHtml += `<h2 class="tier-h">Tier 1: <em>Quantitative</em> (10)</h2>`;
 groups.t1.forEach(({key, tk, num, isCustom}) => contentHtml += renderTk(key, tk, num, isCustom));
-contentHtml += `<h2 class="tier-h">Tier 2 — <em>Patterns</em> (7)</h2>`;
+contentHtml += `<h2 class="tier-h">Tier 2: <em>Patterns</em> (7)</h2>`;
 groups.t2.forEach(({key, tk, num, isCustom}) => contentHtml += renderTk(key, tk, num, isCustom));
 document.getElementById('content').innerHTML = contentHtml;
 </script>

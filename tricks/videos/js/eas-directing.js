@@ -1424,28 +1424,28 @@ function SpectrumLadder({
 }) {
   const ROWS = [{
     k: 'STRONG ACTIVATORS',
-    ex: '–NH₂ · –OH · –OR',
+    ex: '-NH₂ · -OH · -OR',
     dir: 'ortho / para',
     c: RICH
   }, {
     k: 'WEAK ACTIVATORS',
-    ex: 'alkyl –R',
+    ex: 'alkyl -R',
     dir: 'ortho / para',
     c: RICH
   }, {
     k: 'HALOGENS',
-    ex: '–F · –Cl · –Br · –I',
+    ex: '-F · -Cl · -Br · -I',
     dir: 'ortho / para',
     c: GOLD,
     note: 'the exception'
   }, {
     k: 'MODERATE DEACTIVATORS',
-    ex: 'C=O · –C≡N',
+    ex: 'C=O · -C≡N',
     dir: 'meta',
     c: POOR
   }, {
     k: 'STRONG DEACTIVATOR',
-    ex: '–NO₂',
+    ex: '-NO₂',
     dir: 'meta',
     c: POOR
   }];
@@ -1497,7 +1497,7 @@ function SpectrumLadder({
         marginBottom: 24,
         letterSpacing: '0.06em'
       }
-    }, "screenshot this — it’s the whole cheat sheet"), ROWS.map((r, i) => {
+    }, "screenshot this, it’s the whole cheat sheet"), ROWS.map((r, i) => {
       const rv = clamp((t - start - 0.4 - i * 0.5) / 0.5, 0, 1);
       return /*#__PURE__*/React.createElement("div", {
         key: i,
@@ -1690,13 +1690,13 @@ function MetaSameAtom({
     name: 'carbonyl',
     at: start + 0.7
   }, {
-    group: '–C≡N',
+    group: '-C≡N',
     atom: 'C',
     term: '≡N',
     name: 'nitrile',
     at: start + 1.6
   }, {
-    group: '–NO₂',
+    group: '-NO₂',
     atom: 'N',
     term: 'O O',
     name: 'nitro',
@@ -1727,7 +1727,7 @@ function MetaSameAtom({
       color: INK2,
       marginBottom: 34
     }
-  }, "carbonyl, nitrile, nitro — all pull the ring’s electrons out"), /*#__PURE__*/React.createElement("div", {
+  }, "carbonyl, nitrile, nitro, all pull the ring’s electrons out"), /*#__PURE__*/React.createElement("div", {
     style: {
       display: 'flex',
       justifyContent: 'center',
@@ -1845,7 +1845,7 @@ function MetaSameAtom({
     style: {
       color: POOR
     }
-  }, "first atom connected to the ring"), " is δ+ — it drains the ring, forcing E⁺ ", /*#__PURE__*/React.createElement("b", {
+  }, "first atom connected to the ring"), " is δ+, it drains the ring, forcing E⁺ ", /*#__PURE__*/React.createElement("b", {
     style: {
       color: SPARED
     }
@@ -1899,7 +1899,7 @@ function FlipBeat({
     style: {
       color: POOR
     }
-  }, "W"), " — so just flip it"), /*#__PURE__*/React.createElement("div", {
+  }, "W"), ", so just flip it"), /*#__PURE__*/React.createElement("div", {
     style: {
       display: 'flex',
       alignItems: 'center',
@@ -1930,7 +1930,7 @@ function FlipBeat({
       color: flipped ? SPARED : POOR,
       opacity: flipped ? ml : wl
     }
-  }, flipped ? 'M — meta' : 'W — withdrawer'))), /*#__PURE__*/React.createElement("div", {
+  }, flipped ? 'M: meta' : 'W: withdrawer'))), /*#__PURE__*/React.createElement("div", {
     style: {
       fontFamily: SERIF,
       fontWeight: 600,
@@ -1958,7 +1958,7 @@ function FlipBeat({
       flexWrap: 'wrap',
       justifyContent: 'center'
     }
-  }, ['C=O', '–C≡N', '–NO₂', '–SO₃H', '–CF₃'].map((g, i) => /*#__PURE__*/React.createElement("span", {
+  }, ['C=O', '-C≡N', '-NO₂', '-SO₃H', '-CF₃'].map((g, i) => /*#__PURE__*/React.createElement("span", {
     key: i,
     style: {
       fontFamily: SERIF,
@@ -1991,31 +1991,31 @@ function GroupsBoard({
   const inOp = clamp((t - start) / 0.5, 0, 1) * (1 - clamp((t - (end - 0.6)) / 0.6, 0, 1));
   const ROWS = [{
     k: 'STRONG ACTIVATORS',
-    ex: '–NH₂ · –OH · –OR',
+    ex: '-NH₂ · -OH · -OR',
     why: 'lone pair floods in',
     dir: 'ortho / para',
     c: RICH
   }, {
     k: 'WEAK ACTIVATORS',
-    ex: '–R (alkyl) · –C₆H₅',
+    ex: '-R (alkyl) · -C₆H₅',
     why: 'gentle +I push',
     dir: 'ortho / para',
     c: RICH
   }, {
     k: 'HALOGENS · THE EXCEPTION',
-    ex: '–F · –Cl · –Br · –I',
+    ex: '-F · -Cl · -Br · -I',
     why: 'pull, but lone pairs win',
     dir: 'ortho / para',
     c: GOLD
   }, {
     k: 'MODERATE DEACTIVATORS',
-    ex: '–CHO · –COR · –CO₂H · –C≡N · –SO₃H',
+    ex: '-CHO · -COR · -CO₂H · -C≡N · -SO₃H',
     why: 'δ+ first atom drains',
     dir: 'meta',
     c: POOR
   }, {
     k: 'STRONG DEACTIVATORS',
-    ex: '–NO₂ · –NR₃⁺ · –CF₃',
+    ex: '-NO₂ · -NR₃⁺ · -CF₃',
     why: 'the hardest pull',
     dir: 'meta',
     c: POOR
@@ -2063,7 +2063,7 @@ function GroupsBoard({
       margin: '14px 0 26px',
       letterSpacing: '0.06em'
     }
-  }, "screenshot this — it’s every group you need"), ROWS.map((r, i) => {
+  }, "screenshot this, it’s every group you need"), ROWS.map((r, i) => {
     const rv = clamp((t - start - 0.5 - i * 0.55) / 0.5, 0, 1);
     return /*#__PURE__*/React.createElement("div", {
       key: i,
@@ -2156,7 +2156,7 @@ function EASDirectingVideo() {
       lineHeight: 1.04,
       letterSpacing: '-0.02em'
     }
-  }, '–OCH₃ is on the ring.'), /*#__PURE__*/React.createElement("div", {
+  }, '-OCH₃ is on the ring.'), /*#__PURE__*/React.createElement("div", {
     style: {
       fontFamily: SANS,
       fontSize: 38,
@@ -2171,7 +2171,7 @@ function EASDirectingVideo() {
       marginTop: 22,
       letterSpacing: '0.06em'
     }
-  }, "comment your pick — answer at the end")), /*#__PURE__*/React.createElement(Header, {
+  }, "comment your pick, answer at the end")), /*#__PURE__*/React.createElement(Header, {
     start: 5.7,
     end: 13.5,
     top: 280
@@ -2239,17 +2239,17 @@ function EASDirectingVideo() {
     base: 14.6,
     sub: "a lone pair floods the ring with electrons",
     cards: [{
-      formula: '–NH₂',
+      formula: '-NH₂',
       annot: ': lone pair',
       tag: 'amine',
       color: RICH
     }, {
-      formula: '–OH',
+      formula: '-OH',
       annot: ': lone pair',
       tag: 'alcohol',
       color: RICH
     }, {
-      formula: '–OR',
+      formula: '-OR',
       annot: ': lone pair',
       tag: 'ether',
       color: RICH
@@ -2269,9 +2269,9 @@ function EASDirectingVideo() {
     title: "② WEAK ACTIVATORS",
     titleColor: RICH,
     base: 22.6,
-    sub: "a gentle nudge in — no lone pair needed",
+    sub: "a gentle nudge in, no lone pair needed",
     cards: [{
-      formula: '–CH₃',
+      formula: '-CH₃',
       annot: '+I · hyperconj.',
       tag: 'alkyl R',
       color: RICH
@@ -2306,7 +2306,7 @@ function EASDirectingVideo() {
     style: {
       color: GOLD
     }
-  }, "LPOP"), " — lone pair → ortho/para, ", /*#__PURE__*/React.createElement("b", {
+  }, "LPOP"), ", lone pair → ortho/para, ", /*#__PURE__*/React.createElement("b", {
     style: {
       color: RICH
     }
@@ -2318,24 +2318,24 @@ function EASDirectingVideo() {
     title: "③ THE EXCEPTION · HALOGENS",
     titleColor: GOLD,
     base: 37.8,
-    sub: "electronegative — they pull electrons OUT",
+    sub: "electronegative, they pull electrons OUT",
     cards: [{
-      formula: '–F',
+      formula: '-F',
       annot: ': lone pairs',
       tag: 'fluoro',
       color: GOLD
     }, {
-      formula: '–Cl',
+      formula: '-Cl',
       annot: ': lone pairs',
       tag: 'chloro',
       color: GOLD
     }, {
-      formula: '–Br',
+      formula: '-Br',
       annot: ': lone pairs',
       tag: 'bromo',
       color: GOLD
     }, {
-      formula: '–I',
+      formula: '-I',
       annot: ': lone pairs',
       tag: 'iodo',
       color: GOLD
@@ -2400,7 +2400,7 @@ function EASDirectingVideo() {
       color: INK2,
       marginTop: 4
     }
-  }, "easy — fills the octet"))), /*#__PURE__*/React.createElement("div", {
+  }, "easy, fills the octet"))), /*#__PURE__*/React.createElement("div", {
     style: {
       fontFamily: SANS,
       fontSize: 30,
@@ -2411,7 +2411,7 @@ function EASDirectingVideo() {
     style: {
       color: POOR
     }
-  }, "withdraws"), " — but those lone pairs still point ", /*#__PURE__*/React.createElement("b", {
+  }, "withdraws"), ", but those lone pairs still point ", /*#__PURE__*/React.createElement("b", {
     style: {
       color: GOLD
     }
@@ -2421,7 +2421,7 @@ function EASDirectingVideo() {
     color: GOLD,
     kicker: "LONE PAIRS OVERRIDE",
     big: "ortho / para",
-    sub: "slower — but still ortho / para"
+    sub: "slower, but still ortho / para"
   }), /*#__PURE__*/React.createElement(Header, {
     start: 53.2,
     end: 59.0,
@@ -2430,19 +2430,19 @@ function EASDirectingVideo() {
     title: "④⑤ THE WITHDRAWERS",
     titleColor: POOR,
     base: 53.8,
-    sub: "no lone pair to give — O and N hog the electrons instead",
+    sub: "no lone pair to give, O and N hog the electrons instead",
     cards: [{
       formula: 'C=O',
       annot: 'δ+ carbon',
       tag: 'carbonyls',
       color: POOR
     }, {
-      formula: '–C≡N',
+      formula: '-C≡N',
       annot: 'δ+ carbon',
       tag: 'nitriles',
       color: POOR
     }, {
-      formula: '–NO₂',
+      formula: '-NO₂',
       annot: 'δ+ nitrogen',
       tag: 'nitro',
       color: POOR
@@ -2456,7 +2456,7 @@ function EASDirectingVideo() {
     color: SPARED,
     kicker: "EVERY δ+ FIRST ATOM",
     big: "meta",
-    sub: "carbonyl · nitrile · nitro — all forced here"
+    sub: "carbonyl · nitrile · nitro, all forced here"
   }), /*#__PURE__*/React.createElement(Header, {
     start: 74.3,
     end: 82.5,
@@ -2534,20 +2534,20 @@ function EASDirectingVideo() {
   }), /*#__PURE__*/React.createElement(QuizBeat, {
     start: 110.5,
     qs: [{
-      q: '–OCH₃ is on the ring. The next group goes…',
-      opts: ['ortho / para — it donates in', 'meta — it withdraws', 'nowhere — the ring is dead'],
+      q: '-OCH₃ is on the ring. The next group goes…',
+      opts: ['ortho / para, it donates in', 'meta, it withdraws', 'nowhere, the ring is dead'],
       ans: 0,
-      why: 'Lone pair on the oxygen — LPOP. Activator, ortho-para.'
+      why: 'Lone pair on the oxygen: LPOP. Activator, ortho-para.'
     }, {
-      q: '–NO₂ is on the ring: rate and direction?',
+      q: '-NO₂ is on the ring: rate and direction?',
       opts: ['faster · ortho / para', 'slower · meta', 'slower · ortho / para'],
       ans: 1,
-      why: 'δ+ nitrogen straight on the ring — it drains, so meta. Flip the W.'
+      why: 'δ+ nitrogen straight on the ring, it drains, so meta. Flip the W.'
     }, {
-      q: '–Cl on the ring: rate and direction?',
+      q: '-Cl on the ring: rate and direction?',
       opts: ['faster · ortho / para', 'slower · meta', 'slower · but still ortho / para'],
       ans: 2,
-      why: 'The exception — it withdraws (slower), but the lone pairs still point ortho-para.'
+      why: 'The exception: it withdraws (slower), but the lone pairs still point ortho-para.'
     }]
   }), /*#__PURE__*/React.createElement(Sprite, {
     start: 135.5,
@@ -2674,7 +2674,7 @@ function QuizBeat({
         color: INK3,
         marginBottom: 26
       }
-    }, "pause it — commit before the reveal"), /*#__PURE__*/React.createElement("div", {
+    }, "pause it, commit before the reveal"), /*#__PURE__*/React.createElement("div", {
       style: {
         fontFamily: SERIF,
         fontWeight: 600,

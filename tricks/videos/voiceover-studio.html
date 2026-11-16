@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Ace The DAT — Video Voiceover Studio</title>
+<title>Ace The DAT · Video Voiceover Studio</title>
 <meta name="robots" content="noindex, nofollow"/>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -139,8 +139,8 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);min-height:10
   <div id="tkList"></div>
   <div class="sb-foot">
     Records <b>per scene</b> with your browser mic (or mic + face cam). <b>Download all as ZIP</b> bundles a
-    video's clips into one <code>&lt;video&gt;.zip</code> — audio as <code>.wav</code> (opens in any editor),
-    named with each scene's timestamp. Nothing is uploaded; recordings live in your browser only — <b>download before you close.</b>
+    video's clips into one <code>&lt;video&gt;.zip</code>, audio as <code>.wav</code> (opens in any editor),
+    named with each scene's timestamp. Nothing is uploaded; recordings live in your browser only, <b>download before you close.</b>
   </div>
 </aside>
 
@@ -160,7 +160,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);min-height:10
     <div class="preview-frame"><iframe id="vidFrame" title="video preview" allow="autoplay"></iframe></div>
     <div class="preview-side">
       <h3 id="pvTitle">The animation, playing silent</h3>
-      <p>Press play in the frame and record your voice over it, scene by scene. The video runs with no audio here — <b>your</b> voice is the track. Each scene below shows exactly what to say and when it lands on the timeline.</p>
+      <p>Press play in the frame and record your voice over it, scene by scene. The video runs with no audio here, <b>your</b> voice is the track. Each scene below shows exactly what to say and when it lands on the timeline.</p>
       <div class="pv-meta" id="pvMeta"></div>
       <button class="btn" onclick="reloadFrame()">Restart the animation</button>
     </div>
@@ -193,9 +193,9 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);min-height:10
     <h3>From clips to a posted video</h3>
     <ol>
       <li><b>Record every scene</b> at the pace you'd teach it. Re-record any that don't feel right.</li>
-      <li><b>Download all as ZIP</b> — one <code>&lt;video&gt;.zip</code> of clips named <code>&lt;video&gt;-&lt;scene&gt;-&lt;time&gt;-&lt;phase&gt;.wav</code>, so they sort into place by name.</li>
+      <li><b>Download all as ZIP</b>, one <code>&lt;video&gt;.zip</code> of clips named <code>&lt;video&gt;-&lt;scene&gt;-&lt;time&gt;-&lt;phase&gt;.wav</code>, so they sort into place by name.</li>
       <li><b>Screen-record the animation</b> full-screen (Cmd+Shift+5), or drop the video HTML into your editor as a source.</li>
-      <li><b>Layer each audio clip</b> at its <code>t=</code> timestamp — that's the exact playhead time the scene appears in the animation.</li>
+      <li><b>Layer each audio clip</b> at its <code>t=</code> timestamp, that's the exact playhead time the scene appears in the animation.</li>
       <li><b>(Face mode)</b> Add the face clips as a circle picture-in-picture (~25% height, top-right or bottom-left).</li>
       <li><b>Trim tight, add music low, export 1080×1920</b> and post.</li>
     </ol>
@@ -267,7 +267,7 @@ function renderScenes(){
   document.getElementById('statusRow').innerHTML = `
     <span class="status-pill ${recordedCount===total?'recorded':''}">${recordedCount}/${total} scenes</span>
     <span>runtime <b style="color:var(--ink2)">${runtime}</b></span>
-    <span style="margin-left:auto;color:var(--ink3);font-style:italic">Read with the scene's mood — hook energetic, lock grounded</span>`;
+    <span style="margin-left:auto;color:var(--ink3);font-style:italic">Read with the scene's mood: hook energetic, lock grounded</span>`;
   const el = document.getElementById('scenes');
   el.innerHTML = v.scenes.map((s,i) => {
     const rec = recs[i], recorded = !!rec, isFaceMode = recorded && rec.mode==='face';
@@ -310,7 +310,7 @@ async function setMode(mode){
       previewWrap.style.display='flex'; document.getElementById('micWarn').classList.remove('show');
     }catch(e){
       document.getElementById('micWarn').classList.add('show');
-      toast('Camera or mic access denied — check browser permissions','error');
+      toast('Camera or mic access denied: check browser permissions','error');
       previewWrap.style.display='none'; STATE.mode='audio';
       document.getElementById('modeAudio').classList.add('active'); document.getElementById('modeFace').classList.remove('active');
     }
@@ -323,7 +323,7 @@ async function ensureStream(){
   try{
     const s = await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,sampleRate:48000}});
     STATE.audioStream = s; document.getElementById('micWarn').classList.remove('show'); return s;
-  }catch(e){ document.getElementById('micWarn').classList.add('show'); toast('Mic access denied — check browser permissions','error'); throw e; }
+  }catch(e){ document.getElementById('micWarn').classList.add('show'); toast('Mic access denied: check browser permissions','error'); throw e; }
 }
 async function startRecording(sceneIdx){
   if(STATE.recorder) stopRecording();
@@ -414,7 +414,7 @@ async function downloadAll(){
     for(const k of keys){ const idx=+k; const {blob,ext}=await clipFor(recs[idx]); files.push({name:clipName(STATE.active, idx, v.scenes[idx], ext), blob}); }
     downloadBlob(await makeZip(files), STATE.active+'.zip');
     toast('Downloaded '+STATE.active+'.zip · '+keys.length+' clip'+(keys.length===1?'':'s'), 'success');
-  }catch(e){ console.error(e); toast('Could not package the zip — try downloading scenes individually','error'); }
+  }catch(e){ console.error(e); toast('Could not package the zip: try downloading scenes individually','error'); }
 }
 
 /* ---- toast ---- */

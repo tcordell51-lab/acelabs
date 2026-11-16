@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=1080,initial-scale=1"/>
-<title>Ace The DAT — Sarah's Pretend $100 (Percent Change)</title>
+<title>Ace The DAT · Sarah's Pretend $100 (Percent Change)</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400;1,700&family=DM+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet"/>
 <script src="/shared/anime.min.js?v=1"></script>
 <style>
@@ -105,8 +105,8 @@ html,body{background:#000;overflow:hidden;font-family:'DM Sans',sans-serif;color
   <div class="hook" id="hook">
     <div class="hook-tag">Percent Change · Variable Setup</div>
     <div class="hook-q">Pretend it's<br/><em>$100.</em></div>
-    <div class="hook-sub">Coffee, car, house, IPO — doesn't matter what it is. Pretend $100. Run the percentages. Read the answer.</div>
-    <div class="hook-credit">— Sarah's universal substitution</div>
+    <div class="hook-sub">Coffee, car, house, IPO, doesn't matter what it is. Pretend $100. Run the percentages. Read the answer.</div>
+    <div class="hook-credit">Sarah's universal substitution</div>
   </div>
 
   <div class="demo" id="demo">
@@ -165,7 +165,7 @@ html,body{background:#000;overflow:hidden;font-family:'DM Sans',sans-serif;color
   <div class="caption" id="caption">caption</div>
 
   <div class="trap" id="trap">
-    <div class="trap-ribbon">⚠ DAT Trap</div>
+    <div class="trap-ribbon">DAT Trap</div>
     <div class="trap-h">Add the<br/><em>percents.</em></div>
     <div class="trap-sub">−20% then +25% does NOT cancel to "+5%." Percents stack as MULTIPLIERS, never as sums. The pretend-$100 trick makes the multipliers obvious.</div>
   </div>
@@ -185,7 +185,7 @@ html,body{background:#000;overflow:hidden;font-family:'DM Sans',sans-serif;color
       <div class="scrub-thumb" id="scrubThumb" style="left:0%"></div>
     </div>
     <div class="foot-row">
-      <button class="play-btn" id="playBtn">▶ Play</button>
+      <button class="play-btn" id="playBtn">Play</button>
       <div class="foot-cta">acethedat.com · sarah's tricks</div>
     </div>
   </div>
@@ -241,7 +241,7 @@ const TIMELINE = [
     hook.style.opacity=1; demo.style.opacity=0; caption.style.opacity=0; trap.style.opacity=0; lock.style.opacity=0;
     [tag1,arrow1,tag2,arrow2,tag3].forEach(el => el.style.opacity = 0);
     finalAns.style.opacity = 0;
-    if(voiceEnabled) speak("Pretend it's a hundred dollars. Coffee, car, house, IPO — doesn't matter. Pretend a hundred dollars. Run the percentages. Read the answer.");
+    if(voiceEnabled) speak("Pretend it's a hundred dollars. Coffee, car, house, IPO, doesn't matter. Pretend a hundred dollars. Run the percentages. Read the answer.");
   }},
 
   {t:5500, fn: () => {
@@ -258,7 +258,7 @@ const TIMELINE = [
   {t:13500, fn: () => {
     arrow1.style.opacity = 1;
     anime({targets:arrow1, opacity:[0,1], duration:500});
-    if(voiceEnabled) speak("Falls twenty percent — multiply by zero point eight. One MINUS the percent.");
+    if(voiceEnabled) speak("Falls twenty percent: multiply by zero point eight. One MINUS the percent.");
   }},
   {t:18500, fn: () => {
     tag2.style.opacity = 1;
@@ -268,7 +268,7 @@ const TIMELINE = [
   {t:22000, fn: () => {
     arrow2.style.opacity = 1;
     anime({targets:arrow2, opacity:[0,1], duration:500});
-    if(voiceEnabled) speak("Now rises twenty-five percent on the new value — multiply by one point two five. One PLUS the percent.");
+    if(voiceEnabled) speak("Now rises twenty-five percent on the new value, multiply by one point two five. One PLUS the percent.");
   }},
   {t:27000, fn: () => {
     stage.dataset.phase='solve';
@@ -290,7 +290,7 @@ const TIMELINE = [
     stage.dataset.phase='trap';
     trap.style.opacity = 1;
     anime({targets:trap, opacity:[0,1], duration:600});
-    if(voiceEnabled) speak("Trap. Adding the percents. Negative twenty plus twenty-five does NOT equal plus five. Percents are multipliers — they stack by multiplication, not addition. The pretend-hundred trick makes that obvious.");
+    if(voiceEnabled) speak("Trap. Adding the percents. Negative twenty plus twenty-five does NOT equal plus five. Percents are multipliers: they stack by multiplication, not addition. The pretend-hundred trick makes that obvious.");
   }},
 
   {t:50000, fn: () => {
@@ -298,7 +298,7 @@ const TIMELINE = [
     stage.dataset.phase='lock';
     lock.style.opacity = 1;
     anime({targets:lock, opacity:[0,1], scale:[0.92,1], duration:700, easing:'easeOutQuad'});
-    if(voiceEnabled) speak("Lock it in. Up — one PLUS the percent. Down — one MINUS the percent. Stuck on a variable problem? Pretend it's a hundred dollars.");
+    if(voiceEnabled) speak("Lock it in. Up: one PLUS the percent. Down: one MINUS the percent. Stuck on a variable problem? Pretend it's a hundred dollars.");
   }},
   {t:68000, fn: () => { /* hold */ }},
 
@@ -325,10 +325,10 @@ function tick(){
 function play(){
   if(elapsed >= TOTAL){ TIMELINE.forEach(e => e._fired = false); elapsed = 0; }
   paused = false; startedAt = Date.now();
-  playBtn.textContent = '⏸ Pause';
+  playBtn.textContent = 'Pause';
   tick();
 }
-function pause(){ paused = true; elapsed += Date.now() - startedAt; playBtn.textContent = '▶ Resume'; }
+function pause(){ paused = true; elapsed += Date.now() - startedAt; playBtn.textContent = 'Resume'; }
 playBtn.addEventListener('click', () => { if(paused) play(); else pause(); });
 document.getElementById('scrubBar').addEventListener('click', e => {
   const r = e.currentTarget.getBoundingClientRect();

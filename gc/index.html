@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>General Chemistry · Ace Labs</title>
+<link rel="icon" type="image/svg+xml" href="/shared/ace-dat-mark.svg">
+<link rel="stylesheet" href="/shared/ace-ui.css?v=7">
+</head>
+<body class="aui">
+<main class="aui-wrap aui-stack" id="main">
+
+  <div id="hub" class="aui-stack">
+    <header class="aui-hubhead">
+      <div class="aui-stack">
+        <p class="aui-kicker">Section</p>
+        <h1 class="aui-h1">General Chemistry</h1>
+        <p class="aui-lede" id="lede">Loading the question bank.</p>
+        <div class="aui-row">
+          <a class="aui-btn" href="?run=daily" data-run="daily">Start today's set</a>
+          <a class="aui-btn aui-btn--quiet" href="?run=misses" data-run="misses" id="btn-miss">Review misses</a>
+          <a class="aui-btn aui-btn--quiet" href="?run=due" data-run="due" id="btn-due">Spaced repeats</a>
+        </div>
+      </div>
+      <img src="/shared/art/gchem.webp" alt="" width="900" height="678">
+    </header>
+
+    <section class="aui-card aui-card--flat" aria-label="Your Gen Chem numbers">
+      <div class="aui-stats">
+        <div class="aui-stat"><b id="s-answers">0</b><span>answers</span></div>
+        <div class="aui-stat"><b id="s-right">0</b><span>right</span></div>
+        <div class="aui-stat"><b id="s-due">0</b><span>due for a repeat</span></div>
+        <div class="aui-stat"><b id="s-miss">0</b><span>misses open</span></div>
+      </div>
+    </section>
+
+    <section class="aui-stack" aria-labelledby="t-title">
+      <h2 class="aui-h2" id="t-title">Topics</h2>
+      <div class="aui-card aui-card--flat"><ul class="aui-list" id="topics"></ul></div>
+    </section>
+
+    <section class="aui-stack" aria-labelledby="m-title">
+      <h2 class="aui-h2" id="m-title">Learn and explore</h2>
+      <div class="aui-grid">
+        <a class="aui-card aui-card--flat" href="/tools/gchem/"><h3 class="aui-h3">Gen Chem, Retold</h3><p class="aui-small">The course: fourteen nights, each with checks.</p></a>
+        <a class="aui-card aui-card--flat" href="/tools/gc/"><h3 class="aui-h3">Skill lessons</h3><p class="aui-small">Worked examples and faded practice for each skill.</p></a>
+        <a class="aui-card aui-card--flat" href="/tools/gc/trends.html"><h3 class="aui-h3">Periodic trends</h3><p class="aui-small">Every trend on one table.</p></a>
+        <a class="aui-card aui-card--flat" href="/tools/gc/lewis-sandbox.html"><h3 class="aui-h3">Lewis sandbox</h3><p class="aui-small">Build the structure, then the shape.</p></a>
+        <a class="aui-card aui-card--flat" href="/tools/gc/recognition-lab.html"><h3 class="aui-h3">Recognition lab</h3><p class="aui-small">Read curves, diagrams and graphs at a glance.</p></a>
+        <a class="aui-card aui-card--flat" href="/tools/gc/traps.html"><h3 class="aui-h3">Trap library</h3><p class="aui-small">The mistake behind each wrong choice.</p></a>
+      </div>
+    </section>
+  </div>
+
+  <div id="run" class="aui-stack" hidden>
+    <div class="aui-row" style="justify-content:space-between">
+      <p class="aui-kicker" id="run-title">Gen Chem set</p>
+      <a class="aui-btn aui-btn--quiet aui-btn--sm" href="/gc/" id="leave">Leave set</a>
+    </div>
+    <div id="stage"></div>
+  </div>
+
+</main>
+<script src="/shared/ace-record.js?v=4"></script>
+<script src="/shared/ace-question.js?v=4"></script>
+<script src="/shared/ace-set.js?v=3"></script>
+<script src="/shared/ace-hub.js?v=1"></script>
+<script src="/shared/ace-ui.js?v=3" defer></script>
+<script>
+AceHub.init({ section: 'gchem', name: 'Gen Chem', bank: '/data/gchem.json', home: '/gc/', setSize: 10, topicSize: 8, src: 'gc-hub',
+  lede: function (count, topics) { return count + ' questions across TOPICS topics. Every question has five choices and a worked reason.'.replace('TOPICS', topics); } });
+</script>
+<script src="/shared/ace-tabs.js?v=2" defer></script>
+</body>
+</html>

@@ -80,7 +80,7 @@
   <section class="hub-hero" style="padding:46px 60px 0">
     <span class="badge"><span class="pulse"></span>Live &middot; pulled from this device</span>
     <h1>Your <em>analytics</em>.</h1>
-    <p class="lede">Everything below is computed from this browser's localStorage — no server. Open the engines, place enzymes, flip Ace Cards, take mocks. The numbers update every time you come back here.</p>
+    <p class="lede">Everything below is computed from this browser's localStorage, no server. Open the engines, place enzymes, flip Ace Cards, take mocks. The numbers update every time you come back here.</p>
   </section>
 
   <section style="padding:0 60px">
@@ -115,7 +115,7 @@
       </div>
       <div class="an-card">
         <h3>Weak <em>spots</em></h3>
-        <p class="desc">Partial nodes that have stalled — these are where retrieval has the most leverage.</p>
+        <p class="desc">Partial nodes that have stalled: these are where retrieval has the most leverage.</p>
         <ul class="weak-list" id="anWeakList"></ul>
       </div>
     </div>
@@ -124,7 +124,7 @@
       <h3>14-day <em>activity</em></h3>
       <p class="desc">Each cell is one day. Lighter = a few interactions. Darker = a heavy session. Pulled from Ace Card retrieval timestamps.</p>
       <div class="streak-grid" id="anStreak"></div>
-      <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--ink-mute);margin-top:10px;letter-spacing:.08em">14 days ago &mdash;&mdash;&rarr; today</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--ink-mute);margin-top:10px;letter-spacing:.08em">14 days ago: &rarr; today</div>
     </div>
   </section>
 </main>
@@ -267,7 +267,7 @@ function render(){
   document.getElementById('anDue').textContent = due;
   const totalCards = cards.filter(c => c && !c.closed).length;
   document.getElementById('anDueDetail').innerHTML = totalCards === 0
-    ? 'no cards yet — flip a wrong answer to start'
+    ? 'no cards yet, flip a wrong answer to start'
     : `<b>${totalCards}</b> total card${totalCards===1?'':'s'} in deck`;
 
   // Last session
@@ -292,7 +292,7 @@ function render(){
   weak.sort((a,b) => a.ratio - b.ratio);
   const weakList = document.getElementById('anWeakList');
   if (weak.length === 0){
-    weakList.innerHTML = '<li style="border:none;background:transparent;display:block;text-align:center;color:var(--ink-mute);font-style:italic;padding:18px">No partials yet — open a hub and place some enzymes to populate this list.</li>';
+    weakList.innerHTML = '<li style="border:none;background:transparent;display:block;text-align:center;color:var(--ink-mute);font-style:italic;padding:18px">No partials yet: open a hub and place some enzymes to populate this list.</li>';
   } else {
     weakList.innerHTML = weak.slice(0, 6).map((w, i) => {
       const pri = i < 2 ? '' : i < 4 ? 'med' : 'low';
@@ -332,6 +332,6 @@ render();
 window.addEventListener('focus', render);
 </script>
 <script src="/tools/bio/bio-shared.js"></script>
-  <script src="/shared/ace-shell.js?v=1" defer></script>
+  <script src="/shared/ace-shell.js?v=3" defer></script>
 </body>
 </html>

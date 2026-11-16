@@ -162,7 +162,7 @@
     var walker = node.ownerDocument && node.ownerDocument.createTreeWalker
       ? node.ownerDocument.createTreeWalker(node, 4 /* NodeFilter.SHOW_TEXT */, null) : null;
     for (var t = walker ? walker.nextNode() : null; t; t = walker.nextNode()) {
-      if (t.nodeValue.indexOf('\u2014') !== -1) t.nodeValue = t.nodeValue.replace(/\s*\u2014\s*/g, ': ');
+      if (t.nodeValue.indexOf('-') !== -1) t.nodeValue = t.nodeValue.replace(/\s*\u2014\s*/g, ': ');
     }
     // a check frame is taken while the visualizer still waits under the
     // closed-book veil; the copy on the card must not carry the veil

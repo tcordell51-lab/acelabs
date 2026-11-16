@@ -365,7 +365,7 @@ em.gold{font-style:italic; color:var(--gold-d); font-family:'Playfair Display',s
     <span class="tag teal">Module 35 · 36</span>
     <div class="num">PACING SIMULATOR</div>
     <h1>Finish the <em>section</em>. Beat the clock.</h1>
-    <p class="sub">A 45-question, 45-minute QR section in miniature. Practice the <b>skip-and-return</b> mechanic and the <b>guess-vs-blank</b> decision under real time pressure. Most students score 18 because they leave 8 questions blank — not because they got 8 wrong.</p>
+    <p class="sub">A 45-question, 45-minute QR section in miniature. Practice the <b>skip-and-return</b> mechanic and the <b>guess-vs-blank</b> decision under real time pressure. Most students score 18 because they leave 8 questions blank, not because they got 8 wrong.</p>
   </div>
 
   <!-- Setup -->
@@ -377,7 +377,7 @@ em.gold{font-style:italic; color:var(--gold-d); font-family:'Playfair Display',s
       <div class="opt-card" data-len="22" data-mode="standard"><div class="ttl">Half</div><div class="det">22 questions · 22 min · half-section</div></div>
       <div class="opt-card" data-len="10" data-mode="two-pass"><div class="ttl">Two-Pass Drill</div><div class="det">10 q · skip exactly 5 in pass 1 · return in pass 2</div></div>
     </div>
-    <p style="font-size:13px; color:var(--ink-mute); margin:0 0 14px">The real DAT QR section is 40 questions in 45 minutes — about <b>1.125 min/q for a passing pace</b> and ~1.0 min/q for a 22+ scorer. We compress it so a sim fits a single tutoring session. The pacing math (target line, behind/ahead deltas, guess EV) is identical. The <b>Two-Pass Drill</b> forces you to skip the 5 hardest-tagged questions in pass 1, then return in pass 2 with leftover time.</p>
+    <p style="font-size:13px; color:var(--ink-mute); margin:0 0 14px">The real DAT QR section is 40 questions in 45 minutes, about <b>1.125 min/q for a passing pace</b> and ~1.0 min/q for a 22+ scorer. We compress it so a sim fits a single tutoring session. The pacing math (target line, behind/ahead deltas, guess EV) is identical. The <b>Two-Pass Drill</b> forces you to skip the 5 hardest-tagged questions in pass 1, then return in pass 2 with leftover time.</p>
 
     <!-- Calculator Tax mode: off-by-default toggle that adds +10s timer cost
          per calculator open. Trains avoidance — the on-test calc is mouse-only
@@ -386,7 +386,7 @@ em.gold{font-style:italic; color:var(--gold-d); font-family:'Playfair Display',s
       <div class="tax-toggle" id="tax-toggle" role="switch" aria-checked="false" tabindex="0"></div>
       <div class="tax-body">
         <div class="tax-ttl">Calculator Tax (+10s/open)</div>
-        <div class="tax-det">When ON, the section clock drops 10 seconds every time you open the on-screen calculator. The real DAT calculator is mouse-click only with no trig/log — top scorers train themselves to avoid it. This toggle simulates that mouse-click cost so you build the avoidance habit. <b>OFF by default</b> — flip it on once you're comfortable with the basic flow.</div>
+        <div class="tax-det">When ON, the section clock drops 10 seconds every time you open the on-screen calculator. The real DAT calculator is mouse-click only with no trig/log, top scorers train themselves to avoid it. This toggle simulates that mouse-click cost so you build the avoidance habit. <b>OFF by default</b>, flip it on once you're comfortable with the basic flow.</div>
       </div>
     </div>
 
@@ -586,7 +586,7 @@ em.gold{font-style:italic; color:var(--gold-d); font-family:'Playfair Display',s
 const QBANK = [
   {q:"A jacket is marked up 25% then discounted 20%. The final price is what % of the original?",
     opts:["100%","105%","95%","80%","115%"], correct:0, diff:"med",
-    tip:"1.25 × 0.80 = 1.00 — the markup and discount cancel exactly."},
+    tip:"1.25 × 0.80 = 1.00: the markup and discount cancel exactly."},
   {q:"If 3x − 7 = 2x + 5, what is x?",
     opts:["−2","2","12","5","−12"], correct:2, diff:"easy",
     tip:"Subtract 2x from both sides: x − 7 = 5, so x = 12."},
@@ -924,10 +924,10 @@ function maybeFireRecommendation(elapsed, curQ){
   let kind = null, body = '', tag = '';
   if (gapSec > 30){
     kind = 'behind'; tag = 'BEHIND';
-    body = `You're ${Math.round(gapSec)}s behind — skip the next hard one and come back to it.`;
+    body = `You're ${Math.round(gapSec)}s behind, skip the next hard one and come back to it.`;
   } else if (gapSec < -60){
     kind = 'ahead'; tag = 'AHEAD';
-    body = `You're ${Math.round(Math.abs(gapSec))}s ahead — slow down on the next 3 to catch the trap answers.`;
+    body = `You're ${Math.round(Math.abs(gapSec))}s ahead, slow down on the next 3 to catch the trap answers.`;
   } else if (Math.abs(gapSec) <= 30){
     // Only fire the "on pace" once per interval window (still useful for confidence).
     kind = 'on'; tag = 'ON PACE';
@@ -1116,7 +1116,7 @@ function finishSection(){
   document.getElementById('r-raw').textContent = actualRaw;
   document.getElementById('r-raw-d').textContent =
     skipped.length>0 ? `+${(skipped.length*0.20).toFixed(1)} expected if you'd guessed those`
-                     : `clean section — nothing left blank`;
+                     : `clean section, nothing left blank`;
 
   document.getElementById('c-actual').textContent = actualRaw;
   document.getElementById('c-blank').textContent = blankAlt;
@@ -1184,7 +1184,7 @@ function renderTwoPassDebrief(queue){
       <b>${shouldSkip.length > shouldNail.length
           ? 'misallocating time on easy q'
           : (shouldNail.length > 0
-             ? 'pass 2 ran short — start skipping earlier'
+             ? 'pass 2 ran short, start skipping earlier'
              : 'clean two-pass run')}</b>
     </div>
   `;
@@ -1454,7 +1454,7 @@ function copyCalcLog(){
   if (navigator.clipboard && navigator.clipboard.writeText){
     navigator.clipboard.writeText(csv).then(
       () => setStatus(`Copied ${entries.length} entr${entries.length===1?'y':'ies'} to clipboard`, true),
-      () => setStatus('Copy failed — try again', false)
+      () => setStatus('Copy failed: try again', false)
     );
   } else {
     // Fallback: drop CSV in a textarea + try execCommand
@@ -1525,6 +1525,6 @@ document.getElementById('b-show-set').addEventListener('click',()=>{
   document.getElementById('setup').style.display='block';
 });
 </script>
-  <script src="/shared/ace-shell.js?v=1" defer></script>
+  <script src="/shared/ace-shell.js?v=3" defer></script>
 </body>
 </html>

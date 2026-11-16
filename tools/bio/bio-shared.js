@@ -59,9 +59,9 @@ const NODES = {
     stageOrder: ["helicase", "ssb", "topo", "primase", "pol3", "pol1", "ligase"],
     stageLabels: ["Stage 1 · place Helicase", "Stage 2 · place SSB proteins", "Stage 3 · place Topoisomerase", "Stage 4 · place Primase", "Stage 5 · place DNA pol III", "Stage 6 · place DNA pol I", "Stage 7 · place DNA ligase", "Complete · all placed"],
     retrievals: {
-      3: { rt:"Right. 5'→3' only — because the incoming dNTP brings the energy in its triphosphate, the 3'-OH attacks the α-phosphate.", wr:"DNA polymerase ONLY adds nucleotides to a free 3'-OH. The energy for the new bond comes from the incoming dNTP's 5'-triphosphate — the existing 3'-OH attacks the incoming α-phosphate. You cannot add to a 5' end because the energy would have to come from the existing chain.", q:"DNA polymerase synthesizes new strands in which direction?", qh:"<b>5' → 3'.</b> The incoming dNTP brings its triphosphate energy; existing 3'-OH attacks the α-phosphate.", ex:"The 5'→3' rule is not arbitrary — it falls out of where the energy is. The incoming dNTP carries a 5'-triphosphate (PPP-dN). The existing chain's 3'-OH attacks the α-phosphate, releasing pyrophosphate and forming the new phosphodiester bond. If you tried to extend in the other direction, the energy would have to come from the existing chain — and a single hydrolysis error would dissolve the whole strand, killing proofreading. The chemistry forces the directionality." },
+      3: { rt:"Right. 5'→3' only: because the incoming dNTP brings the energy in its triphosphate, the 3'-OH attacks the α-phosphate.", wr:"DNA polymerase ONLY adds nucleotides to a free 3'-OH. The energy for the new bond comes from the incoming dNTP's 5'-triphosphate, the existing 3'-OH attacks the incoming α-phosphate. You cannot add to a 5' end because the energy would have to come from the existing chain.", q:"DNA polymerase synthesizes new strands in which direction?", qh:"<b>5' → 3'.</b> The incoming dNTP brings its triphosphate energy; existing 3'-OH attacks the α-phosphate.", ex:"The 5'→3' rule is not arbitrary, it falls out of where the energy is. The incoming dNTP carries a 5'-triphosphate (PPP-dN). The existing chain's 3'-OH attacks the α-phosphate, releasing pyrophosphate and forming the new phosphodiester bond. If you tried to extend in the other direction, the energy would have to come from the existing chain, and a single hydrolysis error would dissolve the whole strand, killing proofreading. The chemistry forces the directionality." },
       2: { rt:"Right. Lagging strand fragments are joined by DNA ligase after pol I removes RNA primer and fills the gap.", wr:"Okazaki fragments are connected in a 3-step relay: pol III synthesizes each fragment (5'→3'), pol I removes the RNA primer and fills the gap with DNA, and DNA ligase seals the final nick with a phosphodiester bond.", q:"Which enzyme seals the nick between Okazaki fragments?", qh:"<b>DNA ligase.</b> Pol I fills the primer gap; ligase seals the nick.", ex:"On the lagging strand, replication happens in pieces (Okazaki fragments) because synthesis must run 5'→3' but the fork moves the other way. Each fragment is primed by primase (RNA primer), extended by DNA pol III, then the RNA primer is removed and replaced with DNA by pol I, leaving a NICK between the fragments. DNA ligase forms the final phosphodiester bond that seals the nick. Without ligase, fragments stay disconnected." },
-      1: { rt:"Right. Topoisomerase cuts and rejoins DNA to relieve supercoiling ahead of the helicase.", wr:"Helicase unzips the double helix, which over-twists the DNA ahead of the fork. Topoisomerase cuts one or both strands, rotates around, and rejoins them — relieving the supercoiling so the fork can keep moving. Quinolone antibiotics target bacterial topoisomerase.", q:"What problem does topoisomerase solve during replication?", qh:"<b>Relieves supercoiling.</b> Helicase unwinding over-twists DNA ahead of the fork; topoisomerase cuts/rotates/rejoins to relax it.", ex:"Helicase unwinding (~3,000 base pairs per minute in E. coli) creates positive supercoils ahead of the fork — imagine twisting one end of a phone cord. Without relief, the fork would seize within seconds. Topoisomerase I makes single-strand cuts; topoisomerase II (gyrase in bacteria) makes double-strand cuts and introduces negative supercoils. Both let DNA rotate freely past the fork, then religate it. Targeting bacterial gyrase is why fluoroquinolones work." },
+      1: { rt:"Right. Topoisomerase cuts and rejoins DNA to relieve supercoiling ahead of the helicase.", wr:"Helicase unzips the double helix, which over-twists the DNA ahead of the fork. Topoisomerase cuts one or both strands, rotates around, and rejoins them, relieving the supercoiling so the fork can keep moving. Quinolone antibiotics target bacterial topoisomerase.", q:"What problem does topoisomerase solve during replication?", qh:"<b>Relieves supercoiling.</b> Helicase unwinding over-twists DNA ahead of the fork; topoisomerase cuts/rotates/rejoins to relax it.", ex:"Helicase unwinding (~3,000 base pairs per minute in E. coli) creates positive supercoils ahead of the fork, imagine twisting one end of a phone cord. Without relief, the fork would seize within seconds. Topoisomerase I makes single-strand cuts; topoisomerase II (gyrase in bacteria) makes double-strand cuts and introduces negative supercoils. Both let DNA rotate freely past the fork, then religate it. Targeting bacterial gyrase is why fluoroquinolones work." },
     },
   },
 
@@ -73,9 +73,9 @@ const NODES = {
     stageOrder: ["sigma", "rnap", "open", "elong", "term"],
     stageLabels: ["Stage 1 · place Sigma factor", "Stage 2 · place RNA polymerase", "Stage 3 · place Open complex", "Stage 4 · place Elongation", "Stage 5 · place Terminator", "Complete · all placed"],
     retrievals: {
-      1: { rt:"Right. Uracil replaces thymine in RNA — pairs with adenine the same way.", wr:"RNA uses U instead of T. The U-A base pair (two hydrogen bonds) is functionally equivalent to T-A. So when transcribing DNA template A, mRNA gets U; template T gives mRNA A; G/C are unchanged.", q:"In RNA, which base replaces thymine?", qh:"<b>Uracil.</b> U pairs with A in RNA just like T does in DNA.", ex:"RNA uses uracil (U) instead of thymine (T). Both pair with adenine via two hydrogen bonds — the functional pairing is identical. T differs from U only by a methyl group. Why two molecules? RNA is short-lived, so U (cheaper to make) is fine; DNA needs long-term stability, so the extra methyl on T discriminates real T from cytosine deamination products. For transcription: DNA template A → mRNA U; T → A; G → C; C → G." },
-      2: { rt:"Right. RNA polymerase reads template 3'→5' and synthesizes RNA 5'→3' (same as DNA pol).", wr:"RNA polymerase, like DNA polymerase, can only add nucleotides to a free 3'-OH. So new RNA grows 5'→3', which means the template strand is read 3'→5'. The sense/coding strand has the same sequence as the mRNA (with T instead of U).", q:"RNA polymerase reads the template strand in which direction?", qh:"<b>3' → 5'.</b> Synthesis runs 5'→3', so the template must be read antiparallel.", ex:"Same directionality rule as DNA pol — the energy comes from the incoming NTP's triphosphate, so the chain grows 5'→3' and the template must be read antiparallel (3'→5'). The TEMPLATE strand is the one being read; the CODING (or sense) strand has the same sequence as the mRNA (with T → U). When DAT shows you a DNA sequence and asks for the mRNA, identify which strand is the template first." },
-      3: { rt:"Right. In eukaryotes the primary transcript is processed: 5' cap, 3' poly-A tail, intron splicing.", wr:"Eukaryotic primary transcript (pre-mRNA) is heavily modified before export: a 7-methylguanosine cap is added to the 5' end (recognition for translation), a poly-A tail of 100-250 A's is added to the 3' end (stability), and introns are spliced out by the spliceosome. Prokaryotes do NONE of this — transcription and translation are coupled.", q:"Which of these does NOT happen to eukaryotic mRNA before it leaves the nucleus?", qh:"Trick — all three (cap, poly-A tail, intron splicing) DO happen. The thing that does NOT happen: translation. Translation occurs in the cytoplasm.", ex:"Three post-transcriptional modifications in eukaryotes: (1) 5' cap (7-methylguanosine), added to protect from exonucleases and signal the ribosome. (2) 3' poly-A tail (100-250 adenines), added for stability. (3) Splicing — the spliceosome removes introns and ligates exons. Alternative splicing lets one gene make multiple proteins. Prokaryotes do NONE of these; their ribosomes can attach to mRNA while transcription is still happening (coupled transcription-translation). On the DAT, distinguish what's pre-mRNA from mature mRNA, and remember translation happens AFTER export." },
+      1: { rt:"Right. Uracil replaces thymine in RNA: pairs with adenine the same way.", wr:"RNA uses U instead of T. The U-A base pair (two hydrogen bonds) is functionally equivalent to T-A. So when transcribing DNA template A, mRNA gets U; template T gives mRNA A; G/C are unchanged.", q:"In RNA, which base replaces thymine?", qh:"<b>Uracil.</b> U pairs with A in RNA just like T does in DNA.", ex:"RNA uses uracil (U) instead of thymine (T). Both pair with adenine via two hydrogen bonds, the functional pairing is identical. T differs from U only by a methyl group. Why two molecules? RNA is short-lived, so U (cheaper to make) is fine; DNA needs long-term stability, so the extra methyl on T discriminates real T from cytosine deamination products. For transcription: DNA template A → mRNA U; T → A; G → C; C → G." },
+      2: { rt:"Right. RNA polymerase reads template 3'→5' and synthesizes RNA 5'→3' (same as DNA pol).", wr:"RNA polymerase, like DNA polymerase, can only add nucleotides to a free 3'-OH. So new RNA grows 5'→3', which means the template strand is read 3'→5'. The sense/coding strand has the same sequence as the mRNA (with T instead of U).", q:"RNA polymerase reads the template strand in which direction?", qh:"<b>3' → 5'.</b> Synthesis runs 5'→3', so the template must be read antiparallel.", ex:"Same directionality rule as DNA pol, the energy comes from the incoming NTP's triphosphate, so the chain grows 5'→3' and the template must be read antiparallel (3'→5'). The TEMPLATE strand is the one being read; the CODING (or sense) strand has the same sequence as the mRNA (with T → U). When DAT shows you a DNA sequence and asks for the mRNA, identify which strand is the template first." },
+      3: { rt:"Right. In eukaryotes the primary transcript is processed: 5' cap, 3' poly-A tail, intron splicing.", wr:"Eukaryotic primary transcript (pre-mRNA) is heavily modified before export: a 7-methylguanosine cap is added to the 5' end (recognition for translation), a poly-A tail of 100-250 A's is added to the 3' end (stability), and introns are spliced out by the spliceosome. Prokaryotes do NONE of this: transcription and translation are coupled.", q:"Which of these does NOT happen to eukaryotic mRNA before it leaves the nucleus?", qh:"Trick: all three (cap, poly-A tail, intron splicing) DO happen. The thing that does NOT happen: translation. Translation occurs in the cytoplasm.", ex:"Three post-transcriptional modifications in eukaryotes: (1) 5' cap (7-methylguanosine), added to protect from exonucleases and signal the ribosome. (2) 3' poly-A tail (100-250 adenines), added for stability. (3) Splicing: the spliceosome removes introns and ligates exons. Alternative splicing lets one gene make multiple proteins. Prokaryotes do NONE of these; their ribosomes can attach to mRNA while transcription is still happening (coupled transcription-translation). On the DAT, distinguish what's pre-mRNA from mature mRNA, and remember translation happens AFTER export." },
     },
   },
 
@@ -88,8 +88,8 @@ const NODES = {
     stageLabels: ["Stage 1 · place Small subunit", "Stage 2 · place Initiator tRNA", "Stage 3 · place Large subunit", "Stage 4 · place Aminoacyl-tRNA", "Stage 5 · place Release factor", "Complete · all placed"],
     retrievals: {
       1: { rt:"Right. Translation goes 5'→3' on the mRNA, N-terminus to C-terminus on the protein.", wr:"The ribosome reads mRNA 5'→3' (same direction it was synthesized). The new protein grows from N-terminus (methionine, the start) to C-terminus. The first amino acid added is at the N-terminus; the last (before the stop codon) is at the C-terminus.", q:"In what direction does the ribosome read the mRNA, and which end of the protein forms first?", qh:"<b>5' → 3' on mRNA; N-terminus first.</b> Start codon (AUG, methionine) sets the N-terminus.", ex:"The ribosome reads the mRNA 5'→3' (same direction the mRNA was synthesized). For each codon, an aminoacyl-tRNA brings the next amino acid; a peptide bond forms between the carboxyl of the growing chain and the amino group of the new amino acid. The protein therefore extends N-terminus → C-terminus. Start codon AUG sets methionine as the first (N-terminal) amino acid. When a stop codon (UAA/UAG/UGA) enters the A-site, release factors trigger termination." },
-      2: { rt:"Right. Three stop codons: UAA, UAG, UGA — none code for an amino acid; release factors trigger termination.", wr:"Three stop codons: UAA, UAG, UGA. None code for an amino acid. When one enters the A-site, no tRNA matches — instead, release factor proteins trigger hydrolysis of the peptidyl-tRNA bond, releasing the finished protein and dissociating the ribosome.", q:"Which of the following is a stop codon?", qh:"<b>UAA, UAG, or UGA</b> — all three. They do not encode amino acids; release factors terminate translation.", ex:"The genetic code has 64 codons (4³). Three of them are stop signals: UAA, UAG, UGA. These do not code for amino acids — when they enter the A-site, no tRNA recognizes them. Instead, release factors (RF1/RF2/RF3 in bacteria) bind and trigger peptide release. AUG is the start (and also codes for methionine internally). Mnemonic: 'U Are Annoying / U Are Gone / U Go Away.' On the DAT, recognize these three sequences instantly." },
-      3: { rt:"Right. The three ribosomal sites: A (aminoacyl, incoming), P (peptidyl, growing chain), E (exit, departing tRNA).", wr:"Three ribosomal sites — A-P-E in left-to-right reading order: A = Aminoacyl, where incoming aa-tRNA binds. P = Peptidyl, where the growing peptide chain sits. E = Exit, where the spent tRNA departs. The cycle is A→P→E: new tRNA enters A, peptide bond forms, ribosome translocates, the tRNA shifts to P, the previous P-tRNA shifts to E and leaves.", q:"What is the function of the A, P, and E sites of the ribosome?", qh:"<b>A = Aminoacyl (incoming tRNA), P = Peptidyl (growing chain), E = Exit.</b> tRNAs cycle A → P → E.", ex:"The 80S eukaryotic ribosome (and 70S prokaryotic) has three tRNA-binding sites. <b>A site:</b> Aminoacyl-tRNA enters here, matching the codon. <b>P site:</b> Peptidyl-tRNA — holds the tRNA carrying the growing peptide chain. <b>E site:</b> Exit — spent tRNA waits to dissociate. Each elongation cycle: aminoacyl-tRNA enters A → peptidyl transferase (a ribozyme of the large subunit) forms the peptide bond between the P-site amino acid and the A-site amino acid → ribosome translocates one codon → the now-empty A site is ready for the next aminoacyl-tRNA. Antibiotics target this cycle: tetracycline blocks A-site binding; chloramphenicol blocks peptidyl transferase." },
+      2: { rt:"Right. Three stop codons: UAA, UAG, UGA, none code for an amino acid; release factors trigger termination.", wr:"Three stop codons: UAA, UAG, UGA. None code for an amino acid. When one enters the A-site, no tRNA matches, instead, release factor proteins trigger hydrolysis of the peptidyl-tRNA bond, releasing the finished protein and dissociating the ribosome.", q:"Which of the following is a stop codon?", qh:"<b>UAA, UAG, or UGA</b>, all three. They do not encode amino acids; release factors terminate translation.", ex:"The genetic code has 64 codons (4³). Three of them are stop signals: UAA, UAG, UGA. These do not code for amino acids, when they enter the A-site, no tRNA recognizes them. Instead, release factors (RF1/RF2/RF3 in bacteria) bind and trigger peptide release. AUG is the start (and also codes for methionine internally). Mnemonic: 'U Are Annoying / U Are Gone / U Go Away.' On the DAT, recognize these three sequences instantly." },
+      3: { rt:"Right. The three ribosomal sites: A (aminoacyl, incoming), P (peptidyl, growing chain), E (exit, departing tRNA).", wr:"Three ribosomal sites: A-P-E in left-to-right reading order: A = Aminoacyl, where incoming aa-tRNA binds. P = Peptidyl, where the growing peptide chain sits. E = Exit, where the spent tRNA departs. The cycle is A→P→E: new tRNA enters A, peptide bond forms, ribosome translocates, the tRNA shifts to P, the previous P-tRNA shifts to E and leaves.", q:"What is the function of the A, P, and E sites of the ribosome?", qh:"<b>A = Aminoacyl (incoming tRNA), P = Peptidyl (growing chain), E = Exit.</b> tRNAs cycle A → P → E.", ex:"The 80S eukaryotic ribosome (and 70S prokaryotic) has three tRNA-binding sites. <b>A site:</b> Aminoacyl-tRNA enters here, matching the codon. <b>P site:</b> Peptidyl-tRNA: holds the tRNA carrying the growing peptide chain. <b>E site:</b> Exit: spent tRNA waits to dissociate. Each elongation cycle: aminoacyl-tRNA enters A → peptidyl transferase (a ribozyme of the large subunit) forms the peptide bond between the P-site amino acid and the A-site amino acid → ribosome translocates one codon → the now-empty A site is ready for the next aminoacyl-tRNA. Antibiotics target this cycle: tetracycline blocks A-site binding; chloramphenicol blocks peptidyl transferase." },
     },
   },
 
@@ -101,9 +101,9 @@ const NODES = {
     stageOrder: ["prophase", "prometaphase", "metaphase", "anaphase", "telophase"],
     stageLabels: ["Stage 1 · place Prophase", "Stage 2 · place Prometaphase", "Stage 3 · place Metaphase", "Stage 4 · place Anaphase", "Stage 5 · place Telophase", "Complete · all placed"],
     retrievals: {
-      1: { rt:"Right. Sister chromatids separate in ANAPHASE — A for Apart.", wr:"Sister chromatids separate at anaphase. Mnemonic: A is for Apart. Until anaphase, each chromosome is two sister chromatids joined at the centromere. At anaphase the cohesin holding them together is cleaved, and spindle fibers pull them to opposite poles.", q:"During which phase of mitosis do sister chromatids separate?", qh:"<b>Anaphase.</b> A = Apart. Cohesin is cleaved; spindle pulls chromatids to opposite poles.", ex:"Sister chromatids — the two identical copies of a chromosome made during S phase — stay joined at the centromere through prophase, prometaphase, and metaphase. At ANAPHASE, the protein cohesin holding them together is cleaved by the enzyme separase, and shortening spindle microtubules pull the now-individual chromatids toward opposite poles. Mnemonic: A is for Apart. By telophase, the two sets of chromosomes have arrived at opposite poles and nuclear envelopes reform. (Note: in meiosis I anaphase, homologous chromosomes separate — sister chromatids stay together until meiosis II anaphase.)" },
-      2: { rt:"Right. The metaphase plate (the cell's equator) is where chromosomes line up in metaphase.", wr:"During metaphase, chromosomes line up along the metaphase plate — an imaginary plane in the cell's middle, equidistant from both poles. Spindle fibers from both poles attach to kinetochores. This is the cell's quality-control checkpoint: the spindle assembly checkpoint won't let anaphase start until every kinetochore is properly attached.", q:"During metaphase, chromosomes align along the:", qh:"<b>Metaphase plate</b> — the cell's equator, equidistant from both poles.", ex:"In metaphase, chromosomes align along the metaphase plate (an imaginary plane equidistant from both centrosomes/poles). This is enforced by the spindle assembly checkpoint (SAC): each chromosome has two kinetochores (one per sister chromatid), and the cell will not allow anaphase to begin until every kinetochore is attached to spindle microtubules from BOTH poles. Once tension is sensed across all chromosomes, the anaphase-promoting complex (APC) is activated and cohesin is cleaved." },
-      3: { rt:"Right. Cytokinesis differs: animal cells pinch via a cleavage furrow; plant cells build a cell plate.", wr:"Cytokinesis (the actual division of the cytoplasm) differs by cell type. Animal cells: a contractile ring of actin/myosin pinches the cell in two via a cleavage furrow. Plant cells: vesicles from the Golgi line up at the equator and fuse to form a cell plate that becomes the new cell wall, dividing the cell from the inside out. The difference is mechanical, not chemical — plants have rigid walls and can't pinch.", q:"How does cytokinesis differ between animal and plant cells?", qh:"<b>Animals pinch (cleavage furrow);</b> plants build a cell plate from the inside out.", ex:"Mitosis itself (nuclear division) is the same in animals and plants. Cytokinesis (cytoplasm division) is mechanically different because plant cells have a rigid cell wall. Animal cells: a contractile ring of actin and myosin forms just under the plasma membrane at the cell's equator, pinching the cell in two — this creates the visible 'cleavage furrow.' Plant cells: vesicles from the Golgi apparatus carrying cell-wall material line up at the equator and fuse, forming a cell plate that grows outward until it meets the existing cell wall. This builds a new cell wall from the inside out — the only mechanically possible way to divide a walled cell." },
+      1: { rt:"Right. Sister chromatids separate in ANAPHASE: A for Apart.", wr:"Sister chromatids separate at anaphase. Mnemonic: A is for Apart. Until anaphase, each chromosome is two sister chromatids joined at the centromere. At anaphase the cohesin holding them together is cleaved, and spindle fibers pull them to opposite poles.", q:"During which phase of mitosis do sister chromatids separate?", qh:"<b>Anaphase.</b> A = Apart. Cohesin is cleaved; spindle pulls chromatids to opposite poles.", ex:"Sister chromatids: the two identical copies of a chromosome made during S phase, stay joined at the centromere through prophase, prometaphase, and metaphase. At ANAPHASE, the protein cohesin holding them together is cleaved by the enzyme separase, and shortening spindle microtubules pull the now-individual chromatids toward opposite poles. Mnemonic: A is for Apart. By telophase, the two sets of chromosomes have arrived at opposite poles and nuclear envelopes reform. (Note: in meiosis I anaphase, homologous chromosomes separate, sister chromatids stay together until meiosis II anaphase.)" },
+      2: { rt:"Right. The metaphase plate (the cell's equator) is where chromosomes line up in metaphase.", wr:"During metaphase, chromosomes line up along the metaphase plate, an imaginary plane in the cell's middle, equidistant from both poles. Spindle fibers from both poles attach to kinetochores. This is the cell's quality-control checkpoint: the spindle assembly checkpoint won't let anaphase start until every kinetochore is properly attached.", q:"During metaphase, chromosomes align along the:", qh:"<b>Metaphase plate</b>, the cell's equator, equidistant from both poles.", ex:"In metaphase, chromosomes align along the metaphase plate (an imaginary plane equidistant from both centrosomes/poles). This is enforced by the spindle assembly checkpoint (SAC): each chromosome has two kinetochores (one per sister chromatid), and the cell will not allow anaphase to begin until every kinetochore is attached to spindle microtubules from BOTH poles. Once tension is sensed across all chromosomes, the anaphase-promoting complex (APC) is activated and cohesin is cleaved." },
+      3: { rt:"Right. Cytokinesis differs: animal cells pinch via a cleavage furrow; plant cells build a cell plate.", wr:"Cytokinesis (the actual division of the cytoplasm) differs by cell type. Animal cells: a contractile ring of actin/myosin pinches the cell in two via a cleavage furrow. Plant cells: vesicles from the Golgi line up at the equator and fuse to form a cell plate that becomes the new cell wall, dividing the cell from the inside out. The difference is mechanical, not chemical, plants have rigid walls and can't pinch.", q:"How does cytokinesis differ between animal and plant cells?", qh:"<b>Animals pinch (cleavage furrow);</b> plants build a cell plate from the inside out.", ex:"Mitosis itself (nuclear division) is the same in animals and plants. Cytokinesis (cytoplasm division) is mechanically different because plant cells have a rigid cell wall. Animal cells: a contractile ring of actin and myosin forms just under the plasma membrane at the cell's equator, pinching the cell in two, this creates the visible 'cleavage furrow.' Plant cells: vesicles from the Golgi apparatus carrying cell-wall material line up at the equator and fuse, forming a cell plate that grows outward until it meets the existing cell wall. This builds a new cell wall from the inside out, the only mechanically possible way to divide a walled cell." },
     },
   },
 
@@ -119,7 +119,7 @@ const NODES = {
     stageOrder: ["tl", "tr", "bl", "br"],
     stageLabels: ["Stage 1 · place Homozygous dom", "Stage 2 · place Heterozygous", "Stage 3 · place Heterozygous", "Stage 4 · place Homozygous rec", "Complete · all placed"],
     retrievals: {
-      1: { rt:"Right. Aa × Aa: phenotypic 3:1 (dominant:recessive); genotypic 1:2:1.", wr:"Two heterozygotes (Aa × Aa) produce: 1 AA + 2 Aa + 1 aa (genotypic 1:2:1). Phenotypically, AA and Aa both show the dominant trait, so the phenotypic ratio is 3:1 (dominant:recessive).", q:"Two heterozygotes (Aa × Aa) cross. Phenotypic ratio of the offspring?", qh:"<b>3 : 1.</b> 1 AA + 2 Aa + 1 aa → 3 dominant phenotype : 1 recessive.", ex:"Mendel's classic monohybrid cross. Aa × Aa gives 1 AA : 2 Aa : 1 aa (the genotypic ratio). Phenotypically, AA and Aa look the same (both show the dominant trait), so 3 of 4 offspring are dominant phenotype and 1 of 4 is recessive — the 3:1 ratio. If a problem asks 'what fraction will show the recessive trait?' the answer is 1/4; 'carriers' (heterozygotes) is 2/4 = 1/2; 'homozygous' is 1/4 AA + 1/4 aa = 1/2." },
+      1: { rt:"Right. Aa × Aa: phenotypic 3:1 (dominant:recessive); genotypic 1:2:1.", wr:"Two heterozygotes (Aa × Aa) produce: 1 AA + 2 Aa + 1 aa (genotypic 1:2:1). Phenotypically, AA and Aa both show the dominant trait, so the phenotypic ratio is 3:1 (dominant:recessive).", q:"Two heterozygotes (Aa × Aa) cross. Phenotypic ratio of the offspring?", qh:"<b>3 : 1.</b> 1 AA + 2 Aa + 1 aa → 3 dominant phenotype : 1 recessive.", ex:"Mendel's classic monohybrid cross. Aa × Aa gives 1 AA : 2 Aa : 1 aa (the genotypic ratio). Phenotypically, AA and Aa look the same (both show the dominant trait), so 3 of 4 offspring are dominant phenotype and 1 of 4 is recessive, the 3:1 ratio. If a problem asks 'what fraction will show the recessive trait?' the answer is 1/4; 'carriers' (heterozygotes) is 2/4 = 1/2; 'homozygous' is 1/4 AA + 1/4 aa = 1/2." },
       2: { rt:"Right. Test cross with the recessive (aa) reveals genotype: AA × aa → all dominant; Aa × aa → 1:1.", wr:"A test cross uses the homozygous recessive (aa) as a tool. If the unknown is AA, all offspring are Aa (all dominant phenotype). If the unknown is Aa, offspring are 50/50 Aa : aa (1:1 phenotype ratio). The offspring phenotype ratio tells you the unknown genotype.", q:"You have a plant showing the dominant phenotype but don't know if it's AA or Aa. How do you find out?", qh:"<b>Test cross with aa.</b> All dominant offspring → AA. 1:1 ratio → Aa.", ex:"The test cross uses the homozygous recessive (aa) as a diagnostic tool. If the unknown plant is AA, the cross is AA × aa → all Aa offspring (all show the dominant phenotype). If the unknown is Aa, the cross is Aa × aa → half Aa (dominant) and half aa (recessive), a 1:1 ratio. Observing the offspring phenotype ratio resolves the unknown genotype. This is one of Mendel's foundational experimental techniques and shows up on every DAT." },
       3: { rt:"Right. Mendel's law of independent assortment: dihybrid heterozygous cross → 9:3:3:1 phenotypic ratio.", wr:"Dihybrid cross AaBb × AaBb (two genes, both heterozygous, independent assortment): 9 A_B_ : 3 A_bb : 3 aaB_ : 1 aabb. This 9:3:3:1 ratio only holds if the two genes are on different chromosomes (or far apart on the same chromosome) AND both alleles show complete dominance.", q:"AaBb × AaBb cross, both genes independently assorting. Phenotypic ratio?", qh:"<b>9 : 3 : 3 : 1.</b> 9 both dominant : 3 dom A only : 3 dom B only : 1 both recessive.", ex:"Dihybrid cross with two heterozygous parents, two unlinked genes (independent assortment): 9:3:3:1 phenotypic ratio. The 9 carries both dominant traits; the two 3s are one dominant and one recessive each; the 1 is both recessive (aabb). This is Mendel's law of independent assortment in numbers. Requires: (1) genes on different chromosomes OR far enough apart on the same chromosome to recombine freely, (2) complete dominance at both loci. Linked genes (close together on the same chromosome) deviate from 9:3:3:1." },
     },
@@ -133,9 +133,9 @@ const NODES = {
     stageOrder: ["rest", "depol", "peak", "repol", "hyper"],
     stageLabels: ["Stage 1 · place Resting", "Stage 2 · place Depolarization", "Stage 3 · place Peak", "Stage 4 · place Repolarization", "Stage 5 · place Hyperpolarization", "Complete · all placed"],
     retrievals: {
-      1: { rt:"Right. Depolarization is driven by voltage-gated Na+ channels opening — Na+ flows IN.", wr:"At threshold (~-55 mV), voltage-gated Na+ channels snap open and Na+ rushes into the cell (down its electrochemical gradient). The membrane potential races toward +30 mV. K+ channels open more slowly and dominate repolarization, not depolarization.", q:"During the depolarization (upstroke) phase of a neuronal action potential, the dominant ion movement is:", qh:"<b>Na+ influx</b> through voltage-gated Na+ channels.", ex:"Action potential phases: (1) Resting (-70 mV), held by K+ leak. (2) Threshold (~-55 mV): voltage-gated Na+ channels open. (3) Depolarization: Na+ rushes IN, membrane shoots toward +30 mV. (4) Peak: Na+ channels inactivate; K+ channels finish opening. (5) Repolarization: K+ flows OUT, membrane drops back. (6) Hyperpolarization: K+ channels close slowly, briefly below -70 mV. (7) Return to rest via Na/K ATPase. The depolarization phase is defined by Na+ influx — the entire upstroke is voltage-gated Na+ opening." },
-      2: { rt:"Right. Refractory period prevents the AP from going backward — Na+ channels can't reopen yet.", wr:"After firing, voltage-gated Na+ channels enter an inactivated state — they can't reopen until the membrane returns to rest. During this absolute refractory period, no new AP can fire at that location, so the wave can only propagate forward. This is why action potentials are unidirectional.", q:"Why can't an action potential travel backwards along the axon?", qh:"<b>Refractory period.</b> Inactivated Na+ channels behind the wave can't reopen; only the membrane ahead can fire.", ex:"Voltage-gated Na+ channels have three states: closed (resting), open (during depolarization), and inactivated (after firing). After an AP, channels enter the inactivated state and CANNOT reopen until the membrane repolarizes — this is the ABSOLUTE refractory period. The region just behind the traveling AP is therefore unable to fire, so the AP can only propagate forward into membrane that is still at rest with closed (but functional) channels. The refractory period sets the maximum firing frequency (~1 ms in fast neurons) and ensures unidirectional propagation." },
-      3: { rt:"Right. Saltatory conduction: myelin insulates internodes; the AP jumps node-to-node.", wr:"In myelinated axons, voltage-gated Na+ channels are concentrated at nodes of Ranvier (gaps in the myelin sheath). The depolarization spreads passively under the myelin (fast, no regeneration needed), then triggers a fresh AP at the next node. The AP appears to JUMP from node to node — 'saltatory' from Latin saltare (to jump). This is dramatically faster than continuous propagation along an unmyelinated axon.", q:"Saltatory conduction in myelinated axons is faster because:", qh:"<b>The action potential 'jumps' between nodes of Ranvier.</b> Myelin insulates internodes; regeneration happens only at nodes.", ex:"Myelin (oligodendrocyte sheaths in CNS, Schwann cells in PNS) electrically insulates the axon segments between nodes of Ranvier. Voltage-gated Na+ channels cluster at the nodes. Passive (electrotonic) spread of the AP under the myelin is fast but decreasing; just before it dies out, it reaches the next node and triggers a fresh AP. The AP appears to LEAP from node to node — 'saltatory' conduction. Larger axon diameter also speeds conduction (less internal resistance), but the diameter effect is general; saltatory specifically refers to the node-jumping. Loss of myelin (MS) catastrophically slows or blocks conduction." },
+      1: { rt:"Right. Depolarization is driven by voltage-gated Na+ channels opening, Na+ flows IN.", wr:"At threshold (~-55 mV), voltage-gated Na+ channels snap open and Na+ rushes into the cell (down its electrochemical gradient). The membrane potential races toward +30 mV. K+ channels open more slowly and dominate repolarization, not depolarization.", q:"During the depolarization (upstroke) phase of a neuronal action potential, the dominant ion movement is:", qh:"<b>Na+ influx</b> through voltage-gated Na+ channels.", ex:"Action potential phases: (1) Resting (-70 mV), held by K+ leak. (2) Threshold (~-55 mV): voltage-gated Na+ channels open. (3) Depolarization: Na+ rushes IN, membrane shoots toward +30 mV. (4) Peak: Na+ channels inactivate; K+ channels finish opening. (5) Repolarization: K+ flows OUT, membrane drops back. (6) Hyperpolarization: K+ channels close slowly, briefly below -70 mV. (7) Return to rest via Na/K ATPase. The depolarization phase is defined by Na+ influx, the entire upstroke is voltage-gated Na+ opening." },
+      2: { rt:"Right. Refractory period prevents the AP from going backward, Na+ channels can't reopen yet.", wr:"After firing, voltage-gated Na+ channels enter an inactivated state, they can't reopen until the membrane returns to rest. During this absolute refractory period, no new AP can fire at that location, so the wave can only propagate forward. This is why action potentials are unidirectional.", q:"Why can't an action potential travel backwards along the axon?", qh:"<b>Refractory period.</b> Inactivated Na+ channels behind the wave can't reopen; only the membrane ahead can fire.", ex:"Voltage-gated Na+ channels have three states: closed (resting), open (during depolarization), and inactivated (after firing). After an AP, channels enter the inactivated state and CANNOT reopen until the membrane repolarizes, this is the ABSOLUTE refractory period. The region just behind the traveling AP is therefore unable to fire, so the AP can only propagate forward into membrane that is still at rest with closed (but functional) channels. The refractory period sets the maximum firing frequency (~1 ms in fast neurons) and ensures unidirectional propagation." },
+      3: { rt:"Right. Saltatory conduction: myelin insulates internodes; the AP jumps node-to-node.", wr:"In myelinated axons, voltage-gated Na+ channels are concentrated at nodes of Ranvier (gaps in the myelin sheath). The depolarization spreads passively under the myelin (fast, no regeneration needed), then triggers a fresh AP at the next node. The AP appears to JUMP from node to node, 'saltatory' from Latin saltare (to jump). This is dramatically faster than continuous propagation along an unmyelinated axon.", q:"Saltatory conduction in myelinated axons is faster because:", qh:"<b>The action potential 'jumps' between nodes of Ranvier.</b> Myelin insulates internodes; regeneration happens only at nodes.", ex:"Myelin (oligodendrocyte sheaths in CNS, Schwann cells in PNS) electrically insulates the axon segments between nodes of Ranvier. Voltage-gated Na+ channels cluster at the nodes. Passive (electrotonic) spread of the AP under the myelin is fast but decreasing; just before it dies out, it reaches the next node and triggers a fresh AP. The AP appears to LEAP from node to node, 'saltatory' conduction. Larger axon diameter also speeds conduction (less internal resistance), but the diameter effect is general; saltatory specifically refers to the node-jumping. Loss of myelin (MS) catastrophically slows or blocks conduction." },
     },
   },
 
@@ -147,8 +147,8 @@ const NODES = {
     stageOrder: ["propi", "metai", "anai", "metaii", "anaii"],
     stageLabels: ["Stage 1 · place Prophase I", "Stage 2 · place Metaphase I", "Stage 3 · place Anaphase I", "Stage 4 · place Metaphase II", "Stage 5 · place Anaphase II", "Complete · all placed"],
     retrievals: {
-      1: { rt:"Right. Anaphase I separates HOMOLOGS; Anaphase II separates sister chromatids. The reductional vs equational split.", wr:"Two-stage separation: ANAPHASE I separates homologous chromosome PAIRS (the reductional division — ploidy drops from diploid to haploid). ANAPHASE II separates SISTER CHROMATIDS within each haploid cell (the equational division — same ploidy, half the DNA mass per chromosome).", q:"In meiosis, when do sister chromatids separate?", qh:"<b>Anaphase II.</b> Anaphase I separates homologous chromosome pairs; Anaphase II separates sister chromatids (like mitosis).", ex:"Meiosis has two divisions. <b>Meiosis I (reductional):</b> homologous chromosome pairs (tetrads, 4 chromatids each) separate at Anaphase I. Each daughter cell ends up haploid (n) but each chromosome is still two sister chromatids joined at the centromere. <b>Meiosis II (equational):</b> looks like mitosis on a haploid cell — sister chromatids separate at Anaphase II. Final result: 4 haploid daughter cells, each with single chromatids. The DAT loves to ask which anaphase does which: anaphase I = homologs apart, anaphase II = sisters apart." },
-      2: { rt:"Right. Crossing over and independent assortment in meiosis I create genetic diversity.", wr:"Two sources of genetic diversity in meiosis I: (1) CROSSING OVER in prophase I — homologous chromosomes pair up (synapsis), exchange segments at chiasmata. (2) INDEPENDENT ASSORTMENT in metaphase I — each tetrad lines up independently of every other, so maternal/paternal contributions to each chromosome are randomized. For humans (23 pairs): 2^23 ≈ 8.4 million arrangements before crossing over.", q:"What two mechanisms in meiosis I generate genetic diversity in the gametes?", qh:"<b>Crossing over</b> (prophase I) + <b>independent assortment</b> (metaphase I). 2^23 arrangements in humans before crossover.", ex:"Two genetic-shuffling mechanisms in meiosis I: <b>Crossing over</b> (also called recombination): in prophase I, homologous chromosomes pair up tightly (synapsis) and form chiasmata where non-sister chromatids exchange segments. This creates new combinations of linked alleles. <b>Independent assortment</b>: at metaphase I, each tetrad orients on the spindle independently of every other tetrad. For an organism with n chromosome pairs, this gives 2^n possible arrangements (humans: 2^23 ≈ 8.4 million). Together these two mechanisms make every gamete genetically unique. Fertilization adds a third layer of randomness." },
+      1: { rt:"Right. Anaphase I separates HOMOLOGS; Anaphase II separates sister chromatids. The reductional vs equational split.", wr:"Two-stage separation: ANAPHASE I separates homologous chromosome PAIRS (the reductional division, ploidy drops from diploid to haploid). ANAPHASE II separates SISTER CHROMATIDS within each haploid cell (the equational division, same ploidy, half the DNA mass per chromosome).", q:"In meiosis, when do sister chromatids separate?", qh:"<b>Anaphase II.</b> Anaphase I separates homologous chromosome pairs; Anaphase II separates sister chromatids (like mitosis).", ex:"Meiosis has two divisions. <b>Meiosis I (reductional):</b> homologous chromosome pairs (tetrads, 4 chromatids each) separate at Anaphase I. Each daughter cell ends up haploid (n) but each chromosome is still two sister chromatids joined at the centromere. <b>Meiosis II (equational):</b> looks like mitosis on a haploid cell, sister chromatids separate at Anaphase II. Final result: 4 haploid daughter cells, each with single chromatids. The DAT loves to ask which anaphase does which: anaphase I = homologs apart, anaphase II = sisters apart." },
+      2: { rt:"Right. Crossing over and independent assortment in meiosis I create genetic diversity.", wr:"Two sources of genetic diversity in meiosis I: (1) CROSSING OVER in prophase I, homologous chromosomes pair up (synapsis), exchange segments at chiasmata. (2) INDEPENDENT ASSORTMENT in metaphase I, each tetrad lines up independently of every other, so maternal/paternal contributions to each chromosome are randomized. For humans (23 pairs): 2^23 ≈ 8.4 million arrangements before crossing over.", q:"What two mechanisms in meiosis I generate genetic diversity in the gametes?", qh:"<b>Crossing over</b> (prophase I) + <b>independent assortment</b> (metaphase I). 2^23 arrangements in humans before crossover.", ex:"Two genetic-shuffling mechanisms in meiosis I: <b>Crossing over</b> (also called recombination): in prophase I, homologous chromosomes pair up tightly (synapsis) and form chiasmata where non-sister chromatids exchange segments. This creates new combinations of linked alleles. <b>Independent assortment</b>: at metaphase I, each tetrad orients on the spindle independently of every other tetrad. For an organism with n chromosome pairs, this gives 2^n possible arrangements (humans: 2^23 ≈ 8.4 million). Together these two mechanisms make every gamete genetically unique. Fertilization adds a third layer of randomness." },
       3: { rt:"Right. Nondisjunction → aneuploidy. Most common: trisomy 21 (Down syndrome) from meiosis I nondisjunction.", wr:"Nondisjunction is failure of chromosomes (in meiosis I) or sister chromatids (in meiosis II) to separate properly. The result is aneuploidy: gametes with an extra or missing chromosome. Most common viable trisomy in humans: trisomy 21 (Down syndrome), which arises most often from meiosis I nondisjunction in the egg. Other trisomies (13, 18) are viable but severely affected; trisomy of most autosomes is lethal.", q:"Failure of chromosome separation during meiosis is called:", qh:"<b>Nondisjunction.</b> Produces gametes with extra or missing chromosomes (aneuploidy). Trisomy 21 is the classic example.", ex:"Nondisjunction = chromosomes/chromatids that should separate during anaphase do not. Meiosis I nondisjunction: a homologous pair fails to separate → both copies go to the same daughter cell → 2 gametes with extra chromosome (trisomic when fertilized) and 2 with missing chromosome (monosomic). Meiosis II nondisjunction: sister chromatids fail to separate → 1 disomic gamete + 1 nullisomic gamete + 2 normal. Most aneuploid embryos are nonviable; the surviving exceptions: trisomy 21 (Down), trisomy 18 (Edwards), trisomy 13 (Patau), and sex-chromosome aneuploidies (XO Turner, XXY Klinefelter, XYY, XXX). Maternal age increases meiosis I nondisjunction risk because eggs are arrested in prophase I until ovulation." },
     },
   },
@@ -161,9 +161,9 @@ const NODES = {
     stageOrder: ["invest1", "pfk", "split", "payoff1", "payoff2"],
     stageLabels: ["Stage 1 · place Glucose &rarr; G6P", "Stage 2 · place F6P &rarr; F1,6BP", "Stage 3 · place F1,6BP &rarr; 2 G3P", "Stage 4 · place 2 G3P &rarr; 2 1,3BPG", "Stage 5 · place &rarr; 2 pyruvate", "Complete · all placed"],
     retrievals: {
-      1: { rt:"Right. Net 2 ATP + 2 NADH + 2 pyruvate per glucose. Substrate-level phosphorylation, no O₂ required.", wr:"Glycolysis nets 2 ATP (made 4, invested 2), 2 NADH, and 2 pyruvate per glucose. All in cytoplasm, anaerobic — no oxygen required. ATP here is made by substrate-level phosphorylation (direct phosphate transfer), not by the ETC.", q:"Glycolysis nets how much ATP per glucose?", qh:"<b>2 ATP (net).</b> Makes 4, invests 2. Plus 2 NADH and 2 pyruvate.", ex:"Glycolysis runs in TWO halves. Investment phase (steps 1-3): invest 2 ATP to phosphorylate glucose and trap it as F1,6BP. Payoff phase (steps 6-10): generate 4 ATP and 2 NADH from the two G3P molecules. NET = 4 − 2 = 2 ATP. Plus 2 NADH (which will yield more ATP in the ETC, if O₂ is present). Plus 2 pyruvate (which enters Krebs aerobically, or fermentation anaerobically). Glycolysis is universal — it's in every cell on Earth, in the cytoplasm, and doesn't require oxygen." },
-      2: { rt:"Right. PFK-1 (phosphofructokinase) is the rate-limiting enzyme and the major regulation point.", wr:"PFK-1 catalyzes F6P → F1,6BP, the most thermodynamically irreversible step of glycolysis. It's allosterically inhibited by high ATP (cell is energy-rich, slow down) and citrate (Krebs is backed up), and activated by AMP and F2,6BP (cell is energy-poor, speed up). This is the master regulatory switch for the whole pathway.", q:"Which enzyme is the rate-limiting step of glycolysis?", qh:"<b>Phosphofructokinase-1 (PFK-1).</b> Allosterically inhibited by ATP/citrate; activated by AMP.", ex:"Of the three irreversible steps of glycolysis (hexokinase, PFK-1, pyruvate kinase), PFK-1 is the major regulatory choke point. It catalyzes F6P + ATP → F1,6BP + ADP — the first committed step (after this point, the substrate is committed to glycolysis). Allosteric regulation: ATP and citrate INHIBIT (cell has plenty of energy or Krebs is full); AMP and F2,6BP ACTIVATE (cell needs energy). PFK-1 is the integration point between cellular energy state and pathway flux. Hexokinase is also regulated (by its product G6P) but PFK-1 is THE rate-limiting answer on the DAT." },
-      3: { rt:"Right. Anaerobic: pyruvate → lactate (animals) or ethanol + CO₂ (yeast). Regenerates NAD+ for glycolysis to continue.", wr:"Without oxygen, the ETC can't run, so NADH can't be reoxidized → glycolysis would stop (no NAD+ available). Fermentation solves this: pyruvate accepts electrons from NADH, regenerating NAD+. In animals: pyruvate → lactate (lactate dehydrogenase). In yeast: pyruvate → acetaldehyde + CO₂ → ethanol. No ATP is made by fermentation itself; it just keeps glycolysis going.", q:"In the absence of oxygen, what happens to pyruvate in animal cells?", qh:"<b>Pyruvate → lactate</b> (lactate dehydrogenase). Regenerates NAD+ to keep glycolysis running.", ex:"Anaerobic glycolysis needs a way to regenerate NAD+ (consumed when G3P → 1,3-BPG produces NADH). Without O₂, the ETC can't reoxidize NADH → no NAD+ → glycolysis halts. Fermentation rescues this. In animal muscle and RBCs: pyruvate + NADH → lactate + NAD+ via lactate dehydrogenase. In yeast: pyruvate → acetaldehyde + CO₂ → ethanol + NAD+ (alcoholic fermentation). Neither pathway makes ATP — the only ATP from anaerobic glucose metabolism is the 2 from glycolysis itself. Lactate accumulation causes the muscle burn during intense exercise; lactate is later sent to the liver (Cori cycle) to be rebuilt into glucose." },
+      1: { rt:"Right. Net 2 ATP + 2 NADH + 2 pyruvate per glucose. Substrate-level phosphorylation, no O₂ required.", wr:"Glycolysis nets 2 ATP (made 4, invested 2), 2 NADH, and 2 pyruvate per glucose. All in cytoplasm, anaerobic, no oxygen required. ATP here is made by substrate-level phosphorylation (direct phosphate transfer), not by the ETC.", q:"Glycolysis nets how much ATP per glucose?", qh:"<b>2 ATP (net).</b> Makes 4, invests 2. Plus 2 NADH and 2 pyruvate.", ex:"Glycolysis runs in TWO halves. Investment phase (steps 1-3): invest 2 ATP to phosphorylate glucose and trap it as F1,6BP. Payoff phase (steps 6-10): generate 4 ATP and 2 NADH from the two G3P molecules. NET = 4 − 2 = 2 ATP. Plus 2 NADH (which will yield more ATP in the ETC, if O₂ is present). Plus 2 pyruvate (which enters Krebs aerobically, or fermentation anaerobically). Glycolysis is universal: it's in every cell on Earth, in the cytoplasm, and doesn't require oxygen." },
+      2: { rt:"Right. PFK-1 (phosphofructokinase) is the rate-limiting enzyme and the major regulation point.", wr:"PFK-1 catalyzes F6P → F1,6BP, the most thermodynamically irreversible step of glycolysis. It's allosterically inhibited by high ATP (cell is energy-rich, slow down) and citrate (Krebs is backed up), and activated by AMP and F2,6BP (cell is energy-poor, speed up). This is the master regulatory switch for the whole pathway.", q:"Which enzyme is the rate-limiting step of glycolysis?", qh:"<b>Phosphofructokinase-1 (PFK-1).</b> Allosterically inhibited by ATP/citrate; activated by AMP.", ex:"Of the three irreversible steps of glycolysis (hexokinase, PFK-1, pyruvate kinase), PFK-1 is the major regulatory choke point. It catalyzes F6P + ATP → F1,6BP + ADP, the first committed step (after this point, the substrate is committed to glycolysis). Allosteric regulation: ATP and citrate INHIBIT (cell has plenty of energy or Krebs is full); AMP and F2,6BP ACTIVATE (cell needs energy). PFK-1 is the integration point between cellular energy state and pathway flux. Hexokinase is also regulated (by its product G6P) but PFK-1 is THE rate-limiting answer on the DAT." },
+      3: { rt:"Right. Anaerobic: pyruvate → lactate (animals) or ethanol + CO₂ (yeast). Regenerates NAD+ for glycolysis to continue.", wr:"Without oxygen, the ETC can't run, so NADH can't be reoxidized → glycolysis would stop (no NAD+ available). Fermentation solves this: pyruvate accepts electrons from NADH, regenerating NAD+. In animals: pyruvate → lactate (lactate dehydrogenase). In yeast: pyruvate → acetaldehyde + CO₂ → ethanol. No ATP is made by fermentation itself; it just keeps glycolysis going.", q:"In the absence of oxygen, what happens to pyruvate in animal cells?", qh:"<b>Pyruvate → lactate</b> (lactate dehydrogenase). Regenerates NAD+ to keep glycolysis running.", ex:"Anaerobic glycolysis needs a way to regenerate NAD+ (consumed when G3P → 1,3-BPG produces NADH). Without O₂, the ETC can't reoxidize NADH → no NAD+ → glycolysis halts. Fermentation rescues this. In animal muscle and RBCs: pyruvate + NADH → lactate + NAD+ via lactate dehydrogenase. In yeast: pyruvate → acetaldehyde + CO₂ → ethanol + NAD+ (alcoholic fermentation). Neither pathway makes ATP: the only ATP from anaerobic glucose metabolism is the 2 from glycolysis itself. Lactate accumulation causes the muscle burn during intense exercise; lactate is later sent to the liver (Cori cycle) to be rebuilt into glucose." },
     },
   },
 
@@ -175,9 +175,9 @@ const NODES = {
     stageOrder: ["water", "carb", "lipid", "protein", "nucleic"],
     stageLabels: ["Stage 1 · place Water", "Stage 2 · place Glucose", "Stage 3 · place Triglyceride", "Stage 4 · place Polypeptide", "Stage 5 · place DNA / ATP", "Complete · all placed"],
     retrievals: {
-      1: { rt:"Right. Hydrogen bonding gives water its anomalous high specific heat, surface tension, and solid-less-dense-than-liquid behavior.", wr:"Water's bizarre properties (high SH, high heat of vaporization, high surface tension, ice floats) all trace back to hydrogen bonding between H₂O molecules. Each water can H-bond to 4 others (lone pairs on O accept; H atoms donate). This network requires energy to disrupt — hence high SH and vaporization energy — and the open lattice structure of ice is less dense than liquid water.", q:"Hydrogen bonding gives water all the following properties EXCEPT:", qh:"<b>Low surface tension</b> — actually water has UNUSUALLY HIGH surface tension because of H-bonding. The other properties (high SH, high heat of vap, ice floats) are all H-bond consequences.", ex:"Hydrogen bonds between water molecules are responsible for nearly every 'weird' property of water. High specific heat (4.18 J/g·K) — H-bonds absorb energy as kinetic motion increases. High heat of vaporization (40.7 kJ/mol) — turning water to steam requires breaking ALL the H-bonds. HIGH surface tension — surface H₂O molecules H-bond only inward, pulling tightly. Solid less dense than liquid — ice forms an open hexagonal lattice; liquid water is more compact. Universal solvent — H-bonds with polar/ionic solutes. The lone pairs on oxygen + the bent geometry are the structural origin." },
-      2: { rt:"Right. The hydrophobic effect is the single biggest driver of protein tertiary folding — entropy-driven.", wr:"Tertiary structure is dominated by the HYDROPHOBIC EFFECT — nonpolar R-groups bury in the protein core to release ordered water back to bulk solvent. This is entropy-driven (released water gains rotational/translational freedom). H-bonds, disulfides, salt bridges, and van der Waals interactions then lock the conformation. Peptide bonds hold primary; backbone H-bonds hold secondary.", q:"The dominant driver of protein tertiary folding is:", qh:"<b>The hydrophobic effect</b> — nonpolar R-groups bury in the core, releasing ordered water (entropy gain).", ex:"Protein folding is not driven by enthalpic 'attractive forces' as much as it's driven by the entropy of WATER. When a hydrophobic R-group is exposed to water, the surrounding waters form an ordered cage (low entropy). Burying the R-group in the protein interior releases those waters back to disordered bulk (high entropy). Sum across all hydrophobic residues = massive entropy gain. This is the HYDROPHOBIC EFFECT. Other interactions (H-bonds between R-groups, disulfide bridges, salt bridges, van der Waals) then lock the conformation. Same principle drives bilayer self-assembly and detergent micelles. Knowing 'hydrophobic effect first, locking forces second' is the DAT-level answer." },
-      3: { rt:"Right. The four biomolecule families: carbohydrates (4C/g energy), lipids (9C/g, hydrophobic), proteins (function), nucleic acids (info).", wr:"Four biomolecule families: (1) CARBOHYDRATES — energy + structure, 4 cal/g, glucose/glycogen/starch/cellulose. (2) LIPIDS — energy + membranes, 9 cal/g (most dense), hydrophobic, fats/phospholipids/cholesterol. (3) PROTEINS — function (enzymes, transport, structure, hormones), built from 20 amino acids. (4) NUCLEIC ACIDS — information storage (DNA) and transfer (RNA, ATP). All four are polymers (except lipids) built by condensation (releases water).", q:"Which biomolecule family stores the most energy per gram?", qh:"<b>Lipids</b> — 9 cal/g. Carbs and proteins are both 4 cal/g.", ex:"Energy density by biomolecule family: LIPIDS = 9 cal/g (the densest energy store — that's why fat is the body's long-term energy reserve). CARBOHYDRATES and PROTEINS both = 4 cal/g. Why lipids are denser: highly reduced carbon (lots of C-H bonds available to give up electrons in oxidation), hydrophobic (no water-of-hydration penalty in storage). Carbs are partially oxidized already (lots of C-OH bonds). Proteins aren't normally used for energy unless other sources are depleted (the body breaks down muscle as a last resort). Nucleic acids are info molecules, not energy stores — though ATP (a nucleotide) is the immediate energy currency." },
+      1: { rt:"Right. Hydrogen bonding gives water its anomalous high specific heat, surface tension, and solid-less-dense-than-liquid behavior.", wr:"Water's bizarre properties (high SH, high heat of vaporization, high surface tension, ice floats) all trace back to hydrogen bonding between H₂O molecules. Each water can H-bond to 4 others (lone pairs on O accept; H atoms donate). This network requires energy to disrupt, hence high SH and vaporization energy, and the open lattice structure of ice is less dense than liquid water.", q:"Hydrogen bonding gives water all the following properties EXCEPT:", qh:"<b>Low surface tension</b>, actually water has UNUSUALLY HIGH surface tension because of H-bonding. The other properties (high SH, high heat of vap, ice floats) are all H-bond consequences.", ex:"Hydrogen bonds between water molecules are responsible for nearly every 'weird' property of water. High specific heat (4.18 J/g·K): H-bonds absorb energy as kinetic motion increases. High heat of vaporization (40.7 kJ/mol): turning water to steam requires breaking ALL the H-bonds. HIGH surface tension: surface H₂O molecules H-bond only inward, pulling tightly. Solid less dense than liquid: ice forms an open hexagonal lattice; liquid water is more compact. Universal solvent: H-bonds with polar/ionic solutes. The lone pairs on oxygen + the bent geometry are the structural origin." },
+      2: { rt:"Right. The hydrophobic effect is the single biggest driver of protein tertiary folding, entropy-driven.", wr:"Tertiary structure is dominated by the HYDROPHOBIC EFFECT, nonpolar R-groups bury in the protein core to release ordered water back to bulk solvent. This is entropy-driven (released water gains rotational/translational freedom). H-bonds, disulfides, salt bridges, and van der Waals interactions then lock the conformation. Peptide bonds hold primary; backbone H-bonds hold secondary.", q:"The dominant driver of protein tertiary folding is:", qh:"<b>The hydrophobic effect</b>, nonpolar R-groups bury in the core, releasing ordered water (entropy gain).", ex:"Protein folding is not driven by enthalpic 'attractive forces' as much as it's driven by the entropy of WATER. When a hydrophobic R-group is exposed to water, the surrounding waters form an ordered cage (low entropy). Burying the R-group in the protein interior releases those waters back to disordered bulk (high entropy). Sum across all hydrophobic residues = massive entropy gain. This is the HYDROPHOBIC EFFECT. Other interactions (H-bonds between R-groups, disulfide bridges, salt bridges, van der Waals) then lock the conformation. Same principle drives bilayer self-assembly and detergent micelles. Knowing 'hydrophobic effect first, locking forces second' is the DAT-level answer." },
+      3: { rt:"Right. The four biomolecule families: carbohydrates (4C/g energy), lipids (9C/g, hydrophobic), proteins (function), nucleic acids (info).", wr:"Four biomolecule families: (1) CARBOHYDRATES: energy + structure, 4 cal/g, glucose/glycogen/starch/cellulose. (2) LIPIDS: energy + membranes, 9 cal/g (most dense), hydrophobic, fats/phospholipids/cholesterol. (3) PROTEINS: function (enzymes, transport, structure, hormones), built from 20 amino acids. (4) NUCLEIC ACIDS: information storage (DNA) and transfer (RNA, ATP). All four are polymers (except lipids) built by condensation (releases water).", q:"Which biomolecule family stores the most energy per gram?", qh:"<b>Lipids</b>, 9 cal/g. Carbs and proteins are both 4 cal/g.", ex:"Energy density by biomolecule family: LIPIDS = 9 cal/g (the densest energy store, that's why fat is the body's long-term energy reserve). CARBOHYDRATES and PROTEINS both = 4 cal/g. Why lipids are denser: highly reduced carbon (lots of C-H bonds available to give up electrons in oxidation), hydrophobic (no water-of-hydration penalty in storage). Carbs are partially oxidized already (lots of C-OH bonds). Proteins aren't normally used for energy unless other sources are depleted (the body breaks down muscle as a last resort). Nucleic acids are info molecules, not energy stores, though ATP (a nucleotide) is the immediate energy currency." },
     },
   },
 
@@ -189,9 +189,9 @@ const NODES = {
     stageOrder: ["mono", "di", "starch", "glycogen", "cell"],
     stageLabels: ["Stage 1 · place Glucose", "Stage 2 · place Sucrose", "Stage 3 · place Starch", "Stage 4 · place Glycogen", "Stage 5 · place Cellulose", "Complete · all placed"],
     retrievals: {
-      1: { rt:"Right. Sucrose = glucose + fructose (α-1,2 glycosidic bond). Maltose = glucose + glucose; lactose = glucose + galactose.", wr:"Three common disaccharides: SUCROSE (table sugar) = glucose + fructose. MALTOSE (from starch breakdown) = glucose + glucose. LACTOSE (milk sugar) = glucose + galactose. All formed by condensation (water released); all broken by hydrolysis (water added).", q:"Sucrose is built from which two monosaccharides?", qh:"<b>Glucose + fructose</b>, joined by an α-1,2 glycosidic bond.", ex:"Disaccharides are formed by condensation reactions (a water molecule is released) and broken by hydrolysis (a water molecule is added). The three to memorize: SUCROSE (glucose + fructose) — table sugar. MALTOSE (glucose + glucose) — from starch digestion. LACTOSE (glucose + galactose) — milk sugar; lactose intolerance is lactase deficiency. Each pair is joined by a specific glycosidic bond (sucrose α-1,2, maltose α-1,4, lactose β-1,4). On the DAT, you mostly need to know which monomers make which disaccharide." },
-      2: { rt:"Right. Starch and glycogen use α(1→4) bonds (digestible by humans); cellulose uses β(1→4) bonds (not digestible).", wr:"Glucose polymers differ in the BOND TYPE: STARCH and GLYCOGEN use α(1→4) glycosidic bonds — humans have amylase + maltase to break these. CELLULOSE uses β(1→4) bonds — humans LACK the enzyme cellulase, so we can't digest plant cell walls. Termites and ruminants use symbiotic bacteria. The bond difference is just an OH orientation, but it makes the molecules completely different in 3D shape and digestibility.", q:"Why can humans digest starch but NOT cellulose, even though both are glucose polymers?", qh:"<b>Different bond type.</b> Starch uses α(1→4); cellulose uses β(1→4). Humans lack β-glucosidase (cellulase).", ex:"Both starch and cellulose are glucose polymers, but the glycosidic bond orientation is different. STARCH and GLYCOGEN use α(1→4) bonds (with α(1→6) branches in glycogen) — these create coiled, easily-digested chains. Humans have amylase (in saliva and pancreas) and maltase (intestinal brush border) that cleave α bonds. CELLULOSE uses β(1→4) bonds — these create rigid, straight chains that pack into the structural fibrils of plant cell walls. Humans lack cellulase (β-1,4 glucosidase), so cellulose passes through as fiber. Ruminants (cows, sheep) and termites carry symbiotic bacteria that DO have cellulase. The fundamental lesson: a tiny change in stereochemistry (axial vs equatorial OH) creates a completely different biological molecule." },
-      3: { rt:"Right. Glycogen is the animal storage polysaccharide; starch is the plant equivalent. Both are α(1→4) with α(1→6) branches.", wr:"Glycogen = animal storage form of glucose (in liver + muscle). Starch = plant storage form (in seeds, tubers, fruit). Both are α(1→4) glucose chains with α(1→6) branch points. Glycogen is MORE BRANCHED than starch — branches every ~10 residues vs ~25 — which provides more chain-end access for fast mobilization during exercise or fasting.", q:"Glycogen is the animal storage form of glucose. What is the plant equivalent?", qh:"<b>Starch.</b> Both are α(1→4) glucose polymers with α(1→6) branches; glycogen is more branched.", ex:"Animals store glucose as glycogen (in liver + skeletal muscle); plants store glucose as starch (amylose + amylopectin in seeds, tubers, fruit). Both are α(1→4) glucose polymers with α(1→6) branches. Glycogen is MORE branched — branches every 8-12 glucose units, vs ~25 for amylopectin. More branches = more chain ends = more sites where glycogen phosphorylase can release glucose-1-phosphate during fasting or exercise. Liver glycogen maintains blood glucose; muscle glycogen powers contraction (can't release to blood because muscle lacks glucose-6-phosphatase). Insulin stimulates glycogenesis; glucagon and epinephrine stimulate glycogenolysis." },
+      1: { rt:"Right. Sucrose = glucose + fructose (α-1,2 glycosidic bond). Maltose = glucose + glucose; lactose = glucose + galactose.", wr:"Three common disaccharides: SUCROSE (table sugar) = glucose + fructose. MALTOSE (from starch breakdown) = glucose + glucose. LACTOSE (milk sugar) = glucose + galactose. All formed by condensation (water released); all broken by hydrolysis (water added).", q:"Sucrose is built from which two monosaccharides?", qh:"<b>Glucose + fructose</b>, joined by an α-1,2 glycosidic bond.", ex:"Disaccharides are formed by condensation reactions (a water molecule is released) and broken by hydrolysis (a water molecule is added). The three to memorize: SUCROSE (glucose + fructose), table sugar. MALTOSE (glucose + glucose), from starch digestion. LACTOSE (glucose + galactose), milk sugar; lactose intolerance is lactase deficiency. Each pair is joined by a specific glycosidic bond (sucrose α-1,2, maltose α-1,4, lactose β-1,4). On the DAT, you mostly need to know which monomers make which disaccharide." },
+      2: { rt:"Right. Starch and glycogen use α(1→4) bonds (digestible by humans); cellulose uses β(1→4) bonds (not digestible).", wr:"Glucose polymers differ in the BOND TYPE: STARCH and GLYCOGEN use α(1→4) glycosidic bonds: humans have amylase + maltase to break these. CELLULOSE uses β(1→4) bonds: humans LACK the enzyme cellulase, so we can't digest plant cell walls. Termites and ruminants use symbiotic bacteria. The bond difference is just an OH orientation, but it makes the molecules completely different in 3D shape and digestibility.", q:"Why can humans digest starch but NOT cellulose, even though both are glucose polymers?", qh:"<b>Different bond type.</b> Starch uses α(1→4); cellulose uses β(1→4). Humans lack β-glucosidase (cellulase).", ex:"Both starch and cellulose are glucose polymers, but the glycosidic bond orientation is different. STARCH and GLYCOGEN use α(1→4) bonds (with α(1→6) branches in glycogen): these create coiled, easily-digested chains. Humans have amylase (in saliva and pancreas) and maltase (intestinal brush border) that cleave α bonds. CELLULOSE uses β(1→4) bonds: these create rigid, straight chains that pack into the structural fibrils of plant cell walls. Humans lack cellulase (β-1,4 glucosidase), so cellulose passes through as fiber. Ruminants (cows, sheep) and termites carry symbiotic bacteria that DO have cellulase. The fundamental lesson: a tiny change in stereochemistry (axial vs equatorial OH) creates a completely different biological molecule." },
+      3: { rt:"Right. Glycogen is the animal storage polysaccharide; starch is the plant equivalent. Both are α(1→4) with α(1→6) branches.", wr:"Glycogen = animal storage form of glucose (in liver + muscle). Starch = plant storage form (in seeds, tubers, fruit). Both are α(1→4) glucose chains with α(1→6) branch points. Glycogen is MORE BRANCHED than starch, branches every ~10 residues vs ~25, which provides more chain-end access for fast mobilization during exercise or fasting.", q:"Glycogen is the animal storage form of glucose. What is the plant equivalent?", qh:"<b>Starch.</b> Both are α(1→4) glucose polymers with α(1→6) branches; glycogen is more branched.", ex:"Animals store glucose as glycogen (in liver + skeletal muscle); plants store glucose as starch (amylose + amylopectin in seeds, tubers, fruit). Both are α(1→4) glucose polymers with α(1→6) branches. Glycogen is MORE branched: branches every 8-12 glucose units, vs ~25 for amylopectin. More branches = more chain ends = more sites where glycogen phosphorylase can release glucose-1-phosphate during fasting or exercise. Liver glycogen maintains blood glucose; muscle glycogen powers contraction (can't release to blood because muscle lacks glucose-6-phosphatase). Insulin stimulates glycogenesis; glucagon and epinephrine stimulate glycogenolysis." },
     },
   },
 
@@ -203,9 +203,9 @@ const NODES = {
     stageOrder: ["trig-sat", "trig-unsat", "phos", "ster", "wax"],
     stageLabels: ["Stage 1 · place Animal fat", "Stage 2 · place Vegetable oil", "Stage 3 · place Phospholipid", "Stage 4 · place Cholesterol", "Stage 5 · place Wax", "Complete · all placed"],
     retrievals: {
-      1: { rt:"Right. Saturated fats are solid at room T (animal fat); unsaturated fats are liquid (vegetable oil) — kinks from double bonds prevent tight packing.", wr:"Saturated fatty acids have all single C-C bonds → straight chains → tight packing → SOLID at room temperature (animal fat, butter). Unsaturated fatty acids have one or more C=C double bonds in cis configuration → kinks → loose packing → LIQUID at room temperature (vegetable oils). Trans fats are unsaturated but with trans double bonds, which behave more like saturated and are linked to cardiovascular disease.", q:"Why are saturated fats solid at room temperature while unsaturated fats are liquid?", qh:"<b>Cis double bonds create kinks</b> that prevent tight packing. Saturated chains are straight and stack tightly.", ex:"Saturated fatty acids have all single C-C bonds → straight zig-zag chains → tight packing → solid at room temperature (butter, lard, beef tallow). Unsaturated fatty acids have one or more cis C=C double bonds, which create a ~30° kink in the chain → loose packing → liquid at room temperature (olive oil, fish oil). The MORE double bonds, the more liquid (polyunsaturated > monounsaturated > saturated). Trans fats (hydrogenation byproduct) have trans double bonds that don't kink — they pack tightly like saturated fats and raise LDL cholesterol. Membrane phospholipids use unsaturated tails for fluidity at body temp." },
-      2: { rt:"Right. Phospholipids form the bilayer because they are AMPHIPATHIC — polar head + nonpolar tails.", wr:"Phospholipids have two distinct regions: a polar phosphate head (hydrophilic, faces water) and two nonpolar fatty acid tails (hydrophobic, hide from water). This amphipathic structure drives spontaneous bilayer formation in aqueous environments: heads face the water on both sides, tails point inward and exclude water (hydrophobic effect, entropy-driven).", q:"Phospholipids self-assemble into bilayers because they are:", qh:"<b>Amphipathic</b> — polar head + nonpolar tails. Heads face water; tails point inward.", ex:"Phospholipid = glycerol + 2 fatty acid tails + phosphate head (often with a charged/polar group like choline). The head is HYDROPHILIC (loves water); the two tails are HYDROPHOBIC (exclude water). When you drop phospholipids into water, they spontaneously arrange so heads face the water and tails point inward away from water — this is the BILAYER. The driving force is the hydrophobic effect (water entropy gain when nonpolar surfaces are hidden). Single-tail molecules (detergents, fatty acid soaps) form MICELLES instead because their cone shape doesn't pack into flat bilayers. The amphipathic principle is the foundation of every cell membrane on Earth." },
-      3: { rt:"Right. Steroids have the 4-fused-ring backbone. Cholesterol, testosterone, estrogen, cortisol — all steroids.", wr:"Steroids are defined by a 4-ring carbon backbone (3 six-membered rings + 1 five-membered ring fused together). All steroids share this skeleton; they differ in the functional groups attached. CHOLESTEROL is the membrane modulator. TESTOSTERONE, ESTROGEN, PROGESTERONE — sex hormones. CORTISOL, ALDOSTERONE — adrenal steroids. All are synthesized from cholesterol. Because they're hydrophobic, they DIFFUSE THROUGH membranes (don't need transporters) and bind INTRACELLULAR receptors that act as transcription factors.", q:"Which is NOT a steroid?", qh:"All four (cholesterol, testosterone, cortisol, estrogen) ARE steroids. The thing that is not: peptide hormones (insulin, glucagon, oxytocin) — those are amino acid chains.", ex:"All steroids share a 4-ring carbon backbone (3 six-rings + 1 five-ring). They differ in attached functional groups. CHOLESTEROL — membrane modulator (regulates fluidity), precursor to all other steroids. SEX HORMONES (testosterone, estrogen, progesterone) — gonads. CORTICOSTEROIDS (cortisol, aldosterone) — adrenal cortex. Vitamin D is also a steroid. Because steroids are hydrophobic, they diffuse THROUGH plasma membranes (no transporter needed), bind intracellular receptors, and the receptor-hormone complex acts as a transcription factor in the nucleus (slow response, but lasts hours). Contrast with peptide hormones (insulin, glucagon) which can't cross membranes and use membrane receptors with second-messenger cascades (fast, short-lived)." },
+      1: { rt:"Right. Saturated fats are solid at room T (animal fat); unsaturated fats are liquid (vegetable oil), kinks from double bonds prevent tight packing.", wr:"Saturated fatty acids have all single C-C bonds → straight chains → tight packing → SOLID at room temperature (animal fat, butter). Unsaturated fatty acids have one or more C=C double bonds in cis configuration → kinks → loose packing → LIQUID at room temperature (vegetable oils). Trans fats are unsaturated but with trans double bonds, which behave more like saturated and are linked to cardiovascular disease.", q:"Why are saturated fats solid at room temperature while unsaturated fats are liquid?", qh:"<b>Cis double bonds create kinks</b> that prevent tight packing. Saturated chains are straight and stack tightly.", ex:"Saturated fatty acids have all single C-C bonds → straight zig-zag chains → tight packing → solid at room temperature (butter, lard, beef tallow). Unsaturated fatty acids have one or more cis C=C double bonds, which create a ~30° kink in the chain → loose packing → liquid at room temperature (olive oil, fish oil). The MORE double bonds, the more liquid (polyunsaturated > monounsaturated > saturated). Trans fats (hydrogenation byproduct) have trans double bonds that don't kink, they pack tightly like saturated fats and raise LDL cholesterol. Membrane phospholipids use unsaturated tails for fluidity at body temp." },
+      2: { rt:"Right. Phospholipids form the bilayer because they are AMPHIPATHIC, polar head + nonpolar tails.", wr:"Phospholipids have two distinct regions: a polar phosphate head (hydrophilic, faces water) and two nonpolar fatty acid tails (hydrophobic, hide from water). This amphipathic structure drives spontaneous bilayer formation in aqueous environments: heads face the water on both sides, tails point inward and exclude water (hydrophobic effect, entropy-driven).", q:"Phospholipids self-assemble into bilayers because they are:", qh:"<b>Amphipathic</b>, polar head + nonpolar tails. Heads face water; tails point inward.", ex:"Phospholipid = glycerol + 2 fatty acid tails + phosphate head (often with a charged/polar group like choline). The head is HYDROPHILIC (loves water); the two tails are HYDROPHOBIC (exclude water). When you drop phospholipids into water, they spontaneously arrange so heads face the water and tails point inward away from water, this is the BILAYER. The driving force is the hydrophobic effect (water entropy gain when nonpolar surfaces are hidden). Single-tail molecules (detergents, fatty acid soaps) form MICELLES instead because their cone shape doesn't pack into flat bilayers. The amphipathic principle is the foundation of every cell membrane on Earth." },
+      3: { rt:"Right. Steroids have the 4-fused-ring backbone. Cholesterol, testosterone, estrogen, cortisol, all steroids.", wr:"Steroids are defined by a 4-ring carbon backbone (3 six-membered rings + 1 five-membered ring fused together). All steroids share this skeleton; they differ in the functional groups attached. CHOLESTEROL is the membrane modulator. TESTOSTERONE, ESTROGEN, PROGESTERONE, sex hormones. CORTISOL, ALDOSTERONE, adrenal steroids. All are synthesized from cholesterol. Because they're hydrophobic, they DIFFUSE THROUGH membranes (don't need transporters) and bind INTRACELLULAR receptors that act as transcription factors.", q:"Which is NOT a steroid?", qh:"All four (cholesterol, testosterone, cortisol, estrogen) ARE steroids. The thing that is not: peptide hormones (insulin, glucagon, oxytocin), those are amino acid chains.", ex:"All steroids share a 4-ring carbon backbone (3 six-rings + 1 five-ring). They differ in attached functional groups. CHOLESTEROL: membrane modulator (regulates fluidity), precursor to all other steroids. SEX HORMONES (testosterone, estrogen, progesterone), gonads. CORTICOSTEROIDS (cortisol, aldosterone), adrenal cortex. Vitamin D is also a steroid. Because steroids are hydrophobic, they diffuse THROUGH plasma membranes (no transporter needed), bind intracellular receptors, and the receptor-hormone complex acts as a transcription factor in the nucleus (slow response, but lasts hours). Contrast with peptide hormones (insulin, glucagon) which can't cross membranes and use membrane receptors with second-messenger cascades (fast, short-lived)." },
     },
   },
 
@@ -217,9 +217,9 @@ const NODES = {
     stageOrder: ["prim", "sec", "ter", "quat", "den"],
     stageLabels: ["Stage 1 · place Sequence", "Stage 2 · place &alpha;-helix / &beta;-sheet", "Stage 3 · place 3D fold", "Stage 4 · place Hemoglobin (4 subunits)", "Stage 5 · place Denatured", "Complete · all placed"],
     retrievals: {
-      1: { rt:"Right. Four levels: primary (sequence) → secondary (α-helix/β-sheet) → tertiary (3D fold) → quaternary (multiple subunits).", wr:"Four levels of protein structure. (1) PRIMARY = amino acid sequence joined by peptide bonds — the linear order encoded by the gene. (2) SECONDARY = local folds held by BACKBONE H-bonds: α-helix (right-handed coil) and β-sheet (parallel or antiparallel strands). (3) TERTIARY = overall 3D fold held by R-group interactions (hydrophobic effect, disulfides, salt bridges, H-bonds). (4) QUATERNARY = multiple polypeptide subunits assembled together (hemoglobin has 4; many enzymes are dimers/tetramers).", q:"Which level of protein structure involves multiple polypeptide subunits assembled together?", qh:"<b>Quaternary structure.</b> Hemoglobin (4 subunits: 2 α + 2 β) is the classic example.", ex:"Four levels of protein structure. (1) PRIMARY = the linear amino acid sequence, held by peptide bonds (covalent). Encoded by the gene. (2) SECONDARY = local repeating folds held by backbone H-bonds: α-helix (right-handed coil, 3.6 residues per turn) and β-sheet (parallel or antiparallel strands). (3) TERTIARY = the full 3D fold of a single polypeptide, held by R-group (side chain) interactions: hydrophobic effect (dominant driver), H-bonds, salt bridges, disulfides, van der Waals. (4) QUATERNARY = assembly of multiple polypeptide subunits. Hemoglobin = 4 subunits (2α + 2β). Many enzymes are dimers, tetramers, or larger. Not every protein has quaternary structure (myoglobin has only 1 chain → only primary/secondary/tertiary)." },
-      2: { rt:"Right. Denaturation breaks tertiary/quaternary structure but NOT peptide bonds (primary survives).", wr:"Denaturation = loss of secondary, tertiary, quaternary structure (loss of native fold) but PRIMARY (peptide-bond sequence) is preserved. Caused by heat, pH extremes, urea, mercaptoethanol (disulfide reducer), detergents. Some proteins can refold (renature) if conditions are restored, but many can't — once tangled, they aggregate or are cleared by chaperones.", q:"Denaturation of a protein:", qh:"<b>Disrupts secondary, tertiary, quaternary structure</b> but leaves primary structure (peptide bonds) intact.", ex:"Denaturation = the protein loses its functional 3D fold but keeps its amino acid sequence. Peptide bonds are covalent and quite stable; they survive heat and pH extremes that disrupt the noncovalent interactions (H-bonds, hydrophobic, salt bridges) and even disulfides (reduced by β-mercaptoethanol or DTT). Causes: heat (kinetic energy disrupts H-bonds — cooking an egg is denaturing albumin), pH extremes (changes ionization of R-groups), strong urea/guanidinium (competes with internal H-bonds), detergents (replaces hydrophobic core with detergent), mercaptoethanol (reduces -S-S- to -SH HS-). Most denatured proteins cannot spontaneously refold to their native state; they require chaperones (heat shock proteins) or are degraded. The DAT-level takeaway: denaturation = lose fold, keep sequence." },
-      3: { rt:"Right. Hemoglobin's allosteric cooperativity: O₂ binding to one subunit increases affinity at the others.", wr:"Hemoglobin's 4 subunits cooperate: when O₂ binds one subunit, it triggers a conformational shift (T → R state) that increases O₂ affinity at the other 3 subunits. This gives the sigmoidal O₂ dissociation curve (vs myoglobin's hyperbolic curve). The Bohr effect — high CO₂ / low pH in active tissue right-shifts the curve, unloading more O₂ where needed.", q:"Why does the hemoglobin-O₂ dissociation curve have a sigmoidal (S-shaped) rather than hyperbolic shape?", qh:"<b>Cooperativity</b> — O₂ binding to one of hemoglobin's 4 subunits increases O₂ affinity at the others (T → R conformational shift).", ex:"Hemoglobin is a tetramer (4 subunits: 2α + 2β) and exhibits POSITIVE COOPERATIVITY. When O₂ binds the first subunit, it triggers a conformational change (T-state 'tense' → R-state 'relaxed') that increases O₂ affinity at the remaining 3 subunits. Result: the O₂ binding curve is SIGMOIDAL (steep middle section means efficient loading in lungs / unloading in tissues). Compare myoglobin: 1 subunit, no cooperativity, HYPERBOLIC binding curve, very tight O₂ binding (acts as muscle O₂ reservoir). The Bohr effect: high CO₂ + low pH in active tissue right-shifts hemoglobin's curve → more O₂ unloaded where it's needed. The shift is allosteric — H+/CO₂ binds outside the O₂ site but changes the conformation. Two beautiful examples of regulation via quaternary structure." },
+      1: { rt:"Right. Four levels: primary (sequence) → secondary (α-helix/β-sheet) → tertiary (3D fold) → quaternary (multiple subunits).", wr:"Four levels of protein structure. (1) PRIMARY = amino acid sequence joined by peptide bonds, the linear order encoded by the gene. (2) SECONDARY = local folds held by BACKBONE H-bonds: α-helix (right-handed coil) and β-sheet (parallel or antiparallel strands). (3) TERTIARY = overall 3D fold held by R-group interactions (hydrophobic effect, disulfides, salt bridges, H-bonds). (4) QUATERNARY = multiple polypeptide subunits assembled together (hemoglobin has 4; many enzymes are dimers/tetramers).", q:"Which level of protein structure involves multiple polypeptide subunits assembled together?", qh:"<b>Quaternary structure.</b> Hemoglobin (4 subunits: 2 α + 2 β) is the classic example.", ex:"Four levels of protein structure. (1) PRIMARY = the linear amino acid sequence, held by peptide bonds (covalent). Encoded by the gene. (2) SECONDARY = local repeating folds held by backbone H-bonds: α-helix (right-handed coil, 3.6 residues per turn) and β-sheet (parallel or antiparallel strands). (3) TERTIARY = the full 3D fold of a single polypeptide, held by R-group (side chain) interactions: hydrophobic effect (dominant driver), H-bonds, salt bridges, disulfides, van der Waals. (4) QUATERNARY = assembly of multiple polypeptide subunits. Hemoglobin = 4 subunits (2α + 2β). Many enzymes are dimers, tetramers, or larger. Not every protein has quaternary structure (myoglobin has only 1 chain → only primary/secondary/tertiary)." },
+      2: { rt:"Right. Denaturation breaks tertiary/quaternary structure but NOT peptide bonds (primary survives).", wr:"Denaturation = loss of secondary, tertiary, quaternary structure (loss of native fold) but PRIMARY (peptide-bond sequence) is preserved. Caused by heat, pH extremes, urea, mercaptoethanol (disulfide reducer), detergents. Some proteins can refold (renature) if conditions are restored, but many can't, once tangled, they aggregate or are cleared by chaperones.", q:"Denaturation of a protein:", qh:"<b>Disrupts secondary, tertiary, quaternary structure</b> but leaves primary structure (peptide bonds) intact.", ex:"Denaturation = the protein loses its functional 3D fold but keeps its amino acid sequence. Peptide bonds are covalent and quite stable; they survive heat and pH extremes that disrupt the noncovalent interactions (H-bonds, hydrophobic, salt bridges) and even disulfides (reduced by β-mercaptoethanol or DTT). Causes: heat (kinetic energy disrupts H-bonds, cooking an egg is denaturing albumin), pH extremes (changes ionization of R-groups), strong urea/guanidinium (competes with internal H-bonds), detergents (replaces hydrophobic core with detergent), mercaptoethanol (reduces -S-S- to -SH HS-). Most denatured proteins cannot spontaneously refold to their native state; they require chaperones (heat shock proteins) or are degraded. The DAT-level takeaway: denaturation = lose fold, keep sequence." },
+      3: { rt:"Right. Hemoglobin's allosteric cooperativity: O₂ binding to one subunit increases affinity at the others.", wr:"Hemoglobin's 4 subunits cooperate: when O₂ binds one subunit, it triggers a conformational shift (T → R state) that increases O₂ affinity at the other 3 subunits. This gives the sigmoidal O₂ dissociation curve (vs myoglobin's hyperbolic curve). The Bohr effect: high CO₂ / low pH in active tissue right-shifts the curve, unloading more O₂ where needed.", q:"Why does the hemoglobin-O₂ dissociation curve have a sigmoidal (S-shaped) rather than hyperbolic shape?", qh:"<b>Cooperativity</b>, O₂ binding to one of hemoglobin's 4 subunits increases O₂ affinity at the others (T → R conformational shift).", ex:"Hemoglobin is a tetramer (4 subunits: 2α + 2β) and exhibits POSITIVE COOPERATIVITY. When O₂ binds the first subunit, it triggers a conformational change (T-state 'tense' → R-state 'relaxed') that increases O₂ affinity at the remaining 3 subunits. Result: the O₂ binding curve is SIGMOIDAL (steep middle section means efficient loading in lungs / unloading in tissues). Compare myoglobin: 1 subunit, no cooperativity, HYPERBOLIC binding curve, very tight O₂ binding (acts as muscle O₂ reservoir). The Bohr effect: high CO₂ + low pH in active tissue right-shifts hemoglobin's curve → more O₂ unloaded where it's needed. The shift is allosteric: H+/CO₂ binds outside the O₂ site but changes the conformation. Two beautiful examples of regulation via quaternary structure." },
     },
   },
 
@@ -231,9 +231,9 @@ const NODES = {
     stageOrder: ["sugar", "phos", "purine", "pyr", "bond"],
     stageLabels: ["Stage 1 · place Pentose sugar", "Stage 2 · place Phosphate", "Stage 3 · place Purine", "Stage 4 · place Pyrimidine", "Stage 5 · place Phosphodiester bond", "Complete · all placed"],
     retrievals: {
-      1: { rt:"Right. Purines (A, G) have TWO rings; pyrimidines (C, T, U) have ONE ring. Purines pair with pyrimidines.", wr:"PURINES = two-ring bases: Adenine (A) and Guanine (G). PYRIMIDINES = one-ring bases: Cytosine (C), Thymine (T, DNA only), Uracil (U, RNA only). Base pairing always pairs a purine with a pyrimidine — keeps the DNA helix's width constant. A pairs with T (or U in RNA) via 2 H-bonds; G pairs with C via 3 H-bonds. GC-rich DNA is more thermally stable.", q:"Which of the following are purines?", qh:"<b>Adenine (A) and Guanine (G)</b> — two-ring bases. Cytosine, Thymine, Uracil are pyrimidines (one ring).", ex:"PURINES vs PYRIMIDINES is a classic DAT memory question. PURINES (two rings): Adenine (A), Guanine (G). Mnemonic: 'pure As Gold' (pur-A-G). PYRIMIDINES (one ring): Cytosine (C), Thymine (T, DNA only), Uracil (U, RNA only). Mnemonic: 'CUT the Pi/Pyramid'. Base pairing always pairs a purine with a pyrimidine — this is what keeps the double helix's width constant (~2 nm). Two H-bonds in A-T (and A-U); THREE H-bonds in G-C. Therefore GC-rich DNA has a higher melting temperature (more thermally stable) than AT-rich DNA. Chargaff's rule (%A = %T, %G = %C) falls out of this pairing." },
-      2: { rt:"Right. RNA uses RIBOSE (2'-OH); DNA uses DEOXYribose (2'-H). The single OH makes RNA less stable.", wr:"The R in RNA = Ribose. The D in DNA = Deoxyribose. Difference: RIBOSE has an OH at the 2' carbon of the pentose ring; DEOXYribose has just an H there. That extra OH makes RNA more reactive (the 2'-OH can attack the phosphodiester backbone, causing hydrolysis) — so RNA is intentionally short-lived. DNA's 2'-H makes it more stable for long-term info storage.", q:"What is the structural difference between the sugar in RNA versus DNA?", qh:"<b>RNA has 2'-OH; DNA has 2'-H (deoxy).</b> Single oxygen difference, big stability consequences.", ex:"RNA uses RIBOSE; DNA uses DEOXYRIBOSE. The difference is a single oxygen atom at the 2' position of the pentose ring: RIBOSE has 2'-OH; DEOXYRIBOSE has 2'-H (the 'deoxy' = oxygen-less). That tiny structural difference is biologically huge. The 2'-OH of RNA can attack the phosphate backbone, leading to hydrolysis — RNA is intrinsically less stable than DNA. This is FEATURE not bug: RNA is meant to be a transient messenger; DNA is meant to be a long-term archive. DNA's stability is also helped by being double-stranded (most cellular DNA) and by histones in eukaryotes. The 'D' in DNA = DEOXYribose; 'R' in RNA = Ribose. Easy mnemonic." },
-      3: { rt:"Right. ATP is a nucleotide (adenine + ribose + 3 phosphates) — and the cell's immediate energy currency.", wr:"ATP = Adenosine Triphosphate = adenine base + ribose sugar + 3 phosphate groups. It's a nucleotide. The 'energy' is stored in the phosphoanhydride bonds between phosphates; hydrolyzing the terminal phosphate (ATP → ADP + Pᵢ) releases ~7.3 kcal/mol of free energy that the cell uses to drive endergonic reactions (muscle contraction, active transport, biosynthesis).", q:"Structurally, ATP is best classified as:", qh:"<b>A nucleotide</b> (adenine + ribose + 3 phosphates). Same building block as RNA, with extra phosphates.", ex:"ATP = Adenosine TriPhosphate = adenine (a purine base) + ribose (the pentose sugar) + three phosphate groups in a chain. Structurally it's the same as the A-monomer of RNA but with two extra phosphates. The 'energy' of ATP is stored in the phosphoanhydride bonds between the phosphate groups (not in the bonds themselves but in the favorable hydrolysis products: lower charge density, more resonance stabilization, more disorder/entropy). Hydrolyzing the terminal phosphate (ATP → ADP + Pᵢ) releases ~7.3 kcal/mol under standard conditions, more in cellular conditions. The cell uses this to drive endergonic reactions: muscle contraction, active transport (Na+/K+ pump), biosynthesis, etc. GTP, CTP, UTP serve similar roles in specific contexts. ATP is the energy currency, but it's structurally just a nucleotide." },
+      1: { rt:"Right. Purines (A, G) have TWO rings; pyrimidines (C, T, U) have ONE ring. Purines pair with pyrimidines.", wr:"PURINES = two-ring bases: Adenine (A) and Guanine (G). PYRIMIDINES = one-ring bases: Cytosine (C), Thymine (T, DNA only), Uracil (U, RNA only). Base pairing always pairs a purine with a pyrimidine, keeps the DNA helix's width constant. A pairs with T (or U in RNA) via 2 H-bonds; G pairs with C via 3 H-bonds. GC-rich DNA is more thermally stable.", q:"Which of the following are purines?", qh:"<b>Adenine (A) and Guanine (G)</b>, two-ring bases. Cytosine, Thymine, Uracil are pyrimidines (one ring).", ex:"PURINES vs PYRIMIDINES is a classic DAT memory question. PURINES (two rings): Adenine (A), Guanine (G). Mnemonic: 'pure As Gold' (pur-A-G). PYRIMIDINES (one ring): Cytosine (C), Thymine (T, DNA only), Uracil (U, RNA only). Mnemonic: 'CUT the Pi/Pyramid'. Base pairing always pairs a purine with a pyrimidine, this is what keeps the double helix's width constant (~2 nm). Two H-bonds in A-T (and A-U); THREE H-bonds in G-C. Therefore GC-rich DNA has a higher melting temperature (more thermally stable) than AT-rich DNA. Chargaff's rule (%A = %T, %G = %C) falls out of this pairing." },
+      2: { rt:"Right. RNA uses RIBOSE (2'-OH); DNA uses DEOXYribose (2'-H). The single OH makes RNA less stable.", wr:"The R in RNA = Ribose. The D in DNA = Deoxyribose. Difference: RIBOSE has an OH at the 2' carbon of the pentose ring; DEOXYribose has just an H there. That extra OH makes RNA more reactive (the 2'-OH can attack the phosphodiester backbone, causing hydrolysis), so RNA is intentionally short-lived. DNA's 2'-H makes it more stable for long-term info storage.", q:"What is the structural difference between the sugar in RNA versus DNA?", qh:"<b>RNA has 2'-OH; DNA has 2'-H (deoxy).</b> Single oxygen difference, big stability consequences.", ex:"RNA uses RIBOSE; DNA uses DEOXYRIBOSE. The difference is a single oxygen atom at the 2' position of the pentose ring: RIBOSE has 2'-OH; DEOXYRIBOSE has 2'-H (the 'deoxy' = oxygen-less). That tiny structural difference is biologically huge. The 2'-OH of RNA can attack the phosphate backbone, leading to hydrolysis, RNA is intrinsically less stable than DNA. This is FEATURE not bug: RNA is meant to be a transient messenger; DNA is meant to be a long-term archive. DNA's stability is also helped by being double-stranded (most cellular DNA) and by histones in eukaryotes. The 'D' in DNA = DEOXYribose; 'R' in RNA = Ribose. Easy mnemonic." },
+      3: { rt:"Right. ATP is a nucleotide (adenine + ribose + 3 phosphates), and the cell's immediate energy currency.", wr:"ATP = Adenosine Triphosphate = adenine base + ribose sugar + 3 phosphate groups. It's a nucleotide. The 'energy' is stored in the phosphoanhydride bonds between phosphates; hydrolyzing the terminal phosphate (ATP → ADP + Pᵢ) releases ~7.3 kcal/mol of free energy that the cell uses to drive endergonic reactions (muscle contraction, active transport, biosynthesis).", q:"Structurally, ATP is best classified as:", qh:"<b>A nucleotide</b> (adenine + ribose + 3 phosphates). Same building block as RNA, with extra phosphates.", ex:"ATP = Adenosine TriPhosphate = adenine (a purine base) + ribose (the pentose sugar) + three phosphate groups in a chain. Structurally it's the same as the A-monomer of RNA but with two extra phosphates. The 'energy' of ATP is stored in the phosphoanhydride bonds between the phosphate groups (not in the bonds themselves but in the favorable hydrolysis products: lower charge density, more resonance stabilization, more disorder/entropy). Hydrolyzing the terminal phosphate (ATP → ADP + Pᵢ) releases ~7.3 kcal/mol under standard conditions, more in cellular conditions. The cell uses this to drive endergonic reactions: muscle contraction, active transport (Na+/K+ pump), biosynthesis, etc. GTP, CTP, UTP serve similar roles in specific contexts. ATP is the energy currency, but it's structurally just a nucleotide." },
     },
   },
 
@@ -245,9 +245,9 @@ const NODES = {
     stageOrder: ["lock", "induced", "allo"],
     stageLabels: ["Stage 1 · place Lock-and-key", "Stage 2 · place Induced fit", "Stage 3 · place Allosteric activation", "Complete · all placed"],
     retrievals: {
-      1: { rt:"Right. Enzymes lower the activation energy Ea — they do NOT change ΔG or affect equilibrium position.", wr:"Enzymes lower the ACTIVATION ENERGY (Ea) of a reaction by stabilizing the transition state. They do NOT change ΔG (the thermodynamic driving force), do NOT change Keq (the equilibrium position), and do NOT make non-spontaneous reactions spontaneous. They just speed up the journey to equilibrium in both directions equally.", q:"Enzymes function by:", qh:"<b>Lowering activation energy (Ea).</b> They do NOT change ΔG or equilibrium position — just kinetics.", ex:"An enzyme is a catalyst. It speeds up a reaction by lowering the activation energy (Ea) — typically by stabilizing the transition state, orienting substrates properly, providing alternative reaction mechanisms (acid/base catalysis, covalent intermediates), or excluding water. Importantly, enzymes DO NOT change ΔG (the thermodynamic driving force) and do NOT change Keq (the equilibrium constant). They speed up forward and reverse reactions equally — you reach the same equilibrium, just faster. Enzymes cannot make non-spontaneous reactions spontaneous; they can only make slow spontaneous reactions fast. This is why cells COUPLE unfavorable reactions to ATP hydrolysis (a thermodynamic trick), then use enzymes to speed the coupled reaction." },
-      2: { rt:"Right. Competitive inhibitors compete with substrate at active site — increases Km, no change in Vmax.", wr:"COMPETITIVE inhibitors bind the same active site as substrate — they compete. Adding more substrate eventually outcompetes them, so Vmax is UNCHANGED. But you need more substrate to reach half-max → Km INCREASES (apparent affinity for substrate decreases). NON-COMPETITIVE inhibitors bind an allosteric site, change enzyme shape — adding substrate doesn't help. Vmax DECREASES; Km is unchanged.", q:"How does a competitive inhibitor affect Km and Vmax?", qh:"<b>Km increases; Vmax unchanged.</b> More substrate is needed to outcompete the inhibitor, but you can still reach the same maximum rate.", ex:"Two inhibitor types — memorize the kinetic signatures. <b>COMPETITIVE inhibitors</b> bind the active site itself, in competition with substrate. They look structurally similar to the substrate. Effect: Km INCREASES (need more substrate to outcompete), Vmax UNCHANGED (with enough substrate, you fully displace the inhibitor). Example: methanol/ethanol competition at alcohol dehydrogenase. <b>NON-COMPETITIVE inhibitors</b> bind an allosteric site (somewhere other than the active site), changing the enzyme's shape so it can't catalyze. Adding more substrate doesn't help (the bound inhibitor isn't displaced by substrate). Effect: Vmax DECREASES, Km UNCHANGED. Plot the double-reciprocal (Lineweaver-Burk): competitive intersects on the y-axis; non-competitive intersects on the x-axis." },
-      3: { rt:"Right. Allosteric regulation: effector binds OUTSIDE the active site and changes enzyme conformation. Can activate or inhibit.", wr:"ALLOSTERIC regulation = a regulator (effector) binds at a site OTHER than the active site, causing a conformational change that alters enzyme activity. Can be ACTIVATING (T-state → R-state, like hemoglobin going from low to high O₂ affinity) or INHIBITORY (R-state → T-state). Most allosteric enzymes are MULTI-SUBUNIT and show cooperative sigmoidal kinetics. The classic example: feedback inhibition of metabolic pathways, where the end product allosterically inhibits the first committed step.", q:"What is allosteric regulation?", qh:"<b>An effector binds away from the active site</b>, changing the enzyme's shape and altering its activity. Can activate or inhibit.", ex:"Allosteric regulation = an effector molecule binds at an ALLOSTERIC site (different from the active site), causing a conformational change that alters enzyme activity. Effectors can be: (a) activators that shift the enzyme to the R-state (high-affinity, active), (b) inhibitors that shift to T-state (low-affinity, less active). Most allosteric enzymes are MULTI-SUBUNIT (quaternary structure) and show sigmoidal kinetics with substrate (cooperative binding). The classic biological example: feedback inhibition — the end product of a metabolic pathway allosterically inhibits the FIRST COMMITTED enzyme of the pathway. PFK-1 in glycolysis is allosterically inhibited by ATP and citrate (cell has enough energy) and activated by AMP (cell needs energy). Hemoglobin's O₂-binding cooperativity is also allosteric (between subunits). This is how the cell turns metabolism up and down on demand." },
+      1: { rt:"Right. Enzymes lower the activation energy Ea, they do NOT change ΔG or affect equilibrium position.", wr:"Enzymes lower the ACTIVATION ENERGY (Ea) of a reaction by stabilizing the transition state. They do NOT change ΔG (the thermodynamic driving force), do NOT change Keq (the equilibrium position), and do NOT make non-spontaneous reactions spontaneous. They just speed up the journey to equilibrium in both directions equally.", q:"Enzymes function by:", qh:"<b>Lowering activation energy (Ea).</b> They do NOT change ΔG or equilibrium position, just kinetics.", ex:"An enzyme is a catalyst. It speeds up a reaction by lowering the activation energy (Ea): typically by stabilizing the transition state, orienting substrates properly, providing alternative reaction mechanisms (acid/base catalysis, covalent intermediates), or excluding water. Importantly, enzymes DO NOT change ΔG (the thermodynamic driving force) and do NOT change Keq (the equilibrium constant). They speed up forward and reverse reactions equally, you reach the same equilibrium, just faster. Enzymes cannot make non-spontaneous reactions spontaneous; they can only make slow spontaneous reactions fast. This is why cells COUPLE unfavorable reactions to ATP hydrolysis (a thermodynamic trick), then use enzymes to speed the coupled reaction." },
+      2: { rt:"Right. Competitive inhibitors compete with substrate at active site, increases Km, no change in Vmax.", wr:"COMPETITIVE inhibitors bind the same active site as substrate, they compete. Adding more substrate eventually outcompetes them, so Vmax is UNCHANGED. But you need more substrate to reach half-max → Km INCREASES (apparent affinity for substrate decreases). NON-COMPETITIVE inhibitors bind an allosteric site, change enzyme shape, adding substrate doesn't help. Vmax DECREASES; Km is unchanged.", q:"How does a competitive inhibitor affect Km and Vmax?", qh:"<b>Km increases; Vmax unchanged.</b> More substrate is needed to outcompete the inhibitor, but you can still reach the same maximum rate.", ex:"Two inhibitor types: memorize the kinetic signatures. <b>COMPETITIVE inhibitors</b> bind the active site itself, in competition with substrate. They look structurally similar to the substrate. Effect: Km INCREASES (need more substrate to outcompete), Vmax UNCHANGED (with enough substrate, you fully displace the inhibitor). Example: methanol/ethanol competition at alcohol dehydrogenase. <b>NON-COMPETITIVE inhibitors</b> bind an allosteric site (somewhere other than the active site), changing the enzyme's shape so it can't catalyze. Adding more substrate doesn't help (the bound inhibitor isn't displaced by substrate). Effect: Vmax DECREASES, Km UNCHANGED. Plot the double-reciprocal (Lineweaver-Burk): competitive intersects on the y-axis; non-competitive intersects on the x-axis." },
+      3: { rt:"Right. Allosteric regulation: effector binds OUTSIDE the active site and changes enzyme conformation. Can activate or inhibit.", wr:"ALLOSTERIC regulation = a regulator (effector) binds at a site OTHER than the active site, causing a conformational change that alters enzyme activity. Can be ACTIVATING (T-state → R-state, like hemoglobin going from low to high O₂ affinity) or INHIBITORY (R-state → T-state). Most allosteric enzymes are MULTI-SUBUNIT and show cooperative sigmoidal kinetics. The classic example: feedback inhibition of metabolic pathways, where the end product allosterically inhibits the first committed step.", q:"What is allosteric regulation?", qh:"<b>An effector binds away from the active site</b>, changing the enzyme's shape and altering its activity. Can activate or inhibit.", ex:"Allosteric regulation = an effector molecule binds at an ALLOSTERIC site (different from the active site), causing a conformational change that alters enzyme activity. Effectors can be: (a) activators that shift the enzyme to the R-state (high-affinity, active), (b) inhibitors that shift to T-state (low-affinity, less active). Most allosteric enzymes are MULTI-SUBUNIT (quaternary structure) and show sigmoidal kinetics with substrate (cooperative binding). The classic biological example: feedback inhibition, the end product of a metabolic pathway allosterically inhibits the FIRST COMMITTED enzyme of the pathway. PFK-1 in glycolysis is allosterically inhibited by ATP and citrate (cell has enough energy) and activated by AMP (cell needs energy). Hemoglobin's O₂-binding cooperativity is also allosteric (between subunits). This is how the cell turns metabolism up and down on demand." },
     },
   },
 
@@ -259,9 +259,9 @@ const NODES = {
     stageOrder: ["circ", "r70", "nuc", "mito", "r80"],
     stageLabels: ["Stage 1 · place Circular DNA", "Stage 2 · place 70S ribosome", "Stage 3 · place Nucleus", "Stage 4 · place Mitochondria", "Stage 5 · place 80S ribosome", "Complete · all placed"],
     retrievals: {
-      1: { rt:"Right. Prokaryotes have NO membrane-bound organelles, including no nucleus. DNA sits in the cytoplasm (nucleoid).", wr:"Prokaryotes (bacteria + archaea) have NO membrane-bound organelles — no nucleus, no mitochondria, no ER, no Golgi, no lysosomes. Their DNA is a single circular chromosome in the cytoplasm (the 'nucleoid' region, not membrane-bound). Eukaryotes have all of those organelles, plus linear DNA wrapped in histones inside a true nucleus.", q:"Which of the following is found in eukaryotes but NOT in prokaryotes?", qh:"<b>Membrane-bound nucleus</b> (and all other membrane-bound organelles). Prokaryotic DNA sits free in the cytoplasm.", ex:"The defining difference between prokaryotes and eukaryotes is COMPARTMENTALIZATION. PROKARYOTES (bacteria + archaea): no membrane-bound organelles. DNA is a single circular chromosome in the cytoplasm (nucleoid region — not a true nucleus). Ribosomes are 70S. No mitochondria, ER, Golgi, lysosomes, or membrane-bound nucleus. EUKARYOTES: all of the above. DNA is linear, wrapped in histones, inside a membrane-bound nucleus. 80S ribosomes (cytoplasmic) and 70S ribosomes (in mitochondria/chloroplasts — evidence of endosymbiosis). The compartmentalization allows specialization (oxidative metabolism in mitochondria, hydrolytic digestion in lysosomes, protein modification in Golgi) but at the cost of being slower to divide than prokaryotes (~24 hr vs ~20 min)." },
-      2: { rt:"Right. 70S = prokaryotic ribosomes (30S + 50S subunits). 80S = eukaryotic cytoplasmic ribosomes (40S + 60S).", wr:"Ribosome sizes (measured in Svedberg units, a sedimentation coefficient — NOT additive). PROKARYOTIC: 70S (30S small + 50S large). EUKARYOTIC: 80S (40S small + 60S large). Note 30 + 50 ≠ 70 — Svedberg units depend on shape AND size, not just mass. Eukaryotic mitochondria/chloroplasts have 70S ribosomes (endosymbiotic origin from ancient bacteria). Antibiotics that target 70S (tetracycline, streptomycin) selectively kill bacteria without harming eukaryotic 80S — that's the basis for antibiotic selectivity.", q:"What are the sizes of prokaryotic vs eukaryotic ribosomes?", qh:"<b>Prokaryotic = 70S; Eukaryotic = 80S.</b> The size difference is the basis for many antibiotics that selectively kill bacteria.", ex:"Ribosome sizes are measured in Svedberg units (S), a sedimentation coefficient in a centrifuge — NOT a simple measure of mass and NOT additive. PROKARYOTIC ribosomes: 70S overall = 30S small subunit + 50S large subunit. EUKARYOTIC cytoplasmic ribosomes: 80S = 40S small + 60S large. (Note 30+50 ≠ 70 — Svedberg depends on both mass and shape.) The size difference is what allows ANTIBIOTIC SELECTIVITY: tetracycline, streptomycin, chloramphenicol, erythromycin all bind 70S ribosomes and block bacterial translation without affecting our 80S ribosomes. Eukaryotic mitochondria and chloroplasts ALSO have 70S ribosomes (because they're descended from endosymbiotic bacteria — endosymbiotic theory). This is why some antibiotics have side effects (they hit our mitochondria too)." },
-      3: { rt:"Right. Endosymbiotic theory: mitochondria and chloroplasts came from engulfed ancient bacteria.", wr:"ENDOSYMBIOTIC THEORY: mitochondria and chloroplasts evolved from free-living bacteria that were engulfed by an ancestral eukaryotic cell (the first endosymbiosis). The engulfed bacteria became permanent symbionts and eventually obligate organelles. Evidence: (1) double membrane (one from original bacterium, one from engulfing cell), (2) own circular DNA, (3) own 70S ribosomes, (4) divide by binary fission independently of the cell cycle, (5) RNA sequences match those of α-proteobacteria (mitochondria) and cyanobacteria (chloroplasts).", q:"Which observation supports the endosymbiotic origin of mitochondria?", qh:"<b>Mitochondria have their own 70S ribosomes and circular DNA</b> — like prokaryotes, not like the eukaryotic 80S system around them.", ex:"ENDOSYMBIOTIC THEORY (Lynn Margulis): mitochondria and chloroplasts originated from engulfed prokaryotic cells that became permanent endosymbionts. Five strong pieces of evidence: (1) DOUBLE MEMBRANE — outer from the engulfing eukaryote, inner from the original bacterium. (2) OWN DNA — small circular chromosome, like bacteria. (3) OWN 70S RIBOSOMES — prokaryotic size, not the host's 80S. (4) DIVIDE BY BINARY FISSION — independently of the host cell cycle. (5) RNA SEQUENCING places mitochondria with α-proteobacteria and chloroplasts with cyanobacteria. Mitochondria came first (in the eukaryote ancestor); chloroplasts came later (in the plant lineage only — by engulfing a cyanobacterium). On the DAT, any question about why mitochondria have ribosomes / DNA / double membrane points to endosymbiosis." },
+      1: { rt:"Right. Prokaryotes have NO membrane-bound organelles, including no nucleus. DNA sits in the cytoplasm (nucleoid).", wr:"Prokaryotes (bacteria + archaea) have NO membrane-bound organelles, no nucleus, no mitochondria, no ER, no Golgi, no lysosomes. Their DNA is a single circular chromosome in the cytoplasm (the 'nucleoid' region, not membrane-bound). Eukaryotes have all of those organelles, plus linear DNA wrapped in histones inside a true nucleus.", q:"Which of the following is found in eukaryotes but NOT in prokaryotes?", qh:"<b>Membrane-bound nucleus</b> (and all other membrane-bound organelles). Prokaryotic DNA sits free in the cytoplasm.", ex:"The defining difference between prokaryotes and eukaryotes is COMPARTMENTALIZATION. PROKARYOTES (bacteria + archaea): no membrane-bound organelles. DNA is a single circular chromosome in the cytoplasm (nucleoid region, not a true nucleus). Ribosomes are 70S. No mitochondria, ER, Golgi, lysosomes, or membrane-bound nucleus. EUKARYOTES: all of the above. DNA is linear, wrapped in histones, inside a membrane-bound nucleus. 80S ribosomes (cytoplasmic) and 70S ribosomes (in mitochondria/chloroplasts, evidence of endosymbiosis). The compartmentalization allows specialization (oxidative metabolism in mitochondria, hydrolytic digestion in lysosomes, protein modification in Golgi) but at the cost of being slower to divide than prokaryotes (~24 hr vs ~20 min)." },
+      2: { rt:"Right. 70S = prokaryotic ribosomes (30S + 50S subunits). 80S = eukaryotic cytoplasmic ribosomes (40S + 60S).", wr:"Ribosome sizes (measured in Svedberg units, a sedimentation coefficient, NOT additive). PROKARYOTIC: 70S (30S small + 50S large). EUKARYOTIC: 80S (40S small + 60S large). Note 30 + 50 ≠ 70, Svedberg units depend on shape AND size, not just mass. Eukaryotic mitochondria/chloroplasts have 70S ribosomes (endosymbiotic origin from ancient bacteria). Antibiotics that target 70S (tetracycline, streptomycin) selectively kill bacteria without harming eukaryotic 80S, that's the basis for antibiotic selectivity.", q:"What are the sizes of prokaryotic vs eukaryotic ribosomes?", qh:"<b>Prokaryotic = 70S; Eukaryotic = 80S.</b> The size difference is the basis for many antibiotics that selectively kill bacteria.", ex:"Ribosome sizes are measured in Svedberg units (S), a sedimentation coefficient in a centrifuge, NOT a simple measure of mass and NOT additive. PROKARYOTIC ribosomes: 70S overall = 30S small subunit + 50S large subunit. EUKARYOTIC cytoplasmic ribosomes: 80S = 40S small + 60S large. (Note 30+50 ≠ 70: Svedberg depends on both mass and shape.) The size difference is what allows ANTIBIOTIC SELECTIVITY: tetracycline, streptomycin, chloramphenicol, erythromycin all bind 70S ribosomes and block bacterial translation without affecting our 80S ribosomes. Eukaryotic mitochondria and chloroplasts ALSO have 70S ribosomes (because they're descended from endosymbiotic bacteria, endosymbiotic theory). This is why some antibiotics have side effects (they hit our mitochondria too)." },
+      3: { rt:"Right. Endosymbiotic theory: mitochondria and chloroplasts came from engulfed ancient bacteria.", wr:"ENDOSYMBIOTIC THEORY: mitochondria and chloroplasts evolved from free-living bacteria that were engulfed by an ancestral eukaryotic cell (the first endosymbiosis). The engulfed bacteria became permanent symbionts and eventually obligate organelles. Evidence: (1) double membrane (one from original bacterium, one from engulfing cell), (2) own circular DNA, (3) own 70S ribosomes, (4) divide by binary fission independently of the cell cycle, (5) RNA sequences match those of α-proteobacteria (mitochondria) and cyanobacteria (chloroplasts).", q:"Which observation supports the endosymbiotic origin of mitochondria?", qh:"<b>Mitochondria have their own 70S ribosomes and circular DNA</b>, like prokaryotes, not like the eukaryotic 80S system around them.", ex:"ENDOSYMBIOTIC THEORY (Lynn Margulis): mitochondria and chloroplasts originated from engulfed prokaryotic cells that became permanent endosymbionts. Five strong pieces of evidence: (1) DOUBLE MEMBRANE: outer from the engulfing eukaryote, inner from the original bacterium. (2) OWN DNA: small circular chromosome, like bacteria. (3) OWN 70S RIBOSOMES: prokaryotic size, not the host's 80S. (4) DIVIDE BY BINARY FISSION: independently of the host cell cycle. (5) RNA SEQUENCING places mitochondria with α-proteobacteria and chloroplasts with cyanobacteria. Mitochondria came first (in the eukaryote ancestor); chloroplasts came later (in the plant lineage only, by engulfing a cyanobacterium). On the DAT, any question about why mitochondria have ribosomes / DNA / double membrane points to endosymbiosis." },
     },
   },
 
@@ -273,9 +273,9 @@ const NODES = {
     stageOrder: ["dna", "atp", "prot", "ship", "dig"],
     stageLabels: ["Stage 1 · place Stores DNA", "Stage 2 · place Makes ATP", "Stage 3 · place Synthesizes proteins", "Stage 4 · place Modifies + ships", "Stage 5 · place Digests waste", "Complete · all placed"],
     retrievals: {
-      1: { rt:"Right. ROUGH ER is studded with ribosomes — makes secreted + membrane proteins. SMOOTH ER does lipid synthesis + detox.", wr:"ENDOPLASMIC RETICULUM (ER) is a continuous membrane system extending from the nuclear envelope. ROUGH ER = ribosomes attached → synthesizes proteins for secretion, membrane insertion, or lysosomal targeting. SMOOTH ER = no ribosomes → lipid + steroid synthesis (in liver), drug detoxification (cytochrome P450), Ca²⁺ storage (especially in muscle cells, where it's called sarcoplasmic reticulum).", q:"A cell that secretes large amounts of protein would have abundant:", qh:"<b>Rough ER</b> (ribosome-studded). Rough ER makes secreted + membrane + lysosomal proteins.", ex:"The endoplasmic reticulum (ER) is a continuous membrane system connecting to the nuclear envelope. Two types: ROUGH ER has ribosomes attached to its cytoplasmic surface — it synthesizes proteins destined for: (a) secretion (insulin, antibodies, digestive enzymes), (b) membrane insertion (receptors), or (c) lysosomes. SMOOTH ER has no ribosomes and handles: (a) lipid + steroid synthesis (most active in liver and steroid-producing cells like adrenal cortex), (b) drug detoxification (cytochrome P450 enzymes — alcohol, drugs), (c) Ca²⁺ storage (especially in muscle, where it's called sarcoplasmic reticulum — Ca²⁺ release triggers contraction). Cells that SECRETE lots of protein (pancreatic acinar cells, plasma cells making antibodies) are packed with rough ER." },
-      2: { rt:"Right. Golgi modifies + sorts + ships proteins from the ER. Cis face receives; trans face sends.", wr:"The GOLGI APPARATUS is a stack of membrane-bound flattened sacs (cisternae) that receives proteins from the ER, MODIFIES them (glycosylation, phosphorylation, sulfation), SORTS them by destination tags, and PACKAGES them into vesicles for shipping. Cis face = entry from ER. Medial = modifications. Trans face = exit toward plasma membrane, secretion, or lysosomes.", q:"What is the primary function of the Golgi apparatus?", qh:"<b>Modify, sort, and package proteins</b> received from the ER. Cis face receives; trans face ships.", ex:"The Golgi apparatus is a series of flattened membrane sacs (cisternae) arranged in a polarized stack. Proteins arrive via vesicles from the ER, enter the CIS face, move through MEDIAL cisternae where modifications occur (glycosylation patterns, phosphate addition, sulfation), and exit the TRANS face inside vesicles destined for: (a) secretion (exocytosis at plasma membrane), (b) lysosomes (tagged with mannose-6-phosphate), or (c) plasma membrane insertion (receptors, transporters). Think of the Golgi as the post office: receives, sorts, addresses, ships. Most active in cells that secrete heavily — same cells that have lots of rough ER. ER → Golgi → vesicles is the entire SECRETORY PATHWAY." },
-      3: { rt:"Right. Lysosomes contain digestive enzymes (hydrolases) active at acidic pH ~5. The 'cellular stomach.'", wr:"LYSOSOMES are membrane-bound vesicles containing acid hydrolases (digestive enzymes that work best at acidic pH, ~5). Maintained at acidic pH by V-type ATPase pumps in the membrane. They digest: phagocytosed material (bacteria, debris), worn-out organelles (autophagy), and at the end of cell life, the entire cell (autolysis). The acidic pH is a safety feature — if lysosomal contents leak into the cytoplasm (pH 7), the enzymes are largely inactive, protecting the cell. Tay-Sachs and Gaucher disease are lysosomal storage disorders.", q:"Lysosomes function optimally at what pH?", qh:"<b>Acidic (~pH 5)</b>. Maintained by V-type H+ ATPase. The acidic pH is also a safety feature — leaked enzymes are mostly inactive at cytoplasmic pH 7.", ex:"LYSOSOMES are membrane-bound vesicles containing ~40 different acid hydrolases (proteases, lipases, nucleases, glycosidases) that work optimally at acidic pH ~5. The internal pH is maintained by V-type H+ ATPase pumps in the lysosomal membrane (pumping H+ in from cytoplasm at the cost of ATP). Lysosomes digest material delivered by three pathways: PHAGOCYTOSIS (large particles, like bacteria or dying cells engulfed by macrophages), ENDOCYTOSIS (smaller things, like LDL particles), and AUTOPHAGY (the cell's own worn-out organelles wrapped in a double membrane). At the end of cell life, lysosomes can release contents in AUTOLYSIS (programmed self-destruction). The acidic pH is also a safety feature: leaked hydrolases are largely inactive at cytoplasmic pH 7, protecting the cell from accidental self-digestion. Lysosomal storage diseases (Tay-Sachs, Gaucher, Hurler) result from missing hydrolases — undegraded substrate accumulates." },
+      1: { rt:"Right. ROUGH ER is studded with ribosomes, makes secreted + membrane proteins. SMOOTH ER does lipid synthesis + detox.", wr:"ENDOPLASMIC RETICULUM (ER) is a continuous membrane system extending from the nuclear envelope. ROUGH ER = ribosomes attached → synthesizes proteins for secretion, membrane insertion, or lysosomal targeting. SMOOTH ER = no ribosomes → lipid + steroid synthesis (in liver), drug detoxification (cytochrome P450), Ca²⁺ storage (especially in muscle cells, where it's called sarcoplasmic reticulum).", q:"A cell that secretes large amounts of protein would have abundant:", qh:"<b>Rough ER</b> (ribosome-studded). Rough ER makes secreted + membrane + lysosomal proteins.", ex:"The endoplasmic reticulum (ER) is a continuous membrane system connecting to the nuclear envelope. Two types: ROUGH ER has ribosomes attached to its cytoplasmic surface, it synthesizes proteins destined for: (a) secretion (insulin, antibodies, digestive enzymes), (b) membrane insertion (receptors), or (c) lysosomes. SMOOTH ER has no ribosomes and handles: (a) lipid + steroid synthesis (most active in liver and steroid-producing cells like adrenal cortex), (b) drug detoxification (cytochrome P450 enzymes, alcohol, drugs), (c) Ca²⁺ storage (especially in muscle, where it's called sarcoplasmic reticulum, Ca²⁺ release triggers contraction). Cells that SECRETE lots of protein (pancreatic acinar cells, plasma cells making antibodies) are packed with rough ER." },
+      2: { rt:"Right. Golgi modifies + sorts + ships proteins from the ER. Cis face receives; trans face sends.", wr:"The GOLGI APPARATUS is a stack of membrane-bound flattened sacs (cisternae) that receives proteins from the ER, MODIFIES them (glycosylation, phosphorylation, sulfation), SORTS them by destination tags, and PACKAGES them into vesicles for shipping. Cis face = entry from ER. Medial = modifications. Trans face = exit toward plasma membrane, secretion, or lysosomes.", q:"What is the primary function of the Golgi apparatus?", qh:"<b>Modify, sort, and package proteins</b> received from the ER. Cis face receives; trans face ships.", ex:"The Golgi apparatus is a series of flattened membrane sacs (cisternae) arranged in a polarized stack. Proteins arrive via vesicles from the ER, enter the CIS face, move through MEDIAL cisternae where modifications occur (glycosylation patterns, phosphate addition, sulfation), and exit the TRANS face inside vesicles destined for: (a) secretion (exocytosis at plasma membrane), (b) lysosomes (tagged with mannose-6-phosphate), or (c) plasma membrane insertion (receptors, transporters). Think of the Golgi as the post office: receives, sorts, addresses, ships. Most active in cells that secrete heavily, same cells that have lots of rough ER. ER → Golgi → vesicles is the entire SECRETORY PATHWAY." },
+      3: { rt:"Right. Lysosomes contain digestive enzymes (hydrolases) active at acidic pH ~5. The 'cellular stomach.'", wr:"LYSOSOMES are membrane-bound vesicles containing acid hydrolases (digestive enzymes that work best at acidic pH, ~5). Maintained at acidic pH by V-type ATPase pumps in the membrane. They digest: phagocytosed material (bacteria, debris), worn-out organelles (autophagy), and at the end of cell life, the entire cell (autolysis). The acidic pH is a safety feature, if lysosomal contents leak into the cytoplasm (pH 7), the enzymes are largely inactive, protecting the cell. Tay-Sachs and Gaucher disease are lysosomal storage disorders.", q:"Lysosomes function optimally at what pH?", qh:"<b>Acidic (~pH 5)</b>. Maintained by V-type H+ ATPase. The acidic pH is also a safety feature, leaked enzymes are mostly inactive at cytoplasmic pH 7.", ex:"LYSOSOMES are membrane-bound vesicles containing ~40 different acid hydrolases (proteases, lipases, nucleases, glycosidases) that work optimally at acidic pH ~5. The internal pH is maintained by V-type H+ ATPase pumps in the lysosomal membrane (pumping H+ in from cytoplasm at the cost of ATP). Lysosomes digest material delivered by three pathways: PHAGOCYTOSIS (large particles, like bacteria or dying cells engulfed by macrophages), ENDOCYTOSIS (smaller things, like LDL particles), and AUTOPHAGY (the cell's own worn-out organelles wrapped in a double membrane). At the end of cell life, lysosomes can release contents in AUTOLYSIS (programmed self-destruction). The acidic pH is also a safety feature: leaked hydrolases are largely inactive at cytoplasmic pH 7, protecting the cell from accidental self-digestion. Lysosomal storage diseases (Tay-Sachs, Gaucher, Hurler) result from missing hydrolases, undegraded substrate accumulates." },
     },
   },
 
@@ -287,9 +287,9 @@ const NODES = {
     stageOrder: ["simp", "fac", "osm", "act", "bulk"],
     stageLabels: ["Stage 1 · place O&#8322; through bilayer", "Stage 2 · place Glucose via GLUT", "Stage 3 · place Water via aquaporin", "Stage 4 · place Na/K ATPase pump", "Stage 5 · place Phagocytosis", "Complete · all placed"],
     retrievals: {
-      1: { rt:"Right. Facilitated diffusion: passive (no ATP), but requires a transport protein. Simple diffusion is through the bilayer alone.", wr:"FACILITATED diffusion is PASSIVE (down concentration gradient, no ATP needed) but requires a protein transporter (channel or carrier). The substrate is something that can't cross the bilayer alone — too polar, too big, or too charged. SIMPLE diffusion is also passive but goes straight through the bilayer (small, nonpolar molecules: O₂, CO₂, small uncharged molecules). Both are downhill; the difference is whether you need a protein helper.", q:"Facilitated diffusion differs from simple diffusion in that it:", qh:"<b>Requires a transport protein</b> (channel or carrier). Both are passive — neither uses ATP.", ex:"All transport across the membrane falls into PASSIVE (no ATP) or ACTIVE (uses ATP, can go uphill). PASSIVE splits into: SIMPLE DIFFUSION — small, nonpolar molecules (O₂, CO₂, N₂, steroids, small uncharged molecules) pass directly through the lipid bilayer. No protein needed. FACILITATED DIFFUSION — molecules that can't cross the bilayer (polar, charged, or large) use a transport protein. Still passive (downhill, no ATP), just needs a helper. Two flavors: CHANNELS (open pores, very fast — aquaporins for water, ion channels for K+/Na+/Ca²⁺) and CARRIERS (alternating conformations, slower — GLUT transporters for glucose). ACTIVE TRANSPORT requires ATP (or coupling to a gradient) and can move substrate uphill — Na+/K+ ATPase, proton pumps, etc." },
-      2: { rt:"Right. Na+/K+ ATPase pumps 3 Na+ OUT and 2 K+ IN per ATP. Maintains the membrane potential.", wr:"Na+/K+ ATPase is the most important active transporter in animal cells. Per ATP hydrolyzed, it pumps 3 Na+ OUT of the cell and 2 K+ IN. This maintains the resting membrane potential (~-70 mV inside negative): high Na+ outside, high K+ inside. The pump is ELECTROGENIC (net positive charge moved out per cycle). Ouabain is a specific inhibitor (used as a research tool and historically as a heart medication).", q:"Per ATP hydrolyzed, the Na+/K+ ATPase pumps how many ions?", qh:"<b>3 Na+ OUT, 2 K+ IN per ATP.</b> Net positive charge moved out → contributes to the negative resting potential.", ex:"The Na+/K+ ATPase (sodium-potassium pump) is the master ion-gradient generator in animal cells. Per cycle: hydrolyzes 1 ATP → pumps 3 Na+ OUT, 2 K+ IN. The pump is ELECTROGENIC because net charge moves outward (3+ out, 2+ in = net +1 out per cycle), contributing slightly to the negative resting potential. The Na+ and K+ gradients it builds drive EVERYTHING: (1) resting membrane potential, (2) action potentials, (3) secondary active transport (Na+ symports with glucose in the intestine — the SGLT transporter), (4) cell volume regulation. The pump consumes ~25% of basal ATP in resting cells and up to 70% in neurons (which constantly burn through gradients to fire). Ouabain (a cardiac glycoside) inhibits this pump — was used as a heart medication and is still a key research tool." },
-      3: { rt:"Right. Endocytosis: pinocytosis (cell drinking, small fluids) vs phagocytosis (cell eating, large particles).", wr:"BULK TRANSPORT moves material in/out via membrane-bound vesicles. ENDOCYTOSIS = inward: pinocytosis (cell drinking — small fluid droplets, nonspecific), phagocytosis (cell eating — large particles like bacteria, only specialized cells like macrophages do this), receptor-mediated endocytosis (specific molecules grabbed by surface receptors, e.g., LDL particles by liver). EXOCYTOSIS = outward: vesicles fuse with membrane to release contents (hormone secretion, neurotransmitter release, ECM components).", q:"Phagocytosis is best described as:", qh:"<b>A cell engulfing a large particle</b> (like a bacterium or dead cell) into a vesicle. Specialized cells like macrophages do it.", ex:"Bulk transport moves large amounts of material across the membrane via vesicles. THREE FLAVORS OF ENDOCYTOSIS (taking things IN): (1) PINOCYTOSIS — 'cell drinking,' nonspecific uptake of small fluid droplets, all cells do it. (2) PHAGOCYTOSIS — 'cell eating,' large solid particles (bacteria, dead cells, debris) engulfed into a phagosome. Only specialized cells: macrophages, neutrophils, amoebae. (3) RECEPTOR-MEDIATED ENDOCYTOSIS — specific molecules bound by surface receptors, clustered into clathrin-coated pits, internalized as coated vesicles. Example: liver cells taking up LDL particles via LDL receptors. EXOCYTOSIS is the reverse: vesicles from inside the cell fuse with the plasma membrane and release contents OUT — hormone secretion (insulin), neurotransmitter release, deposition of ECM proteins. Both bulk transport modes can move material against a concentration gradient and consume ATP (active processes)." },
+      1: { rt:"Right. Facilitated diffusion: passive (no ATP), but requires a transport protein. Simple diffusion is through the bilayer alone.", wr:"FACILITATED diffusion is PASSIVE (down concentration gradient, no ATP needed) but requires a protein transporter (channel or carrier). The substrate is something that can't cross the bilayer alone, too polar, too big, or too charged. SIMPLE diffusion is also passive but goes straight through the bilayer (small, nonpolar molecules: O₂, CO₂, small uncharged molecules). Both are downhill; the difference is whether you need a protein helper.", q:"Facilitated diffusion differs from simple diffusion in that it:", qh:"<b>Requires a transport protein</b> (channel or carrier). Both are passive: neither uses ATP.", ex:"All transport across the membrane falls into PASSIVE (no ATP) or ACTIVE (uses ATP, can go uphill). PASSIVE splits into: SIMPLE DIFFUSION: small, nonpolar molecules (O₂, CO₂, N₂, steroids, small uncharged molecules) pass directly through the lipid bilayer. No protein needed. FACILITATED DIFFUSION: molecules that can't cross the bilayer (polar, charged, or large) use a transport protein. Still passive (downhill, no ATP), just needs a helper. Two flavors: CHANNELS (open pores, very fast, aquaporins for water, ion channels for K+/Na+/Ca²⁺) and CARRIERS (alternating conformations, slower, GLUT transporters for glucose). ACTIVE TRANSPORT requires ATP (or coupling to a gradient) and can move substrate uphill, Na+/K+ ATPase, proton pumps, etc." },
+      2: { rt:"Right. Na+/K+ ATPase pumps 3 Na+ OUT and 2 K+ IN per ATP. Maintains the membrane potential.", wr:"Na+/K+ ATPase is the most important active transporter in animal cells. Per ATP hydrolyzed, it pumps 3 Na+ OUT of the cell and 2 K+ IN. This maintains the resting membrane potential (~-70 mV inside negative): high Na+ outside, high K+ inside. The pump is ELECTROGENIC (net positive charge moved out per cycle). Ouabain is a specific inhibitor (used as a research tool and historically as a heart medication).", q:"Per ATP hydrolyzed, the Na+/K+ ATPase pumps how many ions?", qh:"<b>3 Na+ OUT, 2 K+ IN per ATP.</b> Net positive charge moved out → contributes to the negative resting potential.", ex:"The Na+/K+ ATPase (sodium-potassium pump) is the master ion-gradient generator in animal cells. Per cycle: hydrolyzes 1 ATP → pumps 3 Na+ OUT, 2 K+ IN. The pump is ELECTROGENIC because net charge moves outward (3+ out, 2+ in = net +1 out per cycle), contributing slightly to the negative resting potential. The Na+ and K+ gradients it builds drive EVERYTHING: (1) resting membrane potential, (2) action potentials, (3) secondary active transport (Na+ symports with glucose in the intestine, the SGLT transporter), (4) cell volume regulation. The pump consumes ~25% of basal ATP in resting cells and up to 70% in neurons (which constantly burn through gradients to fire). Ouabain (a cardiac glycoside) inhibits this pump, was used as a heart medication and is still a key research tool." },
+      3: { rt:"Right. Endocytosis: pinocytosis (cell drinking, small fluids) vs phagocytosis (cell eating, large particles).", wr:"BULK TRANSPORT moves material in/out via membrane-bound vesicles. ENDOCYTOSIS = inward: pinocytosis (cell drinking, small fluid droplets, nonspecific), phagocytosis (cell eating, large particles like bacteria, only specialized cells like macrophages do this), receptor-mediated endocytosis (specific molecules grabbed by surface receptors, e.g., LDL particles by liver). EXOCYTOSIS = outward: vesicles fuse with membrane to release contents (hormone secretion, neurotransmitter release, ECM components).", q:"Phagocytosis is best described as:", qh:"<b>A cell engulfing a large particle</b> (like a bacterium or dead cell) into a vesicle. Specialized cells like macrophages do it.", ex:"Bulk transport moves large amounts of material across the membrane via vesicles. THREE FLAVORS OF ENDOCYTOSIS (taking things IN): (1) PINOCYTOSIS: 'cell drinking,' nonspecific uptake of small fluid droplets, all cells do it. (2) PHAGOCYTOSIS: 'cell eating,' large solid particles (bacteria, dead cells, debris) engulfed into a phagosome. Only specialized cells: macrophages, neutrophils, amoebae. (3) RECEPTOR-MEDIATED ENDOCYTOSIS: specific molecules bound by surface receptors, clustered into clathrin-coated pits, internalized as coated vesicles. Example: liver cells taking up LDL particles via LDL receptors. EXOCYTOSIS is the reverse: vesicles from inside the cell fuse with the plasma membrane and release contents OUT, hormone secretion (insulin), neurotransmitter release, deposition of ECM proteins. Both bulk transport modes can move material against a concentration gradient and consume ATP (active processes)." },
     },
   },
 
@@ -301,9 +301,9 @@ const NODES = {
     stageOrder: ["gpcr", "rtk", "ster", "ion", "camp"],
     stageLabels: ["Stage 1 · place Epinephrine", "Stage 2 · place Insulin", "Stage 3 · place Cortisol", "Stage 4 · place Acetylcholine", "Stage 5 · place cAMP", "Complete · all placed"],
     retrievals: {
-      1: { rt:"Right. Steroid hormones cross the membrane and bind intracellular receptors that act as transcription factors. Slow but long-lasting.", wr:"STEROID hormones (cortisol, testosterone, estrogen, progesterone, aldosterone) are hydrophobic — they diffuse THROUGH the plasma membrane and bind INTRACELLULAR receptors (in cytoplasm or nucleus). The receptor-hormone complex acts as a transcription factor, turning gene expression on/off. Response is SLOW (minutes-hours) because it requires new protein synthesis, but LONG-LASTING. Vitamin D + thyroid hormone use the same mechanism. PEPTIDE hormones (insulin, glucagon, GH, oxytocin) can't cross the membrane and use SURFACE receptors with second-messenger cascades — fast (seconds-minutes), short-lived.", q:"Steroid hormones bind their receptors where?", qh:"<b>Inside the cell</b> (cytoplasm or nucleus). They diffuse through the membrane because they're hydrophobic; receptor-hormone complex is a transcription factor.", ex:"Two big classes of hormones based on solubility and signaling mechanism. STEROID HORMONES (cortisol, aldosterone, testosterone, estrogen, progesterone, vitamin D, thyroid hormone): hydrophobic, diffuse THROUGH the plasma membrane, bind INTRACELLULAR receptors (cytoplasmic or nuclear). The receptor-hormone complex translocates to the nucleus and acts as a TRANSCRIPTION FACTOR — turning specific genes on or off. Effects are SLOW (minutes to hours) because they require new protein synthesis, but LONG-LASTING. PEPTIDE/PROTEIN HORMONES (insulin, glucagon, GH, oxytocin, vasopressin, FSH, LH) and CATECHOLAMINES (epinephrine, NE): water-soluble, cannot cross membrane, bind SURFACE RECEPTORS (GPCRs or RTKs), trigger SECOND-MESSENGER CASCADES (cAMP, IP3, DAG, Ca²⁺). Effects are FAST (seconds to minutes), often SHORT-LIVED, and don't require gene transcription. The DAT loves to test which class a given hormone is and whether its receptor is intracellular or membrane-bound." },
-      2: { rt:"Right. GPCRs use second messengers like cAMP. Epinephrine, glucagon, vasopressin all use cAMP via Gs proteins.", wr:"G-PROTEIN-COUPLED RECEPTORS (GPCRs) are 7-transmembrane proteins. Ligand binding activates an associated G-protein (Gs, Gi, Gq), which then activates an effector enzyme to generate a SECOND MESSENGER. Gs → adenylyl cyclase → cAMP. Gi → inhibits adenylyl cyclase. Gq → phospholipase C → IP3 + DAG → Ca²⁺ release. Examples: epinephrine (β-receptors via Gs), glucagon, vasopressin (V2 in kidney). The classic second-messenger cascade amplifies the signal: one hormone molecule → many cAMP molecules → many activated enzymes.", q:"What is the second messenger activated by Gs-coupled GPCRs (like the epinephrine β-receptor)?", qh:"<b>cAMP</b> (cyclic AMP). Gs → adenylyl cyclase → ATP → cAMP → PKA → downstream effects.", ex:"GPCRs (G-protein-coupled receptors) are 7-transmembrane proteins that work via a 3-step cascade. (1) Ligand binds GPCR → conformational change. (2) GPCR activates an associated heterotrimeric G-protein (α + β + γ subunits) by exchanging GDP for GTP. (3) G-α subunit dissociates and activates an effector enzyme. Three main flavors: <b>Gs</b> → activates ADENYLYL CYCLASE → cAMP production from ATP → activates protein kinase A (PKA) → phosphorylates downstream targets. Used by: epinephrine β-receptors, glucagon, vasopressin V2. <b>Gi</b> → INHIBITS adenylyl cyclase (less cAMP). Used by α₂-adrenergic, opioid receptors. <b>Gq</b> → activates phospholipase C → splits PIP2 into IP3 + DAG → IP3 releases Ca²⁺ from ER, DAG activates PKC. Used by: vasopressin V1, α₁-adrenergic. The cascade massively AMPLIFIES the signal — one hormone molecule can produce thousands of activated downstream enzymes." },
-      3: { rt:"Right. Receptor TYROSINE KINASES (RTKs) auto-phosphorylate on tyrosine and activate downstream signaling. Insulin, growth factors use these.", wr:"RECEPTOR TYROSINE KINASES (RTKs) are single-pass membrane receptors that DIMERIZE on ligand binding. The two receptor monomers come together and CROSS-PHOSPHORYLATE each other on tyrosine residues in their cytoplasmic domains. Phosphorylated tyrosines recruit downstream signaling proteins (SH2 domains) → MAPK/PI3K cascades → cell growth, division, metabolism. Examples: INSULIN receptor, growth factor receptors (EGFR, VEGFR, PDGFR). Many cancers involve mutated overactive RTKs.", q:"How does the insulin receptor signal after insulin binds?", qh:"<b>Receptor dimerizes and trans-autophosphorylates on tyrosine residues</b> — recruits downstream signaling proteins (IRS-1, PI3K) for cellular response.", ex:"RECEPTOR TYROSINE KINASES (RTKs): single-pass membrane receptors with intracellular tyrosine-kinase domains. Mechanism: (1) Ligand binds the extracellular domain. (2) Two receptors DIMERIZE (come together side-by-side). (3) The dimerized receptors TRANS-AUTOPHOSPHORYLATE — each kinase phosphorylates the tyrosines of its partner. (4) Phosphorylated tyrosines serve as DOCKING SITES for downstream signaling proteins (those with SH2 domains: GRB2, PI3K, PLCγ, IRS-1 for insulin). (5) Downstream cascades: MAPK (Ras-Raf-MEK-ERK) for growth/division, PI3K-AKT for survival/metabolism. EXAMPLES: insulin receptor, EGFR (epidermal growth factor), VEGFR (vascular endothelial growth factor), PDGFR (platelet-derived). Most growth factor receptors are RTKs. MANY CANCERS involve constitutively activated mutant RTKs (e.g., HER2 in breast cancer, EGFR in lung cancer). Targeted cancer drugs (trastuzumab/Herceptin, imatinib/Gleevec) inhibit specific RTKs." },
+      1: { rt:"Right. Steroid hormones cross the membrane and bind intracellular receptors that act as transcription factors. Slow but long-lasting.", wr:"STEROID hormones (cortisol, testosterone, estrogen, progesterone, aldosterone) are hydrophobic, they diffuse THROUGH the plasma membrane and bind INTRACELLULAR receptors (in cytoplasm or nucleus). The receptor-hormone complex acts as a transcription factor, turning gene expression on/off. Response is SLOW (minutes-hours) because it requires new protein synthesis, but LONG-LASTING. Vitamin D + thyroid hormone use the same mechanism. PEPTIDE hormones (insulin, glucagon, GH, oxytocin) can't cross the membrane and use SURFACE receptors with second-messenger cascades, fast (seconds-minutes), short-lived.", q:"Steroid hormones bind their receptors where?", qh:"<b>Inside the cell</b> (cytoplasm or nucleus). They diffuse through the membrane because they're hydrophobic; receptor-hormone complex is a transcription factor.", ex:"Two big classes of hormones based on solubility and signaling mechanism. STEROID HORMONES (cortisol, aldosterone, testosterone, estrogen, progesterone, vitamin D, thyroid hormone): hydrophobic, diffuse THROUGH the plasma membrane, bind INTRACELLULAR receptors (cytoplasmic or nuclear). The receptor-hormone complex translocates to the nucleus and acts as a TRANSCRIPTION FACTOR, turning specific genes on or off. Effects are SLOW (minutes to hours) because they require new protein synthesis, but LONG-LASTING. PEPTIDE/PROTEIN HORMONES (insulin, glucagon, GH, oxytocin, vasopressin, FSH, LH) and CATECHOLAMINES (epinephrine, NE): water-soluble, cannot cross membrane, bind SURFACE RECEPTORS (GPCRs or RTKs), trigger SECOND-MESSENGER CASCADES (cAMP, IP3, DAG, Ca²⁺). Effects are FAST (seconds to minutes), often SHORT-LIVED, and don't require gene transcription. The DAT loves to test which class a given hormone is and whether its receptor is intracellular or membrane-bound." },
+      2: { rt:"Right. GPCRs use second messengers like cAMP. Epinephrine, glucagon, vasopressin all use cAMP via Gs proteins.", wr:"G-PROTEIN-COUPLED RECEPTORS (GPCRs) are 7-transmembrane proteins. Ligand binding activates an associated G-protein (Gs, Gi, Gq), which then activates an effector enzyme to generate a SECOND MESSENGER. Gs → adenylyl cyclase → cAMP. Gi → inhibits adenylyl cyclase. Gq → phospholipase C → IP3 + DAG → Ca²⁺ release. Examples: epinephrine (β-receptors via Gs), glucagon, vasopressin (V2 in kidney). The classic second-messenger cascade amplifies the signal: one hormone molecule → many cAMP molecules → many activated enzymes.", q:"What is the second messenger activated by Gs-coupled GPCRs (like the epinephrine β-receptor)?", qh:"<b>cAMP</b> (cyclic AMP). Gs → adenylyl cyclase → ATP → cAMP → PKA → downstream effects.", ex:"GPCRs (G-protein-coupled receptors) are 7-transmembrane proteins that work via a 3-step cascade. (1) Ligand binds GPCR → conformational change. (2) GPCR activates an associated heterotrimeric G-protein (α + β + γ subunits) by exchanging GDP for GTP. (3) G-α subunit dissociates and activates an effector enzyme. Three main flavors: <b>Gs</b> → activates ADENYLYL CYCLASE → cAMP production from ATP → activates protein kinase A (PKA) → phosphorylates downstream targets. Used by: epinephrine β-receptors, glucagon, vasopressin V2. <b>Gi</b> → INHIBITS adenylyl cyclase (less cAMP). Used by α₂-adrenergic, opioid receptors. <b>Gq</b> → activates phospholipase C → splits PIP2 into IP3 + DAG → IP3 releases Ca²⁺ from ER, DAG activates PKC. Used by: vasopressin V1, α₁-adrenergic. The cascade massively AMPLIFIES the signal, one hormone molecule can produce thousands of activated downstream enzymes." },
+      3: { rt:"Right. Receptor TYROSINE KINASES (RTKs) auto-phosphorylate on tyrosine and activate downstream signaling. Insulin, growth factors use these.", wr:"RECEPTOR TYROSINE KINASES (RTKs) are single-pass membrane receptors that DIMERIZE on ligand binding. The two receptor monomers come together and CROSS-PHOSPHORYLATE each other on tyrosine residues in their cytoplasmic domains. Phosphorylated tyrosines recruit downstream signaling proteins (SH2 domains) → MAPK/PI3K cascades → cell growth, division, metabolism. Examples: INSULIN receptor, growth factor receptors (EGFR, VEGFR, PDGFR). Many cancers involve mutated overactive RTKs.", q:"How does the insulin receptor signal after insulin binds?", qh:"<b>Receptor dimerizes and trans-autophosphorylates on tyrosine residues</b>, recruits downstream signaling proteins (IRS-1, PI3K) for cellular response.", ex:"RECEPTOR TYROSINE KINASES (RTKs): single-pass membrane receptors with intracellular tyrosine-kinase domains. Mechanism: (1) Ligand binds the extracellular domain. (2) Two receptors DIMERIZE (come together side-by-side). (3) The dimerized receptors TRANS-AUTOPHOSPHORYLATE: each kinase phosphorylates the tyrosines of its partner. (4) Phosphorylated tyrosines serve as DOCKING SITES for downstream signaling proteins (those with SH2 domains: GRB2, PI3K, PLCγ, IRS-1 for insulin). (5) Downstream cascades: MAPK (Ras-Raf-MEK-ERK) for growth/division, PI3K-AKT for survival/metabolism. EXAMPLES: insulin receptor, EGFR (epidermal growth factor), VEGFR (vascular endothelial growth factor), PDGFR (platelet-derived). Most growth factor receptors are RTKs. MANY CANCERS involve constitutively activated mutant RTKs (e.g., HER2 in breast cancer, EGFR in lung cancer). Targeted cancer drugs (trastuzumab/Herceptin, imatinib/Gleevec) inhibit specific RTKs." },
     },
   },
 
@@ -315,9 +315,9 @@ const NODES = {
     stageOrder: ["glyc", "pdh", "krb", "etc", "atps"],
     stageLabels: ["Stage 1 · place Glycolysis", "Stage 2 · place PDH", "Stage 3 · place Krebs cycle", "Stage 4 · place ETC", "Stage 5 · place ATP synthase", "Complete · all placed"],
     retrievals: {
-      3: { rt:"Right. Krebs makes 6 NADH per glucose (3 per turn × 2 turns). PDH adds 2 more; glycolysis adds 2 more — 10 NADH total per glucose (the trap).", wr:"Krebs cycle (per glucose, both turns): 6 NADH + 2 FADH₂ + 2 ATP (or GTP) + 4 CO₂. Plus 2 CO₂ from PDH; plus 2 NADH from PDH; plus 2 NADH from glycolysis. So TOTAL per glucose = 10 NADH + 2 FADH₂. The trap on the DAT: '10' is the answer when asked about all of cellular respiration, but '6' is the answer when asked specifically about Krebs.", q:"How many NADH are produced per glucose by the Krebs cycle (both turns)?", qh:"<b>6</b> (3 per turn × 2 turns). PLUS 2 FADH₂ + 2 ATP/GTP. (The total NADH per glucose across glycolysis+PDH+Krebs is 10 — that's the trap.)", ex:"Cellular respiration NADH/FADH₂ accounting per glucose: GLYCOLYSIS → 2 NADH (and 2 ATP, 2 pyruvate). PDH (pyruvate dehydrogenase, ×2) → 2 NADH (and 2 CO₂, 2 acetyl-CoA). KREBS CYCLE (×2 turns per glucose, since glucose gives 2 acetyl-CoA) → 6 NADH + 2 FADH₂ + 2 ATP/GTP + 4 CO₂. TOTAL per glucose: 10 NADH, 2 FADH₂, 4 ATP (2 glycolysis + 2 Krebs), 6 CO₂. The ETC then uses the NADH + FADH₂ to pump protons and generate ATP via ATP synthase: each NADH gives ~2.5 ATP, each FADH₂ gives ~1.5 ATP (modern numbers), so total respiration yields ~30-32 ATP per glucose. THE TRAP on the DAT: '10 NADH per glucose' is total respiration; '6 NADH per glucose' is Krebs alone. Read the question carefully." },
-      2: { rt:"Right. The ETC pumps protons into the intermembrane space → proton gradient drives ATP synthase. Chemiosmotic coupling.", wr:"ETC complexes I, III, IV pump H+ from matrix into the intermembrane space as electrons flow down the chain (NADH → O₂). This creates a PROTON GRADIENT (electrochemical, ~150 mV across the inner membrane). H+ then flows back into the matrix through ATP SYNTHASE, and the energy of this flow drives the synthesis of ATP from ADP + Pᵢ. This is Mitchell's CHEMIOSMOTIC HYPOTHESIS — the central insight of bioenergetics.", q:"What is the immediate energy source for ATP synthase to make ATP?", qh:"<b>The proton gradient across the inner mitochondrial membrane</b> (built by the ETC). H+ flows down its gradient through ATP synthase, driving ATP synthesis.", ex:"CHEMIOSMOTIC COUPLING (Mitchell, 1961, Nobel 1978): the ETC and ATP synthesis are mechanistically coupled by a PROTON GRADIENT. As electrons flow down the ETC from NADH → ubiquinone → cytochrome c → O₂, the complexes I, III, and IV pump H+ from the mitochondrial matrix INTO the intermembrane space. This builds an electrochemical proton gradient (~150 mV, pH ~1 unit lower outside). ATP SYNTHASE (complex V) is a rotary enzyme that lets H+ flow back DOWN their gradient into the matrix — the flow turns the F0 ring, which rotates the F1 stalk, which sequentially changes the conformation of three β-subunits, each of which catalyzes ATP synthesis from ADP + Pᵢ. So the ETC doesn't make ATP directly — it makes the proton gradient, which is the intermediate energy form. Each NADH yields ~2.5 ATP; each FADH₂ ~1.5 ATP. Uncouplers like DNP collapse the gradient → ETC runs full speed (burns nutrients, generates heat) but no ATP is made — used historically as a dangerous weight-loss drug and naturally in brown fat thermogenesis." },
-      1: { rt:"Right. Oxygen is the FINAL electron acceptor in the ETC. Without O₂, ETC stops → NADH builds up → glycolysis halts.", wr:"Oxygen plays one critical role in cellular respiration: it's the FINAL ELECTRON ACCEPTOR of the ETC. At complex IV (cytochrome c oxidase), 4 electrons + 4 H+ + O₂ → 2 H₂O. Without O₂, the ETC backs up, NADH can't be reoxidized to NAD+, the Krebs cycle and glycolysis halt (no NAD+). Anaerobic cells survive on the 2 ATP from glycolysis + fermentation (regenerates NAD+); aerobic cells can extract 15× more ATP per glucose with O₂.", q:"What is the role of oxygen in cellular respiration?", qh:"<b>Final electron acceptor</b> at the end of the ETC. O₂ + 4e⁻ + 4H+ → 2 H₂O at complex IV.", ex:"OXYGEN's role in respiration is precisely one thing: it accepts electrons at the END of the electron transport chain. At complex IV (cytochrome c oxidase), 4 electrons (from cytochrome c) + 4 H+ + O₂ → 2 H₂O. Without O₂, electrons have nowhere to go → ETC backs up → NADH can't be reoxidized to NAD+ → Krebs cycle stops (needs NAD+ as cofactor) → glycolysis eventually stops too (also needs NAD+). The cell is stuck with anaerobic glycolysis: 2 ATP per glucose, with fermentation to regenerate NAD+ from NADH (pyruvate → lactate in animals, ethanol in yeast). Aerobic respiration extracts ~30-32 ATP per glucose — about 15× more efficient than anaerobic. This is why aerobic organisms dominate. Cyanide blocks complex IV directly (binds the heme iron) — instantly fatal because it shuts down the entire ETC even with plenty of O₂ available." },
+      3: { rt:"Right. Krebs makes 6 NADH per glucose (3 per turn × 2 turns). PDH adds 2 more; glycolysis adds 2 more, 10 NADH total per glucose (the trap).", wr:"Krebs cycle (per glucose, both turns): 6 NADH + 2 FADH₂ + 2 ATP (or GTP) + 4 CO₂. Plus 2 CO₂ from PDH; plus 2 NADH from PDH; plus 2 NADH from glycolysis. So TOTAL per glucose = 10 NADH + 2 FADH₂. The trap on the DAT: '10' is the answer when asked about all of cellular respiration, but '6' is the answer when asked specifically about Krebs.", q:"How many NADH are produced per glucose by the Krebs cycle (both turns)?", qh:"<b>6</b> (3 per turn × 2 turns). PLUS 2 FADH₂ + 2 ATP/GTP. (The total NADH per glucose across glycolysis+PDH+Krebs is 10, that's the trap.)", ex:"Cellular respiration NADH/FADH₂ accounting per glucose: GLYCOLYSIS → 2 NADH (and 2 ATP, 2 pyruvate). PDH (pyruvate dehydrogenase, ×2) → 2 NADH (and 2 CO₂, 2 acetyl-CoA). KREBS CYCLE (×2 turns per glucose, since glucose gives 2 acetyl-CoA) → 6 NADH + 2 FADH₂ + 2 ATP/GTP + 4 CO₂. TOTAL per glucose: 10 NADH, 2 FADH₂, 4 ATP (2 glycolysis + 2 Krebs), 6 CO₂. The ETC then uses the NADH + FADH₂ to pump protons and generate ATP via ATP synthase: each NADH gives ~2.5 ATP, each FADH₂ gives ~1.5 ATP (modern numbers), so total respiration yields ~30-32 ATP per glucose. THE TRAP on the DAT: '10 NADH per glucose' is total respiration; '6 NADH per glucose' is Krebs alone. Read the question carefully." },
+      2: { rt:"Right. The ETC pumps protons into the intermembrane space → proton gradient drives ATP synthase. Chemiosmotic coupling.", wr:"ETC complexes I, III, IV pump H+ from matrix into the intermembrane space as electrons flow down the chain (NADH → O₂). This creates a PROTON GRADIENT (electrochemical, ~150 mV across the inner membrane). H+ then flows back into the matrix through ATP SYNTHASE, and the energy of this flow drives the synthesis of ATP from ADP + Pᵢ. This is Mitchell's CHEMIOSMOTIC HYPOTHESIS: the central insight of bioenergetics.", q:"What is the immediate energy source for ATP synthase to make ATP?", qh:"<b>The proton gradient across the inner mitochondrial membrane</b> (built by the ETC). H+ flows down its gradient through ATP synthase, driving ATP synthesis.", ex:"CHEMIOSMOTIC COUPLING (Mitchell, 1961, Nobel 1978): the ETC and ATP synthesis are mechanistically coupled by a PROTON GRADIENT. As electrons flow down the ETC from NADH → ubiquinone → cytochrome c → O₂, the complexes I, III, and IV pump H+ from the mitochondrial matrix INTO the intermembrane space. This builds an electrochemical proton gradient (~150 mV, pH ~1 unit lower outside). ATP SYNTHASE (complex V) is a rotary enzyme that lets H+ flow back DOWN their gradient into the matrix, the flow turns the F0 ring, which rotates the F1 stalk, which sequentially changes the conformation of three β-subunits, each of which catalyzes ATP synthesis from ADP + Pᵢ. So the ETC doesn't make ATP directly, it makes the proton gradient, which is the intermediate energy form. Each NADH yields ~2.5 ATP; each FADH₂ ~1.5 ATP. Uncouplers like DNP collapse the gradient → ETC runs full speed (burns nutrients, generates heat) but no ATP is made, used historically as a dangerous weight-loss drug and naturally in brown fat thermogenesis." },
+      1: { rt:"Right. Oxygen is the FINAL electron acceptor in the ETC. Without O₂, ETC stops → NADH builds up → glycolysis halts.", wr:"Oxygen plays one critical role in cellular respiration: it's the FINAL ELECTRON ACCEPTOR of the ETC. At complex IV (cytochrome c oxidase), 4 electrons + 4 H+ + O₂ → 2 H₂O. Without O₂, the ETC backs up, NADH can't be reoxidized to NAD+, the Krebs cycle and glycolysis halt (no NAD+). Anaerobic cells survive on the 2 ATP from glycolysis + fermentation (regenerates NAD+); aerobic cells can extract 15× more ATP per glucose with O₂.", q:"What is the role of oxygen in cellular respiration?", qh:"<b>Final electron acceptor</b> at the end of the ETC. O₂ + 4e⁻ + 4H+ → 2 H₂O at complex IV.", ex:"OXYGEN's role in respiration is precisely one thing: it accepts electrons at the END of the electron transport chain. At complex IV (cytochrome c oxidase), 4 electrons (from cytochrome c) + 4 H+ + O₂ → 2 H₂O. Without O₂, electrons have nowhere to go → ETC backs up → NADH can't be reoxidized to NAD+ → Krebs cycle stops (needs NAD+ as cofactor) → glycolysis eventually stops too (also needs NAD+). The cell is stuck with anaerobic glycolysis: 2 ATP per glucose, with fermentation to regenerate NAD+ from NADH (pyruvate → lactate in animals, ethanol in yeast). Aerobic respiration extracts ~30-32 ATP per glucose, about 15× more efficient than anaerobic. This is why aerobic organisms dominate. Cyanide blocks complex IV directly (binds the heme iron), instantly fatal because it shuts down the entire ETC even with plenty of O₂ available." },
     },
   },
 
@@ -330,8 +330,8 @@ const NODES = {
     stageLabels: ["Stage 1 · place Photosystem II", "Stage 2 · place ETC + cyto b&#8326;f", "Stage 3 · place Photosystem I", "Stage 4 · place ATP synthase", "Stage 5 · place Calvin cycle", "Complete · all placed"],
     retrievals: {
       1: { rt:"Right. Light reactions happen on the thylakoid membrane; Calvin cycle in the stroma.", wr:"Photosynthesis has two stages with different locations. LIGHT REACTIONS = on the THYLAKOID membrane (inside the chloroplast, stacked into grana). Capture light, split water, make ATP + NADPH. CALVIN CYCLE (dark reactions / light-independent) = in the STROMA (the fluid around the thylakoids). Uses CO₂, ATP, and NADPH to make G3P (and ultimately glucose). 'Light makes ATP/NADPH; stroma uses ATP/NADPH to make sugar.' Output of stage 1 = input to stage 2.", q:"Where do the light-dependent reactions of photosynthesis occur?", qh:"<b>Thylakoid membrane</b> (inside chloroplast, stacked into grana). Calvin cycle is in the stroma.", ex:"Photosynthesis has two stages with different locations: <b>LIGHT REACTIONS</b> happen on the thylakoid membrane. Thylakoids are flattened sacs stacked into structures called grana, suspended in the stroma of the chloroplast. The thylakoid lumen is the space inside the thylakoid sacs. Light reactions use photosystems II and I (chlorophyll-protein complexes) to capture light energy, split water (releasing O₂), and generate ATP and NADPH via an ETC-like chain. <b>CALVIN CYCLE</b> (light-independent / 'dark' reactions) happen in the STROMA, the fluid-filled space around the thylakoids. The Calvin cycle uses CO₂ + the ATP and NADPH produced in the light reactions to fix carbon into G3P, which is then assembled into glucose and other carbohydrates. Mnemonic: light reactions happen ON membranes (where the electron transport happens); Calvin cycle happens IN solution (enzymatic chemistry). One full Calvin cycle takes 3 CO₂ + 9 ATP + 6 NADPH to make 1 G3P; six turns make 1 glucose." },
-      2: { rt:"Right. Photolysis of water (in PSII) is the source of O₂. 2 H₂O → 4 e⁻ + 4 H+ + O₂.", wr:"PHOTOSYSTEM II contains the oxygen-evolving complex (a manganese cluster) that splits water: 2 H₂O → 4 e⁻ + 4 H+ + O₂. The 4 electrons replenish PSII's chlorophyll after it's been oxidized by light. The 4 H+ contribute to the proton gradient in the lumen. The O₂ is the GAS BYPRODUCT — released through stomata and is what makes Earth's atmosphere aerobic. Every O₂ molecule you breathe came from photosynthetic water splitting.", q:"Where does the O₂ released by photosynthesis come from?", qh:"<b>Water (H₂O)</b>, split in photosystem II by the oxygen-evolving complex. NOT from CO₂.", ex:"Common misconception: students think the O₂ released by plants comes from CO₂. It does NOT. The O₂ comes from splitting WATER in PHOTOSYSTEM II. The oxygen-evolving complex (OEC) is a manganese-calcium cluster on the lumen side of PSII. Each cycle: 2 H₂O → 4 electrons + 4 H+ + O₂. The 4 electrons are used to replenish PSII's reaction-center chlorophyll (which has been oxidized by absorbing 4 photons). The 4 H+ contribute to the proton gradient across the thylakoid membrane. The O₂ is released as a gas through stomata. Earth's entire aerobic atmosphere (~21% O₂) was built up over ~2 billion years from photosynthetic water splitting. Every O₂ molecule you breathe came from a water molecule split by a photosynthetic organism. The CO₂ used in the Calvin cycle is the source of CARBON in sugars, not oxygen." },
-      3: { rt:"Right. The Calvin cycle FIXES CO₂ using the enzyme RuBisCO. 3 CO₂ + 9 ATP + 6 NADPH → 1 G3P. 6 turns → 1 glucose.", wr:"Calvin cycle stoichiometry: 3 CO₂ + 9 ATP + 6 NADPH → 1 G3P (glyceraldehyde-3-phosphate, a 3-carbon sugar). To make 1 glucose (6 carbons) takes 2 G3P, so 6 CO₂ + 18 ATP + 12 NADPH = 1 glucose. RuBisCO (ribulose bisphosphate carboxylase oxygenase) is the enzyme that fixes CO₂ onto RuBP, making a 6-carbon intermediate that immediately splits into two 3-carbon 3-PG molecules. RuBisCO is the most abundant protein on Earth.", q:"In the Calvin cycle, what enzyme catalyzes the fixation of CO₂?", qh:"<b>RuBisCO</b> (ribulose bisphosphate carboxylase oxygenase). It attaches CO₂ to RuBP — the most abundant protein on Earth.", ex:"The Calvin cycle (light-independent reactions) FIXES carbon dioxide into organic molecules. Three stages: (1) CARBON FIXATION — CO₂ is attached to ribulose-1,5-bisphosphate (RuBP, a 5-carbon molecule) by the enzyme RuBisCO (ribulose bisphosphate carboxylase/oxygenase). The product is a 6-carbon intermediate that immediately splits into two 3-PG molecules. (2) REDUCTION — 3-PG is phosphorylated by ATP, then reduced by NADPH to G3P (glyceraldehyde-3-phosphate, a 3-carbon sugar). (3) REGENERATION — most G3P is recycled back to RuBP via a complex series of reactions using more ATP. NET STOICHIOMETRY: 3 CO₂ + 9 ATP + 6 NADPH → 1 G3P + 3 ADP + 8 Pᵢ + 6 NADP+. To make 1 GLUCOSE: 6 CO₂ + 18 ATP + 12 NADPH (= 2 G3P combined). RuBisCO is REMARKABLE: it's the most abundant protein on Earth (by mass), but it's also painfully slow and not very selective (it can grab O₂ instead of CO₂ — photorespiration, a major efficiency loss in hot/dry conditions, leading to evolution of C4 and CAM photosynthesis as workarounds)." },
+      2: { rt:"Right. Photolysis of water (in PSII) is the source of O₂. 2 H₂O → 4 e⁻ + 4 H+ + O₂.", wr:"PHOTOSYSTEM II contains the oxygen-evolving complex (a manganese cluster) that splits water: 2 H₂O → 4 e⁻ + 4 H+ + O₂. The 4 electrons replenish PSII's chlorophyll after it's been oxidized by light. The 4 H+ contribute to the proton gradient in the lumen. The O₂ is the GAS BYPRODUCT, released through stomata and is what makes Earth's atmosphere aerobic. Every O₂ molecule you breathe came from photosynthetic water splitting.", q:"Where does the O₂ released by photosynthesis come from?", qh:"<b>Water (H₂O)</b>, split in photosystem II by the oxygen-evolving complex. NOT from CO₂.", ex:"Common misconception: students think the O₂ released by plants comes from CO₂. It does NOT. The O₂ comes from splitting WATER in PHOTOSYSTEM II. The oxygen-evolving complex (OEC) is a manganese-calcium cluster on the lumen side of PSII. Each cycle: 2 H₂O → 4 electrons + 4 H+ + O₂. The 4 electrons are used to replenish PSII's reaction-center chlorophyll (which has been oxidized by absorbing 4 photons). The 4 H+ contribute to the proton gradient across the thylakoid membrane. The O₂ is released as a gas through stomata. Earth's entire aerobic atmosphere (~21% O₂) was built up over ~2 billion years from photosynthetic water splitting. Every O₂ molecule you breathe came from a water molecule split by a photosynthetic organism. The CO₂ used in the Calvin cycle is the source of CARBON in sugars, not oxygen." },
+      3: { rt:"Right. The Calvin cycle FIXES CO₂ using the enzyme RuBisCO. 3 CO₂ + 9 ATP + 6 NADPH → 1 G3P. 6 turns → 1 glucose.", wr:"Calvin cycle stoichiometry: 3 CO₂ + 9 ATP + 6 NADPH → 1 G3P (glyceraldehyde-3-phosphate, a 3-carbon sugar). To make 1 glucose (6 carbons) takes 2 G3P, so 6 CO₂ + 18 ATP + 12 NADPH = 1 glucose. RuBisCO (ribulose bisphosphate carboxylase oxygenase) is the enzyme that fixes CO₂ onto RuBP, making a 6-carbon intermediate that immediately splits into two 3-carbon 3-PG molecules. RuBisCO is the most abundant protein on Earth.", q:"In the Calvin cycle, what enzyme catalyzes the fixation of CO₂?", qh:"<b>RuBisCO</b> (ribulose bisphosphate carboxylase oxygenase). It attaches CO₂ to RuBP: the most abundant protein on Earth.", ex:"The Calvin cycle (light-independent reactions) FIXES carbon dioxide into organic molecules. Three stages: (1) CARBON FIXATION: CO₂ is attached to ribulose-1,5-bisphosphate (RuBP, a 5-carbon molecule) by the enzyme RuBisCO (ribulose bisphosphate carboxylase/oxygenase). The product is a 6-carbon intermediate that immediately splits into two 3-PG molecules. (2) REDUCTION: 3-PG is phosphorylated by ATP, then reduced by NADPH to G3P (glyceraldehyde-3-phosphate, a 3-carbon sugar). (3) REGENERATION: most G3P is recycled back to RuBP via a complex series of reactions using more ATP. NET STOICHIOMETRY: 3 CO₂ + 9 ATP + 6 NADPH → 1 G3P + 3 ADP + 8 Pᵢ + 6 NADP+. To make 1 GLUCOSE: 6 CO₂ + 18 ATP + 12 NADPH (= 2 G3P combined). RuBisCO is REMARKABLE: it's the most abundant protein on Earth (by mass), but it's also painfully slow and not very selective (it can grab O₂ instead of CO₂, photorespiration, a major efficiency loss in hot/dry conditions, leading to evolution of C4 and CAM photosynthesis as workarounds)." },
     },
   },
 
@@ -343,9 +343,9 @@ const NODES = {
     stageOrder: ["bact", "arch", "prot", "fung", "anim"],
     stageLabels: ["Stage 1 · place E. coli", "Stage 2 · place Methanogen", "Stage 3 · place Paramecium", "Stage 4 · place Mushroom", "Stage 5 · place Mammal", "Complete · all placed"],
     retrievals: {
-      1: { rt:"Right. Three domains: Bacteria, Archaea, Eukarya. Archaea are evolutionarily closer to Eukarya than to Bacteria.", wr:"THREE DOMAINS of life (Woese 1977, based on rRNA): BACTERIA (familiar prokaryotes — E. coli, Streptococcus), ARCHAEA (extremophile prokaryotes — methanogens, halophiles, thermophiles), EUKARYA (everything with a true nucleus — protists, fungi, plants, animals). The big surprise from rRNA analysis: Archaea are MORE CLOSELY RELATED to Eukarya than to Bacteria. Bacteria branched off first; Archaea and Eukarya share a more recent common ancestor.", q:"How many domains of life are there?", qh:"<b>Three:</b> Bacteria, Archaea, Eukarya. Archaea + Eukarya share a more recent ancestor than either does with Bacteria.", ex:"Carl Woese's three-domain system (1977, based on ribosomal RNA sequences) replaced the older 2-kingdom and 5-kingdom systems. The THREE DOMAINS: <b>BACTERIA</b> — familiar prokaryotes (E. coli, Streptococcus, Mycobacterium). Peptidoglycan cell walls. <b>ARCHAEA</b> — prokaryotes once classified with bacteria, now recognized as a separate domain. Many are extremophiles (methanogens making natural gas, halophiles in salt lakes, thermophiles in hot springs). Different membrane lipids (ether vs ester linkages), different cell wall composition (no peptidoglycan). <b>EUKARYA</b> — protists, fungi, plants, animals. The big surprise from molecular evidence: ARCHAEA are MORE CLOSELY RELATED to EUKARYA than to Bacteria. The tree of life: an ancient ancestor split first into Bacteria vs everyone else; then the 'everyone else' split into Archaea and Eukarya. Eukaryotes have features matching Archaea (similar histones, ribosomal proteins, transcription machinery) AND features from Bacteria (mitochondria are α-proteobacteria; chloroplasts are cyanobacteria — both via endosymbiosis)." },
-      2: { rt:"Right. Bacteria + Archaea are prokaryotic. All other life (protists, fungi, plants, animals) is eukaryotic.", wr:"PROKARYOTES (no membrane-bound nucleus): Bacteria + Archaea — the first two domains. EUKARYOTES (membrane-bound nucleus + other organelles): all of domain Eukarya — protists, fungi, plants, animals. Note that PROTISTS are mostly single-celled but they ARE eukaryotic (they have a nucleus). 'Single-celled' doesn't equal prokaryotic.", q:"A bacterium has a thin cell wall and an outer membrane. It is:", qh:"<b>Gram-negative.</b> Thin peptidoglycan layer + outer membrane (with LPS, the endotoxin). Gram-positive has thick peptidoglycan and NO outer membrane.", ex:"Gram staining (Hans Christian Gram, 1884) divides bacteria by cell wall structure. <b>GRAM-POSITIVE</b> bacteria: THICK peptidoglycan layer (~20-80 nm), no outer membrane, retain the crystal violet stain → appear PURPLE under the microscope. Examples: Staphylococcus, Streptococcus, Bacillus, Clostridium. <b>GRAM-NEGATIVE</b> bacteria: THIN peptidoglycan layer (~5-10 nm), PLUS an OUTER MEMBRANE containing LIPOPOLYSACCHARIDE (LPS, also called endotoxin) on its outer leaflet. Crystal violet washes out, then counterstained with safranin → appear PINK/RED. Examples: E. coli, Salmonella, Neisseria, Helicobacter. Clinical importance: LPS in gram-negative bacteria can trigger massive immune responses (septic shock). Some antibiotics (penicillin) target peptidoglycan synthesis — more effective against gram-positive (where peptidoglycan is more exposed). Others (polymyxins) target the outer membrane of gram-negatives." },
-      3: { rt:"Right. Fungi and animals are SISTER groups (both Opisthokonta) — more closely related to each other than either is to plants.", wr:"FUNGI and ANIMALS are sister taxa (both belong to Opisthokonta), with a more recent common ancestor than either has with plants. Evidence: both have flagellated cells (sperm in animals, zoospores in some fungi like chytrids) with a single posterior flagellum (the name 'Opisthokonta' means 'posterior pole'). Both store glucose as glycogen (plants store as starch). Both are heterotrophic (need organic carbon). Both have chitin (in fungal cell walls and arthropod exoskeletons).", q:"Fungi are most closely related to:", qh:"<b>Animals.</b> Both are Opisthokonts — flagellated cells (sperm / zoospores) with single posterior flagellum; both store glycogen; both heterotrophic; both have chitin.", ex:"Evolutionary surprise: FUNGI and ANIMALS are SISTER GROUPS (Opisthokonta clade), much more closely related to each other than either is to plants. Shared traits supporting this: (1) Flagellated cells with a single POSTERIOR flagellum — animal sperm and some fungal zoospores (the name 'opisthokont' literally means 'posterior pole'). Plants and other groups have anterior or no flagella. (2) STORE GLUCOSE AS GLYCOGEN, like animals — plants store as starch. (3) Both are HETEROTROPHIC (need organic carbon), though fungi absorb after external digestion while animals ingest then digest. (4) Both produce CHITIN — in fungal cell walls and in arthropod (insect, crustacean) exoskeletons. Plants make cellulose instead. (5) DNA sequence data overwhelmingly supports the close fungi-animal relationship. The DAT tests this counterintuitive fact frequently — students assume fungi are 'plant-like' because they grow rooted in place, but evolutionarily they are not at all plants." },
+      1: { rt:"Right. Three domains: Bacteria, Archaea, Eukarya. Archaea are evolutionarily closer to Eukarya than to Bacteria.", wr:"THREE DOMAINS of life (Woese 1977, based on rRNA): BACTERIA (familiar prokaryotes, E. coli, Streptococcus), ARCHAEA (extremophile prokaryotes, methanogens, halophiles, thermophiles), EUKARYA (everything with a true nucleus, protists, fungi, plants, animals). The big surprise from rRNA analysis: Archaea are MORE CLOSELY RELATED to Eukarya than to Bacteria. Bacteria branched off first; Archaea and Eukarya share a more recent common ancestor.", q:"How many domains of life are there?", qh:"<b>Three:</b> Bacteria, Archaea, Eukarya. Archaea + Eukarya share a more recent ancestor than either does with Bacteria.", ex:"Carl Woese's three-domain system (1977, based on ribosomal RNA sequences) replaced the older 2-kingdom and 5-kingdom systems. The THREE DOMAINS: <b>BACTERIA</b>, familiar prokaryotes (E. coli, Streptococcus, Mycobacterium). Peptidoglycan cell walls. <b>ARCHAEA</b>, prokaryotes once classified with bacteria, now recognized as a separate domain. Many are extremophiles (methanogens making natural gas, halophiles in salt lakes, thermophiles in hot springs). Different membrane lipids (ether vs ester linkages), different cell wall composition (no peptidoglycan). <b>EUKARYA</b>, protists, fungi, plants, animals. The big surprise from molecular evidence: ARCHAEA are MORE CLOSELY RELATED to EUKARYA than to Bacteria. The tree of life: an ancient ancestor split first into Bacteria vs everyone else; then the 'everyone else' split into Archaea and Eukarya. Eukaryotes have features matching Archaea (similar histones, ribosomal proteins, transcription machinery) AND features from Bacteria (mitochondria are α-proteobacteria; chloroplasts are cyanobacteria, both via endosymbiosis)." },
+      2: { rt:"Right. Bacteria + Archaea are prokaryotic. All other life (protists, fungi, plants, animals) is eukaryotic.", wr:"PROKARYOTES (no membrane-bound nucleus): Bacteria + Archaea: the first two domains. EUKARYOTES (membrane-bound nucleus + other organelles): all of domain Eukarya, protists, fungi, plants, animals. Note that PROTISTS are mostly single-celled but they ARE eukaryotic (they have a nucleus). 'Single-celled' doesn't equal prokaryotic.", q:"A bacterium has a thin cell wall and an outer membrane. It is:", qh:"<b>Gram-negative.</b> Thin peptidoglycan layer + outer membrane (with LPS, the endotoxin). Gram-positive has thick peptidoglycan and NO outer membrane.", ex:"Gram staining (Hans Christian Gram, 1884) divides bacteria by cell wall structure. <b>GRAM-POSITIVE</b> bacteria: THICK peptidoglycan layer (~20-80 nm), no outer membrane, retain the crystal violet stain → appear PURPLE under the microscope. Examples: Staphylococcus, Streptococcus, Bacillus, Clostridium. <b>GRAM-NEGATIVE</b> bacteria: THIN peptidoglycan layer (~5-10 nm), PLUS an OUTER MEMBRANE containing LIPOPOLYSACCHARIDE (LPS, also called endotoxin) on its outer leaflet. Crystal violet washes out, then counterstained with safranin → appear PINK/RED. Examples: E. coli, Salmonella, Neisseria, Helicobacter. Clinical importance: LPS in gram-negative bacteria can trigger massive immune responses (septic shock). Some antibiotics (penicillin) target peptidoglycan synthesis, more effective against gram-positive (where peptidoglycan is more exposed). Others (polymyxins) target the outer membrane of gram-negatives." },
+      3: { rt:"Right. Fungi and animals are SISTER groups (both Opisthokonta), more closely related to each other than either is to plants.", wr:"FUNGI and ANIMALS are sister taxa (both belong to Opisthokonta), with a more recent common ancestor than either has with plants. Evidence: both have flagellated cells (sperm in animals, zoospores in some fungi like chytrids) with a single posterior flagellum (the name 'Opisthokonta' means 'posterior pole'). Both store glucose as glycogen (plants store as starch). Both are heterotrophic (need organic carbon). Both have chitin (in fungal cell walls and arthropod exoskeletons).", q:"Fungi are most closely related to:", qh:"<b>Animals.</b> Both are Opisthokonts: flagellated cells (sperm / zoospores) with single posterior flagellum; both store glycogen; both heterotrophic; both have chitin.", ex:"Evolutionary surprise: FUNGI and ANIMALS are SISTER GROUPS (Opisthokonta clade), much more closely related to each other than either is to plants. Shared traits supporting this: (1) Flagellated cells with a single POSTERIOR flagellum, animal sperm and some fungal zoospores (the name 'opisthokont' literally means 'posterior pole'). Plants and other groups have anterior or no flagella. (2) STORE GLUCOSE AS GLYCOGEN, like animals, plants store as starch. (3) Both are HETEROTROPHIC (need organic carbon), though fungi absorb after external digestion while animals ingest then digest. (4) Both produce CHITIN: in fungal cell walls and in arthropod (insect, crustacean) exoskeletons. Plants make cellulose instead. (5) DNA sequence data overwhelmingly supports the close fungi-animal relationship. The DAT tests this counterintuitive fact frequently, students assume fungi are 'plant-like' because they grow rooted in place, but evolutionarily they are not at all plants." },
     },
   },
 
@@ -357,9 +357,9 @@ const NODES = {
     stageOrder: ["contact", "acro", "fast", "cort", "fuse"],
     stageLabels: ["Stage 1 · place Contact", "Stage 2 · place Acrosomal reaction", "Stage 3 · place Fast block", "Stage 4 · place Cortical reaction", "Stage 5 · place Fusion + activation", "Complete · all placed"],
     retrievals: {
-      3: { rt:"Right. Acrosomal reaction = SPERM enzymes digest the zona pellucida. Cortical reaction = EGG releases cortical granules to block polyspermy.", wr:"Two reactions, two cells. The ACROSOMAL REACTION is the SPERM'S tool: the acrosome (vesicle at the sperm tip) releases hydrolytic enzymes (hyaluronidase, acrosin) that digest the corona radiata and zona pellucida, letting the sperm reach the egg membrane. The CORTICAL REACTION is the EGG'S RESPONSE: after sperm fusion, cortical granules near the plasma membrane release enzymes that harden the zona pellucida (slow block to polyspermy). Two distinct events serving two opposite purposes — don't confuse them.", q:"The acrosomal reaction during fertilization:", qh:"<b>Releases hydrolytic enzymes from the sperm</b> to digest the zona pellucida. (Cortical reaction is the egg's response that blocks polyspermy.)", ex:"Fertilization has multiple steps, and the DAT loves to test the distinction between the SPERM'S role and the EGG'S role. SPERM'S CONTRIBUTION: (1) Contact — sperm reaches egg's outer layers. (2) ACROSOMAL REACTION — the acrosome (a Golgi-derived vesicle at the sperm tip) releases hydrolytic enzymes (hyaluronidase digests the corona radiata cells; acrosin digests the zona pellucida glycoprotein matrix), creating a path for the sperm to reach the egg's plasma membrane. (3) Sperm and egg membranes FUSE. EGG'S RESPONSE: (1) FAST BLOCK to polyspermy — Na+ influx within milliseconds depolarizes the egg, preventing additional sperm fusion. (2) CORTICAL REACTION — cortical granules just under the egg membrane fuse with it and release enzymes that modify the zona pellucida (zona reaction), creating a permanent SLOW BLOCK to polyspermy. (3) Egg ACTIVATION — completion of meiosis II + initiation of development. Acrosomal = sperm's TOOL. Cortical = egg's DEFENSE. Two reactions, two cells, two purposes." },
-      2: { rt:"Right. Three germ layers (ENDOderm/MESOderm/ECTOderm) form during gastrulation. They give rise to all body tissues.", wr:"During GASTRULATION (after the blastula stage), cells move and invaginate to form THREE GERM LAYERS — the developmental foundation for every tissue type. ECTODERM (outer) → skin epidermis, nervous system, neural crest. MESODERM (middle) → muscle (all 3 types), bone, blood, kidneys, gonads, dermis, cardiovascular system. ENDODERM (inner) → epithelial lining of the GI tract, respiratory tract, liver, pancreas. Classic DAT trap: students confuse 'gut' with mesoderm. Gut LINING is endoderm; the muscle wall AROUND the lining is mesoderm.", q:"Which germ layer gives rise to the epithelial lining of the small intestine?", qh:"<b>Endoderm.</b> Endoderm = epithelial linings of GI + respiratory tracts. (Mesoderm = the muscle WALL around the lining.)", ex:"During gastrulation (after the blastula stage), cells migrate to form THREE GERM LAYERS, which then differentiate into every tissue of the body. Memorize the derivatives — high-yield DAT material. <b>ECTODERM</b> (outer layer): skin epidermis, hair, nails, nervous system (brain, spinal cord, peripheral nerves), neural crest derivatives (PNS ganglia, melanocytes, adrenal medulla, parts of the face). <b>MESODERM</b> (middle layer): all three muscle types (skeletal, cardiac, smooth), bone, cartilage, blood + blood vessels + heart, kidneys, gonads, dermis (deep skin layer), connective tissues, lymphatic system. <b>ENDODERM</b> (inner layer): EPITHELIAL LINING of the GI tract (mouth-to-anus) and respiratory tract; liver; pancreas; thyroid; bladder lining; thymus. THE CLASSIC TRAP: 'gut' is endoderm only for the LINING (the epithelium). The muscle WALL around the gut is mesoderm. Same for blood vessels — the endothelial lining is mesoderm (from blood vessel development), but the principle holds: lining vs wall, lining is typically endoderm for GI/respiratory." },
-      1: { rt:"Right. The order of embryonic stages: zygote → cleavage → morula → blastula → gastrula → neurula.", wr:"Stages of early embryonic development: ZYGOTE (fertilized egg, single cell). CLEAVAGE (rapid mitotic divisions without growth — cells get smaller). MORULA (16-32 cells, solid ball). BLASTULA (hollow ball with a cavity called blastocoel; in mammals, the blastocyst has an inner cell mass + trophoblast). GASTRULA (cell migration creates the three germ layers via invagination; archenteron forms). NEURULA (neural plate folds to form neural tube — future CNS; only in vertebrates). Memorize this sequence cold.", q:"In embryonic development, what stage comes immediately AFTER the blastula?", qh:"<b>Gastrula.</b> Cell migration during gastrulation forms the three germ layers (ectoderm, mesoderm, endoderm).", ex:"Stages of early animal embryonic development, in order: <b>ZYGOTE</b> — single diploid cell formed by fertilization. <b>CLEAVAGE</b> — rapid mitotic divisions without cell growth (cells get smaller each division). Holoblastic (complete) in mammals; meroblastic (partial) in egg-laying species with lots of yolk. <b>MORULA</b> — solid ball of 16-32 cells. <b>BLASTULA</b> — hollow ball with a fluid-filled cavity (blastocoel). In mammals: BLASTOCYST, with an inner cell mass (future embryo) and trophoblast (future placenta). <b>GASTRULA</b> — gastrulation invagination creates the three germ layers (ectoderm, mesoderm, endoderm) and a primitive gut tube (archenteron). The blastopore is the opening of the archenteron: in PROTOSTOMES (most invertebrates) the blastopore becomes the MOUTH; in DEUTEROSTOMES (echinoderms + chordates including humans) it becomes the ANUS. <b>NEURULA</b> — neural plate (ectoderm) folds and pinches off to form the neural tube (future brain + spinal cord). This sequence is high-yield: the DAT often tests the order, what happens at each step, and the protostome/deuterostome distinction." },
+      3: { rt:"Right. Acrosomal reaction = SPERM enzymes digest the zona pellucida. Cortical reaction = EGG releases cortical granules to block polyspermy.", wr:"Two reactions, two cells. The ACROSOMAL REACTION is the SPERM'S tool: the acrosome (vesicle at the sperm tip) releases hydrolytic enzymes (hyaluronidase, acrosin) that digest the corona radiata and zona pellucida, letting the sperm reach the egg membrane. The CORTICAL REACTION is the EGG'S RESPONSE: after sperm fusion, cortical granules near the plasma membrane release enzymes that harden the zona pellucida (slow block to polyspermy). Two distinct events serving two opposite purposes, don't confuse them.", q:"The acrosomal reaction during fertilization:", qh:"<b>Releases hydrolytic enzymes from the sperm</b> to digest the zona pellucida. (Cortical reaction is the egg's response that blocks polyspermy.)", ex:"Fertilization has multiple steps, and the DAT loves to test the distinction between the SPERM'S role and the EGG'S role. SPERM'S CONTRIBUTION: (1) Contact: sperm reaches egg's outer layers. (2) ACROSOMAL REACTION: the acrosome (a Golgi-derived vesicle at the sperm tip) releases hydrolytic enzymes (hyaluronidase digests the corona radiata cells; acrosin digests the zona pellucida glycoprotein matrix), creating a path for the sperm to reach the egg's plasma membrane. (3) Sperm and egg membranes FUSE. EGG'S RESPONSE: (1) FAST BLOCK to polyspermy: Na+ influx within milliseconds depolarizes the egg, preventing additional sperm fusion. (2) CORTICAL REACTION: cortical granules just under the egg membrane fuse with it and release enzymes that modify the zona pellucida (zona reaction), creating a permanent SLOW BLOCK to polyspermy. (3) Egg ACTIVATION: completion of meiosis II + initiation of development. Acrosomal = sperm's TOOL. Cortical = egg's DEFENSE. Two reactions, two cells, two purposes." },
+      2: { rt:"Right. Three germ layers (ENDOderm/MESOderm/ECTOderm) form during gastrulation. They give rise to all body tissues.", wr:"During GASTRULATION (after the blastula stage), cells move and invaginate to form THREE GERM LAYERS, the developmental foundation for every tissue type. ECTODERM (outer) → skin epidermis, nervous system, neural crest. MESODERM (middle) → muscle (all 3 types), bone, blood, kidneys, gonads, dermis, cardiovascular system. ENDODERM (inner) → epithelial lining of the GI tract, respiratory tract, liver, pancreas. Classic DAT trap: students confuse 'gut' with mesoderm. Gut LINING is endoderm; the muscle wall AROUND the lining is mesoderm.", q:"Which germ layer gives rise to the epithelial lining of the small intestine?", qh:"<b>Endoderm.</b> Endoderm = epithelial linings of GI + respiratory tracts. (Mesoderm = the muscle WALL around the lining.)", ex:"During gastrulation (after the blastula stage), cells migrate to form THREE GERM LAYERS, which then differentiate into every tissue of the body. Memorize the derivatives: high-yield DAT material. <b>ECTODERM</b> (outer layer): skin epidermis, hair, nails, nervous system (brain, spinal cord, peripheral nerves), neural crest derivatives (PNS ganglia, melanocytes, adrenal medulla, parts of the face). <b>MESODERM</b> (middle layer): all three muscle types (skeletal, cardiac, smooth), bone, cartilage, blood + blood vessels + heart, kidneys, gonads, dermis (deep skin layer), connective tissues, lymphatic system. <b>ENDODERM</b> (inner layer): EPITHELIAL LINING of the GI tract (mouth-to-anus) and respiratory tract; liver; pancreas; thyroid; bladder lining; thymus. THE CLASSIC TRAP: 'gut' is endoderm only for the LINING (the epithelium). The muscle WALL around the gut is mesoderm. Same for blood vessels: the endothelial lining is mesoderm (from blood vessel development), but the principle holds: lining vs wall, lining is typically endoderm for GI/respiratory." },
+      1: { rt:"Right. The order of embryonic stages: zygote → cleavage → morula → blastula → gastrula → neurula.", wr:"Stages of early embryonic development: ZYGOTE (fertilized egg, single cell). CLEAVAGE (rapid mitotic divisions without growth, cells get smaller). MORULA (16-32 cells, solid ball). BLASTULA (hollow ball with a cavity called blastocoel; in mammals, the blastocyst has an inner cell mass + trophoblast). GASTRULA (cell migration creates the three germ layers via invagination; archenteron forms). NEURULA (neural plate folds to form neural tube, future CNS; only in vertebrates). Memorize this sequence cold.", q:"In embryonic development, what stage comes immediately AFTER the blastula?", qh:"<b>Gastrula.</b> Cell migration during gastrulation forms the three germ layers (ectoderm, mesoderm, endoderm).", ex:"Stages of early animal embryonic development, in order: <b>ZYGOTE</b>, single diploid cell formed by fertilization. <b>CLEAVAGE</b>, rapid mitotic divisions without cell growth (cells get smaller each division). Holoblastic (complete) in mammals; meroblastic (partial) in egg-laying species with lots of yolk. <b>MORULA</b>, solid ball of 16-32 cells. <b>BLASTULA</b>, hollow ball with a fluid-filled cavity (blastocoel). In mammals: BLASTOCYST, with an inner cell mass (future embryo) and trophoblast (future placenta). <b>GASTRULA</b>, gastrulation invagination creates the three germ layers (ectoderm, mesoderm, endoderm) and a primitive gut tube (archenteron). The blastopore is the opening of the archenteron: in PROTOSTOMES (most invertebrates) the blastopore becomes the MOUTH; in DEUTEROSTOMES (echinoderms + chordates including humans) it becomes the ANUS. <b>NEURULA</b>, neural plate (ectoderm) folds and pinches off to form the neural tube (future brain + spinal cord). This sequence is high-yield: the DAT often tests the order, what happens at each step, and the protostome/deuterostome distinction." },
     },
   },
 
@@ -371,9 +371,9 @@ const NODES = {
     stageOrder: ["dir", "stab", "disr", "bal", "drift"],
     stageLabels: ["Stage 1 · place Antibiotic resistance", "Stage 2 · place Human birth weight", "Stage 3 · place African seedcrackers", "Stage 4 · place Sickle-cell + malaria", "Stage 5 · place Cheetah bottleneck", "Complete · all placed"],
     retrievals: {
-      3: { rt:"Right. Three types of natural selection: DIRECTIONAL (one extreme favored), STABILIZING (middle favored, extremes culled), DISRUPTIVE (extremes favored, middle culled).", wr:"Three types of natural selection: <b>DIRECTIONAL</b> = one phenotypic extreme is favored over the others, shifting the population mean over time. Example: antibiotic resistance, peppered moths during industrial revolution. <b>STABILIZING</b> = the middle (mean) phenotype is favored; extremes are selected against. Example: human birth weight (extreme high or low birth weight has historically poor survival). <b>DISRUPTIVE</b> = both extremes favored, middle disfavored. Example: African seedcrackers (large + small beaks both eat available seeds; medium beaks eat neither well).", q:"Which type of natural selection favors BOTH phenotypic extremes against the average?", qh:"<b>Disruptive selection.</b> Both extremes favored; intermediate phenotype disfavored. Classic example: African seedcrackers.", ex:"Three modes of natural selection, classified by how they reshape the phenotypic distribution: <b>DIRECTIONAL SELECTION</b> — one extreme is favored, population mean shifts over time. Examples: antibiotic resistance (bacteria with resistance survive treatment); peppered moths in industrial-era England (dark moths favored on soot-blackened trees); human height increases over centuries. <b>STABILIZING SELECTION</b> — average phenotype is favored; both extremes selected against. Variance decreases. Examples: human birth weight (8-pound babies have higher survival than 4-pound or 12-pound); butterfly egg counts; clutch size. <b>DISRUPTIVE SELECTION</b> — both extremes favored; intermediate selected against. Can lead to speciation if reproductive isolation develops. Examples: African seedcrackers (small beaks for soft seeds, large beaks for hard seeds; medium beaks eat neither well); Cameroon finch beaks. The DAT loves bar/curve graphs showing these — memorize the shapes." },
-      2: { rt:"Right. Genetic drift has the STRONGEST effect on SMALL populations. Random sampling has bigger impact when N is small.", wr:"GENETIC DRIFT is random change in allele frequencies due to chance sampling — NOT due to fitness differences. It's MORE POWERFUL IN SMALL POPULATIONS (random sampling causes bigger swings when N is low). Two flavors: BOTTLENECK EFFECT (small surviving population after disaster — cheetahs, northern elephant seals); FOUNDER EFFECT (small group establishes a new population — Pennsylvania Dutch, Galápagos finches). Drift can override selection in small populations, fixing deleterious alleles or losing beneficial ones.", q:"Genetic drift has the STRONGEST effect on:", qh:"<b>Small populations.</b> Random allele frequency changes are dramatic when N is small.", ex:"GENETIC DRIFT = random change in allele frequencies from generation to generation, due to chance sampling. NOT driven by fitness — it's purely stochastic. The smaller the population, the bigger the swings (think: flipping 10 coins gives more variable HEAD% than flipping 10,000). DRIFT has its strongest effect in SMALL populations. Two famous flavors: <b>BOTTLENECK EFFECT</b> — population drastically reduced (disease, disaster) → survivors are a non-random sample → allele frequencies shift. Cheetahs (~10,000 years ago) and northern elephant seals (down to ~20 in the 1800s) have very low genetic diversity from bottlenecks. <b>FOUNDER EFFECT</b> — small group leaves to establish a new population → their alleles are a non-random sample of the parent population. Examples: Amish/Mennonite communities (elevated rate of certain genetic disorders), Galápagos finches descended from a few mainland colonists. Drift CAN OVERRIDE natural selection in small populations: a weakly deleterious allele might drift to fixation if N is small enough." },
-      1: { rt:"Right. Convergent evolution: similar selection pressures produce ANALOGOUS structures in unrelated lineages. Bird and insect wings.", wr:"CONVERGENT EVOLUTION: unrelated lineages independently evolve similar traits due to similar selection pressures. The traits are ANALOGOUS (same function, different evolutionary origin). Classic examples: bird and insect wings (both for flight, totally different developmental origins); shark and dolphin streamlined bodies (both aquatic predators); cactus and euphorbia succulence (both adapted to arid environments). DIVERGENT evolution is the opposite: related lineages develop differences as they adapt to different environments — produces HOMOLOGOUS structures (same origin, sometimes different functions, like the bones in your hand, a bat's wing, a whale's flipper).", q:"Two species that look similar because they live in similar environments — but evolved independently — are an example of:", qh:"<b>Convergent evolution.</b> Similar selection pressures → analogous traits in unrelated lineages.", ex:"<b>CONVERGENT EVOLUTION</b> — unrelated lineages independently evolve similar traits because they face similar selection pressures. The shared traits are ANALOGOUS (similar function, similar appearance, but DIFFERENT evolutionary origin — they did not come from a common ancestor with that trait). Classic examples: WINGS — birds, bats, and insects all evolved wings independently; the wings serve the same function (flight) but the underlying structures are completely different. STREAMLINED BODIES — sharks (fish), dolphins (mammals), ichthyosaurs (extinct reptiles) all evolved torpedo-like body shapes for fast aquatic predation. SUCCULENCE — New World cacti and Old World euphorbias look almost identical (water-storing stems, reduced leaves, spines) but evolved independently from different ancestors. <b>DIVERGENT EVOLUTION</b> is the opposite: closely related species develop different traits as they adapt to different niches. Produces HOMOLOGOUS structures (same ancestor, sometimes different functions): your arm, a bat's wing, a whale's flipper, a horse's foreleg — all have the same underlying bones (humerus, radius/ulna, carpals, metacarpals, phalanges) but adapted to flight, swimming, running. Tell the DAT difference: ANALOGOUS = convergent (unrelated, similar trait). HOMOLOGOUS = divergent (related, possibly different traits)." },
+      3: { rt:"Right. Three types of natural selection: DIRECTIONAL (one extreme favored), STABILIZING (middle favored, extremes culled), DISRUPTIVE (extremes favored, middle culled).", wr:"Three types of natural selection: <b>DIRECTIONAL</b> = one phenotypic extreme is favored over the others, shifting the population mean over time. Example: antibiotic resistance, peppered moths during industrial revolution. <b>STABILIZING</b> = the middle (mean) phenotype is favored; extremes are selected against. Example: human birth weight (extreme high or low birth weight has historically poor survival). <b>DISRUPTIVE</b> = both extremes favored, middle disfavored. Example: African seedcrackers (large + small beaks both eat available seeds; medium beaks eat neither well).", q:"Which type of natural selection favors BOTH phenotypic extremes against the average?", qh:"<b>Disruptive selection.</b> Both extremes favored; intermediate phenotype disfavored. Classic example: African seedcrackers.", ex:"Three modes of natural selection, classified by how they reshape the phenotypic distribution: <b>DIRECTIONAL SELECTION</b>, one extreme is favored, population mean shifts over time. Examples: antibiotic resistance (bacteria with resistance survive treatment); peppered moths in industrial-era England (dark moths favored on soot-blackened trees); human height increases over centuries. <b>STABILIZING SELECTION</b>, average phenotype is favored; both extremes selected against. Variance decreases. Examples: human birth weight (8-pound babies have higher survival than 4-pound or 12-pound); butterfly egg counts; clutch size. <b>DISRUPTIVE SELECTION</b>, both extremes favored; intermediate selected against. Can lead to speciation if reproductive isolation develops. Examples: African seedcrackers (small beaks for soft seeds, large beaks for hard seeds; medium beaks eat neither well); Cameroon finch beaks. The DAT loves bar/curve graphs showing these, memorize the shapes." },
+      2: { rt:"Right. Genetic drift has the STRONGEST effect on SMALL populations. Random sampling has bigger impact when N is small.", wr:"GENETIC DRIFT is random change in allele frequencies due to chance sampling, NOT due to fitness differences. It's MORE POWERFUL IN SMALL POPULATIONS (random sampling causes bigger swings when N is low). Two flavors: BOTTLENECK EFFECT (small surviving population after disaster, cheetahs, northern elephant seals); FOUNDER EFFECT (small group establishes a new population, Pennsylvania Dutch, Galápagos finches). Drift can override selection in small populations, fixing deleterious alleles or losing beneficial ones.", q:"Genetic drift has the STRONGEST effect on:", qh:"<b>Small populations.</b> Random allele frequency changes are dramatic when N is small.", ex:"GENETIC DRIFT = random change in allele frequencies from generation to generation, due to chance sampling. NOT driven by fitness: it's purely stochastic. The smaller the population, the bigger the swings (think: flipping 10 coins gives more variable HEAD% than flipping 10,000). DRIFT has its strongest effect in SMALL populations. Two famous flavors: <b>BOTTLENECK EFFECT</b>, population drastically reduced (disease, disaster) → survivors are a non-random sample → allele frequencies shift. Cheetahs (~10,000 years ago) and northern elephant seals (down to ~20 in the 1800s) have very low genetic diversity from bottlenecks. <b>FOUNDER EFFECT</b>, small group leaves to establish a new population → their alleles are a non-random sample of the parent population. Examples: Amish/Mennonite communities (elevated rate of certain genetic disorders), Galápagos finches descended from a few mainland colonists. Drift CAN OVERRIDE natural selection in small populations: a weakly deleterious allele might drift to fixation if N is small enough." },
+      1: { rt:"Right. Convergent evolution: similar selection pressures produce ANALOGOUS structures in unrelated lineages. Bird and insect wings.", wr:"CONVERGENT EVOLUTION: unrelated lineages independently evolve similar traits due to similar selection pressures. The traits are ANALOGOUS (same function, different evolutionary origin). Classic examples: bird and insect wings (both for flight, totally different developmental origins); shark and dolphin streamlined bodies (both aquatic predators); cactus and euphorbia succulence (both adapted to arid environments). DIVERGENT evolution is the opposite: related lineages develop differences as they adapt to different environments, produces HOMOLOGOUS structures (same origin, sometimes different functions, like the bones in your hand, a bat's wing, a whale's flipper).", q:"Two species that look similar because they live in similar environments, but evolved independently, are an example of:", qh:"<b>Convergent evolution.</b> Similar selection pressures → analogous traits in unrelated lineages.", ex:"<b>CONVERGENT EVOLUTION</b>, unrelated lineages independently evolve similar traits because they face similar selection pressures. The shared traits are ANALOGOUS (similar function, similar appearance, but DIFFERENT evolutionary origin, they did not come from a common ancestor with that trait). Classic examples: WINGS: birds, bats, and insects all evolved wings independently; the wings serve the same function (flight) but the underlying structures are completely different. STREAMLINED BODIES: sharks (fish), dolphins (mammals), ichthyosaurs (extinct reptiles) all evolved torpedo-like body shapes for fast aquatic predation. SUCCULENCE: New World cacti and Old World euphorbias look almost identical (water-storing stems, reduced leaves, spines) but evolved independently from different ancestors. <b>DIVERGENT EVOLUTION</b> is the opposite: closely related species develop different traits as they adapt to different niches. Produces HOMOLOGOUS structures (same ancestor, sometimes different functions): your arm, a bat's wing, a whale's flipper, a horse's foreleg, all have the same underlying bones (humerus, radius/ulna, carpals, metacarpals, phalanges) but adapted to flight, swimming, running. Tell the DAT difference: ANALOGOUS = convergent (unrelated, similar trait). HOMOLOGOUS = divergent (related, possibly different traits)." },
     },
   },
 
@@ -387,7 +387,7 @@ const NODES = {
     retrievals: {
       1: { rt:"Right. Every generation + ~50% transmission from affected parent = AD.", wr:"AD pedigrees: trait in every generation, affected parent transmits to ~50% of children regardless of sex. Examples: Huntington, achondroplasia, Marfan, neurofibromatosis.", q:"A trait appears in every generation and is passed from affected parent to ~50% of offspring (both sexes). Most likely:", qh:"<b>Autosomal Dominant.</b> Every generation; ~50% from affected parent.", ex:"AD = the most common pedigree pattern shown on the DAT. Tell: trait appears in every generation; affected children must have at least one affected parent. ~50% transmission rate from affected. Examples: Huntington (delayed onset), achondroplasia, Marfan, neurofibromatosis. Often heterozygous in affected (homozygous dominant frequently lethal)." },
       2: { rt:"Right. Mostly males + no male-to-male + affected dad → carrier daughters = X-linked recessive.", wr:"X-linked recessive: affected males inherit X from carrier mother. Affected dads can't pass X to sons (they get Y), but pass X to all daughters → all carriers. Hemophilia, colorblindness, DMD.", q:"A pedigree shows mostly affected males, no male-to-male transmission, and affected fathers produce only carrier daughters. Pattern:", qh:"<b>X-linked recessive.</b> Mostly males; no M→M; dad → carrier daughters.", ex:"XR pedigrees: predominantly affected males. Females rarely affected (need homozygous X<sup>r</sup>X<sup>r</sup>). NO male-to-male transmission (dads give Y, not X, to sons). Affected dad always transmits affected X to all daughters → daughters are obligate carriers (X<sup>r</sup>X<sup>R</sup>). Classic examples: hemophilia A/B, color blindness, Duchenne muscular dystrophy." },
-      3: { rt:"Right. Mom → ALL kids, dad → none = mitochondrial inheritance.", wr:"Mitochondrial: only egg cytoplasm contributes mitochondria to zygote. So affected mom passes to ALL children. Sperm mito don't persist → affected dad transmits to NO children. Both sexes affected equally. LHON, MELAS.", q:"An affected mother passes the trait to ALL of her children regardless of sex; affected fathers pass to none. Pattern:", qh:"<b>Mitochondrial.</b> Mom → all; dad → none. (Egg cytoplasm only.)", ex:"Mitochondrial inheritance follows maternal-only transmission because the egg contributes essentially all of the zygote's cytoplasm (and mitochondria). Sperm mitochondria are typically destroyed after fertilization. Affected mother transmits to ALL offspring; affected father transmits to NONE. Both sexes equally affected. Disorders: Leber hereditary optic neuropathy (LHON), MELAS, MERRF — typically tissues with high energy demand (CNS, muscle)." },
+      3: { rt:"Right. Mom → ALL kids, dad → none = mitochondrial inheritance.", wr:"Mitochondrial: only egg cytoplasm contributes mitochondria to zygote. So affected mom passes to ALL children. Sperm mito don't persist → affected dad transmits to NO children. Both sexes affected equally. LHON, MELAS.", q:"An affected mother passes the trait to ALL of her children regardless of sex; affected fathers pass to none. Pattern:", qh:"<b>Mitochondrial.</b> Mom → all; dad → none. (Egg cytoplasm only.)", ex:"Mitochondrial inheritance follows maternal-only transmission because the egg contributes essentially all of the zygote's cytoplasm (and mitochondria). Sperm mitochondria are typically destroyed after fertilization. Affected mother transmits to ALL offspring; affected father transmits to NONE. Both sexes equally affected. Disorders: Leber hereditary optic neuropathy (LHON), MELAS, MERRF, typically tissues with high energy demand (CNS, muscle)." },
     },
   },
 
@@ -399,9 +399,9 @@ const NODES = {
     stageOrder: ["p", "q", "p2", "pq", "q2"],
     stageLabels: ["Stage 1 · place p", "Stage 2 · place q", "Stage 3 · place p²", "Stage 4 · place 2pq", "Stage 5 · place q²", "Complete · all HW terms"],
     retrievals: {
-      3: { rt:"Right. q²=0.16 → q=0.4 → p=0.6 → 2pq=0.48 = 48%.", wr:"Steps: q²=0.16 → q=√0.16=0.4 → p=1−0.4=0.6 → carriers (2pq) = 2(0.6)(0.4) = 0.48 = 48%. Carriers > affected — common in real disorders.", q:"In a population in HW equilibrium, 16% express a recessive disorder. What % are carriers?", qh:"<b>48%.</b> q²=0.16 → q=0.4, p=0.6, 2pq=0.48.", ex:"Classic carrier-frequency problem. Given affected (q²) = 0.16: take square root to get q (allele freq) = 0.4. Then p = 1 − q = 0.6. Carriers = 2pq = 2(0.6)(0.4) = 0.48 = 48%. The lesson: carrier frequency is often MUCH higher than affected frequency. For rare disorders (q² = 0.0001), carriers are ~2% (1 in 50) — way more common than affected." },
-      2: { rt:"Right. The five HW conditions are: no mutation, no migration, no selection, random mating, infinite population. Equal sex ratio is not required.", wr:"HW assumes no mutation, no migration (gene flow), no selection, random mating, and infinite population (so no drift). Sex ratio is irrelevant for HW math — what matters is allele frequencies in the gene pool.", q:"Which is NOT a Hardy-Weinberg condition?", qh:"<b>Equal sex ratio.</b> The 5 HW conditions are: no mutation, no migration, no selection, random mating, infinite population.", ex:"Five HW conditions for NO evolution: (1) no mutation, (2) no migration / no gene flow, (3) no selection, (4) random mating, (5) infinite population (no drift). Equal sex ratio is not on the list — HW math works on gene-pool allele frequencies regardless of sex ratio (assuming random mating). Real populations almost always violate at least one condition → evolution proceeds." },
-      1: { rt:"Right. q² = 1/10,000 = 0.0001 → q = √0.0001 = 0.01.", wr:"Affected freq = q². Allele freq q = √(q²). Here q² = 1/10,000 = 0.0001 → q = 0.01. Don't confuse the affected frequency with the allele frequency — students often forget the square root.", q:"1 in 10,000 individuals is affected. What is the allele frequency q?", qh:"<b>0.01.</b> q = √q² = √0.0001 = 0.01.", ex:"q² is the affected frequency (homozygous recessive). q is the allele frequency. Take the square root. 1 in 10,000 → q² = 0.0001 → q = 0.01. Then carriers = 2pq ≈ 0.02 = 2% = 1 in 50. Even rare diseases have surprisingly common carriers." },
+      3: { rt:"Right. q²=0.16 → q=0.4 → p=0.6 → 2pq=0.48 = 48%.", wr:"Steps: q²=0.16 → q=√0.16=0.4 → p=1−0.4=0.6 → carriers (2pq) = 2(0.6)(0.4) = 0.48 = 48%. Carriers > affected, common in real disorders.", q:"In a population in HW equilibrium, 16% express a recessive disorder. What % are carriers?", qh:"<b>48%.</b> q²=0.16 → q=0.4, p=0.6, 2pq=0.48.", ex:"Classic carrier-frequency problem. Given affected (q²) = 0.16: take square root to get q (allele freq) = 0.4. Then p = 1 − q = 0.6. Carriers = 2pq = 2(0.6)(0.4) = 0.48 = 48%. The lesson: carrier frequency is often MUCH higher than affected frequency. For rare disorders (q² = 0.0001), carriers are ~2% (1 in 50): way more common than affected." },
+      2: { rt:"Right. The five HW conditions are: no mutation, no migration, no selection, random mating, infinite population. Equal sex ratio is not required.", wr:"HW assumes no mutation, no migration (gene flow), no selection, random mating, and infinite population (so no drift). Sex ratio is irrelevant for HW math, what matters is allele frequencies in the gene pool.", q:"Which is NOT a Hardy-Weinberg condition?", qh:"<b>Equal sex ratio.</b> The 5 HW conditions are: no mutation, no migration, no selection, random mating, infinite population.", ex:"Five HW conditions for NO evolution: (1) no mutation, (2) no migration / no gene flow, (3) no selection, (4) random mating, (5) infinite population (no drift). Equal sex ratio is not on the list, HW math works on gene-pool allele frequencies regardless of sex ratio (assuming random mating). Real populations almost always violate at least one condition → evolution proceeds." },
+      1: { rt:"Right. q² = 1/10,000 = 0.0001 → q = √0.0001 = 0.01.", wr:"Affected freq = q². Allele freq q = √(q²). Here q² = 1/10,000 = 0.0001 → q = 0.01. Don't confuse the affected frequency with the allele frequency, students often forget the square root.", q:"1 in 10,000 individuals is affected. What is the allele frequency q?", qh:"<b>0.01.</b> q = √q² = √0.0001 = 0.01.", ex:"q² is the affected frequency (homozygous recessive). q is the allele frequency. Take the square root. 1 in 10,000 → q² = 0.0001 → q = 0.01. Then carriers = 2pq ≈ 0.02 = 2% = 1 in 50. Even rare diseases have surprisingly common carriers." },
     },
   },
 
@@ -414,8 +414,8 @@ const NODES = {
     stageLabels: ["Stage 1 · RA", "Stage 2 · RV", "Stage 3 · pulm artery (deox)", "Stage 4 · LA", "Stage 5 · LV", "Complete · full flow trace"],
     retrievals: {
       1: { rt:"Right. LA receives oxygenated blood from pulmonary veins.", wr:"After gas exchange in lungs, oxygenated blood returns to LEFT atrium via pulmonary veins. RA receives DEOXYGENATED blood from body via SVC/IVC.", q:"Which chamber receives oxygenated blood from the lungs?", qh:"<b>Left atrium.</b> Receives oxygenated blood via pulmonary veins.", ex:"Pulmonary circuit (lung loop): RV → pulm artery (deox) → lungs (gas exchange) → pulm veins (now ox) → LA. Systemic circuit: LV → aorta → body → SVC/IVC → RA. The LEFT side handles oxygenated blood; RIGHT side deoxygenated. LA = first stop after lungs." },
-      2: { rt:"Right. Pulmonary artery is the only artery carrying deoxygenated blood.", wr:"\"Artery\" doesn't mean oxygenated — it means moving AWAY from the heart. Pulmonary artery carries DEOX blood from RV to lungs. Pulmonary vein returns OX blood to LA. (Reverses the usual ox/deox association of arteries/veins.)", q:"Which vessel carries deoxygenated blood?", qh:"<b>Pulmonary artery.</b> Carries deox blood from RV to lungs.", ex:"Standard rule: arteries away from heart, veins toward heart. Most arteries carry oxygenated blood; most veins carry deoxygenated. The pulmonary circuit BREAKS this association: pulmonary artery (RV→lungs) carries DEOX; pulmonary vein (lungs→LA) carries OX. Memorize this exception. Coronary arteries supply heart muscle with oxygenated blood — normal." },
-      3: { rt:"Right. S1 = closure of AV valves (tricuspid + mitral) at start of ventricular systole.", wr:"S1 (\"lub\") = AV valves close at start of systole, preventing backflow into atria. S2 (\"dub\") = semilunar valves (pulmonary + aortic) close at end of systole, start of diastole, preventing backflow into ventricles.", q:"The S1 (\"lub\") sound is caused by closure of the:", qh:"<b>AV valves.</b> Tricuspid + mitral close at start of systole = \"lub\".", ex:"Heart sounds = valve closures. <b>S1 (\"lub\")</b>: AV valves (tricuspid + mitral/bicuspid) close as ventricles begin contracting (start of systole) — prevents backflow into atria. <b>S2 (\"dub\")</b>: semilunar valves (pulmonary + aortic) close as ventricles relax (end of systole, start of diastole) — prevents backflow into ventricles. Splitting of S2 (audible difference between aortic + pulmonary closure) is normal during inspiration." },
+      2: { rt:"Right. Pulmonary artery is the only artery carrying deoxygenated blood.", wr:"\"Artery\" doesn't mean oxygenated, it means moving AWAY from the heart. Pulmonary artery carries DEOX blood from RV to lungs. Pulmonary vein returns OX blood to LA. (Reverses the usual ox/deox association of arteries/veins.)", q:"Which vessel carries deoxygenated blood?", qh:"<b>Pulmonary artery.</b> Carries deox blood from RV to lungs.", ex:"Standard rule: arteries away from heart, veins toward heart. Most arteries carry oxygenated blood; most veins carry deoxygenated. The pulmonary circuit BREAKS this association: pulmonary artery (RV→lungs) carries DEOX; pulmonary vein (lungs→LA) carries OX. Memorize this exception. Coronary arteries supply heart muscle with oxygenated blood, normal." },
+      3: { rt:"Right. S1 = closure of AV valves (tricuspid + mitral) at start of ventricular systole.", wr:"S1 (\"lub\") = AV valves close at start of systole, preventing backflow into atria. S2 (\"dub\") = semilunar valves (pulmonary + aortic) close at end of systole, start of diastole, preventing backflow into ventricles.", q:"The S1 (\"lub\") sound is caused by closure of the:", qh:"<b>AV valves.</b> Tricuspid + mitral close at start of systole = \"lub\".", ex:"Heart sounds = valve closures. <b>S1 (\"lub\")</b>: AV valves (tricuspid + mitral/bicuspid) close as ventricles begin contracting (start of systole), prevents backflow into atria. <b>S2 (\"dub\")</b>: semilunar valves (pulmonary + aortic) close as ventricles relax (end of systole, start of diastole), prevents backflow into ventricles. Splitting of S2 (audible difference between aortic + pulmonary closure) is normal during inspiration." },
     },
   },
 
@@ -441,9 +441,9 @@ const NODES = {
     stageOrder: ["allo", "sym", "peri", "para", "iso"],
     stageLabels: ["Stage 1 · allopatric", "Stage 2 · sympatric", "Stage 3 · peripatric", "Stage 4 · parapatric", "Stage 5 · isolation types", "Complete · speciation mapped"],
     retrievals: {
-      1: { rt:"Right. Mule = postzygotic, hybrid sterility (zygote viable, but sterile from chromosome mismatch).", wr:"Mules form viable zygotes (donkey 62 chromosomes × horse 64 = 63 in mule). But meiosis fails because 63 is odd and homologs don't pair → no gametes. Hybrid sterility = postzygotic. Same idea: liger (lion × tiger).", q:"Mules (horse × donkey) are sterile. Which isolation mechanism?", qh:"<b>Postzygotic — hybrid sterility.</b> Zygote viable but can't reproduce.", ex:"Mules: viable hybrids (zygote forms, organism develops normally). But chromosome mismatch (63 in mule vs 62 donkey + 64 horse) prevents meiotic pairing → no functional gametes → sterile. This is <b>postzygotic</b> (after zygote formation) hybrid sterility. Distinct from <b>prezygotic</b> isolation (prevents fertilization in the first place — temporal, behavioral, mechanical, gametic, habitat)." },
-      2: { rt:"Right. Different breeding seasons = temporal isolation (prezygotic).", wr:"Two species in same area but with different breeding seasons can't interbreed because gametes are never present at the same time. This is TEMPORAL isolation, a type of PREZYGOTIC isolation (prevents fertilization). Examples: Rana frogs, leopard frog seasons.", q:"Two species of frogs in the same pond breed at different times of year. This is:", qh:"<b>Temporal (prezygotic) isolation.</b> Gametes never present at same time.", ex:"Five prezygotic isolation types: <b>habitat</b> (different niches), <b>temporal</b> (different breeding seasons or times of day), <b>behavioral</b> (mating signal mismatch — firefly flash, blue-footed booby dance), <b>mechanical</b> (genital incompatibility), <b>gametic</b> (sperm-egg protein mismatch — sea urchin bindin specificity). Three postzygotic: <b>hybrid inviability</b> (zygote dies), <b>hybrid sterility</b> (mule), <b>hybrid breakdown</b> (F1 OK, F2 weak). DAT often gives a scenario and asks which type." },
-      3: { rt:"Right. Allopolyploidy (hybrid + chromosome doubling) creates a new plant species in one generation.", wr:"Allopolyploidy: cross two species → infertile hybrid (chromosomes can't pair). Then chromosome doubling → diploid hybrid with two complete sets — can self-fertilize or breed with other allopolyploids of same type. Sympatric speciation in ONE generation. ~50% of plant species are polyploid.", q:"A new plant species arises in one generation when chromosome doubling occurs in a hybrid. This is:", qh:"<b>Sympatric speciation via allopolyploidy.</b> Hybrid + chromosome doubling = new species, one generation.", ex:"Polyploidy in plants: <b>autopolyploidy</b> = same-species genome doubled (e.g., 2n → 4n). Can self-fertilize. <b>Allopolyploidy</b> = interspecies hybrid + chromosome doubling, fertile because each subgenome has a partner. Both create new species in one generation, in the same geographic area = sympatric speciation. Examples: bread wheat (allohexaploid), cotton, oat, banana. Far less common in animals (sex determination disrupted) but seen in some fish and amphibians." },
+      1: { rt:"Right. Mule = postzygotic, hybrid sterility (zygote viable, but sterile from chromosome mismatch).", wr:"Mules form viable zygotes (donkey 62 chromosomes × horse 64 = 63 in mule). But meiosis fails because 63 is odd and homologs don't pair → no gametes. Hybrid sterility = postzygotic. Same idea: liger (lion × tiger).", q:"Mules (horse × donkey) are sterile. Which isolation mechanism?", qh:"<b>Postzygotic: hybrid sterility.</b> Zygote viable but can't reproduce.", ex:"Mules: viable hybrids (zygote forms, organism develops normally). But chromosome mismatch (63 in mule vs 62 donkey + 64 horse) prevents meiotic pairing → no functional gametes → sterile. This is <b>postzygotic</b> (after zygote formation) hybrid sterility. Distinct from <b>prezygotic</b> isolation (prevents fertilization in the first place, temporal, behavioral, mechanical, gametic, habitat)." },
+      2: { rt:"Right. Different breeding seasons = temporal isolation (prezygotic).", wr:"Two species in same area but with different breeding seasons can't interbreed because gametes are never present at the same time. This is TEMPORAL isolation, a type of PREZYGOTIC isolation (prevents fertilization). Examples: Rana frogs, leopard frog seasons.", q:"Two species of frogs in the same pond breed at different times of year. This is:", qh:"<b>Temporal (prezygotic) isolation.</b> Gametes never present at same time.", ex:"Five prezygotic isolation types: <b>habitat</b> (different niches), <b>temporal</b> (different breeding seasons or times of day), <b>behavioral</b> (mating signal mismatch, firefly flash, blue-footed booby dance), <b>mechanical</b> (genital incompatibility), <b>gametic</b> (sperm-egg protein mismatch, sea urchin bindin specificity). Three postzygotic: <b>hybrid inviability</b> (zygote dies), <b>hybrid sterility</b> (mule), <b>hybrid breakdown</b> (F1 OK, F2 weak). DAT often gives a scenario and asks which type." },
+      3: { rt:"Right. Allopolyploidy (hybrid + chromosome doubling) creates a new plant species in one generation.", wr:"Allopolyploidy: cross two species → infertile hybrid (chromosomes can't pair). Then chromosome doubling → diploid hybrid with two complete sets, can self-fertilize or breed with other allopolyploids of same type. Sympatric speciation in ONE generation. ~50% of plant species are polyploid.", q:"A new plant species arises in one generation when chromosome doubling occurs in a hybrid. This is:", qh:"<b>Sympatric speciation via allopolyploidy.</b> Hybrid + chromosome doubling = new species, one generation.", ex:"Polyploidy in plants: <b>autopolyploidy</b> = same-species genome doubled (e.g., 2n → 4n). Can self-fertilize. <b>Allopolyploidy</b> = interspecies hybrid + chromosome doubling, fertile because each subgenome has a partner. Both create new species in one generation, in the same geographic area = sympatric speciation. Examples: bread wheat (allohexaploid), cotton, oat, banana. Far less common in animals (sex determination disrupted) but seen in some fish and amphibians." },
     },
   },
 
@@ -459,7 +459,7 @@ const NODES = {
     stageLabels: ["Stage 1 · F+ conjugation", "Stage 2 · Hfr conjugation", "Stage 3 · Transformation", "Stage 4 · Generalized transduction", "Stage 5 · Specialized transduction", "Complete · all gene transfer types"],
     retrievals: {
       1: { rt:"Right. Transformation is the uptake of naked (free) DNA from the environment.", wr:"Transformation = competent cell takes up free DNA from environment. Discovered by Griffith (S/R pneumococcus experiment). Requires competence factors. Does not need a bacteriophage.", q:"A bacterium gains antibiotic resistance by absorbing free DNA from lysed cells nearby. This is:", qh:"<b>Transformation.</b> Uptake of naked (free) DNA by a competent cell.", ex:"Transformation: competent bacteria (naturally or induced) take up free DNA from the environment. Griffith's classic experiment (heat-killed smooth + live rough → live smooth) showed a 'transforming principle' later identified as DNA (Avery, MacLeod, McCarty). Competence factors (e.g., ComK in B. subtilis) make cells permissive. No phage required." },
-      2: { rt:"Right. Generalized transduction accidentally packages any bacterial DNA into phage particles.", wr:"Generalized transduction: lytic phage accidentally packages random bacterial DNA instead of phage DNA. Any gene can be transferred. Specialized transduction: lysogenic phage precisely excises from chromosome, sometimes taking adjacent bacterial genes with it — specific genes only.", q:"A bacteriophage accidentally packages random chromosomal DNA and transfers it to a new host. This is:", qh:"<b>Generalized transduction.</b> Random bacterial DNA packaged into phage.", ex:"Generalized transduction: lytic phage (e.g., P1 in E. coli) occasionally packages a random segment of bacterial chromosome instead of phage DNA. That transducing phage injects bacterial DNA into a new host — any gene could transfer. Used in gene mapping experiments. Specialized transduction: lysogenic phage (e.g., lambda) integrates at a specific chromosomal site; imprecise excision can include adjacent bacterial genes (usually gal or bio genes). Only adjacent genes transfer." },
+      2: { rt:"Right. Generalized transduction accidentally packages any bacterial DNA into phage particles.", wr:"Generalized transduction: lytic phage accidentally packages random bacterial DNA instead of phage DNA. Any gene can be transferred. Specialized transduction: lysogenic phage precisely excises from chromosome, sometimes taking adjacent bacterial genes with it, specific genes only.", q:"A bacteriophage accidentally packages random chromosomal DNA and transfers it to a new host. This is:", qh:"<b>Generalized transduction.</b> Random bacterial DNA packaged into phage.", ex:"Generalized transduction: lytic phage (e.g., P1 in E. coli) occasionally packages a random segment of bacterial chromosome instead of phage DNA. That transducing phage injects bacterial DNA into a new host, any gene could transfer. Used in gene mapping experiments. Specialized transduction: lysogenic phage (e.g., lambda) integrates at a specific chromosomal site; imprecise excision can include adjacent bacterial genes (usually gal or bio genes). Only adjacent genes transfer." },
       3: { rt:"Right. In Hfr × F- conjugation, genes closer to the origin of transfer transfer first and at highest frequency.", wr:"Hfr has the F factor integrated into the chromosome. During conjugation, a nick at oriT initiates chromosome transfer starting at the F origin. Genes are transferred in order from the origin. Because conjugation breaks before the full chromosome transfers, genes closest to the F origin transfer most frequently. This principle allows interrupted mating experiments to map gene order.", q:"In an Hfr x F- mating experiment, interrupted at different times, which genes are used to determine relative order?", qh:"<b>Genes closest to the origin of transfer</b> arrive earliest and at highest frequency.", ex:"Hfr (high-frequency recombination) strains: F factor integrated into the bacterial chromosome. During conjugation, transfer begins at oriT and proceeds linearly. The chromosome rarely transfers completely (takes ~100 min in E. coli), so F genes arrive last. Genes near oriT transfer first. Interrupted mating: stop conjugation at different times, see which alleles have transferred → build a time-of-entry (minutes) map = genetic distance. 1 minute ≈ ~20 kb transferred." },
     },
   },
@@ -475,7 +475,7 @@ const NODES = {
     stageOrder: ["dock", "ca", "ach", "iono", "meta"],
     stageLabels: ["Stage 1 · SNARE docking", "Stage 2 · Ca2+ trigger", "Stage 3 · Neurotransmitter release", "Stage 4 · Ionotropic receptor", "Stage 5 · Metabotropic receptor", "Complete · full synapse sequence"],
     retrievals: {
-      1: { rt:"Right. GABA is the primary inhibitory neurotransmitter in the brain, opening Cl- channels to hyperpolarize the postsynaptic cell.", wr:"GABA (gamma-aminobutyric acid) is the main inhibitory neurotransmitter in the CNS. It opens Cl- channels (ionotropic GABA-A) → Cl- flows in → membrane hyperpolarizes → IPSP. Glycine is the main inhibitory NT in the spinal cord. Glutamate is the main excitatory NT in the brain. Acetylcholine can be excitatory (NMJ) or inhibitory (cardiac via muscarinic).", q:"Which neurotransmitter is the principal inhibitory transmitter in the brain?", qh:"<b>GABA.</b> Opens Cl- channels → hyperpolarizes postsynaptic neuron (IPSP).", ex:"GABA (gamma-aminobutyric acid) mediates most inhibitory signaling in the brain. GABA-A receptors: ionotropic Cl- channels — fast, direct inhibition. GABA-B receptors: metabotropic (GPCR) — slower, modulate K+ or Ca2+ channels. Benzodiazepines (diazepam) enhance GABA-A Cl- conductance. Alcohol potentiates GABA-A as well. Compare: glycine = main inhibitory NT in spinal cord (also opens Cl- channels)." },
+      1: { rt:"Right. GABA is the primary inhibitory neurotransmitter in the brain, opening Cl- channels to hyperpolarize the postsynaptic cell.", wr:"GABA (gamma-aminobutyric acid) is the main inhibitory neurotransmitter in the CNS. It opens Cl- channels (ionotropic GABA-A) → Cl- flows in → membrane hyperpolarizes → IPSP. Glycine is the main inhibitory NT in the spinal cord. Glutamate is the main excitatory NT in the brain. Acetylcholine can be excitatory (NMJ) or inhibitory (cardiac via muscarinic).", q:"Which neurotransmitter is the principal inhibitory transmitter in the brain?", qh:"<b>GABA.</b> Opens Cl- channels → hyperpolarizes postsynaptic neuron (IPSP).", ex:"GABA (gamma-aminobutyric acid) mediates most inhibitory signaling in the brain. GABA-A receptors: ionotropic Cl- channels, fast, direct inhibition. GABA-B receptors: metabotropic (GPCR): slower, modulate K+ or Ca2+ channels. Benzodiazepines (diazepam) enhance GABA-A Cl- conductance. Alcohol potentiates GABA-A as well. Compare: glycine = main inhibitory NT in spinal cord (also opens Cl- channels)." },
       2: { rt:"Right. Acetylcholinesterase (AChE) in the synaptic cleft breaks down acetylcholine, terminating the signal.", wr:"ACh action must be terminated after release. AChE (acetylcholinesterase) in the basal lamina of the synaptic cleft rapidly hydrolyzes ACh into acetate + choline. Choline is recycled back into the presynaptic terminal (high-affinity choline transporter) and reused for new ACh synthesis. Organophosphate nerve agents and many insecticides inhibit AChE → ACh accumulates → continuous stimulation.", q:"How is acetylcholine (ACh) signal terminated at the neuromuscular junction?", qh:"<b>Acetylcholinesterase (AChE)</b> hydrolyzes ACh → acetate + choline in the synaptic cleft.", ex:"AChE is anchored in the synaptic cleft. It hydrolyzes ACh extremely rapidly (~25,000 ACh molecules per AChE per second). Products: choline (taken back up by presynaptic terminal via high-affinity transporter) and acetate. Rate-limiting step for new ACh synthesis is choline availability. Clinical: AChE inhibitors (neostigmine, physostigmine) used in myasthenia gravis; organophosphates (sarin, nerve agents, many pesticides) irreversibly inhibit AChE." },
       3: { rt:"Right. Temporal summation is the additive effect of multiple APs arriving in rapid succession at the same synapse; spatial summation adds inputs from multiple synapses simultaneously.", wr:"Summation is how EPSPs and IPSPs are integrated. Temporal: one presynaptic neuron fires repeatedly in quick succession, each EPSP adds before the previous fades. Spatial: multiple presynaptic neurons fire at the same time, their EPSPs add algebraically at the postsynaptic cell. Threshold is reached if the sum pushes membrane past -55 mV.", q:"Two presynaptic neurons both fire simultaneously and both produce EPSPs on the same postsynaptic cell. This is:", qh:"<b>Spatial summation.</b> Multiple simultaneous inputs add their EPSPs at the postsynaptic cell.", ex:"Postsynaptic integration: the membrane at the axon hillock algebraically sums all incoming graded potentials (EPSPs add, IPSPs subtract). Temporal summation: rapid successive firing from one terminal. Spatial summation: simultaneous firing from multiple terminals. If the sum reaches threshold at the axon hillock, an AP fires. This is how 'votes' from thousands of synapses are tallied into a yes/no AP decision." },
     },
@@ -492,9 +492,9 @@ const NODES = {
     stageOrder: ["inn", "comp", "mhc", "bcell", "tcell"],
     stageLabels: ["Stage 1 · Innate first response", "Stage 2 · Complement cascade", "Stage 3 · MHC presentation", "Stage 4 · B cell + antibodies", "Stage 5 · T cell types", "Complete · full immune sequence"],
     retrievals: {
-      1: { rt:"Right. MHC I presents endogenous (intracellular) antigens to cytotoxic CD8 T cells.", wr:"MHC I is on ALL nucleated cells. It presents peptides from proteins made inside the cell (endogenous — viral proteins, tumor antigens). CD8 cytotoxic T cells recognize MHC I + peptide and kill the cell. MHC II is on APCs (macrophages, dendritic cells, B cells) and presents exogenous peptides to CD4 helper T cells.", q:"A virus-infected cell displays viral peptides on its surface. Which receptor on the immune cell recognizes this?", qh:"<b>MHC I</b> on the infected cell presents to <b>CD8 T cell</b> (cytotoxic).", ex:"MHC I: expressed on ALL nucleated cells. Loaded with endogenous peptides (8-10 aa) in the ER via proteasome degradation. Recognized by CD8+ cytotoxic T cells — leads to target cell killing (perforin, granzyme B, Fas pathway). MHC II: expressed only on professional APCs (dendritic cells, macrophages, B cells). Loaded with exogenous peptides (13-25 aa) from lysosomes. Recognized by CD4+ helper T cells — leads to cytokine production, B cell help, macrophage activation." },
-      2: { rt:"Right. IgM is the first antibody produced in a primary immune response and is a pentamer.", wr:"Primary response: IgM rises first, then class switching produces IgG. Secondary response: faster, higher peak, mostly IgG (memory cells switch quickly). IgA is found in secretions (saliva, tears, breast milk, gut). IgE binds mast cells/basophils — involved in allergies and anti-parasite response. IgD sits on naive B cells as receptor.", q:"A patient is exposed to a pathogen for the first time. The first antibody class produced is:", qh:"<b>IgM.</b> First antibody in primary response; pentameric form.", ex:"Antibody class switching (isotype switching): activated B cell initially makes IgM. Class switch recombination (CSR) in the heavy chain constant region — AID enzyme + T cell help (CD40L + cytokines) — leads to IgG, IgA, or IgE. IgM: pentamer, good complement activator, low affinity but high avidity (10 binding sites). IgG: monomer, can cross placenta (maternal-fetal immunity), complement activation, opsonization. IgA: dimer in secretions (SIgA), protection at mucosal surfaces. IgE: mast cell degranulation, allergy, anti-helminth." },
-      3: { rt:"Right. Clonal selection: when an antigen binds to a lymphocyte with the matching receptor, that cell proliferates and differentiates — the core of adaptive immunity.", wr:"Clonal selection (Burnet): the antigen doesn't create new receptors — it selects and expands the pre-existing lymphocyte clone that already has the matching receptor. That clone proliferates into effector cells (for immediate response) and memory cells (for faster secondary response). Primary response: slow (days), mostly effectors. Secondary (memory) response: faster, larger, mostly IgG (B cells) or fast CD8 kill (T cells).", q:"Which principle explains why the secondary immune response is faster and stronger than the primary?", qh:"<b>Clonal selection + memory cells.</b> The primary response generated memory lymphocytes that respond rapidly on re-exposure.", ex:"Clonal selection summary: rare lymphocytes with matching surface receptors are expanded by antigen binding. Effector cells act immediately; memory cells persist long-term. Secondary response: memory B cells already have class-switched Ig (IgG), low threshold activation. Memory T cells are more numerous, respond faster, require less co-stimulation. Vaccines exploit this: harmless antigen (or part of antigen) induces primary response + memory formation → protection when real pathogen arrives." },
+      1: { rt:"Right. MHC I presents endogenous (intracellular) antigens to cytotoxic CD8 T cells.", wr:"MHC I is on ALL nucleated cells. It presents peptides from proteins made inside the cell (endogenous, viral proteins, tumor antigens). CD8 cytotoxic T cells recognize MHC I + peptide and kill the cell. MHC II is on APCs (macrophages, dendritic cells, B cells) and presents exogenous peptides to CD4 helper T cells.", q:"A virus-infected cell displays viral peptides on its surface. Which receptor on the immune cell recognizes this?", qh:"<b>MHC I</b> on the infected cell presents to <b>CD8 T cell</b> (cytotoxic).", ex:"MHC I: expressed on ALL nucleated cells. Loaded with endogenous peptides (8-10 aa) in the ER via proteasome degradation. Recognized by CD8+ cytotoxic T cells, leads to target cell killing (perforin, granzyme B, Fas pathway). MHC II: expressed only on professional APCs (dendritic cells, macrophages, B cells). Loaded with exogenous peptides (13-25 aa) from lysosomes. Recognized by CD4+ helper T cells, leads to cytokine production, B cell help, macrophage activation." },
+      2: { rt:"Right. IgM is the first antibody produced in a primary immune response and is a pentamer.", wr:"Primary response: IgM rises first, then class switching produces IgG. Secondary response: faster, higher peak, mostly IgG (memory cells switch quickly). IgA is found in secretions (saliva, tears, breast milk, gut). IgE binds mast cells/basophils: involved in allergies and anti-parasite response. IgD sits on naive B cells as receptor.", q:"A patient is exposed to a pathogen for the first time. The first antibody class produced is:", qh:"<b>IgM.</b> First antibody in primary response; pentameric form.", ex:"Antibody class switching (isotype switching): activated B cell initially makes IgM. Class switch recombination (CSR) in the heavy chain constant region, AID enzyme + T cell help (CD40L + cytokines): leads to IgG, IgA, or IgE. IgM: pentamer, good complement activator, low affinity but high avidity (10 binding sites). IgG: monomer, can cross placenta (maternal-fetal immunity), complement activation, opsonization. IgA: dimer in secretions (SIgA), protection at mucosal surfaces. IgE: mast cell degranulation, allergy, anti-helminth." },
+      3: { rt:"Right. Clonal selection: when an antigen binds to a lymphocyte with the matching receptor, that cell proliferates and differentiates, the core of adaptive immunity.", wr:"Clonal selection (Burnet): the antigen doesn't create new receptors, it selects and expands the pre-existing lymphocyte clone that already has the matching receptor. That clone proliferates into effector cells (for immediate response) and memory cells (for faster secondary response). Primary response: slow (days), mostly effectors. Secondary (memory) response: faster, larger, mostly IgG (B cells) or fast CD8 kill (T cells).", q:"Which principle explains why the secondary immune response is faster and stronger than the primary?", qh:"<b>Clonal selection + memory cells.</b> The primary response generated memory lymphocytes that respond rapidly on re-exposure.", ex:"Clonal selection summary: rare lymphocytes with matching surface receptors are expanded by antigen binding. Effector cells act immediately; memory cells persist long-term. Secondary response: memory B cells already have class-switched Ig (IgG), low threshold activation. Memory T cells are more numerous, respond faster, require less co-stimulation. Vaccines exploit this: harmless antigen (or part of antigen) induces primary response + memory formation → protection when real pathogen arrives." },
     },
   },
 
@@ -511,7 +511,7 @@ const NODES = {
     retrievals: {
       1: { rt:"Right. One primary spermatocyte → 4 sperm; one primary oocyte → 1 egg + 3 polar bodies.", wr:"Spermatogenesis: spermatogonium → primary spermatocyte → (meiosis I) 2 secondary spermatocytes → (meiosis II) 4 spermatids → 4 sperm. All 4 products are functional. Oogenesis: primary oocyte → unequal cytokinesis → secondary oocyte (large, keeps cytoplasm) + 1st polar body. At fertilization: secondary oocyte → ootid + 2nd polar body. Total: 1 functional egg + 3 polar bodies.", q:"How many functional gametes result from one primary spermatocyte vs one primary oocyte completing meiosis?", qh:"<b>4 sperm</b> from one spermatocyte; <b>1 egg + 3 polar bodies</b> from one oocyte.", ex:"Asymmetric cytokinesis in oogenesis conserves cytoplasm for one large, nutrient-rich egg. The 3 polar bodies (small, minimal cytoplasm) are non-functional and eventually degenerate. Timing: primary oocyte is arrested at prophase I from fetal life until puberty/ovulation. Meiosis I completes just before ovulation. Meiosis II completes only if fertilization occurs. Spermatogenesis is continuous from puberty onward, producing millions of sperm per day in the testes." },
       2: { rt:"Right. Ovulation is triggered by the LH surge, which is itself triggered by rising estrogen levels exceeding a threshold (positive feedback).", wr:"The LH surge timing: around day 12-13 of the menstrual cycle. Rising estrogen from the dominant follicle initially exerts negative feedback on LH. As the follicle matures and estrogen rises above a threshold (~200 pg/mL sustained for 48 h), estrogen switches to POSITIVE feedback on the hypothalamus (GnRH pulse increases) and anterior pituitary → massive LH surge. This LH surge triggers oocyte maturation completion and rupture of the follicle ~36 h later.", q:"The LH surge that triggers ovulation is caused by:", qh:"<b>Positive feedback from rising estrogen</b> on the hypothalamus-pituitary axis.", ex:"Menstrual cycle hormone sequence: Follicular phase (days 1-14): FSH rises → recruits follicles → estrogen rises from granulosa cells → LH surge (positive feedback) → ovulation day 14. Luteal phase (days 14-28): LH → corpus luteum → progesterone rises → prepares endometrium for implantation → if no implantation, corpus luteum degenerates → progesterone/estrogen drop → menstruation. If implantation: embryo secretes hCG → maintains corpus luteum → progesterone stays high throughout first trimester." },
-      3: { rt:"Right. Human chorionic gonadotropin (hCG) secreted by the embryo/placenta maintains the corpus luteum in early pregnancy, keeping progesterone high.", wr:"Pregnancy tests detect hCG (human chorionic gonadotropin). hCG is produced by the trophoblast (outer layer of blastocyst) starting at implantation, peaks around week 10, then declines as the placenta takes over progesterone production. hCG mimics LH → maintains corpus luteum → corpus luteum keeps secreting progesterone → endometrium maintained → no menstruation. Without hCG, corpus luteum degenerates, progesterone falls, and menstruation would occur.", q:"What hormone produced by the embryo prevents menstruation in early pregnancy?", qh:"<b>hCG (human chorionic gonadotropin).</b> Maintains corpus luteum → keeps progesterone high.", ex:"Pregnancy test logic: anti-hCG antibodies detect hCG in urine. hCG appears as early as 6-12 days post-fertilization. Structure: heterodimeric glycoprotein with alpha (same as LH/FSH/TSH) and unique beta subunit (pregnancy-test antibodies target beta-hCG). After ~10-12 weeks, the placenta produces enough progesterone on its own (luteo-placental shift) — corpus luteum can degenerate without interrupting pregnancy." },
+      3: { rt:"Right. Human chorionic gonadotropin (hCG) secreted by the embryo/placenta maintains the corpus luteum in early pregnancy, keeping progesterone high.", wr:"Pregnancy tests detect hCG (human chorionic gonadotropin). hCG is produced by the trophoblast (outer layer of blastocyst) starting at implantation, peaks around week 10, then declines as the placenta takes over progesterone production. hCG mimics LH → maintains corpus luteum → corpus luteum keeps secreting progesterone → endometrium maintained → no menstruation. Without hCG, corpus luteum degenerates, progesterone falls, and menstruation would occur.", q:"What hormone produced by the embryo prevents menstruation in early pregnancy?", qh:"<b>hCG (human chorionic gonadotropin).</b> Maintains corpus luteum → keeps progesterone high.", ex:"Pregnancy test logic: anti-hCG antibodies detect hCG in urine. hCG appears as early as 6-12 days post-fertilization. Structure: heterodimeric glycoprotein with alpha (same as LH/FSH/TSH) and unique beta subunit (pregnancy-test antibodies target beta-hCG). After ~10-12 weeks, the placenta produces enough progesterone on its own (luteo-placental shift), corpus luteum can degenerate without interrupting pregnancy." },
     },
   },
 
@@ -527,8 +527,8 @@ const NODES = {
     stageLabels: ["Stage 1 · Linked genes", "Stage 2 · RF formula", "Stage 3 · Centimorgans", "Stage 4 · Three-point cross", "Stage 5 · Chi-squared linkage test", "Complete · full linkage analysis"],
     retrievals: {
       1: { rt:"Right. Recombination frequency = (recombinant offspring) / (total offspring) × 100%. 1% RF = 1 centimorgan.", wr:"Linked genes are on the same chromosome and tend to be inherited together. Crossing over (homologous recombination at chiasmata during prophase I) can separate them. The further apart two genes are, the more likely a crossover occurs between them. RF = recombinants ÷ total × 100%. Max RF = 50% (assorting independently = unlinked). 1% RF = 1 centimorgan (cM) = 1 map unit.", q:"In a testcross, 20 out of 200 offspring have recombinant phenotypes. The recombination frequency is:", qh:"<b>10%</b> = 10 cM apart. RF = 20/200 = 0.10 = 10%.", ex:"Linkage mapping: parental combinations are more frequent than recombinants (when genes are linked). Testcross (AaBb × aabb): if genes are unlinked, expect 1:1:1:1 (25% each class). If linked in coupling (AB/ab), parental classes (AB and ab) are > 25% each; recombinants (Ab and aB) are < 25% each. RF = recombinant total ÷ all offspring. Map distance (cM) = RF%. Over ~50 cM: genes appear unlinked even though they're on the same chromosome (too many double crossovers)." },
-      2: { rt:"Right. In a three-point cross, the class present in the lowest frequency identifies the double crossovers — and the middle gene is the one that switches order relative to the parental types.", wr:"Three-point cross logic: order the 8 phenotypic classes from most to least frequent. Parental classes = most frequent (2). Double recombinants = least frequent (2). Compare double recombinants to parentals: the gene that has flipped positions (relative to the other two) is the MIDDLE gene. Map distance between each adjacent pair = (single crossovers for that interval + double crossovers) ÷ total × 100%.", q:"In a three-point cross, the two least frequent offspring classes indicate:", qh:"<b>Double crossover classes.</b> Identifying them reveals the middle gene (it flips relative to parentals).", ex:"Three-point cross example: genes A, B, C. Parentals: ABC and abc (most frequent). Doubles: ABc and abC (least frequent). Compare ABc to ABC — C flipped. So C is in the middle! True order: A-C-B or equivalently B-C-A. Then calculate: map distance A-C = (AC single + doubles)/total; map distance C-B = (CB single + doubles)/total. Coefficient of coincidence = observed doubles / expected doubles. Interference = 1 - COC." },
-      3: { rt:"Right. If chi-squared test yields p < 0.05, we reject the null hypothesis of independent assortment — the genes are likely linked.", wr:"Chi-squared test for linkage: null hypothesis = genes assort independently (9:3:3:1 for dihybrid, or 1:1:1:1 for testcross). Calculate expected numbers from ratio. X² = sum of (observed-expected)²/expected. Compare to critical value (df = number of classes - 1). If X² > critical value → reject null → evidence for linkage.", q:"A chi-squared test of a dihybrid cross yields p < 0.05. The conclusion is:", qh:"<b>Reject the null hypothesis of independent assortment</b> — the two genes may be linked.", ex:"Chi-square for linkage: degrees of freedom = (number of phenotypic classes) - 1. For dihybrid testcross (4 classes), df = 3. Critical X² at p=0.05, df=3 is 7.815. If calculated X² > 7.815, reject H0 (independent assortment) → suggest linkage. Note: chi-square can't prove linkage — it only says the observed ratio is unlikely if genes were unlinked. Actual RF calculation requires knowing which classes are recombinants." },
+      2: { rt:"Right. In a three-point cross, the class present in the lowest frequency identifies the double crossovers, and the middle gene is the one that switches order relative to the parental types.", wr:"Three-point cross logic: order the 8 phenotypic classes from most to least frequent. Parental classes = most frequent (2). Double recombinants = least frequent (2). Compare double recombinants to parentals: the gene that has flipped positions (relative to the other two) is the MIDDLE gene. Map distance between each adjacent pair = (single crossovers for that interval + double crossovers) ÷ total × 100%.", q:"In a three-point cross, the two least frequent offspring classes indicate:", qh:"<b>Double crossover classes.</b> Identifying them reveals the middle gene (it flips relative to parentals).", ex:"Three-point cross example: genes A, B, C. Parentals: ABC and abc (most frequent). Doubles: ABc and abC (least frequent). Compare ABc to ABC: C flipped. So C is in the middle. True order: A-C-B or equivalently B-C-A. Then calculate: map distance A-C = (AC single + doubles)/total; map distance C-B = (CB single + doubles)/total. Coefficient of coincidence = observed doubles / expected doubles. Interference = 1 - COC." },
+      3: { rt:"Right. If chi-squared test yields p < 0.05, we reject the null hypothesis of independent assortment, the genes are likely linked.", wr:"Chi-squared test for linkage: null hypothesis = genes assort independently (9:3:3:1 for dihybrid, or 1:1:1:1 for testcross). Calculate expected numbers from ratio. X² = sum of (observed-expected)²/expected. Compare to critical value (df = number of classes - 1). If X² > critical value → reject null → evidence for linkage.", q:"A chi-squared test of a dihybrid cross yields p < 0.05. The conclusion is:", qh:"<b>Reject the null hypothesis of independent assortment</b>, the two genes may be linked.", ex:"Chi-square for linkage: degrees of freedom = (number of phenotypic classes) - 1. For dihybrid testcross (4 classes), df = 3. Critical X² at p=0.05, df=3 is 7.815. If calculated X² > 7.815, reject H0 (independent assortment) → suggest linkage. Note: chi-square can't prove linkage, it only says the observed ratio is unlikely if genes were unlinked. Actual RF calculation requires knowing which classes are recombinants." },
     },
   },
 
@@ -543,9 +543,9 @@ const NODES = {
     stageOrder: ["det", "diff", "ind", "morph", "recip"],
     stageLabels: ["Stage 1 · Determination", "Stage 2 · Differentiation", "Stage 3 · Induction", "Stage 4 · Morphogen gradient", "Stage 5 · Reciprocal induction", "Complete · determination to differentiation"],
     retrievals: {
-      1: { rt:"Right. Determination is commitment to a developmental fate; differentiation is the actual expression of that fate (morphological/functional change).", wr:"Determination = a cell is committed to a particular fate (even if it still looks undifferentiated). Transplant a determined ectoderm cell elsewhere — it will still become what it was committed to. Differentiation = the cell actually takes on the morphology and biochemistry of its final cell type. Determination precedes differentiation. A cell can be determined but not yet differentiated.", q:"A frog embryo ectoderm cell is transplanted to a mesoderm region before gastrulation and becomes muscle. After gastrulation it becomes epidermis even when transplanted to mesoderm. What happened between the two time points?", qh:"<b>Determination occurred.</b> After gastrulation, the cell is committed to epidermal fate (determined) even in a new environment.", ex:"Classic transplant logic: before determination, cells are pluripotent/labile — they respond to local signals and adopt the fate of their new environment (regulative development). After determination, cells are committed — transplanting them produces their original fate in the new environment (mosaic development tendency). Most vertebrates show a mixture: early embryo is regulative, later becomes mosaic as cells get determined." },
-      2: { rt:"Right. Spemann's organizer experiment: transplanting the dorsal lip of the blastopore to a ventral location induces a complete secondary body axis, demonstrating that the organizer produces signals that establish the body plan.", wr:"Spemann and Mangold (1924, Nobel Prize): excised the 'organizer' (dorsal lip of blastopore) from one newt embryo and transplanted it to the ventral side of another. The host developed a secondary complete embryo — second neural tube, notochord, etc. The organizer itself contributes some cells, but more importantly it INDUCES the host tissue to reorganize. Organizer signals: chordin + noggin (BMP antagonists, allow dorsal fate), Wnt signals.", q:"Spemann and Mangold's transplant of the dorsal blastopore lip to a ventral location produced:", qh:"<b>A complete second body axis</b> in the host embryo — demonstrating the dorsal lip is the primary organizer.", ex:"Organizer signals (molecular level): BMP (bone morphogenetic protein) is present in ventral territory → specifies ventral/lateral fate. Organizer secretes BMP antagonists (chordin, noggin, follistatin) → creates a BMP gradient → high BMP = ventral, low BMP = dorsal. Wnt signaling also establishes dorsoventral axis. Sonic Hedgehog (from notochord) patterns ventral neural tube. FGF and retinoic acid contribute to anteroposterior patterning." },
-      3: { rt:"Right. Reciprocal induction: the optic vesicle induces the overlying ectoderm to form the lens, and the lens in turn induces the optic cup to differentiate properly — a two-way inductive conversation.", wr:"Reciprocal induction = mutual induction between two tissues. Classic example: eye development. Optic vesicle (outgrowth of diencephalon) contacts overlying head ectoderm → ectoderm thickens to lens placode → lens. The forming lens then sends signals back to the optic vesicle → optic cup (and eventually retina) differentiates. Remove the optic vesicle = no lens. Remove the lens placode = no optic cup differentiation. Each tissue needs the other.", q:"The optic vesicle induces the overlying ectoderm to form the lens, which then induces the optic cup to differentiate. This is:", qh:"<b>Reciprocal induction.</b> Two tissues mutually induce each other's differentiation.", ex:"Additional induction examples: mesoderm (notochord) → overlying ectoderm → neural plate (primary embryonic induction). Kidney: ureteric bud induces metanephric mesenchyme → nephrons form; metanephric mesenchyme induces ureteric bud to branch. General principle: inducers secrete paracrine signals; responders must have the competence (receptors + downstream machinery) to respond. Loss of either = no induction. The competence window is time-limited." },
+      1: { rt:"Right. Determination is commitment to a developmental fate; differentiation is the actual expression of that fate (morphological/functional change).", wr:"Determination = a cell is committed to a particular fate (even if it still looks undifferentiated). Transplant a determined ectoderm cell elsewhere, it will still become what it was committed to. Differentiation = the cell actually takes on the morphology and biochemistry of its final cell type. Determination precedes differentiation. A cell can be determined but not yet differentiated.", q:"A frog embryo ectoderm cell is transplanted to a mesoderm region before gastrulation and becomes muscle. After gastrulation it becomes epidermis even when transplanted to mesoderm. What happened between the two time points?", qh:"<b>Determination occurred.</b> After gastrulation, the cell is committed to epidermal fate (determined) even in a new environment.", ex:"Classic transplant logic: before determination, cells are pluripotent/labile, they respond to local signals and adopt the fate of their new environment (regulative development). After determination, cells are committed, transplanting them produces their original fate in the new environment (mosaic development tendency). Most vertebrates show a mixture: early embryo is regulative, later becomes mosaic as cells get determined." },
+      2: { rt:"Right. Spemann's organizer experiment: transplanting the dorsal lip of the blastopore to a ventral location induces a complete secondary body axis, demonstrating that the organizer produces signals that establish the body plan.", wr:"Spemann and Mangold (1924, Nobel Prize): excised the 'organizer' (dorsal lip of blastopore) from one newt embryo and transplanted it to the ventral side of another. The host developed a secondary complete embryo, second neural tube, notochord, etc. The organizer itself contributes some cells, but more importantly it INDUCES the host tissue to reorganize. Organizer signals: chordin + noggin (BMP antagonists, allow dorsal fate), Wnt signals.", q:"Spemann and Mangold's transplant of the dorsal blastopore lip to a ventral location produced:", qh:"<b>A complete second body axis</b> in the host embryo, demonstrating the dorsal lip is the primary organizer.", ex:"Organizer signals (molecular level): BMP (bone morphogenetic protein) is present in ventral territory → specifies ventral/lateral fate. Organizer secretes BMP antagonists (chordin, noggin, follistatin) → creates a BMP gradient → high BMP = ventral, low BMP = dorsal. Wnt signaling also establishes dorsoventral axis. Sonic Hedgehog (from notochord) patterns ventral neural tube. FGF and retinoic acid contribute to anteroposterior patterning." },
+      3: { rt:"Right. Reciprocal induction: the optic vesicle induces the overlying ectoderm to form the lens, and the lens in turn induces the optic cup to differentiate properly, a two-way inductive conversation.", wr:"Reciprocal induction = mutual induction between two tissues. Classic example: eye development. Optic vesicle (outgrowth of diencephalon) contacts overlying head ectoderm → ectoderm thickens to lens placode → lens. The forming lens then sends signals back to the optic vesicle → optic cup (and eventually retina) differentiates. Remove the optic vesicle = no lens. Remove the lens placode = no optic cup differentiation. Each tissue needs the other.", q:"The optic vesicle induces the overlying ectoderm to form the lens, which then induces the optic cup to differentiate. This is:", qh:"<b>Reciprocal induction.</b> Two tissues mutually induce each other's differentiation.", ex:"Additional induction examples: mesoderm (notochord) → overlying ectoderm → neural plate (primary embryonic induction). Kidney: ureteric bud induces metanephric mesenchyme → nephrons form; metanephric mesenchyme induces ureteric bud to branch. General principle: inducers secrete paracrine signals; responders must have the competence (receptors + downstream machinery) to respond. Loss of either = no induction. The competence window is time-limited." },
     },
   },
 
@@ -978,7 +978,7 @@ function onRetrievalAnswer(nodeId, sectionEl, card, opt) {
     picker = document.createElement("div");
     picker.className = "confidence-picker";
     picker.innerHTML =
-      '<div class="cp-prompt">Before the answer — how sure were you?</div>' +
+      '<div class="cp-prompt">Before the answer: how sure were you?</div>' +
       '<div class="cp-row">' +
         '<button class="cp-btn" data-conf="guess">Guess</button>' +
         '<button class="cp-btn" data-conf="sure">Pretty sure</button>' +
@@ -1024,7 +1024,7 @@ function finishRetrievalAnswer(nodeId, sectionEl, card, opt, correct, qNum, conf
       : 'The correct answer is: ' + (correctText || '(see node above)') + '. Repair details are still being authored for this prompt.';
   }
   const label = correct
-    ? (fragile ? "Right — but you guessed. Sending to spaced review."
+    ? (fragile ? "Right: but you guessed. Sending to spaced review."
                 : (confidence === "locked" ? "Locked in" : "Correct"))
     : "Why this is the answer";
   fb.innerHTML = `<span class="lbl">${label}</span>${feedbackBody}`;
@@ -1118,7 +1118,7 @@ function addAceCard({ q, quickHit, explanation, origin, subject, nodeId, why, im
   if (_isAceCardPlaceholder(q) || _isAceCardPlaceholder(quickHit) || _isAceCardPlaceholder(explanation)) {
     if (typeof console !== 'undefined' && console.warn) {
       console.warn('[bio:ace-cards] skipped placeholder card from', origin || subject || nodeId,
-        '— q/quickHit/explanation contain stub markers. Fill the NODES retrieval entry to enable this card.');
+        'q/quickHit/explanation contain stub markers. Fill the NODES retrieval entry to enable this card.');
     }
     return null;
   }
@@ -1318,7 +1318,7 @@ function computeCalibration() {
 
 function openCalibration() {
   const b = computeCalibration();
-  const pct = (r,w) => (r+w === 0) ? "—" : Math.round(100 * r / (r+w)) + "%";
+  const pct = (r,w) => (r+w === 0) ? "-" : Math.round(100 * r / (r+w)) + "%";
   const total = (r,w) => r + w;
   let modal = document.getElementById("calibrationModal");
   if (!modal) {
@@ -1341,7 +1341,7 @@ function openCalibration() {
       </div>
       <p class="cal-sub">Your confidence vs your accuracy. A well-calibrated student
         is right ~100% of the time when "locked in," ~75% when "pretty sure,"
-        and ~25–50% when "guessing." Big gaps = read the gap, not just the score.</p>
+        and ~25-50% when "guessing." Big gaps = read the gap, not just the score.</p>
       ${tag("locked","Locked in",b.locked)}
       ${tag("sure","Pretty sure",b.sure)}
       ${tag("guess","Guess",b.guess)}
@@ -1410,7 +1410,7 @@ function renderAceStack() {
 
   if (visible.length === 0) {
     if (STATE.aceCards.length === 0) {
-      stack.innerHTML = filterRow + `<div class="ace-empty"><h4>No cards yet.</h4><p>Cards spawn automatically when you miss a retrieval question. They resurface on a spaced schedule (1 / 3 / 7 / 14 / 30 days) — proven to dramatically improve long-term retention (Cepeda et al. 2008).</p></div>`;
+      stack.innerHTML = filterRow + `<div class="ace-empty"><h4>No cards yet.</h4><p>Cards spawn automatically when you miss a retrieval question. They resurface on a spaced schedule (1 / 3 / 7 / 14 / 30 days), proven to dramatically improve long-term retention (Cepeda et al. 2008).</p></div>`;
     } else {
       stack.innerHTML = filterRow + `<div class="ace-empty"><h4>Nothing in this filter.</h4><p>Try "All" to see other subjects' cards.</p></div>`;
     }
@@ -1446,7 +1446,7 @@ function renderAceStack() {
           <span class="ace-back-explanation-label">Full explanation</span>
           <div class="ace-back-explanation">${explanation}</div>
           <div class="ace-rate">
-            <div class="ace-rate-lbl">How confident? — sets next review</div>
+            <div class="ace-rate-lbl">How confident?, sets next review</div>
             <div class="ace-rate-row">
               <button class="ace-rate-btn again" data-rate="1" data-id="${c.id}"><b>Again</b><span>10 min</span></button>
               <button class="ace-rate-btn hard" data-rate="2" data-id="${c.id}"><b>Hard</b><span>${c.interval ? Math.max(1, c.interval*1.2).toFixed(1)+'d' : '1d'}</span></button>
@@ -1497,7 +1497,7 @@ function bindFilterPills() {
 const SEED_CARDS = {
   cell: [
     {q:'In which mitochondrial location does the <em>Krebs cycle</em> take place?', qh:'<b>Matrix.</b> Inside the inner membrane.', ex:'Krebs (citric acid cycle) runs in the mitochondrial matrix. PDH also runs here. ETC + ATP synthase live IN the inner membrane (cristae). Outer membrane is freely permeable; intermembrane space is where H+ accumulates.'},
-    {q:'In aerobic respiration, the <em>final electron acceptor</em> in the ETC is:', qh:'<b>Oxygen (O₂).</b> Forms H₂O at Complex IV.', ex:'Electrons flow through Complexes I→III→IV (NADH path) or II→III→IV (FADH₂ path). Final acceptor is O₂, which combines with H+ to form H₂O. Cyanide blocks Complex IV — lethal because the chain backs up immediately.'},
+    {q:'In aerobic respiration, the <em>final electron acceptor</em> in the ETC is:', qh:'<b>Oxygen (O₂).</b> Forms H₂O at Complex IV.', ex:'Electrons flow through Complexes I→III→IV (NADH path) or II→III→IV (FADH₂ path). Final acceptor is O₂, which combines with H+ to form H₂O. Cyanide blocks Complex IV: lethal because the chain backs up immediately.'},
     {q:'A liver cell exposed to <em>chronic alcohol</em> would most likely have an enlarged:', qh:'<b>Smooth ER.</b> Site of detox via cytochrome P450.', ex:'Smooth ER (no ribosomes) handles lipid synthesis, steroid synthesis, and drug detoxification via cytochrome P450 enzymes. Hepatocytes upregulate smooth ER chronically with alcohol/barbiturate exposure → enzyme induction + drug tolerance.'},
     {q:'Which level of protein structure is <em>preserved</em> during denaturation?', qh:'<b>Primary structure.</b> Peptide bonds are covalent.', ex:'Denaturation breaks H-bonds and R-group interactions (secondary, tertiary, quaternary). Peptide bonds (covalent) survive heat / pH change. Primary structure (sequence) is preserved.'},
     {q:'A red blood cell placed in <em>5% NaCl</em> would most likely:', qh:'<b>Shrink (crenate).</b> Hypertonic surroundings → water leaves.', ex:'Tonicity = relative solute. 5% NaCl is hypertonic to RBC interior (~0.9% saline = isotonic). Water exits down its gradient → cell shrinks. Animal cells crenate; plant cells plasmolyze.'},
@@ -1512,12 +1512,12 @@ const SEED_CARDS = {
   physiology: [
     {q:'Which vessel carries <em>deoxygenated blood</em>?', qh:'<b>Pulmonary artery.</b> Only artery with deox blood.', ex:'Standard rule: arteries away from heart. Most arteries carry oxygenated blood. EXCEPTION: pulmonary artery (RV → lungs) is DEOX. Pulmonary vein (lungs → LA) is oxygenated. Coronary arteries supply heart with oxygenated blood (normal).'},
     {q:'Which nephron segment is <em>impermeable to water</em> but actively transports salt?', qh:'<b>Ascending loop of Henle.</b> NKCC2 pumps salt; water can\'t follow.', ex:'Ascending loop has tight junctions blocking water + active NKCC2 cotransporter pumping Na+/K+/2Cl- out. Generates the medullary osmotic gradient. Furosemide ("Lasix") inhibits NKCC2 = potent diuresis.'},
-    {q:'A <em>right shift</em> of the oxy-hemoglobin dissociation curve indicates:', qh:'<b>Lower Hb affinity.</b> Hb releases O₂ at tissues.', ex:'Right shift = lower affinity = unloads O₂. Caused by ↑CO₂, ↑H+ (↓pH), ↑temp, ↑2,3-BPG (CADET face Right). Happens in metabolically active tissue. Fetal Hb is left-shifted (higher affinity) — pulls O₂ from maternal Hb.'},
+    {q:'A <em>right shift</em> of the oxy-hemoglobin dissociation curve indicates:', qh:'<b>Lower Hb affinity.</b> Hb releases O₂ at tissues.', ex:'Right shift = lower affinity = unloads O₂. Caused by ↑CO₂, ↑H+ (↓pH), ↑temp, ↑2,3-BPG (CADET face Right). Happens in metabolically active tissue. Fetal Hb is left-shifted (higher affinity), pulls O₂ from maternal Hb.'},
     {q:'Which cells present antigens on <em>MHC class II</em>?', qh:'<b>Antigen-presenting cells (APCs):</b> dendritic, macrophage, B cell.', ex:'MHC II is expressed only by APCs (dendritic cells, macrophages, B cells). They present EXOGENOUS antigens to CD4+ helper T cells. MHC I is on all nucleated cells, presents ENDOGENOUS antigens to CD8+ cytotoxic T cells. Mnemonic: CD4 × MHC II = 8; CD8 × MHC I = 8.'},
   ],
   diversity: [
-    {q:'Which feature is shared by <em>Archaea and Eukarya</em> but NOT Bacteria?', qh:'<b>Histones.</b> Also: multiple RNA polymerases, Met start codon.', ex:'Archaea are molecularly closer to Eukarya than to Bacteria. Shared with Eukarya: histones, multiple RNA pol, Met start. Bacteria use fMet start, single RNA pol, no histones. Common DAT trap — students assume Archaea = bacteria.'},
-    {q:'Which is <em>NOT</em> characteristic of Fungi?', qh:'<b>Cellulose cell wall.</b> Fungi have CHITIN walls.', ex:'Fungi: chitin walls (NOT cellulose — that\'s plants), heterotrophic absorbers, glycogen storage (animal-like!), haploid-dominant life cycle. Cell wall confusion is a frequent gotcha.'},
+    {q:'Which feature is shared by <em>Archaea and Eukarya</em> but NOT Bacteria?', qh:'<b>Histones.</b> Also: multiple RNA polymerases, Met start codon.', ex:'Archaea are molecularly closer to Eukarya than to Bacteria. Shared with Eukarya: histones, multiple RNA pol, Met start. Bacteria use fMet start, single RNA pol, no histones. Common DAT trap: students assume Archaea = bacteria.'},
+    {q:'Which is <em>NOT</em> characteristic of Fungi?', qh:'<b>Cellulose cell wall.</b> Fungi have CHITIN walls.', ex:'Fungi: chitin walls (NOT cellulose: that\'s plants), heterotrophic absorbers, glycogen storage (animal-like), haploid-dominant life cycle. Cell wall confusion is a frequent gotcha.'},
     {q:'In angiosperm <em>double fertilization</em>, the endosperm is:', qh:'<b>Triploid (3n).</b> Two polar nuclei + one sperm.', ex:'Double fertilization: one sperm + egg → 2n embryo; one sperm + 2 polar nuclei → 3n endosperm (nutrient store). Unique to angiosperms. Endosperm becomes seed nutrition.'},
   ],
   devo: [
@@ -1527,7 +1527,7 @@ const SEED_CARDS = {
   ],
   evolution: [
     {q:'Sickle-cell allele frequency stays elevated in malaria-endemic regions because:', qh:'<b>Balancing selection (heterozygote advantage).</b> HbAS resists malaria.', ex:'HbAS heterozygotes have partial sickling that disrupts P. falciparum life cycle → malaria resistance. HbSS = anemia (selected against). HbAA = malaria-vulnerable. Balance maintains both alleles in the population.'},
-    {q:'<em>Mules</em> are sterile. Which isolation mechanism?', qh:'<b>Postzygotic — hybrid sterility.</b> Zygote viable but can\'t reproduce.', ex:'Mules form viable zygotes (donkey 62 + horse 64 = 63 chromosomes). But meiosis fails (odd chromosome count = no homolog pairing) → sterile. Postzygotic = after zygote formation. Distinct from prezygotic isolation (prevents fertilization).'},
+    {q:'<em>Mules</em> are sterile. Which isolation mechanism?', qh:'<b>Postzygotic: hybrid sterility.</b> Zygote viable but can\'t reproduce.', ex:'Mules form viable zygotes (donkey 62 + horse 64 = 63 chromosomes). But meiosis fails (odd chromosome count = no homolog pairing) → sterile. Postzygotic = after zygote formation. Distinct from prezygotic isolation (prevents fertilization).'},
     {q:'Cheetahs show extremely low genetic diversity. Best explanation:', qh:'<b>Bottleneck.</b> Catastrophic past population reduction.', ex:'Cheetahs went through severe population bottleneck ~10,000 years ago. Survivors carried only a fraction of original diversity. So nearly clonal today (skin grafts not rejected). Distinct from founder effect (small group COLONIZES new area; bottleneck = catastrophic kill).'},
     {q:'Energy at producers = 10,000 kcal. Approximate energy at <em>tertiary consumers</em>?', qh:'<b>10 kcal.</b> ~10% per trophic level (10× rule).', ex:'~10% energy transfers up each trophic level (rest = heat, metabolism). 10000 → 1000 (1° consumer) → 100 (2°) → 10 (3°). Energy pyramid always upright. Biomass + numbers can invert (parasites, plankton).'},
   ],
@@ -1539,45 +1539,45 @@ const SEED_CARDS = {
 
 const ORGANISMS_DB = [
   // BACTERIA
-  { id:'ecoli',    name:'E. coli',         emoji:'🦠', clades:['bacteria'],                                                              syn:{bacteria:'peptidoglycan walls, fMet start, single RNA pol'} },
-  { id:'cyano',    name:'Cyanobacteria',   emoji:'🟢', clades:['bacteria'],                                                              syn:{bacteria:'photosynthetic bacteria — endosymbiotic origin of chloroplasts'} },
+  { id:'ecoli',    name:'E. coli',         emoji:'', clades:['bacteria'],                                                              syn:{bacteria:'peptidoglycan walls, fMet start, single RNA pol'} },
+  { id:'cyano',    name:'Cyanobacteria',   emoji:'', clades:['bacteria'],                                                              syn:{bacteria:'photosynthetic bacteria, endosymbiotic origin of chloroplasts'} },
   // ARCHAEA
-  { id:'methano',  name:'Methanogen',      emoji:'♨️', clades:['archaea'],                                                               syn:{archaea:'ether-linked branched lipids, no peptidoglycan, extreme habitats'} },
-  { id:'halo',     name:'Halophile',       emoji:'🧂', clades:['archaea'],                                                               syn:{archaea:'thrives at extreme salt; archaeal molecular features (histones, Met start)'} },
+  { id:'methano',  name:'Methanogen',      emoji:'', clades:['archaea'],                                                               syn:{archaea:'ether-linked branched lipids, no peptidoglycan, extreme habitats'} },
+  { id:'halo',     name:'Halophile',       emoji:'', clades:['archaea'],                                                               syn:{archaea:'thrives at extreme salt; archaeal molecular features (histones, Met start)'} },
   // PROTISTA
-  { id:'amoeba',   name:'Amoeba',          emoji:'🫧', clades:['protista'],                                                              syn:{protista:'eukaryote w/ pseudopodia; paraphyletic kingdom'} },
-  { id:'paramecium',name:'Paramecium',     emoji:'〰️', clades:['protista'],                                                             syn:{protista:'ciliated protozoan; eukaryotic'} },
-  { id:'euglena',  name:'Euglena',         emoji:'☘️', clades:['protista'],                                                              syn:{protista:'mixotroph (chloroplast + flagellum)'} },
+  { id:'amoeba',   name:'Amoeba',          emoji:'', clades:['protista'],                                                              syn:{protista:'eukaryote w/ pseudopodia; paraphyletic kingdom'} },
+  { id:'paramecium',name:'Paramecium',     emoji:'〰', clades:['protista'],                                                             syn:{protista:'ciliated protozoan; eukaryotic'} },
+  { id:'euglena',  name:'Euglena',         emoji:'', clades:['protista'],                                                              syn:{protista:'mixotroph (chloroplast + flagellum)'} },
   // FUNGI
-  { id:'mushroom', name:'Mushroom',        emoji:'🍄', clades:['fungi'],                                                                 syn:{fungi:'chitin walls, glycogen storage, basidiomycete fruiting body'} },
-  { id:'yeast',    name:'Yeast',           emoji:'🍞', clades:['fungi'],                                                                 syn:{fungi:'unicellular ascomycete; chitin walls'} },
-  { id:'penicil',  name:'Penicillium',     emoji:'💊', clades:['fungi'],                                                                 syn:{fungi:'ascomycete; chitin walls; produces penicillin'} },
+  { id:'mushroom', name:'Mushroom',        emoji:'', clades:['fungi'],                                                                 syn:{fungi:'chitin walls, glycogen storage, basidiomycete fruiting body'} },
+  { id:'yeast',    name:'Yeast',           emoji:'', clades:['fungi'],                                                                 syn:{fungi:'unicellular ascomycete; chitin walls'} },
+  { id:'penicil',  name:'Penicillium',     emoji:'', clades:['fungi'],                                                                 syn:{fungi:'ascomycete; chitin walls; produces penicillin'} },
   // PLANTAE
-  { id:'moss',     name:'Moss',            emoji:'🌿', clades:['plantae','bryophytes'],                                                  syn:{plantae:'cellulose walls, chlorophyll a+b', bryophytes:'non-vascular, gametophyte-dominant, requires water for sperm'} },
-  { id:'fern',     name:'Fern',            emoji:'🌱', clades:['plantae','seedless'],                                                    syn:{plantae:'multicellular autotroph', seedless:'vascular tissue + lignin, sporophyte-dominant, no seeds'} },
-  { id:'pine',     name:'Pine tree',       emoji:'🌲', clades:['plantae','gymnosperms'],                                                 syn:{plantae:'land plant, alternation of generations', gymnosperms:'naked seeds, wind pollen — no water needed for fertilization'} },
-  { id:'sunflower',name:'Sunflower',       emoji:'🌻', clades:['plantae','angiosperms'],                                                 syn:{plantae:'photosynthetic eukaryote', angiosperms:'flowers, fruits, double fertilization (3n endosperm)'} },
-  { id:'oak',      name:'Oak tree',        emoji:'🌳', clades:['plantae','angiosperms'],                                                 syn:{angiosperms:'dicot — net veins, taproot, flower parts in 4s/5s'} },
+  { id:'moss',     name:'Moss',            emoji:'', clades:['plantae','bryophytes'],                                                  syn:{plantae:'cellulose walls, chlorophyll a+b', bryophytes:'non-vascular, gametophyte-dominant, requires water for sperm'} },
+  { id:'fern',     name:'Fern',            emoji:'', clades:['plantae','seedless'],                                                    syn:{plantae:'multicellular autotroph', seedless:'vascular tissue + lignin, sporophyte-dominant, no seeds'} },
+  { id:'pine',     name:'Pine tree',       emoji:'', clades:['plantae','gymnosperms'],                                                 syn:{plantae:'land plant, alternation of generations', gymnosperms:'naked seeds, wind pollen, no water needed for fertilization'} },
+  { id:'sunflower',name:'Sunflower',       emoji:'', clades:['plantae','angiosperms'],                                                 syn:{plantae:'photosynthetic eukaryote', angiosperms:'flowers, fruits, double fertilization (3n endosperm)'} },
+  { id:'oak',      name:'Oak tree',        emoji:'', clades:['plantae','angiosperms'],                                                 syn:{angiosperms:'dicot, net veins, taproot, flower parts in 4s/5s'} },
   // ANIMALIA — Porifera
-  { id:'sponge',   name:'Sponge',          emoji:'🟡', clades:['animalia','porifera'],                                                   syn:{animalia:'multicellular heterotroph', porifera:'no true tissues (parazoa), choanocytes filter-feed'} },
+  { id:'sponge',   name:'Sponge',          emoji:'', clades:['animalia','porifera'],                                                   syn:{animalia:'multicellular heterotroph', porifera:'no true tissues (parazoa), choanocytes filter-feed'} },
   // Cnidaria
-  { id:'jelly',    name:'Jellyfish',       emoji:'🪼', clades:['animalia','cnidaria'],                                                   syn:{animalia:'collagen ECM', cnidaria:'radial symmetry, diploblastic, cnidocytes/nematocysts'} },
-  { id:'coral',    name:'Coral',           emoji:'🪸', clades:['animalia','cnidaria'],                                                   syn:{cnidaria:'colonial polyp form, gastrovascular cavity'} },
+  { id:'jelly',    name:'Jellyfish',       emoji:'', clades:['animalia','cnidaria'],                                                   syn:{animalia:'collagen ECM', cnidaria:'radial symmetry, diploblastic, cnidocytes/nematocysts'} },
+  { id:'coral',    name:'Coral',           emoji:'', clades:['animalia','cnidaria'],                                                   syn:{cnidaria:'colonial polyp form, gastrovascular cavity'} },
   // Bilateria — Protostomes Lophotrochozoa
-  { id:'flatworm', name:'Planarian',       emoji:'➰', clades:['animalia','bilateria','protostomes'],                                    syn:{bilateria:'bilateral symmetry, triploblastic', protostomes:'spiral determinate cleavage; blastopore → mouth'} },
-  { id:'earthworm',name:'Earthworm',       emoji:'🪱', clades:['animalia','bilateria','protostomes'],                                    syn:{protostomes:'segmented (Annelida); closed circulation; coelomate'} },
-  { id:'snail',    name:'Snail',           emoji:'🐌', clades:['animalia','bilateria','protostomes'],                                    syn:{protostomes:'mollusk — foot/visceral mass/mantle, open circulation'} },
-  { id:'octopus',  name:'Octopus',         emoji:'🐙', clades:['animalia','bilateria','protostomes'],                                    syn:{protostomes:'cephalopod (Mollusca) — closed circulation exception, advanced nervous system'} },
+  { id:'flatworm', name:'Planarian',       emoji:'', clades:['animalia','bilateria','protostomes'],                                    syn:{bilateria:'bilateral symmetry, triploblastic', protostomes:'spiral determinate cleavage; blastopore → mouth'} },
+  { id:'earthworm',name:'Earthworm',       emoji:'', clades:['animalia','bilateria','protostomes'],                                    syn:{protostomes:'segmented (Annelida); closed circulation; coelomate'} },
+  { id:'snail',    name:'Snail',           emoji:'', clades:['animalia','bilateria','protostomes'],                                    syn:{protostomes:'mollusk, foot/visceral mass/mantle, open circulation'} },
+  { id:'octopus',  name:'Octopus',         emoji:'', clades:['animalia','bilateria','protostomes'],                                    syn:{protostomes:'cephalopod (Mollusca): closed circulation exception, advanced nervous system'} },
   // Bilateria — Protostomes Ecdysozoa
-  { id:'roundworm',name:'Nematode',        emoji:'➖', clades:['animalia','bilateria','protostomes'],                                    syn:{protostomes:'pseudocoelomate, molts cuticle (Ecdysozoa), complete digestive tract'} },
-  { id:'spider',   name:'Spider',          emoji:'🕷️', clades:['animalia','bilateria','protostomes'],                                   syn:{protostomes:'arachnid — chitin exoskeleton, jointed appendages, molts'} },
-  { id:'beetle',   name:'Beetle',          emoji:'🪲', clades:['animalia','bilateria','protostomes'],                                    syn:{protostomes:'insect — 6 legs, 3 body segments, often wings; Arthropoda'} },
-  { id:'crab',     name:'Crab',            emoji:'🦀', clades:['animalia','bilateria','protostomes'],                                    syn:{protostomes:'crustacean — biramous appendages, chitin exoskeleton'} },
+  { id:'roundworm',name:'Nematode',        emoji:'', clades:['animalia','bilateria','protostomes'],                                    syn:{protostomes:'pseudocoelomate, molts cuticle (Ecdysozoa), complete digestive tract'} },
+  { id:'spider',   name:'Spider',          emoji:'', clades:['animalia','bilateria','protostomes'],                                   syn:{protostomes:'arachnid, chitin exoskeleton, jointed appendages, molts'} },
+  { id:'beetle',   name:'Beetle',          emoji:'', clades:['animalia','bilateria','protostomes'],                                    syn:{protostomes:'insect, 6 legs, 3 body segments, often wings; Arthropoda'} },
+  { id:'crab',     name:'Crab',            emoji:'', clades:['animalia','bilateria','protostomes'],                                    syn:{protostomes:'crustacean, biramous appendages, chitin exoskeleton'} },
   // Bilateria — Deuterostomes
-  { id:'seastar',  name:'Sea star',        emoji:'⭐', clades:['animalia','bilateria','deuterostomes'],                                  syn:{deuterostomes:'echinoderm — water vascular system, tube feet; bilateral larva, radial adult; blastopore → anus'} },
-  { id:'urchin',   name:'Sea urchin',      emoji:'🟣', clades:['animalia','bilateria','deuterostomes'],                                  syn:{deuterostomes:'echinoderm — pentaradial adult, calcium carbonate ossicles'} },
-  { id:'fish',     name:'Fish',            emoji:'🐟', clades:['animalia','bilateria','deuterostomes'],                                  syn:{deuterostomes:'chordate — notochord (→ vertebral column), dorsal hollow nerve cord, pharyngeal slits, post-anal tail'} },
-  { id:'human',    name:'Human',           emoji:'🧍', clades:['animalia','bilateria','deuterostomes'],                                  syn:{deuterostomes:'mammalian chordate — amniotic egg, hair, mammary glands'} },
+  { id:'seastar',  name:'Sea star',        emoji:'', clades:['animalia','bilateria','deuterostomes'],                                  syn:{deuterostomes:'echinoderm, water vascular system, tube feet; bilateral larva, radial adult; blastopore → anus'} },
+  { id:'urchin',   name:'Sea urchin',      emoji:'', clades:['animalia','bilateria','deuterostomes'],                                  syn:{deuterostomes:'echinoderm, pentaradial adult, calcium carbonate ossicles'} },
+  { id:'fish',     name:'Fish',            emoji:'', clades:['animalia','bilateria','deuterostomes'],                                  syn:{deuterostomes:'chordate, notochord (→ vertebral column), dorsal hollow nerve cord, pharyngeal slits, post-anal tail'} },
+  { id:'human',    name:'Human',           emoji:'', clades:['animalia','bilateria','deuterostomes'],                                  syn:{deuterostomes:'mammalian chordate, amniotic egg, hair, mammary glands'} },
 ];
 
 const BUILDER_STATE = { mode:'explore', placed:{}, score:0, attempts:0, currentQuiz:null };
@@ -1653,7 +1653,7 @@ function evaluatePlacement(org, branchId, branchEl) {
     placeOrgOnTree(org, branchEl);
     const trait = (org.syn && org.syn[branchId]) || 'shared with other members of this clade';
     fb.className = 'builder-feedback correct';
-    fb.innerHTML = `<b>✓ ${org.name} → ${branchId.toUpperCase()}.</b> Synapomorphy: ${trait}`;
+    fb.innerHTML = `<b>${org.name} → ${branchId.toUpperCase()}.</b> Synapomorphy: ${trait}`;
     renderOrgPool();
     updateBuilderStats();
     if (BUILDER_STATE.mode === 'quiz') nextQuizQuestion();
@@ -1662,7 +1662,7 @@ function evaluatePlacement(org, branchId, branchEl) {
     setTimeout(() => branchEl.classList.remove('flash-wrong'), 900);
     const correctClade = org.clades[org.clades.length - 1].toUpperCase();
     fb.className = 'builder-feedback wrong';
-    fb.innerHTML = `<b>✗ Not quite.</b> ${org.name} doesn't belong to <em>${branchId}</em>. Hint: it's ${correctClade.toLowerCase().includes('a') ? 'an' : 'a'} <b>${correctClade}</b> member. Try again.`;
+    fb.innerHTML = `<b>Not quite.</b> ${org.name} doesn't belong to <em>${branchId}</em>. Hint: it's ${correctClade.toLowerCase().includes('a') ? 'an' : 'a'} <b>${correctClade}</b> member. Try again.`;
   }
 }
 function placeOrgOnTree(org, branchEl) {
@@ -1812,18 +1812,18 @@ function renderStudyDashboard() {
   const mastered = cards.filter(c => c.state === 'mastered').length;
   const pct = total > 0 ? Math.round(learned / total * 100) : 0;
   const dashPct = document.getElementById('dashMasteryPct');
-  if (dashPct) dashPct.textContent = total > 0 ? `${pct}%` : '—';
+  if (dashPct) dashPct.textContent = total > 0 ? `${pct}%` : '-';
   const dashFill = document.getElementById('dashMasteryFill');
   if (dashFill) dashFill.style.width = pct + '%';
   const dashSub = document.getElementById('dashMasterySub');
-  if (dashSub) dashSub.textContent = total > 0 ? `${learned} of ${total} cards in review · ${mastered} mastered` : 'No cards yet — start any subject';
+  if (dashSub) dashSub.textContent = total > 0 ? `${learned} of ${total} cards in review · ${mastered} mastered` : 'No cards yet: start any subject';
 
   // Last mock
   const mocks = mockRuns;
   const dashMockScore = document.getElementById('dashMockScore');
   const dashMockSub = document.getElementById('dashMockSub');
   if (mocks.length === 0) {
-    if (dashMockScore) dashMockScore.textContent = '—';
+    if (dashMockScore) dashMockScore.textContent = '-';
     if (dashMockSub) dashMockSub.textContent = 'no attempts yet';
   } else {
     const last = mocks[mocks.length - 1];
@@ -1851,7 +1851,7 @@ function renderStudyDashboard() {
       return `
         <a class="dash-subject" href="${info.href}" style="border-left-color:${info.color}">
           <div class="dash-subject-name">${info.name}</div>
-          <div class="dash-subject-pct">${s.total > 0 ? subjPct + '%' : '—'}</div>
+          <div class="dash-subject-pct">${s.total > 0 ? subjPct + '%' : '-'}</div>
           <div class="dash-subject-bar"><div class="dash-subject-fill" style="width:${subjPct}%;background:${info.color}"></div></div>
           <div class="dash-subject-meta">
             <span>${s.learned}/${s.total} learned</span>
@@ -2035,7 +2035,7 @@ const ATLAS_DATA = {
   mitochondria: {
     name: "Mitochondria",
     func: "Aerobic ATP production. <b>Krebs cycle (matrix) + ETC + ATP synthase (inner membrane)</b>.",
-    sub: "Double membrane (outer smooth, inner highly folded into cristae). Own circular DNA + 70S ribosomes &mdash; endosymbiotic origin (Margulis 1967).",
+    sub: "Double membrane (outer smooth, inner highly folded into cristae). Own circular DNA + 70S ribosomes, endosymbiotic origin (Margulis 1967).",
     dat: "~28 ATP per glucose come from here. 'Powerhouse'. Endosymbiosis evidence. Krebs location = matrix.",
     deepDive: "node-krebs",
     diveLabel: "Krebs + ETC",
@@ -2058,15 +2058,15 @@ const ATLAS_DATA = {
   },
   ribosome: {
     name: "Ribosomes (free)",
-    func: "Site of <b>translation</b> &mdash; mRNA &rarr; protein. Free ribosomes make cytoplasmic proteins.",
-    sub: "Eukaryotic ribosomes are 80S (60S + 40S). Prokaryotic ribosomes (and mitochondrial!) are 70S (50S + 30S). Not membrane-bound &mdash; only organelle present in both pro- and eukaryotes.",
+    func: "Site of <b>translation</b>, mRNA &rarr; protein. Free ribosomes make cytoplasmic proteins.",
+    sub: "Eukaryotic ribosomes are 80S (60S + 40S). Prokaryotic ribosomes (and mitochondrial) are 70S (50S + 30S). Not membrane-bound: only organelle present in both pro- and eukaryotes.",
     dat: "Translation location. 80S vs 70S distinguishes pro/eukaryote. Antibiotic targets exploit the difference.",
     deepDive: "node-translation",
     diveLabel: "Translation",
   },
   cytoskeleton: {
     name: "Cytoskeleton",
-    func: "Network of protein filaments &mdash; microfilaments (actin), intermediate filaments, microtubules (tubulin).",
+    func: "Network of protein filaments: microfilaments (actin), intermediate filaments, microtubules (tubulin).",
     sub: "Provides shape, supports organelle positioning, drives motility (cilia, flagella) + intracellular transport (motor proteins kinesin/dynein on microtubules).",
     dat: "Microtubules + spindle in mitosis. Cytokinesis cleavage furrow uses actin.",
     deepDive: "node-mitosis",
@@ -2074,7 +2074,7 @@ const ATLAS_DATA = {
   },
   centrosome: {
     name: "Centrosome",
-    func: "Pair of centrioles &mdash; microtubule organizing center (MTOC).",
+    func: "Pair of centrioles: microtubule organizing center (MTOC).",
     sub: "Duplicates in S phase. In mitosis, the two centrosomes move to opposite poles + nucleate the spindle. Plants don't have centrioles but still build a spindle.",
     dat: "Spindle formation in mitosis + meiosis.",
     deepDive: "node-mitosis",
@@ -2084,7 +2084,7 @@ const ATLAS_DATA = {
   "cell-wall": {
     name: "Cell Wall (Plant)",
     func: "Rigid <b>cellulose</b> outer layer. Provides structural support, prevents bursting in hypotonic environments.",
-    sub: "β-1,4 glycosidic bonds &mdash; humans can't digest (no cellulase). Distinguishes plant cells. Fungi have a chitin cell wall instead. Bacteria have peptidoglycan.",
+    sub: "β-1,4 glycosidic bonds, humans can't digest (no cellulase). Distinguishes plant cells. Fungi have a chitin cell wall instead. Bacteria have peptidoglycan.",
     dat: "Cellulose = β-1,4 = indigestible. Plant-only feature. Different from fungal/bacterial walls.",
     deepDive: "node-carbs",
     diveLabel: "Carbohydrates",
@@ -2100,7 +2100,7 @@ const ATLAS_DATA = {
   chloroplast: {
     name: "Chloroplast",
     func: "Site of <b>photosynthesis</b>. Light reactions (thylakoid membranes) + Calvin cycle (stroma).",
-    sub: "Double membrane + own circular DNA + 70S ribosomes &mdash; like mitochondria, endosymbiotic origin (engulfed cyanobacterium). Stacked thylakoids = grana.",
+    sub: "Double membrane + own circular DNA + 70S ribosomes, like mitochondria, endosymbiotic origin (engulfed cyanobacterium). Stacked thylakoids = grana.",
     dat: "Photosynthesis location. Light reactions = thylakoid; Calvin = stroma. Endosymbiotic evidence.",
     deepDive: "node-photo",
     diveLabel: "Photosynthesis",
@@ -2124,8 +2124,8 @@ const ATLAS_DATA = {
   },
   "ribosome-70s": {
     name: "70S Ribosomes",
-    func: "Prokaryotic ribosomes &mdash; <b>50S + 30S subunits</b>. Site of bacterial translation.",
-    sub: "Smaller than eukaryotic 80S. Antibiotic specificity exploits this: streptomycin/tetracycline (30S), erythromycin (50S) target bacterial ribosomes selectively. Mitochondrial ribosomes are also 70S — endosymbiotic clue.",
+    func: "Prokaryotic ribosomes: <b>50S + 30S subunits</b>. Site of bacterial translation.",
+    sub: "Smaller than eukaryotic 80S. Antibiotic specificity exploits this: streptomycin/tetracycline (30S), erythromycin (50S) target bacterial ribosomes selectively. Mitochondrial ribosomes are also 70S: endosymbiotic clue.",
     dat: "70S vs 80S distinction. Antibiotic targets. Mitochondria/chloroplasts share 70S.",
     deepDive: "node-prokaryote",
     diveLabel: "Prokaryote vs Eukaryote",
@@ -2141,7 +2141,7 @@ const ATLAS_DATA = {
   plasmid: {
     name: "Plasmid",
     func: "Small circular DNA carrying accessory genes (antibiotic resistance, virulence factors).",
-    sub: "Replicates independently of chromosome. Can be transferred between bacteria via conjugation &mdash; major route for antibiotic resistance spread. Used widely in molecular biology as cloning vectors.",
+    sub: "Replicates independently of chromosome. Can be transferred between bacteria via conjugation, major route for antibiotic resistance spread. Used widely in molecular biology as cloning vectors.",
     dat: "Bacterial conjugation. Antibiotic resistance transfer. Cloning vector tool.",
     deepDive: "node-prokaryote",
     diveLabel: "Prokaryote vs Eukaryote",
@@ -2231,12 +2231,12 @@ function initLabTabs() {
 
 /* ---- BIOENERGETICS PATHWAY MAP ---- */
 const ENERGY_STEPS = {
-  "g-glucose": { stage:"Glycolysis · cytoplasm", name:"Glucose (6C)", desc:"Starting substrate. 6-carbon sugar enters glycolysis. Net per glucose: 2 ATP, 2 NADH, 2 pyruvate.", enz:["—"], y:{atp:0,nadh:0,fadh2:0,co2:0} },
+  "g-glucose": { stage:"Glycolysis · cytoplasm", name:"Glucose (6C)", desc:"Starting substrate. 6-carbon sugar enters glycolysis. Net per glucose: 2 ATP, 2 NADH, 2 pyruvate.", enz:["-"], y:{atp:0,nadh:0,fadh2:0,co2:0} },
   "g-hex": { stage:"Glycolysis · step 1", name:"Hexokinase / Glucokinase", desc:"Phosphorylates glucose → G6P, traps it in cell. Costs 1 ATP. <b>Hexokinase</b> = low Km (most tissues). <b>Glucokinase</b> = high Km (liver, only kicks in at high blood glucose).", enz:["Hexokinase","Glucokinase"], y:{atp:-1,nadh:0,fadh2:0,co2:0} },
   "g-pfk": { stage:"Glycolysis · step 3 · RATE-LIMITING", name:"PFK-1", desc:"<b>Phosphofructokinase-1</b>. Committed step, rate-limiting. F6P → F1,6BP, costs 1 ATP. Inhibited by ATP, citrate (high energy). Activated by AMP, ADP, F2,6BP (low energy + insulin signal).", enz:["PFK-1"], y:{atp:-1,nadh:0,fadh2:0,co2:0} },
   "g-split": { stage:"Glycolysis · step 4", name:"Aldolase", desc:"Cleaves F1,6BP into 2× G3P (3-carbon each). Now 2 molecules per glucose proceed.", enz:["Aldolase"], y:{atp:0,nadh:0,fadh2:0,co2:0} },
   "g-payoff": { stage:"Glycolysis · payoff phase", name:"Payoff (steps 6-10)", desc:"2× G3P → 2× pyruvate. Generates 4 ATP (substrate-level phosphorylation) + 2 NADH. <b>Pyruvate kinase</b> is the final enzyme. Net glycolysis = -2 + 4 ATP = +2 ATP.", enz:["GAPDH","PGK","Enolase","Pyruvate kinase"], y:{atp:4,nadh:2,fadh2:0,co2:0} },
-  "g-pyruvate": { stage:"Glycolysis end", name:"Pyruvate (3C) ×2", desc:"2 pyruvate per glucose. Enters mitochondrion via pyruvate translocase. If anaerobic: → lactate (mammals) or ethanol (yeast). If aerobic: → acetyl-CoA via PDH.", enz:["—"], y:{atp:0,nadh:0,fadh2:0,co2:0} },
+  "g-pyruvate": { stage:"Glycolysis end", name:"Pyruvate (3C) ×2", desc:"2 pyruvate per glucose. Enters mitochondrion via pyruvate translocase. If anaerobic: → lactate (mammals) or ethanol (yeast). If aerobic: → acetyl-CoA via PDH.", enz:["-"], y:{atp:0,nadh:0,fadh2:0,co2:0} },
   "pdh": { stage:"PDH complex · matrix", name:"Pyruvate dehydrogenase", desc:"<b>PDH</b> oxidatively decarboxylates pyruvate → acetyl-CoA. Per glucose: produces 2 NADH + 2 CO₂. Requires 5 cofactors: TPP, lipoic acid, CoA, FAD, NAD⁺. Inhibited by acetyl-CoA, NADH, ATP (product inhibition).", enz:["PDH complex"], y:{atp:0,nadh:2,fadh2:0,co2:2} },
   "k-citrate": { stage:"Krebs · step 1", name:"Citrate synthase", desc:"Acetyl-CoA + OAA → citrate (6C). Inhibited by ATP, NADH, succinyl-CoA, citrate.", enz:["Citrate synthase"], y:{atp:0,nadh:0,fadh2:0,co2:0} },
   "k-isocit": { stage:"Krebs · step 3 · RATE-LIMITING", name:"Isocitrate DH", desc:"<b>Isocitrate DH</b> is rate-limiting for Krebs. Isocitrate → α-ketoglutarate. Per turn: -1 CO₂, +1 NADH. Activated by ADP, Ca²⁺. Inhibited by ATP, NADH.", enz:["Isocitrate DH"], y:{atp:0,nadh:1,fadh2:0,co2:1} },
@@ -2245,11 +2245,11 @@ const ENERGY_STEPS = {
   "k-succinate": { stage:"Krebs · step 6 · IS Complex II", name:"Succinate DH", desc:"<b>Succinate DH = Complex II of ETC</b>. The only Krebs enzyme embedded in inner membrane. Succinate → fumarate, +1 FADH₂ (lower energy than NADH because skips Complex I).", enz:["Succinate DH"], y:{atp:0,nadh:0,fadh2:1,co2:0} },
   "k-fumarate": { stage:"Krebs · step 7", name:"Fumarase", desc:"Fumarate → malate. Adds water across the double bond.", enz:["Fumarase"], y:{atp:0,nadh:0,fadh2:0,co2:0} },
   "k-malate": { stage:"Krebs · step 8", name:"Malate DH", desc:"Malate → OAA, +1 NADH. OAA cycles back to combine with next acetyl-CoA.", enz:["Malate DH"], y:{atp:0,nadh:1,fadh2:0,co2:0} },
-  "k-oaa": { stage:"Krebs cycle continues", name:"Oxaloacetate", desc:"Cycle restarts: OAA + acetyl-CoA → citrate. <b>Per glucose, Krebs runs 2×.</b> Total: 6 NADH + 2 FADH₂ + 2 GTP + 4 CO₂.", enz:["—"], y:{atp:0,nadh:0,fadh2:0,co2:0} },
+  "k-oaa": { stage:"Krebs cycle continues", name:"Oxaloacetate", desc:"Cycle restarts: OAA + acetyl-CoA → citrate. <b>Per glucose, Krebs runs 2×.</b> Total: 6 NADH + 2 FADH₂ + 2 GTP + 4 CO₂.", enz:["-"], y:{atp:0,nadh:0,fadh2:0,co2:0} },
   "etc-c1": { stage:"ETC · inner mitochondrial membrane", name:"Complex I (NADH dehydrogenase)", desc:"NADH → NAD⁺, electrons enter Q. Pumps <b>4 H⁺</b> from matrix to intermembrane space. <b>Inhibited by rotenone</b> (insecticide).", enz:["NADH-Q reductase"], y:{atp:0,nadh:0,fadh2:0,co2:0} },
-  "etc-c2": { stage:"ETC · entry from FADH₂", name:"Complex II (Succinate DH)", desc:"FADH₂ feeds electrons in. <b>Does NOT pump H⁺</b> — that's why FADH₂ yields less ATP than NADH (1.5 vs 2.5).", enz:["Succinate DH"], y:{atp:0,nadh:0,fadh2:0,co2:0} },
+  "etc-c2": { stage:"ETC · entry from FADH₂", name:"Complex II (Succinate DH)", desc:"FADH₂ feeds electrons in. <b>Does NOT pump H⁺</b>, that's why FADH₂ yields less ATP than NADH (1.5 vs 2.5).", enz:["Succinate DH"], y:{atp:0,nadh:0,fadh2:0,co2:0} },
   "etc-c3": { stage:"ETC · cytochrome bc1", name:"Complex III", desc:"Cytochrome bc1. Q → cytochrome c. Pumps <b>4 H⁺</b>. <b>Inhibited by antimycin A</b>. Q-cycle.", enz:["Cytochrome bc1"], y:{atp:0,nadh:0,fadh2:0,co2:0} },
-  "etc-c4": { stage:"ETC · final electron transfer", name:"Complex IV (Cytochrome c oxidase)", desc:"Final electron transfer to O₂ → H₂O. Pumps <b>2 H⁺</b>. <b>Inhibited by cyanide, CO, azide</b> — these are lethal because they shut down ETC entirely.", enz:["Cytochrome c oxidase"], y:{atp:0,nadh:0,fadh2:0,co2:0} },
+  "etc-c4": { stage:"ETC · final electron transfer", name:"Complex IV (Cytochrome c oxidase)", desc:"Final electron transfer to O₂ → H₂O. Pumps <b>2 H⁺</b>. <b>Inhibited by cyanide, CO, azide</b>, these are lethal because they shut down ETC entirely.", enz:["Cytochrome c oxidase"], y:{atp:0,nadh:0,fadh2:0,co2:0} },
   "etc-c5": { stage:"Chemiosmosis · ATP synthase", name:"Complex V (ATP synthase)", desc:"H⁺ flows back through ATP synthase, F₀F₁ rotor synthesizes ATP. ~28 ATP per glucose come from oxidative phosphorylation. <b>Oligomycin</b> inhibits the F₀ proton channel. <b>2,4-DNP</b> uncouples (shuttles H⁺ across membrane → heat, not ATP).", enz:["ATP synthase F₀F₁"], y:{atp:0,nadh:0,fadh2:0,co2:0} },
 };
 
@@ -2437,7 +2437,7 @@ function initPCR() {
 /* ---- LAB BENCH: MICROSCOPY LADDER ---- */
 const MAG_DATA = {
   naked: { name:"Naked eye", body:"~100 μm resolution. You can see most cells barely as specks. <b>Hair</b> is ~80 μm (visible), <b>RBC</b> is ~7 μm (not visible). Useful for tissues, organisms." },
-  light: { name:"Light microscope", body:"<b>~200 nm resolution</b> (Abbe limit, set by visible light wavelength λ ≈ 400–700 nm). <b>Magnification = ocular × objective</b> (e.g., 10× × 100× = 1000×). Sees cells, large organelles (nucleus, mito), fixed/stained samples. Hematoxylin + eosin standard stain." },
+  light: { name:"Light microscope", body:"<b>~200 nm resolution</b> (Abbe limit, set by visible light wavelength λ ≈ 400-700 nm). <b>Magnification = ocular × objective</b> (e.g., 10× × 100× = 1000×). Sees cells, large organelles (nucleus, mito), fixed/stained samples. Hematoxylin + eosin standard stain." },
   fluor: { name:"Fluorescence microscope", body:"Same ~200 nm resolution as light. Uses fluorophore-tagged antibodies/probes (immunofluorescence, FISH for DNA/RNA, GFP for live proteins). Excitation light → emission at longer wavelength. Reveals specific molecules." },
   confocal: { name:"Confocal microscope", body:"Pinhole rejects out-of-focus light → optical sectioning. ~180 nm resolution. Builds 3D stacks of thin sections. Used for thick tissues + live cells." },
   sem: { name:"Scanning electron microscope (SEM)", body:"Electrons scan the surface; detectors capture secondary electrons. <b>~1 nm resolution</b>. Surface topology, 3D-look. Sample sputtered with conductive metal (gold). Cannot see internal structure." },
@@ -2492,15 +2492,15 @@ function updateKinetics() {
 
   if (KIN_STATE.mode === "comp") {
     Km_eff = Km0 * (1 + 3*I); Vmax_eff = 1.0;
-    blurb = `<b>Competitive</b> — inhibitor binds active site, substrate competes. <span class="arrow">↑</span> K<sub>m</sub> = ${Km_eff.toFixed(1)} (was ${Km0}). V<sub>max</sub> unchanged. Lineweaver-Burk: same y-intercept, different x-intercept.`;
+    blurb = `<b>Competitive</b>, inhibitor binds active site, substrate competes. <span class="arrow">↑</span> K<sub>m</sub> = ${Km_eff.toFixed(1)} (was ${Km0}). V<sub>max</sub> unchanged. Lineweaver-Burk: same y-intercept, different x-intercept.`;
   } else if (KIN_STATE.mode === "noncomp") {
     Km_eff = Km0; Vmax_eff = 1 - 0.7*I;
-    blurb = `<b>Noncompetitive</b> — inhibitor binds allosteric site, lowers effective enzyme. <span class="arrow">↓</span> V<sub>max</sub> = ${Vmax_eff.toFixed(2)}. K<sub>m</sub> unchanged at ${Km0}. Lineweaver-Burk: different y-intercept, same x-intercept.`;
+    blurb = `<b>Noncompetitive</b>, inhibitor binds allosteric site, lowers effective enzyme. <span class="arrow">↓</span> V<sub>max</sub> = ${Vmax_eff.toFixed(2)}. K<sub>m</sub> unchanged at ${Km0}. Lineweaver-Burk: different y-intercept, same x-intercept.`;
   } else if (KIN_STATE.mode === "uncomp") {
     Km_eff = Km0 * (1 - 0.5*I); Vmax_eff = 1 - 0.5*I;
-    blurb = `<b>Uncompetitive</b> — inhibitor binds only the ES complex. <span class="arrow">↓</span> Both K<sub>m</sub> (${Km_eff.toFixed(1)}) AND V<sub>max</sub> (${Vmax_eff.toFixed(2)}) decrease proportionally. Lineweaver-Burk: parallel lines.`;
+    blurb = `<b>Uncompetitive</b>, inhibitor binds only the ES complex. <span class="arrow">↓</span> Both K<sub>m</sub> (${Km_eff.toFixed(1)}) AND V<sub>max</sub> (${Vmax_eff.toFixed(2)}) decrease proportionally. Lineweaver-Burk: parallel lines.`;
   } else {
-    blurb = `<b>None</b> — baseline kinetics. K<sub>m</sub> = ${Km0}, V<sub>max</sub> = 1.0. K<sub>m</sub> is the [S] at half V<sub>max</sub>. Low K<sub>m</sub> = high affinity.`;
+    blurb = `<b>None</b>, baseline kinetics. K<sub>m</sub> = ${Km0}, V<sub>max</sub> = 1.0. K<sub>m</sub> is the [S] at half V<sub>max</sub>. Low K<sub>m</sub> = high affinity.`;
   }
 
   baseSvg.setAttribute("d", buildMMPath(Km0, 1.0, 60, 400, 500, maxS));
@@ -2532,7 +2532,7 @@ function initKinetics() {
 
 /* ---- CELL CYCLE WHEEL ---- */
 const CYCLE_DATA = {
-  g1: { name:"G1 phase", lbl:"Gap 1 · growth", body:"Cell grows in size, synthesizes RNA and proteins, and prepares for DNA replication. <b>Cyclin D + CDK4/6</b> drive G1 progression. <b>Restriction point</b> at end of G1 — past this point, cell is committed to division (or exits to G0)." },
+  g1: { name:"G1 phase", lbl:"Gap 1 · growth", body:"Cell grows in size, synthesizes RNA and proteins, and prepares for DNA replication. <b>Cyclin D + CDK4/6</b> drive G1 progression. <b>Restriction point</b> at end of G1, past this point, cell is committed to division (or exits to G0)." },
   s: { name:"S phase", lbl:"Synthesis · DNA doubles", body:"DNA replication. Each chromosome → 2 sister chromatids joined at centromere. <b>Cyclin E + CDK2</b> initiates; <b>Cyclin A + CDK2</b> drives DNA synthesis. Centrosome also duplicates here." },
   g2: { name:"G2 phase", lbl:"Gap 2 · prep for mitosis", body:"Cell synthesizes proteins needed for mitosis (e.g., tubulin for spindle). Final growth + DNA repair check. <b>Cyclin B + CDK1 (MPF)</b> rises, drives entry into M." },
   m: { name:"M phase", lbl:"Mitosis + cytokinesis", body:"<b>PMAT</b>: Prophase, Metaphase, Anaphase, Telophase. Then cytokinesis (cleavage furrow in animals, cell plate in plants). Cyclin B drops sharply at anaphase (cohesin cleaved by separase). Net: 1 cell → 2 identical daughters." },
@@ -2799,7 +2799,7 @@ const PEDIGREE_PUZZLES = [
   {
     id:4, prompt:'Affected mother passes the trait to <b>ALL</b> her children regardless of sex. Affected father passes to none of his children.',
     correct:'mit',
-    explanation:'<b>Mitochondrial.</b> Egg cytoplasm contributes essentially all zygote mitochondria. Maternal-only transmission. Disorders: LHON, MELAS, MERRF — high-energy tissues (CNS, muscle).',
+    explanation:'<b>Mitochondrial.</b> Egg cytoplasm contributes essentially all zygote mitochondria. Maternal-only transmission. Disorders: LHON, MELAS, MERRF, high-energy tissues (CNS, muscle).',
     spec:[
       ['rect','i1',120,40,false],['circle','i2',204,56,true,'mate-with:i1'],
       ['rect','ii1',80,135,true,'child-of:i1+i2'],
@@ -2866,7 +2866,7 @@ const PEDIGREE_PUZZLES = [
   {
     id:10, prompt:'A homozygous-affected mother (HbSS) and an unaffected (HbAA) father. <b>What fraction of children are affected?</b> Trait is autosomal recessive.',
     correct:'ar',
-    explanation:'<b>Autosomal Recessive — calculation.</b> aa × AA → all Aa (carriers, unaffected). 0% affected children. They\'re all carriers though. If she were Aa instead, then 50% affected with an aa partner.',
+    explanation:'<b>Autosomal Recessive: calculation.</b> aa × AA → all Aa (carriers, unaffected). 0% affected children. They\'re all carriers though. If she were Aa instead, then 50% affected with an aa partner.',
     spec:[
       ['circle','i1',164,56,true],['rect','i2',244,40,false,'mate-with:i1'],
       ['rect','ii1',124,135,false,'child-of:i1+i2'],
@@ -3064,7 +3064,7 @@ function initPedigree() {
       }
       const side = document.getElementById('pedSide');
       if (side) {
-        side.innerHTML = `<div class="energy-step-info"><div class="stage-lbl">Puzzle ${PED_STATE.idx+1} &middot; ${correct ? 'CORRECT' : 'INCORRECT'}</div><h5>${correct ? '✓ ' : '✗ '}${{ad:'Autosomal Dominant',ar:'Autosomal Recessive',xd:'X-linked Dominant',xr:'X-linked Recessive',mit:'Mitochondrial',yl:'Y-linked'}[puzzle.correct]}</h5><p>${puzzle.explanation}</p></div>`;
+        side.innerHTML = `<div class="energy-step-info"><div class="stage-lbl">Puzzle ${PED_STATE.idx+1} &middot; ${correct ? 'CORRECT' : 'INCORRECT'}</div><h5>${correct ? '' : ''}${{ad:'Autosomal Dominant',ar:'Autosomal Recessive',xd:'X-linked Dominant',xr:'X-linked Recessive',mit:'Mitochondrial',yl:'Y-linked'}[puzzle.correct]}</h5><p>${puzzle.explanation}</p></div>`;
       }
       // Spawn an Ace Card if wrong
       if (!correct) {
@@ -3462,7 +3462,7 @@ function itreeShowDetails(id) {
   const probCar = itreeProbCarrier(mode, dist, p.sex);
   side.innerHTML = `
     <div class="energy-step-info">
-      <div class="stage-lbl">Individual ${p.id} · ${p.sex === 'male' ? '♂' : '♀'}${p.external ? ' · married in' : ''}</div>
+      <div class="stage-lbl">Individual ${p.id} · ${p.sex === 'male' ? '' : ''}${p.external ? ' · married in' : ''}</div>
       <h5>${probAff > 0.999 ? 'Affected (certain)' : probAff > 0 ? `${(probAff*100).toFixed(0)}% affected probability` : probCar > 0 ? `${(probCar*100).toFixed(0)}% carrier probability` : 'Unaffected'}</h5>
       <p>Possible genotypes (sum to 100%):</p>
       <div class="itree-rows">${rows}</div>
@@ -3656,7 +3656,7 @@ function renderOperon() {
 
     let state, body;
     if (!OPERON_STATE.lactose) {
-      state = "OFF · repressor on operator"; body = "<b>Lactose absent.</b> Repressor binds the operator and physically blocks RNA polymerase. No transcription. Default state — operon is OFF unless induced.";
+      state = "OFF · repressor on operator"; body = "<b>Lactose absent.</b> Repressor binds the operator and physically blocks RNA polymerase. No transcription. Default state: operon is OFF unless induced.";
       rnaPol.style.display = "none"; mrna.style.display = "none";
     } else if (OPERON_STATE.glucose) {
       state = "LOW transcription · CAP not bound";
@@ -3687,7 +3687,7 @@ function renderOperon() {
     let state, body;
     if (OPERON_STATE.trp) {
       state = "OFF · trp + repressor → operator";
-      body = "<b>Tryptophan abundant.</b> Trp acts as corepressor — binds the inactive trp repressor and activates it. Active repressor binds operator → blocks transcription. Why make trp if you have it? Cell shuts off synthesis. <b>Plus: attenuation</b> (a separate, finer mechanism in the leader). When trp is plentiful the ribosome moves through the leader quickly, a terminator hairpin forms, and transcription stops early. When trp is scarce the ribosome stalls and transcription continues.";
+      body = "<b>Tryptophan abundant.</b> Trp acts as corepressor: binds the inactive trp repressor and activates it. Active repressor binds operator → blocks transcription. Why make trp if you have it? Cell shuts off synthesis. <b>Plus: attenuation</b> (a separate, finer mechanism in the leader). When trp is plentiful the ribosome moves through the leader quickly, a terminator hairpin forms, and transcription stops early. When trp is scarce the ribosome stalls and transcription continues.";
       rnaPol.style.display = "none"; mrna.style.display = "none";
     } else {
       state = "ON · default transcription";
@@ -3719,11 +3719,11 @@ function initOperon() {
 const KARY_DATA = {
   normal: { lbl:"Normal (46,XY)", body:"<b>46 chromosomes:</b> 22 autosome pairs + 1 sex pair. 46,XX = female; 46,XY = male. <b>Barr body count = 0</b> (one X is fine; only extra Xs become Barr bodies)." },
   t21: { lbl:"Trisomy 21 (Down · 47,XY,+21)", body:"<b>3 copies of chromosome 21.</b> Most common viable autosomal aneuploidy (~1/700 births). Risk increases with maternal age (nondisjunction in maternal MI). <b>Features:</b> intellectual disability, characteristic facies (epicanthal folds, flat nasal bridge), congenital heart defects (~40%), increased Alzheimer's + leukemia risk. <b>Detection:</b> karyotype, NIPT cell-free DNA." },
-  t18: { lbl:"Trisomy 18 (Edwards · 47,XY,+18)", body:"<b>3 copies of chromosome 18.</b> ~1/5000 births. Severe — most die within the first year. <b>Features:</b> clenched fists with overlapping fingers, rocker-bottom feet, microcephaly, severe heart defects, growth retardation." },
-  t13: { lbl:"Trisomy 13 (Patau · 47,XY,+13)", body:"<b>3 copies of chromosome 13.</b> ~1/16000 births. Severe — most die within first 6 months. <b>Features:</b> cleft lip/palate, polydactyly, microphthalmia, holoprosencephaly, heart defects." },
+  t18: { lbl:"Trisomy 18 (Edwards · 47,XY,+18)", body:"<b>3 copies of chromosome 18.</b> ~1/5000 births. Severe: most die within the first year. <b>Features:</b> clenched fists with overlapping fingers, rocker-bottom feet, microcephaly, severe heart defects, growth retardation." },
+  t13: { lbl:"Trisomy 13 (Patau · 47,XY,+13)", body:"<b>3 copies of chromosome 13.</b> ~1/16000 births. Severe: most die within first 6 months. <b>Features:</b> cleft lip/palate, polydactyly, microphthalmia, holoprosencephaly, heart defects." },
   xo: { lbl:"Turner Syndrome (45,X)", body:"<b>Single X, no Y.</b> Only viable monosomy in humans. Phenotypically female. <b>Barr bodies: 0.</b> <b>Features:</b> short stature, gonadal dysgenesis (sterility), webbed neck, broad chest, heart anomalies (coarctation of aorta), normal intelligence. ~1/2500 live female births." },
   xxy: { lbl:"Klinefelter (47,XXY)", body:"<b>Extra X in male.</b> Phenotypically male. <b>Barr bodies: 1</b> (n_X − 1 = 1). <b>Features:</b> tall stature, gynecomastia, small testes, sterility, mild learning issues. Often diagnosed during infertility workup. ~1/500-1000 male births." },
-  xyy: { lbl:"XYY (47,XYY)", body:"<b>Extra Y.</b> Phenotypically male, often tall. <b>Mostly normal</b> — most are unaware they have it. Slight increase in learning/behavioral issues but the 'criminal Y' association is debunked. ~1/1000 male births." },
+  xyy: { lbl:"XYY (47,XYY)", body:"<b>Extra Y.</b> Phenotypically male, often tall. <b>Mostly normal</b>, most are unaware they have it. Slight increase in learning/behavioral issues but the 'criminal Y' association is debunked. ~1/1000 male births." },
   xxx: { lbl:"Triple-X (47,XXX)", body:"<b>Extra X in female.</b> <b>Barr bodies: 2</b>. Phenotypically female, often tall. Usually normal fertility + mild learning issues. ~1/1000 female births." },
 };
 
@@ -3824,7 +3824,7 @@ function reproRender() {
     sideEl.innerHTML = `
       <div class="energy-step-info">
         <div class="stage-lbl">Day ${day} · ${phase.name}</div>
-        <h5>${phase.name === 'MENSTRUAL' ? 'Menses' : phase.name === 'FOLLICULAR' ? 'Follicle maturing' : phase.name === 'OVULATION' ? 'LH surge!' : 'Corpus luteum'}</h5>
+        <h5>${phase.name === 'MENSTRUAL' ? 'Menses' : phase.name === 'FOLLICULAR' ? 'Follicle maturing' : phase.name === 'OVULATION' ? 'LH surge.' : 'Corpus luteum'}</h5>
         <div style="margin-top:10px">
           <div class="repro-bar"><span class="repro-bar-name" style="color:#6A8AA8">FSH</span><div class="repro-bar-track"><div class="repro-bar-fill" style="width:${lvls.FSH}%;background:#6A8AA8"></div></div><span class="repro-bar-val">${lvls.FSH.toFixed(0)}</span></div>
           <div class="repro-bar"><span class="repro-bar-name" style="color:#c19a3e">LH</span><div class="repro-bar-track"><div class="repro-bar-fill" style="width:${lvls.LH}%;background:#c19a3e"></div></div><span class="repro-bar-val">${lvls.LH.toFixed(0)}</span></div>
@@ -3889,14 +3889,14 @@ const BODY_DATA = {
   lungs: { name:"Lungs · Respiratory", body:"<b>Pathway:</b> nose/pharynx → larynx (epiglottis) → trachea → bronchi → bronchioles → alveoli. <b>Alveoli:</b> Type I = gas exchange; Type II = surfactant (reduces surface tension, prevents collapse). <b>Inhale = ACTIVE</b> (diaphragm contracts down + external intercostals); exhale passive at rest. <b>Medulla senses CO₂/pH</b> primarily, NOT O₂ (gotcha)." },
   heart: { name:"Heart · Circulatory", body:"<b>4 chambers</b>: RA, RV, LA, LV. <b>Valves</b>: tricuspid (RA→RV), mitral (LA→LV), pulm semilunar, aortic semilunar. <b>Conduction</b>: SA → AV → His → Purkinje. <b>Pulmonary artery is DEOXYGENATED</b> (only artery that is). LV walls thicker than RV (systemic vs pulmonary pressure). See <b>Cardiac Cycle tab</b> for full anatomy." },
   digestive: { name:"Digestive System", body:"<b>Mouth:</b> salivary amylase (carbs). <b>Stomach:</b> HCl + pepsinogen → pepsin (protein), gastrin. <b>Small intestine:</b> pancreatic enzymes (amylase, trypsin, lipase) + brush border (maltase, sucrase, lactase). Villi + microvilli for absorption. Lacteals absorb fats. <b>Large intestine:</b> water + vitamin K (bacterial). <b>Hormones:</b> gastrin (↑acid), secretin (↑bicarb), CCK (↑bile + enzymes)." },
-  liver: { name:"Liver", body:"<b>Functions:</b> bile production (emulsifies fats — NOT an enzyme), detoxification, albumin + clotting factor synthesis, glycogen storage, urea cycle. <b>Hepatocytes</b> arranged in lobules around central vein. Cytochrome P450 in smooth ER detoxifies drugs. <b>Bile</b>: stored/concentrated in gallbladder, released by CCK." },
+  liver: { name:"Liver", body:"<b>Functions:</b> bile production (emulsifies fats, NOT an enzyme), detoxification, albumin + clotting factor synthesis, glycogen storage, urea cycle. <b>Hepatocytes</b> arranged in lobules around central vein. Cytochrome P450 in smooth ER detoxifies drugs. <b>Bile</b>: stored/concentrated in gallbladder, released by CCK." },
   kidneys: { name:"Kidneys · Renal", body:"<b>Nephron</b> = functional unit. Filter blood (glomerulus) → reabsorb (PCT, loop of Henle, DCT) → secrete (DCT) → concentrated urine via collecting duct. <b>ADH</b> (post pit) → aquaporin-2 in collecting duct → water retention. <b>Aldosterone</b> (adrenal cortex) → late DCT → Na⁺ in / K⁺ out. <b>RAAS</b>: low BP → renin → angiotensin II → vasoconstriction + ↑aldo + ↑ADH. See <b>Nephron tab</b>." },
   endocrine: { name:"Endocrine System", body:"Glands: hypothalamus (controls), pituitary (anterior makes 6, posterior stores 2), thyroid, parathyroid, adrenal (cortex + medulla), pancreas, gonads, pineal, thymus. <b>Steroid hormones</b> (cholesterol-derived) cross bilayer + bind intracellular receptors → transcription. <b>Peptide hormones</b> bind surface receptors → second messengers (cAMP). See <b>Endocrine tab</b>." },
-  pancreas: { name:"Pancreas", body:"<b>Dual function</b>. <b>Exocrine:</b> via duct, secretes amylase, trypsinogen/chymotrypsinogen, lipase, nucleases into duodenum (activated by enterokinase outside the gland — prevents autodigestion). <b>Endocrine:</b> islets of Langerhans. β cells = insulin (↓glucose, glycogen synthesis). α cells = glucagon (↑glucose, glycogenolysis). δ cells = somatostatin." },
+  pancreas: { name:"Pancreas", body:"<b>Dual function</b>. <b>Exocrine:</b> via duct, secretes amylase, trypsinogen/chymotrypsinogen, lipase, nucleases into duodenum (activated by enterokinase outside the gland, prevents autodigestion). <b>Endocrine:</b> islets of Langerhans. β cells = insulin (↓glucose, glycogen synthesis). α cells = glucagon (↑glucose, glycogenolysis). δ cells = somatostatin." },
   skeletal: { name:"Skeletal System", body:"<b>206 bones</b>: 80 axial + 126 appendicular. <b>Cells:</b> osteoblasts (build), osteoclasts (resorb, from monocyte lineage NOT osteoblast), osteocytes (mature, in lacunae). <b>Compact bone:</b> osteons w/ Haversian canals + lamellae + canaliculi. <b>Spongy bone:</b> trabeculae + red marrow. <b>Joints:</b> fibrous (sutures), cartilaginous (intervertebral discs), synovial (hinge, ball-socket, pivot, saddle). <b>Ca²⁺ homeostasis:</b> PTH ↑ resorption, calcitonin ↓." },
   muscle: { name:"Muscular System", body:"<b>Three types:</b> skeletal (striated, voluntary, multinucleate), cardiac (striated, involuntary, intercalated discs w/ gap junctions), smooth (non-striated, involuntary, single nucleus, spindle). <b>Sliding filament:</b> actin slides over myosin. AP → T-tubule → SR releases Ca²⁺ → binds troponin C → tropomyosin shifts → myosin head binds → power stroke. See <b>Sliding Filament tab</b>." },
   repro: { name:"Reproductive System", body:"<b>Spermatogenesis:</b> continuous from puberty, 4 sperm per cycle, ~74 days. Seminiferous tubules + Leydig (testosterone) + Sertoli cells. <b>Oogenesis:</b> finite supply set at birth, 1 egg per cycle, arrested in prophase I (until ovulation) + metaphase II (until fertilization). <b>Female cycle:</b> follicular (FSH, estrogen) → LH surge → ovulation → luteal (corpus luteum makes progesterone). <b>hCG</b>: from blastocyst, maintains corpus luteum (basis of pregnancy tests)." },
-  skin: { name:"Integumentary · Skin", body:"<b>3 layers:</b> epidermis (stratified squamous, keratinized — basale/spinosum/granulosum/lucidum/corneum), dermis (collagen + elastin, hair, sweat/sebaceous glands), hypodermis (adipose). <b>Functions:</b> barrier, thermoregulation (vasodilation/sweat), vitamin D synthesis (epidermis), sensation. <b>Melanocytes</b> in stratum basale. <b>Stratum lucidum</b> only in palms/soles." },
+  skin: { name:"Integumentary · Skin", body:"<b>3 layers:</b> epidermis (stratified squamous, keratinized, basale/spinosum/granulosum/lucidum/corneum), dermis (collagen + elastin, hair, sweat/sebaceous glands), hypodermis (adipose). <b>Functions:</b> barrier, thermoregulation (vasodilation/sweat), vitamin D synthesis (epidermis), sensation. <b>Melanocytes</b> in stratum basale. <b>Stratum lucidum</b> only in palms/soles." },
   immune: { name:"Immune System", body:"<b>Innate (fast, non-specific):</b> barriers, neutrophils, macrophages, NK cells, complement, interferons. <b>Adaptive (slower, specific, memory):</b> B cells (antibodies), T cells (CD4 helper → MHC II, CD8 cytotoxic → MHC I). <b>Memory:</b> basis of vaccination. <b>Antibody classes:</b> IgG (most abundant, crosses placenta), IgM (first responder, pentamer), IgA (mucosa, milk), IgE (allergy/parasites), IgD (B cell receptor)." },
 };
 
@@ -4075,10 +4075,10 @@ function initCardiac() {
     else if (hr > 100) { label = 'Tachycardia'; color = '#C25B3F'; }
     else { label = 'Normal sinus rhythm'; color = '#5FA874'; }
     let avNote;
-    if (av < 100) avNote = 'short PR — atria barely fill ventricles before they fire';
-    else if (av <= 200) avNote = 'normal PR — atria empty, then ventricles fire';
-    else if (av <= 300) avNote = 'first-degree AV concept — slowed conduction (still 1:1)';
-    else avNote = 'severely delayed conduction — ventricles fire much later than atria';
+    if (av < 100) avNote = 'short PR, atria barely fill ventricles before they fire';
+    else if (av <= 200) avNote = 'normal PR, atria empty, then ventricles fire';
+    else if (av <= 300) avNote = 'first-degree AV concept, slowed conduction (still 1:1)';
+    else avNote = 'severely delayed conduction, ventricles fire much later than atria';
     ccNote.innerHTML = `<span style="font-weight:700;color:${color}">${label}</span> · HR ${hr} bpm · AV delay ${av} ms (PR interval). <em>${avNote}.</em>`;
   }
   if (hrSlider) {
@@ -4144,7 +4144,7 @@ function initCardiac() {
   document.getElementById("cc-flow").addEventListener("click", e => {
     document.querySelectorAll(".cardiac-controls button").forEach(b => b.classList.remove("on"));
     e.target.classList.add("on");
-    side.innerHTML = `<div class="energy-step-info"><div class="stage-lbl">Blood flow trace</div><h5>Memorize this sequence</h5><p>Body → SVC/IVC → <b>RA</b> → tricuspid → <b>RV</b> → pulm semilunar → <b>pulmonary artery (deox!)</b> → lungs (gas exchange) → pulmonary veins (oxygenated) → <b>LA</b> → mitral → <b>LV</b> → aortic semilunar → aorta → body.</p><p style="margin-top:10px"><b>Fetal shunts</b>: foramen ovale (RA → LA, bypasses lungs), ductus arteriosus (pulm artery → aorta), ductus venosus (umbilical vein → IVC). All close at birth.</p></div>`;
+    side.innerHTML = `<div class="energy-step-info"><div class="stage-lbl">Blood flow trace</div><h5>Memorize this sequence</h5><p>Body → SVC/IVC → <b>RA</b> → tricuspid → <b>RV</b> → pulm semilunar → <b>pulmonary artery (deox)</b> → lungs (gas exchange) → pulmonary veins (oxygenated) → <b>LA</b> → mitral → <b>LV</b> → aortic semilunar → aorta → body.</p><p style="margin-top:10px"><b>Fetal shunts</b>: foramen ovale (RA → LA, bypasses lungs), ductus arteriosus (pulm artery → aorta), ductus venosus (umbilical vein → IVC). All close at birth.</p></div>`;
   });
 
   setState("systole");
@@ -4189,8 +4189,8 @@ function updateBohr() {
 
   const side = document.getElementById("bohrSide");
   let summary;
-  if (p50 > 30) summary = `<b>RIGHT shift</b> · p50 = ${p50.toFixed(1)} mmHg (vs 27 normal). <b>Lower affinity</b> — Hb releases O₂ more easily. Tissue scenario: high CO₂, low pH, high temp, high 2,3-BPG.`;
-  else if (p50 < 24) summary = `<b>LEFT shift</b> · p50 = ${p50.toFixed(1)} mmHg. <b>Higher affinity</b> — Hb holds O₂. Lung scenario, or <em>fetal Hb</em> (lower BPG binding) which steals O₂ from maternal Hb.`;
+  if (p50 > 30) summary = `<b>RIGHT shift</b> · p50 = ${p50.toFixed(1)} mmHg (vs 27 normal). <b>Lower affinity</b>, Hb releases O₂ more easily. Tissue scenario: high CO₂, low pH, high temp, high 2,3-BPG.`;
+  else if (p50 < 24) summary = `<b>LEFT shift</b> · p50 = ${p50.toFixed(1)} mmHg. <b>Higher affinity</b>, Hb holds O₂. Lung scenario, or <em>fetal Hb</em> (lower BPG binding) which steals O₂ from maternal Hb.`;
   else summary = `<b>Baseline</b> · p50 = ${p50.toFixed(1)} mmHg. Normal arterial blood ~100 mmHg pO₂ (97% saturated). Normal venous ~40 mmHg (75% saturated → ~22% O₂ delivered).`;
   side.innerHTML = `<div class="energy-step-info"><div class="stage-lbl">Bohr effect</div><h5>${summary}</h5><p style="margin-top:10px"><b>Mnemonic CADET face Right:</b> CO₂, Acid, 2,3-BPG, Exercise (heat), Temperature → Right shift → unloads at tissue.</p><p style="margin-top:10px"><b>Cooperative binding:</b> sigmoidal curve. Hill coefficient ≈ 2.7. First O₂ binding triggers conformational change easing subsequent binding.</p></div>`;
 }
@@ -4232,8 +4232,8 @@ const NEPHRON_DATA = {
   glom: { name:"Glomerulus + Bowman's capsule", body:"<b>Filtration</b>: blood pressure pushes water + small solutes (ions, glucose, amino acids, urea) into Bowman's space. Proteins + cells stay in blood (size barrier). Net filtration ~125 mL/min in humans (GFR). Mesangial cells regulate filtration." },
   pct: { name:"Proximal Convoluted Tubule (PCT)", body:"<b>Bulk reabsorption</b>: ~65% of filtered Na⁺ + water, <b>100% of glucose + amino acids</b> (secondary active transport coupled to Na⁺ via SGLT). Bicarbonate reabsorbed. <b>Brush border</b> + many mitochondria. Site of most drug secretion (organic anion/cation transporters)." },
   descending: { name:"Descending Loop of Henle", body:"<b>Permeable to WATER ONLY.</b> Water exits down osmotic gradient (medullary interstitium is hyperosmotic). Filtrate becomes more concentrated. <b>Contributes to medullary gradient</b>." },
-  ascending: { name:"Ascending Loop of Henle (Thick)", body:"<b>Permeable to SALT, IMPERMEABLE TO WATER</b> (gotcha! key DAT distinction). Secondary active transport: <b>NKCC2</b> moves Na+, K+ and 2 Cl- out of the filtrate, powered by the basolateral Na+/K+ pump. Loop diuretics (<b>furosemide</b>) inhibit NKCC2. Generates the medullary gradient that powers the descending limb + collecting duct concentration." },
-  dct: { name:"Distal Convoluted Tubule (DCT)", body:"<b>Fine-tuning</b>. Early DCT: Na⁺/Cl⁻ via NCC (target of <b>thiazide diuretics</b>). Late DCT: <b>aldosterone</b>-sensitive — Na⁺ in via ENaC, K⁺ out (principal cells). <b>PTH</b> stimulates Ca²⁺ reabsorption here." },
+  ascending: { name:"Ascending Loop of Henle (Thick)", body:"<b>Permeable to SALT, IMPERMEABLE TO WATER</b> (gotcha. key DAT distinction). Secondary active transport: <b>NKCC2</b> moves Na+, K+ and 2 Cl- out of the filtrate, powered by the basolateral Na+/K+ pump. Loop diuretics (<b>furosemide</b>) inhibit NKCC2. Generates the medullary gradient that powers the descending limb + collecting duct concentration." },
+  dct: { name:"Distal Convoluted Tubule (DCT)", body:"<b>Fine-tuning</b>. Early DCT: Na⁺/Cl⁻ via NCC (target of <b>thiazide diuretics</b>). Late DCT: <b>aldosterone</b>-sensitive: Na⁺ in via ENaC, K⁺ out (principal cells). <b>PTH</b> stimulates Ca²⁺ reabsorption here." },
   cd: { name:"Collecting Duct", body:"<b>Final water concentration</b>. <b>ADH</b> (vasopressin) inserts <b>aquaporin-2</b> into apical membrane → water reabsorbed → concentrated urine. No ADH = dilute urine (diabetes insipidus). <b>Aldosterone</b> also acts here on principal cells. Intercalated cells handle acid-base (H⁺ secretion)." },
 };
 
@@ -4330,7 +4330,7 @@ function initSlidingFilament() {
 const ENDO_DATA = {
   hypo: { name:"Hypothalamus", body:"<b>Master controller.</b> Synthesizes releasing/inhibiting hormones (CRH, TRH, GnRH, GHRH, somatostatin, dopamine) → travel through <b>hypophyseal portal system</b> to ant pituitary. Also synthesizes <b>ADH + oxytocin</b> directly (released by post pit)." },
   ant: { name:"Anterior Pituitary", body:"<b>Makes 6 hormones.</b> <b>Tropic</b> (target other glands): TSH (thyroid), ACTH (adrenal cortex), FSH/LH (gonads). <b>Direct</b>: GH (growth, body), prolactin (mammary). Mnemonic: <b>FLAT PIG</b>." },
-  post: { name:"Posterior Pituitary", body:"<b>Stores + releases — does NOT synthesize.</b> Hormones are made in hypothalamus + transported via axons. <b>ADH (vasopressin)</b>: water retention via aquaporin-2 in collecting duct. <b>Oxytocin</b>: uterine contraction, milk letdown." },
+  post: { name:"Posterior Pituitary", body:"<b>Stores + releases: does NOT synthesize.</b> Hormones are made in hypothalamus + transported via axons. <b>ADH (vasopressin)</b>: water retention via aquaporin-2 in collecting duct. <b>Oxytocin</b>: uterine contraction, milk letdown." },
   thyr: { name:"Thyroid", body:"<b>T3/T4</b> (require iodine, made in follicular cells): ↑metabolic rate, growth, development. T3 more potent. Negative feedback to TSH/TRH. <b>Calcitonin</b> (parafollicular C cells): ↓blood Ca²⁺ (deposits in bone). Hypothyroid → cold/sluggish; hyperthyroid → hot/fast." },
   par: { name:"Parathyroid", body:"<b>PTH</b> (4 small glands behind thyroid): ↑blood Ca²⁺. Acts on bone (resorption), kidney (Ca²⁺ reabsorption + activation of vit D), gut (indirect via vit D). Antagonist to calcitonin." },
   cort: { name:"Adrenal Cortex (3 layers)", body:"<b>Mnemonic: GFR / salt-sugar-sex.</b> Zona <b>Glomerulosa</b> → <b>aldosterone</b> (Na⁺ retention). Zona <b>Fasciculata</b> → <b>cortisol</b> (stress, ↑glucose, anti-inflammatory). Zona <b>Reticularis</b> → androgens (DHEA). All steroid hormones (cholesterol-derived)." },
@@ -4359,10 +4359,10 @@ function initEndocrine() {
 const TREE_DATA = {
   bacteria: { name:"Bacteria", body:"<b>Eubacteria + others.</b> Peptidoglycan cell walls (gram +/− distinction). Ester-linked membrane lipids. <b>fMet</b> start codon. Single RNA polymerase. 70S ribosomes. <b>No introns, no histones</b>. Single circular chromosome + plasmids. Reproduce by binary fission. Sensitive to most antibiotics targeting peptidoglycan or 70S ribosome." },
   archaea: { name:"Archaea", body:"<b>Domain.</b> Pseudopeptidoglycan or unique cell walls (NO standard peptidoglycan). <b>Ether-linked branched isoprenoid lipids</b> (KEY distinguisher). Met start (like Eukarya, NOT fMet like bacteria). Multiple RNA polymerases. <b>Histones present.</b> Often found in extremes: thermophiles (hot springs), halophiles (Dead Sea), methanogens (anaerobic guts/marshes). <b>More closely related to Eukarya than to Bacteria</b> (gotcha)." },
-  protista: { name:"Protista", body:"<b>Catch-all eukaryotes</b> — paraphyletic, increasingly broken up taxonomically. Includes <b>protozoa</b> (Amoeba — pseudopodia; Paramecium — cilia; Euglena — flagellum + chloroplast = mixotroph), <b>algae</b> (red, green, brown), <b>slime molds</b>. Tested: locomotion structures, contractile vacuoles (osmotic regulation in fresh water), mixotrophy." },
-  fungi: { name:"Fungi", body:"<b>Chitin cell walls</b> (NOT cellulose — that's plants — common gotcha). <b>Heterotrophic absorbers</b> (decomposers + parasites). Hyphae form mycelium. <b>Haploid-dominant</b> life cycle. Phyla tested: <b>Zygomycota</b> (Rhizopus/bread mold), <b>Ascomycota</b> (sac fungi: yeast, Penicillium, morels), <b>Basidiomycota</b> (mushrooms), <b>Chytridiomycota</b> (only flagellated fungi), <b>Glomeromycota</b> (mycorrhizae). <b>Lichens</b> = fungus + alga/cyanobacterium mutualism. <b>Stores glycogen</b> (like animals!), not starch." },
+  protista: { name:"Protista", body:"<b>Catch-all eukaryotes</b>, paraphyletic, increasingly broken up taxonomically. Includes <b>protozoa</b> (Amoeba: pseudopodia; Paramecium: cilia; Euglena: flagellum + chloroplast = mixotroph), <b>algae</b> (red, green, brown), <b>slime molds</b>. Tested: locomotion structures, contractile vacuoles (osmotic regulation in fresh water), mixotrophy." },
+  fungi: { name:"Fungi", body:"<b>Chitin cell walls</b> (NOT cellulose: that's plants: common gotcha). <b>Heterotrophic absorbers</b> (decomposers + parasites). Hyphae form mycelium. <b>Haploid-dominant</b> life cycle. Phyla tested: <b>Zygomycota</b> (Rhizopus/bread mold), <b>Ascomycota</b> (sac fungi: yeast, Penicillium, morels), <b>Basidiomycota</b> (mushrooms), <b>Chytridiomycota</b> (only flagellated fungi), <b>Glomeromycota</b> (mycorrhizae). <b>Lichens</b> = fungus + alga/cyanobacterium mutualism. <b>Stores glycogen</b> (like animals), not starch." },
   plantae: { name:"Plantae", body:"<b>Cellulose cell walls</b>, <b>chlorophyll a+b</b>, starch storage, <b>alternation of generations</b> (gametophyte ↔ sporophyte). Multicellular autotrophs. Plant cell distinguishing features vs animal cell: cell wall, large central vacuole, chloroplasts, plasmodesmata. NO centrioles (still build a spindle), NO lysosomes (vacuole takes that role). See <b>Plant Evolution tab</b>." },
-  animalia: { name:"Animalia", body:"<b>Multicellular heterotrophs.</b> No cell walls (collagen ECM instead). Motile (at some life stage). <b>Blastula</b> embryonic stage. Mostly diploid. Animal vs plant cell distinguishing features: lysosomes, centrioles, gap/tight/desmosome junctions, cholesterol-rich membranes. Sub-grouped into 9 major phyla — see <b>Animal Phyla tab</b>." },
+  animalia: { name:"Animalia", body:"<b>Multicellular heterotrophs.</b> No cell walls (collagen ECM instead). Motile (at some life stage). <b>Blastula</b> embryonic stage. Mostly diploid. Animal vs plant cell distinguishing features: lysosomes, centrioles, gap/tight/desmosome junctions, cholesterol-rich membranes. Sub-grouped into 9 major phyla: see <b>Animal Phyla tab</b>." },
 };
 
 function initTree() {
@@ -4382,8 +4382,8 @@ function initTree() {
 /* ---- PLANT EVOLUTION ---- */
 const PLANT_DATA = {
   bryo: { name:"Bryophytes", body:"<b>Mosses, liverworts, hornworts.</b> <b>Non-vascular</b> (no xylem/phloem) → small + low-growing. <b>Gametophyte (n) dominant</b> in life cycle. Sperm flagellated → require water film for fertilization. No true roots/leaves/lignin. First land plants. <b>Sporophyte depends on gametophyte</b>." },
-  seedless: { name:"Seedless vascular", body:"<b>Ferns, lycophytes (club mosses), horsetails.</b> Innovation: <b>vascular tissue + lignin</b> → can grow tall. <b>Sporophyte (2n) dominant</b> — flip from bryophytes. Still need water for fertilization (flagellated sperm). Mostly homosporous. No seeds. Reproduce via spores released from sori." },
-  gymno: { name:"Gymnosperms", body:"<b>Conifers (pines, firs), cycads, ginkgo, gnetophytes.</b> Innovation: <b>naked seeds</b> on cones (no fruit). Pollen <b>wind-dispersed</b> — no water needed for fertilization (huge advantage in dry climates). Heterosporous. Tracheids only (except gnetophytes — also have vessels). 'Naked' = ovules not enclosed in ovary." },
+  seedless: { name:"Seedless vascular", body:"<b>Ferns, lycophytes (club mosses), horsetails.</b> Innovation: <b>vascular tissue + lignin</b> → can grow tall. <b>Sporophyte (2n) dominant</b>, flip from bryophytes. Still need water for fertilization (flagellated sperm). Mostly homosporous. No seeds. Reproduce via spores released from sori." },
+  gymno: { name:"Gymnosperms", body:"<b>Conifers (pines, firs), cycads, ginkgo, gnetophytes.</b> Innovation: <b>naked seeds</b> on cones (no fruit). Pollen <b>wind-dispersed</b>, no water needed for fertilization (huge advantage in dry climates). Heterosporous. Tracheids only (except gnetophytes, also have vessels). 'Naked' = ovules not enclosed in ovary." },
   angio: { name:"Angiosperms", body:"<b>Flowering plants.</b> Innovations: <b>flowers</b> (attract pollinators), <b>fruits</b> (protect + disperse seeds), <b>double fertilization</b>: 1 sperm + egg → 2n embryo; 1 sperm + 2 polar nuclei → <b>3n endosperm</b> (nutrient store). Vessel elements + tracheids in xylem. <b>Monocot vs Dicot</b>: 1 vs 2 cotyledons; parallel vs net veins; fibrous vs taproot; flower parts in 3s vs 4s/5s; scattered vs ringed vascular bundles. Most diverse plant group today." },
 };
 
@@ -4405,13 +4405,13 @@ function initPlantEvo() {
 /* ---- ANIMAL PHYLA ---- */
 const PHYLA = [
   { id:"porifera", name:"Porifera", common:"Sponges", traits:["asymmetric","no tissues","filter feeders"], filters:[], body:"<b>No true tissues</b> (parazoa). Asymmetric. Filter feeders via <b>choanocytes</b> (collar cells with flagella drive water flow). Spicules (CaCO₃ or silica) provide structure. Sessile adults; some have larval dispersal. Hermaphroditic. Regenerative." },
-  { id:"cnidaria", name:"Cnidaria", common:"Jellyfish, hydra, coral", traits:["radial","diploblastic","acoelomate","no segments"], filters:["radial","acoel"], body:"<b>Radial symmetry, diploblastic</b> (only ectoderm + endoderm; no mesoderm). Two body forms: polyp (sessile) + medusa (free-swimming). <b>Cnidocytes</b> with stinging nematocysts. <b>Gastrovascular cavity</b> (one opening — mouth + anus). Nerve net (no brain). Hydra, jellyfish, coral, anemones." },
+  { id:"cnidaria", name:"Cnidaria", common:"Jellyfish, hydra, coral", traits:["radial","diploblastic","acoelomate","no segments"], filters:["radial","acoel"], body:"<b>Radial symmetry, diploblastic</b> (only ectoderm + endoderm; no mesoderm). Two body forms: polyp (sessile) + medusa (free-swimming). <b>Cnidocytes</b> with stinging nematocysts. <b>Gastrovascular cavity</b> (one opening, mouth + anus). Nerve net (no brain). Hydra, jellyfish, coral, anemones." },
   { id:"plathy", name:"Platyhelminthes", common:"Flatworms", traits:["bilateral","acoelomate","protostome","triploblastic"], filters:["bilat","acoel","proto"], body:"<b>Bilateral, acoelomate</b> (no body cavity), triploblastic. Flatness = high surface:volume → diffusion is enough (no circulatory system). <b>Protostome</b> (Lophotrochozoan). Includes free-living planaria, parasitic flukes (Schistosoma), tapeworms (Taenia). Hermaphroditic; many alternate hosts." },
-  { id:"nematoda", name:"Nematoda", common:"Roundworms", traits:["bilateral","pseudocoelomate","protostome","molting"], filters:["bilat","pseudo","proto"], body:"<b>Bilateral, PSEUDOCOELOMATE</b> (cavity between mesoderm + endoderm — gotcha! NOT acoelomate). Cylindrical with tough cuticle that they MOLT (Ecdysozoa). Complete digestive tract (mouth + anus). Free-living + parasitic (Ascaris, hookworm, pinworm, Trichinella, C. elegans model organism). Sexes separate." },
+  { id:"nematoda", name:"Nematoda", common:"Roundworms", traits:["bilateral","pseudocoelomate","protostome","molting"], filters:["bilat","pseudo","proto"], body:"<b>Bilateral, PSEUDOCOELOMATE</b> (cavity between mesoderm + endoderm, gotcha. NOT acoelomate). Cylindrical with tough cuticle that they MOLT (Ecdysozoa). Complete digestive tract (mouth + anus). Free-living + parasitic (Ascaris, hookworm, pinworm, Trichinella, C. elegans model organism). Sexes separate." },
   { id:"annelida", name:"Annelida", common:"Earthworms, leeches", traits:["bilateral","coelomate","segmented","protostome"], filters:["bilat","coelom","proto"], body:"<b>Bilateral, coelomate, SEGMENTED</b> (metamerism). Closed circulatory system. Setae for movement. Hydrostatic skeleton. <b>Protostome</b> (Lophotrochozoan). Three classes: oligochaetes (earthworms), polychaetes (marine worms), hirudineans (leeches). Most segments repeat structures." },
-  { id:"mollusca", name:"Mollusca", common:"Snails, clams, octopus", traits:["bilateral","coelomate","protostome","unsegmented"], filters:["bilat","coelom","proto"], body:"<b>Bilateral, coelomate (small), protostome.</b> Three body parts: <b>foot, visceral mass, mantle</b> (secretes shell). Most have <b>open circulation</b> (cephalopods are exception — closed). Classes: gastropods (snails, slugs), bivalves (clams, mussels), cephalopods (octopus, squid — most intelligent invertebrates). Radula for feeding (most groups)." },
-  { id:"arthropoda", name:"Arthropoda", common:"Insects, spiders, crabs", traits:["bilateral","coelomate","segmented","protostome","molting"], filters:["bilat","coelom","proto"], body:"<b>Most diverse phylum.</b> Bilateral, coelomate, segmented (often fused into tagmata: head/thorax/abdomen). <b>Chitin exoskeleton</b> → MOLT (Ecdysozoa). Jointed appendages. Open circulation. Protostome. <b>Classes:</b> Arachnida (8 legs, 2 segments — spiders, scorpions, ticks), Insecta (6 legs, 3 segments, often wings), Crustacea (biramous appendages — crabs, shrimp), Chilopoda (centipedes — 1 pair/seg, predators), Diplopoda (millipedes — 2 pairs/seg)." },
-  { id:"echino", name:"Echinodermata", common:"Sea stars, urchins", traits:["bilateral larva → radial adult","coelomate","deuterostome"], filters:["radial","coelom","deutero"], body:"<b>Bilateral larva, radial adult</b> (5-fold pentaradial). Coelomate. <b>DEUTEROSTOME</b> (with chordates) — KEY DAT fact. <b>Water vascular system</b> with tube feet for movement + feeding. Endoskeleton of CaCO₃ ossicles. Classes: sea stars, sea urchins, sea cucumbers, brittle stars, crinoids. Regenerative." },
+  { id:"mollusca", name:"Mollusca", common:"Snails, clams, octopus", traits:["bilateral","coelomate","protostome","unsegmented"], filters:["bilat","coelom","proto"], body:"<b>Bilateral, coelomate (small), protostome.</b> Three body parts: <b>foot, visceral mass, mantle</b> (secretes shell). Most have <b>open circulation</b> (cephalopods are exception, closed). Classes: gastropods (snails, slugs), bivalves (clams, mussels), cephalopods (octopus, squid, most intelligent invertebrates). Radula for feeding (most groups)." },
+  { id:"arthropoda", name:"Arthropoda", common:"Insects, spiders, crabs", traits:["bilateral","coelomate","segmented","protostome","molting"], filters:["bilat","coelom","proto"], body:"<b>Most diverse phylum.</b> Bilateral, coelomate, segmented (often fused into tagmata: head/thorax/abdomen). <b>Chitin exoskeleton</b> → MOLT (Ecdysozoa). Jointed appendages. Open circulation. Protostome. <b>Classes:</b> Arachnida (8 legs, 2 segments, spiders, scorpions, ticks), Insecta (6 legs, 3 segments, often wings), Crustacea (biramous appendages, crabs, shrimp), Chilopoda (centipedes, 1 pair/seg, predators), Diplopoda (millipedes, 2 pairs/seg)." },
+  { id:"echino", name:"Echinodermata", common:"Sea stars, urchins", traits:["bilateral larva → radial adult","coelomate","deuterostome"], filters:["radial","coelom","deutero"], body:"<b>Bilateral larva, radial adult</b> (5-fold pentaradial). Coelomate. <b>DEUTEROSTOME</b> (with chordates), KEY DAT fact. <b>Water vascular system</b> with tube feet for movement + feeding. Endoskeleton of CaCO₃ ossicles. Classes: sea stars, sea urchins, sea cucumbers, brittle stars, crinoids. Regenerative." },
   { id:"chordata", name:"Chordata", common:"Vertebrates + a few invertebrates", traits:["bilateral","coelomate","segmented","deuterostome"], filters:["bilat","coelom","deutero"], body:"<b>Four chordate features (at some life stage):</b> <b>notochord</b> (replaced by vertebral column in vertebrates), <b>dorsal hollow nerve cord</b>, <b>pharyngeal slits</b>, <b>post-anal tail</b>. Bilateral, coelomate, segmented (in muscle), deuterostome. Subphyla: Cephalochordata (lancelets), Urochordata (tunicates), Vertebrata (fish → tetrapods). <b>Amniotic egg</b> = synapomorphy of reptiles, birds, mammals." },
 ];
 
@@ -4515,10 +4515,10 @@ function renderGermQuiz() {
       if (correct) GERM_QUIZ.hits++; else GERM_QUIZ.misses++;
       const fb = document.getElementById('germQuizFb');
       if (fb) {
-        if (correct) fb.innerHTML = `<b style="color:var(--good-d)">✓ ${struct.name}</b> derives from ${struct.layer === 'ecto' ? 'ECTODERM' : struct.layer === 'meso' ? 'MESODERM' : 'ENDODERM'}.${struct.tag ? ' <em>(common DAT trap.)</em>' : ''}`;
+        if (correct) fb.innerHTML = `<b style="color:var(--good-d)">${struct.name}</b> derives from ${struct.layer === 'ecto' ? 'ECTODERM' : struct.layer === 'meso' ? 'MESODERM' : 'ENDODERM'}.${struct.tag ? ' <em>(common DAT trap.)</em>' : ''}`;
         else {
           const correctLayer = struct.layer === 'ecto' ? 'ECTODERM' : struct.layer === 'meso' ? 'MESODERM' : 'ENDODERM';
-          fb.innerHTML = `<b style="color:var(--trap-d)">✗ ${struct.name}</b> is from ${correctLayer}, not ${GERM_QUIZ.layer.toUpperCase()}DERM. ${struct.tag ? '<em>This is the gotcha — memorize it.</em>' : ''}`;
+          fb.innerHTML = `<b style="color:var(--trap-d)">${struct.name}</b> is from ${correctLayer}, not ${GERM_QUIZ.layer.toUpperCase()}DERM. ${struct.tag ? '<em>This is the gotcha: memorize it.</em>' : ''}`;
           // Spawn an Ace Card for this miss
           addAceCard({
             q: `Which germ layer gives rise to <b>${struct.name}</b>?`,
@@ -4634,10 +4634,10 @@ function initMorpher() {
 /* ---- EMBRYO TIMELINE ---- */
 const EMBRYO_DATA = {
   zygote: { name:"Zygote (1-cell)", body:"<b>Day 0.</b> Diploid (2n) cell formed by sperm + egg fusion. Single, large cell. Nucleus contains genome from both parents. Sex of organism determined here (XX or XY in mammals)." },
-  cleavage: { name:"Cleavage", body:"<b>Days 1-3.</b> Rapid mitotic divisions WITHOUT growth — cells get smaller (in frogs and sea urchins: only S + M, no G1/G2; mammalian cleavage is slower). Total mass unchanged. <b>Holoblastic</b> = complete cleavage (sea urchin, frog, mammal — little/moderate yolk). <b>Meroblastic</b> = incomplete (bird, reptile, insect — lots of yolk). <b>Radial</b> (deutero) vs <b>spiral</b> (proto). <b>Determinate</b> (proto, fates fixed) vs <b>indeterminate</b> (deutero, totipotent cells)." },
+  cleavage: { name:"Cleavage", body:"<b>Days 1-3.</b> Rapid mitotic divisions WITHOUT growth: cells get smaller (in frogs and sea urchins: only S + M, no G1/G2; mammalian cleavage is slower). Total mass unchanged. <b>Holoblastic</b> = complete cleavage (sea urchin, frog, mammal, little/moderate yolk). <b>Meroblastic</b> = incomplete (bird, reptile, insect, lots of yolk). <b>Radial</b> (deutero) vs <b>spiral</b> (proto). <b>Determinate</b> (proto, fates fixed) vs <b>indeterminate</b> (deutero, totipotent cells)." },
   blastula: { name:"Blastula (Blastocyst)", body:"<b>Days 4-6.</b> Hollow ball of cells around <b>blastocoel</b> cavity. <b>Mammal version = blastocyst</b>: <b>inner cell mass (ICM)</b> → embryo proper; <b>trophoblast</b> → placenta + extraembryonic membranes. Implantation begins (mammal) at this stage." },
   gastrula: { name:"Gastrula", body:"<b>~Day 14.</b> Cells migrate inward (invagination) → forms <b>archenteron</b> (primitive gut) opening at <b>blastopore</b>. <b>3 germ layers form: ectoderm (outer), mesoderm (middle), endoderm (inner)</b>. Frog: organizer at dorsal lip of blastopore. Chick/mammal: primitive streak performs equivalent role." },
-  neurula: { name:"Neurula", body:"<b>~Day 22.</b> Notochord (mesoderm) signals overlying ectoderm. <b>Neural plate</b> → folds into <b>neural groove</b> with <b>neural folds</b> → fuses into <b>neural tube</b> (becomes brain + spinal cord). <b>Neural crest cells</b> pinch off — give rise to PNS, melanocytes, adrenal medulla, facial cartilage, Schwann cells." },
+  neurula: { name:"Neurula", body:"<b>~Day 22.</b> Notochord (mesoderm) signals overlying ectoderm. <b>Neural plate</b> → folds into <b>neural groove</b> with <b>neural folds</b> → fuses into <b>neural tube</b> (becomes brain + spinal cord). <b>Neural crest cells</b> pinch off, give rise to PNS, melanocytes, adrenal medulla, facial cartilage, Schwann cells." },
   organo: { name:"Organogenesis", body:"<b>Weeks 4-8.</b> Major organs form. Heart tube loops, then septa divide it into 4 chambers. <b>Somites</b> segment along axis (give rise to vertebrae, ribs, dermis, skeletal muscle). Limb buds outgrow. Kidney progresses through 3 stages: pronephros → mesonephros → metanephros (the final kidney). <b>Pharyngeal arches</b> form structures of head + neck. By end: recognizable embryo with all major organ rudiments." },
 };
 
@@ -4656,12 +4656,12 @@ function initEmbryoTimeline() {
 
 /* ---- FERTILIZATION STEP DETAILS ---- */
 const FERT_DATA = {
-  contact: { name:"Step 1 — Contact", body:"Sperm contacts species-specific receptors on the egg's outer coat. Sea urchin = jelly coat; mammal = zona pellucida (ZP3 glycoprotein). <b>Species specificity</b> prevents cross-fertilization between species." },
-  acro: { name:"Step 2 — Acrosomal Reaction", body:"<b>Acrosome</b> is a Golgi-derived vesicle at the sperm tip. Contact triggers exocytosis → releases hydrolytic enzymes (acrosin) that digest the jelly coat. <b>Acrosomal process</b> extends with <b>bindin</b> protein on tip → binds bindin receptor on egg vitelline envelope. Membranes can now fuse." },
-  fast: { name:"Step 3 — Fast Block to Polyspermy", body:"<b>Within seconds.</b> Membrane depolarization caused by Na+ influx prevents additional sperm from fusing with the egg membrane. <b>Temporary</b> — buys time until the slow block establishes." },
-  cortical: { name:"Step 4 — Cortical Reaction (Slow Block)", body:"<b>Within minutes.</b> Sperm-egg fusion triggers Ca²⁺ wave through the egg cytoplasm. Cortical granules (just under egg membrane) fuse with PM and release contents into perivitelline space → <b>vitelline envelope hardens into fertilization envelope</b>. Permanent block to polyspermy." },
-  fuse: { name:"Step 5 — Fusion + Egg Activation", body:"Sperm + egg plasma membranes fuse. Sperm nucleus enters egg cytoplasm. Ca²⁺ wave also activates egg metabolism — sharp increase in protein synthesis + DNA replication preparation. Cell becomes a zygote." },
-  meiosis2: { name:"Step 6 — Meiosis II Completes", body:"The egg was arrested in metaphase II at ovulation. Fertilization triggers completion → second polar body extruded → mature ovum (n) + 2nd polar body. Now sperm + egg pronuclei fuse to form diploid (2n) zygote." },
+  contact: { name:"Step 1: Contact", body:"Sperm contacts species-specific receptors on the egg's outer coat. Sea urchin = jelly coat; mammal = zona pellucida (ZP3 glycoprotein). <b>Species specificity</b> prevents cross-fertilization between species." },
+  acro: { name:"Step 2: Acrosomal Reaction", body:"<b>Acrosome</b> is a Golgi-derived vesicle at the sperm tip. Contact triggers exocytosis → releases hydrolytic enzymes (acrosin) that digest the jelly coat. <b>Acrosomal process</b> extends with <b>bindin</b> protein on tip → binds bindin receptor on egg vitelline envelope. Membranes can now fuse." },
+  fast: { name:"Step 3: Fast Block to Polyspermy", body:"<b>Within seconds.</b> Membrane depolarization caused by Na+ influx prevents additional sperm from fusing with the egg membrane. <b>Temporary</b>, buys time until the slow block establishes." },
+  cortical: { name:"Step 4: Cortical Reaction (Slow Block)", body:"<b>Within minutes.</b> Sperm-egg fusion triggers Ca²⁺ wave through the egg cytoplasm. Cortical granules (just under egg membrane) fuse with PM and release contents into perivitelline space → <b>vitelline envelope hardens into fertilization envelope</b>. Permanent block to polyspermy." },
+  fuse: { name:"Step 5: Fusion + Egg Activation", body:"Sperm + egg plasma membranes fuse. Sperm nucleus enters egg cytoplasm. Ca²⁺ wave also activates egg metabolism, sharp increase in protein synthesis + DNA replication preparation. Cell becomes a zygote." },
+  meiosis2: { name:"Step 6: Meiosis II Completes", body:"The egg was arrested in metaphase II at ovulation. Fertilization triggers completion → second polar body extruded → mature ovum (n) + 2nd polar body. Now sperm + egg pronuclei fuse to form diploid (2n) zygote." },
 };
 
 function initFertilization() {
@@ -4696,25 +4696,25 @@ function initFertilization() {
 /* ---- FOOD WEB BUILDER ---- */
 const WEB_ORGS = [
   // Producers (level 0)
-  { id:'grass',     name:'Grass',         emoji:'🌿', level:0, role:'autotroph; photosynthesizes' },
-  { id:'phytoplankton', name:'Phytoplankton', emoji:'🟢', level:0, role:'aquatic primary producer' },
-  { id:'tree',      name:'Tree',          emoji:'🌳', level:0, role:'autotroph; carbon fixation' },
-  { id:'algae',     name:'Algae',         emoji:'🟢', level:0, role:'aquatic autotroph' },
+  { id:'grass',     name:'Grass',         emoji:'', level:0, role:'autotroph; photosynthesizes' },
+  { id:'phytoplankton', name:'Phytoplankton', emoji:'', level:0, role:'aquatic primary producer' },
+  { id:'tree',      name:'Tree',          emoji:'', level:0, role:'autotroph; carbon fixation' },
+  { id:'algae',     name:'Algae',         emoji:'', level:0, role:'aquatic autotroph' },
   // 1° consumers (herbivores)
-  { id:'rabbit',    name:'Rabbit',        emoji:'🐰', level:1, role:'herbivore — eats grass' },
-  { id:'deer',      name:'Deer',          emoji:'🦌', level:1, role:'herbivore — eats trees, grass' },
-  { id:'cow',       name:'Cow',           emoji:'🐄', level:1, role:'herbivore — ruminant' },
-  { id:'caterpillar', name:'Caterpillar', emoji:'🐛', level:1, role:'herbivore — eats leaves' },
-  { id:'zooplankton', name:'Zooplankton', emoji:'🦠', level:1, role:'eats phytoplankton' },
+  { id:'rabbit',    name:'Rabbit',        emoji:'', level:1, role:'herbivore, eats grass' },
+  { id:'deer',      name:'Deer',          emoji:'', level:1, role:'herbivore, eats trees, grass' },
+  { id:'cow',       name:'Cow',           emoji:'', level:1, role:'herbivore, ruminant' },
+  { id:'caterpillar', name:'Caterpillar', emoji:'', level:1, role:'herbivore, eats leaves' },
+  { id:'zooplankton', name:'Zooplankton', emoji:'', level:1, role:'eats phytoplankton' },
   // 2° consumers (carnivores eating 1°)
-  { id:'fox',       name:'Fox',           emoji:'🦊', level:2, role:'carnivore — eats rabbits, mice' },
-  { id:'snake',     name:'Snake',         emoji:'🐍', level:2, role:'carnivore — eats rodents, frogs' },
-  { id:'frog',      name:'Frog',          emoji:'🐸', level:2, role:'eats insects (caterpillars, flies)' },
-  { id:'fish',      name:'Small fish',    emoji:'🐟', level:2, role:'eats zooplankton, smaller fish' },
+  { id:'fox',       name:'Fox',           emoji:'', level:2, role:'carnivore, eats rabbits, mice' },
+  { id:'snake',     name:'Snake',         emoji:'', level:2, role:'carnivore, eats rodents, frogs' },
+  { id:'frog',      name:'Frog',          emoji:'', level:2, role:'eats insects (caterpillars, flies)' },
+  { id:'fish',      name:'Small fish',    emoji:'', level:2, role:'eats zooplankton, smaller fish' },
   // 3° consumers (apex/top carnivores)
-  { id:'eagle',     name:'Eagle',         emoji:'🦅', level:3, role:'apex predator — eats foxes, snakes, fish' },
-  { id:'shark',     name:'Shark',         emoji:'🦈', level:3, role:'apex marine predator' },
-  { id:'lion',      name:'Lion',          emoji:'🦁', level:3, role:'apex savanna predator' },
+  { id:'eagle',     name:'Eagle',         emoji:'', level:3, role:'apex predator, eats foxes, snakes, fish' },
+  { id:'shark',     name:'Shark',         emoji:'', level:3, role:'apex marine predator' },
+  { id:'lion',      name:'Lion',          emoji:'', level:3, role:'apex savanna predator' },
 ];
 
 const WEB_STATE = { placed:{}, score:0, attempts:0 };
@@ -4785,12 +4785,12 @@ function evaluateWebPlacement(org, targetLevel, dropEl) {
     tag.innerHTML = `<span class="web-emoji">${org.emoji}</span><span>${org.name}</span>`;
     dropEl.appendChild(tag);
     fb.className = 'web-feedback correct';
-    fb.innerHTML = `<b>✓ ${org.name} → ${['Producer','1° consumer','2° consumer','3° consumer'][targetLevel]}.</b> ${org.role}`;
+    fb.innerHTML = `<b>${org.name} → ${['Producer','1° consumer','2° consumer','3° consumer'][targetLevel]}.</b> ${org.role}`;
     renderWebPool();
     updateWebEnergies();
   } else {
     fb.className = 'web-feedback wrong';
-    fb.innerHTML = `<b>✗ Not quite.</b> ${org.name} is ${['a producer','a 1° consumer (herbivore)','a 2° consumer','a 3° consumer (apex)'][org.level]}, not ${['producer','1° consumer','2° consumer','3° consumer'][targetLevel]}. ${org.role}`;
+    fb.innerHTML = `<b>Not quite.</b> ${org.name} is ${['a producer','a 1° consumer (herbivore)','a 2° consumer','a 3° consumer (apex)'][org.level]}, not ${['producer','1° consumer','2° consumer','3° consumer'][targetLevel]}. ${org.role}`;
     addAceCard({
       q: `What trophic level is the <b>${org.name}</b>?`,
       quickHit: `<b>${['Producer','1° consumer','2° consumer','3° consumer'][org.level]}</b>`,
@@ -4920,9 +4920,9 @@ function initSelectionModes() {
 /* ---- SPECIATION MODE CLICK ---- */
 const SPEC_DATA = {
   allo: { name:"Allopatric Speciation", body:"<b>Geographic barrier separates populations.</b> Each population accumulates different mutations + faces different selection. Over time → reproductively incompatible. Most common mode. <b>Examples:</b> Grand Canyon squirrels (Kaibab on north rim, Abert on south), Galápagos finches (Darwin), Isthmus of Panama splitting Atlantic + Pacific lineages." },
-  sym: { name:"Sympatric Speciation", body:"<b>New species arise WITHOUT geographic separation.</b> Mechanisms: <b>polyploidy</b> (instant speciation, common in plants — autopolyploidy = same species, allopolyploidy = hybrid + chromosome doubling), habitat differentiation (apple maggot fly Rhagoletis: hawthorn vs apple host shift), sexual selection (Lake Victoria cichlid colors)." },
+  sym: { name:"Sympatric Speciation", body:"<b>New species arise WITHOUT geographic separation.</b> Mechanisms: <b>polyploidy</b> (instant speciation, common in plants, autopolyploidy = same species, allopolyploidy = hybrid + chromosome doubling), habitat differentiation (apple maggot fly Rhagoletis: hawthorn vs apple host shift), sexual selection (Lake Victoria cichlid colors)." },
   peri: { name:"Peripatric Speciation", body:"<b>Small peripheral population</b> colonizes a new habitat. <b>Drift-heavy</b> due to small founder size. Special case of allopatric. Faster than ordinary allopatric. <b>Examples:</b> Hawaiian Drosophila (>800 species from few founders), island endemics on isolated archipelagos." },
-  para: { name:"Parapatric Speciation", body:"<b>Adjacent populations</b> with a hybrid zone — gene flow continues but a strong environmental gradient drives divergence. <b>Examples:</b> grass tolerance to mine soil at boundaries (Anthoxanthum), some snail color clines." },
+  para: { name:"Parapatric Speciation", body:"<b>Adjacent populations</b> with a hybrid zone, gene flow continues but a strong environmental gradient drives divergence. <b>Examples:</b> grass tolerance to mine soil at boundaries (Anthoxanthum), some snail color clines." },
 };
 
 function initSpeciation() {
@@ -5077,7 +5077,7 @@ function forkResetAll() {
   forkStop();
   FORK_STATE.t = 0;
   forkUpdate(0);
-  document.getElementById('forkStageTag').textContent = 'Idle — press play';
+  document.getElementById('forkStageTag').textContent = 'Idle: press play';
 }
 
 function initDnaFork() {
@@ -5278,7 +5278,7 @@ function txResetAll() {
   TX_STATE.t = 0;
   txUpdate(0);
   const tag = document.getElementById('txStageTag');
-  if (tag) tag.textContent = 'Idle — press play';
+  if (tag) tag.textContent = 'Idle: press play';
 }
 
 function initTranscription() {
@@ -5397,7 +5397,7 @@ function apResetAll() {
   AP_STATE.t = 0;
   apUpdate(0);
   const tag = document.getElementById('apStageTag');
-  if (tag) tag.textContent = 'Idle — press play';
+  if (tag) tag.textContent = 'Idle: press play';
 }
 function initActionPotential() {
   if (!document.getElementById('apSvg')) return;
@@ -5479,7 +5479,7 @@ function ventUpdate(t) {
   // Stage tag
   const tag = document.getElementById('ventStageTag');
   let label;
-  if (t < 0.10) label = 'Diaphragm starting to contract — early inspiration';
+  if (t < 0.10) label = 'Diaphragm starting to contract: early inspiration';
   else if (t < 0.40) label = 'Inspiration · diaphragm flattens · V↑ · P↓ · air IN';
   else if (t < 0.55) label = 'Peak lung volume · brief pause';
   else if (t < 0.85) label = 'Expiration · diaphragm relaxes · V↓ · P↑ · air OUT';
@@ -5513,7 +5513,7 @@ function ventResetAll() {
   VENT_STATE.t = 0;
   ventUpdate(0);
   const tag = document.getElementById('ventStageTag');
-  if (tag) tag.textContent = 'Idle — press play';
+  if (tag) tag.textContent = 'Idle: press play';
 }
 function initVentilation() {
   if (!document.getElementById('ventSvg')) return;
@@ -5744,7 +5744,7 @@ const SIG_MODES = {
       { label:'STAT enters nucleus',            loc:'nuc', x:600, color:'#5FA874' },
       { label:'Direct gene activation',         loc:'nuc', x:720, color:'#1B3A2D' },
     ],
-    info:'<b>Steps:</b><br>1. Cytokine binds, receptors dimerize<br>2. Receptor-associated <b>JAK kinases</b> activate, cross-phosphorylate<br>3. JAKs phosphorylate <b>STAT</b> transcription factors<br>4. STATs dimerize, translocate to nucleus<br>5. Bind GAS elements → activate transcription<br><br><b>Distinguishing feature:</b> very few intermediate steps — direct route from membrane to nucleus.<br><b>Examples:</b> erythropoietin, interferon, growth hormone.'
+    info:'<b>Steps:</b><br>1. Cytokine binds, receptors dimerize<br>2. Receptor-associated <b>JAK kinases</b> activate, cross-phosphorylate<br>3. JAKs phosphorylate <b>STAT</b> transcription factors<br>4. STATs dimerize, translocate to nucleus<br>5. Bind GAS elements → activate transcription<br><br><b>Distinguishing feature:</b> very few intermediate steps, direct route from membrane to nucleus.<br><b>Examples:</b> erythropoietin, interferon, growth hormone.'
   },
   steroid: {
     label:'Steroid hormone (intracellular)',
@@ -5756,7 +5756,7 @@ const SIG_MODES = {
       { label:'Hormone-receptor enters nucleus', loc:'nuc', x:600, color:'#1B3A2D' },
       { label:'Binds HRE → modulates transcription', loc:'nuc', x:720, color:'#5FA874' },
     ],
-    info:'<b>Why different:</b> steroids are lipid-soluble — they cross the bilayer directly, no membrane receptor needed.<br><br><b>Steps:</b><br>1. Steroid diffuses into cell<br>2. Binds cytoplasmic (or nuclear) receptor (often paired with HSP90)<br>3. HSP dissociates → conformational change<br>4. Hormone-receptor complex enters nucleus<br>5. Binds <b>hormone response elements (HRE)</b> on DNA<br>6. Recruits coactivators/corepressors → modifies transcription<br><br><b>Slower</b> than membrane signaling (hours not seconds) but produces lasting changes via gene expression.'
+    info:'<b>Why different:</b> steroids are lipid-soluble, they cross the bilayer directly, no membrane receptor needed.<br><br><b>Steps:</b><br>1. Steroid diffuses into cell<br>2. Binds cytoplasmic (or nuclear) receptor (often paired with HSP90)<br>3. HSP dissociates → conformational change<br>4. Hormone-receptor complex enters nucleus<br>5. Binds <b>hormone response elements (HRE)</b> on DNA<br>6. Recruits coactivators/corepressors → modifies transcription<br><br><b>Slower</b> than membrane signaling (hours not seconds) but produces lasting changes via gene expression.'
   },
   ligated: {
     label:'Ligand-gated ion channel',
@@ -5767,7 +5767,7 @@ const SIG_MODES = {
       { label:'Membrane depolarization',      loc:'cyto', x:600, color:'#c19a3e' },
       { label:'Postsynaptic action potential', loc:'cyto', x:720, color:'#1B3A2D' },
     ],
-    info:'<b>Speed advantage:</b> fastest signaling type — milliseconds.<br><br><b>Steps:</b><br>1. Ligand binds receptor, channel opens<br>2. Ions flow down their gradient (depends on channel: Na⁺/K⁺/Ca²⁺/Cl⁻)<br>3. Local membrane potential changes<br>4. May trigger action potential or graded response<br><br><b>Examples:</b> nicotinic ACh receptor (Na⁺ in), GABA-A (Cl⁻ in → IPSP), NMDA (Ca²⁺ + Na⁺).'
+    info:'<b>Speed advantage:</b> fastest signaling type, milliseconds.<br><br><b>Steps:</b><br>1. Ligand binds receptor, channel opens<br>2. Ions flow down their gradient (depends on channel: Na⁺/K⁺/Ca²⁺/Cl⁻)<br>3. Local membrane potential changes<br>4. May trigger action potential or graded response<br><br><b>Examples:</b> nicotinic ACh receptor (Na⁺ in), GABA-A (Cl⁻ in → IPSP), NMDA (Ca²⁺ + Na⁺).'
   },
 };
 
@@ -5891,7 +5891,7 @@ const MUTATIONS = {
   missense: {
     label:'Missense mutation',
     apply: m => m.slice(0, 4) + 'U' + m.slice(5),  // CCC → CUC (Pro → Leu)
-    effect:'<b>Missense mutation.</b> Single nucleotide change → different amino acid (Pro → Leu). Effect varies: <b>conservative</b> (similar properties, often tolerated) vs <b>non-conservative</b> (different properties, often damaging). Classic example: <b>sickle cell anemia</b> — single Glu→Val swap in β-globin causes hemoglobin to polymerize.'
+    effect:'<b>Missense mutation.</b> Single nucleotide change → different amino acid (Pro → Leu). Effect varies: <b>conservative</b> (similar properties, often tolerated) vs <b>non-conservative</b> (different properties, often damaging). Classic example: <b>sickle cell anemia</b>, single Glu→Val swap in β-globin causes hemoglobin to polymerize.'
   },
   nonsense: {
     label:'Nonsense mutation',
@@ -5901,12 +5901,12 @@ const MUTATIONS = {
   frameshift_ins: {
     label:'Frameshift insertion (+1)',
     apply: m => m.slice(0, 3) + 'A' + m.slice(3),  // insert A after AUG
-    effect:'<b>Frameshift mutation (insertion).</b> +1 nucleotide shifts the reading frame for ALL downstream codons. Original Pro-Phe-Lys-Gly-STOP becomes a completely different amino acid sequence, usually hitting a premature stop codon. <b>Almost always devastating</b> — produces a nonfunctional protein. Examples: BRCA1 frameshifts, Tay-Sachs, many CF mutations.'
+    effect:'<b>Frameshift mutation (insertion).</b> +1 nucleotide shifts the reading frame for ALL downstream codons. Original Pro-Phe-Lys-Gly-STOP becomes a completely different amino acid sequence, usually hitting a premature stop codon. <b>Almost always devastating</b>, produces a nonfunctional protein. Examples: BRCA1 frameshifts, Tay-Sachs, many CF mutations.'
   },
   frameshift_del: {
     label:'Frameshift deletion (-1)',
     apply: m => m.slice(0, 3) + m.slice(4),  // remove first C of CCC
-    effect:'<b>Frameshift mutation (deletion).</b> -1 nucleotide shifts reading frame. Same logic as insertion — all downstream codons change, nearly always producing a nonfunctional protein. <b>ΔF508 in CFTR</b> (cystic fibrosis) is a 3-nt deletion that is in-frame but still removes a critical Phe — distinguish from frameshift deletions which are not multiples of 3.'
+    effect:'<b>Frameshift mutation (deletion).</b> -1 nucleotide shifts reading frame. Same logic as insertion: all downstream codons change, nearly always producing a nonfunctional protein. <b>ΔF508 in CFTR</b> (cystic fibrosis) is a 3-nt deletion that is in-frame but still removes a critical Phe, distinguish from frameshift deletions which are not multiples of 3.'
   },
   inframe_del: {
     label:'In-frame deletion (-3)',
@@ -5976,8 +5976,8 @@ function chiBuildRows(typeKey) {
       <td style="padding:8px;border:1px solid var(--line)">${cls}</td>
       <td style="padding:8px;border:1px solid var(--line)">${t.ratio[i]}</td>
       <td style="padding:8px;border:1px solid var(--line)"><input type="number" min="0" data-chi-row="${i}" style="width:80px;font-family:inherit;font-size:12px;padding:4px;border:1px solid var(--line);border-radius:4px" placeholder="0"></td>
-      <td style="padding:8px;border:1px solid var(--line);color:var(--ink-mute)" data-chi-exp="${i}">—</td>
-      <td style="padding:8px;border:1px solid var(--line);color:var(--ink-mute)" data-chi-term="${i}">—</td>
+      <td style="padding:8px;border:1px solid var(--line);color:var(--ink-mute)" data-chi-exp="${i}">-</td>
+      <td style="padding:8px;border:1px solid var(--line);color:var(--ink-mute)" data-chi-term="${i}">-</td>
     `;
     tbody.appendChild(tr);
   });
@@ -6091,7 +6091,7 @@ const DIG_DATA = {
       <line x1="170" y1="65" x2="370" y2="80" stroke="#1B3A2D" stroke-width="1" stroke-dasharray="3 2"/>
       <defs><marker id="dig-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" fill="#1B3A2D"/></marker></defs>
     </svg>`,
-    info:'<b>Function:</b> conduit only — no digestion. Connects pharynx to stomach.<br><b>Peristalsis:</b> sequential contraction of <b>circular muscle behind</b> bolus + <b>longitudinal ahead</b> propels material downward.<br><b>Sphincters:</b> upper (UES, skeletal muscle, voluntary) and <b>lower esophageal sphincter (LES / cardiac)</b> prevents reflux of acidic stomach contents (failure → GERD).<br><b>Layers:</b> mucosa → submucosa → muscularis (skeletal in upper third, smooth in lower) → adventitia.',
+    info:'<b>Function:</b> conduit only, no digestion. Connects pharynx to stomach.<br><b>Peristalsis:</b> sequential contraction of <b>circular muscle behind</b> bolus + <b>longitudinal ahead</b> propels material downward.<br><b>Sphincters:</b> upper (UES, skeletal muscle, voluntary) and <b>lower esophageal sphincter (LES / cardiac)</b> prevents reflux of acidic stomach contents (failure → GERD).<br><b>Layers:</b> mucosa → submucosa → muscularis (skeletal in upper third, smooth in lower) → adventitia.',
   },
   stomach: {
     label:'Stomach',
@@ -6156,14 +6156,14 @@ const DIG_DATA = {
       <text x="380" y="332" font-size="9" font-weight="700" fill="#1B3A2D">→ ampulla of Vater (sphincter of Oddi)</text>
       <g transform="translate(40, 360)">
         <rect width="730" height="80" fill="#fff" stroke="#1B3A2D" stroke-width="1.5" rx="6"/>
-        <text x="15" y="20" font-size="11" font-weight="700" fill="#1B3A2D">PANCREATIC ENZYMES (alkaline, pH 8 — neutralizes chyme):</text>
+        <text x="15" y="20" font-size="11" font-weight="700" fill="#1B3A2D">PANCREATIC ENZYMES (alkaline, pH 8, neutralizes chyme):</text>
         <text x="15" y="38" font-size="10" fill="#1B3A2D"><tspan font-weight="700" fill="#C25B3F">Trypsinogen</tspan> → trypsin (by enterokinase) · <tspan font-weight="700" fill="#C25B3F">chymotrypsinogen</tspan> → chymotrypsin · <tspan font-weight="700" fill="#C25B3F">carboxypeptidase</tspan> · <tspan font-weight="700" fill="#5FA874">amylase</tspan> · <tspan font-weight="700" fill="#5FA874">lipase</tspan> · <tspan font-weight="700" fill="#5FA874">nuclease</tspan></text>
         <text x="15" y="56" font-size="10" fill="#1B3A2D"><tspan font-weight="700">BILE</tspan> (liver): salts emulsify fats (mechanical, not enzymatic). Stored/concentrated in gallbladder. Bicarbonate from bile + pancreas neutralizes acid.</text>
         <text x="15" y="73" font-size="10" fill="#1B3A2D"><tspan font-weight="700">DUODENAL HORMONES:</tspan> <tspan fill="#C25B3F" font-weight="700">CCK</tspan> (fat/protein → gallbladder + pancreas), <tspan fill="#C25B3F" font-weight="700">secretin</tspan> (acid → bicarbonate)</text>
       </g>
       <defs><marker id="dig-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" fill="#1B3A2D"/></marker></defs>
     </svg>`,
-    info:'<b>First ~25 cm of small intestine.</b> Chemical digestion hub.<br><b>Bile</b> (from liver, stored in gallbladder): emulsifies fats — not an enzyme; just breaks fat globules into smaller droplets so lipase can work.<br><b>Pancreatic enzymes:</b> trypsin/chymotrypsin/carboxypeptidase (proteins), amylase (starch), lipase (fats), nuclease (DNA/RNA).<br><b>Brush border enzymes</b> (enterocytes): maltase, sucrase, lactase, peptidases — finish the job.<br><b>Duodenum hormones:</b> <b>CCK</b> (fat trigger → bile + pancreatic enzymes), <b>secretin</b> (acid trigger → bicarbonate).',
+    info:'<b>First ~25 cm of small intestine.</b> Chemical digestion hub.<br><b>Bile</b> (from liver, stored in gallbladder): emulsifies fats, not an enzyme; just breaks fat globules into smaller droplets so lipase can work.<br><b>Pancreatic enzymes:</b> trypsin/chymotrypsin/carboxypeptidase (proteins), amylase (starch), lipase (fats), nuclease (DNA/RNA).<br><b>Brush border enzymes</b> (enterocytes): maltase, sucrase, lactase, peptidases, finish the job.<br><b>Duodenum hormones:</b> <b>CCK</b> (fat trigger → bile + pancreatic enzymes), <b>secretin</b> (acid trigger → bicarbonate).',
   },
   jej: {
     label:'Jejunum',
@@ -6173,7 +6173,7 @@ const DIG_DATA = {
       <text x="100" y="76" font-size="10" font-weight="700" fill="#1B3A2D">cross section · jejunal wall · plicae circulares fold the lumen</text>
       <g><path d="M 100 200 Q 105 150 110 200 Q 115 150 120 200 Q 125 150 130 200 Q 135 150 140 200 Q 145 150 150 200 Q 155 150 160 200 Q 165 150 170 200 Q 175 150 180 200 Q 185 150 190 200 Q 195 150 200 200 Q 205 150 210 200 Q 215 150 220 200 Q 225 150 230 200 Q 235 150 240 200 Q 245 150 250 200 Q 255 150 260 200 Q 265 150 270 200 Q 275 150 280 200 Q 285 150 290 200 Q 295 150 300 200 Q 305 150 310 200 Q 315 150 320 200 Q 325 150 330 200 Q 335 150 340 200 Q 345 150 350 200 Q 355 150 360 200 Q 365 150 370 200 Q 375 150 380 200 Q 385 150 390 200 Q 395 150 400 200" stroke="#C25B3F" stroke-width="1.5" fill="none"/>
       <path d="M 400 200 Q 405 150 410 200 Q 415 150 420 200 Q 425 150 430 200 Q 435 150 440 200 Q 445 150 450 200 Q 455 150 460 200 Q 465 150 470 200 Q 475 150 480 200 Q 485 150 490 200 Q 495 150 500 200 Q 505 150 510 200 Q 515 150 520 200 Q 525 150 530 200 Q 535 150 540 200 Q 545 150 550 200 Q 555 150 560 200 Q 565 150 570 200 Q 575 150 580 200 Q 585 150 590 200 Q 595 150 600 200 Q 605 150 610 200 Q 615 150 620 200 Q 625 150 630 200 Q 635 150 640 200 Q 645 150 650 200 Q 655 150 660 200 Q 665 150 670 200 Q 675 150 680 200 Q 685 150 690 200 Q 695 150 700 200" stroke="#C25B3F" stroke-width="1.5" fill="none"/></g>
-      <text x="370" y="148" font-size="10" font-weight="700" fill="#C25B3F">villi (each villus has microvilli — total 200 m² SA)</text>
+      <text x="370" y="148" font-size="10" font-weight="700" fill="#C25B3F">villi (each villus has microvilli, total 200 m² SA)</text>
       <g transform="translate(80, 230)">
         <ellipse cx="80" cy="60" rx="70" ry="45" fill="#fff" stroke="#1B3A2D" stroke-width="2"/>
         <text x="80" y="20" text-anchor="middle" font-size="10" font-weight="700" fill="#1B3A2D">Villus close-up</text>
@@ -6234,7 +6234,7 @@ const DIG_DATA = {
       </g>
       <defs><marker id="dig-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" fill="#1B3A2D"/></marker></defs>
     </svg>`,
-    info:'<b>Final segment of small intestine.</b><br><b>Specific functions:</b> reabsorbs <b>bile salts</b> (enterohepatic circulation, ~95% recycled) and <b>vitamin B12</b> (with intrinsic factor).<br><b>Peyer\'s patches:</b> lymphoid follicles → mucosal immunity (IgA).<br><b>Ileocecal valve:</b> prevents bacterial reflux from colon.<br><b>Crohn\'s disease classic site</b> — distinguish from ulcerative colitis (colon-only).',
+    info:'<b>Final segment of small intestine.</b><br><b>Specific functions:</b> reabsorbs <b>bile salts</b> (enterohepatic circulation, ~95% recycled) and <b>vitamin B12</b> (with intrinsic factor).<br><b>Peyer\'s patches:</b> lymphoid follicles → mucosal immunity (IgA).<br><b>Ileocecal valve:</b> prevents bacterial reflux from colon.<br><b>Crohn\'s disease classic site</b>, distinguish from ulcerative colitis (colon-only).',
   },
   colon: {
     label:'Colon',
@@ -6310,7 +6310,7 @@ const DIG_DATA = {
         <text x="15" y="154" font-size="10" fill="#1B3A2D">Bile salts have hydrophilic + hydrophobic ends → form micelles around fat globules → expose more SA for lipase.</text>
       </g>
     </svg>`,
-    info:'<b>Liver:</b> largest internal organ. Filters everything from gut via hepatic portal vein.<br><b>Functions:</b> glycogen storage, gluconeogenesis, urea cycle (NH₃ disposal), bile production, plasma proteins (albumin, clotting factors), detox (P450), vitamin/mineral storage, VLDL synthesis.<br><b>Gallbladder:</b> stores + concentrates bile. <b>CCK</b> from fat-rich chyme triggers contraction.<br><b>Bile salts</b> emulsify fat — they don\'t digest it. Lipase does the chemical work.',
+    info:'<b>Liver:</b> largest internal organ. Filters everything from gut via hepatic portal vein.<br><b>Functions:</b> glycogen storage, gluconeogenesis, urea cycle (NH₃ disposal), bile production, plasma proteins (albumin, clotting factors), detox (P450), vitamin/mineral storage, VLDL synthesis.<br><b>Gallbladder:</b> stores + concentrates bile. <b>CCK</b> from fat-rich chyme triggers contraction.<br><b>Bile salts</b> emulsify fat, they don\'t digest it. Lipase does the chemical work.',
   },
   panc: {
     label:'Pancreas',
@@ -6339,7 +6339,7 @@ const DIG_DATA = {
       </g>
       <g transform="translate(430, 290)">
         <rect width="340" height="160" fill="#fff" stroke="#5FA874" stroke-width="2" rx="6"/>
-        <text x="15" y="22" font-size="11" font-weight="700" fill="#5FA874">ENDOCRINE (~1% — Islets of Langerhans)</text>
+        <text x="15" y="22" font-size="11" font-weight="700" fill="#5FA874">ENDOCRINE (~1%: Islets of Langerhans)</text>
         <text x="15" y="44" font-size="10" fill="#1B3A2D"><tspan font-weight="700" fill="#C25B3F">Alpha cells:</tspan> glucagon (raises blood glucose)</text>
         <text x="15" y="62" font-size="10" fill="#1B3A2D"><tspan font-weight="700" fill="#5FA874">Beta cells:</tspan> insulin (lowers blood glucose)</text>
         <text x="15" y="80" font-size="10" fill="#1B3A2D"><tspan font-weight="700" fill="#a378a5">Delta cells:</tspan> somatostatin (inhibits both)</text>
@@ -6350,7 +6350,7 @@ const DIG_DATA = {
       </g>
       <defs><marker id="dig-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" fill="#1B3A2D"/></marker></defs>
     </svg>`,
-    info:'<b>Two distinct functions in one organ:</b><br><b>Exocrine (~99%):</b> acinar cells → digestive enzymes (trypsin, chymotrypsin, amylase, lipase, nuclease). Duct cells add bicarbonate. Released via main pancreatic duct (Wirsung) at ampulla of Vater.<br><b>Endocrine (~1%):</b> Islets of Langerhans — α (glucagon ↑ glucose), β (insulin ↓ glucose), δ (somatostatin), PP cells.<br><b>Why zymogens?</b> Pancreas would auto-digest if enzymes were active inside. Trypsinogen is activated by enterokinase only after reaching duodenum.',
+    info:'<b>Two distinct functions in one organ:</b><br><b>Exocrine (~99%):</b> acinar cells → digestive enzymes (trypsin, chymotrypsin, amylase, lipase, nuclease). Duct cells add bicarbonate. Released via main pancreatic duct (Wirsung) at ampulla of Vater.<br><b>Endocrine (~1%):</b> Islets of Langerhans: α (glucagon ↑ glucose), β (insulin ↓ glucose), δ (somatostatin), PP cells.<br><b>Why zymogens?</b> Pancreas would auto-digest if enzymes were active inside. Trypsinogen is activated by enterokinase only after reaching duodenum.',
   },
 };
 function digSetMode(mode) {
@@ -6475,7 +6475,7 @@ const IMM_DATA = {
         <rect width="380" height="60" fill="#fff" stroke="#1B3A2D" stroke-width="1.5" rx="6"/>
         <text x="15" y="22" font-size="11" font-weight="700" fill="#1B3A2D">PRIMARY vs SECONDARY response</text>
         <text x="15" y="40" font-size="10" fill="#1B3A2D">Primary: slow (5-7 d), small, IgM-dominant.</text>
-        <text x="15" y="55" font-size="10" fill="#1B3A2D">Secondary: fast (1-3 d), large, IgG-dominant — <tspan font-weight="700">memory</tspan>.</text>
+        <text x="15" y="55" font-size="10" fill="#1B3A2D">Secondary: fast (1-3 d), large, IgG-dominant: <tspan font-weight="700">memory</tspan>.</text>
       </g>
       <defs><marker id="imm-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" fill="#1B3A2D"/></marker></defs>
     </svg>`,
@@ -6508,15 +6508,15 @@ const IMM_DATA = {
         <rect width="450" height="260" fill="#fff" stroke="#1B3A2D" stroke-width="1.5" rx="6"/>
         <text x="15" y="24" font-size="12" font-weight="700" fill="#1B3A2D">5 ANTIBODY ISOTYPES</text>
         <text x="15" y="48" font-size="11" font-weight="700" fill="#C25B3F">IgM (10%)</text>
-        <text x="80" y="48" font-size="10" fill="#1B3A2D">— pentamer · first secreted in primary response · BCR on naive B</text>
+        <text x="80" y="48" font-size="10" fill="#1B3A2D">pentamer · first secreted in primary response · BCR on naive B</text>
         <text x="15" y="80" font-size="11" font-weight="700" fill="#5FA874">IgG (75%)</text>
-        <text x="80" y="80" font-size="10" fill="#1B3A2D">— most abundant · secondary response · ONLY isotype that crosses placenta</text>
+        <text x="80" y="80" font-size="10" fill="#1B3A2D">most abundant · secondary response · ONLY isotype that crosses placenta</text>
         <text x="15" y="112" font-size="11" font-weight="700" fill="#c19a3e">IgA (15%)</text>
-        <text x="80" y="112" font-size="10" fill="#1B3A2D">— dimer · mucosal (gut, lung, breast milk) · neutralizes</text>
+        <text x="80" y="112" font-size="10" fill="#1B3A2D">dimer · mucosal (gut, lung, breast milk) · neutralizes</text>
         <text x="15" y="144" font-size="11" font-weight="700" fill="#a378a5">IgE (&lt;0.01%)</text>
-        <text x="80" y="144" font-size="10" fill="#1B3A2D">— allergies + parasites · binds mast cells → histamine release</text>
+        <text x="80" y="144" font-size="10" fill="#1B3A2D">allergies + parasites · binds mast cells → histamine release</text>
         <text x="15" y="176" font-size="11" font-weight="700" fill="#1B3A2D">IgD (&lt;1%)</text>
-        <text x="80" y="176" font-size="10" fill="#1B3A2D">— BCR on naive B cells · function unclear</text>
+        <text x="80" y="176" font-size="10" fill="#1B3A2D">BCR on naive B cells · function unclear</text>
         <text x="15" y="210" font-size="11" font-weight="700" fill="#1B3A2D">FUNCTIONS:</text>
         <text x="15" y="228" font-size="10" fill="#1B3A2D">• <tspan font-weight="700">Neutralization</tspan> · <tspan font-weight="700">opsonization</tspan> (tag for phagocytes)</text>
         <text x="15" y="244" font-size="10" fill="#1B3A2D">• <tspan font-weight="700">Complement activation</tspan> · <tspan font-weight="700">ADCC</tspan> · <tspan font-weight="700">agglutination</tspan></text>
@@ -6525,7 +6525,7 @@ const IMM_DATA = {
         <rect width="700" height="100" fill="#fff" stroke="#1B3A2D" stroke-width="1.5" rx="6"/>
         <text x="15" y="22" font-size="12" font-weight="700" fill="#1B3A2D">CLASS SWITCHING + AFFINITY MATURATION</text>
         <text x="15" y="42" font-size="10" fill="#1B3A2D">B cells start with IgM. With T-cell help (cytokines like IL-4 → IgE, TGF-β → IgA), they undergo</text>
-        <text x="15" y="58" font-size="10" fill="#1B3A2D">isotype <b>class switching</b> — same Fab, different Fc → different effector function in different tissues.</text>
+        <text x="15" y="58" font-size="10" fill="#1B3A2D">isotype <b>class switching</b>, same Fab, different Fc → different effector function in different tissues.</text>
         <text x="15" y="80" font-size="10" fill="#1B3A2D"><b>Somatic hypermutation</b> in germinal centers → variable region mutations → highest-affinity B cells survive (Darwinian selection).</text>
       </g>
     </svg>`,
@@ -6584,7 +6584,7 @@ const IMM_DATA = {
       </g>
       <defs><marker id="imm-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" fill="#1B3A2D"/></marker></defs>
     </svg>`,
-    info:'<b>T cells</b> mature in <b>thymus</b> (where they learn self vs non-self via positive + negative selection).<br><b>Helper T (CD4+)</b>: orchestrates everything — activates B cells (antibody class switching), CD8 T cells, and macrophages. Subsets (Th1, Th2, Th17, Tfh) target different pathogen classes via different cytokines.<br><b>Cytotoxic T (CD8+)</b>: kills infected/tumor cells. Recognizes peptide-MHC I complex. Releases perforin (pores) + granzymes (apoptosis triggers).<br><b>Regulatory T (Tregs)</b>: suppress immune response → prevent autoimmunity.<br><b>HIV destroys CD4+ → AIDS</b> because helper T is the conductor — without it, the whole adaptive response falls apart.',
+    info:'<b>T cells</b> mature in <b>thymus</b> (where they learn self vs non-self via positive + negative selection).<br><b>Helper T (CD4+)</b>: orchestrates everything, activates B cells (antibody class switching), CD8 T cells, and macrophages. Subsets (Th1, Th2, Th17, Tfh) target different pathogen classes via different cytokines.<br><b>Cytotoxic T (CD8+)</b>: kills infected/tumor cells. Recognizes peptide-MHC I complex. Releases perforin (pores) + granzymes (apoptosis triggers).<br><b>Regulatory T (Tregs)</b>: suppress immune response → prevent autoimmunity.<br><b>HIV destroys CD4+ → AIDS</b> because helper T is the conductor, without it, the whole adaptive response falls apart.',
   },
   mhc: {
     label:'MHC I vs II',
@@ -6632,7 +6632,7 @@ const IMM_DATA = {
         <text x="20" y="352" font-size="9" fill="#1B3A2D">Activates the helper T cell.</text>
       </g>
     </svg>`,
-    info:'<b>MHC I:</b> on every nucleated cell. Presents <b>endogenous</b> antigens (viral peptides, tumor antigens). Recognized by <b>CD8 cytotoxic T</b>. If the peptide looks foreign → cell is killed.<br><b>MHC II:</b> only on APCs (dendritic, macrophage, B cell). Presents <b>exogenous</b> antigens (phagocytosed pathogen pieces). Recognized by <b>CD4 helper T</b>. Activates the helper T cell.<br><b>Mnemonic:</b> "MHC I × CD8 = 8" and "MHC II × CD4 = 8" — both products equal 8.<br><b>Why split:</b> two pathogen sources need two different responses. Intracellular = kill the cell. Extracellular = call for backup.',
+    info:'<b>MHC I:</b> on every nucleated cell. Presents <b>endogenous</b> antigens (viral peptides, tumor antigens). Recognized by <b>CD8 cytotoxic T</b>. If the peptide looks foreign → cell is killed.<br><b>MHC II:</b> only on APCs (dendritic, macrophage, B cell). Presents <b>exogenous</b> antigens (phagocytosed pathogen pieces). Recognized by <b>CD4 helper T</b>. Activates the helper T cell.<br><b>Mnemonic:</b> "MHC I × CD8 = 8" and "MHC II × CD4 = 8", both products equal 8.<br><b>Why split:</b> two pathogen sources need two different responses. Intracellular = kill the cell. Extracellular = call for backup.',
   },
   comp: {
     label:'Complement',
@@ -6697,7 +6697,7 @@ const IMM_DATA = {
       </g>
       <defs><marker id="imm-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" fill="#1B3A2D"/></marker></defs>
     </svg>`,
-    info:'<b>Complement:</b> 30+ liver-made plasma proteins. Cascade activated three ways, all converging on <b>C3 convertase → C3b</b>.<br><b>3 outcomes:</b><br>• <b>Opsonization (C3b):</b> coats pathogen → phagocytes eat it efficiently.<br>• <b>Inflammation (C3a, C5a):</b> mast cells release histamine, vessels dilate, neutrophils recruited.<br>• <b>Lysis (MAC = C5b-C9):</b> pore-forming complex punches holes in pathogen — especially gram-negative bacteria.<br><b>Self-protection:</b> CD55, CD59 prevent complement from attacking host cells (defects → PNH).',
+    info:'<b>Complement:</b> 30+ liver-made plasma proteins. Cascade activated three ways, all converging on <b>C3 convertase → C3b</b>.<br><b>3 outcomes:</b><br>• <b>Opsonization (C3b):</b> coats pathogen → phagocytes eat it efficiently.<br>• <b>Inflammation (C3a, C5a):</b> mast cells release histamine, vessels dilate, neutrophils recruited.<br>• <b>Lysis (MAC = C5b-C9):</b> pore-forming complex punches holes in pathogen, especially gram-negative bacteria.<br><b>Self-protection:</b> CD55, CD59 prevent complement from attacking host cells (defects → PNH).',
   },
   vac: {
     label:'Active vs Passive Immunity',
@@ -6731,19 +6731,19 @@ const IMM_DATA = {
         <rect width="680" height="180" fill="#fff" stroke="#1B3A2D" stroke-width="1.5" rx="8"/>
         <text x="15" y="24" font-size="12" font-weight="700" fill="#1B3A2D">VACCINE TYPES</text>
         <text x="15" y="46" font-size="11" font-weight="700" fill="#C25B3F">1. Live attenuated</text>
-        <text x="180" y="46" font-size="10" fill="#1B3A2D">— weakened pathogen. Strongest, longest immunity. NOT for immunocompromised.</text>
+        <text x="180" y="46" font-size="10" fill="#1B3A2D">weakened pathogen. Strongest, longest immunity. NOT for immunocompromised.</text>
         <text x="180" y="60" font-size="9" fill="#1B3A2D">e.g., MMR, varicella, oral polio (Sabin), yellow fever, BCG.</text>
         <text x="15" y="86" font-size="11" font-weight="700" fill="#5FA874">2. Inactivated (killed)</text>
-        <text x="180" y="86" font-size="10" fill="#1B3A2D">— dead pathogen. Safer but weaker, often need boosters.</text>
+        <text x="180" y="86" font-size="10" fill="#1B3A2D">dead pathogen. Safer but weaker, often need boosters.</text>
         <text x="180" y="100" font-size="9" fill="#1B3A2D">e.g., flu shot (most), rabies, hepatitis A, injected polio (Salk).</text>
         <text x="15" y="126" font-size="11" font-weight="700" fill="#c19a3e">3. Subunit / toxoid</text>
-        <text x="180" y="126" font-size="10" fill="#1B3A2D">— purified antigen or inactivated toxin.</text>
+        <text x="180" y="126" font-size="10" fill="#1B3A2D">purified antigen or inactivated toxin.</text>
         <text x="180" y="140" font-size="9" fill="#1B3A2D">e.g., Hep B (recombinant HBsAg), HPV, tetanus toxoid, diphtheria.</text>
         <text x="15" y="166" font-size="11" font-weight="700" fill="#a378a5">4. mRNA / viral vector</text>
-        <text x="180" y="166" font-size="10" fill="#1B3A2D">— genetic instructions for spike/antigen. e.g., COVID-19.</text>
+        <text x="180" y="166" font-size="10" fill="#1B3A2D">genetic instructions for spike/antigen. e.g., COVID-19.</text>
       </g>
     </svg>`,
-    info:'<b>Active immunity</b> = your immune system makes the antibodies. Natural (real infection) or artificial (vaccine). Slow onset, long-lasting (often lifetime), produces memory cells.<br><b>Passive immunity</b> = preformed antibodies given. Natural (mom-to-baby IgG via placenta, IgA via breast milk) or artificial (anti-venom, RhoGAM, IVIG). Fast onset, short-lived (weeks), no memory.<br><b>Vaccine types:</b><br>• Live attenuated: strongest immunity, contraindicated in immunocompromised.<br>• Inactivated: safer, often need boosters.<br>• Subunit/toxoid: purified pieces or detoxified toxin.<br>• mRNA/vector: newest — instructions for body to make antigen.',
+    info:'<b>Active immunity</b> = your immune system makes the antibodies. Natural (real infection) or artificial (vaccine). Slow onset, long-lasting (often lifetime), produces memory cells.<br><b>Passive immunity</b> = preformed antibodies given. Natural (mom-to-baby IgG via placenta, IgA via breast milk) or artificial (anti-venom, RhoGAM, IVIG). Fast onset, short-lived (weeks), no memory.<br><b>Vaccine types:</b><br>• Live attenuated: strongest immunity, contraindicated in immunocompromised.<br>• Inactivated: safer, often need boosters.<br>• Subunit/toxoid: purified pieces or detoxified toxin.<br>• mRNA/vector: newest, instructions for body to make antigen.',
   },
   hyper: {
     label:'Hypersensitivity Types',
@@ -6798,7 +6798,7 @@ const IMM_DATA = {
         <text x="15" y="160" font-size="10" font-weight="700" fill="#a378a5">"D" = Delayed</text>
       </g>
     </svg>`,
-    info:'<b>4 hypersensitivity types — mnemonic ACID:</b><br><b>I — Anaphylactic (IgE):</b> allergies, asthma, anaphylaxis. Mast cells release histamine. Minutes.<br><b>II — Cytotoxic (IgG/IgM):</b> antibody attacks cell-bound antigen → complement/phagocytosis. ABO transfusion, HDN, Goodpasture.<br><b>III — Immune complex:</b> antigen-antibody complex deposits in tissue → complement → neutrophil damage. SLE, serum sickness, PSGN.<br><b>IV — Delayed (T cell):</b> no antibody. T cells → cytokines → macrophage activation. Hours-days. PPD test, poison ivy, MS, T1D.',
+    info:'<b>4 hypersensitivity types: mnemonic ACID:</b><br><b>I: Anaphylactic (IgE):</b> allergies, asthma, anaphylaxis. Mast cells release histamine. Minutes.<br><b>II: Cytotoxic (IgG/IgM):</b> antibody attacks cell-bound antigen → complement/phagocytosis. ABO transfusion, HDN, Goodpasture.<br><b>III: Immune complex:</b> antigen-antibody complex deposits in tissue → complement → neutrophil damage. SLE, serum sickness, PSGN.<br><b>IV: Delayed (T cell):</b> no antibody. T cells → cytokines → macrophage activation. Hours-days. PPD test, poison ivy, MS, T1D.',
   },
   auto: {
     label:'Autoimmune Diseases',
@@ -6808,25 +6808,25 @@ const IMM_DATA = {
         <rect width="700" height="380" fill="#fff" stroke="#1B3A2D" stroke-width="1.5" rx="8"/>
         <text x="15" y="24" font-size="12" font-weight="700" fill="#1B3A2D">CLASSIC EXAMPLES</text>
         <text x="15" y="50" font-size="11" font-weight="700" fill="#C25B3F">Type 1 Diabetes</text>
-        <text x="180" y="50" font-size="10" fill="#1B3A2D">— T cell destruction of pancreatic <b>β cells</b> → no insulin → hyperglycemia</text>
+        <text x="180" y="50" font-size="10" fill="#1B3A2D">T cell destruction of pancreatic <b>β cells</b> → no insulin → hyperglycemia</text>
         <text x="15" y="76" font-size="11" font-weight="700" fill="#C25B3F">Multiple Sclerosis</text>
-        <text x="180" y="76" font-size="10" fill="#1B3A2D">— T cells attack <b>CNS myelin</b> → demyelination → patchy neuro deficits</text>
+        <text x="180" y="76" font-size="10" fill="#1B3A2D">T cells attack <b>CNS myelin</b> → demyelination → patchy neuro deficits</text>
         <text x="15" y="102" font-size="11" font-weight="700" fill="#C25B3F">Rheumatoid Arthritis</text>
-        <text x="180" y="102" font-size="10" fill="#1B3A2D">— anti-IgG antibodies (rheumatoid factor) → joint synovium → joint destruction</text>
+        <text x="180" y="102" font-size="10" fill="#1B3A2D">anti-IgG antibodies (rheumatoid factor) → joint synovium → joint destruction</text>
         <text x="15" y="128" font-size="11" font-weight="700" fill="#C25B3F">SLE (Lupus)</text>
-        <text x="180" y="128" font-size="10" fill="#1B3A2D">— ANA, anti-dsDNA → multi-organ immune complex deposition → butterfly rash</text>
+        <text x="180" y="128" font-size="10" fill="#1B3A2D">ANA, anti-dsDNA → multi-organ immune complex deposition → butterfly rash</text>
         <text x="15" y="154" font-size="11" font-weight="700" fill="#C25B3F">Hashimoto thyroiditis</text>
-        <text x="180" y="154" font-size="10" fill="#1B3A2D">— anti-TPO antibodies destroy thyroid → <b>hypo</b>thyroid</text>
+        <text x="180" y="154" font-size="10" fill="#1B3A2D">anti-TPO antibodies destroy thyroid → <b>hypo</b>thyroid</text>
         <text x="15" y="180" font-size="11" font-weight="700" fill="#C25B3F">Graves disease</text>
-        <text x="180" y="180" font-size="10" fill="#1B3A2D">— TSH-receptor activating antibody → <b>hyper</b>thyroid + exophthalmos</text>
+        <text x="180" y="180" font-size="10" fill="#1B3A2D">TSH-receptor activating antibody → <b>hyper</b>thyroid + exophthalmos</text>
         <text x="15" y="206" font-size="11" font-weight="700" fill="#C25B3F">Myasthenia Gravis</text>
-        <text x="180" y="206" font-size="10" fill="#1B3A2D">— anti-ACh receptor antibodies → muscle weakness, fatigue</text>
+        <text x="180" y="206" font-size="10" fill="#1B3A2D">anti-ACh receptor antibodies → muscle weakness, fatigue</text>
         <text x="15" y="232" font-size="11" font-weight="700" fill="#C25B3F">Celiac disease</text>
-        <text x="180" y="232" font-size="10" fill="#1B3A2D">— gluten triggers anti-tTG → small intestine villus atrophy</text>
+        <text x="180" y="232" font-size="10" fill="#1B3A2D">gluten triggers anti-tTG → small intestine villus atrophy</text>
         <text x="15" y="258" font-size="11" font-weight="700" fill="#C25B3F">Goodpasture syndrome</text>
-        <text x="180" y="258" font-size="10" fill="#1B3A2D">— anti-collagen IV → kidneys + lungs hemorrhage</text>
+        <text x="180" y="258" font-size="10" fill="#1B3A2D">anti-collagen IV → kidneys + lungs hemorrhage</text>
         <text x="15" y="284" font-size="11" font-weight="700" fill="#C25B3F">Pernicious anemia</text>
-        <text x="180" y="284" font-size="10" fill="#1B3A2D">— anti-intrinsic factor → no B12 absorption → megaloblastic anemia</text>
+        <text x="180" y="284" font-size="10" fill="#1B3A2D">anti-intrinsic factor → no B12 absorption → megaloblastic anemia</text>
         <text x="15" y="320" font-size="12" font-weight="700" fill="#1B3A2D">WHY DOES IT HAPPEN?</text>
         <text x="15" y="338" font-size="10" fill="#1B3A2D">• Failure of central tolerance (thymus didn\'t kill self-reactive T cells)</text>
         <text x="15" y="354" font-size="10" fill="#1B3A2D">• Failure of peripheral tolerance (Treg dysfunction)</text>
@@ -6879,7 +6879,7 @@ function initEndocrineTable() {
       <text x="345" y="399" text-anchor="middle" font-size="9" font-weight="700" fill="#fff">ovary</text>
       <ellipse cx="445" cy="395" rx="22" ry="14" fill="#a378a5" stroke="#1B3A2D" stroke-width="2"/>
       <text x="445" y="399" text-anchor="middle" font-size="9" font-weight="700" fill="#fff">testis</text>
-      <text x="395" y="425" text-anchor="middle" font-size="8" fill="#1B3A2D">(gonads — sex hormones)</text>
+      <text x="395" y="425" text-anchor="middle" font-size="8" fill="#1B3A2D">(gonads, sex hormones)</text>
       <text x="395" y="475" text-anchor="middle" font-size="9" font-weight="700" fill="#1B3A2D">Hypothalamus → Pituitary → Target Gland</text>
       <text x="395" y="495" text-anchor="middle" font-size="9" fill="#1B3A2D">All controlled by negative feedback (target hormone shuts off upstream).</text>
       <text x="395" y="510" text-anchor="middle" font-size="9" fill="#1B3A2D">Exception: estrogen surge before ovulation = positive feedback.</text>
@@ -6916,7 +6916,7 @@ function initEndocrineTable() {
       </table>
     </div>
     <div style="margin-top:12px;background:rgba(194,91,63,0.08);border-left:4px solid #C25B3F;padding:12px 16px;border-radius:6px">
-      <p style="font-size:12px;color:#1B3A2D;margin:0"><b>Mnemonic — peptide vs steroid:</b> peptide hormones (insulin, GH, ADH) bind <b>membrane receptors</b> → 2nd messengers; steroids (cortisol, aldosterone, sex hormones) cross the membrane → bind <b>cytoplasmic/nuclear receptors</b> → modify transcription. Thyroid hormones (T3/T4) act like steroids despite being amino-acid-derived.</p>
+      <p style="font-size:12px;color:#1B3A2D;margin:0"><b>Mnemonic: peptide vs steroid:</b> peptide hormones (insulin, GH, ADH) bind <b>membrane receptors</b> → 2nd messengers; steroids (cortisol, aldosterone, sex hormones) cross the membrane → bind <b>cytoplasmic/nuclear receptors</b> → modify transcription. Thyroid hormones (T3/T4) act like steroids despite being amino-acid-derived.</p>
     </div>
   `;
 }
@@ -6938,7 +6938,7 @@ const BLOOD_DATA = {
       <text x="395" y="165" font-size="9" fill="#1B3A2D">• Clotting factors</text>
       <text x="395" y="180" font-size="9" fill="#1B3A2D">• Glucose, ions, urea</text>
       <text x="395" y="195" font-size="9" fill="#1B3A2D">• Hormones, gases</text>
-      <text x="395" y="220" font-size="9" font-weight="700" fill="#a378a5">Buffy coat (~1%) — WBCs + platelets</text>
+      <text x="395" y="220" font-size="9" font-weight="700" fill="#a378a5">Buffy coat (~1%): WBCs + platelets</text>
       <text x="395" y="245" font-size="10" font-weight="700" fill="#fff">FORMED ELEMENTS</text>
       <text x="395" y="260" font-size="9" fill="#fff">~45% of volume</text>
       <text x="395" y="282" font-size="9" fill="#fff">• Erythrocytes (RBCs)</text>
@@ -7003,7 +7003,7 @@ const BLOOD_DATA = {
         <rect width="700" height="200" fill="#fff" stroke="#1B3A2D" stroke-width="1.5" rx="6"/>
         <text x="15" y="22" font-size="11" font-weight="700" fill="#1B3A2D">COMPATIBILITY (PLASMA ANTIBODIES SHOULD NOT FIND DONOR ANTIGEN)</text>
         <text x="15" y="50" font-size="10" fill="#1B3A2D"><b>Type A</b> can receive A + O · <b>Type B</b> can receive B + O</text>
-        <text x="15" y="68" font-size="10" fill="#1B3A2D"><b>Type AB</b> can receive ALL (universal recipient — no antibodies in plasma)</text>
+        <text x="15" y="68" font-size="10" fill="#1B3A2D"><b>Type AB</b> can receive ALL (universal recipient, no antibodies in plasma)</text>
         <text x="15" y="86" font-size="10" fill="#1B3A2D"><b>Type O</b> can receive only O (has anti-A AND anti-B). But O negative can DONATE red cells to all.</text>
         <text x="15" y="120" font-size="11" font-weight="700" fill="#1B3A2D">Rh FACTOR (D antigen)</text>
         <text x="15" y="140" font-size="10" fill="#1B3A2D"><b>Rh⁺</b> (85%): has D antigen, no anti-D antibodies.</text>
@@ -7012,7 +7012,7 @@ const BLOOD_DATA = {
         <text x="15" y="190" font-size="10" font-weight="700" fill="#C25B3F">RhoGAM (anti-D Ig) given to Rh⁻ moms at 28 weeks + post-delivery prevents sensitization.</text>
       </g>
     </svg>`,
-    info:'<b>ABO:</b> classic codominance + multiple alleles.<br>• <b>Type A</b>: A antigen, anti-B in plasma.<br>• <b>Type B</b>: B antigen, anti-A.<br>• <b>Type AB</b>: both antigens, no antibodies → <b>universal recipient</b>.<br>• <b>Type O</b>: no A or B antigen, both antibodies, so <b>universal donor</b> (O negative).<br><b>Rh:</b> D antigen present (Rh⁺) or absent (Rh⁻). Rh⁻ doesn\'t make anti-D until exposed.<br><b>HDN:</b> Rh⁻ mom carrying 2nd Rh⁺ baby — antibodies from 1st pregnancy attack fetal RBCs. Prevented by RhoGAM.<br><b>Transfusion mismatch</b> = Type II hypersensitivity → hemolysis.',
+    info:'<b>ABO:</b> classic codominance + multiple alleles.<br>• <b>Type A</b>: A antigen, anti-B in plasma.<br>• <b>Type B</b>: B antigen, anti-A.<br>• <b>Type AB</b>: both antigens, no antibodies → <b>universal recipient</b>.<br>• <b>Type O</b>: no A or B antigen, both antibodies, so <b>universal donor</b> (O negative).<br><b>Rh:</b> D antigen present (Rh⁺) or absent (Rh⁻). Rh⁻ doesn\'t make anti-D until exposed.<br><b>HDN:</b> Rh⁻ mom carrying 2nd Rh⁺ baby, antibodies from 1st pregnancy attack fetal RBCs. Prevented by RhoGAM.<br><b>Transfusion mismatch</b> = Type II hypersensitivity → hemolysis.',
   },
   hemo: {
     label:'Hemoglobin & Erythrocytes',
@@ -7049,7 +7049,7 @@ const BLOOD_DATA = {
         <text x="15" y="22" font-size="11" font-weight="700" fill="#1B3A2D">VARIANTS</text>
         <text x="15" y="40" font-size="10" fill="#1B3A2D"><b>HbA</b> = adult (2α2β · 97%) · <b>HbA2</b> (2α2δ · 2.5%) · <b>HbF</b> = fetal (2α2γ · &lt;1% adult, higher O₂ affinity)</text>
         <text x="15" y="58" font-size="10" fill="#1B3A2D"><b>HbS</b> = sickle (β-Glu6Val) · single missense → polymerizes when deoxy → sickled RBCs · <b>HbC</b> = β-Glu6Lys</text>
-        <text x="15" y="73" font-size="10" font-weight="700" fill="#C25B3F">Sickle trait (heterozygous) protects against malaria — heterozygote advantage.</text>
+        <text x="15" y="73" font-size="10" font-weight="700" fill="#C25B3F">Sickle trait (heterozygous) protects against malaria, heterozygote advantage.</text>
       </g>
       <g transform="translate(620, 200)">
         <text x="0" y="0" font-size="10" font-weight="700" fill="#1B3A2D">RBC LIFECYCLE</text>
@@ -7063,7 +7063,7 @@ const BLOOD_DATA = {
         <text x="0" y="125" font-size="9" fill="#1B3A2D">+ urobilin (urine).</text>
       </g>
     </svg>`,
-    info:'<b>RBCs</b>: anucleate biconcave discs, packed with hemoglobin. Made under EPO (kidney sensor for low O₂). 120-day lifespan. Recycled in spleen/liver.<br><b>Hemoglobin:</b> 2α + 2β globin chains, each with one heme (Fe²⁺) that binds one O₂ → 4 O₂ per Hb. <b>Cooperative binding</b> = sigmoidal O₂ dissociation curve.<br><b>Variants:</b> HbA (adult), HbF (fetal, higher affinity → grabs O₂ from mom), HbS (sickle — β-Glu6Val, polymerizes).<br><b>Heme breakdown:</b> heme → biliverdin → bilirubin (unconjugated) → liver conjugates → bile → stercobilin/urobilin (gives stool/urine color). Excess unconjugated bili = jaundice.',
+    info:'<b>RBCs</b>: anucleate biconcave discs, packed with hemoglobin. Made under EPO (kidney sensor for low O₂). 120-day lifespan. Recycled in spleen/liver.<br><b>Hemoglobin:</b> 2α + 2β globin chains, each with one heme (Fe²⁺) that binds one O₂ → 4 O₂ per Hb. <b>Cooperative binding</b> = sigmoidal O₂ dissociation curve.<br><b>Variants:</b> HbA (adult), HbF (fetal, higher affinity → grabs O₂ from mom), HbS (sickle, β-Glu6Val, polymerizes).<br><b>Heme breakdown:</b> heme → biliverdin → bilirubin (unconjugated) → liver conjugates → bile → stercobilin/urobilin (gives stool/urine color). Excess unconjugated bili = jaundice.',
   },
   clot: {
     label:'Clotting Cascade',
@@ -7124,7 +7124,7 @@ const BLOOD_DATA = {
       </g>
       <text x="50" y="535" font-size="10" fill="#1B3A2D">Vit K-dependent factors: <b>II, VII, IX, X</b> (and proteins C, S). Anti-thrombin III + heparin oppose clotting.</text>
     </svg>`,
-    info:'<b>Hemostasis = 3 stages:</b><br>1. <b>Vascular spasm</b> — vessel constricts immediately.<br>2. <b>Platelet plug</b> — primary hemostasis. Platelets adhere via vWF + collagen, activate, release ADP/TXA2, aggregate.<br>3. <b>Coagulation cascade</b> — secondary hemostasis. Extrinsic (tissue factor → VII, fast) + Intrinsic (contact → XII XI IX VIII) → both converge on Factor X → Xa → thrombin → fibrin mesh.<br><b>Vitamin K-dependent factors:</b> II, VII, IX, X + proteins C, S. <b>Warfarin</b> blocks vitamin K reductase.<br><b>Tests:</b> PT/INR = extrinsic + common (warfarin). PTT = intrinsic + common (heparin).<br><b>Hemophilia A:</b> Factor VIII deficiency (X-linked recessive).',
+    info:'<b>Hemostasis = 3 stages:</b><br>1. <b>Vascular spasm</b>, vessel constricts immediately.<br>2. <b>Platelet plug</b>, primary hemostasis. Platelets adhere via vWF + collagen, activate, release ADP/TXA2, aggregate.<br>3. <b>Coagulation cascade</b>, secondary hemostasis. Extrinsic (tissue factor → VII, fast) + Intrinsic (contact → XII XI IX VIII) → both converge on Factor X → Xa → thrombin → fibrin mesh.<br><b>Vitamin K-dependent factors:</b> II, VII, IX, X + proteins C, S. <b>Warfarin</b> blocks vitamin K reductase.<br><b>Tests:</b> PT/INR = extrinsic + common (warfarin). PTT = intrinsic + common (heparin).<br><b>Hemophilia A:</b> Factor VIII deficiency (X-linked recessive).',
   },
   lymph: {
     label:'Lymphatic System',
@@ -7171,9 +7171,9 @@ const BLOOD_DATA = {
         <text x="15" y="184" font-size="10" fill="#1B3A2D">MALT (mucosa-associated lymphoid tissue). Surveillance at barriers.</text>
       </g>
       <text x="60" y="430" font-size="10" font-weight="700" fill="#1B3A2D">FLOW: lymph capillary (one-way) → lymph vessel (with valves) → lymph node → trunk → thoracic duct/right lymphatic duct → subclavian vein.</text>
-      <text x="60" y="450" font-size="9" fill="#C25B3F" font-weight="700">No pump — relies on skeletal muscle compression + valves. Edema = lymph drainage failure.</text>
+      <text x="60" y="450" font-size="9" fill="#C25B3F" font-weight="700">No pump: relies on skeletal muscle compression + valves. Edema = lymph drainage failure.</text>
     </svg>`,
-    info:'<b>Lymphatic system = 3 jobs:</b><br>1. <b>Drainage:</b> ~3 L/day of tissue fluid that doesn\'t make it back into capillaries → lymph → thoracic duct → left subclavian vein.<br>2. <b>Fat absorption:</b> lacteals pick up chylomicrons from villi.<br>3. <b>Immune surveillance:</b> lymph nodes filter pathogens; B + T cells live there.<br><b>Organs:</b> tonsils (entrance), thymus (T-cell training), spleen (blood filter), lymph nodes (along vessels), Peyer\'s patches (gut), appendix.<br><b>No pump</b> — uses skeletal muscle squeeze + valves. Lymphedema = drainage failure.',
+    info:'<b>Lymphatic system = 3 jobs:</b><br>1. <b>Drainage:</b> ~3 L/day of tissue fluid that doesn\'t make it back into capillaries → lymph → thoracic duct → left subclavian vein.<br>2. <b>Fat absorption:</b> lacteals pick up chylomicrons from villi.<br>3. <b>Immune surveillance:</b> lymph nodes filter pathogens; B + T cells live there.<br><b>Organs:</b> tonsils (entrance), thymus (T-cell training), spleen (blood filter), lymph nodes (along vessels), Peyer\'s patches (gut), appendix.<br><b>No pump</b>, uses skeletal muscle squeeze + valves. Lymphedema = drainage failure.',
   },
   vessels: {
     label:'Vessel Types',
@@ -7283,7 +7283,7 @@ const NEURO_DATA = {
         <text x="15" y="42" font-size="10" fill="#1B3A2D"><b>Sensory (afferent):</b> sense → CNS · <b>Motor (efferent):</b> CNS → effector · <b>Interneuron:</b> CNS-only relay</text>
         <text x="15" y="68" font-size="11" font-weight="700" fill="#1B3A2D">GLIAL CELLS (no signaling, support neurons)</text>
         <text x="15" y="84" font-size="10" fill="#1B3A2D">CNS: <b>oligodendrocytes</b> (myelin) · <b>astrocytes</b> (BBB) · <b>microglia</b> (immune) · <b>ependymal</b> (CSF)</text>
-        <text x="15" y="100" font-size="10" fill="#1B3A2D">PNS: <b>Schwann cells</b> (one cell wraps one axon — myelin) · <b>satellite</b> (around ganglia)</text>
+        <text x="15" y="100" font-size="10" fill="#1B3A2D">PNS: <b>Schwann cells</b> (one cell wraps one axon, myelin) · <b>satellite</b> (around ganglia)</text>
       </g>
     </svg>`,
     info:'<b>Neuron parts:</b><br>• <b>Dendrites</b>: receive signals (graded potentials).<br>• <b>Soma (cell body)</b>: contains nucleus + organelles.<br>• <b>Axon hillock</b>: integrates inputs; threshold reached → AP fires.<br>• <b>Axon</b>: propagates AP. Wrapped in myelin (oligodendrocytes in CNS, Schwann cells in PNS).<br>• <b>Nodes of Ranvier</b>: gaps in myelin → saltatory conduction.<br>• <b>Axon terminals</b>: release neurotransmitters at synapse.<br><b>Functional types:</b> sensory (afferent), motor (efferent), interneuron.<br><b>Glia:</b> oligodendrocytes (CNS myelin, multiple axons), Schwann (PNS myelin, one axon), astrocytes (BBB), microglia (immune), ependymal (CSF).',
@@ -7333,7 +7333,7 @@ const NEURO_DATA = {
         <text x="15" y="354" font-size="10" font-weight="700" fill="#5FA874">Summation: many EPSPs → reach threshold → AP in postsynaptic cell</text>
       </g>
     </svg>`,
-    info:'<b>Synaptic transmission (7 steps):</b><br>1. AP arrives at axon terminal.<br>2. Depolarization opens <b>voltage-gated Ca²⁺ channels</b> → Ca²⁺ floods in.<br>3. Ca²⁺ binds synaptotagmin → SNARE proteins zip vesicles to membrane.<br>4. Vesicles fuse → exocytose neurotransmitter into the cleft (~20 nm).<br>5. NT binds receptors on postsynaptic membrane.<br>6. <b>EPSP</b> (excitatory; Na⁺ in) or <b>IPSP</b> (inhibitory; Cl⁻ in or K⁺ out).<br>7. Termination: reuptake (transporters), enzymatic breakdown, or diffusion.<br><b>Receptor types:</b> ionotropic (ligand-gated channels — fast) vs metabotropic (GPCRs — slower, longer-lasting).',
+    info:'<b>Synaptic transmission (7 steps):</b><br>1. AP arrives at axon terminal.<br>2. Depolarization opens <b>voltage-gated Ca²⁺ channels</b> → Ca²⁺ floods in.<br>3. Ca²⁺ binds synaptotagmin → SNARE proteins zip vesicles to membrane.<br>4. Vesicles fuse → exocytose neurotransmitter into the cleft (~20 nm).<br>5. NT binds receptors on postsynaptic membrane.<br>6. <b>EPSP</b> (excitatory; Na⁺ in) or <b>IPSP</b> (inhibitory; Cl⁻ in or K⁺ out).<br>7. Termination: reuptake (transporters), enzymatic breakdown, or diffusion.<br><b>Receptor types:</b> ionotropic (ligand-gated channels, fast) vs metabotropic (GPCRs: slower, longer-lasting).',
   },
   ntlist: {
     label:'Neurotransmitter Reference',
@@ -7351,7 +7351,7 @@ const NEURO_DATA = {
             <tr><td style="padding:5px;border:1px solid #1B3A2D;font-weight:700">Glycine</td><td style="padding:5px;border:1px solid #1B3A2D">amino acid</td><td style="padding:5px;border:1px solid #1B3A2D">inhibitory (spinal cord)</td><td style="padding:5px;border:1px solid #1B3A2D">spinal cord; strychnine blocks → seizures</td></tr>
             <tr><td style="padding:5px;border:1px solid #1B3A2D;font-weight:700">Dopamine (DA)</td><td style="padding:5px;border:1px solid #1B3A2D">monoamine</td><td style="padding:5px;border:1px solid #1B3A2D">reward, motor</td><td style="padding:5px;border:1px solid #1B3A2D">substantia nigra (↓Parkinson); mesolimbic (↑addiction)</td></tr>
             <tr><td style="padding:5px;border:1px solid #1B3A2D;font-weight:700">Norepinephrine (NE)</td><td style="padding:5px;border:1px solid #1B3A2D">monoamine</td><td style="padding:5px;border:1px solid #1B3A2D">arousal, sympathetic</td><td style="padding:5px;border:1px solid #1B3A2D">locus coeruleus; sympathetic post; ↓ depression</td></tr>
-            <tr><td style="padding:5px;border:1px solid #1B3A2D;font-weight:700">Epinephrine</td><td style="padding:5px;border:1px solid #1B3A2D">monoamine</td><td style="padding:5px;border:1px solid #1B3A2D">fight-or-flight</td><td style="padding:5px;border:1px solid #1B3A2D">adrenal medulla (released into blood — hormone too)</td></tr>
+            <tr><td style="padding:5px;border:1px solid #1B3A2D;font-weight:700">Epinephrine</td><td style="padding:5px;border:1px solid #1B3A2D">monoamine</td><td style="padding:5px;border:1px solid #1B3A2D">fight-or-flight</td><td style="padding:5px;border:1px solid #1B3A2D">adrenal medulla (released into blood, hormone too)</td></tr>
             <tr><td style="padding:5px;border:1px solid #1B3A2D;font-weight:700">Serotonin (5-HT)</td><td style="padding:5px;border:1px solid #1B3A2D">monoamine</td><td style="padding:5px;border:1px solid #1B3A2D">mood, sleep, gut</td><td style="padding:5px;border:1px solid #1B3A2D">raphe nuclei; SSRIs ↑ for depression; 90% in gut</td></tr>
             <tr><td style="padding:5px;border:1px solid #1B3A2D;font-weight:700">Histamine</td><td style="padding:5px;border:1px solid #1B3A2D">monoamine</td><td style="padding:5px;border:1px solid #1B3A2D">wakefulness, allergy</td><td style="padding:5px;border:1px solid #1B3A2D">tuberomammillary; antihistamines = sleepy</td></tr>
             <tr><td style="padding:5px;border:1px solid #1B3A2D;font-weight:700">Endorphins</td><td style="padding:5px;border:1px solid #1B3A2D">peptide</td><td style="padding:5px;border:1px solid #1B3A2D">pain modulation</td><td style="padding:5px;border:1px solid #1B3A2D">PAG, hypothalamus; opioid receptors = morphine target</td></tr>
@@ -7361,7 +7361,7 @@ const NEURO_DATA = {
         </table>
       </foreignObject>
     </svg>`,
-    info:'<b>Six families of neurotransmitters:</b><br>• <b>Acetyl ester</b>: ACh — NMJ + parasympathetic + brain memory.<br>• <b>Amino acids</b>: glutamate (main excite), GABA (main inhibitory in brain), glycine (inhibitory in spinal cord).<br>• <b>Monoamines</b>: dopamine, NE, epi, serotonin, histamine — derived from tyrosine or tryptophan.<br>• <b>Peptides</b>: endorphins, substance P, etc.<br>• <b>Purines</b>: ATP, adenosine.<br>• <b>Gases</b>: NO, CO — made on demand, not stored.<br><b>Excitatory vs inhibitory</b> depends on the receptor, not just the NT — ACh excites at NMJ but inhibits at heart muscarinic receptors.',
+    info:'<b>Six families of neurotransmitters:</b><br>• <b>Acetyl ester</b>: ACh: NMJ + parasympathetic + brain memory.<br>• <b>Amino acids</b>: glutamate (main excite), GABA (main inhibitory in brain), glycine (inhibitory in spinal cord).<br>• <b>Monoamines</b>: dopamine, NE, epi, serotonin, histamine, derived from tyrosine or tryptophan.<br>• <b>Peptides</b>: endorphins, substance P, etc.<br>• <b>Purines</b>: ATP, adenosine.<br>• <b>Gases</b>: NO, CO, made on demand, not stored.<br><b>Excitatory vs inhibitory</b> depends on the receptor, not just the NT, ACh excites at NMJ but inhibits at heart muscarinic receptors.',
   },
   cnspns: {
     label:'CNS vs PNS',
@@ -7440,15 +7440,15 @@ const NEURO_DATA = {
       <g transform="translate(40, 320)">
         <rect width="720" height="120" fill="#fff" stroke="#1B3A2D" stroke-width="1.5" rx="6"/>
         <text x="15" y="22" font-size="11" font-weight="700" fill="#1B3A2D">5 COMPONENTS OF A REFLEX ARC</text>
-        <text x="15" y="42" font-size="10" fill="#1B3A2D">1. <b>Receptor</b> — muscle spindle in this case (senses stretch)</text>
-        <text x="15" y="58" font-size="10" fill="#1B3A2D">2. <b>Sensory neuron</b> — carries impulse to spinal cord (afferent)</text>
-        <text x="15" y="74" font-size="10" fill="#1B3A2D">3. <b>Integration center</b> — spinal cord (sometimes with interneuron between sensory + motor)</text>
-        <text x="15" y="90" font-size="10" fill="#1B3A2D">4. <b>Motor neuron</b> — carries response to muscle (efferent)</text>
-        <text x="15" y="106" font-size="10" fill="#1B3A2D">5. <b>Effector</b> — muscle that performs the response</text>
+        <text x="15" y="42" font-size="10" fill="#1B3A2D">1. <b>Receptor</b>, muscle spindle in this case (senses stretch)</text>
+        <text x="15" y="58" font-size="10" fill="#1B3A2D">2. <b>Sensory neuron</b>, carries impulse to spinal cord (afferent)</text>
+        <text x="15" y="74" font-size="10" fill="#1B3A2D">3. <b>Integration center</b>, spinal cord (sometimes with interneuron between sensory + motor)</text>
+        <text x="15" y="90" font-size="10" fill="#1B3A2D">4. <b>Motor neuron</b>, carries response to muscle (efferent)</text>
+        <text x="15" y="106" font-size="10" fill="#1B3A2D">5. <b>Effector</b>, muscle that performs the response</text>
       </g>
       <defs><marker id="nr-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" fill="#1B3A2D"/></marker></defs>
     </svg>`,
-    info:'<b>Reflex arc = 5 components:</b><br>1. <b>Receptor</b> (e.g., muscle spindle senses stretch).<br>2. <b>Sensory neuron</b> (afferent) → spinal cord.<br>3. <b>Integration center</b> (spinal cord — often just one synapse for fastest reflexes).<br>4. <b>Motor neuron</b> (efferent) → effector.<br>5. <b>Effector</b> (e.g., muscle).<br><b>Monosynaptic reflex</b> (knee-jerk): only one synapse — sensory directly to motor. Fastest possible.<br><b>Polysynaptic reflex</b> (withdrawal, e.g., touching hot stove): includes interneurons → also activates contralateral muscles.<br><b>Why bypass brain?</b> Speed. Reflex acts before brain processes the signal.',
+    info:'<b>Reflex arc = 5 components:</b><br>1. <b>Receptor</b> (e.g., muscle spindle senses stretch).<br>2. <b>Sensory neuron</b> (afferent) → spinal cord.<br>3. <b>Integration center</b> (spinal cord, often just one synapse for fastest reflexes).<br>4. <b>Motor neuron</b> (efferent) → effector.<br>5. <b>Effector</b> (e.g., muscle).<br><b>Monosynaptic reflex</b> (knee-jerk): only one synapse, sensory directly to motor. Fastest possible.<br><b>Polysynaptic reflex</b> (withdrawal, e.g., touching hot stove): includes interneurons → also activates contralateral muscles.<br><b>Why bypass brain?</b> Speed. Reflex acts before brain processes the signal.',
   },
   auto: {
     label:'Sympathetic vs Parasympathetic',
@@ -7460,19 +7460,19 @@ const NEURO_DATA = {
             <tr><th style="padding:8px;border:1px solid #1B3A2D;text-align:left;color:#1B3A2D;width:25%">Organ</th><th style="padding:8px;border:1px solid #1B3A2D;text-align:left;color:#C25B3F">Sympathetic ("Fight/Flight")</th><th style="padding:8px;border:1px solid #1B3A2D;text-align:left;color:#5FA874">Parasympathetic ("Rest/Digest")</th></tr>
           </thead>
           <tbody>
-            <tr><td style="padding:6px;border:1px solid #1B3A2D;font-weight:700">Heart</td><td style="padding:6px;border:1px solid #1B3A2D">↑ rate, ↑ contractility (β1)</td><td style="padding:6px;border:1px solid #1B3A2D">↓ rate (M2 — vagus)</td></tr>
-            <tr><td style="padding:6px;border:1px solid #1B3A2D;font-weight:700">Bronchi</td><td style="padding:6px;border:1px solid #1B3A2D">Dilate (β2 — easier breathing)</td><td style="padding:6px;border:1px solid #1B3A2D">Constrict (M3)</td></tr>
+            <tr><td style="padding:6px;border:1px solid #1B3A2D;font-weight:700">Heart</td><td style="padding:6px;border:1px solid #1B3A2D">↑ rate, ↑ contractility (β1)</td><td style="padding:6px;border:1px solid #1B3A2D">↓ rate (M2: vagus)</td></tr>
+            <tr><td style="padding:6px;border:1px solid #1B3A2D;font-weight:700">Bronchi</td><td style="padding:6px;border:1px solid #1B3A2D">Dilate (β2: easier breathing)</td><td style="padding:6px;border:1px solid #1B3A2D">Constrict (M3)</td></tr>
             <tr><td style="padding:6px;border:1px solid #1B3A2D;font-weight:700">Pupil</td><td style="padding:6px;border:1px solid #1B3A2D">Dilate / mydriasis (α1)</td><td style="padding:6px;border:1px solid #1B3A2D">Constrict / miosis (M3)</td></tr>
             <tr><td style="padding:6px;border:1px solid #1B3A2D;font-weight:700">Salivary glands</td><td style="padding:6px;border:1px solid #1B3A2D">Thick, scant secretion</td><td style="padding:6px;border:1px solid #1B3A2D">Watery, copious</td></tr>
             <tr><td style="padding:6px;border:1px solid #1B3A2D;font-weight:700">GI tract motility</td><td style="padding:6px;border:1px solid #1B3A2D">↓ (slow digestion)</td><td style="padding:6px;border:1px solid #1B3A2D">↑ (peristalsis)</td></tr>
             <tr><td style="padding:6px;border:1px solid #1B3A2D;font-weight:700">GI sphincters</td><td style="padding:6px;border:1px solid #1B3A2D">Contract (close)</td><td style="padding:6px;border:1px solid #1B3A2D">Relax (open)</td></tr>
             <tr><td style="padding:6px;border:1px solid #1B3A2D;font-weight:700">Liver</td><td style="padding:6px;border:1px solid #1B3A2D">Glycogenolysis, gluconeogenesis</td><td style="padding:6px;border:1px solid #1B3A2D">Glycogen synthesis</td></tr>
-            <tr><td style="padding:6px;border:1px solid #1B3A2D;font-weight:700">Kidney</td><td style="padding:6px;border:1px solid #1B3A2D">Renin release (RAAS)</td><td style="padding:6px;border:1px solid #1B3A2D">— minimal effect</td></tr>
-            <tr><td style="padding:6px;border:1px solid #1B3A2D;font-weight:700">Bladder wall</td><td style="padding:6px;border:1px solid #1B3A2D">Relax (β2 — store urine)</td><td style="padding:6px;border:1px solid #1B3A2D">Contract (M3 — void)</td></tr>
+            <tr><td style="padding:6px;border:1px solid #1B3A2D;font-weight:700">Kidney</td><td style="padding:6px;border:1px solid #1B3A2D">Renin release (RAAS)</td><td style="padding:6px;border:1px solid #1B3A2D">minimal effect</td></tr>
+            <tr><td style="padding:6px;border:1px solid #1B3A2D;font-weight:700">Bladder wall</td><td style="padding:6px;border:1px solid #1B3A2D">Relax (β2: store urine)</td><td style="padding:6px;border:1px solid #1B3A2D">Contract (M3: void)</td></tr>
             <tr><td style="padding:6px;border:1px solid #1B3A2D;font-weight:700">Bladder sphincter</td><td style="padding:6px;border:1px solid #1B3A2D">Contract (close)</td><td style="padding:6px;border:1px solid #1B3A2D">Relax (open)</td></tr>
-            <tr><td style="padding:6px;border:1px solid #1B3A2D;font-weight:700">Sweat glands</td><td style="padding:6px;border:1px solid #1B3A2D">↑ (M3 — exception: ACh, not NE!)</td><td style="padding:6px;border:1px solid #1B3A2D">— no innervation</td></tr>
-            <tr><td style="padding:6px;border:1px solid #1B3A2D;font-weight:700">Adrenal medulla</td><td style="padding:6px;border:1px solid #1B3A2D">Release Epi/NE (modified ganglion!)</td><td style="padding:6px;border:1px solid #1B3A2D">— no innervation</td></tr>
-            <tr><td style="padding:6px;border:1px solid #1B3A2D;font-weight:700">Vasculature (most)</td><td style="padding:6px;border:1px solid #1B3A2D">Constrict (α1) — ↑BP</td><td style="padding:6px;border:1px solid #1B3A2D">— mostly no innervation</td></tr>
+            <tr><td style="padding:6px;border:1px solid #1B3A2D;font-weight:700">Sweat glands</td><td style="padding:6px;border:1px solid #1B3A2D">↑ (M3: exception: ACh, not NE)</td><td style="padding:6px;border:1px solid #1B3A2D">no innervation</td></tr>
+            <tr><td style="padding:6px;border:1px solid #1B3A2D;font-weight:700">Adrenal medulla</td><td style="padding:6px;border:1px solid #1B3A2D">Release Epi/NE (modified ganglion)</td><td style="padding:6px;border:1px solid #1B3A2D">no innervation</td></tr>
+            <tr><td style="padding:6px;border:1px solid #1B3A2D;font-weight:700">Vasculature (most)</td><td style="padding:6px;border:1px solid #1B3A2D">Constrict (α1): ↑BP</td><td style="padding:6px;border:1px solid #1B3A2D">mostly no innervation</td></tr>
             <tr><td style="padding:6px;border:1px solid #1B3A2D;font-weight:700">Genitalia</td><td style="padding:6px;border:1px solid #1B3A2D">Ejaculation</td><td style="padding:6px;border:1px solid #1B3A2D">Erection ("Point and Shoot")</td></tr>
           </tbody>
         </table>
@@ -7533,7 +7533,7 @@ const NEURO_DATA = {
         <text x="10" y="374" font-size="9" fill="#1B3A2D">HR, BP, breathing</text>
       </g>
     </svg>`,
-    info:'<b>4 cerebral lobes:</b><br>• <b>Frontal</b>: motor cortex, planning, decision-making, Broca\'s area (speech production).<br>• <b>Parietal</b>: somatosensory cortex, spatial awareness.<br>• <b>Temporal</b>: auditory cortex, memory (hippocampus), Wernicke\'s (speech comprehension).<br>• <b>Occipital</b>: visual cortex (V1).<br><b>Deep structures:</b> thalamus (sensory relay — except smell), hypothalamus (homeostasis, links nervous + endocrine), hippocampus (memory formation), amygdala (fear), basal ganglia (motor), substantia nigra (DA → Parkinson when degenerates).<br><b>Brain stem:</b> midbrain → pons → medulla (HR, BP, breathing).<br><b>Cerebellum:</b> balance, fine motor coordination, motor learning.',
+    info:'<b>4 cerebral lobes:</b><br>• <b>Frontal</b>: motor cortex, planning, decision-making, Broca\'s area (speech production).<br>• <b>Parietal</b>: somatosensory cortex, spatial awareness.<br>• <b>Temporal</b>: auditory cortex, memory (hippocampus), Wernicke\'s (speech comprehension).<br>• <b>Occipital</b>: visual cortex (V1).<br><b>Deep structures:</b> thalamus (sensory relay, except smell), hypothalamus (homeostasis, links nervous + endocrine), hippocampus (memory formation), amygdala (fear), basal ganglia (motor), substantia nigra (DA → Parkinson when degenerates).<br><b>Brain stem:</b> midbrain → pons → medulla (HR, BP, breathing).<br><b>Cerebellum:</b> balance, fine motor coordination, motor learning.',
   },
   senses: {
     label:'Special Senses · Eye + Ear',
@@ -7609,7 +7609,7 @@ const NEURO_DATA = {
         </g>
       </g>
     </svg>`,
-    info:'<b>EYE</b><br>• Light → cornea (refracts) → pupil → lens (accommodates) → vitreous → retina (rods/cones) → ganglion cells → optic nerve (CN II) → optic chiasm → LGN → V1.<br>• <b>Rods</b>: 120M, dim light, no color, peripheral.<br>• <b>Cones</b>: 6M, bright + color, fovea. R/G/B (long/medium/short wavelength).<br>• <b>Phototransduction:</b> light → opsin (retinal flips 11-cis to all-trans) → transducin → ↓cGMP → Na⁺ channels CLOSE → hyperpolarize → less glutamate to bipolar cells.<br><br><b>EAR</b><br>• <b>Outer:</b> pinna → canal → eardrum.<br>• <b>Middle:</b> ossicles (Malleus-Incus-Stapes) amplify ~22×. Eustachian tube equalizes pressure.<br>• <b>Inner:</b> cochlea (hearing — organ of Corti, hair cells, place coding) + semicircular canals (rotation) + utricle/saccule (linear).<br>• Sound: ossicles → oval window → fluid wave → basilar membrane vibrates → hair cells bend → depolarize → CN VIII.',
+    info:'<b>EYE</b><br>• Light → cornea (refracts) → pupil → lens (accommodates) → vitreous → retina (rods/cones) → ganglion cells → optic nerve (CN II) → optic chiasm → LGN → V1.<br>• <b>Rods</b>: 120M, dim light, no color, peripheral.<br>• <b>Cones</b>: 6M, bright + color, fovea. R/G/B (long/medium/short wavelength).<br>• <b>Phototransduction:</b> light → opsin (retinal flips 11-cis to all-trans) → transducin → ↓cGMP → Na⁺ channels CLOSE → hyperpolarize → less glutamate to bipolar cells.<br><br><b>EAR</b><br>• <b>Outer:</b> pinna → canal → eardrum.<br>• <b>Middle:</b> ossicles (Malleus-Incus-Stapes) amplify ~22×. Eustachian tube equalizes pressure.<br>• <b>Inner:</b> cochlea (hearing, organ of Corti, hair cells, place coding) + semicircular canals (rotation) + utricle/saccule (linear).<br>• Sound: ossicles → oval window → fluid wave → basilar membrane vibrates → hair cells bend → depolarize → CN VIII.',
   },
 };
 function neuroSetMode(mode) {
@@ -7634,7 +7634,7 @@ function initBodyMuscle() {
 
       <g transform="translate(40, 60)">
         <rect width="270" height="200" fill="#1a0d12" stroke="#1B3A2D" stroke-width="2.5" rx="8"/>
-        <text x="135" y="22" text-anchor="middle" font-size="11" font-weight="700" fill="#F0E9D6" letter-spacing="0.14em">SKELETAL — striated, voluntary</text>
+        <text x="135" y="22" text-anchor="middle" font-size="11" font-weight="700" fill="#F0E9D6" letter-spacing="0.14em">SKELETAL: striated, voluntary</text>
         <line x1="20" y1="60" x2="250" y2="60" stroke="#C25B3F" stroke-width="14"/>
         <line x1="20" y1="60" x2="250" y2="60" stroke="#7a2418" stroke-width="2" stroke-dasharray="6 4"/>
         <line x1="20" y1="90" x2="250" y2="90" stroke="#C25B3F" stroke-width="14"/>
@@ -7657,7 +7657,7 @@ function initBodyMuscle() {
 
       <g transform="translate(330, 60)">
         <rect width="270" height="200" fill="#1a0d12" stroke="#1B3A2D" stroke-width="2.5" rx="8"/>
-        <text x="135" y="22" text-anchor="middle" font-size="11" font-weight="700" fill="#F0E9D6" letter-spacing="0.14em">CARDIAC — striated, involuntary</text>
+        <text x="135" y="22" text-anchor="middle" font-size="11" font-weight="700" fill="#F0E9D6" letter-spacing="0.14em">CARDIAC: striated, involuntary</text>
         <path d="M 20 70 Q 50 60 90 80 Q 110 60 145 70 Q 180 80 215 65 Q 240 70 250 80" stroke="#C25B3F" stroke-width="22" fill="none" stroke-linecap="round"/>
         <path d="M 20 110 Q 60 130 110 105 Q 145 110 175 125 Q 210 105 250 115" stroke="#C25B3F" stroke-width="22" fill="none" stroke-linecap="round"/>
         <path d="M 20 155 Q 80 140 130 160 Q 175 140 220 155 Q 240 160 250 150" stroke="#C25B3F" stroke-width="22" fill="none" stroke-linecap="round"/>
@@ -7676,7 +7676,7 @@ function initBodyMuscle() {
 
       <g transform="translate(620, 60)">
         <rect width="240" height="200" fill="#1a0d12" stroke="#1B3A2D" stroke-width="2.5" rx="8"/>
-        <text x="120" y="22" text-anchor="middle" font-size="11" font-weight="700" fill="#F0E9D6" letter-spacing="0.14em">SMOOTH — non-striated, involuntary</text>
+        <text x="120" y="22" text-anchor="middle" font-size="11" font-weight="700" fill="#F0E9D6" letter-spacing="0.14em">SMOOTH: non-striated, involuntary</text>
         <ellipse cx="55" cy="80" rx="38" ry="11" fill="#C25B3F" stroke="#7a2418" stroke-width="0.5"/>
         <ellipse cx="135" cy="70" rx="40" ry="11" fill="#C25B3F" stroke="#7a2418" stroke-width="0.5"/>
         <ellipse cx="190" cy="85" rx="35" ry="10" fill="#C25B3F" stroke="#7a2418" stroke-width="0.5"/>
@@ -7705,8 +7705,8 @@ function initBodyMuscle() {
             <tr><td style="padding:6px;border:1px solid #1B3A2D;font-weight:700">Cell shape</td><td style="padding:6px;border:1px solid #1B3A2D">Long cylindrical fibers</td><td style="padding:6px;border:1px solid #1B3A2D">Branched</td><td style="padding:6px;border:1px solid #1B3A2D">Spindle</td></tr>
             <tr><td style="padding:6px;border:1px solid #1B3A2D;font-weight:700">Nuclei</td><td style="padding:6px;border:1px solid #1B3A2D">Many, peripheral</td><td style="padding:6px;border:1px solid #1B3A2D">1-2, central</td><td style="padding:6px;border:1px solid #1B3A2D">Single, central</td></tr>
             <tr><td style="padding:6px;border:1px solid #1B3A2D;font-weight:700">Junctions</td><td style="padding:6px;border:1px solid #1B3A2D">None between fibers</td><td style="padding:6px;border:1px solid #1B3A2D"><b>Intercalated discs</b> (gap junctions + desmosomes)</td><td style="padding:6px;border:1px solid #1B3A2D">Gap junctions (in unitary)</td></tr>
-            <tr><td style="padding:6px;border:1px solid #1B3A2D;font-weight:700">Pacemaker</td><td style="padding:6px;border:1px solid #1B3A2D">No — needs motor neuron</td><td style="padding:6px;border:1px solid #1B3A2D"><b>Yes (SA node)</b> — auto-rhythmic</td><td style="padding:6px;border:1px solid #1B3A2D">Some types yes (gut)</td></tr>
-            <tr><td style="padding:6px;border:1px solid #1B3A2D;font-weight:700">Fatigue</td><td style="padding:6px;border:1px solid #1B3A2D">Yes (rapidly)</td><td style="padding:6px;border:1px solid #1B3A2D">No (must not!)</td><td style="padding:6px;border:1px solid #1B3A2D">No (sustained tone)</td></tr>
+            <tr><td style="padding:6px;border:1px solid #1B3A2D;font-weight:700">Pacemaker</td><td style="padding:6px;border:1px solid #1B3A2D">No: needs motor neuron</td><td style="padding:6px;border:1px solid #1B3A2D"><b>Yes (SA node)</b>, auto-rhythmic</td><td style="padding:6px;border:1px solid #1B3A2D">Some types yes (gut)</td></tr>
+            <tr><td style="padding:6px;border:1px solid #1B3A2D;font-weight:700">Fatigue</td><td style="padding:6px;border:1px solid #1B3A2D">Yes (rapidly)</td><td style="padding:6px;border:1px solid #1B3A2D">No (must not)</td><td style="padding:6px;border:1px solid #1B3A2D">No (sustained tone)</td></tr>
             <tr><td style="padding:6px;border:1px solid #1B3A2D;font-weight:700">Ca²⁺ source</td><td style="padding:6px;border:1px solid #1B3A2D">SR only</td><td style="padding:6px;border:1px solid #1B3A2D">SR + extracellular</td><td style="padding:6px;border:1px solid #1B3A2D">Mostly extracellular</td></tr>
             <tr><td style="padding:6px;border:1px solid #1B3A2D;font-weight:700">Ca²⁺ binding</td><td style="padding:6px;border:1px solid #1B3A2D">Troponin C</td><td style="padding:6px;border:1px solid #1B3A2D">Troponin C</td><td style="padding:6px;border:1px solid #1B3A2D"><b>Calmodulin</b> → MLCK</td></tr>
             <tr><td style="padding:6px;border:1px solid #1B3A2D;font-weight:700">Regeneration</td><td style="padding:6px;border:1px solid #1B3A2D">Limited (satellite cells)</td><td style="padding:6px;border:1px solid #1B3A2D">Very limited → scar</td><td style="padding:6px;border:1px solid #1B3A2D">Good (mitotic)</td></tr>
@@ -7850,7 +7850,7 @@ const SKIN_DATA = {
   layers: {
     label:'Skin Layers',
     svg:`<svg viewBox="0 0 900 540" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-      <text x="450" y="30" text-anchor="middle" font-size="14" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">SKIN — 3 LAYERS · CROSS-SECTION</text>
+      <text x="450" y="30" text-anchor="middle" font-size="14" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">SKIN: 3 LAYERS · CROSS-SECTION</text>
 
       <rect x="80" y="60" width="500" height="40" fill="#fce8d8" stroke="#1B3A2D" stroke-width="2"/>
       <text x="600" y="85" font-size="11" font-weight="700" fill="#1B3A2D">EPIDERMIS</text>
@@ -7864,7 +7864,7 @@ const SKIN_DATA = {
 
       <rect x="80" y="300" width="500" height="100" fill="#fff5e0" stroke="#1B3A2D" stroke-width="2"/>
       <text x="600" y="350" font-size="11" font-weight="700" fill="#1B3A2D">HYPODERMIS</text>
-      <text x="600" y="364" font-size="9" fill="#1B3A2D">(subcutis) — adipose · areolar tissue</text>
+      <text x="600" y="364" font-size="9" fill="#1B3A2D">(subcutis), adipose · areolar tissue</text>
       <circle cx="120" cy="335" r="14" fill="#fff" stroke="#1B3A2D" stroke-width="1"/>
       <circle cx="160" cy="345" r="16" fill="#fff" stroke="#1B3A2D" stroke-width="1"/>
       <circle cx="210" cy="335" r="14" fill="#fff" stroke="#1B3A2D" stroke-width="1"/>
@@ -7915,7 +7915,7 @@ const SKIN_DATA = {
   bone: {
     label:'Bone Structure',
     svg:`<svg viewBox="0 0 900 540" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-      <text x="450" y="30" text-anchor="middle" font-size="14" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">LONG BONE — GROSS TO MICRO</text>
+      <text x="450" y="30" text-anchor="middle" font-size="14" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">LONG BONE: GROSS TO MICRO</text>
 
       <ellipse cx="120" cy="80" rx="50" ry="35" fill="#fce8d8" stroke="#1B3A2D" stroke-width="2"/>
       <rect x="95" y="100" width="50" height="280" fill="#fce8d8" stroke="#1B3A2D" stroke-width="2"/>
@@ -7978,13 +7978,13 @@ const SKIN_DATA = {
 
       <foreignObject x="40" y="430" width="820" height="100">
         <div xmlns="http://www.w3.org/1999/xhtml" style="font-family:JetBrains Mono,monospace;font-size:11.5px;color:#1B3A2D;background:#fff;border:1.5px solid #1B3A2D;border-radius:6px;padding:10px;line-height:1.5">
-          <div><b>BONE CELLS</b> — <span style="color:#C25B3F"><b>Osteoblasts</b></span> build matrix · <span style="color:#3A2C7A"><b>Osteocytes</b></span> are mature, trapped in lacunae · <span style="color:#a378a5"><b>Osteoclasts</b></span> resorb (multinucleated, from monocytes).</div>
-          <div><b>MATRIX</b> — 35% organic (Type I collagen) gives flexibility · 65% inorganic (hydroxyapatite, Ca₁₀(PO₄)₆(OH)₂) gives strength.</div>
-          <div><b>SHAPES</b> — Long (femur), short (carpals), flat (skull, sternum), irregular (vertebra), sesamoid (patella).</div>
+          <div><b>BONE CELLS</b> - <span style="color:#C25B3F"><b>Osteoblasts</b></span> build matrix · <span style="color:#3A2C7A"><b>Osteocytes</b></span> are mature, trapped in lacunae · <span style="color:#a378a5"><b>Osteoclasts</b></span> resorb (multinucleated, from monocytes).</div>
+          <div><b>MATRIX</b>, 35% organic (Type I collagen) gives flexibility · 65% inorganic (hydroxyapatite, Ca₁₀(PO₄)₆(OH)₂) gives strength.</div>
+          <div><b>SHAPES</b>, Long (femur), short (carpals), flat (skull, sternum), irregular (vertebra), sesamoid (patella).</div>
         </div>
       </foreignObject>
     </svg>`,
-    info:'<b>Long bone parts:</b> diaphysis (shaft, compact bone) → epiphysis (ends, spongy bone with red marrow) → epiphyseal plate (growth plate, closes after puberty) → medullary cavity (yellow marrow in adult).<br><b>Compact bone</b> = repeating <b>osteons (Haversian systems)</b>:<br>• Central (Haversian) canal — vessels + nerves.<br>• Concentric lamellae — rings of mineralized matrix.<br>• Lacunae — house osteocytes.<br>• Canaliculi — channels connecting lacunae for nutrient flow.<br><b>Cells:</b> osteoblasts (build), osteocytes (mature, maintain), osteoclasts (resorb, from monocyte lineage).<br><b>Matrix:</b> ~35% organic Type I collagen + ~65% hydroxyapatite (Ca₁₀(PO₄)₆(OH)₂).<br><b>Bone shapes:</b> long, short, flat, irregular, sesamoid.',
+    info:'<b>Long bone parts:</b> diaphysis (shaft, compact bone) → epiphysis (ends, spongy bone with red marrow) → epiphyseal plate (growth plate, closes after puberty) → medullary cavity (yellow marrow in adult).<br><b>Compact bone</b> = repeating <b>osteons (Haversian systems)</b>:<br>• Central (Haversian) canal: vessels + nerves.<br>• Concentric lamellae: rings of mineralized matrix.<br>• Lacunae: house osteocytes.<br>• Canaliculi: channels connecting lacunae for nutrient flow.<br><b>Cells:</b> osteoblasts (build), osteocytes (mature, maintain), osteoclasts (resorb, from monocyte lineage).<br><b>Matrix:</b> ~35% organic Type I collagen + ~65% hydroxyapatite (Ca₁₀(PO₄)₆(OH)₂).<br><b>Bone shapes:</b> long, short, flat, irregular, sesamoid.',
   },
   ossif: {
     label:'Ossification + Remodeling',
@@ -8046,14 +8046,14 @@ const SKIN_DATA = {
         <g transform="translate(0, 130)">
           <rect width="700" height="70" fill="#fff" stroke="#1B3A2D" stroke-width="1.5" rx="6"/>
           <text x="15" y="22" font-size="11" font-weight="700" fill="#1B3A2D">REGULATION OF Ca²⁺ HOMEOSTASIS</text>
-          <text x="15" y="40" font-size="10" fill="#1B3A2D"><b>PTH</b> ↑ blood Ca²⁺ — activates osteoclasts (indirect via osteoblast RANKL), ↑gut absorption (via vit D), ↑renal reabsorption</text>
-          <text x="15" y="56" font-size="10" fill="#1B3A2D"><b>Calcitonin</b> ↓ blood Ca²⁺ — inhibits osteoclasts, ↑deposition into bone</text>
+          <text x="15" y="40" font-size="10" fill="#1B3A2D"><b>PTH</b> ↑ blood Ca²⁺: activates osteoclasts (indirect via osteoblast RANKL), ↑gut absorption (via vit D), ↑renal reabsorption</text>
+          <text x="15" y="56" font-size="10" fill="#1B3A2D"><b>Calcitonin</b> ↓ blood Ca²⁺: inhibits osteoclasts, ↑deposition into bone</text>
         </g>
       </g>
 
       <defs><marker id="sk-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" fill="#1B3A2D"/></marker></defs>
     </svg>`,
-    info:'<b>Two ossification routes:</b><br>• <b>Endochondral</b> (most bones): cartilage model first → primary ossification center in diaphysis → secondary in epiphyses → epiphyseal plate (growth plate) closes ~25 yrs.<br>• <b>Intramembranous</b> (flat skull bones, mandible, clavicle): mesenchyme condenses → osteoblasts secrete matrix directly. No cartilage step.<br><b>Remodeling</b> is lifelong — coupled cycle: osteoclasts resorb pit → osteoblasts fill it with new lamellar bone. Some osteoblasts get trapped → become osteocytes.<br><b>Ca²⁺ homeostasis:</b><br>• <b>PTH</b> ↑ Ca: activates osteoclasts (indirect via RANKL on osteoblasts), ↑gut absorption (vit D), ↑renal reabsorption.<br>• <b>Calcitonin</b> ↓ Ca: inhibits osteoclasts, ↑deposition.',
+    info:'<b>Two ossification routes:</b><br>• <b>Endochondral</b> (most bones): cartilage model first → primary ossification center in diaphysis → secondary in epiphyses → epiphyseal plate (growth plate) closes ~25 yrs.<br>• <b>Intramembranous</b> (flat skull bones, mandible, clavicle): mesenchyme condenses → osteoblasts secrete matrix directly. No cartilage step.<br><b>Remodeling</b> is lifelong, coupled cycle: osteoclasts resorb pit → osteoblasts fill it with new lamellar bone. Some osteoblasts get trapped → become osteocytes.<br><b>Ca²⁺ homeostasis:</b><br>• <b>PTH</b> ↑ Ca: activates osteoclasts (indirect via RANKL on osteoblasts), ↑gut absorption (vit D), ↑renal reabsorption.<br>• <b>Calcitonin</b> ↓ Ca: inhibits osteoclasts, ↑deposition.',
   },
   joint: {
     label:'Joint Types',
@@ -8062,7 +8062,7 @@ const SKIN_DATA = {
 
       <g transform="translate(40, 60)">
         <rect width="270" height="200" fill="#fff" stroke="#C25B3F" stroke-width="2" rx="8"/>
-        <text x="135" y="22" text-anchor="middle" font-size="11" font-weight="700" fill="#C25B3F">FIBROUS — synarthrosis</text>
+        <text x="135" y="22" text-anchor="middle" font-size="11" font-weight="700" fill="#C25B3F">FIBROUS: synarthrosis</text>
         <text x="135" y="36" text-anchor="middle" font-size="8" fill="#1B3A2D">no cavity · immovable</text>
         <path d="M 30 70 L 130 70 L 130 130 L 30 130 Z" fill="#fce8d8" stroke="#1B3A2D" stroke-width="1.5"/>
         <path d="M 140 70 L 240 70 L 240 130 L 140 130 Z" fill="#fce8d8" stroke="#1B3A2D" stroke-width="1.5"/>
@@ -8074,7 +8074,7 @@ const SKIN_DATA = {
 
       <g transform="translate(330, 60)">
         <rect width="270" height="200" fill="#fff" stroke="#5FA874" stroke-width="2" rx="8"/>
-        <text x="135" y="22" text-anchor="middle" font-size="11" font-weight="700" fill="#5FA874">CARTILAGINOUS — amphiarthrosis</text>
+        <text x="135" y="22" text-anchor="middle" font-size="11" font-weight="700" fill="#5FA874">CARTILAGINOUS: amphiarthrosis</text>
         <text x="135" y="36" text-anchor="middle" font-size="8" fill="#1B3A2D">slightly movable</text>
         <rect x="30" y="60" width="100" height="50" fill="#fce8d8" stroke="#1B3A2D" stroke-width="1.5"/>
         <rect x="140" y="60" width="100" height="50" fill="#fce8d8" stroke="#1B3A2D" stroke-width="1.5"/>
@@ -8087,7 +8087,7 @@ const SKIN_DATA = {
 
       <g transform="translate(620, 60)">
         <rect width="240" height="200" fill="#fff" stroke="#a378a5" stroke-width="2" rx="8"/>
-        <text x="120" y="22" text-anchor="middle" font-size="11" font-weight="700" fill="#a378a5">SYNOVIAL — diarthrosis</text>
+        <text x="120" y="22" text-anchor="middle" font-size="11" font-weight="700" fill="#a378a5">SYNOVIAL: diarthrosis</text>
         <text x="120" y="36" text-anchor="middle" font-size="8" fill="#1B3A2D">freely movable</text>
         <ellipse cx="60" cy="100" rx="40" ry="50" fill="#fce8d8" stroke="#1B3A2D" stroke-width="1.5"/>
         <ellipse cx="180" cy="100" rx="40" ry="50" fill="#fce8d8" stroke="#1B3A2D" stroke-width="1.5"/>
@@ -8100,7 +8100,7 @@ const SKIN_DATA = {
       </g>
 
       <g transform="translate(40, 290)">
-        <text x="410" y="0" text-anchor="middle" font-size="11" font-weight="700" fill="#1B3A2D">SYNOVIAL JOINT SUBTYPES — by motion axis</text>
+        <text x="410" y="0" text-anchor="middle" font-size="11" font-weight="700" fill="#1B3A2D">SYNOVIAL JOINT SUBTYPES: by motion axis</text>
 
         <g transform="translate(0, 20)">
           <circle cx="60" cy="50" r="36" fill="#fff" stroke="#1B3A2D" stroke-width="2"/>
@@ -8141,7 +8141,7 @@ const SKIN_DATA = {
 
       <text x="450" y="490" text-anchor="middle" font-size="10" fill="#1B3A2D">Synovial joints contain: articular cartilage · joint capsule · synovial fluid · ligaments · sometimes menisci/bursae.</text>
     </svg>`,
-    info:'<b>3 structural classes:</b><br>• <b>Fibrous (synarthrosis):</b> immovable. Bones connected directly. Sutures (skull), gomphoses (teeth in sockets), syndesmoses (radius-ulna).<br>• <b>Cartilaginous (amphiarthrosis):</b> slightly movable. Connected by cartilage. Vertebral discs, pubic symphysis.<br>• <b>Synovial (diarthrosis):</b> freely movable. Joint cavity with synovial fluid. Most joints in body.<br><b>Synovial subtypes by motion:</b><br>• Ball &amp; socket (shoulder, hip) — 3 axes.<br>• Hinge (elbow, knee) — 1 axis.<br>• Pivot (atlas-axis) — rotation only.<br>• Condyloid (wrist) — 2 axes.<br>• Saddle (thumb CMC) — 2 axes.<br>• Plane (carpals) — sliding.<br><b>Synovial structures:</b> articular cartilage, capsule, synovial fluid, ligaments, menisci, bursae.',
+    info:'<b>3 structural classes:</b><br>• <b>Fibrous (synarthrosis):</b> immovable. Bones connected directly. Sutures (skull), gomphoses (teeth in sockets), syndesmoses (radius-ulna).<br>• <b>Cartilaginous (amphiarthrosis):</b> slightly movable. Connected by cartilage. Vertebral discs, pubic symphysis.<br>• <b>Synovial (diarthrosis):</b> freely movable. Joint cavity with synovial fluid. Most joints in body.<br><b>Synovial subtypes by motion:</b><br>• Ball &amp; socket (shoulder, hip), 3 axes.<br>• Hinge (elbow, knee), 1 axis.<br>• Pivot (atlas-axis), rotation only.<br>• Condyloid (wrist), 2 axes.<br>• Saddle (thumb CMC), 2 axes.<br>• Plane (carpals), sliding.<br><b>Synovial structures:</b> articular cartilage, capsule, synovial fluid, ligaments, menisci, bursae.',
   },
   thermo: {
     label:'Thermoregulation',
@@ -8154,7 +8154,7 @@ const SKIN_DATA = {
 
       <g transform="translate(40, 140)">
         <rect width="380" height="280" fill="#fff" stroke="#C25B3F" stroke-width="2" rx="10"/>
-        <text x="190" y="22" text-anchor="middle" font-size="12" font-weight="700" fill="#C25B3F">TOO HOT — cool down</text>
+        <text x="190" y="22" text-anchor="middle" font-size="12" font-weight="700" fill="#C25B3F">TOO HOT: cool down</text>
         <text x="20" y="50" font-size="11" font-weight="700" fill="#C25B3F">VASODILATION</text>
         <text x="20" y="64" font-size="9" fill="#1B3A2D">Skin arterioles dilate → flushed appearance,</text>
         <text x="20" y="76" font-size="9" fill="#1B3A2D">heat radiates from skin surface.</text>
@@ -8175,7 +8175,7 @@ const SKIN_DATA = {
 
       <g transform="translate(480, 140)">
         <rect width="380" height="280" fill="#fff" stroke="#5FA874" stroke-width="2" rx="10"/>
-        <text x="190" y="22" text-anchor="middle" font-size="12" font-weight="700" fill="#5FA874">TOO COLD — warm up</text>
+        <text x="190" y="22" text-anchor="middle" font-size="12" font-weight="700" fill="#5FA874">TOO COLD: warm up</text>
         <text x="20" y="50" font-size="11" font-weight="700" fill="#5FA874">VASOCONSTRICTION</text>
         <text x="20" y="64" font-size="9" fill="#1B3A2D">Skin arterioles constrict → blood diverted to core,</text>
         <text x="20" y="76" font-size="9" fill="#1B3A2D">less heat lost from surface.</text>
@@ -8197,10 +8197,10 @@ const SKIN_DATA = {
       <line x1="380" y1="105" x2="220" y2="155" stroke="#C25B3F" stroke-width="2" marker-end="url(#tr-arrow)"/>
       <line x1="520" y1="105" x2="680" y2="155" stroke="#5FA874" stroke-width="2" marker-end="url(#tr-arrow)"/>
 
-      <text x="450" y="450" text-anchor="middle" font-size="10" fill="#1B3A2D">Negative feedback — peripheral + core thermoreceptors → POAH (preoptic anterior hypothalamus) → effectors. Fever resets the setpoint upward (pyrogens → PGE₂).</text>
+      <text x="450" y="450" text-anchor="middle" font-size="10" fill="#1B3A2D">Negative feedback: peripheral + core thermoreceptors → POAH (preoptic anterior hypothalamus) → effectors. Fever resets the setpoint upward (pyrogens → PGE₂).</text>
       <defs><marker id="tr-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" fill="#1B3A2D"/></marker></defs>
     </svg>`,
-    info:'<b>Hypothalamus = thermostat</b> (setpoint ~37°C). Negative feedback via thermoreceptors in skin + core.<br><b>Heat dissipation (too hot):</b> vasodilation (flushing), sweating (evaporation cools — ~580 cal/g water), behavioral (shed clothes, seek shade), ↓ metabolic activity.<br><b>Heat conservation (too cold):</b> vasoconstriction (shunt blood to core), shivering (muscle generates heat), piloerection (less useful in humans), ↑ thyroid output (T3/T4 boost BMR), brown adipose tissue (UCP1, mostly infants — uncouples ETC from ATP synthesis to dump heat).<br><b>Fever:</b> pyrogens (TNF, IL-1) → PGE₂ → hypothalamus resets setpoint UPWARD → body shivers/vasoconstricts to reach new higher setpoint.<br><b>Failure modes:</b> hyperthermia → heat stroke (protein denaturation). Hypothermia → enzyme slowdown → arrhythmia.',
+    info:'<b>Hypothalamus = thermostat</b> (setpoint ~37°C). Negative feedback via thermoreceptors in skin + core.<br><b>Heat dissipation (too hot):</b> vasodilation (flushing), sweating (evaporation cools, ~580 cal/g water), behavioral (shed clothes, seek shade), ↓ metabolic activity.<br><b>Heat conservation (too cold):</b> vasoconstriction (shunt blood to core), shivering (muscle generates heat), piloerection (less useful in humans), ↑ thyroid output (T3/T4 boost BMR), brown adipose tissue (UCP1, mostly infants, uncouples ETC from ATP synthesis to dump heat).<br><b>Fever:</b> pyrogens (TNF, IL-1) → PGE₂ → hypothalamus resets setpoint UPWARD → body shivers/vasoconstricts to reach new higher setpoint.<br><b>Failure modes:</b> hyperthermia → heat stroke (protein denaturation). Hypothermia → enzyme slowdown → arrhythmia.',
   },
 };
 function skinSetMode(mode) {
@@ -8222,9 +8222,9 @@ function initBodySkin() {
    ============================================================ */
 const EXP_DATA = {
   griffith: {
-    label:'Griffith (1928) — Transformation',
+    label:'Griffith (1928): Transformation',
     svg:`<svg viewBox="0 0 900 480" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-      <text x="450" y="28" text-anchor="middle" font-size="14" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">GRIFFITH 1928 — A "TRANSFORMING PRINCIPLE"</text>
+      <text x="450" y="28" text-anchor="middle" font-size="14" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">GRIFFITH 1928: A "TRANSFORMING PRINCIPLE"</text>
       <g font-family="JetBrains Mono, monospace">
         <g transform="translate(40, 70)">
           <text x="0" y="0" font-size="10" font-weight="700" fill="#1B3A2D">1.  S strain (smooth) → mouse</text>
@@ -8256,13 +8256,13 @@ const EXP_DATA = {
           <ellipse cx="80" cy="35" rx="14" ry="14" fill="#5FA874" stroke="#1B3A2D" stroke-width="1.5" stroke-dasharray="3 2"/>
           <line x1="100" y1="35" x2="160" y2="35" stroke="#1B3A2D" stroke-width="2" marker-end="url(#exp-arrow)"/>
           <g transform="translate(170,15)"><ellipse cx="20" cy="20" rx="20" ry="14" fill="#a378a5"/><circle cx="14" cy="16" r="2" fill="#000"/><circle cx="26" cy="16" r="2" fill="#000"/></g>
-          <text x="225" y="40" font-size="11" fill="#C25B3F" font-weight="700">→ DEAD!</text>
+          <text x="225" y="40" font-size="11" fill="#C25B3F" font-weight="700">→ DEAD.</text>
         </g>
       </g>
       <g transform="translate(450, 70)">
         <rect width="410" height="270" fill="#fff" stroke="#1B3A2D" stroke-width="1.5" rx="8"/>
         <text x="20" y="26" font-size="12" font-weight="700" fill="#1B3A2D">UNEXPECTED FINDING</text>
-        <text x="20" y="50" font-size="10" fill="#1B3A2D">Live R bacteria recovered from the dead mouse —</text>
+        <text x="20" y="50" font-size="10" fill="#1B3A2D">Live R bacteria recovered from the dead mouse</text>
         <text x="20" y="64" font-size="10" fill="#1B3A2D">but they were now SMOOTH (virulent like S)!</text>
         <text x="20" y="92" font-size="11" font-weight="700" fill="#C25B3F">CONCLUSION</text>
         <text x="20" y="110" font-size="10" fill="#1B3A2D">Some "transforming principle" from dead S bacteria</text>
@@ -8270,19 +8270,19 @@ const EXP_DATA = {
         <text x="20" y="138" font-size="10" fill="#1B3A2D">heritable trait permanently.</text>
         <text x="20" y="166" font-size="11" font-weight="700" fill="#5FA874">WHY IT MATTERS</text>
         <text x="20" y="184" font-size="10" fill="#1B3A2D">Showed that genetic information is a transferable,</text>
-        <text x="20" y="198" font-size="10" fill="#1B3A2D">stable molecule — not "vital force" or some abstract</text>
+        <text x="20" y="198" font-size="10" fill="#1B3A2D">stable molecule, not "vital force" or some abstract</text>
         <text x="20" y="212" font-size="10" fill="#1B3A2D">essence. Sets the table for Avery and Hershey-Chase.</text>
         <text x="20" y="240" font-size="11" font-weight="700" fill="#a378a5">DAT TRIGGER</text>
         <text x="20" y="258" font-size="10" fill="#1B3A2D">"Discovered transformation" → Griffith.</text>
       </g>
       <defs><marker id="exp-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" fill="#1B3A2D"/></marker></defs>
     </svg>`,
-    info:'<b>Question:</b> what is the "transforming principle" that turns harmless R bacteria into virulent S?<br><b>Setup:</b> 4 mouse experiments. The kicker — heat-killed S + live R = dead mouse, with live S recovered. Something from the dead bacteria converted live R into S.<br><b>Conclusion (1928):</b> heritable transformation exists, but Griffith didn\'t identify the molecule.<br><b>Why it matters:</b> proved heredity is chemical, not metaphysical — paved the way for Avery (the molecule) and Hershey-Chase (DNA, not protein).',
+    info:'<b>Question:</b> what is the "transforming principle" that turns harmless R bacteria into virulent S?<br><b>Setup:</b> 4 mouse experiments. The kicker: heat-killed S + live R = dead mouse, with live S recovered. Something from the dead bacteria converted live R into S.<br><b>Conclusion (1928):</b> heritable transformation exists, but Griffith didn\'t identify the molecule.<br><b>Why it matters:</b> proved heredity is chemical, not metaphysical, paved the way for Avery (the molecule) and Hershey-Chase (DNA, not protein).',
   },
   avery: {
-    label:'Avery–MacLeod–McCarty (1944) — DNA is the transforming principle',
+    label:'Avery-MacLeod-McCarty (1944): DNA is the transforming principle',
     svg:`<svg viewBox="0 0 900 480" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-      <text x="450" y="28" text-anchor="middle" font-size="14" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">AVERY–MACLEOD–McCARTY 1944 — IS IT PROTEIN, RNA, OR DNA?</text>
+      <text x="450" y="28" text-anchor="middle" font-size="14" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">AVERY-MACLEOD-McCARTY 1944: IS IT PROTEIN, RNA, OR DNA?</text>
       <text x="60" y="70" font-size="11" font-weight="700" fill="#1B3A2D">Take heat-killed S extract → split into 4 tubes → treat each → add live R → check transformation:</text>
       <g font-family="JetBrains Mono,monospace">
         <g transform="translate(60, 100)">
@@ -8308,7 +8308,7 @@ const EXP_DATA = {
           <ellipse cx="90" cy="80" rx="40" ry="40" fill="#C25B3F" stroke="#1B3A2D" stroke-width="2"/>
           <text x="90" y="80" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">FAILS</text>
           <text x="90" y="94" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">to transform</text>
-          <text x="90" y="138" text-anchor="middle" font-size="10" font-weight="700" fill="#C25B3F">→ DNA IS IT!</text>
+          <text x="90" y="138" text-anchor="middle" font-size="10" font-weight="700" fill="#C25B3F">→ DNA IS IT.</text>
         </g>
         <g transform="translate(660, 100)">
           <rect x="0" y="0" width="180" height="160" fill="#fff" stroke="#1B3A2D" stroke-width="2" rx="8"/>
@@ -8325,16 +8325,16 @@ const EXP_DATA = {
         <text x="20" y="50" font-size="11" fill="#1B3A2D">Removing protein or RNA → still transforms ⇒ those aren\'t the transforming principle.</text>
         <text x="20" y="68" font-size="11" fill="#1B3A2D">Removing DNA → fails ⇒ DNA <b>is required</b> for transformation.</text>
         <text x="20" y="98" font-size="11" font-weight="700" fill="#5FA874">CONCLUSION</text>
-        <text x="20" y="118" font-size="11" fill="#1B3A2D">DNA is the molecule of heredity. Many scientists still didn\'t buy it — they thought DNA was too "simple"</text>
+        <text x="20" y="118" font-size="11" fill="#1B3A2D">DNA is the molecule of heredity. Many scientists still didn\'t buy it, they thought DNA was too "simple"</text>
         <text x="20" y="134" font-size="11" fill="#1B3A2D">(only 4 bases) to encode complex traits, and that protein (20 amino acids) had to be the answer. Took Hershey-Chase to settle it.</text>
       </g>
     </svg>`,
-    info:'<b>Question:</b> Griffith\'s "transforming principle" — what molecule is it?<br><b>Setup:</b> destroyed each candidate macromolecule selectively in heat-killed S extract, then tested whether transformation still happened.<br><b>Result:</b> only DNase blocked transformation. Protease and RNase did not.<br><b>Conclusion:</b> DNA is the genetic material.<br><b>Catch:</b> the field didn\'t fully accept it — many believed proteins were the genetic material because of their greater chemical complexity. Hershey-Chase finally cinched it 8 years later.',
+    info:'<b>Question:</b> Griffith\'s "transforming principle", what molecule is it?<br><b>Setup:</b> destroyed each candidate macromolecule selectively in heat-killed S extract, then tested whether transformation still happened.<br><b>Result:</b> only DNase blocked transformation. Protease and RNase did not.<br><b>Conclusion:</b> DNA is the genetic material.<br><b>Catch:</b> the field didn\'t fully accept it, many believed proteins were the genetic material because of their greater chemical complexity. Hershey-Chase finally cinched it 8 years later.',
   },
   hershey: {
-    label:'Hershey–Chase (1952) — The blender experiment',
+    label:'Hershey-Chase (1952): The blender experiment',
     svg:`<svg viewBox="0 0 900 480" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-      <text x="450" y="28" text-anchor="middle" font-size="14" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">HERSHEY–CHASE 1952 — RADIOLABELED PHAGE T2</text>
+      <text x="450" y="28" text-anchor="middle" font-size="14" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">HERSHEY-CHASE 1952: RADIOLABELED PHAGE T2</text>
       <g transform="translate(60, 60)">
         <text x="0" y="0" font-size="11" font-weight="700" fill="#1B3A2D">EXPT A: ³²P labels DNA (phosphate backbone)</text>
         <g transform="translate(0,20)">
@@ -8357,7 +8357,7 @@ const EXP_DATA = {
           <text x="485" y="20" text-anchor="middle" font-size="9" font-weight="700" fill="#1B3A2D">supernatant (capsids)</text>
           <text x="485" y="36" text-anchor="middle" font-size="11" font-weight="700" fill="#1B3A2D">no ³²P</text>
           <text x="485" y="65" text-anchor="middle" font-size="9" font-weight="700" fill="#1B3A2D">pellet (bacteria)</text>
-          <text x="485" y="78" text-anchor="middle" font-size="11" font-weight="700" fill="#C25B3F">³²P here ✓</text>
+          <text x="485" y="78" text-anchor="middle" font-size="11" font-weight="700" fill="#C25B3F">³²P here</text>
         </g>
       </g>
       <g transform="translate(60, 220)">
@@ -8376,7 +8376,7 @@ const EXP_DATA = {
           <rect x="425" y="0" width="120" height="80" fill="#fff" stroke="#1B3A2D" stroke-width="2" rx="4"/>
           <line x1="425" y1="50" x2="545" y2="50" stroke="#1B3A2D" stroke-width="1" stroke-dasharray="3 2"/>
           <text x="485" y="20" text-anchor="middle" font-size="9" font-weight="700" fill="#1B3A2D">supernatant</text>
-          <text x="485" y="36" text-anchor="middle" font-size="11" font-weight="700" fill="#5FA874">³⁵S here ✓</text>
+          <text x="485" y="36" text-anchor="middle" font-size="11" font-weight="700" fill="#5FA874">³⁵S here</text>
           <text x="485" y="65" text-anchor="middle" font-size="9" font-weight="700" fill="#1B3A2D">pellet</text>
           <text x="485" y="78" text-anchor="middle" font-size="11" font-weight="700" fill="#1B3A2D">no ³⁵S</text>
         </g>
@@ -8391,22 +8391,22 @@ const EXP_DATA = {
         <line x1="105" y1="135" x2="100" y2="150" stroke="#1B3A2D" stroke-width="2"/>
         <line x1="135" y1="135" x2="140" y2="150" stroke="#1B3A2D" stroke-width="2"/>
         <line x1="120" y1="135" x2="120" y2="155" stroke="#1B3A2D" stroke-width="2"/>
-        <text x="20" y="170" font-size="9" fill="#1B3A2D">Capsid (protein) and DNA — perfect for labeling each separately.</text>
+        <text x="20" y="170" font-size="9" fill="#1B3A2D">Capsid (protein) and DNA, perfect for labeling each separately.</text>
       </g>
       <g transform="translate(60, 380)">
         <rect width="780" height="80" fill="#fff" stroke="#1B3A2D" stroke-width="1.5" rx="6"/>
         <text x="20" y="22" font-size="11" font-weight="700" fill="#5FA874">CONCLUSION</text>
-        <text x="20" y="42" font-size="11" fill="#1B3A2D">³²P (DNA) entered bacteria — protein didn\'t. Therefore <b>DNA carries the genetic information</b> required to make new phage.</text>
+        <text x="20" y="42" font-size="11" fill="#1B3A2D">³²P (DNA) entered bacteria: protein didn\'t. Therefore <b>DNA carries the genetic information</b> required to make new phage.</text>
         <text x="20" y="62" font-size="11" fill="#1B3A2D">This was the experiment that made the field accept Avery\'s conclusion. Hershey shared the 1969 Nobel.</text>
       </g>
       <defs><marker id="hc-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" fill="#1B3A2D"/></marker></defs>
     </svg>`,
-    info:'<b>Question:</b> when phage T2 infects E. coli, does the protein coat or the DNA actually enter the cell?<br><b>Trick:</b> grow phage in radioactive media — ³²P labels DNA only (no S in DNA), ³⁵S labels protein only (no P in protein\'s amino acids).<br><b>Method:</b> infect, agitate in a Waring blender to shear off external capsids, centrifuge.<br><b>Result:</b> ³²P (DNA) ended up inside bacteria. ³⁵S (protein) stayed outside.<br><b>Conclusion:</b> DNA, not protein, carries the genetic material — confirms Avery, settles the debate.',
+    info:'<b>Question:</b> when phage T2 infects E. coli, does the protein coat or the DNA actually enter the cell?<br><b>Trick:</b> grow phage in radioactive media, ³²P labels DNA only (no S in DNA), ³⁵S labels protein only (no P in protein\'s amino acids).<br><b>Method:</b> infect, agitate in a Waring blender to shear off external capsids, centrifuge.<br><b>Result:</b> ³²P (DNA) ended up inside bacteria. ³⁵S (protein) stayed outside.<br><b>Conclusion:</b> DNA, not protein, carries the genetic material, confirms Avery, settles the debate.',
   },
   meselson: {
-    label:'Meselson–Stahl (1958) — Semiconservative replication',
+    label:'Meselson-Stahl (1958): Semiconservative replication',
     svg:`<svg viewBox="0 0 900 540" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-      <text x="450" y="28" text-anchor="middle" font-size="14" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">MESELSON–STAHL 1958 — DENSITY GRADIENT EXPERIMENT</text>
+      <text x="450" y="28" text-anchor="middle" font-size="14" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">MESELSON-STAHL 1958: DENSITY GRADIENT EXPERIMENT</text>
       <text x="60" y="60" font-size="10" font-weight="700" fill="#1B3A2D">Grow E. coli in ¹⁵N (heavy nitrogen) → switch to ¹⁴N → centrifuge DNA after each generation in CsCl.</text>
       <g transform="translate(60, 90)">
         <text x="0" y="14" font-size="10" font-weight="700" fill="#1B3A2D">Generation</text>
@@ -8437,22 +8437,22 @@ const EXP_DATA = {
       </g>
       <g transform="translate(60, 380)">
         <rect width="780" height="140" fill="#fff" stroke="#1B3A2D" stroke-width="1.5" rx="8"/>
-        <text x="20" y="22" font-size="12" font-weight="700" fill="#1B3A2D">3 MODELS PROPOSED · Meselson–Stahl distinguished them</text>
+        <text x="20" y="22" font-size="12" font-weight="700" fill="#1B3A2D">3 MODELS PROPOSED · Meselson-Stahl distinguished them</text>
         <text x="20" y="46" font-size="10" fill="#C25B3F" font-weight="700">CONSERVATIVE</text>
-        <text x="155" y="46" font-size="10" fill="#1B3A2D">— parent stays intact, makes brand-new copy. Predicts gen 1 = heavy + light. <b>WRONG.</b></text>
+        <text x="155" y="46" font-size="10" fill="#1B3A2D">parent stays intact, makes brand-new copy. Predicts gen 1 = heavy + light. <b>WRONG.</b></text>
         <text x="20" y="68" font-size="10" fill="#5FA874" font-weight="700">SEMICONSERVATIVE</text>
-        <text x="155" y="68" font-size="10" fill="#1B3A2D">— each strand templates a new strand. Gen 1 = all hybrid; Gen 2 = light + hybrid. <b>MATCHES!</b></text>
+        <text x="155" y="68" font-size="10" fill="#1B3A2D">each strand templates a new strand. Gen 1 = all hybrid; Gen 2 = light + hybrid. <b>MATCHES.</b></text>
         <text x="20" y="90" font-size="10" fill="#a378a5" font-weight="700">DISPERSIVE</text>
-        <text x="155" y="90" font-size="10" fill="#1B3A2D">— DNA fragments + reassembles randomly. Predicts all bands stay hybrid. <b>WRONG (gen 2 split).</b></text>
-        <text x="20" y="120" font-size="11" font-weight="700" fill="#5FA874">"The most beautiful experiment in biology" — John Cairns</text>
+        <text x="155" y="90" font-size="10" fill="#1B3A2D">DNA fragments + reassembles randomly. Predicts all bands stay hybrid. <b>WRONG (gen 2 split).</b></text>
+        <text x="20" y="120" font-size="11" font-weight="700" fill="#5FA874">"The most beautiful experiment in biology", John Cairns</text>
       </g>
     </svg>`,
     info:'<b>Question:</b> when DNA replicates, do the strands stay together (conservative), split + each templates a new one (semiconservative), or fragment and remix (dispersive)?<br><b>Method:</b> grow in heavy ¹⁵N, switch to ¹⁴N, separate DNA by density in cesium chloride centrifugation.<br><b>Predictions:</b><br>• Gen 1: conservative → heavy + light bands. Semiconservative + dispersive → 1 hybrid band.<br>• Gen 2: semiconservative → light + hybrid. Dispersive → still 1 hybrid band.<br><b>Result:</b> Gen 1 = single hybrid band; Gen 2 = light + hybrid. Only semiconservative fits.<br><b>Why beautiful:</b> three competing models, one elegant test.',
   },
   franklin: {
-    label:'Franklin / Watson-Crick (1953) — The double helix',
+    label:'Franklin / Watson-Crick (1953): The double helix',
     svg:`<svg viewBox="0 0 900 480" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-      <text x="450" y="28" text-anchor="middle" font-size="14" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">DOUBLE HELIX — X-RAY DIFFRACTION + MODEL BUILDING</text>
+      <text x="450" y="28" text-anchor="middle" font-size="14" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">DOUBLE HELIX: X-RAY DIFFRACTION + MODEL BUILDING</text>
       <g transform="translate(60, 60)">
         <text x="160" y="0" text-anchor="middle" font-size="12" font-weight="700" fill="#1B3A2D">PHOTO 51 (Franklin/Gosling)</text>
         <rect x="0" y="20" width="320" height="320" fill="#0a0a0a" stroke="#1B3A2D" stroke-width="2"/>
@@ -8505,16 +8505,16 @@ const EXP_DATA = {
       </g>
       <g transform="translate(60, 410)">
         <rect width="780" height="60" fill="#fff" stroke="#1B3A2D" stroke-width="1.5" rx="8"/>
-        <text x="20" y="22" font-size="11" fill="#1B3A2D"><b>Chargaff\'s rules</b> (parallel work): A=T, G=C — pointed straight at base pairing.</text>
+        <text x="20" y="22" font-size="11" fill="#1B3A2D"><b>Chargaff\'s rules</b> (parallel work): A=T, G=C, pointed straight at base pairing.</text>
         <text x="20" y="42" font-size="11" fill="#1B3A2D">Watson + Crick + Wilkins shared 1962 Nobel. Franklin\'s contribution recognized only later (died 1958).</text>
       </g>
     </svg>`,
-    info:'<b>Question:</b> what is DNA\'s 3D structure?<br><b>Method:</b> Rosalind Franklin took X-ray diffraction images (Photo 51 — characteristic "X" pattern) showing helical symmetry, 3.4 Å rise/base, ~34 Å pitch.<br><b>Watson-Crick model:</b> antiparallel double helix, sugar-phosphate backbones outside, base pairs inside. <b>Chargaff\'s rules</b> (A=T, G=C) explained by complementary base pairing.<br><b>Implication immediately obvious to W&amp;C:</b> "<i>It has not escaped our notice that the specific pairing we have postulated immediately suggests a possible copying mechanism for the genetic material.</i>" — semiconservative replication.<br><b>Recognition:</b> Watson, Crick, Wilkins — 1962 Nobel. Franklin had died of cancer in 1958 (Nobels not awarded posthumously).',
+    info:'<b>Question:</b> what is DNA\'s 3D structure?<br><b>Method:</b> Rosalind Franklin took X-ray diffraction images (Photo 51: characteristic "X" pattern) showing helical symmetry, 3.4 Å rise/base, ~34 Å pitch.<br><b>Watson-Crick model:</b> antiparallel double helix, sugar-phosphate backbones outside, base pairs inside. <b>Chargaff\'s rules</b> (A=T, G=C) explained by complementary base pairing.<br><b>Implication immediately obvious to W&amp;C:</b> "<i>It has not escaped our notice that the specific pairing we have postulated immediately suggests a possible copying mechanism for the genetic material.</i>", semiconservative replication.<br><b>Recognition:</b> Watson, Crick, Wilkins, 1962 Nobel. Franklin had died of cancer in 1958 (Nobels not awarded posthumously).',
   },
   beadle: {
-    label:'Beadle-Tatum (1941) — One gene, one enzyme',
+    label:'Beadle-Tatum (1941): One gene, one enzyme',
     svg:`<svg viewBox="0 0 900 480" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-      <text x="450" y="28" text-anchor="middle" font-size="14" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">BEADLE–TATUM 1941 — Neurospora crassa AUXOTROPHS</text>
+      <text x="450" y="28" text-anchor="middle" font-size="14" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">BEADLE-TATUM 1941: Neurospora crassa AUXOTROPHS</text>
       <text x="60" y="60" font-size="10" font-weight="700" fill="#1B3A2D">Mutagenize Neurospora → grow on minimal vs supplemented media → identify which step is broken.</text>
       <g transform="translate(60, 90)">
         <text x="0" y="14" font-size="11" font-weight="700" fill="#1B3A2D">ARGININE BIOSYNTHETIC PATHWAY</text>
@@ -8552,7 +8552,7 @@ const EXP_DATA = {
       </g>
       <g transform="translate(60, 410)">
         <rect width="780" height="60" fill="#fff" stroke="#1B3A2D" stroke-width="1.5" rx="6"/>
-        <text x="20" y="22" font-size="11" font-weight="700" fill="#5FA874">CONCLUSION — "ONE GENE, ONE ENZYME" (refined later to "one gene, one polypeptide")</text>
+        <text x="20" y="22" font-size="11" font-weight="700" fill="#5FA874">CONCLUSION: "ONE GENE, ONE ENZYME" (refined later to "one gene, one polypeptide")</text>
         <text x="20" y="42" font-size="10" fill="#1B3A2D">Each mutant blocks ONE step. Each step is catalyzed by ONE enzyme. Therefore each gene encodes one enzyme. 1958 Nobel.</text>
       </g>
       <defs><marker id="bt-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" fill="#1B3A2D"/></marker></defs>
@@ -8578,9 +8578,9 @@ function initClassicExperiments() {
    ============================================================ */
 const TECH_DATA = {
   southern: {
-    label:'Southern blot — DNA detection',
+    label:'Southern blot: DNA detection',
     svg:`<svg viewBox="0 0 900 480" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">SOUTHERN BLOT — find a specific DNA sequence in a sample</text>
+      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">SOUTHERN BLOT: find a specific DNA sequence in a sample</text>
       <g transform="translate(50, 60)">
         <text x="60" y="0" text-anchor="middle" font-size="11" font-weight="700" fill="#1B3A2D">1. Digest DNA</text>
         <line x1="20" y1="20" x2="100" y2="20" stroke="#5FA874" stroke-width="3"/>
@@ -8632,7 +8632,7 @@ const TECH_DATA = {
         <rect width="780" height="180" fill="#fff" stroke="#1B3A2D" stroke-width="1.5" rx="8"/>
         <text x="20" y="24" font-size="12" font-weight="700" fill="#1B3A2D">USE CASES</text>
         <text x="20" y="44" font-size="10" fill="#1B3A2D">• Detect a specific gene in genomic DNA</text>
-        <text x="20" y="60" font-size="10" fill="#1B3A2D">• Genotyping (RFLP analysis — restriction site polymorphisms)</text>
+        <text x="20" y="60" font-size="10" fill="#1B3A2D">• Genotyping (RFLP analysis: restriction site polymorphisms)</text>
         <text x="20" y="76" font-size="10" fill="#1B3A2D">• Forensic DNA fingerprinting (older method)</text>
         <text x="20" y="100" font-size="11" font-weight="700" fill="#1B3A2D">MNEMONIC: SNoW DRoP</text>
         <text x="20" y="118" font-size="10" fill="#1B3A2D">Southern → DNA · Northern → RNA · Western → Protein</text>
@@ -8642,9 +8642,9 @@ const TECH_DATA = {
     info:'<b>Goal:</b> detect a specific DNA sequence in a sample.<br><b>Steps:</b><br>1. Digest DNA with restriction enzymes → many fragments of varying length.<br>2. Separate by gel electrophoresis (smaller = faster).<br>3. Denature (NaOH) → single strands. Capillary transfer to nitrocellulose membrane.<br>4. Hybridize with a labeled (radio or fluor) single-strand DNA probe complementary to your sequence of interest.<br>5. Wash off unbound probe. Detect (autoradiography or fluorescence).<br><b>Use cases:</b> RFLP analysis, gene presence/absence, forensic DNA fingerprinting (historic).',
   },
   northern: {
-    label:'Northern blot — RNA detection',
+    label:'Northern blot: RNA detection',
     svg:`<svg viewBox="0 0 900 360" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">NORTHERN BLOT — RNA expression analysis</text>
+      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">NORTHERN BLOT: RNA expression analysis</text>
       <g transform="translate(60, 60)">
         <text x="0" y="0" font-size="11" font-weight="700" fill="#1B3A2D">DIFFERENCES FROM SOUTHERN</text>
         <text x="0" y="22" font-size="10" fill="#1B3A2D">• Sample is total RNA (or mRNA, poly-A purified)</text>
@@ -8682,11 +8682,11 @@ const TECH_DATA = {
     info:'<b>Goal:</b> measure mRNA expression for a specific gene.<br><b>Difference from Southern:</b> sample is RNA (no restriction digest); denaturing gel (formaldehyde) keeps RNA linear; probe is DNA or RNA complementary to your transcript.<br><b>Use cases:</b> tissue-specific expression, alternative splicing detection (isoforms show as different bands), mRNA stability.<br><b>Modern alternatives:</b> qPCR (more sensitive), RNA-seq (genome-wide). Northern still used when transcript size matters.',
   },
   western: {
-    label:'Western blot — Protein detection',
+    label:'Western blot: Protein detection',
     svg:`<svg viewBox="0 0 900 480" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">WESTERN BLOT — protein detection via antibody</text>
+      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">WESTERN BLOT: protein detection via antibody</text>
       <g transform="translate(60, 60)">
-        <text x="0" y="0" font-size="11" font-weight="700" fill="#1B3A2D">1. SDS-PAGE — denatures + uniformly negatively charges proteins → size-only separation</text>
+        <text x="0" y="0" font-size="11" font-weight="700" fill="#1B3A2D">1. SDS-PAGE: denatures + uniformly negatively charges proteins → size-only separation</text>
         <rect x="0" y="20" width="180" height="120" fill="#a378a5" stroke="#1B3A2D" stroke-width="1.5"/>
         <rect x="20" y="20" width="20" height="6" fill="#1B3A2D"/>
         <rect x="50" y="20" width="20" height="6" fill="#1B3A2D"/>
@@ -8736,8 +8736,8 @@ const TECH_DATA = {
       <g transform="translate(60, 280)">
         <rect width="780" height="180" fill="#fff" stroke="#1B3A2D" stroke-width="1.5" rx="8"/>
         <text x="20" y="24" font-size="12" font-weight="700" fill="#1B3A2D">WHY USE A SECONDARY ANTIBODY?</text>
-        <text x="20" y="44" font-size="10" fill="#1B3A2D">Signal amplification — many secondary antibodies bind each primary, multiplying signal.</text>
-        <text x="20" y="60" font-size="10" fill="#1B3A2D">Cost — buy one labeled secondary species (e.g., anti-mouse) for ALL your mouse primaries.</text>
+        <text x="20" y="44" font-size="10" fill="#1B3A2D">Signal amplification: many secondary antibodies bind each primary, multiplying signal.</text>
+        <text x="20" y="60" font-size="10" fill="#1B3A2D">Cost: buy one labeled secondary species (e.g., anti-mouse) for ALL your mouse primaries.</text>
         <text x="20" y="92" font-size="11" font-weight="700" fill="#5FA874">USE CASES</text>
         <text x="20" y="110" font-size="10" fill="#1B3A2D">• Confirm protein expression + size · • HIV diagnostic confirmation</text>
         <text x="20" y="126" font-size="10" fill="#1B3A2D">• Phospho-state of protein (with phospho-specific antibodies)</text>
@@ -8748,9 +8748,9 @@ const TECH_DATA = {
     info:'<b>Goal:</b> detect a specific protein.<br><b>Steps:</b><br>1. <b>SDS-PAGE</b>: SDS denatures + coats proteins with negative charge → migrate purely by size. Reducing agent (β-ME or DTT) breaks disulfides.<br>2. Transfer proteins to PVDF/nitrocellulose.<br>3. Block (milk/BSA) to prevent non-specific antibody binding.<br>4. Primary antibody binds your protein.<br>5. Secondary antibody (anti-species + enzyme conjugate like HRP) amplifies signal.<br>6. Add chemiluminescent substrate → light → detect on film/CCD.<br><b>Use cases:</b> expression confirmation, HIV diagnostic, phospho-state detection, quantification (with β-actin loading control).',
   },
   elisa: {
-    label:'ELISA — antibody-based assay',
+    label:'ELISA: antibody-based assay',
     svg:`<svg viewBox="0 0 900 480" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">ELISA — Enzyme-Linked Immunosorbent Assay</text>
+      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">ELISA: Enzyme-Linked Immunosorbent Assay</text>
       <g transform="translate(60, 60)">
         <text x="180" y="0" text-anchor="middle" font-size="12" font-weight="700" fill="#1B3A2D">96-WELL PLATE READOUT</text>
         <rect x="0" y="20" width="360" height="180" fill="#fff" stroke="#1B3A2D" stroke-width="2"/>
@@ -8823,9 +8823,9 @@ const TECH_DATA = {
     info:'<b>ELISA</b> = high-throughput antibody-based assay in 96-well plates.<br><b>Sandwich format (most common):</b><br>1. Coat well with capture antibody.<br>2. Add sample → target antigen binds capture Ab.<br>3. Wash. Add detection Ab (enzyme-conjugated) → binds different epitope on target.<br>4. Wash. Add chromogenic substrate → enzyme converts → color.<br>5. Read absorbance with plate reader. Concentration interpolated from standard curve.<br><b>Other formats:</b> direct, indirect, competitive.<br><b>Use cases:</b> HIV screening, pregnancy tests (hCG), drug screens, cytokine assays.<br><b>Strengths:</b> quantitative, automatable, sensitive (pg/mL range).',
   },
   sanger: {
-    label:'Sanger sequencing — Chain termination',
+    label:'Sanger sequencing: Chain termination',
     svg:`<svg viewBox="0 0 900 480" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">SANGER SEQUENCING — chain-termination with ddNTPs</text>
+      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">SANGER SEQUENCING: chain-termination with ddNTPs</text>
       <g transform="translate(60, 60)">
         <text x="0" y="0" font-size="11" font-weight="700" fill="#1B3A2D">PRINCIPLE: ddNTPs lack 3′-OH → no further extension after incorporation</text>
         <g transform="translate(0,30)">
@@ -8873,7 +8873,7 @@ const TECH_DATA = {
         <text x="20" y="22" font-size="12" font-weight="700" fill="#1B3A2D">PROCESS</text>
         <text x="20" y="42" font-size="10" fill="#1B3A2D">1. Mix template + primer + DNA polymerase + dNTPs + small fraction of fluorescently-labeled ddNTPs (each color = different base)</text>
         <text x="20" y="58" font-size="10" fill="#1B3A2D">2. Polymerase extends from primer; randomly incorporates ddNTP → terminates at random positions</text>
-        <text x="20" y="74" font-size="10" fill="#1B3A2D">3. Run mixture through capillary electrophoresis — fragments separate by size. Laser excites fluor → camera reads color</text>
+        <text x="20" y="74" font-size="10" fill="#1B3A2D">3. Run mixture through capillary electrophoresis: fragments separate by size. Laser excites fluor → camera reads color</text>
         <text x="20" y="90" font-size="10" fill="#1B3A2D">4. Software calls bases from peak colors → outputs sequence</text>
         <text x="20" y="118" font-size="10" font-weight="700" fill="#5FA874">Reads ~800-1000 bp · gold standard for confirming individual variants · slow + expensive vs NGS for whole genomes</text>
       </g>
@@ -8881,11 +8881,11 @@ const TECH_DATA = {
     info:'<b>Goal:</b> determine the exact base sequence of a DNA fragment.<br><b>Trick:</b> dideoxynucleotides (ddNTPs) lack 3′-OH → DNA polymerase can incorporate them but cannot extend further → chain terminates.<br><b>Steps (modern capillary version):</b><br>1. Mix template + primer + dNTPs + 4 fluorescently-labeled ddNTPs.<br>2. Polymerase synthesizes; randomly incorporates ddNTP → fragments of every possible length, each ending in a labeled base.<br>3. Capillary electrophoresis separates by size; laser reads color of each fragment\'s terminal base in order.<br>4. Software calls bases.<br><b>Reads:</b> ~800-1000 bp per run. <b>Use cases:</b> confirming variants, plasmid verification, small targets. NGS replaces it for genome-scale work.',
   },
   ngs: {
-    label:'Next-Gen sequencing — Massively parallel',
+    label:'Next-Gen sequencing: Massively parallel',
     svg:`<svg viewBox="0 0 900 480" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">NEXT-GEN SEQUENCING (Illumina) — billions of reads in parallel</text>
+      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">NEXT-GEN SEQUENCING (Illumina): billions of reads in parallel</text>
       <g transform="translate(60, 60)">
-        <text x="0" y="0" font-size="11" font-weight="700" fill="#1B3A2D">1. Library prep — fragment + ligate adapters</text>
+        <text x="0" y="0" font-size="11" font-weight="700" fill="#1B3A2D">1. Library prep: fragment + ligate adapters</text>
         <line x1="0" y1="20" x2="200" y2="20" stroke="#5FA874" stroke-width="3"/>
         <line x1="0" y1="40" x2="200" y2="40" stroke="#5FA874" stroke-width="3"/>
         <text x="0" y="60" font-size="9" fill="#1B3A2D">↓ fragment</text>
@@ -8944,18 +8944,18 @@ const TECH_DATA = {
               <tr><td style="padding:5px;border:1px solid #1B3A2D">Reads per run</td><td style="padding:5px;border:1px solid #1B3A2D">~96 (capillary array)</td><td style="padding:5px;border:1px solid #1B3A2D">Billions</td></tr>
               <tr><td style="padding:5px;border:1px solid #1B3A2D">Cost per Mb</td><td style="padding:5px;border:1px solid #1B3A2D">$$$$</td><td style="padding:5px;border:1px solid #1B3A2D">$ (orders of magnitude cheaper)</td></tr>
               <tr><td style="padding:5px;border:1px solid #1B3A2D">Best for</td><td style="padding:5px;border:1px solid #1B3A2D">Confirming single variants</td><td style="padding:5px;border:1px solid #1B3A2D">Whole genomes, RNA-seq, variant discovery</td></tr>
-              <tr><td style="padding:5px;border:1px solid #1B3A2D">Long-read alternatives</td><td style="padding:5px;border:1px solid #1B3A2D">—</td><td style="padding:5px;border:1px solid #1B3A2D">PacBio (~25 kb), Oxford Nanopore (100+ kb)</td></tr>
+              <tr><td style="padding:5px;border:1px solid #1B3A2D">Long-read alternatives</td><td style="padding:5px;border:1px solid #1B3A2D">-</td><td style="padding:5px;border:1px solid #1B3A2D">PacBio (~25 kb), Oxford Nanopore (100+ kb)</td></tr>
             </tbody>
           </table>
         </foreignObject>
       </g>
     </svg>`,
-    info:'<b>Goal:</b> sequence millions of fragments in parallel — entire genomes in days.<br><b>Steps (Illumina):</b><br>1. <b>Library prep</b>: fragment DNA, ligate adapter sequences to ends.<br>2. <b>Bridge amplification</b>: fragments anchor on flow cell, amplify into clonal clusters.<br>3. <b>Sequencing-by-synthesis</b>: each cycle adds one fluorescent reversible-terminator nucleotide; camera images cluster colors; chemistry removes terminator + fluor; repeat.<br>4. <b>Software</b>: convert images → reads → align to reference.<br><b>vs. Sanger:</b> shorter reads (150-300 bp) but billions per run. Cheaper by orders of magnitude.<br><b>Use cases:</b> whole-genome sequencing, RNA-seq, variant discovery, microbiome.<br><b>Long-read alternatives:</b> PacBio HiFi, Oxford Nanopore (>100 kb reads).',
+    info:'<b>Goal:</b> sequence millions of fragments in parallel, entire genomes in days.<br><b>Steps (Illumina):</b><br>1. <b>Library prep</b>: fragment DNA, ligate adapter sequences to ends.<br>2. <b>Bridge amplification</b>: fragments anchor on flow cell, amplify into clonal clusters.<br>3. <b>Sequencing-by-synthesis</b>: each cycle adds one fluorescent reversible-terminator nucleotide; camera images cluster colors; chemistry removes terminator + fluor; repeat.<br>4. <b>Software</b>: convert images → reads → align to reference.<br><b>vs. Sanger:</b> shorter reads (150-300 bp) but billions per run. Cheaper by orders of magnitude.<br><b>Use cases:</b> whole-genome sequencing, RNA-seq, variant discovery, microbiome.<br><b>Long-read alternatives:</b> PacBio HiFi, Oxford Nanopore (>100 kb reads).',
   },
   crispr: {
-    label:'CRISPR-Cas9 — Programmable cutting',
+    label:'CRISPR-Cas9: Programmable cutting',
     svg:`<svg viewBox="0 0 900 480" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">CRISPR-Cas9 — bacterial adaptive immunity, repurposed</text>
+      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">CRISPR-Cas9: bacterial adaptive immunity, repurposed</text>
       <g transform="translate(60, 60)">
         <text x="0" y="0" font-size="11" font-weight="700" fill="#1B3A2D">RIBONUCLEOPROTEIN COMPLEX</text>
         <ellipse cx="180" cy="100" rx="120" ry="60" fill="#a378a5" stroke="#1B3A2D" stroke-width="2.5"/>
@@ -8980,7 +8980,7 @@ const TECH_DATA = {
         <line x1="240" y1="106" x2="240" y2="130" stroke="#C25B3F" stroke-width="3"/>
         <text x="160" y="55" font-size="11" font-weight="700" fill="#C25B3F">DOUBLE-STRAND BREAK</text>
         <text x="0" y="170" font-size="11" font-weight="700" fill="#1B3A2D">REPAIR PATHWAYS</text>
-        <text x="0" y="190" font-size="10" fill="#1B3A2D">• <b>NHEJ</b> (Non-Homologous End Joining): error-prone — small indels → <b>knockout</b></text>
+        <text x="0" y="190" font-size="10" fill="#1B3A2D">• <b>NHEJ</b> (Non-Homologous End Joining): error-prone, small indels → <b>knockout</b></text>
         <text x="0" y="208" font-size="10" fill="#1B3A2D">• <b>HDR</b> (Homology-Directed Repair): if repair template provided → precise <b>knock-in</b></text>
       </g>
       <g transform="translate(60, 290)">
@@ -8994,16 +8994,16 @@ const TECH_DATA = {
         <text x="400" y="80" font-size="10" fill="#1B3A2D">• <b>Genetic screens</b>: pooled gRNA libraries</text>
         <text x="20" y="100" font-size="10" fill="#1B3A2D">• <b>Diagnostics</b>: SHERLOCK, DETECTR (Cas13)</text>
         <text x="400" y="100" font-size="10" fill="#1B3A2D">• <b>Therapy</b>: Casgevy (sickle cell, 2023 approved)</text>
-        <text x="20" y="130" font-size="11" font-weight="700" fill="#5FA874">Doudna + Charpentier — 2020 Nobel Prize in Chemistry</text>
+        <text x="20" y="130" font-size="11" font-weight="700" fill="#5FA874">Doudna + Charpentier: 2020 Nobel Prize in Chemistry</text>
         <text x="20" y="150" font-size="10" fill="#1B3A2D">Discovered as bacterial adaptive immune system; repurposed for genome editing in 2012.</text>
       </g>
     </svg>`,
-    info:'<b>Origin:</b> bacteria use CRISPR loci + Cas proteins to remember and chop up phage DNA — a microbial adaptive immune system.<br><b>Repurposed for editing (2012, Doudna + Charpentier):</b> design any 20-nt guide RNA → Cas9 cuts wherever that sequence appears (next to a PAM, typically NGG).<br><b>After the cut:</b><br>• <b>NHEJ</b>: error-prone rejoining → small indels → frameshift → gene <b>knockout</b>.<br>• <b>HDR</b>: precise repair using a homologous donor template → gene <b>knock-in</b> (much rarer event).<br><b>Variants:</b> dead Cas9 (no cut) + base editor (deaminase) → single-base changes; prime editor → arbitrary edits without DSB; CRISPRi/a → tunable gene silencing/activation.<br><b>Therapy:</b> Casgevy (sickle cell), 2020 Nobel.',
+    info:'<b>Origin:</b> bacteria use CRISPR loci + Cas proteins to remember and chop up phage DNA, a microbial adaptive immune system.<br><b>Repurposed for editing (2012, Doudna + Charpentier):</b> design any 20-nt guide RNA → Cas9 cuts wherever that sequence appears (next to a PAM, typically NGG).<br><b>After the cut:</b><br>• <b>NHEJ</b>: error-prone rejoining → small indels → frameshift → gene <b>knockout</b>.<br>• <b>HDR</b>: precise repair using a homologous donor template → gene <b>knock-in</b> (much rarer event).<br><b>Variants:</b> dead Cas9 (no cut) + base editor (deaminase) → single-base changes; prime editor → arbitrary edits without DSB; CRISPRi/a → tunable gene silencing/activation.<br><b>Therapy:</b> Casgevy (sickle cell), 2020 Nobel.',
   },
   cloning: {
-    label:'Restriction cloning — Plasmid + insert',
+    label:'Restriction cloning: Plasmid + insert',
     svg:`<svg viewBox="0 0 900 480" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">RESTRICTION CLONING — moving a gene into a plasmid</text>
+      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">RESTRICTION CLONING: moving a gene into a plasmid</text>
       <g transform="translate(60, 60)">
         <text x="100" y="0" text-anchor="middle" font-size="11" font-weight="700" fill="#1B3A2D">1. Plasmid + insert (both cut with same RE)</text>
         <circle cx="100" cy="100" r="60" fill="none" stroke="#5FA874" stroke-width="3"/>
@@ -9054,12 +9054,12 @@ const TECH_DATA = {
         <text x="0" y="0" font-size="10" font-weight="700" fill="#1B3A2D">Common vectors: pUC, pBluescript, pET (expression). Common REs: EcoRI, BamHI, HindIII, NotI, XhoI. <b>Blue-white screening</b> uses lacZα disruption for further selection.</text>
       </g>
     </svg>`,
-    info:'<b>Goal:</b> insert a gene of interest into a plasmid for amplification or expression.<br><b>Steps:</b><br>1. Cut both the plasmid and the insert with the same restriction enzyme(s) — produces complementary sticky ends.<br>2. Mix → sticky ends base-pair.<br>3. <b>DNA ligase</b> + ATP seals nicks.<br>4. <b>Transform</b> into competent bacteria (heat shock or electroporation).<br>5. <b>Select</b> on antibiotic plate (e.g., ampicillin) — only cells with plasmid survive.<br>6. <b>Screen</b> colonies (blue/white if using lacZα; or PCR/restriction digest).<br><b>Modern alternatives:</b> Gibson assembly, Golden Gate, Gateway cloning — all faster + scarless.<br><b>Use cases:</b> protein production (pET vectors in E. coli), gene therapy vector preparation, CRISPR plasmid construction.',
+    info:'<b>Goal:</b> insert a gene of interest into a plasmid for amplification or expression.<br><b>Steps:</b><br>1. Cut both the plasmid and the insert with the same restriction enzyme(s), produces complementary sticky ends.<br>2. Mix → sticky ends base-pair.<br>3. <b>DNA ligase</b> + ATP seals nicks.<br>4. <b>Transform</b> into competent bacteria (heat shock or electroporation).<br>5. <b>Select</b> on antibiotic plate (e.g., ampicillin), only cells with plasmid survive.<br>6. <b>Screen</b> colonies (blue/white if using lacZα; or PCR/restriction digest).<br><b>Modern alternatives:</b> Gibson assembly, Golden Gate, Gateway cloning, all faster + scarless.<br><b>Use cases:</b> protein production (pET vectors in E. coli), gene therapy vector preparation, CRISPR plasmid construction.',
   },
   qpcr: {
-    label:'qPCR — Real-time quantification',
+    label:'qPCR, Real-time quantification',
     svg:`<svg viewBox="0 0 900 480" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">qPCR — quantitative real-time PCR</text>
+      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">qPCR, quantitative real-time PCR</text>
       <g transform="translate(60, 60)">
         <text x="0" y="0" font-size="11" font-weight="700" fill="#1B3A2D">AMPLIFICATION CURVES (fluorescence vs cycle)</text>
         <rect x="0" y="20" width="500" height="280" fill="#fff" stroke="#1B3A2D" stroke-width="1.5"/>
@@ -9106,12 +9106,12 @@ const TECH_DATA = {
         <text x="20" y="80" font-size="10" font-weight="700" fill="#5FA874">USES: gene expression (cDNA from RNA → qPCR), pathogen load (HIV viral load, COVID PCR), copy-number variation, GMO testing.</text>
       </g>
     </svg>`,
-    info:'<b>qPCR</b> = PCR + real-time fluorescence detection. Quantifies starting template by tracking when amplification crosses a threshold.<br><b>Detection chemistries:</b><br>• <b>SYBR Green</b>: intercalating dye, fluoresces on dsDNA. Cheap but non-specific (binds primer-dimers too).<br>• <b>TaqMan probe</b>: fluor + quencher on same probe; polymerase\'s 5′→3′ exonuclease cleaves probe during extension → fluor released. Specific.<br><b>Ct value</b> = cycle at which fluorescence crosses threshold. Low Ct = lots of starting template; high Ct = little.<br><b>Quantification:</b> standard curve (absolute) or ΔΔCt method (relative — normalize to reference gene + reference condition).<br><b>Use cases:</b> gene expression (RT-qPCR from cDNA), pathogen load, GMO detection, COVID PCR tests.',
+    info:'<b>qPCR</b> = PCR + real-time fluorescence detection. Quantifies starting template by tracking when amplification crosses a threshold.<br><b>Detection chemistries:</b><br>• <b>SYBR Green</b>: intercalating dye, fluoresces on dsDNA. Cheap but non-specific (binds primer-dimers too).<br>• <b>TaqMan probe</b>: fluor + quencher on same probe; polymerase\'s 5′→3′ exonuclease cleaves probe during extension → fluor released. Specific.<br><b>Ct value</b> = cycle at which fluorescence crosses threshold. Low Ct = lots of starting template; high Ct = little.<br><b>Quantification:</b> standard curve (absolute) or ΔΔCt method (relative, normalize to reference gene + reference condition).<br><b>Use cases:</b> gene expression (RT-qPCR from cDNA), pathogen load, GMO detection, COVID PCR tests.',
   },
   ish: {
-    label:'In situ hybridization — spatial expression',
+    label:'In situ hybridization: spatial expression',
     svg:`<svg viewBox="0 0 900 480" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">IN SITU HYBRIDIZATION — see WHERE in the tissue a transcript is</text>
+      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">IN SITU HYBRIDIZATION: see WHERE in the tissue a transcript is</text>
       <g transform="translate(60, 70)">
         <text x="0" y="0" font-size="11" font-weight="700" fill="#1B3A2D">PROCESS</text>
         <text x="0" y="22" font-size="10" fill="#1B3A2D">1. Fix tissue, section onto slide</text>
@@ -9136,16 +9136,16 @@ const TECH_DATA = {
         <rect width="800" height="190" fill="#fff" stroke="#1B3A2D" stroke-width="1.5" rx="8"/>
         <text x="20" y="24" font-size="12" font-weight="700" fill="#1B3A2D">VARIANTS</text>
         <text x="20" y="46" font-size="10" fill="#1B3A2D"><b>FISH (Fluorescent ISH)</b>: detect specific DNA loci on chromosomes (probe = labeled DNA). Used for karyotype anomalies, gene mapping.</text>
-        <text x="20" y="64" font-size="10" fill="#1B3A2D"><b>RNAscope</b>: branched probes amplify signal — single mRNA molecules visible.</text>
+        <text x="20" y="64" font-size="10" fill="#1B3A2D"><b>RNAscope</b>: branched probes amplify signal, single mRNA molecules visible.</text>
         <text x="20" y="82" font-size="10" fill="#1B3A2D"><b>Multiplexed FISH (MERFISH, seqFISH)</b>: thousands of mRNA species per cell across a tissue → spatial transcriptomics.</text>
         <text x="20" y="112" font-size="11" font-weight="700" fill="#5FA874">USE CASES</text>
-        <text x="20" y="130" font-size="10" fill="#1B3A2D">• Developmental biology — Hox gene expression patterns</text>
+        <text x="20" y="130" font-size="10" fill="#1B3A2D">• Developmental biology: Hox gene expression patterns</text>
         <text x="20" y="146" font-size="10" fill="#1B3A2D">• Cancer pathology (HER2 amplification by FISH)</text>
         <text x="20" y="162" font-size="10" fill="#1B3A2D">• Aneuploidy detection (chromosome painting)</text>
-        <text x="20" y="178" font-size="10" fill="#1B3A2D">• Brain mapping — which neurons express which transcripts</text>
+        <text x="20" y="178" font-size="10" fill="#1B3A2D">• Brain mapping: which neurons express which transcripts</text>
       </g>
     </svg>`,
-    info:'<b>Goal:</b> see WHERE in a tissue a specific mRNA (or DNA locus, for FISH) is expressed.<br><b>Difference from blots:</b> tissue is preserved intact — you get spatial info (which cells, which regions), not just bulk amount.<br><b>Steps:</b> fix tissue → permeabilize → add labeled antisense probe → hybridize → wash → detect (chromogenic, fluorescent, or radioactive).<br><b>Variants:</b><br>• <b>FISH</b>: fluorescent DNA probes for specific chromosomal loci (HER2 amplification, aneuploidy detection).<br>• <b>RNAscope</b>: branched-probe amplification → single-molecule sensitivity.<br>• <b>Spatial transcriptomics (MERFISH, seqFISH)</b>: thousands of transcripts per cell across whole tissues.',
+    info:'<b>Goal:</b> see WHERE in a tissue a specific mRNA (or DNA locus, for FISH) is expressed.<br><b>Difference from blots:</b> tissue is preserved intact, you get spatial info (which cells, which regions), not just bulk amount.<br><b>Steps:</b> fix tissue → permeabilize → add labeled antisense probe → hybridize → wash → detect (chromogenic, fluorescent, or radioactive).<br><b>Variants:</b><br>• <b>FISH</b>: fluorescent DNA probes for specific chromosomal loci (HER2 amplification, aneuploidy detection).<br>• <b>RNAscope</b>: branched-probe amplification → single-molecule sensitivity.<br>• <b>Spatial transcriptomics (MERFISH, seqFISH)</b>: thousands of transcripts per cell across whole tissues.',
   },
 };
 function techSetMode(mode) {
@@ -9166,7 +9166,7 @@ function initProEuComparator() {
   if (!document.getElementById('cmpBody')) return;
   document.getElementById('cmpBody').innerHTML = `
     <svg viewBox="0 0 900 580" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-      <text x="450" y="30" text-anchor="middle" font-size="14" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">PROKARYOTE vs EUKARYOTE — SIDE-BY-SIDE</text>
+      <text x="450" y="30" text-anchor="middle" font-size="14" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">PROKARYOTE vs EUKARYOTE: SIDE-BY-SIDE</text>
 
       <g transform="translate(40, 60)">
         <rect width="380" height="280" fill="#fff" stroke="#C25B3F" stroke-width="2.5" rx="10"/>
@@ -9284,7 +9284,7 @@ const PROT_DATA = {
   primary: {
     label:'Primary structure',
     svg:`<svg viewBox="0 0 900 360" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">PRIMARY — sequence of amino acids</text>
+      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">PRIMARY: sequence of amino acids</text>
       <g transform="translate(40, 80)">
         <text x="0" y="0" font-size="10" fill="#1B3A2D">N-terminus</text>
         <text x="800" y="0" font-size="10" fill="#1B3A2D" text-anchor="end">C-terminus</text>
@@ -9331,17 +9331,17 @@ const PROT_DATA = {
         <text x="400" y="100" text-anchor="middle" font-size="11" font-weight="700" fill="#1B3A2D">connected by PEPTIDE BONDS (amide linkages)</text>
         <g transform="translate(180, 130)">
           <text x="0" y="0" font-size="10" font-weight="700" fill="#1B3A2D">peptide bond formation:</text>
-          <text x="0" y="20" font-size="10" font-family="JetBrains Mono,monospace">amino acid 1 (—COOH) + amino acid 2 (H₂N—) → peptide (—CO—NH—) + H₂O</text>
+          <text x="0" y="20" font-size="10" font-family="JetBrains Mono,monospace">amino acid 1 (-COOH) + amino acid 2 (H₂N-) → peptide (-CO-NH-) + H₂O</text>
           <text x="0" y="40" font-size="10" font-family="JetBrains Mono,monospace" fill="#5FA874" font-weight="700">condensation/dehydration</text>
         </g>
       </g>
     </svg>`,
-    info:'<b>Primary structure</b> = the linear sequence of amino acids in a polypeptide.<br><b>Bond:</b> peptide bond (amide) between α-carboxyl of one aa and α-amino of next. Formed by condensation (loses H₂O).<br><b>Direction:</b> N-terminus → C-terminus.<br><b>Determined by:</b> the gene sequence (codons in mRNA).<br><b>Importance:</b> the primary sequence specifies all higher-order structure. Even one wrong amino acid (e.g., HbS Glu→Val) can change everything downstream — sickle cell anemia is a primary-structure mutation.',
+    info:'<b>Primary structure</b> = the linear sequence of amino acids in a polypeptide.<br><b>Bond:</b> peptide bond (amide) between α-carboxyl of one aa and α-amino of next. Formed by condensation (loses H₂O).<br><b>Direction:</b> N-terminus → C-terminus.<br><b>Determined by:</b> the gene sequence (codons in mRNA).<br><b>Importance:</b> the primary sequence specifies all higher-order structure. Even one wrong amino acid (e.g., HbS Glu→Val) can change everything downstream, sickle cell anemia is a primary-structure mutation.',
   },
   secondary: {
-    label:'Secondary — α-helix / β-sheet',
+    label:'Secondary: α-helix / β-sheet',
     svg:`<svg viewBox="0 0 900 480" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">SECONDARY — local folds via H-bonds in backbone</text>
+      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">SECONDARY: local folds via H-bonds in backbone</text>
       <g transform="translate(40, 60)">
         <text x="200" y="0" text-anchor="middle" font-size="12" font-weight="700" fill="#5FA874">α-HELIX</text>
         <g transform="translate(0, 30)">
@@ -9378,7 +9378,7 @@ const PROT_DATA = {
       <g transform="translate(40, 290)">
         <rect width="820" height="170" fill="#fff" stroke="#1B3A2D" stroke-width="1.5" rx="8"/>
         <text x="20" y="24" font-size="12" font-weight="700" fill="#1B3A2D">SECONDARY STRUCTURE FACTS</text>
-        <text x="20" y="44" font-size="10" fill="#1B3A2D">• <b>H-bonds in backbone</b> only — between C=O and N-H. Side chains don\'t define secondary.</text>
+        <text x="20" y="44" font-size="10" fill="#1B3A2D">• <b>H-bonds in backbone</b> only, between C=O and N-H. Side chains don\'t define secondary.</text>
         <text x="20" y="60" font-size="10" fill="#1B3A2D">• <b>Proline</b> disrupts α-helices (rigid ring, no N-H to donate).</text>
         <text x="20" y="76" font-size="10" fill="#1B3A2D">• <b>Glycine</b> too flexible, often interrupts helices/sheets.</text>
         <text x="20" y="98" font-size="11" font-weight="700" fill="#5FA874">α-HELIX</text>
@@ -9387,12 +9387,12 @@ const PROT_DATA = {
         <text x="20" y="158" font-size="10" fill="#1B3A2D">Adjacent extended strands H-bonded. Antiparallel sheets are more stable than parallel. Seen in stable structural proteins (silk).</text>
       </g>
     </svg>`,
-    info:'<b>Secondary structure</b> = local folds stabilized by H-bonds in the polypeptide backbone (between C=O and N-H). Side chains do NOT participate.<br><b>α-helix:</b> right-handed coil, 3.6 residues per turn, 5.4 Å rise/turn. C=O of residue i H-bonds with N-H of residue i+4. Side chains stick outward.<br><b>β-sheet:</b> extended strands aligned side-by-side, H-bonded across strands. Parallel (same direction) or antiparallel (opposite — more stable).<br><b>Helix breakers:</b> Proline (no N-H, rigid) and Glycine (too flexible) disrupt regular structures.<br><b>β-turns:</b> tight 4-residue reversals, often containing Pro/Gly.',
+    info:'<b>Secondary structure</b> = local folds stabilized by H-bonds in the polypeptide backbone (between C=O and N-H). Side chains do NOT participate.<br><b>α-helix:</b> right-handed coil, 3.6 residues per turn, 5.4 Å rise/turn. C=O of residue i H-bonds with N-H of residue i+4. Side chains stick outward.<br><b>β-sheet:</b> extended strands aligned side-by-side, H-bonded across strands. Parallel (same direction) or antiparallel (opposite, more stable).<br><b>Helix breakers:</b> Proline (no N-H, rigid) and Glycine (too flexible) disrupt regular structures.<br><b>β-turns:</b> tight 4-residue reversals, often containing Pro/Gly.',
   },
   tertiary: {
-    label:'Tertiary — 3D fold',
+    label:'Tertiary: 3D fold',
     svg:`<svg viewBox="0 0 900 480" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">TERTIARY — overall 3D fold of one polypeptide</text>
+      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">TERTIARY: overall 3D fold of one polypeptide</text>
       <g transform="translate(80, 60)">
         <path d="M 120 60 Q 180 30 200 80 Q 220 130 180 150 Q 140 170 120 130 Q 100 90 60 110 Q 30 130 50 170 Q 70 200 110 200 Q 160 200 200 220 Q 240 240 240 200 Q 240 160 280 150 Q 320 140 320 100 Q 320 60 280 40 Q 240 20 200 30" fill="none" stroke="#5FA874" stroke-width="5"/>
         <path d="M 120 60 Q 180 30 200 80" stroke="#5FA874" stroke-width="8" fill="none"/>
@@ -9414,7 +9414,7 @@ const PROT_DATA = {
         <text x="20" y="66" font-size="9" fill="#1B3A2D">Nonpolar residues cluster INSIDE (away from water).</text>
         <text x="20" y="80" font-size="9" fill="#1B3A2D">Drives the fold thermodynamically.</text>
         <text x="20" y="106" font-size="11" font-weight="700" fill="#c19a3e">Disulfide bridges (covalent)</text>
-        <text x="20" y="122" font-size="9" fill="#1B3A2D">Cys-Cys -S-S- — strongest, irreversible w/o reduction.</text>
+        <text x="20" y="122" font-size="9" fill="#1B3A2D">Cys-Cys -S-S-: strongest, irreversible w/o reduction.</text>
         <text x="20" y="148" font-size="11" font-weight="700" fill="#a378a5">Salt bridges (ionic)</text>
         <text x="20" y="164" font-size="9" fill="#1B3A2D">Lys/Arg/His⁺ ↔ Asp/Glu⁻</text>
         <text x="20" y="190" font-size="11" font-weight="700" fill="#3A2C7A">H-bonds (side chains)</text>
@@ -9428,15 +9428,15 @@ const PROT_DATA = {
         <text x="20" y="22" font-size="12" font-weight="700" fill="#1B3A2D">FUNCTION-DETERMINING</text>
         <text x="20" y="42" font-size="10" fill="#1B3A2D">Tertiary structure creates the active site of an enzyme, the binding pocket for a ligand, the channel of a transporter.</text>
         <text x="20" y="58" font-size="10" fill="#1B3A2D"><b>Domain</b> = independently-folding tertiary unit. Big proteins have multiple domains (kinase domain, DNA-binding domain, etc.).</text>
-        <text x="20" y="80" font-size="10" font-weight="700" fill="#5FA874">"Structure determines function" — the biology textbook cliché that\'s actually true at the tertiary level.</text>
+        <text x="20" y="80" font-size="10" font-weight="700" fill="#5FA874">"Structure determines function", the biology textbook cliché that\'s actually true at the tertiary level.</text>
       </g>
     </svg>`,
-    info:'<b>Tertiary structure</b> = the overall 3D shape of a single polypeptide chain.<br><b>Stabilizing forces:</b><br>• <b>Hydrophobic effect</b>: nonpolar side chains cluster in the protein interior (the dominant driving force in solution).<br>• <b>Disulfide bridges</b>: covalent S-S bonds between Cys side chains. Strongest type, often in secreted proteins.<br>• <b>Salt bridges</b>: ionic Lys/Arg/His⁺ to Asp/Glu⁻.<br>• <b>H-bonds</b>: between side chains.<br>• <b>Van der Waals</b>: weak but additive in packed cores.<br><b>Domains:</b> independently-folding subunits. Multidomain proteins (kinases, antibodies) have separate functional modules.<br><b>Tertiary creates the active site / binding pocket / channel</b> — function lives at this level.',
+    info:'<b>Tertiary structure</b> = the overall 3D shape of a single polypeptide chain.<br><b>Stabilizing forces:</b><br>• <b>Hydrophobic effect</b>: nonpolar side chains cluster in the protein interior (the dominant driving force in solution).<br>• <b>Disulfide bridges</b>: covalent S-S bonds between Cys side chains. Strongest type, often in secreted proteins.<br>• <b>Salt bridges</b>: ionic Lys/Arg/His⁺ to Asp/Glu⁻.<br>• <b>H-bonds</b>: between side chains.<br>• <b>Van der Waals</b>: weak but additive in packed cores.<br><b>Domains:</b> independently-folding subunits. Multidomain proteins (kinases, antibodies) have separate functional modules.<br><b>Tertiary creates the active site / binding pocket / channel</b>, function lives at this level.',
   },
   quaternary: {
-    label:'Quaternary — multiple subunits',
+    label:'Quaternary: multiple subunits',
     svg:`<svg viewBox="0 0 900 460" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">QUATERNARY — assembly of multiple polypeptides</text>
+      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">QUATERNARY: assembly of multiple polypeptides</text>
       <g transform="translate(60, 60)">
         <text x="160" y="0" text-anchor="middle" font-size="12" font-weight="700" fill="#1B3A2D">HEMOGLOBIN (α₂β₂)</text>
         <circle cx="100" cy="80" r="40" fill="#5FA874" stroke="#1B3A2D" stroke-width="2"/>
@@ -9489,12 +9489,12 @@ const PROT_DATA = {
         <text x="20" y="138" font-size="10" fill="#1B3A2D">Single-chain proteins (myoglobin) have only primary → tertiary. Quaternary requires &gt;1 chain.</text>
       </g>
     </svg>`,
-    info:'<b>Quaternary structure</b> = assembly of two or more polypeptide chains into one functional protein.<br><b>Bonds:</b> same as tertiary (hydrophobic, H-bonds, salt bridges, disulfides) but BETWEEN subunits rather than within.<br><b>Examples:</b><br>• <b>Hemoglobin</b> (α₂β₂): cooperative O₂ binding via subunit communication.<br>• <b>Antibodies</b> (2H + 2L chains, disulfide-linked).<br>• <b>Collagen</b> (triple helix of 3 chains).<br>• <b>Ribosome</b> (50S+30S in prokaryotes, 60S+40S in eukaryotes).<br>• <b>Hexameric/octameric enzymes</b> with allosteric regulation.<br><b>Not all proteins have quaternary structure</b> — myoglobin is a single chain (primary → tertiary only).',
+    info:'<b>Quaternary structure</b> = assembly of two or more polypeptide chains into one functional protein.<br><b>Bonds:</b> same as tertiary (hydrophobic, H-bonds, salt bridges, disulfides) but BETWEEN subunits rather than within.<br><b>Examples:</b><br>• <b>Hemoglobin</b> (α₂β₂): cooperative O₂ binding via subunit communication.<br>• <b>Antibodies</b> (2H + 2L chains, disulfide-linked).<br>• <b>Collagen</b> (triple helix of 3 chains).<br>• <b>Ribosome</b> (50S+30S in prokaryotes, 60S+40S in eukaryotes).<br>• <b>Hexameric/octameric enzymes</b> with allosteric regulation.<br><b>Not all proteins have quaternary structure</b>, myoglobin is a single chain (primary → tertiary only).',
   },
   denat: {
     label:'Denaturation',
     svg:`<svg viewBox="0 0 900 360" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">DENATURATION — losing higher-order structure</text>
+      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">DENATURATION: losing higher-order structure</text>
       <g transform="translate(40, 70)">
         <text x="160" y="0" text-anchor="middle" font-size="12" font-weight="700" fill="#5FA874">FOLDED (NATIVE)</text>
         <path d="M 60 100 Q 100 30 180 70 Q 240 100 220 150 Q 200 200 130 180 Q 80 170 100 130 Q 120 100 60 100" fill="none" stroke="#5FA874" stroke-width="4"/>
@@ -9514,12 +9514,12 @@ const PROT_DATA = {
       </g>
       <defs><marker id="prot-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" fill="#1B3A2D"/></marker></defs>
     </svg>`,
-    info:'<b>Denaturation</b> = loss of native 3D structure (secondary, tertiary, quaternary) without breaking the peptide backbone.<br><b>Causes:</b><br>• <b>Heat</b> (egg white turning white)<br>• <b>Extreme pH</b> (alters ionization of side chains)<br>• <b>Detergents</b> like SDS<br>• <b>Chaotropes</b> (urea, GuHCl) disrupt H-bonds<br>• <b>Reducing agents</b> (β-ME, DTT) break disulfides<br>• <b>Heavy metals</b> bind sulfhydryls<br><b>Result:</b> usually loss of function. Some proteins refold spontaneously when denaturant removed (Anfinsen showed ribonuclease — Nobel 1972). Chaperones often help.<br><b>Irreversible:</b> covalent damage (oxidation, deamidation) or misfolded aggregates (prion proteins).',
+    info:'<b>Denaturation</b> = loss of native 3D structure (secondary, tertiary, quaternary) without breaking the peptide backbone.<br><b>Causes:</b><br>• <b>Heat</b> (egg white turning white)<br>• <b>Extreme pH</b> (alters ionization of side chains)<br>• <b>Detergents</b> like SDS<br>• <b>Chaotropes</b> (urea, GuHCl) disrupt H-bonds<br>• <b>Reducing agents</b> (β-ME, DTT) break disulfides<br>• <b>Heavy metals</b> bind sulfhydryls<br><b>Result:</b> usually loss of function. Some proteins refold spontaneously when denaturant removed (Anfinsen showed ribonuclease: Nobel 1972). Chaperones often help.<br><b>Irreversible:</b> covalent damage (oxidation, deamidation) or misfolded aggregates (prion proteins).',
   },
   bonds: {
     label:'Bond types reference',
     svg:`<svg viewBox="0 0 900 460" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">BOND TYPES IN PROTEINS — strength + role</text>
+      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">BOND TYPES IN PROTEINS: strength + role</text>
       <foreignObject x="40" y="60" width="820" height="380">
         <table xmlns="http://www.w3.org/1999/xhtml" style="width:100%;border-collapse:collapse;font-family:JetBrains Mono,monospace;font-size:11.5px;background:#fff;border:1.5px solid #1B3A2D">
           <thead style="background:rgba(13,32,24,0.08)">
@@ -9538,7 +9538,7 @@ const PROT_DATA = {
         </table>
       </foreignObject>
     </svg>`,
-    info:'<b>Quick reference for protein-stabilizing bonds:</b><br><br><b>Covalent (strongest):</b><br>• Peptide bond — primary structure, never broken by denaturation<br>• Disulfide — Cys-Cys, locks tertiary/quaternary<br><br><b>Non-covalent (broken by denaturants):</b><br>• Hydrogen bonds — backbone (secondary) + side chains (tertiary)<br>• Salt bridges — ionic Lys/Arg/His⁺ to Asp/Glu⁻<br>• Hydrophobic effect — nonpolar collapse in water (the big driver)<br>• Van der Waals — weak but additive in packed cores<br><br><b>Special:</b> coordination bonds with metals (Zn, Fe, Mg) at active sites.',
+    info:'<b>Quick reference for protein-stabilizing bonds:</b><br><br><b>Covalent (strongest):</b><br>• Peptide bond: primary structure, never broken by denaturation<br>• Disulfide: Cys-Cys, locks tertiary/quaternary<br><br><b>Non-covalent (broken by denaturants):</b><br>• Hydrogen bonds: backbone (secondary) + side chains (tertiary)<br>• Salt bridges: ionic Lys/Arg/His⁺ to Asp/Glu⁻<br>• Hydrophobic effect: nonpolar collapse in water (the big driver)<br>• Van der Waals: weak but additive in packed cores<br><br><b>Special:</b> coordination bonds with metals (Zn, Fe, Mg) at active sites.',
   },
 };
 function protSetMode(mode) {
@@ -9565,7 +9565,7 @@ const EPI_DATA = {
   recessive: {
     label:'Recessive epistasis (9:3:4)',
     svg:`<svg viewBox="0 0 900 460" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">RECESSIVE EPISTASIS — 9:3:4 (Labrador coat color)</text>
+      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">RECESSIVE EPISTASIS: 9:3:4 (Labrador coat color)</text>
       <g transform="translate(40, 60)">
         <text x="0" y="0" font-size="11" font-weight="700" fill="#1B3A2D">PATHWAY</text>
         <rect x="0" y="20" width="100" height="50" fill="#fff" stroke="#1B3A2D" stroke-width="1.5" rx="4"/>
@@ -9597,16 +9597,16 @@ const EPI_DATA = {
           </table>
         </foreignObject>
       </g>
-      <text x="40" y="430" font-size="10" font-weight="700" fill="#5FA874">"<b>ee</b> is epistatic to B/b" — homozygous recessive at E hides B/b expression entirely.</text>
+      <text x="40" y="430" font-size="10" font-weight="700" fill="#5FA874">"<b>ee</b> is epistatic to B/b", homozygous recessive at E hides B/b expression entirely.</text>
       <defs><marker id="g-arrow2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" fill="#1B3A2D"/></marker></defs>
     </svg>`,
-    info:'<b>Recessive epistasis (9:3:4):</b> homozygous recessive at one locus hides expression at another.<br><b>Classic example — Labrador coat color:</b><br>• B/b: black (B) vs brown (b) pigment<br>• E/e: deposit (E) vs not deposit (e) pigment in fur<br>• <b>ee genotype masks B/b entirely</b> → yellow lab regardless of B/b<br><b>F2 ratio:</b><br>• 9 B_E_ = black<br>• 3 bbE_ = brown<br>• 3 B_ee = yellow (E gene masks)<br>• 1 bbee = yellow (E gene masks)<br>• Combined: <b>9 : 3 : 4</b>',
+    info:'<b>Recessive epistasis (9:3:4):</b> homozygous recessive at one locus hides expression at another.<br><b>Classic example: Labrador coat color:</b><br>• B/b: black (B) vs brown (b) pigment<br>• E/e: deposit (E) vs not deposit (e) pigment in fur<br>• <b>ee genotype masks B/b entirely</b> → yellow lab regardless of B/b<br><b>F2 ratio:</b><br>• 9 B_E_ = black<br>• 3 bbE_ = brown<br>• 3 B_ee = yellow (E gene masks)<br>• 1 bbee = yellow (E gene masks)<br>• Combined: <b>9 : 3 : 4</b>',
   },
   dominant: {
     label:'Dominant epistasis (12:3:1)',
     svg:`<svg viewBox="0 0 900 380" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">DOMINANT EPISTASIS — 12:3:1 (Squash fruit color)</text>
-      <text x="40" y="60" font-size="10" fill="#1B3A2D"><b>W/w</b>: dominant W produces a colorless covering — masks any color underneath. <b>Y/y</b>: yellow (Y) vs green (y).</text>
+      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">DOMINANT EPISTASIS: 12:3:1 (Squash fruit color)</text>
+      <text x="40" y="60" font-size="10" fill="#1B3A2D"><b>W/w</b>: dominant W produces a colorless covering, masks any color underneath. <b>Y/y</b>: yellow (Y) vs green (y).</text>
       <foreignObject x="40" y="80" width="820" height="240">
         <table xmlns="http://www.w3.org/1999/xhtml" style="width:100%;border-collapse:collapse;font-family:JetBrains Mono,monospace;font-size:12px;background:#fff;border:1.5px solid #1B3A2D">
           <thead style="background:rgba(13,32,24,0.08)">
@@ -9621,15 +9621,15 @@ const EPI_DATA = {
           </tbody>
         </table>
       </foreignObject>
-      <text x="40" y="350" font-size="10" font-weight="700" fill="#5FA874">"<b>W</b> (dominant) is epistatic to Y/y" — single W allele is enough to mask the other locus.</text>
+      <text x="40" y="350" font-size="10" font-weight="700" fill="#5FA874">"<b>W</b> (dominant) is epistatic to Y/y", single W allele is enough to mask the other locus.</text>
     </svg>`,
-    info:'<b>Dominant epistasis (12:3:1):</b> a dominant allele at one locus masks expression at another locus.<br><b>Example — squash:</b><br>• W_ produces colorless covering → all white<br>• ww allows underlying color: Y_ = yellow, yy = green<br><b>F2:</b> 12 white : 3 yellow : 1 green',
+    info:'<b>Dominant epistasis (12:3:1):</b> a dominant allele at one locus masks expression at another locus.<br><b>Example: squash:</b><br>• W_ produces colorless covering → all white<br>• ww allows underlying color: Y_ = yellow, yy = green<br><b>F2:</b> 12 white : 3 yellow : 1 green',
   },
   duplicate: {
     label:'Duplicate dominant (15:1)',
     svg:`<svg viewBox="0 0 900 380" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">DUPLICATE DOMINANT — 15:1 (Wheat grain color)</text>
-      <text x="40" y="60" font-size="10" fill="#1B3A2D">Two redundant genes — EITHER dominant allele is sufficient to produce the phenotype.</text>
+      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">DUPLICATE DOMINANT: 15:1 (Wheat grain color)</text>
+      <text x="40" y="60" font-size="10" fill="#1B3A2D">Two redundant genes: EITHER dominant allele is sufficient to produce the phenotype.</text>
       <text x="40" y="78" font-size="10" fill="#1B3A2D">Only the double-recessive (aabb) lacks any functional copy.</text>
       <foreignObject x="40" y="100" width="820" height="220">
         <table xmlns="http://www.w3.org/1999/xhtml" style="width:100%;border-collapse:collapse;font-family:JetBrains Mono,monospace;font-size:12px;background:#fff;border:1.5px solid #1B3A2D">
@@ -9645,14 +9645,14 @@ const EPI_DATA = {
           </tbody>
         </table>
       </foreignObject>
-      <text x="40" y="350" font-size="10" font-weight="700" fill="#5FA874">Genetic redundancy — gene duplicates that perform the same function.</text>
+      <text x="40" y="350" font-size="10" font-weight="700" fill="#5FA874">Genetic redundancy: gene duplicates that perform the same function.</text>
     </svg>`,
-    info:'<b>Duplicate dominant (15:1):</b> two genes redundantly produce the same phenotype. Either dominant allele is sufficient. Only double-recessive shows the alternative.<br><b>Example — wheat grain:</b> A_B_, A_bb, aaB_ all = red; only aabb = white.<br><b>Why:</b> common when a gene was duplicated and both copies retained function.',
+    info:'<b>Duplicate dominant (15:1):</b> two genes redundantly produce the same phenotype. Either dominant allele is sufficient. Only double-recessive shows the alternative.<br><b>Example: wheat grain:</b> A_B_, A_bb, aaB_ all = red; only aabb = white.<br><b>Why:</b> common when a gene was duplicated and both copies retained function.',
   },
   dupRec: {
     label:'Duplicate recessive (9:7)',
     svg:`<svg viewBox="0 0 900 380" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">DUPLICATE RECESSIVE — 9:7 (Sweet pea flower)</text>
+      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">DUPLICATE RECESSIVE: 9:7 (Sweet pea flower)</text>
       <text x="40" y="60" font-size="10" fill="#1B3A2D">Both genes must have a dominant allele to make the colored phenotype. Pathway requires both enzymes in series.</text>
       <foreignObject x="40" y="80" width="820" height="240">
         <table xmlns="http://www.w3.org/1999/xhtml" style="width:100%;border-collapse:collapse;font-family:JetBrains Mono,monospace;font-size:12px;background:#fff;border:1.5px solid #1B3A2D">
@@ -9668,14 +9668,14 @@ const EPI_DATA = {
           </tbody>
         </table>
       </foreignObject>
-      <text x="40" y="350" font-size="10" font-weight="700" fill="#5FA874">"Complementation" pattern — a sequential pathway where both genes must be functional.</text>
+      <text x="40" y="350" font-size="10" font-weight="700" fill="#5FA874">"Complementation" pattern, a sequential pathway where both genes must be functional.</text>
     </svg>`,
-    info:'<b>Duplicate recessive (9:7) — complementary genes:</b> both genes must contribute a functional product. Knock out either one → phenotype lost.<br><b>Example — sweet pea:</b> need both pigment-pathway enzymes A and B for purple. A_bb, aaB_, and aabb are all white.<br><b>Why:</b> sequential biochemical pathway where each enzyme is essential.',
+    info:'<b>Duplicate recessive (9:7): complementary genes:</b> both genes must contribute a functional product. Knock out either one → phenotype lost.<br><b>Example: sweet pea:</b> need both pigment-pathway enzymes A and B for purple. A_bb, aaB_, and aabb are all white.<br><b>Why:</b> sequential biochemical pathway where each enzyme is essential.',
   },
   comp: {
     label:'Complementary genes (9:7)',
     svg:`<svg viewBox="0 0 900 380" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">COMPLEMENTARY GENES — 9:7 PATHWAY VIEW</text>
+      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">COMPLEMENTARY GENES: 9:7 PATHWAY VIEW</text>
       <g transform="translate(60, 70)">
         <rect x="0" y="20" width="100" height="50" fill="#fff" stroke="#1B3A2D" stroke-width="1.5" rx="4"/>
         <text x="50" y="50" text-anchor="middle" font-size="10" font-weight="700" fill="#1B3A2D">precursor</text>
@@ -9696,16 +9696,16 @@ const EPI_DATA = {
         <text x="20" y="22" font-size="11" font-weight="700" fill="#1B3A2D">CLINICAL EXAMPLE: PHENYLKETONURIA pathway analogy</text>
         <text x="20" y="42" font-size="10" fill="#1B3A2D">Phe → Tyr → DOPA → melanin. Mutations at any step can disrupt downstream products.</text>
         <text x="20" y="60" font-size="10" fill="#1B3A2D">Complementary genes are the genetic version of "weakest link in the chain."</text>
-        <text x="20" y="84" font-size="10" font-weight="700" fill="#5FA874">9:7 is mathematically identical to duplicate recessive — interpretation differs.</text>
+        <text x="20" y="84" font-size="10" font-weight="700" fill="#5FA874">9:7 is mathematically identical to duplicate recessive, interpretation differs.</text>
       </g>
       <defs><marker id="g-arrow3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" fill="#1B3A2D"/></marker></defs>
     </svg>`,
-    info:'<b>Complementary genes (9:7):</b> two genes act in a sequential pathway. Both must be functional for the phenotype.<br><b>Mechanism:</b> if either enzyme is broken (aabb, A_bb, or aaB_), the pathway can\'t complete → no product → "white."<br><b>Hint:</b> 9:7 ratio is mathematically the same as duplicate recessive — the difference is in pathway interpretation. Complementary stresses sequential enzymatic action; duplicate recessive emphasizes redundant gene function.',
+    info:'<b>Complementary genes (9:7):</b> two genes act in a sequential pathway. Both must be functional for the phenotype.<br><b>Mechanism:</b> if either enzyme is broken (aabb, A_bb, or aaB_), the pathway can\'t complete → no product → "white."<br><b>Hint:</b> 9:7 ratio is mathematically the same as duplicate recessive, the difference is in pathway interpretation. Complementary stresses sequential enzymatic action; duplicate recessive emphasizes redundant gene function.',
   },
   dom2: {
     label:'Dominant + recessive (13:3)',
     svg:`<svg viewBox="0 0 900 380" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">DOMINANT INHIBITORY (13:3) — Chicken plumage</text>
+      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">DOMINANT INHIBITORY (13:3): Chicken plumage</text>
       <text x="40" y="60" font-size="10" fill="#1B3A2D">Two ways to be white: dominant <b>I</b> inhibitor (white via inhibition) OR ii cc (white via no pigment).</text>
       <foreignObject x="40" y="80" width="820" height="220">
         <table xmlns="http://www.w3.org/1999/xhtml" style="width:100%;border-collapse:collapse;font-family:JetBrains Mono,monospace;font-size:12px;background:#fff;border:1.5px solid #1B3A2D">
@@ -9723,7 +9723,7 @@ const EPI_DATA = {
       </foreignObject>
       <text x="40" y="350" font-size="10" font-weight="700" fill="#5FA874">Two genes contribute to the same outcome through different mechanisms (inhibition vs absence).</text>
     </svg>`,
-    info:'<b>Dominant + recessive epistasis (13:3):</b> two routes to the same phenotype.<br><b>Example — chicken plumage:</b> dominant I masks color, OR cc means no color produced. Only iiC_ (no inhibitor + has color gene) is colored.<br><b>Result:</b> 9 (I_C_) + 3 (I_cc) + 1 (iicc) = 13 white, vs 3 (iiC_) colored.',
+    info:'<b>Dominant + recessive epistasis (13:3):</b> two routes to the same phenotype.<br><b>Example: chicken plumage:</b> dominant I masks color, OR cc means no color produced. Only iiC_ (no inhibitor + has color gene) is colored.<br><b>Result:</b> 9 (I_C_) + 3 (I_cc) + 1 (iicc) = 13 white, vs 3 (iiC_) colored.',
   },
 };
 function epiSetMode(mode) {
@@ -9744,9 +9744,9 @@ const REG_DATA = {
   chromatin: {
     label:'Chromatin (histones + methylation)',
     svg:`<svg viewBox="0 0 900 460" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">CHROMATIN — open vs closed</text>
+      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">CHROMATIN: open vs closed</text>
       <g transform="translate(60, 60)">
-        <text x="180" y="0" text-anchor="middle" font-size="11" font-weight="700" fill="#5FA874">EUCHROMATIN — open, transcribed</text>
+        <text x="180" y="0" text-anchor="middle" font-size="11" font-weight="700" fill="#5FA874">EUCHROMATIN: open, transcribed</text>
         <line x1="0" y1="40" x2="360" y2="40" stroke="#1B3A2D" stroke-width="2"/>
         <circle cx="40" cy="40" r="14" fill="#a378a5" stroke="#1B3A2D" stroke-width="1.5"/>
         <circle cx="100" cy="40" r="14" fill="#a378a5" stroke="#1B3A2D" stroke-width="1.5"/>
@@ -9763,7 +9763,7 @@ const REG_DATA = {
         <text x="220" y="20" text-anchor="middle" font-size="8" fill="#5FA874" font-weight="700">Ac</text>
       </g>
       <g transform="translate(500, 60)">
-        <text x="180" y="0" text-anchor="middle" font-size="11" font-weight="700" fill="#C25B3F">HETEROCHROMATIN — closed, silenced</text>
+        <text x="180" y="0" text-anchor="middle" font-size="11" font-weight="700" fill="#C25B3F">HETEROCHROMATIN: closed, silenced</text>
         <path d="M 0 40 Q 30 20 60 40 Q 90 60 120 40 Q 150 20 180 40 Q 210 60 240 40 Q 270 20 300 40 Q 330 60 360 40" stroke="#1B3A2D" stroke-width="2" fill="none"/>
         <circle cx="20" cy="40" r="16" fill="#7a2418" stroke="#1B3A2D" stroke-width="1.5"/>
         <circle cx="50" cy="40" r="16" fill="#7a2418" stroke="#1B3A2D" stroke-width="1.5"/>
@@ -9790,7 +9790,7 @@ const REG_DATA = {
         <text x="20" y="102" font-size="10" fill="#1B3A2D">Removes acetyl → restores + charge → tighter binding → heterochromatin. HDAC inhibitors used in cancer.</text>
         <text x="20" y="126" font-size="11" font-weight="700" fill="#C25B3F">DNA METHYLATION (CpG islands)</text>
         <text x="20" y="142" font-size="10" fill="#1B3A2D">DNMTs add methyl to cytosines (5-mC). Hypermethylated promoters = silenced. Inherited mitotically (epigenetic memory).</text>
-        <text x="20" y="166" font-size="11" font-weight="700" fill="#1B3A2D">HISTONE METHYLATION — context-dependent</text>
+        <text x="20" y="166" font-size="11" font-weight="700" fill="#1B3A2D">HISTONE METHYLATION: context-dependent</text>
         <text x="20" y="182" font-size="10" fill="#1B3A2D">H3K4me3 = active promoter · H3K27me3 / H3K9me3 = silencing · H3K36me3 = active gene body</text>
         <text x="20" y="208" font-size="11" font-weight="700" fill="#a378a5">CHROMATIN REMODELERS</text>
         <text x="20" y="224" font-size="10" fill="#1B3A2D">SWI/SNF complex uses ATP to slide nucleosomes → exposes/hides DNA</text>
@@ -9802,7 +9802,7 @@ const REG_DATA = {
   trans: {
     label:'Transcription (TFs + enhancers)',
     svg:`<svg viewBox="0 0 900 380" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">TRANSCRIPTIONAL CONTROL — enhancers + TFs + promoter</text>
+      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">TRANSCRIPTIONAL CONTROL: enhancers + TFs + promoter</text>
       <g transform="translate(60, 80)">
         <line x1="0" y1="100" x2="800" y2="100" stroke="#1B3A2D" stroke-width="3"/>
         <rect x="0" y="80" width="100" height="40" fill="#a378a5" stroke="#1B3A2D" stroke-width="1.5"/>
@@ -9831,12 +9831,12 @@ const REG_DATA = {
         <text x="20" y="124" font-size="10" font-weight="700" fill="#C25B3F">vs prokaryotes: 1 RNA polymerase total, sigma factor confers promoter specificity</text>
       </g>
     </svg>`,
-    info:'<b>Eukaryotic transcription is much more regulated than prokaryotic.</b><br><b>Cis-elements (DNA):</b><br>• <b>Promoter</b> (TATA box ~25 bp upstream) — recruits Pol II + general TFs (TFIID first).<br>• <b>Enhancers</b> — distal binding sites for activator TFs. DNA loops to bring enhancer + promoter together via Mediator complex.<br>• <b>Silencers</b> — bind repressor TFs.<br>• <b>Insulators</b> — block enhancer effects across boundaries.<br><b>Trans-factors:</b> activator/repressor TFs; coactivators (Mediator); GTFs (TFIIA-H).<br><b>3 eukaryotic RNA polymerases:</b> Pol I (rRNA), Pol II (mRNA), Pol III (tRNA).',
+    info:'<b>Eukaryotic transcription is much more regulated than prokaryotic.</b><br><b>Cis-elements (DNA):</b><br>• <b>Promoter</b> (TATA box ~25 bp upstream): recruits Pol II + general TFs (TFIID first).<br>• <b>Enhancers</b>, distal binding sites for activator TFs. DNA loops to bring enhancer + promoter together via Mediator complex.<br>• <b>Silencers</b>, bind repressor TFs.<br>• <b>Insulators</b>, block enhancer effects across boundaries.<br><b>Trans-factors:</b> activator/repressor TFs; coactivators (Mediator); GTFs (TFIIA-H).<br><b>3 eukaryotic RNA polymerases:</b> Pol I (rRNA), Pol II (mRNA), Pol III (tRNA).',
   },
   splice: {
     label:'RNA processing + splicing',
     svg:`<svg viewBox="0 0 900 380" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">RNA PROCESSING — capping, splicing, polyadenylation</text>
+      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">RNA PROCESSING: capping, splicing, polyadenylation</text>
       <g transform="translate(60, 60)">
         <text x="0" y="0" font-size="10" font-weight="700" fill="#1B3A2D">PRE-mRNA (HnRNA)</text>
         <rect x="0" y="20" width="60" height="20" fill="#5FA874" stroke="#1B3A2D"/>
@@ -9887,12 +9887,12 @@ const REG_DATA = {
         <text x="0" y="0" font-size="11" font-weight="700" fill="#1B3A2D">ALTERNATIVE SPLICING: same gene → multiple mRNAs → multiple proteins (esp. brain, immune system)</text>
       </g>
     </svg>`,
-    info:'<b>RNA processing in eukaryotes (4 steps in the nucleus):</b><br>1. <b>5′ cap</b> (m⁷G, added co-transcriptionally) — protects from exonucleases, helps translation start.<br>2. <b>3′ polyadenylation</b> — ~200-300 As added by poly-A polymerase. Stability + nuclear export signal.<br>3. <b>Splicing</b> — spliceosome (snRNPs U1, U2, U4, U5, U6) recognizes 5′ splice site (GU), branch point (A), 3′ splice site (AG). Lariat intermediate. Removes introns, joins exons.<br>4. <b>Editing</b> (rare) — e.g., apoB mRNA editing changes a Glu codon to STOP, making a shorter intestinal protein.<br><b>Alternative splicing</b> = same gene, different exon combinations → multiple proteins. Major source of proteome diversity (~95% of human multi-exon genes).',
+    info:'<b>RNA processing in eukaryotes (4 steps in the nucleus):</b><br>1. <b>5′ cap</b> (m⁷G, added co-transcriptionally), protects from exonucleases, helps translation start.<br>2. <b>3′ polyadenylation</b>, ~200-300 As added by poly-A polymerase. Stability + nuclear export signal.<br>3. <b>Splicing</b>, spliceosome (snRNPs U1, U2, U4, U5, U6) recognizes 5′ splice site (GU), branch point (A), 3′ splice site (AG). Lariat intermediate. Removes introns, joins exons.<br>4. <b>Editing</b> (rare), e.g., apoB mRNA editing changes a Glu codon to STOP, making a shorter intestinal protein.<br><b>Alternative splicing</b> = same gene, different exon combinations → multiple proteins. Major source of proteome diversity (~95% of human multi-exon genes).',
   },
   export: {
     label:'mRNA export + stability',
     svg:`<svg viewBox="0 0 900 380" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">POST-TRANSCRIPTIONAL — export, stability, decay</text>
+      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">POST-TRANSCRIPTIONAL: export, stability, decay</text>
       <g transform="translate(40, 70)">
         <ellipse cx="180" cy="120" rx="160" ry="100" fill="#fce8d8" stroke="#1B3A2D" stroke-width="2.5"/>
         <text x="180" y="40" text-anchor="middle" font-size="11" font-weight="700" fill="#1B3A2D">NUCLEUS</text>
@@ -9910,7 +9910,7 @@ const REG_DATA = {
       <g transform="translate(40, 220)">
         <rect width="820" height="150" fill="#fff" stroke="#1B3A2D" stroke-width="1.5" rx="6"/>
         <text x="20" y="22" font-size="12" font-weight="700" fill="#1B3A2D">REGULATING mRNA STABILITY</text>
-        <text x="20" y="44" font-size="11" font-weight="700" fill="#5FA874">3′ UTR — major target</text>
+        <text x="20" y="44" font-size="11" font-weight="700" fill="#5FA874">3′ UTR: major target</text>
         <text x="20" y="60" font-size="10" fill="#1B3A2D">• <b>AU-rich elements (AREs)</b>: destabilize (cytokine mRNAs)</text>
         <text x="20" y="76" font-size="10" fill="#1B3A2D">• <b>Iron response elements (IRE)</b>: regulated by IRP/IRE binding</text>
         <text x="20" y="92" font-size="10" fill="#1B3A2D">• <b>miRNA binding sites</b>: ~22-nt microRNAs in RISC complex bind UTRs → silence</text>
@@ -9923,7 +9923,7 @@ const REG_DATA = {
   trans2: {
     label:'Translation (initiation, miRNA)',
     svg:`<svg viewBox="0 0 900 360" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">TRANSLATIONAL CONTROL — initiation, miRNA, eIF2α</text>
+      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">TRANSLATIONAL CONTROL: initiation, miRNA, eIF2α</text>
       <g transform="translate(40, 70)">
         <text x="0" y="0" font-size="11" font-weight="700" fill="#1B3A2D">eIF2α PHOSPHORYLATION = global slowdown</text>
         <text x="0" y="20" font-size="10" fill="#1B3A2D">Stress (heat, viral infection, low aa) → kinases phosphorylate eIF2α → blocks Met-tRNA delivery to ribosome → translation stalls globally.</text>
@@ -9957,12 +9957,12 @@ const REG_DATA = {
         <text x="20" y="210" font-size="10" font-weight="700" fill="#a378a5">2006 Nobel: Fire + Mello</text>
       </g>
     </svg>`,
-    info:'<b>Translation regulation modes:</b><br>• <b>eIF2α phosphorylation</b> (global stress response): blocks Met-tRNA delivery → translation stalls. Triggered by heat, viral infection, low amino acids, ER stress.<br>• <b>miRNAs</b> (~22 nt): part of RISC complex. Imperfect base-pairing with 3′ UTR → translational repression. Perfect base-pairing → mRNA cleavage. ~60% of human mRNAs are regulated this way.<br>• <b>5′ UTR features</b>: Kozak context for AUG recognition; IRES allows cap-independent initiation; uORFs hold up the ribosome.<br>• <b>Sequestration</b>: oocytes store maternal mRNAs to be translated post-fertilization.<br><b>RNAi:</b> siRNAs/shRNAs co-opt the miRNA pathway for designed knockdown — major lab + therapeutic tool (Patisiran, 2018).',
+    info:'<b>Translation regulation modes:</b><br>• <b>eIF2α phosphorylation</b> (global stress response): blocks Met-tRNA delivery → translation stalls. Triggered by heat, viral infection, low amino acids, ER stress.<br>• <b>miRNAs</b> (~22 nt): part of RISC complex. Imperfect base-pairing with 3′ UTR → translational repression. Perfect base-pairing → mRNA cleavage. ~60% of human mRNAs are regulated this way.<br>• <b>5′ UTR features</b>: Kozak context for AUG recognition; IRES allows cap-independent initiation; uORFs hold up the ribosome.<br>• <b>Sequestration</b>: oocytes store maternal mRNAs to be translated post-fertilization.<br><b>RNAi:</b> siRNAs/shRNAs co-opt the miRNA pathway for designed knockdown, major lab + therapeutic tool (Patisiran, 2018).',
   },
   post: {
     label:'Post-translational',
     svg:`<svg viewBox="0 0 900 380" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">POST-TRANSLATIONAL — turning a polypeptide into a working protein</text>
+      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">POST-TRANSLATIONAL: turning a polypeptide into a working protein</text>
       <g transform="translate(40, 60)">
         <ellipse cx="80" cy="80" rx="56" ry="32" fill="#fce8d8" stroke="#1B3A2D" stroke-width="2"/>
         <text x="80" y="84" text-anchor="middle" font-size="10" font-weight="700" fill="#1B3A2D">polypeptide</text>
@@ -9983,26 +9983,26 @@ const REG_DATA = {
         <rect width="820" height="200" fill="#fff" stroke="#1B3A2D" stroke-width="1.5" rx="6"/>
         <text x="20" y="22" font-size="12" font-weight="700" fill="#1B3A2D">MODIFICATIONS</text>
         <text x="20" y="46" font-size="11" font-weight="700" fill="#5FA874">Phosphorylation (Ser, Thr, Tyr)</text>
-        <text x="240" y="46" font-size="10" fill="#1B3A2D">— kinases add P, phosphatases remove. Major signaling switch.</text>
+        <text x="240" y="46" font-size="10" fill="#1B3A2D">kinases add P, phosphatases remove. Major signaling switch.</text>
         <text x="20" y="68" font-size="11" font-weight="700" fill="#5FA874">Glycosylation (N-linked Asn, O-linked Ser/Thr)</text>
-        <text x="320" y="68" font-size="10" fill="#1B3A2D">— sugars added in ER + Golgi.</text>
+        <text x="320" y="68" font-size="10" fill="#1B3A2D">sugars added in ER + Golgi.</text>
         <text x="20" y="90" font-size="11" font-weight="700" fill="#5FA874">Ubiquitination</text>
-        <text x="170" y="90" font-size="10" fill="#1B3A2D">— mark for degradation by 26S proteasome (or other fates if mono- or K63-linked).</text>
+        <text x="170" y="90" font-size="10" fill="#1B3A2D">mark for degradation by 26S proteasome (or other fates if mono- or K63-linked).</text>
         <text x="20" y="112" font-size="11" font-weight="700" fill="#5FA874">Proteolytic cleavage</text>
-        <text x="200" y="112" font-size="10" fill="#1B3A2D">— remove signal peptide, activate zymogen (trypsinogen → trypsin), insulin processing.</text>
+        <text x="200" y="112" font-size="10" fill="#1B3A2D">remove signal peptide, activate zymogen (trypsinogen → trypsin), insulin processing.</text>
         <text x="20" y="134" font-size="11" font-weight="700" fill="#5FA874">Acetylation, methylation, sumoylation, palmitoylation</text>
-        <text x="350" y="134" font-size="10" fill="#1B3A2D">— specialized regulatory marks.</text>
+        <text x="350" y="134" font-size="10" fill="#1B3A2D">specialized regulatory marks.</text>
         <text x="20" y="160" font-size="11" font-weight="700" fill="#C25B3F">DEGRADATION</text>
         <text x="20" y="178" font-size="10" fill="#1B3A2D"><b>Ubiquitin-proteasome</b>: short-lived/damaged proteins · <b>Lysosome</b>: long-lived membrane proteins, autophagy</text>
       </g>
       <defs><marker id="post-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" fill="#1B3A2D"/></marker></defs>
     </svg>`,
-    info:'<b>Post-translational modifications (PTMs)</b> turn a freshly-made polypeptide into a mature, regulated, localized, eventually-destroyed protein.<br><b>Reversible signaling switches:</b><br>• <b>Phosphorylation</b> (Ser/Thr/Tyr) — kinases add P, phosphatases remove. The dominant signaling currency.<br>• <b>Acetylation</b> (Lys) — also reversible.<br><b>Localizing/structuring:</b><br>• <b>Glycosylation</b> (N-linked Asn, O-linked Ser/Thr) — happens in ER + Golgi.<br>• <b>Lipidation</b> (palmitoylation, prenylation) — anchors proteins to membranes.<br><b>Activation:</b><br>• <b>Proteolytic cleavage</b> — zymogen (trypsinogen → trypsin), preproinsulin → insulin.<br><b>Destruction:</b><br>• <b>Ubiquitination</b> → 26S proteasome.<br>• <b>Lysosomal/autophagy</b> for long-lived or membrane proteins.',
+    info:'<b>Post-translational modifications (PTMs)</b> turn a freshly-made polypeptide into a mature, regulated, localized, eventually-destroyed protein.<br><b>Reversible signaling switches:</b><br>• <b>Phosphorylation</b> (Ser/Thr/Tyr): kinases add P, phosphatases remove. The dominant signaling currency.<br>• <b>Acetylation</b> (Lys): also reversible.<br><b>Localizing/structuring:</b><br>• <b>Glycosylation</b> (N-linked Asn, O-linked Ser/Thr), happens in ER + Golgi.<br>• <b>Lipidation</b> (palmitoylation, prenylation), anchors proteins to membranes.<br><b>Activation:</b><br>• <b>Proteolytic cleavage</b>, zymogen (trypsinogen → trypsin), preproinsulin → insulin.<br><b>Destruction:</b><br>• <b>Ubiquitination</b> → 26S proteasome.<br>• <b>Lysosomal/autophagy</b> for long-lived or membrane proteins.',
   },
   lacop: {
     label:'Compare: lac operon (review)',
     svg:`<svg viewBox="0 0 900 360" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">PROKARYOTIC OPERON vs EUKARYOTIC GENE — KEY DIFFERENCES</text>
+      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">PROKARYOTIC OPERON vs EUKARYOTIC GENE: KEY DIFFERENCES</text>
       <g transform="translate(40, 80)">
         <text x="0" y="0" font-size="11" font-weight="700" fill="#5FA874">PROKARYOTIC OPERON (lac)</text>
         <line x1="0" y1="40" x2="400" y2="40" stroke="#1B3A2D" stroke-width="2"/>
@@ -10073,16 +10073,16 @@ const DNATEC_DATA = {
   restrict: {
     label:'Restriction enzymes',
     svg:`<svg viewBox="0 0 900 380" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">RESTRICTION ENDONUCLEASES — molecular scissors</text>
+      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">RESTRICTION ENDONUCLEASES: molecular scissors</text>
       <g transform="translate(60, 80)">
-        <text x="0" y="0" font-size="11" font-weight="700" fill="#1B3A2D">EcoRI — STICKY ENDS</text>
+        <text x="0" y="0" font-size="11" font-weight="700" fill="#1B3A2D">EcoRI: STICKY ENDS</text>
         <g font-family="JetBrains Mono,monospace" font-size="14" font-weight="700">
           <text x="0" y="30" fill="#1B3A2D">5′-G ↓ A A T T C-3′</text>
           <text x="0" y="50" fill="#1B3A2D">3′-C T T A A ↑ G-5′</text>
         </g>
         <text x="0" y="70" font-size="9" fill="#1B3A2D">→ leaves 4-nt 5′ overhang ("sticky end")</text>
         <text x="0" y="86" font-size="9" fill="#1B3A2D">complementary to any other EcoRI cut → ligation possible</text>
-        <text x="0" y="120" font-size="11" font-weight="700" fill="#1B3A2D">PvuII — BLUNT ENDS</text>
+        <text x="0" y="120" font-size="11" font-weight="700" fill="#1B3A2D">PvuII: BLUNT ENDS</text>
         <g font-family="JetBrains Mono,monospace" font-size="14" font-weight="700">
           <text x="0" y="148" fill="#1B3A2D">5′-C A G ↓ C T G-3′</text>
           <text x="0" y="168" fill="#1B3A2D">3′-G T C ↑ G A C-5′</text>
@@ -10116,7 +10116,7 @@ const DNATEC_DATA = {
   vector: {
     label:'Plasmid vectors',
     svg:`<svg viewBox="0 0 900 380" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">PLASMID VECTOR — MUST-HAVE FEATURES</text>
+      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">PLASMID VECTOR: MUST-HAVE FEATURES</text>
       <g transform="translate(180, 80)">
         <circle cx="160" cy="120" r="100" fill="none" stroke="#5FA874" stroke-width="6"/>
         <text x="160" y="124" text-anchor="middle" font-size="11" font-weight="700" fill="#1B3A2D">plasmid</text>
@@ -10142,11 +10142,11 @@ const DNATEC_DATA = {
       <g transform="translate(540, 80)">
         <rect width="320" height="240" fill="#fff" stroke="#1B3A2D" stroke-width="1.5" rx="6"/>
         <text x="20" y="22" font-size="11" font-weight="700" fill="#1B3A2D">VECTOR TYPES BY INSERT SIZE</text>
-        <text x="20" y="44" font-size="10" fill="#1B3A2D"><b>Plasmid</b> — up to ~10 kb</text>
-        <text x="20" y="60" font-size="10" fill="#1B3A2D"><b>Phage λ</b> — up to ~25 kb</text>
-        <text x="20" y="76" font-size="10" fill="#1B3A2D"><b>Cosmid</b> — up to ~45 kb</text>
-        <text x="20" y="92" font-size="10" fill="#1B3A2D"><b>BAC</b> (bacterial artificial chromosome) — 100-300 kb</text>
-        <text x="20" y="108" font-size="10" fill="#1B3A2D"><b>YAC</b> (yeast artificial chromosome) — &gt;1 Mb</text>
+        <text x="20" y="44" font-size="10" fill="#1B3A2D"><b>Plasmid</b>, up to ~10 kb</text>
+        <text x="20" y="60" font-size="10" fill="#1B3A2D"><b>Phage λ</b>, up to ~25 kb</text>
+        <text x="20" y="76" font-size="10" fill="#1B3A2D"><b>Cosmid</b>, up to ~45 kb</text>
+        <text x="20" y="92" font-size="10" fill="#1B3A2D"><b>BAC</b> (bacterial artificial chromosome), 100-300 kb</text>
+        <text x="20" y="108" font-size="10" fill="#1B3A2D"><b>YAC</b> (yeast artificial chromosome), &gt;1 Mb</text>
         <text x="20" y="140" font-size="11" font-weight="700" fill="#5FA874">EXPRESSION VECTORS add</text>
         <text x="20" y="158" font-size="10" fill="#1B3A2D">• Strong promoter (T7, CMV)</text>
         <text x="20" y="174" font-size="10" fill="#1B3A2D">• Ribosome-binding site (Shine-Dalgarno)</text>
@@ -10154,12 +10154,12 @@ const DNATEC_DATA = {
         <text x="20" y="206" font-size="10" fill="#1B3A2D">• Inducible (IPTG, tet)</text>
       </g>
     </svg>`,
-    info:'<b>A vector</b> = a DNA molecule used to carry foreign DNA into a host cell.<br><b>Plasmid vector requirements:</b><br>• <b>Origin of replication (ori)</b> — for autonomous replication in host<br>• <b>Selectable marker</b> — typically antibiotic resistance gene (ampR, kanR)<br>• <b>Multiple cloning site (MCS)</b> — cluster of unique restriction sites for insert<br>• Often a <b>screen marker</b> like lacZα for blue/white selection<br><b>Beyond plasmids (by capacity):</b><br>• Phage λ (~25 kb), cosmid (~45 kb), BAC (100-300 kb), YAC (>1 Mb).<br><b>Expression vectors</b> add a promoter, RBS, and often an affinity tag for protein purification.',
+    info:'<b>A vector</b> = a DNA molecule used to carry foreign DNA into a host cell.<br><b>Plasmid vector requirements:</b><br>• <b>Origin of replication (ori)</b>, for autonomous replication in host<br>• <b>Selectable marker</b>, typically antibiotic resistance gene (ampR, kanR)<br>• <b>Multiple cloning site (MCS)</b>, cluster of unique restriction sites for insert<br>• Often a <b>screen marker</b> like lacZα for blue/white selection<br><b>Beyond plasmids (by capacity):</b><br>• Phage λ (~25 kb), cosmid (~45 kb), BAC (100-300 kb), YAC (>1 Mb).<br><b>Expression vectors</b> add a promoter, RBS, and often an affinity tag for protein purification.',
   },
   library: {
     label:'cDNA vs genomic libraries',
     svg:`<svg viewBox="0 0 900 380" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">DNA LIBRARIES — cDNA vs GENOMIC</text>
+      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">DNA LIBRARIES: cDNA vs GENOMIC</text>
       <g transform="translate(60, 70)">
         <rect width="380" height="280" fill="#fff" stroke="#5FA874" stroke-width="2.5" rx="8"/>
         <text x="190" y="22" text-anchor="middle" font-size="13" font-weight="700" fill="#5FA874">cDNA LIBRARY</text>
@@ -10198,10 +10198,10 @@ const DNATEC_DATA = {
   rfip: {
     label:'RFLP',
     svg:`<svg viewBox="0 0 900 380" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">RFLP — Restriction Fragment Length Polymorphism</text>
+      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">RFLP: Restriction Fragment Length Polymorphism</text>
       <g transform="translate(60, 70)">
         <text x="0" y="0" font-size="11" font-weight="700" fill="#1B3A2D">SAME GENE, TWO ALLELES</text>
-        <text x="0" y="22" font-size="10" font-weight="700" fill="#5FA874">Allele A — has restriction site</text>
+        <text x="0" y="22" font-size="10" font-weight="700" fill="#5FA874">Allele A: has restriction site</text>
         <line x1="0" y1="50" x2="400" y2="50" stroke="#1B3A2D" stroke-width="2"/>
         <line x1="100" y1="40" x2="100" y2="60" stroke="#C25B3F" stroke-width="2"/>
         <line x1="250" y1="40" x2="250" y2="60" stroke="#C25B3F" stroke-width="2"/>
@@ -10210,7 +10210,7 @@ const DNATEC_DATA = {
         <text x="250" y="78" text-anchor="middle" font-size="8" fill="#C25B3F" font-weight="700">cut</text>
         <text x="350" y="78" text-anchor="middle" font-size="8" fill="#C25B3F" font-weight="700">cut</text>
         <text x="0" y="110" font-size="9" fill="#5FA874" font-weight="700">→ 3 fragments: 100, 150, 100, 50 bp</text>
-        <text x="0" y="135" font-size="10" font-weight="700" fill="#C25B3F">Allele B — point mutation destroyed middle site</text>
+        <text x="0" y="135" font-size="10" font-weight="700" fill="#C25B3F">Allele B: point mutation destroyed middle site</text>
         <line x1="0" y1="160" x2="400" y2="160" stroke="#1B3A2D" stroke-width="2"/>
         <line x1="100" y1="150" x2="100" y2="170" stroke="#C25B3F" stroke-width="2"/>
         <line x1="350" y1="150" x2="350" y2="170" stroke="#C25B3F" stroke-width="2"/>
@@ -10238,12 +10238,12 @@ const DNATEC_DATA = {
         <text x="140" y="285" text-anchor="middle" font-size="9" fill="#1B3A2D">Heterozygotes show both patterns</text>
       </g>
     </svg>`,
-    info:'<b>RFLP</b> = Restriction Fragment Length Polymorphism. A point mutation that creates or destroys a restriction site changes the size of fragments produced by that enzyme.<br><b>Process:</b> digest sample DNA → run on gel → Southern blot → probe → see which fragments contain the gene.<br><b>Heterozygotes</b> show bands from both alleles.<br><b>Use cases:</b> early genetic mapping, paternity testing (historic), forensic identification (now replaced by STR profiling), some clinical diagnostics (sickle cell — HbS destroys an MstII site).',
+    info:'<b>RFLP</b> = Restriction Fragment Length Polymorphism. A point mutation that creates or destroys a restriction site changes the size of fragments produced by that enzyme.<br><b>Process:</b> digest sample DNA → run on gel → Southern blot → probe → see which fragments contain the gene.<br><b>Heterozygotes</b> show bands from both alleles.<br><b>Use cases:</b> early genetic mapping, paternity testing (historic), forensic identification (now replaced by STR profiling), some clinical diagnostics (sickle cell, HbS destroys an MstII site).',
   },
   micro: {
     label:'DNA microarrays (not DAT-tested)',
     svg:`<svg viewBox="0 0 900 380" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">DNA MICROARRAY — thousands of genes at once</text>
+      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">DNA MICROARRAY: thousands of genes at once</text>
       <g transform="translate(60, 70)">
         <text x="170" y="0" text-anchor="middle" font-size="11" font-weight="700" fill="#1B3A2D">Two-color competitive hybridization (sample vs reference)</text>
         <rect x="0" y="20" width="340" height="280" fill="#0a0a0a" stroke="#1B3A2D" stroke-width="2"/>
@@ -10326,16 +10326,16 @@ const DNATEC_DATA = {
   forensic: {
     label:'Forensic STR profiling',
     svg:`<svg viewBox="0 0 900 380" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">FORENSIC STR PROFILING — DNA fingerprint</text>
+      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">FORENSIC STR PROFILING: DNA fingerprint</text>
       <g transform="translate(60, 70)">
         <text x="0" y="0" font-size="11" font-weight="700" fill="#1B3A2D">SHORT TANDEM REPEATS (STRs)</text>
         <text x="0" y="22" font-size="10" fill="#1B3A2D">2-6 bp motifs repeated head-to-tail. Number of repeats varies between individuals.</text>
-        <text x="0" y="50" font-family="JetBrains Mono,monospace" font-size="12" font-weight="700" fill="#1B3A2D">Allele 8: ...AGAT-AGAT-AGAT-AGAT-AGAT-AGAT-AGAT-AGAT...</text>
-        <text x="0" y="75" font-family="JetBrains Mono,monospace" font-size="12" font-weight="700" fill="#1B3A2D">Allele 12: ...AGAT × 12...</text>
-        <text x="0" y="100" font-family="JetBrains Mono,monospace" font-size="12" font-weight="700" fill="#1B3A2D">Allele 17: ...AGAT × 17...</text>
+        <text x="0" y="50" font-family="JetBrains Mono,monospace" font-size="12" font-weight="700" fill="#1B3A2D">Allele 8: ..AGAT-AGAT-AGAT-AGAT-AGAT-AGAT-AGAT-AGAT..</text>
+        <text x="0" y="75" font-family="JetBrains Mono,monospace" font-size="12" font-weight="700" fill="#1B3A2D">Allele 12: ..AGAT × 12..</text>
+        <text x="0" y="100" font-family="JetBrains Mono,monospace" font-size="12" font-weight="700" fill="#1B3A2D">Allele 17: ..AGAT × 17..</text>
       </g>
       <g transform="translate(60, 200)">
-        <text x="0" y="0" font-size="11" font-weight="700" fill="#1B3A2D">CODIS — 20 STR LOCI</text>
+        <text x="0" y="0" font-size="11" font-weight="700" fill="#1B3A2D">CODIS: 20 STR LOCI</text>
         <text x="0" y="22" font-size="10" fill="#1B3A2D">FBI Combined DNA Index System uses 20 STR loci. Probability of two random unrelated people sharing all 20 = ~10⁻²⁰.</text>
         <text x="0" y="60" font-size="11" font-weight="700" fill="#1B3A2D">PROCESS</text>
         <text x="0" y="78" font-size="10" fill="#1B3A2D">1. Multiplex PCR amplifies all 20 STR loci with fluorescent primers</text>
@@ -10354,27 +10354,27 @@ const DNATEC_DATA = {
         <text x="160" y="225" text-anchor="middle" font-size="10" fill="#fff" font-weight="700">heterozygous (8, 12)</text>
       </g>
     </svg>`,
-    info:'<b>STR (Short Tandem Repeat)</b> = a 2-6 bp DNA motif repeated tandemly. The number of repeats is highly variable between individuals — perfect personal identifier.<br><b>CODIS (FBI):</b> 20 STR loci. Each person has 0-2 alleles per locus (could be heterozygous or homozygous). Combined probability across 20 loci → ~10⁻²⁰ random match → essentially unique.<br><b>Process:</b> extract DNA → multiplex PCR with fluorescent primers → capillary electrophoresis → peak positions = repeat counts.<br><b>Use cases:</b> criminal forensics, paternity testing, missing persons, mass disaster victim ID, exoneration of wrongly convicted (Innocence Project).',
+    info:'<b>STR (Short Tandem Repeat)</b> = a 2-6 bp DNA motif repeated tandemly. The number of repeats is highly variable between individuals, perfect personal identifier.<br><b>CODIS (FBI):</b> 20 STR loci. Each person has 0-2 alleles per locus (could be heterozygous or homozygous). Combined probability across 20 loci → ~10⁻²⁰ random match → essentially unique.<br><b>Process:</b> extract DNA → multiplex PCR with fluorescent primers → capillary electrophoresis → peak positions = repeat counts.<br><b>Use cases:</b> criminal forensics, paternity testing, missing persons, mass disaster victim ID, exoneration of wrongly convicted (Innocence Project).',
   },
   trans: {
     label:'Transgenic / GMO',
     svg:`<svg viewBox="0 0 900 360" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">TRANSGENIC ORGANISMS — foreign gene engineered in</text>
+      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">TRANSGENIC ORGANISMS: foreign gene engineered in</text>
       <g transform="translate(60, 70)">
         <rect width="800" height="270" fill="#fff" stroke="#1B3A2D" stroke-width="1.5" rx="8"/>
         <text x="20" y="22" font-size="12" font-weight="700" fill="#1B3A2D">CLASSIC EXAMPLES</text>
         <text x="20" y="46" font-size="11" font-weight="700" fill="#5FA874">Bt corn / cotton</text>
-        <text x="200" y="46" font-size="10" fill="#1B3A2D">— Bacillus thuringiensis δ-endotoxin gene → plant makes own insecticide</text>
+        <text x="200" y="46" font-size="10" fill="#1B3A2D">Bacillus thuringiensis δ-endotoxin gene → plant makes own insecticide</text>
         <text x="20" y="68" font-size="11" font-weight="700" fill="#5FA874">Roundup Ready</text>
-        <text x="200" y="68" font-size="10" fill="#1B3A2D">— EPSPS variant resistant to glyphosate herbicide → spray weeds, crop survives</text>
+        <text x="200" y="68" font-size="10" fill="#1B3A2D">EPSPS variant resistant to glyphosate herbicide → spray weeds, crop survives</text>
         <text x="20" y="90" font-size="11" font-weight="700" fill="#5FA874">Golden Rice</text>
-        <text x="200" y="90" font-size="10" fill="#1B3A2D">— phytoene synthase + carotene desaturase → β-carotene → vitamin A precursor</text>
+        <text x="200" y="90" font-size="10" fill="#1B3A2D">phytoene synthase + carotene desaturase → β-carotene → vitamin A precursor</text>
         <text x="20" y="112" font-size="11" font-weight="700" fill="#5FA874">Insulin (Humulin, 1982)</text>
-        <text x="200" y="112" font-size="10" fill="#1B3A2D">— human insulin gene in E. coli → mass-produce vs harvest from pig pancreas</text>
+        <text x="200" y="112" font-size="10" fill="#1B3A2D">human insulin gene in E. coli → mass-produce vs harvest from pig pancreas</text>
         <text x="20" y="134" font-size="11" font-weight="700" fill="#5FA874">Knockout mice</text>
-        <text x="200" y="134" font-size="10" fill="#1B3A2D">— targeted gene disruption via ES cells + homologous recombination (Capecchi/Smithies/Evans, 2007 Nobel)</text>
+        <text x="200" y="134" font-size="10" fill="#1B3A2D">targeted gene disruption via ES cells + homologous recombination (Capecchi/Smithies/Evans, 2007 Nobel)</text>
         <text x="20" y="156" font-size="11" font-weight="700" fill="#5FA874">GFP-tagged organisms</text>
-        <text x="200" y="156" font-size="10" fill="#1B3A2D">— jellyfish gene fused to any protein for live imaging (Shimomura/Chalfie/Tsien, 2008 Nobel)</text>
+        <text x="200" y="156" font-size="10" fill="#1B3A2D">jellyfish gene fused to any protein for live imaging (Shimomura/Chalfie/Tsien, 2008 Nobel)</text>
         <text x="20" y="184" font-size="11" font-weight="700" fill="#1B3A2D">DELIVERY METHODS</text>
         <text x="20" y="202" font-size="10" fill="#1B3A2D">• <b>Agrobacterium</b> (plants, T-DNA delivery)</text>
         <text x="20" y="218" font-size="10" fill="#1B3A2D">• <b>Microinjection</b> (fertilized eggs in animals)</text>
@@ -10382,12 +10382,12 @@ const DNATEC_DATA = {
         <text x="20" y="250" font-size="10" fill="#1B3A2D">• <b>Biolistic ("gene gun")</b> (plant cells, particle bombardment)</text>
       </g>
     </svg>`,
-    info:'<b>Transgenic organism</b> = contains a foreign gene from another species, integrated into the genome.<br><b>Notable examples:</b><br>• <b>Bt crops</b> — Bacillus thuringiensis toxin gene → plant\'s own insecticide.<br>• <b>Roundup Ready</b> — herbicide-resistant crop.<br>• <b>Golden Rice</b> — produces β-carotene (vitamin A precursor) for malnutrition prevention.<br>• <b>Recombinant insulin (1982)</b> — first FDA-approved recombinant biopharmaceutical.<br>• <b>Knockout mice</b> — targeted gene disruption (Capecchi/Smithies/Evans, 2007 Nobel).<br>• <b>GFP-tagged organisms</b> — visual tracking of any protein.<br><br><b>Delivery:</b> Agrobacterium (plants), microinjection (animals), viral vectors (gene therapy), biolistics (plants).',
+    info:'<b>Transgenic organism</b> = contains a foreign gene from another species, integrated into the genome.<br><b>Notable examples:</b><br>• <b>Bt crops</b>, Bacillus thuringiensis toxin gene → plant\'s own insecticide.<br>• <b>Roundup Ready</b>, herbicide-resistant crop.<br>• <b>Golden Rice</b>, produces β-carotene (vitamin A precursor) for malnutrition prevention.<br>• <b>Recombinant insulin (1982)</b>, first FDA-approved recombinant biopharmaceutical.<br>• <b>Knockout mice</b>, targeted gene disruption (Capecchi/Smithies/Evans, 2007 Nobel).<br>• <b>GFP-tagged organisms</b>, visual tracking of any protein.<br><br><b>Delivery:</b> Agrobacterium (plants), microinjection (animals), viral vectors (gene therapy), biolistics (plants).',
   },
   stem: {
     label:'Stem cells + cloning',
     svg:`<svg viewBox="0 0 900 380" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">STEM CELLS &amp; CLONING — POTENCY HIERARCHY</text>
+      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">STEM CELLS &amp; CLONING: POTENCY HIERARCHY</text>
       <g transform="translate(60, 70)">
         <text x="0" y="0" font-size="11" font-weight="700" fill="#1B3A2D">POTENCY LEVELS</text>
         <ellipse cx="80" cy="60" rx="40" ry="30" fill="#C25B3F" stroke="#1B3A2D" stroke-width="2"/>
@@ -10445,7 +10445,7 @@ const CHRAB_DATA = {
   del: {
     label:'Deletion',
     svg:`<svg viewBox="0 0 900 320" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">DELETION — segment lost</text>
+      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">DELETION: segment lost</text>
       <g transform="translate(60, 80)">
         <text x="0" y="0" font-size="10" font-weight="700" fill="#1B3A2D">Normal</text>
         <rect x="0" y="20" width="600" height="30" fill="#5FA874" stroke="#1B3A2D"/>
@@ -10470,7 +10470,7 @@ const CHRAB_DATA = {
   dup: {
     label:'Duplication',
     svg:`<svg viewBox="0 0 900 320" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">DUPLICATION — segment copied</text>
+      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">DUPLICATION: segment copied</text>
       <g transform="translate(60, 80)">
         <text x="0" y="0" font-size="10" font-weight="700" fill="#1B3A2D">Normal</text>
         <rect x="0" y="20" width="600" height="30" fill="#5FA874" stroke="#1B3A2D"/>
@@ -10491,8 +10491,8 @@ const CHRAB_DATA = {
         <text x="650" y="130" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">E</text>
         <text x="750" y="130" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">F</text>
         <text x="0" y="170" font-size="10" fill="#1B3A2D">Examples: Charcot-Marie-Tooth (PMP22 dup), some cancer-associated amplifications (HER2, MYC).</text>
-        <text x="0" y="186" font-size="10" fill="#1B3A2D">Often <b>less severe</b> than deletion — extra copies usually tolerated better than missing.</text>
-        <text x="0" y="210" font-size="10" font-weight="700" fill="#5FA874">Evolution loves duplications — paralogs (gene families like globins).</text>
+        <text x="0" y="186" font-size="10" fill="#1B3A2D">Often <b>less severe</b> than deletion, extra copies usually tolerated better than missing.</text>
+        <text x="0" y="210" font-size="10" font-weight="700" fill="#5FA874">Evolution loves duplications: paralogs (gene families like globins).</text>
       </g>
     </svg>`,
     info:'<b>Duplication</b> = segment of chromosome copied.<br><b>Generally less severe than deletion</b>: extra copies of genes are usually tolerated, while missing essential genes is often lethal.<br><b>Examples:</b><br>• <b>Charcot-Marie-Tooth disease 1A</b>: duplication of PMP22 → demyelinating peripheral neuropathy.<br>• <b>HER2 amplification</b>: in ~20% of breast cancers; targeted by trastuzumab (Herceptin).<br><b>Evolutionary engine:</b> gene duplications create paralogs that can diverge in function (globin family, Hox genes). Most of evolution\'s functional novelty comes from duplicated genes.',
@@ -10500,7 +10500,7 @@ const CHRAB_DATA = {
   inv: {
     label:'Inversion',
     svg:`<svg viewBox="0 0 900 320" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">INVERSION — segment flipped 180°</text>
+      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">INVERSION: segment flipped 180°</text>
       <g transform="translate(60, 80)">
         <text x="0" y="0" font-size="10" font-weight="700" fill="#1B3A2D">Normal</text>
         <rect x="0" y="20" width="600" height="30" fill="#5FA874" stroke="#1B3A2D"/>
@@ -10523,12 +10523,12 @@ const CHRAB_DATA = {
         <text x="0" y="210" font-size="10" font-weight="700" fill="#5FA874">Suppresses recombination in inverted region → preserves co-adapted gene complexes (heterochromosomic).</text>
       </g>
     </svg>`,
-    info:'<b>Inversion</b> = segment flipped 180° within the chromosome.<br><b>Two types:</b><br>• <b>Pericentric</b>: includes centromere.<br>• <b>Paracentric</b>: doesn\'t include centromere.<br><b>Heterozygotes</b> are usually phenotypically normal — all genes still present.<br><b>Catch:</b> recombination within the inverted region produces unbalanced gametes (reduced fertility in carriers). Acts as a "recombination suppressor" — important in evolution for keeping co-adapted alleles together (e.g., Drosophila inversion polymorphisms).',
+    info:'<b>Inversion</b> = segment flipped 180° within the chromosome.<br><b>Two types:</b><br>• <b>Pericentric</b>: includes centromere.<br>• <b>Paracentric</b>: doesn\'t include centromere.<br><b>Heterozygotes</b> are usually phenotypically normal, all genes still present.<br><b>Catch:</b> recombination within the inverted region produces unbalanced gametes (reduced fertility in carriers). Acts as a "recombination suppressor", important in evolution for keeping co-adapted alleles together (e.g., Drosophila inversion polymorphisms).',
   },
   trans: {
     label:'Translocation (recip / Robertsonian)',
     svg:`<svg viewBox="0 0 900 380" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">TRANSLOCATION — segments swap between non-homologous chromosomes</text>
+      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">TRANSLOCATION: segments swap between non-homologous chromosomes</text>
       <g transform="translate(60, 80)">
         <text x="0" y="0" font-size="11" font-weight="700" fill="#5FA874">RECIPROCAL TRANSLOCATION</text>
         <rect x="0" y="20" width="200" height="20" fill="#5FA874" stroke="#1B3A2D"/>
@@ -10552,15 +10552,15 @@ const CHRAB_DATA = {
         <text x="0" y="22" font-size="10" fill="#1B3A2D">Long arms of two acrocentric chromosomes (13, 14, 15, 21, 22) fuse at centromere; short arms lost.</text>
         <text x="0" y="38" font-size="10" fill="#1B3A2D">Carrier has 45 chromosomes but no functional gene loss (short arms are mostly rRNA gene clusters with redundancy).</text>
         <text x="0" y="58" font-size="10" font-weight="700" fill="#C25B3F">~5% of Down syndrome cases</text>
-        <text x="0" y="74" font-size="10" fill="#1B3A2D">— translocation of chr 21 long arm onto chr 14 → carrier parents at high risk for Down baby</text>
+        <text x="0" y="74" font-size="10" fill="#1B3A2D">translocation of chr 21 long arm onto chr 14 → carrier parents at high risk for Down baby</text>
       </g>
     </svg>`,
-    info:'<b>Translocation</b> = segment moves to a non-homologous chromosome.<br><b>Reciprocal translocation:</b> two chromosomes swap segments. Often phenotypically normal in carrier (balanced) but can produce unbalanced gametes during meiosis.<br><b>Famous example:</b> t(9;22) creates the <b>Philadelphia chromosome</b> with BCR-ABL fusion oncogene → chronic myeloid leukemia (CML). Treated with imatinib (Gleevec) — the first targeted cancer therapy success story.<br><b>Robertsonian translocation:</b> long arms of two acrocentric chromosomes (13, 14, 15, 21, 22) fuse at centromere. Carrier has 45 chromosomes but is phenotypically normal. Increases risk of Down syndrome in offspring (translocation form, ~5% of Down cases).',
+    info:'<b>Translocation</b> = segment moves to a non-homologous chromosome.<br><b>Reciprocal translocation:</b> two chromosomes swap segments. Often phenotypically normal in carrier (balanced) but can produce unbalanced gametes during meiosis.<br><b>Famous example:</b> t(9;22) creates the <b>Philadelphia chromosome</b> with BCR-ABL fusion oncogene → chronic myeloid leukemia (CML). Treated with imatinib (Gleevec): the first targeted cancer therapy success story.<br><b>Robertsonian translocation:</b> long arms of two acrocentric chromosomes (13, 14, 15, 21, 22) fuse at centromere. Carrier has 45 chromosomes but is phenotypically normal. Increases risk of Down syndrome in offspring (translocation form, ~5% of Down cases).',
   },
   aneu: {
     label:'Aneuploidy',
     svg:`<svg viewBox="0 0 900 380" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">ANEUPLOIDY — abnormal chromosome NUMBER</text>
+      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">ANEUPLOIDY: abnormal chromosome NUMBER</text>
       <g transform="translate(60, 70)">
         <text x="0" y="0" font-size="10" font-weight="700" fill="#1B3A2D">Caused by NONDISJUNCTION in meiosis I or II.</text>
       </g>
@@ -10586,7 +10586,7 @@ const CHRAB_DATA = {
   poly: {
     label:'Polyploidy',
     svg:`<svg viewBox="0 0 900 320" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">POLYPLOIDY — entire extra chromosome SETS</text>
+      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">POLYPLOIDY: entire extra chromosome SETS</text>
       <g transform="translate(60, 70)">
         <text x="0" y="0" font-size="11" font-weight="700" fill="#1B3A2D">RARE in animals (lethal). COMMON in plants (often beneficial).</text>
         <text x="0" y="40" font-size="11" font-weight="700" fill="#5FA874">PLANT EXAMPLES</text>
@@ -10597,15 +10597,15 @@ const CHRAB_DATA = {
         <text x="0" y="156" font-size="10" fill="#1B3A2D">• Some fish/amphibians naturally polyploid · liver hepatocytes can be 4n or 8n endoreplicated</text>
         <text x="0" y="200" font-size="11" font-weight="700" fill="#1B3A2D">CAUSES</text>
         <text x="0" y="220" font-size="10" fill="#1B3A2D">• Failure of cytokinesis (autopolyploidy)</text>
-        <text x="0" y="236" font-size="10" fill="#1B3A2D">• Hybridization between species + chromosome doubling (allopolyploidy — bread wheat)</text>
+        <text x="0" y="236" font-size="10" fill="#1B3A2D">• Hybridization between species + chromosome doubling (allopolyploidy, bread wheat)</text>
       </g>
     </svg>`,
-    info:'<b>Polyploidy</b> = entire extra chromosome sets.<br><b>In animals:</b> almost always lethal (mammals especially). Triploid (3n) human zygotes spontaneously abort.<br><b>In plants:</b> often beneficial — larger size, more resistance, can be created by colchicine (blocks spindle formation → chromosomes don\'t separate). Many crop species are polyploid: bread wheat (6n), cotton (4n), strawberries (8n), seedless watermelon (3n).<br><b>Auto- vs allopolyploidy:</b> auto = same species\' genome doubled; allo = hybrid of two species + doubled (more common natural mechanism, often produces fertile new species).',
+    info:'<b>Polyploidy</b> = entire extra chromosome sets.<br><b>In animals:</b> almost always lethal (mammals especially). Triploid (3n) human zygotes spontaneously abort.<br><b>In plants:</b> often beneficial, larger size, more resistance, can be created by colchicine (blocks spindle formation → chromosomes don\'t separate). Many crop species are polyploid: bread wheat (6n), cotton (4n), strawberries (8n), seedless watermelon (3n).<br><b>Auto- vs allopolyploidy:</b> auto = same species\' genome doubled; allo = hybrid of two species + doubled (more common natural mechanism, often produces fertile new species).',
   },
   syndromes: {
     label:'Common syndromes summary',
     svg:`<svg viewBox="0 0 900 480" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">COMMON SYNDROMES — RAPID REFERENCE</text>
+      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">COMMON SYNDROMES: RAPID REFERENCE</text>
       <foreignObject x="40" y="60" width="820" height="400">
         <table xmlns="http://www.w3.org/1999/xhtml" style="width:100%;border-collapse:collapse;font-family:JetBrains Mono,monospace;font-size:11px;background:#fff;border:1.5px solid #1B3A2D">
           <thead style="background:rgba(13,32,24,0.08)">
@@ -10620,15 +10620,15 @@ const CHRAB_DATA = {
             <tr><td style="padding:6px;border:1px solid #1B3A2D;font-weight:700">Cri-du-chat</td><td style="padding:6px;border:1px solid #1B3A2D">5p− deletion</td><td style="padding:6px;border:1px solid #1B3A2D">High-pitched cat-like cry, severe ID, microcephaly</td></tr>
             <tr><td style="padding:6px;border:1px solid #1B3A2D;font-weight:700">DiGeorge</td><td style="padding:6px;border:1px solid #1B3A2D">22q11.2 deletion</td><td style="padding:6px;border:1px solid #1B3A2D">"CATCH-22": Cardiac, Abnormal facies, Thymic aplasia, Cleft palate, Hypocalcemia (PTH)</td></tr>
             <tr><td style="padding:6px;border:1px solid #1B3A2D;font-weight:700">Williams</td><td style="padding:6px;border:1px solid #1B3A2D">7q11.23 del (incl. ELN)</td><td style="padding:6px;border:1px solid #1B3A2D">Elfin facies, supravalvular aortic stenosis, hypercalcemia, hypersociable</td></tr>
-            <tr><td style="padding:6px;border:1px solid #1B3A2D;font-weight:700">Prader-Willi</td><td style="padding:6px;border:1px solid #1B3A2D">15q11-13 del (paternal) — imprinting</td><td style="padding:6px;border:1px solid #1B3A2D">Hyperphagia → obesity, hypotonia, hypogonadism, ID</td></tr>
-            <tr><td style="padding:6px;border:1px solid #1B3A2D;font-weight:700">Angelman</td><td style="padding:6px;border:1px solid #1B3A2D">15q11-13 del (maternal) — imprinting</td><td style="padding:6px;border:1px solid #1B3A2D">"Happy puppet" — inappropriate laughter, severe ID, ataxia, seizures</td></tr>
+            <tr><td style="padding:6px;border:1px solid #1B3A2D;font-weight:700">Prader-Willi</td><td style="padding:6px;border:1px solid #1B3A2D">15q11-13 del (paternal), imprinting</td><td style="padding:6px;border:1px solid #1B3A2D">Hyperphagia → obesity, hypotonia, hypogonadism, ID</td></tr>
+            <tr><td style="padding:6px;border:1px solid #1B3A2D;font-weight:700">Angelman</td><td style="padding:6px;border:1px solid #1B3A2D">15q11-13 del (maternal), imprinting</td><td style="padding:6px;border:1px solid #1B3A2D">"Happy puppet", inappropriate laughter, severe ID, ataxia, seizures</td></tr>
             <tr><td style="padding:6px;border:1px solid #1B3A2D;font-weight:700">Fragile X</td><td style="padding:6px;border:1px solid #1B3A2D">CGG expansion in FMR1 (X-linked)</td><td style="padding:6px;border:1px solid #1B3A2D">Most common inherited ID, long face, large ears, macroorchidism. Anticipation.</td></tr>
             <tr><td style="padding:6px;border:1px solid #1B3A2D;font-weight:700">CML (acquired)</td><td style="padding:6px;border:1px solid #1B3A2D">t(9;22) Philadelphia → BCR-ABL</td><td style="padding:6px;border:1px solid #1B3A2D">Chronic myeloid leukemia. Treated with imatinib.</td></tr>
           </tbody>
         </table>
       </foreignObject>
     </svg>`,
-    info:'<b>Quick reference for common DAT-tested chromosomal syndromes.</b><br><br><b>Imprinted regions:</b> Prader-Willi vs Angelman both involve 15q11-13 deletion — but the parent-of-origin matters!<br>• Father\'s allele deleted → Prader-Willi (only mom\'s [imprinted/silent] copy left)<br>• Mother\'s allele deleted → Angelman (only dad\'s [imprinted/silent] copy left)<br><br><b>Anticipation:</b> trinucleotide repeat diseases (Fragile X, Huntington, myotonic dystrophy) get earlier onset / worse symptoms in successive generations as repeat number grows during gametogenesis.',
+    info:'<b>Quick reference for common DAT-tested chromosomal syndromes.</b><br><br><b>Imprinted regions:</b> Prader-Willi vs Angelman both involve 15q11-13 deletion, but the parent-of-origin matters.<br>• Father\'s allele deleted → Prader-Willi (only mom\'s [imprinted/silent] copy left)<br>• Mother\'s allele deleted → Angelman (only dad\'s [imprinted/silent] copy left)<br><br><b>Anticipation:</b> trinucleotide repeat diseases (Fragile X, Huntington, myotonic dystrophy) get earlier onset / worse symptoms in successive generations as repeat number grows during gametogenesis.',
   },
 };
 function chrabSetMode(mode) {
@@ -10651,7 +10651,7 @@ const VIRUS_DATA = {
   struct: {
     label:'Capsid + envelope structures',
     svg:`<svg viewBox="0 0 900 380" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">VIRAL ARCHITECTURE — capsid shapes + envelopes</text>
+      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">VIRAL ARCHITECTURE: capsid shapes + envelopes</text>
       <g transform="translate(60, 70)">
         <text x="80" y="0" text-anchor="middle" font-size="11" font-weight="700" fill="#1B3A2D">HELICAL</text>
         <line x1="20" y1="60" x2="140" y2="60" stroke="#a378a5" stroke-width="22" stroke-linecap="round"/>
@@ -10700,15 +10700,15 @@ const VIRUS_DATA = {
         <text x="20" y="80" font-size="10" font-weight="700" fill="#5FA874">Envelope acquired by budding through host membrane.</text>
       </g>
     </svg>`,
-    info:'<b>Viral architecture — 4 main types:</b><br>• <b>Helical</b>: protein spiral around nucleic acid (TMV, rabies, flu nucleocapsid).<br>• <b>Icosahedral</b>: 20 triangular faces, 12 vertices — most efficient closed shell from identical subunits (polio, adenovirus, herpes capsid).<br>• <b>Complex</b>: bacteriophages with capsid head + tail + tail fibers.<br>• <b>Enveloped</b>: any of the above wrapped in a lipid membrane (acquired from host) studded with glycoprotein spikes.<br><br><b>Enveloped (HIV, flu, herpes, SARS)</b>: easier to inactivate with soap/alcohol but spread well person-to-person.<br><b>Naked (norovirus, polio, HPV)</b>: tougher in environment.',
+    info:'<b>Viral architecture: 4 main types:</b><br>• <b>Helical</b>: protein spiral around nucleic acid (TMV, rabies, flu nucleocapsid).<br>• <b>Icosahedral</b>: 20 triangular faces, 12 vertices, most efficient closed shell from identical subunits (polio, adenovirus, herpes capsid).<br>• <b>Complex</b>: bacteriophages with capsid head + tail + tail fibers.<br>• <b>Enveloped</b>: any of the above wrapped in a lipid membrane (acquired from host) studded with glycoprotein spikes.<br><br><b>Enveloped (HIV, flu, herpes, SARS)</b>: easier to inactivate with soap/alcohol but spread well person-to-person.<br><b>Naked (norovirus, polio, HPV)</b>: tougher in environment.',
   },
   lytic: {
     label:'Lytic vs lysogenic cycle',
     svg:`<svg viewBox="0 0 900 460" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">LYTIC vs LYSOGENIC — phage life cycles</text>
+      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">LYTIC vs LYSOGENIC: phage life cycles</text>
       <g transform="translate(40, 70)">
         <rect width="380" height="370" fill="#fff" stroke="#C25B3F" stroke-width="2.5" rx="8"/>
-        <text x="190" y="22" text-anchor="middle" font-size="13" font-weight="700" fill="#C25B3F">LYTIC — destroy host fast</text>
+        <text x="190" y="22" text-anchor="middle" font-size="13" font-weight="700" fill="#C25B3F">LYTIC: destroy host fast</text>
         <text x="20" y="46" font-size="11" font-weight="700" fill="#1B3A2D">1. Attachment</text>
         <text x="40" y="62" font-size="9" fill="#1B3A2D">Phage tail fibers bind host receptor</text>
         <text x="20" y="84" font-size="11" font-weight="700" fill="#1B3A2D">2. Penetration</text>
@@ -10727,7 +10727,7 @@ const VIRUS_DATA = {
       </g>
       <g transform="translate(480, 70)">
         <rect width="380" height="370" fill="#fff" stroke="#5FA874" stroke-width="2.5" rx="8"/>
-        <text x="190" y="22" text-anchor="middle" font-size="13" font-weight="700" fill="#5FA874">LYSOGENIC — integrate + lie low</text>
+        <text x="190" y="22" text-anchor="middle" font-size="13" font-weight="700" fill="#5FA874">LYSOGENIC: integrate + lie low</text>
         <text x="20" y="46" font-size="11" font-weight="700" fill="#1B3A2D">1. Attachment + injection (same)</text>
         <text x="20" y="74" font-size="11" font-weight="700" fill="#1B3A2D">2. Integration (lysogeny)</text>
         <text x="40" y="90" font-size="9" fill="#1B3A2D">Phage DNA integrates into host chromosome</text>
@@ -10741,16 +10741,16 @@ const VIRUS_DATA = {
         <text x="20" y="244" font-size="11" font-weight="700" fill="#5FA874">DURATION: indefinite (years)</text>
         <text x="20" y="262" font-size="11" font-weight="700" fill="#5FA874">CARRIER passes prophage to all daughter cells</text>
         <text x="20" y="296" font-size="11" font-weight="700" fill="#1B3A2D">Examples: λ phage, retroviruses (provirus)</text>
-        <text x="20" y="314" font-size="10" fill="#1B3A2D">"Temperate" phages — choose between modes</text>
+        <text x="20" y="314" font-size="10" fill="#1B3A2D">"Temperate" phages, choose between modes</text>
         <text x="20" y="340" font-size="10" font-weight="700" fill="#C25B3F">CLINICAL: Cholera toxin, diphtheria toxin, scarlet fever toxin all encoded by prophages.</text>
       </g>
     </svg>`,
-    info:'<b>Lytic cycle:</b> attach → inject → biosynthesis → assemble → lyse host → release ~100-200 progeny → cell dies. Fast (~30 min). T-even phages (T4) always lytic.<br><b>Lysogenic cycle:</b> phage DNA integrates into host chromosome as a <b>prophage</b>. Replicated passively along with host genome through cell divisions. A repressor protein keeps lytic genes off.<br><b>Induction:</b> stress (UV, chemicals) inactivates repressor → prophage excises → switches to lytic.<br><b>Temperate phages</b> (λ, P1) can choose between cycles. <b>Retroviruses</b> like HIV are lysogenic-style (integrate as provirus) but eukaryotic.<br><b>Clinical twist:</b> some bacterial toxins (cholera, diphtheria, scarlet fever) are encoded by prophages — a non-toxic strain becomes pathogenic when infected with a temperate phage.',
+    info:'<b>Lytic cycle:</b> attach → inject → biosynthesis → assemble → lyse host → release ~100-200 progeny → cell dies. Fast (~30 min). T-even phages (T4) always lytic.<br><b>Lysogenic cycle:</b> phage DNA integrates into host chromosome as a <b>prophage</b>. Replicated passively along with host genome through cell divisions. A repressor protein keeps lytic genes off.<br><b>Induction:</b> stress (UV, chemicals) inactivates repressor → prophage excises → switches to lytic.<br><b>Temperate phages</b> (λ, P1) can choose between cycles. <b>Retroviruses</b> like HIV are lysogenic-style (integrate as provirus) but eukaryotic.<br><b>Clinical twist:</b> some bacterial toxins (cholera, diphtheria, scarlet fever) are encoded by prophages, a non-toxic strain becomes pathogenic when infected with a temperate phage.',
   },
   dnav: {
     label:'DNA viruses',
     svg:`<svg viewBox="0 0 900 380" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">DNA VIRUSES — replicate in NUCLEUS (mostly)</text>
+      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">DNA VIRUSES: replicate in NUCLEUS (mostly)</text>
       <foreignObject x="40" y="60" width="820" height="300">
         <table xmlns="http://www.w3.org/1999/xhtml" style="width:100%;border-collapse:collapse;font-family:JetBrains Mono,monospace;font-size:11px;background:#fff;border:1.5px solid #1B3A2D">
           <thead style="background:rgba(13,32,24,0.08)">
@@ -10762,30 +10762,30 @@ const VIRUS_DATA = {
             <tr><td style="padding:6px;border:1px solid #1B3A2D;font-weight:700">Adenoviridae</td><td style="padding:6px;border:1px solid #1B3A2D">dsDNA</td><td style="padding:6px;border:1px solid #1B3A2D">naked</td><td style="padding:6px;border:1px solid #1B3A2D">Adenoviruses (respiratory, conjunctivitis)</td></tr>
             <tr><td style="padding:6px;border:1px solid #1B3A2D;font-weight:700">Papillomaviridae</td><td style="padding:6px;border:1px solid #1B3A2D">dsDNA</td><td style="padding:6px;border:1px solid #1B3A2D">naked</td><td style="padding:6px;border:1px solid #1B3A2D">HPV (warts, cervical cancer)</td></tr>
             <tr><td style="padding:6px;border:1px solid #1B3A2D;font-weight:700">Polyomaviridae</td><td style="padding:6px;border:1px solid #1B3A2D">dsDNA</td><td style="padding:6px;border:1px solid #1B3A2D">naked</td><td style="padding:6px;border:1px solid #1B3A2D">JC virus (PML), BK virus</td></tr>
-            <tr><td style="padding:6px;border:1px solid #1B3A2D;font-weight:700">Poxviridae</td><td style="padding:6px;border:1px solid #1B3A2D">dsDNA (linear)</td><td style="padding:6px;border:1px solid #1B3A2D">enveloped</td><td style="padding:6px;border:1px solid #1B3A2D">Smallpox (eradicated), monkeypox, vaccinia. <b>Replicates in cytoplasm</b> (exception!)</td></tr>
-            <tr><td style="padding:6px;border:1px solid #1B3A2D;font-weight:700">Parvoviridae</td><td style="padding:6px;border:1px solid #1B3A2D">ssDNA (smallest!)</td><td style="padding:6px;border:1px solid #1B3A2D">naked</td><td style="padding:6px;border:1px solid #1B3A2D">Parvovirus B19 (slapped cheek, fifth disease)</td></tr>
+            <tr><td style="padding:6px;border:1px solid #1B3A2D;font-weight:700">Poxviridae</td><td style="padding:6px;border:1px solid #1B3A2D">dsDNA (linear)</td><td style="padding:6px;border:1px solid #1B3A2D">enveloped</td><td style="padding:6px;border:1px solid #1B3A2D">Smallpox (eradicated), monkeypox, vaccinia. <b>Replicates in cytoplasm</b> (exception)</td></tr>
+            <tr><td style="padding:6px;border:1px solid #1B3A2D;font-weight:700">Parvoviridae</td><td style="padding:6px;border:1px solid #1B3A2D">ssDNA (smallest)</td><td style="padding:6px;border:1px solid #1B3A2D">naked</td><td style="padding:6px;border:1px solid #1B3A2D">Parvovirus B19 (slapped cheek, fifth disease)</td></tr>
           </tbody>
         </table>
       </foreignObject>
       <text x="40" y="370" font-size="10" font-weight="700" fill="#1B3A2D">Mnemonic: HHAPPPPy = Hepadna, Herpes, Adeno, Papilloma, Polyoma, Pox, Parvo. All dsDNA except Parvo (ssDNA). All replicate in nucleus except Pox.</text>
     </svg>`,
-    info:'<b>DNA viruses</b> mostly replicate in the nucleus (using host RNA polymerase II). One key exception: <b>poxviruses</b> bring their own polymerase and replicate in the cytoplasm.<br><b>Mnemonic for DNA virus families:</b> "<b>HHAPPPPy</b>" — Hepadna, Herpes, Adeno, Papilloma, Polyoma, Pox, Parvo.<br><b>All dsDNA except Parvo (ssDNA).</b><br><b>Important examples:</b><br>• HSV (cold sores), VZV (chickenpox/shingles), EBV (mono, Burkitt lymphoma), CMV (congenital infections).<br>• HBV (chronic hepatitis, liver cancer).<br>• HPV (warts, cervical cancer — Gardasil targets it).<br>• Smallpox/vaccinia (only DNA virus to replicate in cytoplasm).',
+    info:'<b>DNA viruses</b> mostly replicate in the nucleus (using host RNA polymerase II). One key exception: <b>poxviruses</b> bring their own polymerase and replicate in the cytoplasm.<br><b>Mnemonic for DNA virus families:</b> "<b>HHAPPPPy</b>", Hepadna, Herpes, Adeno, Papilloma, Polyoma, Pox, Parvo.<br><b>All dsDNA except Parvo (ssDNA).</b><br><b>Important examples:</b><br>• HSV (cold sores), VZV (chickenpox/shingles), EBV (mono, Burkitt lymphoma), CMV (congenital infections).<br>• HBV (chronic hepatitis, liver cancer).<br>• HPV (warts, cervical cancer, Gardasil targets it).<br>• Smallpox/vaccinia (only DNA virus to replicate in cytoplasm).',
   },
   rnav: {
     label:'RNA viruses (+/− strand)',
     svg:`<svg viewBox="0 0 900 380" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">RNA VIRUSES — most replicate in CYTOPLASM</text>
+      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">RNA VIRUSES: most replicate in CYTOPLASM</text>
       <g transform="translate(60, 60)">
         <text x="0" y="0" font-size="11" font-weight="700" fill="#5FA874">POSITIVE-SENSE (+) ssRNA</text>
         <text x="0" y="20" font-size="10" fill="#1B3A2D">Genome IS the mRNA → ribosome can translate immediately upon entry.</text>
         <text x="0" y="36" font-size="10" fill="#1B3A2D">Examples: <b>Picorna</b> (polio, rhino, hep A), <b>Calici</b> (noro), <b>Flavi</b> (HCV, dengue, zika, yellow), <b>Toga</b> (rubella),</text>
-        <text x="0" y="50" font-size="10" fill="#1B3A2D"><b>Corona</b> (SARS-CoV-2), <b>Retro</b> (HIV — though replicates differently)</text>
+        <text x="0" y="50" font-size="10" fill="#1B3A2D"><b>Corona</b> (SARS-CoV-2), <b>Retro</b> (HIV: though replicates differently)</text>
         <text x="0" y="86" font-size="11" font-weight="700" fill="#C25B3F">NEGATIVE-SENSE (−) ssRNA</text>
-        <text x="0" y="106" font-size="10" fill="#1B3A2D">Genome must be transcribed first — virion BRINGS its own RNA-dependent RNA polymerase.</text>
+        <text x="0" y="106" font-size="10" fill="#1B3A2D">Genome must be transcribed first: virion BRINGS its own RNA-dependent RNA polymerase.</text>
         <text x="0" y="122" font-size="10" fill="#1B3A2D">Examples: <b>Orthomyxo</b> (flu, segmented), <b>Paramyxo</b> (measles, mumps, RSV), <b>Rhabdo</b> (rabies),</text>
         <text x="0" y="136" font-size="10" fill="#1B3A2D"><b>Filo</b> (Ebola, Marburg), <b>Bunya</b> (hantavirus), <b>Arena</b> (Lassa)</text>
         <text x="0" y="170" font-size="11" font-weight="700" fill="#a378a5">DOUBLE-STRANDED (ds) RNA</text>
-        <text x="0" y="190" font-size="10" fill="#1B3A2D">Examples: <b>Reoviridae</b> — Rotavirus (diarrhea, leading cause of childhood death globally without vaccine).</text>
+        <text x="0" y="190" font-size="10" fill="#1B3A2D">Examples: <b>Reoviridae</b>, Rotavirus (diarrhea, leading cause of childhood death globally without vaccine).</text>
         <text x="0" y="220" font-size="11" font-weight="700" fill="#1B3A2D">RETROVIRUSES (special)</text>
         <text x="0" y="240" font-size="10" fill="#1B3A2D">+ssRNA but genome is reverse-transcribed into DNA → integrated as provirus → mRNA from there.</text>
         <text x="0" y="256" font-size="10" fill="#1B3A2D">HIV, HTLV-1. Carries reverse transcriptase + integrase + protease in virion.</text>
@@ -10796,19 +10796,19 @@ const VIRUS_DATA = {
         <text x="20" y="42" font-size="11" font-weight="700" fill="#1B3A2D">Most replicate in cytoplasm. Influenza + retroviruses are exceptions (nuclear).</text>
       </g>
     </svg>`,
-    info:'<b>RNA viruses</b>: more diverse than DNA viruses, generally higher mutation rates (RdRp lacks proofreading).<br><b>Three types of genome:</b><br>• <b>(+) sense ssRNA</b>: genome IS mRNA. Just gets translated. (Polio, HCV, SARS-CoV-2.)<br>• <b>(−) sense ssRNA</b>: genome must be transcribed first → virion <b>carries its own RNA polymerase</b>. (Flu, rabies, measles, Ebola.)<br>• <b>dsRNA</b>: rotavirus.<br><b>Retroviruses</b>: special. (+) ssRNA but reverse-transcribed to DNA, integrated as provirus. HIV, HTLV-1.<br><b>Replication site:</b> usually cytoplasm. Exceptions: influenza + retroviruses use nucleus.<br><b>Antigenic shift</b> (segmented genomes — flu): big jumps via reassortment → pandemic potential. <b>Antigenic drift</b>: gradual mutations → seasonal updates.',
+    info:'<b>RNA viruses</b>: more diverse than DNA viruses, generally higher mutation rates (RdRp lacks proofreading).<br><b>Three types of genome:</b><br>• <b>(+) sense ssRNA</b>: genome IS mRNA. Just gets translated. (Polio, HCV, SARS-CoV-2.)<br>• <b>(−) sense ssRNA</b>: genome must be transcribed first → virion <b>carries its own RNA polymerase</b>. (Flu, rabies, measles, Ebola.)<br>• <b>dsRNA</b>: rotavirus.<br><b>Retroviruses</b>: special. (+) ssRNA but reverse-transcribed to DNA, integrated as provirus. HIV, HTLV-1.<br><b>Replication site:</b> usually cytoplasm. Exceptions: influenza + retroviruses use nucleus.<br><b>Antigenic shift</b> (segmented genomes, flu): big jumps via reassortment → pandemic potential. <b>Antigenic drift</b>: gradual mutations → seasonal updates.',
   },
   retro: {
     label:'Retroviruses (HIV)',
     svg:`<svg viewBox="0 0 900 460" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">HIV LIFE CYCLE — RNA → DNA → integrated</text>
+      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">HIV LIFE CYCLE: RNA → DNA → integrated</text>
       <g transform="translate(60, 70)">
         <text x="0" y="0" font-size="11" font-weight="700" fill="#1B3A2D">1. Attachment</text>
         <text x="20" y="18" font-size="10" fill="#1B3A2D">gp120 binds <b>CD4</b> + coreceptor (<b>CCR5</b> or CXCR4) on T helper cell</text>
         <text x="0" y="46" font-size="11" font-weight="700" fill="#1B3A2D">2. Fusion + entry</text>
         <text x="20" y="64" font-size="10" fill="#1B3A2D">gp41 mediates membrane fusion → capsid enters cytoplasm</text>
         <text x="0" y="92" font-size="11" font-weight="700" fill="#1B3A2D">3. Reverse transcription</text>
-        <text x="20" y="110" font-size="10" fill="#1B3A2D"><b>Reverse transcriptase</b> (brought in virion) makes DNA from RNA — error-prone (no proofreading)</text>
+        <text x="20" y="110" font-size="10" fill="#1B3A2D"><b>Reverse transcriptase</b> (brought in virion) makes DNA from RNA, error-prone (no proofreading)</text>
         <text x="0" y="138" font-size="11" font-weight="700" fill="#1B3A2D">4. Integration</text>
         <text x="20" y="156" font-size="10" fill="#1B3A2D"><b>Integrase</b> inserts viral DNA into host chromosome → becomes <b>provirus</b></text>
         <text x="0" y="184" font-size="11" font-weight="700" fill="#1B3A2D">5. Transcription + translation</text>
@@ -10842,11 +10842,11 @@ const VIRUS_DATA = {
   prion: {
     label:'Prions + viroids',
     svg:`<svg viewBox="0 0 900 360" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">PRIONS + VIROIDS — non-canonical infectious agents</text>
+      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">PRIONS + VIROIDS: non-canonical infectious agents</text>
       <g transform="translate(60, 70)">
         <rect width="380" height="270" fill="#fff" stroke="#C25B3F" stroke-width="2.5" rx="8"/>
         <text x="190" y="22" text-anchor="middle" font-size="13" font-weight="700" fill="#C25B3F">PRIONS</text>
-        <text x="20" y="46" font-size="10" font-weight="700" fill="#1B3A2D">PROTEIN-ONLY infectious agents (no nucleic acid!)</text>
+        <text x="20" y="46" font-size="10" font-weight="700" fill="#1B3A2D">PROTEIN-ONLY infectious agents (no nucleic acid)</text>
         <text x="20" y="68" font-size="10" fill="#1B3A2D">Misfolded version (PrPSc) of normal protein (PrPC).</text>
         <text x="20" y="84" font-size="10" fill="#1B3A2D">PrPSc converts PrPC → PrPSc on contact → cascade.</text>
         <text x="20" y="106" font-size="10" font-weight="700" fill="#1B3A2D">Resistant to:</text>
@@ -10858,7 +10858,7 @@ const VIRUS_DATA = {
         <text x="40" y="206" font-size="10" fill="#1B3A2D">• Variant CJD (mad cow → human)</text>
         <text x="40" y="222" font-size="10" fill="#1B3A2D">• Kuru (cannibalism, Fore people)</text>
         <text x="40" y="238" font-size="10" fill="#1B3A2D">• Scrapie (sheep), BSE (cattle)</text>
-        <text x="20" y="262" font-size="9" font-weight="700" fill="#1B3A2D">Stanley Prusiner — 1997 Nobel</text>
+        <text x="20" y="262" font-size="9" font-weight="700" fill="#1B3A2D">Stanley Prusiner: 1997 Nobel</text>
       </g>
       <g transform="translate(480, 70)">
         <rect width="380" height="270" fill="#fff" stroke="#5FA874" stroke-width="2.5" rx="8"/>
@@ -10876,12 +10876,12 @@ const VIRUS_DATA = {
         <text x="20" y="250" font-size="10" fill="#1B3A2D">Hepatitis D virus needs HBsAg from HBV to package itself.</text>
       </g>
     </svg>`,
-    info:'<b>Prions:</b> protein-only infectious particles. The misfolded form (PrPSc) catalyzes conversion of normal PrPC → PrPSc → exponential spread + neuronal aggregation.<br><b>Resistant to</b> heat, proteases, UV, alcohol, formaldehyde — standard sterilization fails.<br><b>Diseases (TSEs)</b>: Creutzfeldt-Jakob (CJD), variant CJD (mad cow → human), kuru (Fore people, cannibalism), scrapie (sheep), BSE (cattle), fatal familial insomnia.<br>Stanley Prusiner — 1997 Nobel for the prion hypothesis.<br><br><b>Viroids:</b> tiny circular ssRNA (~250-400 nt). No protein coat, no encoded proteins, replicate via host RNA pol II. Cause plant diseases (potato spindle tuber, coconut cadang-cadang).<br><br><b>Satellite RNAs (Hepatitis D):</b> need a helper virus to provide coat protein.',
+    info:'<b>Prions:</b> protein-only infectious particles. The misfolded form (PrPSc) catalyzes conversion of normal PrPC → PrPSc → exponential spread + neuronal aggregation.<br><b>Resistant to</b> heat, proteases, UV, alcohol, formaldehyde, standard sterilization fails.<br><b>Diseases (TSEs)</b>: Creutzfeldt-Jakob (CJD), variant CJD (mad cow → human), kuru (Fore people, cannibalism), scrapie (sheep), BSE (cattle), fatal familial insomnia.<br>Stanley Prusiner: 1997 Nobel for the prion hypothesis.<br><br><b>Viroids:</b> tiny circular ssRNA (~250-400 nt). No protein coat, no encoded proteins, replicate via host RNA pol II. Cause plant diseases (potato spindle tuber, coconut cadang-cadang).<br><br><b>Satellite RNAs (Hepatitis D):</b> need a helper virus to provide coat protein.',
   },
   vaccine: {
     label:'Vaccines',
     svg:`<svg viewBox="0 0 900 460" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">VACCINES — train the adaptive immune system safely</text>
+      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">VACCINES: train the adaptive immune system safely</text>
       <foreignObject x="40" y="60" width="820" height="380">
         <table xmlns="http://www.w3.org/1999/xhtml" style="width:100%;border-collapse:collapse;font-family:JetBrains Mono,monospace;font-size:11px;background:#fff;border:1.5px solid #1B3A2D">
           <thead style="background:rgba(13,32,24,0.08)">
@@ -10921,7 +10921,7 @@ const BACT_DATA = {
   gram: {
     label:'Gram + vs Gram −',
     svg:`<svg viewBox="0 0 900 460" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">GRAM STAIN — cell wall architecture decides color</text>
+      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">GRAM STAIN: cell wall architecture decides color</text>
       <g transform="translate(40, 70)">
         <rect width="380" height="180" fill="#fff" stroke="#3A2C7A" stroke-width="2.5" rx="8"/>
         <text x="190" y="22" text-anchor="middle" font-size="13" font-weight="700" fill="#3A2C7A">GRAM-POSITIVE (purple)</text>
@@ -10949,13 +10949,13 @@ const BACT_DATA = {
         <rect width="800" height="180" fill="#fff" stroke="#1B3A2D" stroke-width="1.5" rx="8"/>
         <text x="20" y="24" font-size="12" font-weight="700" fill="#1B3A2D">CONSEQUENCES</text>
         <text x="20" y="46" font-size="11" font-weight="700" fill="#3A2C7A">Gram +</text>
-        <text x="100" y="46" font-size="10" fill="#1B3A2D">— susceptible to penicillin (targets peptidoglycan), no LPS</text>
+        <text x="100" y="46" font-size="10" fill="#1B3A2D">susceptible to penicillin (targets peptidoglycan), no LPS</text>
         <text x="20" y="66" font-size="10" fill="#1B3A2D">Examples: Staph, Strep, Bacillus, Clostridium, Listeria</text>
         <text x="20" y="92" font-size="11" font-weight="700" fill="#C25B3F">Gram −</text>
-        <text x="100" y="92" font-size="10" fill="#1B3A2D">— LPS in outer membrane = endotoxin (lipid A) → septic shock</text>
+        <text x="100" y="92" font-size="10" fill="#1B3A2D">LPS in outer membrane = endotoxin (lipid A) → septic shock</text>
         <text x="20" y="112" font-size="10" fill="#1B3A2D">Examples: E. coli, Salmonella, Pseudomonas, Neisseria, H. pylori</text>
         <text x="20" y="138" font-size="11" font-weight="700" fill="#a378a5">Acid-fast (special)</text>
-        <text x="200" y="138" font-size="10" fill="#1B3A2D">— mycolic acid in wall → resists Gram stain. Mycobacterium (TB, leprosy).</text>
+        <text x="200" y="138" font-size="10" fill="#1B3A2D">mycolic acid in wall → resists Gram stain. Mycobacterium (TB, leprosy).</text>
         <text x="20" y="160" font-size="11" font-weight="700" fill="#5FA874">Mnemonic Gram +: "PEcK Strep on the Bacillus"</text>
       </g>
     </svg>`,
@@ -10964,7 +10964,7 @@ const BACT_DATA = {
   shapes: {
     label:'Cocci, bacilli, spirilla',
     svg:`<svg viewBox="0 0 900 380" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">BACTERIAL MORPHOLOGY — shape + arrangement</text>
+      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">BACTERIAL MORPHOLOGY: shape + arrangement</text>
       <g transform="translate(60, 70)">
         <text x="80" y="0" text-anchor="middle" font-size="12" font-weight="700" fill="#1B3A2D">COCCI (spheres)</text>
         <circle cx="40" cy="60" r="14" fill="#a378a5" stroke="#1B3A2D"/>
@@ -11008,12 +11008,12 @@ const BACT_DATA = {
       <g transform="translate(620, 70)">
         <text x="80" y="0" text-anchor="middle" font-size="12" font-weight="700" fill="#1B3A2D">CURVED / SPIRAL</text>
         <path d="M 20 60 Q 50 50 80 60 Q 110 70 140 60" stroke="#c19a3e" stroke-width="6" fill="none"/>
-        <text x="20" y="90" font-size="9" font-weight="700" fill="#1B3A2D">vibrio (comma) — V. cholerae</text>
+        <text x="20" y="90" font-size="9" font-weight="700" fill="#1B3A2D">vibrio (comma), V. cholerae</text>
         <path d="M 20 120 Q 50 100 80 120 Q 110 140 140 120 Q 170 100 200 120" stroke="#c19a3e" stroke-width="5" fill="none"/>
         <text x="20" y="150" font-size="9" font-weight="700" fill="#1B3A2D">spirillum (rigid spiral)</text>
         <path d="M 20 180 Q 30 170 40 180 Q 50 190 60 180 Q 70 170 80 180 Q 90 190 100 180 Q 110 170 120 180 Q 130 190 140 180 Q 150 170 160 180 Q 170 190 180 180" stroke="#c19a3e" stroke-width="3" fill="none"/>
         <text x="20" y="210" font-size="9" font-weight="700" fill="#1B3A2D">spirochete (flexible coil)</text>
-        <text x="20" y="226" font-size="9" fill="#1B3A2D">— Treponema (syphilis), Borrelia (Lyme), Leptospira</text>
+        <text x="20" y="226" font-size="9" fill="#1B3A2D">Treponema (syphilis), Borrelia (Lyme), Leptospira</text>
       </g>
       <g transform="translate(60, 320)">
         <rect width="800" height="50" fill="rgba(167,120,165,0.12)" stroke="#1B3A2D" stroke-width="1.5" rx="6"/>
@@ -11021,7 +11021,7 @@ const BACT_DATA = {
         <text x="20" y="42" font-size="10" fill="#1B3A2D">Strep: α-hemolytic (pneumo, viridans) · β-hemolytic (Group A, B) · γ-hemolytic (Enterococcus)</text>
       </g>
     </svg>`,
-    info:'<b>3 main bacterial shapes:</b><br>• <b>Cocci (spheres)</b>: arrangements include diplococci (Strep pneumo, Neisseria), streptococci (chains), staphylococci (clusters), tetrads, sarcina (cubes of 8).<br>• <b>Bacilli (rods)</b>: single, diplo, strepto, palisade (Corynebacterium). Coccobacilli are short rods.<br>• <b>Curved/spiral</b>: vibrios (commas, V. cholerae), spirilla (rigid spirals), spirochetes (flexible coils — Treponema, Borrelia, Leptospira).<br><b>Diagnostic shortcut for Gram+ cocci:</b><br>• Clusters + catalase positive → Staph<br>• Chains + catalase negative → Strep (subtyped by hemolysis pattern: α/β/γ)',
+    info:'<b>3 main bacterial shapes:</b><br>• <b>Cocci (spheres)</b>: arrangements include diplococci (Strep pneumo, Neisseria), streptococci (chains), staphylococci (clusters), tetrads, sarcina (cubes of 8).<br>• <b>Bacilli (rods)</b>: single, diplo, strepto, palisade (Corynebacterium). Coccobacilli are short rods.<br>• <b>Curved/spiral</b>: vibrios (commas, V. cholerae), spirilla (rigid spirals), spirochetes (flexible coils, Treponema, Borrelia, Leptospira).<br><b>Diagnostic shortcut for Gram+ cocci:</b><br>• Clusters + catalase positive → Staph<br>• Chains + catalase negative → Strep (subtyped by hemolysis pattern: α/β/γ)',
   },
   repro: {
     label:'Binary fission + horizontal gene transfer',
@@ -11064,8 +11064,8 @@ const BACT_DATA = {
         <ellipse cx="180" cy="105" rx="40" ry="25" fill="#5FA874" stroke="#1B3A2D" stroke-width="1.5"/>
         <text x="180" y="108" text-anchor="middle" font-size="9" font-weight="700" fill="#fff">recipient</text>
         <text x="20" y="155" font-size="9" fill="#1B3A2D">Bacteriophage transfers DNA.</text>
-        <text x="20" y="170" font-size="9" fill="#1B3A2D">"Generalized" — random DNA</text>
-        <text x="20" y="185" font-size="9" fill="#1B3A2D">"Specialized" — adjacent to phage</text>
+        <text x="20" y="170" font-size="9" fill="#1B3A2D">"Generalized", random DNA</text>
+        <text x="20" y="185" font-size="9" fill="#1B3A2D">"Specialized", adjacent to phage</text>
         <text x="20" y="205" font-size="9" font-weight="700" fill="#a378a5">Diphtheria toxin gene transferred this way.</text>
       </g>
       <g transform="translate(620, 200)">
@@ -11083,7 +11083,7 @@ const BACT_DATA = {
       </g>
       <defs><marker id="bact-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" fill="#1B3A2D"/></marker></defs>
     </svg>`,
-    info:'<b>Binary fission</b>: asexual division. Single circular chromosome replicates → cell elongates → septum forms → two daughter cells. Generation time as short as 20 min in E. coli under ideal conditions.<br><br><b>Horizontal Gene Transfer (HGT)</b> — bacteria swap DNA without sex:<br>• <b>Conjugation</b>: F+ donor → F− recipient via F-pilus. Major route for antibiotic resistance plasmid spread.<br>• <b>Transduction</b>: bacteriophage accidentally packages bacterial DNA → injects into next host. Generalized (random DNA) or specialized (adjacent to phage integration site). Diphtheria + cholera toxin genes transferred this way.<br>• <b>Transformation</b>: cell takes up naked DNA from environment. Requires "competence." Discovered by Griffith.',
+    info:'<b>Binary fission</b>: asexual division. Single circular chromosome replicates → cell elongates → septum forms → two daughter cells. Generation time as short as 20 min in E. coli under ideal conditions.<br><br><b>Horizontal Gene Transfer (HGT)</b>, bacteria swap DNA without sex:<br>• <b>Conjugation</b>: F+ donor → F− recipient via F-pilus. Major route for antibiotic resistance plasmid spread.<br>• <b>Transduction</b>: bacteriophage accidentally packages bacterial DNA → injects into next host. Generalized (random DNA) or specialized (adjacent to phage integration site). Diphtheria + cholera toxin genes transferred this way.<br>• <b>Transformation</b>: cell takes up naked DNA from environment. Requires "competence." Discovered by Griffith.',
   },
   metab: {
     label:'Metabolic strategies',
@@ -11109,18 +11109,18 @@ const BACT_DATA = {
             <tr><td style="padding:6px;border:1px solid #1B3A2D;font-weight:700;color:#5FA874">Obligate aerobe</td><td style="padding:6px;border:1px solid #1B3A2D">Requires O₂. Mycobacterium TB, Pseudomonas, Bordetella.</td></tr>
             <tr><td style="padding:6px;border:1px solid #1B3A2D;font-weight:700">Facultative anaerobe</td><td style="padding:6px;border:1px solid #1B3A2D">Prefers O₂ but can survive without. E. coli, Staph, Strep.</td></tr>
             <tr><td style="padding:6px;border:1px solid #1B3A2D;font-weight:700">Microaerophile</td><td style="padding:6px;border:1px solid #1B3A2D">Needs low O₂. H. pylori, Campylobacter.</td></tr>
-            <tr><td style="padding:6px;border:1px solid #1B3A2D;font-weight:700">Aerotolerant anaerobe</td><td style="padding:6px;border:1px solid #1B3A2D">Doesn\'t use O₂ but tolerates it. Clostridium tetani exception — many Clostridia are obligate anaerobes.</td></tr>
+            <tr><td style="padding:6px;border:1px solid #1B3A2D;font-weight:700">Aerotolerant anaerobe</td><td style="padding:6px;border:1px solid #1B3A2D">Doesn\'t use O₂ but tolerates it. Clostridium tetani exception: many Clostridia are obligate anaerobes.</td></tr>
             <tr><td style="padding:6px;border:1px solid #1B3A2D;font-weight:700;color:#C25B3F">Obligate anaerobe</td><td style="padding:6px;border:1px solid #1B3A2D">O₂ is toxic (no catalase/superoxide dismutase). Clostridium, Bacteroides.</td></tr>
           </tbody>
         </table>
       </foreignObject>
     </svg>`,
-    info:'<b>Bacterial metabolism — 2 axes:</b><br>• <b>Energy</b>: photo (light) vs chemo (chemical)<br>• <b>Carbon</b>: auto (CO₂) vs hetero (organic)<br><br><b>4 combinations:</b> photoautotroph (cyanobacteria), photoheterotroph (purple non-sulfur), chemoautotroph (nitrifiers, vent bacteria), chemoheterotroph (most pathogens, animals).<br><br><b>Oxygen tolerance:</b><br>• Obligate aerobe — needs O₂ (TB, Pseudomonas)<br>• Facultative anaerobe — uses O₂ if available, ferments otherwise (E. coli, Staph)<br>• Microaerophile — likes low O₂ (H. pylori)<br>• Aerotolerant anaerobe — ignores O₂<br>• Obligate anaerobe — O₂ toxic (Clostridium, Bacteroides)',
+    info:'<b>Bacterial metabolism: 2 axes:</b><br>• <b>Energy</b>: photo (light) vs chemo (chemical)<br>• <b>Carbon</b>: auto (CO₂) vs hetero (organic)<br><br><b>4 combinations:</b> photoautotroph (cyanobacteria), photoheterotroph (purple non-sulfur), chemoautotroph (nitrifiers, vent bacteria), chemoheterotroph (most pathogens, animals).<br><br><b>Oxygen tolerance:</b><br>• Obligate aerobe: needs O₂ (TB, Pseudomonas)<br>• Facultative anaerobe: uses O₂ if available, ferments otherwise (E. coli, Staph)<br>• Microaerophile: likes low O₂ (H. pylori)<br>• Aerotolerant anaerobe: ignores O₂<br>• Obligate anaerobe: O₂ toxic (Clostridium, Bacteroides)',
   },
   archaea: {
     label:'Archaea',
     svg:`<svg viewBox="0 0 900 360" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">ARCHAEA — third domain of life</text>
+      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">ARCHAEA: third domain of life</text>
       <foreignObject x="40" y="60" width="820" height="280">
         <table xmlns="http://www.w3.org/1999/xhtml" style="width:100%;border-collapse:collapse;font-family:JetBrains Mono,monospace;font-size:11px;background:#fff;border:1.5px solid #1B3A2D">
           <thead style="background:rgba(13,32,24,0.08)">
@@ -11140,12 +11140,12 @@ const BACT_DATA = {
       </foreignObject>
       <text x="40" y="345" font-size="10" font-weight="700" fill="#5FA874">EXTREMOPHILE GROUPS: Methanogens (anoxic, make CH₄, e.g., cow rumen) · Halophiles (high salt, Dead Sea) · Thermoacidophiles (hot springs)</text>
     </svg>`,
-    info:'<b>Archaea</b> = third domain (Carl Woese, 1977 — based on rRNA sequencing).<br><b>Bacterial-like:</b> prokaryotic cell organization, single circular chromosome.<br><b>Eukaryotic-like:</b> RNA polymerase structure, histones (some), more complex transcription apparatus.<br><b>Unique:</b> ether-linked membrane lipids (vs ester-linked in everyone else); pseudopeptidoglycan or S-layer instead of true peptidoglycan; resistant to penicillin and lysozyme.<br><b>Famous extremophile groups:</b><br>• <b>Methanogens</b>: anaerobic, produce CH₄ (cow rumen, swamps, sewage)<br>• <b>Halophiles</b>: thrive in high salt (Dead Sea, salterns)<br>• <b>Thermoacidophiles</b>: hot acid springs (Sulfolobus)<br>Many also live in the gut and other "normal" habitats.',
+    info:'<b>Archaea</b> = third domain (Carl Woese, 1977, based on rRNA sequencing).<br><b>Bacterial-like:</b> prokaryotic cell organization, single circular chromosome.<br><b>Eukaryotic-like:</b> RNA polymerase structure, histones (some), more complex transcription apparatus.<br><b>Unique:</b> ether-linked membrane lipids (vs ester-linked in everyone else); pseudopeptidoglycan or S-layer instead of true peptidoglycan; resistant to penicillin and lysozyme.<br><b>Famous extremophile groups:</b><br>• <b>Methanogens</b>: anaerobic, produce CH₄ (cow rumen, swamps, sewage)<br>• <b>Halophiles</b>: thrive in high salt (Dead Sea, salterns)<br>• <b>Thermoacidophiles</b>: hot acid springs (Sulfolobus)<br>Many also live in the gut and other "normal" habitats.',
   },
   endos: {
     label:'Endospores',
     svg:`<svg viewBox="0 0 900 380" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">ENDOSPORES — survive the apocalypse</text>
+      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">ENDOSPORES: survive the apocalypse</text>
       <g transform="translate(60, 80)">
         <ellipse cx="60" cy="60" rx="40" ry="22" fill="#5FA874" stroke="#1B3A2D" stroke-width="2"/>
         <text x="60" y="64" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">vegetative</text>
@@ -11178,20 +11178,20 @@ const BACT_DATA = {
       </g>
       <defs><marker id="es-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" fill="#1B3A2D"/></marker></defs>
     </svg>`,
-    info:'<b>Endospores</b> = dormant survival structures formed by some Gram+ rods (Bacillus, Clostridium) under stress.<br><b>Process (sporulation):</b> chromosome replicates → mother cell engulfs forespore → multiple coats deposit → mother lyses → spore released.<br><b>Resistance:</b> survives boiling, drying, UV, most chemicals — viable for decades to millennia. Dipicolinic acid + Ca²⁺ + low water content + multiple coats explain it.<br><b>Killed by:</b> autoclaving (121°C, 15 psi, 15+ min) or sporicidal chemicals.<br><b>Important spore-formers:</b><br>• <b>Bacillus anthracis</b> — anthrax<br>• <b>Bacillus cereus</b> — food poisoning<br>• <b>Clostridium botulinum</b> — botulism (canned food)<br>• <b>Clostridium tetani</b> — tetanus<br>• <b>Clostridium difficile</b> — colitis<br>• <b>Clostridium perfringens</b> — gas gangrene',
+    info:'<b>Endospores</b> = dormant survival structures formed by some Gram+ rods (Bacillus, Clostridium) under stress.<br><b>Process (sporulation):</b> chromosome replicates → mother cell engulfs forespore → multiple coats deposit → mother lyses → spore released.<br><b>Resistance:</b> survives boiling, drying, UV, most chemicals, viable for decades to millennia. Dipicolinic acid + Ca²⁺ + low water content + multiple coats explain it.<br><b>Killed by:</b> autoclaving (121°C, 15 psi, 15+ min) or sporicidal chemicals.<br><b>Important spore-formers:</b><br>• <b>Bacillus anthracis</b>, anthrax<br>• <b>Bacillus cereus</b>, food poisoning<br>• <b>Clostridium botulinum</b>, botulism (canned food)<br>• <b>Clostridium tetani</b>, tetanus<br>• <b>Clostridium difficile</b>, colitis<br>• <b>Clostridium perfringens</b>, gas gangrene',
   },
   sym: {
     label:'Symbionts',
     svg:`<svg viewBox="0 0 900 360" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">BACTERIAL SYMBIONTS — partners we depend on</text>
+      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">BACTERIAL SYMBIONTS: partners we depend on</text>
       <g transform="translate(60, 70)">
         <rect width="800" height="280" fill="#fff" stroke="#1B3A2D" stroke-width="1.5" rx="8"/>
         <text x="20" y="22" font-size="12" font-weight="700" fill="#1B3A2D">HUMAN MICROBIOME</text>
         <text x="20" y="42" font-size="10" fill="#1B3A2D">~10¹⁴ bacteria · 1.3× human cell count · most in colon</text>
         <text x="20" y="60" font-size="10" fill="#1B3A2D">Functions: digest fiber → SCFAs (butyrate fuels colonocytes), make vit K + biotin + B12, train immune system, exclude pathogens.</text>
         <text x="20" y="90" font-size="11" font-weight="700" fill="#5FA874">NITROGEN FIXERS</text>
-        <text x="20" y="108" font-size="10" fill="#1B3A2D">• <b>Rhizobium</b> in legume root nodules — N₂ → NH₃ via nitrogenase. Plant gives carbs.</text>
-        <text x="20" y="124" font-size="10" fill="#1B3A2D">• <b>Cyanobacteria</b> (Anabaena, Nostoc) — free-living + symbiotic with ferns, lichens</text>
+        <text x="20" y="108" font-size="10" fill="#1B3A2D">• <b>Rhizobium</b> in legume root nodules, N₂ → NH₃ via nitrogenase. Plant gives carbs.</text>
+        <text x="20" y="124" font-size="10" fill="#1B3A2D">• <b>Cyanobacteria</b> (Anabaena, Nostoc), free-living + symbiotic with ferns, lichens</text>
         <text x="20" y="146" font-size="11" font-weight="700" fill="#C25B3F">ANCESTORS OF ORGANELLES</text>
         <text x="20" y="164" font-size="10" fill="#1B3A2D">• <b>Mitochondria</b> ← α-proteobacteria (~2 Bya endosymbiosis)</text>
         <text x="20" y="180" font-size="10" fill="#1B3A2D">• <b>Chloroplasts</b> ← cyanobacteria (~1.5 Bya, in ancestor of plants/algae)</text>
@@ -11201,12 +11201,12 @@ const BACT_DATA = {
         <text x="20" y="260" font-size="10" fill="#1B3A2D">• Leech salivary bacteria · • Tubeworms + sulfur bacteria at hydrothermal vents</text>
       </g>
     </svg>`,
-    info:'<b>Bacteria as essential symbionts:</b><br><b>Human microbiome (~10¹⁴ cells):</b><br>• Ferment fiber → SCFAs (butyrate fuels colonocytes)<br>• Make vitamin K, biotin, some B vitamins<br>• Train immune system, exclude pathogens<br>• Disruption (dysbiosis) linked to IBD, obesity, autoimmunity<br><br><b>Nitrogen fixers:</b><br>• <b>Rhizobium</b> in legume root nodules — N₂ → NH₃ (nitrogenase). Plant supplies carbs.<br>• <b>Cyanobacteria</b> (Anabaena, Nostoc) — heterocysts protect O₂-sensitive nitrogenase.<br><br><b>Ancestors of organelles (endosymbiotic theory):</b> mitochondria ← α-proteobacteria (~2 Bya); chloroplasts ← cyanobacteria (~1.5 Bya). Evidence: own DNA, 70S ribosomes, double membrane, binary fission, antibiotic-sensitive.',
+    info:'<b>Bacteria as essential symbionts:</b><br><b>Human microbiome (~10¹⁴ cells):</b><br>• Ferment fiber → SCFAs (butyrate fuels colonocytes)<br>• Make vitamin K, biotin, some B vitamins<br>• Train immune system, exclude pathogens<br>• Disruption (dysbiosis) linked to IBD, obesity, autoimmunity<br><br><b>Nitrogen fixers:</b><br>• <b>Rhizobium</b> in legume root nodules, N₂ → NH₃ (nitrogenase). Plant supplies carbs.<br>• <b>Cyanobacteria</b> (Anabaena, Nostoc), heterocysts protect O₂-sensitive nitrogenase.<br><br><b>Ancestors of organelles (endosymbiotic theory):</b> mitochondria ← α-proteobacteria (~2 Bya); chloroplasts ← cyanobacteria (~1.5 Bya). Evidence: own DNA, 70S ribosomes, double membrane, binary fission, antibiotic-sensitive.',
   },
   abx: {
     label:'Antibiotics + resistance',
     svg:`<svg viewBox="0 0 900 380" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">ANTIBIOTICS — targets + resistance mechanisms</text>
+      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">ANTIBIOTICS: targets + resistance mechanisms</text>
       <foreignObject x="40" y="60" width="820" height="300">
         <table xmlns="http://www.w3.org/1999/xhtml" style="width:100%;border-collapse:collapse;font-family:JetBrains Mono,monospace;font-size:11px;background:#fff;border:1.5px solid #1B3A2D">
           <thead style="background:rgba(13,32,24,0.08)">
@@ -11214,7 +11214,7 @@ const BACT_DATA = {
           </thead>
           <tbody>
             <tr><td style="padding:6px;border:1px solid #1B3A2D;font-weight:700">β-lactams</td><td style="padding:6px;border:1px solid #1B3A2D">PBP / peptidoglycan synthesis</td><td style="padding:6px;border:1px solid #1B3A2D">Penicillin, amoxicillin, cephalosporins, carbapenems</td><td style="padding:6px;border:1px solid #1B3A2D">β-lactamase enzymes; altered PBPs (MRSA = mecA)</td></tr>
-            <tr><td style="padding:6px;border:1px solid #1B3A2D;font-weight:700">Glycopeptides</td><td style="padding:6px;border:1px solid #1B3A2D">D-Ala-D-Ala in peptidoglycan</td><td style="padding:6px;border:1px solid #1B3A2D">Vancomycin</td><td style="padding:6px;border:1px solid #1B3A2D">VRE — vanA changes target to D-Ala-D-Lac</td></tr>
+            <tr><td style="padding:6px;border:1px solid #1B3A2D;font-weight:700">Glycopeptides</td><td style="padding:6px;border:1px solid #1B3A2D">D-Ala-D-Ala in peptidoglycan</td><td style="padding:6px;border:1px solid #1B3A2D">Vancomycin</td><td style="padding:6px;border:1px solid #1B3A2D">VRE: vanA changes target to D-Ala-D-Lac</td></tr>
             <tr><td style="padding:6px;border:1px solid #1B3A2D;font-weight:700">Aminoglycosides</td><td style="padding:6px;border:1px solid #1B3A2D">30S ribosome (misreading)</td><td style="padding:6px;border:1px solid #1B3A2D">Gentamicin, streptomycin, tobramycin</td><td style="padding:6px;border:1px solid #1B3A2D">Modifying enzymes (acetyl, phospho)</td></tr>
             <tr><td style="padding:6px;border:1px solid #1B3A2D;font-weight:700">Macrolides</td><td style="padding:6px;border:1px solid #1B3A2D">50S ribosome (translocation)</td><td style="padding:6px;border:1px solid #1B3A2D">Erythromycin, azithromycin (Z-pak)</td><td style="padding:6px;border:1px solid #1B3A2D">erm methylase modifies rRNA</td></tr>
             <tr><td style="padding:6px;border:1px solid #1B3A2D;font-weight:700">Tetracyclines</td><td style="padding:6px;border:1px solid #1B3A2D">30S ribosome (tRNA blocking)</td><td style="padding:6px;border:1px solid #1B3A2D">Doxycycline, minocycline</td><td style="padding:6px;border:1px solid #1B3A2D">Efflux pumps</td></tr>
@@ -11247,9 +11247,9 @@ const FUNGI_DATA = {
   overview: {
     label:'Overview + body plan',
     svg:`<svg viewBox="0 0 900 380" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">FUNGAL BODY PLAN — hyphae + mycelium</text>
+      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">FUNGAL BODY PLAN: hyphae + mycelium</text>
       <g transform="translate(60, 70)">
-        <text x="0" y="0" font-size="11" font-weight="700" fill="#1B3A2D">HYPHA — single tubular filament</text>
+        <text x="0" y="0" font-size="11" font-weight="700" fill="#1B3A2D">HYPHA: single tubular filament</text>
         <line x1="0" y1="40" x2="500" y2="40" stroke="#a06b3e" stroke-width="6"/>
         <line x1="0" y1="60" x2="500" y2="60" stroke="#a06b3e" stroke-width="6"/>
         <line x1="80" y1="40" x2="80" y2="60" stroke="#1B3A2D" stroke-width="2"/>
@@ -11257,26 +11257,26 @@ const FUNGI_DATA = {
         <line x1="240" y1="40" x2="240" y2="60" stroke="#1B3A2D" stroke-width="2"/>
         <line x1="320" y1="40" x2="320" y2="60" stroke="#1B3A2D" stroke-width="2"/>
         <line x1="400" y1="40" x2="400" y2="60" stroke="#1B3A2D" stroke-width="2"/>
-        <text x="200" y="90" text-anchor="middle" font-size="10" font-weight="700" fill="#1B3A2D">SEPTATE hypha (most fungi) — cross walls divide cells</text>
+        <text x="200" y="90" text-anchor="middle" font-size="10" font-weight="700" fill="#1B3A2D">SEPTATE hypha (most fungi), cross walls divide cells</text>
         <line x1="0" y1="120" x2="500" y2="120" stroke="#a06b3e" stroke-width="6"/>
         <line x1="0" y1="140" x2="500" y2="140" stroke="#a06b3e" stroke-width="6"/>
-        <text x="200" y="170" text-anchor="middle" font-size="10" font-weight="700" fill="#1B3A2D">COENOCYTIC (aseptate) — multinucleate, no walls (Zygomycetes)</text>
+        <text x="200" y="170" text-anchor="middle" font-size="10" font-weight="700" fill="#1B3A2D">COENOCYTIC (aseptate), multinucleate, no walls (Zygomycetes)</text>
       </g>
       <g transform="translate(60, 270)">
         <rect width="800" height="100" fill="#fff" stroke="#1B3A2D" stroke-width="1.5" rx="6"/>
         <text x="20" y="22" font-size="12" font-weight="700" fill="#1B3A2D">KEY FACTS</text>
         <text x="20" y="42" font-size="10" fill="#1B3A2D">• <b>Cell wall:</b> chitin (not cellulose like plants, not peptidoglycan like bacteria)</text>
-        <text x="20" y="58" font-size="10" fill="#1B3A2D">• <b>Heterotroph:</b> absorptive nutrition — secrete digestive enzymes externally, absorb nutrients</text>
+        <text x="20" y="58" font-size="10" fill="#1B3A2D">• <b>Heterotroph:</b> absorptive nutrition, secrete digestive enzymes externally, absorb nutrients</text>
         <text x="20" y="74" font-size="10" fill="#1B3A2D">• <b>Mycelium</b> = network of hyphae · <b>Fruiting body</b> = mushroom = reproductive structure</text>
         <text x="20" y="90" font-size="10" font-weight="700" fill="#5FA874">More closely related to animals than to plants (Opisthokonta)</text>
       </g>
     </svg>`,
-    info:'<b>Fungi:</b> heterotrophic eukaryotes with chitin cell walls, absorptive nutrition.<br><b>Body plan:</b> multicellular fungi grow as <b>hyphae</b> (filaments) → networks called <b>mycelium</b>. Fruiting bodies (mushrooms) are reproductive.<br><b>Hypha types:</b><br>• <b>Septate</b>: cross-walls with pores — most fungi.<br>• <b>Coenocytic (aseptate)</b>: multinucleate, no cross-walls — Zygomycetes.<br><b>Key features:</b><br>• Chitin cell wall (same as arthropod exoskeleton)<br>• Absorptive: secrete enzymes, absorb<br>• Sister to animals (Opisthokonta)<br><b>Lifestyles:</b> saprobes (decompose dead matter), parasites, symbionts (mycorrhizae, lichens).',
+    info:'<b>Fungi:</b> heterotrophic eukaryotes with chitin cell walls, absorptive nutrition.<br><b>Body plan:</b> multicellular fungi grow as <b>hyphae</b> (filaments) → networks called <b>mycelium</b>. Fruiting bodies (mushrooms) are reproductive.<br><b>Hypha types:</b><br>• <b>Septate</b>: cross-walls with pores, most fungi.<br>• <b>Coenocytic (aseptate)</b>: multinucleate, no cross-walls, Zygomycetes.<br><b>Key features:</b><br>• Chitin cell wall (same as arthropod exoskeleton)<br>• Absorptive: secrete enzymes, absorb<br>• Sister to animals (Opisthokonta)<br><b>Lifestyles:</b> saprobes (decompose dead matter), parasites, symbionts (mycorrhizae, lichens).',
   },
   chytrid: {
     label:'Chytridiomycota',
     svg:`<svg viewBox="0 0 900 320" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">CHYTRIDIOMYCOTA — earliest fungal lineage</text>
+      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">CHYTRIDIOMYCOTA: earliest fungal lineage</text>
       <g transform="translate(60, 60)">
         <circle cx="120" cy="80" r="40" fill="#a06b3e" stroke="#1B3A2D" stroke-width="2"/>
         <text x="120" y="84" text-anchor="middle" font-size="9" font-weight="700" fill="#fff">spore</text>
@@ -11293,7 +11293,7 @@ const FUNGI_DATA = {
         <text x="20" y="62" font-size="10" fill="#1B3A2D">• ONLY fungi with flagellated spores → swim</text>
         <text x="20" y="78" font-size="10" fill="#1B3A2D">• Earliest-diverging fungal lineage</text>
         <text x="20" y="106" font-size="11" font-weight="700" fill="#C25B3F">Batrachochytrium dendrobatidis (Bd)</text>
-        <text x="20" y="124" font-size="10" fill="#1B3A2D">— infects amphibian skin → blocks osmoregulation → cardiac arrest</text>
+        <text x="20" y="124" font-size="10" fill="#1B3A2D">infects amphibian skin → blocks osmoregulation → cardiac arrest</text>
         <text x="20" y="138" font-size="10" font-weight="700" fill="#C25B3F">Driving global amphibian extinctions.</text>
         <text x="20" y="170" font-size="11" font-weight="700" fill="#5FA874">ROLES IN ECOSYSTEMS</text>
         <text x="20" y="188" font-size="10" fill="#1B3A2D">• Decompose chitin, keratin, cellulose</text>
@@ -11301,12 +11301,12 @@ const FUNGI_DATA = {
         <text x="20" y="220" font-size="10" fill="#1B3A2D">• Some are parasitic on algae, plants, insects</text>
       </g>
     </svg>`,
-    info:'<b>Chytridiomycota</b> = earliest-diverging fungal lineage. Mostly aquatic.<br><b>Unique feature:</b> only fungi with flagellated spores (zoospores) — they swim. All other fungi lost flagella.<br><b>Notorious species:</b> <b>Batrachochytrium dendrobatidis (Bd)</b> infects amphibian skin → osmoregulation failure → cardiac arrest. Major driver of global amphibian extinctions.<br><b>Ecological roles:</b> decomposers of chitin/keratin/cellulose; anaerobic chytrids in cow rumen ferment plant matter; some parasitic.',
+    info:'<b>Chytridiomycota</b> = earliest-diverging fungal lineage. Mostly aquatic.<br><b>Unique feature:</b> only fungi with flagellated spores (zoospores), they swim. All other fungi lost flagella.<br><b>Notorious species:</b> <b>Batrachochytrium dendrobatidis (Bd)</b> infects amphibian skin → osmoregulation failure → cardiac arrest. Major driver of global amphibian extinctions.<br><b>Ecological roles:</b> decomposers of chitin/keratin/cellulose; anaerobic chytrids in cow rumen ferment plant matter; some parasitic.',
   },
   zygo: {
     label:'Zygomycota',
     svg:`<svg viewBox="0 0 900 320" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">ZYGOMYCOTA — bread mold (Rhizopus)</text>
+      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">ZYGOMYCOTA: bread mold (Rhizopus)</text>
       <g transform="translate(60, 60)">
         <line x1="0" y1="100" x2="200" y2="100" stroke="#a06b3e" stroke-width="6"/>
         <line x1="0" y1="120" x2="200" y2="120" stroke="#a06b3e" stroke-width="6"/>
@@ -11316,21 +11316,21 @@ const FUNGI_DATA = {
         <line x1="140" y1="100" x2="140" y2="40" stroke="#a06b3e" stroke-width="3"/>
         <circle cx="140" cy="30" r="14" fill="#1B3A2D"/>
         <text x="0" y="160" font-size="11" font-weight="700" fill="#1B3A2D">Sporangiophore + sporangium with hundreds of haploid spores</text>
-        <text x="0" y="176" font-size="10" fill="#1B3A2D">Coenocytic hyphae (no septa) — multinucleate cytoplasm</text>
+        <text x="0" y="176" font-size="10" fill="#1B3A2D">Coenocytic hyphae (no septa), multinucleate cytoplasm</text>
         <text x="0" y="200" font-size="11" font-weight="700" fill="#a378a5">SEXUAL: + and − strain mate → ZYGOSPORANGIUM (resistant) → meiosis → spores</text>
       </g>
       <g transform="translate(60, 250)">
         <rect width="800" height="60" fill="rgba(167,120,165,0.1)" stroke="#a378a5" stroke-width="1.5" rx="6"/>
         <text x="20" y="22" font-size="11" font-weight="700" fill="#1B3A2D">CLASSIC EXAMPLE: Rhizopus stolonifer (black bread mold) · Mucor (food spoilage)</text>
-        <text x="20" y="42" font-size="10" fill="#1B3A2D">Mucormycosis — opportunistic infection in diabetics + immunocompromised (rapid, severe).</text>
+        <text x="20" y="42" font-size="10" fill="#1B3A2D">Mucormycosis: opportunistic infection in diabetics + immunocompromised (rapid, severe).</text>
       </g>
     </svg>`,
-    info:'<b>Zygomycota</b> = "conjugation fungi." Aseptate (coenocytic) hyphae.<br><b>Asexual:</b> upright sporangiophore with sporangium → hundreds of haploid spores wind-dispersed.<br><b>Sexual:</b> + and − strain hyphae touch, gametangia fuse → zygosporangium (thick-walled, resistant) → karyogamy → meiosis → haploid spores released.<br><b>Examples:</b> Rhizopus stolonifer (black bread mold), Mucor.<br><b>Clinical:</b> Mucormycosis — opportunistic, often fatal. Diabetics with ketoacidosis are especially vulnerable.',
+    info:'<b>Zygomycota</b> = "conjugation fungi." Aseptate (coenocytic) hyphae.<br><b>Asexual:</b> upright sporangiophore with sporangium → hundreds of haploid spores wind-dispersed.<br><b>Sexual:</b> + and − strain hyphae touch, gametangia fuse → zygosporangium (thick-walled, resistant) → karyogamy → meiosis → haploid spores released.<br><b>Examples:</b> Rhizopus stolonifer (black bread mold), Mucor.<br><b>Clinical:</b> Mucormycosis: opportunistic, often fatal. Diabetics with ketoacidosis are especially vulnerable.',
   },
   glomero: {
-    label:'Glomeromycota — mycorrhizae',
+    label:'Glomeromycota: mycorrhizae',
     svg:`<svg viewBox="0 0 900 320" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">GLOMEROMYCOTA — arbuscular mycorrhizae (AMF)</text>
+      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">GLOMEROMYCOTA: arbuscular mycorrhizae (AMF)</text>
       <g transform="translate(60, 60)">
         <rect x="0" y="80" width="800" height="100" fill="#a06b3e" stroke="none"/>
         <text x="50" y="70" font-size="10" fill="#1B3A2D" font-weight="700">soil</text>
@@ -11342,7 +11342,7 @@ const FUNGI_DATA = {
         <line x1="220" y1="120" x2="290" y2="130" stroke="#a378a5" stroke-width="2"/>
         <line x1="220" y1="150" x2="280" y2="170" stroke="#a378a5" stroke-width="2"/>
         <text x="280" y="80" font-size="10" font-weight="700" fill="#a378a5">fungal hyphae extend</text>
-        <text x="280" y="92" font-size="9" fill="#1B3A2D">far into soil — much more SA</text>
+        <text x="280" y="92" font-size="9" fill="#1B3A2D">far into soil, much more SA</text>
         <g transform="translate(140, 130)">
           <circle cx="0" cy="0" r="3" fill="#a378a5"/>
           <circle cx="-8" cy="-5" r="3" fill="#a378a5"/>
@@ -11360,12 +11360,12 @@ const FUNGI_DATA = {
         <text x="20" y="74" font-size="10" font-weight="700" fill="#5FA874">~450-million-year-old partnership; helped plants colonize land.</text>
       </g>
     </svg>`,
-    info:'<b>Glomeromycota</b> = obligate plant symbionts forming <b>arbuscular mycorrhizae (AMF)</b>.<br><b>Symbiosis:</b> fungal hypha penetrates root cortical cell wall (not membrane) → forms tree-like <b>arbuscule</b> as exchange interface.<br><b>Plant gives:</b> photosynthate (sugars).<br><b>Fungus gives:</b> phosphorus + water + micronutrients via the vast hyphal network beyond the root rhizosphere.<br><b>Ubiquity:</b> ~80% of land plant species form this partnership. ~450-million-year-old — likely helped plants colonize land.<br><b>Distinct from:</b> ectomycorrhizae (Basidio/Asco — wrap around roots, don\'t penetrate cells).',
+    info:'<b>Glomeromycota</b> = obligate plant symbionts forming <b>arbuscular mycorrhizae (AMF)</b>.<br><b>Symbiosis:</b> fungal hypha penetrates root cortical cell wall (not membrane) → forms tree-like <b>arbuscule</b> as exchange interface.<br><b>Plant gives:</b> photosynthate (sugars).<br><b>Fungus gives:</b> phosphorus + water + micronutrients via the vast hyphal network beyond the root rhizosphere.<br><b>Ubiquity:</b> ~80% of land plant species form this partnership. ~450-million-year-old: likely helped plants colonize land.<br><b>Distinct from:</b> ectomycorrhizae (Basidio/Asco: wrap around roots, don\'t penetrate cells).',
   },
   asco: {
-    label:'Ascomycota — sac fungi',
+    label:'Ascomycota: sac fungi',
     svg:`<svg viewBox="0 0 900 320" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">ASCOMYCOTA — sac fungi (largest phylum)</text>
+      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">ASCOMYCOTA: sac fungi (largest phylum)</text>
       <g transform="translate(60, 60)">
         <text x="100" y="0" text-anchor="middle" font-size="11" font-weight="700" fill="#1B3A2D">ASCUS (sac with 8 ascospores)</text>
         <ellipse cx="100" cy="80" rx="32" ry="60" fill="#fce8d8" stroke="#1B3A2D" stroke-width="2"/>
@@ -11389,13 +11389,13 @@ const FUNGI_DATA = {
       <g transform="translate(500, 60)">
         <rect width="380" height="180" fill="#fff" stroke="#1B3A2D" stroke-width="1.5" rx="6"/>
         <text x="20" y="22" font-size="11" font-weight="700" fill="#1B3A2D">EXAMPLES (~64,000 species, ~75% of all fungi)</text>
-        <text x="20" y="42" font-size="10" fill="#1B3A2D">• <b>Saccharomyces cerevisiae</b> — yeast (bread, beer, model)</text>
-        <text x="20" y="58" font-size="10" fill="#1B3A2D">• <b>Penicillium</b> — penicillin · cheese</text>
-        <text x="20" y="74" font-size="10" fill="#1B3A2D">• <b>Aspergillus</b> — pharma + soy sauce; aspergillosis</text>
-        <text x="20" y="90" font-size="10" fill="#1B3A2D">• <b>Neurospora</b> — Beadle-Tatum genetics</text>
-        <text x="20" y="106" font-size="10" fill="#1B3A2D">• <b>Truffles + morels</b> — culinary cup fungi</text>
-        <text x="20" y="122" font-size="10" fill="#1B3A2D">• <b>Candida</b> — yeast infections</text>
-        <text x="20" y="138" font-size="10" fill="#1B3A2D">• <b>Claviceps</b> — ergot (LSD precursor)</text>
+        <text x="20" y="42" font-size="10" fill="#1B3A2D">• <b>Saccharomyces cerevisiae</b>, yeast (bread, beer, model)</text>
+        <text x="20" y="58" font-size="10" fill="#1B3A2D">• <b>Penicillium</b>, penicillin · cheese</text>
+        <text x="20" y="74" font-size="10" fill="#1B3A2D">• <b>Aspergillus</b>, pharma + soy sauce; aspergillosis</text>
+        <text x="20" y="90" font-size="10" fill="#1B3A2D">• <b>Neurospora</b>, Beadle-Tatum genetics</text>
+        <text x="20" y="106" font-size="10" fill="#1B3A2D">• <b>Truffles + morels</b>, culinary cup fungi</text>
+        <text x="20" y="122" font-size="10" fill="#1B3A2D">• <b>Candida</b>, yeast infections</text>
+        <text x="20" y="138" font-size="10" fill="#1B3A2D">• <b>Claviceps</b>, ergot (LSD precursor)</text>
         <text x="20" y="156" font-size="10" fill="#1B3A2D">• <b>Most lichen mycobiont partners</b></text>
       </g>
       <text x="60" y="290" font-size="10" font-weight="700" fill="#5FA874">Hyphae: septate. Sexual: dikaryotic ascus → meiosis → 8 ascospores. Largest fungal phylum, includes most molds + lichens + yeasts.</text>
@@ -11403,9 +11403,9 @@ const FUNGI_DATA = {
     info:'<b>Ascomycota</b> = sac fungi. Largest phylum (~75% of described fungi).<br><b>Sexual reproduction:</b> hyphae fuse → dikaryotic stage → karyogamy in ascus (sac) → meiosis → typically 8 haploid ascospores per ascus.<br><b>Asexual:</b> conidia (chains of mitotic spores from conidiophores).<br><b>Famous members:</b> Saccharomyces (yeast), Penicillium (antibiotics + cheese), Aspergillus, Neurospora (Beadle-Tatum), truffles, morels, Candida, Claviceps (ergot → LSD precursor), most lichen partners.',
   },
   basidio: {
-    label:'Basidiomycota — club fungi',
+    label:'Basidiomycota: club fungi',
     svg:`<svg viewBox="0 0 900 380" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">BASIDIOMYCOTA — club fungi (mushrooms)</text>
+      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">BASIDIOMYCOTA: club fungi (mushrooms)</text>
       <g transform="translate(60, 60)">
         <ellipse cx="120" cy="50" rx="80" ry="20" fill="#a06b3e" stroke="#1B3A2D" stroke-width="2"/>
         <rect x="105" y="60" width="30" height="100" fill="#fce8d8" stroke="#1B3A2D" stroke-width="2"/>
@@ -11426,7 +11426,7 @@ const FUNGI_DATA = {
         <text x="120" y="195" text-anchor="middle" font-size="9" fill="#1B3A2D">(basidiocarp)</text>
       </g>
       <g transform="translate(330, 80)">
-        <text x="0" y="0" font-size="11" font-weight="700" fill="#1B3A2D">BASIDIUM (CLUB) — on gill surface</text>
+        <text x="0" y="0" font-size="11" font-weight="700" fill="#1B3A2D">BASIDIUM (CLUB): on gill surface</text>
         <ellipse cx="80" cy="70" rx="22" ry="40" fill="#fce8d8" stroke="#1B3A2D" stroke-width="2"/>
         <line x1="68" y1="32" x2="68" y2="20" stroke="#a06b3e" stroke-width="2"/>
         <circle cx="68" cy="14" r="4" fill="#a06b3e"/>
@@ -11447,18 +11447,18 @@ const FUNGI_DATA = {
         <text x="20" y="74" font-size="10" fill="#1B3A2D">• Smuts + rusts (plant pathogens)</text>
         <text x="20" y="90" font-size="10" fill="#1B3A2D">• Cryptococcus (yeast pathogen)</text>
         <text x="20" y="120" font-size="11" font-weight="700" fill="#5FA874">CRITICAL ROLE</text>
-        <text x="20" y="138" font-size="10" fill="#1B3A2D">Wood decomposers — secrete laccase + lignin peroxidase</text>
+        <text x="20" y="138" font-size="10" fill="#1B3A2D">Wood decomposers: secrete laccase + lignin peroxidase</text>
         <text x="20" y="154" font-size="10" fill="#1B3A2D">→ break lignin (almost no other organisms can)</text>
         <text x="20" y="180" font-size="11" font-weight="700" fill="#C25B3F">Fairy rings: mycelium expands radially each year</text>
         <text x="20" y="196" font-size="10" fill="#1B3A2D">→ mushrooms appear at edge</text>
       </g>
     </svg>`,
-    info:'<b>Basidiomycota</b> = club fungi. Includes mushrooms, puffballs, bracket fungi, smuts, rusts.<br><b>Body plan:</b> dikaryotic mycelium for most of life. Mushroom (basidiocarp) is the fruiting body.<br><b>Sexual reproduction:</b> on gill surfaces of mushroom, basidia (clubs) form. Karyogamy → meiosis → 4 haploid basidiospores per basidium.<br><b>Critical ecological role:</b> only major lignin decomposers (laccase, lignin peroxidase). Without them, dead wood would accumulate forever — and the fossil-fuel record shows huge coal deposits formed before basidiomycetes evolved their lignin-eating tricks.<br><b>Pathogenic:</b> rusts + smuts on crops; Cryptococcus (yeast pathogen — meningitis in immunocompromised).',
+    info:'<b>Basidiomycota</b> = club fungi. Includes mushrooms, puffballs, bracket fungi, smuts, rusts.<br><b>Body plan:</b> dikaryotic mycelium for most of life. Mushroom (basidiocarp) is the fruiting body.<br><b>Sexual reproduction:</b> on gill surfaces of mushroom, basidia (clubs) form. Karyogamy → meiosis → 4 haploid basidiospores per basidium.<br><b>Critical ecological role:</b> only major lignin decomposers (laccase, lignin peroxidase). Without them, dead wood would accumulate forever, and the fossil-fuel record shows huge coal deposits formed before basidiomycetes evolved their lignin-eating tricks.<br><b>Pathogenic:</b> rusts + smuts on crops; Cryptococcus (yeast pathogen, meningitis in immunocompromised).',
   },
   lichen: {
     label:'Lichens',
     svg:`<svg viewBox="0 0 900 320" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">LICHENS — fungus + photobiont symbiosis</text>
+      <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">LICHENS: fungus + photobiont symbiosis</text>
       <g transform="translate(60, 60)">
         <text x="0" y="0" font-size="11" font-weight="700" fill="#1B3A2D">LICHEN STRUCTURE (cross section)</text>
         <rect x="0" y="20" width="500" height="14" fill="#a06b3e" stroke="#1B3A2D"/>
@@ -11494,7 +11494,7 @@ const FUNGI_DATA = {
         <text x="20" y="78" font-size="10" font-weight="700" fill="#5FA874">3 GROWTH FORMS: crustose (flat crust) · foliose (leafy) · fruticose (shrubby)</text>
       </g>
     </svg>`,
-    info:'<b>Lichens</b> = obligate symbiosis between fungus (mycobiont, usually Ascomycete) + photobiont (green alga or cyanobacterium).<br><b>Structure:</b> layered thallus — upper cortex (fungus) → algal layer → medulla (loose hyphae) → lower cortex with rhizines for attachment.<br><b>Partnership:</b><br>• Mycobiont gives: structure, protection from UV/desiccation/predation.<br>• Photobiont gives: photosynthate (and N₂ fixation if cyanobacterial).<br><b>3 growth forms:</b> crustose (flat crusts on rocks), foliose (leafy), fruticose (shrubby).<br><b>Bioindicators:</b> very sensitive to air pollution → lichen diversity tracks air quality.<br><b>Pioneer species:</b> often first colonizers of bare rock, breaking it down → soil formation.',
+    info:'<b>Lichens</b> = obligate symbiosis between fungus (mycobiont, usually Ascomycete) + photobiont (green alga or cyanobacterium).<br><b>Structure:</b> layered thallus, upper cortex (fungus) → algal layer → medulla (loose hyphae) → lower cortex with rhizines for attachment.<br><b>Partnership:</b><br>• Mycobiont gives: structure, protection from UV/desiccation/predation.<br>• Photobiont gives: photosynthate (and N₂ fixation if cyanobacterial).<br><b>3 growth forms:</b> crustose (flat crusts on rocks), foliose (leafy), fruticose (shrubby).<br><b>Bioindicators:</b> very sensitive to air pollution → lichen diversity tracks air quality.<br><b>Pioneer species:</b> often first colonizers of bare rock, breaking it down → soil formation.',
   },
 };
 function fungiSetMode(mode) {
@@ -11512,12 +11512,12 @@ function initFungi() {
 
 /* ---- PROTISTS ---- */
 const PROT_DIV = {
-  exc: { label:'Excavata', desc:'Flagellated, often have feeding groove. <b>Euglena</b> (mixotrophic, photosynthetic when light, heterotroph in dark). <b>Trypanosoma</b> (sleeping sickness, Chagas), <b>Giardia</b> (intestinal parasite, no mitochondria — has mitosomes), <b>Trichomonas</b> (STI).', color:'#5FA874' },
+  exc: { label:'Excavata', desc:'Flagellated, often have feeding groove. <b>Euglena</b> (mixotrophic, photosynthetic when light, heterotroph in dark). <b>Trypanosoma</b> (sleeping sickness, Chagas), <b>Giardia</b> (intestinal parasite, no mitochondria, has mitosomes), <b>Trichomonas</b> (STI).', color:'#5FA874' },
   sar: { label:'SAR clade', desc:'<b>Stramenopiles</b> (heterokonts): brown algae, kelp, diatoms, water molds. <b>Alveolates</b>: dinoflagellates (red tides), apicomplexans (Plasmodium → malaria, Toxoplasma), ciliates (Paramecium with macro+micronuclei). <b>Rhizarians</b>: forams, radiolarians, chlorarachniophytes.', color:'#a378a5' },
-  archae: { label:'Archaeplastida', desc:'<b>Red algae (Rhodophyta)</b>: phycoerythrin pigment, source of agar + carrageenan, no flagellated stages. <b>Green algae (Chlorophyta)</b>: chlorophyll a + b like plants — Chlamydomonas, Volvox (colonial), Ulva (sea lettuce). Plants evolved from green algae (charophytes).', color:'#5FA874' },
-  amoeb: { label:'Amoebozoa', desc:'Amoebas with lobose pseudopods (vs slender filose in rhizarians). <b>Entamoeba histolytica</b> (amoebic dysentery). Slime molds: <b>plasmodial</b> (Physarum — single huge multinucleate cell) and <b>cellular</b> (Dictyostelium — separate cells aggregate when starved).', color:'#c19a3e' },
+  archae: { label:'Archaeplastida', desc:'<b>Red algae (Rhodophyta)</b>: phycoerythrin pigment, source of agar + carrageenan, no flagellated stages. <b>Green algae (Chlorophyta)</b>: chlorophyll a + b like plants, Chlamydomonas, Volvox (colonial), Ulva (sea lettuce). Plants evolved from green algae (charophytes).', color:'#5FA874' },
+  amoeb: { label:'Amoebozoa', desc:'Amoebas with lobose pseudopods (vs slender filose in rhizarians). <b>Entamoeba histolytica</b> (amoebic dysentery). Slime molds: <b>plasmodial</b> (Physarum: single huge multinucleate cell) and <b>cellular</b> (Dictyostelium: separate cells aggregate when starved).', color:'#c19a3e' },
   opis: { label:'Opisthokonta', desc:'Includes animals + fungi + their unicellular relatives. <b>Choanoflagellates</b>: collared flagellated cells; sister group to animals; same shape as sponge collar cells (choanocytes). Important evidence for animal origin.', color:'#3A2C7A' },
-  slime: { label:'Slime molds', desc:'<b>Plasmodial slime molds (Myxomycetes)</b>: huge multinucleate cytoplasmic mass (a "plasmodium") flows over substrate, eating bacteria. Famously Physarum solves mazes + recreates Tokyo subway map. <b>Cellular slime molds (Dictyostelium)</b>: free-living amoebas that aggregate under starvation → multicellular slug → fruiting body — model for development + cell signaling.', color:'#a06b3e' },
+  slime: { label:'Slime molds', desc:'<b>Plasmodial slime molds (Myxomycetes)</b>: huge multinucleate cytoplasmic mass (a "plasmodium") flows over substrate, eating bacteria. Famously Physarum solves mazes + recreates Tokyo subway map. <b>Cellular slime molds (Dictyostelium)</b>: free-living amoebas that aggregate under starvation → multicellular slug → fruiting body, model for development + cell signaling.', color:'#a06b3e' },
 };
 function protSvg(key) {
   const d = PROT_DIV[key];
@@ -11557,15 +11557,15 @@ function initProtists() {
 /* ---- PLANT LIFECYCLE / ALTERNATION OF GENERATIONS ---- */
 const PLIFE_DATA = {
   moss: { dom:'Gametophyte', dom_ratio:'most prominent', sporo:'small, attached to gametophyte', water:'YES (sperm swim)', seeds:'no', vasc:'no', notes:'<b>Bryophytes</b> (mosses, liverworts, hornworts). Gametophyte (n) is the green leafy plant. Sporophyte (2n) lives on top, dependent. Need water for fertilization. No vascular tissue → small.', color:'#5FA874' },
-  fern: { dom:'Sporophyte', dom_ratio:'much larger', sporo:'leafy fern (frond)', water:'YES (sperm swim)', seeds:'no', vasc:'YES', notes:'<b>Pteridophytes</b> (ferns, horsetails, club mosses). Sporophyte (2n) dominant — what we call a fern. Spores released from sori → grow into tiny prothallus (gametophyte, heart-shaped). Still need water for sperm. Vascular tissue allows larger size.', color:'#a378a5' },
-  gymno: { dom:'Sporophyte', dom_ratio:'overwhelmingly', sporo:'tree (pine, conifer)', water:'NO (pollen wind-blown)', seeds:'YES (naked, in cone)', vasc:'YES', notes:'<b>Gymnosperms</b> (conifers, cycads, ginkgo, gnetophytes). Pollen carries sperm — no water needed. Female gametophyte tiny, lives in ovule on cone. Seeds are <b>naked</b> on scales of cone (gymno = "naked seed"). Pine takes 2-3 yrs from pollination to seed.', color:'#c19a3e' },
-  angio: { dom:'Sporophyte', dom_ratio:'almost entirely', sporo:'flower-bearing plant', water:'NO (pollen via animals/wind/water)', seeds:'YES (in fruit)', vasc:'YES + vessels', notes:'<b>Angiosperms</b> (flowering plants). Sperm travels in pollen tube. <b>Double fertilization</b>: one sperm + egg → embryo (2n); other sperm + 2 polar nuclei → endosperm (3n) for nutrient stores. Seeds enclosed in <b>fruit</b> (ripened ovary). Most diverse plant group — ~250,000 species.', color:'#C25B3F' },
+  fern: { dom:'Sporophyte', dom_ratio:'much larger', sporo:'leafy fern (frond)', water:'YES (sperm swim)', seeds:'no', vasc:'YES', notes:'<b>Pteridophytes</b> (ferns, horsetails, club mosses). Sporophyte (2n) dominant: what we call a fern. Spores released from sori → grow into tiny prothallus (gametophyte, heart-shaped). Still need water for sperm. Vascular tissue allows larger size.', color:'#a378a5' },
+  gymno: { dom:'Sporophyte', dom_ratio:'overwhelmingly', sporo:'tree (pine, conifer)', water:'NO (pollen wind-blown)', seeds:'YES (naked, in cone)', vasc:'YES', notes:'<b>Gymnosperms</b> (conifers, cycads, ginkgo, gnetophytes). Pollen carries sperm: no water needed. Female gametophyte tiny, lives in ovule on cone. Seeds are <b>naked</b> on scales of cone (gymno = "naked seed"). Pine takes 2-3 yrs from pollination to seed.', color:'#c19a3e' },
+  angio: { dom:'Sporophyte', dom_ratio:'almost entirely', sporo:'flower-bearing plant', water:'NO (pollen via animals/wind/water)', seeds:'YES (in fruit)', vasc:'YES + vessels', notes:'<b>Angiosperms</b> (flowering plants). Sperm travels in pollen tube. <b>Double fertilization</b>: one sperm + egg → embryo (2n); other sperm + 2 polar nuclei → endosperm (3n) for nutrient stores. Seeds enclosed in <b>fruit</b> (ripened ovary). Most diverse plant group: ~250,000 species.', color:'#C25B3F' },
   trend: { dom:'TREND', dom_ratio:'gametophyte → smaller', sporo:'sporophyte → bigger and more independent', water:'water dependence → eliminated', seeds:'naked → enclosed', vasc:'absent → present → vessels', notes:'Evolutionary trend across plant groups: gametophyte became smaller and more dependent (sometimes microscopic, lives inside sporophyte tissues). Sporophyte became larger, longer-lived, more independent. Reproduction freed from water by pollen + seeds. Vascular tissue enabled tall growth.', color:'#3A2C7A' },
 };
 function plifeSvg(key) {
   const d = PLIFE_DATA[key];
   return `<svg viewBox="0 0 900 460" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-    <text x="450" y="30" text-anchor="middle" font-size="14" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">PLANT LIFECYCLE — ${key === 'trend' ? 'EVOLUTIONARY TREND' : key.toUpperCase()}</text>
+    <text x="450" y="30" text-anchor="middle" font-size="14" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">PLANT LIFECYCLE: ${key === 'trend' ? 'EVOLUTIONARY TREND' : key.toUpperCase()}</text>
     <foreignObject x="40" y="60" width="820" height="180">
       <table xmlns="http://www.w3.org/1999/xhtml" style="width:100%;border-collapse:collapse;font-family:JetBrains Mono,monospace;font-size:12px;background:#fff;border:2px solid ${d.color};border-radius:8px">
         <tr><td style="padding:8px;border-bottom:1px solid #1B3A2D;background:rgba(13,32,24,0.05);font-weight:700;width:30%">Dominant generation</td><td style="padding:8px;border-bottom:1px solid #1B3A2D">${d.dom} (${d.dom_ratio})</td></tr>
@@ -11600,7 +11600,7 @@ function initComparativeEmbryos() {
   if (!document.getElementById('compBody')) return;
   document.getElementById('compBody').innerHTML = `
     <svg viewBox="0 0 900 540" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-      <text x="450" y="30" text-anchor="middle" font-size="14" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">COMPARATIVE EMBRYOLOGY — sea urchin · frog · chick · human</text>
+      <text x="450" y="30" text-anchor="middle" font-size="14" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">COMPARATIVE EMBRYOLOGY: sea urchin · frog · chick · human</text>
       <g transform="translate(40, 70)">
         <text x="100" y="0" text-anchor="middle" font-size="12" font-weight="700" fill="#5FA874">SEA URCHIN</text>
         <circle cx="100" cy="60" r="40" fill="#fff" stroke="#1B3A2D" stroke-width="2"/>
@@ -11651,7 +11651,7 @@ function initComparativeEmbryos() {
       </foreignObject>
     </svg>
     <div style="margin-top:14px;background:rgba(106,138,168,0.08);border-left:4px solid #6A8AA8;padding:12px 16px;border-radius:6px">
-      <p style="font-size:13px;color:#1B3A2D;margin:0"><b>Von Baer\'s laws:</b> early stages of vertebrate embryos look very similar — pharyngeal arches, post-anal tail, somites. Differentiation happens later. Strong evidence for common descent (Darwin\'s "embryology argument"). Chick + human gastrulate via primitive streak — a shared amniote feature.</p>
+      <p style="font-size:13px;color:#1B3A2D;margin:0"><b>Von Baer\'s laws:</b> early stages of vertebrate embryos look very similar, pharyngeal arches, post-anal tail, somites. Differentiation happens later. Strong evidence for common descent (Darwin\'s "embryology argument"). Chick + human gastrulate via primitive streak, a shared amniote feature.</p>
     </div>
   `;
 }
@@ -11660,11 +11660,11 @@ function initComparativeEmbryos() {
 const CLEAVE_DATA = {
   holo: {
     label:'Holoblastic (complete)',
-    info:'<b>Holoblastic cleavage</b>: cleavage furrows pass entirely through the egg → all of the cytoplasm divides. Happens when yolk is small (isolecithal) or moderate (mesolecithal).<br><b>Examples:</b> sea urchin (equal), frog (unequal — vegetal cells larger because of yolk), human (rotational, asynchronous).',
+    info:'<b>Holoblastic cleavage</b>: cleavage furrows pass entirely through the egg → all of the cytoplasm divides. Happens when yolk is small (isolecithal) or moderate (mesolecithal).<br><b>Examples:</b> sea urchin (equal), frog (unequal, vegetal cells larger because of yolk), human (rotational, asynchronous).',
   },
   mero: {
     label:'Meroblastic (incomplete)',
-    info:'<b>Meroblastic cleavage</b>: cleavage furrow can\'t penetrate the dense yolk. Only the cytoplasm-rich region (animal pole) divides → forms a disc of cells on top of yolk.<br><b>Examples:</b> bird, reptile, fish (discoidal). Cephalopods + insects use a different incomplete pattern (superficial — nuclei migrate to cortex of yolk-filled egg).',
+    info:'<b>Meroblastic cleavage</b>: cleavage furrow can\'t penetrate the dense yolk. Only the cytoplasm-rich region (animal pole) divides → forms a disc of cells on top of yolk.<br><b>Examples:</b> bird, reptile, fish (discoidal). Cephalopods + insects use a different incomplete pattern (superficial, nuclei migrate to cortex of yolk-filled egg).',
   },
   radial: {
     label:'Radial cleavage (deuterostome)',
@@ -11672,7 +11672,7 @@ const CLEAVE_DATA = {
   },
   spiral: {
     label:'Spiral cleavage (protostome)',
-    info:'<b>Spiral cleavage</b>: cells divide at oblique angles → daughter cells nestle in grooves between earlier cells. Pattern looks like a tilted helix.<br>Found in <b>protostomes</b> (annelids, mollusks, flatworms).<br><b>Determinate</b>: each cell\'s fate is fixed early — separate one and you get a partial embryo (mosaic development).',
+    info:'<b>Spiral cleavage</b>: cells divide at oblique angles → daughter cells nestle in grooves between earlier cells. Pattern looks like a tilted helix.<br>Found in <b>protostomes</b> (annelids, mollusks, flatworms).<br><b>Determinate</b>: each cell\'s fate is fixed early, separate one and you get a partial embryo (mosaic development).',
   },
   indet: {
     label:'Indeterminate (regulative)',
@@ -11706,9 +11706,9 @@ function initHoxGenes() {
   if (!document.getElementById('hoxBody')) return;
   document.getElementById('hoxBody').innerHTML = `
     <svg viewBox="0 0 900 460" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-      <text x="450" y="30" text-anchor="middle" font-size="14" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">HOX GENES — head-to-tail body plan blueprint</text>
+      <text x="450" y="30" text-anchor="middle" font-size="14" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">HOX GENES: head-to-tail body plan blueprint</text>
       <g transform="translate(40, 70)">
-        <text x="0" y="0" font-size="11" font-weight="700" fill="#1B3A2D">DROSOPHILA — 8 Hox genes in 2 clusters</text>
+        <text x="0" y="0" font-size="11" font-weight="700" fill="#1B3A2D">DROSOPHILA: 8 Hox genes in 2 clusters</text>
         <line x1="0" y1="40" x2="800" y2="40" stroke="#1B3A2D" stroke-width="3"/>
         <rect x="20" y="30" width="80" height="20" fill="#5FA874" stroke="#1B3A2D"/>
         <rect x="105" y="30" width="80" height="20" fill="#a378a5" stroke="#1B3A2D"/>
@@ -11751,11 +11751,11 @@ function initHoxGenes() {
         <rect width="820" height="60" fill="#fff" stroke="#1B3A2D" stroke-width="1.5" rx="6"/>
         <text x="20" y="22" font-size="11" font-weight="700" fill="#1B3A2D">HOMEOTIC MUTATIONS</text>
         <text x="20" y="42" font-size="10" fill="#1B3A2D">• <b>Antennapedia</b>: leg grows where antenna should · • <b>bithorax</b>: extra wings (loss of haltere identity)</text>
-        <text x="20" y="56" font-size="10" font-weight="700" fill="#5FA874">Vertebrates have 4 Hox clusters (HoxA-D), 39 genes total — duplications during early vertebrate evolution.</text>
+        <text x="20" y="56" font-size="10" font-weight="700" fill="#5FA874">Vertebrates have 4 Hox clusters (HoxA-D), 39 genes total, duplications during early vertebrate evolution.</text>
       </g>
     </svg>
     <div style="margin-top:14px;background:rgba(167,120,165,0.08);border-left:4px solid #a378a5;padding:12px 16px;border-radius:6px">
-      <p style="font-size:13px;color:#1B3A2D;margin:0"><b>Hox genes</b> contain a 180-bp <b>homeobox</b> encoding a 60-aa <b>homeodomain</b> DNA-binding motif. They\'re master regulators that switch on whole batteries of downstream genes appropriate for each body region.<br><br><b>Colinearity</b>: their physical order on the chromosome matches their expression along the anterior-posterior axis.<br><br>Discovered through the homeotic mutations Antennapedia + bithorax. Lewis, Nüsslein-Volhard, Wieschaus — 1995 Nobel.</p>
+      <p style="font-size:13px;color:#1B3A2D;margin:0"><b>Hox genes</b> contain a 180-bp <b>homeobox</b> encoding a 60-aa <b>homeodomain</b> DNA-binding motif. They\'re master regulators that switch on whole batteries of downstream genes appropriate for each body region.<br><br><b>Colinearity</b>: their physical order on the chromosome matches their expression along the anterior-posterior axis.<br><br>Discovered through the homeotic mutations Antennapedia + bithorax. Lewis, Nüsslein-Volhard, Wieschaus, 1995 Nobel.</p>
     </div>
   `;
 }
@@ -11765,7 +11765,7 @@ function initExtraEmbryonic() {
   if (!document.getElementById('extraBody')) return;
   document.getElementById('extraBody').innerHTML = `
     <svg viewBox="0 0 900 460" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-      <text x="450" y="30" text-anchor="middle" font-size="14" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">EXTRA-EMBRYONIC MEMBRANES — amniote innovation</text>
+      <text x="450" y="30" text-anchor="middle" font-size="14" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">EXTRA-EMBRYONIC MEMBRANES: amniote innovation</text>
       <g transform="translate(60, 70)">
         <ellipse cx="380" cy="180" rx="320" ry="160" fill="none" stroke="#1B3A2D" stroke-width="2.5"/>
         <text x="380" y="40" text-anchor="middle" font-size="11" font-weight="700" fill="#1B3A2D">SHELL (or uterine wall in mammals)</text>
@@ -11786,9 +11786,9 @@ function initExtraEmbryonic() {
             <tr><th style="padding:6px;border:1px solid #1B3A2D">Membrane</th><th style="padding:6px;border:1px solid #1B3A2D">Function (egg)</th><th style="padding:6px;border:1px solid #1B3A2D">Function (mammal)</th></tr>
           </thead>
           <tbody>
-            <tr><td style="padding:5px;border:1px solid #1B3A2D;font-weight:700">Amnion</td><td style="padding:5px;border:1px solid #1B3A2D">Fluid-filled sac surrounding embryo — cushion, prevent desiccation</td><td style="padding:5px;border:1px solid #1B3A2D">Same — amniotic fluid</td></tr>
+            <tr><td style="padding:5px;border:1px solid #1B3A2D;font-weight:700">Amnion</td><td style="padding:5px;border:1px solid #1B3A2D">Fluid-filled sac surrounding embryo: cushion, prevent desiccation</td><td style="padding:5px;border:1px solid #1B3A2D">Same: amniotic fluid</td></tr>
             <tr><td style="padding:5px;border:1px solid #1B3A2D;font-weight:700">Chorion</td><td style="padding:5px;border:1px solid #1B3A2D">Gas exchange across shell</td><td style="padding:5px;border:1px solid #1B3A2D">Forms fetal portion of placenta</td></tr>
-            <tr><td style="padding:5px;border:1px solid #1B3A2D;font-weight:700">Yolk sac</td><td style="padding:5px;border:1px solid #1B3A2D">Stores yolk (food)</td><td style="padding:5px;border:1px solid #1B3A2D">Vestigial — first site of hematopoiesis + germ cells</td></tr>
+            <tr><td style="padding:5px;border:1px solid #1B3A2D;font-weight:700">Yolk sac</td><td style="padding:5px;border:1px solid #1B3A2D">Stores yolk (food)</td><td style="padding:5px;border:1px solid #1B3A2D">Vestigial: first site of hematopoiesis + germ cells</td></tr>
             <tr><td style="padding:5px;border:1px solid #1B3A2D;font-weight:700">Allantois</td><td style="padding:5px;border:1px solid #1B3A2D">Stores nitrogenous waste; gas exchange</td><td style="padding:5px;border:1px solid #1B3A2D">Forms umbilical cord vessels; vestigial → urachus</td></tr>
           </tbody>
         </table>
@@ -11806,31 +11806,31 @@ function initExtraEmbryonic() {
 const EVID_DATA = {
   fossil: {
     label:'Fossil record + transitional fossils',
-    info:'<b>The fossil record</b> documents the history of life. Layers of sedimentary rock preserve dated snapshots — older below, younger above.<br><br><b>Transitional fossils</b> show intermediate features:<br>• <b>Tiktaalik</b> (375 Mya) — between fish and tetrapods (lobed fins, neck, lungs)<br>• <b>Archaeopteryx</b> (150 Mya) — bird with feathers + reptilian teeth, claws, tail<br>• <b>Pakicetus → Ambulocetus → Basilosaurus</b> — terrestrial mammals to whales<br>• <b>Australopithecus afarensis (Lucy)</b> — bipedal hominin with chimp-sized brain<br><br><b>Carbon dating</b> for younger fossils (&lt;50,000 yrs); <b>uranium-lead, K-Ar</b> for older. Index fossils (rapidly evolving species with wide distribution) calibrate timing.',
+    info:'<b>The fossil record</b> documents the history of life. Layers of sedimentary rock preserve dated snapshots, older below, younger above.<br><br><b>Transitional fossils</b> show intermediate features:<br>• <b>Tiktaalik</b> (375 Mya): between fish and tetrapods (lobed fins, neck, lungs)<br>• <b>Archaeopteryx</b> (150 Mya): bird with feathers + reptilian teeth, claws, tail<br>• <b>Pakicetus → Ambulocetus → Basilosaurus</b>, terrestrial mammals to whales<br>• <b>Australopithecus afarensis (Lucy)</b>, bipedal hominin with chimp-sized brain<br><br><b>Carbon dating</b> for younger fossils (&lt;50,000 yrs); <b>uranium-lead, K-Ar</b> for older. Index fossils (rapidly evolving species with wide distribution) calibrate timing.',
   },
   anat: {
     label:'Comparative anatomy',
-    info:'<b>Homologous structures</b> — same evolutionary origin, different function. Mammalian forelimbs (human arm, bat wing, whale flipper, horse leg) all share the same bone pattern (humerus → radius/ulna → carpals → metacarpals → phalanges).<br><br><b>Analogous structures</b> — same function, different origin (convergent evolution): wings of insects vs birds or bats (bird and bat wings are analogous as wings but homologous as forelimbs); eyes evolved independently many times.<br><br><b>Vestigial structures</b> — reduced or non-functional remnants of ancestral features:<br>• Human appendix, tailbone, wisdom teeth, body hair, ear-wiggling muscles<br>• Whale pelvis (no longer connects to limb)<br>• Snake hindlimb stubs (boas, pythons)<br>• Cave-dwelling fish eyes',
+    info:'<b>Homologous structures</b>, same evolutionary origin, different function. Mammalian forelimbs (human arm, bat wing, whale flipper, horse leg) all share the same bone pattern (humerus → radius/ulna → carpals → metacarpals → phalanges).<br><br><b>Analogous structures</b>, same function, different origin (convergent evolution): wings of insects vs birds or bats (bird and bat wings are analogous as wings but homologous as forelimbs); eyes evolved independently many times.<br><br><b>Vestigial structures</b>, reduced or non-functional remnants of ancestral features:<br>• Human appendix, tailbone, wisdom teeth, body hair, ear-wiggling muscles<br>• Whale pelvis (no longer connects to limb)<br>• Snake hindlimb stubs (boas, pythons)<br>• Cave-dwelling fish eyes',
   },
   embryo: {
     label:'Comparative embryology',
-    info:'<b>Vertebrate embryos look strikingly similar early in development.</b><br><br>Pharyngeal arches, post-anal tail, somites, dorsal nerve cord — all visible in fish, frog, chick, mammal embryos.<br><br>These shared features reflect a deep common ancestor whose developmental program everyone inherited. Differentiation diverges later — gills retained in fish, transformed into Eustachian tube + middle ear bones in mammals.<br><br><b>Von Baer\'s laws:</b> general traits appear before specific traits during development. The earliest embryonic stages of vertebrates resemble each other more than later stages do.<br><br>Ernst Haeckel\'s "ontogeny recapitulates phylogeny" overstated the case but the underlying observation — shared embryonic features → common ancestry — remains valid.',
+    info:'<b>Vertebrate embryos look strikingly similar early in development.</b><br><br>Pharyngeal arches, post-anal tail, somites, dorsal nerve cord, all visible in fish, frog, chick, mammal embryos.<br><br>These shared features reflect a deep common ancestor whose developmental program everyone inherited. Differentiation diverges later: gills retained in fish, transformed into Eustachian tube + middle ear bones in mammals.<br><br><b>Von Baer\'s laws:</b> general traits appear before specific traits during development. The earliest embryonic stages of vertebrates resemble each other more than later stages do.<br><br>Ernst Haeckel\'s "ontogeny recapitulates phylogeny" overstated the case but the underlying observation, shared embryonic features → common ancestry, remains valid.',
   },
   biogeo: {
     label:'Biogeography',
-    info:'<b>Biogeography</b> = geographic distribution of species. Current distributions reflect deep evolutionary history and continental drift.<br><br><b>Wallace\'s line:</b> sharp boundary between Asian + Australian fauna in Indonesian archipelago, despite small water gap. Reflects long isolation of the two continents.<br><br><b>Marsupials in Australia</b> — Australia separated from other continents ~50 Mya, before placental mammals diversified there. Marsupials radiated to fill all niches (kangaroo, koala, Tasmanian devil, marsupial mole) → independent evolution mirroring placental mammals elsewhere.<br><br><b>Galápagos finches</b> — single ancestral species → 13+ species with different beak shapes for different food niches. Adaptive radiation in geographic isolation. Same with Hawaiian honeycreepers, Madagascar lemurs, African Rift Lake cichlids.<br><br><b>Why vicariance matters:</b> when a population is split by a geographic barrier (continental drift, mountain rise, river change), each piece evolves separately → speciation.',
+    info:'<b>Biogeography</b> = geographic distribution of species. Current distributions reflect deep evolutionary history and continental drift.<br><br><b>Wallace\'s line:</b> sharp boundary between Asian + Australian fauna in Indonesian archipelago, despite small water gap. Reflects long isolation of the two continents.<br><br><b>Marsupials in Australia</b>, Australia separated from other continents ~50 Mya, before placental mammals diversified there. Marsupials radiated to fill all niches (kangaroo, koala, Tasmanian devil, marsupial mole) → independent evolution mirroring placental mammals elsewhere.<br><br><b>Galápagos finches</b>, single ancestral species → 13+ species with different beak shapes for different food niches. Adaptive radiation in geographic isolation. Same with Hawaiian honeycreepers, Madagascar lemurs, African Rift Lake cichlids.<br><br><b>Why vicariance matters:</b> when a population is split by a geographic barrier (continental drift, mountain rise, river change), each piece evolves separately → speciation.',
   },
   mol: {
     label:'Molecular biology',
-    info:'<b>The strongest evidence for common descent</b> — every organism uses essentially the same genetic code. Species closer in evolutionary time share more DNA sequence.<br><br><b>Universal features:</b><br>• Same 4 nucleotides<br>• Same 20 amino acids<br>• Same triplet codon table (with minor mitochondrial/some-protozoan variants)<br>• Same ribosome architecture<br>• Same enzymes for replication and core metabolism<br><br><b>Sequence comparison:</b> cytochrome c is nearly identical in humans + chimps (1 difference), 88% identical to yeast, ~60% to bacteria. Differences accumulate at a roughly clock-like rate → <b>molecular clock</b> for dating divergences.<br><br><b>Pseudogenes</b> — non-functional gene relics. Humans + chimps share an inactivated GULO gene (vitamin C synthesis) → confirms common ancestor lost the function in same way.<br><br><b>HOX genes</b> are conserved across all bilaterian animals — same body-plan toolkit, deployed differently.',
+    info:'<b>The strongest evidence for common descent</b>, every organism uses essentially the same genetic code. Species closer in evolutionary time share more DNA sequence.<br><br><b>Universal features:</b><br>• Same 4 nucleotides<br>• Same 20 amino acids<br>• Same triplet codon table (with minor mitochondrial/some-protozoan variants)<br>• Same ribosome architecture<br>• Same enzymes for replication and core metabolism<br><br><b>Sequence comparison:</b> cytochrome c is nearly identical in humans + chimps (1 difference), 88% identical to yeast, ~60% to bacteria. Differences accumulate at a roughly clock-like rate → <b>molecular clock</b> for dating divergences.<br><br><b>Pseudogenes</b>, non-functional gene relics. Humans + chimps share an inactivated GULO gene (vitamin C synthesis) → confirms common ancestor lost the function in same way.<br><br><b>HOX genes</b> are conserved across all bilaterian animals, same body-plan toolkit, deployed differently.',
   },
   direct: {
     label:'Direct observation',
-    info:'<b>Evolution is observable in real time</b> when generation times are short or selection pressure is strong.<br><br><b>Bacterial antibiotic resistance:</b> selection for resistance alleles happens within days. MRSA emerged within years of methicillin introduction.<br><br><b>Peppered moths (Biston betularia):</b> dark-form frequency rose from ~2% to ~95% in industrial UK as soot darkened tree bark, then reversed after Clean Air Act. Tutt + Kettlewell.<br><br><b>Galápagos finches (Grants, 1970s-present):</b> documented beak-size shifts within a few years tied to rainfall changes affecting seed availability.<br><br><b>Lenski\'s long-term E. coli experiment</b> (1988-): 12 lines, &gt;75,000 generations. Documented adaptation, an emergent citrate-eating ability (~31,000 generations), evolved hyper-mutators.<br><br><b>Drug-resistant HIV, herbicide-resistant weeds, pesticide-resistant insects</b> — all real-time evolution in human-impacted systems.',
+    info:'<b>Evolution is observable in real time</b> when generation times are short or selection pressure is strong.<br><br><b>Bacterial antibiotic resistance:</b> selection for resistance alleles happens within days. MRSA emerged within years of methicillin introduction.<br><br><b>Peppered moths (Biston betularia):</b> dark-form frequency rose from ~2% to ~95% in industrial UK as soot darkened tree bark, then reversed after Clean Air Act. Tutt + Kettlewell.<br><br><b>Galápagos finches (Grants, 1970s-present):</b> documented beak-size shifts within a few years tied to rainfall changes affecting seed availability.<br><br><b>Lenski\'s long-term E. coli experiment</b> (1988-): 12 lines, &gt;75,000 generations. Documented adaptation, an emergent citrate-eating ability (~31,000 generations), evolved hyper-mutators.<br><br><b>Drug-resistant HIV, herbicide-resistant weeds, pesticide-resistant insects</b>, all real-time evolution in human-impacted systems.',
   },
   vestig: {
     label:'Vestigial structures',
-    info:'<b>Vestigial structures</b> are reduced/non-functional traits inherited from ancestors that used them. Strong evidence for descent with modification — if life were designed, why bother making non-functional parts?<br><br><b>Human examples:</b><br>• <b>Appendix</b> — vestigial cecum (large in herbivores for cellulose digestion).<br>• <b>Tailbone (coccyx)</b> — fused vertebrae from ancestral tail.<br>• <b>Wisdom teeth</b> — extra molars for tougher diet ancestors had.<br>• <b>Plica semilunaris</b> — third-eyelid remnant in inner corner of eye.<br>• <b>Goosebumps</b> — arrector pili muscles trying to fluff fur we don\'t have.<br>• <b>Palmaris longus tendon</b> — present in only 85% of humans.<br><br><b>Other species:</b><br>• <b>Whale pelvis + femur</b> — disconnected from spine (ancestor walked).<br>• <b>Snake hindlimb stubs</b> — pythons + boas.<br>• <b>Cave fish eyes</b> — present but degenerate.<br>• <b>Flightless bird wings</b> — ostrich, kiwi.',
+    info:'<b>Vestigial structures</b> are reduced/non-functional traits inherited from ancestors that used them. Strong evidence for descent with modification, if life were designed, why bother making non-functional parts?<br><br><b>Human examples:</b><br>• <b>Appendix</b>, vestigial cecum (large in herbivores for cellulose digestion).<br>• <b>Tailbone (coccyx)</b>, fused vertebrae from ancestral tail.<br>• <b>Wisdom teeth</b>, extra molars for tougher diet ancestors had.<br>• <b>Plica semilunaris</b>, third-eyelid remnant in inner corner of eye.<br>• <b>Goosebumps</b>, arrector pili muscles trying to fluff fur we don\'t have.<br>• <b>Palmaris longus tendon</b>, present in only 85% of humans.<br><br><b>Other species:</b><br>• <b>Whale pelvis + femur</b>, disconnected from spine (ancestor walked).<br>• <b>Snake hindlimb stubs</b>, pythons + boas.<br>• <b>Cave fish eyes</b>, present but degenerate.<br>• <b>Flightless bird wings</b>, ostrich, kiwi.',
   },
 };
 function evidSetMode(mode) {
@@ -11948,21 +11948,21 @@ const BIOMES = [
   { name:'Savanna', x:280, y:30, w:200, h:30, color:'#d9a955', desc:'Tropical grassland with scattered trees. Wet/dry seasons. Lions, giraffes.' },
   { name:'Tropical rainforest', x:280, y:65, w:200, h:30, color:'#1B3A2D', desc:'Equatorial. Year-round warm + wet. Highest biodiversity. Layered canopy.' },
   { name:'Freshwater', x:280, y:100, w:200, h:30, color:'#5cabe6', desc:'Lakes, rivers, wetlands. Trophic structure: littoral, limnetic, profundal zones.' },
-  { name:'Marine — pelagic', x:280, y:135, w:200, h:30, color:'#1e4a72', desc:'Open ocean. Photic zone (sunlit), aphotic zone. Plankton → fish → top predators.' },
-  { name:'Marine — coral reef', x:280, y:170, w:200, h:30, color:'#a378a5', desc:'Tropical, shallow, clear. Coral-zooxanthellae symbiosis. Highest marine biodiversity.' },
-  { name:'Marine — estuary', x:280, y:205, w:200, h:30, color:'#5FA874', desc:'River meets ocean — brackish. Highly productive. Salt marshes, mangroves.' },
+  { name:'Marine: pelagic', x:280, y:135, w:200, h:30, color:'#1e4a72', desc:'Open ocean. Photic zone (sunlit), aphotic zone. Plankton → fish → top predators.' },
+  { name:'Marine: coral reef', x:280, y:170, w:200, h:30, color:'#a378a5', desc:'Tropical, shallow, clear. Coral-zooxanthellae symbiosis. Highest marine biodiversity.' },
+  { name:'Marine: estuary', x:280, y:205, w:200, h:30, color:'#5FA874', desc:'River meets ocean: brackish. Highly productive. Salt marshes, mangroves.' },
 ];
 function initBiomeMap() {
   if (!document.getElementById('biomeBody')) return;
   let svg = `<svg viewBox="0 0 900 480" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-    <text x="450" y="30" text-anchor="middle" font-size="14" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">BIOME COMPARATOR — click any biome</text>`;
+    <text x="450" y="30" text-anchor="middle" font-size="14" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">BIOME COMPARATOR: click any biome</text>`;
   BIOMES.forEach((b, i) => {
     svg += `<g class="biome-tile" data-biome-idx="${i}" style="cursor:pointer">
       <rect x="${b.x}" y="${b.y + 60}" width="${b.w}" height="${b.h - 5}" fill="${b.color}" stroke="#1B3A2D" stroke-width="1.5" rx="4"/>
       <text x="${b.x + b.w/2}" y="${b.y + 60 + b.h/2 + 1}" text-anchor="middle" font-size="11" font-weight="700" fill="${['#dde8e2','#c19a3e','#e8c45a','#d9a955','#5cabe6'].includes(b.color) ? '#1B3A2D' : '#fff'}">${b.name}</text>
     </g>`;
   });
-  svg += `<text x="50" y="320" font-size="11" font-weight="700" fill="#1B3A2D">CLIMATE DETERMINES BIOME — temperature × precipitation</text>
+  svg += `<text x="50" y="320" font-size="11" font-weight="700" fill="#1B3A2D">CLIMATE DETERMINES BIOME: temperature × precipitation</text>
     <text x="50" y="340" font-size="10" fill="#1B3A2D">High temp + high rain → tropical rainforest. Low temp + low rain → tundra. Aridity at 30°N/S → desert belts (Hadley cell descending air).</text>
     <foreignObject x="50" y="360" width="800" height="100"><div xmlns="http://www.w3.org/1999/xhtml" id="biomeInfo" style="font-family:'Inter',system-ui;font-size:13px;line-height:1.6;color:#1B3A2D;background:#fff;border:1.5px solid var(--line);border-radius:8px;padding:14px">Click a biome to see its details.</div></foreignObject></svg>`;
   document.getElementById('biomeBody').innerHTML = svg;
@@ -11989,7 +11989,7 @@ const BGC_DATA = {
   },
   water: {
     label:'Water cycle (hydrologic)',
-    info:'<b>Water cycle</b> — driven by solar energy + gravity.<br><br><b>Processes:</b><br>• <b>Evaporation</b>: liquid → vapor (oceans = 86% of evaporation)<br>• <b>Transpiration</b>: water from plant leaves<br>• <b>Condensation</b>: vapor → cloud droplets<br>• <b>Precipitation</b>: rain, snow, sleet, hail<br>• <b>Runoff</b>: surface flow back to oceans<br>• <b>Infiltration</b>: groundwater (aquifers — long-term storage)<br><br><b>Reservoirs:</b> oceans (97%), ice caps (2%), groundwater + lakes/rivers (1%).<br><b>Anthropogenic impacts:</b> irrigation, deforestation (less transpiration → drier regions), urbanization (more runoff, less infiltration), groundwater depletion.',
+    info:'<b>Water cycle</b>, driven by solar energy + gravity.<br><br><b>Processes:</b><br>• <b>Evaporation</b>: liquid → vapor (oceans = 86% of evaporation)<br>• <b>Transpiration</b>: water from plant leaves<br>• <b>Condensation</b>: vapor → cloud droplets<br>• <b>Precipitation</b>: rain, snow, sleet, hail<br>• <b>Runoff</b>: surface flow back to oceans<br>• <b>Infiltration</b>: groundwater (aquifers, long-term storage)<br><br><b>Reservoirs:</b> oceans (97%), ice caps (2%), groundwater + lakes/rivers (1%).<br><b>Anthropogenic impacts:</b> irrigation, deforestation (less transpiration → drier regions), urbanization (more runoff, less infiltration), groundwater depletion.',
   },
   sulfur: {
     label:'Sulfur cycle',
@@ -12019,7 +12019,7 @@ function initSuccession() {
   if (!document.getElementById('succBody')) return;
   document.getElementById('succBody').innerHTML = `
     <svg viewBox="0 0 900 460" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-      <text x="450" y="30" text-anchor="middle" font-size="14" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">SUCCESSION — primary vs secondary</text>
+      <text x="450" y="30" text-anchor="middle" font-size="14" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">SUCCESSION: primary vs secondary</text>
       <g transform="translate(40, 70)">
         <text x="0" y="0" font-size="12" font-weight="700" fill="#5FA874">PRIMARY (bare rock to forest, ~1000s of yrs)</text>
         <rect x="0" y="20" width="160" height="60" fill="#a06b3e" stroke="#1B3A2D"/>
@@ -12121,7 +12121,7 @@ function initSurvivorship() {
   const ptsIII = typeIII.map(p => `${xPx(p.a)},${yPx(Math.max(0, p.lp))}`).join(' ');
   document.getElementById('survBody').innerHTML = `
     <svg viewBox="0 0 ${W} ${H + 100}" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-      <text x="${W/2}" y="22" text-anchor="middle" font-size="14" font-weight="700" letter-spacing="0.14em" fill="#1B3A2D">SURVIVORSHIP CURVES — Type I, II, III</text>
+      <text x="${W/2}" y="22" text-anchor="middle" font-size="14" font-weight="700" letter-spacing="0.14em" fill="#1B3A2D">SURVIVORSHIP CURVES: Type I, II, III</text>
       <line x1="60" y1="${yPx(0)}" x2="${W-20}" y2="${yPx(0)}" stroke="#1B3A2D" stroke-width="1.5"/>
       <line x1="60" y1="${yPx(3)}" x2="60" y2="${yPx(0)}" stroke="#1B3A2D" stroke-width="1.5"/>
       <text x="55" y="${yPx(3)+4}" text-anchor="end" font-size="9" fill="#1B3A2D">1000</text>
@@ -12133,12 +12133,12 @@ function initSurvivorship() {
       <polyline points="${ptsI}" stroke="#5FA874" stroke-width="3" fill="none"/>
       <polyline points="${ptsII}" stroke="#a378a5" stroke-width="3" fill="none"/>
       <polyline points="${ptsIII}" stroke="#C25B3F" stroke-width="3" fill="none"/>
-      <text x="${W-25}" y="60" text-anchor="end" font-size="11" font-weight="700" fill="#5FA874">Type I — humans, large mammals</text>
-      <text x="${W-25}" y="78" text-anchor="end" font-size="11" font-weight="700" fill="#a378a5">Type II — birds, small mammals, reptiles</text>
-      <text x="${W-25}" y="96" text-anchor="end" font-size="11" font-weight="700" fill="#C25B3F">Type III — fish, oysters, plants</text>
+      <text x="${W-25}" y="60" text-anchor="end" font-size="11" font-weight="700" fill="#5FA874">Type I: humans, large mammals</text>
+      <text x="${W-25}" y="78" text-anchor="end" font-size="11" font-weight="700" fill="#a378a5">Type II: birds, small mammals, reptiles</text>
+      <text x="${W-25}" y="96" text-anchor="end" font-size="11" font-weight="700" fill="#C25B3F">Type III: fish, oysters, plants</text>
       <text x="60" y="${H+50}" font-size="11" font-weight="700" fill="#1B3A2D">Type I (concave): low juvenile mortality, most die in old age (parental care, K-selected).</text>
       <text x="60" y="${H+68}" font-size="11" font-weight="700" fill="#1B3A2D">Type II (linear): roughly constant per-capita death rate at any age (birds, hydra).</text>
-      <text x="60" y="${H+86}" font-size="11" font-weight="700" fill="#1B3A2D">Type III (convex): high juvenile mortality, few survivors live long (r-selected — many offspring, low investment).</text>
+      <text x="60" y="${H+86}" font-size="11" font-weight="700" fill="#1B3A2D">Type III (convex): high juvenile mortality, few survivors live long (r-selected, many offspring, low investment).</text>
     </svg>
   `;
 }
@@ -12175,7 +12175,7 @@ function ppRender() {
   const ptsP = PP_STATE.hist.map(p => `${xPx(p.t)},${yPx(p.P)}`).join(' ');
   document.getElementById('ppBody').innerHTML = `
     <svg viewBox="0 0 ${W} ${H + 40}" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-      <text x="${W/2}" y="20" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.14em" fill="#1B3A2D">LOTKA-VOLTERRA — predator/prey oscillation</text>
+      <text x="${W/2}" y="20" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.14em" fill="#1B3A2D">LOTKA-VOLTERRA: predator/prey oscillation</text>
       <line x1="50" y1="${yPx(0)}" x2="${W-20}" y2="${yPx(0)}" stroke="#1B3A2D" stroke-width="1"/>
       <line x1="50" y1="30" x2="50" y2="${yPx(0)}" stroke="#1B3A2D" stroke-width="1"/>
       <polyline points="${ptsR}" stroke="#5FA874" stroke-width="2" fill="none"/>
@@ -12243,7 +12243,7 @@ function initSymbiosis() {
       </foreignObject>
     </svg>
     <div style="margin-top:14px;background:rgba(95,168,116,0.08);border-left:4px solid #5FA874;padding:12px 16px;border-radius:6px">
-      <p style="font-size:13px;color:#1B3A2D;margin:0"><b>Competitive exclusion principle (Gause):</b> two species with identical niches cannot coexist indefinitely — one will outcompete the other. Real species coexist by occupying slightly different niches (resource partitioning).</p>
+      <p style="font-size:13px;color:#1B3A2D;margin:0"><b>Competitive exclusion principle (Gause):</b> two species with identical niches cannot coexist indefinitely, one will outcompete the other. Real species coexist by occupying slightly different niches (resource partitioning).</p>
     </div>
   `;
 }
@@ -12254,9 +12254,9 @@ const COND_QUIZ = [
   { q:'Pavlov\'s dogs salivate when they hear a bell that has been paired with food.', a:'classical conditioning', alt:['operant conditioning','habituation','sensitization'] },
   { q:'A rat presses a lever and receives food; it presses more often.', a:'operant conditioning (positive reinforcement)', alt:['classical conditioning','negative reinforcement','punishment'] },
   { q:'A baby duck follows the first moving thing it sees during its critical period.', a:'imprinting', alt:['habituation','classical conditioning','operant conditioning'] },
-  { q:'A cat learns to escape a shock by pressing a button — does it more in the future to avoid the shock.', a:'negative reinforcement', alt:['punishment','habituation','classical conditioning'] },
+  { q:'A cat learns to escape a shock by pressing a button, does it more in the future to avoid the shock.', a:'negative reinforcement', alt:['punishment','habituation','classical conditioning'] },
   { q:'A child receives a time-out for hitting another kid; hitting decreases.', a:'punishment', alt:['negative reinforcement','operant conditioning (positive)','habituation'] },
-  { q:'A fish only sees other fish from a young age — never learns to recognize its mother.', a:'imprinting failure', alt:['habituation','classical conditioning','sensitization'] },
+  { q:'A fish only sees other fish from a young age, never learns to recognize its mother.', a:'imprinting failure', alt:['habituation','classical conditioning','sensitization'] },
   { q:'After a single loud noise, a person becomes much MORE jumpy with subsequent stimuli.', a:'sensitization', alt:['habituation','classical conditioning','imprinting'] },
 ];
 let condIdx = 0;
@@ -12276,8 +12276,8 @@ function condRender() {
   document.querySelectorAll('.cond-opt').forEach(btn => btn.addEventListener('click', () => {
     const correct = btn.dataset.condAns === item.a;
     document.getElementById('condFeedback').innerHTML = correct
-      ? `<span style="color:#5FA874">Correct — ${item.a}.</span> &nbsp; <button id="condNext" style="margin-left:8px;font-family:inherit;font-size:13px;padding:8px 14px;background:#c19a3e;border:1px solid #1B3A2D;color:#0d2018;border-radius:6px;cursor:pointer;font-weight:700">Next</button>`
-      : `<span style="color:#C25B3F">Not quite — the correct answer is <b>${item.a}</b>.</span> &nbsp; <button id="condNext" style="margin-left:8px;font-family:inherit;font-size:13px;padding:8px 14px;background:#c19a3e;border:1px solid #1B3A2D;color:#0d2018;border-radius:6px;cursor:pointer;font-weight:700">Next</button>`;
+      ? `<span style="color:#5FA874">Correct: ${item.a}.</span> &nbsp; <button id="condNext" style="margin-left:8px;font-family:inherit;font-size:13px;padding:8px 14px;background:#c19a3e;border:1px solid #1B3A2D;color:#0d2018;border-radius:6px;cursor:pointer;font-weight:700">Next</button>`
+      : `<span style="color:#C25B3F">Not quite: the correct answer is <b>${item.a}</b>.</span> &nbsp; <button id="condNext" style="margin-left:8px;font-family:inherit;font-size:13px;padding:8px 14px;background:#c19a3e;border:1px solid #1B3A2D;color:#0d2018;border-radius:6px;cursor:pointer;font-weight:700">Next</button>`;
     document.getElementById('condStageTag').textContent = correct ? 'Correct' : 'Try the next one';
     document.getElementById('condNext').addEventListener('click', () => {
       condIdx = (condIdx + 1) % COND_QUIZ.length;
@@ -12333,7 +12333,7 @@ function initHwWordTrainer() {
    ============================================================ */
 const COACH_TIPS = {
   // Cell Lab
-  atlas: { title:'Cell Atlas', body:'<p>Click any organelle to learn its structure + function. The DAT loves "which organelle does X?" questions — endomembrane system, mitochondria/chloroplast endosymbiosis, and lysosomes are common targets.</p><p><b>Focus most on:</b> ER (rough vs smooth), Golgi (modification + sorting), mitochondrion (ETC + matrix vs intermembrane space), nucleus (transcription compartment).</p>' },
+  atlas: { title:'Cell Atlas', body:'<p>Click any organelle to learn its structure + function. The DAT loves "which organelle does X?" questions, endomembrane system, mitochondria/chloroplast endosymbiosis, and lysosomes are common targets.</p><p><b>Focus most on:</b> ER (rough vs smooth), Golgi (modification + sorting), mitochondrion (ETC + matrix vs intermembrane space), nucleus (transcription compartment).</p>' },
   energy: { title:'Bioenergetics', body:'<p>Drag enzymes to their pathway slots. Glycolysis → pyruvate oxidation → Krebs → ETC + chemiosmosis. Track ATP per glucose: 2 (glyc) + 0 (PDH) + 2 (Krebs) + 28 (ETC) ≈ 32 ATP eukaryotic.</p><p><b>Three things the DAT tests obsessively:</b> location of each step, NADH/FADH₂ yields, reactants/products of each substep.</p>' },
   bench: { title:'Lab Bench', body:'<p>Practice gel electrophoresis, PCR cycling, and microscopy techniques. Every DAT bio test asks at least one molecular technique question.</p>' },
   kinetics: { title:'Enzyme Kinetics', body:'<p>Slide [S] and inhibitors to see how Vmax and Km respond. Memorize: <b>competitive</b> = Vmax same, Km up. <b>Non-competitive</b> = Vmax down, Km same. <b>Uncompetitive</b> = both decrease.</p>' },
@@ -12347,7 +12347,7 @@ const COACH_TIPS = {
   cmp: { title:'Pro vs Eu', body:'<p>Most testable diff: <b>nucleus + membrane organelles + 80S ribosomes + linear chromatin in eukaryotes</b>. Prokaryotes: nucleoid, no organelles, 70S, circular DNA + plasmids, peptidoglycan wall.</p>' },
   prot: { title:'Protein Structure', body:'<p>Four levels: <b>1°</b> (peptide bonds, sequence) → <b>2°</b> (H-bonds in backbone, α-helix/β-sheet) → <b>3°</b> (full 3D fold, dominated by hydrophobic effect + disulfides) → <b>4°</b> (multiple subunits, like hemoglobin).</p>' },
   // Genetics
-  punnett: { title:'Punnett Solver', body:'<p>Type any cross. The Punnett square is just a multiplication table for gametes. <b>Test cross</b> = with homozygous recessive — reveals genotype of unknown.</p>' },
+  punnett: { title:'Punnett Solver', body:'<p>Type any cross. The Punnett square is just a multiplication table for gametes. <b>Test cross</b> = with homozygous recessive: reveals genotype of unknown.</p>' },
   pedigree: { title:'Pedigree Analyzer', body:'<p>Decision tree:</p><ol><li>Both sexes affected? → autosomal. Only males? → X-linked recessive likely.</li><li>Skips generations? → recessive. Every gen? → dominant.</li></ol>' },
   hw: { title:'Hardy-Weinberg', body:'<p>p + q = 1 and p² + 2pq + q² = 1. <b>Most common DAT setup:</b> "X% are affected (recessive)" → q² = X. From q, find p, then carriers (2pq).</p>' },
   inheritree: { title:'Inheritance Tree', body:'<p>Pick an inheritance pattern + founder genotypes. Click any individual to see their possible genotypes + probabilities given parents. The tree visualizes how alleles propagate across 4 generations.</p>' },
@@ -12356,7 +12356,7 @@ const COACH_TIPS = {
   epi: { title:'Epistasis', body:'<p>Variations on 9:3:3:1. <b>Memorize:</b> 9:3:4 (recessive epistasis), 12:3:1 (dominant), 15:1 (duplicate dominant), 9:7 (complementary), 13:3 (dominant + recessive).</p>' },
   reg: { title:'Gene Regulation', body:'<p>Eukaryotic regulation happens at every level: chromatin (histone acetylation, DNA methylation), transcription (TFs, enhancers), splicing, mRNA stability, translation, post-translational.</p>' },
   // Body Systems
-  bodymap: { title:'Body Map', body:'<p>Click any organ to see its system + function. The DAT tests organ system integration heavily — cardio + pulmonary + renal share a lot of physiology.</p>' },
+  bodymap: { title:'Body Map', body:'<p>Click any organ to see its system + function. The DAT tests organ system integration heavily, cardio + pulmonary + renal share a lot of physiology.</p>' },
   cardiac: { title:'Cardiac Cycle', body:'<p>Press play to see the heart pump. <b>S1</b> = AV valves close (start of systole). <b>S2</b> = semilunar valves close (end of systole). EKG: P (atrial depol), QRS (vent depol), T (vent repol).</p>' },
   bohr: { title:'Bohr Curve', body:'<p>Sigmoidal Hb-O₂ curve. <b>Right shift</b> (release O₂) caused by: ↑CO₂, ↑H⁺ (low pH), ↑temp, ↑BPG. Tissue conditions. <b>Left shift</b> (hold O₂): opposite. Fetal Hb is left of adult.</p>' },
   nephron: { title:'Nephron', body:'<p>Filtration → reabsorption → secretion. <b>PCT</b>: most reabsorption (Na, glucose, aa, water). <b>Loop</b>: countercurrent for medullary gradient. <b>DCT/CD</b>: fine-tuning under aldosterone + ADH.</p>' },
@@ -12373,7 +12373,7 @@ const COACH_TIPS = {
   gam: { title:'Gametogenesis', body:'<p>Spermatogenesis: 1 primary spermatocyte → 4 sperm. Oogenesis: 1 primary oocyte → 1 ovum + 3 polar bodies. Females arrest at prophase I until ovulation, metaphase II until fertilization.</p>' },
   // Diversity
   tree: { title:'Tree of Life', body:'<p>3 domains: Bacteria, Archaea, Eukarya. Archaea have unique ether-linked lipids. Eukaryotes evolved from archaeal lineage with α-proteobacterial endosymbiont (mitochondrion).</p>' },
-  virus: { title:'Viruses', body:'<p>Viruses aren\'t cells — capsid + nucleic acid (DNA or RNA). Some have lipid envelope. Lytic = destroy host. Lysogenic = integrate as prophage.</p>' },
+  virus: { title:'Viruses', body:'<p>Viruses aren\'t cells: capsid + nucleic acid (DNA or RNA). Some have lipid envelope. Lytic = destroy host. Lysogenic = integrate as prophage.</p>' },
   bact: { title:'Bacteria', body:'<p>Gram +: thick peptidoglycan, single membrane, susceptible to penicillin. Gram −: thin peptidoglycan + outer membrane with LPS endotoxin. Acid-fast: mycobacteria with mycolic acid.</p>' },
   fungi: { title:'Fungi', body:'<p>Heterotrophic, chitin cell wall, mostly multicellular hyphae. Phyla: Chytrid (only flagellated spores), Zygo (bread mold), Glomero (mycorrhizae), Asco (yeast, penicillium), Basidio (mushrooms, lignin breakdown).</p>' },
   plife: { title:'Plant Lifecycle', body:'<p>Alternation of generations. <b>Trend:</b> gametophyte (n) shrinks across plant evolution; sporophyte (2n) becomes dominant. Bryophytes still gametophyte-dominant.</p>' },
@@ -12427,11 +12427,11 @@ function coachUpdateContent() {
   } else {
     // Detect which page we're on
     const pageHints = {
-      'engine': '<h5>Bio Engine — Launcher</h5><p>Pick a subject hub or jump straight to a Mock Exam. Your Ace Cards stack up at the bottom — keep up with daily reviews.</p><p><b>Recommended order for a fresh DAT prep:</b> Cell Lab → Genetics → Body Systems → Diversity → Devo → Evolution. Take a baseline mock first.</p>',
-      'cell': '<h5>Cell Lab</h5><p>Cell &amp; Molecular is ~33% of DAT bio. Go deep here. The flagship has 16 modules — work through every one at least once.</p>',
+      'engine': '<h5>Bio Engine: Launcher</h5><p>Pick a subject hub or jump straight to a Mock Exam. Your Ace Cards stack up at the bottom, keep up with daily reviews.</p><p><b>Recommended order for a fresh DAT prep:</b> Cell Lab → Genetics → Body Systems → Diversity → Devo → Evolution. Take a baseline mock first.</p>',
+      'cell': '<h5>Cell Lab</h5><p>Cell &amp; Molecular is ~33% of DAT bio. Go deep here. The flagship has 16 modules: work through every one at least once.</p>',
       'genetics': '<h5>Genetics Studio</h5><p>~17% of bio. Punnett, pedigrees, HW are mandatory. Mutation sim + epistasis cover the harder questions.</p>',
-      'physiology': '<h5>Body Systems Lab</h5><p>~25% of bio. 11 systems to cover. Don\'t neglect endocrine + immune — both heavily tested.</p>',
-      'diversity': '<h5>Field Guide</h5><p>~10% of bio. Don\'t skip viruses + bacteria — they show up every test.</p>',
+      'physiology': '<h5>Body Systems Lab</h5><p>~25% of bio. 11 systems to cover. Don\'t neglect endocrine + immune: both heavily tested.</p>',
+      'diversity': '<h5>Field Guide</h5><p>~10% of bio. Don\'t skip viruses + bacteria: they show up every test.</p>',
       'devo': '<h5>Embryo Atlas</h5><p>~5% of bio. Smallest section but easy points if you know germ layer derivatives + the protostome/deuterostome split.</p>',
       'evolution': '<h5>Selection Sim</h5><p>~10% of bio. HW math, evidence for evolution, ecology basics. Expect at least 4 questions.</p>',
       'mock': '<h5>Mock Exam</h5><p>Take a full timed mock weekly. Wrong answers automatically spawn Ace Cards. Adaptive weak-topic mode after 1+ mocks taken.</p>',
@@ -12457,7 +12457,7 @@ function initTwinsClones() {
   if (!document.getElementById('twinsBody')) return;
   document.getElementById('twinsBody').innerHTML = `
     <svg viewBox="0 0 900 460" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-      <text x="450" y="30" text-anchor="middle" font-size="14" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">TWINS — types and timing</text>
+      <text x="450" y="30" text-anchor="middle" font-size="14" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">TWINS: types and timing</text>
       <g transform="translate(40, 70)">
         <rect width="380" height="160" fill="#fff" stroke="#5FA874" stroke-width="2.5" rx="8"/>
         <text x="190" y="22" text-anchor="middle" font-size="13" font-weight="700" fill="#5FA874">MONOZYGOTIC (identical)</text>
@@ -12482,13 +12482,13 @@ function initTwinsClones() {
       </g>
       <g transform="translate(40, 250)">
         <rect width="820" height="200" fill="#fff" stroke="#1B3A2D" stroke-width="1.5" rx="8"/>
-        <text x="20" y="24" font-size="12" font-weight="700" fill="#1B3A2D">MONOZYGOTIC SUBTYPES — depends on WHEN the zygote splits</text>
+        <text x="20" y="24" font-size="12" font-weight="700" fill="#1B3A2D">MONOZYGOTIC SUBTYPES: depends on WHEN the zygote splits</text>
         <text x="20" y="46" font-size="10" font-weight="700" fill="#1B3A2D">Day 1-3 (before morula compacts):</text>
-        <text x="350" y="46" font-size="10" fill="#1B3A2D">DI/DI — separate placentas + amniotic sacs (33%)</text>
+        <text x="350" y="46" font-size="10" fill="#1B3A2D">DI/DI: separate placentas + amniotic sacs (33%)</text>
         <text x="20" y="64" font-size="10" font-weight="700" fill="#1B3A2D">Day 4-8 (after blastocyst forms):</text>
-        <text x="350" y="64" font-size="10" fill="#1B3A2D">MO/DI — shared placenta, separate sacs (66%)</text>
+        <text x="350" y="64" font-size="10" fill="#1B3A2D">MO/DI: shared placenta, separate sacs (66%)</text>
         <text x="20" y="82" font-size="10" font-weight="700" fill="#1B3A2D">Day 8-13 (amnion already formed):</text>
-        <text x="350" y="82" font-size="10" fill="#1B3A2D">MO/MO — shared placenta + sac (1% — high-risk)</text>
+        <text x="350" y="82" font-size="10" fill="#1B3A2D">MO/MO: shared placenta + sac (1%: high-risk)</text>
         <text x="20" y="100" font-size="10" font-weight="700" fill="#C25B3F">Day 13+:</text>
         <text x="350" y="100" font-size="10" fill="#1B3A2D">incomplete split → CONJOINED twins (very rare)</text>
         <text x="20" y="130" font-size="11" font-weight="700" fill="#1B3A2D">CLONING (artificial monozygotic)</text>
@@ -12504,7 +12504,7 @@ function initBodyPlanComparator() {
   if (!document.getElementById('bplanBody')) return;
   document.getElementById('bplanBody').innerHTML = `
     <svg viewBox="0 0 900 580" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-      <text x="450" y="30" text-anchor="middle" font-size="14" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">ANIMAL BODY PLANS — symmetry · germ layers · coelom</text>
+      <text x="450" y="30" text-anchor="middle" font-size="14" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">ANIMAL BODY PLANS: symmetry · germ layers · coelom</text>
       <g transform="translate(40, 60)">
         <text x="180" y="0" text-anchor="middle" font-size="12" font-weight="700" fill="#1B3A2D">ASYMMETRICAL / RADIAL / BILATERAL</text>
         <ellipse cx="80" cy="80" rx="40" ry="50" fill="#a378a5" stroke="#1B3A2D" stroke-width="2"/>
@@ -12523,7 +12523,7 @@ function initBodyPlanComparator() {
         <text x="350" y="150" text-anchor="middle" font-size="9" fill="#1B3A2D">most animals (head + tail, L/R)</text>
       </g>
       <g transform="translate(40, 200)">
-        <text x="180" y="0" text-anchor="middle" font-size="12" font-weight="700" fill="#1B3A2D">GERM LAYERS — diploblast vs triploblast</text>
+        <text x="180" y="0" text-anchor="middle" font-size="12" font-weight="700" fill="#1B3A2D">GERM LAYERS: diploblast vs triploblast</text>
         <g transform="translate(0, 20)">
           <circle cx="80" cy="60" r="40" fill="#fff" stroke="#1B3A2D" stroke-width="2"/>
           <circle cx="80" cy="60" r="40" fill="#5FA874" opacity="0.5"/>
@@ -12582,8 +12582,8 @@ function initBodyPlanComparator() {
           <tr><th style="padding:8px;border:1px solid var(--line);text-align:left">Phylum</th><th style="padding:8px;border:1px solid var(--line);text-align:left">Symmetry</th><th style="padding:8px;border:1px solid var(--line);text-align:left">Layers</th><th style="padding:8px;border:1px solid var(--line);text-align:left">Coelom</th><th style="padding:8px;border:1px solid var(--line);text-align:left">Other</th></tr>
         </thead>
         <tbody>
-          <tr><td style="padding:6px;border:1px solid var(--line);font-weight:700">Porifera (sponges)</td><td style="padding:6px;border:1px solid var(--line)">none</td><td style="padding:6px;border:1px solid var(--line)">none (no true tissues)</td><td style="padding:6px;border:1px solid var(--line)">—</td><td style="padding:6px;border:1px solid var(--line)">choanocytes filter feed</td></tr>
-          <tr><td style="padding:6px;border:1px solid var(--line);font-weight:700">Cnidaria</td><td style="padding:6px;border:1px solid var(--line)">radial</td><td style="padding:6px;border:1px solid var(--line)">diploblastic</td><td style="padding:6px;border:1px solid var(--line)">—</td><td style="padding:6px;border:1px solid var(--line)">cnidocytes (stinging cells), polyp/medusa</td></tr>
+          <tr><td style="padding:6px;border:1px solid var(--line);font-weight:700">Porifera (sponges)</td><td style="padding:6px;border:1px solid var(--line)">none</td><td style="padding:6px;border:1px solid var(--line)">none (no true tissues)</td><td style="padding:6px;border:1px solid var(--line)">-</td><td style="padding:6px;border:1px solid var(--line)">choanocytes filter feed</td></tr>
+          <tr><td style="padding:6px;border:1px solid var(--line);font-weight:700">Cnidaria</td><td style="padding:6px;border:1px solid var(--line)">radial</td><td style="padding:6px;border:1px solid var(--line)">diploblastic</td><td style="padding:6px;border:1px solid var(--line)">-</td><td style="padding:6px;border:1px solid var(--line)">cnidocytes (stinging cells), polyp/medusa</td></tr>
           <tr><td style="padding:6px;border:1px solid var(--line);font-weight:700">Platyhelminthes</td><td style="padding:6px;border:1px solid var(--line)">bilateral</td><td style="padding:6px;border:1px solid var(--line)">triploblastic</td><td style="padding:6px;border:1px solid var(--line)">acoelomate</td><td style="padding:6px;border:1px solid var(--line)">flatworms (planaria, tapeworm)</td></tr>
           <tr><td style="padding:6px;border:1px solid var(--line);font-weight:700">Nematoda</td><td style="padding:6px;border:1px solid var(--line)">bilateral</td><td style="padding:6px;border:1px solid var(--line)">triploblastic</td><td style="padding:6px;border:1px solid var(--line)">pseudocoelomate</td><td style="padding:6px;border:1px solid var(--line)">round worms (C. elegans, Ascaris)</td></tr>
           <tr><td style="padding:6px;border:1px solid var(--line);font-weight:700">Mollusca</td><td style="padding:6px;border:1px solid var(--line)">bilateral</td><td style="padding:6px;border:1px solid var(--line)">triploblastic</td><td style="padding:6px;border:1px solid var(--line)">eucoelomate (protostome)</td><td style="padding:6px;border:1px solid var(--line)">snails, clams, octopuses</td></tr>
@@ -12624,7 +12624,7 @@ function initCycleWheel() {
 /* ---- MUSCLE COMPARATOR (skeletal · smooth · cardiac) ---- */
 const MUSCLE_HTML = `
 <svg viewBox="0 0 900 240" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-  <text x="450" y="26" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">MUSCLE TYPES — STRUCTURE AT A GLANCE</text>
+  <text x="450" y="26" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">MUSCLE TYPES: STRUCTURE AT A GLANCE</text>
 
   <!-- ===== SKELETAL ===== -->
   <g transform="translate(20, 50)">
@@ -12723,7 +12723,7 @@ const MUSCLE_HTML = `
   <div style="padding:8px 12px;background:#f0e9d6;font-weight:700">Nuclei per cell</div>
   <div style="padding:8px 12px">Multi (peripheral)</div>
   <div style="padding:8px 12px">Single (central)</div>
-  <div style="padding:8px 12px">1–2 (central)</div>
+  <div style="padding:8px 12px">1-2 (central)</div>
 
   <div style="padding:8px 12px;background:#f0e9d6;font-weight:700">Cell shape</div>
   <div style="padding:8px 12px">Long cylindrical fiber</div>
@@ -12741,9 +12741,9 @@ const MUSCLE_HTML = `
   <div style="padding:8px 12px">Both (SR + extracellular through L-type)</div>
 
   <div style="padding:8px 12px;background:#f0e9d6;font-weight:700">Activation</div>
-  <div style="padding:8px 12px"><b>Troponin–tropomyosin</b> (Ca²⁺ binds troponin C)</div>
+  <div style="padding:8px 12px"><b>Troponin-tropomyosin</b> (Ca²⁺ binds troponin C)</div>
   <div style="padding:8px 12px"><b>Calmodulin → MLCK</b> phosphorylates myosin LC</div>
-  <div style="padding:8px 12px">Troponin–tropomyosin (same as skeletal)</div>
+  <div style="padding:8px 12px">Troponin-tropomyosin (same as skeletal)</div>
 
   <div style="padding:8px 12px;background:#f0e9d6;font-weight:700">Speed</div>
   <div style="padding:8px 12px">Fast (ms)</div>
@@ -12770,10 +12770,10 @@ const MUSCLE_HTML = `
   <h5 style="margin:0 0 8px 0;font-family:'Playfair Display',serif">High-yield DAT differentiators</h5>
   <ul style="margin:0;padding-left:20px">
     <li><b>Sliding filament</b> applies to <b>skeletal + cardiac</b> only (smooth lacks sarcomeres). Memorize: I-band shortens, A-band stays constant, H-zone disappears.</li>
-    <li><b>Troponin C</b> is the Ca²⁺-binding subunit; <b>tropomyosin</b> is the blocker that moves off actin. Smooth muscle has neither — uses <b>calmodulin + MLCK</b>.</li>
-    <li><b>Cardiac action potential</b> has a long plateau (Ca²⁺ influx) — prevents tetanus. Skeletal has short AP and CAN tetanize.</li>
+    <li><b>Troponin C</b> is the Ca²⁺-binding subunit; <b>tropomyosin</b> is the blocker that moves off actin. Smooth muscle has neither: uses <b>calmodulin + MLCK</b>.</li>
+    <li><b>Cardiac action potential</b> has a long plateau (Ca²⁺ influx): prevents tetanus. Skeletal has short AP and CAN tetanize.</li>
     <li><b>Functional syncytium:</b> cardiac cells contract as a unit because of gap junctions in intercalated discs. One pacemaker (SA node) → whole atrium contracts together.</li>
-    <li><b>Neuromuscular junction</b> (ACh) drives skeletal muscle. Smooth and cardiac have <b>no NMJ</b> — they receive autonomic input or intrinsic pacemaker signals.</li>
+    <li><b>Neuromuscular junction</b> (ACh) drives skeletal muscle. Smooth and cardiac have <b>no NMJ</b>, they receive autonomic input or intrinsic pacemaker signals.</li>
   </ul>
 </div>
 `;
@@ -12786,7 +12786,7 @@ function initMuscleComparator() {
 /* ---- GAMETOGENESIS (spermatogenesis vs oogenesis) ---- */
 const GAM_HTML = `
 <svg viewBox="0 0 900 460" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px">
-  <text x="450" y="28" text-anchor="middle" font-size="14" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">GAMETOGENESIS — SPERMATOGENESIS vs OOGENESIS</text>
+  <text x="450" y="28" text-anchor="middle" font-size="14" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">GAMETOGENESIS: SPERMATOGENESIS vs OOGENESIS</text>
 
   <!-- Vertical divider -->
   <line x1="450" y1="50" x2="450" y2="430" stroke="#1B3A2D" stroke-width="1" stroke-dasharray="4,4" opacity="0.5"/>
@@ -12837,7 +12837,7 @@ const GAM_HTML = `
   <text x="395" y="190" text-anchor="middle" font-size="9" font-weight="700" fill="#1B3A2D">4 spermatids</text>
 
   <!-- Spermiogenesis arrow + 4 mature sperm with detail -->
-  <text x="225" y="240" text-anchor="middle" font-size="11" font-style="italic" font-weight="700" fill="#5FA874">↓ spermiogenesis (no division — morphological transformation)</text>
+  <text x="225" y="240" text-anchor="middle" font-size="11" font-style="italic" font-weight="700" fill="#5FA874">↓ spermiogenesis (no division, morphological transformation)</text>
   <!-- 4 mature sperm with tails -->
   <g transform="translate(110, 270)">
     <ellipse cx="20" cy="20" rx="10" ry="6" fill="#1B3A2D"/>
@@ -12860,7 +12860,7 @@ const GAM_HTML = `
   <!-- Spermatogenesis box -->
   <rect x="20" y="355" width="410" height="78" fill="#fff" stroke="#5cabe6" stroke-width="1.5" rx="6"/>
   <text x="32" y="375" font-size="11" font-weight="700" fill="#5cabe6">Key features (sperm)</text>
-  <text x="32" y="390" font-size="10" fill="#1B3A2D">• Continuous from puberty (~64–74 days per cycle, ~100 million/day)</text>
+  <text x="32" y="390" font-size="10" fill="#1B3A2D">• Continuous from puberty (~64-74 days per cycle, ~100 million/day)</text>
   <text x="32" y="404" font-size="10" fill="#1B3A2D">• <tspan font-weight="700">All 4 daughter cells become functional sperm</tspan></text>
   <text x="32" y="418" font-size="10" fill="#1B3A2D">• Equal cytoplasm division at each meiosis</text>
   <text x="32" y="429" font-size="9" fill="#1B3A2D" font-style="italic">FSH stimulates Sertoli cells · LH → Leydig cells → testosterone</text>
@@ -12925,7 +12925,7 @@ const GAM_HTML = `
   <text x="482" y="375" font-size="11" font-weight="700" fill="#C25B3F">Key features (egg)</text>
   <text x="482" y="390" font-size="10" fill="#1B3A2D">• Discontinuous: arrest at <tspan font-weight="700">prophase I</tspan> (fetus → ovulation) and <tspan font-weight="700">metaphase II</tspan> (until fertilization)</text>
   <text x="482" y="404" font-size="10" fill="#1B3A2D">• <tspan font-weight="700">Only 1 of 4 daughters becomes a functional ovum</tspan></text>
-  <text x="482" y="418" font-size="10" fill="#1B3A2D">• Asymmetric cytokinesis — all cytoplasm to the ovum (polar bodies tiny)</text>
+  <text x="482" y="418" font-size="10" fill="#1B3A2D">• Asymmetric cytokinesis: all cytoplasm to the ovum (polar bodies tiny)</text>
   <text x="482" y="429" font-size="9" fill="#1B3A2D" font-style="italic">FSH → follicle growth · LH surge → ovulation · estrogen / progesterone cycle</text>
 
   <!-- Arrowhead marker -->
@@ -12952,7 +12952,7 @@ const GAM_HTML = `
       <li><b>Two arrest points:</b> prophase I (fetal life → ovulation) and metaphase II (until fertilization).</li>
       <li><b>Ovulation</b> = secondary oocyte released. Meiosis II only completes if a sperm enters.</li>
       <li><b>Polar bodies:</b> 1st PB may divide once; all PBs degenerate. Ensures <b>maximum cytoplasm</b> in the egg.</li>
-      <li><b>Limited reserve:</b> all primary oocytes (~1–2 million) are made before birth; ~400 ovulate over lifetime.</li>
+      <li><b>Limited reserve:</b> all primary oocytes (~1-2 million) are made before birth; ~400 ovulate over lifetime.</li>
     </ul>
   </div>
 </div>
@@ -12968,8 +12968,8 @@ const GAM_HTML = `
     <tr><td style="padding:6px 10px;border-bottom:1px solid var(--line);font-weight:700">Functional gametes per primary cell</td><td style="padding:6px 10px;border-bottom:1px solid var(--line)">4</td><td style="padding:6px 10px;border-bottom:1px solid var(--line)">1 (+ polar bodies that degenerate)</td></tr>
     <tr><td style="padding:6px 10px;border-bottom:1px solid var(--line);font-weight:700">Timing</td><td style="padding:6px 10px;border-bottom:1px solid var(--line)">Continuous from puberty</td><td style="padding:6px 10px;border-bottom:1px solid var(--line)">Begins in fetus, finishes only at fertilization</td></tr>
     <tr><td style="padding:6px 10px;border-bottom:1px solid var(--line);font-weight:700">Meiotic arrests</td><td style="padding:6px 10px;border-bottom:1px solid var(--line)">None</td><td style="padding:6px 10px;border-bottom:1px solid var(--line)">Prophase I (fetus→ovulation), Metaphase II (until fertilization)</td></tr>
-    <tr><td style="padding:6px 10px;border-bottom:1px solid var(--line);font-weight:700">Cytokinesis</td><td style="padding:6px 10px;border-bottom:1px solid var(--line)">Equal</td><td style="padding:6px 10px;border-bottom:1px solid var(--line)">Asymmetric — cytoplasm to egg</td></tr>
-    <tr><td style="padding:6px 10px;font-weight:700">Reserve</td><td style="padding:6px 10px">Stem cells regenerate (spermatogonia divide)</td><td style="padding:6px 10px">Fixed pool from birth (~1–2 million → ~400 ovulated)</td></tr>
+    <tr><td style="padding:6px 10px;border-bottom:1px solid var(--line);font-weight:700">Cytokinesis</td><td style="padding:6px 10px;border-bottom:1px solid var(--line)">Equal</td><td style="padding:6px 10px;border-bottom:1px solid var(--line)">Asymmetric: cytoplasm to egg</td></tr>
+    <tr><td style="padding:6px 10px;font-weight:700">Reserve</td><td style="padding:6px 10px">Stem cells regenerate (spermatogonia divide)</td><td style="padding:6px 10px">Fixed pool from birth (~1-2 million → ~400 ovulated)</td></tr>
   </table>
 </div>
 `;
@@ -13039,7 +13039,7 @@ const HW_BUBBLE_HTML = `
       <div style="background:#fbf6e9;border:1.5px solid #c19a3e;border-radius:10px;padding:12px">
         <div style="font-size:11px;color:#c19a3e;font-weight:700;text-transform:uppercase;letter-spacing:0.1em">DAT scenario</div>
         <div style="font-size:12px;line-height:1.5;color:#1B3A2D;margin-top:6px" id="hwScenario">
-          If the disease frequency in the population is <b>q&sup2; = 0.09</b> (1 in 11), then carriers are <b>2pq = 0.42</b> &mdash; about <b>4.7&times;</b> more carriers than affected. Most recessive disease alleles hide in heterozygotes.
+          If the disease frequency in the population is <b>q&sup2; = 0.09</b> (1 in 11), then carriers are <b>2pq = 0.42</b>, about <b>4.7&times;</b> more carriers than affected. Most recessive disease alleles hide in heterozygotes.
         </div>
       </div>
 
@@ -13493,7 +13493,7 @@ const BRAIN_REGIONS = {
 const BRAIN_EXPLORER_HTML = `
 <div style="display:grid;grid-template-columns:1fr 280px;gap:12px;background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px;padding:14px;align-items:start">
   <svg id="brainSvg" viewBox="0 0 620 480" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;background:#fff;border:1.5px solid #1B3A2D;border-radius:8px">
-    <text x="310" y="26" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">BRAIN REGIONS &mdash; SAGITTAL VIEW</text>
+    <text x="310" y="26" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">BRAIN REGIONS: SAGITTAL VIEW</text>
     <text x="310" y="42" text-anchor="middle" font-size="10" font-style="italic" fill="#1B3A2D">click any region</text>
 
     <!-- Cerebrum outline -->
@@ -13600,7 +13600,7 @@ const BRAIN_EXPLORER_HTML = `
     </div>
 
     <div style="background:#fff;border:1.5px solid #1B3A2D;border-radius:10px;padding:10px;margin-top:10px;font-size:11px;line-height:1.5;color:#1B3A2D">
-      <span style="font-weight:700">DAT note:</span> the test asks "function of region X" or "damage to X causes...". Function-and-consequence pairings are the entire scope. No specific cases or syndromes required.
+      <span style="font-weight:700">DAT note:</span> the test asks "function of region X" or "damage to X causes.". Function-and-consequence pairings are the entire scope. No specific cases or syndromes required.
     </div>
   </div>
 </div>
@@ -13982,7 +13982,7 @@ function initProbTree() {
       label = `Exactly 1 of ${nChildren} affected`;
       const oneOrdering = `<span style="color:#C25B3F">1/4</span> &times; ${Array(nChildren - 1).fill('<span style="color:#5FA874">3/4</span>').join(' &times; ')} = ${perOrdering}/${totalDen}`;
       formula = `Per ordering: ${oneOrdering}<br><span style="color:#c19a3e">${orderings} orderings (1st, 2nd, ..., ${nChildren}th could be the affected one)</span><br>Total = ${orderings} &times; ${perOrdering}/${totalDen} = <b style="color:#c19a3e">${numerator}/${totalDen}</b>`;
-      explain = `Each ordering uses AND (multiply across ${nChildren} children). There are ${orderings} mutually-exclusive orderings, so OR (add) across them — equivalent to multiplying by the count.`;
+      explain = `Each ordering uses AND (multiply across ${nChildren} children). There are ${orderings} mutually-exclusive orderings, so OR (add) across them, equivalent to multiplying by the count.`;
       finalNum = numerator; finalDen = totalDen;
     } else if (scenario === 'atleast1') {
       // P(at least 1) = 1 - P(none) = 1 - (3/4)^n
@@ -13996,7 +13996,7 @@ function initProbTree() {
 
     // Build tree SVG
     let svgInner = '';
-    svgInner += `<text x="400" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">PROBABILITY TREE — ${label.toUpperCase()}</text>`;
+    svgInner += `<text x="400" y="28" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">PROBABILITY TREE: ${label.toUpperCase()}</text>`;
 
     // Tree layout — each level represents one child
     // Top: parents node
@@ -14123,7 +14123,7 @@ function initProbTree() {
 const KREBS_SCRUBBER_HTML = `
 <div style="background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px;padding:18px">
   <div style="text-align:center;margin-bottom:10px">
-    <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#1B3A2D">Cellular Respiration &mdash; One Glucose</div>
+    <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#1B3A2D">Cellular Respiration: One Glucose</div>
     <div style="font-size:12px;color:#1B3A2D;margin-top:4px;font-style:italic">Drag the slider. Glycolysis &rarr; PDH &rarr; Krebs &rarr; ETC + ATP synthase. Carriers and ATP accumulate live.</div>
   </div>
 
@@ -14167,14 +14167,14 @@ const KREBS_SCRUBBER_HTML = `
 
   <!-- Phase explanation -->
   <div id="krbExplain" style="background:#fff;border:1.5px solid #1B3A2D;border-radius:10px;padding:14px;margin-top:14px;font-size:13px;line-height:1.5;color:#1B3A2D">
-    <span style="font-weight:700;color:#C25B3F">Glycolysis · cytoplasm.</span> One glucose (6C) is split into two pyruvate (3C). Net yield: <b>2 ATP</b> (4 made, 2 spent in the investment phase) and <b>2 NADH</b>. No O&#8322; required — happens whether or not oxygen is present. PFK is the rate-limiting enzyme.
+    <span style="font-weight:700;color:#C25B3F">Glycolysis · cytoplasm.</span> One glucose (6C) is split into two pyruvate (3C). Net yield: <b>2 ATP</b> (4 made, 2 spent in the investment phase) and <b>2 NADH</b>. No O&#8322; required, happens whether or not oxygen is present. PFK is the rate-limiting enzyme.
   </div>
 
   <!-- Final tally -->
   <div style="background:#1B3A2D;color:#fff;border-radius:10px;padding:14px;margin-top:10px;text-align:center">
     <div style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;opacity:0.9">Total ATP per glucose at this point</div>
     <div id="krbTotalATP" style="font-size:28px;font-weight:700;font-family:'JetBrains Mono',monospace;margin-top:4px">2 ATP</div>
-    <div id="krbTotalNote" style="font-size:11px;font-style:italic;opacity:0.85;margin-top:4px">Glycolysis only — pyruvate must enter mitochondria for the rest</div>
+    <div id="krbTotalNote" style="font-size:11px;font-style:italic;opacity:0.85;margin-top:4px">Glycolysis only: pyruvate must enter mitochondria for the rest</div>
   </div>
 </div>
 `;
@@ -14182,8 +14182,8 @@ const KREBS_SCRUBBER_HTML = `
 const KREBS_STAGES = [
   // Each stage: range [min, max] of slider position, what's accumulated
   { range: [0, 20], name: 'Stage 1 · Glycolysis (cytoplasm)', atp: 2, nadh: 2, fadh: 0, co2: 0,
-    explain: '<span style="font-weight:700;color:#C25B3F">Glycolysis · cytoplasm.</span> One glucose (6C) is split into two pyruvate (3C). Net yield: <b>2 ATP</b> (4 made, 2 spent in the investment phase) and <b>2 NADH</b>. No O&#8322; required — happens whether or not oxygen is present. PFK is the rate-limiting enzyme.',
-    note: 'Glycolysis only — pyruvate must enter mitochondria for the rest' },
+    explain: '<span style="font-weight:700;color:#C25B3F">Glycolysis · cytoplasm.</span> One glucose (6C) is split into two pyruvate (3C). Net yield: <b>2 ATP</b> (4 made, 2 spent in the investment phase) and <b>2 NADH</b>. No O&#8322; required, happens whether or not oxygen is present. PFK is the rate-limiting enzyme.',
+    note: 'Glycolysis only: pyruvate must enter mitochondria for the rest' },
   { range: [20, 35], name: 'Stage 2 · Pyruvate dehydrogenase (matrix)', atp: 2, nadh: 4, fadh: 0, co2: 2,
     explain: '<span style="font-weight:700;color:#5FA874">PDH · linker step.</span> Each pyruvate (3C) enters the matrix and is decarboxylated to acetyl-CoA (2C) + 1 CO&#8322; + 1 NADH. Per glucose (2 pyruvates): <b>+2 NADH</b>, <b>+2 CO&#8322;</b>. Pyruvate dehydrogenase is the catalyst.',
     note: '4 of glucose\'s 6 carbons remain, in 2 acetyl-CoA. Krebs releases them as CO2.' },
@@ -14194,8 +14194,8 @@ const KREBS_STAGES = [
     explain: '<span style="font-weight:700;color:#a378a5">ETC · inner mitochondrial membrane.</span> NADH donates electrons to <b>Complex I</b>; FADH&#8322; donates to <b>Complex II</b>. Electrons flow I → III → IV (NADH path) or II → III → IV (FADH&#8322; path). Final acceptor: <b>O&#8322; → H&#8322;O</b> at Complex IV. Energy from electron flow pumps H&#8314; from matrix to intermembrane space, building the <b>proton gradient</b>.',
     note: 'Proton gradient is the energy currency. ATP synthase converts it to ATP next.' },
   { range: [85, 100], name: 'Stage 5 · ATP synthase (chemiosmosis)', atp: 32, nadh: 10, fadh: 2, co2: 6,
-    explain: '<span style="font-weight:700;color:#5cabe6">ATP synthase · chemiosmosis.</span> Protons flow back through ATP synthase down their gradient, spinning the rotor and driving ATP synthesis. Per NADH: ~2.5 ATP. Per FADH&#8322;: ~1.5 ATP. <b>Total per glucose: ~30–32 ATP</b> (counting glycolytic NADH shuttle costs; older textbooks said 36–38).',
-    note: 'Final yield per glucose: ~30–32 ATP. O2 is the final electron acceptor. Without it the chain backs up and Krebs and the ETC stop; only glycolysis, with fermentation, keeps going.' },
+    explain: '<span style="font-weight:700;color:#5cabe6">ATP synthase · chemiosmosis.</span> Protons flow back through ATP synthase down their gradient, spinning the rotor and driving ATP synthesis. Per NADH: ~2.5 ATP. Per FADH&#8322;: ~1.5 ATP. <b>Total per glucose: ~30-32 ATP</b> (counting glycolytic NADH shuttle costs; older textbooks said 36-38).',
+    note: 'Final yield per glucose: ~30-32 ATP. O2 is the final electron acceptor. Without it the chain backs up and Krebs and the ETC stop; only glycolysis, with fermentation, keeps going.' },
 ];
 
 function initKrebsScrubber() {
@@ -14351,7 +14351,7 @@ const RNA_SCRUBBER_HTML = `
     </div>
     <input id="rnaStage" type="range" min="0" max="100" step="1" value="0" style="width:100%;accent-color:#5cabe6">
     <div style="text-align:center;margin-top:6px;font-family:'JetBrains Mono',monospace;font-size:13px;color:#1B3A2D">
-      <span id="rnaStageName" style="font-weight:700;color:#5cabe6">Stage 1 · Pre-mRNA — freshly transcribed, 5 exons + 4 introns visible</span>
+      <span id="rnaStageName" style="font-weight:700;color:#5cabe6">Stage 1 · Pre-mRNA: freshly transcribed, 5 exons + 4 introns visible</span>
     </div>
   </div>
 
@@ -14386,16 +14386,16 @@ const RNA_SCRUBBER_HTML = `
 `;
 
 const RNA_STAGES = [
-  { range: [0, 20], name: 'Stage 1 · Pre-mRNA — freshly transcribed, 5 exons + 4 introns visible', cap: 'absent', tail: 'absent', introns: '4 present', status: 'in nucleus',
+  { range: [0, 20], name: 'Stage 1 · Pre-mRNA: freshly transcribed, 5 exons + 4 introns visible', cap: 'absent', tail: 'absent', introns: '4 present', status: 'in nucleus',
     explain: '<span style="font-weight:700;color:#5cabe6">Pre-mRNA.</span> The freshly transcribed RNA has the same sequence as the gene\'s coding strand: <b>exons</b> (kept) alternating with <b>introns</b> (removed later). At this stage it is unprotected and not ready to be exported from the nucleus.' },
-  { range: [20, 40], name: 'Stage 2 · 5\' cap added (7-methylguanosine)', cap: '7-methyl-G ✓', tail: 'absent', introns: '4 present', status: 'in nucleus',
+  { range: [20, 40], name: 'Stage 2 · 5\' cap added (7-methylguanosine)', cap: '7-methyl-G', tail: 'absent', introns: '4 present', status: 'in nucleus',
     explain: '<span style="font-weight:700;color:#C25B3F">5\' cap.</span> Added co-transcriptionally as the first ~25 nucleotides emerge from RNA polymerase II. The cap is a methylated guanosine attached "backward" via a 5\'-5\' triphosphate linkage. Functions: (1) protects the 5\' end from exonucleases, (2) recruits the small ribosomal subunit during translation initiation, (3) signals nuclear export.' },
-  { range: [40, 60], name: 'Stage 3 · 3\' poly-A tail added (~200 As)', cap: '7-methyl-G ✓', tail: '~200 As ✓', introns: '4 present', status: 'in nucleus',
-    explain: '<span style="font-weight:700;color:#5cabe6">3\' poly-A tail.</span> After RNA polymerase encounters the AAUAAA polyadenylation signal, the transcript is cleaved and ~200 adenosines are added by poly-A polymerase. Functions: (1) protects against 3\' exonuclease attack, (2) export signal, (3) the tail shortens with each round of translation — once it falls below ~30 As, the message is degraded.' },
-  { range: [60, 90], name: 'Stage 4 · Splicing — spliceosome cuts introns out as lariats', cap: '7-methyl-G ✓', tail: '~200 As ✓', introns: 'being removed', status: 'in nucleus',
+  { range: [40, 60], name: 'Stage 3 · 3\' poly-A tail added (~200 As)', cap: '7-methyl-G', tail: '~200 As', introns: '4 present', status: 'in nucleus',
+    explain: '<span style="font-weight:700;color:#5cabe6">3\' poly-A tail.</span> After RNA polymerase encounters the AAUAAA polyadenylation signal, the transcript is cleaved and ~200 adenosines are added by poly-A polymerase. Functions: (1) protects against 3\' exonuclease attack, (2) export signal, (3) the tail shortens with each round of translation, once it falls below ~30 As, the message is degraded.' },
+  { range: [60, 90], name: 'Stage 4 · Splicing: spliceosome cuts introns out as lariats', cap: '7-methyl-G', tail: '~200 As', introns: 'being removed', status: 'in nucleus',
     explain: '<span style="font-weight:700;color:#c19a3e">Splicing.</span> The <b>spliceosome</b> (snRNPs U1, U2, U4, U5, U6 + many proteins) recognizes intron boundaries (5\' GU and 3\' AG) and the branch-point adenine. The intron loops back and forms a 2\'-5\' bond at the branch site, creating a <b>lariat</b> (lasso shape). The lariat is excised, exons are ligated together, and the lariat is degraded. Watch the introns shrink to lariat structures and pop out below.' },
-  { range: [90, 100], name: 'Stage 5 · Mature mRNA — exits nucleus, ready for translation', cap: '7-methyl-G ✓', tail: '~200 As ✓', introns: 'all removed', status: 'cytoplasm-bound',
-    explain: '<span style="font-weight:700;color:#5FA874">Mature mRNA.</span> Cap + tail + spliced. Now small enough to fit through nuclear pores; the 5\' cap and poly-A tail signal export. Once in the cytoplasm, the cap is recognized by the small ribosomal subunit during initiation. <b>Eukaryotes only</b> — prokaryotes skip all three modifications because their ribosomes can attach to mRNA while it is still being transcribed (coupled transcription/translation).' },
+  { range: [90, 100], name: 'Stage 5 · Mature mRNA: exits nucleus, ready for translation', cap: '7-methyl-G', tail: '~200 As', introns: 'all removed', status: 'cytoplasm-bound',
+    explain: '<span style="font-weight:700;color:#5FA874">Mature mRNA.</span> Cap + tail + spliced. Now small enough to fit through nuclear pores; the 5\' cap and poly-A tail signal export. Once in the cytoplasm, the cap is recognized by the small ribosomal subunit during initiation. <b>Eukaryotes only</b>, prokaryotes skip all three modifications because their ribosomes can attach to mRNA while it is still being transcribed (coupled transcription/translation).' },
 ];
 
 function initRnaScrubber() {
@@ -14409,9 +14409,9 @@ function initRnaScrubber() {
     document.getElementById('rnaStageName').textContent = stage.name;
     document.getElementById('rnaExplain').innerHTML = stage.explain;
     document.getElementById('rnaCap').textContent = stage.cap;
-    document.getElementById('rnaCap').style.color = stage.cap.includes('✓') ? '#C25B3F' : '#888';
+    document.getElementById('rnaCap').style.color = stage.cap.includes('') ? '#C25B3F' : '#888';
     document.getElementById('rnaTail').textContent = stage.tail;
-    document.getElementById('rnaTail').style.color = stage.tail.includes('✓') ? '#5cabe6' : '#888';
+    document.getElementById('rnaTail').style.color = stage.tail.includes('') ? '#5cabe6' : '#888';
     document.getElementById('rnaIntrons').textContent = stage.introns;
     document.getElementById('rnaIntrons').style.color = stage.introns === 'all removed' ? '#5FA874' : (stage.introns === '4 present' ? '#888' : '#c19a3e');
     document.getElementById('rnaStatus').textContent = stage.status;
@@ -14531,11 +14531,11 @@ function initRnaScrubber() {
 
     // Stage label below
     let stageLabel = '';
-    if (pct < 20) stageLabel = '5 exons (green) + 4 introns (gray) — still in nucleus';
+    if (pct < 20) stageLabel = '5 exons (green) + 4 introns (gray), still in nucleus';
     else if (pct < 40) stageLabel = '5\' cap (m7G) being added';
     else if (pct < 60) stageLabel = 'Poly-A tail being added at 3\' end';
     else if (pct < 90) stageLabel = 'Spliceosome cutting introns out as lariats';
-    else stageLabel = 'Mature mRNA — exits nucleus → cytoplasm → ribosome';
+    else stageLabel = 'Mature mRNA: exits nucleus → cytoplasm → ribosome';
     inner += `<text x="400" y="240" text-anchor="middle" font-size="11" font-style="italic" fill="#1B3A2D">${stageLabel}</text>`;
 
     // Legend
@@ -14557,7 +14557,7 @@ function initRnaScrubber() {
 const Z_SCHEME_HTML = `
 <div style="background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px;padding:18px">
   <div style="text-align:center;margin-bottom:10px">
-    <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#1B3A2D">Photosynthesis &mdash; Z-scheme + Calvin Cycle</div>
+    <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#1B3A2D">Photosynthesis: Z-scheme + Calvin Cycle</div>
     <div style="font-size:12px;color:#1B3A2D;margin-top:4px;font-style:italic">Drag the slider. PSII splits water → electrons jump up → b6f → PSI → NADPH. Calvin uses ATP + NADPH to fix CO&#8322; → G3P.</div>
   </div>
 
@@ -14601,19 +14601,19 @@ const Z_SCHEME_HTML = `
 
   <!-- Stage explanation -->
   <div id="zsExplain" style="background:#fff;border:1.5px solid #1B3A2D;border-radius:10px;padding:14px;margin-top:14px;font-size:13px;line-height:1.5;color:#1B3A2D">
-    <span style="font-weight:700;color:#5FA874">Stage 1.</span> A photon strikes Photosystem II (P680). The reaction-center chlorophyll loses an electron to the primary acceptor. P680 — now positively charged — pulls a replacement electron from water in the oxygen-evolving complex. <b>Water is split: 2 H&#8322;O → 4 H&#8314; + 4 e&#8315; + O&#8322;.</b> O&#8322; is the source of the oxygen released by photosynthesis (NOT CO&#8322;).
+    <span style="font-weight:700;color:#5FA874">Stage 1.</span> A photon strikes Photosystem II (P680). The reaction-center chlorophyll loses an electron to the primary acceptor. P680: now positively charged: pulls a replacement electron from water in the oxygen-evolving complex. <b>Water is split: 2 H&#8322;O → 4 H&#8314; + 4 e&#8315; + O&#8322;.</b> O&#8322; is the source of the oxygen released by photosynthesis (NOT CO&#8322;).
   </div>
 </div>
 `;
 
 const Z_STAGES = [
-  { range: [0, 20], name: 'Stage 1 · Photon strikes PSII (P680) — water split, O₂ released', o2: 1, atp: 0, nadph: 0, g3p: 0,
-    explain: '<span style="font-weight:700;color:#5FA874">Stage 1.</span> A photon strikes Photosystem II (P680). The reaction-center chlorophyll loses an electron to the primary acceptor. P680 — now positively charged — pulls a replacement electron from water in the oxygen-evolving complex. <b>Water is split: 2 H&#8322;O → 4 H&#8314; + 4 e&#8315; + O&#8322;.</b> O&#8322; is the source of the oxygen released by photosynthesis (NOT CO&#8322;).' },
+  { range: [0, 20], name: 'Stage 1 · Photon strikes PSII (P680): water split, O₂ released', o2: 1, atp: 0, nadph: 0, g3p: 0,
+    explain: '<span style="font-weight:700;color:#5FA874">Stage 1.</span> A photon strikes Photosystem II (P680). The reaction-center chlorophyll loses an electron to the primary acceptor. P680: now positively charged: pulls a replacement electron from water in the oxygen-evolving complex. <b>Water is split: 2 H&#8322;O → 4 H&#8314; + 4 e&#8315; + O&#8322;.</b> O&#8322; is the source of the oxygen released by photosynthesis (NOT CO&#8322;).' },
   { range: [20, 40], name: 'Stage 2 · Electrons flow through cytochrome b6f → ATP made', o2: 1, atp: 3, nadph: 0, g3p: 0,
     explain: '<span style="font-weight:700;color:#c19a3e">Stage 2.</span> Excited electrons leave PSII and travel through the electron transport chain (plastoquinone → cytochrome b6f → plastocyanin). At b6f, energy from the electrons pumps H&#8314; from the stroma into the thylakoid lumen, building a proton gradient. <b>ATP synthase</b> (in the thylakoid membrane) lets H&#8314; flow back, making <b>ATP</b>. This is photophosphorylation.' },
-  { range: [40, 60], name: 'Stage 3 · Photon strikes PSI (P700) — electrons → NADP⁺ → NADPH', o2: 1, atp: 3, nadph: 2, g3p: 0,
+  { range: [40, 60], name: 'Stage 3 · Photon strikes PSI (P700): electrons → NADP⁺ → NADPH', o2: 1, atp: 3, nadph: 2, g3p: 0,
     explain: '<span style="font-weight:700;color:#5cabe6">Stage 3.</span> Electrons arrive at Photosystem I (P700) at a low energy. A second photon re-excites them, sending them to ferredoxin → NADP&#8314; reductase. NADP&#8314; + 2 e&#8315; + H&#8314; → <b>NADPH</b>. The Z-scheme is the energy-vs-step picture: PSII at low energy, jumps up via photon, drops through ETC making ATP, lands at PSI low energy, jumps up again via second photon, lands as NADPH at top.' },
-  { range: [60, 85], name: 'Stage 4 · Calvin cycle in stroma — CO₂ fixed by RuBisCO', o2: 1, atp: 9, nadph: 6, g3p: 1,
+  { range: [60, 85], name: 'Stage 4 · Calvin cycle in stroma, CO₂ fixed by RuBisCO', o2: 1, atp: 9, nadph: 6, g3p: 1,
     explain: '<span style="font-weight:700;color:#5FA874">Stage 4.</span> Light-independent reactions in the <b>stroma</b>. <b>RuBisCO</b> attaches CO&#8322; to the 5-carbon RuBP, immediately splitting into two 3-carbon 3-PGAs (carbon fixation). 3-PGA is reduced to G3P using <b>ATP and NADPH</b> (made by light reactions). The cycle runs <b>3 turns to make 1 G3P that exits</b> for glucose synthesis; the rest regenerate RuBP. Costs per G3P: 9 ATP + 6 NADPH.' },
   { range: [85, 100], name: 'Stage 5 · 6 turns → 1 glucose ready for export', o2: 6, atp: 18, nadph: 12, g3p: 2,
     explain: '<span style="font-weight:700;color:#1B3A2D">Stage 5.</span> 6 turns of the Calvin cycle make 12 G3P; 10 stay to regenerate RuBP, 2 combine to make 1 glucose (6C). Total cost: <b>18 ATP + 12 NADPH per glucose</b>. The light reactions produce these inputs; the Calvin cycle consumes them. Photosynthesis as a whole: <b>6 CO&#8322; + 6 H&#8322;O + light → C&#8326;H&#8321;&#8322;O&#8326; + 6 O&#8322;</b>.' },
@@ -14641,7 +14641,7 @@ function initZScheme() {
     // Z-scheme SVG: energy on Y axis, time/step on X axis
     const svg = document.getElementById('zsSvg');
     let inner = '';
-    inner += '<text x="400" y="22" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">Z-SCHEME — energy vs step</text>';
+    inner += '<text x="400" y="22" text-anchor="middle" font-size="13" font-weight="700" letter-spacing="0.16em" fill="#1B3A2D">Z-SCHEME: energy vs step</text>';
 
     // Y-axis (energy)
     inner += '<line x1="50" y1="50" x2="50" y2="270" stroke="#1B3A2D" stroke-width="1.5"/>';
@@ -14773,7 +14773,7 @@ function initZScheme() {
 const REP_FORK_HTML = `
 <div style="background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px;padding:18px">
   <div style="text-align:center;margin-bottom:10px">
-    <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#1B3A2D">Replication fork — 7-step build</div>
+    <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#1B3A2D">Replication fork: 7-step build</div>
     <div style="font-size:12px;color:#1B3A2D;margin-top:4px;font-style:italic">Drag the slider. Each enzyme appears at its canonical spot, daughter strands grow, primers convert to DNA, ligase seals nicks.</div>
   </div>
 
@@ -14805,7 +14805,7 @@ const REP_FORK_HTML = `
     </div>
     <div style="background:#fff;border:1.5px solid #1B3A2D;border-radius:8px;padding:14px">
       <div style="font-size:11px;color:#1B3A2D;font-weight:700;text-transform:uppercase;letter-spacing:0.08em">Active enzyme</div>
-      <div id="repEnzymeName" style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#1B3A2D;margin:4px 0">—</div>
+      <div id="repEnzymeName" style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#1B3A2D;margin:4px 0">-</div>
       <div id="repEnzymeRole" style="font-size:12px;line-height:1.5;color:#1B3A2D;font-style:italic"></div>
       <div style="margin-top:8px;font-size:11px;color:#1B3A2D"><span style="font-weight:700;color:#C25B3F">DAT trap:</span> <span id="repTrap"></span></div>
     </div>
@@ -14818,43 +14818,43 @@ const REP_FORK_STAGES = [
     range: [0, 14], label: 'Stage 1 · Helicase opens the duplex', enzyme: 'Helicase (DnaB in E. coli)', enzymeKey: 'helicase',
     role: 'Breaks H-bonds between complementary base pairs, unwinding the parental duplex into two single strands.',
     explain: '<b>Helicase lands at the origin and walks 5\'→3\' on one strand</b>, prying the duplex open like a zipper. ATP-driven motor. The unwinding creates the fork shape.',
-    trap: 'Helicase BREAKS the H-bonds between bases — it does not cut the sugar-phosphate backbone. That\'s topoisomerase\'s job (different bond).'
+    trap: 'Helicase BREAKS the H-bonds between bases, it does not cut the sugar-phosphate backbone. That\'s topoisomerase\'s job (different bond).'
   },
   {
     range: [14, 28], label: 'Stage 2 · SSB stabilizes single-stranded DNA', enzyme: 'Single-strand binding proteins (SSB)', enzymeKey: 'ssb',
     role: 'Coats the unwound single strands to prevent re-annealing and protect from nucleases.',
     explain: '<b>SSB proteins bind cooperatively to ssDNA</b> and keep it stretched out so polymerases can access it. Without SSB, the strands snap back together.',
-    trap: 'SSB does NOT have catalytic activity — it is a structural/binding protein. It does not cut, ligate, or polymerize.'
+    trap: 'SSB does NOT have catalytic activity, it is a structural/binding protein. It does not cut, ligate, or polymerize.'
   },
   {
     range: [28, 42], label: 'Stage 3 · Topoisomerase relieves supercoils', enzyme: 'Topoisomerase (gyrase in prokaryotes)', enzymeKey: 'topo',
     role: 'Cuts the DNA backbone ahead of the fork to release torsional stress, then re-seals.',
-    explain: '<b>Helicase unwinding generates positive supercoils ahead of the fork</b>. Topoisomerase cuts one or both strands (Type I cuts one, Type II cuts both), lets them rotate, and re-seals — relieving torsion.',
+    explain: '<b>Helicase unwinding generates positive supercoils ahead of the fork</b>. Topoisomerase cuts one or both strands (Type I cuts one, Type II cuts both), lets them rotate, and re-seals, relieving torsion.',
     trap: 'Topo works <b>ahead of</b> the fork (downstream), not at the fork itself. Helicase is at the fork; topo is in the unbroken duplex beyond it.'
   },
   {
     range: [42, 56], label: 'Stage 4 · Primase lays an RNA primer', enzyme: 'Primase (DnaG)', enzymeKey: 'primase',
     role: 'Synthesizes a short RNA primer (~10 nt) on each strand to give DNA pol III a 3\'-OH to extend from.',
-    explain: '<b>DNA pol III cannot start from scratch</b> — it can only add nucleotides to an existing 3\'-OH. Primase (an RNA polymerase) makes a short RNA primer that pol III then extends. Leading strand needs only ONE primer; lagging needs MANY (one per Okazaki fragment).',
-    trap: 'Primer is <b>RNA, not DNA</b> — that\'s why pol I has to come along later and replace it. The primer ribose has a 2\'-OH (RNA), not 2\'-H (DNA).'
+    explain: '<b>DNA pol III cannot start from scratch</b>, it can only add nucleotides to an existing 3\'-OH. Primase (an RNA polymerase) makes a short RNA primer that pol III then extends. Leading strand needs only ONE primer; lagging needs MANY (one per Okazaki fragment).',
+    trap: 'Primer is <b>RNA, not DNA</b>, that\'s why pol I has to come along later and replace it. The primer ribose has a 2\'-OH (RNA), not 2\'-H (DNA).'
   },
   {
     range: [56, 70], label: 'Stage 5 · DNA pol III extends both strands', enzyme: 'DNA polymerase III', enzymeKey: 'pol3',
     role: 'Adds nucleotides 5\'→3\' on both daughter strands. Continuous on leading; Okazaki fragments on lagging.',
-    explain: '<b>Pol III is the workhorse</b> — high processivity, high speed (~1000 nt/s in E. coli). On the <b>leading strand</b> it synthesizes continuously toward the fork. On the <b>lagging strand</b> it synthesizes in short Okazaki fragments AWAY from the fork (5\'→3\' constraint forces this).',
-    trap: '5\'→3\' synthesis is the constraint that explains why the lagging strand exists. Pol III cannot add to a 5\' end — it must extend from a 3\'-OH.'
+    explain: '<b>Pol III is the workhorse</b>, high processivity, high speed (~1000 nt/s in E. coli). On the <b>leading strand</b> it synthesizes continuously toward the fork. On the <b>lagging strand</b> it synthesizes in short Okazaki fragments AWAY from the fork (5\'→3\' constraint forces this).',
+    trap: '5\'→3\' synthesis is the constraint that explains why the lagging strand exists. Pol III cannot add to a 5\' end, it must extend from a 3\'-OH.'
   },
   {
     range: [70, 85], label: 'Stage 6 · DNA pol I replaces RNA primers', enzyme: 'DNA polymerase I', enzymeKey: 'pol1',
     role: 'Removes RNA primers via 5\'→3\' exonuclease activity and fills the gap with DNA.',
     explain: '<b>Pol I has both polymerase AND exonuclease activity</b>. It excises the RNA primer one nucleotide at a time (5\'→3\' exonuclease) and simultaneously fills in DNA behind itself. The result: continuous DNA except for tiny nicks where Pol I disengaged.',
-    trap: 'Pol I is mostly a repair enzyme — most synthesis is Pol III. Pol I\'s job here is specifically primer replacement, not new synthesis.'
+    trap: 'Pol I is mostly a repair enzyme, most synthesis is Pol III. Pol I\'s job here is specifically primer replacement, not new synthesis.'
   },
   {
     range: [85, 100], label: 'Stage 7 · DNA ligase seals the nicks', enzyme: 'DNA ligase', enzymeKey: 'ligase',
     role: 'Forms the final phosphodiester bond between adjacent Okazaki fragments.',
-    explain: '<b>Ligase joins the 3\'-OH of one fragment to the 5\'-phosphate of the next</b> — using ATP (eukaryotes) or NAD+ (prokaryotes) as the energy source. The result: one continuous lagging-strand daughter molecule.',
-    trap: 'Ligase forms the bond between the SUGAR (3\'-OH) and PHOSPHATE (5\'-PO4) — not between bases. Bases pair via H-bonds, which need no enzyme.'
+    explain: '<b>Ligase joins the 3\'-OH of one fragment to the 5\'-phosphate of the next</b>, using ATP (eukaryotes) or NAD+ (prokaryotes) as the energy source. The result: one continuous lagging-strand daughter molecule.',
+    trap: 'Ligase forms the bond between the SUGAR (3\'-OH) and PHOSPHATE (5\'-PO4): not between bases. Bases pair via H-bonds, which need no enzyme.'
   },
 ];
 
@@ -15009,7 +15009,7 @@ function initReplicationForkScrubber() {
     s += '<rect x="0" y="0" width="14" height="3" fill="#1B3A2D"/><text x="20" y="6" font-size="10" fill="#1B3A2D" font-weight="700">parental DNA</text>';
     s += '<rect x="120" y="0" width="14" height="3" fill="#C9A84C"/><text x="140" y="6" font-size="10" fill="#1B3A2D" font-weight="700">daughter DNA</text>';
     s += '<rect x="240" y="0" width="14" height="3" fill="#C25B3F"/><text x="260" y="6" font-size="10" fill="#1B3A2D" font-weight="700">RNA primer</text>';
-    s += '<text x="700" y="6" text-anchor="end" font-size="10" font-style="italic" fill="#1B3A2D">' + (helOpen ? 'fork open · template exposed' : 'duplex intact — slide to start') + '</text>';
+    s += '<text x="700" y="6" text-anchor="end" font-size="10" font-style="italic" fill="#1B3A2D">' + (helOpen ? 'fork open · template exposed' : 'duplex intact, slide to start') + '</text>';
     s += '</g>';
 
     svg.innerHTML = s;
@@ -15030,7 +15030,7 @@ function initReplicationForkScrubber() {
 const TX_SCRUBBER_HTML = `
 <div style="background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px;padding:18px">
   <div style="text-align:center;margin-bottom:10px">
-    <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#1B3A2D">Transcription bubble — 5-step build</div>
+    <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#1B3A2D">Transcription bubble: 5-step build</div>
     <div style="font-size:12px;color:#1B3A2D;margin-top:4px;font-style:italic">Slide through initiation → elongation → termination. mRNA grows live as the bubble travels.</div>
   </div>
 
@@ -15060,7 +15060,7 @@ const TX_SCRUBBER_HTML = `
     </div>
     <div style="background:#fff;border:1.5px solid #1B3A2D;border-radius:8px;padding:14px">
       <div style="font-size:11px;color:#1B3A2D;font-weight:700;text-transform:uppercase;letter-spacing:0.08em">Active player</div>
-      <div id="txPlayerName" style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#1B3A2D;margin:4px 0">—</div>
+      <div id="txPlayerName" style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#1B3A2D;margin:4px 0">-</div>
       <div id="txPlayerRole" style="font-size:12px;line-height:1.5;color:#1B3A2D;font-style:italic"></div>
       <div style="margin-top:8px;font-size:11px;color:#1B3A2D"><span style="font-weight:700;color:#C25B3F">DAT trap:</span> <span id="txTrap"></span></div>
     </div>
@@ -15073,31 +15073,31 @@ const TX_BUBBLE_STAGES = [
     range: [0, 20], label: 'Stage 1 · Sigma factor recognizes the promoter', player: 'Sigma factor (σ)', playerKey: 'sigma',
     role: 'Recognizes the -10 (TATA) and -35 promoter sequences upstream of the gene. Without σ, RNA polymerase cannot find where to start.',
     explain: '<b>Sigma is the search head.</b> The bacterial RNA polymerase core enzyme cannot specifically recognize promoters on its own. Sigma factor binds to the core to form the holoenzyme, then scans the DNA until it finds a promoter\'s -10 and -35 boxes.',
-    trap: 'Sigma binds the PROMOTER, not the gene itself. After transcription begins, sigma DISSOCIATES — it is not part of the elongation complex.'
+    trap: 'Sigma binds the PROMOTER, not the gene itself. After transcription begins, sigma DISSOCIATES, it is not part of the elongation complex.'
   },
   {
     range: [20, 40], label: 'Stage 2 · RNA polymerase joins → holoenzyme', player: 'RNA polymerase + σ (holoenzyme)', playerKey: 'rnap',
     role: 'The holoenzyme (core RNA pol + σ) binds the promoter via σ. Closed complex forms with the duplex still intact.',
-    explain: '<b>The holoenzyme is sigma + core RNA polymerase.</b> It binds the promoter without yet melting the DNA. This "closed complex" is the recognition step — DNA is still double-stranded but the polymerase is now positioned to start.',
+    explain: '<b>The holoenzyme is sigma + core RNA polymerase.</b> It binds the promoter without yet melting the DNA. This "closed complex" is the recognition step, DNA is still double-stranded but the polymerase is now positioned to start.',
     trap: 'In <b>eukaryotes</b>, this step requires <b>general transcription factors (TFIID, TFIIA-H)</b> instead of σ. Sigma is bacterial-only.'
   },
   {
-    range: [40, 60], label: 'Stage 3 · Open complex — DNA bubble forms', player: 'Open complex (~14 bp bubble)', playerKey: 'open',
+    range: [40, 60], label: 'Stage 3 · Open complex: DNA bubble forms', player: 'Open complex (~14 bp bubble)', playerKey: 'open',
     role: 'RNA polymerase melts a ~14-bp segment of DNA, exposing the template strand for base-pairing.',
     explain: '<b>The polymerase pries the duplex open into a transcription bubble.</b> Roughly 14 bp of DNA become single-stranded. The template strand (3\'→5\' direction) is now exposed for incoming NTPs to base-pair against.',
-    trap: 'Only one strand — the <b>template (antisense)</b> — is read. The other (<b>coding/sense</b>) strand has the same sequence as mRNA but with T instead of U.'
+    trap: 'Only one strand: the <b>template (antisense)</b>, is read. The other (<b>coding/sense</b>) strand has the same sequence as mRNA but with T instead of U.'
   },
   {
-    range: [60, 85], label: 'Stage 4 · Elongation — mRNA synthesized 5\'→3\'', player: 'RNA polymerase (core, in elongation)', playerKey: 'elong',
+    range: [60, 85], label: 'Stage 4 · Elongation: mRNA synthesized 5\'→3\'', player: 'RNA polymerase (core, in elongation)', playerKey: 'elong',
     role: 'Reads template 3\'→5\'. Adds NTPs to the growing mRNA 5\'→3\'. Sigma has dissociated; the bubble travels with the polymerase.',
     explain: '<b>The bubble travels along the gene.</b> Behind the bubble, the duplex re-anneals; in front, fresh DNA opens. mRNA emerges out the back. After ~10 nt, sigma dissociates and the polymerase enters productive elongation.',
-    trap: 'Polymerase reads <b>3\'→5\'</b> on the template, but synthesizes <b>5\'→3\'</b> on the mRNA. Same constraint as DNA pol — the new chain always grows 5\'→3\'.'
+    trap: 'Polymerase reads <b>3\'→5\'</b> on the template, but synthesizes <b>5\'→3\'</b> on the mRNA. Same constraint as DNA pol: the new chain always grows 5\'→3\'.'
   },
   {
-    range: [85, 100], label: 'Stage 5 · Termination — mRNA released', player: 'Terminator (stem-loop or rho)', playerKey: 'term',
+    range: [85, 100], label: 'Stage 5 · Termination: mRNA released', player: 'Terminator (stem-loop or rho)', playerKey: 'term',
     role: 'A terminator sequence forms a hairpin (intrinsic) or recruits rho protein, which pulls mRNA off the polymerase.',
-    explain: '<b>Two termination mechanisms in prokaryotes:</b> (1) Intrinsic — the mRNA folds into a GC-rich stem-loop followed by a poly-U stretch; the polymerase stalls and falls off. (2) Rho-dependent — rho protein binds an unstructured site on the new mRNA and walks toward the polymerase, displacing it.',
-    trap: 'In <b>eukaryotes</b>, termination involves <b>cleavage at AAUAAA</b> followed by polyadenylation — not stem-loops or rho.'
+    explain: '<b>Two termination mechanisms in prokaryotes:</b> (1) Intrinsic: the mRNA folds into a GC-rich stem-loop followed by a poly-U stretch; the polymerase stalls and falls off. (2) Rho-dependent: rho protein binds an unstructured site on the new mRNA and walks toward the polymerase, displacing it.',
+    trap: 'In <b>eukaryotes</b>, termination involves <b>cleavage at AAUAAA</b> followed by polyadenylation, not stem-loops or rho.'
   },
 ];
 
@@ -15190,7 +15190,7 @@ function initTranscriptionScrubber() {
     s += `<text x="780" y="${yTop + 4}" font-size="10" font-weight="700" fill="#8C7235">3\'</text>`;
     s += `<text x="20" y="${yBot + 4}" text-anchor="end" font-size="10" font-weight="700" fill="#8C7235">3\'</text>`;
     s += `<text x="780" y="${yBot + 4}" font-size="10" font-weight="700" fill="#8C7235">5\'</text>`;
-    s += `<text x="775" y="${yTop - 8}" text-anchor="end" font-size="9" fill="#1B3A2D" font-style="italic">coding (sense) strand — same as mRNA but with T not U</text>`;
+    s += `<text x="775" y="${yTop - 8}" text-anchor="end" font-size="9" fill="#1B3A2D" font-style="italic">coding (sense) strand, same as mRNA but with T not U</text>`;
 
     // mRNA strand (grows during elongation)
     if (pct >= 60) {
@@ -15281,7 +15281,7 @@ function initTranscriptionScrubber() {
 const TL_SCRUBBER_HTML = `
 <div style="background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px;padding:18px">
   <div style="text-align:center;margin-bottom:10px">
-    <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#1B3A2D">Translation — 5-step build</div>
+    <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#1B3A2D">Translation: 5-step build</div>
     <div style="font-size:12px;color:#1B3A2D;margin-top:4px;font-style:italic">Slide through initiation → elongation → termination. tRNAs cycle A→P→E. Polypeptide grows live.</div>
   </div>
 
@@ -15308,7 +15308,7 @@ const TL_SCRUBBER_HTML = `
     </div>
     <div style="background:#fff;border:1.5px solid #1B3A2D;border-radius:8px;padding:14px">
       <div style="font-size:11px;color:#1B3A2D;font-weight:700;text-transform:uppercase;letter-spacing:0.08em">Active player</div>
-      <div id="tlPlayerName" style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#1B3A2D;margin:4px 0">—</div>
+      <div id="tlPlayerName" style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#1B3A2D;margin:4px 0">-</div>
       <div id="tlPlayerRole" style="font-size:12px;line-height:1.5;color:#1B3A2D;font-style:italic"></div>
       <div style="margin-top:8px;font-size:11px;color:#1B3A2D"><span style="font-weight:700;color:#C25B3F">DAT trap:</span> <span id="tlTrap"></span></div>
     </div>
@@ -15321,7 +15321,7 @@ const TL_STAGES = [
     range: [0, 20], label: 'Stage 1 · Small subunit (30S) scans mRNA for AUG', player: 'Small ribosomal subunit (30S)', playerKey: 'small',
     role: 'Binds the 5\' end of the mRNA (Shine-Dalgarno in prokaryotes; cap in eukaryotes) and scans for the first AUG.',
     explain: '<b>The small subunit is the scanner.</b> In prokaryotes, the 16S rRNA recognizes the Shine-Dalgarno sequence ~6 nt upstream of AUG. In eukaryotes, the 40S subunit binds the 5\' cap and scans 3\'-ward for the first AUG (Kozak context).',
-    trap: 'Small subunit alone cannot translate — it just finds the start. Polypeptide bond formation requires the LARGE subunit\'s peptidyl transferase activity.'
+    trap: 'Small subunit alone cannot translate: it just finds the start. Polypeptide bond formation requires the LARGE subunit\'s peptidyl transferase activity.'
   },
   {
     range: [20, 40], label: 'Stage 2 · Initiator tRNA (Met) lands in the P site', player: 'Initiator tRNA carrying Met', playerKey: 'init',
@@ -15332,18 +15332,18 @@ const TL_STAGES = [
   {
     range: [40, 55], label: 'Stage 3 · Large subunit (50S) joins → 70S ribosome', player: 'Large ribosomal subunit (50S)', playerKey: 'large',
     role: 'The large subunit assembles onto the small subunit + initiator tRNA + mRNA, completing the functional ribosome with active A, P, E sites.',
-    explain: '<b>The large subunit brings peptidyl transferase activity.</b> Now the ribosome has all three tRNA-binding sites — A (aminoacyl, incoming), P (peptidyl, growing chain), E (exit, leaving). Initiator tRNA is in P site; A site is open and ready for the next aminoacyl-tRNA.',
+    explain: '<b>The large subunit brings peptidyl transferase activity.</b> Now the ribosome has all three tRNA-binding sites, A (aminoacyl, incoming), P (peptidyl, growing chain), E (exit, leaving). Initiator tRNA is in P site; A site is open and ready for the next aminoacyl-tRNA.',
     trap: 'Prokaryote ribosome = 70S (30S + 50S). Eukaryote ribosome = 80S (40S + 60S). The 50S/60S = sedimentation rate, not literal sum.'
   },
   {
-    range: [55, 85], label: 'Stage 4 · Elongation cycle — A → P → E', player: 'Aminoacyl-tRNA (in A site)', playerKey: 'trna',
+    range: [55, 85], label: 'Stage 4 · Elongation cycle: A → P → E', player: 'Aminoacyl-tRNA (in A site)', playerKey: 'trna',
     role: 'New aminoacyl-tRNA enters the A site. Peptide bond forms between A-site amino acid and the growing chain on P-site tRNA. Ribosome translocates: A→P, P→E, E→exits.',
-    explain: '<b>The cycle repeats per codon:</b> (1) aminoacyl-tRNA enters A site (matches codon); (2) peptide bond forms — the chain is transferred from P-site tRNA to A-site tRNA via peptidyl transferase (rRNA, a ribozyme!); (3) translocation: ribosome moves 3 nt; A becomes P, P becomes E, E ejects empty tRNA.',
-    trap: 'Peptidyl transferase is a <b>ribozyme</b> — the enzyme is RNA, not protein. The 23S rRNA in the large subunit catalyzes the bond. Test favorite.'
+    explain: '<b>The cycle repeats per codon:</b> (1) aminoacyl-tRNA enters A site (matches codon); (2) peptide bond forms: the chain is transferred from P-site tRNA to A-site tRNA via peptidyl transferase (rRNA, a ribozyme); (3) translocation: ribosome moves 3 nt; A becomes P, P becomes E, E ejects empty tRNA.',
+    trap: 'Peptidyl transferase is a <b>ribozyme</b>, the enzyme is RNA, not protein. The 23S rRNA in the large subunit catalyzes the bond. Test favorite.'
   },
   {
     range: [85, 100], label: 'Stage 5 · Stop codon → release factor → polypeptide released', player: 'Release factor (RF)', playerKey: 'release',
-    role: 'A stop codon (UAA, UAG, UGA) enters the A site. No tRNA matches — instead, a release factor binds and triggers hydrolysis of the polypeptide-tRNA bond.',
+    role: 'A stop codon (UAA, UAG, UGA) enters the A site. No tRNA matches: instead, a release factor binds and triggers hydrolysis of the polypeptide-tRNA bond.',
     explain: '<b>Stop codons are NOT decoded by tRNAs.</b> When UAA/UAG/UGA enters the A site, release factor (RF1/RF2 in prokaryotes; eRF1 in eukaryotes) binds and stimulates peptidyl transferase to add WATER instead of an amino acid. Polypeptide is released; ribosome dissociates into subunits.',
     trap: 'Memorize the stop codons: <b>UAA, UAG, UGA</b>. Mnemonic: "U Are Annoying, U Are Gone, U Go Away." The DAT will sneak one of these into a translation Q to test that you stop reading.'
   },
@@ -15541,7 +15541,7 @@ function initTranslationScrubber() {
 const AP_SCRUBBER_HTML = `
 <div style="background:linear-gradient(180deg,#fbf6e9 0%,#f0e9d6 100%);border-radius:10px;padding:18px">
   <div style="text-align:center;margin-bottom:10px">
-    <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#1B3A2D">Action potential — one cycle</div>
+    <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#1B3A2D">Action potential: one cycle</div>
     <div style="font-size:12px;color:#1B3A2D;margin-top:4px;font-style:italic">Drag through 5 phases. Vm dot rides the curve. Na⁺ + K⁺ channels open and close in real time.</div>
   </div>
 
@@ -15583,7 +15583,7 @@ const AP_SCRUBBER_HTML = `
     </div>
     <div style="background:#fff;border:1.5px solid #1B3A2D;border-radius:8px;padding:14px">
       <div style="font-size:11px;color:#1B3A2D;font-weight:700;text-transform:uppercase;letter-spacing:0.08em">Phase</div>
-      <div id="apPhaseName" style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#1B3A2D;margin:4px 0">—</div>
+      <div id="apPhaseName" style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#1B3A2D;margin:4px 0">-</div>
       <div style="margin-top:8px;font-size:11px;color:#1B3A2D"><span style="font-weight:700;color:#C25B3F">DAT trap:</span> <span id="apTrap"></span></div>
     </div>
   </div>
@@ -15596,20 +15596,20 @@ const AP_PHASES = [
     na: 'CLOSED', naColor: '#C25B3F',
     k: 'leak only', kColor: '#5cabe6',
     explain: '<b>Steady-state.</b> Na/K ATPase pumps 3 Na⁺ out and 2 K⁺ in (per ATP); K⁺ leaks back out via leak channels, leaving the inside negative (~-70 mV). Voltage-gated Na⁺ and K⁺ channels are CLOSED. Stable until a stimulus arrives.',
-    trap: 'The Na/K pump MAINTAINS the gradient — it does NOT generate the AP. The AP is generated by voltage-gated channels using the gradient the pump set up.'
+    trap: 'The Na/K pump MAINTAINS the gradient, it does NOT generate the AP. The AP is generated by voltage-gated channels using the gradient the pump set up.'
   },
   {
     range: [18, 30], label: 'Stage 2 · Depolarization (threshold → +30 mV)', vm: 0,
     na: 'OPENING (in)', naColor: '#C25B3F',
     k: 'still closed', kColor: '#888',
-    explain: '<b>Stimulus brings Vm to threshold (-55 mV).</b> Voltage-gated Na⁺ channels SNAP OPEN — Na⁺ rushes in down its electrochemical gradient. This depolarizes the membrane further → opens MORE Na⁺ channels (positive feedback). All-or-nothing: once threshold is crossed, the AP runs to completion.',
+    explain: '<b>Stimulus brings Vm to threshold (-55 mV).</b> Voltage-gated Na⁺ channels SNAP OPEN: Na⁺ rushes in down its electrochemical gradient. This depolarizes the membrane further → opens MORE Na⁺ channels (positive feedback). All-or-nothing: once threshold is crossed, the AP runs to completion.',
     trap: 'Sub-threshold stimuli produce graded potentials but NO AP. Above threshold, every AP reaches the same +30 mV peak. Stimulus strength is encoded by AP FREQUENCY, not amplitude.'
   },
   {
-    range: [30, 36], label: 'Stage 3 · Peak (+30 mV) — Na⁺ inactivates', vm: 30,
+    range: [30, 36], label: 'Stage 3 · Peak (+30 mV): Na⁺ inactivates', vm: 30,
     na: 'INACTIVATED', naColor: '#888',
     k: 'opening (out)', kColor: '#5cabe6',
-    explain: '<b>Vm reaches +30 mV.</b> Voltage-gated Na⁺ channels INACTIVATE (a third state, distinct from "closed" — they have an inactivation gate that swings shut). Voltage-gated K⁺ channels are slow to respond but now OPEN. K⁺ begins flowing out down its gradient.',
+    explain: '<b>Vm reaches +30 mV.</b> Voltage-gated Na⁺ channels INACTIVATE (a third state, distinct from "closed", they have an inactivation gate that swings shut). Voltage-gated K⁺ channels are slow to respond but now OPEN. K⁺ begins flowing out down its gradient.',
     trap: 'Na⁺ channels have THREE states: closed (resting), open (during depol), and inactivated (during peak/repol). The inactivation gate is what makes the absolute refractory period.'
   },
   {
@@ -15631,7 +15631,7 @@ const AP_PHASES = [
     na: 'CLOSED', naColor: '#C25B3F',
     k: 'closing', kColor: '#888',
     explain: '<b>Membrane returns to resting potential.</b> K⁺ channels close, Na⁺ channels reset from inactivated → closed (ready to open again). Na/K pump runs continuously to maintain the gradient (it never stops; just unrelated to the AP itself). Cell is ready for the next stimulus.',
-    trap: 'Each AP costs only a tiny number of Na⁺/K⁺ ions — the gradient is never significantly depleted by a single AP. Pump prevents long-term drift.'
+    trap: 'Each AP costs only a tiny number of Na⁺/K⁺ ions, the gradient is never significantly depleted by a single AP. Pump prevents long-term drift.'
   },
 ];
 
@@ -15902,7 +15902,7 @@ function init() {
       const tone = correct ? (fragile ? "fragile" : "correct") : "wrong";
       fb.className = "retrieval-feedback show " + tone;
       const lbl = correct
-        ? (fragile ? "Right — but you guessed. Spaced-review queued."
+        ? (fragile ? "Right: but you guessed. Spaced-review queued."
                    : "Correct")
         : "Why this is the answer";
       let restoredBody = correct ? data.rt : data.wr;

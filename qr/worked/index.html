@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Worked solutions you can see · QR · Ace Labs</title>
+<meta name="description" content="Six QR problem families. Answer first, then the solution is drawn step by step.">
+<link rel="icon" type="image/svg+xml" href="/shared/ace-dat-mark.svg">
+<link rel="stylesheet" href="/shared/ace-ui.css?v=7">
+<style>
+  .wk-picks { display: flex; flex-wrap: wrap; gap: var(--aui-2); }
+  .wk-picks button { min-height: 40px; padding: 0 12px; border-radius: 999px; border: 1.5px solid var(--aui-line-2); background: var(--aui-paper); font: 600 var(--aui-t-sm) var(--aui-font); cursor: pointer; color: var(--aui-ink); }
+  .wk-picks button[aria-current="true"] { background: var(--aui-forest); color: var(--aui-cream); border-color: var(--aui-forest); }
+  svg.wk { width: 100%; height: auto; display: block; font-family: var(--aui-font); }
+  svg.wk .t { font-size: 17px; fill: #0d2018; }
+  svg.wk .tb { font-size: 19px; font-weight: 700; fill: #0d2018; }
+  svg.wk .ts { font-size: 14px; fill: #3a4a42; }
+  svg.wk .tg { font-size: 17px; font-weight: 700; fill: #7c6113; }
+  svg.wk .tok { font-size: 18px; font-weight: 700; fill: #007a59; }
+  svg.wk .ln { stroke: #0d2018; stroke-width: 2; fill: none; }
+  svg.wk .lnm { stroke: #8a9a90; stroke-width: 1.5; fill: none; stroke-dasharray: 5 5; }
+  svg.wk .f1 { fill: #1B3A2D; } svg.wk .f2 { fill: #C9A84C; } svg.wk .f3 { fill: #e6dccb; } svg.wk .f4 { fill: #7fa38f; }
+  svg.wk .box { fill: #FFFDF7; stroke: #0d2018; stroke-width: 1.5; }
+</style>
+</head>
+<body class="aui">
+<main class="aui-wrap aui-stack" id="main">
+  <header class="aui-stack">
+    <p class="aui-kicker">Quantitative Reasoning · See it</p>
+    <h1 class="aui-h1">Worked solutions you can see</h1>
+    <p class="aui-lede">Six problem families the DAT returns to. Answer first. Then the setup is drawn, one step at a time, so the method sticks and not just the number.</p>
+  </header>
+  <div class="wk-picks" id="picks" role="group" aria-label="Problem families"></div>
+  <div id="q"></div>
+</main>
+<script src="/shared/ace-ui.js?v=3"></script>
+<script src="/shared/ace-record.js?v=4"></script>
+<script src="/shared/ace-question.js?v=4"></script>
+<script>
+(function () {
+  'use strict';
+  function R(k, s) { return '<g class="reveal" style="--k:' + k + '">' + s + '</g>'; }
+  function T(x, y, s, c, a) { return '<text x="' + x + '" y="' + y + '" class="' + (c || 't') + '"' + (a ? ' text-anchor="' + a + '"' : '') + '>' + s + '</text>'; }
+  function rect(x, y, w, h, c) { return '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" rx="4" class="' + c + '"/>'; }
+  function line(x1, y1, x2, y2, c) { return '<line x1="' + x1 + '" y1="' + y1 + '" x2="' + x2 + '" y2="' + y2 + '" class="' + (c || 'ln') + '"/>'; }
+  function svg(w, h, body) { return '<svg class="wk" viewBox="0 0 ' + w + ' ' + h + '" role="img">' + body + '</svg>'; }
+  function check(cond, what) { if (!cond) throw new Error('worked lab key check failed: ' + what); }
+  var near = function (a, b) { return Math.abs(a - b) < 1e-9; };
+
+  var F = [];
+  /* 1. Successive percent change: a bar model */
+  (function () {
+    var start = 100, up = 1.25, down = 0.80, end = start * up * down; check(near(end, 100), 'percent');
+    var W = 600, s = 3.2, b = function (v) { return v * s; };
+    var body = T(20, 30, 'Start: 100', 'ts') + rect(20, 40, b(100), 34, 'f1') +
+      R(0, T(20, 108, 'Up 25 percent of 100: add 25', 'ts') + rect(20, 118, b(100), 34, 'f1') + rect(20 + b(100), 118, b(25), 34, 'f2') + T(30 + b(125), 141, '125', 'tb')) +
+      R(1, T(20, 186, 'Down 20 percent of 125: take away 25', 'ts') + rect(20, 196, b(100), 34, 'f1') + rect(20 + b(100), 196, b(25), 34, 'f3') + line(20 + b(100), 190, 20 + b(125), 236, 'ln') + T(30 + b(125), 219, '100', 'tok')) +
+      R(2, T(20, 266, 'The 20 percent comes off a bigger number,', 'tg') + T(20, 290, 'so here the two changes cancel.', 'tg'));
+    F.push({ id: 'pct', name: 'Percent change', svg: svg(W, 305, body),
+      stem: 'A jacket\'s price is raised by 25 percent and later reduced by 20 percent. The final price is what percent of the original price?',
+      choices: ['95%', '100%', '105%', '110%', '120%'], answer: 1,
+      why: 'Multiply the factors: 1.25 x 0.80 = 1.00, so the final price equals the original. Each percent is taken of the price at that moment, not of the original.',
+      steps: ['Write each change as a factor: up 25 percent is x 1.25, down 20 percent is x 0.80.', 'Multiply: 1.25 x 0.80 = 1.00.', 'The final price is 100 percent of the original.'] });
+  })();
+  /* 2. Ratio: a tape diagram */
+  (function () {
+    var total = 40, a = 3, b = 5, unit = total / (a + b), girls = b * unit; check(girls === 25, 'ratio');
+    var W = 600, u = 66, x0 = 30, body = T(x0, 30, 'Boys to girls is 3 to 5: draw 8 equal parts', 'ts');
+    for (var i = 0; i < a + b; i++) body += rect(x0 + i * u, 44, u - 4, 40, i < a ? 'f4' : 'f1');
+    body += R(0, T(x0 + 1.5 * u, 108, 'boys: 3 parts', 'ts', 'middle') + T(x0 + 5.5 * u, 108, 'girls: 5 parts', 'ts', 'middle'));
+    body += R(1, T(x0, 148, '8 parts make 40 students, so each part is 40 / 8 = 5', 'tg'));
+    var r2 = ''; for (var j = 0; j < a + b; j++) r2 += T(x0 + j * u + (u - 4) / 2, 69, '5', j < a ? 'tb' : 'tb', 'middle');
+    body += R(2, r2.replace(/class="tb"/g, 'class="tb" fill="#fffdf7" style="fill:#fffdf7"'));
+    body += R(3, T(x0, 186, 'Girls: 5 parts x 5 = 25', 'tok'));
+    F.push({ id: 'ratio', name: 'Ratio', svg: svg(W, 205, body),
+      stem: 'A class of 40 students has boys and girls in a ratio of 3 to 5. How many girls are in the class?',
+      choices: ['15', '24', '25', '30', '32'], answer: 2,
+      why: '3 + 5 = 8 equal parts make up 40 students, so each part is 5. The girls are 5 parts: 25. 15 is the boys; 24 treats 3 to 5 as a fraction of the whole.',
+      steps: ['Add the ratio parts: 3 + 5 = 8.', 'One part is 40 / 8 = 5 students.', 'Girls are 5 parts: 5 x 5 = 25.'] });
+  })();
+  /* 3. Work rate: what each pipe does in one hour */
+  (function () {
+    var ra = 1 / 4, rb = 1 / 12, t = 1 / (ra + rb); check(near(t, 3), 'work');
+    var W = 600, L = 480, x0 = 40, body = T(x0, 28, 'One tank, split into twelfths', 'ts') + rect(x0, 40, L, 36, 'f3');
+    for (var i = 1; i < 12; i++) body += line(x0 + i * L / 12, 40, x0 + i * L / 12, 76, 'lnm');
+    body += R(0, rect(x0, 40, L * ra, 36, 'f1') + T(x0, 100, 'Pipe A in one hour: 1/4 = 3/12', 'ts'));
+    body += R(1, rect(x0 + L * ra, 40, L * rb, 36, 'f2') + T(x0 + L * ra, 120, 'Pipe B in one hour: 1/12', 'ts'));
+    body += R(2, T(x0, 160, 'Together: 4/12 = 1/3 of the tank each hour', 'tg'));
+    body += R(3, T(x0, 196, '3 hours fill the tank', 'tok'));
+    F.push({ id: 'work', name: 'Work rate', svg: svg(W, 215, body),
+      stem: 'Pipe A fills a tank in 4 hours. Pipe B fills the same tank in 12 hours. Working together, how many hours do they take to fill it?',
+      choices: ['2', '3', '6', '8', '16'], answer: 1,
+      why: 'Add the rates, not the times: 1/4 + 1/12 = 3/12 + 1/12 = 4/12 = 1/3 of the tank per hour, so 3 hours. Averaging the times gives 8, which is slower than pipe A alone.',
+      steps: ['Rate of A: 1/4 tank per hour. Rate of B: 1/12.', 'Together: 1/4 + 1/12 = 1/3 tank per hour.', 'Time = 1 / (1/3) = 3 hours.'] });
+  })();
+  /* 4. Mixture: the balance (alligation) picture */
+  (function () {
+    var v1 = 10, c1 = 20, c2 = 60, target = 30, x = v1 * (target - c1) / (c2 - target); check(near(0.2 * v1 + 0.6 * x, 0.3 * (v1 + x)), 'mixture');
+    var W = 600, s = 8, x0 = 60, X = function (c) { return x0 + c * s; };
+    var body = line(X(0), 80, X(60), 80) + T(X(20), 110, '20%', 'tb', 'middle') + T(X(60), 110, '60%', 'tb', 'middle') + T(X(30), 60, '30% target', 'tg', 'middle') +
+      '<circle cx="' + X(20) + '" cy="80" r="7" class="f1"/><circle cx="' + X(60) + '" cy="80" r="7" class="f2"/><path d="M' + X(30) + ',86 l-9,16 h18 z" class="f1"/>' +
+      R(0, T(X(25), 140, '10 away', 'ts', 'middle') + T(X(45), 140, '30 away', 'ts', 'middle')) +
+      R(1, T(x0, 176, 'The amounts balance in the opposite ratio:', 'tg') + T(x0, 200, '20% to 60% is 30 to 10, so 3 to 1', 'tg')) +
+      R(2, T(x0, 236, '10 L of 20% needs 10 / 3 = 3 1/3 L of 60%', 'tok'));
+    F.push({ id: 'mix', name: 'Mixture', svg: svg(W, 252, body),
+      stem: 'How many liters of a 60 percent acid solution must be added to 10 liters of a 20 percent acid solution to make a 30 percent solution?',
+      choices: ['2 1/2 L', '3 1/3 L', '5 L', '6 2/3 L', '10 L'], answer: 1,
+      why: 'Acid in equals acid out: 0.20(10) + 0.60x = 0.30(10 + x), so 2 + 0.6x = 3 + 0.3x and x = 10/3 L. The balance picture gives it fast: 30 percent sits 10 points from 20 and 30 from 60, so the amounts are 3 to 1.',
+      steps: ['Write acid in = acid out: 0.20(10) + 0.60x = 0.30(10 + x).', 'Solve: 0.30x = 1, so x = 10/3.', 'That is 3 1/3 liters.'] });
+  })();
+  /* 5. Probability without replacement: a tree */
+  (function () {
+    var p = (3 / 5) * (2 / 4); check(near(p, 3 / 10), 'tree');
+    var W = 600, body = '<circle cx="60" cy="130" r="8" class="f1"/>' + line(60, 130, 230, 60) + line(60, 130, 230, 200) +
+      T(240, 66, 'red', 'tb') + T(240, 206, 'blue', 'tb') + T(110, 82, '3/5', 'tg') + T(110, 190, '2/5', 'ts') +
+      R(0, line(290, 60, 450, 25) + line(290, 60, 450, 95) + T(460, 30, 'red', 'tb') + T(460, 100, 'blue', 'ts') + T(340, 32, '2/4', 'tg') + T(340, 100, '2/4', 'ts')) +
+      R(1, T(300, 150, 'One red is gone: 2 red left of 4', 'ts')) +
+      R(2, T(300, 190, '3/5 x 2/4 = 6/20 = 3/10', 'tok'));
+    F.push({ id: 'tree', name: 'Probability', svg: svg(W, 220, body),
+      stem: 'A bag holds 3 red marbles and 2 blue marbles. Two marbles are drawn without replacement. What is the probability that both are red?',
+      choices: ['3/25', '9/25', '3/10', '2/5', '3/5'], answer: 2,
+      why: 'First draw: 3 of 5 are red. With one red gone, 2 of the remaining 4 are red. Multiply along the branch: 3/5 x 2/4 = 3/10. 9/25 forgets that the first marble is not put back.',
+      steps: ['P(first red) = 3/5.', 'P(second red, given the first was red) = 2/4.', 'Multiply along the branch: 3/10.'] });
+  })();
+  /* 6. Geometry: one area, two ways */
+  (function () {
+    var a = 6, b = 8, c = Math.hypot(a, b), h = a * b / c; check(near(h, 4.8) && near(c, 10), 'altitude');
+    var W = 600, s = 34, ox = 120, oy = 250;
+    var A = [ox, oy], B = [ox + b * s, oy], C = [ox, oy - a * s];
+    var t = (b * b) / (c * c); var D = [B[0] + (C[0] - B[0]) * t, B[1] + (C[1] - B[1]) * t];
+    var body = '<polygon points="' + A + ' ' + B + ' ' + C + '" class="box"/>' + T(ox - 14, oy - a * s / 2, '6', 'tb', 'end') + T(ox + b * s / 2, oy + 26, '8', 'tb', 'middle') +
+      R(0, T((B[0] + C[0]) / 2 + 14, (B[1] + C[1]) / 2 - 8, '10', 'tb') + T(410, 40, '6, 8, 10: a right triangle', 'ts')) +
+      R(1, line(A[0], A[1], D[0], D[1], 'ln') + T((A[0] + D[0]) / 2 + 6, (A[1] + D[1]) / 2 + 16, 'h', 'tg') + T(410, 80, 'Area = 1/2 x 6 x 8 = 24', 'ts')) +
+      R(2, T(410, 120, 'Also area = 1/2 x 10 x h', 'ts')) +
+      R(3, T(410, 160, 'So h = 48 / 10 = 4.8', 'tok'));
+    F.push({ id: 'alt', name: 'Geometry', svg: svg(W, 285, body),
+      stem: 'A right triangle has legs of length 6 and 8. What is the length of the altitude drawn from the right angle to the hypotenuse?',
+      choices: ['4', '4.8', '5', '6', '7'], answer: 1,
+      why: 'The hypotenuse is 10 (a 6-8-10 triangle). The area is 1/2 x 6 x 8 = 24, and the same area is 1/2 x 10 x h, so h = 4.8. The altitude is always shorter than both legs.',
+      steps: ['Hypotenuse: 6, 8, 10.', 'Area from the legs: 1/2 x 6 x 8 = 24.', 'Area from the hypotenuse: 1/2 x 10 x h = 24, so h = 4.8.'] });
+  })();
+
+  var picks = document.getElementById('picks');
+  F.forEach(function (f, k) { var b = document.createElement('button'); b.type = 'button'; b.textContent = f.name; b.addEventListener('click', function () { show(k); }); picks.appendChild(b); });
+  function show(k) {
+    var f = F[k];
+    Array.prototype.forEach.call(picks.children, function (b, j) { b.setAttribute('aria-current', j === k ? 'true' : 'false'); });
+    var item = { id: 'qr:worked:' + f.id, section: 'qr', topic: 'worked-' + f.id, topicName: f.name, stem: f.stem, choices: f.choices, answer: f.answer, why: f.why, steps: f.steps,
+      figure: { html: f.svg, caption: 'Answer first. The worked picture draws in after.', revealCaption: 'The method, drawn step by step.' } };
+    window.AceQuestion.mount(document.getElementById('q'), item, { label: 'QR · ' + f.name, number: k + 1, total: F.length, confidence: true, nextLabel: k + 1 < F.length ? 'Next problem' : 'Back to the first',
+      onAnswer: function (res) { if (window.AceRecord) window.AceRecord.record({ item: item, picked: res.picked, answer: res.answer, ok: res.ok, ms: res.ms, src: 'qr-worked', first: res.first, changes: res.changes, change: res.change, conf: res.conf, repair: false }); },
+      onNext: function () { show((k + 1) % F.length); } });
+  }
+  show(0);
+})();
+</script>
+<script src="/shared/ace-tabs.js?v=2" defer></script>
+</body>
+</html>

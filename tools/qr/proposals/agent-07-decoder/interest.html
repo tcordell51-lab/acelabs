@@ -123,11 +123,11 @@ body{font-family:'DM Sans',system-ui,sans-serif; background:var(--bg); color:var
   <div class="head">
     <span class="badge"><span class="pulse"></span>Interest Decoder</span>
     <h1>Simple is <em>linear</em>. Compound is <em>exponential</em>.</h1>
-    <p class="lede">Two skeletons, one decoder. Simple: <b>A = P(1 + rt)</b>. Compound: <b>A = P(1 + r/n)<sup>nt</sup></b>. The wording tells you which one to use — "simple interest", "compounded annually", "compounded quarterly". Three steps, five problems mixing both.</p>
+    <p class="lede">Two skeletons, one decoder. Simple: <b>A = P(1 + rt)</b>. Compound: <b>A = P(1 + r/n)<sup>nt</sup></b>. The wording tells you which one to use, "simple interest", "compounded annually", "compounded quarterly". Three steps, five problems mixing both.</p>
   </div>
 
   <div class="qbar" id="qbar"><span class="lbl">Problem</span></div>
-  <div class="mode-strip">Pattern this round: <b id="mode-strip-val">—</b></div>
+  <div class="mode-strip">Pattern this round: <b id="mode-strip-val">-</b></div>
 
   <div class="steps" id="steps">
     <div class="step-pill active" data-step="1"><span class="num">1</span><span class="lbl"><span class="ttl">Highlight</span><span class="sub">P, r, t, n</span></span></div>
@@ -136,7 +136,7 @@ body{font-family:'DM Sans',system-ui,sans-serif; background:var(--bg); color:var
   </div>
 
   <div class="card" id="step1-card">
-    <div class="card-h"><div class="mark">01</div><div class="ttl"><h3>Highlight <em>P, r, t</em> (and n if compounded)</h3><div class="sub">Tap the principal, the rate, the time, and — if the wording says "compounded ___" — the compounding frequency.</div></div></div>
+    <div class="card-h"><div class="mark">01</div><div class="ttl"><h3>Highlight <em>P, r, t</em> (and n if compounded)</h3><div class="sub">Tap the principal, the rate, the time, and, if the wording says "compounded ___", the compounding frequency.</div></div></div>
     <div class="problem" id="problem-text"></div>
     <div class="var-tray" id="var-tray"><span class="ph">Picked variables will appear here.</span></div>
     <div class="feedback" id="step1-feedback"></div>
@@ -166,7 +166,7 @@ body{font-family:'DM Sans',system-ui,sans-serif; background:var(--bg); color:var
     <div class="card-h"><div class="mark">03</div><div class="ttl"><h3>Solve &amp; <em>sanity-check</em></h3><div class="sub">Final amount must exceed principal (interest is positive). Compound at the same r,t always exceeds simple.</div></div></div>
     <div class="skeleton" id="skeleton-filled" style="font-size:17px"></div>
     <div class="solve-row">
-      <div class="field"><span class="lbl">Final amount A</span><input type="text" id="answer-input" placeholder="number"><span class="units" id="units-hint">dollars (or interest only — read the question)</span></div>
+      <div class="field"><span class="lbl">Final amount A</span><input type="text" id="answer-input" placeholder="number"><span class="units" id="units-hint">dollars (or interest only, read the question)</span></div>
       <div class="field"><span class="lbl">Sanity check</span><input type="text" id="sanity-input" placeholder="A > P? compound > simple?"><span class="units">one short sentence</span></div>
     </div>
     <div class="feedback" id="step3-feedback"></div>
@@ -260,7 +260,7 @@ const PROBLEMS = [
     slots:{P:'P=800', r:'r=.12', t:'t=.5'},
     skelDisplay:'A = 800(1 + .12·0.5)',
     answer:848, tol:1,
-    sanity:'6 months is 0.5 yr — convert because rate is annual. A = 800·1.06 = $848. Interest $48.',
+    sanity:'6 months is 0.5 yr: convert because rate is annual. A = 800·1.06 = $848. Interest $48.',
     answerHint:'total owed in $'
   },
   {
@@ -297,7 +297,7 @@ function renderQbar(){
   });
   document.getElementById('score').textContent = state.completed.filter(Boolean).length + '/' + PROBLEMS.length;
   const m = PROBLEMS[state.qIdx].mode;
-  document.getElementById('mode-strip-val').innerHTML = m==='simple' ? 'simple — A = P(1 + r·t)' : 'compound — A = P(1 + r/n)^(n·t)';
+  document.getElementById('mode-strip-val').innerHTML = m==='simple' ? 'simple, A = P(1 + r·t)' : 'compound, A = P(1 + r/n)^(n·t)';
 }
 
 function renderProblem(){
@@ -359,7 +359,7 @@ function checkPicks(){
   const fb = document.getElementById('step1-feedback');
   fb.className = 'feedback show ' + (ok && missing.length===0?'good':'bad');
   if (ok && missing.length===0){
-    fb.innerHTML = '<span class="lbl">Locked</span>You found <b>'+p.expect.join('</b>, <b>')+'</b>. ' + (p.mode==='compound' ? 'This wording says <b>compound</b> — n is the number of compoundings per year.' : 'This wording says <b>simple</b> — no n, just rt.');
+    fb.innerHTML = '<span class="lbl">Locked</span>You found <b>'+p.expect.join('</b>, <b>')+'</b>. ' + (p.mode==='compound' ? 'This wording says <b>compound</b>, n is the number of compoundings per year.' : 'This wording says <b>simple</b>, no n, just rt.');
     document.getElementById('step1-next').disabled = false;
   } else {
     let msg = '<span class="lbl">Not yet</span>';
@@ -499,6 +499,6 @@ document.getElementById('step3-next').addEventListener('click', ()=>{
 
 loadProblem();
 </script>
-  <script src="/shared/ace-shell.js?v=1" defer></script>
+  <script src="/shared/ace-shell.js?v=3" defer></script>
 </body>
 </html>

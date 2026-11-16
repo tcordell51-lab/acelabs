@@ -68,7 +68,7 @@ window.TOPICS = {
     ],
     caption:'Eighths + fifths cover 80% of the test',
     trapH:'<em>Long-dividing</em><br/>memorized fractions.',
-    trapSub:'You waste 30 seconds finding 0.625 by hand. Memorize them — bank the points.',
+    trapSub:'You waste 30 seconds finding 0.625 by hand. Memorize them: bank the points.',
     lockWord:'know<br/><em>the strip.</em>',
     lockDecode:'Eighths: 0, .125, .25, .375, .5, .625, .75, .875, 1. Done.',
     speak:{ hook:"Fraction to decimal. Memorize the strip. Eighths and fifths come up every test.", formula:"One eighth is point one two five. One quarter is point two five. Three eighths is point three seven five.", trap:"Trap. Long-dividing memorized fractions. Wastes thirty seconds.", lock:"Lock it in. Know the strip. Eighths step by zero point one two five." }
@@ -123,7 +123,7 @@ window.TOPICS = {
     tag:'Tier 0 · Percent', title:'Percent Change',
     hookTag:'Percent · Increase or Decrease',
     hookWord:'Multiply<br/><em>by 1 ± p.</em>',
-    hookSub:'Don\'t add the percent — multiply by a factor.',
+    hookSub:'Don\'t add the percent: multiply by a factor.',
     formula:'New = <span class="gold">Old · (1 + p/100)</span> for an increase · <span class="teal">Old · (1 − p/100)</span> for a decrease',
     formulaSub:'Percent change = (New − Old) / Old × 100.',
     bulletsHead:'The plays',
@@ -159,7 +159,7 @@ window.TOPICS = {
     trapH:'<em>Adding</em><br/>percent changes.',
     trapSub:'Up 20 down 20 is NOT back to start. It\'s a 4% net loss. Multiply factors, never add.',
     lockWord:'multiply<br/><em>factors.</em>',
-    lockDecode:'(1+p₁) · (1+p₂) — never (p₁+p₂).',
+    lockDecode:'(1+p₁) · (1+p₂): never (p₁+p₂).',
     speak:{ hook:"Sequential percent changes. Factors multiply. Plus twenty then minus twenty is not zero.", formula:"Final equals start times one plus P one over one hundred, times one plus P two over one hundred.", trap:"Trap. Adding percent changes. Up twenty then down twenty leaves a four percent loss.", lock:"Lock it in. Multiply factors. Never add the percents." }
   },
 
@@ -169,7 +169,7 @@ window.TOPICS = {
     hookWord:'Round<br/><em>to one digit.</em>',
     hookSub:'Land within an order of magnitude.',
     formula:'4823 × 19 ≈ <span class="gold">5000 · 20</span> = 100,000 (exact: 91,637)',
-    formulaSub:'Within ~10% — close enough to pick the right answer.',
+    formulaSub:'Within ~10%: close enough to pick the right answer.',
     bulletsHead:'The plays',
     bullets:[
       'Round each input to its leading digit',
@@ -238,8 +238,8 @@ window.TOPICS = {
     formulaSub:'And in reverse: factor out the GCF.',
     bulletsHead:'The patterns',
     bullets:[
-      '<em>3(x + 2)</em> = 3x + 6 — multiply both terms inside',
-      '<em>−(x − 5)</em> = −x + 5 — sign flips both',
+      '<em>3(x + 2)</em> = 3x + 6: multiply both terms inside',
+      '<em>−(x − 5)</em> = −x + 5: sign flips both',
       'FOIL: <em>(a+b)(c+d)</em> = ac + ad + bc + bd',
       'Reverse: <em>4x + 12 = 4(x + 3)</em>'
     ],
@@ -260,10 +260,10 @@ window.TOPICS = {
     formulaSub:'Same priority? Go left to right.',
     bulletsHead:'The traps',
     bullets:[
-      'M and D are <em>same priority</em> — left to right',
-      'A and S are <em>same priority</em> — left to right',
+      'M and D are <em>same priority</em>, left to right',
+      'A and S are <em>same priority</em>, left to right',
       '<em>2 + 3 · 4</em> = 2 + 12 = 14, not 20',
-      '<em>10 − 4 + 2</em> = 8, not 4 (left to right!)'
+      '<em>10 − 4 + 2</em> = 8, not 4 (left to right)'
     ],
     caption:'P, E, then × ÷ (L→R), then + − (L→R)',
     trapH:'<em>Multiply</em><br/>before divide.',
@@ -380,7 +380,7 @@ window.TOPICS = {
     ],
     caption:'Solute adds; volume adds; ratio = mix',
     trapH:'<em>Averaging</em><br/>concentrations.',
-    trapSub:'Mixing 100mL of 30% with 50mL of 10% is NOT 20%. It\'s 23.3% — weighted by volume.',
+    trapSub:'Mixing 100mL of 30% with 50mL of 10% is NOT 20%. It\'s 23.3%: weighted by volume.',
     lockWord:'weight by<br/><em>volume.</em>',
     lockDecode:'Solute = concentration × volume. Add solute amounts. Add volumes. Divide.',
     speak:{ hook:"Mixture problems. Volume weighted. The midpoint isn't the answer unless volumes are equal.", formula:"C mix equals C one V one plus C two V two, all over V one plus V two.", trap:"Trap. Averaging the concentrations. One hundred mL of thirty percent plus fifty mL of ten percent is twenty three point three percent, not twenty.", lock:"Lock it in. Weight by volume. Solute amounts add." }
@@ -458,12 +458,12 @@ window.TOPICS = {
     hookWord:'Translate<br/><em>phrase by phrase.</em>',
     hookSub:'Each English phrase becomes a math symbol.',
     formula:'\"is\" = <span class="gold">=</span> · \"of\" = <span class="teal">·</span> · \"more than X\" = <span class="warm">X + ___</span> · \"less than X\" = <span class="warm">X − ___</span>',
-    formulaSub:'\"more/less than X\" reverses order — be careful.',
+    formulaSub:'\"more/less than X\" reverses order, be careful.',
     bulletsHead:'The dictionary',
     bullets:[
       '\"is/equals\" → <em>=</em>',
       '\"of\" → <em>×</em>',
-      '\"more than X\" → <em>X + ___</em> (X first!)',
+      '\"more than X\" → <em>X + ___</em> (X first)',
       '\"twice/half\" → <em>×2 / ÷2</em>'
     ],
     caption:'\"more than X\" puts X first',
@@ -482,7 +482,7 @@ window.TOPICS = {
     hookWord:'Independent?<br/><em>Multiply.</em>',
     hookSub:'P(A and B) = P(A) · P(B). No conditioning.',
     formula:'<span class="gold">P(A ∩ B)</span> = P(A) · P(B) · only when independent',
-    formulaSub:'Coin flips, dice rolls — classic independent events.',
+    formulaSub:'Coin flips, dice rolls, classic independent events.',
     bulletsHead:'The plays',
     bullets:[
       'All heads on N flips: <em>(1/2)^N</em>',
@@ -605,7 +605,7 @@ window.TOPICS = {
       'For three+ rates: H = n / (1/a + 1/b + 1/c + …)',
       'Equal time → arithmetic. Equal distance → harmonic.'
     ],
-    caption:'2ab/(a+b) — never the average',
+    caption:'2ab/(a+b), never the average',
     trapH:'<em>Averaging</em><br/>the rates.',
     trapSub:'60 + 40 over 2 = 50, but 50 is wrong. Equal-distance trips spend more time at the slower rate.',
     lockWord:'distance ≠<br/><em>arithmetic.</em>',
@@ -628,7 +628,7 @@ window.TOPICS = {
       'Within ±2σ: <em>95.45%</em>',
       'Within ±3σ: <em>99.73%</em>'
     ],
-    caption:'68 / 95 / 99.7 — memorize',
+    caption:'68 / 95 / 99.7: memorize',
     trapH:'<em>Sign</em><br/>flipped on z.',
     trapSub:'z = (x − μ) / σ. If x < μ, z is negative. Sign matters for the percentile.',
     lockWord:'standardize<br/><em>then look up.</em>',
@@ -694,7 +694,7 @@ window.TOPICS = {
       'Vertical line: slope undefined (Δx = 0)',
       'Perpendicular slopes <em>multiply to −1</em>'
     ],
-    caption:'Rise over run — sign matters',
+    caption:'Rise over run: sign matters',
     trapH:'<em>Δx/Δy</em><br/>flipped.',
     trapSub:'Slope is Δy over Δx, NOT Δx over Δy. Rise comes first.',
     lockWord:'rise<br/><em>over run.</em>',
@@ -806,7 +806,7 @@ window.TOPICS = {
       'First pass: solve fast, mark hard ones to skip',
       'Skip threshold: <em>~90 sec</em> per problem',
       'Pass 2: drain the skip pile with remaining time',
-      'Always answer something — no blanks (no penalty)'
+      'Always answer something: no blanks (no penalty)'
     ],
     caption:'Skip after 90s · two passes · no blanks',
     trapH:'<em>Sunk cost</em><br/>on one problem.',
@@ -834,7 +834,7 @@ window.TOPICS = {
     trapH:'<em>Skipping</em><br/>elimination.',
     trapSub:'Random guess from 5 = 20%. Eliminate to 2 = 50%. Eliminate to 3 = 33%. Always eliminate first.',
     lockWord:'eliminate<br/><em>then guess.</em>',
-    lockDecode:'Units. Magnitude. Sign. Trap pattern. Get to 2 — guess wins half the time.',
+    lockDecode:'Units. Magnitude. Sign. Trap pattern. Get to 2: guess wins half the time.',
     speak:{ hook:"Educated guessing. Five to two doubles your odds. Eliminate before guessing.", formula:"Five choices is twenty percent random. Two choices is fifty percent. Always answer.", trap:"Trap. Skipping elimination. Random guess wastes a doubled odds.", lock:"Lock it in. Eliminate then guess." }
   }
 

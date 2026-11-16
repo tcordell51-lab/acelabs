@@ -786,7 +786,7 @@ body{
     <!-- Next-step handoffs (populated in renderResults) -->
     <div class="diag-weak-section" id="diagNextSteps" style="display:none">
       <h3>What to do next</h3>
-      <p style="font-size:.86rem;color:var(--al-ink-mute);margin-bottom:1rem">Turn this diagnostic into action — start with your weakest section, then rehearse full pacing under real timing.</p>
+      <p style="font-size:.86rem;color:var(--al-ink-mute);margin-bottom:1rem">Turn this diagnostic into action: start with your weakest section, then rehearse full pacing under real timing.</p>
       <div class="diag-result-actions" id="diagHandoffs"></div>
     </div>
 
@@ -1440,9 +1440,9 @@ function renderResults(result){
     const pct = Math.round(d.pct);
     const fillCls = pct >= 70 ? 'fill-good' : pct >= 50 ? 'fill-mid' : 'fill-low';
     const feedbackText = pct >= 80 ? 'Strong performance' :
-                         pct >= 65 ? 'Solid — a few gaps to close' :
-                         pct >= 50 ? 'Almost — review the topics below' :
-                                     'Needs focus — this is a priority area';
+                         pct >= 65 ? 'Solid: a few gaps to close' :
+                         pct >= 50 ? 'Almost: review the topics below' :
+                                     'Needs focus: this is a priority area';
     const card = document.createElement('div');
     card.className = `diag-section-card ${def.cls}`;
     card.innerHTML = `
@@ -1483,7 +1483,7 @@ function renderResults(result){
 
       const feedbackVerb = pct === 0 ? 'No questions answered correctly in this area.' :
                            pct < 40  ? 'Not quite there yet.' :
-                                       'Almost &mdash; a focused review should close the gap.';
+                                       'Almost: a focused review should close the gap.';
 
       const item = document.createElement('div');
       item.className = 'diag-weak-item';
@@ -1524,7 +1524,7 @@ function renderResults(result){
   if(handoffs && nextWrap){
     const parts = [];
     if(eng){
-      parts.push(`<a class="btn-primary" href="${eng.href}">Study ${eng.label} &mdash; your weakest section</a>`);
+      parts.push(`<a class="btn-primary" href="${eng.href}">Study ${eng.label}, your weakest section</a>`);
     }
     parts.push(`<a class="btn-primary" href="prometric-mock.html">Take a full mock next</a>`);
     handoffs.innerHTML = parts.join('');
@@ -1569,8 +1569,8 @@ function retakeDiagnostic(){
   // Don't auto-start; let user click Begin again
 }
 </script>
-  <script src="/shared/ace-index.js?v=2"></script>
-  <script src="/shared/ace-route.js?v=1"></script>
-  <script src="/shared/ace-shell.js?v=1" defer></script>
+  <script src="/shared/ace-index.js?v=3"></script>
+  <script src="/shared/ace-route.js?v=3"></script>
+  <script src="/shared/ace-shell.js?v=3" defer></script>
 </body>
 </html>
