@@ -20,7 +20,7 @@
   }
   function call(q, body) {
     return fetch(FN + (q || ''), { method: body ? 'POST' : 'GET', headers: headers(), credentials: 'same-origin', body: body ? JSON.stringify(body) : undefined })
-      .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { j.status = r.status; return j; }); });
+      .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { j.http = r.status; return j; }); });
   }
   function el(tag, cls, text) { var n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; }
 
@@ -35,10 +35,10 @@
     Array.prototype.forEach.call($('tabs').children, function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-sec') === sec)); });
     $('item').innerHTML = '<p class="br-msg">Loading the queue.</p>';
     return call('?section=' + sec).then(function (j) {
-      if (j.status === 401) return gate('Sign in as the master coach (open Ace Labs from the portal), or paste the review key.', true);
-      if (j.status === 403) return gate('This page is for the master coach only.', false);
-      if (j.status === 503) return gate('The review is not switched on yet: it needs the Ace Labs sign-in on, or the reviewer key set in Netlify.', false);
-      if (!j.ok) return gate('The queue did not load (' + (j.error || j.status) + '). Refresh to try again.', false);
+      if (j.http === 401) return gate('Sign in as the master coach (open Ace Labs from the portal), or paste the review key.', true);
+      if (j.http === 403) return gate('This page is for the master coach only.', false);
+      if (j.http === 503) return gate('The review is not switched on yet: it needs the Ace Labs sign-in on, or the reviewer key set in Netlify.', false);
+      if (!j.ok) return gate('The queue did not load (' + (j.error || j.http) + '). Refresh to try again.', false);
       $('gate').hidden = true; $('board').hidden = false;
       state.list = j.items; state.counts = j.counts; state.seedSize = j.seedSize; state.seedDone = j.seedDone;
       stats(); forms(j.forms);
@@ -50,7 +50,7 @@
   function firstOpen() { return 0; }
   function stats() {
     var c = state.counts || {}, h = $('stats'); h.textContent = '';
-    [['Seeded ' + state.seedSize, state.seedDone + ' decided'], ['Approved', c.approve || 0], ['Fix', c.fix || 0], ['Rejected', c.reject || 0], ['Not reviewed', (c.open || 0) + (c.changed || 0)]].forEach(function (x) {
+    [['of the seeded ' + state.seedSize + ' decided', state.seedDone], ['Approved', c.approve || 0], ['Fix', c.fix || 0], ['Rejected', c.reject || 0], ['Not reviewed', (c.open || 0) + (c.changed || 0)]].forEach(function (x) {
       var s = el('span', 'br-stat'); s.appendChild(el('b', null, String(x[1]))); s.appendChild(document.createTextNode(' ' + x[0])); h.appendChild(s);
     });
   }
@@ -85,7 +85,7 @@
     var row = v[state.pos];
     $('item').innerHTML = '<p class="br-msg">Loading the question.</p>'; setActions(false);
     fetchItem(row.id).then(function (j) {
-      if (!j.ok) { $('item').textContent = 'This question did not load (' + (j.error || j.status) + ').'; return; }
+      if (!j.ok) { $('item').textContent = 'This question did not load (' + (j.error || j.http) + ').'; return; }
       state.item = j; render(j, row); setActions(true);
       var next = v[state.pos + 1]; if (next) fetchItem(next.id);
     });
@@ -100,6 +100,7 @@
     meta.appendChild(el('span', 'br-chip' + (it.conf === 'low' ? ' low' : ''), 'Skill: ' + (it.canonName || it.skillName || it.topic) + (it.conf === 'low' ? ' (low confidence: parent topic only)' : it.conf === 'table' ? ' (keyword table)' : ' (from the item’s own tag)')));
     meta.appendChild(el('span', 'br-chip', 'Difficulty ' + it.difficulty + ' of 3'));
     meta.appendChild(el('span', 'br-chip', it.bankId + ' · ' + it.bank));
+    if (it.figureMissing) meta.appendChild(el('span', 'br-chip low', 'The stem points to a drawing, but none is attached (kept off the new forms)'));
     box.appendChild(meta);
     if (j.passage) {
       var d = el('details', 'br-passage'); d.open = row.part === 'seed' && state.pos === 0;
@@ -131,7 +132,7 @@
     state.busy = true; setActions(false);
     call('', { id: row.id, decision: d, note: note || '' }).then(function (j) {
       state.busy = false;
-      if (!j.ok) { $('item').appendChild(el('p', 'br-err', 'Not saved (' + (j.error || j.status) + '). Try again.')); setActions(true); return; }
+      if (!j.ok) { $('item').appendChild(el('p', 'br-err', 'Not saved (' + (j.error || j.http) + '). Try again.')); setActions(true); return; }
       var prev = row.status; row.status = d; delete state.cache[row.id];
       state.counts[prev] = Math.max(0, (state.counts[prev] || 0) - 1); state.counts[d] = (state.counts[d] || 0) + 1;
       if (row.part === 'seed' && (prev === 'open' || prev === 'changed')) state.seedDone += 1;

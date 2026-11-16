@@ -22,7 +22,7 @@ const END = '# ---- END internal pages ----';
 
 // Whole folders that hold only internal files.
 const INTERNAL_DIRS = [
-  'tests/bio', 'tests/pat', 'tests/shell', 'tests/ochem2026', 'tests/qr-formats', 'tests/signin',
+  'tests/bio', 'tests/pat', 'tests/shell', 'tests/ochem2026', 'tests/qr-formats', 'tests/signin', 'tests/bank',
   'tools/gc/research', 'tools/qr/research',
   'tools/rc/verification', 'tools/rc/scripts',
   'tools/mock/verification', 'tools/minitests/source',

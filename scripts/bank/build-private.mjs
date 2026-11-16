@@ -74,6 +74,8 @@ export function toItem(b, raw, passage) {
     formEligible: raw.form_eligible !== false, version: raw.version || 1
   };
   if (raw.image && raw.image.path) { it.img = svgData(b, raw.image.path); it.imgAlt = raw.image.alt || ''; }
+  // a stem that points at a drawing the item does not carry: flagged for Thomas, kept off the forms
+  it.figureMissing = !it.img && /\b(shown|below|pictured|drawn|the figure|the graph|the chart)\b/i.test(raw.stem) && !/\n/.test(raw.stem) && b !== 'rc';
   // the content hash: an approval holds only while the item still reads exactly like this
   it.hash = crypto.createHash('sha256').update(JSON.stringify([it.stem, it.choices, it.answer, it.why, it.traps, it.img || '', raw.passage_id || ''])).digest('hex').slice(0, 16);
   if (b === 'rc') { it.passageId = raw.passage_id; if (ex.proof_line) it.proof = ex.proof_line; it.topicName = passage ? passage.title : raw.passage_id; }

@@ -53,6 +53,7 @@ export function formEligible(it) {
   if (!Array.isArray(it.choices) || it.choices.length !== 5) return 'not five choices';
   if (!(it.answer >= 0 && it.answer < 5)) return 'no key';
   if (it.formEligible === false) return 'bank marks it off timed forms';
+  if (it.figureMissing) return 'stem points to a drawing the item does not carry';
   return null;
 }
 
