@@ -29,14 +29,14 @@
     <h1 class="aui-h1">Plates: predict, then label</h1>
     <p class="aui-lede">Each plate starts with no labels. Answer the question from the picture first. Then every label draws in, placed in code and checked against the textbook.</p>
   </header>
-  <div class="pl-grid" id="plates" role="list"></div>
+  <div class="pl-grid" id="plates" role="group" aria-label="Plates"></div>
   <div id="q"></div>
   <p class="pl-src" id="src"></p>
   <p class="aui-small">The pictures are made by AI without any words in them; every label and leader is drawn by the site. A picture drawn wrong is thrown out, not patched with labels.</p>
 </main>
 <script src="/shared/ace-ui.js?v=3"></script>
 <script src="/shared/ace-record.js?v=4"></script>
-<script src="/shared/ace-question.js?v=3"></script>
+<script src="/shared/ace-question.js?v=4"></script>
 <script>
 (function () {
   'use strict';
@@ -128,7 +128,7 @@
   }
   var grid = document.getElementById('plates'), cur = 0;
   PLATES.forEach(function (p, i) {
-    var b = document.createElement('button'); b.type = 'button'; b.className = 'pl-card'; b.setAttribute('role', 'listitem');
+    var b = document.createElement('button'); b.type = 'button'; b.className = 'pl-card';
     b.innerHTML = '<img src="' + p.img + '" alt="" loading="lazy" width="200" height="150"><span>' + esc(p.name) + '</span><small>No labels yet</small>';
     b.addEventListener('click', function () { show(i); document.getElementById('q').scrollIntoView({ behavior: 'smooth', block: 'start' }); });
     grid.appendChild(b);

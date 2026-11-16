@@ -50,14 +50,19 @@
 </main>
 <script src="/shared/ace-ui.js?v=3"></script>
 <script src="/shared/ace-record.js?v=4"></script>
-<script src="/shared/ace-question.js?v=3"></script>
+<script src="/shared/ace-question.js?v=4"></script>
 <script type="module">
-import * as THREE from '/shared/three.module.min.js';
 const $ = (id) => document.getElementById(id);
 const data = await fetch('/data/oc-3d.json').then((r) => r.json());
+/* The drawing and the question paint first; three.js (about 700 KB) loads when the browser is idle,
+   so a mid phone can read and answer while the 3D model arrives. */
+let THREE = null, pending = null;
 const COLORS = data.colors, RADII = { H: 0.26, C: 0.42, O: 0.42, N: 0.42, F: 0.38, Cl: 0.5, Br: 0.56 };
 const view = $('view');
-let renderer = null;
+let renderer = null, scene, camera, group, sphere, cyl, sun;
+const mats = {}; const mat = (hex) => mats[hex] || (mats[hex] = new THREE.MeshStandardMaterial({ color: hex, roughness: 0.55, metalness: 0.05 }));
+let atomsNow = [], tags = [];
+function init3d() {
 try {
   const c = document.createElement('canvas');
   if (!(c.getContext('webgl2') || c.getContext('webgl'))) throw new Error('no webgl');
@@ -69,18 +74,18 @@ try {
   const n = document.createElement('div'); n.className = 'nogl'; n.textContent = 'This browser cannot draw 3D (WebGL is off). The drawing, the written form and the question all still work.'; view.appendChild(n);
   $('hint').hidden = true;
 }
-const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(36, 4 / 3, 0.1, 100); camera.position.set(0, 0, 11);
+scene = new THREE.Scene();
+camera = new THREE.PerspectiveCamera(36, 4 / 3, 0.1, 100); camera.position.set(0, 0, 11);
 scene.add(new THREE.AmbientLight(0xffffff, 1.6));
-const sun = new THREE.DirectionalLight(0xffffff, 2.2); sun.position.set(4, 6, 8); scene.add(sun);
-const group = new THREE.Group(); scene.add(group);
-const sphere = new THREE.SphereGeometry(1, 20, 14), cyl = new THREE.CylinderGeometry(0.11, 0.11, 1, 12);
-const mats = {}; const mat = (hex) => mats[hex] || (mats[hex] = new THREE.MeshStandardMaterial({ color: hex, roughness: 0.55, metalness: 0.05 }));
-let atomsNow = [], tags = [];
+sun = new THREE.DirectionalLight(0xffffff, 2.2); sun.position.set(4, 6, 8); scene.add(sun);
+group = new THREE.Group(); scene.add(group);
+sphere = new THREE.SphereGeometry(1, 20, 14); cyl = new THREE.CylinderGeometry(0.11, 0.11, 1, 12);
+}
 
-function size() { if (!renderer) return; const r = view.getBoundingClientRect(); renderer.setSize(r.width, r.height, false); camera.aspect = r.width / r.height; camera.updateProjectionMatrix(); draw(); }
-function draw() { if (!renderer) return; renderer.render(scene, camera); placeTags(); }
+function size() { if (!renderer || !THREE) return; const r = view.getBoundingClientRect(); renderer.setSize(r.width, r.height, false); camera.aspect = r.width / r.height; camera.updateProjectionMatrix(); draw(); }
+function draw() { if (!renderer || !THREE) return; renderer.render(scene, camera); placeTags(); }
 function build(atoms, bonds) {
+  if (!THREE) { pending = () => build(atoms, bonds); return; }
   group.clear(); group.rotation.set(-0.35, 0.5, 0); atomsNow = atoms;
   atoms.forEach((a) => { const m = new THREE.Mesh(sphere, mat(COLORS[a.el] || '#888')); m.scale.setScalar(RADII[a.el] || 0.4); m.position.set(a.x, a.y, a.z); group.add(m); });
   bonds.forEach(([i, j, order]) => {
@@ -98,18 +103,19 @@ function setTags(map) {
   placeTags();
 }
 function placeTags() {
-  if (!renderer) return; const r = view.getBoundingClientRect();
+  if (!renderer || !THREE) return; const r = view.getBoundingClientRect();
   tags.forEach((t) => { const a = atomsNow[t.i]; if (!a) return; const v = new THREE.Vector3(a.x, a.y, a.z).applyMatrix4(group.matrixWorld).project(camera); t.el.style.left = ((v.x + 1) / 2 * r.width) + 'px'; t.el.style.top = ((1 - v.y) / 2 * r.height - 22) + 'px'; });
 }
 // drag to turn
 let drag = null;
 view.addEventListener('pointerdown', (e) => { drag = { x: e.clientX, y: e.clientY }; view.setPointerCapture(e.pointerId); $('hint').hidden = true; });
-view.addEventListener('pointermove', (e) => { if (!drag) return; group.rotation.y += (e.clientX - drag.x) * 0.01; group.rotation.x += (e.clientY - drag.y) * 0.01; drag = { x: e.clientX, y: e.clientY }; group.updateMatrixWorld(); draw(); });
+view.addEventListener('pointermove', (e) => { if (!drag || !group) return; group.rotation.y += (e.clientX - drag.x) * 0.01; group.rotation.x += (e.clientY - drag.y) * 0.01; drag = { x: e.clientX, y: e.clientY }; group.updateMatrixWorld(); draw(); });
 view.addEventListener('pointerup', () => { drag = null; });
 window.addEventListener('resize', size);
 
 /* Turn the model so the lowest priority points straight away from you: the DAT move. */
 function turnAway(center, low) {
+  if (!THREE || !renderer) return;
   const a = atomsNow[center], b = atomsNow[low];
   const v = new THREE.Vector3(b.x - a.x, b.y - a.y, b.z - a.z).normalize();
   const q = new THREE.Quaternion().setFromUnitVectors(v, new THREE.Vector3(0, 0, -1));
@@ -134,7 +140,7 @@ function show(k) {
     item = { id: 'oc:3d:' + it.id, section: 'ochem', topic: 'stereo-3d', topicName: 'R and S', stem: 'Look at ' + it.name + ' (' + it.condensed + ') in 3D and in the drawing. What is the configuration of the highlighted carbon?', choices: CH, answer: ans,
       why: ans === 2 ? 'The carbon carries two identical groups (two methyls), so it is not a stereocenter and has no R or S.' : 'Rank the four groups by atomic number at the first point of difference: that gives 1 to 4. Turn the model so 4 points away from you. 1 to 2 to 3 runs ' + (it.answer === 'R' ? 'clockwise: R.' : 'counterclockwise: S.') + ' The 3D model and the drawing are the same molecule, so they always agree, and the sign of optical rotation is measured, not predicted from R or S.',
       steps: ans === 2 ? ['List the four groups on the carbon.', 'Two of them are the same.', 'No stereocenter, no R or S.'] : ['Number the groups 1 to 4 by atomic number, then the next atoms out.', 'Turn the lowest priority, 4, away from you.', 'Trace 1 to 2 to 3: clockwise is R, counterclockwise is S.'] };
-    if (it.center != null && renderer) {
+    if (it.center != null) {
       const low = Object.keys(it.priority).find((i) => it.priority[i] === 4);
       const btn = document.createElement('button'); btn.type = 'button'; btn.className = 'aui-btn aui-btn--quiet'; btn.textContent = 'Turn group 4 away'; btn.disabled = true;
       btn.addEventListener('click', () => turnAway(it.center, +low)); $('tools').appendChild(btn);
@@ -157,7 +163,9 @@ function show(k) {
     onNext: () => show((k + 1) % data.items.length) });
   size();
 }
-size(); show(0);
+show(0);
+const load = () => import('/shared/three.module.min.js').then((m) => { THREE = m; init3d(); size(); if (pending) { const p = pending; pending = null; p(); } else size(); }).catch(() => { $('hint').hidden = true; });
+if ('requestIdleCallback' in window) requestIdleCallback(load, { timeout: 1500 }); else setTimeout(load, 300);
 </script>
 </body>
 </html>

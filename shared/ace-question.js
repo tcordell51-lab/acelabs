@@ -98,7 +98,7 @@
 
     var list = el('ul', 'aui-q__choices'); list.setAttribute('role', 'radiogroup'); list.setAttribute('aria-labelledby', stemId);
     var buttons = item.choices.map(function (text, i) {
-      var li = el('li'), b = el('button', 'aui-q__choice');
+      var li = el('li'), b = el('button', 'aui-q__choice'); li.setAttribute('role', 'none');
       b.type = 'button'; b.setAttribute('role', 'radio'); b.setAttribute('aria-checked', 'false'); b.tabIndex = i === 0 ? 0 : -1;
       b.appendChild(el('span', 'aui-q__letter', LETTERS[i]));
       b.appendChild(el('span', 'aui-q__text', text));
