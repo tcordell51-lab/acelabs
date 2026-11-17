@@ -52,9 +52,6 @@ function gchem() {
 
 // Alt text for the Climb's drawn QR figures (read from each SVG's labels).
 const CLIMB_FIG_ALT = {
-  'qr:climb-gw7c8n': 'Right triangle with angle theta marked; the side opposite theta is labeled 3 and the hypotenuse is labeled 5.',
-  'qr:climb-1xxz1t': 'Right triangle with angle theta marked; the side opposite theta is labeled 6, the hypotenuse 10, and the adjacent side is marked with a question mark.',
-  'qr:climb-1srekp9': 'Right triangle ABC with the right angle at C; side BC, opposite angle A, is labeled 3 and hypotenuse AB is labeled 5.',
   'qr:climb-aq83c8': 'A cylinder of radius 3 and height 10 with a hemisphere of the same radius sitting on top.',
   'qr:climb-cdsj5b': 'A sphere inside a cylinder, touching the curved side and both circular ends.'
 };

@@ -97,7 +97,7 @@ if (problems.length) {
   console.error(`${problems.length} problem(s):\n  ${problems.join('\n  ')}`);
   process.exit(1);
 }
-const head = '/* Mini-Test Bank (window.MINITEST_BANK) - 10 tests x 40 questions (Bio/GChem/OChem/QR),\n'
+const head = '/* Mini-Test Bank (window.MINITEST_BANK) - 10 tests x 39 questions (Bio/GChem/OChem 10 each, QR 9; trig dropped 2026-11-16),\n'
     + '   difficulty tiers 1-10, authored + adversarially verified. Do not hand-edit; regenerate via assemble-minitests.mjs. */\n';
 const body = `${head}window.MINITEST_BANK = ${JSON.stringify(bank)};\n`;
 if (CHECK) {
