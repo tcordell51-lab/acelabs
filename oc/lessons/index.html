@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OChem lessons · Ace Labs</title>
+<meta name="description" content="Short visual OChem lessons: one idea, one drawing, the tie to the rest of organic, the three traps, and a three-question check.">
+<link rel="icon" type="image/svg+xml" href="/shared/ace-dat-mark.svg">
+<link rel="stylesheet" href="/shared/ace-ui.css?v=8">
+<style>
+  .ocl { max-width: 430px; margin: 0 auto; }
+  .ocl-top { display: flex; align-items: center; justify-content: space-between; gap: var(--aui-2); }
+  .ocl-dots { display: flex; gap: 6px; margin: var(--aui-2) 0 var(--aui-3); }
+  .ocl-dots button { flex: 1; height: 6px; border: 0; border-radius: 3px; background: var(--aui-line); padding: 0; cursor: pointer; }
+  .ocl-dots button[aria-current="step"] { background: var(--aui-forest); }
+  .ocl-dots button.is-done { background: var(--aui-gold); }
+  .ocl-screen { min-height: 52vh; }
+  .ocl-k { font-size: var(--aui-t-xs); font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--aui-gold-ink); margin: 0 0 6px; }
+  .ocl-idea { font: 600 26px/1.28 var(--aui-display); color: var(--aui-ink); margin: var(--aui-3) 0 var(--aui-4); }
+  .ocl-fig { background: #FFFDF7; border: 1px solid var(--aui-line); border-radius: var(--aui-r); padding: 8px; display: grid; gap: 6px; }
+  .ocl-fig--grid2 { grid-template-columns: 1fr 1fr; }
+  .ocl-fig figure { margin: 0; min-width: 0; }
+  .ocl-fig .wide { grid-column: 1 / -1; }
+  .ocl-fig svg { display: block; width: 100%; height: auto; max-width: 340px; margin: 0 auto; }
+  .ocl-fig figcaption { font-size: var(--aui-t-xs); color: var(--aui-ink-2); text-align: center; line-height: 1.35; padding: 0 2px 4px; }
+  .ocl-fig figcaption b { display: block; color: var(--aui-ink); font-weight: 700; }
+  .ocl-cap { font-size: var(--aui-t-sm); color: var(--aui-ink-2); line-height: 1.5; margin: var(--aui-3) 0; }
+  .ocl-move { margin: 0; padding-left: 1.3em; font-size: var(--aui-t-sm); line-height: 1.5; color: var(--aui-ink); }
+  .ocl-move li { margin: 0 0 4px; }
+  .ocl-cardio { display: grid; grid-template-columns: repeat(6, 1fr); gap: 5px; margin: var(--aui-2) 0 var(--aui-3); }
+  .ocl-cardio span { display: grid; place-items: center; height: 46px; border-radius: 8px; border: 1px solid var(--aui-line); background: var(--aui-paper); font: 700 20px var(--aui-font); color: #9aa39c; }
+  .ocl-cardio span small { font: 600 9px var(--aui-font); letter-spacing: .02em; margin-top: -10px; }
+  .ocl-cardio span.on { background: #E9C46A; border-color: #c9b98d; color: var(--aui-ink); }
+  .ocl-links { display: flex; flex-wrap: wrap; gap: 6px; margin-top: var(--aui-3); }
+  .ocl-links a, .ocl-links span { font-size: var(--aui-t-xs); font-weight: 600; padding: 6px 10px; border-radius: 999px; border: 1px solid var(--aui-line-2); color: var(--aui-ink); text-decoration: none; background: var(--aui-paper); }
+  .ocl-links span { color: var(--aui-ink-3); border-style: dashed; }
+  .ocl-trap { border-left: 4px solid #B4462B; padding: 10px 12px; background: var(--aui-paper); border-radius: 0 var(--aui-r-sm) var(--aui-r-sm) 0; margin: 0 0 var(--aui-3); }
+  .ocl-trap h3 { font-size: var(--aui-t-md); margin: 0 0 4px; }
+  .ocl-trap p { margin: 0; font-size: var(--aui-t-sm); line-height: 1.5; color: var(--aui-ink-2); }
+  .ocl-trap p.ex { margin-top: 6px; color: var(--aui-ink); }
+  .ocl-nav { display: flex; gap: var(--aui-2); padding: var(--aui-4) 0 var(--aui-3); }
+  .ocl-nav .aui-btn { flex: 1; }
+  .ocl-empty { font-size: var(--aui-t-sm); color: var(--aui-ink-2); background: var(--aui-paper); border: 1px dashed var(--aui-line-2); border-radius: var(--aui-r); padding: 12px; line-height: 1.5; }
+  .ocl-clip { font-size: var(--aui-t-xs); color: var(--aui-ink-3); border: 1px dashed var(--aui-line-2); border-radius: var(--aui-r-sm); padding: 8px 10px; margin-top: var(--aui-3); }
+  .ocl-unit { margin: var(--aui-5) 0 var(--aui-2); }
+  .ocl-card { display: block; text-decoration: none; color: inherit; }
+  .ocl-card .n { font-size: var(--aui-t-xs); font-weight: 700; color: var(--aui-gold-ink); letter-spacing: .08em; text-transform: uppercase; }
+  .ocl-card h3 { margin: 2px 0 4px; }
+</style>
+</head>
+<body class="aui">
+<main class="aui-wrap aui-stack ocl" id="main">
+  <div id="list" class="aui-stack" hidden>
+    <header class="aui-stack">
+      <p class="aui-kicker">Organic Chemistry · Lessons</p>
+      <h1 class="aui-h1">One idea at a time</h1>
+      <p class="aui-lede">Each lesson is five short screens: the idea, the drawing, how it ties to the rest of organic, the three traps, then three questions.</p>
+    </header>
+    <div id="units"></div>
+  </div>
+
+  <div id="lesson" class="aui-stack" hidden>
+    <div class="ocl-top">
+      <p class="aui-kicker" id="kicker">Lesson</p>
+      <a class="aui-btn aui-btn--quiet aui-btn--sm" href="/oc/lessons/">All lessons</a>
+    </div>
+    <h1 class="aui-h2" id="title" style="margin:0"></h1>
+    <div class="ocl-dots" id="dots" role="tablist" aria-label="Lesson screens"></div>
+    <section class="ocl-screen" id="screen" aria-live="polite"></section>
+    <div class="ocl-nav">
+      <button class="aui-btn aui-btn--quiet" type="button" id="back">Back</button>
+      <button class="aui-btn" type="button" id="next">Next</button>
+    </div>
+  </div>
+</main>
+<script src="/shared/ace-ui.js?v=4"></script>
+<script src="/shared/ace-skills.js?v=2"></script>
+<script src="/shared/ace-record.js?v=6"></script>
+<script src="/shared/ace-question.js?v=8"></script>
+<script>
+(function () {
+  'use strict';
+  var $ = function (id) { return document.getElementById(id); };
+  var params = new URLSearchParams(location.search);
+  var SCREENS = ['The idea', 'See it', 'Connect', 'Traps', 'Check'];
+  var CARDIO = [['C', 'Charge'], ['A', 'Atom'], ['R', 'Resonance'], ['D', 'Dipole'], ['I', 'Induction'], ['O', 'Orbital']];
+  /* names for the subtopic ids proposed in the blueprint that are not in ace-skills.js yet */
+  var PROPOSED = { oc_bronsted_lowry: 'Bronsted-Lowry acids and bases', oc_extraction: 'Acid-base extraction', oc_recrystallization: 'Recrystallization', oc_distillation: 'Distillation', oc_multi_spectra: 'Combined spectra', oc_alcohol_to_halide: 'Alcohols to alkyl halides', oc_carbonyl_deoxygenation: 'Clemmensen and Wolff-Kishner', oc_multistep_synthesis: 'Multi-step synthesis', oc_chemoselectivity: 'Reactivity across functional groups' };
+  var POOL = '/.netlify/functions/' + 'ace-bank-pool';
+  var data, lesson, at = 0, done = {};
+
+  function el(tag, cls, text) { var n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; }
+  function nameOf(id) { return (window.AceSkills && window.AceSkills.name(id)) || PROPOSED[id] || id; }
+  function byId(id) { return data.lessons.filter(function (l) { return l.id === id; })[0] || null; }
+  function href(id, s) { return '/oc/lessons/?id=' + encodeURIComponent(id) + (s ? '&s=' + s : ''); }
+
+  /* ---------- the list ---------- */
+  function drawList() {
+    $('list').hidden = false; $('lesson').hidden = true;
+    var host = $('units'); host.textContent = '';
+    data.units.forEach(function (u) {
+      var ls = data.lessons.filter(function (l) { return l.unit === u.n; }).sort(function (a, b) { return a.order - b.order; });
+      host.appendChild(el('h2', 'aui-h2 ocl-unit', 'Unit ' + u.n + '. ' + u.title));
+      var box = el('div', 'aui-stack');
+      ls.forEach(function (l) {
+        var a = el('a', 'aui-card aui-card--flat ocl-card'); a.href = href(l.id); a.setAttribute('data-lesson', l.id);
+        a.appendChild(el('span', 'n', 'Lesson ' + l.order));
+        a.appendChild(el('h3', 'aui-h3', l.title));
+        a.appendChild(el('p', 'aui-small', l.idea));
+        box.appendChild(a);
+      });
+      host.appendChild(box);
+    });
+  }
+
+  /* ---------- one lesson ---------- */
+  function figure(f) {
+    var box = el('div', 'ocl-fig' + (f.layout === 'grid2' ? ' ocl-fig--grid2' : ''));
+    f.panels.forEach(function (p) {
+      var fig = el('figure', p.wide ? 'wide' : null);
+      fig.innerHTML = p.svg;   /* built by scripts/build-oc-lessons.py from RDKit, no user input */
+      if (p.label || p.sub) {
+        var cap = el('figcaption');
+        if (p.label) cap.appendChild(el('b', null, p.label));
+        if (p.sub) cap.appendChild(document.createTextNode(p.sub));
+        fig.appendChild(cap);
+      }
+      box.appendChild(fig);
+    });
+    return box;
+  }
+
+  function screenIdea(s) {
+    s.appendChild(el('p', 'ocl-k', 'The one idea'));
+    s.appendChild(el('p', 'ocl-idea', lesson.idea));
+    s.appendChild(el('p', 'aui-small', 'Read it, then say it back in your own words before you go on.'));
+  }
+  function screenSee(s) {
+    s.appendChild(el('p', 'ocl-k', 'See it'));
+    s.appendChild(figure(lesson.figure));
+    s.appendChild(el('p', 'ocl-cap', lesson.visual.caption));
+    s.appendChild(el('p', 'ocl-k', 'The move'));
+    var ol = el('ol', 'ocl-move'); lesson.steps.forEach(function (x) { ol.appendChild(el('li', null, x)); }); s.appendChild(ol);
+    /* video slot: filled when the clip or recording is ready (blueprint section C2). Shown with ?slots=1. */
+    var c = lesson.clip || {};
+    var slot = el('div', 'ocl-clip', 'Video slot. ' + (c.useNow ? 'Stopgap clip ' + c.useNow + ' (' + c.status + '), ' : 'No usable clip yet, ') + 'recording ' + (c.record || 'none') + '.');
+    slot.setAttribute('data-clip', c.useNow || ''); slot.setAttribute('data-record', c.record || '');
+    slot.hidden = params.get('slots') !== '1';
+    s.appendChild(slot);
+  }
+  function screenConnect(s) {
+    var c = lesson.connect;
+    s.appendChild(el('p', 'ocl-k', c.letters.length ? 'Connect: CARDIO' : 'Connect'));
+    if (c.letters.length) {
+      var strip = el('div', 'ocl-cardio'); strip.setAttribute('aria-label', 'CARDIO letters that apply: ' + c.letters.join(', '));
+      CARDIO.forEach(function (L) { var b = el('span', c.letters.indexOf(L[0]) >= 0 ? 'on' : null); b.appendChild(document.createTextNode(L[0])); b.appendChild(el('small', null, L[1])); strip.appendChild(b); });
+      s.appendChild(strip);
+    }
+    s.appendChild(el('p', 'aui-p', c.text));
+    var links = el('div', 'ocl-links');
+    c.links.forEach(function (id) {
+      var built = byId(id), n;
+      if (built) { n = el('a', null, nameOf(id)); n.href = href(id); } else { n = el('span', null, nameOf(id)); n.title = 'Lesson coming'; }
+      links.appendChild(n);
+    });
+    s.appendChild(links);
+  }
+  function screenTraps(s) {
+    s.appendChild(el('p', 'ocl-k', 'The three traps'));
+    lesson.traps.forEach(function (tr) {
+      var box = el('div', 'ocl-trap'); box.setAttribute('data-family', tr.family);
+      box.appendChild(el('h3', null, tr.name));
+      box.appendChild(el('p', null, tr.fix));
+      if (tr.example) box.appendChild(el('p', 'ex', tr.example));
+      s.appendChild(box);
+    });
+  }
+
+  var poolCache = null, publicCache = null;
+  /* The approved private-bank pool: { items, status } where status is 'ok', 'signin' (no session)
+     or 'off' (sign-in switched off, or the function is not reachable, as on a local preview). */
+  function getPool() {
+    if (poolCache) return poolCache;
+    poolCache = fetch(POOL, { credentials: 'same-origin' }).then(function (r) {
+      if (r.status === 401) return { items: [], status: 'signin' };
+      if (!r.ok) return { items: [], status: 'off' };
+      return r.json().then(function (j) { return { items: j.items || [], status: j.reason === 'sign_in_off' ? 'off' : 'ok' }; });
+    }).catch(function () { return { items: [], status: 'off' }; });
+    return poolCache;
+  }
+  function getPublic() {
+    if (publicCache) return publicCache;
+    publicCache = fetch('/data/ochem.json').then(function (r) { return r.json(); }).then(function (j) { return j.items || []; }).catch(function () { return []; });
+    return publicCache;
+  }
+  /* The three check items, ids only in the lesson file: first the lesson's own bank ids once
+     Thomas has approved them (private pool, signed in), then the hand-picked public items. */
+  function checkItems() {
+    var ids = (lesson.check && lesson.check.ids) || [], pubIds = (lesson.check && lesson.check.publicIds) || [];
+    return Promise.all([getPool(), getPublic()]).then(function (r) {
+      var pool = r[0].items, pub = r[1];
+      var find = function (list, id) { return list.filter(function (it) { return it.id === id; })[0]; };
+      var got = ids.map(function (id) { return find(pool, id); }).filter(Boolean);
+      pubIds.forEach(function (id) { var it = find(pub, id); if (it && got.length < 3) got.push(it); });
+      var hasSkill = pub.some(function (it) { return it.skill === lesson.id; });
+      return { items: got.slice(0, 3), status: r[0].status, waiting: ids.length - got.filter(function (it) { return ids.indexOf(it.id) >= 0; }).length, hasSkill: hasSkill };
+    });
+  }
+  function screenCheck(s) {
+    s.appendChild(el('p', 'ocl-k', 'Check: three questions'));
+    var host = el('div'); s.appendChild(host);
+    var after = el('div', 'aui-stack'); after.style.marginTop = '12px';
+    var prac = el('a', 'aui-btn aui-btn--quiet', 'Practice this subtopic'); prac.setAttribute('data-skill', lesson.id); prac.href = '/oc/';
+    s.appendChild(after);
+    host.appendChild(el('p', 'aui-small', 'Loading the questions.'));
+    checkItems().then(function (res) {
+      host.textContent = '';
+      if (res.hasSkill) prac.href = '/oc/?skill=' + encodeURIComponent(lesson.id); else prac.textContent = 'Open the OChem hub';
+      var note = null;
+      if (res.waiting > 0 && res.status === 'signin') note = 'Sign in to Ace Labs to get the questions written for this lesson.';
+      else if (res.waiting > 0 && res.items.length < 3) note = 'More questions for this lesson open after they are checked.';
+      if (!res.items.length) {
+        host.appendChild(el('p', 'ocl-empty', (note ? note + ' ' : '') + 'Until then, the OChem hub and Repair cover the topics around this one.'));
+        after.appendChild(prac);
+        return;
+      }
+      if (note) after.appendChild(el('p', 'aui-small', note));
+      after.appendChild(prac);
+      var items = res.items, k = 0;
+      (function one() {
+        var item = items[k];
+        window.AceQuestion.mount(host, item, { number: k + 1, total: items.length, label: lesson.title, confidence: true, nextLabel: k + 1 < items.length ? 'Next question' : 'Finish',
+          onAnswer: function (r) { if (window.AceRecord) window.AceRecord.record({ item: item, picked: r.picked, answer: r.answer, ok: r.ok, ms: r.ms, src: 'oc-lesson', first: r.first, changes: r.changes, change: r.change, conf: r.conf, tool: 'lab' }); },
+          onNext: function () { k += 1; if (k < items.length) one(); else { host.textContent = ''; host.appendChild(el('p', 'aui-p', 'Check done. Misses are in Repair, and they come back as new versions.')); } } });
+      })();
+    });
+  }
+
+  var DRAW = [screenIdea, screenSee, screenConnect, screenTraps, screenCheck];
+  function show(k) {
+    at = Math.max(0, Math.min(SCREENS.length - 1, k));
+    var s = $('screen'); s.textContent = '';
+    DRAW[at](s);
+    done[at] = true;
+    [].forEach.call($('dots').children, function (b, i) { b.setAttribute('aria-current', i === at ? 'step' : 'false'); b.classList.toggle('is-done', !!done[i] && i !== at); });
+    $('back').disabled = at === 0;
+    var next = nextLesson();
+    $('next').textContent = at < SCREENS.length - 1 ? 'Next: ' + SCREENS[at + 1] : (next ? 'Next lesson' : 'All lessons');
+    var u = new URL(location.href); u.searchParams.set('s', at + 1); history.replaceState(null, '', u);
+  }
+  function nextLesson() {
+    var list = data.lessons.slice().sort(function (a, b) { return a.unit - b.unit || a.order - b.order; });
+    var i = list.indexOf(lesson); return list[i + 1] || null;
+  }
+  function drawLesson() {
+    $('list').hidden = true; $('lesson').hidden = false;
+    var inUnit = data.lessons.filter(function (l) { return l.unit === lesson.unit; }).length;
+    $('kicker').textContent = 'Unit ' + lesson.unit + ' · Lesson ' + lesson.order + ' of ' + inUnit;
+    $('title').textContent = lesson.title;
+    document.title = lesson.title + ' · OChem lessons · Ace Labs';
+    var dots = $('dots'); dots.textContent = '';
+    SCREENS.forEach(function (n, i) { var b = el('button'); b.type = 'button'; b.setAttribute('aria-label', n); b.addEventListener('click', function () { show(i); window.scrollTo(0, 0); }); dots.appendChild(b); });
+    $('back').onclick = function () { show(at - 1); window.scrollTo(0, 0); };
+    $('next').onclick = function () {
+      if (at < SCREENS.length - 1) { show(at + 1); window.scrollTo(0, 0); return; }
+      var n = nextLesson(); location.href = n ? href(n.id) : '/oc/lessons/';
+    };
+    document.addEventListener('keydown', function (e) {
+      if (e.target && /INPUT|TEXTAREA|BUTTON/.test(e.target.tagName) && e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+      if (at === 4) return;   /* the question owns the keyboard on the check screen */
+      if (e.key === 'ArrowRight') $('next').click(); else if (e.key === 'ArrowLeft' && at > 0) $('back').click();
+    });
+    show((parseInt(params.get('s'), 10) || 1) - 1);
+  }
+
+  fetch('/data/oc-lessons.json').then(function (r) { return r.json(); }).then(function (j) {
+    data = j;
+    lesson = params.get('id') ? byId(params.get('id')) : null;
+    if (lesson) drawLesson(); else drawList();
+  }).catch(function () { $('list').hidden = false; $('units').appendChild(el('p', 'ocl-empty', 'The lessons did not load. Check your connection and reload the page.')); });
+})();
+</script>
+<script src="/shared/ace-tabs.js?v=3" defer></script>
+</body>
+</html>

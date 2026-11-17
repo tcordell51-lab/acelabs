@@ -8,7 +8,8 @@
 
    Expected ids: hub, run, stage, run-title, lede, topics, btn-miss, btn-due,
    s-answers, s-right, s-due, s-miss.
-   Addresses: ?run=daily | misses | due, ?topic=<topic id>. */
+   Addresses: ?run=daily | misses | due, ?topic=<topic id>, ?skill=<canonical subtopic id>
+   (a set on one subtopic, e.g. ?skill=oc_pka, used by the OChem lessons). */
 (function () {
   'use strict';
   if (window.AceHub) return;
@@ -45,16 +46,18 @@
 
     function start(run) {
       $('hub').hidden = true; $('run').hidden = false;
-      var name = run.topic ? (items.filter(function (i) { return i.topic === run.topic; })[0] || {}).topicName : null;
+      var pool = run.skill ? items.filter(function (i) { return i.skill === run.skill; }) : items;
+      var name = run.skill ? (pool[0] || {}).skillName : run.topic ? (items.filter(function (i) { return i.topic === run.topic; })[0] || {}).topicName : null;
       $('run-title').textContent = o.name + ': ' + (run.mode === 'misses' ? 'miss review' : run.mode === 'due' ? 'spaced repeats' : name ? name : 'today’s set');
-      window.AceSet.run($('stage'), items, { mode: run.mode, section: o.section, topic: run.topic, size: run.topic ? (o.topicSize || 8) : (o.setSize || 10), src: o.src || o.section, homeHref: o.home, homeLabel: 'Back to ' + o.name });
+      window.AceSet.run($('stage'), pool, { mode: run.mode, section: o.section, topic: run.topic, size: run.topic || run.skill ? (o.topicSize || 8) : (o.setSize || 10), src: o.src || o.section, homeHref: o.home, homeLabel: 'Back to ' + o.name });
       window.scrollTo(0, 0);
     }
 
     return window.AceSet.load(o.bank).then(function (bank) {
       items = bank.items;
-      var run = params.get('run'), topic = params.get('topic');
-      if (topic && items.some(function (i) { return i.topic === topic; })) start({ mode: 'topic', topic: topic });
+      var run = params.get('run'), topic = params.get('topic'), skill = params.get('skill');
+      if (skill && items.some(function (i) { return i.skill === skill; })) start({ mode: 'topic', skill: skill });
+      else if (topic && items.some(function (i) { return i.topic === topic; })) start({ mode: 'topic', topic: topic });
       else if (run === 'daily' || run === 'misses' || run === 'due') start({ mode: run });
       else drawHub();
       return items;
