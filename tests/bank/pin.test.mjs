@@ -27,9 +27,9 @@ const seedOf = (sections) => Object.fromEntries(SECS.map((s) => [s, sections[s].
 const formsOf = (forms) => forms.map((f) => ({ id: f.id, sections: f.sections, rc: f.rc && f.rc.passages ? { passages: f.rc.passages } : f.rc }));
 
 // Approved swaps since 27a5aaf (pin.json "swaps"): trig items out of the pinned set (Thomas, 2026-11-17).
-const APPROVED_SWAPS = [{ out: 'qr:qr-geo-0005', in: 'qr:qr-geo-0007' }];
+const APPROVED_SWAPS = [{ out: 'qr:qr-geo-0005', in: 'qr:qr-geo-0007' }, { out: 'qr:qr-geo-0004', in: 'qr:qr-alg-0081' }];
 const SEED_SHA_PINNED = '2a60be0bd38ce99afd8a90bbba63b168d1321e42992d74e8bf88099ea8b5e5ba';
-const FORMS_SHA_PINNED = '7b8e0035e431fc41c5117d3f3c0794fa30e845061886534d141f427787983037';
+const FORMS_SHA_PINNED = '1ba15d651d4e59e82bd0863328888f81f62eb8cbc099c86a756d109ecc66f1c7';
 const undoSwaps = (x) => { let j = JSON.stringify(x); for (const s of APPROVED_SWAPS) j = j.split(JSON.stringify(s.in)).join(JSON.stringify(s.out)); return JSON.parse(j); };
 
 test('pin.json is the 27a5aaf review set with only the approved swaps', () => {
