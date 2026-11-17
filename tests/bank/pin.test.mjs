@@ -1,5 +1,6 @@
 // The pinned review set (Thomas, 2026-11-16): the seeded 50 per section and the six forms stay
-// exactly the ids committed at 27a5aaf (PR #19), whatever a bank changes in difficulty or tags.
+// exactly the ids committed at 27a5aaf (PR #19), whatever a bank changes in difficulty or tags,
+// apart from swaps Thomas approves by id (APPROVED_SWAPS below).
 // Ids only: nothing here reads or prints question text.
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -25,14 +26,27 @@ const sha = (x) => crypto.createHash('sha256').update(JSON.stringify(x)).digest(
 const seedOf = (sections) => Object.fromEntries(SECS.map((s) => [s, sections[s].seed]));
 const formsOf = (forms) => forms.map((f) => ({ id: f.id, sections: f.sections, rc: f.rc && f.rc.passages ? { passages: f.rc.passages } : f.rc }));
 
-test('pin.json holds the 250 seed ids and the six forms committed at 27a5aaf', () => {
+// Approved swaps since 27a5aaf (pin.json "swaps"): trig items out of the pinned set (Thomas, 2026-11-17).
+const APPROVED_SWAPS = [{ out: 'qr:qr-geo-0005', in: 'qr:qr-geo-0007' }];
+const SEED_SHA_PINNED = '2a60be0bd38ce99afd8a90bbba63b168d1321e42992d74e8bf88099ea8b5e5ba';
+const FORMS_SHA_PINNED = '7b8e0035e431fc41c5117d3f3c0794fa30e845061886534d141f427787983037';
+const undoSwaps = (x) => { let j = JSON.stringify(x); for (const s of APPROVED_SWAPS) j = j.split(JSON.stringify(s.in)).join(JSON.stringify(s.out)); return JSON.parse(j); };
+
+test('pin.json is the 27a5aaf review set with only the approved swaps', () => {
   const pin = loadPin();
   assert.ok(pin, 'scripts/bank/pin.json is missing');
   for (const s of SECS) assert.equal(pin.seed[s].length, 50, s + ' seed is not 50');
   assert.equal(new Set(Object.values(pin.seed).flat()).size, 250);
   assert.equal(pin.forms.length, 6);
-  assert.equal(sha(pin.seed), SEED_SHA_27A5AAF, 'the pinned seed moved');
-  assert.equal(sha(formsOf(pin.forms)), FORMS_SHA_27A5AAF, 'the pinned forms moved');
+  assert.deepEqual((pin.swaps || []).map((s) => ({ out: s.out, in: s.in })), APPROVED_SWAPS);
+  assert.equal(sha(pin.seed), SEED_SHA_PINNED, 'the pinned seed moved');
+  assert.equal(sha(formsOf(pin.forms)), FORMS_SHA_PINNED, 'the pinned forms moved');
+  // undo the swaps and the set is byte-for-byte the one committed at 27a5aaf
+  assert.equal(sha(undoSwaps(pin.seed)), SEED_SHA_27A5AAF);
+  assert.equal(sha(undoSwaps(formsOf(pin.forms))), FORMS_SHA_27A5AAF);
+  // a replacement was never already in the set
+  const before = JSON.stringify(undoSwaps(pin.forms)) + JSON.stringify(undoSwaps(pin.seed));
+  for (const s of APPROVED_SWAPS) assert.ok(!before.includes(JSON.stringify(s.in)), s.in + ' was already in the set');
 });
 
 test('the committed forms.json and review-queue.json match the pin', () => {
@@ -104,9 +118,9 @@ test('with all five bank PR heads checked out, the build keeps the 250 seed ids 
     const r = build({ banks: h.dir, regenerate: false, pin });
     assert.equal(r.pinned, true);
     assert.deepEqual(seedOf(r.queue.sections), pin.seed);
-    assert.equal(sha(seedOf(r.queue.sections)), SEED_SHA_27A5AAF);
+    assert.equal(sha(seedOf(r.queue.sections)), SEED_SHA_PINNED);
     assert.deepEqual(formsOf(r.forms), formsOf(pin.forms));
-    assert.equal(sha(formsOf(r.forms)), FORMS_SHA_27A5AAF);
+    assert.equal(sha(formsOf(r.forms)), FORMS_SHA_PINNED);
     // the per-item subtopic the bank PRs added is read (canon in Bio and QR, subtopic in OChem)
     assert.ok(r.declared.used >= 150, 'stated subtopics read: ' + r.declared.used);
     assert.deepEqual(r.declared.unknown, []);
