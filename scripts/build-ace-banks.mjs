@@ -24,6 +24,8 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const Skills = createRequire(import.meta.url)(path.join(ROOT, 'shared/ace-skills.js'));
 function withSkill(it) {
   const t = Skills.tag(it);
+  // a source item that states its portal subtopic outright (canon) overrides the keyword guess
+  if (it.canon && Skills.names[it.canon]) Object.assign(t, { canon: it.canon, skill: it.canon, skillName: Skills.names[it.canon][0], topicId: Skills.names[it.canon][1], conf: 'meta' });
   return Object.assign(it, { skill: t.skill, skillName: t.skillName, canon: t.canon, topicId: t.topicId, conf: t.conf });
 }
 const read = (f) => fs.readFileSync(path.join(ROOT, f), 'utf8');
@@ -48,14 +50,23 @@ function gchem() {
   return { name: 'gchem', source: 'games/gchem.json', items: out, skipped };
 }
 
+// Alt text for the Climb's drawn QR figures (read from each SVG's labels).
+const CLIMB_FIG_ALT = {
+  'qr:climb-aq83c8': 'A cylinder of radius 3 and height 10 with a hemisphere of the same radius sitting on top.',
+  'qr:climb-cdsj5b': 'A sphere inside a cylinder, touching the curved side and both circular ends.'
+};
 function qrClimb() {
   const w = {}; vm.runInContext(read('tools/minitests/bank.js'), vm.createContext({ window: w }));
   const out = [], skipped = [];
   for (const t of w.MINITEST_BANK.tests) for (const q of t.questions) {
     if (q.section !== 'qr') continue;
     if (!Array.isArray(q.choices) || q.choices.length !== 5 || !q.explanation) { skipped.push(q.stem.slice(0, 40)); continue; }
-    out.push({ id: 'qr:climb-' + hash(q.stem), section: 'qr', topic: slug(q.topic), topicName: clean(q.topic).replace(/ & /g, ' and ').replace(/\s*\(.*\)$/, ''),
-      difficulty: t.tier, stem: clean(q.stem), choices: q.choices.map(clean), answer: q.correct, why: clean(q.explanation) });
+    const id = 'qr:climb-' + hash(q.stem);
+    const it = { id, section: 'qr', topic: slug(q.topic), topicName: clean(q.topic).replace(/ & /g, ' and ').replace(/\s*\(.*\)$/, ''),
+      difficulty: t.tier, stem: clean(q.stem), choices: q.choices.map(clean), answer: q.correct, why: clean(q.explanation), ...(q.canon ? { canon: q.canon } : {}) };
+    // A Climb figure travels with its item, so Repair never shows "the triangle shown" without the triangle.
+    if (q.figureSvg) { it.img = 'data:image/svg+xml;base64,' + Buffer.from(q.figureSvg).toString('base64'); it.imgAlt = CLIMB_FIG_ALT[id] || 'Figure for this question.'; }
+    out.push(it);
   }
   return { name: 'qr-climb', source: 'tools/minitests/bank.js (QR items)', items: out, skipped };
 }
@@ -116,7 +127,7 @@ function qrDat() {
   for (const q of DAT.qr || []) {
     if (!Array.isArray(q.opts) || q.opts.length !== 5 || !q.why) { skipped.push(q.id); continue; }
     out.push({ id: 'qr:' + q.id, section: 'qr', topic: q.topic, topicName: QR_NAMES[q.topic] || q.topic.replace(/-/g, ' '), difficulty: q.difficulty || 1,
-      stem: clean(q.q), choices: q.opts.map(clean), answer: q.correct, why: clean(q.why) });
+      stem: clean(q.q), choices: q.opts.map(clean), answer: q.correct, why: clean(q.why), ...(q.canon ? { canon: q.canon } : {}) });
   }
   return { name: 'qr-dat', source: 'scripts/dat-mock-bank.json (QR, five choices with a worked reason)', items: out, skipped };
 }
@@ -127,6 +138,8 @@ function topicsMap() {
   const bio = {}; for (const [k, v] of Object.entries(BIO_TOPICS)) bio[k] = v;
   const oc = {}; for (const [k, v] of Object.entries(OC_NAMES)) oc[k] = [k, v];
   const qr = {}; for (const q of DAT.qr || []) qr[q.topic] = [q.topic, QR_NAMES[q.topic] || q.topic.replace(/-/g, ' ')];
+  // keep the map stable for older stored misses whose topic no live item uses any more
+  for (const k of ['logarithms']) if (!qr[k]) qr[k] = [k, QR_NAMES[k]];
   return { format: 1, gchem: gc, bio, ochem: oc, qr };
 }
 

@@ -123,7 +123,8 @@ function pickRc(passages, usedP, r) {
  * bioTargets: { 'cell-molecular': 418, ... } the skill-map targets summed per ADA area
  * rcFallback: served Ace Labs RC section ids for forms the private RC bank cannot fill
  */
-export function composeForms({ items, passages, bioTargets, count = 6, rcFallback = ['rc-s11', 'rc-s10'], seed = 'ace-bank-forms-v1' }) {
+/* The eligible pool and the topic quotas per section (shared by a fresh compose and a pinned build). */
+function poolsAndQuotas(items, bioTargets) {
   const report = { sections: {}, notes: [] };
   const pools = {}, quotas = {};
   for (const sec of ['bio', 'gc', 'ochem', 'qr']) {
@@ -140,6 +141,12 @@ export function composeForms({ items, passages, bioTargets, count = 6, rcFallbac
     quotas.qr = Object.assign({ 'word-problems': 10 }, apportion(counts, 30));
   }
   report.quotas = quotas;
+  return { pools, quotas, report };
+}
+const rcFallbackNote = (id, fb) => `${id} rc: the private RC bank has no three unused passages that total exactly 50 questions; ` + (fb ? `this form uses the existing Ace Labs RC section ${fb} (already live, not part of the review)` : 'no RC section');
+
+export function composeForms({ items, passages, bioTargets, count = 6, rcFallback = ['rc-s11', 'rc-s10'], seed = 'ace-bank-forms-v1' }) {
+  const { pools, quotas, report } = poolsAndQuotas(items, bioTargets);
 
   const used = new Set(), usedP = new Set(), subUse = {};
   const forms = [];
@@ -160,10 +167,56 @@ export function composeForms({ items, passages, bioTargets, count = 6, rcFallbac
     else {
       const fb = rcFallback[f - 1 - possible.rc] || null;
       form.rc = fb ? { section: fb, fallback: true } : null;
-      report.notes.push(`${form.id} rc: the private RC bank has no three unused passages that total exactly 50 questions; ` + (fb ? `this form uses the existing Ace Labs RC section ${fb} (already live, not part of the review)` : 'no RC section'));
+      report.notes.push(rcFallbackNote(form.id, fb));
     }
     forms.push(form);
   }
   report.possible = possible;
   return { forms, report };
+}
+
+/**
+ * The pinned forms (scripts/bank/pin.json): the same output shape as composeForms, but every form
+ * keeps exactly the item ids and RC passages it was frozen with. Nothing is re-picked. The item
+ * data (difficulty, key, tags, content) is read fresh, so the mix line and the counts stay true,
+ * and an edited item still reaches the review page with its new content hash.
+ * Returns { forms, report, missing } where missing lists pinned ids the banks no longer hold.
+ */
+export function pinnedForms({ items, passages, bioTargets, pin }) {
+  const { report } = poolsAndQuotas(items, bioTargets);
+  const byId = {}; for (const sec of ['bio', 'gc', 'ochem', 'qr']) for (const it of items[sec]) byId[it.id] = it;
+  const pById = Object.fromEntries((passages || []).map((p) => [p.id, p]));
+  const missing = [], ineligible = [];
+  const possible = { bio: 0, gc: 0, ochem: 0, qr: 0, rc: 0 };
+  const forms = pin.forms.map((pf) => {
+    const form = { id: pf.id, n: pf.n, name: pf.name, sections: {}, pat: pf.pat, rc: null, status: pf.status || 'awaiting review' };
+    for (const sec of ['bio', 'gc', 'ochem', 'qr']) {
+      const ids = pf.sections && pf.sections[sec];
+      if (!ids) { form.sections[sec] = null; continue; }
+      possible[sec]++;
+      form.sections[sec] = ids.slice();
+      const letters = [0, 0, 0, 0, 0], diff = { 1: 0, 2: 0, 3: 0 };
+      for (const id of ids) {
+        const it = byId[id];
+        if (!it) { missing.push(id); continue; }
+        const w = formEligible(it); if (w) ineligible.push(id + ' (' + w + ')');
+        if (it.answer >= 0 && it.answer < 5) letters[it.answer]++;
+        diff[it.difficulty] = (diff[it.difficulty] || 0) + 1;
+      }
+      form.mix = form.mix || {};
+      form.mix[sec] = { difficulty: diff, keys: 'ABCDE'.split('').map((l, i) => l + letters[i]).join(' ') };
+    }
+    if (pf.rc && pf.rc.passages) {
+      for (const pid of pf.rc.passages) if (!pById[pid]) missing.push(pid);
+      possible.rc++;
+      form.rc = { passages: pf.rc.passages.slice(), questions: pf.rc.passages.reduce((a, pid) => a + (pById[pid] ? pById[pid].n : 0), 0) };
+    } else {
+      form.rc = pf.rc ? { ...pf.rc } : null;
+      report.notes.push(rcFallbackNote(pf.id, pf.rc && pf.rc.section));
+    }
+    return form;
+  });
+  for (const x of ineligible) report.notes.push('pinned item no longer passes the form check, kept on its form for Thomas to decide: ' + x);
+  report.possible = possible;
+  return { forms, report, missing };
 }
