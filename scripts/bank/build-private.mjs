@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // build-private.mjs : the private AceTheDAT banks (4,140 original items) into Ace Labs, safely.
 //
-//   node scripts/bank/build-private.mjs [--banks DIR] [--check]
+//   node scripts/bank/build-private.mjs [--banks DIR] [--check] [--regenerate]
 //
 // This repository is public. The private banks (ace-bank-bio, -gchem, -ochem, -qr, -rc) are
 // private repositories, so NO question text is ever committed here. This script writes two kinds
@@ -16,6 +16,17 @@
 //     scripts/bank/forms.json                 the six new full-length forms (item ids)
 //     scripts/bank/review-queue.json          Thomas's review order per section (the seeded 50 first)
 //
+// The pin (scripts/bank/pin.json, ids only): the seeded 50 per section and the six forms are
+// frozen there (Thomas, 2026-11-16: the set he is reviewing must not move when a bank changes a
+// difficulty or a tag). A normal build keeps exactly those ids and only refreshes item data, so a
+// content edit to a pinned item still gets a new hash (re-approval, as intended). A pinned id that
+// the banks no longer hold stops the build. --regenerate recomposes the forms and the seed from the
+// tags and rewrites pin.json; it is the only way the review set changes.
+//
+// Tags: an item may state its own portal subtopic, as `canon` (Biology, QR) or `subtopic` (OChem).
+// A stated subtopic that exists in shared/ace-skills.js is the tag of record (conf "meta"); an
+// unknown one is ignored (keyword tagger used) and counted in the build log.
+//
 // Every item is AI-checked only. Nothing here is called verified, and nothing reaches a student
 // until Thomas approves it on the coach review page (netlify/functions/ace-bank-review.mjs).
 // --check: rebuild in memory and exit 1 if a committed file is stale (skipped without the banks).
@@ -25,20 +36,25 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
-import { composeForms } from './compose-ace-forms.mjs';
+import { composeForms, pinnedForms } from './compose-ace-forms.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const Skills = createRequire(import.meta.url)(path.join(ROOT, 'shared/ace-skills.js'));
 const TAX = JSON.parse(fs.readFileSync(path.join(ROOT, 'scripts/bank/taxonomy.json'), 'utf8'));
 const arg = (n, d) => { const i = process.argv.indexOf(n); return i > 0 ? process.argv[i + 1] : d; };
 const CHECK = process.argv.includes('--check');
+const REGENERATE = process.argv.includes('--regenerate');
 const BANK_NAMES = ['bio', 'gchem', 'ochem', 'qr', 'rc'];
 const dirs = [arg('--banks', ''), process.env.ACE_BANK_DIR || '', path.join(os.homedir(), 'code'), os.homedir(), '/home/claude'].filter(Boolean);
 export const BANKS = dirs.find((d) => BANK_NAMES.every((b) => fs.existsSync(path.join(d, 'ace-bank-' + b, 'items'))));
+let BANKS_DIR = BANKS;
 const OUT_PRIVATE = path.join(ROOT, 'bank-private');
 const OUT_TAGS = path.join(ROOT, 'scripts/bank/out/ace-bank-tags.json');
 const OUT_FORMS = path.join(ROOT, 'scripts/bank/forms.json');
 const OUT_QUEUE = path.join(ROOT, 'scripts/bank/review-queue.json');
+export const PIN_FILE = path.join(ROOT, 'scripts/bank/pin.json');
+export function loadPin(file = PIN_FILE) { return fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, 'utf8')) : null; }
+export const declaredTags = { used: 0, unknown: [] };
 const L = 'ABCDE';
 export const SEC = { bio: 'bio', gchem: 'gc', ochem: 'ochem', qr: 'qr', rc: 'rc' };   // bank -> form section key
 const PREFIX = { bio: 'bio:', gchem: 'gc:', ochem: 'oc:', qr: 'qr:', rc: 'rc:' };
@@ -47,15 +63,16 @@ const RC_TYPE = { 'rc-detail': 'detail', 'rc-main-idea': 'mainidea', 'rc-inferen
 
 function jsonl(file) { return fs.readFileSync(file, 'utf8').split('\n').filter((l) => l.trim()).map((l) => JSON.parse(l)); }
 function loadBank(b) {
-  const dir = path.join(BANKS, 'ace-bank-' + b, 'items');
+  const dir = path.join(BANKS_DIR, 'ace-bank-' + b, 'items');
   return fs.readdirSync(dir).filter((f) => f.endsWith('.jsonl')).sort().flatMap((f) => jsonl(path.join(dir, f)));
 }
 function svgData(b, rel) {
   if (!rel) return null;
-  const f = path.join(BANKS, 'ace-bank-' + b, rel);
+  const f = path.join(BANKS_DIR, 'ace-bank-' + b, rel);
   if (!fs.existsSync(f)) return null;
   return 'data:image/svg+xml;base64,' + fs.readFileSync(f).toString('base64');
 }
+const PIN_NOTE = 'Frozen review set (ids only, no question text). build-private.mjs keeps these ids on every build; item content still flows through, so an edited item gets a new hash and needs re-approval. Only `node scripts/bank/build-private.mjs --regenerate` recomposes the forms and seed and rewrites this file.';
 const topicName = (id) => (id && TAX.topics[id] ? TAX.topics[id].name : null);
 
 /* One private item -> the Ace Labs item shape. explanation.wrong becomes traps[5] (null at the key). */
@@ -66,9 +83,12 @@ export function toItem(b, raw, passage) {
   // the other sections keep method first.
   const why = (b === 'qr' && ex.fastest ? ['Fastest: ' + ex.fastest, 'Full method: ' + ex.correct] : [ex.correct, ex.fastest ? 'Fastest: ' + ex.fastest : '']).filter(Boolean).join(' ');
   const traps = (raw.choices || []).map((_, i) => (i === answer ? null : ((ex.wrong || {})[L[i]] || null)));
-  const t = Skills.tag({ section: SECTION[b], topic: raw.skill_id, stem: raw.stem, why: ex.correct || '' });
-  // an item that states its portal subtopic outright (raw.canon) overrides the keyword guess
-  if (raw.canon && Skills.names[raw.canon]) Object.assign(t, { canon: raw.canon, canonName: Skills.names[raw.canon][0], topicId: Skills.names[raw.canon][1], conf: 'meta', skill: raw.canon, skillName: Skills.names[raw.canon][0] });
+  // an item that states its own portal subtopic (`canon` in Biology and QR, `subtopic` in OChem,
+  // each checked by its bank's validator) keeps it; an unknown id falls back to the keyword tagger
+  const declared = raw.canon || raw.subtopic || null;
+  const known = declared && Skills.names[declared] ? declared : null;
+  if (declared) { if (known) declaredTags.used++; else declaredTags.unknown.push(PREFIX[b] + raw.id + ' -> ' + declared); }
+  const t = Skills.tag({ section: SECTION[b], topic: raw.skill_id, stem: raw.stem, why: ex.correct || '', canonCandidates: known ? [known] : undefined });
   const it = {
     id: PREFIX[b] + raw.id, bankId: raw.id, bank: 'ace-bank-' + b, section: SECTION[b],
     topic: b === 'rc' ? (RC_TYPE[raw.skill_id] || raw.skill_id) : (t.topicId || raw.topic), topicName: b === 'rc' ? null : (topicName(t.topicId) || raw.topic),
@@ -86,8 +106,13 @@ export function toItem(b, raw, passage) {
   return it;
 }
 
-export function build() {
-  if (!BANKS) return null;
+export function build({ banks = BANKS, regenerate = REGENERATE, pin = loadPin() } = {}) {
+  if (!banks) return null;
+  const prevBanks = BANKS_DIR; BANKS_DIR = banks;
+  try { return buildFrom(regenerate, pin); } finally { BANKS_DIR = prevBanks; }
+}
+function buildFrom(regenerate, pin) {
+  declaredTags.used = 0; declaredTags.unknown = [];
   const out = {}, tags = {}, passages = {};
   for (const b of BANK_NAMES) {
     const raw = loadBank(b);
@@ -98,19 +123,33 @@ export function build() {
     for (const it of out[b]) tags[it.id] = [it.canon, it.topicId, it.conf];
   }
   // forms
-  const smap = JSON.parse(fs.readFileSync(path.join(BANKS, 'ace-bank-bio/skills/bio-skill-map.json'), 'utf8'));
+  const smap = JSON.parse(fs.readFileSync(path.join(BANKS_DIR, 'ace-bank-bio/skills/bio-skill-map.json'), 'utf8'));
   const bioTargets = {}; for (const s of smap.skills) bioTargets[s.ada_slug] = (bioTargets[s.ada_slug] || 0) + (s.target || 0);
   const pList = Object.values(passages).map((p) => ({ id: p.id, n: out.rc.filter((q) => q.passageId === p.id).length, topic: p.topic, difficulty: p.difficulty, exclusion: p.exclusion }));
-  const { forms, report } = composeForms({ items: { bio: out.bio, gc: out.gchem, ochem: out.ochem, qr: out.qr }, passages: pList, bioTargets });
+  const formItems = { bio: out.bio, gc: out.gchem, ochem: out.ochem, qr: out.qr };
+  const pinned = !regenerate && !!pin;
+  let forms, report, seed = null;
+  if (pinned) {
+    // the frozen review set: same ids, fresh item data
+    const r = pinnedForms({ items: formItems, passages: pList, bioTargets, pin });
+    const ids = new Set(Object.values(out).flat().map((i) => i.id));
+    const missing = r.missing.concat(Object.values(pin.seed || {}).flat().filter((id) => !ids.has(id)));
+    if (missing.length) throw new Error('pinned ids the banks no longer hold: ' + [...new Set(missing)].join(', ') + '. Restore them in the bank, or recompose on purpose with --regenerate.');
+    ({ forms, report } = r); seed = pin.seed;
+  } else ({ forms, report } = composeForms({ items: formItems, passages: pList, bioTargets }));
   // review queue: Form A's items first (approving them unlocks that form), then the rest of the
   // seeded 50 by high-yield subtopic, then every other form item in form order, then the bank.
-  const queue = reviewQueue(out, forms, passages);
-  return { out, tags, passages, forms, report, queue };
+  // Pinned: the frozen seed, in its frozen order.
+  const queue = reviewQueue(out, forms, passages, seed);
+  const newPin = { format: 1, note: (pin && pin.note) || PIN_NOTE, source: pinned ? pin.source : { regenerated: new Date().toISOString().slice(0, 10) },
+    seed: Object.fromEntries(Object.entries(queue.sections).map(([k, v]) => [k, v.seed])),
+    forms: forms.map((f) => ({ id: f.id, n: f.n, name: f.name, sections: f.sections, pat: f.pat, rc: f.rc && f.rc.passages ? { passages: f.rc.passages } : f.rc, status: f.status })) };
+  return { out, tags, passages, forms, report, queue, pinned, pin: newPin, declared: { used: declaredTags.used, unknown: declaredTags.unknown.slice() } };
 }
 
 const hy = (it) => (it.topicId && TAX.topics[it.topicId] && TAX.topics[it.topicId].highYield ? 0 : 1);
 const order = (it) => (TAX.topics[it.topicId] ? TAX.topics[it.topicId].order : 99);
-export function reviewQueue(out, forms, passages) {
+export function reviewQueue(out, forms, passages, pinnedSeed = null) {
   const res = { seedPerSection: 50, sections: {} };
   for (const b of BANK_NAMES) {
     const sec = SEC[b], items = out[b], byId = Object.fromEntries(items.map((i) => [i.id, i]));
@@ -124,8 +163,8 @@ export function reviewQueue(out, forms, passages) {
     // inside the seed, highest-yield first: high-yield parent topic, then the registry order,
     // then the subtopic; RC keeps passage order (a passage is read once).
     const sortHY = (ids) => (sec === 'rc' ? ids.slice() : ids.slice().sort((a, b2) => { const x = byId[a], y = byId[b2]; return hy(x) - hy(y) || order(x) - order(y) || String(x.canon || x.topicId).localeCompare(String(y.canon || y.topicId)) || a.localeCompare(b2); }));
-    const seed = sortHY(formA);
-    if (seed.length < 50) {
+    const seed = pinnedSeed && pinnedSeed[sec] ? pinnedSeed[sec].slice() : sortHY(formA);
+    if (!(pinnedSeed && pinnedSeed[sec]) && seed.length < 50) {
       const extra = formIds.filter((id) => !seed.includes(id));
       // round robin over high-yield subtopics so the extra items cover new ground
       const bySub = {};
@@ -147,7 +186,8 @@ function writeOrCheck(file, body) {
 }
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.argv[1])) {
-  const r = build();
+  let r;
+  try { r = build(); } catch (e) { console.error('build-private: ' + e.message); process.exit(1); }
   if (!r) { console.log('build-private: the private banks are not on this machine; nothing built' + (CHECK ? ' (check skipped)' : '')); process.exit(0); }
   let stale = 0;
   if (!CHECK) {
@@ -158,10 +198,15 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.a
   }
   const conf = { meta: 0, table: 0, low: 0 }; for (const v of Object.values(r.tags)) conf[v[2]]++;
   stale += writeOrCheck(OUT_TAGS, JSON.stringify({ format: 1, note: 'ids and canonical tags only (no question text): [subtopic or null, parent topic, conf]', count: Object.keys(r.tags).length, conf, tags: r.tags }) + '\n');
-  stale += writeOrCheck(OUT_FORMS, JSON.stringify({ format: 1, note: 'Item ids only. Status stays "awaiting review" until Thomas approves every item of a form on the coach review page; the forms function works the status out live from his decisions.', time: { sons: 90, pat: 60, rc: 60, qr: 45 }, report: r.report, forms: r.forms }, null, 1) + '\n');
-  stale += writeOrCheck(OUT_QUEUE, JSON.stringify({ format: 1, note: 'Item ids only. seed = the 50 per section shown first (the first form\'s items lead, then high-yield subtopics); forms = the other form items; bank = the rest.', ...r.queue }) + '\n');
+  const pinLine = r.pinned ? { pin: 'scripts/bank/pin.json: these ids are frozen (2026-11-16); only --regenerate recomposes them' } : {};
+  if (!r.pinned) stale += writeOrCheck(PIN_FILE, JSON.stringify(r.pin, null, 1) + '\n');
+  stale += writeOrCheck(OUT_FORMS, JSON.stringify({ format: 1, ...pinLine, note: 'Item ids only. Status stays "awaiting review" until Thomas approves every item of a form on the coach review page; the forms function works the status out live from his decisions.', time: { sons: 90, pat: 60, rc: 60, qr: 45 }, report: r.report, forms: r.forms }, null, 1) + '\n');
+  stale += writeOrCheck(OUT_QUEUE, JSON.stringify({ format: 1, ...pinLine, note: 'Item ids only. seed = the 50 per section shown first (the first form\'s items lead, then high-yield subtopics); forms = the other form items; bank = the rest.', ...r.queue }) + '\n');
   for (const b of BANK_NAMES) { const it = r.out[b]; const c = { meta: 0, table: 0, low: 0 }; it.forEach((x) => c[x.conf]++); console.log(`ace-bank-${b}: ${it.length} items; tags meta ${c.meta}, table ${c.table}, low ${c.low}`); }
   console.log('forms possible per section: ' + JSON.stringify(r.report.possible));
+  console.log(r.pinned ? 'forms and seed: pinned (scripts/bank/pin.json); ids unchanged' : 'forms and seed: RECOMPOSED (--regenerate); pin.json rewritten');
+  console.log(`stated subtopics used: ${r.declared.used}; unknown (keyword tagger used instead): ${r.declared.unknown.length}`);
+  r.declared.unknown.slice(0, 20).forEach((x) => console.log('  unknown subtopic: ' + x));
   r.report.notes.forEach((n) => console.log('  note: ' + n));
   if (stale) process.exit(1);
 }
