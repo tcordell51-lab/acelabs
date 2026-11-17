@@ -62,9 +62,13 @@ const topicName = (id) => (id && TAX.topics[id] ? TAX.topics[id].name : null);
 export function toItem(b, raw, passage) {
   const answer = L.indexOf(String(raw.answer || '').trim());
   const ex = raw.explanation || {};
-  const why = [ex.correct, ex.fastest ? 'Fastest: ' + ex.fastest : ''].filter(Boolean).join(' ');
+  // QR leads with the fastest legitimate route, then the full method (Thomas's teaching order);
+  // the other sections keep method first.
+  const why = (b === 'qr' && ex.fastest ? ['Fastest: ' + ex.fastest, 'Full method: ' + ex.correct] : [ex.correct, ex.fastest ? 'Fastest: ' + ex.fastest : '']).filter(Boolean).join(' ');
   const traps = (raw.choices || []).map((_, i) => (i === answer ? null : ((ex.wrong || {})[L[i]] || null)));
   const t = Skills.tag({ section: SECTION[b], topic: raw.skill_id, stem: raw.stem, why: ex.correct || '' });
+  // an item that states its portal subtopic outright (raw.canon) overrides the keyword guess
+  if (raw.canon && Skills.names[raw.canon]) Object.assign(t, { canon: raw.canon, canonName: Skills.names[raw.canon][0], topicId: Skills.names[raw.canon][1], conf: 'meta', skill: raw.canon, skillName: Skills.names[raw.canon][0] });
   const it = {
     id: PREFIX[b] + raw.id, bankId: raw.id, bank: 'ace-bank-' + b, section: SECTION[b],
     topic: b === 'rc' ? (RC_TYPE[raw.skill_id] || raw.skill_id) : (t.topicId || raw.topic), topicName: b === 'rc' ? null : (topicName(t.topicId) || raw.topic),
