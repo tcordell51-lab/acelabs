@@ -50,7 +50,8 @@
   var LIMITS = { lineChars: 80, stepWords: 12, stepWordsMax: 14, stepsMin: 3, stepsMax: 5, trapLines: 2 };
 
   function plain(s) { return String(s == null ? '' : s).replace(/\*\*/g, '').replace(/[_^]\{([^}]*)\}/g, '$1').replace(/[_^](\S)/g, '$1'); }
-  function words(s) { var t = plain(s).trim(); return t ? t.split(/\s+/).length : 0; }
+  // words: tokens with a letter or a digit; a bare =, +, \u00D7 or \u2212 is a sign, not a word
+  function words(s) { var t = plain(s).trim(); return t ? t.split(/\s+/).filter(function (w) { return /[A-Za-z0-9]/.test(w); }).length : 0; }
   function sentences(s) { var t = plain(s).trim(); if (!t) return 0; return t.split(/(?<=[.!?])\s+(?=[A-Z0-9"(])/).length; }
   function lines(s) { return Math.ceil(plain(s).length / LIMITS.lineChars) || 0; }
 

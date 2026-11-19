@@ -9,6 +9,8 @@
 //   node scripts/lint-explanations.mjs --private DIR   also lint the private banks in DIR/ace-bank-*/
 //                                                      (counts only; no question text is printed)
 //   node scripts/lint-explanations.mjs --list N        print the first N failing items per source
+//   node scripts/lint-explanations.mjs --sidecar FILE  lint a rewrite sidecar (scripts/bank/rewrite-explanations.mjs):
+//                                                      every record marked "rewritten" must pass (strict)
 //
 // The rules (one place: shared/ace-walkthrough.js validate(), used here and by the panel):
 //   answer, trick, check: one line (80 characters: one desktop row, two phone rows)
@@ -30,10 +32,11 @@ const require = createRequire(import.meta.url);
 const W = require(path.join(ROOT, 'shared/ace-walkthrough.js'));
 const args = process.argv.slice(2);
 const opt = (k) => { const i = args.indexOf(k); return i >= 0 ? args[i + 1] : null; };
+const SIDECARS = args.flatMap((a, i) => (a === '--sidecar' ? [args[i + 1]] : []));
 const STRICT = args.includes('--strict'), JSON_OUT = opt('--json'), PRIVATE = opt('--private'), LIST = Number(opt('--list') || 0);
 const MAXP = W.LIMITS.lineChars * 2;
 
-const ENT = { amp: '&', lt: '<', gt: '>', quot: '"', apos: "'", nbsp: ' ', deg: '°', minus: '−', times: '×', ldquo: '“', rdquo: '”', lsquo: '‘', rsquo: '’', mdash: '—', ndash: '–', rarr: '→', larr: '←', middot: '·', hellip: '…' };
+const ENT = { amp: '&', lt: '<', gt: '>', quot: '"', apos: "'", nbsp: ' ', deg: '°', minus: '−', times: '×', ldquo: '“', rdquo: '”', lsquo: '‘', rsquo: '’', mdash: '\u2014', ndash: '\u2013', rarr: '→', larr: '←', middot: '·', hellip: '…' };
 const decode = (s) => String(s).replace(/&#x([0-9a-f]+);/gi, (_, h) => String.fromCodePoint(parseInt(h, 16))).replace(/&#(\d+);/g, (_, d) => String.fromCodePoint(+d)).replace(/&([a-z]+);/gi, (m, n) => ENT[n.toLowerCase()] ?? m);
 const text = (html) => decode(String(html).replace(/<sup>/gi, '^{').replace(/<\/sup>/gi, '}').replace(/<sub>/gi, '_{').replace(/<\/sub>/gi, '}').replace(/<b>|<strong>/gi, '**').replace(/<\/b>|<\/strong>/gi, '**').replace(/<[^>]+>/g, ' ')).replace(/\s+/g, ' ').trim();
 
@@ -72,7 +75,7 @@ function report(src, kind, id, problems) {
 function para(name, t) {
   const out = [], p = W.plain(t);
   if (p.length > MAXP || W.sentences(t) > 2) out.push(`paragraph: ${name} is ${p.length} chars, ${W.sentences(t)} sentences`);
-  if (/—/.test(t)) out.push(name + ': em dash');
+  if (/\u2014/.test(t)) out.push(name + ': em dash');
   return out;
 }
 
@@ -193,6 +196,17 @@ if (PRIVATE) {
         report('private ace-bank-' + b, 'private', it.id, probs);
       }
     }
+  }
+}
+
+/* ---- 5. rewrite sidecars: records marked rewritten are standard-shape content ---- */
+for (const f of SIDECARS) {
+  const sc = JSON.parse(fs.readFileSync(f, 'utf8'));
+  for (const r of sc.records) {
+    if (r.status !== 'rewritten') continue;
+    const probs = W.validate(r.explain);
+    if (r.review !== 'pending' && r.review !== 'approved') probs.push('missing answer line (no review state)');
+    report('sidecar ' + path.basename(f) + ' (' + (sc.summary && sc.summary.bank || '') + ')', 'standard', r.id, probs);
   }
 }
 

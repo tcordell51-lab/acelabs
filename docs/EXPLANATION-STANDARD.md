@@ -171,3 +171,14 @@ Every legacy item fails, mostly for shape (no steps, no check, no sources). The 
 3. Use the bank's per-choice `wrong` text as the traps, cut to 2 lines.
 4. Trick: only from the playbooks with a source, else "Draft trick, Thomas to approve".
 5. Re-run the lint; then the verify script for the numbers.
+
+## 9. Gen Chem bank rewrite (2026-11-19, review pending)
+
+`scripts/bank/rewrite-explanations.mjs` writes each item's own explanation into this shape as a **sidecar**; no bank file changes. `scripts/bank/verify-rewrites.py` checks it in code: answer key unchanged, no number that is not already in the item, every `a op b = c` claim recomputed, the bank's recompute expressions re-run. `node scripts/lint-explanations.mjs --sidecar FILE` must show 0 failures for every record marked rewritten.
+
+| Bank | Items | Rewritten | Done except trap lines | Needs a hand rewrite |
+|---|---|---|---|---|
+| ace-bank-gchem (private; sidecar stays in that folder) | 991 | 566 | 9 | 416 |
+| data/gchem.json (public; `scripts/bank/out/gchem-explanations-standard.json`) | 517 | 1 | 76 | 440 |
+
+Tricks on the 566: 120 approved lines, 53 other recorded lines (with source, not yet approved), 393 drafts (the bank's own trick, labeled). The public bank never had per-choice wrong-answer text, so its trap lines must be written by hand.
