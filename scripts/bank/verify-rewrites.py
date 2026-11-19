@@ -37,7 +37,7 @@ def norm(t):
 EXPR = re.compile(r'[\d.()+\-*/ e]+$')
 def claims(text):
     """yield (lhs, shown, value) for every a op b = c in the text"""
-    for sent in re.split(r'(?<=[.;])\s+|,\s+(?=so\b)', norm(text)):
+    for sent in re.split(r'(?<=[.;?!])\s+|,\s+(?=so\b)', norm(text)):
         parts = sent.split('=')
         for i in range(1, len(parts)):
             lhs = parts[i - 1]
@@ -127,9 +127,16 @@ for iid, it in bank.items():
             parts = [e['answer']] + e['steps'] + [t for t in e['traps'].values() if t] + [e['check']['q'], e['check'].get('a', '')]
             if e['trick'].get('draft'): parts.append(e['trick']['text'])
             have = set(numbers(norm(s['all']))) | set(numbers(s['all']))
-            new = [n for n in numbers(' '.join(parts).replace('**', '')) if n not in have and n.lstrip('-') not in have and n not in L]
+            # new wording may add a number only through arithmetic that recomputes
+            rtext = ' '.join(parts).replace('**', '').replace('^{', '^').replace('}', '')
+            rcl = list(claims(rtext))
+            for c in rcl:
+                if close(c[1], c[2]): have |= set(numbers(c[0])) | set(numbers(c[1])) | {c[1], c[1].lstrip('-')}
+                else: flags.append('REWRITE claims %s = %s, recomputed %.4g' % (c[0].strip(), c[1], c[2])); tot['rewrite_claim_flags'] = tot.get('rewrite_claim_flags', 0) + 1
+            tot['rewrite_claims'] = tot.get('rewrite_claims', 0) + len(rcl)
+            new = [n for n in numbers(' '.join(parts).replace('**', '').replace('^{', '^').replace('}', '')) if n not in have and n.lstrip('-') not in have and n not in L]
             # numbers that are only a list index or step count are not claims; letters A-E are choice names
-            new = [n for n in new if not re.fullmatch(r'[1-5]', n)]
+            new = [n for n in new if not re.fullmatch(r'[-+]?\d', n)]   # single digits: counts, charges, oxidation numbers
             inv = 'none' if not new else 'FLAG ' + ' '.join(new[:5])
             if new: tot['invented_numbers'] += 1; flags.append('number(s) not in the item: ' + ' '.join(new[:5]))
             k = s['choices'][L.index(s['key'])]; kn = numbers(norm(k))
