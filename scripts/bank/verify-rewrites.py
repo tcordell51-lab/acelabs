@@ -24,7 +24,8 @@ OUT = args[-1]
 
 NUMRE = re.compile(r'(?<![A-Za-z\d.])[-+−]?\d+(?:[.,]\d+)*(?:\.\d+)?')
 def numbers(t):
-    return [m.group(0).replace('−', '-').lstrip('+') for m in NUMRE.finditer(t or '')]
+    t = re.sub(r'(?<=\d)e[-+]?\d+', '', t or '')      # in 2.0e-14 the exponent belongs to the number
+    return [m.group(0).replace('\u2212', '-').lstrip('+') for m in NUMRE.finditer(t)]
 def norm(t):
     t = (t or '').replace('−', '-').replace('×', '*').replace('÷', '/').replace(' ', ' ')
     t = re.sub(r'(\d(?:\.\d+)?)\s*[x*]\s*10\^\s*\(?([-+]?\d+)\)?', r'\1e\2', t)   # 2.0 x 10^-2 -> 2.0e-2
@@ -134,7 +135,7 @@ for iid, it in bank.items():
                 if close(c[1], c[2]): have |= set(numbers(c[0])) | set(numbers(c[1])) | {c[1], c[1].lstrip('-')}
                 else: flags.append('REWRITE claims %s = %s, recomputed %.4g' % (c[0].strip(), c[1], c[2])); tot['rewrite_claim_flags'] = tot.get('rewrite_claim_flags', 0) + 1
             tot['rewrite_claims'] = tot.get('rewrite_claims', 0) + len(rcl)
-            new = [n for n in numbers(' '.join(parts).replace('**', '').replace('^{', '^').replace('}', '')) if n not in have and n.lstrip('-') not in have and n not in L]
+            new = [n for n in numbers(norm(' '.join(parts).replace('**', '').replace('^{', '^').replace('}', ''))) if n not in have and n.lstrip('-') not in have and n not in L]
             # numbers that are only a list index or step count are not claims; letters A-E are choice names
             new = [n for n in new if not re.fullmatch(r'[-+]?\d', n)]   # single digits: counts, charges, oxidation numbers
             inv = 'none' if not new else 'FLAG ' + ' '.join(new[:5])
