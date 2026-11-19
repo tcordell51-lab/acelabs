@@ -45,7 +45,11 @@ function gchem() {
   for (const q of src) {
     if (!Array.isArray(q.opts) || q.opts.length !== 5 || !q.why) { skipped.push(q.id); continue; }
     out.push({ id: 'gc:' + q.id, section: 'gchem', topic: q.topic, topicName: clean(GC_NAMES[q.topic] || GC_EXTRA[q.topic] || q.topic).replace(/ & /g, ' and '),
-      difficulty: q.difficulty || 1, stem: clean(q.q), choices: q.opts.map(clean), answer: q.correct, why: clean(q.why) });
+      difficulty: q.difficulty || 1, stem: clean(q.q), choices: q.opts.map(clean), answer: q.correct, why: clean(q.why),
+      // explanation standard (docs/EXPLANATION-STANDARD.md), only where the source item carries it
+      ...(Array.isArray(q.steps) ? { steps: q.steps.map(clean) } : {}),
+      ...(Array.isArray(q.traps) && q.traps.length === 5 ? { traps: q.traps.map((t) => (t == null ? null : clean(t))) } : {}),
+      ...(q.trick ? { trick: clean(q.trick) } : {}) });
   }
   return { name: 'gchem', source: 'games/gchem.json', items: out, skipped };
 }

@@ -22,8 +22,8 @@
   ];
   var byId = {}; HALF.forEach(function (h) { byId[h.id] = h; });
   var MINUS = '−';
-  var TRICK = { text: 'Electrons always flow from the anode to the cathode.', src: 'Zoom 2026-04-28 #84183655423 ~0:48:29' };
-  var TRICK_RULE = { text: 'Reduction is at the cathode, red cat. The oxidation occurs at the anode and ox.', src: 'Zoom 2026-04-28 #84183655423 ~0:14:46' };
+  var TRICK = { text: 'Electrons always flow from the anode to the cathode.', src: 'Zoom 2026-04-28 #84183655423 ~0:48:29', approved: '2026-11-19' };
+  var TRICK_RULE = { text: 'Reduction is at the cathode, red cat. The oxidation occurs at the anode and ox.', src: 'Zoom 2026-04-28 #84183655423 ~0:14:46', approved: '2026-11-19' };
   var SOURCES = ['OpenStax Chemistry 2e, 17.2 Galvanic Cells and 17.3 Electrode and Cell Potentials.',
     'Potentials: OpenStax Chemistry 2e, Appendix L, 25 °C.',
     "Thomas's line: Zoom 2026-04-28 #84183655423 ~0:48:29 (Gen Chem playbook 9.3)."];

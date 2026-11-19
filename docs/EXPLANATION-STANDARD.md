@@ -39,6 +39,16 @@ When a student misses, the panel **opens on part 4** (their trap), then the answ
 - Anything written for him is labeled **Draft trick, Thomas to approve** and shown without quote marks.
 - His terms (Red Cat, An Ox, Catan, magic sauce, the pit) can appear in steps without quote marks; they are his vocabulary, not a quote.
 
+**Approved by Thomas (2026-11-19).** These three lines are cleared for any explanation on their topic:
+
+| Line | Source | Use for |
+|---|---|---|
+| "Electrons always flow from the anode to the cathode." | Zoom 2026-04-28 #84183655423 ~0:48:29 | galvanic and electrolytic cells, electron direction |
+| "Reduction is at the cathode, red cat. The oxidation occurs at the anode and ox." | Zoom 2026-04-28 #84183655423 ~0:14:46 | which electrode is which |
+| "Moles are king. We always want to get to moles, it's so crucial" | Zoom 2026-09-03 #85955264465 ~0:45:01 | stoichiometry, mole conversions |
+
+Other recorded lines from the playbooks may be used with their source; they show as "His recorded line" until he approves them. In code an approved trick carries `approved: 'YYYY-MM-DD'`; in markup, `data-approved`.
+
 ## 4. The board (animated whiteboard)
 
 - Every step has a board frame (`data-frame` on the step). Next draws that frame: strokes draw in, text writes left to right. Back jumps. Replay redraws.
@@ -98,7 +108,7 @@ Science check: higher E° is reduced (cathode); the other is oxidized (anode); e
 
 > Cu^(2+)/Cu is the cathode (more positive); Zn^(2+)/Zn is the anode. E°_cell = +0.34 - (-0.76) = +1.10 V. Adding magnitudes (giving 0.42) is a common sign error.
 
-(This one is also **wrong**: adding the magnitudes gives 1.10, the right answer. The 0.42 comes from adding the two potentials as written, 0.34 + (−0.76). Flagged for a fix.)
+(This one was also **wrong**: adding the magnitudes gives 1.10, the right answer. Fixed on 2026-11-19 in `games/gchem.json` to the version below; the build now carries steps, traps and trick into `data/gchem.json`.)
 
 **After:**
 

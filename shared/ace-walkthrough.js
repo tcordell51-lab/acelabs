@@ -290,7 +290,7 @@
     if (ex.trick && ex.trick.text) {
       var tr = el('section', 'awk__card awk__trick'); tr.appendChild(el('p', 'awk__k', ex.trick.draft ? 'The trick' : "Thomas's trick"));
       tr.appendChild(richEl('p', 'awk__line', ex.trick.draft ? ex.trick.text : '“' + ex.trick.text + '”'));
-      tr.appendChild(el('p', 'awk__tag', ex.trick.draft ? 'Draft trick, Thomas to approve' : 'His recorded line'));
+      tr.appendChild(el('p', 'awk__tag', ex.trick.draft ? 'Draft trick, Thomas to approve' : ex.trick.approved ? 'His recorded line, approved' : 'His recorded line'));
       top.appendChild(tr);
     }
     sheet.appendChild(top);
